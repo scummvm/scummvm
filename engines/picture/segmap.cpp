@@ -100,12 +100,12 @@ void SegmentMap::load(byte *source) {
 	
 	for (uint16 i = 0; i < pathRectCount; i++) {
 		SegmapPathRect pathRect;
-		pathRect.y = READ_LE_UINT16(source);
-		pathRect.x = READ_LE_UINT16(source + 2);
-		pathRect.height = READ_LE_UINT16(source + 4);
-		pathRect.width = READ_LE_UINT16(source + 6);
+		pathRect.y1 = READ_LE_UINT16(source);
+		pathRect.x1 = READ_LE_UINT16(source + 2);
+		pathRect.y2 = pathRect.y1 + READ_LE_UINT16(source + 4);
+		pathRect.x2 = pathRect.x1 + READ_LE_UINT16(source + 6);
 		
-		debug(0, "SegmentMap::load() (%d, %d, %d, %d)", pathRect.x, pathRect.y, pathRect.width, pathRect.height);
+		debug(0, "SegmentMap::load() (%d, %d, %d, %d)", pathRect.x1, pathRect.y1, pathRect.x2, pathRect.y2);
 
 		source += 8;
 		_pathRects.push_back(pathRect);
@@ -142,158 +142,138 @@ void SegmentMap::load(byte *source) {
 
 }
 
-int SegmentMap::findPathRectAtPoint(int x, int y) {
-	for (uint rectIndex = 0; rectIndex < _pathRects.size(); rectIndex++) {
-		if (y >= _pathRects[rectIndex].y && y <= _pathRects[rectIndex].y + _pathRects[rectIndex].height &&
-			x >= _pathRects[rectIndex].x && x <= _pathRects[rectIndex].x + _pathRects[rectIndex].width) {
+int16 SegmentMap::findPathRectAtPoint(int16 x, int16 y) {
+	for (int16 rectIndex = 0; rectIndex < (int16)_pathRects.size(); rectIndex++) {
+		if (y >= _pathRects[rectIndex].y1 && y <= _pathRects[rectIndex].y2 &&
+			x >= _pathRects[rectIndex].x1 && x <= _pathRects[rectIndex].x2) {
 			return rectIndex;
 		}
 	}
 	return -1;
 }
 
-void SegmentMap::adjustPathPoint(int x, int y) {
+void SegmentMap::adjustPathPoint(int16 &x, int16 &y) {
 
 	if (findPathRectAtPoint(x, y) != -1)
 		return;
 
 	uint32 minDistance = 0xFFFFFFFF, distance;
-	int x2, y2;
+	int16 adjustedX, adjustedY, x2, y2;
 	
-	for (uint rectIndex = 0; rectIndex < _pathRects.size(); rectIndex++) {
+	for (int16 rectIndex = 0; rectIndex < (int16)_pathRects.size(); rectIndex++) {
 
-		if (ABS(x - _pathRects[rectIndex].x) >= ABS((x - (_pathRects[rectIndex].x + _pathRects[rectIndex].width)))) {
-			x2 = _pathRects[rectIndex].x + _pathRects[rectIndex].width;
-		} else {
-			x2 = _pathRects[rectIndex].x;
-		}
-
-		if (ABS(y - _pathRects[rectIndex].y) >= ABS((y - (_pathRects[rectIndex].y + _pathRects[rectIndex].height)))) {
-			y2 = _pathRects[rectIndex].y + _pathRects[rectIndex].height;
-		} else {
-			y2 = _pathRects[rectIndex].y;
-		}
-
-		if (x >= _pathRects[rectIndex].x && x < _pathRects[rectIndex].x + _pathRects[rectIndex].width) {
+		if (x >= _pathRects[rectIndex].x1 && x < _pathRects[rectIndex].x2) {
 			x2 = x;
+		} else if (ABS(x - _pathRects[rectIndex].x1) >= ABS(x - _pathRects[rectIndex].x2)) {
+			x2 = _pathRects[rectIndex].x2;
+		} else {
+			x2 = _pathRects[rectIndex].x1;
+		}
+
+		if (ABS(y - _pathRects[rectIndex].y1) >= ABS(y - _pathRects[rectIndex].y2)) {
+			y2 = _pathRects[rectIndex].y2;
+		} else {
+			y2 = _pathRects[rectIndex].y1;
 		}
 
 		distance = ABS(y - y2) + ABS(x - x2);
 		if (distance < minDistance) {
-			if (y >= _pathRects[rectIndex].y && y <= _pathRects[rectIndex].y + _pathRects[rectIndex].height)
-				_y = y;
-			else
-				_y = y2;
-			if (x >= _pathRects[rectIndex].x && x <= _pathRects[rectIndex].x + _pathRects[rectIndex].width)
-				_x = x;
-			else
-				_x = x2;
+			if (x >= _pathRects[rectIndex].x1 && x <= _pathRects[rectIndex].x2) {
+				adjustedX = x;
+			} else {
+				adjustedX = x2;
+			}
+			if (y >= _pathRects[rectIndex].y1 && y <= _pathRects[rectIndex].y2) {
+				adjustedY = y;
+			} else {
+				adjustedY = y2;
+			}
 			minDistance = distance;
 		}
 
 	}
+	
+	x = adjustedX;
+	y = adjustedY;
 
 }
 
-int SegmentMap::findNextPathRect(int srcRectIndex) {
+int16 SegmentMap::findNextPathRect(int16 srcRectIndex, int16 destX, int16 destY) {
 
-	uint v28;
-	int result;
-	int minDistance, distance;
-	int x1, y1, x2, y2;
-	int nx1, nx2, nx3;
-	int ny, ny2, ny3;
+	int16 result;
+	uint16 minDistance, distance;
+	int16 x1, y1, x2, y2;
+	int16 xmin, xmax, ymax, ymin;
 
 	result = -1;
-	minDistance = 65535;
+	minDistance = 0xFFFF;
 
-	x1 = _pathRects[srcRectIndex].x;
-	y1 = _pathRects[srcRectIndex].y;
+	x1 = _pathRects[srcRectIndex].x1;
+	y1 = _pathRects[srcRectIndex].y1;
+	x2 = _pathRects[srcRectIndex].x2;
+	y2 = _pathRects[srcRectIndex].y2;
 
-	x2 = x1 + _pathRects[srcRectIndex].width;
-	y2 = y1 + _pathRects[srcRectIndex].height;
+	for (int16 rectIndex = 0; rectIndex < (int16)_pathRects.size(); rectIndex++) {
 
-	for (uint rectIndex = 0; rectIndex < _pathRects.size(); ++rectIndex) {
+		int16 nodeX = -1, nodeY = -1;
 
-		if (y1 == _pathRects[rectIndex].height + _pathRects[rectIndex].y && x1 < _pathRects[rectIndex].x + _pathRects[rectIndex].width && x2 > _pathRects[rectIndex].x) {
-			ny = y1;
-			
-LABEL_28:
-			if (x1 >= _pathRects[rectIndex].x) {
-				nx1 = x1;
+		// Check if the current rectangle is connected to the source rectangle
+		if (x1 == _pathRects[rectIndex].x2 && y1 < _pathRects[rectIndex].y2 && y2 > _pathRects[rectIndex].y1) {
+			nodeX = x1;
+		} else if (x2 == _pathRects[rectIndex].x1 && y1 < _pathRects[rectIndex].y2 && y2 > _pathRects[rectIndex].y1) {
+			nodeX = x2 - 1;
+		} else if (y1 == _pathRects[rectIndex].y2 && x1 < _pathRects[rectIndex].x2 && x2 > _pathRects[rectIndex].x1) {
+			nodeY = y1;
+		} else if (y2 == _pathRects[rectIndex].y1 && x1 < _pathRects[rectIndex].x2 && x2 > _pathRects[rectIndex].x1) {
+			nodeY = y2 - 1;
+		} else
+			continue;
+
+		if (nodeX == -1) {
+			xmin = MAX<int16>(x1, _pathRects[rectIndex].x1);
+			xmax = MIN<int16>(x2, _pathRects[rectIndex].x2) - 1;
+			if (destX > xmin && destX < xmax) {
+				nodeX = destX;
+			} else if (ABS(destX - xmin) >= ABS(destX - xmax)) {
+				nodeX = xmax - 1;
 			} else {
-				nx1 = _pathRects[rectIndex].x;
+				nodeX = xmin;
 			}
-			if (x2 <= _pathRects[rectIndex].x + _pathRects[rectIndex].width) {
-				nx2 = x2 - 1;
+		}
+
+		if (nodeY == -1) {
+			ymin = MAX<int16>(y1, _pathRects[rectIndex].y1);
+			ymax = MIN<int16>(y2, _pathRects[rectIndex].y2) - 1;
+			if (destY > ymin && destY < ymax) {
+				nodeY = destY;
+			} else if (ABS(destY - ymin) >= ABS(destY - ymax)) {
+				nodeY = ymax - 1;
 			} else {
-				nx2 = _pathRects[rectIndex].x + _pathRects[rectIndex].width - 1;
+				nodeY = ymin;
 			}
-			if (ABS(_x - nx1) >= ABS(_x - nx2)) {
-				nx3 = nx2 - 1;
-			} else {
-				nx3 = nx1;
-			}
-			if (_x > nx1 && _x < nx2) {
-				nx3 = _x;
-			}
-			goto LABEL_55;
 		}
-		if (y2 == _pathRects[rectIndex].y && x1 < _pathRects[rectIndex].x + _pathRects[rectIndex].width && x2 > _pathRects[rectIndex].x) {
-			ny = y2 - 1;
-			goto LABEL_28;
-		}
-		if (x1 == _pathRects[rectIndex].x + _pathRects[rectIndex].width && y1 < _pathRects[rectIndex].y + _pathRects[rectIndex].height && y2 > _pathRects[rectIndex].y) {
-			nx3 = x1;
-		} else {
-			if (x2 != _pathRects[rectIndex].x || y1 >= _pathRects[rectIndex].y + _pathRects[rectIndex].height || y2 <= _pathRects[rectIndex].y)
-				continue;
-			nx3 = x2 - 1;
-		}
-		if (y1 >= _pathRects[rectIndex].y) {
-			ny3 = y1;
-		} else {
-			ny3 = _pathRects[rectIndex].y;
-		}
-		if (y2 <= _pathRects[rectIndex].y + _pathRects[rectIndex].height) {
-			ny2 = y2 - 1;
-		} else {
-			ny2 = _pathRects[rectIndex].y + _pathRects[rectIndex].height - 1;
-		}
-		if (ABS(_y - ny3) >= ABS(_y - ny2)) {
-			ny = ny2 - 1;
-		} else {
-			ny = ny3;
-		}
-		if (_y > ny3 && _y < ny2) {
-			ny = _y;
-		}
-		
-LABEL_55:
-		distance = ABS(_x - nx3) + ABS(_y - ny);
-		v28 = 0;
-		while (v28 < _rectIndexArray2Count) {
-			if (rectIndex == _rectIndexArray2[v28]) {
+
+		distance = ABS(destX - nodeX) + ABS(destY - nodeY);
+
+		for (uint i = 0; i < _closedPathRectsCount; i++) {
+			if (rectIndex == _closedPathRects[i]) {
 				distance = minDistance;
 				break;
 			}
-			++v28;
 		}
 
-		v28 = 0;
-		while (v28 < _rectIndexArray1Count) {
-			if (rectIndex == _rectIndexArray1[v28]) {
+		for (uint i = 0; i < _deadEndPathRectsCount; i++) {
+			if (rectIndex == _deadEndPathRects[i]) {
 				distance = minDistance;
 				break;
 			}
-			++v28;
 		}
 
 		if (distance < minDistance) {
 			result = rectIndex;
 			minDistance = distance;
-			_pointsArray[_pointsCount].y = ny;
-			_pointsArray[_pointsCount].x = nx3;
+			_pathNodes[_pathNodesCount].x = nodeX;
+			_pathNodes[_pathNodesCount].y = nodeY;
 		}
 
 	}
@@ -311,68 +291,58 @@ void plotProc(int x, int y, int color, void *data) {
 	ld->surf[x + y * ld->pitch] = color;
 }
 
-void SegmentMap::findPath(int16 *pointsArray, int destX, int destY, int x, int y) {
+void SegmentMap::findPath(int16 *pointsArray, int16 destX, int16 destY, int16 sourceX, int16 sourceY) {
 
-	int index;
-	int sourceRectIndex, destRectIndex;
-	int pointsCount;
+	// TODO: Writes to pointsArray aren't endian-safe yet
+
+	int16 currentRectIndex, destRectIndex;
+	int16 pointsCount;
+
+	debug(0, "SegmentMap::findPath(fromX: %d; fromY: %d; toX: %d; toY: %d)", sourceX, sourceY, destX, destY);
+
+	_deadEndPathRectsCount = 0;
+	_closedPathRectsCount = 0;
+	_pathNodesCount = 0;
 
 	pointsCount = 2;
-	index = 0;
 
-	debug(0, "SegmentMap::findPath(fromX: %d; fromY: %d; toX: %d; toY: %d)", x, y, destX, destY);
+    adjustPathPoint(sourceX, sourceY);
+	currentRectIndex = findPathRectAtPoint(sourceX, sourceY);
 
-	sourceRectIndex = findPathRectAtPoint(x, y);
-	if (sourceRectIndex == -1) {
-		adjustPathPoint(x, y);
-		x = _x;
-		y = _y;
-	}
+	adjustPathPoint(destX, destY);
+	destRectIndex = findPathRectAtPoint(destX, destY);
 
-	_rectIndexArray1Count = 0;
-	_rectIndexArray2Count = 0;
-	_pointsCount = 0;
-
-	_x = destX;
-	_y = destY;
-
-	adjustPathPoint(_x, _y);
-	destRectIndex = findPathRectAtPoint(_x, _y);
-	sourceRectIndex = findPathRectAtPoint(x, y);
-	if (sourceRectIndex != -1) {
-		if (destRectIndex != sourceRectIndex) {
+	if (currentRectIndex != -1) {
+		if (destRectIndex != currentRectIndex) {
 			while (1) {
 				do {
-					_rectIndexArray2[_rectIndexArray2Count++] = sourceRectIndex;
-					sourceRectIndex = findNextPathRect(sourceRectIndex);
-					_pointsCount++;
-				} while (sourceRectIndex != -1 && sourceRectIndex != destRectIndex);
-				if (sourceRectIndex != -1 && sourceRectIndex == destRectIndex)
+					_closedPathRects[_closedPathRectsCount++] = currentRectIndex;
+					currentRectIndex = findNextPathRect(currentRectIndex, destX, destY);
+					_pathNodesCount++;
+				} while (currentRectIndex != -1 && currentRectIndex != destRectIndex);
+				if (currentRectIndex != -1 && currentRectIndex == destRectIndex)
 					break;
-				_rectIndexArray1[_rectIndexArray1Count++] = _rectIndexArray2[--_rectIndexArray2Count];
-				_pointsCount -= 2;
-				sourceRectIndex = _rectIndexArray2[--_rectIndexArray2Count];
+				_deadEndPathRects[_deadEndPathRectsCount++] = _closedPathRects[--_closedPathRectsCount];
+				_pathNodesCount -= 2;
+				currentRectIndex = _closedPathRects[--_closedPathRectsCount];
 			}
-			sourceRectIndex = 0;
-			while (sourceRectIndex < _pointsCount) {
-				pointsArray[pointsCount++] = _pointsArray[sourceRectIndex].y;
-				pointsArray[pointsCount++] = _pointsArray[sourceRectIndex].x;
-				index++;
-				sourceRectIndex++;
+			for (int16 i = 0; i < _pathNodesCount; i++) {
+				pointsArray[pointsCount++] = _pathNodes[i].y;
+				pointsArray[pointsCount++] = _pathNodes[i].x;
 			}
 		}
 
-		pointsArray[pointsCount++] = _y;
-		pointsArray[pointsCount++] = _x;
+		pointsArray[pointsCount++] = destY;
+		pointsArray[pointsCount++] = destX;
 
 		pointsArray[0] = 0;
-		pointsArray[1] = index + 1;
+		pointsArray[1] = _pathNodesCount + 1;
 	}
 	
 	debug(0, "SegmentMap::findPath() count = %d", pointsArray[1]);
 
-	/*
-	int sx = x, sy = y;
+#if 0 // DEBUG: Draw the path we found
+	int sx = sourceX, sy = sourceY;
 	LineData ld;
 	ld.pitch = _vm->_sceneWidth;
 	ld.surf = _vm->_screen->_backScreen;
@@ -382,7 +352,7 @@ void SegmentMap::findPath(int16 *pointsArray, int destX, int destY, int x, int y
 		sx = pointsArray[3+i];
 		sy = pointsArray[2+i];
 	}
-	*/
+#endif
 	
 }
 
@@ -392,8 +362,9 @@ int8 SegmentMap::getScalingAtPoint(int16 x, int16 y) {
 		if (_infoRects[i].id == 0 &&
 			y >= _infoRects[i].y && y <= _infoRects[i].y + _infoRects[i].height &&
 			x >= _infoRects[i].x && x <= _infoRects[i].x + _infoRects[i].width) {
-			char topScaling = (char)_infoRects[i].b;
-			char bottomScaling = (char)_infoRects[i].c;
+
+			int8 topScaling = (int8)_infoRects[i].b;
+			int8 bottomScaling = (int8)_infoRects[i].c;
 			if (y - _infoRects[i].y > 0) {
 				scaling = (ABS(y - _infoRects[i].y) * (bottomScaling - topScaling) / _infoRects[i].height) + topScaling;
 			}
@@ -529,7 +500,7 @@ void SegmentMap::debugDrawRects(Graphics::Surface *surf) {
 	for (uint16 i = 0; i < _pathRects.size(); i++) {
 		SegmapPathRect pathRect = _pathRects[i];
 		surf->frameRect(
-			Common::Rect(pathRect.x, pathRect.y, pathRect.x + pathRect.width, pathRect.y + pathRect.height),
+			Common::Rect(pathRect.x1, pathRect.y1, pathRect.x2, pathRect.y2),
 			255);
 	}
 }

@@ -65,10 +65,10 @@ public:
 
 	void load(byte *source);
 
-	int findPathRectAtPoint(int x, int y);
-	void adjustPathPoint(int x, int y);
+	int16 findPathRectAtPoint(int16 x, int16 y);
+	void adjustPathPoint(int16 &x, int16 &y);
 
-	void findPath(int16 *pointsArray, int destX, int destY, int x, int y);
+	void findPath(int16 *pointsArray, int16 destX, int16 destY, int16 sourceX, int16 sourceY);
 
 	int8 getScalingAtPoint(int16 x, int16 y);
 	void getRgbModifiertAtPoint(int16 x, int16 y, int16 id, byte &r, byte &g, byte &b);
@@ -89,8 +89,11 @@ public: // for debugging purposes
 	};
 
 	struct SegmapPathRect {
+	    /*
 		int16 y, x;
 		int16 height, width;
+		*/
+		int16 x1, y1, x2, y2;
 	};
 	
 	struct SegmapInfoRect {
@@ -116,18 +119,16 @@ public: // for debugging purposes
 	SegmapPathRectArray _pathRects;
 	SegmapInfoRectArray _infoRects;
 
-	int _rectIndexArray1[1000];
-	uint _rectIndexArray1Count;
+	int16 _deadEndPathRects[1000];
+	uint _deadEndPathRectsCount;
 
-	int _rectIndexArray2[1000];
-	uint _rectIndexArray2Count;
+	int16 _closedPathRects[1000];
+	uint _closedPathRectsCount;
 
-	PathPoint _pointsArray[1000];
-	int16 _pointsCount;
+	PathPoint _pathNodes[1000];
+	int16 _pathNodesCount;
 
-	int _x, _y;
-
-	int findNextPathRect(int srcRectIndex);
+	int16 findNextPathRect(int16 srcRectIndex, int16 destX, int16 destY);
 
 };
 
