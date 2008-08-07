@@ -121,7 +121,7 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_comi = (strncmp(gameid.c_str(), "comi", 4) == 0);
 	bool is_gob = (strncmp(gameid.c_str(), "gob", 3) == 0);
 	bool is_saga = (gameid == "saga");
-	bool is_kyra = (gameid == "kyra1");
+	bool is_kyra = (strncmp(gameid.c_str(), "kyra",4) == 0);
 	bool is_samnmax = (gameid == "samnmax");
 	bool is_cine = (gameid == "cine");
 	bool is_touche = (gameid == "touche");
