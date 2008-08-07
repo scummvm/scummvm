@@ -185,12 +185,12 @@ protected:
 	/** internal state variables of parser */
 	ParseMode _parseMode;
 	VirtualKeyboard::Mode *_mode; // pointer to mode currently being parsed
-	Common::String _initialModeName;
+	String _initialModeName;
 	bool _kbdParsed;
 	bool _layoutParsed;
 
-	bool keyCallback(Common::String keyName);
-	bool closedKeyCallback(Common::String keyName);
+	bool keyCallback(String keyName);
+	bool closedKeyCallback(String keyName);
 	void cleanup();
 
 	bool parserCallback_Keyboard();
@@ -204,11 +204,12 @@ protected:
 	bool parserCallback_ModeClosed();
 
 	byte parseFlags(const String& flags);
-	bool parseRect(Common::Rect *rect, const String& coords);
-	bool parsePolygon(Common::Polygon *poly, const String& coords);
+	bool parseRect(Rect *rect, const String& coords);
+	bool parsePolygon(Polygon *poly, const String& coords);
+	bool parseRectAsPolygon(Polygon *poly, const String& coords);
 
-	Common::HashMap<Common::String, ParserCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _callbacks;
-	Common::HashMap<Common::String, ParserCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _closedCallbacks;
+	HashMap<String, ParserCallback, IgnoreCase_Hash, IgnoreCase_EqualTo> _callbacks;
+	HashMap<String, ParserCallback, IgnoreCase_Hash, IgnoreCase_EqualTo> _closedCallbacks;
 };
 
 } // end of namespace GUI

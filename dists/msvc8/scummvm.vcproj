@@ -415,10 +415,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\shape.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\common\singleton.h"
 				>
 			</File>

@@ -98,7 +98,7 @@ public:
 
 	/**
 	 * Returns true if all UserAction's in Keymap are mapped, or,
-	 * all HardwareKey'ss from the given set have been used up.
+	 * all HardwareKey's from the given set have been used up.
 	 */
 	bool isComplete(const HardwareKeySet *hwKeys);
 

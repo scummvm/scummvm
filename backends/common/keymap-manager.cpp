@@ -43,12 +43,12 @@ void KeymapManager::Domain::addKeymap(const String& name, Keymap *map) {
 void KeymapManager::Domain::deleteAllKeyMaps() {
 	KeymapMap::iterator it;
 	for (it = _keymaps.begin(); it != _keymaps.end(); it++) {
-		it->_value->saveMappings(_configDomain, it->_key);
+		//it->_value->saveMappings(_configDomain, it->_key);
 		delete it->_value;
 	}
 	_keymaps.clear();
 	if (_defaultKeymap) {
-		_defaultKeymap->saveMappings(_configDomain, "default");
+		//_defaultKeymap->saveMappings(_configDomain, "default");
 		delete _defaultKeymap;
 	}
 }

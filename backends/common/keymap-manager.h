@@ -39,7 +39,9 @@ public:
 	class Domain {
 	public:
 		Domain() : _defaultKeymap(0), _configDomain(0) {}
-		~Domain() { deleteAllKeyMaps(); }
+		~Domain() { 
+			deleteAllKeyMaps();
+		}
 
 		void setConfigDomain(ConfigManager::Domain *confDom) { 
 			_configDomain = confDom;

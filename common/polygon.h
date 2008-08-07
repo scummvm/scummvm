@@ -28,15 +28,14 @@
 
 #include "common/array.h"
 #include "common/rect.h"
-#include "common/shape.h"
 
 namespace Common {
 
-struct Polygon : public Shape {
+struct Polygon {
 
 
 	Polygon() {}
-	Polygon(const Polygon& p) : Shape(), _points(p._points), _bound(p._bound) {}
+	Polygon(const Polygon& p) : _points(p._points), _bound(p._bound) {}
 	Polygon(Array<Point> p) : _points(p) {
 		if (p.empty()) return;
 		_bound = Rect(p[0].x, p[0].y, p[0].x, p[0].y);

@@ -28,7 +28,6 @@
 
 #include "common/hashmap.h"
 #include "common/hash-str.h"
-#include "common/rect.h"
 #include "common/polygon.h"
 
 namespace Common {
@@ -39,14 +38,13 @@ public:
 
 	~ImageMap();
 	
-	Rect *createRectArea(const String& id);
-	Polygon *createPolygonArea(const String& id);
+	Polygon *createArea(const String& id);
 	void removeArea(const String& id);
 	void removeAllAreas();
 	String findMapArea(int16 x, int16 y);
 
 protected:
-	HashMap<String, Shape*> _areas;
+	HashMap<String, Polygon*> _areas;
 };
 
 

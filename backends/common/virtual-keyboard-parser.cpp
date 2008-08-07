@@ -55,14 +55,14 @@ void VirtualKeyboardParser::cleanup() {
 	}
 }
 
-bool VirtualKeyboardParser::keyCallback(Common::String keyName) {
+bool VirtualKeyboardParser::keyCallback(String keyName) {
 	if (!_callbacks.contains(_activeKey.top()->name))
 		return parserError("%s is not a valid key name.", keyName.c_str());
 
 	return (this->*(_callbacks[_activeKey.top()->name]))();
 }
 
-bool VirtualKeyboardParser::closedKeyCallback(Common::String keyName) {
+bool VirtualKeyboardParser::closedKeyCallback(String keyName) {
 	if (!_closedCallbacks.contains(_activeKey.top()->name))
 		return true;
 	
@@ -90,7 +90,7 @@ bool VirtualKeyboardParser::parserCallback_Keyboard() {
 	_initialModeName = kbdNode->values["initial_mode"];
 
 	if (kbdNode->values.contains("h_align")) {
-		Common::String h = kbdNode->values["h_align"];
+		String h = kbdNode->values["h_align"];
 		if (h == "left")
 			_keyboard->_hAlignment = VirtualKeyboard::kAlignLeft;
 		else if (h == "centre" || h == "center")
@@ -100,7 +100,7 @@ bool VirtualKeyboardParser::parserCallback_Keyboard() {
 	}
 
 	if (kbdNode->values.contains("v_align")) {
-		Common::String v = kbdNode->values["h_align"];
+		String v = kbdNode->values["h_align"];
 		if (v == "top")
 			_keyboard->_vAlignment = VirtualKeyboard::kAlignTop;
 		else if (v == "middle" || v == "center")
@@ -130,7 +130,7 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 	if (!modeNode->values.contains("name") || !modeNode->values.contains("resolutions"))
 		return parserError("Mode element must contain name and resolutions attributes");
 
-	Common::String name = modeNode->values["name"];
+	String name = modeNode->values["name"];
 
 	if (_parseMode == kParseFull) {
 		// if full parse then add new mode to keyboard
@@ -148,8 +148,8 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 	} else
 		_mode = &(_keyboard->_modes[name]);
 
-	Common::String resolutions = modeNode->values["resolutions"];
-	Common::StringTokenizer tok (resolutions, " ,");
+	String resolutions = modeNode->values["resolutions"];
+	StringTokenizer tok (resolutions, " ,");
 
 	// select best resolution simply by minimising the difference between the 
 	// overlay size and the resolution dimensions.
@@ -157,8 +157,8 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 	// than the overlay res (so the keyboard can't be too big for the screen)
 	uint16 scrW = g_system->getOverlayWidth(), scrH = g_system->getOverlayHeight();
 	uint32 diff = 0xFFFFFFFF;
-	Common::String newResolution;
-	for (Common::String res = tok.nextToken(); res.size() > 0; res = tok.nextToken()) {
+	String newResolution;
+	for (String res = tok.nextToken(); res.size() > 0; res = tok.nextToken()) {
 		int resW, resH;
 		if (sscanf(res.c_str(), "%dx%d", &resW, &resH) != 2) {
 			return parserError("Invalid resolution specification");
@@ -222,14 +222,14 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 	if (_parseMode == kParseCheckResolutions)
 		return true;
 
-	Common::String name = evtNode->values["name"];
+	String name = evtNode->values["name"];
 	if (_mode->events.contains(name))
 		return parserError("Event '%s' has already been defined", name.c_str());
 
 	VirtualKeyboard::Event *evt = new VirtualKeyboard::Event();
 	evt->name = name;
 
-	Common::String type = evtNode->values["type"];
+	String type = evtNode->values["type"];
 	if (type == "key") {
 		if (!evtNode->values.contains("code") || !evtNode->values.contains("ascii")) {
 			delete evt;
@@ -238,14 +238,14 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 
 		evt->type = VirtualKeyboard::kEventKey;
 
-		Common::KeyCode code = (Common::KeyCode)atoi(evtNode->values["code"].c_str());
+		KeyCode code = (KeyCode)atoi(evtNode->values["code"].c_str());
 		uint16 ascii = atoi(evtNode->values["ascii"].c_str());
 
 		byte flags = 0;
 		if (evtNode->values.contains("modifiers"))
 			flags = parseFlags(evtNode->values["modifiers"]);
 
-		evt->data = new Common::KeyState(code, ascii, flags);
+		evt->data = new KeyState(code, ascii, flags);
 
 	} else if (type == "modifier") {
 		if (!evtNode->values.contains("modifiers")) {
@@ -265,7 +265,7 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 		}
 
 		evt->type = VirtualKeyboard::kEventSwitchMode;
-		evt->data = new Common::String(evtNode->values["mode"]);
+		evt->data = new String(evtNode->values["mode"]);
 	} else if (type == "close") {
 		evt->type = VirtualKeyboard::kEventClose;
 		evt->data = 0;
@@ -292,7 +292,7 @@ bool VirtualKeyboardParser::parserCallback_Layout() {
 
 	assert(!_mode->resolution.empty());
 
-	Common::String res = layoutNode->values["resolution"];
+	String res = layoutNode->values["resolution"];
 
 	if (res != _mode->resolution) {
 		layoutNode->ignore = true;
@@ -353,20 +353,20 @@ bool VirtualKeyboardParser::parserCallback_Area() {
 	if (!areaNode->values.contains("shape") || !areaNode->values.contains("coords") || !areaNode->values.contains("target"))
 		return parserError("Area element must contain shape, coords and target attributes");
 
-	Common::String& shape = areaNode->values["shape"];
-	Common::String& target = areaNode->values["target"];
-	Common::String& coords = areaNode->values["coords"];
+	String& shape = areaNode->values["shape"];
+	String& target = areaNode->values["target"];
+	String& coords = areaNode->values["coords"];
 
 	if (target == "display_area") {
 		if (shape != "rect")
 			return parserError("display_area must be a rect area");
-		_mode->displayArea = new Common::Rect();
+		_mode->displayArea = new Rect();
 		return parseRect(_mode->displayArea, coords);
 	} else if (shape == "rect") {
-		Common::Rect *rect = _mode->imageMap.createRectArea(target);
-		return parseRect(rect, coords);
+		Polygon *poly = _mode->imageMap.createArea(target);
+		return parseRectAsPolygon(poly, coords);
 	} else if (shape == "poly") {
-		Common::Polygon *poly = _mode->imageMap.createPolygonArea(target);
+		Polygon *poly = _mode->imageMap.createArea(target);
 		return parsePolygon(poly, coords);
 	}
 	return parserError("Area shape '%s' not known", shape.c_str());
@@ -376,20 +376,20 @@ byte VirtualKeyboardParser::parseFlags(const String& flags) {
 	if (flags.empty())
 		return 0;
 
-	Common::StringTokenizer tok(flags, ", ");
+	StringTokenizer tok(flags, ", ");
 	byte val = 0;
-	for (Common::String fl = tok.nextToken(); !fl.empty(); fl = tok.nextToken()) {
+	for (String fl = tok.nextToken(); !fl.empty(); fl = tok.nextToken()) {
 		if (fl == "ctrl" || fl == "control")
-			val |= Common::KBD_CTRL;
+			val |= KBD_CTRL;
 		else if (fl == "alt")
-			val |= Common::KBD_ALT;
+			val |= KBD_ALT;
 		else if (fl == "shift")
-			val |= Common::KBD_SHIFT;
+			val |= KBD_SHIFT;
 	}
 	return val;
 }
 
-bool VirtualKeyboardParser::parseRect(Common::Rect *rect, const String& coords) {
+bool VirtualKeyboardParser::parseRect(Rect *rect, const String& coords) {
 	int x1, y1, x2, y2;
 	if (!parseIntegerKey(coords.c_str(), 4, &x1, &y1, &x2, &y2))
 		return parserError("Invalid coords for rect area");
@@ -399,9 +399,9 @@ bool VirtualKeyboardParser::parseRect(Common::Rect *rect, const String& coords) 
 	return true;
 }
 
-bool VirtualKeyboardParser::parsePolygon(Common::Polygon *poly, const String& coords) {
-	Common::StringTokenizer tok (coords, ", ");
-	for (Common::String st = tok.nextToken(); !st.empty(); st = tok.nextToken()) {
+bool VirtualKeyboardParser::parsePolygon(Polygon *poly, const String& coords) {
+	StringTokenizer tok (coords, ", ");
+	for (String st = tok.nextToken(); !st.empty(); st = tok.nextToken()) {
 		int x, y;
 		if (sscanf(st.c_str(), "%d", &x) != 1)
 			return parserError("Invalid coords for polygon area");
@@ -413,6 +413,17 @@ bool VirtualKeyboardParser::parsePolygon(Common::Polygon *poly, const String& co
 	if (poly->getPointCount() < 3)
 		return parserError("Invalid coords for polygon area");
 
+	return true;
+}
+
+bool VirtualKeyboardParser::parseRectAsPolygon(Polygon *poly, const String& coords) {
+	Rect rect;
+	if (!parseRect(&rect, coords))
+		return false;
+	poly->addPoint(rect.left, rect.top);
+	poly->addPoint(rect.right, rect.top);
+	poly->addPoint(rect.right, rect.bottom);
+	poly->addPoint(rect.left, rect.bottom);
 	return true;
 }
 

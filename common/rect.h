@@ -26,9 +26,44 @@
 #ifndef COMMON_RECT_H
 #define COMMON_RECT_H
 
-#include "common/shape.h"
+#include "common/scummsys.h"
+#include "common/util.h"
 
 namespace Common {
+
+/*!		@brief simple class for handling both 2D position and size
+
+	This small class is an helper for position and size values.
+*/
+struct Point {
+	int16 x;	//!< The horizontal part of the point
+	int16 y;	//!< The vertical part of the point
+
+	Point() : x(0), y(0) {}
+	Point(const Point &p) : x(p.x), y(p.y) {}
+	explicit Point(int16 x1, int16 y1) : x(x1), y(y1) {}
+	Point & operator=(const Point & p) { x = p.x; y = p.y; return *this; };
+	bool operator==(const Point & p) const { return x == p.x && y == p.y; };
+	bool operator!=(const Point & p) const { return x != p.x || y != p.y; };
+
+	/**
+	 * Return the square of the distance between this point and the point p.
+	 *
+	 * @param p		the other point
+	 * @return the distance between this and p
+	 */
+	uint sqrDist(const Point & p) const {
+		int diffx = ABS(p.x - x);
+		if (diffx >= 0x1000)
+			return 0xFFFFFF;
+
+		int diffy = ABS(p.y - y);
+		if (diffy >= 0x1000)
+			return 0xFFFFFF;
+
+		return uint(diffx*diffx + diffy*diffy);
+	}
+};
 
 /*!		@brief simple class for handling a rectangular zone.
 
@@ -40,7 +75,7 @@ namespace Common {
 	Another very wide spread approach to rectangle classes treats (bottom,right)
 	also as a part of the rectangle.
 
-	Conceptually, both are sound, but the approach we use saves many intermediate
+	Coneptually, both are sound, but the approach we use saves many intermediate
 	computations (like computing the height in our case is done by doing this:
 	  height = bottom - top;
 	while in the alternate system, it would be
@@ -48,7 +83,7 @@ namespace Common {
 
 	When writing code using our Rect class, always keep this principle in mind!
 */
-struct Rect : public Shape {
+struct Rect {
 	int16 top, left;		//!< The point at the top left of the rectangle (part of the rect).
 	int16 bottom, right;	//!< The point at the bottom right of the rectangle (not part of the rect).
 
@@ -57,8 +92,6 @@ struct Rect : public Shape {
 	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {
 		assert(isValidRect());
 	}
-	virtual ~Rect() {}
-
 	int16 width() const { return right - left; }
 	int16 height() const { return bottom - top; }
 
@@ -77,7 +110,7 @@ struct Rect : public Shape {
 
 		@return true if the given position is inside this rectangle, false otherwise
 	*/
-	virtual bool contains(int16 x, int16 y) const {
+	bool contains(int16 x, int16 y) const {
 		return (left <= x) && (x < right) && (top <= y) && (y < bottom);
 	}
 
@@ -87,7 +120,7 @@ struct Rect : public Shape {
 
 		@return true if the given point is inside this rectangle, false otherwise
 	*/
-	virtual bool contains(const Point &p) const {
+	bool contains(const Point &p) const {
 		return contains(p.x, p.y);
 	}
 
@@ -152,19 +185,19 @@ struct Rect : public Shape {
 		return (left <= right && top <= bottom);
 	}
 
-	virtual void moveTo(int16 x, int16 y) {
+	void moveTo(int16 x, int16 y) {
 		bottom += y - top;
 		right += x - left;
 		top = y;
 		left = x;
 	}
 
-	virtual void translate(int16 dx, int16 dy) {
+	void translate(int16 dx, int16 dy) {
 		left += dx; right += dx;
 		top += dy; bottom += dy;
 	}
 
-	virtual void moveTo(const Point &p) {
+	void moveTo(const Point &p) {
 		moveTo(p.x, p.y);
 	}
 
@@ -177,10 +210,6 @@ struct Rect : public Shape {
 		w /= 2;
 		h /= 2;
 		return Rect(cx - w, cy - h, cx + w, cy + h);
-	}
-
-	virtual Rect getBoundingRect() const {
-		return *this;
 	}
 };
 
