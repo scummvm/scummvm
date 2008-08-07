@@ -141,7 +141,6 @@ void addPlayerCommandMessage(int16 cmd) {
 	tmp.type = 3;
 
 	overlayList.push_back(tmp);
-	waitForPlayerClick = 1;
 }
 
 int16 getRelEntryForObject(uint16 param1, uint16 param2, SelectedObjStruct *pSelectedObject) {
@@ -2002,9 +2001,22 @@ void drawSprite(Common::List<overlay>::iterator it, const byte *spritePtr, const
 
 void removeMessages() {
 	Common::List<overlay>::iterator it;
+	bool remove;
 
 	for (it = overlayList.begin(); it != overlayList.end(); ) {
-		if (it->type == 2 || it->type == 3) {
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			// NOTE: These are really removeOverlay calls that have been deferred.
+			// In Operation Stealth's disassembly elements are removed from the
+			// overlay list right in the drawOverlays function (And actually in
+			// some other places too) and that's where incrementing a the overlay's
+			// last parameter by one if it's negative and testing it for positivity
+			// comes from too.
+			remove = it->type == 3 || (it->type == 2 && (it->color >= 0 || ++it->color >= 0));
+		} else { // Future Wars
+			remove = it->type == 2 || it->type == 3;
+		}
+
+		if (remove) {
 			it = overlayList.erase(it);
 		} else {
 			++it;
@@ -2087,7 +2099,6 @@ void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 par
 	tmp.color = param5;
 
 	overlayList.push_back(tmp);
-	waitForPlayerClick = 1;
 }
 
 Common::List<SeqListElement> seqList;

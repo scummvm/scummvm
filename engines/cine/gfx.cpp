@@ -422,6 +422,7 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 
 		_messageLen += messageTable[it->objIdx].size();
 		drawMessage(messageTable[it->objIdx].c_str(), it->x, it->y, it->width, it->color);
+		waitForPlayerClick = 1;
 		break;
 
 	// action failure message
@@ -433,6 +434,7 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		width = width > 300 ? 300 : width;
 
 		drawMessage(failureMessages[idx], (320 - width) / 2, 80, width, 4);
+		waitForPlayerClick = 1;
 		break;
 
 	// bitmap
@@ -1044,6 +1046,19 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		remaskSprite(mask, it);
 		drawMaskedSprite(objectTable[it->objIdx], mask);
 		delete[] mask;
+		break;
+
+	// game message
+	case 2:
+		if (it->objIdx >= messageTable.size()) {
+			return;
+		}
+
+		_messageLen += messageTable[it->objIdx].size();
+		drawMessage(messageTable[it->objIdx].c_str(), it->x, it->y, it->width, it->color);		
+		if (it->color >= 0) { // This test isn't in Future Wars's implementation
+			waitForPlayerClick = 1;
+		}
 		break;
 
 	// bitmap

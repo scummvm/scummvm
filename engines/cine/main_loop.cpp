@@ -311,6 +311,11 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			renderer->drawFrame();
 		}
 
+		// NOTE: In the original Future Wars and Operation Stealth messages
+		// were removed when running the drawOverlays function which is
+		// currently called from the renderer's drawFrame function.
+		removeMessages();
+
 		if (waitForPlayerClick) {
 			playerAction = false;
 
@@ -340,8 +345,6 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			} while (mouseButton != 0);
 
 			waitForPlayerClick = 0;
-
-			removeMessages();
 		}
 
 		if (checkForPendingDataLoadSwitch) {
