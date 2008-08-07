@@ -23,8 +23,8 @@
 *
 */
 
-#include "backends/common/keymap.h"
-#include "backends/common/hardware-key.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/hardware-key.h"
 
 namespace Common {
 

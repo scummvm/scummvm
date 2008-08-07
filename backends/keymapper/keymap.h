@@ -31,7 +31,7 @@
 #include "common/hashmap.h"
 #include "common/keyboard.h"
 #include "common/list.h"
-#include "backends/common/action.h"
+#include "backends/keymapper/action.h"
 
 namespace Common {
 

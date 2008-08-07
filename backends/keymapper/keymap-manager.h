@@ -26,8 +26,8 @@
 #ifndef COMMON_KEYMAP_MANAGER
 #define COMMON_KEYMAP_MANAGER
 
-#include "backends/common/hardware-key.h"
-#include "backends/common/keymap.h"
+#include "backends/keymapper/hardware-key.h"
+#include "backends/keymapper/keymap.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
 

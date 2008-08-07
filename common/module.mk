@@ -6,12 +6,10 @@ MODULE_OBJS := \
 	config-manager.o \
 	file.o \
 	fs.o \
-	image-map.o \
 	hashmap.o \
 	memorypool.o \
 	md5.o \
 	mutex.o \
-	polygon.o \
 	str.o \
 	stream.o \
 	util.o \

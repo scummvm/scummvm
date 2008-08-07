@@ -26,7 +26,7 @@
 #ifndef COMMON_HARDWAREKEY
 #define COMMON_HARDWAREKEY
 
-#include "backends/common/action.h"
+#include "backends/keymapper/action.h"
 
 namespace Common {
 

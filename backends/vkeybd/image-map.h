@@ -28,7 +28,7 @@
 
 #include "common/hashmap.h"
 #include "common/hash-str.h"
-#include "common/polygon.h"
+#include "backends/vkeybd/polygon.h"
 
 namespace Common {
 

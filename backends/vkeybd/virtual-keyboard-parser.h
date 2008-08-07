@@ -27,7 +27,7 @@
 #define COMMON_VIRTUAL_KEYBOARD_PARSER
 
 #include "common/xmlparser.h"
-#include "backends/common/virtual-keyboard.h"
+#include "backends/vkeybd/virtual-keyboard.h"
 
 /**
  TODO - information about optional attributes and their default values

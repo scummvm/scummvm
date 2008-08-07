@@ -23,9 +23,9 @@
  *
  */
 
-#include "backends/common/virtual-keyboard.h"
-#include "backends/common/virtual-keyboard-gui.h"
-#include "backends/common/virtual-keyboard-parser.h"
+#include "backends/vkeybd/virtual-keyboard.h"
+#include "backends/vkeybd/virtual-keyboard-gui.h"
+#include "backends/vkeybd/virtual-keyboard-parser.h"
 #include "graphics/imageman.h"
 
 namespace Common {

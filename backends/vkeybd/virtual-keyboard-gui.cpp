@@ -23,7 +23,7 @@
 *
 */
 
-#include "backends/common/virtual-keyboard-gui.h"
+#include "backends/vkeybd/virtual-keyboard-gui.h"
 #include "graphics/cursorman.h"
 #include "gui/newgui.h"
 
@@ -39,10 +39,8 @@ VirtualKeyboardGUI::VirtualKeyboardGUI(VirtualKeyboard *kbd) {
 
 	memset(_cursor, 0xFF, sizeof(_cursor));
 
-	_displaying = _needRedraw = _drag = false;
+	_displaying = _needRedraw = _drag = _drawCaret = _displayEnabled = false;
 	_firstRun = true;
-
-	_displayEnabled = false;
 
 	_cursorAnimateTimer = 0;
 }

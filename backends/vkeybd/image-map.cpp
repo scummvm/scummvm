@@ -23,33 +23,47 @@
  *
  */
 
-#include "common/polygon.h"
+#include "backends/vkeybd/image-map.h"
 
 namespace Common {
 
-bool Polygon::contains(int16 x, int16 y) const {
-	int yflag0;
-	int yflag1;
-	bool inside_flag = false;
-	unsigned int pt;
-
-	const Point *vtx0 = &_points[_points.size() - 1];
-	const Point *vtx1 = &_points[0];
-
-	yflag0 = (vtx0->y >= y);
-	for (pt = 0; pt < _points.size(); pt++, vtx1++) {
-		yflag1 = (vtx1->y >= y);
-		if (yflag0 != yflag1) {
-			if (((vtx1->y - y) * (vtx0->x - vtx1->x) >=
-				(vtx1->x - x) * (vtx0->y - vtx1->y)) == yflag1) {
-				inside_flag = !inside_flag;
-			}
-		}
-		yflag0 = yflag1;
-		vtx0 = vtx1;
-	}
-
-	return inside_flag;
+ImageMap::~ImageMap() {
+	removeAllAreas();
 }
 
-} // end of namespace Common
+Polygon *ImageMap::createArea(const String& id) {
+	if (_areas.contains(id)) {
+		warning("Image map already contains an area with target of '%s'", id.c_str());
+		return 0;
+	}
+	Polygon *p = new Polygon();
+	_areas[id] = p;
+	return p;
+}
+
+void ImageMap::removeArea(const String& id) {
+	if (!_areas.contains(id))
+		return;
+	delete _areas[id];
+	_areas.erase(id);
+}
+
+void ImageMap::removeAllAreas() {
+	HashMap<String, Polygon*>::iterator it;
+	for (it = _areas.begin(); it != _areas.end(); it++) {
+		delete it->_value;
+	}
+	_areas.clear();
+}
+
+String ImageMap::findMapArea(int16 x, int16 y) {
+	HashMap<String, Polygon*>::iterator it;
+	for (it = _areas.begin(); it != _areas.end(); it++) {
+		if (it->_value->contains(x, y))
+			return it->_key;
+	}
+	return "";
+}
+
+
+} // End of namespace Common

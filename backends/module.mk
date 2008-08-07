@@ -28,13 +28,15 @@ MODULE_OBJS := \
 	saves/default/default-saves.o \
 	saves/compressed/compressed-saves.o \
 	timer/default/default-timer.o \
-	common/virtual-keyboard.o \
-	common/virtual-keyboard-gui.o \
-	common/virtual-keyboard-parser.o \
-	common/keymap.o \
-	common/keymap-manager.o \
-	common/keymapper.o \
-	common/action.o \
+	keymapper/action.o \
+	keymapper/keymap.o \
+	keymapper/keymap-manager.o \
+	keymapper/keymapper.o \
+	vkeybd/image-map.o \
+	vkeybd/polygon.o \
+	vkeybd/virtual-keyboard.o \
+	vkeybd/virtual-keyboard-gui.o \
+	vkeybd/virtual-keyboard-parser.o
 
 # Include common rules
 include $(srcdir)/rules.mk

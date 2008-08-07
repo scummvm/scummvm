@@ -335,14 +335,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\image-map.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\image-map.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\common\keyboard.h"
 				>
 			</File>
@@ -384,14 +376,6 @@
 			</File>
 			<File
 				RelativePath="..\..\common\pack-start.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\polygon.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\polygon.h"
 				>
 			</File>
 			<File
@@ -1050,66 +1034,86 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="common"
+				Name="vkeybd"
 				>
 				<File
-					RelativePath="..\..\backends\common\action.cpp"
+					RelativePath="..\..\backends\vkeybd\image-map.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\action.h"
+					RelativePath="..\..\backends\vkeybd\image-map.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\hardware-key.h"
+					RelativePath="..\..\backends\vkeybd\polygon.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\keymap-manager.cpp"
+					RelativePath="..\..\backends\vkeybd\polygon.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\keymap-manager.h"
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard-gui.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\keymap.cpp"
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard-gui.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\keymap.h"
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard-parser.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\keymapper.cpp"
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard-parser.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\keymapper.h"
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\virtual-keyboard-gui.cpp"
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="keymapper"
+				>
+				<File
+					RelativePath="..\..\backends\keymapper\action.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\virtual-keyboard-gui.h"
+					RelativePath="..\..\backends\keymapper\action.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\virtual-keyboard-parser.cpp"
+					RelativePath="..\..\backends\keymapper\hardware-key.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\virtual-keyboard-parser.h"
+					RelativePath="..\..\backends\keymapper\keymap-manager.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\virtual-keyboard.cpp"
+					RelativePath="..\..\backends\keymapper\keymap-manager.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\common\virtual-keyboard.h"
+					RelativePath="..\..\backends\keymapper\keymap.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\keymap.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\keymapper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\keymapper.h"
 					>
 				</File>
 			</Filter>

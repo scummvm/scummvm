@@ -24,7 +24,7 @@
  */
 
 #include "backends/platform/sdl/sdl.h"
-#include "backends/common/keymapper.h"
+#include "backends/keymapper/keymapper.h"
 #include "common/util.h"
 #include "common/events.h"
 

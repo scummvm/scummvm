@@ -26,7 +26,7 @@
 #ifndef COMMON_VIRTUAL_KEYBOARD_GUI
 #define COMMON_VIRTUAL_KEYBOARD_GUI
 
-#include "backends/common/virtual-keyboard.h"
+#include "backends/vkeybd/virtual-keyboard.h"
 #include "common/rect.h"
 #include "common/system.h"
 #include "graphics/fontman.h"

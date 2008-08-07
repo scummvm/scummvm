@@ -23,7 +23,7 @@
 *
 */
 
-#include "backends/common/keymap-manager.h"
+#include "backends/keymapper/keymap-manager.h"
 #include "common/algorithm.h"
 
 namespace Common {

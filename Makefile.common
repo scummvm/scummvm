@@ -28,11 +28,11 @@ MODULES += \
 	common \
 	engines \
 	backends \
-	common \
-	graphics	# HACK/FIXME: this extra 'common' was added because of a circular dependency between
-			# backends and common (the newly added Virtual Keyboard stuff depends on things
-			# from common).   This should be resolved in one way or another, perhaps by moving 
-			# the VK code out of backends?
+	graphics \
+	common      # HACK/FIXME: the extra 'common' and 'graphics' were added because of circular 
+			# dependencies (the newly added Virtual Keyboard stuff depends on things from 
+			# common and graphics). This should be resolved in one way or another, perhaps 
+			# by moving the VK code out of backends?
 
 ifdef USE_MT32EMU
 MODULES += sound/softsynth/mt32
