@@ -132,6 +132,7 @@ void Keymap::loadMappings(ConfigManager::Domain *domain, const String& name, con
 }
 
 void Keymap::saveMappings(ConfigManager::Domain *domain, const String& name) {
+	if (!domain) return;
 	List<Action*>::const_iterator it;
 	char buf[11];
 	for (it = _actions.begin(); it != _actions.end(); it++) {
@@ -144,6 +145,20 @@ void Keymap::saveMappings(ConfigManager::Domain *domain, const String& name) {
 			strcpy(buf, "");
 		domain->setVal(key, buf);
 	}
+}
+
+bool Keymap::isComplete(const HardwareKeySet *hwKeys) {
+	List<Action*>::iterator it;
+	bool allMapped = true;
+	uint numberMapped = 0;
+	for (it = _actions.begin(); it != _actions.end(); it++) {
+		if ((*it)->getMappedKey()) {
+			numberMapped++;
+		} else {
+			allMapped = false;
+		}
+	}
+	return allMapped || (numberMapped == hwKeys->count());
 }
 
 } // end of namespace Common

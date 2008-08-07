@@ -96,6 +96,12 @@ public:
 	 */
 	void saveMappings(ConfigManager::Domain *domain, const String& name);
 
+	/**
+	 * Returns true if all UserAction's in Keymap are mapped, or,
+	 * all HardwareKey'ss from the given set have been used up.
+	 */
+	bool isComplete(const HardwareKeySet *hwKeys);
+
 private:
 	friend struct Action;
 	/**

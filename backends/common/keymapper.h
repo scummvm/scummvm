@@ -73,16 +73,6 @@ public:
 	void setDefaultGameKeymap(Keymap *keymap);
 
 	/**
-	 * Initialise the keymapper for a new game
-	 */
-	void initGame();
-
-	/**
-	 * Cleanup the keymapper after a game has ended
-	 */
-	void cleanupGame();
-
-	/**
 	 * Push a new keymap to the top of the active stack, activating it for use.
 	 * @param name		name of the keymap to push
 	 * @param inherit	if true 
@@ -120,14 +110,12 @@ public:
 private:
 
 	void pushKeymap(Keymap *newMap, bool inherit);
-	bool checkGameInit();
 
 	typedef List<HardwareKey*>::iterator Iterator;
 
 	EventManager *_eventMan;
 	KeymapManager *_keymapMan;
 
-	String _gameId;
 
 	struct MapRecord {
 		Keymap* keymap;

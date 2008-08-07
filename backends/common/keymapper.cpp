@@ -50,38 +50,18 @@ void Keymapper::setDefaultGlobalKeymap(Keymap *keymap) {
 }
 
 void Keymapper::addGameKeymap(const String& name, Keymap *keymap) {
-	if (checkGameInit())
-		_keymapMan->registerGameKeymap(name, keymap);
+	if (ConfMan.getActiveDomain() == 0)
+		error("Call to Keymapper::initGame when no game loaded");
+		
+	_keymapMan->registerGameKeymap(name, keymap);
 }
 
 void Keymapper::setDefaultGameKeymap(Keymap *keymap) {
-	if (checkGameInit()) {
-		_keymapMan->registerDefaultGameKeymap(keymap);
-		pushKeymap(keymap, true);
-	}
-}
-
-bool Keymapper::checkGameInit() {
-	if (_gameId.empty()) {
-		initGame();
-		if (_gameId.empty())
-			return false;
-	}
-	return true;
-}
-
-void Keymapper::initGame() {
 	if (ConfMan.getActiveDomain() == 0)
 		error("Call to Keymapper::initGame when no game loaded");
-
-	if (_gameId.size() > 0)
-		cleanupGame();
-	_gameId = ConfMan.getActiveDomainName();
-}
-
-void Keymapper::cleanupGame() {
-	_keymapMan->unregisterAllGameKeymaps();
-	_gameId.clear();
+	
+	_keymapMan->registerDefaultGameKeymap(keymap);
+	pushKeymap(keymap, true);
 }
 
 bool Keymapper::pushKeymap(const String& name, bool inherit) {

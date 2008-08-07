@@ -38,8 +38,15 @@ public:
 
 	class Domain {
 	public:
-		Domain() : _defaultKeymap(0) {}
+		Domain() : _defaultKeymap(0), _configDomain(0) {}
 		~Domain() { deleteAllKeyMaps(); }
+
+		void setConfigDomain(ConfigManager::Domain *confDom) { 
+			_configDomain = confDom;
+		}
+		ConfigManager::Domain *getConfigDomain() {
+			return _configDomain;
+		}
 
 		void setDefaultKeymap(Keymap *map);
 		void addKeymap(const String& name, Keymap *map);
@@ -53,6 +60,7 @@ public:
 		typedef HashMap<String, Keymap*, 
 			IgnoreCase_Hash, IgnoreCase_EqualTo> KeymapMap;
 
+		ConfigManager::Domain *_configDomain;
 		Keymap *_defaultKeymap;
 		KeymapMap _keymaps;
 	};
@@ -65,10 +73,9 @@ public:
 	void registerDefaultGlobalKeymap(Keymap *map);
 	void registerGlobalKeymap(const String& name, Keymap *map);
 
+	void refreshGameDomain();
 	void registerDefaultGameKeymap(Keymap *map);
 	void registerGameKeymap(const String& name, Keymap *map);
-
-	void unregisterAllGameKeymaps();
 
 	Keymap *getKeymap(const String& name);
 
@@ -76,7 +83,6 @@ private:
 
 	void initKeymap(ConfigManager::Domain *domain, const String& name, Keymap *keymap);
 	void automaticMap(Keymap *map);
-	bool isMapComplete(const Keymap *map);
 
 	Domain _globalDomain;
 	Domain _gameDomain;
