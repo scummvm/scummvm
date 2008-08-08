@@ -51,7 +51,7 @@ template<> struct Hash<KeyState>
 
 class Keymap {
 public:
-	Keymap() {}
+	Keymap(const String& na) : _name(na) {}
 	Keymap(const Keymap& km);
 
 public:
@@ -70,9 +70,9 @@ public:
 	Action *getAction(int32 id);
 
 	/**
-	 * Get a read-only array of all the Actions contained in this Keymap
+	 * Get the list of all the Actions contained in this Keymap
 	 */
-	const List<Action*>& getActions() const { return _actions; }
+	List<Action*>& getActions() { return _actions; }
 
 	/**
 	 * Find the Action that a key is mapped to
@@ -84,23 +84,23 @@ public:
 	/**
 	 * Load this keymap's mappings from the given config domain and hardware key set
 	 * @param domain	config domain to load keymap from
-	 * @param name		name of the keymap to load
 	 * @param hwKeys	the set to retrieve hardware key pointers from
 	 */
-	void loadMappings(ConfigManager::Domain *domain, const String& name, const HardwareKeySet *hwKeys);
+	void loadMappings(ConfigManager::Domain *domain, const HardwareKeySet *hwKeys);
 
 	/**
 	 * Save this keymap's mappings to the given config domain
 	 * @param domain	config domain to save keymap to
-	 * @param name		name to save the keymap under
 	 */
-	void saveMappings(ConfigManager::Domain *domain, const String& name);
+	void saveMappings(ConfigManager::Domain *domain);
 
 	/**
 	 * Returns true if all UserAction's in Keymap are mapped, or,
 	 * all HardwareKey's from the given set have been used up.
 	 */
 	bool isComplete(const HardwareKeySet *hwKeys);
+
+	const String& getName() { return _name; }
 
 private:
 	friend struct Action;
@@ -124,6 +124,7 @@ private:
 
 	void internalMapKey(Action *action, HardwareKey *hwKey);
 
+	String _name;
 	List<Action*> _actions;
 	HashMap<KeyState, Action*> _keymap; 
 

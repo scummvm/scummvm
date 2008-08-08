@@ -37,8 +37,11 @@ class KeymapManager {
 public:
 
 	class Domain {
+		typedef HashMap<String, Keymap*, 
+			IgnoreCase_Hash, IgnoreCase_EqualTo> KeymapMap;
+
 	public:
-		Domain() : _defaultKeymap(0), _configDomain(0) {}
+		Domain() : _configDomain(0) {}
 		~Domain() { 
 			deleteAllKeyMaps();
 		}
@@ -50,20 +53,22 @@ public:
 			return _configDomain;
 		}
 
-		void setDefaultKeymap(Keymap *map);
-		void addKeymap(const String& name, Keymap *map);
+		void addKeymap(Keymap *map);
 
 		void deleteAllKeyMaps();
 
-		Keymap *getDefaultKeymap();
 		Keymap *getKeymap(const String& name);
+		
+		typedef KeymapMap::iterator iterator;
+		typedef KeymapMap::const_iterator const_iterator;
+		iterator begin() { return _keymaps.begin(); }
+		const_iterator begin() const { return _keymaps.begin(); }
+		iterator end() { return _keymaps.end(); }
+		const_iterator end() const { return _keymaps.end(); }
 
+		uint32 count() { return _keymaps.size(); }
 	private:
-		typedef HashMap<String, Keymap*, 
-			IgnoreCase_Hash, IgnoreCase_EqualTo> KeymapMap;
-
 		ConfigManager::Domain *_configDomain;
-		Keymap *_defaultKeymap;
 		KeymapMap _keymaps;
 	};
 
@@ -71,19 +76,21 @@ public:
 	~KeymapManager();
 
 	void registerHardwareKeySet(HardwareKeySet *keys);
+	HardwareKeySet *getHardwareKeySet() { return _hardwareKeys; }
 
-	void registerDefaultGlobalKeymap(Keymap *map);
-	void registerGlobalKeymap(const String& name, Keymap *map);
+	void registerGlobalKeymap(Keymap *map);
 
 	void refreshGameDomain();
-	void registerDefaultGameKeymap(Keymap *map);
-	void registerGameKeymap(const String& name, Keymap *map);
+	void registerGameKeymap(Keymap *map);
 
 	Keymap *getKeymap(const String& name);
 
+	Domain& getGlobalDomain() { return _globalDomain; }
+	Domain& getGameDomain() { return _gameDomain; }
+
 private:
 
-	void initKeymap(ConfigManager::Domain *domain, const String& name, Keymap *keymap);
+	void initKeymap(ConfigManager::Domain *domain, Keymap *keymap);
 	void automaticMap(Keymap *map);
 
 	Domain _globalDomain;

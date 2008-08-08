@@ -29,6 +29,7 @@
 #include "common/config-manager.h"
 #include "backends/events/default/default-events.h"
 #include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/remap-dialog.h"
 #include "backends/vkeybd/virtual-keyboard.h"
 
 #include "engines/engine.h"
@@ -427,6 +428,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 					if (!isPaused) g_engine->pauseEngine(false);
 					result = false;
 				}
+			} else if (event.kbd.keycode == Common::KEYCODE_F7 && event.kbd.flags == 0) {
+				Common::RemapDialog dialog;
+				dialog.runModal();
 			}
 
 			break;

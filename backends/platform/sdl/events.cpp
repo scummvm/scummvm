@@ -532,7 +532,7 @@ void OSystem_SDL::setupKeymapper() {
 	keySet->addHardwareKey(new HardwareKey( 'f', KeyState(KEYCODE_f), "f" ));
 	mapper->registerHardwareKeySet(keySet);
 
-	Keymap *global = new Keymap();
+	Keymap *global = new Keymap("global");
 	Action *act;
 	Event evt;
 
@@ -551,6 +551,7 @@ void OSystem_SDL::setupKeymapper() {
 
 	#undef ADD_KEYDOWN_EVENT
 
-	mapper->setDefaultGlobalKeymap(global);
+	mapper->addGlobalKeymap(global);
+	mapper->pushKeymap("global");
 }
 

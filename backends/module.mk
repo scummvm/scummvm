@@ -29,6 +29,7 @@ MODULE_OBJS := \
 	saves/compressed/compressed-saves.o \
 	timer/default/default-timer.o \
 	keymapper/action.o \
+	keymapper/remap-dialog.o \
 	keymapper/keymap.o \
 	keymapper/keymap-manager.o \
 	keymapper/keymapper.o \

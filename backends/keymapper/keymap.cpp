@@ -48,17 +48,23 @@ void Keymap::addAction(Action *action) {
 void Keymap::registerMapping(Action *action, const HardwareKey *hwKey) {
 	HashMap<KeyState, Action*>::iterator it;
 	it = _keymap.find(hwKey->key);
-	// if key is already mapped to an action then un-map it
-	if (it != _keymap.end())
+	// if key is already mapped to a different action then un-map it
+	if (it != _keymap.end() && action != it->_value) {
+		HashMap<KeyState, Action*>::iterator it2;
+		for (it2 = _keymap.begin(); it2 != _keymap.end(); it2++) {
+			printf("%d\n", it2->_value);
+		}
 		it->_value->mapKey(0);
+	}
 
 	_keymap[hwKey->key] = action;
 }
 
 void Keymap::unregisterMapping(Action *action) {
 	const HardwareKey *hwKey = action->getMappedKey();
-	if (hwKey)
-		_keymap[hwKey->key] = 0;
+	if (hwKey) {
+		_keymap.erase(hwKey->key);
+	}
 }
 
 Action *Keymap::getAction(int32 id) {
@@ -92,9 +98,9 @@ Action *Keymap::getMappedAction(const KeyState& ks) const {
 		return it->_value;
 }
 
-void Keymap::loadMappings(ConfigManager::Domain *domain, const String& name, const HardwareKeySet *hwKeys) {
+void Keymap::loadMappings(ConfigManager::Domain *domain, const HardwareKeySet *hwKeys) {
 	ConfigManager::Domain::iterator it;	
-	String prefix = "km_" + name + "_";
+	String prefix = "km_" + _name + "_";
 	for (it = domain->begin(); it != domain->end(); it++) {
 		const String& key = it->_key;
 		if (!key.hasPrefix(prefix.c_str()))
@@ -111,7 +117,7 @@ void Keymap::loadMappings(ConfigManager::Domain *domain, const String& name, con
 		Action *ua = getAction(actionId);
 		if (!ua) {
 			warning("'%s' keymap does not contain Action with ID %d", 
-				name.c_str(), (int)actionId);
+				_name.c_str(), (int)actionId);
 			continue;
 		}
 
@@ -131,14 +137,14 @@ void Keymap::loadMappings(ConfigManager::Domain *domain, const String& name, con
 	}
 }
 
-void Keymap::saveMappings(ConfigManager::Domain *domain, const String& name) {
+void Keymap::saveMappings(ConfigManager::Domain *domain) {
 	if (!domain) return;
 	List<Action*>::const_iterator it;
-	char buf[11];
+	char buf[12];
+	String prefix = "km_" + _name + "_";
 	for (it = _actions.begin(); it != _actions.end(); it++) {
-		String key("km_");
 		sprintf(buf, "%d", (*it)->id);
-		key += name + "_" + buf;
+		String key = prefix + buf;
 		if ((*it)->getMappedKey())
 			sprintf(buf, "%d", (*it)->getMappedKey()->id);
 		else

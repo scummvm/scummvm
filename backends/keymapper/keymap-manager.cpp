@@ -28,16 +28,11 @@
 
 namespace Common {
 
-void KeymapManager::Domain::setDefaultKeymap(Keymap *map) {
-	delete _defaultKeymap;
-	_defaultKeymap = map;
-}
-
-void KeymapManager::Domain::addKeymap(const String& name, Keymap *map) {
-	KeymapMap::iterator it = _keymaps.find(name);
+void KeymapManager::Domain::addKeymap(Keymap *map) {
+	KeymapMap::iterator it = _keymaps.find(map->getName());
 	if (it != _keymaps.end())
-		delete _keymaps[name];
-	_keymaps[name] = map;
+		delete _keymaps[map->getName()];
+	_keymaps[map->getName()] = map;
 }
 
 void KeymapManager::Domain::deleteAllKeyMaps() {
@@ -47,14 +42,6 @@ void KeymapManager::Domain::deleteAllKeyMaps() {
 		delete it->_value;
 	}
 	_keymaps.clear();
-	if (_defaultKeymap) {
-		//_defaultKeymap->saveMappings(_configDomain, "default");
-		delete _defaultKeymap;
-	}
-}
-
-Keymap *KeymapManager::Domain::getDefaultKeymap() {
-	return _defaultKeymap;
 }
 
 Keymap *KeymapManager::Domain::getKeymap(const String& name) {
@@ -80,20 +67,9 @@ void KeymapManager::registerHardwareKeySet(HardwareKeySet *keys) {
 	_hardwareKeys = keys;
 }
 
-void KeymapManager::registerDefaultGlobalKeymap(Keymap *map) {
-	ConfigManager::Domain *dom = ConfMan.getDomain(ConfigManager::kApplicationDomain);
-	assert(dom);
-
-	initKeymap(dom, "default", map);
-	_globalDomain.setDefaultKeymap(map);
-}
-
-void KeymapManager::registerGlobalKeymap(const String& name, Keymap *map) {
-	ConfigManager::Domain *dom = ConfMan.getDomain(ConfigManager::kApplicationDomain);
-	assert(dom);
-
-	initKeymap(dom, name, map);
-	_globalDomain.addKeymap(name, map);
+void KeymapManager::registerGlobalKeymap(Keymap *map) {
+	initKeymap(_globalDomain.getConfigDomain(), map);
+	_globalDomain.addKeymap(map);
 }
 
 void KeymapManager::refreshGameDomain() {
@@ -103,22 +79,15 @@ void KeymapManager::refreshGameDomain() {
 	}
 }
 
-void KeymapManager::registerDefaultGameKeymap(Keymap *map) {
+void KeymapManager::registerGameKeymap(Keymap *map) {
 	refreshGameDomain();
-	initKeymap(_gameDomain.getConfigDomain(), "default", map);
-	_gameDomain.setDefaultKeymap(map);
-}
-
-void KeymapManager::registerGameKeymap(const String& name, Keymap *map) {
-	refreshGameDomain();
-	initKeymap(_gameDomain.getConfigDomain(), name, map);
-	_gameDomain.addKeymap(name, map);
+	initKeymap(_gameDomain.getConfigDomain(), map);
+	_gameDomain.addKeymap(map);
 }
 
 void KeymapManager::initKeymap(ConfigManager::Domain *domain, 
-							   const String& name, 
 							   Keymap *map) {
-	map->loadMappings(domain, name, _hardwareKeys);
+	map->loadMappings(domain, _hardwareKeys);
 	if (map->isComplete(_hardwareKeys) == false)
 		automaticMap(map);
 }
@@ -161,7 +130,7 @@ void KeymapManager::automaticMap(Keymap *map) {
 Keymap *KeymapManager::getKeymap(const String& name) {
 	Keymap *keymap = _gameDomain.getKeymap(name);
 	if (!keymap)
-		_globalDomain.getKeymap(name);
+		keymap = _globalDomain.getKeymap(name);
 	return keymap;
 }
 

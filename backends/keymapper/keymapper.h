@@ -36,6 +36,8 @@
 namespace Common {
 
 class Keymapper {
+	friend class RemapDialog;
+
 public:
 
 	Keymapper(EventManager *eventMan);
@@ -49,39 +51,31 @@ public:
 
 
 	/**
-	 * Add a general keymap to the global domain.
+	 * Add a keymap to the global domain.
 	 * If a saved key setup exists for it in the ini file it will be used.
 	 * Else, the key setup will be automatically mapped.
 	 */
-	void addGlobalKeymap(const String& name, Keymap *keymap);
+	void addGlobalKeymap(Keymap *keymap);
 
 	/**
-	* Sets the default keymap for the global domain.
-	*/
-	void setDefaultGlobalKeymap(Keymap *keymap);
-
-	/**
-	* Add a general keymap to the game domain.
+	* Add a keymap to the game domain.
 	* @see addGlobalKeyMap
 	* @note initGame() should be called before any game keymaps are added.
 	*/
-	void addGameKeymap(const String& name, Keymap *keymap);
+	void addGameKeymap(Keymap *keymap);
 
 	/**
-	* Sets the default keymap for the game domain.
-	*/
-	void setDefaultGameKeymap(Keymap *keymap);
-
-	/**
-	 * Push a new keymap to the top of the active stack, activating it for use.
+	 * Push a new keymap to the top of the active stack, activating 
+	 * it for use.
 	 * @param name		name of the keymap to push
-	 * @param inherit	if true 
-	 * @return true if successful
+	 * @param inherit	if true keymapper will iterate down the 
+	 *					stack it cannot find a key in the new map
+	 * @return			true if succesful
 	 */
 	bool pushKeymap(const String& name, bool inherit = false);
 
 	/**
-	 * Pop the active keymap off the stack.
+	 * Pop the top keymap off the active stack.
 	 */
 	void popKeymap();
 
@@ -107,6 +101,10 @@ public:
 	*/
 	bool mapKeyUp(const KeyState& key);
 
+	const HardwareKey *getHardwareKey(const KeyState& key);
+
+	void setEnabled(bool enabled) { _enabled = enabled; }
+
 private:
 
 	void pushKeymap(Keymap *newMap, bool inherit);
@@ -116,6 +114,7 @@ private:
 	EventManager *_eventMan;
 	KeymapManager *_keymapMan;
 
+	bool _enabled;
 
 	struct MapRecord {
 		Keymap* keymap;

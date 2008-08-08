@@ -30,6 +30,7 @@ namespace Common {
 Keymapper::Keymapper(EventManager *evtMgr) {
 	_eventMan = evtMgr;
 	_keymapMan = new KeymapManager();
+	_enabled = true;
 }
 
 Keymapper::~Keymapper() {
@@ -40,28 +41,15 @@ void Keymapper::registerHardwareKeySet(HardwareKeySet *keys) {
 	_keymapMan->registerHardwareKeySet(keys);
 }
 
-void Keymapper::addGlobalKeymap(const String& name, Keymap *keymap) {
-	_keymapMan->registerGlobalKeymap(name, keymap);
+void Keymapper::addGlobalKeymap(Keymap *keymap) {
+	_keymapMan->registerGlobalKeymap(keymap);
 }
 
-void Keymapper::setDefaultGlobalKeymap(Keymap *keymap) {
-	_keymapMan->registerDefaultGlobalKeymap(keymap);
-	pushKeymap(keymap, false);
-}
-
-void Keymapper::addGameKeymap(const String& name, Keymap *keymap) {
+void Keymapper::addGameKeymap(Keymap *keymap) {
 	if (ConfMan.getActiveDomain() == 0)
-		error("Call to Keymapper::initGame when no game loaded");
+		error("Call to Keymapper::addGameKeymap when no game loaded");
 		
-	_keymapMan->registerGameKeymap(name, keymap);
-}
-
-void Keymapper::setDefaultGameKeymap(Keymap *keymap) {
-	if (ConfMan.getActiveDomain() == 0)
-		error("Call to Keymapper::initGame when no game loaded");
-	
-	_keymapMan->registerDefaultGameKeymap(keymap);
-	pushKeymap(keymap, true);
+	_keymapMan->registerGameKeymap(keymap);
 }
 
 bool Keymapper::pushKeymap(const String& name, bool inherit) {
@@ -95,6 +83,7 @@ bool Keymapper::mapKeyUp(const KeyState& key) {
 }
 
 bool Keymapper::mapKey(const KeyState& key, bool isKeyDown) {
+	if (!_enabled) return false;
 	if (_activeMaps.empty()) return false;
 
 	Action *action = 0;
@@ -141,6 +130,12 @@ bool Keymapper::mapKey(const KeyState& key, bool isKeyDown) {
 		if (pushEvent) _eventMan->pushEvent(evt);
 	}
 	return true;
+}
+
+const HardwareKey *Keymapper::getHardwareKey(const KeyState& key) {
+	HardwareKeySet *keyset = _keymapMan->getHardwareKeySet();
+	if (!keyset) return 0;
+	return keyset->findHardwareKey(key);
 }
 
 } // end of namespace Common
