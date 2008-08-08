@@ -68,6 +68,7 @@ static void processEvent(Common::Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_RETURN:
 		case Common::KEYCODE_KP_ENTER:
+		case Common::KEYCODE_s:
 		case Common::KEYCODE_KP5:
 			if (allowPlayerInput) {
 				mouseLeft = 1;
@@ -133,11 +134,77 @@ static void processEvent(Common::Event &event) {
 		case Common::KEYCODE_KP_PLUS:
 			g_cine->modifyGameSpeed(+1); // Faster
 			break;
+		case Common::KEYCODE_LEFT:
+		case Common::KEYCODE_KP4:
+		case Common::KEYCODE_a:			
+			moveUsingKeyboard(-1, 0); // Left
+			break;
+		case Common::KEYCODE_RIGHT:
+		case Common::KEYCODE_KP6:
+		case Common::KEYCODE_d:			
+			moveUsingKeyboard(+1, 0); // Right
+			break;
+		case Common::KEYCODE_UP:
+		case Common::KEYCODE_KP8:
+		case Common::KEYCODE_w:
+			moveUsingKeyboard(0, +1); // Up
+			break;
+		case Common::KEYCODE_DOWN:
+		case Common::KEYCODE_KP2:
+		case Common::KEYCODE_x:
+			moveUsingKeyboard(0, -1); // Down
+			break;
+		case Common::KEYCODE_KP9:
+		case Common::KEYCODE_e:
+			moveUsingKeyboard(+1, +1); // Up & Right
+			break;
+		case Common::KEYCODE_KP7:
+		case Common::KEYCODE_q:
+			moveUsingKeyboard(-1, +1); // Up & Left
+			break;
+		case Common::KEYCODE_KP1:
+		case Common::KEYCODE_z:
+			moveUsingKeyboard(-1, -1); // Down & Left
+			break;
+		case Common::KEYCODE_KP3:
+		case Common::KEYCODE_c:			
+			moveUsingKeyboard(+1, -1); // Down & Right
+			break;
 		default:
 			lastKeyStroke = event.kbd.keycode;
 			break;
 		}
 		break;
+	case Common::EVENT_KEYUP:
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_s:		// Emulated left mouse button click
+		case Common::KEYCODE_KP5:	// Emulated left mouse button click
+		case Common::KEYCODE_LEFT:	// Left
+		case Common::KEYCODE_KP4:	// Left
+		case Common::KEYCODE_a:		// Left
+		case Common::KEYCODE_RIGHT: // Right
+		case Common::KEYCODE_KP6:	// Right
+		case Common::KEYCODE_d:		// Right
+		case Common::KEYCODE_UP:	// Up
+		case Common::KEYCODE_KP8:	// Up
+		case Common::KEYCODE_w:		// Up
+		case Common::KEYCODE_DOWN:	// Down
+		case Common::KEYCODE_KP2:	// Down
+		case Common::KEYCODE_x:		// Down
+		case Common::KEYCODE_KP9:	// Up & Right
+		case Common::KEYCODE_e:		// Up & Right
+		case Common::KEYCODE_KP7:	// Up & Left
+		case Common::KEYCODE_q:		// Up & Left
+		case Common::KEYCODE_KP1:	// Down & Left
+		case Common::KEYCODE_z:		// Down & Left
+		case Common::KEYCODE_KP3:	// Down & Right
+		case Common::KEYCODE_c:		// Down & Right
+			// Stop ego movement made with keyboard when releasing a known key
+			moveUsingKeyboard(0, 0);
+			break;
+		default:
+			break;
+		}
 	default:
 		break;
 	}

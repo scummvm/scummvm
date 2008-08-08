@@ -145,6 +145,7 @@ void processSeqList(void);
 void resetGfxEntityEntry(uint16 objIdx);
 
 bool makeTextEntryMenu(const char *caption, char *string, int strLen, int y);
+void moveUsingKeyboard(int x, int y);
 
 } // End of namespace Cine
 
