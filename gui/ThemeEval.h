@@ -91,8 +91,7 @@ public:
 			width += p->_paddingRight + p->_paddingLeft;
 			if (p->getLayoutType() == kLayoutHorizontal) {
 				for (uint i = 0; i < p->_children.size(); ++i)
-					if (p->_children[i]->getLayoutType() == kLayoutWidget)
-						width += p->_children[i]->getHeight() + p->_spacing;
+					width += p->_children[i]->getHeight() + p->_spacing;
 			}
 			p = p->_parent;
 		}
@@ -108,8 +107,7 @@ public:
 			height += p->_paddingBottom + p->_paddingTop;
 			if (p->getLayoutType() == kLayoutVertical) {
 				for (uint i = 0; i < p->_children.size(); ++i)
-					if (p->_children[i]->getLayoutType() == kLayoutWidget)
-						height += p->_children[i]->getHeight() + p->_spacing;
+					height += p->_children[i]->getHeight() + p->_spacing;
 			}
 			p = p->_parent;
 		}
@@ -304,25 +302,37 @@ class ThemeEval {
 	typedef Common::HashMap<Common::String, ThemeLayout*> LayoutsMap;
 	
 public:
-	ThemeEval() {}
+	ThemeEval() {
+		buildBuiltinVars();
+	}
 	~ThemeEval() {}
 	
+	void buildBuiltinVars();
+	
 	int getVar(const Common::String &s) {
-		if (!_vars.contains(s)) {
-			error("CRITICAL: Missing variable: '%s'", s.c_str());
-			return -13375; //EVAL_UNDEF_VAR
-		} 
-		
-		return _vars[s];
+		if (_vars.contains(s))
+			return _vars[s];
+			
+		if (_builtin.contains(s))
+			return _builtin[s];
+
+		error("CRITICAL: Missing variable: '%s'", s.c_str());
+		return -13375; //EVAL_UNDEF_VAR 
 	}
 	
 	int getVar(const Common::String &s, int def) {
-		return (_vars.contains(s)) ? _vars[s] : def;
+		if (_vars.contains(s))
+			return _vars[s];
+			
+		if (_builtin.contains(s))
+			return _builtin[s];
+
+		return def;
 	}
 	
 	void setVar(const String &name, int val) { _vars[name] = val; }
 	
-	bool hasVar(const Common::String &name) { return _vars.contains(name); }
+	bool hasVar(const Common::String &name) { return _vars.contains(name) || _builtin.contains(name); }
 	
 	void addDialog(const Common::String &name, const Common::String &overlays, bool enabled = true);
 	void addLayout(ThemeLayout::LayoutType type, int spacing, bool reverse, bool center = false);
@@ -365,12 +375,14 @@ public:
 	}
 
 	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font) {
-		_layouts["Dialog.ScummConfig"]->debugDraw(screen, font);
+		_layouts["Dialog.ScummSaveLoad"]->debugDraw(screen, font);
 //		_layouts["Dialog.GameOptions_Graphics"]->debugDraw(screen, font);
 	}
 	
 private:
 	VariablesMap _vars;
+	VariablesMap _builtin;
+	
 	LayoutsMap _layouts;
 	Common::Stack<ThemeLayout*> _curLayout;
 	Common::String _curDialog;

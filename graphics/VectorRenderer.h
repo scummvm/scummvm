@@ -349,8 +349,16 @@ public:
 			_gradientFactor = factor;
 	}
 
+	/**
+	 * Translates the position data inside a DrawStep into actual
+	 * screen drawing positions.
+	 */
 	void stepGetPositions(const DrawStep &step, const Common::Rect &area, uint16 &in_x, uint16 &in_y, uint16 &in_w, uint16 &in_h);
 
+	/**
+	 * Translates the radius data inside a drawstep into the real radius
+	 * for the shape. Used for automatic radius calculations.
+	 */
 	int stepGetRadius(const DrawStep &step, const Common::Rect &area);
 
 	/**
@@ -417,34 +425,90 @@ public:
 	virtual void drawStep(const Common::Rect &area, const DrawStep &step, uint32 extra = 0);
 
 	/**
+	 * Copies the part of the current frame to the system overlay.
+	 *
+	 * @param sys Pointer to the global System class
+	 * @param r Zone of the surface to copy into the overlay.
+	 */
+	virtual void copyFrame(OSystem *sys, const Common::Rect &r) = 0;
+	
+	/**
 	 * Copies the current surface to the system overlay 
 	 *
 	 * @param sys Pointer to the global System class
 	 */
-	virtual void copyFrame(OSystem *sys, const Common::Rect &r) = 0;
 	virtual void copyWholeFrame(OSystem *sys) = 0;
 
 	/**
 	 * Blits a given graphics surface on top of the current drawing surface.
 	 *
+	 * Note that the source surface and the active
+	 * surface are expected to be of the same size, hence the area delimited
+	 * by "r" in the source surface will be blitted into the area delimited by 
+	 * "r" on the current surface.
+	 *
+	 * If you wish to blit a smaller surface into the active drawing area, use
+	 * VectorRenderer::blitSubSurface().
+	 *
 	 * @param source Surface to blit into the drawing surface.
 	 * @param r Position in the active drawing surface to do the blitting.
 	 */
-	virtual void blitSurface(Graphics::Surface *source, const Common::Rect &r) = 0;
+	virtual void blitSurface(const Graphics::Surface *source, const Common::Rect &r) = 0;
 	
+	/**
+	 * Blits a given graphics surface into a small area of the current drawing surface.
+	 *
+	 * Note that the given surface is expected to be smaller than the
+	 * active drawing surface, hence the WHOLE source surface will be
+	 * blitted into the active surface, at the position specified by "r".
+	 */
+	virtual void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) = 0;
+	
+	/**
+	 * Draws a string into the screen. Wrapper for the Graphics::Font string drawing
+	 * method.
+	 */
 	virtual void drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV, int deltax) = 0;
 	
+	/**
+	 * Allows to temporarily enable/disable all shadows drawing.
+	 * i.e. for performance issues, blitting, etc
+	 */
 	virtual void disableShadows() { _disableShadows = true; }
 	virtual void enableShadows() { _disableShadows = false; }
 	
+	/**
+	 * Applies a convolution matrix on the given surface area.
+	 * Call applyConvolutionMatrix() instead if you want to use
+	 * the embeded matrixes (blur/sharpen masks, bevels, etc).
+	 *
+	 * @param area Area in which the convolution matrix will be applied.
+	 * @param filter Convolution matrix (3X3)
+	 * @param filterDiv Divisor for the convolution matrix.
+	 *					Make sure this equals the total sum of the elements
+	 *					of the matrix or brightness data will be distorted.
+	 * @param offset Offset on the convolution area.
+	 */
 	virtual void areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset) = 0;
 	
+	/**
+	 * Applies one of the predefined convolution effects on the given area.
+	 *
+	 * WARNING: Because of performance issues, this is currently disabled on all renderers.
+	 *
+	 * @param id Id of the convolution data set (see VectorRenderer::ConvolutionData)
+	 * @param area Area in which the convolution effect will be applied.
+	 */
 	virtual void applyConvolutionMatrix(const ConvolutionData id, const Common::Rect &area) {
 #ifdef ENABLE_CONVOLUTIONS
 		areaConvolution(area, _convolutionData[id].matrix, _convolutionData[id].divisor, _convolutionData[id].offset);
 #endif
 	}
 	
+	/**
+	 * Applies a whole-screen shading effect, used before opening a new dialog.
+	 * Currently supports screen dimmings and luminance (b&w).
+	 */
 	virtual void applyScreenShading(GUI::Theme::ShadingStyle) = 0;
 
 protected:
@@ -453,7 +517,7 @@ protected:
 	FillMode _fillMode; /** Defines in which way (if any) are filled the drawn shapes */
 	
 	int _shadowOffset; /** offset for drawn shadows */
-	int _bevel;
+	int _bevel; /** amount of fake bevel */
 	bool _disableShadows; /** Disables temporarily shadow drawing for overlayed images. */
 	int _strokeWidth; /** Width of the stroke of all drawn shapes */
 	uint32 _dynamicData; /** Dynamic data from the GUI Theme that modifies the drawing of the current shape */
@@ -463,7 +527,7 @@ protected:
 	
 	static const ConvolutionDataSet _convolutionData[kConvolutionMAX];
 	
-	static const int _dimPercentValue = 256 * 50 / 100;
+	static const int _dimPercentValue = 256 * 50 / 100; /** default value for screen dimming (50%) */
 };
 
 /**
@@ -607,7 +671,7 @@ public:
 	/**
 	 * @see VectorRenderer::blitSurface()
 	 */
-	virtual void blitSurface(Graphics::Surface *source, const Common::Rect &r) {
+	virtual void blitSurface(const Graphics::Surface *source, const Common::Rect &r) {
 		PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(r.left, r.top);
 		PixelType *src_ptr = (PixelType *)source->getBasePtr(r.left, r.top);
 
@@ -616,6 +680,22 @@ public:
 
 		int h = r.height(), w = r.width();
 
+		while (h--) {
+			colorCopy(src_ptr, dst_ptr, w);
+			dst_ptr += dst_pitch;
+			src_ptr += src_pitch;
+		}
+	}
+	
+	virtual void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) {
+		PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(r.left, r.top);
+		PixelType *src_ptr = (PixelType *)source->getBasePtr(0, 0);
+		
+		int dst_pitch = surfacePitch();
+		int src_pitch = source->pitch / source->bytesPerPixel;
+		
+		int h = r.height(), w = r.width();
+		
 		while (h--) {
 			colorCopy(src_ptr, dst_ptr, w);
 			dst_ptr += dst_pitch;

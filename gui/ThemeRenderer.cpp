@@ -592,8 +592,9 @@ void ThemeRenderer::drawPopUpWidget(const Common::Rect &r, const Common::String 
 void ThemeRenderer::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, WidgetStateInfo state, int alpha, bool themeTrans) {
 	if (!ready())
 		return;
-
-	debugWidgetPosition("Surface", r);
+	
+	_vectorRenderer->blitSubSurface(&surface, r);
+	addDirtyRect(r);
 }
 
 void ThemeRenderer::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, WidgetStateInfo state) {
@@ -718,9 +719,9 @@ void ThemeRenderer::updateScreen() {
 		
 	renderDirtyScreen();
 
-//	_vectorRenderer->fillSurface();
-//	themeEval()->debugDraw(_screen, _font);
-//	_vectorRenderer->copyWholeFrame(_system);
+	// _vectorRenderer->fillSurface();
+	// themeEval()->debugDraw(_screen, _font);
+	// _vectorRenderer->copyWholeFrame(_system);
 }
 
 void ThemeRenderer::renderDirtyScreen() {

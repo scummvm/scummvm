@@ -39,6 +39,7 @@
 #include "gui/eval.h"
 #include "gui/newgui.h"
 #include "gui/ListWidget.h"
+#include "gui/ThemeEval.h"
 
 #include "scumm/dialogs.h"
 #include "scumm/sound.h"
@@ -233,14 +234,14 @@ enum {
 };
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine)
-	: Dialog("scummsaveload"), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0), _vm(engine) {
+	: Dialog("ScummSaveLoad"), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0), _vm(engine) {
 
 	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
 
-	new StaticTextWidget(this, "scummsaveload_title", title);
+	new StaticTextWidget(this, "ScummSaveload.Title", title);
 
 	// Add choice list
-	_list = new GUI::ListWidget(this, "scummsaveload_list");
+	_list = new GUI::ListWidget(this, "ScummSaveLoad.List");
 	_list->setEditable(saveMode);
 	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
 
@@ -254,8 +255,8 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", kTextAlignCenter);
 
 	// Buttons
-	new GUI::ButtonWidget(this, "scummsaveload_cancel", "Cancel", kCloseCmd, 0);
-	_chooseButton = new GUI::ButtonWidget(this, "scummsaveload_choose", buttonLabel, kChooseCmd, 0);
+	new GUI::ButtonWidget(this, "ScummSaveLoad.Cancel", "Cancel", kCloseCmd, 0);
+	_chooseButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
 }
 
@@ -318,16 +319,21 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 
 void SaveLoadChooser::reflowLayout() {
 	if (g_gui.evaluator()->getVar("scummsaveload_extinfo.visible") == 1) {
-		int thumbX = g_gui.evaluator()->getVar("scummsaveload_thumbnail.x");
-		int thumbY = g_gui.evaluator()->getVar("scummsaveload_thumbnail.y");
-		int hPad = g_gui.evaluator()->getVar("scummsaveload_thumbnail.hPad");
-		int vPad = g_gui.evaluator()->getVar("scummsaveload_thumbnail.vPad");
+		int16 x, y;
+		uint16 w, h;
+		
+		if (!g_gui.xmlEval()->getWidgetData("ScummSaveLoad.Thumbnail", x, y, w, h))
+			error("Error when loading position data for Save/Load Thumbnails.");
+			
+		_container->resize(x, y, w, h);
+			
+		int thumbW = kThumbnailWidth;	
 		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
-
-		_container->resize(thumbX - hPad, thumbY - vPad, kThumbnailWidth + hPad * 2, thumbH + vPad * 2 + kLineHeight * 4);
-
-		// Add the thumbnail display
-		_gfxWidget->resize(thumbX, thumbY, kThumbnailWidth, thumbH);
+		int thumbX = x + (w >> 1) - (thumbW >> 1);
+		int thumbY = y + kLineHeight;
+		
+		_container->resize(x, y, w, h);
+		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH); 
 
 		int height = thumbY + thumbH + kLineHeight;
 
@@ -347,9 +353,9 @@ void SaveLoadChooser::reflowLayout() {
 		_time->clearFlags(GUI::WIDGET_INVISIBLE);
 		_playtime->clearFlags(GUI::WIDGET_INVISIBLE);
 
-		_fillR = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
-		_fillG = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
-		_fillB = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillB");
+		_fillR = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
+		_fillG = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
+		_fillB = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillB");
 		updateInfos(false);
 	} else {
 		_container->setFlags(GUI::WIDGET_INVISIBLE);

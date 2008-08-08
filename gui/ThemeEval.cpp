@@ -29,6 +29,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/xmlparser.h"
+#include "graphics/scaler.h"
 
 #include "gui/ThemeRenderer.h"
 #include "gui/ThemeParser.h"
@@ -158,6 +159,22 @@ void ThemeLayoutHorizontal::reflowLayout() {
 		_w += _children[i]->getWidth() + _spacing;
 		_h = MAX(_h, (int16)(_children[i]->getHeight() + _paddingTop + _paddingBottom));
 	}
+}
+
+void ThemeEval::buildBuiltinVars() {
+	_builtin["kThumbnailWidth"] = kThumbnailWidth;
+	_builtin["kThumbnailHeight"] = kThumbnailHeight1;
+	_builtin["kThumbnailHeight2"] = kThumbnailHeight2;
+	
+	_builtin["kButtonWidth"] = GUI::kButtonWidth;
+	_builtin["kButtonHeight"] = GUI::kButtonHeight;
+	_builtin["kSliderWidth"] = GUI::kSliderWidth;
+	_builtin["kSliderHeight"] = GUI::kSliderHeight;
+	_builtin["kBigButtonWidth"] = GUI::kBigButtonWidth;
+	_builtin["kBigButtonHeight"] = GUI::kBigButtonHeight;
+	_builtin["kBigSliderWidth"] = GUI::kBigSliderWidth;
+	_builtin["kBigSliderWidth"] = GUI::kBigSliderWidth;
+	_builtin["kBigSliderHeight"] = GUI::kBigSliderHeight;	
 }
 
 
