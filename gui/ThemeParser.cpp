@@ -129,6 +129,11 @@ bool ThemeParser::parserCallback_defaults(ParserNode *node) {
 
 bool ThemeParser::parserCallback_font(ParserNode *node) {		
 	int red, green, blue;
+	
+	if (resolutionCheck(node->values["resolution"])) {
+		node->ignore = true;
+		return true;
+	}
 
 	if (_palette.contains(node->values["color"]))
 		getPaletteColor(node->values["color"], red, green, blue);
@@ -226,6 +231,11 @@ bool ThemeParser::parserCallback_drawstep(ParserNode *node) {
 
 bool ThemeParser::parserCallback_drawdata(ParserNode *node) {
 	bool cached = false;
+	
+	if (resolutionCheck(node->values["resolution"])) {
+		node->ignore = true;
+		return true;
+	}
 
 	if (node->values.contains("cache")) {
 		if (node->values["cache"] == "true") 
@@ -234,16 +244,6 @@ bool ThemeParser::parserCallback_drawdata(ParserNode *node) {
 			cached = false;
 		else return parserError("'Parsed' value must be either true or false.");
 	}
-
-	// Both Max and Johannes suggest using a non-platform specfic approach based on available
-	// resources and active resolution. getHostPlatformString() has been removed, so fix this.
-
-/*	if (drawdataNode->values.contains("platform")) {
-		if (drawdataNode->values["platform"].compareToIgnoreCase(Common::getHostPlatformString()) != 0) {
-			drawdataNode->ignore = true;
-			return true;
-		}
-	}*/
 
 	if (_theme->addDrawData(node->values["id"], cached) == false)
 		return parserError("Error when adding Draw Data set: Invalid DrawData name.");
@@ -437,10 +437,18 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 }
 
 bool ThemeParser::parserCallback_def(ParserNode *node) {
+	if (resolutionCheck(node->values["resolution"])) {
+		node->ignore = true;
+		return true;
+	}
+	
 	Common::String var = "Globals." + node->values["var"];
 	int value;
 	
-	if (!parseIntegerKey(node->values["value"].c_str(), 1, &value))
+	if (_theme->themeEval()->hasVar(node->values["value"]) == true)
+		value = _theme->themeEval()->getVar(node->values["value"]);
+	
+	else if (!parseIntegerKey(node->values["value"].c_str(), 1, &value))
 		return parserError("Invalid definition for '%s'.", var.c_str());
 		
 	_theme->themeEval()->setVar(var, value);
@@ -451,9 +459,16 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 	Common::String var;
 	
 	if (getParentNode(node)->name == "globals") {
+		
+		if (resolutionCheck(node->values["resolution"])) {
+			node->ignore = true;
+			return true;
+		}
+		
 		var = "Globals." + node->values["name"] + ".";
 		if (!parseCommonLayoutProps(node, var))
 			return parserError("Error when parsing Layout properties of '%s'.", var.c_str());
+
 	} else {
 		var = node->values["name"];
 		int width = -1;
@@ -501,6 +516,11 @@ bool ThemeParser::parserCallback_child(ParserNode *node) {
 bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 	Common::String var = "Dialog." + node->values["name"];
 	bool enabled = true;
+	
+	if (resolutionCheck(node->values["resolution"])) {
+		node->ignore = true;
+		return true;
+	}
 	
 	if (node->values.contains("enabled")) {
 		if (node->values["enabled"] == "false")
@@ -701,6 +721,18 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 	}
 	
 	return true;
+}
+
+bool ThemeParser::resolutionCheck(const Common::String &resolution) {
+	if (resolution.empty())
+		return false;
+		
+	Common::StringTokenizer tokenizer(resolution, "x");
+	Common::String w = tokenizer.nextToken();
+	Common::String h = tokenizer.nextToken();
+	
+	return  ((w == "X" || atoi(w.c_str()) == g_system->getOverlayWidth()) && 
+			(h == "Y" || atoi(h.c_str()) == g_system->getOverlayHeight())) == false;
 }
 
 }

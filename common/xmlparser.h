@@ -182,12 +182,12 @@ namespace Common {
 	
 #define XML_KEY(keyName) {\
 		lay = new XMLKeyLayout; \
-		lay->anyProps = false; \
-		lay->anyKeys = false; \
 		lay->custom = new kLocalParserName::CustomParserCallback; \
 		((kLocalParserName::CustomParserCallback*)(lay->custom))->callback = (&kLocalParserName::parserCallback_##keyName); \
 		layout.top()->children[#keyName] = lay; \
-		layout.push(lay);
+		layout.push(lay); \
+		for (Common::List<XMLKeyLayout::XMLKeyProperty>::const_iterator p = globalProps.begin(); p != globalProps.end(); ++p){\
+			layout.top()->properties.push_back(*p);}
 		
 #define XML_KEY_RECURSIVE(keyName) {\
 			layout.top()->children[#keyName] = layout.top();\
@@ -199,13 +199,13 @@ namespace Common {
 #define XML_PROP(propName, req) {\
 		prop.name = #propName; \
 		prop.required = req; \
-		layout.top()->properties.push_back(prop); }\
+		layout.top()->properties.push_back(prop); }
 		
-#define XML_PROP_ANY() {\
-		layout.top()->anyProps = true; }
-
-#define XML_KEY_ANY() {\
-		layout.top()->anyKeys = true; }
+#define XML_GLOBAL_PROP(propName, req) {\
+		prop.name = #propName; \
+		prop.required = req;\
+		globalProps.push_back(prop); }
+		
 	
 #define CUSTOM_XML_PARSER(parserName) \
 	protected: \
@@ -217,9 +217,8 @@ namespace Common {
 		Common::Stack<XMLKeyLayout*> layout; \
 		XMLKeyLayout *lay = 0; \
 		XMLKeyLayout::XMLKeyProperty prop; \
+		Common::List<XMLKeyLayout::XMLKeyProperty> globalProps; \
 		_XMLkeys = new XMLKeyLayout; \
-		_XMLkeys->anyProps = false; \
-		_XMLkeys->anyKeys = false; \
 		layout.push(_XMLkeys);
 	
 #define PARSER_END() layout.clear(); }
@@ -310,14 +309,11 @@ public:
 		};
 		
 		Common::List<XMLKeyProperty> properties;
-		bool anyProps;
-		bool anyKeys;
 		ChildMap children;
 		
 		~XMLKeyLayout() {
 			properties.clear();
 			children.clear();
-//			delete custom;
 		}
 	} *_XMLkeys;
 

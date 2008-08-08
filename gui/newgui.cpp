@@ -61,6 +61,8 @@ void GuiObject::reflowLayout() {
 		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, _w, _h)) {
 			warning("Could not load widget position for '%s'", _name.c_str());
 		}
+		
+		return;
 
 		if (_x < 0)
 			error("Widget <%s> has x < 0: %d", _name.c_str(), _x);
@@ -442,7 +444,7 @@ void NewGui::animateCursor() {
 }
 
 WidgetSize NewGui::getWidgetSize() {
-	return (WidgetSize)(_theme->_evaluator->getVar("widgetSize"));
+	return (WidgetSize)(g_gui.xmlEval()->getVar("Globals.WidgetSize"));
 }
 
 void NewGui::clearDragWidget() {

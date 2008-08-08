@@ -113,8 +113,6 @@ ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) :
 	_graphicsMode = mode;
 	setGraphicsMode(_graphicsMode);
 
-	loadConfigFile("modern");
-
 	if (_screen->w >= 400 && _screen->h >= 300) {
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	} else {
@@ -138,9 +136,6 @@ bool ThemeRenderer::init() {
 
 	if (isThemeLoadingRequired() || !_themeOk) {
 		loadTheme(_themeName);
-
-		Theme::loadTheme(_defaultConfig);
-		Theme::loadTheme(_configFile, false, true);
 	}
 
 	return true;
@@ -240,11 +235,9 @@ bool ThemeRenderer::addFont(const Common::String &fontId, const Common::String &
 		return false;
 		
 	if (_texts[textId] != 0)
-		return false;
+		delete _texts[textId];
 		
 	_texts[textId] = new TextDrawData;
-	
-//	_texts[textId]->_fontPtr = _font;
 	
 	if (file == "default") {
 		_texts[textId]->_fontPtr = _font;
@@ -271,8 +264,11 @@ bool ThemeRenderer::addFont(const Common::String &fontId, const Common::String &
 bool ThemeRenderer::addDrawData(const Common::String &data, bool cached) {
 	DrawData data_id = getDrawDataId(data);
 
-	if (data_id == -1 || _widgets[data_id] != 0)
+	if (data_id == -1)
 		return false;
+		
+	if (_widgets[data_id] != 0)
+		delete _widgets[data_id];
 
 	_widgets[data_id] = new WidgetDrawData;
 	_widgets[data_id]->_cached = cached;
@@ -682,6 +678,15 @@ void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, W
 			queueDDText(kTextDataDefault, dr, str, true, useEllipsis, align);
 			return;
 	}
+}
+
+void ThemeRenderer::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state) {
+	if (!ready())
+		return;
+		
+	restoreBackground(r);
+	font->drawChar(_screen, ch, r.left, r.top, 0);
+	addDirtyRect(r);
 }
 
 void ThemeRenderer::debugWidgetPosition(const char *name, const Common::Rect &r) {

@@ -110,9 +110,10 @@ bool XMLParser::parseActiveKey(bool closed) {
 				return parserError("Missing required property '%s' inside key '%s'", i->name.c_str(), key->name.c_str());
 		}
 	
-		if (key->layout->anyProps == false && localMap.empty() == false)
+		if (localMap.empty() == false)
 			return parserError("Unhandled property inside key '%s': '%s'", key->name.c_str(), localMap.begin()->_key.c_str());
-	} else if (layout->anyKeys == false) {
+			
+	} else {
 		return parserError("Unexpected key in the active scope: '%s'.", key->name.c_str());
 	}
 

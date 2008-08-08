@@ -183,10 +183,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, 
 	_type = kStaticTextWidget;
 	_label = text;
 
-	_align = (Graphics::TextAlignment)g_gui.evaluator()->getVar(name + ".align");
-
-	if (_align == (int)EVAL_UNDEF_VAR)
-		_align = kTextAlignLeft;
+	_align = (Graphics::TextAlignment)g_gui.xmlEval()->getVar(name + ".Align", kTextAlignLeft);
 }
 
 void StaticTextWidget::setValue(int value) {

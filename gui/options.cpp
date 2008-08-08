@@ -28,6 +28,7 @@
 #include "gui/eval.h"
 #include "gui/message.h"
 #include "gui/newgui.h"
+#include "gui/ThemeEval.h"
 #include "gui/options.h"
 #include "gui/PopUpWidget.h"
 #include "gui/TabWidget.h"
@@ -500,7 +501,7 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 
-	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
+	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
 
 	// The GFX mode popup
 	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup", "Graphics mode:", labelWidth);
@@ -537,7 +538,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 }
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
-	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
+	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
 
 	// The MIDI mode popup & a label
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", "Music driver:", labelWidth);
@@ -643,7 +644,7 @@ int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 void OptionsDialog::reflowLayout() {
 	Dialog::reflowLayout();
 
-	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
+	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
 
 	if (_midiPopUp)
 		_midiPopUp->changeLabelWidth(labelWidth);
@@ -723,7 +724,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", "Theme:", kChooseThemeCmd, 0);
 	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
 
-	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
+	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
 
 	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriod", "Autosave:", labelWidth);
 

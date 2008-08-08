@@ -48,6 +48,7 @@
 
 #include "sound/mididrv.h"
 
+#include "gui/ThemeEval.h"
 
 
 using Common::ConfigManager;
@@ -145,7 +146,7 @@ protected:
 EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	: OptionsDialog(domain, "GameOptions") {
 
-	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
+	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
 	String gamePath(ConfMan.get("path", _domain));
@@ -267,7 +268,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 void EditGameDialog::reflowLayout() {
 	OptionsDialog::reflowLayout();
 
-	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
+	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
 
 	if (_langPopUp)
 		_langPopUp->changeLabelWidth(labelWidth);
@@ -480,7 +481,7 @@ LauncherDialog::LauncherDialog()
 
 #ifndef DISABLE_FANCY_THEMES
 	_logo = 0;
-	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1 && g_gui.theme()->supportsImages()) {
+	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(Theme::kImageLogo));
@@ -878,21 +879,21 @@ void LauncherDialog::updateButtons() {
 
 void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES
-	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1 && g_gui.theme()->supportsImages()) {
-		StaticTextWidget *ver = (StaticTextWidget*)findWidget("launcher_version");
+	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
+		StaticTextWidget *ver = (StaticTextWidget*)findWidget("lLauncher.Version");
 		if (ver) {
-			ver->setAlign((Graphics::TextAlignment)g_gui.evaluator()->getVar("launcher_version.align"));
+			ver->setAlign((Graphics::TextAlignment)g_gui.xmlEval()->getVar("Launcher.Version.Align", Graphics::kTextAlignCenter));
 			ver->setLabel(gScummVMVersionDate);
 		}
 
 		if (!_logo)
-			_logo = new GraphicsWidget(this, "launcher_logo");
+			_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(Theme::kImageLogo));
 	} else {
-		StaticTextWidget *ver = (StaticTextWidget*)findWidget("launcher_version");
+		StaticTextWidget *ver = (StaticTextWidget*)findWidget("Launcher.Version");
 		if (ver) {
-			ver->setAlign((Graphics::TextAlignment)g_gui.evaluator()->getVar("launcher_version.align"));
+			ver->setAlign((Graphics::TextAlignment)g_gui.xmlEval()->getVar("Launcher.Version.Align", Graphics::kTextAlignCenter));
 			ver->setLabel(gScummVMFullVersion);
 		}
 

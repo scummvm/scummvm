@@ -331,7 +331,6 @@ protected:
 	ThemeRenderer *_theme;
 	
 	CUSTOM_XML_PARSER(ThemeParser) {
-		
 		XML_KEY(render_info)
 			XML_KEY(palette)
 				XML_KEY(color)
@@ -345,6 +344,7 @@ protected:
 					XML_PROP(id, true)
 					XML_PROP(file, true)
 					XML_PROP(color, true)
+					XML_PROP(resolution, false)
 				KEY_END()
 			KEY_END()
 
@@ -365,6 +365,7 @@ protected:
 			XML_KEY(drawdata)
 				XML_PROP(id, true)
 				XML_PROP(cache, false)
+				XML_PROP(resolution, false)
 
 				XML_KEY(defaults)
 					XML_PROP(stroke, false)
@@ -417,6 +418,7 @@ protected:
 				XML_KEY(def)
 					XML_PROP(var, true)
 					XML_PROP(value, true)
+					XML_PROP(resolution, false)
 				KEY_END()
 				
 				XML_KEY(widget)
@@ -424,6 +426,7 @@ protected:
 					XML_PROP(size, false)
 					XML_PROP(pos, false)
 					XML_PROP(padding, false)
+					XML_PROP(resolution, false)
 					
 					XML_KEY(child)
 						XML_PROP(name, true)
@@ -438,6 +441,7 @@ protected:
 				XML_PROP(overlays, true)
 				XML_PROP(shading, false)
 				XML_PROP(enabled, false)
+				XML_PROP(resolution, false)
 				XML_KEY(layout)
 					XML_PROP(type, true)
 					XML_PROP(center, false)
@@ -491,6 +495,8 @@ protected:
 	bool parserCallback_import(ParserNode *node);
 	
 	bool closedKeyCallback(ParserNode *node);
+	
+	bool resolutionCheck(const Common::String &resolution);
 	
 	void cleanup();
 

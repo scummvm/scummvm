@@ -330,7 +330,7 @@ public:
 		WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font);
 	
 	void drawChar(const Common::Rect &r, byte ch, 
-		const Graphics::Font *font, WidgetStateInfo state) {}
+		const Graphics::Font *font, WidgetStateInfo state);
 	
 	/**
 	 *	Actual implementation of a Dirty Rect drawing routine.
@@ -435,6 +435,7 @@ public:
 	}
 	
 	void *evaluator() { return _themeEval; }
+	bool supportsImages() const { return true; }
 
 protected:
 	
