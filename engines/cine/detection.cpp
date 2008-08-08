@@ -76,6 +76,25 @@ static const CINEGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// This is a CD version of Future Wars published by Sony.
+	// This version has a crypted AUTO00.PRC.
+	{
+		{
+			"fw",
+			"Sony CD version",
+			{
+				{ "AUTO00.PRC", 0, "4fe1e7930b38e3c63f0f2474d471bf8f", -1},
+				{ "PART01", 0, "61d003202d301c29dd399acfb1354310", -1},
+				{ NULL, 0, NULL, 0}
+			},
+			Common::EN_USA,
+			Common::kPlatformPC,
+			Common::ADGF_CD
+		},
+		GType_FW,
+		GF_CD | GF_CRYPTED_BOOT_PRC,
+	},
+
 	{
 		// This is the version included in the UK "Classic Collection"
 		{

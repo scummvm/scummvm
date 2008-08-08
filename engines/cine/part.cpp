@@ -259,7 +259,12 @@ byte *readBundleSoundFile(const char *entryName, uint32 *size) {
 	return data;
 }
 
-byte *readFile(const char *filename) {
+/*! \brief Rotate value to the left by n bits */
+byte rol(byte value, int n) {
+	return (byte) ((value << n) | (value >> (8 - n)));
+}
+
+byte *readFile(const char *filename, bool crypted) {
 	Common::File in;
 
 	in.open(filename);
@@ -271,6 +276,16 @@ byte *readFile(const char *filename) {
 
 	byte *dataPtr = (byte *)malloc(size);
 	in.read(dataPtr, size);
+
+	// The Sony published CD version of Future Wars has its
+	// AUTO00.PRC file's bytes rotated to the right by one.
+	// So we decode the so called crypting by rotating all
+	// the bytes to the left by one.
+	if (crypted) {
+		for (uint index = 0; index < size; index++) {
+			dataPtr[index] = rol(dataPtr[index], 1);
+		}
+	}
 
 	return dataPtr;
 }

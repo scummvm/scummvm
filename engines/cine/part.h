@@ -48,7 +48,7 @@ void readFromPart(int16 idx, byte *dataPtr);
 
 byte *readBundleFile(int16 foundFileIdx);
 byte *readBundleSoundFile(const char *entryName, uint32 *size = 0);
-byte *readFile(const char *filename);
+byte *readFile(const char *filename, bool crypted = false);
 
 void checkDataDisk(int16 param);
 
