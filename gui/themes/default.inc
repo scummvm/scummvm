@@ -404,6 +404,8 @@
 "<def var = 'Padding.Left' value = '16' /> "
 "<def var = 'Padding.Right' value = '16' /> "
 "<def var = 'Padding.Top' value = '16' /> "
+"<def var = 'About.OuterBorder' value = '80'/> "
+"<def resolution = '320xY' var = 'About.OuterBorder' value = '16'/> "
 "<def var = 'ListWidget.hlLeftPadding' value = '0'/> "
 "<def var = 'ListWidget.hlRightPadding' value = '16'/> "
 "<def var = 'PopUpWidget.labelSpacing' value = '10' /> "
