@@ -65,6 +65,9 @@ void ThemeLayoutMain::reflowLayout() {
 		_children[0]->setHeight(_h);
 		_children[0]->reflowLayout();
 		
+//		_children[0]->setX(_x);
+//		_children[0]->setY(_y);
+		
 		if (_w == -1)
 			_w = _children[0]->getWidth();
 			
@@ -81,25 +84,27 @@ void ThemeLayoutMain::reflowLayout() {
 
 void ThemeLayoutVertical::reflowLayout() {
 	int curX, curY;
+	int autoWidget = -1;
 	
 	curX = _paddingLeft;
 	curY = _paddingTop;
 	_h = _paddingTop + _paddingBottom;
 	
 	for (uint i = 0; i < _children.size(); ++i) {
-		assert(_children[i]->getLayoutType() != kLayoutVertical);
 	
 		_children[i]->resetLayout();
 		_children[i]->reflowLayout();
-	
-		if (i != _children.size() - 1)
-			assert(_children[i]->getHeight() != -1);
 
 		if (_children[i]->getWidth() == -1)
 			_children[i]->setWidth((_w == -1 ? getParentW() : _w) - _paddingLeft - _paddingRight);
 			
-		if (_children[i]->getHeight() == -1)
+		if (_children[i]->getHeight() == -1) {
+			if (autoWidget != -1)
+				error("Cannot expand automatically two different widgets.");
+				
+			autoWidget = i;
 			_children[i]->setHeight(getParentH() - _h - _spacing);
+		}
 			
 		_children[i]->setY(curY);
 		
@@ -116,31 +121,40 @@ void ThemeLayoutVertical::reflowLayout() {
 		}
 		
 		_w = MAX(_w, (int16)(_children[i]->getWidth() + _paddingLeft + _paddingRight));
-		_h += _children[i]->getHeight() + _spacing;
+		
+		if (autoWidget != -1 && autoWidget != (int)i) {
+			_children[autoWidget]->setHeight(_children[autoWidget]->getHeight() - (_children[i]->getHeight() + _spacing));
+			for (int j = autoWidget - 1; j >= 0; --j)
+				_children[j]->setY(-(_children[i]->getHeight() + _spacing));
+		} else {
+			_h += _children[i]->getHeight() + _spacing;
+		}
 	}
 }
 
 void ThemeLayoutHorizontal::reflowLayout() {
 	int curX, curY;
+	int autoWidget = -1;
 
 	curX = _paddingLeft;
 	curY = _paddingTop;
 	_w = _paddingLeft + _paddingRight;
 		
 	for (uint i = 0; i < _children.size(); ++i) {
-		assert(_children[i]->getLayoutType() != kLayoutHorizontal);
 	
 		_children[i]->resetLayout();
 		_children[i]->reflowLayout();
 	
-		if (i != _children.size() - 1)
-			assert(_children[i]->getWidth() != -1);
-	
 		if (_children[i]->getHeight() == -1)
 			_children[i]->setHeight((_h == -1 ? getParentH() : _h) - _paddingTop - _paddingBottom);
 
-		if (_children[i]->getWidth() == -1)
+		if (_children[i]->getWidth() == -1) {
+			if (autoWidget != -1)
+				error("Cannot expand automatically two different widgets.");
+				
+			autoWidget = i;
 			_children[i]->setWidth(getParentW() - _w - _spacing);
+		}
 			
 		_children[i]->setX(curX);
 		
@@ -156,7 +170,15 @@ void ThemeLayoutHorizontal::reflowLayout() {
 			curX += (_children[i]->getWidth() + _spacing);
 		}
 
-		_w += _children[i]->getWidth() + _spacing;
+		if (autoWidget != -1 && autoWidget != (int)i) {
+			_children[autoWidget]->setWidth(_children[autoWidget]->getWidth() - (_children[i]->getWidth() + _spacing));
+			for (int j = autoWidget - 1; j >= 0; --j)
+				_children[j]->setX(-(_children[i]->getWidth() + _spacing));
+		} else {
+			_w += _children[i]->getWidth() + _spacing;
+		}
+		
+		
 		_h = MAX(_h, (int16)(_children[i]->getHeight() + _paddingTop + _paddingBottom));
 	}
 }
@@ -197,19 +219,21 @@ void ThemeEval::addWidget(const Common::String &name, int w, int h, const Common
 
 void ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, bool enabled) {
 	int16 x, y;
-	int16 w, h;
+	uint16 w, h;
+	
+	ThemeLayout *layout = 0;
 	
 	if (overlays == "screen") {
-		x = y = 0;
-		w = g_system->getOverlayWidth();
-		h = g_system->getOverlayHeight();
+		layout = new ThemeLayoutMain(0, 0, g_system->getOverlayWidth(), g_system->getOverlayHeight());
 	} else if (overlays == "screen_center") {
-		x = y = w = h = -1;
-	} else if (!getWidgetData(overlays, x, y, (uint16&)w, (uint16&)h)) {
-		error("Error when loading dialog position for '%s'", overlays.c_str());
+		layout = new ThemeLayoutMain(-1, -1, -1, -1);
+	} else if (getWidgetData(overlays, x, y, w, h)) {
+		layout = new ThemeLayoutMain(x, y, w, h);
 	}
 	
-	ThemeLayout *layout = new ThemeLayoutMain(x, y, w, h);
+	if (!layout)
+		error("Error when loading dialog position for '%s'", overlays.c_str());
+	
 	_layouts[name] = layout;
 
 	layout->setPadding(

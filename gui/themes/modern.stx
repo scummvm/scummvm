@@ -462,7 +462,7 @@
 		<def var = 'Padding.Right' value = '16' />
 		<def var = 'Padding.Top' value = '16' />
 		
-		<def var = 'ListWidget.hlLeftPadding' value = '8'/>
+		<def var = 'ListWidget.hlLeftPadding' value = '0'/>
 		<def var = 'ListWidget.hlRightPadding' value = '16'/>
 		<def var = 'PopUpWidget.labelSpacing' value = '10' />
 
@@ -485,7 +485,7 @@
 				size = '-1, Globals.Line.Height'
 		/>
 		<widget name = 'ListWidget'
-				padding = '7, 5, 3, 3'
+				padding = '5, 0, 8, 0'
 		/>
 		<widget name = 'PopUpWidget'
 				padding = '7, 5, 0, 0'
@@ -551,6 +551,31 @@
 			</layout>
 		</layout>
 	</dialog>
+	
+	<dialog name = 'Browser' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' direction = 'bottom2top'>
+			<layout type = 'horizontal' padding = '0, 0, 16, 0' direction = 'right2left'>
+				<widget name = 'Choose'
+						type = 'Button'
+				/>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<space/>
+				<widget name = 'Up'
+						type = 'Button'
+				/>
+			</layout>
+			<widget name = 'List'/>
+			<widget name = 'Path'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Headline'
+					height = 'Globals.Line.Height'
+			/>
+		</layout>
+	</dialog>
+			
 	
 	<dialog name = 'GlobalOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0' direction = 'bottom2top'>

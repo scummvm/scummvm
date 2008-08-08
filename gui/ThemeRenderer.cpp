@@ -651,15 +651,18 @@ void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, W
 	if (!ready())
 		return;
 		
+	Common::Rect dr = r;
+	dr.left += deltax;
+		
 	if (inverted) {
 		queueDD(kDDTextSelectionBackground, r);
-		queueDDText(kTextDataInverted, r, str, false, useEllipsis, align);
+		queueDDText(kTextDataInverted, dr, str, false, useEllipsis, align);
 		return;
 	}
 	
 	switch (font) {
 		case kFontStyleNormal:
-			queueDDText(kTextDataNormalFont, r, str, true, useEllipsis, align);
+			queueDDText(kTextDataNormalFont, dr, str, true, useEllipsis, align);
 			return;
 			
 		default:
@@ -668,15 +671,15 @@ void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, W
 
 	switch (state) {
 		case kStateDisabled:
-			queueDDText(kTextDataDisabled, r, str, true, useEllipsis, align);
+			queueDDText(kTextDataDisabled, dr, str, true, useEllipsis, align);
 			return;
 			
 		case kStateHighlight:
-			queueDDText(kTextDataHover, r, str, true, useEllipsis, align);
+			queueDDText(kTextDataHover, dr, str, true, useEllipsis, align);
 			return;
 		
 		case kStateEnabled:
-			queueDDText(kTextDataDefault, r, str, true, useEllipsis, align);
+			queueDDText(kTextDataDefault, dr, str, true, useEllipsis, align);
 			return;
 	}
 }
@@ -719,9 +722,9 @@ void ThemeRenderer::updateScreen() {
 		
 	renderDirtyScreen();
 
-	// _vectorRenderer->fillSurface();
-	// themeEval()->debugDraw(_screen, _font);
-	// _vectorRenderer->copyWholeFrame(_system);
+//	_vectorRenderer->fillSurface();
+//	themeEval()->debugDraw(_screen, _font);
+//	_vectorRenderer->copyWholeFrame(_system);
 }
 
 void ThemeRenderer::renderDirtyScreen() {

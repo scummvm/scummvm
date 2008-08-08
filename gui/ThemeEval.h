@@ -52,7 +52,7 @@ public:
 	ThemeLayout(ThemeLayout *p, const Common::String &name) : 
 		_parent(p), _name(name), _x(0), _y(0), _w(-1), _h(-1), _reverse(false),
 		_paddingLeft(0), _paddingRight(0), _paddingTop(0), _paddingBottom(0), 
-		_centered(false) { }
+		_centered(false), _defaultW(-1), _defaultH(-1) { }
 		
 	virtual ~ThemeLayout() {
 		_children.clear();
@@ -375,7 +375,7 @@ public:
 	}
 
 	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font) {
-		_layouts["Dialog.ScummSaveLoad"]->debugDraw(screen, font);
+		_layouts["Dialog.Browser"]->debugDraw(screen, font);
 //		_layouts["Dialog.GameOptions_Graphics"]->debugDraw(screen, font);
 	}
 	

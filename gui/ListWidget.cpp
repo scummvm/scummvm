@@ -499,7 +499,17 @@ void ListWidget::reflowLayout() {
 		_scrollBarWidth = kNormalScrollBarWidth;
 	}
 
-	_entriesPerPage = (_h - _topPadding - _bottomPadding) / kLineHeight;
+	// HACK: Once we take padding into account, there are times where
+	// integer rounding leaves a big chunk of white space in the bottom
+	// of the list.
+	// We do a rough rounding on the decimal places of Entries Per Page,
+	// to add another entry even if it goes a tad over the padding.
+	_entriesPerPage = ((_h - _topPadding - _bottomPadding) << 16) / kLineHeight;
+	
+	if ((uint)(_entriesPerPage & 0xFFFF) >= 0xF000)
+		_entriesPerPage += (1 << 16);
+
+	_entriesPerPage >>= 16;
 
 	delete[] _textWidth;
 	_textWidth = new int[_entriesPerPage];
