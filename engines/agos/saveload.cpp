@@ -279,11 +279,11 @@ restart:
 	name = buf;
 	_saveGameNameLen = 0;
 
-	for (;;) {
+	while (!_quit) {
 		windowPutChar(window, 128);
 		_keyPressed.reset();
 
-		for (;;) {
+		while (!_quit) {
 			delay(10);
 			if (_keyPressed.ascii && _keyPressed.ascii < 128) {
 				i = _keyPressed.ascii;
@@ -443,7 +443,7 @@ void AGOSEngine_Elvira2::userGame(bool load) {
 
 		name = buf + 192;
 
-		for (;;) {
+		while (!_quit) {
 			windowPutChar(window, 128);
 
 			_saveLoadEdit = true;
@@ -516,7 +516,7 @@ int AGOSEngine_Elvira2::userGameGetKey(bool *b, char *buf, uint maxChar) {
 
 	_keyPressed.reset();
 
-	for (;;) {
+	while (!_quit) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
@@ -526,7 +526,7 @@ int AGOSEngine_Elvira2::userGameGetKey(bool *b, char *buf, uint maxChar) {
 				return _keyPressed.ascii;
 			}
 			delay(10);
-		} while (_lastHitArea3 == 0);
+		} while (_lastHitArea3 == 0 && !_quit);
 
 		ha = _lastHitArea;
 		if (ha == NULL || ha->id < 200) {
@@ -543,6 +543,8 @@ int AGOSEngine_Elvira2::userGameGetKey(bool *b, char *buf, uint maxChar) {
 			return ha->id - 200;
 		}
 	}
+
+	return 225;
 }
 
 void AGOSEngine_Simon1::listSaveGames(char *dst) {
@@ -706,7 +708,7 @@ restart:;
 			_saveGameNameLen++;
 		}
 
-		for (;;) {
+		while (!_quit) {
 			windowPutChar(window, 127);
 
 			_saveLoadEdit = true;
@@ -785,7 +787,7 @@ int AGOSEngine_Simon1::userGameGetKey(bool *b, char *buf, uint maxChar) {
 
 	_keyPressed.reset();
 
-	for (;;) {
+	while (!_quit) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
@@ -795,7 +797,7 @@ int AGOSEngine_Simon1::userGameGetKey(bool *b, char *buf, uint maxChar) {
 				return _keyPressed.ascii;
 			}
 			delay(10);
-		} while (_lastHitArea3 == 0);
+		} while (_lastHitArea3 == 0 && !_quit);
 
 		ha = _lastHitArea;
 		if (ha == NULL || ha->id < 205) {
@@ -824,6 +826,8 @@ int AGOSEngine_Simon1::userGameGetKey(bool *b, char *buf, uint maxChar) {
 			return ha->id - 208;
 		}
 	}
+
+	return 205;
 }
 
 void AGOSEngine::disableFileBoxes() {
