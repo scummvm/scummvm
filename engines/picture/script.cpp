@@ -75,10 +75,10 @@ void ScriptInterpreter::loadScript(uint resIndex, uint slotIndex) {
 
 void ScriptInterpreter::runScript(uint slotIndex) {
 
-	_switchStack1 = true;
-	_switchStack2 = false;
-	_switchStack3 = false;
-	_scriptFlag01 = false;
+	_switchLocalDataNear = true;
+	_switchLocalDataFar = false;
+	_switchLocalDataToStack = false;
+	_cmpBitTest = false;
 
 	_regs.reg0 = 0;
 	_regs.reg1 = 0;
@@ -97,21 +97,21 @@ void ScriptInterpreter::runScript(uint slotIndex) {
 		if (_vm->_movieSceneFlag)
 			_vm->_input->_mouseButton = 0;
 			
-		if (_switchStack1) {
-			_switchStack1 = false;
+		if (_switchLocalDataNear) {
+			_switchLocalDataNear = false;
 			_localData = getSlotData(_regs.reg4);
 		}
 
-		if (_switchStack2) {
-			_switchStack2 = false;
+		if (_switchLocalDataFar) {
+			_switchLocalDataFar = false;
 			_localData = getSlotData(_regs.reg5);
-			_switchStack1 = true;
+			_switchLocalDataNear = true;
 		}
 
-		if (_switchStack3) {
-			_switchStack3 = false;
+		if (_switchLocalDataToStack) {
+			_switchLocalDataToStack = false;
 			_localData = _stack + 2;
-			_switchStack1 = true;
+			_switchLocalDataNear = true;
 		}
 		
 		byte opcode = readByte();
@@ -275,25 +275,25 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		localWrite16(_regs.reg3, localRead16(_regs.reg3) - 1);
 		break;
 	case 32:
-		_switchStack2 = true;
+		_switchLocalDataFar = true;
 		break;
 	case 33:
-		_switchStack3 = true;
+		_switchLocalDataToStack = true;
 		break;
 	case 34:
-		push16(_regs.reg0);
+		pushInt16(_regs.reg0);
 		debug(1, "pushw reg0");
 		break;
 	case 35:
-		push16(_regs.reg1);
+		pushInt16(_regs.reg1);
 		debug(1, "pushw reg1");
 		break;
 	case 36:
-		_regs.reg1 = pop16();
+		_regs.reg1 = popInt16();
 		debug(1, "popw reg1");
 		break;
 	case 37:
-		_regs.reg0 = pop16();
+		_regs.reg0 = popInt16();
 		debug(1, "popw reg0");
 		break;
 	case 38:
@@ -301,19 +301,19 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		break;
 	case 39:
 		_regs.reg8 = readInt16();
-		_scriptFlag01 = false;
+		_cmpBitTest = false;
 		break;
 	case 40:
 		_regs.reg8 = _regs.reg0;
-		_scriptFlag01 = false;
+		_cmpBitTest = false;
 		break;
 	case 41:
 		_regs.reg8 = readInt16();
-		_scriptFlag01 = true;
+		_cmpBitTest = true;
 		break;
 	case 42:
 		_regs.reg8 = _regs.reg0;
-		_scriptFlag01 = true;
+		_cmpBitTest = true;
 		break;
 	case 43:
 		debug(1, "retn (slot: %d; ofs: %04X)\n", _regs.reg4, _regs.reg0);
@@ -323,38 +323,38 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		debug(1, "retf (slot: %d; ofs: %04X)\n", _regs.reg5, _regs.reg0);
 		_code = getSlotData(_regs.reg5) + _regs.reg0;
 		_regs.reg4 = _regs.reg5;
-		_switchStack1 = true;
+		_switchLocalDataNear = true;
 		break;
 	case 45:
 		debug(1, "callnear %04X (slot: %d; ofs: %04X)\n", _regs.reg0, _regs.reg4, _regs.reg0);
-		push16(_code - getSlotData(_regs.reg4));
-		push16(_regs.reg4);
+		pushInt16(_code - getSlotData(_regs.reg4));
+		pushInt16(_regs.reg4);
 		_code = getSlotData(_regs.reg4) + _regs.reg0;
 		break;
 	case 46:
 		debug(1, "callfar %04X (slot: %d; ofs: %04X)\n", _regs.reg0, _regs.reg5, _regs.reg0);
-		push16(_code - getSlotData(_regs.reg4));
-		push16(_regs.reg4);
+		pushInt16(_code - getSlotData(_regs.reg4));
+		pushInt16(_regs.reg4);
 		_code = getSlotData(_regs.reg5) + _regs.reg0;
 		_regs.reg4 = _regs.reg5;
-		_switchStack1 = true;
+		_switchLocalDataNear = true;
 		break;
 	case 47:
-		_regs.reg4 = pop16();
-		ofs = pop16();
+		_regs.reg4 = popInt16();
+		ofs = popInt16();
 		_code = getSlotData(_regs.reg4) + ofs;
 		debug(1, "ret (slot: %d; ofs: %04X)\n", _regs.reg4, ofs);
-		//_code = getSlotData(_regs.reg4) + pop16();
-		_switchStack1 = true;
+		//_code = getSlotData(_regs.reg4) + popInt16();
+		_switchLocalDataNear = true;
 		break;
 	case 48:
-		_regs.reg4 = pop16();
-		ofs = pop16();
+		_regs.reg4 = popInt16();
+		ofs = popInt16();
 		_code = getSlotData(_regs.reg4) + ofs;
 		debug(1, "retsp (slot: %d; ofs: %04X)\n", _regs.reg4, ofs);
-		//_code = getSlotData(_regs.reg4) + pop16();
+		//_code = getSlotData(_regs.reg4) + popInt16();
 		_regs.sp += _regs.reg0;
-		_switchStack1 = true;
+		_switchLocalDataNear = true;
 		break;
 	case 49:
 		ofs = readByte();
@@ -362,7 +362,7 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		_code += ofs;
 		break;
 	case 50:
-		if (_scriptFlag01) {
+		if (_cmpBitTest) {
 			_regs.reg1 &= _regs.reg8;
 			if (_regs.reg1 == 0)
 				_code += 4;
@@ -373,7 +373,7 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		_code++;
 		break;
 	case 51:
-		if (_scriptFlag01) {
+		if (_cmpBitTest) {
 			_regs.reg1 &= _regs.reg8;
 			if (_regs.reg1 != 0)
 				_code += 4;
@@ -575,7 +575,7 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 		int16 codeOfs = _code - getSlotData(_regs.reg4);
 		loadScript(arg16(4), arg8(3));
 		_code = getSlotData(_regs.reg4) + codeOfs;
-		_switchStack1 = true;
+		_switchLocalDataNear = true;
 		break;
 	}
 	
@@ -1073,6 +1073,7 @@ void ScriptInterpreter::setGameVar(uint variable, int16 value) {
 	switch (variable) {
 		case 0:
 			_vm->_input->_mouseDisabled = value;
+			_vm->_system->showMouse(value == 0);
 			break;
 		case 3:
 			_vm->_input->_mouseButton = value;
@@ -1153,32 +1154,32 @@ int32 ScriptInterpreter::arg32(int16 offset) {
 	return READ_LE_UINT32(&_subCode[offset]);
 }
 
-void ScriptInterpreter::push8(byte value) {
+void ScriptInterpreter::pushByte(byte value) {
 	_stack[_regs.sp] = value;
 	_regs.sp--;
 }
 
-byte ScriptInterpreter::pop8() {
+byte ScriptInterpreter::popByte() {
 	_regs.sp++;
 	return _stack[_regs.sp];
 }
 
-void ScriptInterpreter::push16(int16 value) {
+void ScriptInterpreter::pushInt16(int16 value) {
 	WRITE_LE_UINT16(_stack + _regs.sp, value);
 	_regs.sp -= 2;
 }
 
-int16 ScriptInterpreter::pop16() {
+int16 ScriptInterpreter::popInt16() {
 	_regs.sp += 2;
 	return READ_LE_UINT16(_stack + _regs.sp);
 }
 
-void ScriptInterpreter::push32(int32 value) {
+void ScriptInterpreter::pushInt32(int32 value) {
 	WRITE_LE_UINT32(_stack + _regs.sp, value);
 	_regs.sp -= 4;
 }
 
-int32 ScriptInterpreter::pop32() {
+int32 ScriptInterpreter::popInt32() {
 	_regs.sp += 4;
 	return READ_LE_UINT32(_stack + _regs.sp);
 }

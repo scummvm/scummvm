@@ -89,8 +89,8 @@ protected:
 
 	byte *_code, *_subCode;
 	byte *_localData;
-	bool _switchStack1, _switchStack2, _switchStack3;
-	bool _scriptFlag01;
+	bool _switchLocalDataNear, _switchLocalDataFar, _switchLocalDataToStack;
+	bool _cmpBitTest;
 
 	ScriptSlot _slots[kMaxScriptSlots];
 	
@@ -111,12 +111,12 @@ protected:
 	int16 arg16(int16 offset);
 	int32 arg32(int16 offset);
 
-	void push8(byte value);
-	byte pop8();
-	void push16(int16 value);
-	int16 pop16();
-	void push32(int32 value);
-	int32 pop32();
+	void pushByte(byte value);
+	byte popByte();
+	void pushInt16(int16 value);
+	int16 popInt16();
+	void pushInt32(int32 value);
+	int32 popInt32();
 
 	void localWrite8(int16 offset, byte value);
 	byte localRead8(int16 offset);
