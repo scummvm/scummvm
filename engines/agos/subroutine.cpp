@@ -518,6 +518,8 @@ void AGOSEngine::runSubroutine101() {
 }
 
 int AGOSEngine::startSubroutine(Subroutine *sub) {
+	printf("startSubroutine\n");
+
 	int result = -1;
 	SubroutineLine *sl = (SubroutineLine *)((byte *)sub + sub->first);
 

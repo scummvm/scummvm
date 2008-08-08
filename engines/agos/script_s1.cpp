@@ -339,7 +339,7 @@ void AGOSEngine_Simon1::os1_pauseGame() {
 		break;
 	}
 
-	for (;;) {
+	while (!_quit) {
 		delay(1);
 		if (_keyPressed.keycode == keyYes)
 			_quit = true;
