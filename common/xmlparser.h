@@ -423,12 +423,21 @@ protected:
 	 * The closedKeyCallback is issued once a key has been finished parsing, to let
 	 * the parser verify that all the required subkeys, etc, were included.
 	 *
+	 * Unlike the keyCallbacks(), there's just a closedKeyCallback() for all keys.
+	 * Use "node->name" to distinguish between each key type.
+	 *
 	 * Returns true if the key was properly closed, false otherwise.
 	 * By default, all keys are properly closed.
 	 */
 	virtual bool closedKeyCallback(ParserNode *node) {
 		return true;
 	}
+	
+	/**
+	 * Called when a node is closed. Manages its cleanup and calls the
+	 * closing callback function if needed.
+	 */
+	bool closeKey();
 
 	/**
 	 * Parses the value of a given key. There's no reason to overload this.

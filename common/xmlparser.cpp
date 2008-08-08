@@ -135,7 +135,7 @@ bool XMLParser::parseActiveKey(bool closed) {
 	}
 	
 	if (closed)
-		delete _activeKey.pop();
+		return closeKey();
 
 	return true;
 }
@@ -164,6 +164,23 @@ bool XMLParser::parseKeyValue(Common::String keyName) {
 
 	_activeKey.top()->values[keyName] = _token;
 	return true;
+}
+
+bool XMLParser::closeKey() {
+	bool ignore = false;
+	bool result = true;
+	
+	for (int i = _activeKey.size() - 1; i >= 0; --i) {
+		if (_activeKey[i]->ignore)
+			ignore = true;
+	}
+	
+	if (ignore == false)
+		result = closedKeyCallback(_activeKey.top());
+		
+	delete _activeKey.pop();
+	
+	return result;
 }
 
 bool XMLParser::parse() {
@@ -235,13 +252,12 @@ bool XMLParser::parse() {
 
 			case kParserNeedPropertyName:
 				if (activeClosure) {
-					if (!closedKeyCallback(_activeKey.top())) {
+					if (!closeKey()) {
 						parserError("Missing data when closing key '%s'.", _activeKey.top()->name.c_str()); 
 						break;
 					}
 
 					activeClosure = false;
-					delete _activeKey.pop();
 
 					if (_text[_pos++] != '>')
 						parserError("Invalid syntax in key closure.");
