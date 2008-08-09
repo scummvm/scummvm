@@ -22,9 +22,9 @@
 #ifndef _WII_OSYSTEM_H_
 #define _WII_OSYSTEM_H_
 
-#include "common/system.h"
 #include "base/main.h"
-
+#include "common/system.h"
+#include "common/fs.h"
 #include "common/rect.h"
 #include "common/events.h"
 

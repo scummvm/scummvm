@@ -89,8 +89,12 @@ OSystem_Wii::~OSystem_Wii() {
 
 void OSystem_Wii::initBackend() {
 	_startup_time = gettime();
+	
+	char buf[MAXPATHLEN];
+	if (!getcwd(buf, MAXPATHLEN))
+		strcpy(buf, "/");
 
-	_savefile = new DefaultSaveFileManager();
+	_savefile = new DefaultSaveFileManager(buf);
 	_mixer = new Audio::MixerImpl(this);
 	_timer = new DefaultTimerManager();
 
