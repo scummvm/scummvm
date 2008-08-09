@@ -341,9 +341,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 		
 		// Clear the zoneQuery table (Operation Stealth specific)
 		if (g_cine->getGameType() == Cine::GType_OS) {
-			for (uint i = 0; i < NUM_MAX_ZONE; i++) {
-				zoneQuery[i] = 0;
-			}
+			Common::set_to(zoneQuery.begin(), zoneQuery.end(), 0);
 		}
 
 		if (g_cine->getGameType() == Cine::GType_OS) {

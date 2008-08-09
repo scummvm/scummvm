@@ -132,6 +132,14 @@ void CineEngine::initialize() {
 	animDataTable.resize(NUM_MAX_ANIMDATA);
 	freeAnimDataTable();
 
+	// Resize zone data table to its correct size and reset all its elements
+	zoneData.resize(NUM_MAX_ZONE);
+	Common::set_to(zoneData.begin(), zoneData.end(), 0);
+
+	// Resize zone query table to its correct size and reset all its elements
+	zoneQuery.resize(NUM_MAX_ZONE);	
+	Common::set_to(zoneQuery.begin(), zoneQuery.end(), 0);
+
 	_timerDelayMultiplier = 12; // Set default speed
 	setupOpcodes();
 

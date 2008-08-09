@@ -129,8 +129,8 @@ struct SelectedObjStruct {
 };
 
 #define NUM_MAX_ZONE 16
-extern uint16 zoneData[NUM_MAX_ZONE];
-extern uint16 zoneQuery[NUM_MAX_ZONE];
+extern Common::Array<uint16> zoneData;
+extern Common::Array<uint16> zoneQuery;
 
 void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 param5);
 

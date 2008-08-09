@@ -126,8 +126,8 @@ CommandeType objectListCommand[20];
 int16 objListTab[20];
 
 uint16 exitEngine;
-uint16 zoneData[NUM_MAX_ZONE];
-uint16 zoneQuery[NUM_MAX_ZONE]; //!< Only exists in Operation Stealth
+Common::Array<uint16> zoneData;
+Common::Array<uint16> zoneQuery; //!< Only exists in Operation Stealth
 
 /*! \brief Move the player character using the keyboard
  * \param x Negative values move left, positive right, zero not at all
