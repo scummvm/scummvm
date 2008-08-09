@@ -64,9 +64,9 @@ void ConfigManager::loadDefaultConfigFile() {
 	SeekableReadStream *stream = g_system->openConfigFileForReading();
 	_filename.clear();	// clear the filename to indicate that we are using the default config file
 
-	// ... load it ...
-	assert(stream);
-	loadFromStream(*stream);
+	// ... load it, if available ...
+	if (stream)
+		loadFromStream(*stream);
 	
 	// ... and close it again.
 	delete stream;
