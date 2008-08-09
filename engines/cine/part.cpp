@@ -259,8 +259,9 @@ byte *readBundleSoundFile(const char *entryName, uint32 *size) {
 	return data;
 }
 
-/*! \brief Rotate value to the left by n bits */
-byte rol(byte value, int n) {
+/*! \brief Rotate byte value to the left by n bits */
+byte rolByte(byte value, uint n) {
+	n %= 8;
 	return (byte) ((value << n) | (value >> (8 - n)));
 }
 
@@ -283,7 +284,7 @@ byte *readFile(const char *filename, bool crypted) {
 	// the bytes to the left by one.
 	if (crypted) {
 		for (uint index = 0; index < size; index++) {
-			dataPtr[index] = rol(dataPtr[index], 1);
+			dataPtr[index] = rolByte(dataPtr[index], 1);
 		}
 	}
 
