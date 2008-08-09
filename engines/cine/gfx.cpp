@@ -1098,10 +1098,11 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	// masked background
 	case 20:
 		assert(it->objIdx < NUM_MAX_OBJECT);
+		var5 = it->x; // A global variable updated here!
 		obj = objectTable + it->objIdx;
 		sprite = animDataTable + obj->frame;
 
-		if (obj->frame < 0 || it->x > 8 || !_bgTable[it->x].bg || sprite->_bpp != 1) {
+		if (obj->frame < 0 || it->x < 0 || it->x > 8 || !_bgTable[it->x].bg || sprite->_bpp != 1) {
 			break;
 		}
 
