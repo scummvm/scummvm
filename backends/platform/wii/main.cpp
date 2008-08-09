@@ -62,7 +62,9 @@ int main(int argc, char *argv[]) {
 	printf("startup\n");
 
 	SYS_SetResetCallback(reset_cb);
+#ifndef GAMECUBE
 	SYS_SetPowerCallback(power_cb);
+#endif
 
 	if (!fatInitDefault()) {
 		printf("fatInitDefault failed\n");
