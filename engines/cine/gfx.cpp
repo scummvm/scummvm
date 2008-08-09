@@ -1109,6 +1109,16 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		maskBgOverlay(_bgTable[it->x].bg, sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, obj->x, obj->y);
 		break;
 
+	// TODO: Figure out what this overlay type is and name it
+	// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing)
+	case 22: {
+		assert(it->objIdx < NUM_MAX_OBJECT);
+		obj = objectTable + it->objIdx;
+		byte transCol = obj->part & 0x0F;		
+		drawPlainBox(obj->x, obj->y, obj->frame, obj->costume, transCol);
+		break;
+	 }
+
 	// something else
 	default:
 		FWRenderer::renderOverlay(it);
