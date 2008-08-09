@@ -276,9 +276,11 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte colo
 /*! \brief Draw rectangle on screen
  * \param x Top left corner coordinate
  * \param y Top left corner coordinate
- * \param width Rectangle width
- * \param height Rectangle height
+ * \param width Rectangle width (Negative values draw the box horizontally flipped)
+ * \param height Rectangle height (Negative values draw the box vertically flipped)
  * \param color Fill color
+ * \note Rectangle's drawn width is always at least one.
+ * \note Rectangle's drawn height is always at least one.
  */
 void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
 	int i;
@@ -313,12 +315,18 @@ void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
 		height = 0;
 	}
 
-	// Draw the box if it's not empty
-	if (width > 0 && height > 0) {
-		byte *dest = _backBuffer + y * 320 + x;
-		for (i = 0; i < height; i++) {
-			memset(dest + i * 320, color, width);
-		}
+	// Make width and height at least one
+	// which forces this function to always draw something.
+	// This fixes at least the showing of the oxygen gauge meter in
+	// Operation Stealth's first arcade sequence where this function
+	// is called with a height of zero.
+	width  = MAX(1, width);
+	height = MAX(1, height);
+
+	// Draw the filled rectangle
+	byte *dest = _backBuffer + y * 320 + x;
+	for (i = 0; i < height; i++) {
+		memset(dest + i * 320, color, width);
 	}
 }
 
@@ -1109,13 +1117,29 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		maskBgOverlay(_bgTable[it->x].bg, sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, obj->x, obj->y);
 		break;
 
-	// TODO: Figure out what this overlay type is and name it
-	// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing)
+	// FIXME: Looking at Operation Stealth's disassembly I can't find any codepath that
+	// will draw a type 21 overlay. But looking at the first arcade sequence's scripts
+	// it looks like the oxygen gauge meter is implemented using a type 21 overlay.
+	// So for the time being I'm simply drawing type 21 overlays as type 22 overlays
+	// and hoping for the best.
+	// TODO: Check how the original game looks under DOSBox to see if the oxygen gauge works in it
+	case 21:
+	// A filled rectangle:
 	case 22: {
+		// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing).
+		// The drawn rectangle doesn't seem to be flipped in the original disassembly
+		// but looking at the oxygen gauge meter during the first arcade sequence it
+		// definitely looks like the drawing should be at least horizontally flipped.
+		// So this may very well be wrong but having tested only the first arcade sequence's
+		// oxygen gauge this implementation's output *looks* good. It may be wrong still...
 		assert(it->objIdx < NUM_MAX_OBJECT);
 		obj = objectTable + it->objIdx;
-		byte transCol = obj->part & 0x0F;		
-		drawPlainBox(obj->x, obj->y, obj->frame, obj->costume, transCol);
+		byte color = obj->part & 0x0F;
+		int width = -obj->frame; // Flipped horizontally for now.
+		int height = -obj->costume; // Flipped vertically for now.
+		drawPlainBox(obj->x, obj->y, width, height, color);
+		debug(5, "renderOverlay: type=%d, x=%d, y=%d, width=%d, height=%d, color=%d",
+			it->type, obj->x, obj->y, width, height, color);
 		break;
 	 }
 
