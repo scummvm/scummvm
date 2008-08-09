@@ -88,6 +88,7 @@ class ThemeRenderer : public Theme {
 protected:
 	typedef Common::String String;
 	typedef GUI::Dialog Dialog;
+	typedef Common::HashMap<Common::String, Graphics::Surface*> ImagesMap;
 
 	friend class GUI::Dialog;
 	friend class GUI::GuiObject;
@@ -195,6 +196,12 @@ protected:
 		bool elipsis;
 		bool restoreBg;
 		int deltax;
+	};
+	
+	struct BitmapQueue {
+		const Graphics::Surface *bitmap;
+		Common::Rect area;
+		bool alpha;
 	};
 	
 public:
@@ -390,7 +397,26 @@ public:
 	 *	@param cached Whether this DD set will be cached beforehand.
 	 */ 
 	bool addDrawData(const Common::String &data, bool cached);
+	
+	
+	/**
+	 *	Interface for the ThemeParser class: Loads a font to use on the GUI from the given
+	 *	filename.
+	 *
+	 *	@param fontName Identifier name for the font.
+	 * 	@param file Name of the font file.
+	 *	@param r, g, b Color of the font.
+	 */
 	bool addFont(const Common::String &fontName, const Common::String &file, int r, int g, int b);
+	
+	
+	/**
+	 *	Interface for the ThemeParser class: Loads a bitmap file to use on the GUI.
+	 * 	The filename is also used as its identifier.
+	 *
+	 *	@param filename Name of the bitmap file.
+	 */
+	bool addBitmap(const Common::String &filename);
 	
 	/**
 	 *	Adds a new TextStep from the ThemeParser. This will be deprecated/removed once the 
@@ -433,6 +459,19 @@ public:
 	
 	void *evaluator() { return _themeEval; }
 	bool supportsImages() const { return true; }
+	
+	Graphics::Surface *getBitmap(const Common::String &name) {
+		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
+	}
+	
+	const Graphics::Surface *getImageSurface(const kThemeImages n) const {
+		if (n == kImageLogo)
+			return _bitmaps.contains("logo.bmp") ? _bitmaps["logo.bmp"] : 0;
+			
+		return 0;
+	}
+	
+	const Common::String &getThemeName() { return _themeName; }
 
 protected:
 	
@@ -487,7 +526,9 @@ protected:
 	 * Not implemented yet.
 	 * TODO: reload themes, reload the renderer, recheck everything
 	 */
-	void screenChange() {}
+	void screenChange() {
+		error("Screen Changes are not supported yet. Fix this!");
+	}
 	
 	/**
 	 *	Actual Dirty Screen handling function.
@@ -570,6 +611,7 @@ protected:
 	 */
 	inline void drawDD(const DrawQueue &q, bool draw = true, bool restore = false);
 	inline void drawDDText(const DrawQueueText &q);
+	inline void drawBitmap(const BitmapQueue &q);
 	
 	/**
 	 *	Generates a DrawQueue item and enqueues it so it's drawn to the screen
@@ -585,6 +627,7 @@ protected:
 	inline void queueDD(DrawData type,  const Common::Rect &r, uint32 dynamic = 0);
 	inline void queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
 		bool elipsis, TextAlign alignH = kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0);
+	inline void queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha);
 	
 	/**
 	 *	DEBUG: Draws a white square around the given position and writes the given next to it.
@@ -646,6 +689,8 @@ protected:
 	/** Array of all the text fonts that can be drawn. */
 	TextDrawData *_texts[kTextDataMAX];
 	
+	ImagesMap _bitmaps;
+	
 	/** List of all the dirty screens that must be blitted to the overlay. */
 	Common::List<Common::Rect> _dirtyScreen;
 	
@@ -657,6 +702,8 @@ protected:
 	
 	/** Queue with all the text drawing that must be done to the screen */
 	Common::List<DrawQueueText> _textQueue;
+	
+	Common::List<BitmapQueue> _bitmapQueue;
 
 	bool _initOk; /** Class and renderer properly initialized */
 	bool _themeOk; /** Theme data successfully loaded. */

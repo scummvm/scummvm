@@ -371,6 +371,12 @@ public:
 		_fileName = "Memory Stream";
 		return true;
 	}
+	
+	bool loadStream(MemoryReadStream *stream) {
+		_text.loadStream(stream);
+		_fileName = "Compressed File Stream";
+		return true;
+	}
 
 	/**
 	 * The actual parsing function.

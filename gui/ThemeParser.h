@@ -308,7 +308,7 @@ namespace GUI {
 
 using namespace Graphics;
 using namespace Common;
-class ThemeRenderer;
+class ThemeRenderer;	
 
 class ThemeParser : public XMLParser {
 	typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const DrawStep &);
@@ -351,6 +351,13 @@ protected:
 					XML_PROP(id, true)
 					XML_PROP(file, true)
 					XML_PROP(color, true)
+					XML_PROP(resolution, false)
+				KEY_END()
+			KEY_END()
+			
+			XML_KEY(bitmaps)
+				XML_KEY(bitmap)
+					XML_PROP(filename, true)
 					XML_PROP(resolution, false)
 				KEY_END()
 			KEY_END()
@@ -408,6 +415,7 @@ protected:
 					XML_PROP(xpos, false)
 					XML_PROP(ypos, false)
 					XML_PROP(orientation, false)
+					XML_PROP(bitmap, false)
 				KEY_END()
 
 				XML_KEY(text)
@@ -489,6 +497,8 @@ protected:
 	bool parserCallback_color(ParserNode *node);
 	bool parserCallback_drawstep(ParserNode *node);
 	bool parserCallback_drawdata(ParserNode *node);
+	bool parserCallback_bitmaps(ParserNode *node) { return true; }
+	bool parserCallback_bitmap(ParserNode *node);
 	
 	/** Layout info callbacks */
 	bool parserCallback_layout_info(ParserNode *node);

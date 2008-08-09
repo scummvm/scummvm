@@ -71,6 +71,7 @@ struct DrawStep {
 	uint32 scale; /** scale of all the coordinates in FIXED POINT with 16 bits mantissa */
 
 	void (VectorRenderer::*drawingCall)(const Common::Rect &, const DrawStep &); /** Pointer to drawing function */
+	Graphics::Surface *blitSrc;
 };
 
 VectorRenderer *createRenderer(int mode);
@@ -412,6 +413,12 @@ public:
 		stepGetPositions(step, area, x, y, w, h);
 		drawTab(x, y, stepGetRadius(step, area), w, h);
 	}
+	
+	void drawCallback_BITMAP(const Common::Rect &area, const DrawStep &step) {
+		uint16 x, y, w, h;
+		stepGetPositions(step, area, x, y, w, h);
+		blitAlphaBitmap(step.blitSrc, Common::Rect(x, y, w, h));
+	}
 
 	void drawCallback_VOID(const Common::Rect &area, const DrawStep &step) {}
 
@@ -463,6 +470,8 @@ public:
 	 * blitted into the active surface, at the position specified by "r".
 	 */
 	virtual void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) = 0;
+	
+	virtual void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) = 0;
 	
 	/**
 	 * Draws a string into the screen. Wrapper for the Graphics::Font string drawing
@@ -554,6 +563,11 @@ class VectorRendererSpec : public VectorRenderer {
 	typedef VectorRenderer Base;
 
 public:
+	VectorRendererSpec() {
+		_bitmapAlphaColor = RGBToColor<PixelFormat>(255, 0, 255);
+	}
+	
+	
 	/**
 	 * @see VectorRenderer::drawLine()
 	 */
@@ -672,6 +686,8 @@ public:
 	 * @see VectorRenderer::blitSurface()
 	 */
 	virtual void blitSurface(const Graphics::Surface *source, const Common::Rect &r) {
+		assert(source->w == _activeSurface->w && source->h == _activeSurface->h);
+		
 		PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(r.left, r.top);
 		PixelType *src_ptr = (PixelType *)source->getBasePtr(r.left, r.top);
 
@@ -701,6 +717,43 @@ public:
 			dst_ptr += dst_pitch;
 			src_ptr += src_pitch;
 		}
+	}
+	
+	virtual void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) {
+		assert(r.width() >= source->w && r.height() >= source->h);
+		
+		int16 x = r.left;
+		int16 y = r.top;
+		
+		if (r.width() > source->w)
+			x = x + (r.width() >> 1) - (source->w >> 1);
+			
+		if (r.height() > source->h)
+			y = y + (r.height() >> 1) - (source->h >> 1);
+			
+		PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
+		PixelType *src_ptr = (PixelType *)source->getBasePtr(0, 0);
+		
+		int dst_pitch = surfacePitch();
+		int src_pitch = source->pitch / source->bytesPerPixel;
+		
+		int w, h = source->h;
+		
+		while (h--) {
+			w = source->w;
+			
+			while (w--) {
+				if (*src_ptr != _bitmapAlphaColor)
+					*dst_ptr = *src_ptr;
+					
+				dst_ptr++;
+				src_ptr++;
+			}
+			
+			dst_ptr = dst_ptr - source->w + dst_pitch;
+			src_ptr = src_ptr - source->w + src_pitch;
+		}
+		
 	}
 	
 	virtual void applyScreenShading(GUI::Theme::ShadingStyle shadingStyle) {
@@ -935,6 +988,8 @@ protected:
 	PixelType _gradientEnd; /** End color for the fill gradient */
 	
 	PixelType _bevelColor;
+	
+	PixelType _bitmapAlphaColor;
 };
 
 /**

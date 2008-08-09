@@ -371,7 +371,7 @@ public:
 	static bool themeConfigUseable(const Common::String &file, const Common::String &style="", Common::String *cStyle=0, Common::ConfigFile *cfg=0);
 
 	const Common::String &getStylefileName() const { return _stylefile; }
-	const Common::String &getThemeName() const { return _stylename; }
+	virtual const Common::String &getThemeName() const { return _stylename; }
 
 	virtual bool isDynamic() {
 		return false;

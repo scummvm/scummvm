@@ -51,6 +51,7 @@ ThemeParser::ThemeParser(ThemeRenderer *parent) : XMLParser() {
 	_drawFunctions["fill"]  = &Graphics::VectorRenderer::drawCallback_FILLSURFACE;
 	_drawFunctions["tab"]  = &Graphics::VectorRenderer::drawCallback_TAB;
 	_drawFunctions["void"]  = &Graphics::VectorRenderer::drawCallback_VOID;
+	_drawFunctions["bitmap"] = &Graphics::VectorRenderer::drawCallback_BITMAP;
 
 	_defaultStepGlobal = defaultDrawStep();
 	_defaultStepLocal = 0;
@@ -147,6 +148,18 @@ bool ThemeParser::parserCallback_font(ParserNode *node) {
 
 bool ThemeParser::parserCallback_fonts(ParserNode *node) {		
 	return true;	
+}
+
+bool ThemeParser::parserCallback_bitmap(ParserNode *node) {
+	if (resolutionCheck(node->values["resolution"])) {
+		node->ignore = true;
+		return true;
+	}
+	
+	if (!_theme->addBitmap(node->values["filename"]))
+		return parserError("Error when loading Bitmap file '%s'", node->values["filename"].c_str());
+		
+	return true;
 }
 
 bool ThemeParser::parserCallback_text(ParserNode *node) {		
@@ -319,6 +332,14 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 	if (functionSpecific) {
 		assert(stepNode->values.contains("func"));
 		Common::String functionName = stepNode->values["func"];
+		
+		if (functionName == "bitmap") {
+			if (!stepNode->values.contains("filename"))
+				return parserError("Need to specify a filename for Bitmap blitting.");
+				
+			if (!_theme->getBitmap(stepNode->values["filename"]))
+				return parserError("The given filename hasn't been loaded into the GUI.");
+		}
 
 		if (functionName == "roundedsq" || functionName == "circle" || functionName == "tab") {
 			if (stepNode->values.contains("radius") && stepNode->values["radius"] == "auto") {

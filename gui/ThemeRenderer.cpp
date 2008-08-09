@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/config-manager.h"
+#include "graphics/imageman.h"
 
 #include "gui/launcher.h"
 
@@ -118,6 +119,8 @@ ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) :
 	} else {
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	}
+	
+	ImageMan.addArchive(themeName + ".zip");
 
 	_initOk = true;
 	_themeName = themeName;
@@ -130,6 +133,13 @@ ThemeRenderer::~ThemeRenderer() {
 	unloadTheme();
 	delete _parser;
 	delete _themeEval;
+	
+	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
+//		delete i->_value;
+		ImageMan.unregisterSurface(i->_key);
+	}
+	
+	ImageMan.remArchive(_stylefile + ".zip");
 }
 
 bool ThemeRenderer::init() {
@@ -269,6 +279,18 @@ bool ThemeRenderer::addFont(const Common::String &fontId, const Common::String &
 	
 }
 
+bool ThemeRenderer::addBitmap(const Common::String &filename) {
+	if (_bitmaps.contains(filename)) {
+		delete _bitmaps[filename];
+		ImageMan.unregisterSurface(filename);
+	}
+	
+	ImageMan.registerSurface(filename, 0);
+	_bitmaps[filename] = ImageMan.getSurface(filename);
+	
+	return _bitmaps[filename] != 0;
+}
+
 bool ThemeRenderer::addDrawData(const Common::String &data, bool cached) {
 	DrawData data_id = getDrawDataId(data);
 
@@ -346,9 +368,41 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 
 	if (ConfMan.hasKey("extrapath"))
 		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
-
-	if (!parser()->loadFile(themeName + ".xml"))
+		
+ 	if (!parser()->loadFile(themeName + ".stx")){
+#ifdef USE_ZLIB
+		unzFile zipFile = unzOpen((themeName + ".zip").c_str());
+		
+		if (zipFile && unzLocateFile(zipFile, (themeName + ".stx").c_str(), 2) == UNZ_OK) {
+			
+			unz_file_info fileInfo;
+			unzOpenCurrentFile(zipFile);
+			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+			uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
+			assert(buffer);
+			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
+			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
+			unzCloseCurrentFile(zipFile);
+			
+			Common::MemoryReadStream *stream = new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size+1, true);
+			
+			if (!parser()->loadStream(stream)) {
+				unzClose(zipFile);
+				delete stream;
+				return false;
+			}
+			
+//			delete[] buffer;
+			buffer = 0;
+		} else {
+			unzClose(zipFile);
+			return false;
+		}
+		unzClose(zipFile);
+#else
 		return false;
+#endif
+	}
 	
 	return parser()->parse();
 }
@@ -411,6 +465,19 @@ void ThemeRenderer::queueDDText(TextData type, const Common::Rect &r, const Comm
 	}
 }
 
+void ThemeRenderer::queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &area, bool alpha) {
+	BitmapQueue q;
+	q.bitmap = bitmap;
+	q.area = area;
+	q.alpha = alpha;
+	
+	if (_buffering) {
+		_bitmapQueue.push_back(q);
+	} else {
+		drawBitmap(q);
+	}
+}
+
 void ThemeRenderer::drawDD(const DrawQueue &q, bool draw, bool restore) {
 	Common::Rect extendedRect = q.area;
 	extendedRect.grow(kDirtyRectangleThreshold);
@@ -439,6 +506,16 @@ void ThemeRenderer::drawDDText(const DrawQueueText &q) {
 	
 	_vectorRenderer->setFgColor(_texts[q.type]->_color.r, _texts[q.type]->_color.g, _texts[q.type]->_color.b);
 	_vectorRenderer->drawString(_texts[q.type]->_fontPtr, q.text, q.area, q.alignH, q.alignV, q.deltax);
+	addDirtyRect(q.area);
+}
+
+void ThemeRenderer::drawBitmap(const BitmapQueue &q) {
+	
+	if (q.alpha)
+		_vectorRenderer->blitAlphaBitmap(q.bitmap, q.area);
+	else
+		_vectorRenderer->blitSubSurface(q.bitmap, q.area);
+	
 	addDirtyRect(q.area);
 }
 
@@ -597,8 +674,10 @@ void ThemeRenderer::drawSurface(const Common::Rect &r, const Graphics::Surface &
 	if (!ready())
 		return;
 	
-	_vectorRenderer->blitSubSurface(&surface, r);
-	addDirtyRect(r);
+	queueBitmap(&surface, r, themeTrans);
+	
+//	_vectorRenderer->blitSubSurface(&surface, r);
+//	addDirtyRect(r);
 }
 
 void ThemeRenderer::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, WidgetStateInfo state) {
@@ -724,6 +803,13 @@ void ThemeRenderer::updateScreen() {
 			
 		_vectorRenderer->enableShadows();
 		_screenQueue.clear();
+	}
+	
+	if (!_bitmapQueue.empty()) {
+		for (Common::List<BitmapQueue>::const_iterator q = _bitmapQueue.begin(); q != _bitmapQueue.end(); ++q)
+			drawBitmap(*q);
+		
+		_bitmapQueue.clear();
 	}
 	
 	if (!_textQueue.empty()) {

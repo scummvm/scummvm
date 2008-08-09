@@ -91,31 +91,16 @@ NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
 
-	bool loadClassicTheme = true;
-#ifndef DISABLE_FANCY_THEMES
+
 	ConfMan.registerDefault("gui_theme", "default");
 	Common::String style(ConfMan.get("gui_theme"));
-	// The default theme for now is the 'modern' theme.
 	if (style.compareToIgnoreCase("default") == 0)
-		style = "modern";
+		style = "builtin";
+		
+	//DEBUG:
+	style = "scummodern";
 
-	Common::String styleType;
-	Common::ConfigFile cfg;
-	if (loadNewTheme(style)) {
-	   loadClassicTheme = false;
-	} else {
-	   loadClassicTheme = true;
-	   warning("falling back to classic style");
-	}
-#endif
-
-	if (loadClassicTheme) {
-		_theme = new ThemeClassic(_system);
-		assert(_theme);
-		if (!_theme->init()) {
-			error("Couldn't initialize classic theme");
-		}
-	}
+	loadNewTheme(style);
 
 	_theme->resetDrawArea();
 	_themeChange = false;
@@ -129,7 +114,7 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 	Common::String styleType;
 	Common::ConfigFile cfg;
 
-	Common::String oldTheme = (_theme != 0) ? _theme->getStylefileName() : "";
+	Common::String oldTheme = (_theme != 0) ? _theme->getThemeName() : "";
 
 	if (_theme)
 		_theme->disable();
@@ -142,38 +127,12 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 	delete _theme;
 	_theme = 0;
 
-/*	if (style.compareToIgnoreCase("classic (builtin)") == 0 ||
-		style.compareToIgnoreCase("classic") == 0) {
-		_theme = new ThemeClassic(_system, style);
-	} else {
-		if (Theme::themeConfigUseable(style, "", &styleType, &cfg)) {
-			if (0 == styleType.compareToIgnoreCase("classic"))
-				_theme = new ThemeClassic(_system, style, &cfg);
-#ifndef DISABLE_FANCY_THEMES
-			else if (0 == styleType.compareToIgnoreCase("modern"))
-				_theme = new ThemeModern(_system, style, &cfg);
-#endif
-			else
-				warning("Unsupported theme type '%s'", styleType.c_str());
-		} else {
-			warning("Config '%s' is NOT usable for themes or not found", style.c_str());
-		}
-	}
-	cfg.clear(); */
-
 	_theme = new ThemeRenderer(style, GUI::ThemeRenderer::kGfxAntialias16bit);
-//	_theme = new ThemeRenderer(style, GUI::ThemeRenderer::kGfxStandard16bit);
 
 	if (!_theme)
 		return (!oldTheme.empty() ? loadNewTheme(oldTheme) : false);
 
-	if (!_theme->init()) {
-		warning("Could not initialize your preferred theme");
-		delete _theme;
-		_theme = 0;
-		loadNewTheme(oldTheme);
-		return false;
-	}
+	_theme->init();
 	_theme->resetDrawArea();
 
 	if (!oldTheme.empty())

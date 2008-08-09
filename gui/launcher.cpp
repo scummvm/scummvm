@@ -880,7 +880,7 @@ void LauncherDialog::updateButtons() {
 void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
-		StaticTextWidget *ver = (StaticTextWidget*)findWidget("lLauncher.Version");
+		StaticTextWidget *ver = (StaticTextWidget*)findWidget("Launcher.Version");
 		if (ver) {
 			ver->setAlign((Graphics::TextAlignment)g_gui.xmlEval()->getVar("Launcher.Version.Align", Graphics::kTextAlignCenter));
 			ver->setLabel(gScummVMVersionDate);

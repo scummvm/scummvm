@@ -56,6 +56,11 @@
 				rgb = '63, 60, 17'
 		/>
 	</palette>
+	
+	<bitmaps>
+		<bitmap filename = 'logo.bmp'/>
+		<bitmap filename = 'cursor.bmp'/>
+	</bitmaps>
 
 	<fonts>
 		<font	id = 'text_default'
