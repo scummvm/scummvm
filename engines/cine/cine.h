@@ -59,7 +59,8 @@ enum CineGameType {
 enum CineGameFeatures {
 	GF_CD =   1 << 0,
 	GF_DEMO = 1 << 1,
-	GF_ALT_FONT = 1 << 2
+	GF_ALT_FONT = 1 << 2,
+	GF_CRYPTED_BOOT_PRC = 1 << 3
 };
 
 struct CINEGameDescription;
@@ -86,6 +87,8 @@ public:
 
 	bool loadSaveDirectory(void);
 	void makeSystemMenu(void);
+	int modifyGameSpeed(int speedChange);
+	int getTimerDelay() const;
 
 	const CINEGameDescription *_gameDescription;
 	Common::File _partFileHandle;
@@ -109,6 +112,7 @@ private:
 	void readVolCnf();
 
 	bool _preLoad;
+	int _timerDelayMultiplier;
 };
 
 extern CineEngine *g_cine;

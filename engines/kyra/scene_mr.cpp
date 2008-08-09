@@ -378,10 +378,11 @@ void KyraEngine_MR::loadSceneMsc() {
 	_screen->loadBitmap(filename, 5, 5, 0, true);
 
 	// HACK
-	uint8 data[320*200];
+	uint8 *data = new uint8[320*200];
 	_screen->copyRegionToBuffer(5, 0, 0, 320, 200, data);
 	_screen->clearPage(5);
 	_screen->copyBlockToPage(5, 0, _maskPageMinY, 320, height, data);
+	delete[] data;
 
 	musicUpdate(0);
 }

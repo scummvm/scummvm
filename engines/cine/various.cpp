@@ -94,11 +94,23 @@ int16 saveVar2;
 
 byte isInPause = 0;
 
-// TODO: Implement inputVar0's changes in the program
-// Currently inputVar0 isn't updated anywhere even though it's used at least in processSeqListElement.
-uint16 inputVar0 = 0;
-byte inputVar1 = 0;
-uint16 inputVar2 = 0, inputVar3 = 0;
+/*! \brief Values used by the xMoveKeyb variable */
+enum xMoveKeybEnums {
+	kKeybMoveCenterX = 0,
+	kKeybMoveRight = 1,
+	kKeybMoveLeft = 2
+};
+
+/*! \brief Values used by the yMoveKeyb variable */
+enum yMoveKeybEnums {
+	kKeybMoveCenterY = 0,
+	kKeybMoveDown = 1,
+	kKeybMoveUp = 2
+};
+
+uint16 xMoveKeyb = kKeybMoveCenterX;
+bool egoMovedWithKeyboard = false;
+uint16 yMoveKeyb = kKeybMoveCenterY;
 
 SelectedObjStruct currentSelectedObject;
 
@@ -115,6 +127,31 @@ int16 objListTab[20];
 uint16 zoneData[NUM_MAX_ZONE];
 uint16 zoneQuery[NUM_MAX_ZONE]; //!< Only exists in Operation Stealth
 
+/*! \brief Move the player character using the keyboard
+ * \param x Negative values move left, positive right, zero not at all
+ * \param y Negative values move down, positive up, zero not at all
+ * NOTE: If both x and y are zero then the character stops
+ * FIXME: This seems to only work in Operation Stealth. May need code changes somewhere else...
+ */
+void moveUsingKeyboard(int x, int y) {
+	if (x > 0) {
+		xMoveKeyb = kKeybMoveRight;
+	} else if (x < 0) {
+		xMoveKeyb = kKeybMoveLeft;
+	} else {
+		xMoveKeyb = kKeybMoveCenterX;
+	}
+
+	if (y > 0) {
+		yMoveKeyb = kKeybMoveUp;
+	} else if (y < 0) {
+		yMoveKeyb = kKeybMoveDown;
+	} else {
+		yMoveKeyb = kKeybMoveCenterY;
+	}
+
+	egoMovedWithKeyboard = x || y;
+}
 
 void stopMusicAfterFadeOut(void) {
 //	if (g_sfxPlayer->_fadeOutCounter != 0 && g_sfxPlayer->_fadeOutCounter < 100) {
@@ -139,7 +176,6 @@ void addPlayerCommandMessage(int16 cmd) {
 	tmp.type = 3;
 
 	overlayList.push_back(tmp);
-	waitForPlayerClick = 1;
 }
 
 int16 getRelEntryForObject(uint16 param1, uint16 param2, SelectedObjStruct *pSelectedObject) {
@@ -1516,6 +1552,7 @@ void makeCommandLine(void) {
 	}
 
 	if (!disableSystemMenu) {
+		isDrawCommandEnabled = 1;
 		renderer->setCommand(commandBuffer);
 	}
 }
@@ -1688,6 +1725,11 @@ uint16 executePlayerInput(void) {
 	}
 
 	if (allowPlayerInput) {
+		if (isDrawCommandEnabled) {
+			renderer->setCommand(commandBuffer);
+			isDrawCommandEnabled = 0;
+		}
+		
 		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 		while (mouseButton && currentEntry < 200) {
@@ -1868,8 +1910,8 @@ uint16 executePlayerInput(void) {
 		var_2 = 0;
 	}
 
-	if (inputVar1 && allowPlayerInput) {	// use keyboard
-		inputVar1 = 0;
+	if (egoMovedWithKeyboard && allowPlayerInput) {	// use keyboard
+		egoMovedWithKeyboard = false;
 
 		switch (globalVars[VAR_MOUSE_X_MODE]) {
 		case 1:
@@ -1901,8 +1943,8 @@ uint16 executePlayerInput(void) {
 			globalVars[VAR_MOUSE_X_POS] = mouseX;
 			globalVars[VAR_MOUSE_Y_POS] = mouseY;
 		} else {
-			if (inputVar2) {
-				if (inputVar2 == 2) {
+			if (xMoveKeyb) {
+				if (xMoveKeyb == kKeybMoveLeft) {
 					globalVars[VAR_MOUSE_X_POS] = 1;
 				} else {
 					globalVars[VAR_MOUSE_X_POS] = 320;
@@ -1911,8 +1953,8 @@ uint16 executePlayerInput(void) {
 				globalVars[VAR_MOUSE_X_POS] = mouseX;
 			}
 
-			if (inputVar3) {
-				if (inputVar3 == 2) {
+			if (yMoveKeyb) {
+				if (yMoveKeyb == kKeybMoveUp) {
 					globalVars[VAR_MOUSE_Y_POS] = 1;
 				} else {
 					globalVars[VAR_MOUSE_Y_POS] = 200;
@@ -1994,9 +2036,22 @@ void drawSprite(Common::List<overlay>::iterator it, const byte *spritePtr, const
 
 void removeMessages() {
 	Common::List<overlay>::iterator it;
+	bool remove;
 
 	for (it = overlayList.begin(); it != overlayList.end(); ) {
-		if (it->type == 2 || it->type == 3) {
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			// NOTE: These are really removeOverlay calls that have been deferred.
+			// In Operation Stealth's disassembly elements are removed from the
+			// overlay list right in the drawOverlays function (And actually in
+			// some other places too) and that's where incrementing a the overlay's
+			// last parameter by one if it's negative and testing it for positivity
+			// comes from too.
+			remove = it->type == 3 || (it->type == 2 && (it->color >= 0 || ++it->color >= 0));
+		} else { // Future Wars
+			remove = it->type == 2 || it->type == 3;
+		}
+
+		if (remove) {
 			it = overlayList.erase(it);
 		} else {
 			++it;
@@ -2079,7 +2134,6 @@ void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 par
 	tmp.color = param5;
 
 	overlayList.push_back(tmp);
-	waitForPlayerClick = 1;
 }
 
 Common::List<SeqListElement> seqList;
@@ -2338,9 +2392,9 @@ void processSeqListElement(SeqListElement &element) {
 			}
 			computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, x2, y2);
 		} else {
-			if (inputVar0 && allowPlayerInput) {
+			if (xMoveKeyb && allowPlayerInput) {
 				int16 adder = param1 + 1;
-				if (inputVar0 != 1) {
+				if (xMoveKeyb != kKeybMoveRight) {
 					adder = -adder;
 				}
 				// FIXME: In Operation Stealth's disassembly global variable 251 is used here
@@ -2349,9 +2403,9 @@ void processSeqListElement(SeqListElement &element) {
 				globalVars[VAR_MOUSE_X_POS] = globalVars[251] = ptr1[4] + x + adder;
 			}
 
-			if (inputVar1 && allowPlayerInput) {
+			if (yMoveKeyb && allowPlayerInput) {
 				int16 adder = param2 + 1;
-				if (inputVar1 != 1) {
+				if (yMoveKeyb != kKeybMoveDown) {
 					adder = -adder;
 				}
 				// TODO: Name currently unnamed global variable 252

@@ -333,6 +333,11 @@ enum {
 	kCurrentGameStateVersion = 6	// for --list-saves support
 };
 
+enum StringType {
+	kStringTypeDefault,
+	kStringTypeConversation
+};
+
 class MidiPlayer;
 
 class ToucheEngine: public Engine {
@@ -402,7 +407,7 @@ protected:
 	void setKeyCharMoney();
 	const char *getString(int num) const;
 	int getStringWidth(int num) const;
-	void drawString(uint16 color, int x, int y, int16 num);
+	void drawString(uint16 color, int x, int y, int16 num, StringType strType = kStringTypeDefault);
 	void drawGameString(uint16 color, int x1, int y, const char *str);
 	int restartKeyCharScriptOnAction(int action, int obj1, int obj2);
 	void buildSpriteScalingTable(int z1, int z2);

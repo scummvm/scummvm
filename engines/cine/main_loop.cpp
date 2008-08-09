@@ -121,11 +121,68 @@ static void processEvent(Common::Event &event) {
 				g_cine->makeSystemMenu();
 			}
 			break;
+		case Common::KEYCODE_MINUS:
+		case Common::KEYCODE_KP_MINUS:
+			g_cine->modifyGameSpeed(-1); // Slower
+			break;
+		case Common::KEYCODE_PLUS:
+		case Common::KEYCODE_KP_PLUS:
+			g_cine->modifyGameSpeed(+1); // Faster
+			break;
+		case Common::KEYCODE_LEFT:
+		case Common::KEYCODE_KP4:
+			moveUsingKeyboard(-1, 0); // Left
+			break;
+		case Common::KEYCODE_RIGHT:
+		case Common::KEYCODE_KP6:
+			moveUsingKeyboard(+1, 0); // Right
+			break;
+		case Common::KEYCODE_UP:
+		case Common::KEYCODE_KP8:
+			moveUsingKeyboard(0, +1); // Up
+			break;
+		case Common::KEYCODE_DOWN:
+		case Common::KEYCODE_KP2:
+			moveUsingKeyboard(0, -1); // Down
+			break;
+		case Common::KEYCODE_KP9:
+			moveUsingKeyboard(+1, +1); // Up & Right
+			break;
+		case Common::KEYCODE_KP7:
+			moveUsingKeyboard(-1, +1); // Up & Left
+			break;
+		case Common::KEYCODE_KP1:
+			moveUsingKeyboard(-1, -1); // Down & Left
+			break;
+		case Common::KEYCODE_KP3:
+			moveUsingKeyboard(+1, -1); // Down & Right
+			break;
 		default:
 			lastKeyStroke = event.kbd.keycode;
 			break;
 		}
 		break;
+	case Common::EVENT_KEYUP:
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_KP5:	// Emulated left mouse button click
+		case Common::KEYCODE_LEFT:	// Left
+		case Common::KEYCODE_KP4:	// Left
+		case Common::KEYCODE_RIGHT: // Right
+		case Common::KEYCODE_KP6:	// Right
+		case Common::KEYCODE_UP:	// Up
+		case Common::KEYCODE_KP8:	// Up
+		case Common::KEYCODE_DOWN:	// Down
+		case Common::KEYCODE_KP2:	// Down
+		case Common::KEYCODE_KP9:	// Up & Right
+		case Common::KEYCODE_KP7:	// Up & Left
+		case Common::KEYCODE_KP1:	// Down & Left
+		case Common::KEYCODE_KP3:	// Down & Right
+			// Stop ego movement made with keyboard when releasing a known key
+			moveUsingKeyboard(0, 0);
+			break;
+		default:
+			break;
+		}
 	default:
 		break;
 	}
@@ -134,7 +191,7 @@ static void processEvent(Common::Event &event) {
 void manageEvents() {
 	Common::EventManager *eventMan = g_system->getEventManager();
 
-	uint32 nextFrame = g_system->getMillis() + kGameTimerDelay * kGameSpeed;
+	uint32 nextFrame = g_system->getMillis() + g_cine->getTimerDelay();
 	do {
 		Common::Event event;
 		while (eventMan->pollEvent(event)) {
@@ -239,6 +296,38 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 	}
 
 	do {
+		// HACK: Force amount of oxygen left to maximum during Operation Stealth's first arcade sequence.
+		//       This makes it possible to pass the arcade sequence for now.
+		// FIXME: Remove the hack and make the first arcade sequence normally playable.
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			Common::String bgName(renderer->getBgName());
+			// Check if the background is one of the three backgrounds
+			// that are only used during the first arcade sequence.
+			if (bgName == "28.PI1" || bgName == "29.PI1" || bgName == "30.PI1") {
+				static const uint oxygenObjNum = 202, maxOxygen = 264;
+				// Force the amount of oxygen left to the maximum.
+				objectTable[oxygenObjNum].x = maxOxygen;
+			}
+		}
+
+		// HACK: In Operation Stealth after the first arcade sequence jump player's position to avoid getting stuck.
+		// After the first arcade sequence the player comes up stairs from
+		// the water in Santa Paragua's downtown in front of the flower shop.
+		// Previously he was completely stuck after getting up the stairs.
+		// If the background is the one used in the flower shop scene ("21.PI1")
+		// and the player is at the exact location after getting up the stairs
+		// then we just nudge him a tiny bit away from the stairs and voila, he's free!
+		// Maybe the real problem behind all this is collision data related as it looks
+		// like there's some boundary right there near position (204, 110) which we can
+		// jump over by moving the character to (204, 109). The script handling the
+		// flower shop scene is AIRPORT.PRC's 13th script.
+		// FIXME: Remove the hack and solve what's really causing the problem in the first place.
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			if (scumm_stricmp(renderer->getBgName(), "21.PI1") == 0 && objectTable[1].x == 204 && objectTable[1].y == 110) {
+				objectTable[1].y--; // Move the player character upward on-screen by one pixel
+			}
+		}
+
 		stopMusicAfterFadeOut();
 		di = executePlayerInput();
 		
@@ -271,6 +360,11 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			renderer->drawFrame();
 		}
 
+		// NOTE: In the original Future Wars and Operation Stealth messages
+		// were removed when running the drawOverlays function which is
+		// currently called from the renderer's drawFrame function.
+		removeMessages();
+
 		if (waitForPlayerClick) {
 			playerAction = false;
 
@@ -300,8 +394,6 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			} while (mouseButton != 0);
 
 			waitForPlayerClick = 0;
-
-			removeMessages();
 		}
 
 		if (checkForPendingDataLoadSwitch) {

@@ -56,6 +56,10 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Eng
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	// Use music volume for plain sound types (At least the Adlib player uses a plain sound type
+	// so previously the music and sfx volume controls didn't affect it at all).
+	// FIXME: Make Adlib player differentiate between playing sound effects and music and remove this.
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, ConfMan.getInt("music_volume"));
 
 	g_cine = this;
 
@@ -99,14 +103,28 @@ int CineEngine::go() {
 	mainLoop(1);
 
 	delete renderer;
-	delete[] page3Raw;
+	delete[] collisionPage;
 	delete g_sound;
 	
 	return _eventMan->shouldRTL();
 }
 
+int CineEngine::getTimerDelay() const {
+	return (10923000 * _timerDelayMultiplier) / 1193180;
+}
+
+/*! \brief Modify game speed
+ * \param speedChange Negative values slow game down, positive values speed it up, zero does nothing
+ * \return Timer delay multiplier's value after the game speed change
+ */
+int CineEngine::modifyGameSpeed(int speedChange) {
+	// If we want more speed we decrement the timer delay multiplier and vice versa.
+	_timerDelayMultiplier = CLIP(_timerDelayMultiplier - speedChange, 1, 50);
+	return _timerDelayMultiplier;
+}
 
 void CineEngine::initialize() {
+	_timerDelayMultiplier = 12; // Set default speed
 	setupOpcodes();
 
 	initLanguage(g_cine->getLanguage());
@@ -117,7 +135,7 @@ void CineEngine::initialize() {
 		renderer = new FWRenderer;
 	}
 
-	page3Raw = new byte[320 * 200];
+	collisionPage = new byte[320 * 200];
 	textDataPtr = (byte *)malloc(8000);
 
 	partBuffer = (PartBuffer *)malloc(NUM_MAX_PARTDATA * sizeof(PartBuffer));

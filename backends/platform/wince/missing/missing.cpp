@@ -171,7 +171,7 @@ int _access(const char *path, int mode) {
 	MultiByteToWideChar(CP_ACP, 0, path, -1, fname, sizeof(fname)/sizeof(TCHAR));
 
 	WIN32_FIND_DATA ffd;
-	HANDLE h=FindFirstFile(fname, &ffd);
+	HANDLE h = FindFirstFile(fname, &ffd);
 	FindClose(h);
 
 	if (h == INVALID_HANDLE_VALUE)
@@ -179,9 +179,14 @@ int _access(const char *path, int mode) {
 
 	if (ffd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) {
 		// WORKAROUND: WinCE (or the emulator) sometimes returns bogus direcotry
-		// hits for files that don't exist. Checking for the same fname twice
+		// hits for files that don't exist. TRIPLE checking for the same fname
 		// seems to weed out those false positives.
-		HANDLE h=FindFirstFile(fname, &ffd);
+		// Exhibited in kyra engine.
+		HANDLE h = FindFirstFile(fname, &ffd);
+		FindClose(h);
+		if (h == INVALID_HANDLE_VALUE)
+			return -1;  //Can't find file
+		h = FindFirstFile(fname, &ffd);
 		FindClose(h);
 		if (h == INVALID_HANDLE_VALUE)
 			return -1;  //Can't find file

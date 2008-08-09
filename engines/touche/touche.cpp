@@ -1256,10 +1256,11 @@ int ToucheEngine::getStringWidth(int num) const {
 	return Graphics::getStringWidth16(str);
 }
 
-void ToucheEngine::drawString(uint16 color, int x, int y, int16 num) {
+void ToucheEngine::drawString(uint16 color, int x, int y, int16 num, StringType strType) {
+	const int xmax = (_language == Common::ES_ESP && strType == kStringTypeConversation) ? kScreenWidth - 20 : 0;
 	if (num) {
 		const char *str = getString(num);
-		Graphics::drawString16(_offscreenBuffer, kScreenWidth, color, x, y, str);
+		Graphics::drawString16(_offscreenBuffer, kScreenWidth, color, x, y, str, xmax);
 	}
 }
 
@@ -2422,7 +2423,7 @@ void ToucheEngine::drawCharacterConversation() {
 	}
 	drawConversationPanel();
 	for (int i = 0; i < 4; ++i) {
-		drawString(214, 42, 328 + i * kTextHeight, _conversationChoicesTable[_scrollConversationChoiceOffset + i].msg);
+		drawString(214, 42, 328 + i * kTextHeight, _conversationChoicesTable[_scrollConversationChoiceOffset + i].msg, kStringTypeConversation);
 	}
 	updateScreenArea(0, 320, kScreenWidth, kScreenHeight - 320);
 	_conversationAreaCleared = false;
@@ -2430,7 +2431,7 @@ void ToucheEngine::drawCharacterConversation() {
 
 void ToucheEngine::drawConversationString(int num, uint16 color) {
 	const int y = 328 + num * kTextHeight;
-	drawString(color, 42, y, _conversationChoicesTable[num + _scrollConversationChoiceOffset].msg);
+	drawString(color, 42, y, _conversationChoicesTable[num + _scrollConversationChoiceOffset].msg, kStringTypeConversation);
 	updateScreenArea(0, y, kScreenWidth, kTextHeight);
 }
 

@@ -36,7 +36,7 @@
 
 namespace Cine {
 
-byte *page3Raw;
+byte *collisionPage;
 FWRenderer *renderer = NULL;
 
 static const byte mouseCursorNormal[] = {
@@ -282,20 +282,43 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte colo
  */
 void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
 	int i;
-	byte *dest = _backBuffer + y * 320 + x;
 
+	// Handle horizontally flipped boxes
 	if (width < 0) {
 		x += width;
-		width = -width;
+		width = ABS(width);
 	}
 
+	// Handle vertically flipped boxes
 	if (height < 0) {
 		y += height;
-		height = -height;
+		height = ABS(height);
 	}
 
-	for (i = 0; i < height; i++) {
-		memset(dest + i * 320, color, width);
+	// Handle horizontal boundaries
+	if (x < 0) {
+		width += x; // Remove invisible columns
+		x = 0; // Start drawing at the screen's left border
+	} else if (x > 319) {
+		// Nothing left to draw as we're over the screen's right border
+		width = 0;
+	}
+
+	// Handle vertical boundaries
+	if (y < 0) {
+		height += y; // Remove invisible rows
+		y = 0; // Start drawing at the screen's top border
+	} else if (y > 199) {
+		// Nothing left to draw as we're below the screen's bottom border
+		height = 0;
+	}
+
+	// Draw the box if it's not empty
+	if (width > 0 && height > 0) {
+		byte *dest = _backBuffer + y * 320 + x;
+		for (i = 0; i < height; i++) {
+			memset(dest + i * 320, color, width);
+		}
 	}
 }
 
@@ -422,6 +445,7 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 
 		_messageLen += messageTable[it->objIdx].size();
 		drawMessage(messageTable[it->objIdx].c_str(), it->x, it->y, it->width, it->color);
+		waitForPlayerClick = 1;
 		break;
 
 	// action failure message
@@ -433,6 +457,7 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		width = width > 300 ? 300 : width;
 
 		drawMessage(failureMessages[idx], (320 - width) / 2, 80, width, 4);
+		waitForPlayerClick = 1;
 		break;
 
 	// bitmap
@@ -615,6 +640,11 @@ void FWRenderer::removeBg(unsigned int idx) {
 
 void FWRenderer::saveBgNames(Common::OutSaveFile &fHandle) {
 	fHandle.write(_bgName, 13);
+}
+
+const char *FWRenderer::getBgName(uint idx) const {
+	assert(idx == 0);
+	return _bgName;
 }
 
 /*! \brief Restore active and backup palette from save
@@ -1011,8 +1041,12 @@ void OSRenderer::drawBackground() {
 
 		assert(scroll);
 
-		memcpy(_backBuffer, main + mainShift, mainSize);
-		memcpy(_backBuffer + mainSize, scroll, mainShift);
+		if (mainSize > 0) { // Just a precaution
+			memcpy(_backBuffer, main + mainShift, mainSize);
+		}
+		if (mainShift > 0) { // Just a precaution
+			memcpy(_backBuffer + mainSize, scroll, mainShift);
+		}
 	}
 }
 
@@ -1041,6 +1075,19 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		delete[] mask;
 		break;
 
+	// game message
+	case 2:
+		if (it->objIdx >= messageTable.size()) {
+			return;
+		}
+
+		_messageLen += messageTable[it->objIdx].size();
+		drawMessage(messageTable[it->objIdx].c_str(), it->x, it->y, it->width, it->color);		
+		if (it->color >= 0) { // This test isn't in Future Wars's implementation
+			waitForPlayerClick = 1;
+		}
+		break;
+
 	// bitmap
 	case 4:
 		if (objectTable[it->objIdx].frame >= 0) {
@@ -1051,15 +1098,26 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	// masked background
 	case 20:
 		assert(it->objIdx < NUM_MAX_OBJECT);
+		var5 = it->x; // A global variable updated here!
 		obj = objectTable + it->objIdx;
 		sprite = animDataTable + obj->frame;
 
-		if (obj->frame < 0 || it->x > 8 || !_bgTable[it->x].bg || sprite->_bpp != 1) {
+		if (obj->frame < 0 || it->x < 0 || it->x > 8 || !_bgTable[it->x].bg || sprite->_bpp != 1) {
 			break;
 		}
 
 		maskBgOverlay(_bgTable[it->x].bg, sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, obj->x, obj->y);
 		break;
+
+	// TODO: Figure out what this overlay type is and name it
+	// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing)
+	case 22: {
+		assert(it->objIdx < NUM_MAX_OBJECT);
+		obj = objectTable + it->objIdx;
+		byte transCol = obj->part & 0x0F;		
+		drawPlainBox(obj->x, obj->y, obj->frame, obj->costume, transCol);
+		break;
+	 }
 
 	// something else
 	default:
@@ -1330,6 +1388,11 @@ void OSRenderer::saveBgNames(Common::OutSaveFile &fHandle) {
 	for (int i = 0; i < 8; i++) {
 		fHandle.write(_bgTable[i].name, 13);
 	}
+}
+
+const char *OSRenderer::getBgName(uint idx) const {
+	assert(idx < 9);
+	return _bgTable[idx].name;
 }
 
 /*! \brief Fade to black

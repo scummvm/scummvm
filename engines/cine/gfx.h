@@ -111,6 +111,7 @@ public:
 	virtual uint getScroll() const;
 	virtual void removeBg(unsigned int idx);
 	virtual void saveBgNames(Common::OutSaveFile &fHandle);
+	virtual const char *getBgName(uint idx = 0) const;
 
 	virtual void refreshPalette();
 	virtual void reloadPalette();
@@ -168,6 +169,7 @@ public:
 	uint getScroll() const;
 	void removeBg(unsigned int idx);
 	void saveBgNames(Common::OutSaveFile &fHandle);
+	const char *getBgName(uint idx = 0) const;
 
 	void refreshPalette();
 	void reloadPalette();
@@ -181,7 +183,7 @@ public:
 
 void gfxDrawSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy);
 
-extern byte *page3Raw;
+extern byte *collisionPage;
 extern FWRenderer *renderer;
 
 void setMouseCursor(int cursor);

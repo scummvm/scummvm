@@ -365,6 +365,7 @@ FWScript *OSScriptInfo::create(const RawObjectScript &script, int16 index, const
 // OPERATION STEALTH opcodes
 // ------------------------------------------------------------------------
 
+/*! \brief Load collision table data */
 int FWScript::o2_loadCt() {
 	const char *param = getNextString();
 
@@ -636,7 +637,28 @@ int FWScript::o2_loadAbs() {
 	const char *param2 = getNextString();
 
 	debugC(5, kCineDebugScript, "Line: %d: loadABS(%d,%s)", _line, param1, param2);
-	loadResource(param2, param1);
+	// Load the resource to an absolute position
+	if (loadResource(param2, param1) == -1) { // Check if the loading failed
+		// WORKAROUND: In the 256 color PC version of Operation Stealth when
+		// walking out of the airport in Santa Paragua to the street the
+		// player character should be seen as a grey silhuette while walking
+		// behind the glass. But actually the player character is completely
+		// invisible when walking behind the glass because the animation files
+		// used are wrongly loaded. In AIRPORT.PRC's 6th script there are
+		// calls loadAbs("JOHN01.ANI", 73) and loadAbs("JOHN02.ANI", 37) to
+		// load the animations involved but no such files are found with the
+		// game. Corresponding SET-files are found though. As it worked and
+		// looked fine when I tried loading them instead of the missing ANI
+		// files I'm doing so here. NOTE: At least the German Amiga version
+		// of Operation Stealth seems to have all the files involved
+		// (JOHN01.ANI, JOHN02.ANI, JOHN01.SET and JOHN02.SET).
+		if (scumm_stricmp(param2, "JOHN01.ANI") == 0 && param1 == 73) {
+			loadResource("JOHN01.SET", param1);
+		} else if (scumm_stricmp(param2, "JOHN02.ANI") == 0 && param1 == 37) {
+			loadResource("JOHN02.SET", param1);
+		}
+	}
+
 	return 0;
 }
 

@@ -669,7 +669,7 @@ protected:
 	void executeScript();
 	void updateScriptPtr();
 	virtual void runInventoryScript(int i);
-	void inventoryScript();
+	void inventoryScriptIndy3Mac();
 	void checkAndRunSentenceScript();
 	void runExitScript();
 	void runEntryScript();

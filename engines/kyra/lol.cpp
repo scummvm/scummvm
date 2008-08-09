@@ -87,6 +87,9 @@ int LoLEngine::init() {
 	_screen->setAnimBlockPtr(10000);
 	_screen->setScreenDim(0);
 
+	if (!_sound->init())
+		error("Couldn't init sound");
+
 	return 0;
 }
 

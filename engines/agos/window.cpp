@@ -298,7 +298,7 @@ void AGOSEngine::waitWindow(WindowBlock *window) {
 	ha->id = 0x7FFF;
 	ha->priority = 999;
 
-	for (;;) {
+	while (!_quit) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 

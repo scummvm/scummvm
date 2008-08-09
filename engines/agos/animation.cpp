@@ -150,7 +150,7 @@ void MoviePlayer::play() {
 
 	startSound();
 
-	while (_frameNum < _framesCount)
+	while (_frameNum < _framesCount && !_vm->_quit)
 		handleNextFrame();
 
 	closeFile();
@@ -166,7 +166,7 @@ void MoviePlayer::play() {
 		_vm->_system->setPalette(palette, 0, 256);
 	}
 
-	 _vm->fillBackGroundFromBack();
+	_vm->fillBackGroundFromBack();
 	_vm->_fastFadeOutFlag = true;
 }
 

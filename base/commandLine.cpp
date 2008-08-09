@@ -193,9 +193,6 @@ void registerDefaults() {
 	ConfMan.registerDefault("joystick_num", -1);
 	ConfMan.registerDefault("confirm_exit", false);
 	ConfMan.registerDefault("disable_sdl_parachute", false);
-#ifdef USE_ALSA
-	ConfMan.registerDefault("alsa_port", "65:0");
-#endif
 
 	ConfMan.registerDefault("record_mode", "none");
 	ConfMan.registerDefault("record_file_name", "record.bin");

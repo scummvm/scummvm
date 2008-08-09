@@ -260,11 +260,6 @@ AbstractFilesystemNode *WindowsFilesystemNode::getChild(const String &n) const {
 		newPath += '\\';
 	newPath += n;
 
-	// Check whether the directory actually exists
-	DWORD fileAttribs = GetFileAttributes(toUnicode(newPath.c_str()));
-	if (fileAttribs == INVALID_FILE_ATTRIBUTES)
-		return 0;
-
 	return new WindowsFilesystemNode(newPath, false);
 }
 
