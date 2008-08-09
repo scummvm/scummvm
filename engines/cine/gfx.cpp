@@ -471,7 +471,7 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	// bitmap
 	case 4:
 		assert(it->objIdx < NUM_MAX_OBJECT);
-		obj = objectTable + it->objIdx;
+		obj = &objectTable[it->objIdx];
 
 		if (obj->frame < 0) {
 			return;
@@ -1107,7 +1107,7 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	case 20:
 		assert(it->objIdx < NUM_MAX_OBJECT);
 		var5 = it->x; // A global variable updated here!
-		obj = objectTable + it->objIdx;
+		obj = &objectTable[it->objIdx];
 		sprite = animDataTable + obj->frame;
 
 		if (obj->frame < 0 || it->x < 0 || it->x > 8 || !_bgTable[it->x].bg || sprite->_bpp != 1) {
@@ -1128,7 +1128,7 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	case 22: {
 		// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing).
 		assert(it->objIdx < NUM_MAX_OBJECT);
-		obj = objectTable + it->objIdx;
+		obj = &objectTable[it->objIdx];
 		byte color = obj->part & 0x0F;
 		int width = obj->frame;
 		int height = obj->costume;

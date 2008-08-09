@@ -618,16 +618,7 @@ void CineEngine::resetEngine() {
 	relTable.clear();
 	scriptTable.clear();
 	messageTable.clear();
-
-	for (int i = 0; i < NUM_MAX_OBJECT; i++) {
-		objectTable[i].x = 0;
-		objectTable[i].y = 0;
-		objectTable[i].part = 0;
-		objectTable[i].name[0] = 0;
-		objectTable[i].frame = 0;
-		objectTable[i].mask = 0;
-		objectTable[i].costume = 0;
-	}
+	resetObjectTable();
 
 	globalVars.reset();
 

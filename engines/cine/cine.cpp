@@ -124,6 +124,10 @@ int CineEngine::modifyGameSpeed(int speedChange) {
 }
 
 void CineEngine::initialize() {
+	// Resize object table to its correct size and reset all its elements
+	objectTable.resize(NUM_MAX_OBJECT);
+	resetObjectTable();
+
 	_timerDelayMultiplier = 12; // Set default speed
 	setupOpcodes();
 
@@ -160,8 +164,7 @@ void CineEngine::initialize() {
 	freeAnimDataTable();
 	overlayList.clear();
 	messageTable.clear();
-
-	memset(objectTable, 0, sizeof(objectTable));
+	resetObjectTable();
 
 	var8 = 0;
 
