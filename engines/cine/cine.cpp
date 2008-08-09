@@ -128,6 +128,10 @@ void CineEngine::initialize() {
 	objectTable.resize(NUM_MAX_OBJECT);
 	resetObjectTable();
 
+	// Resize animation data table to its correct size and reset all its elements
+	animDataTable.resize(NUM_MAX_ANIMDATA);
+	freeAnimDataTable();
+
 	_timerDelayMultiplier = 12; // Set default speed
 	setupOpcodes();
 

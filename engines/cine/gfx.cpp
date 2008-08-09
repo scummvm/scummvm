@@ -436,7 +436,7 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	switch (it->type) {
 	// color sprite
 	case 0:
-		sprite = animDataTable + objectTable[it->objIdx].frame;
+		sprite = &animDataTable[objectTable[it->objIdx].frame];
 		len = sprite->_realWidth * sprite->_height;
 		mask = new byte[len];
 		memcpy(mask, sprite->mask(), len);
@@ -1074,7 +1074,7 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		if (objectTable[it->objIdx].frame < 0) {
 			break;
 		}
-		sprite = animDataTable + objectTable[it->objIdx].frame;
+		sprite = &animDataTable[objectTable[it->objIdx].frame];
 		len = sprite->_realWidth * sprite->_height;
 		mask = new byte[len];
 		generateMask(sprite->data(), mask, len, objectTable[it->objIdx].part);
@@ -1108,7 +1108,7 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		assert(it->objIdx < NUM_MAX_OBJECT);
 		var5 = it->x; // A global variable updated here!
 		obj = &objectTable[it->objIdx];
-		sprite = animDataTable + obj->frame;
+		sprite = &animDataTable[obj->frame];
 
 		if (obj->frame < 0 || it->x < 0 || it->x > 8 || !_bgTable[it->x].bg || sprite->_bpp != 1) {
 			break;

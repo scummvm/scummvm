@@ -150,7 +150,7 @@ public:
 
 #define NUM_MAX_ANIMDATA 255
 
-extern AnimData animDataTable[NUM_MAX_ANIMDATA];
+extern Common::Array<AnimData> animDataTable;
 
 void freeAnimDataTable(void);
 void freeAnimDataRange(byte startIdx, byte numIdx);
