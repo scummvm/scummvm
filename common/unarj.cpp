@@ -75,7 +75,7 @@ static uint32 GetCRC(byte *data, int len) {
 	return CRC ^ 0xFFFFFFFF;
 }
 
-ArjFile::ArjFile() {
+ArjFile::ArjFile() : _uncompressedData(NULL) {
 	InitCRC();
 	_isOpen = false;
 	_fallBack = false;
@@ -255,6 +255,11 @@ bool ArjFile::open(const Common::String &filename, AccessMode mode) {
 
 	_compsize = hdr->compSize;
 	_origsize = hdr->origSize;
+
+	// FIXME: This hotfix prevents Drascula from leaking memory.
+	// As far as sanity checks go this is not bad, but the engine should be fixed.
+	if (_uncompressedData)
+		free(_uncompressedData);
 
 	_uncompressedData = (byte *)malloc(_origsize);
 	_outstream = new MemoryWriteStream(_uncompressedData, _origsize);
