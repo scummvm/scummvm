@@ -98,7 +98,7 @@ NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
 		style = "builtin";
 		
 	//DEBUG:
-	style = "scummodern";
+//	style = "scummodern";
 
 	loadNewTheme(style);
 
@@ -110,11 +110,8 @@ NewGui::~NewGui() {
 	delete _theme;
 }
 
-bool NewGui::loadNewTheme(const Common::String &style) {
-	Common::String styleType;
-	Common::ConfigFile cfg;
-
-	Common::String oldTheme = (_theme != 0) ? _theme->getThemeName() : "";
+bool NewGui::loadNewTheme(const Common::String &filename) {
+	Common::String oldTheme = (_theme != 0) ? _theme->getThemeFileName() : "";
 
 	if (_theme)
 		_theme->disable();
@@ -127,7 +124,7 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 	delete _theme;
 	_theme = 0;
 
-	_theme = new ThemeRenderer(style, GUI::ThemeRenderer::kGfxAntialias16bit);
+	_theme = new ThemeRenderer(filename, GUI::ThemeRenderer::kGfxAntialias16bit);
 
 	if (!_theme)
 		return (!oldTheme.empty() ? loadNewTheme(oldTheme) : false);

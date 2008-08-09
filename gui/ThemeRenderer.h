@@ -216,7 +216,7 @@ public:
 	};
 	
 	/** Default constructor */
-	ThemeRenderer(Common::String themeName, GraphicsMode mode);
+	ThemeRenderer(Common::String fileName, GraphicsMode mode);
 
 	/** Default destructor */
 	~ThemeRenderer();
@@ -470,10 +470,11 @@ public:
 			
 		return 0;
 	}
-	
-	const Common::String &getThemeName() { return _themeName; }
 
 protected:
+
+	const Common::String &getThemeName() const { return _themeName; }
+	const Common::String &getThemeFileName() const { return _themeFileName; }
 	
 	/**
 	 *	Initializes the drawing screen surfaces, _screen and _backBuffer.
@@ -505,22 +506,7 @@ protected:
 	 *	Unloads the currently loaded theme so another one can
 	 *	be loaded.
 	 */
-	void unloadTheme() {
-		if (!_themeOk)
-			return;
-
-		for (int i = 0; i < kDrawDataMAX; ++i) {
-			delete _widgets[i];
-			_widgets[i] = 0;
-		}
-		
-		for (int i = 0; i < kTextDataMAX; ++i) {
-			delete _texts[i];
-			_texts[i] = 0;
-		}
-
-		_themeOk = false;
-	}
+	void unloadTheme();
 
 	/**
 	 * Not implemented yet.
@@ -710,6 +696,7 @@ protected:
 	bool _enabled; /** Whether the Theme is currently shown on the overlay */
 
 	Common::String _themeName; /** Name of the currently loaded theme */
+	Common::String _themeFileName;
 };
 
 } // end of namespace GUI.

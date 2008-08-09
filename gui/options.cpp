@@ -907,7 +907,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			const Common::String &theme = browser.selected();
-			if (0 != theme.compareToIgnoreCase(g_gui.theme()->getStylefileName()))
+			if (0 != theme.compareToIgnoreCase(g_gui.theme()->getThemeFileName()))
 				if (g_gui.loadNewTheme(theme)) {
 					_curTheme->setLabel(g_gui.theme()->getThemeName());
 					ConfMan.set("gui_theme", theme);

@@ -377,7 +377,7 @@ public:
 	}
 
 	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font) {
-		_layouts["Dialog.Launcher"]->debugDraw(screen, font);
+		_layouts["Dialog.Browser"]->debugDraw(screen, font);
 //		_layouts["Dialog.GameOptions_Graphics"]->debugDraw(screen, font);
 	}
 	

@@ -510,6 +510,8 @@ void ListWidget::reflowLayout() {
 		_entriesPerPage += (1 << 16);
 
 	_entriesPerPage >>= 16;
+	
+	assert(_entriesPerPage > 0);
 
 	delete[] _textWidth;
 	_textWidth = new int[_entriesPerPage];

@@ -43,21 +43,21 @@ enum {
 // but for now this simple browser works,
 // also it will get its own theme config values
 // and not use 'browser_' anymore
-ThemeBrowser::ThemeBrowser() : Dialog("browser") {
+ThemeBrowser::ThemeBrowser() : Dialog("Browser") {
 	_fileList = 0;
 
-	new StaticTextWidget(this, "browser_headline", "Select a Theme");
+	new StaticTextWidget(this, "Browser.Headline", "Select a Theme");
 
 	// Add file list
-	_fileList = new ListWidget(this, "browser_list");
+	_fileList = new ListWidget(this, "Browser.List");
 	_fileList->setNumberingMode(kListNumberingOff);
 	_fileList->setEditable(false);
 
 	_fileList->setHints(THEME_HINT_PLAIN_COLOR);
 
 	// Buttons
-	new ButtonWidget(this, "browser_cancel", "Cancel", kCloseCmd, 0);
-	new ButtonWidget(this, "browser_choose", "Choose", kChooseCmd, 0);
+	new ButtonWidget(this, "Browser.Cancel", "Cancel", kCloseCmd, 0);
+	new ButtonWidget(this, "Browser.Choose", "Choose", kChooseCmd, 0);
 }
 
 void ThemeBrowser::open() {
@@ -91,9 +91,8 @@ void ThemeBrowser::updateListing() {
 
 	// classic is always build in
 	Entry th;
-	th.name = "Classic (Builtin)";
-	th.type = "Classic";
-	th.file = "Classic (Builtin)";
+	th.name = "Modern Development Theme (Builtin) - WIP";
+	th.file = "builtin";
 	_themes.push_back(th);
 
 	// we are using only the paths 'themepath', 'extrapath', DATA_PATH and '.'
@@ -172,10 +171,11 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 }
 
 bool ThemeBrowser::isTheme(const FilesystemNode &node, Entry &out) {
-	Common::ConfigFile cfg;
-	Common::String type;
-
 	out.file = node.getName();
+	
+	if (!out.file.hasSuffix(".zip") && !out.file.hasSuffix(".stx"))
+		return false;
+	
 	for (int i = out.file.size()-1; out.file[i] != '.' && i > 0; --i) {
 		out.file.deleteLastChar();
 	}
@@ -184,14 +184,13 @@ bool ThemeBrowser::isTheme(const FilesystemNode &node, Entry &out) {
 	if (out.file.empty())
 		return false;
 
-	if (!Theme::themeConfigUseable(out.file, "", &type, &cfg))
-		return false;
+// TODO: Check if theme is usable.
+//	if (!Theme::themeConfigUseable(out.file, "", &type, &cfg))
+//		return false;
 
-	out.type = type;
-
-	if (cfg.hasKey("name", "theme"))
-		cfg.getKey("name", "theme", out.name);
-	else
+//	if (cfg.hasKey("name", "theme"))
+//		cfg.getKey("name", "theme", out.name);
+//	else
 		out.name = out.file;
 
 	return true;

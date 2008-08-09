@@ -46,7 +46,6 @@ public:
 private:
 	struct Entry {
 		Common::String name;
-		Common::String type;
 		Common::String file;
 	};
 

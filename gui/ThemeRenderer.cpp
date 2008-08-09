@@ -95,7 +95,7 @@ const ThemeRenderer::TextDataInfo ThemeRenderer::kTextDataDefaults[] = {
 };
 
 
-ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) : 
+ThemeRenderer::ThemeRenderer(Common::String fileName, GraphicsMode mode) : 
 	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), 
 	_screen(0), _backBuffer(0), _bytesPerPixel(0), _initOk(false), 
 	_themeOk(false), _enabled(false), _buffering(false) {
@@ -119,11 +119,9 @@ ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) :
 	} else {
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	}
-	
-	ImageMan.addArchive(themeName + ".zip");
 
+	_themeFileName = fileName;
 	_initOk = true;
-	_themeName = themeName;
 }
 
 ThemeRenderer::~ThemeRenderer() {
@@ -134,12 +132,8 @@ ThemeRenderer::~ThemeRenderer() {
 	delete _parser;
 	delete _themeEval;
 	
-	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
-//		delete i->_value;
+	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i)
 		ImageMan.unregisterSurface(i->_key);
-	}
-	
-	ImageMan.remArchive(_stylefile + ".zip");
 }
 
 bool ThemeRenderer::init() {
@@ -154,7 +148,7 @@ bool ThemeRenderer::init() {
 	}
 
 	if (isThemeLoadingRequired() || !_themeOk) {
-		loadTheme(_themeName);
+		loadTheme(_themeFileName);
 	}
 
 	return true;
@@ -168,6 +162,30 @@ void ThemeRenderer::deinit() {
 		freeBackbuffer();
 		_initOk = false;
 	}
+}
+
+void ThemeRenderer::unloadTheme() {
+	if (!_themeOk)
+		return;
+
+	for (int i = 0; i < kDrawDataMAX; ++i) {
+		delete _widgets[i];
+		_widgets[i] = 0;
+	}
+	
+	for (int i = 0; i < kTextDataMAX; ++i) {
+		delete _texts[i];
+		_texts[i] = 0;
+	}
+	
+	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i)
+		ImageMan.unregisterSurface(i->_key);
+
+	ImageMan.remArchive(_themeFileName + ".zip");
+
+	_themeName.clear();
+	_themeFileName.clear();
+	_themeOk = false;
 }
 
 void ThemeRenderer::clearAll() {
@@ -281,7 +299,6 @@ bool ThemeRenderer::addFont(const Common::String &fontId, const Common::String &
 
 bool ThemeRenderer::addBitmap(const Common::String &filename) {
 	if (_bitmaps.contains(filename)) {
-		delete _bitmaps[filename];
 		ImageMan.unregisterSurface(filename);
 	}
 	
@@ -309,14 +326,28 @@ bool ThemeRenderer::addDrawData(const Common::String &data, bool cached) {
 	return true;
 }
 
-bool ThemeRenderer::loadTheme(Common::String themeName) {
+bool ThemeRenderer::loadTheme(Common::String fileName) {
 	unloadTheme();
 
-	if (themeName == "builtin" && !loadDefaultXML())
-		error("Could not load default embeded theme.");
+	if (fileName != "builtin") {	
+		if (ConfMan.hasKey("themepath"))
+			Common::File::addDefaultDirectory(ConfMan.get("themepath"));
 
-	if (!loadThemeXML(themeName)) {
-		warning("Could not parse custom theme '%s'.\nFalling back to default theme", themeName.c_str());
+#ifdef DATA_PATH
+		Common::File::addDefaultDirectoryRecursive(DATA_PATH);
+#endif
+		if (ConfMan.hasKey("extrapath"))
+			Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
+		
+		ImageMan.addArchive(fileName + ".zip");
+	}
+
+	if (fileName == "builtin") {
+		if (!loadDefaultXML())
+			error("Could not load default embeded theme");
+	}
+	else if (!loadThemeXML(fileName)) {
+		warning("Could not parse custom theme '%s'.\nFalling back to default theme", fileName.c_str());
 		
 		if (!loadDefaultXML()) // if we can't load the embeded theme, this is a complete failure
 			error("Could not load default embeded theme");
@@ -333,9 +364,7 @@ bool ThemeRenderer::loadTheme(Common::String themeName) {
 		}
 	}
 	
-	// Debug print all the parsed variables. remove
-	_themeEval->debugPrint();
-	
+	_themeName = "DEBUG - A Theme name";
 	_themeOk = true;
 	return true;
 }
@@ -346,6 +375,8 @@ bool ThemeRenderer::loadDefaultXML() {
 	// file inside the themes directory.
 	// Use the Python script "makedeftheme.py" to convert a normal XML theme
 	// into the "default.inc" file, which is ready to be included in the code.
+
+#ifdef GUI_ENABLE_BUILTIN_THEME
 	const char *defaultXML =
 #include "themes/default.inc"
 	;
@@ -354,20 +385,14 @@ bool ThemeRenderer::loadDefaultXML() {
 		return false;
 
 	return parser()->parse();
+#else
+	warning("The built-in theme is not enabled in the current build. Please load an external theme");
+	return false;
+#endif
 }
 
 bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 	assert(_parser);
-
-	if (ConfMan.hasKey("themepath"))
-		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
-
-#ifdef DATA_PATH
-	Common::File::addDefaultDirectoryRecursive(DATA_PATH);
-#endif
-
-	if (ConfMan.hasKey("extrapath"))
-		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
 		
  	if (!parser()->loadFile(themeName + ".stx")){
 #ifdef USE_ZLIB
@@ -821,9 +846,9 @@ void ThemeRenderer::updateScreen() {
 		
 	renderDirtyScreen();
 
-//	_vectorRenderer->fillSurface();
-//	themeEval()->debugDraw(_screen, _font);
-//	_vectorRenderer->copyWholeFrame(_system);
+	// _vectorRenderer->fillSurface();
+	// themeEval()->debugDraw(_screen, _font);
+	// _vectorRenderer->copyWholeFrame(_system);
 }
 
 void ThemeRenderer::renderDirtyScreen() {
