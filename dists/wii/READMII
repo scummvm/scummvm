@@ -6,12 +6,18 @@ features not compiled in:
 
 REQUIREMENTS
 
-  - sd card
-  - wiimote or gamecube controller in port 1
+  wii:
+    - sd card
+    - wiimote or gamecube controller in port 1
+
+  gamecube:
+    - sd card
+    - sd gecko adapter
+    - gamecube controller in port 1
 
 INSTALL
 
-  - copy the "apps" folder to the root of your sd card
+  - copy the "scummvm" folder into the "/apps" folder of your sd card
   - copy your demos and/or games onto the same sd card
     each game goes into its own subdirectory, do not place those under
     "/apps/scummvm", and do not set the "theme" or "extra" path to that folder
@@ -20,17 +26,21 @@ INSTALL
 
 RUN
 
-  either use the homebrew channel, available at
+  wii:
+    either use the homebrew channel, available at
 
-  http://hbc.hackmii.com/
+    http://hbc.hackmii.com/
 
-  or load "boot.dol" with your favorite loader
+    or load "/apps/scummvm/boot.dol" with your favorite loader
+
+  gamecube:
+    load "/apps/scummvm/scummvm-gc.dol" with your favorite loader
 
 CONTROLS
 
   wiimote
 
-    analog stick: mouse movement
+    IR: mouse movement
     a: left mouse button
     b: right mouse button
     minus: escape
