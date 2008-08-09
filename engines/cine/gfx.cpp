@@ -1127,16 +1127,11 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	// A filled rectangle:
 	case 22: {
 		// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing).
-		// The drawn rectangle doesn't seem to be flipped in the original disassembly
-		// but looking at the oxygen gauge meter during the first arcade sequence it
-		// definitely looks like the drawing should be at least horizontally flipped.
-		// So this may very well be wrong but having tested only the first arcade sequence's
-		// oxygen gauge this implementation's output *looks* good. It may be wrong still...
 		assert(it->objIdx < NUM_MAX_OBJECT);
 		obj = objectTable + it->objIdx;
 		byte color = obj->part & 0x0F;
-		int width = -obj->frame; // Flipped horizontally for now.
-		int height = -obj->costume; // Flipped vertically for now.
+		int width = obj->frame;
+		int height = obj->costume;
 		drawPlainBox(obj->x, obj->y, width, height, color);
 		debug(5, "renderOverlay: type=%d, x=%d, y=%d, width=%d, height=%d, color=%d",
 			it->type, obj->x, obj->y, width, height, color);
