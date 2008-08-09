@@ -312,9 +312,16 @@ class ThemeRenderer;
 
 class ThemeParser : public XMLParser {
 	typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const DrawStep &);
-	
+
 public:
 	ThemeParser(GUI::ThemeRenderer *parent);
+	
+	virtual ~ThemeParser() {
+		delete _defaultStepGlobal;
+		delete _defaultStepLocal;
+		_palette.clear();
+		_drawFunctions.clear();
+	}
 	
 	bool getPaletteColor(const Common::String &name, int &r, int &g, int &b) {
 		if (!_palette.contains(name))

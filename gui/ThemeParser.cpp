@@ -97,12 +97,12 @@ Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 
 Graphics::DrawStep *ThemeParser::newDrawStep() {
 	assert(_defaultStepGlobal);
-	Graphics::DrawStep *step = new DrawStep;
+	Graphics::DrawStep *step = 0 ; //new DrawStep;
 
 	if (_defaultStepLocal) {
-		memcpy(step, _defaultStepLocal, sizeof(DrawStep));
+		step = new DrawStep(*_defaultStepLocal);
 	} else {
-		memcpy(step, _defaultStepGlobal, sizeof(DrawStep));
+		step = new DrawStep(*_defaultStepGlobal);
 	}
 
 	return step;
@@ -116,9 +116,8 @@ bool ThemeParser::parserCallback_defaults(ParserNode *node) {
 		step = _defaultStepGlobal;
 	} else if (parentNode->name == "drawdata") {
 		if (_defaultStepLocal == 0)
-			_defaultStepLocal = new DrawStep;
+			_defaultStepLocal = new DrawStep(*_defaultStepLocal);
 
-		memcpy(_defaultStepLocal, _defaultStepGlobal, sizeof(DrawStep));
 		step = _defaultStepLocal;
 	} else {
 		return parserError("<default> key out of scope. Must be inside <drawdata> or <render_info> keys.");

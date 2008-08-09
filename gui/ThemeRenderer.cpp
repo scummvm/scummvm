@@ -123,6 +123,15 @@ ThemeRenderer::ThemeRenderer(Common::String themeName, GraphicsMode mode) :
 	_themeName = themeName;
 }
 
+ThemeRenderer::~ThemeRenderer() {
+	freeRenderer();
+	freeScreen();
+	freeBackbuffer();
+	unloadTheme();
+	delete _parser;
+	delete _themeEval;
+}
+
 bool ThemeRenderer::init() {
 	// reset everything and reload the graphics
 	deinit();
@@ -174,17 +183,16 @@ void ThemeRenderer::disable() {
 
 template<typename PixelType> 
 void ThemeRenderer::screenInit(bool backBuffer) {
-	freeScreen();
-	freeBackbuffer();
-
 	uint32 width = _system->getOverlayWidth();
 	uint32 height = _system->getOverlayHeight();
 	
 	if (backBuffer) {
+		freeBackbuffer();
 		_backBuffer = new Surface;
 		_backBuffer->create(width, height, sizeof(PixelType));
 	}
 	
+	freeScreen();
 	_screen = new Surface;
 	_screen->create(width, height, sizeof(PixelType));
 	_system->clearOverlay();

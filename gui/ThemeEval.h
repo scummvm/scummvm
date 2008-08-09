@@ -55,7 +55,8 @@ public:
 		_centered(false), _defaultW(-1), _defaultH(-1) { }
 		
 	virtual ~ThemeLayout() {
-		_children.clear();
+		for (uint i = 0; i < _children.size(); ++i)
+			delete _children[i];
 	}
 		
 	virtual void reflowLayout() = 0;
@@ -305,7 +306,8 @@ public:
 	ThemeEval() {
 		buildBuiltinVars();
 	}
-	~ThemeEval() {}
+	
+	~ThemeEval();
 	
 	void buildBuiltinVars();
 	
@@ -377,6 +379,16 @@ public:
 	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font) {
 		_layouts["Dialog.Launcher"]->debugDraw(screen, font);
 //		_layouts["Dialog.GameOptions_Graphics"]->debugDraw(screen, font);
+	}
+	
+	void reset() {
+		_vars.clear();
+		_builtin.clear();
+		_curDialog.clear();
+		_curLayout.clear();
+		
+		for (LayoutsMap::iterator i = _layouts.begin(); i != _layouts.end(); ++i)
+			delete i->_value;
 	}
 	
 private:

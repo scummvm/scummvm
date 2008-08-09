@@ -178,9 +178,12 @@ void ThemeLayoutHorizontal::reflowLayout() {
 			_w += _children[i]->getWidth() + _spacing;
 		}
 		
-		
 		_h = MAX(_h, (int16)(_children[i]->getHeight() + _paddingTop + _paddingBottom));
 	}
+}
+
+ThemeEval::~ThemeEval() {
+	reset();
 }
 
 void ThemeEval::buildBuiltinVars() {
@@ -236,6 +239,9 @@ void ThemeEval::addDialog(const Common::String &name, const Common::String &over
 	
 	if (!layout)
 		error("Error when loading dialog position for '%s'", overlays.c_str());
+		
+	if (_layouts.contains(name))
+		delete _layouts[name];
 	
 	_layouts[name] = layout;
 

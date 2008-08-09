@@ -179,13 +179,13 @@ namespace Common {
 	for a working sample of a Custom XML Parser.
 		
 */
-	
+			
 #define XML_KEY(keyName) {\
-		lay = new XMLKeyLayout; \
-		lay->custom = new kLocalParserName::CustomParserCallback; \
-		((kLocalParserName::CustomParserCallback*)(lay->custom))->callback = (&kLocalParserName::parserCallback_##keyName); \
-		layout.top()->children[#keyName] = lay; \
+		lay =  new CustomXMLKeyLayout;\
+		lay->callback = (&kLocalParserName::parserCallback_##keyName);\
+		layout.top()->children[#keyName] = lay;\
 		layout.push(lay); \
+		_layoutList.push_back(lay);\
 		for (Common::List<XMLKeyLayout::XMLKeyProperty>::const_iterator p = globalProps.begin(); p != globalProps.end(); ++p){\
 			layout.top()->properties.push_back(*p);}
 		
@@ -209,16 +209,18 @@ namespace Common {
 	
 #define CUSTOM_XML_PARSER(parserName) \
 	protected: \
-	typedef bool (parserName::*ParserCallback)(ParserNode *node); \
 	typedef parserName kLocalParserName; \
-	struct CustomParserCallback { ParserCallback callback; }; \
-	bool keyCallback(ParserNode *node) {return (this->*(((parserName::CustomParserCallback*)(node->layout->custom))->callback))(node);}\
+	bool keyCallback(ParserNode *node) {return node->layout->doCallback(this, node); }\
+	struct CustomXMLKeyLayout : public XMLKeyLayout {\
+		typedef bool (parserName::*ParserCallback)(ParserNode *node);\
+		ParserCallback callback;\
+		bool doCallback(XMLParser *parent, ParserNode *node) {return ((kLocalParserName*)parent->*callback)(node);} };\
 	virtual void buildLayout() { \
 		Common::Stack<XMLKeyLayout*> layout; \
-		XMLKeyLayout *lay = 0; \
+		CustomXMLKeyLayout *lay = 0; \
 		XMLKeyLayout::XMLKeyProperty prop; \
 		Common::List<XMLKeyLayout::XMLKeyProperty> globalProps; \
-		_XMLkeys = new XMLKeyLayout; \
+		_XMLkeys = new CustomXMLKeyLayout; \
 		layout.push(_XMLkeys);
 	
 #define PARSER_END() layout.clear(); }
@@ -280,8 +282,14 @@ public:
 	virtual ~XMLParser() {
 		while (!_activeKey.empty())
 			delete _activeKey.pop();
-		
+
 		delete _XMLkeys;
+
+		for (Common::List<XMLKeyLayout*>::iterator i = _layoutList.begin();
+			i != _layoutList.end(); ++i)
+			delete *i;
+
+		_layoutList.clear();
 	}
 
 	/** Active state for the parser */
@@ -297,12 +305,12 @@ public:
 	};
 	
 	struct XMLKeyLayout;
+	struct ParserNode;
 	
 	typedef Common::HashMap<Common::String, XMLParser::XMLKeyLayout*, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ChildMap;
 	
 	/** nested struct representing the layout of the XML file */
 	struct XMLKeyLayout {
-		void *custom;
 		struct XMLKeyProperty {
 			Common::String name;
 			bool required;
@@ -311,9 +319,10 @@ public:
 		Common::List<XMLKeyProperty> properties;
 		ChildMap children;
 		
-		~XMLKeyLayout() {
+		virtual bool doCallback(XMLParser *parent, ParserNode *node) = 0;
+		
+		virtual ~XMLKeyLayout() {
 			properties.clear();
-			children.clear();
 		}
 	} *_XMLkeys;
 
@@ -336,8 +345,10 @@ public:
 	bool loadFile(Common::String filename) {
 		Common::File *f = new Common::File;
 
-		if (!f->open(filename))
+		if (!f->open(filename)) {
+			delete f;
 			return false;
+		}
 
 		_fileName = filename;
 		_text.loadStream(f);
@@ -564,6 +575,7 @@ protected:
 	 */
 	virtual void cleanup() {}
 
+	Common::List<XMLKeyLayout*> _layoutList;
 
 private:
 	int _pos; /** Current position on the XML buffer. */

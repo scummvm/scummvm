@@ -35,13 +35,15 @@
 
 #include "gui/dialog.h"
 #include "gui/ThemeParser.h"
-#include "gui/ThemeEval.h"
 #include "graphics/VectorRenderer.h"
+#include "gui/ThemeEval.h"
+
 
 namespace GUI {
 
 struct WidgetDrawData;
 struct DrawDataInfo;
+class ThemeEval;
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
@@ -210,12 +212,7 @@ public:
 	ThemeRenderer(Common::String themeName, GraphicsMode mode);
 
 	/** Default destructor */
-	~ThemeRenderer() {
-		freeRenderer();
-		freeScreen();
-		unloadTheme();
-		delete _parser;
-	}
+	~ThemeRenderer();
 	
 	GUI::ThemeEval *themeEval() { return _themeEval; }
 

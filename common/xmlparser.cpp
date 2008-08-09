@@ -191,6 +191,9 @@ bool XMLParser::parse() {
 	if (_XMLkeys == 0)
 		buildLayout();
 
+	while (!_activeKey.empty())
+		delete _activeKey.pop();
+
 	cleanup();
 
 	bool activeClosure = false;
