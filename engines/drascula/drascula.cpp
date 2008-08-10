@@ -162,6 +162,12 @@ int DrasculaEngine::init() {
 	_textmisc = 0;
 	_textd1 = 0;
 
+	_color = 0;
+	blinking = 0;
+	leftMouseButton = 0;
+	rightMouseButton = 0;
+	*textName = 0;
+
 	if (!loadDrasculaDat())
 		return 1;
 
@@ -1020,7 +1026,7 @@ void DrasculaEngine::freeTexts(char ***ptr) {
 
 	for (int lang = 0; lang < _numLangs; lang++) {
 		if (ptr[lang]) {
-			free(ptr[lang][0] - DATAALIGNMENT);
+			free(ptr[lang][0]);
 			free(ptr[lang]);
 		}
 	}
