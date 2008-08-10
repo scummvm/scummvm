@@ -478,7 +478,7 @@
 		<def resolution = '320xY' var = 'About.OuterBorder' value = '16'/>
 		
 		<def var = 'ListWidget.hlLeftPadding' value = '0'/>
-		<def var = 'ListWidget.hlRightPadding' value = '16'/>
+		<def var = 'ListWidget.hlRightPadding' value = '0'/>
 		<def var = 'PopUpWidget.labelSpacing' value = '10' />
 		
 		<def var = 'ShowLauncherLogo' value = '1'/>

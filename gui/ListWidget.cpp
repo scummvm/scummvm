@@ -398,7 +398,7 @@ void ListWidget::drawWidget() {
 		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
 			adjustOffset();
-			width = _w - r.left - _hlRightPadding - _leftPadding;
+			width = _w - r.left - _hlRightPadding - _leftPadding - _scrollBarWidth;
 			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight-2), 
 									buffer, _state, Theme::kTextAlignLeft, inverted, pad);
 		} else {
@@ -409,7 +409,7 @@ void ListWidget::drawWidget() {
 				if (width > _w - r.left)
 					width = _w - r.left;
 			} else
-				width = _w - r.left - _hlRightPadding;
+				width = _w - r.left - _hlRightPadding - _scrollBarWidth;
 			if (width > maxWidth)
 				maxWidth = width;
 			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight-2), 
