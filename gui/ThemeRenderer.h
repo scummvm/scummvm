@@ -458,7 +458,9 @@ public:
 	}
 	
 	void *evaluator() { return _themeEval; }
+	
 	bool supportsImages() const { return true; }
+	bool ownCursor() const { return _useCursor; }
 	
 	Graphics::Surface *getBitmap(const Common::String &name) {
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
@@ -697,6 +699,19 @@ protected:
 
 	Common::String _themeName; /** Name of the currently loaded theme */
 	Common::String _themeFileName;
+	
+	/** Custom Cursor Management */
+	void setUpCursor();
+	void createCursor();
+	
+	bool _useCursor;
+	int _cursorHotspotX, _cursorHotspotY;
+	int _cursorTargetScale;
+#define MAX_CURS_COLORS 255
+	byte *_cursor;
+	bool _needPaletteUpdates;
+	uint _cursorWidth, _cursorHeight;
+	byte _cursorPal[4*MAX_CURS_COLORS];
 };
 
 } // end of namespace GUI.

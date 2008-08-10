@@ -30,7 +30,7 @@
 #include "common/events.h"
 #include "common/config-manager.h"
 #include "graphics/imageman.h"
-
+#include "graphics/cursorman.h"
 #include "gui/launcher.h"
 
 #include "gui/ThemeRenderer.h"
@@ -98,10 +98,12 @@ const ThemeRenderer::TextDataInfo ThemeRenderer::kTextDataDefaults[] = {
 ThemeRenderer::ThemeRenderer(Common::String fileName, GraphicsMode mode) : 
 	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), 
 	_screen(0), _backBuffer(0), _bytesPerPixel(0), _initOk(false), 
-	_themeOk(false), _enabled(false), _buffering(false) {
+	_themeOk(false), _enabled(false), _buffering(false), _cursor(0) {
 	_system = g_system;
 	_parser = new ThemeParser(this);
 	_themeEval = new GUI::ThemeEval();
+	
+	_useCursor = false;
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
 		_widgets[i] = 0;
@@ -131,6 +133,7 @@ ThemeRenderer::~ThemeRenderer() {
 	unloadTheme();
 	delete _parser;
 	delete _themeEval;
+	delete[] _cursor;
 	
 	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i)
 		ImageMan.unregisterSurface(i->_key);
@@ -200,14 +203,18 @@ void ThemeRenderer::refresh() {
 	init();
 	if (_enabled) {
 		_system->showOverlay();
-//		CursorMan.replaceCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
-//		CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
+		CursorMan.replaceCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
+		CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
 	}
 }
 
 void ThemeRenderer::enable() {
 	init();
 	resetDrawArea();
+	
+	if (_useCursor)
+		setUpCursor();
+	
 	_system->showOverlay();
 	clearAll();
 	_enabled = true;
@@ -215,6 +222,12 @@ void ThemeRenderer::enable() {
 
 void ThemeRenderer::disable() {
 	_system->hideOverlay();
+	
+	if (_useCursor) {
+		CursorMan.popCursorPalette();
+		CursorMan.popCursor();
+	}
+	
 	_enabled = false;
 }
 
@@ -371,6 +384,10 @@ bool ThemeRenderer::loadTheme(Common::String fileName) {
 			// TODO: draw the cached widget to the cache surface
 			if (_widgets[i]->_cached) {}
 		}
+	}
+	
+	if (_system->hasFeature(OSystem::kFeatureCursorHasPalette)) {
+		createCursor();
 	}
 	
 	_themeName = "DEBUG - A Theme name";
@@ -888,6 +905,72 @@ void ThemeRenderer::openDialog(bool doBuffer, ShadingStyle style) {
 	_vectorRenderer->setSurface(_backBuffer);
 	_vectorRenderer->blitSurface(_screen, Common::Rect(0, 0, _screen->w, _screen->h));
 	_vectorRenderer->setSurface(_screen);
+}
+
+void ThemeRenderer::setUpCursor() {
+	CursorMan.pushCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
+	CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
+	CursorMan.showMouse(true);
+}
+
+void ThemeRenderer::createCursor() {
+	const Surface *cursor = _bitmaps["cursor.bmp"];
+	
+	if (!cursor)
+		return;
+		
+	_cursorHotspotX = _themeEval->getVar("Cursor.Hotspot.X", 0);
+	_cursorHotspotY = _themeEval->getVar("Cursor.Hotspot.Y", 0);
+
+	_cursorTargetScale = _themeEval->getVar("Cursor.TargetScale", 3);
+
+	_cursorWidth = cursor->w;
+	_cursorHeight = cursor->h;
+
+	uint colorsFound = 0;
+	const OverlayColor *src = (const OverlayColor*)cursor->pixels;
+
+	byte *table = new byte[65536];
+	assert(table);
+	memset(table, 0, sizeof(byte)*65536);
+
+	byte r, g, b;
+
+	uint16 transparency = RGBToColor<ColorMasks<565> >(255, 0, 255);
+
+	delete[] _cursor;
+
+	_cursor = new byte[_cursorWidth * _cursorHeight];
+	assert(_cursor);
+	memset(_cursor, 255, sizeof(byte)*_cursorWidth*_cursorHeight);
+
+	for (uint y = 0; y < _cursorHeight; ++y) {
+		for (uint x = 0; x < _cursorWidth; ++x) {
+			_system->colorToRGB(src[x], r, g, b);
+			uint16 col = RGBToColor<ColorMasks<565> >(r, g, b);
+			if (!table[col] && col != transparency) {
+				table[col] = colorsFound++;
+
+				uint index = table[col];
+				_cursorPal[index * 4 + 0] = r;
+				_cursorPal[index * 4 + 1] = g;
+				_cursorPal[index * 4 + 2] = b;
+				_cursorPal[index * 4 + 3] = 0xFF;
+
+				if (colorsFound > MAX_CURS_COLORS)
+					error("Cursor contains too much colors (%d, but only %d are allowed)", colorsFound, MAX_CURS_COLORS);
+			}
+
+			if (col != transparency) {
+				uint index = table[col];
+				_cursor[y * _cursorWidth + x] = index;
+			}
+		}
+		src += _cursorWidth;
+	}
+
+	_useCursor = true;
+	delete[] table;
 }
 
 } // end of namespace GUI.
