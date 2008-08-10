@@ -68,7 +68,7 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 			return font;
 
 #ifdef USE_ZLIB
-		unzFile zipFile = unzOpen((_stylefile + ".zip").c_str());
+		unzFile zipFile = unzOpen((getThemeFileName() + ".zip").c_str());
 		if (zipFile && unzLocateFile(zipFile, cacheFilename.c_str(), 2) == UNZ_OK) {
 			unz_file_info fileInfo;
 			unzOpenCurrentFile(zipFile);
@@ -98,7 +98,7 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 
 #ifdef USE_ZLIB
 	if (!font) {
-		unzFile zipFile = unzOpen((_stylefile + ".zip").c_str());
+		unzFile zipFile = unzOpen((getThemeFileName() + ".zip").c_str());
 		if (zipFile && unzLocateFile(zipFile, filename, 2) == UNZ_OK) {
 			unz_file_info fileInfo;
 			unzOpenCurrentFile(zipFile);

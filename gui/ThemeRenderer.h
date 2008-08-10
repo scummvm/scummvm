@@ -234,7 +234,7 @@ public:
 	void deinit();
 	void clearAll();
 
-	void refresh() {}
+	void refresh();
 	void enable();
 	void disable();
 	

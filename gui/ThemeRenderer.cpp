@@ -183,8 +183,8 @@ void ThemeRenderer::unloadTheme() {
 
 	ImageMan.remArchive(_themeFileName + ".zip");
 
-	_themeName.clear();
-	_themeFileName.clear();
+//	_themeName.clear();
+//	_themeFileName.clear();
 	_themeOk = false;
 }
 
@@ -194,6 +194,15 @@ void ThemeRenderer::clearAll() {
 
 	_system->clearOverlay();
 	_system->grabOverlay((OverlayColor*)_screen->pixels, _screen->w);
+}
+
+void ThemeRenderer::refresh() {
+	init();
+	if (_enabled) {
+		_system->showOverlay();
+//		CursorMan.replaceCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
+//		CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
+	}
 }
 
 void ThemeRenderer::enable() {
