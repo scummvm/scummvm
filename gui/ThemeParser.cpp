@@ -354,10 +354,12 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		Common::String functionName = stepNode->values["func"];
 		
 		if (functionName == "bitmap") {
-			if (!stepNode->values.contains("filename"))
+			if (!stepNode->values.contains("file"))
 				return parserError("Need to specify a filename for Bitmap blitting.");
 				
-			if (!_theme->getBitmap(stepNode->values["filename"]))
+			drawstep->blitSrc = _theme->getBitmap(stepNode->values["file"]);
+				
+			if (!drawstep->blitSrc)
 				return parserError("The given filename hasn't been loaded into the GUI.");
 		}
 

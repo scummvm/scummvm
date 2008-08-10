@@ -422,7 +422,7 @@ protected:
 					XML_PROP(xpos, false)
 					XML_PROP(ypos, false)
 					XML_PROP(orientation, false)
-					XML_PROP(bitmap, false)
+					XML_PROP(file, false)
 				KEY_END()
 
 				XML_KEY(text)

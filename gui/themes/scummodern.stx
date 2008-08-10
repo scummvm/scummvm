@@ -60,6 +60,7 @@
 	<bitmaps>
 		<bitmap filename = 'logo.bmp'/>
 		<bitmap filename = 'cursor.bmp'/>
+		<bitmap filename = 'checkbox.bmp'/>
 	</bitmaps>
 
 	<fonts>
@@ -419,7 +420,7 @@
 				vertical_align = 'top'
 				horizontal_align = 'left'
 		/>
-		<drawstep	func = 'roundedsq'
+/*		<drawstep	func = 'roundedsq'
 					fill = 'gradient'
 					radius = 4
 					fg_color = 'white'
@@ -428,6 +429,9 @@
 					shadow = 0
 					bevel = 1
 					bevel_color = 'shadowcolor'
+		/> */
+		<drawstep	func = 'bitmap'
+					file = 'checkbox.bmp'
 		/>
 	</drawdata>
 
@@ -518,7 +522,7 @@
 				padding = '7, 5, 0, 0'
 		/>
 		<widget name = 'EditTextWidget'
-				padding = '7, 5, 0, 0'
+				padding = '5, 5, 0, 0'
 		/>
 		<widget name = 'Console'
 				padding = '7, 5, 5, 5'

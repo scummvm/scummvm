@@ -364,6 +364,7 @@ void ListWidget::drawWidget() {
 
 	// Draw a thin frame around the list.
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), _hints, Theme::kWidgetBackgroundBorder);
+	const int scrollbarW = (_scrollBar && _scrollBar->isVisible()) ? _scrollBarWidth : 0;
 
 	// Draw the list items
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
@@ -398,7 +399,7 @@ void ListWidget::drawWidget() {
 		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
 			adjustOffset();
-			width = _w - r.left - _hlRightPadding - _leftPadding - _scrollBarWidth;
+			width = _w - r.left - _hlRightPadding - _leftPadding - scrollbarW;
 			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight-2), 
 									buffer, _state, Theme::kTextAlignLeft, inverted, pad);
 		} else {
@@ -407,9 +408,9 @@ void ListWidget::drawWidget() {
 			if (_selectedItem != pos) {
 				width = g_gui.getStringWidth(buffer) + pad;
 				if (width > _w - r.left)
-					width = _w - r.left - _hlRightPadding - _scrollBarWidth;
+					width = _w - r.left - _hlRightPadding - scrollbarW;
 			} else
-				width = _w - r.left - _hlRightPadding - _scrollBarWidth;
+				width = _w - r.left - _hlRightPadding - scrollbarW;
 			if (width > maxWidth)
 				maxWidth = width;
 			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight-2), 

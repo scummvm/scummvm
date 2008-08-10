@@ -417,7 +417,7 @@ public:
 	void drawCallback_BITMAP(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		blitAlphaBitmap(step.blitSrc, Common::Rect(x, y, w, h));
+		blitAlphaBitmap(step.blitSrc, Common::Rect(x, y, x + w, y + h));
 	}
 
 	void drawCallback_VOID(const Common::Rect &area, const DrawStep &step) {}
@@ -720,8 +720,6 @@ public:
 	}
 	
 	virtual void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) {
-		assert(r.width() >= source->w && r.height() >= source->h);
-		
 		int16 x = r.left;
 		int16 y = r.top;
 		
