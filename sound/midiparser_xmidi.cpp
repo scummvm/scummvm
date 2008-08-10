@@ -46,13 +46,16 @@ protected:
 	Loop _loop[4];
 	int _loopCount;
 
+	XMidiCallbackProc _callbackProc;
+	void *_callbackData;
+
 protected:
 	uint32 readVLQ2(byte * &data);
 	void resetTracking();
 	void parseNextEvent(EventInfo &info);
 
 public:
-	MidiParser_XMIDI() : _inserted_delta(0) {}
+	MidiParser_XMIDI(XMidiCallbackProc proc, void *data) : _inserted_delta(0), _callbackProc(proc), _callbackData(data) {}
 	~MidiParser_XMIDI() { }
 
 	bool loadMusic(byte *data, uint32 size);
@@ -103,23 +106,22 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = *(_position._play_pos++);
 
+		// This isn't a full XMIDI implementation, but it should
+		// hopefully be "good enough" for most things.
+
+		switch (info.basic.param1) {
 		// Simplified XMIDI looping.
-		//
-		// I would really like to turn the loop events into some sort
-		// of NOP event (perhaps a dummy META event?), but for now we
-		// just pass them on to the MIDI driver. That has worked in the
-		// past, so it shouldn't cause any actual damage...
+		case 0x74: {	// XMIDI_CONTROLLER_FOR_LOOP
+				byte *pos = _position._play_pos;
+				if (_loopCount < ARRAYSIZE(_loop) - 1)
+					_loopCount++;
 
-		if (info.basic.param1 == 0x74) {
-			// XMIDI_CONTROLLER_FOR_LOOP
-			byte *pos = _position._play_pos;
-			if (_loopCount < ARRAYSIZE(_loop) - 1)
-				_loopCount++;
+				_loop[_loopCount].pos = pos;
+				_loop[_loopCount].repeat = info.basic.param2;
+				break;
+			}
 
-			_loop[_loopCount].pos = pos;
-			_loop[_loopCount].repeat = info.basic.param2;
-		} else if (info.basic.param1 == 0x75) {
-			// XMIDI_CONTROLLER_NEXT_BREAK
+		case 0x75:	// XMIDI_CONTORLLER_NEXT_BREAK
 			if (_loopCount >= 0) {
 				if (info.basic.param2 < 64) {
 					// End the current loop.
@@ -133,10 +135,26 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 					}
 				}
 			}
-		} else if (info.basic.param1 >= 0x6e && info.basic.param1 <= 0x78) {
-			warning("Unsupported XMIDI controller %d (0x%2x)",
-				info.basic.param1, info.basic.param1);
+			break;
+
+		case 0x77:	// XMIDI_CONTROLLER_CALLBACK_TRIG
+			if (_callbackProc)
+				_callbackProc(info.basic.param2, _callbackData);
+			break;
+
+		default:
+			if (info.basic.param1 >= 0x6e && info.basic.param1 <= 0x78) {
+				warning("Unsupported XMIDI controller %d (0x%2x)",
+					info.basic.param1, info.basic.param1);
+			}
+			break;
 		}
+
+		// Should we really keep passing the XMIDI controller events to
+		// the MIDI driver, or should we turn them into some kind of
+		// NOP events? (Dummy meta events, perhaps?) Ah well, it has
+		// worked so far, so it shouldn't cause any damage...
+
 		break;
 
 	case 0xF: // Meta or SysEx event
@@ -336,4 +354,10 @@ void MidiParser_XMIDI::resetTracking() {
 	_inserted_delta = 0;
 }
 
-MidiParser *MidiParser::createParser_XMIDI() { return new MidiParser_XMIDI; }
+void MidiParser::defaultXMidiCallback(byte eventData, void *data) {
+	warning("MidiParser: defaultXMidiCallback(%d)", eventData);
+}
+
+MidiParser *MidiParser::createParser_XMIDI(XMidiCallbackProc proc, void *data) {
+	return new MidiParser_XMIDI(proc, data);
+}

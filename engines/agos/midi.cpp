@@ -538,7 +538,11 @@ void MidiPlayer::loadXMIDI(Common::File *in, bool sfx) {
 		error("Expected 'FORM' tag but found '%c%c%c%c' instead", buf[0], buf[1], buf[2], buf[3]);
 	}
 
-	MidiParser *parser = MidiParser::createParser_XMIDI();
+	// In the DOS version of Simon the Sorcerer 2, the music contains lots
+	// of XMIDI callback controller events. As far as we know, they aren't
+	// actually used, so we disable the callback handler explicitly.
+
+	MidiParser *parser = MidiParser::createParser_XMIDI(NULL);
 	parser->setMidiDriver(this);
 	parser->setTimerRate(_driver->getBaseTempo());
 	if (!parser->loadMusic(p->data, size))
