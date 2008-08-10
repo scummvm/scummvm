@@ -472,6 +472,17 @@ public:
 			
 		return 0;
 	}
+	
+	/**
+	 *	Interface for the Theme Parser: Creates a new cursor by loading the given
+	 *	bitmap and sets it as the active cursor.
+	 *
+	 *	@param filename File name of the bitmap to load.
+	 * 	@param hotspotX X Coordinate of the bitmap which does the cursor click.
+	 *	@param hotspotY	Y Coordinate of the bitmap which does the cursor click.
+	 *	@param scale	Scale at which the bitmap is supposed to be used.
+	 */
+	bool createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale);
 
 protected:
 
@@ -702,7 +713,6 @@ protected:
 	
 	/** Custom Cursor Management */
 	void setUpCursor();
-	void createCursor();
 	
 	bool _useCursor;
 	int _cursorHotspotX, _cursorHotspotY;

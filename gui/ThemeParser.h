@@ -361,6 +361,13 @@ protected:
 					XML_PROP(resolution, false)
 				KEY_END()
 			KEY_END()
+			
+			XML_KEY(cursor)
+				XML_PROP(file, true)
+				XML_PROP(hotspot, true)
+				XML_PROP(scale, true)
+				XML_PROP(resolution, false)
+			KEY_END()
 
 			XML_KEY(defaults)
 				XML_PROP(stroke, false)
@@ -499,6 +506,8 @@ protected:
 	bool parserCallback_drawdata(ParserNode *node);
 	bool parserCallback_bitmaps(ParserNode *node) { return true; }
 	bool parserCallback_bitmap(ParserNode *node);
+	bool parserCallback_cursor(ParserNode *node);
+	
 	
 	/** Layout info callbacks */
 	bool parserCallback_layout_info(ParserNode *node);

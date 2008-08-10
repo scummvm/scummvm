@@ -150,6 +150,26 @@ bool ThemeParser::parserCallback_fonts(ParserNode *node) {
 	return true;	
 }
 
+bool ThemeParser::parserCallback_cursor(ParserNode *node) {
+	if (resolutionCheck(node->values["resolution"])) {
+		node->ignore = true;
+		return true;
+	}
+	
+	int spotx, spoty, scale;
+	
+	if (!parseIntegerKey(node->values["hotspot"].c_str(), 2, &spotx, &spoty))
+		return parserError("Error when parsing cursor Hot Spot coordinates.");
+		
+	if (!parseIntegerKey(node->values["scale"].c_str(), 1, &scale))
+		return parserError("Error when parsing cursor scale.");
+		
+	if (!_theme->createCursor(node->values["file"], spotx, spoty, scale))
+		return parserError("Error when creating Bitmap Cursor.");
+		
+	return true;
+}
+
 bool ThemeParser::parserCallback_bitmap(ParserNode *node) {
 	if (resolutionCheck(node->values["resolution"])) {
 		node->ignore = true;

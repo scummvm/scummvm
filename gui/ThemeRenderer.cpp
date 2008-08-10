@@ -386,10 +386,6 @@ bool ThemeRenderer::loadTheme(Common::String fileName) {
 		}
 	}
 	
-	if (_system->hasFeature(OSystem::kFeatureCursorHasPalette)) {
-		createCursor();
-	}
-	
 	_themeName = "DEBUG - A Theme name";
 	_themeOk = true;
 	return true;
@@ -913,16 +909,18 @@ void ThemeRenderer::setUpCursor() {
 	CursorMan.showMouse(true);
 }
 
-void ThemeRenderer::createCursor() {
-	const Surface *cursor = _bitmaps["cursor.bmp"];
+bool ThemeRenderer::createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale) {
+	if (!_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+		return false;
+		
+	const Surface *cursor = _bitmaps[filename];
 	
 	if (!cursor)
-		return;
+		return false;
 		
-	_cursorHotspotX = _themeEval->getVar("Cursor.Hotspot.X", 0);
-	_cursorHotspotY = _themeEval->getVar("Cursor.Hotspot.Y", 0);
-
-	_cursorTargetScale = _themeEval->getVar("Cursor.TargetScale", 3);
+	_cursorHotspotX = hotspotX;
+	_cursorHotspotY = hotspotY;
+	_cursorTargetScale = scale;
 
 	_cursorWidth = cursor->w;
 	_cursorHeight = cursor->h;
@@ -957,8 +955,10 @@ void ThemeRenderer::createCursor() {
 				_cursorPal[index * 4 + 2] = b;
 				_cursorPal[index * 4 + 3] = 0xFF;
 
-				if (colorsFound > MAX_CURS_COLORS)
-					error("Cursor contains too much colors (%d, but only %d are allowed)", colorsFound, MAX_CURS_COLORS);
+				if (colorsFound > MAX_CURS_COLORS) {
+					warning("Cursor contains too much colors (%d, but only %d are allowed)", colorsFound, MAX_CURS_COLORS);
+					return false;
+				}
 			}
 
 			if (col != transparency) {
@@ -971,6 +971,8 @@ void ThemeRenderer::createCursor() {
 
 	_useCursor = true;
 	delete[] table;
+	
+	return true;
 }
 
 } // end of namespace GUI.

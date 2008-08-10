@@ -94,6 +94,8 @@
 	</fonts>
 
 	<defaults fill = 'gradient' fg_color = 'white' bevel_color = '237, 169, 72'/>
+	
+	<cursor file = 'cursor.bmp' hotspot = '0, 0' scale = '3'/>
 
 	<drawdata id = 'text_selection' cache = false>
 		<drawstep	func = 'square'
