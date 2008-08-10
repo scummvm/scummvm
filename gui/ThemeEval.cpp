@@ -124,8 +124,11 @@ void ThemeLayoutVertical::reflowLayout() {
 		
 		if (autoWidget != -1 && autoWidget != (int)i) {
 			_children[autoWidget]->setHeight(_children[autoWidget]->getHeight() - (_children[i]->getHeight() + _spacing));
-			for (int j = autoWidget - 1; j >= 0; --j)
+			
+			if (_reverse) for (int j = autoWidget - 1; j >= 0; --j)
 				_children[j]->setY(-(_children[i]->getHeight() + _spacing));
+			else
+				_children[i]->setY(-2 * (_children[i]->getHeight() + _spacing));
 		} else {
 			_h += _children[i]->getHeight() + _spacing;
 		}
@@ -172,8 +175,11 @@ void ThemeLayoutHorizontal::reflowLayout() {
 
 		if (autoWidget != -1 && autoWidget != (int)i) {
 			_children[autoWidget]->setWidth(_children[autoWidget]->getWidth() - (_children[i]->getWidth() + _spacing));
-			for (int j = autoWidget - 1; j >= 0; --j)
+			
+			if (_reverse) for (int j = autoWidget - 1; j >= 0; --j)
 				_children[j]->setX(-(_children[i]->getWidth() + _spacing));
+			else
+				_children[i]->setX(-2 * (_children[i]->getWidth() + _spacing));
 		} else {
 			_w += _children[i]->getWidth() + _spacing;
 		}

@@ -483,6 +483,8 @@
 		
 		<def var = 'ShowLauncherLogo' value = '1'/>
 		<def resolution = '320xY' var = 'ShowLauncherLogo' value = '0'/>
+		
+		<def var = 'ScummSaveLoad.ExtInfo.Visible' value = '1'/>
 
 		<widget name = 'OptionsLabel'
 				size = '110, Globals.Line.Height'
@@ -582,7 +584,7 @@
 			<widget name = 'Version'
 					height = 'Globals.Line.Height'
 			/>
-			<widget name = 'GameList' width = '304' height = '120'/>
+			<widget name = 'GameList'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6'>
 				<widget name = 'AddGameButton' 
 						width = '95'
@@ -1048,6 +1050,29 @@
 				</layout>
 				<widget name = 'List' />
 			</layout>
+		</layout>
+	</dialog>
+	
+	<dialog name = 'ScummHelp' overlays = 'screen_center'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' direction = 'bottom2top'>
+			<layout type = 'horizontal' padding = '0, 0, 16, 0'>
+				<widget name = 'Prev'
+						type = 'Button'
+				/>
+				<widget name = 'Next'
+						type = 'Button'
+				/>
+				<space size = '32'/>
+				<widget name = 'Close'
+						type = 'Button'
+				/>
+			</layout>
+			<widget name = 'HelpText'
+					height = '220'
+			/>
+			<widget name = 'Title'
+					height = 'Globals.Line.Height'
+			/>
 		</layout>
 	</dialog>
 </layout_info>

@@ -318,7 +318,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 }
 
 void SaveLoadChooser::reflowLayout() {
-	if (g_gui.evaluator()->getVar("scummsaveload_extinfo.visible") == 1) {
+	if (g_gui.xmlEval()->getVar("ScummSaveLoad.ExtInfo.Visible", 1) == 1) {
 		int16 x, y;
 		uint16 w, h;
 		
@@ -644,16 +644,16 @@ enum {
 };
 
 HelpDialog::HelpDialog(const GameSettings &game)
-	: ScummDialog("scummhelp"), _game(game) {
-	_title = new StaticTextWidget(this, "scummhelp_title", "");
+	: ScummDialog("ScummHelp"), _game(game) {
+	_title = new StaticTextWidget(this, "ScummHelp.Title", "");
 
 	_page = 1;
 
 	_numPages = ScummHelp::numPages(_game.id);
 
-	_prevButton = new GUI::ButtonWidget(this, "scummhelp_prev", "Previous", kPrevCmd, 'P');
-	_nextButton = new GUI::ButtonWidget(this, "scummhelp_next", "Next", kNextCmd, 'N');
-	new GUI::ButtonWidget(this, "scummhelp_close", "Close", kCloseCmd, 'C');
+	_prevButton = new GUI::ButtonWidget(this, "ScummHelp.Prev", "Previous", kPrevCmd, 'P');
+	_nextButton = new GUI::ButtonWidget(this, "ScummHelp.Next", "Next", kNextCmd, 'N');
+	new GUI::ButtonWidget(this, "ScummHelp.Close", "Close", kCloseCmd, 'C');
 	_prevButton->clearFlags(WIDGET_ENABLED);
 
 	// Dummy entries
@@ -670,19 +670,18 @@ void HelpDialog::reflowLayout() {
 	_drawingHints &= ~GUI::THEME_HINT_SPECIAL_COLOR;
 
 	int lineHeight = g_gui.getFontHeight();
-
-	int keyX = g_gui.evaluator()->getVar("scummhelp_key.x");
-	int keyYoff = g_gui.evaluator()->getVar("scummhelp_key.yoffset");
-	int keyW = g_gui.evaluator()->getVar("scummhelp_key.w");
-	int keyH = g_gui.evaluator()->getVar("scummhelp_key.h");
-	int dscX = g_gui.evaluator()->getVar("scummhelp_dsc.x");
-	int dscYoff = g_gui.evaluator()->getVar("scummhelp_dsc.yoffset");
-	int dscW = g_gui.evaluator()->getVar("scummhelp_dsc.w");
-	int dscH = g_gui.evaluator()->getVar("scummhelp_dsc.h");
+	int16 x, y;
+	uint16 w, h;
+	
+	g_gui.xmlEval()->getWidgetData("ScummHelp.HelpText", x, y, w, h);
+	
+	int keyW = w * 20 / 100;
+	int dscX = x + keyW;
+	int dscW = w * 80 / 100;
 
 	for (int i = 0; i < HELP_NUM_LINES; i++) {
-		_key[i]->resize(keyX, keyYoff + lineHeight * (i + 2), keyW, keyH);
-		_dsc[i]->resize(dscX, dscYoff + lineHeight * (i + 2), dscW, dscH);
+		_key[i]->resize(x, y + lineHeight * i, keyW, lineHeight + 2);
+		_dsc[i]->resize(dscX, y + lineHeight * i, dscW, lineHeight + 2);
 	}
 
 	displayKeyBindings();
