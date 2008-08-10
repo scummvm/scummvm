@@ -59,6 +59,8 @@ bool DrasculaEngine::saveLoadScreen() {
 
 	select[0] = 0;
 
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
 	for (;;) {
 		y = 27;
 		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
@@ -140,8 +142,10 @@ bool DrasculaEngine::saveLoadScreen() {
 			}
 
 			if (mouseX > 125 && mouseY > 123 && mouseX < 199 && mouseY < 149 && selectionMade == 1) {
-				if (!loadGame(file))
+				if (!loadGame(file)) {
+					_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 					return false;
+				}
 				break;
 			} else if (mouseX > 208 && mouseY > 123 && mouseX < 282 && mouseY < 149 && selectionMade == 1) {
 				saveGame(file);
@@ -171,6 +175,8 @@ bool DrasculaEngine::saveLoadScreen() {
 	clearRoom();
 	loadPic(roomNumber, bgSurface, HALF_PAL);
 	selectionMade = 0;
+
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 	return true;
 }
