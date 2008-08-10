@@ -196,14 +196,18 @@ void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 		_seqWsaChatTimeout += pausedTime;
 		_seqWsaChatFrameTimeout += pausedTime;
 
-		for (int x = 0; x < 10; x++) {
-			if (_activeText[x].duration != -1)
-				_activeText[x].startTime += pausedTime;
+		if (_activeText) {
+			for (int x = 0; x < 10; x++) {
+				if (_activeText[x].duration != -1)
+					_activeText[x].startTime += pausedTime;
+			}
 		}
 
-		for (int x = 0; x < 8; x++) {
-			if (_activeWSA[x].flags != -1)
-				_activeWSA[x].nextFrame += pausedTime;
+		if (_activeWSA) {
+			for (int x = 0; x < 8; x++) {
+				if (_activeWSA[x].flags != -1)
+					_activeWSA[x].nextFrame += pausedTime;
+			}
 		}
 
 		_nextIdleAnim += pausedTime;
