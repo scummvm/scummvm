@@ -323,23 +323,24 @@ inline uint32 fp_sqroot(uint32 x) {
 template <typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, 
-			GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV, int deltax) {
+			GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV, int deltax, bool ellipsis) {
 
-	int offset = 0;
+	int offset = area.top;
 	
-	switch (alignV) {
-		case GUI::Theme::kTextAlignVCenter:
-			offset = area.top + (area.height() - font->getFontHeight()) / 2;
-			break;
-		case GUI::Theme::kTextAlignVBottom:
-			offset = area.bottom - font->getFontHeight();
-			break;
-		case GUI::Theme::kTextAlignVTop:
-			offset = area.top;
-			break;
+	if (font->getFontHeight() < area.height()) {
+		switch (alignV) {
+			case GUI::Theme::kTextAlignVCenter:
+				offset = area.top + ((area.height() - font->getFontHeight()) >> 1);
+				break;
+			case GUI::Theme::kTextAlignVBottom:
+				offset = area.bottom - font->getFontHeight();
+				break;
+			default:
+				break;
+		}
 	}
 	
-	font->drawString(_activeSurface, text, area.left, offset, area.width(), _fgColor, (Graphics::TextAlignment)alignH, deltax, false);
+	font->drawString(_activeSurface, text, area.left, offset, area.width(), _fgColor, (Graphics::TextAlignment)alignH, deltax, ellipsis);
 }
 
 /** LINES **/

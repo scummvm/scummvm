@@ -94,7 +94,7 @@ protected:
 	friend class GUI::GuiObject;
 
 	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
-	static const int kDirtyRectangleThreshold = 2;
+	static const int kDirtyRectangleThreshold = 0;
 	
 	/** Sets whether backcaching is enabled */
 	static const bool kEnableBackCaching = true;

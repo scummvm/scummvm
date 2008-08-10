@@ -407,7 +407,7 @@ void ListWidget::drawWidget() {
 			if (_selectedItem != pos) {
 				width = g_gui.getStringWidth(buffer) + pad;
 				if (width > _w - r.left)
-					width = _w - r.left;
+					width = _w - r.left - _hlRightPadding - _scrollBarWidth;
 			} else
 				width = _w - r.left - _hlRightPadding - _scrollBarWidth;
 			if (width > maxWidth)

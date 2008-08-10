@@ -552,7 +552,7 @@ void ThemeRenderer::drawDDText(const DrawQueueText &q) {
 		restoreBackground(q.area);
 	
 	_vectorRenderer->setFgColor(_texts[q.type]->_color.r, _texts[q.type]->_color.g, _texts[q.type]->_color.b);
-	_vectorRenderer->drawString(_texts[q.type]->_fontPtr, q.text, q.area, q.alignH, q.alignV, q.deltax);
+	_vectorRenderer->drawString(_texts[q.type]->_fontPtr, q.text, q.area, q.alignH, q.alignV, q.deltax, q.elipsis);
 	addDirtyRect(q.area);
 }
 
@@ -781,18 +781,15 @@ void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, W
 	if (!ready())
 		return;
 		
-	Common::Rect dr = r;
-	dr.left += deltax;
-		
 	if (inverted) {
 		queueDD(kDDTextSelectionBackground, r);
-		queueDDText(kTextDataInverted, dr, str, false, useEllipsis, align);
+		queueDDText(kTextDataInverted, r, str, false, useEllipsis, align, kTextAlignVCenter, deltax);
 		return;
 	}
 	
 	switch (font) {
 		case kFontStyleNormal:
-			queueDDText(kTextDataNormalFont, dr, str, true, useEllipsis, align);
+			queueDDText(kTextDataNormalFont, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
 			return;
 			
 		default:
@@ -801,15 +798,15 @@ void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, W
 
 	switch (state) {
 		case kStateDisabled:
-			queueDDText(kTextDataDisabled, dr, str, true, useEllipsis, align);
+			queueDDText(kTextDataDisabled, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
 			return;
 			
 		case kStateHighlight:
-			queueDDText(kTextDataHover, dr, str, true, useEllipsis, align);
+			queueDDText(kTextDataHover, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
 			return;
 		
 		case kStateEnabled:
-			queueDDText(kTextDataDefault, dr, str, true, useEllipsis, align);
+			queueDDText(kTextDataDefault, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
 			return;
 	}
 }

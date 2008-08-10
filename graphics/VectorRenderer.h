@@ -477,7 +477,7 @@ public:
 	 * Draws a string into the screen. Wrapper for the Graphics::Font string drawing
 	 * method.
 	 */
-	virtual void drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV, int deltax) = 0;
+	virtual void drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV, int deltax, bool useEllipsis) = 0;
 	
 	/**
 	 * Allows to temporarily enable/disable all shadows drawing.
@@ -604,7 +604,7 @@ public:
 	
 	void drawString(const Graphics::Font *font, const Common::String &text, 
 					const Common::Rect &area, GUI::Theme::TextAlign alignH,
-					GUI::Theme::TextAlignVertical alignV, int deltax);
+					GUI::Theme::TextAlignVertical alignV, int deltax, bool elipsis);
 
 	/**
 	 * @see VectorRenderer::setFgColor()
