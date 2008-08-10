@@ -70,9 +70,9 @@ enum {
 
 struct AudioDataStruct {
 	const char * const *_fileList;
-	const int _fileListLen;
-	const void * const _cdaTracks;
-	const int _cdaNumTracks;
+	int _fileListLen;
+	const void * _cdaTracks;
+	int _cdaNumTracks;
 };
 
 // TODO: this is just the start of makeing the debug output of the kyra engine a bit more useable

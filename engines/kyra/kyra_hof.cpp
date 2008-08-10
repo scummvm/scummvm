@@ -196,14 +196,18 @@ void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 		_seqWsaChatTimeout += pausedTime;
 		_seqWsaChatFrameTimeout += pausedTime;
 
-		for (int x = 0; x < 10; x++) {
-			if (_activeText[x].duration != -1)
-				_activeText[x].startTime += pausedTime;
+		if (_activeText) {
+			for (int x = 0; x < 10; x++) {
+				if (_activeText[x].duration != -1)
+					_activeText[x].startTime += pausedTime;
+			}
 		}
 
-		for (int x = 0; x < 8; x++) {
-			if (_activeWSA[x].flags != -1)
-				_activeWSA[x].nextFrame += pausedTime;
+		if (_activeWSA) {
+			for (int x = 0; x < 8; x++) {
+				if (_activeWSA[x].flags != -1)
+					_activeWSA[x].nextFrame += pausedTime;
+			}
 		}
 
 		_nextIdleAnim += pausedTime;
@@ -1505,15 +1509,19 @@ void KyraEngine_HoF::openTalkFile(int newFile) {
 		_oldTalkFile = -1;
 	}
 
-	if (newFile == 0) {
+	if (newFile == 0)
 		strcpy(talkFilename, "ANYTALK.TLK");
-		_res->loadPakFile(talkFilename);
-	} else {
+	else
 		sprintf(talkFilename, "CH%dVOC.TLK", newFile);
-		_res->loadPakFile(talkFilename);
-	}
 
 	_oldTalkFile = newFile;
+
+	if (!_res->loadPakFile(talkFilename)) {
+		if (speechEnabled()) {
+			warning("Couldn't load file '%s' falling back to text only mode", talkFilename);
+			_configVoice = 0;
+		}
+	}
 }
 
 void KyraEngine_HoF::snd_playVoiceFile(int id) {
@@ -1549,7 +1557,8 @@ void KyraEngine_HoF::playVoice(int high, int low) {
 	if (!_flags.isTalkie)
 		return;
 	int vocFile = high * 10000 + low * 10;
-	snd_playVoiceFile(vocFile);
+	if (speechEnabled())
+		snd_playVoiceFile(vocFile);
 }
 
 void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {

@@ -508,7 +508,8 @@ void KyraEngine_MR::snd_playVoiceFile(int file) {
 	char filename[16];
 	snprintf(filename, 16, "%.08u", (uint)file);
 
-	_voiceSoundChannel = _soundDigital->playSound(filename, 0xFE, Audio::Mixer::kSpeechSoundType, 255);
+	if (speechEnabled())
+		_voiceSoundChannel = _soundDigital->playSound(filename, 0xFE, Audio::Mixer::kSpeechSoundType, 255);
 }
 
 bool KyraEngine_MR::snd_voiceIsPlaying() {
@@ -802,7 +803,12 @@ void KyraEngine_MR::openTalkFile(int file) {
 	}
 
 	_currentTalkFile = file;
-	_res->loadPakFile(talkFilename);
+	if (!_res->loadPakFile(talkFilename)) {
+		if (speechEnabled()) {
+			warning("Couldn't load file '%s' falling back to text only mode", talkFilename);
+			_configVoice = 0;
+		}
+	}
 }
 
 #pragma mark -

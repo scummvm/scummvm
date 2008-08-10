@@ -302,8 +302,7 @@ protected:
 	static const int8 _dosTrackMap[];
 	static const int _dosTrackMapSize;
 
-	const AudioDataStruct *_soundData;
-
+	AudioDataStruct _soundData[3];
 protected:
 	// game initialization
 	void startup();

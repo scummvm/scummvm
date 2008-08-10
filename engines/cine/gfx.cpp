@@ -276,9 +276,11 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte colo
 /*! \brief Draw rectangle on screen
  * \param x Top left corner coordinate
  * \param y Top left corner coordinate
- * \param width Rectangle width
- * \param height Rectangle height
+ * \param width Rectangle width (Negative values draw the box horizontally flipped)
+ * \param height Rectangle height (Negative values draw the box vertically flipped)
  * \param color Fill color
+ * \note Rectangle's drawn width is always at least one.
+ * \note Rectangle's drawn height is always at least one.
  */
 void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
 	int i;
@@ -313,12 +315,18 @@ void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
 		height = 0;
 	}
 
-	// Draw the box if it's not empty
-	if (width > 0 && height > 0) {
-		byte *dest = _backBuffer + y * 320 + x;
-		for (i = 0; i < height; i++) {
-			memset(dest + i * 320, color, width);
-		}
+	// Make width and height at least one
+	// which forces this function to always draw something.
+	// This fixes at least the showing of the oxygen gauge meter in
+	// Operation Stealth's first arcade sequence where this function
+	// is called with a height of zero.
+	width  = MAX(1, width);
+	height = MAX(1, height);
+
+	// Draw the filled rectangle
+	byte *dest = _backBuffer + y * 320 + x;
+	for (i = 0; i < height; i++) {
+		memset(dest + i * 320, color, width);
 	}
 }
 
@@ -428,7 +436,7 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	switch (it->type) {
 	// color sprite
 	case 0:
-		sprite = animDataTable + objectTable[it->objIdx].frame;
+		sprite = &animDataTable[objectTable[it->objIdx].frame];
 		len = sprite->_realWidth * sprite->_height;
 		mask = new byte[len];
 		memcpy(mask, sprite->mask(), len);
@@ -463,7 +471,7 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	// bitmap
 	case 4:
 		assert(it->objIdx < NUM_MAX_OBJECT);
-		obj = objectTable + it->objIdx;
+		obj = &objectTable[it->objIdx];
 
 		if (obj->frame < 0) {
 			return;
@@ -1066,7 +1074,7 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		if (objectTable[it->objIdx].frame < 0) {
 			break;
 		}
-		sprite = animDataTable + objectTable[it->objIdx].frame;
+		sprite = &animDataTable[objectTable[it->objIdx].frame];
 		len = sprite->_realWidth * sprite->_height;
 		mask = new byte[len];
 		generateMask(sprite->data(), mask, len, objectTable[it->objIdx].part);
@@ -1099,8 +1107,8 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	case 20:
 		assert(it->objIdx < NUM_MAX_OBJECT);
 		var5 = it->x; // A global variable updated here!
-		obj = objectTable + it->objIdx;
-		sprite = animDataTable + obj->frame;
+		obj = &objectTable[it->objIdx];
+		sprite = &animDataTable[obj->frame];
 
 		if (obj->frame < 0 || it->x < 0 || it->x > 8 || !_bgTable[it->x].bg || sprite->_bpp != 1) {
 			break;
@@ -1109,13 +1117,24 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		maskBgOverlay(_bgTable[it->x].bg, sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, obj->x, obj->y);
 		break;
 
-	// TODO: Figure out what this overlay type is and name it
-	// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing)
+	// FIXME: Looking at Operation Stealth's disassembly I can't find any codepath that
+	// will draw a type 21 overlay. But looking at the first arcade sequence's scripts
+	// it looks like the oxygen gauge meter is implemented using a type 21 overlay.
+	// So for the time being I'm simply drawing type 21 overlays as type 22 overlays
+	// and hoping for the best.
+	// TODO: Check how the original game looks under DOSBox to see if the oxygen gauge works in it
+	case 21:
+	// A filled rectangle:
 	case 22: {
+		// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing).
 		assert(it->objIdx < NUM_MAX_OBJECT);
-		obj = objectTable + it->objIdx;
-		byte transCol = obj->part & 0x0F;		
-		drawPlainBox(obj->x, obj->y, obj->frame, obj->costume, transCol);
+		obj = &objectTable[it->objIdx];
+		byte color = obj->part & 0x0F;
+		int width = obj->frame;
+		int height = obj->costume;
+		drawPlainBox(obj->x, obj->y, width, height, color);
+		debug(5, "renderOverlay: type=%d, x=%d, y=%d, width=%d, height=%d, color=%d",
+			it->type, obj->x, obj->y, width, height, color);
 		break;
 	 }
 

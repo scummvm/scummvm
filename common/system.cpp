@@ -163,25 +163,15 @@ static Common::String getDefaultConfigFileName() {
 }
 
 Common::SeekableReadStream *OSystem::openConfigFileForReading() {
-	Common::File *confFile = new Common::File();
-	assert(confFile);
-	if (!confFile->open(getDefaultConfigFileName())) {
-		delete confFile;
-		confFile = 0;
-	}
-	return confFile;
+	FilesystemNode file(getDefaultConfigFileName());
+	return file.openForReading();
 }
 
 Common::WriteStream *OSystem::openConfigFileForWriting() {
 #ifdef __DC__
 	return 0;
 #else
-	Common::DumpFile *confFile = new Common::DumpFile();
-	assert(confFile);
-	if (!confFile->open(getDefaultConfigFileName())) {
-		delete confFile;
-		confFile = 0;
-	}
-	return confFile;
+	FilesystemNode file(getDefaultConfigFileName());
+	return file.openForWriting();
 #endif
 }

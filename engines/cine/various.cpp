@@ -124,8 +124,8 @@ static const int16 canUseOnItemTable[] = { 1, 0, 0, 1, 1, 0, 0 };
 CommandeType objectListCommand[20];
 int16 objListTab[20];
 
-uint16 zoneData[NUM_MAX_ZONE];
-uint16 zoneQuery[NUM_MAX_ZONE]; //!< Only exists in Operation Stealth
+Common::Array<uint16> zoneData;
+Common::Array<uint16> zoneQuery; //!< Only exists in Operation Stealth
 
 /*! \brief Move the player character using the keyboard
  * \param x Negative values move left, positive right, zero not at all
@@ -616,16 +616,7 @@ void CineEngine::resetEngine() {
 	relTable.clear();
 	scriptTable.clear();
 	messageTable.clear();
-
-	for (int i = 0; i < NUM_MAX_OBJECT; i++) {
-		objectTable[i].x = 0;
-		objectTable[i].y = 0;
-		objectTable[i].part = 0;
-		objectTable[i].name[0] = 0;
-		objectTable[i].frame = 0;
-		objectTable[i].mask = 0;
-		objectTable[i].costume = 0;
-	}
+	resetObjectTable();
 
 	globalVars.reset();
 

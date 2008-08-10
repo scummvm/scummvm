@@ -49,7 +49,7 @@ struct AnimHeader2Struct {
 	uint16 field_E;
 };
 
-AnimData animDataTable[NUM_MAX_ANIMDATA];
+Common::Array<AnimData> animDataTable;
 
 static const AnimDataEntry transparencyData[] = {
 	{"ALPHA", 0xF},
