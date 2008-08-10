@@ -1510,15 +1510,19 @@ void KyraEngine_HoF::openTalkFile(int newFile) {
 		_oldTalkFile = -1;
 	}
 
-	if (newFile == 0) {
+	if (newFile == 0)
 		strcpy(talkFilename, "ANYTALK.TLK");
-		_res->loadPakFile(talkFilename);
-	} else {
+	else
 		sprintf(talkFilename, "CH%dVOC.TLK", newFile);
-		_res->loadPakFile(talkFilename);
-	}
 
 	_oldTalkFile = newFile;
+
+	if (!_res->loadPakFile(talkFilename)) {
+		if (speechEnabled()) {
+			warning("Couldn't load file '%s' falling back to text only mode", talkFilename);
+			_configVoice = 0;
+		}
+	}
 }
 
 void KyraEngine_HoF::snd_playVoiceFile(int id) {
@@ -1554,7 +1558,8 @@ void KyraEngine_HoF::playVoice(int high, int low) {
 	if (!_flags.isTalkie)
 		return;
 	int vocFile = high * 10000 + low * 10;
-	snd_playVoiceFile(vocFile);
+	if (speechEnabled())
+		snd_playVoiceFile(vocFile);
 }
 
 void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
