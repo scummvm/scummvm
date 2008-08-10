@@ -286,6 +286,8 @@ void DrasculaEngine::endChapter() {
 bool DrasculaEngine::runCurrentChapter() {
 	int n;
 
+	rightMouseButton = 0;
+
 	if (_lang == kSpanish)
 		textSurface = extraSurface;
 	else
@@ -458,21 +460,44 @@ bool DrasculaEngine::runCurrentChapter() {
 		}
 
 		delay(25);
+#ifndef _WIN32_WCE
+		// FIXME
+		// This and the following #ifndefs disable the excess updateEvents() calls *within* the game loop.
+		// Events such as keypresses or mouse clicks are dropped on the ground with no processing
+		// by these calls. They are properly handled by the implicit call through getScan() below.
+		// It is not a good practice to not process events and indeed this created problems with synthesized
+		// events in the wince port.
 		updateEvents();
+#endif
 
 		if (menuScreen == 0 && takeObject == 1)
 			checkObjects();
 		
+#ifdef _WIN32_WCE
+		if (rightMouseButton)
+			if (menuScreen) {
+#else
 		if (rightMouseButton == 1 && menuScreen == 1) {
+#endif
 			if (currentChapter == 2)
 				loadPic(menuBackground, backSurface);
 			else
 				loadPic(99, backSurface);
 			setPalette((byte *)&gamePalette);
 			menuScreen = 0;
+#ifndef _WIN32_WCE
+			// FIXME: This call here is in hope that it will catch the rightmouseup event so the
+			// next if block won't be executed. This too is not a good coding practice. I've recoded it
+			// with a mutual exclusive if block for the menu. I would commit this properly but I cannot test
+			// for other (see Desktop) ports right now.
 			updateEvents();
+#endif
+#ifdef _WIN32_WCE
+			} else {
+#else
 		}
 		if (rightMouseButton == 1 && menuScreen == 0) {
+#endif
 			characterMoved = 0;
 			if (trackProtagonist == 2)
 				trackProtagonist = 1;
@@ -485,7 +510,9 @@ bool DrasculaEngine::runCurrentChapter() {
 			else
 				loadPic("icons.alg", backSurface);
 			menuScreen = 1;
+#ifndef _WIN32_WCE
 			updateEvents();
+#endif
 			withoutVerb();
 		}
 
@@ -671,7 +698,11 @@ void DrasculaEngine::updateEvents() {
 
 	AudioCD.updateCD();
 
+#ifdef _WIN32_WCE
+	if (eventMan->pollEvent(event)) {
+#else
 	while (eventMan->pollEvent(event)) {
+#endif
 	switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_keyPressed = event.kbd;
