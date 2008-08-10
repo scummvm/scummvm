@@ -355,6 +355,10 @@ int AgiEngine::playGame() {
 		if (quit() == 0xff)
 			ec = errRestartGame;
 
+		if (shouldPerformAutoSave(_lastSaveTime)) {
+			saveGame(getSavegameFilename(0), "Autosave");
+		}
+
 	} while (quit() == 0);
 
 	_sound->stopSound();

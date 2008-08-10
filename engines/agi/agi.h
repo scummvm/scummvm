@@ -746,6 +746,8 @@ protected:
 	int go();
 	void initialize();
 
+	uint32 _lastSaveTime;
+
 public:
 	AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	virtual ~AgiEngine();

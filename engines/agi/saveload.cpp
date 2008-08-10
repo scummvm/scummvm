@@ -214,6 +214,9 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 
 	delete out;
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Closed %s", fileName);
+
+	_lastSaveTime = _system->getMillis();
+
 	return result;
 }
 
@@ -699,13 +702,18 @@ int AgiEngine::saveGameDialog() {
 
 	sprintf(fileName, "%s", getSavegameFilename(slot));
 
-	drawWindow(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
-	printText("Select a slot in which you wish to\nsave the game:",
-			0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
-	slot = selectSlot();
-	if (slot < 0)
-		return errOK;
+	do {
+		drawWindow(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
+		printText("Select a slot in which you wish to\nsave the game:",
+				0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
+		slot = selectSlot();
+		if (slot == 0)
+			messageBox("That slot is for Autosave only.");
+		else if (slot < 0)
+			return errOK;
+	}
+	while (slot == 0);
 
 	drawWindow(hp, vp + 5 * CHAR_LINES, GFX_WIDTH - hp,
 			GFX_HEIGHT - vp - 9 * CHAR_LINES);

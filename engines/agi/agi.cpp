@@ -734,6 +734,8 @@ void AgiEngine::initialize() {
 	_gfx->initVideo();
 	_sound->initSound();
 
+	_lastSaveTime = 0;
+
 	_timer->installTimerProc(agiTimerFunctionLow, 10 * 1000, NULL);
 
 	_game.ver = -1;		/* Don't display the conf file warning */
