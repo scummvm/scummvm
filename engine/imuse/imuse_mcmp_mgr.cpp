@@ -92,8 +92,8 @@ bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
 		_compTable[i].offset += sizeCodecs;
 	}
 	_file->seek(sizeCodecs, SEEK_CUR);
-	// hack: one more byte at the end of input buffer
-	_compInput = new byte[maxSize + 1];
+	// hack: two more bytes at the end of input buffer
+	_compInput = new byte[maxSize + 2];
 	_file->read(_compInput, headerSize);
 	*resPtr = _compInput;
 	offsetData = headerSize;
@@ -123,8 +123,9 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 
 	for (i = first_block; i <= last_block; i++) {
 		if (_lastBlock != i) {
-			// hack: one more zero byte at the end of input buffer
+			// hack: two more zero bytes at the end of input buffer
 			_compInput[_compTable[i].compSize] = 0;
+			_compInput[_compTable[i].compSize + 1] = 0;
 			_file->seek(_compTable[i].offset, SEEK_SET);
 			_file->read(_compInput, _compTable[i].compSize);
 			decompressVima(_compInput, (int16 *)_compOutput, _compTable[i].decompSize, imuseDestTable);
