@@ -3,7 +3,7 @@
 DEBUG_WII = 1
 
 # builds a gamecube version. cleanup object files before flipping this
-GAMECUBE = 1
+GAMECUBE = 0
 
 ENABLE_SCUMM = STATIC_PLUGIN
 ENABLE_SCUMM_7_8 = STATIC_PLUGIN
