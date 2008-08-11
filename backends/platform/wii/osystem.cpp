@@ -19,8 +19,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "osystem.h"
 #include "backends/fs/wii/wii-fs-factory.h"
+#include "common/config-manager.h"
+
+#include "osystem.h"
 
 #include <unistd.h>
 
@@ -51,7 +53,9 @@ OSystem_Wii::OSystem_Wii() :
 	_currentHeight(0),
 
 	_supportedGraphicsModes(NULL),
-	_activeGraphicsMode(-1),
+	_activeGraphicsMode(0),
+
+	_fullscreen(false),
 
 	_mouseVisible(false),
 	_mouseX(0),
@@ -94,6 +98,8 @@ void OSystem_Wii::initBackend() {
 	_mixer = new Audio::MixerImpl(this);
 	_timer = new DefaultTimerManager();
 
+	_fullscreen = ConfMan.getBool("fullscreen");
+
 	initGfx();
 	initSfx();
 	initEvents();
@@ -108,14 +114,28 @@ void OSystem_Wii::quit() {
 }
 
 bool OSystem_Wii::hasFeature(Feature f) {
-	return f == kFeatureCursorHasPalette;
+	return (f == kFeatureFullscreenMode) ||
+			(f == kFeatureCursorHasPalette);
 }
 
 void OSystem_Wii::setFeatureState(Feature f, bool enable) {
+	switch (f) {
+	case kFeatureFullscreenMode:
+		_fullscreen = enable;
+		setGraphicsMode(_activeGraphicsMode);
+		break;
+	default:
+		break;
+	}
 }
 
 bool OSystem_Wii::getFeatureState(Feature f) {
-	return false;
+	switch (f) {
+	case kFeatureFullscreenMode:
+		return _fullscreen;
+	default:
+		return false;
+	}
 }
 
 uint32 OSystem_Wii::getMillis() {

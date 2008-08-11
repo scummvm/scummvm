@@ -153,8 +153,10 @@ distclean: distclean-wii
 distclean-wii:
 	@-$(RM) dist
 
-ifeq ($(GAMECUBE),1)
 upload:
+ifeq ($(GAMECUBE),1)
+	$(DEVKITPPC)/bin/geckoupload $(TARGET).dol
+else
 	$(DEVKITPPC)/bin/wiiload $(TARGET).dol
 endif
 
@@ -166,6 +168,7 @@ else
 	$(CP) $(TARGET).dol dist/scummvm/boot.dol
 	$(CP) $(DISTPATH)/meta.xml dist/scummvm/
 	$(CP) $(DISTPATH)/icon.png dist/scummvm/
+endif
 	$(CP) $(DISTPATH)/READMII dist/scummvm/
 	$(CP) $(srcdir)/AUTHORS dist/scummvm/
 	$(CP) $(srcdir)/COPYING dist/scummvm/
@@ -174,5 +177,4 @@ else
 	$(CP) $(srcdir)/README dist/scummvm/
 	$(CP) $(DIST_FILES_THEMES) dist/scummvm/
 	$(CP) $(DIST_FILES_ENGINEDATA) dist/scummvm/
-endif
 

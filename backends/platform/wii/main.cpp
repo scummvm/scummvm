@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
 		if (!strcmp(buf, "fat:/"))
 			chdir("/apps/scummvm");
 
-		//fatEnableReadAhead(PI_DEFAULT, 32, 128);
+		fatEnableReadAhead(PI_DEFAULT, 32, 128);
 	}
 
 	g_system = new OSystem_Wii();
