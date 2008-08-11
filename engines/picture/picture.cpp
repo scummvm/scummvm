@@ -100,7 +100,7 @@ int PictureEngine::go() {
 	_cameraY = 0;
 	_newCameraX = 0;
 	_newCameraY = 0;
-	_cameraTop = 26;
+	_guiHeight = 26;
 	_cameraHeight = 0;
 	_yetAnotherX = 0;
 	
@@ -229,11 +229,11 @@ void PictureEngine::setCamera(int16 x, int16 y) {
 
 }
 
-void PictureEngine::setCameraTop(int16 top) {
-	if (top != _cameraTop) {
-		_cameraTop = top;
-		_cameraHeight = 400 - _cameraTop;
-		debug(0, "PictureEngine::setCameraTop() _cameraTop = %d; _cameraHeight = %d", _cameraTop, _cameraHeight);
+void PictureEngine::setGuiHeight(int16 guiHeight) {
+	if (guiHeight != _guiHeight) {
+		_guiHeight = guiHeight;
+		_cameraHeight = 400 - _guiHeight;
+		debug(0, "PictureEngine::setGuiHeight() _guiHeight = %d; _cameraHeight = %d", _guiHeight, _cameraHeight);
 		// TODO: clearScreen();
 	}
 }

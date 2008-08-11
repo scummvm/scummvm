@@ -66,6 +66,20 @@ void Input::update() {
 	while (eventMan->pollEvent(event)) {
 	switch (event.type) {
 		case Common::EVENT_KEYDOWN:
+
+			// FIXME: This is just for debugging
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_F6:
+				_vm->savegame("toltecs.001");
+				break;
+			case Common::KEYCODE_F9:
+				_vm->loadgame("toltecs.001");
+				break;
+			default:
+				break;
+			}
+
+			break;
 		case Common::EVENT_QUIT:
 			break;
 		case Common::EVENT_MOUSEMOVE:

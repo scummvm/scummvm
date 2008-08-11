@@ -329,6 +329,9 @@ public:
 	void drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, byte color);
 	void drawChar2(const Font &font, byte *dest, int16 x, int16 y, byte ch, byte color);
 
+	void saveState(Common::WriteStream *out);
+	void loadState(Common::ReadStream *in);
+
 //protected:
 public:
 
@@ -350,6 +353,7 @@ public:
 	uint _fontResIndexArray[10];
 	byte _fontColor1, _fontColor2;
 
+	// TODO: Remove this _tempXXX stuff
 	byte _tempString[100];
 	byte _tempStringLen1, _tempStringLen2;
 

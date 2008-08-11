@@ -31,6 +31,7 @@
 #include "common/util.h"
 #include "common/file.h"
 #include "common/savefile.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "common/hash-str.h"
 #include "common/events.h"
@@ -55,6 +56,7 @@ public:
 	~Palette();
 
 	void setFullPalette(byte *palette);
+	void getFullPalette(byte *palette);
 	void setDeltaPalette(byte *palette, byte mask, char deltaValue, int16 count, int16 startIndex);
 
 	void loadAddPalette(uint resIndex, byte startIndex);
@@ -65,6 +67,10 @@ public:
 	void clearFragments();
 
 	byte *getMainPalette() { return _mainPalette; }
+	byte *getAnimPalette() { return _animPalette; }
+
+	void saveState(Common::WriteStream *out);
+	void loadState(Common::ReadStream *in);
 
 protected:
 
@@ -78,6 +84,8 @@ protected:
 	PictureEngine *_vm;
 
 	byte _mainPalette[768];
+	byte _animPalette[768];
+	byte _colorTransTable[256];
 
 	PaletteFragmentArray _fragments;
 	byte _fragmentIndex;

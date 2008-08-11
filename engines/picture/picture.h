@@ -82,7 +82,7 @@ public:
 	void updateScreen();
 
 	void setCamera(int16 x, int16 y);
-	void setCameraTop(int16 top);
+	void setGuiHeight(int16 guiHeight);
 	void scrollCameraUp(int16 delta);
 	void scrollCameraDown(int16 delta);
 	void scrollCameraLeft(int16 delta);
@@ -95,6 +95,9 @@ public:
 	void walk(byte *walkData);
 	
 	int16 findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize);
+
+	void savegame(const char *filename);
+	void loadgame(const char *filename);
 
 public:
 	AnimationPlayer *_anim;
@@ -118,7 +121,7 @@ public:
 	// TODO: Move camera stuff into own Scene class
 	int16 _cameraX, _cameraY;
 	int16 _newCameraX, _newCameraY;
-	int16 _cameraTop, _cameraHeight;
+	int16 _guiHeight, _cameraHeight;
 	int16 _yetAnotherX;
 
 	bool _doSpeech, _doText;

@@ -23,6 +23,8 @@
  *
  */
 
+// TODO: Clean up game variable handling and move it to PictureEngine
+
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/file.h"
@@ -47,7 +49,7 @@ namespace Picture {
 
 ScriptInterpreter::ScriptInterpreter(PictureEngine *vm) : _vm(vm) {
 
-	_stack = new byte[4096 + 4];
+	_stack = new byte[kScriptStackSize];
 
 	memset(_slots, 0, sizeof(_slots));
 
@@ -552,7 +554,7 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 	case 14:// ok
 	{
 		debug(0, "o2_setDeltaPalette(animPalette, %d, %d, %d, %d)", arg8(6), arg8(5), arg8(4), arg8(3));
-		_vm->_palette->setDeltaPalette(_vm->_anim->_palette, arg8(6), (char)arg8(5), arg8(4), arg8(3));
+		_vm->_palette->setDeltaPalette(_vm->_palette->getAnimPalette(), arg8(6), (char)arg8(5), arg8(4), arg8(3));
 		break;
 	}
 
@@ -606,8 +608,8 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 
 	case 22:// ok
 	{
-		debug(0, "o2_setCameraTop(%d)", arg8(3));
-		_vm->setCameraTop(arg8(3));
+		debug(0, "o2_setGuiHeight(%d)", arg8(3));
+		_vm->setGuiHeight(arg8(3));
 		break;
 	}
 
@@ -928,7 +930,7 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 
 }
 
-ScriptInterpreter::VarType ScriptInterpreter::getGameVarType(uint variable) {
+VarType ScriptInterpreter::getGameVarType(uint variable) {
 	switch (variable) {
 		case 0:	 return vtByte;
 		case 1:	 return vtWord;
@@ -978,7 +980,7 @@ const char *getVarName(uint variable) {
 		case 16: return "walkSpeedX";
 		case 17: return "flag01";
 		case 18: return "sceneResIndex";
-		case 19: return "cameraTop";
+		case 19: return "guiHeight";
 		case 20: return "sceneHeight";
 		case 21: return "sceneWidth";
 	}
@@ -1049,7 +1051,7 @@ int16 ScriptInterpreter::getGameVar(uint variable) {
 			value = _vm->_sceneResIndex;
 			break;
 		case 19:
-			value = _vm->_cameraTop;
+			value = _vm->_guiHeight;
 			break;
 		case 20:
 			value = _vm->_sceneHeight;
@@ -1124,7 +1126,7 @@ void ScriptInterpreter::setGameVar(uint variable, int16 value) {
 			_vm->_sceneResIndex = value;
 			break;
 		case 19:
-			_vm->_cameraTop = value;
+			_vm->_guiHeight = value;
 			break;
 		case 20:
 			_vm->_sceneHeight = value;
@@ -1217,6 +1219,36 @@ int32 ScriptInterpreter::localRead32(int16 offset) {
 byte *ScriptInterpreter::localPtr(int16 offset) {
 	debug(1, "localPtr(%d)", offset);
 	return &_localData[offset];
+}
+
+void ScriptInterpreter::saveState(Common::WriteStream *out) {
+
+	// Save registers
+	out->writeUint16LE(_regs.reg0);
+	out->writeUint16LE(_regs.reg1);
+	out->writeUint16LE(_regs.reg2);
+	out->writeUint16LE(_regs.reg3);
+	out->writeUint16LE(_regs.reg4);
+	out->writeUint16LE(_regs.reg5);
+	out->writeUint16LE(_regs.reg6);
+	out->writeUint16LE(_regs.sp);
+	out->writeUint16LE(_regs.reg8);
+
+	// Save slots
+	for (int slot = 0; slot < kMaxScriptSlots; slot++) {
+		out->writeUint32LE(_slots[slot].size);
+		out->writeUint16LE(_slots[slot].resIndex);
+		if (_slots[slot].size > 0)
+			out->write(_slots[slot].data, _slots[slot].size);
+	}
+
+	// Save stack
+	out->write(_stack, kScriptStackSize);
+	out->writeUint16LE(_savedSp);
+
+}
+
+void ScriptInterpreter::loadState(Common::ReadStream *in) {
 }
 
 } // End of namespace Picture

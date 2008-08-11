@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	palette.o \
 	picture.o \
 	resource.o \
+	saveload.o \
 	screen.o \
 	script.o \
 	segmap.o

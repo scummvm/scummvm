@@ -965,6 +965,17 @@ void Screen::drawChar2(const Font &font, byte *dest, int16 x, int16 y, byte ch, 
 
 }
 
+void Screen::saveState(Common::WriteStream *out) {
+	for (int i = 0; i < 8; i++) {
+		out->writeUint16LE(_verbLineItems[i].slotIndex);
+		out->writeUint16LE(_verbLineItems[i].slotOffset);
+	}
+}
+
+void Screen::loadState(Common::ReadStream *in) {
+}
+
+
 /*
 void Screen::update() {
 }

@@ -44,6 +44,8 @@ Palette::Palette(PictureEngine *vm) : _vm(vm) {
 
 	clearFragments();
 	
+	memset(_colorTransTable, 0, sizeof(_colorTransTable));
+	
 }
 
 Palette::~Palette() {
@@ -59,6 +61,16 @@ void Palette::setFullPalette(byte *palette) {
 	}
 	_vm->_system->setPalette((const byte *)colors, 0, 256);
 	_vm->_system->updateScreen();
+}
+
+void Palette::getFullPalette(byte *palette) {
+	byte colors[1024];
+	_vm->_system->grabPalette(colors, 0, 256);
+	for (int i = 0; i < 256; i++) {
+		palette[i * 3 + 0] = colors[i * 4 + 0] >> 2;
+		palette[i * 3 + 1] = colors[i * 4 + 1] >> 2;
+		palette[i * 3 + 2] = colors[i * 4 + 2] >> 2;
+	}
 }
 
 void Palette::setDeltaPalette(byte *palette, byte mask, char deltaValue, int16 count, int16 startIndex) {
@@ -155,5 +167,33 @@ void Palette::clearFragments() {
 	_fragmentIndex = 128;
 	_fragments.clear();
 }
+
+void Palette::saveState(Common::WriteStream *out) {
+
+	// Save currently active palette
+	byte palette[768];
+	getFullPalette(palette);
+	out->write(palette, 768);
+
+	out->write(_mainPalette, 768);
+	out->write(_animPalette, 768);
+	out->write(_colorTransTable, 256);
+
+	uint16 fragmentCount = _fragments.size();
+	out->writeUint16LE(fragmentCount);
+	for (PaletteFragmentArray::iterator iter = _fragments.begin(); iter != _fragments.end(); iter++) {
+		PaletteFragment fragment = *iter;
+		out->writeUint16LE(fragment.id);
+		out->writeByte(fragment.index);
+		out->writeByte(fragment.count);
+	}
+	out->writeByte(_fragmentIndex);
+
+
+}
+
+void Palette::loadState(Common::ReadStream *in) {
+}
+
 
 } // End of namespace Picture
