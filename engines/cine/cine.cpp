@@ -73,8 +73,6 @@ CineEngine::~CineEngine() {
 		freeErrmessDat();
 	}
 	Common::clearAllSpecialDebugLevels();
-
-	free(palPtr);
 }
 
 int CineEngine::init() {

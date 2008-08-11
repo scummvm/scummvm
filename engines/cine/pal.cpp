@@ -28,10 +28,7 @@
 
 namespace Cine {
 
-uint16 palEntriesCount;
-
-PalEntry *palPtr = NULL;
-
+Common::Array<PalEntry> palArray;
 static byte paletteBuffer1[16];
 static byte paletteBuffer2[16];
 
@@ -41,27 +38,20 @@ void loadPal(const char *fileName) {
 	removeExtention(buffer, fileName);
 
 	strcat(buffer, ".PAL");
-
-	if (palPtr) {
-		free(palPtr);
-		palPtr = NULL;
-	}
-
-	palEntriesCount = 0;
+	palArray.clear();
 
 	Common::File palFileHandle;
 	if (!palFileHandle.open(buffer))
 		error("loadPal(): Cannot open file %s", fileName);
 
-	palEntriesCount = palFileHandle.readUint16LE();
+	uint16 palEntriesCount = palFileHandle.readUint16LE();	
 	palFileHandle.readUint16LE(); // entry size
 
-	palPtr = (PalEntry *)malloc(palEntriesCount * sizeof(PalEntry));
-	assert(palPtr);
-	for (int i = 0; i < palEntriesCount; ++i) {
-		palFileHandle.read(palPtr[i].name, 10);
-		palFileHandle.read(palPtr[i].pal1, 16);
-		palFileHandle.read(palPtr[i].pal2, 16);
+	palArray.resize(palEntriesCount);
+	for (uint i = 0; i < palArray.size(); ++i) {
+		palFileHandle.read(palArray[i].name, 10);
+		palFileHandle.read(palArray[i].pal1, 16);
+		palFileHandle.read(palArray[i].pal2, 16);
 	}
 	palFileHandle.close();
 }
@@ -81,8 +71,8 @@ int16 findPaletteFromName(const char *fileName) {
 		position++;
 	}
 
-	for (i = 0; i < palEntriesCount; i++) {
-		if (!strcmp(buffer, palPtr[i].name)) {
+	for (i = 0; i < palArray.size(); i++) {
+		if (!strcmp(buffer, palArray[i].name)) {
 			return i;
 		}
 	}
@@ -105,9 +95,9 @@ void loadRelatedPalette(const char *fileName) {
 			paletteBuffer1[i] = paletteBuffer2[i] = (i << 4) + i;
 		}
 	} else {
-		assert(paletteIndex < palEntriesCount);
-		memcpy(paletteBuffer1, palPtr[paletteIndex].pal1, 16);
-		memcpy(paletteBuffer2, palPtr[paletteIndex].pal2, 16);
+		assert(paletteIndex < (int32)palArray.size());
+		memcpy(paletteBuffer1, palArray[paletteIndex].pal1, 16);
+		memcpy(paletteBuffer2, palArray[paletteIndex].pal2, 16);
 	}
 }
 
