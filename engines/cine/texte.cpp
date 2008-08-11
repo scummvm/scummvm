@@ -29,8 +29,6 @@
 
 namespace Cine {
 
-byte *textDataPtr;
-
 const char **failureMessages;
 const CommandeType *defaultActionCommand;
 const CommandeType *systemMenu;
@@ -40,54 +38,40 @@ const char *commandPrepositionOn;
 
 void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency);
 
-void loadTextData(const char *pFileName, byte *pDestinationBuffer) {
-	Common::File pFileHandle;
-	uint16 entrySize;
-	uint16 numEntry;
-	uint16 i;
-	byte *tempBuffer;
-	uint16 dataSize;
+void loadTextData(const char *filename) {
+	Common::File fileHandle;
+	assert(filename);
 
-	assert(pFileName);
-	assert(pDestinationBuffer);
+	if (!fileHandle.open(filename))
+		error("loadTextData(): Cannot open file %s", filename);
 
-	if (!pFileHandle.open(pFileName))
-		error("loadTextData(): Cannot open file %s", pFileName);
+	uint entrySize = fileHandle.readUint16BE();
+	uint numEntry = fileHandle.readUint16BE();
 
-	entrySize = pFileHandle.readUint16BE();
-	numEntry = pFileHandle.readUint16BE();
+	uint sourceSize = numEntry * entrySize;
+	Common::Array<byte> source;
+	source.resize(sourceSize);
+	fileHandle.read(source.begin(), sourceSize);
 
-	dataSize = numEntry * entrySize;
-	pFileHandle.read(pDestinationBuffer, numEntry * entrySize);
-
-	tempBuffer = pDestinationBuffer;
-
+	const int fontHeight = 8;
+	const int fontWidth = (g_cine->getGameType() == Cine::GType_FW) ? 16 : 8;
+	uint numCharacters;
+	uint bytesPerCharacter;
 	if (g_cine->getGameType() == Cine::GType_FW) {
-		int numCharacters;
-		if (g_cine->getFeatures() & GF_ALT_FONT) {
-			numCharacters = 85;
-		} else {
-			numCharacters = 78;
-		}
-
-		dataSize = dataSize / numCharacters;
-
-		loadRelatedPalette(pFileName);
-
-		for (i = 0; i < numCharacters; i++) {
-			gfxConvertSpriteToRaw(g_cine->_textHandler.textTable[i][0], tempBuffer, 16, 8);
-			generateMask(g_cine->_textHandler.textTable[i][0], g_cine->_textHandler.textTable[i][1], 16 * 8, 0);
-			tempBuffer += dataSize;
-		}
+		numCharacters = (g_cine->getFeatures() & GF_ALT_FONT) ? 85 : 78;		
+		bytesPerCharacter = sourceSize / numCharacters; // TODO: Check if this could be replaced with fontWidth * fontHeight
+		loadRelatedPalette(filename);
 	} else {
-		for (i = 0; i < 90; i++) {
-			gfxConvertSpriteToRaw(g_cine->_textHandler.textTable[i][0], tempBuffer, 8, 8);
-			generateMask(g_cine->_textHandler.textTable[i][0], g_cine->_textHandler.textTable[i][1], 8 * 8, 0);
-			tempBuffer += 0x40;
-		}
+		numCharacters = 90;
+		bytesPerCharacter = fontWidth * fontHeight;
 	}
 
-	pFileHandle.close();
+	for (uint i = 0; i < numCharacters; i++) {
+		gfxConvertSpriteToRaw(g_cine->_textHandler.textTable[i][0], &source[i * bytesPerCharacter], fontWidth, fontHeight);
+		generateMask(g_cine->_textHandler.textTable[i][0], g_cine->_textHandler.textTable[i][1], fontWidth * fontHeight, 0);
+	}
+
+	fileHandle.close();
 }
 
 const CharacterEntry *fontParamTable;

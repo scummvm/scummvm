@@ -33,8 +33,6 @@ namespace Cine {
 
 typedef char CommandeType[20];
 
-extern byte *textDataPtr;
-
 struct TextHandler {
 	byte textTable[256][2][16 * 8];
 };
@@ -53,7 +51,7 @@ struct CharacterEntry {
 
 extern const CharacterEntry *fontParamTable;
 
-void loadTextData(const char *pFileName, byte *pDestinationBuffer);
+void loadTextData(const char *filename);
 void loadErrmessDat(const char *fname);
 void freeErrmessDat(void);
 void loadPoldatDat(const char *fname);
