@@ -68,7 +68,7 @@ protected:
 	virtual void drawSprite(const objectStruct &obj);
 
 	void drawCommand();
-	void drawMessage(const char *str, int x, int y, int width, byte color);
+	void drawMessage(const char *str, int x, int y, int width, int color);
 	void drawPlainBox(int x, int y, int width, int height, byte color);
 	void drawBorder(int x, int y, int width, int height, byte color);
 	void drawDoubleBorder(int x, int y, int width, int height, byte color);

@@ -225,14 +225,18 @@ void FWRenderer::drawCommand() {
  * \param x Top left message box corner coordinate
  * \param y Top left message box corner coordinate
  * \param width Message box width
- * \param color Message box background color
+ * \param color Message box background color (Or if negative draws only the text)
+ * \note Negative colors are used in Operation Stealth's timed cutscenes
+ * (e.g. when first meeting The Movement for the Liberation of Santa Paragua).
  */
-void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte color) {
+void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color) {
 	int i, tx, ty, tw;
 	int line = 0, words = 0, cw = 0;
 	int space = 0, extraSpace = 0;
 
-	drawPlainBox(x, y, width, 4, color);
+	if (color >= 0) {
+		drawPlainBox(x, y, width, 4, color);
+	}
 	tx = x + 4;
 	ty = str[0] ? y - 5 : y + 4;
 	tw = width - 8;
@@ -252,7 +256,9 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte colo
 			}
 
 			ty += 9;
-			drawPlainBox(x, ty, width, 9, color);
+			if (color >= 0) {
+				drawPlainBox(x, ty, width, 9, color);
+			}
 			tx = x + 4;
 		}
 
@@ -269,8 +275,10 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte colo
 	}
 
 	ty += 9;
-	drawPlainBox(x, ty, width, 4, color);
-	drawDoubleBorder(x, y, width, ty - y + 4, 2);
+	if (color >= 0) {
+		drawPlainBox(x, ty, width, 4, color);
+		drawDoubleBorder(x, y, width, ty - y + 4, 2);
+	}
 }
 
 /*! \brief Draw rectangle on screen
