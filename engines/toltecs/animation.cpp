@@ -34,6 +34,7 @@
 
 #include "toltecs/toltecs.h"
 #include "toltecs/animation.h"
+#include "toltecs/palette.h"
 #include "toltecs/screen.h"
 
 namespace Toltecs {
@@ -55,7 +56,7 @@ void AnimationPlayer::start(uint resIndex) {
 	_height = _vm->_arc->readUint16LE();
 	_width = _vm->_arc->readUint16LE();
 	_frameCount = _vm->_arc->readUint16LE();
-	_vm->_arc->read(_palette, 768);
+	_vm->_arc->read(_vm->_palette->getAnimPalette(), 768);
 	_curFrameSize = _vm->_arc->readUint32LE();
 	_nextFrameOffset = _curFrameSize + 782;
 	_vm->_arc->read(_animBuffer, _curFrameSize);
@@ -134,6 +135,25 @@ int16 AnimationPlayer::getStatus() {
 void AnimationPlayer::unpackFrame() {
 	_vm->_screen->unpackRle(_animBuffer, _vm->_screen->_frontScreen, _width, _height);
 	_vm->_screen->unpackRle(_animBuffer, _vm->_screen->_backScreen, _width, _height);
+}
+
+void AnimationPlayer::saveState(Common::WriteStream *out) {
+	out->writeUint16LE(_resIndex);
+	// NOTE: The original engine doesn't save width/height, but we do
+	out->writeUint16LE(_width);
+	out->writeUint16LE(_height);
+	out->writeUint16LE(_frameCount);
+	out->writeUint16LE(_frameNumber);
+	out->writeUint32LE(_keepFrameCounter);
+	out->writeUint32LE(_curFrameSize);
+	out->writeUint32LE(_nextFrameSize);
+	out->writeUint32LE(_nextFrameOffset);
+	out->writeUint32LE(_firstCurFrameSize);
+	out->writeUint32LE(_firstNextFrameSize);
+	out->writeUint32LE(_firstNextFrameOffset);
+}
+
+void AnimationPlayer::loadState(Common::ReadStream *in) {
 }
 
 } // End of namespace Toltecs

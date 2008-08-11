@@ -45,6 +45,12 @@
 namespace Toltecs {
 
 const int kMaxScriptSlots = 50;
+const int kScriptStackSize = 4096 + 4;
+
+enum VarType {
+	vtByte,
+	vtWord
+};
 
 class ScriptInterpreter {
 public:
@@ -56,12 +62,14 @@ public:
 
 	byte *getSlotData(int slotIndex) const { return _slots[slotIndex].data; }
 
-protected:
+	VarType getGameVarType(uint variable);
+	int16 getGameVar(uint variable);
+	void setGameVar(uint variable, int16 value);
 
-	enum VarType {
-		vtByte,
-		vtWord
-	};
+	void saveState(Common::WriteStream *out);
+	void loadState(Common::ReadStream *in);
+
+protected:
 
 	struct ScriptRegs {
 		int16 reg0;
@@ -100,10 +108,6 @@ protected:
 	
 	void execOpcode(byte opcode);
 	void execKernelOpcode(uint16 kernelOpcode);
-
-	VarType getGameVarType(uint variable);
-	int16 getGameVar(uint variable);
-	void setGameVar(uint variable, int16 value);
 
 	byte arg8(int16 offset);
 	int16 arg16(int16 offset);

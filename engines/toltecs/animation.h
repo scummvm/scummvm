@@ -57,6 +57,9 @@ public:
 	int16 getStatus();
 	uint16 getFrameNumber() const { return _frameNumber; }
 
+	void saveState(Common::WriteStream *out);
+	void loadState(Common::ReadStream *in);
+
 //protected:
 public:
 	ToltecsEngine *_vm;
@@ -65,7 +68,6 @@ public:
 	byte *_animBuffer;
 
 	uint _resIndex;
-	byte _palette[768];
 
 	uint16 _width, _height;
 	uint16 _frameNumber, _frameCount;
