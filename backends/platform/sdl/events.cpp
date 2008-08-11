@@ -549,6 +549,30 @@ void OSystem_SDL::setupKeymapper() {
 	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
 	global->addAction(act);
 
+	
+	act = new Action('QUIY', "Quit", kGenericActionCategory, kQuitAction);
+	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
+	global->addAction(act);
+
+	
+	act = new Action('QUIU', "Quit", kGenericActionCategory, kQuitAction);
+	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
+	global->addAction(act);
+
+	
+	act = new Action('QUII', "Quit", kGenericActionCategory, kQuitAction);
+	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
+	global->addAction(act);
+	
+	
+	act = new Action('QUIG', "Quit", kGenericActionCategory, kQuitAction);
+	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
+	global->addAction(act);
+	
+	act = new Action('QUIH', "Quit", kGenericActionCategory, kQuitAction);
+	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
+	global->addAction(act);
+
 	#undef ADD_KEYDOWN_EVENT
 
 	mapper->addGlobalKeymap(global);

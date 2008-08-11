@@ -30,6 +30,7 @@
 
 namespace GUI {
 	class PopupWidget;
+	class ScrollBarWidget;
 }
 
 namespace Common {
@@ -49,8 +50,9 @@ protected:
 		GUI::ButtonWidget *keyButton;
 	};
 
+	void loadKeymap();
 	void refreshKeymap();
-	void setNumOfWidgets(uint num);
+	void setupWidgets(uint num);
 	void startRemapping(Mapping *remap);
 	void stopRemapping();
 
@@ -59,13 +61,20 @@ protected:
 	KeymapManager::Domain *_globalKeymaps;
 	KeymapManager::Domain *_gameKeymaps;
 
+	List<Action*> *_currentActions;
+	List<Action*>::iterator _topAction;
+	uint _topRow;
+
+	Rect _keymapArea;
+
 	GUI::PopUpWidget *_kmPopUp;
 	Keymap** _keymapTable;
 
+	GUI::ScrollBarWidget *_scrollBar;
+
 	uint _colWidth;
-	uint _colCount;
+	uint _colCount, _rowCount;
 	uint _spacing;
-	uint _widgetsY;
 	uint _buttonHeight;
 
 	Mapping *_activeRemap;

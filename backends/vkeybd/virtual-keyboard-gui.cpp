@@ -267,7 +267,7 @@ void VirtualKeyboardGUI::redraw() {
 	const OverlayColor *ove = (OverlayColor *) _overlayBackup.getBasePtr(_dirtyRect.left, _dirtyRect.top);
 	int16 h = surf.h;
 
-	while (h-- > 0) {
+	while (h--) {
 		memcpy(scr, ove, surf.w * sizeof(OverlayColor));
 		scr += surf.w;
 		ove += _overlayBackup.w;
