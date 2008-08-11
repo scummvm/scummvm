@@ -221,17 +221,21 @@ void readFromPart(int16 idx, byte *dataPtr) {
 
 byte *readBundleFile(int16 foundFileIdx) {
 	assert(foundFileIdx >= 0 && foundFileIdx < numElementInPart);
+	bool error = false;
 	byte *dataPtr = (byte *)calloc(partBuffer[foundFileIdx].unpackedSize, 1);
-	if (partBuffer[foundFileIdx].unpackedSize != partBuffer[foundFileIdx].packedSize) {
-		byte *unpackBuffer = (byte *)malloc(partBuffer[foundFileIdx].packedSize);
-		readFromPart(foundFileIdx, unpackBuffer);
+	readFromPart(foundFileIdx, dataPtr);
+	if (partBuffer[foundFileIdx].unpackedSize > partBuffer[foundFileIdx].packedSize) {
 		CineUnpacker cineUnpacker;
-		if (!cineUnpacker.unpack(unpackBuffer, partBuffer[foundFileIdx].packedSize, dataPtr, partBuffer[foundFileIdx].unpackedSize)) {
-			warning("Error unpacking '%s' from bundle file '%s'", partBuffer[foundFileIdx].partName, currentPartName);
-		}
-		free(unpackBuffer);
-	} else {
-		readFromPart(foundFileIdx, dataPtr);
+		error = !cineUnpacker.unpack(dataPtr, partBuffer[foundFileIdx].packedSize, dataPtr, partBuffer[foundFileIdx].unpackedSize);
+	} else if (partBuffer[foundFileIdx].unpackedSize < partBuffer[foundFileIdx].packedSize) {
+		// Unpacked size of a file should never be less than its packed size
+		error = true;
+	} else { // partBuffer[foundFileIdx].unpackedSize == partBuffer[foundFileIdx].packedSize
+		debugC(5, kCineDebugPart, "Loaded non-compressed file '%s' from bundle file '%s'", partBuffer[foundFileIdx].partName, currentPartName);
+	}
+
+	if (error) {
+		warning("Error unpacking '%s' from bundle file '%s'", partBuffer[foundFileIdx].partName, currentPartName);
 	}
 
 	return dataPtr;
