@@ -128,7 +128,7 @@ DriverTinyGL::DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscr
 }
 
 DriverTinyGL::~DriverTinyGL() {
-	delete []_storedDisplay;
+	delete[] _storedDisplay;
 	tglClose();
 	ZB_close(_zb);
 }
@@ -672,7 +672,7 @@ Bitmap *DriverTinyGL::getScreenshot(int w, int h) {
 	}
 
 	Bitmap *screenshot = new Bitmap((char *)buffer, w, h, "screenshot");
-	delete []buffer;
+	delete[] buffer;
 	return screenshot;
 }
 

@@ -111,7 +111,7 @@ void vimaInit(uint16 *destTable) {
 				imcTable1Pos < sizeof(imcTable1) / sizeof(imcTable1[0]); imcTable1Pos++, destTablePos += 64) {
 			int put = 0, count, tableValue;
 			for (count = 32, tableValue = imcTable1[imcTable1Pos]; count != 0; count >>= 1, tableValue >>= 1) {
-				if ((incer & count) != 0) {
+				if (incer & count) {
 					put += tableValue;
 				}
 			}
@@ -156,7 +156,7 @@ void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable
 			int val = (bits >> (16 - bitPtr)) & (highBit | lowBits);
 
 			if (bitPtr > 7) {
-				bits = ((bits & 0xff) << 8) | *(uint8*)(src++);
+				bits = ((bits & 0xff) << 8) | *(uint8 *)(src++);
 				bitPtr -= 8;
 			}
 
@@ -167,16 +167,16 @@ void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable
 
 			if (val == lowBits) {
 				outputWord = ((int16)(bits << bitPtr) & 0xffffff00);
-				bits = ((bits & 0xff) << 8) | *(uint8*)(src++);
+				bits = ((bits & 0xff) << 8) | *(uint8 *)(src++);
 				outputWord |= ((bits >> (8 - bitPtr)) & 0xff);
-				bits = ((bits & 0xff) << 8) | *(uint8*)(src++);
+				bits = ((bits & 0xff) << 8) | *(uint8 *)(src++);
 			} else {
 				int index = (val << (7 - numBits)) | (currTablePos << 6);
 				int delta = destTable[index];
 
-				if (val != 0)
+				if (val)
 					delta += (imcTable1[currTablePos] >> (numBits - 1));
-				if (highBit != 0)
+				if (highBit)
 					delta = -delta;
 
 				outputWord += delta;

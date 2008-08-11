@@ -75,7 +75,7 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 }
 
 DriverGL::~DriverGL() {
-	delete []_storedDisplay;
+	delete[] _storedDisplay;
 }
 
 void DriverGL::toggleFullscreenMode() {
@@ -461,7 +461,7 @@ void DriverGL::createBitmap(Bitmap *bitmap) {
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-		delete [] texData;
+		delete[] texData;
 	} else {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			uint16 *zbufPtr = reinterpret_cast<uint16 *>(bitmap->_data[pic]);
@@ -811,7 +811,7 @@ Driver::TextObjectHandle *DriverGL::createTextBitmap(uint8 *data, int width, int
 		}
 	}
 
-	delete [] texData;
+	delete[] texData;
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	return handle;
@@ -900,7 +900,7 @@ Bitmap *DriverGL::getScreenshot(int w, int h) {
 	}
 	
 	Bitmap *screenshot = new Bitmap((char *) buffer, w, h, "screenshot");
-	delete []buffer;
+	delete[] buffer;
 	return screenshot;
 }
 

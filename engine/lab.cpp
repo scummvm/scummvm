@@ -72,7 +72,7 @@ bool Lab::open(const char *filename) {
 		_fileMap.size();
 	}
 
-	delete [] string_table;
+	delete []string_table;
 	return true;
 }
 

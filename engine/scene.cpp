@@ -110,12 +110,12 @@ Scene::Scene(const char *name, const char *buf, int len) :
 }
 
 Scene::~Scene() {
-	delete [] _cmaps;
-	delete [] _setups;
+	delete[] _cmaps;
+	delete[] _setups;
 	if (_lights)
-		delete [] _lights;
+		delete[] _lights;
 	if (_sectors)
-		delete [] _sectors;
+		delete[] _sectors;
 	for (StateList::iterator i = _states.begin(); i != _states.end(); i++)
 		delete (*i);
 }
