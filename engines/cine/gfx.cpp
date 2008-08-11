@@ -1104,6 +1104,20 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		}
 		break;
 
+	// action failure message
+	case 3: {
+		int idx = it->objIdx * 4 + g_cine->_rnd.getRandomNumber(3);
+		int len = strlen(failureMessages[idx]);
+		_messageLen += len;
+		int width = 6 * len + 20;
+		width = width > 300 ? 300 : width;
+
+		// The used color here differs from Future Wars
+		drawMessage(failureMessages[idx], (320 - width) / 2, 80, width, _messageBg);
+		waitForPlayerClick = 1;
+		break;
+	}
+
 	// bitmap
 	case 4:
 		if (objectTable[it->objIdx].frame >= 0) {
