@@ -1,6 +1,7 @@
 /****************************************************************************
 *	Generic GX Support for Emulators
 *	softdev 2007
+*	dhewg 2008
 *
 *	This program is free software; you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -21,11 +22,12 @@
 * These are pretty standard functions to setup and use GX scaling.
 ****************************************************************************/
 
-#include <gccore.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
+
+#include "gx_supp.h"
 
 #define DEFAULT_FIFO_SIZE (256 * 1024)
 
@@ -39,18 +41,19 @@ extern "C" {
 /*** 2D ***/
 static u32 whichfb;
 static u32 *xfb[2];
-static GXRModeObj *vmode;
+GXRModeObj *vmode = NULL;
 
 /*** 3D GX ***/
 static u8 *gp_fifo;
 
 /*** Texture memory ***/
-static u8 *texturemem;
+static u8 *texturemem = NULL;
 static u32 texturesize;
 
-GXTexObj texobj;
+static GXTexObj texobj;
 static Mtx view;
 static u16 vwidth, vheight, oldvwidth, oldvheight;
+static float tex_xT = 0.0f, tex_yT = 0.0f;
 
 /* New texture based scaler */
 typedef struct tagcamera {
@@ -74,6 +77,10 @@ static camera cam = {
 
 void GX_InitVideo() {
 	vmode = VIDEO_GetPreferredMode(NULL);
+
+	vmode->viWidth = 678;
+	vmode->viXOrigin = (VI_MAX_WIDTH_PAL - 678) / 2;
+
 	VIDEO_Configure(vmode);
 
 	xfb[0] = (u32 *) MEM_K0_TO_K1 (SYS_AllocateFramebuffer(vmode));
@@ -91,6 +98,15 @@ void GX_InitVideo() {
 
 	if (vmode->viTVMode & VI_NON_INTERLACE)
 		VIDEO_WaitVSync();
+}
+
+void GX_SetTexTrans(float xT, float yT) {
+	tex_xT = xT;
+	tex_yT = yT;
+}
+
+void GX_SetCamPosZ(float f) {
+	cam.pos.z = f;
 }
 
 /****************************************************************************
@@ -128,7 +144,7 @@ static void draw_square(Mtx v) {
 	Mtx mv;
 
 	guMtxIdentity(m);
-	guMtxTransApply(m, m, 0, 0, -100);
+	guMtxTransApply(m, m, tex_xT, tex_yT, -100);
 	guMtxConcat(v, m, mv);
 
 	GX_LoadPosMtxImm(mv, GX_PNMTX0);
@@ -144,9 +160,9 @@ static void draw_square(Mtx v) {
  * StartGX
  ****************************************************************************/
 void GX_Start(u16 width, u16 height, s16 haspect, s16 vaspect) {
+	static bool inited = false;
 	Mtx p;
-
-	GX_AbortFrame();
+	GXColor gxbackground = { 0, 0, 0, 0xff };
 
 	/*** Set new aspect ***/
 	square[0] = square[9] = -haspect;
@@ -156,9 +172,20 @@ void GX_Start(u16 width, u16 height, s16 haspect, s16 vaspect) {
 
 	/*** Allocate 32byte aligned texture memory ***/
 	texturesize = (width * height) * 2;
-	texturemem = (u8 *) memalign(32, texturesize);
 
-	GXColor gxbackground = { 0, 0, 0, 0xff };
+	if (texturemem)
+		free(texturemem);
+
+	texturemem = (u8 *) memalign(32, texturesize);
+	memset(texturemem, 0, texturesize);
+
+	/*** Setup for first call to scaler ***/
+	oldvwidth = oldvheight = -1;
+
+	if (inited)
+		return;
+
+	inited = true;
 
 	/*** Clear out FIFO area ***/
 	memset(gp_fifo, 0, DEFAULT_FIFO_SIZE);
@@ -184,12 +211,8 @@ void GX_Start(u16 width, u16 height, s16 haspect, s16 vaspect) {
 
 	guPerspective(p, 60, 1.33f, 10.0f, 1000.0f);
 	GX_LoadProjectionMtx(p, GX_PERSPECTIVE);
-	memset(texturemem, 0, texturesize);
 
 	GX_Flush();
-
-	/*** Setup for first call to scaler ***/
-	vwidth = vheight = -1;
 }
 
 /****************************************************************************

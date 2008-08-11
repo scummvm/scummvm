@@ -1,5 +1,5 @@
-Wii port of ScummVM README
---------------------------
+Wii/Gamecube port of ScummVM README
+-----------------------------------
 
 features not compiled in:
 - the AGI game engine
@@ -65,6 +65,21 @@ CONTROLS
     dpad down: "0"
     dpad left: "y"
     dpad right: "n"
+
+DISPLAY SETUP
+
+  "Graphics mode"
+    you can choose between multiple overscan options to adjust the screen size
+    used for drawing. select a higher overscan mode to get rid of black
+    borders or choose a lower overscan mode if parts of the picture get cropped
+
+  "Fullscreen mode"
+    If your wii is set to 16:9, this will stretch the picture to fullscreen.
+    Turning this option off results in black borders on the left and right
+    sides, but the aspect ratio will be kept. This option has no effect on 4:3
+    displays
+
+  you have to restart scummvm after changing one of these options
 
 THANKS
 

@@ -27,7 +27,12 @@
 #define MAX_FPS 30
 
 enum GraphicModeID {
-	GM_DEFAULT
+	GM_DEFAULT = 0,
+	GM_OVERSCAN1,
+	GM_OVERSCAN2,
+	GM_OVERSCAN3,
+	GM_OVERSCAN4,
+	GM_OVERSCAN5
 };
 
 void OSystem_Wii::initGfx() {
@@ -42,6 +47,11 @@ void OSystem_Wii::initGfx() {
 	_overlayWidth = 640;
 	_overlayHeight = 480;
 
+#ifndef GAMECUBE
+	if (CONF_GetAspectRatio() && _fullscreen)
+		_overlayHeight = 360;
+#endif
+
 	_overlaySize = _overlayWidth * _overlayHeight * 2;
 	_overlayPixels = (OverlayColor *) memalign(32, _overlaySize);
 
@@ -51,17 +61,32 @@ void OSystem_Wii::initGfx() {
 	_cursorPalette = (u16 *) memalign(32, 256 * 2);
 	memset(_cursorPalette, 0, 256 * 2);
 
-	_supportedGraphicsModes = new OSystem::GraphicsMode[2];
-	_supportedGraphicsModes[0].name = strdup("gx");
-	_supportedGraphicsModes[0].description = strdup("wii hardware scaler");
+	_supportedGraphicsModes = new OSystem::GraphicsMode[7];
+	_supportedGraphicsModes[0].name = strdup("standard");
+	_supportedGraphicsModes[0].description = strdup("standard");
 	_supportedGraphicsModes[0].id = GM_DEFAULT;
-	_supportedGraphicsModes[1].name = 0;
-	_supportedGraphicsModes[1].description = 0;
-	_supportedGraphicsModes[1].id = 0;
+	_supportedGraphicsModes[1].name = strdup("overscan1");
+	_supportedGraphicsModes[1].description = strdup("overscan 1");
+	_supportedGraphicsModes[1].id = GM_OVERSCAN1;
+	_supportedGraphicsModes[2].name = strdup("overscan2");
+	_supportedGraphicsModes[2].description = strdup("overscan 2");
+	_supportedGraphicsModes[2].id = GM_OVERSCAN2;
+	_supportedGraphicsModes[3].name = strdup("overscan3");
+	_supportedGraphicsModes[3].description = strdup("overscan 3");
+	_supportedGraphicsModes[3].id = GM_OVERSCAN3;
+	_supportedGraphicsModes[4].name = strdup("overscan4");
+	_supportedGraphicsModes[4].description = strdup("overscan 4");
+	_supportedGraphicsModes[4].id = GM_OVERSCAN4;
+	_supportedGraphicsModes[5].name = strdup("overscan5");
+	_supportedGraphicsModes[5].description = strdup("overscan 5");
+	_supportedGraphicsModes[5].id = GM_OVERSCAN5;
+	_supportedGraphicsModes[6].name = 0;
+	_supportedGraphicsModes[6].description = 0;
+	_supportedGraphicsModes[6].id = 0;
 
-	_texture = (u16 *) memalign(32, _overlaySize);
+	_texture = (u16 *) memalign(32, 640 * 480 * 2);
 
-	GX_Start(_overlayWidth, _overlayHeight, 320, 240);
+	setGraphicsMode(_activeGraphicsMode);
 }
 
 void OSystem_Wii::deinitGfx() {
@@ -111,13 +136,24 @@ int OSystem_Wii::getDefaultGraphicsMode() const {
 	return GM_DEFAULT;
 }
 
-bool OSystem_Wii::setGraphicsMode(const char *mode) {
-	setGraphicsMode(GM_DEFAULT);
-
-	return true;
-}
-
 bool OSystem_Wii::setGraphicsMode(int mode) {
+	s16 xar, yar;
+
+	printf("setGraphicsMode %d\n", mode);
+
+	xar = vmode->viWidth / 2;
+	yar = vmode->xfbHeight / 2;
+
+#ifndef GAMECUBE
+	if (CONF_GetAspectRatio() && !_fullscreen)
+		xar /= 1.33f;
+#endif
+
+	GX_SetCamPosZ(400 - mode * 10);
+	GX_Start(640, 480, xar, yar);
+
+	_activeGraphicsMode = mode;
+
 	return true;
 }
 
@@ -129,6 +165,8 @@ void OSystem_Wii::initSize(uint width, uint height) {
 	if (_gameWidth != width || _gameHeight != height) {
 		printf("initSize %u %u\n", width, height);
 
+		assert((width <= 640) && (height <= 480));
+
 		_gameWidth = width;
 		_gameHeight = height;
 
@@ -136,12 +174,15 @@ void OSystem_Wii::initSize(uint width, uint height) {
 			free(_gamePixels);
 
 		_gamePixels = (u8 *) memalign(32, _gameWidth * _gameHeight);
+		memset(_gamePixels, 0, _gameWidth * _gameHeight);
 
 		if (!_overlayVisible) {
 			_currentWidth = _gameWidth;
 			_currentHeight = _gameHeight;
 			updateEventScreenResolution();
 		}
+
+		setGraphicsMode(_activeGraphicsMode);
 	}
 }
 
@@ -320,6 +361,8 @@ void OSystem_Wii::unlockScreen() {
 }
 
 void OSystem_Wii::setShakePos(int shakeOffset) {
+	GX_SetTexTrans(0, (float) -shakeOffset * ((float) vmode->efbHeight /
+												(float) _currentHeight));
 }
 
 void OSystem_Wii::showOverlay() {
