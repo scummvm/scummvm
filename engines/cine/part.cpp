@@ -31,13 +31,10 @@
 
 namespace Cine {
 
-uint16 numElementInPart;
-
-PartBuffer *partBuffer;
+Common::Array<PartBuffer> partBuffer;
 
 void loadPart(const char *partName) {
-	memset(partBuffer, 0, sizeof(PartBuffer) * NUM_MAX_PARTDATA);
-	numElementInPart = 0;
+	partBuffer.clear();
 
 	g_cine->_partFileHandle.close();
 
@@ -48,13 +45,14 @@ void loadPart(const char *partName) {
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
-	numElementInPart = g_cine->_partFileHandle.readUint16BE();
+	uint16 numElementInPart = g_cine->_partFileHandle.readUint16BE();
+	partBuffer.resize(numElementInPart);
 	g_cine->_partFileHandle.readUint16BE(); // entry size
 
 	if (currentPartName != partName)
 		strcpy(currentPartName, partName);
 
-	for (uint16 i = 0; i < numElementInPart; i++) {
+	for (uint16 i = 0; i < partBuffer.size(); i++) {
 		g_cine->_partFileHandle.read(partBuffer[i].partName, 14);
 		partBuffer[i].offset = g_cine->_partFileHandle.readUint32BE();
 		partBuffer[i].packedSize = g_cine->_partFileHandle.readUint32BE();
@@ -190,7 +188,7 @@ void CineEngine::readVolCnf() {
 int16 findFileInBundle(const char *fileName) {
 	if (g_cine->getGameType() == Cine::GType_OS) {
 		// look first in currently loaded resource file
-		for (int i = 0; i < numElementInPart; i++) {
+		for (uint i = 0; i < partBuffer.size(); i++) {
 			if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
 				return i;
 			}
@@ -204,7 +202,7 @@ int16 findFileInBundle(const char *fileName) {
 		const char *part = (*it)._value;
 		loadPart(part);
 	}
-	for (int i = 0; i < numElementInPart; i++) {
+	for (uint i = 0; i < partBuffer.size(); i++) {
 		if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
 			return i;
 		}
@@ -220,7 +218,7 @@ void readFromPart(int16 idx, byte *dataPtr, uint32 maxSize) {
 }
 
 byte *readBundleFile(int16 foundFileIdx) {
-	assert(foundFileIdx >= 0 && foundFileIdx < numElementInPart);
+	assert(foundFileIdx >= 0 && foundFileIdx < (int32)partBuffer.size());
 	bool error = false;
 	byte *dataPtr = (byte *)calloc(partBuffer[foundFileIdx].unpackedSize, 1);
 	readFromPart(foundFileIdx, dataPtr, partBuffer[foundFileIdx].unpackedSize);
@@ -304,7 +302,7 @@ void dumpBundle(const char *fileName) {
 	strcpy(tmpPart, currentPartName);
 
 	loadPart(fileName);
-	for (int i = 0; i < numElementInPart; i++) {
+	for (uint i = 0; i < partBuffer.size(); i++) {
 		byte *data = readBundleFile(i);
 
 		debug(0, "%s", partBuffer[i].partName);

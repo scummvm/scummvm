@@ -75,7 +75,6 @@ CineEngine::~CineEngine() {
 	Common::clearAllSpecialDebugLevels();
 
 	free(palPtr);
-	free(partBuffer);
 	free(textDataPtr);
 }
 
@@ -154,7 +153,9 @@ void CineEngine::initialize() {
 	collisionPage = new byte[320 * 200];
 	textDataPtr = (byte *)malloc(8000);
 
-	partBuffer = (PartBuffer *)malloc(NUM_MAX_PARTDATA * sizeof(PartBuffer));
+	// Clear part buffer as there's nothing loaded into it yet.
+	// Its size will change when loading data into it with the loadPart function.
+	partBuffer.clear();
 
 	if (g_cine->getGameType() == Cine::GType_OS) {
 		readVolCnf();
