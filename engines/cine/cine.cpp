@@ -69,7 +69,6 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Eng
 
 CineEngine::~CineEngine() {
 	if (g_cine->getGameType() == Cine::GType_OS) {
-		freePoldatDat();
 		freeErrmessDat();
 	}
 	Common::clearAllSpecialDebugLevels();

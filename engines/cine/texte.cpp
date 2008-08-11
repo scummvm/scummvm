@@ -74,9 +74,7 @@ void loadTextData(const char *filename) {
 	fileHandle.close();
 }
 
-const CharacterEntry *fontParamTable;
-
-const CharacterEntry fontParamTable_standard[256] = {
+static const CharacterEntry fontParamTable_standard[NUM_FONT_CHARS] = {
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
@@ -113,7 +111,7 @@ const CharacterEntry fontParamTable_standard[256] = {
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}
 };
 
-const CharacterEntry fontParamTable_alt[256] = {
+static const CharacterEntry fontParamTable_alt[NUM_FONT_CHARS] = {
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
@@ -537,9 +535,11 @@ void initLanguage(Common::Language lang) {
 	}
 
 	if (g_cine->getFeatures() & GF_ALT_FONT) {
-		fontParamTable = fontParamTable_alt;
+		// Copy alternative font parameter table to the current font parameter table
+		Common::copy(fontParamTable_alt, fontParamTable_alt + NUM_FONT_CHARS, g_cine->_textHandler.fontParamTable);
 	} else {
-		fontParamTable = fontParamTable_standard;
+		// Copy standard font parameter to the current font parameter table
+		Common::copy(fontParamTable_standard, fontParamTable_standard + NUM_FONT_CHARS, g_cine->_textHandler.fontParamTable);
 	}
 }
 
@@ -574,23 +574,14 @@ void loadPoldatDat(const char *fname) {
 	in.open(fname);
 
 	if (in.isOpen()) {
-		CharacterEntry *ptr = (CharacterEntry *)malloc(sizeof(CharacterEntry) * 256);
-
-		for (int i = 0; i < 256; i++) {
-			ptr[i].characterIdx = (int)in.readByte();
-			ptr[i].characterWidth = (int)in.readByte();
+		for (int i = 0; i < NUM_FONT_CHARS; i++) {
+			g_cine->_textHandler.fontParamTable[i].characterIdx   = in.readByte();
+			g_cine->_textHandler.fontParamTable[i].characterWidth = in.readByte();
 		}
-		fontParamTable = ptr;
-
 		in.close();
 	} else {
 		error("Cannot open file %s for reading", fname);
 	}
-}
-
-void freePoldatDat() {
-	free(const_cast<Cine::CharacterEntry *>(fontParamTable));
-	fontParamTable = 0;
 }
 
 /*! \brief Fit a substring of text into one line of fixed width text box
@@ -617,7 +608,7 @@ int fitLine(const char *str, int maxWidth, int &words, int &width) {
 			bkpWidth = width;
 			bkpLen = i + 1;
 		} else {
-			charWidth = fontParamTable[(unsigned char)str[i]].characterWidth + 1;
+			charWidth = g_cine->_textHandler.fontParamTable[(unsigned char)str[i]].characterWidth + 1;
 			width += charWidth;
 		}
 

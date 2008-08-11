@@ -33,8 +33,17 @@ namespace Cine {
 
 typedef char CommandeType[20];
 
+// Number of characters in a font
+#define NUM_FONT_CHARS 256
+
+struct CharacterEntry {
+	byte characterIdx;
+	byte characterWidth;
+};
+
 struct TextHandler {
-	byte textTable[256][2][16 * 8];
+	byte textTable[NUM_FONT_CHARS][2][16 * 8];
+	CharacterEntry fontParamTable[NUM_FONT_CHARS];
 };
 
 extern const char **failureMessages;
@@ -44,18 +53,10 @@ extern const CommandeType *confirmMenu;
 extern const char **otherMessages;
 extern const char *commandPrepositionOn;
 
-struct CharacterEntry {
-	byte characterIdx;
-	byte characterWidth;
-};
-
-extern const CharacterEntry *fontParamTable;
-
 void loadTextData(const char *filename);
 void loadErrmessDat(const char *fname);
 void freeErrmessDat(void);
 void loadPoldatDat(const char *fname);
-void freePoldatDat(void);
 
 int fitLine(const char *ptr, int maxWidth, int &words, int &width);
 
