@@ -212,18 +212,18 @@ int16 findFileInBundle(const char *fileName) {
 	return -1;
 }
 
-void readFromPart(int16 idx, byte *dataPtr) {
+void readFromPart(int16 idx, byte *dataPtr, uint32 maxSize) {
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
 	g_cine->_partFileHandle.seek(partBuffer[idx].offset, SEEK_SET);
-	g_cine->_partFileHandle.read(dataPtr, partBuffer[idx].packedSize);
+	g_cine->_partFileHandle.read(dataPtr, MIN(partBuffer[idx].packedSize, maxSize));
 }
 
 byte *readBundleFile(int16 foundFileIdx) {
 	assert(foundFileIdx >= 0 && foundFileIdx < numElementInPart);
 	bool error = false;
 	byte *dataPtr = (byte *)calloc(partBuffer[foundFileIdx].unpackedSize, 1);
-	readFromPart(foundFileIdx, dataPtr);
+	readFromPart(foundFileIdx, dataPtr, partBuffer[foundFileIdx].unpackedSize);
 	if (partBuffer[foundFileIdx].unpackedSize > partBuffer[foundFileIdx].packedSize) {
 		CineUnpacker cineUnpacker;
 		error = !cineUnpacker.unpack(dataPtr, partBuffer[foundFileIdx].packedSize, dataPtr, partBuffer[foundFileIdx].unpackedSize);
