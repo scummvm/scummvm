@@ -65,7 +65,7 @@ void VirtualKeyboardGUI::initMode(VirtualKeyboard::Mode *mode) {
 			return;
 	}
 	_dispX = r.left;
-	_dispY = r.top + (_dispFont->getFontHeight() - r.height() + 1) / 2;
+	_dispY = r.top + (r.height() + 1 - _dispFont->getFontHeight()) / 2;
 	_dispSurface.free();
 	_dispSurface.create(r.width() + 1, _dispFont->getFontHeight(), sizeof(OverlayColor));
 	_dispI = 0;
