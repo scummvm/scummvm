@@ -67,11 +67,14 @@ namespace {
 #define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, true, false, Kyra::GI_KYRA3)
 
 #define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, true, Kyra::GI_LOL)
 #define LOL_PC98_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_LOL)
 #define LOL_PC98_SJIS_FLAGS FLAGS(false, false, false, true, false, false, Kyra::GI_LOL)
 #define LOL_DEMO_FLAGS FLAGS(true, false, false, false, false, false, Kyra::GI_KYRA2)
 
 const KYRAGameDescription adGameDescs[] = {
+	/* disable these targets until they get supported
 	{
 		{
 			"kyra1",
@@ -83,6 +86,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_CMP_FLAGS
 	},
+
 	{
 		{
 			"kyra1",
@@ -94,6 +98,8 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_CMP_FLAGS
 	},
+	*/
+
 	{
 		{
 			"kyra1",
@@ -696,7 +702,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_FAN_FLAGS(Common::ES_ESP, Common::EN_ANY)
 	},
 
-	// Itlian fan translation, see fr#2003504 "KYRA: add support for Italian version of Kyrandia 2&3"
+	// Italian fan translation, see fr#2003504 "KYRA: add support for Italian version of Kyrandia 2&3"
 	{
 		{
 			"kyra3",
@@ -839,8 +845,24 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		LOL_CD_FLAGS
 	},
-	
-	/*{
+
+	{
+		{
+			"lol",
+			0,
+			{
+				{ "WESTWOOD.1", 0, "3c61cb7de5b2ec452f5851f5075207ee", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		LOL_FLOPPY_CMP_FLAGS
+	},
+
+	/* disable these targets until they get supported
+	{
 		{
 			"lol",
 			0,
