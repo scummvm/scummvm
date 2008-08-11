@@ -240,7 +240,7 @@ static void io_appendto() {
 		delete fp;
 		pushresult(0);
 	}
-	delete buf;
+	delete[] buf;
 }
 
 #define NEED_OTHER (EOF - 1)  // just some flag different from EOF
