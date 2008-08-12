@@ -1416,19 +1416,38 @@ void drawDoubleMessageBox(int16 x, int16 y, int16 width, int16 currentY, int16 c
 }
 
 void processInventory(int16 x, int16 y) {
-	int16 listSize = buildObjectListCommand(-2);
 	uint16 button;
+	int menuWidth;
+	int listSize;
+	int commandParam;
+
+	if (g_cine->getGameType() == Cine::GType_FW) {
+		menuWidth = 140;
+		commandParam = -2;
+	} else { // Operation Stealth
+		menuWidth = 160;
+		commandParam = -3;
+	}
+
+	listSize = buildObjectListCommand(commandParam);
 
 	if (!listSize)
 		return;
 
-	renderer->drawMenu(objectListCommand, listSize, x, y, 140, -1);
+	renderer->drawMenu(objectListCommand, listSize, x, y, menuWidth, -1);
 	renderer->blit();
 
 	do {
 		manageEvents();
 		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
 	} while (!button);
+
+	do {
+		manageEvents();
+		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
+	} while (button);
+
+	// TODO: Both Future Wars and Operation Stealth call showMouse, drawMouse or something similar here.
 }
 
 int16 buildObjectListCommand(int16 param) {
