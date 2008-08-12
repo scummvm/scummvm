@@ -216,7 +216,7 @@ void initLanguage(Common::Language lang) {
 		"PAUSE",
 		"Loading | %s",
 		"Loading canceled ...",
-		"No baclup in the drive...",
+		"No backup in the drive...",
 		"Please enter the backup name"
 	};
 
