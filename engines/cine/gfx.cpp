@@ -1071,10 +1071,11 @@ void OSRenderer::drawBackground() {
  * \todo Add handling of type 22 overlays
  */
 void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
-	int len;
+	int len, idx, width, height;
 	objectStruct *obj;
 	AnimData *sprite;
 	byte *mask;
+	byte color;
 
 	switch (it->type) {
 	// color sprite
@@ -1105,18 +1106,17 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		break;
 
 	// action failure message
-	case 3: {
-		int idx = it->objIdx * 4 + g_cine->_rnd.getRandomNumber(3);
-		int len = strlen(failureMessages[idx]);
+	case 3:
+		idx = it->objIdx * 4 + g_cine->_rnd.getRandomNumber(3);
+		len = strlen(failureMessages[idx]);
 		_messageLen += len;
-		int width = 6 * len + 20;
+		width = 6 * len + 20;
 		width = width > 300 ? 300 : width;
 
 		// The used color here differs from Future Wars
 		drawMessage(failureMessages[idx], (320 - width) / 2, 80, width, _messageBg);
 		waitForPlayerClick = 1;
 		break;
-	}
 
 	// bitmap
 	case 4:
@@ -1147,18 +1147,17 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	// TODO: Check how the original game looks under DOSBox to see if the oxygen gauge works in it
 	case 21:
 	// A filled rectangle:
-	case 22: {
+	case 22:
 		// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing).
 		assert(it->objIdx < NUM_MAX_OBJECT);
 		obj = &objectTable[it->objIdx];
-		byte color = obj->part & 0x0F;
-		int width = obj->frame;
-		int height = obj->costume;
+		color = obj->part & 0x0F;
+		width = obj->frame;
+		height = obj->costume;
 		drawPlainBox(obj->x, obj->y, width, height, color);
 		debug(5, "renderOverlay: type=%d, x=%d, y=%d, width=%d, height=%d, color=%d",
 			it->type, obj->x, obj->y, width, height, color);
 		break;
-	 }
 
 	// something else
 	default:
