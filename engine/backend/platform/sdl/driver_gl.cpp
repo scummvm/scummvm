@@ -76,6 +76,8 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 
 DriverGL::~DriverGL() {
 	delete[] _storedDisplay;
+	if (glIsList(_emergFont))
+		glDeleteLists(_emergFont, 128);
 }
 
 void DriverGL::toggleFullscreenMode() {
