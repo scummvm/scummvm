@@ -115,6 +115,9 @@ Engine::~Engine() {
 
 	for (ActorListType::const_iterator i = _actors.begin(); i != _actors.end(); i++)
 		delete (*i);
+
+	killPrimitiveObjects();
+	killTextObjects();
 }
 
 void Engine::handleButton(int operation, int key, int /*keyModifier*/, uint16 ascii) {
@@ -546,6 +549,7 @@ void Engine::storeSaveGameImage(SaveGame *savedState) {
 		error("Unable to store screenshot!");
 	}
 	savedState->endSection();
+	delete screenshot;
 	printf("Engine::StoreSaveGameImage() finished.\n");
 }
 
