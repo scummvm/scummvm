@@ -98,10 +98,10 @@ int ToltecsEngine::go() {
 	_cameraY = 0;
 	_newCameraX = 0;
 	_newCameraY = 0;
-	_guiHeight = 26;
 	_cameraHeight = 0;
-	_yetAnotherX = 0;
-	
+
+	_guiHeight = 26;
+
 	_sceneWidth = 0;
 	_sceneHeight = 0;
 	
@@ -280,36 +280,15 @@ void ToltecsEngine::scrollCameraRight(int16 delta) {
 
 void ToltecsEngine::updateCamera() {
 
-	_yetAnotherX = _newCameraX;
-	if (_cameraX != _yetAnotherX) {
+	if (_cameraX != _newCameraX) {
 		//dirtyFullRefresh = -1;
+		_cameraX = _newCameraX;
 	}
-	_cameraX = _yetAnotherX;
-	
+
 	if (_cameraY != _newCameraY) {
-		if (_cameraY < _newCameraY) {
-			/*
-			drawRequest.resIndex = -(cameraY - anotherY);
-			drawRequest.y = cameraHeight + cameraY;
-			drawRequest.x = cameraX;
-			drawRequest.flags = 640;
-			*/
-			debug(0, "ToltecsEngine::updateCamera() a: (%d, %d, %d, %d)",
-				-(_cameraY - _newCameraY), _cameraHeight + _cameraY, _cameraX, 640);
-			//dirtyFullRefresh = -1;
-		} else {
-			/*
-			drawRequest.resIndex = cameraY - anotherY;
-			drawRequest.y = anotherY;
-			drawRequest.x = cameraX;
-			drawRequest.flags = 640;
-			*/
-			debug(0, "ToltecsEngine::updateCamera() b: (%d, %d, %d, %d)",
-				_cameraY - _newCameraY, _newCameraY, _cameraX, 640);
-			//dirtyFullRefresh = -1;
-		}
+		//dirtyFullRefresh = -1;
+		_cameraY = _newCameraY;
 	}
-	_cameraY = _newCameraY;
 
 	debug(0, "ToltecsEngine::checkCamera() _cameraX = %d; _cameraY = %d", _cameraX, _cameraY);
 
