@@ -283,7 +283,8 @@ void Engine::updateDisplayScene() {
 						g_driver->drawEmergString(550, 25, _fps, Color(255, 255, 255));
 				} else
 					_doFlip = false;
-			}
+			} else
+				g_driver->releaseSmushFrame();
 		}
 		drawPrimitives();
 	} else if (_mode == ENGINE_MODE_NORMAL) {
@@ -332,6 +333,8 @@ void Engine::updateDisplayScene() {
 			}
 			if (g_smush->getFrame() > 0)
 				g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
+			else
+				g_driver->releaseSmushFrame();
 		}
 
 		// Underlay objects are just above the background

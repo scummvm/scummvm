@@ -128,6 +128,7 @@ public:
 
 	virtual void prepareSmushFrame(int width, int height, byte *bitmap) = 0;
 	virtual void drawSmushFrame(int offsetX, int offsetY) = 0;
+	virtual void releaseSmushFrame() = 0;
 
 	virtual const char *getVideoDeviceName() = 0;
 

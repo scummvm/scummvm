@@ -579,6 +579,9 @@ void DriverTinyGL::drawSmushFrame(int offsetX, int offsetY) {
 	}
 }
 
+void DriverTinyGL::releaseSmushFrame() {
+}
+
 void DriverTinyGL::loadEmergFont() {
 }
 

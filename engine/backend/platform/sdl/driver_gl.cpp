@@ -713,6 +713,14 @@ void DriverGL::drawSmushFrame(int offsetX, int offsetY) {
 	glEnable(GL_LIGHTING);
 }
 
+void DriverGL::releaseSmushFrame() {
+	if (_smushNumTex > 0) {
+		glDeleteTextures(_smushNumTex, _smushTexIds);
+		delete[] _smushTexIds;
+		_smushNumTex = 0;
+	}
+}
+
 void DriverGL::loadEmergFont() {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 

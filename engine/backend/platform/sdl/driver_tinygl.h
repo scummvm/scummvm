@@ -103,6 +103,7 @@ public:
 
 	void prepareSmushFrame(int width, int height, byte *bitmap);
 	void drawSmushFrame(int offsetX, int offsetY);
+	void releaseSmushFrame();
 
 protected:
 
