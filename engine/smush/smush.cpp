@@ -386,7 +386,8 @@ bool zlibFile::setPos(struct SavePos *pos) {
 
 bool zlibFile::open(const char *filename) {
 	char flags = 0;
-	_inBuf = (byte *)calloc(1, BUFFER_SIZE);
+	_inBuf = new byte[BUFFER_SIZE];
+	memset(_inBuf, 0, BUFFER_SIZE);
 
 	if (_handle) {
 		if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
@@ -451,10 +452,8 @@ void zlibFile::close() {
 		_handle = NULL;
 	}
 
-	if (_inBuf) {
-		free(_inBuf);
- 		_inBuf = NULL;
-	}
+	delete _inBuf;
+	_inBuf = NULL;
 }
 
 bool zlibFile::isOpen() {
@@ -511,7 +510,7 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 		}
 	}
 
-	return (int)(len - _stream.avail_out);
+	return (uint32)(len - _stream.avail_out);
 }
  
 byte zlibFile::readByte() {
