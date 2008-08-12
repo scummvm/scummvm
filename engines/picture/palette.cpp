@@ -189,10 +189,30 @@ void Palette::saveState(Common::WriteStream *out) {
 	}
 	out->writeByte(_fragmentIndex);
 
-
 }
 
 void Palette::loadState(Common::ReadStream *in) {
+
+	// Save currently active palette
+	byte palette[768];
+	in->read(palette, 768);
+	setFullPalette(palette);
+
+	in->read(_mainPalette, 768);
+	in->read(_animPalette, 768);
+	in->read(_colorTransTable, 256);
+
+	uint16 fragmentCount = in->readUint16LE();
+	_fragments.clear();
+	for (uint16 i = 0; i < fragmentCount; i++) {
+		PaletteFragment fragment;
+		fragment.id = in->readUint16LE();
+		fragment.index = in->readByte();
+		fragment.count = in->readByte();
+		_fragments.push_back(fragment);
+	}
+	_fragmentIndex = in->readByte();
+
 }
 
 

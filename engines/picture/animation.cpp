@@ -156,6 +156,20 @@ void AnimationPlayer::saveState(Common::WriteStream *out) {
 }
 
 void AnimationPlayer::loadState(Common::ReadStream *in) {
+
+	_resIndex = in->readUint16LE();
+	_width = in->readUint16LE();
+	_height = in->readUint16LE();
+	_frameCount = in->readUint16LE();
+	_frameNumber = in->readUint16LE();
+	_keepFrameCounter = in->readUint32LE();
+	_curFrameSize = in->readUint32LE();
+	_nextFrameSize = in->readUint32LE();
+	_nextFrameOffset = in->readUint32LE();
+	_firstCurFrameSize = in->readUint32LE();
+	_firstNextFrameSize = in->readUint32LE();
+	_firstNextFrameOffset = in->readUint32LE();
+	
 }
 
 } // End of namespace Picture

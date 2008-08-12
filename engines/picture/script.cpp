@@ -1245,10 +1245,43 @@ void ScriptInterpreter::saveState(Common::WriteStream *out) {
 	// Save stack
 	out->write(_stack, kScriptStackSize);
 	out->writeUint16LE(_savedSp);
+	
+	// Save IP
+	out->writeUint16LE((int16)(_code - getSlotData(_regs.reg4)));
 
 }
 
 void ScriptInterpreter::loadState(Common::ReadStream *in) {
+
+	// Load registers
+	_regs.reg0 = in->readUint16LE();
+	_regs.reg1 = in->readUint16LE();
+	_regs.reg2 = in->readUint16LE();
+	_regs.reg3 = in->readUint16LE();
+	_regs.reg4 = in->readUint16LE();
+	_regs.reg5 = in->readUint16LE();
+	_regs.reg6 = in->readUint16LE();
+	_regs.sp = in->readUint16LE();
+	_regs.reg8 = in->readUint16LE();
+
+	// Load slots
+	for (int slot = 0; slot < kMaxScriptSlots; slot++) {
+		_slots[slot].size = in->readUint32LE();
+		_slots[slot].resIndex = in->readUint16LE();
+		_slots[slot].data = NULL;
+		if (_slots[slot].size > 0) {
+			_slots[slot].data = new byte[_slots[slot].size];
+			in->read(_slots[slot].data, _slots[slot].size);
+		}
+	}
+
+	// Load stack
+	in->read(_stack, kScriptStackSize);
+	_savedSp = in->readUint16LE();
+
+	// Load IP
+	_code = getSlotData(_regs.reg4) + in->readUint16LE();
+
 }
 
 } // End of namespace Picture

@@ -966,13 +966,105 @@ void Screen::drawChar2(const Font &font, byte *dest, int16 x, int16 y, byte ch, 
 }
 
 void Screen::saveState(Common::WriteStream *out) {
+
+	// Save verb line
+	out->writeUint16LE(_verbLineNum);
+	out->writeUint16LE(_verbLineX);
+	out->writeUint16LE(_verbLineY);
+	out->writeUint16LE(_verbLineWidth);
+	out->writeUint16LE(_verbLineCount);
 	for (int i = 0; i < 8; i++) {
 		out->writeUint16LE(_verbLineItems[i].slotIndex);
 		out->writeUint16LE(_verbLineItems[i].slotOffset);
 	}
+
+	// Save talk text items
+	out->writeUint16LE(_talkTextX);
+	out->writeUint16LE(_talkTextY);
+	out->writeUint16LE(_talkTextMaxWidth);
+	out->writeByte(_talkTextFontColor);
+	out->writeUint16LE(_talkTextItemNum);
+	for (int i = 0; i < 5; i++) {
+		out->writeUint16LE(_talkTextItems[i].duration);
+		out->writeUint16LE(_talkTextItems[i].slotIndex);
+		out->writeUint16LE(_talkTextItems[i].slotOffset);
+		out->writeUint16LE(_talkTextItems[i].fontNum);
+		out->writeByte(_talkTextItems[i].color);
+		out->writeByte(_talkTextItems[i].rectCount);
+		for (int j = 0; j < _talkTextItems[i].rectCount; j++) {
+			out->writeUint16LE(_talkTextItems[i].rects[j].x);
+			out->writeUint16LE(_talkTextItems[i].rects[j].y);
+			out->writeUint16LE(_talkTextItems[i].rects[j].width);
+			out->writeUint16LE(_talkTextItems[i].rects[j].length);
+		}
+	}
+
+	// Save GUI bitmap
+	{
+		byte *gui = _frontScreen + _vm->_cameraHeight * 640;
+		for (int i = 0; i < _vm->_guiHeight; i++) {
+			out->write(gui, 640);
+			gui += 640;
+		}
+	}
+
+	// Save fonts
+	for (int i = 0; i < 10; i++)
+		out->writeUint32LE(_fontResIndexArray[i]);
+	out->writeByte(_fontColor1);
+	out->writeByte(_fontColor2);
+
 }
 
 void Screen::loadState(Common::ReadStream *in) {
+
+	// Load verb line
+	_verbLineNum = in->readUint16LE();
+	_verbLineX = in->readUint16LE();
+	_verbLineY = in->readUint16LE();
+	_verbLineWidth = in->readUint16LE();
+	_verbLineCount = in->readUint16LE();
+	for (int i = 0; i < 8; i++) {
+		_verbLineItems[i].slotIndex = in->readUint16LE();
+		_verbLineItems[i].slotOffset = in->readUint16LE();
+	}
+	
+	// Load talk text items
+	_talkTextX = in->readUint16LE();
+	_talkTextY = in->readUint16LE();
+	_talkTextMaxWidth = in->readUint16LE();
+	_talkTextFontColor = in->readByte();
+	_talkTextItemNum = in->readUint16LE();
+	for (int i = 0; i < 5; i++) {
+		_talkTextItems[i].duration = in->readUint16LE();
+		_talkTextItems[i].slotIndex = in->readUint16LE();
+		_talkTextItems[i].slotOffset = in->readUint16LE();
+		_talkTextItems[i].fontNum = in->readUint16LE();
+		_talkTextItems[i].color = in->readByte();
+		_talkTextItems[i].rectCount = in->readByte();
+		for (int j = 0; j < _talkTextItems[i].rectCount; j++) {
+			_talkTextItems[i].rects[j].x = in->readUint16LE();
+			_talkTextItems[i].rects[j].y = in->readUint16LE();
+			_talkTextItems[i].rects[j].width = in->readUint16LE();
+			_talkTextItems[i].rects[j].length = in->readUint16LE();
+		}
+	}
+	
+	// Load GUI bitmap
+	{
+		byte *gui = _frontScreen + _vm->_cameraHeight * 640;
+		for (int i = 0; i < _vm->_guiHeight; i++) {
+			in->read(gui, 640);
+			gui += 640;
+		}
+	}
+
+	// Load fonts
+	for (int i = 0; i < 10; i++)
+		_fontResIndexArray[i] = in->readUint32LE();
+	_fontColor1 = in->readByte();
+	_fontColor2 = in->readByte();
+
 }
 
 

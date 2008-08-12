@@ -45,64 +45,61 @@
 
 namespace Picture {
 
-// TODO: Saveload is not working yet
+/* TODO:
+	- Saveload is working so far but only one slot is supported until the game menu is implemented
+	- Save with F6; Load with F9
+	- Saving during an animation (AnimationPlayer) is not working correctly yet
+	- Maybe switch to SCUMM/Tinsel serialization approach?
+*/
+
+#define SAVEGAME_VERSION 0 // 0 is dev version until in official SVN
 
 void PictureEngine::savegame(const char *filename) {
 
 	Common::OutSaveFile *out;
 	if (!(out = g_system->getSavefileManager()->openForSaving(filename))) {
 		warning("Can't create file '%s', game not saved", filename);
+		return;
 	}
 
-	// Save game variables
-	for (uint variable = 0; variable < 22; variable++) {
-	    int16 value = _script->getGameVar(variable);
-	    out->writeUint16LE(value);
-	}
+	out->writeUint32LE(SAVEGAME_VERSION);
+
+	out->writeUint16LE(_cameraX);
+	out->writeUint16LE(_cameraY);
+	out->writeUint16LE(_cameraHeight);
+
+	out->writeUint16LE(_guiHeight);
+
+	out->writeUint16LE(_sceneWidth);
+	out->writeUint16LE(_sceneHeight);
+	out->writeUint32LE(_sceneResIndex);
+
+	out->writeUint16LE(_walkSpeedX);
+	out->writeUint16LE(_walkSpeedY);
+
+	out->writeUint32LE(_counter01);
+	out->writeUint32LE(_counter02);
+	out->writeByte(_movieSceneFlag ? 1 : 0);
+	out->writeByte(_flag01);
 
 	_palette->saveState(out);
 	_script->saveState(out);
 	_anim->saveState(out);
-
-	// Save GUI
-	{
-	
-	}
+	_screen->saveState(out);
 
 /*
 case 0: return "mouseDisabled";
 case 1: return "mouseY";
 case 2: return "mouseX";
 case 3: return "mouseButton";
-case 4: return "verbLineY";
-case 5: return "verbLineX";
-case 6: return "verbLineWidth";
-case 7: return "verbLineCount";
-case 8: return "verbLineNum";
-case 9: return "talkTextItemNum";
-case 10: return "talkTextY";
-case 11: return "talkTextX";
-case 12: return "talkTextFontColor";
-case 13: return "cameraY";
-case 14: return "cameraX";
-case 15: return "walkSpeedY";
-case 16: return "walkSpeedX";
-case 17: return "flag01";
-case 18: return "sceneResIndex";
-case 19: return "cameraTop";
-case 20: return "sceneHeight";
-case 21: return "sceneWidth";
 */
 
 /*
-PersistentGameVarRef <offset _sceneHeight, 2>
-PersistentGameVarRef <offset _sceneWidth, 2>
 PersistentGameVarRef <offset screenFlag01, 2>
 PersistentGameVarRef <offset currentSequenceResIndex, 4>
 PersistentGameVarRef <offset currentSequenceLoopCount, 4>
 PersistentGameVarRef <offset sequenceVolume, 4>
 PersistentGameVarRef <offset dword_99AC0, 4>
-PersistentGameVarRef <offset verbLineNum, 22h>
 */
 
 	delete out;
@@ -110,7 +107,50 @@ PersistentGameVarRef <offset verbLineNum, 22h>
 }
 
 void PictureEngine::loadgame(const char *filename) {
-}
 
+	Common::InSaveFile *in;
+	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
+		warning("Can't open file '%s', game not loaded", filename);
+		return;
+	}
+	
+	uint32 version = in->readUint32LE();
+	if (version != SAVEGAME_VERSION) {
+		warning("Savegame '%s' too old, game not loaded (got v%d, need v%d)", filename, version, SAVEGAME_VERSION);
+		return;
+	}
+	
+	_cameraX = in->readUint16LE();
+	_cameraY = in->readUint16LE();
+	_cameraHeight = in->readUint16LE();
+
+	_guiHeight = in->readUint16LE();
+
+	_sceneWidth = in->readUint16LE();
+	_sceneHeight = in->readUint16LE();
+	_sceneResIndex = in->readUint32LE();
+
+	_walkSpeedX = in->readUint16LE();
+	_walkSpeedY = in->readUint16LE();
+
+	_counter01 = in->readUint32LE();
+	_counter02 = in->readUint32LE();
+	_movieSceneFlag = in->readByte() != 0;
+	_flag01 = in->readByte();
+
+	_palette->loadState(in);
+	_script->loadState(in);
+	_anim->loadState(in);
+	_screen->loadState(in);
+
+	delete in;
+
+	loadScene(_sceneResIndex);
+	_screen->clearSprites();
+
+	_newCameraX = _cameraX;
+	_newCameraY = _cameraY;
+
+}
 
 } // End of namespace Picture
