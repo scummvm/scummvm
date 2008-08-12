@@ -54,6 +54,7 @@ struct Shadow {
 class Actor {
 public:
 	Actor(const char *name);
+	~Actor();
 
 	const char *name() const { return _name.c_str(); }
 

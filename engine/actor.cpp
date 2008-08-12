@@ -73,6 +73,11 @@ Actor::Actor(const char *name) :
 	}
 }
 
+Actor::~Actor() {
+	clearShadowPlanes();
+	delete[] _shadowArray;
+}
+
 void Actor::setYaw(float yaw) {
 	// While the program correctly handle yaw angles outside
 	// of the range [0, 360), proper convention is to roll
