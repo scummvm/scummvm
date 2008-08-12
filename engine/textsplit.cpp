@@ -72,7 +72,7 @@ TextSplitter::TextSplitter(const char *data, int len) {
 	tmpData[len] = '\0';
 	// Find out how many lines of text there are
 	_numLines = _lineIndex = 0;
-	line = (char *) tmpData;
+	line = (char *)tmpData;
 	while (line) {
 		line = std::strchr(line, '\n');
 		if (line) {
@@ -82,10 +82,9 @@ TextSplitter::TextSplitter(const char *data, int len) {
 	}
 	// Allocate an array of the lines
 	_lines = new TextLines[_numLines];
-	line = (char *) tmpData;
+	line = (char *)tmpData;
 	for (i = 0; i < _numLines;i++) {
 		char *lastLine = line;
-		
 		line = std::strchr(lastLine, '\n');
 		_lines[i].setData(lastLine, line-lastLine);
 		line++;
