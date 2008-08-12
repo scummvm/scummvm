@@ -81,6 +81,8 @@ void Input::update() {
 
 			break;
 		case Common::EVENT_QUIT:
+		    // FIXME: Find a nicer way to quit
+		    g_system->quit();
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
