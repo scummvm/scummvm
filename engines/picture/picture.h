@@ -111,7 +111,6 @@ public:
 
 	uint _sceneResIndex;
 	int16 _sceneWidth, _sceneHeight;
-	//byte _scenePalette[768];
 
 	bool _quitGame;
 	int _counter01, _counter02;
@@ -121,8 +120,8 @@ public:
 	// TODO: Move camera stuff into own Scene class
 	int16 _cameraX, _cameraY;
 	int16 _newCameraX, _newCameraY;
-	int16 _guiHeight, _cameraHeight;
-	int16 _yetAnotherX;
+	int16 _cameraHeight;
+	int16 _guiHeight;
 
 	bool _doSpeech, _doText;
 	
