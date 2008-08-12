@@ -1491,6 +1491,8 @@ int16 selectSubObject(int16 x, int16 y, int16 param) {
 	return objListTab[selectedObject];
 }
 
+// TODO: Make separate functions for Future Wars's and Operation Stealth's version of this function, this is getting too messy
+// TODO: Add support for using the different prepositions for different verbs (Doesn't work currently)
 void makeCommandLine(void) {
 	uint16 x, y;
 
@@ -1515,8 +1517,12 @@ void makeCommandLine(void) {
 		}
 
 		if (si < 0) {
-			playerCommand = -1;
-			commandBuffer = "";
+			if (g_cine->getGameType() == Cine::GType_OS) {
+				canUseOnObject = 0;
+			} else { // Future Wars
+				playerCommand = -1;
+				commandBuffer = "";
+			}
 		} else {
 			if (g_cine->getGameType() == Cine::GType_OS) {
 				if (si >= 8000) {
@@ -1532,9 +1538,15 @@ void makeCommandLine(void) {
 			commandBuffer += " ";
 			commandBuffer += objectTable[commandVar3[0]].name;
 			commandBuffer += " ";
-			commandBuffer += commandPrepositionOn;
+			if (g_cine->getGameType() == Cine::GType_OS) {
+				commandBuffer += commandPrepositionTable[playerCommand];
+			} else { // Future Wars
+				commandBuffer += defaultCommandPreposition;
+			}
 		}
-	} else {
+	}
+	
+	if (g_cine->getGameType() == Cine::GType_OS || !(playerCommand != -1 && choiceResultTable[playerCommand] == 2)) {
 		if (playerCommand == 2) {
 			getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
 			processInventory(x, y + 8);
@@ -1544,7 +1556,7 @@ void makeCommandLine(void) {
 		}
 	}
 
-	if (g_cine->getGameType() == Cine::GType_OS) {
+	if (g_cine->getGameType() == Cine::GType_OS && playerCommand != 2) {
 		if (playerCommand != -1 && canUseOnObject != 0)	{ // call use on sub object
 			int16 si;
 
@@ -1552,34 +1564,37 @@ void makeCommandLine(void) {
 
 			si = selectSubObject(x, y + 8, -subObjectUseTable[playerCommand]);
 
-			if (si) {
+			if (si >= 0) {
 				if (si >= 8000) {
 					si -= 8000;
 				}
 
 				commandVar3[commandVar1] = si;
-
 				commandVar1++;
-
-				// TODO: add command message draw
+				commandBuffer += " ";
+				commandBuffer += objectTable[si].name;
 			}
+		}
 
-			isDrawCommandEnabled = 1;
+		isDrawCommandEnabled = 1;
 
-			if (playerCommand != -1 && choiceResultTable[playerCommand] == commandVar1) {
-				SelectedObjStruct obj;
-				obj.idx = commandVar3[0];
-				obj.param = commandVar3[1];
-				int16 di = getRelEntryForObject(playerCommand, commandVar1, &obj);
+		if (playerCommand != -1 && choiceResultTable[playerCommand] == commandVar1) {
+			SelectedObjStruct obj;
+			obj.idx = commandVar3[0];
+			obj.param = commandVar3[1];
+			int16 di = getRelEntryForObject(playerCommand, commandVar1, &obj);
 
-				if (di != -1) {
-					runObjectScript(di);
-				}
-			}
+			if (di != -1) {
+				runObjectScript(di);
+			} // TODO: else addFailureMessage(playerCommand)
+
+			playerCommand = -1;
+			commandVar1 = 0;
+			commandBuffer = "";
 		}
 	}
 
-	if (!disableSystemMenu) {
+	if (g_cine->getGameType() == Cine::GType_OS || !disableSystemMenu) {
 		isDrawCommandEnabled = 1;
 		renderer->setCommand(commandBuffer);
 	}

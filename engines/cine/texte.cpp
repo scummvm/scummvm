@@ -34,7 +34,8 @@ const CommandeType *defaultActionCommand;
 const CommandeType *systemMenu;
 const CommandeType *confirmMenu;
 const char **otherMessages;
-const char *commandPrepositionOn;
+const char *defaultCommandPreposition;
+const char **commandPrepositionTable;
 
 void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency);
 
@@ -190,6 +191,16 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
+	static const char *commandPrepositionTable_EN[] = {
+		"",   // EXAMINE
+		"",   // TAKE
+		"",   // INVENTORY
+		"on", // USE
+		"",   // OPERATE
+		"to", // SPEAK
+		""    // NOACTION
+	};
+
 	static const CommandeType systemMenu_EN[] = {
 		"Pause",
 		"Restart Game",
@@ -206,8 +217,7 @@ void initLanguage(Common::Language lang) {
 		"Loading | %s",
 		"Loading canceled ...",
 		"No baclup in the drive...",
-		"Please enter the backup name",
-		"on"
+		"Please enter the backup name"
 	};
 
 	static const CommandeType confirmMenu_EN[] = {
@@ -258,6 +268,16 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
+	static const char *commandPrepositionTable_FR[] = {
+		"",    // EXAMINER
+		"",    // PRENDRE
+		"",    // INVENTAIRE
+		"sur", // UTILISER
+		"",    // ACTIONNER
+		"a",   // PARLER
+		""     // NOACTION
+	};
+
 	static const CommandeType systemMenu_FR[] = {
 		"Pause",
 		"Nouvelle partie",
@@ -279,8 +299,7 @@ void initLanguage(Common::Language lang) {
 		"Sauvegarde de | %s",
 		"Sauvegarde Annul\x82""e ...",
 		"Aucune sauvegarde dans le lecteur ...",
-		"Veuillez entrer le Nom de la Sauvegarde .",
-		"sur"
+		"Veuillez entrer le Nom de la Sauvegarde ."
 	};
 
 	static const char *failureMessages_ES[] = {
@@ -326,6 +345,16 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
+	static const char *commandPrepositionTable_ES[] = {
+		"",      // EXAMINAR
+		"",      // COGER
+		"",      // INVENTARIO
+		"donde", // USAR
+		"",      // ACCIONAR
+		"a",     // HABLAR
+		""       // NOACTION
+	};
+
 	static const CommandeType systemMenu_ES[] = {
 		"Pause",
 		"Nueva partida",
@@ -347,8 +376,7 @@ void initLanguage(Common::Language lang) {
 		"Gabacion de| %s",
 		"Rrabacion anulada",
 		"No hay partidas grabadas en este disco...",
-		"Teclea el nombre de la partida grabada",
-		"donde"
+		"Teclea el nombre de la partida grabada"
 	};
 
 	static const char *failureMessages_DE[] = {
@@ -385,13 +413,23 @@ void initLanguage(Common::Language lang) {
 	};
 
 	static const CommandeType defaultActionCommand_DE[] = {
-		"Pr\x81""fe",
+		"Pr\x81""fe", // FIXME? The third letter should be Latin Small Letter U with diaeresis
 		"Nimm",
 		"Bestand",
 		"Benutze",
-		"Bet\x84tige",
+		"Bet\x84tige", // FIXME? The third letter should be Latin Small Letter A with diaeresis
 		"Sprich",
 		"NOACTION"
+	};
+
+	static const char *commandPrepositionTable_DE[] = {
+		"",      // Prufe
+		"",      // Nimm
+		"",      // Bestand
+		"gegen", // Benutze
+		"",      // Betatige
+		"a",     // Sprich
+		""       // NOACTION
 	};
 
 	static const CommandeType systemMenu_DE[] = {
@@ -415,8 +453,7 @@ void initLanguage(Common::Language lang) {
 		"Er L\x84""dt | %s",
 		"Ladevorgang Abgebrochen...",
 		"Kein Backup im Laufwerk...",
-		"Geben Sie den Namen|der Sicherungsdiskette ein",
-		"gegen"
+		"Geben Sie den Namen|der Sicherungsdiskette ein"
 	};
 
 	static const char *failureMessages_IT[] = {
@@ -462,6 +499,16 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
+	static const char *commandPrepositionTable_IT[] = {
+		"",   // ESAMINARE
+		"",   // PRENDERE
+		"",   // INVENTARIO
+		"su", // UTILIZZARE
+		"",   // AZIONARE
+		"a",  // PARLARE
+		""    // NOACTION
+	};
+
 	static const CommandeType systemMenu_IT[] = {
 		"Pausa",
 		"Parte nuova",
@@ -483,8 +530,7 @@ void initLanguage(Common::Language lang) {
 		"Caricamento di| %s",
 		"Caricamento annullato...",
 		"Nessun salvataggio su questo disco...",
-		"Vogliate accedere con il nome del salvataggio",
-		"su"
+		"Vogliate accedere con il nome del salvataggio"
 	};
 
 	switch (lang) {
@@ -494,7 +540,8 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_FR;
 		confirmMenu = confirmMenu_FR;
 		otherMessages = otherMessages_FR;
-		commandPrepositionOn = otherMessages_FR[7];
+		defaultCommandPreposition = commandPrepositionTable_FR[3];
+		commandPrepositionTable = commandPrepositionTable_FR;
 		break;
 
 	case Common::ES_ESP:
@@ -503,7 +550,8 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_ES;
 		confirmMenu = confirmMenu_ES;
 		otherMessages = otherMessages_ES;
-		commandPrepositionOn = otherMessages_ES[7];
+		defaultCommandPreposition = commandPrepositionTable_ES[3];
+		commandPrepositionTable = commandPrepositionTable_ES;
 		break;
 
 	case Common::DE_DEU:
@@ -512,7 +560,8 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_DE;
 		confirmMenu = confirmMenu_DE;
 		otherMessages = otherMessages_DE;
-		commandPrepositionOn = otherMessages_DE[7];
+		defaultCommandPreposition = commandPrepositionTable_DE[3];
+		commandPrepositionTable = commandPrepositionTable_DE;
 		break;
 
 	case Common::IT_ITA:
@@ -521,7 +570,8 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_IT;
 		confirmMenu = confirmMenu_IT;
 		otherMessages = otherMessages_IT;
-		commandPrepositionOn = otherMessages_IT[7];
+		defaultCommandPreposition = commandPrepositionTable_IT[3];
+		commandPrepositionTable = commandPrepositionTable_IT;
 		break;
 
 	default:
@@ -530,7 +580,8 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_EN;
 		confirmMenu = confirmMenu_EN;
 		otherMessages = otherMessages_EN;
-		commandPrepositionOn = otherMessages_EN[7];
+		defaultCommandPreposition = commandPrepositionTable_EN[3];
+		commandPrepositionTable = commandPrepositionTable_EN;
 		break;
 	}
 

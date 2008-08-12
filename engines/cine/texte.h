@@ -51,7 +51,8 @@ extern const CommandeType *defaultActionCommand;
 extern const CommandeType *systemMenu;
 extern const CommandeType *confirmMenu;
 extern const char **otherMessages;
-extern const char *commandPrepositionOn;
+extern const char *defaultCommandPreposition;
+extern const char **commandPrepositionTable;
 
 void loadTextData(const char *filename);
 void loadErrmessDat(const char *fname);
