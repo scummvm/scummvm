@@ -417,7 +417,7 @@ void initLanguage(Common::Language lang) {
 		"Nimm",
 		"Bestand",
 		"Benutze",
-		"Bet\x84tige", // FIXME? The third letter should be Latin Small Letter A with diaeresis
+		"Bet\x84tige", // FIXME? The fourth letter should be Latin Small Letter A with diaeresis
 		"Sprich",
 		"NOACTION"
 	};
