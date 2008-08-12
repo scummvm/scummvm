@@ -86,6 +86,8 @@ Block *Lab::getFileBlock(const char *filename) const {
 		return NULL;
 
 	_f->seek(i->second.offset, SEEK_SET);
+	char *data = new char[i->second.len];
+	_f->read(data, i->second.len);
 	return new Block(data, i->second.len);
 }
 
