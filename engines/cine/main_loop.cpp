@@ -284,7 +284,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 		menuCommandLen = 0;
 
 		playerCommand = -1;
-		strcpy(commandBuffer, "");
+		commandBuffer = "";
 
 		globalVars[VAR_MOUSE_X_POS] = 0;
 		globalVars[VAR_MOUSE_Y_POS] = 0;

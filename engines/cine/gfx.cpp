@@ -530,7 +530,7 @@ void FWRenderer::blit() {
 /*! \brief Set player command string
  * \param cmd New command string
  */
-void FWRenderer::setCommand(const char *cmd) {
+void FWRenderer::setCommand(Common::String cmd) {
 	_cmd = cmd;
 }
 

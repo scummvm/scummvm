@@ -94,7 +94,7 @@ public:
 
 	void drawFrame();
 	void blit();
-	void setCommand(const char *cmd);
+	void setCommand(Common::String cmd);
 
 	virtual void incrustMask(const objectStruct &obj, uint8 color = 0);
 	virtual void incrustSprite(const objectStruct &obj);
