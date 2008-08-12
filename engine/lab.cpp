@@ -86,14 +86,6 @@ Block *Lab::getFileBlock(const char *filename) const {
 		return NULL;
 
 	_f->seek(i->second.offset, SEEK_SET);
-
-	// The sound decoder reads up to two bytes past the end of data
-	// (but shouldn't actually use those bytes).  So allocate two extra bytes
-	// to be safe against crashes.
-	char *data = new char[i->second.len + 2];
-	_f->read(data, i->second.len);
-	data[i->second.len] = '\0';	// For valgrind cleanness
-	data[i->second.len + 1] = '\0';
 	return new Block(data, i->second.len);
 }
 
