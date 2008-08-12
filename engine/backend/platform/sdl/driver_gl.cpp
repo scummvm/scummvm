@@ -747,7 +747,7 @@ void DriverGL::drawEmergString(int x, int y, const char *text, const Color &fgCo
 	glRasterPos2i(x, y);
 
 	glListBase(_emergFont);
-	glCallLists(strlen(text), GL_UNSIGNED_BYTE, (GLubyte *) text);
+	glCallLists(strlen(text), GL_UNSIGNED_BYTE, (GLubyte *)text);
 
 	glEnable(GL_LIGHTING);
 
