@@ -217,7 +217,7 @@ void readFromPart(int16 idx, byte *dataPtr, uint32 maxSize) {
 	g_cine->_partFileHandle.read(dataPtr, MIN(partBuffer[idx].packedSize, maxSize));
 }
 
-byte *readBundleFile(int16 foundFileIdx) {
+byte *readBundleFile(int16 foundFileIdx, uint32 *size) {
 	assert(foundFileIdx >= 0 && foundFileIdx < (int32)partBuffer.size());
 	bool error = false;
 	byte *dataPtr = (byte *)calloc(partBuffer[foundFileIdx].unpackedSize, 1);
@@ -234,6 +234,11 @@ byte *readBundleFile(int16 foundFileIdx) {
 
 	if (error) {
 		warning("Error unpacking '%s' from bundle file '%s'", partBuffer[foundFileIdx].partName, currentPartName);
+	}
+
+	// Set the size variable if a pointer to it has been given
+	if (size != NULL) {
+		*size = partBuffer[foundFileIdx].unpackedSize;
 	}
 
 	return dataPtr;

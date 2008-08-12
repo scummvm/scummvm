@@ -46,7 +46,7 @@ int16 findFileInBundle(const char *fileName);
 
 void readFromPart(int16 idx, byte *dataPtr, uint32 maxSize);
 
-byte *readBundleFile(int16 foundFileIdx);
+byte *readBundleFile(int16 foundFileIdx, uint32 *size = NULL);
 byte *readBundleSoundFile(const char *entryName, uint32 *size = 0);
 byte *readFile(const char *filename, bool crypted = false);
 
