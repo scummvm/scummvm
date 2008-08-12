@@ -287,54 +287,44 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
  * \param width Rectangle width (Negative values draw the box horizontally flipped)
  * \param height Rectangle height (Negative values draw the box vertically flipped)
  * \param color Fill color
- * \note Rectangle's drawn width is always at least one.
- * \note Rectangle's drawn height is always at least one.
+ * \note An on-screen rectangle's drawn width is always at least one.
+ * \note An on-screen rectangle's drawn height is always at least one.
  */
 void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
-	int i;
+	// Make width's and height's absolute values at least one
+	// which forces this function to always draw something if the
+	// drawing position is inside screen bounds. This fixes at least
+	// the showing of the oxygen gauge meter in Operation Stealth's
+	// first arcade sequence where this function is called with a
+	// height of zero.
+	if (width == 0) {
+		width = 1;
+	}
+	if (height == 0) {
+		height = 1;
+	}
 
 	// Handle horizontally flipped boxes
 	if (width < 0) {
-		x += width;
 		width = ABS(width);
+		x -= width;
 	}
 
 	// Handle vertically flipped boxes
 	if (height < 0) {
-		y += height;
 		height = ABS(height);
+		y -= height;
 	}
 
-	// Handle horizontal boundaries
-	if (x < 0) {
-		width += x; // Remove invisible columns
-		x = 0; // Start drawing at the screen's left border
-	} else if (x > 319) {
-		// Nothing left to draw as we're over the screen's right border
-		width = 0;
-	}
+	// Clip the rectangle to screen dimensions
+	Common::Rect boxRect(x, y, x + width, y + height);
+	Common::Rect screenRect(320, 200);
+	boxRect.clip(screenRect);
 
-	// Handle vertical boundaries
-	if (y < 0) {
-		height += y; // Remove invisible rows
-		y = 0; // Start drawing at the screen's top border
-	} else if (y > 199) {
-		// Nothing left to draw as we're below the screen's bottom border
-		height = 0;
-	}
-
-	// Make width and height at least one
-	// which forces this function to always draw something.
-	// This fixes at least the showing of the oxygen gauge meter in
-	// Operation Stealth's first arcade sequence where this function
-	// is called with a height of zero.
-	width  = MAX(1, width);
-	height = MAX(1, height);
-
-	// Draw the filled rectangle
-	byte *dest = _backBuffer + y * 320 + x;
-	for (i = 0; i < height; i++) {
-		memset(dest + i * 320, color, width);
+	// Draw the filled rectangle	
+	byte *dest = _backBuffer + boxRect.top * 320 + boxRect.left;
+	for (int i = 0; i < boxRect.height(); i++) {
+		memset(dest + i * 320, color, boxRect.width());
 	}
 }
 
