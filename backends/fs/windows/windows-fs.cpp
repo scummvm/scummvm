@@ -227,8 +227,7 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p, const bool current
 		char path[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, path);
 		_path = path;
-	}
-	else {
+	} else {
 		assert(p.size() > 0);
 		_path = p;
 	}
