@@ -181,10 +181,11 @@ bool Tfmx::loadSong(uint8 songNumber) {
 		_tracks[track].activeMacro.macroWait = 0;
 		_tracks[track].activeMacro.noteNumber = 0;
 		_tracks[track].activeMacro.notePeriod = 0;
-		_tracks[track].activeMacro.noteVolume = 0;
+		_tracks[track].activeMacro.noteVelocity = 0;
 		_tracks[track].activeMacro.noteChannel = 0;
 		_tracks[track].activeMacro.noteType = 0;
 		_tracks[track].activeMacro.noteWait = 0;
+		_tracks[track].activeMacro.fineTune = 0;
 	}
 
 	//INITIALIZE CHANNELS
@@ -204,7 +205,7 @@ bool Tfmx::loadSong(uint8 songNumber) {
 	setInterruptFreq( (int)( getRate() / (1 / _tempo * 24)));
 	}
 
-	//setInterruptFreq( (int)( getRate() / 10) );
+	setInterruptFreq( (int)( getRate() / 10) );
 	return true;
 }
 void Tfmx::updateTrackstep() {
@@ -380,10 +381,10 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 			loadMacro( trackNumber, (_tracks[trackNumber].macroNumber) );
 			_tracks[trackNumber].macroOn = true; //set to false again when macro terminates
 			_tracks[trackNumber].activeMacro.noteNumber = byte1;
-			_tracks[trackNumber].activeMacro.noteVolume = (byte3 & 0xF0) >> 4;
+			_tracks[trackNumber].activeMacro.noteVelocity = (byte3 & 0xF0) >> 4;
 			_tracks[trackNumber].activeMacro.noteChannel = (byte3 & 0x0F);
-			_tracks[trackNumber].activeMacro.noteWait = byte4; 	
-			_tracks[trackNumber].activeMacro.notePeriod = periods[_tracks[trackNumber].activeMacro.noteNumber & 0x3F];
+		//	_tracks[trackNumber].activePattern.patternWait += byte4; 	
+			_tracks[trackNumber].activeMacro.notePeriod = periods[(_tracks[trackNumber].activeMacro.noteNumber + _tracks[trackNumber].activePattern.patternTranspose) & 0x3F];
 		}
 
 		else {
@@ -431,29 +432,26 @@ void Tfmx::doMacro(uint8 trackNumber) {
 	uint8 byte1 = ( *(_tracks[trackNumber].activeMacro.data) ) >> 24;
 	uint8 byte2 = ( *(_tracks[trackNumber].activeMacro.data) & 0x00FF0000 ) >> 16;
 	uint8 byte3 = ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FF00 ) >> 8;
+	int8 sbyte3 = ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FF00 ) >> 8;
 	uint8 byte4 = ( *(_tracks[trackNumber].activeMacro.data) & 0x000000FF );
-	uint8 myChannel = _tracks[trackNumber].activeMacro.noteChannel;
-	
+	uint8 currentChannel = _tracks[trackNumber].activeMacro.noteChannel;
+	uint16 currentPeriod = _tracks[trackNumber].activeMacro.notePeriod;
+	uint16 tunedPeriod = 0;
+
 	switch (byte1) {
 	case 0x00: //DMAoff reset + CLEARS EFFECTS
-		_channels[myChannel].sampleOn = false;
-		_channels[myChannel].sampleOffset = 0;
-		_channels[myChannel].sampleLength = 0;
-		break;
+		_channels[currentChannel].sampleOn = false;
+		_channels[currentChannel].sampleOffset = 0;
+		_channels[currentChannel].sampleLength = 0;
 	case 0x01:
-		_channels[myChannel].sampleOn = true;
-		/*
-		setChannelPeriod(myChannel,_channels[myChannel].period);
-		setChannelVolume(myChannel,_channels[myChannel].volume);
-		setChannelData(myChannel, _sampleData + _channels[myChannel].sampleOffset, 0, _channels[myChannel].sampleLength, 0);
-		*/
+		_channels[currentChannel].sampleOn = true;
 		//_tracks[trackNumber].activeMacro.macroWait = 1;
 		break;
 	case 0x02: //set sample offset
-		_channels[myChannel].sampleOffset = *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF;
+		_channels[currentChannel].sampleOffset = *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF;
 		break;
 	case 0x03: //set sample length
-		_channels[myChannel].sampleLength = ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) * 2;
+		_channels[currentChannel].sampleLength = ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) * 2;
 		break;
 	case 0x04: //wait
 		if ( (*(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF) == 0 ) {
@@ -464,46 +462,64 @@ void Tfmx::doMacro(uint8 trackNumber) {
 		}
 		break;
 	case 0x07:
-		_channels[myChannel].sampleOn = false; 
+		_channels[currentChannel].sampleOn = false; 
 		_tracks[trackNumber].macroOn = false;
 		break;
 	case 0x13: //DMA OFF BUT DOESNT CLEAR EFFECTS
-		_channels[myChannel].sampleOn = false;
+		_channels[currentChannel].sampleOn = false;
 		break;
 	case 0x0D: //add volume to channel;.
-		/*if (byte3 != 0xFE) {
-			uint8 channelNumber = _tracks[trackNumber].pattern.note.channelNumber;
-			_channels[channelNumber].volume = (_tracks[trackNumber].pattern.note.volume * 3) + byte4;
-
-			if (_channels[channelNumber].volume > 0x40) {
-				_channels[channelNumber].volume = 0x40;
+		if (byte3 != 0xFE) {
+			_channels[currentChannel].volume = (_tracks[trackNumber].activeMacro.noteVelocity * 3) + byte4;
+			
+			if (_channels[currentChannel].volume > 0x40) {
+				_channels[currentChannel].volume = 0x40;
 			}
-			break;
 		}
-		*/
 		break;
 	case 0x0E: //set volume
-		/*if (byte3 != 0xFE) {
-			uint8 channelNumber = _tracks[trackNumber].pattern.note.channelNumber;
-			_channels[channelNumber].volume = byte4;
-			break;
+		if (byte3 != 0xFE) {
+			_channels[currentChannel].volume = byte4;
 		}
-		*/
+		break;
+	case 0x19: //set one shot ? cut off?
+		_tracks[trackNumber].activeMacro.notePeriod = 0;
+		_channels[currentChannel].sampleOffset = 0;
+		_channels[currentChannel].sampleLength = 1;
+		break;
+	case 0x18: //sampleloop
+		_channels[currentChannel].sampleOffset += ( *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF );
+		_channels[currentChannel].sampleLength -= ( *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF );
+		break;
+	case 0x8: //add note
+		tunedPeriod = (periods[(byte2 + currentPeriod) & (0x3F)]);
+		_tracks[trackNumber].activeMacro.fineTune = sbyte3 / 0x100;
+		//_tracks[trackNumber].activeMacro.fineTune += (_tracks[trackNumber].activeMacro.noteFineTune / 0x100);
+		_tracks[trackNumber].activeMacro.fineTune += 1;
+		_tracks[trackNumber].activeMacro.notePeriod = (int)(tunedPeriod * _tracks[trackNumber].activeMacro.fineTune);
+		_tracks[trackNumber].activeMacro.macroWait = 1;
+		break;
+	case 0x9: //set note
+		tunedPeriod = (periods[(byte2) & (0x3F)]);
+		_tracks[trackNumber].activeMacro.fineTune = sbyte3 / 0x100;
+		//_tracks[trackNumber].activeMacro.fineTune += (_tracks[trackNumber].activeMacro.noteFineTune / 0x100);
+		_tracks[trackNumber].activeMacro.fineTune += 1;
+		_tracks[trackNumber].activeMacro.notePeriod = (int)(tunedPeriod * _tracks[trackNumber].activeMacro.fineTune);
+		_tracks[trackNumber].activeMacro.macroWait = 1;
 		break;
 	default:
 		break;
 	}//end switch
 
-	_channels[myChannel].period = _tracks[trackNumber].activeMacro.notePeriod;
-	_channels[myChannel].volume = _tracks[trackNumber].activeMacro.noteVolume;
-	_channels[myChannel].volume = 0x40;
-
+	_channels[currentChannel].period = _tracks[trackNumber].activeMacro.notePeriod;
+	//_channels[currentChannel].volume = _tracks[trackNumber].activeMacro.noteVolume;
+	
 	_tracks[trackNumber].activeMacro.data++;
 	_tracks[trackNumber].activeMacro.macroCount++;
 	
 	if (_tracks[trackNumber].activeMacro.macroCount == _tracks[trackNumber].activeMacro.macroLength) {
 		_tracks[trackNumber].macroOn = false;
-		//_channels[myChannel].sampleOn = false;
+		//_channels[currentChannel].sampleOn = false;
 	}
 }
 void Tfmx::testMacro(uint8 macroNumber) {
@@ -511,10 +527,11 @@ void Tfmx::testMacro(uint8 macroNumber) {
 	loadMacro(0, macroNumber);
 	_tracks[0].macroOn = true; //set to false again when macro terminates
 	_tracks[0].activeMacro.noteNumber = 0x1E;  //middle C
-	_tracks[0].activeMacro.noteVolume = 0x0F;
+	_tracks[0].activeMacro.noteVelocity = 0x40;
 	_tracks[0].activeMacro.noteChannel = 0;
 	_tracks[0].activeMacro.noteWait = 0; 
 	_tracks[0].activeMacro.notePeriod = periods[0x1E & 0x3F];
+	startPaula();
 }
 void Tfmx::interrupt(void) {
 	if (!_macroTest) { //Would be the normal case unless macro testing is on.
@@ -545,7 +562,7 @@ void Tfmx::interrupt(void) {
 			if (_tracks[track].patternOn) {
 				_trackAdvance = false;
 				break;
-			}
+			} 
 			else {
 				_trackAdvance = true;
 			}
@@ -555,8 +572,8 @@ void Tfmx::interrupt(void) {
 
 	else { //MACRO TEST IS ON
 		while (_tracks[0].activeMacro.macroWait == 0 && (_tracks[0].macroOn == true) ) {
-					doMacro(0);
-		}//END WHILE
+				doMacro(0);
+		}
 		setChannelPeriod(0,_channels[0].period);
 		setChannelVolume(0,_channels[0].volume);
 		if (_channels[0].sampleOn) {

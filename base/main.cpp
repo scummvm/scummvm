@@ -296,11 +296,14 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	Audio::Tfmx _aTfmx;
 	_aTfmx.load();
 	_aTfmx.loadSamples();
-	//_aTfmx.playSong(0);
-	//_aTfmx.testMacro(9);
+	_aTfmx.playSong(0);
+	
+	//if (_aTfmx.loadSong(0)) {
+	//	_aTfmx.testMacro(12);
+	//}
 
 	system.getMixer()->playInputStream( Audio::Mixer::kMusicSoundType, &_handle, &_aTfmx, -1, 255, 0, false);
-	system.delayMillis( 99 );
+	system.delayMillis( 999999 );
 	//Tfmx test end.
 
 

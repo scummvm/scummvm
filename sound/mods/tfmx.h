@@ -50,7 +50,7 @@ public:
 		
 		//DEBUGGING FUNCTION:: Temporary function to test individual macros for playback
 		void testMacro(uint8 macroNumber);
-	
+		bool loadSong(uint8 songNumber); //temporarly public
 protected:
 		//DEBUGGING::
 		bool _macroTest;
@@ -116,11 +116,12 @@ protected:
 			uint16 macroWait; //internal wait
 			//external note stuff here
 			uint8 noteNumber;
-			uint8 notePeriod;
-			uint8 noteVolume;
+			uint16 notePeriod;
+			uint8 noteVelocity;
 			uint8 noteChannel;
 			uint8 noteType;
 			uint8 noteWait;  //external wait
+			float fineTune;
 		};
 
 		//Track structure
@@ -150,7 +151,7 @@ protected:
 		//PAULA Interrupt override
 		virtual void interrupt(void);
 
-		bool loadSong(uint8 songNumber);
+		//bool loadSong(uint8 songNumber);
 		void updateTrackstep();
 		void loadPattern(uint8 trackNumber, uint8 patternNumber);
 		void updatePattern(uint8 trackNumber);
