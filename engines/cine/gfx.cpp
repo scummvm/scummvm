@@ -1129,12 +1129,12 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		maskBgOverlay(_bgTable[it->x].bg, sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, obj->x, obj->y);
 		break;
 
-	// FIXME: Looking at Operation Stealth's disassembly I can't find any codepath that
-	// will draw a type 21 overlay. But looking at the first arcade sequence's scripts
-	// it looks like the oxygen gauge meter is implemented using a type 21 overlay.
-	// So for the time being I'm simply drawing type 21 overlays as type 22 overlays
-	// and hoping for the best.
-	// TODO: Check how the original game looks under DOSBox to see if the oxygen gauge works in it
+	// FIXME: Implement correct drawing of type 21 overlays.
+	// Type 21 overlays aren't just filled rectangles, I found their drawing routine
+	// from Operation Stealth's drawSprite routine. So they're likely some kind of sprites
+	// and it's just a coincidence that the oxygen meter during the first arcade sequence
+	// works even somehow currently. I tried the original under DOSBox and the oxygen gauge
+	// is a long red bar that gets shorter as the air runs out.
 	case 21:
 	// A filled rectangle:
 	case 22:
