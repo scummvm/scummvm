@@ -38,7 +38,7 @@
 
 namespace GUI {
 
-class Eval;
+class ThemeEval;
 
 //! Hint to the theme engine that the widget is used in a non-standard way.
 enum ThemeHint {
@@ -250,9 +250,8 @@ public:
 	 *          the dialog, we return false, which means we need to redraw
 	 *          the dialog stack from scratch.
 	 */
-	virtual bool closeDialog() { return false; }
-	virtual void startBuffering() {}
-	virtual void finishBuffering() {}
+	virtual void startBuffering() = 0;
+	virtual void finishBuffering() = 0;
 
 	/**
 	 * Clear the complete GUI screen.
@@ -266,36 +265,6 @@ public:
 	 * it just copies all (changed) data to the overlay.
 	 */
 	virtual void updateScreen() = 0;
-
-	/**
-	 * Set the active screen area, in which the renderer is able to
-	 * draw.
-	 *
-	 * This does not affect the coordinates for the draw* functions,
-	 * it just marks the screen rect given in param r as writeable.
-	 *
-	 * This is for example used in the credits dialog, which, if not
-	 * just a part of the screen would be marked as writeable, would
-	 * draw parts of the scrolling text outside the dialog box and
-	 * thus would look strange.
-	 *
-	 * The active area defaults to the whole screen, so there is just
-	 * need to use this function if you want to limit it.
-	 *
-	 * @param r	rect of the screen, which should be writeable
-	 *
-	 * @see resetDrawArea
-	 */
-	virtual void setDrawArea(const Common::Rect &r) { _drawArea = r; }
-
-	/**
-	 * Resets the draw area to the whole screen.
-	 *
-	 * @see setDrawArea
-	 */
-	virtual void resetDrawArea() = 0;
-
-	virtual const Common::ConfigFile &getConfigFile() const { return _configFile; }
 
 	virtual const Graphics::Font *getFont(FontStyle font = kFontStyleBold) const = 0;
 	virtual int getFontHeight(FontStyle font = kFontStyleBold) const = 0;
@@ -356,19 +325,11 @@ public:
 		return kTextAlignCenter;
 	}
 
-	void processResSection(Common::ConfigFile &config, const Common::String &name, bool skipDefs = false, const Common::String &prefix = "");
-	void processSingleLine(const Common::String &section, const Common::String &prefix, const Common::String &name, const Common::String &str);
-	void setSpecialAlias(const Common::String &alias, const Common::String &name);
 
 	bool isThemeLoadingRequired();
-	bool sectionIsSkipped(Common::ConfigFile &config, const char *name, int w, int h);
-	void loadTheme(Common::ConfigFile &config, bool reset = true);
-	void loadTheme(Common::ConfigFile &config, bool reset, bool doBackendSpecificPostProcessing);
-	Eval *_evaluator;
-	
-	virtual void *evaluator() { return (void*)_evaluator; }
+	virtual ThemeEval *evaluator() = 0;
 
-	static bool themeConfigUseable(const Common::String &file, const Common::String &style="", Common::String *cStyle=0, Common::ConfigFile *cfg=0);
+	static bool themeConfigUseable(const Common::String &file);
 
 	virtual const Common::String &getThemeFileName() const = 0;
 	virtual const Common::String &getThemeName() const = 0;
@@ -395,18 +356,9 @@ public:
 	 */
 	virtual const Graphics::Surface *getImageSurface(const kThemeImages n) const { return 0; }
 protected:
-	bool loadConfigFile(const Common::String &file);
-	void getColorFromConfig(const Common::String &name, OverlayColor &col);
-	void getColorFromConfig(const Common::String &value, uint8 &r, uint8 &g, uint8 &b);
 
 	const Graphics::Font *loadFont(const char *filename);
 	Common::String genCacheFilename(const char *filename);
-
-	Common::String _stylefile, _stylename;
-
-	Common::Rect _drawArea;
-	Common::ConfigFile _configFile;
-	Common::ConfigFile _defaultConfig;
 
 public:
 	bool needThemeReload() { return ((_loadedThemeX != g_system->getOverlayWidth()) ||

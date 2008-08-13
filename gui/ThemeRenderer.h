@@ -453,11 +453,10 @@ public:
 	 *	Finishes buffering: widgets from there one will be drawn straight on the screen
 	 *	without drawing queues.
 	 */
-	void finishBuffering() {
-		_buffering = false;
-	}
+	void finishBuffering() { _buffering = false; }
+	void startBuffering() { _buffering = true; }
 	
-	void *evaluator() { return _themeEval; }
+	ThemeEval *evaluator() { return _themeEval; }
 	
 	bool supportsImages() const { return true; }
 	bool ownCursor() const { return _useCursor; }

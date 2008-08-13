@@ -79,8 +79,7 @@ public:
 	bool loadNewTheme(const Common::String &file);
 	Theme *theme() { return _theme; }
 	
-	Eval *evaluator() { return _theme->_evaluator; }
-	ThemeEval *xmlEval() { return (ThemeEval*)_theme->evaluator(); }
+	ThemeEval *xmlEval() { return _theme->evaluator(); }
 
 	const Graphics::Font &getFont(Theme::FontStyle style = Theme::kFontStyleBold) const { return *(_theme->getFont(style)); }
 	int getFontHeight(Theme::FontStyle style = Theme::kFontStyleBold) const { return _theme->getFontHeight(style); }

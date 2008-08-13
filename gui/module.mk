@@ -25,10 +25,7 @@ MODULE_OBJS := \
 	widget.o \
 	theme.o \
 	ThemeEval.o \
-	ThemeClassic.o \
-	ThemeModern.o \
-	ThemeParser.o \
-	theme-config.o
+	ThemeParser.o
 
 # Include common rules
 include $(srcdir)/rules.mk

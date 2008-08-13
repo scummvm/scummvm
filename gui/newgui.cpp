@@ -93,16 +93,11 @@ NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
 
 
 	ConfMan.registerDefault("gui_theme", "default");
-	Common::String style(ConfMan.get("gui_theme"));
-	if (style.compareToIgnoreCase("default") == 0)
-		style = "builtin";
-		
-	//DEBUG:
-//	style = "scummodern";
+	Common::String themefile(ConfMan.get("gui_theme"));
+	if (themefile.compareToIgnoreCase("default") == 0)
+		themefile = "builtin";
 
-	loadNewTheme(style);
-
-	_theme->resetDrawArea();
+	loadNewTheme(themefile);
 	_themeChange = false;
 }
 
@@ -130,7 +125,6 @@ bool NewGui::loadNewTheme(const Common::String &filename) {
 		return (!oldTheme.empty() ? loadNewTheme(oldTheme) : false);
 
 	_theme->init();
-	_theme->resetDrawArea();
 
 	if (!oldTheme.empty())
 		screenChange();

@@ -666,18 +666,6 @@ void Theme::setSpecialAlias(const String &alias, const String &name) {
 	}
 }
 
-bool Theme::isThemeLoadingRequired() {
-	int x = g_system->getOverlayWidth(), y = g_system->getOverlayHeight();
-
-	if (_loadedThemeX == x && _loadedThemeY == y)
-		return false;
-
-	_loadedThemeX = x;
-	_loadedThemeY = y;
-
-	return true;
-}
-
 bool Theme::sectionIsSkipped(Common::ConfigFile &config, const char *name, int w, int h) {
 	if (!config.hasKey("skipFor", name))
 		return false;

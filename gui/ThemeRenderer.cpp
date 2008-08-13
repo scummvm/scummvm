@@ -433,7 +433,7 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 				Common::MemoryReadStream *stream = new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size+1, true);
 				
 				if (parser()->loadStream(stream) == false || parser()->parse() == false) {
-					warning("Failed to load stream for %s", fileNameBuffer);
+					warning("Failed to load stream for zipped file '%s'", fileNameBuffer);
 					unzClose(zipFile);
 					delete stream;
 					return false;
@@ -444,7 +444,7 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 		
 			unzCloseCurrentFile(zipFile);
 		
-			if (unzGoToNextFile(zipFile) == UNZ_END_OF_LIST_OF_FILE)
+			if (unzGoToNextFile(zipFile) != UNZ_OK)
 				break;
 		}
 	} else if (parser()->loadFile(themeName + ".stx") && parser()->parse()) {

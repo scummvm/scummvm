@@ -29,32 +29,9 @@
 
 namespace GUI {
 
-Theme::Theme() : _drawArea(), _stylefile(""), _configFile(), _loadedThemeX(0), _loadedThemeY(0) {
-	Common::MemoryReadStream s((const byte *)_defaultConfigINI, strlen(_defaultConfigINI));
-	_defaultConfig.loadFromStream(s);
+Theme::Theme() : _loadedThemeX(0), _loadedThemeY(0) {}
 
-	_evaluator = new Eval();
-}
-
-Theme::~Theme() {
-	delete _evaluator;
-}
-
-void Theme::getColorFromConfig(const Common::String &value, OverlayColor &color) {
-	const char *postfixes[] = {".r", ".g", ".b"};
-	int rgb[3];
-
-	for (int cnt = 0; cnt < 3; cnt++)
-		rgb[cnt] = _evaluator->getVar(value + postfixes[cnt], 0);
-
-	color = g_system->RGBToColor(rgb[0], rgb[1], rgb[2]);
-}
-
-void Theme::getColorFromConfig(const Common::String &value, uint8 &r, uint8 &g, uint8 &b) {
-	r = _evaluator->getVar(value + ".r", 0);
-	g = _evaluator->getVar(value + ".g", 0);
-	b = _evaluator->getVar(value + ".b", 0);
-}
+Theme::~Theme() {}
 
 const Graphics::Font *Theme::loadFont(const char *filename) {
 	const Graphics::NewFont *font = 0;
@@ -146,51 +123,19 @@ Common::String Theme::genCacheFilename(const char *filename) {
 	return "";
 }
 
-bool Theme::loadConfigFile(const Common::String &stylefile) {
-	if (ConfMan.hasKey("themepath"))
-		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
+bool Theme::isThemeLoadingRequired() {
+	int x = g_system->getOverlayWidth(), y = g_system->getOverlayHeight();
 
-#ifdef DATA_PATH
-	Common::File::addDefaultDirectoryRecursive(DATA_PATH);
-#endif
-
-	if (ConfMan.hasKey("extrapath"))
-		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
-
-	if (!_configFile.loadFromFile(stylefile + ".ini")) {
-#ifdef USE_ZLIB
-		// Maybe find a nicer solution to this
-		unzFile zipFile = unzOpen((stylefile + ".zip").c_str());
-		if (zipFile && unzLocateFile(zipFile, (stylefile + ".ini").c_str(), 2) == UNZ_OK) {
-			unz_file_info fileInfo;
-			unzOpenCurrentFile(zipFile);
-			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-			uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
-			assert(buffer);
-			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
-			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
-			unzCloseCurrentFile(zipFile);
-			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
-			if (!_configFile.loadFromStream(stream)) {
-				unzClose(zipFile);
-				return false;
-			}
-			delete[] buffer;
-			buffer = 0;
-		} else {
-			unzClose(zipFile);
-			return false;
-		}
-		unzClose(zipFile);
-#else
+	if (_loadedThemeX == x && _loadedThemeY == y)
 		return false;
-#endif
-	}
+
+	_loadedThemeX = x;
+	_loadedThemeY = y;
 
 	return true;
 }
 
-bool Theme::themeConfigUseable(const Common::String &stylefile, const Common::String &style, Common::String *cStyle, Common::ConfigFile *cfg) {
+bool Theme::themeConfigUseable(const Common::String &filename) {
 	if (ConfMan.hasKey("themepath"))
 		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
 
@@ -201,58 +146,7 @@ bool Theme::themeConfigUseable(const Common::String &stylefile, const Common::St
 	if (ConfMan.hasKey("extrapath"))
 		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
 
-	Common::File file;
-	Common::ConfigFile configFile;
-	if (!cfg && (cStyle || !style.empty()))
-		cfg = &configFile;
 
-	if (!file.open(stylefile + ".ini")) {
-#ifdef USE_ZLIB
-		// Maybe find a nicer solution to this
-		unzFile zipFile = unzOpen((stylefile + ".zip").c_str());
-		if (zipFile && unzLocateFile(zipFile, (stylefile + ".ini").c_str(), 2) == UNZ_OK) {
-			if (!style.empty() || cStyle || cfg) {
-				unz_file_info fileInfo;
-				unzOpenCurrentFile(zipFile);
-				unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-				uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
-				assert(buffer);
-				memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
-				unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
-				unzCloseCurrentFile(zipFile);
-				Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
-				if (!cfg->loadFromStream(stream)) {
-					unzClose(zipFile);
-					return false;
-				}
-				delete[] buffer;
-				buffer = 0;
-			}
-		} else {
-			unzClose(zipFile);
-			return false;
-		}
-		unzClose(zipFile);
-#else
-		return false;
-#endif
-	}
-
-	if (!style.empty() || cStyle || cfg) {
-		if (file.isOpen()) {
-			if (!cfg->loadFromStream(file))
-				return false;
-			file.close();
-		}
-
-		Common::String temp;
-		if (!cfg->getKey("type", "theme", temp))
-			return false;
-		if (cStyle)
-			*cStyle = temp;
-		if (0 != temp.compareToIgnoreCase(style) && !style.empty())
-			return false;
-	}
 
 	return true;
 }
