@@ -1212,7 +1212,7 @@ static void fillAudio(void *udata, int16 *stream, uint len) {
 	n -= s;
 }
 
-SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) {
+SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) : _chn() {
 	_vm = agi;
 	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
