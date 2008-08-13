@@ -130,7 +130,7 @@ bool ThemeParser::parserCallback_defaults(ParserNode *node) {
 bool ThemeParser::parserCallback_font(ParserNode *node) {		
 	int red, green, blue;
 	
-	if (resolutionCheck(node->values["resolution"])) {
+	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
 	}
@@ -151,7 +151,7 @@ bool ThemeParser::parserCallback_fonts(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_cursor(ParserNode *node) {
-	if (resolutionCheck(node->values["resolution"])) {
+	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
 	}
@@ -171,7 +171,7 @@ bool ThemeParser::parserCallback_cursor(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_bitmap(ParserNode *node) {
-	if (resolutionCheck(node->values["resolution"])) {
+	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
 	}
@@ -209,12 +209,16 @@ bool ThemeParser::parserCallback_text(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_render_info(ParserNode *node) {
-	// TODO: Skip key if it's not for this platform.
+	if (resolutionCheck(node->values["resolution"]) == false)
+		node->ignore = true;
+		
 	return true;
 }
 
 bool ThemeParser::parserCallback_layout_info(ParserNode *node) {
-	// TODO: skip key
+	if (resolutionCheck(node->values["resolution"]) == false)
+		node->ignore = true;
+		
 	return true;
 }
 
@@ -264,7 +268,7 @@ bool ThemeParser::parserCallback_drawstep(ParserNode *node) {
 bool ThemeParser::parserCallback_drawdata(ParserNode *node) {
 	bool cached = false;
 	
-	if (resolutionCheck(node->values["resolution"])) {
+	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
 	}
@@ -479,7 +483,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 }
 
 bool ThemeParser::parserCallback_def(ParserNode *node) {
-	if (resolutionCheck(node->values["resolution"])) {
+	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
 	}
@@ -502,7 +506,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 	
 	if (getParentNode(node)->name == "globals") {
 		
-		if (resolutionCheck(node->values["resolution"])) {
+		if (resolutionCheck(node->values["resolution"]) == false) {
 			node->ignore = true;
 			return true;
 		}
@@ -546,20 +550,12 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 	return true;
 }
 
-bool ThemeParser::parserCallback_child(ParserNode *node) {
-	Common::String var = "Globals." + getParentNode(node)->values["name"] + "." + node->values["name"] + ".";
-	
-	if (!parseCommonLayoutProps(node, var))
-		return parserError("Error when parsing Layout properties of '%s'.", var.c_str());
-	
-	return true;
-}
-
 bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 	Common::String var = "Dialog." + node->values["name"];
 	bool enabled = true;
+	int inset = 0;
 	
-	if (resolutionCheck(node->values["resolution"])) {
+	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
 	}
@@ -571,7 +567,12 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 			return parserError("Invalid value for Dialog enabling (expecting true/false)");
 	}
 	
-	_theme->themeEval()->addDialog(var, node->values["overlays"], enabled);
+	if (node->values.contains("inset")) {
+		if (!parseIntegerKey(node->values["inset"].c_str(), 1, &inset))
+			return false;
+	}
+	
+	_theme->themeEval()->addDialog(var, node->values["overlays"], enabled, inset);
 	
 	if (node->values.contains("shading")) {
 		int shading = 0;
@@ -767,14 +768,33 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 
 bool ThemeParser::resolutionCheck(const Common::String &resolution) {
 	if (resolution.empty())
-		return false;
+		return true;
 		
-	Common::StringTokenizer tokenizer(resolution, "x");
-	Common::String w = tokenizer.nextToken();
-	Common::String h = tokenizer.nextToken();
+	Common::StringTokenizer globTokenizer(resolution, ", ");
+	Common::String cur, w, h;
+	bool definedRes = false;
 	
-	return  ((w == "X" || atoi(w.c_str()) == g_system->getOverlayWidth()) && 
-			(h == "Y" || atoi(h.c_str()) == g_system->getOverlayHeight())) == false;
+	while (!globTokenizer.empty()) {
+		bool ignore = false;
+		cur = globTokenizer.nextToken();
+		
+		if (cur[0] == '-') {
+			ignore = true;
+			cur.deleteChar(0);
+		} else {
+			definedRes = true;
+		}
+		
+		Common::StringTokenizer resTokenizer(cur, "x");
+		w = resTokenizer.nextToken();
+		h = resTokenizer.nextToken();
+
+		if ((w == "X" || atoi(w.c_str()) == g_system->getOverlayWidth()) && 
+			(h == "Y" || atoi(h.c_str()) == g_system->getOverlayHeight()))
+			return !ignore;
+	}
+
+	return !definedRes;
 }
 
 }

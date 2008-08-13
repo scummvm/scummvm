@@ -238,7 +238,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 
 	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
 
-	new StaticTextWidget(this, "ScummSaveload.Title", title);
+	new StaticTextWidget(this, "ScummSaveLoad.Title", title);
 
 	// Add choice list
 	_list = new GUI::ListWidget(this, "ScummSaveLoad.List");
@@ -318,7 +318,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 }
 
 void SaveLoadChooser::reflowLayout() {
-	if (g_gui.xmlEval()->getVar("ScummSaveLoad.ExtInfo.Visible", 1) == 1) {
+	if (g_gui.xmlEval()->getVar("Globals.ScummSaveLoad.ExtInfo.Visible") == 1) {
 		int16 x, y;
 		uint16 w, h;
 		

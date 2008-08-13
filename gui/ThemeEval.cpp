@@ -85,6 +85,7 @@ void ThemeLayoutMain::reflowLayout() {
 void ThemeLayoutVertical::reflowLayout() {
 	int curX, curY;
 	int autoWidget = -1;
+	int extraHeight = 0;
 	
 	curX = _paddingLeft;
 	curY = _paddingTop;
@@ -127,8 +128,13 @@ void ThemeLayoutVertical::reflowLayout() {
 			
 			if (_reverse) for (int j = autoWidget - 1; j >= 0; --j)
 				_children[j]->setY(-(_children[i]->getHeight() + _spacing));
-			else
-				_children[i]->setY(-2 * (_children[i]->getHeight() + _spacing));
+			else {
+				extraHeight -= (_children[i]->getHeight() + _spacing);
+				_children[i]->setY(extraHeight);
+				
+				for (int j = i - 1; j > autoWidget; --j)
+					_children[j]->setY(-(_children[i]->getHeight() + _spacing));
+			}
 		} else {
 			_h += _children[i]->getHeight() + _spacing;
 		}
@@ -138,6 +144,7 @@ void ThemeLayoutVertical::reflowLayout() {
 void ThemeLayoutHorizontal::reflowLayout() {
 	int curX, curY;
 	int autoWidget = -1;
+	int autoWidth = 0;
 
 	curX = _paddingLeft;
 	curY = _paddingTop;
@@ -178,8 +185,13 @@ void ThemeLayoutHorizontal::reflowLayout() {
 			
 			if (_reverse) for (int j = autoWidget - 1; j >= 0; --j)
 				_children[j]->setX(-(_children[i]->getWidth() + _spacing));
-			else
-				_children[i]->setX(-2 * (_children[i]->getWidth() + _spacing));
+			else {
+				autoWidth -= (_children[i]->getWidth() + _spacing);
+				_children[i]->setX(autoWidth);
+				
+				for (int j = i - 1; j > autoWidget; --j)
+					_children[j]->setX(-(_children[i]->getWidth() + _spacing));
+			}
 		} else {
 			_w += _children[i]->getWidth() + _spacing;
 		}
@@ -229,18 +241,18 @@ void ThemeEval::addWidget(const Common::String &name, int w, int h, const Common
 	setVar(_curDialog + "." + name + ".Enabled", enabled ? 1 : 0);
 }
 
-void ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, bool enabled) {
+void ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, bool enabled, int inset) {
 	int16 x, y;
 	uint16 w, h;
 	
 	ThemeLayout *layout = 0;
 	
 	if (overlays == "screen") {
-		layout = new ThemeLayoutMain(0, 0, g_system->getOverlayWidth(), g_system->getOverlayHeight());
+		layout = new ThemeLayoutMain(inset, inset, g_system->getOverlayWidth() - 2 * inset, g_system->getOverlayHeight() - 2 * inset);
 	} else if (overlays == "screen_center") {
 		layout = new ThemeLayoutMain(-1, -1, -1, -1);
 	} else if (getWidgetData(overlays, x, y, w, h)) {
-		layout = new ThemeLayoutMain(x, y, w, h);
+		layout = new ThemeLayoutMain(x + inset, y + inset, w - 2 * inset, h - 2 * inset);
 	}
 	
 	if (!layout)

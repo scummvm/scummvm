@@ -96,7 +96,7 @@ const ThemeRenderer::TextDataInfo ThemeRenderer::kTextDataDefaults[] = {
 
 
 ThemeRenderer::ThemeRenderer(Common::String fileName, GraphicsMode mode) : 
-	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), 
+	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), _font(0),
 	_screen(0), _backBuffer(0), _bytesPerPixel(0), _initOk(false), 
 	_themeOk(false), _enabled(false), _buffering(false), _cursor(0) {
 	_system = g_system;
@@ -114,16 +114,8 @@ ThemeRenderer::ThemeRenderer(Common::String fileName, GraphicsMode mode) :
 	}
 
 	_graphicsMode = mode;
-	setGraphicsMode(_graphicsMode);
-
-	if (_screen->w >= 400 && _screen->h >= 300) {
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-	} else {
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	}
-
 	_themeFileName = fileName;
-	_initOk = true;
+	_initOk = false;
 }
 
 ThemeRenderer::~ThemeRenderer() {
@@ -148,6 +140,12 @@ bool ThemeRenderer::init() {
 		_initOk = true;
 		clearAll();
 		resetDrawArea();
+	}
+	
+	if (_screen->w >= 400 && _screen->h >= 300) {
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	} else {
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	}
 
 	if (isThemeLoadingRequired() || !_themeOk) {
@@ -185,9 +183,8 @@ void ThemeRenderer::unloadTheme() {
 		ImageMan.unregisterSurface(i->_key);
 
 	ImageMan.remArchive(_themeFileName + ".zip");
-
-//	_themeName.clear();
-//	_themeFileName.clear();
+	
+	_themeEval->reset();
 	_themeOk = false;
 }
 

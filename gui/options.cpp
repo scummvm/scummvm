@@ -669,7 +669,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	// 1) The graphics tab
 	//
-	tab->addTab("Graphics");
+	tab->addTab(g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
 	addGraphicControls(tab, "GlobalOptions_Graphics.");
 
 	//
