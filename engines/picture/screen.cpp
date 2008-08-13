@@ -801,7 +801,8 @@ void Screen::drawTalkTextItems() {
 				if (ch == 0x20) {
 					x += font.getWidth();
 				} else {
-					drawChar2(font, _frontScreen, x, item->rects[j].y, ch, item->color);
+					//drawChar2(font, _frontScreen, x, item->rects[j].y, ch, item->color);
+					drawChar(font, _frontScreen, x, item->rects[j].y, ch, item->color, true);
 					x += font.getCharWidth(ch) + font.getSpacing() - 1;
 				}
 			}
@@ -893,7 +894,8 @@ void Screen::drawString(int16 x, int16 y, byte fontColor1, byte fontColor2, uint
 		if (ch <= 0x20) {
 			x += font.getWidth();
 		} else {
-			drawChar(font, _frontScreen, x + 1, y + _vm->_cameraHeight - yadd, ch, color);
+			//drawChar(font, _frontScreen, x + 1, y + _vm->_cameraHeight - yadd, ch, color);
+			drawChar(font, _frontScreen, x + 1, y + _vm->_cameraHeight - yadd, ch, color, false);
 			x += font.getCharWidth(ch) + font.getSpacing() - 1;
 			yadd = -yadd;
 		}
@@ -901,9 +903,7 @@ void Screen::drawString(int16 x, int16 y, byte fontColor1, byte fontColor2, uint
 	
 }
 
-// TODO: Merge drawChar and  drawChar2
-
-void Screen::drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, byte color) {
+void Screen::drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, byte color, bool outline) {
 
 	int16 charWidth, charHeight;
 	byte *charData;
@@ -921,43 +921,13 @@ void Screen::drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, b
 			byte flags = charData[0] & 0xF0;
 			charData++;
 			lineWidth -= count;
-			if (!(flags & 0x80) && (flags & 0x10)) {
-				memset(dest, color, count);
-			}
-			dest += count;
-		}
-		dest += 640 - charWidth;
-	}
-
-}
-
-void Screen::drawChar2(const Font &font, byte *dest, int16 x, int16 y, byte ch, byte color) {
-
-	int16 charWidth, charHeight;
-	byte *charData;
-
-	dest += x + (y * 640);
-
-	charWidth = font.getCharWidth(ch);
-	charHeight = font.getHeight() - 2;
-	charData = font.getCharData(ch);
-
-	while (charHeight--) {
-		byte lineWidth = charWidth;
-		while (lineWidth > 0) {
-			byte count = charData[0] & 0x0F;
-			byte flags = charData[0] & 0xF0;
-			charData++;
-			lineWidth -= count;
-
 			if ((flags & 0x80) == 0) {
- 				if ((flags & 0x10) == 0) {
-					memset(dest, 0, count);
-				} else {
+ 				if (flags & 0x10) {
 					memset(dest, color, count);
+				} else if (outline) {
+					memset(dest, 0, count);
 				}
 			}
-
 			dest += count;
 		}
 		dest += 640 - charWidth;

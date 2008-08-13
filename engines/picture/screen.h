@@ -326,9 +326,7 @@ public:
 	void printText(byte *textData);
 	void preprocessText(uint fontResIndex, int maxWidth, int &width, byte *&sourceString, byte *&destString, byte &len);
 	void drawString(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex);
-	void drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, byte color);
-	void drawChar2(const Font &font, byte *dest, int16 x, int16 y, byte ch, byte color);
-
+	void drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, byte color, bool outline);
 	void saveState(Common::WriteStream *out);
 	void loadState(Common::ReadStream *in);
 
