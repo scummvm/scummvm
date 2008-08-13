@@ -95,22 +95,36 @@ void KeymapManager::initKeymap(ConfigManager::Domain *domain,
 void KeymapManager::automaticMap(Keymap *map) {
 	List<Action*> actions(map->getActions()), unmapped;
 	List<Action*>::iterator actIt;
-	List<HardwareKey*> keys = _hardwareKeys->getHardwareKeys();
-	List<HardwareKey*>::iterator keyIt, selectedKey;
+	List<const HardwareKey*> keys = _hardwareKeys->getHardwareKeys();
+	List<const HardwareKey*>::iterator keyIt, selectedKey;
 
 	// sort by priority
 	ActionPriorityComp priorityComp;
 	sort(actions.begin(), actions.end(), priorityComp);
-
+	
 	for (actIt = actions.begin(); actIt != actions.end(); actIt++) {
 		selectedKey = keys.end();
+		int keyScore = 0;
 		Action *act = *actIt;
 		for (keyIt = keys.begin(); keyIt != keys.end(); keyIt++) {
 			if ((*keyIt)->preferredType == act->type) {
-				selectedKey = keyIt;
-				break;
-			} else if ((*keyIt)->preferredCategory == act->category && selectedKey == keys.end()) {
-				selectedKey = keyIt;
+				Action *parentAct = getParentMappedAction(map, (*keyIt)->key);
+				if (!parentAct) {
+					selectedKey = keyIt;
+					break;
+				} else if (parentAct->priority <= act->priority && keyScore < 3) {
+					selectedKey = keyIt;
+					keyScore = 3;
+				}
+			} else if ((*keyIt)->preferredCategory == act->category && keyScore < 2) {
+				Action *parentAct = getParentMappedAction(map, (*keyIt)->key);
+				if (!parentAct) {
+					selectedKey = keyIt;
+					keyScore = 2;
+				} else if (parentAct->priority <= act->priority && keyScore < 1) {
+					selectedKey = keyIt;
+					keyScore = 1;
+				}
 			}
 		}
 		if (selectedKey != keys.end()) {
@@ -120,11 +134,46 @@ void KeymapManager::automaticMap(Keymap *map) {
 			unmapped.push_back(act);
 	}
 
-	actIt = unmapped.begin();
-	keyIt = keys.begin();
-	while (actIt != unmapped.end() && keyIt != keys.end())
-		(*actIt)->mapKey(*keyIt);
+	for (actIt = unmapped.begin(); actIt != unmapped.end(); actIt++) {
+		selectedKey = keys.end();
+		int keyScore = 0;
+		int lowestPriority = 0; //dummy value
+		Action *act = *actIt;
+		for (keyIt = keys.begin(); keyIt != keys.end(); keyIt++) {
+			Action *parentAct = getParentMappedAction(map, (*keyIt)->key);
+			if (!parentAct) {
+				selectedKey = keyIt;
+				break;
+			} else if (keyScore < 2) {
+				if (parentAct->priority <= act->priority) {
+					keyScore = 2;
+					selectedKey = keyIt;
+				} else if (parentAct->priority < lowestPriority || keyScore == 0) {
+					keyScore = 1;
+					lowestPriority = parentAct->priority;
+					selectedKey = keyIt;
+				}
+			}
+		}
+		if (selectedKey != keys.end()) {
+			act->mapKey(*selectedKey);
+			keys.erase(selectedKey);
+		} else // no keys left 
+			return;
+	}
+}
 
+Action *KeymapManager::getParentMappedAction(Keymap *map, KeyState key) {
+	Keymap *parent = map->getParent();
+	if (parent) {
+		Action *act = parent->getMappedAction(key);
+		if (act)
+			return act;
+		else
+			return getParentMappedAction(parent, key);
+	} else {
+		return 0;
+	}
 }
 
 Keymap *KeymapManager::getKeymap(const String& name) {

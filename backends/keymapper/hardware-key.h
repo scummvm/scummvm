@@ -71,7 +71,7 @@ public:
 
 	HardwareKeySet() {}
 	virtual ~HardwareKeySet() {
-		List<HardwareKey*>::iterator it;
+		List<const HardwareKey*>::iterator it;
 		for (it = _keys.begin(); it != _keys.end(); it++)
 			delete *it;
 	}
@@ -82,7 +82,7 @@ public:
 	}
 
 	const HardwareKey *findHardwareKey(int32 id) const {
-		List<HardwareKey*>::iterator it;
+		List<const HardwareKey*>::iterator it;
 		for (it = _keys.begin(); it != _keys.end(); it++) {
 			if ((*it)->id == id)
 				return (*it);
@@ -91,7 +91,7 @@ public:
 	}
 
 	const HardwareKey *findHardwareKey(const KeyState& keystate) const {
-		List<HardwareKey*>::iterator it;
+		List<const HardwareKey*>::iterator it;
 		for (it = _keys.begin(); it != _keys.end(); it++) {
 			if ((*it)->key == keystate)
 				return (*it);
@@ -99,7 +99,7 @@ public:
 		return 0;
 	}
 
-	List<HardwareKey*> getHardwareKeys() const {
+	List<const HardwareKey*> getHardwareKeys() const {
 		return _keys;
 	}
 
@@ -111,7 +111,7 @@ public:
 private:
 
 	void checkForKey(HardwareKey *key) {
-		List<HardwareKey*>::iterator it;
+		List<const HardwareKey*>::iterator it;
 		for (it = _keys.begin(); it != _keys.end(); it++) {
 			if ((*it)->id == key->id)
 				error("Error adding HardwareKey '%s' - id of %d already in use!", key->description.c_str(), key->id);
@@ -120,7 +120,7 @@ private:
 		}
 	}
 
-	List<HardwareKey*> _keys;
+	List<const HardwareKey*> _keys;
 };
 
 

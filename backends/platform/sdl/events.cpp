@@ -533,6 +533,7 @@ void OSystem_SDL::setupKeymapper() {
 	mapper->registerHardwareKeySet(keySet);
 
 	Keymap *global = new Keymap("global");
+	Keymap *specific = new Keymap("specific");
 	Action *act;
 	Event evt;
 
@@ -549,33 +550,28 @@ void OSystem_SDL::setupKeymapper() {
 	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
 	global->addAction(act);
 
+	act = new Action('MENQ', "Menu", kGenericActionCategory, kMenuAction);
+	ADD_KEYDOWN_EVENT(KEYCODE_F5, ASCII_F5, 0)
+	global->addAction(act);
 	
-	act = new Action('QUIY', "Quit", kGenericActionCategory, kQuitAction);
+	act = new Action('QUIQ', "Quit", kGenericActionCategory, kQuitAction);
 	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
 	global->addAction(act);
 
+	act = new Action('JUMP', "Jump");
+	ADD_KEYDOWN_EVENT(KEYCODE_j, 'j', 0);
+	specific->addAction(act);
 	
-	act = new Action('QUIU', "Quit", kGenericActionCategory, kQuitAction);
-	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
-	global->addAction(act);
-
-	
-	act = new Action('QUII', "Quit", kGenericActionCategory, kQuitAction);
-	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
-	global->addAction(act);
-	
-	
-	act = new Action('QUIG', "Quit", kGenericActionCategory, kQuitAction);
-	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
-	global->addAction(act);
-	
-	act = new Action('QUIH', "Quit", kGenericActionCategory, kQuitAction);
-	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
-	global->addAction(act);
+	act = new Action('DUCK', "Duck");
+	ADD_KEYDOWN_EVENT(KEYCODE_d, 'd', 0);
+	specific->addAction(act);
 
 	#undef ADD_KEYDOWN_EVENT
 
 	mapper->addGlobalKeymap(global);
+	mapper->addGlobalKeymap(specific);
+
 	mapper->pushKeymap("global");
+	mapper->pushKeymap("specific", true);
 }
 

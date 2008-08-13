@@ -51,7 +51,7 @@ template<> struct Hash<KeyState>
 
 class Keymap {
 public:
-	Keymap(const String& na) : _name(na) {}
+	Keymap(const String& name, Keymap *parent = 0) : _name(name), _parent(parent) {}
 	Keymap(const Keymap& km);
 
 public:
@@ -80,7 +80,7 @@ public:
 	 * @return		a pointer to the Action or 0 if no
 	 */
 	Action *getMappedAction(const KeyState& ks) const;
-
+	
 	/**
 	 * Load this keymap's mappings from the given config domain and hardware key set
 	 * @param domain	config domain to load keymap from
@@ -101,6 +101,7 @@ public:
 	bool isComplete(const HardwareKeySet *hwKeys);
 
 	const String& getName() { return _name; }
+	Keymap *getParent() { return _parent; }
 
 private:
 	friend struct Action;
@@ -125,6 +126,7 @@ private:
 	void internalMapKey(Action *action, HardwareKey *hwKey);
 
 	String _name;
+	Keymap *_parent;
 	List<Action*> _actions;
 	HashMap<KeyState, Action*> _keymap; 
 

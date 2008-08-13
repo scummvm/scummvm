@@ -134,6 +134,11 @@ void OSystem_SDL::initBackend() {
 		setupMixer();
 	}
 
+	// Setup the keymapper with backend's set of keys
+	// NOTE: must be done before creating TimerManager 
+	// to avoid race conditions in creating EventManager
+	setupKeymapper();
+
 	// Create and hook up the timer manager, if none exists yet (we check for
 	// this to allow subclasses to provide their own).
 	if (_timer == 0) {
@@ -147,9 +152,6 @@ void OSystem_SDL::initBackend() {
 		_timer = new DefaultTimerManager();
 		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
 	}
-
-	// Provide the keymapper with backend's set of keys
-	setupKeymapper();
 
 	// Invoke parent implementation of this method
 	OSystem::initBackend();

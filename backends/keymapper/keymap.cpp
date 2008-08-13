@@ -50,10 +50,6 @@ void Keymap::registerMapping(Action *action, const HardwareKey *hwKey) {
 	it = _keymap.find(hwKey->key);
 	// if key is already mapped to a different action then un-map it
 	if (it != _keymap.end() && action != it->_value) {
-		HashMap<KeyState, Action*>::iterator it2;
-		for (it2 = _keymap.begin(); it2 != _keymap.end(); it2++) {
-			printf("%d\n", it2->_value);
-		}
 		it->_value->mapKey(0);
 	}
 

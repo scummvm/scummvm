@@ -92,6 +92,7 @@ private:
 
 	void initKeymap(ConfigManager::Domain *domain, Keymap *keymap);
 	void automaticMap(Keymap *map);
+	Action *getParentMappedAction(Keymap *map, KeyState key);
 
 	Domain _globalDomain;
 	Domain _gameDomain;

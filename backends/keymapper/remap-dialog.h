@@ -41,44 +41,42 @@ public:
 	virtual ~RemapDialog();
 	virtual void open();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyUp(Common::KeyState state);
 
 protected:
-	struct Mapping {
-		Action *action;
+	struct ActionWidgets {
 		GUI::StaticTextWidget *actionText;
 		GUI::ButtonWidget *keyButton;
+	};
+	struct ActionInfo {
+		Action *action;
+		bool inherited;
+		String description;
 	};
 
 	void loadKeymap();
 	void refreshKeymap();
-	void setupWidgets(uint num);
-	void startRemapping(Mapping *remap);
+	void setupWidgets();
+	void startRemapping(uint i);
 	void stopRemapping();
 
 	Keymapper *_keymapper;
 	Stack<Keymapper::MapRecord> *_activeKeymaps;
-	KeymapManager::Domain *_globalKeymaps;
-	KeymapManager::Domain *_gameKeymaps;
+	Keymap** _keymapTable;
 
-	List<Action*> *_currentActions;
-	List<Action*>::iterator _topAction;
-	uint _topRow;
+	Array<ActionInfo> _currentActions;
+	int _topAction;
 
 	Rect _keymapArea;
 
 	GUI::PopUpWidget *_kmPopUp;
-	Keymap** _keymapTable;
-
+	//GUI::ContainerWidget *_container;
 	GUI::ScrollBarWidget *_scrollBar;
 
-	uint _colWidth;
 	uint _colCount, _rowCount;
-	uint _spacing;
-	uint _buttonHeight;
 
-	Mapping *_activeRemap;
-	Array<Mapping> _keymapMappings;
+	Array<ActionWidgets> _keymapWidgets;
+	Action *_activeRemapAction;
 
 };
 

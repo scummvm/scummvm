@@ -87,7 +87,7 @@ bool Keymapper::mapKey(const KeyState& key, bool isKeyDown) {
 	if (_activeMaps.empty()) return false;
 
 	Action *action = 0;
-	for (int i = _activeMaps.size() - 1; !action && i >= 0; i++) {
+	for (int i = _activeMaps.size() - 1; !action && i >= 0; --i) {
 		MapRecord mr = _activeMaps[i];
 		action = mr.keymap->getMappedAction(key);
 		if (mr.inherit == false) break;
@@ -95,7 +95,7 @@ bool Keymapper::mapKey(const KeyState& key, bool isKeyDown) {
 	if (!action) return false;
 
 	List<Event>::iterator it;
-	for (it = action->events.begin(); it != action->events.end(); it++) {
+	for (it = action->events.begin(); it != action->events.end(); ++it) {
 		Event evt = *it;
 		bool pushEvent = true;
 		switch (evt.type) {
