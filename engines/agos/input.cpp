@@ -123,7 +123,7 @@ void AGOSEngine::setup_cond_c_helper() {
 	clearName();
 	_lastNameOn = last;
 
-	while (!_quit) {
+	while (!quit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = 0;
 		_leftButtonDown = 0;
@@ -145,7 +145,7 @@ void AGOSEngine::setup_cond_c_helper() {
 			}
 
 			delay(100);
-		} while ((_lastHitArea3 == (HitArea *) -1 || _lastHitArea3 == 0) && !_quit);
+		} while ((_lastHitArea3 == (HitArea *) -1 || _lastHitArea3 == 0) && !quit());
 
 		if (_lastHitArea == NULL) {
 		} else if (_lastHitArea->id == 0x7FFB) {

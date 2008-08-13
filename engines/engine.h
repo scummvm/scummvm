@@ -51,8 +51,6 @@ public:
 	Audio::Mixer *_mixer;
 	Common::TimerManager * _timer;
 
-	bool _quit, _rtl;
-
 protected:
 	Common::EventManager *_eventMan;
 	Common::SaveFileManager *_saveFileMan;

@@ -369,7 +369,7 @@ void Sound::blasterWaitEndPlay(bool interruptible, bool stopComp) {
 	if (stopComp)
 		_blaster->endComposition();
 
-	while (_blaster->isPlaying() && !_vm->_quit) {
+	while (_blaster->isPlaying() && !_vm->quit()) {
 		if (interruptible && (_vm->_util->checkKey() == 0x11B)) {
 			WRITE_VAR(57, (uint32) -1);
 			return;

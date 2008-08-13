@@ -1012,7 +1012,7 @@ int AGOSEngine::runScript() {
 		executeOpcode(_opcode);
 	} while  (getScriptCondition() != flag && !getScriptReturn() && !quit());
 
-	return (_quit) ? 1 : getScriptReturn();
+	return (quit()) ? 1 : getScriptReturn();
 }
 
 Child *nextSub(Child *sub, int16 key) {

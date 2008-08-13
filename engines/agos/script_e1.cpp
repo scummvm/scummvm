@@ -1052,11 +1052,11 @@ uint AGOSEngine::confirmYesOrNo(uint16 x, uint16 y) {
 	ha->priority = 999;
 	ha->window = 0;
 
-	while (!_quit) {
+	while (!quit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
-		while (!_quit) {
+		while (!quit()) {
 			if (_lastHitArea3 != 0)
 				break;
 			delay(1);
@@ -1101,11 +1101,11 @@ uint AGOSEngine::continueOrQuit() {
 	ha->priority = 999;
 	ha->window = 0;
 
-	while (!_quit) {
+	while (!quit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
-		while (!_quit) {
+		while (!quit()) {
 			if (_lastHitArea3 != 0)
 				break;
 			delay(1);
