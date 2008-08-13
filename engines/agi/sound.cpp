@@ -435,8 +435,12 @@ void IIgsMidiChannel::stopSounds() {
 	_gsChannels.clear();
 }
 
+static int16 *buffer;
+
 int SoundMgr::initSound() {
 	int r = -1;
+
+	buffer = _sndBuffer = (int16 *)calloc(2, BUFFER_SIZE);
 
 	_env = false;
 
@@ -474,6 +478,7 @@ int SoundMgr::initSound() {
 void SoundMgr::deinitSound() {
 	debugC(3, kDebugLevelSound, "()");
 	_mixer->stopHandle(_soundHandle);
+	free(_sndBuffer);
 }
 
 void SoundMgr::stopNote(int i) {
@@ -1180,7 +1185,7 @@ bool SoundMgr::loadInstruments() {
 	return _gsSound.loadWaveFile(waveFsnode->getPath(), *exeInfo) && _gsSound.loadInstrumentHeaders(exeFsnode->getPath(), *exeInfo);
 }
 
-void SoundMgr::fillAudio(void *udata, int16 *stream, uint len) {
+static void fillAudio(void *udata, int16 *stream, uint len) {
 	SoundMgr *soundMgr = (SoundMgr *)udata;
 	uint32 p = 0;
 	static uint32 n = 0, s = 0;
@@ -1188,32 +1193,32 @@ void SoundMgr::fillAudio(void *udata, int16 *stream, uint len) {
 	len <<= 2;
 
 	debugC(5, kDebugLevelSound, "(%p, %p, %d)", (void *)udata, (void *)stream, len);
-	memcpy(stream, ((uint8 *)&_sndBuffer[0]) + s, p = n);
+	memcpy(stream, (uint8 *)buffer + s, p = n);
 	for (n = 0, len -= p; n < len; p += n, len -= n) {
 		soundMgr->playSound();
 		n = soundMgr->mixSound() << 1;
 		if (len < n) {
-			memcpy((uint8 *)stream + p, _sndBuffer, len);
+			memcpy((uint8 *)stream + p, buffer, len);
 			s = len;
 			n -= s;
 			return;
 		} else {
-			memcpy((uint8 *)stream + p, _sndBuffer, n);
+			memcpy((uint8 *)stream + p, buffer, n);
 		}
 	}
 	soundMgr->playSound();
 	n = soundMgr->mixSound() << 1;
-	memcpy((uint8 *)stream + p, _sndBuffer, s = len);
+	memcpy((uint8 *)stream + p, buffer, s = len);
 	n -= s;
 }
 
-SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) : _sndBuffer(), _chn() {
+SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) : _chn() {
 	_vm = agi;
 	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
 	_endflag = -1;
-	_playing = false;
 	_playingSound = -1;
+	_sndBuffer = 0;
 	_waveform = 0;
 }
 

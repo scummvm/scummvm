@@ -468,11 +468,10 @@ private:
 	int _playingSound;
 	uint8 _env;
 
-	int16 _sndBuffer[BUFFER_SIZE];
+	int16 *_sndBuffer;
 	const int16 *_waveform;
 
 	void premixerCall(int16 *buf, uint len);
-	void fillAudio(void *udata, int16 *stream, uint len);
 
 public:
 	void unloadSound(int);
