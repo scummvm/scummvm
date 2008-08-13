@@ -150,7 +150,7 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	_fileList->setNumberingMode(kListNumberingOff);
 	_fileList->setEditable(false);
 
-	_fileList->setHints(THEME_HINT_PLAIN_COLOR);
+	_backgroundType = GUI::Theme::kDialogBackgroundPlain;
 
 	// Buttons
 	new ButtonWidget(this, "Browser.Up", "Go up", kGoUpCmd, 0);

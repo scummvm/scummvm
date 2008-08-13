@@ -1101,14 +1101,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\gui\eval.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\eval.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\gui\Key.cpp"
 				>
 			</File>
@@ -1197,10 +1189,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\gui\theme-config.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\gui\theme.cpp"
 				>
 			</File>
@@ -1214,14 +1202,6 @@
 			</File>
 			<File
 				RelativePath="..\..\gui\themebrowser.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\ThemeClassic.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\ThemeModern.cpp"
 				>
 			</File>
 			<File
