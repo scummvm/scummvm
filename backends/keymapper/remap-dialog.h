@@ -42,6 +42,8 @@ public:
 	virtual void open();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleKeyUp(Common::KeyState state);
+	virtual void handleMouseDown(int x, int y, int button, int clickCount);
+	virtual void handleTickle();
 
 protected:
 	struct ActionWidgets {
@@ -77,6 +79,8 @@ protected:
 
 	Array<ActionWidgets> _keymapWidgets;
 	Action *_activeRemapAction;
+	uint32 _remapTimeout;
+	static const uint32 kRemapTimeoutDelay = 3000;
 
 };
 

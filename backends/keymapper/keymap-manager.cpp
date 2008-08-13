@@ -92,64 +92,107 @@ void KeymapManager::initKeymap(ConfigManager::Domain *domain,
 		automaticMap(map);
 }
 
+// TODO:
+// - current weaknesses:
+//     - if an action finds a key with required type / category but a parent 
+//       action with higher priority is using it, that key is never used
 void KeymapManager::automaticMap(Keymap *map) {
-	List<Action*> actions(map->getActions()), unmapped;
-	List<Action*>::iterator actIt;
-	List<const HardwareKey*> keys = _hardwareKeys->getHardwareKeys();
-	List<const HardwareKey*>::iterator keyIt, selectedKey;
+	// Create local copies of action and key lists.
+	List<Action*> actions(map->getActions());
+	List<const HardwareKey*> keys(_hardwareKeys->getHardwareKeys());
 
-	// sort by priority
+	List<Action*>::iterator actIt;
+	List<const HardwareKey*>::iterator keyIt, selectedKey;
+	
+	// Remove actions and keys from local lists that have already been mapped.
+	actIt = actions.begin();
+	while (actIt != actions.end()) {
+		Action *act = *actIt;
+		const HardwareKey *key = act->getMappedKey();
+		if (key) {
+			keys.remove(key);
+			actIt = actions.erase(actIt);
+		} else {
+			++actIt;
+		}
+	}
+
+	// Sort remaining actions by priority.
 	ActionPriorityComp priorityComp;
 	sort(actions.begin(), actions.end(), priorityComp);
 	
-	for (actIt = actions.begin(); actIt != actions.end(); actIt++) {
+	// First mapping pass:
+	// - Match if a key's preferred type or category is same as the action's.
+	// - Priority is given to:
+	//     - keys that match type over category.
+	//     - keys that have not been used by parent maps.
+	// - If a key has been used by a parent map the new action must have a
+	//   higher priority than the parent action.
+	// - As soon as the number of skipped actions equals the number of keys 
+	//   remaining we stop matching. This means that the second pass will assign keys
+	//   to these higher priority skipped actions.
+	uint skipped = 0;
+	actIt = actions.begin();
+	while (actIt != actions.end() && skipped < keys.size()) {
 		selectedKey = keys.end();
-		int keyScore = 0;
+		int matchRank = 0;
 		Action *act = *actIt;
-		for (keyIt = keys.begin(); keyIt != keys.end(); keyIt++) {
+		for (keyIt = keys.begin(); keyIt != keys.end(); ++keyIt) {
 			if ((*keyIt)->preferredType == act->type) {
 				Action *parentAct = getParentMappedAction(map, (*keyIt)->key);
 				if (!parentAct) {
 					selectedKey = keyIt;
 					break;
-				} else if (parentAct->priority <= act->priority && keyScore < 3) {
+				} else if (parentAct->priority <= act->priority && matchRank < 3) {
 					selectedKey = keyIt;
-					keyScore = 3;
+					matchRank = 3;
 				}
-			} else if ((*keyIt)->preferredCategory == act->category && keyScore < 2) {
+			} else if ((*keyIt)->preferredCategory == act->category && matchRank < 2) {
 				Action *parentAct = getParentMappedAction(map, (*keyIt)->key);
 				if (!parentAct) {
 					selectedKey = keyIt;
-					keyScore = 2;
-				} else if (parentAct->priority <= act->priority && keyScore < 1) {
+					matchRank = 2;
+				} else if (parentAct->priority <= act->priority && matchRank < 1) {
 					selectedKey = keyIt;
-					keyScore = 1;
+					matchRank = 1;
 				}
 			}
 		}
 		if (selectedKey != keys.end()) {
+			// Map action and delete action & key from local lists.
 			act->mapKey(*selectedKey);
 			keys.erase(selectedKey);
-		} else
-			unmapped.push_back(act);
+			actIt = actions.erase(actIt);
+		} else {
+			// Skip action (will be mapped in next pass).
+			++actIt;
+			++skipped;
+		}
 	}
 
-	for (actIt = unmapped.begin(); actIt != unmapped.end(); actIt++) {
+	// Second mapping pass:
+	// - Maps any remaining actions to keys
+	// - priority given to:
+	//     - keys that have no parent action
+	//     - keys whose parent action has lower priority than the new action
+	//     - keys whose parent action has the lowest priority
+	// - is guarantees to match a key if one is available
+	for (actIt = actions.begin(); actIt != actions.end(); ++actIt) {
 		selectedKey = keys.end();
-		int keyScore = 0;
-		int lowestPriority = 0; //dummy value
+		int matchRank = 0;
+		int lowestPriority = 0;
 		Action *act = *actIt;
-		for (keyIt = keys.begin(); keyIt != keys.end(); keyIt++) {
+		for (keyIt = keys.begin(); keyIt != keys.end(); ++keyIt) {
 			Action *parentAct = getParentMappedAction(map, (*keyIt)->key);
 			if (!parentAct) {
 				selectedKey = keyIt;
 				break;
-			} else if (keyScore < 2) {
+			} else if (matchRank < 2) {
 				if (parentAct->priority <= act->priority) {
-					keyScore = 2;
+					matchRank = 2;
 					selectedKey = keyIt;
-				} else if (parentAct->priority < lowestPriority || keyScore == 0) {
-					keyScore = 1;
+				} else if (parentAct->priority < lowestPriority || matchRank == 0) {
+					matchRank = 1;
 					lowestPriority = parentAct->priority;
 					selectedKey = keyIt;
 				}
@@ -158,8 +201,9 @@ void KeymapManager::automaticMap(Keymap *map) {
 		if (selectedKey != keys.end()) {
 			act->mapKey(*selectedKey);
 			keys.erase(selectedKey);
-		} else // no keys left 
+		} else {// no match = no keys left 
 			return;
+		}
 	}
 }
 

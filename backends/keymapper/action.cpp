@@ -50,7 +50,7 @@ void Action::mapKey(const HardwareKey *key) {
 	assert(_parent);
 	if (_hwKey) _parent->unregisterMapping(this);
 	_hwKey = key;
-	if (_hwKey) _parent->registerMapping(this, key);
+	if (_hwKey) _parent->registerMapping(this, _hwKey);
 }
 
 const HardwareKey *Action::getMappedKey() const {

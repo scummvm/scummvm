@@ -35,7 +35,7 @@ enum {
 };
 
 RemapDialog::RemapDialog()
-	: Dialog("remap"), _activeRemapAction(0), _topAction(0) {
+	: Dialog("remap"), _activeRemapAction(0), _topAction(0), _remapTimeout(0) {
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
@@ -112,15 +112,16 @@ void RemapDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 d
 }
 
 void RemapDialog::startRemapping(uint i) {
-
+	_remapTimeout = getMillis() + kRemapTimeoutDelay;
 	_activeRemapAction = _currentActions[_topAction + i].action;
 	_keymapWidgets[i].keyButton->setLabel("...");
 	_keymapWidgets[i].keyButton->draw();
-
 	_keymapper->setEnabled(false);
+
 }
 
 void RemapDialog::stopRemapping() {
+	_topAction = -1;
 	refreshKeymap();
 	_activeRemapAction = 0;
 	_keymapper->setEnabled(true);
@@ -136,7 +137,19 @@ void RemapDialog::handleKeyUp(Common::KeyState state) {
 	} else {
 		GUI::Dialog::handleKeyDown(state);
 	}
+}
 
+void RemapDialog::handleMouseDown(int x, int y, int button, int clickCount) {
+	if (_activeRemapAction)
+		stopRemapping();
+	else
+		Dialog::handleMouseDown(x, y, button, clickCount);
+}
+
+void RemapDialog::handleTickle() {
+	if (_activeRemapAction && getMillis() > _remapTimeout)
+		stopRemapping();
+	Dialog::handleTickle();
 }
 
 void RemapDialog::loadKeymap() {
