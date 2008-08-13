@@ -604,6 +604,7 @@ bool PCSoundFxPlayer::load(const char *song) {
 		_instrumentsData[i] = NULL;
 
 		char instrument[64];
+		memset(instrument, 0, 64); // Clear the data first
 		memcpy(instrument, _sfxData + 20 + i * 30, 12);
 		instrument[63] = '\0';
 
