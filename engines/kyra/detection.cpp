@@ -607,6 +607,53 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_INS_FLAGS
 	},
 
+	// Mac version
+	{ 
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			Common::ADGF_DROPLANGUAGE
+		},
+		KYRA3_CD_INS_FLAGS
+	},
+	{
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformMacintosh,
+			Common::ADGF_DROPLANGUAGE
+		},
+		KYRA3_CD_INS_FLAGS
+	},
+	{
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::FR_FRA,
+			Common::kPlatformMacintosh,
+			Common::ADGF_DROPLANGUAGE
+		},
+		KYRA3_CD_INS_FLAGS
+	},
+
 	// Spanish fan translation, see fr#1994040 "KYRA3: Add support for Spanish fan translation"
 	{
 		{
