@@ -2262,14 +2262,17 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 				_lastKeyPressed = 0;
 				event.type = Common::EVENT_PREDICTIVE_DIALOG;
 				return true;
-			}
-
-			event.type = Common::EVENT_KEYDOWN;
+			} 			event.type = Common::EVENT_KEYDOWN;
 			if (!_unfilteredkeys)
 				event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 			else
 				event.kbd.keycode = (Common::KeyCode)mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
 			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
+
+			if (ev.key.keysym.mod == KMOD_RESERVED && ev.key.keysym.unicode == KMOD_SHIFT) {
+				event.kbd.ascii ^= 0x20;
+				event.kbd.flags = Common::KBD_SHIFT;
+			}
 
 			return true;
 
@@ -2297,6 +2300,11 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 			else
 				event.kbd.keycode = (Common::KeyCode)mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
 			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
+
+			if (ev.key.keysym.mod == KMOD_RESERVED && ev.key.keysym.unicode == KMOD_SHIFT) {
+				event.kbd.ascii ^= 0x20;
+				event.kbd.flags = Common::KBD_SHIFT;
+			}
 
 			return true;
 
