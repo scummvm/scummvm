@@ -1207,7 +1207,7 @@ void SoundMgr::fillAudio(void *udata, int16 *stream, uint len) {
 	n -= s;
 }
 
-SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) : _sndBuffer() {
+SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) : _sndBuffer(), _chn() {
 	_vm = agi;
 	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
