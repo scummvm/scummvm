@@ -91,7 +91,7 @@ void ThemeBrowser::updateListing() {
 
 	// classic is always build in
 	Entry th;
-	th.name = "Modern Development Theme (Builtin) - WIP";
+	th.name = "ScummVM Modern Theme (Builtin Version)";
 	th.file = "builtin";
 	_themes.push_back(th);
 
@@ -173,25 +173,11 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 bool ThemeBrowser::isTheme(const FilesystemNode &node, Entry &out) {
 	out.file = node.getName();
 	
-	if (!out.file.hasSuffix(".zip") && !out.file.hasSuffix(".stx"))
+	if (!out.file.hasSuffix(".zip"))
 		return false;
-	
-	for (int i = out.file.size()-1; out.file[i] != '.' && i > 0; --i) {
-		out.file.deleteLastChar();
-	}
-	out.file.deleteLastChar();
-
-	if (out.file.empty())
+		
+	if (!Theme::themeConfigUseable(out.file, out.name))
 		return false;
-
-// TODO: Check if theme is usable.
-//	if (!Theme::themeConfigUseable(out.file, "", &type, &cfg))
-//		return false;
-
-//	if (cfg.hasKey("name", "theme"))
-//		cfg.getKey("name", "theme", out.name);
-//	else
-		out.name = out.file;
 
 	return true;
 }

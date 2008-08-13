@@ -35,6 +35,7 @@
 #include "graphics/fontman.h"
 
 #define THEME_VERSION 23
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_THEME_V23"
 
 namespace GUI {
 
@@ -304,7 +305,8 @@ public:
 	bool isThemeLoadingRequired();
 	virtual ThemeEval *evaluator() = 0;
 
-	static bool themeConfigUseable(const Common::String &file);
+	static bool themeConfigUseable(const Common::String &file, Common::String &themeName);
+	static bool themeConfigParseHeader(Common::String header, Common::String &themeName);
 
 	virtual const Common::String &getThemeFileName() const = 0;
 	virtual const Common::String &getThemeName() const = 0;

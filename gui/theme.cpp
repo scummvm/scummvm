@@ -133,7 +133,27 @@ bool Theme::isThemeLoadingRequired() {
 	return true;
 }
 
-bool Theme::themeConfigUseable(const Common::String &filename) {
+bool Theme::themeConfigParseHeader(Common::String header, Common::String &themeName) {	
+	header.trim();
+	
+	if (header[0] != '[' || header.lastChar() != ']')
+		return false;
+		
+	header.deleteChar(0);
+	header.deleteLastChar();
+	
+	Common::StringTokenizer tok(header, ":");
+	
+	if (tok.nextToken() != SCUMMVM_THEME_VERSION_STR)
+		return false;
+		
+	themeName = tok.nextToken();
+	Common::String author = tok.nextToken();
+
+	return tok.empty();
+}
+
+bool Theme::themeConfigUseable(const Common::String &filename, Common::String &themeName) {
 	if (ConfMan.hasKey("themepath"))
 		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
 
@@ -143,11 +163,39 @@ bool Theme::themeConfigUseable(const Common::String &filename) {
 
 	if (ConfMan.hasKey("extrapath"))
 		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
+		
+#ifdef USE_ZLIB
+	unzFile zipFile = unzOpen(filename.c_str());
+	char stxHeader[128];
+	bool foundHeader = false;
+	
+	if (zipFile && unzLocateFile(zipFile, "THEMERC", 2) == UNZ_OK) {
+		unz_file_info fileInfo;
+		unzOpenCurrentFile(zipFile);
+		unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+		uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
+		assert(buffer);
+		memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
+		unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
+		unzCloseCurrentFile(zipFile);
+		Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
+		stream.readLine(stxHeader, 128);
 
+		if (themeConfigParseHeader(stxHeader, themeName))
+			foundHeader = true;
 
+		delete[] buffer;
+		buffer = 0;
+	}
+	unzClose(zipFile);
+#else
+	return false;
+#endif	
 
-	return true;
+	return foundHeader;
 }
+
+
 
 } // End of namespace GUI
 

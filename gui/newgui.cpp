@@ -93,6 +93,9 @@ NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
 	Common::String themefile(ConfMan.get("gui_theme"));
 	if (themefile.compareToIgnoreCase("default") == 0)
 		themefile = "builtin";
+		
+	if (!themefile.hasSuffix(".zip"))
+		themefile += ".zip";
 
 	loadNewTheme(themefile);
 	_themeChange = false;

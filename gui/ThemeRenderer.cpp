@@ -383,7 +383,6 @@ bool ThemeRenderer::loadTheme(Common::String fileName) {
 		}
 	}
 	
-	_themeName = "DEBUG - A Theme name";
 	_themeOk = true;
 	return true;
 }
@@ -412,9 +411,10 @@ bool ThemeRenderer::loadDefaultXML() {
 
 bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 	assert(_parser);
+	_themeName.clear();
 	
 #ifdef USE_ZLIB
-	unzFile zipFile = unzOpen((themeName + ".zip").c_str());
+	unzFile zipFile = unzOpen(themeName.c_str());
 	char fileNameBuffer[32];
 	int parseCount = 0;
 	
@@ -424,7 +424,7 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 			unzOpenCurrentFile(zipFile);
 			unzGetCurrentFileInfo(zipFile, &fileInfo, fileNameBuffer, 32, NULL, 0, NULL, 0);
 		
-			if (matchString(fileNameBuffer, "*.stx")) {
+			if (matchString(fileNameBuffer, "*.stx") || !strcmp(fileNameBuffer, "THEMERC")) {
 				uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
 				assert(buffer);
 				memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
@@ -432,31 +432,38 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 			
 				Common::MemoryReadStream *stream = new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size+1, true);
 				
-				if (parser()->loadStream(stream) == false || parser()->parse() == false) {
-					warning("Failed to load stream for zipped file '%s'", fileNameBuffer);
-					unzClose(zipFile);
-					delete stream;
-					return false;
-				}
+				if (!strcmp(fileNameBuffer, "THEMERC")) {
+					char stxHeader[128];
+					stream->readLine(stxHeader, 128);
 
-				parseCount++;
-			}
+					if (!themeConfigParseHeader(stxHeader, _themeName))
+						error("Corrupted 'THEMERC' file");
+						
+					delete stream;
+					
+				} else {
+					parseCount++;
+					
+					if (parser()->loadStream(stream) == false || parser()->parse() == false) {
+						warning("Failed to load stream for zipped file '%s'", fileNameBuffer);
+						unzClose(zipFile);
+						delete stream;
+						return false;
+					}
+				}
+			} 
 		
 			unzCloseCurrentFile(zipFile);
 		
 			if (unzGoToNextFile(zipFile) != UNZ_OK)
 				break;
 		}
-	} else if (parser()->loadFile(themeName + ".stx") && parser()->parse()) {
-		parseCount++;
-	} else {
-		warning("No theme files for '%s' found.", themeName.c_str());
 	}
 	
 	unzClose(zipFile);
-	return (parseCount > 0);
+	return (parseCount > 0 && _themeName.empty() == false);
 #else
-	return (parser()->loadFile(themeName + ".stx") && parser()->parse());
+	return false;
 #endif
 }
 
