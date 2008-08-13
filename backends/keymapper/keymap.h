@@ -91,6 +91,7 @@ public:
 	/**
 	 * Save this keymap's mappings to the given config domain
 	 * @param domain	config domain to save keymap to
+	 * @note Changes are *not* flushed to disk, to do so call ConfMan.flushToDisk()
 	 */
 	void saveMappings(ConfigManager::Domain *domain);
 

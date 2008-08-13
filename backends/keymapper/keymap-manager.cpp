@@ -37,10 +37,8 @@ void KeymapManager::Domain::addKeymap(Keymap *map) {
 
 void KeymapManager::Domain::deleteAllKeyMaps() {
 	KeymapMap::iterator it;
-	for (it = _keymaps.begin(); it != _keymaps.end(); it++) {
-		//it->_value->saveMappings(_configDomain, it->_key);
+	for (it = _keymaps.begin(); it != _keymaps.end(); it++)
 		delete it->_value;
-	}
 	_keymaps.clear();
 }
 
@@ -88,8 +86,11 @@ void KeymapManager::registerGameKeymap(Keymap *map) {
 void KeymapManager::initKeymap(ConfigManager::Domain *domain, 
 							   Keymap *map) {
 	map->loadMappings(domain, _hardwareKeys);
-	if (map->isComplete(_hardwareKeys) == false)
+	if (map->isComplete(_hardwareKeys) == false) {
 		automaticMap(map);
+		map->saveMappings(domain);
+		ConfMan.flushToDisk();
+	}
 }
 
 // TODO:
@@ -202,7 +203,7 @@ void KeymapManager::automaticMap(Keymap *map) {
 			act->mapKey(*selectedKey);
 			keys.erase(selectedKey);
 		} else {// no match = no keys left 
-			return;
+			break;
 		}
 	}
 }

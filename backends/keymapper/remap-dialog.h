@@ -83,6 +83,8 @@ protected:
 	uint32 _remapTimeout;
 	static const uint32 kRemapTimeoutDelay = 3000;
 
+	bool _changes;
+
 };
 
 } // end of namespace Common

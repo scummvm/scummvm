@@ -96,6 +96,7 @@ public:
 
 	void addEvent(const Event &evt) { events.push_back(evt); }
 	void setParent(Keymap *parent);
+	Keymap *getParent() { return _parent; }
 	void mapKey(const HardwareKey *key);
 	const HardwareKey *getMappedKey() const;
 

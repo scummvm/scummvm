@@ -37,9 +37,6 @@ enum {
 RemapDialog::RemapDialog()
 	: Dialog("remap"), _keymapTable(0), _activeRemapAction(0), _topAction(0), _remapTimeout(0) {
 
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
 	_keymapper = g_system->getEventManager()->getKeymapper();
 	assert(_keymapper);
 
@@ -95,10 +92,11 @@ void RemapDialog::open() {
 		}
 	}
 
-	Dialog::open();
-	
+	_changes = false;
 	_kmPopUp->setSelected(0);
 	loadKeymap();
+
+	Dialog::open();
 }
 
 void RemapDialog::close() {
@@ -107,6 +105,7 @@ void RemapDialog::close() {
 		free(_keymapTable);
 		_keymapTable = 0;
 	}
+	if (_changes) ConfMan.flushToDisk();
 	Dialog::close();
 }
 
@@ -203,6 +202,8 @@ void RemapDialog::handleKeyUp(Common::KeyState state) {
 		const HardwareKey *hwkey = _keymapper->getHardwareKey(state);
 		if (hwkey) {
 			_activeRemapAction->mapKey(hwkey);
+			// TODO:   _activeRemapAction->getParent()->saveMappings();
+			_changes = true;
 			stopRemapping();
 		}
 	} else {
@@ -285,7 +286,6 @@ void RemapDialog::refreshKeymap() {
 	//_container->draw();
 	_scrollBar->draw();
 
-	uint widgetI = 0;
 	uint actionI = _topAction;
 	for (uint widgetI = 0; widgetI < _keymapWidgets.size(); widgetI++) {
 		ActionWidgets& widg = _keymapWidgets[widgetI];
