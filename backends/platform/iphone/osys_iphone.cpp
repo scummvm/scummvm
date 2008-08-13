@@ -740,7 +740,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 }
 
 bool OSystem_IPHONE::handleEvent_mouseDown(Common::Event &event, int x, int y) {
-	printf("Mouse down at (%u, %u)\n", x, y);
+	//printf("Mouse down at (%u, %u)\n", x, y);
 
 	// Workaround: kInputMouseSecondToggled isn't always sent when the
 	// secondary finger is lifted. Need to make sure we get out of that mode.

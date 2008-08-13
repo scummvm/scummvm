@@ -35,7 +35,7 @@
 #include <AudioToolbox/AudioQueue.h>
 
 #define AUDIO_BUFFERS 3
-#define WAVE_BUFFER_SIZE 2048
+#define WAVE_BUFFER_SIZE 4096
 #define AUDIO_SAMPLE_RATE 44100
 
 #define SCUMMVM_ROOT_PATH "/var/mobile/Library/ScummVM"
