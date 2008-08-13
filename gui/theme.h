@@ -40,39 +40,6 @@ namespace GUI {
 
 class ThemeEval;
 
-//! Hint to the theme engine that the widget is used in a non-standard way.
-enum ThemeHint {
-	//! Indicates that this is the first time the widget is drawn.
-	THEME_HINT_FIRST_DRAW = 1 << 0,
-
-	/**
-	 * Indicates that the widget will be redrawn often, e.g. list widgets.
-	 * It may therefore be a good idea to save the background so that it
-	 * can be redrawn quickly.
-	 */
-	THEME_HINT_SAVE_BACKGROUND = 1 << 1,
-
-	//! Indicates that this is the launcher dialog (maybe delete this in the future)
-	THEME_HINT_MAIN_DIALOG = 1 << 2,
-
-	//! Indicates special colorfade
-	THEME_HINT_SPECIAL_COLOR = 1 << 3,
-
-	//! Indicates no colorfade
-	THEME_HINT_PLAIN_COLOR = 1 << 4,
-
-	//! Indictaes that a shadows should be drawn around the background
-	THEME_HINT_USE_SHADOW = 1 << 5,
-
-	/**
-	 * Indicates that no background should be restored when drawing the widget
-	 * (note that this can be silently ignored if for example the theme does
-	 * alpha blending and would blend over an already drawn widget)
-	 * TODO: currently only ThemeModern::drawButton supports this
-	 */
-	THEME_HINT_NO_BACKGROUND_RESTORE = 1 << 6
-};
-
 /**
  * Our theme renderer class.
  *
@@ -108,6 +75,14 @@ public:
 		kWidgetBackgroundBorderSmall,	//! Same as kWidgetBackgroundPlain just with a small border
 		kWidgetBackgroundEditText,		//! Background used for edit text fields
 		kWidgetBackgroundSlider			//! Background used for sliders
+	};
+	
+	//! Dialog background type
+	enum DialogBackground {
+		kDialogBackgroundMain,
+		kDialogBackgroundSpecial,
+		kDialogBackgroundPlain,
+		kDialogBackgroundDefault
 	};
 
 	//! State of the widget to be drawn
@@ -271,7 +246,7 @@ public:
 	virtual int getStringWidth(const Common::String &str, FontStyle font = kFontStyleBold) const = 0;
 	virtual int getCharWidth(byte c, FontStyle font = kFontStyleBold) const = 0;
 
-	virtual void drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state = kStateEnabled) = 0;
+	virtual void drawDialogBackground(const Common::Rect &r, DialogBackground type, WidgetStateInfo state = kStateEnabled) = 0;
 	virtual void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, TextAlign align = kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold) = 0;
 	// this should ONLY be used by the debugger until we get a nicer solution
 	virtual void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled) = 0;

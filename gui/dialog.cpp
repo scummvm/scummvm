@@ -42,18 +42,15 @@ namespace GUI {
  * ...
  */
 
-Dialog::Dialog(int x, int y, int w, int h, bool dimsInactive_)
+Dialog::Dialog(int x, int y, int w, int h)
 	: GuiObject(x, y, w, h),
-	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false), _drawingHints(0),
-	  _dimsInactive(dimsInactive_) {
-	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
-}
+	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false), 
+	_backgroundType(GUI::Theme::kDialogBackgroundDefault) {}
 
-Dialog::Dialog(const Common::String &name, bool dimsInactive_)
+Dialog::Dialog(const Common::String &name)
 	: GuiObject(name),
-	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false), _drawingHints(0),
-	  _dimsInactive(dimsInactive_) {
-	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
+	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false),
+	_backgroundType(GUI::Theme::kDialogBackgroundDefault) {
 
 	// It may happen that we have 3x scaler in launcher (960xY) and then 640x480
 	// game will be forced to 1x. At this stage GUI will not be aware of
@@ -113,11 +110,9 @@ void Dialog::reflowLayout() {
 	// changed, so any cached image may be invalid. The subsequent redraw
 	// should be treated as the very first draw.
 
-	_drawingHints |= THEME_HINT_FIRST_DRAW;
 	Widget *w = _firstWidget;
 	while (w) {
 		w->reflowLayout();
-		w->setHints(THEME_HINT_FIRST_DRAW);
 		w = w->_next;
 	}
 
@@ -144,8 +139,7 @@ void Dialog::drawDialog() {
 	if (!isVisible())
 		return;
 
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _drawingHints);
-	_drawingHints &= ~THEME_HINT_FIRST_DRAW;
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _backgroundType);
 
 	// Draw all children
 	Widget *w = _firstWidget;

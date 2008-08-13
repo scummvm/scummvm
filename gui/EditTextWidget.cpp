@@ -24,7 +24,6 @@
 
 #include "gui/EditTextWidget.h"
 #include "gui/dialog.h"
-#include "gui/eval.h"
 #include "gui/newgui.h"
 
 #include "gui/ThemeEval.h"
@@ -43,7 +42,6 @@ EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String
 	: EditableWidget(boss, name) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
-	_hints |= THEME_HINT_USE_SHADOW;
 
 	setEditString(text);
 }
@@ -84,7 +82,7 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 
 void EditTextWidget::drawWidget() {
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundEditText);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), 0, Theme::kWidgetBackgroundEditText);
 
 	// Draw the text
 	adjustOffset();

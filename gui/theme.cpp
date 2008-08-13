@@ -23,8 +23,6 @@
  */
 
 #include "gui/theme.h"
-#include "gui/eval.h"
-
 #include "common/unzip.h"
 
 namespace GUI {

@@ -26,7 +26,6 @@
 #include "graphics/fontman.h"
 #include "gui/widget.h"
 #include "gui/dialog.h"
-#include "gui/eval.h"
 #include "gui/newgui.h"
 
 #include "gui/ThemeEval.h"
@@ -35,15 +34,13 @@ namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h)
 	: GuiObject(x, y, w, h), _type(0), _boss(boss),
-	  _id(0), _flags(0), _hints(THEME_HINT_FIRST_DRAW),
-	  _hasFocus(false), _state(Theme::kStateEnabled) {
+	  _id(0), _flags(0), _hasFocus(false), _state(Theme::kStateEnabled) {
 	init();
 }
 
 Widget::Widget(GuiObject *boss, const Common::String &name)
 	: GuiObject(name), _type(0), _boss(boss),
-	  _id(0), _flags(0), _hints(THEME_HINT_FIRST_DRAW),
-	  _hasFocus(false), _state(Theme::kStateDisabled) {
+	  _id(0), _flags(0), _hasFocus(false), _state(Theme::kStateDisabled) {
 	init();
 }
 
@@ -51,8 +48,6 @@ void Widget::init() {
 	// Insert into the widget list of the boss
 	_next = _boss->_firstWidget;
 	_boss->_firstWidget = this;
-	// HACK: we enable background saving for all widgets by default for now
-	_hints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 }
 
 Widget::~Widget() {
@@ -101,7 +96,7 @@ void Widget::draw() {
 
 	// Draw border
 	if (_flags & WIDGET_BORDER) {
-		gui->theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundBorder);
+		gui->theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), 0, Theme::kWidgetBackgroundBorder);
 		_x += 4;
 		_y += 4;
 		_w -= 8;
@@ -128,8 +123,6 @@ void Widget::draw() {
 		w->draw();
 		w = w->_next;
 	}
-
-	clearHints(THEME_HINT_FIRST_DRAW);
 }
 
 Widget *Widget::findWidgetInChain(Widget *w, int x, int y) {
@@ -225,7 +218,6 @@ ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Co
 	: StaticTextWidget(boss, name, label), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
-	_hints = THEME_HINT_USE_SHADOW;
 	_type = kButtonWidget;
 }
 
@@ -235,7 +227,7 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void ButtonWidget::drawWidget() {
-	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, _hints);
+	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, 0);
 }
 
 #pragma mark -
@@ -335,20 +327,12 @@ GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y, w, h), _gfx(), _alpha(256), _transparency(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
-	// HACK: Don't save the background. We want to be sure that redrawing
-	//       the widget updates the screen, even when there isn't any image
-	//       to draw.
-	_hints &= ~THEME_HINT_SAVE_BACKGROUND;
 }
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, const Common::String &name)
 	: Widget(boss, name), _gfx(), _alpha(256), _transparency(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
-	// HACK: Don't save the background. We want to be sure that redrawing
-	//       the widget updates the screen, even when there isn't any image
-	//       to draw.
-	_hints &= ~THEME_HINT_SAVE_BACKGROUND;
 }
 
 GraphicsWidget::~GraphicsWidget() {
@@ -403,7 +387,7 @@ ContainerWidget::ContainerWidget(GuiObject *boss, const Common::String &name) : 
 }
 
 void ContainerWidget::drawWidget() {
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), _hints, Theme::kWidgetBackgroundBorder);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0, Theme::kWidgetBackgroundBorder);
 }
 
 } // End of namespace GUI

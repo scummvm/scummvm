@@ -25,7 +25,6 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "gui/dialog.h"
-#include "gui/eval.h"
 #include "gui/newgui.h"
 #include "gui/PopUpWidget.h"
 #include "engines/engine.h"
@@ -73,7 +72,7 @@ protected:
 };
 
 PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
-	: Dialog(0, 0, 16, 16, false),
+	: Dialog(0, 0, 16, 16),
 	_popUpBoss(boss) {
 
 	// Copy the selection index
@@ -153,7 +152,7 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 
 void PopUpDialog::drawDialog() {
 	// Draw the menu border
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND | THEME_HINT_USE_SHADOW);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), 0);
 
 	/*if (_twoColumns)
 		g_gui.vLine(_x + _w / 2, _y, _y + _h - 2, g_gui._color);*/
@@ -360,7 +359,6 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const String &label, uint labelWidth)
 	: Widget(boss, name), CommandSender(boss), _label(label), _labelWidth(labelWidth) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS);
-	setHints(THEME_HINT_SAVE_BACKGROUND);
 	_type = kPopUpWidget;
 
 	_selectedItem = -1;

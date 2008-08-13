@@ -27,7 +27,6 @@
 #include "gui/ListWidget.h"
 #include "gui/ScrollBarWidget.h"
 #include "gui/dialog.h"
-#include "gui/eval.h"
 #include "gui/newgui.h"
 
 #include "gui/ThemeEval.h"
@@ -47,7 +46,6 @@ ListWidget::ListWidget(GuiObject *boss, const String &name)
 	_scrollBar->setTarget(this);
 
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
-	setHints(THEME_HINT_SAVE_BACKGROUND | THEME_HINT_USE_SHADOW);
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
@@ -77,7 +75,6 @@ ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h)
 	_scrollBar->setTarget(this);
 
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
-	setHints(THEME_HINT_SAVE_BACKGROUND | THEME_HINT_USE_SHADOW);
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
@@ -363,7 +360,7 @@ void ListWidget::drawWidget() {
 	Common::String buffer;
 
 	// Draw a thin frame around the list.
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), _hints, Theme::kWidgetBackgroundBorder);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0, Theme::kWidgetBackgroundBorder);
 	const int scrollbarW = (_scrollBar && _scrollBar->isVisible()) ? _scrollBarWidth : 0;
 
 	// Draw the list items
@@ -378,7 +375,7 @@ void ListWidget::drawWidget() {
 				inverted = true;
 			else
 				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, y - 1, _x + _w - 1, y + fontHeight - 1), 
-													_hints, Theme::kWidgetBackgroundBorderSmall);
+													0, Theme::kWidgetBackgroundBorderSmall);
 		}
 
 		Common::Rect r(getEditRect());

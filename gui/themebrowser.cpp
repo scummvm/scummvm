@@ -53,7 +53,7 @@ ThemeBrowser::ThemeBrowser() : Dialog("Browser") {
 	_fileList->setNumberingMode(kListNumberingOff);
 	_fileList->setEditable(false);
 
-	_fileList->setHints(THEME_HINT_PLAIN_COLOR);
+	_backgroundType = GUI::Theme::kDialogBackgroundPlain;
 
 	// Buttons
 	new ButtonWidget(this, "Browser.Cancel", "Cancel", kCloseCmd, 0);

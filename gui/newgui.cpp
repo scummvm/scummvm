@@ -28,9 +28,6 @@
 #include "graphics/cursorman.h"
 #include "gui/newgui.h"
 #include "gui/dialog.h"
-#include "gui/eval.h"
-#include "gui/ThemeModern.h"
-#include "gui/ThemeClassic.h"
 #include "gui/ThemeRenderer.h"
 
 #include "common/config-manager.h"

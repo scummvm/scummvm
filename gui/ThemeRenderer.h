@@ -328,7 +328,7 @@ public:
 	
 	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled);
 
-	void drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state);
+	void drawDialogBackground(const Common::Rect &r, DialogBackground type, WidgetStateInfo state);
 	
 	void drawText(const Common::Rect &r, const Common::String &str, 
 		WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font);

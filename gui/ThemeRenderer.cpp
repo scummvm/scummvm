@@ -683,18 +683,26 @@ void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int slider
 	queueDD(scrollState == kScrollbarStateSlider ? kDDScrollbarHandleHover : kDDScrollbarHandleIdle, r2);
 }
 
-void ThemeRenderer::drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state) {
+void ThemeRenderer::drawDialogBackground(const Common::Rect &r, DialogBackground bgtype, WidgetStateInfo state) {
 	if (!ready())
 		return;
 		
-	if (hints & THEME_HINT_MAIN_DIALOG) {
-		queueDD(kDDMainDialogBackground, r);
-	} else if (hints & THEME_HINT_SPECIAL_COLOR) { 
-		queueDD(kDDSpecialColorBackground, r);
-	} else if (hints & THEME_HINT_PLAIN_COLOR) {
-		queueDD(kDDPlainColorBackground, r);	
-	} else {
-		queueDD(kDDDefaultBackground, r);
+	switch (bgtype) {
+		case kDialogBackgroundMain:
+			queueDD(kDDMainDialogBackground, r);
+			break;
+			
+		case kDialogBackgroundSpecial:
+			queueDD(kDDSpecialColorBackground, r);
+			break;
+			
+		case kDialogBackgroundPlain:
+			queueDD(kDDPlainColorBackground, r);
+			break;
+			
+		case kDialogBackgroundDefault:
+			queueDD(kDDDefaultBackground, r);
+			break;
 	}
 }
 

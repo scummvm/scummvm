@@ -49,15 +49,15 @@ protected:
 	Widget  *_focusedWidget;
 	Widget  *_dragWidget;
 	bool	_visible;
-	uint16	_drawingHints;
+	
+	Theme::DialogBackground _backgroundType;
 
 private:
 	int		_result;
-	bool	_dimsInactive;
 
 public:
-	Dialog(int x, int y, int w, int h, bool dimsInactive = true);
-	Dialog(const Common::String &name, bool dimsInactive = true);
+	Dialog(int x, int y, int w, int h);
+	Dialog(const Common::String &name);
 
 	virtual int runModal();
 
@@ -91,9 +91,6 @@ protected:
 
 	void setResult(int result) { _result = result; }
 	int getResult() const { return _result; }
-
-	// Whether dialog dims all underneath dialogs or not when active
-	bool dimsInactive() { return _dimsInactive; }
 };
 
 } // End of namespace GUI

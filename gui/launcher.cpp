@@ -34,7 +34,6 @@
 #include "gui/about.h"
 #include "gui/browser.h"
 #include "gui/chooser.h"
-#include "gui/eval.h"
 #include "gui/launcher.h"
 #include "gui/massadd.h"
 #include "gui/message.h"
@@ -161,7 +160,6 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 
 	// GUI:  Add tab widget
 	TabWidget *tab = new TabWidget(this, "GameOptions.TabWidget");
-	tab->setHints(THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND);
 
 	//
 	// 1) The game tab
@@ -471,7 +469,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 LauncherDialog::LauncherDialog()
 	: Dialog(0, 0, 320, 200) {
-	_drawingHints |= THEME_HINT_MAIN_DIALOG;
+	_backgroundType = GUI::Theme::kDialogBackgroundMain;
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();

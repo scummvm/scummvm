@@ -24,7 +24,6 @@
 
 #include "gui/console.h"
 #include "gui/ScrollBarWidget.h"
-#include "gui/eval.h"
 #include "gui/ThemeEval.h"
 
 #include "engines/engine.h"
@@ -120,8 +119,6 @@ void ConsoleDialog::init() {
 		scrollBarWidth = kNormalScrollBarWidth;
 	_scrollBar->resize(_w - scrollBarWidth - 1, 0, scrollBarWidth, _h);
 
-	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
-
 	_pageWidth = (_w - scrollBarWidth - 2 - _leftPadding - _topPadding - scrollBarWidth) / kConsoleCharWidth;
 	_linesPerPage = (_h - 2 - _topPadding - _bottomPadding) / kConsoleLineHeight;
 	_linesInBuffer = kBufferSize / kCharsPerLine;
@@ -152,8 +149,6 @@ void ConsoleDialog::open() {
 	if (_w != w || _h != h)
 		init();
 
-	_drawingHints |= THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
-
 	_y = -_h;
 	_slideTime = g_system->getMillis();
 	_slideMode = kDownSlideMode;
@@ -170,7 +165,7 @@ void ConsoleDialog::close() {
 }
 
 void ConsoleDialog::drawDialog() {
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _drawingHints);
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _backgroundType);
 	// FIXME: for the old theme the frame around the console vanishes
 	// when any action is processed if we enable this
 	// _drawingHints &= ~THEME_HINT_FIRST_DRAW;
@@ -229,7 +224,6 @@ void ConsoleDialog::handleTickle() {
 
 	// Perform the "slide animation".
 	if (_slideMode != kNoSlideMode) {
-		_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 		const float tmp = (float)(g_system->getMillis() - _slideTime) / kConsoleSlideDownDuration;
 		if (_slideMode == kUpSlideMode) {
 			_y = (int)(_h * (0.0 - tmp));

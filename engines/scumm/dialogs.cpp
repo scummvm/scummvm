@@ -36,7 +36,7 @@
 #endif
 
 #include "gui/about.h"
-#include "gui/eval.h"
+#include "gui/theme.h"
 #include "gui/newgui.h"
 #include "gui/ListWidget.h"
 #include "gui/ThemeEval.h"
@@ -213,9 +213,8 @@ static const ResString string_map_table_v345[] = {
 
 #pragma mark -
 
-ScummDialog::ScummDialog(String name)
-	: GUI::Dialog(name) {
-_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
+ScummDialog::ScummDialog(String name) : GUI::Dialog(name) {
+	_backgroundType = GUI::Theme::kDialogBackgroundSpecial;
 }
 
 #pragma mark -
@@ -235,8 +234,8 @@ enum {
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine)
 	: Dialog("ScummSaveLoad"), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0), _vm(engine) {
-
-	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
+		
+	_backgroundType = GUI::Theme::kDialogBackgroundSpecial;
 
 	new StaticTextWidget(this, "ScummSaveLoad.Title", title);
 
@@ -246,8 +245,6 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
 
 	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
-	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
-
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 
 	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", kTextAlignCenter);
@@ -667,8 +664,6 @@ HelpDialog::HelpDialog(const GameSettings &game)
 void HelpDialog::reflowLayout() {
 	ScummDialog::reflowLayout();
 
-	_drawingHints &= ~GUI::THEME_HINT_SPECIAL_COLOR;
-
 	int lineHeight = g_gui.getFontHeight();
 	int16 x, y;
 	uint16 w, h;
@@ -853,7 +848,7 @@ void ConfirmDialog::handleKeyDown(Common::KeyState state) {
 
 ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, int maxVal,
 		int val, uint16 incKey, uint16 decKey)
-	: GUI::Dialog("scummDummyDialog", false),
+	: GUI::Dialog("scummDummyDialog"),
 	_label(label), _min(minVal), _max(maxVal),
 	_value(val), _incKey(incKey), _decKey(decKey) {
 	assert(_min <= _value && _value <= _max);
@@ -861,8 +856,7 @@ ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, 
 
 void ValueDisplayDialog::drawDialog() {
 	const int labelWidth = _w - 8 - _percentBarWidth;
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h),
-				GUI::THEME_HINT_SAVE_BACKGROUND | GUI::THEME_HINT_FIRST_DRAW);
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), GUI::Theme::kDialogBackgroundDefault);
 	g_gui.theme()->drawText(Common::Rect(_x+4, _y+4, _x+labelWidth+4,
 				_y+g_gui.theme()->getFontHeight()+4), _label);
 	g_gui.theme()->drawSlider(Common::Rect(_x+4+labelWidth, _y+4, _x+_w-4, _y+_h-4),

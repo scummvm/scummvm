@@ -9,7 +9,6 @@ MODULE_OBJS := \
 	dialog.o \
 	editable.o \
 	EditTextWidget.o \
-	eval.o \
 	ThemeRenderer.o \
 	launcher.o \
 	ListWidget.o \

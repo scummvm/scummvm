@@ -26,7 +26,6 @@
 #include "gui/TabWidget.h"
 #include "gui/dialog.h"
 #include "gui/newgui.h"
-#include "gui/eval.h"
 
 #include "gui/ThemeEval.h"
 
@@ -69,9 +68,7 @@ void TabWidget::init() {
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
 	_navLeft = new ButtonWidget(this, x, y, _butW, _butH, "<", kCmdLeft, 0);
-	_navLeft->setHints(THEME_HINT_NO_BACKGROUND_RESTORE);
 	_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, ">", kCmdRight, 0);
-	_navRight->setHints(THEME_HINT_NO_BACKGROUND_RESTORE);
 }
 
 TabWidget::~TabWidget() {
@@ -256,7 +253,7 @@ void TabWidget::drawWidget() {
 	for (int i = _firstVisibleTab; i < (int)_tabs.size(); ++i) {
 		tabs.push_back(_tabs[i].title);
 	}
-	g_gui.theme()->drawTab(Common::Rect(_x, _y, _x+_w, _y+_h), _tabHeight, _tabWidth, tabs, _activeTab - _firstVisibleTab, _hints, _titleVPad);
+	g_gui.theme()->drawTab(Common::Rect(_x, _y, _x+_w, _y+_h), _tabHeight, _tabWidth, tabs, _activeTab - _firstVisibleTab, 0, _titleVPad);
 }
 
 void TabWidget::draw() {

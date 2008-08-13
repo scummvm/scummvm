@@ -25,7 +25,6 @@
 #include "gui/browser.h"
 #include "gui/themebrowser.h"
 #include "gui/chooser.h"
-#include "gui/eval.h"
 #include "gui/message.h"
 #include "gui/newgui.h"
 #include "gui/ThemeEval.h"
@@ -664,7 +663,6 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	// The tab widget
 	TabWidget *tab = new TabWidget(this, "GlobalOptions.TabWidget");
-	tab->setHints(THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND);
 
 	//
 	// 1) The graphics tab
