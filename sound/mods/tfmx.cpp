@@ -379,11 +379,21 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 		if (!_tracks[trackNumber].macroOn) {
 			_tracks[trackNumber].macroNumber = byte2;
 			loadMacro( trackNumber, (_tracks[trackNumber].macroNumber) );
+			if (byte1 < 0x80) {
+				_tracks[trackNumber].activeMacro.noteType = 1; 		//byte4 = finetune
+				_tracks[trackNumber].activeMacro.noteFineTune = byte4;
+			}
+			else if (byte1 < 0xC0) {
+				_tracks[trackNumber].activeMacro.noteType = 2;      //byte4 = wait
+				_tracks[trackNumber].activeMacro.noteWait = byte4;
+			}
+			else {
+				_tracks[trackNumber].activeMacro.noteType = 3;      //byte4 = portamento rate
+			}
 			_tracks[trackNumber].macroOn = true; //set to false again when macro terminates
 			_tracks[trackNumber].activeMacro.noteNumber = byte1;
 			_tracks[trackNumber].activeMacro.noteVelocity = (byte3 & 0xF0) >> 4;
 			_tracks[trackNumber].activeMacro.noteChannel = (byte3 & 0x0F);
-		//	_tracks[trackNumber].activePattern.patternWait += byte4; 	
 			_tracks[trackNumber].activeMacro.notePeriod = periods[(_tracks[trackNumber].activeMacro.noteNumber + _tracks[trackNumber].activePattern.patternTranspose) & 0x3F];
 		}
 
@@ -392,7 +402,6 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 				doMacro(trackNumber);
 			}
 		}
-
 		if (_tracks[trackNumber].activeMacro.macroWait != 0) {
 		_tracks[trackNumber].activeMacro.macroWait--;
 		}
@@ -403,6 +412,9 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 	if (!_tracks[trackNumber].macroOn) {
 		_tracks[trackNumber].activePattern.data++;
 		_tracks[trackNumber].activePattern.patternCount++;
+		if (_tracks[trackNumber].activeMacro.noteType == 2) {
+			_tracks[trackNumber].activePattern.patternWait += _tracks[trackNumber].activeMacro.noteWait;
+		}
 	}
 	//IF THE END IS REACHED, TURN PATTERN OFF
 	if (_tracks[trackNumber].activePattern.patternCount == _tracks[trackNumber].activePattern.patternLength) {
@@ -419,7 +431,9 @@ void Tfmx::loadMacro(uint8 trackNumber, uint8 macroNumber){
 
 	_tracks[trackNumber].activeMacro.macroCount = 0;
 	_tracks[trackNumber].activeMacro.macroLength = numCommands;
-
+	_tracks[trackNumber].activeMacro.noteType = 0;
+	_tracks[trackNumber].activeMacro.noteFineTune = 0;
+	
 	Common::MemoryReadStream dataStream(_data, _dataSize);
 	Common::SeekableSubReadStream macroSubStream(&dataStream, startPosition, endPosition);
 
@@ -494,7 +508,7 @@ void Tfmx::doMacro(uint8 trackNumber) {
 	case 0x8: //add note
 		tunedPeriod = (periods[(byte2 + currentPeriod) & (0x3F)]);
 		_tracks[trackNumber].activeMacro.fineTune = sbyte3 / 0x100;
-		//_tracks[trackNumber].activeMacro.fineTune += (_tracks[trackNumber].activeMacro.noteFineTune / 0x100);
+		_tracks[trackNumber].activeMacro.fineTune += (_tracks[trackNumber].activeMacro.noteFineTune / 0x100);
 		_tracks[trackNumber].activeMacro.fineTune += 1;
 		_tracks[trackNumber].activeMacro.notePeriod = (int)(tunedPeriod * _tracks[trackNumber].activeMacro.fineTune);
 		_tracks[trackNumber].activeMacro.macroWait = 1;
@@ -502,7 +516,7 @@ void Tfmx::doMacro(uint8 trackNumber) {
 	case 0x9: //set note
 		tunedPeriod = (periods[(byte2) & (0x3F)]);
 		_tracks[trackNumber].activeMacro.fineTune = sbyte3 / 0x100;
-		//_tracks[trackNumber].activeMacro.fineTune += (_tracks[trackNumber].activeMacro.noteFineTune / 0x100);
+		_tracks[trackNumber].activeMacro.fineTune += (_tracks[trackNumber].activeMacro.noteFineTune / 0x100);
 		_tracks[trackNumber].activeMacro.fineTune += 1;
 		_tracks[trackNumber].activeMacro.notePeriod = (int)(tunedPeriod * _tracks[trackNumber].activeMacro.fineTune);
 		_tracks[trackNumber].activeMacro.macroWait = 1;

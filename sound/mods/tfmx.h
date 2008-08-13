@@ -121,6 +121,7 @@ protected:
 			uint8 noteChannel;
 			uint8 noteType;
 			uint8 noteWait;  //external wait
+			int8 noteFineTune;
 			float fineTune;
 		};
 
