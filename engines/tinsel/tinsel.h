@@ -101,6 +101,7 @@ public:
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 
+	MidiDriver *_driver;
 	SoundManager *_sound;
 	MusicPlayer *_music;
 
