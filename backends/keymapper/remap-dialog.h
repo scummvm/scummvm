@@ -40,6 +40,8 @@ public:
 	RemapDialog();
 	virtual ~RemapDialog();
 	virtual void open();
+	virtual void close();
+	virtual void reflowLayout();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
@@ -58,7 +60,6 @@ protected:
 
 	void loadKeymap();
 	void refreshKeymap();
-	void setupWidgets();
 	void startRemapping(uint i);
 	void stopRemapping();
 

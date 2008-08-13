@@ -36,9 +36,12 @@
 namespace Common {
 
 class Keymapper {
-	friend class RemapDialog;
-
 public:
+	
+	struct MapRecord {
+		Keymap* keymap;
+		bool inherit;
+	};
 
 	Keymapper(EventManager *eventMan);
 	~Keymapper();
@@ -105,6 +108,9 @@ public:
 
 	void setEnabled(bool enabled) { _enabled = enabled; }
 
+	KeymapManager *getManager() { return _keymapMan; }
+	Stack<MapRecord>& getActiveStack() { return _activeMaps; }
+
 private:
 
 	void pushKeymap(Keymap *newMap, bool inherit);
@@ -115,11 +121,6 @@ private:
 	KeymapManager *_keymapMan;
 
 	bool _enabled;
-
-	struct MapRecord {
-		Keymap* keymap;
-		bool inherit;
-	};
 
 	Stack<MapRecord> _activeMaps;
 

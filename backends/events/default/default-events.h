@@ -31,6 +31,7 @@
 #include "common/savefile.h"
 
 namespace Common {
+	class Keymapper;
 	class VirtualKeyboard;
 }
 
@@ -51,6 +52,7 @@ class DefaultEventManager : public Common::EventManager {
 
 	Common::VirtualKeyboard *_vk;
 	Common::Keymapper *_keymapper;
+	bool _remap;
 
 	Common::Queue<Common::Event> _artificialEventQueue;
 	int _artificialEventCounter;

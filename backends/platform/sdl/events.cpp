@@ -566,6 +566,10 @@ void OSystem_SDL::setupKeymapper() {
 	ADD_KEYDOWN_EVENT(KEYCODE_d, 'd', 0);
 	specific->addAction(act);
 
+	act = new Action('RUN_', "Run");
+	ADD_KEYDOWN_EVENT(KEYCODE_r, 'r', 0);
+	specific->addAction(act);
+
 	#undef ADD_KEYDOWN_EVENT
 
 	mapper->addGlobalKeymap(global);

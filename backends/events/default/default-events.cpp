@@ -198,6 +198,7 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 
 	_vk = new Common::VirtualKeyboard();
 	_keymapper = new Common::Keymapper(this);
+	_remap = false;
 }
 
 DefaultEventManager::~DefaultEventManager() {
@@ -429,8 +430,15 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 					result = false;
 				}
 			} else if (event.kbd.keycode == Common::KEYCODE_F7 && event.kbd.flags == 0) {
-				Common::RemapDialog dialog;
-				dialog.runModal();
+				if (!_remap) {
+					_remap = true;
+					Common::RemapDialog _remapDialog;
+					bool isPaused = (g_engine) ? g_engine->isPaused() : true;
+					if (!isPaused) g_engine->pauseEngine(true);
+					_remapDialog.runModal();
+					if (!isPaused) g_engine->pauseEngine(false);
+					_remap = false;
+				}
 			}
 
 			break;
