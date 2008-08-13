@@ -1319,10 +1319,10 @@ const char* OSystem_IPHONE::getSavePath() {
 }
 
 void iphone_main(int argc, char *argv[]) {
+	system("mkdir " SCUMMVM_ROOT_PATH);
+	system("mkdir " SCUMMVM_SAVE_PATH);
 
-	//OSystem_IPHONE::migrateApp();
-
-	FILE *newfp = fopen("/var/mobile/.scummvm.log", "a");
+	FILE *newfp = fopen(SCUMMVM_LOGFILE_PATH, "w");
 	if (newfp != NULL) {
 		fclose(stdout);
 		fclose(stderr);
@@ -1334,9 +1334,6 @@ void iphone_main(int argc, char *argv[]) {
 		//extern int gDebugLevel;
 		//gDebugLevel = 10;
 	}
-
-	system("mkdir " SCUMMVM_ROOT_PATH);
-	system("mkdir " SCUMMVM_SAVE_PATH);
 
 	chdir("/var/mobile/");
 

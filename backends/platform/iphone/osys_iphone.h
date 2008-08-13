@@ -40,9 +40,9 @@
 
 #define SCUMMVM_ROOT_PATH "/var/mobile/Library/ScummVM"
 #define SCUMMVM_SAVE_PATH SCUMMVM_ROOT_PATH "/Savegames"
-#define SCUMMVM_OLD_SAVE_PATH "/var/root/.scummvm"
 #define SCUMMVM_PREFS_PATH SCUMMVM_ROOT_PATH "/Preferences"
-#define SCUMMVM_OLD_PREFS_PATH "/var/root/.scummvmrc"
+#define SCUMMVM_LOGFILE_PATH SCUMMVM_ROOT_PATH "/Log"
+
 
 typedef void (*SoundProc)(void *param, byte *buf, int len);
 typedef int (*TimerProc)(int interval);
