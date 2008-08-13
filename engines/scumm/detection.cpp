@@ -820,9 +820,10 @@ PluginError ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	// unknown MD5, or with a medium debug level in case of a known MD5 (for
 	// debugging purposes).
 	if (!findInMD5Table(res.md5.c_str())) {
-		printf("Your game version appears to be unknown. Please, report the following\n");
-		printf("data to the ScummVM team along with name of the game you tried to add\n");
-		printf("and its version/language/etc.:\n");
+		printf("Your game version appears to be unknown. If this is *NOT* a fan-modified\n");
+		printf("version (in particular, not a fan-made translation), please, report the\n");
+		printf("following data to the ScummVM team along with name of the game you tried\n");
+		printf("to add and its version/language/etc.:\n");
 
 		printf("  SCUMM gameid '%s', file '%s', MD5 '%s'\n\n",
 				res.game.gameid,
