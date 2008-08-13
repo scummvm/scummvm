@@ -238,13 +238,17 @@ void Control::removePanel(void) {
 	free(_sprites.slide2);			free(_sprites.slode);
 	free(_sprites.slode2);			free(_sprites.musicBodge);
 	delete _controlPanel;			delete _exitButton;
-	delete _slide;					delete _slide2;
-	delete _slode;					delete _restorePanButton;
+	delete _slide;				delete _slide2;
+	delete _slode;				delete _restorePanButton;
+	delete _savePanel;			delete _saveButton;
+	delete _downFastButton;			delete _downSlowButton;
+	delete _upFastButton;			delete _upSlowButton;
+	delete _quitButton;			delete _autoSaveButton;
 	delete _savePanButton;			delete _dosPanButton;
 	delete _restartPanButton;		delete _fxPanButton;
 	delete _musicPanButton;			delete _bodge;
-	delete _yesNo;					delete _text;
-	delete _statusBar;				delete _restoreButton;
+	delete _yesNo;				delete _text;
+	delete _statusBar;			delete _restoreButton;
 
 	if (_textSprite) {
 		free(_textSprite);

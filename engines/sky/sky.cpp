@@ -277,6 +277,8 @@ SkyEngine::~SkyEngine() {
 	delete _skyDisk;
 	delete _skyControl;
 	delete _skyCompact;
+	if (_skyIntro)
+		delete _skyIntro;
 
 	for (int i = 0; i < 300; i++)
 		if (_itemList[i])
@@ -473,6 +475,7 @@ int SkyEngine::init() {
 	_systemVars.systemFlags |= SF_PLAY_VOCS;
 	_systemVars.gameSpeed = 50;
 
+	_skyIntro = 0;
 	_skyCompact = new SkyCompact();
 	_skyText = new Text(_skyDisk, _skyCompact);
 	_skyMouse = new Mouse(_system, _skyDisk, _skyCompact);

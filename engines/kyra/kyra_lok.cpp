@@ -118,7 +118,11 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 
 	delete[] _characterList;
 
+	delete[] _roomTable;
+
 	delete[] _movFacingTable;
+
+	delete[] _defaultShapeTable;
 
 	delete[] _gui->_scrollUpButton.data0ShapePtr;
 	delete[] _gui->_scrollUpButton.data1ShapePtr;

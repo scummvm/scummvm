@@ -669,6 +669,7 @@ void LauncherDialog::selectGame(const String &name) {
 
 LauncherDialog::~LauncherDialog() {
 	delete _browser;
+	delete _loadDialog;
 }
 
 void LauncherDialog::open() {

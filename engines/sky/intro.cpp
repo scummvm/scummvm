@@ -640,9 +640,6 @@ Intro::Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *t
 }
 
 Intro::~Intro(void) {
-
-	_mixer->stopAll();
-	_skyScreen->stopSequence();
 	if (_textBuf)
 		free(_textBuf);
 	if (_saveBuf)
