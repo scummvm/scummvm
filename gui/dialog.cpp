@@ -80,12 +80,12 @@ int Dialog::runModal() {
 }
 
 void Dialog::open() {
-	Widget *w = _firstWidget;
 
 	_result = 0;
 	_visible = true;
 	g_gui.openDialog(this);
 
+	Widget *w = _firstWidget;
 	// Search for the first objects that wantsFocus() (if any) and give it the focus
 	while (w && !w->wantsFocus()) {
 		w = w->_next;
@@ -331,14 +331,18 @@ void Dialog::removeWidget(Widget *del) {
 	Widget *w = _firstWidget;
 
 	if (del == _firstWidget) {
-		_firstWidget = _firstWidget->_next;
+		Widget *del_next = del->_next;
+		del->_next = 0;
+		_firstWidget = del_next;
 		return;
 	}
 
 	w = _firstWidget;
 	while (w) {
 		if (w->_next == del) {
-			w->_next = w->_next->_next;
+			Widget *del_next = del->_next;
+			del->_next = 0;
+			w->_next = del_next;
 			return;
 		}
 		w = w->_next;
