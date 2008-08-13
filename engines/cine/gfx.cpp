@@ -281,9 +281,6 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte colo
  * \param color Fill color
  */
 void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
-	int i;
-	byte *dest = _backBuffer + y * 320 + x;
-
 	if (width < 0) {
 		x += width;
 		width = -width;
@@ -294,8 +291,14 @@ void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
 		height = -height;
 	}
 
-	for (i = 0; i < height; i++) {
-		memset(dest + i * 320, color, width);
+	// Clip the rectangle to screen dimensions
+	Common::Rect boxRect(x, y, x + width, y + height);
+	Common::Rect screenRect(320, 200);
+	boxRect.clip(screenRect);
+
+	byte *dest = _backBuffer + boxRect.top * 320 + boxRect.left;
+	for (int i = 0; i < boxRect.height(); i++) {
+		memset(dest + i * 320, color, boxRect.width());
 	}
 }
 
