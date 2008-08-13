@@ -138,10 +138,20 @@ public:
 		_curHeight = _sprite->origHeight;
 	}
 	SpriteReaderStatus readPacket(PixelPacket &packet) {
-		if ((_sprite->flags & 0x40) || (_sprite->flags & 0x10)) {
+		if (_sprite->flags & 0x40) {
+			// shadow sprite
+			packet.count = _source[0] & 0x7F;
+			if (_source[0] & 0x80)
+				packet.pixel = 1;
+			else
+				packet.pixel = 0;
+			_source++;
+		} else if (_sprite->flags & 0x10) {
+			// 256-color sprite
 			packet.pixel = *_source++;
 			packet.count = *_source++;
 		} else {
+			// 16-color sprite
 			packet.count = _source[0] & 0x0F;
 			packet.pixel = (_source[0] & 0xF0) >> 4;
 			_source++;

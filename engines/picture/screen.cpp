@@ -502,6 +502,15 @@ void Screen::drawSprite(SpriteDrawItem *sprite) {
 
 	if (sprite->flags & 0x40) {
 		// TODO: Shadow sprites
+		if (sprite->flags & 1) {
+			SpriteFilterScaleDown spriteScaler(sprite, &spriteReader);
+			drawSpriteCore(dest, spriteScaler, sprite);
+		} else if (sprite->flags & 2) {
+			SpriteFilterScaleUp spriteScaler(sprite, &spriteReader);
+			drawSpriteCore(dest, spriteScaler, sprite);
+		} else {
+			drawSpriteCore(dest, spriteReader, sprite);
+		}
 	} else if (sprite->flags & 0x10) {
 		// 256 color sprite
 		drawSpriteCore(dest, spriteReader, sprite);
@@ -558,16 +567,25 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sp
 			}
 		}
 		
-		if (((sprite->flags & 0x10) && (packet.pixel != 0xFF)) || !(sprite->flags & 0x10) && (packet.pixel != 0)) {
+		if (((sprite->flags & 0x40) && (packet.pixel != 0)) ||
+			((sprite->flags & 0x10) && (packet.pixel != 0xFF)) ||
+			!(sprite->flags & 0x10) && (packet.pixel != 0))
+		{
 			if (sprite->flags & 0x40) {
-			} else if (sprite->flags & 0x10) {
-				packet.pixel = ((packet.pixel << 4) & 0xF0) | ((packet.pixel >> 4) & 0x0F);
+				while (packet.count--) {
+					*dest = _vm->_palette->getColorTransPixel(*dest);
+					dest += destInc;
+				}
 			} else {
-				packet.pixel += sprite->baseColor - 1;
-			}
-			while (packet.count--) {
-				*dest = packet.pixel;
-				dest += destInc;
+				if (sprite->flags & 0x10) {
+					packet.pixel = ((packet.pixel << 4) & 0xF0) | ((packet.pixel >> 4) & 0x0F);
+				} else {
+					packet.pixel += sprite->baseColor - 1;
+				}
+				while (packet.count--) {
+					*dest = packet.pixel;
+					dest += destInc;
+				}
 			}
 		} else {
 			dest += packet.count * destInc;
@@ -801,12 +819,12 @@ void Screen::drawTalkTextItems() {
 				if (ch == 0x20) {
 					x += font.getWidth();
 				} else {
-					//drawChar2(font, _frontScreen, x, item->rects[j].y, ch, item->color);
 					drawChar(font, _frontScreen, x, item->rects[j].y, ch, item->color, true);
 					x += font.getCharWidth(ch) + font.getSpacing() - 1;
 				}
 			}
 		}
+		
 	}
 
 }
@@ -894,7 +912,6 @@ void Screen::drawString(int16 x, int16 y, byte fontColor1, byte fontColor2, uint
 		if (ch <= 0x20) {
 			x += font.getWidth();
 		} else {
-			//drawChar(font, _frontScreen, x + 1, y + _vm->_cameraHeight - yadd, ch, color);
 			drawChar(font, _frontScreen, x + 1, y + _vm->_cameraHeight - yadd, ch, color, false);
 			x += font.getCharWidth(ch) + font.getSpacing() - 1;
 			yadd = -yadd;
@@ -920,7 +937,6 @@ void Screen::drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, b
 			byte count = charData[0] & 0x0F;
 			byte flags = charData[0] & 0xF0;
 			charData++;
-			lineWidth -= count;
 			if ((flags & 0x80) == 0) {
  				if (flags & 0x10) {
 					memset(dest, color, count);
@@ -929,6 +945,7 @@ void Screen::drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, b
 				}
 			}
 			dest += count;
+			lineWidth -= count;
 		}
 		dest += 640 - charWidth;
 	}

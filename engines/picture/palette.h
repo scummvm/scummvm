@@ -66,6 +66,9 @@ public:
 	uint16 findFragment(int16 id);
 	void clearFragments();
 
+	void buildColorTransTable(byte limit, char deltaValue, byte mask);
+	byte getColorTransPixel(byte pixel) const { return _colorTransTable[pixel]; }
+
 	byte *getMainPalette() { return _mainPalette; }
 	byte *getAnimPalette() { return _animPalette; }
 

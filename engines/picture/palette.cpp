@@ -168,6 +168,51 @@ void Palette::clearFragments() {
 	_fragments.clear();
 }
 
+void Palette::buildColorTransTable(byte limit, char deltaValue, byte mask) {
+
+	// TODO
+
+	byte r, g, b;
+	
+	mask &= 7;
+	
+	for (int i = 0; i < 256; i++) {
+
+		if (deltaValue < 0) {
+			// TODO
+		} else {
+			r = _mainPalette[i * 3 + 0];
+			g = _mainPalette[i * 3 + 1];
+			b = _mainPalette[i * 3 + 2];
+			if (MAX(r, MAX(b, g)) >= limit) {
+				if ((mask & 1) && r >= deltaValue)
+					r -= deltaValue;
+				if ((mask & 2) && g >= deltaValue)
+					g -= deltaValue;
+				if ((mask & 4) && b >= deltaValue)
+					b -= deltaValue;
+			}
+		}
+		
+		int bestIndex = 0;
+		uint16 bestMatch = 0xFFFF;
+
+		for (int j = 0; j < 256; j++) {
+			byte distance = ABS(_mainPalette[j * 3 + 0] - r) + ABS(_mainPalette[j * 3 + 1] - g) + ABS(_mainPalette[j * 3 + 2] - b);
+			byte maxColor = MAX(_mainPalette[j * 3 + 0], MAX(_mainPalette[j * 3 + 1], _mainPalette[j * 3 + 2]));
+			uint16 match = (distance << 8) | maxColor;
+			if (match < bestMatch) {
+				bestMatch = match;
+				bestIndex = j;
+			}
+		}
+		
+		_colorTransTable[i] = bestIndex;
+
+	}
+
+}
+
 void Palette::saveState(Common::WriteStream *out) {
 
 	// Save currently active palette

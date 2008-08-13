@@ -558,9 +558,10 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 		break;
 	}
 
-	case 16:// TODO
+	case 16:// ok
 	{
-		debug(0, "o2_makeTransColorTable");
+		debug(0, "o2_buildColorTransTable(%d, %d, %d)", arg8(4), (char)arg8(3), arg8(5));
+		_vm->_palette->buildColorTransTable(arg8(4), (char)arg8(3), arg8(5));
 		break;
 	}
 
