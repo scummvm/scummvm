@@ -412,43 +412,52 @@ bool ThemeRenderer::loadDefaultXML() {
 
 bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 	assert(_parser);
-		
- 	if (!parser()->loadFile(themeName + ".stx")){
+	
 #ifdef USE_ZLIB
-		unzFile zipFile = unzOpen((themeName + ".zip").c_str());
-		
-		if (zipFile && unzLocateFile(zipFile, (themeName + ".stx").c_str(), 2) == UNZ_OK) {
-			
+	unzFile zipFile = unzOpen((themeName + ".zip").c_str());
+	char fileNameBuffer[32];
+	int parseCount = 0;
+	
+	if (zipFile && unzGoToFirstFile(zipFile) == UNZ_OK) {
+		while (true) {
 			unz_file_info fileInfo;
 			unzOpenCurrentFile(zipFile);
-			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-			uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
-			assert(buffer);
-			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
-			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
-			unzCloseCurrentFile(zipFile);
+			unzGetCurrentFileInfo(zipFile, &fileInfo, fileNameBuffer, 32, NULL, 0, NULL, 0);
+		
+			if (matchString(fileNameBuffer, "*.stx")) {
+				uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
+				assert(buffer);
+				memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
+				unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
 			
-			Common::MemoryReadStream *stream = new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size+1, true);
-			
-			if (!parser()->loadStream(stream)) {
-				unzClose(zipFile);
-				delete stream;
-				return false;
+				Common::MemoryReadStream *stream = new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size+1, true);
+				
+				if (parser()->loadStream(stream) == false || parser()->parse() == false) {
+					warning("Failed to load stream for %s", fileNameBuffer);
+					unzClose(zipFile);
+					delete stream;
+					return false;
+				}
+
+				parseCount++;
 			}
-			
-//			delete[] buffer;
-			buffer = 0;
-		} else {
-			unzClose(zipFile);
-			return false;
+		
+			unzCloseCurrentFile(zipFile);
+		
+			if (unzGoToNextFile(zipFile) == UNZ_END_OF_LIST_OF_FILE)
+				break;
 		}
-		unzClose(zipFile);
-#else
-		return false;
-#endif
+	} else if (parser()->loadFile(themeName + ".stx") && parser()->parse()) {
+		parseCount++;
+	} else {
+		warning("No theme files for '%s' found.", themeName.c_str());
 	}
 	
-	return parser()->parse();
+	unzClose(zipFile);
+	return (parseCount > 0);
+#else
+	return (parser()->loadFile(themeName + ".stx") && parser()->parse());
+#endif
 }
 
 bool ThemeRenderer::isWidgetCached(DrawData type, const Common::Rect &r) {
