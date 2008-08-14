@@ -261,7 +261,7 @@ void Parallaction_ns::_c_contaFoglie(void *parm) {
 	if (num_foglie != 6)
 		return;
 
-	_commandFlags |= 0x1000;
+	_globalFlags |= 0x1000;
 
 	return;
 }

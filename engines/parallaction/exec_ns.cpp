@@ -203,7 +203,7 @@ DECLARE_COMMAND_OPCODE(invalid) {
 DECLARE_COMMAND_OPCODE(set) {
 	if (_ctxt.cmd->u._flags & kFlagsGlobal) {
 		_ctxt.cmd->u._flags &= ~kFlagsGlobal;
-		_commandFlags |= _ctxt.cmd->u._flags;
+		_globalFlags |= _ctxt.cmd->u._flags;
 	} else {
 		_vm->setLocationFlags(_ctxt.cmd->u._flags);
 	}
@@ -213,7 +213,7 @@ DECLARE_COMMAND_OPCODE(set) {
 DECLARE_COMMAND_OPCODE(clear) {
 	if (_ctxt.cmd->u._flags & kFlagsGlobal) {
 		_ctxt.cmd->u._flags &= ~kFlagsGlobal;
-		_commandFlags &= ~_ctxt.cmd->u._flags;
+		_globalFlags &= ~_ctxt.cmd->u._flags;
 	} else {
 		_vm->clearLocationFlags(_ctxt.cmd->u._flags);
 	}
@@ -290,7 +290,7 @@ DECLARE_COMMAND_OPCODE(call) {
 DECLARE_COMMAND_OPCODE(toggle) {
 	if (_ctxt.cmd->u._flags & kFlagsGlobal) {
 		_ctxt.cmd->u._flags &= ~kFlagsGlobal;
-		_commandFlags ^= _ctxt.cmd->u._flags;
+		_globalFlags ^= _ctxt.cmd->u._flags;
 	} else {
 		_vm->toggleLocationFlags(_ctxt.cmd->u._flags);
 	}
@@ -336,7 +336,7 @@ void Parallaction_ns::drawAnimations() {
 		if ((anim->_flags & kFlagsActive) && ((anim->_flags & kFlagsRemove) == 0))   {
 
 			if (anim->_flags & kFlagsNoMasked)
-				layer = 3;
+				layer = LAYER_FOREGROUND;
 			else
 				layer = _gfx->_backgroundInfo->getLayer(anim->_top + anim->height());
 
@@ -439,7 +439,7 @@ void CommandExec::runList(CommandList::iterator first, CommandList::iterator las
 		CommandPtr cmd = *first;
 
 		if (cmd->_flagsOn & kFlagsGlobal) {
-			useFlags = _commandFlags | kFlagsGlobal;
+			useFlags = _globalFlags | kFlagsGlobal;
 			useLocalFlags = false;
 		} else {
 			useFlags = _vm->getLocationFlags();

@@ -168,7 +168,7 @@ bool DialogueManager::displayAnswer(uint16 i) {
 
 	uint32 flags = _vm->getLocationFlags();
 	if (a->_yesFlags & kFlagsGlobal)
-		flags = _commandFlags | kFlagsGlobal;
+		flags = _globalFlags | kFlagsGlobal;
 
 	// display suitable answers
 	if (((a->_yesFlags & flags) == a->_yesFlags) && ((a->_noFlags & ~flags) == a->_noFlags)) {

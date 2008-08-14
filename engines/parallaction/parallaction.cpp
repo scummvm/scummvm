@@ -53,7 +53,7 @@ uint32		_engineFlags = 0;
 uint16		_score = 1;
 char		_password[8];
 
-uint32		_commandFlags = 0;
+uint32		_globalFlags = 0;
 
 // private stuff
 
@@ -85,7 +85,7 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 
 Parallaction::~Parallaction() {
 	delete _debugger;
-	delete _globalTable;
+	delete _globalFlagsNames;
 	delete _callableNames;
 	delete _cmdExec;
 	delete _programExec;
@@ -114,7 +114,7 @@ int Parallaction::init() {
 
 	_engineFlags = 0;
 	_objectsNames = NULL;
-	_globalTable = NULL;
+	_globalFlagsNames = NULL;
 	_location._hasSound = false;
 	_baseTime = 0;
 	_numLocations = 0;

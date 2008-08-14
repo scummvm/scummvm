@@ -218,7 +218,7 @@ void Parallaction_ns::callFunction(uint index, void* parm) {
 int Parallaction_ns::go() {
 	renameOldSavefiles();
 
-	_globalTable = _disk->loadTable("global");
+	_globalFlagsNames = _disk->loadTable("global");
 
 	startGui();
 
@@ -438,7 +438,7 @@ void Parallaction_ns::cleanupGame() {
 	// this code saves main character animation from being removed from the following code
 	_location._animations.remove(_char._ani);
 	_numLocations = 0;
-	_commandFlags = 0;
+	_globalFlags = 0;
 
 	memset(_localFlags, 0, sizeof(_localFlags));
 	memset(_locationNames, 0, sizeof(_locationNames));

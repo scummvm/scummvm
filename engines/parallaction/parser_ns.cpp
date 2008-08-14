@@ -608,7 +608,7 @@ DECLARE_COMMAND_PARSER(flags)  {
 
 	createCommand(_parser->_lookup);
 
-	if (_vm->_globalTable->lookup(_tokens[1]) == Table::notFound) {
+	if (_vm->_globalFlagsNames->lookup(_tokens[1]) == Table::notFound) {
 		do {
 			char _al = _vm->_localFlagNames->lookup(_tokens[ctxt.nextToken]);
 			ctxt.nextToken++;
@@ -618,7 +618,7 @@ DECLARE_COMMAND_PARSER(flags)  {
 	} else {
 		ctxt.cmd->u._flags |= kFlagsGlobal;
 		do {
-			char _al = _vm->_globalTable->lookup(_tokens[1]);
+			char _al = _vm->_globalFlagsNames->lookup(_tokens[1]);
 			ctxt.nextToken++;
 			ctxt.cmd->u._flags |= 1 << (_al - 1);
 		} while (!scumm_stricmp(_tokens[ctxt.nextToken++], "|"));
@@ -759,11 +759,11 @@ void LocationParser_ns::parseCommandFlags() {
 				cmd->_flagsOn |= kFlagsEnter;
 			} else
 			if (!scumm_strnicmp(_tokens[_si], "no", 2)) {
-				byte _al = _vm->_globalTable->lookup(&_tokens[_si][2]);
+				byte _al = _vm->_globalFlagsNames->lookup(&_tokens[_si][2]);
 				assert(_al != Table::notFound);
 				cmd->_flagsOff |= 1 << (_al - 1);
 			} else {
-				byte _al = _vm->_globalTable->lookup(_tokens[_si]);
+				byte _al = _vm->_globalFlagsNames->lookup(_tokens[_si]);
 				assert(_al != Table::notFound);
 				cmd->_flagsOn |= 1 << (_al - 1);
 			}
@@ -880,7 +880,7 @@ Answer *LocationParser_ns::parseAnswer() {
 
 		if (!scumm_stricmp(_tokens[1], "global")) {
 			token = 2;
-			flagNames = _vm->_globalTable;
+			flagNames = _vm->_globalFlagsNames;
 			answer->_yesFlags |= kFlagsGlobal;
 		} else {
 			token = 1;

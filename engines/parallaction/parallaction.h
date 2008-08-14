@@ -136,7 +136,7 @@ extern uint16		_score;
 extern uint16		_language;
 extern uint32		_engineFlags;
 extern char			_saveData1[];
-extern uint32		_commandFlags;
+extern uint32		_globalFlags;
 extern const char	*_dinoName;
 extern const char	*_donnaName;
 extern const char	*_doughName;
@@ -272,7 +272,7 @@ public:
 	void		setBackground(const char *background, const char *mask, const char *path);
 	void		freeBackground();
 
-	Table		*_globalTable;
+	Table		*_globalFlagsNames;
 	Table		*_objectsNames;
 	Table		*_callableNames;
 	Table		*_localFlagNames;

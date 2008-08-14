@@ -101,14 +101,14 @@ bool Debugger::Cmd_Locations(int argc, const char **argv) {
 
 bool Debugger::Cmd_GlobalFlags(int argc, const char **argv) {
 
-	uint32 flags = _commandFlags;
+	uint32 flags = _globalFlags;
 
 	DebugPrintf("+------------------------------+---------+\n"
 				"| flag name                    |  value  |\n"
 				"+------------------------------+---------+\n");
-	for (uint i = 0; i < _vm->_globalTable->count(); i++) {
+	for (uint i = 0; i < _vm->_globalFlagsNames->count(); i++) {
 		const char *value = ((flags & (1 << i)) == 0) ? "OFF" : "ON";
-		DebugPrintf("|%-30s|   %-6s|\n", _vm->_globalTable->item(i),  value);
+		DebugPrintf("|%-30s|   %-6s|\n", _vm->_globalFlagsNames->item(i),  value);
 	}
 	DebugPrintf("+------------------------------+---------+\n");
 
