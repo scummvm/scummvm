@@ -94,7 +94,7 @@ protected:
 	friend class GUI::GuiObject;
 
 	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
-	static const int kDirtyRectangleThreshold = 0;
+	static const int kDirtyRectangleThreshold = 1;
 	
 	/** Sets whether backcaching is enabled */
 	static const bool kEnableBackCaching = true;
@@ -193,7 +193,7 @@ protected:
 		
 		GUI::Theme::TextAlign alignH;
 		GUI::Theme::TextAlignVertical alignV;
-		bool elipsis;
+		bool ellipsis;
 		bool restoreBg;
 		int deltax;
 	};

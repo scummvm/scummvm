@@ -53,7 +53,7 @@ const ThemeRenderer::DrawDataInfo ThemeRenderer::kDrawDataDefaults[] = {
 	{kDDWidgetBackgroundEditText, "widget_textedit", true, kDDNone},
 	{kDDWidgetBackgroundSlider, "widget_slider", true, kDDNone},
 
-	{kDDButtonIdle, "button_idle", true, kDDNone},
+	{kDDButtonIdle, "button_idle", true, kDDWidgetBackgroundSlider},
 	{kDDButtonHover, "button_hover", false, kDDButtonIdle},
 	{kDDButtonDisabled, "button_disabled", true, kDDNone},
 
@@ -503,7 +503,7 @@ void ThemeRenderer::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic
 }
 
 void ThemeRenderer::queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
-	bool elipsis, TextAlign alignH, TextAlignVertical alignV, int deltax) {
+	bool ellipsis, TextAlign alignH, TextAlignVertical alignV, int deltax) {
 		
 	if (_texts[type] == 0)
 		return;
@@ -517,6 +517,7 @@ void ThemeRenderer::queueDDText(TextData type, const Common::Rect &r, const Comm
 	q.alignV = alignV;
 	q.restoreBg = restoreBg;
 	q.deltax = deltax;
+	q.ellipsis = ellipsis;
 	
 	if (_buffering) {		
 		_textQueue.push_back(q);
@@ -565,7 +566,7 @@ void ThemeRenderer::drawDDText(const DrawQueueText &q) {
 		restoreBackground(q.area);
 	
 	_vectorRenderer->setFgColor(_texts[q.type]->_color.r, _texts[q.type]->_color.g, _texts[q.type]->_color.b);
-	_vectorRenderer->drawString(_texts[q.type]->_fontPtr, q.text, q.area, q.alignH, q.alignV, q.deltax, q.elipsis);
+	_vectorRenderer->drawString(_texts[q.type]->_fontPtr, q.text, q.area, q.alignH, q.alignV, q.deltax, q.ellipsis);
 	addDirtyRect(q.area);
 }
 
@@ -743,9 +744,6 @@ void ThemeRenderer::drawSurface(const Common::Rect &r, const Graphics::Surface &
 		return;
 	
 	queueBitmap(&surface, r, themeTrans);
-	
-//	_vectorRenderer->blitSubSurface(&surface, r);
-//	addDirtyRect(r);
 }
 
 void ThemeRenderer::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, WidgetStateInfo state) {
@@ -800,7 +798,7 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 
 void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
 	if (!ready())
-		return;
+		return;	
 		
 	if (inverted) {
 		queueDD(kDDTextSelectionBackground, r);
