@@ -496,16 +496,12 @@ void initGame() {
 		}
 	}
 		
-	if (firstTime) {
+/*	if (firstTime) {
 		firstTime = false;
 
-		if (ConfMan.hasKey("22khzaudio", "ds") && ConfMan.getBool("22khzaudio", "ds")) {
-			startSound(22050, 8192);
-		} else {
-			startSound(11025, 4096);
-		}
 
 	}
+*/
 	#ifdef HEAVY_LOGGING
 	consolePrintf("done\n");
 	#endif
@@ -1288,19 +1284,35 @@ void doButtonSelectMode(OSystem_DS* system)
 		//consolePrintf("x=%d   y=%d  \n", getPenX(), getPenY());
 	}
 
+	static bool leftButtonDown = false;
+	static bool rightButtonDown = false;
+
+	if (getPenReleased() && (leftButtonDown || rightButtonDown)) {
+		if (leftButtonDown) {
+			event.type = Common::EVENT_LBUTTONUP;
+		} else {
+			event.type = Common::EVENT_RBUTTONUP;
+		}
+
+		event.mouse = Common::Point(getPenX(), getPenY());
+		system->addEvent(event);
+	}
+
 
 	if ((mouseMode != MOUSE_HOVER) || (!displayModeIs8Bit)) {
 		if (getPenDown() && (!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {	
-			event.type = ((mouseMode == MOUSE_LEFT) || (!displayModeIs8Bit))? Common::EVENT_LBUTTONDOWN: Common::EVENT_RBUTTONDOWN;
+			if ((mouseMode == MOUSE_LEFT) || (!displayModeIs8Bit)) {
+				event.type = Common::EVENT_LBUTTONDOWN;
+				leftButtonDown = true;
+			} else {
+				event.type = Common::EVENT_RBUTTONDOWN;
+				rightButtonDown = true;
+			}
+
 			event.mouse = Common::Point(getPenX(), getPenY());
 			system->addEvent(event);
 		}
 		
-		if (getPenReleased()) {
-			event.type = mouseMode == MOUSE_LEFT? Common::EVENT_LBUTTONUP: Common::EVENT_RBUTTONUP;
-			event.mouse = Common::Point(getPenX(), getPenY());
-			system->addEvent(event);
-		}
 	} else {
 		// In hover mode, D-pad left and right click the mouse when the pen is on the screen
 
@@ -1691,7 +1703,7 @@ void updateStatus() {
 	int offs;
 
 	if (displayModeIs8Bit) {
-		if (!touchPadStyle) {
+		if (!tapScreenClicks) {
 			switch (mouseMode) {
 				case MOUSE_LEFT: {
 					offs = 1;
@@ -2910,7 +2922,7 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.12.0 beta1 ");
+	consolePrintf("Version 0.12.0 beta2 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");

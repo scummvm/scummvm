@@ -72,9 +72,15 @@ void OSystem_DS::initBackend() {
 	_timer = new DSTimerManager();
     	DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
 
-	_mixer->setOutputRate(11025 /*DS::getSoundFrequency()*/);
+	if (ConfMan.hasKey("22khzaudio", "ds") && ConfMan.getBool("22khzaudio", "ds")) {
+		DS::startSound(22050, 8192);
+	} else {
+		DS::startSound(11025, 4096);
+	}
+
+	_mixer->setOutputRate(DS::getSoundFrequency());
 	_mixer->setReady(true);
-    
+
 	OSystem::initBackend();
 }
 
