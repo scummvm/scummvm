@@ -187,6 +187,7 @@ void RemapDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 d
 }
 
 void RemapDialog::startRemapping(uint i) {
+	if (_topAction + i >= _currentActions.size()) return; 
 	_remapTimeout = getMillis() + kRemapTimeoutDelay;
 	_activeRemapAction = _currentActions[_topAction + i].action;
 	_keymapWidgets[i].keyButton->setLabel("...");
