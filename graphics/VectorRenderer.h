@@ -405,7 +405,7 @@ public:
 	void drawCallback_BEVELSQ(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawBeveledSquare(x, y, w, h, step.extraData);
+		drawBeveledSquare(x, y, w, h, _bevel);
 	}
 	
 	void drawCallback_TAB(const Common::Rect &area, const DrawStep &step) {
@@ -599,7 +599,7 @@ public:
 	void drawTab(int x, int y, int r, int w, int h);
 
 	void drawBeveledSquare(int x, int y, int w, int h, int bevel) {
-		drawBevelSquareAlg(x, y, w, h, bevel, _fgColor, _bgColor);
+		drawBevelSquareAlg(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
 	}
 	
 	void drawString(const Graphics::Font *font, const Common::String &text, 
@@ -860,8 +860,9 @@ protected:
 	virtual void drawSquareAlg(int x, int y, int w, int h, PixelType color, FillMode fill_m);
 	virtual void drawTriangleVertAlg(int x, int y, int w, int h, bool inverted, PixelType color, FillMode fill_m);
 	virtual void drawTriangleFast(int x, int y, int size, bool inverted, PixelType color, FillMode fill_m);
-	virtual void drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color);
+	virtual void drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color, bool fill);
 	virtual void drawTabAlg(int x, int y, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m, int baseLeft = 0, int baseRight = 0);
+	virtual void drawBevelTabAlg(int x, int y, int w, int h, int bevel, PixelType topColor, PixelType bottomColor, int baseLeft = 0, int baseRight = 0);
 
 	/**
 	 * SHADOW DRAWING ALGORITHMS

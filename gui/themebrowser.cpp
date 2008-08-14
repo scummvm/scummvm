@@ -91,7 +91,7 @@ void ThemeBrowser::updateListing() {
 
 	// classic is always build in
 	Entry th;
-	th.name = "ScummVM Modern Theme (Builtin Version)";
+	th.name = "ScummVM Classic Theme (Builtin Version)";
 	th.file = "builtin";
 	_themes.push_back(th);
 

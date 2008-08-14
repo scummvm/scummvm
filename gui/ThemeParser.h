@@ -150,7 +150,6 @@ protected:
 					XML_PROP(gradient_factor, false)
 					XML_PROP(bevel_color, false)
 					XML_PROP(fill, false)
-					XML_PROP(bevel, false)
 					XML_PROP(radius, false)
 					XML_PROP(width, false)
 					XML_PROP(height, false)

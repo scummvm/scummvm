@@ -477,7 +477,7 @@ template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawRoundedSquare(int x, int y, int r, int w, int h) {
 	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
-		w <= 0 || h <= 0 || x < 0 || y < 0)
+		w <= 0 || h <= 0 || x < 0 || y < 0 || r <= 0)
 		return;
 		
 	if ((r << 1) > w || (r << 1) > h)
@@ -527,6 +527,13 @@ drawTab(int x, int y, int r, int w, int h) {
 	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
 		w <= 0 || h <= 0 || x < 0 || y < 0 || r > w || r > h)
 		return;
+		
+	if (r == 0 && Base::_bevel > 0) {
+		drawBevelTabAlg(x, y, w, h, Base::_bevel, _bevelColor, _fgColor, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
+		return;
+	}
+	
+	if (r == 0) return;
 	
 	switch (Base::_fillMode) {
 		case kFillDisabled:
@@ -696,6 +703,51 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 	}
 }
 
+
+/** BEVELED TABS FOR CLASSIC THEME **/
+template<typename PixelType, typename PixelFormat>
+void VectorRendererSpec<PixelType, PixelFormat>::
+drawBevelTabAlg(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color, int baseLeft, int baseRight) {
+	int pitch = Base::surfacePitch();
+	int i, j;
+	
+	PixelType *ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
+	
+	i = bevel;
+	while (i--) {
+		colorFill(ptr_left, ptr_left + w, top_color);
+		ptr_left += pitch;
+	}
+
+	if (baseLeft > 0) {
+		i = h - bevel;
+		ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
+		while (i--) {
+			colorFill(ptr_left, ptr_left + bevel, top_color);
+			ptr_left += pitch;
+		}
+	}
+
+	i = h - bevel;
+	j = bevel;
+	ptr_left = (PixelType *)_activeSurface->getBasePtr(x + w - bevel, y);
+	while (i--) {
+		colorFill(ptr_left + j, ptr_left + bevel, bottom_color);
+		if (j > 0) j--;
+		ptr_left += pitch;
+	}
+	
+	i = bevel;
+	ptr_left = (PixelType *)_activeSurface->getBasePtr(x + w - bevel, y + h - bevel);
+	while (i--) {
+		colorFill(ptr_left, ptr_left + baseRight + bevel, bottom_color);
+		
+		if (baseLeft)
+			colorFill(ptr_left - w - baseLeft + bevel, ptr_left - w + bevel + bevel, top_color);
+		ptr_left += pitch;
+	}
+}
+
 /** SQUARE ALGORITHM **/
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
@@ -732,10 +784,26 @@ drawSquareAlg(int x, int y, int w, int h, PixelType color, VectorRenderer::FillM
 /** SQUARE ALGORITHM **/
 template<typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
-drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color) {
-	PixelType *ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
+drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color, bool fill) {
 	int pitch = Base::surfacePitch();
+	
+	int height = h;
+	PixelType *ptr_fill = (PixelType *)_activeSurface->getBasePtr(x, y);
+	
+	if (fill) {
+		while (height--) {
+			blendFill(ptr_fill, ptr_fill + w, _bgColor, 200);
+			ptr_fill += pitch;
+		}
+	}
+	
 	int i, j;
+	x = MAX(x - bevel, 0);
+	y = MAX(y - bevel, 0);
+	h += bevel << 1;
+	w += bevel << 1;
+	
+	PixelType *ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
 	
 	i = bevel;
 	while (i--) {

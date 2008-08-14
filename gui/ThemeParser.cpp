@@ -375,10 +375,6 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			}
 		}
 
-		if (functionName == "bevelsq") {
-			__PARSER_ASSIGN_INT(extraData, "bevel", true);
-		}
-
 		if (functionName == "triangle") {
 			drawstep->extraData = VectorRenderer::kTriangleUp;
 

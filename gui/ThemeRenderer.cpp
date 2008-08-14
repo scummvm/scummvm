@@ -37,6 +37,8 @@
 #include "gui/ThemeEval.h"
 #include "graphics/VectorRenderer.h"
 
+#define GUI_ENABLE_BUILTIN_THEME
+
 namespace GUI {
 
 using namespace Graphics;
@@ -401,6 +403,9 @@ bool ThemeRenderer::loadDefaultXML() {
 	
 	if (!parser()->loadBuffer((const byte*)defaultXML, strlen(defaultXML), false))
 		return false;
+		
+	_themeName = "ScummVM Classic Theme (Builtin Version)";
+	_themeFileName = "builtin";
 
 	return parser()->parse();
 #else
@@ -541,9 +546,9 @@ void ThemeRenderer::queueBitmap(const Graphics::Surface *bitmap, const Common::R
 
 void ThemeRenderer::drawDD(const DrawQueue &q, bool draw, bool restore) {
 	Common::Rect extendedRect = q.area;
-	extendedRect.grow(kDirtyRectangleThreshold);
-	extendedRect.right += _widgets[q.type]->_backgroundOffset;
-	extendedRect.bottom += _widgets[q.type]->_backgroundOffset;
+	extendedRect.grow(kDirtyRectangleThreshold + _widgets[q.type]->_backgroundOffset);
+//	extendedRect.right += _widgets[q.type]->_backgroundOffset;
+//	extendedRect.bottom += _widgets[q.type]->_backgroundOffset;
 
 	if (restore)
 		restoreBackground(extendedRect);
@@ -584,8 +589,11 @@ void ThemeRenderer::calcBackgroundOffset(DrawData type) {
 	uint maxShadow = 0;
 	for (Common::List<Graphics::DrawStep>::const_iterator step = _widgets[type]->_steps.begin(); 
 		step != _widgets[type]->_steps.end(); ++step) {
-		if (((*step).autoWidth || (*step).autoHeight) && (*step).shadow > maxShadow) 
-			maxShadow = (*step).shadow;
+		if ((step->autoWidth || step->autoHeight) && step->shadow > maxShadow) 
+			maxShadow = step->shadow;
+			
+		if (step->drawingCall == &Graphics::VectorRenderer::drawCallback_BEVELSQ && step->bevel > maxShadow)
+			maxShadow = step->bevel;
 	}
 
 	_widgets[type]->_backgroundOffset = maxShadow;

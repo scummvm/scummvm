@@ -139,6 +139,8 @@ void ThemeLayoutVertical::reflowLayout() {
 			_h += _children[i]->getHeight() + _spacing;
 		}
 	}
+	
+	_h -= _spacing;
 }
 
 void ThemeLayoutHorizontal::reflowLayout() {
@@ -198,6 +200,8 @@ void ThemeLayoutHorizontal::reflowLayout() {
 		
 		_h = MAX(_h, (int16)(_children[i]->getHeight() + _paddingTop + _paddingBottom));
 	}
+	
+	_w -= _spacing;
 }
 
 ThemeEval::~ThemeEval() {
