@@ -273,7 +273,7 @@ void Screen::clearSprites() {
 void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 
 	int16 scaleValueX, scaleValueY;
-	int16 spriteDraw_X, spriteDraw_Y;
+	int16 xoffs, yoffs;
 	byte *spriteData;
 	int16 frameNum;
 
@@ -292,6 +292,10 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	
 	spriteData = _vm->_res->load(drawRequest.resIndex);
 	
+	if (drawRequest.flags & 0x1000) {
+		sprite.flags |= 4;
+	}
+
 	if (drawRequest.flags & 0x2000) {
 		sprite.flags |= 0x10;
 	}
@@ -318,12 +322,12 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	sprite.origHeight = spriteFrameEntry.h;
 
 	if (drawRequest.flags & 0x1000) {
-		spriteDraw_X = spriteFrameEntry.w - spriteFrameEntry.x;
+		xoffs = spriteFrameEntry.w - spriteFrameEntry.x;
 	} else {
-		spriteDraw_X = spriteFrameEntry.x;
+		xoffs = spriteFrameEntry.x;
 	}
 
-	spriteDraw_Y = spriteFrameEntry.y;
+	yoffs = spriteFrameEntry.y;
 
 	// If the sprite should be scaled we need to initialize some values now
 
@@ -343,22 +347,22 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 			sprite.flags |= 2;
 			sprite.width = sprite.origWidth + scaleValueX;
 			sprite.height = sprite.origHeight + scaleValueY;
-			spriteDraw_X += (spriteDraw_X * scaleValue) / 100;
-			spriteDraw_Y += (spriteDraw_Y * scaleValue) / 100;
+			xoffs += (xoffs * scaleValue) / 100;
+			yoffs += (yoffs * scaleValue) / 100;
 		} else {
 			sprite.flags |= 1;
 			sprite.width = sprite.origWidth - scaleValueX;
 			sprite.height = sprite.origHeight - 1 - scaleValueY;
 			if (sprite.width <= 0 || sprite.height <= 0)
 				return;
-			spriteDraw_X -= (spriteDraw_X * scaleValue) / 100;
-			spriteDraw_Y -= (spriteDraw_Y * scaleValue) / 100;
+			xoffs -= (xoffs * scaleValue) / 100;
+			yoffs -= (yoffs * scaleValue) / 100;
 		}
 		
 	}
 	
-	sprite.x -= spriteDraw_X;
-	sprite.y -= spriteDraw_Y;
+	sprite.x -= xoffs;
+	sprite.y -= yoffs;
 
 	sprite.yerror = sprite.ydelta;
 
@@ -437,7 +441,6 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	
 	if (drawRequest.flags & 0x1000) {
 		// Left border
-		sprite.flags |= 4;
 		if (sprite.x - _vm->_cameraX < 0) {
 			sprite.width -= ABS(sprite.x - _vm->_cameraX);
 			if (sprite.width <= 0)
@@ -553,6 +556,9 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sp
 	byte *destp = dest;
 	int16 skipX = sprite->value1;
 
+	int16 w = sprite->width;
+	int16 h = sprite->height;
+
 	do {
 		status = reader.readPacket(packet);
 
@@ -567,6 +573,11 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sp
 			}
 		}
 		
+		if (w - packet.count < 0)
+			packet.count = w;
+
+		w -= packet.count;
+
 		if (((sprite->flags & 0x40) && (packet.pixel != 0)) ||
 			((sprite->flags & 0x10) && (packet.pixel != 0xFF)) ||
 			!(sprite->flags & 0x10) && (packet.pixel != 0))
@@ -591,13 +602,20 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sp
 			dest += packet.count * destInc;
 		}
 
-		if (status == kSrsEndOfLine) {
+		if (status == kSrsEndOfLine || w == 0) {
+			if (w == 0) {
+				while (status != kSrsEndOfLine) {
+					status = reader.readPacket(packet);
+				}
+			}
 			dest = destp + 640;
 			destp = dest;
    			skipX = sprite->value1;
+   			w = sprite->width;
+   			h--;
 		}
 
-	} while (status != kSrsEndOfSprite);
+	} while (status != kSrsEndOfSprite && h > 0);
 
 }
 
