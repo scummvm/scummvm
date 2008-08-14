@@ -441,6 +441,9 @@ void Tfmx::loadMacro(uint8 trackNumber, uint8 macroNumber){
 	for (int i = 0; i < numCommands; i++) {
 		_tracks[trackNumber].activeMacro.data[i] = macroSubStream.readUint32BE();
 	}
+
+	printf("MACRO NUMBER:: %02x \n", macroNumber);
+	printf("MACRO LENGTH:: %02x \n", numCommands);
 }
 void Tfmx::doMacro(uint8 trackNumber) {
 	uint8 byte1 = ( *(_tracks[trackNumber].activeMacro.data) ) >> 24;
@@ -449,14 +452,17 @@ void Tfmx::doMacro(uint8 trackNumber) {
 	int8 sbyte3 = ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FF00 ) >> 8;
 	uint8 byte4 = ( *(_tracks[trackNumber].activeMacro.data) & 0x000000FF );
 	uint8 currentChannel = _tracks[trackNumber].activeMacro.noteChannel;
-	uint16 currentPeriod = _tracks[trackNumber].activeMacro.notePeriod;
 	uint16 tunedPeriod = 0;
+	
+	printf("COUNT:: %02x ::::", _tracks[trackNumber].activeMacro.macroCount);
+	printf("COMMAND:: %02x \n", byte1);
 
 	switch (byte1) {
 	case 0x00: //DMAoff reset + CLEARS EFFECTS
 		_channels[currentChannel].sampleOn = false;
 		_channels[currentChannel].sampleOffset = 0;
 		_channels[currentChannel].sampleLength = 0;
+		break;
 	case 0x01:
 		_channels[currentChannel].sampleOn = true;
 		//_tracks[trackNumber].activeMacro.macroWait = 1;
@@ -465,7 +471,8 @@ void Tfmx::doMacro(uint8 trackNumber) {
 		_channels[currentChannel].sampleOffset = *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF;
 		break;
 	case 0x03: //set sample length
-		_channels[currentChannel].sampleLength = ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) * 2;
+		//_channels[currentChannel].sampleLength = ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) * 2;
+		_channels[currentChannel].sampleLength = ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF );
 		break;
 	case 0x04: //wait
 		if ( (*(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF) == 0 ) {
@@ -493,27 +500,29 @@ void Tfmx::doMacro(uint8 trackNumber) {
 		break;
 	case 0x0E: //set volume
 		if (byte3 != 0xFE) {
-			_channels[currentChannel].volume = byte4;
+			_channels[currentChannel].volume = byte2;
 		}
 		break;
 	case 0x19: //set one shot ? cut off?
 		_tracks[trackNumber].activeMacro.notePeriod = 0;
 		_channels[currentChannel].sampleOffset = 0;
-		_channels[currentChannel].sampleLength = 1;
+		_channels[currentChannel].sampleLength = 0;
 		break;
 	case 0x18: //sampleloop
-		_channels[currentChannel].sampleOffset += ( *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF );
-		_channels[currentChannel].sampleLength -= ( *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF );
+		//_channels[currentChannel].sampleOffset += ( *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF );
+		//_channels[currentChannel].sampleLength -= ( *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF );
+		_channels[currentChannel].sampleOffset += ( ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) & 0xFFFE );
+		_channels[currentChannel].sampleLength -= ( ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) >> 1);
 		break;
-	case 0x8: //add note
-		tunedPeriod = (periods[(byte2 + currentPeriod) & (0x3F)]);
+	case 0x08: //add note
+		tunedPeriod = (periods[(byte2 + _tracks[trackNumber].activeMacro.noteNumber) & (0x3F)]);
 		_tracks[trackNumber].activeMacro.fineTune = sbyte3 / 0x100;
 		_tracks[trackNumber].activeMacro.fineTune += (_tracks[trackNumber].activeMacro.noteFineTune / 0x100);
 		_tracks[trackNumber].activeMacro.fineTune += 1;
 		_tracks[trackNumber].activeMacro.notePeriod = (int)(tunedPeriod * _tracks[trackNumber].activeMacro.fineTune);
 		_tracks[trackNumber].activeMacro.macroWait = 1;
 		break;
-	case 0x9: //set note
+	case 0x09: //set note
 		tunedPeriod = (periods[(byte2) & (0x3F)]);
 		_tracks[trackNumber].activeMacro.fineTune = sbyte3 / 0x100;
 		_tracks[trackNumber].activeMacro.fineTune += (_tracks[trackNumber].activeMacro.noteFineTune / 0x100);
@@ -521,19 +530,25 @@ void Tfmx::doMacro(uint8 trackNumber) {
 		_tracks[trackNumber].activeMacro.notePeriod = (int)(tunedPeriod * _tracks[trackNumber].activeMacro.fineTune);
 		_tracks[trackNumber].activeMacro.macroWait = 1;
 		break;
+	case 0x17: //set period
+		_tracks[trackNumber].activeMacro.notePeriod = ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF );
+		_tracks[trackNumber].activeMacro.macroWait = 1;
+		break;
 	default:
 		break;
 	}//end switch
 
+	if (_channels[currentChannel].volume == 0) {
+		_channels[currentChannel].volume = _tracks[trackNumber].activeMacro.noteVelocity;
+	}
 	_channels[currentChannel].period = _tracks[trackNumber].activeMacro.notePeriod;
-	//_channels[currentChannel].volume = _tracks[trackNumber].activeMacro.noteVolume;
 	
 	_tracks[trackNumber].activeMacro.data++;
 	_tracks[trackNumber].activeMacro.macroCount++;
-	
+
 	if (_tracks[trackNumber].activeMacro.macroCount == _tracks[trackNumber].activeMacro.macroLength) {
 		_tracks[trackNumber].macroOn = false;
-		//_channels[currentChannel].sampleOn = false;
+		_channels[currentChannel].sampleOn = false;
 	}
 }
 void Tfmx::testMacro(uint8 macroNumber) {
@@ -541,13 +556,17 @@ void Tfmx::testMacro(uint8 macroNumber) {
 	loadMacro(0, macroNumber);
 	_tracks[0].macroOn = true; //set to false again when macro terminates
 	_tracks[0].activeMacro.noteNumber = 0x1E;  //middle C
-	_tracks[0].activeMacro.noteVelocity = 0x40;
+	_tracks[0].activeMacro.noteVelocity = 0x0F;
 	_tracks[0].activeMacro.noteChannel = 0;
 	_tracks[0].activeMacro.noteWait = 0; 
-	_tracks[0].activeMacro.notePeriod = periods[0x1E & 0x3F];
+	_tracks[0].activeMacro.notePeriod = periods[0x1E];
 	startPaula();
 }
 void Tfmx::interrupt(void) {
+	static int count = 0;
+	count++;
+	//printf("INTERRUPT COUNT:: %02x \n", count);
+	
 	if (!_macroTest) { //Would be the normal case unless macro testing is on.
 
 		if (_trackAdvance) {
@@ -567,6 +586,11 @@ void Tfmx::interrupt(void) {
 			setChannelPeriod(i,_channels[i].period);
 			setChannelVolume(i,_channels[i].volume);
 			if (_channels[i].sampleOn) {
+				printf("SAMPLE ON \n");
+				printf("SAMPLE OFFSET:: %02x \n", _channels[0].sampleOffset);
+				printf("SAMPLE LENGTH:: %02x \n", _channels[0].sampleLength);
+				printf("SAMPLE VOLUME:: %02x \n", _channels[0].volume);
+				printf("SAMPLE PERIOD:: %02x \n", _channels[0].period);
 				setChannelData(i, _sampleData + _channels[i].sampleOffset, 0, _channels[i].sampleLength, 0);
 			}	
 		}
@@ -590,8 +614,14 @@ void Tfmx::interrupt(void) {
 		}
 		setChannelPeriod(0,_channels[0].period);
 		setChannelVolume(0,_channels[0].volume);
-		if (_channels[0].sampleOn) {
+		if (_channels[0].sampleOn == true) {
+			printf("SAMPLE ON \n");
+			printf("SAMPLE OFFSET:: %02x \n", _channels[0].sampleOffset);
+			printf("SAMPLE LENGTH:: %02x \n", _channels[0].sampleLength);
+			printf("SAMPLE VOLUME:: %02x \n", _channels[0].volume);
+			printf("SAMPLE PERIOD:: %02x \n", _channels[0].period);
 			setChannelData(0, _sampleData + _channels[0].sampleOffset, 0, _channels[0].sampleLength, 0);
+			//setChannelData(0, _sampleData + _channels[0].sampleOffset, _sampleData + _channels[0].sampleOffset, _channels[0].sampleLength, _channels[0].sampleLength);
 		}	
 
 		if (_tracks[0].activeMacro.macroWait != 0) {
