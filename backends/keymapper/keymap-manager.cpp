@@ -73,7 +73,6 @@ void KeymapManager::registerGlobalKeymap(Keymap *map) {
 void KeymapManager::refreshGameDomain() {
 	if (_gameDomain.getConfigDomain() != ConfMan.getActiveDomain()) {
 		_gameDomain.deleteAllKeyMaps();
-
 		_gameDomain.setConfigDomain(ConfMan.getActiveDomain());
 	}
 }
@@ -88,11 +87,8 @@ void KeymapManager::initKeymap(ConfigManager::Domain *domain,
 							   Keymap *map) {
 	map->setConfigDomain(domain);
 	map->loadMappings(_hardwareKeys);
-	if (map->isComplete(_hardwareKeys) == false) {
+	if (map->isComplete(_hardwareKeys) == false)
 		automaticMap(map);
-		map->saveMappings(domain);
-		ConfMan.flushToDisk();
-	}
 }
 
 // TODO:
