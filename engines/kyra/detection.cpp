@@ -466,6 +466,18 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
 	},
 
+	{ 
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "39772ff82e42c4c520050518deb82e64"),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
 	{ // Interactive Demo
 		{
 			"kyra2",
