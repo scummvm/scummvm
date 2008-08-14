@@ -382,7 +382,7 @@ void PictureEngine::updateCamera() {
 		_cameraY = _newCameraY;
 	}
 
-	debug(0, "PictureEngine::checkCamera() _cameraX = %d; _cameraY = %d", _cameraX, _cameraY);
+	debug(0, "PictureEngine::updateCamera() _cameraX = %d; _cameraY = %d", _cameraX, _cameraY);
 
 }
 
