@@ -62,6 +62,7 @@ protected:
 	byte *_backBuffer; ///< Screen backbuffer
 	uint16 *_activeLowPal; ///< Active 16 color palette
 	int _changePal; ///< Load active palette to video backend on next frame
+	bool _showCollisionPage; ///< Should we show the collision page instead of the back buffer? Used for debugging.
 
 	void fillSprite(const objectStruct &obj, uint8 color = 0);
 	void drawMaskedSprite(const objectStruct &obj, const byte *mask);
@@ -124,6 +125,7 @@ public:
 	void drawInputBox(const char *info, const char *input, int cursor, int x, int y, int width);
 
 	virtual void fadeToBlack();
+	void showCollisionPage(bool state);
 };
 
 /*! \brief Operation Stealth renderer

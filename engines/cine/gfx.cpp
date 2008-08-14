@@ -92,7 +92,7 @@ static const byte cursorPalette[] = {
  */
 FWRenderer::FWRenderer() : _background(NULL), _palette(NULL), _cmd(""),
 	_cmdY(0), _messageBg(0), _backBuffer(new byte[_screenSize]),
-	_activeLowPal(NULL), _changePal(0) {
+	_activeLowPal(NULL), _changePal(0), _showCollisionPage(false) {
 
 	assert(_backBuffer);
 
@@ -126,6 +126,7 @@ void FWRenderer::clear() {
 	_cmdY = 0;
 	_messageBg = 0;
 	_changePal = 0;
+	_showCollisionPage = false;
 }
 
 /*! \brief Draw 1bpp sprite using selected color
@@ -512,16 +513,22 @@ void FWRenderer::drawFrame() {
 	blit();
 }
 
+/*!
+ * \brief Turn on or off the showing of the collision page.
+ * If turned on the blitting routine shows the collision page instead of the back buffer.
+ * \note Useful for debugging collision page related problems.
+ */
+void FWRenderer::showCollisionPage(bool state) {
+	_showCollisionPage = state;
+}
+
 /*! \brief Update screen
  */
 void FWRenderer::blit() {
-	if (g_system->getEventManager()->getModifierState() & Common::KBD_ALT) {
-		// Show collision page if the Alt key is being pressed
-		g_system->copyRectToScreen(collisionPage, 320, 0, 0, 320, 200);
-	} else {
-		// Normally show the back buffer
-		g_system->copyRectToScreen(_backBuffer, 320, 0, 0, 320, 200);
-	}
+	// Show the back buffer or the collision page. Normally the back
+	// buffer but showing the collision page is useful for debugging.
+	byte *source = (_showCollisionPage ? collisionPage : _backBuffer);
+	g_system->copyRectToScreen(source, 320, 0, 0, 320, 200);
 }
 
 /*! \brief Set player command string
