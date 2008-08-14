@@ -348,7 +348,17 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) {
 	CompFileMap::iterator compEntry;
 
-	if (Common::File::exists(file)) {
+	if ((compEntry = _compFiles.find(file)) != _compFiles.end())
+		return new Common::MemoryReadStream(compEntry->_value.data, compEntry->_value.size, false);		
+
+	if (!isAccessable(file))
+		return 0;
+
+	ResFileMap::const_iterator iter = _map.find(file);
+	if (iter == _map.end())
+		return 0;
+
+	if (iter->_value.parent.empty()) {
 		Common::File *stream = new Common::File();
 		if (!stream->open(file)) {
 			delete stream;
@@ -356,28 +366,15 @@ Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) 
 			error("Couldn't open file '%s'", file.c_str());
 		}
 		return stream;
-	} else if ((compEntry = _compFiles.find(file)) != _compFiles.end()) {
-		return new Common::MemoryReadStream(compEntry->_value.data, compEntry->_value.size, false);		
 	} else {
-		if (!isAccessable(file))
-			return 0;
+		Common::SeekableReadStream *parent = getFileStream(iter->_value.parent);
+		assert(parent);
 
-		ResFileMap::const_iterator iter = _map.find(file);
-		if (iter == _map.end())
-			return 0;
+		ResFileMap::const_iterator parentIter = _map.find(iter->_value.parent);
+		const ResArchiveLoader *loader = getLoader(parentIter->_value.type);
+		assert(loader);
 
-		if (!iter->_value.parent.empty()) {
-			Common::SeekableReadStream *parent = getFileStream(iter->_value.parent);
-			assert(parent);
-
-			ResFileMap::const_iterator parentIter = _map.find(iter->_value.parent);
-			const ResArchiveLoader *loader = getLoader(parentIter->_value.type);
-			assert(loader);
-
-			return loader->loadFileFromArchive(file, parent, iter->_value);
-		} else {
-			error("Couldn't open file '%s'", file.c_str());
-		}
+		return loader->loadFileFromArchive(file, parent, iter->_value);
 	}
 
 	return 0;
@@ -409,7 +406,19 @@ void Resource::checkFile(const Common::String &file) {
 	if (_map.find(file) == _map.end()) {
 		CompFileMap::const_iterator iter;
 
-		if (Common::File::exists(file)) {
+		if ((iter = _compFiles.find(file)) != _compFiles.end()) {
+			ResFileEntry entry;
+			entry.parent = "";
+			entry.size = iter->_value.size;
+			entry.mounted = false;
+			entry.preload = false;
+			entry.prot = false;
+			entry.type = ResFileEntry::kAutoDetect;
+			entry.offset = 0;
+			_map[file] = entry;
+
+			detectFileTypes();
+		} else if (Common::File::exists(file)) {
 			Common::File temp;
 			if (temp.open(file)) {
 				ResFileEntry entry;
@@ -425,18 +434,6 @@ void Resource::checkFile(const Common::String &file) {
 
 				detectFileTypes();
 			}
-		} else if ((iter = _compFiles.find(file)) != _compFiles.end()) {
-			ResFileEntry entry;
-			entry.parent = "";
-			entry.size = iter->_value.size;
-			entry.mounted = false;
-			entry.preload = false;
-			entry.prot = false;
-			entry.type = ResFileEntry::kAutoDetect;
-			entry.offset = 0;
-			_map[file] = entry;
-
-			detectFileTypes();
 		}
 	}
 }
