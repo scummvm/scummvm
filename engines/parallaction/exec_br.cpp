@@ -139,31 +139,12 @@ DECLARE_COMMAND_OPCODE(close) {
 
 
 DECLARE_COMMAND_OPCODE(on) {
-	CommandData *data = &_ctxt.cmd->u;
-	ZonePtr z = data->_zone;
-
-	if (z) {
-		z->_flags |= kFlagsActive;
-		z->_flags &= ~kFlagsRemove;
-
-		if ((z->_type & 0xFFFF) & kZoneGet) {
-			_vm->_gfx->showGfxObj(z->u.get->gfxobj, true);
-		}
-	}
+	_vm->showZone(_ctxt.cmd->u._zone, true);
 }
 
 
 DECLARE_COMMAND_OPCODE(off) {
-	CommandData *data = &_ctxt.cmd->u;
-	ZonePtr z = data->_zone;
-
-	if (z) {
-		z->_flags |= kFlagsRemove;
-
-		if ((z->_type & 0xFFFF) & kZoneGet) {
-			_vm->_gfx->showGfxObj(z->u.get->gfxobj, false);
-		}
-	}
+	_vm->showZone(_ctxt.cmd->u._zone, false);
 }
 
 
@@ -335,31 +316,12 @@ DECLARE_COMMAND_OPCODE(offsave) {
 
 
 DECLARE_INSTRUCTION_OPCODE(on) {
-	InstructionPtr inst = *_ctxt.inst;
-	ZonePtr z = inst->_z;
-
-	if (z) {
-		z->_flags |= kFlagsActive;
-		z->_flags &= ~kFlagsRemove;
-
-		if ((z->_type & 0xFFFF) & kZoneGet) {
-			_vm->_gfx->showGfxObj(z->u.get->gfxobj, true);
-		}
-	}
+	_vm->showZone((*_ctxt.inst)->_z, true);
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(off) {
-	InstructionPtr inst = *_ctxt.inst;
-	ZonePtr z = inst->_z;
-
-	if (z) {
-		z->_flags |= kFlagsRemove;
-
-		if ((z->_type & 0xFFFF) & kZoneGet) {
-			_vm->_gfx->showGfxObj(z->u.get->gfxobj, false);
-		}
-	}
+	_vm->showZone((*_ctxt.inst)->_z, false);
 }
 
 

@@ -260,34 +260,31 @@ DECLARE_COMMAND_OPCODE(close) {
 	}
 }
 
-void CommandExec_ns::updateGetZone(ZonePtr z, bool visible) {
+void Parallaction::showZone(ZonePtr z, bool visible) {
 	if (!z) {
 		return;
 	}
 
-	if ((z->_type & 0xFFFF) == kZoneGet) {
-		_vm->_gfx->showGfxObj(z->u.get->gfxobj, visible);
+	if (visible) {
+		z->_flags &= ~kFlagsRemove;
+		z->_flags |= kFlagsActive;
+	} else {
+		z->_flags |= kFlagsRemove;
 	}
+
+	if ((z->_type & 0xFFFF) == kZoneGet) {
+		_gfx->showGfxObj(z->u.get->gfxobj, visible);
+	}
+
 }
 
 DECLARE_COMMAND_OPCODE(on) {
-	ZonePtr z = _ctxt.cmd->u._zone;
-
-	if (z) {
-		z->_flags &= ~kFlagsRemove;
-		z->_flags |= kFlagsActive;
-		updateGetZone(z, true);
-	}
+	_vm->showZone(_ctxt.cmd->u._zone, true);
 }
 
 
 DECLARE_COMMAND_OPCODE(off) {
-	ZonePtr z = _ctxt.cmd->u._zone;
-
-	if (z) {
-		_ctxt.cmd->u._zone->_flags |= kFlagsRemove;
-		updateGetZone(z, false);
-	}
+	_vm->showZone(_ctxt.cmd->u._zone, false);
 }
 
 
@@ -618,7 +615,6 @@ uint16 Parallaction::runZone(ZonePtr z) {
 		if (pickupItem(z) != 0) {
 			return 1;
 		}
-		z->_flags |= kFlagsRemove;
 		break;
 
 	case kZoneDoor:
@@ -666,7 +662,7 @@ void Parallaction::updateDoor(ZonePtr z) {
 int16 Parallaction::pickupItem(ZonePtr z) {
 	int r = addInventoryItem(z->u.get->_icon);
 	if (r != -1) {
-		_gfx->showGfxObj(z->u.get->gfxobj, false);
+		showZone(z, false);
 	}
 
 	return (r == -1);

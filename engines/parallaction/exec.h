@@ -84,8 +84,6 @@ class CommandExec_ns : public CommandExec {
 	Parallaction_ns	*_vm;
 
 protected:
-	void updateGetZone(ZonePtr z, bool visible);
-
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(invalid);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(set);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(clear);

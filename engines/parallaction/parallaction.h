@@ -424,6 +424,8 @@ public:
 
 	void setInternLanguage(uint id);
 	uint getInternLanguage();
+
+	void showZone(ZonePtr z, bool visible);
 };
 
 
