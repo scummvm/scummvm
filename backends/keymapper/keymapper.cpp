@@ -52,20 +52,28 @@ void Keymapper::addGameKeymap(Keymap *keymap) {
 	_keymapMan->registerGameKeymap(keymap);
 }
 
+void Keymapper::cleanupGameKeymaps() {
+	Stack<MapRecord> newStack;
+	for (int i = 0; i < _activeMaps.size(); i++) {
+		if (!_activeMaps[i].global)
+			newStack.push(_activeMaps[i]);
+	}
+	_activeMaps = newStack;
+}
+
 bool Keymapper::pushKeymap(const String& name, bool inherit) {
-	Keymap *newMap = _keymapMan->getKeymap(name);
+	bool global;
+	Keymap *newMap = _keymapMan->getKeymap(name, &global);
 	if (!newMap) {
 		warning("Keymap '%s' not registered", name.c_str());
 		return false;
 	}
-	pushKeymap(newMap, inherit);
+	pushKeymap(newMap, inherit, global);
 	return true;
 }
 
-void Keymapper::pushKeymap(Keymap *newMap, bool inherit) {
-	MapRecord mr;
-	mr.inherit = inherit;
-	mr.keymap = newMap;
+void Keymapper::pushKeymap(Keymap *newMap, bool inherit, bool global) {
+	MapRecord mr = {newMap, inherit, global};
 	_activeMaps.push(mr);
 }
 

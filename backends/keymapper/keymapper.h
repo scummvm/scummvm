@@ -41,6 +41,7 @@ public:
 	struct MapRecord {
 		Keymap* keymap;
 		bool inherit;
+		bool global;
 	};
 
 	Keymapper(EventManager *eventMan);
@@ -61,12 +62,17 @@ public:
 	void addGlobalKeymap(Keymap *keymap);
 
 	/**
-	* Add a keymap to the game domain.
-	* @see addGlobalKeyMap
-	* @note initGame() should be called before any game keymaps are added.
-	*/
+	 * Add a keymap to the game domain.
+	 * @see addGlobalKeyMap
+	 * @note initGame() should be called before any game keymaps are added.
+	 */
 	void addGameKeymap(Keymap *keymap);
 
+	/**
+	 * Should be called at end of game to tell Keymapper to deactivate and free
+	 * any game keymaps that are loaded.
+	 */
+	void cleanupGameKeymaps();
 	/**
 	 * Push a new keymap to the top of the active stack, activating 
 	 * it for use.
@@ -113,7 +119,7 @@ public:
 
 private:
 
-	void pushKeymap(Keymap *newMap, bool inherit);
+	void pushKeymap(Keymap *newMap, bool inherit, bool global);
 
 	typedef List<HardwareKey*>::iterator Iterator;
 

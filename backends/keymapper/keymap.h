@@ -81,19 +81,20 @@ public:
 	 */
 	Action *getMappedAction(const KeyState& ks) const;
 	
-	/**
-	 * Load this keymap's mappings from the given config domain and hardware key set
-	 * @param domain	config domain to load keymap from
-	 * @param hwKeys	the set to retrieve hardware key pointers from
-	 */
-	void loadMappings(ConfigManager::Domain *domain, const HardwareKeySet *hwKeys);
+	void setConfigDomain(ConfigManager::Domain *dom);
 
 	/**
-	 * Save this keymap's mappings to the given config domain
-	 * @param domain	config domain to save keymap to
+	 * Load this keymap's mappings from the config manager.
+	 * @param hwKeys	the set to retrieve hardware key pointers from
+	 */
+	void loadMappings(const HardwareKeySet *hwKeys);
+
+	/**
+	 * Save this keymap's mappings to the config manager
+	 * @note Changes are *not* flushed to disk, to do so call ConfMan.flushToDisk()
 	 * @note Changes are *not* flushed to disk, to do so call ConfMan.flushToDisk()
 	 */
-	void saveMappings(ConfigManager::Domain *domain);
+	void saveMappings();
 
 	/**
 	 * Returns true if all UserAction's in Keymap are mapped, or,
@@ -130,6 +131,7 @@ private:
 	Keymap *_parent;
 	List<Action*> _actions;
 	HashMap<KeyState, Action*> _keymap; 
+	ConfigManager::Domain *_configDomain;
 
 };
 

@@ -83,7 +83,7 @@ public:
 	void refreshGameDomain();
 	void registerGameKeymap(Keymap *map);
 
-	Keymap *getKeymap(const String& name);
+	Keymap *getKeymap(const String& name, bool *global);
 
 	Domain& getGlobalDomain() { return _globalDomain; }
 	Domain& getGameDomain() { return _gameDomain; }

@@ -88,7 +88,11 @@ protected:
 public:
 	Stack<T>() {}
 	Stack<T>(const Array<T> &stackContent) : _stack(stackContent) {}
-
+	
+	Stack<T>& operator=(const Stack<T> &st) {
+		_stack = st._stack;
+		return *this;
+	}
 	bool empty() const {
 		return _stack.empty();
 	}

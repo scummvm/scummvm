@@ -28,7 +28,7 @@
 
 namespace Common {
 
-Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap() {
+Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap(), _configDomain(0) {
 	List<Action*>::iterator it;
 	for (it = _actions.begin(); it != _actions.end(); it++) {
 		const HardwareKey *hwKey = (*it)->getMappedKey();
@@ -94,10 +94,15 @@ Action *Keymap::getMappedAction(const KeyState& ks) const {
 		return it->_value;
 }
 
-void Keymap::loadMappings(ConfigManager::Domain *domain, const HardwareKeySet *hwKeys) {
+void Keymap::setConfigDomain(ConfigManager::Domain *dom) {
+	_configDomain = dom;
+}
+
+void Keymap::loadMappings(const HardwareKeySet *hwKeys) {
+	if (!_configDomain) return;
 	ConfigManager::Domain::iterator it;	
 	String prefix = "km_" + _name + "_";
-	for (it = domain->begin(); it != domain->end(); it++) {
+	for (it = _configDomain->begin(); it != _configDomain->end(); it++) {
 		const String& key = it->_key;
 		if (!key.hasPrefix(prefix.c_str()))
 			continue;
@@ -114,6 +119,7 @@ void Keymap::loadMappings(ConfigManager::Domain *domain, const HardwareKeySet *h
 		if (!ua) {
 			warning("'%s' keymap does not contain Action with ID %d", 
 				_name.c_str(), (int)actionId);
+			_configDomain->erase(key);
 			continue;
 		}
 
@@ -126,6 +132,7 @@ void Keymap::loadMappings(ConfigManager::Domain *domain, const HardwareKeySet *h
 		const HardwareKey *hwKey = hwKeys->findHardwareKey(hwKeyId);
 		if (!hwKey) {
 			warning("HardwareKey with ID %d not known", (int)hwKeyId);
+			_configDomain->erase(key);
 			continue;
 		}
 
@@ -133,8 +140,8 @@ void Keymap::loadMappings(ConfigManager::Domain *domain, const HardwareKeySet *h
 	}
 }
 
-void Keymap::saveMappings(ConfigManager::Domain *domain) {
-	if (!domain) return;
+void Keymap::saveMappings() {
+	if (!_configDomain) return;
 	List<Action*>::const_iterator it;
 	char buf[12];
 	String prefix = "km_" + _name + "_";
@@ -145,7 +152,7 @@ void Keymap::saveMappings(ConfigManager::Domain *domain) {
 			sprintf(buf, "%d", (*it)->getMappedKey()->id);
 		else
 			strcpy(buf, "");
-		domain->setVal(key, buf);
+		_configDomain->setVal(key, buf);
 	}
 }
 

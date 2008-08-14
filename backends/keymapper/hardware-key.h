@@ -69,7 +69,7 @@ struct HardwareKey {
 class HardwareKeySet {
 public:
 
-	HardwareKeySet() {}
+	HardwareKeySet() : _count(0) {}
 	virtual ~HardwareKeySet() {
 		List<const HardwareKey*>::iterator it;
 		for (it = _keys.begin(); it != _keys.end(); it++)
@@ -79,6 +79,7 @@ public:
 	void addHardwareKey(HardwareKey *key) {
 		checkForKey(key);
 		_keys.push_back(key);
+		++_count;
 	}
 
 	const HardwareKey *findHardwareKey(int32 id) const {
@@ -104,7 +105,7 @@ public:
 	}
 
 	uint count() const {
-		return _keys.size();
+		return _count;
 	}
 
 
@@ -121,6 +122,7 @@ private:
 	}
 
 	List<const HardwareKey*> _keys;
+	uint _count;
 };
 
 

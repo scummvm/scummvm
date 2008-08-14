@@ -73,6 +73,7 @@ void KeymapManager::registerGlobalKeymap(Keymap *map) {
 void KeymapManager::refreshGameDomain() {
 	if (_gameDomain.getConfigDomain() != ConfMan.getActiveDomain()) {
 		_gameDomain.deleteAllKeyMaps();
+
 		_gameDomain.setConfigDomain(ConfMan.getActiveDomain());
 	}
 }
@@ -85,7 +86,8 @@ void KeymapManager::registerGameKeymap(Keymap *map) {
 
 void KeymapManager::initKeymap(ConfigManager::Domain *domain, 
 							   Keymap *map) {
-	map->loadMappings(domain, _hardwareKeys);
+	map->setConfigDomain(domain);
+	map->loadMappings(_hardwareKeys);
 	if (map->isComplete(_hardwareKeys) == false) {
 		automaticMap(map);
 		map->saveMappings(domain);
@@ -206,6 +208,8 @@ void KeymapManager::automaticMap(Keymap *map) {
 			break;
 		}
 	}
+	map->saveMappings();
+	ConfMan.flushToDisk();
 }
 
 Action *KeymapManager::getParentMappedAction(Keymap *map, KeyState key) {
@@ -221,10 +225,13 @@ Action *KeymapManager::getParentMappedAction(Keymap *map, KeyState key) {
 	}
 }
 
-Keymap *KeymapManager::getKeymap(const String& name) {
+Keymap *KeymapManager::getKeymap(const String& name, bool *global) {
 	Keymap *keymap = _gameDomain.getKeymap(name);
-	if (!keymap)
+	*global = false;
+	if (!keymap) {
 		keymap = _globalDomain.getKeymap(name);
+		*global = true;
+	}
 	return keymap;
 }
 

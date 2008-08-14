@@ -51,9 +51,11 @@ RemapDialog::~RemapDialog() {
 }
 
 void RemapDialog::open() {
+	bool divider = false;
 	_activeKeymaps = &_keymapper->getActiveStack();
 	if (_activeKeymaps->size() > 0) {
 		_kmPopUp->appendEntry(_activeKeymaps->top().keymap->getName() + " (Active)");
+		divider = true;
 	}
 
 	KeymapManager::Domain *_globalKeymaps = &_keymapper->getManager()->getGlobalDomain();
@@ -78,14 +80,15 @@ void RemapDialog::open() {
 	KeymapManager::Domain::iterator it;
 	uint32 idx = 0;
 	if (_globalKeymaps) {
-		_kmPopUp->appendEntry("");
+		if (divider) _kmPopUp->appendEntry("");
 		for (it = _globalKeymaps->begin(); it != _globalKeymaps->end(); it++) {
 			_kmPopUp->appendEntry(it->_value->getName() + " (Global)", idx);
 			_keymapTable[idx++] = it->_value;
 		}
+		divider = true;
 	}
 	if (_gameKeymaps) {
-		_kmPopUp->appendEntry("");
+		if (divider) _kmPopUp->appendEntry("");
 		for (it = _gameKeymaps->begin(); it != _gameKeymaps->end(); it++) {
 			_kmPopUp->appendEntry(it->_value->getName() + " (Game)", idx);
 			_keymapTable[idx++] = it->_value;
@@ -93,10 +96,11 @@ void RemapDialog::open() {
 	}
 
 	_changes = false;
-	_kmPopUp->setSelected(0);
-	loadKeymap();
 
 	Dialog::open();
+
+	_kmPopUp->setSelected(0);
+	loadKeymap();
 }
 
 void RemapDialog::close() {
@@ -105,7 +109,8 @@ void RemapDialog::close() {
 		free(_keymapTable);
 		_keymapTable = 0;
 	}
-	if (_changes) ConfMan.flushToDisk();
+	if (_changes) 
+		ConfMan.flushToDisk();
 	Dialog::close();
 }
 
@@ -260,7 +265,9 @@ void RemapDialog::loadKeymap() {
 		}
 
 	} else if (_kmPopUp->getSelected() != -1) {
-		Keymap *km = _keymapTable[_kmPopUp->getSelectedTag()];
+		uint32 select = _kmPopUp->getSelected();
+		uint32 tag = _kmPopUp->getSelectedTag();
+		Keymap *km = _keymapTable[tag];
 
 		List<Action*>::iterator it;
 		for (it = km->getActions().begin(); it != km->getActions().end(); it++) {
