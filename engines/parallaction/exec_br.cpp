@@ -122,19 +122,13 @@ DECLARE_COMMAND_OPCODE(location) {
 
 DECLARE_COMMAND_OPCODE(open) {
 	warning("Parallaction_br::cmdOp_open command not yet implemented");
-	_ctxt.cmd->u._zone->_flags &= ~kFlagsClosed;
-	if (_ctxt.cmd->u._zone->u.door->gfxobj) {
-		_vm->updateDoor(_ctxt.cmd->u._zone);
-	}
+	_vm->updateDoor(_ctxt.cmd->u._zone, false);
 }
 
 
 DECLARE_COMMAND_OPCODE(close) {
 	warning("Parallaction_br::cmdOp_close not yet implemented");
-	_ctxt.cmd->u._zone->_flags |= kFlagsClosed;
-	if (_ctxt.cmd->u._zone->u.door->gfxobj) {
-		_vm->updateDoor(_ctxt.cmd->u._zone);
-	}
+	_vm->updateDoor(_ctxt.cmd->u._zone, true);
 }
 
 

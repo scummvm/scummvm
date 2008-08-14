@@ -246,18 +246,12 @@ DECLARE_COMMAND_OPCODE(location) {
 
 
 DECLARE_COMMAND_OPCODE(open) {
-	_ctxt.cmd->u._zone->_flags &= ~kFlagsClosed;
-	if (_ctxt.cmd->u._zone->u.door->gfxobj) {
-		_vm->updateDoor(_ctxt.cmd->u._zone);
-	}
+	_vm->updateDoor(_ctxt.cmd->u._zone, false);
 }
 
 
 DECLARE_COMMAND_OPCODE(close) {
-	_ctxt.cmd->u._zone->_flags |= kFlagsClosed;
-	if (_ctxt.cmd->u._zone->u.door->gfxobj) {
-		_vm->updateDoor(_ctxt.cmd->u._zone);
-	}
+	_vm->updateDoor(_ctxt.cmd->u._zone, true);
 }
 
 void Parallaction::showZone(ZonePtr z, bool visible) {
@@ -598,7 +592,7 @@ void Parallaction::runCommentFrame() {
 }
 
 
-uint16 Parallaction::runZone(ZonePtr z) {
+void Parallaction::runZone(ZonePtr z) {
 	debugC(3, kDebugExec, "runZone (%s)", z->_name);
 
 	uint16 subtype = z->_type & 0xFFFF;
@@ -608,19 +602,15 @@ uint16 Parallaction::runZone(ZonePtr z) {
 
 	case kZoneExamine:
 		enterCommentMode(z);
-		return 0;
+		return;
 
 	case kZoneGet:
-		if (z->_flags & kFlagsFixed) break;
-		if (pickupItem(z) != 0) {
-			return 1;
-		}
+		pickupItem(z);
 		break;
 
 	case kZoneDoor:
 		if (z->_flags & kFlagsLocked) break;
-		z->_flags ^= kFlagsClosed;
-		updateDoor(z);
+		updateDoor(z, !(z->_flags & kFlagsClosed));
 		break;
 
 	case kZoneHear:
@@ -629,23 +619,24 @@ uint16 Parallaction::runZone(ZonePtr z) {
 
 	case kZoneSpeak:
 		enterDialogueMode(z);
-		return 0;
+		return;
 	}
 
 	debugC(3, kDebugExec, "runZone completed");
 
 	_cmdExec->run(z->_commands, z);
 
-	return 0;
+	return;
 }
 
 //
 //	ZONE TYPE: DOOR
 //
-void Parallaction::updateDoor(ZonePtr z) {
+void Parallaction::updateDoor(ZonePtr z, bool close) {
+	z->_flags = close ? (z->_flags |= kFlagsClosed) : (z->_flags &= ~kFlagsClosed);
 
 	if (z->u.door->gfxobj) {
-		uint frame = (z->_flags & kFlagsClosed ? 0 : 1);
+		uint frame = (close ? 0 : 1);
 //		z->u.door->gfxobj->setFrame(frame);
 		z->u.door->gfxobj->frame = frame;
 	}
@@ -659,13 +650,17 @@ void Parallaction::updateDoor(ZonePtr z) {
 //	ZONE TYPE: GET
 //
 
-int16 Parallaction::pickupItem(ZonePtr z) {
-	int r = addInventoryItem(z->u.get->_icon);
-	if (r != -1) {
+bool Parallaction::pickupItem(ZonePtr z) {
+	if (z->_flags & kFlagsFixed) {
+		return false;
+	}
+
+	int slot = addInventoryItem(z->u.get->_icon);
+	if (slot != -1) {
 		showZone(z, false);
 	}
 
-	return (r == -1);
+	return (slot != -1);
 }
 
 

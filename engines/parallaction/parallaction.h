@@ -263,7 +263,7 @@ public:
 
 	ZonePtr		findZone(const char *name);
 	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
-	uint16		runZone(ZonePtr z);
+	void		runZone(ZonePtr z);
 	void		freeZones();
 
 	AnimationPtr findAnimation(const char *name);
@@ -354,7 +354,7 @@ protected:		// members
 
 	void		freeCharacter();
 
-	int16		pickupItem(ZonePtr z);
+	bool		pickupItem(ZonePtr z);
 
 	void 		clearSet(OpcodeSet &opcodes);
 
@@ -370,7 +370,7 @@ public:
 
 	virtual void parseLocation(const char* name) = 0;
 
-	void updateDoor(ZonePtr z);
+	void updateDoor(ZonePtr z, bool close);
 
 	virtual void drawAnimations() = 0;
 
