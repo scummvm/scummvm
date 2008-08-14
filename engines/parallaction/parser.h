@@ -32,8 +32,6 @@
 
 namespace Parallaction {
 
-char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ignoreQuotes = false);
-
 #define MAX_TOKEN_LEN	50
 extern int  _numTokens;
 extern char _tokens[][MAX_TOKEN_LEN];
@@ -46,6 +44,7 @@ class Script {
 
 	void clearTokens();
 	uint16 fillTokens(char* line);
+	char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ignoreQuotes = false);
 
 public:
 	Script(Common::ReadStream *, bool _disposeSource = false);
