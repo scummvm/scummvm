@@ -406,7 +406,8 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 	}//END ELSE
 
 	//	else {
-		if (!_tracks[trackNumber].macroOn) {
+//		printf("macroon %d\n", _tracks[trackNumber].macroOn);
+		if (_tracks[trackNumber].macroOn) {
 			while (_tracks[trackNumber].activeMacro.macroWait == 0 && (_tracks[trackNumber].macroOn == true) ) {
 				doMacro(trackNumber);
 			}
@@ -414,6 +415,7 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 		if (_tracks[trackNumber].activeMacro.macroWait != 0) {
 		_tracks[trackNumber].activeMacro.macroWait--;
 		}
+//		printf("macrowait %d", _tracks[trackNumber].activeMacro.macroWait);
 
 	//ADVANCE PATTERN COUNT, INCREASE COUNT
 	//IF MACRO IS ON, WAIT TO ADVANCE
@@ -447,8 +449,8 @@ void Tfmx::loadMacro(uint8 trackNumber, uint8 macroNumber){
 		_tracks[trackNumber].activeMacro.data[i] = macroSubStream.readUint32BE();
 	}
 
-	debug(2, "MACRO NUMBER:: %02x \n", macroNumber);
-	debug(2, "MACRO LENGTH:: %02x \n", numCommands);
+	debug(3, "MACRO NUMBER:: %02x \n", macroNumber);
+	debug(3, "MACRO LENGTH:: %02x \n", numCommands);
 }
 void Tfmx::doMacro(uint8 trackNumber) {
 	uint8 byte1 = ( *(_tracks[trackNumber].activeMacro.data) ) >> 24;
@@ -459,27 +461,32 @@ void Tfmx::doMacro(uint8 trackNumber) {
 	uint8 currentChannel = _tracks[trackNumber].activeMacro.noteChannel;
 	uint16 tunedPeriod = 0;
 	
-	debug(2,"COUNT:: %02x ::::", _tracks[trackNumber].activeMacro.macroCount);
-	debug(2,"COMMAND:: %02x \n", byte1);
+//	debug(2,"COUNT:: %02x ::::", _tracks[trackNumber].activeMacro.macroCount);
+	debug(2,"channel[%d]: %02x:%02x:%02x:%02x \n", trackNumber, byte1,byte2,byte3,byte4);
 
 	switch (byte1) {
 	case 0x00: //DMAoff reset + CLEARS EFFECTS
+		debug(2, "DMAoff + reset");
 		_channels[currentChannel].sampleOn = false;
 		_channels[currentChannel].sampleOffset = 0;
 		_channels[currentChannel].sampleLength = 0;
+		_tracks[trackNumber].activeMacro.macroWait = 1;
 		break;
 	case 0x01:
 		_channels[currentChannel].sampleOn = true;
 		//_tracks[trackNumber].activeMacro.macroWait = 1;
 		break;
 	case 0x02: //set sample offset
+		debug(2, "Setbegin");
 		_channels[currentChannel].sampleOffset = *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF;
 		break;
 	case 0x03: //set sample length
+		debug(2, "Setlen");
 		//_channels[currentChannel].sampleLength = ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) * 2;
 		_channels[currentChannel].sampleLength = ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF );
 		break;
 	case 0x04: //wait
+		debug(2, "wait");
 		if ( (*(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF) == 0 ) {
 			_tracks[trackNumber].activeMacro.macroWait = 1;
 		}
@@ -520,6 +527,7 @@ void Tfmx::doMacro(uint8 trackNumber) {
 		_channels[currentChannel].sampleLength -= ( ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) >> 1);
 		break;
 	case 0x08: //add note
+		debug(2, "addnote");
 		tunedPeriod = (periods[(byte2 + _tracks[trackNumber].activeMacro.noteNumber) & (0x3F)]);
 		_tracks[trackNumber].activeMacro.fineTune = sbyte3 / 0x100;
 		_tracks[trackNumber].activeMacro.fineTune += (_tracks[trackNumber].activeMacro.noteFineTune / 0x100);
