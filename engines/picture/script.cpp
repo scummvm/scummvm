@@ -359,7 +359,6 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		break;
 	case 49:
 		ofs = readByte();
-		debug(0, "49, len = %d", ofs);
 		_code += ofs;
 		break;
 	case 50:
@@ -385,22 +384,22 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		_code++;
 		break;
 	case 52:
-		if (_regs.reg1 >= _regs.reg8)
+		if ((uint16)_regs.reg1 >= (uint16)_regs.reg8)
 			_code += 4;
 		_code++;
 		break;
 	case 53:
-		if (_regs.reg1 <= _regs.reg8)
+		if ((uint16)_regs.reg1 <= (uint16)_regs.reg8)
 			_code += 4;
 		_code++;
 		break;
 	case 54:
-		if (_regs.reg1 < _regs.reg8)
+		if ((uint16)_regs.reg1 < (uint16)_regs.reg8)
 			_code += 4;
 		_code++;
 		break;
 	case 55:
-		if (_regs.reg1 > _regs.reg8)
+		if ((uint16)_regs.reg1 > (uint16)_regs.reg8)
 			_code += 4;
 		_code++;
 		break;
