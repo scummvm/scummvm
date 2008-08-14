@@ -182,7 +182,7 @@ void ThemeRenderer::unloadTheme() {
 	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i)
 		ImageMan.unregisterSurface(i->_key);
 
-	ImageMan.remArchive(_themeFileName + ".zip");
+	ImageMan.remArchive(_themeFileName);
 	
 	_themeEval->reset();
 	_themeOk = false;
@@ -358,7 +358,7 @@ bool ThemeRenderer::loadTheme(Common::String fileName) {
 		if (ConfMan.hasKey("extrapath"))
 			Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
 		
-		ImageMan.addArchive(fileName + ".zip");
+		ImageMan.addArchive(fileName);
 	}
 
 	if (fileName == "builtin") {
