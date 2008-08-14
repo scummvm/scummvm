@@ -31,6 +31,7 @@
 
 #include "common/endian.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "graphics/cursorman.h"
 
@@ -514,7 +515,13 @@ void FWRenderer::drawFrame() {
 /*! \brief Update screen
  */
 void FWRenderer::blit() {
-	g_system->copyRectToScreen(_backBuffer, 320, 0, 0, 320, 200);
+	if (g_system->getEventManager()->getModifierState() & Common::KBD_ALT) {
+		// Show collision page if the Alt key is being pressed
+		g_system->copyRectToScreen(collisionPage, 320, 0, 0, 320, 200);
+	} else {
+		// Normally show the back buffer
+		g_system->copyRectToScreen(_backBuffer, 320, 0, 0, 320, 200);
+	}
 }
 
 /*! \brief Set player command string
