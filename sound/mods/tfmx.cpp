@@ -62,7 +62,7 @@ void Tfmx::loadSamples() {
 	//FIXME:: temporary loader - just creates seekablereadstream from c:\mk.smpl
 	Common::SeekableReadStream *stream = NULL;
 	Common::File myfile;
-	myfile.addDefaultDirectory("C:");
+	myfile.addDefaultDirectory("~/tfmx");
 	myfile.open("mk.smpl");
 	stream = myfile.readStream(myfile.size());
 	myfile.close();
@@ -78,7 +78,7 @@ void Tfmx::load() {
 	//FIXME:: temporary loader - just creates seekablereadstream from c:\mk.mdat
 	Common::SeekableReadStream *stream = NULL;
 	Common::File myfile;
-	myfile.addDefaultDirectory("C:");
+	myfile.addDefaultDirectory("~/tfmx");
 	myfile.open("mk.mdat");
 	stream = myfile.readStream(myfile.size());
 	myfile.close();
@@ -296,6 +296,7 @@ void Tfmx::loadPattern(uint8 trackNumber, uint8 patternNumber) {
 }
 void Tfmx::updatePattern(uint8 trackNumber) {
 	if (_tracks[trackNumber].activePattern.patternWait != 0) {
+		//debugN(1, "patternwait %02x", _tracks[trackNumber].activePattern.patternWait);
 		_tracks[trackNumber].activePattern.patternWait--;
 		return;
 	}
@@ -305,6 +306,8 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 	uint8 byte3 = ( *(_tracks[trackNumber].activePattern.data) & 0x0000FF00 ) >> 8;
 	uint8 byte4 = ( *(_tracks[trackNumber].activePattern.data) & 0x000000FF );
 	uint16 bytes34 = ( *(_tracks[trackNumber].activePattern.data) & 0x0000FFFF );
+
+	debugN(1, "%02x:%02x:%02x:%02x",byte1,byte2,byte3,byte4);
 
 	if (byte1 >= 0xF0) {
 		switch (byte1) {
@@ -326,7 +329,7 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 			break;
 		case 0xF3:
 			//waits byte2 + 1 jiffies
-			_tracks[trackNumber].activePattern.patternWait = (byte2 + 1);
+			_tracks[trackNumber].activePattern.patternWait = byte2;
 			break;
 		case 0xF4: //kills track until new pointer is loaded
 			//need to know track this pattern is on, then needs to stop reading proceeding cmds
@@ -376,7 +379,7 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 	} 
 	
 	else { 
-		if (!_tracks[trackNumber].macroOn) {
+	//	if (!_tracks[trackNumber].macroOn) {
 			_tracks[trackNumber].macroNumber = byte2;
 			loadMacro( trackNumber, (_tracks[trackNumber].macroNumber) );
 			if (byte1 < 0x80) {
@@ -395,9 +398,15 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 			_tracks[trackNumber].activeMacro.noteVelocity = (byte3 & 0xF0) >> 4;
 			_tracks[trackNumber].activeMacro.noteChannel = (byte3 & 0x0F);
 			_tracks[trackNumber].activeMacro.notePeriod = periods[(_tracks[trackNumber].activeMacro.noteNumber + _tracks[trackNumber].activePattern.patternTranspose) & 0x3F];
-		}
 
-		else {
+		if (_tracks[trackNumber].activeMacro.noteType == 2) {
+			_tracks[trackNumber].activePattern.patternWait += _tracks[trackNumber].activeMacro.noteWait;
+		}
+	//	}
+	}//END ELSE
+
+	//	else {
+		if (!_tracks[trackNumber].macroOn) {
 			while (_tracks[trackNumber].activeMacro.macroWait == 0 && (_tracks[trackNumber].macroOn == true) ) {
 				doMacro(trackNumber);
 			}
@@ -405,17 +414,13 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 		if (_tracks[trackNumber].activeMacro.macroWait != 0) {
 		_tracks[trackNumber].activeMacro.macroWait--;
 		}
-	}//END ELSE
 
 	//ADVANCE PATTERN COUNT, INCREASE COUNT
 	//IF MACRO IS ON, WAIT TO ADVANCE
-	if (!_tracks[trackNumber].macroOn) {
+//	if (!_tracks[trackNumber].macroOn) {
 		_tracks[trackNumber].activePattern.data++;
 		_tracks[trackNumber].activePattern.patternCount++;
-		if (_tracks[trackNumber].activeMacro.noteType == 2) {
-			_tracks[trackNumber].activePattern.patternWait += _tracks[trackNumber].activeMacro.noteWait;
-		}
-	}
+//	}
 	//IF THE END IS REACHED, TURN PATTERN OFF
 	if (_tracks[trackNumber].activePattern.patternCount == _tracks[trackNumber].activePattern.patternLength) {
 		_tracks[trackNumber].patternOn = false;
@@ -442,8 +447,8 @@ void Tfmx::loadMacro(uint8 trackNumber, uint8 macroNumber){
 		_tracks[trackNumber].activeMacro.data[i] = macroSubStream.readUint32BE();
 	}
 
-	printf("MACRO NUMBER:: %02x \n", macroNumber);
-	printf("MACRO LENGTH:: %02x \n", numCommands);
+	debug(2, "MACRO NUMBER:: %02x \n", macroNumber);
+	debug(2, "MACRO LENGTH:: %02x \n", numCommands);
 }
 void Tfmx::doMacro(uint8 trackNumber) {
 	uint8 byte1 = ( *(_tracks[trackNumber].activeMacro.data) ) >> 24;
@@ -454,8 +459,8 @@ void Tfmx::doMacro(uint8 trackNumber) {
 	uint8 currentChannel = _tracks[trackNumber].activeMacro.noteChannel;
 	uint16 tunedPeriod = 0;
 	
-	printf("COUNT:: %02x ::::", _tracks[trackNumber].activeMacro.macroCount);
-	printf("COMMAND:: %02x \n", byte1);
+	debug(2,"COUNT:: %02x ::::", _tracks[trackNumber].activeMacro.macroCount);
+	debug(2,"COMMAND:: %02x \n", byte1);
 
 	switch (byte1) {
 	case 0x00: //DMAoff reset + CLEARS EFFECTS
@@ -576,6 +581,7 @@ void Tfmx::interrupt(void) {
 		//CYCLE THROUGH THE 8 TRACKS TO FIND WHICH PATTERNS ARE ON AND THEN UPDATE
 		//WILL SKIP UPDATES FOR A WAIT
 		for (int track = 0; track < 8; track++) {
+		debugN(1, "\n%d(%02x j): ",track,count);
 			if (_tracks[track].patternOn && _tracks[track].trackOn) {
 					updatePattern(track);
 			}
@@ -586,11 +592,11 @@ void Tfmx::interrupt(void) {
 			setChannelPeriod(i,_channels[i].period);
 			setChannelVolume(i,_channels[i].volume);
 			if (_channels[i].sampleOn) {
-				printf("SAMPLE ON \n");
-				printf("SAMPLE OFFSET:: %02x \n", _channels[0].sampleOffset);
-				printf("SAMPLE LENGTH:: %02x \n", _channels[0].sampleLength);
-				printf("SAMPLE VOLUME:: %02x \n", _channels[0].volume);
-				printf("SAMPLE PERIOD:: %02x \n", _channels[0].period);
+				debug(2,"SAMPLE ON \n");
+				debug(2,"SAMPLE OFFSET:: %02x \n", _channels[0].sampleOffset);
+				debug(2,"SAMPLE LENGTH:: %02x \n", _channels[0].sampleLength);
+				debug(2,"SAMPLE VOLUME:: %02x \n", _channels[0].volume);
+				debug(2,"SAMPLE PERIOD:: %02x \n", _channels[0].period);
 				setChannelData(i, _sampleData + _channels[i].sampleOffset, 0, _channels[i].sampleLength, 0);
 			}	
 		}
