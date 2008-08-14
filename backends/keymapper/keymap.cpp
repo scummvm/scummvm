@@ -38,6 +38,12 @@ Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap(), _configDoma
 	}
 }
 
+Keymap::~Keymap() {
+	List<Action*>::iterator it;
+	for (it = _actions.begin(); it != _actions.end(); it++)
+		delete *it;
+}
+
 void Keymap::addAction(Action *action) {
 	if (findAction(action->id))
 		error("Action with id %d already in KeyMap!", action->id);

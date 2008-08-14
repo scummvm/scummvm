@@ -265,9 +265,7 @@ void RemapDialog::loadKeymap() {
 		}
 
 	} else if (_kmPopUp->getSelected() != -1) {
-		uint32 select = _kmPopUp->getSelected();
-		uint32 tag = _kmPopUp->getSelectedTag();
-		Keymap *km = _keymapTable[tag];
+		Keymap *km = _keymapTable[_kmPopUp->getSelectedTag()];
 
 		List<Action*>::iterator it;
 		for (it = km->getActions().begin(); it != km->getActions().end(); it++) {

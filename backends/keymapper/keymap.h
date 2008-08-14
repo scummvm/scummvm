@@ -53,6 +53,7 @@ class Keymap {
 public:
 	Keymap(const String& name, Keymap *parent = 0) : _name(name), _parent(parent) {}
 	Keymap(const Keymap& km);
+	~Keymap();
 
 public:
 	/**

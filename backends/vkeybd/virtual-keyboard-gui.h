@@ -39,6 +39,8 @@ class VirtualKeyboardGUI {
 public:
 
 	VirtualKeyboardGUI(VirtualKeyboard *kbd);
+	~VirtualKeyboardGUI();
+	
 	void initMode(VirtualKeyboard::Mode *mode);
 	void run();
 	void hide();

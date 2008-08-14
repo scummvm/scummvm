@@ -29,20 +29,23 @@
 
 namespace Common {
 
-VirtualKeyboardGUI::VirtualKeyboardGUI(VirtualKeyboard *kbd) {
-	_kbd = kbd;
-
+VirtualKeyboardGUI::VirtualKeyboardGUI(VirtualKeyboard *kbd)
+	: _kbd(kbd), _displaying(false), _needRedraw(false), _drag(false),
+	_drawCaret(false), _refreshDisplay(false), _displayEnabled(false),
+	_firstRun(true), _cursorAnimateTimer(0), _cursorAnimateCounter(0) {
+	
+	assert(_kbd);
 	assert(g_system);
 	_system = g_system;
-
+	
 	_lastScreenChanged = _system->getScreenChangeID();
-
+	
 	memset(_cursor, 0xFF, sizeof(_cursor));
+}
 
-	_displaying = _needRedraw = _drag = _drawCaret = _displayEnabled = false;
-	_firstRun = true;
-
-	_cursorAnimateTimer = 0;
+VirtualKeyboardGUI::~VirtualKeyboardGUI() {
+	_overlayBackup.free();
+	_dispSurface.free();
 }
 
 void VirtualKeyboardGUI::initMode(VirtualKeyboard::Mode *mode) {
@@ -52,6 +55,7 @@ void VirtualKeyboardGUI::initMode(VirtualKeyboard::Mode *mode) {
 	_kbdBound.setHeight(_kbdSurface->h + 1);
 	_needRedraw = true;
 
+	_dispSurface.free();
 	_displayEnabled = false;
 	if (!mode->displayArea)
 		return;
@@ -66,7 +70,6 @@ void VirtualKeyboardGUI::initMode(VirtualKeyboard::Mode *mode) {
 	}
 	_dispX = r.left;
 	_dispY = r.top + (r.height() + 1 - _dispFont->getFontHeight()) / 2;
-	_dispSurface.free();
 	_dispSurface.create(r.width() + 1, _dispFont->getFontHeight(), sizeof(OverlayColor));
 	_dispI = 0;
 	_dispForeColor = mode->displayFontColor;
@@ -108,6 +111,7 @@ void VirtualKeyboardGUI::run() {
 	if (!g_gui.isActive()) _system->hideOverlay();
 
 	_overlayBackup.free();
+	_dispSurface.free();
 }
 
 void VirtualKeyboardGUI::hide() {
@@ -192,7 +196,7 @@ void VirtualKeyboardGUI::mainLoop() {
 			if (_kbd->_keyQueue.hasStringChanged())
 				_refreshDisplay = true;
 			animateCaret();
-			if (_refreshDisplay) updateDisplay();;
+			if (_refreshDisplay) updateDisplay();
 		}
 		if (_needRedraw) redraw();
 		animateCursor();
@@ -261,16 +265,16 @@ void VirtualKeyboardGUI::redraw() {
 	extendDirtyRect(_kbdBound);
 
 	Graphics::SurfaceKeyColored surf;
-	surf.create(_dirtyRect.width()+1, _dirtyRect.height()+1, sizeof(OverlayColor));
+	surf.create(_dirtyRect.width(), _dirtyRect.height(), sizeof(OverlayColor));
 
-	OverlayColor *scr = (OverlayColor *)surf.pixels;
-	const OverlayColor *ove = (OverlayColor *) _overlayBackup.getBasePtr(_dirtyRect.left, _dirtyRect.top);
+	OverlayColor *dst = (OverlayColor *)surf.pixels;
+	const OverlayColor *src = (OverlayColor *) _overlayBackup.getBasePtr(_dirtyRect.left, _dirtyRect.top);
 	int16 h = surf.h;
 
 	while (h--) {
-		memcpy(scr, ove, surf.w * sizeof(OverlayColor));
-		scr += surf.w;
-		ove += _overlayBackup.w;
+		memcpy(dst, src, surf.w * sizeof(OverlayColor));
+		dst += surf.w;
+		src += _overlayBackup.w;
 	}
 
 	int16 keyX = _kbdBound.left - _dirtyRect.left;

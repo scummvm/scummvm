@@ -214,6 +214,8 @@ bool VirtualKeyboard::isDisplaying() {
 VirtualKeyboard::KeyPressQueue::KeyPressQueue() {
 	_keyPos = _keys.end();
 	_strPos = 0;
+	_strChanged = false;
+	_keyFlags = 0;
 }
 
 void VirtualKeyboard::KeyPressQueue::toggleFlags(byte fl) {
