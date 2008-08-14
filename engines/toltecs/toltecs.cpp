@@ -380,7 +380,7 @@ void ToltecsEngine::updateCamera() {
 		_cameraY = _newCameraY;
 	}
 
-	debug(0, "ToltecsEngine::checkCamera() _cameraX = %d; _cameraY = %d", _cameraX, _cameraY);
+	debug(0, "ToltecsEngine::updateCamera() _cameraX = %d; _cameraY = %d", _cameraX, _cameraY);
 
 }
 
