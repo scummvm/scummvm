@@ -41,7 +41,6 @@
 
 #include "picture/picture.h"
 #include "picture/animation.h"
-#include "picture/input.h"
 #include "picture/palette.h"
 #include "picture/resource.h"
 #include "picture/script.h"
@@ -113,6 +112,15 @@ int PictureEngine::go() {
 	_walkSpeedY = 5;
 	_walkSpeedX = 1;
 
+	_mouseX = 0;
+	_mouseY = 0;
+	_mouseCounter = 0;
+	_mouseButtonPressedFlag = false;
+	_mouseButton = 0;
+	_mouseDisabled = 0;
+	_leftButtonDown = false;
+	_rightButtonDown = false;
+
 	_arc = new ArchiveReader();
 	_arc->openArchive("WESTERN");
 
@@ -124,7 +132,6 @@ int PictureEngine::go() {
 	_anim = new AnimationPlayer(this);
 	_palette = new Palette(this);
 	_segmap = new SegmentMap(this);
-	_input = new Input(this);
 
 	_system->showMouse(true);
 
@@ -142,7 +149,6 @@ int PictureEngine::go() {
 	delete _anim;
 	delete _palette;
 	delete _segmap;
-	delete _input;
 
 	return 0;
 }
@@ -203,6 +209,90 @@ void PictureEngine::updateScreen() {
 	_system->updateScreen();
 
 	updateCamera();
+}
+
+void PictureEngine::updateInput() {
+
+	Common::Event event;
+	Common::EventManager *eventMan = _system->getEventManager();
+	while (eventMan->pollEvent(event)) {
+	switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+
+			// FIXME: This is just for debugging
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_F6:
+				savegame("toltecs.001");
+				break;
+			case Common::KEYCODE_F9:
+				loadgame("toltecs.001");
+				break;
+			default:
+				break;
+			}
+
+			break;
+		case Common::EVENT_QUIT:
+			// FIXME: Find a nicer way to quit
+			_system->quit();
+			break;
+		case Common::EVENT_MOUSEMOVE:
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
+			_leftButtonDown = true;
+			break;
+		case Common::EVENT_LBUTTONUP:
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
+			_leftButtonDown = false;
+			break;
+		case Common::EVENT_RBUTTONDOWN:
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
+			_rightButtonDown = true;
+			break;
+		case Common::EVENT_RBUTTONUP:
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
+			_rightButtonDown = false;
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (_mouseDisabled == 0) {
+
+		if (_mouseCounter > 0)
+			_mouseCounter--;
+
+		byte mouseButtons = 0;
+		if (_leftButtonDown)
+			mouseButtons |= 1;
+		if (_rightButtonDown)
+			mouseButtons |= 2;
+
+		if (mouseButtons != 0) {
+			if (!_mouseButtonPressedFlag) {
+				_mouseButton = mouseButtons;
+				if (_mouseCounter != 0)
+					_mouseButton |= 0x80;
+				_mouseCounter = 30; // maybe TODO
+				_mouseButtonPressedFlag = true;
+			} else {
+				_mouseButton = 0;
+			}
+		} else {
+			_mouseButtonPressedFlag = false;
+			_mouseButton = 0;
+		}
+
+	}
+
 }
 
 void PictureEngine::setCamera(int16 x, int16 y) {

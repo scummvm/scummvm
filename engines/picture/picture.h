@@ -80,6 +80,7 @@ public:
 	void loadScene(uint resIndex);
 
 	void updateScreen();
+	void updateInput();
 
 	void setCamera(int16 x, int16 y);
 	void setGuiHeight(int16 guiHeight);
@@ -126,6 +127,13 @@ public:
 	bool _doSpeech, _doText;
 	
 	int16 _walkSpeedY, _walkSpeedX;
+
+	int16 _mouseX, _mouseY;
+	int16 _mouseCounter;
+	bool _mouseButtonPressedFlag;
+	byte _mouseButton;
+	int16 _mouseDisabled;
+	bool _leftButtonDown, _rightButtonDown;
 
 };
 

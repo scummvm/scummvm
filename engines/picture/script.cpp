@@ -38,7 +38,6 @@
 
 #include "picture/picture.h"
 #include "picture/animation.h"
-#include "picture/input.h"
 #include "picture/palette.h"
 #include "picture/resource.h"
 #include "picture/script.h"
@@ -97,7 +96,7 @@ void ScriptInterpreter::runScript(uint slotIndex) {
 	while (1) {
 
 		if (_vm->_movieSceneFlag)
-			_vm->_input->_mouseButton = 0;
+			_vm->_mouseButton = 0;
 			
 		if (_switchLocalDataNear) {
 			_switchLocalDataNear = false;
@@ -461,9 +460,9 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 			return;
 
 		if (!_vm->_movieSceneFlag)
-			_vm->_input->update();
+			_vm->updateInput();
 		else
-			_vm->_input->_mouseButton = 0;
+			_vm->_mouseButton = 0;
 
 		// TODO? Check keyb
 		
@@ -488,8 +487,8 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 
 	case 5:// ok
 	{
-		debug(0, "o2_mouseDeltaStuff(%d)", arg16(3));
-		localWrite16(arg16(5), _vm->_input->getMouseDeltaStuff(arg16(3)));
+		debug(0, "o2_getRandomNumber(%d)", arg16(3));
+		localWrite16(arg16(5), _vm->_rnd->getRandomNumber(arg16(3) - 1));
 		break;
 	}
 
@@ -618,10 +617,10 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 	{
 		debug(0, "o2_findMouseInRectIndex1(offset: %d; slot: %d; elemSize: %d; var: %d; index: %d)", arg16(3), arg16(5), arg16(7), arg16(9), arg16(11));
 		int16 index = -1;
-		if (_vm->_input->_mouseY < _vm->_cameraHeight) {
+		if (_vm->_mouseY < _vm->_cameraHeight) {
 			index = _vm->findRectAtPoint(getSlotData(arg16(5)) + arg16(3),
-				_vm->_input->_mouseX + _vm->_cameraX,
-				_vm->_input->_mouseY + _vm->_cameraY,
+				_vm->_mouseX + _vm->_cameraX,
+				_vm->_mouseY + _vm->_cameraY,
 				arg16(11) + 1, arg16(7));
 		}
 		localWrite16(arg16(9), index);
@@ -633,7 +632,7 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 		debug(0, "o2_findMouseInRectIndex2(offset: %d, slot: %d, elemSize: %d, var: %d)", arg16(3), arg16(5), arg16(7), arg16(9));
 		int16 index = -1;
 
-		debug(0, "_vm->_input->_mouseDisabled = %d", _vm->_input->_mouseDisabled);
+		debug(0, "_vm->_mouseDisabled = %d", _vm->_mouseDisabled);
 
 		/* FIXME: This opcode is called after the Revistronic logo at the beginning,
 			but at the slot/offset there's bytecode and not a rect array as expected.
@@ -642,10 +641,10 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 			Needs some more checking.
 		*/
 		if (_vm->_sceneResIndex != 215) {
-			if (_vm->_input->_mouseY < _vm->_cameraHeight) {
+			if (_vm->_mouseY < _vm->_cameraHeight) {
 				index = _vm->findRectAtPoint(getSlotData(arg16(5)) + arg16(3),
-					_vm->_input->_mouseX + _vm->_cameraX,
-					_vm->_input->_mouseY + _vm->_cameraY,
+					_vm->_mouseX + _vm->_cameraX,
+					_vm->_mouseY + _vm->_cameraY,
 					0, arg16(7));
 			}
 		}
@@ -995,16 +994,16 @@ int16 ScriptInterpreter::getGameVar(uint variable) {
 	
 	switch (variable) {
 		case 0:
-			value = _vm->_input->_mouseDisabled;
+			value = _vm->_mouseDisabled;
 			break;
 		case 1:
-			value = _vm->_input->_mouseY;
+			value = _vm->_mouseY;
 			break;
 		case 2:
-			value = _vm->_input->_mouseX;
+			value = _vm->_mouseX;
 			break;
 		case 3:
-			value = _vm->_input->_mouseButton;
+			value = _vm->_mouseButton;
 			break;
 		case 4:
 			value = _vm->_screen->_verbLineY;
@@ -1075,11 +1074,11 @@ void ScriptInterpreter::setGameVar(uint variable, int16 value) {
 	
 	switch (variable) {
 		case 0:
-			_vm->_input->_mouseDisabled = value;
+			_vm->_mouseDisabled = value;
 			_vm->_system->showMouse(value == 0);
 			break;
 		case 3:
-			_vm->_input->_mouseButton = value;
+			_vm->_mouseButton = value;
 			break;
 		case 4:
 			_vm->_screen->_verbLineY = value;

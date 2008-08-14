@@ -36,7 +36,6 @@
 
 #include "picture/picture.h"
 #include "picture/animation.h"
-#include "picture/input.h"
 #include "picture/palette.h"
 #include "picture/resource.h"
 #include "picture/script.h"
@@ -82,9 +81,9 @@ void PictureEngine::savegame(const char *filename) {
 	out->writeByte(_movieSceneFlag ? 1 : 0);
 	out->writeByte(_flag01);
 
-	out->writeUint16LE(_input->_mouseX);
-	out->writeUint16LE(_input->_mouseY);
-	out->writeUint16LE(_input->_mouseDisabled);
+	out->writeUint16LE(_mouseX);
+	out->writeUint16LE(_mouseY);
+	out->writeUint16LE(_mouseDisabled);
 
 	_palette->saveState(out);
 	_script->saveState(out);
@@ -142,12 +141,12 @@ void PictureEngine::loadgame(const char *filename) {
 	_movieSceneFlag = in->readByte() != 0;
 	_flag01 = in->readByte();
 
-	_input->_mouseX = in->readUint16LE();
-	_input->_mouseY = in->readUint16LE();
-	_input->_mouseDisabled = in->readUint16LE();
+	_mouseX = in->readUint16LE();
+	_mouseY = in->readUint16LE();
+	_mouseDisabled = in->readUint16LE();
 	
-	_system->warpMouse(_input->_mouseX, _input->_mouseY);
- 	_system->showMouse(_input->_mouseDisabled == 0);
+	_system->warpMouse(_mouseX, _mouseY);
+ 	_system->showMouse(_mouseDisabled == 0);
 
 	_palette->loadState(in);
 	_script->loadState(in);
