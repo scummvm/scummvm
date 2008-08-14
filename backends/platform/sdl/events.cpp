@@ -546,16 +546,16 @@ void OSystem_SDL::setupKeymapper() {
 	ADD_KEYDOWN_EVENT(KEYCODE_F5, ASCII_F5, 0)
 	global->addAction(act);
 	
-	act = new Action('QUIT', "Quit", kGenericActionCategory, kQuitAction);
+	act = new Action('SKCT', "Skip");
 	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
 	global->addAction(act);
 
-	act = new Action('MENQ', "Menu", kGenericActionCategory, kMenuAction);
-	ADD_KEYDOWN_EVENT(KEYCODE_F5, ASCII_F5, 0)
+	act = new Action('PAUS', "Pause");
+	ADD_KEYDOWN_EVENT(KEYCODE_SPACE, ' ', 0)
 	global->addAction(act);
 	
-	act = new Action('QUIQ', "Quit", kGenericActionCategory, kQuitAction);
-	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
+	act = new Action('SKLI', "Skip line");
+	ADD_KEYDOWN_EVENT(Common::KEYCODE_PERIOD, '.', 0);
 	global->addAction(act);
 
 	act = new Action('JUMP', "Jump");
@@ -576,6 +576,6 @@ void OSystem_SDL::setupKeymapper() {
 	mapper->addGlobalKeymap(specific);
 
 	mapper->pushKeymap("global");
-	mapper->pushKeymap("specific", true);
+	//mapper->pushKeymap("specific", true);
 }
 
