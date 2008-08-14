@@ -179,8 +179,14 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	for (ResArchiveLoader::FileList::iterator i = files.begin(); i != files.end(); ++i) {
 		iter = _map.find(i->filename);
 		if (iter == _map.end()) {
+			// We do an internal check for a file in gamepath with same filename to
+			// allow overwriting files inside archives with plain files inside the
+			// game directory
+			checkFile(i->filename);
+
 			// A new file entry, so we just insert it into the file map.
-			_map[i->filename] = i->entry;
+			if (_map.find(i->filename) == _map.end())
+				_map[i->filename] = i->entry;
 		} else if (!iter->_value.parent.empty()) {
 			if (!iter->_value.parent.equalsIgnoreCase(filename)) {
 				ResFileMap::iterator oldParent = _map.find(iter->_value.parent);
