@@ -194,7 +194,7 @@ bool Tfmx::loadSong(uint8 songNumber) {
 		_channels[channel].volume = 0;
 		_channels[channel].sampleOffset = 0;
 		_channels[channel].sampleLength = 0;
-	    _channels[channel].sampleOn = false;
+	    _channels[channel].sampleOn = 0;
 	}
 
 	//SET INTERRUPT FREQUENCY
@@ -407,14 +407,14 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 
 	//	else {
 //		printf("macroon %d\n", _tracks[trackNumber].macroOn);
-		if (_tracks[trackNumber].macroOn) {
+/*		if (_tracks[trackNumber].macroOn) {
 			while (_tracks[trackNumber].activeMacro.macroWait == 0 && (_tracks[trackNumber].macroOn == true) ) {
 				doMacro(trackNumber);
 			}
 		}
 		if (_tracks[trackNumber].activeMacro.macroWait != 0) {
 		_tracks[trackNumber].activeMacro.macroWait--;
-		}
+		}*/
 //		printf("macrowait %d", _tracks[trackNumber].activeMacro.macroWait);
 
 	//ADVANCE PATTERN COUNT, INCREASE COUNT
@@ -427,6 +427,16 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 	if (_tracks[trackNumber].activePattern.patternCount == _tracks[trackNumber].activePattern.patternLength) {
 		_tracks[trackNumber].patternOn = false;
 	}
+}
+void Tfmx::runMacro(uint8 trackNumber) {
+		if (_tracks[trackNumber].macroOn) {
+			while (_tracks[trackNumber].activeMacro.macroWait == 0 && (_tracks[trackNumber].macroOn == true) ) {
+				doMacro(trackNumber);
+			}
+		}
+		if (_tracks[trackNumber].activeMacro.macroWait != 0) {
+		_tracks[trackNumber].activeMacro.macroWait--;
+		}
 }
 void Tfmx::loadMacro(uint8 trackNumber, uint8 macroNumber){
 	uint32 startPosition;
@@ -467,13 +477,14 @@ void Tfmx::doMacro(uint8 trackNumber) {
 	switch (byte1) {
 	case 0x00: //DMAoff reset + CLEARS EFFECTS
 		debug(2, "DMAoff + reset");
-		_channels[currentChannel].sampleOn = false;
+		_channels[currentChannel].sampleOn = 0;
 		_channels[currentChannel].sampleOffset = 0;
 		_channels[currentChannel].sampleLength = 0;
 		_tracks[trackNumber].activeMacro.macroWait = 1;
 		break;
 	case 0x01:
-		_channels[currentChannel].sampleOn = true;
+		debug(2, "DMAon");
+		_channels[currentChannel].sampleOn = 1;
 		//_tracks[trackNumber].activeMacro.macroWait = 1;
 		break;
 	case 0x02: //set sample offset
@@ -495,11 +506,11 @@ void Tfmx::doMacro(uint8 trackNumber) {
 		}
 		break;
 	case 0x07:
-		_channels[currentChannel].sampleOn = false; 
+		//_channels[currentChannel].sampleOn = 0; 
 		_tracks[trackNumber].macroOn = false;
 		break;
 	case 0x13: //DMA OFF BUT DOESNT CLEAR EFFECTS
-		_channels[currentChannel].sampleOn = false;
+		_channels[currentChannel].sampleOn = 0;
 		break;
 	case 0x0D: //add volume to channel;.
 		if (byte3 != 0xFE) {
@@ -515,6 +526,9 @@ void Tfmx::doMacro(uint8 trackNumber) {
 			_channels[currentChannel].volume = byte2;
 		}
 		break;
+	case 0x0F:
+		debug(2,"Envelope not implemented");
+		break;
 	case 0x19: //set one shot ? cut off?
 		_tracks[trackNumber].activeMacro.notePeriod = 0;
 		_channels[currentChannel].sampleOffset = 0;
@@ -525,6 +539,7 @@ void Tfmx::doMacro(uint8 trackNumber) {
 		//_channels[currentChannel].sampleLength -= ( *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF );
 		_channels[currentChannel].sampleOffset += ( ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) & 0xFFFE );
 		_channels[currentChannel].sampleLength -= ( ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) >> 1);
+		_channels[currentChannel].sampleOn = 1;
 		break;
 	case 0x08: //add note
 		debug(2, "addnote");
@@ -561,7 +576,7 @@ void Tfmx::doMacro(uint8 trackNumber) {
 
 	if (_tracks[trackNumber].activeMacro.macroCount == _tracks[trackNumber].activeMacro.macroLength) {
 		_tracks[trackNumber].macroOn = false;
-		_channels[currentChannel].sampleOn = false;
+		_channels[currentChannel].sampleOn = 0;
 	}
 }
 void Tfmx::testMacro(uint8 macroNumber) {
@@ -589,24 +604,28 @@ void Tfmx::interrupt(void) {
 		//CYCLE THROUGH THE 8 TRACKS TO FIND WHICH PATTERNS ARE ON AND THEN UPDATE
 		//WILL SKIP UPDATES FOR A WAIT
 		for (int track = 0; track < 8; track++) {
-		debugN(1, "\n%d(%02x j): ",track,count);
+			debugN(1, "\n%d(%02x j): ",track,count);
 			if (_tracks[track].patternOn && _tracks[track].trackOn) {
 					updatePattern(track);
 			}
+			runMacro(track);
 		}
 
 		for (int i = 0; i < 4; i++)
 		{
 			setChannelPeriod(i,_channels[i].period);
 			setChannelVolume(i,_channels[i].volume);
-			if (_channels[i].sampleOn) {
-				debug(2,"SAMPLE ON \n");
-				debug(2,"SAMPLE OFFSET:: %02x \n", _channels[0].sampleOffset);
-				debug(2,"SAMPLE LENGTH:: %02x \n", _channels[0].sampleLength);
-				debug(2,"SAMPLE VOLUME:: %02x \n", _channels[0].volume);
-				debug(2,"SAMPLE PERIOD:: %02x \n", _channels[0].period);
+			if (_channels[i].sampleOn == 1) {
+				_channels[i].sampleOn = 2;
+				debugN(2,"SAMPLE ON channel %d ",i);
+				debugN(2,"SAMPLE OFFSET:: %02x ", _channels[i].sampleOffset);
+				debugN(2,"SAMPLE LENGTH:: %02x ", _channels[i].sampleLength);
+				debugN(2,"SAMPLE VOLUME:: %02x ", _channels[i].volume);
+				debug(2,"SAMPLE PERIOD:: %02x ", _channels[i].period);
 				setChannelData(i, _sampleData + _channels[i].sampleOffset, 0, _channels[i].sampleLength, 0);
-			}	
+			} else if (_channels[i].sampleOn == 0) {
+			// kill the channel here
+			}
 		}
 		
 		//CHECK IF PATTERNS ARE ON: IF SO, TRACK ADVANCE IS FALSE

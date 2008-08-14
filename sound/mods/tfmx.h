@@ -146,7 +146,9 @@ protected:
 			int8 volume;
 			uint32 sampleOffset;
 			uint32 sampleLength;
-			bool sampleOn;
+			//int8 *dataRepeat;
+			//uint32 lengthRepeat;
+			int sampleOn;
 		}_channels[4];
 
 		//PAULA Interrupt override
@@ -158,6 +160,7 @@ protected:
 		void updatePattern(uint8 trackNumber);
 		void loadMacro(uint8 trackNumber, uint8 macroNumber);
 		void doMacro(uint8 trackNumber);
+		void runMacro(uint8 trackNumber);
 		
 		//Trackstep functions
 		void setTempo();
