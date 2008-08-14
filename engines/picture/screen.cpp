@@ -138,8 +138,6 @@ void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
 
 	debug(0, "Screen::drawGuiImage() x = %d; y = %d; w = %d; h = %d; resIndex = %d", x, y, width, height, resIndex);
 	
-	//_vm->_arc->dump(resIndex, "gui");
-	
 	while (workHeight > 0) {
 		int count = 1;
 		byte pixel = *imageData++;
@@ -437,42 +435,37 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	if (sprite.height <= 0)
 		return;
 
-	sprite.value1 = 0;
-	
+	sprite.skipX = 0;
+
 	if (drawRequest.flags & 0x1000) {
 		// Left border
 		if (sprite.x - _vm->_cameraX < 0) {
 			sprite.width -= ABS(sprite.x - _vm->_cameraX);
-			if (sprite.width <= 0)
-				return;
 			sprite.x = _vm->_cameraX;
 		}
 		// Right border
 		if (sprite.x + sprite.width - _vm->_cameraX - 640 > 0) {
 			sprite.flags |= 8;
-			sprite.width -= sprite.x + sprite.width - _vm->_cameraX - 640;
-			if (sprite.width <= 0)
-				return;
-			sprite.value1 = sprite.x + sprite.width - _vm->_cameraX - 640;
+			sprite.skipX = sprite.x + sprite.width - _vm->_cameraX - 640;
+			sprite.width -= sprite.skipX;
 		}
 	} else {
 		// Left border
 		if (sprite.x - _vm->_cameraX < 0) {
 			sprite.flags |= 8;
-			sprite.width -= ABS(sprite.x - _vm->_cameraX);
-			if (sprite.width <= 0)
-				return;
-			sprite.value1 = ABS(sprite.x - _vm->_cameraX);
+			sprite.skipX = ABS(sprite.x - _vm->_cameraX);
+			sprite.width -= sprite.skipX;
 			sprite.x = _vm->_cameraX;
 		}
 		// Right border
 		if (sprite.x + sprite.width - _vm->_cameraX - 640 > 0) {
 			sprite.flags |= 8;
 			sprite.width -= sprite.x + sprite.width - _vm->_cameraX - 640;
-			if (sprite.width <= 0)
-				return;
 		}
 	}
+
+	if (sprite.width <= 0)
+		return;
 
 	// Add sprite sorted by priority
 	Common::List<SpriteDrawItem>::iterator iter = _spriteDrawList.begin();
@@ -493,13 +486,6 @@ void Screen::drawSprite(SpriteDrawItem *sprite) {
 
 	byte *source = _vm->_res->load(sprite->resIndex) + sprite->offset;
 	byte *dest = _frontScreen + (sprite->x - _vm->_cameraX) + (sprite->y - _vm->_cameraY) * 640;
-
-	// FIXME: Temporary hack until proper clipping is implemented
-	/*
-	int16 dx = sprite->x - _vm->_cameraX, dy = sprite->y - _vm->_cameraY;
-	if (dx < 0 || dy < 0 || dx + sprite->width >= 640 || dy + sprite->height >= 400)
-		return;
-		*/
 
 	SpriteReader spriteReader(source, sprite);
 
@@ -538,23 +524,18 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sp
 
 	int16 destInc;
 
-	/*
-	if ((sprite->flags & 8))
-		return;
-		*/
-
 	if (sprite->flags & 4) {
 		destInc = -1;
 		dest += sprite->width;
 	} else {
 		destInc = 1;
 	}
-	
+
 	SpriteReaderStatus status;
 	PixelPacket packet;
 	
 	byte *destp = dest;
-	int16 skipX = sprite->value1;
+	int16 skipX = sprite->skipX;
 
 	int16 w = sprite->width;
 	int16 h = sprite->height;
@@ -602,15 +583,15 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sp
 			dest += packet.count * destInc;
 		}
 
-		if (status == kSrsEndOfLine || w == 0) {
-			if (w == 0) {
-				while (status != kSrsEndOfLine) {
+		if (status == kSrsEndOfLine || w <= 0) {
+			if (w <= 0) {
+				while (status == kSrsPixelsLeft) {
 					status = reader.readPacket(packet);
 				}
 			}
 			dest = destp + 640;
 			destp = dest;
-   			skipX = sprite->value1;
+   			skipX = sprite->skipX;
    			w = sprite->width;
    			h--;
 		}
@@ -709,8 +690,6 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 
 	item->fontNum = 0;
 	item->color = _talkTextFontColor;
-
-	//debug(0, "## _talkTextMaxWidth = %d", _talkTextMaxWidth);
 
 	x = CLIP<int16>(_talkTextX - _vm->_cameraX, 120, _talkTextMaxWidth);
 	y = CLIP<int16>(_talkTextY - _vm->_cameraY, 4, _vm->_cameraHeight - 16);

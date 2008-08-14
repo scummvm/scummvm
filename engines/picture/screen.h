@@ -65,7 +65,7 @@ struct SpriteDrawItem {
 	uint32 offset;
 	int16 xdelta, ydelta;
 	uint16 flags;
-	int16 value1, yerror;
+	int16 skipX, yerror;
 	int16 ybottom;
 	int16 baseColor;
 };
