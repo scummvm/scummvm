@@ -944,6 +944,22 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_CMP_FLAGS
 	},
 
+	{
+		{
+			"lol",
+			"Extracted",
+			{
+				{ "GENERAL.PAK", 0, "996e66e81054d36249907a1d8158da3d", -1 },
+				{ "CHAPTER7.PAK", 0, "cabee57f00d6d84b65a732b6868a4959", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		LOL_FLOPPY_FLAGS
+	},
+
 	/* disable these targets until they get supported
 	{
 		{
