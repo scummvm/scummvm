@@ -186,7 +186,7 @@ bool Resource::loadPakFile(const Common::String &filename) {
 		if (iter == _map.end()) {
 			// We do an internal check for a file in gamepath with same filename to
 			// allow overwriting files inside archives with plain files inside the
-		    // game directory
+			// game directory
 			checkFile(i->filename);
 
 			// A new file entry, so we just insert it into the file map.
