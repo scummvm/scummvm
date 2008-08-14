@@ -40,6 +40,7 @@ bool getKeyboardClosed();
 void addAutoComplete(char* word);
 void clearAutoComplete();
 void setCharactersEntered(int count);
+void releaseAllKeys();
 
 }
 

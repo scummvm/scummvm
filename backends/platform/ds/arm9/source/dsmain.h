@@ -38,7 +38,8 @@ enum controlType {
 	CONT_SIMON,
 	CONT_FUTURE_WARS,
 	CONT_AGI,
-	CONT_GOBLINS
+	CONT_GOBLINS,
+	CONT_NIPPON,
 };
 
 struct gameListType {
@@ -56,6 +57,7 @@ int 	getPenX();
 int 	getPenY();
 GLvector getPenPos();
 void 	consumePenEvents();
+controlType getControlType();
 
 // Pad reading
 int 	getKeysHeld();
@@ -64,6 +66,8 @@ int 	getKeysDown();
 int 	getKeysReleased();
 void 	consumeKeys();
 int 	leftHandedSwap(int keys);
+void	setGameScreenSwap(bool enable);
+void	setSensitivity(int sensitivity);
 
 // Video
 void 	displayMode8Bit();											// Switch to 8-bit mode5
@@ -81,6 +85,7 @@ u16*	getScalerBuffer();
 void 	setTalkPos(int x, int y);
 void 	setTopScreenTarget(int x, int y);
 void	set200PercentFixedScale(bool on);
+void	setTopScreenZoom(int percentage);
 
 // Timers
 void 	setTimerCallback(OSystem_DS::TimerProc proc, int interval);		// Setup a callback function at a regular interval
@@ -131,6 +136,8 @@ void 	setIndyFightState(bool st);
 bool 	getIndyFightState();
 bool    isCpuScalerEnabled();
 void	setCpuScalerEnable(bool enable);
+void	setTrackPadStyleEnable(bool enable);
+void	setTapScreenClicksEnable(bool enable);
 
 // Display
 bool 	getIsDisplayMode8Bit();

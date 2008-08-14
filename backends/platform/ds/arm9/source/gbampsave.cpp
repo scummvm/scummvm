@@ -155,11 +155,13 @@ GBAMPSaveFile* GBAMPSaveFileManager::openSavefile(char const* name, bool saveOrL
 		sprintf(fileSpec, "%s/%s", getSavePath(), name);
 	}
 	
-//	consolePrintf(fileSpec);
+//	consolePrintf("Opening the file: %s\n", fileSpec);
 	GBAMPSaveFile* sf = new GBAMPSaveFile(fileSpec, saveOrLoad);
 	if (sf->isOpen()) {
+//		consolePrintf("Ok");
 		return sf;	
 	} else {
+//		consolePrintf("Fail");
 		delete sf;
 		return NULL;	
 	}

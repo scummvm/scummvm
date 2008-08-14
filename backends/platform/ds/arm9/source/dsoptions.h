@@ -30,6 +30,7 @@
 #include "gui/object.h"
 #include "gui/widget.h"
 #include "gui/dialog.h"
+#include "gui/TabWidget.h"
 #include "scumm/dialogs.h"
 
 namespace DS {
@@ -45,11 +46,18 @@ protected:
 	void togglePause();
 	void updateConfigManager();
 
+	GUI::TabWidget* _tab;
+
+	GUI::StaticTextWidget* _sensitivityLabel;
+
 	GUI::SliderWidget* _touchX;
 	GUI::SliderWidget* _touchY;
+	GUI::SliderWidget* _sensitivity;
 	GUI::CheckboxWidget* _leftHandedCheckbox;
 	GUI::CheckboxWidget* _unscaledCheckbox;
-	GUI::CheckboxWidget* _twoHundredPercentCheckbox;
+	GUI::CheckboxWidget* _100PercentCheckbox;
+	GUI::CheckboxWidget* _150PercentCheckbox;
+	GUI::CheckboxWidget* _200PercentCheckbox;
 	GUI::CheckboxWidget* _indyFightCheckbox;
 	GUI::CheckboxWidget* _highQualityAudioCheckbox;
 	GUI::CheckboxWidget* _disablePowerOff;
@@ -59,6 +67,9 @@ protected:
 	GUI::CheckboxWidget* _hardScaler;
 	GUI::CheckboxWidget* _cpuScaler;
 	
+	GUI::CheckboxWidget* _touchPadStyle;
+	GUI::CheckboxWidget* _screenTaps;
+
 #ifdef DS_SCUMM_BUILD
 	Scumm::SaveLoadChooser* _delDialog;
 #endif

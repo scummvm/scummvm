@@ -75,9 +75,10 @@ VPATH = $(srcdir)
 # I actually had to use
 # ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork' LDFLAGS='C:/Progra~1/devkitpro/libnds/lib/libnds9.a' --disable-shared --disable-debugging
 
-USE_ARM_SOUND_ASM = 1
 ARM = 1
+USE_ARM_SOUND_ASM = 1
 USE_ARM_COSTUME_ASM = 1
+ARM_USE_GFX_ASM = 1
 
 ifdef DS_BUILD_A
 	DEFINES = -DDS_SCUMM_BUILD -DDS_BUILD_A -DUSE_ARM_GFX_ASM -DUSE_ARM_COSTUME_ASM
@@ -130,7 +131,8 @@ endif
 
 ifdef DS_BUILD_G
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_G
-	LOGO = logog.bmp
+	LOGO = logof.bmp
+	ENABLE_PARALLACTION = STATIC_PLUGIN
 	ENABLE_LURE = STATIC_PLUGIN
 	BUILD=scummvm-G
 endif
@@ -145,7 +147,7 @@ CXX     = arm-eabi-g++
 CFLAGS	=	-Wno-multichar -Wall\
 		-Wno-multichar -mcpu=arm9tdmi -mtune=arm9tdmi \
 		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
-		-mthumb-interwork -DUSE_ARM_COSTUME_ASM=1
+		-mthumb-interwork -DUSE_ARM_COSTUME_ASM=1 -D$(BUILD)
 
 # -ffast-math 
 
@@ -160,7 +162,7 @@ ifdef USE_PROFILER
 endif
 
 CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor -Wno-unknown-pragmas -Wno-reorder  \
-		-fno-exceptions -fno-rtti -mthumb-interwork
+		-fno-exceptions -fno-rtti -mthumb-interwork -ffunction-sections -fdata-sections
 
 #		-mthumb
 
@@ -180,7 +182,7 @@ ifdef USE_MAD
 endif
 
 
-LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -Wl,--wrap,time -mno-fpu -Wl,-Map,map.txt
+LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -Wl,--wrap,time -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections
 
 INCLUDES= -I./ -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/common -I$(portdir)/source \
 			-I$(portdir)/data -I$(libndsdir)/include -I$(portdir)/../commoninclude\
@@ -259,7 +261,7 @@ OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp 
 #OPTLIST :=
 
 # Compiler options for files which should be optimised for speed
-OPT_SPEED := -O2
+OPT_SPEED := -O3
 
 # Compiler options for files which should be optimised for space
 OPT_SIZE := -Os
@@ -281,7 +283,7 @@ ndsall:
 include $(srcdir)/Makefile.common
 
 semiclean:
-	$(RM) $(portdir)/source/dsoptions.o $(portdir)/source/dsmain.o $(FAT_OBJS) $(DATA_OBJS) $(portdir)/source/wordcompletion.o
+	$(RM) $(portdir)/source/dsoptions.o $(portdir)/source/dsmain.o $(FAT_OBJS) $(DATA_OBJS) $(portdir)/source/wordcompletion.o $(portdir)/source/dsoptions.o 
 
 clean:
 	$(RM) $(OBJS) $(EXECUTABLE)

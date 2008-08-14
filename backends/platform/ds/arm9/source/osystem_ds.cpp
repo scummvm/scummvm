@@ -41,7 +41,8 @@
 OSystem_DS* OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
-	: eventNum(0), lastPenFrame(0), queuePos(0), _mixer(NULL), _timer(NULL), _frameBufferExists(false)
+	: eventNum(0), lastPenFrame(0), queuePos(0), _mixer(NULL), _timer(NULL), _frameBufferExists(false),
+	_disableCursorPalette(true), _graphicsEnable(true)
 {
 //	eventNum = 0;
 //	lastPenFrame = 0;
@@ -79,7 +80,7 @@ void OSystem_DS::initBackend() {
 
 bool OSystem_DS::hasFeature(Feature f) {
 //	consolePrintf("hasfeature\n");
-	return (f == kFeatureVirtualKeyboard);
+	return (f == kFeatureVirtualKeyboard) || (f == kFeatureCursorHasPalette);
 }
 
 void OSystem_DS::setFeatureState(Feature f, bool enable) {
@@ -107,7 +108,7 @@ bool OSystem_DS::setGraphicsMode(int mode) {
 }
 
 bool OSystem_DS::setGraphicsMode(const char *name) {
-//	consolePrintf("Set gfx mode %s\n", name);
+	consolePrintf("Set gfx mode %s\n", name);
 	return true;
 }
 
@@ -116,8 +117,15 @@ int OSystem_DS::getGraphicsMode() const {
 }
 
 void OSystem_DS::initSize(uint width, uint height) {
-//	consolePrintf("Set gfx mode %d x %d\n", width, height);
-	DS::setGameSize(width, height);
+	// For Lost in Time, the title screen is displayed in 640x400.
+	// In order to support this game, the screen mode is set, but
+	// all draw calls are ignored until the game switches to 320x200.
+	if ((width == 640) && (height == 400)) {
+		_graphicsEnable = false;
+	} else {
+		_graphicsEnable = true;
+		DS::setGameSize(width, height);
+	}
 }
 
 int16 OSystem_DS::getHeight() {
@@ -129,9 +137,6 @@ int16 OSystem_DS::getWidth() {
 }
 
 void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
-//	consolePrintf("Set palette %d, %d colours\n", start, num);
-//return;
-	if (!DS::getIsDisplayMode8Bit()) return;
 	for (unsigned int r = start; r < start + num; r++) {
 		int red = *colors;
 		int green = *(colors + 1);
@@ -141,20 +146,48 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		green >>= 3;
 		blue >>= 3;
 		
-		if (r != 255)
+//		if (r != 255)
 		{		
-			BG_PALETTE[r] = red | (green << 5) | (blue << 10);
-			if (!DS::getKeyboardEnable()) {
-				BG_PALETTE_SUB[r] = red | (green << 5) | (blue << 10);
+			u16 paletteValue = red | (green << 5) | (blue << 10);
+
+			if (DS::getIsDisplayMode8Bit()) {
+				BG_PALETTE[r] = paletteValue;
+				if (!DS::getKeyboardEnable()) {
+					BG_PALETTE_SUB[r] = paletteValue;
+				}
 			}
+
+			_palette[r] = paletteValue;
 		}
-//		if (num == 16) consolePrintf("pal:%d r:%d g:%d b:%d\n", r, red, green, blue);
+	//	if (num == 255) consolePrintf("pal:%d r:%d g:%d b:%d\n", r, red, green, blue);
 		
 		colors += 4;
 	}
 }
 
+void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
+
+//	consolePrintf("Cursor palette set: start: %d, cols: %d\n", start, num);
+	for (unsigned int r = start; r < start + num; r++) {
+		int red = *colors;
+		int green = *(colors + 1);
+		int blue = *(colors + 2);
+		
+		red >>= 3;
+		green >>= 3;
+		blue >>= 3;
+		
+		u16 paletteValue = red | (green << 5) | (blue << 10);
+		_cursorPalette[r] = paletteValue;
+	
+		colors += 4;
+	}
+
+	_disableCursorPalette = false;
+}
+
 bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
+
 	surf->create(DS::getGameWidth(), DS::getGameHeight(), 1);
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
@@ -184,9 +217,11 @@ void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) {
 }
 
 
+#define MISALIGNED16(ptr) (((u32) (ptr) & 1) != 0)
+
 void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
-//	consolePrintf("Copy rect %d, %d   %d, %d ", x, y, w, h);
-	
+	//consolePrintf("Copy rect %d, %d   %d, %d ", x, y, w, h);
+	if (!_graphicsEnable) return;	
 	if (w <= 1) return;
 	if (h < 0) return;
 	if (!DS::getIsDisplayMode8Bit()) return;
@@ -194,6 +229,9 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 	u16* bg;
 	s32 stride;
 	u16* bgSub = (u16 *) BG_GFX_SUB;
+
+	// The DS video RAM doesn't support 8-bit writes because Nintendo wanted
+	// to save a few pennies/euro cents on the hardware.
 
 	if (_frameBufferExists) {
 		bg = (u16 *) _framebuffer.pixels;
@@ -203,36 +241,111 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 		stride = DS::get8BitBackBufferStride();
 	}
 
-	u16* src = (u16 *) buf;
-	
-	if (DS::getKeyboardEnable()) {
-	
+	if (((pitch & 1) != 0) || ((w & 1) != 0) || (((int) (buf) & 1) != 0)) {
+
+		// Something is misaligned, so we have to use the slow but sure method
+
+		int by = 0;
+
 		for (int dy = y; dy < y + h; dy++) {
-			u16* dest = bg + (dy * (stride >> 1)) + (x >> 1);
-		
-			DC_FlushRange(src, w << 1);
-			DC_FlushRange(dest, w << 1);
-			dmaCopyHalfWords(3, src, dest, w);
-					
-			src += pitch >> 1;
-		}
-	
-	} else {
-		for (int dy = y; dy < y + h; dy++) {
-			u16* dest1 = bg + (dy * (stride >> 1)) + (x >> 1);
-			u16* dest2 = bgSub + (dy << 8) + (x >> 1);
+			u8* dest = ((u8 *) (bg)) + (dy * stride) + x;
+			u8* destSub = ((u8 *) (bgSub)) + (dy * 512) + x;
+			u8* src = (u8 *) buf + (pitch * by);
 			
-			DC_FlushRange(src, w << 1);
-			DC_FlushRange(dest1, w << 1);
-			DC_FlushRange(dest2, w << 1);
-					
-			dmaCopyHalfWords(3, src, dest1, w);
-			dmaCopyHalfWords(3, src, dest2, w);
-					
-			src += pitch >> 1;
+			u32 dx;
+
+			u32 pixelsLeft = w;
+
+			if (MISALIGNED16(dest))	{
+				// Read modify write
+
+				dest--;
+				u16 mix = *((u16 *) dest);
+
+				mix = (mix & 0x00FF) | (*src++ << 8);
+
+				*dest = mix;
+				*destSub = mix;
+
+				dest += 2;
+				destSub += 2;
+				pixelsLeft--;
+			}
+
+			// We can now assume dest is aligned
+			u16* dest16 = (u16 *) dest;
+			u16* destSub16 = (u16 *) destSub;
+
+			for (dx = 0; dx < pixelsLeft; dx+=2)	{
+				u16 mix;
+
+				mix = *src + (*(src + 1) << 8);
+				*dest16++ = mix;
+				*destSub16++ = mix;
+				src += 2;
+			}
+
+			pixelsLeft -= dx;
+
+			// At the end we may have one pixel left over
+
+			if (pixelsLeft != 0) {
+				u16 mix = *dest16;
+
+				mix = (mix & 0xFF00) | (*src++);
+
+				*dest16 = mix;
+				*destSub16 = mix;
+			}
+
+			by++;
+				
+		}
+
+//		consolePrintf("Slow method used!\n");
+
+
+	} else {
+
+		// Stuff is aligned to 16-bit boundaries, so it's safe to do DMA.
+	
+		u16* src = (u16 *) buf;
+		
+		if (DS::getKeyboardEnable()) {
+		
+			for (int dy = y; dy < y + h; dy++) {
+				u16* dest = bg + (dy * (stride >> 1)) + (x >> 1);
+			
+				DC_FlushRange(src, w << 1);
+				DC_FlushRange(dest, w << 1);
+				dmaCopyHalfWords(3, src, dest, w);
+	
+				while (dmaBusy(3));
+						
+				src += pitch >> 1;
+			}
+		
+		} else {
+			for (int dy = y; dy < y + h; dy++) {
+				u16* dest1 = bg + (dy * (stride >> 1)) + (x >> 1);
+				u16* dest2 = bgSub + (dy << 8) + (x >> 1);
+				
+				DC_FlushRange(src, w << 1);
+				DC_FlushRange(dest1, w << 1);
+				DC_FlushRange(dest2, w << 1);
+						
+				dmaCopyHalfWords(3, src, dest1, w);
+	
+				if ((!_frameBufferExists) || (buf == _framebuffer.pixels)) {
+					dmaCopyHalfWords(2, src, dest2, w);
+				}
+	
+				while (dmaBusy(2) || dmaBusy(3));
+						
+				src += pitch >> 1;
+			}
 		}
 	}
-	
 //	consolePrintf("Done\n");
 	
 			
@@ -240,6 +353,8 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 }
 
 void OSystem_DS::updateScreen() {
+
+
 
 	if ((_frameBufferExists) && (DS::getIsDisplayMode8Bit()))
 	{
@@ -253,6 +368,12 @@ void OSystem_DS::updateScreen() {
 	DS::doSoundCallback();
 //	DS::doTimerCallback();
 	DS::addEventsToQueue();
+
+	// Force back buffer usage for Nippon Safes, as it doesn't double buffer it's output
+	if (DS::getControlType() == DS::CONT_NIPPON) {
+		OSystem_DS::instance()->lockScreen();
+		OSystem_DS::instance()->unlockScreen();
+	}
 }
 
 void OSystem_DS::setShakePos(int shakeOffset) {
@@ -559,6 +680,7 @@ Graphics::Surface* OSystem_DS::createTempFrameBuffer() {
 
 
 Graphics::Surface *OSystem_DS::lockScreen() {
+	
 	if (!_frameBufferExists) {
 		createTempFrameBuffer();
 	}
