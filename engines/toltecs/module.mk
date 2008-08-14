@@ -3,7 +3,6 @@ MODULE := engines/toltecs
 MODULE_OBJS = \
 	animation.o \
 	detection.o \
-	input.o \
 	palette.o \
 	toltecs.o \
 	resource.o \
