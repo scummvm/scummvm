@@ -28,29 +28,18 @@
 
 namespace Common {
 
-Action::Action(int32 i, String des, 
-			   ActionCategory cat, ActionType typ, 
-			   int pri, int grp, int flg) {
-	id = i;
-	description = des;
-	category = cat;
-	type = typ;
-	priority = pri;
-	group = grp;
-	flags = flg;
-	_hwKey = 0;
-	_parent = 0;
-}
-
-void Action::setParent(Keymap *parent) {
-	_parent = parent;
+Action::Action(Keymap *boss, int32 i,	String des, ActionCategory cat, 
+			   ActionType typ, int pri, int grp, int flg)
+	: _boss(boss), id(i), description(des), category(cat), type(typ), 
+	priority(pri), group(grp), flags(flg), _hwKey(0) {
+	assert(_boss);
+	_boss->addAction(this);
 }
 
 void Action::mapKey(const HardwareKey *key) {
-	assert(_parent);
-	if (_hwKey) _parent->unregisterMapping(this);
+	if (_hwKey) _boss->unregisterMapping(this);
 	_hwKey = key;
-	if (_hwKey) _parent->registerMapping(this, _hwKey);
+	if (_hwKey) _boss->registerMapping(this, _hwKey);
 }
 
 const HardwareKey *Action::getMappedKey() const {

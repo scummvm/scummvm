@@ -57,13 +57,6 @@ public:
 
 public:
 	/**
-	 * Adds a new Action to this Map, 
-	 * adding it at the back of the internal array
-	 * @param action the Action to add
-	 */
-	void addAction(Action *action);
-
-	/**
 	 * Retrieves the Action with the given id
 	 * @param id id of Action to retrieve
 	 * @return Pointer to the Action or 0 if not found
@@ -108,6 +101,14 @@ public:
 
 private:
 	friend struct Action;
+
+	/**
+	 * Adds a new Action to this Map, 
+	 * adding it at the back of the internal array
+	 * @param action the Action to add
+	 */
+	void addAction(Action *action);
+
 	/**
 	* Registers a HardwareKey to the given Action
 	* @param action Action in this Keymap

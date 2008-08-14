@@ -85,18 +85,16 @@ struct Action {
 private:
 	/** Hardware key that is mapped to this Action */
 	const HardwareKey *_hwKey;
-	Keymap *_parent;
+	Keymap *_boss;
 
 public:
-	Action(	int32 id,
-			String des = "", 
-			ActionCategory cat = kGenericActionCategory,
-			ActionType typ = kGenericActionType,
-			int pri = 0, int grp = 0, int flg = 0 );
+	Action(Keymap *boss, int32 id,	String des = "", 
+		   ActionCategory cat = kGenericActionCategory,
+		   ActionType typ = kGenericActionType,
+		   int pri = 0, int grp = 0, int flg = 0 );
 
 	void addEvent(const Event &evt) { events.push_back(evt); }
-	void setParent(Keymap *parent);
-	Keymap *getParent() { return _parent; }
+	Keymap *getBoss() { return _boss; }
 	void mapKey(const HardwareKey *key);
 	const HardwareKey *getMappedKey() const;
 

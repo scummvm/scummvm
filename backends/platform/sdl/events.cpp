@@ -542,33 +542,26 @@ void OSystem_SDL::setupKeymapper() {
 		evt.kbd = KeyState(kc, asc, flags); \
 		act->events.push_back(evt);
 
-	act = new Action('MENU', "Menu", kGenericActionCategory, kMenuAction);
+	act = new Action(global, 'MENU', "Menu", kGenericActionCategory, kMenuAction);
 	ADD_KEYDOWN_EVENT(KEYCODE_F5, ASCII_F5, 0)
-	global->addAction(act);
 	
-	act = new Action('SKCT', "Skip");
+	act = new Action(global, 'SKCT', "Skip");
 	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
-	global->addAction(act);
 
-	act = new Action('PAUS', "Pause");
+	act = new Action(global, 'PAUS', "Pause");
 	ADD_KEYDOWN_EVENT(KEYCODE_SPACE, ' ', 0)
-	global->addAction(act);
 	
-	act = new Action('SKLI', "Skip line");
+	act = new Action(global, 'SKLI', "Skip line");
 	ADD_KEYDOWN_EVENT(Common::KEYCODE_PERIOD, '.', 0);
-	global->addAction(act);
 
-	act = new Action('JUMP', "Jump");
+	act = new Action(specific, 'JUMP', "Jump");
 	ADD_KEYDOWN_EVENT(KEYCODE_j, 'j', 0);
-	specific->addAction(act);
 	
-	act = new Action('DUCK', "Duck");
+	act = new Action(specific, 'DUCK', "Duck");
 	ADD_KEYDOWN_EVENT(KEYCODE_d, 'd', 0);
-	specific->addAction(act);
 
-	act = new Action('RUN_', "Run");
+	act = new Action(specific, 'RUN_', "Run");
 	ADD_KEYDOWN_EVENT(KEYCODE_r, 'r', 0);
-	specific->addAction(act);
 
 	#undef ADD_KEYDOWN_EVENT
 
