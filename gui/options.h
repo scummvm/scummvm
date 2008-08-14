@@ -26,6 +26,7 @@
 #define OPTIONS_DIALOG_H
 
 #include "gui/dialog.h"
+#include "gui/TabWidget.h"
 #include "common/str.h"
 
 #ifdef SMALL_SCREEN_DEVICE
@@ -80,6 +81,9 @@ protected:
 	void setMIDISettingsState(bool enabled);
 	void setVolumeSettingsState(bool enabled);
 	void setSubtitleSettingsState(bool enabled);
+	
+	TabWidget *_tabWidget;
+	int _graphicsTabId;
 
 private:
 	//

@@ -195,7 +195,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 3) The graphics tab
 	//
-	tab->addTab("Graphics");
+	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
 
 	_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", "Override global graphic settings", kCmdGlobalGraphicsOverride, 0);
 
@@ -257,6 +257,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	
 	// Activate the first tab
 	tab->setActiveTab(0);
+	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
 	new ButtonWidget(this, "GameOptions.Cancel", "Cancel", kCloseCmd, 0);

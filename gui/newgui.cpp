@@ -94,7 +94,7 @@ NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
 	if (themefile.compareToIgnoreCase("default") == 0)
 		themefile = "builtin";
 		
-	if (!themefile.hasSuffix(".zip"))
+	if (themefile != "builtin" && !themefile.hasSuffix(".zip"))
 		themefile += ".zip";
 
 	loadNewTheme(themefile);

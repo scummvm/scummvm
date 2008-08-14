@@ -73,12 +73,12 @@ static const int outputRateValues[] = { 0, 22050, 8000, 11025, 44100, 48000, -1 
 
 
 OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
-	: Dialog(x, y, w, h), _domain(domain) {
+	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _tabWidget(0) {
 	init();
 }
 
 OptionsDialog::OptionsDialog(const String &domain, const String &name)
-	: Dialog(name), _domain(domain) {
+	: Dialog(name), _domain(domain), _graphicsTabId(-1), _tabWidget(0) {
 	init();
 }
 
@@ -644,6 +644,9 @@ void OptionsDialog::reflowLayout() {
 	Dialog::reflowLayout();
 
 	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
+	
+	if (_graphicsTabId != -1 && _tabWidget)
+		_tabWidget->setTabTitle(_graphicsTabId, g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
 
 	if (_midiPopUp)
 		_midiPopUp->changeLabelWidth(labelWidth);
@@ -667,7 +670,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	// 1) The graphics tab
 	//
-	tab->addTab(g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
+	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
 	addGraphicControls(tab, "GlobalOptions_Graphics.");
 
 	//
@@ -735,6 +738,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	// Activate the first tab
 	tab->setActiveTab(0);
+	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
 	new ButtonWidget(this, "GlobalOptions.Cancel", "Cancel", kCloseCmd, 0);
