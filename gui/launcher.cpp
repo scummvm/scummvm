@@ -64,6 +64,7 @@ enum {
 	kLoadGameCmd = 'LOAD',
 	kQuitCmd = 'QUIT',
 	kChooseCmd = 'CHOS',
+	kDelCmd = 'DEL',
 
 
 	kCmdGlobalGraphicsOverride = 'OGFX',
@@ -474,9 +475,10 @@ class SaveLoadChooser : public GUI::Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 protected:
-	bool _saveMode;
+	bool			_delSave;
 	GUI::ListWidget		*_list;
 	GUI::ButtonWidget	*_chooseButton;
+	GUI::ButtonWidget	*_deleteButton;
 	GUI::GraphicsWidget	*_gfxWidget;
 	GUI::ContainerWidget	*_container;
 
@@ -484,7 +486,7 @@ protected:
 
 	void updateInfos(bool redraw);
 public:
-	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode);
+	SaveLoadChooser(const String &title, const String &buttonLabel);
 	~SaveLoadChooser();
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
@@ -493,10 +495,12 @@ public:
 	int runModal();
 
 	virtual void reflowLayout();
+
+	bool delSave() { return _delSave; };
 };
 
-SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
-	: Dialog("scummsaveload"), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0)  {
+SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
+	: Dialog("scummsaveload"), _delSave(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
 
 	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
 
@@ -504,8 +508,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 
 	// Add choice list
 	_list = new GUI::ListWidget(this, "scummsaveload_list");
-	_list->setEditable(saveMode);
-	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
+	_list->setNumberingMode(GUI::kListNumberingZero);
 
 	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
 	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
@@ -516,6 +519,9 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	new GUI::ButtonWidget(this, "scummsaveload_cancel", "Cancel", kCloseCmd, 0);
 	_chooseButton = new GUI::ButtonWidget(this, "scummsaveload_choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
+
+	_deleteButton = new GUI::ButtonWidget(this, "scummsaveload_delete", "Delete", kDelCmd, 0);
+	_deleteButton->setEnabled(false);
 }
 
 SaveLoadChooser::~SaveLoadChooser() {
@@ -532,6 +538,7 @@ void SaveLoadChooser::setList(const StringList& list) {
 int SaveLoadChooser::runModal() {
 	if (_gfxWidget)
 		_gfxWidget->setGfx(0);
+	_delSave = false;
 	int ret = Dialog::runModal();
 	return ret;
 }
@@ -542,7 +549,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 	case GUI::kListItemActivatedCmd:
 	case GUI::kListItemDoubleClickedCmd:
 		if (selItem >= 0) {
-			if (_saveMode || !getResultString().empty()) {
+			if (!getResultString().empty()) {
 				_list->endEditMode();
 				setResult(selItem);
 				close();
@@ -559,15 +566,23 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 			updateInfos(true);
 		}
 
-		if (_saveMode) {
-			_list->startEditMode();
-		}
-		// Disable button if nothing is selected, or (in load mode) if an empty
-		// list item is selected. We allow choosing an empty item in save mode
-		// because we then just assign a default name.
-		_chooseButton->setEnabled(selItem >= 0 && (_saveMode || !getResultString().empty()));
+		// Disable these buttons if nothing is selected, or if an empty
+		// list item is selected.
+		_chooseButton->setEnabled(selItem >= 0 && (!getResultString().empty()));
 		_chooseButton->draw();
+		_deleteButton->setEnabled(selItem >= 0 && (!getResultString().empty()));
+		_deleteButton->draw();
 	} break;
+	case kDelCmd:
+		setResult(selItem);
+		_delSave = true;		
+
+		// Disable these buttons again after deleteing a selection
+		_chooseButton->setEnabled(false);
+		_deleteButton->setEnabled(false);
+		
+		close();
+		break;
 	case kCloseCmd:
 		setResult(-1);
 	default:
@@ -586,6 +601,7 @@ void SaveLoadChooser::updateInfos(bool redraw) {
 	if (redraw)
 		_gfxWidget->draw();
 }
+
 
 #pragma mark -
 
@@ -650,8 +666,8 @@ LauncherDialog::LauncherDialog()
 	// Create file browser dialog
 	_browser = new BrowserDialog("Select directory with game data", true);
 
-	// Create SaveLoad dialog
-	_loadDialog = new SaveLoadChooser("Load game:", "Load", false);
+	// Create Load dialog
+	_loadDialog = new SaveLoadChooser("Load game:", "Load");
 }
 
 void LauncherDialog::selectGame(const String &name) {
@@ -926,15 +942,26 @@ void LauncherDialog::loadGame(int item) {
 
 	const EnginePlugin *plugin = 0;
 	GameDescriptor game = EngineMan.findGame(gameId, &plugin);
-	
+
+	int idx;
 	if (plugin) {
-		_loadDialog->setList(generateSavegameList(item, plugin));
-		int idx = _loadDialog->runModal();
-		if (idx >= 0) {
-			ConfMan.setInt("save_slot", idx);
-			ConfMan.setActiveDomain(_domains[item]);
-			close();
+		do {
+			_loadDialog->setList(generateSavegameList(item, plugin));
+			idx = _loadDialog->runModal();
+			if (idx >= 0) {
+				// Delete the savegame
+				if (_loadDialog->delSave()) {
+					printf("Deleting slot: %d\n", idx);
+				}
+				// Load the savegame
+				else {
+					ConfMan.setInt("save_slot", idx);
+					ConfMan.setActiveDomain(_domains[item]);
+					close();
+				}
+			}
 		}
+		while (_loadDialog->delSave());
 	} else {
 		MessageDialog dialog("ScummVM could not find any engine capable of running the selected game!", "OK");
 		dialog.runModal();
