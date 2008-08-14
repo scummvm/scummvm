@@ -29,6 +29,7 @@
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/util.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "gui/about.h"
@@ -936,6 +937,7 @@ void LauncherDialog::editGame(int item) {
 }
 
 void LauncherDialog::loadGame(int item) {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	String gameId = ConfMan.get("gameid", _domains[item]);
 	if (gameId.empty())
 		gameId = _domains[item];
@@ -943,19 +945,27 @@ void LauncherDialog::loadGame(int item) {
 	const EnginePlugin *plugin = 0;
 	GameDescriptor game = EngineMan.findGame(gameId, &plugin);
 
+	String description = _domains[item];
+	description.toLowercase();
+
 	int idx;
 	if (plugin) {
 		do {
 			_loadDialog->setList(generateSavegameList(item, plugin));
+			SaveStateList saveList = (*plugin)->listSaves(description.c_str());
 			idx = _loadDialog->runModal();
 			if (idx >= 0) {
 				// Delete the savegame
 				if (_loadDialog->delSave()) {
-					printf("Deleting slot: %d\n", idx);
+					String filename = saveList[idx].filename();
+					printf("Deleting file: %s\n", filename.c_str());
+					saveFileMan->removeSavefile(filename.c_str());
 				}
 				// Load the savegame
 				else {
-					ConfMan.setInt("save_slot", idx);
+					int slot = atoi(saveList[idx].save_slot().c_str());
+					printf("Loading slot: %d\n", slot);
+					ConfMan.setInt("save_slot", slot);
 					ConfMan.setActiveDomain(_domains[item]);
 					close();
 				}
@@ -969,10 +979,6 @@ void LauncherDialog::loadGame(int item) {
 }
 
 Common::StringList LauncherDialog::generateSavegameList(int item, const EnginePlugin *plugin) {
-	String gameId = ConfMan.get("gameid", _domains[item]);
-	if (gameId.empty())
-		gameId = _domains[item];
-
 	String description = _domains[item];
 	description.toLowercase();
 	
