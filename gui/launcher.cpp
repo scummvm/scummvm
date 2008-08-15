@@ -969,6 +969,8 @@ void LauncherDialog::loadGame(int item) {
 						String filename = saveList[idx].filename();
 						printf("Deleting file: %s\n", filename.c_str());
 						saveFileMan->removeSavefile(filename.c_str());
+						if ((saveList.size() - 1) == 0)
+							ConfMan.setInt("save_slot", -1);
 					}
 					// Load the savegame
 					else {

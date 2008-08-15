@@ -696,7 +696,7 @@ int SwordEngine::go() {
 		int saveSlot = ConfMan.getInt("save_slot");
 		// Savegames are numbered starting from 1 in the dialog window,
 		// but their filenames are numbered starting from 0.
-		if (saveSlot >= 0 && _control->savegamesExist() &&_control->restoreGameFromFile(saveSlot)) {
+		if (saveSlot >= 0 && _control->savegamesExist() && _control->restoreGameFromFile(saveSlot)) {
 			_control->doRestore();
 		} else if (_control->savegamesExist()) {
 			_systemVars.controlPanelMode = CP_NEWGAME;
