@@ -60,6 +60,7 @@ public:
 	virtual const char *getName() const;
 	virtual const char *getCopyright() const;
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const FSList &fslist) const;
@@ -74,6 +75,13 @@ const char *QueenMetaEngine::getName() const {
 
 const char *QueenMetaEngine::getCopyright() const {
 	return "Flight of the Amazon Queen (C) John Passfield and Steve Stamatiadis";
+}
+
+bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad) ||
+		(f == kSupportsDeleteSave);
 }
 
 GameList QueenMetaEngine::getSupportedGames() const {

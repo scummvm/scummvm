@@ -80,6 +80,7 @@ public:
 		return "Broken Sword Games (C) Revolution";
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const FSList &fslist) const;
@@ -87,6 +88,13 @@ public:
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 };
+
+bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad) ||
+		(f == kSupportsDeleteSave);
+}
 
 GameList Sword2MetaEngine::getSupportedGames() const {
 	const Sword2::GameSettings *g = Sword2::sword2_settings;

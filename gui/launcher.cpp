@@ -477,6 +477,7 @@ class SaveLoadChooser : public GUI::Dialog {
 	typedef Common::StringList StringList;
 protected:
 	bool			_delSave;
+	bool			_delSupport;
 	GUI::ListWidget		*_list;
 	GUI::ButtonWidget	*_chooseButton;
 	GUI::ButtonWidget	*_deleteButton;
@@ -493,7 +494,7 @@ public:
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	const String &getResultString() const;
 	void setList(const StringList& list);
-	int runModal();
+	int runModal(bool delSupport);
 
 	virtual void reflowLayout();
 
@@ -501,7 +502,7 @@ public:
 };
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
-	: Dialog("scummsaveload"), _delSave(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
+	: Dialog("scummsaveload"), _delSave(0), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
 
 	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
 
@@ -536,10 +537,11 @@ void SaveLoadChooser::setList(const StringList& list) {
 	_list->setList(list);
 }
 
-int SaveLoadChooser::runModal() {
+int SaveLoadChooser::runModal(bool delSupport) {
 	if (_gfxWidget)
 		_gfxWidget->setGfx(0);
 	_delSave = false;
+	_delSupport = delSupport;
 	int ret = Dialog::runModal();
 	return ret;
 }
@@ -571,7 +573,8 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		// list item is selected.
 		_chooseButton->setEnabled(selItem >= 0 && (!getResultString().empty()));
 		_chooseButton->draw();
-		_deleteButton->setEnabled(selItem >= 0 && (!getResultString().empty()));
+		// Delete will always be disabled if the engine doesn't support it.
+		_deleteButton->setEnabled(_delSupport && (selItem >= 0) && (!getResultString().empty()));
 		_deleteButton->draw();
 	} break;
 	case kDelCmd:
@@ -950,29 +953,37 @@ void LauncherDialog::loadGame(int item) {
 
 	int idx;
 	if (plugin) {
-		do {
-			Common::StringList saveNames = generateSavegameList(item, plugin);
-			_loadDialog->setList(saveNames);
-			SaveStateList saveList = (*plugin)->listSaves(description.c_str());
-			idx = _loadDialog->runModal();
-			if (idx >= 0) {
-				// Delete the savegame
-				if (_loadDialog->delSave()) {
-					String filename = saveList[idx].filename();
-					printf("Deleting file: %s\n", filename.c_str());
-					//saveFileMan->removeSavefile(filename.c_str());
-				}
-				// Load the savegame
-				else {
-					int slot = atoi(saveList[idx].save_slot().c_str());
-					printf("Loading slot: %d\n", slot);
-					ConfMan.setInt("save_slot", slot);
-					ConfMan.setActiveDomain(_domains[item]);
-					close();
+		bool delSupport = (*plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
+
+		if ((*plugin)->hasFeature(MetaEngine::kSupportsListSaves)) {
+			do {
+				Common::StringList saveNames = generateSavegameList(item, plugin);
+				_loadDialog->setList(saveNames);
+				SaveStateList saveList = (*plugin)->listSaves(description.c_str());
+				idx = _loadDialog->runModal(delSupport);
+				if (idx >= 0) {
+					// Delete the savegame
+					if (_loadDialog->delSave()) {
+						String filename = saveList[idx].filename();
+						printf("Deleting file: %s\n", filename.c_str());
+						//saveFileMan->removeSavefile(filename.c_str());
+					}
+					// Load the savegame
+					else {
+						int slot = atoi(saveList[idx].save_slot().c_str());
+						printf("Loading slot: %d\n", slot);
+						ConfMan.setInt("save_slot", slot);
+						ConfMan.setActiveDomain(_domains[item]);
+						close();
+					}
 				}
 			}
+			while (_loadDialog->delSave());
+		} else {
+			MessageDialog dialog
+				("Sorry, this game does not yet support loading games from the launcher.", "OK");
+			dialog.runModal();
 		}
-		while (_loadDialog->delSave());
 	} else {
 		MessageDialog dialog("ScummVM could not find any engine capable of running the selected game!", "OK");
 		dialog.runModal();

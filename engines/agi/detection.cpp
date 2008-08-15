@@ -2122,10 +2122,20 @@ public:
 		return "Sierra AGI Engine (C) Sierra On-Line Software";
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	
 	const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const;
 };
+
+bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad) ||
+		(f == kSupportsDeleteSave);
+}
+
 
 bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const Agi::AGIGameDescription *gd = (const Agi::AGIGameDescription *)desc;

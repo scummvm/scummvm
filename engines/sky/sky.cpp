@@ -110,9 +110,10 @@ public:
 	virtual const char *getName() const;
 	virtual const char *getCopyright() const;
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const FSList &fslist) const;
+	virtual GameList detectGames(const FSList &fslist) const;	
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 
@@ -125,6 +126,12 @@ const char *SkyMetaEngine::getName() const {
 
 const char *SkyMetaEngine::getCopyright() const {
 	return "Beneath a Steel Sky (C) Revolution";
+}
+
+bool SkyMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad);
 }
 
 GameList SkyMetaEngine::getSupportedGames() const {

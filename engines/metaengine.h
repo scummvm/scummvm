@@ -126,7 +126,7 @@ public:
 	/**
 	 * Determine whether the engine supports the specified feature
 	 */	
-	virtual bool hasFeature(MetaEngineFeature f) { return false; };
+	virtual bool hasFeature(MetaEngineFeature f) const { return false; };
 
 	//@}
 };
