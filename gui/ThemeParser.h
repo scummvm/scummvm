@@ -197,7 +197,6 @@ protected:
 				XML_KEY(layout)
 					XML_PROP(type, true)
 					XML_PROP(center, false)
-					XML_PROP(direction, false)
 					XML_PROP(padding, false)
 					XML_PROP(spacing, false)
 					

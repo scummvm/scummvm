@@ -65,9 +65,6 @@ void ThemeLayoutMain::reflowLayout() {
 		_children[0]->setHeight(_h);
 		_children[0]->reflowLayout();
 		
-//		_children[0]->setX(_x);
-//		_children[0]->setY(_y);
-		
 		if (_w == -1)
 			_w = _children[0]->getWidth();
 			
@@ -109,32 +106,22 @@ void ThemeLayoutVertical::reflowLayout() {
 			
 		_children[i]->setY(curY);
 		
-		if (_centered && _children[i]->getWidth() < _w)
+		if (_centered && _children[i]->getWidth() < _w && _w != -1)
 			_children[i]->setX((_w >> 1) - (_children[i]->getWidth() >> 1));
 		else
 			_children[i]->setX(curX);
 
-		if (_reverse) {
-			for (int j = i - 1; j >= 0; --j)
-				_children[j]->setY(_children[i]->getHeight() + _spacing);
-		} else {
-			curY += _children[i]->getHeight() + _spacing;
-		}
-		
+		curY += _children[i]->getHeight() + _spacing;	
 		_w = MAX(_w, (int16)(_children[i]->getWidth() + _paddingLeft + _paddingRight));
 		
 		if (autoWidget != -1 && autoWidget != (int)i) {
 			_children[autoWidget]->setHeight(_children[autoWidget]->getHeight() - (_children[i]->getHeight() + _spacing));
 			
-			if (_reverse) for (int j = autoWidget - 1; j >= 0; --j)
+			extraHeight -= (_children[i]->getHeight() + _spacing);
+			_children[i]->setY(extraHeight);
+			
+			for (int j = i - 1; j > autoWidget; --j)
 				_children[j]->setY(-(_children[i]->getHeight() + _spacing));
-			else {
-				extraHeight -= (_children[i]->getHeight() + _spacing);
-				_children[i]->setY(extraHeight);
-				
-				for (int j = i - 1; j > autoWidget; --j)
-					_children[j]->setY(-(_children[i]->getHeight() + _spacing));
-			}
 		} else {
 			_h += _children[i]->getHeight() + _spacing;
 		}
@@ -170,30 +157,21 @@ void ThemeLayoutHorizontal::reflowLayout() {
 			
 		_children[i]->setX(curX);
 		
-		if (_centered && _children[i]->getHeight() < _h)
+		if (_centered && _children[i]->getHeight() < _h && _h != -1)
 			_children[i]->setY((_h >> 1) - (_children[i]->getHeight() >> 1));
 		else
 			_children[i]->setY(curY);
 			
-		if (_reverse) {
-			for (int j = i - 1; j >= 0; --j)
-				_children[j]->setX(_children[i]->getWidth() + _spacing);
-		} else {
-			curX += (_children[i]->getWidth() + _spacing);
-		}
+		curX += (_children[i]->getWidth() + _spacing);
 
 		if (autoWidget != -1 && autoWidget != (int)i) {
 			_children[autoWidget]->setWidth(_children[autoWidget]->getWidth() - (_children[i]->getWidth() + _spacing));
 			
-			if (_reverse) for (int j = autoWidget - 1; j >= 0; --j)
+			autoWidth -= (_children[i]->getWidth() + _spacing);
+			_children[i]->setX(autoWidth);
+		
+			for (int j = i - 1; j > autoWidget; --j)
 				_children[j]->setX(-(_children[i]->getWidth() + _spacing));
-			else {
-				autoWidth -= (_children[i]->getWidth() + _spacing);
-				_children[i]->setX(autoWidth);
-				
-				for (int j = i - 1; j > autoWidget; --j)
-					_children[j]->setX(-(_children[i]->getWidth() + _spacing));
-			}
 		} else {
 			_w += _children[i]->getWidth() + _spacing;
 		}
@@ -279,16 +257,16 @@ void ThemeEval::addDialog(const Common::String &name, const Common::String &over
 	setVar(name + ".Enabled", enabled ? 1 : 0);
 }
 
-void ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, bool reverse, bool center) {
+void ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, bool center) {
 	ThemeLayout *layout = 0;
 	
 	if (spacing == -1)
 		spacing = getVar("Globals.Layout.Spacing", 4);
 	
 	if (type == ThemeLayout::kLayoutVertical)
-		layout = new ThemeLayoutVertical(_curLayout.top(), spacing, reverse, center);
+		layout = new ThemeLayoutVertical(_curLayout.top(), spacing, center);
 	else if (type == ThemeLayout::kLayoutHorizontal)
-		layout = new ThemeLayoutHorizontal(_curLayout.top(), spacing, reverse, center);
+		layout = new ThemeLayoutHorizontal(_curLayout.top(), spacing, center);
 	
 	layout->setPadding(
 		getVar("Globals.Padding.Left", 0),

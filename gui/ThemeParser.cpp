@@ -600,14 +600,10 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 	}
 	
 	if (node->values["type"] == "vertical")
-		_theme->themeEval()->addLayout(GUI::ThemeLayout::kLayoutVertical, spacing,
-		node->values["direction"] == "bottom2top",
-		node->values["center"] == "true");
+		_theme->themeEval()->addLayout(GUI::ThemeLayout::kLayoutVertical, spacing, node->values["center"] == "true");
 		
 	else if (node->values["type"] == "horizontal")
-		_theme->themeEval()->addLayout(GUI::ThemeLayout::kLayoutHorizontal, spacing,
-		node->values["direction"] == "right2left", 
-		node->values["center"] == "true");
+		_theme->themeEval()->addLayout(GUI::ThemeLayout::kLayoutHorizontal, spacing, node->values["center"] == "true");
 		
 	if (node->values.contains("padding")) {
 		int paddingL, paddingR, paddingT, paddingB;

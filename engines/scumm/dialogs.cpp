@@ -645,6 +645,7 @@ HelpDialog::HelpDialog(const GameSettings &game)
 	_title = new StaticTextWidget(this, "ScummHelp.Title", "");
 
 	_page = 1;
+	_backgroundType = GUI::Theme::kDialogBackgroundDefault;
 
 	_numPages = ScummHelp::numPages(_game.id);
 
@@ -655,8 +656,8 @@ HelpDialog::HelpDialog(const GameSettings &game)
 
 	// Dummy entries
 	for (int i = 0; i < HELP_NUM_LINES; i++) {
-		_key[i] = new StaticTextWidget(this, 0, 0, 10, 10, "", kTextAlignLeft);
-		_dsc[i] = new StaticTextWidget(this, 0, 0, 10, 10, "", kTextAlignLeft);
+		_key[i] = new StaticTextWidget(this, 0, 0, 10, 10, "", Graphics::kTextAlignRight);
+		_dsc[i] = new StaticTextWidget(this, 0, 0, 10, 10, "", Graphics::kTextAlignLeft);
 	}
 
 }
@@ -671,12 +672,14 @@ void HelpDialog::reflowLayout() {
 	g_gui.xmlEval()->getWidgetData("ScummHelp.HelpText", x, y, w, h);
 	
 	int keyW = w * 20 / 100;
-	int dscX = x + keyW;
+	int dscX = x + keyW + 32;
 	int dscW = w * 80 / 100;
+	
+	int xoff = (_w >> 1) - (w >> 1);
 
 	for (int i = 0; i < HELP_NUM_LINES; i++) {
-		_key[i]->resize(x, y + lineHeight * i, keyW, lineHeight + 2);
-		_dsc[i]->resize(dscX, y + lineHeight * i, dscW, lineHeight + 2);
+		_key[i]->resize(xoff + x, y + lineHeight * i, keyW, lineHeight + 2);
+		_dsc[i]->resize(xoff + dscX, y + lineHeight * i, dscW, lineHeight + 2);
 	}
 
 	displayKeyBindings();

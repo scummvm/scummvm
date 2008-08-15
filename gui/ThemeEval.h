@@ -50,7 +50,7 @@ public:
 	};
 	
 	ThemeLayout(ThemeLayout *p, const Common::String &name) : 
-		_parent(p), _name(name), _x(0), _y(0), _w(-1), _h(-1), _reverse(false),
+		_parent(p), _name(name), _x(0), _y(0), _w(-1), _h(-1),
 		_paddingLeft(0), _paddingRight(0), _paddingTop(0), _paddingBottom(0), 
 		_centered(false), _defaultW(-1), _defaultH(-1) { }
 		
@@ -185,7 +185,6 @@ protected:
 	int8 _spacing;
 	Common::Array<ThemeLayout*> _children;
 	ThemeLayout *_parent;
-	bool _reverse;
 	bool _centered;
 	Common::String _name;
 };
@@ -218,10 +217,9 @@ protected:
 
 class ThemeLayoutVertical : public ThemeLayout {
 public:
-	ThemeLayoutVertical(ThemeLayout *p, int spacing, bool reverse, bool center) :
+	ThemeLayoutVertical(ThemeLayout *p, int spacing, bool center) :
 	 	ThemeLayout(p, "") {
 		_spacing = spacing;
-		_reverse = reverse;
 		_centered = center;
 	}
 		
@@ -242,10 +240,9 @@ public:
 
 class ThemeLayoutHorizontal : public ThemeLayout {
 public:
-	ThemeLayoutHorizontal(ThemeLayout *p, int spacing, bool reverse, bool center) : 
+	ThemeLayoutHorizontal(ThemeLayout *p, int spacing, bool center) : 
 		ThemeLayout(p, "") {
 		_spacing = spacing;
-		_reverse = reverse;
 		_centered = center;
 	}
 		
@@ -337,7 +334,7 @@ public:
 	bool hasVar(const Common::String &name) { return _vars.contains(name) || _builtin.contains(name); }
 	
 	void addDialog(const Common::String &name, const Common::String &overlays, bool enabled = true, int inset = 0);
-	void addLayout(ThemeLayout::LayoutType type, int spacing, bool reverse, bool center = false);
+	void addLayout(ThemeLayout::LayoutType type, int spacing, bool center = false);
 	void addWidget(const Common::String &name, int w, int h, const Common::String &type, bool enabled = true);
 	bool addImportedLayout(const Common::String &name);
 	void addSpace(int size);
