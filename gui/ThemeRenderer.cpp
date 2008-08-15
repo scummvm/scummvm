@@ -208,8 +208,11 @@ void ThemeRenderer::refresh() {
 	init();
 	if (_enabled) {
 		_system->showOverlay();
-		CursorMan.replaceCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
-		CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
+		
+		if (_useCursor) {
+			CursorMan.replaceCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
+			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
+		}
 	}
 }
 
@@ -374,7 +377,7 @@ bool ThemeRenderer::loadTheme(Common::String fileName) {
 			error("Could not load default embeded theme");
 	}
 	else if (!loadThemeXML(fileName)) {
-		warning("Could not parse custom theme '%s'.\nFalling back to default theme", fileName.c_str());
+		warning("Could not parse custom theme '%s'. Falling back to default theme", fileName.c_str());
 		
 		if (!loadDefaultXML()) // if we can't load the embeded theme, this is a complete failure
 			error("Could not load default embeded theme");
