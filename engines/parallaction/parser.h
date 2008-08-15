@@ -131,9 +131,6 @@ protected:
 		// BRA specific
 		int numZones;
 		BackgroundInfo	*info;
-		char *bgName;
-		char *maskName;
-		char *pathName;
 		char *characterName;
 	} ctxt;
 
@@ -306,6 +303,7 @@ protected:
 
 	virtual void	parseZoneTypeBlock(ZonePtr z);
 	void			parsePathData(ZonePtr z);
+	void 			parseGetData(ZonePtr z);
 
 public:
 	LocationParser_br(Parallaction_br *vm) : LocationParser_ns((Parallaction_ns*)vm), _vm(vm) {

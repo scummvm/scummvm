@@ -198,11 +198,14 @@ struct GetData {	// size = 24
 	byte		   *_backup;
 	uint16			field_14;		// unused
 	uint16			field_16;		// unused
+	MaskBuffer		_mask[2];
+	bool			hasMask;
 
 	GetData() {
 		_icon = 0;
 		_backup = NULL;
 		gfxobj = NULL;
+		hasMask = false;
 	}
 };
 struct SpeakData {	// size = 36

@@ -261,8 +261,13 @@ void Parallaction::showZone(ZonePtr z, bool visible) {
 
 	if ((z->_type & 0xFFFF) == kZoneGet) {
 		_gfx->showGfxObj(z->u.get->gfxobj, visible);
-	}
 
+		GetData *data = z->u.get;
+		if (data->hasMask && _gfx->_backgroundInfo->hasMask) {
+			int frame = visible ? 0 : 1;
+			_gfx->_backgroundInfo->mask.blt(data->gfxobj->x, data->gfxobj->y, data->_mask[frame], 0, 0, data->_mask->w, data->_mask->h);
+		}
+	}
 }
 
 DECLARE_COMMAND_OPCODE(on) {

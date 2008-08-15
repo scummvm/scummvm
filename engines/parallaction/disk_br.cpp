@@ -357,6 +357,29 @@ void DosDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
 	return;
 }
 
+void DosDisk_br::loadMask(const char *name, MaskBuffer &buffer) {
+	if (!name) {
+		return;
+	}
+
+	Common::String filepath;
+	FilesystemNode node;
+	Common::File stream;
+
+	filepath = Common::String(name) + ".msk";
+	node = _mskDir.getChild(filepath);
+	if (!node.exists()) {
+		errorFileNotFound(_mskDir, filepath);
+	}
+	stream.open(node);
+
+	// NOTE: info.width and info.height are only valid if the background graphics
+	// have already been loaded
+	buffer.bigEndian = false;
+	stream.read(buffer.data, buffer.size);
+	stream.close();
+}
+
 void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char *mask, const char* path) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadScenery");
 

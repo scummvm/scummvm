@@ -316,7 +316,6 @@ DECLARE_LOCATION_PARSER(location)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(location) ");
 
 	strcpy(_vm->_location._name, _tokens[1]);
-	ctxt.bgName = strdup(_tokens[1]);
 
 	bool flip = false;
 	int nextToken;
@@ -340,6 +339,8 @@ DECLARE_LOCATION_PARSER(location)  {
 	if (_tokens[nextToken][0] != '\0') {
 		_vm->_char._ani->setF(atoi(_tokens[nextToken]));
 	}
+
+	_vm->_disk->loadScenery(*ctxt.info, _tokens[1], 0, 0);
 }
 
 
@@ -465,18 +466,20 @@ DECLARE_LOCATION_PARSER(null)  {
 DECLARE_LOCATION_PARSER(mask)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(mask) ");
 
-	ctxt.maskName = strdup(_tokens[1]);
 	ctxt.info->layers[0] = 0;
 	ctxt.info->layers[1] = atoi(_tokens[2]);
 	ctxt.info->layers[2] = atoi(_tokens[3]);
 	ctxt.info->layers[3] = atoi(_tokens[4]);
+
+	_vm->_disk->loadScenery(*ctxt.info, 0, _tokens[1], 0);
+	ctxt.info->hasMask = true;
 }
 
 
 DECLARE_LOCATION_PARSER(path)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(path) ");
 
-	ctxt.pathName = strdup(_tokens[1]);
+	_vm->_disk->loadScenery(*ctxt.info, 0, 0, _tokens[1]);
 }
 
 
@@ -766,6 +769,54 @@ void LocationParser_br::parsePathData(ZonePtr z) {
 	} while (scumm_stricmp("endzone", _tokens[0]));
 
 	z->u.path = data;
+}
+
+void LocationParser_br::parseGetData(ZonePtr z) {
+
+	GetData *data = new GetData;
+
+	do {
+
+		if (!scumm_stricmp(_tokens[0], "file")) {
+
+			GfxObj *obj = _vm->_gfx->loadGet(_tokens[1]);
+			obj->frame = 0;
+			obj->x = z->getX();
+			obj->y = z->getY();
+			data->gfxobj = obj;
+		}
+
+		if (!scumm_stricmp(_tokens[0], "mask")) {
+			if (ctxt.info->hasMask) {
+				Common::Rect rect;
+				data->gfxobj->getRect(0, rect);
+				data->_mask[0].create(rect.width(), rect.height());
+				_vm->_disk->loadMask(_tokens[1], data->_mask[0]);
+				data->_mask[1].create(rect.width(), rect.height());
+				data->_mask[1].blt(0, 0, ctxt.info->mask, data->gfxobj->x, data->gfxobj->y, data->_mask->w, data->_mask->h);
+				data->hasMask = true;
+			} else {
+				warning("Mask for zone '%s' ignored, since background doesn't have one", z->_name);
+			}
+		}
+
+		if (!scumm_stricmp(_tokens[0], "path")) {
+
+		}
+
+		if (!scumm_stricmp(_tokens[0], "icon")) {
+			data->_icon = 4 + _vm->_objectsNames->lookup(_tokens[1]);
+		}
+
+		_script->readLineToken(true);
+	} while (scumm_stricmp(_tokens[0], "endzone"));
+
+	z->u.get = data;
+
+	// FIXME: right now showZone doesn't work properly when called during location
+	// parsing. In fact, the main backgroundInfo is not properly set yet.
+	bool visible = (z->_flags & kFlagsRemove) == 0;
+	_vm->showZone(z, visible);
 }
 
 void LocationParser_br::parseZoneTypeBlock(ZonePtr z) {
@@ -1192,15 +1243,11 @@ void LocationParser_br::parse(Script *script) {
 	Script *script2 = new Script(getStream(list), true);
 
 	ctxt.numZones = 0;
-	ctxt.bgName = 0;
-	ctxt.maskName = 0;
-	ctxt.pathName = 0;
 	ctxt.characterName = 0;
 	ctxt.info = new BackgroundInfo;
 
 	LocationParser_ns::parse(script2);
 
-	_vm->_disk->loadScenery(*ctxt.info, ctxt.bgName, ctxt.maskName, ctxt.pathName);
 	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.info);
 	_vm->_pathBuffer = &ctxt.info->path;
 
@@ -1209,9 +1256,6 @@ void LocationParser_br::parse(Script *script) {
 		_vm->changeCharacter(ctxt.characterName);
 	}
 
-	free(ctxt.bgName);
-	free(ctxt.maskName);
-	free(ctxt.pathName);
 	free(ctxt.characterName);
 
 	delete script2;
