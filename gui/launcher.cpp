@@ -951,7 +951,8 @@ void LauncherDialog::loadGame(int item) {
 	int idx;
 	if (plugin) {
 		do {
-			_loadDialog->setList(generateSavegameList(item, plugin));
+			Common::StringList saveNames = generateSavegameList(item, plugin);
+			_loadDialog->setList(saveNames);
 			SaveStateList saveList = (*plugin)->listSaves(description.c_str());
 			idx = _loadDialog->runModal();
 			if (idx >= 0) {
@@ -959,7 +960,7 @@ void LauncherDialog::loadGame(int item) {
 				if (_loadDialog->delSave()) {
 					String filename = saveList[idx].filename();
 					printf("Deleting file: %s\n", filename.c_str());
-					saveFileMan->removeSavefile(filename.c_str());
+					//saveFileMan->removeSavefile(filename.c_str());
 				}
 				// Load the savegame
 				else {

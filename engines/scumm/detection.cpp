@@ -677,6 +677,7 @@ public:
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const FSList &fslist) const;
+	virtual bool hasFeature(MetaEngineFeature f);
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 
@@ -691,6 +692,12 @@ GameDescriptor ScummMetaEngine::findGame(const char *gameid) const {
 	return Common::AdvancedDetector::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
 }
 
+bool ScummMetaEngine::hasFeature(MetaEngineFeature f) {
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad) ||
+		(f == kSupportsDeleteSave);
+}
 
 GameList ScummMetaEngine::detectGames(const FSList &fslist) const {
 	GameList detectedGames;
