@@ -36,7 +36,7 @@ VirtualKeyboard::VirtualKeyboard() : _currentMode(0) {
 
 	_parser = new VirtualKeyboardParser(this);
 	_kbdGUI = new VirtualKeyboardGUI(this);
-	_loaded = false;
+	_submitKeys = _loaded = false;
 }
 
 VirtualKeyboard::~VirtualKeyboard() {
@@ -139,12 +139,23 @@ void VirtualKeyboard::processAreaClick(const Common::String& area) {
 		break;
 	case kEventSwitchMode:
 		// switch to new mode
-		switchMode(*(Common::String *)evt->data);
+		switchMode((char *)evt->data);
 		_keyQueue.clearFlags();
 		break;
-	case kEventClose:
-		// close virtual keyboard
-		_kbdGUI->hide();
+	case kEventSubmit:
+		close(true);
+		break;
+	case kEventCancel:
+		close(false);
+		break;
+	case kEventDelete:
+		_keyQueue.deleteKey();
+		break;
+	case kEventMoveLeft:
+		_keyQueue.moveLeft();
+		break;
+	case kEventMoveRight:
+		_keyQueue.moveRight();
 		break;
 	}
 }
@@ -188,23 +199,28 @@ void VirtualKeyboard::show() {
 
 	_kbdGUI->run();
 
-	EventManager *eventMan = _system->getEventManager();
-	assert(eventMan);
+	if (_submitKeys) {
+		EventManager *eventMan = _system->getEventManager();
+		assert(eventMan);
 
-	// push keydown & keyup events into the event manager
-	Common::Event evt;
-	evt.synthetic = false;
-	while (!_keyQueue.empty()) {
-		evt.kbd = _keyQueue.pop();
-		evt.type = Common::EVENT_KEYDOWN;
-		eventMan->pushEvent(evt);
-		evt.type = Common::EVENT_KEYUP;
-		eventMan->pushEvent(evt);
+		// push keydown & keyup events into the event manager
+		Common::Event evt;
+		evt.synthetic = false;
+		while (!_keyQueue.empty()) {
+			evt.kbd = _keyQueue.pop();
+			evt.type = Common::EVENT_KEYDOWN;
+			eventMan->pushEvent(evt);
+			evt.type = Common::EVENT_KEYUP;
+			eventMan->pushEvent(evt);
+		}
+	} else {
+		_keyQueue.clear();
 	}
 }
 
-void VirtualKeyboard::hide() {
-	_kbdGUI->hide();
+void VirtualKeyboard::close(bool submit) {
+	_submitKeys = submit;
+	_kbdGUI->close();
 }
 
 bool VirtualKeyboard::isDisplaying() { 
@@ -230,20 +246,6 @@ void VirtualKeyboard::KeyPressQueue::clearFlags() {
 
 void VirtualKeyboard::KeyPressQueue::insertKey(KeyState key) {
 	_strChanged = true;
-	switch (key.keycode) {
-	case KEYCODE_LEFT:
-		moveLeft();
-		return;
-	case KEYCODE_RIGHT:
-		moveRight();
-		return;
-	case KEYCODE_BACKSPACE:
-		deleteKey();
-		return;
-	default:
-		;
-	}
-
 	key.flags ^= _keyFlags;
 	if ((key.keycode >= Common::KEYCODE_a) && (key.keycode <= Common::KEYCODE_z))
 		key.ascii = (key.flags & Common::KBD_SHIFT) ? key.keycode - 32 : key.keycode;

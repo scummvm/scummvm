@@ -43,7 +43,7 @@ public:
 	
 	void initMode(VirtualKeyboard::Mode *mode);
 	void run();
-	void hide();
+	void close();
 	bool isDisplaying() { return _displaying; }
 	void reset();
 	void startDrag(int16 x, int16 y);

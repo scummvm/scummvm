@@ -235,17 +235,15 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 			delete evt;
 			return parserError("Key event element must contain code and ascii attributes");
 		}
-
 		evt->type = VirtualKeyboard::kEventKey;
 
-		KeyCode code = (KeyCode)atoi(evtNode->values["code"].c_str());
-		uint16 ascii = atoi(evtNode->values["ascii"].c_str());
-
-		byte flags = 0;
+		KeyState *ks = (KeyState*) malloc(sizeof(KeyState));
+		ks->keycode = (KeyCode)atoi(evtNode->values["code"].c_str());
+		ks->ascii = atoi(evtNode->values["ascii"].c_str());
+		ks->flags = 0;
 		if (evtNode->values.contains("modifiers"))
-			flags = parseFlags(evtNode->values["modifiers"]);
-
-		evt->data = new KeyState(code, ascii, flags);
+			ks->flags = parseFlags(evtNode->values["modifiers"]);
+		evt->data = ks;
 
 	} else if (type == "modifier") {
 		if (!evtNode->values.contains("modifiers")) {
@@ -254,7 +252,7 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 		}
 		
 		evt->type = VirtualKeyboard::kEventModifier;
-		byte *flags = new byte;
+		byte *flags = (byte*) malloc(sizeof(byte));
 		*(flags) = parseFlags(evtNode->values["modifiers"]);
 		evt->data = flags;
 
@@ -265,9 +263,25 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 		}
 
 		evt->type = VirtualKeyboard::kEventSwitchMode;
-		evt->data = new String(evtNode->values["mode"]);
-	} else if (type == "close") {
-		evt->type = VirtualKeyboard::kEventClose;
+		String& mode = evtNode->values["mode"];
+		char *str = (char*) malloc(sizeof(char) * mode.size() + 1);
+		memcpy(str, mode.c_str(), sizeof(char) * mode.size());
+		str[mode.size()] = 0;
+		evt->data = str;
+	} else if (type == "submit") {
+		evt->type = VirtualKeyboard::kEventSubmit;
+		evt->data = 0;
+	} else if (type == "cancel") {
+		evt->type = VirtualKeyboard::kEventCancel;
+		evt->data = 0;
+	} else if (type == "delete") {
+		evt->type = VirtualKeyboard::kEventDelete;
+		evt->data = 0;
+	} else if (type == "move_left") {
+		evt->type = VirtualKeyboard::kEventMoveLeft;
+		evt->data = 0;
+	} else if (type == "move_right") {
+		evt->type = VirtualKeyboard::kEventMoveRight;
 		evt->data = 0;
 	} else {
 		delete evt;

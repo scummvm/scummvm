@@ -47,7 +47,11 @@ protected:
 		kEventKey,
 		kEventModifier,
 		kEventSwitchMode,
-		kEventClose
+		kEventSubmit,
+		kEventCancel,
+		kEventDelete,
+		kEventMoveLeft,
+		kEventMoveRight
 	};
 
 	struct Event {
@@ -57,21 +61,7 @@ protected:
 		
 		Event() : data(0) {}
 		~Event() {
-			if (data) {
-				switch (type) {
-				case kEventKey:
-					delete (KeyState*)data;
-					break;
-				case kEventModifier:
-					delete (byte*)data;
-					break;
-				case kEventSwitchMode:
-					delete (String*)data;
-					break;
-				case kEventClose:
-					break;
-				}
-			}
+			if (data) free(data);
 		}
 	};
 	
@@ -144,34 +134,41 @@ public:
 	virtual ~VirtualKeyboard();
 	
 	/**
-	  * Loads the keyboard pack with the given name.
-	  * The system first looks for an uncompressed keyboard pack by searching 
-	  * for packName.xml in the filesystem, if this does not exist then it 
-	  * searches for a compressed keyboard pack by looking for packName.zip.
-	  * @param packName name of the keyboard pack
-	  */
+	 * Loads the keyboard pack with the given name.
+	 * The system first looks for an uncompressed keyboard pack by searching 
+	 * for packName.xml in the filesystem, if this does not exist then it 
+	 * searches for a compressed keyboard pack by looking for packName.zip.
+	 * @param packName	name of the keyboard pack
+	 */
 	bool loadKeyboardPack(Common::String packName);
 
 	/**
-	  * Shows the keyboard, starting an event loop that will intercept all
-	  * user input (like a modal GUI dialog).
-	  * It is assumed that the game has been paused, before this is called
-	  */
+	 * Shows the keyboard, starting an event loop that will intercept all
+	 * user input (like a modal GUI dialog).
+	 * It is assumed that the game has been paused, before this is called
+	 */
 	void show();
 
 	/**
-	  * Hides the keyboard, ending the event loop.
-	  */
-	void hide();
+	 * Hides the keyboard, ending the event loop.
+	 * @param submit	if true all accumulated key presses are submitted to 
+	 *					the event manager
+	 */
+	void close(bool submit);
 
 	/**
-	  * Returns true if the keyboard is currently being shown
-	  */
+	 * Hides the keyboard, submiting any key presses to the event manager
+	 */
+	void submit();
+
+	/**
+	 * Returns true if the keyboard is currently being shown
+	 */
 	bool isDisplaying();
 
 	/**
-	  * Returns true if the keyboard is loaded and ready to be shown
-	  */
+	 * Returns true if the keyboard is loaded and ready to be shown
+	 */
 	bool isLoaded() {
 		return _loaded;
 	}
@@ -208,6 +205,8 @@ protected:	// TODO : clean up all this stuff
 	VerticalAlignment    _vAlignment;
 
 	String _areaDown;
+
+	bool _submitKeys;
 
 };
 

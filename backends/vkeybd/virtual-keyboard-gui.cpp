@@ -114,7 +114,7 @@ void VirtualKeyboardGUI::run() {
 	_dispSurface.free();
 }
 
-void VirtualKeyboardGUI::hide() {
+void VirtualKeyboardGUI::close() {
 	_displaying = false;
 }
 

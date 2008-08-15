@@ -421,7 +421,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			// HACK to show/hide keyboard (keyboard is not shown if gui is active)
 			if (event.kbd.keycode == Common::KEYCODE_F6 && event.kbd.flags == 0) {
 				if (_vk->isDisplaying()) {
-					_vk->hide();
+					_vk->close(true);
 				} else {
 					bool isPaused = (g_engine) ? g_engine->isPaused() : true;
 					if (!isPaused) g_engine->pauseEngine(true);
