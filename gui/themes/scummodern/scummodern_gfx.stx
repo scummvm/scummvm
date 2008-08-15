@@ -26,22 +26,19 @@
 <render_info>
 	<palette>
 		<color name = 'darkred'
-				rgb = '168, 42, 12'
+				rgb = '169, 42, 12'
 		/>
 		<color name = 'brightred'
-				rgb = '200, 124, 104'
+				rgb = '203, 126, 107'
 		/>
 		<color name = 'xtrabrightred'
-				rgb = '251, 241, 206'
+				rgb = '255, 210, 200'
 		/>
 		<color name = 'blandyellow'
 				rgb = '247, 228, 166'
 		/>
 		<color name = 'bgreen'
-				rgb = '96, 160, 8'
-		/>
-		<color name = 'blue'
-				rgb = '0, 255, 255'
+				rgb = '100, 162, 8'
 		/>
 		<color name = 'black'
 				rgb = '0, 0, 0'
@@ -232,7 +229,7 @@
 
 	<drawdata id = 'tab_background' cache = false>
 		<drawstep	func = 'tab'
-					radius = '8'
+					radius = '6'
 					stroke = '0'
 					fill = 'foreground'
 					fg_color = '232, 180, 81'
@@ -263,6 +260,17 @@
 	</drawdata>
 
 	<drawdata id = 'slider_hover' cache = false>
+		<drawstep	func = 'roundedsq'
+					stroke = 1
+					radius = 4
+					fill = 'gradient'
+					fg_color = '123, 112, 56'
+					gradient_start = 'xtrabrightred'
+					gradient_end = 'darkred'
+		/>
+	</drawdata>
+	
+	<drawdata id = 'slider_disabled' cache = false>
 		<drawstep	func = 'roundedsq'
 					stroke = 1
 					radius = 4
@@ -334,7 +342,7 @@
 	
 	<drawdata id = 'plain_bg' cache = false>
 		<drawstep	func = 'roundedsq'
-					radius = 8
+					radius = 6
 					stroke = 0
 					gradient_start = 'blandyellow'
 					gradient_end = 'xtrabrightred'
@@ -366,7 +374,7 @@
 				horizontal_align = 'center'
 		/>
 		<drawstep	func = 'roundedsq'
-					radius = '6'
+					radius = '3'
 					stroke = 1
 					fill = 'gradient'
 					shadow = 0
@@ -383,7 +391,7 @@
 				horizontal_align = 'center'
 		/>
 		<drawstep	func = 'roundedsq'
-					radius = '6'
+					radius = '3'
 					gradient_factor = 1
 					stroke = 1 
 					fill = 'gradient'
@@ -402,11 +410,14 @@
 				horizontal_align = 'center'
 		/>
 		<drawstep	func = 'roundedsq'
-					radius = '8'
-					stroke = 0
-					fill = 'foreground'
-					fg_color = '200, 200, 200'
-					shadow = 3
+					radius = '3'
+					stroke = 1
+					fill = 'gradient'
+					shadow = 0
+					fg_color = 'shadowcolor'
+					gradient_start = 'brightred'
+					gradient_end = 'darkred'
+					bevel = 1
 		/>
 	</drawdata>
 

@@ -211,6 +211,15 @@ public:
 	 * @param r Radius of the corners of the tab (0 for squared tabs).
 	 */
 	virtual void drawTab(int x, int y, int r, int w, int h) = 0;
+	
+	
+	/**
+	 * Simple helper function to draw a cross.
+	 */
+	virtual void drawCross(int x, int y, int w, int h) {
+		drawLine(x, y, x + w, y + w);
+		drawLine(x + w, y, x, y + h);
+	}
 
 	/**
 	 * Gets the pixel pitch for the current drawing surface.
@@ -418,6 +427,12 @@ public:
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
 		blitAlphaBitmap(step.blitSrc, Common::Rect(x, y, x + w, y + h));
+	}
+	
+	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step) {
+		uint16 x, y, w, h;
+		stepGetPositions(step, area, x, y, w, h);
+		drawCross(x, y, w, h);
 	}
 
 	void drawCallback_VOID(const Common::Rect &area, const DrawStep &step) {}

@@ -52,6 +52,7 @@ ThemeParser::ThemeParser(ThemeRenderer *parent) : XMLParser() {
 	_drawFunctions["tab"]  = &Graphics::VectorRenderer::drawCallback_TAB;
 	_drawFunctions["void"]  = &Graphics::VectorRenderer::drawCallback_VOID;
 	_drawFunctions["bitmap"] = &Graphics::VectorRenderer::drawCallback_BITMAP;
+	_drawFunctions["cross"] = &Graphics::VectorRenderer::drawCallback_CROSS;
 
 	_defaultStepGlobal = defaultDrawStep();
 	_defaultStepLocal = 0;

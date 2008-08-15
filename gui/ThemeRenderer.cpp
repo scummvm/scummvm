@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/config-manager.h"
+#include "common/fs.h"
 #include "graphics/imageman.h"
 #include "graphics/cursorman.h"
 #include "gui/launcher.h"
@@ -461,7 +462,7 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 					if (parser()->loadStream(stream) == false || parser()->parse() == false) {
 						warning("Failed to load stream for zipped file '%s'", fileNameBuffer);
 						unzClose(zipFile);
-						delete stream;
+//						delete stream;
 						return false;
 					}
 				}
@@ -473,6 +474,9 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 				break;
 		}
 	}
+	
+//	FilesystemNode dir(themeName);
+//	FSList files = dir.listDir(FilesystemNode::kListFilesOnly);
 	
 	unzClose(zipFile);
 	return (parseCount > 0 && _themeName.empty() == false);
@@ -705,6 +709,9 @@ void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int slider
 	r2.right -= 1;
 	r2.top += sliderY;
 	r2.bottom = r2.top + sliderHeight - 1;
+	
+	r2.top += r.width() / 5;
+	r2.bottom -= r.width() / 5; 
 	queueDD(scrollState == kScrollbarStateSlider ? kDDScrollbarHandleHover : kDDScrollbarHandleIdle, r2);
 }
 

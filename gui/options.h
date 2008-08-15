@@ -122,6 +122,7 @@ private:
 	ButtonWidget *_subToggleButton;
 	int _subMode;
 	static const char *_subModeDesc[];
+	static const char *_lowresSubModeDesc[];
 	StaticTextWidget *_subSpeedDesc;
 	SliderWidget *_subSpeedSlider;
 	StaticTextWidget *_subSpeedLabel;

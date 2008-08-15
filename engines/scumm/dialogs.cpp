@@ -951,7 +951,10 @@ void SubtitleSettingsDialog::cycleValue() {
 	if (_value > 2)
 		_value = 0;
 
-	setInfoText(subtitleDesc[_value]);
+	if (_value == 1 && g_system->getOverlayWidth() <= 320)
+		setInfoText("Speech & Subs");
+	else
+		setInfoText(subtitleDesc[_value]);
 
 	_timer = getMillis() + 1500;
 }

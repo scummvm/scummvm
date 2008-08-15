@@ -370,15 +370,21 @@ drawLine(int x1, int y1, int x2, int y2) {
 
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	int pitch = Base::surfacePitch();
+	int st = Base::_strokeWidth >> 1;
 
 	if (dy == 0) { // horizontal lines
 		// these can be filled really fast with a single memset.
 		colorFill(ptr, ptr + dx + 1, (PixelType)_fgColor);
+		
+		for (int i = 0, p = pitch; i < st; ++i, p += pitch) {
+			colorFill(ptr + p, ptr + dx + 1 + p, (PixelType)_fgColor);
+			colorFill(ptr - p, ptr + dx + 1 - p, (PixelType)_fgColor);
+		}
 
 	} else if (dx == 0) { // vertical lines
 		// these ones use a static pitch increase.
 		while (y1++ <= y2) {
-			*ptr = (PixelType)_fgColor;
+			colorFill(ptr - st, ptr + st, (PixelType)_fgColor);
 			ptr += pitch;
 		}
 
@@ -387,7 +393,7 @@ drawLine(int x1, int y1, int x2, int y2) {
 		pitch += (x2 > x1) ? 1 : -1;
 
 		while (dy--) {
-			*ptr = (PixelType)_fgColor;
+			colorFill(ptr - st, ptr + st, (PixelType)_fgColor);
 			ptr += pitch;
 		}
 

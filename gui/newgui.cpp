@@ -423,6 +423,7 @@ void NewGui::screenChange() {
 	// redrawn before redraw() has been called.
 	_redrawStatus = kRedrawFull;
 	redraw();
+	_system->showOverlay();
 	_system->updateScreen();
 }
 

@@ -338,7 +338,11 @@
 					bevel = '2'
 					fill = 'none'
 		/>
-/* TODO */
+		<drawstep	func = 'cross'
+					fill = 'foreground'
+					stroke = '2'
+					fg_color = 'green'
+		/>
 	</drawdata>
 
 	<drawdata id = 'checkbox_default' cache = false>

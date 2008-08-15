@@ -88,6 +88,12 @@ const char *OptionsDialog::_subModeDesc[] = {
 	"Subtitles Only"
 };
 
+const char *OptionsDialog::_lowresSubModeDesc[] = {
+	"Speech Only",
+	"Speech & Subs",
+	"Subtitles Only"
+};
+
 void OptionsDialog::init() {
 	_enableGraphicSettings = false;
 	_gfxPopUp = 0;
@@ -417,7 +423,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		else
 			_subMode = 0;
 
-		_subToggleButton->setLabel(_subModeDesc[_subMode]);
+		_subToggleButton->setLabel(g_system->getOverlayWidth() > 320 ? _subModeDesc[_subMode] : _lowresSubModeDesc[_subMode]);
 		_subToggleButton->draw();
 		_subSpeedDesc->draw();
 		_subSpeedSlider->draw();
