@@ -126,7 +126,7 @@ DECLARE_INSTRUCTION_OPCODE(put) {
 	Graphics::Surface v18;
 	v18.w = inst->_a->width();
 	v18.h = inst->_a->height();
-	v18.pixels = inst->_a->getFrameData(inst->_a->_frame);
+	v18.pixels = inst->_a->getFrameData(inst->_a->getF());
 
 	int16 x = inst->_opA.getValue();
 	int16 y = inst->_opB.getValue();
@@ -331,14 +331,14 @@ void Parallaction_ns::drawAnimations() {
 			if (anim->_flags & kFlagsNoMasked)
 				layer = LAYER_FOREGROUND;
 			else
-				layer = _gfx->_backgroundInfo->getLayer(anim->_top + anim->height());
+				layer = _gfx->_backgroundInfo->getLayer(anim->getY() + anim->height());
 
 			if (obj) {
 				_gfx->showGfxObj(obj, true);
-				obj->frame =  anim->_frame;
-				obj->x = anim->_left;
-				obj->y = anim->_top;
-				obj->z = anim->_z;
+				obj->frame =  anim->getF();
+				obj->x = anim->getX();
+				obj->y = anim->getY();
+				obj->z = anim->getZ();
 				obj->layer = layer;
 			}
 		}
@@ -401,7 +401,7 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 		AnimationPtr a = (*it)->_anim;
 
 		if (a->_flags & kFlagsCharacter)
-			a->_z = a->_top + a->height();
+			a->setZ(a->getY() + a->height());
 
 		if ((a->_flags & kFlagsActing) == 0)
 			continue;
@@ -409,7 +409,7 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 		runScript(*it, a);
 
 		if (a->_flags & kFlagsCharacter)
-			a->_z = a->_top + a->height();
+			a->setZ(a->getY() + a->height());
 	}
 
 	_modCounter++;
@@ -680,7 +680,7 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 		if (!r.contains(_si, _di)) {
 
 			// out of Zone, so look for special values
-			if ((z->_left == -2) || (z->_left == -3)) {
+			if ((z->getX() == -2) || (z->getX() == -3)) {
 
 				// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
 				// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
@@ -699,15 +699,15 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 				}
 			}
 
-			if (z->_left != -1)
+			if (z->getX() != -1)
 				continue;
-			if (_si < _char._ani->_left)
+			if (_si < _char._ani->getX())
 				continue;
-			if (_si > (_char._ani->_left + _char._ani->width()))
+			if (_si > (_char._ani->getX() + _char._ani->width()))
 				continue;
-			if (_di < _char._ani->_top)
+			if (_di < _char._ani->getY())
 				continue;
-			if (_di > (_char._ani->_top + _char._ani->height()))
+			if (_di > (_char._ani->getY() + _char._ani->height()))
 				continue;
 
 		}
@@ -729,8 +729,8 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 		AnimationPtr a = *ait;
 
 		_a = (a->_flags & kFlagsActive) ? 1 : 0;															   // _a: active Animation
-		_e = ((_si >= a->_left + a->width()) || (_si <= a->_left)) ? 0 : 1;		// _e: horizontal range
-		_f = ((_di >= a->_top + a->height()) || (_di <= a->_top)) ? 0 : 1;		// _f: vertical range
+		_e = ((_si >= a->getX() + a->width()) || (_si <= a->getX())) ? 0 : 1;		// _e: horizontal range
+		_f = ((_di >= a->getY() + a->height()) || (_di <= a->getY())) ? 0 : 1;		// _f: vertical range
 
 		_b = ((type != 0) || (a->_type == kZoneYou)) ? 0 : 1;										 // _b: (no type specified) AND (Animation is not the character)
 		_c = (a->_type & 0xFFFF0000) ? 0 : 1;															// _c: Animation is not an object

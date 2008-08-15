@@ -319,9 +319,9 @@ void Parallaction_ns::changeLocation(char *location) {
 	parseLocation(_saveData1);
 
 	if (_location._startPosition.x != -1000) {
-		_char._ani->_left = _location._startPosition.x;
-		_char._ani->_top = _location._startPosition.y;
-		_char._ani->_frame = _location._startFrame;
+		_char._ani->setX(_location._startPosition.x);
+		_char._ani->setY(_location._startPosition.y);
+		_char._ani->setF(_location._startFrame);
 		_location._startPosition.y = -1000;
 		_location._startPosition.x = -1000;
 	}

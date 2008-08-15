@@ -331,14 +331,14 @@ DECLARE_LOCATION_PARSER(location)  {
 	// TODO: handle background horizontal flip (via a context parameter)
 
 	if (_tokens[nextToken][0] != '\0') {
-		_vm->_char._ani->_left = atoi(_tokens[nextToken]);
+		_vm->_char._ani->setX(atoi(_tokens[nextToken]));
 		nextToken++;
-		_vm->_char._ani->_top = atoi(_tokens[nextToken]);
+		_vm->_char._ani->setY(atoi(_tokens[nextToken]));
 		nextToken++;
 	}
 
 	if (_tokens[nextToken][0] != '\0') {
-		_vm->_char._ani->_frame = atoi(_tokens[nextToken]);
+		_vm->_char._ani->setF(atoi(_tokens[nextToken]));
 	}
 }
 
@@ -716,10 +716,7 @@ DECLARE_ZONE_PARSER(limits)  {
 		ctxt.z->_linkedAnim = _vm->findAnimation(_tokens[1]);
 		ctxt.z->_linkedName = strdup(_tokens[1]);
 	} else {
-		ctxt.z->_left = atoi(_tokens[1]);
-		ctxt.z->_top = atoi(_tokens[2]);
-		ctxt.z->_right = atoi(_tokens[3]);
-		ctxt.z->_bottom = atoi(_tokens[4]);
+		ctxt.z->setBox(atoi(_tokens[1]), atoi(_tokens[2]), atoi(_tokens[3]), atoi(_tokens[4]));
 	}
 }
 
@@ -824,10 +821,10 @@ DECLARE_ANIM_PARSER(file)  {
 DECLARE_ANIM_PARSER(position)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(position) ");
 
-	ctxt.a->_left = atoi(_tokens[1]);
-	ctxt.a->_top = atoi(_tokens[2]);
-	ctxt.a->_z = atoi(_tokens[3]);
-	ctxt.a->_frame = atoi(_tokens[4]);
+	ctxt.a->setX(atoi(_tokens[1]));
+	ctxt.a->setY(atoi(_tokens[2]));
+	ctxt.a->setZ(atoi(_tokens[3]));
+	ctxt.a->setF(atoi(_tokens[4]));
 }
 
 
@@ -843,12 +840,14 @@ DECLARE_ANIM_PARSER(moveto)  {
 DECLARE_ANIM_PARSER(endanimation)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(endanimation) ");
 
-
+#if 0
+	// I have disabled the following code since it seems useless.
+	// I will remove it after mask processing is done.
 	if (ctxt.a->gfxobj) {
 		ctxt.a->_right = ctxt.a->width();
 		ctxt.a->_bottom = ctxt.a->height();
 	}
-
+#endif
 	ctxt.a->_flags |= 0x1000000;
 
 	_parser->popTables();

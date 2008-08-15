@@ -297,12 +297,15 @@ struct TypeData {
 #define ZONENAME_LENGTH 32
 
 struct Zone {
-	char			_name[ZONENAME_LENGTH];
-
+protected:
 	int16			_left;
 	int16			_top;
 	int16			_right;
 	int16			_bottom;
+
+public:
+	char			_name[ZONENAME_LENGTH];
+
 	uint32			_type;
 	uint32			_flags;
 	uint			_label;
@@ -323,6 +326,20 @@ struct Zone {
 	void translate(int16 x, int16 y);
 	virtual uint16 width() const;
 	virtual uint16 height() const;
+
+	void setBox(int16 left, int16 top, int16 right, int16 bottom) {
+		setX(left);
+		setY(top);
+		_right = right;
+		_bottom = bottom;
+	}
+
+	// getters/setters
+	virtual int16 getX() 			{ return _left; }
+	virtual void  setX(int16 value) { _left = value; }
+
+	virtual int16 getY() 			{ return _top; }
+	virtual void  setY(int16 value) { _top = value; }
 };
 
 
@@ -479,12 +496,13 @@ typedef Common::SharedPtr<Program> ProgramPtr;
 typedef Common::List<ProgramPtr> ProgramList;
 
 struct Animation : public Zone {
+protected:
+	int16		_frame;
+	int16		_z;
+public:
 
 	GfxObj		*gfxobj;
 	char		*_scriptName;
-	int16		_frame;
-	int16		_z;
-
 
 	Animation();
 	virtual ~Animation();

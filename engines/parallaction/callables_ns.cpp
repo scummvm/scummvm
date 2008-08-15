@@ -211,21 +211,17 @@ void Parallaction_ns::_c_moveSarc(void *parm) {
 			}
 		}
 
-		_introSarcData1 = _introSarcData3 - _moveSarcZone1->_left;
-		a->_z = _introSarcData3;
-		a->_frame = _moveSarcZone1->_top - (_introSarcData1 / 20);
-		_introSarcData3 = _moveSarcZone1->_left;
+		_introSarcData1 = _introSarcData3 - _moveSarcZone1->getX();
+		a->setZ(_introSarcData3);
+		a->setF(_moveSarcZone1->getY() - (_introSarcData1 / 20));
+		_introSarcData3 = _moveSarcZone1->getX();
 
 		if (_introSarcData1 > 0) {
-			a->_left = _introSarcData1 / 2;
+			a->setX(_introSarcData1 / 2);
+			a->setY(2);
 		} else {
-			a->_left = -_introSarcData1 / 2;
-		}
-
-		if (_introSarcData1 > 0) {
-			a->_top = 2;
-		} else {
-			a->_top = -2;
+			a->setX(-_introSarcData1 / 2);
+			a->setY(-2);
 		}
 
 		return;
@@ -236,11 +232,11 @@ void Parallaction_ns::_c_moveSarc(void *parm) {
 	_moveSarcZone1->translate(_introSarcData1, -_introSarcData1 / 20);
 	_moveSarcZone0->translate(_introSarcData1, -_introSarcData1 / 20);
 
-	if (_moveSarcZones[0]->_left == 35 &&
-		_moveSarcZones[1]->_left == 68 &&
-		_moveSarcZones[2]->_left == 101 &&
-		_moveSarcZones[3]->_left == 134 &&
-		_moveSarcZones[4]->_left == 167) {
+	if (_moveSarcZones[0]->getX() == 35 &&
+		_moveSarcZones[1]->getX() == 68 &&
+		_moveSarcZones[2]->getX() == 101 &&
+		_moveSarcZones[3]->getX() == 134 &&
+		_moveSarcZones[4]->getX() == 167) {
 
 		a = findAnimation("finito");
 
@@ -482,8 +478,8 @@ void Parallaction_ns::_c_sketch(void *parm) {
 
 	Graphics::drawLine(oldx, oldy, newx, newy, 0, zeroMask, &_gfx->_backgroundInfo);
 
-	_rightHandAnim->_left = newx;
-	_rightHandAnim->_top = newy - 20;
+	_rightHandAnim->setX(newx);
+	_rightHandAnim->setY(newy - 20);
 
 	index++;
 
@@ -496,10 +492,10 @@ void Parallaction_ns::_c_sketch(void *parm) {
 void Parallaction_ns::_c_shade(void *parm) {
 
 	Common::Rect r(
-		_rightHandAnim->_left - 36,
-		_rightHandAnim->_top - 36,
-		_rightHandAnim->_left,
-		_rightHandAnim->_top
+		_rightHandAnim->getX() - 36,
+		_rightHandAnim->getY() - 36,
+		_rightHandAnim->getX(),
+		_rightHandAnim->getY()
 	);
 
 	uint16 _di = r.left/4 + r.top * _gfx->_backgroundInfo->mask.internalWidth;

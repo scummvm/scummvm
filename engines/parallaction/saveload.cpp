@@ -207,9 +207,9 @@ void Parallaction_ns::doSaveGame(uint16 slot, const char* name) {
 
 	sprintf(s, "%s\n", _saveData1);
 	f->writeString(s);
-	sprintf(s, "%d\n", _char._ani->_left);
+	sprintf(s, "%d\n", _char._ani->getX());
 	f->writeString(s);
-	sprintf(s, "%d\n", _char._ani->_top);
+	sprintf(s, "%d\n", _char._ani->getY());
 	f->writeString(s);
 	sprintf(s, "%d\n", _score);
 	f->writeString(s);

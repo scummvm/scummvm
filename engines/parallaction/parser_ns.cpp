@@ -264,9 +264,9 @@ DECLARE_ANIM_PARSER(file)  {
 DECLARE_ANIM_PARSER(position)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(position) ");
 
-	ctxt.a->_left = atoi(_tokens[1]);
-	ctxt.a->_top = atoi(_tokens[2]);
-	ctxt.a->_z = atoi(_tokens[3]);
+	ctxt.a->setX(atoi(_tokens[1]));
+	ctxt.a->setY(atoi(_tokens[2]));
+	ctxt.a->setZ(atoi(_tokens[3]));
 }
 
 
@@ -985,12 +985,12 @@ DECLARE_LOCATION_PARSER(location)  {
 	_vm->switchBackground(_vm->_location._name, mask);
 
 	if (_tokens[2][0] != '\0') {
-		_vm->_char._ani->_left = atoi(_tokens[2]);
-		_vm->_char._ani->_top = atoi(_tokens[3]);
+		_vm->_char._ani->setX(atoi(_tokens[2]));
+		_vm->_char._ani->setY(atoi(_tokens[3]));
 	}
 
 	if (_tokens[4][0] != '\0') {
-		_vm->_char._ani->_frame = atoi(_tokens[4]);
+		_vm->_char._ani->setF(atoi(_tokens[4]));
 	}
 }
 
@@ -1309,11 +1309,7 @@ DECLARE_ZONE_PARSER(endzone)  {
 
 DECLARE_ZONE_PARSER(limits)  {
 	debugC(7, kDebugParser, "ZONE_PARSER(limits) ");
-
-	ctxt.z->_left = atoi(_tokens[1]);
-	ctxt.z->_top = atoi(_tokens[2]);
-	ctxt.z->_right = atoi(_tokens[3]);
-	ctxt.z->_bottom = atoi(_tokens[4]);
+	ctxt.z->setBox(atoi(_tokens[1]), atoi(_tokens[2]), atoi(_tokens[3]), atoi(_tokens[4]));
 }
 
 
@@ -1404,8 +1400,8 @@ void LocationParser_ns::parseGetData(ZonePtr z) {
 
 			GfxObj *obj = _vm->_gfx->loadGet(_tokens[1]);
 			obj->frame = 0;
-			obj->x = z->_left;
-			obj->y = z->_top;
+			obj->x = z->getX();
+			obj->y = z->getY();
 			_vm->_gfx->showGfxObj(obj, visible);
 
 			data->gfxobj = obj;
@@ -1467,8 +1463,8 @@ void LocationParser_ns::parseDoorData(ZonePtr z) {
 
 			GfxObj *obj = _vm->_gfx->loadDoor(_tokens[1]);
 			obj->frame = frame;
-			obj->x = z->_left;
-			obj->y = z->_top;
+			obj->x = z->getX();
+			obj->y = z->getY();
 			_vm->_gfx->showGfxObj(obj, true);
 
 			data->gfxobj = obj;
