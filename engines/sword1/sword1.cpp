@@ -199,12 +199,20 @@ PluginError SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SaveStateList saveList;
+
+	Common::String pattern = "SAVEGAME.???";
+	Common::StringList filenames = saveFileMan->listSavefiles(pattern.c_str());
+	sort(filenames.begin(), filenames.end());
+	Common::StringList::const_iterator file = filenames.begin();
+
 	Common::InSaveFile *in = saveFileMan->openForLoading("SAVEGAME.INF");
 	if (in) {
 		uint8 stop;
 		char saveDesc[32];
-		int slotNum = 0;
 		do {
+			// Obtain the last digit of the filename, since they correspond to the save slot
+			int slotNum = atoi(file->c_str() + file->size() - 1);
+
 			uint pos = 0;
 			do {
 				stop = in->readByte();
@@ -218,8 +226,8 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 				}
 			} while ((stop != 10) && (stop != 255) && (!in->eos()));
 			if (saveDesc[0] != 0) {
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc, "SAVEGAME.INF"));
-				slotNum++;
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc, *file));
+				file++;
 			}
 		} while ((stop != 255) && (!in->eos()));
 	}
@@ -688,7 +696,7 @@ int SwordEngine::go() {
 		int saveSlot = ConfMan.getInt("save_slot");
 		// Savegames are numbered starting from 1 in the dialog window,
 		// but their filenames are numbered starting from 0.
-		if (saveSlot > 0 && _control->restoreGameFromFile(saveSlot - 1)) {
+		if (saveSlot >= 0 && _control->savegamesExist() &&_control->restoreGameFromFile(saveSlot)) {
 			_control->doRestore();
 		} else if (_control->savegamesExist()) {
 			_systemVars.controlPanelMode = CP_NEWGAME;

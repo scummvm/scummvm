@@ -703,7 +703,7 @@ void Control::handleSaveKey(Common::KeyState kbd) {
 bool Control::saveToFile(void) {
 	if ((_selectedSavegame == 255) || !strlen((char*)_saveNames[_selectedSavegame]))
 		return false; // no saveslot selected or no name entered
-	saveGameToFile(_selectedSavegame);
+	saveGameToFile(_numSaves);
 	writeSavegameDescriptions();
 	return true;
 }
@@ -741,6 +741,7 @@ void Control::readSavegameDescriptions(void) {
 				curFileNum++;
 		} while ((ch != 255) && (!inf->eos()));
 		_saveFiles = curFileNum;
+		_numSaves = _saveFiles;
 	}
 	delete inf;
 }
