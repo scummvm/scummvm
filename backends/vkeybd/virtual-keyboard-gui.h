@@ -53,45 +53,43 @@ private:
 
 	OSystem *_system;
 	VirtualKeyboard *_kbd;
+	Rect _kbdBound;
 	Graphics::Surface *_kbdSurface;
 	OverlayColor _kbdTransparentColor;
 
+	Point _dragPoint;
+	bool _drag;
 	static const int SNAP_WIDTH = 10;
 
 	Graphics::Surface _overlayBackup;
-
 	Rect _dirtyRect;
 
 	bool _displayEnabled;
-	bool _refreshDisplay;
 	Graphics::Surface _dispSurface;
 	const Graphics::Font *_dispFont;
 	int16 _dispX, _dispY;
 	uint _dispI;
 	OverlayColor _dispForeColor, _dispBackColor;
 
-	Rect _kbdBound;
-
-	Point _dragPoint;
-	bool _drag;
-
 	bool _displaying;
 	bool _firstRun;
-	bool _needRedraw;
 	int _lastScreenChanged;
 
-	void setDefaultPosition();
+	void setupDisplayArea(Rect& r, OverlayColor forecolor);
 	void move(int16 x, int16 y);
+	void moveToDefaultPosition();
 	void screenChanged();
 	void mainLoop();
 	void extendDirtyRect(const Rect &r);
 	void resetDirtyRect();
 	void redraw();
+	void forceRedraw();
 	void updateDisplay();
 	bool fontIsSuitable(const Graphics::Font *font, const Rect& rect);
 	uint calculateEndIndex(const String& str, uint startIndex);
 
 	bool _drawCaret;
+	int16 _caretX;
 	static const int kCaretBlinkTime = 500;
 	void animateCaret();
 

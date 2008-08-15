@@ -308,6 +308,7 @@ void VirtualKeyboard::KeyPressQueue::deleteKey() {
 	while((it->strLen)-- > 0)
 		_keysStr.deleteChar(_strPos);
 	_keys.erase(it);
+	_strChanged = true;
 }
 
 void VirtualKeyboard::KeyPressQueue::moveLeft() {
@@ -315,6 +316,7 @@ void VirtualKeyboard::KeyPressQueue::moveLeft() {
 		return;
 	_keyPos--;
 	_strPos -= _keyPos->strLen;
+	_strChanged = true;
 }
 
 void VirtualKeyboard::KeyPressQueue::moveRight() {
@@ -322,6 +324,7 @@ void VirtualKeyboard::KeyPressQueue::moveRight() {
 		return;
 	_strPos += _keyPos->strLen;
 	_keyPos++;
+	_strChanged = true;
 }
 
 KeyState VirtualKeyboard::KeyPressQueue::pop() {
