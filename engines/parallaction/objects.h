@@ -357,20 +357,61 @@ enum ParaFlags {
 };
 
 
+struct AnimationField {
+	typedef Common::Functor0Mem<int16, Animation> Accessor;
+	typedef Common::Functor1Mem<int16, void, Animation> Mutator;
+
+	typedef Accessor::FuncType AccessorFunc;
+	typedef Mutator::FuncType MutatorFunc;
+
+protected:
+	Accessor *_accessor;
+	Mutator *_mutator;
+
+public:
+	AnimationField(Animation* instance, AccessorFunc accessor, MutatorFunc mutator) {
+		_accessor = new Accessor(instance, accessor);
+		_mutator = new Mutator(instance, mutator);
+	}
+
+	AnimationField(Animation* instance, AccessorFunc accessor) {
+		_accessor = new Accessor(instance, accessor);
+		_mutator = 0;
+	}
+
+	~AnimationField() {
+		delete _accessor;
+		delete _mutator;
+	}
+
+	int16 getValue() const {
+		assert(_accessor);
+		return _accessor->operator()();
+	}
+
+	void setValue(int16 value) {
+		assert(_mutator);
+		_mutator->operator()(value);
+	}
+};
+
+
 struct ScriptVar {
 	uint32			_flags;
 
 	int16			_value;
-	int16*			_pvalue;
 	LocalVariable*	_local;
+	AnimationField*	_field;
 
 	ScriptVar();
+	~ScriptVar();
 
 	int16	getValue();
 	void	setValue(int16 value);
 
 	void	setLocal(LocalVariable *local);
-	void	setField(int16 *field);
+	void	setField(Animation *anim, AnimationField::AccessorFunc accessor, AnimationField::MutatorFunc mutator);
+	void	setField(Animation *anim, AnimationField::AccessorFunc accessor);
 	void	setImmediate(int16 value);
 	void	setRandom(int16 seed);
 };
@@ -453,6 +494,19 @@ struct Animation : public Zone {
 	byte* getFrameData(uint32 index) const;
 
 	void validateScriptVars();
+
+	// getters/setters used by scripts
+	int16 getX() 			{ return _left; }
+	void  setX(int16 value) { _left = value; }
+
+	int16 getY() 			{ return _top; }
+	void  setY(int16 value) { _top = value; }
+
+	int16 getZ() 			{ return _z; }
+	void  setZ(int16 value) { _z = value; }
+
+	int16 getF() 			{ return _frame; }
+	void  setF(int16 value) { _frame = value; }
 };
 
 class Table {

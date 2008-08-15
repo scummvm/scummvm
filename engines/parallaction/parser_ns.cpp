@@ -551,16 +551,16 @@ void ProgramParser_ns::parseRValue(ScriptVar &v, const char *str) {
 	}
 
 	if (str[0] == 'X') {
-		v.setField(&a->_left);
+		v.setField(a.get(), &Animation::getX);
 	} else
 	if (str[0] == 'Y') {
-		v.setField(&a->_top);
+		v.setField(a.get(), &Animation::getY);
 	} else
 	if (str[0] == 'Z') {
-		v.setField(&a->_z);
+		v.setField(a.get(), &Animation::getZ);
 	} else
 	if (str[0] == 'F') {
-		v.setField(&a->_frame);
+		v.setField(a.get(), &Animation::getF);
 	}
 
 }
@@ -581,16 +581,16 @@ void ProgramParser_ns::parseLValue(ScriptVar &v, const char *str) {
 	}
 
 	if (str[0] == 'X') {
-		v.setField(&a->_left);
+		v.setField(a.get(), &Animation::getX, &Animation::setX);
 	} else
 	if (str[0] == 'Y') {
-		v.setField(&a->_top);
+		v.setField(a.get(), &Animation::getY, &Animation::setY);
 	} else
 	if (str[0] == 'Z') {
-		v.setField(&a->_z);
+		v.setField(a.get(), &Animation::getZ, &Animation::setZ);
 	} else
 	if (str[0] == 'F') {
-		v.setField(&a->_frame);
+		v.setField(a.get(), &Animation::getF, &Animation::setF);
 	}
 
 }

@@ -289,7 +289,7 @@ int16 ScriptVar::getValue() {
 	}
 
 	if (_flags & kParaField) {
-		return *_pvalue;
+		return _field->getValue();
 	}
 
 	if (_flags & kParaRandom) {
@@ -311,7 +311,7 @@ void ScriptVar::setValue(int16 value) {
 	}
 
 	if (_flags & kParaField) {
-		*_pvalue = value;
+		_field->setValue(value);
 	}
 
 }
@@ -321,9 +321,14 @@ void ScriptVar::setLocal(LocalVariable *local) {
 	_flags |= (kParaLocal | kParaLValue);
 }
 
-void ScriptVar::setField(int16 *field) {
-	_pvalue = field;
+void ScriptVar::setField(Animation *anim, AnimationField::AccessorFunc accessor, AnimationField::MutatorFunc mutator) {
+	_field = new AnimationField(anim, accessor, mutator);
 	_flags |= (kParaField | kParaLValue);
+}
+
+void ScriptVar::setField(Animation *anim, AnimationField::AccessorFunc accessor) {
+	_field = new AnimationField(anim, accessor);
+	_flags |= kParaField;
 }
 
 void ScriptVar::setImmediate(int16 value) {
@@ -341,8 +346,13 @@ ScriptVar::ScriptVar() {
 	_flags = 0;
 	_local = 0;
 	_value = 0;
-	_pvalue = 0;
+	_field = 0;
 }
+
+ScriptVar::~ScriptVar() {
+	delete _field;
+}
+
 
 Table::Table(uint32 size) : _size(size), _used(0), _disposeMemory(true) {
 	_data = (char**)calloc(size, sizeof(char*));
