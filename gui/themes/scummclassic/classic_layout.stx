@@ -92,34 +92,27 @@
 			<widget name = 'GameList'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'AddGameButton' 
-						width = '190'
 						height = '20'
 				/>
 				<widget name = 'EditGameButton' 
-						width = '190'
 						height = '20'
 				/>
 				<widget name = 'RemoveGameButton' 
-						width = '190'
 						height = '20'
 				/>
 			</layout>
 			<space size = '12'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'QuitButton' 
-						width = '140'
 						height = '20'
 				/>
 				<widget name = 'AboutButton' 
-						width = '140'
 						height = '20'
 				/>
 				<widget name = 'OptionsButton' 
-						width = '140'
 						height = '20'
 				/>
 				<widget name = 'StartButton' 
-						width = '140'
 						height = '20'
 				/>
 			</layout>

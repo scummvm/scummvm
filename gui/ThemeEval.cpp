@@ -81,8 +81,8 @@ void ThemeLayoutMain::reflowLayout() {
 
 void ThemeLayoutVertical::reflowLayout() {
 	int curX, curY;
-	int autoWidget = -1;
-	int extraHeight = 0;
+	int resize[8];
+	int rescount = 0;
 	
 	curX = _paddingLeft;
 	curY = _paddingTop;
@@ -97,43 +97,41 @@ void ThemeLayoutVertical::reflowLayout() {
 			_children[i]->setWidth((_w == -1 ? getParentW() : _w) - _paddingLeft - _paddingRight);
 			
 		if (_children[i]->getHeight() == -1) {
-			if (autoWidget != -1)
-				error("Cannot expand automatically two different widgets.");
-				
-			autoWidget = i;
-			_children[i]->setHeight(getParentH() - _h - _spacing);
+			resize[rescount++] = i;
+			_children[i]->setHeight(0);
 		}
 			
 		_children[i]->setY(curY);
 		
-		if (_centered && _children[i]->getWidth() < _w && _w != -1)
+		if (_centered && _children[i]->getWidth() < _w && _w != -1) {
 			_children[i]->setX((_w >> 1) - (_children[i]->getWidth() >> 1));
+		}
 		else
 			_children[i]->setX(curX);
 
 		curY += _children[i]->getHeight() + _spacing;	
 		_w = MAX(_w, (int16)(_children[i]->getWidth() + _paddingLeft + _paddingRight));
-		
-		if (autoWidget != -1 && autoWidget != (int)i) {
-			_children[autoWidget]->setHeight(_children[autoWidget]->getHeight() - (_children[i]->getHeight() + _spacing));
-			
-			extraHeight -= (_children[i]->getHeight() + _spacing);
-			_children[i]->setY(extraHeight);
-			
-			for (int j = i - 1; j > autoWidget; --j)
-				_children[j]->setY(-(_children[i]->getHeight() + _spacing));
-		} else {
-			_h += _children[i]->getHeight() + _spacing;
-		}
+		_h += _children[i]->getHeight() + _spacing;
 	}
 	
 	_h -= _spacing;
+	
+	if (rescount) {
+		int newh = (getParentH() - _h - _paddingBottom) / rescount;
+		
+		for (int i = 0; i < rescount; ++i) {
+			_children[resize[i]]->setHeight(newh);
+			_h += newh;
+			for (uint j = resize[i] + 1; j < _children.size(); ++j)
+				_children[j]->setY(newh);
+		}
+	}
 }
 
 void ThemeLayoutHorizontal::reflowLayout() {
 	int curX, curY;
-	int autoWidget = -1;
-	int autoWidth = 0;
+	int resize[8];
+	int rescount = 0;
 
 	curX = _paddingLeft;
 	curY = _paddingTop;
@@ -148,11 +146,8 @@ void ThemeLayoutHorizontal::reflowLayout() {
 			_children[i]->setHeight((_h == -1 ? getParentH() : _h) - _paddingTop - _paddingBottom);
 
 		if (_children[i]->getWidth() == -1) {
-			if (autoWidget != -1)
-				error("Cannot expand automatically two different widgets.");
-				
-			autoWidget = i;
-			_children[i]->setWidth(getParentW() - _w - _spacing);
+			resize[rescount++] = i;
+			_children[i]->setWidth(0);
 		}
 			
 		_children[i]->setX(curX);
@@ -163,23 +158,22 @@ void ThemeLayoutHorizontal::reflowLayout() {
 			_children[i]->setY(curY);
 			
 		curX += (_children[i]->getWidth() + _spacing);
-
-		if (autoWidget != -1 && autoWidget != (int)i) {
-			_children[autoWidget]->setWidth(_children[autoWidget]->getWidth() - (_children[i]->getWidth() + _spacing));
-			
-			autoWidth -= (_children[i]->getWidth() + _spacing);
-			_children[i]->setX(autoWidth);
-		
-			for (int j = i - 1; j > autoWidget; --j)
-				_children[j]->setX(-(_children[i]->getWidth() + _spacing));
-		} else {
-			_w += _children[i]->getWidth() + _spacing;
-		}
-		
+		_w += _children[i]->getWidth() + _spacing;
 		_h = MAX(_h, (int16)(_children[i]->getHeight() + _paddingTop + _paddingBottom));
 	}
 	
 	_w -= _spacing;
+	
+	if (rescount) {
+		int neww = (getParentW() - _w - _paddingRight) / rescount;
+		
+		for (int i = 0; i < rescount; ++i) {
+			_children[resize[i]]->setWidth(neww);
+			_w += neww;
+			for (uint j = resize[i] + 1; j < _children.size(); ++j)
+				_children[j]->setX(neww);
+		}
+	}
 }
 
 ThemeEval::~ThemeEval() {

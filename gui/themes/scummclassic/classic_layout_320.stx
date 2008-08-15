@@ -88,34 +88,27 @@
 			<widget name = 'GameList'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'AddGameButton' 
-						width = '90'
 						height = '12'
 				/>
 				<widget name = 'EditGameButton' 
-						width = '90'
 						height = '12'
 				/>
 				<widget name = 'RemoveGameButton' 
-						width = '90'
 						height = '12'
 				/>
 			</layout>
 			<space size = '4'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'QuitButton' 
-						width = '65'
 						height = '12'
 				/>
 				<widget name = 'AboutButton' 
-						width = '65'
 						height = '12'
 				/>
 				<widget name = 'OptionsButton' 
-						width = '65'
 						height = '12' 
 				/>
 				<widget name = 'StartButton' 
-						width = '65'
 						height = '12'
 				/>
 			</layout>
@@ -150,7 +143,7 @@
 	<dialog name = 'GlobalOptions' overlays = 'screen' inset = '16' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget'/>
-			<layout type = 'horizontal' padding = '8, 8, 8, 2'>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
 				<space/>
 				<widget name = 'Cancel'
 						type = 'Button'
@@ -346,7 +339,7 @@
 	<dialog name = 'GameOptions' overlays = 'screen' inset = '16' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '16'>
 			<widget name = 'TabWidget'/>
-			<layout type = 'horizontal' padding = '8, 8, 8, 2'>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
 				<space/>
 				<widget name = 'Cancel'
 						type = 'Button'
