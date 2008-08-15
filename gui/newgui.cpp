@@ -58,8 +58,6 @@ void GuiObject::reflowLayout() {
 		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, _w, _h)) {
 			warning("Could not load widget position for '%s'", _name.c_str());
 		}
-		
-		return;
 
 		if (_x < 0)
 			error("Widget <%s> has x < 0: %d", _name.c_str(), _x);
@@ -425,6 +423,7 @@ void NewGui::screenChange() {
 	// redrawn before redraw() has been called.
 	_redrawStatus = kRedrawFull;
 	redraw();
+	_system->updateScreen();
 }
 
 } // End of namespace GUI
