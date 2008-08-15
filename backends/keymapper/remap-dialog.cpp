@@ -31,7 +31,8 @@
 namespace Common {
 
 enum {
-	kRemapCmd = 'REMP'
+	kRemapCmd = 'REMP',
+	kCloseCmd = 'CLOS'
 };
 
 RemapDialog::RemapDialog()
@@ -44,6 +45,8 @@ RemapDialog::RemapDialog()
 	_kmPopUp = new GUI::PopUpWidget(this, "remap_popup", "Keymap: ", labelWidth);
 
 	_scrollBar = new GUI::ScrollBarWidget(this, 0, 0, 0, 0);
+
+	new GUI::ButtonWidget(this, "remap_close_button", "Close", kCloseCmd);
 }
 
 RemapDialog::~RemapDialog() {
@@ -181,6 +184,8 @@ void RemapDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 d
 		loadKeymap();
 	} else if (cmd == GUI::kSetPositionCmd) {
 		refreshKeymap();
+	} else if (cmd == kCloseCmd) {
+		close();
 	} else {
 		GUI::Dialog::handleCommand(sender, cmd, data);
 	}
