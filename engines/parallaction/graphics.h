@@ -213,27 +213,37 @@ public:
 		return data + (x >> 2) + y * internalWidth;
 	}
 
-	void blt(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {
+	void bltOr(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {
 		assert((width <= w) && (width <= src.w) && (height <= h) && (height <= src.h));
 
 		byte *s = src.getPtr(sx, sy);
 		byte *d = getPtr(dx, dy);
 
-		uint diffs = 0;
-
 		// this code assumes buffers are aligned on 4-pixels boundaries, as the original does
 		uint16 linewidth = width >> 2;
 		for (uint16 i = 0; i < height; i++) {
 			for (uint16 j = 0; j < linewidth; j++) {
-				if (*s) diffs++;
 				*d++ |= *s++;
 			}
 			d += internalWidth - linewidth;
 			s += src.internalWidth - linewidth;
 		}
-
-		printf("MaskBuffer::blt() diffs = %i\n", diffs);
 	}
+
+	void bltCopy(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {
+		assert((width <= w) && (width <= src.w) && (height <= h) && (height <= src.h));
+
+		byte *s = src.getPtr(sx, sy);
+		byte *d = getPtr(dx, dy);
+
+		// this code assumes buffers are aligned on 4-pixels boundaries, as the original does
+		for (uint16 i = 0; i < height; i++) {
+			memcpy(d, s, (width >> 2));
+			d += internalWidth;
+			s += src.internalWidth;
+		}
+	}
+
 
 };
 

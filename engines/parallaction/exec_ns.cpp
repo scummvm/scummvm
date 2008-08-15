@@ -264,8 +264,11 @@ void Parallaction::showZone(ZonePtr z, bool visible) {
 
 		GetData *data = z->u.get;
 		if (data->hasMask && _gfx->_backgroundInfo->hasMask) {
-			int frame = visible ? 0 : 1;
-			_gfx->_backgroundInfo->mask.blt(data->gfxobj->x, data->gfxobj->y, data->_mask[frame], 0, 0, data->_mask->w, data->_mask->h);
+			if (visible) {
+				_gfx->_backgroundInfo->mask.bltOr(data->gfxobj->x, data->gfxobj->y, data->_mask[0], 0, 0, data->_mask->w, data->_mask->h);
+			} else {
+				_gfx->_backgroundInfo->mask.bltCopy(data->gfxobj->x, data->gfxobj->y, data->_mask[1], 0, 0, data->_mask->w, data->_mask->h);
+			}
 		}
 	}
 }

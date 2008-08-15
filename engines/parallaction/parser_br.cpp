@@ -793,7 +793,7 @@ void LocationParser_br::parseGetData(ZonePtr z) {
 				data->_mask[0].create(rect.width(), rect.height());
 				_vm->_disk->loadMask(_tokens[1], data->_mask[0]);
 				data->_mask[1].create(rect.width(), rect.height());
-				data->_mask[1].blt(0, 0, ctxt.info->mask, data->gfxobj->x, data->gfxobj->y, data->_mask->w, data->_mask->h);
+				data->_mask[1].bltCopy(0, 0, ctxt.info->mask, data->gfxobj->x, data->gfxobj->y, data->_mask->w, data->_mask->h);
 				data->hasMask = true;
 			} else {
 				warning("Mask for zone '%s' ignored, since background doesn't have one", z->_name);
@@ -812,11 +812,6 @@ void LocationParser_br::parseGetData(ZonePtr z) {
 	} while (scumm_stricmp(_tokens[0], "endzone"));
 
 	z->u.get = data;
-
-	// FIXME: right now showZone doesn't work properly when called during location
-	// parsing. In fact, the main backgroundInfo is not properly set yet.
-	bool visible = (z->_flags & kFlagsRemove) == 0;
-	_vm->showZone(z, visible);
 }
 
 void LocationParser_br::parseZoneTypeBlock(ZonePtr z) {
@@ -1251,6 +1246,12 @@ void LocationParser_br::parse(Script *script) {
 	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.info);
 	_vm->_pathBuffer = &ctxt.info->path;
 
+
+	ZoneList::iterator it = _vm->_location._zones.begin();
+	for ( ; it != _vm->_location._zones.end(); it++) {
+		bool visible = ((*it)->_flags & kFlagsRemove) == 0;
+		_vm->showZone((*it), visible);
+	}
 
 	if (ctxt.characterName) {
 		_vm->changeCharacter(ctxt.characterName);
