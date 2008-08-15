@@ -322,7 +322,6 @@ public:
 	Zone();
 	virtual ~Zone();
 
-	void getRect(Common::Rect& r) const;
 	void translate(int16 x, int16 y);
 	virtual uint16 width() const;
 	virtual uint16 height() const;
@@ -333,6 +332,14 @@ public:
 		_right = right;
 		_bottom = bottom;
 	}
+
+	void getBox(Common::Rect& r) {
+		r.left = getX();
+		r.right = getX() + width();
+		r.top = getY();
+		r.bottom = getY() + height();
+	}
+
 
 	// getters/setters
 	virtual int16 getX() 			{ return _left; }
@@ -512,6 +519,9 @@ public:
 	byte* getFrameData(uint32 index) const;
 
 	void validateScriptVars();
+
+	int16 getFrameX() const;
+	int16 getFrameY() const;
 
 	// getters/setters used by scripts
 	int16 getX() 			{ return _left; }

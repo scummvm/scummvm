@@ -352,7 +352,7 @@ void Parallaction::runGame() {
 
 	if (_input->_inputMode == Input::kInputModeGame) {
 		_programExec->runScripts(_location._programs.begin(), _location._programs.end());
-		_char._ani->setZ(_char._ani->height() + _char._ani->getY());
+		_char._ani->setZ(_char._ani->height() + _char._ani->getFrameY());
 		if (_char._ani->gfxobj) {
 			_char._ani->gfxobj->z = _char._ani->getZ();
 		}

@@ -377,6 +377,12 @@ void Gfx::beginFrame() {
 						*data++ = _backgroundInfo->mask.getValue(x, y);
 					}
 				}
+#if 1
+				Common::DumpFile dump;
+				dump.open("maskdump.bin");
+				dump.write(_bitmapMask.pixels, _bitmapMask.w * _bitmapMask.h);
+				dump.close();
+#endif
 				break;
 			}
 		}

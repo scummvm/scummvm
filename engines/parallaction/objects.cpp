@@ -71,6 +71,20 @@ uint16 Animation::height() const {
 	return r.height();
 }
 
+int16 Animation::getFrameX() const {
+	if (!gfxobj) return _left;
+	Common::Rect r;
+	gfxobj->getRect(_frame, r);
+	return r.left + _left;
+}
+
+int16 Animation::getFrameY() const {
+	if (!gfxobj) return _top;
+	Common::Rect r;
+	gfxobj->getRect(_frame, r);
+	return r.top + _top;
+}
+
 uint16 Animation::getFrameNum() const {
 	if (!gfxobj) return 0;
 	return gfxobj->getNum();
@@ -196,13 +210,6 @@ Zone::~Zone() {
 
 
 	free(_linkedName);
-}
-
-void Zone::getRect(Common::Rect& r) const {
-	r.left = _left;
-	r.right = _right;
-	r.top = _top;
-	r.bottom = _bottom;
 }
 
 void Zone::translate(int16 x, int16 y) {

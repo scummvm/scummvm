@@ -330,12 +330,21 @@ void Parallaction_ns::drawAnimations() {
 
 			if (anim->_flags & kFlagsNoMasked)
 				layer = LAYER_FOREGROUND;
-			else
-				layer = _gfx->_backgroundInfo->getLayer(anim->getY() + anim->height());
+			else {
+				if (getGameType() == GType_Nippon) {
+					// Layer in NS depends on where the animation is on the screen, for each animation.
+					layer = _gfx->_backgroundInfo->getLayer(anim->getFrameY() + anim->height());
+				} else {
+					// Layer in BRA is calculated from Z value. For characters it is the same as NS,
+					// but other animations can have Z set from scripts independently from their
+					// position on the screen.
+					layer = _gfx->_backgroundInfo->getLayer(anim->getZ());
+				}
+			}
 
 			if (obj) {
 				_gfx->showGfxObj(obj, true);
-				obj->frame =  anim->getF();
+				obj->frame = anim->getF();
 				obj->x = anim->getX();
 				obj->y = anim->getY();
 				obj->z = anim->getZ();
@@ -401,7 +410,7 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 		AnimationPtr a = (*it)->_anim;
 
 		if (a->_flags & kFlagsCharacter)
-			a->setZ(a->getY() + a->height());
+			a->setZ(a->getFrameY() + a->height());
 
 		if ((a->_flags & kFlagsActing) == 0)
 			continue;
@@ -409,7 +418,7 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 		runScript(*it, a);
 
 		if (a->_flags & kFlagsCharacter)
-			a->setZ(a->getY() + a->height());
+			a->setZ(a->getFrameY() + a->height());
 	}
 
 	_modCounter++;
@@ -671,7 +680,7 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 		if (z->_flags & kFlagsRemove) continue;
 
 		Common::Rect r;
-		z->getRect(r);
+		z->getBox(r);
 		r.right++;		// adjust border because Common::Rect doesn't include bottom-right edge
 		r.bottom++;
 
@@ -701,13 +710,13 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 			if (z->getX() != -1)
 				continue;
-			if (_si < _char._ani->getX())
+			if (_si < _char._ani->getFrameX())
 				continue;
-			if (_si > (_char._ani->getX() + _char._ani->width()))
+			if (_si > (_char._ani->getFrameX() + _char._ani->width()))
 				continue;
-			if (_di < _char._ani->getY())
+			if (_di < _char._ani->getFrameY())
 				continue;
-			if (_di > (_char._ani->getY() + _char._ani->height()))
+			if (_di > (_char._ani->getFrameY() + _char._ani->height()))
 				continue;
 
 		}
@@ -729,8 +738,8 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 		AnimationPtr a = *ait;
 
 		_a = (a->_flags & kFlagsActive) ? 1 : 0;															   // _a: active Animation
-		_e = ((_si >= a->getX() + a->width()) || (_si <= a->getX())) ? 0 : 1;		// _e: horizontal range
-		_f = ((_di >= a->getY() + a->height()) || (_di <= a->getY())) ? 0 : 1;		// _f: vertical range
+		_e = ((_si >= a->getFrameX() + a->width()) || (_si <= a->getFrameX())) ? 0 : 1;		// _e: horizontal range
+		_f = ((_di >= a->getFrameY() + a->height()) || (_di <= a->getFrameY())) ? 0 : 1;		// _f: vertical range
 
 		_b = ((type != 0) || (a->_type == kZoneYou)) ? 0 : 1;										 // _b: (no type specified) AND (Animation is not the character)
 		_c = (a->_type & 0xFFFF0000) ? 0 : 1;															// _c: Animation is not an object

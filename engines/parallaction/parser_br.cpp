@@ -466,9 +466,10 @@ DECLARE_LOCATION_PARSER(mask)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(mask) ");
 
 	ctxt.maskName = strdup(_tokens[1]);
-	ctxt.info->layers[0] = atoi(_tokens[2]);
-	ctxt.info->layers[1] = atoi(_tokens[3]);
-	ctxt.info->layers[2] = atoi(_tokens[4]);
+	ctxt.info->layers[0] = 0;
+	ctxt.info->layers[1] = atoi(_tokens[2]);
+	ctxt.info->layers[2] = atoi(_tokens[3]);
+	ctxt.info->layers[3] = atoi(_tokens[4]);
 }
 
 
