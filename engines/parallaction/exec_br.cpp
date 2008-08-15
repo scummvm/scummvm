@@ -97,8 +97,9 @@ void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
 	} else {
 		_subtitle[1] = -1;
 	}
-
+#if 0	// disabled because no references to lip sync has been found in the scripts
 	_subtitleLipSync = 0;
+#endif
 }
 
 void Parallaction_br::clearSubtitles() {

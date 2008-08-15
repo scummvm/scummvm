@@ -1009,7 +1009,10 @@ void ProgramParser_br::parseRValue(ScriptVar &v, const char *str) {
 		v.setRandom(atoi(&str[1]));
 	} else
 	if (str[0] == 'L') {
+#if 0	// disabled because no references to lip sync has been found in the scripts
 		v.setField(&_vm->_lipSyncVal);
+#endif
+		warning("Lip sync instruction encountered! Please notify the team!");
 	}
 
 }

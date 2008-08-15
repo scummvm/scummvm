@@ -625,8 +625,10 @@ public:
 	int			_part;
 	int			_progress;
 
+#if 0	// disabled since I couldn't find any references to lip sync in the scripts
 	int16		_lipSyncVal;
 	uint		_subtitleLipSync;
+#endif
 	int			_subtitleY;
 	int			_subtitle[2];
 
