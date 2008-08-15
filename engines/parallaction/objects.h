@@ -306,8 +306,7 @@ struct Zone {
 	uint32			_type;
 	uint32			_flags;
 	uint			_label;
-	uint16			field_2C;		// unused
-	uint16			field_2E;		// unused
+
 	TypeData		u;
 	CommandList		_commands;
 	Common::Point	_moveTo;
@@ -328,9 +327,12 @@ struct Zone {
 
 
 struct LocalVariable {
+protected:
 	int16		_value;
 	int16		_min;
 	int16		_max;
+
+public:
 
 	LocalVariable() {
 		_value = 0;
@@ -338,14 +340,20 @@ struct LocalVariable {
 		_max = 10000;
 	}
 
-	void wrap();
+	void setRange(int16 min, int16 max);
+
+	int16 getValue() const;
+	void setValue(int16 value);
 };
+
 
 enum ParaFlags {
 	kParaImmediate	= 1,				// instruction is using an immediate parameter
 	kParaLocal		= 2,				// instruction is using a local variable
 	kParaField		= 0x10,				// instruction is using an animation's field
-	kParaRandom		= 0x100
+	kParaRandom		= 0x100,
+
+	kParaLValue		= 0x20
 };
 
 
@@ -358,8 +366,8 @@ struct ScriptVar {
 
 	ScriptVar();
 
-	int16	getRValue();
-	int16*	getLValue();
+	int16	getValue();
+	void	setValue(int16 value);
 
 	void	setLocal(LocalVariable *local);
 	void	setField(int16 *field);
@@ -431,18 +439,11 @@ typedef Common::List<ProgramPtr> ProgramList;
 
 struct Animation : public Zone {
 
-	Common::Point	_oldPos;
 	GfxObj		*gfxobj;
 	char		*_scriptName;
 	int16		_frame;
-	uint16		field_50;		// unused
 	int16		_z;
-	uint16		field_54;		// unused
-	uint16		field_56;		// unused
-	uint16		field_58;		// unused
-	uint16		field_5A;		// unused
-	uint16		field_5C;		// unused
-	uint16		field_5E;		// unused
+
 
 	Animation();
 	virtual ~Animation();

@@ -80,7 +80,7 @@ DECLARE_INSTRUCTION_OPCODE(off) {
 DECLARE_INSTRUCTION_OPCODE(loop) {
 	InstructionPtr inst = *_ctxt.inst;
 
-	_ctxt.program->_loopCounter = inst->_opB.getRValue();
+	_ctxt.program->_loopCounter = inst->_opB.getValue();
 	_ctxt.program->_loopStart = _ctxt.ip;
 }
 
@@ -93,7 +93,7 @@ DECLARE_INSTRUCTION_OPCODE(endloop) {
 
 DECLARE_INSTRUCTION_OPCODE(inc) {
 	InstructionPtr inst = *_ctxt.inst;
-	int16 _si = inst->_opB.getRValue();
+	int16 _si = inst->_opB.getValue();
 
 	if (inst->_flags & kInstMod) {	// mod
 		int16 _bx = (_si > 0 ? _si : -_si);
@@ -102,29 +102,22 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 		_si = (_si > 0 ?  1 : -1);
 	}
 
-	int16* lvalue = inst->_opA.getLValue();
+	int16 lvalue = inst->_opA.getValue();
 
 	if (inst->_index == INST_INC) {
-		*lvalue += _si;
+		lvalue += _si;
 	} else {
-		*lvalue -= _si;
+		lvalue -= _si;
 	}
 
-	if (inst->_opA._flags & kParaLocal) {
-		inst->_opA._local->wrap();
-	}
+	inst->_opA.setValue(lvalue);
 
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(set) {
 	InstructionPtr inst = *_ctxt.inst;
-
-	int16 _si = inst->_opB.getRValue();
-	int16 *lvalue = inst->_opA.getLValue();
-
-	*lvalue = _si;
-
+	inst->_opA.setValue(inst->_opB.getValue());
 }
 
 
@@ -135,8 +128,8 @@ DECLARE_INSTRUCTION_OPCODE(put) {
 	v18.h = inst->_a->height();
 	v18.pixels = inst->_a->getFrameData(inst->_a->_frame);
 
-	int16 x = inst->_opA.getRValue();
-	int16 y = inst->_opB.getRValue();
+	int16 x = inst->_opA.getValue();
+	int16 y = inst->_opB.getValue();
 	bool mask = (inst->_flags & kInstMaskedPut) == kInstMaskedPut;
 
 	_vm->_gfx->patchBackground(v18, x, y, mask);
@@ -176,8 +169,8 @@ DECLARE_INSTRUCTION_OPCODE(sound) {
 DECLARE_INSTRUCTION_OPCODE(move) {
 	InstructionPtr inst = (*_ctxt.inst);
 
-	int16 x = inst->_opA.getRValue();
-	int16 y = inst->_opB.getRValue();
+	int16 x = inst->_opA.getValue();
+	int16 y = inst->_opB.getValue();
 
 	_vm->_char.scheduleWalk(x, y);
 }
@@ -352,7 +345,6 @@ void Parallaction_ns::drawAnimations() {
 
 		if (((anim->_flags & kFlagsActive) == 0) && (anim->_flags & kFlagsRemove))   {
 			anim->_flags &= ~kFlagsRemove;
-			anim->_oldPos.x = -1000;
 		}
 
 		if ((anim->_flags & kFlagsActive) && (anim->_flags & kFlagsRemove))	{

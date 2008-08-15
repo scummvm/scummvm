@@ -318,10 +318,6 @@ void Parallaction_ns::changeLocation(char *location) {
 	strcpy(_saveData1, locname.location());
 	parseLocation(_saveData1);
 
-	_char._ani->_oldPos.x = -1000;
-	_char._ani->_oldPos.y = -1000;
-
-	_char._ani->field_50 = 0;
 	if (_location._startPosition.x != -1000) {
 		_char._ani->_left = _location._startPosition.x;
 		_char._ani->_top = _location._startPosition.y;

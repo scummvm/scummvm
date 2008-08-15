@@ -115,24 +115,29 @@ int16 Program::addLocal(const char *name, int16 value, int16 min, int16 max) {
 	assert(_numLocals < NUM_LOCALS);
 
 	strcpy(_localNames[_numLocals], name);
-	_locals[_numLocals]._value = value;
-
-	_locals[_numLocals]._min = min;
-	_locals[_numLocals]._max = max;
+	_locals[_numLocals].setRange(min, max);
+	_locals[_numLocals].setValue(value);
 
 	return _numLocals++;
 }
 
-void LocalVariable::wrap() {
+void LocalVariable::setValue(int16 value) {
+	if (value >= _max)
+		value = _min;
+	if (value < _min)
+		value = _max - 1;
 
-	if (_value >= _max)
-		_value = _min;
-	if (_value < _min)
-		_value = _max - 1;
-
-	return;
+	_value = value;
 }
 
+void LocalVariable::setRange(int16 min, int16 max) {
+	_max = max;
+	_min = min;
+}
+
+int16 LocalVariable::getValue() const {
+	return _value;
+}
 
 
 Zone::Zone() {
@@ -273,14 +278,14 @@ Instruction::~Instruction() {
 	free(_text2);
 }
 
-int16 ScriptVar::getRValue() {
+int16 ScriptVar::getValue() {
 
 	if (_flags & kParaImmediate) {
 		return _value;
 	}
 
 	if (_flags & kParaLocal) {
-		return _local->_value;
+		return _local->getValue();
 	}
 
 	if (_flags & kParaField) {
@@ -296,28 +301,29 @@ int16 ScriptVar::getRValue() {
 	return 0;
 }
 
-int16* ScriptVar::getLValue() {
+void ScriptVar::setValue(int16 value) {
+	if ((_flags & kParaLValue) == 0) {
+		error("Only l-value can be set");
+	}
 
 	if (_flags & kParaLocal) {
-		return &_local->_value;
+		_local->setValue(value);
 	}
 
 	if (_flags & kParaField) {
-		return _pvalue;
+		*_pvalue = value;
 	}
-
-	error("Parameter is not an l-value");
 
 }
 
 void ScriptVar::setLocal(LocalVariable *local) {
 	_local = local;
-	_flags |= kParaLocal;
+	_flags |= (kParaLocal | kParaLValue);
 }
 
 void ScriptVar::setField(int16 *field) {
 	_pvalue = field;
-	_flags |= kParaField;
+	_flags |= (kParaField | kParaLValue);
 }
 
 void ScriptVar::setImmediate(int16 value) {

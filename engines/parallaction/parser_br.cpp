@@ -849,9 +849,6 @@ DECLARE_ANIM_PARSER(endanimation)  {
 		ctxt.a->_bottom = ctxt.a->height();
 	}
 
-	ctxt.a->_oldPos.x = -1000;
-	ctxt.a->_oldPos.y = -1000;
-
 	ctxt.a->_flags |= 0x1000000;
 
 	_parser->popTables();

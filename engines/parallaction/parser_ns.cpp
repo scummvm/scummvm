@@ -221,9 +221,6 @@ DECLARE_ANIM_PARSER(type)  {
 		}
 	}
 
-	ctxt.a->_oldPos.x = -1000;
-	ctxt.a->_oldPos.y = -1000;
-
 	ctxt.a->_flags |= 0x1000000;
 
 	_parser->popTables();
@@ -283,10 +280,6 @@ DECLARE_ANIM_PARSER(moveto)  {
 
 DECLARE_ANIM_PARSER(endanimation)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(endanimation) ");
-
-
-	ctxt.a->_oldPos.x = -1000;
-	ctxt.a->_oldPos.y = -1000;
 
 	ctxt.a->_flags |= 0x1000000;
 
@@ -523,7 +516,7 @@ DECLARE_INSTRUCTION_PARSER(defLocal)  {
 	}
 
 	ctxt.inst->_opA.setLocal(&ctxt.locals[index]);
-	ctxt.inst->_opB.setImmediate(ctxt.locals[index]._value);
+	ctxt.inst->_opB.setImmediate(ctxt.locals[index].getValue());
 
 	ctxt.inst->_index = INST_SET;
 }

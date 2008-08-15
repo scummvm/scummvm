@@ -321,12 +321,7 @@ DECLARE_INSTRUCTION_OPCODE(off) {
 
 DECLARE_INSTRUCTION_OPCODE(set) {
 	InstructionPtr inst = *_ctxt.inst;
-
-	int16 rvalue = inst->_opB.getRValue();
-	int16* lvalue = inst->_opA.getLValue();
-
-	*lvalue = rvalue;
-
+	inst->_opA.setValue(inst->_opB.getValue());
 }
 
 
@@ -334,7 +329,7 @@ DECLARE_INSTRUCTION_OPCODE(set) {
 DECLARE_INSTRUCTION_OPCODE(inc) {
 	InstructionPtr inst = *_ctxt.inst;
 
-	int16 rvalue = inst->_opB.getRValue();
+	int16 rvalue = inst->_opB.getValue();
 
 	if (inst->_flags & kInstMod) {	// mod
 		int16 _bx = (rvalue > 0 ? rvalue : -rvalue);
@@ -343,32 +338,30 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 		rvalue = (rvalue > 0 ?  1 : -1);
 	}
 
-	int16 *lvalue = inst->_opA.getLValue();
+	int16 lvalue = inst->_opA.getValue();
 
 	switch (inst->_index) {
 	case INST_INC:
-		*lvalue += rvalue;
+		lvalue += rvalue;
 		break;
 
 	case INST_DEC:
-		*lvalue -= rvalue;
+		lvalue -= rvalue;
 		break;
 
 	case INST_MUL:
-		*lvalue *= rvalue;
+		lvalue *= rvalue;
 		break;
 
 	case INST_DIV:
-		*lvalue /= rvalue;
+		lvalue /= rvalue;
 		break;
 
 	default:
 		error("This should never happen. Report immediately");
 	}
 
-	if (inst->_opA._flags & kParaLocal) {
-		inst->_opA._local->wrap();
-	}
+	inst->_opA.setValue(lvalue);
 
 }
 
@@ -401,11 +394,7 @@ DECLARE_INSTRUCTION_OPCODE(move) {
 
 DECLARE_INSTRUCTION_OPCODE(color) {
 	InstructionPtr inst = *_ctxt.inst;
-
-	int16 entry = inst->_opB.getRValue();
-
-	_vm->_gfx->_palette.setEntry(entry, inst->_colors[0], inst->_colors[1], inst->_colors[2]);
-
+	_vm->_gfx->_palette.setEntry(inst->_opB.getValue(), inst->_colors[0], inst->_colors[1], inst->_colors[2]);
 }
 
 
