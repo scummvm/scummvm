@@ -154,6 +154,9 @@ void VirtualKeyboard::processAreaClick(const Common::String& area) {
 	case kEventCancel:
 		close(false);
 		break;
+	case kEventClear:
+		_keyQueue.clear();
+		break;
 	case kEventDelete:
 		_keyQueue.deleteKey();
 		break;
@@ -343,6 +346,7 @@ void VirtualKeyboard::KeyPressQueue::clear() {
 	_keysStr.clear();
 	_strPos = 0;
 	_flags = 0;
+	_strChanged = true;
 }
 
 bool VirtualKeyboard::KeyPressQueue::empty()

@@ -49,6 +49,7 @@ protected:
 		kEventSwitchMode,
 		kEventSubmit,
 		kEventCancel,
+		kEventClear,
 		kEventDelete,
 		kEventMoveLeft,
 		kEventMoveRight
@@ -159,11 +160,6 @@ public:
 	 *					the event manager
 	 */
 	void close(bool submit);
-
-	/**
-	 * Hides the keyboard, submiting any key presses to the event manager
-	 */
-	void submit();
 
 	/**
 	 * Returns true if the keyboard is currently being shown

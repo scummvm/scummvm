@@ -270,19 +270,16 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 		evt->data = str;
 	} else if (type == "submit") {
 		evt->type = VirtualKeyboard::kEventSubmit;
-		evt->data = 0;
 	} else if (type == "cancel") {
 		evt->type = VirtualKeyboard::kEventCancel;
-		evt->data = 0;
+	} else if (type == "clear") {
+		evt->type = VirtualKeyboard::kEventClear;
 	} else if (type == "delete") {
 		evt->type = VirtualKeyboard::kEventDelete;
-		evt->data = 0;
 	} else if (type == "move_left") {
 		evt->type = VirtualKeyboard::kEventMoveLeft;
-		evt->data = 0;
 	} else if (type == "move_right") {
 		evt->type = VirtualKeyboard::kEventMoveRight;
-		evt->data = 0;
 	} else {
 		delete evt;
 		return parserError("Event type '%s' not known", type.c_str());
