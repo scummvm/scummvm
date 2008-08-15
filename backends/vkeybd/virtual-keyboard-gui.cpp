@@ -317,6 +317,8 @@ void VirtualKeyboardGUI::animateCaret() {
 void VirtualKeyboardGUI::updateDisplay() {
 	if (!_displayEnabled) return;
 
+	_refreshDisplay = false;
+
 	// calculate the text to display
 	uint cursorPos = _kbd->_keyQueue.getInsertIndex();
 	String wholeText = _kbd->_keyQueue.getString();

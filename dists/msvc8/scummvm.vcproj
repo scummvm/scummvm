@@ -1045,6 +1045,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\backends\vkeybd\keycode-descriptions.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\backends\vkeybd\polygon.cpp"
 					>
 				</File>

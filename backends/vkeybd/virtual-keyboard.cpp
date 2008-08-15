@@ -26,7 +26,11 @@
 #include "backends/vkeybd/virtual-keyboard.h"
 #include "backends/vkeybd/virtual-keyboard-gui.h"
 #include "backends/vkeybd/virtual-keyboard-parser.h"
+#include "backends/vkeybd/keycode-descriptions.h"
 #include "graphics/imageman.h"
+
+#define KEY_START_CHAR ('[')
+#define KEY_END_CHAR (']')
 
 namespace Common {
 
@@ -37,6 +41,8 @@ VirtualKeyboard::VirtualKeyboard() : _currentMode(0) {
 	_parser = new VirtualKeyboardParser(this);
 	_kbdGUI = new VirtualKeyboardGUI(this);
 	_submitKeys = _loaded = false;
+
+		printf("\t\"%c\",\n",255);
 }
 
 VirtualKeyboard::~VirtualKeyboard() {
@@ -231,44 +237,62 @@ VirtualKeyboard::KeyPressQueue::KeyPressQueue() {
 	_keyPos = _keys.end();
 	_strPos = 0;
 	_strChanged = false;
-	_keyFlags = 0;
+	_flags = 0;
 }
 
 void VirtualKeyboard::KeyPressQueue::toggleFlags(byte fl) {
-	_keyFlags ^= fl;
+	_flags ^= fl;
+	_flagsStr.clear();
+	if (_flags) {
+		_flagsStr = KEY_START_CHAR;
+		if (_flags & KBD_CTRL)
+			_flagsStr += "Ctrl+";
+		if (_flags & KBD_ALT)
+			_flagsStr += "Alt+";
+		if (_flags & KBD_SHIFT)
+			_flagsStr += "Shift+";
+	}
 	_strChanged = true;
 }
 
 void VirtualKeyboard::KeyPressQueue::clearFlags() {
-	_keyFlags = 0;
+	_flags = 0;
+	_flagsStr.clear();
 	_strChanged = true;
 }
 
 void VirtualKeyboard::KeyPressQueue::insertKey(KeyState key) {
 	_strChanged = true;
-	key.flags ^= _keyFlags;
+	key.flags ^= _flags;
 	if ((key.keycode >= Common::KEYCODE_a) && (key.keycode <= Common::KEYCODE_z))
 		key.ascii = (key.flags & Common::KBD_SHIFT) ? key.keycode - 32 : key.keycode;
 	clearFlags();
 
 	String keyStr;
-	if (key.keycode >= 32 && key.keycode <= 126) {
-		if (key.flags & KBD_CTRL)
-			keyStr += "Ctrl+";
-		if (key.flags & KBD_ALT)
-			keyStr += "Alt+";
+	if (key.flags & KBD_CTRL) keyStr += "Ctrl+";
+	if (key.flags & KBD_ALT) keyStr += "Alt+";
+
+	if (key.ascii >= 32 && key.ascii <= 255) {
 		if (key.flags & KBD_SHIFT && (key.ascii < 65 || key.ascii > 90))
 			keyStr += "Shift+";
 		keyStr += (char)key.ascii;
+	} else {
+		if (key.flags & KBD_SHIFT) keyStr += "Shift+";
+		if (key.keycode >= 0 && key.keycode < keycodeDescTableSize)
+			keyStr += keycodeDescTable[key.keycode];
 	}
 
+	if (keyStr.empty()) keyStr += "???";
+
+	_keysStr.insertChar(KEY_START_CHAR, _strPos++);
 	const char *k = keyStr.c_str();
 	while (char ch = *k++)
-		_str.insertChar(ch, _strPos++);
+		_keysStr.insertChar(ch, _strPos++);
+	_keysStr.insertChar(KEY_END_CHAR, _strPos++);
 
 	VirtualKeyPress kp;
 	kp.key = key;
-	kp.strLen = keyStr.size();
+	kp.strLen = keyStr.size() + 2;
 	_keys.insert(_keyPos, kp);
 }
 
@@ -279,7 +303,7 @@ void VirtualKeyboard::KeyPressQueue::deleteKey() {
 	it--;
 	_strPos -= it->strLen;
 	while((it->strLen)-- > 0)
-		_str.deleteChar(_strPos);
+		_keysStr.deleteChar(_strPos);
 	_keys.erase(it);
 }
 
@@ -308,7 +332,7 @@ KeyState VirtualKeyboard::KeyPressQueue::pop() {
 		_strPos -= kp.strLen;
 
 	while (kp.strLen-- > 0)
-		_str.deleteChar(0);
+		_keysStr.deleteChar(0);
 
 	return kp.key;
 }
@@ -316,9 +340,9 @@ KeyState VirtualKeyboard::KeyPressQueue::pop() {
 void VirtualKeyboard::KeyPressQueue::clear() {
 	_keys.clear();
 	_keyPos = _keys.end();
-	_str.clear();
+	_keysStr.clear();
 	_strPos = 0;
-	_keyFlags = 0;
+	_flags = 0;
 }
 
 bool VirtualKeyboard::KeyPressQueue::empty()
@@ -328,18 +352,25 @@ bool VirtualKeyboard::KeyPressQueue::empty()
 
 String VirtualKeyboard::KeyPressQueue::getString()
 {
-	String flags;
-	if (_keyFlags & KBD_CTRL)
-		flags += "Ctrl+";
-	if (_keyFlags & KBD_ALT)
-		flags += "Alt+";
-	if (_keyFlags & KBD_SHIFT)
-		flags += "Shift+";
-	return _str + flags;
+	if (_keysStr.empty())
+		return _flagsStr;
+	if (_flagsStr.empty())
+		return _keysStr;
+	if (_strPos == _keysStr.size())
+		return _keysStr + _flagsStr;
+
+	uint len = _keysStr.size() + _flagsStr.size();
+	char *str = new char[len];
+	memcpy(str, _keysStr.c_str(), _strPos);
+	memcpy(str + _strPos, _flagsStr.c_str(), _flagsStr.size());
+	memcpy(str + _strPos + _flagsStr.size(), _keysStr.c_str() + _strPos, _keysStr.size() - _strPos);
+	String ret(str, len);
+	delete[] str;
+	return ret;
 }
 
 uint VirtualKeyboard::KeyPressQueue::getInsertIndex() {
-	return _strPos;
+	return _strPos + _flagsStr.size();
 }
 
 bool VirtualKeyboard::KeyPressQueue::hasStringChanged() {

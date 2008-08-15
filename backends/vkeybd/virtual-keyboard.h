@@ -118,16 +118,20 @@ protected:
 		bool hasStringChanged();
 
 	private:
-		byte _keyFlags;
+		byte _flags;
+		String _flagsStr;
+
 
 		List<VirtualKeyPress> _keys;
-		String _str;
+		String _keysStr;
 
 		bool _strChanged;
 
 		List<VirtualKeyPress>::iterator _keyPos;
 		uint _strPos;
 	};
+
+
 
 public:
 	VirtualKeyboard();
