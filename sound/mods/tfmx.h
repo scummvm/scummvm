@@ -50,10 +50,12 @@ public:
 		
 		//DEBUGGING FUNCTION:: Temporary function to test individual macros for playback
 		void testMacro(uint8 macroNumber);
+		void testPattern(uint8 patternNumber);
 		bool loadSong(uint8 songNumber); //temporarly public
 protected:
 		//DEBUGGING::
 		bool _macroTest;
+		bool _patternTest;
 	
 		//uint8 stream for whole MDAT file
 		uint8 *_data;      
@@ -123,6 +125,9 @@ protected:
 			uint8 noteWait;  //external wait
 			int8 noteFineTune;
 			float fineTune;
+			bool keyUp;
+			uint8 keyCount;
+			uint8 keyWait;
 		};
 
 		//Track structure
@@ -148,7 +153,20 @@ protected:
 			uint32 sampleLength;
 			//int8 *dataRepeat;
 			//uint32 lengthRepeat;
-			int sampleOn;
+			bool sampleOn;
+			bool updateOn;
+			//Envelope Effect
+			bool envelopeOn;
+			int8 envelopeTarget;
+			uint8 envelopeRate;
+			uint8 envelopeSpeed;
+			uint8 envelopeCount;
+			//Vibrato Effect
+			bool vibratoOn;
+			bool vibratoDirection;
+			int8 vibratoRate;
+			uint8 vibratoSpeed;
+			uint8 vibratoCount;
 		}_channels[4];
 
 		//PAULA Interrupt override
@@ -160,6 +178,7 @@ protected:
 		void updatePattern(uint8 trackNumber);
 		void loadMacro(uint8 trackNumber, uint8 macroNumber);
 		void doMacro(uint8 trackNumber);
+		void doEffects(uint8 channelNumber);
 		void runMacro(uint8 trackNumber);
 		
 		//Trackstep functions

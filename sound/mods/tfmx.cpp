@@ -62,7 +62,7 @@ void Tfmx::loadSamples() {
 	//FIXME:: temporary loader - just creates seekablereadstream from c:\mk.smpl
 	Common::SeekableReadStream *stream = NULL;
 	Common::File myfile;
-	myfile.addDefaultDirectory("~/tfmx");
+	myfile.addDefaultDirectory("C:");
 	myfile.open("mk.smpl");
 	stream = myfile.readStream(myfile.size());
 	myfile.close();
@@ -78,7 +78,7 @@ void Tfmx::load() {
 	//FIXME:: temporary loader - just creates seekablereadstream from c:\mk.mdat
 	Common::SeekableReadStream *stream = NULL;
 	Common::File myfile;
-	myfile.addDefaultDirectory("~/tfmx");
+	myfile.addDefaultDirectory("C:");
 	myfile.open("mk.mdat");
 	stream = myfile.readStream(myfile.size());
 	myfile.close();
@@ -153,12 +153,13 @@ bool Tfmx::loadSong(uint8 songNumber) {
 		_trackData[i] = trackSubStream.readUint16BE();
 	}
 
+	_trackAdvance = true;
+	_trackEnd = false;
+	_macroTest = false;
+	_patternTest = false;
+
 	//INITIALIZE TRACKS
 	for (int track = 0; track < 8; track++) { 
-		_trackAdvance = true;
-		_trackEnd = false;
-		_macroTest = false;
-
 		//initialize Track objects
 		_tracks[track].data = 0;
 		_tracks[track].trackOn = true;
@@ -186,6 +187,9 @@ bool Tfmx::loadSong(uint8 songNumber) {
 		_tracks[track].activeMacro.noteType = 0;
 		_tracks[track].activeMacro.noteWait = 0;
 		_tracks[track].activeMacro.fineTune = 0;
+		_tracks[track].activeMacro.keyUp = false;
+		_tracks[track].activeMacro.keyCount = 0;
+		_tracks[track].activeMacro.keyWait = 0;
 	}
 
 	//INITIALIZE CHANNELS
@@ -194,7 +198,18 @@ bool Tfmx::loadSong(uint8 songNumber) {
 		_channels[channel].volume = 0;
 		_channels[channel].sampleOffset = 0;
 		_channels[channel].sampleLength = 0;
-	    _channels[channel].sampleOn = 0;
+	    _channels[channel].sampleOn = false;
+		_channels[channel].updateOn = false;
+		_channels[channel].envelopeOn = false;
+		_channels[channel].envelopeTarget = 0;
+		_channels[channel].envelopeRate = 0;
+		_channels[channel].envelopeCount = 0;
+		_channels[channel].envelopeSpeed = 0;
+		_channels[channel].vibratoOn = false;
+		_channels[channel].vibratoDirection = false;
+		_channels[channel].vibratoRate = 0;
+		_channels[channel].vibratoSpeed = 0;
+		_channels[channel].vibratoCount = 0;
 	}
 
 	//SET INTERRUPT FREQUENCY
@@ -205,7 +220,7 @@ bool Tfmx::loadSong(uint8 songNumber) {
 	setInterruptFreq( (int)( getRate() / (1 / _tempo * 24)));
 	}
 
-	setInterruptFreq( (int)( getRate() / 10) );
+	setInterruptFreq( (int)( getRate() / 80) );
 	return true;
 }
 void Tfmx::updateTrackstep() {
@@ -296,7 +311,7 @@ void Tfmx::loadPattern(uint8 trackNumber, uint8 patternNumber) {
 }
 void Tfmx::updatePattern(uint8 trackNumber) {
 	if (_tracks[trackNumber].activePattern.patternWait != 0) {
-		//debugN(1, "patternwait %02x", _tracks[trackNumber].activePattern.patternWait);
+		//printf("PATTERN WAIT:: %02x \n", _tracks[trackNumber].activePattern.patternWait);
 		_tracks[trackNumber].activePattern.patternWait--;
 		return;
 	}
@@ -307,7 +322,7 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 	uint8 byte4 = ( *(_tracks[trackNumber].activePattern.data) & 0x000000FF );
 	uint16 bytes34 = ( *(_tracks[trackNumber].activePattern.data) & 0x0000FFFF );
 
-	debugN(1, "%02x:%02x:%02x:%02x",byte1,byte2,byte3,byte4);
+//	printf("PATTERN COMMAND:: %02x \n", byte1);
 
 	if (byte1 >= 0xF0) {
 		switch (byte1) {
@@ -379,7 +394,7 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 	} 
 	
 	else { 
-	//	if (!_tracks[trackNumber].macroOn) {
+		if (!_tracks[trackNumber].macroOn) {
 			_tracks[trackNumber].macroNumber = byte2;
 			loadMacro( trackNumber, (_tracks[trackNumber].macroNumber) );
 			if (byte1 < 0x80) {
@@ -398,45 +413,32 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 			_tracks[trackNumber].activeMacro.noteVelocity = (byte3 & 0xF0) >> 4;
 			_tracks[trackNumber].activeMacro.noteChannel = (byte3 & 0x0F);
 			_tracks[trackNumber].activeMacro.notePeriod = periods[(_tracks[trackNumber].activeMacro.noteNumber + _tracks[trackNumber].activePattern.patternTranspose) & 0x3F];
-
-		if (_tracks[trackNumber].activeMacro.noteType == 2) {
-			_tracks[trackNumber].activePattern.patternWait += _tracks[trackNumber].activeMacro.noteWait;
 		}
-	//	}
-	}//END ELSE
 
-	//	else {
-//		printf("macroon %d\n", _tracks[trackNumber].macroOn);
-/*		if (_tracks[trackNumber].macroOn) {
+		else {
 			while (_tracks[trackNumber].activeMacro.macroWait == 0 && (_tracks[trackNumber].macroOn == true) ) {
 				doMacro(trackNumber);
 			}
 		}
 		if (_tracks[trackNumber].activeMacro.macroWait != 0) {
+		printf("MACRO WAIT:: %02x \n", _tracks[trackNumber].activeMacro.macroWait);
 		_tracks[trackNumber].activeMacro.macroWait--;
-		}*/
-//		printf("macrowait %d", _tracks[trackNumber].activeMacro.macroWait);
+		}
+	}//END ELSE
 
 	//ADVANCE PATTERN COUNT, INCREASE COUNT
 	//IF MACRO IS ON, WAIT TO ADVANCE
-//	if (!_tracks[trackNumber].macroOn) {
+	if (!_tracks[trackNumber].macroOn) {
 		_tracks[trackNumber].activePattern.data++;
 		_tracks[trackNumber].activePattern.patternCount++;
-//	}
+		if (_tracks[trackNumber].activeMacro.noteType == 2) {
+			_tracks[trackNumber].activePattern.patternWait += _tracks[trackNumber].activeMacro.noteWait;
+		}
+	}
 	//IF THE END IS REACHED, TURN PATTERN OFF
 	if (_tracks[trackNumber].activePattern.patternCount == _tracks[trackNumber].activePattern.patternLength) {
 		_tracks[trackNumber].patternOn = false;
 	}
-}
-void Tfmx::runMacro(uint8 trackNumber) {
-		if (_tracks[trackNumber].macroOn) {
-			while (_tracks[trackNumber].activeMacro.macroWait == 0 && (_tracks[trackNumber].macroOn == true) ) {
-				doMacro(trackNumber);
-			}
-		}
-		if (_tracks[trackNumber].activeMacro.macroWait != 0) {
-		_tracks[trackNumber].activeMacro.macroWait--;
-		}
 }
 void Tfmx::loadMacro(uint8 trackNumber, uint8 macroNumber){
 	uint32 startPosition;
@@ -459,8 +461,8 @@ void Tfmx::loadMacro(uint8 trackNumber, uint8 macroNumber){
 		_tracks[trackNumber].activeMacro.data[i] = macroSubStream.readUint32BE();
 	}
 
-	debug(3, "MACRO NUMBER:: %02x \n", macroNumber);
-	debug(3, "MACRO LENGTH:: %02x \n", numCommands);
+	printf("MACRO NUMBER:: %02x \n", macroNumber);
+	printf("MACRO LENGTH:: %02x \n", numCommands);
 }
 void Tfmx::doMacro(uint8 trackNumber) {
 	uint8 byte1 = ( *(_tracks[trackNumber].activeMacro.data) ) >> 24;
@@ -471,33 +473,33 @@ void Tfmx::doMacro(uint8 trackNumber) {
 	uint8 currentChannel = _tracks[trackNumber].activeMacro.noteChannel;
 	uint16 tunedPeriod = 0;
 	
-//	debug(2,"COUNT:: %02x ::::", _tracks[trackNumber].activeMacro.macroCount);
-	debug(2,"channel[%d]: %02x:%02x:%02x:%02x \n", trackNumber, byte1,byte2,byte3,byte4);
+	printf("MACRO COUNT:: %02x ::::", _tracks[trackNumber].activeMacro.macroCount);
+	printf("MACRO COMMAND:: %02x \n", byte1);
 
 	switch (byte1) {
 	case 0x00: //DMAoff reset + CLEARS EFFECTS
-		debug(2, "DMAoff + reset");
-		_channels[currentChannel].sampleOn = 0;
+		_channels[currentChannel].sampleOn = false;
+		//_channels[currentChannel].updateOn = true;
 		_channels[currentChannel].sampleOffset = 0;
 		_channels[currentChannel].sampleLength = 0;
-		_tracks[trackNumber].activeMacro.macroWait = 1;
+		_channels[currentChannel].envelopeOn = false;
+		_channels[currentChannel].vibratoOn = false;
 		break;
 	case 0x01:
-		debug(2, "DMAon");
-		_channels[currentChannel].sampleOn = 1;
+		_channels[currentChannel].sampleOn = true;
+		_channels[currentChannel].updateOn = true;
 		//_tracks[trackNumber].activeMacro.macroWait = 1;
 		break;
 	case 0x02: //set sample offset
-		debug(2, "Setbegin");
 		_channels[currentChannel].sampleOffset = *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF;
+		_channels[currentChannel].updateOn = true;
 		break;
 	case 0x03: //set sample length
-		debug(2, "Setlen");
 		//_channels[currentChannel].sampleLength = ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) * 2;
 		_channels[currentChannel].sampleLength = ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF );
+		_channels[currentChannel].updateOn = true;
 		break;
 	case 0x04: //wait
-		debug(2, "wait");
 		if ( (*(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF) == 0 ) {
 			_tracks[trackNumber].activeMacro.macroWait = 1;
 		}
@@ -506,11 +508,11 @@ void Tfmx::doMacro(uint8 trackNumber) {
 		}
 		break;
 	case 0x07:
-		//_channels[currentChannel].sampleOn = 0; 
+		_channels[currentChannel].sampleOn = false; 
 		_tracks[trackNumber].macroOn = false;
 		break;
 	case 0x13: //DMA OFF BUT DOESNT CLEAR EFFECTS
-		_channels[currentChannel].sampleOn = 0;
+		_channels[currentChannel].sampleOn = false;
 		break;
 	case 0x0D: //add volume to channel;.
 		if (byte3 != 0xFE) {
@@ -526,23 +528,20 @@ void Tfmx::doMacro(uint8 trackNumber) {
 			_channels[currentChannel].volume = byte2;
 		}
 		break;
-	case 0x0F:
-		debug(2,"Envelope not implemented");
-		break;
 	case 0x19: //set one shot ? cut off?
 		_tracks[trackNumber].activeMacro.notePeriod = 0;
 		_channels[currentChannel].sampleOffset = 0;
 		_channels[currentChannel].sampleLength = 0;
+		_channels[currentChannel].updateOn = true;
 		break;
 	case 0x18: //sampleloop
 		//_channels[currentChannel].sampleOffset += ( *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF );
 		//_channels[currentChannel].sampleLength -= ( *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF );
 		_channels[currentChannel].sampleOffset += ( ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) & 0xFFFE );
 		_channels[currentChannel].sampleLength -= ( ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) >> 1);
-		_channels[currentChannel].sampleOn = 1;
+		//_channels[currentChannel].updateOn = true;
 		break;
 	case 0x08: //add note
-		debug(2, "addnote");
 		tunedPeriod = (periods[(byte2 + _tracks[trackNumber].activeMacro.noteNumber) & (0x3F)]);
 		_tracks[trackNumber].activeMacro.fineTune = sbyte3 / 0x100;
 		_tracks[trackNumber].activeMacro.fineTune += (_tracks[trackNumber].activeMacro.noteFineTune / 0x100);
@@ -562,6 +561,31 @@ void Tfmx::doMacro(uint8 trackNumber) {
 		_tracks[trackNumber].activeMacro.notePeriod = ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF );
 		_tracks[trackNumber].activeMacro.macroWait = 1;
 		break;
+	case 0x0F://envelope
+		_channels[currentChannel].envelopeOn = true;
+		_channels[currentChannel].envelopeTarget = byte4;
+		_channels[currentChannel].envelopeRate = byte2;
+		_channels[currentChannel].envelopeSpeed = byte3; 
+		_channels[currentChannel].envelopeCount = 0;
+		break;
+	case 0x0C: //vibrato
+		_channels[currentChannel].vibratoOn = true;
+		_channels[currentChannel].vibratoRate = byte4;
+		_channels[currentChannel].vibratoSpeed = byte2 * 2;
+		_channels[currentChannel].vibratoCount = 0;
+		break;
+	case 0x14://wait for key-up
+		//_tracks[trackNumber].activeMacro.keyWait = byte4;
+		//_tracks[trackNumber].activeMacro.keyCount++;
+		/*
+		if (!_tracks[trackNumber].activeMacro.keyUp) {
+			_tracks[trackNumber].activeMacro.data--;
+			_tracks[trackNumber].activeMacro.macroCount--;
+			_channels[currentChannel].updateOn = true;
+			_tracks[trackNumber].activeMacro.macroWait = 1;
+		}
+		*/
+		break;
 	default:
 		break;
 	}//end switch
@@ -576,7 +600,7 @@ void Tfmx::doMacro(uint8 trackNumber) {
 
 	if (_tracks[trackNumber].activeMacro.macroCount == _tracks[trackNumber].activeMacro.macroLength) {
 		_tracks[trackNumber].macroOn = false;
-		_channels[currentChannel].sampleOn = 0;
+		//_channels[currentChannel].sampleOn = false;
 	}
 }
 void Tfmx::testMacro(uint8 macroNumber) {
@@ -587,7 +611,7 @@ void Tfmx::testMacro(uint8 macroNumber) {
 	_tracks[0].activeMacro.noteVelocity = 0x0F;
 	_tracks[0].activeMacro.noteChannel = 0;
 	_tracks[0].activeMacro.noteWait = 0; 
-	_tracks[0].activeMacro.notePeriod = periods[0x1E];
+	_tracks[0].activeMacro.notePeriod = periods[(_tracks[0].activeMacro.noteNumber & 0x3F)];
 	startPaula();
 }
 void Tfmx::interrupt(void) {
@@ -595,7 +619,7 @@ void Tfmx::interrupt(void) {
 	count++;
 	//printf("INTERRUPT COUNT:: %02x \n", count);
 	
-	if (!_macroTest) { //Would be the normal case unless macro testing is on.
+	if (!_macroTest && !_patternTest) { //Would be the normal case unless macro testing is on.
 
 		if (_trackAdvance) {
 			updateTrackstep();
@@ -604,28 +628,25 @@ void Tfmx::interrupt(void) {
 		//CYCLE THROUGH THE 8 TRACKS TO FIND WHICH PATTERNS ARE ON AND THEN UPDATE
 		//WILL SKIP UPDATES FOR A WAIT
 		for (int track = 0; track < 8; track++) {
-			debugN(1, "\n%d(%02x j): ",track,count);
 			if (_tracks[track].patternOn && _tracks[track].trackOn) {
 					updatePattern(track);
 			}
-			runMacro(track);
 		}
 
-		for (int i = 0; i < 4; i++)
-		{
+		for (int i = 1; i < 4; i++) {
+			doEffects(i);
 			setChannelPeriod(i,_channels[i].period);
 			setChannelVolume(i,_channels[i].volume);
-			if (_channels[i].sampleOn == 1) {
-				_channels[i].sampleOn = 2;
-				debugN(2,"SAMPLE ON channel %d ",i);
-				debugN(2,"SAMPLE OFFSET:: %02x ", _channels[i].sampleOffset);
-				debugN(2,"SAMPLE LENGTH:: %02x ", _channels[i].sampleLength);
-				debugN(2,"SAMPLE VOLUME:: %02x ", _channels[i].volume);
-				debug(2,"SAMPLE PERIOD:: %02x ", _channels[i].period);
-				setChannelData(i, _sampleData + _channels[i].sampleOffset, 0, _channels[i].sampleLength, 0);
-			} else if (_channels[i].sampleOn == 0) {
-			// kill the channel here
-			}
+			if ( (_channels[i].sampleOn) && (_channels[i].updateOn) ) {
+				printf("SAMPLE ON:: Channel # %02x \n", i);
+				printf("SAMPLE OFFSET:: %02x \n", _channels[i].sampleOffset);
+				printf("SAMPLE LENGTH:: %02x \n", _channels[i].sampleLength);
+				printf("SAMPLE VOLUME:: %02x \n", _channels[i].volume);
+				printf("SAMPLE PERIOD:: %02x \n", _channels[i].period);
+				//setChannelData(i, _sampleData + _channels[i].sampleOffset, 0, _channels[i].sampleLength, 0);
+				setChannelData(i, _sampleData + _channels[i].sampleOffset, _sampleData + _channels[i].sampleOffset, _channels[i].sampleLength, _channels[i].sampleLength);
+				_channels[i].updateOn = false;
+			}	
 		}
 		
 		//CHECK IF PATTERNS ARE ON: IF SO, TRACK ADVANCE IS FALSE
@@ -641,27 +662,119 @@ void Tfmx::interrupt(void) {
 
 	}//IF MACRO TEST = FALSE
 
-	else { //MACRO TEST IS ON
+	else if (_macroTest) { //MACRO TEST IS ON
 		while (_tracks[0].activeMacro.macroWait == 0 && (_tracks[0].macroOn == true) ) {
 				doMacro(0);
 		}
+		doEffects(0);
 		setChannelPeriod(0,_channels[0].period);
 		setChannelVolume(0,_channels[0].volume);
-		if (_channels[0].sampleOn == true) {
-			printf("SAMPLE ON \n");
-			printf("SAMPLE OFFSET:: %02x \n", _channels[0].sampleOffset);
-			printf("SAMPLE LENGTH:: %02x \n", _channels[0].sampleLength);
-			printf("SAMPLE VOLUME:: %02x \n", _channels[0].volume);
-			printf("SAMPLE PERIOD:: %02x \n", _channels[0].period);
-			setChannelData(0, _sampleData + _channels[0].sampleOffset, 0, _channels[0].sampleLength, 0);
-			//setChannelData(0, _sampleData + _channels[0].sampleOffset, _sampleData + _channels[0].sampleOffset, _channels[0].sampleLength, _channels[0].sampleLength);
-		}	
+				if ( (_channels[0].sampleOn) && (_channels[0].updateOn) ) {
+				printf("SAMPLE ON:: Channel #0 \n");
+				printf("SAMPLE OFFSET:: %02x \n", _channels[0].sampleOffset);
+				printf("SAMPLE LENGTH:: %02x \n", _channels[0].sampleLength);
+				printf("SAMPLE VOLUME:: %02x \n", _channels[0].volume);
+				printf("SAMPLE PERIOD:: %02x \n", _channels[0].period);
+				printf("SAMPLE PERIOD NUMBER:: %02x \n", _tracks[0].activeMacro.noteNumber & 0x3F);
+				//setChannelData(0, _sampleData + _channels[0].sampleOffset, 0, _channels[0].sampleLength, 0);
+				setChannelData(0, _sampleData + _channels[0].sampleOffset, _sampleData + _channels[0].sampleOffset, _channels[0].sampleLength, _channels[0].sampleLength);
+				_channels[0].updateOn = false;
+		}		
 
 		if (_tracks[0].activeMacro.macroWait != 0) {
 		_tracks[0].activeMacro.macroWait--;
 		}
 	}
+
+	else if (_patternTest) {
+		//printf("INTERRUPT COUNT:: %02x \n", count);
+		if (_tracks[0].patternOn && _tracks[0].trackOn) {
+			updatePattern(0);
+		}
+
+		for (int i = 0; i < 4; i++) {
+			//setChannelPeriod(i,periods[(_tracks[0].activeMacro.noteNumber & 0x3F)]);
+			doEffects(i);
+			setChannelPeriod(i,_channels[i].period);
+			setChannelVolume(i,_channels[i].volume);
+			
+			if ( (_channels[i].sampleOn) && (_channels[i].updateOn) ) {
+				printf("SAMPLE ON:: Channel # %02x \n", i);
+				printf("SAMPLE OFFSET:: %02x \n", _channels[i].sampleOffset);
+				printf("SAMPLE LENGTH:: %02x \n", _channels[i].sampleLength);
+				printf("SAMPLE VOLUME:: %02x \n", _channels[i].volume);
+				printf("SAMPLE PERIOD:: %02x \n", _channels[i].period);
+				printf("SAMPLE PERIOD NUMBER:: %02x \n", _tracks[0].activeMacro.noteNumber & 0x3F);
+				//setChannelData(i, _sampleData + _channels[i].sampleOffset, 0, _channels[i].sampleLength, 0);
+				setChannelData(i, _sampleData + _channels[i].sampleOffset, _sampleData + _channels[i].sampleOffset, _channels[i].sampleLength, _channels[i].sampleLength);
+				_channels[i].updateOn = false;
+			}	
+		}
+
+		//if (!_tracks[0].patternOn) {
+		//	stopPaula();
+		//}
+	}//end pattern test
 }
+void Tfmx::testPattern(uint8 patternNumber) {
+	_patternTest = true;
+	loadPattern(0, patternNumber); //load the pattern into track[0]
+	_tracks[0].patternOn = true;
+	startPaula();
+}
+void Tfmx::doEffects(uint8 channelNumber) {
+	//Envelope Effect
+	if (_channels[channelNumber].envelopeOn) {
+		//Tick at the begining or the end?
+		//_channels[channelNumber].envelopeCount++;
+		if(_channels[channelNumber].envelopeCount == _channels[channelNumber].envelopeSpeed) {
+			
+			//Subtract Volume, target volume is lower
+			if (_channels[channelNumber].volume > _channels[channelNumber].envelopeTarget) {
+				_channels[channelNumber].volume -= _channels[channelNumber].envelopeRate;
+				//Fix if you pass target volume
+				if (_channels[channelNumber].volume < _channels[channelNumber].envelopeTarget) {
+					_channels[channelNumber].volume = _channels[channelNumber].envelopeTarget;
+				}
+			}
+			//Add Volume, target volume is higher
+			if (_channels[channelNumber].volume < _channels[channelNumber].envelopeTarget) {
+				_channels[channelNumber].volume += _channels[channelNumber].envelopeRate;
+				//Fix if you pass target volume
+				if (_channels[channelNumber].volume > _channels[channelNumber].envelopeTarget) {
+					_channels[channelNumber].volume = _channels[channelNumber].envelopeTarget;
+				}
+			}
+			//Reset count.
+			_channels[channelNumber].envelopeCount = 0;
+		}
+		//Tick at the begining or the end?
+		_channels[channelNumber].envelopeCount++;
+
+		if (_channels[channelNumber].volume == _channels[channelNumber].envelopeTarget) {
+			_channels[channelNumber].envelopeOn = false;
+		}
+	}
+	//Vibrato Effect
+	if (_channels[channelNumber].vibratoOn) {
+		
+		if (_channels[channelNumber].vibratoCount == _channels[channelNumber].vibratoSpeed) {
+			//vibrato up
+			if (_channels[channelNumber].vibratoDirection) { //true = up
+			_channels[channelNumber].period += _channels[channelNumber].vibratoRate;
+			}
+			//vibrato down
+			if (!_channels[channelNumber].vibratoDirection) { //false = down
+			_channels[channelNumber].period += _channels[channelNumber].vibratoRate;
+			}
+			//reset count
+			_channels[channelNumber].vibratoCount = 0;
+		}
+		_channels[channelNumber].vibratoCount++;
+	}
+	//Period Effects
+}
+
 void Tfmx::setTempo() {
 	//Safe to ignore for now
 }
