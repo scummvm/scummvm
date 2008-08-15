@@ -428,10 +428,11 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 	assert(_parser);
 	_themeName.clear();
 	
-#ifdef USE_ZLIB
-	unzFile zipFile = unzOpen(themeName.c_str());
 	char fileNameBuffer[32];
 	int parseCount = 0;
+	
+#ifdef USE_ZLIB
+	unzFile zipFile = unzOpen(themeName.c_str());
 	
 	if (zipFile && unzGoToFirstFile(zipFile) == UNZ_OK) {
 		while (true) {
@@ -462,7 +463,6 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 					if (parser()->loadStream(stream) == false || parser()->parse() == false) {
 						warning("Failed to load stream for zipped file '%s'", fileNameBuffer);
 						unzClose(zipFile);
-//						delete stream;
 						return false;
 					}
 				}
@@ -473,16 +473,34 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 			if (unzGoToNextFile(zipFile) != UNZ_OK)
 				break;
 		}
+	} else {
+#endif
+		FilesystemNode node(themeName);
+		if (node.exists() && node.isReadable() && node.isDirectory()) {
+			
+			FSList fslist;
+			if (!node.getChildren(fslist, FilesystemNode::kListFilesOnly))
+				return false;
+			
+			for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
+				if (i->getName().hasSuffix(".stx")) {
+					
+				} else if (i->getName() == "THEMERC") {
+					
+				}
+				
+			}
+			
+		}
+#ifdef USE_ZLIB
 	}
 	
-//	FilesystemNode dir(themeName);
-//	FSList files = dir.listDir(FilesystemNode::kListFilesOnly);
-	
 	unzClose(zipFile);
-	return (parseCount > 0 && _themeName.empty() == false);
-#else
-	return false;
+	
 #endif
+
+
+	return (parseCount > 0 && _themeName.empty() == false);
 }
 
 bool ThemeRenderer::isWidgetCached(DrawData type, const Common::Rect &r) {
