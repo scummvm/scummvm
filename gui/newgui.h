@@ -33,6 +33,8 @@
 #include "gui/theme.h"
 #include "gui/widget.h"
 
+#include "gui/ThemeRenderer.h"
+
 class OSystem;
 
 namespace GUI {
@@ -76,7 +78,7 @@ public:
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 
-	bool loadNewTheme(const Common::String &file);
+	bool loadNewTheme(const Common::String &file, ThemeRenderer::GraphicsMode gfx = ThemeRenderer::kGfxDisabled);
 	Theme *theme() { return _theme; }
 	
 	ThemeEval *xmlEval() { return _theme->evaluator(); }

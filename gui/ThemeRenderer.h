@@ -212,8 +212,11 @@ public:
 	enum GraphicsMode {
 		kGfxDisabled = 0,	/** No GFX */
 		kGfxStandard16bit,	/** 2BPP with the standard (aliased) renderer. */
-		kGfxAntialias16bit	/** 2BPP with the optimized AA renderer. */
+		kGfxAntialias16bit,	/** 2BPP with the optimized AA renderer. */
+		kGfxMAX
 	};
+	
+	static const char *rendererModeLabels[];
 	
 	/** Default constructor */
 	ThemeRenderer(Common::String fileName, GraphicsMode mode);
@@ -487,6 +490,7 @@ protected:
 
 	const Common::String &getThemeName() const { return _themeName; }
 	const Common::String &getThemeFileName() const { return _themeFileName; }
+	int getThemeRenderer() const { return _graphicsMode; }
 	
 	/**
 	 *	Initializes the drawing screen surfaces, _screen and _backBuffer.

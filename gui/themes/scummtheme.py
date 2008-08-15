@@ -6,7 +6,7 @@ import os
 import zipfile
 
 def buildTheme(themeName):
-	if not os.path.isdir(themeName):
+	if not os.path.isdir(themeName) or not os.path.isfile(os.path.join(themeName, "THEMERC")):
 		print "Invalid theme name: " + themeName
 		return
 	

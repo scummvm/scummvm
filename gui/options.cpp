@@ -724,9 +724,16 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", "Theme:", kChooseThemeCmd, 0);
 	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
+	
 
 	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
-
+	
+	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.Renderer", "GUI Renderer:", labelWidth);
+	
+	for (int i = 1; i < GUI::ThemeRenderer::kGfxMAX; ++i) {
+		_rendererPopUp->appendEntry(GUI::ThemeRenderer::rendererModeLabels[i], i);
+	}
+	
 	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriod", "Autosave:", labelWidth);
 
 	for (int i = 0; savePeriodLabels[i]; i++) {
@@ -799,6 +806,8 @@ void GlobalOptionsDialog::open() {
 		if (value == savePeriodValues[i])
 			_autosavePeriodPopUp->setSelected(i);
 	}
+	
+	_rendererPopUp->setSelected(ConfMan.getInt("gui_renderer") - 1);
 }
 
 void GlobalOptionsDialog::close() {
@@ -828,6 +837,11 @@ void GlobalOptionsDialog::close() {
 #endif
 
 		ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
+		
+		if ((int)_rendererPopUp->getSelectedTag() != ConfMan.getInt("gui_renderer")) {
+			g_gui.loadNewTheme(g_gui.theme()->getThemeFileName(), (GUI::ThemeRenderer::GraphicsMode)_rendererPopUp->getSelectedTag());
+			ConfMan.setInt("gui_renderer", _rendererPopUp->getSelectedTag(), _domain);
+		}
 	}
 	OptionsDialog::close();
 }

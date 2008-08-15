@@ -456,6 +456,9 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
+			<widget name = 'Renderer'
+					type = 'PopUp'
+			/>
 			<widget name = 'AutosavePeriod'
 					type = 'PopUp'
 			/>

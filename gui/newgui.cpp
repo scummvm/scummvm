@@ -58,8 +58,6 @@ void GuiObject::reflowLayout() {
 		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, _w, _h)) {
 			warning("Could not load widget position for '%s'", _name.c_str());
 		}
-		
-		return;
 
 		if (_x < 0)
 			error("Widget <%s> has x < 0: %d", _name.c_str(), _x);
@@ -96,8 +94,11 @@ NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
 		
 	if (themefile != "builtin" && !themefile.hasSuffix(".zip"))
 		themefile += ".zip";
+		
+	ConfMan.registerDefault("gui_renderer", 2);
+	ThemeRenderer::GraphicsMode gfxMode = (ThemeRenderer::GraphicsMode)ConfMan.getInt("gui_renderer");
 
-	loadNewTheme(themefile);
+	loadNewTheme(themefile, gfxMode);
 	_themeChange = false;
 }
 
@@ -105,8 +106,14 @@ NewGui::~NewGui() {
 	delete _theme;
 }
 
-bool NewGui::loadNewTheme(const Common::String &filename) {
+bool NewGui::loadNewTheme(const Common::String &filename, ThemeRenderer::GraphicsMode gfx) {
+	if (_theme && filename == _theme->getThemeFileName() && gfx == _theme->getThemeRenderer())
+		return true;
+	
 	Common::String oldTheme = (_theme != 0) ? _theme->getThemeFileName() : "";
+	
+	if (gfx == ThemeRenderer::kGfxDisabled)
+		gfx = (ThemeRenderer::GraphicsMode)ConfMan.getInt("gui_renderer");
 
 	if (_theme)
 		_theme->disable();
@@ -119,7 +126,7 @@ bool NewGui::loadNewTheme(const Common::String &filename) {
 	delete _theme;
 	_theme = 0;
 
-	_theme = new ThemeRenderer(filename, GUI::ThemeRenderer::kGfxAntialias16bit);
+	_theme = new ThemeRenderer(filename, gfx);
 
 	if (!_theme)
 		return (!oldTheme.empty() ? loadNewTheme(oldTheme) : false);

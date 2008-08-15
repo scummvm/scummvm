@@ -310,6 +310,7 @@ public:
 
 	virtual const Common::String &getThemeFileName() const = 0;
 	virtual const Common::String &getThemeName() const = 0;
+	virtual int getThemeRenderer() const = 0;
 
 	/**
 	 * Checks if the theme renderer supports drawing of images.

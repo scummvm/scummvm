@@ -43,6 +43,12 @@ namespace GUI {
 
 using namespace Graphics;
 
+const char *ThemeRenderer::rendererModeLabels[] = {
+	"Disabled GFX",
+	"Stardard Renderer (16bpp)",
+	"Antialiased Renderer (16bpp)"
+};
+
 const ThemeRenderer::DrawDataInfo ThemeRenderer::kDrawDataDefaults[] = {
 	{kDDMainDialogBackground, "mainmenu_bg", true, kDDNone},
 	{kDDSpecialColorBackground, "special_bg", true, kDDNone},
@@ -256,7 +262,7 @@ void ThemeRenderer::setGraphicsMode(GraphicsMode mode) {
 		break;
 
 	default:
-		return;
+		error("Invalid graphics mode");
 	}
 
 	freeRenderer();

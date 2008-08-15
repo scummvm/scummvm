@@ -170,7 +170,7 @@ protected:
 	// Misc controls
 	//
 	StaticTextWidget *_curTheme;
-
+	PopUpWidget *_rendererPopUp;
 	PopUpWidget *_autosavePeriodPopUp;
 };
 
