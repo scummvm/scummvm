@@ -955,7 +955,9 @@ void LauncherDialog::loadGame(int item) {
 	if (plugin) {
 		bool delSupport = (*plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
 
-		if ((*plugin)->hasFeature(MetaEngine::kSupportsListSaves)) {
+		if ((*plugin)->hasFeature(MetaEngine::kSupportsListSaves) && 
+			(*plugin)->hasFeature(MetaEngine::kSupportsDirectLoad)) 
+		{
 			do {
 				Common::StringList saveNames = generateSavegameList(item, plugin);
 				_loadDialog->setList(saveNames);

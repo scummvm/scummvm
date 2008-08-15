@@ -109,10 +109,16 @@ public:
 	virtual const char *getCopyright() const {
 		return "AGOS (C) Adventure Soft";
 	}
-
+	
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
 };
+
+bool AgosMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves);
+}
 
 bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const AGOS::AGOSGameDescription *gd = (const AGOS::AGOSGameDescription *)desc;
