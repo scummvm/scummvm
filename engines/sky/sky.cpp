@@ -130,6 +130,7 @@ const char *SkyMetaEngine::getCopyright() const {
 
 bool SkyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
+		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDirectLoad);
 }

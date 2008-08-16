@@ -30,6 +30,7 @@
 #include "common/str.h"
 
 class OSystem;
+
 namespace Audio {
 	class Mixer;
 }
@@ -137,6 +138,10 @@ public:
 	/** Sync the engine's sound settings with the config manager
 	 */
 	virtual void syncSoundSettings();
+
+	/** Determine whether the engine supports the specified MetaEngine feature
+	 */
+	virtual bool hasFeature(int f);
 
 public:
 

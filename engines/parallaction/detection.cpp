@@ -250,6 +250,7 @@ public:
 
 bool ParallactionMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
+		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDirectLoad) ||
 		(f == kSupportsDeleteSave);

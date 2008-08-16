@@ -79,6 +79,7 @@ const char *QueenMetaEngine::getCopyright() const {
 
 bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
+		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDirectLoad) ||
 		(f == kSupportsDeleteSave);

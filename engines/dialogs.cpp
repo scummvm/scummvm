@@ -36,6 +36,7 @@
 
 #include "engines/dialogs.h"
 #include "engines/engine.h"
+#include "engines/metaengine.h"
 
 #ifdef SMALL_SCREEN_DEVICE
 #include "gui/KeysDialog.h"
@@ -76,15 +77,18 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 
 	new GUI::ButtonWidget(this, "globalmain_resume", "Resume", kPlayCmd, 'P');
 
-//	new GUI::ButtonWidget(this, "scummmain_load", "Load", kLoadCmd, 'L');
-//	new GUI::ButtonWidget(this, "scummmain_save", "Save", kSaveCmd, 'S');
+//	new GUI::ButtonWidget(this, "globalmain_load", "Load", kLoadCmd, 'L');
+//	new GUI::ButtonWidget(this, "globalmain_save", "Save", kSaveCmd, 'S');
 
 	new GUI::ButtonWidget(this, "globalmain_options", "Options", kOptionsCmd, 'O');
 
 	new GUI::ButtonWidget(this, "globalmain_about", "About", kAboutCmd, 'A');
 
-	new GUI::ButtonWidget(this, "globalmain_rtl", "Return to Launcher", kRTLCmd, 'R');	
-	
+	_rtlButton = new GUI::ButtonWidget(this, "globalmain_rtl", "Return to Launcher", kRTLCmd, 'R');	
+	// '0' corresponds to the kSupportsRTL MetaEngineFeature
+	_rtlButton->setEnabled(_engine->hasFeature(0));
+
+
 	new GUI::ButtonWidget(this, "globalmain_quit", "Quit", kQuitCmd, 'Q');
 
 	_aboutDialog = new GUI::AboutDialog();

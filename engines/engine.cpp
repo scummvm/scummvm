@@ -39,6 +39,7 @@
 #include "gui/newgui.h"
 #include "sound/mixer.h"
 #include "engines/dialogs.h"
+#include "engines/metaengine.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone(void);
@@ -251,3 +252,13 @@ void Engine::quitGame() {
 	event.type = Common::EVENT_QUIT;
 	_eventMan->pushEvent(event);
 }
+
+bool Engine::hasFeature(int f) {
+	const EnginePlugin *plugin = 0;
+	Common::String gameid = ConfMan.get("gameid");
+	gameid.toLowercase();
+	EngineMan.findGame(gameid, &plugin);
+	
+	return ( (*plugin)->hasFeature((MetaEngine::MetaEngineFeature)f) );
+}
+

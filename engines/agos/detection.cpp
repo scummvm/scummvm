@@ -117,6 +117,7 @@ public:
 
 bool AgosMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
+		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves);
 }
 

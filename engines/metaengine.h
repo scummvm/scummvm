@@ -118,13 +118,14 @@ public:
 	 *  in the launcher.
 	 */
 	enum MetaEngineFeature {
-		kSupportsListSaves,
-		kSupportsDirectLoad,
-		kSupportsDeleteSave
+		kSupportsRTL 		= 0,
+		kSupportsListSaves 	= 1,
+		kSupportsDirectLoad 	= 2,
+		kSupportsDeleteSave 	= 3
 	};	
 
 	/**
-	 * Determine whether the engine supports the specified feature
+	 * Determine whether the engine supports the specified MetaEngine feature
 	 */	
 	virtual bool hasFeature(MetaEngineFeature f) const { return false; };
 

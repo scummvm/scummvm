@@ -52,6 +52,7 @@ public:
 protected:
 	Engine			*_engine;
 
+	GUI::ButtonWidget	*_rtlButton;
 	GUI::Dialog		*_aboutDialog;
 	GUI::Dialog		*_optionsDialog;
 
