@@ -3,10 +3,10 @@
 
 	@WorkingEngines = qw(
 		scumm agos sky queen gob saga drascula 
-		kyra lure agi touche parallaction 
+		kyra lure agi touche parallaction cine
 	);
 	@TestingEngines = qw(
-		cruise igor made m4 cine 		
+		cruise igor made m4
 	);
 	@BrokenEngines = qw(
 		sword1
