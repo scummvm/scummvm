@@ -3156,8 +3156,10 @@ void TownsPC98_OpnDriver::fadeOut() {
 			if (_updateSSGFlag & _ssgChannels[j]->_idFlag)
 				_ssgChannels[j]->fadeStep();
 		}
-		if (_updatePCMFlag & _pcmChannel->_idFlag)
-			_pcmChannel->fadeStep();
+		if (_hasPCM) {
+			if (_updatePCMFlag & _pcmChannel->_idFlag)
+				_pcmChannel->fadeStep();
+		}
 
 		unlock();
 
