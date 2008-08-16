@@ -554,19 +554,16 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 
 	copyOverlayRegion(x1, y1, x2, y2, w, h, srcPage, dstPage);
 
-	if (flags & CR_X_FLIPPED) {
+	if (flags & CR_NO_P_CHECK) {
 		while (h--) {
-			for (int i = 0; i < w; ++i) {
-				if (src[i] || (flags & CR_NO_P_CHECK))
-					dst[w-i] = src[i];
-			}
+			memcpy(dst, src, w);
 			src += SCREEN_W;
 			dst += SCREEN_W;
 		}
 	} else {
 		while (h--) {
 			for (int i = 0; i < w; ++i) {
-				if (src[i] || (flags & CR_NO_P_CHECK))
+				if (src[i])
 					dst[i] = src[i];
 			}
 			src += SCREEN_W;
