@@ -978,8 +978,8 @@ void LauncherDialog::loadGame(int item) {
 						const char *file = saveList[idx].filename().c_str();
 						printf("Loading slot: %d\n", slot);
 						printf("Loading file: %s\n", file);
-						ConfMan.setInt("save_slot", slot);
 						ConfMan.setActiveDomain(_domains[item]);
+						ConfMan.setInt("save_slot", slot);
 						close();
 					}
 				}
