@@ -565,14 +565,16 @@ bool AGOSEngine::processSpecialKeys() {
 		if (_midiEnabled) {
 			_midi.setVolume(_midi.getMusicVolume() + 16, _midi.getSFXVolume() + 16);
 		}
-		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 16);
+		ConfMan.setInt("music_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 16);
+		syncSoundSettings();
 		break;
 	case Common::KEYCODE_MINUS:
 	case Common::KEYCODE_KP_MINUS:
 		if (_midiEnabled) {
 			_midi.setVolume(_midi.getMusicVolume() - 16, _midi.getSFXVolume() - 16);
 		}
-		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) - 16);
+		ConfMan.setInt("music_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) - 16);
+		syncSoundSettings();
 		break;
 	case Common::KEYCODE_m:
 		_musicPaused ^= 1;
