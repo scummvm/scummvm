@@ -1493,7 +1493,18 @@ int FWScript::o1_compareGlobalVar() {
 
 		debugC(5, kCineDebugScript, "Line: %d: compare globalVars[%d] and %d", _line, varIdx, value);
 
-		_compare = compareVars(_globalVars[varIdx], value);
+		// WORKAROUND for bug #2054882. Without this, the monks will always
+		// kill you as an impostor, even if you enter the monastery in disguise.
+		//
+		// TODO: Check whether this might be worked around in some other way
+		// like setting global variable 255 to 143 in Future Wars (This is
+		// supposedly what Future Wars checks for from time to time during
+		// gameplay to verify that copy protection was successfully passed).
+		if (varIdx == 255 && (g_cine->getGameType() == Cine::GType_FW)) {
+			_compare = kCmpEQ;
+		} else {
+			_compare = compareVars(_globalVars[varIdx], value);
+		}
 	}
 
 	return 0;
