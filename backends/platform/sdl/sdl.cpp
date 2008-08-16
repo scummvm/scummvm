@@ -292,12 +292,13 @@ static Common::String getDefaultConfigFileName() {
 		CreateDirectory(configFile, NULL);
 		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
 
-		if (fopen(configFile, "r") == NULL) {
+		FILE *tmp = NULL;
+		if ((tmp = fopen(configFile, "r")) == NULL) {
 			// Check windows directory
 			char oldConfigFile[MAXPATHLEN];
 			GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
 			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
-			if (fopen(oldConfigFile, "r")) {
+			if ((tmp = fopen(oldConfigFile, "r"))) {
 				printf("The default location of the config file (scummvm.ini) in ScummVM has changed,\n");
 				printf("under Windows NT4/2000/XP/Vista. You may want to consider moving your config\n");
 				printf("file from the old default location:\n");
@@ -305,7 +306,11 @@ static Common::String getDefaultConfigFileName() {
 				printf("to the new default location:\n");
 				printf("%s\n\n", configFile);
 				strcpy(configFile, oldConfigFile);
+
+				fclose(tmp);
 			}
+		} else {
+			fclose(tmp);
 		}
 	} else {
 		// Check windows directory
