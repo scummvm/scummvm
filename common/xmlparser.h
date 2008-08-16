@@ -32,6 +32,7 @@
 #include "common/xmlparser.h"
 #include "common/stream.h"
 #include "common/file.h"
+#include "common/fs.h"
 
 #include "common/hashmap.h"
 #include "common/hash-str.h"
@@ -342,7 +343,7 @@ public:
 	 *
 	 * @param filename Name of the file to load.
 	 */
-	bool loadFile(Common::String filename) {
+	bool loadFile(const Common::String &filename) {
 		Common::File *f = new Common::File;
 
 		if (!f->open(filename)) {
@@ -351,6 +352,19 @@ public:
 		}
 
 		_fileName = filename;
+		_text.loadStream(f);
+		return true;
+	}
+	
+	bool loadFile(const FilesystemNode &node) {
+		Common::File *f = new Common::File;
+		
+		if (!f->open(node)) {
+			delete f;
+			return false;
+		}
+		
+		_fileName = node.getName();
 		_text.loadStream(f);
 		return true;
 	}

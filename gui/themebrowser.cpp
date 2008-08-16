@@ -146,16 +146,34 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 		return;
 
 	FSList fslist;
-	if (!node.getChildren(fslist, FilesystemNode::kListAll))
-		return;
-
-	for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
-		if (i->isDirectory()) {
-			addDir(list, i->getPath(), level-1);
-		} else {
+	
+#ifdef USE_ZLIB
+	if (node.lookupFile(fslist, "*.zip", false, true, 0)) {
+		for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
 			Entry th;
 			if (isTheme(*i, th)) {
 				bool add = true;
+				
+				for (ThList::const_iterator p = list.begin(); p != list.end(); ++p) {
+					if (p->name == th.name || p->file == th.file) {
+						add = false;
+						break;
+					}
+				}
+
+				if (add)
+					list.push_back(th);	
+			}
+		}
+	}
+#endif
+
+	if (node.lookupFile(fslist, "THEMERC", false, true, 1)) {
+		for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
+			Entry th;
+			if (isTheme(i->getParent(), th)) {
+				bool add = true;
+				
 				for (ThList::const_iterator p = list.begin(); p != list.end(); ++p) {
 					if (p->name == th.name || p->file == th.file) {
 						add = false;
@@ -171,12 +189,17 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 }
 
 bool ThemeBrowser::isTheme(const FilesystemNode &node, Entry &out) {
-	out.file = node.getName();
+	out.file = node.getName();	
 	
-	if (!out.file.hasSuffix(".zip"))
+#ifdef USE_ZLIB
+	if (!out.file.hasSuffix(".zip") && !node.isDirectory())
 		return false;
+#else
+	if (!node.isDirectory())
+		return false;
+#endif
 		
-	if (!Theme::themeConfigUseable(out.file, out.name))
+	if (!Theme::themeConfigUseable(node, out.name))
 		return false;
 
 	return true;

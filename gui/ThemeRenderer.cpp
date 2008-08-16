@@ -191,7 +191,10 @@ void ThemeRenderer::unloadTheme() {
 	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i)
 		ImageMan.unregisterSurface(i->_key);
 
-	ImageMan.remArchive(_themeFileName);
+	if (_themeFileName.hasSuffix(".zip"))
+		ImageMan.remArchive(_themeFileName);
+		
+	Common::File::resetDefaultDirectories();
 	
 	_themeEval->reset();
 	_themeOk = false;
@@ -370,7 +373,10 @@ bool ThemeRenderer::loadTheme(Common::String fileName) {
 		if (ConfMan.hasKey("extrapath"))
 			Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
 		
-		ImageMan.addArchive(fileName);
+		if (fileName.hasSuffix(".zip"))
+			ImageMan.addArchive(fileName);
+		else 
+			Common::File::addDefaultDirectory(fileName);
 	}
 
 	if (fileName == "builtin") {
@@ -429,10 +435,11 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 	_themeName.clear();
 	
 	char fileNameBuffer[32];
+	char stxHeader[128];
 	int parseCount = 0;
 	
 #ifdef USE_ZLIB
-	unzFile zipFile = unzOpen(themeName.c_str());
+	unzFile zipFile = unzOpen((themeName).c_str());
 	
 	if (zipFile && unzGoToFirstFile(zipFile) == UNZ_OK) {
 		while (true) {
@@ -449,11 +456,12 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 				Common::MemoryReadStream *stream = new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size+1, true);
 				
 				if (!strcmp(fileNameBuffer, "THEMERC")) {
-					char stxHeader[128];
 					stream->readLine(stxHeader, 128);
 
-					if (!themeConfigParseHeader(stxHeader, _themeName))
-						error("Corrupted 'THEMERC' file");
+					if (!themeConfigParseHeader(stxHeader, _themeName)) {
+						warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
+						return false;
+					}
 						
 					delete stream;
 					
@@ -484,13 +492,23 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 			
 			for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
 				if (i->getName().hasSuffix(".stx")) {
+					parseCount++;
 					
+					if (parser()->loadFile(*i) == false || parser()->parse() == false) {
+						warning("Failed to parse STX file '%s'", i->getName().c_str());
+						return false;
+					}
 				} else if (i->getName() == "THEMERC") {
-					
+					Common::File f;
+					f.open(*i);
+					f.readLine(stxHeader, 128);
+
+					if (!themeConfigParseHeader(stxHeader, _themeName)) {
+						warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
+						return false;
+					}
 				}
-				
 			}
-			
 		}
 #ifdef USE_ZLIB
 	}

@@ -23,6 +23,7 @@
  */
 
 #include "gui/theme.h"
+#include "common/fs.h"
 #include "common/unzip.h"
 
 namespace GUI {
@@ -153,7 +154,10 @@ bool Theme::themeConfigParseHeader(Common::String header, Common::String &themeN
 	return tok.empty();
 }
 
-bool Theme::themeConfigUseable(const Common::String &filename, Common::String &themeName) {
+bool Theme::themeConfigUseable(const FilesystemNode &node, Common::String &themeName) {
+	char stxHeader[128];
+	bool foundHeader = false;
+	
 	if (ConfMan.hasKey("themepath"))
 		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
 
@@ -164,38 +168,47 @@ bool Theme::themeConfigUseable(const Common::String &filename, Common::String &t
 	if (ConfMan.hasKey("extrapath"))
 		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
 		
+	if (node.getName().hasSuffix(".zip")) {		
 #ifdef USE_ZLIB
-	unzFile zipFile = unzOpen(filename.c_str());
-	char stxHeader[128];
-	bool foundHeader = false;
+		unzFile zipFile = unzOpen(node.getPath().c_str());
 	
-	if (zipFile && unzLocateFile(zipFile, "THEMERC", 2) == UNZ_OK) {
-		unz_file_info fileInfo;
-		unzOpenCurrentFile(zipFile);
-		unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-		uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
-		assert(buffer);
-		memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
-		unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
-		unzCloseCurrentFile(zipFile);
-		Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
-		stream.readLine(stxHeader, 128);
+		if (zipFile && unzLocateFile(zipFile, "THEMERC", 2) == UNZ_OK) {
+			unz_file_info fileInfo;
+			unzOpenCurrentFile(zipFile);
+			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+			uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
+			assert(buffer);
+			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
+			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
+			unzCloseCurrentFile(zipFile);
+			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
+			stream.readLine(stxHeader, 128);
+
+			if (themeConfigParseHeader(stxHeader, themeName))
+				foundHeader = true;
+
+			delete[] buffer;
+			buffer = 0;
+		}
+		unzClose(zipFile);
+#else
+		return false;
+#endif	
+	} else if (node.isDirectory()) {			
+		FilesystemNode headerfile = node.getChild("THEMERC");
+		if (!headerfile.exists() || !headerfile.isReadable() || headerfile.isDirectory())
+			return false;
+			
+		Common::File f;
+		f.open(headerfile);
+		f.readLine(stxHeader, 128);
 
 		if (themeConfigParseHeader(stxHeader, themeName))
 			foundHeader = true;
-
-		delete[] buffer;
-		buffer = 0;
 	}
-	unzClose(zipFile);
-#else
-	return false;
-#endif	
 
 	return foundHeader;
 }
-
-
 
 } // End of namespace GUI
 
