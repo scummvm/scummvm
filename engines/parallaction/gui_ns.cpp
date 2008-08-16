@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/hashmap.h"
 
@@ -116,7 +117,9 @@ class ChooseLanguageInputState_NS : public MenuInputState {
 public:
 	ChooseLanguageInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("chooselanguage", helper), _vm(vm) {
 		_allowChoice = false;
-		_nextState = "selectgame";
+	
+		if (ConfMan.getInt("save_slot") < 0 || ConfMan.getInt("save_slot") > 99)
+			_nextState = "selectgame";
 
 		if (_vm->getPlatform() == Common::kPlatformAmiga) {
 			if (!(_vm->getFeatures() & GF_LANG_MULT)) {

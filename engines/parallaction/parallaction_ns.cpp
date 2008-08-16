@@ -29,6 +29,7 @@
 
 #include "parallaction/parallaction.h"
 #include "parallaction/gui.h"
+#include "parallaction/gui_ns.cpp"
 #include "parallaction/input.h"
 #include "parallaction/sound.h"
 
@@ -220,7 +221,7 @@ int Parallaction_ns::go() {
 	renameOldSavefiles();
 
 	_globalTable = _disk->loadTable("global");
-/*
+
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
 		_gameToLoad = ConfMan.getInt("save_slot");
@@ -234,13 +235,13 @@ int Parallaction_ns::go() {
 		
 		_menuHelper = new MenuInputHelper;
 		assert(_menuHelper);
-		
 		new ChooseLanguageInputState_NS(this, _menuHelper);
+		_menuHelper->setState("chooselanguage");
+
+		_input->_inputMode = Input::kInputModeMenu;
 		doLoadGame(_gameToLoad);
 	}
-*/	
-	startGui();
-
+	
 	while (!quit()) {
 		runGame();
 	}
