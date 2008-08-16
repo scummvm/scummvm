@@ -187,7 +187,7 @@ bool Tfmx::loadSong(uint8 songNumber) {
 		_tracks[track].activeMacro.noteType = 0;
 		_tracks[track].activeMacro.noteWait = 0;
 		_tracks[track].activeMacro.fineTune = 0;
-		_tracks[track].activeMacro.keyUp = false;
+		_tracks[track].activeMacro.keyWaitOn = false;
 		_tracks[track].activeMacro.keyCount = 0;
 		_tracks[track].activeMacro.keyWait = 0;
 	}
@@ -200,6 +200,7 @@ bool Tfmx::loadSong(uint8 songNumber) {
 		_channels[channel].sampleLength = 0;
 	    _channels[channel].sampleOn = false;
 		_channels[channel].updateOn = false;
+		_channels[channel].keyUp = false;
 		_channels[channel].envelopeOn = false;
 		_channels[channel].envelopeTarget = 0;
 		_channels[channel].envelopeRate = 0;
@@ -352,6 +353,7 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 			_tracks[trackNumber].trackOn = false;
 			break;
 		case 0xF5: //Key up
+			_channels[(byte3 & 0x0F)].keyUp = true;
 			break;
 		case 0xF6: //Vibrato
 			break;
@@ -428,10 +430,10 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 
 	//ADVANCE PATTERN COUNT, INCREASE COUNT
 	//IF MACRO IS ON, WAIT TO ADVANCE
-	if (!_tracks[trackNumber].macroOn) {
+	if ( (!_tracks[trackNumber].macroOn) || (_tracks[trackNumber].activeMacro.keyWaitOn) ) {
 		_tracks[trackNumber].activePattern.data++;
 		_tracks[trackNumber].activePattern.patternCount++;
-		if (_tracks[trackNumber].activeMacro.noteType == 2) {
+		if (_tracks[trackNumber].activeMacro.noteType == 2 && (!_tracks[trackNumber].activeMacro.keyWaitOn) ) {
 			_tracks[trackNumber].activePattern.patternWait += _tracks[trackNumber].activeMacro.noteWait;
 		}
 	}
@@ -575,16 +577,36 @@ void Tfmx::doMacro(uint8 trackNumber) {
 		_channels[currentChannel].vibratoCount = 0;
 		break;
 	case 0x14://wait for key-up
-		//_tracks[trackNumber].activeMacro.keyWait = byte4;
-		//_tracks[trackNumber].activeMacro.keyCount++;
-		/*
-		if (!_tracks[trackNumber].activeMacro.keyUp) {
+		_tracks[trackNumber].activeMacro.keyWaitOn = true;
+		_tracks[trackNumber].activeMacro.keyWait = byte4;
+		if (_tracks[trackNumber].activeMacro.keyWait == 0) {
+			_tracks[trackNumber].activeMacro.keyWait = -1; //infinite loop
+		}
+		
+		if (_tracks[trackNumber].activeMacro.keyCount == 0) {
+			printf("KEY UP WAIT TIME:: %02x \n", _tracks[trackNumber].activeMacro.keyWait);
+			_channels[currentChannel].updateOn = true;
+			_channels[currentChannel].keyUp = false;
+		}
+
+		if ( (!_channels[currentChannel].keyUp) && (_tracks[trackNumber].activeMacro.keyCount != _tracks[trackNumber].activeMacro.keyWait) ){
+			//waiting for key up to be set
 			_tracks[trackNumber].activeMacro.data--;
 			_tracks[trackNumber].activeMacro.macroCount--;
-			_channels[currentChannel].updateOn = true;
 			_tracks[trackNumber].activeMacro.macroWait = 1;
+			printf("KEY UP WAIT COUNT:: %02x \n", _tracks[trackNumber].activeMacro.keyCount);
+			_tracks[trackNumber].activeMacro.keyCount++;
+			if (_tracks[trackNumber].activeMacro.keyCount == 0x7F) {
+				_tracks[trackNumber].activeMacro.keyCount = 1;
+			}
 		}
-		*/
+		else if ( (_channels[currentChannel].keyUp) || (_tracks[trackNumber].activeMacro.keyCount == _tracks[trackNumber].activeMacro.keyWait) ) {
+			//key up has been set or key wait time has been reached
+			_channels[currentChannel].keyUp = false;
+			_tracks[trackNumber].activeMacro.keyWaitOn = false;
+			_tracks[trackNumber].activeMacro.keyWait = 0;
+			_tracks[trackNumber].activeMacro.keyCount = 0;
+		}
 		break;
 	default:
 		break;

@@ -125,9 +125,9 @@ protected:
 			uint8 noteWait;  //external wait
 			int8 noteFineTune;
 			float fineTune;
-			bool keyUp;
-			uint8 keyCount;
-			uint8 keyWait;
+			bool keyWaitOn;
+			int8 keyCount;
+			int8 keyWait;
 		};
 
 		//Track structure
@@ -155,6 +155,7 @@ protected:
 			//uint32 lengthRepeat;
 			bool sampleOn;
 			bool updateOn;
+			bool keyUp;
 			//Envelope Effect
 			bool envelopeOn;
 			int8 envelopeTarget;
