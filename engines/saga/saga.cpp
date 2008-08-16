@@ -255,6 +255,7 @@ int SagaEngine::go() {
 		char *fileName;
 		fileName = calcSaveFileName(ConfMan.getInt("save_slot"));
 		load(fileName);
+		syncSoundSettings();
 	} else {
 		_framesEsc = 0;
 		_scene->startScene();

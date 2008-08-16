@@ -1153,6 +1153,7 @@ void Interface::setLoad(PanelButton *panelButton) {
 						debug(1, "Loading save game %d", _vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
 						setMode(kPanelMain);
 						_vm->load(_vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber));
+						_vm->syncSoundSettings();
 					}
 				}
 			}
@@ -1616,6 +1617,7 @@ void Interface::setOption(PanelButton *panelButton) {
 					debug(1, "Loading save game %d", _vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
 					setMode(kPanelMain);
 					_vm->load(_vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber));
+					_vm->syncSoundSettings();
 				}
 			}
 		} else {
