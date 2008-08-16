@@ -626,8 +626,6 @@ int BalloonManager_br::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 w
 	return id;
 }
 
-static int count = 0;
-
 int BalloonManager_br::setDialogueBalloon(char *text, uint16 winding, byte textColor) {
 	cacheAnims();
 
