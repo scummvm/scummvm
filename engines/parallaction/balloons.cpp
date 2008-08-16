@@ -585,7 +585,7 @@ Graphics::Surface *BalloonManager_br::expandBalloon(Frames *data, int frameNum) 
 	Graphics::Surface *surf = new Graphics::Surface;
 	surf->create(rect.width(), rect.height(), 1);
 
-	_gfx->unpackBlt(rect, data->getData(frameNum), data->getRawSize(frameNum), surf, 0, BALLOON_TRANSPARENT_COLOR_BR);
+	_gfx->unpackBlt(rect, data->getData(frameNum), data->getRawSize(frameNum), surf, LAYER_FOREGROUND, BALLOON_TRANSPARENT_COLOR_BR);
 
 	return surf;
 }
@@ -625,6 +625,8 @@ int BalloonManager_br::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 w
 
 	return id;
 }
+
+static int count = 0;
 
 int BalloonManager_br::setDialogueBalloon(char *text, uint16 winding, byte textColor) {
 	cacheAnims();
