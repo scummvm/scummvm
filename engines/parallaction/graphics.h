@@ -495,13 +495,19 @@ enum {
 
 class BalloonManager {
 public:
+	enum TextColor {
+		kSelectedColor = 0,
+		kUnselectedColor = 1,
+		kNormalColor = 2
+	};
+
 	virtual ~BalloonManager() { }
 
 	virtual void freeBalloons() = 0;
 	virtual int setLocationBalloon(char *text, bool endGame) = 0;
-	virtual int setDialogueBalloon(char *text, uint16 winding, byte textColor) = 0;
-	virtual int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor) = 0;
-	virtual void setBalloonText(uint id, char *text, byte textColor) = 0;
+	virtual int setDialogueBalloon(char *text, uint16 winding, TextColor textColor) = 0;
+	virtual int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, TextColor textColor) = 0;
+	virtual void setBalloonText(uint id, char *text, TextColor textColor) = 0;
 	virtual int hitTestDialogueBalloon(int x, int y) = 0;
 };
 

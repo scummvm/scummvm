@@ -246,6 +246,8 @@ class BalloonManager_ns : public BalloonManager {
 
 	static int16 _dialogueBalloonX[5];
 
+	byte _textColors[2];
+
 	struct Balloon {
 		Common::Rect outerBox;
 		Common::Rect innerBox;
@@ -266,16 +268,18 @@ public:
 
 	void freeBalloons();
 	int setLocationBalloon(char *text, bool endGame);
-	int setDialogueBalloon(char *text, uint16 winding, byte textColor);
-	int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor);
-	void setBalloonText(uint id, char *text, byte textColor);
+	int setDialogueBalloon(char *text, uint16 winding, TextColor textColor);
+	int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, TextColor textColor);
+	void setBalloonText(uint id, char *text, TextColor textColor);
 	int hitTestDialogueBalloon(int x, int y);
 };
 
 int16 BalloonManager_ns::_dialogueBalloonX[5] = { 80, 120, 150, 150, 150 };
 
 BalloonManager_ns::BalloonManager_ns(Gfx *gfx) : _numBalloons(0), _gfx(gfx) {
-
+	_textColors[kSelectedColor] = 0;
+	_textColors[kUnselectedColor] = 3;
+	_textColors[kNormalColor] = 0;
 }
 
 BalloonManager_ns::~BalloonManager_ns() {
@@ -323,7 +327,7 @@ int BalloonManager_ns::createBalloon(int16 w, int16 h, int16 winding, uint16 bor
 }
 
 
-int BalloonManager_ns::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor) {
+int BalloonManager_ns::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, TextColor textColor) {
 
 	int16 w, h;
 
@@ -336,7 +340,7 @@ int BalloonManager_ns::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 w
 	Balloon *balloon = &_intBalloons[id];
 
 	StringWriter_NS sw(_vm->_dialogueFont);
-	sw.write(text, MAX_BALLOON_WIDTH, textColor, balloon->surface);
+	sw.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
 
 	// TODO: extract some text to make a name for obj
 	balloon->obj = _gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
@@ -347,7 +351,7 @@ int BalloonManager_ns::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 w
 	return id;
 }
 
-int BalloonManager_ns::setDialogueBalloon(char *text, uint16 winding, byte textColor) {
+int BalloonManager_ns::setDialogueBalloon(char *text, uint16 winding, TextColor textColor) {
 
 	int16 w, h;
 
@@ -361,7 +365,7 @@ int BalloonManager_ns::setDialogueBalloon(char *text, uint16 winding, byte textC
 	Balloon *balloon = &_intBalloons[id];
 
 	StringWriter_NS sw(_vm->_dialogueFont);
-	sw.write(text, MAX_BALLOON_WIDTH, textColor, balloon->surface);
+	sw.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
 
 	// TODO: extract some text to make a name for obj
 	balloon->obj = _gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
@@ -377,12 +381,12 @@ int BalloonManager_ns::setDialogueBalloon(char *text, uint16 winding, byte textC
 	return id;
 }
 
-void BalloonManager_ns::setBalloonText(uint id, char *text, byte textColor) {
+void BalloonManager_ns::setBalloonText(uint id, char *text, TextColor textColor) {
 	Balloon *balloon = getBalloon(id);
 	balloon->surface->fillRect(balloon->innerBox, 1);
 
 	StringWriter_NS sw(_vm->_dialogueFont);
-	sw.write(text, MAX_BALLOON_WIDTH, textColor, balloon->surface);
+	sw.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
 }
 
 
@@ -398,7 +402,7 @@ int BalloonManager_ns::setLocationBalloon(char *text, bool endGame) {
 	int id = createBalloon(w+(endGame ? 5 : 10), h+5, -1, BALLOON_TRANSPARENT_COLOR_NS);
 	Balloon *balloon = &_intBalloons[id];
 	StringWriter_NS sw(_vm->_dialogueFont);
-	sw.write(text, MAX_BALLOON_WIDTH, 0, balloon->surface);
+	sw.write(text, MAX_BALLOON_WIDTH, _textColors[kNormalColor], balloon->surface);
 
 	// TODO: extract some text to make a name for obj
 	balloon->obj = _gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
@@ -534,6 +538,8 @@ public:
 
 class BalloonManager_br : public BalloonManager {
 
+	byte _textColors[2];
+
 	struct Balloon {
 		Common::Rect box;
 		Graphics::Surface *surface;
@@ -562,9 +568,9 @@ public:
 
 	void freeBalloons();
 	int setLocationBalloon(char *text, bool endGame);
-	int setDialogueBalloon(char *text, uint16 winding, byte textColor);
-	int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor);
-	void setBalloonText(uint id, char *text, byte textColor);
+	int setDialogueBalloon(char *text, uint16 winding, TextColor textColor);
+	int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, TextColor textColor);
+	void setBalloonText(uint id, char *text, TextColor textColor);
 	int hitTestDialogueBalloon(int x, int y);
 };
 
@@ -590,7 +596,7 @@ Graphics::Surface *BalloonManager_br::expandBalloon(Frames *data, int frameNum) 
 	return surf;
 }
 
-int BalloonManager_br::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor) {
+int BalloonManager_br::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, TextColor textColor) {
 	cacheAnims();
 
 	int id = _numBalloons;
@@ -613,7 +619,7 @@ int BalloonManager_br::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 w
 	balloon->surface = expandBalloon(src, srcFrame);
 	src->getRect(srcFrame, balloon->box);
 
-	_writer.write(text, MAX_BALLOON_WIDTH, textColor, balloon->surface);
+	_writer.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
 
 	// TODO: extract some text to make a name for obj
 	balloon->obj = _gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
@@ -626,7 +632,7 @@ int BalloonManager_br::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 w
 	return id;
 }
 
-int BalloonManager_br::setDialogueBalloon(char *text, uint16 winding, byte textColor) {
+int BalloonManager_br::setDialogueBalloon(char *text, uint16 winding, TextColor textColor) {
 	cacheAnims();
 
 	int id = _numBalloons;
@@ -649,7 +655,7 @@ int BalloonManager_br::setDialogueBalloon(char *text, uint16 winding, byte textC
 	balloon->surface = expandBalloon(src, srcFrame);
 	src->getRect(srcFrame, balloon->box);
 
-	_writer.write(text, MAX_BALLOON_WIDTH, textColor, balloon->surface);
+	_writer.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
 
 	// TODO: extract some text to make a name for obj
 	balloon->obj = _gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
@@ -662,11 +668,11 @@ int BalloonManager_br::setDialogueBalloon(char *text, uint16 winding, byte textC
 	return id;
 }
 
-void BalloonManager_br::setBalloonText(uint id, char *text, byte textColor) {
+void BalloonManager_br::setBalloonText(uint id, char *text, TextColor textColor) {
 	Balloon *balloon = getBalloon(id);
 
 	StringWriter_BR sw(_vm->_dialogueFont);
-	sw.write(text, MAX_BALLOON_WIDTH, textColor, balloon->surface);
+	sw.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
 }
 
 int BalloonManager_br::setLocationBalloon(char *text, bool endGame) {
@@ -722,6 +728,10 @@ void BalloonManager_br::cacheAnims() {
 
 BalloonManager_br::BalloonManager_br(Disk *disk, Gfx *gfx) : _numBalloons(0), _disk(disk), _gfx(gfx),
 	_leftBalloon(0), _rightBalloon(0), _writer(_vm->_dialogueFont) {
+
+	_textColors[kSelectedColor] = 12;
+	_textColors[kUnselectedColor] = 0;
+	_textColors[kNormalColor] = 0;
 }
 
 BalloonManager_br::~BalloonManager_br() {
