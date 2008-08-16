@@ -429,7 +429,7 @@ public:
 	MidiChannel *allocateChannel()		{ return 0; }
 	MidiChannel *getPercussionChannel()	{ return 0; }
 
-	static float semitoneAndSampleRate_to_sampleStep(int8 semiTone, int8 semiToneRootkey,
+	static float calculatePhaseStep(int8 semiTone, int8 semiToneRootkey,
 		uint32 sampleRate, uint32 outputRate, int32 pitchWheel);
 
 private:
@@ -492,7 +492,7 @@ public:
 	void process();
 
 	void loadSoundFile(uint file) {}
-	void loadSoundFile(Common::String) {}
+	void loadSoundFile(Common::String file);
 
 	void playTrack(uint8 track);
 	void haltTrack();
@@ -507,6 +507,7 @@ protected:
 	bool _useFmSfx;
 
 	uint8 *_musicTrackData;
+	uint8 *_sfxTrackData;
 	TownsPC98_OpnDriver *_driver;	
 };
 

@@ -2830,6 +2830,9 @@ void KyraEngine_HoF::seq_init() {
 	_res->unloadAllPakFiles();
 	_res->loadPakFile(StaticResource::staticDataFilename());
 	_res->loadFileList(_sequencePakList, _sequencePakListSize);
+	
+	if (_flags.platform == Common::kPlatformPC98)
+		_sound->loadSoundFile("sound.dat");
 
 	int numShp = -1;
 
