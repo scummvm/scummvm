@@ -1631,7 +1631,7 @@ protected:
 	bool _sfxPlaying;
 	bool _fading;
 	uint8 _looping;
-	uint32 _tickCounter;
+	uint32 _musicTickCounter;
 
 	bool _updateEnvelopeParameters;
 
@@ -2662,7 +2662,7 @@ bool TownsPC98_OpnChannelPCM::processControlEvent(uint8 cmd) {
 }
 
 void TownsPC98_OpnChannelPCM::fadeStep() {
-
+	// TODO (emulation not implemented anyway)
 }
 
 bool TownsPC98_OpnChannelPCM::control_f1_pcmStart(uint8 para) {
@@ -2878,7 +2878,7 @@ TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) :
 	_ssgChannels(0), _sfxChannels(0), _pcmChannel(0),	_looping(0), _opnCarrier(_drvTables + 76),
 	_opnFreqTable(_drvTables + 84), _opnFreqTableSSG(_drvTables + 252),	_opnFxCmdLen(_drvTables + 36),
 	_opnLvlPresets(_drvTables + (type == OD_TOWNS ? 52 : 228)), _oprRates(0), _oprRateshift(0), _oprAttackDecay(0),
-	_oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0), _cbCounter(4), _tickCounter(0),
+	_oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0), _cbCounter(4), _musicTickCounter(0),
 	_updateChannelsFlag(type == OD_TYPE26 ? 0x07 : 0x3F), _updateSSGFlag(type == OD_TOWNS ? 0 : 7),
 	_updatePCMFlag(type == OD_TYPE86 ? 1 : 0), _finishedChannelsFlag(0), _finishedSSGFlag(0),
 	_finishedPCMFlag(0), _samplesTillCallback(0), _samplesTillCallbackRemainder(0),
@@ -3132,7 +3132,7 @@ void TownsPC98_OpnDriver::reset() {
 
 	_musicPlaying = _sfxPlaying = _fading = false;
 	_looping = 0;
-	_tickCounter = 0;
+	_musicTickCounter = 0;
 	_sfxData = 0;
 
 	unlock();
@@ -3147,20 +3147,22 @@ void TownsPC98_OpnDriver::fadeOut() {
 
 		_fading = true;
 
-		uint32 dTime = _tickCounter + 2;
+		uint32 dTime = _musicTickCounter + 2;
 		for (int j = 0; j < _numChan; j++) {
 			if (_updateChannelsFlag & _channels[j]->_idFlag)
 				_channels[j]->fadeStep();
 		}
 		for (int j = 0; j < _numSSG; j++) {
-			if (_updateSSGFlag & _channels[j]->_idFlag)
+			if (_updateSSGFlag & _ssgChannels[j]->_idFlag)
 				_ssgChannels[j]->fadeStep();
 		}
+		if (_updatePCMFlag & _pcmChannel->_idFlag)
+			_pcmChannel->fadeStep();
 
 		unlock();
 
 		while (_musicPlaying) {
-			if (_tickCounter >= dTime)
+			if (_musicTickCounter >= dTime)
 				break;
 		}
 	}
@@ -3170,8 +3172,6 @@ void TownsPC98_OpnDriver::fadeOut() {
 
 void TownsPC98_OpnDriver::callback() {
 	lock();
-
-	_tickCounter++;
 
 	if (_sfxChannels && _sfxPlaying) {
 		if (_sfxData)
@@ -3192,6 +3192,7 @@ void TownsPC98_OpnDriver::callback() {
 
 	if (!--_cbCounter && _musicPlaying) {
 		_cbCounter = 4;
+		_musicTickCounter++;
 
 		for (int i = 0; i < _numChan; i++) {
 			if (_updateChannelsFlag & _channels[i]->_idFlag) {
