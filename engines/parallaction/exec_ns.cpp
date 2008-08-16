@@ -672,71 +672,106 @@ bool Parallaction::pickupItem(ZonePtr z) {
 	return (slot != -1);
 }
 
+// FIXME: input coordinates must be offseted to handle scrolling!
+bool Parallaction::checkZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
+	if (z->_flags & kFlagsRemove)
+		return false;
 
+	debugC(5, kDebugExec, "checkZoneBox for %s (type = %x, x = %i, y = %i)", z->_name, type, x, y);
+
+	Common::Rect r;
+	z->getBox(r);
+	r.right++;		// adjust border because Common::Rect doesn't include bottom-right edge
+	r.bottom++;
+
+	r.grow(-1);		// allows some tolerance for mouse click
+
+	if (!r.contains(x, y)) {
+
+		// out of Zone, so look for special values
+		if ((z->getX() == -2) || (z->getX() == -3)) {
+
+			// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
+			// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
+			// but we need to check it separately here. The same workaround is applied in freeZones.
+			if ((((z->_type & 0xFFFF) == kZoneMerge) && (((x == z->u.merge->_obj1) && (y == z->u.merge->_obj2)) || ((x == z->u.merge->_obj2) && (y == z->u.merge->_obj1)))) ||
+				(((z->_type & 0xFFFF) == kZoneGet) && ((x == z->u.get->_icon) || (y == z->u.get->_icon)))) {
+
+				// special Zone
+				if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
+					return true;
+				if (z->_type == type)
+					return true;
+				if ((z->_type & 0xFFFF0000) == type)
+					return true;
+
+			}
+		}
+
+		if (z->getX() != -1)
+			return false;
+		if ((int)x < _char._ani->getFrameX())
+			return false;
+		if ((int)x > (_char._ani->getFrameX() + _char._ani->width()))
+			return false;
+		if ((int)y < _char._ani->getFrameY())
+			return false;
+		if ((int)y > (_char._ani->getFrameY() + _char._ani->height()))
+			return false;
+
+	}
+
+	// normal Zone
+	if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
+		return true;
+	if (z->_type == type)
+		return true;
+	if ((z->_type & 0xFFFF0000) == type)
+		return true;
+
+	return false;
+}
+
+// FIXME: input coordinates must be offseted to handle scrolling!
+bool Parallaction::checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y) {
+	if (z->_flags & kFlagsRemove)
+		return false;
+
+	if ((z->_flags & kFlagsAnimLinked) == 0)
+		return false;
+
+	debugC(5, kDebugExec, "checkLinkedAnimBox for %s (type = %x, x = %i, y = %i)", z->_name, type, x, y);
+
+	AnimationPtr anim = z->_linkedAnim;
+	Common::Rect r(anim->getFrameX(), anim->getFrameY(), anim->getFrameX() + anim->width() + 1, anim->getFrameY() + anim->height() + 1);
+
+	if (!r.contains(x, y)) {
+		return false;
+	}
+
+	// NOTE: the implementation of the following lines is a different in the
+	// original... it is working so far, though
+	if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
+		return true;
+	if (z->_type == type)
+		return true;
+	if ((z->_type & 0xFFFF0000) == type)
+		return true;
+
+	return false;
+}
 
 ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
-//	printf("hitZone(%i, %i, %i)", type, x, y);
-
 	uint16 _di = y;
 	uint16 _si = x;
 
 	for (ZoneList::iterator it = _location._zones.begin(); it != _location._zones.end(); it++) {
-//		printf("Zone name: %s", z->_name);
-
-		ZonePtr z = *it;
-
-		if (z->_flags & kFlagsRemove) continue;
-
-		Common::Rect r;
-		z->getBox(r);
-		r.right++;		// adjust border because Common::Rect doesn't include bottom-right edge
-		r.bottom++;
-
-		r.grow(-1);		// allows some tolerance for mouse click
-
-		if (!r.contains(_si, _di)) {
-
-			// out of Zone, so look for special values
-			if ((z->getX() == -2) || (z->getX() == -3)) {
-
-				// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
-				// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
-				// but we need to check it separately here. The same workaround is applied in freeZones.
-				if ((((z->_type & 0xFFFF) == kZoneMerge) && (((_si == z->u.merge->_obj1) && (_di == z->u.merge->_obj2)) || ((_si == z->u.merge->_obj2) && (_di == z->u.merge->_obj1)))) ||
-					(((z->_type & 0xFFFF) == kZoneGet) && ((_si == z->u.get->_icon) || (_di == z->u.get->_icon)))) {
-
-					// special Zone
-					if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
-						return z;
-					if (z->_type == type)
-						return z;
-					if ((z->_type & 0xFFFF0000) == type)
-						return z;
-
-				}
-			}
-
-			if (z->getX() != -1)
-				continue;
-			if (_si < _char._ani->getFrameX())
-				continue;
-			if (_si > (_char._ani->getFrameX() + _char._ani->width()))
-				continue;
-			if (_di < _char._ani->getFrameY())
-				continue;
-			if (_di > (_char._ani->getFrameY() + _char._ani->height()))
-				continue;
-
+		if (checkLinkedAnimBox(*it, type, x, y)) {
+			return *it;
 		}
-
-		// normal Zone
-		if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
-			return z;
-		if (z->_type == type)
-			return z;
-		if ((z->_type & 0xFFFF0000) == type)
-			return z;
-
+		if (checkZoneBox(*it, type, x, y)) {
+			return *it;
+		}
 	}
 
 
