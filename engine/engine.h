@@ -194,7 +194,6 @@ private:
 	int _speechMode;
 	int _textSpeed;
 	bool _flipEnable;
-	uint32 _lastUpdateTime;
 	bool _refreshDrawNeeded;
 	char _fps[8];
 	bool _doFlip;
@@ -205,6 +204,7 @@ private:
 	int _prevSmushFrame;
 	unsigned int _frameCounter;
 	unsigned int _timeAccum;
+	unsigned _speedLimitMs;
 
 	bool *_controlsEnabled;
 

@@ -69,7 +69,7 @@ Engine::Engine() :
 	_textSpeed = 7;
 	_mode = _previousMode = ENGINE_MODE_IDLE;
 	_flipEnable = true;
-	_lastUpdateTime = 0;
+	_speedLimitMs = 33;
 	_refreshDrawNeeded = true;
 	g_fslist = NULL;
 	g_fsdir = NULL;
@@ -232,8 +232,6 @@ void Engine::luaUpdate() {
 		_frameStart = newStart;
 		return;
 	}
-	if (newStart - _frameStart < 30)
-		return;
 	_frameTime = newStart - _frameStart;
 	_frameStart = newStart;
 
@@ -256,17 +254,6 @@ void Engine::luaUpdate() {
 }
 
 void Engine::updateDisplayScene() {
-	uint32 newTime = g_driver->getMillis();
-	if (newTime < _lastUpdateTime) {
-		_lastUpdateTime = newTime;
-		_doFlip = false;
-	}
-	if (newTime - _lastUpdateTime < 30) {
-		_doFlip = false;
-		return;
-	}
-	_lastUpdateTime = newTime;
-
 	_doFlip = true;
 
 	if (_mode == ENGINE_MODE_SMUSH) {
@@ -387,13 +374,10 @@ void Engine::doFlip() {
 	if (_doFlip && _flipEnable)
 		g_driver->flipBuffer();
 
-	// don't kill CPU
-	g_driver->delayMillis(10);
-
 	if (SHOWFPS_GLOBAL && _doFlip && _mode != ENGINE_MODE_DRAW) {
 		_frameCounter++;
 		_timeAccum += _frameTime;
-		if (_timeAccum > 1000) {
+		if (_timeAccum > 500) {
 			sprintf(_fps, "%7.2f", (double)(_frameCounter * 1000) / (double)_timeAccum );
 			_frameCounter = 0;
 			_timeAccum = 0;
@@ -415,6 +399,8 @@ void Engine::mainLoop() {
 	_refreshShadowMask = false;
 
 	for (;;) {
+		uint32 startTime = g_driver->getMillis();
+
 		if (_savegameLoadRequest) {
 			savegameRestore();
 		}
@@ -425,8 +411,11 @@ void Engine::mainLoop() {
 		g_imuse->flushTracks();
 		g_imuse->refreshScripts();
 
-		if (_mode == ENGINE_MODE_IDLE)
+		if (_mode == ENGINE_MODE_IDLE) {
+			// don't kill CPU
+			g_driver->delayMillis(10);
 			continue;
+		}
 
 		// Process events
 		Driver::Event event;
@@ -457,6 +446,15 @@ void Engine::mainLoop() {
 		if (g_imuseState != -1) {
 			g_imuse->setMusicState(g_imuseState);
 			g_imuseState = -1;
+		}
+
+		uint32 endTime = g_driver->getMillis();
+		if (startTime > endTime)
+			continue;
+		uint32 diffTime = endTime - startTime;
+		if (diffTime < _speedLimitMs) {
+			uint32 delayTime = _speedLimitMs - diffTime;
+			g_driver->delayMillis(delayTime);
 		}
 	}
 }
