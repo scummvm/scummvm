@@ -300,15 +300,15 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	
 	/*
 	if (_aTfmx.loadSong(0)) {
-		_aTfmx.testPattern(0x08);
+		_aTfmx.testPattern(0x04);
 	}
 	//*/
 		
 	/*
 	if (_aTfmx.loadSong(0)) {
-		_aTfmx.testMacro(0x17);
+		_aTfmx.testMacro(0x3);
 	}
-	*/
+	//*/
 
 	system.getMixer()->playInputStream( Audio::Mixer::kMusicSoundType, &_handle, &_aTfmx, -1, 255, 0, false);
 	system.delayMillis( 999999 );

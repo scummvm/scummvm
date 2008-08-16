@@ -357,7 +357,7 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 			}
 			break;
 		case 0xF5: //Key up
-			_channels[(byte3 & 0x0F)].keyUp = true;
+			_channels[(byte3 & 0x0F) & 0x03].keyUp = true;
 			break;
 		case 0xF6: //Vibrato
 			break;
@@ -544,10 +544,10 @@ void Tfmx::doMacro(uint8 trackNumber) {
 		_channels[currentChannel].updateOn = true;
 		break;
 	case 0x18: //sampleloop
-		//_channels[currentChannel].sampleOffset += ( *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF );
-		//_channels[currentChannel].sampleLength -= ( *(_tracks[trackNumber].activeMacro.data) & 0x00FFFFFF );
-		_channels[currentChannel].sampleOffset += ( ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) & 0xFFFE );
-		_channels[currentChannel].sampleLength -= ( ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) >> 1);
+		//_channels[currentChannel].sampleOffset += ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF );
+		//_channels[currentChannel].sampleLength -= ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF );
+		_channels[currentChannel].sampleOffset += ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFE );
+	    _channels[currentChannel].sampleLength -= ( ( *(_tracks[trackNumber].activeMacro.data) & 0x0000FFFF ) >> 1);
 		//_channels[currentChannel].updateOn = true;
 		break;
 	case 0x08: //add note
@@ -592,7 +592,7 @@ void Tfmx::doMacro(uint8 trackNumber) {
 		}
 		
 		if (_tracks[trackNumber].activeMacro.keyCount == 0) {
-			printf("KEY UP WAIT TIME:: %02x \n", _tracks[trackNumber].activeMacro.keyWait);
+			//printf("KEY UP WAIT TIME:: %02x \n", _tracks[trackNumber].activeMacro.keyWait);
 			_channels[currentChannel].updateOn = true;
 			_channels[currentChannel].keyUp = false;
 		}
@@ -602,7 +602,7 @@ void Tfmx::doMacro(uint8 trackNumber) {
 			_tracks[trackNumber].activeMacro.data--;
 			_tracks[trackNumber].activeMacro.macroCount--;
 			_tracks[trackNumber].activeMacro.macroWait = 1;
-			printf("KEY UP WAIT COUNT:: %02x \n", _tracks[trackNumber].activeMacro.keyCount);
+			//printf("KEY UP WAIT COUNT:: %02x \n", _tracks[trackNumber].activeMacro.keyCount);
 			_tracks[trackNumber].activeMacro.keyCount++;
 			if (_tracks[trackNumber].activeMacro.keyCount == 0x7F) {
 				_tracks[trackNumber].activeMacro.keyCount = 1;
@@ -663,7 +663,7 @@ void Tfmx::interrupt(void) {
 			}
 		}
 
-		for (int i = 1; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			doEffects(i);
 			setChannelPeriod(i,_channels[i].period);
 			setChannelVolume(i,_channels[i].volume);
