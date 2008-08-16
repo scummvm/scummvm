@@ -6,8 +6,8 @@ Last updated:    $Date$
 What is Residual?
 -----------------
 Residual is a ScummVM (http://www.scummvm.org/) sub-project to play LucasArts'
-LUA-based 3D adventures, such as Grim Fandango. Residual is an OpenGL program,
-and requires a 3D card with working OpenGL support for optimum playability.
+LUA-based 3D adventures, such as Grim Fandango. Residual use OpenGL for 3d
+graphics hardware acceleration.
 
 A software renderer is also included for machines without hardware OpenGL.
 
@@ -71,13 +71,12 @@ An example config file looks as follows:
 
 It runs really slow when using -zbuffer!
 ----------------------------------------
-A large portion of older cards (Such as 3dfx cards, Radeon 7500 and earlier,
-Matrox G4xx series cards, etc) and newer cards too (Radeon X800 GTO
-with Windows drivers) do not have a fast glDrawPixels implementation.
+A large portion of cards do not have a fast glDrawPixels access to zbuffer 
+implementation in the driver.
 
 Unix users may be able to achieve playable framerates by using Mesa 5.0 or
 above, but people unable to upgrade or Windows users must use software
-renderer (-soft).
+renderer (-soft). Software renderer is generaly faster on modern platform.
 
 Black screen while menu dialogs on Radeon with Windows!
 -------------------------------------------------------
