@@ -97,8 +97,9 @@ void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
 	} else {
 		_subtitle[1] = -1;
 	}
-
+#if 0	// disabled because no references to lip sync has been found in the scripts
 	_subtitleLipSync = 0;
+#endif
 }
 
 void Parallaction_br::clearSubtitles() {
@@ -122,48 +123,23 @@ DECLARE_COMMAND_OPCODE(location) {
 
 DECLARE_COMMAND_OPCODE(open) {
 	warning("Parallaction_br::cmdOp_open command not yet implemented");
-	_ctxt.cmd->u._zone->_flags &= ~kFlagsClosed;
-	if (_ctxt.cmd->u._zone->u.door->gfxobj) {
-		_vm->updateDoor(_ctxt.cmd->u._zone);
-	}
+	_vm->updateDoor(_ctxt.cmd->u._zone, false);
 }
 
 
 DECLARE_COMMAND_OPCODE(close) {
 	warning("Parallaction_br::cmdOp_close not yet implemented");
-	_ctxt.cmd->u._zone->_flags |= kFlagsClosed;
-	if (_ctxt.cmd->u._zone->u.door->gfxobj) {
-		_vm->updateDoor(_ctxt.cmd->u._zone);
-	}
+	_vm->updateDoor(_ctxt.cmd->u._zone, true);
 }
 
 
 DECLARE_COMMAND_OPCODE(on) {
-	CommandData *data = &_ctxt.cmd->u;
-	ZonePtr z = data->_zone;
-
-	if (z) {
-		z->_flags |= kFlagsActive;
-		z->_flags &= ~kFlagsRemove;
-
-		if ((z->_type & 0xFFFF) & kZoneGet) {
-			_vm->_gfx->showGfxObj(z->u.get->gfxobj, true);
-		}
-	}
+	_vm->showZone(_ctxt.cmd->u._zone, true);
 }
 
 
 DECLARE_COMMAND_OPCODE(off) {
-	CommandData *data = &_ctxt.cmd->u;
-	ZonePtr z = data->_zone;
-
-	if (z) {
-		z->_flags |= kFlagsRemove;
-
-		if ((z->_type & 0xFFFF) & kZoneGet) {
-			_vm->_gfx->showGfxObj(z->u.get->gfxobj, false);
-		}
-	}
+	_vm->showZone(_ctxt.cmd->u._zone, false);
 }
 
 
@@ -335,42 +311,18 @@ DECLARE_COMMAND_OPCODE(offsave) {
 
 
 DECLARE_INSTRUCTION_OPCODE(on) {
-	InstructionPtr inst = *_ctxt.inst;
-	ZonePtr z = inst->_z;
-
-	if (z) {
-		z->_flags |= kFlagsActive;
-		z->_flags &= ~kFlagsRemove;
-
-		if ((z->_type & 0xFFFF) & kZoneGet) {
-			_vm->_gfx->showGfxObj(z->u.get->gfxobj, true);
-		}
-	}
+	_vm->showZone((*_ctxt.inst)->_z, true);
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(off) {
-	InstructionPtr inst = *_ctxt.inst;
-	ZonePtr z = inst->_z;
-
-	if (z) {
-		z->_flags |= kFlagsRemove;
-
-		if ((z->_type & 0xFFFF) & kZoneGet) {
-			_vm->_gfx->showGfxObj(z->u.get->gfxobj, false);
-		}
-	}
+	_vm->showZone((*_ctxt.inst)->_z, false);
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(set) {
 	InstructionPtr inst = *_ctxt.inst;
-
-	int16 rvalue = inst->_opB.getRValue();
-	int16* lvalue = inst->_opA.getLValue();
-
-	*lvalue = rvalue;
-
+	inst->_opA.setValue(inst->_opB.getValue());
 }
 
 
@@ -378,7 +330,7 @@ DECLARE_INSTRUCTION_OPCODE(set) {
 DECLARE_INSTRUCTION_OPCODE(inc) {
 	InstructionPtr inst = *_ctxt.inst;
 
-	int16 rvalue = inst->_opB.getRValue();
+	int16 rvalue = inst->_opB.getValue();
 
 	if (inst->_flags & kInstMod) {	// mod
 		int16 _bx = (rvalue > 0 ? rvalue : -rvalue);
@@ -387,32 +339,30 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 		rvalue = (rvalue > 0 ?  1 : -1);
 	}
 
-	int16 *lvalue = inst->_opA.getLValue();
+	int16 lvalue = inst->_opA.getValue();
 
 	switch (inst->_index) {
 	case INST_INC:
-		*lvalue += rvalue;
+		lvalue += rvalue;
 		break;
 
 	case INST_DEC:
-		*lvalue -= rvalue;
+		lvalue -= rvalue;
 		break;
 
 	case INST_MUL:
-		*lvalue *= rvalue;
+		lvalue *= rvalue;
 		break;
 
 	case INST_DIV:
-		*lvalue /= rvalue;
+		lvalue /= rvalue;
 		break;
 
 	default:
 		error("This should never happen. Report immediately");
 	}
 
-	if (inst->_opA._flags & kParaLocal) {
-		inst->_opA._local->wrap();
-	}
+	inst->_opA.setValue(lvalue);
 
 }
 
@@ -445,11 +395,7 @@ DECLARE_INSTRUCTION_OPCODE(move) {
 
 DECLARE_INSTRUCTION_OPCODE(color) {
 	InstructionPtr inst = *_ctxt.inst;
-
-	int16 entry = inst->_opB.getRValue();
-
-	_vm->_gfx->_palette.setEntry(entry, inst->_colors[0], inst->_colors[1], inst->_colors[2]);
-
+	_vm->_gfx->_palette.setEntry(inst->_opB.getValue(), inst->_colors[0], inst->_colors[1], inst->_colors[2]);
 }
 
 

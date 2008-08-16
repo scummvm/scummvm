@@ -68,14 +68,9 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Eng
 
 CineEngine::~CineEngine() {
 	if (g_cine->getGameType() == Cine::GType_OS) {
-		freePoldatDat();
 		freeErrmessDat();
 	}
 	Common::clearAllSpecialDebugLevels();
-
-	free(palPtr);
-	free(partBuffer);
-	free(textDataPtr);
 }
 
 int CineEngine::init() {
@@ -152,15 +147,16 @@ void CineEngine::initialize() {
 	}
 
 	collisionPage = new byte[320 * 200];
-	textDataPtr = (byte *)malloc(8000);
 
-	partBuffer = (PartBuffer *)malloc(NUM_MAX_PARTDATA * sizeof(PartBuffer));
+	// Clear part buffer as there's nothing loaded into it yet.
+	// Its size will change when loading data into it with the loadPart function.
+	partBuffer.clear();
 
 	if (g_cine->getGameType() == Cine::GType_OS) {
 		readVolCnf();
 	}
 
-	loadTextData("texte.dat", textDataPtr);
+	loadTextData("texte.dat");
 
 	if (g_cine->getGameType() == Cine::GType_OS && !(g_cine->getFeatures() & GF_DEMO)) {
 		loadPoldatDat("poldat.dat");

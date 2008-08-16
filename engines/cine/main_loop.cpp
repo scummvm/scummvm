@@ -121,6 +121,9 @@ static void processEvent(Common::Event &event) {
 				g_cine->makeSystemMenu();
 			}
 			break;
+		case Common::KEYCODE_F11:
+			renderer->showCollisionPage(true);
+			break;
 		case Common::KEYCODE_MINUS:
 		case Common::KEYCODE_KP_MINUS:
 			g_cine->modifyGameSpeed(-1); // Slower
@@ -164,6 +167,9 @@ static void processEvent(Common::Event &event) {
 		break;
 	case Common::EVENT_KEYUP:
 		switch (event.kbd.keycode) {
+		case Common::KEYCODE_F11:
+			renderer->showCollisionPage(false);
+			break;
 		case Common::KEYCODE_KP5:	// Emulated left mouse button click
 		case Common::KEYCODE_LEFT:	// Left
 		case Common::KEYCODE_KP4:	// Left
@@ -276,7 +282,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 		menuCommandLen = 0;
 
 		playerCommand = -1;
-		strcpy(commandBuffer, "");
+		commandBuffer = "";
 
 		globalVars[VAR_MOUSE_X_POS] = 0;
 		globalVars[VAR_MOUSE_Y_POS] = 0;

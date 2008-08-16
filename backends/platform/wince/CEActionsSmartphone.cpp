@@ -179,7 +179,7 @@ CEActionsSmartphone::~CEActionsSmartphone() {
 }
 
 bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
-	static bool keydialogrunning = false;
+	static bool keydialogrunning = false, quitdialog = false;
 
 	if (!pushed) {
 		switch (action) {
@@ -250,12 +250,14 @@ bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
 			_CESystem->smartphone_rotate_display();
 			return true;
 		case SMARTPHONE_ACTION_QUIT:
-			{
+			if (!quitdialog) {
+				quitdialog = true;
 				GUI::MessageDialog alert("   Are you sure you want to quit ?   ", "Yes", "No");
 				if (alert.runModal() == GUI::kMessageOK)
 					_mainSystem->quit();
-				return true;
+				quitdialog = false;
 			}
+			return true;
 	}
 
 	return false;

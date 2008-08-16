@@ -103,6 +103,9 @@ bool Resource::reset() {
 
 		return true;
 	} else if (_vm->game() == GI_LOL) {
+		if (_vm->gameFlags().useInstallerPackage)
+			tryLoadCompFiles();
+
 		return true;
 	}
 
@@ -181,8 +184,14 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	for (ResArchiveLoader::FileList::iterator i = files.begin(); i != files.end(); ++i) {
 		iter = _map.find(i->filename);
 		if (iter == _map.end()) {
+			// We do an internal check for a file in gamepath with same filename to
+			// allow overwriting files inside archives with plain files inside the
+			// game directory
+			checkFile(i->filename);
+
 			// A new file entry, so we just insert it into the file map.
-			_map[i->filename] = i->entry;
+			if (_map.find(i->filename) == _map.end())
+				_map[i->filename] = i->entry;
 		} else if (!iter->_value.parent.empty()) {
 			if (!iter->_value.parent.equalsIgnoreCase(filename)) {
 				ResFileMap::iterator oldParent = _map.find(iter->_value.parent);
@@ -350,7 +359,17 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) {
 	CompFileMap::iterator compEntry;
 
-	if (Common::File::exists(file)) {
+	if ((compEntry = _compFiles.find(file)) != _compFiles.end())
+		return new Common::MemoryReadStream(compEntry->_value.data, compEntry->_value.size, false);		
+
+	if (!isAccessable(file))
+		return 0;
+
+	ResFileMap::const_iterator iter = _map.find(file);
+	if (iter == _map.end())
+		return 0;
+
+	if (iter->_value.parent.empty()) {
 		Common::File *stream = new Common::File();
 		if (!stream->open(file)) {
 			delete stream;
@@ -358,28 +377,15 @@ Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) 
 			error("Couldn't open file '%s'", file.c_str());
 		}
 		return stream;
-	} else if ((compEntry = _compFiles.find(file)) != _compFiles.end()) {
-		return new Common::MemoryReadStream(compEntry->_value.data, compEntry->_value.size, false);		
 	} else {
-		if (!isAccessable(file))
-			return 0;
+		Common::SeekableReadStream *parent = getFileStream(iter->_value.parent);
+		assert(parent);
 
-		ResFileMap::const_iterator iter = _map.find(file);
-		if (iter == _map.end())
-			return 0;
+		ResFileMap::const_iterator parentIter = _map.find(iter->_value.parent);
+		const ResArchiveLoader *loader = getLoader(parentIter->_value.type);
+		assert(loader);
 
-		if (!iter->_value.parent.empty()) {
-			Common::SeekableReadStream *parent = getFileStream(iter->_value.parent);
-			assert(parent);
-
-			ResFileMap::const_iterator parentIter = _map.find(iter->_value.parent);
-			const ResArchiveLoader *loader = getLoader(parentIter->_value.type);
-			assert(loader);
-
-			return loader->loadFileFromArchive(file, parent, iter->_value);
-		} else {
-			error("Couldn't open file '%s'", file.c_str());
-		}
+		return loader->loadFileFromArchive(file, parent, iter->_value);
 	}
 
 	return 0;
@@ -411,7 +417,19 @@ void Resource::checkFile(const Common::String &file) {
 	if (_map.find(file) == _map.end()) {
 		CompFileMap::const_iterator iter;
 
-		if (Common::File::exists(file)) {
+		if ((iter = _compFiles.find(file)) != _compFiles.end()) {
+			ResFileEntry entry;
+			entry.parent = "";
+			entry.size = iter->_value.size;
+			entry.mounted = false;
+			entry.preload = false;
+			entry.prot = false;
+			entry.type = ResFileEntry::kAutoDetect;
+			entry.offset = 0;
+			_map[file] = entry;
+
+			detectFileTypes();
+		} else if (Common::File::exists(file)) {
 			Common::File temp;
 			if (temp.open(file)) {
 				ResFileEntry entry;
@@ -427,18 +445,6 @@ void Resource::checkFile(const Common::String &file) {
 
 				detectFileTypes();
 			}
-		} else if ((iter = _compFiles.find(file)) != _compFiles.end()) {
-			ResFileEntry entry;
-			entry.parent = "";
-			entry.size = iter->_value.size;
-			entry.mounted = false;
-			entry.preload = false;
-			entry.prot = false;
-			entry.type = ResFileEntry::kAutoDetect;
-			entry.offset = 0;
-			_map[file] = entry;
-
-			detectFileTypes();
 		}
 	}
 }
@@ -1257,10 +1263,17 @@ uint8 FileExpander::calcCmdAndIndex(const uint8 *tbl, int16 &para) {
 
 class CompLoaderInsHof : public CompArchiveLoader {
 public:
-	bool checkForFiles() const;
-	bool loadFile(CompFileMap &loadTo) const;
+	CompLoaderInsHof() {
+		_fileExtP = "%03d";
+		_checkFile1 = "WESTWOOD.001";
+		_checkFile2 = "WESTWOOD.002";
+		_containerOffset = 6;
+	}
 
-private:
+	virtual bool checkForFiles() const;
+	virtual bool loadFile(CompFileMap &loadTo) const;
+
+protected:
 	struct Archive {
 		Common::String filename;
 		uint32 firstFile;
@@ -1269,10 +1282,25 @@ private:
 		uint32 endOffset;
 		uint32 totalSize;
 	};
+
+	const char *_fileExtP;
+	const char *_checkFile1;
+	const char *_checkFile2;
+	uint8 _containerOffset;
+};
+
+class CompLoaderInsLol : public CompLoaderInsHof {
+public:
+	CompLoaderInsLol() {
+		_fileExtP = "%d";
+		_checkFile1 = "WESTWOOD.1";
+		_checkFile2 = "WESTWOOD.2";
+		_containerOffset = 0;
+	}
 };
 
 bool CompLoaderInsHof::checkForFiles() const {
-	return (Common::File::exists("WESTWOOD.001") && Common::File::exists("WESTWOOD.002"));
+	return (Common::File::exists(_checkFile1) && Common::File::exists(_checkFile2));
 }
 
 bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
@@ -1294,7 +1322,7 @@ bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
 	Common::List<Archive> archives;
 
 	for (int8 currentFile = 1; currentFile; currentFile++) {
-		sprintf(filenameExt, "%03d", currentFile);
+		sprintf(filenameExt, _fileExtP, currentFile);
 		filenameTemp = filenameBase + Common::String(filenameExt);
 
 		if (!tmpFile.open(filenameTemp)) {
@@ -1310,9 +1338,9 @@ bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
 		if (startFile) {
 			size -= 4;
 			if (fileId == currentFile) {
-				size -= 6;
-				pos += 6;
-				tmpFile.seek(6, SEEK_CUR);
+				size -= _containerOffset;
+				pos += _containerOffset;
+				tmpFile.seek(_containerOffset, SEEK_CUR);
 			} else {
 				size = size + 1 - pos;
 			}
@@ -1356,6 +1384,7 @@ bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
 	uint8 *outbuffer = 0;
 	uint32 inPart1 = 0;
 	uint32 inPart2 = 0;
+	uint8 compressionType = 0;
 	Common::String entryStr;
 
 	pos = 0;
@@ -1367,7 +1396,7 @@ bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
 	for (Common::List<Archive>::iterator a = archives.begin(); a != archives.end(); ++a) {
 		startFile = true;
 		for (uint32 i = a->firstFile; i != (a->lastFile + 1); i++) {
-			sprintf(filenameExt, "%03d", i);
+			sprintf(filenameExt, _fileExtP, i);
 			filenameTemp = a->filename + Common::String(filenameExt);
 
 			if (!tmpFile.open(filenameTemp)) {
@@ -1390,7 +1419,12 @@ bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
 					tmpFile.seek(1);
 					tmpFile.read(inbuffer + inPart1, inPart2);
 					inPart2 = 0;
-					exp.process(outbuffer, inbuffer, outsize, insize);
+
+					if (compressionType > 0)
+						exp.process(outbuffer, inbuffer, outsize, insize);
+					else
+						memcpy(outbuffer, inbuffer, outsize);
+
 					delete[] inbuffer;
 					inbuffer = 0;
 					newEntry.data = outbuffer;
@@ -1419,7 +1453,7 @@ bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
 						}
 					}
 				
-					sprintf(filenameExt, "%03d", i + 1);
+					sprintf(filenameExt, _fileExtP, i + 1);
 					filenameTemp = a->filename + Common::String(filenameExt);
 
 					Common::File tmpFile2;
@@ -1435,8 +1469,7 @@ bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
 				uint32 id = READ_LE_UINT32(hdr);
 				
 				if (id == 0x04034B50) {
-					if (hdr[8] != 8)
-						error("compression type not implemented");
+					compressionType = hdr[8];
 					insize = READ_LE_UINT32(hdr + 18);
 					outsize = READ_LE_UINT32(hdr + 22);
 			
@@ -1464,7 +1497,12 @@ bool CompLoaderInsHof::loadFile(CompFileMap &loadTo) const {
 					} else {
 						tmpFile.read(inbuffer, insize);
 						inPart2 = 0;
-						exp.process(outbuffer, inbuffer, outsize, insize);
+
+						if (compressionType > 0)
+							exp.process(outbuffer, inbuffer, outsize, insize);
+						else
+							memcpy(outbuffer, inbuffer, outsize);
+
 						delete[] inbuffer;
 						inbuffer = 0;
 						newEntry.data = outbuffer;
@@ -1498,6 +1536,7 @@ void Resource::initializeLoaders() {
 	_loaders.push_back(LoaderList::value_type(new ResLoaderTlk()));
 
 	_compLoaders.push_back(CompLoaderList::value_type(new CompLoaderInsHof()));
+	_compLoaders.push_back(CompLoaderList::value_type(new CompLoaderInsLol()));
 }
 
 const ResArchiveLoader *Resource::getLoader(ResFileEntry::kType type) const {

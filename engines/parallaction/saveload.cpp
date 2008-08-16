@@ -125,7 +125,7 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 	_score = atoi(s);
 
 	f->readLine(s, 15);
-	_commandFlags = atoi(s);
+	_globalFlags = atoi(s);
 
 	f->readLine(s, 15);
 
@@ -209,13 +209,13 @@ void Parallaction_ns::doSaveGame(uint16 slot, const char* name) {
 
 	sprintf(s, "%s\n", _saveData1);
 	f->writeString(s);
-	sprintf(s, "%d\n", _char._ani->_left);
+	sprintf(s, "%d\n", _char._ani->getX());
 	f->writeString(s);
-	sprintf(s, "%d\n", _char._ani->_top);
+	sprintf(s, "%d\n", _char._ani->getY());
 	f->writeString(s);
 	sprintf(s, "%d\n", _score);
 	f->writeString(s);
-	sprintf(s, "%u\n", _commandFlags);
+	sprintf(s, "%u\n", _globalFlags);
 	f->writeString(s);
 
 	sprintf(s, "%d\n", _numLocations);

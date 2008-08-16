@@ -31,6 +31,7 @@
 
 #include "common/endian.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "graphics/cursorman.h"
 
@@ -91,7 +92,7 @@ static const byte cursorPalette[] = {
  */
 FWRenderer::FWRenderer() : _background(NULL), _palette(NULL), _cmd(""),
 	_cmdY(0), _messageBg(0), _backBuffer(new byte[_screenSize]),
-	_activeLowPal(NULL), _changePal(0) {
+	_activeLowPal(NULL), _changePal(0), _showCollisionPage(false) {
 
 	assert(_backBuffer);
 
@@ -125,6 +126,7 @@ void FWRenderer::clear() {
 	_cmdY = 0;
 	_messageBg = 0;
 	_changePal = 0;
+	_showCollisionPage = false;
 }
 
 /*! \brief Draw 1bpp sprite using selected color
@@ -225,14 +227,18 @@ void FWRenderer::drawCommand() {
  * \param x Top left message box corner coordinate
  * \param y Top left message box corner coordinate
  * \param width Message box width
- * \param color Message box background color
+ * \param color Message box background color (Or if negative draws only the text)
+ * \note Negative colors are used in Operation Stealth's timed cutscenes
+ * (e.g. when first meeting The Movement for the Liberation of Santa Paragua).
  */
-void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte color) {
+void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color) {
 	int i, tx, ty, tw;
 	int line = 0, words = 0, cw = 0;
 	int space = 0, extraSpace = 0;
 
-	drawPlainBox(x, y, width, 4, color);
+	if (color >= 0) {
+		drawPlainBox(x, y, width, 4, color);
+	}
 	tx = x + 4;
 	ty = str[0] ? y - 5 : y + 4;
 	tw = width - 8;
@@ -252,7 +258,9 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte colo
 			}
 
 			ty += 9;
-			drawPlainBox(x, ty, width, 9, color);
+			if (color >= 0) {
+				drawPlainBox(x, ty, width, 9, color);
+			}
 			tx = x + 4;
 		}
 
@@ -269,8 +277,10 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte colo
 	}
 
 	ty += 9;
-	drawPlainBox(x, ty, width, 4, color);
-	drawDoubleBorder(x, y, width, ty - y + 4, 2);
+	if (color >= 0) {
+		drawPlainBox(x, ty, width, 4, color);
+		drawDoubleBorder(x, y, width, ty - y + 4, 2);
+	}
 }
 
 /*! \brief Draw rectangle on screen
@@ -279,54 +289,44 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte colo
  * \param width Rectangle width (Negative values draw the box horizontally flipped)
  * \param height Rectangle height (Negative values draw the box vertically flipped)
  * \param color Fill color
- * \note Rectangle's drawn width is always at least one.
- * \note Rectangle's drawn height is always at least one.
+ * \note An on-screen rectangle's drawn width is always at least one.
+ * \note An on-screen rectangle's drawn height is always at least one.
  */
 void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
-	int i;
+	// Make width's and height's absolute values at least one
+	// which forces this function to always draw something if the
+	// drawing position is inside screen bounds. This fixes at least
+	// the showing of the oxygen gauge meter in Operation Stealth's
+	// first arcade sequence where this function is called with a
+	// height of zero.
+	if (width == 0) {
+		width = 1;
+	}
+	if (height == 0) {
+		height = 1;
+	}
 
 	// Handle horizontally flipped boxes
 	if (width < 0) {
-		x += width;
 		width = ABS(width);
+		x -= width;
 	}
 
 	// Handle vertically flipped boxes
 	if (height < 0) {
-		y += height;
 		height = ABS(height);
+		y -= height;
 	}
 
-	// Handle horizontal boundaries
-	if (x < 0) {
-		width += x; // Remove invisible columns
-		x = 0; // Start drawing at the screen's left border
-	} else if (x > 319) {
-		// Nothing left to draw as we're over the screen's right border
-		width = 0;
-	}
+	// Clip the rectangle to screen dimensions
+	Common::Rect boxRect(x, y, x + width, y + height);
+	Common::Rect screenRect(320, 200);
+	boxRect.clip(screenRect);
 
-	// Handle vertical boundaries
-	if (y < 0) {
-		height += y; // Remove invisible rows
-		y = 0; // Start drawing at the screen's top border
-	} else if (y > 199) {
-		// Nothing left to draw as we're below the screen's bottom border
-		height = 0;
-	}
-
-	// Make width and height at least one
-	// which forces this function to always draw something.
-	// This fixes at least the showing of the oxygen gauge meter in
-	// Operation Stealth's first arcade sequence where this function
-	// is called with a height of zero.
-	width  = MAX(1, width);
-	height = MAX(1, height);
-
-	// Draw the filled rectangle
-	byte *dest = _backBuffer + y * 320 + x;
-	for (i = 0; i < height; i++) {
-		memset(dest + i * 320, color, width);
+	// Draw the filled rectangle	
+	byte *dest = _backBuffer + boxRect.top * 320 + boxRect.left;
+	for (int i = 0; i < boxRect.height(); i++) {
+		memset(dest + i * 320, color, boxRect.width());
 	}
 }
 
@@ -366,8 +366,8 @@ int FWRenderer::drawChar(char character, int x, int y) {
 
 	if (character == ' ') {
 		x += 5;
-	} else if ((width = fontParamTable[(unsigned char)character].characterWidth)) {
-		idx = fontParamTable[(unsigned char)character].characterIdx;
+	} else if ((width = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterWidth)) {
+		idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
 		drawSpriteRaw(g_cine->_textHandler.textTable[idx][0], g_cine->_textHandler.textTable[idx][1], 16, 8, _backBuffer, x, y);
 		x += width + 1;
 	}
@@ -513,16 +513,28 @@ void FWRenderer::drawFrame() {
 	blit();
 }
 
+/*!
+ * \brief Turn on or off the showing of the collision page.
+ * If turned on the blitting routine shows the collision page instead of the back buffer.
+ * \note Useful for debugging collision page related problems.
+ */
+void FWRenderer::showCollisionPage(bool state) {
+	_showCollisionPage = state;
+}
+
 /*! \brief Update screen
  */
 void FWRenderer::blit() {
-	g_system->copyRectToScreen(_backBuffer, 320, 0, 0, 320, 200);
+	// Show the back buffer or the collision page. Normally the back
+	// buffer but showing the collision page is useful for debugging.
+	byte *source = (_showCollisionPage ? collisionPage : _backBuffer);
+	g_system->copyRectToScreen(source, 320, 0, 0, 320, 200);
 }
 
 /*! \brief Set player command string
  * \param cmd New command string
  */
-void FWRenderer::setCommand(const char *cmd) {
+void FWRenderer::setCommand(Common::String cmd) {
 	_cmd = cmd;
 }
 
@@ -1023,8 +1035,8 @@ int OSRenderer::drawChar(char character, int x, int y) {
 
 	if (character == ' ') {
 		x += 5;
-	} else if ((width = fontParamTable[(unsigned char)character].characterWidth)) {
-		idx = fontParamTable[(unsigned char)character].characterIdx;
+	} else if ((width = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterWidth)) {
+		idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
 		drawSpriteRaw2(g_cine->_textHandler.textTable[idx][0], 0, 16, 8, _backBuffer, x, y);
 		x += width + 1;
 	}
@@ -1063,10 +1075,11 @@ void OSRenderer::drawBackground() {
  * \todo Add handling of type 22 overlays
  */
 void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
-	int len;
+	int len, idx, width, height;
 	objectStruct *obj;
 	AnimData *sprite;
 	byte *mask;
+	byte color;
 
 	switch (it->type) {
 	// color sprite
@@ -1096,6 +1109,19 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		}
 		break;
 
+	// action failure message
+	case 3:
+		idx = it->objIdx * 4 + g_cine->_rnd.getRandomNumber(3);
+		len = strlen(failureMessages[idx]);
+		_messageLen += len;
+		width = 6 * len + 20;
+		width = width > 300 ? 300 : width;
+
+		// The used color here differs from Future Wars
+		drawMessage(failureMessages[idx], (320 - width) / 2, 80, width, _messageBg);
+		waitForPlayerClick = 1;
+		break;
+
 	// bitmap
 	case 4:
 		if (objectTable[it->objIdx].frame >= 0) {
@@ -1117,26 +1143,25 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		maskBgOverlay(_bgTable[it->x].bg, sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, obj->x, obj->y);
 		break;
 
-	// FIXME: Looking at Operation Stealth's disassembly I can't find any codepath that
-	// will draw a type 21 overlay. But looking at the first arcade sequence's scripts
-	// it looks like the oxygen gauge meter is implemented using a type 21 overlay.
-	// So for the time being I'm simply drawing type 21 overlays as type 22 overlays
-	// and hoping for the best.
-	// TODO: Check how the original game looks under DOSBox to see if the oxygen gauge works in it
+	// FIXME: Implement correct drawing of type 21 overlays.
+	// Type 21 overlays aren't just filled rectangles, I found their drawing routine
+	// from Operation Stealth's drawSprite routine. So they're likely some kind of sprites
+	// and it's just a coincidence that the oxygen meter during the first arcade sequence
+	// works even somehow currently. I tried the original under DOSBox and the oxygen gauge
+	// is a long red bar that gets shorter as the air runs out.
 	case 21:
 	// A filled rectangle:
-	case 22: {
+	case 22:
 		// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing).
 		assert(it->objIdx < NUM_MAX_OBJECT);
 		obj = &objectTable[it->objIdx];
-		byte color = obj->part & 0x0F;
-		int width = obj->frame;
-		int height = obj->costume;
+		color = obj->part & 0x0F;
+		width = obj->frame;
+		height = obj->costume;
 		drawPlainBox(obj->x, obj->y, width, height, color);
 		debug(5, "renderOverlay: type=%d, x=%d, y=%d, width=%d, height=%d, color=%d",
 			it->type, obj->x, obj->y, width, height, color);
 		break;
-	 }
 
 	// something else
 	default:

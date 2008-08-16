@@ -32,8 +32,6 @@
 
 namespace Parallaction {
 
-char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ignoreQuotes = false);
-
 #define MAX_TOKEN_LEN	50
 extern int  _numTokens;
 extern char _tokens[][MAX_TOKEN_LEN];
@@ -46,6 +44,7 @@ class Script {
 
 	void clearTokens();
 	uint16 fillTokens(char* line);
+	char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ignoreQuotes = false);
 
 public:
 	Script(Common::ReadStream *, bool _disposeSource = false);
@@ -132,9 +131,6 @@ protected:
 		// BRA specific
 		int numZones;
 		BackgroundInfo	*info;
-		char *bgName;
-		char *maskName;
-		char *pathName;
 		char *characterName;
 	} ctxt;
 
@@ -307,6 +303,7 @@ protected:
 
 	virtual void	parseZoneTypeBlock(ZonePtr z);
 	void			parsePathData(ZonePtr z);
+	void 			parseGetData(ZonePtr z);
 
 public:
 	LocationParser_br(Parallaction_br *vm) : LocationParser_ns((Parallaction_ns*)vm), _vm(vm) {

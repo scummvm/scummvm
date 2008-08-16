@@ -33,6 +33,9 @@
 
 namespace Cine {
 
+// Maximum size of the command buffer including the trailing zero
+#define kMaxCommandBufferSize 80
+
 void initLanguage(Common::Language lang);
 
 int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width, bool recheckValue = false);
@@ -85,7 +88,7 @@ extern byte _danKeysPressed;
 
 extern int16 playerCommand;
 
-extern char commandBuffer[80];
+extern Common::String commandBuffer;
 
 extern char currentPrcName[20];
 extern char currentRelName[20];

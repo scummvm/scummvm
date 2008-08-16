@@ -805,8 +805,16 @@ void OSystem_WINCE3::setupMixer() {
 		debug(1, "Sound opened OK, mixing at %d Hz", _sampleRate);
 
 		// Re-create mixer to match the output rate
+		int vol1 = _mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
+		int vol2 = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+		int vol3 = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
+		int vol4 = _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
 		delete(_mixer);
 		_mixer = new Audio::MixerImpl(this);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol1);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol2);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol3);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, vol4);
 		_mixer->setOutputRate(_sampleRate);
 		_mixer->setReady(true);
 		SDL_PauseAudio(0);
@@ -2254,14 +2262,17 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 				_lastKeyPressed = 0;
 				event.type = Common::EVENT_PREDICTIVE_DIALOG;
 				return true;
-			}
-
-			event.type = Common::EVENT_KEYDOWN;
+			} 			event.type = Common::EVENT_KEYDOWN;
 			if (!_unfilteredkeys)
 				event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 			else
 				event.kbd.keycode = (Common::KeyCode)mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
 			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
+
+			if (ev.key.keysym.mod == KMOD_RESERVED && ev.key.keysym.unicode == KMOD_SHIFT) {
+				event.kbd.ascii ^= 0x20;
+				event.kbd.flags = Common::KBD_SHIFT;
+			}
 
 			return true;
 
@@ -2289,6 +2300,11 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 			else
 				event.kbd.keycode = (Common::KeyCode)mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
 			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
+
+			if (ev.key.keysym.mod == KMOD_RESERVED && ev.key.keysym.unicode == KMOD_SHIFT) {
+				event.kbd.ascii ^= 0x20;
+				event.kbd.flags = Common::KBD_SHIFT;
+			}
 
 			return true;
 

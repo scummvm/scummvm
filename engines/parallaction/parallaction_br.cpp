@@ -193,7 +193,7 @@ void Parallaction_br::initPart() {
 
 	memset(_counters, 0, ARRAYSIZE(_counters));
 
-	_globalTable = _disk->loadTable("global");
+	_globalFlagsNames = _disk->loadTable("global");
 	_objectsNames = _disk->loadTable("objects");
 	_countersNames = _disk->loadTable("counters");
 
@@ -208,11 +208,11 @@ void Parallaction_br::initPart() {
 
 void Parallaction_br::freePart() {
 
-	delete _globalTable;
+	delete _globalFlagsNames;
 	delete _objectsNames;
 	delete _countersNames;
 
-	_globalTable = 0;
+	_globalFlagsNames = 0;
 	_objectsNames = 0;
 	_countersNames = 0;
 }

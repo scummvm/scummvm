@@ -73,6 +73,8 @@ private:
 	OSystem::GraphicsMode *_supportedGraphicsModes;
 	s32 _activeGraphicsMode;
 
+	bool _fullscreen;
+
 	bool _mouseVisible;
 	s32 _mouseX, _mouseY;
 	u32 _mouseWidth, _mouseHeight;
@@ -110,7 +112,6 @@ public:
 	virtual bool getFeatureState(Feature f);
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
-	bool setGraphicsMode(const char *name);
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height);

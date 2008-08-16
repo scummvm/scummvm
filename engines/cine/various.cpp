@@ -77,7 +77,7 @@ byte _danKeysPressed;
 
 int16 playerCommand;
 
-char commandBuffer[80];
+Common::String commandBuffer;
 char currentPrcName[20];
 char currentRelName[20];
 char currentObjectName[20];
@@ -313,6 +313,18 @@ void saveZoneData(Common::OutSaveFile &out) {
 void saveCommandVariables(Common::OutSaveFile &out) {
 	for (int i = 0; i < 4; i++) {
 		out.writeUint16BE(commandVar3[i]);
+	}
+}
+
+/*! \brief Save the 80 bytes long command buffer padded to that length with zeroes. */
+void saveCommandBuffer(Common::OutSaveFile &out) {
+	// Let's make sure there's space for the trailing zero
+	// (That's why we subtract one from the maximum command buffer size here).
+	uint32 size = MIN<uint32>(commandBuffer.size(), kMaxCommandBufferSize - 1);
+	out.write(commandBuffer.c_str(), size);
+	// Write the rest as zeroes (Here we also write the string's trailing zero)
+	for (uint i = 0; i < kMaxCommandBufferSize - size; i++) {
+		out.writeByte(0);
 	}
 }
 
@@ -633,7 +645,7 @@ void CineEngine::resetEngine() {
 	playerCommand = -1;
 	isDrawCommandEnabled = 0;
 
-	strcpy(commandBuffer, "");
+	commandBuffer = "";
 
 	globalVars[VAR_MOUSE_X_POS] = 0;
 	globalVars[VAR_MOUSE_Y_POS] = 0;
@@ -834,7 +846,10 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	globalVars.load(in, NUM_MAX_VAR);
 	loadZoneData(in);
 	loadCommandVariables(in);
-	in.read(commandBuffer, 0x50);
+	char tempCommandBuffer[kMaxCommandBufferSize];
+	in.read(tempCommandBuffer, kMaxCommandBufferSize);
+	commandBuffer = tempCommandBuffer;
+	renderer->setCommand(commandBuffer);
 	loadZoneQuery(in);
 
 	// TODO: Use the loaded string (Current music name (String, 13 bytes)).
@@ -971,7 +986,9 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	loadCommandVariables(in);
 
 	// At 0x22A9 (i.e. 0x22A1 + 4 * 2):
-	in.read(commandBuffer, 0x50);
+	char tempCommandBuffer[kMaxCommandBufferSize];
+	in.read(tempCommandBuffer, kMaxCommandBufferSize);
+	commandBuffer = tempCommandBuffer;
 	renderer->setCommand(commandBuffer);
 
 	// At 0x22F9 (i.e. 0x22A9 + 0x50):
@@ -1119,7 +1136,7 @@ void CineEngine::makeSaveFW(Common::OutSaveFile &out) {
 	globalVars.save(out, NUM_MAX_VAR);
 	saveZoneData(out);
 	saveCommandVariables(out);
-	out.write(commandBuffer, 0x50);
+	saveCommandBuffer(out);
 
 	out.writeUint16BE(renderer->_cmdY);
 	out.writeUint16BE(bgVar0);
@@ -1334,7 +1351,7 @@ void CineEngine::makeSaveOS(Common::OutSaveFile &out) {
 	globalVars.save(out, NUM_MAX_VAR);
 	saveZoneData(out);
 	saveCommandVariables(out);
-	out.write(commandBuffer, 0x50);
+	saveCommandBuffer(out);
 	saveZoneQuery(out);
 
 	// FIXME: Save a proper name here, saving an empty string currently.
@@ -1397,19 +1414,38 @@ void drawDoubleMessageBox(int16 x, int16 y, int16 width, int16 currentY, int16 c
 }
 
 void processInventory(int16 x, int16 y) {
-	int16 listSize = buildObjectListCommand(-2);
 	uint16 button;
+	int menuWidth;
+	int listSize;
+	int commandParam;
+
+	if (g_cine->getGameType() == Cine::GType_FW) {
+		menuWidth = 140;
+		commandParam = -2;
+	} else { // Operation Stealth
+		menuWidth = 160;
+		commandParam = -3;
+	}
+
+	listSize = buildObjectListCommand(commandParam);
 
 	if (!listSize)
 		return;
 
-	renderer->drawMenu(objectListCommand, listSize, x, y, 140, -1);
+	renderer->drawMenu(objectListCommand, listSize, x, y, menuWidth, -1);
 	renderer->blit();
 
 	do {
 		manageEvents();
 		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
 	} while (!button);
+
+	do {
+		manageEvents();
+		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
+	} while (button);
+
+	// TODO: Both Future Wars and Operation Stealth call showMouse, drawMouse or something similar here.
 }
 
 int16 buildObjectListCommand(int16 param) {
@@ -1453,6 +1489,8 @@ int16 selectSubObject(int16 x, int16 y, int16 param) {
 	return objListTab[selectedObject];
 }
 
+// TODO: Make separate functions for Future Wars's and Operation Stealth's version of this function, this is getting too messy
+// TODO: Add support for using the different prepositions for different verbs (Doesn't work currently)
 void makeCommandLine(void) {
 	uint16 x, y;
 
@@ -1460,9 +1498,9 @@ void makeCommandLine(void) {
 	commandVar2 = -10;
 
 	if (playerCommand != -1) {
-		strcpy(commandBuffer, defaultActionCommand[playerCommand]);
+		commandBuffer = defaultActionCommand[playerCommand];
 	} else {
-		strcpy(commandBuffer, "");
+		commandBuffer = "";
 	}
 
 	if ((playerCommand != -1) && (choiceResultTable[playerCommand] == 2)) {	// need object selection ?
@@ -1477,8 +1515,12 @@ void makeCommandLine(void) {
 		}
 
 		if (si < 0) {
-			playerCommand = -1;
-			strcpy(commandBuffer, "");
+			if (g_cine->getGameType() == Cine::GType_OS) {
+				canUseOnObject = 0;
+			} else { // Future Wars
+				playerCommand = -1;
+				commandBuffer = "";
+			}
 		} else {
 			if (g_cine->getGameType() == Cine::GType_OS) {
 				if (si >= 8000) {
@@ -1491,23 +1533,28 @@ void makeCommandLine(void) {
 
 			commandVar3[0] = si;
 			commandVar1 = 1;
-
-			strcat(commandBuffer, " ");
-			strcat(commandBuffer, objectTable[commandVar3[0]].name);
-			strcat(commandBuffer, " ");
-			strcat(commandBuffer, commandPrepositionOn);
+			commandBuffer += " ";
+			commandBuffer += objectTable[commandVar3[0]].name;
+			commandBuffer += " ";
+			if (g_cine->getGameType() == Cine::GType_OS) {
+				commandBuffer += commandPrepositionTable[playerCommand];
+			} else { // Future Wars
+				commandBuffer += defaultCommandPreposition;
+			}
 		}
-	} else {
+	}
+	
+	if (g_cine->getGameType() == Cine::GType_OS || !(playerCommand != -1 && choiceResultTable[playerCommand] == 2)) {
 		if (playerCommand == 2) {
 			getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
 			processInventory(x, y + 8);
 			playerCommand = -1;
 			commandVar1 = 0;
-			strcpy(commandBuffer, "");
+			commandBuffer = "";
 		}
 	}
 
-	if (g_cine->getGameType() == Cine::GType_OS) {
+	if (g_cine->getGameType() == Cine::GType_OS && playerCommand != 2) {
 		if (playerCommand != -1 && canUseOnObject != 0)	{ // call use on sub object
 			int16 si;
 
@@ -1515,34 +1562,37 @@ void makeCommandLine(void) {
 
 			si = selectSubObject(x, y + 8, -subObjectUseTable[playerCommand]);
 
-			if (si) {
+			if (si >= 0) {
 				if (si >= 8000) {
 					si -= 8000;
 				}
 
 				commandVar3[commandVar1] = si;
-
 				commandVar1++;
-
-				// TODO: add command message draw
+				commandBuffer += " ";
+				commandBuffer += objectTable[si].name;
 			}
+		}
 
-			isDrawCommandEnabled = 1;
+		isDrawCommandEnabled = 1;
 
-			if (playerCommand != -1 && choiceResultTable[playerCommand] == commandVar1) {
-				SelectedObjStruct obj;
-				obj.idx = commandVar3[0];
-				obj.param = commandVar3[1];
-				int16 di = getRelEntryForObject(playerCommand, commandVar1, &obj);
+		if (playerCommand != -1 && choiceResultTable[playerCommand] == commandVar1) {
+			SelectedObjStruct obj;
+			obj.idx = commandVar3[0];
+			obj.param = commandVar3[1];
+			int16 di = getRelEntryForObject(playerCommand, commandVar1, &obj);
 
-				if (di != -1) {
-					runObjectScript(di);
-				}
-			}
+			if (di != -1) {
+				runObjectScript(di);
+			} // TODO: else addFailureMessage(playerCommand)
+
+			playerCommand = -1;
+			commandVar1 = 0;
+			commandBuffer = "";
 		}
 	}
 
-	if (!disableSystemMenu) {
+	if (g_cine->getGameType() == Cine::GType_OS || !disableSystemMenu) {
 		isDrawCommandEnabled = 1;
 		renderer->setCommand(commandBuffer);
 	}
@@ -1759,8 +1809,9 @@ uint16 executePlayerInput(void) {
 						commandVar3[commandVar1] = si;
 						commandVar1++;
 
-						strcat(commandBuffer, " ");
-						strcat(commandBuffer, objectTable[si].name);
+						commandBuffer += " ";
+						commandBuffer += objectTable[si].name;
+						
 
 						isDrawCommandEnabled = 1;
 
@@ -1782,8 +1833,8 @@ uint16 executePlayerInput(void) {
 							playerCommand = -1;
 
 							commandVar1 = 0;
-							strcpy(commandBuffer, "");
-							renderer->setCommand("");
+							commandBuffer = "";
+							renderer->setCommand(commandBuffer);
 						}
 					} else {
 						globalVars[VAR_MOUSE_X_POS] = mouseX;
@@ -1804,13 +1855,7 @@ uint16 executePlayerInput(void) {
 
 				if (commandVar2 != objIdx) {
 					if (objIdx != -1) {
-						char command[256];
-
-						strcpy(command, commandBuffer);
-						strcat(command, " ");
-						strcat(command, objectTable[objIdx].name);
-
-						renderer->setCommand(command);
+						renderer->setCommand(commandBuffer + " " + objectTable[objIdx].name);
 					} else {
 						isDrawCommandEnabled = 1;
 					}
@@ -1984,6 +2029,14 @@ uint16 executePlayerInput(void) {
 			//  printf("Unhandled case %d in last part of executePlayerInput\n",var2-59);
 			break;
 		}
+	}
+
+	// Update Operation Stealth specific global variables.
+	// This fixes swimming at the bottom of the ocean after
+	// having been thrown into it with the girl.
+	if (g_cine->getGameType() == Cine::GType_OS) {
+		globalVars[251] = globalVars[VAR_MOUSE_X_POS];
+		globalVars[252] = globalVars[VAR_MOUSE_Y_POS];
 	}
 
 	return var_5E;

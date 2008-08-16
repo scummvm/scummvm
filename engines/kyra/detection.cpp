@@ -67,11 +67,14 @@ namespace {
 #define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, true, false, Kyra::GI_KYRA3)
 
 #define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, true, Kyra::GI_LOL)
 #define LOL_PC98_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_LOL)
 #define LOL_PC98_SJIS_FLAGS FLAGS(false, false, false, true, false, false, Kyra::GI_LOL)
 #define LOL_DEMO_FLAGS FLAGS(true, false, false, false, false, false, Kyra::GI_KYRA2)
 
 const KYRAGameDescription adGameDescs[] = {
+	/* disable these targets until they get supported
 	{
 		{
 			"kyra1",
@@ -83,6 +86,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_CMP_FLAGS
 	},
+
 	{
 		{
 			"kyra1",
@@ -94,6 +98,8 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_CMP_FLAGS
 	},
+	*/
+
 	{
 		{
 			"kyra1",
@@ -460,6 +466,42 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
 	},
 
+	{ 
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "39772ff82e42c4c520050518deb82e64"),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
+	{ 
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "39772ff82e42c4c520050518deb82e64"),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
+	{ 
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "39772ff82e42c4c520050518deb82e64"),
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
 	{ // Interactive Demo
 		{
 			"kyra2",
@@ -649,6 +691,53 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_INS_FLAGS
 	},
 
+	// Mac version
+	{ 
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			Common::ADGF_DROPLANGUAGE
+		},
+		KYRA3_CD_INS_FLAGS
+	},
+	{
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformMacintosh,
+			Common::ADGF_DROPLANGUAGE
+		},
+		KYRA3_CD_INS_FLAGS
+	},
+	{
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::FR_FRA,
+			Common::kPlatformMacintosh,
+			Common::ADGF_DROPLANGUAGE
+		},
+		KYRA3_CD_INS_FLAGS
+	},
+
 	// Spanish fan translation, see fr#1994040 "KYRA3: Add support for Spanish fan translation"
 	{
 		{
@@ -696,7 +785,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_FAN_FLAGS(Common::ES_ESP, Common::EN_ANY)
 	},
 
-	// Itlian fan translation, see fr#2003504 "KYRA: add support for Italian version of Kyrandia 2&3"
+	// Italian fan translation, see fr#2003504 "KYRA: add support for Italian version of Kyrandia 2&3"
 	{
 		{
 			"kyra3",
@@ -839,8 +928,40 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		LOL_CD_FLAGS
 	},
-	
-	/*{
+
+	{
+		{
+			"lol",
+			0,
+			{
+				{ "WESTWOOD.1", 0, "3c61cb7de5b2ec452f5851f5075207ee", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		LOL_FLOPPY_CMP_FLAGS
+	},
+
+	{
+		{
+			"lol",
+			"Extracted",
+			{
+				{ "GENERAL.PAK", 0, "996e66e81054d36249907a1d8158da3d", -1 },
+				{ "CHAPTER7.PAK", 0, "cabee57f00d6d84b65a732b6868a4959", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		LOL_FLOPPY_FLAGS
+	},
+
+	/* disable these targets until they get supported
+	{
 		{
 			"lol",
 			0,
