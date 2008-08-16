@@ -600,30 +600,41 @@ void Gfx::updateFloatingLabel() {
 		return;
 	}
 
-	int16 _si, _di;
-
-	Common::Point	cursor;
-	_vm->_input->getCursorPos(cursor);
+	struct FloatingLabelTraits {
+		Common::Point _offsetWithItem;
+		Common::Point _offsetWithoutItem;
+		int	_minX;
+		int _minY;
+		int	_maxX;
+		int _maxY;
+	} *traits;
 
 	Common::Rect r;
 	_labels[_floatingLabel]->getRect(0, r);
 
-	if (_vm->_input->_activeItem._id != 0) {
-		_si = cursor.x + 16 - r.width()/2;
-		_di = cursor.y + 34;
+	if (_vm->getGameType() == GType_Nippon) {
+		FloatingLabelTraits traits_NS = {
+			Common::Point(16 - r.width()/2, 34),
+			Common::Point(8 - r.width()/2, 21),
+			0, 0, _vm->_screenWidth - r.width(), 190
+		};
+		traits = &traits_NS;
 	} else {
-		_si = cursor.x + 8 - r.width()/2;
-		_di = cursor.y + 21;
+		// FIXME: _maxY for BRA is not constant (390), but depends on _vm->_subtitleY
+		FloatingLabelTraits traits_BR = {
+			Common::Point(34 - r.width()/2, 70),
+			Common::Point(16 - r.width()/2, 37),
+			0, 0, _vm->_screenWidth - r.width(), 390
+		};
+		traits = &traits_BR;
 	}
 
-	if (_si < 0) _si = 0;
-	if (_di > 190) _di = 190;
+	Common::Point	cursor;
+	_vm->_input->getCursorPos(cursor);
+	Common::Point offset = (_vm->_input->_activeItem._id) ? traits->_offsetWithItem : traits->_offsetWithoutItem;
 
-	if (r.width() + _si > _vm->_screenWidth)
-		_si = _vm->_screenWidth - r.width();
-
-	_labels[_floatingLabel]->x = _si;
-	_labels[_floatingLabel]->y = _di;
+	_labels[_floatingLabel]->x = CLIP(cursor.x + offset.x, traits->_minX, traits->_maxX);
+	_labels[_floatingLabel]->y = CLIP(cursor.y + offset.y, traits->_minY, traits->_maxY);
 }
 
 
