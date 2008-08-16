@@ -76,6 +76,25 @@ static const CINEGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// This is a CD version of Future Wars published by Sony.
+	// This version has a crypted AUTO00.PRC.
+	{
+		{
+			"fw",
+			"Sony CD version",
+			{
+				{ "AUTO00.PRC", 0, "4fe1e7930b38e3c63f0f2474d471bf8f", -1},
+				{ "PART01", 0, "61d003202d301c29dd399acfb1354310", -1},
+				{ NULL, 0, NULL, 0}
+			},
+			Common::EN_USA,
+			Common::kPlatformPC,
+			Common::ADGF_CD
+		},
+		GType_FW,
+		GF_CD | GF_CRYPTED_BOOT_PRC,
+	},
+
 	{
 		// This is the version included in the UK "Classic Collection"
 		{
@@ -242,6 +261,21 @@ static const CINEGameDescription gameDescriptions[] = {
 			"os",
 			"256 colors",
 			AD_ENTRY1("procs00",	"d6752e7d25924cb866b61eb7cb0c8b56"),
+			Common::EN_GRB,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_OS,
+		0,
+	},
+
+	{
+		// This is a 16 color PC version (It came on three 720kB 3.5" disks).
+		// The protagonist is named John Glames in this version.
+		{
+			"os",
+			"",
+			AD_ENTRY1("procs1", "9629129b86979fa592c1787385bf3695"),
 			Common::EN_GRB,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS

@@ -40,7 +40,7 @@ public:
 	static void setupFont(Common::Language language);
 	static int getStringWidth16(const char *str);
 	static int getCharWidth16(uint8 chr);
-	static void drawString16(uint8 *dst, int dstPitch, uint16 color, int x, int y, const char *str);
+	static void drawString16(uint8 *dst, int dstPitch, uint16 color, int x, int y, const char *str, int xmax = 0);
 	static int drawChar16(uint8 *dst, int dstPitch, uint8 chr, int x, int y, uint16 color);
 	static void fillRect(uint8 *dst, int dstPitch, int x, int y, int w, int h, uint8 color);
 	static void drawRect(uint8 *dst, int dstPitch, int x, int y, int w, int h, uint8 color1, uint8 color2);

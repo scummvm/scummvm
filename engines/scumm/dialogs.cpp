@@ -367,37 +367,32 @@ void SaveLoadChooser::reflowLayout() {
 
 void SaveLoadChooser::updateInfos(bool redraw) {
 	int selItem = _list->getSelected();
-	Graphics::Surface *thumb;
-	thumb = _vm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
+	Graphics::Surface *thumb = 0;
+	if (selItem >= 0 && !_list->getSelectedString().empty())
+		thumb = _vm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
 
 	if (thumb) {
 		_gfxWidget->setGfx(thumb);
 		_gfxWidget->useAlpha(256);
 		thumb->free();
+		delete thumb;
 	} else {
 		_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
 	}
 
-	delete thumb;
-	if (redraw)
-		_gfxWidget->draw();
-
 	InfoStuff infos;
 	memset(&infos, 0, sizeof(InfoStuff));
-	char buffer[32];
-	if (_vm->loadInfosFromSlot(_saveMode ? selItem + 1 : selItem, &infos)) {
+	if (selItem >= 0 && !_list->getSelectedString().empty() 
+		   && _vm->loadInfosFromSlot(_saveMode ? selItem + 1 : selItem, &infos)) {
+		char buffer[32];
 		snprintf(buffer, 32, "Date: %.2d.%.2d.%.4d",
 			(infos.date >> 24) & 0xFF, (infos.date >> 16) & 0xFF,
 			infos.date & 0xFFFF);
 		_date->setLabel(buffer);
-		if (redraw)
-			_date->draw();
 
 		snprintf(buffer, 32, "Time: %.2d:%.2d",
 			(infos.time >> 8) & 0xFF, infos.time & 0xFF);
 		_time->setLabel(buffer);
-		if (redraw)
-			_time->draw();
 
 		int minutes = infos.playtime / 60;
 		int hours = minutes / 60;
@@ -406,23 +401,17 @@ void SaveLoadChooser::updateInfos(bool redraw) {
 		snprintf(buffer, 32, "Playtime: %.2d:%.2d",
 			hours & 0xFF, minutes & 0xFF);
 		_playtime->setLabel(buffer);
-		if (redraw)
-			_playtime->draw();
 	} else {
-		snprintf(buffer, 32, "No date saved");
-		_date->setLabel(buffer);
-		if (redraw)
-			_date->draw();
+		_date->setLabel("No date saved");
+		_time->setLabel("No time saved");
+		_playtime->setLabel("No playtime saved");
+	}
 
-		snprintf(buffer, 32, "No time saved");
-		_time->setLabel(buffer);
-		if (redraw)
-			_time->draw();
-
-		snprintf(buffer, 32, "No playtime saved");
-		_playtime->setLabel(buffer);
-		if (redraw)
-			_playtime->draw();
+	if (redraw) {
+		_gfxWidget->draw();
+		_date->draw();
+		_time->draw();
+		_playtime->draw();
 	}
 }
 

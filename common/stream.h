@@ -78,6 +78,22 @@ public:
 	 */
 	virtual void flush() {}
 
+	/**
+	 * Finalize and close this stream. To be called right before this
+	 * stream instance is deleted. The goal here is to enable calling
+	 * code to detect and handle I/O errors which might occur when
+	 * closing (and this flushing, if buffered) the stream.
+	 *
+	 * After this method has been called, no further writes may be
+	 * peformed on the stream. Calling ioFailed() is allowed.
+	 *
+	 * By default, this just flushes the stream.
+	 */
+	virtual void finalize() {
+		flush();
+	}
+
+
 	// The remaining methods all have default implementations; subclasses
 	// need not (and should not) overload them.
 

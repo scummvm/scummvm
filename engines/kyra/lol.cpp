@@ -87,6 +87,9 @@ int LoLEngine::init() {
 	_screen->setAnimBlockPtr(10000);
 	_screen->setScreenDim(0);
 
+	if (!_sound->init())
+		error("Couldn't init sound");
+
 	return 0;
 }
 
@@ -256,11 +259,14 @@ void LoLEngine::setupPrologueData(bool load) {
 		"xxx/intro9.pak"
 	};
 
-	char filename[32];
+	char filepath[32];
+	char *filename = filepath;
 	for (uint i = 0; i < ARRAYSIZE(fileList); ++i) {
 		strcpy(filename, fileList[i]);
 		memcpy(filename, _languageExt[_lang], 3);
-
+		if (!_flags.isTalkie)
+			filename += 4;		
+		
 		if (load) {
 			if (!_res->loadPakFile(filename))
 				error("Couldn't load file: '%s'", filename);

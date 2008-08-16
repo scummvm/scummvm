@@ -129,17 +129,20 @@ void SymbianActions::initInstanceGame() {
 	bool is_simon = (strncmp(gameid.c_str(), "simon", 5) == 0);
 	bool is_sword1 = (gameid == "sword1");
 	bool is_sword2 = (strcmp(gameid.c_str(), "sword2") == 0);
-	bool is_sky = (strncmp(gameid.c_str(), "sky", 3) == 0);
-	bool is_saga = (gameid == "saga");
+	bool is_queen = (gameid == "queen");
+	bool is_sky = (gameid == "sky");
 	bool is_comi = (strncmp(gameid.c_str(), "comi", 4) == 0);
-	bool is_queen = (strncmp(gameid.c_str(), "queen", 5) == 0);
 	bool is_gob = (strncmp(gameid.c_str(), "gob", 3) == 0);
-	bool is_kyra = (gameid == "kyra1");
+	bool is_saga = (gameid == "saga");
+	bool is_kyra = (strncmp(gameid.c_str(), "kyra",4) == 0);
 	bool is_samnmax = (gameid == "samnmax");
 	bool is_cine = (gameid == "cine");
 	bool is_touche = (gameid == "touche");
 	bool is_agi = (gameid == "agi");
 	bool is_parallaction = (gameid == "parallaction");
+	bool is_lure = (gameid == "lure");
+	bool is_feeble = (gameid == "feeble");
+	bool is_drascula = (strncmp(gameid.c_str(), "drascula",8) == 0);
 
 	Actions::initInstanceGame();
 
@@ -150,16 +153,16 @@ void SymbianActions::initInstanceGame() {
 
 
 	// Save
-	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche)
+	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche || is_feeble)
 		_action_enabled[ACTION_SAVE] = false;
 	else {
 		_action_enabled[ACTION_SAVE] = true;
 
 		if (is_queen) {
-			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, Common::KEYCODE_F5); // F1 key for FOTAQ
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F1, Common::KEYCODE_F1); // F1 key for FOTAQ
 		} else if (is_sky) {
 			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, Common::KEYCODE_F5);
-		} else if (is_cine) {
+		} else if (is_cine || is_drascula) {
 			_key_action[ACTION_SAVE].setKey(Common::ASCII_F10, Common::KEYCODE_F10); // F10
 		} else if (is_agi) {
 			_key_action[ACTION_SAVE].setKey(Common::ASCII_ESCAPE, Common::KEYCODE_ESCAPE);
@@ -175,7 +178,8 @@ void SymbianActions::initInstanceGame() {
 	// Skip text
 	if (!is_cine && !is_parallaction)
 		_action_enabled[ACTION_SKIP_TEXT] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_saga || is_kyra || is_touche)
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || 
+		is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula)
 		_key_action[ACTION_SKIP_TEXT].setKey(Common::KEYCODE_ESCAPE, Common::KEYCODE_ESCAPE); // Escape key
 	else {
 		_key_action[ACTION_SKIP_TEXT].setKey(SDLK_PERIOD);

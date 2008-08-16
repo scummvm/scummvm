@@ -76,13 +76,28 @@ namespace Tinsel {
 
 static const TinselGameDescription gameDescriptions[] = {
 
-	// Note: versions with *.gra files use tinsel v1 (28/2/1995), whereas
-	// versions with *.scn files tinsel v2 (7/5/1995)
-	// Update: this is not entirely true, there were some versions released
-	// with *.gra files and used tinsel v2
+	// The DW1 demo was based on an older revision of the Tinsel engine
+	// than the one used in the released game. We call it Tinsel v0 as 
+	// opposed to v1 which was used in the full retail version of DW.
+
+	{	// Demo from http://www.adventure-treff.de/specials/dl_demos.php
+		{
+			"dw",
+			"Demo",
+			AD_ENTRY1s("dw.gra", "ce1b57761ba705221bcf70955b827b97", 441192),
+			//AD_ENTRY1s("dw.scn", "ccd72f02183d0e96b6e7d8df9492cda8", 23308),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_DEMO
+		},
+		GID_DW1,
+		0,
+		GF_DEMO,
+		TINSEL_V0,
+	},
 
 	{
-		{	// This version has *.gra files but uses tinsel v2
+		{	// This version has *.gra files
 			"dw",
 			"Floppy",
 			AD_ENTRY1s("dw.gra", "c8808ccd988d603dd35dff42013ae7fd", 781656),
@@ -93,10 +108,10 @@ static const TinselGameDescription gameDescriptions[] = {
 		GID_DW1,
 		0,
 		GF_FLOPPY,
-		TINSEL_V2,
+		TINSEL_V1,
 	},
 
-	{	// English CD v1. This version has *.gra files but uses tinsel v2
+	{	// English CD. This version has *.gra files
 		{
 			"dw",
 			"CD",
@@ -112,10 +127,10 @@ static const TinselGameDescription gameDescriptions[] = {
 		GID_DW1,
 		0,
 		GF_CD,
-		TINSEL_V2,
+		TINSEL_V1,
 	},
 
-	{	// English CD v2
+	{	// English CD with SCN files
 		{
 			"dw",
 			"CD",
@@ -131,11 +146,11 @@ static const TinselGameDescription gameDescriptions[] = {
 		GID_DW1,
 		0,
 		GF_CD | GF_SCNFILES,
-		TINSEL_V2,
+		TINSEL_V1,
 	},
 
 #if 0
-	{	// English Saturn CD
+	{	// English Saturn CD. Not (yet?) supported
 		{
 			"dw",
 			"CD",
@@ -151,25 +166,9 @@ static const TinselGameDescription gameDescriptions[] = {
 		GID_DW1,
 		0,
 		GF_CD,
-		TINSEL_V2,
-	},
-#endif
-
-	{	// Demo from http://www.adventure-treff.de/specials/dl_demos.php
-		{
-			"dw",
-			"Demo",
-			AD_ENTRY1s("dw.gra", "ce1b57761ba705221bcf70955b827b97", 441192),
-			//AD_ENTRY1s("dw.scn", "ccd72f02183d0e96b6e7d8df9492cda8", 23308),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			Common::ADGF_DEMO
-		},
-		GID_DW1,
-		0,
-		GF_DEMO,
 		TINSEL_V1,
 	},
+#endif
 
 	{	// German CD re-release "Neon Edition"
 		// Note: This release has ENGLISH.TXT (with german content) instead of GERMAN.TXT
@@ -184,9 +183,9 @@ static const TinselGameDescription gameDescriptions[] = {
 		GID_DW1,
 		0,
 		GF_CD | GF_SCNFILES,
-		TINSEL_V2,
+		TINSEL_V1,
 	},
-	
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 

@@ -669,7 +669,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 				x += 16;
 				while (x + width >= _screenWidth)
 					width -= 16;
-				if (width < 0)
+				if (width <= 0)
 					return;
 			}
 

@@ -479,7 +479,7 @@ void PathWalker_BR::finalizeWalk() {
 	_char.setFoot(foot);
 #endif
 
-	_ch->_ani->_frame = _dirFrame;	// temporary solution
+	_ch->_ani->setF(_dirFrame);	// temporary solution
 
 #if 0
 	// TODO: support scrolling ;)
@@ -515,7 +515,7 @@ void PathWalker_BR::walk() {
 	GfxObj *obj = _ch->_ani->gfxobj;
 
 	Common::Rect rect;
-	obj->getRect(_ch->_ani->_frame, rect);
+	obj->getRect(_ch->_ani->getF(), rect);
 
 	uint scale;
 	if (rect.bottom > _vm->_location._zeta0) {
@@ -609,11 +609,11 @@ void PathWalker_BR::walk() {
 
 	if (_fieldC) {
 		debugC(9, kDebugWalk, "PathWalker_BR::walk, foot moved from (%i, %i) to (%i, %i)\n", _startFoot.x, _startFoot.y, newpos.x, newpos.y);
-		_ch->_ani->_frame = walkFrame + _dirFrame + 1;
+		_ch->_ani->setF(walkFrame + _dirFrame + 1);
 		_startFoot.x = newpos.x;
 		_startFoot.y = newpos.y;
 		_ch->setFoot(_startFoot);
-		_ch->_ani->_z = newpos.y;
+		_ch->_ani->setZ(newpos.y);
 	}
 
 	if (_fieldC || !_ch->_walkPath.empty()) {

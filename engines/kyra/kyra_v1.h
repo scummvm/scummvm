@@ -34,8 +34,8 @@
 #include "kyra/script.h"
 
 namespace Common {
-class InSaveFile;
-class OutSaveFile;
+class SeekableReadStream;
+class WriteStream;
 } // end of namespace Common
 
 class KyraMetaEngine;
@@ -70,9 +70,9 @@ enum {
 
 struct AudioDataStruct {
 	const char * const *_fileList;
-	const int _fileListLen;
-	const void * const _cdaTracks;
-	const int _cdaNumTracks;
+	int _fileListLen;
+	const void * _cdaTracks;
+	int _cdaNumTracks;
 };
 
 // TODO: this is just the start of makeing the debug output of the kyra engine a bit more useable
@@ -299,10 +299,10 @@ protected:
 		kRSHEIoError = 3
 	};
 
-	static kReadSaveHeaderError readSaveHeader(Common::InSaveFile *file, SaveHeader &header);
+	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, SaveHeader &header);
 
-	Common::InSaveFile *openSaveForReading(const char *filename, SaveHeader &header);
-	Common::OutSaveFile *openSaveForWriting(const char *filename, const char *saveName) const;
+	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header);
+	Common::WriteStream *openSaveForWriting(const char *filename, const char *saveName) const;
 };
 
 } // End of namespace Kyra

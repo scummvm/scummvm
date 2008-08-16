@@ -76,10 +76,13 @@ int Graphics::getCharWidth16(uint8 chr) {
 	return chrData[2];
 }
 
-void Graphics::drawString16(uint8 *dst, int dstPitch, uint16 color, int x, int y, const char *str) {
+void Graphics::drawString16(uint8 *dst, int dstPitch, uint16 color, int x, int y, const char *str, int xmax) {
 	while (*str) {
 		uint8 chr = (uint8)*str++;
 		x += drawChar16(dst, dstPitch, chr, x, y, color);
+		if (xmax != 0 && x > xmax) {
+			break;
+		}
 	}
 }
 

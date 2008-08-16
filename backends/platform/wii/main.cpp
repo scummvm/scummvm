@@ -62,7 +62,9 @@ int main(int argc, char *argv[]) {
 	printf("startup\n");
 
 	SYS_SetResetCallback(reset_cb);
+#ifndef GAMECUBE
 	SYS_SetPowerCallback(power_cb);
+#endif
 
 	if (!fatInitDefault()) {
 		printf("fatInitDefault failed\n");
@@ -75,7 +77,7 @@ int main(int argc, char *argv[]) {
 		if (!strcmp(buf, "fat:/"))
 			chdir("/apps/scummvm");
 
-		//fatEnableReadAhead(PI_DEFAULT, 32, 128);
+		fatEnableReadAhead(PI_DEFAULT, 32, 128);
 	}
 
 	g_system = new OSystem_Wii();

@@ -58,20 +58,18 @@
 #include "common/str.h"
 #include "common/util.h"
 
-// FIXME: Since this define is very system dependant, 
-// it should be moved to the appropriate H file instead.
-// Portdefs might be a good location for example
-#if !defined(__SYMBIAN32__)
 #define USE_HASHMAP_MEMORY_POOL
-#endif
-
 #ifdef USE_HASHMAP_MEMORY_POOL
 #include "common/memorypool.h"
 // FIXME: we sadly can't assume standard C++ to be present
 // on every system we support, so we should get rid of this.
 // The solution should be to write a simple placement new
 // on our own.
+
+// Symbian does not have <new> but the new operator 
+#if !defined(__SYMBIAN32__) 
 #include <new>
+#endif
 #endif
 
 namespace Common {

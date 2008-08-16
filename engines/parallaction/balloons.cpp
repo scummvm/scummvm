@@ -30,6 +30,183 @@
 
 namespace Parallaction {
 
+class WrappedLineFormatter {
+
+protected:
+	Common::String _line;
+	Font *_font;
+	uint16 _lines, _lineWidth;
+
+	virtual void setup() = 0;
+	virtual void action() = 0;
+	virtual void end() = 0;
+	virtual Common::String expand(const Common::String &token) { return token; }
+
+	void textAccum(const Common::String &token, uint16 width) {
+		if (token.empty()) {
+			return;
+		}
+
+		_lineWidth += width;
+		_line += token;
+	}
+
+	void textNewLine() {
+		_lines++;
+		_lineWidth = 0;
+		_line.clear();
+	}
+
+public:
+	WrappedLineFormatter(Font *font) : _font(font) { }
+	virtual ~WrappedLineFormatter() { }
+
+	virtual void calc(const char *text, uint16 maxwidth) {
+		setup();
+
+		_lineWidth = 0;
+		_line.clear();
+		_lines = 0;
+
+		Common::StringTokenizer	tokenizer(text, " ");
+		Common::String token;
+		Common::String blank(" ");
+
+		uint16 blankWidth = _font->getStringWidth(" ");
+		uint16 tokenWidth = 0;
+
+		while (!tokenizer.empty()) {
+			token = tokenizer.nextToken();
+			token = expand(token);
+
+			if (token == '/') {
+				tokenWidth = 0;
+				action();
+				textNewLine();
+			} else {
+				// todo: expand '%'
+				tokenWidth = _font->getStringWidth(token.c_str());
+
+				if (_lineWidth == 0) {
+					textAccum(token, tokenWidth);
+				} else {
+					if (_lineWidth + blankWidth + tokenWidth <= maxwidth) {
+						textAccum(blank, blankWidth);
+						textAccum(token, tokenWidth);
+					} else {
+						action();
+						textNewLine();
+						textAccum(token, tokenWidth);
+					}
+				}
+			}
+		}
+
+		end();
+	}
+};
+
+class StringExtent_NS : public WrappedLineFormatter {
+
+	uint	_width, _height;
+
+protected:
+	virtual Common::String expand(const Common::String &token) {
+		if (token.compareToIgnoreCase("%p") == 0) {
+			return Common::String("/");
+		}
+
+		return token;
+	}
+
+	virtual void setup() {
+		_width = _height = 0;
+
+		_line.clear();
+		_lines = 0;
+		_width = 0;
+	}
+
+	virtual void action() {
+		if (_lineWidth > _width) {
+			_width = _lineWidth;
+		}
+		_height = _lines * _font->height();
+	}
+
+	virtual void end() {
+		action();
+	}
+
+public:
+	StringExtent_NS(Font *font) : WrappedLineFormatter(font) { }
+
+	uint width() const { return _width; }
+	uint height() const { return _height; }
+};
+
+
+class StringWriter_NS : public WrappedLineFormatter {
+
+	uint	_width, _height;
+	byte	_color;
+
+	Graphics::Surface	*_surf;
+
+protected:
+	virtual Common::String expand(const Common::String& token) {
+		if (token.compareToIgnoreCase("%p") == 0) {
+			Common::String t(".......");
+			for (int i = 0; _password[i]; i++) {
+				t.setChar(_password[i], i);
+			}
+			return Common::String("> ") + t;
+		} else
+		if (token.compareToIgnoreCase("%s") == 0) {
+			char buf[20];
+			sprintf(buf, "%i", _score);
+			return Common::String(buf);
+		}
+
+		return token;
+	}
+
+	virtual void setup() {
+	}
+
+	virtual void action() {
+		if (_line.empty()) {
+			return;
+		}
+		uint16 rx = 10;
+		uint16 ry = 4 + _lines * _font->height();	// y
+
+		byte *dst = (byte*)_surf->getBasePtr(rx, ry);
+		_font->setColor(_color);
+		_font->drawString(dst, _surf->w, _line.c_str());
+	}
+
+	virtual void end() {
+		action();
+	}
+
+public:
+	StringWriter_NS(Font *font) : WrappedLineFormatter(font) { }
+
+	void write(const char *text, uint maxWidth, byte color, Graphics::Surface *surf) {
+		StringExtent_NS	se(_font);
+		se.calc(text, maxWidth);
+		_width = se.width() + 10;
+		_height = se.height() + 20;
+		_color = color;
+		_surf = surf;
+
+		calc(text, maxWidth);
+	}
+
+};
+
+
 
 #define	BALLOON_TRANSPARENT_COLOR_NS 2
 #define BALLOON_TRANSPARENT_COLOR_BR 0
@@ -78,8 +255,6 @@ class BalloonManager_ns : public BalloonManager {
 
 	uint	_numBalloons;
 
-	void getStringExtent(Font *font, char *text, uint16 maxwidth, int16* width, int16* height);
-	void drawWrappedText(Font *font, Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
 	int createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness);
 	Balloon *getBalloon(uint id);
 
@@ -152,12 +327,16 @@ int BalloonManager_ns::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 w
 
 	int16 w, h;
 
-	getStringExtent(_vm->_dialogueFont, text, MAX_BALLOON_WIDTH, &w, &h);
+	StringExtent_NS	se(_vm->_dialogueFont);
+	se.calc(text, MAX_BALLOON_WIDTH);
+	w = se.width() + 14;
+	h = se.height() + 20;
 
 	int id = createBalloon(w+5, h, winding, 1);
 	Balloon *balloon = &_intBalloons[id];
 
-	drawWrappedText(_vm->_dialogueFont, balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
+	StringWriter_NS sw(_vm->_dialogueFont);
+	sw.write(text, MAX_BALLOON_WIDTH, textColor, balloon->surface);
 
 	// TODO: extract some text to make a name for obj
 	balloon->obj = _gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
@@ -172,12 +351,17 @@ int BalloonManager_ns::setDialogueBalloon(char *text, uint16 winding, byte textC
 
 	int16 w, h;
 
-	getStringExtent(_vm->_dialogueFont, text, MAX_BALLOON_WIDTH, &w, &h);
+	StringExtent_NS	se(_vm->_dialogueFont);
+	se.calc(text, MAX_BALLOON_WIDTH);
+	w = se.width() + 14;
+	h = se.height() + 20;
+
 
 	int id = createBalloon(w+5, h, winding, 1);
 	Balloon *balloon = &_intBalloons[id];
 
-	drawWrappedText(_vm->_dialogueFont, balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
+	StringWriter_NS sw(_vm->_dialogueFont);
+	sw.write(text, MAX_BALLOON_WIDTH, textColor, balloon->surface);
 
 	// TODO: extract some text to make a name for obj
 	balloon->obj = _gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
@@ -196,7 +380,9 @@ int BalloonManager_ns::setDialogueBalloon(char *text, uint16 winding, byte textC
 void BalloonManager_ns::setBalloonText(uint id, char *text, byte textColor) {
 	Balloon *balloon = getBalloon(id);
 	balloon->surface->fillRect(balloon->innerBox, 1);
-	drawWrappedText(_vm->_dialogueFont, balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
+
+	StringWriter_NS sw(_vm->_dialogueFont);
+	sw.write(text, MAX_BALLOON_WIDTH, textColor, balloon->surface);
 }
 
 
@@ -204,11 +390,15 @@ int BalloonManager_ns::setLocationBalloon(char *text, bool endGame) {
 
 	int16 w, h;
 
-	getStringExtent(_vm->_dialogueFont, text, MAX_BALLOON_WIDTH, &w, &h);
+	StringExtent_NS	se(_vm->_dialogueFont);
+	se.calc(text, MAX_BALLOON_WIDTH);
+	w = se.width() + 14;
+	h = se.height() + 20;
 
 	int id = createBalloon(w+(endGame ? 5 : 10), h+5, -1, BALLOON_TRANSPARENT_COLOR_NS);
 	Balloon *balloon = &_intBalloons[id];
-	drawWrappedText(_vm->_dialogueFont, balloon->surface, text, 0, MAX_BALLOON_WIDTH);
+	StringWriter_NS sw(_vm->_dialogueFont);
+	sw.write(text, MAX_BALLOON_WIDTH, 0, balloon->surface);
 
 	// TODO: extract some text to make a name for obj
 	balloon->obj = _gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
@@ -245,106 +435,99 @@ void BalloonManager_ns::freeBalloons() {
 	_numBalloons = 0;
 }
 
-void BalloonManager_ns::drawWrappedText(Font *font, Graphics::Surface* surf, char *text, byte color, int16 wrapwidth) {
 
-	uint16 lines = 0;
-	uint16 linewidth = 0;
 
-	uint16 rx = 10;
-	uint16 ry = 4;
 
-	uint16 blankWidth = font->getStringWidth(" ");
-	uint16 tokenWidth = 0;
 
-	char token[MAX_TOKEN_LEN];
 
-	if (wrapwidth == -1)
-		wrapwidth = _vm->_screenWidth;
 
-	while (strlen(text) > 0) {
 
-		text = parseNextToken(text, token, MAX_TOKEN_LEN, "   ", true);
 
-		if (!scumm_stricmp(token, "%p")) {
-			lines++;
-			rx = 10;
-			ry = 4 + lines*10;	// y
 
-			strcpy(token, "> .......");
-			strncpy(token+2, _password, strlen(_password));
-			tokenWidth = font->getStringWidth(token);
-		} else {
-			tokenWidth = font->getStringWidth(token);
 
-			linewidth += tokenWidth;
+class StringExtent_BR : public WrappedLineFormatter {
 
-			if (linewidth > wrapwidth) {
-				// wrap line
-				lines++;
-				rx = 10;			// x
-				ry = 4 + lines*10;	// y
-				linewidth = tokenWidth;
-			}
+	uint	_width, _height;
 
-			if (!scumm_stricmp(token, "%s")) {
-				sprintf(token, "%d", _score);
-			}
+protected:
+	virtual void setup() {
+		_width = _height = 0;
 
-		}
-
-		_gfx->drawText(font, surf, rx, ry, token, color);
-
-		rx += tokenWidth + blankWidth;
-		linewidth += blankWidth;
-
-		text = Common::ltrim(text);
+		_line.clear();
+		_lines = 0;
+		_width = 0;
 	}
 
-}
-
-void BalloonManager_ns::getStringExtent(Font *font, char *text, uint16 maxwidth, int16* width, int16* height) {
-
-	uint16 lines = 0;
-	uint16 w = 0;
-	*width = 0;
-
-	uint16 blankWidth = font->getStringWidth(" ");
-	uint16 tokenWidth = 0;
-
-	char token[MAX_TOKEN_LEN];
-
-	while (strlen(text) != 0) {
-
-		text = parseNextToken(text, token, MAX_TOKEN_LEN, "   ", true);
-		tokenWidth = font->getStringWidth(token);
-
-		w += tokenWidth;
-
-		if (!scumm_stricmp(token, "%p")) {
-			lines++;
-		} else {
-			if (w > maxwidth) {
-				w -= tokenWidth;
-				lines++;
-				if (w > *width)
-					*width = w;
-
-				w = tokenWidth;
-			}
+	virtual void action() {
+		if (_lineWidth > _width) {
+			_width = _lineWidth;
 		}
-
-		w += blankWidth;
-		text = Common::ltrim(text);
+		_height = _lines * _font->height();
 	}
 
-	if (*width < w) *width = w;
-	*width += 10;
+	virtual void end() {
+		action();
+	}
 
-	*height = lines * 10 + 20;
+public:
+	StringExtent_BR(Font *font) : WrappedLineFormatter(font) { }
 
-	return;
-}
+	uint width() const { return _width; }
+	uint height() const { return _height; }
+};
 
+
+class StringWriter_BR : public WrappedLineFormatter {
+
+	uint	_width, _height;
+	byte	_color;
+	uint	_x, _y;
+
+	Graphics::Surface	*_surf;
+
+protected:
+	StringWriter_BR(Font *font, byte color) : WrappedLineFormatter(font) {
+
+	}
+
+	virtual void setup() {
+	}
+
+	virtual void action() {
+		if (_line.empty()) {
+			return;
+		}
+		uint16 rx = _x + (_surf->w - _lineWidth) / 2;
+		uint16 ry = _y + _lines * _font->height();	// y
+
+		byte *dst = (byte*)_surf->getBasePtr(rx, ry);
+		_font->setColor(_color);
+		_font->drawString(dst, _surf->w, _line.c_str());
+	}
+
+	virtual void end() {
+		action();
+	}
+
+public:
+	StringWriter_BR(Font *font) : WrappedLineFormatter(font) { }
+
+	void write(const char *text, uint maxWidth, byte color, Graphics::Surface *surf) {
+		maxWidth = 216;
+
+		StringExtent_BR	se(_font);
+		se.calc(text, maxWidth);
+		_width = se.width() + 10;
+		_height = se.height() + 12;
+		_color = color;
+		_surf = surf;
+
+		_x = 0;
+		_y = (_surf->h - _height) / 2;
+		calc(text, maxWidth);
+	}
+
+};
 
 
 
@@ -366,29 +549,12 @@ class BalloonManager_br : public BalloonManager {
 	Frames *_rightBalloon;
 
 	void cacheAnims();
-	void getStringExtent(Font *font, const char *text, uint16 maxwidth, int16* width, int16* height);
 	void drawWrappedText(Font *font, Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
 	int createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness);
 	Balloon *getBalloon(uint id);
 	Graphics::Surface *expandBalloon(Frames *data, int frameNum);
 
-	void textSetupRendering(const Common::String &text, Graphics::Surface *dest, Font *font, byte color);
-	void textEmitCenteredLine();
-	void textAccum(const Common::String &token, uint16 width);
-	void textNewLine();
-
-	Common::String _textLine;
-	Graphics::Surface *_textSurf;
-	Font *_textFont;
-	uint16 _textX, _textY;
-	byte _textColor;
-	uint16 _textLines, _textWidth;
-
-	void extentSetup(Font *font, int16 *width, int16 *height);
-	void extentAction();
-
-	int16 *_extentWidth, *_extentHeight;
-
+	StringWriter_BR	_writer;
 
 public:
 	BalloonManager_br(Disk *disk, Gfx *gfx);
@@ -447,15 +613,13 @@ int BalloonManager_br::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 w
 	balloon->surface = expandBalloon(src, srcFrame);
 	src->getRect(srcFrame, balloon->box);
 
-	drawWrappedText(_vm->_dialogueFont, balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
+	_writer.write(text, MAX_BALLOON_WIDTH, textColor, balloon->surface);
 
 	// TODO: extract some text to make a name for obj
 	balloon->obj = _gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
 	balloon->obj->x = x + balloon->box.left;
 	balloon->obj->y = y + balloon->box.top;
 	balloon->obj->transparentKey = BALLOON_TRANSPARENT_COLOR_BR;
-
-	printf("balloon (%i, %i)\n", balloon->obj->x, balloon->obj->y);
 
 	_numBalloons++;
 
@@ -485,7 +649,7 @@ int BalloonManager_br::setDialogueBalloon(char *text, uint16 winding, byte textC
 	balloon->surface = expandBalloon(src, srcFrame);
 	src->getRect(srcFrame, balloon->box);
 
-	drawWrappedText(_vm->_dialogueFont, balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
+	_writer.write(text, MAX_BALLOON_WIDTH, textColor, balloon->surface);
 
 	// TODO: extract some text to make a name for obj
 	balloon->obj = _gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
@@ -556,155 +720,9 @@ void BalloonManager_br::cacheAnims() {
 }
 
 
-void BalloonManager_br::extentSetup(Font *font, int16 *width, int16 *height) {
-	_extentWidth = width;
-	_extentHeight = height;
 
-	_textLine.clear();
-	_textLines = 0;
-	_textWidth = 0;
-	_textFont = font;
-}
-
-void BalloonManager_br::extentAction() {
-	if (_textWidth > *_extentWidth) {
-		*_extentWidth = _textWidth;
-	}
-	*_extentHeight = _textLines * _textFont->height();
-}
-
-void BalloonManager_br::textSetupRendering(const Common::String &text, Graphics::Surface *dest, Font *font, byte color) {
-	uint16 maxWidth = 216;
-
-	int16 w, h;
-	getStringExtent(font, text.c_str(), maxWidth, &w, &h);
-
-	w += 10;
-	h += 12;
-
-	_textLine.clear();
-	_textSurf = dest;
-	_textFont = font;
-	_textX = 0;
-	_textY = (_textSurf->h - h) / 2;
-	_textColor = color;
-	_textLines = 0;
-	_textWidth = 0;
-}
-
-void BalloonManager_br::textEmitCenteredLine() {
-	if (_textLine.empty()) {
-		return;
-	}
-	uint16 rx = _textX + (_textSurf->w - _textWidth) / 2;
-	uint16 ry = _textY + _textLines * _textFont->height();	// y
-	_gfx->drawText(_textFont, _textSurf, rx, ry, _textLine.c_str(), _textColor);
-}
-
-void BalloonManager_br::textAccum(const Common::String &token, uint16 width) {
-	if (token.empty()) {
-		return;
-	}
-
-	_textWidth += width;
-	_textLine += token;
-}
-
-void BalloonManager_br::textNewLine() {
-	_textLines++;
-	_textWidth = 0;
-	_textLine.clear();
-}
-
-
-// TODO: really, base this and getStringExtent on some kind of LineTokenizer, instead of
-// repeating the algorithm and changing a couple of lines.
-void BalloonManager_br::drawWrappedText(Font *font, Graphics::Surface* surf, char *text, byte color, int16 wrapWidth) {
-	textSetupRendering(text, surf, font, color);
-
-	wrapWidth = 216;
-
-	Common::StringTokenizer	tokenizer(text, " ");
-	Common::String token;
-	Common::String blank(" ");
-
-	uint16 blankWidth = font->getStringWidth(" ");
-	uint16 tokenWidth = 0;
-
-	while (!tokenizer.empty()) {
-		token = tokenizer.nextToken();
-
-		if (token == '/') {
-			tokenWidth = 0;
-			textEmitCenteredLine();
-			textNewLine();
-		} else {
-			// todo: expand '%'
-			tokenWidth = font->getStringWidth(token.c_str());
-
-			if (_textWidth == 0) {
-				textAccum(token, tokenWidth);
-			} else {
-				if (_textWidth + blankWidth + tokenWidth <= wrapWidth) {
-					textAccum(blank, blankWidth);
-					textAccum(token, tokenWidth);
-				} else {
-					textEmitCenteredLine();
-					textNewLine();
-					textAccum(token, tokenWidth);
-				}
-			}
-		}
-	}
-
-	textEmitCenteredLine();
-}
-
-
-
-void BalloonManager_br::getStringExtent(Font *font, const char *text, uint16 maxwidth, int16* width, int16* height) {
-	extentSetup(font, width, height);
-
-	Common::StringTokenizer	tokenizer(text, " ");
-	Common::String token;
-	Common::String blank(" ");
-
-	uint16 blankWidth = font->getStringWidth(" ");
-	uint16 tokenWidth = 0;
-
-	while (!tokenizer.empty()) {
-		token = tokenizer.nextToken();
-
-		if (token == '/') {
-			tokenWidth = 0;
-			extentAction();
-			textNewLine();
-		} else {
-			// todo: expand '%'
-			tokenWidth = font->getStringWidth(token.c_str());
-
-			if (_textWidth == 0) {
-				textAccum(token, tokenWidth);
-			} else {
-				if (_textWidth + blankWidth + tokenWidth <= maxwidth) {
-					textAccum(blank, blankWidth);
-					textAccum(token, tokenWidth);
-				} else {
-					extentAction();
-					textNewLine();
-					textAccum(token, tokenWidth);
-				}
-			}
-		}
-	}
-
-	extentAction();
-}
-
-
-
-
-BalloonManager_br::BalloonManager_br(Disk *disk, Gfx *gfx) : _numBalloons(0), _disk(disk), _gfx(gfx), _leftBalloon(0), _rightBalloon(0) {
+BalloonManager_br::BalloonManager_br(Disk *disk, Gfx *gfx) : _numBalloons(0), _disk(disk), _gfx(gfx),
+	_leftBalloon(0), _rightBalloon(0), _writer(_vm->_dialogueFont) {
 }
 
 BalloonManager_br::~BalloonManager_br() {

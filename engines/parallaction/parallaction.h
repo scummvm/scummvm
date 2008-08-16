@@ -136,7 +136,7 @@ extern uint16		_score;
 extern uint16		_language;
 extern uint32		_engineFlags;
 extern char			_saveData1[];
-extern uint32		_commandFlags;
+extern uint32		_globalFlags;
 extern const char	*_dinoName;
 extern const char	*_donnaName;
 extern const char	*_doughName;
@@ -263,7 +263,7 @@ public:
 
 	ZonePtr		findZone(const char *name);
 	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
-	uint16		runZone(ZonePtr z);
+	void		runZone(ZonePtr z);
 	void		freeZones();
 
 	AnimationPtr findAnimation(const char *name);
@@ -272,7 +272,7 @@ public:
 	void		setBackground(const char *background, const char *mask, const char *path);
 	void		freeBackground();
 
-	Table		*_globalTable;
+	Table		*_globalFlagsNames;
 	Table		*_objectsNames;
 	Table		*_callableNames;
 	Table		*_localFlagNames;
@@ -354,7 +354,7 @@ protected:		// members
 
 	void		freeCharacter();
 
-	int16		pickupItem(ZonePtr z);
+	bool		pickupItem(ZonePtr z);
 
 	void 		clearSet(OpcodeSet &opcodes);
 
@@ -370,7 +370,7 @@ public:
 
 	virtual void parseLocation(const char* name) = 0;
 
-	void updateDoor(ZonePtr z);
+	void updateDoor(ZonePtr z, bool close);
 
 	virtual void drawAnimations() = 0;
 
@@ -424,6 +424,8 @@ public:
 
 	void setInternLanguage(uint id);
 	uint getInternLanguage();
+
+	void showZone(ZonePtr z, bool visible);
 };
 
 
@@ -623,8 +625,10 @@ public:
 	int			_part;
 	int			_progress;
 
+#if 0	// disabled since I couldn't find any references to lip sync in the scripts
 	int16		_lipSyncVal;
 	uint		_subtitleLipSync;
+#endif
 	int			_subtitleY;
 	int			_subtitle[2];
 

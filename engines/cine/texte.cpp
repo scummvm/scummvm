@@ -29,70 +29,53 @@
 
 namespace Cine {
 
-byte *textDataPtr;
-
 const char **failureMessages;
 const CommandeType *defaultActionCommand;
 const CommandeType *systemMenu;
 const CommandeType *confirmMenu;
 const char **otherMessages;
-const char *commandPrepositionOn;
+const char *defaultCommandPreposition;
+const char **commandPrepositionTable;
 
 void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency);
 
-void loadTextData(const char *pFileName, byte *pDestinationBuffer) {
-	Common::File pFileHandle;
-	uint16 entrySize;
-	uint16 numEntry;
-	uint16 i;
-	byte *tempBuffer;
-	uint16 dataSize;
+void loadTextData(const char *filename) {
+	Common::File fileHandle;
+	assert(filename);
 
-	assert(pFileName);
-	assert(pDestinationBuffer);
+	if (!fileHandle.open(filename))
+		error("loadTextData(): Cannot open file %s", filename);
 
-	if (!pFileHandle.open(pFileName))
-		error("loadTextData(): Cannot open file %s", pFileName);
+	uint entrySize = fileHandle.readUint16BE();
+	uint numEntry = fileHandle.readUint16BE();
 
-	entrySize = pFileHandle.readUint16BE();
-	numEntry = pFileHandle.readUint16BE();
+	uint sourceSize = numEntry * entrySize;
+	Common::Array<byte> source;
+	source.resize(sourceSize);
+	fileHandle.read(source.begin(), sourceSize);
 
-	dataSize = numEntry * entrySize;
-	pFileHandle.read(pDestinationBuffer, numEntry * entrySize);
-
-	tempBuffer = pDestinationBuffer;
-
+	const int fontHeight = 8;
+	const int fontWidth = (g_cine->getGameType() == Cine::GType_FW) ? 16 : 8;
+	uint numCharacters;
+	uint bytesPerCharacter;
 	if (g_cine->getGameType() == Cine::GType_FW) {
-		int numCharacters;
-		if (g_cine->getFeatures() & GF_ALT_FONT) {
-			numCharacters = 85;
-		} else {
-			numCharacters = 78;
-		}
-
-		dataSize = dataSize / numCharacters;
-
-		loadRelatedPalette(pFileName);
-
-		for (i = 0; i < numCharacters; i++) {
-			gfxConvertSpriteToRaw(g_cine->_textHandler.textTable[i][0], tempBuffer, 16, 8);
-			generateMask(g_cine->_textHandler.textTable[i][0], g_cine->_textHandler.textTable[i][1], 16 * 8, 0);
-			tempBuffer += dataSize;
-		}
+		numCharacters = (g_cine->getFeatures() & GF_ALT_FONT) ? 85 : 78;		
+		bytesPerCharacter = sourceSize / numCharacters; // TODO: Check if this could be replaced with fontWidth * fontHeight
+		loadRelatedPalette(filename);
 	} else {
-		for (i = 0; i < 90; i++) {
-			gfxConvertSpriteToRaw(g_cine->_textHandler.textTable[i][0], tempBuffer, 8, 8);
-			generateMask(g_cine->_textHandler.textTable[i][0], g_cine->_textHandler.textTable[i][1], 8 * 8, 0);
-			tempBuffer += 0x40;
-		}
+		numCharacters = 90;
+		bytesPerCharacter = fontWidth * fontHeight;
 	}
 
-	pFileHandle.close();
+	for (uint i = 0; i < numCharacters; i++) {
+		gfxConvertSpriteToRaw(g_cine->_textHandler.textTable[i][0], &source[i * bytesPerCharacter], fontWidth, fontHeight);
+		generateMask(g_cine->_textHandler.textTable[i][0], g_cine->_textHandler.textTable[i][1], fontWidth * fontHeight, 0);
+	}
+
+	fileHandle.close();
 }
 
-const CharacterEntry *fontParamTable;
-
-const CharacterEntry fontParamTable_standard[256] = {
+static const CharacterEntry fontParamTable_standard[NUM_FONT_CHARS] = {
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
@@ -129,7 +112,7 @@ const CharacterEntry fontParamTable_standard[256] = {
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}
 };
 
-const CharacterEntry fontParamTable_alt[256] = {
+static const CharacterEntry fontParamTable_alt[NUM_FONT_CHARS] = {
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
@@ -208,6 +191,16 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
+	static const char *commandPrepositionTable_EN[] = {
+		"",   // EXAMINE
+		"",   // TAKE
+		"",   // INVENTORY
+		"on", // USE
+		"",   // OPERATE
+		"to", // SPEAK
+		""    // NOACTION
+	};
+
 	static const CommandeType systemMenu_EN[] = {
 		"Pause",
 		"Restart Game",
@@ -223,9 +216,8 @@ void initLanguage(Common::Language lang) {
 		"PAUSE",
 		"Loading | %s",
 		"Loading canceled ...",
-		"No baclup in the drive...",
-		"Please enter the backup name",
-		"on"
+		"No backup in the drive...",
+		"Please enter the backup name"
 	};
 
 	static const CommandeType confirmMenu_EN[] = {
@@ -276,6 +268,16 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
+	static const char *commandPrepositionTable_FR[] = {
+		"",    // EXAMINER
+		"",    // PRENDRE
+		"",    // INVENTAIRE
+		"sur", // UTILISER
+		"",    // ACTIONNER
+		"a",   // PARLER
+		""     // NOACTION
+	};
+
 	static const CommandeType systemMenu_FR[] = {
 		"Pause",
 		"Nouvelle partie",
@@ -297,8 +299,7 @@ void initLanguage(Common::Language lang) {
 		"Sauvegarde de | %s",
 		"Sauvegarde Annul\x82""e ...",
 		"Aucune sauvegarde dans le lecteur ...",
-		"Veuillez entrer le Nom de la Sauvegarde .",
-		"sur"
+		"Veuillez entrer le Nom de la Sauvegarde ."
 	};
 
 	static const char *failureMessages_ES[] = {
@@ -344,6 +345,16 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
+	static const char *commandPrepositionTable_ES[] = {
+		"",      // EXAMINAR
+		"",      // COGER
+		"",      // INVENTARIO
+		"donde", // USAR
+		"",      // ACCIONAR
+		"a",     // HABLAR
+		""       // NOACTION
+	};
+
 	static const CommandeType systemMenu_ES[] = {
 		"Pause",
 		"Nueva partida",
@@ -365,8 +376,7 @@ void initLanguage(Common::Language lang) {
 		"Gabacion de| %s",
 		"Rrabacion anulada",
 		"No hay partidas grabadas en este disco...",
-		"Teclea el nombre de la partida grabada",
-		"donde"
+		"Teclea el nombre de la partida grabada"
 	};
 
 	static const char *failureMessages_DE[] = {
@@ -403,13 +413,23 @@ void initLanguage(Common::Language lang) {
 	};
 
 	static const CommandeType defaultActionCommand_DE[] = {
-		"Pr\x81""fe",
+		"Pr\x81""fe", // FIXME? The third letter should be Latin Small Letter U with diaeresis
 		"Nimm",
 		"Bestand",
 		"Benutze",
-		"Bet\x84tige",
+		"Bet\x84tige", // FIXME? The fourth letter should be Latin Small Letter A with diaeresis
 		"Sprich",
 		"NOACTION"
+	};
+
+	static const char *commandPrepositionTable_DE[] = {
+		"",      // Prufe
+		"",      // Nimm
+		"",      // Bestand
+		"gegen", // Benutze
+		"",      // Betatige
+		"a",     // Sprich
+		""       // NOACTION
 	};
 
 	static const CommandeType systemMenu_DE[] = {
@@ -433,8 +453,7 @@ void initLanguage(Common::Language lang) {
 		"Er L\x84""dt | %s",
 		"Ladevorgang Abgebrochen...",
 		"Kein Backup im Laufwerk...",
-		"Geben Sie den Namen|der Sicherungsdiskette ein",
-		"gegen"
+		"Geben Sie den Namen|der Sicherungsdiskette ein"
 	};
 
 	static const char *failureMessages_IT[] = {
@@ -480,6 +499,16 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
+	static const char *commandPrepositionTable_IT[] = {
+		"",   // ESAMINARE
+		"",   // PRENDERE
+		"",   // INVENTARIO
+		"su", // UTILIZZARE
+		"",   // AZIONARE
+		"a",  // PARLARE
+		""    // NOACTION
+	};
+
 	static const CommandeType systemMenu_IT[] = {
 		"Pausa",
 		"Parte nuova",
@@ -501,8 +530,7 @@ void initLanguage(Common::Language lang) {
 		"Caricamento di| %s",
 		"Caricamento annullato...",
 		"Nessun salvataggio su questo disco...",
-		"Vogliate accedere con il nome del salvataggio",
-		"su"
+		"Vogliate accedere con il nome del salvataggio"
 	};
 
 	switch (lang) {
@@ -512,7 +540,8 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_FR;
 		confirmMenu = confirmMenu_FR;
 		otherMessages = otherMessages_FR;
-		commandPrepositionOn = otherMessages_FR[7];
+		defaultCommandPreposition = commandPrepositionTable_FR[3];
+		commandPrepositionTable = commandPrepositionTable_FR;
 		break;
 
 	case Common::ES_ESP:
@@ -521,7 +550,8 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_ES;
 		confirmMenu = confirmMenu_ES;
 		otherMessages = otherMessages_ES;
-		commandPrepositionOn = otherMessages_ES[7];
+		defaultCommandPreposition = commandPrepositionTable_ES[3];
+		commandPrepositionTable = commandPrepositionTable_ES;
 		break;
 
 	case Common::DE_DEU:
@@ -530,7 +560,8 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_DE;
 		confirmMenu = confirmMenu_DE;
 		otherMessages = otherMessages_DE;
-		commandPrepositionOn = otherMessages_DE[7];
+		defaultCommandPreposition = commandPrepositionTable_DE[3];
+		commandPrepositionTable = commandPrepositionTable_DE;
 		break;
 
 	case Common::IT_ITA:
@@ -539,7 +570,8 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_IT;
 		confirmMenu = confirmMenu_IT;
 		otherMessages = otherMessages_IT;
-		commandPrepositionOn = otherMessages_IT[7];
+		defaultCommandPreposition = commandPrepositionTable_IT[3];
+		commandPrepositionTable = commandPrepositionTable_IT;
 		break;
 
 	default:
@@ -548,14 +580,17 @@ void initLanguage(Common::Language lang) {
 		systemMenu = systemMenu_EN;
 		confirmMenu = confirmMenu_EN;
 		otherMessages = otherMessages_EN;
-		commandPrepositionOn = otherMessages_EN[7];
+		defaultCommandPreposition = commandPrepositionTable_EN[3];
+		commandPrepositionTable = commandPrepositionTable_EN;
 		break;
 	}
 
 	if (g_cine->getFeatures() & GF_ALT_FONT) {
-		fontParamTable = fontParamTable_alt;
+		// Copy alternative font parameter table to the current font parameter table
+		Common::copy(fontParamTable_alt, fontParamTable_alt + NUM_FONT_CHARS, g_cine->_textHandler.fontParamTable);
 	} else {
-		fontParamTable = fontParamTable_standard;
+		// Copy standard font parameter to the current font parameter table
+		Common::copy(fontParamTable_standard, fontParamTable_standard + NUM_FONT_CHARS, g_cine->_textHandler.fontParamTable);
 	}
 }
 
@@ -590,23 +625,14 @@ void loadPoldatDat(const char *fname) {
 	in.open(fname);
 
 	if (in.isOpen()) {
-		CharacterEntry *ptr = (CharacterEntry *)malloc(sizeof(CharacterEntry) * 256);
-
-		for (int i = 0; i < 256; i++) {
-			ptr[i].characterIdx = (int)in.readByte();
-			ptr[i].characterWidth = (int)in.readByte();
+		for (int i = 0; i < NUM_FONT_CHARS; i++) {
+			g_cine->_textHandler.fontParamTable[i].characterIdx   = in.readByte();
+			g_cine->_textHandler.fontParamTable[i].characterWidth = in.readByte();
 		}
-		fontParamTable = ptr;
-
 		in.close();
 	} else {
 		error("Cannot open file %s for reading", fname);
 	}
-}
-
-void freePoldatDat() {
-	free(const_cast<Cine::CharacterEntry *>(fontParamTable));
-	fontParamTable = 0;
 }
 
 /*! \brief Fit a substring of text into one line of fixed width text box
@@ -633,7 +659,7 @@ int fitLine(const char *str, int maxWidth, int &words, int &width) {
 			bkpWidth = width;
 			bkpLen = i + 1;
 		} else {
-			charWidth = fontParamTable[(unsigned char)str[i]].characterWidth + 1;
+			charWidth = g_cine->_textHandler.fontParamTable[(unsigned char)str[i]].characterWidth + 1;
 			width += charWidth;
 		}
 

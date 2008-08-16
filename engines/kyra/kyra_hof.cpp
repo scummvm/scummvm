@@ -196,14 +196,18 @@ void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 		_seqWsaChatTimeout += pausedTime;
 		_seqWsaChatFrameTimeout += pausedTime;
 
-		for (int x = 0; x < 10; x++) {
-			if (_activeText[x].duration != -1)
-				_activeText[x].startTime += pausedTime;
+		if (_activeText) {
+			for (int x = 0; x < 10; x++) {
+				if (_activeText[x].duration != -1)
+					_activeText[x].startTime += pausedTime;
+			}
 		}
 
-		for (int x = 0; x < 8; x++) {
-			if (_activeWSA[x].flags != -1)
-				_activeWSA[x].nextFrame += pausedTime;
+		if (_activeWSA) {
+			for (int x = 0; x < 8; x++) {
+				if (_activeWSA[x].flags != -1)
+					_activeWSA[x].nextFrame += pausedTime;
+			}
 		}
 
 		_nextIdleAnim += pausedTime;
@@ -251,7 +255,7 @@ int KyraEngine_HoF::init() {
 	_abortIntroFlag = false;
 
 	if (_sequenceStrings) {
-		for (int i = 0; i < 33; i++)
+		for (int i = 0; i < MIN(33, _sequenceStringsSize); i++)
 			_sequenceStringsDuration[i] = (int) strlen(_sequenceStrings[i]) * 8;
 	}
 
@@ -278,7 +282,10 @@ int KyraEngine_HoF::go() {
 			seq_showStarcraftLogo();
 
 		if (_flags.isDemo && !_flags.isTalkie) {
-			seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);
+			if (_flags.gameID == GI_LOL)
+				seq_playSequences(kSequenceLolDemoScene1, kSequenceLolDemoScene6);	
+			else
+				seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);
 			_menuChoice = 4;
 		} else {
 			seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
@@ -292,10 +299,12 @@ int KyraEngine_HoF::go() {
 	if (_menuChoice != 4) {
 		// load just the pak files needed for ingame
 		_res->loadPakFile(StaticResource::staticDataFilename());
-		if (_flags.platform == Common::kPlatformPC && _flags.isTalkie)
-			_res->loadFileList("FILEDATA.FDT");
-		else
+		if (_flags.platform == Common::kPlatformPC && _flags.isTalkie) {
+			if (!_res->loadFileList("FILEDATA.FDT"))
+				error("couldn't load 'FILEDATA.FDT'");
+		} else {
 			_res->loadFileList(_ingamePakList, _ingamePakListSize);
+		}
 
 		if (_flags.platform == Common::kPlatformPC98)
 			_res->loadPakFile("AUDIO.PAK");
@@ -1501,15 +1510,19 @@ void KyraEngine_HoF::openTalkFile(int newFile) {
 		_oldTalkFile = -1;
 	}
 
-	if (newFile == 0) {
+	if (newFile == 0)
 		strcpy(talkFilename, "ANYTALK.TLK");
-		_res->loadPakFile(talkFilename);
-	} else {
+	else
 		sprintf(talkFilename, "CH%dVOC.TLK", newFile);
-		_res->loadPakFile(talkFilename);
-	}
 
 	_oldTalkFile = newFile;
+
+	if (!_res->loadPakFile(talkFilename)) {
+		if (speechEnabled()) {
+			warning("Couldn't load file '%s' falling back to text only mode", talkFilename);
+			_configVoice = 0;
+		}
+	}
 }
 
 void KyraEngine_HoF::snd_playVoiceFile(int id) {
@@ -1545,7 +1558,8 @@ void KyraEngine_HoF::playVoice(int high, int low) {
 	if (!_flags.isTalkie)
 		return;
 	int vocFile = high * 10000 + low * 10;
-	snd_playVoiceFile(vocFile);
+	if (speechEnabled())
+		snd_playVoiceFile(vocFile);
 }
 
 void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {

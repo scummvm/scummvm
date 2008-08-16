@@ -71,6 +71,20 @@ uint16 Animation::height() const {
 	return r.height();
 }
 
+int16 Animation::getFrameX() const {
+	if (!gfxobj) return _left;
+	Common::Rect r;
+	gfxobj->getRect(_frame, r);
+	return r.left + _left;
+}
+
+int16 Animation::getFrameY() const {
+	if (!gfxobj) return _top;
+	Common::Rect r;
+	gfxobj->getRect(_frame, r);
+	return r.top + _top;
+}
+
 uint16 Animation::getFrameNum() const {
 	if (!gfxobj) return 0;
 	return gfxobj->getNum();
@@ -115,24 +129,29 @@ int16 Program::addLocal(const char *name, int16 value, int16 min, int16 max) {
 	assert(_numLocals < NUM_LOCALS);
 
 	strcpy(_localNames[_numLocals], name);
-	_locals[_numLocals]._value = value;
-
-	_locals[_numLocals]._min = min;
-	_locals[_numLocals]._max = max;
+	_locals[_numLocals].setRange(min, max);
+	_locals[_numLocals].setValue(value);
 
 	return _numLocals++;
 }
 
-void LocalVariable::wrap() {
+void LocalVariable::setValue(int16 value) {
+	if (value >= _max)
+		value = _min;
+	if (value < _min)
+		value = _max - 1;
 
-	if (_value >= _max)
-		_value = _min;
-	if (_value < _min)
-		_value = _max - 1;
-
-	return;
+	_value = value;
 }
 
+void LocalVariable::setRange(int16 min, int16 max) {
+	_max = max;
+	_min = min;
+}
+
+int16 LocalVariable::getValue() const {
+	return _value;
+}
 
 
 Zone::Zone() {
@@ -191,13 +210,6 @@ Zone::~Zone() {
 
 
 	free(_linkedName);
-}
-
-void Zone::getRect(Common::Rect& r) const {
-	r.left = _left;
-	r.right = _right;
-	r.top = _top;
-	r.bottom = _bottom;
 }
 
 void Zone::translate(int16 x, int16 y) {
@@ -273,18 +285,18 @@ Instruction::~Instruction() {
 	free(_text2);
 }
 
-int16 ScriptVar::getRValue() {
+int16 ScriptVar::getValue() {
 
 	if (_flags & kParaImmediate) {
 		return _value;
 	}
 
 	if (_flags & kParaLocal) {
-		return _local->_value;
+		return _local->getValue();
 	}
 
 	if (_flags & kParaField) {
-		return *_pvalue;
+		return _field->getValue();
 	}
 
 	if (_flags & kParaRandom) {
@@ -296,27 +308,33 @@ int16 ScriptVar::getRValue() {
 	return 0;
 }
 
-int16* ScriptVar::getLValue() {
+void ScriptVar::setValue(int16 value) {
+	if ((_flags & kParaLValue) == 0) {
+		error("Only l-value can be set");
+	}
 
 	if (_flags & kParaLocal) {
-		return &_local->_value;
+		_local->setValue(value);
 	}
 
 	if (_flags & kParaField) {
-		return _pvalue;
+		_field->setValue(value);
 	}
-
-	error("Parameter is not an l-value");
 
 }
 
 void ScriptVar::setLocal(LocalVariable *local) {
 	_local = local;
-	_flags |= kParaLocal;
+	_flags |= (kParaLocal | kParaLValue);
 }
 
-void ScriptVar::setField(int16 *field) {
-	_pvalue = field;
+void ScriptVar::setField(Animation *anim, AnimationField::AccessorFunc accessor, AnimationField::MutatorFunc mutator) {
+	_field = new AnimationField(anim, accessor, mutator);
+	_flags |= (kParaField | kParaLValue);
+}
+
+void ScriptVar::setField(Animation *anim, AnimationField::AccessorFunc accessor) {
+	_field = new AnimationField(anim, accessor);
 	_flags |= kParaField;
 }
 
@@ -335,8 +353,13 @@ ScriptVar::ScriptVar() {
 	_flags = 0;
 	_local = 0;
 	_value = 0;
-	_pvalue = 0;
+	_field = 0;
 }
+
+ScriptVar::~ScriptVar() {
+	delete _field;
+}
+
 
 Table::Table(uint32 size) : _size(size), _used(0), _disposeMemory(true) {
 	_data = (char**)calloc(size, sizeof(char*));

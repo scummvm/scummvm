@@ -43,7 +43,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 28
+#define RESFILE_VERSION 31
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -279,6 +279,16 @@ bool StaticResource::init() {
 		{ 0, 0, 0 }
 	};
 
+	static const FilenameTable lolStaticRes[] = {
+		// Demo Sequence Player
+		{ k2SeqplayPakFiles, kStringList, "S_PAKFILES.TXT" },
+		{ k2SeqplayStrings, kLanguageList, "S_STRINGS." },
+		{ k2SeqplaySfxFiles, kStringList, "S_SFXFILES.TXT" },
+		{ k2SeqplaySeqData, k2SeqData, "S_DATA.SEQ" },
+		{ k2SeqplayIntroTracks, kStringList, "S_INTRO.TRA" },
+		{ 0, 0, 0 }
+	};
+
 	if (_vm->game() == GI_KYRA1) {
 		_builtIn = 0;
 		_filenameTable = kyra1StaticRes;
@@ -289,7 +299,10 @@ bool StaticResource::init() {
 		_builtIn = 0;
 		_filenameTable = kyra3StaticRes;
 	} else if (_vm->game() == GI_LOL) {
-		return true;
+		if (!_vm->gameFlags().isDemo)
+			return true;
+		_builtIn = 0;
+		_filenameTable = lolStaticRes;
 	} else {
 		error("StaticResource: Unknown game ID");
 	}
@@ -920,6 +933,8 @@ const char *StaticResource::getFilename(const char *name) {
 		filename += ".K2";
 	else if (_vm->gameFlags().gameID == GI_KYRA3)
 		filename += ".K3";
+	else if (_vm->gameFlags().gameID == GI_LOL)
+		filename += ".LOL";
 
 	if (_vm->gameFlags().isTalkie && _vm->gameFlags().gameID != GI_KYRA3)
 		filename += ".CD";
@@ -1037,38 +1052,51 @@ void KyraEngine_LoK::initStaticResource() {
 	}
 
 	// audio data tables
-#if 0
 	static const char *tIntro98[] = { "intro%d.dat" };
 	static const char *tIngame98[] = { "kyram%d.dat" };
-#endif
 
-	static const AudioDataStruct soundData_PC[] = {
-		{ _soundFilesIntro, _soundFilesIntroSize, 0, 0 },
-		{ _soundFiles, _soundFilesSize, 0, 0 },
-		{ 0, 0, 0, 0}
-	};
-
-	static const AudioDataStruct soundData_TOWNS[] = {
-		{ _soundFiles, _soundFilesSize, _cdaTrackTable, _cdaTrackTableSize },
-		{ _soundFiles, _soundFilesSize, _cdaTrackTable, _cdaTrackTableSize },
-		{ 0, 0, 0, 0}
-	};
-
-#if 0
-	static const AudioDataStruct soundData_PC98[] = {
-		{ tIntro98, 1, 0, 0 },
-		{ tIngame98, 1, 0, 0 },
-		{ 0, 0, 0, 0}
-	};
-#endif
-
-	if (_flags.platform == Common::kPlatformPC)
-		_soundData = soundData_PC;
-	else if (_flags.platform == Common::kPlatformFMTowns)
-		_soundData = soundData_TOWNS;
-	else if (_flags.platform == Common::kPlatformPC98)
-		_soundData = soundData_TOWNS/*soundData_PC98*/;
-
+	if (_flags.platform == Common::kPlatformPC) {
+		_soundData[0]._fileList = _soundFilesIntro;
+		_soundData[0]._fileListLen = _soundFilesIntroSize;
+		_soundData[0]._cdaTracks = 0;
+		_soundData[0]._cdaNumTracks = 0;
+		_soundData[1]._fileList = _soundFiles;
+		_soundData[1]._fileListLen = _soundFilesSize;
+		_soundData[1]._cdaTracks = 0;
+		_soundData[1]._cdaNumTracks = 0;
+		_soundData[2]._fileList = 0;
+		_soundData[2]._fileListLen = 0;
+		_soundData[2]._cdaTracks = 0;
+		_soundData[2]._cdaNumTracks = 0;
+	} else if (_flags.platform == Common::kPlatformFMTowns) {
+		_soundData[0]._fileList = _soundFiles;
+		_soundData[0]._fileListLen = _soundFilesSize;
+		_soundData[0]._cdaTracks = _cdaTrackTable;
+		_soundData[0]._cdaNumTracks = _cdaTrackTableSize;
+		_soundData[1]._fileList = _soundFiles;
+		_soundData[1]._fileListLen = _soundFilesSize;
+		_soundData[1]._cdaTracks = _cdaTrackTable;
+		_soundData[1]._cdaNumTracks = _cdaTrackTableSize;
+		_soundData[2]._fileList = 0;
+		_soundData[2]._fileListLen = 0;
+		_soundData[2]._cdaTracks = 0;
+		_soundData[2]._cdaNumTracks = 0;
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		_soundData[0]._fileList = tIntro98;
+		_soundData[0]._fileListLen = 1;
+		_soundData[0]._cdaTracks = 0;
+		_soundData[0]._cdaNumTracks = 0;
+		_soundData[1]._fileList = tIngame98;
+		_soundData[1]._fileListLen = 1;
+		_soundData[1]._cdaTracks = 0;
+		_soundData[1]._cdaNumTracks = 0;
+		_soundData[2]._fileList = 0;
+		_soundData[2]._fileListLen = 0;
+		_soundData[2]._cdaTracks = 0;
+		_soundData[2]._cdaNumTracks = 0;
+	} else {
+		memset(_soundData, 0, sizeof(_soundData));
+	}
 }
 
 void KyraEngine_LoK::loadMouseShapes() {
@@ -1266,38 +1294,50 @@ void KyraEngine_HoF::initStaticResource() {
 	static const char *fmtMusicFileListFinale[] = { "finale%d.twn" };
 	static const char *fmtMusicFileListIngame[] = { "km%02d.twn" };
 
-#if 0
 	static const char *pc98MusicFileListIntro[] = { "intro%d.86" };
 	static const char *pc98MusicFileListFinale[] = { "finale%d.86" };
 	static const char *pc98MusicFileListIngame[] = { "km%02d.86" };
-#endif
 
-	static const AudioDataStruct soundData_PC[] = {
-		{ _musicFileListIntro, _musicFileListIntroSize, 0, 0 },
-		{ _musicFileListIngame, _musicFileListIngameSize, 0, 0},
-		{ _musicFileListFinale, _musicFileListIntroSize, 0, 0 }
-	};
-
-	static const AudioDataStruct soundData_TOWNS[] = {
-		{ fmtMusicFileListIntro, 1, _cdaTrackTableIntro, _cdaTrackTableIntroSize >> 1 },
-		{ fmtMusicFileListIngame, 1, _cdaTrackTableIngame, _cdaTrackTableIngameSize >> 1 },
-		{ fmtMusicFileListFinale, 1, _cdaTrackTableFinale, _cdaTrackTableFinaleSize >> 1 }
-	};
-
-#if 0
-	static const AudioDataStruct soundData_PC98[] = {
-		{ pc98MusicFileListIntro, 1, 0, 0 },
-		{ pc98MusicFileListIngame, 1, 0, 0 },
-		{ pc98MusicFileListFinale, 1, 0, 0 }		
-	};
-#endif
-
-	if (_flags.platform == Common::kPlatformPC)
-		_soundData = soundData_PC;
-	else if (_flags.platform == Common::kPlatformFMTowns)
-		_soundData = soundData_TOWNS;
-	else if (_flags.platform == Common::kPlatformPC98)
-		_soundData = soundData_TOWNS/*soundData_PC98*/;
+	if (_flags.platform == Common::kPlatformPC) {
+		_soundData[0]._fileList = _musicFileListIntro;
+		_soundData[0]._fileListLen = _musicFileListIntroSize;
+		_soundData[0]._cdaTracks = 0;
+		_soundData[0]._cdaNumTracks = 0;
+		_soundData[1]._fileList = _musicFileListIngame;
+		_soundData[1]._fileListLen = _musicFileListIngameSize;
+		_soundData[1]._cdaTracks = 0;
+		_soundData[1]._cdaNumTracks = 0;
+		_soundData[2]._fileList = _musicFileListFinale;
+		_soundData[2]._fileListLen = _musicFileListIntroSize;
+		_soundData[2]._cdaTracks = 0;
+		_soundData[2]._cdaNumTracks = 0;
+	} else if (_flags.platform == Common::kPlatformFMTowns) {
+		_soundData[0]._fileList = fmtMusicFileListIntro;
+		_soundData[0]._fileListLen = 1;
+		_soundData[0]._cdaTracks = _cdaTrackTableIntro;
+		_soundData[0]._cdaNumTracks = _cdaTrackTableIntroSize >> 1;
+		_soundData[1]._fileList = fmtMusicFileListIngame;
+		_soundData[1]._fileListLen = 1;
+		_soundData[1]._cdaTracks = _cdaTrackTableIngame;
+		_soundData[1]._cdaNumTracks = _cdaTrackTableIngameSize >> 1;
+		_soundData[2]._fileList = fmtMusicFileListFinale;
+		_soundData[2]._fileListLen = 1;
+		_soundData[2]._cdaTracks = _cdaTrackTableFinale;
+		_soundData[2]._cdaNumTracks = _cdaTrackTableFinaleSize >> 1;
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		_soundData[0]._fileList = pc98MusicFileListIntro;
+		_soundData[0]._fileListLen = 1;
+		_soundData[0]._cdaTracks = 0;
+		_soundData[0]._cdaNumTracks = 0;
+		_soundData[1]._fileList = pc98MusicFileListIngame;
+		_soundData[1]._fileListLen = 1;
+		_soundData[1]._cdaTracks = 0;
+		_soundData[1]._cdaNumTracks = 0;
+		_soundData[2]._fileList = pc98MusicFileListFinale;
+		_soundData[2]._fileListLen = 1;
+		_soundData[2]._cdaTracks = 0;
+		_soundData[2]._cdaNumTracks = 0;
+	}
 
 	// setup sequence data
 	_sequences = _staticres->loadHofSequenceData(k2SeqplaySeqData, tmpSize);
@@ -1336,8 +1376,17 @@ void KyraEngine_HoF::initStaticResource() {
 		&KyraEngine_HoF::seq_demoDig, 0
 	};
 
-	_callbackS = (_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks;
-	_callbackN = (_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks;
+	static const SeqProc lolDemoSequenceCallbacks[] = {
+		&KyraEngine_HoF::seq_lolDemoScene1, 0, &KyraEngine_HoF::seq_lolDemoScene2, 0,
+		&KyraEngine_HoF::seq_lolDemoScene3, 0, &KyraEngine_HoF::seq_lolDemoScene4, 0,
+		&KyraEngine_HoF::seq_lolDemoScene5, &KyraEngine_HoF::seq_lolDemoText5,
+		&KyraEngine_HoF::seq_lolDemoScene6, 0
+	};
+
+	static const SeqProc lolDemoNestedSequenceCallbacks[] = { 0	};
+
+	_callbackS = _flags.gameID == GI_LOL ? lolDemoSequenceCallbacks : ((_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks);
+	_callbackN = _flags.gameID == GI_LOL ? lolDemoNestedSequenceCallbacks : ((_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks);
 }
 
 void KyraEngine_MR::initStaticResource() {

@@ -479,6 +479,9 @@ Graphics::Surface *ScummEngine::loadThumbnailFromSlot(int slot) {
 	Common::SeekableReadStream *in;
 	SaveGameHeader hdr;
 
+	if (slot < 0)
+		return  0;
+
 	makeSavegameName(filename, slot, false);
 	if (!(in = _saveFileMan->openForLoading(filename))) {
 		return 0;
@@ -506,6 +509,9 @@ bool ScummEngine::loadInfosFromSlot(int slot, InfoStuff *stuff) {
 	char filename[256];
 	Common::SeekableReadStream *in;
 	SaveGameHeader hdr;
+
+	if (slot < 0)
+		return  0;
 
 	makeSavegameName(filename, slot, false);
 	if (!(in = _saveFileMan->openForLoading(filename))) {
@@ -595,7 +601,7 @@ bool ScummEngine::loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff) 
 	return true;
 }
 
-void ScummEngine::saveInfos(Common::OutSaveFile* file) {
+void ScummEngine::saveInfos(Common::WriteStream* file) {
 	SaveInfoSection section;
 	section.type = MKID_BE('INFO');
 	section.version = INFOSECTION_VERSION;

@@ -31,13 +31,10 @@
 
 namespace Cine {
 
-uint16 numElementInPart;
-
-PartBuffer *partBuffer;
+Common::Array<PartBuffer> partBuffer;
 
 void loadPart(const char *partName) {
-	memset(partBuffer, 0, sizeof(PartBuffer) * NUM_MAX_PARTDATA);
-	numElementInPart = 0;
+	partBuffer.clear();
 
 	g_cine->_partFileHandle.close();
 
@@ -48,13 +45,14 @@ void loadPart(const char *partName) {
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
-	numElementInPart = g_cine->_partFileHandle.readUint16BE();
+	uint16 numElementInPart = g_cine->_partFileHandle.readUint16BE();
+	partBuffer.resize(numElementInPart);
 	g_cine->_partFileHandle.readUint16BE(); // entry size
 
 	if (currentPartName != partName)
 		strcpy(currentPartName, partName);
 
-	for (uint16 i = 0; i < numElementInPart; i++) {
+	for (uint16 i = 0; i < partBuffer.size(); i++) {
 		g_cine->_partFileHandle.read(partBuffer[i].partName, 14);
 		partBuffer[i].offset = g_cine->_partFileHandle.readUint32BE();
 		partBuffer[i].packedSize = g_cine->_partFileHandle.readUint32BE();
@@ -190,7 +188,7 @@ void CineEngine::readVolCnf() {
 int16 findFileInBundle(const char *fileName) {
 	if (g_cine->getGameType() == Cine::GType_OS) {
 		// look first in currently loaded resource file
-		for (int i = 0; i < numElementInPart; i++) {
+		for (uint i = 0; i < partBuffer.size(); i++) {
 			if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
 				return i;
 			}
@@ -204,7 +202,7 @@ int16 findFileInBundle(const char *fileName) {
 		const char *part = (*it)._value;
 		loadPart(part);
 	}
-	for (int i = 0; i < numElementInPart; i++) {
+	for (uint i = 0; i < partBuffer.size(); i++) {
 		if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
 			return i;
 		}
@@ -212,26 +210,35 @@ int16 findFileInBundle(const char *fileName) {
 	return -1;
 }
 
-void readFromPart(int16 idx, byte *dataPtr) {
+void readFromPart(int16 idx, byte *dataPtr, uint32 maxSize) {
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
 	g_cine->_partFileHandle.seek(partBuffer[idx].offset, SEEK_SET);
-	g_cine->_partFileHandle.read(dataPtr, partBuffer[idx].packedSize);
+	g_cine->_partFileHandle.read(dataPtr, MIN(partBuffer[idx].packedSize, maxSize));
 }
 
-byte *readBundleFile(int16 foundFileIdx) {
-	assert(foundFileIdx >= 0 && foundFileIdx < numElementInPart);
+byte *readBundleFile(int16 foundFileIdx, uint32 *size) {
+	assert(foundFileIdx >= 0 && foundFileIdx < (int32)partBuffer.size());
+	bool error = false;
 	byte *dataPtr = (byte *)calloc(partBuffer[foundFileIdx].unpackedSize, 1);
-	if (partBuffer[foundFileIdx].unpackedSize != partBuffer[foundFileIdx].packedSize) {
-		byte *unpackBuffer = (byte *)malloc(partBuffer[foundFileIdx].packedSize);
-		readFromPart(foundFileIdx, unpackBuffer);
+	readFromPart(foundFileIdx, dataPtr, partBuffer[foundFileIdx].unpackedSize);
+	if (partBuffer[foundFileIdx].unpackedSize > partBuffer[foundFileIdx].packedSize) {
 		CineUnpacker cineUnpacker;
-		if (!cineUnpacker.unpack(unpackBuffer, partBuffer[foundFileIdx].packedSize, dataPtr, partBuffer[foundFileIdx].unpackedSize)) {
-			warning("Error unpacking '%s' from bundle file '%s'", partBuffer[foundFileIdx].partName, currentPartName);
-		}
-		free(unpackBuffer);
-	} else {
-		readFromPart(foundFileIdx, dataPtr);
+		error = !cineUnpacker.unpack(dataPtr, partBuffer[foundFileIdx].packedSize, dataPtr, partBuffer[foundFileIdx].unpackedSize);
+	} else if (partBuffer[foundFileIdx].unpackedSize < partBuffer[foundFileIdx].packedSize) {
+		// Unpacked size of a file should never be less than its packed size
+		error = true;
+	} else { // partBuffer[foundFileIdx].unpackedSize == partBuffer[foundFileIdx].packedSize
+		debugC(5, kCineDebugPart, "Loaded non-compressed file '%s' from bundle file '%s'", partBuffer[foundFileIdx].partName, currentPartName);
+	}
+
+	if (error) {
+		warning("Error unpacking '%s' from bundle file '%s'", partBuffer[foundFileIdx].partName, currentPartName);
+	}
+
+	// Set the size variable if a pointer to it has been given
+	if (size != NULL) {
+		*size = partBuffer[foundFileIdx].unpackedSize;
 	}
 
 	return dataPtr;
@@ -259,7 +266,13 @@ byte *readBundleSoundFile(const char *entryName, uint32 *size) {
 	return data;
 }
 
-byte *readFile(const char *filename) {
+/*! \brief Rotate byte value to the left by n bits */
+byte rolByte(byte value, uint n) {
+	n %= 8;
+	return (byte) ((value << n) | (value >> (8 - n)));
+}
+
+byte *readFile(const char *filename, bool crypted) {
 	Common::File in;
 
 	in.open(filename);
@@ -271,6 +284,16 @@ byte *readFile(const char *filename) {
 
 	byte *dataPtr = (byte *)malloc(size);
 	in.read(dataPtr, size);
+
+	// The Sony published CD version of Future Wars has its
+	// AUTO00.PRC file's bytes rotated to the right by one.
+	// So we decode the so called crypting by rotating all
+	// the bytes to the left by one.
+	if (crypted) {
+		for (uint index = 0; index < size; index++) {
+			dataPtr[index] = rolByte(dataPtr[index], 1);
+		}
+	}
 
 	return dataPtr;
 }
@@ -284,7 +307,7 @@ void dumpBundle(const char *fileName) {
 	strcpy(tmpPart, currentPartName);
 
 	loadPart(fileName);
-	for (int i = 0; i < numElementInPart; i++) {
+	for (uint i = 0; i < partBuffer.size(); i++) {
 		byte *data = readBundleFile(i);
 
 		debug(0, "%s", partBuffer[i].partName);

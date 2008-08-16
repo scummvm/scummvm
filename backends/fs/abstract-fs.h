@@ -64,7 +64,7 @@ protected:
 	 *
 	 * @param name String containing the name of the child to create a new node.
 	 */
-	virtual AbstractFilesystemNode *getChild(const String &name) const = 0;
+	virtual AbstractFilesystemNode *getChild(const Common::String &name) const = 0;
 
 	/**
 	 * The parent node of this directory.
@@ -100,7 +100,7 @@ public:
 	 *
 	 * @note By default, this method returns the value of getName().
 	 */
-	virtual String getDisplayName() const { return getName(); }
+	virtual Common::String getDisplayName() const { return getName(); }
 
 	/**
 	 * Returns the last component of the path pointed by this FilesystemNode.
@@ -111,12 +111,12 @@ public:
 	 *
 	 * @note This method is very architecture dependent, please check the concrete implementation for more information.
 	 */
-	virtual String getName() const = 0;
+	virtual Common::String getName() const = 0;
 
 	/**
 	 * Returns the 'path' of the current node, usable in fopen().
 	 */
-	virtual String getPath() const = 0;
+	virtual Common::String getPath() const = 0;
 
 	/**
 	 * Indicates whether this path refers to a directory or not.

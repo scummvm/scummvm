@@ -1322,34 +1322,39 @@ sequencer support does not work, you can always fall back on Adlib emulation.
 
 7.6.1) Playing sound with ALSA sequencer:                        [UNIX ONLY]
 ------ ----------------------------------
-If you have installed the ALSA driver with the sequencer support, then
-set the environment variable SCUMMVM_PORT or the config file parameter
-alsa_port to your sequencer port. The default is "65:0".
+If you have installed the ALSA driver with the sequencer support, then set the
+environment variable SCUMMVM_PORT or the config file parameter alsa_port to
+your sequencer port. The default is to try both "65:0" and "17:0".
 
 Here is a little howto on how to use the ALSA sequencer with your soundcard.
 In all cases, to have a list of all the sequencer ports you have, try the
 command "aconnect -o -l". This should give output similar to:
-client 64: 'External MIDI 0' [type=kernel]
-    0 'MIDI 0-0        '
-client 65: 'Emu10k1 WaveTable' [type=kernel]
+
+client 14: 'Midi Through' [type=kernel]
+    0 'Midi Through Port-0'
+client 16: 'SBLive! Value [CT4832]' [type=kernel]
+    0 'EMU10K1 MPU-401 (UART)'
+client 17: 'Emu10k1 WaveTable' [type=kernel]
     0 'Emu10k1 Port 0  '
     1 'Emu10k1 Port 1  '
     2 'Emu10k1 Port 2  '
     3 'Emu10k1 Port 3  '
-client 128: 'Client-128' [type=user]
+client 128: 'TiMidity' [type=user]
     0 'TiMidity port 0 '
     1 'TiMidity port 1 '
+    2 'TiMidity port 2 '
+    3 'TiMidity port 3 '
 
-This means the external MIDI output of the sound card is located on the
-port 64:0, four WaveTable MIDI outputs in 65:0, 65:1, 65:2
-and 65:3, and two TiMidity ports, located at 128:0 and 128:1.
+The most important bit here is that there are four WaveTable MIDI outputs
+located at 17:0, 17:1, 17:2 and 17:3, and four TiMidity ports located at 128:0,
+128:1, 128:2 and 128:3.
 
 If you have a FM-chip on your card, like the SB16, then you have to load
 the SoundFonts using the sbiload software. Example:
-  sbiload -p 65:0 /etc/std.o3 /etc/drums.o3
+  sbiload -p 17:0 /etc/std.o3 /etc/drums.o3
 
 If you have a WaveTable capable sound card, you have to load a sbk or sf2
-SoundFont using the sfxload software. Example:
+SoundFont using the sfxload or asfxload software. Example:
   sfxload /path/to/8mbgmsfx.sf2
 
 If you don't have a MIDI capable soundcard, there are two options: FluidSynth

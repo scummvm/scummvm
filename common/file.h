@@ -125,7 +125,7 @@ public:
 	virtual ~DumpFile();
 
 	virtual bool open(const String &filename);
-	//virtual bool open(const FilesystemNode &node);
+	virtual bool open(const FilesystemNode &node);
 
 	virtual void close();
 
@@ -148,7 +148,9 @@ public:
 	 */
 	virtual bool eof() const;
 
-	uint32 write(const void *dataPtr, uint32 dataSize);
+	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+
+	virtual void flush();
 };
 
 

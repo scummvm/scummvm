@@ -120,6 +120,12 @@ public:
 	virtual void loadSoundFile(uint file) = 0;
 
 	/**
+	 * Load a sound file for playing music
+	 * and sound effects from.
+	 */
+	virtual void loadSoundFile(Common::String file) = 0;
+
+	/**
 	 * Plays the specified track.
 	 *
 	 * @param track	track number
@@ -215,8 +221,6 @@ protected:
 	int _musicEnabled;
 	bool _sfxEnabled;
 
-	int _currentTheme;
-
 	KyraEngine_v1 *_vm;
 	Audio::Mixer *_mixer;
 
@@ -260,6 +264,7 @@ public:
 	void process();
 
 	void loadSoundFile(uint file);
+	void loadSoundFile(Common::String file);
 
 	void playTrack(uint8 track);
 	void haltTrack();
@@ -269,6 +274,8 @@ public:
 
 	void beginFadeOut();
 private:
+	void internalLoadFile(Common::String file);
+
 	void play(uint8 track);
 
 	void unk1();
@@ -280,7 +287,8 @@ private:
 	uint8 _trackEntries[500];
 	uint8 *_soundDataPtr;
 	int _sfxPlayingSound;
-	uint _soundFileLoaded;
+
+	Common::String _soundFileLoaded;
 
 	uint8 _sfxPriority;
 	uint8 _sfxFourthByteOfSong;
@@ -316,6 +324,7 @@ public:
 	void updateVolumeSettings();
 
 	void loadSoundFile(uint file);
+	void loadSoundFile(Common::String file);
 
 	void playTrack(uint8 track);
 	void haltTrack();
@@ -343,6 +352,7 @@ public:
 	bool isMT32() const { return _nativeMT32; }
 
 private:
+	void internalLoadFile(Common::String file);
 	void updateChannelVolume(uint8 vol);
 
 	static void onTimer(void *data);
@@ -397,6 +407,7 @@ public:
 	void process();
 
 	void loadSoundFile(uint file);
+	void loadSoundFile(Common::String) {}
 
 	void playTrack(uint8 track);
 	void haltTrack();
@@ -454,6 +465,7 @@ public:
 	
 	void process() {}
 	void loadSoundFile(uint file) {}
+	void loadSoundFile(Common::String) {}
 
 	void playTrack(uint8 track);
 	void haltTrack();
@@ -480,6 +492,7 @@ public:
 	void process();
 
 	void loadSoundFile(uint file) {}
+	void loadSoundFile(Common::String) {}
 
 	void playTrack(uint8 track);
 	void haltTrack();
@@ -513,6 +526,7 @@ public:
 	void setSoundList(const AudioDataStruct * list) { _music->setSoundList(list); _sfx->setSoundList(list); }
 	bool hasSoundFile(uint file) const { return _music->hasSoundFile(file) && _sfx->hasSoundFile(file); }
 	void loadSoundFile(uint file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
+	void loadSoundFile(Common::String file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
 
 	void playTrack(uint8 track) { _music->playTrack(track); }
 	void haltTrack() { _music->haltTrack(); }

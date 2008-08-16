@@ -78,7 +78,7 @@ byte _danKeysPressed;
 
 int16 playerCommand;
 
-char commandBuffer[80];
+Common::String commandBuffer;
 char currentPrcName[20];
 char currentRelName[20];
 char currentObjectName[20];
@@ -95,11 +95,23 @@ int16 saveVar2;
 
 byte isInPause = 0;
 
-// TODO: Implement inputVar0's changes in the program
-// Currently inputVar0 isn't updated anywhere even though it's used at least in processSeqListElement.
-uint16 inputVar0 = 0;
-byte inputVar1 = 0;
-uint16 inputVar2 = 0, inputVar3 = 0;
+/*! \brief Values used by the xMoveKeyb variable */
+enum xMoveKeybEnums {
+	kKeybMoveCenterX = 0,
+	kKeybMoveRight = 1,
+	kKeybMoveLeft = 2
+};
+
+/*! \brief Values used by the yMoveKeyb variable */
+enum yMoveKeybEnums {
+	kKeybMoveCenterY = 0,
+	kKeybMoveDown = 1,
+	kKeybMoveUp = 2
+};
+
+uint16 xMoveKeyb = kKeybMoveCenterX;
+bool egoMovedWithKeyboard = false;
+uint16 yMoveKeyb = kKeybMoveCenterY;
 
 SelectedObjStruct currentSelectedObject;
 
@@ -114,9 +126,34 @@ CommandeType objectListCommand[20];
 int16 objListTab[20];
 
 uint16 exitEngine;
-uint16 zoneData[NUM_MAX_ZONE];
-uint16 zoneQuery[NUM_MAX_ZONE]; //!< Only exists in Operation Stealth
+Common::Array<uint16> zoneData;
+Common::Array<uint16> zoneQuery; //!< Only exists in Operation Stealth
 
+/*! \brief Move the player character using the keyboard
+ * \param x Negative values move left, positive right, zero not at all
+ * \param y Negative values move down, positive up, zero not at all
+ * NOTE: If both x and y are zero then the character stops
+ * FIXME: This seems to only work in Operation Stealth. May need code changes somewhere else...
+ */
+void moveUsingKeyboard(int x, int y) {
+	if (x > 0) {
+		xMoveKeyb = kKeybMoveRight;
+	} else if (x < 0) {
+		xMoveKeyb = kKeybMoveLeft;
+	} else {
+		xMoveKeyb = kKeybMoveCenterX;
+	}
+
+	if (y > 0) {
+		yMoveKeyb = kKeybMoveUp;
+	} else if (y < 0) {
+		yMoveKeyb = kKeybMoveDown;
+	} else {
+		yMoveKeyb = kKeybMoveCenterY;
+	}
+
+	egoMovedWithKeyboard = x || y;
+}
 
 void stopMusicAfterFadeOut(void) {
 //	if (g_sfxPlayer->_fadeOutCounter != 0 && g_sfxPlayer->_fadeOutCounter < 100) {
@@ -141,7 +178,6 @@ void addPlayerCommandMessage(int16 cmd) {
 	tmp.type = 3;
 
 	overlayList.push_back(tmp);
-	waitForPlayerClick = 1;
 }
 
 int16 getRelEntryForObject(uint16 param1, uint16 param2, SelectedObjStruct *pSelectedObject) {
@@ -189,6 +225,15 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 		frame = ABS((int16)(objectTable[it->objIdx].frame));
 		part = objectTable[it->objIdx].part;
 
+		// Additional case for negative frame values in Operation Stealth
+		if (g_cine->getGameType() == Cine::GType_OS && objectTable[it->objIdx].frame < 0) {
+			if ((it->type == 1) && (x >= objX) && (objX + frame >= x) && (y >= objY) && (objY + part >= y)) {
+				return it->objIdx;
+			} else {
+				continue;
+			}
+		}
+
 		if (it->type == 0) {
 			threshold = animDataTable[frame]._var1;
 		} else {
@@ -201,16 +246,19 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 		xdif = x - objX;
 		ydif = y - objY;
 
-		if ((xdif < 0) || ((threshold << 4) <= xdif) || (ydif < 0) || (ydif >= height) || !animDataTable[frame].data()) {
+		if ((xdif < 0) || ((threshold << 4) <= xdif) || (ydif <= 0) || (ydif >= height) || !animDataTable[frame].data()) {
 			continue;
 		}
 
 		if (g_cine->getGameType() == Cine::GType_OS) {
+			// This test isn't present in Operation Stealth's PC version's disassembly
+			// but removing it makes things crash sometimes (e.g. when selecting a verb
+			// and moving the mouse cursor around the floor in the airport's bathroom).
 			if (xdif >= width) {
 				continue;
 			}
 
-			if (it->type == 0 && animDataTable[frame].getColor(xdif, ydif) != part) {
+			if (it->type == 0 && animDataTable[frame].getColor(xdif, ydif) != (part & 0x0F)) {
 				return it->objIdx;
 			} else if (it->type == 1 && gfxGetBit(xdif, ydif, animDataTable[frame].data(), animDataTable[frame]._width * 4)) {
 				return it->objIdx;
@@ -267,6 +315,18 @@ void saveZoneData(Common::OutSaveFile &out) {
 void saveCommandVariables(Common::OutSaveFile &out) {
 	for (int i = 0; i < 4; i++) {
 		out.writeUint16BE(commandVar3[i]);
+	}
+}
+
+/*! \brief Save the 80 bytes long command buffer padded to that length with zeroes. */
+void saveCommandBuffer(Common::OutSaveFile &out) {
+	// Let's make sure there's space for the trailing zero
+	// (That's why we subtract one from the maximum command buffer size here).
+	uint32 size = MIN<uint32>(commandBuffer.size(), kMaxCommandBufferSize - 1);
+	out.write(commandBuffer.c_str(), size);
+	// Write the rest as zeroes (Here we also write the string's trailing zero)
+	for (uint i = 0; i < kMaxCommandBufferSize - size; i++) {
+		out.writeByte(0);
 	}
 }
 
@@ -570,16 +630,7 @@ void CineEngine::resetEngine() {
 	relTable.clear();
 	scriptTable.clear();
 	messageTable.clear();
-
-	for (int i = 0; i < NUM_MAX_OBJECT; i++) {
-		objectTable[i].x = 0;
-		objectTable[i].y = 0;
-		objectTable[i].part = 0;
-		objectTable[i].name[0] = 0;
-		objectTable[i].frame = 0;
-		objectTable[i].mask = 0;
-		objectTable[i].costume = 0;
-	}
+	resetObjectTable();
 
 	globalVars.reset();
 
@@ -596,7 +647,7 @@ void CineEngine::resetEngine() {
 	playerCommand = -1;
 	isDrawCommandEnabled = 0;
 
-	strcpy(commandBuffer, "");
+	commandBuffer = "";
 
 	globalVars[VAR_MOUSE_X_POS] = 0;
 	globalVars[VAR_MOUSE_Y_POS] = 0;
@@ -797,7 +848,10 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	globalVars.load(in, NUM_MAX_VAR);
 	loadZoneData(in);
 	loadCommandVariables(in);
-	in.read(commandBuffer, 0x50);
+	char tempCommandBuffer[kMaxCommandBufferSize];
+	in.read(tempCommandBuffer, kMaxCommandBufferSize);
+	commandBuffer = tempCommandBuffer;
+	renderer->setCommand(commandBuffer);
 	loadZoneQuery(in);
 
 	// TODO: Use the loaded string (Current music name (String, 13 bytes)).
@@ -934,7 +988,9 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	loadCommandVariables(in);
 
 	// At 0x22A9 (i.e. 0x22A1 + 4 * 2):
-	in.read(commandBuffer, 0x50);
+	char tempCommandBuffer[kMaxCommandBufferSize];
+	in.read(tempCommandBuffer, kMaxCommandBufferSize);
+	commandBuffer = tempCommandBuffer;
 	renderer->setCommand(commandBuffer);
 
 	// At 0x22F9 (i.e. 0x22A9 + 0x50):
@@ -1082,7 +1138,7 @@ void CineEngine::makeSaveFW(Common::OutSaveFile &out) {
 	globalVars.save(out, NUM_MAX_VAR);
 	saveZoneData(out);
 	saveCommandVariables(out);
-	out.write(commandBuffer, 0x50);
+	saveCommandBuffer(out);
 
 	out.writeUint16BE(renderer->_cmdY);
 	out.writeUint16BE(bgVar0);
@@ -1297,7 +1353,7 @@ void CineEngine::makeSaveOS(Common::OutSaveFile &out) {
 	globalVars.save(out, NUM_MAX_VAR);
 	saveZoneData(out);
 	saveCommandVariables(out);
-	out.write(commandBuffer, 0x50);
+	saveCommandBuffer(out);
 	saveZoneQuery(out);
 
 	// FIXME: Save a proper name here, saving an empty string currently.
@@ -1360,19 +1416,38 @@ void drawDoubleMessageBox(int16 x, int16 y, int16 width, int16 currentY, int16 c
 }
 
 void processInventory(int16 x, int16 y) {
-	int16 listSize = buildObjectListCommand(-2);
 	uint16 button;
+	int menuWidth;
+	int listSize;
+	int commandParam;
+
+	if (g_cine->getGameType() == Cine::GType_FW) {
+		menuWidth = 140;
+		commandParam = -2;
+	} else { // Operation Stealth
+		menuWidth = 160;
+		commandParam = -3;
+	}
+
+	listSize = buildObjectListCommand(commandParam);
 
 	if (!listSize)
 		return;
 
-	renderer->drawMenu(objectListCommand, listSize, x, y, 140, -1);
+	renderer->drawMenu(objectListCommand, listSize, x, y, menuWidth, -1);
 	renderer->blit();
 
 	do {
 		manageEvents();
 		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
 	} while (!button);
+
+	do {
+		manageEvents();
+		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
+	} while (button);
+
+	// TODO: Both Future Wars and Operation Stealth call showMouse, drawMouse or something similar here.
 }
 
 int16 buildObjectListCommand(int16 param) {
@@ -1416,6 +1491,8 @@ int16 selectSubObject(int16 x, int16 y, int16 param) {
 	return objListTab[selectedObject];
 }
 
+// TODO: Make separate functions for Future Wars's and Operation Stealth's version of this function, this is getting too messy
+// TODO: Add support for using the different prepositions for different verbs (Doesn't work currently)
 void makeCommandLine(void) {
 	uint16 x, y;
 
@@ -1423,9 +1500,9 @@ void makeCommandLine(void) {
 	commandVar2 = -10;
 
 	if (playerCommand != -1) {
-		strcpy(commandBuffer, defaultActionCommand[playerCommand]);
+		commandBuffer = defaultActionCommand[playerCommand];
 	} else {
-		strcpy(commandBuffer, "");
+		commandBuffer = "";
 	}
 
 	if ((playerCommand != -1) && (choiceResultTable[playerCommand] == 2)) {	// need object selection ?
@@ -1440,8 +1517,12 @@ void makeCommandLine(void) {
 		}
 
 		if (si < 0) {
-			playerCommand = -1;
-			strcpy(commandBuffer, "");
+			if (g_cine->getGameType() == Cine::GType_OS) {
+				canUseOnObject = 0;
+			} else { // Future Wars
+				playerCommand = -1;
+				commandBuffer = "";
+			}
 		} else {
 			if (g_cine->getGameType() == Cine::GType_OS) {
 				if (si >= 8000) {
@@ -1454,23 +1535,28 @@ void makeCommandLine(void) {
 
 			commandVar3[0] = si;
 			commandVar1 = 1;
-
-			strcat(commandBuffer, " ");
-			strcat(commandBuffer, objectTable[commandVar3[0]].name);
-			strcat(commandBuffer, " ");
-			strcat(commandBuffer, commandPrepositionOn);
+			commandBuffer += " ";
+			commandBuffer += objectTable[commandVar3[0]].name;
+			commandBuffer += " ";
+			if (g_cine->getGameType() == Cine::GType_OS) {
+				commandBuffer += commandPrepositionTable[playerCommand];
+			} else { // Future Wars
+				commandBuffer += defaultCommandPreposition;
+			}
 		}
-	} else {
+	}
+	
+	if (g_cine->getGameType() == Cine::GType_OS || !(playerCommand != -1 && choiceResultTable[playerCommand] == 2)) {
 		if (playerCommand == 2) {
 			getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
 			processInventory(x, y + 8);
 			playerCommand = -1;
 			commandVar1 = 0;
-			strcpy(commandBuffer, "");
+			commandBuffer = "";
 		}
 	}
 
-	if (g_cine->getGameType() == Cine::GType_OS) {
+	if (g_cine->getGameType() == Cine::GType_OS && playerCommand != 2) {
 		if (playerCommand != -1 && canUseOnObject != 0)	{ // call use on sub object
 			int16 si;
 
@@ -1478,34 +1564,38 @@ void makeCommandLine(void) {
 
 			si = selectSubObject(x, y + 8, -subObjectUseTable[playerCommand]);
 
-			if (si) {
+			if (si >= 0) {
 				if (si >= 8000) {
 					si -= 8000;
 				}
 
 				commandVar3[commandVar1] = si;
-
 				commandVar1++;
-
-				// TODO: add command message draw
+				commandBuffer += " ";
+				commandBuffer += objectTable[si].name;
 			}
+		}
 
-			isDrawCommandEnabled = 1;
+		isDrawCommandEnabled = 1;
 
-			if (playerCommand != -1 && choiceResultTable[playerCommand] == commandVar1) {
-				SelectedObjStruct obj;
-				obj.idx = commandVar3[0];
-				obj.param = commandVar3[1];
-				int16 di = getRelEntryForObject(playerCommand, commandVar1, &obj);
+		if (playerCommand != -1 && choiceResultTable[playerCommand] == commandVar1) {
+			SelectedObjStruct obj;
+			obj.idx = commandVar3[0];
+			obj.param = commandVar3[1];
+			int16 di = getRelEntryForObject(playerCommand, commandVar1, &obj);
 
-				if (di != -1) {
-					runObjectScript(di);
-				}
-			}
+			if (di != -1) {
+				runObjectScript(di);
+			} // TODO: else addFailureMessage(playerCommand)
+
+			playerCommand = -1;
+			commandVar1 = 0;
+			commandBuffer = "";
 		}
 	}
 
-	if (!disableSystemMenu) {
+	if (g_cine->getGameType() == Cine::GType_OS || !disableSystemMenu) {
+		isDrawCommandEnabled = 1;
 		renderer->setCommand(commandBuffer);
 	}
 }
@@ -1678,6 +1768,11 @@ uint16 executePlayerInput(void) {
 	}
 
 	if (allowPlayerInput) {
+		if (isDrawCommandEnabled) {
+			renderer->setCommand(commandBuffer);
+			isDrawCommandEnabled = 0;
+		}
+		
 		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 		while (mouseButton && currentEntry < 200) {
@@ -1716,8 +1811,9 @@ uint16 executePlayerInput(void) {
 						commandVar3[commandVar1] = si;
 						commandVar1++;
 
-						strcat(commandBuffer, " ");
-						strcat(commandBuffer, objectTable[si].name);
+						commandBuffer += " ";
+						commandBuffer += objectTable[si].name;
+						
 
 						isDrawCommandEnabled = 1;
 
@@ -1739,8 +1835,8 @@ uint16 executePlayerInput(void) {
 							playerCommand = -1;
 
 							commandVar1 = 0;
-							strcpy(commandBuffer, "");
-							renderer->setCommand("");
+							commandBuffer = "";
+							renderer->setCommand(commandBuffer);
 						}
 					} else {
 						globalVars[VAR_MOUSE_X_POS] = mouseX;
@@ -1761,13 +1857,7 @@ uint16 executePlayerInput(void) {
 
 				if (commandVar2 != objIdx) {
 					if (objIdx != -1) {
-						char command[256];
-
-						strcpy(command, commandBuffer);
-						strcat(command, " ");
-						strcat(command, objectTable[objIdx].name);
-
-						renderer->setCommand(command);
+						renderer->setCommand(commandBuffer + " " + objectTable[objIdx].name);
 					} else {
 						isDrawCommandEnabled = 1;
 					}
@@ -1858,8 +1948,8 @@ uint16 executePlayerInput(void) {
 		var_2 = 0;
 	}
 
-	if (inputVar1 && allowPlayerInput) {	// use keyboard
-		inputVar1 = 0;
+	if (egoMovedWithKeyboard && allowPlayerInput) {	// use keyboard
+		egoMovedWithKeyboard = false;
 
 		switch (globalVars[VAR_MOUSE_X_MODE]) {
 		case 1:
@@ -1891,8 +1981,8 @@ uint16 executePlayerInput(void) {
 			globalVars[VAR_MOUSE_X_POS] = mouseX;
 			globalVars[VAR_MOUSE_Y_POS] = mouseY;
 		} else {
-			if (inputVar2) {
-				if (inputVar2 == 2) {
+			if (xMoveKeyb) {
+				if (xMoveKeyb == kKeybMoveLeft) {
 					globalVars[VAR_MOUSE_X_POS] = 1;
 				} else {
 					globalVars[VAR_MOUSE_X_POS] = 320;
@@ -1901,8 +1991,8 @@ uint16 executePlayerInput(void) {
 				globalVars[VAR_MOUSE_X_POS] = mouseX;
 			}
 
-			if (inputVar3) {
-				if (inputVar3 == 2) {
+			if (yMoveKeyb) {
+				if (yMoveKeyb == kKeybMoveUp) {
 					globalVars[VAR_MOUSE_Y_POS] = 1;
 				} else {
 					globalVars[VAR_MOUSE_Y_POS] = 200;
@@ -1941,6 +2031,14 @@ uint16 executePlayerInput(void) {
 			//  printf("Unhandled case %d in last part of executePlayerInput\n",var2-59);
 			break;
 		}
+	}
+
+	// Update Operation Stealth specific global variables.
+	// This fixes swimming at the bottom of the ocean after
+	// having been thrown into it with the girl.
+	if (g_cine->getGameType() == Cine::GType_OS) {
+		globalVars[251] = globalVars[VAR_MOUSE_X_POS];
+		globalVars[252] = globalVars[VAR_MOUSE_Y_POS];
 	}
 
 	return var_5E;
@@ -1984,9 +2082,22 @@ void drawSprite(Common::List<overlay>::iterator it, const byte *spritePtr, const
 
 void removeMessages() {
 	Common::List<overlay>::iterator it;
+	bool remove;
 
 	for (it = overlayList.begin(); it != overlayList.end(); ) {
-		if (it->type == 2 || it->type == 3) {
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			// NOTE: These are really removeOverlay calls that have been deferred.
+			// In Operation Stealth's disassembly elements are removed from the
+			// overlay list right in the drawOverlays function (And actually in
+			// some other places too) and that's where incrementing a the overlay's
+			// last parameter by one if it's negative and testing it for positivity
+			// comes from too.
+			remove = it->type == 3 || (it->type == 2 && (it->color >= 0 || ++it->color >= 0));
+		} else { // Future Wars
+			remove = it->type == 2 || it->type == 3;
+		}
+
+		if (remove) {
 			it = overlayList.erase(it);
 		} else {
 			++it;
@@ -2069,7 +2180,6 @@ void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 par
 	tmp.color = param5;
 
 	overlayList.push_back(tmp);
-	waitForPlayerClick = 1;
 }
 
 Common::List<SeqListElement> seqList;
@@ -2328,9 +2438,9 @@ void processSeqListElement(SeqListElement &element) {
 			}
 			computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, x2, y2);
 		} else {
-			if (inputVar0 && allowPlayerInput) {
+			if (xMoveKeyb && allowPlayerInput) {
 				int16 adder = param1 + 1;
-				if (inputVar0 != 1) {
+				if (xMoveKeyb != kKeybMoveRight) {
 					adder = -adder;
 				}
 				// FIXME: In Operation Stealth's disassembly global variable 251 is used here
@@ -2339,9 +2449,9 @@ void processSeqListElement(SeqListElement &element) {
 				globalVars[VAR_MOUSE_X_POS] = globalVars[251] = ptr1[4] + x + adder;
 			}
 
-			if (inputVar1 && allowPlayerInput) {
+			if (yMoveKeyb && allowPlayerInput) {
 				int16 adder = param2 + 1;
-				if (inputVar1 != 1) {
+				if (yMoveKeyb != kKeybMoveDown) {
 					adder = -adder;
 				}
 				// TODO: Name currently unnamed global variable 252

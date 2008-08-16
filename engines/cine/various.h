@@ -33,6 +33,9 @@
 
 namespace Cine {
 
+// Maximum size of the command buffer including the trailing zero
+#define kMaxCommandBufferSize 80
+
 void initLanguage(Common::Language lang);
 
 int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width, bool recheckValue = false);
@@ -85,7 +88,7 @@ extern byte _danKeysPressed;
 
 extern int16 playerCommand;
 
-extern char commandBuffer[80];
+extern Common::String commandBuffer;
 
 extern char currentPrcName[20];
 extern char currentRelName[20];
@@ -129,8 +132,8 @@ struct SelectedObjStruct {
 };
 
 #define NUM_MAX_ZONE 16
-extern uint16 zoneData[NUM_MAX_ZONE];
-extern uint16 zoneQuery[NUM_MAX_ZONE];
+extern Common::Array<uint16> zoneData;
+extern Common::Array<uint16> zoneQuery;
 
 void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 param5);
 
@@ -145,6 +148,7 @@ void processSeqList(void);
 void resetGfxEntityEntry(uint16 objIdx);
 
 bool makeTextEntryMenu(const char *caption, char *string, int strLen, int y);
+void moveUsingKeyboard(int x, int y);
 
 } // End of namespace Cine
 

@@ -986,7 +986,7 @@ void Control::handleKeyPress(Common::KeyState kbd, Common::String &textBuf) {
 	if (kbd.keycode == Common::KEYCODE_BACKSPACE) { // backspace
 		if (textBuf.size() > 0)
 			textBuf.deleteLastChar();
-	} else {
+	} else if (kbd.ascii) {
 		// Cannot enter text wider than the save/load panel
 		if (_enteredTextWidth >= PAN_LINE_WIDTH - 10)
 			return;

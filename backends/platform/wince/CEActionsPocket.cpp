@@ -121,7 +121,7 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_comi = (strncmp(gameid.c_str(), "comi", 4) == 0);
 	bool is_gob = (strncmp(gameid.c_str(), "gob", 3) == 0);
 	bool is_saga = (gameid == "saga");
-	bool is_kyra = (gameid == "kyra1");
+	bool is_kyra = (strncmp(gameid.c_str(), "kyra",4) == 0);
 	bool is_samnmax = (gameid == "samnmax");
 	bool is_cine = (gameid == "cine");
 	bool is_touche = (gameid == "touche");
@@ -129,11 +129,13 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_parallaction = (gameid == "parallaction");
 	bool is_lure = (gameid == "lure");
 	bool is_feeble = (gameid == "feeble");
+	bool is_drascula = (strncmp(gameid.c_str(), "drascula",8) == 0);
 
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_samnmax || is_cine || is_touche || is_parallaction)
+	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || 
+			is_samnmax || is_cine || is_touche || is_parallaction || is_drascula)
 		_right_click_needed = true;
 
 	// See if a "hide toolbar" mapping could be needed
@@ -153,7 +155,7 @@ void CEActionsPocket::initInstanceGame() {
 	} else if (is_sky) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5);
-	} else if (is_cine) {
+	} else if (is_cine || is_drascula) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_F10, SDLK_F10); // F10
 	} else if (is_agi) {
@@ -171,7 +173,8 @@ void CEActionsPocket::initInstanceGame() {
 	// Skip
 	if (!is_cine && !is_parallaction)
 		_action_enabled[POCKET_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_saga || is_kyra || is_touche || is_lure || is_feeble)
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || 
+			is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula)
 		_key_action[POCKET_ACTION_SKIP].setKey(VK_ESCAPE);
 	else
 		_key_action[POCKET_ACTION_SKIP].setKey(KEY_ALL_SKIP);
@@ -212,7 +215,7 @@ CEActionsPocket::~CEActionsPocket() {
 }
 
 bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
-	static bool keydialogrunning = false;
+	static bool keydialogrunning = false, quitdialog = false;
 
 	if (!pushed) {
 		switch(action) {
@@ -289,12 +292,14 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 			_CESystem->move_cursor_right();
 			return true;
 		case POCKET_ACTION_QUIT:
-			{
+			if (!quitdialog) {
+				quitdialog = true;
 				GUI::MessageDialog alert("   Are you sure you want to quit ?   ", "Yes", "No");
 				if (alert.runModal() == GUI::kMessageOK)
 					_mainSystem->quit();
-				return true;
+				quitdialog = false;
 			}
+			return true;
 		case POCKET_ACTION_BINDKEYS:
 			if (!keydialogrunning) {
 				keydialogrunning = true;

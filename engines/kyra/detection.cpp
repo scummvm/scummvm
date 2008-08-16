@@ -56,6 +56,7 @@ namespace {
 #define KYRA2_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, true, Kyra::GI_KYRA2)
 #define KYRA2_CD_FLAGS FLAGS(false, false, true, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_KYRA2)
@@ -66,8 +67,14 @@ namespace {
 #define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, true, false, Kyra::GI_KYRA3)
 
 #define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, true, Kyra::GI_LOL)
+#define LOL_PC98_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_PC98_SJIS_FLAGS FLAGS(false, false, false, true, false, false, Kyra::GI_LOL)
+#define LOL_DEMO_FLAGS FLAGS(true, false, false, false, false, false, Kyra::GI_KYRA2)
 
 const KYRAGameDescription adGameDescs[] = {
+	/* disable these targets until they get supported
 	{
 		{
 			"kyra1",
@@ -79,6 +86,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_CMP_FLAGS
 	},
+
 	{
 		{
 			"kyra1",
@@ -90,6 +98,8 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_CMP_FLAGS
 	},
+	*/
+
 	{
 		{
 			"kyra1",
@@ -210,7 +220,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // FM-Towns version
 		{
 			"kyra1",
-			0,
+			"CD",
 			{
 				{ "EMC.PAK", 0, "a046bb0b422061aab8e4c4689400343a", -1 },
 				{ "TWMUSIC.PAK", 0, "e53bca3a3e3fb49107d59463ec387a59", -1 },
@@ -218,14 +228,14 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformFMTowns,
-			Common::ADGF_NO_FLAGS
+			Common::ADGF_CD
 		},
 		KYRA1_TOWNS_FLAGS
 	},
 	{
 		{
 			"kyra1",
-			0,
+			"CD",
 			{
 				{ "JMC.PAK", 0, "9c5707a2a478e8167e44283246612d2c", -1 },
 				{ "TWMUSIC.PAK", 0, "e53bca3a3e3fb49107d59463ec387a59", -1 },
@@ -233,7 +243,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::JA_JPN,
 			Common::kPlatformFMTowns,
-			Common::ADGF_NO_FLAGS
+			Common::ADGF_CD
 		},
 		KYRA1_TOWNS_SJIS_FLAGS
 	},
@@ -421,6 +431,77 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_FLAGS
 	},
 
+	// Italian fan translation, see fr#2003504 "KYRA: add support for Italian version of Kyrandia 2&3"
+	{ // CD version
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "30487f3b8d7790c7857f4769ff2dd125"),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+	{
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "30487f3b8d7790c7857f4769ff2dd125"),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+	{
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "30487f3b8d7790c7857f4769ff2dd125"),
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
+	{ 
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "39772ff82e42c4c520050518deb82e64"),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
+	{ 
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "39772ff82e42c4c520050518deb82e64"),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
+	{ 
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "39772ff82e42c4c520050518deb82e64"),
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
 	{ // Interactive Demo
 		{
 			"kyra2",
@@ -457,11 +538,11 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_DEMO_FLAGS
 	},
 
-	{ // Non-Interactive Demo
+	{ // Non-Interactive Demos
 		{
 			"kyra2",
 			"Demo",
-			AD_ENTRY1("GENERAL.PAK", "35825783e5b60755fd520360079f9c15"),
+			AD_ENTRY1("VOC.PAK", "ecb3561b63749158172bf21528cf5f45"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			Common::ADGF_DEMO
@@ -472,44 +553,44 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // FM-Towns
 		{
 			"kyra2",
-			0,
+			"CD",
 			AD_ENTRY1("WSCORE.PAK", "c44de1302b67f27d4707409987b7a685"),
 			Common::EN_ANY,
 			Common::kPlatformFMTowns,
-			Common::ADGF_NO_FLAGS
+			Common::ADGF_CD
 		},
 		KYRA2_TOWNS_FLAGS
 	},
 	{
 		{
 			"kyra2",
-			0,
+			"CD",
 			AD_ENTRY1("WSCORE.PAK", "c44de1302b67f27d4707409987b7a685"),
 			Common::JA_JPN,
 			Common::kPlatformFMTowns,
-			Common::ADGF_NO_FLAGS
+			Common::ADGF_CD
 		},
 		KYRA2_TOWNS_SJIS_FLAGS
 	},
 	{ // PC-9821
 		{
 			"kyra2",
-			0,
+			"CD",
 			AD_ENTRY1("WSCORE.PAK", "c44de1302b67f27d4707409987b7a685"),
 			Common::EN_ANY,
 			Common::kPlatformPC98,
-			Common::ADGF_NO_FLAGS
+			Common::ADGF_CD
 		},
 		KYRA2_TOWNS_FLAGS
 	},
 	{
 		{
 			"kyra2",
-			0,
+			"CD",
 			AD_ENTRY1("WSCORE.PAK", "c44de1302b67f27d4707409987b7a685"),
 			Common::JA_JPN,
 			Common::kPlatformPC98,
-			Common::ADGF_NO_FLAGS
+			Common::ADGF_CD
 		},
 		KYRA2_TOWNS_SJIS_FLAGS
 	},
@@ -610,6 +691,53 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_INS_FLAGS
 	},
 
+	// Mac version
+	{ 
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			Common::ADGF_DROPLANGUAGE
+		},
+		KYRA3_CD_INS_FLAGS
+	},
+	{
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformMacintosh,
+			Common::ADGF_DROPLANGUAGE
+		},
+		KYRA3_CD_INS_FLAGS
+	},
+	{
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::FR_FRA,
+			Common::kPlatformMacintosh,
+			Common::ADGF_DROPLANGUAGE
+		},
+		KYRA3_CD_INS_FLAGS
+	},
+
 	// Spanish fan translation, see fr#1994040 "KYRA3: Add support for Spanish fan translation"
 	{
 		{
@@ -657,7 +785,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_FAN_FLAGS(Common::ES_ESP, Common::EN_ANY)
 	},
 
-	// Itlian fan translation, see fr#2003504 "KYRA: add support for Italian version of Kyrandia 2&3"
+	// Italian fan translation, see fr#2003504 "KYRA: add support for Italian version of Kyrandia 2&3"
 	{
 		{
 			"kyra3",
@@ -752,7 +880,134 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		LOL_CD_FLAGS
 	},
+
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
+				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		LOL_CD_FLAGS
+	},
 	
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
+				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		LOL_CD_FLAGS
+	},
+	
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
+				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		LOL_CD_FLAGS
+	},
+
+	{
+		{
+			"lol",
+			0,
+			{
+				{ "WESTWOOD.1", 0, "3c61cb7de5b2ec452f5851f5075207ee", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		LOL_FLOPPY_CMP_FLAGS
+	},
+
+	{
+		{
+			"lol",
+			"Extracted",
+			{
+				{ "GENERAL.PAK", 0, "996e66e81054d36249907a1d8158da3d", -1 },
+				{ "CHAPTER7.PAK", 0, "cabee57f00d6d84b65a732b6868a4959", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		LOL_FLOPPY_FLAGS
+	},
+
+	/* disable these targets until they get supported
+	{
+		{
+			"lol",
+			0,
+			{
+				{ "GENERAL.PAK", 0, "3fe6539b9b09084c0984eaf7170464e9", -1 },
+				{ "MUS.PAK", 0, "008dc69d8cbcdb6bae30e270fab26e76", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC98,
+			Common::ADGF_NO_FLAGS
+		},
+		LOL_PC98_FLAGS
+	},
+
+	{
+		{
+			"lol",
+			0,
+			{
+				{ "GENERAL.PAK", 0, "3fe6539b9b09084c0984eaf7170464e9", -1 },
+				{ "MUS.PAK", 0, "008dc69d8cbcdb6bae30e270fab26e76", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::JA_JPN,
+			Common::kPlatformPC98,
+			Common::ADGF_NO_FLAGS
+		},
+		LOL_PC98_SJIS_FLAGS
+	},*/
+
+	{
+		{
+			"lol",
+			"Demo",
+			{
+				{ "GENERAL.PAK", 0, "e94863d86c4597a2d581d05481c152ba", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		LOL_DEMO_FLAGS
+	},
+
 	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0) }
 };
 

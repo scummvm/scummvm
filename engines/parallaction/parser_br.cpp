@@ -25,6 +25,7 @@
 
 
 #include "parallaction/parallaction.h"
+
 #include "parallaction/sound.h"
 
 namespace Parallaction {
@@ -103,6 +104,7 @@ namespace Parallaction {
 #define INST_IFGT		29
 #define INST_ENDIF		30
 #define INST_STOP		31
+
 
 const char *_zoneTypeNamesRes_br[] = {
 	"examine",
@@ -314,7 +316,6 @@ DECLARE_LOCATION_PARSER(location)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(location) ");
 
 	strcpy(_vm->_location._name, _tokens[1]);
-	ctxt.bgName = strdup(_tokens[1]);
 
 	bool flip = false;
 	int nextToken;
@@ -329,15 +330,17 @@ DECLARE_LOCATION_PARSER(location)  {
 	// TODO: handle background horizontal flip (via a context parameter)
 
 	if (_tokens[nextToken][0] != '\0') {
-		_vm->_char._ani->_left = atoi(_tokens[nextToken]);
+		_vm->_char._ani->setX(atoi(_tokens[nextToken]));
 		nextToken++;
-		_vm->_char._ani->_top = atoi(_tokens[nextToken]);
+		_vm->_char._ani->setY(atoi(_tokens[nextToken]));
 		nextToken++;
 	}
 
 	if (_tokens[nextToken][0] != '\0') {
-		_vm->_char._ani->_frame = atoi(_tokens[nextToken]);
+		_vm->_char._ani->setF(atoi(_tokens[nextToken]));
 	}
+
+	_vm->_disk->loadScenery(*ctxt.info, _tokens[1], 0, 0);
 }
 
 
@@ -463,17 +466,20 @@ DECLARE_LOCATION_PARSER(null)  {
 DECLARE_LOCATION_PARSER(mask)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(mask) ");
 
-	ctxt.maskName = strdup(_tokens[1]);
-	ctxt.info->layers[0] = atoi(_tokens[2]);
-	ctxt.info->layers[1] = atoi(_tokens[3]);
-	ctxt.info->layers[2] = atoi(_tokens[4]);
+	ctxt.info->layers[0] = 0;
+	ctxt.info->layers[1] = atoi(_tokens[2]);
+	ctxt.info->layers[2] = atoi(_tokens[3]);
+	ctxt.info->layers[3] = atoi(_tokens[4]);
+
+	_vm->_disk->loadScenery(*ctxt.info, 0, _tokens[1], 0);
+	ctxt.info->hasMask = true;
 }
 
 
 DECLARE_LOCATION_PARSER(path)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(path) ");
 
-	ctxt.pathName = strdup(_tokens[1]);
+	_vm->_disk->loadScenery(*ctxt.info, 0, 0, _tokens[1]);
 }
 
 
@@ -714,10 +720,7 @@ DECLARE_ZONE_PARSER(limits)  {
 		ctxt.z->_linkedAnim = _vm->findAnimation(_tokens[1]);
 		ctxt.z->_linkedName = strdup(_tokens[1]);
 	} else {
-		ctxt.z->_left = atoi(_tokens[1]);
-		ctxt.z->_top = atoi(_tokens[2]);
-		ctxt.z->_right = atoi(_tokens[3]);
-		ctxt.z->_bottom = atoi(_tokens[4]);
+		ctxt.z->setBox(atoi(_tokens[1]), atoi(_tokens[2]), atoi(_tokens[3]), atoi(_tokens[4]));
 	}
 }
 
@@ -766,6 +769,49 @@ void LocationParser_br::parsePathData(ZonePtr z) {
 	} while (scumm_stricmp("endzone", _tokens[0]));
 
 	z->u.path = data;
+}
+
+void LocationParser_br::parseGetData(ZonePtr z) {
+
+	GetData *data = new GetData;
+
+	do {
+
+		if (!scumm_stricmp(_tokens[0], "file")) {
+
+			GfxObj *obj = _vm->_gfx->loadGet(_tokens[1]);
+			obj->frame = 0;
+			obj->x = z->getX();
+			obj->y = z->getY();
+			data->gfxobj = obj;
+		}
+
+		if (!scumm_stricmp(_tokens[0], "mask")) {
+			if (ctxt.info->hasMask) {
+				Common::Rect rect;
+				data->gfxobj->getRect(0, rect);
+				data->_mask[0].create(rect.width(), rect.height());
+				_vm->_disk->loadMask(_tokens[1], data->_mask[0]);
+				data->_mask[1].create(rect.width(), rect.height());
+				data->_mask[1].bltCopy(0, 0, ctxt.info->mask, data->gfxobj->x, data->gfxobj->y, data->_mask->w, data->_mask->h);
+				data->hasMask = true;
+			} else {
+				warning("Mask for zone '%s' ignored, since background doesn't have one", z->_name);
+			}
+		}
+
+		if (!scumm_stricmp(_tokens[0], "path")) {
+
+		}
+
+		if (!scumm_stricmp(_tokens[0], "icon")) {
+			data->_icon = 4 + _vm->_objectsNames->lookup(_tokens[1]);
+		}
+
+		_script->readLineToken(true);
+	} while (scumm_stricmp(_tokens[0], "endzone"));
+
+	z->u.get = data;
 }
 
 void LocationParser_br::parseZoneTypeBlock(ZonePtr z) {
@@ -822,10 +868,10 @@ DECLARE_ANIM_PARSER(file)  {
 DECLARE_ANIM_PARSER(position)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(position) ");
 
-	ctxt.a->_left = atoi(_tokens[1]);
-	ctxt.a->_top = atoi(_tokens[2]);
-	ctxt.a->_z = atoi(_tokens[3]);
-	ctxt.a->_frame = atoi(_tokens[4]);
+	ctxt.a->setX(atoi(_tokens[1]));
+	ctxt.a->setY(atoi(_tokens[2]));
+	ctxt.a->setZ(atoi(_tokens[3]));
+	ctxt.a->setF(atoi(_tokens[4]));
 }
 
 
@@ -841,15 +887,14 @@ DECLARE_ANIM_PARSER(moveto)  {
 DECLARE_ANIM_PARSER(endanimation)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(endanimation) ");
 
-
+#if 0
+	// I have disabled the following code since it seems useless.
+	// I will remove it after mask processing is done.
 	if (ctxt.a->gfxobj) {
 		ctxt.a->_right = ctxt.a->width();
 		ctxt.a->_bottom = ctxt.a->height();
 	}
-
-	ctxt.a->_oldPos.x = -1000;
-	ctxt.a->_oldPos.y = -1000;
-
+#endif
 	ctxt.a->_flags |= 0x1000000;
 
 	_parser->popTables();
@@ -992,16 +1037,16 @@ void ProgramParser_br::parseRValue(ScriptVar &v, const char *str) {
 		a = AnimationPtr(ctxt.a);
 
 	if (str[0] == 'X') {
-		v.setField(&a->_left);
+		v.setField(a.get(), &Animation::getX);
 	} else
 	if (str[0] == 'Y') {
-		v.setField(&a->_top);
+		v.setField(a.get(), &Animation::getY);
 	} else
 	if (str[0] == 'Z') {
-		v.setField(&a->_z);
+		v.setField(a.get(), &Animation::getZ);
 	} else
 	if (str[0] == 'F') {
-		v.setField(&a->_frame);
+		v.setField(a.get(), &Animation::getF);
 	}	else
 	if (str[0] == 'N') {
 		v.setImmediate(a->getFrameNum());
@@ -1010,7 +1055,10 @@ void ProgramParser_br::parseRValue(ScriptVar &v, const char *str) {
 		v.setRandom(atoi(&str[1]));
 	} else
 	if (str[0] == 'L') {
+#if 0	// disabled because no references to lip sync has been found in the scripts
 		v.setField(&_vm->_lipSyncVal);
+#endif
+		warning("Lip sync instruction encountered! Please notify the team!");
 	}
 
 }
@@ -1168,31 +1216,50 @@ void ProgramParser_br::init() {
 	INSTRUCTION_PARSER(endscript);
 }
 
+
+/*
+	Ancillary routine to support hooking preprocessor and
+	parser.
+*/
+Common::ReadStream *getStream(StatementList &list) {
+	Common::String text;
+	StatementList::iterator it = list.begin();
+	for ( ; it != list.end(); it++) {
+		text += (*it)._text;
+	}
+	return new ReadStringStream(text);
+}
+
 void LocationParser_br::parse(Script *script) {
 
+	PreProcessor pp;
+	StatementList list;
+	pp.preprocessScript(*script, list);
+	Script *script2 = new Script(getStream(list), true);
+
 	ctxt.numZones = 0;
-	ctxt.bgName = 0;
-	ctxt.maskName = 0;
-	ctxt.pathName = 0;
 	ctxt.characterName = 0;
 	ctxt.info = new BackgroundInfo;
 
-	LocationParser_ns::parse(script);
+	LocationParser_ns::parse(script2);
 
-	_vm->_disk->loadScenery(*ctxt.info, ctxt.bgName, ctxt.maskName, ctxt.pathName);
 	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.info);
 	_vm->_pathBuffer = &ctxt.info->path;
 
+
+	ZoneList::iterator it = _vm->_location._zones.begin();
+	for ( ; it != _vm->_location._zones.end(); it++) {
+		bool visible = ((*it)->_flags & kFlagsRemove) == 0;
+		_vm->showZone((*it), visible);
+	}
 
 	if (ctxt.characterName) {
 		_vm->changeCharacter(ctxt.characterName);
 	}
 
-	free(ctxt.bgName);
-	free(ctxt.maskName);
-	free(ctxt.pathName);
 	free(ctxt.characterName);
 
+	delete script2;
 }
 
 } // namespace Parallaction

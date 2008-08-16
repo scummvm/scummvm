@@ -218,7 +218,7 @@ void Parallaction_ns::callFunction(uint index, void* parm) {
 int Parallaction_ns::go() {
 	renameOldSavefiles();
 
-	_globalTable = _disk->loadTable("global");
+	_globalFlagsNames = _disk->loadTable("global");
 
 	startGui();
 
@@ -318,14 +318,10 @@ void Parallaction_ns::changeLocation(char *location) {
 	strcpy(_saveData1, locname.location());
 	parseLocation(_saveData1);
 
-	_char._ani->_oldPos.x = -1000;
-	_char._ani->_oldPos.y = -1000;
-
-	_char._ani->field_50 = 0;
 	if (_location._startPosition.x != -1000) {
-		_char._ani->_left = _location._startPosition.x;
-		_char._ani->_top = _location._startPosition.y;
-		_char._ani->_frame = _location._startFrame;
+		_char._ani->setX(_location._startPosition.x);
+		_char._ani->setY(_location._startPosition.y);
+		_char._ani->setF(_location._startFrame);
 		_location._startPosition.y = -1000;
 		_location._startPosition.x = -1000;
 	}
@@ -438,7 +434,7 @@ void Parallaction_ns::cleanupGame() {
 	// this code saves main character animation from being removed from the following code
 	_location._animations.remove(_char._ani);
 	_numLocations = 0;
-	_commandFlags = 0;
+	_globalFlags = 0;
 
 	memset(_localFlags, 0, sizeof(_localFlags));
 	memset(_locationNames, 0, sizeof(_locationNames));

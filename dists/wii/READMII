@@ -1,17 +1,23 @@
-Wii port of ScummVM README
---------------------------
+Wii/Gamecube port of ScummVM README
+-----------------------------------
 
 features not compiled in:
 - the AGI game engine
 
 REQUIREMENTS
 
-  - sd card
-  - wiimote or gamecube controller in port 1
+  wii:
+    - sd card
+    - wiimote or gamecube controller in port 1
+
+  gamecube:
+    - sd card
+    - sd gecko adapter
+    - gamecube controller in port 1
 
 INSTALL
 
-  - copy the "apps" folder to the root of your sd card
+  - copy the "scummvm" folder into the "/apps" folder of your sd card
   - copy your demos and/or games onto the same sd card
     each game goes into its own subdirectory, do not place those under
     "/apps/scummvm", and do not set the "theme" or "extra" path to that folder
@@ -20,17 +26,21 @@ INSTALL
 
 RUN
 
-  either use the homebrew channel, available at
+  wii:
+    either use the homebrew channel, available at
 
-  http://hbc.hackmii.com/
+    http://hbc.hackmii.com/
 
-  or load "boot.dol" with your favorite loader
+    or load "/apps/scummvm/boot.dol" with your favorite loader
+
+  gamecube:
+    load "/apps/scummvm/scummvm-gc.dol" with your favorite loader
 
 CONTROLS
 
   wiimote
 
-    analog stick: mouse movement
+    IR: mouse movement
     a: left mouse button
     b: right mouse button
     minus: escape
@@ -55,6 +65,21 @@ CONTROLS
     dpad down: "0"
     dpad left: "y"
     dpad right: "n"
+
+DISPLAY SETUP
+
+  "Graphics mode"
+    you can choose between multiple overscan options to adjust the screen size
+    used for drawing. select a higher overscan mode to get rid of black
+    borders or choose a lower overscan mode if parts of the picture get cropped
+
+  "Fullscreen mode"
+    If your wii is set to 16:9, this will stretch the picture to fullscreen.
+    Turning this option off results in black borders on the left and right
+    sides, but the aspect ratio will be kept. This option has no effect on 4:3
+    displays
+
+  you have to restart scummvm after changing one of these options
 
 THANKS
 

@@ -377,6 +377,12 @@ void Gfx::beginFrame() {
 						*data++ = _backgroundInfo->mask.getValue(x, y);
 					}
 				}
+#if 1
+				Common::DumpFile dump;
+				dump.open("maskdump.bin");
+				dump.write(_bitmapMask.pixels, _bitmapMask.w * _bitmapMask.h);
+				dump.close();
+#endif
 				break;
 			}
 		}
@@ -441,7 +447,7 @@ void Gfx::updateScreen() {
 		for (; b != e; b++) {
 			ZonePtr z = *b;
 			if (z->_type & kZonePath) {
-				surf->frameRect(Common::Rect(z->_left, z->_top, z->_right, z->_bottom), 2);
+				surf->frameRect(Common::Rect(z->getX(), z->getY(), z->getX() + z->width(), z->getY() + z->height()), 2);
 			}
 		}
 		g_system->unlockScreen();

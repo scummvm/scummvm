@@ -69,6 +69,7 @@ public:
 	virtual Table* loadTable(const char* name) = 0;
 	virtual Common::SeekableReadStream* loadMusic(const char* name) = 0;
 	virtual Common::ReadStream* loadSound(const char* name) = 0;
+	virtual void loadMask(const char *name, MaskBuffer &buffer) { }
 };
 
 
@@ -248,6 +249,7 @@ public:
 	Table* loadTable(const char* name);
 	Common::SeekableReadStream* loadMusic(const char* name);
 	Common::ReadStream* loadSound(const char* name);
+	void loadMask(const char *name, MaskBuffer &buffer);
 };
 
 class DosDemo_br : public DosDisk_br {

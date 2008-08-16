@@ -162,6 +162,12 @@ int DrasculaEngine::init() {
 	_textmisc = 0;
 	_textd1 = 0;
 
+	_color = 0;
+	blinking = 0;
+	leftMouseButton = 0;
+	rightMouseButton = 0;
+	*textName = 0;
+
 	if (!loadDrasculaDat())
 		return 1;
 
@@ -285,6 +291,8 @@ void DrasculaEngine::endChapter() {
 
 bool DrasculaEngine::runCurrentChapter() {
 	int n;
+
+	rightMouseButton = 0;
 
 	if (_lang == kSpanish)
 		textSurface = extraSurface;
@@ -457,23 +465,45 @@ bool DrasculaEngine::runCurrentChapter() {
 				playMusic(roomMusic);
 		}
 
+		delay(25);
+#ifndef _WIN32_WCE
+		// FIXME
+		// This and the following #ifndefs disable the excess updateEvents() calls *within* the game loop.
+		// Events such as keypresses or mouse clicks are dropped on the ground with no processing
+		// by these calls. They are properly handled by the implicit call through getScan() below.
+		// It is not a good practice to not process events and indeed this created problems with synthesized
+		// events in the wince port.
 		updateEvents();
+#endif
 
 		if (menuScreen == 0 && takeObject == 1)
 			checkObjects();
 		
+#ifdef _WIN32_WCE
+		if (rightMouseButton)
+			if (menuScreen) {
+#else
 		if (rightMouseButton == 1 && menuScreen == 1) {
-			delay(100);
+#endif
 			if (currentChapter == 2)
 				loadPic(menuBackground, backSurface);
 			else
 				loadPic(99, backSurface);
 			setPalette((byte *)&gamePalette);
 			menuScreen = 0;
+#ifndef _WIN32_WCE
+			// FIXME: This call here is in hope that it will catch the rightmouseup event so the
+			// next if block won't be executed. This too is not a good coding practice. I've recoded it
+			// with a mutual exclusive if block for the menu. I would commit this properly but I cannot test
+			// for other (see Desktop) ports right now.
 			updateEvents();
+#endif
+#ifdef _WIN32_WCE
+			} else {
+#else
 		}
 		if (rightMouseButton == 1 && menuScreen == 0) {
-			delay(100);
+#endif
 			characterMoved = 0;
 			if (trackProtagonist == 2)
 				trackProtagonist = 1;
@@ -486,15 +516,15 @@ bool DrasculaEngine::runCurrentChapter() {
 			else
 				loadPic("icons.alg", backSurface);
 			menuScreen = 1;
+#ifndef _WIN32_WCE
 			updateEvents();
+#endif
 			withoutVerb();
 		}
 
 		if (leftMouseButton == 1 && menuBar == 1) {
-			delay(100);
 			selectVerbFromBar();
 		} else if (leftMouseButton == 1 && takeObject == 0) {
-			delay(100);
 			if (verify1())
 				return true;
 		} else if (leftMouseButton == 1 && takeObject == 1) {
@@ -674,7 +704,11 @@ void DrasculaEngine::updateEvents() {
 
 	AudioCD.updateCD();
 
+#ifdef _WIN32_WCE
+	if (eventMan->pollEvent(event)) {
+#else
 	while (eventMan->pollEvent(event)) {
+#endif
 	switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_keyPressed = event.kbd;
@@ -987,9 +1021,14 @@ char ***DrasculaEngine::loadTexts(Common::File &in) {
 }
 
 void DrasculaEngine::freeTexts(char ***ptr) {
+	if (!ptr)
+		return;
+
 	for (int lang = 0; lang < _numLangs; lang++) {
-		free(ptr[lang][0] - DATAALIGNMENT);
-		free(ptr[lang]);
+		if (ptr[lang]) {
+			free(ptr[lang][0]);
+			free(ptr[lang]);
+		}
 	}
 	free(ptr);
 }

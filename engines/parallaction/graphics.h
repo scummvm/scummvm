@@ -209,6 +209,42 @@ public:
 		return (m >> n) & 3;
 	}
 
+	inline byte* getPtr(uint16 x, uint16 y) const {
+		return data + (x >> 2) + y * internalWidth;
+	}
+
+	void bltOr(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {
+		assert((width <= w) && (width <= src.w) && (height <= h) && (height <= src.h));
+
+		byte *s = src.getPtr(sx, sy);
+		byte *d = getPtr(dx, dy);
+
+		// this code assumes buffers are aligned on 4-pixels boundaries, as the original does
+		uint16 linewidth = width >> 2;
+		for (uint16 i = 0; i < height; i++) {
+			for (uint16 j = 0; j < linewidth; j++) {
+				*d++ |= *s++;
+			}
+			d += internalWidth - linewidth;
+			s += src.internalWidth - linewidth;
+		}
+	}
+
+	void bltCopy(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {
+		assert((width <= w) && (width <= src.w) && (height <= h) && (height <= src.h));
+
+		byte *s = src.getPtr(sx, sy);
+		byte *d = getPtr(dx, dy);
+
+		// this code assumes buffers are aligned on 4-pixels boundaries, as the original does
+		for (uint16 i = 0; i < height; i++) {
+			memcpy(d, s, (width >> 2));
+			d += internalWidth;
+			s += src.internalWidth;
+		}
+	}
+
+
 };
 
 
@@ -419,7 +455,9 @@ struct BackgroundInfo {
 	int 				layers[4];
 	PaletteFxRange		ranges[6];
 
-	BackgroundInfo() : x(0), y(0), width(0), height(0) {
+	bool				hasMask;
+
+	BackgroundInfo() : x(0), y(0), width(0), height(0), hasMask(false) {
 		layers[0] = layers[1] = layers[2] = layers[3] = 0;
 		memset(ranges, 0, sizeof(ranges));
 	}

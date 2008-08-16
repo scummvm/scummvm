@@ -37,7 +37,7 @@
 
 namespace Kyra {
 
-KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::InSaveFile *in, SaveHeader &header) {
+KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header) {
 	uint32 type = in->readUint32BE();
 	header.originalSave = false;
 	header.oldHeader = false;
@@ -95,6 +95,9 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::InSave
 	if (header.version <= 8) {
 		char buffer[31];
 		in->read(buffer, 31);
+		// WORKAROUND: Old savegames could contain a missing termination 0 at the
+		// end so we manually add it.
+		buffer[30] = 0;
 		header.description = buffer;
 	} else {
 		header.description = "";
@@ -108,10 +111,10 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::InSave
 	return (in->ioFailed() ? kRSHEIoError : kRSHENoError);
 }
 
-Common::InSaveFile *KyraEngine_v1::openSaveForReading(const char *filename, SaveHeader &header) {
+Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filename, SaveHeader &header) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::openSaveForReading('%s', -)", filename);
 
-	Common::InSaveFile *in = 0;
+	Common::SeekableReadStream *in = 0;
 	if (!(in = _saveFileMan->openForLoading(filename)))
 		return 0;
 
@@ -159,12 +162,12 @@ Common::InSaveFile *KyraEngine_v1::openSaveForReading(const char *filename, Save
 	return in;
 }
 
-Common::OutSaveFile *KyraEngine_v1::openSaveForWriting(const char *filename, const char *saveName) const {
+Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, const char *saveName) const {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::openSaveForWriting('%s', '%s')", filename, saveName);
 	if (_quitFlag)
 		return 0;
 
-	Common::OutSaveFile *out = 0;
+	Common::WriteStream *out = 0;
 	if (!(out = _saveFileMan->openForSaving(filename))) {
 		warning("Can't create file '%s', game not saved", filename);
 		return 0;
@@ -209,7 +212,7 @@ bool KyraEngine_v1::saveFileLoadable(int slot) {
 		return false;
 
 	SaveHeader header;
-	Common::InSaveFile *in = openSaveForReading(getSavegameFilename(slot), header);
+	Common::SeekableReadStream *in = openSaveForReading(getSavegameFilename(slot), header);
 
 	if (in) {
 		delete in;

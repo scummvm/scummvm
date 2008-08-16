@@ -227,8 +227,7 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p, const bool current
 		char path[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, path);
 		_path = path;
-	}
-	else {
+	} else {
 		assert(p.size() > 0);
 		_path = p;
 	}
@@ -259,11 +258,6 @@ AbstractFilesystemNode *WindowsFilesystemNode::getChild(const String &n) const {
 	if (_path.lastChar() != '\\')
 		newPath += '\\';
 	newPath += n;
-
-	// Check whether the directory actually exists
-	DWORD fileAttribs = GetFileAttributes(toUnicode(newPath.c_str()));
-	if (fileAttribs == INVALID_FILE_ATTRIBUTES)
-		return 0;
 
 	return new WindowsFilesystemNode(newPath, false);
 }

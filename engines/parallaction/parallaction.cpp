@@ -53,7 +53,7 @@ uint32		_engineFlags = 0;
 uint16		_score = 1;
 char		_password[8];
 
-uint32		_commandFlags = 0;
+uint32		_globalFlags = 0;
 
 // private stuff
 
@@ -85,7 +85,7 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 
 Parallaction::~Parallaction() {
 	delete _debugger;
-	delete _globalTable;
+	delete _globalFlagsNames;
 	delete _callableNames;
 	delete _cmdExec;
 	delete _programExec;
@@ -114,7 +114,7 @@ int Parallaction::init() {
 
 	_engineFlags = 0;
 	_objectsNames = NULL;
-	_globalTable = NULL;
+	_globalFlagsNames = NULL;
 	_location._hasSound = false;
 	_baseTime = 0;
 	_numLocations = 0;
@@ -352,9 +352,9 @@ void Parallaction::runGame() {
 
 	if (_input->_inputMode == Input::kInputModeGame) {
 		_programExec->runScripts(_location._programs.begin(), _location._programs.end());
-		_char._ani->_z = _char._ani->height() + _char._ani->_top;
+		_char._ani->setZ(_char._ani->height() + _char._ani->getFrameY());
 		if (_char._ani->gfxobj) {
-			_char._ani->gfxobj->z = _char._ani->_z;
+			_char._ani->gfxobj->z = _char._ani->getZ();
 		}
 		_char._walker->walk();
 		drawAnimations();
@@ -452,7 +452,7 @@ void Parallaction::freeZones() {
 		// NOTE : this condition has been relaxed compared to the original, to allow the engine
 		// to retain special - needed - zones that were lost across location switches.
 		ZonePtr z = *it;
-		if (((z->_top == -1) || (z->_left == -2)) && ((_engineFlags & kEngineQuit) == 0)) {
+		if (((z->getY() == -1) || (z->getX() == -2)) && ((_engineFlags & kEngineQuit) == 0)) {
 			debugC(2, kDebugExec, "freeZones preserving zone '%s'", z->_name);
 			it++;
 		} else {
@@ -510,12 +510,10 @@ Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation) {
 
 	_dummy = false;
 
-	_ani->_left = 150;
-	_ani->_top = 100;
-	_ani->_z = 10;
-	_ani->_oldPos.x = -1000;
-	_ani->_oldPos.y = -1000;
-	_ani->_frame = 0;
+	_ani->setX(150);
+	_ani->setY(100);
+	_ani->setZ(10);
+	_ani->setF(0);
 	_ani->_flags = kFlagsActive | kFlagsNoName;
 	_ani->_type = kZoneYou;
 	strncpy(_ani->_name, "yourself", ZONENAME_LENGTH);
@@ -542,18 +540,18 @@ Character::~Character() {
 
 void Character::getFoot(Common::Point &foot) {
 	Common::Rect rect;
-	_ani->gfxobj->getRect(_ani->_frame, rect);
+	_ani->gfxobj->getRect(_ani->getF(), rect);
 
-	foot.x = _ani->_left + (rect.left + rect.width() / 2);
-	foot.y = _ani->_top + (rect.top + rect.height());
+	foot.x = _ani->getX() + (rect.left + rect.width() / 2);
+	foot.y = _ani->getY() + (rect.top + rect.height());
 }
 
 void Character::setFoot(const Common::Point &foot) {
 	Common::Rect rect;
-	_ani->gfxobj->getRect(_ani->_frame, rect);
+	_ani->gfxobj->getRect(_ani->getF(), rect);
 
-	_ani->_left = foot.x - (rect.left + rect.width() / 2);
-	_ani->_top = foot.y - (rect.top + rect.height());
+	_ani->setX(foot.x - (rect.left + rect.width() / 2));
+	_ani->setY(foot.y - (rect.top + rect.height()));
 }
 
 #if 0
@@ -677,7 +675,7 @@ void Character::updateDirection(const Common::Point& pos, const Common::Point& t
 	_step++;
 
 	if (dist.x == 0 && dist.y == 0) {
-		_ani->_frame = frames->stillFrame[_direction];
+		_ani->setF(frames->stillFrame[_direction]);
 		return;
 	}
 
@@ -687,7 +685,7 @@ void Character::updateDirection(const Common::Point& pos, const Common::Point& t
 		dist.y = -dist.y;
 
 	_direction = (dist.x > dist.y) ? ((to.x > pos.x) ? WALK_LEFT : WALK_RIGHT) : ((to.y > pos.y) ? WALK_DOWN : WALK_UP);
-	_ani->_frame = frames->firstWalkFrame[_direction] + (_step / frames->frameRepeat[_direction]) % frames->numWalkFrames[_direction];
+	_ani->setF(frames->firstWalkFrame[_direction] + (_step / frames->frameRepeat[_direction]) % frames->numWalkFrames[_direction]);
 }
 
 

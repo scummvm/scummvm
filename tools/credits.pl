@@ -463,6 +463,12 @@ begin_credits("Credits");
 	  end_persons();
     end_section();
 
+    begin_section("Retired Project Leaders");
+	  begin_persons();
+		add_person("Vincent Hamm", "yaz0r", "ScummVM co-founder, Original Cruise/CinE author");
+		add_person("Ludvig Strigeus", "ludde", "Original ScummVM and SimonVM author");
+	  end_persons();
+    end_section();
 
     begin_section("Engine Teams");
 	  begin_section("SCUMM");
@@ -679,12 +685,10 @@ begin_credits("Credits");
 		add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
 		add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
 		add_person("R&uuml;diger Hanke", "", "Port: MorphOS");
-		add_person("Vincent Hamm", "yaz0r", "ScummVM co-founder, Original Cruise/CinE author");
 		add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");
 		add_person("Mutwin Kraus", "mutle", "Original MacOS porter");
 		add_person("Peter Moraliyski", "ph0x", "Port: GP32");
 		add_person("Jeremy Newman", "laxdragon", "Former webmaster");
-		add_person("Ludvig Strigeus", "ludde", "Original ScummVM and SimonVM author");
 		add_person("Lionel Ulmer", "bbrox", "Port: X11");
 		add_person("Won Star", "wonst719", "Former GP32 porter");
 	  end_persons();
