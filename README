@@ -982,7 +982,7 @@ and return the user back to the ScummVM Launcher, where another game may be sele
 play.
 
 Note: Returning to the Launcher is not supported by all of the engines, and the button will be 
-diabled in the Global Menu if it is not supported.
+disabled in the Global Menu if it is not supported.
 
 Engines which currently support Returning to the Launcher are:
 
