@@ -147,7 +147,7 @@ protected:
 		
 		//Channel structure
 		struct Channel {
-			uint8 period;
+			uint16 period;
 			int8 volume;
 			uint32 sampleOffset;
 			uint32 sampleLength;

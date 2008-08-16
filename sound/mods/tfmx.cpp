@@ -329,7 +329,9 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 		switch (byte1) {
 		case 0xF0: //end pattern + advance track
 			//end pattern? also needs to know the track this is playing on
-			_tracks[trackNumber].patternOn = false; 
+			if (!_tracks[trackNumber].activeMacro.keyWaitOn) {
+				_tracks[trackNumber].patternOn = false; 
+			}
 			//_trackAdvance = true;
 			break;
 		case 0xF1: //repeat block/loop
@@ -349,8 +351,10 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 			break;
 		case 0xF4: //kills track until new pointer is loaded
 			//need to know track this pattern is on, then needs to stop reading proceeding cmds
-			_tracks[trackNumber].patternOn = false; 
-			_tracks[trackNumber].trackOn = false;
+			if (!_tracks[trackNumber].activeMacro.keyWaitOn) {
+				_tracks[trackNumber].patternOn = false; 
+				_tracks[trackNumber].trackOn = false;
+			}
 			break;
 		case 0xF5: //Key up
 			_channels[(byte3 & 0x0F)].keyUp = true;
@@ -439,7 +443,9 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 	}
 	//IF THE END IS REACHED, TURN PATTERN OFF
 	if (_tracks[trackNumber].activePattern.patternCount == _tracks[trackNumber].activePattern.patternLength) {
+		if (!_tracks[trackNumber].activeMacro.keyWaitOn) {
 		_tracks[trackNumber].patternOn = false;
+		}
 	}
 }
 void Tfmx::loadMacro(uint8 trackNumber, uint8 macroNumber){
@@ -486,6 +492,7 @@ void Tfmx::doMacro(uint8 trackNumber) {
 		_channels[currentChannel].sampleLength = 0;
 		_channels[currentChannel].envelopeOn = false;
 		_channels[currentChannel].vibratoOn = false;
+		//_tracks[trackNumber].activeMacro.macroWait = 1;
 		break;
 	case 0x01:
 		_channels[currentChannel].sampleOn = true;
@@ -575,6 +582,7 @@ void Tfmx::doMacro(uint8 trackNumber) {
 		_channels[currentChannel].vibratoRate = byte4;
 		_channels[currentChannel].vibratoSpeed = byte2 * 2;
 		_channels[currentChannel].vibratoCount = 0;
+		_channels[currentChannel].vibratoDirection = false; //vibrato down first
 		break;
 	case 0x14://wait for key-up
 		_tracks[trackNumber].activeMacro.keyWaitOn = true;
@@ -784,10 +792,12 @@ void Tfmx::doEffects(uint8 channelNumber) {
 			//vibrato up
 			if (_channels[channelNumber].vibratoDirection) { //true = up
 			_channels[channelNumber].period += _channels[channelNumber].vibratoRate;
+			_channels[channelNumber].vibratoDirection = false;
 			}
 			//vibrato down
-			if (!_channels[channelNumber].vibratoDirection) { //false = down
-			_channels[channelNumber].period += _channels[channelNumber].vibratoRate;
+			else if (!_channels[channelNumber].vibratoDirection) { //false = down
+			_channels[channelNumber].period -= _channels[channelNumber].vibratoRate;
+			_channels[channelNumber].vibratoDirection = true;
 			}
 			//reset count
 			_channels[channelNumber].vibratoCount = 0;
