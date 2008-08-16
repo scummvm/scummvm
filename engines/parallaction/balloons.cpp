@@ -637,11 +637,11 @@ int BalloonManager_br::setDialogueBalloon(char *text, uint16 winding, byte textC
 
 	if (winding == 0) {
 		src = _rightBalloon;
-		srcFrame = id;
+		srcFrame = 0;
 	} else
 	if (winding == 1) {
 		src = _leftBalloon;
-		srcFrame = 0;
+		srcFrame = id;
 	}
 
 	assert(src);
@@ -657,16 +657,17 @@ int BalloonManager_br::setDialogueBalloon(char *text, uint16 winding, byte textC
 	balloon->obj->y = balloon->box.top;
 	balloon->obj->transparentKey = BALLOON_TRANSPARENT_COLOR_BR;
 
-	if (id > 0) {
-		balloon->obj->y += _intBalloons[id - 1].obj->y + _intBalloons[id - 1].box.height();
-	}
-
 	_numBalloons++;
 
 	return id;
 }
 
-void BalloonManager_br::setBalloonText(uint id, char *text, byte textColor) { }
+void BalloonManager_br::setBalloonText(uint id, char *text, byte textColor) {
+	Balloon *balloon = getBalloon(id);
+
+	StringWriter_BR sw(_vm->_dialogueFont);
+	sw.write(text, MAX_BALLOON_WIDTH, textColor, balloon->surface);
+}
 
 int BalloonManager_br::setLocationBalloon(char *text, bool endGame) {
 /*
@@ -691,11 +692,9 @@ int BalloonManager_br::hitTestDialogueBalloon(int x, int y) {
 	Common::Point p;
 
 	for (uint i = 0; i < _numBalloons; i++) {
-		p.x = x - _intBalloons[i].obj->x;
-		p.y = y - _intBalloons[i].obj->y;
-
-		if (_intBalloons[i].box.contains(p))
+		if (_intBalloons[i].box.contains(x, y)) {
 			return i;
+		}
 	}
 
 	return -1;
