@@ -408,6 +408,9 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	switch (it->type) {
 	// color sprite
 	case 0:
+		if (objectTable[it->objIdx].frame < 0) {
+			return;
+		}
 		sprite = animDataTable + objectTable[it->objIdx].frame;
 		len = sprite->_realWidth * sprite->_height;
 		mask = new byte[len];
