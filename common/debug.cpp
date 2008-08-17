@@ -29,65 +29,33 @@
 
 #include "engine/backend/platform/driver.h"
 
-Common::String tag2string(uint32 tag) {
-	char str[5];
-	str[0] = (char)(tag >> 24);
-	str[1] = (char)(tag >> 16);
-	str[2] = (char)(tag >> 8);
-	str[3] = (char)tag;
-	str[4] = '\0';
-	return Common::String(str);
-}
+#ifdef __PLAYSTATION2__
+	// for those replaced fopen/fread/etc functions
+	typedef unsigned long	uint64;
+	typedef signed long	int64;
+	#include "engine/backend/platform/ps2/fileio.h"
 
-void hexdump(const byte *data, int len, int bytesPerLine) {
-	assert(1 <= bytesPerLine && bytesPerLine <= 32);
-	int i;
-	byte c;
-	int offset = 0;
+	#define fprintf				ps2_fprintf
+	#define fflush(a)			ps2_fflush(a)
+#endif
 
-	while (len >= bytesPerLine) {
-		printf("%06x: ", offset);
-		for (i = 0; i < bytesPerLine; i++) {
-			printf("%02x ", data[i]);
-			if (i % 4 == 3)
-				printf(" ");
-		}
-		printf(" |");
-		for (i = 0; i < bytesPerLine; i++) {
-			c = data[i];
-			if (c < 32 || c >= 127)
-				c = '.';
-			printf("%c", c);
-		}
-		printf("|\n");
-		data += bytesPerLine;
-		len -= bytesPerLine;
-		offset += bytesPerLine;
-	}
+#ifdef __DS__
+	#include "engine/backend/fs/ds/ds-fs.h"
 
-	if (len <= 0)
-		return;
+	#undef stderr
+	#undef stdout
+	#undef stdin
 
-	printf("%06x: ", offset);
-	for (i = 0; i < bytesPerLine; i++) {
-		if (i < len)
-			printf("%02x ", data[i]);
-		else
-			printf("   ");
-		if (i % 4 == 3)
-			printf(" ");
-	}
-	printf(" |");
-	for (i = 0; i < len; i++) {
-		c = data[i];
-		if (c < 32 || c >= 127)
-			c = '.';
-		printf("%c", c);
-	}
-	for (; i < bytesPerLine; i++)
-		printf(" ");
-	printf("|\n");
-}
+	#define stdout ((DS::fileHandle*) -1)
+	#define stderr ((DS::fileHandle*) -2)
+	#define stdin ((DS::fileHandle*) -3)
+
+	void	std_fprintf(FILE* handle, const char* fmt, ...);
+	void	std_fflush(FILE* handle);
+
+	#define fprintf(file, fmt, ...)				{ char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); }
+	#define fflush(file)						DS::std_fflush(file)
+#endif
 
 static void debugHelper(const char *in_buf, bool caret = true) {
 	char buf[STRINGBUFLEN];

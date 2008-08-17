@@ -10,9 +10,10 @@ MODULE_OBJS := \
 	matrix3.o \
 	matrix4.o \
 	memorypool.o \
+	mutex.o
 	str.o \
 	stream.o \
-	mutex.o
+	utio.o
 
 # Include common rules
 include $(srcdir)/rules.mk

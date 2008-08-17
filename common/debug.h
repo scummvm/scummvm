@@ -58,8 +58,4 @@ void error(const char *fmt, ...);
 void CDECL debug(int level, const char *s, ...);
 void CDECL debug(const char *s, ...);
 
-void hexdump(const byte * data, int len, int bytesPerLine);
-
-Common::String tag2string(uint32 tag);
-
 #endif

@@ -61,4 +61,56 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #define round(x) ((x > 0.0) ? floor((x) + 0.5) : ceil((x) - 0.5))
 #endif
 
+namespace Common {
+
+/**
+ * Print a hexdump of the data passed in. The number of bytes per line is
+ * customizable.
+ * @param data	the data to be dumped
+ * @param len	the lenght of that data
+ * @param bytesPerLine	number of bytes to print per line (default: 16)
+ */
+extern void hexdump(const byte *data, int len, int bytesPerLine = 16);
+
+/**
+ * Simple random number generator. Although it is definitely not suitable for
+ * cryptographic purposes, it serves our purposes just fine.
+ */
+class RandomSource {
+private:
+	uint32 _randSeed;
+
+public:
+	RandomSource();
+	void setSeed(uint32 seed);
+
+	uint32 getSeed() {
+		return _randSeed;
+	}
+
+	/**
+	 * Generates a random unsigned integer in the interval [0, max].
+	 * @param max	the upper bound
+	 * @return	a random number in the interval [0, max].
+	 */
+	uint getRandomNumber(uint max);
+	/**
+	 * Generates a random unsigned integer in the interval [0, 1].
+	 * Identical to getRandomNumber(1), but faster, hopefully.
+	 * @return	a random number in the interval [0, max].
+	 */
+	uint getRandomBit(void);
+	/**
+	 * Generates a random unsigned integer in the interval [min, max].
+	 * @param min	the lower bound
+	 * @param max	the upper bound
+	 * @return	a random number in the interval [min, max].
+	 */
+	uint getRandomNumberRng(uint min, uint max);
+};
+
+Common::String tag2string(uint32 tag);
+
+}	// End of namespace Common
+
 #endif
