@@ -27,12 +27,12 @@
 #define BACKEND_DRIVER_TINYGL_H
 
 #include "common/sys.h"
-#include "common/vector3d.h"
 
 #include "engine/color.h"
 #include "engine/model.h"
 #include "engine/colormap.h"
 #include "engine/bitmap.h"
+#include "engine/vector3d.h"
 #include "engine/backend/platform/driver.h"
 #include "engine/backend/platform/sdl/driver_sdl.h"
 

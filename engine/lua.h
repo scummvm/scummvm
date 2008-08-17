@@ -26,8 +26,7 @@
 #ifndef LUA_HH
 #define LUA_HH
 
-#include "common/vector3d.h"
-
+#include "engine/vector3d.h"
 #include "engine/lua/lua.h"
 #include "engine/lua/lualib.h"
 #include "engine/lua/luadebug.h"

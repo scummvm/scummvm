@@ -192,18 +192,6 @@
 				RelativePath="..\..\common\list.h">
 			</File>
 			<File
-				RelativePath="..\..\common\matrix3.cpp">
-			</File>
-			<File
-				RelativePath="..\..\common\matrix3.h">
-			</File>
-			<File
-				RelativePath="..\..\common\matrix4.cpp">
-			</File>
-			<File
-				RelativePath="..\..\common\matrix4.h">
-			</File>
-			<File
 				RelativePath="..\..\common\memorypool.cpp">
 			</File>
 			<File
@@ -253,9 +241,6 @@
 			</File>
 			<File
 				RelativePath="..\..\common\util.h">
-			</File>
-			<File
-				RelativePath="..\..\common\vector3d.h">
 			</File>
 		</Filter>
 		<Filter
@@ -351,6 +336,18 @@
 				RelativePath="..\..\engine\material.h">
 			</File>
 			<File
+				RelativePath="..\..\engine\matrix3.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engine\matrix3.h">
+			</File>
+			<File
+				RelativePath="..\..\engine\matrix4.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engine\matrix4.h">
+			</File>
+			<File
 				RelativePath="..\..\engine\model.cpp">
 			</File>
 			<File
@@ -403,6 +400,9 @@
 			</File>
 			<File
 				RelativePath="..\..\engine\textsplit.h">
+			</File>
+			<File
+				RelativePath="..\..\engine\vector3d.h">
 			</File>
 			<File
 				RelativePath="..\..\engine\version.cpp">

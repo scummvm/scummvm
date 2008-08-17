@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef COMMON_VECTOR3D_H
-#define COMMON_VECTOR3D_H
+#ifndef ENGINE_VECTOR3D_H
+#define ENGINE_VECTOR3D_H
 
 #include <cmath>
 #include <common/sys.h>

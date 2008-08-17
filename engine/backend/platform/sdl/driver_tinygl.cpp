@@ -26,11 +26,11 @@
 #include "common/sys.h"
 #include "common/endian.h"
 #include "common/debug.h"
-#include "common/vector3d.h"
 
 #include "engine/colormap.h"
 #include "engine/material.h"
 #include "engine/font.h"
+#include "engine/vector3d.h"
 #include "engine/backend/platform/sdl/driver_tinygl.h"
 
 #include "engine/tinygl/gl.h"

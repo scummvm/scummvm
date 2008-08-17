@@ -26,10 +26,9 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "common/vector3d.h"
-#include "common/matrix4.h"
-
 #include "engine/resource.h"
+#include "engine/vector3d.h"
+#include "engine/matrix4.h"
 
 #include <cstring>
 

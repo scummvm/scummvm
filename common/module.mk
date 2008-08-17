@@ -7,8 +7,6 @@ MODULE_OBJS := \
 	file.o \
 	fs.o \
 	hashmap.o \
-	matrix3.o \
-	matrix4.o \
 	memorypool.o \
 	mutex.o \
 	str.o \

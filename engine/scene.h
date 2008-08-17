@@ -26,13 +26,13 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "common/vector3d.h"
 #include "common/debug.h"
 
 #include "engine/bitmap.h"
 #include "engine/color.h"
 #include "engine/walkplane.h"
 #include "engine/objectstate.h"
+#include "engine/vector3d.h"
 
 #include <string>
 

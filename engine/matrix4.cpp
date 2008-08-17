@@ -23,42 +23,18 @@
  *
  */
 
-#ifndef COMMON_MATRIX4_H
-#define COMMON_MATRIX4_H
+#include "engine/matrix4.h"
 
-#include "common/vector3d.h"
-#include "common/matrix3.h"
+Matrix4::Matrix4() {
+	_pos.set(0.f, 0.f, 0.f);
+	_rot.setAsIdentity();
+}
 
-// matrix 4 is a rotation matrix + position
-class Matrix4 {
-public:
-	Matrix3 _rot;
-	Vector3d _pos;
+void Matrix4::translate(float x, float y, float z) {
+	Vector3d v;
 
-	Matrix4();
-
-	Matrix4& operator =(const Matrix4& s) {
-		_pos = s._pos;
-		_rot = s._rot;
-
-		return *this;
-	}
-
-	Matrix4& operator *=(const Matrix4& s) {
-		Vector3d v;
-
-		v = s._pos;
-		_rot.transform(&v);
-		_pos += v;
-		_rot *= s._rot;
-
-		return *this;
-	}
-
-	void translate(float x, float y, float z);
-
-private:
-};
-
-#endif // MATRIX_HH
+	v.set(x, y, z);
+	_rot.transform(&v);
+	_pos += v;
+}
 

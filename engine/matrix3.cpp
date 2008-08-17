@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/matrix3.h"
+#include "engine/matrix3.h"
 
 #include <math.h>
 

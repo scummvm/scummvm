@@ -27,7 +27,8 @@
 #define WALKPLANE_H
 
 #include "common/debug.h"
-#include "common/vector3d.h"
+
+#include "engine/vector3d.h"
 
 #include <string>
 

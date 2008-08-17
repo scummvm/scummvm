@@ -25,7 +25,6 @@
 
 #include "common/sys.h"
 #include "common/debug.h"
-#include "common/vector3d.h"
 
 #include "engine/scene.h"
 #include "engine/textsplit.h"
@@ -34,6 +33,7 @@
 #include "engine/colormap.h"
 #include "engine/backend/platform/driver.h"
 #include "engine/engine.h"
+#include "engine/vector3d.h"
 
 #include "engine/imuse/imuse.h"
 

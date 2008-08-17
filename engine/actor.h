@@ -26,11 +26,10 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
-#include "common/vector3d.h"
-
 #include "engine/color.h"
 #include "engine/resource.h"
 #include "engine/font.h"
+#include "engine/vector3d.h"
 
 #include <string>
 #include <list>

@@ -27,12 +27,12 @@
 #define BACKEND_DRIVER_H
 
 #include "common/sys.h"
-#include "common/vector3d.h"
 #include "common/mutex.h"
 
 #include "engine/color.h"
 #include "engine/model.h"
 #include "engine/scene.h"
+#include "engine/vector3d.h"
 #include "engine/colormap.h"
 #include "engine/font.h"
 #include "engine/primitives.h"
