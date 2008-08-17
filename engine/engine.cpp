@@ -79,7 +79,7 @@ Engine::Engine() :
 	else
 		_speedLimitMs = 1000 / speed;
 	char buf[20];
-	sprintf(buf, "%d", _speedLimitMs);
+	sprintf(buf, "%d", 1000 / _speedLimitMs);
 	g_registry->set("engine_speed", buf);
 	_refreshDrawNeeded = true;
 	g_fslist = NULL;
