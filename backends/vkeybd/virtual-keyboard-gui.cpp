@@ -54,8 +54,6 @@ void VirtualKeyboardGUI::initMode(VirtualKeyboard::Mode *mode) {
 	_kbdBound.setWidth(_kbdSurface->w);
 	_kbdBound.setHeight(_kbdSurface->h);
 
-	_dispSurface.free();
-	_displayEnabled = false;
 	if (mode->displayArea)
 		setupDisplayArea(*(mode->displayArea), mode->displayFontColor);
 
@@ -66,12 +64,14 @@ void VirtualKeyboardGUI::initMode(VirtualKeyboard::Mode *mode) {
 }
 
 void VirtualKeyboardGUI::setupDisplayArea(Rect& r, OverlayColor forecolor) {
-	// choose font
+
 	_dispFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	if (!fontIsSuitable(_dispFont, r)) {
 		_dispFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-		if (!fontIsSuitable(_dispFont, r))
+		if (!fontIsSuitable(_dispFont, r)) {
+			_displayEnabled = false;
 			return;
+		}
 	}
 	_dispX = _kbdBound.left + r.left;
 	_dispY = _kbdBound.top + r.top + (r.height() - _dispFont->getFontHeight()) / 2;
@@ -79,7 +79,7 @@ void VirtualKeyboardGUI::setupDisplayArea(Rect& r, OverlayColor forecolor) {
 	_dispForeColor = forecolor;
 	_dispBackColor = _dispForeColor + 0xFF;
 	_dispSurface.create(r.width(), _dispFont->getFontHeight(), sizeof(OverlayColor));
-	_dispSurface.fillRect(r, _dispBackColor);
+	_dispSurface.fillRect(Rect(_dispSurface.w, _dispSurface.h), _dispBackColor);
 	_displayEnabled = true;
 }
 
@@ -88,11 +88,12 @@ bool VirtualKeyboardGUI::fontIsSuitable(const Graphics::Font *font, const Rect& 
 			font->getFontHeight() < rect.height());
 }
 
-void VirtualKeyboardGUI::run() {
+void VirtualKeyboardGUI::checkScreenChanged() {
 	if (_lastScreenChanged != _system->getScreenChangeID())
-		screenChanged();
+		screenChanged(); 
+}
 
-	// TODO: set default position if position is somehow invalid (ie. after screen change)
+void VirtualKeyboardGUI::run() {
 	if (_firstRun) {
 		_firstRun = false;
 		moveToDefaultPosition();
@@ -195,8 +196,11 @@ void VirtualKeyboardGUI::move(int16 x, int16 y) {
 
 void VirtualKeyboardGUI::screenChanged() {
 	_lastScreenChanged = _system->getScreenChangeID();
-	if (!_kbd->checkModeResolutions())
+	if (!_kbd->checkModeResolutions()) {
 		_displaying = false;
+		return;
+	}
+	moveToDefaultPosition();
 }
 
 

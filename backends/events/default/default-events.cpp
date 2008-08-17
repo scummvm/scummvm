@@ -423,11 +423,17 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				if (_vk->isDisplaying()) {
 					_vk->close(true);
 				} else {
-					bool isPaused = (g_engine) ? g_engine->isPaused() : true;
-					if (!isPaused) g_engine->pauseEngine(true);
-					_vk->show();
-					if (!isPaused) g_engine->pauseEngine(false);
-					result = false;
+					static bool enabled = true;
+					if (enabled && _vk->isLoaded() == false) {
+						enabled = _vk->loadKeyboardPack("vkeybd");
+					}
+					if (enabled) {
+						bool isPaused = (g_engine) ? g_engine->isPaused() : true;
+						if (!isPaused) g_engine->pauseEngine(true);
+						_vk->show();
+						if (!isPaused) g_engine->pauseEngine(false);
+						result = false;
+					}
 				}
 			} else if (event.kbd.keycode == Common::KEYCODE_F7 && event.kbd.flags == 0) {
 				if (!_remap) {

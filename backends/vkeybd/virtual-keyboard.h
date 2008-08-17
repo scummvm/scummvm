@@ -80,7 +80,7 @@ protected:
 		OverlayColor		displayFontColor;
 
 		Mode() : image(0), displayArea(0) {}
-		~Mode() { if (displayArea) delete displayArea; }
+		~Mode() { delete displayArea; }
 	};
 	
 	typedef Common::HashMap<Common::String, Mode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ModeMap;

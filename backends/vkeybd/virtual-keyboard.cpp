@@ -27,6 +27,8 @@
 #include "backends/vkeybd/virtual-keyboard-gui.h"
 #include "backends/vkeybd/virtual-keyboard-parser.h"
 #include "backends/vkeybd/keycode-descriptions.h"
+#include "common/config-manager.h"
+#include "common/fs.h"
 #include "graphics/imageman.h"
 
 #define KEY_START_CHAR ('[')
@@ -73,12 +75,25 @@ void VirtualKeyboard::reset() {
 }
 
 bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
-	if (Common::File::exists(packName + ".xml")) {
+	FilesystemNode *vkDir = 0;
+	if (ConfMan.hasKey("vkeybdpath")) {
+		vkDir = new FilesystemNode(ConfMan.get("vkeybdpath"));
+	} else if (ConfMan.hasKey("extrapath")) {
+		vkDir = new FilesystemNode(ConfMan.get("extrapath"));
+	} else { // use current directory
+		vkDir = new FilesystemNode(".");
+	}
+	
+	// TODO - make parser support FilesystemNode's
+	File::addDefaultDirectory(vkDir->getPath());
+
+	if (vkDir->getChild(packName + ".xml").exists()) {
 		// uncompressed keyboard pack
+		
 		if (!_parser->loadFile(packName + ".xml"))
 			return false;
 		
-	} else if (Common::File::exists(packName + ".zip")) {
+	} else if (vkDir->getChild(packName + ".zip").exists()) {
 		// compressed keyboard pack
 #ifdef USE_ZLIB
 		unzFile zipFile = unzOpen((packName + ".zip").c_str());
@@ -123,6 +138,7 @@ bool VirtualKeyboard::checkModeResolutions()
 {
 	_parser->setParseMode(kParseCheckResolutions);
 	_loaded = _parser->parse();
+	_kbdGUI->initMode(_currentMode);
 	return _loaded;
 }
 
@@ -197,15 +213,13 @@ void VirtualKeyboard::handleMouseUp(int16 x, int16 y) {
 }
 
 void VirtualKeyboard::show() {
+	if (_loaded) _kbdGUI->checkScreenChanged();
 	if (!_loaded) {
-		// if not loaded then load default "vkeybd" pack
-		if (!loadKeyboardPack("vkeybd")) {
-			warning("Keyboard not loaded therefore can't be shown");
-			return;
-		}
+		warning("Virtual keyboard not loaded!");
+		return;
 	}
-	switchMode(_initialMode);
 
+	switchMode(_initialMode);
 	_kbdGUI->run();
 
 	if (_submitKeys) {

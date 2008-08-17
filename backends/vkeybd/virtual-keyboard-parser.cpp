@@ -134,19 +134,17 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 
 	if (_parseMode == kParseFull) {
 		// if full parse then add new mode to keyboard
-
 		if (_keyboard->_modes.contains(name))
 			return parserError("Mode '%s' has already been defined", name.c_str());
 
 		VirtualKeyboard::Mode mode;
 		mode.name = name;
 		_keyboard->_modes[name] = mode;
-		_mode = &(_keyboard->_modes[name]);
+	}
 
-		if (name == _initialModeName)
-			_keyboard->_initialMode = _mode;
-	} else
-		_mode = &(_keyboard->_modes[name]);
+	_mode = &(_keyboard->_modes[name]);
+	if (name == _initialModeName)
+		_keyboard->_initialMode = _mode;
 
 	String resolutions = modeNode->values["resolutions"];
 	StringTokenizer tok (resolutions, " ,");
@@ -189,6 +187,8 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 			_mode->bitmapName.clear();
 			_mode->image = 0;
 			_mode->imageMap.removeAllAreas();
+			delete _mode->displayArea;
+			_mode->displayArea = 0;
 		}
 	}
 

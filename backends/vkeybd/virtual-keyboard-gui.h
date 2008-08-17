@@ -42,6 +42,7 @@ public:
 	~VirtualKeyboardGUI();
 	
 	void initMode(VirtualKeyboard::Mode *mode);
+	void checkScreenChanged();
 	void run();
 	void close();
 	bool isDisplaying() { return _displaying; }
