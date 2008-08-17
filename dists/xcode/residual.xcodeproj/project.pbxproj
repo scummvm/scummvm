@@ -24,8 +24,6 @@
 		289EEE120D8921CA00521A80 /* mixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE0D0D8921CA00521A80 /* mixer.cpp */; };
 		289EEE130D8921CA00521A80 /* rate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE0F0D8921CA00521A80 /* rate.cpp */; };
 		289EEE240D8921E400521A80 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE150D8921E400521A80 /* debug.cpp */; };
-		289EEE250D8921E400521A80 /* matrix3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE190D8921E400521A80 /* matrix3.cpp */; };
-		289EEE260D8921E400521A80 /* matrix4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE1B0D8921E400521A80 /* matrix4.cpp */; };
 		289EEE270D8921E400521A80 /* mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE1D0D8921E400521A80 /* mutex.cpp */; };
 		289EEED60D8921F600521A80 /* actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE290D8921F600521A80 /* actor.cpp */; };
 		289EEEE30D8921F600521A80 /* bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE420D8921F600521A80 /* bitmap.cpp */; };
@@ -111,6 +109,8 @@
 		28D6AC3E0E4081B100B1DE57 /* driver_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D6AC390E4081B100B1DE57 /* driver_sdl.cpp */; };
 		28D6AC3F0E4081B100B1DE57 /* driver_tinygl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D6AC3B0E4081B100B1DE57 /* driver_tinygl.cpp */; };
 		28D6AC430E4081CC00B1DE57 /* default-timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D6AC410E4081CC00B1DE57 /* default-timer.cpp */; };
+		28D9D70D0E5812F600BCBCB1 /* matrix3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D9D7090E5812F600BCBCB1 /* matrix3.cpp */; };
+		28D9D70E0E5812F600BCBCB1 /* matrix4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D9D70B0E5812F600BCBCB1 /* matrix4.cpp */; };
 		28F8DF8A0E403EA3003543B4 /* config-file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28F8DF890E403EA3003543B4 /* config-file.cpp */; };
 		28F8DF8D0E403EB2003543B4 /* config-manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28F8DF8C0E403EB2003543B4 /* config-manager.cpp */; };
 /* End PBXBuildFile section */
@@ -176,16 +176,11 @@
 		289EEE160D8921E400521A80 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		289EEE170D8921E400521A80 /* frac.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = frac.h; sourceTree = "<group>"; };
 		289EEE180D8921E400521A80 /* list.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
-		289EEE190D8921E400521A80 /* matrix3.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = matrix3.cpp; sourceTree = "<group>"; };
-		289EEE1A0D8921E400521A80 /* matrix3.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = matrix3.h; sourceTree = "<group>"; };
-		289EEE1B0D8921E400521A80 /* matrix4.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = matrix4.cpp; sourceTree = "<group>"; };
-		289EEE1C0D8921E400521A80 /* matrix4.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = matrix4.h; sourceTree = "<group>"; };
 		289EEE1D0D8921E400521A80 /* mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = mutex.cpp; sourceTree = "<group>"; };
 		289EEE1E0D8921E400521A80 /* mutex.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = mutex.h; sourceTree = "<group>"; };
 		289EEE1F0D8921E400521A80 /* noncopyable.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = noncopyable.h; sourceTree = "<group>"; };
 		289EEE210D8921E400521A80 /* sys.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = sys.h; sourceTree = "<group>"; };
 		289EEE220D8921E400521A80 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
-		289EEE230D8921E400521A80 /* vector3d.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = vector3d.h; sourceTree = "<group>"; };
 		289EEE290D8921F600521A80 /* actor.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = actor.cpp; sourceTree = "<group>"; };
 		289EEE2A0D8921F600521A80 /* actor.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = actor.h; sourceTree = "<group>"; };
 		289EEE420D8921F600521A80 /* bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = bitmap.cpp; sourceTree = "<group>"; };
@@ -343,6 +338,11 @@
 		28D6AC400E4081BE00B1DE57 /* driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver.h; path = platform/driver.h; sourceTree = "<group>"; };
 		28D6AC410E4081CC00B1DE57 /* default-timer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "default-timer.cpp"; path = "timer/default/default-timer.cpp"; sourceTree = "<group>"; };
 		28D6AC420E4081CC00B1DE57 /* default-timer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "default-timer.h"; path = "timer/default/default-timer.h"; sourceTree = "<group>"; };
+		28D9D7090E5812F600BCBCB1 /* matrix3.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = matrix3.cpp; sourceTree = "<group>"; };
+		28D9D70A0E5812F600BCBCB1 /* matrix3.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = matrix3.h; sourceTree = "<group>"; };
+		28D9D70B0E5812F600BCBCB1 /* matrix4.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = matrix4.cpp; sourceTree = "<group>"; };
+		28D9D70C0E5812F600BCBCB1 /* matrix4.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = matrix4.h; sourceTree = "<group>"; };
+		28D9D70F0E58130200BCBCB1 /* vector3d.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = vector3d.h; sourceTree = "<group>"; };
 		28F8DF890E403EA3003543B4 /* config-file.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = "config-file.cpp"; sourceTree = "<group>"; };
 		28F8DF8B0E403EAB003543B4 /* config-file.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "config-file.h"; sourceTree = "<group>"; };
 		28F8DF8C0E403EB2003543B4 /* config-manager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = "config-manager.cpp"; sourceTree = "<group>"; };
@@ -487,16 +487,11 @@
 				289EEE160D8921E400521A80 /* debug.h */,
 				289EEE170D8921E400521A80 /* frac.h */,
 				289EEE180D8921E400521A80 /* list.h */,
-				289EEE190D8921E400521A80 /* matrix3.cpp */,
-				289EEE1A0D8921E400521A80 /* matrix3.h */,
-				289EEE1B0D8921E400521A80 /* matrix4.cpp */,
-				289EEE1C0D8921E400521A80 /* matrix4.h */,
 				289EEE1D0D8921E400521A80 /* mutex.cpp */,
 				289EEE1E0D8921E400521A80 /* mutex.h */,
 				289EEE1F0D8921E400521A80 /* noncopyable.h */,
 				289EEE210D8921E400521A80 /* sys.h */,
 				289EEE220D8921E400521A80 /* timer.h */,
-				289EEE230D8921E400521A80 /* vector3d.h */,
 			);
 			name = common;
 			path = ../../common;
@@ -505,6 +500,11 @@
 		289EEE280D8921F600521A80 /* engine */ = {
 			isa = PBXGroup;
 			children = (
+				28D9D70F0E58130200BCBCB1 /* vector3d.h */,
+				28D9D7090E5812F600BCBCB1 /* matrix3.cpp */,
+				28D9D70A0E5812F600BCBCB1 /* matrix3.h */,
+				28D9D70B0E5812F600BCBCB1 /* matrix4.cpp */,
+				28D9D70C0E5812F600BCBCB1 /* matrix4.h */,
 				286B7CFD0E426E2C00560EAE /* cmd_line.cpp */,
 				286B7CFE0E426E2C00560EAE /* cmd_line.h */,
 				289917E20E1F6D7C006704AC /* version.cpp */,
@@ -806,8 +806,6 @@
 				289EEE120D8921CA00521A80 /* mixer.cpp in Sources */,
 				289EEE130D8921CA00521A80 /* rate.cpp in Sources */,
 				289EEE240D8921E400521A80 /* debug.cpp in Sources */,
-				289EEE250D8921E400521A80 /* matrix3.cpp in Sources */,
-				289EEE260D8921E400521A80 /* matrix4.cpp in Sources */,
 				289EEE270D8921E400521A80 /* mutex.cpp in Sources */,
 				289EEED60D8921F600521A80 /* actor.cpp in Sources */,
 				289EEEE30D8921F600521A80 /* bitmap.cpp in Sources */,
@@ -908,6 +906,8 @@
 				286B7CFF0E426E2C00560EAE /* cmd_line.cpp in Sources */,
 				28AF38310E58096B00B013C5 /* default-events.cpp in Sources */,
 				28AF38370E5809B000B013C5 /* util.cpp in Sources */,
+				28D9D70D0E5812F600BCBCB1 /* matrix3.cpp in Sources */,
+				28D9D70E0E5812F600BCBCB1 /* matrix4.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
