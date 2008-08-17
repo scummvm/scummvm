@@ -967,17 +967,21 @@ void LauncherDialog::loadGame(int item) {
 					// Delete the savegame
 					if (_loadDialog->delSave()) {
 						String filename = saveList[idx].filename();
-						printf("Deleting file: %s\n", filename.c_str());
-						saveFileMan->removeSavefile(filename.c_str());
-						if ((saveList.size() - 1) == 0)
-							ConfMan.setInt("save_slot", -1);
+						//printf("Deleting file: %s\n", filename.c_str());
+                                                MessageDialog alert("Do you really want to delete this savegame?", 
+									"Yes", "No");
+						if (alert.runModal() == GUI::kMessageOK) {
+							saveFileMan->removeSavefile(filename.c_str());
+						  	if ((saveList.size() - 1) == 0)
+								ConfMan.setInt("save_slot", -1);
+						}
 					}
 					// Load the savegame
 					else {
 						int slot = atoi(saveList[idx].save_slot().c_str());
-						const char *file = saveList[idx].filename().c_str();
-						printf("Loading slot: %d\n", slot);
-						printf("Loading file: %s\n", file);
+						//const char *file = saveList[idx].filename().c_str();
+						//printf("Loading slot: %d\n", slot);
+						//printf("Loading file: %s\n", file);
 						ConfMan.setActiveDomain(_domains[item]);
 						ConfMan.setInt("save_slot", slot);
 						close();
