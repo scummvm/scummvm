@@ -33,6 +33,7 @@
 #endif
 
 #define TOTAL_ZONES 3
+class RFs;
 
 class OSystem_SDL_Symbian : public OSystem_SDL {
 public:
@@ -62,6 +63,9 @@ public:
 
 	// Overloaded from SDL_Commmon
 	void quit();
+
+	// Returns reference to File session
+	RFs& FsSession();
 protected:
 	//
 	// The mixer callback function, passed on to OSystem::setSoundCallback().
@@ -131,6 +135,7 @@ protected:
 	} zoneDesc;
 
 	static zoneDesc _zones[TOTAL_ZONES];
+	RFs* _RFs;
 };
 
 #endif
