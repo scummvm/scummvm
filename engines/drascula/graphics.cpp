@@ -621,12 +621,11 @@ void DrasculaEngine::decodeRLE(byte* srcPtr, byte* dstPtr) {
 			pixel = *srcPtr++;
 		}
 		for (uint j = 0; j < repeat; j++) {
-			curByte++;
-			if (curByte > 64000) {
+			*dstPtr++ = pixel;
+			if (++curByte >= 64000) {
 				stopProcessing = true;
 				break;
 			}
-			*dstPtr++ = pixel;
 		}
 	}
 }
