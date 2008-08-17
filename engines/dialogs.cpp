@@ -22,6 +22,8 @@
  * $Id$ 
  */
 
+#include "base/version.h"
+
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -75,6 +77,10 @@ enum {
 MainMenuDialog::MainMenuDialog(Engine *engine)
 	: GlobalDialog("globalmain"), _engine(engine) {
 
+	new StaticTextWidget(this, "global_title", "ScummVM");
+
+	new StaticTextWidget(this, "global_version", gScummVMVersionDate);
+		
 	new GUI::ButtonWidget(this, "globalmain_resume", "Resume", kPlayCmd, 'P');
 
 //	new GUI::ButtonWidget(this, "globalmain_load", "Load", kLoadCmd, 'L');
