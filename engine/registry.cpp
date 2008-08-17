@@ -56,6 +56,7 @@ Registry *g_registry = NULL;
 Registry::Registry() : _dirty(true) {
 	_develMode = ConfMan.get("game_devel_mode");
 	_dataPath = ConfMan.get("path");
+	_savePath = ConfMan.get("savepath");
 	_lastSet = ConfMan.get("last_set");
 	_musicVolume = ConfMan.get("music_volume");
 	_sfxVolume = ConfMan.get("sfx_volume");
@@ -80,6 +81,8 @@ const char *Registry::get(const char *key, const char *defval) const {
 		return _develMode.c_str();
 	} else if (strcasecmp("GrimDataDir", key) == 0) {
 		return _dataPath.c_str();
+	} else if (strcasecmp("savepath", key) == 0) {
+		return _savePath.c_str();
 	} else if (strcasecmp("GrimLastSet", key) == 0) {
 		return _lastSet.c_str();
 	} else if (strcasecmp("MusicVolume", key) == 0) {
@@ -133,6 +136,9 @@ void Registry::set(const char *key, const char *val) {
 		return;
 	} else if (strcasecmp("GrimDataDir", key) == 0) {
 		_dataPath = val;
+		return;
+	} else if (strcasecmp("savepath", key) == 0) {
+		_savePath = val;
 		return;
 	} else if (strcasecmp("GrimLastSet", key) == 0) {
 		_lastSet = val;
@@ -194,6 +200,7 @@ void Registry::save() {
 
 	ConfMan.set("game_devel_mode", _develMode);
 	ConfMan.set("path", _dataPath);
+	ConfMan.set("savepath", _savePath);
 	ConfMan.set("last_set", _lastSet);
 	ConfMan.set("music_volume", _musicVolume);
 	ConfMan.set("sfx_volume", _sfxVolume);

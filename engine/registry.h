@@ -43,6 +43,7 @@ private:
 
 	Common::String _develMode;
 	Common::String _dataPath;
+	Common::String _savePath;
 	Common::String _lastSet;
 	Common::String _musicVolume;
 	Common::String _sfxVolume;
