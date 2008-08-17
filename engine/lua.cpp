@@ -189,7 +189,7 @@ static inline int check_int(int num) {
 
 static inline int check_control(int num) {
 	int val = check_int(num);
-	if (val < 0 || val >= g_driver->getNumControls())
+	if (val < 0 || val >= KEYCODE_EXTRA_LAST)
 		luaL_argerror(num, "control identifier out of range");
 	return val;
 }
@@ -2210,10 +2210,10 @@ void GetControlState() {
 	
 	DEBUG_FUNCTION();
 	num = check_control(1);
-	if (g_driver->controlIsAxis(num))
-		lua_pushnumber(g_driver->getControlAxis(num));
+	if (num >= KEYCODE_AXIS_JOY1_X && num <= KEYCODE_AXIS_MOUSE_Z)
+		lua_pushnumber(g_engine->getControlAxis(num));
 	else
-		pushbool(g_driver->getControlState(num));
+		pushbool(g_engine->getControlState(num));
 }
 
 static void killBitmapPrimitives(Bitmap *bitmap) {
@@ -3787,8 +3787,7 @@ void register_lua() {
 	lua_pushobject(controls_table);
 	lua_settable();
 
-	const Driver::ControlDescriptor *controls = g_driver->listControls();
-	for (unsigned i = 0; controls[i].name != NULL; i++) {
+	for (int i = 0; controls[i].name; i++) {
 		lua_pushobject(controls_table);
 		lua_pushstring(controls[i].name);
 		lua_pushnumber(controls[i].key);

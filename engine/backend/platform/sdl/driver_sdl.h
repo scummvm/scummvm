@@ -58,12 +58,7 @@ public:
 
 	const char *getVideoDeviceName();
 
-	const ControlDescriptor *listControls();
-	int getNumControls();
-	bool controlIsAxis(int num);
-	float getControlAxis(int num);
-	bool getControlState(int num);
-	bool pollEvent(Event &event);
+	bool pollEvent(Common::Event &event);
 	uint32 getMillis();
 	void delayMillis(uint msecs);
 	Common::TimerManager *getTimerManager();
@@ -88,6 +83,23 @@ private:
 	Common::SaveFileManager *_savefile;
 	Common::TimerManager *_timer;
 	SDL_TimerID _timerID;
+
+	virtual void fillMouseEvent(Common::Event &event, int x, int y);
+
+	// Keyboard mouse emulation.  Disabled by fingolfin 2004-12-18.
+	// I am keeping the rest of the code in for now, since the joystick
+	// code (or rather, "hack") uses it, too.
+	struct KbdMouse {
+		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
+		uint32 last_time, delay_time, x_down_time, y_down_time;
+	};
+
+	// mouse
+	KbdMouse _km;
+
+	void handleKbdMouse();
+
+	bool remapKey(SDL_Event &ev, Common::Event &event);
 
 protected:
 

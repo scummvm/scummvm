@@ -50,6 +50,11 @@ extern int g_flags;
 
 #define GF_DEMO		1
 
+struct ControlDescriptor {
+	const char *name;
+	int key;
+};
+
 class Engine {
 public:
 
@@ -84,6 +89,8 @@ public:
 
 	void enableControl(int num) { _controlsEnabled[num] = true; }
 	void disableControl(int num) { _controlsEnabled[num] = false; }
+	float getControlAxis(int num);
+	bool getControlState(int num);
 
 	Scene *findScene(const char *name);
 	void setSceneLock(const char *name, bool lockStatus);
@@ -207,6 +214,7 @@ private:
 	unsigned _speedLimitMs;
 
 	bool *_controlsEnabled;
+	bool *_controlsState;
 
 	SceneListType _scenes;
 	ActorListType _actors;
@@ -223,5 +231,60 @@ extern Actor *g_currentUpdatedActor;
 
 void vimaInit(uint16 *destTable);
 void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable);
+
+// Fake KEYCODE_* values for joystick and mouse events
+
+enum {
+	KEYCODE_JOY1_B1 = 512,
+	KEYCODE_JOY1_B2,
+	KEYCODE_JOY1_B3,
+	KEYCODE_JOY1_B4,
+	KEYCODE_JOY1_B5,
+	KEYCODE_JOY1_B6,
+	KEYCODE_JOY1_B7,
+	KEYCODE_JOY1_B8,
+	KEYCODE_JOY1_B9,
+	KEYCODE_JOY1_B10,
+	KEYCODE_JOY1_HLEFT,
+	KEYCODE_JOY1_HUP,
+	KEYCODE_JOY1_HRIGHT,
+	KEYCODE_JOY1_HDOWN,
+	KEYCODE_JOY2_B1,
+	KEYCODE_JOY2_B2,
+	KEYCODE_JOY2_B3,
+	KEYCODE_JOY2_B4,
+	KEYCODE_JOY2_B5,
+	KEYCODE_JOY2_B6,
+	KEYCODE_JOY2_B7,
+	KEYCODE_JOY2_B8,
+	KEYCODE_JOY2_B9,
+	KEYCODE_JOY2_B10,
+	KEYCODE_JOY2_HLEFT,
+	KEYCODE_JOY2_HUP,
+	KEYCODE_JOY2_HRIGHT,
+	KEYCODE_JOY2_HDOWN,
+	KEYCODE_MOUSE_B1,
+	KEYCODE_MOUSE_B2,
+	KEYCODE_MOUSE_B3,
+	KEYCODE_MOUSE_B4,
+	KEYCODE_AXIS_JOY1_X,
+	KEYCODE_AXIS_JOY1_Y,
+	KEYCODE_AXIS_JOY1_Z,
+	KEYCODE_AXIS_JOY1_R,
+	KEYCODE_AXIS_JOY1_U,
+	KEYCODE_AXIS_JOY1_V,
+	KEYCODE_AXIS_JOY2_X,
+	KEYCODE_AXIS_JOY2_Y,
+	KEYCODE_AXIS_JOY2_Z,
+	KEYCODE_AXIS_JOY2_R,
+	KEYCODE_AXIS_JOY2_U,
+	KEYCODE_AXIS_JOY2_V,
+	KEYCODE_AXIS_MOUSE_X,
+	KEYCODE_AXIS_MOUSE_Y,
+	KEYCODE_AXIS_MOUSE_Z,
+	KEYCODE_EXTRA_LAST
+};
+
+extern const ControlDescriptor controls[];
 
 #endif

@@ -28,6 +28,7 @@
 
 #include "common/sys.h"
 #include "common/mutex.h"
+#include "common/events.h"
 
 #include "engine/color.h"
 #include "engine/model.h"
@@ -43,9 +44,11 @@ class Material;
 class Bitmap;
 class Timer;
 class FilesystemFactory;
+class Engine;
 
 namespace Common {
 	class SaveFileManager;
+	class EventManager;
 }
 
 namespace Audio {
@@ -139,102 +142,13 @@ public:
 
 	virtual void getTimeAndDate(struct tm &t) const = 0;
 
-	/**
-	 * The types of events backends may generate.
-	 * @see Event
-	 */
-	enum EventType {
-		/** A key was pressed, details in Event::kbd. */
-		EVENT_KEYDOWN = 1,
-		/** A key was released, details in Event::kbd. */
-		EVENT_KEYUP = 2,
-
-		EVENT_QUIT = 10,
-		EVENT_REFRESH = 11
-	};
-
-	/**
-	 * Keyboard modifier flags, used for Event::kbd::flags.
-	 */
-	enum {
-		KBD_CTRL  = 1 << 0,
-		KBD_ALT   = 1 << 1,
-		KBD_SHIFT = 1 << 2
-	};
-
-	/**
-	 * Data structure for an event. A pointer to an instance of Event
-	 * can be passed to pollEvent.
-	 */
-	struct Event {
-		/** The type of the event. */
-		EventType type;
-		/**
-		  * Keyboard data; only valid for keyboard events (EVENT_KEYDOWN and
-		  * EVENT_KEYUP). For all other event types, content is undefined.
-		  */
-		struct {
-			/**
-			 * Abstract control number (will be the same for any given key regardless
-			 * of modifiers being held at the same time.
-			 * For example, this is the same for both 'A' and Shift-'A'.
-			 */
-			int num;
-			/**
-			 * ASCII-value of the pressed key (if any).
-			 * This depends on modifiers, i.e. pressing the 'A' key results in
-			 * different values here depending on the status of shift, alt and
-			 * caps lock.
-			 */
-			uint16 ascii;
-			/**
-			 * Status of the modifier keys. Bits are set in this for each
-			 * pressed modifier
-			 * @see KBD_CTRL, KBD_ALT, KBD_SHIFT
-			 */
-			byte flags;
-		} kbd;
-	};
-
-	/**
-	 *
-	 */
-	struct ControlDescriptor {
-		const char *name;
-		int key;
-	};
-
-	/**
-	 * Get a list of all named controls supported by the driver
-	 */
-	virtual const ControlDescriptor *listControls() = 0;
-
-	/**
-	 * Get the largest control number used by the driver, plus 1
-	 */
-	virtual int getNumControls() = 0;
-
-	/**
-	 * Check whether a control is an axis control
-	 */
-	virtual bool controlIsAxis(int num) = 0;
-
-	/**
-	 * Read the current value of an axis control (-1.0 .. 1.0)
-	 */
-	virtual float getControlAxis(int num) = 0;
-
-	/**
-	 * Read the current state of a non-axis control
-	 */
-	virtual bool getControlState(int num) = 0;
-
+	friend class DefaultEventManager;
 	/**
 	 * Get the next event in the event queue.
 	 * @param event	point to an Event struct, which will be filled with the event data.
 	 * @return true if an event was retrieved.
 	 */
-	virtual bool pollEvent(Event &event) = 0;
+	virtual bool pollEvent(Common::Event &event) = 0;
 
 	/** Get the number of milliseconds since the program was started. */
 	virtual uint32 getMillis() = 0;
