@@ -699,6 +699,8 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, 
 	mouseHotspotX = hotspotX;
 	mouseHotspotY = hotspotY;
 
+	//consolePrintf("Set cursor icon %d, %d\n", w, h);
+
 	{
 		int off = 128*64;
 	

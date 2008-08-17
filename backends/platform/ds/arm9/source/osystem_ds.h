@@ -64,6 +64,15 @@ protected:
 
 	u16 _palette[256];
 	u16 _cursorPalette[256];
+
+	u8 _cursorImage[64 * 64];
+	uint _cursorW;
+	uint _cursorH;
+	int _cursorHotX;
+	int _cursorHotY;
+	byte _cursorKey;
+	int _cursorScale;
+
 	
 	Graphics::Surface* createTempFrameBuffer();
 	bool _disableCursorPalette;
@@ -168,9 +177,11 @@ public:
 
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
-	virtual void disableCursorPalette(bool dis) { _disableCursorPalette = dis; }
+	virtual void disableCursorPalette(bool dis) { _disableCursorPalette = dis; refreshCursor(); }
 
 	FilesystemFactory *getFilesystemFactory();
+
+	void refreshCursor();
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {

@@ -460,8 +460,23 @@ bool OSystem_DS::showMouse(bool visible) {
 void OSystem_DS::warpMouse(int x, int y) {
 }
 
+
 void OSystem_DS::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetCursorScale) {
-	DS::setCursorIcon(buf, w, h, keycolor, hotspotX, hotspotY);
+	if ((w > 0) && (w < 64) && (h > 0) && (h < 64))
+	{
+		memcpy(_cursorImage, buf, w * h);
+		_cursorW = w;
+		_cursorH = h;
+		_cursorHotX = hotspotX;
+		_cursorHotY = hotspotY;
+		_cursorKey = keycolor;
+		_cursorScale = targetCursorScale;
+		refreshCursor();
+	}
+}
+
+void OSystem_DS::refreshCursor() {
+	DS::setCursorIcon(_cursorImage, _cursorW, _cursorH, _cursorKey, _cursorHotX, _cursorHotY);
 }
 
 void OSystem_DS::addEvent(Common::Event& e) {
