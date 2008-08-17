@@ -1667,6 +1667,16 @@ void gfxResetRawPage(byte *pageRaw) {
 }
 
 void gfxConvertSpriteToRaw(byte *dst, const byte *src, uint16 w, uint16 h) {
+	// Output is 4 bits per pixel.
+	// Pixels are in 16 pixel chunks (8 bytes of source per 16 pixels of output).
+	// The source data is interleaved so that
+	// 1st big-endian 16-bit value contains all bit position 0 values for 16 pixels,
+	// 2nd big-endian 16-bit value contains all bit position 1 values for 16 pixels,
+	// 3rd big-endian 16-bit value contains all bit position 2 values for 16 pixels,
+	// 4th big-endian 16-bit value contains all bit position 3 values for 16 pixels.
+	// 1st pixel's bits are in the 16th bits,
+	// 2nd pixel's bits are in the 15th bits,
+	// 3rd pixel's bits are in the 14th bits etc.
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w / 8; ++x) {
 			for (int bit = 0; bit < 16; ++bit) {
