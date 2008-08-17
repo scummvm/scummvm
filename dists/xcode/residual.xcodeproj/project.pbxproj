@@ -105,6 +105,8 @@
 		289EEF2D0D8921F600521A80 /* zmath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEED00D8921F600521A80 /* zmath.cpp */; };
 		289EEF2E0D8921F600521A80 /* ztriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEED20D8921F600521A80 /* ztriangle.cpp */; };
 		289EEF2F0D8921F600521A80 /* walkplane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEED40D8921F600521A80 /* walkplane.cpp */; };
+		28AF38310E58096B00B013C5 /* default-events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28AF382F0E58096B00B013C5 /* default-events.cpp */; };
+		28AF38370E5809B000B013C5 /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28AF38360E5809B000B013C5 /* util.cpp */; };
 		28D6AC3D0E4081B100B1DE57 /* driver_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D6AC370E4081B100B1DE57 /* driver_gl.cpp */; };
 		28D6AC3E0E4081B100B1DE57 /* driver_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D6AC390E4081B100B1DE57 /* driver_sdl.cpp */; };
 		28D6AC3F0E4081B100B1DE57 /* driver_tinygl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D6AC3B0E4081B100B1DE57 /* driver_tinygl.cpp */; };
@@ -326,6 +328,12 @@
 		289EEED30D8921F600521A80 /* ztriangle.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = ztriangle.h; sourceTree = "<group>"; };
 		289EEED40D8921F600521A80 /* walkplane.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = walkplane.cpp; sourceTree = "<group>"; };
 		289EEED50D8921F600521A80 /* walkplane.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = walkplane.h; sourceTree = "<group>"; };
+		28AF382F0E58096B00B013C5 /* default-events.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "default-events.cpp"; path = "events/default/default-events.cpp"; sourceTree = "<group>"; };
+		28AF38300E58096B00B013C5 /* default-events.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "default-events.h"; path = "events/default/default-events.h"; sourceTree = "<group>"; };
+		28AF38330E58098600B013C5 /* events.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = events.h; sourceTree = "<group>"; };
+		28AF38340E58099100B013C5 /* keyboard.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = keyboard.h; sourceTree = "<group>"; };
+		28AF38350E58099F00B013C5 /* rect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = rect.h; sourceTree = "<group>"; };
+		28AF38360E5809B000B013C5 /* util.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = util.cpp; sourceTree = "<group>"; };
 		28D6AC370E4081B100B1DE57 /* driver_gl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = driver_gl.cpp; path = platform/sdl/driver_gl.cpp; sourceTree = "<group>"; };
 		28D6AC380E4081B100B1DE57 /* driver_gl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver_gl.h; path = platform/sdl/driver_gl.h; sourceTree = "<group>"; };
 		28D6AC390E4081B100B1DE57 /* driver_sdl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = driver_sdl.cpp; path = platform/sdl/driver_sdl.cpp; sourceTree = "<group>"; };
@@ -445,6 +453,10 @@
 		289EEE140D8921E400521A80 /* common */ = {
 			isa = PBXGroup;
 			children = (
+				28AF38360E5809B000B013C5 /* util.cpp */,
+				28AF38350E58099F00B013C5 /* rect.h */,
+				28AF38340E58099100B013C5 /* keyboard.h */,
+				28AF38330E58098600B013C5 /* events.h */,
 				28F8DF8E0E403EBC003543B4 /* config-manager.h */,
 				28F8DF8C0E403EB2003543B4 /* config-manager.cpp */,
 				28F8DF8B0E403EAB003543B4 /* config-file.h */,
@@ -556,6 +568,7 @@
 		289EEE2B0D8921F600521A80 /* backend */ = {
 			isa = PBXGroup;
 			children = (
+				28AF38250E58093700B013C5 /* events */,
 				28D6AC340E40814900B1DE57 /* timer */,
 				28D6AC330E40813F00B1DE57 /* platform */,
 				281E11120E3FA90E004A8255 /* saves */,
@@ -688,6 +701,23 @@
 				289EEED30D8921F600521A80 /* ztriangle.h */,
 			);
 			path = tinygl;
+			sourceTree = "<group>";
+		};
+		28AF38250E58093700B013C5 /* events */ = {
+			isa = PBXGroup;
+			children = (
+				28AF38260E58093E00B013C5 /* default */,
+			);
+			name = events;
+			sourceTree = "<group>";
+		};
+		28AF38260E58093E00B013C5 /* default */ = {
+			isa = PBXGroup;
+			children = (
+				28AF382F0E58096B00B013C5 /* default-events.cpp */,
+				28AF38300E58096B00B013C5 /* default-events.h */,
+			);
+			name = default;
 			sourceTree = "<group>";
 		};
 		28D6AC330E40813F00B1DE57 /* platform */ = {
@@ -876,6 +906,8 @@
 				28D6AC3F0E4081B100B1DE57 /* driver_tinygl.cpp in Sources */,
 				28D6AC430E4081CC00B1DE57 /* default-timer.cpp in Sources */,
 				286B7CFF0E426E2C00560EAE /* cmd_line.cpp in Sources */,
+				28AF38310E58096B00B013C5 /* default-events.cpp in Sources */,
+				28AF38370E5809B000B013C5 /* util.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
