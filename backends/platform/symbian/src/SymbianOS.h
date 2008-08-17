@@ -33,6 +33,7 @@
 #endif
 
 #define TOTAL_ZONES 3
+class RFs;
 
 class OSystem_SDL_Symbian : public OSystem_SDL {
 public:
@@ -134,6 +135,7 @@ protected:
 	} zoneDesc;
 
 	static zoneDesc _zones[TOTAL_ZONES];
+	RFs* _RFs;
 };
 
 #endif

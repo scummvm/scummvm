@@ -161,6 +161,7 @@ OSystem_SDL_Symbian::zoneDesc OSystem_SDL_Symbian::_zones[TOTAL_ZONES] = {
         { 150, 145, 170, 55 }
 };
 OSystem_SDL_Symbian::OSystem_SDL_Symbian() :_channels(0),_stereo_mix_buffer(0) {
+	_RFs = &CEikonEnv::Static()->FsSession();
 }
 
 void OSystem_SDL_Symbian::initBackend() {
@@ -488,6 +489,10 @@ void OSystem_SDL_Symbian::initZones() {
 	}
 }
 
+RFs& OSystem_SDL_Symbian::FsSession() {
+	return *_RFs;
+}
+
 FILE*	symbian_fopen(const char* name, const char* mode) {
 	TSymbianFileEntry* fileEntry = new TSymbianFileEntry;
 	fileEntry->iInputPos = KErrNotFound;
@@ -516,22 +521,22 @@ FILE*	symbian_fopen(const char* name, const char* mode) {
 
 		switch(mode[0]) {
 		case 'a':
-			if (fileEntry->iFileHandle.Open(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
-				if (fileEntry->iFileHandle.Create(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
+			if (fileEntry->iFileHandle.Open(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
+				if (fileEntry->iFileHandle.Create(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
 					delete fileEntry;
 					fileEntry = NULL;
 				}
 			}
 			break;
 		case 'r':
-			if (fileEntry->iFileHandle.Open(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
+			if (fileEntry->iFileHandle.Open(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
 				delete fileEntry;
 				fileEntry = NULL;
 			}
 			break;
 
 		case 'w':
-			if (fileEntry->iFileHandle.Replace(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
+			if (fileEntry->iFileHandle.Replace(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
 				delete fileEntry;
 				fileEntry = NULL;
 			}
