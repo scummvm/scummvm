@@ -59,6 +59,7 @@ private:
 	Common::String _softRenderer;
 	Common::String _glZbuffer;
 	Common::String _fullscreen;
+	Common::String _engineSpeed;
 
 	bool _dirty;
 };

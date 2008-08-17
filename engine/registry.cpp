@@ -51,6 +51,7 @@ Registry *g_registry = NULL;
 // gl_zbuffer
 // soft_renderer
 // fullscreen
+// engine_speed
 
 Registry::Registry() : _dirty(true) {
 	_develMode = ConfMan.get("game_devel_mode");
@@ -71,6 +72,7 @@ Registry::Registry() : _dirty(true) {
 	_softRenderer = ConfMan.get("soft_renderer");
 	_glZbuffer = ConfMan.get("gl_zbuffer");
 	_fullscreen = ConfMan.get("fullscreen");
+	_engineSpeed = ConfMan.get("engine_speed");
 }
 
 const char *Registry::get(const char *key, const char *defval) const {
@@ -110,6 +112,8 @@ const char *Registry::get(const char *key, const char *defval) const {
 		return _glZbuffer.c_str();
 	} else if (strcasecmp("fullscreen", key) == 0) {
 		return _fullscreen.c_str();
+	} else if (strcasecmp("engine_speed", key) == 0) {
+		return _engineSpeed.c_str();
 	}
 
 	return defval;
@@ -178,6 +182,9 @@ void Registry::set(const char *key, const char *val) {
 	} else if (strcasecmp("fullscreen", key) == 0) {
 		_fullscreen = val;
 		return;
+	} else if (strcasecmp("engine_speed", key) == 0) {
+		_engineSpeed = val;
+		return;
 	}
 }
 
@@ -203,6 +210,7 @@ void Registry::save() {
 	ConfMan.set("soft_renderer", _softRenderer);
 	ConfMan.set("gl_zbuffer", _glZbuffer);
 	ConfMan.set("fullscreen", _fullscreen);
+	ConfMan.set("engine_speed", _engineSpeed);
 
 	ConfMan.flushToDisk();
 

@@ -25,6 +25,7 @@
 
 #include "common/sys.h"
 #include "common/fs.h"
+#include "common/str.h"
 
 #include "engine/engine.h"
 #include "engine/scene.h"
@@ -36,6 +37,7 @@
 #include "engine/backend/platform/driver.h"
 #include "engine/savegame.h"
 #include "engine/lipsynch.h"
+#include "engine/registry.h"
 
 #include "engine/imuse/imuse.h"
 
@@ -69,7 +71,16 @@ Engine::Engine() :
 	_textSpeed = 7;
 	_mode = _previousMode = ENGINE_MODE_IDLE;
 	_flipEnable = true;
-	_speedLimitMs = 33;
+	int speed = atol(g_registry->get("engine_speed", "30"));
+	if (speed == 0)
+		_speedLimitMs = 0;
+	else if (speed < 0 || speed > 100)
+		_speedLimitMs = 33;
+	else
+		_speedLimitMs = 1000 / speed;
+	char buf[20];
+	sprintf(buf, "%d", _speedLimitMs);
+	g_registry->set("engine_speed", buf);
 	_refreshDrawNeeded = true;
 	g_fslist = NULL;
 	g_fsdir = NULL;
@@ -452,6 +463,8 @@ void Engine::mainLoop() {
 		if (startTime > endTime)
 			continue;
 		uint32 diffTime = endTime - startTime;
+		if (_speedLimitMs == 0)
+			continue;
 		if (diffTime < _speedLimitMs) {
 			uint32 delayTime = _speedLimitMs - diffTime;
 			g_driver->delayMillis(delayTime);

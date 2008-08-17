@@ -84,6 +84,7 @@ static const char HELP_STRING[] =
 	"  --show-fps=BOOL          Set the turn on/off display FPS info: TRUE/FALSE\n"
 	"  --gl-zbuffer=BOOL        Set the turn on/off Z Buffer in OpenGL display\n"
 	"  --soft-renderer=BOOL     Set the turn on/off software 3D renderer: TRUE/FALSE\n"
+	"  --engine-speed=NUM       Set engine speed (default: 30)\n"
 	"  -b, --boot-param=NUM     Pass number to the boot script (boot param)\n"
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
 	"  --debugflags=FLAGS       Enables engine specific debug flags\n"
@@ -137,6 +138,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("gl_zbuffer", "TRUE");
 	ConfMan.registerDefault("soft_renderer", "TRUE");
 	ConfMan.registerDefault("fullscreen", "FALSE");
+	ConfMan.registerDefault("engine_speed", "30");
 
 	ConfMan.registerDefault("disable_sdl_parachute", false);
 
@@ -313,6 +315,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("soft-renderer")
+			END_OPTION
+
+			DO_LONG_OPTION("engine-speed")
 			END_OPTION
 
 			DO_LONG_OPTION("manny-state")
