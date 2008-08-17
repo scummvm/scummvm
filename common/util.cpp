@@ -30,7 +30,7 @@ namespace Common {
 //
 // Print hexdump of the data passed in
 //
-void hexdump(const byte * data, int len, int bytesPerLine) {
+void hexdump(const byte *data, int len, int bytesPerLine) {
 	assert(1 <= bytesPerLine && bytesPerLine <= 32);
 	int i;
 	byte c;
