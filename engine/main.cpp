@@ -76,6 +76,11 @@ extern "C" int residual_main(int argc, char *argv[]) {
 	// Update the config file
 	ConfMan.set("versioninfo", gResidualVersion, Common::ConfigManager::kApplicationDomain);
 
+	if (!processSettings(command, settings))
+		return 0;
+
+	g_registry = new Registry();
+
 	// Load and setup the debuglevel and the debug flags. We do this at the
 	// soonest possible moment to ensure debug output starts early on, if
 	// requested.
@@ -90,11 +95,6 @@ extern "C" int residual_main(int argc, char *argv[]) {
 		specialDebug = settings["debugflags"];
 		settings.erase("debugflags");
 	}
-
-	if (!processSettings(command, settings))
-		return 0;
-
-	g_registry = new Registry();
 
 	SHOWFPS_GLOBAL = (tolower(g_registry->get("show_fps", "FALSE")[0]) == 't');
 	TINYGL_GLOBAL = (tolower(g_registry->get("soft_renderer", "FALSE")[0]) == 't');
