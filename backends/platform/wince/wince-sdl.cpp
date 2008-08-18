@@ -1059,12 +1059,6 @@ void OSystem_WINCE3::update_game_settings() {
 			panel->setVisible(false);
 
 		_saveToolbarState = true;
-
-		// Set Smush Force Redraw rate for Full Throttle
-		if (!ConfMan.hasKey("Smush_force_redraw")) {
-			ConfMan.setInt("Smush_force_redraw", 30);
-			ConfMan.flushToDisk();
-		}
 	}
 
 	compute_sample_rate();

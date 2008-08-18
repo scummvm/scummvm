@@ -300,12 +300,6 @@ Game specific sections (f.e. [monkey2]) - performance options
                                     stuttering try setting this to a higher value.
                                     Set to 0 if your device is fast enough or if
                                     you prefer better audio/video synchronization.
- *  Smush_force_redraw     int      Force a Smush frame redraw every X missed
-                                    frames. Mainly used for Full Throttle action
-                                    sequences. Setting it lower gives more
-                                    priority to screen redraws. Setting it higher
-                                    gives more priority to stylus/keyboard input.
-                                    The default is 30.
 
 Game specific sections (f.e. [monkey2]) - game options
 
