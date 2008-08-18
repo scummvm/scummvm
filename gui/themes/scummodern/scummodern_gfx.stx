@@ -32,10 +32,10 @@
 				rgb = '203, 126, 107'
 		/>
 		<color name = 'xtrabrightred'
-				rgb = '255, 210, 200'
+				rgb = '251, 241, 206'
 		/>
 		<color name = 'blandyellow'
-				rgb = '247, 228, 166'
+				rgb = '246, 224, 139'
 		/>
 		<color name = 'bgreen'
 				rgb = '100, 162, 8'
@@ -466,7 +466,7 @@
 					radius = 8
 					stroke = 0
 					gradient_start = 'blandyellow'
-					gradient_end = 'xtrabrightred'
+					gradient_end = '251, 241, 206'
 					gradient_factor = '6'
 					fill = 'gradient'
 					shadow = 3
