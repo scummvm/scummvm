@@ -363,16 +363,7 @@ bool ThemeRenderer::addDrawData(const Common::String &data, bool cached) {
 bool ThemeRenderer::loadTheme(Common::String fileName) {
 	unloadTheme();
 
-	if (fileName != "builtin") {	
-		if (ConfMan.hasKey("themepath"))
-			Common::File::addDefaultDirectory(ConfMan.get("themepath"));
-
-#ifdef DATA_PATH
-		Common::File::addDefaultDirectoryRecursive(DATA_PATH);
-#endif
-		if (ConfMan.hasKey("extrapath"))
-			Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
-		
+	if (fileName != "builtin") {
 		if (fileName.hasSuffix(".zip"))
 			ImageMan.addArchive(fileName);
 		else 
