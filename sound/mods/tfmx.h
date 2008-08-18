@@ -34,7 +34,6 @@ namespace Audio {
 
 class Tfmx : public Paula {
 public:
-		//TODO:: Ctor + Dtor might need some repair/cleanup
 		Tfmx(bool stereo = false, int rate = 44100, int interruptFreq = 0);
 		~Tfmx();
 	
@@ -43,56 +42,77 @@ public:
 		void load();
 		void loadSamples();
 
-		//After the TFMX file is loaded, you chose which song to playback.
-		//The song will end automatically or when you call stop().
+		//After loading the data file and the sample file, you chose which song to playback.
+		//The playback will terminate automatically or when you call stop().
 		void playSong(uint8 songNumber);
 		void stop();
 		
-		//DEBUGGING FUNCTION:: Temporary function to test individual macros for playback
+		//DEBUGGING FUNCTIONS:: Function to test individual macros/patterns for playback.
 		void testMacro(uint8 macroNumber);
 		void testPattern(uint8 patternNumber);
-		bool loadSong(uint8 songNumber); //temporarly public
+		
 protected:
 		//DEBUGGING::
 		bool _macroTest;
 		bool _patternTest;
 	
-		//uint8 stream for whole MDAT file
+		//UINT8 Stream for data file.
 		uint8 *_data;      
 		uint32 _dataSize; 
 
-		//uint8 stream for whole SMPL file
+		//UINT8 Stream for sample file.
 		int8 *_sampleData;
 		uint32 _sampleSize;
 
-		//addresses of tables in MDAT file
+		//Addresses of tables in the data file.
 		uint32 _trackTableOffset;
 		uint32 _patternTableOffset;
 		uint32 _macroTableOffset;
 
-		//addresses of patterns and macros from MDAT file
+		//Pointers to the patterns and macros in the data file.
 		uint32 _patternPointers[128];
 		uint32 _macroPointers[128];  
 
-		//uint16 stream for current song trackstep
+		//Current song trackstep steam and flags.
 		uint16 *_trackData;
 		uint32 _trackCount;
 		uint32 _trackLength;
+		uint16 _tempo; 
 		bool _trackAdvance;
 		bool _trackEnd;
-		uint16 _tempo; //current value for tempo
 		
-		//note table
+		//UINT16 Period Table
 		static const uint16 periods[]; 
 
-		//Song structure
+		//Addresses of maximum 32 possible song stored in data file.
 		struct Song {
 			uint16 startPosition;
 			uint16 endPosition;
 			uint16 tempoValue;
 		}_songs[32];
 		
-		//Pattern structure
+		//Macro structure, one active macro.
+		struct Macro {
+			uint32 *data;
+			uint32 macroCount;
+			uint32 macroLength;
+			uint16 macroWait; //Internal wait specified by the macro.
+			uint8 noteNumber;
+			uint16 notePeriod;
+			uint8 noteVelocity;
+			uint8 noteChannel;
+			uint8 noteType;
+			uint8 noteWait; //External wait specified by the pattern. 
+			int8 noteFineTune;
+			float fineTune;
+			//The members below are used for key-up looping.
+			bool keyWaitOn;
+			int8 keyCount;
+			int8 keyWait;
+			uint32 positionLoaded; //Pattern count where the macro was loaded.
+		};
+
+		//Pattern structure, one active pattern.
 		struct Pattern {
 			uint32 *data;
 			uint32 patternCount;
@@ -100,37 +120,11 @@ protected:
 			uint8 patternWait;
 			uint8 patternTranspose;
 			bool newPattern;
-		//	bool patternEnd;
-		//	uint16 offset;
-		//	uint8 saveNumber1;
-		//	uint8 saveNumber2;
-		//	bool jumpFlag;
-		//	bool returnFlag;
-		//	bool loopFlag;
-		//	uint16 loopCount;
+		//TODO:: Add members for pattern jumping/go to commands (not currently used in Monkey Island).
+		//TODO:: Add members for pattern effects (not currently used in Monkey Island).
 		};
 
-		//Macro structure
-		struct Macro {
-			uint32 *data;
-			uint32 macroCount;
-			uint32 macroLength;
-			uint16 macroWait; //internal wait
-			//external note stuff here
-			uint8 noteNumber;
-			uint16 notePeriod;
-			uint8 noteVelocity;
-			uint8 noteChannel;
-			uint8 noteType;
-			uint8 noteWait;  //external wait
-			int8 noteFineTune;
-			float fineTune;
-			bool keyWaitOn;
-			int8 keyCount;
-			int8 keyWait;
-		};
-
-		//Track structure
+		//Track structure, 8 tracks.
 		struct Track {
 			uint16 data;
 			bool trackOn;
@@ -140,19 +134,15 @@ protected:
 			uint8 macroNumber;
 			Pattern activePattern;
 			Macro activeMacro;
-		//	uint16 volume;
-		//	bool loopFlag;
-		//	uint16 loopCount;
+		//TODO:: Add members for other trackstep commands (not currently used in Monkey Island).
 		}_tracks[8];
-		
-		//Channel structure
+
+		//Channel structure, 4 channels used
 		struct Channel {
 			uint16 period;
 			int8 volume;
 			uint32 sampleOffset;
 			uint32 sampleLength;
-			//int8 *dataRepeat;
-			//uint32 lengthRepeat;
 			bool sampleOn;
 			bool updateOn;
 			bool keyUp;
@@ -170,19 +160,21 @@ protected:
 			uint8 vibratoCount;
 		}_channels[4];
 
-		//PAULA Interrupt override
+		//PAULA Interrupt override.
 		virtual void interrupt(void);
-
-		//bool loadSong(uint8 songNumber);
-		void updateTrackstep();
+        
+		//Loading functions.
+		bool loadSong(uint8 songNumber); 
 		void loadPattern(uint8 trackNumber, uint8 patternNumber);
-		void updatePattern(uint8 trackNumber);
 		void loadMacro(uint8 trackNumber, uint8 macroNumber);
+		
+		//Update cycle functions.
+		void updateTrackstep();
+		void updatePattern(uint8 trackNumber);
 		void doMacro(uint8 trackNumber);
 		void doEffects(uint8 channelNumber);
-		void runMacro(uint8 trackNumber);
 		
-		//Trackstep functions
+		//Trackstep commands.
 		void setTempo();
 		void volumeSlide();
 
