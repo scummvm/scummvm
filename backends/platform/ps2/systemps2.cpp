@@ -281,11 +281,11 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 
 		dbg_printf("romeo : hddCheckPresent done : %d\n", _useHdd);
 
-		hddPreparePoweroff();
+		// hddPreparePoweroff();
 		//poweroffInit();
 		dbg_printf("romeo : hddPreparePoweroff done\n");     
 
-		hddSetUserPoweroffCallback(gluePowerOffCallback, this);
+		// hddSetUserPoweroffCallback(gluePowerOffCallback, this);
 		//poweroffSetCallback(gluePowerOffCallback, this);
 		dbg_printf("romeo : hddSetUserPoweroffCallback done\n");
 	}
