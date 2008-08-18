@@ -31,18 +31,8 @@
 
 namespace Common {
 
-VirtualKeyboardParser::VirtualKeyboardParser(VirtualKeyboard *kbd) : XMLParser() {
-	_keyboard = kbd;
-	
-	_callbacks["keyboard"] = &VirtualKeyboardParser::parserCallback_Keyboard;
-	_callbacks["mode"]     = &VirtualKeyboardParser::parserCallback_Mode;
-	_callbacks["event"]    = &VirtualKeyboardParser::parserCallback_Event;
-	_callbacks["layout"]   = &VirtualKeyboardParser::parserCallback_Layout;
-	_callbacks["map"]	   = &VirtualKeyboardParser::parserCallback_Map;
-	_callbacks["area"]     = &VirtualKeyboardParser::parserCallback_Area;
-
-	_closedCallbacks["keyboard"] = &VirtualKeyboardParser::parserCallback_KeyboardClosed;
-	_closedCallbacks["mode"]     = &VirtualKeyboardParser::parserCallback_ModeClosed;
+VirtualKeyboardParser::VirtualKeyboardParser(VirtualKeyboard *kbd) 
+	: XMLParser(), _keyboard(kbd) {
 }
 
 void VirtualKeyboardParser::cleanup() {
@@ -55,27 +45,21 @@ void VirtualKeyboardParser::cleanup() {
 	}
 }
 
-bool VirtualKeyboardParser::keyCallback(String keyName) {
-	if (!_callbacks.contains(_activeKey.top()->name))
-		return parserError("%s is not a valid key name.", keyName.c_str());
-
-	return (this->*(_callbacks[_activeKey.top()->name]))();
+bool VirtualKeyboardParser::closedKeyCallback(ParserNode *node) {
+	if (node->name.equalsIgnoreCase("keyboard")) {
+		_kbdParsed = true;
+		if (!_keyboard->_initialMode)
+			return parserError("Initial mode of keyboard pack not defined");
+	} else if (node->name.equalsIgnoreCase("mode")) {
+		if (!_layoutParsed) {
+			return parserError("'%s' layout missing from '%s' mode", 
+				_mode->resolution.c_str(), _mode->name.c_str());
+		}
+	}
+	return true;
 }
 
-bool VirtualKeyboardParser::closedKeyCallback(String keyName) {
-	if (!_closedCallbacks.contains(_activeKey.top()->name))
-		return true;
-	
-	return (this->*(_closedCallbacks[_activeKey.top()->name]))();
-}
-
-bool VirtualKeyboardParser::parserCallback_Keyboard() {
-	ParserNode *kbdNode = getActiveNode();
-
-	assert(kbdNode->name == "keyboard");
-
-	if (getParentNode(kbdNode) != 0)
-		return parserError("Keyboard element must be root");
+bool VirtualKeyboardParser::parserCallback_keyboard(ParserNode *node) {
 
 	if (_kbdParsed)
 		return parserError("Only a single keyboard element is allowed");
@@ -84,53 +68,34 @@ bool VirtualKeyboardParser::parserCallback_Keyboard() {
 	if (_parseMode == kParseCheckResolutions)
 		return true;
 
-	if (!kbdNode->values.contains("initial_mode"))
-		return parserError("Keyboard element must contain initial_mode attribute");
+	_initialModeName = node->values["initial_mode"];
 
-	_initialModeName = kbdNode->values["initial_mode"];
-
-	if (kbdNode->values.contains("h_align")) {
-		String h = kbdNode->values["h_align"];
-		if (h == "left")
+	if (node->values.contains("h_align")) {
+		String h = node->values["h_align"];
+		if (h.equalsIgnoreCase("left"))
 			_keyboard->_hAlignment = VirtualKeyboard::kAlignLeft;
-		else if (h == "centre" || h == "center")
+		else if (h.equalsIgnoreCase("centre") || h.equalsIgnoreCase("center"))
 			_keyboard->_hAlignment = VirtualKeyboard::kAlignCentre;
-		else if (h == "right")
+		else if (h.equalsIgnoreCase("right"))
 			_keyboard->_hAlignment = VirtualKeyboard::kAlignRight;
 	}
 
-	if (kbdNode->values.contains("v_align")) {
-		String v = kbdNode->values["h_align"];
-		if (v == "top")
+	if (node->values.contains("v_align")) {
+		String v = node->values["h_align"];
+		if (v.equalsIgnoreCase("top"))
 			_keyboard->_vAlignment = VirtualKeyboard::kAlignTop;
-		else if (v == "middle" || v == "center")
+		else if (v.equalsIgnoreCase("middle") || v.equalsIgnoreCase("center"))
 			_keyboard->_vAlignment = VirtualKeyboard::kAlignMiddle;
-		else if (v == "bottom")
+		else if (v.equalsIgnoreCase("bottom"))
 			_keyboard->_vAlignment = VirtualKeyboard::kAlignBottom;
 	}
 
 	return true;
 }
 
-bool VirtualKeyboardParser::parserCallback_KeyboardClosed() {
-	_kbdParsed = true;
-	if (!_keyboard->_initialMode)
-		return parserError("Initial mode of keyboard pack not defined");
-	return true;
-}
+bool VirtualKeyboardParser::parserCallback_mode(ParserNode *node) {
 
-bool VirtualKeyboardParser::parserCallback_Mode() {
-	ParserNode *modeNode = getActiveNode();
-
-	assert(modeNode->name == "mode");
-
-	if (getParentNode(modeNode) == 0 || getParentNode(modeNode)->name != "keyboard")
-		return parserError("Mode element must be child of keyboard element");
-
-	if (!modeNode->values.contains("name") || !modeNode->values.contains("resolutions"))
-		return parserError("Mode element must contain name and resolutions attributes");
-
-	String name = modeNode->values["name"];
+	String name = node->values["name"];
 
 	if (_parseMode == kParseFull) {
 		// if full parse then add new mode to keyboard
@@ -146,7 +111,7 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 	if (name == _initialModeName)
 		_keyboard->_initialMode = _mode;
 
-	String resolutions = modeNode->values["resolutions"];
+	String resolutions = node->values["resolutions"];
 	StringTokenizer tok (resolutions, " ,");
 
 	// select best resolution simply by minimising the difference between the 
@@ -179,7 +144,7 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 
 	if (_parseMode == kParseCheckResolutions) {
 		if (_mode->resolution == newResolution) {
-			modeNode->ignore = true;
+			node->ignore = true;
 			return true;
 		} else {
 			// remove data relating to old resolution
@@ -198,87 +163,69 @@ bool VirtualKeyboardParser::parserCallback_Mode() {
 	return true;
 }
 
-bool VirtualKeyboardParser::parserCallback_ModeClosed() {
-	if (!_layoutParsed) {
-		return parserError("'%s' layout missing from '%s' mode", _mode->resolution.c_str(), _mode->name.c_str());
-	}
-	return true;
-}
-
-bool VirtualKeyboardParser::parserCallback_Event() {
-	ParserNode *evtNode = getActiveNode();
-
-	assert(evtNode->name == "event");
-
-	if (getParentNode(evtNode) == 0 || getParentNode(evtNode)->name != "mode")
-		return parserError("Event element must be child of mode element");
-
-	if (!evtNode->values.contains("name") || !evtNode->values.contains("type"))
-		return parserError("Event element must contain name and type attributes");
-
-	assert(_mode);
-
+bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
+	
 	// if just checking resolutions we're done
 	if (_parseMode == kParseCheckResolutions)
 		return true;
 
-	String name = evtNode->values["name"];
+	String name = node->values["name"];
 	if (_mode->events.contains(name))
 		return parserError("Event '%s' has already been defined", name.c_str());
 
 	VirtualKeyboard::Event *evt = new VirtualKeyboard::Event();
 	evt->name = name;
 
-	String type = evtNode->values["type"];
-	if (type == "key") {
-		if (!evtNode->values.contains("code") || !evtNode->values.contains("ascii")) {
+	String type = node->values["type"];
+	if (type.equalsIgnoreCase("key")) {
+		if (!node->values.contains("code") || !node->values.contains("ascii")) {
 			delete evt;
 			return parserError("Key event element must contain code and ascii attributes");
 		}
 		evt->type = VirtualKeyboard::kEventKey;
 
 		KeyState *ks = (KeyState*) malloc(sizeof(KeyState));
-		ks->keycode = (KeyCode)atoi(evtNode->values["code"].c_str());
-		ks->ascii = atoi(evtNode->values["ascii"].c_str());
+		ks->keycode = (KeyCode)atoi(node->values["code"].c_str());
+		ks->ascii = atoi(node->values["ascii"].c_str());
 		ks->flags = 0;
-		if (evtNode->values.contains("modifiers"))
-			ks->flags = parseFlags(evtNode->values["modifiers"]);
+		if (node->values.contains("modifiers"))
+			ks->flags = parseFlags(node->values["modifiers"]);
 		evt->data = ks;
 
-	} else if (type == "modifier") {
-		if (!evtNode->values.contains("modifiers")) {
+	} else if (type.equalsIgnoreCase("modifier")) {
+		if (!node->values.contains("modifiers")) {
 			delete evt;
 			return parserError("Key modifier element must contain modifier attributes");
 		}
 		
 		evt->type = VirtualKeyboard::kEventModifier;
 		byte *flags = (byte*) malloc(sizeof(byte));
-		*(flags) = parseFlags(evtNode->values["modifiers"]);
+		*(flags) = parseFlags(node->values["modifiers"]);
 		evt->data = flags;
 
-	} else if (type == "switch_mode") {
-		if (!evtNode->values.contains("mode")) {
+	} else if (type.equalsIgnoreCase("switch_mode")) {
+		if (!node->values.contains("mode")) {
 			delete evt;
 			return parserError("Switch mode event element must contain mode attribute");
 		}
 
 		evt->type = VirtualKeyboard::kEventSwitchMode;
-		String& mode = evtNode->values["mode"];
+		String& mode = node->values["mode"];
 		char *str = (char*) malloc(sizeof(char) * mode.size() + 1);
 		memcpy(str, mode.c_str(), sizeof(char) * mode.size());
 		str[mode.size()] = 0;
 		evt->data = str;
-	} else if (type == "submit") {
+	} else if (type.equalsIgnoreCase("submit")) {
 		evt->type = VirtualKeyboard::kEventSubmit;
-	} else if (type == "cancel") {
+	} else if (type.equalsIgnoreCase("cancel")) {
 		evt->type = VirtualKeyboard::kEventCancel;
-	} else if (type == "clear") {
+	} else if (type.equalsIgnoreCase("clear")) {
 		evt->type = VirtualKeyboard::kEventClear;
-	} else if (type == "delete") {
+	} else if (type.equalsIgnoreCase("delete")) {
 		evt->type = VirtualKeyboard::kEventDelete;
-	} else if (type == "move_left") {
+	} else if (type.equalsIgnoreCase("move_left")) {
 		evt->type = VirtualKeyboard::kEventMoveLeft;
-	} else if (type == "move_right") {
+	} else if (type.equalsIgnoreCase("move_right")) {
 		evt->type = VirtualKeyboard::kEventMoveRight;
 	} else {
 		delete evt;
@@ -290,27 +237,18 @@ bool VirtualKeyboardParser::parserCallback_Event() {
 	return true;
 }
 
-bool VirtualKeyboardParser::parserCallback_Layout() {
-	ParserNode *layoutNode = getActiveNode();
-
-	assert(layoutNode->name == "layout");
-
-	if (getParentNode(layoutNode) == 0 || getParentNode(layoutNode)->name != "mode")
-		return parserError("Layout element must be child of mode element");
-
-	if (!layoutNode->values.contains("resolution") || !layoutNode->values.contains("bitmap"))
-		return parserError("Layout element must contain resolution and bitmap attributes");
+bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
 
 	assert(!_mode->resolution.empty());
 
-	String res = layoutNode->values["resolution"];
+	String res = node->values["resolution"];
 
 	if (res != _mode->resolution) {
-		layoutNode->ignore = true;
+		node->ignore = true;
 		return true;
 	}
 
-	_mode->bitmapName = layoutNode->values["bitmap"];
+	_mode->bitmapName = node->values["bitmap"];
 	_mode->image = ImageMan.getSurface(_mode->bitmapName);
 	if (!_mode->image) {
 		if (!ImageMan.registerSurface(_mode->bitmapName, 0))
@@ -321,17 +259,17 @@ bool VirtualKeyboardParser::parserCallback_Layout() {
 			return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
 	}
 	
-	if (layoutNode->values.contains("transparent_color")) {
+	if (node->values.contains("transparent_color")) {
 		int r, g, b;
-		if (!parseIntegerKey(layoutNode->values["transparent_color"].c_str(), 3, &r, &g, &b))
+		if (!parseIntegerKey(node->values["transparent_color"].c_str(), 3, &r, &g, &b))
 			return parserError("Could not parse color value");
 		_mode->transparentColor = g_system->RGBToColor(r, g, b);
-	} else
-		_mode->transparentColor = g_system->RGBToColor(255, 0, 255); // default to purple
+	} else // default to purple
+		_mode->transparentColor = g_system->RGBToColor(255, 0, 255); 
 
-	if (layoutNode->values.contains("display_font_color")) {
+	if (node->values.contains("display_font_color")) {
 		int r, g, b;
-		if (!parseIntegerKey(layoutNode->values["display_font_color"].c_str(), 3, &r, &g, &b))
+		if (!parseIntegerKey(node->values["display_font_color"].c_str(), 3, &r, &g, &b))
 			return parserError("Could not parse color value");
 		_mode->displayFontColor = g_system->RGBToColor(r, g, b);
 	} else
@@ -342,41 +280,25 @@ bool VirtualKeyboardParser::parserCallback_Layout() {
 	return true;
 }
 
-bool VirtualKeyboardParser::parserCallback_Map() {
-	ParserNode *mapNode = getActiveNode();
-
-	assert(mapNode->name == "map");
-
-	if (getParentNode(mapNode) == 0 || getParentNode(mapNode)->name != "layout")
-		return parserError("Map element must be child of layout element");
-
+bool VirtualKeyboardParser::parserCallback_map(ParserNode *node) {
 	return true;
 }
 
-bool VirtualKeyboardParser::parserCallback_Area() {
-	ParserNode *areaNode = getActiveNode();
+bool VirtualKeyboardParser::parserCallback_area(ParserNode *node) {
 
-	assert(areaNode->name == "area");
+	String& shape = node->values["shape"];
+	String& target = node->values["target"];
+	String& coords = node->values["coords"];
 
-	if (getParentNode(areaNode) == 0 || getParentNode(areaNode)->name != "map")
-		return parserError("Area element must be child of map element");
-	
-	if (!areaNode->values.contains("shape") || !areaNode->values.contains("coords") || !areaNode->values.contains("target"))
-		return parserError("Area element must contain shape, coords and target attributes");
-
-	String& shape = areaNode->values["shape"];
-	String& target = areaNode->values["target"];
-	String& coords = areaNode->values["coords"];
-
-	if (target == "display_area") {
-		if (shape != "rect")
+	if (target.equalsIgnoreCase("display_area")) {
+		if (! shape.equalsIgnoreCase("rect"))
 			return parserError("display_area must be a rect area");
 		_mode->displayArea = new Rect();
 		return parseRect(_mode->displayArea, coords);
-	} else if (shape == "rect") {
+	} else if (shape.equalsIgnoreCase("rect")) {
 		Polygon *poly = _mode->imageMap.createArea(target);
 		return parseRectAsPolygon(poly, coords);
-	} else if (shape == "poly") {
+	} else if (shape.equalsIgnoreCase("poly")) {
 		Polygon *poly = _mode->imageMap.createArea(target);
 		return parsePolygon(poly, coords);
 	}

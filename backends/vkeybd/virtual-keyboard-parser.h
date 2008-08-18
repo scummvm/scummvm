@@ -170,14 +170,46 @@ enum ParseMode {
 
 class VirtualKeyboardParser : public Common::XMLParser {
 
-	typedef bool (VirtualKeyboardParser::*ParserCallback)();
-
 public:
 
 	VirtualKeyboardParser(VirtualKeyboard *kbd);
 	void setParseMode(ParseMode m) {
 		_parseMode = m;
 	}
+
+protected:
+	CUSTOM_XML_PARSER(VirtualKeyboardParser) {
+		XML_KEY(keyboard)
+			XML_PROP(initial_mode, true)
+			XML_PROP(v_align, false)
+			XML_PROP(h_align, false)
+			XML_KEY(mode)
+				XML_PROP(name, true)
+				XML_PROP(resolutions, true)
+				XML_KEY(layout)
+					XML_PROP(resolution, true)
+					XML_PROP(bitmap, true)
+					XML_PROP(transparent_color, false)
+					XML_PROP(display_font_color, false)
+					XML_KEY(map)
+						XML_KEY(area)
+							XML_PROP(shape, true)
+							XML_PROP(coords, true)
+							XML_PROP(target, true)
+						KEY_END()
+					KEY_END()
+				KEY_END()
+				XML_KEY(event)
+					XML_PROP(name, true)
+					XML_PROP(type, true)
+					XML_PROP(code, false)
+					XML_PROP(ascii, false)
+					XML_PROP(modifiers, false)
+					XML_PROP(mode, false)
+				KEY_END()
+			KEY_END()
+		KEY_END()
+	} PARSER_END()
 
 protected:
 	VirtualKeyboard *_keyboard;
@@ -189,27 +221,21 @@ protected:
 	bool _kbdParsed;
 	bool _layoutParsed;
 
-	bool keyCallback(String keyName);
-	bool closedKeyCallback(String keyName);
 	void cleanup();
 
-	bool parserCallback_Keyboard();
-	bool parserCallback_Mode();
-	bool parserCallback_Event();
-	bool parserCallback_Layout();
-	bool parserCallback_Map();
-	bool parserCallback_Area();
-
-	bool parserCallback_KeyboardClosed();
-	bool parserCallback_ModeClosed();
+	bool parserCallback_keyboard(ParserNode *node);
+	bool parserCallback_mode(ParserNode *node);
+	bool parserCallback_event(ParserNode *node);
+	bool parserCallback_layout(ParserNode *node);
+	bool parserCallback_map(ParserNode *node);
+	bool parserCallback_area(ParserNode *node);
+	
+	bool closedKeyCallback(ParserNode *node);
 
 	byte parseFlags(const String& flags);
 	bool parseRect(Rect *rect, const String& coords);
 	bool parsePolygon(Polygon *poly, const String& coords);
 	bool parseRectAsPolygon(Polygon *poly, const String& coords);
-
-	HashMap<String, ParserCallback, IgnoreCase_Hash, IgnoreCase_EqualTo> _callbacks;
-	HashMap<String, ParserCallback, IgnoreCase_Hash, IgnoreCase_EqualTo> _closedCallbacks;
 };
 
 } // end of namespace GUI

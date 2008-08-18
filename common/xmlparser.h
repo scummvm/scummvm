@@ -32,12 +32,199 @@
 #include "common/xmlparser.h"
 #include "common/stream.h"
 #include "common/file.h"
+#include "common/fs.h"
 
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/stack.h"
 
 namespace Common {
+	
+/***********************************************
+ **** XMLParser.cpp/h -- Generic XML Parser ****
+ ***********************************************
+
+	This is a simple implementation of a generic parser which is able to
+	interpret a subset of the XML language.
+	
+	The XMLParser class is virtual, and must be derived into a child class,
+	called a Custom Parser Class, which will manage the parsed data for your
+	specific needs.
+	
+	Custom Parser Classes have two basic requirements:
+	They must inherit directly the XMLParser class, and they must define the
+	parsing layout of the XML file.
+	
+	Declaring the XML layout is done with the help of the CUSTOM_XML_PARSER()
+	macro: this macro must appear once inside the Custom Parser Class 
+	declaration, and takes a single parameter, the name of the Custom Parser
+	Class.
+	
+	The macro must be followed by the actual layout of the XML files to be 
+	parsed, and closed with the PARSER_END() macro. The layout of XML files
+	is defined by the use of 3 helper macros: XML_KEY(), KEY_END() and 
+	XML_PROP().
+	
+	Here's a sample of its usage:
+	
+	===========	===========	===========	===========	===========	===========
+	
+	CUSTOM_XML_PARSER(ThemeParser) {
+		XML_KEY(render_info)
+			XML_KEY(palette)
+				XML_KEY(color)
+					XML_PROP(name, true)
+					XML_PROP(rgb, true)
+				KEY_END()
+			KEY_END()
+
+			XML_KEY(fonts)
+				XML_KEY(font)
+					XML_PROP(id, true)
+					XML_PROP(type, true)
+					XML_PROP(color, true)
+				KEY_END()
+			KEY_END()
+
+			XML_KEY(defaults)
+				XML_PROP(stroke, false)
+				XML_PROP(shadow, false)
+				XML_PROP(factor, false)
+				XML_PROP(fg_color, false)
+				XML_PROP(bg_color, false)
+				XML_PROP(gradient_start, false)
+				XML_PROP(gradient_end, false)
+				XML_PROP(gradient_factor, false)
+				XML_PROP(fill, false)
+			KEY_END()
+		KEY_END()
+	} PARSER_END()
+			
+	===========	===========	===========	===========	===========	===========
+	
+	The XML_KEY() macro takes a single argument, the name of the expected key.
+	Inside the scope of each key, you may define properties for the given key
+	with the XML_PROP() macro, which takes as parameters the name of the 
+	property and whether it's optional or required. You might also define the 
+	contained children keys, using the XML_KEY() macro again.
+	The scope of a XML key is closed with the KEY_END() macro.
+	
+	Keys which may contain any kind of Property names may be defined with the
+	XML_PROP_ANY() macro instead of the XML_PROP() macro. This macro takes no
+	arguments.
+	
+	As an example, the following XML layout:
+	
+		XML_KEY(palette)
+			XML_KEY(color)
+				XML_PROP(name, true)
+				XML_PROP(rgb, true)
+				XML_PROP(optional_param, false)
+			KEY_END()
+		KEY_END()
+		
+	will expect to parse a syntax like this:
+	
+		<palette>
+			<color name = "red" rgb = "255, 0, 0" />
+			<color name = "blue" rgb = "0, 0, 255" optional_param = "565" />
+		</palette>
+		
+	Once a layout has been defined, everytime a XML node (that is, a key and
+	all its properties) has been parsed, a specific callback funcion is called,
+	which should take care of managing the parsed data for the node.
+	
+	Callback functions must be explicitly declared with the following syntax:
+	
+		bool parserCallback_KEYNAME(ParserNode *node);
+		
+	A callback function is needed for each key that can be parsed, since they
+	are called automatically; the function will receive a pointer to the XML
+	Node that has been parsed. This XML Node has the following properties:
+	
+		- It's assured to be expected in the layout of the XML file (i.e. 
+		  has the proper position and depth in the XML tree).
+		
+		- It's assured to contain all the required Properties that have 
+		  been declared in the XML layout.
+		
+		- It's assured to contain NO unexpected properties (i.e. properties
+		  which haven't been declared in the XML layout).
+		
+	Further validation of the Node's data may be performed inside the callback
+	function. Once the node has been validated and its data has been parsed/
+	managed, the callback function is expected to return true.
+	
+	If the data in the XML Node is corrupted or there was a problem when 
+	parsing it, the callback function is expected to return false or, 
+	preferably, to throw a parserError() using the following syntax:
+	
+		return parserError("There was a problem in key '%s'.", arg1, ...);
+	
+	Also, note that the XML parser doesn't take into account the actual order
+	of the keys and properties in the XML layout definition, only its layout 
+	and relationships.
+	
+	Lastly, when defining your own Custom XML Parser, further customization 
+	may be accomplished _optionally_ by overloading several virtual functions
+	of the XMLParser class.
+	
+	Check the API documentation of the following functions for more info:
+		
+		virtual bool closedKeyCallback(ParserNode *node);
+		virtual bool skipComments();
+		virtual bool isValidNameChar(char c);
+		virtual void cleanup();
+		
+	Check the sample implementation of the GUI::ThemeParser custom parser
+	for a working sample of a Custom XML Parser.
+		
+*/
+			
+#define XML_KEY(keyName) {\
+		lay =  new CustomXMLKeyLayout;\
+		lay->callback = (&kLocalParserName::parserCallback_##keyName);\
+		layout.top()->children[#keyName] = lay;\
+		layout.push(lay); \
+		_layoutList.push_back(lay);\
+		for (Common::List<XMLKeyLayout::XMLKeyProperty>::const_iterator p = globalProps.begin(); p != globalProps.end(); ++p){\
+			layout.top()->properties.push_back(*p);}
+		
+#define XML_KEY_RECURSIVE(keyName) {\
+			layout.top()->children[#keyName] = layout.top();\
+			layout.push(layout.top());\
+		}
+
+#define KEY_END() layout.pop(); }
+
+#define XML_PROP(propName, req) {\
+		prop.name = #propName; \
+		prop.required = req; \
+		layout.top()->properties.push_back(prop); }
+		
+#define XML_GLOBAL_PROP(propName, req) {\
+		prop.name = #propName; \
+		prop.required = req;\
+		globalProps.push_back(prop); }
+		
+	
+#define CUSTOM_XML_PARSER(parserName) \
+	protected: \
+	typedef parserName kLocalParserName; \
+	bool keyCallback(ParserNode *node) {return node->layout->doCallback(this, node); }\
+	struct CustomXMLKeyLayout : public XMLKeyLayout {\
+		typedef bool (parserName::*ParserCallback)(ParserNode *node);\
+		ParserCallback callback;\
+		bool doCallback(XMLParser *parent, ParserNode *node) {return ((kLocalParserName*)parent->*callback)(node);} };\
+	virtual void buildLayout() { \
+		Common::Stack<XMLKeyLayout*> layout; \
+		CustomXMLKeyLayout *lay = 0; \
+		XMLKeyLayout::XMLKeyProperty prop; \
+		Common::List<XMLKeyLayout::XMLKeyProperty> globalProps; \
+		_XMLkeys = new CustomXMLKeyLayout; \
+		layout.push(_XMLkeys);
+	
+#define PARSER_END() layout.clear(); }
 
 class XMLStream {
 protected:
@@ -91,11 +278,19 @@ public:
 	/**
 	 * Parser constructor.
 	 */
-	XMLParser() {}
+	XMLParser() : _XMLkeys(0) {}
 
 	virtual ~XMLParser() {
 		while (!_activeKey.empty())
 			delete _activeKey.pop();
+
+		delete _XMLkeys;
+
+		for (Common::List<XMLKeyLayout*>::iterator i = _layoutList.begin();
+			i != _layoutList.end(); ++i)
+			delete *i;
+
+		_layoutList.clear();
 	}
 
 	/** Active state for the parser */
@@ -109,6 +304,28 @@ public:
 
 		kParserError
 	};
+	
+	struct XMLKeyLayout;
+	struct ParserNode;
+	
+	typedef Common::HashMap<Common::String, XMLParser::XMLKeyLayout*, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ChildMap;
+	
+	/** nested struct representing the layout of the XML file */
+	struct XMLKeyLayout {
+		struct XMLKeyProperty {
+			Common::String name;
+			bool required;
+		};
+		
+		Common::List<XMLKeyProperty> properties;
+		ChildMap children;
+		
+		virtual bool doCallback(XMLParser *parent, ParserNode *node) = 0;
+		
+		virtual ~XMLKeyLayout() {
+			properties.clear();
+		}
+	} *_XMLkeys;
 
 	/** Struct representing a parsed node */
 	struct ParserNode {
@@ -116,6 +333,7 @@ public:
 		Common::StringMap values;
 		bool ignore;
 		int depth;
+		XMLKeyLayout *layout;
 	};
 
 	/**
@@ -125,13 +343,28 @@ public:
 	 *
 	 * @param filename Name of the file to load.
 	 */
-	virtual bool loadFile(Common::String filename) {
+	bool loadFile(const Common::String &filename) {
 		Common::File *f = new Common::File;
 
-		if (!f->open(filename))
+		if (!f->open(filename)) {
+			delete f;
 			return false;
+		}
 
 		_fileName = filename;
+		_text.loadStream(f);
+		return true;
+	}
+	
+	bool loadFile(const FilesystemNode &node) {
+		Common::File *f = new Common::File;
+		
+		if (!f->open(node)) {
+			delete f;
+			return false;
+		}
+		
+		_fileName = node.getName();
 		_text.loadStream(f);
 		return true;
 	}
@@ -147,9 +380,15 @@ public:
 	 *                   i.e. if it can be freed safely after it's
 	 *                   no longer needed by the parser.
 	 */
-	virtual bool loadBuffer(const byte *buffer, uint32 size, bool disposable = false) {
+	bool loadBuffer(const byte *buffer, uint32 size, bool disposable = false) {
 		_text.loadStream(new MemoryReadStream(buffer, size, disposable));
 		_fileName = "Memory Stream";
+		return true;
+	}
+	
+	bool loadStream(MemoryReadStream *stream) {
+		_text.loadStream(stream);
+		_fileName = "Compressed File Stream";
 		return true;
 	}
 
@@ -157,7 +396,7 @@ public:
 	 * The actual parsing function.
 	 * Parses the loaded data stream, returns true if successful.
 	 */
-	virtual bool parse();
+	bool parse();
 
 	/**
 	 * Returns the active node being parsed (the one on top of
@@ -178,70 +417,81 @@ public:
 	}
 
 protected:
+	
 	/**
-	 * The keycallback function must be overloaded by inheriting classes
-	 * to implement parser-specific functions.
+	 * The buildLayout function builds the layout for the parser to use
+	 * based on a series of helper macros. This function is automatically
+	 * generated by the CUSTOM_XML_PARSER() macro on custom parsers.
 	 *
-	 * This function is called everytime a key has successfully been parsed.
-	 * The keyName parameter contains the name of the key that has just been
-	 * parsed; this same key is still on top of the Node Stack.
+	 * See the documentation regarding XML layouts.
+	 */
+	virtual void buildLayout() = 0;
+	
+	/**
+	 * The keycallback function is automatically overloaded on custom parsers
+	 * when using the CUSTOM_XML_PARSER() macro. 
 	 *
-	 * Access the node stack to view this key's properties and its parents.
-	 * Remember to leave the node stack _UNCHANGED_ in your own function. Removal
-	 * of closed keys is done automatically.
+	 * Its job is to call the corresponding Callback function for the given node.
+	 * A function for each key type must be declared separately. See the custom
+	 * parser creation instructions.
 	 *
-	 * When parsing a key, one may chose to skip it, e.g. because it's not needed
+	 * When parsing a key in such function, one may chose to skip it, e.g. because it's not needed
 	 * on the current configuration. In order to ignore a key, you must set
 	 * the "ignore" field of its KeyNode struct to "true": The key and all its children
 	 * will then be automatically ignored by the parser.
 	 *
-	 * Return true if the key was properly handled (this includes the case when the
-	 * key is being ignored). False otherwise.
+	 * The callback function must return true if the key was properly handled (this includes the case when the
+	 * key is being ignored). False otherwise. The return of keyCallback() is the same as
+	 * the callback function's.
 	 * See the sample implementation in GUI::ThemeParser.
 	 */
-	virtual bool keyCallback(Common::String keyName) {
-		return false;
-	}
+	virtual bool keyCallback(ParserNode *node) = 0;
 
 	/**
-	 * The closed key callback function must be overloaded by inheriting classes to
+	 * The closed key callback function MAY be overloaded by inheriting classes to
 	 * implement parser-specific functions.
 	 *
 	 * The closedKeyCallback is issued once a key has been finished parsing, to let
 	 * the parser verify that all the required subkeys, etc, were included.
 	 *
+	 * Unlike the keyCallbacks(), there's just a closedKeyCallback() for all keys.
+	 * Use "node->name" to distinguish between each key type.
+	 *
 	 * Returns true if the key was properly closed, false otherwise.
 	 * By default, all keys are properly closed.
 	 */
-	virtual bool closedKeyCallback(Common::String keyName) {
+	virtual bool closedKeyCallback(ParserNode *node) {
 		return true;
 	}
+	
+	/**
+	 * Called when a node is closed. Manages its cleanup and calls the
+	 * closing callback function if needed.
+	 */
+	bool closeKey();
 
 	/**
 	 * Parses the value of a given key. There's no reason to overload this.
 	 */
-	virtual bool parseKeyValue(Common::String keyName);
+	bool parseKeyValue(Common::String keyName);
 
 	/**
 	 * Called once a key has been parsed. It handles the closing/cleanup of the
 	 * node stack and calls the keyCallback.
-	 * There's no reason to overload this.
 	 */
-	virtual bool parseActiveKey(bool closed);
+	bool parseActiveKey(bool closed);
 
 	/**
 	 * Prints an error message when parsing fails and stops the parser.
 	 * Parser error always returns "false" so we can pass the return value directly
 	 * and break down the parsing.
 	 */
-	virtual bool parserError(const char *errorString, ...) GCC_PRINTF(2, 3);
+	bool parserError(const char *errorString, ...) GCC_PRINTF(2, 3);
 
 	/**
 	 * Skips spaces/whitelines etc. Returns true if any spaces were skipped.
-	 * Overload this if you want to make your parser depend on newlines or
-	 * whatever.
 	 */
-	virtual bool skipSpaces() {
+	bool skipSpaces() {
 		if (!isspace(_text[_pos]))
 			return false;
 
@@ -269,13 +519,6 @@ protected:
 			return true;
 		}
 
-		if (_text[_pos] == '/' && _text[_pos + 1] == '/') {
-			_pos += 2;
-			while (_text[_pos] && _text[_pos] != '\n' && _text[_pos] != '\r')
-				_pos++;
-			return true;
-		}
-
 		return false;
 	}
 
@@ -292,12 +535,12 @@ protected:
 	 * Parses a the first textual token found.
 	 * There's no reason to overload this.
 	 */
-	virtual bool parseToken() {
+	bool parseToken() {
 		_token.clear();
 		while (isValidNameChar(_text[_pos]))
 			_token += _text[_pos++];
 
-		return isspace(_text[_pos]) != 0 || _text[_pos] == '>' || _text[_pos] == '=';
+		return isspace(_text[_pos]) != 0 || _text[_pos] == '>' || _text[_pos] == '=' || _text[_pos] == '/';
 	}
 
 	/**
@@ -318,7 +561,7 @@ protected:
 	 *            by reference.
 	 * @returns True if the parsing succeeded.
 	 */
-	virtual bool parseIntegerKey(const char *key, int count, ...) {
+	bool parseIntegerKey(const char *key, int count, ...) {
 		char *parseEnd;
 		int *num_ptr;
 
@@ -352,6 +595,9 @@ protected:
 	 */
 	virtual void cleanup() {}
 
+	Common::List<XMLKeyLayout*> _layoutList;
+
+private:
 	int _pos; /** Current position on the XML buffer. */
 	XMLStream _text; /** Buffer with the text being parsed */
 	Common::String _fileName;

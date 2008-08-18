@@ -41,25 +41,34 @@ bool XMLParser::parserError(const char *errorString, ...) {
 	int lineCount = 1;
 	int lineStart = 0;
 
-	do {
-		if (_text[pos] == '\n' || _text[pos] == '\r') {
-			lineCount++;
-			
-			if (lineStart == 0)
-				lineStart = MAX(pos + 1, _pos - 60);
-		}
-	} while (pos-- > 0);
+	if (_fileName == "Memory Stream") {
+		lineStart = MAX(0, _pos - 35);
+		lineCount = 0;
+	} else {
+		do {
+			if (_text[pos] == '\n' || _text[pos] == '\r') {
+				lineCount++;
+		
+				if (lineStart == 0)
+					lineStart = MAX(pos + 1, _pos - 60);
+			}
+		} while (pos-- > 0);
+	}
 
 	char lineStr[70];
 	_text.stream()->seek(lineStart, SEEK_SET);
 	_text.stream()->readLine(lineStr, 70);
+	
+	for (int i = 0; i < 70; ++i)
+		if (lineStr[i] == '\n')
+			lineStr[i] = ' ';
 
-	printf("  File <%s>, line %d:\n", _fileName.c_str(), lineCount);
+	printf("\n  File <%s>, line %d:\n", _fileName.c_str(), lineCount);
 
 	bool startFull = lineStr[0] == '<';
 	bool endFull = lineStr[strlen(lineStr) - 1] == '>';
 
-	printf("%s%s%s\n", startFull ? "" : "...", endFull ? "" : "...", lineStr);
+	printf("%s%s%s\n", startFull ? "" : "...", lineStr, endFull ? "" : "...");
 
 	int cursor = MIN(_pos - lineStart, 70);
 
@@ -77,13 +86,36 @@ bool XMLParser::parserError(const char *errorString, ...) {
 	vprintf(errorString, args);
 	va_end(args);
 
-	printf("\n");
+	printf("\n\n");
 
 	return false;
 }
 
 bool XMLParser::parseActiveKey(bool closed) {
 	bool ignore = false;
+	assert(_activeKey.empty() == false);
+
+	ParserNode *key = _activeKey.top();
+	XMLKeyLayout *layout = (_activeKey.size() == 1) ? _XMLkeys : getParentNode(key)->layout;
+	
+	if (layout->children.contains(key->name)) {
+		key->layout = layout->children[key->name];
+	
+		Common::StringMap localMap = key->values;
+	
+		for (Common::List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
+			if (localMap.contains(i->name))
+				localMap.erase(i->name);
+			else if (i->required)
+				return parserError("Missing required property '%s' inside key '%s'", i->name.c_str(), key->name.c_str());
+		}
+	
+		if (localMap.empty() == false)
+			return parserError("Unhandled property inside key '%s': '%s'", key->name.c_str(), localMap.begin()->_key.c_str());
+			
+	} else {
+		return parserError("Unexpected key in the active scope: '%s'.", key->name.c_str());
+	}
 
 	// check if any of the parents must be ignored.
 	// if a parent is ignored, all children are too.
@@ -92,13 +124,18 @@ bool XMLParser::parseActiveKey(bool closed) {
 			ignore = true;
 	}
 
-	if (ignore == false && keyCallback(_activeKey.top()->name) == false) {
+	if (ignore == false && keyCallback(key) == false) {
+		// HACK:  People may be stupid and overlook the fact that
+		// when keyCallback() fails, a parserError() must be set.
+		// We set it manually in that case.
+		if (_state != kParserError)
+			parserError("Unhandled exception when parsing '%s' key.", key->name.c_str());
+			
 		return false;
 	}
 	
-	if (closed) {
-		delete _activeKey.pop();
-	}
+	if (closed)
+		return closeKey();
 
 	return true;
 }
@@ -129,10 +166,33 @@ bool XMLParser::parseKeyValue(Common::String keyName) {
 	return true;
 }
 
+bool XMLParser::closeKey() {
+	bool ignore = false;
+	bool result = true;
+	
+	for (int i = _activeKey.size() - 1; i >= 0; --i) {
+		if (_activeKey[i]->ignore)
+			ignore = true;
+	}
+	
+	if (ignore == false)
+		result = closedKeyCallback(_activeKey.top());
+		
+	delete _activeKey.pop();
+	
+	return result;
+}
+
 bool XMLParser::parse() {
 
 	if (_text.ready() == false)
 		return parserError("XML stream not ready for reading.");
+		
+	if (_XMLkeys == 0)
+		buildLayout();
+
+	while (!_activeKey.empty())
+		delete _activeKey.pop();
 
 	cleanup();
 
@@ -186,6 +246,7 @@ bool XMLParser::parse() {
 					node->name = _token;
 					node->ignore = false;
 					node->depth = _activeKey.size();
+					node->layout = 0;
 					_activeKey.push(node);
 				}
 
@@ -194,13 +255,12 @@ bool XMLParser::parse() {
 
 			case kParserNeedPropertyName:
 				if (activeClosure) {
-					if (!closedKeyCallback(_activeKey.top()->name)) {
+					if (!closeKey()) {
 						parserError("Missing data when closing key '%s'.", _activeKey.top()->name.c_str()); 
 						break;
 					}
 
 					activeClosure = false;
-					delete _activeKey.pop();
 
 					if (_text[_pos++] != '>')
 						parserError("Invalid syntax in key closure.");

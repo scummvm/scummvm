@@ -85,20 +85,22 @@ bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 	} else { // use current directory
 		vkDir = new FilesystemNode(".");
 	}
-	
-	// TODO - make parser support FilesystemNode's
+
+	// HACK/FIXME:
+	// - the ImageManager still needs the default directory to be added
+	// - would be nice for everything to use FSNodes
 	File::addDefaultDirectory(vkDir->getPath());
 
 	if (vkDir->getChild(packName + ".xml").exists()) {
 		// uncompressed keyboard pack
 		
-		if (!_parser->loadFile(packName + ".xml"))
+		if (!_parser->loadFile(vkDir->getChild(packName + ".xml")))
 			return false;
 		
 	} else if (vkDir->getChild(packName + ".zip").exists()) {
 		// compressed keyboard pack
 #ifdef USE_ZLIB
-		unzFile zipFile = unzOpen((packName + ".zip").c_str());
+		unzFile zipFile = unzOpen(vkDir->getChild(packName + ".zip").getPath().c_str());
 		if (zipFile && unzLocateFile(zipFile, (packName + ".xml").c_str(), 2) == UNZ_OK) {
 			unz_file_info fileInfo;
 			unzOpenCurrentFile(zipFile);
