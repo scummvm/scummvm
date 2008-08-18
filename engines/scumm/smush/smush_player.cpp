@@ -212,10 +212,6 @@ static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_enc
 
 void SmushPlayer::timerCallback() {
 	parseNextFrame();
-#ifdef _WIN32_WCE
-	_inTimer = true;
-	_inTimerCount++;
-#endif
 }
 
 SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
@@ -252,11 +248,6 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
 	_paused = false;
 	_pauseStartTime = 0;
 	_pauseTime = 0;
-#ifdef _WIN32_WCE
-	_inTimer = false;
-	_inTimerCount = 0;
-	_inTimerCountRedraw = ConfMan.getInt("Smush_force_redraw");
-#endif
 }
 
 SmushPlayer::~SmushPlayer() {
@@ -926,14 +917,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	}
 
 	if (_width != 0 && _height != 0) {
-#ifdef _WIN32_WCE
-		if (!_inTimer || _inTimerCount == _inTimerCountRedraw) {
-			updateScreen();
-			_inTimerCount = 0;
-		}
-#else
 		updateScreen();
-#endif
 	}
 	_smixer->handleFrame();
 
@@ -1326,10 +1310,6 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 				_vm->_system->updateScreen();
 				_updateNeeded = false;
 			}
-#ifdef _WIN32_WCE
-			_inTimer = false;
-			_inTimerCount = 0;
-#endif
 		}
 		if (_endOfFile)
 			break;
