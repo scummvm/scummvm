@@ -1816,7 +1816,7 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Get Scratchbox environment with Maemo 2.2 rootstrap (2.2 is for 770 and up)
         * Install limbad, Tremor, FLAC, libmpeg2 from source
         * patch scummvm source (some stuff is currently too dirty to be in svn directly)
-          patch -p1 < backends/platform/maemo/scummvm-0.11.0-maemo.patch
+          patch -p1 < backends/platform/maemo/scummvm-<currentversion>-maemo.patch
         * go to backends/platform/maemo
         * run 'make config'
         * run 'make scummvm'
