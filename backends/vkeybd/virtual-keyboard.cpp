@@ -44,7 +44,6 @@ VirtualKeyboard::VirtualKeyboard() : _currentMode(0) {
 	_kbdGUI = new VirtualKeyboardGUI(this);
 	_submitKeys = _loaded = false;
 
-		printf("\t\"%c\",\n",255);
 }
 
 VirtualKeyboard::~VirtualKeyboard() {
@@ -75,6 +74,9 @@ void VirtualKeyboard::reset() {
 }
 
 bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
+
+	_kbdGUI->initSize(_system->getOverlayWidth(), _system->getOverlayHeight());
+
 	FilesystemNode *vkDir = 0;
 	if (ConfMan.hasKey("vkeybdpath")) {
 		vkDir = new FilesystemNode(ConfMan.get("vkeybdpath"));
@@ -138,7 +140,7 @@ bool VirtualKeyboard::checkModeResolutions()
 {
 	_parser->setParseMode(kParseCheckResolutions);
 	_loaded = _parser->parse();
-	_kbdGUI->initMode(_currentMode);
+	if (_currentMode) _kbdGUI->initMode(_currentMode);
 	return _loaded;
 }
 
@@ -215,7 +217,7 @@ void VirtualKeyboard::handleMouseUp(int16 x, int16 y) {
 void VirtualKeyboard::show() {
 	if (_loaded) _kbdGUI->checkScreenChanged();
 	if (!_loaded) {
-		warning("Virtual keyboard not loaded!");
+		warning("Virtual keyboard not loaded");
 		return;
 	}
 

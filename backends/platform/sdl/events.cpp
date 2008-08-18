@@ -526,10 +526,10 @@ void OSystem_SDL::setupKeymapper() {
 	Keymapper *mapper = getEventManager()->getKeymapper();
 
 	HardwareKeySet *keySet = new HardwareKeySet();
-	keySet->addHardwareKey(new HardwareKey( 'a', KeyState(KEYCODE_a), "a" ));
-	keySet->addHardwareKey(new HardwareKey( 's', KeyState(KEYCODE_s), "s" ));
-	keySet->addHardwareKey(new HardwareKey( 'd', KeyState(KEYCODE_d), "d" ));
-	keySet->addHardwareKey(new HardwareKey( 'f', KeyState(KEYCODE_f), "f" ));
+	keySet->addHardwareKey(new HardwareKey( "a", KeyState(KEYCODE_a), "a" ));
+	keySet->addHardwareKey(new HardwareKey( "s", KeyState(KEYCODE_s), "s" ));
+	keySet->addHardwareKey(new HardwareKey( "d", KeyState(KEYCODE_d), "d" ));
+	keySet->addHardwareKey(new HardwareKey( "f", KeyState(KEYCODE_f), "f" ));
 	mapper->registerHardwareKeySet(keySet);
 
 	Keymap *global = new Keymap("global");
@@ -542,25 +542,25 @@ void OSystem_SDL::setupKeymapper() {
 		evt.kbd = KeyState(kc, asc, flags); \
 		act->events.push_back(evt);
 
-	act = new Action(global, 'MENU', "Menu", kGenericActionCategory, kMenuAction);
+	act = new Action(global, "MENU", "Menu", kGenericActionCategory, kMenuAction);
 	ADD_KEYDOWN_EVENT(KEYCODE_F5, ASCII_F5, 0)
 	
-	act = new Action(global, 'SKCT', "Skip");
+	act = new Action(global, "SKCT", "Skip");
 	ADD_KEYDOWN_EVENT(KEYCODE_ESCAPE, ASCII_ESCAPE, 0);
 
-	act = new Action(global, 'PAUS', "Pause");
+	act = new Action(global, "PAUS", "Pause");
 	ADD_KEYDOWN_EVENT(KEYCODE_SPACE, ' ', 0)
 	
-	act = new Action(global, 'SKLI', "Skip line");
+	act = new Action(global, "SKLI", "Skip line");
 	ADD_KEYDOWN_EVENT(Common::KEYCODE_PERIOD, '.', 0);
 
-	act = new Action(specific, 'JUMP', "Jump");
+	act = new Action(specific, "JUMP", "Jump");
 	ADD_KEYDOWN_EVENT(KEYCODE_j, 'j', 0);
 	
-	act = new Action(specific, 'DUCK', "Duck");
+	act = new Action(specific, "DUCK", "Duck");
 	ADD_KEYDOWN_EVENT(KEYCODE_d, 'd', 0);
 
-	act = new Action(specific, 'RUN_', "Run");
+	act = new Action(specific, "RUN_", "Run");
 	ADD_KEYDOWN_EVENT(KEYCODE_r, 'r', 0);
 
 	#undef ADD_KEYDOWN_EVENT

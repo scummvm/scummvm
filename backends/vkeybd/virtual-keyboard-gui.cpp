@@ -39,6 +39,9 @@ VirtualKeyboardGUI::VirtualKeyboardGUI(VirtualKeyboard *kbd)
 	_system = g_system;
 	
 	_lastScreenChanged = _system->getScreenChangeID();
+	_screenW = _system->getOverlayWidth();
+	_screenH = _system->getOverlayHeight();
+
 	
 	memset(_cursor, 0xFF, sizeof(_cursor));
 }
@@ -93,6 +96,11 @@ void VirtualKeyboardGUI::checkScreenChanged() {
 		screenChanged(); 
 }
 
+void VirtualKeyboardGUI::initSize(int16 w, int16 h) {
+	_screenW = w;
+	_screenH = h;
+}
+
 void VirtualKeyboardGUI::run() {
 	if (_firstRun) {
 		_firstRun = false;
@@ -103,7 +111,7 @@ void VirtualKeyboardGUI::run() {
 		_system->showOverlay();
 		_system->clearOverlay();
 	}
-	_overlayBackup.create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(OverlayColor));
+	_overlayBackup.create(_screenW, _screenH, sizeof(OverlayColor));
 	_system->grabOverlay((OverlayColor*)_overlayBackup.pixels, _overlayBackup.w);
 
 	setupCursor();
@@ -136,32 +144,31 @@ void VirtualKeyboardGUI::reset() {
 
 void VirtualKeyboardGUI::moveToDefaultPosition()
 {
-	int16 scrW = _system->getOverlayWidth(), scrH = _system->getOverlayHeight(); 
 	int16 kbdW = _kbdBound.width(), kbdH = _kbdBound.height();
 	int16 x = 0, y = 0;
-	if (scrW != kbdW) {
+	if (_screenW != kbdW) {
 		switch (_kbd->_hAlignment) {
 		case VirtualKeyboard::kAlignLeft:
 			x = 0;
 			break;
 		case VirtualKeyboard::kAlignCentre:
-			x = (scrW - kbdW) / 2;
+			x = (_screenW - kbdW) / 2;
 			break;
 		case VirtualKeyboard::kAlignRight:
-			x = scrW - kbdW;
+			x = _screenW - kbdW;
 			break;
 		}
 	}
-	if (scrH != kbdH) {
+	if (_screenH != kbdH) {
 		switch (_kbd->_vAlignment) {
 		case VirtualKeyboard::kAlignTop:
 			y = 0;
 			break;
 		case VirtualKeyboard::kAlignMiddle:
-			y = (scrH - kbdH) / 2;
+			y = (_screenH - kbdH) / 2;
 			break;
 		case VirtualKeyboard::kAlignBottom:
-			y = scrH - kbdH;
+			y = _screenH - kbdH;
 			break;
 		}
 	}
@@ -170,17 +177,17 @@ void VirtualKeyboardGUI::moveToDefaultPosition()
 
 void VirtualKeyboardGUI::move(int16 x, int16 y) {
 	// add old position to dirty area
-	extendDirtyRect(_kbdBound);
+	if (_displaying) extendDirtyRect(_kbdBound);
 
 	// snap to edge of screen
 	if (ABS(x) < SNAP_WIDTH)
 		x = 0;
-	int16 x2 = _system->getOverlayWidth() - _kbdBound.width();
+	int16 x2 = _screenW - _kbdBound.width();
 	if (ABS(x - x2) < SNAP_WIDTH)
 		x = x2;
 	if (ABS(y) < SNAP_WIDTH)
 		y = 0;
-	int16 y2 = _system->getOverlayHeight() - _kbdBound.height();
+	int16 y2 = _screenH - _kbdBound.height();
 	if (ABS(y - y2) < SNAP_WIDTH)
 		y = y2;
 
@@ -188,19 +195,26 @@ void VirtualKeyboardGUI::move(int16 x, int16 y) {
 	_dispY += y - _kbdBound.top;
 	_kbdBound.moveTo(x, y);
 
-	// add new position to dirty area
-	extendDirtyRect(_kbdBound);
-
-	redraw();
+	if (_displaying) {
+		// add new position to dirty area
+		extendDirtyRect(_kbdBound);
+		redraw();
+	}
 }
 
 void VirtualKeyboardGUI::screenChanged() {
 	_lastScreenChanged = _system->getScreenChangeID();
-	if (!_kbd->checkModeResolutions()) {
-		_displaying = false;
-		return;
+	int16 newScreenW = _system->getOverlayWidth();
+	int16 newScreenH = _system->getOverlayHeight();
+	if (_screenW != newScreenW || _screenH != newScreenH) {
+		_screenW = newScreenW;
+		_screenH = newScreenH;
+		if (!_kbd->checkModeResolutions()) {
+			_displaying = false;
+			return;
+		}
+		moveToDefaultPosition();
 	}
-	moveToDefaultPosition();
 }
 
 

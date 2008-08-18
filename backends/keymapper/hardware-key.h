@@ -30,12 +30,14 @@
 
 namespace Common {
 
+#define HWKEY_ID_SIZE (4)
+
 /**
 * Describes an available hardware key 
 */
 struct HardwareKey {
 	/** unique id used for saving/loading to config */
-	int32 id;
+	char id[HWKEY_ID_SIZE];
 	/** Human readable description */
 	String description; 
 	/** 
@@ -48,15 +50,12 @@ struct HardwareKey {
 	ActionType preferredType;
 	int16 group;
 
-	HardwareKey(int32 i, KeyState ks = KeyState(), String des = "",
+	HardwareKey(const char *i, KeyState ks = KeyState(), String des = "",
 				ActionCategory cat = kGenericActionCategory,
-				ActionType ty = kGenericActionType,	int gr = 0) {
-		id = i;
-		key = ks;
-		description = des;
-		preferredCategory = cat;
-		preferredType = ty;
-		group = gr;
+				ActionType ty = kGenericActionType,	int gr = 0)
+		: key(ks), description(des), preferredCategory(cat), preferredType(ty), group(gr) {
+		assert(i);
+		strncpy(id, i, HWKEY_ID_SIZE);
 	}
 };
 
@@ -82,10 +81,10 @@ public:
 		++_count;
 	}
 
-	const HardwareKey *findHardwareKey(int32 id) const {
+	const HardwareKey *findHardwareKey(const char *id) const {
 		List<const HardwareKey*>::iterator it;
 		for (it = _keys.begin(); it != _keys.end(); it++) {
-			if ((*it)->id == id)
+			if (strncmp((*it)->id, id, HWKEY_ID_SIZE) == 0)
 				return (*it);
 		}
 		return 0;

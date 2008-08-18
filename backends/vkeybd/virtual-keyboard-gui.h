@@ -49,10 +49,12 @@ public:
 	void reset();
 	void startDrag(int16 x, int16 y);
 	void endDrag();
+	void initSize(int16 w, int16 h);
 
 private:
 
 	OSystem *_system;
+
 	VirtualKeyboard *_kbd;
 	Rect _kbdBound;
 	Graphics::Surface *_kbdSurface;
@@ -72,9 +74,11 @@ private:
 	uint _dispI;
 	OverlayColor _dispForeColor, _dispBackColor;
 
+	int _lastScreenChanged;
+	int16 _screenW, _screenH;
+
 	bool _displaying;
 	bool _firstRun;
-	int _lastScreenChanged;
 
 	void setupDisplayArea(Rect& r, OverlayColor forecolor);
 	void move(int16 x, int16 y);

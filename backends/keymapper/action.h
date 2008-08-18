@@ -68,9 +68,11 @@ enum ActionCategory {
 	kActionCategoryMax
 };
 
+#define ACTION_ID_SIZE (4)
+
 struct Action {
 	/** unique id used for saving/loading to config */
-	int32 id;
+	char id[ACTION_ID_SIZE];
 	/** Human readable description */
 	String description;
 
@@ -88,7 +90,7 @@ private:
 	Keymap *_boss;
 
 public:
-	Action(Keymap *boss, int32 id,	String des = "", 
+	Action(Keymap *boss, const char *id, String des = "", 
 		   ActionCategory cat = kGenericActionCategory,
 		   ActionType typ = kGenericActionType,
 		   int pri = 0, int grp = 0, int flg = 0 );

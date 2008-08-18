@@ -38,6 +38,7 @@
 #include "base/version.h"
 
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
@@ -54,20 +55,6 @@
 
 
 static bool launcherDialog(OSystem &system) {
-
-	system.beginGFXTransaction();
-		// Set the user specified graphics mode (if any).
-		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
-
-		system.initSize(320, 200);
-	system.endGFXTransaction();
-
-	// Set initial window caption
-	system.setWindowCaption(gScummVMFullVersion);
-
-	// Clear the main screen
-	system.clearScreen();
-
 #if defined(_WIN32_WCE)
 	CELauncherDialog dlg;
 #elif defined(__DC__)
@@ -203,6 +190,21 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 	return 0;
 }
 
+static void setupGraphics(OSystem &system) {
+	system.beginGFXTransaction();
+		// Set the user specified graphics mode (if any).
+		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+
+		system.initSize(320, 200);
+	system.endGFXTransaction();
+
+	// Set initial window caption
+	system.setWindowCaption(gScummVMFullVersion);
+
+	// Clear the main screen
+	system.clearScreen();
+}
+
 
 extern "C" int scummvm_main(int argc, char *argv[]) {
 	Common::String specialDebug;
@@ -259,6 +261,12 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// the command line params) was read.
 	system.initBackend();
 
+	setupGraphics(system);
+
+	// Init the event manager. As the virtual keyboard is loaded here, it must 
+	// take place after the backend is initiated and the screen has been setup
+	system.getEventManager()->init();
+
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain()) {
 		launcherDialog(system);
@@ -303,7 +311,9 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 			// screen to draw on yet.
 			warning("Could not find any engine capable of running the selected game");
 		}
-
+		
+		// reset the graphics to default
+		setupGraphics(system);
 		launcherDialog(system);
 	}
 	PluginManager::instance().unloadPlugins();

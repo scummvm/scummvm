@@ -122,6 +122,7 @@ public:
 	DefaultEventManager(OSystem *boss);
 	~DefaultEventManager();
 
+	virtual void init();
 	virtual bool pollEvent(Common::Event &event);
 	virtual void pushEvent(const Common::Event &event);
 	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name);

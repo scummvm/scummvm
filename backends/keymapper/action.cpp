@@ -28,11 +28,15 @@
 
 namespace Common {
 
-Action::Action(Keymap *boss, int32 i,	String des, ActionCategory cat, 
+Action::Action(Keymap *boss, const char *i,	String des, ActionCategory cat, 
 			   ActionType typ, int pri, int grp, int flg)
-	: _boss(boss), id(i), description(des), category(cat), type(typ), 
+	: _boss(boss), description(des), category(cat), type(typ), 
 	priority(pri), group(grp), flags(flg), _hwKey(0) {
+	assert(i);
 	assert(_boss);
+
+	strncpy(id, i, ACTION_ID_SIZE);
+
 	_boss->addAction(this);
 }
 

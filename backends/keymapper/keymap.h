@@ -61,7 +61,7 @@ public:
 	 * @param id id of Action to retrieve
 	 * @return Pointer to the Action or 0 if not found
 	 */
-	Action *getAction(int32 id);
+	Action *getAction(const char *id);
 
 	/**
 	 * Get the list of all the Actions contained in this Keymap
@@ -124,8 +124,8 @@ private:
 	*/
 	void unregisterMapping(Action *action);
 
-	Action *findAction(int32 id);
-	const Action *findAction(int32 id) const;
+	Action *findAction(const char *id);
+	const Action *findAction(const char *id) const;
 
 	void internalMapKey(Action *action, HardwareKey *hwKey);
 

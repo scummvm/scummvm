@@ -199,6 +199,8 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	_vk = new Common::VirtualKeyboard();
 	_keymapper = new Common::Keymapper(this);
 	_remap = false;
+
+	//init();
 }
 
 DefaultEventManager::~DefaultEventManager() {
@@ -257,6 +259,14 @@ DefaultEventManager::~DefaultEventManager() {
 	}
 	_boss->deleteMutex(_timeMutex);
 	_boss->deleteMutex(_recorderMutex);
+}
+
+void DefaultEventManager::init() {
+	if (ConfMan.hasKey("vkeybd_pack_name")) {
+		_vk->loadKeyboardPack(ConfMan.get("vkeybd_pack_name"));
+	} else {
+		_vk->loadKeyboardPack("vkeybd");
+	}
 }
 
 bool DefaultEventManager::playback(Common::Event &event) {
@@ -418,22 +428,15 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
 
-			// HACK to show/hide keyboard (keyboard is not shown if gui is active)
 			if (event.kbd.keycode == Common::KEYCODE_F6 && event.kbd.flags == 0) {
 				if (_vk->isDisplaying()) {
 					_vk->close(true);
 				} else {
-					static bool enabled = true;
-					if (enabled && _vk->isLoaded() == false) {
-						enabled = _vk->loadKeyboardPack("vkeybd");
-					}
-					if (enabled) {
-						bool isPaused = (g_engine) ? g_engine->isPaused() : true;
-						if (!isPaused) g_engine->pauseEngine(true);
-						_vk->show();
-						if (!isPaused) g_engine->pauseEngine(false);
-						result = false;
-					}
+					bool isPaused = (g_engine) ? g_engine->isPaused() : true;
+					if (!isPaused) g_engine->pauseEngine(true);
+					_vk->show();
+					if (!isPaused) g_engine->pauseEngine(false);
+					result = false;
 				}
 			} else if (event.kbd.keycode == Common::KEYCODE_F7 && event.kbd.flags == 0) {
 				if (!_remap) {

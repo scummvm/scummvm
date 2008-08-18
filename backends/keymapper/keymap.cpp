@@ -26,6 +26,8 @@
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/hardware-key.h"
 
+#define KEYMAP_KEY_PREFIX "keymap_"
+
 namespace Common {
 
 Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap(), _configDomain(0) {
@@ -68,23 +70,23 @@ void Keymap::unregisterMapping(Action *action) {
 	}
 }
 
-Action *Keymap::getAction(int32 id) {
+Action *Keymap::getAction(const char *id) {
 	return findAction(id);
 }
 
-Action *Keymap::findAction(int32 id) {
+Action *Keymap::findAction(const char *id) {
 	List<Action*>::iterator it;
 	for (it = _actions.begin(); it != _actions.end(); it++) {
-		if ((*it)->id == id)
+		if (strncmp((*it)->id, id, ACTION_ID_SIZE) == 0)
 			return *it;
 	}
 	return 0;
 }
 
-const Action *Keymap::findAction(int32 id) const {
+const Action *Keymap::findAction(const char *id) const {
 	List<Action*>::const_iterator it;
 	for (it = _actions.begin(); it != _actions.end(); it++) {
-		if ((*it)->id == id)
+		if (strncmp((*it)->id, id, ACTION_ID_SIZE) == 0)
 			return *it;
 	}
 	return 0;
@@ -106,37 +108,25 @@ void Keymap::setConfigDomain(ConfigManager::Domain *dom) {
 void Keymap::loadMappings(const HardwareKeySet *hwKeys) {
 	if (!_configDomain) return;
 	ConfigManager::Domain::iterator it;	
-	String prefix = "km_" + _name + "_";
+	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 	for (it = _configDomain->begin(); it != _configDomain->end(); it++) {
 		const String& key = it->_key;
 		if (!key.hasPrefix(prefix.c_str()))
 			continue;
 
 		// parse Action ID
-		const char *actionIdStart = key.c_str() + prefix.size();
-		char *err;
-		int32 actionId = (int32) strtol(actionIdStart, &err, 0);
-		if (err == actionIdStart) {
-			warning("'%s' is not a valid Action ID", err);
-			continue;
-		}
+		const char *actionId = key.c_str() + prefix.size();
 		Action *ua = getAction(actionId);
 		if (!ua) {
-			warning("'%s' keymap does not contain Action with ID %d", 
-				_name.c_str(), (int)actionId);
+			warning("'%s' keymap does not contain Action with ID %s", 
+				_name.c_str(), actionId);
 			_configDomain->erase(key);
 			continue;
 		}
 
-		// parse HardwareKey ID
-		int32 hwKeyId = (int32) strtol(it->_value.c_str(), &err, 0);
-		if (err == it->_value.c_str()) {
-			warning("'%s' is not a valid HardwareKey ID", err);
-			continue;
-		}
-		const HardwareKey *hwKey = hwKeys->findHardwareKey(hwKeyId);
+		const HardwareKey *hwKey = hwKeys->findHardwareKey(it->_value.c_str());
 		if (!hwKey) {
-			warning("HardwareKey with ID %d not known", (int)hwKeyId);
+			warning("HardwareKey with ID %s not known", it->_value.c_str());
 			_configDomain->erase(key);
 			continue;
 		}
@@ -148,16 +138,17 @@ void Keymap::loadMappings(const HardwareKeySet *hwKeys) {
 void Keymap::saveMappings() {
 	if (!_configDomain) return;
 	List<Action*>::const_iterator it;
-	char buf[12];
-	String prefix = "km_" + _name + "_";
+	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 	for (it = _actions.begin(); it != _actions.end(); it++) {
-		sprintf(buf, "%d", (*it)->id);
-		String key = prefix + buf;
-		if ((*it)->getMappedKey())
-			sprintf(buf, "%d", (*it)->getMappedKey()->id);
-		else
-			strcpy(buf, "");
-		_configDomain->setVal(key, buf);
+		uint actIdLen = strnlen((*it)->id, ACTION_ID_SIZE);
+		String actId((*it)->id, (*it)->id + actIdLen);
+		if ((*it)->getMappedKey()) {
+			uint hwIdLen = strnlen((*it)->getMappedKey()->id, HWKEY_ID_SIZE);
+			String hwId((*it)->getMappedKey()->id, (*it)->getMappedKey()->id + hwIdLen);
+			_configDomain->setVal(prefix + actId, hwId);
+		} else {
+			_configDomain->setVal(prefix + actId, "");
+		}
 	}
 }
 

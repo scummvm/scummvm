@@ -136,6 +136,12 @@ public:
 		RBUTTON = 1 << 1
 	};
 
+
+	/**
+	 * Initialise the event manager.
+	 * @note	called after graphics system has been set up
+	 */
+	virtual void init() {}
 	/**
 	 * Get the next event in the event queue.
 	 * @param event	point to an Event struct, which will be filled with the event data.
