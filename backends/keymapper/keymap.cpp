@@ -48,7 +48,7 @@ Keymap::~Keymap() {
 
 void Keymap::addAction(Action *action) {
 	if (findAction(action->id))
-		error("Action with id %d already in KeyMap!", action->id);
+		error("Action with id %s already in KeyMap!", action->id);
 	_actions.push_back(action);
 }
 
@@ -140,10 +140,12 @@ void Keymap::saveMappings() {
 	List<Action*>::const_iterator it;
 	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 	for (it = _actions.begin(); it != _actions.end(); it++) {
-		uint actIdLen = strnlen((*it)->id, ACTION_ID_SIZE);
+		uint actIdLen = strlen((*it)->id);
+		actIdLen = (actIdLen > ACTION_ID_SIZE) ? ACTION_ID_SIZE : actIdLen;
 		String actId((*it)->id, (*it)->id + actIdLen);
 		if ((*it)->getMappedKey()) {
-			uint hwIdLen = strnlen((*it)->getMappedKey()->id, HWKEY_ID_SIZE);
+			uint hwIdLen = strlen((*it)->getMappedKey()->id);
+			hwIdLen = (hwIdLen > HWKEY_ID_SIZE) ? HWKEY_ID_SIZE : hwIdLen;
 			String hwId((*it)->getMappedKey()->id, (*it)->getMappedKey()->id + hwIdLen);
 			_configDomain->setVal(prefix + actId, hwId);
 		} else {
@@ -167,9 +169,9 @@ bool Keymap::isComplete(const HardwareKeySet *hwKeys) {
 }
 
 // TODO:
-// - current weaknesses:
-//     - if an action finds a key with required type / category but a parent 
-//       action with higher priority is using it, that key is never used
+// - current weakness:
+//     - if an action finds a key with required type but a parent action with 
+//       higher priority is using it, that key is never used
 void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
 	// Create copies of action and key lists.
 	List<Action*> actions(_actions);
@@ -196,9 +198,10 @@ void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
 	sort(actions.begin(), actions.end(), priorityComp);
 	
 	// First mapping pass:
-	// - Match if a key's preferred type or category is same as the action's.
+	// - Match if a key's preferred action type is the same as the action's 
+	// type, or vice versa.
 	// - Priority is given to:
-	//     - keys that match type over category.
+	//     - keys that match action types over key types.
 	//     - keys that have not been used by parent maps.
 	// - If a key has been used by a parent map the new action must have a
 	//   higher priority than the parent action.
@@ -212,7 +215,7 @@ void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
 		int matchRank = 0;
 		Action *act = *actIt;
 		for (keyIt = keys.begin(); keyIt != keys.end(); ++keyIt) {
-			if ((*keyIt)->preferredType == act->type) {
+			if ((*keyIt)->preferredAction == act->type && act->type != kGenericActionType) {
 				Action *parentAct = getParentMappedAction((*keyIt)->key);
 				if (!parentAct) {
 					selectedKey = keyIt;
@@ -221,7 +224,7 @@ void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
 					selectedKey = keyIt;
 					matchRank = 3;
 				}
-			} else if ((*keyIt)->preferredCategory == act->category && matchRank < 2) {
+			} else if ((*keyIt)->type == act->preferredKey && act->preferredKey != kGenericKeyType && matchRank < 2) {
 				Action *parentAct = getParentMappedAction((*keyIt)->key);
 				if (!parentAct) {
 					selectedKey = keyIt;
@@ -250,7 +253,7 @@ void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
 	//     - keys that have no parent action
 	//     - keys whose parent action has lower priority than the new action
 	//     - keys whose parent action has the lowest priority
-	// - is guarantees to match a key if one is available
+	// - is guaranteed to match a key if they are not all used up
 	for (actIt = actions.begin(); actIt != actions.end(); ++actIt) {
 		selectedKey = keys.end();
 		int matchRank = 0;

@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#include "backends/keymapper/keymapper.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/util.h"
@@ -235,7 +236,7 @@ void NewGui::runLoop() {
 	}
 
 	Common::EventManager *eventMan = _system->getEventManager();
-
+	eventMan->getKeymapper()->pushKeymap("gui");
 	while (!_dialogStack.empty() && activeDialog == getTopDialog()) {
 		if (_needRedraw) {
 			redraw();
@@ -326,6 +327,7 @@ void NewGui::runLoop() {
 		// Delay for a moment
 		_system->delayMillis(10);
 	}
+	eventMan->getKeymapper()->popKeymap();
 
 	// HACK: since we reopen all dialogs anyway on redraw
 	// we for now use Theme::closeAllDialogs here, until

@@ -26,12 +26,12 @@
 #ifndef COMMON_HARDWAREKEY
 #define COMMON_HARDWAREKEY
 
-#include "backends/keymapper/action.h"
+#include "backends/keymapper/types.h"
 
 namespace Common {
 
-#define HWKEY_ID_SIZE (4)
 
+#define HWKEY_ID_SIZE (4)
 /**
 * Describes an available hardware key 
 */
@@ -46,14 +46,12 @@ struct HardwareKey {
 	*/
 	KeyState key;
 
-	ActionCategory preferredCategory;
-	ActionType preferredType;
-	int16 group;
+	KeyType type;
+	ActionType preferredAction;
 
-	HardwareKey(const char *i, KeyState ks = KeyState(), String des = "",
-				ActionCategory cat = kGenericActionCategory,
-				ActionType ty = kGenericActionType,	int gr = 0)
-		: key(ks), description(des), preferredCategory(cat), preferredType(ty), group(gr) {
+	HardwareKey(const char *i, KeyState ky = KeyState(), String desc = "",
+				KeyType typ = kGenericKeyType, ActionType prefAct = kGenericActionType)
+		: key(ky), description(desc), type(typ), preferredAction(prefAct) {
 		assert(i);
 		strncpy(id, i, HWKEY_ID_SIZE);
 	}
@@ -113,8 +111,8 @@ private:
 	void checkForKey(HardwareKey *key) {
 		List<const HardwareKey*>::iterator it;
 		for (it = _keys.begin(); it != _keys.end(); it++) {
-			if ((*it)->id == key->id)
-				error("Error adding HardwareKey '%s' - id of %d already in use!", key->description.c_str(), key->id);
+			if (strncmp((*it)->id, key->id, HWKEY_ID_SIZE) == 0)
+				error("Error adding HardwareKey '%s' - id of %s already in use!", key->description.c_str(), key->id);
 			else if ((*it)->key == key->key)
 				error("Error adding HardwareKey '%s' - key already in use!", key->description.c_str());
 		}

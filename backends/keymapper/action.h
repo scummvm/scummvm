@@ -26,6 +26,7 @@
 #ifndef COMMON_ACTION
 #define COMMON_ACTION
 
+#include "backends/keymapper/types.h"
 #include "common/events.h"
 #include "common/func.h"
 #include "common/list.h"
@@ -35,38 +36,6 @@ namespace Common {
 
 struct HardwareKey;
 class Keymap;
-
-
-enum ActionType {
-	kGenericActionType,
-
-	// common actions
-	kDirectionUpAction,
-	kDirectionDownAction,
-	kDirectionLeftAction,
-	kDirectionRightAction,
-	kLeftClickAction,
-	kRightClickAction,
-	kSaveAction,
-	kMenuAction,
-	kQuitAction,
-	kVirtualKeyboardAction,
-	kKeyRemapAction,
-	kVolumeUpAction,
-	kVolumeDownAction,
-
-
-	kActionTypeMax
-};
-
-enum ActionCategory {
-	kGenericActionCategory,
-	// classes of action - probably need to be slightly more specific than this
-	kInGameAction,   // effects the actual gameplay
-	kSystemAction,   //show a menu / change volume / etc
-
-	kActionCategoryMax
-};
 
 #define ACTION_ID_SIZE (4)
 
@@ -78,8 +47,8 @@ struct Action {
 
 	/** Events to be sent when mapped key is pressed */
 	List<Event> events;
-	ActionCategory category;
 	ActionType type;
+	KeyType preferredKey;
 	int priority;
 	int group;
 	int flags;
@@ -91,12 +60,43 @@ private:
 
 public:
 	Action(Keymap *boss, const char *id, String des = "", 
-		   ActionCategory cat = kGenericActionCategory,
 		   ActionType typ = kGenericActionType,
-		   int pri = 0, int grp = 0, int flg = 0 );
+		   KeyType prefKey = kGenericKeyType,
+		   int pri = 0, int flg = 0 );
 
-	void addEvent(const Event &evt) { events.push_back(evt); }
-	Keymap *getBoss() { return _boss; }
+	void addEvent(const Event &evt) { 
+		events.push_back(evt);
+	}
+
+	void addKeyEvent(const KeyState &ks) {
+		Event evt;
+		evt.type = EVENT_KEYDOWN;
+		evt.kbd = ks;
+		addEvent(evt);
+	}
+
+	void addLeftClickEvent() {
+		Event evt;
+		evt.type = EVENT_LBUTTONDOWN;
+		addEvent(evt);
+	}
+
+	void addMiddleClickEvent() {
+		Event evt;
+		evt.type = EVENT_MBUTTONDOWN;
+		addEvent(evt);
+	}
+
+	void addRightClickEvent() {
+		Event evt;
+		evt.type = EVENT_RBUTTONDOWN;
+		addEvent(evt);
+	}
+
+	Keymap *getBoss() { 
+		return _boss;
+	}
+
 	void mapKey(const HardwareKey *key);
 	const HardwareKey *getMappedKey() const;
 

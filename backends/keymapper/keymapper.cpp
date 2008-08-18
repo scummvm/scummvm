@@ -159,7 +159,6 @@ bool Keymapper::mapKey(const KeyState& key, bool isKeyDown) {
 	List<Event>::iterator it;
 	for (it = action->events.begin(); it != action->events.end(); ++it) {
 		Event evt = *it;
-		bool pushEvent = true;
 		switch (evt.type) {
 		case EVENT_KEYDOWN:
 			if (!isKeyDown) evt.type = EVENT_KEYUP;
@@ -187,9 +186,10 @@ bool Keymapper::mapKey(const KeyState& key, bool isKeyDown) {
 			break;
 		default:
 			// don't deliver other events on key up
-			if (!isKeyDown) pushEvent = false;
+			if (!isKeyDown) continue;
 		}
-		if (pushEvent) _eventMan->pushEvent(evt);
+		evt.mouse = _eventMan->getMousePos();
+		_eventMan->pushEvent(evt);
 	}
 	return true;
 }

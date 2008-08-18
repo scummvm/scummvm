@@ -23,31 +23,49 @@
 *
 */
 
-#include "backends/keymapper/action.h"
-#include "backends/keymapper/keymap.h"
+#ifndef COMMON_TYPES
+#define COMMON_TYPES
 
 namespace Common {
 
-Action::Action(Keymap *boss, const char *i,	String des, ActionType typ, 
-			   KeyType prefKey, int pri, int flg)
-	: _boss(boss), description(des), type(typ), preferredKey(prefKey),
-	priority(pri), flags(flg), _hwKey(0) {
-	assert(i);
-	assert(_boss);
+enum KeyType {
+	kGenericKeyType,
+	kDirUpKeyType,
+	kDirDownKeyType,
+	kDirLeftKeyType,
+	kDirRightKeyType,
+	kActionKeyType,
+	kTriggerLeftKeyType,
+	kTriggerRightKeyType,
+	kStartKeyType,
+	kSelectKeyType,
+	/*  ...  */
 
-	strncpy(id, i, ACTION_ID_SIZE);
+	kKeyTypeMax
+};
 
-	_boss->addAction(this);
-}
+enum ActionType {
+	kGenericActionType,
 
-void Action::mapKey(const HardwareKey *key) {
-	if (_hwKey) _boss->unregisterMapping(this);
-	_hwKey = key;
-	if (_hwKey) _boss->registerMapping(this, _hwKey);
-}
+	// common actions
+	kDirUpActionType,
+	kDirDownActionType,
+	kDirLeftActionType,
+	kDirRightActionType,
+	kLeftClickActionType,
+	kRightClickActionType,
+	kSaveActionType,
+	kMenuActionType,
+	kQuitActionType,
+	kVirtualKeyboardActionType,
+	kKeyRemapActionType,
+	kVolumeUpActionType,
+	kVolumeDownActionType,
 
-const HardwareKey *Action::getMappedKey() const {
-	return _hwKey;
-}
+
+	kActionTypeMax
+};
 
 } // end of namespace Common
+
+#endif

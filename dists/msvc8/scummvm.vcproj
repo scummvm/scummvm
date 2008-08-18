@@ -1120,6 +1120,10 @@
 					RelativePath="..\..\backends\keymapper\remap-dialog.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\types.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
