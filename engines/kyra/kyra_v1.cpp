@@ -114,7 +114,7 @@ int KyraEngine_v1::init() {
 				_sound = new SoundTownsPC98_v2(this, _mixer);
 		} else if (_flags.platform == Common::kPlatformPC98) {
 			if (_flags.gameID == GI_KYRA1)
-				_sound = new SoundTowns/*SoundPC98*/(this, _mixer);
+				_sound = new SoundPC98(this, _mixer);
 			else
 				_sound = new SoundTownsPC98_v2(this, _mixer);
 		} else if (midiDriver == MD_ADLIB) {
