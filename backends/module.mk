@@ -31,7 +31,6 @@ MODULE_OBJS := \
 	keymapper/action.o \
 	keymapper/remap-dialog.o \
 	keymapper/keymap.o \
-	keymapper/keymap-manager.o \
 	keymapper/keymapper.o \
 	vkeybd/image-map.o \
 	vkeybd/polygon.o \
