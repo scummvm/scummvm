@@ -612,32 +612,37 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		assert(0 == (width & 3));
 
 		// Compose the text over the game graphics
-
-		// TODO: Optimize this code. There are several things that come immediately to mind:
-		// (1) Loop unrolling: We could read 4 or even 8 pixels at once, since everything is
-		//     a multiple of 8 here.
-		// (2) More ASM versions (in particular, the ARM code for the NDS could be used on
-		//     all ARM systems, couldn't it?)
-		// (3) Better encoding of the text surface data. This is the one with the biggest
-		//     potential.
-		//     (a) Keep an "isEmpty" marker for each pixel row in the _textSurface. The idea
-		//         is that most rows won't contain any text data, so we can just use memcpy.
-		//     (b) RLE encode the _textSurface row-wise. This is an improved variant of (a),
-		//         but also more complicated to implement, and incurs a bigger overhead when
-		//         writing to the text surface.
 #ifdef USE_ARM_GFX_ASM
 		asmDrawStripToScreen(height, width, text, src, dst, vs->pitch, width, _textSurface.pitch);
 #else
-		for (int h = 0; h < height * m; ++h) {
-			for (int w = 0; w < width * m; ++w) {
-				byte tmp = *text++;
-				if (tmp == CHARSET_MASK_TRANSPARENCY)
-					tmp = *src;
-				*dst++ = tmp;
-				src++;
+		// We blit four pixels at a time, for improved performance.
+		const uint32 *src32 = (const uint32 *)src;
+		const uint32 *text32 = (const uint32 *)text;
+		uint32 *dst32 = (uint32 *)dst;
+		
+		vsPitch >>= 2;
+		const int textPitch = (_textSurface.pitch - width * m) >> 2;
+		for (int h = height * m; h > 0; --h) {
+			for (int w = width*m; w > 0; w-=4) {
+				uint32 temp = *text32++;
+				
+				// Generate a byte mask for those text pixels (bytes) with
+				// value CHARSET_MASK_TRANSPARENCY. In the end, each byte
+				// in mask will be either equal to 0x00 or 0xFF.
+				// Doing it this way avoids branches and bytewise operations,
+				// at the cost of readability ;).
+				uint32 mask = temp ^ CHARSET_MASK_TRANSPARENCY_32;
+				mask = (((mask & 0x7f7f7f7f) + 0x7f7f7f7f) | mask) & 0x80808080;
+				mask = ((mask >> 7) + 0x7f7f7f7f) ^ 0x80808080;
+				
+				// The following line is equivalent to this code:
+				//   *dst32++ = (*src32++ & mask) | (temp & ~mask);
+				// However, some compilers can generate somewhat better
+				// machine code for this equivalent statement:
+				*dst32++ = ((temp ^ *src32++) & mask) ^ temp;
 			}
-			src += vsPitch;
-			text += _textSurface.pitch - width * m;
+			src32 += vsPitch;
+			text32 += textPitch;
 		}
 #endif
 		src = _compositeBuf;

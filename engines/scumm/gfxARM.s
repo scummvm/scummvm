@@ -24,7 +24,7 @@
 
 	.global	asmDrawStripToScreen
 	.global	asmCopy8Col
-	
+
 	@ ARM implementation of asmDrawStripToScreen.
 	@
 	@ C prototype would be:
@@ -47,7 +47,7 @@ asmDrawStripToScreen:
 	@ r2 = text
 	@ r3 = src
 	MOV	r12,r13
-	STMFD	r13!,{r4-r7,r9-r11,R14}
+	STMFD	r13!,{r4-r11,R14}
 	LDMIA	r12,{r4,r5,r6,r7}
 	@ r4 = dst
 	@ r5 = vsPitch
@@ -69,57 +69,46 @@ asmDrawStripToScreen:
 	MOV	r10,#253
 	ORR	r10,r10,r10,LSL #8
 	ORR	r10,r10,r10,LSL #16	@ r10 = mask
-yLoop:
-	MOV	r14,r1			@ r14 = width
+	MOV	r8,#0x7F
+	ORR	r8, r8, r8, LSL #8
+	ORR	r8, r8, r8, LSL #16	@ r8  = 7f7f7f7f
+	STR	r1,[r13,#-4]!		@ Stack width
+	B	xLoop
+
+notEntirelyTransparent:
+	AND	r14,r9, r8		@ r14  =  mask & 7f7f7f7f
+	ADD	r14,r14,r8		@ r14  = (mask & 7f7f7f7f)+7f7f7f7f
+	ORR	r14,r14,r9		@ r14 |= mask
+	BIC	r14,r14,r8		@ r14 &= 80808080
+	ADD	r14,r8, r14,LSR #7	@ r14  = (rx>>7) + 7f7f7f7f
+	EOR	r14,r14,r8		@ r14 ^= 7f7f7f7f
+	@ So bytes of r14 are 00 where source was matching value,FF otherwise
+	BIC	r11,r11,r14
+	AND	r12,r12,r14
+	ORR	r12,r11,r12
+	STR	r12,[r4],#4
+	SUBS	r1,r1,#4
+	BLE	endXLoop
 xLoop:
-	LDR	r12,[r2],#4		@ r12 = [text]
-	LDR	r11,[r3],#4		@ r11 = [src]
-	CMP	r12,r10
-	BNE	singleByteCompare
-	SUBS	r14,r14,#4
+	LDR	r12,[r2],#4		@ r12 = temp = [text]
+	LDR	r11,[r3],#4		@ r11 =        [src]
+	@ Stall
+	EORS	r9, r12,r10		@ r9  = mask = temp ^ TRANSPARENCY
+	BNE	notEntirelyTransparent
+	SUBS	r1, r1, #4
 	STR	r11,[r4], #4		@ r4 = [dst]
 	BGT	xLoop
-
+endXLoop:
 	ADD	r2,r2,r7		@ text += textSurfacePitch
 	ADD	r3,r3,r5		@ src  += vsPitch
 	ADD	r4,r4,r6		@ dst  += vmScreenWidth
 	SUBS	r0,r0,#1
-	BGT	yLoop
-	LDMFD	r13!,{r4-r7,r9-r11,PC}
-
-singleByteCompare:
-	MOV	r9,r12,LSR #24		@ r9 = 1st byte of [text]
-	CMP	r9,r10,LSR #24		@ if (r9 == mask)
-	MOVEQ	r9,r11,LSR #24		@     r9 = 1st byte of [src]
-	ORR	r12,r9,r12,LSL #8	@ r12 = combine r9 and r12
-
-	MOV	r9,r12,LSR #24		@ r9 = 1st byte of [text]
-	CMP	r9,r10,LSR #24		@ if (r9 == mask)
-	MOVEQ	r9,r11,LSR #24		@     r9 = 1st byte of [src]
-	ORR	r12,r9,r12,LSL #8	@ r12 = combine r9 and r12
-
-	MOV	r9,r12,LSR #24		@ r9 = 1st byte of [text]
-	CMP	r9,r10,LSR #24		@ if (r9 == mask)
-	MOVEQ	r9,r11,LSR #24		@     r9 = 1st byte of [src]
-	ORR	r12,r9,r12,LSL #8	@ r12 = combine r9 and r12
-
-	MOV	r9,r12,LSR #24		@ r9 = 1st byte of [text]
-	CMP	r9,r10,LSR #24		@ if (r9 == mask)
-	MOVEQ	r9,r11,LSR #24		@     r9 = 1st byte of [src]
-	ORR	r12,r9,r12,LSL #8	@ r12 = combine r9 and r12
-
-	STR	r12,[r4],#4
-	SUBS	r14,r14,#4
+	LDRGT	r1,[r13]		@ r14 = width
 	BGT	xLoop
-
-	ADD	r2,r2,r7		@ text += textSurfacePitch
-	ADD	r3,r3,r5		@ src  += vsPitch
-	ADD	r4,r4,r6		@ dst  += vmScreenWidth
-	SUBS	r0,r0,#1
-	BGT	yLoop
+	ADD	r13,r13,#4
 end:
-	LDMFD	r13!,{r4-r7,r9-r11,PC}
-	
+	LDMFD	r13!,{r4-r11,PC}
+
 	@ ARM implementation of asmCopy8Col
 	@
 	@ C prototype would be:
@@ -156,4 +145,4 @@ roll2:
 	STR	r14,[r0],r1
 	BNE	yLoop2
 
-	LDMFD	r13!,{PC}	
+	LDMFD	r13!,{PC}
