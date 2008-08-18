@@ -174,7 +174,8 @@ struct ColorCycle {
 
 struct StripTable;
 
-#define CHARSET_MASK_TRANSPARENCY	253
+#define CHARSET_MASK_TRANSPARENCY	 0xFD
+#define CHARSET_MASK_TRANSPARENCY_32 0xFDFDFDFD
 
 class Gdi {
 protected:
