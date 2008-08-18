@@ -235,7 +235,6 @@ private:
 	// * One for instruments, starting at offset 500.
 
 	uint8 *getProgram(int progId) {
-		uint16 offset = READ_LE_UINT16(_soundData + 2 * progId);
 		return _soundData + READ_LE_UINT16(_soundData + 2 * progId);
 	}
 
