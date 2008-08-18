@@ -506,7 +506,7 @@ void Gfx::patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask) 
 	r.moveTo(x, y);
 
 	uint16 z = (mask) ? _backgroundInfo->getLayer(y) : LAYER_FOREGROUND;
-	blt(r, (byte*)surf.pixels, &_backgroundInfo->bg, z, 0);
+	blt(r, (byte*)surf.pixels, &_backgroundInfo->bg, z, 100, 0);
 }
 
 void Gfx::fillBackground(const Common::Rect& r, byte color) {

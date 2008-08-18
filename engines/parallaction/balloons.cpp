@@ -318,7 +318,7 @@ int BalloonManager_ns::createBalloon(int16 w, int16 h, int16 winding, uint16 bor
 		winding = (winding == 0 ? 1 : 0);
 		Common::Rect s(BALLOON_TAIL_WIDTH, BALLOON_TAIL_HEIGHT);
 		s.moveTo(r.width()/2 - 5, r.bottom - 1);
-		_gfx->blt(s, _resBalloonTail[winding], balloon->surface, LAYER_FOREGROUND, BALLOON_TRANSPARENT_COLOR_NS);
+		_gfx->blt(s, _resBalloonTail[winding], balloon->surface, LAYER_FOREGROUND, 100, BALLOON_TRANSPARENT_COLOR_NS);
 	}
 
 	_numBalloons++;
@@ -591,7 +591,7 @@ Graphics::Surface *BalloonManager_br::expandBalloon(Frames *data, int frameNum) 
 	Graphics::Surface *surf = new Graphics::Surface;
 	surf->create(rect.width(), rect.height(), 1);
 
-	_gfx->unpackBlt(rect, data->getData(frameNum), data->getRawSize(frameNum), surf, LAYER_FOREGROUND, BALLOON_TRANSPARENT_COLOR_BR);
+	_gfx->unpackBlt(rect, data->getData(frameNum), data->getRawSize(frameNum), surf, LAYER_FOREGROUND, 100, BALLOON_TRANSPARENT_COLOR_BR);
 
 	return surf;
 }

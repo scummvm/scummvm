@@ -514,7 +514,7 @@ Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation) {
 	_ani->setY(100);
 	_ani->setZ(10);
 	_ani->setF(0);
-	_ani->_flags = kFlagsActive | kFlagsNoName;
+	_ani->_flags = kFlagsActive | kFlagsNoName | kFlagsCharacter;
 	_ani->_type = kZoneYou;
 	strncpy(_ani->_name, "yourself", ZONENAME_LENGTH);
 

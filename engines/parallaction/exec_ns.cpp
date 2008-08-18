@@ -321,7 +321,7 @@ DECLARE_COMMAND_OPCODE(stop) {
 void Parallaction_ns::drawAnimations() {
 	debugC(9, kDebugExec, "Parallaction_ns::drawAnimations()\n");
 
-	uint16 layer = 0;
+	uint16 layer = 0, scale = 100;
 
 	for (AnimationList::iterator it = _location._animations.begin(); it != _location._animations.end(); it++) {
 
@@ -350,6 +350,18 @@ void Parallaction_ns::drawAnimations() {
 				}
 			}
 
+			if (getGameType() == GType_BRA) {
+				if (anim->_flags & (kFlagsScaled | kFlagsCharacter)) {
+					if (anim->getZ() <= _location._zeta0) {
+						if (anim->getZ() >= _location._zeta1) {
+							scale = ((anim->getZ() - _location._zeta1) * (100 - _location._zeta2)) / (_location._zeta0 - _location._zeta1) + _location._zeta2;
+						} else {
+							scale = _location._zeta2;
+						}
+					}
+				}
+			}
+
 			if (obj) {
 				_gfx->showGfxObj(obj, true);
 				obj->frame = anim->getF();
@@ -357,6 +369,7 @@ void Parallaction_ns::drawAnimations() {
 				obj->y = anim->getY();
 				obj->z = anim->getZ();
 				obj->layer = layer;
+				obj->scale = scale;
 			}
 		}
 
