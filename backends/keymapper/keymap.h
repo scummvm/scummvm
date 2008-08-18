@@ -90,6 +90,9 @@ public:
 	 */
 	void saveMappings();
 
+	
+	void automaticMapping(HardwareKeySet *hwKeys);
+
 	/**
 	 * Returns true if all UserAction's in Keymap are mapped, or,
 	 * all HardwareKey's from the given set have been used up.
@@ -128,6 +131,8 @@ private:
 	const Action *findAction(const char *id) const;
 
 	void internalMapKey(Action *action, HardwareKey *hwKey);
+
+	Action *getParentMappedAction(KeyState key);
 
 	String _name;
 	Keymap *_parent;

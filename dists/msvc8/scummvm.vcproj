@@ -1097,14 +1097,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\keymapper\keymap-manager.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\backends\keymapper\keymap-manager.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\backends\keymapper\keymap.cpp"
 					>
 				</File>

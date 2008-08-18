@@ -31,7 +31,6 @@
 #include "common/stack.h"
 #include "backends/keymapper/hardware-key.h"
 #include "backends/keymapper/keymap.h"
-#include "backends/keymapper/keymap-manager.h"
 
 namespace Common {
 
@@ -44,6 +43,42 @@ public:
 		bool global;
 	};
 
+	/* Nested class that represents a set of keymaps */
+	class Domain {
+		typedef HashMap<String, Keymap*, 
+			IgnoreCase_Hash, IgnoreCase_EqualTo> KeymapMap;
+
+	public:
+		Domain() : _configDomain(0) {}
+		~Domain() { 
+			deleteAllKeyMaps();
+		}
+
+		void setConfigDomain(ConfigManager::Domain *confDom) { 
+			_configDomain = confDom;
+		}
+		ConfigManager::Domain *getConfigDomain() {
+			return _configDomain;
+		}
+
+		void addKeymap(Keymap *map);
+
+		void deleteAllKeyMaps();
+
+		Keymap *getKeymap(const String& name);
+		
+		typedef KeymapMap::iterator iterator;
+		typedef KeymapMap::const_iterator const_iterator;
+		iterator begin() { return _keymaps.begin(); }
+		const_iterator begin() const { return _keymaps.begin(); }
+		iterator end() { return _keymaps.end(); }
+		const_iterator end() const { return _keymaps.end(); }
+		uint32 count() { return _keymaps.size(); }
+	private:
+		ConfigManager::Domain *_configDomain;
+		KeymapMap _keymaps;
+	};
+
 	Keymapper(EventManager *eventMan);
 	~Keymapper();
 
@@ -53,6 +88,10 @@ public:
 	 */
 	void registerHardwareKeySet(HardwareKeySet *keys);
 
+	/**
+	 * Get the HardwareKeySet that is registered with the Keymapper
+	 */
+	HardwareKeySet *getHardwareKeySet() { return _hardwareKeys; }
 
 	/**
 	 * Add a keymap to the global domain.
@@ -73,6 +112,15 @@ public:
 	 * any game keymaps that are loaded.
 	 */
 	void cleanupGameKeymaps();
+
+	/**
+	 * Obtain a keymap of the given name from the keymapper.
+	 * Game keymaps have priority over global keymaps
+	 * @param name		name of the keymap to return
+	 * @param global	set to true if returned keymap is global, false if game
+	 */
+	Keymap *getKeymap(const String& name, bool &global);
+
 	/**
 	 * Push a new keymap to the top of the active stack, activating 
 	 * it for use.
@@ -89,13 +137,13 @@ public:
 	void popKeymap();
 
 	/**
-	* @brief Map a key press event.
-	* If the active keymap contains a Action mapped to the given key, then 
-	* the Action's events are pushed into the EventManager's event queue.
-	* @param key		key that was pressed
-	* @param isKeyDown	true for key down, false for key up
-	* @return			true if key was mapped
-	*/
+	 * @brief Map a key press event.
+	 * If the active keymap contains a Action mapped to the given key, then 
+	 * the Action's events are pushed into the EventManager's event queue.
+	 * @param key		key that was pressed
+	 * @param isKeyDown	true for key down, false for key up
+	 * @return			true if key was mapped
+	 */
 	bool mapKey(const KeyState& key, bool isKeyDown);
 
 	/**
@@ -105,26 +153,40 @@ public:
 	bool mapKeyDown(const KeyState& key);
 
 	/**
-	* @brief Map a key up event.
-	* @see mapKey
-	*/
+	 * @brief Map a key up event.
+	 * @see mapKey
+	 */
 	bool mapKeyUp(const KeyState& key);
 
-	const HardwareKey *getHardwareKey(const KeyState& key);
-
+	/**
+	 * Enable/disable the keymapper
+	 */
 	void setEnabled(bool enabled) { _enabled = enabled; }
 
-	KeymapManager *getManager() { return _keymapMan; }
+	/**
+	 * Return a HardwareKey pointer for the given key state
+	 */
+	const HardwareKey *getHardwareKey(const KeyState& key);
+
+	Domain& getGlobalDomain() { return _globalDomain; }
+	Domain& getGameDomain() { return _gameDomain; }
 	Stack<MapRecord>& getActiveStack() { return _activeMaps; }
 
 private:
+
+	void initKeymap(ConfigManager::Domain *domain, Keymap *keymap);
+	void refreshGameDomain();
+
+	Domain _globalDomain;
+	Domain _gameDomain;
+
+	HardwareKeySet *_hardwareKeys;
 
 	void pushKeymap(Keymap *newMap, bool inherit, bool global);
 
 	typedef List<HardwareKey*>::iterator Iterator;
 
 	EventManager *_eventMan;
-	KeymapManager *_keymapMan;
 
 	bool _enabled;
 

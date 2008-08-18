@@ -61,8 +61,8 @@ void RemapDialog::open() {
 		divider = true;
 	}
 
-	KeymapManager::Domain *_globalKeymaps = &_keymapper->getManager()->getGlobalDomain();
-	KeymapManager::Domain *_gameKeymaps = 0;
+	Keymapper::Domain *_globalKeymaps = &_keymapper->getGlobalDomain();
+	Keymapper::Domain *_gameKeymaps = 0;
 
 	int keymapCount = 0;
 	if (_globalKeymaps->count() == 0)
@@ -71,7 +71,7 @@ void RemapDialog::open() {
 		keymapCount += _globalKeymaps->count();
 
 	if (ConfMan.getActiveDomain() != 0) {
-		_gameKeymaps = &_keymapper->getManager()->getGameDomain();
+		_gameKeymaps = &_keymapper->getGameDomain();
 		if (_gameKeymaps->count() == 0)
 			_gameKeymaps = 0;
 		else
@@ -80,7 +80,7 @@ void RemapDialog::open() {
 
 	_keymapTable = (Keymap**)malloc(sizeof(Keymap*) * keymapCount);
 
-	KeymapManager::Domain::iterator it;
+	Keymapper::Domain::iterator it;
 	uint32 idx = 0;
 	if (_globalKeymaps) {
 		if (divider) _kmPopUp->appendEntry("");
@@ -238,7 +238,7 @@ void RemapDialog::handleTickle() {
 void RemapDialog::loadKeymap() {
 	_currentActions.clear();
 	if (_activeKeymaps->size() > 0 && _kmPopUp->getSelected() == 0) {
-		List<const HardwareKey*> freeKeys (_keymapper->getManager()->getHardwareKeySet()->getHardwareKeys());
+		List<const HardwareKey*> freeKeys (_keymapper->getHardwareKeySet()->getHardwareKeys());
 
 		// add most active keymap's keys
 		Keymapper::MapRecord top = _activeKeymaps->top();

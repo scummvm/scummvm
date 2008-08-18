@@ -166,4 +166,131 @@ bool Keymap::isComplete(const HardwareKeySet *hwKeys) {
 	return allMapped || (numberMapped == hwKeys->count());
 }
 
+// TODO:
+// - current weaknesses:
+//     - if an action finds a key with required type / category but a parent 
+//       action with higher priority is using it, that key is never used
+void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
+	// Create copies of action and key lists.
+	List<Action*> actions(_actions);
+	List<const HardwareKey*> keys(hwKeys->getHardwareKeys());
+
+	List<Action*>::iterator actIt;
+	List<const HardwareKey*>::iterator keyIt, selectedKey;
+	
+	// Remove actions and keys from local lists that have already been mapped.
+	actIt = actions.begin();
+	while (actIt != actions.end()) {
+		Action *act = *actIt;
+		const HardwareKey *key = act->getMappedKey();
+		if (key) {
+			keys.remove(key);
+			actIt = actions.erase(actIt);
+		} else {
+			++actIt;
+		}
+	}
+
+	// Sort remaining actions by priority.
+	ActionPriorityComp priorityComp;
+	sort(actions.begin(), actions.end(), priorityComp);
+	
+	// First mapping pass:
+	// - Match if a key's preferred type or category is same as the action's.
+	// - Priority is given to:
+	//     - keys that match type over category.
+	//     - keys that have not been used by parent maps.
+	// - If a key has been used by a parent map the new action must have a
+	//   higher priority than the parent action.
+	// - As soon as the number of skipped actions equals the number of keys 
+	//   remaining we stop matching. This means that the second pass will assign keys
+	//   to these higher priority skipped actions.
+	uint skipped = 0;
+	actIt = actions.begin();
+	while (actIt != actions.end() && skipped < keys.size()) {
+		selectedKey = keys.end();
+		int matchRank = 0;
+		Action *act = *actIt;
+		for (keyIt = keys.begin(); keyIt != keys.end(); ++keyIt) {
+			if ((*keyIt)->preferredType == act->type) {
+				Action *parentAct = getParentMappedAction((*keyIt)->key);
+				if (!parentAct) {
+					selectedKey = keyIt;
+					break;
+				} else if (parentAct->priority <= act->priority && matchRank < 3) {
+					selectedKey = keyIt;
+					matchRank = 3;
+				}
+			} else if ((*keyIt)->preferredCategory == act->category && matchRank < 2) {
+				Action *parentAct = getParentMappedAction((*keyIt)->key);
+				if (!parentAct) {
+					selectedKey = keyIt;
+					matchRank = 2;
+				} else if (parentAct->priority <= act->priority && matchRank < 1) {
+					selectedKey = keyIt;
+					matchRank = 1;
+				}
+			}
+		}
+		if (selectedKey != keys.end()) {
+			// Map action and delete action & key from local lists.
+			act->mapKey(*selectedKey);
+			keys.erase(selectedKey);
+			actIt = actions.erase(actIt);
+		} else {
+			// Skip action (will be mapped in next pass).
+			++actIt;
+			++skipped;
+		}
+	}
+
+	// Second mapping pass:
+	// - Maps any remaining actions to keys
+	// - priority given to:
+	//     - keys that have no parent action
+	//     - keys whose parent action has lower priority than the new action
+	//     - keys whose parent action has the lowest priority
+	// - is guarantees to match a key if one is available
+	for (actIt = actions.begin(); actIt != actions.end(); ++actIt) {
+		selectedKey = keys.end();
+		int matchRank = 0;
+		int lowestPriority = 0;
+		Action *act = *actIt;
+		for (keyIt = keys.begin(); keyIt != keys.end(); ++keyIt) {
+			Action *parentAct = getParentMappedAction((*keyIt)->key);
+			if (!parentAct) {
+				selectedKey = keyIt;
+				break;
+			} else if (matchRank < 2) {
+				if (parentAct->priority <= act->priority) {
+					matchRank = 2;
+					selectedKey = keyIt;
+				} else if (parentAct->priority < lowestPriority || matchRank == 0) {
+					matchRank = 1;
+					lowestPriority = parentAct->priority;
+					selectedKey = keyIt;
+				}
+			}
+		}
+		if (selectedKey != keys.end()) {
+			act->mapKey(*selectedKey);
+			keys.erase(selectedKey);
+		} else {// no match = no keys left 
+			break;
+		}
+	}
+}
+
+Action *Keymap::getParentMappedAction(KeyState key) {
+	if (_parent) {
+		Action *act = _parent->getMappedAction(key);
+		if (act)
+			return act;
+		else
+			return _parent->getParentMappedAction(key);
+	} else {
+		return 0;
+	}
+}
+
 } // end of namespace Common

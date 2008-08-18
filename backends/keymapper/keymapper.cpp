@@ -27,32 +27,76 @@
 #include "common/config-manager.h"
 namespace Common {
 
-Keymapper::Keymapper(EventManager *evtMgr) {
-	_eventMan = evtMgr;
-	_keymapMan = new KeymapManager();
-	_enabled = true;
+void Keymapper::Domain::addKeymap(Keymap *map) {
+	KeymapMap::iterator it = _keymaps.find(map->getName());
+	if (it != _keymaps.end())
+		delete _keymaps[map->getName()];
+	_keymaps[map->getName()] = map;
+}
+
+void Keymapper::Domain::deleteAllKeyMaps() {
+	KeymapMap::iterator it;
+	for (it = _keymaps.begin(); it != _keymaps.end(); it++)
+		delete it->_value;
+	_keymaps.clear();
+}
+
+Keymap *Keymapper::Domain::getKeymap(const String& name) {
+	KeymapMap::iterator it = _keymaps.find(name);
+	if (it != _keymaps.end())
+		return it->_value;
+	else
+		return 0;
+}
+
+Keymapper::Keymapper(EventManager *evtMgr)
+	: _eventMan(evtMgr), _enabled(true), _hardwareKeys(0) {
+	_globalDomain.setConfigDomain(ConfMan.getDomain(ConfigManager::kApplicationDomain));
 }
 
 Keymapper::~Keymapper() {
-	delete _keymapMan;
+	delete _hardwareKeys;
 }
 
 void Keymapper::registerHardwareKeySet(HardwareKeySet *keys) {
-	_keymapMan->registerHardwareKeySet(keys);
+	if (_hardwareKeys)
+		error("Hardware key set already registered!");
+	_hardwareKeys = keys;
 }
 
 void Keymapper::addGlobalKeymap(Keymap *keymap) {
-	_keymapMan->registerGlobalKeymap(keymap);
+	initKeymap(_globalDomain.getConfigDomain(), keymap);
+	_globalDomain.addKeymap(keymap);
+}
+
+void Keymapper::refreshGameDomain() {
+	if (_gameDomain.getConfigDomain() != ConfMan.getActiveDomain()) {
+		cleanupGameKeymaps();
+		_gameDomain.setConfigDomain(ConfMan.getActiveDomain());
+	}
 }
 
 void Keymapper::addGameKeymap(Keymap *keymap) {
 	if (ConfMan.getActiveDomain() == 0)
 		error("Call to Keymapper::addGameKeymap when no game loaded");
 		
-	_keymapMan->registerGameKeymap(keymap);
+	refreshGameDomain();
+	initKeymap(_gameDomain.getConfigDomain(), keymap);
+	_gameDomain.addKeymap(keymap);
+}
+
+void Keymapper::initKeymap(ConfigManager::Domain *domain, Keymap *map) {
+	map->setConfigDomain(domain);
+	map->loadMappings(_hardwareKeys);
+	if (map->isComplete(_hardwareKeys) == false) {
+		map->automaticMapping(_hardwareKeys);
+		map->saveMappings();
+		ConfMan.flushToDisk();
+	}
 }
 
 void Keymapper::cleanupGameKeymaps() {
+	_gameDomain.deleteAllKeyMaps();
 	Stack<MapRecord> newStack;
 	for (int i = 0; i < _activeMaps.size(); i++) {
 		if (!_activeMaps[i].global)
@@ -61,9 +105,19 @@ void Keymapper::cleanupGameKeymaps() {
 	_activeMaps = newStack;
 }
 
+Keymap *Keymapper::getKeymap(const String& name, bool &global) {
+	Keymap *keymap = _gameDomain.getKeymap(name);
+	global = false;
+	if (!keymap) {
+		keymap = _globalDomain.getKeymap(name);
+		global = true;
+	}
+	return keymap;
+}
+
 bool Keymapper::pushKeymap(const String& name, bool inherit) {
 	bool global;
-	Keymap *newMap = _keymapMan->getKeymap(name, &global);
+	Keymap *newMap = getKeymap(name, global);
 	if (!newMap) {
 		warning("Keymap '%s' not registered", name.c_str());
 		return false;
@@ -141,9 +195,7 @@ bool Keymapper::mapKey(const KeyState& key, bool isKeyDown) {
 }
 
 const HardwareKey *Keymapper::getHardwareKey(const KeyState& key) {
-	HardwareKeySet *keyset = _keymapMan->getHardwareKeySet();
-	if (!keyset) return 0;
-	return keyset->findHardwareKey(key);
+	return (_hardwareKeys) ? _hardwareKeys->findHardwareKey(key) : 0;
 }
 
 } // end of namespace Common
