@@ -118,9 +118,6 @@ void RemapDialog::close() {
 }
 
 void RemapDialog::reflowLayout() {
-	int labelWidth = g_gui.evaluator()->getVar("remap_popup_labelW");
-	_kmPopUp->changeLabelWidth(labelWidth);
-
 	int scrollbarWidth, buttonHeight;
 	if (g_gui.getWidgetSize() == GUI::kBigWidgetSize) {
 		buttonHeight = GUI::kBigButtonHeight;
@@ -134,13 +131,15 @@ void RemapDialog::reflowLayout() {
 	int areaW = g_gui.evaluator()->getVar("remap_keymap_area.w");
 	int areaH = g_gui.evaluator()->getVar("remap_keymap_area.h");
 	int spacing = g_gui.evaluator()->getVar("remap_spacing");
-	_colCount = g_gui.evaluator()->getVar("remap_col_count");
-	if (_colCount <= 0) 
-		error("remap_col_count must be >= 0");
+	int labelWidth = g_gui.evaluator()->getVar("remap_label_width");
+	int buttonWidth = g_gui.evaluator()->getVar("remap_button_width");
+	int colWidth = labelWidth + buttonWidth + spacing;
+	_colCount = (areaW - scrollbarWidth) / colWidth;
 	_rowCount = (areaH + spacing) / (buttonHeight + spacing);
-	if (_rowCount <= 0) 
+	if (_colCount <= 0 || _rowCount <= 0) 
 		error("Remap dialog too small to display any keymaps!");
-	int colWidth = (areaW - scrollbarWidth - _colCount * spacing) / _colCount;
+
+	_kmPopUp->changeLabelWidth(labelWidth);
 
 	_scrollBar->resize(areaX + areaW - scrollbarWidth, areaY, scrollbarWidth, areaH);
 	_scrollBar->_entriesPerPage = _rowCount;
@@ -162,10 +161,10 @@ void RemapDialog::reflowLayout() {
 		} else {
 			widg = _keymapWidgets[i];
 		}
-		uint x = areaX + (i % _colCount) * (colWidth + spacing);
+		uint x = areaX + (i % _colCount) * colWidth;
 		uint y = areaY + (i / _colCount) * (buttonHeight + spacing);
-		widg.actionText->resize(x, y + textYOff, colWidth / 2, kLineHeight);
-		widg.keyButton->resize(x + colWidth / 2, y, colWidth / 2, buttonHeight);
+		widg.actionText->resize(x, y + textYOff, labelWidth, kLineHeight);
+		widg.keyButton->resize(x + labelWidth, y, buttonWidth, buttonHeight);
 	}
 	while (oldSize > newSize) {
 		ActionWidgets widg = _keymapWidgets.remove_at(--oldSize);
@@ -238,6 +237,8 @@ void RemapDialog::handleTickle() {
 void RemapDialog::loadKeymap() {
 	_currentActions.clear();
 	if (_activeKeymaps->size() > 0 && _kmPopUp->getSelected() == 0) {
+		// load active keymaps
+
 		List<const HardwareKey*> freeKeys (_keymapper->getHardwareKeySet()->getHardwareKeys());
 
 		// add most active keymap's keys
