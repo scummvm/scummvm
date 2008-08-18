@@ -189,7 +189,7 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 }
 
 bool ThemeBrowser::isTheme(const FilesystemNode &node, Entry &out) {
-	out.file = node.getName();	
+	out.file = node.getPath();	
 	
 #ifdef USE_ZLIB
 	if (!out.file.hasSuffix(".zip") && !node.isDirectory())

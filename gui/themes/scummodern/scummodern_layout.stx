@@ -261,13 +261,13 @@
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'mcFontButton'
 						type = 'Button'
+				/>	
+				<widget name = 'mcFontPath'
+						height = 'Globals.Line.Height'
 				/>
 				<widget name = 'mcFontClearButton'
 						height = 'Globals.Line.Height'
 						width = 'Globals.Line.Height'
-				/>		
-				<widget name = 'mcFontPath'
-						height = 'Globals.Line.Height'
 				/>
 			</layout>
 			<widget name = 'mcMixedCheckbox'

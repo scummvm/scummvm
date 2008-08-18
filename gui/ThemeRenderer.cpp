@@ -483,9 +483,9 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 		}
 	} else {
 #endif
-		FilesystemNode node(themeName);
+        
+        FilesystemNode node(themeName);
 		if (node.exists() && node.isReadable() && node.isDirectory()) {
-			
 			FSList fslist;
 			if (!node.getChildren(fslist, FilesystemNode::kListFilesOnly))
 				return false;
@@ -795,7 +795,7 @@ void ThemeRenderer::drawPopUpWidget(const Common::Rect &r, const Common::String 
 	
 	if (!sel.empty()) {
 		Common::Rect text(r.left, r.top, r.right - 16, r.bottom);
-		queueDDText(getTextData(dd), text, sel, false, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
+		queueDDText(getTextData(dd), text, sel, false, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV, deltax);
 	}
 }
 

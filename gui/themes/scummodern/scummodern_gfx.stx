@@ -300,7 +300,7 @@
 		/>
 		<text	font = 'text_default'
 				vertical_align = 'center'
-				horizontal_align = 'right'
+				horizontal_align = 'left'
 		/>
 	</drawdata>
 
@@ -325,7 +325,7 @@
 		/>
 		<text	font = 'text_hover'
 				vertical_align = 'center'
-				horizontal_align = 'right'
+				horizontal_align = 'left'
 		/>
 	</drawdata>
 
@@ -462,6 +462,18 @@
 	</drawdata>
 
 	<drawdata id = 'widget_default' cache = false>
+		<drawstep	func = 'roundedsq'
+					radius = 8
+					stroke = 0
+					gradient_start = 'blandyellow'
+					gradient_end = 'xtrabrightred'
+					gradient_factor = '6'
+					fill = 'gradient'
+					shadow = 3
+		/>
+	</drawdata>
+	
+	<drawdata id = 'widget_small' cache = false>
 		<drawstep	func = 'roundedsq'
 					radius = 8
 					stroke = 0
