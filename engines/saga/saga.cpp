@@ -255,13 +255,20 @@ int SagaEngine::go() {
 			_interface->addToInventory(_actor->objIndexToId(0));	// Magic hat
 		_scene->changeScene(ConfMan.getInt("boot_param"), 0, kTransitionNoFade);
 	} else if (ConfMan.hasKey("save_slot")) {
+		// Init the current chapter to 8 (character selection) for IHNM
+		if (getGameType() == GType_IHNM)
+			_scene->changeScene(-2, 0, kTransitionFade, 8);
+
 		// First scene sets up palette
 		_scene->changeScene(getStartSceneNumber(), 0, kTransitionNoFade);
 		_events->handleEvents(0); // Process immediate events
 
-		_interface->setMode(kPanelMain);
-		char *fileName;
-		fileName = calcSaveFileName(ConfMan.getInt("save_slot"));
+		if (getGameType() != GType_IHNM)
+			_interface->setMode(kPanelMain);
+		else
+			_interface->setMode(kPanelChapterSelection);
+
+		char *fileName = calcSaveFileName(ConfMan.getInt("save_slot"));
 		load(fileName);
 	} else {
 		_framesEsc = 0;
