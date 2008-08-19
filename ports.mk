@@ -10,7 +10,7 @@
 #
 install: all
 	$(INSTALL) -d "$(DESTDIR)$(BINDIR)"
-	$(INSTALL) -c -s -m 755 "$(srcdir)/scummvm$(EXEEXT)" "$(DESTDIR)$(BINDIR)/scummvm$(EXEEXT)"
+	$(INSTALL) -c -s -m 755 "./scummvm$(EXEEXT)" "$(DESTDIR)$(BINDIR)/scummvm$(EXEEXT)"
 	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man6/"
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.6" "$(DESTDIR)$(MANDIR)/man6/scummvm.6"
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/pixmaps/"
