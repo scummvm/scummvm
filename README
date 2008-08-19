@@ -6,8 +6,8 @@ Last updated:    $Date$
 What is Residual?
 -----------------
 Residual is a ScummVM (http://www.scummvm.org/) sub-project to play LucasArts'
-LUA-based 3D adventures, such as Grim Fandango. Residual use OpenGL for 3d
-graphics hardware acceleration.
+LUA-based 3D adventures, such as Grim Fandango. Residual utilizes OpenGL for
+3d graphics hardware acceleration.
 
 A software renderer is also included for machines without hardware OpenGL.
 
@@ -16,42 +16,40 @@ Residual is named such as it aims to do the same for the residual (remaining)
 games. It is also a word pun, as the engine used in these LUA-based adventure
 is called GrimE (as opposed to SCUMM). Grime is a type of residue.
 
-What games does it support?
----------------------------
-Residual is a fairly new project and slow developing project, and is still very
-much considered alpha. Currently it contains initial support for Grim Fandango.
+Which games does it support?
+----------------------------
+Residual is a fairly slow developing project and is still very much considered
+alpha. Currently it contains initial support for Grim Fandango.
 
-It is possible, but far from promised, that we can support the other LucasArts
-LUA-based title 'Escape from Monkey Island' in the distant future.
+It is possible, but far from promised, that the other LucasArts LUA-based
+title 'Escape from Monkey Island' may be supported in the distant future.
 
 How do I run Residual?
 ----------------------
-As Residual is still under heavy development, it is not yet stable, easy
-to use, nor complete. Some technical ability is required.
+As Residual is still under heavy development it is not yet stable, easy
+to use, or complete. Some technical ability is required.
 
-See the Configuation File section, to see how to create the configulatun file.
+See the Configuration File section to see how to create the configuration
+file.
 
-Residual understands command-line options: 
-'-fps' display fps information.
-'-fullscreen' switch to full screen
-'-soft' switch to software 3d renderering.
-'-zbuffer' enables masking for hardware 3d rendering.
+To see a list of supported command-line parameters, run Residual with the
+argument --help
 
 Configuration file:
----- -------------------
+-------------------
 By default, the configuration file is saved in, and loaded from:
 
         Windows Vista:
-        \Users\username\AppData\Roaming\Residual\residual.ini,
+        \Users\username\AppData\Roaming\Residual\residual.ini
 
         Windows 2000/XP:
-        \Documents and Settings\username\Application Data\Residual\residual.ini,
+        \Documents and Settings\username\Application Data\Residual\residual.ini
 
         Windows NT4:
-        <windir>\Profiles\username\Application Data\Residual\residual.ini,
+        <windir>\Profiles\username\Application Data\Residual\residual.ini
 
         Windows 95/98/ME:
-       <windir>\residual.ini,
+       <windir>\residual.ini
 
         Unix:
         ~/.residualrc
@@ -71,22 +69,22 @@ An example config file looks as follows:
 
 It runs really slow when using -zbuffer!
 ----------------------------------------
-A large portion of cards do not have a fast glDrawPixels access to zbuffer 
+A large portion of gfx cards do not have a fast glDrawPixels access to zbuffer 
 implementation in the driver.
 
 Unix users may be able to achieve playable framerates by using Mesa 5.0 or
 above, but people unable to upgrade or Windows users must use software
-renderer (-soft). Software renderer is generaly faster on modern platform.
+renderer. Software renderer is generally faster on modern platform.
 
 Black screen while menu dialogs on Radeon with Windows!
 -------------------------------------------------------
-Turn off force fullscene antialiasing in OpenGL gfx driver options.
+Turn off "force fullscene antialiasing" in the OpenGL gfx driver options.
 
 What is the state of Residual? 
-------------------------------- 
-Basic gameplay works, including cutscenes. Some of the game is playable,
-but many features are either missing or unstable. There is no abilitity
-to save/load, etc. Crashes are likely.
+------------------------------
+Basic gameplay works, including cutscenes. Parts of the game are playable,
+but many features are either missing or unstable. There is no ability
+to reliably save/load games, etc. Crashes are likely.
 
 Game currently playable to:
 	Meche leaves Manny again (Rubacava, Year 2)
@@ -101,6 +99,14 @@ Caveats (in order of appearance):
 3) Sometimes the Demon Beavers get stuck on obstacles - open the 
    menu for a moment and they will correct themselves
 
+For more information, see the page on Residual at the ScummVM wiki:
+http://wiki.scummvm.org/index.php/Residual
+
+Which datafiles are needed?
+---------------------------
+*.LAB
+GRIM.TAB
+
 What are the default keys?
 --------------------------
 e,u,p,i    : Examine, Use, Pickup, Inventory
@@ -110,6 +116,8 @@ Enter      : Selects items in inventory, conversation, etc
 Escape     : Skips cutscenes, exits certain screens
 q          : Exit Dialog Menu
 Ctrl + c   : Force Quit (from command-line)
+Alt + x    : Quit (ingame)
+F1         : Menu
 
 Development/debug keys from the original game
 ---------------------------------------------
@@ -122,7 +130,7 @@ Ctrl + o   : Create a door
 Ctrl + p   : Execute patch file
 Ctrl + s   : Turn on cursor
 Ctrl + u   : Create a new object
-Ctrl + v   : print the value of a variable
+Ctrl + v   : Print the value of a variable
 Alt + n    : Next viewpoint
 Apt + p    : Prev viewpoint
 Alt + s    : Run lua script
