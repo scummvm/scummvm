@@ -721,6 +721,7 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 	width = 0;
 	length = 0;
 
+    item->duration = 0;
 	item->rectCount = 0;
 
 	Font font(_vm->_res->load(_fontResIndexArray[item->fontNum]));
