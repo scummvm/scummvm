@@ -125,13 +125,13 @@ void CineEngine::readVolCnf() {
 		unpackedSize = packedSize = f.size();
 	}
 	uint8 *buf = new uint8[unpackedSize];
-	f.read(buf, packedSize);
-	if (packedSize != unpackedSize) {
-		CineUnpacker cineUnpacker;
-		if (!cineUnpacker.unpack(buf, packedSize, buf, unpackedSize)) {
-			error("Error while unpacking 'vol.cnf' data");
-		}
+	uint8 *packedBuf = new uint8[packedSize];
+	f.read(packedBuf, packedSize);
+	CineUnpacker cineUnpacker;
+	if (!cineUnpacker.unpack(packedBuf, packedSize, buf, unpackedSize)) {
+		error("Error while unpacking 'vol.cnf' data");
 	}
+	delete[] packedBuf;
 	uint8 *p = buf;
 	int resourceFilesCount = READ_BE_UINT16(p); p += 2;
 	int entrySize = READ_BE_UINT16(p); p += 2;
@@ -212,7 +212,8 @@ int16 findFileInBundle(const char *fileName) {
 	return -1;
 }
 
-void readFromPart(int16 idx, byte *dataPtr) {
+void readFromPart(int16 idx, byte *dataPtr, uint32 maxSize) {
+	assert(maxSize >= partBuffer[idx].packedSize);
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
 	g_cine->_partFileHandle.seek(partBuffer[idx].offset, SEEK_SET);
@@ -221,17 +222,17 @@ void readFromPart(int16 idx, byte *dataPtr) {
 
 byte *readBundleFile(int16 foundFileIdx) {
 	assert(foundFileIdx >= 0 && foundFileIdx < numElementInPart);
+	bool error = false;
 	byte *dataPtr = (byte *)calloc(partBuffer[foundFileIdx].unpackedSize, 1);
-	if (partBuffer[foundFileIdx].unpackedSize != partBuffer[foundFileIdx].packedSize) {
-		byte *unpackBuffer = (byte *)malloc(partBuffer[foundFileIdx].packedSize);
-		readFromPart(foundFileIdx, unpackBuffer);
-		CineUnpacker cineUnpacker;
-		if (!cineUnpacker.unpack(unpackBuffer, partBuffer[foundFileIdx].packedSize, dataPtr, partBuffer[foundFileIdx].unpackedSize)) {
-			warning("Error unpacking '%s' from bundle file '%s'", partBuffer[foundFileIdx].partName, currentPartName);
-		}
-		free(unpackBuffer);
-	} else {
-		readFromPart(foundFileIdx, dataPtr);
+	byte *packedData = (byte *)calloc(partBuffer[foundFileIdx].packedSize, 1);
+	assert(dataPtr && packedData);
+	readFromPart(foundFileIdx, packedData, partBuffer[foundFileIdx].packedSize);
+	CineUnpacker cineUnpacker;
+	error = !cineUnpacker.unpack(packedData, partBuffer[foundFileIdx].packedSize, dataPtr, partBuffer[foundFileIdx].unpackedSize);
+	free(packedData);
+
+	if (error) {
+		warning("Error unpacking '%s' from bundle file '%s'", partBuffer[foundFileIdx].partName, currentPartName);
 	}
 
 	return dataPtr;
