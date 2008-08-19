@@ -114,7 +114,7 @@ void ThemeClassic::enable() {
 }
 
 void ThemeClassic::disable() {
-	deinit();
+	_system->hideOverlay();
 	_enabled = false;
 }
 
