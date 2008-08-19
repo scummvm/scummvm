@@ -181,6 +181,8 @@ int DrasculaEngine::go() {
 	currentChapter = 1; // values from 1 to 6 will start each part of game
 	hay_que_load = 0;
 
+	checkCD();
+
 	for (;;) {
 		int i;
 
