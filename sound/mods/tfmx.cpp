@@ -418,16 +418,18 @@ void Tfmx::updatePattern(uint8 trackNumber) {
 				_tracks[trackNumber].activeMacro.notePeriod = periods[(_tracks[trackNumber].activeMacro.noteNumber + _tracks[trackNumber].activePattern.patternTranspose) & 0x3F];
 			}
 		}
-		else if (_tracks[trackNumber].macroOn) {
+	}
+
+	//Macro process loop.
+	if (_tracks[trackNumber].macroOn) {
 			while (_tracks[trackNumber].activeMacro.macroWait == 0 && (_tracks[trackNumber].macroOn == true)) {
 				doMacro(trackNumber);
 			}
-		}
-		if (_tracks[trackNumber].activeMacro.macroWait != 0) {
-			_tracks[trackNumber].activeMacro.macroWait--;
-		}
 	}
-
+	//Set macro timer.
+	if (_tracks[trackNumber].activeMacro.macroWait != 0) {
+			_tracks[trackNumber].activeMacro.macroWait--;
+	}
 	//Advance pattern. If macro is on, wait to advance.
 	if ((!_tracks[trackNumber].macroOn) || (_tracks[trackNumber].activeMacro.keyWaitOn)) {
 		if (_tracks[trackNumber].activePattern.patternCount < _tracks[trackNumber].activePattern.patternLength) {
@@ -652,8 +654,8 @@ void Tfmx::interrupt(void) {
 				printf("SAMPLE ON:: Channel #0 \n");
 				printf("SAMPLE OFFSET:: %02x \n", _channels[0].sampleOffset);
 				printf("SAMPLE LENGTH:: %02x \n", _channels[0].sampleLength);
-				printf("SAMPLE VOLUME:: %02x \n", _channels[0].volume);
 				printf("SAMPLE PERIOD NUMBER:: %02x \n", _tracks[0].activeMacro.noteNumber);
+				printf("SAMPLE VOLUME:: %02x \n", _channels[0].volume);printf("SAMPLE PERIOD:: %02x \n", _channels[0].period);
 				setChannelData(0, _sampleData + _channels[0].sampleOffset, _sampleData + _channels[0].sampleOffset, _channels[0].sampleLength, _channels[0].sampleLength);
 				_channels[0].updateOn = false;
 		}		
@@ -670,7 +672,6 @@ void Tfmx::interrupt(void) {
 
 		for (int i = 0; i < 4; i++) {
 			doEffects(i);
-			
 			setChannelPeriod(i,_channels[i].period);
 			setChannelVolume(i,_channels[i].volume);
 			if ( (_channels[i].sampleOn) && (_channels[i].updateOn) ) {
@@ -736,7 +737,9 @@ void Tfmx::doEffects(uint8 channelNumber) {
 			//reset count
 			_channels[channelNumber].vibratoCount = 0;
 		}
-		_channels[channelNumber].vibratoCount++;
+		else {
+			_channels[channelNumber].vibratoCount++;
+		}
 	}
 
 	//TODO:: Period Effects
