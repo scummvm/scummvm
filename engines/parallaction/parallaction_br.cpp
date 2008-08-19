@@ -123,8 +123,6 @@ Parallaction_br::~Parallaction_br() {
 	delete _dinoCursor;
 	delete _dougCursor;
 	delete _donnaCursor;
-
-	delete _mouseArrow;
 }
 
 void Parallaction_br::callFunction(uint index, void* parm) {
@@ -185,6 +183,7 @@ void Parallaction_br::initCursors() {
 		_mouseArrow = _donnaCursor;
 	} else {
 		// TODO: Where are the Amiga cursors?
+		_mouseArrow = 0;
 	}
 
 }
