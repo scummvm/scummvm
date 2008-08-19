@@ -1358,7 +1358,7 @@ public:
 	bool _enableRight;
 	bool _updateEnvelopeParameters;
 	const uint8 _idFlag;
-	int _feedbuf[3];
+	int32 _feedbuf[3];
 
 protected:
 	void setupPitchWheel();
