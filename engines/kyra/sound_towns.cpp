@@ -1592,7 +1592,7 @@ public:
 	void loadMusicData(uint8 *data, bool loadPaused = false);
 	void loadSoundEffectData(uint8 *data, uint8 trackNum);
 	void reset();
-	void fadeOut();
+	void fadeStep();
 
 	void pause() { _musicPlaying = false; }
 	void cont() { _musicPlaying = true; }
@@ -1601,6 +1601,7 @@ public:
 	void nextTick(int32 *buffer, uint32 bufferSize);
 
 	bool looping() { return _looping == _updateChannelsFlag ? true : false; }
+	bool musicPlaying() { return _musicPlaying; }
 
 	// AudioStream interface
 	int inline readBuffer(int16 *buffer, const int numSamples);
@@ -1660,7 +1661,7 @@ protected:
 	uint16 _tempo;
 	bool _musicPlaying;
 	bool _sfxPlaying;
-	bool _fading;
+	uint8 _fading;
 	uint8 _looping;
 	uint32 _musicTickCounter;
 
@@ -2798,6 +2799,63 @@ void TownsPC98_OpnSquareSineSource::writeReg(uint8 address, uint8 value, bool fo
 	*_regIndex = value;
 }
 
+void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
+	if (!_ready)
+		return;
+
+	for (uint32 i = 0; i < bufferSize; i++) {
+		_timer += _tickLength;
+		while (_timer > 0x30000) {
+			_timer -= 0x30000;
+
+			if (++_nTick >= (_reg[6] & 0x1f)) {
+				if ((_rand + 1) & 2)
+					_outN ^= 1;
+
+				_rand = (((_rand & 1) ^ ((_rand >> 3) & 1)) << 16) | (_rand >> 1);
+				_nTick = 0;
+			}
+
+			for (int ii = 0; ii < 3; ii++) {
+				if (++_channels[ii].tick >= (((_reg[ii * 2 + 1] & 0x0f) << 8) | _reg[ii * 2])) {
+					_channels[ii].tick = 0;
+					_channels[ii].smp ^= 1;
+				}
+				_channels[ii].out = (_channels[ii].smp | ((_reg[7] >> ii) & 1)) & (_outN | ((_reg[7] >> (ii + 3)) & 1));
+			}
+
+			if (_evpUpdate) {
+				if (++_evpUpdateCnt >= ((_reg[12] << 8) | _reg[11])) {
+					_evpUpdateCnt = 0;
+
+					if (--_evpTimer < 0) {
+						if (_cont) {
+							_evpTimer &= 0x1f;
+						} else {
+							_evpUpdate = false;
+							_evpTimer = 0;
+						}
+					}
+				}
+			}
+			_pReslt = _evpTimer ^ _attack;
+			updatesRegs();
+		}
+
+		int32 finOut = 0;
+		for (int ii = 0; ii < 3; ii++) {
+			if ((_reg[ii + 8] >> 4) & 1)
+				finOut += _tleTable[_channels[ii].out ? _pReslt : 0];
+			else
+				finOut += _tlTable[_channels[ii].out ? (_reg[ii + 8] & 0x0f) : 0];
+		}
+
+		finOut /= 2;
+		buffer[i << 1] += finOut;
+		buffer[(i << 1) + 1] += finOut;
+	}
+}
+
 void TownsPC98_OpnSquareSineSource::updatesRegs() {
 	for (int i = 0; i < _updateRequest;) {
 		uint8 b = _updateRequestBuf[i++];
@@ -2974,63 +3032,6 @@ void TownsPC98_OpnPercussionSource::advanceInput(PcmInstrument *ins) {
 		ins->samples[i] = d;
 		ins->decState = CLIP<int8>(ins->decState + adjustIndex[cur & 7], 0, 48);
 		cur >>= 4;
-	}
-}
-
-void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
-	if (!_ready)
-		return;
-
-	for (uint32 i = 0; i < bufferSize; i++) {
-		_timer += _tickLength;
-		while (_timer > 0x30000) {
-			_timer -= 0x30000;
-
-			if (++_nTick >= (_reg[6] & 0x1f)) {
-				if ((_rand + 1) & 2)
-					_outN ^= 1;
-
-				_rand = (((_rand & 1) ^ ((_rand >> 3) & 1)) << 16) | (_rand >> 1);
-				_nTick = 0;
-			}
-
-			for (int ii = 0; ii < 3; ii++) {
-				if (++_channels[ii].tick >= (((_reg[ii * 2 + 1] & 0x0f) << 8) | _reg[ii * 2])) {
-					_channels[ii].tick = 0;
-					_channels[ii].smp ^= 1;
-				}
-				_channels[ii].out = (_channels[ii].smp | ((_reg[7] >> ii) & 1)) & (_outN | ((_reg[7] >> (ii + 3)) & 1));
-			}
-
-			if (_evpUpdate) {
-				if (++_evpUpdateCnt >= ((_reg[12] << 8) | _reg[11])) {
-					_evpUpdateCnt = 0;
-
-					if (--_evpTimer < 0) {
-						if (_cont) {
-							_evpTimer &= 0x1f;
-						} else {
-							_evpUpdate = false;
-							_evpTimer = 0;
-						}
-					}
-				}
-			}
-			_pReslt = _evpTimer ^ _attack;
-			updatesRegs();
-		}
-
-		int32 finOut = 0;
-		for (int ii = 0; ii < 3; ii++) {
-			if ((_reg[ii + 8] >> 4) & 1)
-				finOut += _tleTable[_channels[ii].out ? _pReslt : 0];
-			else
-				finOut += _tlTable[_channels[ii].out ? (_reg[ii + 8] & 0x0f) : 0];
-		}
-
-		finOut /= 2;
-		buffer[i << 1] += finOut;
-		buffer[(i << 1) + 1] += finOut;
 	}
 }
 
@@ -3317,41 +3318,34 @@ void TownsPC98_OpnDriver::reset() {
 	unlock();
 }
 
-void TownsPC98_OpnDriver::fadeOut() {
+void TownsPC98_OpnDriver::fadeStep() {
 	if (!_musicPlaying)
 		return;
 
-	if (_hasPCM) {
-		lock();
-		if (_updatePCMFlag & _pcmChannel->_idFlag)
-			_pcmChannel->reset();
-		unlock();
+	lock();
+
+	for (int j = 0; j < _numChan; j++) {
+		if (_updateChannelsFlag & _channels[j]->_idFlag)
+			_channels[j]->fadeStep();
+	}
+		
+	for (int j = 0; j < _numSSG; j++) {
+		if (_updateSSGFlag & _ssgChannels[j]->_idFlag)
+			_ssgChannels[j]->fadeStep();
 	}
 
-	for (int i = 0; i < 20; i++) {
-		lock();
-
-		_fading = true;
-
-		uint32 dTime = _musicTickCounter + 2;
-		for (int j = 0; j < _numChan; j++) {
-			if (_updateChannelsFlag & _channels[j]->_idFlag)
-				_channels[j]->fadeStep();
+	if (!_fading) {
+		_fading = 19;
+		if (_hasPCM) {
+			if (_updatePCMFlag & _pcmChannel->_idFlag)
+				_pcmChannel->reset();
 		}
-		for (int j = 0; j < _numSSG; j++) {
-			if (_updateSSGFlag & _ssgChannels[j]->_idFlag)
-				_ssgChannels[j]->fadeStep();
-		}
-
-		unlock();
-
-		while (_musicPlaying) {
-			if (_musicTickCounter >= dTime)
-				break;
-		}
+	} else {
+		if (!--_fading)
+			reset();
 	}
 
-	reset();
+	unlock();
 }
 
 void TownsPC98_OpnDriver::callback() {
@@ -3831,7 +3825,13 @@ void SoundPC98::haltTrack() {
 }
 
 void SoundPC98::beginFadeOut() {
-	_driver->fadeOut();
+	if (!_driver->musicPlaying())
+		return;
+
+	for (int i = 0; i < 20; i++) {
+		_driver->fadeStep();
+		_vm->delay(32);
+	}
 	haltTrack();
 }
 
@@ -3930,7 +3930,14 @@ void SoundTownsPC98_v2::haltTrack() {
 }
 
 void SoundTownsPC98_v2::beginFadeOut() {
-	_driver->fadeOut();
+	if (!_driver->musicPlaying())
+		return;
+
+	for (int i = 0; i < 20; i++) {
+		_driver->fadeStep();
+		_vm->delay(32);
+	}
+
 	haltTrack();
 }
 
