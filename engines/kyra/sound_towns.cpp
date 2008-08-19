@@ -63,13 +63,13 @@ public:
 	MidiDriver *device() { return 0; }
 	byte getNumber() { return 0; }
 	void release() { }
-	void send(uint32 b) { }
+	void send(uint32) { }
 	void noteOff(byte note);
 	void noteOn(byte note, byte onVelo);
-	void programChange(byte program) {}
+	void programChange(byte) {}
 	void pitchBend(int16 value);
 	void controlChange(byte control, byte value);
-	void pitchBendFactor(byte value) { }
+	void pitchBendFactor(byte) { }
 	void sysEx_customInstrument(uint32 unused, const byte *instr);
 
 protected:
@@ -818,7 +818,8 @@ void Towns_EuphonyParser::parseNextEvent(EventInfo &info) {
 		}
 	}
 
-	while (true) {
+	bool loop = true;
+	while (loop) {
 		byte cmd = *pos;
 		byte evt = (cmd & 0xF0);
 
@@ -852,7 +853,7 @@ void Towns_EuphonyParser::parseNextEvent(EventInfo &info) {
 				info.basic.param2 = onVelo;
 
 				pos += 12;
-				break;
+				loop = false;
 			} else {
 				pos += 6;
 			}
@@ -869,7 +870,7 @@ void Towns_EuphonyParser::parseNextEvent(EventInfo &info) {
 				info.basic.param1 = pos[4];
 				info.basic.param2 = pos[5];
 				pos += 6;
-				break;
+				loop = false;
 			} else {
 				pos += 6;
 			}
@@ -888,7 +889,7 @@ void Towns_EuphonyParser::parseNextEvent(EventInfo &info) {
 			_tempo[2] = tempo & 0xff;
 			info.ext.data = (byte*) _tempo;
 			pos += 6;
-			break;
+			loop = false;
 		} else if (cmd == 0xFD || cmd == 0xFE) {
 			// End of track.
 			if (_autoLoop) {
@@ -905,12 +906,12 @@ void Towns_EuphonyParser::parseNextEvent(EventInfo &info) {
 			info.event = 0xFF;
 			info.ext.type = 0x2F;
 			info.ext.data = pos;
-			break;
+			loop = false;
 		} else {
 			error("Unknown Euphony music event 0x%02X", (int)cmd);
 			memset(&info, 0, sizeof(info));
 			pos = 0;
-			break;
+			loop = false;
 		}
 	}
 	_position._play_pos = pos;
@@ -1259,8 +1260,8 @@ void TownsPC98_OpnOperator::generateOutput(int32 phasebuf, int32 *feed, int32 &o
 
 	uint32 lvlout = _totalLevel + (uint32) _currentLevel;
 
-	int outp = 0;
-	int *i = &outp, *o = &outp;
+	int32 outp = 0;
+	int32 *i = &outp, *o = &outp;
 	int phaseShift = 0;
 
 	if (feed) {
@@ -1937,8 +1938,8 @@ void TownsPC98_OpnChannel::updateEnv() {
 		_opr[i]->updatePhaseIncrement();
 }
 
-void TownsPC98_OpnChannel::generateOutput(int32 &leftSample, int32 &rightSample, int *del, int *feed) {
-	int phbuf1, phbuf2, output;
+void TownsPC98_OpnChannel::generateOutput(int32 &leftSample, int32 &rightSample, int32 *del, int32 *feed) {
+	int32 phbuf1, phbuf2, output;
 	phbuf1 = phbuf2 = output = 0;
 
 	switch (_algorithm) {
