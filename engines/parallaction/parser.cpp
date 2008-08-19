@@ -190,7 +190,6 @@ uint16 Script::readLineToken(bool errorOnEOF) {
 	char *start;
 	do {
 		line = readLine(buf, 200);
-		printf("read line: %s\n", line);
 
 		if (line == NULL) {
 			if (errorOnEOF)
