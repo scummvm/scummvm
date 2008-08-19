@@ -485,6 +485,7 @@ bool DrasculaEngine::runCurrentChapter() {
 #else
 		if (rightMouseButton == 1 && menuScreen == 1) {
 #endif
+			delay(100);
 			if (currentChapter == 2)
 				loadPic(menuBackground, backSurface);
 			else
@@ -525,6 +526,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		if (leftMouseButton == 1 && menuBar == 1) {
 			selectVerbFromBar();
 		} else if (leftMouseButton == 1 && takeObject == 0) {
+			delay(100);
 			if (verify1())
 				return true;
 		} else if (leftMouseButton == 1 && takeObject == 1) {
