@@ -55,6 +55,7 @@ namespace {
 #define KYRA2_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, true, Kyra::GI_KYRA2)
 #define KYRA2_CD_FLAGS FLAGS(false, false, true, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_KYRA2)
@@ -428,6 +429,77 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
 		},
 		KYRA2_CD_FLAGS
+	},
+
+	// Italian fan translation, see fr#2003504 "KYRA: add support for Italian version of Kyrandia 2&3"
+	{ // CD version
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "30487f3b8d7790c7857f4769ff2dd125"),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+	{
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "30487f3b8d7790c7857f4769ff2dd125"),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+	{
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "30487f3b8d7790c7857f4769ff2dd125"),
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
+	{ 
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "39772ff82e42c4c520050518deb82e64"),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
+	{ 
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "39772ff82e42c4c520050518deb82e64"),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
+	{ 
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "39772ff82e42c4c520050518deb82e64"),
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE | Common::ADGF_CD
+		},
+		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
 	},
 
 	{ // Interactive Demo
