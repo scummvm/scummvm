@@ -1321,6 +1321,14 @@
 				RelativePath="..\..\graphics\surface.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\graphics\thumbnail.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\thumbnail.h"
+				>
+			</File>
 			<Filter
 				Name="scaler"
 				>
