@@ -1061,7 +1061,7 @@
 					RelativePath="..\..\graphics\scaler\scalebit.h">
 				</File>
 				<File
-					RelativePath="..\..\graphics\scaler\thumbnail.cpp">
+					RelativePath="..\..\graphics\scaler\thumbnail_intern.cpp">
 				</File>
 			</Filter>
 			<Filter

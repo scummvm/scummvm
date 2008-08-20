@@ -1434,7 +1434,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\graphics\scaler\thumbnail.cpp"
+					RelativePath="..\..\graphics\scaler\thumbnail_intern.cpp"
 					>
 				</File>
 			</Filter>
