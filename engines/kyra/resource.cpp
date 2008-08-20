@@ -150,7 +150,7 @@ bool Resource::reset() {
 }
 
 bool Resource::loadPakFile(const Common::String &filename) {
-	if (!isAccessable(filename))
+	if (!isAccessible(filename))
 		return false;
 
 	ResFileMap::iterator iter = _map.find(filename);
@@ -201,18 +201,18 @@ bool Resource::loadPakFile(const Common::String &filename) {
 						// If the old parent is not protected we mark it as not preload anymore,
 						// since now no longer all of its embedded files are in the filemap.
 						oldParent->_value.preload = false;
-						_map[i->filename] = i->entry;
+						iter->_value = i->entry;
 					}
 				} else {
 					// Old parent not found? That's strange... But we just overwrite the old
 					// entry.
-					_map[i->filename] = i->entry;
+					iter->_value = i->entry;
 				}
 			} else {
 				// The old parent has the same filenames as the new archive, we are sure and overwrite the
 				// old file entry, could be afterall that the preload flag of the new archive was
 				// just unflagged.
-				_map[i->filename] = i->entry;
+				iter->_value = i->entry;
 			}
 		}
 		// 'else' case would mean here overwriting an existing file entry in the map without parent.
@@ -244,7 +244,7 @@ bool Resource::loadFileList(const Common::String &filedata) {
 		filename.toUppercase();
 
 		if (filename.hasSuffix(".PAK")) {
-			if (!isAccessable(filename) && _vm->gameFlags().isDemo) {
+			if (!isAccessible(filename) && _vm->gameFlags().isDemo) {
 				// the demo version supplied with Kyra3 does not 
 				// contain all pak files listed in filedata.fdt
 				// so we don't do anything here if they are non
@@ -289,7 +289,7 @@ void Resource::clearCompFileList() {
 }
 
 bool Resource::isInPakList(const Common::String &filename) {
-	if (!isAccessable(filename))
+	if (!isAccessible(filename))
 		return false;
 	ResFileMap::iterator iter = _map.find(filename);
 	if (iter == _map.end())
@@ -320,7 +320,7 @@ uint8 *Resource::fileData(const char *file, uint32 *size) {
 bool Resource::exists(const char *file, bool errorOutOnFail) {
 	if (Common::File::exists(file))
 		return true;
-	else if (isAccessable(file))
+	else if (isAccessible(file))
 		return true;
 	else if (errorOutOnFail)
 		error("File '%s' can't be found", file);
@@ -335,7 +335,7 @@ uint32 Resource::getFileSize(const char *file) {
 		if (f.open(file))
 			return f.size();
 	} else {
-		if (!isAccessable(file))
+		if (!isAccessible(file))
 			return 0;
 
 		ResFileMap::const_iterator iter = _map.find(file);
@@ -362,7 +362,7 @@ Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) 
 	if ((compEntry = _compFiles.find(file)) != _compFiles.end())
 		return new Common::MemoryReadStream(compEntry->_value.data, compEntry->_value.size, false);		
 
-	if (!isAccessable(file))
+	if (!isAccessible(file))
 		return 0;
 
 	ResFileMap::const_iterator iter = _map.find(file);
@@ -381,8 +381,8 @@ Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) 
 		Common::SeekableReadStream *parent = getFileStream(iter->_value.parent);
 		assert(parent);
 
-		ResFileMap::const_iterator parentIter = _map.find(iter->_value.parent);
-		const ResArchiveLoader *loader = getLoader(parentIter->_value.type);
+		ResFileEntry* parentEntry = getParentEntry(&iter->_value);
+		const ResArchiveLoader *loader = getLoader(parentEntry->type);
 		assert(loader);
 
 		return loader->loadFileFromArchive(file, parent, iter->_value);
@@ -391,26 +391,65 @@ Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) 
 	return 0;
 }
 
-bool Resource::isAccessable(const Common::String &file) {
+bool Resource::isAccessible(const Common::String &file) {
 	checkFile(file);
 
 	ResFileMap::const_iterator iter = _map.find(file);
-	while (iter != _map.end()) {
-		if (!iter->_value.parent.empty()) {
-			iter = _map.find(iter->_value.parent);
-			if (iter != _map.end()) {
-				// parent can never be a non archive file
-				if (iter->_value.type == ResFileEntry::kRaw)
-					return false;
-				// not mounted parent means not accessable
-				else if (!iter->_value.mounted)
-					return false;
-			}
+	if (iter == _map.end())
+		return false;
+	
+	return isAccessible(&iter->_value);
+}
+
+bool Resource::isAccessible(const ResFileEntry *fileEntry) {
+	assert(fileEntry);
+	
+	const ResFileEntry* currentEntry = fileEntry;
+	while (not currentEntry->parent.empty()) {
+		if (currentEntry->parentEntry) {
+			currentEntry = currentEntry->parentEntry;
 		} else {
-			return true;
+			ResFileMap::iterator it = _map.find(currentEntry->parent);
+			if (it == _map.end())
+				return false;
+			else
+				currentEntry->parentEntry = &it->_value;
+		}
+		// parent can never be a non archive file
+		if (currentEntry->type == ResFileEntry::kRaw)
+			return false;
+		// not mounted parent means not accessable
+		else if (!currentEntry->mounted)
+			return false;
+	}
+	
+	return true;
+}
+
+ResFileEntry *Resource::getParentEntry(const ResFileEntry *entry) const {
+	assert(entry);
+	if (entry->parent.empty()) {
+		return 0;
+	} else if (entry->parentEntry) {
+		assert(_map.find(entry->parent) != _map.end());	// If some day the hash map implementations changes and moves nodes around,
+														// this assumption would fail and the whole system would need a refactoring
+		assert(entry->parentEntry == &_map.find(entry->parent)->_value);
+		return entry->parentEntry;
+	} else {
+		ResFileMap::iterator it = _map.find(entry->parent);
+		if (it == _map.end())
+			return 0; // If it happens often, the structure maybe deserves a flag to avoid rechecking the map
+		else {
+			entry->parentEntry = &it->_value;
+			return entry->parentEntry;
 		}
 	}
-	return false;
+}
+
+ResFileEntry *Resource::getParentEntry(const Common::String &filename) const {
+	ResFileMap::iterator it = _map.find(filename);
+	assert(it != _map.end());
+	return getParentEntry(&it->_value);
 }
 
 void Resource::checkFile(const Common::String &file) {
@@ -418,65 +457,70 @@ void Resource::checkFile(const Common::String &file) {
 		CompFileMap::const_iterator iter;
 
 		if ((iter = _compFiles.find(file)) != _compFiles.end()) {
-			ResFileEntry entry;
+			ResFileEntry& entry = _map[file];
 			entry.parent = "";
+			entry.parentEntry = 0;
 			entry.size = iter->_value.size;
 			entry.mounted = false;
 			entry.preload = false;
 			entry.prot = false;
 			entry.type = ResFileEntry::kAutoDetect;
 			entry.offset = 0;
-			_map[file] = entry;
-
-			detectFileTypes();
+			
+			detectFileType(file, &entry);
 		} else if (Common::File::exists(file)) {
 			Common::File temp;
 			if (temp.open(file)) {
-				ResFileEntry entry;
+				ResFileEntry& entry = _map[file];
 				entry.parent = "";
+				entry.parentEntry = 0;
 				entry.size = temp.size();
 				entry.mounted = file.compareToIgnoreCase(StaticResource::staticDataFilename()) != 0;
 				entry.preload = false;
 				entry.prot = false;
 				entry.type = ResFileEntry::kAutoDetect;
 				entry.offset = 0;
-				_map[file] = entry;
 				temp.close();
 
-				detectFileTypes();
+				detectFileType(file, &entry);
 			}
 		}
 	}
 }
 
-void Resource::detectFileTypes() {
-	for (ResFileMap::iterator i = _map.begin(); i != _map.end(); ++i) {
-		if (!isAccessable(i->_key))
-			continue;
+void Resource::detectFileType(const Common::String &filename, ResFileEntry *fileEntry) {
+	assert(fileEntry);
+	
+	if (!isAccessible(fileEntry))
+		return;
 
-		if (i->_value.type == ResFileEntry::kAutoDetect) {
-			Common::SeekableReadStream *stream = 0;
-			for (LoaderIterator l = _loaders.begin(); l != _loaders.end(); ++l) {
-				if (!(*l)->checkFilename(i->_key))
-					continue;
-				
-				if (!stream)
-					stream = getFileStream(i->_key);
+	if (fileEntry->type == ResFileEntry::kAutoDetect) {
+		Common::SeekableReadStream *stream = 0;
+		for (LoaderIterator l = _loaders.begin(); l != _loaders.end(); ++l) {
+			if (!(*l)->checkFilename(filename))
+				continue;
+			
+			if (!stream)
+				stream = getFileStream(filename);
 
-				if ((*l)->isLoadable(i->_key, *stream)) {
-					i->_value.type = (*l)->getType();
-					i->_value.mounted = false;
-					i->_value.preload = false;
-					break;
-				}
+			if ((*l)->isLoadable(filename, *stream)) {
+				fileEntry->type = (*l)->getType();
+				fileEntry->mounted = false;
+				fileEntry->preload = false;
+				break;
 			}
-			delete stream;
-			stream = 0;
-
-			if (i->_value.type == ResFileEntry::kAutoDetect)
-				i->_value.type = ResFileEntry::kRaw;
 		}
+		delete stream;
+		stream = 0;
+
+		if (fileEntry->type == ResFileEntry::kAutoDetect)
+			fileEntry->type = ResFileEntry::kRaw;
 	}
+}
+
+void Resource::detectFileTypes() {
+	for (ResFileMap::iterator i = _map.begin(); i != _map.end(); ++i)
+		detectFileType(i->_key, &i->_value);
 }
 
 void Resource::tryLoadCompFiles() {
@@ -620,6 +664,7 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 			entry.size = endoffset - startoffset;
 			entry.offset = startoffset;
 			entry.parent = filename;
+			entry.parentEntry = 0;
 			entry.type = ResFileEntry::kAutoDetect;
 			entry.mounted = false;
 			entry.prot = false;
@@ -738,6 +783,7 @@ bool ResLoaderInsMalcolm::loadFile(const Common::String &filename, Common::Seeka
 	for (Common::List<Common::String>::iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		ResFileEntry entry;
 		entry.parent = filename;
+		entry.parentEntry = 0;
 		entry.type = ResFileEntry::kAutoDetect;
 		entry.mounted = false;
 		entry.preload = false;
@@ -807,6 +853,7 @@ bool ResLoaderTlk::loadFile(const Common::String &filename, Common::SeekableRead
 	for (uint i = 0; i < entries; ++i) {
 		ResFileEntry entry;
 		entry.parent = filename;
+		entry.parentEntry = 0;
 		entry.type = ResFileEntry::kAutoDetect;
 		entry.mounted = false;
 		entry.preload = false;

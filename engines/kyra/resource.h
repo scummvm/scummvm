@@ -43,6 +43,9 @@ namespace Kyra {
 
 struct ResFileEntry {
 	Common::String parent;
+	mutable ResFileEntry *parentEntry;	// Cache to avoid lookup by string in the map
+										// No smart invalidation is needed because the map is cleared globally
+										// or expanded but no element is ever removed
 	uint32 size;
 
 	bool preload;
@@ -128,9 +131,11 @@ public:
 	bool loadFileToBuf(const char *file, void *buf, uint32 maxSize);
 protected:
 	void checkFile(const Common::String &file);
-	bool isAccessable(const Common::String &file);
+	bool isAccessible(const Common::String &file);
+	bool isAccessible(const ResFileEntry *fileEntry);
 
 	void detectFileTypes();
+	void detectFileType(const Common::String &filename, ResFileEntry *fileEntry);
 
 	void initializeLoaders();
 	const ResArchiveLoader *getLoader(ResFileEntry::kType type) const;
@@ -139,6 +144,9 @@ protected:
 	typedef LoaderList::const_iterator CLoaderIterator;
 	LoaderList _loaders;
 	ResFileMap _map;
+
+	ResFileEntry *getParentEntry(const ResFileEntry *entry) const;
+	ResFileEntry *getParentEntry(const Common::String &filename) const;
 
 	typedef Common::List<Common::SharedPtr<CompArchiveLoader> > CompLoaderList;
 	typedef CompLoaderList::iterator CompLoaderIterator;
