@@ -34,8 +34,9 @@
 namespace Parallaction {
 
 // this is the size of the receiving buffer for unpacked frames,
-// since BRA uses some insanely big animations.
-#define MAXIMUM_UNPACKED_BITMAP_SIZE	640*401
+// since BRA uses some insanely big animations (the largest is
+// part0/ani/dino.ani).
+#define MAXIMUM_UNPACKED_BITMAP_SIZE	641*401
 
 
 void Gfx::registerVar(const Common::String &name, int32 initialValue) {
@@ -377,7 +378,7 @@ void Gfx::beginFrame() {
 						*data++ = _backgroundInfo->mask.getValue(x, y);
 					}
 				}
-#if 1
+#if 0
 				Common::DumpFile dump;
 				dump.open("maskdump.bin");
 				dump.write(_bitmapMask.pixels, _bitmapMask.w * _bitmapMask.h);
