@@ -39,6 +39,13 @@ const char **commandPrepositionTable;
 
 void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency);
 
+/*! \brief Loads font data from the given file.
+ * The number of characters used in the font varies between game versions:
+ * 78 (Most PC, Amiga and Atari ST versions of Future Wars, but also Operation Stealth's Amiga demo),
+ * 85 (All observed versions of German Future Wars (Amiga and PC), possibly Spanish Future Wars too),
+ * 90 (Most PC, Amiga and Atari ST versions of Operation Stealth),
+ * 93 (All observed versions of German Operation Stealth (Amiga and PC)).
+ */
 void loadTextData(const char *filename) {
 	Common::File fileHandle;
 	assert(filename);
@@ -46,30 +53,29 @@ void loadTextData(const char *filename) {
 	if (!fileHandle.open(filename))
 		error("loadTextData(): Cannot open file %s", filename);
 
-	uint entrySize = fileHandle.readUint16BE();
-	uint numEntry = fileHandle.readUint16BE();
+	static const uint headerSize = 2 + 2;              // The entry size (16-bit) and entry count (16-bit).
+	const uint entrySize = fileHandle.readUint16BE();  // Observed values: 8.
+	const uint entryCount = fileHandle.readUint16BE(); // Observed values: 624, 680, 720, 744.
+	const uint fontDataSize = entryCount * entrySize;  // Observed values: 4992, 5440, 5760, 5952.
+	const uint numChars = entryCount / entrySize;      // Observed values: 78, 85, 90, 93.
+	const uint bytesPerChar = fontDataSize / numChars; // Observed values: 64.
+	static const uint bytesPerRow = FONT_WIDTH / 2;    // The input font data is 4-bit so it takes only half the space
 
-	uint sourceSize = numEntry * entrySize;
-	Common::Array<byte> source;
-	source.resize(sourceSize);
-	fileHandle.read(source.begin(), sourceSize);
-
-	const int fontHeight = 8;
-	const int fontWidth = (g_cine->getGameType() == Cine::GType_FW) ? 16 : 8;
-	uint numCharacters;
-	uint bytesPerCharacter;
-	if (g_cine->getGameType() == Cine::GType_FW) {
-		numCharacters = (g_cine->getFeatures() & GF_ALT_FONT) ? 85 : 78;		
-		bytesPerCharacter = sourceSize / numCharacters; // TODO: Check if this could be replaced with fontWidth * fontHeight
-		loadRelatedPalette(filename);
-	} else {
-		numCharacters = 90;
-		bytesPerCharacter = fontWidth * fontHeight;
+	if (headerSize + fontDataSize != fileHandle.size()) {
+		warning("loadTextData: file '%s' (entrySize = %d, entryCount = %d) is of incorrect size %d", filename, entrySize, entryCount, fileHandle.size());
 	}
 
-	for (uint i = 0; i < numCharacters; i++) {
-		gfxConvertSpriteToRaw(g_cine->_textHandler.textTable[i][0], &source[i * bytesPerCharacter], fontWidth, fontHeight);
-		generateMask(g_cine->_textHandler.textTable[i][0], g_cine->_textHandler.textTable[i][1], fontWidth * fontHeight, 0);
+	Common::Array<byte> source;
+	source.resize(fontDataSize);
+	fileHandle.read(source.begin(), fontDataSize);
+
+	if (g_cine->getGameType() == Cine::GType_FW) {
+		loadRelatedPalette(filename);
+	}
+
+	for (uint i = 0; i < numChars; i++) {
+		gfxConvertSpriteToRaw(g_cine->_textHandler.textTable[i][FONT_DATA], &source[i * bytesPerChar], bytesPerRow, FONT_HEIGHT);
+		generateMask(g_cine->_textHandler.textTable[i][FONT_DATA], g_cine->_textHandler.textTable[i][FONT_MASK], FONT_WIDTH * FONT_HEIGHT, 0);
 	}
 
 	fileHandle.close();

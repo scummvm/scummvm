@@ -368,7 +368,7 @@ int FWRenderer::drawChar(char character, int x, int y) {
 		x += 5;
 	} else if ((width = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterWidth)) {
 		idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
-		drawSpriteRaw(g_cine->_textHandler.textTable[idx][0], g_cine->_textHandler.textTable[idx][1], 16, 8, _backBuffer, x, y);
+		drawSpriteRaw(g_cine->_textHandler.textTable[idx][FONT_DATA], g_cine->_textHandler.textTable[idx][FONT_MASK], FONT_WIDTH, FONT_HEIGHT, _backBuffer, x, y);
 		x += width + 1;
 	}
 
@@ -1040,7 +1040,7 @@ int OSRenderer::drawChar(char character, int x, int y) {
 		x += 5;
 	} else if ((width = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterWidth)) {
 		idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
-		drawSpriteRaw2(g_cine->_textHandler.textTable[idx][0], 0, 16, 8, _backBuffer, x, y);
+		drawSpriteRaw2(g_cine->_textHandler.textTable[idx][FONT_DATA], 0, FONT_WIDTH, FONT_HEIGHT, _backBuffer, x, y);
 		x += width + 1;
 	}
 

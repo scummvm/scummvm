@@ -36,13 +36,20 @@ typedef char CommandeType[20];
 // Number of characters in a font
 #define NUM_FONT_CHARS 256
 
+#define FONT_WIDTH 16
+#define FONT_HEIGHT 8
+
+// Used for choosing between font's data and font's mask
+#define FONT_DATA 0
+#define FONT_MASK 1
+
 struct CharacterEntry {
 	byte characterIdx;
 	byte characterWidth;
 };
 
 struct TextHandler {
-	byte textTable[NUM_FONT_CHARS][2][16 * 8];
+	byte textTable[NUM_FONT_CHARS][2][FONT_WIDTH * FONT_HEIGHT];
 	CharacterEntry fontParamTable[NUM_FONT_CHARS];
 };
 
