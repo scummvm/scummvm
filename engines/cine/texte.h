@@ -33,10 +33,18 @@ namespace Cine {
 
 typedef char CommandeType[20];
 
-extern byte *textDataPtr;
+// Number of characters in a font
+#define NUM_FONT_CHARS 256
+
+#define FONT_WIDTH 16
+#define FONT_HEIGHT 8
+
+// Used for choosing between font's data and font's mask
+#define FONT_DATA 0
+#define FONT_MASK 1
 
 struct TextHandler {
-	byte textTable[256][2][16 * 8];
+	byte textTable[NUM_FONT_CHARS][2][FONT_WIDTH * FONT_HEIGHT];
 };
 
 extern const char **failureMessages;
@@ -53,7 +61,7 @@ struct CharacterEntry {
 
 extern const CharacterEntry *fontParamTable;
 
-void loadTextData(const char *pFileName, byte *pDestinationBuffer);
+void loadTextData(const char *filename);
 void loadErrmessDat(const char *fname);
 void freeErrmessDat(void);
 void loadPoldatDat(const char *fname);

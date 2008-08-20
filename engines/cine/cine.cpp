@@ -76,7 +76,6 @@ CineEngine::~CineEngine() {
 
 	free(palPtr);
 	free(partBuffer);
-	free(textDataPtr);
 }
 
 int CineEngine::init() {
@@ -122,7 +121,6 @@ void CineEngine::initialize() {
 	}
 
 	page3Raw = new byte[320 * 200];
-	textDataPtr = (byte *)malloc(8000);
 
 	partBuffer = (PartBuffer *)malloc(NUM_MAX_PARTDATA * sizeof(PartBuffer));
 
@@ -130,7 +128,7 @@ void CineEngine::initialize() {
 		readVolCnf();
 	}
 
-	loadTextData("texte.dat", textDataPtr);
+	loadTextData("texte.dat");
 
 	if (g_cine->getGameType() == Cine::GType_OS && !(g_cine->getFeatures() & GF_DEMO)) {
 		loadPoldatDat("poldat.dat");
