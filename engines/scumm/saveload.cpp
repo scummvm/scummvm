@@ -212,9 +212,9 @@ bool ScummEngine::loadState(int slot, bool compat) {
 				delete in;
 				return false;
 			}
-		} else {
-			Graphics::skipThumbnailHeader(*in);
 		}
+
+		Graphics::skipThumbnailHeader(*in);
 	}
 
 	// Since version 56 we save additional information about the creation of
