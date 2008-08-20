@@ -400,7 +400,7 @@ bool Resource::isAccessible(const ResFileEntry *fileEntry) {
 	assert(fileEntry);
 	
 	const ResFileEntry* currentEntry = fileEntry;
-	while (not currentEntry->parent.empty()) {
+	while (!currentEntry->parent.empty()) {
 		if (currentEntry->parentEntry) {
 			currentEntry = currentEntry->parentEntry;
 		} else {
