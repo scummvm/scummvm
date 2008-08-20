@@ -667,7 +667,7 @@ private:
 
 	static const char *_partNames[];
 
-	void startGui();
+	void startGui(bool showSplash);
 
 	static const Callable _dosCallables[6];
 

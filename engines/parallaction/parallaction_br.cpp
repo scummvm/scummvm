@@ -133,17 +133,21 @@ void Parallaction_br::callFunction(uint index, void* parm) {
 
 int Parallaction_br::go() {
 
-	if (getFeatures() & GF_DEMO) {
-		startPart(1);
-	} else {
-		startGui();
-	}
+	bool splash = true;
 
 	while ((_engineFlags & kEngineQuit) == 0) {
 
+		if (getFeatures() & GF_DEMO) {
+			startPart(1);
+			_input->_inputMode = Input::kInputModeGame;
+		} else {
+			startGui(splash);
+			 // don't show splash after first time
+			splash = false;
+		}
+
 //		initCharacter();
 
-		_input->_inputMode = Input::kInputModeGame;
 		while ((_engineFlags & (kEngineReturn | kEngineQuit)) == 0) {
 			runGame();
 		}
@@ -151,7 +155,6 @@ int Parallaction_br::go() {
 
 		freePart();
 //		freeCharacter();
-
 	}
 
 	return 0;

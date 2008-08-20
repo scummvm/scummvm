@@ -264,27 +264,22 @@ const MainMenuInputState_BR::MenuOptions MainMenuInputState_BR::_options[NUM_MEN
 
 
 
-void Parallaction_br::startGui() {
+void Parallaction_br::startGui(bool showSplash) {
 	_menuHelper = new MenuInputHelper;
-	new SplashInputState0_BR(this, _menuHelper);
-	new SplashInputState1_BR(this, _menuHelper);
+
 	new MainMenuInputState_BR(this, _menuHelper);
 
-	_menuHelper->setState("intro0");
+	if (showSplash) {
+		new SplashInputState0_BR(this, _menuHelper);
+		new SplashInputState1_BR(this, _menuHelper);
+		_menuHelper->setState("intro0");
+	} else {
+		_menuHelper->setState("mainmenu");
+	}
+
 	_input->_inputMode = Input::kInputModeMenu;
-
-	do {
-		_input->readInput();
-		if (!_menuHelper->run()) break;
-		_gfx->beginFrame();
-		_gfx->updateScreen();
-	} while (true);
-
-	delete _menuHelper;
-	_menuHelper = 0;
-
-	_input->_inputMode = Input::kInputModeGame;
 }
+
 
 
 
