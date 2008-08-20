@@ -2456,8 +2456,6 @@ void TownsPC98_OpnChannelSSG::processFrequency() {
 		if (!processPitchWheel())
 			return;
 
-		processPitchWheel();
-
 		uint16 f = _frequency >> _block;
 		writeReg(_regOffset << 1, f & 0xff);
 		writeReg((_regOffset << 1) + 1, f >> 8);
