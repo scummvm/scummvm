@@ -567,9 +567,6 @@
 			RelativePath="..\..\engines\scumm\string.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\scumm\thumbnail.cpp">
-		</File>
-		<File
 			RelativePath="..\..\engines\scumm\usage_bits.cpp">
 		</File>
 		<File
