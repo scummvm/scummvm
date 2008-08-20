@@ -709,8 +709,8 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 			durationModifier = textData[1];
 			textData += 2;
 		} else if (*textData < 0x0A) {
-			item->fontNum = textData[1];
-			textData += 2;
+			item->fontNum = textData[0];
+			textData += 1;
 		} else
 			break;
 	}
