@@ -53,7 +53,6 @@ MODULE_OBJS := \
 	scumm.o \
 	sound.o \
 	string.o \
-	thumbnail.o \
 	usage_bits.o \
 	util.o \
 	vars.o \

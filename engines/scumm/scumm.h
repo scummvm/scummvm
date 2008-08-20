@@ -636,8 +636,6 @@ public:
 
 protected:
 	Graphics::Surface *loadThumbnail(Common::SeekableReadStream *file);
-	void saveThumbnail(Common::WriteStream *file);
-	void skipThumbnailHeader(Common::SeekableReadStream *file);
 
 	void saveInfos(Common::WriteStream* file);
 	bool loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff);

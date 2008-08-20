@@ -46,6 +46,8 @@
 #include "sound/audiocd.h"
 #include "sound/mixer.h"
 
+#include "graphics/thumbnail.h"
+
 namespace Scumm {
 
 struct SaveGameHeader {
@@ -70,6 +72,22 @@ struct SaveInfoSection {
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
 #define INFOSECTION_VERSION 2
+
+Graphics::Surface *ScummEngine::loadThumbnail(Common::SeekableReadStream *file) {
+	if (!Graphics::checkThumbnailHeader(*file))
+		return 0;
+
+	Graphics::Surface *thumb = new Graphics::Surface();
+	assert(thumb);
+	if (!Graphics::loadThumbnail(*file, *thumb)) {
+		delete thumb;
+		return 0;
+	}
+
+	return thumb;
+}
+
+#pragma mark -
 
 void ScummEngine::requestSave(int slot, const char *name, bool temporary) {
 	_saveLoadSlot = slot;
@@ -114,7 +132,9 @@ bool ScummEngine::saveState(int slot, bool compat) {
 
 	memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
 	saveSaveGameHeader(out, hdr);
-	saveThumbnail(out);
+#if !defined(__DS__)
+	Graphics::saveThumbnail(*out);
+#endif
 	saveInfos(out);
 
 	Serializer ser(0, out, CURRENT_VER);
@@ -184,8 +204,18 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	}
 
 	// Since version 52 a thumbnail is saved directly after the header.
-	if (hdr.ver >= VER(52))
-		skipThumbnailHeader(in);
+	if (hdr.ver >= VER(52)) {
+		// Prior to version 75 we always required an thumbnail to be present
+		if (hdr.ver <= VER(74)) {
+			if (!Graphics::checkThumbnailHeader(*in)) {
+				warning("Can not load thumbnail");
+				delete in;
+				return false;
+			}
+		} else {
+			Graphics::skipThumbnailHeader(*in);
+		}
+	}
 
 	// Since version 56 we save additional information about the creation of
 	// the save game and the save time.
