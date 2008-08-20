@@ -1534,9 +1534,9 @@ private:
 class TownsPC98_OpnPercussionSource {
 public:
 	TownsPC98_OpnPercussionSource(const float rate);
-	~TownsPC98_OpnPercussionSource();
+	~TownsPC98_OpnPercussionSource() {}
 
-	void init(const void *pcmData = 0);
+	void init(const uint8 *pcmData = 0);
 	void reset();
 	void writeReg(uint8 address, uint8 value);
 
@@ -2871,16 +2871,13 @@ TownsPC98_OpnPercussionSource::TownsPC98_OpnPercussionSource(const float rate) :
 		memset(_pcmInstr, 0, sizeof(PcmInstrument) * 6);
 }
 
-TownsPC98_OpnPercussionSource::~TownsPC98_OpnPercussionSource() {
-}
-
-void TownsPC98_OpnPercussionSource::init(const void *pcmData) {
+void TownsPC98_OpnPercussionSource::init(const uint8 *pcmData) {
 	if (_ready) {
 		reset();
 		return;
 	}
 
-	const uint8 *start = (const uint8*) pcmData;
+	const uint8 *start = pcmData;
 	const uint8 *pos = start;
 
 	if (pcmData) {
@@ -3505,9 +3502,12 @@ void TownsPC98_OpnDriver::startSoundEffect() {
 }
 
 void TownsPC98_OpnDriver::setTempo(uint8 tempo) {
-	_tempo = tempo - 0x10;
-	_samplesPerCallback = _tempo ? (getRate() / _tempo) : 0;
-	_samplesPerCallbackRemainder = _tempo ? (getRate() % _tempo) : 0;
+	_tempo = tempo;
+
+	float spc = (float)(0x100 - _tempo) * 2.5 * _baserate;
+	_samplesPerCallback = (int32) spc;
+	spc -= _samplesPerCallback;
+	_samplesPerCallbackRemainder = (spc > 0.5) ? 1 : 0;
 }
 
 SoundTowns::SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer)
