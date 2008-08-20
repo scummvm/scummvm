@@ -1598,7 +1598,8 @@ public:
 	void pause() { _musicPlaying = false; }
 	void cont() { _musicPlaying = true; }
 
-	void callback();
+	void musicCallback();
+	void sfxCallback();
 	void nextTick(int32 *buffer, uint32 bufferSize);
 
 	bool looping() { return _looping == _updateChannelsFlag ? true : false; }
@@ -1622,7 +1623,9 @@ protected:
 	TownsPC98_OpnPercussionSource *_pcm;
 
 	void startSoundEffect();
-	void setTempo(uint8 tempo);
+	
+	void setMusicTempo(uint8 tempo);
+	void setSfxTempo(uint16 tempo);
 
 	void lock() { _mutex.lock(); }
 	void unlock() { _mutex.unlock(); }
@@ -1651,15 +1654,15 @@ protected:
 	uint8 *_patches;
 	uint8 *_ssgPatches;
 
-	uint8 _cbCounter;
 	uint8 _updateChannelsFlag;
 	uint8 _updateSSGFlag;
 	uint8 _updatePCMFlag;
+	uint8 _updateSfxFlag;
 	uint8 _finishedChannelsFlag;
 	uint8 _finishedSSGFlag;
 	uint8 _finishedPCMFlag;
+	uint8 _finishedSfxFlag;
 
-	uint16 _tempo;
 	bool _musicPlaying;
 	bool _sfxPlaying;
 	uint8 _fading;
@@ -1673,10 +1676,10 @@ protected:
 	uint8 *_sfxData;
 	uint16 _sfxOffsets[2];
 
-	int32 _samplesTillCallback;
-	int32 _samplesTillCallbackRemainder;
-	int32 _samplesPerCallback;
-	int32 _samplesPerCallbackRemainder;
+	int32 _samplesTillMusicCallback;
+	int32 _samplesPerMusicCallback;
+	int32 _samplesTillSfxCallback;
+	int32 _samplesPerSfxCallback;
 
 	const int _numChan;
 	const int _numSSG;
@@ -2208,7 +2211,7 @@ bool TownsPC98_OpnChannel::control_f4_setOutputLevel(uint8 para) {
 }
 
 bool TownsPC98_OpnChannel::control_f5_setTempo(uint8 para) {
-	_drv->setTempo(para);
+	_drv->setMusicTempo(para);
 	return true;
 }
 
@@ -2599,6 +2602,7 @@ bool TownsPC98_OpnChannelSSG::control_ff_endOfTrack(uint8 para) {
 	} else {
 		// end of sfx track - restore ssg music channel
 		_flags |= CHS_EOT;
+		_drv->_finishedSfxFlag |= _idFlag;
 		_drv->_ssgChannels[_chanNum]->restore();
 	}
 
@@ -3038,14 +3042,15 @@ TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) :
 	_ssgChannels(0), _sfxChannels(0), _pcmChannel(0),	_looping(0), _opnCarrier(_drvTables + 76),
 	_opnFreqTable(_drvTables + 84), _opnFreqTableSSG(_drvTables + 252),	_opnFxCmdLen(_drvTables + 36),
 	_opnLvlPresets(_drvTables + (type == OD_TOWNS ? 52 : 228)), _oprRates(0), _oprRateshift(0), _oprAttackDecay(0),
-	_oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0), _cbCounter(4), _musicTickCounter(0),
+	_oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0), _musicTickCounter(0), _updateSfxFlag(type == OD_TOWNS ? 0 : 6),
 	_updateChannelsFlag(type == OD_TYPE26 ? 0x07 : 0x3F), _updateSSGFlag(type == OD_TOWNS ? 0 : 7),
 	_updatePCMFlag(type == OD_TYPE86 ? 1 : 0), _finishedChannelsFlag(0), _finishedSSGFlag(0),
-	_finishedPCMFlag(0), _samplesTillCallback(0), _samplesTillCallbackRemainder(0),
+	_finishedPCMFlag(0), _samplesTillMusicCallback(0), _samplesTillSfxCallback (0), _finishedSfxFlag(0),
 	_sfxData(0), _ready(false), _numSSG(type == OD_TOWNS ? 0 : 3), _hasPCM(type == OD_TYPE86 ? true : false),
 	_sfxOffs(0), _numChan(type == OD_TYPE26 ? 3 : 6), _hasStereo(type == OD_TYPE26 ? false : true),
 	_ssgPatches(0), _ssg(0), _pcm(0), _baserate(55125.0f / (float)getRate()) {
-	setTempo(84);
+	setMusicTempo(84);
+	setSfxTempo(654);
 }
 
 TownsPC98_OpnDriver::~TownsPC98_OpnDriver() {
@@ -3171,20 +3176,22 @@ int inline TownsPC98_OpnDriver::readBuffer(int16 *buffer, const int numSamples) 
 	int32 samplesLeft = numSamples >> 1;
 
 	while (samplesLeft) {
-		if (!_samplesTillCallback) {
-			callback();
-
-			_samplesTillCallback = _samplesPerCallback;
-			_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
-			if (_samplesTillCallbackRemainder >= _tempo) {
-				_samplesTillCallback++;
-				_samplesTillCallbackRemainder -= _tempo;
-			}
+		if (!_samplesTillMusicCallback) {
+			musicCallback();
+			_samplesTillMusicCallback = _samplesPerMusicCallback;
 		}
 
-		int32 render = MIN(samplesLeft, _samplesTillCallback);
+		if (!_samplesTillSfxCallback) {
+			sfxCallback();
+			_samplesTillSfxCallback = _samplesPerSfxCallback;
+		}
+
+		int32 render = MIN(_samplesTillSfxCallback, _samplesTillMusicCallback);
+		render = MIN(samplesLeft, render);
 		samplesLeft -= render;
-		_samplesTillCallback -= render;
+
+		_samplesTillMusicCallback -= render;		
+		_samplesTillSfxCallback -= render;
 
 		nextTick(tmp, render);
 
@@ -3257,8 +3264,7 @@ void TownsPC98_OpnDriver::loadMusicData(uint8 *data, bool loadPaused) {
 	_regProtectionFlag = false;
 
 	_patches = src_a + 4;
-	_cbCounter = 4;
-	_finishedChannelsFlag = _finishedSSGFlag = 0;
+	_finishedChannelsFlag = _finishedSSGFlag = _finishedPCMFlag = 0;
 
 	_musicPlaying = (loadPaused ? false : true);
 
@@ -3286,6 +3292,7 @@ void TownsPC98_OpnDriver::loadSoundEffectData(uint8 *data, uint8 trackNum) {
 	_sfxOffsets[0] = READ_LE_UINT16(&_sfxData[(trackNum << 2)]);
 	_sfxOffsets[1] = READ_LE_UINT16(&_sfxData[(trackNum << 2) + 2]);
 	_sfxPlaying = true;
+	_finishedSfxFlag = 0;
 	unlock();
 }
 
@@ -3348,28 +3355,12 @@ void TownsPC98_OpnDriver::fadeStep() {
 	unlock();
 }
 
-void TownsPC98_OpnDriver::callback() {
+void TownsPC98_OpnDriver::musicCallback() {
 	lock();
-
-	if (_sfxChannels && _sfxPlaying) {
-		if (_sfxData)
-			startSoundEffect();
-
-		_sfxOffs = 3;
-		_trackPtr = _sfxBuffer;
-
-		for (int i = 0; i < 2; i++) {
-			_sfxChannels[i]->processEvents();
-			_sfxChannels[i]->processFrequency();
-		}
-
-		_trackPtr = _musicBuffer;
-	}
 
 	_sfxOffs = 0;
 
-	if (!--_cbCounter && _musicPlaying) {
-		_cbCounter = 4;
+	if (_musicPlaying) {
 		_musicTickCounter++;
 
 		for (int i = 0; i < _numChan; i++) {
@@ -3397,6 +3388,30 @@ void TownsPC98_OpnDriver::callback() {
 
 	if (_finishedChannelsFlag == _updateChannelsFlag && _finishedSSGFlag == _updateSSGFlag && _finishedPCMFlag == _updatePCMFlag)
 		_musicPlaying = false;
+
+	unlock();
+}
+
+void TownsPC98_OpnDriver::sfxCallback() {
+	lock();
+
+	if (_sfxChannels && _sfxPlaying) {
+		if (_sfxData)
+			startSoundEffect();
+
+		_sfxOffs = 3;
+		_trackPtr = _sfxBuffer;
+
+		for (int i = 0; i < 2; i++) {
+			_sfxChannels[i]->processEvents();
+			_sfxChannels[i]->processFrequency();
+		}
+
+		_trackPtr = _musicBuffer;
+	}
+
+	if (_finishedSfxFlag == _updateSfxFlag)
+		_sfxPlaying = false;
 
 	unlock();
 }
@@ -3501,13 +3516,14 @@ void TownsPC98_OpnDriver::startSoundEffect() {
 	_sfxData = 0;
 }
 
-void TownsPC98_OpnDriver::setTempo(uint8 tempo) {
-	_tempo = tempo;
+void TownsPC98_OpnDriver::setMusicTempo(uint8 tempo) {
+	float spc = (float)(0x100 - tempo) * 10.0 * _baserate;
+	_samplesPerMusicCallback = (int32) spc;
+}
 
-	float spc = (float)(0x100 - _tempo) * 2.5 * _baserate;
-	_samplesPerCallback = (int32) spc;
-	spc -= _samplesPerCallback;
-	_samplesPerCallbackRemainder = (spc > 0.5) ? 1 : 0;
+void TownsPC98_OpnDriver::setSfxTempo(uint16 tempo) {
+	float spc = (float)(0x400 - tempo) * _baserate;
+	_samplesPerSfxCallback = (int32) spc;
 }
 
 SoundTowns::SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer)
@@ -3845,7 +3861,7 @@ void SoundPC98::playSoundEffect(uint8 track) {
 	//	This has been disabled for now since I don't know
 	//	how to make up the correct track number. It probably
 	//	needs a map.
-	// _driver->loadSoundEffectData(_sfxTrackData, track);
+	//_driver->loadSoundEffectData(_sfxTrackData, track);
 }
 
 

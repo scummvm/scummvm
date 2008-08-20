@@ -28,6 +28,16 @@ const ExtractEntry kyra2File1G[] = {
 	{ -1, 0, 0 }
 };
 
+const ExtractEntry kyra2File1I[] = {
+	{ k2SeqplayPakFiles, 0x00021189, 0x000211B7 },
+	{ k2SeqplayStrings, 0x00022C62, 0x0002352A },
+	{ k2SeqplaySfxFiles, 0x0002352A, 0x0002369D },
+	{ k2SeqplayIntroTracks, 0x000236AA, 0x000236AA },
+	{ k2SeqplayFinaleTracks, 0x000236C7, 0x000236D9 },
+	{ k2SeqplaySeqData, 0x00022250, 0x00022944 },
+	{ -1, 0, 0 }
+};
+
 const ExtractEntry kyra2File2E[] = {
 	{ k2IngamePakFiles, 0x0035E4E, 0x00362ED },
 	{ k2IngameSfxFiles, 0x00034700, 0x00034DF1 },
@@ -58,12 +68,24 @@ const ExtractEntry kyra2File2G[] = {
 	{ -1, 0, 0 }
 };
 
+const ExtractEntry kyra2File2I[] = {
+	{ k2IngamePakFiles, 0x00036816, 0x00036CB5 },
+	{ k2IngameSfxFiles, 0x000350C6, 0x000357B7 },
+	{ k2IngameSfxIndex, 0x0002AB80, 0x0002AED8 },
+	{ k2IngameTracks, 0x0003BE78, 0x0003BEF6 },
+	{ k2IngameTalkObjIndex, 0x00034872, 0x000348EA },
+	{ k2IngameItemAnimData, 0x0003C4E2, 0x0003C82A },
+	{ -1, 0, 0 }
+};
+
 const Game kyra2FloppyGames[] = {
 	{ kKyra2, EN_ANY, k2FloppyFile1, "9b0f5e57b5a2ed88b5b989cbb402b6c7", kyra2File1E},
 	{ kKyra2, FR_FRA, k2FloppyFile1, "df31cc9e37e1cf68df2fdc75ddf2d87b", kyra2File1F},
 	{ kKyra2, DE_DEU, k2FloppyFile1, "0ca4f9a1438264a4c63c3218e064ed3b", kyra2File1G},
+	{ kKyra2, IT_ITA, k2FloppyFile1, "178d3ab913f61bfba21d2fb196405e8c", kyra2File1I},
 	{ kKyra2, EN_ANY, k2FloppyFile2, "7c3eadbe5122722cf2e5e1611e19dfb9", kyra2File2E},
 	{ kKyra2, FR_FRA, k2FloppyFile2, "fc2c6782778e6c6d5a553d1cb73c98ad", kyra2File2F},
 	{ kKyra2, DE_DEU, k2FloppyFile2, "0d9b0eb7b0ad889ec942d74d80dde1bf", kyra2File2G},
+	{ kKyra2, IT_ITA, k2FloppyFile2, "3a61ed6b7c00ddae383a0361799e2ba6", kyra2File2I},
 	GAME_DUMMY_ENTRY
 };

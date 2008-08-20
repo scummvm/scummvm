@@ -397,6 +397,18 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_FLOPPY_FLAGS
 	},
 
+	{ // Floppy version extracted
+		{
+			"kyra2",
+			"Extracted",
+			AD_ENTRY1("FATE.PAK", "e0a70c31b022cb4bb3061890020fc27c"),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA2_FLOPPY_FLAGS
+	},
+
 	{ // CD version
 		{
 			"kyra2",
