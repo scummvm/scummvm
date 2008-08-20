@@ -33,11 +33,8 @@
 namespace Scumm {
 
 Graphics::Surface *ScummEngine::loadThumbnail(Common::SeekableReadStream *file) {
-	// TODO: Until backwards seeking in compressed save files is not supported
-	// We can not use this.
-
-	//if (!Graphics::checkThumbnailHeader(*file))
-	//	return 0;
+	if (!Graphics::checkThumbnailHeader(*file))
+		return 0;
 
 	Graphics::Surface *thumb = new Graphics::Surface();
 	assert(thumb);
@@ -50,25 +47,13 @@ Graphics::Surface *ScummEngine::loadThumbnail(Common::SeekableReadStream *file) 
 }
 
 void ScummEngine::saveThumbnail(Common::OutSaveFile *file) {
-	// Until we support no thumbnails in the SCUMM save formats for NDS
-	// we save a dummy thumbnail.
-	//
-	// TODO: Actually all what has to be done about it, is to update
-	// the code in engines/scumm/saveload.o which skips the saveheader.
-	// Currently impossible because of lacking backward seek support for
-	// compressed save files.
-	// When we change that code to use the new API from graphics/thumbnail.h
-	// it should be all fine to save no header at all for NDS.
-
-	Graphics::Surface thumb;
-
 #if !defined(__DS__)
-	if (!createThumbnailFromScreen(&thumb))
+	Graphics::saveThumbnail(*file);
 #endif
-		thumb.create(kThumbnailWidth, kThumbnailHeight2, sizeof(uint16));
+}
 
-	Graphics::saveThumbnail(*file, thumb);
-	thumb.free();
+void ScummEngine::skipThumbnailHeader(Common::SeekableReadStream *file) {
+	Graphics::skipThumbnailHeader(*file);
 }
 
 } // end of namespace Scumm

@@ -636,9 +636,11 @@ public:
 
 protected:
 	Graphics::Surface *loadThumbnail(Common::SeekableReadStream *file);
-	bool loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff);
 	void saveThumbnail(Common::WriteStream *file);
+	void skipThumbnailHeader(Common::SeekableReadStream *file);
+
 	void saveInfos(Common::WriteStream* file);
+	bool loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff);
 
 	int32 _engineStartTime;
 	int32 _pauseStartTime;

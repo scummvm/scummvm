@@ -113,7 +113,10 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 		if (loadThumbnail) {
 			header.thumbnail = new Graphics::Surface();
 			assert(header.thumbnail);
-			Graphics::loadThumbnail(*in, *header.thumbnail);
+			if (!Graphics::loadThumbnail(*in, *header.thumbnail)) {
+				delete header.thumbnail;
+				header.thumbnail = 0;
+			}
 		} else {
 			Graphics::skipThumbnailHeader(*in);
 		}

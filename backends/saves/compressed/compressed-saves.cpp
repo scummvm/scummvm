@@ -62,7 +62,7 @@ public:
 		_stream.zfree = Z_NULL;
 		_stream.opaque = Z_NULL;
 
-		// Verify file header is correct once more
+		// Verify file header is correct
 		w->seek(0, SEEK_SET);
 		uint16 header = w->readUint16BE();
 		assert(header == 0x1F8B ||
@@ -133,27 +133,34 @@ public:
 	}
 	void seek(int32 offset, int whence = SEEK_SET) {
 		int32 newPos = 0;
+		assert(whence != SEEK_END);	// SEEK_END not supported
 		switch(whence) {
-		case SEEK_END:
-			newPos = size() - offset;
-			break;
 		case SEEK_SET:
 			newPos = offset;
 			break;
 		case SEEK_CUR:
 			newPos = _pos + offset;
 		}
+		
+		assert(newPos >= 0);
+
+		if ((uint32)newPos < _pos) {
+			// To search backward, we have to restart the whole decompression
+			// from the start of the file. A rather wasteful operation, best
+			// to avoid it. :/
+#if DEBUG
+			warning("Backward seeking in CompressedInSaveFile detected");
+#endif
+			_pos = 0;
+			_wrapped->seek(0, SEEK_SET);
+			_zlibErr = inflateReset(&_stream);
+			if (_zlibErr != Z_OK)
+				return;
+			_stream.next_in = _buf;
+			_stream.avail_in = 0;
+		}
+
 		offset = newPos - _pos;
-
-		if (offset < 0)
-			error("Backward seeking not supported in compressed savefiles");
-
-		// We could implement backward seeking, but it is tricky to do efficiently.
-		// A simple solution would be to restart the whole decompression from the
-		// start of the file. Or we could decompress the whole file in one go
-		// in the constructor, and wrap it into a MemoryReadStream -- but that
-		// would be rather wasteful. As long as we don't need it, I'd rather not
-		// implement this at all. -- Fingolfin
 
 		// Skip the given amount of data (very inefficient if one tries to skip
 		// huge amounts of data, but usually client code will only skip a few

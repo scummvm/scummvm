@@ -91,7 +91,7 @@ bool skipThumbnailHeader(Common::SeekableReadStream &in) {
 	uint32 position = in.pos();
 	ThumbnailHeader header;
 
-	if (!loadHeader(in, header, true)) {
+	if (!loadHeader(in, header, false)) {
 		in.seek(position, SEEK_SET);
 		return false;
 	}
