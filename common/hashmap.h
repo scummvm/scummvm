@@ -338,6 +338,10 @@ HashMap<Key, Val, HashFunc, EqualFunc>::~HashMap() {
 		  freeNode(_arr[ctr]);
 
 	delete[] _arr;
+#ifdef DEBUG_HASH_COLLISIONS
+	extern void updateHashCollisionStats(int, int, int, int);
+	updateHashCollisionStats(_collisions, _lookups, _arrsize, _nele);
+#endif
 }
 
 /**
