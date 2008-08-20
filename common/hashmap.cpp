@@ -94,9 +94,9 @@ static double
 	g_collisions = 0,
 	g_lookups = 0,
 	g_collPerLook = 0,
-	g_arrsize = 0,
-	g_nele = 0;
-static int g_max_arrsize = 0, g_max_nele = 0;
+	g_capacity = 0,
+	g_size = 0;
+static int g_max_capacity = 0, g_max_size = 0;
 static int g_totalHashmaps = 0;
 
 void updateHashCollisionStats(int collisions, int lookups, int arrsize, int nele) {
@@ -104,20 +104,20 @@ void updateHashCollisionStats(int collisions, int lookups, int arrsize, int nele
 	g_lookups += lookups;
 	if (lookups)
 		g_collPerLook += (double)collisions / (double)lookups;
-	g_arrsize += arrsize;
-	g_nele += nele;
+	g_capacity += arrsize;
+	g_size += nele;
 	g_totalHashmaps++;
 	
-	g_max_arrsize = MAX(g_max_arrsize, arrsize);
-	g_max_nele = MAX(g_max_nele, nele);
+	g_max_capacity = MAX(g_max_capacity, arrsize);
+	g_max_size = MAX(g_max_size, nele);
 
 	fprintf(stdout, "%d hashmaps: colls %.1f; lookups %.1f; ratio %.3f%%; size %f (max: %d); capacity %f (max: %d)\n",
 		g_totalHashmaps,
 		g_collisions / g_totalHashmaps,
 		g_lookups / g_totalHashmaps,
 		100 * g_collPerLook / g_totalHashmaps,
-		g_nele / g_totalHashmaps, g_max_nele,
-		g_arrsize / g_totalHashmaps, g_max_arrsize);
+		g_size / g_totalHashmaps, g_max_size,
+		g_capacity / g_totalHashmaps, g_max_capacity);
 }
 #endif
 

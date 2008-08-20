@@ -136,8 +136,9 @@ public:
 	}
 #endif
 
-	Node **_arr;	// hashtable of size arrsize.
-	uint _arrsize, _nele;
+	Node **_storage;	// hashtable of size arrsize.
+	uint _capacity;
+	uint _size;
 
 	HashFunc _hash;
 	EqualFunc _equal;
@@ -174,8 +175,8 @@ public:
 
 		NodeType *deref() const {
 			assert(_hashmap != 0);
-			assert(_idx < _hashmap->_arrsize);
-			Node *node = _hashmap->_arr[_idx];
+			assert(_idx < _hashmap->_capacity);
+			Node *node = _hashmap->_storage[_idx];
 			assert(node != 0);
 			return node;
 		}
@@ -195,8 +196,8 @@ public:
 			assert(_hashmap);
 			do {
 				_idx++;
-			} while (_idx < _hashmap->_arrsize && _hashmap->_arr[_idx] == 0);
-			if (_idx >= _hashmap->_arrsize)
+			} while (_idx < _hashmap->_capacity && _hashmap->_storage[_idx] == 0);
+			if (_idx >= _hashmap->_capacity)
 				_idx = (uint)-1;
 
 			return *this;
@@ -223,7 +224,7 @@ public:
 
 		// Remove the previous content and ...
 		clear();
-		delete[] _arr;
+		delete[] _storage;
 		// ... copy the new stuff.
 		assign(map);
 		return *this;
@@ -242,12 +243,12 @@ public:
 
 	void erase(const Key &key);
 
-	uint size() const { return _nele; }
+	uint size() const { return _size; }
 
 	iterator	begin() {
 		// Find and return the _key non-empty entry
-		for (uint ctr = 0; ctr < _arrsize; ++ctr) {
-			if (_arr[ctr])
+		for (uint ctr = 0; ctr < _capacity; ++ctr) {
+			if (_storage[ctr])
 				return iterator(ctr, this);
 		}
 		return end();
@@ -258,8 +259,8 @@ public:
 
 	const_iterator	begin() const {
 		// Find and return the first non-empty entry
-		for (uint ctr = 0; ctr < _arrsize; ++ctr) {
-			if (_arr[ctr])
+		for (uint ctr = 0; ctr < _capacity; ++ctr) {
+			if (_storage[ctr])
 				return const_iterator(ctr, this);
 		}
 		return end();
@@ -270,14 +271,14 @@ public:
 
 	iterator	find(const Key &key) {
 		uint ctr = lookup(key);
-		if (_arr[ctr])
+		if (_storage[ctr])
 			return iterator(ctr, this);
 		return end();
 	}
 
 	const_iterator	find(const Key &key) const {
 		uint ctr = lookup(key);
-		if (_arr[ctr])
+		if (_storage[ctr])
 			return const_iterator(ctr, this);
 		return end();
 	}
@@ -285,7 +286,7 @@ public:
 	// TODO: insert() method?
 
 	bool empty() const {
-		return (_nele == 0);
+		return (_size == 0);
 	}
 };
 
@@ -301,12 +302,12 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() :
 	_nodePool(sizeof(Node)),
 #endif
 	_defaultVal() {
-	_arrsize = nextTableSize(0);
-	_arr = new Node *[_arrsize];
-	assert(_arr != NULL);
-	memset(_arr, 0, _arrsize * sizeof(Node *));
+	_capacity = nextTableSize(0);
+	_storage = new Node *[_capacity];
+	assert(_storage != NULL);
+	memset(_storage, 0, _capacity * sizeof(Node *));
 
-	_nele = 0;
+	_size = 0;
 
 #ifdef DEBUG_HASH_COLLISIONS
 	_collisions = 0;
@@ -333,14 +334,14 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t &map) :
  */
 template<class Key, class Val, class HashFunc, class EqualFunc>
 HashMap<Key, Val, HashFunc, EqualFunc>::~HashMap() {
-	for (uint ctr = 0; ctr < _arrsize; ++ctr)
-		if (_arr[ctr] != NULL)
-		  freeNode(_arr[ctr]);
+	for (uint ctr = 0; ctr < _capacity; ++ctr)
+		if (_storage[ctr] != NULL)
+		  freeNode(_storage[ctr]);
 
-	delete[] _arr;
+	delete[] _storage;
 #ifdef DEBUG_HASH_COLLISIONS
 	extern void updateHashCollisionStats(int, int, int, int);
-	updateHashCollisionStats(_collisions, _lookups, _arrsize, _nele);
+	updateHashCollisionStats(_collisions, _lookups, _capacity, _size);
 #endif
 }
 
@@ -353,95 +354,95 @@ HashMap<Key, Val, HashFunc, EqualFunc>::~HashMap() {
  */
 template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::assign(const HM_t &map) {
-	_arrsize = map._arrsize;
-	_arr = new Node *[_arrsize];
-	assert(_arr != NULL);
-	memset(_arr, 0, _arrsize * sizeof(Node *));
+	_capacity = map._capacity;
+	_storage = new Node *[_capacity];
+	assert(_storage != NULL);
+	memset(_storage, 0, _capacity * sizeof(Node *));
 
 	// Simply clone the map given to us, one by one.
-	_nele = 0;
-	for (uint ctr = 0; ctr < _arrsize; ++ctr) {
-		if (map._arr[ctr] != NULL) {
-			_arr[ctr] = allocNode(map._arr[ctr]->_key);
-			_arr[ctr]->_value = map._arr[ctr]->_value;
-			_nele++;
+	_size = 0;
+	for (uint ctr = 0; ctr < _capacity; ++ctr) {
+		if (map._storage[ctr] != NULL) {
+			_storage[ctr] = allocNode(map._storage[ctr]->_key);
+			_storage[ctr]->_value = map._storage[ctr]->_value;
+			_size++;
 		}
 	}
 	// Perform a sanity check (to help track down hashmap corruption)
-	assert(_nele == map._nele);
+	assert(_size == map._size);
 }
 
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::clear(bool shrinkArray) {
-	for (uint ctr = 0; ctr < _arrsize; ++ctr) {
-		if (_arr[ctr] != NULL) {
-			freeNode(_arr[ctr]);
-			_arr[ctr] = NULL;
+	for (uint ctr = 0; ctr < _capacity; ++ctr) {
+		if (_storage[ctr] != NULL) {
+			freeNode(_storage[ctr]);
+			_storage[ctr] = NULL;
 		}
 	}
 
-	if (shrinkArray && _arrsize > nextTableSize(0)) {
-		delete[] _arr;
+	if (shrinkArray && _capacity > nextTableSize(0)) {
+		delete[] _storage;
 
-		_arrsize = nextTableSize(0);
-		_arr = new Node *[_arrsize];
-		assert(_arr != NULL);
-		memset(_arr, 0, _arrsize * sizeof(Node *));
+		_capacity = nextTableSize(0);
+		_storage = new Node *[_capacity];
+		assert(_storage != NULL);
+		memset(_storage, 0, _capacity * sizeof(Node *));
 	}
 
-	_nele = 0;
+	_size = 0;
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::expand_array(uint newsize) {
-	assert(newsize > _arrsize);
+	assert(newsize > _capacity);
 	uint ctr, dex;
 
-	const uint old_nele = _nele;
-	const uint old_arrsize = _arrsize;
-	Node **old_arr = _arr;
+	const uint old_size = _size;
+	const uint old_capacity = _capacity;
+	Node **old_storage = _storage;
 
 	// allocate a new array
-	_nele = 0;
-	_arrsize = newsize;
-	_arr = new Node *[_arrsize];
-	assert(_arr != NULL);
-	memset(_arr, 0, _arrsize * sizeof(Node *));
+	_size = 0;
+	_capacity = newsize;
+	_storage = new Node *[_capacity];
+	assert(_storage != NULL);
+	memset(_storage, 0, _capacity * sizeof(Node *));
 
 	// rehash all the old elements
-	for (ctr = 0; ctr < old_arrsize; ++ctr) {
-		if (old_arr[ctr] == NULL)
+	for (ctr = 0; ctr < old_capacity; ++ctr) {
+		if (old_storage[ctr] == NULL)
 			continue;
 
 		// Insert the element from the old table into the new table.
 		// Since we know that no key exists twice in the old table, we
 		// can do this slightly better than by calling lookup, since we
 		// don't have to call _equal().
-		dex = _hash(old_arr[ctr]->_key) % _arrsize;
-		while (_arr[dex] != NULL) {
-			dex = (dex + 1) % _arrsize;
+		dex = _hash(old_storage[ctr]->_key) % _capacity;
+		while (_storage[dex] != NULL) {
+			dex = (dex + 1) % _capacity;
 		}
 
-		_arr[dex] = old_arr[ctr];
-		_nele++;
+		_storage[dex] = old_storage[ctr];
+		_size++;
 	}
 
 	// Perform a sanity check: Old number of elements should match the new one!
 	// This check will fail if some previous operation corrupted this hashmap.
-	assert(_nele == old_nele);
+	assert(_size == old_size);
 
-	delete[] old_arr;
+	delete[] old_storage;
 
 	return;
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
 int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
-	uint ctr = _hash(key) % _arrsize;
+	uint ctr = _hash(key) % _capacity;
 
-	while (_arr[ctr] != NULL && !_equal(_arr[ctr]->_key, key)) {
-		ctr = (ctr + 1) % _arrsize;
+	while (_storage[ctr] != NULL && !_equal(_storage[ctr]->_key, key)) {
+		ctr = (ctr + 1) % _capacity;
 
 #ifdef DEBUG_HASH_COLLISIONS
 		_collisions++;
@@ -452,7 +453,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
 	_lookups++;
 	fprintf(stderr, "collisions %d, lookups %d, ratio %f in HashMap %p; size %d num elements %d\n",
 		_collisions, _lookups, ((double) _collisions / (double)_lookups),
-		(const void *)this, _arrsize, _nele);
+		(const void *)this, _capacity, _size);
 #endif
 
 	return ctr;
@@ -462,13 +463,13 @@ template<class Key, class Val, class HashFunc, class EqualFunc>
 int HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &key) {
 	uint ctr = lookup(key);
 
-	if (_arr[ctr] == NULL) {
-		_arr[ctr] = allocNode(key);
-		_nele++;
+	if (_storage[ctr] == NULL) {
+		_storage[ctr] = allocNode(key);
+		_size++;
 
 		// Keep the load factor below 75%.
-		if (_nele > _arrsize * 75 / 100) {
-			expand_array(nextTableSize(_arrsize));
+		if (_size > _capacity * 75 / 100) {
+			expand_array(nextTableSize(_capacity));
 			ctr = lookup(key);
 		}
 	}
@@ -480,7 +481,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &
 template<class Key, class Val, class HashFunc, class EqualFunc>
 bool HashMap<Key, Val, HashFunc, EqualFunc>::contains(const Key &key) const {
 	uint ctr = lookup(key);
-	return (_arr[ctr] != NULL);
+	return (_storage[ctr] != NULL);
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
@@ -496,15 +497,15 @@ const Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator[](const Key &key) co
 template<class Key, class Val, class HashFunc, class EqualFunc>
 Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) {
 	uint ctr = lookupAndCreateIfMissing(key);
-	assert(_arr[ctr] != NULL);
-	return _arr[ctr]->_value;
+	assert(_storage[ctr] != NULL);
+	return _storage[ctr]->_value;
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
 const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) const {
 	uint ctr = lookup(key);
-	if (_arr[ctr] != NULL)
-		return _arr[ctr]->_value;
+	if (_storage[ctr] != NULL)
+		return _storage[ctr]->_value;
 	else
 		return _defaultVal;
 }
@@ -512,38 +513,38 @@ const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) const 
 template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::setVal(const Key &key, const Val &val) {
 	uint ctr = lookupAndCreateIfMissing(key);
-	assert(_arr[ctr] != NULL);
-	_arr[ctr]->_value = val;
+	assert(_storage[ctr] != NULL);
+	_storage[ctr]->_value = val;
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
 	// This is based on code in the Wikipedia article on Hash tables.
 	uint i = lookup(key);
-	if (_arr[i] == NULL)
+	if (_storage[i] == NULL)
 		return; // key wasn't present, so no work has to be done
 	// If we remove a key, we must check all subsequent keys and possibly
 	// reinsert them.
 	uint j = i;
-	freeNode(_arr[i]);
-	_arr[i] = NULL;
+	freeNode(_storage[i]);
+	_storage[i] = NULL;
 	while (true) {
 		// Look at the next table slot
-		j = (j + 1) % _arrsize;
+		j = (j + 1) % _capacity;
 		// If the next slot is empty, we are done
-		if (_arr[j] == NULL)
+		if (_storage[j] == NULL)
 			break;
 		// Compute the slot where the content of the next slot should normally be,
 		// assuming an empty table, and check whether we have to move it.
-		uint k = _hash(_arr[j]->_key) % _arrsize;
+		uint k = _hash(_storage[j]->_key) % _capacity;
 		if ((j > i && (k <= i || k > j)) ||
 		    (j < i && (k <= i && k > j)) ) {
-			_arr[i] = _arr[j];
+			_storage[i] = _storage[j];
 			i = j;
 		}
 	}
-	_arr[i] = NULL;
-	_nele--;
+	_storage[i] = NULL;
+	_size--;
 	return;
 }
 

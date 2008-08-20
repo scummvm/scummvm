@@ -35,7 +35,7 @@ class Array {
 protected:
 	uint _capacity;
 	uint _size;
-	T *_data;
+	T *_storage;
 
 public:
 	typedef T *iterator;
@@ -44,41 +44,41 @@ public:
 	typedef T value_type;
 
 public:
-	Array() : _capacity(0), _size(0), _data(0) {}
-	Array(const Array<T> &array) : _capacity(0), _size(0), _data(0) {
+	Array() : _capacity(0), _size(0), _storage(0) {}
+	Array(const Array<T> &array) : _capacity(0), _size(0), _storage(0) {
 		_size = array._size;
 		_capacity = _size + 32;
-		_data = new T[_capacity];
-		copy(array._data, array._data + _size, _data);
+		_storage = new T[_capacity];
+		copy(array._storage, array._storage + _size, _storage);
 	}
 
 	~Array() {
-		delete[] _data;
+		delete[] _storage;
 	}
 
 	void push_back(const T &element) {
 		ensureCapacity(_size + 1);
-		_data[_size++] = element;
+		_storage[_size++] = element;
 	}
 
 	void push_back(const Array<T> &array) {
 		ensureCapacity(_size + array._size);
-		copy(array._data, array._data + array._size, _data + _size);
+		copy(array._storage, array._storage + array._size, _storage + _size);
 		_size += array._size;
 	}
 
 	void insert_at(int idx, const T &element) {
 		assert(idx >= 0 && (uint)idx <= _size);
 		ensureCapacity(_size + 1);
-		copy_backward(_data + idx, _data + _size, _data + _size + 1);
-		_data[idx] = element;
+		copy_backward(_storage + idx, _storage + _size, _storage + _size + 1);
+		_storage[idx] = element;
 		_size++;
 	}
 
 	T remove_at(int idx) {
 		assert(idx >= 0 && (uint)idx < _size);
-		T tmp = _data[idx];
-		copy(_data + idx + 1, _data + _size, _data + idx);
+		T tmp = _storage[idx];
+		copy(_storage + idx + 1, _storage + _size, _storage + idx);
 		_size--;
 		return tmp;
 	}
@@ -87,23 +87,23 @@ public:
 
 	T& operator[](int idx) {
 		assert(idx >= 0 && (uint)idx < _size);
-		return _data[idx];
+		return _storage[idx];
 	}
 
 	const T& operator[](int idx) const {
 		assert(idx >= 0 && (uint)idx < _size);
-		return _data[idx];
+		return _storage[idx];
 	}
 
 	Array<T>& operator=(const Array<T> &array) {
 		if (this == &array)
 			return *this;
 
-		delete[] _data;
+		delete[] _storage;
 		_size = array._size;
 		_capacity = _size + 32;
-		_data = new T[_capacity];
-		copy(array._data, array._data + _size, _data);
+		_storage = new T[_capacity];
+		copy(array._storage, array._storage + _size, _storage);
 
 		return *this;
 	}
@@ -113,8 +113,8 @@ public:
 	}
 
 	void clear() {
-		delete[] _data;
-		_data = 0;
+		delete[] _storage;
+		_storage = 0;
 		_size = 0;
 		_capacity = 0;
 	}
@@ -125,33 +125,33 @@ public:
 
 
 	iterator		begin() {
-		return _data;
+		return _storage;
 	}
 
 	iterator		end() {
-		return _data + _size;
+		return _storage + _size;
 	}
 
 	const_iterator	begin() const {
-		return _data;
+		return _storage;
 	}
 
 	const_iterator	end() const {
-		return _data + _size;
+		return _storage + _size;
 	}
 
 	void reserve(uint newCapacity) {
 		if (newCapacity <= _capacity)
 			return;
 
-		T *old_data = _data;
+		T *old_storage = _storage;
 		_capacity = newCapacity;
-		_data = new T[newCapacity];
+		_storage = new T[newCapacity];
 
-		if (old_data) {
+		if (old_storage) {
 			// Copy old data
-			copy(old_data, old_data + _size, _data);
-			delete[] old_data;
+			copy(old_storage, old_storage + _size, _storage);
+			delete[] old_storage;
 		}
 	}
 
@@ -159,14 +159,14 @@ public:
 		if (newSize == _size)
 			return;
 
-		T *old_data = _data;
+		T *old_storage = _storage;
 		_capacity = newSize;
-		_data = new T[newSize];
-		if (old_data) {
+		_storage = new T[newSize];
+		if (old_storage) {
 			// Copy old data
 			int cnt = (_size < newSize ? _size : newSize);
-			copy(old_data, old_data + cnt, _data);
-			delete[] old_data;
+			copy(old_storage, old_storage + cnt, _storage);
+			delete[] old_storage;
 		}
 		_size = newSize;
 	}

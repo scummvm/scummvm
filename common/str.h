@@ -61,7 +61,7 @@ protected:
 	 * a lot. Yes, we limit ourselves to strings shorter than 4GB --
 	 * on purpose :-).
 	 */
-	uint32		_len;
+	uint32		_size;
 
 	/**
 	 * Pointer to the actual string storage. Either points to _storage,
@@ -97,7 +97,7 @@ public:
 #endif
 
 	/** Construct a new empty string. */
-	String() : _len(0), _str(_storage) { _storage[0] = 0; }
+	String() : _size(0), _str(_storage) { _storage[0] = 0; }
 
 	/** Construct a new string from the given NULL-terminated C string. */
 	String(const char *str);
@@ -150,13 +150,13 @@ public:
 	bool contains(char x) const;
 
 	inline const char *c_str() const		{ return _str; }
-	inline uint size() const				{ return _len; }
+	inline uint size() const				{ return _size; }
 
-	inline bool empty() const	{ return (_len == 0); }
-	char lastChar() const	{ return (_len > 0) ? _str[_len-1] : 0; }
+	inline bool empty() const	{ return (_size == 0); }
+	char lastChar() const	{ return (_size > 0) ? _str[_size-1] : 0; }
 
 	char operator [](int idx) const {
-		assert(_str && idx >= 0 && idx < (int)_len);
+		assert(_str && idx >= 0 && idx < (int)_size);
 		return _str[idx];
 	}
 
@@ -203,7 +203,7 @@ public:
 
 protected:
 	void makeUnique();
-	void ensureCapacity(uint32 new_len, bool keep_old);
+	void ensureCapacity(uint32 new_size, bool keep_old);
 	void incRefCount() const;
 	void decRefCount(int *oldRefCount);
 	void initWithCStr(const char *str, uint32 len);
@@ -230,13 +230,11 @@ extern char *trim(char *t);
 class StringList : public Array<String> {
 public:
 	void push_back(const char *str) {
-		ensureCapacity(_size + 1);
-		_data[_size++] = str;
+		Array<String>::push_back(str);
 	}
 
 	void push_back(const String &str) {
-		ensureCapacity(_size + 1);
-		_data[_size++] = str;
+		Array<String>::push_back(str);
 	}
 };
 
