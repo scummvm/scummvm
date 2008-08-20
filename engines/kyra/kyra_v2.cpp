@@ -186,7 +186,7 @@ int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 				} else {
 					char savegameName[14];
 					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');
-					saveGame(saveLoadSlot, savegameName);
+					saveGame(saveLoadSlot, savegameName, 0);
 				}
 			} else if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == 'd')

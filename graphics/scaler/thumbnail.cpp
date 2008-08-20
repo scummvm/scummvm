@@ -126,70 +126,93 @@ static bool grabScreen565(Graphics::Surface *surf) {
 	return true;
 }
 
+static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
+	uint16 width = in.w;
+	uint16 inHeight = in.h;
+
+	if (width < 320) {
+		// Special case to handle MM NES (uses a screen width of 256)
+		width = 320;
+
+		// center MM NES screen
+		Graphics::Surface newscreen;
+		newscreen.create(width, in.h, in.bytesPerPixel);
+
+		uint8 *dst = (uint8*)newscreen.getBasePtr((320 - in.w) / 2, 0);
+		const uint8 *src = (uint8*)in.getBasePtr(0, 0);
+		uint16 height = in.h;
+
+		while (height--) {
+			memcpy(dst, src, in.pitch);
+			dst += newscreen.pitch;
+			src += in.pitch;
+		}
+
+		in.free();
+		in = newscreen;
+	} else if (width == 720) {
+		// Special case to handle Hercules mode
+		width = 640;
+		inHeight = 400;
+
+		// cut off menu and so on..
+		Graphics::Surface newscreen;
+		newscreen.create(width, 400, in.bytesPerPixel);
+
+		uint8 *dst = (uint8*)in.getBasePtr(0, (400 - 240) / 2);
+		const uint8 *src = (uint8*)in.getBasePtr(41, 28);
+
+		for (int y = 0; y < 240; ++y) {
+			memcpy(dst, src, 640 * in.bytesPerPixel);
+			dst += newscreen.pitch;
+			src += in.pitch;
+		}
+
+		in.free();
+		in = newscreen;
+	}
+
+	uint16 newHeight = !(inHeight % 240) ? kThumbnailHeight2 : kThumbnailHeight1;
+
+	int gBitFormatBackUp = gBitFormat;
+	gBitFormat = 565;
+	out.create(kThumbnailWidth, newHeight, sizeof(uint16));
+	createThumbnail((const uint8 *)in.pixels, width * sizeof(uint16), (uint8 *)out.pixels, out.pitch, width, inHeight);
+	gBitFormat = gBitFormatBackUp;
+
+	in.free();
+
+	return true;
+}
+
 bool createThumbnailFromScreen(Graphics::Surface* surf) {
 	assert(surf);
-
-	int screenWidth = g_system->getWidth();
-	int screenHeight = g_system->getHeight();
 
 	Graphics::Surface screen;
 
 	if (!grabScreen565(&screen))
 		return false;
 
-	uint16 width = screenWidth;
+	return createThumbnail(*surf, screen);
+}
 
-	if (screenWidth < 320) {
-		// Special case to handle MM NES (uses a screen width of 256)
-		width = 320;
+bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h, const uint8 *palette) {
+	assert(surf);
 
-		// center MM NES screen
-		Graphics::Surface newscreen;
-		newscreen.create(width, screen.h, screen.bytesPerPixel);
+	Graphics::Surface screen;
+	screen.create(w, h, 2);
 
-		uint8 *dst = (uint8*)newscreen.getBasePtr((320 - screenWidth) / 2, 0);
-		uint8 *src = (uint8*)screen.getBasePtr(0, 0);
-		uint16 height = screen.h;
+	for (uint y = 0; y < screen.h; ++y) {
+		for (uint x = 0; x < screen.w; ++x) {
+			byte r, g, b;
+			r = palette[pixels[y * w + x] * 3];
+			g = palette[pixels[y * w + x] * 3 + 1];
+			b = palette[pixels[y * w + x] * 3 + 2];
 
-		while (height--) {
-			memcpy(dst, src, screen.pitch);
-			dst += newscreen.pitch;
-			src += screen.pitch;
+			((uint16 *)screen.pixels)[y * screen.w + x] = RGBToColor<ColorMasks<565> >(r, g, b);
 		}
-
-		screen.free();
-		screen = newscreen;
-	} else if (screenWidth == 720) {
-		// Special case to handle Hercules mode
-		width = 640;
-		screenHeight = 400;
-
-		// cut off menu and so on..
-		Graphics::Surface newscreen;
-		newscreen.create(width, 400, screen.bytesPerPixel);
-
-		uint8 *dst = (uint8*)newscreen.getBasePtr(0, (400 - 240) / 2);
-		uint8 *src = (uint8*)screen.getBasePtr(41, 28);
-
-		for (int y = 0; y < 240; ++y) {
-			memcpy(dst, src, 640 * screen.bytesPerPixel);
-			dst += newscreen.pitch;
-			src += screen.pitch;
-		}
-
-		screen.free();
-		screen = newscreen;
 	}
 
-	uint16 newHeight = !(screenHeight % 240) ? kThumbnailHeight2 : kThumbnailHeight1;
-
-	int gBitFormatBackUp = gBitFormat;
-	gBitFormat = 565;
-	surf->create(kThumbnailWidth, newHeight, sizeof(uint16));
-	createThumbnail((const uint8*)screen.pixels, width * sizeof(uint16), (uint8*)surf->pixels, surf->pitch, width, screenHeight);
-	gBitFormat = gBitFormatBackUp;
-
-	screen.free();
-
-	return true;
+	return createThumbnail(*surf, screen);
 }
+

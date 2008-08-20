@@ -290,6 +290,8 @@ protected:
 
 		bool originalSave;	// savegame from original interpreter
 		bool oldHeader;		// old scummvm save header
+
+		Graphics::Surface *thumbnail;
 	};
 
 	enum kReadSaveHeaderError {
@@ -299,10 +301,10 @@ protected:
 		kRSHEIoError = 3
 	};
 
-	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, SaveHeader &header);
+	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, bool loadThumbnail, SaveHeader &header);
 
 	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header);
-	Common::WriteStream *openSaveForWriting(const char *filename, const char *saveName) const;
+	Common::WriteStream *openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const;
 };
 
 } // End of namespace Kyra

@@ -214,7 +214,7 @@ public:
 protected:
 	int32 _speechPlayTime;
 
-	void saveGame(const char *fileName, const char *saveName);
+	void saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumbnail);
 	void loadGame(const char *fileName);
 
 protected:

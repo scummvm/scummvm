@@ -32,10 +32,10 @@
 
 namespace Kyra {
 
-void KyraEngine_MR::saveGame(const char *fileName, const char *saveName) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::saveGame('%s', '%s')", fileName, saveName);
+void KyraEngine_MR::saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumb) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::saveGame('%s', '%s', %p)", fileName, saveName, (const void *)thumb);
 
-	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName);
+	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName, thumb);
 	if (!out) {
 		warning("Can't open file '%s', game not loadable", fileName);
 		return;

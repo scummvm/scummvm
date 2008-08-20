@@ -78,10 +78,22 @@ enum {
 extern void createThumbnail(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 dstPitch, int width, int height);
 
 /**
- * creates a thumbnail from the current screen (without overlay)
+ * Creates a thumbnail from the current screen (without overlay).
+ *
  * @param surf	a surface (will always have 16 bpp after this for now)
  * @return		false if a error occured
  */
-extern bool createThumbnailFromScreen(Graphics::Surface* surf);
+extern bool createThumbnailFromScreen(Graphics::Surface *surf);
+
+/**
+ * Creates a thumbnail from a buffer.
+ *
+ * @param surf      destination surface (will always have 16 bpp after this for now)
+ * @param pixels    raw pixel data
+ * @param w         width
+ * @param h         height
+ * @param palette   palette in RGB format
+ */
+extern bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h, const uint8 *palette);
 
 #endif

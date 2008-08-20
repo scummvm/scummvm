@@ -33,6 +33,8 @@
 
 #include "common/savefile.h"
 
+#include "graphics/scaler.h"
+
 namespace Kyra {
 
 void KyraEngine_MR::loadButtonShapes() {
@@ -1138,6 +1140,10 @@ int KyraEngine_MR::albumClose(Button *caller) {
 GUI_MR::GUI_MR(KyraEngine_MR *vm) : GUI_v2(vm), _vm(vm), _screen(vm->_screen) {
 }
 
+void GUI_MR::createScreenThumbnail(Graphics::Surface &dst) {
+	::createThumbnail(&dst, _vm->_screenBuffer, Screen::SCREEN_W, Screen::SCREEN_H, _screen->getPalette(0));
+}
+
 void GUI_MR::flagButtonEnable(Button *button) {
 	if (!button)
 		return;
@@ -1450,7 +1456,7 @@ int GUI_MR::gameOptions(Button *caller) {
 
 	if (_vm->_lang != lang) {
 		_reloadTemporarySave = true;
-		_vm->saveGame(_vm->getSavegameFilename(999), "Temporary Kyrandia 3 Savegame");
+		_vm->saveGame(_vm->getSavegameFilename(999), "Temporary Kyrandia 3 Savegame", 0);
 		if (!_vm->loadLanguageFile("ITEMS.", _vm->_itemFile))
 			error("Couldn't load ITEMS");
 		if (!_vm->loadLanguageFile("SCORE.", _vm->_scoreFile))

@@ -684,7 +684,7 @@ void KyraEngine_MR::startup() {
 	assert(_invWsa);
 	_invWsa->open("MOODOMTR.WSA", 1, 0);
 	_invWsaFrame = 6;
-	saveGame(getSavegameFilename(0), (const char*)getTableEntry(_optionsFile, 33));
+	saveGame(getSavegameFilename(0), (const char*)getTableEntry(_optionsFile, 33), 0);
 	_soundDigital->beginFadeOut(_musicSoundChannel, 60);
 	delayWithTicks(60);
 	if (_gameToLoad == -1)

@@ -33,6 +33,8 @@
 
 #include "common/savefile.h"
 
+#include "graphics/scaler.h"
+
 namespace Kyra {
 
 void KyraEngine_HoF::loadButtonShapes() {
@@ -793,6 +795,10 @@ int GUI_HoF::optionsButton(Button *button) {
 
 #pragma mark -
 
+void GUI_HoF::createScreenThumbnail(Graphics::Surface &dst) {
+	::createThumbnail(&dst, _vm->_screenBuffer, Screen::SCREEN_W, Screen::SCREEN_H, _screen->getPalette(1));
+}
+
 void GUI_HoF::setupPalette() {
 	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
 
@@ -996,7 +1002,7 @@ int GUI_HoF::gameOptionsTalkie(Button *caller) {
 
 	if (_vm->_lang != lang) {
 		_reloadTemporarySave = true;
-		_vm->saveGame(_vm->getSavegameFilename(999), "Temporary Kyrandia 2 Savegame");
+		_vm->saveGame(_vm->getSavegameFilename(999), "Temporary Kyrandia 2 Savegame", 0);
 		_vm->loadCCodeBuffer("C_CODE.XXX");
 		if (_vm->_flags.isTalkie)
 			_vm->loadOptionsBuffer("OPTIONS.XXX");

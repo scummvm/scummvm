@@ -50,6 +50,7 @@ public:
 
 	void savePageToDisk(const char *file, int page);
 	void loadPageFromDisk(const char *file, int page);
+	void queryPageFromDisk(const char *file, int page, uint8 *buffer);
 	void deletePageFromDisk(int page);
 
 	void copyBackgroundBlock(int x, int page, int flag);

@@ -26,10 +26,11 @@
 #include "common/endian.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "graphics/thumbnail.h"
 
 #include "kyra/kyra_v1.h"
 
-#define CURRENT_SAVE_VERSION 13
+#define CURRENT_SAVE_VERSION 14
 
 #define GF_FLOPPY  (1 <<  0)
 #define GF_TALKIE  (1 <<  1)
@@ -37,7 +38,7 @@
 
 namespace Kyra {
 
-KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header) {
+KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header) {
 	uint32 type = in->readUint32BE();
 	header.originalSave = false;
 	header.oldHeader = false;
@@ -108,6 +109,16 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 	if (header.version >= 2)
 		header.flags = in->readUint32BE();
 
+	if (header.version >= 14) {
+		if (loadThumbnail) {
+			header.thumbnail = new Graphics::Surface();
+			assert(header.thumbnail);
+			Graphics::loadThumbnail(*in, *header.thumbnail);
+		} else {
+			Graphics::skipThumbnailHeader(*in);
+		}
+	}
+
 	return (in->ioFailed() ? kRSHEIoError : kRSHENoError);
 }
 
@@ -118,7 +129,7 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 	if (!(in = _saveFileMan->openForLoading(filename)))
 		return 0;
 
-	kReadSaveHeaderError errorCode = KyraEngine_v1::readSaveHeader(in, header);
+	kReadSaveHeaderError errorCode = KyraEngine_v1::readSaveHeader(in, false, header);
 	if (errorCode != kRSHENoError) {
 		if (errorCode == kRSHEInvalidType)
 			warning("No ScummVM Kyra engine savefile header.");
@@ -162,8 +173,8 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 	return in;
 }
 
-Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, const char *saveName) const {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::openSaveForWriting('%s', '%s')", filename, saveName);
+Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::openSaveForWriting('%s', '%s', %p)", filename, saveName, (const void *)thumbnail);
 	if (_quitFlag)
 		return 0;
 
@@ -190,6 +201,11 @@ Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, con
 		delete out;
 		return 0;
 	}
+
+	if (thumbnail)
+		Graphics::saveThumbnail(*out, *thumbnail);
+	else
+		Graphics::saveThumbnail(*out);
 
 	return out;
 }

@@ -37,6 +37,8 @@
 #include "common/events.h"
 #include "common/system.h"
 
+#include "graphics/scaler.h"
+
 namespace Kyra {
 
 void KyraEngine_LoK::initMainButtonList() {
@@ -197,6 +199,15 @@ GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI(vm), _vm(vm), _sc
 
 GUI_LoK::~GUI_LoK() {
 	delete[] _menu;
+}
+
+void GUI_LoK::createScreenThumbnail(Graphics::Surface &dst) {
+	uint8 *screen = new uint8[Screen::SCREEN_W*Screen::SCREEN_H];
+	if (screen) {
+		_screen->queryPageFromDisk("SEENPAGE.TMP", 0, screen);
+		::createThumbnail(&dst, screen, Screen::SCREEN_W, Screen::SCREEN_H, _screen->getPalette(2));
+	}
+	delete[] screen;
 }
 
 int GUI_LoK::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) {
@@ -736,8 +747,12 @@ int GUI_LoK::saveGame(Button *button) {
 	} else {
 		if (_savegameOffset == 0 && _vm->_gameToLoad == 0)
 			_vm->_gameToLoad = getNextSavegameSlot();
-		if (_vm->_gameToLoad > 0)
-			_vm->saveGame(_vm->getSavegameFilename(_vm->_gameToLoad), _savegameName);
+		if (_vm->_gameToLoad > 0) {
+			Graphics::Surface thumb;
+			createScreenThumbnail(thumb);
+			_vm->saveGame(_vm->getSavegameFilename(_vm->_gameToLoad), _savegameName, &thumb);
+			thumb.free();
+		}
 	}
 
 	return 0;

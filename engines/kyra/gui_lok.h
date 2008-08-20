@@ -103,6 +103,8 @@ public:
 	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel);
 
 	int buttonMenuCallback(Button *caller);
+
+	void createScreenThumbnail(Graphics::Surface &dst);
 private:
 	void initStaticResource();
 

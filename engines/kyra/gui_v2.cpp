@@ -618,7 +618,12 @@ int GUI_v2::saveMenu(Button *caller) {
 
 	restorePage1(_vm->_screenBuffer);
 	restorePalette();
-	_vm->saveGame(_vm->getSavegameFilename(_saveSlot), _saveDescription);
+
+	Graphics::Surface thumb;
+	createScreenThumbnail(thumb);
+	_vm->saveGame(_vm->getSavegameFilename(_saveSlot), _saveDescription, &thumb);
+	thumb.free();
+
 	_displayMenu = false;
 	_madeSave = true;
 

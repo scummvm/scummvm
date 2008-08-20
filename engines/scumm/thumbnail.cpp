@@ -27,76 +27,39 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {
 
-#define THMB_VERSION 1
-
-struct ThumbnailHeader {
-	uint32 type;
-	uint32 size;
-	byte version;
-	uint16 width, height;
-	byte bpp;
-};
-
-#define ThumbnailHeaderSize (4+4+1+2+2+1)
-
-inline void colorToRGB(uint16 color, uint8 &r, uint8 &g, uint8 &b) {
-	r = (((color >> 11) & 0x1F) << 3);
-	g = (((color >> 5) & 0x3F) << 2);
-	b = ((color&0x1F) << 3);
-}
-
 Graphics::Surface *ScummEngine::loadThumbnail(Common::SeekableReadStream *file) {
-	ThumbnailHeader header;
+	// TODO: Until backwards seeking in compressed save files is not supported
+	// We can not use this.
 
-	header.type = file->readUint32BE();
-	// We also accept the bad 'BMHT' header here, for the sake of compatibility
-	// with some older savegames which were written incorrectly due to a bug in
-	// ScummVM which wrote the thumb header type incorrectly on LE systems.
-	if (header.type != MKID_BE('THMB') && header.type != MKID_BE('BMHT'))
-		return 0;
-
-	header.size = file->readUint32BE();
-	header.version = file->readByte();
-
-	if (header.version > THMB_VERSION) {
-		file->skip(header.size - 9);
-		warning("Loading a newer thumbnail version");
-		return 0;
-	}
-
-	header.width = file->readUint16BE();
-	header.height = file->readUint16BE();
-	header.bpp = file->readByte();
-
-	// TODO: support other bpp values than 2
-	if (header.bpp != 2) {
-		file->skip(header.size - 14);
-		return 0;
-	}
+	//if (!Graphics::checkThumbnailHeader(*file))
+	//	return 0;
 
 	Graphics::Surface *thumb = new Graphics::Surface();
-	thumb->create(header.width, header.height, sizeof(OverlayColor));
-
-	OverlayColor* pixels = (OverlayColor *)thumb->pixels;
-
-	for (int y = 0; y < thumb->h; ++y) {
-		for (int x = 0; x < thumb->w; ++x) {
-			uint8 r, g, b;
-			colorToRGB(file->readUint16BE(), r, g, b);
-
-			// converting to current OSystem Color
-			*pixels++ = _system->RGBToColor(r, g, b);
-		}
+	assert(thumb);
+	if (!Graphics::loadThumbnail(*file, *thumb)) {
+		delete thumb;
+		return 0;
 	}
 
 	return thumb;
 }
 
 void ScummEngine::saveThumbnail(Common::OutSaveFile *file) {
+	// Until we support no thumbnails in the SCUMM save formats for NDS
+	// we save a dummy thumbnail.
+	//
+	// TODO: Actually all what has to be done about it, is to update
+	// the code in engines/scumm/saveload.o which skips the saveheader.
+	// Currently impossible because of lacking backward seek support for
+	// compressed save files.
+	// When we change that code to use the new API from graphics/thumbnail.h
+	// it should be all fine to save no header at all for NDS.
+
 	Graphics::Surface thumb;
 
 #if !defined(__DS__)
@@ -104,26 +67,7 @@ void ScummEngine::saveThumbnail(Common::OutSaveFile *file) {
 #endif
 		thumb.create(kThumbnailWidth, kThumbnailHeight2, sizeof(uint16));
 
-	ThumbnailHeader header;
-	header.type = MKID_BE('THMB');
-	header.size = ThumbnailHeaderSize + thumb.w*thumb.h*thumb.bytesPerPixel;
-	header.version = THMB_VERSION;
-	header.width = thumb.w;
-	header.height = thumb.h;
-	header.bpp = thumb.bytesPerPixel;
-
-	file->writeUint32BE(header.type);
-	file->writeUint32BE(header.size);
-	file->writeByte(header.version);
-	file->writeUint16BE(header.width);
-	file->writeUint16BE(header.height);
-	file->writeByte(header.bpp);
-
-	// TODO: for later this shouldn't be casted to uint16...
-	uint16* pixels = (uint16 *)thumb.pixels;
-	for (uint16 p = 0; p < thumb.w*thumb.h; ++p, ++pixels)
-		file->writeUint16BE(*pixels);
-
+	Graphics::saveThumbnail(*file, thumb);
 	thumb.free();
 }
 
