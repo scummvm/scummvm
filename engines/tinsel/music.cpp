@@ -343,8 +343,6 @@ MusicPlayer::~MusicPlayer() {
 }
 
 void MusicPlayer::setVolume(int volume) {
-	Common::StackLock lock(_mutex);
-
 	// FIXME: Could we simply change MAXMIDIVOL to match ScummVM's range?
 	volume = CLIP((255 * volume) / MAXMIDIVOL, 0, 255);
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
@@ -353,6 +351,8 @@ void MusicPlayer::setVolume(int volume) {
 		return;
 
 	_masterVolume = volume;
+
+	Common::StackLock lock(_mutex);
 
 	for (int i = 0; i < 16; ++i) {
 		if (_channel[i]) {
