@@ -2459,8 +2459,6 @@ void TownsPC98_OpnChannelSSG::processFrequency() {
 		if (!processPitchWheel())
 			return;
 
-		processPitchWheel();
-
 		uint16 f = _frequency >> _block;
 		writeReg(_regOffset << 1, f & 0xff);
 		writeReg((_regOffset << 1) + 1, f >> 8);
@@ -3517,12 +3515,12 @@ void TownsPC98_OpnDriver::startSoundEffect() {
 }
 
 void TownsPC98_OpnDriver::setMusicTempo(uint8 tempo) {
-	float spc = (float)(0x100 - tempo) * 10.0 * _baserate;
+	float spc = (float)(0x100 - tempo) * 10.0f * _baserate;
 	_samplesPerMusicCallback = (int32) spc;
 }
 
 void TownsPC98_OpnDriver::setSfxTempo(uint16 tempo) {
-	float spc = (float)(0x400 - tempo) * _baserate;
+	float spc = (float)(0x400 - tempo) * 0.625f * _baserate;
 	_samplesPerSfxCallback = (int32) spc;
 }
 
