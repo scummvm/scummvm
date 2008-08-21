@@ -1684,7 +1684,6 @@ protected:
 	const int _numChan;
 	const int _numSSG;
 	const bool _hasPCM;
-	const bool _hasStereo;
 
 	static const uint8 _drvTables[];
 	static const uint32 _adtStat[];
@@ -3036,17 +3035,28 @@ void TownsPC98_OpnPercussionSource::advanceInput(PcmInstrument *ins) {
 }
 
 TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) :
-	_mixer(mixer), _trackPtr(0), _musicPlaying(false), _sfxPlaying(false), _fading(false), _channels(0),
-	_ssgChannels(0), _sfxChannels(0), _pcmChannel(0),	_looping(0), _opnCarrier(_drvTables + 76),
-	_opnFreqTable(_drvTables + 84), _opnFreqTableSSG(_drvTables + 252),	_opnFxCmdLen(_drvTables + 36),
-	_opnLvlPresets(_drvTables + (type == OD_TOWNS ? 52 : 228)), _oprRates(0), _oprRateshift(0), _oprAttackDecay(0),
-	_oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0), _musicTickCounter(0), _updateSfxFlag(type == OD_TOWNS ? 0 : 6),
-	_updateChannelsFlag(type == OD_TYPE26 ? 0x07 : 0x3F), _updateSSGFlag(type == OD_TOWNS ? 0 : 7),
-	_updatePCMFlag(type == OD_TYPE86 ? 1 : 0), _finishedChannelsFlag(0), _finishedSSGFlag(0),
-	_finishedPCMFlag(0), _samplesTillMusicCallback(0), _samplesTillSfxCallback (0), _finishedSfxFlag(0),
-	_sfxData(0), _ready(false), _numSSG(type == OD_TOWNS ? 0 : 3), _hasPCM(type == OD_TYPE86 ? true : false),
-	_sfxOffs(0), _numChan(type == OD_TYPE26 ? 3 : 6), _hasStereo(type == OD_TYPE26 ? false : true),
-	_ssgPatches(0), _ssg(0), _pcm(0), _baserate(55125.0f / (float)getRate()) {
+	_mixer(mixer),
+
+	_channels(0), _ssgChannels(0), _sfxChannels(0), _pcmChannel(0), _ssg(0), _pcm(0),
+	
+	_trackPtr(0), _sfxData(0), _sfxOffs(0), _ssgPatches(0),	
+
+	_opnCarrier(_drvTables + 76), _opnFreqTable(_drvTables + 84), _opnFreqTableSSG(_drvTables + 252),
+	_opnFxCmdLen(_drvTables + 36), _opnLvlPresets(_drvTables + (type == OD_TOWNS ? 52 : 228)),
+	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0),	_oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0),	
+	
+	_numChan(type == OD_TYPE26 ? 3 : 6), _numSSG(type == OD_TOWNS ? 0 : 3), _hasPCM(type == OD_TYPE86 ? true : false),
+	_updateChannelsFlag(type == OD_TYPE26 ? 0x07 : 0x3F), _finishedChannelsFlag(0),
+	_updateSSGFlag(type == OD_TOWNS ? 0x00 : 0x07), _finishedSSGFlag(0),
+	_updatePCMFlag(type == OD_TYPE86 ? 0x01 : 0x00), _finishedPCMFlag(0),
+	_updateSfxFlag(type == OD_TOWNS ? 0x00 : 0x06), _finishedSfxFlag(0),
+	
+	_baserate(55125.0f / (float)getRate()),
+	_samplesTillMusicCallback(0), _samplesTillSfxCallback (0),
+	_musicTickCounter(0),
+	
+	_musicPlaying(false), _sfxPlaying(false), _fading(false), _looping(0), _ready(false) {
+
 	setMusicTempo(84);
 	setSfxTempo(654);
 }
@@ -3276,12 +3286,12 @@ void TownsPC98_OpnDriver::loadSoundEffectData(uint8 *data, uint8 trackNum) {
 	}
 
 	if (!_sfxChannels) {
-		warning("TownsPC98_OpnDriver: sound effects not supported by this configuration");
+		warning("TownsPC98_OpnDriver: Sound effects not supported by this configuration");
 		return;
 	}
 
 	if (!data) {
-		warning("TownsPC98_OpnDriver: Invalid sound effect file data");
+		warning("TownsPC98_OpnDriver: Invalid sound effects file data");
 		return;
 	}
 
@@ -3368,15 +3378,13 @@ void TownsPC98_OpnDriver::musicCallback() {
 			}
 		}
 
-		if (_numSSG) {
-			for (int i = 0; i < _numSSG; i++) {
-				if (_updateSSGFlag & _ssgChannels[i]->_idFlag) {
-					_ssgChannels[i]->processEvents();
-					_ssgChannels[i]->processFrequency();
-				}
+		for (int i = 0; i < _numSSG; i++) {
+			if (_updateSSGFlag & _ssgChannels[i]->_idFlag) {
+				_ssgChannels[i]->processEvents();
+				_ssgChannels[i]->processFrequency();
 			}
 		}
-
+		
 		if (_hasPCM)
 			if (_updatePCMFlag & _pcmChannel->_idFlag)
 				_pcmChannel->processEvents();
@@ -3401,8 +3409,10 @@ void TownsPC98_OpnDriver::sfxCallback() {
 		_trackPtr = _sfxBuffer;
 
 		for (int i = 0; i < 2; i++) {
-			_sfxChannels[i]->processEvents();
-			_sfxChannels[i]->processFrequency();
+			if (_updateSfxFlag & _sfxChannels[i]->_idFlag) {
+				_sfxChannels[i]->processEvents();
+				_sfxChannels[i]->processFrequency();
+			}
 		}
 
 		_trackPtr = _musicBuffer;
@@ -3515,12 +3525,12 @@ void TownsPC98_OpnDriver::startSoundEffect() {
 }
 
 void TownsPC98_OpnDriver::setMusicTempo(uint8 tempo) {
-	float spc = (float)(0x100 - tempo) * 10.0f * _baserate;
+	float spc = (float)(0x100 - tempo) * 16.0f / _baserate;
 	_samplesPerMusicCallback = (int32) spc;
 }
 
 void TownsPC98_OpnDriver::setSfxTempo(uint16 tempo) {
-	float spc = (float)(0x400 - tempo) * 0.625f * _baserate;
+	float spc = (float)(0x400 - tempo) / _baserate;
 	_samplesPerSfxCallback = (int32) spc;
 }
 
