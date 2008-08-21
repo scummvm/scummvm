@@ -1111,6 +1111,7 @@ public:
 
 protected:
 	EnvelopeState _state;
+	bool _playing;
 	uint32 _feedbackLevel;
 	uint32 _multiple;
 	uint32 _totalLevel;
@@ -1159,11 +1160,19 @@ TownsPC98_OpnOperator::TownsPC98_OpnOperator(const uint32 timerbase, const uint8
 }
 
 void TownsPC98_OpnOperator::keyOn() {
+	if (_playing)
+		return;
+
+	_playing = true;
 	_state = s_attacking;
 	_phase = 0;
 }
 
 void TownsPC98_OpnOperator::keyOff() {
+	if (!_playing)
+		return;
+	
+	_playing = false;
 	if (_state != s_ready)
 		_state = s_releasing;
 }
@@ -1259,6 +1268,7 @@ void TownsPC98_OpnOperator::generateOutput(int32 phasebuf, int32 *feed, int32 &o
 	}
 
 	uint32 lvlout = _totalLevel + (uint32) _currentLevel;
+
 
 	int32 outp = 0;
 	int32 *i = &outp, *o = &outp;
@@ -1675,13 +1685,13 @@ protected:
 	uint8 *_sfxData;
 	uint16 _sfxOffsets[2];
 
-	uint32 _samplesTillMusicCallback;
+	int32 _samplesTillMusicCallback;
 	uint32 _samplesTillMusicCallbackRemainder;
-	uint32 _samplesPerMusicCallback;
+	int32 _samplesPerMusicCallback;
 	uint32 _samplesPerMusicCallbackRemainder;
-	uint32 _samplesTillSfxCallback;
+	int32 _samplesTillSfxCallback;
 	uint32 _samplesTillSfxCallbackRemainder;
-	uint32 _samplesPerSfxCallback;
+	int32 _samplesPerSfxCallback;
 	uint32 _samplesPerSfxCallbackRemainder;
 
 	const int _numChan;
@@ -1809,13 +1819,13 @@ void TownsPC98_OpnChannel::processEvents() {
 	if (_flags & CHS_EOT)
 		return;
 
-	if (_hold == false && _ticksLeft == _keyOffTime)
+	if (!_hold && _ticksLeft == _keyOffTime)
 		keyOff();
 
 	if (--_ticksLeft)
 		return;
 
-	if (_hold == false)
+	if (!_hold)
 		keyOff();
 
 	uint8 cmd = 0;
@@ -3024,16 +3034,11 @@ void TownsPC98_OpnPercussionSource::advanceInput(PcmInstrument *ins) {
 		371, 408, 449, 494, 544, 598, 658, 724, 796, 876, 963, 1060, 1166, 1282, 1411, 1552
 	};
 	
-	int d = ins->samples[1];
 	uint8 cur = (int8) *ins->pos++;
 
 	for (int i = 0; i < 2; i++) {
 		int b = (2 * (cur & 7) + 1) * stepTable[ins->decState] / 8;
-		if (cur & 8)
-			b = -b;
-		d += b;
-		d = CLIP<int16>(d, -2048, 2047);
-		ins->samples[i] = d;
+		ins->samples[i] = CLIP<int16>(ins->samples[i ^ 1] + (cur & 8 ? b : -b), -2048, 2047);
 		ins->decState = CLIP<int8>(ins->decState + adjustIndex[cur & 7], 0, 48);
 		cur >>= 4;
 	}
@@ -3213,8 +3218,7 @@ int inline TownsPC98_OpnDriver::readBuffer(int16 *buffer, const int numSamples) 
 			}
 		}
 
-		int32 render = MIN(_samplesTillSfxCallback, _samplesTillMusicCallback);
-		render = MIN(samplesLeft, render);
+		int32 render = MIN(samplesLeft, MIN(_samplesTillSfxCallback, _samplesTillMusicCallback));
 		samplesLeft -= render;
 
 		_samplesTillMusicCallback -= render;		
@@ -3228,18 +3232,9 @@ int inline TownsPC98_OpnDriver::readBuffer(int16 *buffer, const int numSamples) 
 			_pcm->nextTick(tmp, render);
 
 		for (int i = 0; i < render; ++i) {
-			int32 l = tmp[i << 1];
-			if (l > 32767)
-				l = 32767;
-			if (l < -32767)
-				l = -32767;
+			int32 l = CLIP<int32>(tmp[i << 1], -32767, 32767);
 			buffer[i << 1] = (int16) l;
-
-			int32 r = tmp[(i << 1) + 1];
-			if (r > 32767)
-				r = 32767;
-			if (r < -32767)
-				r = -32767;
+			int32 r = CLIP<int32>(tmp[(i << 1) + 1], -32767, 32767);
 			buffer[(i << 1) + 1] = (int16) r;
 		}
 
@@ -3545,13 +3540,13 @@ void TownsPC98_OpnDriver::startSoundEffect() {
 
 void TownsPC98_OpnDriver::setMusicTempo(uint8 tempo) {
 	float spc = (float)(0x100 - tempo) * 16.0f / _baserate;
-	_samplesPerMusicCallback = (uint32) spc;
+	_samplesPerMusicCallback = (int32) spc;
 	_samplesPerMusicCallbackRemainder = (uint32) ((spc - (float)_samplesPerMusicCallback) * 1000000.0f);
 }
 
 void TownsPC98_OpnDriver::setSfxTempo(uint16 tempo) {
 	float spc = (float)(0x400 - tempo) / _baserate;
-	_samplesPerSfxCallback = (uint32) spc;
+	_samplesPerSfxCallback = (int32) spc;
 	_samplesPerSfxCallbackRemainder = (uint32) ((spc - (float)_samplesPerSfxCallback) * 1000000.0f);
 }
 
