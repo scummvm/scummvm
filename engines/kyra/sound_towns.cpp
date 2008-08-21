@@ -1111,6 +1111,7 @@ public:
 
 protected:
 	EnvelopeState _state;
+	bool _playing;
 	uint32 _feedbackLevel;
 	uint32 _multiple;
 	uint32 _totalLevel;
@@ -1159,11 +1160,19 @@ TownsPC98_OpnOperator::TownsPC98_OpnOperator(const float rate, const uint8 *rate
 }
 
 void TownsPC98_OpnOperator::keyOn() {
+	if (_playing)
+		return;
+
+	_playing = true;
 	_state = s_attacking;
 	_phase = 0;
 }
 
 void TownsPC98_OpnOperator::keyOff() {
+	if (!_playing)
+		return;
+
+	_playing = false;
 	if (_state != s_ready)
 		_state = s_releasing;
 }
