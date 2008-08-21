@@ -546,27 +546,4 @@ ProgramExec_br::ProgramExec_br(Parallaction_br *vm) : ProgramExec_ns(vm), _vm(vm
 ProgramExec_br::~ProgramExec_br() {
 }
 
-#if 0
-void Parallaction_br::jobWaitRemoveLabelJob(void *parm, Job *job) {
-
-}
-
-void Parallaction_br::jobPauseSfx(void *parm, Job *job) {
-
-}
-
-
-void Parallaction_br::jobStopFollower(void *parm, Job *job) {
-
-}
-
-
-void Parallaction_br::jobScroll(void *parm, Job *job) {
-
-}
-#endif
-
-
-
-
 } // namespace Parallaction

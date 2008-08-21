@@ -29,6 +29,7 @@
 #include "common/str.h"
 #include "common/stack.h"
 #include "common/array.h"
+#include "common/func.h"
 #include "common/savefile.h"
 
 #include "engines/engine.h"
@@ -256,7 +257,7 @@ public:
 
 	Input	*_input;
 
-	void		processInput(InputData* data);
+	void		processInput(int event);
 
 	void		pauseJobs();
 	void		resumeJobs();
@@ -656,6 +657,7 @@ private:
 
 	void		initPart();
 	void		freePart();
+	void		freeLocation();
 
 	void initCursors();
 
@@ -682,13 +684,6 @@ private:
 
 	void parseLocation(const char* name);
 	void loadProgram(AnimationPtr a, const char *filename);
-
-#if 0
-	void jobWaitRemoveLabelJob(void *parm, Job *job);
-	void jobPauseSfx(void *parm, Job *job);
-	void jobStopFollower(void *parm, Job *job);
-	void jobScroll(void *parm, Job *job);
-#endif
 };
 
 // FIXME: remove global

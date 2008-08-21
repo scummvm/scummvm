@@ -52,8 +52,6 @@ public:
 			pal.fadeTo(blackPal, 1);
 			_vm->_gfx->setPalette(pal);
 			_fadeSteps--;
-			// TODO: properly implement timers to avoid delay calls
-			_vm->_system->delayMillis(20);
 			return this;
 		}
 

@@ -41,14 +41,6 @@ enum {
 	kMouseRightDown		= 8
 };
 
-struct InputData {
-	uint16			_event;
-	Common::Point	_mousePos;
-	int16		_inventoryIndex;
-	ZonePtr		_zone;
-	uint		_label;
-};
-
 enum MouseTriState {
 	MOUSE_ENABLED_SHOW,
 	MOUSE_ENABLED_HIDE,
@@ -56,10 +48,7 @@ enum MouseTriState {
 };
 
 class Input {
-	void updateGameInput();
-
-	// input-only
-	InputData	_inputData;
+	int 		updateGameInput();
 
 	bool		_hasKeyPressEvent;
 	Common::KeyState _keyPressed;
@@ -69,7 +58,7 @@ class Input {
 
 	int16		_transCurrentHoverItem;
 
-	InputData	*translateInput();
+	void		translateInput();
 	bool		translateGameInput();
 	bool		updateInventoryInput();
 	void 		takeAction(ZonePtr z);
@@ -91,7 +80,7 @@ public:
 		kInputModeComment = 1,
 		kInputModeDialogue = 2,
 		kInputModeInventory = 3,
-		kInputModeMenu = 4
+		kInputModeMenu = 4,
 	};
 
 
@@ -116,7 +105,7 @@ public:
 	InventoryItem	_activeItem;
 
 	void	readInput();
-	InputData* 	updateInput();
+	int 	updateInput();
 	void	trackMouse(ZonePtr z);
 	void	waitForButtonEvent(uint32 buttonEventMask, int32 timeout = -1);
 	uint32	getLastButtonEvent() { return _mouseButtons; }

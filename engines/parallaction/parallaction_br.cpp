@@ -209,6 +209,7 @@ void Parallaction_br::initPart() {
 }
 
 void Parallaction_br::freePart() {
+	freeLocation();
 
 	delete _globalFlagsNames;
 	delete _objectsNames;
@@ -262,8 +263,7 @@ void Parallaction_br::runPendingZones() {
 	}
 }
 
-
-void Parallaction_br::changeLocation(char *location) {
+void Parallaction_br::freeLocation() {
 
 	// free open location stuff
 	clearSubtitles();
@@ -281,26 +281,30 @@ void Parallaction_br::changeLocation(char *location) {
 
 	_location._animations.push_front(_char._ani);
 
-//	free(_location._comment);
-//	_location._comment = 0;
+	free(_location._comment);
+	_location._comment = 0;
 	_location._commands.clear();
 	_location._aCommands.clear();
 
+}
+
+
+
+void Parallaction_br::changeLocation(char *location) {
+	freeLocation();
 	// load new location
 	parseLocation(location);
-
-	// kFlagsRemove is cleared because the character defaults to visible on new locations
-	// script command can hide the character, anyway, so that's why the flag is cleared
-	// before _location._commands are executed
+	// kFlagsRemove is cleared because the character is visible by default.
+	// Commands can hide the character, anyway.
 	_char._ani->_flags &= ~kFlagsRemove;
-
 	_cmdExec->run(_location._commands);
-//	doLocationEnterTransition();
+
+	doLocationEnterTransition();
+
 	_cmdExec->run(_location._aCommands);
 
 	_engineFlags &= ~kEngineChangeLocation;
 }
-
 
 // FIXME: Parallaction_br::parseLocation() is now a verbatim copy of the same routine from Parallaction_ns.
 void Parallaction_br::parseLocation(const char *filename) {

@@ -127,7 +127,9 @@ void Input::waitForButtonEvent(uint32 buttonEventMask, int32 timeout) {
 }
 
 
-void Input::updateGameInput() {
+int Input::updateGameInput() {
+
+	int event = kEvNone;
 
 	readInput();
 
@@ -141,25 +143,25 @@ void Input::updateGameInput() {
 			(_engineFlags & kEngineChangeLocation) == 0
 		);
 
-		return;
+		return event;
 	}
 
 	if (_hasKeyPressEvent && (_vm->getFeatures() & GF_DEMO) == 0) {
-		if (_keyPressed.keycode == Common::KEYCODE_l) _inputData._event = kEvLoadGame;
-		if (_keyPressed.keycode == Common::KEYCODE_s) _inputData._event = kEvSaveGame;
+		if (_keyPressed.keycode == Common::KEYCODE_l) event = kEvLoadGame;
+		if (_keyPressed.keycode == Common::KEYCODE_s) event = kEvSaveGame;
 	}
 
-	if (_inputData._event == kEvNone) {
-		_inputData._mousePos = _mousePos;
+	if (event == kEvNone) {
 		translateGameInput();
 	}
 
+	return event;
 }
 
 
-InputData* Input::updateInput() {
+int Input::updateInput() {
 
-	_inputData._event = kEvNone;
+	int event = kEvNone;
 
 	switch (_inputMode) {
 	case kInputModeComment:
@@ -169,7 +171,7 @@ InputData* Input::updateInput() {
 		break;
 
 	case kInputModeGame:
-		updateGameInput();
+		event = updateGameInput();
 		break;
 
 	case kInputModeInventory:
@@ -178,7 +180,7 @@ InputData* Input::updateInput() {
 		break;
 	}
 
-	return &_inputData;
+	return event;
 }
 
 void Input::trackMouse(ZonePtr z) {
@@ -252,7 +254,6 @@ bool Input::translateGameInput() {
 
 	if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || ((z->_type & 0xFFFF) == kZoneCommand))) {
 
-		_inputData._zone = z;
 		if (z->_flags & kFlagsNoWalk) {
 			// character doesn't need to walk to take specified action
 			takeAction(z);

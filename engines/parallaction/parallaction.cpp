@@ -303,12 +303,9 @@ void Parallaction::showLocationComment(const char *text, bool end) {
 }
 
 
-void Parallaction::processInput(InputData *data) {
-	if (!data) {
-		return;
-	}
+void Parallaction::processInput(int event) {
 
-	switch (data->_event) {
+	switch (event) {
 	case kEvSaveGame:
 		_input->stopHovering();
 		saveGame();
@@ -328,7 +325,7 @@ void Parallaction::processInput(InputData *data) {
 
 void Parallaction::runGame() {
 
-	InputData *data = _input->updateInput();
+	int event = _input->updateInput();
 	if (_engineFlags & kEngineQuit)
 		return;
 
@@ -337,7 +334,7 @@ void Parallaction::runGame() {
 	runCommentFrame();
 
 	if (_input->_inputMode == Input::kInputModeGame) {
-		processInput(data);
+		processInput(event);
 		runPendingZones();
 
 		if (_engineFlags & kEngineQuit)
