@@ -1085,7 +1085,7 @@ void Towns_EuphonyTrackQueue::initDriver() {
 
 class TownsPC98_OpnOperator {
 public:
-	TownsPC98_OpnOperator(const float rate, const uint8 *rateTable,
+	TownsPC98_OpnOperator(const uint32 timerbase, const uint8 *rateTable,
 		const uint8 *shiftTable, const uint8 *attackDecayTable, const uint32 *frqTable,
 		const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable);
 	~TownsPC98_OpnOperator() {}
@@ -1137,8 +1137,8 @@ protected:
 	const int32 *_tLvlTbl;
 	const int32 *_detnTbl;
 
-	const int _tickLength;
-	int _tick;
+	const uint32 _tickLength;
+	uint32 _timer;
 	int32 _currentLevel;
 
 	struct EvpState {
@@ -1147,11 +1147,11 @@ protected:
 	} fs_a, fs_d, fs_s, fs_r;
 };
 
-TownsPC98_OpnOperator::TownsPC98_OpnOperator(const float rate, const uint8 *rateTable,
+TownsPC98_OpnOperator::TownsPC98_OpnOperator(const uint32 timerbase, const uint8 *rateTable,
 	const uint8 *shiftTable, const uint8 *attackDecayTable,	const uint32 *frqTable,
 	const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable) :
 	_rateTbl(rateTable), _rshiftTbl(shiftTable), _adTbl(attackDecayTable), _fTbl(frqTable),
-	_sinTbl(sineTable), _tLvlTbl(tlevelOut), _detnTbl(detuneTable), _tickLength((int)(rate * 65536.0f)),
+	_sinTbl(sineTable), _tLvlTbl(tlevelOut), _detnTbl(detuneTable), _tickLength(timerbase * 2),
 	_specifiedAttackRate(0), _specifiedDecayRate(0), _specifiedReleaseRate(0), _specifiedSustainRate(0),
 	_phase(0), _state(s_ready) {
 
@@ -1209,9 +1209,9 @@ void TownsPC98_OpnOperator::generateOutput(int32 phasebuf, int32 *feed, int32 &o
 	if (_state == s_ready)
 		return;
 
-	_tick += _tickLength;
-	while (_tick > 0x30000) {
-		_tick -= 0x30000;
+	_timer += _tickLength;
+	while (_timer > 0x5B8D80) {
+		_timer -= 0x5B8D80;
 		++_tickCount;
 
 		int32 levelIncrement = 0;
@@ -1289,7 +1289,7 @@ void TownsPC98_OpnOperator::generateOutput(int32 phasebuf, int32 *feed, int32 &o
 
 void TownsPC98_OpnOperator::reset(){
 	keyOff();
-	_tick = 0;
+	_timer = 0;
 	_keyScale2 = 0;
 	_currentLevel = 1023;
 
@@ -1486,7 +1486,7 @@ private:
 
 class TownsPC98_OpnSquareSineSource {
 public:
-	TownsPC98_OpnSquareSineSource(const float rate);
+	TownsPC98_OpnSquareSineSource(const uint32 timerbase);
 	~TownsPC98_OpnSquareSineSource();
 
 	void init(const int *rsTable, const int *rseTable);
@@ -1518,9 +1518,8 @@ private:
 	int32 *_tlTable;
 	int32 *_tleTable;
 
-	const float _rate;
-	const int _tickLength;
-	int _timer;
+	const uint32 _tickLength;
+	uint32 _timer;
 
 	struct Channel {
 		int tick;
@@ -1533,7 +1532,7 @@ private:
 
 class TownsPC98_OpnPercussionSource {
 public:
-	TownsPC98_OpnPercussionSource(const float rate);
+	TownsPC98_OpnPercussionSource(const uint32 timerbase);
 	~TownsPC98_OpnPercussionSource() {}
 
 	void init(const uint8 *pcmData = 0);
@@ -1568,8 +1567,8 @@ private:
 
 	uint8 _totalLevel;
 
-	const int _tickLength;
-	int _timer;
+	const uint32 _tickLength;
+	uint32 _timer;
 	bool _ready;
 };
 
@@ -1676,10 +1675,14 @@ protected:
 	uint8 *_sfxData;
 	uint16 _sfxOffsets[2];
 
-	int32 _samplesTillMusicCallback;
-	int32 _samplesPerMusicCallback;
-	int32 _samplesTillSfxCallback;
-	int32 _samplesPerSfxCallback;
+	uint32 _samplesTillMusicCallback;
+	uint32 _samplesTillMusicCallbackRemainder;
+	uint32 _samplesPerMusicCallback;
+	uint32 _samplesPerMusicCallbackRemainder;
+	uint32 _samplesTillSfxCallback;
+	uint32 _samplesTillSfxCallbackRemainder;
+	uint32 _samplesPerSfxCallback;
+	uint32 _samplesPerSfxCallbackRemainder;
 
 	const int _numChan;
 	const int _numSSG;
@@ -1690,6 +1693,8 @@ protected:
 	static const int _ssgTables[];
 
 	const float _baserate;
+	uint32 _timerbase;
+
 	bool _ready;
 };
 
@@ -1721,7 +1726,7 @@ TownsPC98_OpnChannel::~TownsPC98_OpnChannel() {
 void TownsPC98_OpnChannel::init() {
 	_opr = new TownsPC98_OpnOperator*[4];
 	for (int i = 0; i < 4; i++)
-		_opr[i] = new TownsPC98_OpnOperator(_drv->_baserate, _drv->_oprRates, _drv->_oprRateshift,
+		_opr[i] = new TownsPC98_OpnOperator(_drv->_timerbase, _drv->_oprRates, _drv->_oprRateshift,
 			_drv->_oprAttackDecay, _drv->_oprFrq, _drv->_oprSinTbl, _drv->_oprLevelOut, _drv->_oprDetune);
 
 	#define Control(x)	&TownsPC98_OpnChannel::control_##x
@@ -2710,8 +2715,8 @@ bool TownsPC98_OpnChannelPCM::control_ff_endOfTrack(uint8 para) {
 	}
 }
 
-TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const float rate) : _rate(rate),	_tlTable(0),
-	_tleTable(0), _regIndex(_reg), _updateRequest(-1), _tickLength((int)(rate * 32768.0f * 27.0f)), _ready(0) {
+TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerbase) : 	_tlTable(0),
+	_tleTable(0), _regIndex(_reg), _updateRequest(-1), _tickLength(timerbase * 27), _ready(0) {
 	memset(_reg, 0, 16);
 	memset(_channels, 0, sizeof(Channel) * 3);
 	reset();
@@ -2807,8 +2812,8 @@ void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
 
 	for (uint32 i = 0; i < bufferSize; i++) {
 		_timer += _tickLength;
-		while (_timer > 0x30000) {
-			_timer -= 0x30000;
+		while (_timer > 0x5B8D80) {
+			_timer -= 0x5B8D80;
 
 			if (++_nTick >= (_reg[6] & 0x1f)) {
 				if ((_rand + 1) & 2)
@@ -2867,8 +2872,8 @@ void TownsPC98_OpnSquareSineSource::updatesRegs() {
 	_updateRequest = -1;
 }
 
-TownsPC98_OpnPercussionSource::TownsPC98_OpnPercussionSource(const float rate) :
-	_tickLength((int)(rate * 65536.0)), _timer(0), _ready(false) {
+TownsPC98_OpnPercussionSource::TownsPC98_OpnPercussionSource(const uint32 timerbase) :
+	_tickLength(timerbase * 2), _timer(0), _ready(false) {
 		memset(_pcmInstr, 0, sizeof(PcmInstrument) * 6);
 }
 
@@ -2973,8 +2978,8 @@ void TownsPC98_OpnPercussionSource::nextTick(int32 *buffer, uint32 bufferSize) {
 
 	for (uint32 i = 0; i < bufferSize; i++) {
 		_timer += _tickLength;
-		while (_timer > 0x30000) {
-			_timer -= 0x30000;
+		while (_timer > 0x5B8D80) {
+			_timer -= 0x5B8D80;
 
 			for (int ii = 0; ii < 6; ii++) {
 				PcmInstrument *s = &_pcmInstr[ii];
@@ -3052,11 +3057,13 @@ TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) :
 	_updateSfxFlag(type == OD_TOWNS ? 0x00 : 0x06), _finishedSfxFlag(0),
 	
 	_baserate(55125.0f / (float)getRate()),
-	_samplesTillMusicCallback(0), _samplesTillSfxCallback (0),
+	_samplesTillMusicCallback(0), _samplesTillSfxCallback(0),
+	_samplesTillMusicCallbackRemainder(0), _samplesTillSfxCallbackRemainder(0),
 	_musicTickCounter(0),
 	
 	_musicPlaying(false), _sfxPlaying(false), _fading(false), _looping(0), _ready(false) {
 
+	_timerbase = (uint32)(_baserate * 1000000.0f);
 	setMusicTempo(84);
 	setSfxTempo(654);
 }
@@ -3138,7 +3145,7 @@ bool TownsPC98_OpnDriver::init() {
 	}
 
 	if (_numSSG) {
-		_ssg = new TownsPC98_OpnSquareSineSource(_baserate);
+		_ssg = new TownsPC98_OpnSquareSineSource(_timerbase);
 		_ssg->init(&_ssgTables[0], &_ssgTables[16]);
 		_ssgPatches = new uint8[256];
 		memcpy(_ssgPatches, _drvTables + 244, 256);
@@ -3161,7 +3168,7 @@ bool TownsPC98_OpnDriver::init() {
 	}
 
 	if (_hasPCM) {
-		_pcm = new TownsPC98_OpnPercussionSource(_baserate);
+		_pcm = new TownsPC98_OpnPercussionSource(_timerbase);
 		_pcm->init();
 
 		delete _pcmChannel;
@@ -3187,11 +3194,23 @@ int inline TownsPC98_OpnDriver::readBuffer(int16 *buffer, const int numSamples) 
 		if (!_samplesTillMusicCallback) {
 			musicCallback();
 			_samplesTillMusicCallback = _samplesPerMusicCallback;
+
+			_samplesTillMusicCallbackRemainder += _samplesPerMusicCallbackRemainder;
+			if (_samplesTillMusicCallbackRemainder >= _timerbase) {
+				_samplesTillMusicCallback++;
+				_samplesTillMusicCallbackRemainder -= _timerbase;
+			}
 		}
 
 		if (!_samplesTillSfxCallback) {
 			sfxCallback();
 			_samplesTillSfxCallback = _samplesPerSfxCallback;
+
+			_samplesTillSfxCallbackRemainder += _samplesPerSfxCallbackRemainder;
+			if (_samplesTillSfxCallbackRemainder >= _timerbase) {
+				_samplesTillSfxCallback++;
+				_samplesTillSfxCallbackRemainder -= _timerbase;
+			}
 		}
 
 		int32 render = MIN(_samplesTillSfxCallback, _samplesTillMusicCallback);
@@ -3526,12 +3545,14 @@ void TownsPC98_OpnDriver::startSoundEffect() {
 
 void TownsPC98_OpnDriver::setMusicTempo(uint8 tempo) {
 	float spc = (float)(0x100 - tempo) * 16.0f / _baserate;
-	_samplesPerMusicCallback = (int32) spc;
+	_samplesPerMusicCallback = (uint32) spc;
+	_samplesPerMusicCallbackRemainder = (uint32) ((spc - (float)_samplesPerMusicCallback) * 1000000.0f);
 }
 
 void TownsPC98_OpnDriver::setSfxTempo(uint16 tempo) {
 	float spc = (float)(0x400 - tempo) / _baserate;
-	_samplesPerSfxCallback = (int32) spc;
+	_samplesPerSfxCallback = (uint32) spc;
+	_samplesPerSfxCallbackRemainder = (uint32) ((spc - (float)_samplesPerSfxCallback) * 1000000.0f);
 }
 
 SoundTowns::SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer)
