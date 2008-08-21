@@ -66,6 +66,9 @@ void AnimationPlayer::start(uint resIndex) {
 	_vm->_arc->closeResource();
 
 	debug(1, "AnimationPlayer::start() width = %d; height = %d; frameCount = %d", _width, _height, _frameCount);
+	
+	_vm->_sceneWidth = _width;
+	_vm->_sceneHeight = _height;
 
 	unpackFrame();
 
