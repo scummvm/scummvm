@@ -454,7 +454,7 @@ bool CineEngine::makeLoad(char *saveName) {
 		// that's not implemented here because it was never used in a stable
 		// release of ScummVM but only during development (From revision 31453,
 		// which introduced the problem, until revision 32073, which fixed it).
-		// Therefore be bail out if we detect this particular savegame format.
+		// Therefore we bail out if we detect this particular savegame format.
 		warning("Detected a known broken savegame format, not loading savegame");
 		return false;
 	} else if (saveGameFormat == ANIMSIZE_UNKNOWN) {
