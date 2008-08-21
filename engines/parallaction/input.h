@@ -80,7 +80,7 @@ public:
 		kInputModeComment = 1,
 		kInputModeDialogue = 2,
 		kInputModeInventory = 3,
-		kInputModeMenu = 4,
+		kInputModeMenu = 4
 	};
 
 
