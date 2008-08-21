@@ -585,6 +585,14 @@ int loadAni(const char *resourceName, int16 idx) {
 
 	transparentColor = getAnimTransparentColor(resourceName);
 
+	// TODO: Merge this special case into getAnimTransparentColor somehow.	
+	// Versions of TITRE.ANI with height 37 use color 0xF for transparency.
+	// Versions of TITRE.ANI with height 57 use color 0x0 for transparency.
+	// Fixes bug #2057619: FW: Glitches in title display of demo (regression).
+	if (scumm_stricmp(resourceName, "TITRE.ANI") == 0 && animHeader.frameHeight == 37) {
+		transparentColor = 0xF;
+	}
+
 	entry = idx < 0 ? emptyAnimSpace() : idx;
 	assert(entry >= 0);
 
