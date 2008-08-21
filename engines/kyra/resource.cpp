@@ -179,11 +179,6 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	for (ResArchiveLoader::FileList::iterator i = files.begin(); i != files.end(); ++i) {
 		iter = _map.find(i->filename);
 		if (iter == _map.end()) {
-			// We do an internal check for a file in gamepath with same filename to
-			// allow overwriting files inside archives with plain files inside the
-			// game directory
-			checkFile(i->filename);
-
 			// A new file entry, so we just insert it into the file map.
 			if (_map.find(i->filename) == _map.end())
 				_map[i->filename] = i->entry;
@@ -216,6 +211,16 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	}
 
 	detectFileTypes();
+	return true;
+}
+
+bool Resource::preloadProtected(const Common::String &filename) {
+	checkFile(filename);
+	ResFileMap::iterator iter = _map.find(filename);
+	if (iter == _map.end())
+		return false;
+
+	iter->_value.prot = true;
 	return true;
 }
 

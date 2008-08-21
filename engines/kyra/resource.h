@@ -115,6 +115,7 @@ public:
 	bool reset();
 
 	bool loadPakFile(const Common::String &filename);
+	bool preloadProtected(const Common::String &filename);
 	void unloadPakFile(const Common::String &filename);
 	bool isInPakList(const Common::String &filename);
 

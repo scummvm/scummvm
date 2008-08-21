@@ -297,6 +297,12 @@ int KyraEngine_HoF::go() {
 		// load just the pak files needed for ingame
 		_res->loadPakFile(StaticResource::staticDataFilename());
 		if (_flags.platform == Common::kPlatformPC && _flags.isTalkie) {
+			if (_flags.isDemo) {
+				_res->preloadProtected("SKY.EMC");
+				_res->preloadProtected("SKY.FMC");
+				_res->preloadProtected("SKY.GMC");
+			}
+
 			if (!_res->loadFileList("FILEDATA.FDT"))
 				error("couldn't load 'FILEDATA.FDT'");
 		} else {
