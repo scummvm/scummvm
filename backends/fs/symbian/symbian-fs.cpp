@@ -24,6 +24,7 @@
 
 #if defined (__SYMBIAN32__)
 #include "backends/fs/abstract-fs.h"
+#include "backends/platform/symbian/src/SymbianOS.h"
 
 #include <dirent.h>
 #include <eikenv.h>
@@ -62,7 +63,7 @@ public:
 		TFileName fname;
 		TPtrC8 ptr((const unsigned char*)_path.c_str(),_path.size());
 		fname.Copy(ptr);
-		TBool fileExists = BaflUtils::FileExists(CEikonEnv::Static()->FsSession(), fname);
+		TBool fileExists = BaflUtils::FileExists(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), fname);
 		return fileExists;
 	}
 	virtual String getDisplayName() const { return _displayName; }
@@ -142,7 +143,7 @@ SymbianFilesystemNode::SymbianFilesystemNode(const String &path) {
 	TPtrC8 ptr((const unsigned char*)_path.c_str(),_path.size());
 	fname.Copy(ptr);
 
-	if (CEikonEnv::Static()->FsSession().Entry(fname, fileAttribs) == KErrNone) {
+	if (static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession().Entry(fname, fileAttribs) == KErrNone) {
 		_isValid = true;
 		_isDirectory = fileAttribs.IsDir();
 	} else {
@@ -163,7 +164,7 @@ AbstractFilesystemNode *SymbianFilesystemNode::getChild(const String &n) const {
 	TFileName fname;
 	fname.Copy(ptr);
 	TBool isFolder = EFalse;
-	BaflUtils::IsFolder(CEikonEnv::Static()->FsSession(), fname, isFolder);
+	BaflUtils::IsFolder(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), fname, isFolder);
 	if (!isFolder)
 		return 0;
 
@@ -177,7 +178,7 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 
 	if (_isPseudoRoot) {
 		// Drives enumeration
-		RFs fs = CEikonEnv::Static()->FsSession();
+		RFs& fs = static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession();
 		TInt driveNumber;
 		TChar driveLetter;
 		TUint driveLetterValue;
@@ -218,7 +219,7 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		fname.Copy(ptr);
 		TBuf8<256>nameBuf;
 		CDir* dirPtr;
-		if (CEikonEnv::Static()->FsSession().GetDir(fname,KEntryAttNormal|KEntryAttDir,0,dirPtr)==KErrNone) {
+		if (static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession().GetDir(fname,KEntryAttNormal|KEntryAttDir,0,dirPtr)==KErrNone) {
 			CleanupStack::PushL(dirPtr);
 			TInt cnt=dirPtr->Count();
 			for (TInt loop=0;loop<cnt;loop++) {
