@@ -26,8 +26,6 @@
 #include "backends/fs/symbian/symbian-fs-factory.h"
 #include "backends/fs/symbian/symbian-fs.cpp"
 
-DECLARE_SINGLETON(SymbianFilesystemFactory);
-
 AbstractFilesystemNode *SymbianFilesystemFactory::makeRootFileNode() const {
 	return new SymbianFilesystemNode(true);
 }
@@ -38,7 +36,7 @@ AbstractFilesystemNode *SymbianFilesystemFactory::makeCurrentDirectoryFileNode()
 	return new SymbianFilesystemNode(path);
 }
 
-AbstractFilesystemNode *SymbianFilesystemFactory::makeFileNodePath(const String &path) const {
+AbstractFilesystemNode *SymbianFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new SymbianFilesystemNode(path);
 }
 #endif

@@ -268,6 +268,7 @@ Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 }
 
 FilesystemFactory *OSystem_SDL::getFilesystemFactory() {
+	assert(_fsFactory);
 	return _fsFactory;
 }
 

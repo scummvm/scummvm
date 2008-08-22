@@ -123,10 +123,6 @@ void OSystem_SDL_Symbian::setFeatureState(Feature f, bool enable) {
 	}
 }
 
-FilesystemFactory *OSystem_SDL_Symbian::getFilesystemFactory() {
-	return &SymbianFilesystemFactory::instance();
-}
-
 static Common::String getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 	strcpy(configFile, Symbian::GetExecutablePath());
@@ -164,6 +160,8 @@ void OSystem_SDL_Symbian::initBackend() {
 	actions->initInstanceMain(this);
 	actions->loadMapping();
 	initZones();
+	
+	_fsFactory = new SymbianFilesystemFactory();
 }
 
 OSystem_SDL_Symbian::~OSystem_SDL_Symbian() {
