@@ -72,9 +72,6 @@ protected:
 	static void symbianMixCallback(void *s, byte *samples, int len);
 
 	virtual FilesystemFactory *getFilesystemFactory();
-
-	virtual Common::SeekableReadStream *openConfigFileForReading();
-	virtual Common::WriteStream *openConfigFileForWriting();
 public:
 	// vibration support
 #ifdef USE_VIBRA_SE_PXXX

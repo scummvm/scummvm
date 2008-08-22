@@ -134,27 +134,6 @@ static Common::String getDefaultConfigFileName() {
 	return configFile;
 }
 
-Common::SeekableReadStream *OSystem_SDL_Symbian::openConfigFileForReading() {
-	Common::File *confFile = new Common::File();
-	assert(confFile);
-	if (!confFile->open(getDefaultConfigFileName())) {
-		delete confFile;
-		confFile = 0;
-	}
-	return confFile;
-}
-
-Common::WriteStream *OSystem_SDL_Symbian::openConfigFileForWriting() {
-	Common::DumpFile *confFile = new Common::DumpFile();
-	assert(confFile);
-	if (!confFile->open(getDefaultConfigFileName())) {
-		delete confFile;
-		confFile = 0;
-	}
-	return confFile;
-}
-
-
 OSystem_SDL_Symbian::zoneDesc OSystem_SDL_Symbian::_zones[TOTAL_ZONES] = {
         { 0, 0, 320, 145 },
         { 0, 145, 150, 55 },
