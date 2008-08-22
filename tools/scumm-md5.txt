@@ -436,7 +436,9 @@ readtime	Blue's Reading Time Activities
 	95818b178d473c989ac753574e8892aa	-1	en	All	-	Demo	-	Kirben
 
 fbear	Fatty Bear's Birthday Surprise
+	13d2a86a7290813a1c386490447d72db	-1	en	3DO	HE 61	-	-	George Kormendi
 	5b08000a9c47b2887df6506ac767ca68	-1	en	3DO	HE 61	-	-	sev
+	6bca7a1a96d16e52b8f3c42b50dbdca3	-1	jp	3DO	HE 61	-	-	George Kormendi
 	3824e60cdf639d22f6df92a03dc4b131	7732	en	DOS	HE 61	-	-	khalek
 	ef74d9071d4e564b037cb44bd6774de7	-1	hb	DOS	HE 61	-	-	sev
 	3df6ead57930488bc61e6e41901d0e97	-1	en	Mac	HE 61	-	-	khalek
