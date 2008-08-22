@@ -226,6 +226,7 @@ void VirtualKeyboardGUI::mainLoop() {
 			updateDisplay();
 		animateCaret();
 		animateCursor();
+		redraw();
 		_system->updateScreen();
 		Common::Event event;
 		while (eventMan->pollEvent(event)) {
@@ -286,19 +287,22 @@ void VirtualKeyboardGUI::resetDirtyRect() {
 }
 
 void VirtualKeyboardGUI::forceRedraw() {
+	updateDisplay();
 	extendDirtyRect(Rect(_overlayBackup.w, _overlayBackup.h));
 	redraw();
 }
 
 void VirtualKeyboardGUI::redraw() {
 	assert(_kbdSurface);
-
+	int16 w = _dirtyRect.width();
+	int16 h = _dirtyRect.height();
+	if (w <= 0 || h <= 0) return;
+	
 	Graphics::SurfaceKeyColored surf;
-	surf.create(_dirtyRect.width(), _dirtyRect.height(), sizeof(OverlayColor));
+	surf.create(w, h, sizeof(OverlayColor));
 
 	OverlayColor *dst = (OverlayColor *)surf.pixels;
 	const OverlayColor *src = (OverlayColor *) _overlayBackup.getBasePtr(_dirtyRect.left, _dirtyRect.top);
-	int16 h = surf.h;
 
 	while (h--) {
 		memcpy(dst, src, surf.w * sizeof(OverlayColor));
@@ -306,10 +310,14 @@ void VirtualKeyboardGUI::redraw() {
 		src += _overlayBackup.w;
 	}
 
-	surf.blit(_kbdSurface, _kbdBound.left - _dirtyRect.left, _kbdBound.top - _dirtyRect.top, _kbdTransparentColor);
-	if (_displayEnabled) surf.blit(&_dispSurface, _dispX - _dirtyRect.left, _dispY - _dirtyRect.top, _dispBackColor);
-	_system->copyRectToOverlay((OverlayColor*)surf.pixels, surf.w,
-		_dirtyRect.left, _dirtyRect.top, surf.w, surf.h);
+	surf.blit(_kbdSurface, _kbdBound.left - _dirtyRect.left, 
+			  _kbdBound.top - _dirtyRect.top, _kbdTransparentColor);
+	if (_displayEnabled) {
+		surf.blit(&_dispSurface, _dispX - _dirtyRect.left, 
+				  _dispY - _dirtyRect.top, _dispBackColor);
+	}
+	_system->copyRectToOverlay((OverlayColor*)surf.pixels, surf.w, 
+							   _dirtyRect.left, _dirtyRect.top, surf.w, surf.h);
 
 	surf.free();
 	
@@ -333,14 +341,12 @@ void VirtualKeyboardGUI::animateCaret() {
 			_drawCaret = true;			
 			_dispSurface.drawLine(_caretX, 0, _caretX, _dispSurface.h, _dispForeColor);
 			extendDirtyRect(Rect(_dispX + _caretX, _dispY, _dispX + _caretX + 1, _dispY + _dispSurface.h));
-			redraw();
 		}
 	} else {
 		if (_drawCaret) {
 			_drawCaret = false;
 			_dispSurface.drawLine(_caretX, 0, _caretX, _dispSurface.h, _dispBackColor);
 			extendDirtyRect(Rect(_dispX + _caretX, _dispY, _dispX + _caretX + 1, _dispY + _dispSurface.h));
-			redraw();
 		}
 	}
 }
@@ -370,7 +376,6 @@ void VirtualKeyboardGUI::updateDisplay() {
 	if (_drawCaret) _dispSurface.drawLine(_caretX, 0, _caretX, _dispSurface.h, _dispForeColor);
 
 	extendDirtyRect(Rect(_dispX, _dispY, _dispX + _dispSurface.w, _dispY + _dispSurface.h));
-	redraw();
 }
 
 void VirtualKeyboardGUI::setupCursor() {

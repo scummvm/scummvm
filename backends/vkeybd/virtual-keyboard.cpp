@@ -366,7 +366,7 @@ void VirtualKeyboard::KeyPressQueue::clear() {
 	_keyPos = _keys.end();
 	_keysStr.clear();
 	_strPos = 0;
-	_flags = 0;
+	clearFlags();
 	_strChanged = true;
 }
 
