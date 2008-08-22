@@ -497,7 +497,7 @@ DECLARE_LOCATION_PARSER(zeta)  {
 	_vm->_location._zeta1 = atoi(_tokens[2]);
 
 	if (_tokens[3][0] != '\0') {
-		_vm->_location._zeta2 = atoi(_tokens[1]);
+		_vm->_location._zeta2 = atoi(_tokens[3]);
 	} else {
 		_vm->_location._zeta2 = 50;
 	}
