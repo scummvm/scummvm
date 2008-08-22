@@ -24,61 +24,12 @@
 
 #if defined(UNIX)
 
-#include "backends/fs/abstract-fs.h"
+#include "backends/fs/posix/posix-fs.h"
 
-#ifdef MACOSX
-#include <sys/types.h>
-#endif
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <dirent.h>
 #include <stdio.h>
-#include <unistd.h>
-
-/**
- * Implementation of the ScummVM file system API based on POSIX.
- *
- * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
- */
-class POSIXFilesystemNode : public AbstractFilesystemNode {
-protected:
-	Common::String _displayName;
-	Common::String _path;
-	bool _isDirectory;
-	bool _isValid;
-
-public:
-	/**
-	 * Creates a POSIXFilesystemNode with the root node as path.
-	 */
-	POSIXFilesystemNode();
-
-	/**
-	 * Creates a POSIXFilesystemNode for a given path.
-	 *
-	 * @param path String with the path the new node should point to.
-	 * @param verify true if the isValid and isDirectory flags should be verified during the construction.
-	 */
-	POSIXFilesystemNode(const Common::String &path, bool verify);
-
-	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
-	virtual Common::String getDisplayName() const { return _displayName; }
-	virtual Common::String getName() const { return _displayName; }
-	virtual Common::String getPath() const { return _path; }
-	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }
-	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }
-
-	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFilesystemNode *getParent() const;
-
-private:
-	/**
-	 * Tests and sets the _isValid and _isDirectory flags, using the stat() function.
-	 */
-	virtual void setFlags();
-};
 
 /**
  * Returns the last component of a given path.
