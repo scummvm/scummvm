@@ -127,6 +127,12 @@ bool Keymapper::pushKeymap(const String& name, bool inherit) {
 }
 
 void Keymapper::pushKeymap(Keymap *newMap, bool inherit, bool global) {
+	List<KeyState>::iterator it;
+	for (it = _keysDown.begin(); it != _keysDown.end(); ++it) {
+		Action *action = getAction(*it);
+		if (action) executeAction(action, false);
+	}
+	_keysDown.clear();
 	MapRecord mr = {newMap, inherit, global};
 	_activeMaps.push(mr);
 }
@@ -144,54 +150,68 @@ bool Keymapper::mapKeyUp(const KeyState& key) {
 	return mapKey(key, false);
 }
 
-bool Keymapper::mapKey(const KeyState& key, bool isKeyDown) {
+bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 	if (!_enabled) return false;
 	if (_activeMaps.empty()) return false;
 
-	Action *action = 0;
-	for (int i = _activeMaps.size() - 1; !action && i >= 0; --i) {
-		MapRecord mr = _activeMaps[i];
-		action = mr.keymap->getMappedAction(key);
-		if (mr.inherit == false) break;
-	}
+	Action *action = getAction(key);
 	if (!action) return false;
 
+	if (keyDown)
+		_keysDown.push_back(key);
+	else
+		_keysDown.remove(key);
+
+	executeAction(action, keyDown);
+	return true;
+}
+
+Action *Keymapper::getAction(const KeyState& key) {
+	Action *action = 0;
+	for (int i = _activeMaps.size() - 1; i >= 0; --i) {
+		MapRecord mr = _activeMaps[i];
+		action = mr.keymap->getMappedAction(key);
+		if (action || mr.inherit == false) break;
+	}
+	return action;
+}
+
+void Keymapper::executeAction(const Action *action, bool keyDown) {
 	List<Event>::iterator it;
 	for (it = action->events.begin(); it != action->events.end(); ++it) {
 		Event evt = *it;
 		switch (evt.type) {
 		case EVENT_KEYDOWN:
-			if (!isKeyDown) evt.type = EVENT_KEYUP;
+			if (!keyDown) evt.type = EVENT_KEYUP;
 			break;
 		case EVENT_KEYUP:
-			if (isKeyDown) evt.type = EVENT_KEYDOWN;
+			if (keyDown) evt.type = EVENT_KEYDOWN;
 			break;
 		case EVENT_LBUTTONDOWN:
-			if (!isKeyDown) evt.type = EVENT_LBUTTONUP;
+			if (!keyDown) evt.type = EVENT_LBUTTONUP;
 			break;
 		case EVENT_LBUTTONUP:
-			if (isKeyDown) evt.type = EVENT_LBUTTONDOWN;
+			if (keyDown) evt.type = EVENT_LBUTTONDOWN;
 			break;
 		case EVENT_RBUTTONDOWN:
-			if (!isKeyDown) evt.type = EVENT_RBUTTONUP;
+			if (!keyDown) evt.type = EVENT_RBUTTONUP;
 			break;
 		case EVENT_RBUTTONUP:
-			if (isKeyDown) evt.type = EVENT_RBUTTONDOWN;
+			if (keyDown) evt.type = EVENT_RBUTTONDOWN;
 			break;
 		case EVENT_MBUTTONDOWN:
-			if (!isKeyDown) evt.type = EVENT_MBUTTONUP;
+			if (!keyDown) evt.type = EVENT_MBUTTONUP;
 			break;
 		case EVENT_MBUTTONUP:
-			if (isKeyDown) evt.type = EVENT_MBUTTONDOWN;
+			if (keyDown) evt.type = EVENT_MBUTTONDOWN;
 			break;
 		default:
 			// don't deliver other events on key up
-			if (!isKeyDown) continue;
+			if (!keyDown) continue;
 		}
 		evt.mouse = _eventMan->getMousePos();
 		_eventMan->pushEvent(evt);
 	}
-	return true;
 }
 
 const HardwareKey *Keymapper::getHardwareKey(const KeyState& key) {

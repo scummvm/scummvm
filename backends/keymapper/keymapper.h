@@ -141,10 +141,10 @@ public:
 	 * If the active keymap contains a Action mapped to the given key, then 
 	 * the Action's events are pushed into the EventManager's event queue.
 	 * @param key		key that was pressed
-	 * @param isKeyDown	true for key down, false for key up
+	 * @param keyDown	true for key down, false for key up
 	 * @return			true if key was mapped
 	 */
-	bool mapKey(const KeyState& key, bool isKeyDown);
+	bool mapKey(const KeyState& key, bool keyDown);
 
 	/**
 	 * @brief Map a key down event.
@@ -183,6 +183,9 @@ private:
 	HardwareKeySet *_hardwareKeys;
 
 	void pushKeymap(Keymap *newMap, bool inherit, bool global);
+	
+	Action *getAction(const KeyState& key);
+	void executeAction(const Action *act, bool keyDown);
 
 	typedef List<HardwareKey*>::iterator Iterator;
 
@@ -191,6 +194,7 @@ private:
 	bool _enabled;
 
 	Stack<MapRecord> _activeMaps;
+	List<KeyState> _keysDown;
 
 };
 
