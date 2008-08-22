@@ -170,21 +170,6 @@ void OSystem_SDL::initBackend() {
 		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
 	}
 
-	if (_fsFactory == 0) {
-		#if defined(__amigaos4__)
-			_fsFactory = new AmigaOSFilesystemFactory();
-		#elif defined(UNIX)
-			_fsFactory = new POSIXFilesystemFactory();
-		#elif defined(WIN32)
-			_fsFactory = new WindowsFilesystemFactory();
-		#elif defined(__SYMBIAN32__)
-			// Do nothing since its handled by the Symbian SDL inheritance
-		#else
-			#error Unknown and unsupported backend in OSystem_SDL::getFilesystemFactory
-		#endif
-	}
-	
-
 	// Invoke parent implementation of this method
 	OSystem::initBackend();
 
@@ -229,6 +214,19 @@ OSystem_SDL::OSystem_SDL()
 	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
 
 	_inited = false;
+
+
+	#if defined(__amigaos4__)
+		_fsFactory = new AmigaOSFilesystemFactory();
+	#elif defined(UNIX)
+		_fsFactory = new POSIXFilesystemFactory();
+	#elif defined(WIN32)
+		_fsFactory = new WindowsFilesystemFactory();
+	#elif defined(__SYMBIAN32__)
+		// Do nothing since its handled by the Symbian SDL inheritance
+	#else
+		#error Unknown and unsupported FS backend
+	#endif
 }
 
 OSystem_SDL::~OSystem_SDL() {
@@ -345,23 +343,13 @@ static Common::String getDefaultConfigFileName() {
 }
 
 Common::SeekableReadStream *OSystem_SDL::openConfigFileForReading() {
-	Common::File *confFile = new Common::File();
-	assert(confFile);
-	if (!confFile->open(getDefaultConfigFileName())) {
-		delete confFile;
-		confFile = 0;
-	}
-	return confFile;
+	FilesystemNode file(getDefaultConfigFileName());
+	return file.openForReading();
 }
 
 Common::WriteStream *OSystem_SDL::openConfigFileForWriting() {
-	Common::DumpFile *confFile = new Common::DumpFile();
-	assert(confFile);
-	if (!confFile->open(getDefaultConfigFileName())) {
-		delete confFile;
-		confFile = 0;
-	}
-	return confFile;
+	FilesystemNode file(getDefaultConfigFileName());
+	return file.openForWriting();
 }
 
 void OSystem_SDL::setWindowCaption(const char *caption) {
