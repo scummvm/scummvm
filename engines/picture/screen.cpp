@@ -591,9 +591,9 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sp
 			}
 			dest = destp + 640;
 			destp = dest;
-   			skipX = sprite->skipX;
-   			w = sprite->width;
-   			h--;
+			skipX = sprite->skipX;
+			w = sprite->width;
+			h--;
 		}
 
 	} while (status != kSrsEndOfSprite && h > 0);
@@ -653,7 +653,7 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 				byte ch = *sourceString--;
 				_tempStringLen1--;
 				len--;
-		   		charWidth = font.getCharWidth(ch) + font.getSpacing() - 1;
+				charWidth = font.getCharWidth(ch) + font.getSpacing() - 1;
 				width -= charWidth;
 			}
 			width += charWidth;
@@ -661,9 +661,9 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 			_tempStringLen1 -= len;
 			_tempStringLen2 = len + 1;
 			
-			drawString(_verbLineX - 1 - (width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0]);
+			drawStringEx(_verbLineX - 1 - (width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0]);
 
-   			destString = _tempString;
+			destString = _tempString;
 			width = 0;
 			preprocessText(_fontResIndexArray[0], _verbLineWidth, width, sourceString, destString, len);
 			
@@ -676,7 +676,7 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	_tempStringLen1 -= len;
 	_tempStringLen2 = len;
 
-	drawString(_verbLineX - 1 - (width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0]);
+	drawStringEx(_verbLineX - 1 - (width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0]);
 
 }
 
@@ -721,7 +721,7 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 	width = 0;
 	length = 0;
 
-    item->duration = 0;
+	item->duration = 0;
 	item->rectCount = 0;
 
 	Font font(_vm->_res->load(_fontResIndexArray[item->fontNum]));
@@ -794,8 +794,6 @@ void Screen::addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 
 
 void Screen::drawTalkTextItems() {
 
-	//debug(0, "## _talkTextItemNum = %d", _talkTextItemNum);
-
 	for (int16 i = 0; i <= _talkTextItemNum; i++) {
 		TalkTextItem *item = &_talkTextItems[i];
 		byte *text = _vm->_script->getSlotData(item->slotIndex) + item->slotOffset;
@@ -807,20 +805,10 @@ void Screen::drawTalkTextItems() {
 		if (item->duration < 0)
 			item->duration = 0;
 
-		Font font(_vm->_res->load(_fontResIndexArray[item->fontNum]));
 		for (byte j = 0; j < item->rectCount; j++) {
-			int16 x = item->rects[j].x;
-			for (byte pos = 0; pos < item->rects[j].length; pos++) {
-				byte ch = *text++;
-				if (ch < 0x20)
-					continue;
-				if (ch == 0x20) {
-					x += font.getWidth();
-				} else {
-					drawChar(font, _frontScreen, x, item->rects[j].y, ch, item->color, true);
-					x += font.getCharWidth(ch) + font.getSpacing() - 1;
-				}
-			}
+			drawString(item->rects[j].x, item->rects[j].y, item->color, _fontResIndexArray[item->fontNum],
+				text, item->rects[j].length, NULL, true);
+			text += item->rects[j].length;
 		}
 		
 	}
@@ -864,7 +852,7 @@ void Screen::printText(byte *textData) {
 			int width = 0;
 			_tempStringLen1 = 0;
 			preprocessText(_fontResIndexArray[1], 640, width, textData, destString, _tempStringLen2);
-			drawString(x - width / 2, y, _fontColor1, _fontColor2, _fontResIndexArray[1]);
+			drawStringEx(x - width / 2, y, _fontColor1, _fontColor2, _fontResIndexArray[1]);
 		}
 	
 	} while (*textData != 0xFF);
@@ -891,31 +879,46 @@ void Screen::preprocessText(uint fontResIndex, int maxWidth, int &width, byte *&
 	}
 }
 
-void Screen::drawString(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex) {
+void Screen::drawStringEx(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex) {
 
-	debug(0, "Screen::drawString(%d, %d, %d, %d, %d) _tempStringLen1 = %d; _tempStringLen2 = %d", x, y, fontColor1, fontColor2, fontResIndex, _tempStringLen1, _tempStringLen2);
+	debug(0, "Screen::drawStringEx(%d, %d, %d, %d, %d) _tempStringLen1 = %d; _tempStringLen2 = %d", x, y, fontColor1, fontColor2, fontResIndex, _tempStringLen1, _tempStringLen2);
+
+	int16 ywobble = 1;
+
+	x = drawString(x + 1, y + _vm->_cameraHeight, fontColor1, fontResIndex, _tempString, _tempStringLen1, &ywobble, false);
+	x = drawString(x, y + _vm->_cameraHeight, fontColor2, fontResIndex, _tempString + _tempStringLen1, _tempStringLen2, &ywobble, false);
+
+}
+
+int16 Screen::drawString(int16 x, int16 y, byte color, uint fontResIndex, byte *text, int len, int16 *ywobble, bool outline) {
+
+	debug(0, "Screen::drawString(%d, %d, %d, %d)", x, y, color, fontResIndex);
 
 	Font font(_vm->_res->load(fontResIndex));
 
-	byte color = fontColor1;
-	byte *text = _tempString;
-	byte len = _tempStringLen1 + _tempStringLen2;
-	int16 yadd = 1;
-	
-	for (byte pos = 0; pos < len; pos++) {
-		if (pos == _tempStringLen1) {
-			color = fontColor2;
-		}
+	if (len == -1)
+		len = strlen((char*)text);
+
+	int16 yadd = 0;
+	if (ywobble)
+		yadd = *ywobble;
+
+ 	while (len--) {
 		byte ch = *text++;
 		if (ch <= 0x20) {
 			x += font.getWidth();
 		} else {
-			drawChar(font, _frontScreen, x + 1, y + _vm->_cameraHeight - yadd, ch, color, false);
+			drawChar(font, _frontScreen, x, y - yadd, ch, color, outline);
 			x += font.getCharWidth(ch) + font.getSpacing() - 1;
 			yadd = -yadd;
 		}
 	}
-	
+
+	if (ywobble)
+		*ywobble = yadd;
+
+	return x;
+
 }
 
 void Screen::drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, byte color, bool outline) {
