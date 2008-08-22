@@ -34,8 +34,6 @@
  *
  * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
-
-/* A file */
 class RoninCDFileNode : public AbstractFilesystemNode {
 protected:
 	String _path;
@@ -61,7 +59,7 @@ public:
 /* A directory */
 class RoninCDDirectoryNode : public RoninCDFileNode {
 public:
-        RoninCDDirectoryNode(const String &path) : RoninCDFileNode(path) {};
+	RoninCDDirectoryNode(const String &path) : RoninCDFileNode(path) {};
 
 	virtual bool isDirectory() const { return true; }
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
@@ -101,8 +99,7 @@ const char *RoninCDFileNode::lastPathComponent(const Common::String &str) {
 	return cur + 1;
 }
 
-AbstractFilesystemNode *RoninCDFileNode::makeFileNodePath(const Common::String &path)
-{
+AbstractFilesystemNode *RoninCDFileNode::makeFileNodePath(const Common::String &path) {
 	assert(path.size() > 0);
 
 	int fd;
@@ -110,12 +107,10 @@ AbstractFilesystemNode *RoninCDFileNode::makeFileNodePath(const Common::String &
 	if ((fd = open(path.c_str(), O_RDONLY)) >= 0) {
 		close(fd);
 		return new RoninCDFileNode(path);
-	}
-	else if ((fd = open(path.c_str(), O_DIR|O_RDONLY)) >= 0) {
+	} else if ((fd = open(path.c_str(), O_DIR|O_RDONLY)) >= 0) {
 		close(fd);
 		return new RoninCDDirectoryNode(path);		
-	}
-	else {
+	} else {
 		return NULL;
 	}
 }
