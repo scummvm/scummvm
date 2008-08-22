@@ -37,7 +37,6 @@
 extern "C" int residual_main(int argc, char *argv[]);
 
 #ifndef _MSC_VER
-#include <stdint.h>
 #include <dirent.h>
 #include <unistd.h>
 #endif
