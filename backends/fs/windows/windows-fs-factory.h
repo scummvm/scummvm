@@ -25,7 +25,6 @@
 #ifndef WINDOWS_FILESYSTEM_FACTORY_H
 #define WINDOWS_FILESYSTEM_FACTORY_H
 
-#include "common/singleton.h"
 #include "backends/fs/fs-factory.h"
 
 /**
@@ -33,19 +32,11 @@
  *
  * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class WindowsFilesystemFactory : public FilesystemFactory, public Common::Singleton<WindowsFilesystemFactory> {
+class WindowsFilesystemFactory : public FilesystemFactory {
 public:
-	typedef Common::String String;
-
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
-	virtual AbstractFilesystemNode *makeFileNodePath(const String &path) const;
-
-protected:
-	WindowsFilesystemFactory() {};
-
-private:
-	friend class Common::Singleton<SingletonBaseType>;
+	virtual AbstractFilesystemNode *makeFileNodePath(const Common::String &path) const;
 };
 
 #endif /*WINDOWS_FILESYSTEM_FACTORY_H*/

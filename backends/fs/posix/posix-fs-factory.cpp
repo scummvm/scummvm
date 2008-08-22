@@ -26,8 +26,6 @@
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.cpp"
 
-DECLARE_SINGLETON(POSIXFilesystemFactory);
-
 AbstractFilesystemNode *POSIXFilesystemFactory::makeRootFileNode() const {
 	return new POSIXFilesystemNode();
 }
@@ -38,7 +36,7 @@ AbstractFilesystemNode *POSIXFilesystemFactory::makeCurrentDirectoryFileNode() c
 	return new POSIXFilesystemNode(buf, true);
 }
 
-AbstractFilesystemNode *POSIXFilesystemFactory::makeFileNodePath(const String &path) const {
+AbstractFilesystemNode *POSIXFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new POSIXFilesystemNode(path, true);
 }
 #endif

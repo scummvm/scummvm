@@ -170,6 +170,21 @@ void OSystem_SDL::initBackend() {
 		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
 	}
 
+	if (_fsFactory == 0) {
+		#if defined(__amigaos4__)
+			_fsFactory = new AmigaOSFilesystemFactory();
+		#elif defined(UNIX)
+			_fsFactory = new POSIXFilesystemFactory();
+		#elif defined(WIN32)
+			_fsFactory = new WindowsFilesystemFactory();
+		#elif defined(__SYMBIAN32__)
+			// Do nothing since its handled by the Symbian SDL inheritance
+		#else
+			#error Unknown and unsupported backend in OSystem_SDL::getFilesystemFactory
+		#endif
+	}
+	
+
 	// Invoke parent implementation of this method
 	OSystem::initBackend();
 
@@ -196,6 +211,7 @@ OSystem_SDL::OSystem_SDL()
 	_soundMutex(0), _soundCond(0), _soundThread(0),
 	_soundThreadIsRunning(false), _soundThreadShouldQuit(false),
 #endif
+	_fsFactory(0),
 	_savefile(0),
 	_mixer(0),
 	_timer(0),
@@ -254,17 +270,7 @@ Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 }
 
 FilesystemFactory *OSystem_SDL::getFilesystemFactory() {
-	#if defined(__amigaos4__)
-		return &AmigaOSFilesystemFactory::instance();	
-	#elif defined(UNIX)
-		return &POSIXFilesystemFactory::instance();
-	#elif defined(WIN32)
-		return &WindowsFilesystemFactory::instance();
-	#elif defined(__SYMBIAN32__)
-		// Do nothing since its handled by the Symbian SDL inheritance
-	#else
-		#error Unknown and unsupported backend in OSystem_SDL::getFilesystemFactory
-	#endif
+	return _fsFactory;
 }
 
 static Common::String getDefaultConfigFileName() {

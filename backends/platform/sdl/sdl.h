@@ -400,13 +400,12 @@ protected:
 	void deinitThreadedMixer();
 #endif
 
-
+	FilesystemFactory *_fsFactory;
 	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
 
 	SDL_TimerID _timerID;
 	Common::TimerManager *_timer;
-
 
 protected:
 	void addDirtyRgnAuto(const byte *buf);
