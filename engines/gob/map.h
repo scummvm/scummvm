@@ -101,6 +101,9 @@ public:
 
 	void loadMapsInitGobs(void);
 
+	virtual int16 getItem(int x, int y) = 0;
+	virtual void setItem(int x, int y, int16 item) = 0;
+
 	virtual int8 getPass(int x, int y, int heightOff = -1) = 0;
 	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) = 0;
 
@@ -126,6 +129,23 @@ public:
 	virtual void findNearestToGob(Mult::Mult_Object *obj);
 	virtual void findNearestToDest(Mult::Mult_Object *obj);
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);
+
+	virtual int16 getItem(int x, int y) {
+		assert(_itemsMap);
+
+		x = CLIP<int>(x, 0, _mapWidth - 1);
+		y = CLIP<int>(y, 0, _mapHeight - 1);
+
+		return _itemsMap[y][x];
+	}
+	virtual void setItem(int x, int y, int16 item) {
+		assert(_itemsMap);
+
+		x = CLIP<int>(x, 0, _mapWidth - 1);
+		y = CLIP<int>(y, 0, _mapHeight - 1);
+
+		_itemsMap[y][x] = item;
+	}
 
 	virtual int8 getPass(int x, int y, int heightOff = -1) {
 		if (!_passMap)

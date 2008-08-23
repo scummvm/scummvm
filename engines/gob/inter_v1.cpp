@@ -2443,10 +2443,10 @@ void Inter_v1::o1_getItem(OpGobParams &params) {
 	int16 xPos = load16();
 	int16 yPos = load16();
 
-	if ((_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) != 0)
-		params.retVarPtr = (uint32) ((_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) >> 8);
+	if ((_vm->_map->getItem(xPos, yPos) & 0xFF00) != 0)
+		params.retVarPtr = (uint32) ((_vm->_map->getItem(xPos, yPos) & 0xFF00) >> 8);
 	else
-		params.retVarPtr = (uint32) _vm->_map->_itemsMap[yPos][xPos];
+		params.retVarPtr = (uint32) _vm->_map->getItem(xPos, yPos);
 }
 
 void Inter_v1::o1_manipulateMapIndirect(OpGobParams &params) {
@@ -2468,10 +2468,10 @@ void Inter_v1::o1_getItemIndirect(OpGobParams &params) {
 	xPos = VAR(xPos);
 	yPos = VAR(yPos);
 
-	if ((_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) != 0)
-		params.retVarPtr = (uint32) ((_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) >> 8);
+	if ((_vm->_map->getItem(xPos, yPos) & 0xFF00) != 0)
+		params.retVarPtr = (uint32) ((_vm->_map->getItem(xPos, yPos) & 0xFF00) >> 8);
 	else
-		params.retVarPtr = (uint32) _vm->_map->_itemsMap[yPos][xPos];
+		params.retVarPtr = (uint32) _vm->_map->getItem(xPos, yPos);
 }
 
 void Inter_v1::o1_setPassMap(OpGobParams &params) {
@@ -3025,88 +3025,88 @@ void Inter_v1::animPalette() {
 void Inter_v1::manipulateMap(int16 xPos, int16 yPos, int16 item) {
 	for (int y = 0; y < _vm->_map->_mapHeight; y++) {
 		for (int x = 0; x < _vm->_map->_mapWidth; x++) {
-			if ((_vm->_map->_itemsMap[y][x] & 0xFF) == item)
-				_vm->_map->_itemsMap[y][x] &= 0xFF00;
-			else if (((_vm->_map->_itemsMap[y][x] & 0xFF00) >> 8) == item)
-				_vm->_map->_itemsMap[y][x] &= 0xFF;
+			if ((_vm->_map->getItem(x, y) & 0xFF) == item)
+				_vm->_map->setItem(x, y, _vm->_map->getItem(x, y) & 0xFF00);
+			else if (((_vm->_map->getItem(x, y) & 0xFF00) >> 8) == item)
+				_vm->_map->setItem(x, y, _vm->_map->getItem(x, y) & 0xFF);
 		}
 	}
 
 	if (xPos < _vm->_map->_mapWidth - 1) {
 		if (yPos > 0) {
-			if (((_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) != 0) ||
-					((_vm->_map->_itemsMap[yPos - 1][xPos] & 0xFF00) != 0) ||
-					((_vm->_map->_itemsMap[yPos][xPos + 1] & 0xFF00) != 0) ||
-					((_vm->_map->_itemsMap[yPos - 1][xPos + 1] & 0xFF00) != 0)) {
+			if (((_vm->_map->getItem(xPos, yPos) & 0xFF00) != 0) ||
+					((_vm->_map->getItem(xPos, yPos - 1) & 0xFF00) != 0) ||
+					((_vm->_map->getItem(xPos + 1, yPos) & 0xFF00) != 0) ||
+					((_vm->_map->getItem(xPos + 1, yPos - 1) & 0xFF00) != 0)) {
 
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) + item;
+				_vm->_map->setItem(xPos, yPos,
+						(_vm->_map->getItem(xPos, yPos) & 0xFF00) + item);
 
-				_vm->_map->_itemsMap[yPos - 1][xPos] =
-						(_vm->_map->_itemsMap[yPos - 1][xPos] & 0xFF00) + item;
+				_vm->_map->setItem(xPos, yPos - 1,
+						(_vm->_map->getItem(xPos, yPos - 1) & 0xFF00) + item);
 
-				_vm->_map->_itemsMap[yPos][xPos + 1] =
-						(_vm->_map->_itemsMap[yPos][xPos + 1] & 0xFF00) + item;
+				_vm->_map->setItem(xPos + 1, yPos,
+						(_vm->_map->getItem(xPos + 1, yPos) & 0xFF00) + item);
 
-				_vm->_map->_itemsMap[yPos - 1][xPos + 1] =
-						(_vm->_map->_itemsMap[yPos - 1][xPos + 1] & 0xFF00) + item;
+				_vm->_map->setItem(xPos + 1, yPos - 1,
+						(_vm->_map->getItem(xPos + 1, yPos - 1) & 0xFF00) + item);
 
 			} else {
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xFF) + (item << 8);
+				_vm->_map->setItem(xPos, yPos,
+						(_vm->_map->getItem(xPos, yPos) & 0xFF) + (item << 8));
 
-				_vm->_map->_itemsMap[yPos - 1][xPos] =
-						(_vm->_map->_itemsMap[yPos - 1][xPos] & 0xFF) + (item << 8);
+				_vm->_map->setItem(xPos, yPos - 1,
+						(_vm->_map->getItem(xPos, yPos - 1) & 0xFF) + (item << 8));
 
-				_vm->_map->_itemsMap[yPos][xPos + 1] =
-						(_vm->_map->_itemsMap[yPos][xPos + 1] & 0xFF) + (item << 8);
+				_vm->_map->setItem(xPos + 1, yPos,
+						(_vm->_map->getItem(xPos + 1, yPos) & 0xFF) + (item << 8));
 
-				_vm->_map->_itemsMap[yPos - 1][xPos + 1] =
-						(_vm->_map->_itemsMap[yPos - 1][xPos + 1] & 0xFF) + (item << 8);
+				_vm->_map->setItem(xPos + 1, yPos - 1,
+						(_vm->_map->getItem(xPos + 1, yPos - 1) & 0xFF) + (item << 8));
 			}
 		} else {
-			if (((_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) != 0) ||
-					((_vm->_map->_itemsMap[yPos][xPos + 1] & 0xFF00) != 0)) {
+			if (((_vm->_map->getItem(xPos, yPos) & 0xFF00) != 0) ||
+					((_vm->_map->getItem(xPos + 1, yPos) & 0xFF00) != 0)) {
 
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) + item;
+				_vm->_map->setItem(xPos, yPos,
+						(_vm->_map->getItem(xPos, yPos) & 0xFF00) + item);
 
-				_vm->_map->_itemsMap[yPos][xPos + 1] =
-						(_vm->_map->_itemsMap[yPos][xPos + 1] & 0xFF00) + item;
+				_vm->_map->setItem(xPos + 1, yPos,
+						(_vm->_map->getItem(xPos + 1, yPos) & 0xFF00) + item);
 
 			} else {
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xFF) + (item << 8);
+				_vm->_map->setItem(xPos, yPos,
+						(_vm->_map->getItem(xPos, yPos) & 0xFF) + (item << 8));
 
-				_vm->_map->_itemsMap[yPos][xPos + 1] =
-						(_vm->_map->_itemsMap[yPos][xPos + 1] & 0xFF) + (item << 8);
+				_vm->_map->setItem(xPos + 1, yPos,
+						(_vm->_map->getItem(xPos + 1, yPos) & 0xFF) + (item << 8));
 			}
 		}
 	} else {
 		if (yPos > 0) {
-			if (((_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) != 0) ||
-					((_vm->_map->_itemsMap[yPos - 1][xPos] & 0xFF00) != 0)) {
+			if (((_vm->_map->getItem(xPos, yPos) & 0xFF00) != 0) ||
+					((_vm->_map->getItem(xPos, yPos - 1) & 0xFF00) != 0)) {
 
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) + item;
+				_vm->_map->setItem(xPos, yPos,
+						(_vm->_map->getItem(xPos, yPos) & 0xFF00) + item);
 
-				_vm->_map->_itemsMap[yPos - 1][xPos] =
-						(_vm->_map->_itemsMap[yPos - 1][xPos] & 0xFF00) + item;
+				_vm->_map->setItem(xPos, yPos - 1,
+						(_vm->_map->getItem(xPos, yPos - 1) & 0xFF00) + item);
 
 			} else {
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xFF) + (item << 8);
+				_vm->_map->setItem(xPos, yPos,
+						(_vm->_map->getItem(xPos, yPos) & 0xFF) + (item << 8));
 
-				_vm->_map->_itemsMap[yPos - 1][xPos] =
-						(_vm->_map->_itemsMap[yPos - 1][xPos] & 0xFF) + (item << 8);
+				_vm->_map->setItem(xPos, yPos - 1,
+						(_vm->_map->getItem(xPos, yPos - 1) & 0xFF) + (item << 8));
 			}
 		} else {
-			if ((_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) != 0) {
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xFF00) + item;
+			if ((_vm->_map->getItem(xPos, yPos) & 0xFF00) != 0) {
+				_vm->_map->setItem(xPos, yPos,
+						(_vm->_map->getItem(xPos, yPos) & 0xFF00) + item);
 			} else {
-				_vm->_map->_itemsMap[yPos][xPos] =
-						(_vm->_map->_itemsMap[yPos][xPos] & 0xFF) + (item << 8);
+				_vm->_map->setItem(xPos, yPos,
+						(_vm->_map->getItem(xPos, yPos) & 0xFF) + (item << 8));
 			}
 		}
 	}
