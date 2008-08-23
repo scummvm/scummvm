@@ -345,7 +345,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = _boss->getMillis();
 	bool result;
 
-//	result = _boss->pollEvent(event);
+	result = false;//_boss->pollEvent(event);
 
 	if (_recordMode != kPassthrough)  {
 
