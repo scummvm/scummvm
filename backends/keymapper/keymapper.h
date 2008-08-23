@@ -28,6 +28,7 @@
 
 #include "common/events.h"
 #include "common/list.h"
+#include "common/hashmap.h"
 #include "common/stack.h"
 #include "backends/keymapper/hardware-key.h"
 #include "backends/keymapper/keymap.h"
@@ -194,7 +195,7 @@ private:
 	bool _enabled;
 
 	Stack<MapRecord> _activeMaps;
-	List<KeyState> _keysDown;
+	HashMap<KeyState, Action*> _keysDown;
 
 };
 

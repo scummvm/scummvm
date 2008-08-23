@@ -55,10 +55,6 @@ class DefaultEventManager : public Common::EventManager {
 	bool _remap;
 
 	Common::Queue<Common::Event> _artificialEventQueue;
-	int _artificialEventCounter;
-	enum {
-		kArtificialEventDelay = 5
-	};
 
 	Common::Point _mousePos;
 	int _buttonState;

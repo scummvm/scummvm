@@ -110,7 +110,6 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	_eventCount = 0;
 	_lastEventCount = 0;
 	_lastMillis = 0;
-	_artificialEventCounter = 0;
 
 	Common::String recordModeString = ConfMan.get("record_mode");
 	if (recordModeString.compareToIgnoreCase("record") == 0) {
@@ -364,19 +363,20 @@ void DefaultEventManager::processMillis(uint32 &millis) {
 	_lastMillis = millis;
 	_boss->unlockMutex(_timeMutex);
 }
-
+#include "backends/vkeybd/keycode-descriptions.h"
 bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = _boss->getMillis();
 	bool result = false;
 	
 	// poll for pushed events
 	if (!_artificialEventQueue.empty()) {
-		// delay the feeding of artificial events
-		if (++_artificialEventCounter % kArtificialEventDelay == 0) {
-			event = _artificialEventQueue.pop();
-			result = true;
-			_artificialEventCounter = 0; 
-		}
+		event = _artificialEventQueue.pop();
+		result = true;
+		
+		if (event.type == Common::EVENT_KEYDOWN)
+			printf("ART. KEY DOWN: %d (%s)\n", event.kbd.keycode, keycodeDescTable[event.kbd.keycode]);
+		else if (event.type == Common::EVENT_KEYUP)
+			printf("ART. KEY UP: %d (%s)\n", event.kbd.keycode, keycodeDescTable[event.kbd.keycode]);
 	}
 	
 	// poll for event from backend
@@ -385,11 +385,21 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		if (result) {
 			// send key press events to keymapper
 			if (event.type == Common::EVENT_KEYDOWN) {
-				if (_keymapper->mapKeyDown(event.kbd))
+				printf("KEY DOWN: %d (%s)", event.kbd.keycode, keycodeDescTable[event.kbd.keycode]);
+				if (_keymapper->mapKeyDown(event.kbd)) {
 					result = false;
+					printf(" - MAPPED!\n");
+				} else {
+					printf("\n");
+				}
 			} else if (event.type == Common::EVENT_KEYUP) {
-				if (_keymapper->mapKeyUp(event.kbd))
+				printf("KEY UP: %d (%s)", event.kbd.keycode, keycodeDescTable[event.kbd.keycode]);
+				if (_keymapper->mapKeyUp(event.kbd)) {
 					result = false;
+					printf(" - MAPPED!\n");
+				} else {
+					printf("\n");
+				}
 			}
 		}
 	}

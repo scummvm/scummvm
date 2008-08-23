@@ -127,12 +127,6 @@ bool Keymapper::pushKeymap(const String& name, bool inherit) {
 }
 
 void Keymapper::pushKeymap(Keymap *newMap, bool inherit, bool global) {
-	List<KeyState>::iterator it;
-	for (it = _keysDown.begin(); it != _keysDown.end(); ++it) {
-		Action *action = getAction(*it);
-		if (action) executeAction(action, false);
-	}
-	_keysDown.clear();
 	MapRecord mr = {newMap, inherit, global};
 	_activeMaps.push(mr);
 }
@@ -154,25 +148,29 @@ bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 	if (!_enabled) return false;
 	if (_activeMaps.empty()) return false;
 
-	Action *action = getAction(key);
+	Action *action = 0;
+	if (keyDown) {
+		// Search for key in active keymap stack
+		for (int i = _activeMaps.size() - 1; i >= 0; --i) {
+			MapRecord mr = _activeMaps[i];
+			action = mr.keymap->getMappedAction(key);
+			if (action || mr.inherit == false) break;
+		}
+		if (action) _keysDown[key] = action;
+	} else {
+		HashMap<KeyState, Action*>::iterator it = _keysDown.find(key);
+		if (it != _keysDown.end()) {
+			action = it->_value;
+			_keysDown.erase(key);
+		}
+	}
 	if (!action) return false;
-
-	if (keyDown)
-		_keysDown.push_back(key);
-	else
-		_keysDown.remove(key);
-
 	executeAction(action, keyDown);
 	return true;
 }
 
 Action *Keymapper::getAction(const KeyState& key) {
 	Action *action = 0;
-	for (int i = _activeMaps.size() - 1; i >= 0; --i) {
-		MapRecord mr = _activeMaps[i];
-		action = mr.keymap->getMappedAction(key);
-		if (action || mr.inherit == false) break;
-	}
 	return action;
 }
 
