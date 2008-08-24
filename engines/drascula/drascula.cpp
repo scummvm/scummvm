@@ -507,6 +507,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		}
 		if (rightMouseButton == 1 && menuScreen == 0) {
 #endif
+			delay(100);
 			characterMoved = 0;
 			if (trackProtagonist == 2)
 				trackProtagonist = 1;
@@ -526,6 +527,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		}
 
 		if (leftMouseButton == 1 && menuBar == 1) {
+			delay(100);
 			selectVerbFromBar();
 		} else if (leftMouseButton == 1 && takeObject == 0) {
 			delay(100);
