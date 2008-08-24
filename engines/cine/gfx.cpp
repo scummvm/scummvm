@@ -198,9 +198,13 @@ void FWRenderer::incrustSprite(const objectStruct &obj) {
 	width = animDataTable[obj.frame]._realWidth;
 	height = animDataTable[obj.frame]._height;
 
-	assert(mask);
-
-	drawSpriteRaw(data, mask, width, height, _background, x, y);
+	// There was an assert(mask) here before but it made savegame loading
+	// in Future Wars sometimes fail the assertion (e.g. see bug #2055912).
+	// Not drawing sprites that have no mask seems to work, but not sure
+	// if this is really a correct way to fix this.
+	if (mask) {
+		drawSpriteRaw(data, mask, width, height, _background, x, y);
+	}
 }
 
 /*! \brief Draw command box on screen
