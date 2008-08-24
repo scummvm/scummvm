@@ -625,6 +625,7 @@ pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	4fe6a2e8df3c4536b278fdd2fbcb181e	-1	en	Windows	-	Mini Game	-	Trekky
 	679855cf61932f9bf995c8f3677380ed	-1	fr	Windows	-	Demo	-	Mevi
 	c8c5baadcbfc8d0372ed4335abace8a7	-1	fr	Windows	-	Demo	-	Mevi
+	784b499c98d07260a30952685758636b	13911	de	Windows	-	Demo	-	George Kormendi
 	3e48298920fab9b7aec5a971e1bd1fab	-1	gb	Windows	-	Demo	-	eriktorbjorn
 	cf90b4db5486ef798db78fe6fbf897e5	-1	us	Windows	-	Demo	-	khalek
 
@@ -662,6 +663,7 @@ puttrace	Putt-Putt Enters the Race
 	aaa587701cde7e74692c68c1024b85eb	-1	nl	All	HE 99	Demo	-	joostp
 	0bf1a3eb198ca1bd2ebe104825cec770	-1	fr	Windows	HE 99	Demo	-	Mevi
 	c8575e0b973ff1723aba6cd92c642db2	-1	fr	Windows	HE 99	Demo	-	Mevi
+	3769b56c9a22f5521d74525ee459f88d	13108	de	Windows	HE 99	Demo	-	George Kormendi
 	7c8100e360e8ef05f88069d4cfa0afd1	13108	gb	Windows	HE 99	Demo	-	eriktorbjorn
 	6b27dbcd8d5697d5c918eeca0f68ef6a	3901484	All	All	HE CUP	Preview	-	sev
 
@@ -689,9 +691,11 @@ puttcircus	Putt-Putt Joins the Circus
 	3af61c5edf8e15b43dbafd285b2e9777	-1	hb	Windows	-	Demo	-	Ori Avtalion
 
 puttputt	Putt-Putt Joins the Parade
+	7766c9487f9d53a8cb0edabda5119c3d	8022	en	DOS	HE 60	-	-	George Kormendi
 	0b3222aaa7efcf283eb621e0cefd26cc	-1	ru	DOS	HE 60	-	-	sev
 	7e151c17adf624f1966c8fc5827c95e9	-1	en	3DO	HE 61	-	-	khalek
 	be2abe172f58db170de3a037daa1dd27	-1	jp	3DO	HE 61	-	-	clone2727
+	ee41f6afbc5b26fa475754b56fe92048	8032	jp	3DO	HE 61	-	-	George Kormendi
 	9708cf716ed8bcc9ff3fcfc69413b746	-1	en	DOS	HE 61	-	-	khalek
 	e361a7058ed8e8ebb462663c0a3ae8d6	-1	hb	DOS	HE 61	-	-	sev
 	684732efb5799c0f78804c99d8de9aba	-1	en	Mac	HE 61	-	-	khalek
@@ -707,6 +711,7 @@ puttzoo	Putt-Putt Saves the Zoo
 	1005456bfe351c1b679e1ff2dc2849e9	-1	All	Windows	-	-	-	khalek
 	c3b22fa4654bb580b20325ebf4174841	-1	nl	Windows	-	-	-	joostp
 	9781422e4288dbc090720e4563168ba7	-1	fr	Windows	-	-	-	gist974
+	0f9d3317910ac7a9f449243118884ada	42070	de	Windows	-	-	-	George Kormendi
 	92e7727e67f5cd979d8a1070e4eb8cb3	-1	en	All	HE 98.5	Updated	-	cyx
 	3a3e592b074f595489f7f11e150c398d	-1	us	Windows	HE 99	Updated	-	Adrian
 
@@ -738,6 +743,7 @@ PuttTime	Putt-Putt Travels Through Time
 
 balloon	Putt-Putt and Pep's Balloon-O-Rama
 	08cc5c3eedaf72ebe12734eee94f7fa2	-1	en	All	HE 80	-	-	Kirben
+	bab0fb81dcb12b8930c5d850b8f2a7de	12800	de	Windows	HE 80	-	-	George Kormendi
 	145bd3373574feb668cc2eea2ec6cf86	-1	ru	Windows	HE 80	-	-	sev
 	2232b0b9411575b1f9961713ebc9de61	-1	es	Windows	HE 80	-	-	exiltd
 	d7b247c26bf1f01f8f7daf142be84de3	-1	en	Windows	HE 99	Updated	-	iziku
