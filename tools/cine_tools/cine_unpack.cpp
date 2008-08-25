@@ -27,6 +27,8 @@
  * which archive files to unpack.
  *
  * Note that this isn't polished code so caveat emptor.
+ *
+ * FIXME: Make this code endian safe.
  */
 
 #include <stdio.h>

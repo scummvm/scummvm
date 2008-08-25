@@ -28,6 +28,7 @@
  * Note that this isn't polished code so caveat emptor.
  *
  * TODO: Unify opcode namings between ScummVM's Cine engine and this utility.
+ * FIXME: Make this code endian safe.
  */
 
 #include <stdio.h>
