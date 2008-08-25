@@ -815,10 +815,11 @@ bool DrasculaEngine::room_53(int fl) {
 		flags[2] = 1;
 		withoutVerb();
 		updateVisible();
+		pickedObject = kVerbMove;
 	} else if (pickedObject == 16) {
-		talk(439);
-		withoutVerb();
+		// Wall plug in chapter 5
 		visible[3] = 1;
+		hasAnswer = 0;
 	} else
 		hasAnswer = 0;
 

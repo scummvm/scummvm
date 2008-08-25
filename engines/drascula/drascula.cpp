@@ -505,7 +505,12 @@ bool DrasculaEngine::runCurrentChapter() {
 			} else {
 #else
 		}
-		if (rightMouseButton == 1 && menuScreen == 0) {
+
+		// Do not show the inventory screen in chapter 5, if the right mouse button is clicked
+		// while the plug (object 16) is held
+		// Fixes bug #2059621 - "DRASCULA: Plug bug"
+		if (rightMouseButton == 1 && menuScreen == 0 && 
+			!(currentChapter == 5 && pickedObject == 16)) {
 #endif
 			delay(100);
 			characterMoved = 0;
