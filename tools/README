@@ -51,18 +51,3 @@ md5table
     Used to convert scumm-md5.txt into a SCUMM header file, or alternatively
     PHP code for our website.
 
-cine_tools/cine_unpack
-----------------------
-    Delphine's Cinematique engine's archive file unpacker:
-
-    USAGE: cine_unpack [input file] [output directory]
-    Supports using Operation Stealth's 'vol.cnf' file as input.
-
-cine_tools/cine_decode
-----------------------
-    Delphine's Cinematique engine's script decompiler:
-
-    USAGE: cine_decode [type] [version] [filename]
-    type: -prc or -rel (Use -prc for *.prc-files, -rel for *.rel-files)
-    version: -v1 or -v2 (Use -v1 for Future Wars, -v2 for Operation Stealth)
-    filename: The name of the script file to decode
