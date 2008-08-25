@@ -613,14 +613,18 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 				if ((((z->_type & 0xFFFF) == kZoneMerge) && (((_si == z->u.merge->_obj1) && (_di == z->u.merge->_obj2)) || ((_si == z->u.merge->_obj2) && (_di == z->u.merge->_obj1)))) ||
 					(((z->_type & 0xFFFF) == kZoneGet) && ((_si == z->u.get->_icon) || (_di == z->u.get->_icon)))) {
 
-					// special Zone
-					if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
-						return z;
-					if (z->_type == type)
-						return z;
-					if ((z->_type & 0xFFFF0000) == type)
-						return z;
+					// WORKAROUND for bug 2070751: special zones are only used in NS, to allow the
+					// the EXAMINE/USE action to be applied on some particular item in the inventory.
+					// The usage a verb requires at least an item match, so type can't be 0, as it
+					// was in the original code. This bug has been here since the beginning, and was
+					// hidden by label code, which filtered the bogus matches produced here.
 
+					// look for action + item match
+					if (z->_type == type)
+						return true;
+					// look for item match, but don't accept 0 types
+					if (((z->_type & 0xFFFF0000) == type) && (type))
+						return true;
 				}
 			}
 
