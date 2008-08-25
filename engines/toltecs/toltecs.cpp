@@ -188,8 +188,11 @@ void ToltecsEngine::loadScene(uint resIndex) {
 }
 
 void ToltecsEngine::updateScreen() {
-	// TODO
 
+	// FIXME: Quick hack, sometimes cameraY was negative (the code in updateCamera was at fault)
+	if (_cameraY < 0) _cameraY = 0;
+
+	// TODO: Optimize redraw by using dirty rectangles
 	byte *destp = _screen->_frontScreen;
 	byte *srcp = _screen->_backScreen + _cameraX + _cameraY * _sceneWidth;
 	for (uint y = 0; y < MIN<uint>(_cameraHeight, 400); y++) {
@@ -295,13 +298,17 @@ void ToltecsEngine::updateInput() {
 
 void ToltecsEngine::setCamera(int16 x, int16 y) {
 
-	// TODO font_sub_4B5BB()
-	
+	_screen->finishTextDrawItems();
+
+	/*
+	// TODO: Fix checks; sometimes cameraY ended up being negative
+
 	if (x > _sceneWidth)
 		x = _sceneWidth;
 	
 	if (y > _sceneHeight - _cameraHeight)
 		y = _sceneHeight - _cameraHeight;
+	*/
 
 	// TODO DirtyRect clearing stuff
 	
@@ -332,7 +339,7 @@ void ToltecsEngine::scrollCameraUp(int16 delta) {
 			_newCameraY = 0;
 		else
 			_newCameraY -= delta;
-		// TODO: font_sub_4B5BB();
+		_screen->finishTextDrawItems();
 	}
 }
 
@@ -343,7 +350,7 @@ void ToltecsEngine::scrollCameraDown(int16 delta) {
 			delta += (_sceneHeight - _cameraHeight) - (delta + _newCameraY);
 		_newCameraY += delta;
 		debug(0, "ToltecsEngine::scrollCameraDown() _newCameraY = %d; delta = %d", _newCameraY, delta);
-		// TODO: font_sub_4B5BB();
+		_screen->finishTextDrawItems();
 	}
 }
 
@@ -353,7 +360,7 @@ void ToltecsEngine::scrollCameraLeft(int16 delta) {
 			_newCameraX = 0;
 		else
 			_newCameraX -= delta;
-		// TODO: font_sub_4B5BB();
+		_screen->finishTextDrawItems();
 	}
 }
 
@@ -364,7 +371,7 @@ void ToltecsEngine::scrollCameraRight(int16 delta) {
 			delta += (_sceneWidth - 640) - (delta + _newCameraX);
 		_newCameraX += delta;
 		debug(0, "ToltecsEngine::scrollCameraRight() _newCameraX = %d; delta = %d", _newCameraY, delta);
-		// TODO: font_sub_4B5BB();
+		_screen->finishTextDrawItems();
 	}
 }
 
