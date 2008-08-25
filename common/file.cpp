@@ -167,6 +167,7 @@ static FILE *fopenNoCase(const String &filename, const String &directory, const 
 	//
 	file = fopen(pathBuf.c_str(), mode);
 
+#ifndef __DS__
 	//
 	// Try again, with file name converted to upper case
 	//
@@ -194,6 +195,7 @@ static FILE *fopenNoCase(const String &filename, const String &directory, const 
 		pathBuf = dirBuf + fileBuf;
 		file = fopen(pathBuf.c_str(), mode);
 	}
+#endif // __DS__
 
 #ifdef __amigaos4__
 	//
