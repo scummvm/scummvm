@@ -821,9 +821,6 @@ void GUI_v2::checkTextfieldInput() {
 
 	bool running = true;
 	int keys = 0;
-
-	_screen->updateScreen();
-
 	while (_vm->_eventMan->pollEvent(event) && running) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
