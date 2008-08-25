@@ -27,12 +27,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "backends/platform/ps2/asyncfio.h"
-#include "backends/platform/ps2/fileio.h"
-#include "backends/platform/ps2/systemps2.h"
-#include "backends/platform/ps2/ps2debug.h"
+#include "asyncfio.h"
+#include "fileio.h"
+#include "systemps2.h"
+#include "ps2debug.h"
 
 #define DEFAULT_MODE (FIO_S_IRUSR | FIO_S_IWUSR | FIO_S_IRGRP | FIO_S_IWGRP | FIO_S_IROTH | FIO_S_IWOTH)
+
+FILE *ps2_fopen(const char *fname, const char *mode);
+int ps2_fclose(FILE *stream);
+// extern int fileXioChdir(const char* pathname);
+
+#include <fileXio_rpc.h>
+
 
 extern AsyncFio fio;
 extern OSystem_PS2 *g_systemPs2;
@@ -52,10 +59,6 @@ protected:
 	bool _isDirectory;
 	bool _isRoot;
 
-private:
-	char *getDeviceDescription(const char *path) const;
-	bool getDirectoryFlag(const char *path);
-
 public:
 	/**
 	 * Creates a PS2FilesystemNode with the root node as path.
@@ -74,23 +77,99 @@ public:
 	 * Copy constructor.
 	 */
 	Ps2FilesystemNode(const Ps2FilesystemNode *node);
+	
+	virtual bool exists() const {
+		int fd;
 
-	virtual bool exists(void) const;
+		dbg_printf("Q: Does %s exist ?\n", _path.c_str());
+
+		if (_path[4] != ':') { // don't bother for relative path...
+		                       //  ...they always fail on PS2!
+			dbg_printf("A: nope -> skip relative path\n");
+			return false;
+		}
+
+		if (_path[0] == 'h') { // bypass host
+			dbg_printf("A: nope -> skip host\n");
+			return false;
+		}
+
+		if ((fd = fio.open(_path.c_str(), O_RDONLY)) >= 0) { /* it's a file */
+			fio.close(fd);
+			dbg_printf("A: yep -> file\n");
+			return true;
+		}
+
+		   /* romeo's black magic */
+		fd = fio.open(_path.c_str(), O_RDONLY, DEFAULT_MODE | FIO_S_IFDIR); 
+		if (fd == -EISDIR) {
+			dbg_printf("A: yep -> dir\n");
+			return true;
+		}
+		/* NOTE: it cannot be a file cause it would have been caught by
+		         the previous test, so no need to close it ;-)          */
+
+		dbg_printf("A: nope\n");
+		return false;
+	}
 
 	virtual String getDisplayName() const { return _displayName; }
 	virtual String getName() const { return _displayName; }
 	virtual String getPath() const { return _path; }
-
 	virtual bool isDirectory() const {
+
+		dbg_printf("Q: Is %s a dir?\n", _path.c_str());
+
+#if 0
+		int fd;
+
+		if (_path.empty()) {
+			printf("A: yep -> top level\n");
+			return true; // top level
+		}
+
+		if (_path.lastChar() == ':' ||
+			(_path.lastChar() == '/' && _path[_path.size()-2] == ':')) {
+			printf("A: yep -> device\n");
+			return true; // device
+		}
+
+		fd = fio.open(_path.c_str(), O_RDONLY, DEFAULT_MODE | FIO_S_IFDIR);
+		if (fd == -EISDIR) {
+			printf("A: yep\n");
+			return true;
+		}
+
+		if (fd >= 0)
+			fio.close(fd);
+
+		printf("A: nope\n");
+		return false;
+#else
+		if (_isDirectory)
+			dbg_printf("A: yep -> _isDirectory == 1\n");
+		else
+			dbg_printf("A: nope -> _isDirectory == 0\n");
+
 		return _isDirectory;
+#endif
 	}
 
 	virtual bool isReadable() const {
-		return exists();
+		int fd;
+		if ((fd = fio.open(_path.c_str(), O_RDONLY)) >= 0) {
+			fio.close(fd);
+			return true;
+		}
+		return false;
 	}
 
 	virtual bool isWritable() const {
-		// The only writable device on the ps2 is the memory card
+		int fd;
+		if ((fd =  fio.open(_path.c_str(), O_WRONLY)) >= 0) {
+			fio.close(fd);
+			return true;
+		}
 		return false;
 	}
 
@@ -117,7 +196,7 @@ const char *lastPathComponent(const Common::String &str) {
 		--cur;
 	}
 
-	printf("romeo : lastPathComponent = %s\n", cur + 1);
+	dbg_printf("romeo : lastPathComponent = %s\n", cur + 1);
 
 	return cur + 1;
 }
@@ -130,6 +209,9 @@ Ps2FilesystemNode::Ps2FilesystemNode() {
 }
 
 Ps2FilesystemNode::Ps2FilesystemNode(const String &path) {
+
+	Ps2FilesystemNode(path, true);
+/*
 	_path = path;
 	_isDirectory = true;
 	if (strcmp(path.c_str(), "") == 0) {
@@ -143,35 +225,135 @@ Ps2FilesystemNode::Ps2FilesystemNode(const String &path) {
 				dsplName = pos;
 		if (dsplName)
 			_displayName = String(dsplName);
-		else
-			_displayName = getDeviceDescription(path.c_str());
+		else {
+			if (strncmp(path.c_str(), "cdfs", 4) == 0)
+				_displayName = "DVD Drive";
+			else if (strncmp(path.c_str(), "mass", 4) == 0)
+				_displayName = "USB Mass Storage";
+			else
+				_displayName = "Harddisk";
+		}
 	}
+*/
 }
 
 Ps2FilesystemNode::Ps2FilesystemNode(const String &path, bool verify) {
 	_path = path;
+	_isDirectory = true;
 
 	if (strcmp(path.c_str(), "") == 0) {
-		_isRoot = true; /* root is always a dir*/
+		_isRoot = true;
 		_displayName = String("PlayStation 2");
-		_isDirectory = true;
+		verify = false; /* root is always a dir*/
 	} else {
 		_isRoot = false;
 		const char *dsplName = NULL, *pos = path.c_str();
 		while (*pos)
 			if (*pos++ == '/')
 				dsplName = pos;
-
-		if (dsplName) {
+		if (dsplName)
 			_displayName = String(dsplName);
-			if (verify)
-				_isDirectory = getDirectoryFlag(path.c_str());
+		else {
+			if (strncmp(path.c_str(), "cdfs", 4) == 0)
+				_displayName = "DVD Drive";
+			else if (strncmp(path.c_str(), "mass", 4) == 0)
+				_displayName = "USB Mass Storage";
 			else
-				_isDirectory = false;
-		} else {
-			_displayName = getDeviceDescription(path.c_str());
-			_isDirectory = true; /* devices are always dir */
+				_displayName = "Harddisk";
+			verify = false; /* devices are always dir */
 		}
+	}
+
+	if (verify && !_isRoot) {
+		int medium, fd;
+
+		if (strncmp(path.c_str(), "pfs0", 4) == 0)
+			medium = 0;
+		else if (strncmp(path.c_str(), "cdfs", 4) == 0)
+			medium = 1;
+		else if (strncmp(path.c_str(), "mass", 4) == 0)
+			medium = 2;
+
+		switch(medium) {
+
+		case 0: /* hd */
+		dbg_printf("hd >  ");
+		fd = fio.open(_path.c_str(), O_RDONLY, DEFAULT_MODE | FIO_S_IFDIR);
+
+		if (fd == -EISDIR) {
+			dbg_printf(" romeo : new node [ %s ] is a dir\n", path.c_str());
+		}
+		else if (fd >=0) {
+			_isDirectory = false;
+			dbg_printf(" romeo : new node [ %s ] is -not- a dir (%d)\n",
+				path.c_str(), fd);
+			fio.close(fd);
+		}
+		else
+			dbg_printf(" romeo : new node [ %s ] is -not- (%d)\n",
+				 path.c_str(), fd);
+
+		break;
+
+		case 1: /* cd */
+		dbg_printf("cd >  ");
+		fd = fio.open(_path.c_str(), O_RDONLY, DEFAULT_MODE | FIO_S_IFDIR);
+
+		if (fd == -ENOENT) {
+			dbg_printf(" romeo : new node [ %s ] is a dir\n", path.c_str());
+		}
+		else if (fd >=0) {
+			_isDirectory = false;
+			dbg_printf(" romeo : new node [ %s ] is -not- a dir (%d)\n",
+				path.c_str(), fd);
+			fio.close(fd);
+		}
+		else
+			dbg_printf(" romeo : new node [ %s ] is -not- (%d)\n",
+				path.c_str(), fd);
+
+		break;
+
+		case 2: /* usb */
+		dbg_printf("usb >  ");
+		// fd = fio.open(_path.c_str(), O_RDONLY, DEFAULT_MODE | FIO_S_IFDIR);
+#if 1
+		fd = fio.open(_path.c_str(), O_RDONLY);
+		if (fd == -EISDIR) {
+			dbg_printf(" romeo : new node [ %s ] is a dir\n", path.c_str());
+		}
+		else if (fd > 0)  {
+			_isDirectory = false;
+			dbg_printf(" romeo : new node [ %s ] is a -not- a dir (%d)\n",
+				path.c_str(), fd);
+			fio.close(fd);
+		}
+		else {
+			dbg_printf(" romeo : new node [ %s ] is a -not-\n",	path.c_str());
+			_isDirectory = false;
+		}
+
+#else
+
+		fd = fio.chdir(path.c_str());
+
+		dbg_printf(" %d ", fd);
+
+		if (fd == -48) {
+			dbg_printf(" romeo : new node [ %s ] is a dir\n", path.c_str());
+			// fio.close(fd);
+			// chdir("");
+		}
+		else {
+			_isDirectory = false;
+			dbg_printf(" romeo : new node [ %s ] is a -not- a dir (%d)\n",
+				path.c_str(), fd);
+		}
+#endif
+
+		break;
+		} /* switch(medium) */
+
 	}
 }
 
@@ -180,52 +362,6 @@ Ps2FilesystemNode::Ps2FilesystemNode(const Ps2FilesystemNode *node) {
 	_isDirectory = node->_isDirectory;
 	_path = node->_path;
 	_isRoot = node->_isRoot;
-}
-
-bool Ps2FilesystemNode::exists(void) const {
-	
-	dbg_printf("Ps2FilesystemNode::exists: path \"%s\": ", _path.c_str());
-
-	if (_path[4] != ':') { // don't bother for relative path... they always fail on PS2!
-		dbg_printf("NO, relative path\n");
-		return false;
-	}
-
-	if (_path[0] == 'h') { // bypass host
-		dbg_printf("NO, host device ignored\n");
-		return false;
-	}
-
-	int fd = fio.open(_path.c_str(), O_RDONLY);
-	if (fd == -EISDIR) {
-		dbg_printf("YES, directory\n");
-		return true;
-	} else if (fd >= 0) {
-		dbg_printf("YES, file\n");
-		fio.close(fd);
-		return true;
-	}
-
-	printf("NO, not found\n");
-	return false;
-}
-
-bool Ps2FilesystemNode::getDirectoryFlag(const char *path) {
-	if (strncmp(path, "host:", 5) == 0)
-		return true;	// Can't get listings from host: right now
-
-	int fd = fio.open(_path.c_str(), O_RDONLY);
-
-	if (fd == -EISDIR) {
-		dbg_printf(" romeo : new node [ %s ] is a dir\n", path);
-		return true;
-	} else if (fd >=0) {
-		dbg_printf(" romeo : new node [ %s ] is -not- a dir (%d)\n", path, fd);
-		fio.close(fd);
-	} else
-		dbg_printf(" romeo : new node [ %s ] is -not- (%d)\n", path, fd);
-
-	return false;
 }
 
 AbstractFilesystemNode *Ps2FilesystemNode::getChild(const String &n) const {
@@ -273,18 +409,18 @@ bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 		dirEntry._isDirectory = true;
 		dirEntry._isRoot = false;
 		dirEntry._path = "cdfs:";
-		dirEntry._displayName = getDeviceDescription(dirEntry._path.c_str());
+		dirEntry._displayName = "DVD Drive";
 		list.push_back(new Ps2FilesystemNode(&dirEntry));
 
 		if (g_systemPs2->hddPresent()) {
 			dirEntry._path = "pfs0:";
-			dirEntry._displayName = getDeviceDescription(dirEntry._path.c_str());
+			dirEntry._displayName = "Harddisk";
 			list.push_back(new Ps2FilesystemNode(&dirEntry));
 		}
 
 		if (g_systemPs2->usbMassPresent()) {
 			dirEntry._path = "mass:";
-			dirEntry._displayName = getDeviceDescription(dirEntry._path.c_str());
+			dirEntry._displayName = "USB Mass Storage";
 			list.push_back(new Ps2FilesystemNode(&dirEntry));
 		}
 		return true;
@@ -348,14 +484,3 @@ AbstractFilesystemNode *Ps2FilesystemNode::getParent() const {
 	else
 		return new Ps2FilesystemNode();
 }
-
-
-char *Ps2FilesystemNode::getDeviceDescription(const char *path) const {
-	if (strncmp(path, "cdfs", 4) == 0)
-		return "DVD Drive";
-	else if (strncmp(path, "mass", 4) == 0)
-		return "USB Mass Storage";
-	else
-		return "Harddisk";	
-}
-

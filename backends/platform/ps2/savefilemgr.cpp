@@ -170,12 +170,12 @@ Ps2SaveFileManager::Ps2SaveFileManager(OSystem_PS2 *system, Gs2dScreen *screen) 
 
 		if ((res == 0) || (res == -1)) { // mc okay
 			_mcPresent = true;
-			printf("MC okay, result = %d. Type %d, Free %d, Format %d\n", res, mcType, mcFree, mcFormat);
+			dbg_printf("MC okay, result = %d. Type %d, Free %d, Format %d\n", res, mcType, mcFree, mcFormat);
 			checkMainDirectory();
 			break;
 		} else {
 			_mcPresent = false;
-			printf("MC failed, not present or not formatted, code %d\n", res);
+			dbg_printf("MC failed, not present or not formatted, code %d\n", res);
 		}
 	}
 
@@ -211,9 +211,9 @@ void Ps2SaveFileManager::checkMainDirectory(void) {
 	int ret, fd;
 	_mcNeedsUpdate = true;
 	ret = _mc->getDir("/ScummVM/*", 0, MAX_MC_ENTRIES, _mcDirList);
-	printf("/ScummVM/* res = %d\n", ret);
+	dbg_printf("/ScummVM/* res = %d\n", ret);
 	if (ret <= 0) { // assume directory doesn't exist
-		printf("Dir doesn't exist\n");
+		dbg_printf("Dir doesn't exist\n");
 		ret = _mc->mkDir("/ScummVM");
 		if (ret >= 0) {
 			fd = _mc->open("/ScummVM/scummvm.icn", O_WRONLY | O_CREAT);
@@ -224,12 +224,12 @@ void Ps2SaveFileManager::checkMainDirectory(void) {
 				_mc->close(fd);
 				free(icoBuf);
 
-				printf(".icn written\n");
+				dbg_printf(".icn written\n");
 				setupIcon("/ScummVM/icon.sys", "scummvm.icn", "ScummVM", "Configuration");
 			} else
-				printf("Can't create icon file: %d\n", fd);
+				dbg_printf("Can't create icon file: %d\n", fd);
 		} else
-			printf("can't create scummvm directory: %d\n", ret);
+			dbg_printf("can't create scummvm directory: %d\n", ret);
 	}
 }
 
@@ -257,7 +257,7 @@ bool Ps2SaveFileManager::mcReadyForDir(const char *dir) {
 				checkMainDirectory(); // make sure ScummVM dir and icon are there
 			} else { // no memorycard in slot or not formatted or something like that
 				_mcPresent = false;
-				printf("MC not found, error code %d\n", mcResult);
+				dbg_printf("MC not found, error code %d\n", mcResult);
 				return false;
 			}
 		}
@@ -279,15 +279,15 @@ Common::InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
 
 	char dir[256], name[256];
 	splitPath(filename, dir, name);
-	printf("openForLoading: \"%s\" => \"%s\" + \"%s\"\n", filename, dir, name);
+	dbg_printf("openForLoading: \"%s\" => \"%s\" + \"%s\"\n", filename, dir, name);
 	if (mcReadyForDir(dir)) {
-		printf("Ready\n");
+		dbg_printf("Ready\n");
 		bool fileExists = false;
 		for (int i = 0; i < _mcEntries; i++)
 			if (strcmp(name, (char*)_mcDirList[i].name) == 0)
 				fileExists = true;
 		if (fileExists) {
-			printf("Found!\n");
+			dbg_printf("Found!\n");
 			char fullName[256];
 			sprintf(fullName, "/ScummVM-%s/%s", dir, name);
 			UclInSaveFile *file = new UclInSaveFile(fullName, _screen, _mc);
@@ -295,12 +295,12 @@ Common::InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
 				if (!file->ioFailed())
 					return file;
 				else {
-					printf("IoFailed\n");
+					dbg_printf("IoFailed\n");
 					delete file;
 				}
 			}
 		} else
-			printf("file %s (%s) doesn't exist\n", filename, name);
+			dbg_printf("file %s (%s) doesn't exist\n", filename, name);
 	}
 	_screen->wantAnim(false);
 	return NULL;
@@ -342,7 +342,7 @@ Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const char *filename) {
 				_mcNeedsUpdate = true;
 				return file;
 			} else {
-				printf("UCL out create failed!\n");
+				dbg_printf("UCL out create failed!\n");
 				delete file;
 			}
 		}
@@ -385,7 +385,7 @@ void Ps2SaveFileManager::listSavefiles(const char *prefix, bool *marks, int num)
 				char *stopCh;
 				int destNum = (int)strtoul((char*)mcEntries[i].name + searchLen, &stopCh, 10);
 				if ((!stopCh) || strcmp(stopCh, ".ucl"))
-					printf("unexpected end %s in name %s, search %s\n", stopCh, (char*)mcEntries[i].name, prefix);
+					dbg_printf("unexpected end %s in name %s, search %s\n", stopCh, (char*)mcEntries[i].name, prefix);
 				if (destNum < num)
 					marks[destNum] = true;
 			}
@@ -399,7 +399,7 @@ Common::StringList Ps2SaveFileManager::listSavefiles(const char *regex) {
 	Common::StringList results;
 	int mcType, mcFree, mcFormat, mcResult;
 
-	printf("listSavefiles -> regex=%s\n", regex);
+	dbg_printf("listSavefiles -> regex=%s\n", regex);
 
 	mcResult = _mc->getInfo(&mcType, &mcFree, &mcFormat);
 
@@ -410,14 +410,25 @@ Common::StringList Ps2SaveFileManager::listSavefiles(const char *regex) {
 
 		mcTable *mcEntries = (mcTable*)memalign(64, sizeof(mcTable) * MAX_MC_ENTRIES);
     
-		char temp[256], mcSearchStr[256], *dir, *ext;
+		char temp[64], key[64], mcSearchStr[64], *dir, *ext;
 		strcpy(temp, regex);
 		dir = strdup(strtok(temp, "."));
-		ext = strdup(strtok(NULL, "*"));
+		ext = strdup(strtok(NULL, "."));
 
-		printf("dir = %s - ext = %s\n", dir, ext);
+		if (strcmp(ext, "???") == 0) {
+			free(ext);
+			ext = strdup("*"); // workaround for kyra in ScummVM > 0.11.1
+			                   // legitimte in PS2 cause there are only
+			                   // saved games inside "dir" so "*" will
+		    	               // always give us what we are looking for ;-)
+		}
 
-		sprintf(mcSearchStr, "/ScummVM-%s/%s*", dir, ext);
+		dbg_printf("dir = %s - ext = %s\n", dir, ext);
+
+		sprintf(mcSearchStr, "/ScummVM-%s/%s", dir, ext);
+		sprintf(key, "%s.ucl", ext);
+
+		dbg_printf("path = %s - key = %s\n", mcSearchStr, key);
 
 		int numEntries = _mc->getDir(mcSearchStr, 0, MAX_MC_ENTRIES, mcEntries);
 		char *name;
@@ -425,15 +436,15 @@ Common::StringList Ps2SaveFileManager::listSavefiles(const char *regex) {
 			name = (char*)mcEntries[i].name;
 
             if ((name[0] != '.') && stricmp(name, "icon.sys")) {
-				printf(" name = %s\n", (char*)mcEntries[i].name);
-				if (Common::matchString(name, "s*.ucl")) {
-					sprintf(temp, "%s.%s%c%c", dir, ext, name[1], name[2]);
+				dbg_printf(" name = %s\n", (char*)mcEntries[i].name);
+				if (Common::matchString(name, key)) {
+					sprintf(temp, "%s.%c%c%c", dir, name[0], name[1], name[2]);
 					results.push_back(temp);
-					printf("  -> match [%s] ;-)\n", temp);
+					dbg_printf("  -> match [%s] ;-)\n", temp);
 				}
 				else {
 					results.push_back(name); // ;-)
-					printf("  -> no match :-(\n");
+					dbg_printf("  -> no match :-(\n");
 				}
 			}
 		}

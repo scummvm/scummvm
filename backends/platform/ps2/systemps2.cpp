@@ -257,6 +257,14 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 		SifLoadFileInit();
 		cdvdInit(CDVD_INIT_WAIT);
 	}
+	else {
+		// romeo : HOST : pre-load
+
+		// TODO: avoid re-loading USB_MASS.IRX -> it will jam mass:
+
+		// TODO: ps2link 1.46 will stall on "poweroff" init / cb
+	}
+
 	startIrxModules(numModules, modules);
 
 	int res;
@@ -281,12 +289,12 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 
 		dbg_printf("romeo : hddCheckPresent done : %d\n", _useHdd);
 
-		// hddPreparePoweroff();
-		//poweroffInit();
+		//hddPreparePoweroff();
+		poweroffInit();
 		dbg_printf("romeo : hddPreparePoweroff done\n");     
 
-		// hddSetUserPoweroffCallback(gluePowerOffCallback, this);
-		//poweroffSetCallback(gluePowerOffCallback, this);
+		//hddSetUserPoweroffCallback(gluePowerOffCallback, this);
+		poweroffSetCallback(gluePowerOffCallback, this);
 		dbg_printf("romeo : hddSetUserPoweroffCallback done\n");
 	}
 
@@ -464,7 +472,16 @@ bool OSystem_PS2::hddPresent(void) {
 }
 
 bool OSystem_PS2::usbMassPresent(void) {
-	
+#if 1
+	int fd = fio.dopen("mass:");
+
+	if (fd > 0) {
+		fio.dclose(fd);
+		return true;
+	}
+	else
+		return false;
+#else
 	if (_usbMassLoaded) {
 		int testFd = fio.dopen("mass:/");
 		if (testFd >= 0)
@@ -473,6 +490,7 @@ bool OSystem_PS2::usbMassPresent(void) {
 			return true;
 	}
 	return false;
+#endif
 }
 
 void OSystem_PS2::initSize(uint width, uint height) {

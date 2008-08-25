@@ -57,8 +57,8 @@ enum IrxLocation {
 enum BootDevice {
 	HOST = 0,
 	CDROM,
-	OTHER,
-	UNKNOWN
+	MASS,
+	OTHER
 };
 
 struct IrxFile {

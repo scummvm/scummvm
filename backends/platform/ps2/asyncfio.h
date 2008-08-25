@@ -31,6 +31,7 @@ public:
 	AsyncFio(void);
 	~AsyncFio(void);
 	int open(const char *name, int ioMode);
+	int open(const char *name, int ioMode, int mode);
 	void close(int handle);
 	void read(int fd, void *dest, unsigned int len);
 	void write(int fd, const void *src, unsigned int len);
@@ -39,6 +40,7 @@ public:
 	int dopen(const char *name);
 	int dread(int fd, iox_dirent_t *dest);
 	void dclose(int fd);
+	int chdir(const char *name);
 	int mount(const char *mountpoint, const char *mountstring, int flag);
 	int umount(const char *mountpoint);
 	int sync(int fd);

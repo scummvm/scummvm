@@ -341,7 +341,7 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 	}
 
 	if (((mode[0] != 'r') && (mode[0] != 'w')) || ((mode[1] != '\0') && (mode[1] != 'b'))) {
-		printf("unsupported mode \"%s\" for file \"%s\"\n", mode, fname);
+		dbg_printf("unsupported mode \"%s\" for file \"%s\"\n", mode, fname);
 		return NULL;
 	}
 	bool rdOnly = (mode[0] == 'r');
@@ -361,7 +361,7 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 	} else {
 		// Regular access to one of the devices
 
-		printf("ps2_fopen = %s\n", fname); // romeo : temp
+		dbg_printf("ps2_fopen = %s\n", fname); // romeo : temp
 
 		if (!rdOnly)
 			return NULL; // we only provide readaccess for cd,dvd,hdd,usb
@@ -369,7 +369,7 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 		if (!checkedPath && g_engine) {
 			// are we playing from cd/dvd?
 			const char *gameDataPath = ConfMan.get("path").c_str();
-			printf("Read TOC dir: %s\n", gameDataPath);
+			dbg_printf("Read TOC dir: %s\n", gameDataPath);
 			if (strncmp(gameDataPath, "cdfs:", 5) != 0)
 				driveStop(); // no, we aren't. stop the drive. it's noisy.
 			// now cache the dir tree
@@ -384,7 +384,7 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 		if (cacheId != 0) {
 			Ps2File *file = findInCache(cacheId);
 			if (file) {
-				printf("  findInCache(%x)\n", cacheId); // romeo : temp
+				dbg_printf("  findInCache(%x)\n", cacheId); // romeo : temp
 				return (FILE*)file;
 			}
 
@@ -393,7 +393,7 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 
 			if (file->open(fname)) {
 				openFileCount++;
-				printf("  new cacheID = %x\n", cacheId); // romeo : temp
+				dbg_printf("  new cacheID = %x\n", cacheId); // romeo : temp
 				return (FILE*)file;
 			} else
 				delete file;
@@ -530,7 +530,7 @@ int ps2_fprintf(FILE *pOut, const char *zFormat, ...) {
 	int res = vsnprintf(resStr, 2048, zFormat, ap);
 	va_end(ap);
 	if ((pOut == stderr) || (pOut == stdout)) {
-		printf("%s", resStr);
+		dbg_printf("%s", resStr);
 		sioprintf("%s", resStr);
 	} else
 		res = ps2_fwrite(resStr, 1, res, pOut);
@@ -558,7 +558,7 @@ int ps2_fputs(const char *s, FILE *stream) {
 }
 
 int ps2_fflush(FILE *stream) {
-	printf("fflush not implemented\n");
+	dbg_printf("fflush not implemented\n");
 	return 0;
 }
 
@@ -582,7 +582,7 @@ void TocManager::readEntries(const char *root) {
 	}
 	char readPath[256];
 	sprintf(readPath, "%s/", _root);
-	printf("readDir: %s    (root: %s )\n", readPath, root);
+	dbg_printf("readDir: %s    (root: %s )\n", readPath, root);
 	readDir(readPath, &_rootNode, 0);
 }
 
@@ -593,7 +593,7 @@ void TocManager::readDir(const char *path, TocNode **node, int level) {
 		TocNode *eNode = NULL; // = *node; // entry node
 		bool first = true;
 
-		printf("path=%s - level=%d fd=%d\n", path, level, fd); // romeo : temp
+		dbg_printf("path=%s - level=%d fd=%d\n", path, level, fd); // romeo : temp
 		if (fd >= 0) {
 			while (fio.dread(fd, &dirent) > 0) {
 				if (dirent.name[0] != '.') { // skip '.' & '..' - romeo : check
@@ -609,11 +609,11 @@ void TocManager::readDir(const char *path, TocNode **node, int level) {
 
 					if (dirent.stat.mode & FIO_S_IFDIR) {
 						(*node)->isDir = true;
-						printf("dirent.name = %s [DIR]\n", dirent.name);
+						dbg_printf("dirent.name = %s [DIR]\n", dirent.name);
 					}
 					else {
 						(*node)->isDir = false;
-						printf("dirent.name = %s\n", dirent.name);
+						dbg_printf("dirent.name = %s\n", dirent.name);
 					}
 
 					node = &((*node)->next);

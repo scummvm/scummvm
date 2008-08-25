@@ -38,26 +38,26 @@ static const char pfsArg[] = "-m" "\0" "2" "\0" "-o" "\0" "32" "\0" "-n" "\0" "7
 
 IrxFile irxFiles[] = {
 	{ "SIO2MAN", BIOS, NOTHING, NULL, 0 },
-	{ "MCMAN",   BIOS, NOTHING, NULL, 0 },
+	{ "MCMAN",   BIOS, NOTHING, NULL, 0 }, 
 	{ "MCSERV",  BIOS, NOTHING, NULL, 0 },
 	{ "PADMAN",  BIOS, NOTHING, NULL, 0 },
 	{ "LIBSD",   BIOS, NOTHING, NULL, 0 },
 
-	{ "IOMANX.IRX",   SYSTEM /*| NOT_HOST*/, NOTHING, NULL, 0 }, // already loaded by ps2link
+	{ "IOMANX.IRX",   SYSTEM, NOTHING, NULL, 0 },
 	{ "FILEXIO.IRX",  SYSTEM, NOTHING, NULL, 0 },
 	{ "CODYVDFS.IRX", SYSTEM, NOTHING, NULL, 0 },
 	{ "SJPCM.IRX",    SYSTEM, NOTHING, NULL, 0 },
 
 	{ "USBD.IRX",     USB | OPTIONAL | DEPENDANCY, USB_DRIVER, NULL, 0 },
+	{ "USB_MASS.IRX", USB | OPTIONAL, MASS_DRIVER, NULL, 0 },
 	{ "PS2MOUSE.IRX", USB | OPTIONAL, MOUSE_DRIVER, NULL, 0 },
 	{ "RPCKBD.IRX",   USB | OPTIONAL, KBD_DRIVER, NULL, 0 },
-	{ "USB_MASS.IRX", USB | OPTIONAL, MASS_DRIVER, NULL, 0 },
 
-	{ "PS2DEV9.IRX",  HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, NULL, 0 },
+	{ "POWEROFF.IRX", HDD | OPTIONAL | NOT_HOST | DEPENDANCY, HDD_DRIVER, NULL, 0 },
+	{ "PS2DEV9.IRX",  HDD | OPTIONAL | NOT_HOST | DEPENDANCY, HDD_DRIVER, NULL, 0 },
 	{ "PS2ATAD.IRX",  HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, NULL, 0 },
 	{ "PS2HDD.IRX",   HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, hddArg, sizeof(hddArg) },
-	{ "PS2FS.IRX",    HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, pfsArg, sizeof(pfsArg) },
-	{ "POWEROFF.IRX", HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, NULL, 0 }
+	{ "PS2FS.IRX",    HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, pfsArg, sizeof(pfsArg) }
 };
 
 static const int numIrxFiles = sizeof(irxFiles) / sizeof(irxFiles[0]);
@@ -66,8 +66,10 @@ BootDevice detectBootPath(const char *elfPath, char *bootPath) {
 
 	BootDevice device;
 
-	if (strncasecmp(elfPath, "cdrom0:", 7) == 0)
+	if (strncasecmp(elfPath, "cdrom", 5) == 0)
 		device = CDROM;
+	else if (strncasecmp(elfPath, "mass", 4) == 0)
+		 device = MASS;
 	else if (strncasecmp(elfPath, "host", 4) == 0)
 		device = HOST;
 	else
@@ -111,7 +113,7 @@ BootDevice detectBootPath(const char *elfPath, char *bootPath) {
 	} else {
 		sioprintf("path not recognized, default to host.\n");
 		strcpy(bootPath, "host:");
-		device = UNKNOWN;
+		device = HOST; // UNKNOWN;
 	}
 	return device;
 }
