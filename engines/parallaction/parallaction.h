@@ -262,6 +262,7 @@ public:
 	void		pauseJobs();
 	void		resumeJobs();
 
+	bool 		checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y);
 	bool 		checkZoneBox(ZonePtr z, uint32 type, uint x, uint y);
 	bool 		checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y);
 	ZonePtr		findZone(const char *name);

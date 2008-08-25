@@ -686,6 +686,36 @@ bool Parallaction::pickupItem(ZonePtr z) {
 }
 
 // FIXME: input coordinates must be offseted to handle scrolling!
+bool Parallaction::checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
+	// not a special zone
+	if ((z->getX() != -2) && (z->getX() != -3)) {
+		return false;
+	}
+
+	// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
+	// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
+	// but we need to check it separately here. The same workaround is applied in freeZones.
+	if ((((z->_type & 0xFFFF) == kZoneMerge) && (((x == z->u.merge->_obj1) && (y == z->u.merge->_obj2)) || ((x == z->u.merge->_obj2) && (y == z->u.merge->_obj1)))) ||
+		(((z->_type & 0xFFFF) == kZoneGet) && ((x == z->u.get->_icon) || (y == z->u.get->_icon)))) {
+
+		// WORKAROUND for bug 2070751: special zones are only used in NS, to allow the
+		// the EXAMINE/USE action to be applied on some particular item in the inventory.
+		// The usage a verb requires at least an item match, so type can't be 0, as it
+		// was in the original code. This bug has been here since the beginning, and was
+		// hidden by label code, which filtered the bogus matches produced here.
+
+		// look for action + item match
+		if (z->_type == type)
+			return true;
+		// look for item match, but don't accept 0 types
+		if (((z->_type & 0xFFFF0000) == type) && (type))
+			return true;
+	}
+
+	return false;
+}
+
+// FIXME: input coordinates must be offseted to handle scrolling!
 bool Parallaction::checkZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 	if (z->_flags & kFlagsRemove)
 		return false;
@@ -701,25 +731,9 @@ bool Parallaction::checkZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 
 	if (!r.contains(x, y)) {
 
-		// out of Zone, so look for special values
-		if ((z->getX() == -2) || (z->getX() == -3)) {
-
-			// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
-			// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
-			// but we need to check it separately here. The same workaround is applied in freeZones.
-			if ((((z->_type & 0xFFFF) == kZoneMerge) && (((x == z->u.merge->_obj1) && (y == z->u.merge->_obj2)) || ((x == z->u.merge->_obj2) && (y == z->u.merge->_obj1)))) ||
-				(((z->_type & 0xFFFF) == kZoneGet) && ((x == z->u.get->_icon) || (y == z->u.get->_icon)))) {
-
-				// special Zone
-				if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
-					return true;
-				if (z->_type == type)
-					return true;
-				if ((z->_type & 0xFFFF0000) == type)
-					return true;
-
-			}
-		}
+		// check for special zones (items defined in common.loc)
+		if (checkSpecialZoneBox(z, type, x, y))
+			return true;
 
 		if (z->getX() != -1)
 			return false;
@@ -731,7 +745,6 @@ bool Parallaction::checkZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 			return false;
 		if ((int)y > (_char._ani->getFrameY() + _char._ani->height()))
 			return false;
-
 	}
 
 	// normal Zone
