@@ -35,6 +35,7 @@ namespace Kyra {
 GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
 	_backUpButtonList = _unknownButtonList = 0;
 	_buttonListChanged = false;
+	_lastScreenUpdate = 0;
 
 	_currentMenu = 0;
 	_isDeathMenu = false;
@@ -767,6 +768,7 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 			x2 -= getCharWidth(buffer[curPos]);
 			drawTextfieldBlock(x2, y2, c3);
 			_screen->updateScreen();
+			_lastScreenUpdate = _vm->_system->getMillis();
 		} else if (_keyPressed.ascii > 31 && _keyPressed.ascii < 127 && curPos < bufferSize) {
 			if (x2 + getCharWidth(_keyPressed.ascii) + 7 < 0x11F) {
 				buffer[curPos] = _keyPressed.ascii;
@@ -776,11 +778,11 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 				drawTextfieldBlock(x2, y2, c3);
 				++curPos;
 				_screen->updateScreen();
+				_lastScreenUpdate = _vm->_system->getMillis();
 			}
 		}
 
 		_keyPressed.reset();
-		_vm->delay(10);
 	}
 
 	return buffer;
@@ -824,6 +826,8 @@ int GUI_v2::getCharWidth(uint8 c) {
 void GUI_v2::checkTextfieldInput() {
 	Common::Event event;
 
+	uint32 now = _vm->_system->getMillis();
+
 	bool running = true;
 	int keys = 0;
 	while (_vm->_eventMan->pollEvent(event) && running) {
@@ -854,6 +858,7 @@ void GUI_v2::checkTextfieldInput() {
 			_vm->_mouseX = pos.x;
 			_vm->_mouseY = pos.y;
 			_screen->updateScreen();
+			_lastScreenUpdate = now;
 			} break;
 
 		default:
@@ -861,7 +866,13 @@ void GUI_v2::checkTextfieldInput() {
 		}
 	}
 
+	if (now - _lastScreenUpdate > 50) {
+		_vm->_system->updateScreen();
+		_lastScreenUpdate = now;
+	}
+
 	processButtonList(_menuButtonList, keys | 0x8000, 0);
+	_vm->_system->delayMillis(3);
 }
 
 void GUI_v2::drawTextfieldBlock(int x, int y, uint8 c) {
