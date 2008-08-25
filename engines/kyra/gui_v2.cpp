@@ -780,6 +780,7 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 		}
 
 		_keyPressed.reset();
+		_vm->delay(10);
 	}
 
 	return buffer;
