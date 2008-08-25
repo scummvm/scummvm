@@ -724,7 +724,7 @@ void DrasculaEngine::animation_4_2() {
 	flags[9] = 1;
 
 	pause(12);
-	talk(56);
+	talk(60);
 	pause(8);
 
 	clearRoom();
