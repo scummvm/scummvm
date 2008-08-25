@@ -790,7 +790,7 @@ void OSystem_WINCE3::setupMixer() {
 
 	// Add sound thread priority
 	if (!ConfMan.hasKey("sound_thread_priority"))
-		thread_priority = THREAD_PRIORITY_NORMAL;
+		thread_priority = THREAD_PRIORITY_ABOVE_NORMAL;
 	else
 		thread_priority = ConfMan.getInt("sound_thread_priority");
 

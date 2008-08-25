@@ -106,7 +106,7 @@ INCLUDES := -I$(srcdir) -I. -I$(srcdir)/engines -Imissing/gcc -Ilibs/include -Il
 
 CFLAGS :=
 ifndef UNOPTIMIZED_BUILD
-CFLAGS += -O3 -march=armv4 -mtune=xscale
+CFLAGS += -O2 -march=armv4 -mtune=xscale
 endif
 
 LDFLAGS := -Wl,-Map,scummvm.exe.map -Wl,--stack,65536
