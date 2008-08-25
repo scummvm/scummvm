@@ -621,10 +621,10 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 					// look for action + item match
 					if (z->_type == type)
-						return true;
+						return z;
 					// look for item match, but don't accept 0 types
 					if (((z->_type & 0xFFFF0000) == type) && (type))
-						return true;
+						return z;
 				}
 			}
 
