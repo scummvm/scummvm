@@ -330,6 +330,7 @@ public:
 	void addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 width, TalkTextItem *item);
 	void drawTalkTextItems();
 	int16 getTalkTextDuration();
+	void finishTextDrawItems();
 
 	// Font/text
 	void registerFont(uint fontIndex, uint resIndex);

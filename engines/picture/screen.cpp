@@ -819,6 +819,12 @@ int16 Screen::getTalkTextDuration() {
 	return _talkTextItems[_talkTextItemNum].duration;
 }
 
+void Screen::finishTextDrawItems() {
+	for (int16 i = 0; i <= _talkTextItemNum; i++) {
+		_talkTextItems[i].duration = 0;
+	}
+}
+
 void Screen::registerFont(uint fontIndex, uint resIndex) {
 	_fontResIndexArray[fontIndex] = resIndex;
 }
