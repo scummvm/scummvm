@@ -145,6 +145,7 @@ void Parallaction_ns::guiStart() {
 
 	switch (event) {
 	case START_DEMO:
+		_input->showCursor(true);
 		strcpy(_location._name, "fognedemo.dough");
 		break;
 
