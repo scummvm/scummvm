@@ -1,13 +1,19 @@
 diff -Naur scummvm-0.12.orig/debian/changelog scummvm-0.12/debian/changelog
 --- scummvm-0.12.orig/debian/changelog	1970-01-01 01:00:00.000000000 +0100
-+++ scummvm-0.12/debian/changelog	2008-08-18 22:17:41.000000000 +0200
-@@ -0,0 +1,97 @@
++++ scummvm-0.12/debian/changelog	2008-08-25 21:49:41.000000000 +0200
+@@ -0,0 +1,103 @@
 +scummvm (0.12.0) unstable; urgency=low
 +
 +  * upstream 0.12.0 release
++  * update description
++  
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Mon, 25 Aug 2008 21:47:41 +0200
++scummvm (0.11.99) unstable; urgency=low
++
++  * upstream 0.12.0 testing pre-release
 +  * big icons added for OS2008 menu
 +  
-+ -- Frantisek Dufka <dufkaf@seznam.cz>  Sun, 17 Aug 2008 21:17:40 +0200
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Fri, 22 Aug 2008 08:20:48 +0200
 +scummvm (0.11.1) unstable; urgency=low
 +
 +  * upstream 0.11.1 release
@@ -106,8 +112,8 @@ diff -Naur scummvm-0.12.orig/debian/compat scummvm-0.12/debian/compat
 +4
 diff -Naur scummvm-0.12.orig/debian/control scummvm-0.12/debian/control
 --- scummvm-0.12.orig/debian/control	1970-01-01 01:00:00.000000000 +0100
-+++ scummvm-0.12/debian/control	2008-08-15 14:48:40.000000000 +0200
-@@ -0,0 +1,47 @@
++++ scummvm-0.12/debian/control	2008-08-25 21:26:52.000000000 +0200
+@@ -0,0 +1,52 @@
 +Source: scummvm
 +Section: user/games
 +Priority: optional
@@ -120,8 +126,13 @@ diff -Naur scummvm-0.12.orig/debian/control scummvm-0.12/debian/control
 +Depends: ${shlibs:Depends}
 +Architecture: any
 +Section: user/games
-+Description: free implementation of LucasArts' S.C.U.M.M interpreter
-+ ScummVM is a virtual machine for classic graphical adventure games.
++Description: interpreter that will play graphic adventure games
++ written for LucasArts' SCUMM virtual machine, Sierra's AGI adventures,
++ Adventure Soft's Simon the Sorcerer 1, 2 and Feeble Files,
++ Revolution Software's Beneath a Steel Sky and Broken Sword 1 and 2,
++ Interactive Binary Illusions' Flight of the Amazon Queen,
++ Coktel Vision's Gobliiins, Wyrmkeep's Inherit the Earth,
++ Westwood's Legend of Kyrandia, and various others.
 + This package does not contain any actual games.
 +XBS-Maemo-Icon-26:
 +  iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAC/VBMVEUICwcH
@@ -179,17 +190,25 @@ diff -Naur scummvm-0.12.orig/debian/copyright scummvm-0.12/debian/copyright
 + Public License can be found in `/usr/share/common-licenses/GPL'.
 +
 +This copyright also applies to the Debian-related build scripts.
-diff -Naur scummvm-0.12.orig/debian/files scummvm-0.12/debian/files
---- scummvm-0.12.orig/debian/files	1970-01-01 01:00:00.000000000 +0100
-+++ scummvm-0.12/debian/files	2008-08-18 22:02:10.000000000 +0200
-@@ -0,0 +1 @@
-+scummvm_0.12.0_armel.deb user/games optional
 diff -Naur scummvm-0.12.orig/debian/postinst scummvm-0.12/debian/postinst
 --- scummvm-0.12.orig/debian/postinst	1970-01-01 01:00:00.000000000 +0100
-+++ scummvm-0.12/debian/postinst	2008-08-18 21:59:03.000000000 +0200
-@@ -0,0 +1,6 @@
++++ scummvm-0.12/debian/postinst	2008-08-25 21:37:13.000000000 +0200
+@@ -0,0 +1,19 @@
 +#! /bin/sh
 +if [ "$1" = "configure"  ] ; then
++OSVER=$OSSO_VERSION
++[ -z "$OSVER" -a -f /etc/osso_software_version ] && OSVER=`cat /etc/osso_software_version`
++OSVER=`echo $OSVER | cut -d _ -f 2`
++case $OSVER in
++	2006*|2007*)
++		#nothing to do
++		true
++		;;
++	*)
++		#ugly trick, until this icon is removed big icon in menu does not show
++		[ -f /usr/share/icons/scummvm.xpm ] && rm /usr/share/icons/scummvm.xpm
++		;;
++esac
 +	[ -x /usr/bin/gtk-update-icon-cache ] && /usr/bin/gtk-update-icon-cache /usr/share/icons/hicolor
 +	[ -x /usr/bin/maemo-select-menu-location -a -z "$2" ] && /usr/bin/maemo-select-menu-location scummvm.desktop  tana_fi_games
 +fi
@@ -263,8 +282,8 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
 +usr/share/icons/hicolor/48x48/hildon
 +usr/share/icons/hicolor/64x64/hildon
 +usr/share/applications/hildon
---- scummvm-0.12.orig/configure	2008-08-18 21:53:45.000000000 +0200
-+++ scummvm-0.12/configure	2008-08-17 23:02:43.000000000 +0200
+--- scummvm-0.12.orig/configure	2008-08-25 21:04:55.000000000 +0200
++++ scummvm-0.12/configure	2008-08-20 23:36:53.000000000 +0200
 @@ -1096,7 +1096,7 @@
  			;;
  		arm-linux|arm*-linux-gnueabi|arm-*-linux|*-angstrom-linux)
@@ -284,7 +303,7 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
  			;;
  		bfin*)
  			_need_memalign=yes
---- scummvm-0.12.orig/dists/maemo/scummvm.desktop	2008-01-19 22:09:45.000000000 +0100
+--- scummvm-0.12.orig/dists/maemo/scummvm.desktop	2008-08-25 21:04:55.000000000 +0200
 +++ scummvm-0.12/dists/maemo/scummvm.desktop	2008-08-18 22:08:33.000000000 +0200
 @@ -5,7 +5,7 @@
  Name=ScummVM
@@ -295,7 +314,7 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
  X-Window-Icon=scummvm
  X-HildonDesk-ShowInToolbar=true
  X-Osso-Type=application/x-executable
---- scummvm-0.12.orig/engines/sword1/sword1.cpp	2008-08-18 21:42:07.000000000 +0200
+--- scummvm-0.12.orig/engines/sword1/sword1.cpp	2008-08-25 21:04:55.000000000 +0200
 +++ scummvm-0.12/engines/sword1/sword1.cpp	2008-08-15 14:48:40.000000000 +0200
 @@ -775,8 +775,21 @@
  		while (_eventMan->pollEvent(event)) {
@@ -319,7 +338,7 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
  			case Common::EVENT_MOUSEMOVE:
  				_mouseCoord = event.mouse;
  				break;
---- scummvm-0.12.orig/engines/sword2/sword2.cpp	2008-08-18 21:42:08.000000000 +0200
+--- scummvm-0.12.orig/engines/sword2/sword2.cpp	2008-08-25 21:04:55.000000000 +0200
 +++ scummvm-0.12/engines/sword2/sword2.cpp	2008-08-15 14:48:40.000000000 +0200
 @@ -569,11 +569,27 @@
  						_gameSpeed = 1;
@@ -349,7 +368,7 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
  		case Common::EVENT_LBUTTONDOWN:
  			if (!(_inputEventFilter & RD_LEFTBUTTONDOWN)) {
  				_mouseEvent.pending = true;
---- scummvm-0.12.orig/engines/scumm/input.cpp	2008-08-18 21:42:58.000000000 +0200
+--- scummvm-0.12.orig/engines/scumm/input.cpp	2008-08-25 21:04:55.000000000 +0200
 +++ scummvm-0.12/engines/scumm/input.cpp	2008-08-15 14:48:40.000000000 +0200
 @@ -89,6 +89,19 @@
  				_keyPressed = event.kbd;
@@ -404,7 +423,7 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
  	} else if (pauseKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_SPACE && lastKeyHit.flags == 0)) {
  		pauseGame();
  
---- scummvm-0.12.orig/engines/scumm/dialogs.cpp	2008-08-18 21:42:58.000000000 +0200
+--- scummvm-0.12.orig/engines/scumm/dialogs.cpp	2008-08-25 21:04:55.000000000 +0200
 +++ scummvm-0.12/engines/scumm/dialogs.cpp	2008-08-15 14:48:40.000000000 +0200
 @@ -823,7 +823,11 @@
  }
@@ -439,8 +458,17 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
  		setResult(_value);
  		_timer = getMillis() + kDisplayDelay;
  		draw();
---- scummvm-0.12.orig/engines/touche/touche.cpp	2008-08-18 21:43:00.000000000 +0200
-+++ scummvm-0.12/engines/touche/touche.cpp	2008-08-15 14:48:40.000000000 +0200
+--- scummvm-0.12.orig/engines/touche/touche.cpp	2008-08-25 21:04:55.000000000 +0200
++++ scummvm-0.12/engines/touche/touche.cpp	2008-08-25 21:02:05.000000000 +0200
+@@ -18,7 +18,7 @@
+  * along with this program; if not, write to the Free Software
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+  *
+- * $URL: http://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/branches/branch-0-12-0/engines/touche/touche.cpp $
++ * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/branches/branch-0-12-0/engines/touche/touche.cpp $
+  * $Id: touche.cpp 34167 2008-08-25 18:15:04Z sev $
+  *
+  */
 @@ -291,6 +291,13 @@
  			_flagsTable[611] = 1;
  			break;
@@ -504,7 +532,7 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
  		default:
  			break;
  		}
---- scummvm-0.12.orig/engines/sky/sky.cpp	2008-08-18 21:45:11.000000000 +0200
+--- scummvm-0.12.orig/engines/sky/sky.cpp	2008-08-25 21:04:55.000000000 +0200
 +++ scummvm-0.12/engines/sky/sky.cpp	2008-08-15 14:48:40.000000000 +0200
 @@ -600,6 +600,17 @@
  			switch (event.type) {
@@ -524,7 +552,7 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
  				break;
  			case Common::EVENT_MOUSEMOVE:
  				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
---- scummvm-0.12.orig/engines/kyra/module.mk	2008-08-18 21:45:10.000000000 +0200
+--- scummvm-0.12.orig/engines/kyra/module.mk	2008-08-25 21:04:55.000000000 +0200
 +++ scummvm-0.12/engines/kyra/module.mk	2008-08-18 21:51:19.000000000 +0200
 @@ -73,3 +73,9 @@
  
@@ -536,7 +564,7 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
 +	$(MKDIR) $(*D)/$(DEPDIR)
 +	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) -O3 $(CPPFLAGS) -c $(<) -o $*.o
 +
---- scummvm-0.12.orig/engines/gob/util.cpp	2008-08-18 21:46:10.000000000 +0200
+--- scummvm-0.12.orig/engines/gob/util.cpp	2008-08-25 21:04:55.000000000 +0200
 +++ scummvm-0.12/engines/gob/util.cpp	2008-08-15 14:48:40.000000000 +0200
 @@ -107,6 +107,12 @@
  			_mouseButtons &= ~2;
@@ -562,7 +590,7 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
  			break;
  		case Common::EVENT_QUIT:
  			_vm->_quitRequested = true;
---- scummvm-0.12.orig/engines/lure/menu.cpp	2008-08-18 21:45:27.000000000 +0200
+--- scummvm-0.12.orig/engines/lure/menu.cpp	2008-08-25 21:04:55.000000000 +0200
 +++ scummvm-0.12/engines/lure/menu.cpp	2008-08-15 14:48:40.000000000 +0200
 @@ -34,7 +34,7 @@
  #include "lure/events.h"
@@ -573,7 +601,7 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
  #define LURE_CLICKABLE_MENUS
  #endif
  
---- scummvm-0.12.orig/engines/queen/input.cpp	2008-08-18 21:47:26.000000000 +0200
+--- scummvm-0.12.orig/engines/queen/input.cpp	2008-08-25 21:04:55.000000000 +0200
 +++ scummvm-0.12/engines/queen/input.cpp	2008-08-15 14:48:40.000000000 +0200
 @@ -175,7 +175,11 @@
  		}
@@ -587,7 +615,7 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
  		if (_cutawayRunning) {
  			if (_canQuit) {
  				_keyVerb = VERB_USE_JOURNAL;
---- scummvm-0.12.orig/engines/cine/main_loop.cpp	2008-08-18 21:47:48.000000000 +0200
+--- scummvm-0.12.orig/engines/cine/main_loop.cpp	2008-08-25 21:04:55.000000000 +0200
 +++ scummvm-0.12/engines/cine/main_loop.cpp	2008-08-15 14:48:40.000000000 +0200
 @@ -78,18 +78,27 @@
  				mouseRight = 1;
@@ -671,7 +699,7 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
  			if (!disableSystemMenu && !inMenu) {
  				g_cine->makeSystemMenu();
  			}
---- scummvm-0.12.orig/backends/platform/sdl/sdl.cpp	2008-08-18 21:50:07.000000000 +0200
+--- scummvm-0.12.orig/backends/platform/sdl/sdl.cpp	2008-08-25 21:04:55.000000000 +0200
 +++ scummvm-0.12/backends/platform/sdl/sdl.cpp	2008-08-15 14:52:50.000000000 +0200
 @@ -148,7 +148,14 @@
  		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
@@ -689,7 +717,7 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
  	OSystem::initBackend();
  
  	_inited = true;
---- scummvm-0.12.orig/backends/platform/sdl/events.cpp	2008-08-18 21:50:07.000000000 +0200
+--- scummvm-0.12.orig/backends/platform/sdl/events.cpp	2008-08-25 21:04:55.000000000 +0200
 +++ scummvm-0.12/backends/platform/sdl/events.cpp	2008-08-15 14:48:40.000000000 +0200
 @@ -26,7 +26,9 @@
  #include "backends/platform/sdl/sdl.h"
@@ -874,7 +902,7 @@ diff -Naur scummvm-0.12.orig/debian/scummvm.dirs scummvm-0.12/debian/scummvm.dir
  #ifdef LINUPY
  	// On Yopy map the End button to quit
  	if ((ev.key.keysym.sym == 293)) {
---- scummvm-0.12.orig/backends/platform/sdl/sdl.h	2008-08-18 21:50:07.000000000 +0200
+--- scummvm-0.12.orig/backends/platform/sdl/sdl.h	2008-08-25 21:04:55.000000000 +0200
 +++ scummvm-0.12/backends/platform/sdl/sdl.h	2008-08-15 14:48:40.000000000 +0200
 @@ -397,6 +397,9 @@
  	void deinitThreadedMixer();
