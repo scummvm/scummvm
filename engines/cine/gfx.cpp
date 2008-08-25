@@ -206,6 +206,8 @@ void FWRenderer::incrustSprite(const objectStruct &obj) {
 	// if this is really a correct way to fix this.
 	if (mask) {
 		drawSpriteRaw(data, mask, width, height, _background, x, y);
+	} else { // mask == NULL
+		warning("FWRenderer::incrustSprite: Skipping maskless sprite (frame=%d)", obj.frame);
 	}
 }
 
