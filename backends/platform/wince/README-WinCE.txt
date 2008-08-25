@@ -303,10 +303,13 @@ Game specific sections (f.e. [monkey2]) - performance options
 
 Game specific sections (f.e. [monkey2]) - game options
 
- *  landscape              int      0: Portrait, 1: Landscape, 2: Inverse Landscape
+ *  landscape                int    0: Portrait, 1: Landscape, 2: Inverse Landscape
                                     You can also use this in the [scummvm] section
                                     in QVGA Pocket PCs to display the launcher in
                                     landscape, for example, at startup.
+ *  no_doubletap_rightclick  int    1: Turn off the default behaviour of simulating
+                                    a right-click when the screen is double-tapped. 
+
 
 [scummvm] section - keys definition
 
