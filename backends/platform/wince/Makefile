@@ -139,7 +139,7 @@ LIBS += -ltremorce
 endif
 
 ifdef USE_TREMOLO
-DEFINES += -DUSE_TREMOR -DUSE_VORBIS
+DEFINES += -DUSE_TREMOR -DUSE_VORBIS -DUSE_TREMOLO
 INCLUDES += -Ilibs/include/tremolo
 LIBS += -llibTremolo
 endif
