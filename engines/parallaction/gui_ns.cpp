@@ -352,6 +352,7 @@ public:
 
 	virtual MenuInputState* run() {
 		_vm->scheduleLocationSwitch("fognedemo.dough");
+		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 		return 0;
 	}
 
