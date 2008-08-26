@@ -1,0 +1,30 @@
+NOTES
+-------
+
+- The game is completable with revision 20 with some minor glitches (see BUGS).
+
+
+TODO
+------
+
+- Rewrite the resource system to something similar as used by M4
+  - each resource type gets its own class, the resource cache manages the resource instances
+  - generic resource class which has a method that creates a MemoryReadStream
+  - rewrite parts of the engine to use the new resource system
+- Add movie playback functionality (movie format is known, needs implementing)
+- Add sound support (after rewrite of the resource system)
+- Add music support (game seems to use XMIDI, MIDI and headerless music...figure out more)
+- Add game menu
+  - Rewrite from scratch with only minor stuff from the disasm since the original menu is one huge
+	messy function
+- Extend savegame format (savegame version, description, more data)
+- When saving a game, save the whole screen when an animation is playing
+- Implement dirty rectangles (low priority)
+- Optimize segment mask redrawing (only redraw what's neccessary)
+
+BUGS
+------
+
+- Still some clipping issues (walking upstairs in the saloon, when on top of the tower in the hideout)
+- Crashes sometimes on scene changes
+  (I guess because some talktext is still running although the slot used by it has changed)
