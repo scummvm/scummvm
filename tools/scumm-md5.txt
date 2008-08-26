@@ -670,6 +670,7 @@ puttrace	Putt-Putt Enters the Race
 puttmoon	Putt-Putt Goes to the Moon
 	a9543ef0d79bcb47cd76ec197ad0a967	-1	en	3DO	-	-	-	sev
 	780e4a0ae2ff17dc296f4a79543b44f8	-1	All	DOS	-	-	-	khalek
+	b9bb68c5d2c9b6e2d9c513a29a754a57	7828	en	DOS	-	-	-	George Kormendi
 	697c9b7c55a05d8199c48b48e379d2c8	-1	hb	DOS	-	-	-	sev
 	9dc02577bf50d4cfaf3de3fbac06fbe2	-1	en	Mac	-	-	-	khalek
 	9c92eeaf517a31b7221ec2546ab669fd	-1	en	Windows	HE 70	-	-	khalek
@@ -751,6 +752,7 @@ balloon	Putt-Putt and Pep's Balloon-O-Rama
 
 dog	Putt-Putt and Pep's Dog on a Stick
 	eae95b2b3546d8ba86ae1d397c383253	-1	en	All	-	-	-	Kirben
+	839a658f7d22de00787ebc945348cdb6	19681	de	Windows	-	-	-	George Kormendi
 	d4b8ee426b1afd3e53bc0cf020418cf6	-1	en	Windows	HE 99	-	-	sev
 
 activity	Putt-Putt & Fatty Bear's Activity Pack
@@ -799,6 +801,8 @@ spyfox2	SPY Fox 2: Some Assembly Required
 	7222f260253f325c21fcfa68b5bfab67	-1	us	All	-	Demo	-	Kirben
 	732845548b1d6c2da572cb6a1bf81b07	-1	de	All	-	Demo	-	Joachim Eberhard
 	e62056ba675ad65d8854ab3c5ad4b3c0	-1	en	Windows	-	Mini Game	-	Trekky
+	22de86b2f7ec6e5db745ed1123310b44	15832	fr	Windows	-	Demo	-	George Kormendi
+	204453e33456c4faa26e276229fe5b76	14689	de	Windows	-	Demo	-	George Kormendi
 	19bf6938a94698296bcb0c99c31c91a7	-1	gb	Windows	-	Demo	-	eriktorbjorn
 	49a1739981a89066b1121fac04b710f4	5756234	All	All	HE CUP	Preview	-	sev
 
