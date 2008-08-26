@@ -135,6 +135,11 @@ enum IgorTalkerTypes {
 	kIgorWig = 4
 };
 
+enum VonBraunTalkerTypes {
+	kVonBraunNormal = 0,
+	kVonBraunDoor = 1
+};
+
 enum AnimFrameTypes {
 	kFrameBlind = 0,
 	kFrameSnore = 1,
@@ -426,8 +431,7 @@ public:
 	void talk_werewolf(int);
 	void talk_mus(int);
 	void talk_dr_grande(int);
-	void talk_vonBraun(int);
-	void talk_vonBraunpuerta(int);
+	void talk_vonBraun(int, int);
 	void talk_blind(int);
 	void talk_hacker(int);
 	void talk_generic(const char* said, const char* filename, int* faces, int faceCount, int* coords, byte* surface);

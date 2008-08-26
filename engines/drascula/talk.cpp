@@ -498,7 +498,10 @@ void DrasculaEngine::talk_drunk(int index) {
 	}
 }
 
-void DrasculaEngine::talk_vonBraun(int index) {
+// talker types:
+// 0: kVonBraunNormal
+// 1: KVonBraunDoor
+void DrasculaEngine::talk_vonBraun(int index, int talkerType) {
 	char filename[20];
 	sprintf(filename, "VB%i.als", index);
 	const char *said = _textvb[_lang][index];
@@ -513,49 +516,32 @@ void DrasculaEngine::talk_vonBraun(int index) {
 	copyBackground(vonBraunX + 5, 64, OBJWIDTH + 1, 0, 25, 27, bgSurface, drawSurface3);
 
 	do {
-		if (trackVonBraun == 1) {
-			face = _rnd->getRandomNumber(5);
-			copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		if (talkerType == kVonBraunNormal) {
+			if (trackVonBraun == 1) {
+				face = _rnd->getRandomNumber(5);
+				copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 
-			moveCharacters();
-			moveVonBraun();
+				moveCharacters();
+				moveVonBraun();
 
-			copyBackground(OBJWIDTH + 1, 0, vonBraunX + 5, 64, 25, 27, drawSurface3, screenSurface);
-			copyRect(x_talk[face], 34, vonBraunX + 5, 64, 25, 27, frontSurface, screenSurface);
-			updateRefresh();
+				copyBackground(OBJWIDTH + 1, 0, vonBraunX + 5, 64, 25, 27, drawSurface3, screenSurface);
+				copyRect(x_talk[face], 34, vonBraunX + 5, 64, 25, 27, frontSurface, screenSurface);
+				updateRefresh();
+			}
+
+			if (withVoices == 0)
+				centerText(said, vonBraunX, 66);
+
+			updateScreen();
+			pause(3);
+		} else {
+			updateRoom();
+
+			if (withVoices == 0)
+				centerText(said, 150, 80);
+
+			updateScreen();
 		}
-
-		if (withVoices == 0)
-			centerText(said, vonBraunX, 66);
-
-		updateScreen();
-
-		pause(3);
-	} while (!isTalkFinished(&length));
-
-	updateRoom();
-	updateScreen();
-	if (musicStatus() == 0 && flags[11] == 0 && roomMusic != 0)
-		playMusic(roomMusic);
-}
-
-void DrasculaEngine::talk_vonBraunpuerta(int index) {
-	char filename[20];
-	sprintf(filename, "VB%i.als", index);
-	const char *said = _textvb[_lang][index];
-	int length = strlen(said);
-
-	color_abc(kColorBrown);
-
-	talkInit(filename);
-
-	do {
-		updateRoom();
-
-		if (withVoices == 0)
-			centerText(said, 150, 80);
-
-		updateScreen();
 	} while (!isTalkFinished(&length));
 
 	updateRoom();

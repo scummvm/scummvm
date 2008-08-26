@@ -1009,24 +1009,24 @@ void DrasculaEngine::animation_17_2() {
 }
 
 void DrasculaEngine::animation_19_2() {
-	talk_vonBraunpuerta(5);
+	talk_vonBraun(5, kVonBraunDoor);
 }
 
 void DrasculaEngine::animation_20_2() {
-	talk_vonBraunpuerta(7);
-	talk_vonBraunpuerta(8);
+	talk_vonBraun(7, kVonBraunDoor);
+	talk_vonBraun(8, kVonBraunDoor);
 	talk(383);
-	talk_vonBraunpuerta(9);
+	talk_vonBraun(9, kVonBraunDoor);
 	talk(384);
-	talk_vonBraunpuerta(10);
+	talk_vonBraun(10, kVonBraunDoor);
 	talk(385);
-	talk_vonBraunpuerta(11);
+	talk_vonBraun(11, kVonBraunDoor);
 	if (flags[23] == 0) {
 		talk(350);
-		talk_vonBraunpuerta(57);
+	talk_vonBraun(57, kVonBraunDoor);
 	} else {
 		talk(386);
-		talk_vonBraunpuerta(12);
+		talk_vonBraun(12, kVonBraunDoor);
 		flags[18] = 0;
 		flags[14] = 1;
 		openDoor(15, 1);
@@ -1043,7 +1043,7 @@ void DrasculaEngine::animation_20_2() {
 }
 
 void DrasculaEngine::animation_21_2() {
-	talk_vonBraunpuerta(6);
+	talk_vonBraun(6, kVonBraunDoor);
 }
 
 void DrasculaEngine::animation_23_2() {
@@ -1052,26 +1052,26 @@ void DrasculaEngine::animation_23_2() {
 	flags[21] = 1;
 
 	if (flags[25] == 0) {
-		talk_vonBraun(13);
-		talk_vonBraun(14);
+		talk_vonBraun(13, kVonBraunDoor);
+		talk_vonBraun(14, kVonBraunDoor);
 		pause(10);
 		talk(387);
 	}
 
-	talk_vonBraun(15);
+	talk_vonBraun(15, kVonBraunNormal);
 	placeVonBraun(42);
 	trackVonBraun = 1;
-	talk_vonBraun(16);
+	talk_vonBraun(16, kVonBraunNormal);
 	trackVonBraun = 2;
 	gotoObject(157, 147);
 	gotoObject(131, 149);
 	trackProtagonist = 0;
 	animation_14_2();
 	if (flags[25] == 0)
-		talk_vonBraun(17);
+		talk_vonBraun(17, kVonBraunNormal);
 	pause(8);
 	trackVonBraun = 1;
-	talk_vonBraun(18);
+	talk_vonBraun(18, kVonBraunNormal);
 
 	if (flags[29] == 0)
 		animation_23_joined();
@@ -1083,9 +1083,9 @@ void DrasculaEngine::animation_23_2() {
 	placeVonBraun(99);
 
 	if (flags[29] == 0) {
-		talk_vonBraun(19);
+		talk_vonBraun(19, kVonBraunNormal);
 		if (flags[25] == 0) {
-			talk_vonBraun(20);
+			talk_vonBraun(20, kVonBraunNormal);
 			if (removeObject(kItemMoney) == 0)
 				flags[30] = 1;
 			if (removeObject(kItemTwoCoins) == 0)
@@ -1093,7 +1093,7 @@ void DrasculaEngine::animation_23_2() {
 			if (removeObject(kItemOneCoin) == 0)
 				flags[32] = 1;
 		}
-		talk_vonBraun(21);
+		talk_vonBraun(21, kVonBraunNormal);
 	} else
 		animation_27_2();
 
@@ -1178,46 +1178,46 @@ void DrasculaEngine::animation_27_2() {
 	removeObject(kItemEarWithEarPlug);
 	addObject(kItemEarplugs);
 
-	talk_vonBraun(23);
-	talk_vonBraun(24);
+	talk_vonBraun(23, kVonBraunNormal);
+	talk_vonBraun(24, kVonBraunNormal);
 	if (flags[30] == 1)
 		addObject(kItemMoney);
 	if (flags[31] == 1)
 		addObject(kItemTwoCoins);
 	if (flags[32] == 1)
 		addObject(kItemOneCoin);
-	talk_vonBraun(25);
-	talk_vonBraun(26);
+	talk_vonBraun(25, kVonBraunNormal);
+	talk_vonBraun(26, kVonBraunNormal);
 }
 
 void DrasculaEngine::animation_28_2() {
 	for(int i = 27; i <= 30; i++)
-		talk_vonBraun(i);
+		talk_vonBraun(i, kVonBraunNormal);
 }
 
 void DrasculaEngine::animation_29_2() {
 	if (flags[33] == 0) {
-		talk_vonBraun(32);
+		talk_vonBraun(32, kVonBraunNormal);
 		talk(398);
-		talk_vonBraun(33);
+		talk_vonBraun(33, kVonBraunNormal);
 		talk(399);
-		talk_vonBraun(34);
-		talk_vonBraun(35);
+		talk_vonBraun(34, kVonBraunNormal);
+		talk_vonBraun(35, kVonBraunNormal);
 		talk(400);
-		talk_vonBraun(36);
-		talk_vonBraun(37);
+		talk_vonBraun(36, kVonBraunNormal);
+		talk_vonBraun(37, kVonBraunNormal);
 		talk(386);
-		talk_vonBraun(38);
-		talk_vonBraun(39);
+		talk_vonBraun(38, kVonBraunNormal);
+		talk_vonBraun(39, kVonBraunNormal);
 		talk(401);
-		talk_vonBraun(40);
-		talk_vonBraun(41);
+		talk_vonBraun(40, kVonBraunNormal);
+		talk_vonBraun(41, kVonBraunNormal);
 		flags[33] = 1;
 	} else
-		talk_vonBraun(43);
+		talk_vonBraun(43, kVonBraunNormal);
 
 	talk(402);
-	talk_vonBraun(42);
+	talk_vonBraun(42, kVonBraunNormal);
 
 	if (flags[38] == 0) {
 		talk(403);
@@ -1227,12 +1227,12 @@ void DrasculaEngine::animation_29_2() {
 }
 
 void DrasculaEngine::animation_30_2() {
-	talk_vonBraun(31);
+	talk_vonBraun(31, kVonBraunNormal);
 	talk(396);
 }
 
 void DrasculaEngine::animation_31_2() {
-	talk_vonBraun(44);
+	talk_vonBraun(44, kVonBraunNormal);
 	placeVonBraun(-50);
 	pause(15);
 	gotoObject(159, 140);
@@ -1247,23 +1247,23 @@ void DrasculaEngine::animation_31_2() {
 	pause(22);
 	talk(406);
 	placeVonBraun(98);
-	talk_vonBraun(45);
-	talk_vonBraun(46);
-	talk_vonBraun(47);
+	talk_vonBraun(45, kVonBraunNormal);
+	talk_vonBraun(46, kVonBraunNormal);
+	talk_vonBraun(47, kVonBraunNormal);
 	talk(407);
-	talk_vonBraun(48);
-	talk_vonBraun(49);
+	talk_vonBraun(48, kVonBraunNormal);
+	talk_vonBraun(49, kVonBraunNormal);
 	talk(408);
-	talk_vonBraun(50);
-	talk_vonBraun(51);
+	talk_vonBraun(50, kVonBraunNormal);
+	talk_vonBraun(51, kVonBraunNormal);
 	talk(409);
-	talk_vonBraun(52);
-	talk_vonBraun(53);
+	talk_vonBraun(52, kVonBraunNormal);
+	talk_vonBraun(53, kVonBraunNormal);
 	pause(12);
-	talk_vonBraun(54);
-	talk_vonBraun(55);
+	talk_vonBraun(54, kVonBraunNormal);
+	talk_vonBraun(55, kVonBraunNormal);
 	talk(410);
-	talk_vonBraun(56);
+	talk_vonBraun(56, kVonBraunNormal);
 
 	breakOut = 1;
 
@@ -2258,7 +2258,7 @@ void DrasculaEngine::animation_13_2() {
 
 void DrasculaEngine::animation_18_2() {
 	talk(378);
-	talk_vonBraunpuerta(4);
+	talk_vonBraun(4, kVonBraunDoor);
 	converse(3);
 }
 
@@ -2272,11 +2272,11 @@ void DrasculaEngine::animation_22_2() {
 	finishSound();
 	trackProtagonist = 1;
 
-	talk_vonBraunpuerta(1);
+	talk_vonBraun(1, kVonBraunDoor);
 	talk(375);
-	talk_vonBraunpuerta(2);
+	talk_vonBraun(2, kVonBraunDoor);
 	talk(376);
-	talk_vonBraunpuerta(3);
+	talk_vonBraun(3, kVonBraunDoor);
 
 	flags[18] = 1;
 }
@@ -2297,7 +2297,7 @@ void DrasculaEngine::animation_24_2() {
 
 	flags[21] = 1;
 
-	talk_vonBraun(22);
+	talk_vonBraun(22, kVonBraunNormal);
 
 	if (flags[22] == 0)
 		converse(4);
