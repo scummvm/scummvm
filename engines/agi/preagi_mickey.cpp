@@ -932,10 +932,17 @@ bool Mickey::loadGame() {
 			if (_vm->getSelection(kSelAnyKey) == 0)
 				return false;
 		} else {
-			if (infile->readUint32BE() != MKID_BE('MICK'))
-				error("Mickey::loadGame wrong save game format");
+			if (infile->readUint32BE() != MKID_BE('MICK')) {
+				warning("Mickey::loadGame wrong save game format");
+				return false;
+			}
 
 			saveVersion = infile->readByte();
+			if (saveVersion < 2) {
+				warning("The planet data in this save game is corrupted. Load aborted");
+				return false;
+			}
+
 			if (saveVersion != MSA_SAVEGAME_VERSION)
 				warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, MSA_SAVEGAME_VERSION);
 
@@ -953,7 +960,7 @@ bool Mickey::loadGame() {
 				_game.iPlanetXtal[i] = infile->readByte();
 
 			for(i = 0; i < IDI_MSA_MAX_PLANET; i++)
-				_game.iClue[i] = infile->readByte();
+				_game.iClue[i] = infile->readUint16LE();
 
 			infile->read(_game.szAddr, IDI_MSA_MAX_BUTTON + 1);
 
@@ -1058,7 +1065,7 @@ void Mickey::saveGame() {
 				outfile->writeByte(_game.iPlanetXtal[i]);
 
 			for(i = 0; i < IDI_MSA_MAX_PLANET; i++)
-				outfile->writeByte(_game.iClue[i]);
+				outfile->writeUint16LE(_game.iClue[i]);
 
 			outfile->write(_game.szAddr, IDI_MSA_MAX_BUTTON + 1);
 

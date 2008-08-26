@@ -30,7 +30,7 @@
 
 namespace Agi {
 
-#define MSA_SAVEGAME_VERSION			1
+#define MSA_SAVEGAME_VERSION			2
 
 // strings
 #define IDS_MSA_PATH_DAT	"dat/%s"
@@ -637,7 +637,7 @@ const int IDO_MSA_NEXT_PIECE[IDI_MSA_MAX_PLANET][5] = {
 	{0x5B78,	0x5BB6,	0x5C29,	0x5C76,	0x5CE1},	// pluto
 	{0x526B,	0x52DA,	0x5340,	0x53A1,	0x540C},	// jupiter
 	{0x50F6,	0x512C,	0x5170,	0x51D5,	0x5228},	// mars
-	{0x56AA,	0x571C,	0x579E,	0x5807,	0x5875}	// uranus
+	{0x56AA,	0x571C,	0x579E,	0x5807,	0x5875}		// uranus
 };
 
 // message offsets
@@ -697,7 +697,7 @@ struct MSA_GAME {
 
 	uint8 nXtals;
 	uint8 iPlanetXtal[IDI_MSA_MAX_DAT];
-	uint8 iClue[IDI_MSA_MAX_PLANET];
+	uint16 iClue[IDI_MSA_MAX_PLANET];
 	char szAddr[IDI_MSA_MAX_BUTTON + 1];
 
 	// Flags
