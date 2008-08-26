@@ -257,6 +257,11 @@ public:
 	void setPalette(byte *PalBuf);
 	void copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
 				int height, byte *src, byte *dest);
+
+	void copyBackground() {
+		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+	}
+
 	void copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 				int height, byte *src, byte *dest);
 	void copyRectClip(int *Array, byte *src, byte *dest);

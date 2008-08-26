@@ -70,11 +70,11 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 	do {
 		if (talkerType == kIgorDch || talkerType == kIgorFront) {
 			face = _rnd->getRandomNumber(7);
-			copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+			copyBackground();
 			updateRefresh_pre();
 		} else if (talkerType == kIgorSeated || talkerType == kIgorWig) {
 			face = _rnd->getRandomNumber(3);
-			copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+			copyBackground();
 			updateRefresh_pre();
 		}
 		
@@ -127,7 +127,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 	}
 
 	if (talkerType == kIgorDch || (talkerType == kIgorFront && currentChapter == 1)) {
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 		placeIgor();
 		placeDrascula();
 	}
@@ -152,7 +152,7 @@ void DrasculaEngine::talk_drascula(int index, int talkerType) {
 	do {
 		face = _rnd->getRandomNumber(7);
 
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 
 		updateRefresh_pre();
 
@@ -179,7 +179,7 @@ void DrasculaEngine::talk_drascula(int index, int talkerType) {
 	} while (!isTalkFinished(&length));
 
 	if (talkerType == 0)
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 
 	if (talkerType == 1 && currentChapter == 6)
 		updateRoom();
@@ -204,7 +204,7 @@ void DrasculaEngine::talk_solo(const char *said, const char *filename) {
 	talkInit(filename);
 
 	if (currentChapter == 6)
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 
 	do {
 		if (withVoices == 0) {
@@ -219,7 +219,7 @@ void DrasculaEngine::talk_solo(const char *said, const char *filename) {
 	} while (!isTalkFinished(&length));
 
 	if (currentChapter == 6) {
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 		updateScreen();
 	}
 }
@@ -260,7 +260,7 @@ void DrasculaEngine::talk_bartender(int index, int talkerType) {
 			face = _rnd->getRandomNumber(5);
 		}
 
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 
 		updateRefresh_pre();
 
@@ -299,7 +299,7 @@ void DrasculaEngine::talk_bj(int index) {
 		if (currentChapter != 5) {
 			face = _rnd->getRandomNumber(4);
 
-			copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+			copyBackground();
 
 			updateRefresh_pre();
 
@@ -375,7 +375,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 	do {
 		face = _rnd->getRandomNumber(5);
 
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 
 		updateRefresh_pre();
 		if (currentChapter == 2)
@@ -519,7 +519,7 @@ void DrasculaEngine::talk_vonBraun(int index, int talkerType) {
 		if (talkerType == kVonBraunNormal) {
 			if (trackVonBraun == 1) {
 				face = _rnd->getRandomNumber(5);
-				copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+				copyBackground();
 
 				moveCharacters();
 				moveVonBraun();
@@ -566,13 +566,13 @@ void DrasculaEngine::talk_blind(int index) {
 
 	color_abc(kColorBrown);
 
-	copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+	copyBackground();
 	updateScreen();
 
 	talkInit(filename);
 
 	do {
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 		pos_blind[5] = 149;
 		char c = toupper(syncChar[p]);
 
@@ -609,7 +609,7 @@ void DrasculaEngine::talk_hacker(int index) {
 	const char *said = _textd[_lang][index];
 	int length = strlen(said);
 
-	copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+	copyBackground();
 	updateScreen();
 
 	color_abc(kColorYellow);
@@ -669,7 +669,7 @@ void DrasculaEngine::talk_pen(const char *said, const char *filename, int talker
 		else
 			face = _rnd->getRandomNumber(4);
 
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 		updateRefresh_pre();
 
 		if (talkerType == 0)
@@ -692,7 +692,7 @@ void DrasculaEngine::talk_pen(const char *said, const char *filename, int talker
 	} while (!isTalkFinished(&length));
 
 	flags[1] = 0;
-	copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+	copyBackground();
 	updateRefresh_pre();
 	updateScreen();
 }
@@ -712,7 +712,7 @@ void DrasculaEngine::talk_bj_bed(int index) {
 	do {
 		face = _rnd->getRandomNumber(4);
 
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 
 		updateRefresh_pre();
 
@@ -757,7 +757,7 @@ void DrasculaEngine::talk_htel(int index) {
 		else
 			faceBuffer = (char *)backSurface;
 
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 
 		copyBackground(x_talk[face], 1, 45, 24, 92, 108, (byte *)faceBuffer, screenSurface);
 
@@ -768,7 +768,7 @@ void DrasculaEngine::talk_htel(int index) {
 		pause(3);
 	} while (!isTalkFinished(&length));
 
-	copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+	copyBackground();
 	updateScreen();
 }
 
@@ -794,7 +794,7 @@ void DrasculaEngine::talk_sync(const char *said, const char *filename, const cha
 		strncpy(buf, &syncChar[p], 1);
 		face = atoi(buf);
 
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 
 		updateRefresh_pre();
 		if (currentChapter == 2)
@@ -904,7 +904,7 @@ void DrasculaEngine::talk_dr_grande(int index) {
 
 	do {
 		face = _rnd->getRandomNumber(3);
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 		copyBackground(interf_x[l] + 24, interf_y[l], 0, 45, 39, 31, drawSurface2, screenSurface);
 		copyBackground(x_talk[face], 1, 171, 68, 45, 48, drawSurface2, screenSurface);
 		l++;
@@ -932,7 +932,7 @@ void DrasculaEngine::talk_generic(const char* said, const char* filename, int* f
 	do {
 		face = _rnd->getRandomNumber(faceCount - 1);
 
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 		updateRefresh_pre();
 		copyBackground(faces[face], coords[0], coords[1], coords[2], 
 						coords[3], coords[4], surface, screenSurface);

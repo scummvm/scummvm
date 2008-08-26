@@ -801,7 +801,7 @@ void DrasculaEngine::hipo_sin_nadie(int counter){
 	do {
 		counter--;
 
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 		if (currentChapter == 3)
 			updateScreen(0, 0, 0, y, 320, 200, screenSurface);
 		else
@@ -825,7 +825,7 @@ void DrasculaEngine::hipo_sin_nadie(int counter){
 		}
 	} while (counter > 0);
 
-	copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+	copyBackground();
 	updateScreen();
 }
 

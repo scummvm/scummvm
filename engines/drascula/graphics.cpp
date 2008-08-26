@@ -61,7 +61,7 @@ void DrasculaEngine::freeMemory() {
 }
 
 void DrasculaEngine::moveCursor() {
-	copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+	copyBackground();
 
 	updateRefresh_pre();
 	moveCharacters();
@@ -146,6 +146,12 @@ void DrasculaEngine::showFrame(bool firstFrame) {
 
 void DrasculaEngine::copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
 								  int height, byte *src, byte *dest) {
+	if (src == 0)
+		src = bgSurface;
+
+	if (dest == 0)
+		dest = screenSurface;
+
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
 	for (int x = 0; x < height; x++) {

@@ -63,7 +63,7 @@ bool DrasculaEngine::saveLoadScreen() {
 
 	for (;;) {
 		y = 27;
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 		for (n = 0; n < NUM_SAVES; n++) {
 			print_abc(names[n], 116, y);
 			y = y + 9;
