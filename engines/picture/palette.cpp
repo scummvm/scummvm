@@ -83,31 +83,18 @@ void Palette::setDeltaPalette(byte *palette, byte mask, char deltaValue, int16 c
 
 	count++;
 
-	mask &= 7;
-
 	_vm->_system->grabPalette(colors, 0, 256);
-	
-	if (deltaValue < 0) {
-		deltaValue = -deltaValue;
-		while (count--) {
-			rgb = *palPtr++;
-			if (mask & 1) colors[index * 4 + 0] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
-			rgb = *palPtr++;
-			if (mask & 2) colors[index * 4 + 1] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
-			rgb = *palPtr++;
-			if (mask & 4) colors[index * 4 + 2] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
-			index++;
-		}
-	} else {
-		while (count--) {
-			rgb = *palPtr++;
-			if (mask & 1) colors[index * 4 + 0] = CLIP<int>(rgb - deltaValue, deltaValue, 255) << 2;
-			rgb = *palPtr++;
-			if (mask & 2) colors[index * 4 + 1] = CLIP<int>(rgb - deltaValue, deltaValue, 255) << 2;
-			rgb = *palPtr++;
-			if (mask & 4) colors[index * 4 + 2] = CLIP<int>(rgb - deltaValue, deltaValue, 255) << 2;
-		 	index++;
-		}
+
+	deltaValue *= -1;
+
+	while (count--) {
+		rgb = *palPtr++;
+		if (mask & 1) colors[index * 4 + 0] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
+		rgb = *palPtr++;
+		if (mask & 2) colors[index * 4 + 1] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
+		rgb = *palPtr++;
+		if (mask & 4) colors[index * 4 + 2] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
+	 	index++;
 	}
 	
 	debug(0, "startIndex = %d; colorCount = %d", startIndex, colorCount);

@@ -710,6 +710,9 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 			textData += 2;
 		} else if (*textData < 0x0A) {
 			item->fontNum = textData[0];
+			// FIXME: Some texts request a font which isn't registered so we change it to a font that is
+			if (_fontResIndexArray[item->fontNum] == 0)
+				item->fontNum = 0;
 			textData += 1;
 		} else
 			break;
@@ -722,7 +725,7 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 	length = 0;
 
 	item->duration = 0;
-	item->rectCount = 0;
+	item->lineCount = 0;
 
 	Font font(_vm->_res->load(_fontResIndexArray[item->fontNum]));
 	int16 wordLength, wordWidth;
@@ -764,7 +767,7 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 	
 	addTalkTextRect(font, x, y, length, width, item);
 
-	debug(0, "## item->rectCount = %d", item->rectCount);
+	debug(0, "## item->lineCount = %d", item->lineCount);
 
 	int16 textDurationMultiplier = item->duration + 8;
 	// TODO: Check sound/text flags
@@ -778,14 +781,14 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 void Screen::addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 width, TalkTextItem *item) {
 
 	if (width > 0) {
-		TextRect *textRect = &item->rects[item->rectCount];
+		TextRect *textRect = &item->lines[item->lineCount];
 		width = width + 1 - font.getSpacing();
 		textRect->width = width;
 		item->duration += length;
 		textRect->length = length;
 		textRect->y = y;
 		textRect->x = CLIP<int16>(x - width / 2, 0, 640);
-		item->rectCount++;
+		item->lineCount++;
 	}
 	
 	y += font.getHeight() - 1;
@@ -805,10 +808,10 @@ void Screen::drawTalkTextItems() {
 		if (item->duration < 0)
 			item->duration = 0;
 
-		for (byte j = 0; j < item->rectCount; j++) {
-			drawString(item->rects[j].x, item->rects[j].y, item->color, _fontResIndexArray[item->fontNum],
-				text, item->rects[j].length, NULL, true);
-			text += item->rects[j].length;
+		for (byte j = 0; j < item->lineCount; j++) {
+			drawString(item->lines[j].x, item->lines[j].y, item->color, _fontResIndexArray[item->fontNum],
+				text, item->lines[j].length, NULL, true);
+			text += item->lines[j].length;
 		}
 		
 	}
@@ -984,12 +987,12 @@ void Screen::saveState(Common::WriteStream *out) {
 		out->writeUint16LE(_talkTextItems[i].slotOffset);
 		out->writeUint16LE(_talkTextItems[i].fontNum);
 		out->writeByte(_talkTextItems[i].color);
-		out->writeByte(_talkTextItems[i].rectCount);
-		for (int j = 0; j < _talkTextItems[i].rectCount; j++) {
-			out->writeUint16LE(_talkTextItems[i].rects[j].x);
-			out->writeUint16LE(_talkTextItems[i].rects[j].y);
-			out->writeUint16LE(_talkTextItems[i].rects[j].width);
-			out->writeUint16LE(_talkTextItems[i].rects[j].length);
+		out->writeByte(_talkTextItems[i].lineCount);
+		for (int j = 0; j < _talkTextItems[i].lineCount; j++) {
+			out->writeUint16LE(_talkTextItems[i].lines[j].x);
+			out->writeUint16LE(_talkTextItems[i].lines[j].y);
+			out->writeUint16LE(_talkTextItems[i].lines[j].width);
+			out->writeUint16LE(_talkTextItems[i].lines[j].length);
 		}
 	}
 
@@ -1035,12 +1038,12 @@ void Screen::loadState(Common::ReadStream *in) {
 		_talkTextItems[i].slotOffset = in->readUint16LE();
 		_talkTextItems[i].fontNum = in->readUint16LE();
 		_talkTextItems[i].color = in->readByte();
-		_talkTextItems[i].rectCount = in->readByte();
-		for (int j = 0; j < _talkTextItems[i].rectCount; j++) {
-			_talkTextItems[i].rects[j].x = in->readUint16LE();
-			_talkTextItems[i].rects[j].y = in->readUint16LE();
-			_talkTextItems[i].rects[j].width = in->readUint16LE();
-			_talkTextItems[i].rects[j].length = in->readUint16LE();
+		_talkTextItems[i].lineCount = in->readByte();
+		for (int j = 0; j < _talkTextItems[i].lineCount; j++) {
+			_talkTextItems[i].lines[j].x = in->readUint16LE();
+			_talkTextItems[i].lines[j].y = in->readUint16LE();
+			_talkTextItems[i].lines[j].width = in->readUint16LE();
+			_talkTextItems[i].lines[j].length = in->readUint16LE();
 		}
 	}
 	

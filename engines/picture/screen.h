@@ -293,8 +293,8 @@ struct TalkTextItem {
 	int16 slotOffset;
 	int16 fontNum;
 	byte color;
-	byte rectCount;
-	TextRect rects[15];
+	byte lineCount;
+	TextRect lines[15];
 };
 
 class Screen {
