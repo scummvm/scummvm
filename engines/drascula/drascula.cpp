@@ -226,41 +226,35 @@ int DrasculaEngine::go() {
 		if (currentChapter != 6)
 			loadPic(95, tableSurface);
 
+		if (currentChapter != 3)
+			loadPic(96, frontSurface, COMPLETE_PAL);
+
 		if (currentChapter == 1) {
-			loadPic(96, frontSurface, COMPLETE_PAL);
-			loadPic(99, backSurface);
-			loadPic(97, extraSurface);
 		} else if (currentChapter == 2) {
-			loadPic(96, frontSurface, COMPLETE_PAL);
 			loadPic("pts.alg", drawSurface2);
 		} else if (currentChapter == 3) {
 			loadPic("aux13.alg", bgSurface, COMPLETE_PAL);
 			loadPic(96, frontSurface);
-			loadPic(97, extraSurface);
-			loadPic(99, backSurface);
 		} else if (currentChapter == 4) {
-			loadPic(96, frontSurface, COMPLETE_PAL);
 			if (hay_que_load == 0)
 				animation_ray();
 			loadPic(96, frontSurface);
 			clearRoom();
-			loadPic(99, backSurface);
-			loadPic(97, extraSurface);
 		} else if (currentChapter == 5) {
-			loadPic(96, frontSurface, COMPLETE_PAL);
-			loadPic(97, extraSurface);
-			loadPic(99, backSurface);
 		} else if (currentChapter == 6) {
 			igorX = 105, igorY = 85, trackIgor = 1;
 			drasculaX = 62, drasculaY = 99, trackDrascula = 1;
 			actorFrames[kFramePendulum] = 0;
 			flag_tv = 0;
 
-			loadPic(96, frontSurface, COMPLETE_PAL);
-			loadPic(99, backSurface);
-			loadPic(97, extraSurface);
 			loadPic(95, tableSurface);
 		}
+
+		if (currentChapter != 2) {
+			loadPic(99, backSurface);
+			loadPic(97, extraSurface);
+		}
+
 		memset(iconName, 0, sizeof(iconName));
 
 		for (i = 0; i < 6; i++)
