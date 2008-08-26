@@ -72,33 +72,6 @@ enum {
 };
 
 
-// high values mean high priority
-
-enum {
-	kPriority0 = 0,
-	kPriority1 = 1,
-	kPriority2 = 2,
-	kPriority3 = 3,
-	kPriority4 = 4,
-	kPriority5 = 5,
-	kPriority6 = 6,
-	kPriority7 = 7,
-	kPriority8 = 8,
-	kPriority9 = 9,
-	kPriority10 = 10,
-	kPriority11 = 11,
-	kPriority12 = 12,
-	kPriority13 = 13,
-	kPriority14 = 14,
-	kPriority15 = 15,
-	kPriority16 = 16,
-	kPriority17 = 17,
-	kPriority18 = 18,
-	kPriority19 = 19,
-	kPriority20 = 20,
-	kPriority21 = 21
-};
-
 enum EngineFlags {
 	kEngineQuit			= (1 << 0),
 	kEnginePauseJobs	= (1 << 1),
@@ -342,7 +315,6 @@ protected:		// data
 protected:		// members
 	bool detectGame(void);
 
-	void		initGlobals();
 	void		runGame();
 	void		updateView();
 
@@ -354,13 +326,9 @@ protected:		// members
 	void		freeLocation();
 	void		showLocationComment(const char *text, bool end);
 
-	void		displayComment(ExamineData *data);
-
 	void		freeCharacter();
 
 	bool		pickupItem(ZonePtr z);
-
-	void 		clearSet(OpcodeSet &opcodes);
 
 
 public:
@@ -381,15 +349,8 @@ public:
 	void		beep();
 
 	ZonePtr		_zoneTrap;
-	PathBuilder* getPathBuilder(Character *ch);
 
 public:
-//	const char **_zoneFlagNamesRes;
-//	const char **_zoneTypeNamesRes;
-//	const char **_commandsNamesRes;
-	const char **_callableNamesRes;
-	const char **_instructionNamesRes;
-
 	void highlightInventoryItem(ItemPosition pos);
 	int16 getHoverInventoryItem(int16 x, int16 y);
 	int addInventoryItem(ItemName item);
@@ -591,8 +552,6 @@ protected:
 	void		parseLocation(const char *filename);
 	void		loadProgram(AnimationPtr a, const char *filename);
 
-	void		selectStartLocation();
-
 	void		startGui();
 	void		startCreditSequence();
 	void		startEndPartSequence();
@@ -603,8 +562,6 @@ protected:
 #define NUM_ZONES	100
 
 class Parallaction_br : public Parallaction_ns {
-
-	typedef Parallaction_ns Super;
 
 public:
 	Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction_ns(syst, gameDesc) { }

@@ -180,7 +180,6 @@ Zone::~Zone() {
 
 	case kZoneDoor:
 		free(u.door->_location);
-		free(u.door->_background);
 		u.door->gfxobj->release();
 		delete u.door;
 		break;
@@ -191,7 +190,6 @@ Zone::~Zone() {
 		break;
 
 	case kZoneGet:
-		free(u.get->_backup);
 		u.get->gfxobj->release();
 		delete u.get;
 		break;

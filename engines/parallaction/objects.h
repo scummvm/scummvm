@@ -192,23 +192,19 @@ struct Dialogue {
 	~Dialogue();
 };
 
-struct GetData {	// size = 24
+struct GetData {
 	uint32			_icon;
 	GfxObj			*gfxobj;
-	byte		   *_backup;
-	uint16			field_14;		// unused
-	uint16			field_16;		// unused
 	MaskBuffer		_mask[2];
 	bool			hasMask;
 
 	GetData() {
 		_icon = 0;
-		_backup = NULL;
 		gfxobj = NULL;
 		hasMask = false;
 	}
 };
-struct SpeakData {	// size = 36
+struct SpeakData {
 	char		_name[32];
 	Dialogue	*_dialogue;
 
@@ -217,30 +213,25 @@ struct SpeakData {	// size = 36
 		_dialogue = NULL;
 	}
 };
-struct ExamineData {	// size = 28
+struct ExamineData {
 	GfxObj	*_cnv;
-	uint16		_opBase;		   // unused
-	uint16		field_12;			// unused
 	char*		_description;
 	char*		_filename;
 
 	ExamineData() {
-		_opBase = 0;
 		_description = NULL;
 		_filename = NULL;
 		_cnv = NULL;
 	}
 };
-struct DoorData {	// size = 28
+struct DoorData {
 	char*	_location;
 	GfxObj	*gfxobj;
-	byte*	_background;
 	Common::Point	_startPos;
 	uint16	_startFrame;
 
 	DoorData() {
 		_location = NULL;
-		_background = NULL;
 		_startFrame = 0;
 		gfxobj = NULL;
 	}

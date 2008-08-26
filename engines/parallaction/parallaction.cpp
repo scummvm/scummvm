@@ -147,14 +147,6 @@ int Parallaction::init() {
 	return 0;
 }
 
-
-void Parallaction::clearSet(OpcodeSet &opcodes) {
-	for (Common::Array<const Opcode*>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)
-		delete *i;
-	opcodes.clear();
-}
-
-
 void Parallaction::updateView() {
 
 	if ((_engineFlags & kEnginePauseJobs) && (_input->_inputMode != Input::kInputModeInventory)) {
