@@ -440,7 +440,7 @@ bool DrasculaEngine::room_16(int fl) {
 		pause(10);
 		talk_sync(_text[_lang][50], "50.als", "11111111111144432554433");
 		pause(3);
-		talk_baul(83);
+		talk_trunk(83);
 	} else if (pickedObject == kVerbOpen && fl == 183) {
 		openDoor(19, NO_DOOR);
 		if (flags[20] == 0) {

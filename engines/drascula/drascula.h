@@ -427,7 +427,7 @@ public:
 	void talk_bj_bed(int);
 	void talk_htel(int);
 	void talk_bj(int);
-	void talk_baul(int);
+	void talk_trunk(int);
 	void talk(int);
 	void talk(const char *, const char *);
 	void talk_sync(const char *, const char *, const char *);
@@ -435,7 +435,7 @@ public:
 	void talk_pianist(int);
 	void talk_werewolf(int);
 	void talk_mus(int);
-	void talk_dr_grande(int);
+	void talk_drascula_big(int);
 	void talk_vonBraun(int, int);
 	void talk_blind(int);
 	void talk_hacker(int);

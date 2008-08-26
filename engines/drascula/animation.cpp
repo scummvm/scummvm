@@ -177,7 +177,7 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		copyBackground(0, 0, 0, 0, 320, 200, screenSurface, bgSurface);
 
-		talk_dr_grande(1);
+		talk_drascula_big(1);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 

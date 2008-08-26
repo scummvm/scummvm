@@ -193,6 +193,41 @@ void DrasculaEngine::talk_drascula(int index, int talkerType) {
 	updateScreen();
 }
 
+void DrasculaEngine::talk_drascula_big(int index) {
+	char filename[20];
+	sprintf(filename, "d%i.als", index);
+	const char *said = _textd[_lang][index];
+	int x_talk[4] = {47, 93, 139, 185};
+	int face;
+	int l = 0;
+	int length = strlen(said);
+
+	color_abc(kColorRed);
+
+	talkInit(filename);
+
+	do {
+		face = _rnd->getRandomNumber(3);
+		copyBackground();
+		copyBackground(interf_x[l] + 24, interf_y[l], 0, 45, 39, 31, drawSurface2, screenSurface);
+		copyBackground(x_talk[face], 1, 171, 68, 45, 48, drawSurface2, screenSurface);
+		l++;
+		if (l == 7)
+			l = 0;
+
+		if (withVoices == 0)
+			centerText(said, 191, 69);
+
+		updateScreen();
+
+		pause(3);
+
+		byte key = getScan();
+		if (key == Common::KEYCODE_ESCAPE)
+			term_int = 1;
+	} while (!isTalkFinished(&length));
+}
+
 void DrasculaEngine::talk_solo(const char *said, const char *filename) {
 	int length = strlen(said);
 
@@ -857,7 +892,7 @@ void DrasculaEngine::talk_sync(const char *said, const char *filename, const cha
 		playMusic(roomMusic);
 }
 
-void DrasculaEngine::talk_baul(int index) {
+void DrasculaEngine::talk_trunk(int index) {
 	char filename[20];
 	sprintf(filename, "d%i.als", index);
 	const char *said = _text[_lang][index];
@@ -887,41 +922,6 @@ void DrasculaEngine::talk_baul(int index) {
 	flags[19] = cara_antes;
 	updateRoom();
 	updateScreen();
-}
-
-void DrasculaEngine::talk_dr_grande(int index) {
-	char filename[20];
-	sprintf(filename, "D%i.als", index);
-	const char *said = _textd[_lang][index];
-	int x_talk[4] = {47, 93, 139, 185};
-	int face;
-	int l = 0;
-	int length = strlen(said);
-
-	color_abc(kColorRed);
-
-	talkInit(filename);
-
-	do {
-		face = _rnd->getRandomNumber(3);
-		copyBackground();
-		copyBackground(interf_x[l] + 24, interf_y[l], 0, 45, 39, 31, drawSurface2, screenSurface);
-		copyBackground(x_talk[face], 1, 171, 68, 45, 48, drawSurface2, screenSurface);
-		l++;
-		if (l == 7)
-			l = 0;
-
-		if (withVoices == 0)
-			centerText(said, 191, 69);
-
-		updateScreen();
-
-		pause(3);
-
-		byte key = getScan();
-		if (key == Common::KEYCODE_ESCAPE)
-			term_int = 1;
-	} while (!isTalkFinished(&length));
 }
 
 void DrasculaEngine::talk_generic(const char* said, const char* filename, int* faces, int faceCount, int* coords, byte* surface) {
