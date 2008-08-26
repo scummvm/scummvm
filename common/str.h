@@ -218,7 +218,7 @@ String operator +(const String &x, const char *y);
 String operator +(const String &x, char y);
 String operator +(char x, const String &y);
 
-// Some useful additional comparsion operators for Strings
+// Some useful additional comparison operators for Strings
 bool operator == (const char *x, const String &y);
 bool operator != (const char *x, const String &y);
 
