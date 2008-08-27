@@ -769,25 +769,23 @@ bool LanguageChange(void) {
 #ifdef USE_3FLAGS
 	// VERY quick dodgy bodge
 	if (cd.selBox == 0)
-		nLang = TXT_FRENCH;
+		nLang = TXT_FRENCH;		// = 1
 	else if (cd.selBox == 1)
-		nLang = TXT_GERMAN;
+		nLang = TXT_GERMAN;		// = 2
 	else
-		nLang = TXT_SPANISH;
-	if (nLang != language) {
+		nLang = TXT_SPANISH;	// = 4
 #elif defined(USE_4FLAGS)
 	nLang = (LANGUAGE)(cd.selBox + 1);
-	if (nLang != language) {
 #else
-	if (cd.selBox != language) {
-		nLang = (LANGUAGE)cd.selBox;
+	nLang = (LANGUAGE)cd.selBox;
 #endif
+
+	if (nLang != language) {
 		KillInventory();
 		ChangeLanguage(nLang);
 		language = nLang;
 		return true;
-	}
-	else
+	} else
 		return false;
 }
 #endif
