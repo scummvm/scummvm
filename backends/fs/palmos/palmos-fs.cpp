@@ -80,30 +80,6 @@ private:
 	static void addFile(AbstractFSList &list, ListMode mode, const Char *base, FileInfoType* find_data);
 };
 
-/**
- * Returns the last component of a given path.
- *
- * Examples:
- *			/foo/bar.txt would return /bar.txt
- *			/foo/bar/    would return /bar/
- *
- * @param str String containing the path.
- * @return Pointer to the first char of the last component inside str.
- */
-const char *lastPathComponent(const Common::String &str) {
-	if(str.empty())
-		return "";
-
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '/') {
-		--cur;
-	}
-
-	return cur + 1;
-}
-
 void PalmOSFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, FileInfoType* find_data) {
 	PalmOSFilesystemNode entry;
 	bool isDir;
@@ -138,7 +114,7 @@ PalmOSFilesystemNode::PalmOSFilesystemNode() {
 
 PalmOSFilesystemNode::PalmOSFilesystemNode(const String &p) {
 	_path = p;
-	_displayName = lastPathComponent(_path);
+	_displayName = lastPathComponent(_path, '/');
 
 	UInt32 attr;
 	FileRef handle;
@@ -215,13 +191,13 @@ AbstractFilesystemNode *PalmOSFilesystemNode::getParent() const {
 
 	if (!_isPseudoRoot) {
 		const char *start = _path.c_str();
-		const char *end = lastPathComponent(_path);
+		const char *end = lastPathComponent(_path, '/');
 
 		p = new PalmOSFilesystemNode();
 		p->_path = String(start, end - start);
 		p->_isValid = true;
 		p->_isDirectory = true;
-		p->_displayName = lastPathComponent(p->_path);
+		p->_displayName = lastPathComponent(p->_path, '/');
 		p->_isPseudoRoot =(p->_path == "/");
 	}
 

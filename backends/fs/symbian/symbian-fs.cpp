@@ -79,30 +79,6 @@ public:
 };
 
 /**
- * Returns the last component of a given path.
- *
- * Examples:
- *			c:\foo\bar.txt would return "\bar.txt"
- *			c:\foo\bar\    would return "\bar\"
- *
- * @param str Path to obtain the last component from.
- * @return Pointer to the first char of the last component inside str.
- */
-const char *lastPathComponent(const Common::String &str) {
-	if(str.empty())
-		return "";
-
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '\\') {
-		--cur;
-	}
-
-	return cur + 1;
-}
-
-/**
  * Fixes the path by changing all slashes to backslashes.
  *
  * @param path String with the path to be fixed.
@@ -136,7 +112,7 @@ SymbianFilesystemNode::SymbianFilesystemNode(const String &path) {
 
 	fixFilePath(_path);
 
-	_displayName = lastPathComponent(_path);
+	_displayName = lastPathComponent(_path, '\\');
 
 	TEntry fileAttribs;
 	TFileName fname;
@@ -257,12 +233,12 @@ AbstractFilesystemNode *SymbianFilesystemNode::getParent() const {
 	if (!_isPseudoRoot && _path.size() > 3) {
 		p = new SymbianFilesystemNode(false);
 		const char *start = _path.c_str();
-		const char *end = lastPathComponent(_path);
+		const char *end = lastPathComponent(_path, '\\');
 
 		p->_path = String(start, end - start);
 		p->_isValid = true;
 		p->_isDirectory = true;
-		p->_displayName = lastPathComponent(p->_path);
+		p->_displayName = lastPathComponent(p->_path, '\\');
 	}
 	else
 	{

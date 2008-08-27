@@ -71,30 +71,6 @@ private:
 	virtual void setFlags();
 };
 
-/**
- * Returns the last component of a given path.
- *
- * Examples:
- *						/foo/bar.txt would return /bar.txt
- *						/foo/bar/	 would return /bar/
- *
- * @param str String containing the path.
- * @return Pointer to the first char of the last component inside str.
- */
-const char *lastPathComponent(const Common::String &str) {
-	if(str.empty())
-		return "";
-
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '/') {
-		--cur;
-	}
-
-	return cur + 1;
-}
-
 void WiiFilesystemNode::setFlags() {
 	struct stat st;
 
@@ -123,7 +99,7 @@ WiiFilesystemNode::WiiFilesystemNode(const String &p, bool verify) {
 
 	_path = p;
 
-	_displayName = lastPathComponent(_path);
+	_displayName = lastPathComponent(_path, '/');
 
 	if (verify)
 		setFlags();
@@ -187,7 +163,7 @@ AbstractFilesystemNode *WiiFilesystemNode::getParent() const {
 		return 0;
 
 	const char *start = _path.c_str();
-	const char *end = lastPathComponent(_path);
+	const char *end = lastPathComponent(_path, '/');
 
 	return new WiiFilesystemNode(String(start, end - start), true);
 }

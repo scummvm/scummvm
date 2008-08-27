@@ -100,28 +100,6 @@ public:
 	virtual AbstractFilesystemNode *getParent() const;
 };
 
-/**
- * Returns the last component of a given path.
- * 
- * @param str String containing the path.
- * @return Pointer to the first char of the last component inside str.
- */
-const char *lastPathComponent(const Common::String &str) {
-	if (str.empty())
-		return "";
-
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '/' && *cur != ':') {
-		--cur;
-	}
-
-	printf("romeo : lastPathComponent = %s\n", cur + 1);
-
-	return cur + 1;
-}
-
 Ps2FilesystemNode::Ps2FilesystemNode() {
 	_isDirectory = true;
 	_isRoot = true;

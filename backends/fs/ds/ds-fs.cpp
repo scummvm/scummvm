@@ -798,25 +798,3 @@ int std_ferror(FILE* handle) {
 }
 
 } // namespace DS
-
-/**
- * Returns the last component of a given path.
- *
- * Examples:
- *			/foo/bar.txt would return /bar.txt
- *			/foo/bar/    would return /bar/
- *
- * @param str String containing the path.
- * @return Pointer to the first char of the last component inside str.
- */
-const char *lastPathComponent(const Common::String &str) {
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '/' && *cur != '\\') {
-		--cur;
-	}
-
-	return cur + 1;
-}
-

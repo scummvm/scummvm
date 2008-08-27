@@ -72,6 +72,19 @@ protected:
 	 */
 	virtual AbstractFilesystemNode *getParent() const = 0;
 
+	/**
+	 * Returns the last component of a given path.
+	 *
+	 * Examples:
+	 *			/foo/bar.txt would return /bar.txt
+	 *			/foo/bar/    would return /bar/
+	 *
+	 * @param str String containing the path.
+	 * @param sep character used to separate path components
+	 * @return Pointer to the first char of the last component inside str.
+	 */
+	static const char *lastPathComponent(const Common::String &str, const char sep);
+
 public:
 	/**
 	 * Destructor.
@@ -153,5 +166,7 @@ public:
 	bool isFile();
 	*/
 };
+
+
 
 #endif //BACKENDS_ABSTRACT_FS_H

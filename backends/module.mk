@@ -1,6 +1,7 @@
 MODULE := backends
 
 MODULE_OBJS := \
+	fs/abstract-fs.o \
 	fs/amigaos4/amigaos4-fs-factory.o \
 	fs/ds/ds-fs-factory.o \
 	fs/palmos/palmos-fs-factory.o \

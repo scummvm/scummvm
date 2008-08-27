@@ -37,13 +37,12 @@
 class RoninCDFileNode : public AbstractFilesystemNode {
 protected:
 	String _path;
-	static const char *lastPathComponent(const Common::String &str);
 
 public:
 	RoninCDFileNode(const String &path) : _path(path) {};
 
 	virtual bool exists() const { return true; }
-	virtual String getName() const { return lastPathComponent(_path); }
+	virtual String getName() const { return lastPathComponent(_path, '/'); }
 	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return false; }
 	virtual bool isReadable() const { return true; }
@@ -74,30 +73,6 @@ public:
 	virtual bool exists() const { return false; }
 	virtual bool isReadable() const { return false; }
 };
-
-/**
- * Returns the last component of a given path.
- *
- * Examples:
- *			/foo/bar.txt would return /bar.txt
- *			/foo/bar/    would return /bar/
- *
- * @param str String containing the path.
- * @return Pointer to the first char of the last component inside str.
- */
-const char *RoninCDFileNode::lastPathComponent(const Common::String &str) {
-	if(str.empty())
-		return "";
-
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '/') {
-		--cur;
-	}
-
-	return cur + 1;
-}
 
 AbstractFilesystemNode *RoninCDFileNode::makeFileNodePath(const Common::String &path) {
 	assert(path.size() > 0);
@@ -163,7 +138,7 @@ AbstractFilesystemNode *RoninCDFileNode::getParent() const {
 		return 0;
 
 	const char *start = _path.c_str();
-	const char *end = lastPathComponent(_path);
+	const char *end = lastPathComponent(_path, '/');
 
 	return new RoninCDDirectoryNode(String(start, end - start));
 }

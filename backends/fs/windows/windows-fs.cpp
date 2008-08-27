@@ -135,30 +135,6 @@ private:
 	static const TCHAR* toUnicode(const char *str);
 };
 
-/**
- * Returns the last component of a given path.
- *
- * Examples:
- *			c:\foo\bar.txt would return "\bar.txt"
- *			c:\foo\bar\    would return "\bar\"
- *
- * @param str Path to obtain the last component from.
- * @return Pointer to the first char of the last component inside str.
- */
-const char *lastPathComponent(const Common::String &str) {
-	if(str.empty())
-		return "";
-
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '\\') {
-		--cur;
-	}
-
-	return cur + 1;
-}
-
 void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data) {
 	WindowsFilesystemNode entry;
 	char *asciiName = toAscii(find_data->cFileName);
@@ -232,7 +208,7 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p, const bool current
 		_path = p;
 	}
 
-	_displayName = lastPathComponent(_path);
+	_displayName = lastPathComponent(_path, '\\');
 
 	// Check whether it is a directory, and whether the file actually exists
 	DWORD fileAttribs = GetFileAttributes(toUnicode(_path.c_str()));
@@ -322,13 +298,13 @@ AbstractFilesystemNode *WindowsFilesystemNode::getParent() const {
 	WindowsFilesystemNode *p = new WindowsFilesystemNode();
 	if (_path.size() > 3) {
 		const char *start = _path.c_str();
-		const char *end = lastPathComponent(_path);
+		const char *end = lastPathComponent(_path, '\\');
 
 		p = new WindowsFilesystemNode();
 		p->_path = String(start, end - start);
 		p->_isValid = true;
 		p->_isDirectory = true;
-		p->_displayName = lastPathComponent(p->_path);
+		p->_displayName = lastPathComponent(p->_path, '\\');
 		p->_isPseudoRoot = false;
 	}
 
