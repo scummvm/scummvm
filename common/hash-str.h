@@ -39,7 +39,7 @@ inline uint hashit_lower(const String &str) { return hashit_lower(str.c_str()); 
 // FIXME: The following functors obviously are not consistently named
 
 struct CaseSensitiveString_EqualTo {
-	bool operator()(const String& x, const String& y) const { return strcmp(x.c_str(), y.c_str()) == 0; }
+	bool operator()(const String& x, const String& y) const { return x.equals(y); }
 };
 
 struct CaseSensitiveString_Hash {
@@ -48,7 +48,7 @@ struct CaseSensitiveString_Hash {
 
 
 struct IgnoreCase_EqualTo {
-	bool operator()(const String& x, const String& y) const { return scumm_stricmp(x.c_str(), y.c_str()) == 0; }
+	bool operator()(const String& x, const String& y) const { return x.equalsIgnoreCase(y); }
 };
 
 struct IgnoreCase_Hash {

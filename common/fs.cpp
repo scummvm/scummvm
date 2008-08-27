@@ -52,7 +52,7 @@ bool FilesystemNode::operator<(const FilesystemNode& node) const {
 	if (isDirectory() != node.isDirectory())
 		return isDirectory();
 
-	return scumm_stricmp(getDisplayName().c_str(), node.getDisplayName().c_str()) < 0;
+	return getDisplayName().compareToIgnoreCase(node.getDisplayName()) < 0;
 }
 
 bool FilesystemNode::exists() const {

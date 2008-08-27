@@ -237,10 +237,9 @@ Language parseLanguage(const String &str) {
 	if (str.empty())
 		return UNK_LANG;
 
-	const char *s = str.c_str();
 	const LanguageDescription *l = g_languages;
 	for (; l->code; ++l) {
-		if (!scumm_stricmp(l->code, s))
+		if (str.equalsIgnoreCase(l->code))
 			return l->id;
 	}
 
@@ -299,20 +298,18 @@ Platform parsePlatform(const String &str) {
 	if (str.empty())
 		return kPlatformUnknown;
 
-	const char *s = str.c_str();
-
 	// Handle some special case separately, for compatibility with old config
 	// files.
-	if (!strcmp(s, "1"))
+	if (str == "1")
 		return kPlatformAmiga;
-	else if (!strcmp(s, "2"))
+	else if (str == "2")
 		return kPlatformAtariST;
-	else if (!strcmp(s, "3"))
+	else if (str == "3")
 		return kPlatformMacintosh;
 
 	const PlatformDescription *l = g_platforms;
 	for (; l->code; ++l) {
-		if (!scumm_stricmp(l->code, s) || !scumm_stricmp(l->code2, s) || !scumm_stricmp(l->abbrev, s))
+		if (str.equalsIgnoreCase(l->code) || str.equalsIgnoreCase(l->code2) || str.equalsIgnoreCase(l->abbrev))
 			return l->id;
 	}
 
@@ -364,10 +361,9 @@ RenderMode parseRenderMode(const String &str) {
 	if (str.empty())
 		return kRenderDefault;
 
-	const char *s = str.c_str();
 	const RenderModeDescription *l = g_renderModes;
 	for (; l->code; ++l) {
-		if (!scumm_stricmp(l->code, s))
+		if (str.equalsIgnoreCase(l->code))
 			return l->id;
 	}
 
