@@ -31,6 +31,13 @@
 #include <dirent.h>
 #include <stdio.h>
 
+#ifdef __OS2__
+#define INCL_DOS
+#include <os2.h>
+#endif
+
+
+
 /**
  * Returns the last component of a given path.
  *
@@ -108,6 +115,38 @@ AbstractFilesystemNode *POSIXFilesystemNode::getChild(const Common::String &n) c
 
 bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
+
+#ifdef __OS2__
+    if (_path == "/") {
+        ULONG ulDrvNum;
+        ULONG ulDrvMap;
+
+        DosQueryCurrentDisk(&ulDrvNum, &ulDrvMap);
+
+        for (int i = 0; i < 26; i++) {
+            if (ulDrvMap & 1) {
+                char drive_root[4];
+
+                drive_root[0] = i + 'A';
+                drive_root[1] = ':';
+                drive_root[2] = '/';
+                drive_root[3] = 0;
+
+                POSIXFilesystemNode entry;
+
+                entry._isDirectory = true;
+                entry._isValid = true;
+                entry._path = drive_root;
+                entry._displayName = "[" + Common::String(drive_root, 2) + "]";
+                myList.push_back(new POSIXFilesystemNode(entry));
+            }
+
+            ulDrvMap >>= 1;
+        }
+        
+        return true;
+    }
+#endif
 
 	DIR *dirp = opendir(_path.c_str());
 	struct dirent *dp;
@@ -187,7 +226,12 @@ AbstractFilesystemNode *POSIXFilesystemNode::getParent() const {
 	const char *start = _path.c_str();
 	const char *end = lastPathComponent(_path);
 
-	return new POSIXFilesystemNode(Common::String(start, end - start), true);
+#ifdef __OS2__
+    if (end == start)
+        return new POSIXFilesystemNode();
+#endif
+
+	return new POSIXFilesystemNode(Common::String(start, end), true);
 }
 
 #endif //#if defined(UNIX)
