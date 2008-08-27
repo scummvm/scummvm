@@ -596,6 +596,7 @@ void DrasculaEngine::animation_2_1() {
 	}
 }
 
+// John Hacker talks with the bartender to book a room
 void DrasculaEngine::animation_3_1() {
 	if (_lang == kSpanish)
 		textSurface = frontSurface;
@@ -631,6 +632,7 @@ void DrasculaEngine::animation_3_1() {
 	loadPic(97, extraSurface);
 }
 
+// John Hacker talks with the pianist
 void DrasculaEngine::animation_4_1() {
 	if (_lang == kSpanish)
 		textSurface = frontSurface;
