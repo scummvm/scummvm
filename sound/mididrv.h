@@ -51,6 +51,9 @@ enum MidiDriverType {
 	// Windows
 	MD_WINDOWS,
 
+	// Atari ST
+	MD_STMIDI,
+
 	// Linux
 	MD_ALSA,
 	MD_SEQ,
@@ -271,6 +274,7 @@ public:
 extern MidiDriver *MidiDriver_NULL_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_ADLIB_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_WIN_create(Audio::Mixer *mixer);
+extern MidiDriver *MidiDriver_STMIDI_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_SEQ_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_TIMIDITY_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_QT_create(Audio::Mixer *mixer);

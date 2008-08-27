@@ -1074,7 +1074,6 @@ case $_host_os in
 		;;
 	mint*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-		LIBS="$LIBS -lsocket"
 		;;
 	amigaos*)
 		# TODO: anything to be added here?

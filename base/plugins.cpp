@@ -157,8 +157,11 @@ public:
 		#if defined(UNIX) && defined(USE_ALSA)
 		LINK_PLUGIN(ALSA)
 		#endif
-		#if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__)
+		#if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__) && !defined(__MINT__)
 		LINK_PLUGIN(SEQ)
+		#endif
+		#if defined(__MINT__)
+		LINK_PLUGIN(STMIDI)
 		#endif
 		#if defined(IRIX)
 		LINK_PLUGIN(DMEDIA)

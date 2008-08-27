@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	midi/coremidi.o \
 	midi/quicktime.o \
 	midi/seq.o \
+	midi/stmidi.o \
 	midi/timidity.o \
 	midi/dmedia.o \
 	midi/windows.o \

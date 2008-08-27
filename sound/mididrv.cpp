@@ -46,7 +46,11 @@ static const MidiDriverDescription s_musicDrivers[] = {
 	{"alsa", "ALSA", MD_ALSA, MDT_MIDI},
 #endif
 
-#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__)
+#if defined(__MINT__)
+       {"stmidi", "Atari ST MIDI", MD_STMIDI, MDT_MIDI},
+#endif
+
+#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__) && !defined(__MINT__)
 	{"seq", "SEQ", MD_SEQ, MDT_MIDI},
 #endif
 
@@ -247,7 +251,10 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	case MD_WINDOWS:   return MidiDriver_WIN_create(g_system->getMixer());
 #endif
-#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__)
+#if defined(__MINT__)
+       case MD_STMIDI:    return MidiDriver_STMIDI_create(g_system->getMixer());
+#endif
+#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__) && !defined(__MINT__)
 	case MD_SEQ:       return MidiDriver_SEQ_create(g_system->getMixer());
 #endif
 #if defined(UNIX)
