@@ -206,13 +206,16 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 			{
 				int sceneOffset = (_vm->getFeatures() & GF_SCNFILES) ? 1 : 0;
 				int sceneNumber = (GetSceneHandle() >> SCNHANDLE_SHIFT) - sceneOffset;
+#if 0	// FIXME: Disabled this code for now, as it doesn't work as it should (see bug #2078922).
 				if ((language == TXT_GERMAN) && 
 					((sceneNumber >= 25 && sceneNumber <= 27) || (sceneNumber == 17))) {
 					// Skip to title screen
 					// It seems the German CD version uses scenes 25,26,27,17 for the intro,
 					// instead of 13,14,15,11;  also, the title screen is 11 instead of 10
 					SetNewScene((11 + sceneOffset) << SCNHANDLE_SHIFT, 1, TRANS_CUT);
-				} else if ((sceneNumber >= 13) && (sceneNumber <= 15) || (sceneNumber == 11)) {
+				} else
+#endif
+				if ((sceneNumber >= 13) && (sceneNumber <= 15) || (sceneNumber == 11)) {
 					// Skip to title screen
 					SetNewScene((10 + sceneOffset) << SCNHANDLE_SHIFT, 1, TRANS_CUT);
 				} else {
