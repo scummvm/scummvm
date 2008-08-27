@@ -429,15 +429,21 @@ void OSystem_SDL::quit() {
 }
 
 void OSystem_SDL::setupIcon() {
-	int w, h, ncols, nbytes, i;
-	unsigned int rgba[256], icon[32 * 32];
-	unsigned char mask[32][4];
+	int x, y, w, h, ncols, nbytes, i;
+	unsigned int rgba[256];
+        unsigned int *icon;
 
 	sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes);
-	if ((w != 32) || (h != 32) || (ncols > 255) || (nbytes > 1)) {
-		warning("Could not load the icon (%d %d %d %d)", w, h, ncols, nbytes);
+	if ((w > 512) || (h > 512) || (ncols > 255) || (nbytes > 1)) {
+		warning("Could not load the built-in icon (%d %d %d %d)", w, h, ncols, nbytes);
 		return;
 	}
+	icon = (unsigned int*)malloc(w*h*sizeof(unsigned int));
+	if (!icon) {
+		warning("Could not allocate temp storage for the built-in icon");
+		return;
+	}
+
 	for (i = 0; i < ncols; i++) {
 		unsigned char code;
 		char color[32];
@@ -451,26 +457,27 @@ void OSystem_SDL::setupIcon() {
 			sscanf(color + 1, "%06x", &col);
 			col |= 0xFF000000;
 		} else {
-			warning("Could not load the icon (%d %s - %s) ", code, color, scummvm_icon[1 + i]);
+			warning("Could not load the built-in icon (%d %s - %s) ", code, color, scummvm_icon[1 + i]);
+			free(icon);
 			return;
 		}
 
 		rgba[code] = col;
 	}
-	memset(mask, 0, sizeof(mask));
-	for (h = 0; h < 32; h++) {
-		const char *line = scummvm_icon[1 + ncols + h];
-		for (w = 0; w < 32; w++) {
-			icon[w + 32 * h] = rgba[(int)line[w]];
-			if (rgba[(int)line[w]] & 0xFF000000) {
-				mask[h][w >> 3] |= 1 << (7 - (w & 0x07));
-			}
+	for (y = 0; y < h; y++) {
+		const char *line = scummvm_icon[1 + ncols + y];
+		for (x = 0; x < w; x++) {
+			icon[x + w * y] = rgba[(int)line[x]];
 		}
 	}
 
-	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, 32, 32, 32, 32 * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
-	SDL_WM_SetIcon(sdl_surf, (unsigned char *) mask);
+	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, w, h, 32, w * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
+	if (!sdl_surf) {
+		warning("SDL_CreateRGBSurfaceFrom(icon) failed");
+	}
+	SDL_WM_SetIcon(sdl_surf, NULL);
 	SDL_FreeSurface(sdl_surf);
+	free(icon);
 }
 
 OSystem::MutexRef OSystem_SDL::createMutex(void) {
