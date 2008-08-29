@@ -8,25 +8,29 @@ libndsdir = $(DEVKITPRO)/libnds
 # Select the build by setting SCUMM_BUILD to a,b,c,d,e,f or g.
 # Anything else gets build a.
 
-ifeq ($(SCUMM_BUILD),g)
-        DS_BUILD_G = 1
-else
- ifeq ($(SCUMM_BUILD),f)
-        DS_BUILD_F = 1
+ifeq ($(SCUMM_BUILD),h)
+        DS_BUILD_H = 1
  else
-  ifeq ($(SCUMM_BUILD),e)
-        DS_BUILD_E = 1
+ ifeq ($(SCUMM_BUILD),g)
+        DS_BUILD_G = 1
   else
-   ifeq ($(SCUMM_BUILD),d)
-        DS_BUILD_D = 1
+  ifeq ($(SCUMM_BUILD),f)
+        DS_BUILD_F = 1
+  else
+   ifeq ($(SCUMM_BUILD),e)
+        DS_BUILD_E = 1
    else
-    ifeq ($(SCUMM_BUILD),c)
-        DS_BUILD_C = 1
+    ifeq ($(SCUMM_BUILD),d)
+        DS_BUILD_D = 1
     else
-     ifeq ($(SCUMM_BUILD),b)
-        DS_BUILD_B = 1
+     ifeq ($(SCUMM_BUILD),c)
+        DS_BUILD_C = 1
      else
+      ifeq ($(SCUMM_BUILD),b)
+        DS_BUILD_B = 1
+      else
         DS_BUILD_A = 1
+      endif
      endif
     endif
    endif
@@ -132,9 +136,15 @@ endif
 ifdef DS_BUILD_G
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_G
 	LOGO = logog.bmp
-	ENABLE_PARALLACTION = STATIC_PLUGIN
 	ENABLE_LURE = STATIC_PLUGIN
 	BUILD=scummvm-G
+endif
+
+ifdef DS_BUILD_H
+	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_H
+	LOGO = logog.bmp
+	ENABLE_PARALLACTION = STATIC_PLUGIN
+	BUILD=scummvm-H
 endif
 
 
@@ -147,7 +157,8 @@ CXX     = arm-eabi-g++
 CFLAGS	=	-Wno-multichar -Wall\
 		-Wno-multichar -mcpu=arm9tdmi -mtune=arm9tdmi \
 		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
-		-mthumb-interwork -DUSE_ARM_COSTUME_ASM=1 -D$(BUILD)
+		-mthumb-interwork -DUSE_ARM_COSTUME_ASM=1 -g -D$(BUILD)
+
 
 # -ffast-math 
 
@@ -234,7 +245,8 @@ endif
 DATA_OBJS := $(portdir)/data/icons.o $(portdir)/data/keyboard.o $(portdir)/data/keyboard_pal.o $(portdir)/data/default_font.o $(portdir)/data/8x8font_tga.o
 
 
-COMPRESSOR_OBJS := $(portdir)/source/compressor/lz.o
+COMPRESSOR_OBJS := 
+#$(portdir)/source/compressor/lz.o
 
 FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o\
 			$(portdir)/source/fat/io_fcsr.o $(portdir)/source/fat/io_m3cf.o\
@@ -254,7 +266,8 @@ FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o
 #			$(portdir)/source/fat/io_sd_common.o $(portdir)/source/fat/io_scsd_s.o \
 #			$(portdir)/source/fat/io_sc_common.o $(portdir)/source/fat/io_sd_common.o
 
-LIBCARTRESET_OBJS := $(portdir)/source/libcartreset/cartreset.o
+LIBCARTRESET_OBJS := 
+#$(portdir)/source/libcartreset/cartreset.o
 
 # Files in this list will be optimisied for speed, otherwise they will be optimised for space
 OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp mixer.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp

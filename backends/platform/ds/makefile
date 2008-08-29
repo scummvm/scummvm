@@ -36,6 +36,8 @@ allbuilds:
 	make all       SCUMM_BUILD=f
 	make semiclean
 	make all       SCUMM_BUILD=g
+	make semiclean
+	make all       SCUMM_BUILD=h
 
 allbuildssafe:
 	make clean     SCUMM_BUILD=a
@@ -52,3 +54,5 @@ allbuildssafe:
 	make all       SCUMM_BUILD=f
 	make clean     SCUMM_BUILD=g
 	make all       SCUMM_BUILD=g
+	make clean     SCUMM_BUILD=h
+	make all       SCUMM_BUILD=h

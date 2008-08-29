@@ -19,13 +19,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  */
- // Save in order 1,2,3,4,larger 2,5
+#ifdef GBA_SRAM_SAVE
+
+
 #include "ramsave.h"
 #include "nds.h"
 #include "compressor/lz.h"
 
 #define CART_RAM ((vu8 *) (0x0A000000))
 #define SRAM_SAVE_MAX (65533)
+
 
 DSSaveFile::DSSaveFile() {
 	ptr = 0;
@@ -522,3 +525,5 @@ int DSSaveFileManager::getExtraData() {
 		return 0;
 	}
 }
+
+#endif

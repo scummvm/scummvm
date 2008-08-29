@@ -52,7 +52,9 @@ protected:
 	Common::Event eventQueue[96];
 	int queuePos;
 	
+#ifdef GBA_SRAM_SAVE
 	DSSaveFileManager saveManager;
+#endif
 	GBAMPSaveFileManager mpSaveManager;
 	DSAudioMixer* _mixer;
 	DSTimerManager* _timer;

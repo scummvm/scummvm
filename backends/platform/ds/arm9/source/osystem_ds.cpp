@@ -143,6 +143,8 @@ int16 OSystem_DS::getWidth() {
 }
 
 void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
+//	consolePrintf("Setpal %d, %d\n", start, num);
+
 	for (unsigned int r = start; r < start + num; r++) {
 		int red = *colors;
 		int green = *(colors + 1);
@@ -298,7 +300,7 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 			if (pixelsLeft != 0) {
 				u16 mix = *dest16;
 
-				mix = (mix & 0xFF00) | (*src++);
+				mix = (mix & 0x00FF) | ((*src++) << 8);
 
 				*dest16 = mix;
 				*destSub16 = mix;
@@ -631,7 +633,11 @@ Common::SaveFileManager* OSystem_DS::getSavefileManager() {
 	if (DS::isGBAMPAvailable() && (!forceSram)) {
 		return &mpSaveManager;
 	} else {
+#ifdef GBA_SRAM_SAVE
 		return &saveManager;
+#else
+		return NULL;
+#endif
 	}
 }
 

@@ -95,6 +95,27 @@
 #include "profiler/cyg-profile.h"
 #endif
 #include "backends/fs/ds/ds-fs.h"
+#include "arm9/exceptions.h"
+
+extern "C" u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState);
+extern const char __itcm_start[];
+static const char *registerNames[] =
+	{	"r0","r1","r2","r3","r4","r5","r6","r7",
+		"r8 ","r9 ","r10","r11","r12","sp ","lr ","pc " };
+
+/*
+extern "C" void* __real_malloc(size_t size);
+
+extern "C" void* __wrap_malloc(size_t size) {
+	void* res = __real_malloc(size);
+	if (res) {
+		return res;
+	} else {
+		consolePrintf("Failed alloc %d\n", size);
+		return NULL;
+	}
+}
+*/
 
 namespace DS {
 
@@ -2638,6 +2659,8 @@ GLvector getPenPos() {
 	return v;
 }
 
+#ifdef GBA_SRAM_SAVE
+
 void formatSramOption() {
 	consolePrintf("The following files are present in save RAM:\n");
 	DSSaveFileManager::instance()->listFiles();
@@ -2659,7 +2682,7 @@ void formatSramOption() {
 		}
 	}
 }
-
+#endif
 
 void setIndyFightState(bool st) {
 	indyFightState = st;
@@ -2834,13 +2857,70 @@ void powerOff() {
 /////////////////
 
 
+
+void dsExceptionHandler()
+{
+	consolePrintf("Blue screen of death");
+	setExceptionHandler(NULL);
+
+	
+	u32	currentMode = getCPSR() & 0x1f;
+	u32 thumbState = ((*(u32*)0x027FFD90) & 0x20);
+
+	u32 codeAddress, exceptionAddress = 0;
+
+	int offset = 8;
+
+	if ( currentMode == 0x17 ) {
+		consolePrintf("\x1b[10Cdata abort!\n\n");
+		codeAddress = exceptionRegisters[15] - offset;
+		if (	(codeAddress > 0x02000000 && codeAddress < 0x02400000) ||
+				(codeAddress > (u32)__itcm_start && codeAddress < (u32)(__itcm_start + 32768)) )
+			exceptionAddress = getExceptionAddress( codeAddress, thumbState);
+		else
+			exceptionAddress = codeAddress;
+			
+	} else {
+		if (thumbState)
+			offset = 2;
+		else
+			offset = 4;
+		consolePrintf("\x1b[5Cundefined instruction!\n\n");
+		codeAddress = exceptionRegisters[15] - offset;
+		exceptionAddress = codeAddress;
+	}
+
+	consolePrintf("  pc: %08X addr: %08X\n\n",codeAddress,exceptionAddress);
+
+	int i;
+	for ( i=0; i < 8; i++ ) {
+		consolePrintf(	"  %s: %08X   %s: %08X\n",
+					registerNames[i], exceptionRegisters[i],
+					registerNames[i+8],exceptionRegisters[i+8]);
+	}
+//	u32 *stack = (u32 *)exceptionRegisters[13];
+//	for ( i=0; i<10; i++ ) {
+//		consolePrintf( "\x1b[%d;2H%08X: %08X %08X", i + 14, (u32)&stack[i*2],stack[i*2], stack[(i*2)+1] );
+//	}
+
+	memoryReport();
+
+	while(1);
+}
+
+
+
+
 int main(void)
 {
 
 	soundCallback = NULL;
 
+
+
 	initHardware();
 
+	setExceptionHandler(dsExceptionHandler);
 
 #ifdef USE_DEBUGGER
 	for (int r = 0; r < 150; r++) {
@@ -2924,7 +3004,7 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.12.0 ");
+	consolePrintf("Version 0.12.0 beta4 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");
@@ -2951,7 +3031,11 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_G)
 	consolePrintf("build G\n");
-	consolePrintf("PARALLATION, LURE\n");
+	consolePrintf("Lure of the Tempress (LURE)\n");
+	consolePrintf("-------------------------------\n");
+#elif defined(DS_BUILD_H)
+	consolePrintf("build H\n");
+	consolePrintf("Nippon Safes (PARALLATION)\n");
 	consolePrintf("-------------------------------\n");
 #endif
 	consolePrintf("L/R + D-pad/pen:    Scroll view\n");
@@ -3069,9 +3153,11 @@ int main(void)
 	g_system = new OSystem_DS();
 	assert(g_system);
 
+#ifdef GBA_SRAM_SAVE
 	if ((keysHeld() & KEY_L) && (keysHeld() & KEY_R)) {
 		formatSramOption();
 	}
+#endif
 
 	IPC->adpcm.semaphore = false;
 
@@ -3092,6 +3178,8 @@ int main(void)
 	const char *argv[] = {"/scummvmds", "--config=scummvmf.ini"};
 #elif defined(DS_BUILD_G)
 	const char *argv[] = {"/scummvmds", "--config=scummvmg.ini"};
+#elif defined(DS_BUILD_H)
+	const char *argv[] = {"/scummvmds", "--config=scummvmh.ini"};
 #endif
 
 	while (1) {
