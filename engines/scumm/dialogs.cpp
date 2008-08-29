@@ -395,8 +395,7 @@ void SaveLoadChooser::updateInfos(bool redraw) {
 		int hours = minutes / 60;
 		minutes %= 60;
 
-		snprintf(buffer, 32, "Playtime: %.2d:%.2d",
-			hours & 0xFF, minutes & 0xFF);
+		snprintf(buffer, 32, "Playtime: %.2d:%.2d", hours, minutes);
 		_playtime->setLabel(buffer);
 	} else {
 		_date->setLabel("No date saved");

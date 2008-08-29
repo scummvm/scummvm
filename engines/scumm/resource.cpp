@@ -809,7 +809,7 @@ byte *ResourceManager::createResource(int type, int idx, uint32 size) {
 
 	ptr = (byte *)calloc(size + sizeof(MemBlkHeader) + SAFETY_AREA, 1);
 	if (ptr == NULL) {
-		error("Out of memory while allocating %d", size);
+		error("createResource(%s,%d): Out of memory while allocating %d", resTypeFromId(type), idx, size);
 	}
 
 	_allocatedSize += size;
