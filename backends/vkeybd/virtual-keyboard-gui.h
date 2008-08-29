@@ -34,21 +34,61 @@
 
 namespace Common {
 
+/**
+ * Class to handle the drawing of the virtual keyboard to the overlay, and the
+ * execution of the keyboard's main loop.
+ * This includes the blitting of the appropriate bitmap in the correct location,
+ * as well as the drawing of the virtual keyboard display.
+ */
 class VirtualKeyboardGUI {
 
 public:
 
 	VirtualKeyboardGUI(VirtualKeyboard *kbd);
 	~VirtualKeyboardGUI();
-	
+
+	/**
+	 * Updates the GUI when the Mode of the keyboard is changes
+	 */
 	void initMode(VirtualKeyboard::Mode *mode);
-	void checkScreenChanged();
+
+	/**
+	 * Starts the drawing of the keyboard, and runs the main event loop.
+	 */
 	void run();
+
+	/**
+	 * Interrupts the event loop and resets the overlay to its initial state.
+	 */	 
 	void close();
+	
 	bool isDisplaying() { return _displaying; }
+
+	/**
+	 * Reset the class to an initial state
+	 */
 	void reset();
+
+	/**
+	 * Activates drag mode. Takes the keyboard-relative coordinates of the 
+	 * cursor as an argument.
+	 */
 	void startDrag(int16 x, int16 y);
+
+	/**
+	 * Deactivates drag mode
+	 * */
 	void endDrag();
+	
+	/**
+	 * Checks for a screen change in the backend and re-inits the virtual 
+	 * keyboard if it has.
+	 */
+	void checkScreenChanged();
+	
+	/**
+	 * Sets the GUI's internal screen size variables
+	 */ 
 	void initSize(int16 w, int16 h);
 
 private:

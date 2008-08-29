@@ -54,9 +54,9 @@ VirtualKeyboard::~VirtualKeyboard() {
 
 void VirtualKeyboard::deleteEvents() {
 	ModeMap::iterator it_m;
-	EventMap::iterator it_e;
+	VKEventMap::iterator it_e;
 	for (it_m = _modes.begin(); it_m != _modes.end(); it_m++) {
-		EventMap *evt = &(it_m->_value.events);
+		VKEventMap *evt = &(it_m->_value.events);
 		for (it_e = evt->begin(); it_e != evt->end(); it_e++)
 			delete it_e->_value;
 	}
@@ -73,7 +73,7 @@ void VirtualKeyboard::reset() {
 	_kbdGUI->reset();
 }
 
-bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
+bool VirtualKeyboard::loadKeyboardPack(String packName) {
 
 	_kbdGUI->initSize(_system->getOverlayWidth(), _system->getOverlayHeight());
 
@@ -130,7 +130,7 @@ bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 		return false;
 	}
 
-	_parser->setParseMode(kParseFull);
+	_parser->setParseMode(VirtualKeyboardParser::kParseFull);
 	_loaded = _parser->parse();
 	if (_loaded)
 		printf("Keyboard pack '%s' loaded successfully!\n", packName.c_str());
@@ -140,50 +140,50 @@ bool VirtualKeyboard::loadKeyboardPack(Common::String packName) {
 
 bool VirtualKeyboard::checkModeResolutions()
 {
-	_parser->setParseMode(kParseCheckResolutions);
+	_parser->setParseMode(VirtualKeyboardParser::kParseCheckResolutions);
 	_loaded = _parser->parse();
 	if (_currentMode) _kbdGUI->initMode(_currentMode);
 	return _loaded;
 }
 
-Common::String VirtualKeyboard::findArea(int16 x, int16 y) {
+String VirtualKeyboard::findArea(int16 x, int16 y) {
 	return _currentMode->imageMap.findMapArea(x, y);
 }
 
-void VirtualKeyboard::processAreaClick(const Common::String& area) {
+void VirtualKeyboard::processAreaClick(const String& area) {
 	if (!_currentMode->events.contains(area)) return;
-	Event *evt = _currentMode->events[area];
+	VKEvent *evt = _currentMode->events[area];
 
 	switch (evt->type) {
-	case kEventKey: {
+	case kVKEventKey: {
 		// add virtual keypress to queue
-		_keyQueue.insertKey(*(Common::KeyState*)evt->data);
+		_keyQueue.insertKey(*(KeyState*)evt->data);
 		break;
 	}
-	case kEventModifier:
+	case kVKEventModifier:
 		_keyQueue.toggleFlags(*(byte*)(evt->data));
 		break;
-	case kEventSwitchMode:
+	case kVKEventSwitchMode:
 		// switch to new mode
 		switchMode((char *)evt->data);
 		_keyQueue.clearFlags();
 		break;
-	case kEventSubmit:
+	case kVKEventSubmit:
 		close(true);
 		break;
-	case kEventCancel:
+	case kVKEventCancel:
 		close(false);
 		break;
-	case kEventClear:
+	case kVKEventClear:
 		_keyQueue.clear();
 		break;
-	case kEventDelete:
+	case kVKEventDelete:
 		_keyQueue.deleteKey();
 		break;
-	case kEventMoveLeft:
+	case kVKEventMoveLeft:
 		_keyQueue.moveLeft();
 		break;
-	case kEventMoveRight:
+	case kVKEventMoveRight:
 		_keyQueue.moveRight();
 		break;
 	}
@@ -194,7 +194,7 @@ void VirtualKeyboard::switchMode(Mode *newMode) {
 	_currentMode = newMode;
 }
 
-void VirtualKeyboard::switchMode(const Common::String& newMode) {
+void VirtualKeyboard::switchMode(const String& newMode) {
 	if (!_modes.contains(newMode)) {
 		warning("Keyboard mode '%s' unknown", newMode.c_str());
 		return;
@@ -231,13 +231,13 @@ void VirtualKeyboard::show() {
 		assert(eventMan);
 
 		// push keydown & keyup events into the event manager
-		Common::Event evt;
+		Event evt;
 		evt.synthetic = false;
 		while (!_keyQueue.empty()) {
 			evt.kbd = _keyQueue.pop();
-			evt.type = Common::EVENT_KEYDOWN;
+			evt.type = EVENT_KEYDOWN;
 			eventMan->pushEvent(evt);
-			evt.type = Common::EVENT_KEYUP;
+			evt.type = EVENT_KEYUP;
 			eventMan->pushEvent(evt);
 		}
 	} else {
@@ -285,8 +285,8 @@ void VirtualKeyboard::KeyPressQueue::clearFlags() {
 void VirtualKeyboard::KeyPressQueue::insertKey(KeyState key) {
 	_strChanged = true;
 	key.flags ^= _flags;
-	if ((key.keycode >= Common::KEYCODE_a) && (key.keycode <= Common::KEYCODE_z))
-		key.ascii = (key.flags & Common::KBD_SHIFT) ? key.keycode - 32 : key.keycode;
+	if ((key.keycode >= KEYCODE_a) && (key.keycode <= KEYCODE_z))
+		key.ascii = (key.flags & KBD_SHIFT) ? key.keycode - 32 : key.keycode;
 	clearFlags();
 
 	String keyStr;

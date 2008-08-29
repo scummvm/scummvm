@@ -173,7 +173,7 @@ bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
 	if (_mode->events.contains(name))
 		return parserError("Event '%s' has already been defined", name.c_str());
 
-	VirtualKeyboard::Event *evt = new VirtualKeyboard::Event();
+	VirtualKeyboard::VKEvent *evt = new VirtualKeyboard::VKEvent();
 	evt->name = name;
 
 	String type = node->values["type"];
@@ -182,7 +182,7 @@ bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
 			delete evt;
 			return parserError("Key event element must contain code and ascii attributes");
 		}
-		evt->type = VirtualKeyboard::kEventKey;
+		evt->type = VirtualKeyboard::kVKEventKey;
 
 		KeyState *ks = (KeyState*) malloc(sizeof(KeyState));
 		ks->keycode = (KeyCode)atoi(node->values["code"].c_str());
@@ -198,7 +198,7 @@ bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
 			return parserError("Key modifier element must contain modifier attributes");
 		}
 		
-		evt->type = VirtualKeyboard::kEventModifier;
+		evt->type = VirtualKeyboard::kVKEventModifier;
 		byte *flags = (byte*) malloc(sizeof(byte));
 		*(flags) = parseFlags(node->values["modifiers"]);
 		evt->data = flags;
@@ -209,24 +209,24 @@ bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
 			return parserError("Switch mode event element must contain mode attribute");
 		}
 
-		evt->type = VirtualKeyboard::kEventSwitchMode;
+		evt->type = VirtualKeyboard::kVKEventSwitchMode;
 		String& mode = node->values["mode"];
 		char *str = (char*) malloc(sizeof(char) * mode.size() + 1);
 		memcpy(str, mode.c_str(), sizeof(char) * mode.size());
 		str[mode.size()] = 0;
 		evt->data = str;
 	} else if (type.equalsIgnoreCase("submit")) {
-		evt->type = VirtualKeyboard::kEventSubmit;
+		evt->type = VirtualKeyboard::kVKEventSubmit;
 	} else if (type.equalsIgnoreCase("cancel")) {
-		evt->type = VirtualKeyboard::kEventCancel;
+		evt->type = VirtualKeyboard::kVKEventCancel;
 	} else if (type.equalsIgnoreCase("clear")) {
-		evt->type = VirtualKeyboard::kEventClear;
+		evt->type = VirtualKeyboard::kVKEventClear;
 	} else if (type.equalsIgnoreCase("delete")) {
-		evt->type = VirtualKeyboard::kEventDelete;
+		evt->type = VirtualKeyboard::kVKEventDelete;
 	} else if (type.equalsIgnoreCase("move_left")) {
-		evt->type = VirtualKeyboard::kEventMoveLeft;
+		evt->type = VirtualKeyboard::kVKEventMoveLeft;
 	} else if (type.equalsIgnoreCase("move_right")) {
-		evt->type = VirtualKeyboard::kEventMoveRight;
+		evt->type = VirtualKeyboard::kVKEventMoveRight;
 	} else {
 		delete evt;
 		return parserError("Event type '%s' not known", type.c_str());

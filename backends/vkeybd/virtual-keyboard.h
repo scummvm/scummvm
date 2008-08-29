@@ -41,49 +41,80 @@ namespace Common {
 class VirtualKeyboardGUI;
 class VirtualKeyboardParser;
 
+/**
+ * Class that handles the functionality of the virtual keyboard.
+ * This includes storage of the virtual key press events when the user clicks
+ * a key and delivery of them when the keyboard is closed, as well as managing
+ * the internal state of the keyboard, such as its active mode.
+ */  
 class VirtualKeyboard {
 protected:
-	enum EventType {
-		kEventKey,
-		kEventModifier,
-		kEventSwitchMode,
-		kEventSubmit,
-		kEventCancel,
-		kEventClear,
-		kEventDelete,
-		kEventMoveLeft,
-		kEventMoveRight
+
+	/**
+	 * Enum to describe the different types of events that can be associated
+	 * with an area of the virtual keyboard bitmap.
+	 */
+	enum VKEventType {
+		/** Standard key press event */
+		kVKEventKey,
+		/** Modifier key press event */
+		kVKEventModifier,
+		/** Switch the mode of the keyboard */
+		kVKEventSwitchMode,
+		/** Close the keyboard, submitting all keypresses */
+		kVKEventSubmit,
+		/** Close the keyboard, without submitting keypresses */
+		kVKEventCancel,
+		/** Clear the virtual keypress queue */ 
+		kVKEventClear,
+		/** Move the keypress queue insert position backwards */
+		kVKEventMoveLeft,
+		/** Move the keypress queue insert position forwards */
+		kVKEventMoveRight,
+		/** Delete keypress from queue at the current insert position */
+		kVKEventDelete
 	};
 
-	struct Event {
-		Common::String name;
-		EventType type;
+	/** VKEvent struct encapsulates data on a virtual keyboard event */
+	struct VKEvent {
+		String name;
+		VKEventType type;
+		/** 
+		 * Void pointer that will point to different types of data depending
+		 * on the type of the event, these are:
+		 * - KeyState struct for kVKEventKey events
+		 * - a flags byte for kVKEventModifier events
+		 * - c-string stating the name of the new mode for kSwitchMode events
+		 */ 
 		void *data;
 		
-		Event() : data(0) {}
-		~Event() {
+		VKEvent() : data(0) {}
+		~VKEvent() {
 			if (data) free(data);
 		}
 	};
 	
-	typedef Common::HashMap<Common::String, Event*> EventMap; 
+	typedef HashMap<String, VKEvent*> VKEventMap; 
 
+	/**
+	 * Mode struct encapsulates all the data for each mode of the keyboard
+	 */
 	struct Mode {
-		Common::String		name;
-		Common::String		resolution;
-		Common::String		bitmapName;
+		String				name;
+		String				resolution;
+		String				bitmapName;
 		Graphics::Surface	*image;
 		OverlayColor		transparentColor;
-		Common::ImageMap	imageMap;
-		EventMap			events;
-		Common::Rect		*displayArea;
+		ImageMap			imageMap;
+		VKEventMap			events;
+		Rect				*displayArea;
 		OverlayColor		displayFontColor;
 
 		Mode() : image(0), displayArea(0) {}
 		~Mode() { delete displayArea; }
 	};
 	
-	typedef Common::HashMap<Common::String, Mode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ModeMap;
+	typedef HashMap<String, Mode, IgnoreCase_Hash, IgnoreCase_EqualTo> ModeMap;
 
 	enum HorizontalAlignment {
 		kAlignLeft,
@@ -98,10 +129,15 @@ protected:
 	};
 
 	struct VirtualKeyPress {
-		Common::KeyState key;
+		KeyState key;
+		/** length of the key presses description string */
 		uint strLen;
 	};
 
+	/** 
+	 * Class that stores the queue of virtual key presses, as well as
+	 * maintaining a string that represents a preview of the queue
+	 */
 	class KeyPressQueue {
 	public:
 		KeyPressQueue();
@@ -132,10 +168,10 @@ protected:
 		uint _strPos;
 	};
 
-
-
 public:
+
 	VirtualKeyboard();
+
 	virtual ~VirtualKeyboard();
 	
 	/**
@@ -145,7 +181,7 @@ public:
 	 * searches for a compressed keyboard pack by looking for packName.zip.
 	 * @param packName	name of the keyboard pack
 	 */
-	bool loadKeyboardPack(Common::String packName);
+	bool loadKeyboardPack(String packName);
 
 	/**
 	 * Shows the keyboard, starting an event loop that will intercept all
@@ -173,7 +209,7 @@ public:
 		return _loaded;
 	}
 
-protected:	// TODO : clean up all this stuff
+protected:	
 
 	OSystem *_system;
 
@@ -189,11 +225,11 @@ protected:	// TODO : clean up all this stuff
 	void deleteEvents();
 	bool checkModeResolutions();
 	void switchMode(Mode *newMode);
-	void switchMode(const Common::String& newMode);
+	void switchMode(const String& newMode);
 	void handleMouseDown(int16 x, int16 y);
 	void handleMouseUp(int16 x, int16 y);
 	String findArea(int16 x, int16 y);
-	void processAreaClick(const Common::String &area);
+	void processAreaClick(const String &area);
 
 	bool _loaded;
 
@@ -211,7 +247,7 @@ protected:	// TODO : clean up all this stuff
 };
 
 
-} // End of namespace GUI
+} // End of namespace Common
 
 
 #endif

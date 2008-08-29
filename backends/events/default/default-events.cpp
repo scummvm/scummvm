@@ -363,7 +363,7 @@ void DefaultEventManager::processMillis(uint32 &millis) {
 	_lastMillis = millis;
 	_boss->unlockMutex(_timeMutex);
 }
-#include "backends/vkeybd/keycode-descriptions.h"
+
 bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = _boss->getMillis();
 	bool result = false;
@@ -372,11 +372,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	if (!_artificialEventQueue.empty()) {
 		event = _artificialEventQueue.pop();
 		result = true;
-		
-		if (event.type == Common::EVENT_KEYDOWN)
-			printf("ART. KEY DOWN: %d (%s)\n", event.kbd.keycode, keycodeDescTable[event.kbd.keycode]);
-		else if (event.type == Common::EVENT_KEYUP)
-			printf("ART. KEY UP: %d (%s)\n", event.kbd.keycode, keycodeDescTable[event.kbd.keycode]);
 	}
 	
 	// poll for event from backend
@@ -385,20 +380,12 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		if (result) {
 			// send key press events to keymapper
 			if (event.type == Common::EVENT_KEYDOWN) {
-				printf("KEY DOWN: %d (%s)", event.kbd.keycode, keycodeDescTable[event.kbd.keycode]);
 				if (_keymapper->mapKeyDown(event.kbd)) {
 					result = false;
-					printf(" - MAPPED!\n");
-				} else {
-					printf("\n");
 				}
 			} else if (event.type == Common::EVENT_KEYUP) {
-				printf("KEY UP: %d (%s)", event.kbd.keycode, keycodeDescTable[event.kbd.keycode]);
 				if (_keymapper->mapKeyUp(event.kbd)) {
 					result = false;
-					printf(" - MAPPED!\n");
-				} else {
-					printf("\n");
 				}
 			}
 		}
