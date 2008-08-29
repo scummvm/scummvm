@@ -100,9 +100,6 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -192,9 +189,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -945,6 +939,10 @@
 			<Filter
 				Name="fs"
 				>
+				<File
+					RelativePath="..\..\backends\fs\abstract-fs.cpp"
+					>
+				</File>
 				<File
 					RelativePath="..\..\backends\fs\abstract-fs.h"
 					>
