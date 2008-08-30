@@ -55,7 +55,14 @@ enum TinselGameFeatures {
 	GF_DEMO = 1 << 0,
 	GF_CD = 1 << 1,
 	GF_FLOPPY = 1 << 2,
-	GF_SCNFILES = 1 << 3
+	GF_SCNFILES = 1 << 3,
+
+	// The GF_USE_?FLAGS values specify how many country flags are displayed
+	// in the subtitles options dialog.
+	// None of these defined -> 1 language, in ENGLISH.TXT
+	GF_USE_3FLAGS = 1 << 4,	// French, German, Spanish
+	GF_USE_4FLAGS = 1 << 5,	// French, German, Spanish, Italian
+	GF_USE_5FLAGS = 1 << 6	// All 5 flags
 };
 
 enum TinselEngineVersion {

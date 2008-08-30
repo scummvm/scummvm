@@ -207,7 +207,7 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 				int sceneOffset = (_vm->getFeatures() & GF_SCNFILES) ? 1 : 0;
 				int sceneNumber = (GetSceneHandle() >> SCNHANDLE_SHIFT) - sceneOffset;
 #if 0	// FIXME: Disabled this code for now, as it doesn't work as it should (see bug #2078922).
-				if ((language == TXT_GERMAN) && 
+				if ((g_language == TXT_GERMAN) && 
 					((sceneNumber >= 25 && sceneNumber <= 27) || (sceneNumber == 17))) {
 					// Skip to title screen
 					// It seems the German CD version uses scenes 25,26,27,17 for the intro,
@@ -695,25 +695,8 @@ int TinselEngine::init() {
 
 	// TODO: More stuff from dos_main.c may have to be added here
 
-	// Set language - we'll be clever here and use the ScummVM language setting
-	language = TXT_ENGLISH;
-	switch (getLanguage()) {
-	case Common::FR_FRA:
-		language = TXT_FRENCH;
-		break;
-	case Common::DE_DEU:
-		language = TXT_GERMAN;
-		break;
-	case Common::IT_ITA:
-		language = TXT_ITALIAN;
-		break;
-	case Common::ES_ESP:
-		language = TXT_SPANISH;
-		break;
-	default:
-		language = TXT_ENGLISH;
-	}
-	ChangeLanguage(language);
+	// load in text strings
+	ChangeLanguage(g_language);
 
 	// load in graphics info
 	SetupHandleTable();

@@ -130,6 +130,30 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
+	{	// Multilingual CD with english speech and *.gra files.
+		// Note: It contains no english subtitles.
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
+				{"english.smp", 0, NULL, -1},
+				{"french.txt", 0, NULL, -1},
+				{"german.txt", 0, NULL, -1},
+				{"italian.txt", 0, NULL, -1},
+				{"spanish.txt", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::UNK_LANG,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_DW1,
+		0,
+		GF_CD | GF_USE_4FLAGS,
+		TINSEL_V1,
+	},
+
 	{	// English CD with SCN files
 		{
 			"dw",

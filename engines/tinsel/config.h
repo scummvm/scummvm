@@ -30,23 +30,11 @@
 
 namespace Tinsel {
 
-// None of these defined -> 1 language, in ENGLISH.TXT
-//#define USE_5FLAGS	1	// All 5 flags
-//#define USE_4FLAGS	1	// French, German, Italian, Spanish
-//#define USE_3FLAGS	1	// French, German, Spanish
-
-// The Hebrew version appears to the software as being English
-// but it needs to have subtitles on...
-//#define HEBREW	1
-
-//#define JAPAN	1
-
-
 // double click timer initial value
-#define	DOUBLE_CLICK_TIME	6	// 6 @ 18Hz = .33 sec
-
-#define DEFTEXTSPEED	0
-
+enum {
+	DOUBLE_CLICK_TIME	= 6,	// 6 @ 18Hz = .33 sec
+	DEFTEXTSPEED		= 0
+};
 
 extern int dclickSpeed;
 extern int volMidi;
@@ -55,7 +43,7 @@ extern int volVoice;
 extern int speedText;
 extern int bSubtitles;
 extern int bSwapButtons;
-extern LANGUAGE language;
+extern LANGUAGE g_language;
 extern int bAmerica;
 
 void WriteConfig(void);
