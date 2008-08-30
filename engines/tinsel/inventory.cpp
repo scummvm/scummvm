@@ -801,11 +801,9 @@ bool LanguageChange(void) {
 /******************** Some miscellaneous functions ************************/
 /**************************************************************************/
 
-/*---------------------------------------------------------------------*\
-|	DumpIconArray()/DumpDobjArray()/DumpObjArray()			|
-|-----------------------------------------------------------------------|
-| Delete all the objects in iconArray[]/DobjArray[]/objArray[]		|
-\*---------------------------------------------------------------------*/
+/**
+ * Delete all the objects in iconArray[]
+ */
 static void DumpIconArray(void){
 	for (int i = 0; i < MAX_ICONS; i++) {
 		if (iconArray[i] != NULL) {
@@ -818,7 +816,6 @@ static void DumpIconArray(void){
 /**
  * Delete all the objects in DobjArray[]
  */
-
 static void DumpDobjArray(void) {
 	for (int i = 0; i < MAX_WCOMP; i++) {
 		if (DobjArray[i] != NULL) {
@@ -831,7 +828,6 @@ static void DumpDobjArray(void) {
 /**
  * Delete all the objects in objArray[]
  */
-
 static void DumpObjArray(void) {
 	for (int i = 0; i < MAX_WCOMP; i++) {
 		if (objArray[i] != NULL) {
@@ -891,7 +887,6 @@ bool IsInInventory(int object, int invnum) {
 /**
  * Returns which item is held (INV_NOICON (-1) if none)
  */
-
 int WhichItemHeld(void) {
 	return HeldItem;
 }
@@ -900,7 +895,6 @@ int WhichItemHeld(void) {
  * Called from the cursor module when it re-initialises (at the start of
  * a new scene). For if we are holding something at scene-change time.
  */
-
 void InventoryIconCursor(void) {
 	INV_OBJECT *invObj;
 
@@ -913,7 +907,6 @@ void InventoryIconCursor(void) {
 /**
  * Returns TRUE if the inventory is active.
  */
-
 bool InventoryActive(void) {
 	return (InventoryState == ACTIVE_INV);
 }
@@ -1281,7 +1274,6 @@ void DropItem(int item) {
  * Stick the item into an inventory list (ItemOrder[]), and hold the
  * item if requested.
  */
-
 void AddToInventory(int invno, int icon, bool hold) {
 	int	i;
 	bool	bOpen;
@@ -1412,12 +1404,12 @@ int InvArea(int x, int y) {
 	int RightX = MultiRightmost(RectObject) + 1;
 	int BottomY = MultiLowest(RectObject) + 1;
 
-// Outside the whole rectangle?
+	// Outside the whole rectangle?
 	if (x <= LeftX - EXTRA || x > RightX + EXTRA
 	|| y <= TopY - EXTRA || y > BottomY + EXTRA)
 		return I_NOTIN;
 
-// The bottom line
+	// The bottom line
 	if (y > BottomY - 2 - EXTRA) {		// Below top of bottom line?
 		if (x <= LeftX + 2 + EXTRA)
 			return I_BLEFT;		// Bottom left corner
@@ -1427,7 +1419,7 @@ int InvArea(int x, int y) {
 			return I_BOTTOM;	// Just plain bottom
 	}
 
-// The top line
+	// The top line
 	if (y <= TopY + 2 + EXTRA) {		// Above bottom of top line?
 		if (x <= LeftX + 2 + EXTRA)
 			return I_TLEFT;		// Top left corner
@@ -1437,24 +1429,24 @@ int InvArea(int x, int y) {
 			return I_TOP;		// Just plain top
 	}
 
-// Sides
+	// Sides
 	if (x <= LeftX + 2 + EXTRA)		// Left of right of left side?
 		return I_LEFT;
 	else if (x > RightX - 2 - EXTRA)		// Right of left of right side?
 		return I_RIGHT;
 
-// From here down still needs fixing up properly
-/*
-* In the move area?
-*/
+	// From here down still needs fixing up properly
+	/*
+	 * In the move area?
+	 */
 	if (ino != INV_CONF
 	&& x >= LeftX + M_SW - 2 && x <= RightX - M_SW + 3 &&
 	   y >= TopY + M_TH - 2  && y < TopY + M_TBB + 2)
 		return I_MOVE;
 
-/*
-* Scroll bits
-*/
+	/*
+	 * Scroll bits
+	 */
 	if (ino == INV_CONF && cd.bExtraWin) {
 	} else {
 		if (x > RightX - M_IAL + 3 && x <= RightX - M_IAR + 1) {
@@ -1481,7 +1473,6 @@ int InvArea(int x, int y) {
  * Returns the id of the icon displayed under the given position.
  * Also return co-ordinates of items tag display position, if requested.
  */
-
 int InvItem(int *x, int *y, bool update) {
 	int itop, ileft;
 	int row, col;
@@ -1515,7 +1506,6 @@ int InvItem(int *x, int *y, bool update) {
 /**
  * Returns the id of the icon displayed under the given position.
  */
-
 int InvItemId(int x, int y) {
 	int itop, ileft;
 	int row, col;
@@ -1544,21 +1534,21 @@ int InvItemId(int x, int y) {
 	return INV_NOICON;
 }
 
-/*---------------------------------------------------------------------*\
-|	WhichInvBox()							|
-|-----------------------------------------------------------------------|
-| Finds which box the cursor is in.					|
-\*---------------------------------------------------------------------*/
-#define MD_YSLIDTOP	7
-#define MD_YSLIDBOT	18
-#define MD_YBUTTOP	9
-#define MD_YBUTBOT	16
-#define MD_XLBUTL	1
-#define MD_XLBUTR	10
-#define MD_XRBUTL	105
-#define MD_XRBUTR	114
-
+/**
+ * Finds which box the cursor is in.
+ */
 static int WhichInvBox(int curX, int curY, bool bSlides) {
+	enum {
+		MD_YSLIDTOP	= 7,
+		MD_YSLIDBOT	= 18,
+		MD_YBUTTOP	= 9,
+		MD_YBUTBOT	= 16,
+		MD_XLBUTL	= 1,
+		MD_XLBUTR	= 10,
+		MD_XRBUTL	= 105,
+		MD_XRBUTR	= 114
+	};
+
 	if (bSlides) {
 		for (int i = 0; i < numMdSlides; i++) {
 			if (curY > MultiHighest(mdSlides[i].obj) && curY < MultiLowest(mdSlides[i].obj)
@@ -1846,7 +1836,6 @@ void InvLabels(bool InBody, int aniX, int aniY) {
  * It seems to set up slideStuff[], an array of possible first-displayed
  * icons set against the matching y-positions of the slider.
  */
-
 void AdjustTop(void) {
 	int tMissing, bMissing, nMissing;
 	int nslideY;
@@ -1909,7 +1898,6 @@ void AdjustTop(void) {
 /**
  * Insert an inventory icon object onto the display list.
  */
-
 OBJECT *AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
 	INV_OBJECT *invObj;		// Icon data
 	const MULTI_INIT *pmi;		// Its INIT structure - from the reel
@@ -1934,7 +1922,6 @@ OBJECT *AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
 /**
  * Create display objects for the displayed icons in an inventory window.
  */
-
 void FillInInventory(void) {
 	int	Index;		// Index into ItemOrder[]
 	int	n = 0;		// index into iconArray[]
@@ -2015,7 +2002,6 @@ void AddBackground(OBJECT **rect, OBJECT **title, int extraH, int extraV, int te
 /**
  * Insert a part of the inventory window frame onto the display list.
  */
-
 static OBJECT *AddObject(const FREEL *pfreel, int num) {
 	const MULTI_INIT *pmi;	// Get the MULTI_INIT structure
 	IMAGE *pim;
@@ -2048,7 +2034,6 @@ static OBJECT *AddObject(const FREEL *pfreel, int num) {
 /**
  * Display the scroll bar slider.
  */
-
 void AddSlider(OBJECT **slide, const FILM *pfilm) {
 	SlideObject = *slide = AddObject(&pfilm->reels[IX_SLIDE], -1);
 	MultiSetAniXY(*slide, MultiRightmost(RectObject)-M_SXOFF+2, InvD[ino].inventoryY + slideY);
@@ -2067,7 +2052,6 @@ enum {
 /**
  * Display a box with some text in it.
  */
-
 void AddBox(int *pi, int i) {
 	int x	= InvD[ino].inventoryX + cd.Box[i].xpos;
 	int y	= InvD[ino].inventoryY + cd.Box[i].ypos;
@@ -2239,7 +2223,6 @@ static void AddBoxes(bool posnSlide) {
 /**
  * Display the scroll bar slider.
  */
-
 void AddEWSlider(OBJECT **slide, const FILM *pfilm) {
 	SlideObject = *slide = AddObject(&pfilm->reels[IX_SLIDE], -1);
 	MultiSetAniXY(*slide, InvD[ino].inventoryX + 24 + 127, slideY);
@@ -2249,7 +2232,6 @@ void AddEWSlider(OBJECT **slide, const FILM *pfilm) {
 /**
  * AddExtraWindow
  */
-
 int AddExtraWindow(int x, int y, OBJECT **retObj) {
 	int	n = 0;
 	const FILM *pfilm;
@@ -2484,7 +2466,7 @@ void ConstructInventory(InventoryType filling) {
 
 	OBJECT **rect, **title;
 
-// Draw background, slider and icons
+	// Draw background, slider and icons
 	if (filling == FULL) {
 		rect = &retObj[n++];
 		title = &retObj[n++];
@@ -2500,8 +2482,7 @@ void ConstructInventory(InventoryType filling) {
 		}
 
 		FillInInventory();
-	}
-	else if (filling == CONF) {
+	} else if (filling == CONF) {
 		rect = &retObj[n++];
 		title = &retObj[n++];
 
@@ -2805,7 +2786,6 @@ bool convHid(void) {
 /**
  * Start up an inventory window.
  */
-
 void PopUpInventory(int invno) {
 	assert((invno == INV_1 || invno == INV_2 || invno == INV_CONV || invno == INV_CONF)); // Trying to open illegal inventory
 
@@ -2854,7 +2834,6 @@ void SetConfGlobals(CONFINIT *ci) {
 /**
  * PopupConf
  */
-
 void PopUpConf(CONFTYPE type) {
 	int curX, curY;
 
@@ -2971,7 +2950,6 @@ void PopUpConf(CONFTYPE type) {
 /**
  * Close down an inventory window.
  */
-
 void KillInventory(void) {
 	if (objArray[0] != NULL) {
 		DumpObjArray();

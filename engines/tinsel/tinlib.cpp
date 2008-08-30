@@ -1991,7 +1991,6 @@ void topplay(CORO_PARAM, SCNHANDLE film, int x, int y, int complete, int actorid
 /**
  * Open or close the 'top window'
  */
-
 void topwindow(int bpos) {
 	assert(bpos == TW_START || bpos == TW_END);
 
@@ -2010,7 +2009,6 @@ void topwindow(int bpos) {
 /**
  * unhookscene
  */
-
 void unhookscene(void) {
 	UnHookScene();
 }
@@ -2018,7 +2016,6 @@ void unhookscene(void) {
 /**
  * Un-define an actor as tagged.
  */
-
 void untagactor(int actor) {
 	UnTagActor(actor);
 }
@@ -2026,14 +2023,12 @@ void untagactor(int actor) {
 /**
  * vibrate
  */
-
 void vibrate(void) {
 }
 
 /**
  * waitframe(int actor, int frameNumber)
  */
-
 void waitframe(CORO_PARAM, int actor, int frameNumber, bool escOn, int myescEvent) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
@@ -2056,7 +2051,6 @@ void waitframe(CORO_PARAM, int actor, int frameNumber, bool escOn, int myescEven
 /**
  * Return when a key pressed or button pushed.
  */
-
 void waitkey(CORO_PARAM, bool escOn, int myescEvent) {
 	CORO_BEGIN_CONTEXT;
 		int	startEvent;
@@ -2104,7 +2098,6 @@ void waitkey(CORO_PARAM, bool escOn, int myescEvent) {
 /**
  * Pause for requested time.
  */
-
 void waittime(CORO_PARAM, int time, bool frame, bool escOn, int myescEvent) {
 	CORO_BEGIN_CONTEXT;
 		int time;
@@ -2261,7 +2254,6 @@ void walkingactor(uint32 id, SCNHANDLE *rp) {
  * Walk a moving actor towards the polygon's tag, but return when the
  * actor enters the polygon.
  */
-
 void walkpoly(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool escOn, int myescEvent) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
@@ -2309,7 +2301,6 @@ void walkpoly(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool escOn, in
 /**
  * walktag(actor, reel, hold)
  */
-
 void walktag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool escOn, int myescEvent) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
@@ -2385,7 +2376,6 @@ void walktag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool escOn, int
 /**
  * whichinventory
  */
-
 int whichinventory(void) {
 	return WhichInventoryOpen();
 }
