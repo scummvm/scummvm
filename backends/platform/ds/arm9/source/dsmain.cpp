@@ -697,7 +697,7 @@ void checkSleepMode() {
 
 void setShowCursor(bool enable)
 {
-	if (currentGame->control == CONT_SCUMM_SAMNMAX)
+	if ((currentGame) && (currentGame->control == CONT_SCUMM_SAMNMAX))
 	{
 		if (cursorEnable) {
 			sprites[1].attribute[0] = ATTR0_BMP | 150;
