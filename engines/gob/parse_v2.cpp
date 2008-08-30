@@ -116,6 +116,7 @@ int16 Parse_v2::parseValExpr(byte stopToken) {
 	int16 brackPos;
 	static int16 flag = 0;
 	int16 oldflag;
+	uint32 varPos = 0;
 
 	memset(values, 0, 20 * sizeof(int16));
 
@@ -130,11 +131,61 @@ int16 Parse_v2::parseValExpr(byte stopToken) {
 	valPtr = values - 1;
 
 	while (1) {
+		operation = *_vm->_global->_inter_execPtr++;
+
+		while ((operation == 14) || (operation == 15)) {
+			if (operation == 14) {
+				uint16 n = _vm->_inter->load16();
+				varPos += n * 4;
+
+				_vm->_global->_inter_execPtr += 2;
+				if (*_vm->_global->_inter_execPtr == 97)
+					_vm->_global->_inter_execPtr++;
+			} else if (operation == 15) {
+				uint16 n = _vm->_inter->load16();
+				varPos += n * 4;
+
+				uint16 var_0C = _vm->_inter->load16();
+				uint8 var_A = *_vm->_global->_inter_execPtr++;
+
+				byte *var_12 = _vm->_global->_inter_execPtr;
+				_vm->_global->_inter_execPtr += var_A;
+
+				uint16 var_6 = 0;
+
+				for (int i = 0; i < var_A; i++) {
+					temp2 = parseValExpr(12);
+
+					//uint16 ax = sub_12063(temp2, var_12[i], varPos, 0);
+
+					uint16 ax;
+
+					if (temp2 < 0) {
+						ax = 0;
+					} else if (var_12[i] > temp2) {
+						ax = temp2;
+					} else {
+						ax = var_12[i] - 1;
+					}
+
+					var_6 = var_6 * var_12[i] + ax;
+				}
+
+				varPos += var_6 * var_0C * 4;
+
+				if (*_vm->_global->_inter_execPtr == 97)
+					_vm->_global->_inter_execPtr++;
+			}
+
+			warning("v5+ Stub: parseValExpr operation %d, offset %d", operation, varPos);
+
+			operation = *_vm->_global->_inter_execPtr++;
+		}
+
 		stkPos++;
 		operPtr++;
 		valPtr++;
 
-		operation = *_vm->_global->_inter_execPtr++;
 		if ((operation >= 16) && (operation <= 29)) {
 			*operPtr = 20;
 			switch (operation) {
@@ -373,6 +424,7 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 	bool var_1A;
 	int16 stkPos;
 	int16 brackStart;
+	uint32 varPos = 0;
 
 	memset(operStack, 0, 20);
 
@@ -381,10 +433,61 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 	valPtr = values - 1;
 
 	while (1) {
+		operation = *_vm->_global->_inter_execPtr++;
+
+		while ((operation == 14) || (operation == 15)) {
+			if (operation == 14) {
+				uint16 n = _vm->_inter->load16();
+				varPos += n * 4;
+
+				_vm->_global->_inter_execPtr += 2;
+				if (*_vm->_global->_inter_execPtr == 97)
+					_vm->_global->_inter_execPtr++;
+			} else if (operation == 15) {
+				uint16 n = _vm->_inter->load16();
+				varPos += n * 4;
+
+				uint16 var_0C = _vm->_inter->load16();
+				uint8 var_A = *_vm->_global->_inter_execPtr++;
+
+				byte *var_12 = _vm->_global->_inter_execPtr;
+				_vm->_global->_inter_execPtr += var_A;
+
+				uint16 var_6 = 0;
+
+				for (int i = 0; i < var_A; i++) {
+					temp2 = parseValExpr(12);
+
+					//uint16 ax = sub_12063(temp2, var_12[i], varPos, 0);
+
+					uint16 ax;
+
+					if (temp2 < 0) {
+						ax = 0;
+					} else if (var_12[i] > temp2) {
+						ax = temp2;
+					} else {
+						ax = var_12[i] - 1;
+					}
+
+					var_6 = var_6 * var_12[i] + ax;
+				}
+
+				varPos += var_6 * var_0C * 4;
+
+				if (*_vm->_global->_inter_execPtr == 97)
+					_vm->_global->_inter_execPtr++;
+			}
+
+			warning("v5+ Stub: parseExpr operation %d, offset %d", operation, varPos);
+
+			operation = *_vm->_global->_inter_execPtr++;
+		}
+
 		stkPos++;
 		operPtr++;
 		valPtr++;
-		operation = *_vm->_global->_inter_execPtr++;
+
 		if ((operation >= 16) && (operation <= 29)) {
 			switch (operation) {
 			case 16:

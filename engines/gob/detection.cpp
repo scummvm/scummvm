@@ -57,6 +57,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"inca2", "Inca II: Wiracocha"},
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
 	{"dynasty", "The Last Dynasty"},
+	{"urban", "Urban Runner"},
 	{0, 0}
 };
 
@@ -1771,7 +1772,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeWoodruff,
+		kGameTypeDynasty,
 		kFeatures640,
 		"intro"
 	},
@@ -1784,7 +1785,20 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeWoodruff,
+		kGameTypeDynasty,
+		kFeatures640,
+		"intro"
+	},
+	{
+		{
+			"urban",
+			"",
+			AD_ENTRY1s("intro.stk", "3ab2c542bd9216ae5d02cc6f45701ae1", 1252436),
+			EN_USA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeDynasty,
 		kFeatures640,
 		"intro"
 	},

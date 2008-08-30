@@ -62,7 +62,9 @@ const Common::Language GobEngine::_gobToScummVMLang[] = {
 	Common::EN_USA,
 	Common::NL_NLD,
 	Common::KO_KOR,
-	Common::HB_ISR
+	Common::HB_ISR,
+	Common::PT_BRA,
+	Common::JA_JPN
 };
 
 GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
@@ -120,7 +122,7 @@ void GobEngine::shutdown() {
 }
 
 const char *GobEngine::getLangDesc(int16 language) const {
-	if ((language < 0) || (language > 8))
+	if ((language < 0) || (language > 10))
 		language = 2;
 	return Common::getLanguageDescription(_gobToScummVMLang[language]);
 }
@@ -243,6 +245,12 @@ int GobEngine::init() {
 		break;
 	case Common::HB_ISR:
 		_global->_language = 8;
+		break;
+	case Common::PT_BRA:
+		_global->_language = 9;
+		break;
+	case Common::JA_JPN:
+		_global->_language = 10;
 		break;
 	default:
 		// Default to English
@@ -377,6 +385,20 @@ bool GobEngine::initGameParts() {
 			_init = new Init_v3(this);
 			_video = new Video_v2(this);
 			_inter = new Inter_v4(this);
+			_parse = new Parse_v2(this);
+			_mult = new Mult_v2(this);
+			_draw = new Draw_v2(this);
+			_game = new Game_v2(this);
+			_map = new Map_v4(this);
+			_goblin = new Goblin_v4(this);
+			_scenery = new Scenery_v2(this);
+			_saveLoad = new SaveLoad_v4(this, _targetName.c_str());
+			break;
+
+		case kGameTypeDynasty:
+			_init = new Init_v3(this);
+			_video = new Video_v2(this);
+			_inter = new Inter_v5(this);
 			_parse = new Parse_v2(this);
 			_mult = new Mult_v2(this);
 			_draw = new Draw_v2(this);

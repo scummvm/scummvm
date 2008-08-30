@@ -69,7 +69,7 @@ public:
 	int16 _destSurface;
 
 	char _letterToPrint;
-	char *_textToPrint;
+	const char *_textToPrint;
 
 	int16 _backDeltaX;
 	int16 _backDeltaY;
@@ -146,10 +146,11 @@ public:
 	void adjustCoords(char adjust, uint16 *coord1, uint16 *coord2) {
 		adjustCoords(adjust, (int16 *) coord1, (int16 *) coord2);
 	}
-	void drawString(char *str, int16 x, int16 y, int16 color1, int16 color2,
+	int stringLength(const char *str, int16 fontIndex);
+	void drawString(const char *str, int16 x, int16 y, int16 color1, int16 color2,
 			int16 transp, SurfaceDesc *dest, Video::FontDesc *font);
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
-			int16 bottom, char *str, int16 fontIndex, int16 color);
+			int16 bottom, const char *str, int16 fontIndex, int16 color);
 	int32 getSpriteRectSize(int16 index);
 	void forceBlit(bool backwards = false);
 

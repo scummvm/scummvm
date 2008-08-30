@@ -30,6 +30,7 @@ MODULE_OBJS := \
 	inter_bargon.o \
 	inter_v3.o \
 	inter_v4.o \
+	inter_v5.o \
 	map.o \
 	map_v1.o \
 	map_v2.o \
