@@ -79,7 +79,7 @@ enum TinselKeyDirection {
 
 typedef bool (*KEYFPTR)(const Common::KeyState &);
 
-class TinselEngine : public ::Engine {
+class TinselEngine : public Engine {
 	int _gameId;
 	Common::KeyState _keyPressed;
 	Common::RandomSource _random;
