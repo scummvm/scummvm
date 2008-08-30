@@ -66,8 +66,8 @@ enum TinselGameFeatures {
 };
 
 enum TinselEngineVersion {
-	TINSEL_V0 = 1 << 0,	// Used in the DW1 demo only
-	TINSEL_V1 = 1 << 1
+	TINSEL_V0 = 0,	// Used in the DW1 demo only
+	TINSEL_V1 = 1
 };
 
 struct TinselGameDescription;
