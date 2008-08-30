@@ -2971,6 +2971,9 @@ void KillInventory(void) {
 	if (bOpenConf) {
 		bOpenConf = false;
 		PopUpConf(OPTION);
+		
+		// Write config changes
+		WriteConfig();
 	} else if (ino == INV_CONF)
 		InventoryIconCursor();
 }

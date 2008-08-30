@@ -53,9 +53,8 @@ int bAmerica = 0;
 bool bNoBlocking;
 
 /**
- * WriteConfig()
+ * Write settings to config manager and flush the config file to disk.
  */
-
 void WriteConfig(void) {
 	ConfMan.setInt("dclick_speed", dclickSpeed);
 	ConfMan.setInt("music_volume", (volMidi * Audio::Mixer::kMaxChannelVolume) / MAXMIDIVOL);
@@ -64,7 +63,6 @@ void WriteConfig(void) {
 	ConfMan.setInt("talkspeed", (speedText * 255) / 100);
 	ConfMan.setBool("subtitles", bSubtitles);
 	//ConfMan.setBool("swap_buttons", bSwapButtons ? 1 : 0);
-	//ConfigData.language = language;	// not necessary, as language has been set in the launcher
 	//ConfigData.bAmerica = bAmerica;		// EN_USA / EN_GRB
 
 	// Store language for multilingual versions
