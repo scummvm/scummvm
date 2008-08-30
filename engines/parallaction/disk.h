@@ -29,9 +29,11 @@
 #define PATH_LEN 200
 
 #include "common/fs.h"
-
 #include "common/file.h"
+
 #include "graphics/surface.h"
+
+#include "parallaction/graphics.h"
 
 namespace Parallaction {
 

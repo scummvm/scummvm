@@ -230,7 +230,7 @@ public:
 			_vm->_gfx->setItemFrame(id, 0);
 		}
 		_selection = -1;
-		_vm->setArrowCursor();
+		_vm->_input->setArrowCursor();
 		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 	}
 

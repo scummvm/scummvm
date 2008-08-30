@@ -32,27 +32,6 @@
 
 namespace Parallaction {
 
-struct MouseComboProperties {
-	int	_xOffset;
-	int	_yOffset;
-	int	_width;
-	int	_height;
-};
-/*
-// TODO: improve NS's handling of normal cursor before merging cursor code.
-MouseComboProperties	_mouseComboProps_NS = {
-	7,	// combo x offset (the icon from the inventory will be rendered from here)
-	7,	// combo y offset (ditto)
-	32,	// combo (arrow + icon) width
-	32	// combo (arrow + icon) height
-};
-*/
-MouseComboProperties	_mouseComboProps_BR = {
-	8,	// combo x offset (the icon from the inventory will be rendered from here)
-	8,	// combo y offset (ditto)
-	68,	// combo (arrow + icon) width
-	68	// combo (arrow + icon) height
-};
 
 const char *Parallaction_br::_partNames[] = {
 	"PART0",
@@ -96,7 +75,6 @@ int Parallaction_br::init() {
 
 	initResources();
 	initFonts();
-	initCursors();
 	_locationParser = new LocationParser_br(this);
 	_locationParser->init();
 	_programParser = new ProgramParser_br(this);
@@ -119,10 +97,6 @@ int Parallaction_br::init() {
 
 Parallaction_br::~Parallaction_br() {
 	freeFonts();
-
-	delete _dinoCursor;
-	delete _dougCursor;
-	delete _donnaCursor;
 }
 
 void Parallaction_br::callFunction(uint index, void* parm) {
@@ -170,26 +144,6 @@ void Parallaction_br::freeFonts() {
 	return;
 }
 
-void Parallaction_br::initCursors() {
-
-	if (getPlatform() == Common::kPlatformPC) {
-		_dinoCursor = _disk->loadPointer("pointer1");
-		_dougCursor = _disk->loadPointer("pointer2");
-		_donnaCursor = _disk->loadPointer("pointer3");
-
-		Graphics::Surface *surf = new Graphics::Surface;
-		surf->create(_mouseComboProps_BR._width, _mouseComboProps_BR._height, 1);
-		_comboArrow = new SurfaceToFrames(surf);
-
-		// TODO: choose the pointer depending on the active character
-		// For now, we pick Donna's
-		_mouseArrow = _donnaCursor;
-	} else {
-		// TODO: Where are the Amiga cursors?
-		_mouseArrow = 0;
-	}
-
-}
 
 void Parallaction_br::initPart() {
 
@@ -365,30 +319,5 @@ void Parallaction_br::changeCharacter(const char *name) {
 }
 
 
-void Parallaction_br::setArrowCursor() {
-	// FIXME: Where are the Amiga cursors?
-	if (getPlatform() == Common::kPlatformAmiga)
-		return;
-
-	Common::Rect r;
-	_mouseArrow->getRect(0, r);
-
-	_system->setMouseCursor(_mouseArrow->getData(0), r.width(), r.height(), 0, 0, 0);
-	_system->showMouse(true);
-
-	_input->_activeItem._id = 0;
-}
-
-void Parallaction_br::setInventoryCursor(ItemName name) {
-	assert(name > 0);
-
-	byte *src = _mouseArrow->getData(0);
-	byte *dst = _comboArrow->getData(0);
-	memcpy(dst, src, _comboArrow->getSize(0));
-
-	// FIXME: destination offseting is not clear
-	_inventoryRenderer->drawItem(name, dst + _mouseComboProps_BR._yOffset * _mouseComboProps_BR._width + _mouseComboProps_BR._xOffset, _mouseComboProps_BR._width);
-	_system->setMouseCursor(dst, _mouseComboProps_BR._width, _mouseComboProps_BR._height, 0, 0, 0);
-}
 
 } // namespace Parallaction

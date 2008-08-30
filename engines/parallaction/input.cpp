@@ -31,6 +31,58 @@
 
 namespace Parallaction {
 
+#define MOUSEARROW_WIDTH_NS		16
+#define MOUSEARROW_HEIGHT_NS		16
+
+#define MOUSECOMBO_WIDTH_NS		32	// sizes for cursor + selected inventory item
+#define MOUSECOMBO_HEIGHT_NS		32
+
+struct MouseComboProperties {
+	int	_xOffset;
+	int	_yOffset;
+	int	_width;
+	int	_height;
+};
+/*
+// TODO: improve NS's handling of normal cursor before merging cursor code.
+MouseComboProperties	_mouseComboProps_NS = {
+	7,	// combo x offset (the icon from the inventory will be rendered from here)
+	7,	// combo y offset (ditto)
+	32,	// combo (arrow + icon) width
+	32	// combo (arrow + icon) height
+};
+*/
+MouseComboProperties	_mouseComboProps_BR = {
+	8,	// combo x offset (the icon from the inventory will be rendered from here)
+	8,	// combo y offset (ditto)
+	68,	// combo (arrow + icon) width
+	68	// combo (arrow + icon) height
+};
+
+Input::Input(Parallaction *vm) : _vm(vm) {
+	_gameType = _vm->getGameType();
+	_transCurrentHoverItem = 0;
+	_hasDelayedAction = false;  // actived when the character needs to move before taking an action
+	_mouseState = MOUSE_DISABLED;
+	_activeItem._index = 0;
+	_activeItem._id = 0;
+	_mouseButtons = 0;
+	_delayedActionZone = nullZonePtr;
+
+	initCursors();
+}
+
+Input::~Input() {
+	if (_gameType == GType_Nippon) {
+		delete _mouseArrow;
+	}
+
+	delete _comboArrow;
+	delete _dinoCursor;
+	delete _dougCursor;
+	delete _donnaCursor;
+}
+
 // FIXME: the engine has 3 event loops. The following routine hosts the main one,
 // and it's called from 8 different places in the code. There exist 2 more specialised
 // loops which could possibly be merged into this one with some effort in changing
@@ -131,8 +183,6 @@ int Input::updateGameInput() {
 
 	int event = kEvNone;
 
-	readInput();
-
 	if (!isMouseEnabled() ||
 		(_engineFlags & kEngineWalking) ||
 		(_engineFlags & kEngineChangeLocation)) {
@@ -162,20 +212,14 @@ int Input::updateGameInput() {
 int Input::updateInput() {
 
 	int event = kEvNone;
+	readInput();
 
 	switch (_inputMode) {
-	case kInputModeComment:
-	case kInputModeDialogue:
-	case kInputModeMenu:
-		readInput();
-		break;
-
 	case kInputModeGame:
 		event = updateGameInput();
 		break;
 
 	case kInputModeInventory:
-		readInput();
 		updateInventoryInput();
 		break;
 	}
@@ -214,7 +258,7 @@ void Input::takeAction(ZonePtr z) {
 
 void Input::walkTo(const Common::Point &dest) {
 	stopHovering();
-	_vm->setArrowCursor();
+	setArrowCursor();
 	_vm->_char.scheduleWalk(dest.x, dest.y);
 }
 
@@ -270,7 +314,7 @@ bool Input::translateGameInput() {
 		}
 
 		_vm->beep();
-		_vm->setArrowCursor();
+		setArrowCursor();
 		return true;
 	}
 
@@ -286,7 +330,7 @@ void Input::enterInventoryMode() {
 			_activeItem._index = (_activeItem._id >> 16) & 0xFFFF;
 			_engineFlags |= kEngineDragging;
 		} else {
-			_vm->setArrowCursor();
+			setArrowCursor();
 		}
 	}
 
@@ -321,12 +365,12 @@ void Input::exitInventoryMode() {
 
 	_vm->closeInventory();
 	if (pos == -1) {
-		_vm->setArrowCursor();
+		setArrowCursor();
 	} else {
 		const InventoryItem *item = _vm->getInventoryItem(pos);
 		if (item->_index != 0) {
 			_activeItem._id = item->_id;
-			_vm->setInventoryCursor(item->_index);
+			setInventoryCursor(item->_index);
 		}
 	}
 	_vm->resumeJobs();
@@ -372,6 +416,96 @@ MouseTriState Input::getMouseState() {
 
 bool Input::isMouseEnabled() {
 	return (_mouseState == MOUSE_ENABLED_SHOW) || (_mouseState == MOUSE_ENABLED_HIDE);
+}
+
+
+void Input::initCursors() {
+
+	switch (_gameType) {
+	case GType_Nippon:
+		_comboArrow = _vm->_disk->loadPointer("pointer");
+		_mouseArrow = new Cnv(1, MOUSEARROW_WIDTH_NS, MOUSEARROW_HEIGHT_NS, _resMouseArrow_NS);
+		break;
+
+	case GType_BRA:
+		if (_vm->getPlatform() == Common::kPlatformPC) {
+			_dinoCursor = _vm->_disk->loadPointer("pointer1");
+			_dougCursor = _vm->_disk->loadPointer("pointer2");
+			_donnaCursor = _vm->_disk->loadPointer("pointer3");
+
+			Graphics::Surface *surf = new Graphics::Surface;
+			surf->create(_mouseComboProps_BR._width, _mouseComboProps_BR._height, 1);
+			_comboArrow = new SurfaceToFrames(surf);
+
+			// TODO: choose the pointer depending on the active character
+			// For now, we pick Donna's
+			_mouseArrow = _donnaCursor;
+		} else {
+			// TODO: Where are the Amiga cursors?
+			_mouseArrow = 0;
+		}
+		break;
+
+	default:
+		warning("Input::initCursors: unknown gametype");
+	}
+
+}
+
+void Input::setArrowCursor() {
+
+	switch (_gameType) {
+	case GType_Nippon:
+		debugC(1, kDebugInput, "setting mouse cursor to arrow");
+		// this stuff is needed to avoid artifacts with labels and selected items when switching cursors
+		stopHovering();
+		_activeItem._id = 0;
+		_vm->_system->setMouseCursor(_mouseArrow->getData(0), MOUSEARROW_WIDTH_NS, MOUSEARROW_HEIGHT_NS, 0, 0, 0);
+		break;
+
+	case GType_BRA: {
+		if (_vm->getPlatform() == Common::kPlatformAmiga)
+			return;
+
+		Common::Rect r;
+		_mouseArrow->getRect(0, r);
+		_vm->_system->setMouseCursor(_mouseArrow->getData(0), r.width(), r.height(), 0, 0, 0);
+		_vm->_system->showMouse(true);
+		_activeItem._id = 0;
+		break;
+	}
+
+	default:
+		warning("Input::setArrowCursor: unknown gametype");
+	}
+
+}
+
+void Input::setInventoryCursor(ItemName name) {
+	assert(name > 0);
+
+	switch (_gameType) {
+	case GType_Nippon: {
+		byte *v8 = _comboArrow->getData(0);
+		// FIXME: destination offseting is not clear
+		_vm->_inventoryRenderer->drawItem(name, v8 + 7 * MOUSECOMBO_WIDTH_NS + 7, MOUSECOMBO_WIDTH_NS);
+		_vm->_system->setMouseCursor(v8, MOUSECOMBO_WIDTH_NS, MOUSECOMBO_HEIGHT_NS, 0, 0, 0);
+		break;
+	}
+
+	case GType_BRA: {
+		byte *src = _mouseArrow->getData(0);
+		byte *dst = _comboArrow->getData(0);
+		memcpy(dst, src, _comboArrow->getSize(0));
+		// FIXME: destination offseting is not clear
+		_vm->_inventoryRenderer->drawItem(name, dst + _mouseComboProps_BR._yOffset * _mouseComboProps_BR._width + _mouseComboProps_BR._xOffset, _mouseComboProps_BR._width);
+		_vm->_system->setMouseCursor(dst, _mouseComboProps_BR._width, _mouseComboProps_BR._height, 0, 0, 0);
+	}
+
+	default:
+		warning("Input::setInventoryCursor: unknown gametype");
+	}
+
 }
 
 } // namespace Parallaction

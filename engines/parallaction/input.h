@@ -74,6 +74,17 @@ class Input {
 	void	enterInventoryMode();
 	void 	exitInventoryMode();
 
+	int		_gameType;
+
+	static byte _resMouseArrow_NS[256];
+	Frames	*_mouseArrow;
+	Frames	*_comboArrow;
+	Frames	*_dinoCursor;
+	Frames	*_dougCursor;
+	Frames	*_donnaCursor;
+
+	void initCursors();
+
 public:
 	enum {
 		kInputModeGame = 0,
@@ -84,18 +95,8 @@ public:
 	};
 
 
-	Input(Parallaction *vm) : _vm(vm) {
-		_transCurrentHoverItem = 0;
-		_hasDelayedAction = false;  // actived when the character needs to move before taking an action
-		_mouseState = MOUSE_DISABLED;
-		_activeItem._index = 0;
-		_activeItem._id = 0;
-		_mouseButtons = 0;
-		_delayedActionZone = nullZonePtr;
-	}
-
-	virtual ~Input() { }
-
+	Input(Parallaction *vm);
+	virtual ~Input();
 
 	void			getCursorPos(Common::Point& p) {
 		p = _mousePos;
@@ -118,6 +119,9 @@ public:
 	void setMouseState(MouseTriState state);
 	MouseTriState getMouseState();
 	bool isMouseEnabled();
+
+	void setArrowCursor();
+	void setInventoryCursor(ItemName name);
 };
 
 } // namespace Parallaction

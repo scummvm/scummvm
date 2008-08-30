@@ -392,7 +392,7 @@ bool Parallaction_ns::loadGame() {
 	GUI::TimedMessageDialog dialog("Loading game...", 1500);
 	dialog.runModal();
 
-	setArrowCursor();
+	_input->setArrowCursor();
 
 	return true;
 }

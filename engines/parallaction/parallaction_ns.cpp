@@ -35,12 +35,6 @@
 namespace Parallaction {
 
 
-#define MOUSEARROW_WIDTH		16
-#define MOUSEARROW_HEIGHT		16
-
-#define MOUSECOMBO_WIDTH		32	// sizes for cursor + selected inventory item
-#define MOUSECOMBO_HEIGHT		32
-
 LocationName::LocationName() {
 	_buf = 0;
 	_hasSlide = false;
@@ -135,7 +129,6 @@ int Parallaction_ns::init() {
 
 	initResources();
 	initFonts();
-	initCursors();
 	_locationParser = new LocationParser_ns(this);
 	_locationParser->init();
 	_programParser = new ProgramParser_ns(this);
@@ -179,32 +172,6 @@ void Parallaction_ns::freeFonts() {
 	delete _menuFont;
 	delete _introFont;
 
-}
-
-void Parallaction_ns::initCursors() {
-	_comboArrow = _disk->loadPointer("pointer");
-	_mouseArrow = _resMouseArrow;
-}
-
-void Parallaction_ns::setArrowCursor() {
-
-	debugC(1, kDebugInput, "setting mouse cursor to arrow");
-
-	// this stuff is needed to avoid artifacts with labels and selected items when switching cursors
-	_input->stopHovering();
-	_input->_activeItem._id = 0;
-
-	_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
-}
-
-void Parallaction_ns::setInventoryCursor(ItemName name) {
-	assert(name > 0);
-
-	byte *v8 = _comboArrow->getData(0);
-
-	// FIXME: destination offseting is not clear
-	_inventoryRenderer->drawItem(name, v8 + 7 * MOUSECOMBO_WIDTH + 7, MOUSECOMBO_WIDTH);
-	_system->setMouseCursor(v8, MOUSECOMBO_WIDTH, MOUSECOMBO_HEIGHT, 0, 0, 0);
 }
 
 
@@ -287,7 +254,7 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	_zoneTrap = nullZonePtr;
 
-	setArrowCursor();
+	_input->setArrowCursor();
 
 	_gfx->showGfxObj(_char._ani->gfxobj, false);
 	_location._animations.remove(_char._ani);

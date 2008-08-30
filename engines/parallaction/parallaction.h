@@ -90,10 +90,6 @@ enum {
 	kEvLoadGame		= 4000
 };
 
-enum {
-	kCursorArrow = -1
-};
-
 enum ParallactionGameType {
 	GType_Nippon = 1,
 	GType_BRA
@@ -104,7 +100,6 @@ struct PARALLACTIONGameDescription;
 
 
 
-extern uint16		_mouseButtons;
 extern char			_password[8];
 extern uint16		_score;
 extern uint16		_language;
@@ -302,7 +297,6 @@ public:
 	Common::RandomSource _rnd;
 
 	Debugger	*_debugger;
-	Frames	*_comboArrow;
 
 
 protected:		// data
@@ -336,9 +330,6 @@ public:
 	virtual void changeCharacter(const char *name) = 0;
 
 	virtual	void callFunction(uint index, void* parm) { }
-
-	virtual void setArrowCursor() = 0;
-	virtual void setInventoryCursor(ItemName name) = 0;
 
 	virtual void parseLocation(const char* name) = 0;
 
@@ -455,7 +446,6 @@ public:
 
 	void		switchBackground(const char* background, const char* mask);
 	void		showSlide(const char *name, int x = 0, int y = 0);
-	void 		setArrowCursor();
 
 	// TODO: this should be private!!!!!!!
 	bool	_inTestResult;
@@ -479,19 +469,12 @@ private:
 	void changeCharacter(const char *name);
 	void runPendingZones();
 
-	void setInventoryCursor(ItemName name);
-
-
 	void doLoadGame(uint16 slot);
 	void doSaveGame(uint16 slot, const char* name);
 	int  buildSaveFileList(Common::StringList& l);
 	int  selectSaveFile(uint16 arg_0, const char* caption, const char* button);
 
 	void initResources();
-	void initCursors();
-
-	static byte _resMouseArrow[256];
-	byte	*_mouseArrow;
 
 	static const Callable _dosCallables[25];
 	static const Callable _amigaCallables[25];
@@ -599,7 +582,6 @@ public:
 
 	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
 	void		startPart(uint part);
-	void 		setArrowCursor();
 private:
 	LocationParser_br		*_locationParser;
 	ProgramParser_br		*_programParser;
@@ -607,22 +589,12 @@ private:
 	void		initResources();
 	void		initFonts();
 	void		freeFonts();
-
-	void setInventoryCursor(ItemName name);
-
 	void		changeLocation(char *location);
 	void 		runPendingZones();
 
 	void		initPart();
 	void		freePart();
 	void		freeLocation();
-
-	void initCursors();
-
-	Frames	*_dinoCursor;
-	Frames	*_dougCursor;
-	Frames	*_donnaCursor;
-	Frames	*_mouseArrow;
 
 
 	static const char *_partNames[];

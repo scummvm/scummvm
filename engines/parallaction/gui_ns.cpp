@@ -178,7 +178,7 @@ public:
 		uint id = _vm->_gfx->createLabel(_vm->_introFont, "SELECT LANGUAGE", 1);
 		_vm->_gfx->showLabel(id, 60, 30);
 
-		_vm->setArrowCursor();
+		_vm->_input->setArrowCursor();
 	}
 };
 
@@ -556,7 +556,7 @@ public:
 
 		cleanup();
 
-		_vm->setArrowCursor();
+		_vm->_input->setArrowCursor();
 		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 		_state = CHOICE;
 	}

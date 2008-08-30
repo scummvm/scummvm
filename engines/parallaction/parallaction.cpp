@@ -100,8 +100,6 @@ Parallaction::~Parallaction() {
 
 	cleanupGui();
 
-	delete _comboArrow;
-
 	delete _localFlagNames;
 	delete _gfx;
 	delete _soundMan;
@@ -134,6 +132,7 @@ int Parallaction::init() {
 
 	initInventory();	// needs to be pushed into subclass
 
+	// this needs _disk to be already setup
 	_input = new Input(this);
 
 	_gfx = new Gfx(this);
@@ -301,13 +300,13 @@ void Parallaction::processInput(int event) {
 	case kEvSaveGame:
 		_input->stopHovering();
 		saveGame();
-		setArrowCursor();
+		_input->setArrowCursor();
 		break;
 
 	case kEvLoadGame:
 		_input->stopHovering();
 		loadGame();
-		setArrowCursor();
+		_input->setArrowCursor();
 		break;
 
 	}
