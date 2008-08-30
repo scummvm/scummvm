@@ -1030,7 +1030,6 @@ echo "$_have_x86"
 #
 # Determine build settings
 #
-# TODO - also add an command line option to override this?!?
 echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
@@ -1046,7 +1045,7 @@ case $_host_os in
 		type_4_byte='long'
 		;;	
 	solaris*)
-		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		DEFINES="$DEFINES -DUNIX -DSOLARIS -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lbind -lsocket for the timidity MIDI driver
 		LIBS="$LIBS -lnsl -lsocket"
 		;;
