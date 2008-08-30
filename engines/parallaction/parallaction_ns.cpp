@@ -209,7 +209,7 @@ void Parallaction_ns::switchBackground(const char* background, const char* mask)
 			v2 += 4;
 		}
 
-		g_system->delayMillis(20);
+		_vm->_system->delayMillis(20);
 		_gfx->setPalette(pal);
 		_gfx->updateScreen();
 	}

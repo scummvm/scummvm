@@ -45,8 +45,6 @@
 #define PATH_LEN	200
 
 
-extern OSystem *g_system;
-
 namespace Parallaction {
 
 enum {

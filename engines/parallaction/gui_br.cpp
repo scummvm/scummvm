@@ -73,7 +73,7 @@ public:
 		_vm->showSlide(_slideName.c_str(), CENTER_LABEL_HORIZONTAL, CENTER_LABEL_VERTICAL);
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 
-		_startTime = g_system->getMillis();
+		_startTime = _vm->_system->getMillis();
 		_fadeSteps = -1;
 	}
 };

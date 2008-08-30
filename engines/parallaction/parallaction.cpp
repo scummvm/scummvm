@@ -154,7 +154,7 @@ void Parallaction::updateView() {
 
 	_gfx->animatePalette();
 	_gfx->updateScreen();
-	g_system->delayMillis(30);
+	_vm->_system->delayMillis(30);
 }
 
 
@@ -391,7 +391,7 @@ void Parallaction::doLocationEnterTransition() {
 		pal.fadeTo(_gfx->_palette, 4);
 		_gfx->setPalette(pal);
 		_gfx->updateScreen();
-		g_system->delayMillis(20);
+		_vm->_system->delayMillis(20);
 	}
 
 	_gfx->setPalette(_gfx->_palette);

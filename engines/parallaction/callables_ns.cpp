@@ -170,7 +170,7 @@ void Parallaction_ns::_c_fade(void *parm) {
 		_gfx->setPalette(pal);
 
 		_gfx->updateScreen();
-		g_system->delayMillis(20);
+		_vm->_system->delayMillis(20);
 	}
 
 	return;
@@ -305,7 +305,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 		_gfx->setPalette(_gfx->_palette);
 
 		_gfx->updateScreen();
-		g_system->delayMillis(20);
+		_vm->_system->delayMillis(20);
 	}
 
 	_input->waitForButtonEvent(kMouseLeftUp);
@@ -324,10 +324,10 @@ void Parallaction_ns::_c_frankenstein(void *parm) {
 	}
 
 	for (uint16 _di = 0; _di < 30; _di++) {
-		g_system->delayMillis(20);
+		_vm->_system->delayMillis(20);
 		_gfx->setPalette(pal0);
 		_gfx->updateScreen();
-		g_system->delayMillis(20);
+		_vm->_system->delayMillis(20);
 		_gfx->setPalette(pal1);
 		_gfx->updateScreen();
 	}

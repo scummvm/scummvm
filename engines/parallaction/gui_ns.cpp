@@ -48,7 +48,7 @@ public:
 	}
 
 	virtual MenuInputState* run() {
-		uint32 curTime = g_system->getMillis();
+		uint32 curTime = _vm->_system->getMillis();
 		if (curTime - _startTime > _timeOut) {
 			_vm->freeBackground();
 			return _helper->getState(_nextState);
@@ -59,7 +59,7 @@ public:
 	virtual void enter() {
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 		_vm->showSlide(_slideName.c_str());
-		_startTime = g_system->getMillis();
+		_startTime = _vm->_system->getMillis();
 	}
 };
 
@@ -389,7 +389,7 @@ class SelectCharacterInputState_NS : public MenuInputState {
 			_vm->_gfx->invertBackground(codeTrueBlocks[selection]);
 			_vm->_gfx->updateScreen();
 			_vm->beep();
-			g_system->delayMillis(100);
+			_vm->_system->delayMillis(100);
 			_vm->_gfx->invertBackground(codeTrueBlocks[selection]);
 			_vm->_gfx->updateScreen();
 		}
@@ -444,7 +444,7 @@ public:
 	}
 
 	void delay() {
-		if (g_system->getMillis() - _startTime < 2000) {
+		if (_vm->_system->getMillis() - _startTime < 2000) {
 			return;
 		}
 		cleanup();
@@ -486,7 +486,7 @@ public:
 		_vm->_gfx->patchBackground(_emptySlots, SLOT_X, SLOT_Y, false);
 		_vm->_gfx->hideLabel(_labels[0]);
 		_vm->_gfx->showLabel(_labels[1], 60, 30);
-		_startTime = g_system->getMillis();
+		_startTime = _vm->_system->getMillis();
 		_state = DELAY;
 	}
 
@@ -647,14 +647,14 @@ public:
 
 	virtual MenuInputState* run() {
 		if (_current == -1) {
-			_startTime = g_system->getMillis();
+			_startTime = _vm->_system->getMillis();
 			_current = 0;
 			drawCurrentLabel();
 			return this;
 		}
 
 		int event = _vm->_input->getLastButtonEvent();
-		uint32 curTime = g_system->getMillis();
+		uint32 curTime = _vm->_system->getMillis();
 		if ((event == kMouseLeftUp) || (curTime - _startTime > 5500)) {
 			_current++;
 			_startTime = curTime;

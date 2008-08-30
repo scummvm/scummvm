@@ -252,7 +252,7 @@ void Gfx::setPalette(Palette pal) {
 	byte sysPal[256*4];
 
 	uint n = pal.fillRGBA(sysPal);
-	g_system->setPalette(sysPal, 0, n);
+	_vm->_system->setPalette(sysPal, 0, n);
 }
 
 void Gfx::setBlackPalette() {
@@ -328,7 +328,7 @@ void Gfx::drawInventory() {
 	_vm->_inventoryRenderer->getRect(r);
 	byte *data = _vm->_inventoryRenderer->getData();
 
-	g_system->copyRectToScreen(data, r.width(), r.left, r.top, r.width(), r.height());
+	_vm->_system->copyRectToScreen(data, r.width(), r.left, r.top, r.width(), r.height());
 }
 
 void Gfx::drawItems() {
@@ -336,11 +336,11 @@ void Gfx::drawItems() {
 		return;
 	}
 
-	Graphics::Surface *surf = g_system->lockScreen();
+	Graphics::Surface *surf = _vm->_system->lockScreen();
 	for (uint i = 0; i < _numItems; i++) {
 		drawGfxObject(_items[i].data, *surf, false);
 	}
-	g_system->unlockScreen();
+	_vm->_system->unlockScreen();
 }
 
 void Gfx::drawBalloons() {
@@ -348,15 +348,15 @@ void Gfx::drawBalloons() {
 		return;
 	}
 
-	Graphics::Surface *surf = g_system->lockScreen();
+	Graphics::Surface *surf = _vm->_system->lockScreen();
 	for (uint i = 0; i < _balloons.size(); i++) {
 		drawGfxObject(_balloons[i], *surf, false);
 	}
-	g_system->unlockScreen();
+	_vm->_system->unlockScreen();
 }
 
 void Gfx::clearScreen() {
-	g_system->clearScreen();
+	_vm->_system->clearScreen();
 }
 
 void Gfx::beginFrame() {
@@ -438,11 +438,11 @@ void Gfx::updateScreen() {
 			backgroundPitch = _bitmapMask.pitch;
 			break;
 		}
-		g_system->copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo->x, _backgroundInfo->y, w, h);
+		_vm->_system->copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo->x, _backgroundInfo->y, w, h);
 	}
 
 	if (_varDrawPathZones == 1) {
-		Graphics::Surface *surf = g_system->lockScreen();
+		Graphics::Surface *surf = _vm->_system->lockScreen();
 		ZoneList::iterator b = _vm->_location._zones.begin();
 		ZoneList::iterator e = _vm->_location._zones.end();
 		for (; b != e; b++) {
@@ -451,13 +451,13 @@ void Gfx::updateScreen() {
 				surf->frameRect(Common::Rect(z->getX(), z->getY(), z->getX() + z->width(), z->getY() + z->height()), 2);
 			}
 		}
-		g_system->unlockScreen();
+		_vm->_system->unlockScreen();
 	}
 
 	_varRenderMode = _varAnimRenderMode;
 
 	// TODO: transform objects coordinates to be drawn with scrolling
-	Graphics::Surface *surf = g_system->lockScreen();
+	Graphics::Surface *surf = _vm->_system->lockScreen();
 	drawGfxObjects(*surf);
 
 	if (_halfbrite) {
@@ -481,7 +481,7 @@ void Gfx::updateScreen() {
 		}
 	}
 
-	g_system->unlockScreen();
+	_vm->_system->unlockScreen();
 
 	_varRenderMode = _varMiscRenderMode;
 
@@ -490,7 +490,7 @@ void Gfx::updateScreen() {
 	drawBalloons();
 	drawLabels();
 
-	g_system->updateScreen();
+	_vm->_system->updateScreen();
 	return;
 }
 
@@ -715,13 +715,13 @@ void Gfx::drawLabels() {
 
 	updateFloatingLabel();
 
-	Graphics::Surface* surf = g_system->lockScreen();
+	Graphics::Surface* surf = _vm->_system->lockScreen();
 
 	for (uint i = 0; i < _labels.size(); i++) {
 		drawGfxObject(_labels[i], *surf, false);
 	}
 
-	g_system->unlockScreen();
+	_vm->_system->unlockScreen();
 }
 
 
@@ -749,10 +749,10 @@ void Gfx::grabBackground(const Common::Rect& r, Graphics::Surface &dst) {
 Gfx::Gfx(Parallaction* vm) :
 	_vm(vm), _disk(vm->_disk) {
 
-	g_system->beginGFXTransaction();
-	g_system->initSize(_vm->_screenWidth, _vm->_screenHeight);
+	_vm->_system->beginGFXTransaction();
+	_vm->_system->initSize(_vm->_screenWidth, _vm->_screenHeight);
 	_vm->initCommonGFX(_vm->getGameType() == GType_BRA);
-	g_system->endGFXTransaction();
+	_vm->_system->endGFXTransaction();
 
 	setPalette(_palette);
 
