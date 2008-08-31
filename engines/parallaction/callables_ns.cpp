@@ -32,6 +32,7 @@
 
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
+#include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 
 
@@ -341,7 +342,7 @@ void Parallaction_ns::_c_frankenstein(void *parm) {
 
 void Parallaction_ns::_c_finito(void *parm) {
 
-	setPartComplete(_char);
+	_saveLoad->setPartComplete(_char.getBaseName());
 
 	cleanInventory();
 	cleanupGame();

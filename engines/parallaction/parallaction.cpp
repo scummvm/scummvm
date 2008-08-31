@@ -35,6 +35,7 @@
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/debug.h"
+#include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 
 
@@ -307,13 +308,13 @@ void Parallaction::processInput(int event) {
 	switch (event) {
 	case kEvSaveGame:
 		_input->stopHovering();
-		saveGame();
+		_saveLoad->saveGame();
 		_input->setArrowCursor();
 		break;
 
 	case kEvLoadGame:
 		_input->stopHovering();
-		loadGame();
+		_saveLoad->loadGame();
 		_input->setArrowCursor();
 		break;
 

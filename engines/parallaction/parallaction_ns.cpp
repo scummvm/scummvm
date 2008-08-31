@@ -29,6 +29,7 @@
 
 #include "parallaction/parallaction.h"
 #include "parallaction/input.h"
+#include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 
 
@@ -149,6 +150,8 @@ int Parallaction_ns::init() {
 
 	_location._animations.push_front(_char._ani);
 
+	_saveLoad = new SaveLoad_ns(this, _saveFileMan);
+
 	Parallaction::init();
 
 	return 0;
@@ -183,7 +186,7 @@ void Parallaction_ns::callFunction(uint index, void* parm) {
 
 
 int Parallaction_ns::go() {
-	renameOldSavefiles();
+	_saveLoad->renameOldSavefiles();
 
 	_globalFlagsNames = _disk->loadTable("global");
 
@@ -409,6 +412,10 @@ void Parallaction_ns::cleanupGame() {
 	// main character animation is restored
 	_location._animations.push_front(_char._ani);
 	_score = 0;
+
+	_soundMan->stopMusic();
+	_introSarcData3 = 200;
+	_introSarcData2 = 1;
 
 	return;
 }

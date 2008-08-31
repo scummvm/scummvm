@@ -28,6 +28,7 @@
 #include "parallaction/gui.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
+#include "parallaction/saveload.h"
 
 namespace Parallaction {
 
@@ -223,7 +224,7 @@ public:
 		_availItems = 4;
 
 		bool complete[3];
-		_vm->getGamePartProgress(complete, 3);
+		_vm->_saveLoad->getGamePartProgress(complete, 3);
 		for (int i = 0; i < 3 && complete[i]; i++, _availItems++) ;
 
 		// TODO: keep track of and destroy menu item frames/surfaces

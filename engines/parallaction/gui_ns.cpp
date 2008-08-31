@@ -29,6 +29,7 @@
 #include "parallaction/gui.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
+#include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 
 
@@ -284,7 +285,7 @@ public:
 	}
 
 	virtual void enter() {
-		_result = _vm->loadGame();
+		_result = _vm->_saveLoad->loadGame();
 	}
 };
 
@@ -759,7 +760,7 @@ public:
 
 	virtual void enter() {
 		bool completed[3];
-		_vm->getGamePartProgress(completed, 3);
+		_vm->_saveLoad->getGamePartProgress(completed, 3);
 		_allPartsComplete = (completed[0] && completed[1] && completed[2]);
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 

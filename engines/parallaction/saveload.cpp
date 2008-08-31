@@ -31,6 +31,7 @@
 #include "gui/message.h"
 
 #include "parallaction/parallaction.h"
+#include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 
 
@@ -57,12 +58,11 @@ protected:
 	GUI::StaticTextWidget	*_time;
 	GUI::StaticTextWidget	*_playtime;
 	GUI::ContainerWidget	*_container;
-	Parallaction_ns			*_vm;
 
 	uint8 _fillR, _fillG, _fillB;
 
 public:
-	SaveLoadChooser(const String &title, const String &buttonLabel, Parallaction_ns *engine);
+	SaveLoadChooser(const String &title, const String &buttonLabel);
 	~SaveLoadChooser();
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
@@ -73,34 +73,39 @@ public:
 	virtual void reflowLayout();
 };
 
-Common::String Parallaction_ns::genSaveFileName(uint slot, bool oldStyle) {
+Common::String SaveLoad_ns::genOldSaveFileName(uint slot) {
 	assert(slot < NUM_SAVESLOTS || slot == SPECIAL_SAVESLOT);
 
 	char s[20];
-	sprintf(s, (oldStyle ? "game.%i" : "nippon.%.3d"), slot );
+	sprintf(s, "game.%i", slot);
 
 	return Common::String(s);
 }
 
-Common::InSaveFile *Parallaction_ns::getInSaveFile(uint slot) {
+
+Common::String SaveLoad::genSaveFileName(uint slot) {
+	assert(slot < NUM_SAVESLOTS || slot == SPECIAL_SAVESLOT);
+
+	char s[20];
+	sprintf(s, "%s.%.3d", _saveFilePrefix.c_str(), slot);
+
+	return Common::String(s);
+}
+
+Common::InSaveFile *SaveLoad::getInSaveFile(uint slot) {
 	Common::String name = genSaveFileName(slot);
 	return _saveFileMan->openForLoading(name.c_str());
 }
 
-Common::OutSaveFile *Parallaction_ns::getOutSaveFile(uint slot) {
+Common::OutSaveFile *SaveLoad::getOutSaveFile(uint slot) {
 	Common::String name = genSaveFileName(slot);
 	return _saveFileMan->openForSaving(name.c_str());
 }
 
 
-void Parallaction_ns::doLoadGame(uint16 slot) {
+void SaveLoad_ns::doLoadGame(uint16 slot) {
 
-	_soundMan->stopMusic();
-
-	cleanupGame();
-
-	_introSarcData3 = 200;
-	_introSarcData2 = 1;
+	_vm->cleanupGame();
 
 	Common::InSaveFile *f = getInSaveFile(slot);
 	if (!f) return;
@@ -116,10 +121,10 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 	f->readLine(l, 15);
 
 	f->readLine(s, 15);
-	_location._startPosition.x = atoi(s);
+	_vm->_location._startPosition.x = atoi(s);
 
 	f->readLine(s, 15);
-	_location._startPosition.y = atoi(s);
+	_vm->_location._startPosition.y = atoi(s);
 
 	f->readLine(s, 15);
 	_score = atoi(s);
@@ -135,23 +140,23 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 	// need to invoke freeZones here with kEngineQuit set, because the
 	// call in changeLocation preserve certain zones.
 	_engineFlags |= kEngineQuit;
-	freeZones();
+	_vm->freeZones();
 	_engineFlags &= ~kEngineQuit;
 
-	_numLocations = atoi(s);
+	_vm->_numLocations = atoi(s);
 
 	uint16 _si;
-	for (_si = 0; _si < _numLocations; _si++) {
+	for (_si = 0; _si < _vm->_numLocations; _si++) {
 		f->readLine(s, 20);
 		s[strlen(s)] = '\0';
 
-		strcpy(_locationNames[_si], s);
+		strcpy(_vm->_locationNames[_si], s);
 
 		f->readLine(s, 15);
-		_localFlags[_si] = atoi(s);
+		_vm->_localFlags[_si] = atoi(s);
 	}
 
-	cleanInventory(false);
+	_vm->cleanInventory(false);
 	ItemName name;
 	uint32 value;
 
@@ -162,24 +167,24 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 		f->readLine(s, 15);
 		name = atoi(s);
 
-		addInventoryItem(name, value);
+		_vm->addInventoryItem(name, value);
 	}
 
 	delete f;
 
 	// force reload of character to solve inventory
 	// bugs, but it's a good maneuver anyway
-	strcpy(_characterName1, "null");
+	strcpy(_vm->_characterName1, "null");
 
 	char tmp[PATH_LEN];
 	sprintf(tmp, "%s.%s" , l, n);
-	scheduleLocationSwitch(tmp);
+	_vm->scheduleLocationSwitch(tmp);
 
 	return;
 }
 
 
-void Parallaction_ns::doSaveGame(uint16 slot, const char* name) {
+void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 
 	Common::OutSaveFile *f = getOutSaveFile(slot);
 	if (f == 0) {
@@ -202,30 +207,30 @@ void Parallaction_ns::doSaveGame(uint16 slot, const char* name) {
 	f->writeString(s);
 	f->writeString("\n");
 
-	sprintf(s, "%s\n", _char.getFullName());
+	sprintf(s, "%s\n", _vm->_char.getFullName());
 	f->writeString(s);
 
 	sprintf(s, "%s\n", _saveData1);
 	f->writeString(s);
-	sprintf(s, "%d\n", _char._ani->getX());
+	sprintf(s, "%d\n", _vm->_char._ani->getX());
 	f->writeString(s);
-	sprintf(s, "%d\n", _char._ani->getY());
+	sprintf(s, "%d\n", _vm->_char._ani->getY());
 	f->writeString(s);
 	sprintf(s, "%d\n", _score);
 	f->writeString(s);
 	sprintf(s, "%u\n", _globalFlags);
 	f->writeString(s);
 
-	sprintf(s, "%d\n", _numLocations);
+	sprintf(s, "%d\n", _vm->_numLocations);
 	f->writeString(s);
-	for (uint16 _si = 0; _si < _numLocations; _si++) {
-		sprintf(s, "%s\n%u\n", _locationNames[_si], _localFlags[_si]);
+	for (uint16 _si = 0; _si < _vm->_numLocations; _si++) {
+		sprintf(s, "%s\n%u\n", _vm->_locationNames[_si], _vm->_localFlags[_si]);
 		f->writeString(s);
 	}
 
 	const InventoryItem *item;
 	for (uint16 _si = 0; _si < 30; _si++) {
-		item = getInventoryItem(_si);
+		item = _vm->getInventoryItem(_si);
 		sprintf(s, "%u\n%d\n", item->_id, item->_index);
 		f->writeString(s);
 	}
@@ -247,8 +252,8 @@ enum {
 };
 
 
-SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, Parallaction_ns *engine)
-	: Dialog("scummsaveload"), _list(0), _chooseButton(0), _gfxWidget(0), _vm(engine) {
+SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
+	: Dialog("scummsaveload"), _list(0), _chooseButton(0), _gfxWidget(0) {
 
 //	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
 
@@ -335,7 +340,7 @@ void SaveLoadChooser::reflowLayout() {
 	Dialog::reflowLayout();
 }
 
-int Parallaction_ns::buildSaveFileList(Common::StringList& l) {
+int SaveLoad_ns::buildSaveFileList(Common::StringList& l) {
 
 	char buf[200];
 
@@ -359,9 +364,9 @@ int Parallaction_ns::buildSaveFileList(Common::StringList& l) {
 }
 
 
-int Parallaction_ns::selectSaveFile(uint16 arg_0, const char* caption, const char* button) {
+int SaveLoad_ns::selectSaveFile(uint16 arg_0, const char* caption, const char* button) {
 
-	SaveLoadChooser* slc = new SaveLoadChooser(caption, button, this);
+	SaveLoadChooser* slc = new SaveLoadChooser(caption, button);
 
 	Common::StringList l;
 
@@ -380,7 +385,7 @@ int Parallaction_ns::selectSaveFile(uint16 arg_0, const char* caption, const cha
 
 
 
-bool Parallaction_ns::loadGame() {
+bool SaveLoad_ns::loadGame() {
 
 	int _di = selectSaveFile( 0, "Load file", "Load" );
 	if (_di == -1) {
@@ -392,15 +397,15 @@ bool Parallaction_ns::loadGame() {
 	GUI::TimedMessageDialog dialog("Loading game...", 1500);
 	dialog.runModal();
 
-	_input->setArrowCursor();
+	_vm->_input->setArrowCursor();
 
 	return true;
 }
 
 
-bool Parallaction_ns::saveGame() {
+bool SaveLoad_ns::saveGame() {
 
-	if (!scumm_stricmp(_location._name, "caveau")) {
+	if (!scumm_stricmp(_vm->_location._name, "caveau")) {
 		return false;
 	}
 
@@ -418,7 +423,7 @@ bool Parallaction_ns::saveGame() {
 }
 
 
-void Parallaction_ns::setPartComplete(const Character& character) {
+void SaveLoad_ns::setPartComplete(const char *part) {
 	char buf[30];
 	bool alreadyPresent = false;
 
@@ -429,7 +434,7 @@ void Parallaction_ns::setPartComplete(const Character& character) {
 		inFile->readLine(buf, 29);
 		delete inFile;
 
-		if (strstr(buf, character.getBaseName())) {
+		if (strstr(buf, part)) {
 			alreadyPresent = true;
 		}
 	}
@@ -437,7 +442,7 @@ void Parallaction_ns::setPartComplete(const Character& character) {
 	if (!alreadyPresent) {
 		Common::OutSaveFile *outFile = getOutSaveFile(SPECIAL_SAVESLOT);
 		outFile->writeString(buf);
-		outFile->writeString(character.getBaseName());
+		outFile->writeString(part);
 		outFile->finalize();
 		delete outFile;
 	}
@@ -445,7 +450,7 @@ void Parallaction_ns::setPartComplete(const Character& character) {
 	return;
 }
 
-void Parallaction_ns::getGamePartProgress(bool *complete, int size) {
+void SaveLoad_ns::getGamePartProgress(bool *complete, int size) {
 	assert(complete && size >= 3);
 
 	char buf[30];
@@ -458,17 +463,7 @@ void Parallaction_ns::getGamePartProgress(bool *complete, int size) {
 	complete[2] = strstr(buf, "dough");
 }
 
-void Parallaction_br::getGamePartProgress(bool *complete, int size) {
-	assert(complete && size >= 3);
-
-	// TODO: implement progress loading
-
-	complete[0] = true;
-	complete[1] = true;
-	complete[2] = true;
-}
-
-void Parallaction_ns::renameOldSavefiles() {
+void SaveLoad_ns::renameOldSavefiles() {
 
 	bool exists[NUM_SAVESLOTS];
 	uint num = 0;
@@ -476,7 +471,7 @@ void Parallaction_ns::renameOldSavefiles() {
 
 	for (i = 0; i < NUM_SAVESLOTS; i++) {
 		exists[i] = false;
-		Common::String name = genSaveFileName(i, true);
+		Common::String name = genOldSaveFileName(i);
 		Common::InSaveFile *f = _saveFileMan->openForLoading(name.c_str());
 		if (f) {
 			exists[i] = true;
@@ -504,8 +499,8 @@ void Parallaction_ns::renameOldSavefiles() {
 	uint success = 0;
 	for (i = 0; i < NUM_SAVESLOTS; i++) {
 		if (exists[i]) {
-			Common::String oldName = genSaveFileName(i, true);
-			Common::String newName = genSaveFileName(i, false);
+			Common::String oldName = genOldSaveFileName(i);
+			Common::String newName = genSaveFileName(i);
 			if (_saveFileMan->renameSavefile(oldName.c_str(), newName.c_str())) {
 				success++;
 			} else {
@@ -530,5 +525,29 @@ void Parallaction_ns::renameOldSavefiles() {
 	return;
 }
 
+
+bool SaveLoad_br::loadGame() {
+	// TODO: implement loadgame
+	return false;
+}
+
+bool SaveLoad_br::saveGame() {
+	// TODO: implement savegame
+	return false;
+}
+
+void SaveLoad_br::getGamePartProgress(bool *complete, int size) {
+	assert(complete && size >= 3);
+
+	// TODO: implement progress loading
+
+	complete[0] = true;
+	complete[1] = true;
+	complete[2] = true;
+}
+
+void SaveLoad_br::setPartComplete(const char *part) {
+	// TODO: implement progress saving
+}
 
 } // namespace Parallaction

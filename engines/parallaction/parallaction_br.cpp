@@ -28,6 +28,7 @@
 
 #include "parallaction/parallaction.h"
 #include "parallaction/input.h"
+#include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 
 namespace Parallaction {
@@ -81,6 +82,8 @@ int Parallaction_br::init() {
 
 	_subtitle[0] = -1;
 	_subtitle[1] = -1;
+
+	_saveLoad = new SaveLoad_br(this, _saveFileMan);
 
 	Parallaction::init();
 

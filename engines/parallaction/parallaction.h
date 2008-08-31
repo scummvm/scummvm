@@ -205,6 +205,7 @@ public:
 };
 
 
+class SaveLoad;
 
 #define NUM_LOCATIONS 120
 
@@ -217,9 +218,6 @@ public:
 	~Parallaction();
 
 	int init();
-
-	virtual bool loadGame() = 0;
-	virtual bool saveGame() = 0;
 
 	Input	*_input;
 
@@ -296,10 +294,10 @@ public:
 
 	Debugger	*_debugger;
 
+	char		_characterName1[50];	// only used in changeCharacter
 
 protected:		// data
 	uint32		_baseTime;
-	char		_characterName1[50];	// only used in changeCharacter
 
 	Common::String	_saveFileName;
 
@@ -322,7 +320,6 @@ protected:		// members
 
 	bool		pickupItem(ZonePtr z);
 
-
 public:
 	void		scheduleLocationSwitch(const char *location);
 	virtual void changeCharacter(const char *name) = 0;
@@ -339,9 +336,9 @@ public:
 	void		showSlide(const char *name, int x = 0, int y = 0);
 
 	ZonePtr		_zoneTrap;
+	SaveLoad	*_saveLoad;
 
 	virtual void cleanupGame() = 0;
-	virtual void getGamePartProgress(bool *complete, int size) = 0;
 
 public:
 	void highlightInventoryItem(ItemPosition pos);
@@ -443,13 +440,9 @@ public:
 
 	virtual	void callFunction(uint index, void* parm);
 
-	bool loadGame();
-	bool saveGame();
-
 	void		switchBackground(const char* background, const char* mask);
 
 	void cleanupGame();
-	void getGamePartProgress(bool *complete, int size);
 
 private:
 	bool	_inTestResult;
@@ -459,21 +452,11 @@ private:
 
 	void initFonts();
 	void freeFonts();
-	void renameOldSavefiles();
-	Common::String genSaveFileName(uint slot, bool oldStyle = false);
-	Common::InSaveFile *getInSaveFile(uint slot);
-	Common::OutSaveFile *getOutSaveFile(uint slot);
-	void setPartComplete(const Character& character);
 
 private:
 	void changeLocation(char *location);
 	void changeCharacter(const char *name);
 	void runPendingZones();
-
-	void doLoadGame(uint16 slot);
-	void doSaveGame(uint16 slot, const char* name);
-	int  buildSaveFileList(Common::StringList& l);
-	int  selectSaveFile(uint16 arg_0, const char* caption, const char* button);
 
 	void initResources();
 
@@ -559,8 +542,6 @@ public:
 	void		changeCharacter(const char *name);
 	void setupSubtitles(char *s, char *s2, int y);
 	void clearSubtitles();
-
-	void getGamePartProgress(bool *complete, int size);
 
 public:
 	Table		*_countersNames;
