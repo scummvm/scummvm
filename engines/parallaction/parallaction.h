@@ -572,8 +572,6 @@ private:
 	void		changeLocation(char *location);
 	void 		runPendingZones();
 
-	void		initPart();
-	void		freePart();
 	void		freeLocation();
 
 
@@ -594,6 +592,8 @@ private:
 
 	void parseLocation(const char* name);
 	void loadProgram(AnimationPtr a, const char *filename);
+
+	void cleanupGame();
 };
 
 // FIXME: remove global

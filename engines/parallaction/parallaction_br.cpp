@@ -122,8 +122,7 @@ int Parallaction_br::go() {
 		}
 		_engineFlags &= ~kEngineReturn;
 
-		freePart();
-//		freeCharacter();
+		cleanupGame();
 	}
 
 	return 0;
@@ -139,35 +138,6 @@ void Parallaction_br::freeFonts() {
 	return;
 }
 
-
-void Parallaction_br::initPart() {
-
-	memset(_counters, 0, ARRAYSIZE(_counters));
-
-	_globalFlagsNames = _disk->loadTable("global");
-	_objectsNames = _disk->loadTable("objects");
-	_countersNames = _disk->loadTable("counters");
-
-	// TODO: maybe handle this into Disk
-	if (getPlatform() == Common::kPlatformPC) {
-		_char._objs = _disk->loadObjects("icone.ico");
-	} else {
-		_char._objs = _disk->loadObjects("icons.ico");
-	}
-
-}
-
-void Parallaction_br::freePart() {
-	freeLocation();
-
-	delete _globalFlagsNames;
-	delete _objectsNames;
-	delete _countersNames;
-
-	_globalFlagsNames = 0;
-	_objectsNames = 0;
-	_countersNames = 0;
-}
 
 void Parallaction_br::runPendingZones() {
 	ZonePtr z;
@@ -220,6 +190,19 @@ void Parallaction_br::freeLocation() {
 
 }
 
+void Parallaction_br::cleanupGame() {
+	freeLocation();
+
+//		freeCharacter();
+
+	delete _globalFlagsNames;
+	delete _objectsNames;
+	delete _countersNames;
+
+	_globalFlagsNames = 0;
+	_objectsNames = 0;
+	_countersNames = 0;
+}
 
 
 void Parallaction_br::changeLocation(char *location) {
@@ -237,7 +220,20 @@ void Parallaction_br::changeLocation(char *location) {
 		}
 
 		_disk->selectArchive(_partNames[_part]);
-		initPart();
+
+		memset(_counters, 0, ARRAYSIZE(_counters));
+
+		_globalFlagsNames = _disk->loadTable("global");
+		_objectsNames = _disk->loadTable("objects");
+		_countersNames = _disk->loadTable("counters");
+
+		// TODO: maybe handle this into Disk
+		if (getPlatform() == Common::kPlatformPC) {
+			_char._objs = _disk->loadObjects("icone.ico");
+		} else {
+			_char._objs = _disk->loadObjects("icons.ico");
+		}
+
 		parseLocation("common");
 	}
 
