@@ -333,11 +333,15 @@ public:
 
 	void updateDoor(ZonePtr z, bool close);
 
-	virtual void drawAnimations() = 0;
+	void drawAnimations();
 
 	void		beep();
+	void		showSlide(const char *name, int x = 0, int y = 0);
 
 	ZonePtr		_zoneTrap;
+
+	virtual void cleanupGame() = 0;
+	virtual void getGamePartProgress(bool *complete, int size) = 0;
 
 public:
 	void highlightInventoryItem(ItemPosition pos);
@@ -443,14 +447,13 @@ public:
 	bool saveGame();
 
 	void		switchBackground(const char* background, const char* mask);
-	void		showSlide(const char *name, int x = 0, int y = 0);
 
-	// TODO: this should be private!!!!!!!
-	bool	_inTestResult;
 	void cleanupGame();
-	bool allPartsComplete();
+	void getGamePartProgress(bool *complete, int size);
 
 private:
+	bool	_inTestResult;
+
 	LocationParser_ns		*_locationParser;
 	ProgramParser_ns		*_programParser;
 
@@ -528,7 +531,6 @@ private:
 	const Callable *_callables;
 
 protected:
-	void drawAnimations();
 
 	void		parseLocation(const char *filename);
 	void		loadProgram(AnimationPtr a, const char *filename);
@@ -558,6 +560,7 @@ public:
 	void setupSubtitles(char *s, char *s2, int y);
 	void clearSubtitles();
 
+	void getGamePartProgress(bool *complete, int size);
 
 public:
 	Table		*_countersNames;
@@ -565,7 +568,6 @@ public:
 	const char **_audioCommandsNamesRes;
 
 	int			_part;
-	int			_progress;
 
 #if 0	// disabled since I couldn't find any references to lip sync in the scripts
 	int16		_lipSyncVal;
@@ -579,7 +581,6 @@ public:
 	int32		_counters[32];
 
 	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
-	void		startPart(uint part);
 private:
 	LocationParser_br		*_locationParser;
 	ProgramParser_br		*_programParser;

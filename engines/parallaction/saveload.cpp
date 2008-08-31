@@ -445,14 +445,27 @@ void Parallaction_ns::setPartComplete(const Character& character) {
 	return;
 }
 
-bool Parallaction_ns::allPartsComplete() {
-	char buf[30];
+void Parallaction_ns::getGamePartProgress(bool *complete, int size) {
+	assert(complete && size >= 3);
 
+	char buf[30];
 	Common::InSaveFile *inFile = getInSaveFile(SPECIAL_SAVESLOT);
 	inFile->readLine(buf, 29);
 	delete inFile;
 
-	return strstr(buf, "dino") && strstr(buf, "donna") && strstr(buf, "dough");
+	complete[0] = strstr(buf, "dino");
+	complete[1] = strstr(buf, "donna");
+	complete[2] = strstr(buf, "dough");
+}
+
+void Parallaction_br::getGamePartProgress(bool *complete, int size) {
+	assert(complete && size >= 3);
+
+	// TODO: implement progress loading
+
+	complete[0] = true;
+	complete[1] = true;
+	complete[2] = true;
 }
 
 void Parallaction_ns::renameOldSavefiles() {

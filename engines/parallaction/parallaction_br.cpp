@@ -41,14 +41,6 @@ const char *Parallaction_br::_partNames[] = {
 	"PART4"
 };
 
-const char *partFirstLocation[] = {
-	"intro",
-	"museo",
-	"start",
-	"bolscoi",
-	"treno"
-};
-
 int Parallaction_br::init() {
 
 	_screenWidth = 640;
@@ -112,7 +104,7 @@ int Parallaction_br::go() {
 	while ((_engineFlags & kEngineQuit) == 0) {
 
 		if (getFeatures() & GF_DEMO) {
-			startPart(1);
+			scheduleLocationSwitch("camalb.1");
 			_input->_inputMode = Input::kInputModeGame;
 		} else {
 			startGui(splash);
@@ -174,23 +166,6 @@ void Parallaction_br::freePart() {
 	_countersNames = 0;
 }
 
-void Parallaction_br::startPart(uint part) {
-	_part = part;
-	_disk->selectArchive(_partNames[_part]);
-
-	initPart();
-
-	if (getFeatures() & GF_DEMO) {
-		strcpy(_location._name, "camalb");
-	} else {
-		strcpy(_location._name, partFirstLocation[_part]);
-	}
-
-	parseLocation("common");
-	changeLocation(_location._name);
-
-}
-
 void Parallaction_br::runPendingZones() {
 	ZonePtr z;
 
@@ -245,6 +220,24 @@ void Parallaction_br::freeLocation() {
 
 
 void Parallaction_br::changeLocation(char *location) {
+	char *partStr = strrchr(location, '.');
+	if (partStr) {
+		int n = partStr - location;
+		strncpy(_location._name, location, n);
+		_location._name[n] = '\0';
+
+		_part = atoi(++partStr);
+		if (getFeatures() & GF_DEMO) {
+			assert(_part == 1);
+		} else {
+			assert(_part >= 0 && _part <= 4);
+		}
+
+		_disk->selectArchive(_partNames[_part]);
+		initPart();
+		parseLocation("common");
+	}
+
 	freeLocation();
 	// load new location
 	parseLocation(location);

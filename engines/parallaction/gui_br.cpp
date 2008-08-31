@@ -40,11 +40,11 @@ protected:
 	Palette blackPal;
 	Palette pal;
 
-	Parallaction_br *_vm;
+	Parallaction *_vm;
 	int _fadeSteps;
 
 public:
-	SplashInputState_BR(Parallaction_br *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm)  {
+	SplashInputState_BR(Parallaction *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm)  {
 	}
 
 	virtual MenuInputState* run() {
@@ -150,6 +150,8 @@ class MainMenuInputState_BR : public MenuInputState {
 	static const char *_menuStrings[NUM_MENULINES];
 	static const MenuOptions _options[NUM_MENULINES];
 
+	static const char *_firstLocation[];
+
 	int _availItems;
 	int _selection;
 
@@ -173,7 +175,7 @@ class MainMenuInputState_BR : public MenuInputState {
 			break;
 
 		default:
-			_vm->startPart(selectedItem);
+			_vm->scheduleLocationSwitch(_firstLocation[selectedItem]);
 		}
 	}
 
@@ -218,9 +220,11 @@ public:
 		}
 		_vm->showSlide("tbra", x, y);
 
-		// TODO: load progress from savefile
-		int progress = 3;
-		_availItems = 4 + progress;
+		_availItems = 4;
+
+		bool complete[3];
+		_vm->getGamePartProgress(complete, 3);
+		for (int i = 0; i < 3 && complete[i]; i++, _availItems++) ;
 
 		// TODO: keep track of and destroy menu item frames/surfaces
 		int i;
@@ -234,6 +238,14 @@ public:
 		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 	}
 
+};
+
+const char *MainMenuInputState_BR::_firstLocation[] = {
+	"intro.0",
+	"museo.1",
+	"start.2",
+	"bolscoi.3",
+	"treno.4"
 };
 
 const char *MainMenuInputState_BR::_menuStrings[NUM_MENULINES] = {

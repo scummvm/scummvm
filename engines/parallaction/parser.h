@@ -27,6 +27,7 @@
 #define PARALLACTION_PARSER_H
 
 #include "common/stream.h"
+#include "common/stack.h"
 #include "parallaction/objects.h"
 #include "parallaction/walk.h"
 

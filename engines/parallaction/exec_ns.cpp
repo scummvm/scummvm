@@ -318,7 +318,7 @@ DECLARE_COMMAND_OPCODE(stop) {
 }
 
 
-void Parallaction_ns::drawAnimations() {
+void Parallaction::drawAnimations() {
 	debugC(9, kDebugExec, "Parallaction_ns::drawAnimations()\n");
 
 	uint16 layer = 0, scale = 100;
