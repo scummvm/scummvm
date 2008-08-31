@@ -91,6 +91,6 @@ public:
 };
 
 
-}; // namespace Parallaction
+} // namespace Parallaction
 
 #endif
