@@ -421,10 +421,12 @@ bool Input::isMouseEnabled() {
 
 void Input::initCursors() {
 
+	_dinoCursor = _donnaCursor = _dougCursor = 0;
+
 	switch (_gameType) {
 	case GType_Nippon:
 		_comboArrow = _vm->_disk->loadPointer("pointer");
-		_mouseArrow = new Cnv(1, MOUSEARROW_WIDTH_NS, MOUSEARROW_HEIGHT_NS, _resMouseArrow_NS);
+		_mouseArrow = new Cnv(1, MOUSEARROW_WIDTH_NS, MOUSEARROW_HEIGHT_NS, _resMouseArrow_NS, false);
 		break;
 
 	case GType_BRA:

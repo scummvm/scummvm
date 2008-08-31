@@ -313,6 +313,7 @@ struct Cnv : public Frames {
 	uint16	_height;	//
 	byte**	field_8;	// unused
 	byte*	_data;
+	bool 	_freeData;
 
 public:
 	Cnv() {
@@ -320,12 +321,14 @@ public:
 		_data = NULL;
 	}
 
-	Cnv(uint16 numFrames, uint16 width, uint16 height, byte* data) : _count(numFrames), _width(width), _height(height), _data(data) {
+	Cnv(uint16 numFrames, uint16 width, uint16 height, byte* data, bool freeData = false)
+		: _count(numFrames), _width(width), _height(height), _data(data), _freeData(freeData) {
 
 	}
 
 	~Cnv() {
-		free(_data);
+		if (_freeData)
+			free(_data);
 	}
 
 	byte* getFramePtr(uint16 index) {
