@@ -768,8 +768,13 @@ void Inter_v5::o5_spaceShooter(OpGobParams &params) {
 
 	uint32 var1 = load16() * 4;
 	uint32 var2 = load16() * 4;
+#if 1
+	load16();
+	load16();
+#else
 	uint32 var3 = load16() * 4;
 	uint16 var4 = load16();
+#endif
 
 	if (params.extraData != 0) {
 		WRITE_VARO_UINT32(var1, 0);
