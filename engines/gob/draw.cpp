@@ -334,7 +334,7 @@ int Draw::stringLength(const char *str, int16 fontIndex) {
 	if (_vm->_global->_language == 10) {
 
 		for (int i = 0; str[i] != 0; i++) {
-			if (str[i+1] < 128) {
+			if (((unsigned char) str[i+1]) < 128) {
 				len += dword_8F74C[4];
 				i++;
 			} else
