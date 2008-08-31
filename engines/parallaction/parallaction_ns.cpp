@@ -36,15 +36,54 @@
 namespace Parallaction {
 
 
-LocationName::LocationName() {
-	_buf = 0;
-	_hasSlide = false;
-	_hasCharacter = false;
-}
+class LocationName {
 
-LocationName::~LocationName() {
-	free(_buf);
-}
+	Common::String _slide;
+	Common::String _character;
+	Common::String _location;
+
+	bool _hasCharacter;
+	bool _hasSlide;
+	char *_buf;
+
+public:
+	LocationName() {
+		_buf = 0;
+		_hasSlide = false;
+		_hasCharacter = false;
+	}
+
+	~LocationName() {
+		free(_buf);
+	}
+
+	void bind(const char*);
+
+	const char *location() const {
+		return _location.c_str();
+	}
+
+	bool hasCharacter() const {
+		return _hasCharacter;
+	}
+
+	const char *character() const {
+		return _character.c_str();
+	}
+
+	bool hasSlide() const {
+		return _hasSlide;
+	}
+
+	const char *slide() const {
+		return _slide.c_str();
+	}
+
+	const char *c_str() const {
+		return _buf;
+	}
+};
+
 
 
 /*

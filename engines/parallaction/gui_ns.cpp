@@ -764,17 +764,18 @@ public:
 		_allPartsComplete = (completed[0] && completed[1] && completed[2]);
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 
+		uint16 language = _vm->getInternLanguage();
 		uint id[4];
 		if (_allPartsComplete) {
-			id[0] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg4[_language], 1);
-			id[1] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg5[_language], 1);
-			id[2] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg6[_language], 1);
-			id[3] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg7[_language], 1);
+			id[0] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg4[language], 1);
+			id[1] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg5[language], 1);
+			id[2] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg6[language], 1);
+			id[3] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg7[language], 1);
 		} else {
-			id[0] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg0[_language], 1);
-			id[1] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg1[_language], 1);
-			id[2] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg2[_language], 1);
-			id[3] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg3[_language], 1);
+			id[0] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg0[language], 1);
+			id[1] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg1[language], 1);
+			id[2] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg2[language], 1);
+			id[3] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg3[language], 1);
 		}
 
 		_vm->_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 70);

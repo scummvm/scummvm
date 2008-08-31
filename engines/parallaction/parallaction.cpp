@@ -48,7 +48,6 @@ Parallaction *_vm = NULL;
 // public stuff
 
 char		_saveData1[30] = { '\0' };
-uint16		_language = 0;
 uint32		_engineFlags = 0;
 
 uint16		_score = 1;
@@ -115,7 +114,6 @@ int Parallaction::init() {
 	_objectsNames = NULL;
 	_globalFlagsNames = NULL;
 	_location._hasSound = false;
-	_baseTime = 0;
 	_numLocations = 0;
 	_location._startPosition.x = -1000;
 	_location._startPosition.y = -1000;
