@@ -968,12 +968,13 @@ void LauncherDialog::loadGame(int item) {
 					if (_loadDialog->delSave()) {
 						String filename = saveList[idx].filename();
 						//printf("Deleting file: %s\n", filename.c_str());
-                                                MessageDialog alert("Do you really want to delete this savegame?", 
-									"Yes", "No");
+						MessageDialog alert("Do you really want to delete this savegame?", 
+									"Delete", "Cancel");
 						if (alert.runModal() == GUI::kMessageOK) {
 							saveFileMan->removeSavefile(filename.c_str());
-						  	if ((saveList.size() - 1) == 0)
-								ConfMan.setInt("save_slot", -1);
+						  	if ((saveList.size() - 1) == 0) {
+								//ConfMan.setInt("save_slot", -1);
+							}
 						}
 					}
 					// Load the savegame
