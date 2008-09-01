@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -228,7 +227,7 @@ FIXME (Fingolfin asks): Why are Mickey, Winnie and Troll standalone classes
 		error("Unknown preagi engine");
 		break;
 	}
-	return 0;
+	return _eventMan->shouldRTL();
 }
 
 } // End of namespace Agi

@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/events.h"
 #include "common/savefile.h"
 #include "common/stream.h"
 
@@ -343,11 +342,12 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 
 	drawMenu(menu, *sel0, *sel1);
 
-	for (;;) {
+	for(;;) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
-				exit(0);
+				return 0;
 			case Common::EVENT_MOUSEMOVE:
 				if (iRow < 2) {
 					x = event.mouse.x / 8;
@@ -640,8 +640,8 @@ void Mickey::playSound(ENUM_MSA_SOUND iSound) {
 			if (iSound == IDI_MSA_SND_THEME) {
 				while (_vm->_system->getEventManager()->pollEvent(event)) {
 					switch(event.type) {
+					case Common::EVENT_RTL:
 					case Common::EVENT_QUIT:
-						_vm->_system->quit();
 					case Common::EVENT_LBUTTONUP:
 					case Common::EVENT_RBUTTONUP:
 					case Common::EVENT_KEYDOWN:
@@ -1221,7 +1221,7 @@ void Mickey::gameOver() {
 	}
 
 	waitAnyKey();
-	exit(0);
+	_vm->quitGame();
 }
 
 void Mickey::flipSwitch() {
@@ -2060,8 +2060,8 @@ void Mickey::waitAnyKey(bool anim) {
 	for (;;) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
-				_vm->_system->quit();
 			case Common::EVENT_KEYDOWN:
 			case Common::EVENT_LBUTTONUP:
 			case Common::EVENT_RBUTTONUP:
@@ -2160,7 +2160,7 @@ void Mickey::run() {
 	intro();
 
 	// Game loop
-	for (;;) {
+	while (!_vm->quit()) {
 		drawRoom();
 
 		if (_game.fIntro) {

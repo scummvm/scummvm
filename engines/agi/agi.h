@@ -530,7 +530,6 @@ struct AgiGame {
 
 	/* internal flags */
 	int playerControl;		/**< player is in control */
-	int quitProgNow;		/**< quit now */
 	int statusLine;		/**< status line on/off */
 	int clockEnabled;		/**< clock is on/off */
 	int exitAllLogics;	/**< break cycle after new.room */
@@ -747,12 +746,16 @@ protected:
 	int go();
 	void initialize();
 
+	uint32 _lastSaveTime;
+
 public:
 	AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	virtual ~AgiEngine();
 	int getGameId() {
 		return _gameId;
 	}
+
+	virtual void syncSoundSettings();
 
 private:
 
