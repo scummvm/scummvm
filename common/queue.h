@@ -35,35 +35,58 @@ namespace Common {
  */
 template<class T>
 class Queue {
-protected:
-	List<T>		_queue;
 public:
-	Queue<T>() {}
-	Queue<T>(const List<T> &queueContent) : _queue(queueContent) {}
+	typedef T value_type;
+
+public:
+	Queue<T>() : _impl() {}
+	Queue<T>(const Queue<T> &queue) : _impl(queue._impl) {}
+
+	Queue<T> &operator=(const Queue<T> &queue) {
+		_impl = queue._impl;
+		return *this;
+	}
 
 	bool empty() const {
-		return _queue.empty();
+		return _impl.empty();
 	}
+
 	void clear() {
-		_queue.clear();
+		_impl.clear();
 	}
+
 	void push(const T &x) {
-		_queue.push_back(x);
+		_impl.push_back(x);
 	}
-	T back() const {
-		return _queue.reverse_begin().operator*();
+
+	T &front() {
+		return *_impl.begin();
 	}
-	T front() const {
-		return _queue.begin().operator*();
+
+	const T &front() const {
+		return *_impl.begin();
 	}
+
+	T &back() {
+		return *_impl.reverse_begin();
+	}
+
+	const T &back() const {
+		return *_impl.reverse_begin();
+	}
+
 	T pop() {
 		T tmp = front();
-		_queue.pop_front();
+		_impl.pop_front();
 		return tmp;
 	}
+
 	int size() const {
-		return _queue.size();
+		return _impl.size();
 	}
+
+private:
+	List<T>	_impl;
 };
 
 } // End of namespace Common
