@@ -412,7 +412,7 @@ Common::File *ResourceManager::openCluFile(uint16 fileNum) {
 		// quit while the game is asking for the user to insert a CD.
 		// But recovering from this situation gracefully is just too
 		// much trouble, so quit now.
-		if (_vm->_quit)
+		if (_vm->quit())
 			g_system->quit();
 
 		// If the file is supposed to be on hard disk, or we're

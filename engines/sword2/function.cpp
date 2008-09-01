@@ -2388,7 +2388,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	// params:	none
 
 	if (readVar(DEMO)) {
-		_vm->closeGame();
+		_vm->quitGame();
 		return IR_STOP;
 	}
 

@@ -33,6 +33,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/events.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "engines/metaengine.h"
@@ -79,12 +80,22 @@ public:
 		return "Broken Sword Games (C) Revolution";
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const FSList &fslist) const;
+	virtual SaveStateList listSaves(const char *target) const;
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 };
+
+bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad) ||
+		(f == kSupportsDeleteSave);
+}
 
 GameList Sword2MetaEngine::getSupportedGames() const {
 	const Sword2::GameSettings *g = Sword2::sword2_settings;
@@ -154,6 +165,35 @@ GameList Sword2MetaEngine::detectGames(const FSList &fslist) const {
 
 
 	return detectedGames;
+}
+
+SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringList filenames;
+	char saveDesc[SAVE_DESCRIPTION_LEN];
+	Common::String pattern = target;
+	pattern += ".???";
+
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+		
+		if (slotNum >= 0 && slotNum <= 999) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				in->readUint32LE();
+				in->read(saveDesc, SAVE_DESCRIPTION_LEN);
+				saveList.push_back(SaveStateDescriptor(slotNum, Common::String(saveDesc), *file));
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
 }
 
 PluginError Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) const {
@@ -229,7 +269,6 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 	_gameCycle = 0;
 	_gameSpeed = 1;
 
-	_quit = false;
 	syst->getEventManager()->registerRandomSource(_rnd, "sword2");
 }
 
@@ -371,7 +410,7 @@ int Sword2Engine::init() {
 		// player will kill the music for us. Otherwise, the restore
 		// will either have killed the music, or done a crossfade.
 
-		if (_quit)
+		if (quit())
 			return 0;
 
 		if (result)
@@ -443,7 +482,7 @@ int Sword2Engine::go() {
 		// because we want the break to happen before updating the
 		// screen again.
 
-		if (_quit)
+		if (quit())
 			break;
 
 		// creates the debug text blocks
@@ -460,11 +499,7 @@ int Sword2Engine::go() {
 #endif
 	}
 
-	return 0;
-}
-
-void Sword2Engine::closeGame() {
-	_quit = true;
+	return _eventMan->shouldRTL();
 }
 
 void Sword2Engine::restartGame() {
@@ -609,9 +644,6 @@ void Sword2Engine::parseInputEvents() {
 				_mouseEvent.pending = true;
 				_mouseEvent.buttons = RD_WHEELDOWN;
 			}
-			break;
-		case Common::EVENT_QUIT:
-			closeGame();
 			break;
 		default:
 			break;
