@@ -772,7 +772,7 @@ static void ConfActionSpecial(int i);
 
 
 bool LanguageChange(void) {
-	LANGUAGE nLang;
+	LANGUAGE nLang = TXT_ENGLISH;
 
 	if (_vm->getFeatures() & GF_USE_3FLAGS) {
 		// VERY quick dodgy bodge
