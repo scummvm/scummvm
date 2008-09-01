@@ -99,9 +99,11 @@ public:
 	 * Engines which keep an index file will also update it accordingly.
 	 *
 	 * @param slot		slot number of the save state to be removed
-	 * @param saveNames	a list of all the save state description names
+	 *
+	 * @todo  This method is currently never called. Rather, LauncherDialog::loadGame
+	 *        directly calls _saveFileMan->removeSaveFile() if kSupportsDeleteSave is set.
 	 */
-	virtual void removeSaveState(int slot, Common::StringList saveNames) const {};
+	virtual void removeSaveState(int slot) const {};
 
 	
 	/** @name MetaEngineFeature flags */
@@ -109,7 +111,7 @@ public:
 	
 	/**
 	 * A feature in this context means an ability of the engine which can be
-	 * either available or not.  Examples include:
+	 * either available or not. Examples include:
 	 *  - Supporting the 'Return to launcher' feature (i.e. handles EVENT_RTL)
 	 *  - Listing Save States (i.e. implements the listSaves() method;
 	 *    used for --list-saves support)
