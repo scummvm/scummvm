@@ -79,9 +79,9 @@ public:
 	/**
 	 * Return a list of all save states associated with the given target.
 	 *
-	 * In general, the caller will already have ensured that this (Meta)Engine
-	 * is responsible for the specified target by using findGame on it resp.
-	 * on the associated gameid from the relevant ConfMan entry, if present.
+	 * The caller has to ensure that this (Meta)Engine is responsible
+	 * for the specified target (by using findGame on it respectively
+	 * on the associated gameid from the relevant ConfMan entry, if present).
 	 *
 	 * The default implementation returns an empty list.
 	 *
@@ -95,7 +95,7 @@ public:
 	/**
 	 * Remove the specified save state. 
 	 *
-	 * For most engines this just involves a call removeSaveFile().  
+	 * For most engines this just amounts to calling _saveFileMan->removeSaveFile().  
 	 * Engines which keep an index file will also update it accordingly.
 	 *
 	 * @param slot		slot number of the save state to be removed
@@ -109,23 +109,24 @@ public:
 	
 	/**
 	 * A feature in this context means an ability of the engine which can be
-	 * either on or off.  Examples include:
-	 *  - Listing Save States (--list-saves)
+	 * either available or not.  Examples include:
+	 *  - Supporting the 'Return to launcher' feature (i.e. handles EVENT_RTL)
+	 *  - Listing Save States (i.e. implements the listSaves() method;
+	 *    used for --list-saves support)
 	 *  - Loading from the Launcher (-x)
-	 *  - Deleting Saves from the Launcher
-	 *
-	 *  These determine whether the features will be available to the engine
-	 *  in the launcher.
+	 *  - Deleting Saves from the Launcher (i.e. implements the
+	 *    removeSaveState() method)
 	 */
 	enum MetaEngineFeature {
-		kSupportsRTL 		= 0,
-		kSupportsListSaves 	= 1,
-		kSupportsDirectLoad 	= 2,
-		kSupportsDeleteSave 	= 3
+		kSupportsRTL            = 0,
+		kSupportsListSaves      = 1,
+		kSupportsDirectLoad     = 2,
+		kSupportsDeleteSave     = 3
 	};	
 
 	/**
-	 * Determine whether the engine supports the specified MetaEngine feature
+	 * Determine whether the engine supports the specified MetaEngine feature.
+	 * Used by e.g. the launcher to determine whether to enable the "Load" button.
 	 */	
 	virtual bool hasFeature(MetaEngineFeature f) const { return false; };
 
