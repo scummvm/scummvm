@@ -1017,7 +1017,7 @@ other games.
 
     Common:
         F6                     - Displays the Global Menu
-	Cmd-q                  - Quit (Mac OS X)
+        Cmd-q                  - Quit (Mac OS X)
         Ctrl-q                 - Quit (other unices including Linux)
         Ctrl-z OR Alt-x        - Quit (other platforms)
         Ctrl-m                 - Toggle mouse capture
