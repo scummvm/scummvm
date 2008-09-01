@@ -269,7 +269,6 @@ protected:
 
 	uint16 _marks;
 
-	bool _quit;
 	bool _scriptVar2;
 	bool _runScriptReturn1;
 	bool _runScriptCondition[40];
@@ -588,6 +587,8 @@ protected:
 	void loadVoice(uint speechId);
 
 	void loadSoundFile(const char *filename);
+
+	virtual void syncSoundSettings();
 
 	int getUserFlag(Item *item, int a);
 	int getUserFlag1(Item *item, int a);

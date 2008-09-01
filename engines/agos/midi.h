@@ -68,6 +68,8 @@ protected:
 
 	// These are maintained for both music and SFX
 	byte _masterVolume;    // 0-255
+	byte _musicVolume;
+	byte _sfxVolume;
 	bool _paused;
 
 	// These are only used for music.
@@ -103,8 +105,9 @@ public:
 	void stop();
 	void pause(bool b);
 
-	int  getVolume() { return _masterVolume; }
-	void setVolume(int volume);
+	int  getMusicVolume() { return _musicVolume; }
+	int  getSFXVolume() { return _sfxVolume; }
+	void setVolume(int musicVol, int sfxVol);
 	void setDriver(MidiDriver *md);
 
 public:
