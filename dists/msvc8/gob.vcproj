@@ -389,6 +389,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\inter_v5.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\map.cpp"
 			>
 		</File>

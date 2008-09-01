@@ -305,6 +305,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\saveload.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\sound.cpp"
 			>
 		</File>
