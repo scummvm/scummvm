@@ -280,10 +280,12 @@ void CreditsPlayer::delay(int msecs) {
 	do {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
+#if 0
 			switch (event.type) {
 			default:
 				break;
 			}
+#endif
 		}
 
 		_system->updateScreen();
