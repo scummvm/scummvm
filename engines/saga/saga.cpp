@@ -64,7 +64,6 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	_leftMouseButtonPressed = _rightMouseButtonPressed = false;
 
 	_console = NULL;
-	_quit = false;
 
 	_resource = NULL;
 	_sndRes = NULL;
@@ -142,8 +141,7 @@ SagaEngine::~SagaEngine() {
 }
 
 int SagaEngine::init() {
-	_soundVolume = ConfMan.getInt("sfx_volume") / 25;
-	_musicVolume = ConfMan.getInt("music_volume") / 25;
+	_musicVolume = ConfMan.getInt("music_volume");
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
 	_readingSpeed = getTalkspeed();
 	_copyProtection = ConfMan.getBool("copy_protection");
@@ -194,29 +192,21 @@ int SagaEngine::init() {
 	if (native_mt32)
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_music = new Music(this, _mixer, _driver, _musicVolume);
+	_music = new Music(this, _mixer, _driver);
 	_music->setNativeMT32(native_mt32);
 	_music->setAdlib(adlib);
-
-	if (!_musicVolume) {
-		debug(1, "Music disabled.");
-	}
-
 	_render = new Render(this, _system);
 	if (!_render->initialized()) {
 		return FAILURE;
 	}
 
 	// Initialize system specific sound
-	_sound = new Sound(this, _mixer, _soundVolume);
-	if (!_soundVolume) {
-		debug(1, "Sound disabled.");
-	}
-
+	_sound = new Sound(this, _mixer);
+	
 	_interface->converseInit();
 	_script->setVerb(_script->getVerbType(kVerbWalkTo));
 
-	_music->setVolume(-1, 1);
+	_music->setVolume(_musicVolume, 1);
 
 	_gfx->initPalette();
 
@@ -232,6 +222,8 @@ int SagaEngine::init() {
 			_voicesEnabled = true;
 		}
 	}
+
+	syncSoundSettings();
 
 	// FIXME: This is the ugly way of reducing redraw overhead. It works
 	//        well for 320x200 but it's unclear how well it will work for
@@ -270,6 +262,7 @@ int SagaEngine::go() {
 
 		char *fileName = calcSaveFileName(ConfMan.getInt("save_slot"));
 		load(fileName);
+		syncSoundSettings();
 	} else {
 		_framesEsc = 0;
 		_scene->startScene();
@@ -277,7 +270,7 @@ int SagaEngine::go() {
 
 	uint32 currentTicks;
 
-	while (!_quit) {
+	while (!quit()) {
 		if (_console->isAttached())
 			_console->onFrame();
 
@@ -317,7 +310,7 @@ int SagaEngine::go() {
 		_system->delayMillis(10);
 	}
 
-	return 0;
+	return _eventMan->shouldRTL();
 }
 
 void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength) {
@@ -525,6 +518,18 @@ void SagaEngine::setTalkspeed(int talkspeed) {
 
 int SagaEngine::getTalkspeed() {
 	return (ConfMan.getInt("talkspeed") * 3 + 255 / 2) / 255;
+}
+
+void SagaEngine::syncSoundSettings() {
+	_subtitlesEnabled = ConfMan.getBool("subtitles");
+	_readingSpeed = getTalkspeed();
+
+	if (_readingSpeed > 3)
+		_readingSpeed = 0;
+
+	_musicVolume = ConfMan.getInt("music_volume");
+	_music->setVolume(_musicVolume, 1);
+	_sound->setVolume();
 }
 
 } // End of namespace Saga

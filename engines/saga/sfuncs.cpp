@@ -339,7 +339,7 @@ void Script::sfMainMode(SCRIPTFUNC_PARAMS) {
 	// exit the game. Known non-interactive demos are GID_ITE_MACDEMO1 and
 	// GID_ITE_WINDEMO1
 	if (_vm->getFeatures() & GF_NON_INTERACTIVE)
-		_vm->shutDown();
+		_vm->quitGame();
 }
 
 // Script function #6 (0x06) blocking
@@ -555,7 +555,7 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	}
 
 	if (_vm->getGameType() == GType_ITE && sceneNumber < 0) {
-		_vm->shutDown();
+		_vm->quitGame();
 		return;
 	}
 

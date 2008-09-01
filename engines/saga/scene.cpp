@@ -315,7 +315,7 @@ void Scene::creditsScene() {
 		break;
 	}
 
-	_vm->shutDown();
+	_vm->quitGame();
 	return;
 }
 
