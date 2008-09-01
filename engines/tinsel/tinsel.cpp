@@ -710,10 +710,6 @@ int TinselEngine::init() {
 	return 0;
 }
 
-Common::String TinselEngine::getSavegamePattern() const {
-	return _targetName + ".???";
-}
-
 Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
 	char filename[256];
 	snprintf(filename, 256, "%s.%03d", getTargetName().c_str(), saveNum);

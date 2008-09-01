@@ -127,7 +127,6 @@ private:
 
 public:
 	const Common::String getTargetName() const { return _targetName; }
-	Common::String getSavegamePattern() const;
 	Common::String getSavegameFilename(int16 saveNum) const;
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
 	Graphics::Surface &screen() { return _screenSurface; }

@@ -29,6 +29,7 @@
 #include "common/file.h"
 
 #include "tinsel/tinsel.h"
+#include "tinsel/savescn.h"	// needed by TinselMetaEngine::listSaves
 
 
 namespace Tinsel {
@@ -309,12 +310,41 @@ public:
 	}
 
 	virtual const char *getCopyright() const {
+		// FIXME: Bad copyright string.
+		// Should be something like "Tinsel (C) Psygnosis" or so... ???
 		return "Tinsel Engine";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 
+	virtual bool hasFeature(MetaEngineFeature f) const;	
+	virtual SaveStateList listSaves(const char *target) const;
 };
+
+bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves);
+}
+
+namespace Tinsel {
+extern int getList(Common::SaveFileManager *saveFileMan, const Common::String &target);
+}
+
+SaveStateList TinselMetaEngine::listSaves(const char *target) const {
+	int numStates = Tinsel::getList(g_system->getSavefileManager(), target);
+
+	SaveStateList saveList;
+	for (int i = 0; i < numStates; i++) {
+		SaveStateDescriptor sd(i,
+				Tinsel::ListEntry(i, Tinsel::LE_DESC),
+				Tinsel::ListEntry(i, Tinsel::LE_NAME));
+		// TODO: Also add savedFiles[i].dateTime to the SaveStateDescriptor
+		saveList.push_back(sd);
+	}
+
+	return saveList;
+}
+
 
 bool TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const Tinsel::TinselGameDescription *gd = (const Tinsel::TinselGameDescription *)desc;
