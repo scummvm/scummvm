@@ -843,11 +843,13 @@ void ScummEngine_vCUPhe::parseEvents() {
 	Common::Event event;
 
 	while (_eventMan->pollEvent(event)) {
+#if 0
 		switch (event.type) {
 
 		default:
 			break;
 		}
+#endif
 	}
 }
 
