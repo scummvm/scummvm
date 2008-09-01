@@ -328,7 +328,9 @@ enum {
 	kCursorHeight = 42,
 	kTextHeight = 16,
 	kMaxProgramDataSize = 61440,
-	kMaxSaveStates = 100
+	kMaxSaveStates = 100,
+	kGameStateDescriptionLen = 32,	// Need these two values defined here
+	kCurrentGameStateVersion = 6	// for --list-saves support
 };
 
 enum StringType {
@@ -361,6 +363,7 @@ public:
 
 	virtual int init();
 	virtual int go();
+	virtual void syncSoundSettings();
 
 protected:
 
