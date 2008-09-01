@@ -636,14 +636,10 @@ Intro::Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *t
 	_textBuf = (uint8*)malloc(10000);
 	_saveBuf = (uint8*)malloc(10000);
 	_bgBuf = NULL;
-	_quitProg = false;
 	_relDelay = 0;
 }
 
 Intro::~Intro(void) {
-
-	_mixer->stopAll();
-	_skyScreen->stopSequence();
 	if (_textBuf)
 		free(_textBuf);
 	if (_saveBuf)
@@ -912,8 +908,7 @@ bool Intro::escDelay(uint32 msecs) {
 			if (event.type == Common::EVENT_KEYDOWN) {
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					return false;
-			} else if (event.type == Common::EVENT_QUIT) {
-				_quitProg = true;
+			} else if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RTL) {
 				return false;
 			}
 		}
