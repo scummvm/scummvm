@@ -111,18 +111,25 @@ public:
 	
 	/**
 	 * A feature in this context means an ability of the engine which can be
-	 * either available or not. Examples include:
-	 *  - Supporting the 'Return to launcher' feature (i.e. handles EVENT_RTL)
-	 *  - Listing Save States (i.e. implements the listSaves() method;
-	 *    used for --list-saves support)
-	 *  - Loading from the Launcher (-x)
-	 *  - Deleting Saves from the Launcher (i.e. implements the
-	 *    removeSaveState() method)
+	 * either available or not.
 	 */
 	enum MetaEngineFeature {
+		/** 'Return to launcher' feature (i.e. EVENT_RTL is handled) */
 		kSupportsRTL            = 0,
+
+		/**
+		 * Listing Save States (i.e. implements the listSaves() method;
+		 * used for --list-saves support)
+		 */
 		kSupportsListSaves      = 1,
+		
+		/** Loading from the Launcher / command line (-x) */
 		kSupportsDirectLoad     = 2,
+
+		/**
+		 * Deleting Saves from the Launcher (i.e. implements the
+		 * removeSaveState() method)
+		 */
 		kSupportsDeleteSave     = 3
 	};	
 
