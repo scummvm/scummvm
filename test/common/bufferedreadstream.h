@@ -13,8 +13,7 @@ class BufferedReadStreamTestSuite : public CxxTest::TestSuite {
 		// refilled.
 		Common::BufferedReadStream srs(&ms, 4);
 
-		int i;
-		byte b;
+		byte i, b;
 		for (i = 0; i < 10; ++i) {
 			TS_ASSERT( !srs.eos() );
 
