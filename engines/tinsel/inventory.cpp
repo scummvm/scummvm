@@ -3071,7 +3071,7 @@ void InventoryProcess(CORO_PARAM, const void *) {
 					InvLoadGame();
 					break;
 				case IQUITGAME:
-					_vm->quitFlag = true;
+					_vm->quitGame();
 					break;
 				case CLOSEWIN:
 					KillInventory();

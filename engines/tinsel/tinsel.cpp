@@ -625,11 +625,11 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 	//bool adlib = (midiDriver == MD_ADLIB);
 
-	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+	_driver = MidiDriver::createMidi(midiDriver);
 	if (native_mt32)
-		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_music = new MusicPlayer(driver);
+	_music = new MusicPlayer(_driver);
 	//_music->setNativeMT32(native_mt32);
 	//_music->setAdlib(adlib);
 
@@ -641,13 +641,14 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	_mousePos.y = 0;
 	_keyHandler = NULL;
 	_dosPlayerDir = 0;
-	quitFlag = false;
 }
 
 TinselEngine::~TinselEngine() {
 	delete _sound;
 	delete _music;
 	delete _console;
+	delete _driver;
+	_screenSurface.free();
 	FreeSs();
 	FreeTextBuffer();
 	FreeHandleTable();
@@ -681,6 +682,8 @@ int TinselEngine::init() {
 #if 1
 	// FIXME: The following is taken from RestartGame().
 	// It may have to be adjusted a bit
+	CountOut = 1;
+
 	RebootCursor();
 	RebootDeadTags();
 	RebootMovers();
@@ -741,7 +744,7 @@ int TinselEngine::go() {
 
 	// Foreground loop
 
-	while (!quitFlag) {
+	while (!quit()) {
 		assert(_console);
 		if (_console->isAttached())
 			_console->onFrame();
@@ -775,7 +778,7 @@ int TinselEngine::go() {
 	// Write configuration
 	WriteConfig();
 
-	return 0;
+	return _eventMan->shouldRTL();
 }
 
 
@@ -805,10 +808,6 @@ bool TinselEngine::pollEvent() {
 
 	// Handle the various kind of events
 	switch (event.type) {
-	case Common::EVENT_QUIT:
-		quitFlag = true;
-		break;
-
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:

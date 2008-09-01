@@ -107,8 +107,8 @@ public:
 	Common::Language getLanguage() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
-	bool quitFlag;
 
+	MidiDriver *_driver;
 	SoundManager *_sound;
 	MusicPlayer *_music;
 
