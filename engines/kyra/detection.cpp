@@ -1064,9 +1064,9 @@ public:
 		return "The Legend of Kyrandia (C) Westwood Studios";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
+	bool hasFeature(MetaEngineFeature f) const;
+	bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	SaveStateList listSaves(const char *target) const;
 };
 
 bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -1152,3 +1152,4 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 #else
 	REGISTER_PLUGIN_STATIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
 #endif
+
