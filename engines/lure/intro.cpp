@@ -55,17 +55,18 @@ static const AnimRecord anim_screens[] = {
 
 bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize) {
 	Screen &screen = Screen::getReference();
-	Events &events = Events::getReference();
 	bool isEGA = LureEngine::getReference().isEGA();
 	screen.screen().loadScreen(screenId);
 	screen.update();
 	Palette p(paletteId);
 
+	if (LureEngine::getReference().quit()) return true;
+	
 	if (isEGA) screen.setPalette(&p);
 	else screen.paletteFadeIn(&p);
 
 	bool result = interruptableDelay(delaySize);
-	if (events.quitFlag) return true;
+	if (LureEngine::getReference().quit()) return true;
 
 	if (!isEGA)
 		screen.paletteFadeOut();
@@ -83,6 +84,8 @@ bool Introduction::interruptableDelay(uint32 milliseconds) {
 	if (events.interruptableDelay(milliseconds)) {
 		if (events.type() == Common::EVENT_KEYDOWN)
 			return events.event().kbd.keycode == 27;
+		else if (LureEngine::getReference().quit())
+			return true;
 		else if (events.type() == Common::EVENT_LBUTTONDOWN)
 			return false;
 	}

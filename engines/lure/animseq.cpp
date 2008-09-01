@@ -44,12 +44,18 @@ AnimAbortType AnimationSequence::delay(uint32 milliseconds) {
 	while (g_system->getMillis() < delayCtr) {
 		while (events.pollEvent()) {
 			if ((events.type() == Common::EVENT_KEYDOWN) && (events.event().kbd.ascii != 0)) {
-				if (events.event().kbd.keycode == Common::KEYCODE_ESCAPE) return ABORT_END_INTRO;
-				else return ABORT_NEXT_SCENE;
-			} else if (events.type() == Common::EVENT_LBUTTONDOWN)
+				if (events.event().kbd.keycode == Common::KEYCODE_ESCAPE)
+					return ABORT_END_INTRO;
+				else
+					return ABORT_NEXT_SCENE;
+			} else if (events.type() == Common::EVENT_LBUTTONDOWN) {
 				return ABORT_NEXT_SCENE;
-			else if (events.type() == Common::EVENT_QUIT)
+			} else if ((events.type() == Common::EVENT_QUIT) || (events.type() == Common::EVENT_RTL)) {
 				return ABORT_END_INTRO;
+			} else if (events.type() == Common::EVENT_MAINMENU) {
+				return ABORT_NONE;
+			}
+
 		}
 
 		uint32 delayAmount = delayCtr - g_system->getMillis();

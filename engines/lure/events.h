@@ -66,8 +66,6 @@ class Events {
 private:
 	Common::Event _event;
 public:
-	bool quitFlag;
-
 	Events();
 	static Events &getReference();
 

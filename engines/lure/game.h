@@ -27,6 +27,7 @@
 #define LURE_GAME_H
 
 
+#include "common/config-manager.h"
 #include "engines/engine.h"
 #include "lure/luredefs.h"
 #include "lure/menu.h"
@@ -85,8 +86,8 @@ public:
 	bool &debugFlag() { return _debugFlag; }
 	bool fastTextFlag() { return _fastTextFlag; }
 	bool soundFlag() { return _soundFlag; }
-	uint8 sfxVolume() { return _sfxVolume; }
-	uint8 musicVolume() { return _musicVolume; }
+	uint8 sfxVolume() { return ConfMan.getInt("sfx_volume"); }
+	uint8 musicVolume() { return ConfMan.getInt("music_volume"); }
 	Debugger &debugger() { return *_debugger; }
 
 	// Menu item support methods

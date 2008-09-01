@@ -30,6 +30,7 @@
 #include "common/rect.h"
 #include "sound/mixer.h"
 #include "common/file.h"
+#include "common/savefile.h"
 
 #include "lure/disk.h"
 #include "lure/res.h"
@@ -47,6 +48,7 @@ struct LureGameDescription;
 class LureEngine : public Engine {
 private:
 	bool _initialised;
+	int _gameToLoad;
 	uint8 _saveVersion;
 	Disk *_disk;
 	Resources *_resources;
@@ -70,9 +72,11 @@ public:
 	virtual int init();
 	virtual int go();
 	virtual void pauseEngineIntern(bool pause);
+	virtual void syncSoundSettings();
 
 	Disk &disk() { return *_disk; }
 
+	int gameToLoad() { return _gameToLoad; }
 	bool loadGame(uint8 slotNumber);
 	bool saveGame(uint8 slotNumber, Common::String &caption);
 	Common::String *detectSave(int slotNumber);
@@ -84,7 +88,7 @@ public:
 	Common::Platform getPlatform() const;
 	bool isEGA() const { return (getFeatures() & GF_EGA) != 0; }
 };
-
+	Common::String getSaveName(Common::InSaveFile *in);
 } // End of namespace Lure
 
 #endif

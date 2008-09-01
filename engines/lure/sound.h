@@ -66,7 +66,7 @@ private:
 
 public:
 	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
-		 uint8 channelNum, uint8 soundNum, bool isMusic, uint8 numChannels, void *soundData, uint32 size);
+		 uint8 channelNum, uint8 soundNum, bool isMus, uint8 numChannels, void *soundData, uint32 size);
 	~MidiMusic();
 	void setVolume(int volume);
 	int getVolume() { return _volume; }
@@ -98,6 +98,7 @@ public:
 	uint8 channelNumber() { return _channelNumber; }
 	uint8 soundNumber() { return _soundNumber; }
 	bool isPlaying() { return _isPlaying; }
+	bool isMusic() {return _isMusic; }
 };
 
 class SoundManager: public Common::Singleton<SoundManager> {
@@ -142,6 +143,7 @@ public:
 	void stopSound(uint8 soundIndex);
 	void killSound(uint8 soundNumber);
 	void setVolume(uint8 soundNumber, uint8 volume);
+	void syncSounds();
 	void tidySounds();
 	uint8 descIndexOf(uint8 soundNumber);
 	SoundDescResource *findSound(uint8 soundNumber);
