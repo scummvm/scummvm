@@ -32,6 +32,7 @@
 #include "common/fs.h"
 #include "common/timer.h"
 #include "common/events.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "engines/metaengine.h"
@@ -94,12 +95,21 @@ public:
 		return "Broken Sword Games (C) Revolution";
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const FSList &fslist) const;
+	virtual SaveStateList listSaves(const char *target) const;
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 };
+
+bool SwordMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad);
+}
 
 GameList SwordMetaEngine::getSupportedGames() const {
 	GameList games;
@@ -187,6 +197,47 @@ PluginError SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	return kNoError;
 }
 
+SaveStateList SwordMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	SaveStateList saveList;
+
+	Common::String pattern = "SAVEGAME.???";
+	Common::StringList filenames = saveFileMan->listSavefiles(pattern.c_str());
+	sort(filenames.begin(), filenames.end());
+	Common::StringList::const_iterator file = filenames.begin();
+
+	Common::InSaveFile *in = saveFileMan->openForLoading("SAVEGAME.INF");
+	if (in) {
+		uint8 stop;
+		char saveDesc[32];
+		do {
+			// Obtain the last digit of the filename, since they correspond to the save slot
+			int slotNum = atoi(file->c_str() + file->size() - 1);
+
+			uint pos = 0;
+			do {
+				stop = in->readByte();
+				if (pos < (sizeof(saveDesc) - 1)) { 	
+					if ((stop == 10) || (stop == 255) || (in->eos())) {
+						saveDesc[pos++] = '\0';
+					}
+					else if (stop >= 32) {
+						saveDesc[pos++] = stop;
+					}
+				}
+			} while ((stop != 10) && (stop != 255) && (!in->eos()));
+			if (saveDesc[0] != 0) {
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc, *file));
+				file++;
+			}
+		} while ((stop != 255) && (!in->eos()));
+	}
+	
+	delete in;
+		
+	return saveList;
+}
+
 #if PLUGIN_ENABLED_DYNAMIC(SWORD1)
 	REGISTER_PLUGIN_DYNAMIC(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngine);
 #else
@@ -247,8 +298,6 @@ int SwordEngine::init() {
 	_resMan = new ResMan("swordres.rif", _systemVars.isMac);
 	debug(5, "Starting object manager");
 	_objectMan = new ObjectMan(_resMan);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, Audio::Mixer::kMaxMixerVolume);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
 	_mouse = new Mouse(_system, _resMan, _objectMan);
 	_screen = new Screen(_system, _resMan, _objectMan);
 	_music = new Music(_mixer);
@@ -257,60 +306,13 @@ int SwordEngine::init() {
 	_logic = new Logic(_objectMan, _resMan, _screen, _mouse, _sound, _music, _menu, _system, _mixer);
 	_mouse->useLogicAndMenu(_logic, _menu);
 
-	uint musicVol = ConfMan.getInt("music_volume");
-	uint speechVol = ConfMan.getInt("speech_volume");
-	uint sfxVol = ConfMan.getInt("sfx_volume");
-	uint musicBal = 50;
-	if (ConfMan.hasKey("music_balance")) {
-		musicBal = CLIP(ConfMan.getInt("music_balance"), 0, 100);
-	}
-	uint speechBal = 50;
-	if (ConfMan.hasKey("speech_balance")) {
-		speechBal = CLIP(ConfMan.getInt("speech_balance"), 0, 100);
-	}
-	uint sfxBal = 50;
-	if (ConfMan.hasKey("sfx_balance")) {
-		sfxBal = CLIP(ConfMan.getInt("sfx_balance"), 0, 100);
-	}
-
-	uint musicVolL = 2 * musicVol * musicBal / 100;
-	uint musicVolR = 2 * musicVol - musicVolL;
-
-	uint speechVolL = 2 * speechVol * speechBal / 100;
-	uint speechVolR = 2 * speechVol - speechVolL;
-
-	uint sfxVolL = 2 * sfxVol * sfxBal / 100;
-	uint sfxVolR = 2 * sfxVol - sfxVolL;
-
-	if (musicVolR > 255) {
-		musicVolR = 255;
-	}
-	if (musicVolL > 255) {
-		musicVolL = 255;
-	}
-	if (speechVolR > 255) {
-		speechVolR = 255;
-	}
-	if (speechVolL > 255) {
-		speechVolL = 255;
-	}
-	if (sfxVolR > 255) {
-		sfxVolR = 255;
-	}
-	if (sfxVolL > 255) {
-		sfxVolL = 255;
-	}
-
-	_music->setVolume(musicVolL, musicVolR);
-	_sound->setSpeechVol(speechVolL, speechVolR);
-	_sound->setSfxVol(sfxVolL, sfxVolR);
+	syncSoundSettings();
 
 	_systemVars.justRestoredGame = 0;
 	_systemVars.currentCD = 0;
 	_systemVars.controlPanelMode = CP_NEWGAME;
 	_systemVars.forceRestart = false;
 	_systemVars.wantFade = true;
-	_systemVars.engineQuit = false;
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
 	case Common::DE_DEU:
@@ -356,6 +358,62 @@ void SwordEngine::reinitialize(void) {
 	_mouse->initialize();
 	_system->warpMouse(320, 240);
 	_systemVars.wantFade = true;
+}
+
+void SwordEngine::syncSoundSettings() {
+	uint musicVol = ConfMan.getInt("music_volume");
+	uint sfxVol = ConfMan.getInt("sfx_volume");
+	uint speechVol = ConfMan.getInt("speech_volume");
+
+	uint musicBal = 50;
+	if (ConfMan.hasKey("music_balance")) {
+		musicBal = CLIP(ConfMan.getInt("music_balance"), 0, 100);
+	}
+
+	uint speechBal = 50;
+	if (ConfMan.hasKey("speech_balance")) {
+		speechBal = CLIP(ConfMan.getInt("speech_balance"), 0, 100);
+	}
+	uint sfxBal = 50;
+	if (ConfMan.hasKey("sfx_balance")) {
+		sfxBal = CLIP(ConfMan.getInt("sfx_balance"), 0, 100);
+	}
+
+	uint musicVolL = 2 * musicVol * musicBal / 100;
+	uint musicVolR = 2 * musicVol - musicVolL;
+
+	uint speechVolL = 2 * speechVol * speechBal / 100;
+	uint speechVolR = 2 * speechVol - speechVolL;
+
+	uint sfxVolL = 2 * sfxVol * sfxBal / 100;
+	uint sfxVolR = 2 * sfxVol - sfxVolL;
+
+	if (musicVolR > 255) {
+		musicVolR = 255;
+	}
+	if (musicVolL > 255) {
+		musicVolL = 255;
+	}
+
+	if (speechVolR > 255) {
+		speechVolR = 255;
+	}
+	if (speechVolL > 255) {
+		speechVolL = 255;
+	}
+	if (sfxVolR > 255) {
+		sfxVolR = 255;
+	}
+	if (sfxVolL > 255) {
+		sfxVolL = 255;
+	}
+
+	_music->setVolume(musicVolL, musicVolR);
+	_sound->setSpeechVol(speechVolL, speechVolR);
+	_sound->setSfxVol(sfxVolL, sfxVolR);
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 }
 
 void SwordEngine::flagsToBool(bool *dest, uint8 flags) {
@@ -639,13 +697,13 @@ int SwordEngine::go() {
 		int saveSlot = ConfMan.getInt("save_slot");
 		// Savegames are numbered starting from 1 in the dialog window,
 		// but their filenames are numbered starting from 0.
-		if (saveSlot > 0 && _control->restoreGameFromFile(saveSlot - 1)) {
+		if (saveSlot >= 0 && _control->savegamesExist() && _control->restoreGameFromFile(saveSlot)) {
 			_control->doRestore();
 		} else if (_control->savegamesExist()) {
 			_systemVars.controlPanelMode = CP_NEWGAME;
 			if (_control->runPanel() == CONTROL_GAME_RESTORED)
 				_control->doRestore();
-			else if (!_systemVars.engineQuit)
+			else if (!quit())
 				_logic->startPositions(0);
 		} else {
 			// no savegames, start new game.
@@ -654,10 +712,10 @@ int SwordEngine::go() {
 	}
 	_systemVars.controlPanelMode = CP_NORMAL;
 
-	while (!_systemVars.engineQuit) {
+	while (!quit()) {
 		uint8 action = mainLoop();
 
-		if (!_systemVars.engineQuit) {
+		if (!quit()) {
 			// the mainloop was left, we have to reinitialize.
 			reinitialize();
 			if (action == CONTROL_GAME_RESTORED)
@@ -669,7 +727,7 @@ int SwordEngine::go() {
 		}
 	}
 
-	return 0;
+	return _eventMan->shouldRTL();
 }
 
 void SwordEngine::checkCd(void) {
@@ -698,7 +756,7 @@ uint8 SwordEngine::mainLoop(void) {
 	uint8 retCode = 0;
 	_keyPressed.reset();
 
-	while ((retCode == 0) && (!_systemVars.engineQuit)) {
+	while ((retCode == 0) && (!quit())) {
 		// do we need the section45-hack from sword.c here?
 		checkCd();
 
@@ -747,9 +805,9 @@ uint8 SwordEngine::mainLoop(void) {
 			}
 			_mouseState = 0;
 			_keyPressed.reset();
-		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) && (retCode == 0) && (!_systemVars.engineQuit));
+		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) && (retCode == 0) && (!quit()));
 
-		if ((retCode == 0) && (Logic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade && (!_systemVars.engineQuit)) {
+		if ((retCode == 0) && (Logic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade && (!quit())) {
 			_screen->fadeDownPalette();
 			int32 relDelay = (int32)_system->getMillis();
 			while (_screen->stillFading()) {
@@ -795,9 +853,6 @@ void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
 			case Common::EVENT_RBUTTONUP:
 				_mouseState |= BS1R_BUTTON_UP;
 				_mouseCoord = event.mouse;
-				break;
-			case Common::EVENT_QUIT:
-				_systemVars.engineQuit = true;
 				break;
 			default:
 				break;

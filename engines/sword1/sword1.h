@@ -58,7 +58,6 @@ struct SystemVars {
 	bool	runningFromCd;
 	uint32	currentCD;			// starts at zero, then either 1 or 2 depending on section being played
 	uint32	justRestoredGame;	// see main() in sword.c & New_screen() in gtm_core.c
-	bool	engineQuit;
 
 	uint8	controlPanelMode;	// 1 death screen version of the control panel, 2 = successful end of game, 3 = force restart
 	bool	forceRestart;
@@ -78,6 +77,7 @@ public:
 	virtual ~SwordEngine();
 	static SystemVars _systemVars;
 	void reinitialize(void);
+	virtual void syncSoundSettings();
 
 	uint32 _features;
 protected:

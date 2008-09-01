@@ -215,7 +215,7 @@ void Control::askForCd(void) {
 				notAccepted = false;
 			}
 		}
-	} while (notAccepted && (!SwordEngine::_systemVars.engineQuit));
+	} while (notAccepted && (!g_engine->quit()));
 
 	_resMan->resClose(fontId);
 	free(_screenBuf);
@@ -317,7 +317,7 @@ uint8 Control::runPanel(void) {
 		}
 		delay(1000 / 12);
 		newMode = getClicks(mode, &retVal);
-	} while ((newMode != BUTTON_DONE) && (retVal == 0) && (!SwordEngine::_systemVars.engineQuit));
+	} while ((newMode != BUTTON_DONE) && (retVal == 0) && (!g_engine->quit()));
 
 	if (SwordEngine::_systemVars.controlPanelMode == CP_NORMAL) {
 		uint8 volL, volR;
@@ -425,7 +425,7 @@ uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 			_buttons[5]->setSelected(SwordEngine::_systemVars.showText);
 		} else if (id == BUTTON_QUIT) {
 			if (getConfirm(_lStrings[STR_QUIT]))
-				SwordEngine::_systemVars.engineQuit = true;
+				g_engine->quitGame();
 			return mode;
 		}
 		break;
@@ -703,7 +703,7 @@ void Control::handleSaveKey(Common::KeyState kbd) {
 bool Control::saveToFile(void) {
 	if ((_selectedSavegame == 255) || !strlen((char*)_saveNames[_selectedSavegame]))
 		return false; // no saveslot selected or no name entered
-	saveGameToFile(_selectedSavegame);
+	saveGameToFile(_numSaves);
 	writeSavegameDescriptions();
 	return true;
 }
@@ -741,6 +741,7 @@ void Control::readSavegameDescriptions(void) {
 				curFileNum++;
 		} while ((ch != 255) && (!inf->eos()));
 		_saveFiles = curFileNum;
+		_numSaves = _saveFiles;
 	}
 	delete inf;
 }
@@ -1090,9 +1091,6 @@ void Control::delay(uint32 msecs) {
 			case Common::EVENT_WHEELDOWN:
 				_mouseDown = false;
 				_mouseState |= BS1_WHEEL_DOWN;
-				break;
-			case Common::EVENT_QUIT:
-				SwordEngine::_systemVars.engineQuit = true;
 				break;
 			default:
 				break;

@@ -300,9 +300,6 @@ void MoviePlayer::play(void) {
 					terminated = true;
 				}
 				break;
-			case Common::EVENT_QUIT:
-				_system->quit();
-				break;
 			default:
 				break;
 			}
