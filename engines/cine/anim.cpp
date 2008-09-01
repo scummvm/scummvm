@@ -768,7 +768,7 @@ int loadResource(const char *resourceName, int16 idx) {
 	} else if (strstr(resourceName, ".AMI")) {
 		warning("loadResource: Ignoring file '%s' (Load at %d)", resourceName, idx);
 	} else if (strstr(resourceName, "ECHEC")) { // Echec (French) means failure
-		exitEngine = 1;
+		g_cine->quitGame();
 	} else {
 		error("loadResource: Cannot determine type for '%s'", resourceName);
 	}

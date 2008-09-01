@@ -533,7 +533,16 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual SaveStateList listSaves(const char *target) const;
 };
+
+bool CineMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad);
+}
 
 bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const Cine::CINEGameDescription *gd = (const Cine::CINEGameDescription *)desc;
@@ -541,6 +550,50 @@ bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 		*engine = new Cine::CineEngine(syst, gd);
 	}
 	return gd != 0;
+}
+
+SaveStateList CineMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	SaveStateList saveList;
+
+	Common::String pattern = target;
+	pattern += ".?";
+	Common::StringList filenames = saveFileMan->listSavefiles(pattern.c_str());
+	sort(filenames.begin(), filenames.end());
+	Common::StringList::const_iterator file = filenames.begin();
+
+	Common::String filename = target;
+	filename += ".dir";
+	Common::InSaveFile *in = saveFileMan->openForLoading(filename.c_str());
+	if (in) {
+		int8 ch;
+		char saveDesc[20];
+		do {
+			// Obtain the last digit of the filename, since they correspond to the save slot
+			int slotNum = atoi(file->c_str() + file->size() - 1);
+
+			uint pos = 0;
+			do {
+				ch = in->readByte();
+				if (pos < (sizeof(saveDesc) - 1)) {
+					if (ch < 32 || in->eos()) {
+						saveDesc[pos++] = '\0';
+					} 
+					else if (ch >= 32) {
+						saveDesc[pos++] = ch;
+					}
+				}
+			} while (ch >= 32 && !in->eos());
+			if (saveDesc[0] != 0) {
+				saveList.push_back(SaveStateDescriptor(slotNum, Common::String(saveDesc), *file));
+				file++;
+			}
+		} while (!in->eos());
+	}
+
+	delete in;
+
+	return saveList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CINE)

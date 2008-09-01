@@ -25,7 +25,6 @@
 
 
 #include "common/endian.h"
-#include "common/events.h"
 #include "common/savefile.h"
 
 #include "cine/cine.h"
@@ -125,7 +124,6 @@ static const int16 canUseOnItemTable[] = { 1, 0, 0, 1, 1, 0, 0 };
 CommandeType objectListCommand[20];
 int16 objListTab[20];
 
-uint16 exitEngine;
 Common::Array<uint16> zoneData;
 Common::Array<uint16> zoneQuery; //!< Only exists in Operation Stealth
 
@@ -1223,7 +1221,7 @@ void CineEngine::makeSystemMenu(void) {
 			{
 				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
 				if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
-					exitEngine = 1;
+					quitGame();
 				}
 				break;
 			}
