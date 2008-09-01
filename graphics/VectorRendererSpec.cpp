@@ -262,7 +262,7 @@ blitSurface(const Graphics::Surface *source, const Common::Rect &r) {
 	int h = r.height(), w = r.width();
 
 	while (h--) {
-		colorCopy(src_ptr, dst_ptr, w);
+		memcpy(dst_ptr, src_ptr, w * sizeof(PixelType));
 		dst_ptr += dst_pitch;
 		src_ptr += src_pitch;
 	}
@@ -280,7 +280,7 @@ blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) {
 	int h = r.height(), w = r.width();
 	
 	while (h--) {
-		colorCopy(src_ptr, dst_ptr, w);
+		memcpy(dst_ptr, src_ptr, w * sizeof(PixelType));
 		dst_ptr += dst_pitch;
 		src_ptr += src_pitch;
 	}
@@ -407,24 +407,6 @@ colorFill(PixelType *first, PixelType *last, PixelType color) {
 	case 3:		*ptr++ = color;
 	case 2:		*ptr++ = color;
 	case 1:		*ptr++ = color;
-			} while (--n > 0);
-	}
-}
-
-template <typename PixelType, typename PixelFormat>
-inline void VectorRendererSpec<PixelType, PixelFormat>::
-colorCopy(PixelType *src, PixelType *dst, int count) {
-	register int n = (count + 7) >> 3;
-	switch (count % 8) {
-	case 0: do { 
-				*dst++ = *src++;
-	case 7:		*dst++ = *src++;
-	case 6:		*dst++ = *src++;
-	case 5:		*dst++ = *src++;
-	case 4:		*dst++ = *src++;
-	case 3:		*dst++ = *src++;
-	case 2:		*dst++ = *src++;
-	case 1:		*dst++ = *src++;
 			} while (--n > 0);
 	}
 }

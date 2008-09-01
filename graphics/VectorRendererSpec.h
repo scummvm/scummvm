@@ -227,17 +227,6 @@ protected:
 	 * @param color Color of the pixel
 	 */
     virtual inline void colorFill(PixelType *first, PixelType *last, PixelType color);
-
-	/**
-	 * Copies several pixes in a row from a surface to another one.
-	 * Used for surface blitting.
-	 * See colorFill() for optimization guidelines.
-	 *
-	 * @param src Source surface.
-	 * @param dst Destination surface.
-	 * @param count Amount of pixels to copy over.
-	 */
-    virtual inline void colorCopy(PixelType *src, PixelType *dst, int count);
 	
 	virtual void areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset);
 
