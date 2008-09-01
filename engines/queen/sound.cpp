@@ -278,8 +278,6 @@ void PCSound::playSpeech(const char *base) {
 
 void PCSound::setVolume(int vol) {
 	Sound::setVolume(vol);
-	// Set mixer music volume to maximum, since music volume is regulated by MusicPlayer's MIDI messages
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
 	_music->setVolume(vol);
 }
 
@@ -333,7 +331,8 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 	if (sound) {
 		f->read(sound, size);
 		byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, soundHandle, sound, size, 11840, flags);
+		Audio::Mixer::SoundType type = (soundHandle == &_speechHandle) ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
+		_mixer->playRaw(type, soundHandle, sound, size, 11840, flags);
 	}
 }
 

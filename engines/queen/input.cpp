@@ -118,9 +118,10 @@ void Input::delay(uint amount) {
 			case Common::EVENT_RBUTTONDOWN:
 				_mouseButton |= MOUSE_RBUTTON;
 				break;
-
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
-				_vm->quitGame();
+				if (_cutawayRunning)
+					_cutawayQuit = true;
 				return;
 
 			default:

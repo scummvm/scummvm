@@ -60,9 +60,11 @@ public:
 	virtual const char *getName() const;
 	virtual const char *getCopyright() const;
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const FSList &fslist) const;
+	virtual SaveStateList listSaves(const char *target) const;
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 };
@@ -73,6 +75,14 @@ const char *QueenMetaEngine::getName() const {
 
 const char *QueenMetaEngine::getCopyright() const {
 	return "Flight of the Amazon Queen (C) John Passfield and Steve Stamatiadis";
+}
+
+bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad) ||
+		(f == kSupportsDeleteSave);
 }
 
 GameList QueenMetaEngine::getSupportedGames() const {
@@ -119,6 +129,36 @@ GameList QueenMetaEngine::detectGames(const FSList &fslist) const {
 		}
 	}
 	return detectedGames;
+}
+
+SaveStateList QueenMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringList filenames;
+	char saveDesc[32];
+	Common::String pattern = target;
+	pattern += ".s??";
+
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 2);
+		
+		if (slotNum >= 0 && slotNum <= 99) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				for (int i = 0; i < 4; i++)
+					in->readUint32BE();
+				in->read(saveDesc, 32);	
+				saveList.push_back(SaveStateDescriptor(slotNum, Common::String(saveDesc), *file));
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
 }
 
 PluginError QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
@@ -178,6 +218,10 @@ void QueenEngine::checkOptionSettings() {
 	if (!_sound->speechOn()) {
 		_subtitles = true;
 	}
+}
+
+void QueenEngine::syncSoundSettings() {
+	readOptionSettings();
 }
 
 void QueenEngine::readOptionSettings() {
@@ -381,8 +425,8 @@ int QueenEngine::go() {
 		loadGameState(ConfMan.getInt("save_slot"));
 	}
 	_lastSaveTime = _lastUpdateTime = _system->getMillis();
-	_quit = false;
-	while (!_quit) {
+
+	while (!quit()) {
 		if (_logic->newRoom() > 0) {
 			_logic->update();
 			_logic->oldRoom(_logic->currentRoom());
@@ -400,7 +444,7 @@ int QueenEngine::go() {
 			update(true);
 		}
 	}
-	return 0;
+	return _eventMan->shouldRTL();
 }
 
 int QueenEngine::init() {
@@ -427,10 +471,6 @@ int QueenEngine::init() {
 	} else {
 		_logic = new LogicGame(this);
 	}
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	// Set mixer music volume to maximum, since music volume is regulated by MusicPlayer's MIDI messages
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
 
 	_sound = Sound::makeSoundInstance(_mixer, this, _resource->getCompression());
 	_walk = new Walk(this);
