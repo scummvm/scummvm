@@ -920,6 +920,7 @@ void StaticResource::freePaletteTable(void *&ptr, int &size) {
 	uint8 **data = (uint8**)ptr;
 	while (size--)
 		delete[] data[size];
+	delete[] data;
 	ptr = 0;
 	size = 0;
 }

@@ -118,8 +118,6 @@ public:
 
 	virtual void pauseEngineIntern(bool pause);
 
-	bool quit() const { return _quitFlag; }
-
 	uint8 game() const { return _flags.gameID; }
 	const GameFlags &gameFlags() const { return _flags; }
 
@@ -177,9 +175,6 @@ public:
 protected:
 	virtual int go() = 0;
 	virtual int init();
-
-	// quit Handling
-	bool _quitFlag;
 
 	// intern
 	Resource *_res;

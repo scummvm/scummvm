@@ -120,8 +120,8 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 					if (event.kbd.keycode == '.')
 						_skipFlag = true;
 					break;
+				case Common::EVENT_RTL:
 				case Common::EVENT_QUIT:
-					quitGame();
 					runLoop = false;
 					break;
 				case Common::EVENT_LBUTTONDOWN:

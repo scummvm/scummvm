@@ -32,7 +32,6 @@
 // The jung2.vqa movie does work, but only thanks to a grotesque hack.
 
 
-#include "common/events.h"
 #include "common/system.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
@@ -671,8 +670,8 @@ void VQAMovie::play() {
 					if (event.kbd.ascii == 27)
 						return;
 					break;
+				case Common::EVENT_RTL:
 				case Common::EVENT_QUIT:
-					_vm->quitGame();
 					return;
 				default:
 					break;

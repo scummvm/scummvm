@@ -378,9 +378,6 @@ bool MainMenu::getInput() {
 
 	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_vm->quitGame();
-			break;
 		case Common::EVENT_LBUTTONUP:
 			return true;
 		default:

@@ -221,7 +221,7 @@ void KyraEngine_LoK::loadGame(const char *fileName) {
 void KyraEngine_LoK::saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumb) {
 	debugC(9, kDebugLevelMain, "KyraEngine_LoK::saveGame('%s', '%s', %p)", fileName, saveName, (const void *)thumb);
 	
-	if (_quitFlag)
+	if (quit())
 		return;
 
 	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName, thumb);

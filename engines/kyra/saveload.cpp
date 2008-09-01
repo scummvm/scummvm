@@ -178,7 +178,7 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 
 Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::openSaveForWriting('%s', '%s', %p)", filename, saveName, (const void *)thumbnail);
-	if (_quitFlag)
+	if (quit())
 		return 0;
 
 	Common::WriteStream *out = 0;

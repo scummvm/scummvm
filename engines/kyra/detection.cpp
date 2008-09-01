@@ -1064,10 +1064,18 @@ public:
 		return "The Legend of Kyrandia (C) Westwood Studios";
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
-
-	SaveStateList listSaves(const char *target) const;
+	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual SaveStateList listSaves(const char *target) const;
 };
+
+bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad) ||
+		(f == kSupportsDeleteSave);
+}
 
 bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const KYRAGameDescription *gd = (const KYRAGameDescription *)desc;
