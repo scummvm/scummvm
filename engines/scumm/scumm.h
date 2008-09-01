@@ -462,7 +462,7 @@ protected:
 	virtual void loadLanguageBundle() {}
 	void loadCJKFont();
 	void setupMusic(int midi);
-	void updateSoundSettings();
+	virtual void syncSoundSettings();
 	void setTalkspeed(int talkspeed);
 	int getTalkspeed();
 
@@ -496,22 +496,18 @@ protected:
 public:
 	void pauseGame();
 	void restart();
-	void shutDown();
-
-	/** We keep running until this is set to true. */
-	bool _quit;
 
 protected:
 	Dialog *_pauseDialog;
 	Dialog *_versionDialog;
-	Dialog *_mainMenuDialog;
+	Dialog *_scummMenuDialog;
 
 	virtual int runDialog(Dialog &dialog);
 	void confirmExitDialog();
 	void confirmRestartDialog();
 	void pauseDialog();
 	void versionDialog();
-	void mainMenuDialog();
+	void scummMenuDialog();
 
 	char displayMessage(const char *altButton, const char *message, ...);
 

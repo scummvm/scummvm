@@ -430,7 +430,7 @@ Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 	return descriptions;
 }
 
-MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
+ScummMenuDialog::ScummMenuDialog(ScummEngine *scumm)
 	: ScummDialog("scummmain"), _vm(scumm) {
 
 	new GUI::ButtonWidget(this, "scummmain_resume", "Resume", kPlayCmd, 'P');
@@ -458,7 +458,7 @@ MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 	_loadDialog = new SaveLoadChooser("Load game:", "Load", false, scumm);
 }
 
-MainMenuDialog::~MainMenuDialog() {
+ScummMenuDialog::~ScummMenuDialog() {
 	delete _aboutDialog;
 	delete _optionsDialog;
 #ifndef DISABLE_HELP
@@ -468,7 +468,7 @@ MainMenuDialog::~MainMenuDialog() {
 	delete _loadDialog;
 }
 
-void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void ScummMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSaveCmd:
 		save();
@@ -491,7 +491,7 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 #endif
 	case kQuitCmd:
-		_vm->_quit = true;
+		_vm->quitGame();
 		close();
 		break;
 	default:
@@ -499,7 +499,7 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-void MainMenuDialog::save() {
+void ScummMenuDialog::save() {
 	int idx;
 	_saveDialog->setList(generateSavegameList(_vm, true));
 	idx = _saveDialog->runModal();
@@ -518,7 +518,7 @@ void MainMenuDialog::save() {
 	}
 }
 
-void MainMenuDialog::load() {
+void ScummMenuDialog::load() {
 	int idx;
 	_loadDialog->setList(generateSavegameList(_vm, false));
 	idx = _loadDialog->runModal();

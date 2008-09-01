@@ -291,7 +291,7 @@ void ScummEngine::readIndexFile() {
 
 	if (checkTryMedia(_fileHandle)) {
 		displayMessage(NULL, "You're trying to run game encrypted by ActiveMark. This is not supported.");
-		_quit = true;
+		quitGame();
 
 		return;
 	}

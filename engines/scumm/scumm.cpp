@@ -109,7 +109,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _language(dr.language),
 	  _debugger(0),
 	  _currentScript(0xFF), // Let debug() work on init stage
-	  _pauseDialog(0), _mainMenuDialog(0), _versionDialog(0) {
+	  _pauseDialog(0), _scummMenuDialog(0), _versionDialog(0) {
 
 	if (_game.platform == Common::kPlatformNES) {
 		_gdi = new GdiNES(this);
@@ -143,9 +143,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_objs = NULL;
 	_sound = NULL;
 	memset(&vm, 0, sizeof(vm));
-	_quit = false;
 	_pauseDialog = NULL;
-	_mainMenuDialog = NULL;
+	_scummMenuDialog = NULL;
 	_versionDialog = NULL;
 	_fastMode = 0;
 	_actors = NULL;
@@ -561,7 +560,7 @@ ScummEngine::~ScummEngine() {
 	delete _2byteFontPtr;
 	delete _charset;
 	delete _pauseDialog;
-	delete _mainMenuDialog;
+	delete _scummMenuDialog;
 	delete _versionDialog;
 	delete _fileHandle;
 
@@ -815,7 +814,6 @@ ScummEngine_vCUPhe::ScummEngine_vCUPhe(OSystem *syst, const DetectorResult &dr) 
 	_syst = syst;
 	_game = dr.game;
 	_filenamePattern = dr.fp,
-	_quit = false;
 
 	_cupPlayer = new CUP_Player(syst, this, _mixer);
 }
@@ -846,9 +844,6 @@ void ScummEngine_vCUPhe::parseEvents() {
 
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_quit = true;
-			break;
 
 		default:
 			break;
@@ -1108,7 +1103,7 @@ int ScummEngine::init() {
 	if (_game.version >= 5 && _game.version <= 7)
 		_sound->setupSound();
 
-	updateSoundSettings();
+	syncSoundSettings();
 
 	return 0;
 }
@@ -1667,7 +1662,7 @@ void ScummEngine::setupMusic(int midi) {
 	}
 }
 
-void ScummEngine::updateSoundSettings() {
+void ScummEngine::syncSoundSettings() {
 
 	// Sync the engine with the config manager
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
@@ -1721,7 +1716,7 @@ int ScummEngine::go() {
 
 	int diff = 0;	// Duration of one loop iteration
 
-	while (!_quit) {
+	while (!quit()) {
 
 		if (_debugger->isAttached())
 			_debugger->onFrame();
@@ -1754,12 +1749,12 @@ int ScummEngine::go() {
 		diff = _system->getMillis() - diff;
 
 
-		if (_quit) {
+		if (quit()) {
 			// TODO: Maybe perform an autosave on exit?
 		}
 	}
 
-	return 0;
+	return _eventMan->shouldRTL();
 }
 
 void ScummEngine::waitForTimer(int msec_delay) {
@@ -1772,7 +1767,7 @@ void ScummEngine::waitForTimer(int msec_delay) {
 
 	start_time = _system->getMillis();
 
-	while (!_quit) {
+	while (!quit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
 		parseEvents();
 		_system->updateScreen();
@@ -1895,7 +1890,7 @@ load_game:
 	checkExecVerbs();
 	checkAndRunSentenceScript();
 
-	if (_quit)
+	if (quit())
 		return;
 
 	// HACK: If a load was requested, immediately perform it. This avoids
@@ -2160,10 +2155,6 @@ void ScummEngine::pauseGame() {
 	pauseDialog();
 }
 
-void ScummEngine::shutDown() {
-	_quit = true;
-}
-
 void ScummEngine::restart() {
 // TODO: Check this function - we should probably be reinitting a lot more stuff, and I suspect
 //	 this leaks memory like a sieve
@@ -2305,18 +2296,18 @@ void ScummEngine::versionDialog() {
 	runDialog(*_versionDialog);
 }
 
-void ScummEngine::mainMenuDialog() {
-	if (!_mainMenuDialog)
-		_mainMenuDialog = new MainMenuDialog(this);
-	runDialog(*_mainMenuDialog);
-	updateSoundSettings();
+void ScummEngine::scummMenuDialog() {
+	if (!_scummMenuDialog)
+		_scummMenuDialog = new ScummMenuDialog(this);
+	runDialog(*_scummMenuDialog);
+	syncSoundSettings();
 }
 
 void ScummEngine::confirmExitDialog() {
 	ConfirmDialog d(this, 6);
 
 	if (runDialog(d)) {
-		_quit = true;
+		quitGame();
 	}
 }
 

@@ -1769,7 +1769,7 @@ void ScummEngine_v5::o5_systemOps() {
 		pauseGame();
 		break;
 	case 3:		// SO_QUIT
-		shutDown();
+		quitGame();
 		break;
 	default:
 		error("o5_systemOps: unknown subopcode %d", subOp);

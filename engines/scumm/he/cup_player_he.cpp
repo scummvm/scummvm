@@ -99,7 +99,7 @@ void CUP_Player::play() {
 	debug(1, "rate %d width %d height %d", _playbackRate, _width, _height);
 
 	int ticks = _system->getMillis();
-	while (_dataSize != 0 && !_vm->_quit) {
+	while (_dataSize != 0 && !_vm->quit()) {
 		while (parseNextBlockTag(_fileStream)) {
 			if (_fileStream.ioFailed()) {
 				return;
@@ -190,7 +190,7 @@ void CUP_Player::waitForSfxChannel(int channel) {
 	CUP_SfxChannel *sfxChannel = &_sfxChannels[channel];
 	debug(1, "waitForSfxChannel %d", channel);
 	if ((sfxChannel->flags & kSfxFlagLoop) == 0) {
-		while (_mixer->isSoundHandleActive(sfxChannel->handle) && !_vm->_quit) {
+		while (_mixer->isSoundHandleActive(sfxChannel->handle) && !_vm->quit()) {
 			_vm->parseEvents();
 			_system->delayMillis(10);
 		}
@@ -496,7 +496,7 @@ void CUP_Player::handleTOIL(Common::SeekableReadStream &dataStream, uint32 dataS
 			for (int i = 0; i < kSfxChannels; ++i) {
 				waitForSfxChannel(i);
 			}
-			_vm->_quit = true;
+			_vm->quitGame();
 			break;
 		case 7: {
 				int channelSync = dataStream.readUint32LE();

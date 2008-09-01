@@ -674,14 +674,23 @@ public:
 	virtual const char *getName() const;
 	virtual const char *getCopyright() const;
 
+	virtual bool hasFeature(MetaEngineFeature f) const;	
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const FSList &fslist) const;
-
+	
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 
 	virtual SaveStateList listSaves(const char *target) const;
 };
+
+bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad) ||
+		(f == kSupportsDeleteSave);
+}
 
 GameList ScummMetaEngine::getSupportedGames() const {
 	return GameList(gameDescriptions);
@@ -690,7 +699,6 @@ GameList ScummMetaEngine::getSupportedGames() const {
 GameDescriptor ScummMetaEngine::findGame(const char *gameid) const {
 	return Common::AdvancedDetector::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
 }
-
 
 GameList ScummMetaEngine::detectGames(const FSList &fslist) const {
 	GameList detectedGames;

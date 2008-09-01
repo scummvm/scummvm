@@ -192,10 +192,6 @@ void ScummEngine::parseEvents() {
 				_keyPressed = Common::KeyState(Common::KEYCODE_6, 54);	// '6'
 			break;
 
-		case Common::EVENT_QUIT:
-			_quit = true;
-			break;
-
 		default:
 			break;
 		}
@@ -475,7 +471,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
 
-		mainMenuDialog();		// Display NewGui
+		scummMenuDialog();		// Display NewGui
 
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
@@ -514,7 +510,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			vol = Audio::Mixer::kMaxMixerVolume;
 
 		ConfMan.setInt("music_volume", vol);
-		updateSoundSettings();
+		syncSoundSettings();
 
 	} else if (lastKeyHit.ascii == '-' || lastKeyHit.ascii == '+') { // Change text speed
 		if (lastKeyHit.ascii == '+' && _defaultTalkDelay > 0)
