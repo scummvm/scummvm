@@ -24,7 +24,6 @@
  */
 
 #include "common/endian.h"
-#include "common/events.h"
 
 #include "base/plugins.h"
 #include "common/config-manager.h"
@@ -84,7 +83,6 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	_copyProtection = ConfMan.getBool("copy_protection");
-	_quitRequested = false;
 
 	Common::addSpecialDebugLevel(kDebugFuncOp, "FuncOpcodes", "Script FuncOpcodes debug level");
 	Common::addSpecialDebugLevel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
@@ -114,11 +112,7 @@ GobEngine::~GobEngine() {
 int GobEngine::go() {
 	_init->initGame(0);
 
-	return 0;
-}
-
-void GobEngine::shutdown() {
-	_quitRequested = true;
+	return _eventMan->shouldRTL();
 }
 
 const char *GobEngine::getLangDesc(int16 language) const {

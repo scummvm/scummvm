@@ -210,7 +210,6 @@ public:
 	char *_startTot0;
 	bool _copyProtection;
 	bool _noMusic;
-	bool _quitRequested;
 
 	Global *_global;
 	Util *_util;
@@ -229,8 +228,6 @@ public:
 	Inter *_inter;
 	SaveLoad *_saveLoad;
 	VideoPlayer *_vidPlayer;
-
-	void shutdown();
 
 	const char *getLangDesc(int16 language) const;
 	void validateLanguage();

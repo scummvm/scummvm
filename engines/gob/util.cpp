@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/events.h"
 
 #include "gob/gob.h"
 #include "gob/util.h"
@@ -72,7 +71,7 @@ void Util::longDelay(uint16 msecs) {
 		_vm->_video->waitRetrace();
 		processInput();
 		delay(15);
-	} while (!_vm->_quitRequested &&
+	} while (!_vm->quit() &&
 	         ((g_system->getMillis() * _vm->_global->_speedFactor) < time));
 }
 
@@ -117,9 +116,6 @@ void Util::processInput(bool scroll) {
 			addKeyToBuffer(event.kbd);
 			break;
 		case Common::EVENT_KEYUP:
-			break;
-		case Common::EVENT_QUIT:
-			_vm->_quitRequested = true;
 			break;
 		default:
 			break;

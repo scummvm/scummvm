@@ -63,7 +63,7 @@ void Game_v1::playTot(int16 skipPlay) {
 	strcpy(savedTotName, _curTotFile);
 
 	if (skipPlay <= 0) {
-		while (!_vm->_quitRequested) {
+		while (!_vm->quit()) {
 			for (int i = 0; i < 4; i++) {
 				_vm->_draw->_fontToSprite[i].sprite = -1;
 				_vm->_draw->_fontToSprite[i].base = -1;
@@ -997,7 +997,7 @@ void Game_v1::collisionsBlock(void) {
 		WRITE_VAR(16, 0);
 		_activeCollResId = 0;
 	}
-	while ((_activeCollResId == 0) && !_vm->_inter->_terminate && !_vm->_quitRequested);
+	while ((_activeCollResId == 0) && !_vm->_inter->_terminate && !_vm->quit());
 
 	if (((uint16) _activeCollResId & ~0x8000) == collResId) {
 		collStackPos = 0;
