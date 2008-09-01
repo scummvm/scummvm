@@ -91,6 +91,45 @@ public:
 	virtual SaveStateList listSaves(const char *target) const {
 		return SaveStateList();
 	}
+
+	/**
+	 * Remove the specified save state. 
+	 *
+	 * For most engines this just involves a call removeSaveFile().  
+	 * Engines which keep an index file will also update it accordingly.
+	 *
+	 * @param slot		slot number of the save state to be removed
+	 * @param saveNames	a list of all the save state description names
+	 */
+	virtual void removeSaveState(int slot, Common::StringList saveNames) const {};
+
+	
+	/** @name MetaEngineFeature flags */
+	//@{
+	
+	/**
+	 * A feature in this context means an ability of the engine which can be
+	 * either on or off.  Examples include:
+	 *  - Listing Save States (--list-saves)
+	 *  - Loading from the Launcher (-x)
+	 *  - Deleting Saves from the Launcher
+	 *
+	 *  These determine whether the features will be available to the engine
+	 *  in the launcher.
+	 */
+	enum MetaEngineFeature {
+		kSupportsRTL 		= 0,
+		kSupportsListSaves 	= 1,
+		kSupportsDirectLoad 	= 2,
+		kSupportsDeleteSave 	= 3
+	};	
+
+	/**
+	 * Determine whether the engine supports the specified MetaEngine feature
+	 */	
+	virtual bool hasFeature(MetaEngineFeature f) const { return false; };
+
+	//@}
 };
 
 

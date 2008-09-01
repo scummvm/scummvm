@@ -1,7 +1,7 @@
 MODULE := engines
 
 MODULE_OBJS := \
-	engine.o
-
+	engine.o \
+	dialogs.o
 # Include common rules
 include $(srcdir)/rules.mk

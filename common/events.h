@@ -27,6 +27,7 @@
 #define COMMON_EVENTS_H
 
 #include "common/keyboard.h"
+#include "common/queue.h"
 #include "common/rect.h"
 #include "common/system.h"
 #include "common/noncopyable.h"
@@ -57,6 +58,9 @@ enum EventType {
 	EVENT_WHEELDOWN = 9,
 	EVENT_MBUTTONDOWN = 13,
 	EVENT_MBUTTONUP = 14,
+
+	EVENT_MAINMENU = 15,
+	EVENT_RTL = 16,
 
 	EVENT_QUIT = 10,
 	EVENT_SCREEN_CHANGED = 11,
@@ -142,6 +146,11 @@ public:
 	 */
 	virtual bool pollEvent(Common::Event &event) = 0;
 
+	/**
+	 * Pushes a "fake" event of the specified type into the event queue
+	 */
+	virtual void pushEvent(Common::Event event) = 0;
+
 	/** Register random source so it can be serialized in game test purposes **/
 	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name) = 0;
 
@@ -166,6 +175,16 @@ public:
 	 */
 	virtual int shouldQuit() const = 0;
 
+	/**
+	 * Should we return to the launcher?
+	 */
+	virtual int shouldRTL() const = 0;
+
+	/**
+	 * We have returned to the launcher, and the _shouldRTL should be reset to false
+	 */
+	virtual void resetRTL() = 0;
+
 	// Optional: check whether a given key is currently pressed ????
 	//virtual bool isKeyPressed(int keycode) = 0;
 
@@ -173,6 +192,9 @@ public:
 
 	// TODO: Consider removing OSystem::getScreenChangeID and
 	// replacing it by a generic getScreenChangeID method here
+protected:
+
+	Common::Queue<Common::Event> artificialEventQueue;
 };
 
 } // End of namespace Common

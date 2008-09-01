@@ -39,10 +39,12 @@ Table of Contents:
  * 5.1 Command Line Options
  * 5.2 Language Options
  * 5.3 Graphics Filters
- * 5.4 Hotkeys
+ * 5.4 Global Menu
+ * 5.5 Hotkeys
 6.0) Savegames
  * 6.1 Autosaves
  * 6.2 Converting savegames
+ * 6.3 Viewing/Loading savegames from the command line
 7.0) Music and Sound
  * 7.1 Adlib emulation
  * 7.2 FluidSynth MIDI emulation
@@ -781,6 +783,7 @@ arguments -- see the next section.
   -h, --help               Display a brief help text and exit
   -z, --list-games         Display list of supported games and exit
   -t, --list-targets       Display list of configured targets and exit
+  --list-saves=TARGET      Display a list of savegames for the game (TARGET) specified
 
   -c, --config=CONFIG      Use alternate configuration file
   -p, --path=PATH          Path to where the game is installed
@@ -968,7 +971,38 @@ Likewise, games that originally were using 640x480 (such as COMI or Broken Sword
 will be scaled to 1280x960 and 1920x1440.
 
 
-5.4) Hot Keys:
+5.4) Global Menu:
+---- ------------
+
+The Global Menu is a general menu which is available to all of the game engines 
+by pressing F6.  From this menu there are the following buttons: Resume, 
+Options, About, Return to Launcher, and Quit. Selecting 'Options' will display 
+a dialog where basic audio settings, such as volume levels, can be adjusted.  
+Selecting 'Return to Launcher' will close the current game and return the user 
+back to the ScummVM Launcher, where another game may be selected to play.
+
+Note: Returning to the Launcher is not supported by all of the engines, 
+     and the button will be disabled in the Global Menu if it is not supported.
+
+Engines which currently support Returning to the Launcher are:
+
+        AGI
+        AGOS
+        CINE
+        GOB
+        KYRA
+        LURE
+        PARALLACTION
+        QUEEN
+        SAGA
+        SCUMM
+        SKY
+        SWORD1
+        SWORD2
+        TOUCHE
+
+
+5.5) Hot Keys:
 ---- ---------
 TODO
 TODO: Rework this section to clearly state which hotkeys are implemented in *all*
@@ -982,7 +1016,8 @@ ScummVM supports various in-game hotkeys. They differ between SCUMM games and
 other games.
 
     Common:
-        Cmd-q                  - Quit (Mac OS X)
+        F6                     - Displays the Global Menu
+	Cmd-q                  - Quit (Mac OS X)
         Ctrl-q                 - Quit (other unices including Linux)
         Ctrl-z OR Alt-x        - Quit (other platforms)
         Ctrl-m                 - Toggle mouse capture
@@ -1138,43 +1173,91 @@ The platforms that currently have a different default directory are:
 
 6.1) Autosaves:
 ---- ----------
-For some games (namely "Beneath a Steel Sky", "Flight of the Amazon
-Queen" and all SCUMM games), ScummVM will by default automatically
-save the current state every five minutes (adjustable via the
-"autosave_period" config setting). For the SCUMM engine, it will save
-in Slot 0. This savestate can then be loaded again via Ctrl-0, or the
-F5 menu.
+For some games, (namely "Beneath a Steel Sky", "Flight of the Amazon Queen", 
+all AGI games, and all SCUMM games), ScummVM will by default automatically
+save the current state every five minutes (adjustable via the "autosave_period"
+config setting). For the AGI and SCUMM engines, it will save in Slot 0. For the
+SCUMM engine, this savestate can then be loaded again via Ctrl-0, or the F5
+menu.
 
 
 6.2) Converting Savegames:
----- ----------
-Using savegames from original versions, isn't supported by all game engines. Only
-the following games, can use savedgames from their original versions.
+---- ---------------------
+Using savegames from original versions, isn't supported by all game engines. 
+Only the following games, can use savegames from their original versions.
 
      Elvira 1
-          - Add 8 bytes (savedgame name) to the start of the savegame file
-          - Rename the savedgame to 'elvira1.xxx'
+          - Add 8 bytes (savegame name) to the start of the savegame file
+          - Rename the savegame to 'elvira1.xxx'
 
      Elvira 2
-          - Add 8 bytes (savedgame name) to the start of the savegame file
-          - Rename the savedgame to 'elvira2-pc.xxx' (DOS version) or
+          - Add 8 bytes (savegame name) to the start of the savegame file
+          - Rename the savegame to 'elvira2-pc.xxx' (DOS version) or
             'elvira2.xxx' (Other versions)
 
     Waxworks
-          - Add 8 bytes (savedgame name) to the start of the savegame file
-          - Rename the savedgame to 'waxworks-pc.xxx' (DOS version) or
+          - Add 8 bytes (savegame name) to the start of the savegame file
+          - Rename the savegame to 'waxworks-pc.xxx' (DOS version) or
             'waxworks.xxx' (Other versions)
 
      Simon the Sorcerer 1
-          - Rename the savedgame to 'simon1.xxx'
+          - Rename the savegame to 'simon1.xxx'
  
     Simon the Sorcerer 1
-          - Rename the savedgame to 'simon2.xxx'
+          - Rename the savegame to 'simon2.xxx'
  
     The Feeble Files
-          - Rename the savedgame to 'feeble.xxx'
+          - Rename the savegame to 'feeble.xxx'
 
 Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
+
+
+6.3) Viewing/Loading savegames from the command line:
+---- ------------------------------------------------
+
+--list-saves:
+
+     This switch may be used to display a list of the current savegames
+     of the specified target game and their corresponding save slots.
+
+     Usage: --list-saves=[TARGET], where [TARGET] is the target game.
+
+     Engines which currently support --list-saves are:
+
+             AGI
+             AGOS
+             CINE
+             KYRA
+             LURE
+             PARALLACTION
+             QUEEN
+             SAGA
+             SCUMM
+             SKY
+             SWORD1
+             SWORD2
+             TOUCHE
+	
+--save-slot/-x:
+
+     This switch may be used to load a savegame directly from the command line.
+
+     Usage: --save-slot[SLOT] or -x[SLOT], where [SLOT] is the save slot number.
+
+     Engines which currently support --save-slot/-x are:
+
+             AGI
+             CINE
+             KYRA
+             LURE
+             PARALLACTION
+             QUEEN
+             SAGA
+             SCUMM
+             SKY
+             SWORD1
+             SWORD2
+             TOUCHE
 
 
 7.0) Music and Sound:

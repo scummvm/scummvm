@@ -34,10 +34,9 @@ namespace GUI {
 class BrowserDialog;
 class ListWidget;
 class GraphicsWidget;
-
+class SaveLoadChooser;
 
 Common::String addGameToConf(const GameDescriptor &result);
-
 
 class LauncherDialog : public Dialog {
 	typedef Common::String String;
@@ -62,6 +61,7 @@ protected:
 #endif
 	StringList		_domains;
 	BrowserDialog	*_browser;
+	SaveLoadChooser	*_loadDialog;
 
 	virtual void reflowLayout();
 
@@ -73,6 +73,9 @@ protected:
 	virtual void addGame();
 	void removeGame(int item);
 	void editGame(int item);
+	void loadGame(int item);
+	
+	StringList generateSavegameList(int item, const EnginePlugin *plugin);
 
 	void selectGame(const String &name);
 };

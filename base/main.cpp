@@ -38,6 +38,7 @@
 #include "base/version.h"
 
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
@@ -200,7 +201,8 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 	// Reset the file/directory mappings
 	Common::File::resetDefaultDirectories();
 
-	return 0;
+	// If result=1 return to the launcher, else quit ScummVM
+    return result;
 }
 
 
@@ -286,6 +288,10 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 			// TODO: We should keep running if starting the selected game failed
 			// (so instead of just quitting, show a nice error dialog to the
 			// user and let him pick another game).
+		 	
+			// Reset RTL flag in case we want to load another engine
+			g_system->getEventManager()->resetRTL();		
+
 			if (result == 0)
 				break;
 

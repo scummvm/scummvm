@@ -29,6 +29,7 @@
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/util.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "gui/about.h"
@@ -61,7 +62,10 @@ enum {
 	kAddGameCmd = 'ADDG',
 	kEditGameCmd = 'EDTG',
 	kRemoveGameCmd = 'REMG',
+	kLoadGameCmd = 'LOAD',
 	kQuitCmd = 'QUIT',
+	kChooseCmd = 'CHOS',
+	kDelCmd = 'DEL',
 
 
 	kCmdGlobalGraphicsOverride = 'OGFX',
@@ -468,6 +472,140 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
+class SaveLoadChooser : public GUI::Dialog {
+	typedef Common::String String;
+	typedef Common::StringList StringList;
+protected:
+	bool			_delSave;
+	bool			_delSupport;
+	GUI::ListWidget		*_list;
+	GUI::ButtonWidget	*_chooseButton;
+	GUI::ButtonWidget	*_deleteButton;
+	GUI::GraphicsWidget	*_gfxWidget;
+	GUI::ContainerWidget	*_container;
+
+	uint8 _fillR, _fillG, _fillB;
+
+	void updateInfos(bool redraw);
+public:
+	SaveLoadChooser(const String &title, const String &buttonLabel);
+	~SaveLoadChooser();
+
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	const String &getResultString() const;
+	void setList(const StringList& list);
+	int runModal(bool delSupport);
+
+	virtual void reflowLayout();
+
+	bool delSave() { return _delSave; };
+};
+
+SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
+	: Dialog("scummsaveload"), _delSave(0), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
+
+	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
+
+	new StaticTextWidget(this, "scummsaveload_title", title);
+
+	// Add choice list
+	_list = new GUI::ListWidget(this, "scummsaveload_list");
+	_list->setNumberingMode(GUI::kListNumberingZero);
+
+	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
+	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
+
+	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
+
+	// Buttons
+	new GUI::ButtonWidget(this, "scummsaveload_cancel", "Cancel", kCloseCmd, 0);
+	_chooseButton = new GUI::ButtonWidget(this, "scummsaveload_choose", buttonLabel, kChooseCmd, 0);
+	_chooseButton->setEnabled(false);
+
+	_deleteButton = new GUI::ButtonWidget(this, "scummsaveload_delete", "Delete", kDelCmd, 0);
+	_deleteButton->setEnabled(false);
+}
+
+SaveLoadChooser::~SaveLoadChooser() {
+}
+
+const Common::String &SaveLoadChooser::getResultString() const {
+	return _list->getSelectedString();
+}
+
+void SaveLoadChooser::setList(const StringList& list) {
+	_list->setList(list);
+}
+
+int SaveLoadChooser::runModal(bool delSupport) {
+	if (_gfxWidget)
+		_gfxWidget->setGfx(0);
+	_delSave = false;
+	_delSupport = delSupport;
+	int ret = Dialog::runModal();
+	return ret;
+}
+
+void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	int selItem = _list->getSelected();
+	switch (cmd) {
+	case GUI::kListItemActivatedCmd:
+	case GUI::kListItemDoubleClickedCmd:
+		if (selItem >= 0) {
+			if (!getResultString().empty()) {
+				_list->endEditMode();
+				setResult(selItem);
+				close();
+			}
+		}
+		break;
+	case kChooseCmd:
+		_list->endEditMode();
+		setResult(selItem);
+		close();
+		break;
+	case GUI::kListSelectionChangedCmd: {
+		if (_gfxWidget) {
+			updateInfos(true);
+		}
+
+		// Disable these buttons if nothing is selected, or if an empty
+		// list item is selected.
+		_chooseButton->setEnabled(selItem >= 0 && (!getResultString().empty()));
+		_chooseButton->draw();
+		// Delete will always be disabled if the engine doesn't support it.
+		_deleteButton->setEnabled(_delSupport && (selItem >= 0) && (!getResultString().empty()));
+		_deleteButton->draw();
+	} break;
+	case kDelCmd:
+		setResult(selItem);
+		_delSave = true;		
+
+		// Disable these buttons again after deleteing a selection
+		_chooseButton->setEnabled(false);
+		_deleteButton->setEnabled(false);
+		
+		close();
+		break;
+	case kCloseCmd:
+		setResult(-1);
+	default:
+		Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+void SaveLoadChooser::reflowLayout() {
+	_container->setFlags(GUI::WIDGET_INVISIBLE);
+	_gfxWidget->setFlags(GUI::WIDGET_INVISIBLE);
+	Dialog::reflowLayout();
+}
+
+void SaveLoadChooser::updateInfos(bool redraw) {
+	_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
+	if (redraw)
+		_gfxWidget->draw();
+}
+
 
 #pragma mark -
 
@@ -501,6 +639,8 @@ LauncherDialog::LauncherDialog()
 	new ButtonWidget(this, "launcher_options_button", "Options", kOptionsCmd, 'O');
 	_startButton =
 			new ButtonWidget(this, "launcher_start_button", "Start", kStartCmd, 'S');
+	
+	new ButtonWidget(this, "launcher_loadGame_button", "Load", kLoadGameCmd, 'L');
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	_addButton =
@@ -529,6 +669,9 @@ LauncherDialog::LauncherDialog()
 
 	// Create file browser dialog
 	_browser = new BrowserDialog("Select directory with game data", true);
+
+	// Create Load dialog
+	_loadDialog = new SaveLoadChooser("Load game:", "Load");
 }
 
 void LauncherDialog::selectGame(const String &name) {
@@ -546,6 +689,7 @@ void LauncherDialog::selectGame(const String &name) {
 
 LauncherDialog::~LauncherDialog() {
 	delete _browser;
+	delete _loadDialog;
 }
 
 void LauncherDialog::open() {
@@ -795,6 +939,80 @@ void LauncherDialog::editGame(int item) {
 	}
 }
 
+void LauncherDialog::loadGame(int item) {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	String gameId = ConfMan.get("gameid", _domains[item]);
+	if (gameId.empty())
+		gameId = _domains[item];
+
+	const EnginePlugin *plugin = 0;
+	GameDescriptor game = EngineMan.findGame(gameId, &plugin);
+
+	String description = _domains[item];
+	description.toLowercase();
+
+	int idx;
+	if (plugin) {
+		bool delSupport = (*plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
+
+		if ((*plugin)->hasFeature(MetaEngine::kSupportsListSaves) && 
+			(*plugin)->hasFeature(MetaEngine::kSupportsDirectLoad)) 
+		{
+			do {
+				Common::StringList saveNames = generateSavegameList(item, plugin);
+				_loadDialog->setList(saveNames);
+				SaveStateList saveList = (*plugin)->listSaves(description.c_str());
+				idx = _loadDialog->runModal(delSupport);
+				if (idx >= 0) {
+					// Delete the savegame
+					if (_loadDialog->delSave()) {
+						String filename = saveList[idx].filename();
+						//printf("Deleting file: %s\n", filename.c_str());
+                                                MessageDialog alert("Do you really want to delete this savegame?", 
+									"Yes", "No");
+						if (alert.runModal() == GUI::kMessageOK) {
+							saveFileMan->removeSavefile(filename.c_str());
+						  	if ((saveList.size() - 1) == 0)
+								ConfMan.setInt("save_slot", -1);
+						}
+					}
+					// Load the savegame
+					else {
+						int slot = atoi(saveList[idx].save_slot().c_str());
+						//const char *file = saveList[idx].filename().c_str();
+						//printf("Loading slot: %d\n", slot);
+						//printf("Loading file: %s\n", file);
+						ConfMan.setActiveDomain(_domains[item]);
+						ConfMan.setInt("save_slot", slot);
+						close();
+					}
+				}
+			}
+			while (_loadDialog->delSave());
+		} else {
+			MessageDialog dialog
+				("Sorry, this game does not yet support loading games from the launcher.", "OK");
+			dialog.runModal();
+		}
+	} else {
+		MessageDialog dialog("ScummVM could not find any engine capable of running the selected game!", "OK");
+		dialog.runModal();
+	}
+}
+
+Common::StringList LauncherDialog::generateSavegameList(int item, const EnginePlugin *plugin) {
+	String description = _domains[item];
+	description.toLowercase();
+	
+	StringList saveNames;
+	SaveStateList saveList = (*plugin)->listSaves(description.c_str());
+
+	for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x)
+		saveNames.push_back(x->description().c_str());
+
+	return saveNames;
+}
+
 void LauncherDialog::handleKeyDown(Common::KeyState state) {
 	Dialog::handleKeyDown(state);
 	updateButtons();
@@ -817,6 +1035,9 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kEditGameCmd:
 		editGame(item);
+		break;
+	case kLoadGameCmd:
+		loadGame(item);
 		break;
 	case kOptionsCmd: {
 		GlobalOptionsDialog options;
