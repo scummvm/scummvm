@@ -204,11 +204,11 @@ void OSystem_NULL::initSize(uint width, uint height) {
 }
 
 int16 OSystem_NULL::getHeight() {
-	return 320;
+	return 200;
 }
 
 int16 OSystem_NULL::getWidth() {
-	return 200;
+	return 320;
 }
 
 void OSystem_NULL::setPalette(const byte *colors, uint start, uint num) {
