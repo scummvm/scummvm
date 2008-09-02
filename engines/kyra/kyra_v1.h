@@ -151,9 +151,6 @@ public:
 	void setVolume(kVolumeEntry vol, uint8 value);
 	uint8 getVolume(kVolumeEntry vol);
 
-	// quit handling
-	virtual void quitGame();
-
 	// game flag handling
 	int setGameFlag(int flag);
 	int queryGameFlag(int flag) const;

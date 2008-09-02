@@ -198,15 +198,6 @@ KyraEngine_v1::~KyraEngine_v1() {
 	delete _debugger;
 }
 
-void KyraEngine_v1::quitGame() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::quitGame()");
-	Common::Event event;
-
-	event.type = Common::EVENT_QUIT;
-	_eventMan->pushEvent(event);
-	// Nothing to do here
-}
-
 Common::Point KyraEngine_v1::getMousePos() const {
 	Common::Point mouse = _eventMan->getMousePos();
 
