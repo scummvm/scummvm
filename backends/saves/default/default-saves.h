@@ -28,6 +28,7 @@
 
 #include "common/savefile.h"
 #include "common/str.h"
+#include "common/fs.h"
 
 /**
  * Provides a default savefile manager implementation for common platforms.
