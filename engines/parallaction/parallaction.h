@@ -71,7 +71,6 @@ enum {
 
 
 enum EngineFlags {
-	kEngineQuit			= (1 << 0),
 	kEnginePauseJobs	= (1 << 1),
 	kEngineWalking		= (1 << 3),
 	kEngineChangeLocation	= (1 << 4),
@@ -275,6 +274,11 @@ public:
 	char			_characterName1[50];	// only used in changeCharacter
 	ZonePtr			_zoneTrap;
 	ZonePtr			_commentZone;
+
+	bool _quit;   /* The only reason this flag exists is for freeZones() to properly
+		       * delete all zones when necessary. THIS FLAG IS NOT THE ENGINE QUIT FLAG,
+		       * use _eventMan->shouldQuit() for that.
+		       */
 
 protected:
 	void	runGame();

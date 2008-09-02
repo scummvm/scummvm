@@ -137,11 +137,11 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	// TODO (LIST): unify (and parametrize) calls to freeZones.
 	// We aren't calling freeAnimations because it is not needed, since
 	// kChangeLocation will trigger a complete deletion. Anyway, we still
-	// need to invoke freeZones here with kEngineQuit set, because the
+	// need to invoke freeZones here with _quit set, because the
 	// call in changeLocation preserve certain zones.
-	_engineFlags |= kEngineQuit;
+	_vm->_quit = true;
 	_vm->freeZones();
-	_engineFlags &= ~kEngineQuit;
+	_vm->_quit = false;
 
 	_vm->_numLocations = atoi(s);
 

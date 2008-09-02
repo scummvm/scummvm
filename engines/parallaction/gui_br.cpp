@@ -167,9 +167,11 @@ class MainMenuInputState_BR : public MenuInputState {
 
 	void performChoice(int selectedItem) {
 		switch (selectedItem) {
-		case kMenuQuit:
-			_engineFlags |= kEngineQuit;
+		case kMenuQuit: {
+			_vm->_quit = true;
+			_vm->quitGame();
 			break;
+		}
 
 		case kMenuLoadGame:
 			warning("loadgame not yet implemented");

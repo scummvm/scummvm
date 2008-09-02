@@ -231,11 +231,11 @@ int Parallaction_ns::go() {
 
 	startGui();
 
-	while ((_engineFlags & kEngineQuit) == 0) {
+	while (!quit()) {
 		runGame();
 	}
 
-	return 0;
+	return _eventMan->shouldRTL();
 }
 
 void Parallaction_ns::switchBackground(const char* background, const char* mask) {
@@ -440,13 +440,13 @@ void Parallaction_ns::cleanupGame() {
 	memset(_locationNames, 0, sizeof(_locationNames));
 
 	// this flag tells freeZones to unconditionally remove *all* Zones
-	_engineFlags |= kEngineQuit;
+	_vm->_quit = true;
 
 	freeZones();
 	freeAnimations();
 
 	// this dangerous flag can now be cleared
-	_engineFlags &= ~kEngineQuit;
+	_vm->_quit = false;
 
 	// main character animation is restored
 	_location._animations.push_front(_char._ani);

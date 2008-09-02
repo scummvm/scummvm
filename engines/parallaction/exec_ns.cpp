@@ -278,7 +278,8 @@ DECLARE_COMMAND_OPCODE(drop){
 
 
 DECLARE_COMMAND_OPCODE(quit) {
-	_engineFlags |= kEngineQuit;
+	_vm->_quit = true;
+	_vm->quitGame();
 }
 
 
@@ -356,7 +357,7 @@ void CommandExec::runList(CommandList::iterator first, CommandList::iterator las
 	_ctxt.suspend = false;
 
 	for ( ; first != last; first++) {
-		if (_engineFlags & kEngineQuit)
+		if (_vm->quit())
 			break;
 
 		CommandPtr cmd = *first;

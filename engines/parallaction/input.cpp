@@ -131,8 +131,9 @@ void Input::readInput() {
 			_mousePos = e.mouse;
 			break;
 
+		case Common::EVENT_RTL:
 		case Common::EVENT_QUIT:
-			_engineFlags |= kEngineQuit;
+			_vm->_quit = true;
 			return;
 
 		default:
