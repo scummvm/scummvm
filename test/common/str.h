@@ -157,4 +157,36 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str, "TEST IT, NOW! 42");
 		TS_ASSERT_EQUALS(str2, "Test it, NOW! 42");
 	}
+
+	void test_lastPathComponent(void) {
+		TS_ASSERT(Common::lastPathComponent("/", '/') == "");
+		TS_ASSERT(Common::lastPathComponent("/foo/bar", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("/foo//bar/", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("/foo/./bar", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("/foo//./bar//", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("/foo//.bar//", '/') == ".bar");
+
+		TS_ASSERT(Common::lastPathComponent("", '/') == "");
+		TS_ASSERT(Common::lastPathComponent("foo/bar", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("foo//bar/", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("foo/./bar", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("foo//./bar//", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("foo//.bar//", '/') == ".bar");
+	}
+
+	void test_normalizePath(void) {
+		TS_ASSERT(Common::normalizePath("/", '/') == "/");
+		TS_ASSERT(Common::normalizePath("/foo/bar", '/') == "/foo/bar");
+		TS_ASSERT(Common::normalizePath("/foo//bar/", '/') == "/foo/bar");
+		TS_ASSERT(Common::normalizePath("/foo/./bar", '/') == "/foo/bar");
+		TS_ASSERT(Common::normalizePath("/foo//./bar//", '/') == "/foo/bar");
+		TS_ASSERT(Common::normalizePath("/foo//.bar//", '/') == "/foo/.bar");
+
+		TS_ASSERT(Common::normalizePath("", '/') == "");
+		TS_ASSERT(Common::normalizePath("foo/bar", '/') == "foo/bar");
+		TS_ASSERT(Common::normalizePath("foo//bar/", '/') == "foo/bar");
+		TS_ASSERT(Common::normalizePath("foo/./bar", '/') == "foo/bar");
+		TS_ASSERT(Common::normalizePath("foo//./bar//", '/') == "foo/bar");
+		TS_ASSERT(Common::normalizePath("foo//.bar//", '/') == "foo/.bar");
+	}
 };

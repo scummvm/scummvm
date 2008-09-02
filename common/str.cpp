@@ -524,4 +524,71 @@ char *trim(char *t) {
 	return rtrim(ltrim(t));
 }
 
+Common::String lastPathComponent(const Common::String &path, const char sep) {
+	const char *str = path.c_str();
+	const char *last = str + path.size();
+
+	// Skip over trailing slashes
+	while (last > str && *(last-1) == sep)
+		--last;
+
+	// Path consisted of only slashes -> return empty string
+	if (last == str)
+		return Common::String();
+	
+	// Now scan the whole component
+	const char *first = last - 1;
+	while (first >= str && *first != sep)
+		--first;
+	
+	if (*first == sep)
+		first++;
+
+	return Common::String(first, last);
+}
+
+Common::String normalizePath(const Common::String &path, const char sep) {
+	if (path.empty())
+		return path;
+
+	const char *cur = path.c_str();
+	Common::String result;
+
+	// If there is a leading slash, preserve that:
+	if (*cur == sep) {
+		result += sep;
+		while (*cur == sep)
+			++cur;
+	}
+	
+	// Scan till the end of the String
+	while (*cur != 0) {
+		const char *start = cur;
+		
+		// Scan till the next path separator resp. the end of the string
+		while (*cur != sep && *cur != 0)
+			cur++;
+		
+		const Common::String component(start, cur);
+
+		// Skip empty components and dot components, add all others
+		if (!component.empty() && component != ".") {
+			// Add a separator before the component, unless the result
+			// string already ends with one (which happens only if the
+			// path *starts* with a separator).
+			if (!result.empty() && result.lastChar() != sep)
+				result += sep;
+
+			// Add the component
+			result += component;
+		}
+
+		// Skip over separator chars
+		while (*cur == sep)
+			cur++;
+	}
+
+	return result;
+}
+
 }	// End of namespace Common

@@ -227,6 +227,38 @@ extern char *ltrim(char *t);
 extern char *rtrim(char *t);
 extern char *trim(char *t);
 
+
+/**
+ * Returns the last component of a given path.
+ *
+ * Examples:
+ *			/foo/bar.txt would return 'bar.txt'
+ *			/foo/bar/    would return 'bar'
+ *			/foo/./bar//    would return 'bar'
+ *
+ * @param path the path of which we want to know the last component
+ * @param sep character used to separate path components
+ * @return The last component of the path.
+ */
+Common::String lastPathComponent(const Common::String &path, const char sep);
+
+/**
+ * Normalize a gien path to a canonical form. In particular:
+ * - trailing separators are removed:  /foo/bar/ -> /foo/bar
+ * - double separators (= empty components) are removed:   /foo//bar -> /foo/bar
+ * - dot components are removed:  /foo/./bar -> /foo/bar
+ *
+ * @todo remove double dot components:  /foo/baz/../bar -> /foo/bar
+ *
+ * @param path	the path to normalize
+ * @param sep	the separator token (usually '/' on Unix-style systems, or '\\' on Windows based stuff)
+ * @return	the normalized path
+ */
+Common::String normalizePath(const Common::String &path, const char sep);
+
+
+
+
 class StringList : public Array<String> {
 public:
 	void push_back(const char *str) {
