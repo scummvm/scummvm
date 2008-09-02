@@ -25,6 +25,7 @@
 #if defined(UNIX)
 
 #include "backends/fs/posix/posix-fs.h"
+#include "common/algorithm.h"
 
 #include <sys/param.h>
 #include <sys/stat.h>
@@ -46,8 +47,7 @@ void POSIXFilesystemNode::setFlags() {
 
 POSIXFilesystemNode::POSIXFilesystemNode() {
 	// The root dir.
-	_path = "/";
-	_displayName = _path;
+	_displayName = _path = "/";
 	_isValid = true;
 	_isDirectory = true;
 }
@@ -67,8 +67,28 @@ POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p, bool verify) {
 	} else {
 		_path = p;
 	}
+	
+	// Normalize the path (that is, remove unneeded slashes etc.)
+	_path = Common::normalizePath(_path, '/');
+	_displayName = Common::lastPathComponent(_path, '/');
 
-	_displayName = lastPathComponent(_path, '/');
+	// TODO: should we turn relative paths into absolut ones?
+	// Pro: Ensures the "getParent" works correctly even for relative dirs.
+	// Contra: The user may wish to use (and keep!) relative paths in his
+	//   config file, and converting relative to absolute paths may hurt him...
+	//
+	// An alternative approach would be to change getParent() to work correctly
+	// if "_path" is the empty string.
+#if 0
+	if (!_path.hasPrefix("/")) {
+		char buf[MAXPATHLEN+1];
+		getcwd(buf, MAXPATHLEN);
+		strcat(buf, "/");
+		_path = buf + _path;
+	}
+#endif
+	// TODO: Should we enforce that the path is absolute at this point?
+	//assert(_path.hasPrefix("/"));
 
 	if (verify) {
 		setFlags();
@@ -76,13 +96,15 @@ POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p, bool verify) {
 }
 
 AbstractFilesystemNode *POSIXFilesystemNode::getChild(const Common::String &n) const {
-	// FIXME: Pretty lame implementation! We do no error checking to speak
-	// of, do not check if this is a special node, etc.
 	assert(_isDirectory);
+	
+	// Make sure the string contains no slashes
+	assert(Common::find(n.begin(), n.end(), '/') == n.end());
 
+	// We assume here that _path is already normalized (hence don't bother to call
+	//  Common::normalizePath on the final path
 	Common::String newPath(_path);
-	if (_path.lastChar() != '/')
-		newPath += '/';
+	newPath += '/';
 	newPath += n;
 
 	return new POSIXFilesystemNode(newPath, true);
@@ -92,35 +114,36 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 	assert(_isDirectory);
 
 #ifdef __OS2__
-    if (_path == "/") {
-        ULONG ulDrvNum;
-        ULONG ulDrvMap;
-
-        DosQueryCurrentDisk(&ulDrvNum, &ulDrvMap);
-
-        for (int i = 0; i < 26; i++) {
-            if (ulDrvMap & 1) {
-                char drive_root[4];
-
-                drive_root[0] = i + 'A';
-                drive_root[1] = ':';
-                drive_root[2] = '/';
-                drive_root[3] = 0;
-
-                POSIXFilesystemNode entry;
-
-                entry._isDirectory = true;
-                entry._isValid = true;
-                entry._path = drive_root;
-                entry._displayName = "[" + Common::String(drive_root, 2) + "]";
-                myList.push_back(new POSIXFilesystemNode(entry));
-            }
-
-            ulDrvMap >>= 1;
-        }
-        
-        return true;
-    }
+	if (_path == "/") {
+		// Special case for the root dir: List all DOS drives
+		ULONG ulDrvNum;
+		ULONG ulDrvMap;
+	
+		DosQueryCurrentDisk(&ulDrvNum, &ulDrvMap);
+	
+		for (int i = 0; i < 26; i++) {
+			if (ulDrvMap & 1) {
+				char drive_root[4];
+	
+				drive_root[0] = i + 'A';
+				drive_root[1] = ':';
+				drive_root[2] = '/';
+				drive_root[3] = 0;
+	
+				POSIXFilesystemNode entry;
+	
+				entry._isDirectory = true;
+				entry._isValid = true;
+				entry._path = drive_root;
+				entry._displayName = "[" + Common::String(drive_root, 2) + "]";
+				myList.push_back(new POSIXFilesystemNode(entry));
+			}
+	
+			ulDrvMap >>= 1;
+		}
+		
+		return true;
+	}
 #endif
 
 	DIR *dirp = opendir(_path.c_str());
@@ -141,8 +164,7 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 		}
 
 		Common::String newPath(_path);
-		if (newPath.lastChar() != '/')
-			newPath += '/';
+		newPath += '/';
 		newPath += dp->d_name;
 
 		POSIXFilesystemNode entry(newPath, false);
@@ -184,9 +206,6 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 			(mode == FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
 			continue;
 
-		if (entry._isDirectory)
-			entry._path += "/";
-
 		myList.push_back(new POSIXFilesystemNode(entry));
 	}
 	closedir(dirp);
@@ -196,17 +215,20 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 
 AbstractFilesystemNode *POSIXFilesystemNode::getParent() const {
 	if (_path == "/")
-		return 0;
+		return 0;	// The filesystem root has no parent
 
 	const char *start = _path.c_str();
-	const char *end = lastPathComponent(_path, '/');
+	const char *end = start + _path.size();
+	
+	// Strip of the last component. We make use of the fact that at this
+	// point, _path is guaranteed to be normalized
+	while (end > start && *end != '/')
+		end--;
 
-#ifdef __OS2__
-    if (end == start)
-        return new POSIXFilesystemNode();
-#endif
-
-	return new POSIXFilesystemNode(Common::String(start, end), true);
+	if (end == start)
+		return new POSIXFilesystemNode();
+	else
+		return new POSIXFilesystemNode(Common::String(start, end), true);
 }
 
 #endif //#if defined(UNIX)
