@@ -587,6 +587,44 @@ protected:
 	void o5_gob200(OpGobParams &params);
 };
 
+class Inter_v6 : public Inter_v5 {
+public:
+	Inter_v6(GobEngine *vm);
+	virtual ~Inter_v6() {}
+
+protected:
+	typedef void (Inter_v6::*OpcodeDrawProcV6)();
+	typedef bool (Inter_v6::*OpcodeFuncProcV6)(OpFuncParams &);
+	typedef void (Inter_v6::*OpcodeGoblinProcV6)(OpGobParams &);
+	struct OpcodeDrawEntryV6 {
+		OpcodeDrawProcV6 proc;
+		const char *desc;
+	};
+	struct OpcodeFuncEntryV6 {
+		OpcodeFuncProcV6 proc;
+		const char *desc;
+	};
+	struct OpcodeGoblinEntryV6 {
+		OpcodeGoblinProcV6 proc;
+		const char *desc;
+	};
+	const OpcodeDrawEntryV6 *_opcodesDrawV6;
+	const OpcodeFuncEntryV6 *_opcodesFuncV6;
+	const OpcodeGoblinEntryV6 *_opcodesGoblinV6;
+	static const int _goblinFuncLookUp[][2];
+
+	virtual void setupOpcodes();
+	virtual void executeDrawOpcode(byte i);
+	virtual bool executeFuncOpcode(byte i, byte j, OpFuncParams &params);
+	virtual void executeGoblinOpcode(int i, OpGobParams &params);
+	virtual const char *getOpcodeDrawDesc(byte i);
+	virtual const char *getOpcodeFuncDesc(byte i, byte j);
+	virtual const char *getOpcodeGoblinDesc(int i);
+
+	bool o6_loadCursor(OpFuncParams &params);
+	bool o6_evaluateStore(OpFuncParams &params);
+};
+
 } // End of namespace Gob
 
 #endif // GOB_INTER_H

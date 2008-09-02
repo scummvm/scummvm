@@ -35,7 +35,7 @@ namespace Gob {
 Parse_v1::Parse_v1(GobEngine *vm) : Parse(vm) {
 }
 
-int16 Parse_v1::parseVarIndex() {
+int16 Parse_v1::parseVarIndex(uint16 *arg_0, uint16 *arg_4) {
 	int16 temp2;
 	byte *arrDesc;
 	int16 dim;

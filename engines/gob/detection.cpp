@@ -1798,7 +1798,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeDynasty,
+		kGameTypeUrban,
 		kFeatures640,
 		"intro"
 	},
