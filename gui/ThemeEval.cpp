@@ -31,150 +31,11 @@
 #include "common/xmlparser.h"
 #include "graphics/scaler.h"
 
-#include "gui/ThemeRenderer.h"
+#include "gui/ThemeEngine.h"
 #include "gui/ThemeParser.h"
 #include "gui/ThemeEval.h"
 
 namespace GUI {
-	
-bool ThemeLayoutWidget::getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {
-	if (name == _name) {
-		x = _x; y = _y;
-		w = _w; h = _h;
-		return true;
-	}
-	
-	return false;
-}
-
-bool ThemeLayout::getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {
-	for (uint i = 0; i < _children.size(); ++i) {
-		if (_children[i]->getWidgetData(name, x, y, w, h))
-			return true;
-	}
-	
-	return false;
-}
-
-void ThemeLayoutMain::reflowLayout() {
-	assert(_children.size() <= 1);
-	
-	if (_children.size()) {
-		_children[0]->resetLayout();
-		_children[0]->setWidth(_w);
-		_children[0]->setHeight(_h);
-		_children[0]->reflowLayout();
-		
-		if (_w == -1)
-			_w = _children[0]->getWidth();
-			
-		if (_h == -1)
-			_h = _children[0]->getHeight();
-		
-		if (_y == -1)
-			_y = (g_system->getOverlayHeight() >> 1) - (_h >> 1);
-		
-		if (_x == -1)
-			_x = (g_system->getOverlayWidth() >> 1) - (_w >> 1);
-	}
-}
-
-void ThemeLayoutVertical::reflowLayout() {
-	int curX, curY;
-	int resize[8];
-	int rescount = 0;
-	
-	curX = _paddingLeft;
-	curY = _paddingTop;
-	_h = _paddingTop + _paddingBottom;
-	
-	for (uint i = 0; i < _children.size(); ++i) {
-	
-		_children[i]->resetLayout();
-		_children[i]->reflowLayout();
-
-		if (_children[i]->getWidth() == -1)
-			_children[i]->setWidth((_w == -1 ? getParentW() : _w) - _paddingLeft - _paddingRight);
-			
-		if (_children[i]->getHeight() == -1) {
-			resize[rescount++] = i;
-			_children[i]->setHeight(0);
-		}
-			
-		_children[i]->setY(curY);
-		
-		if (_centered && _children[i]->getWidth() < _w && _w != -1) {
-			_children[i]->setX((_w >> 1) - (_children[i]->getWidth() >> 1));
-		}
-		else
-			_children[i]->setX(curX);
-
-		curY += _children[i]->getHeight() + _spacing;	
-		_w = MAX(_w, (int16)(_children[i]->getWidth() + _paddingLeft + _paddingRight));
-		_h += _children[i]->getHeight() + _spacing;
-	}
-	
-	_h -= _spacing;
-	
-	if (rescount) {
-		int newh = (getParentH() - _h - _paddingBottom) / rescount;
-		
-		for (int i = 0; i < rescount; ++i) {
-			_children[resize[i]]->setHeight(newh);
-			_h += newh;
-			for (uint j = resize[i] + 1; j < _children.size(); ++j)
-				_children[j]->setY(newh);
-		}
-	}
-}
-
-void ThemeLayoutHorizontal::reflowLayout() {
-	int curX, curY;
-	int resize[8];
-	int rescount = 0;
-
-	curX = _paddingLeft;
-	curY = _paddingTop;
-	_w = _paddingLeft + _paddingRight;
-		
-	for (uint i = 0; i < _children.size(); ++i) {
-	
-		_children[i]->resetLayout();
-		_children[i]->reflowLayout();
-	
-		if (_children[i]->getHeight() == -1)
-			_children[i]->setHeight((_h == -1 ? getParentH() : _h) - _paddingTop - _paddingBottom);
-
-		if (_children[i]->getWidth() == -1) {
-			resize[rescount++] = i;
-			_children[i]->setWidth(0);
-		}
-			
-		_children[i]->setX(curX);
-		
-		if (_centered && _children[i]->getHeight() < _h && _h != -1)
-			_children[i]->setY((_h >> 1) - (_children[i]->getHeight() >> 1));
-		else
-			_children[i]->setY(curY);
-			
-		curX += (_children[i]->getWidth() + _spacing);
-		_w += _children[i]->getWidth() + _spacing;
-		_h = MAX(_h, (int16)(_children[i]->getHeight() + _paddingTop + _paddingBottom));
-	}
-	
-	_w -= _spacing;
-	
-	if (rescount) {
-		int neww = (getParentW() - _w - _paddingRight) / rescount;
-		
-		for (int i = 0; i < rescount; ++i) {
-			_children[resize[i]]->setWidth(neww);
-			_w += neww;
-			for (uint j = resize[i] + 1; j < _children.size(); ++j)
-				_children[j]->setX(neww);
-		}
-	}
-}
 
 ThemeEval::~ThemeEval() {
 	reset();
@@ -197,6 +58,35 @@ void ThemeEval::buildBuiltinVars() {
 	
 	_builtin["kNormalWidgetSize"] = GUI::kNormalWidgetSize;
 	_builtin["kBigWidgetSize"] = GUI::kBigWidgetSize;
+}
+
+void ThemeEval::reset() {
+	_vars.clear();
+	_curDialog.clear();
+	_curLayout.clear();
+	
+	for (LayoutsMap::iterator i = _layouts.begin(); i != _layouts.end(); ++i)
+		delete i->_value;
+		
+	_layouts.clear();
+}
+
+bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, uint16 &w, uint16 &h) {
+	Common::StringTokenizer tokenizer(widget, ".");
+	
+	if (widget.hasPrefix("Dialog."))
+		tokenizer.nextToken();
+
+	Common::String dialogName = "Dialog." + tokenizer.nextToken();
+	Common::String widgetName = tokenizer.nextToken();
+	
+	if (!_layouts.contains(dialogName)) 
+		return false;
+
+	if (widgetName.empty())
+		return _layouts[dialogName]->getDialogData(x, y, w, h);
+		
+	return _layouts[dialogName]->getWidgetData(widgetName, x, y, w, h);
 }
 
 

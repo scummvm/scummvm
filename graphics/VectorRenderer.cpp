@@ -30,7 +30,7 @@
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
 
-#include "gui/ThemeRenderer.h"
+#include "gui/ThemeEngine.h"
 #include "graphics/VectorRenderer.h"
 
 #define VECTOR_RENDERER_FAST_TRIANGLES

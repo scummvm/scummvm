@@ -30,7 +30,7 @@
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
 
-#include "gui/ThemeRenderer.h"
+#include "gui/ThemeEngine.h"
 #include "graphics/VectorRenderer.h"
 #include "graphics/VectorRendererSpec.h"
 
@@ -128,10 +128,10 @@ namespace Graphics {
     
 VectorRenderer *createRenderer(int mode) {
 	switch (mode) {
-	case GUI::ThemeRenderer::kGfxStandard16bit:
+	case GUI::ThemeEngine::kGfxStandard16bit:
 		return new VectorRendererSpec<uint16, ColorMasks<565> >;
 
-	case GUI::ThemeRenderer::kGfxAntialias16bit:
+	case GUI::ThemeEngine::kGfxAntialias16bit:
 		return new VectorRendererAA<uint16, ColorMasks<565> >;
 
 	default:

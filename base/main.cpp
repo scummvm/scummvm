@@ -43,7 +43,7 @@
 #include "common/system.h"
 #include "gui/newgui.h"
 #include "gui/message.h"
-#include "gui/ThemeRenderer.h"
+#include "gui/ThemeEngine.h"
 #include "gui/ThemeParser.h"
 
 #if defined(_WIN32_WCE)

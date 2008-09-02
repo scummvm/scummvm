@@ -30,7 +30,7 @@
 #include "common/hash-str.h"
 #include "common/xmlparser.h"
 
-#include "gui/ThemeRenderer.h"
+#include "gui/ThemeEngine.h"
 #include "gui/ThemeParser.h"
 #include "gui/newgui.h"
 #include "graphics/VectorRenderer.h"
@@ -40,7 +40,7 @@ namespace GUI {
 using namespace Graphics;
 using namespace Common;
 
-ThemeParser::ThemeParser(ThemeRenderer *parent) : XMLParser() {	
+ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {	
 	
 	_drawFunctions["circle"]  = &Graphics::VectorRenderer::drawCallback_CIRCLE;
 	_drawFunctions["square"]  = &Graphics::VectorRenderer::drawCallback_SQUARE;

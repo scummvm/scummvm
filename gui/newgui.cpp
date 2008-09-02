@@ -28,7 +28,7 @@
 #include "graphics/cursorman.h"
 #include "gui/newgui.h"
 #include "gui/dialog.h"
-#include "gui/ThemeRenderer.h"
+#include "gui/ThemeEngine.h"
 
 #include "common/config-manager.h"
 
@@ -96,7 +96,7 @@ NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
 //		themefile += ".zip";
 		
 	ConfMan.registerDefault("gui_renderer", 2);
-	ThemeRenderer::GraphicsMode gfxMode = (ThemeRenderer::GraphicsMode)ConfMan.getInt("gui_renderer");
+	ThemeEngine::GraphicsMode gfxMode = (ThemeEngine::GraphicsMode)ConfMan.getInt("gui_renderer");
 
 	loadNewTheme(themefile, gfxMode);
 	_themeChange = false;
@@ -106,14 +106,14 @@ NewGui::~NewGui() {
 	delete _theme;
 }
 
-bool NewGui::loadNewTheme(const Common::String &filename, ThemeRenderer::GraphicsMode gfx) {
-	if (_theme && filename == _theme->getThemeFileName() && gfx == _theme->getThemeRenderer())
+bool NewGui::loadNewTheme(const Common::String &filename, ThemeEngine::GraphicsMode gfx) {
+	if (_theme && filename == _theme->getThemeFileName() && gfx == _theme->getGraphicsMode())
 		return true;
 	
 	Common::String oldTheme = (_theme != 0) ? _theme->getThemeFileName() : "";
 	
-	if (gfx == ThemeRenderer::kGfxDisabled)
-		gfx = (ThemeRenderer::GraphicsMode)ConfMan.getInt("gui_renderer");
+	if (gfx == ThemeEngine::kGfxDisabled)
+		gfx = (ThemeEngine::GraphicsMode)ConfMan.getInt("gui_renderer");
 
 	if (_theme)
 		_theme->disable();
@@ -126,7 +126,7 @@ bool NewGui::loadNewTheme(const Common::String &filename, ThemeRenderer::Graphic
 	delete _theme;
 	_theme = 0;
 
-	_theme = new ThemeRenderer(filename, gfx);
+	_theme = new ThemeEngine(filename, gfx);
 
 	if (!_theme)
 		return (!oldTheme.empty() ? loadNewTheme(oldTheme) : false);

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef INTERFACE_MANAGER_H
-#define INTERFACE_MANAGER_H
+#ifndef THEME_ENGINE_H
+#define THEME_ENGINE_H
 
 #include "common/scummsys.h"
 #include "graphics/surface.h"
@@ -83,8 +83,65 @@ struct WidgetDrawData {
 	}
 };
 
-class ThemeRenderer : public Theme {
+class ThemeItem {
 	
+public:
+	ThemeItem(ThemeEngine *engine, const Common::Rect &area) : 
+		_engine(engine), _area(area) {}
+
+	virtual void drawSelf(bool doDraw, bool doRestore) = 0;
+
+protected:
+	Common::Rect _area;
+	ThemeEngine *_engine;
+};
+
+class ThemeItemDrawData : public ThemeItem {
+public:
+	ThemeItemDrawData(ThemeEngine *engine, const WidgetDrawData *data, const Common::Rect &area, uint32 dynData) : 
+		ThemeItem(engine, area), _dynamicData(dynData), _data(data) {}
+
+	void drawSelf(bool draw, bool restore);
+
+protected:
+	uint32 _dynamicData;
+	const WidgetDrawData *_data;
+};
+
+class ThemeItemTextData : public ThemeItem {
+public:
+	ThemeItemTextData(ThemeEngine *engine, const TextDrawData *data, const Common::Rect &area, const Common::String &text,
+		GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV,
+		bool ellipsis, bool restoreBg, int deltaX) : 
+		ThemeItem(engine, area), _data(data), _text(text), _alignH(alignH), _alignV(alignV), 
+		_ellipsis(ellipsis), _restoreBg(restoreBg), _deltax(deltaX) {}
+
+	void drawSelf(bool draw, bool restore);
+
+protected:
+	const TextDrawData *_data;
+	Common::String _text;
+	GUI::Theme::TextAlign _alignH;
+	GUI::Theme::TextAlignVertical _alignV;
+	bool _ellipsis;
+	bool _restoreBg;
+	int _deltax;
+};
+
+class ThemeItemBitmap : public ThemeItem {
+public:
+	ThemeItemBitmap(ThemeEngine *engine, const Common::Rect &area, const Graphics::Surface *bitmap, bool alpha) : 
+		ThemeItem(engine, area), _bitmap(bitmap), _alpha(alpha) {}
+
+	void drawSelf(bool draw, bool restore);
+
+protected:
+	const Graphics::Surface *_bitmap;
+	bool _alpha;
+};
+
+
+class ThemeEngine : public Theme {
 protected:
 	typedef Common::String String;
 	typedef GUI::Dialog Dialog;
@@ -92,9 +149,6 @@ protected:
 
 	friend class GUI::Dialog;
 	friend class GUI::GuiObject;
-
-	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
-	static const int kDirtyRectangleThreshold = 1;
 	
 	/** Sets whether backcaching is enabled */
 	static const bool kEnableBackCaching = true;
@@ -158,16 +212,6 @@ protected:
 		DrawData parent; 	/** Parent DrawData item, for items that overlay. E.g. kButtonIdle -> kButtonHover */
 	} kDrawDataDefaults[];
 	
-	/**
-	 *	Queue Node for the drawing queue.
-	 *	Specifies the exact drawing to be done when processing
-	 *	the drawing queues.
-	 */
-	struct DrawQueue {
-		DrawData type;		/** DrawData item to draw. */
-		Common::Rect area;	/** Place on screen to draw it. */
-		uint32 dynData;		/** Dynamic data which modifies the DrawData item (optional)*/
-	};
 	
 	enum TextData {
 		kTextDataNone = -1,
@@ -186,23 +230,6 @@ protected:
 		const char *name;
 	} kTextDataDefaults[];
 	
-	struct DrawQueueText {
-		TextData type;
-		Common::Rect area;
-		Common::String text;
-		
-		GUI::Theme::TextAlign alignH;
-		GUI::Theme::TextAlignVertical alignV;
-		bool ellipsis;
-		bool restoreBg;
-		int deltax;
-	};
-	
-	struct BitmapQueue {
-		const Graphics::Surface *bitmap;
-		Common::Rect area;
-		bool alpha;
-	};
 	
 public:
 	/** Graphics mode enumeration.
@@ -215,21 +242,24 @@ public:
 		kGfxAntialias16bit,	/** 2BPP with the optimized AA renderer. */
 		kGfxMAX
 	};
+
+	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
+	static const int kDirtyRectangleThreshold = 1;
 	
 	static const char *rendererModeLabels[];
 	
 	/** Default constructor */
-	ThemeRenderer(Common::String fileName, GraphicsMode mode);
+	ThemeEngine(Common::String fileName, GraphicsMode mode);
 
 	/** Default destructor */
-	~ThemeRenderer();
+	~ThemeEngine();
 	
 	GUI::ThemeEval *themeEval() { return _themeEval; }
 
 	/**
 	 *	VIRTUAL METHODS
 	 *	This is the implementation of the GUI::Theme API to allow
-	 *	the ThemeRenderer class to be plugged in as any other GUI
+	 *	the ThemeEngine class to be plugged in as any other GUI
 	 *	theme. In fact, the renderer works like any other GUI theme,
 	 *	but supports extensive customization of the drawn widgets.
 	 */
@@ -453,13 +483,14 @@ public:
 
 
 	/**
-	 *	Finishes buffering: widgets from there one will be drawn straight on the screen
+	 *	Finishes buffering: widgets from then on will be drawn straight on the screen
 	 *	without drawing queues.
 	 */
 	void finishBuffering() { _buffering = false; }
 	void startBuffering() { _buffering = true; }
 	
 	ThemeEval *evaluator() { return _themeEval; }
+	VectorRenderer *renderer() { return _vectorRenderer; }
 	
 	bool supportsImages() const { return true; }
 	bool ownCursor() const { return _useCursor; }
@@ -486,11 +517,29 @@ public:
 	 */
 	bool createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale);
 
+	/**
+	 *	Wrapper for restoring data from the Back Buffer to the screen.
+	 *	The actual processing is done in the VectorRenderer.
+	 *
+	 *	@param r Area to restore.
+	 *	@param special Deprecated.
+	 */
+	void restoreBackground(Common::Rect r, bool special = false);
+
+	/**
+	 *	Checks if a given DrawData set for a widget has been cached beforehand
+	 *	and is ready to be blit into the screen.
+	 *
+	 *	@param type DrawData type of the widget.
+	 *	@param r Size of the widget which is expected to be cached.
+	 */
+	bool isWidgetCached(DrawData type, const Common::Rect &r);
+
 protected:
 
 	const Common::String &getThemeName() const { return _themeName; }
 	const Common::String &getThemeFileName() const { return _themeFileName; }
-	int getThemeRenderer() const { return _graphicsMode; }
+	int getGraphicsMode() const { return _graphicsMode; }
 	
 	/**
 	 *	Initializes the drawing screen surfaces, _screen and _backBuffer.
@@ -503,7 +552,7 @@ protected:
 	template<typename PixelType> void screenInit(bool backBuffer = true);
 
 	/**
-	 *	Loads the given theme into the ThemeRenderer.
+	 *	Loads the given theme into the ThemeEngine.
 	 *	Note that ThemeName is an identifier, not a filename.
 	 *
 	 *	@param ThemeName Theme identifier.
@@ -575,15 +624,6 @@ protected:
 	}
 	
 	/**
-	 *	Checks if a given DrawData set for a widget has been cached beforehand
-	 *	and is ready to be blit into the screen.
-	 *
-	 *	@param type DrawData type of the widget.
-	 *	@param r Size of the widget which is expected to be cached.
-	 */
-	bool isWidgetCached(DrawData type, const Common::Rect &r);
-	
-	/**
 	 * Draws a cached widget directly on the screen. Currently deprecated.
 	 *
 	 * @param type DrawData type of the widget.
@@ -601,19 +641,6 @@ protected:
 	 *	@param type DrawData type of the widget.
 	 */
 	void calcBackgroundOffset(DrawData type);
-
-	/**
-	 *	Draws a DrawQueue item (which contains DrawData information and a screen
-	 *	position) into the screen.
-	 *
-	 *	This is the only way the Theme has to drawn on the screen.
-	 *
-	 *	@param draw Sets if the DrawData info will be actually drawn.
-	 *	@param restore	Sets if the background behind the widget will be restored before drawing.
-	 */
-	inline void drawDD(const DrawQueue &q, bool draw = true, bool restore = false);
-	inline void drawDDText(const DrawQueueText &q);
-	inline void drawBitmap(const BitmapQueue &q);
 	
 	/**
 	 *	Generates a DrawQueue item and enqueues it so it's drawn to the screen
@@ -635,16 +662,6 @@ protected:
 	 *	DEBUG: Draws a white square around the given position and writes the given next to it.
 	 */
 	inline void debugWidgetPosition(const char *name, const Common::Rect &r);
-
-
-	/**
-	 *	Wrapper for restoring data from the Back Buffer to the screen.
-	 *	The actual processing is done in the VectorRenderer.
-	 *
-	 *	@param r Area to restore.
-	 *	@param special Deprecated.
-	 */
-	void restoreBackground(Common::Rect r, bool special = false);
 
 	
 	/**
@@ -697,15 +714,10 @@ protected:
 	Common::List<Common::Rect> _dirtyScreen;
 	
 	/** Queue with all the drawing that must be done to the Back Buffer */
-	Common::List<DrawQueue> _bufferQueue;
+	Common::List<ThemeItem*> _bufferQueue;
 	
 	/** Queue with all the drawing that must be done to the screen */
-	Common::List<DrawQueue> _screenQueue;
-	
-	/** Queue with all the text drawing that must be done to the screen */
-	Common::List<DrawQueueText> _textQueue;
-	
-	Common::List<BitmapQueue> _bitmapQueue;
+	Common::List<ThemeItem*> _screenQueue;
 
 	bool _initOk; /** Class and renderer properly initialized */
 	bool _themeOk; /** Theme data successfully loaded. */

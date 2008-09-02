@@ -34,7 +34,7 @@
 #include "graphics/cursorman.h"
 #include "gui/launcher.h"
 
-#include "gui/ThemeRenderer.h"
+#include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 #include "graphics/VectorRenderer.h"
 
@@ -44,13 +44,65 @@ namespace GUI {
 
 using namespace Graphics;
 
-const char *ThemeRenderer::rendererModeLabels[] = {
+const char *ThemeEngine::rendererModeLabels[] = {
 	"Disabled GFX",
 	"Stardard Renderer (16bpp)",
 	"Antialiased Renderer (16bpp)"
 };
 
-const ThemeRenderer::DrawDataInfo ThemeRenderer::kDrawDataDefaults[] = {
+
+/**********************************************************
+ *	ThemeItem functions for drawing queues.
+ *********************************************************/
+void ThemeItemDrawData::drawSelf(bool draw, bool restore) {
+
+	Common::Rect extendedRect = _area;
+	extendedRect.grow(_engine->kDirtyRectangleThreshold + _data->_backgroundOffset);
+
+	if (restore)
+		_engine->restoreBackground(extendedRect);
+
+	if (draw) {
+		Common::List<Graphics::DrawStep>::const_iterator step;
+		for (step = _data->_steps.begin(); step != _data->_steps.end(); ++step)
+			_engine->renderer()->drawStep(_area, *step, _dynamicData);
+	}
+	
+	_engine->addDirtyRect(extendedRect);
+}
+
+void ThemeItemTextData::drawSelf(bool draw, bool restore) {
+	if (_restoreBg || restore)
+		_engine->restoreBackground(_area);
+	
+	if (draw) {
+		_engine->renderer()->setFgColor(_data->_color.r, _data->_color.g, _data->_color.b);
+		_engine->renderer()->drawString(_data->_fontPtr, _text, _area, _alignH, _alignV, _deltax, _ellipsis);
+	}
+
+	_engine->addDirtyRect(_area);
+}
+
+void ThemeItemBitmap::drawSelf(bool draw, bool restore) {
+	if (restore)
+		_engine->restoreBackground(_area);
+
+	if (draw) {
+		if (_alpha)
+			_engine->renderer()->blitAlphaBitmap(_bitmap, _area);
+		else
+			_engine->renderer()->blitSubSurface(_bitmap, _area);
+	}
+
+	_engine->addDirtyRect(_area);
+}
+
+
+
+/**********************************************************
+ *	Data definitions for theme engine elements
+ *********************************************************/
+const ThemeEngine::DrawDataInfo ThemeEngine::kDrawDataDefaults[] = {
 	{kDDMainDialogBackground, "mainmenu_bg", true, kDDNone},
 	{kDDSpecialColorBackground, "special_bg", true, kDDNone},
 	{kDDPlainColorBackground, "plain_bg", true, kDDNone},
@@ -93,7 +145,7 @@ const ThemeRenderer::DrawDataInfo ThemeRenderer::kDrawDataDefaults[] = {
 	{kDDSeparator, "separator", true, kDDNone},
 };
 
-const ThemeRenderer::TextDataInfo ThemeRenderer::kTextDataDefaults[] = {
+const ThemeEngine::TextDataInfo ThemeEngine::kTextDataDefaults[] = {
 	{kTextDataDefault, "text_default"},
 	{kTextDataHover, "text_hover"},
 	{kTextDataDisabled, "text_disabled"},
@@ -104,7 +156,10 @@ const ThemeRenderer::TextDataInfo ThemeRenderer::kTextDataDefaults[] = {
 };
 
 
-ThemeRenderer::ThemeRenderer(Common::String fileName, GraphicsMode mode) : 
+/**********************************************************
+ *	ThemeEngine class
+ *********************************************************/
+ThemeEngine::ThemeEngine(Common::String fileName, GraphicsMode mode) : 
 	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), _font(0),
 	_screen(0), _backBuffer(0), _bytesPerPixel(0), _initOk(false), 
 	_themeOk(false), _enabled(false), _buffering(false), _cursor(0) {
@@ -127,7 +182,7 @@ ThemeRenderer::ThemeRenderer(Common::String fileName, GraphicsMode mode) :
 	_initOk = false;
 }
 
-ThemeRenderer::~ThemeRenderer() {
+ThemeEngine::~ThemeEngine() {
 	freeRenderer();
 	freeScreen();
 	freeBackbuffer();
@@ -140,7 +195,11 @@ ThemeRenderer::~ThemeRenderer() {
 		ImageMan.unregisterSurface(i->_key);
 }
 
-bool ThemeRenderer::init() {
+
+/**********************************************************
+ *	Theme setup/initialization
+ *********************************************************/
+bool ThemeEngine::init() {
 	// reset everything and reload the graphics
 	deinit();
 	setGraphicsMode(_graphicsMode);
@@ -164,7 +223,7 @@ bool ThemeRenderer::init() {
 	return true;
 }
 
-void ThemeRenderer::deinit() {
+void ThemeEngine::deinit() {
 	if (_initOk) {
 		_system->hideOverlay();
 		freeRenderer();
@@ -174,7 +233,7 @@ void ThemeRenderer::deinit() {
 	}
 }
 
-void ThemeRenderer::unloadTheme() {
+void ThemeEngine::unloadTheme() {
 	if (!_themeOk)
 		return;
 
@@ -200,7 +259,7 @@ void ThemeRenderer::unloadTheme() {
 	_themeOk = false;
 }
 
-void ThemeRenderer::clearAll() {
+void ThemeEngine::clearAll() {
 	if (!_initOk)
 		return;
 
@@ -208,7 +267,7 @@ void ThemeRenderer::clearAll() {
 	_system->grabOverlay((OverlayColor*)_screen->pixels, _screen->w);
 }
 
-void ThemeRenderer::refresh() {
+void ThemeEngine::refresh() {
 	init();
 	if (_enabled) {
 		_system->showOverlay();
@@ -220,7 +279,7 @@ void ThemeRenderer::refresh() {
 	}
 }
 
-void ThemeRenderer::enable() {
+void ThemeEngine::enable() {
 	init();
 	resetDrawArea();
 	
@@ -232,7 +291,7 @@ void ThemeRenderer::enable() {
 	_enabled = true;
 }
 
-void ThemeRenderer::disable() {
+void ThemeEngine::disable() {
 	_system->hideOverlay();
 	
 	if (_useCursor) {
@@ -244,7 +303,7 @@ void ThemeRenderer::disable() {
 }
 
 template<typename PixelType> 
-void ThemeRenderer::screenInit(bool backBuffer) {
+void ThemeEngine::screenInit(bool backBuffer) {
 	uint32 width = _system->getOverlayWidth();
 	uint32 height = _system->getOverlayHeight();
 	
@@ -260,7 +319,7 @@ void ThemeRenderer::screenInit(bool backBuffer) {
 	_system->clearOverlay();
 }
 
-void ThemeRenderer::setGraphicsMode(GraphicsMode mode) {
+void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 	switch (mode) {
 	case kGfxStandard16bit:
 	case kGfxAntialias16bit:
@@ -277,14 +336,50 @@ void ThemeRenderer::setGraphicsMode(GraphicsMode mode) {
 	_vectorRenderer->setSurface(_screen);
 }
 
-void ThemeRenderer::addDrawStep(const Common::String &drawDataId, Graphics::DrawStep step) {
+bool ThemeEngine::isWidgetCached(DrawData type, const Common::Rect &r) {
+	return _widgets[type] && _widgets[type]->_cached &&
+		_widgets[type]->_surfaceCache->w == r.width() && 
+		_widgets[type]->_surfaceCache->h == r.height();
+}
+
+void ThemeEngine::drawCached(DrawData type, const Common::Rect &r) {
+	assert(_widgets[type]->_surfaceCache->bytesPerPixel == _screen->bytesPerPixel);
+	_vectorRenderer->blitSurface(_widgets[type]->_surfaceCache, r);
+}
+
+void ThemeEngine::calcBackgroundOffset(DrawData type) {
+	uint maxShadow = 0;
+	for (Common::List<Graphics::DrawStep>::const_iterator step = _widgets[type]->_steps.begin(); 
+		step != _widgets[type]->_steps.end(); ++step) {
+		if ((step->autoWidth || step->autoHeight) && step->shadow > maxShadow) 
+			maxShadow = step->shadow;
+			
+		if (step->drawingCall == &Graphics::VectorRenderer::drawCallback_BEVELSQ && step->bevel > maxShadow)
+			maxShadow = step->bevel;
+	}
+
+	_widgets[type]->_backgroundOffset = maxShadow;
+}
+
+void ThemeEngine::restoreBackground(Common::Rect r, bool special) {
+	r.clip(_screen->w, _screen->h); // AHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA... Oh god. :(
+	_vectorRenderer->blitSurface(_backBuffer, r);
+}
+
+
+
+
+/**********************************************************
+ *	Theme elements management
+ *********************************************************/
+void ThemeEngine::addDrawStep(const Common::String &drawDataId, Graphics::DrawStep step) {
 	DrawData id = getDrawDataId(drawDataId);
 	
 	assert(_widgets[id] != 0);
 	_widgets[id]->_steps.push_back(step);
 }
 
-bool ThemeRenderer::addTextData(const Common::String &drawDataId, const Common::String &textDataId, TextAlign alignH, TextAlignVertical alignV) {
+bool ThemeEngine::addTextData(const Common::String &drawDataId, const Common::String &textDataId, TextAlign alignH, TextAlignVertical alignV) {
 	DrawData id = getDrawDataId(drawDataId);
 	TextData textId = getTextDataId(textDataId);
 
@@ -298,7 +393,7 @@ bool ThemeRenderer::addTextData(const Common::String &drawDataId, const Common::
 	return true;
 }
 
-bool ThemeRenderer::addFont(const Common::String &fontId, const Common::String &file, int r, int g, int b) {
+bool ThemeEngine::addFont(const Common::String &fontId, const Common::String &file, int r, int g, int b) {
 	TextData textId = getTextDataId(fontId);
 	
 	if (textId == -1)
@@ -331,7 +426,7 @@ bool ThemeRenderer::addFont(const Common::String &fontId, const Common::String &
 	
 }
 
-bool ThemeRenderer::addBitmap(const Common::String &filename) {
+bool ThemeEngine::addBitmap(const Common::String &filename) {
 	if (_bitmaps.contains(filename)) {
 		ImageMan.unregisterSurface(filename);
 	}
@@ -342,7 +437,7 @@ bool ThemeRenderer::addBitmap(const Common::String &filename) {
 	return _bitmaps[filename] != 0;
 }
 
-bool ThemeRenderer::addDrawData(const Common::String &data, bool cached) {
+bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
 	DrawData data_id = getDrawDataId(data);
 
 	if (data_id == -1)
@@ -360,7 +455,11 @@ bool ThemeRenderer::addDrawData(const Common::String &data, bool cached) {
 	return true;
 }
 
-bool ThemeRenderer::loadTheme(Common::String fileName) {
+
+/**********************************************************
+ *	Theme XML loading
+ *********************************************************/
+bool ThemeEngine::loadTheme(Common::String fileName) {
 	unloadTheme();
 
 	if (fileName != "builtin") {
@@ -396,7 +495,7 @@ bool ThemeRenderer::loadTheme(Common::String fileName) {
 	return true;
 }
 
-bool ThemeRenderer::loadDefaultXML() {
+bool ThemeEngine::loadDefaultXML() {
 	
 	// The default XML theme is included on runtime from a pregenerated
 	// file inside the themes directory.
@@ -421,7 +520,7 @@ bool ThemeRenderer::loadDefaultXML() {
 #endif
 }
 
-bool ThemeRenderer::loadThemeXML(Common::String themeName) {
+bool ThemeEngine::loadThemeXML(Common::String themeName) {
 	assert(_parser);
 	_themeName.clear();
 	
@@ -512,26 +611,19 @@ bool ThemeRenderer::loadThemeXML(Common::String themeName) {
 	return (parseCount > 0 && _themeName.empty() == false);
 }
 
-bool ThemeRenderer::isWidgetCached(DrawData type, const Common::Rect &r) {
-	return _widgets[type] && _widgets[type]->_cached &&
-		_widgets[type]->_surfaceCache->w == r.width() && 
-		_widgets[type]->_surfaceCache->h == r.height();
-}
 
-void ThemeRenderer::drawCached(DrawData type, const Common::Rect &r) {
-	assert(_widgets[type]->_surfaceCache->bytesPerPixel == _screen->bytesPerPixel);
-	_vectorRenderer->blitSurface(_widgets[type]->_surfaceCache, r);
-}
 
-void ThemeRenderer::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic) {
+/**********************************************************
+ *	Drawing Queue management
+ *********************************************************/
+void ThemeEngine::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic) {
 	if (_widgets[type] == 0)
 		return;
 		
-	DrawQueue q;	
-	q.type = type;
-	q.area = r;
-	q.area.clip(_screen->w, _screen->h);
-	q.dynData = dynamic;
+	Common::Rect area = r;
+	area.clip(_screen->w, _screen->h);
+
+	ThemeItemDrawData *q = new ThemeItemDrawData(this, _widgets[type], area, dynamic);
 	
 	if (_buffering) {
 		if (_widgets[type]->_buffer) {
@@ -543,108 +635,51 @@ void ThemeRenderer::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic
 			_screenQueue.push_back(q);
 		}
 	} else {
-		drawDD(q, !_widgets[type]->_buffer, _widgets[type]->_buffer);
+		q->drawSelf(!_widgets[type]->_buffer, _widgets[type]->_buffer);
+		delete q;
 	}
 }
 
-void ThemeRenderer::queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
+void ThemeEngine::queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
 	bool ellipsis, TextAlign alignH, TextAlignVertical alignV, int deltax) {
 		
 	if (_texts[type] == 0)
 		return;
-		
-	DrawQueueText q;
-	q.type = type;
-	q.area = r;
-	q.area.clip(_screen->w, _screen->h);
-	q.text = text;
-	q.alignH = alignH;
-	q.alignV = alignV;
-	q.restoreBg = restoreBg;
-	q.deltax = deltax;
-	q.ellipsis = ellipsis;
+
+	Common::Rect area = r;
+	area.clip(_screen->w, _screen->h);
+
+	ThemeItemTextData *q = new ThemeItemTextData(this, _texts[type], area, text, alignH, alignV, ellipsis, restoreBg, deltax);
 	
 	if (_buffering) {		
-		_textQueue.push_back(q);
+		_screenQueue.push_back(q);
 	} else {
-		drawDDText(q);
+		q->drawSelf(true, false);
+		delete q;
 	}
 }
 
-void ThemeRenderer::queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &area, bool alpha) {
-	BitmapQueue q;
-	q.bitmap = bitmap;
-	q.area = area;
-	q.alpha = alpha;
+void ThemeEngine::queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha) {
+
+	Common::Rect area = r;
+	area.clip(_screen->w, _screen->h);
+
+	ThemeItemBitmap *q = new ThemeItemBitmap(this, area, bitmap, alpha);
 	
 	if (_buffering) {
-		_bitmapQueue.push_back(q);
+		_bufferQueue.push_back(q);
 	} else {
-		drawBitmap(q);
+		q->drawSelf(true, false);
+		delete q;
 	}
 }
 
-void ThemeRenderer::drawDD(const DrawQueue &q, bool draw, bool restore) {
-	Common::Rect extendedRect = q.area;
-	extendedRect.grow(kDirtyRectangleThreshold + _widgets[q.type]->_backgroundOffset);
-//	extendedRect.right += _widgets[q.type]->_backgroundOffset;
-//	extendedRect.bottom += _widgets[q.type]->_backgroundOffset;
 
-	if (restore)
-		restoreBackground(extendedRect);
-		
-	if (draw) {
-		if (isWidgetCached(q.type, q.area)) {
-			drawCached(q.type, q.area);
-		} else {
-			for (Common::List<Graphics::DrawStep>::const_iterator step = _widgets[q.type]->_steps.begin(); 
-				 step != _widgets[q.type]->_steps.end(); ++step)
-				_vectorRenderer->drawStep(q.area, *step, q.dynData);
-		}
-	}
-	
-	addDirtyRect(extendedRect);
-}
 
-void ThemeRenderer::drawDDText(const DrawQueueText &q) {	
-	if (q.restoreBg)
-		restoreBackground(q.area);
-	
-	_vectorRenderer->setFgColor(_texts[q.type]->_color.r, _texts[q.type]->_color.g, _texts[q.type]->_color.b);
-	_vectorRenderer->drawString(_texts[q.type]->_fontPtr, q.text, q.area, q.alignH, q.alignV, q.deltax, q.ellipsis);
-	addDirtyRect(q.area);
-}
-
-void ThemeRenderer::drawBitmap(const BitmapQueue &q) {
-	
-	if (q.alpha)
-		_vectorRenderer->blitAlphaBitmap(q.bitmap, q.area);
-	else
-		_vectorRenderer->blitSubSurface(q.bitmap, q.area);
-	
-	addDirtyRect(q.area);
-}
-
-void ThemeRenderer::calcBackgroundOffset(DrawData type) {
-	uint maxShadow = 0;
-	for (Common::List<Graphics::DrawStep>::const_iterator step = _widgets[type]->_steps.begin(); 
-		step != _widgets[type]->_steps.end(); ++step) {
-		if ((step->autoWidth || step->autoHeight) && step->shadow > maxShadow) 
-			maxShadow = step->shadow;
-			
-		if (step->drawingCall == &Graphics::VectorRenderer::drawCallback_BEVELSQ && step->bevel > maxShadow)
-			maxShadow = step->bevel;
-	}
-
-	_widgets[type]->_backgroundOffset = maxShadow;
-}
-
-void ThemeRenderer::restoreBackground(Common::Rect r, bool special) {
-	r.clip(_screen->w, _screen->h); // AHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA... Oh god. :(
-	_vectorRenderer->blitSurface(_backBuffer, r);
-}
-
-void ThemeRenderer::drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, uint16 hints) {
+/**********************************************************
+ *	Widget drawing functions
+ *********************************************************/
+void ThemeEngine::drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, uint16 hints) {
 	if (!ready())
 		return;
 		
@@ -661,14 +696,14 @@ void ThemeRenderer::drawButton(const Common::Rect &r, const Common::String &str,
 	queueDDText(getTextData(dd), r, str, false, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
-void ThemeRenderer::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {
+void ThemeEngine::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {
 	if (!ready())
 		return;
 
 	queueDD(kDDSeparator, r);
 }
 
-void ThemeRenderer::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
+void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
 	if (!ready())
 		return;
 
@@ -695,7 +730,7 @@ void ThemeRenderer::drawCheckbox(const Common::Rect &r, const Common::String &st
 	queueDDText(td, r2, str, false, false, _widgets[kDDCheckboxDefault]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
-void ThemeRenderer::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
+void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
 	if (!ready())
 		return;
 		
@@ -716,7 +751,7 @@ void ThemeRenderer::drawSlider(const Common::Rect &r, int width, WidgetStateInfo
 		queueDD(dd, r2);
 }
 
-void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState, WidgetStateInfo state) {
+void ThemeEngine::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState, WidgetStateInfo state) {
 	if (!ready())
 		return;
 		
@@ -742,7 +777,7 @@ void ThemeRenderer::drawScrollbar(const Common::Rect &r, int sliderY, int slider
 	queueDD(scrollState == kScrollbarStateSlider ? kDDScrollbarHandleHover : kDDScrollbarHandleIdle, r2);
 }
 
-void ThemeRenderer::drawDialogBackground(const Common::Rect &r, DialogBackground bgtype, WidgetStateInfo state) {
+void ThemeEngine::drawDialogBackground(const Common::Rect &r, DialogBackground bgtype, WidgetStateInfo state) {
 	if (!ready())
 		return;
 		
@@ -765,7 +800,7 @@ void ThemeRenderer::drawDialogBackground(const Common::Rect &r, DialogBackground
 	}
 }
 
-void ThemeRenderer::drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo state) {
+void ThemeEngine::drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo state) {
 	if (!ready())
 		return;
 	
@@ -776,7 +811,7 @@ void ThemeRenderer::drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo
 		queueDD(kDDCaret, r);
 }
 
-void ThemeRenderer::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state, TextAlign align) {
+void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state, TextAlign align) {
 	if (!ready())
 		return;
 		
@@ -790,14 +825,14 @@ void ThemeRenderer::drawPopUpWidget(const Common::Rect &r, const Common::String 
 	}
 }
 
-void ThemeRenderer::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, WidgetStateInfo state, int alpha, bool themeTrans) {
+void ThemeEngine::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, WidgetStateInfo state, int alpha, bool themeTrans) {
 	if (!ready())
 		return;
 	
 	queueBitmap(&surface, r, themeTrans);
 }
 
-void ThemeRenderer::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, WidgetStateInfo state) {
+void ThemeEngine::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, WidgetStateInfo state) {
 	if (!ready())
 		return;
 		
@@ -820,7 +855,7 @@ void ThemeRenderer::drawWidgetBackground(const Common::Rect &r, uint16 hints, Wi
 	}
 }
 
-void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, WidgetStateInfo state) {
+void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, WidgetStateInfo state) {
 	if (!ready())
 		return;
 		
@@ -847,7 +882,7 @@ void ThemeRenderer::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
 	}
 }
 
-void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
+void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
 	if (!ready())
 		return;	
 		
@@ -881,7 +916,7 @@ void ThemeRenderer::drawText(const Common::Rect &r, const Common::String &str, W
 	}
 }
 
-void ThemeRenderer::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state) {
+void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state) {
 	if (!ready())
 		return;
 		
@@ -890,7 +925,7 @@ void ThemeRenderer::drawChar(const Common::Rect &r, byte ch, const Graphics::Fon
 	addDirtyRect(r);
 }
 
-void ThemeRenderer::debugWidgetPosition(const char *name, const Common::Rect &r) {
+void ThemeEngine::debugWidgetPosition(const char *name, const Common::Rect &r) {
 	_font->drawString(_screen, name, r.left, r.top, r.width(), 0xFFFF, Graphics::kTextAlignRight, 0, true);
 	_screen->hLine(r.left, r.top, r.right, 0xFFFF);
 	_screen->hLine(r.left, r.bottom, r.right, 0xFFFF);
@@ -898,12 +933,21 @@ void ThemeRenderer::debugWidgetPosition(const char *name, const Common::Rect &r)
 	_screen->vLine(r.right, r.top, r.bottom, 0xFFFF);
 }
 
-void ThemeRenderer::updateScreen() {
+
+
+/**********************************************************
+ *	Screen/overlay management
+ *********************************************************/
+void ThemeEngine::updateScreen() {
+	ThemeItem *item = 0;
+
 	if (!_bufferQueue.empty()) {
 		_vectorRenderer->setSurface(_backBuffer);
 		
-		for (Common::List<DrawQueue>::const_iterator q = _bufferQueue.begin(); q != _bufferQueue.end(); ++q)
-			drawDD(*q, true, false);
+		for (Common::List<ThemeItem*>::iterator q = _bufferQueue.begin(); q != _bufferQueue.end(); ++q) {
+			(*q)->drawSelf(true, false);
+			delete *q;
+		}
 			
 		_vectorRenderer->setSurface(_screen);
 		_vectorRenderer->blitSurface(_backBuffer, Common::Rect(0, 0, _screen->w, _screen->h));
@@ -912,35 +956,19 @@ void ThemeRenderer::updateScreen() {
 	
 	if (!_screenQueue.empty()) {
 		_vectorRenderer->disableShadows();
-		for (Common::List<DrawQueue>::const_iterator q = _screenQueue.begin(); q != _screenQueue.end(); ++q)
-			drawDD(*q, true, false);
+		for (Common::List<ThemeItem*>::iterator q = _screenQueue.begin(); q != _screenQueue.end(); ++q) {
+			(*q)->drawSelf(true, false);
+			delete *q;
+		}
 			
 		_vectorRenderer->enableShadows();
 		_screenQueue.clear();
 	}
-	
-	if (!_bitmapQueue.empty()) {
-		for (Common::List<BitmapQueue>::const_iterator q = _bitmapQueue.begin(); q != _bitmapQueue.end(); ++q)
-			drawBitmap(*q);
-		
-		_bitmapQueue.clear();
-	}
-	
-	if (!_textQueue.empty()) {
-		for (Common::List<DrawQueueText>::const_iterator q = _textQueue.begin(); q != _textQueue.end(); ++q)
-			drawDDText(*q);
-			
-		_textQueue.clear();
-	}
 		
 	renderDirtyScreen();
-
-//	_vectorRenderer->fillSurface();
-//	themeEval()->debugDraw(_screen, _font);
-//	_vectorRenderer->copyWholeFrame(_system);
 }
 
-void ThemeRenderer::renderDirtyScreen() {
+void ThemeEngine::renderDirtyScreen() {
 	if (_dirtyScreen.empty())
 		return;
 
@@ -956,7 +984,7 @@ void ThemeRenderer::renderDirtyScreen() {
 	_dirtyScreen.clear();
 }
 
-void ThemeRenderer::openDialog(bool doBuffer, ShadingStyle style) {
+void ThemeEngine::openDialog(bool doBuffer, ShadingStyle style) {
 	if (doBuffer)
 		_buffering = true;
 		
@@ -970,13 +998,13 @@ void ThemeRenderer::openDialog(bool doBuffer, ShadingStyle style) {
 	_vectorRenderer->setSurface(_screen);
 }
 
-void ThemeRenderer::setUpCursor() {
+void ThemeEngine::setUpCursor() {
 	CursorMan.pushCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
 	CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
 	CursorMan.showMouse(true);
 }
 
-bool ThemeRenderer::createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale) {
+bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale) {
 	if (!_system->hasFeature(OSystem::kFeatureCursorHasPalette))
 		return false;
 		

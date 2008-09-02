@@ -36,19 +36,19 @@
 #include "common/xmlparser.h"
 
 #include "graphics/VectorRenderer.h"
-#include "gui/ThemeRenderer.h"
+#include "gui/ThemeEngine.h"
 
 namespace GUI {
 
 using namespace Graphics;
 using namespace Common;
-class ThemeRenderer;	
+class ThemeEngine;	
 
 class ThemeParser : public XMLParser {
 	typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const DrawStep &);
 
 public:
-	ThemeParser(GUI::ThemeRenderer *parent);
+	ThemeParser(GUI::ThemeEngine *parent);
 	
 	virtual ~ThemeParser() {
 		delete _defaultStepGlobal;
@@ -69,7 +69,7 @@ public:
 	}
 
 protected:
-	ThemeRenderer *_theme;
+	ThemeEngine *_theme;
 	
 	CUSTOM_XML_PARSER(ThemeParser) {
 		XML_KEY(render_info)

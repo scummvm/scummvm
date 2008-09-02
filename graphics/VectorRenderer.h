@@ -32,7 +32,7 @@
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
 
-#include "gui/ThemeRenderer.h"
+#include "gui/ThemeEngine.h"
 
 namespace Graphics {
 class VectorRenderer;

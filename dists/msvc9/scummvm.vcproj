@@ -1205,6 +1205,26 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\gui\ThemeEngine.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeEngine.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeEval.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeLayout.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeLayout.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\gui\ThemeParser.cpp"
 				>
 			</File>
@@ -1218,18 +1238,6 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\gui\ThemeRenderer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\ThemeEval.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\ThemeRenderer.h"
-				>
 			</File>
 			<File
 				RelativePath="..\..\gui\widget.cpp"
@@ -1349,6 +1357,14 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\graphics\VectorRendererSpec.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\VectorRendererSpec.h"
+				>
 			</File>
 			<Filter
 				Name="scaler"
