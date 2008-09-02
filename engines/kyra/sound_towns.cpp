@@ -1278,8 +1278,6 @@ void TownsPC98_OpnOperator::generateOutput(int32 phasebuf, int32 *feed, int32 &o
 		o = &feed[0];
 		i = &feed[1];
 		phaseShift = _feedbackLevel ? ((*o + *i) << _feedbackLevel) : 0;
-		if (phasebuf == -1)
-			*i = 0;
 		*o = *i;
 	} else {
 		phaseShift = phasebuf << 15;
@@ -1964,16 +1962,35 @@ void TownsPC98_OpnChannel::fadeStep() {
 }
 
 void TownsPC98_OpnChannel::reset() {
+	_hold = false;
+	_keyOffTime = 0;
+	_ticksLeft = 1;
+
+	_flags = (_flags & ~CHS_EOT) | CHS_ALLOFF;
+	
+	_totalLevel = 0;
+	_algorithm = 0;
+	_flags = CHS_EOT;
+	_algorithm = 0;
+
 	_block = 0;
 	_frequency = 0;
-	_hold = false;
+	_frqBlockMSB = 0;
+	_frqLSB = 0;
+
 	_ssgTl = 0;
 	_ssgStartLvl = 0;
 	_ssgTargetLvl = 0;
 	_ssgStep = 0;
 	_ssgTicksLeft = 0;
-	_totalLevel = 0;
-	_flags |= CHS_EOT;
+	
+	_vbrInitDelayHi = 0;
+	_vbrInitDelayLo = 0;
+	_vbrModInitVal = 0;
+	_vbrDuration = 0;
+	_vbrCurDelay = 0;
+	_vbrModCurVal = 0;
+	_vbrDurLeft = 0;
 }
 
 bool TownsPC98_OpnChannel::control_f0_setPatch(uint8 para) {
@@ -3329,11 +3346,11 @@ void TownsPC98_OpnCore::nextTick(int32 *buffer, uint32 bufferSize) {
 				*del = 0;
 				break;
 			case 5:
-				*del = feed[1];
-				o[0]->generateOutput(-1, feed, phbuf1);
+				o[0]->generateOutput(0, feed, phbuf1);
 				o[2]->generateOutput(*del, 0, output);
-				o[1]->generateOutput(*del, 0, output);
-				o[3]->generateOutput(*del, 0, output);
+				o[1]->generateOutput(phbuf1, 0, output);
+				o[3]->generateOutput(phbuf1, 0, output);
+				*del = phbuf1;
 				break;
 			case 6:
 				o[0]->generateOutput(0, feed, phbuf1);
