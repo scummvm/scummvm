@@ -50,13 +50,12 @@
 	#include "backends/fs/windows/windows-fs-factory.h"
 #endif
 
-
-
 class OSystem_NULL : public OSystem {
 protected:
 	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
 	Common::TimerManager *_timer;
+	FilesystemFactory *_fsFactory;
 
 	timeval _startTime;
 public:
@@ -133,12 +132,23 @@ OSystem_NULL::OSystem_NULL() {
 	_savefile = 0;
 	_mixer = 0;
 	_timer = 0;
+
+	#if defined(__amigaos4__)
+		_fsFactory = new AmigaOSFilesystemFactory();
+	#elif defined(UNIX)
+		_fsFactory = new POSIXFilesystemFactory();
+	#elif defined(WIN32)
+		_fsFactory = new WindowsFilesystemFactory();
+	#else
+		#error Unknown and unsupported FS backend
+	#endif
 }
 
 OSystem_NULL::~OSystem_NULL() {
 	delete _savefile;
 	delete _mixer;
 	delete _timer;
+	delete _fsFactory;
 }
 
 void OSystem_NULL::initBackend() {
@@ -327,17 +337,8 @@ void OSystem_NULL::getTimeAndDate(struct tm &t) const {
 }
 
 FilesystemFactory *OSystem_NULL::getFilesystemFactory() {
-	#if defined(__amigaos4__)
-		return &AmigaOSFilesystemFactory::instance();
-	#elif defined(UNIX)
-		return &POSIXFilesystemFactory::instance();
-	#elif defined(WIN32)
-		return &WindowsFilesystemFactory::instance();
-	#else
-		#error Unknown and unsupported backend in OSystem_NULL::getFilesystemFactory
-	#endif
+	return _fsFactory;
 }
-
 
 OSystem *OSystem_NULL_create() {
 	return new OSystem_NULL();
