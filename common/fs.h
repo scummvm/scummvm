@@ -107,17 +107,29 @@ public:
 	virtual bool exists() const;
 
 	/**
-	 * Fetch a child node of this node, with the given name. Only valid for
-	 * directory nodes (an assertion is triggered otherwise).
-	 * If no child node with the given name exists, an invalid node is returned.
+	 * Create a new node referring to a child node of the current node, which
+	 * must be a directory node (an assertion is triggered otherwise).
+	 * If a child matching the name exists, a normal node for it is returned.
+	 * If no child with the name exists, a node for it is still returned,
+	 * but exists() will return 'false' for it. This node can however be used
+	 * to create a new file using the openForWriting() method.
+	 *
+	 * @todo If openForWriting() (or a hypothetical future mkdir() method) is used,
+	 *       this should affect what exists/isDirectory/isReadable/isWritable return
+	 *       for existing nodes. However, this is not the case for many existing
+	 *       FSNode implementations. Either fix those, or document that FSNodes
+	 *       can become 'stale'...
+	 *
+	 * @param name	the name of a child of this directory
+	 * @return the node referring to the child with the given name
 	 */
 	FilesystemNode getChild(const Common::String &name) const;
 
 	/**
-	 * Return a list of child nodes of this directory node. If called on a node
+	 * Return a list of all child nodes of this directory node. If called on a node
 	 * that does not represent a directory, false is returned.
 	 *
-	 * @return true if succesful, false otherwise (e.g. when the directory does not exist).
+	 * @return true if successful, false otherwise (e.g. when the directory does not exist).
 	 */
 	virtual bool getChildren(FSList &fslist, ListMode mode = kListDirectoriesOnly, bool hidden = false) const;
 
