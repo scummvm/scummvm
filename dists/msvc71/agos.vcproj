@@ -69,6 +69,8 @@
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
 				Optimization="2"
 				InlineFunctionExpansion="1"
+				EnableIntrinsicFunctions="TRUE"
+				FavorSizeOrSpeed="2"
 				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;USE_ZLIB;USE_MAD;USE_VORBIS"
