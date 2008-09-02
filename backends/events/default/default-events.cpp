@@ -393,7 +393,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 #endif
 			// Global Main Menu
 			// FIXME: F6 is not the best trigger, it conflicts with some games!!!
-			if (event.kbd.keycode == Common::KEYCODE_F6)
+			if (event.kbd.keycode == Common::KEYCODE_F6) {
 				if (g_engine && !g_engine->isPaused()) {
 					Common::Event menuEvent;
 					menuEvent.type = Common::EVENT_MAINMENU;
@@ -409,7 +409,21 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 					
 					//pushEvent(menuEvent);
 					event = menuEvent;
+
+					// FIXME: Since now we do not push another MAINMENU event onto
+					// our event stack, the GMM would never open, so we have to do
+					// that here. Of course when the engine would handle MAINMENU
+					// as an event now and open up the GMM itself it would open the
+					// menu twice.
+					if (g_engine && !g_engine->isPaused())
+						g_engine->mainMenuDialog();
+
+					if (_shouldQuit)
+						event.type = Common::EVENT_QUIT;
+					else if (_shouldRTL)
+						event.type = Common::EVENT_RTL;
 				}
+			}
 			break;
 
 		case Common::EVENT_KEYUP:
