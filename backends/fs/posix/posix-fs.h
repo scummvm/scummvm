@@ -43,20 +43,18 @@ protected:
 	Common::String _path;
 	bool _isDirectory;
 	bool _isValid;
+	
+	virtual AbstractFilesystemNode *makeNode(const Common::String &path) const {
+		return new POSIXFilesystemNode(path);
+	}
 
 public:
 	/**
-	 * Creates a POSIXFilesystemNode with the root node as path.
-	 */
-	POSIXFilesystemNode();
-
-	/**
 	 * Creates a POSIXFilesystemNode for a given path.
 	 *
-	 * @param path String with the path the new node should point to.
-	 * @param verify true if the isValid and isDirectory flags should be verified during the construction.
+	 * @param path the path the new node should point to.
 	 */
-	POSIXFilesystemNode(const Common::String &path, bool verify);
+	POSIXFilesystemNode(const Common::String &path);
 
 	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
 	virtual Common::String getDisplayName() const { return _displayName; }
