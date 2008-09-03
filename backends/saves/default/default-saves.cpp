@@ -28,7 +28,6 @@
 #include "common/savefile.h"
 #include "common/util.h"
 #include "common/fs.h"
-#include "common/file.h"
 #include "common/config-manager.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/saves/compressed/compressed-saves.h"

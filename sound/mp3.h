@@ -31,7 +31,6 @@
 #ifdef USE_MAD
 
 namespace Common {
-	class File;
 	class SeekableReadStream;
 }
 

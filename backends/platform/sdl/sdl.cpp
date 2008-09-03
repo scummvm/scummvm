@@ -34,7 +34,6 @@
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "common/file.h"
 #include "common/util.h"
 
 #include "backends/saves/default/default-saves.h"
@@ -516,7 +515,7 @@ void OSystem_SDL::mixerProducerThread() {
 		// Generate samples and put them into the next buffer
 		nextSoundBuffer = _activeSoundBuf ^ 1;
 		_mixer->mixCallback(_soundBuffers[nextSoundBuffer], _soundBufSize);
-		
+
 		// Swap buffers
 		_activeSoundBuf = nextSoundBuffer;
 	}
@@ -560,7 +559,7 @@ void OSystem_SDL::deinitThreadedMixer() {
 		SDL_CondBroadcast(_soundCond);
 		SDL_WaitThread(_soundThread, NULL);
 
-		// Kill the mutex & cond variables. 
+		// Kill the mutex & cond variables.
 		// Attention: AT this point, the mixer callback must not be running
 		// anymore, else we will crash!
 		SDL_DestroyMutex(_soundMutex);
@@ -583,10 +582,10 @@ void OSystem_SDL::mixCallback(void *arg, byte *samples, int len) {
 
 	// Lock mutex, to ensure our data is not overwritten by the producer thread
 	SDL_LockMutex(this_->_soundMutex);
-	
+
 	// Copy data from the current sound buffer
 	memcpy(samples, this_->_soundBuffers[this_->_activeSoundBuf], len);
-	
+
 	// Unlock mutex and wake up the produced thread
 	SDL_UnlockMutex(this_->_soundMutex);
 	SDL_CondSignal(this_->_soundCond);
@@ -646,7 +645,7 @@ void OSystem_SDL::setupMixer() {
 		// even if it didn't. Probably only happens for "weird" rates, though.
 		_samplesPerSec = obtained.freq;
 		debug(1, "Output sample rate: %d Hz", _samplesPerSec);
-	
+
 		// Tell the mixer that we are ready and start the sound processing
 		_mixer->setOutputRate(_samplesPerSec);
 		_mixer->setReady(true);
