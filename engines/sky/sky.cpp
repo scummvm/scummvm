@@ -298,6 +298,7 @@ GUI::Debugger *SkyEngine::getDebugger() {
 }
 
 void SkyEngine::initVirgin() {
+	_skyScreen->setPalette(60111);
 	_skyScreen->showScreen(60110);
 }
 
