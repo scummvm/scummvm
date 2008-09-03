@@ -24,24 +24,16 @@
 
 #ifdef WIN32
 
-#ifdef ARRAYSIZE
-#undef ARRAYSIZE
-#endif
-#ifdef _WIN32_WCE
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...
 #undef ARRAYSIZE
+#ifdef _WIN32_WCE
 #undef GetCurrentDirectory
 #endif
 #include "backends/fs/abstract-fs.h"
 #include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
-#ifndef _WIN32_WCE
-#include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
-#endif
 #include <tchar.h>
 
 // F_OK, R_OK and W_OK are not defined under MSVC, so we define them here
