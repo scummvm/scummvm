@@ -152,7 +152,7 @@ public:
  * match. SearchSet *DOES* guarantee that searches are performed in *DESCENDING*
  * priority order. In case of conflicting priorities, insertion order prevails.
  */
- class SearchSet : public Archive {
+class SearchSet : public Archive {
 	struct Node {
 		uint		_priority;
 		String		_name;
