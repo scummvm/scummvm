@@ -251,7 +251,7 @@ void TextviewView::processLines() {
 		error("Attempted to read past end of response file");
 
 	while (!_script->eos()) {
-		_script->readLine(_currentLine, 79);
+		_script->readLine_OLD(_currentLine, 79);
 
 		// Commented out line, so go loop for another
 		if (_currentLine[0] == '#')
@@ -601,7 +601,7 @@ void AnimviewView::processLines() {
 	}
 
 	while (!_script->eos()) {
-		_script->readLine(_currentLine, 79);
+		_script->readLine_OLD(_currentLine, 79);
 
 		// Process the line
 		char *cStart = strchr(_currentLine, '-');

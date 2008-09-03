@@ -86,7 +86,7 @@ void MemoryReadStream::seek(int32 offs, int whence) {
 #define LF 0x0A
 #define CR 0x0D
 
-char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
+char *SeekableReadStream::readLine_OLD(char *buf, size_t bufSize) {
 	assert(buf && bufSize > 0);
 	char *p = buf;
 	size_t len = 0;
@@ -201,6 +201,20 @@ char *SeekableReadStream::readLine_NEW(char *buf, size_t bufSize) {
 	*p = 0;
 	return buf;
 }
+
+String SeekableReadStream::readLine() {
+	// Read a line
+	String line;
+	while (line.lastChar() != '\n') {
+		char buf[256];
+		if (!readLine_NEW(buf, 256))
+			break;
+		line += buf;
+	}
+
+	return line;
+}
+
 
 
 uint32 SubReadStream::read(void *dataPtr, uint32 dataSize) {

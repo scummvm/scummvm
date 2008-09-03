@@ -189,7 +189,7 @@ bool MoviePlayer::load(uint32 id) {
 			int lastEnd = -1;
 
 			_movieTexts.clear();
-			while (f.readLine(line, sizeof(line))) {
+			while (f.readLine_OLD(line, sizeof(line))) {
 				lineNo++;
 				if (line[0] == '#' || line[0] == 0) {
 					continue;

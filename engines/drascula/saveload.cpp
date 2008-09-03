@@ -50,7 +50,7 @@ bool DrasculaEngine::saveLoadScreen() {
 		}
 	}
 	for (n = 0; n < NUM_SAVES; n++)
-		sav->readLine(names[n], 23);
+		sav->readLine_OLD(names[n], 23);
 	delete sav;
 
 	loadPic("savescr.alg", bgSurface, HALF_PAL);

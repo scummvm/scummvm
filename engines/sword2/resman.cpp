@@ -113,7 +113,7 @@ bool ResourceManager::init() {
 	// The resource.inf file is a simple text file containing the names of
 	// all the resource files.
 
-	while (file.readLine(_resFiles[_totalClusters].fileName, sizeof(_resFiles[_totalClusters].fileName))) {
+	while (file.readLine_OLD(_resFiles[_totalClusters].fileName, sizeof(_resFiles[_totalClusters].fileName))) {
 		_resFiles[_totalClusters].numEntries = -1;
 		_resFiles[_totalClusters].entryTab = NULL;
 		if (++_totalClusters >= MAX_res_files) {

@@ -114,25 +114,25 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	char n[16];
 	char l[16];
 
-	f->readLine(s, 199);
+	f->readLine_OLD(s, 199);
 
-	f->readLine(n, 15);
+	f->readLine_OLD(n, 15);
 
-	f->readLine(l, 15);
+	f->readLine_OLD(l, 15);
 
-	f->readLine(s, 15);
+	f->readLine_OLD(s, 15);
 	_vm->_location._startPosition.x = atoi(s);
 
-	f->readLine(s, 15);
+	f->readLine_OLD(s, 15);
 	_vm->_location._startPosition.y = atoi(s);
 
-	f->readLine(s, 15);
+	f->readLine_OLD(s, 15);
 	_score = atoi(s);
 
-	f->readLine(s, 15);
+	f->readLine_OLD(s, 15);
 	_globalFlags = atoi(s);
 
-	f->readLine(s, 15);
+	f->readLine_OLD(s, 15);
 
 	// TODO (LIST): unify (and parametrize) calls to freeZones.
 	// We aren't calling freeAnimations because it is not needed, since
@@ -147,12 +147,12 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 
 	uint16 _si;
 	for (_si = 0; _si < _vm->_numLocations; _si++) {
-		f->readLine(s, 20);
+		f->readLine_OLD(s, 20);
 		s[strlen(s)] = '\0';
 
 		strcpy(_vm->_locationNames[_si], s);
 
-		f->readLine(s, 15);
+		f->readLine_OLD(s, 15);
 		_vm->_localFlags[_si] = atoi(s);
 	}
 
@@ -161,10 +161,10 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	uint32 value;
 
 	for (_si = 0; _si < 30; _si++) {
-		f->readLine(s, 15);
+		f->readLine_OLD(s, 15);
 		value = atoi(s);
 
-		f->readLine(s, 15);
+		f->readLine_OLD(s, 15);
 		name = atoi(s);
 
 		_vm->addInventoryItem(name, value);
@@ -351,7 +351,7 @@ int SaveLoad_ns::buildSaveFileList(Common::StringList& l) {
 
 		Common::InSaveFile *f = getInSaveFile(i);
 		if (f) {
-			f->readLine(buf, 199);
+			f->readLine_OLD(buf, 199);
 			delete f;
 
 			count++;
@@ -431,7 +431,7 @@ void SaveLoad_ns::setPartComplete(const char *part) {
 
 	Common::InSaveFile *inFile = getInSaveFile(SPECIAL_SAVESLOT);
 	if (inFile) {
-		inFile->readLine(buf, 29);
+		inFile->readLine_OLD(buf, 29);
 		delete inFile;
 
 		if (strstr(buf, part)) {
@@ -455,7 +455,7 @@ void SaveLoad_ns::getGamePartProgress(bool *complete, int size) {
 
 	char buf[30];
 	Common::InSaveFile *inFile = getInSaveFile(SPECIAL_SAVESLOT);
-	inFile->readLine(buf, 29);
+	inFile->readLine_OLD(buf, 29);
 	delete inFile;
 
 	complete[0] = strstr(buf, "dino");

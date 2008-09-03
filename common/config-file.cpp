@@ -88,7 +88,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 
 	while (!stream.eos()) {
 		lineno++;
-		if (!stream.readLine(buf, MAXLINELEN))
+		if (!stream.readLine_OLD(buf, MAXLINELEN))
 			break;
 
 		if (buf[0] == '#') {

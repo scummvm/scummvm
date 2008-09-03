@@ -293,7 +293,7 @@ SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 99) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-				in->readLine(saveDesc, 199);
+				in->readLine_OLD(saveDesc, 199);
 				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc, *file));
 				delete in;
 			}

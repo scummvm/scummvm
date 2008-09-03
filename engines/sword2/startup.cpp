@@ -68,7 +68,7 @@ bool Sword2Engine::initStartMenu() {
 
 	int lineno = 0;
 
-	while (fp.readLine(buf, sizeof(buf))) {
+	while (fp.readLine_OLD(buf, sizeof(buf))) {
 		char *errptr;
 		int id;
 

@@ -919,7 +919,7 @@ void Screen::rollCredits() {
 
 	while (1) {
 		char buffer[80];
-		char *line = f.readLine(buffer, sizeof(buffer));
+		char *line = f.readLine_OLD(buffer, sizeof(buffer));
 
 		if (!line || *line == 0) {
 			if (!hasCenterMark) {
