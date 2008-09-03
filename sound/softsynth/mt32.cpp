@@ -96,9 +96,6 @@ public:
 	size_t read(void *in, size_t size) {
 		return _in.read(in, size);
 	}
-	bool readLine(char *in, size_t size) {
-		return _in.readLine(in, size) != NULL;
-	}
 	bool readBit8u(MT32Emu::Bit8u *in) {
 		byte b = _in.readByte();
 		if (_in.eof())

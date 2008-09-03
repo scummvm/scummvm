@@ -35,7 +35,6 @@ public:
 	virtual ~File() {}
 	virtual void close() = 0;
 	virtual size_t read(void *in, size_t size) = 0;
-	virtual bool readLine(char *in, size_t size) = 0;
 	virtual bool readBit8u(Bit8u *in) = 0;
 	virtual bool readBit16u(Bit16u *in);
 	virtual bool readBit32u(Bit32u *in);
@@ -55,7 +54,6 @@ public:
 	bool open(const char *filename, OpenMode mode);
 	void close();
 	size_t read(void *in, size_t size);
-	bool readLine(char *in, size_t size);
 	bool readBit8u(Bit8u *in);
 	size_t write(const void *out, size_t size);
 	bool writeBit8u(Bit8u out);
