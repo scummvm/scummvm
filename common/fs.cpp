@@ -23,7 +23,6 @@
  */
 
 #include "common/util.h"
-#include "common/file.h"
 #include "common/system.h"
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs-factory.h"
@@ -177,37 +176,28 @@ bool FilesystemNode::lookupFile(FSList &results, const Common::String &p, bool h
 Common::SeekableReadStream *FilesystemNode::openForReading() {
 	if (_realNode == 0)
 		return 0;
-#if 0
-	return _realNode->openForReading();
-#else
-	// FIXME: Until we support openForReading in AbstractFilesystemNode,
-	// we just use Common::File.
-	Common::File *confFile = new Common::File();
-	assert(confFile);
-	if (!confFile->open(*this)) {
-		delete confFile;
-		confFile = 0;
+
+	if (!_realNode->exists()) {
+		warning("File::open: Trying to open a FilesystemNode which does not exist");
+		return false;
+	} else if (_realNode->isDirectory()) {
+		warning("File::open: Trying to open a FilesystemNode which is a directory");
+		return false;
 	}
-	return confFile;
-#endif
+
+	return _realNode->openForReading();
 }
 
 Common::WriteStream *FilesystemNode::openForWriting() {
 	if (_realNode == 0)
 		return 0;
-#if 0
-	return _realNode->openForWriting();
-#else
-	// FIXME: Until we support openForWriting in AbstractFilesystemNode,
-	// we just use Common::DumpFile.
-	Common::DumpFile *confFile = new Common::DumpFile();
-	assert(confFile);
-	if (!confFile->open(*this)) {
-		delete confFile;
-		confFile = 0;
+
+	if (_realNode->isDirectory()) {
+		warning("File::open: Trying to open a FilesystemNode which is a directory");
+		return 0;
 	}
-	return confFile;
-#endif
+
+	return _realNode->openForWriting();
 }
 
 //}	// End of namespace Common
