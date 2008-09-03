@@ -35,10 +35,7 @@ const char *String::emptyString = "";
 #endif
 
 static uint32 computeCapacity(uint32 len) {
-	// By default, for the capacity we use the nearest multiple of 32
-	// that leaves at least 16 chars of extra space (in case the string
-	// grows a bit).
-	len += 16;
+	// By default, for the capacity we use the next multiple of 32
 	return ((len + 32 - 1) & ~0x1F);
 }
 
@@ -70,7 +67,7 @@ void String::initWithCStr(const char *str, uint32 len) {
 
 	if (len >= _builtinCapacity) {
 		// Not enough internal storage, so allocate more
-		_extern._capacity = computeCapacity(len);
+		_extern._capacity = computeCapacity(len+1);
 		_extern._refCount = 0;
 		_str = (char *)malloc(_extern._capacity);
 		assert(_str != 0);
@@ -136,7 +133,7 @@ void String::ensureCapacity(uint32 new_size, bool keep_old) {
 
 	// Special case: If there is enough space, and we do not share
 	// the storage, then there is nothing to do.
-	if (!isShared && new_size <= curCapacity)
+	if (!isShared && new_size < curCapacity)
 		return;
 
 	if (isShared && new_size < _builtinCapacity) {
@@ -147,7 +144,7 @@ void String::ensureCapacity(uint32 new_size, bool keep_old) {
 		// We need to allocate storage on the heap!
 
 		// Compute a suitable new capacity limit
-		newCapacity = MAX(curCapacity * 2, computeCapacity(new_size));
+		newCapacity = MAX(curCapacity * 2, computeCapacity(new_size+1));
 
 		// Allocate new storage
 		newStorage = (char *)malloc(newCapacity);
