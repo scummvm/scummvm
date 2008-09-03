@@ -984,7 +984,7 @@ void LauncherDialog::loadGame(int item) {
 						//printf("Loading slot: %d\n", slot);
 						//printf("Loading file: %s\n", file);
 						ConfMan.setActiveDomain(_domains[item]);
-						ConfMan.setInt("save_slot", slot);
+						ConfMan.setInt("save_slot", slot, Common::ConfigManager::kTransientDomain);
 						close();
 					}
 				}
