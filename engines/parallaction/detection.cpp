@@ -278,7 +278,6 @@ bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringList filenames;
-	char saveDesc[200];
 	Common::String pattern = target;
 	pattern += ".0??";
 
@@ -293,7 +292,7 @@ SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 99) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-				in->readLine_OLD(saveDesc, 199);
+				Common::String saveDesc = in->readLine();
 				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc, *file));
 				delete in;
 			}
