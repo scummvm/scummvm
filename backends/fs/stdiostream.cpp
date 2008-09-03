@@ -191,3 +191,10 @@ void StdioStream::flush() {
 	// check errno and set an error flag.
 	fflush((FILE *)_handle);
 }
+
+StdioStream *StdioStream::makeFromPath(const Common::String &path, bool writeMode) {
+	FILE *handle = fopen(path.c_str(), writeMode ? "wb" : "rb");
+	if (handle)
+		return new StdioStream(handle);
+	return 0;
+}

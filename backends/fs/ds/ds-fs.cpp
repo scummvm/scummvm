@@ -24,6 +24,7 @@
 #include "common/util.h"
 //#include <NDS/ARM9/console.h> //basic print funcionality
 #include "backends/fs/ds/ds-fs.h"
+#include "backends/fs/stdiostream.h"
 #include "dsmain.h"
 #include "fat/gba_nds_fat.h"
 
@@ -204,6 +205,14 @@ AbstractFilesystemNode* DSFileSystemNode::getParent() const {
 	return p;
 }
 
+Common::SeekableReadStream *DSFileSystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *DSFileSystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // GBAMPFileSystemNode - File system using GBA Movie Player and CF card //
 //////////////////////////////////////////////////////////////////////////
@@ -365,6 +374,14 @@ AbstractFilesystemNode* GBAMPFileSystemNode::getParent() const {
 	}
 
 	return p;
+}
+
+Common::SeekableReadStream *GBAMPFileSystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *GBAMPFileSystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 // Stdio replacements

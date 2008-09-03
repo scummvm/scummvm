@@ -26,6 +26,7 @@
 
 #include "engines/engine.h"
 #include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -69,6 +70,9 @@ public:
 	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
+
+	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::WriteStream *openForWriting();
 };
 
 PSPFilesystemNode::PSPFilesystemNode() {
@@ -155,6 +159,14 @@ AbstractFilesystemNode *PSPFilesystemNode::getParent() const {
 	const char *end = lastPathComponent(_path, '/');
 
 	return new PSPFilesystemNode(Common::String(start, end - start), false);
+}
+
+Common::SeekableReadStream *PSPFilesystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *PSPFilesystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 #endif //#ifdef __PSP__

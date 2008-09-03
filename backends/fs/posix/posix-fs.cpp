@@ -25,6 +25,7 @@
 #if defined(UNIX)
 
 #include "backends/fs/posix/posix-fs.h"
+#include "backends/fs/stdiostream.h"
 #include "common/algorithm.h"
 
 #include <sys/param.h>
@@ -229,6 +230,14 @@ AbstractFilesystemNode *POSIXFilesystemNode::getParent() const {
 		return new POSIXFilesystemNode();
 	else
 		return new POSIXFilesystemNode(Common::String(start, end), true);
+}
+
+Common::SeekableReadStream *POSIXFilesystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *POSIXFilesystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 #endif //#if defined(UNIX)

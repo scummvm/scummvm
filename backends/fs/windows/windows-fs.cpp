@@ -31,6 +31,7 @@
 #undef GetCurrentDirectory
 #endif
 #include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 #include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -97,6 +98,9 @@ public:
 	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
+
+	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::WriteStream *openForWriting();
 
 private:
 	/**
@@ -301,6 +305,14 @@ AbstractFilesystemNode *WindowsFilesystemNode::getParent() const {
 	}
 
 	return p;
+}
+
+Common::SeekableReadStream *WindowsFilesystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *WindowsFilesystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 #endif //#ifdef WIN32

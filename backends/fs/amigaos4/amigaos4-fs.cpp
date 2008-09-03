@@ -36,8 +36,9 @@
 #endif
 
 #include "common/util.h"
-#include "engines/engine.h"
+#include "engines/engine.h"		// FIXME: Why is this here????
 #include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 
 #define ENTER() /* debug(6, "Enter") */
 #define LEAVE() /* debug(6, "Leave") */
@@ -106,6 +107,9 @@ public:
 	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
+
+	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::WriteStream *openForWriting();
 
 	/**
 	 * Creates a list with all the volumes present in the root node.
@@ -564,6 +568,14 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
 	LEAVE();
 
 	return myList;
+}
+
+Common::SeekableReadStream *AmigaOSFilesystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *AmigaOSFilesystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 #endif //defined(__amigaos4__)

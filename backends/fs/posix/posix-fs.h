@@ -70,6 +70,9 @@ public:
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 
+	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::WriteStream *openForWriting();
+
 private:
 	/**
 	 * Tests and sets the _isValid and _isDirectory flags, using the stat() function.

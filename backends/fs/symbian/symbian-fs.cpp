@@ -24,6 +24,7 @@
 
 #if defined (__SYMBIAN32__)
 #include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 #include "backends/platform/symbian/src/SymbianOS.h"
 
 #include <dirent.h>
@@ -76,6 +77,9 @@ public:
 	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
+
+	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::WriteStream *openForWriting();
 };
 
 /**
@@ -246,6 +250,14 @@ AbstractFilesystemNode *SymbianFilesystemNode::getParent() const {
 	}
 
 	return p;
+}
+
+Common::SeekableReadStream *SymbianFilesystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *SymbianFilesystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 #endif //#if defined (__SYMBIAN32__)

@@ -28,6 +28,7 @@
 #include "globals.h"
 
 #include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 
 /**
  * Implementation of the ScummVM file system API based on PalmOS VFS API.
@@ -66,6 +67,9 @@ public:
 	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
+
+	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::WriteStream *openForWriting();
 
 private:
 	/**
@@ -202,6 +206,14 @@ AbstractFilesystemNode *PalmOSFilesystemNode::getParent() const {
 	}
 
 	return p;
+}
+
+Common::SeekableReadStream *PalmOSFilesystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *PalmOSFilesystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 #endif // PALMOS_MODE

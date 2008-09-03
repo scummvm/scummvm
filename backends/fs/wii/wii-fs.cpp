@@ -23,6 +23,7 @@
 #if defined(__WII__)
 
 #include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 
 #include <sys/dir.h>
 
@@ -66,6 +67,9 @@ public:
 	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
+
+	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::WriteStream *openForWriting();
 
 private:
 	virtual void setFlags();
@@ -166,6 +170,14 @@ AbstractFilesystemNode *WiiFilesystemNode::getParent() const {
 	const char *end = lastPathComponent(_path, '/');
 
 	return new WiiFilesystemNode(Common::String(start, end - start), true);
+}
+
+Common::SeekableReadStream *WiiFilesystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *WiiFilesystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 #endif //#if defined(__WII__)

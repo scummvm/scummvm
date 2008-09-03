@@ -90,6 +90,9 @@ public:
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 
+	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::WriteStream *openForWriting();
+
 	/**
 	 * Returns the zip file this node points to.
 	 * TODO: check this documentation.
@@ -151,6 +154,9 @@ public:
 	virtual AbstractFilesystemNode *getChild(const Common::String& name) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
+
+	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::WriteStream *openForWriting();
 };
 
 struct fileHandle {

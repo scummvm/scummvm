@@ -29,6 +29,7 @@
 #include "common/scummsys.h"
 #include "common/noncopyable.h"
 #include "common/stream.h"
+#include "common/str.h"
 
 class StdioStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable {
 protected:
@@ -36,6 +37,12 @@ protected:
 	void *_handle;
 
 public:
+	/**
+	 * Given a path, invokes fopen on that path and wrap the result in a
+	 * StdioStream instance.
+	 */
+	static StdioStream *makeFromPath(const Common::String &path, bool writeMode);
+
 	StdioStream(void *handle);
 	virtual ~StdioStream();
 

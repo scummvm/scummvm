@@ -23,6 +23,7 @@
  */
 
 #include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 #include <kernel.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -98,6 +99,9 @@ public:
 	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
+
+	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::WriteStream *openForWriting();
 };
 
 Ps2FilesystemNode::Ps2FilesystemNode() {
@@ -337,3 +341,10 @@ char *Ps2FilesystemNode::getDeviceDescription(const char *path) const {
 		return "Harddisk";	
 }
 
+Common::SeekableReadStream *Ps2FilesystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *Ps2FilesystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
+}

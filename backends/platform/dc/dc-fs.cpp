@@ -24,6 +24,7 @@
 
 #include "dc.h"
 #include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 
 #include <ronin/cdfs.h>
 #include <stdio.h>
@@ -51,6 +52,9 @@ public:
 	virtual AbstractFilesystemNode *getChild(const Common::String &n) const { return NULL; }
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const { return false; }
 	virtual AbstractFilesystemNode *getParent() const;
+
+	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::WriteStream *openForWriting();
 
 	static AbstractFilesystemNode *makeFileNodePath(const Common::String &path);
 };
@@ -141,6 +145,15 @@ AbstractFilesystemNode *RoninCDFileNode::getParent() const {
 	const char *end = lastPathComponent(_path, '/');
 
 	return new RoninCDDirectoryNode(Common::String(start, end - start));
+}
+
+
+Common::SeekableReadStream *RoninCDFileNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *RoninCDFileNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 AbstractFilesystemNode *OSystem_Dreamcast::makeRootFileNode() const {

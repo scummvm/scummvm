@@ -23,9 +23,9 @@
  */
 
 #include "backends/fs/abstract-fs.h"
-#include "backends/fs/stdiostream.h"
 
 const char *AbstractFilesystemNode::lastPathComponent(const Common::String &str, const char sep) {
+	// TODO: Get rid of this eventually! Use Common::lastPathComponent instead
 	if(str.empty())
 		return "";
 
@@ -37,22 +37,4 @@ const char *AbstractFilesystemNode::lastPathComponent(const Common::String &str,
 	}
 
 	return cur + 1;
-}
-
-Common::SeekableReadStream *AbstractFilesystemNode::openForReading() {
-	// FIXME: Until openForReading is supported by all AbstractFilesystemNode
-	// implementations, we provide this "generic" one, using Common::File.
-	FILE *handle = fopen(getPath().c_str(), "rb");
-	if (handle)
-		return new StdioStream(handle);
-	return 0;
-}
-
-Common::WriteStream *AbstractFilesystemNode::openForWriting() {
-	// FIXME: Until openForWriting is supported by all AbstractFilesystemNode
-	// implementations, we provide this "generic" one.
-	FILE *handle = fopen(getPath().c_str(), "wb");
-	if (handle)
-		return new StdioStream(handle);
-	return 0;
 }
