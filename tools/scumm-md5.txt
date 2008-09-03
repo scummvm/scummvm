@@ -596,6 +596,7 @@ pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 	f237bf8a5ef9af78b2a6a4f3901da341	18354	en	All	-	Demo	-	khalek, sev
 	7f945525abcd48015adf1632637a44a1	-1	fr	All	-	Demo	-	Kirben
 	0305e850382b812fec6e5998ef88a966	-1	nl	Windows	-	Demo	-	adutchguy
+	87df3e0074624040407764b7c5e710b9	18354	nl	Windows	-	Demo	-	George Kormendi
 	d7ab7cd6105546016e6a0d46fb36b964	-1	en	All	HE 100	Demo	-	khalek
 
 pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
