@@ -28,13 +28,16 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/error.h"
-#include "common/fs.h"
 
 #include "base/game.h"
 #include "base/plugins.h"
 
 class Engine;
 class OSystem;
+
+namespace Common {
+	class FSList;
+}
 
 /**
  * A meta engine is essentially a factory for Engine instances with the
@@ -62,7 +65,7 @@ public:
 	 * (possibly empty) list of games supported by the engine which it was able
 	 * to detect amongst the given files.
 	 */
-	virtual GameList detectGames(const FSList &fslist) const = 0;
+	virtual GameList detectGames(const Common::FSList &fslist) const = 0;
 
 	/**
 	 * Tries to instantiate an engine instance based on the settings of
@@ -156,7 +159,7 @@ private:
 
 public:
 	GameDescriptor findGame(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;
-	GameList detectGames(const FSList &fslist) const;
+	GameList detectGames(const Common::FSList &fslist) const;
 	const EnginePlugin::List &getPlugins() const;
 };
 

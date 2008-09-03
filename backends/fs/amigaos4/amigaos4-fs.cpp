@@ -52,8 +52,8 @@ const uint32 kExAllBufferSize = 40960; // TODO: is this okay for sure?
 class AmigaOSFilesystemNode : public AbstractFilesystemNode {
 protected:
 	BPTR _pFileLock;
-	String _sDisplayName;
-	String _sPath;
+	Common::String _sDisplayName;
+	Common::String _sPath;
 	bool _bIsDirectory;
 	bool _bIsValid;
 
@@ -74,9 +74,9 @@ public:
 	/**
 	 * Creates a AmigaOSFilesystemNode for a given path.
 	 *
-	 * @param path String with the path the new node should point to.
+	 * @param path Common::String with the path the new node should point to.
 	 */
-	AmigaOSFilesystemNode(const String &p);
+	AmigaOSFilesystemNode(const Common::String &p);
 
 	/**
 	 * FIXME: document this constructor.
@@ -96,14 +96,14 @@ public:
 	virtual ~AmigaOSFilesystemNode();
 
 	virtual bool exists() const;
-	virtual String getDisplayName() const { return _sDisplayName; };
-	virtual String getName() const { return _sDisplayName; };
-	virtual String getPath() const { return _sPath; };
+	virtual Common::String getDisplayName() const { return _sDisplayName; };
+	virtual Common::String getName() const { return _sDisplayName; };
+	virtual Common::String getPath() const { return _sPath; };
 	virtual bool isDirectory() const { return _bIsDirectory; };
 	virtual bool isReadable() const;
 	virtual bool isWritable() const;
 
-	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 
@@ -116,7 +116,7 @@ public:
 /**
  * Returns the last component of a given path.
  *
- * @param str String containing the path.
+ * @param str Common::String containing the path.
  * @return Pointer to the first char of the last component inside str.
  */
 const char *lastPathComponent(const Common::String &str) {
@@ -148,7 +148,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode() {
 	LEAVE();
 }
 
-AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
+AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 	ENTER();
 
 	int len = 0, offset = p.size();
@@ -299,14 +299,14 @@ bool AmigaOSFilesystemNode::exists() const {
 	return nodeExists;
 }
 
-AbstractFilesystemNode *AmigaOSFilesystemNode::getChild(const String &n) const {
+AbstractFilesystemNode *AmigaOSFilesystemNode::getChild(const Common::String &n) const {
 	ENTER();
 	if (!_bIsDirectory) {
 		debug(6, "Not a directory");
 		return 0;
 	}
 
-	String newPath(_sPath);
+	Common::String newPath(_sPath);
 
 	if (_sPath.lastChar() != '/')
 		newPath += '/';
@@ -368,10 +368,10 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 
 				struct ExAllData *ead = data;
 				do {
-					if ((mode == FilesystemNode::kListAll) ||
-						(EAD_IS_DRAWER(ead) && (mode == FilesystemNode::kListDirectoriesOnly)) ||
-						(EAD_IS_FILE(ead) && (mode == FilesystemNode::kListFilesOnly))) {
-						String full_path = _sPath;
+					if ((mode == Common::FilesystemNode::kListAll) ||
+						(EAD_IS_DRAWER(ead) && (mode == Common::FilesystemNode::kListDirectoriesOnly)) ||
+						(EAD_IS_FILE(ead) && (mode == Common::FilesystemNode::kListFilesOnly))) {
+						Common::String full_path = _sPath;
 						full_path += (char*)ead->ed_Name;
 
 						BPTR lock = IDOS->Lock((STRPTR)full_path.c_str(), SHARED_LOCK);

@@ -29,6 +29,7 @@
  */
 
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/md5.h"
 #include "common/util.h"
 #include "common/endian.h"

@@ -32,15 +32,10 @@
 class AbstractFilesystemNode;
 
 namespace Common {
-	class SeekableReadStream;
-	class WriteStream;
-}
-
-//namespace Common {
 
 class FilesystemNode;
-//class SeekableReadStream;
-//class WriteStream;
+class SeekableReadStream;
+class WriteStream;
 
 /**
  * List of multiple file system nodes. E.g. the contents of a given directory.
@@ -246,6 +241,6 @@ public:
 	virtual Common::WriteStream *openForWriting();
 };
 
-//} // End of namespace Common
+} // End of namespace Common
 
 #endif //COMMON_FS_H

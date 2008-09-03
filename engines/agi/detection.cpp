@@ -2126,7 +2126,7 @@ public:
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	
-	const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const;
+	const Common::ADGameDescription *fallbackDetect(const Common::FSList *fslist) const;
 };
 
 bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -2189,7 +2189,7 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const FSList *fslist) const {
+const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSList *fslist) const {
 	typedef Common::HashMap<Common::String, int32> IntMap;
 	IntMap allFiles;
 	bool matchedUsingFilenames = false;
@@ -2198,7 +2198,7 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const FSList *fsl
 	WagFileParser wagFileParser;
 	Common::String wagFilePath;
 	Common::String description;
-	FSList fslistCurrentDir; // Only used if fslist == NULL
+	Common::FSList fslistCurrentDir; // Only used if fslist == NULL
 
 	// // Set the defaults for gameid and extra
 	_gameid = "agi-fanmade";
@@ -2211,8 +2211,8 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const FSList *fsl
 		if (path.empty())
 			path = ".";
 
-		FilesystemNode fsCurrentDir(path);
-		fsCurrentDir.getChildren(fslistCurrentDir, FilesystemNode::kListFilesOnly);
+		Common::FilesystemNode fsCurrentDir(path);
+		fsCurrentDir.getChildren(fslistCurrentDir, Common::FilesystemNode::kListFilesOnly);
 		fslist = &fslistCurrentDir;
 	}
 
@@ -2227,7 +2227,7 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const FSList *fsl
 	g_fallbackDesc.version = 0x2917;
 
 	// First grab all filenames and at the same time count the number of *.wag files
-	for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
+	for (Common::FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
 		if (file->isDirectory()) continue;
 		Common::String filename = file->getName();
 		filename.toLowercase();

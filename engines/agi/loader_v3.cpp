@@ -47,15 +47,15 @@ int AgiLoader_v3::detectGame() {
 	int ec = errUnk;
 	bool found = false;
 
-	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
+	Common::FSList fslist;
+	Common::FilesystemNode dir(ConfMan.get("path"));
 
-	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly)) {
+	if (!dir.getChildren(fslist, Common::FilesystemNode::kListFilesOnly)) {
 		warning("AgiEngine: invalid game path '%s'", dir.getPath().c_str());
 		return errInvalidAGIFile;
 	}
 
-	for (FSList::const_iterator file = fslist.begin();
+	for (Common::FSList::const_iterator file = fslist.begin();
 	    file != fslist.end() && !found; ++file) {
 		Common::String f = file->getName();
 		f.toLowercase();

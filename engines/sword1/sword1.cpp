@@ -98,7 +98,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const FSList &fslist) const;
+	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
@@ -132,8 +132,8 @@ GameDescriptor SwordMetaEngine::findGame(const char *gameid) const {
 	return GameDescriptor();
 }
 
-void Sword1CheckDirectory(const FSList &fslist, bool *filesFound) {
-	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound) {
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
 			const char *fileName = file->getName().c_str();
 			for (int cnt = 0; cnt < NUM_FILES_TO_CHECK; cnt++)
@@ -142,15 +142,15 @@ void Sword1CheckDirectory(const FSList &fslist, bool *filesFound) {
 		} else {
 			for (int cnt = 0; cnt < ARRAYSIZE(g_dirNames); cnt++)
 				if (scumm_stricmp(file->getName().c_str(), g_dirNames[cnt]) == 0) {
-					FSList fslist2;
-					if (file->getChildren(fslist2, FilesystemNode::kListFilesOnly))
+					Common::FSList fslist2;
+					if (file->getChildren(fslist2, Common::FilesystemNode::kListFilesOnly))
 						Sword1CheckDirectory(fslist2, filesFound);
 				}
 		}
 	}
 }
 
-GameList SwordMetaEngine::detectGames(const FSList &fslist) const {
+GameList SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 	int i, j;
 	GameList detectedGames;
 	bool filesFound[NUM_FILES_TO_CHECK];

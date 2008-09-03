@@ -177,7 +177,7 @@ static Common::String generateFilenameForDetection(const char *pattern, Filename
 }
 
 struct DetectorDesc {
-	FilesystemNode node;
+	Common::FilesystemNode node;
 	Common::String md5;
 	const MD5Table *md5Entry;	// Entry of the md5 table corresponding to this file, if any.
 };
@@ -191,8 +191,8 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 // when performing the matching. The first match is returned, so if you
 // search for "resource" and two nodes "RESOURE and "resource" are present,
 // the first match is used.
-static bool searchFSNode(const FSList &fslist, const Common::String &name, FilesystemNode &result) {
-	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+static bool searchFSNode(const Common::FSList &fslist, const Common::String &name, Common::FilesystemNode &result) {
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!scumm_stricmp(file->getName().c_str(), name.c_str())) {
 			result = *file;
 			return true;
@@ -202,7 +202,7 @@ static bool searchFSNode(const FSList &fslist, const Common::String &name, Files
 }
 
 // The following function tries to detect the language for COMI and DIG
-static Common::Language detectLanguage(const FSList &fslist, byte id) {
+static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 	assert(id == GID_CMI || id == GID_DIG);
 
 	// Check for LANGUAGE.BND (Dig) resp. LANGUAGE.TAB (CMI).
@@ -212,14 +212,14 @@ static Common::Language detectLanguage(const FSList &fslist, byte id) {
 	// switch to MD5 based detection).
 	const char *filename = (id == GID_CMI) ? "LANGUAGE.TAB" : "LANGUAGE.BND";
 	Common::File tmp;
-	FilesystemNode langFile;
+	Common::FilesystemNode langFile;
 	if (!searchFSNode(fslist, filename, langFile) || !tmp.open(langFile)) {
 		// try loading in RESOURCE sub dir...
-		FilesystemNode resDir;
-		FSList tmpList;
+		Common::FilesystemNode resDir;
+		Common::FSList tmpList;
 		if (searchFSNode(fslist, "RESOURCE", resDir)
 			&& resDir.isDirectory()
-			&& resDir.getChildren(tmpList, FilesystemNode::kListFilesOnly)
+			&& resDir.getChildren(tmpList, Common::FilesystemNode::kListFilesOnly)
 			&& searchFSNode(tmpList, filename, langFile)) {
 			tmp.open(langFile);
 		}
@@ -270,7 +270,7 @@ static Common::Language detectLanguage(const FSList &fslist, byte id) {
 }
 
 
-static void computeGameSettingsFromMD5(const FSList &fslist, const GameFilenamePattern *gfp, const MD5Table *md5Entry, DetectorResult &dr) {
+static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameFilenamePattern *gfp, const MD5Table *md5Entry, DetectorResult &dr) {
 	dr.language = md5Entry->language;
 	dr.extra = md5Entry->extra;
 
@@ -315,12 +315,12 @@ static void computeGameSettingsFromMD5(const FSList &fslist, const GameFilenameP
 	}
 }
 
-static void detectGames(const FSList &fslist, Common::List<DetectorResult> &results, const char *gameid) {
+static void detectGames(const Common::FSList &fslist, Common::List<DetectorResult> &results, const char *gameid) {
 	DescMap fileMD5Map;
 	DetectorResult dr;
 	char md5str[32+1];
 
-	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
 			DetectorDesc d;
 			d.node = *file;
@@ -677,7 +677,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;	
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const FSList &fslist) const;
+	virtual GameList detectGames(const Common::FSList &fslist) const;
 	
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 
@@ -700,7 +700,7 @@ GameDescriptor ScummMetaEngine::findGame(const char *gameid) const {
 	return Common::AdvancedDetector::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
 }
 
-GameList ScummMetaEngine::detectGames(const FSList &fslist) const {
+GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 	GameList detectedGames;
 	Common::List<DetectorResult> results;
 
@@ -777,9 +777,9 @@ PluginError ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	}
 
 	// Fetch the list of files in the current directory
-	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly)) {
+	Common::FSList fslist;
+	Common::FilesystemNode dir(ConfMan.get("path"));
+	if (!dir.getChildren(fslist, Common::FilesystemNode::kListFilesOnly)) {
 		return kInvalidPathError;
 	}
 

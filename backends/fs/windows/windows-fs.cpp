@@ -58,8 +58,8 @@
  */
 class WindowsFilesystemNode : public AbstractFilesystemNode {
 protected:
-	String _displayName;
-	String _path;
+	Common::String _displayName;
+	Common::String _path;
 	bool _isDirectory;
 	bool _isPseudoRoot;
 	bool _isValid;
@@ -81,20 +81,20 @@ public:
 	 *			path=c:\foo\bar.txt, currentDir=true -> current directory
 	 *			path=NULL, currentDir=true -> current directory
 	 *
-	 * @param path String with the path the new node should point to.
+	 * @param path Common::String with the path the new node should point to.
 	 * @param currentDir if true, the path parameter will be ignored and the resulting node will point to the current directory.
 	 */
-	WindowsFilesystemNode(const String &path, const bool currentDir);
+	WindowsFilesystemNode(const Common::String &path, const bool currentDir);
 
 	virtual bool exists() const { return _access(_path.c_str(), F_OK) == 0; }
-	virtual String getDisplayName() const { return _displayName; }
-	virtual String getName() const { return _displayName; }
-	virtual String getPath() const { return _path; }
+	virtual Common::String getDisplayName() const { return _displayName; }
+	virtual Common::String getName() const { return _displayName; }
+	virtual Common::String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return _access(_path.c_str(), R_OK) == 0; }
 	virtual bool isWritable() const { return _access(_path.c_str(), W_OK) == 0; }
 
-	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 
@@ -105,7 +105,7 @@ private:
 	 *
 	 * @param list List to put the file entry node in.
 	 * @param mode Mode to use while adding the file entry to the list.
-	 * @param base String with the directory being listed.
+	 * @param base Common::String with the directory being listed.
 	 * @param find_data Describes a file that the FindFirstFile, FindFirstFileEx, or FindNextFile functions find.
 	 */
 	static void addFile(AbstractFSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data);
@@ -113,7 +113,7 @@ private:
 	/**
 	 * Converts a Unicode string to Ascii format.
 	 *
-	 * @param str String to convert from Unicode to Ascii.
+	 * @param str Common::String to convert from Unicode to Ascii.
 	 * @return str in Ascii format.
 	 */
 	static char *toAscii(TCHAR *str);
@@ -121,7 +121,7 @@ private:
 	/**
 	 * Converts an Ascii string to Unicode format.
 	 *
-	 * @param str String to convert from Ascii to Unicode.
+	 * @param str Common::String to convert from Ascii to Unicode.
 	 * @return str in Unicode format.
 	 */
 	static const TCHAR* toUnicode(const char *str);
@@ -138,8 +138,8 @@ void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const c
 
 	isDirectory = (find_data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ? true : false);
 
-	if ((!isDirectory && mode == FilesystemNode::kListDirectoriesOnly) ||
-		(isDirectory && mode == FilesystemNode::kListFilesOnly))
+	if ((!isDirectory && mode == Common::FilesystemNode::kListDirectoriesOnly) ||
+		(isDirectory && mode == Common::FilesystemNode::kListFilesOnly))
 		return;
 
 	entry._isDirectory = isDirectory;
@@ -190,7 +190,7 @@ WindowsFilesystemNode::WindowsFilesystemNode() {
 #endif
 }
 
-WindowsFilesystemNode::WindowsFilesystemNode(const String &p, const bool currentDir) {
+WindowsFilesystemNode::WindowsFilesystemNode(const Common::String &p, const bool currentDir) {
 	if (currentDir) {
 		char path[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, path);
@@ -219,10 +219,10 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p, const bool current
 	_isPseudoRoot = false;
 }
 
-AbstractFilesystemNode *WindowsFilesystemNode::getChild(const String &n) const {
+AbstractFilesystemNode *WindowsFilesystemNode::getChild(const Common::String &n) const {
 	assert(_isDirectory);
 
-	String newPath(_path);
+	Common::String newPath(_path);
 	if (_path.lastChar() != '\\')
 		newPath += '\\';
 	newPath += n;
@@ -293,7 +293,7 @@ AbstractFilesystemNode *WindowsFilesystemNode::getParent() const {
 		const char *end = lastPathComponent(_path, '\\');
 
 		p = new WindowsFilesystemNode();
-		p->_path = String(start, end - start);
+		p->_path = Common::String(start, end - start);
 		p->_isValid = true;
 		p->_isDirectory = true;
 		p->_displayName = lastPathComponent(p->_path, '\\');

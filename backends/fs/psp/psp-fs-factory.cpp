@@ -36,7 +36,7 @@ AbstractFilesystemNode *PSPFilesystemFactory::makeCurrentDirectoryFileNode() con
 	return new PSPFilesystemNode();
 }
 
-AbstractFilesystemNode *PSPFilesystemFactory::makeFileNodePath(const String &path) const {
+AbstractFilesystemNode *PSPFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new PSPFilesystemNode(path, true);
 }
 #endif

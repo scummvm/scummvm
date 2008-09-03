@@ -50,7 +50,7 @@ bool Resource::reset() {
 	clearCompFileList();
 	unloadAllPakFiles();
 
-	FilesystemNode dir(ConfMan.get("path"));
+	Common::FilesystemNode dir(ConfMan.get("path"));
 
 	if (!dir.exists() || !dir.isDirectory())
 		error("invalid game path '%s'", dir.getPath().c_str());
@@ -109,8 +109,8 @@ bool Resource::reset() {
 		return true;
 	}
 
-	FSList fslist;
-	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly))
+	Common::FSList fslist;
+	if (!dir.getChildren(fslist, Common::FilesystemNode::kListFilesOnly))
 		error("can't list files inside game path '%s'", dir.getPath().c_str());
 
 	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().isTalkie) {
@@ -128,7 +128,7 @@ bool Resource::reset() {
 				iterator->_value.prot = true;
 		}
 	} else {
-		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			Common::String filename = file->getName();
 			filename.toUppercase();
 

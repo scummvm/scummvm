@@ -365,7 +365,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_OPTION('p', "path")
-				FilesystemNode path(option);
+				Common::FilesystemNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent game path '%s'", option);
 				} else if (!path.isReadable()) {
@@ -408,7 +408,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("soundfont")
-				FilesystemNode path(option);
+				Common::FilesystemNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent soundfont path '%s'", option);
 				} else if (!path.isReadable()) {
@@ -438,7 +438,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("savepath")
-				FilesystemNode path(option);
+				Common::FilesystemNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent savegames path '%s'", option);
 				} else if (!path.isWritable()) {
@@ -447,7 +447,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("extrapath")
-				FilesystemNode path(option);
+				Common::FilesystemNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent extra path '%s'", option);
 				} else if (!path.isReadable()) {
@@ -465,7 +465,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("themepath")
-				FilesystemNode path(option);
+				Common::FilesystemNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent theme path '%s'", option);
 				} else if (!path.isReadable()) {
@@ -623,9 +623,9 @@ static void runDetectorTest() {
 			gameid = name;
 		}
 
-		FilesystemNode dir(path);
-		FSList files;
-		if (!dir.getChildren(files, FilesystemNode::kListAll)) {
+		Common::FilesystemNode dir(path);
+		Common::FSList files;
+		if (!dir.getChildren(files, Common::FilesystemNode::kListAll)) {
 			printf(" ... invalid path, skipping\n");
 			continue;
 		}
@@ -736,7 +736,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	if (!settings.contains("savepath")) {
 		const char *dir = getenv("SCUMMVM_SAVEPATH");
 		if (dir && *dir && strlen(dir) < MAXPATHLEN) {
-			FilesystemNode saveDir(dir);
+			Common::FilesystemNode saveDir(dir);
 			if (!saveDir.exists()) {
 				warning("Non-existent SCUMMVM_SAVEPATH save path. It will be ignored.");
 			} else if (!saveDir.isWritable()) {

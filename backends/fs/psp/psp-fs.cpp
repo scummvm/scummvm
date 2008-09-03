@@ -39,8 +39,8 @@
  */
 class PSPFilesystemNode : public AbstractFilesystemNode {
 protected:
-	String _displayName;
-	String _path;
+	Common::String _displayName;
+	Common::String _path;
 	bool _isDirectory;
 	bool _isValid;
 
@@ -53,20 +53,20 @@ public:
 	/**
 	 * Creates a PSPFilesystemNode for a given path.
 	 *
-	 * @param path String with the path the new node should point to.
+	 * @param path Common::String with the path the new node should point to.
 	 * @param verify true if the isValid and isDirectory flags should be verified during the construction.
 	 */
 	PSPFilesystemNode(const Common::String &p, bool verify);
 
 	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
-	virtual String getDisplayName() const { return _displayName; }
-	virtual String getName() const { return _displayName; }
-	virtual String getPath() const { return _path; }
+	virtual Common::String getDisplayName() const { return _displayName; }
+	virtual Common::String getName() const { return _displayName; }
+	virtual Common::String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }
 	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }
 
-	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 };
@@ -93,12 +93,12 @@ PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
 	}
 }
 
-AbstractFilesystemNode *PSPFilesystemNode::getChild(const String &n) const {
+AbstractFilesystemNode *PSPFilesystemNode::getChild(const Common::String &n) const {
 	// FIXME: Pretty lame implementation! We do no error checking to speak
 	// of, do not check if this is a special node, etc.
 	assert(_isDirectory);
 
-	String newPath(_path);
+	Common::String newPath(_path);
 	if (_path.lastChar() != '/')
 		newPath += '/';
 	newPath += n;
@@ -133,8 +133,8 @@ bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 				entry._path += "/";
 
 			// Honor the chosen mode
-			if ((mode == FilesystemNode::kListFilesOnly && entry._isDirectory) ||
-			   (mode == FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
+			if ((mode == Common::FilesystemNode::kListFilesOnly && entry._isDirectory) ||
+			   (mode == Common::FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
 				continue;
 
 			myList.push_back(new PSPFilesystemNode(entry));
@@ -154,7 +154,7 @@ AbstractFilesystemNode *PSPFilesystemNode::getParent() const {
 	const char *start = _path.c_str();
 	const char *end = lastPathComponent(_path, '/');
 
-	return new PSPFilesystemNode(String(start, end - start), false);
+	return new PSPFilesystemNode(Common::String(start, end - start), false);
 }
 
 #endif //#ifdef __PSP__

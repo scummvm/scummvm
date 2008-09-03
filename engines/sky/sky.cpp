@@ -113,7 +113,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const FSList &fslist) const;	
+	virtual GameList detectGames(const Common::FSList &fslist) const;	
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 
@@ -147,7 +147,7 @@ GameDescriptor SkyMetaEngine::findGame(const char *gameid) const {
 	return GameDescriptor();
 }
 
-GameList SkyMetaEngine::detectGames(const FSList &fslist) const {
+GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 	GameList detectedGames;
 	bool hasSkyDsk = false;
 	bool hasSkyDnr = false;
@@ -155,7 +155,7 @@ GameList SkyMetaEngine::detectGames(const FSList &fslist) const {
 	int dataDiskSize = -1;
 
 	// Iterate over all files in the given directory
-	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
 			const char *fileName = file->getName().c_str();
 

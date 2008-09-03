@@ -45,7 +45,7 @@ AbstractFilesystemNode *DSFilesystemFactory::makeCurrentDirectoryFileNode() cons
 	}
 }
 
-AbstractFilesystemNode *DSFilesystemFactory::makeFileNodePath(const String &path) const {
+AbstractFilesystemNode *DSFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	if (DS::isGBAMPAvailable()) {
 		return new DS::GBAMPFileSystemNode(path);
 	} else {

@@ -338,12 +338,12 @@ static Common::String getDefaultConfigFileName() {
 }
 
 Common::SeekableReadStream *OSystem_SDL::openConfigFileForReading() {
-	FilesystemNode file(getDefaultConfigFileName());
+	Common::FilesystemNode file(getDefaultConfigFileName());
 	return file.openForReading();
 }
 
 Common::WriteStream *OSystem_SDL::openConfigFileForWriting() {
-	FilesystemNode file(getDefaultConfigFileName());
+	Common::FilesystemNode file(getDefaultConfigFileName());
 	return file.openForWriting();
 }
 

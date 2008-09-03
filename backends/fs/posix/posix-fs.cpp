@@ -202,8 +202,8 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 			continue;
 
 		// Honor the chosen mode
-		if ((mode == FilesystemNode::kListFilesOnly && entry._isDirectory) ||
-			(mode == FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
+		if ((mode == Common::FilesystemNode::kListFilesOnly && entry._isDirectory) ||
+			(mode == Common::FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
 			continue;
 
 		myList.push_back(new POSIXFilesystemNode(entry));

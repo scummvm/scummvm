@@ -41,8 +41,6 @@ namespace DS {
  */
 class DSFileSystemNode : public AbstractFilesystemNode {
 protected:
-	typedef class Common::String String;
-
 	static ZipFile* _zipFile;
 
 	String _displayName;
@@ -89,7 +87,7 @@ public:
 	 */
 	virtual AbstractFilesystemNode *clone() const { return new DSFileSystemNode(this); }
 	virtual AbstractFilesystemNode *getChild(const Common::String& name) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly, bool hidden = false) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 
 	/**
@@ -107,8 +105,6 @@ public:
  */
 class GBAMPFileSystemNode : public AbstractFilesystemNode {
 protected:
-	typedef class Common::String String;
-
 	String _displayName;
 	String _path;
 	bool _isDirectory;
@@ -153,7 +149,7 @@ public:
 	 */
 	virtual AbstractFilesystemNode *clone() const { return new GBAMPFileSystemNode(this); }
 	virtual AbstractFilesystemNode *getChild(const Common::String& name) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly, bool hidden = false) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 };
 

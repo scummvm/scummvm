@@ -141,16 +141,16 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 	if (level < 0)
 		return;
 
-	FilesystemNode node(dir);
+	Common::FilesystemNode node(dir);
 
 	if (!node.exists() || !node.isReadable())
 		return;
 
-	FSList fslist;
-	if (!node.getChildren(fslist, FilesystemNode::kListAll))
+	Common::FSList fslist;
+	if (!node.getChildren(fslist, Common::FilesystemNode::kListAll))
 		return;
 
-	for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
+	for (Common::FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
 		if (i->isDirectory()) {
 			addDir(list, i->getPath(), level-1);
 		} else {
@@ -171,7 +171,7 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 	}
 }
 
-bool ThemeBrowser::isTheme(const FilesystemNode &node, Entry &out) {
+bool ThemeBrowser::isTheme(const Common::FilesystemNode &node, Entry &out) {
 	Common::ConfigFile cfg;
 	Common::String type;
 

@@ -36,19 +36,19 @@
  */
 class RoninCDFileNode : public AbstractFilesystemNode {
 protected:
-	String _path;
+	Common::String _path;
 
 public:
-	RoninCDFileNode(const String &path) : _path(path) {};
+	RoninCDFileNode(const Common::String &path) : _path(path) {};
 
 	virtual bool exists() const { return true; }
-	virtual String getName() const { return lastPathComponent(_path, '/'); }
-	virtual String getPath() const { return _path; }
+	virtual Common::String getName() const { return lastPathComponent(_path, '/'); }
+	virtual Common::String getPath() const { return _path; }
 	virtual bool isDirectory() const { return false; }
 	virtual bool isReadable() const { return true; }
 	virtual bool isWritable() const { return false; }
 
-	virtual AbstractFilesystemNode *getChild(const String &n) const { return NULL; }
+	virtual AbstractFilesystemNode *getChild(const Common::String &n) const { return NULL; }
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const { return false; }
 	virtual AbstractFilesystemNode *getParent() const;
 
@@ -58,17 +58,17 @@ public:
 /* A directory */
 class RoninCDDirectoryNode : public RoninCDFileNode {
 public:
-	RoninCDDirectoryNode(const String &path) : RoninCDFileNode(path) {};
+	RoninCDDirectoryNode(const Common::String &path) : RoninCDFileNode(path) {};
 
 	virtual bool isDirectory() const { return true; }
-	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 };
 
 /* A file/directory which does not exist */
 class RoninCDNonexistingNode : public RoninCDFileNode {
 public:
-	RoninCDNonexistingNode(const String &path) : RoninCDFileNode(path) {};
+	RoninCDNonexistingNode(const Common::String &path) : RoninCDFileNode(path) {};
 
 	virtual bool exists() const { return false; }
 	virtual bool isReadable() const { return false; }
@@ -90,8 +90,8 @@ AbstractFilesystemNode *RoninCDFileNode::makeFileNodePath(const Common::String &
 	}
 }
 
-AbstractFilesystemNode *RoninCDDirectoryNode::getChild(const String &n) const {
-	String newPath(_path);
+AbstractFilesystemNode *RoninCDDirectoryNode::getChild(const Common::String &n) const {
+	Common::String newPath(_path);
 	if (_path.lastChar() != '/')
 		newPath += '/';
 	newPath += n;
@@ -109,20 +109,20 @@ bool RoninCDDirectoryNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 
 	// ... loop over dir entries using readdir
 	while ((dp = readdir(dirp)) != NULL) {
-		String newPath(_path);
+		Common::String newPath(_path);
 		if (newPath.lastChar() != '/')
 			newPath += '/';
 		newPath += dp->d_name;
 
 		if (dp->d_size < 0) {
 			// Honor the chosen mode
-			if (mode == FilesystemNode::kListFilesOnly)
+			if (mode == Common::FilesystemNode::kListFilesOnly)
 				continue;
 
 			myList.push_back(new RoninCDDirectoryNode(newPath+"/"));
 		} else {
 			// Honor the chosen mode
-			if (mode == FilesystemNode::kListDirectoriesOnly)
+			if (mode == Common::FilesystemNode::kListDirectoriesOnly)
 				continue;
 
 			myList.push_back(new RoninCDFileNode(newPath));
@@ -140,7 +140,7 @@ AbstractFilesystemNode *RoninCDFileNode::getParent() const {
 	const char *start = _path.c_str();
 	const char *end = lastPathComponent(_path, '/');
 
-	return new RoninCDDirectoryNode(String(start, end - start));
+	return new RoninCDDirectoryNode(Common::String(start, end - start));
 }
 
 AbstractFilesystemNode *OSystem_Dreamcast::makeRootFileNode() const {

@@ -27,7 +27,7 @@
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs-factory.h"
 
-//namespace Common {
+namespace Common {
 
 FilesystemNode::FilesystemNode() {
 }
@@ -200,4 +200,4 @@ Common::WriteStream *FilesystemNode::openForWriting() {
 	return _realNode->openForWriting();
 }
 
-//}	// End of namespace Common
+}	// End of namespace Common

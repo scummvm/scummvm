@@ -164,7 +164,7 @@ static Common::String getDefaultConfigFileName() {
 }
 
 Common::SeekableReadStream *OSystem::openConfigFileForReading() {
-	FilesystemNode file(getDefaultConfigFileName());
+	Common::FilesystemNode file(getDefaultConfigFileName());
 	return file.openForReading();
 }
 
@@ -172,7 +172,7 @@ Common::WriteStream *OSystem::openConfigFileForWriting() {
 #ifdef __DC__
 	return 0;
 #else
-	FilesystemNode file(getDefaultConfigFileName());
+	Common::FilesystemNode file(getDefaultConfigFileName());
 	return file.openForWriting();
 #endif
 }

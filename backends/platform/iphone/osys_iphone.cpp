@@ -1199,11 +1199,11 @@ const char* OSystem_IPHONE::getConfigPath() {
 void OSystem_IPHONE::migrateApp() {
 	// Migrate to the new 1.1.3 directory structure, if needed.
 	
-	FilesystemNode file("/var/mobile");
+	Common::FilesystemNode file("/var/mobile");
 	if (file.exists() && file.isDirectory()) {
 		// We have 1.1.3 or above.
 		s_is113OrHigher = true;
-		file = FilesystemNode(SCUMMVM_ROOT_PATH);
+		file = Common::FilesystemNode(SCUMMVM_ROOT_PATH);
 		if (!file.exists()) {
 			system("mkdir " SCUMMVM_ROOT_PATH);
 			system("mkdir " SCUMMVM_SAVE_PATH);
@@ -1211,7 +1211,7 @@ void OSystem_IPHONE::migrateApp() {
 			// Copy over the prefs file
 			system("cp " SCUMMVM_OLD_PREFS_PATH " " SCUMMVM_PREFS_PATH);
 
-			file = FilesystemNode(SCUMMVM_OLD_SAVE_PATH);
+			file = Common::FilesystemNode(SCUMMVM_OLD_SAVE_PATH);
 			// Copy over old savegames to the new directory.
 			if (file.exists() && file.isDirectory())			
 				system("cp " SCUMMVM_OLD_SAVE_PATH "/* " SCUMMVM_SAVE_PATH "/");

@@ -107,7 +107,7 @@ int BrowserDialog::runModal() {
 			err = FSRefMakePath(&ref, (UInt8*)buf, sizeof(buf)-1);
 			assert(err == noErr);
 
-			_choice = FilesystemNode(buf);
+			_choice = Common::FilesystemNode(buf);
 			choiceMade = true;
 		}
 
@@ -160,9 +160,9 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 
 void BrowserDialog::open() {
 	if (ConfMan.hasKey("browser_lastpath"))
-		_node = FilesystemNode(ConfMan.get("browser_lastpath"));
+		_node = Common::FilesystemNode(ConfMan.get("browser_lastpath"));
 	if (!_node.isDirectory())
-		_node = FilesystemNode(".");
+		_node = Common::FilesystemNode(".");
 
 	// Alway refresh file list
 	updateListing();
@@ -227,8 +227,9 @@ void BrowserDialog::updateListing() {
 	ConfMan.set("browser_lastpath", _node.getPath());
 
 	// Read in the data from the file system
-	FilesystemNode::ListMode listMode = _isDirBrowser ? FilesystemNode::kListDirectoriesOnly
-	                                                  : FilesystemNode::kListAll;
+	Common::FilesystemNode::ListMode listMode =
+	         _isDirBrowser ? Common::FilesystemNode::kListDirectoriesOnly
+	                       : Common::FilesystemNode::kListAll;
 	if (!_node.getChildren(_nodeContent, listMode)) {
 		_nodeContent.clear();
 	} else {
@@ -237,7 +238,7 @@ void BrowserDialog::updateListing() {
 
 	// Populate the ListWidget
 	Common::StringList list;
-	for (FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
+	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 		if (!_isDirBrowser && i->isDirectory())
 			list.push_back(i->getDisplayName() + "/");
 		else

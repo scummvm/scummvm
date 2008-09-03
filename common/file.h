@@ -31,9 +31,10 @@
 #include "common/str.h"
 #include "common/stream.h"
 
+namespace Common {
+
 class FilesystemNode;
 
-namespace Common {
 
 /**
  * TODO: vital to document this core class properly!!! For both users and implementors

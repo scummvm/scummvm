@@ -83,7 +83,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const FSList &fslist) const;
+	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
@@ -117,10 +117,10 @@ GameDescriptor Sword2MetaEngine::findGame(const char *gameid) const {
 	return GameDescriptor(g->gameid, g->description);
 }
 
-GameList Sword2MetaEngine::detectGames(const FSList &fslist) const {
+GameList Sword2MetaEngine::detectGames(const Common::FSList &fslist) const {
 	GameList detectedGames;
 	const Sword2::GameSettings *g;
-	FSList::const_iterator file;
+	Common::FSList::const_iterator file;
 
 	// TODO: It would be nice if we had code here which distinguishes
 	// between the 'sword2' and 'sword2demo' targets. The current code
@@ -150,8 +150,8 @@ GameList Sword2MetaEngine::detectGames(const FSList &fslist) const {
 				const char *fileName = file->getName().c_str();
 
 				if (0 == scumm_stricmp("clusters", fileName)) {
-					FSList recList;
-					if (file->getChildren(recList, FilesystemNode::kListAll)) {
+					Common::FSList recList;
+					if (file->getChildren(recList, Common::FilesystemNode::kListAll)) {
 						GameList recGames(detectGames(recList));
 						if (!recGames.empty()) {
 							detectedGames.push_back(recGames);
@@ -200,9 +200,9 @@ PluginError Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) con
 	assert(syst);
 	assert(engine);
 
-	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.getChildren(fslist, FilesystemNode::kListAll)) {
+	Common::FSList fslist;
+	Common::FilesystemNode dir(ConfMan.get("path"));
+	if (!dir.getChildren(fslist, Common::FilesystemNode::kListAll)) {
 		return kInvalidPathError;
 	}
 

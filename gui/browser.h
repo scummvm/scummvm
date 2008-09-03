@@ -39,8 +39,6 @@ class ListWidget;
 class StaticTextWidget;
 
 class BrowserDialog : public Dialog {
-	typedef Common::String String;
-	typedef Common::StringList StringList;
 public:
 	BrowserDialog(const char *title, bool dirBrowser);
 
@@ -52,7 +50,7 @@ public:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 #endif
 
-	const FilesystemNode	&getResult() { return _choice; }
+	const Common::FilesystemNode	&getResult() { return _choice; }
 
 protected:
 #ifdef MACOSX
@@ -60,10 +58,10 @@ protected:
 #else
 	ListWidget		*_fileList;
 	StaticTextWidget	*_currentPath;
-	FilesystemNode	_node;
-	FSList			_nodeContent;
+	Common::FilesystemNode	_node;
+	Common::FSList			_nodeContent;
 #endif
-	FilesystemNode	_choice;
+	Common::FilesystemNode	_choice;
 	bool			_isDirBrowser;
 
 #ifndef MACOSX

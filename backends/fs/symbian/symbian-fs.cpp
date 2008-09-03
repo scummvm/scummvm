@@ -38,8 +38,8 @@
  */
 class SymbianFilesystemNode : public AbstractFilesystemNode {
 protected:
-	String _displayName;
-	String _path;
+	Common::String _displayName;
+	Common::String _path;
 	bool _isDirectory;
 	bool _isValid;
 	bool _isPseudoRoot;
@@ -55,9 +55,9 @@ public:
 	/**
 	 * Creates a SymbianFilesystemNode for a given path.
 	 *
-	 * @param path String with the path the new node should point to.
+	 * @param path Common::String with the path the new node should point to.
 	 */
-	SymbianFilesystemNode(const String &path);
+	SymbianFilesystemNode(const Common::String &path);
 
 	virtual bool exists() const {
 		TFileName fname;
@@ -66,14 +66,14 @@ public:
 		TBool fileExists = BaflUtils::FileExists(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), fname);
 		return fileExists;
 	}
-	virtual String getDisplayName() const { return _displayName; }
-	virtual String getName() const { return _displayName; }
-	virtual String getPath() const { return _path; }
+	virtual Common::String getDisplayName() const { return _displayName; }
+	virtual Common::String getName() const { return _displayName; }
+	virtual Common::String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }	//FIXME: this is just a stub
 	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }	//FIXME: this is just a stub
 
-	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 };
@@ -81,7 +81,7 @@ public:
 /**
  * Fixes the path by changing all slashes to backslashes.
  *
- * @param path String with the path to be fixed.
+ * @param path Common::String with the path to be fixed.
  */
 static void fixFilePath(Common::String& aPath){
 	TInt len = aPath.size();
@@ -102,7 +102,7 @@ SymbianFilesystemNode::SymbianFilesystemNode(bool aIsRoot) {
 
 }
 
-SymbianFilesystemNode::SymbianFilesystemNode(const String &path) {
+SymbianFilesystemNode::SymbianFilesystemNode(const Common::String &path) {
 	if (path.size() == 0)
 		_isPseudoRoot = true;
 	else
@@ -128,9 +128,9 @@ SymbianFilesystemNode::SymbianFilesystemNode(const String &path) {
 	}
 }
 
-AbstractFilesystemNode *SymbianFilesystemNode::getChild(const String &n) const {
+AbstractFilesystemNode *SymbianFilesystemNode::getChild(const Common::String &n) const {
 	assert(_isDirectory);
-	String newPath(_path);
+	Common::String newPath(_path);
 
 	if (_path.lastChar() != '\\')
 		newPath += '\\';
@@ -210,8 +210,8 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 				entry._isDirectory = fileentry.IsDir();
 
 				// Honor the chosen mode
-				if ((mode == FilesystemNode::kListFilesOnly && entry._isDirectory) ||
-					(mode == FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
+				if ((mode == Common::FilesystemNode::kListFilesOnly && entry._isDirectory) ||
+					(mode == Common::FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
 					continue;
 
 				if (entry._isDirectory)
@@ -235,7 +235,7 @@ AbstractFilesystemNode *SymbianFilesystemNode::getParent() const {
 		const char *start = _path.c_str();
 		const char *end = lastPathComponent(_path, '\\');
 
-		p->_path = String(start, end - start);
+		p->_path = Common::String(start, end - start);
 		p->_isValid = true;
 		p->_isDirectory = true;
 		p->_displayName = lastPathComponent(p->_path, '\\');

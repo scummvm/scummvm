@@ -29,6 +29,7 @@
 
 #ifdef DYNAMIC_MODULES
 #include "common/config-manager.h"
+#include "common/fs.h"
 #endif
 
 // Plugin versioning
@@ -203,11 +204,11 @@ PluginList FilePluginProvider::getPlugins() {
 	PluginList pl;
 
 	// Prepare the list of directories to search
-	FSList pluginDirs;
+	Common::FSList pluginDirs;
 
 	// Add the default directories
-	pluginDirs.push_back(FilesystemNode("."));
-	pluginDirs.push_back(FilesystemNode("plugins"));
+	pluginDirs.push_back(Common::FilesystemNode("."));
+	pluginDirs.push_back(Common::FilesystemNode("plugins"));
 
 	// Add the provider's custom directories
 	addCustomDirectories(pluginDirs);
@@ -215,21 +216,21 @@ PluginList FilePluginProvider::getPlugins() {
 	// Add the user specified directory
 	Common::String pluginsPath(ConfMan.get("pluginspath"));
 	if (!pluginsPath.empty())
-		pluginDirs.push_back(FilesystemNode(pluginsPath));
+		pluginDirs.push_back(Common::FilesystemNode(pluginsPath));
 
-	FSList::const_iterator dir;
+	Common::FSList::const_iterator dir;
 	for (dir = pluginDirs.begin(); dir != pluginDirs.end(); dir++) {
 		// Load all plugins.
 		// Scan for all plugins in this directory
-		FSList files;
-		if (!dir->getChildren(files, FilesystemNode::kListFilesOnly)) {
+		Common::FSList files;
+		if (!dir->getChildren(files, Common::FilesystemNode::kListFilesOnly)) {
 			debug(1, "Couldn't open plugin directory '%s'", dir->getPath().c_str());
 			continue;
 		} else {
 			debug(1, "Reading plugins from plugin directory '%s'", dir->getPath().c_str());
 		}
 
-		for (FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
+		for (Common::FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
 			if (isPluginFilename(i->getName())) {
 				pl.push_back(createPlugin(i->getPath()));
 			}
@@ -255,9 +256,9 @@ bool FilePluginProvider::isPluginFilename(const Common::String &filename) const 
 	return true;
 }
 
-void FilePluginProvider::addCustomDirectories(FSList &dirs) const {
+void FilePluginProvider::addCustomDirectories(Common::FSList &dirs) const {
 #ifdef PLUGIN_DIRECTORY
-	dirs.push_back(FilesystemNode(PLUGIN_DIRECTORY));
+	dirs.push_back(Common::FilesystemNode(PLUGIN_DIRECTORY));
 #endif
 }
 
@@ -379,7 +380,7 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Eng
 	return result;
 }
 
-GameList EngineManager::detectGames(const FSList &fslist) const {
+GameList EngineManager::detectGames(const Common::FSList &fslist) const {
 	GameList candidates;
 
 	const EnginePlugin::List &plugins = getPlugins();

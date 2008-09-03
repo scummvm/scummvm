@@ -36,7 +36,7 @@ AbstractFilesystemNode *Ps2FilesystemFactory::makeCurrentDirectoryFileNode() con
 	return new Ps2FilesystemNode();
 }
 
-AbstractFilesystemNode *Ps2FilesystemFactory::makeFileNodePath(const String &path) const {
+AbstractFilesystemNode *Ps2FilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	// return new Ps2FilesystemNode(path);
 
 	Ps2FilesystemNode *nf = new Ps2FilesystemNode(path, true);
