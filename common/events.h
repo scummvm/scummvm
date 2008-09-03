@@ -181,7 +181,8 @@ public:
 	virtual int shouldRTL() const = 0;
 
 	/**
-	 * We have returned to the launcher, and the _shouldRTL should be reset to false
+	 * Reset the "return to launcher" flag (as returned shouldRTL()) to false.
+	 * Used when we have returned to the launcher.
 	 */
 	virtual void resetRTL() = 0;
 
