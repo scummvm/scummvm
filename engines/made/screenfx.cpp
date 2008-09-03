@@ -132,7 +132,7 @@ void ScreenEffects::setBlendedPalette(byte *palette, byte *newPalette, int color
 	if (!_screen->isPaletteLocked()) {
 		int32 mulValue = (value * 64) / maxValue;
 		for (int i = 0; i < colorCount * 3; i++)
-			_fxPalette[i] = CLIP(newPalette[i] - (newPalette[i] - palette[i]) * mulValue / 64, 0, 255);
+			_fxPalette[i] = CLIP<int32>(newPalette[i] - (newPalette[i] - palette[i]) * mulValue / 64, 0, 255);
 		_screen->setRGBPalette(_fxPalette, 0, 256);
 	}
 }
