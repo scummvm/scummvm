@@ -211,6 +211,9 @@ String SeekableReadStream::readLine() {
 			break;
 		line += buf;
 	}
+	
+	if (line.lastChar() == '\n')
+		line.deleteLastChar();
 
 	return line;
 }
