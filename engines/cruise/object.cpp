@@ -58,7 +58,7 @@ objDataStruct *getObjectDataFromOverlay(int ovlIdx, int objIdx) {
 }
 
 int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx, objectParamsQuery *returnParam) {
-	objectParams *ptr2;
+	objectParams *ptr2 = 0;
 	objDataStruct *ptr;
 	ovlDataStruct *ovlData;
 //  int16 type;
@@ -246,7 +246,7 @@ int16 getSingleObjectParam(int16 overlayIdx, int16 param2, int16 param3, int16 *
 	//char* ptr3 = NULL;
 	objDataStruct *ptr;
 	ovlDataStruct *ovlData;
-	objectParams *ptr2;
+	objectParams *ptr2 = 0;
 
 	ptr = getObjectDataFromOverlay(overlayIdx, param2);
 
