@@ -201,8 +201,8 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 	// Reset the file/directory mappings
 	Common::File::resetDefaultDirectories();
 
-	// If result=1 return to the launcher, else quit ScummVM
-    return result;
+	// Return result (== 0 means no error)
+	return result;
 }
 
 
@@ -285,15 +285,18 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 			// Try to run the game
 			int result = runGame(plugin, system, specialDebug);
-			// TODO: We should keep running if starting the selected game failed
-			// (so instead of just quitting, show a nice error dialog to the
-			// user and let him pick another game).
-		 	
-			// Reset RTL flag in case we want to load another engine
-			g_system->getEventManager()->resetRTL();		
-
-			if (result == 0)
+			
+			// Did an error occur ?
+			if (result != 0) {
+				// TODO: Show an informative error dialog if starting the selected game failed.
+			}
+			
+			// Quit unless an error occurred, or Return to launcher was requested
+			if (result == 0 && !g_system->getEventManager()->shouldRTL())
 				break;
+
+			// Reset RTL flag in case we want to load another engine
+			g_system->getEventManager()->resetRTL();
 
 			// Discard any command line options. It's unlikely that the user
 			// wanted to apply them to *all* games ever launched.

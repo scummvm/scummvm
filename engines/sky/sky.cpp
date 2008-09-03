@@ -426,7 +426,7 @@ int SkyEngine::go() {
 	_skyMusic->stopMusic();
 	ConfMan.flushToDisk();
 	delay(1500);
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 int SkyEngine::init() {

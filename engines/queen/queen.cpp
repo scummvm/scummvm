@@ -444,7 +444,7 @@ int QueenEngine::go() {
 			update(true);
 		}
 	}
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 int QueenEngine::init() {

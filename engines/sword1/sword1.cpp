@@ -727,7 +727,7 @@ int SwordEngine::go() {
 		}
 	}
 
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 void SwordEngine::checkCd(void) {

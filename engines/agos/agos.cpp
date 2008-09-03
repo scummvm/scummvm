@@ -1023,7 +1023,7 @@ int AGOSEngine::go() {
 		delay(100);
 	}
 
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 

@@ -499,7 +499,7 @@ int Sword2Engine::go() {
 #endif
 	}
 
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 void Sword2Engine::restartGame() {

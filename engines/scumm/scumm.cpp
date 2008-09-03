@@ -1756,7 +1756,7 @@ int ScummEngine::go() {
 		}
 	}
 
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 void ScummEngine::waitForTimer(int msec_delay) {

@@ -101,7 +101,7 @@ int CineEngine::go() {
 	delete[] collisionPage;
 	delete g_sound;
 	
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 int CineEngine::getTimerDelay() const {

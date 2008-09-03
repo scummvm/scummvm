@@ -310,7 +310,7 @@ int SagaEngine::go() {
 		_system->delayMillis(10);
 	}
 
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength) {

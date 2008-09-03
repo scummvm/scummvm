@@ -112,7 +112,7 @@ GobEngine::~GobEngine() {
 int GobEngine::go() {
 	_init->initGame(0);
 
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 const char *GobEngine::getLangDesc(int16 language) const {

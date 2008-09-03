@@ -774,7 +774,7 @@ int TinselEngine::go() {
 	// Write configuration
 	WriteConfig();
 
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 

@@ -324,7 +324,7 @@ int KyraEngine_MR::go() {
 	if (_showOutro)
 		playVQA("CREDITS");
 
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 void KyraEngine_MR::initMainMenu() {

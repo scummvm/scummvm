@@ -807,7 +807,7 @@ int AgiEngine::go() {
 
 	runGame();
 
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 void AgiEngine::syncSoundSettings() {

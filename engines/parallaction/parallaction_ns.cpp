@@ -235,7 +235,7 @@ int Parallaction_ns::go() {
 		runGame();
 	}
 
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 void Parallaction_ns::switchBackground(const char* background, const char* mask) {

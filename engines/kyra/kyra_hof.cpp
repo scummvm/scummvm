@@ -325,7 +325,7 @@ int KyraEngine_HoF::go() {
 			seq_playSequences(kSequenceFunters, kSequenceFrash);
 	}
 
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 void KyraEngine_HoF::startup() {

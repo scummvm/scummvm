@@ -125,7 +125,7 @@ int Parallaction_br::go() {
 		cleanupGame();
 	}
 
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 

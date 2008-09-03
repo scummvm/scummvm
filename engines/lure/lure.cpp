@@ -137,7 +137,7 @@ int LureEngine::go() {
 			bool result = dialog->show();
 			delete dialog;
 			if (quit())
-				return _eventMan->shouldRTL();
+				return 0;
 
 			if (!result)
 				error("Sorry - copy protection failed");
@@ -160,7 +160,7 @@ int LureEngine::go() {
 	}
 
 	delete gameInstance;
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 void LureEngine::pauseEngineIntern(bool pause) {

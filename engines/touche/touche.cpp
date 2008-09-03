@@ -111,7 +111,7 @@ int ToucheEngine::go() {
 
 	res_deallocateTables();
 	res_closeDataFile();
-	return _eventMan->shouldRTL();
+	return 0;
 }
 
 void ToucheEngine::restart() {
