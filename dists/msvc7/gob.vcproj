@@ -273,6 +273,9 @@
 			RelativePath="..\..\engines\gob\inter_v5.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\inter_v6.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\map.cpp">
 		</File>
 		<File
@@ -367,6 +370,9 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\video_v2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\video_v6.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\videoplayer.cpp">
