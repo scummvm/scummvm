@@ -352,8 +352,10 @@ int AgiEngine::playGame() {
 			_game.vars[vKey] = 0;
 		}
 
-		if (quit() == 0xff)
-			ec = errRestartGame;
+		// FIXME: This has been broken with the merge of the RTL GSoC project. quit() returns a boolean, and we're trying to
+		// check it against 0xff, which is never going to be true
+		//if (quit() == 0xff)
+		//	ec = errRestartGame;
 
 		if (shouldPerformAutoSave(_lastSaveTime)) {
 			saveGame(getSavegameFilename(0), "Autosave");
