@@ -70,19 +70,19 @@ bool FSDirectory::hasFile(const String &name) {
 	return node.exists();
 }
 
-FilePtr FSDirectory::openFile(const String &name) {
+SeekableReadStream *FSDirectory::openFile(const String &name) {
 	if (name.empty() || !_node.isDirectory()) {
-		return FilePtr();
+		return 0;
 	}
 
 	FilesystemNode node = lookupCache(_fileCache, name);
 
 	if (!node.exists()) {
 		warning("FSDirectory::openFile: Trying to open a FilesystemNode which does not exist");
-		return FilePtr();
+		return 0;
 	} else if (node.isDirectory()) {
 		warning("FSDirectory::openFile: Trying to open a FilesystemNode which is a directory");
-		return FilePtr();
+		return 0;
 	}
 
 	SeekableReadStream *stream = node.openForReading();
@@ -90,7 +90,7 @@ FilePtr FSDirectory::openFile(const String &name) {
 		warning("FSDirectory::openFile: Can't create stream for file '%s'", name.c_str());
 	}
 
-	return FilePtr(stream);
+	return stream;
 }
 
 SharedPtr<FSDirectory> FSDirectory::getSubDirectory(const String &name) {
@@ -269,9 +269,9 @@ int SearchSet::matchPattern(StringList &list, const String &pattern) {
 	return matches;
 }
 
-FilePtr SearchSet::openFile(const String &name) {
+SeekableReadStream *SearchSet::openFile(const String &name) {
 	if (name.empty()) {
-		return FilePtr();
+		return 0;
 	}
 
 	ArchiveList::iterator it = _list.begin();
@@ -281,7 +281,7 @@ FilePtr SearchSet::openFile(const String &name) {
 		}
 	}
 
-	return FilePtr();
+	return 0;
 }
 
 

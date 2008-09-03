@@ -35,6 +35,10 @@
 
 namespace Common {
 
+/**
+ * FilePtr is a convenient way to keep track of a SeekableReadStream without
+ * having to worry about releasing its memory.
+ */
 typedef SharedPtr<SeekableReadStream> FilePtr;
 
 /**
@@ -75,7 +79,7 @@ public:
 	 * Create a stream bound to a file in the archive.
 	 * @return The newly created input stream.
 	 */
-	virtual FilePtr openFile(const String &name) = 0;
+	virtual SeekableReadStream *openFile(const String &name) = 0;
 };
 
 
@@ -136,7 +140,7 @@ public:
 
 	virtual bool hasFile(const String &name);
 	virtual int matchPattern(StringList &list, const String &pattern);
-	virtual FilePtr openFile(const String &name);
+	virtual SeekableReadStream *openFile(const String &name);
 };
 
 
@@ -193,7 +197,7 @@ public:
 	 * Implements openFile from Archive base class. The current policy is
 	 * opening the first file encountered that matches the name.
 	 */
-	virtual FilePtr openFile(const String &name);
+	virtual SeekableReadStream *openFile(const String &name);
 };
 
 } // namespace Common
