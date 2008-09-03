@@ -647,9 +647,6 @@
 		</Filter>
 		<Filter
 			Name="backends">
-			<File
-				RelativePath="..\..\backends\intern.h">
-			</File>
 			<Filter
 				Name="sdl">
 				<File
@@ -692,6 +689,12 @@
 				</File>
 				<File
 					RelativePath="..\..\backends\fs\fs-factory.h">
+				</File>
+				<File
+					RelativePath="..\..\backends\fs\stdiostream.cpp">
+				</File>
+				<File
+					RelativePath="..\..\backends\fs\stdiostream.h">
 				</File>
 				<Filter
 					Name="windows">
