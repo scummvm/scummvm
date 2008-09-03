@@ -154,6 +154,28 @@ public:
 };
 
 
+class StdioStream : public SeekableReadStream, public WriteStream, public NonCopyable {
+protected:
+	/** File handle to the actual file. */
+	void *_handle;
+
+public:
+	StdioStream(void *handle);
+	virtual ~StdioStream();
+
+	bool ioFailed() const;
+	void clearIOFailed();
+	bool eos() const;
+
+	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+	virtual void flush();
+
+	virtual uint32 pos() const;
+	virtual uint32 size() const;
+	void seek(int32 offs, int whence = SEEK_SET);
+	uint32 read(void *dataPtr, uint32 dataSize);
+};
+
 } // End of namespace Common
 
 #endif

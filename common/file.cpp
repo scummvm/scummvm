@@ -558,4 +558,66 @@ void DumpFile::flush() {
 }
 
 
+StdioStream::StdioStream(void *handle) : _handle(handle) {
+	assert(handle);
+}
+
+StdioStream::~StdioStream() {
+	fclose((FILE *)_handle);
+}
+
+bool StdioStream::ioFailed() const {
+	return ferror((FILE *)_handle) != 0;
+}
+
+void StdioStream::clearIOFailed() {
+	clearerr((FILE *)_handle);
+}
+
+bool StdioStream::eos() const {
+	return feof((FILE *)_handle) != 0;
+}
+
+uint32 StdioStream::pos() const {
+	// FIXME: ftell can return -1 to indicate an error (in which case errno gets set)
+	//        Maybe we should support that, too?
+	return ftell((FILE *)_handle);
+}
+
+uint32 StdioStream::size() const {
+	uint32 oldPos = ftell((FILE *)_handle);
+	fseek((FILE *)_handle, 0, SEEK_END);
+	uint32 length = ftell((FILE *)_handle);
+	fseek((FILE *)_handle, oldPos, SEEK_SET);
+
+	return length;
+}
+
+void StdioStream::seek(int32 offs, int whence) {
+	assert(_handle);
+
+	if (fseek((FILE *)_handle, offs, whence) != 0)
+		clearerr((FILE *)_handle);	// FIXME: why do we call clearerr here?
+		
+	// FIXME: fseek has a return value to indicate errors; 
+	//        Maybe we should support that, too?
+}
+
+uint32 StdioStream::read(void *ptr, uint32 len) {
+	return (uint32)fread((byte *)ptr, 1, len, (FILE *)_handle);
+}
+
+uint32 StdioStream::write(const void *ptr, uint32 len) {
+	return (uint32)fwrite(ptr, 1, len, (FILE *)_handle);
+}
+
+void StdioStream::flush() {
+	// TODO: Should check the return value of fflush, and if it is non-zero,
+	// check errno and set an error flag.
+	fflush((FILE *)_handle);
+}
+
+
+
+
 }	// End of namespace Common
