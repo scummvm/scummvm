@@ -8,36 +8,48 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
+ *
  */
 
-#if defined(UNIX)
-#include "backends/fs/posix/posix-fs-factory.h"
-#include "backends/fs/posix/posix-fs.cpp"
+#ifndef BACKENDS_FS_STDIOSTREAM_H
+#define BACKENDS_FS_STDIOSTREAM_H
 
-AbstractFilesystemNode *POSIXFilesystemFactory::makeRootFileNode() const {
-	return new POSIXFilesystemNode();
-}
+#include "common/scummsys.h"
+#include "common/noncopyable.h"
+#include "common/stream.h"
 
-AbstractFilesystemNode *POSIXFilesystemFactory::makeCurrentDirectoryFileNode() const {
-	char buf[MAXPATHLEN];
-	getcwd(buf, MAXPATHLEN);
-	return new POSIXFilesystemNode(buf, true);
-}
+class StdioStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable {
+protected:
+	/** File handle to the actual file. */
+	void *_handle;
 
-AbstractFilesystemNode *POSIXFilesystemFactory::makeFileNodePath(const Common::String &path) const {
-	assert(!path.empty());
-	return new POSIXFilesystemNode(path, true);
-}
+public:
+	StdioStream(void *handle);
+	virtual ~StdioStream();
+
+	bool ioFailed() const;
+	void clearIOFailed();
+	bool eos() const;
+
+	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+	virtual void flush();
+
+	virtual uint32 pos() const;
+	virtual uint32 size() const;
+	void seek(int32 offs, int whence = SEEK_SET);
+	uint32 read(void *dataPtr, uint32 dataSize);
+};
+
 #endif

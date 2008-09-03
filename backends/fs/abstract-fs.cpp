@@ -23,7 +23,7 @@
  */
 
 #include "backends/fs/abstract-fs.h"
-#include "common/file.h"
+#include "backends/fs/stdiostream.h"
 
 const char *AbstractFilesystemNode::lastPathComponent(const Common::String &str, const char sep) {
 	if(str.empty())
@@ -44,7 +44,7 @@ Common::SeekableReadStream *AbstractFilesystemNode::openForReading() {
 	// implementations, we provide this "generic" one, using Common::File.
 	FILE *handle = fopen(getPath().c_str(), "rb");
 	if (handle)
-		return new Common::StdioStream(handle);
+		return new StdioStream(handle);
 	return 0;
 }
 
@@ -53,6 +53,6 @@ Common::WriteStream *AbstractFilesystemNode::openForWriting() {
 	// implementations, we provide this "generic" one.
 	FILE *handle = fopen(getPath().c_str(), "wb");
 	if (handle)
-		return new Common::StdioStream(handle);
+		return new StdioStream(handle);
 	return 0;
 }
