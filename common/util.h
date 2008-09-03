@@ -210,6 +210,7 @@ enum Platform {
 
 	kPlatformApple2GS,
 	kPlatformPC98,
+	kPlatformWii,
 
 	kPlatformUnknown = -1
 };

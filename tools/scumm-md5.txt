@@ -468,6 +468,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	e44ea295a3f8fe4f41983080dab1e9ce	-1	fr	Mac	HE 90	Updated	-	ThierryFR
 	746e88c172a5b7a1ae89ac0ee3ee681a	-1	ru	Windows	HE 90	Updated	-	sev
 	a197a87ae77f3b3333f09a7a2c448fe2	-1	en	Windows	HE 99	Updated	-	Jonathan
+	57a5cfec9ef231a007043cc1917e8988	-1	en	Wii	HE 99	Updated	-	sanguinehearts
 
 	084ed0fa98a6d1e9368d67fe9cfbd417	-1	en	Windows	HE 71	Demo	-	khalek
 	c8aac5e3e701874e2fa4117896f9e1b1	-1	en	Mac	HE 73	Demo	-	khalek, sev
@@ -590,6 +591,7 @@ pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 	37aed3f91c1ef959e0bd265f9b13781f	-1	us	All	HE 100	Updated	-	Kirben
 	782393c5934ecd0b536eaf5fd541bd26	-1	en	Windows	HE 100	Updated	-	Jonathan
 	4aa93cb30e485b728504ba3a693f12bf	-1	ru	Windows	HE 100	-	-	sev
+	c225bec1b6c0798a2b8c89ac226dc793	-1	en	Wii	HE 100	-	-	sanguinehearts
 
 	f237bf8a5ef9af78b2a6a4f3901da341	18354	en	All	-	Demo	-	khalek, sev
 	7f945525abcd48015adf1632637a44a1	-1	fr	All	-	Demo	-	Kirben
