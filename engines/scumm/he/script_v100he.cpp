@@ -1117,6 +1117,9 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 		break;
 	case 128:
 		break;
+	case 129:
+		// Dummy case
+		break;
 	case 132:
 		if (_heResType == rtScript && _heResId >= _numGlobalScripts)
 			break;
