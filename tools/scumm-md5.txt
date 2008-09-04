@@ -469,7 +469,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	e44ea295a3f8fe4f41983080dab1e9ce	-1	fr	Mac	HE 90	Updated	-	ThierryFR
 	746e88c172a5b7a1ae89ac0ee3ee681a	-1	ru	Windows	HE 90	Updated	-	sev
 	a197a87ae77f3b3333f09a7a2c448fe2	-1	en	Windows	HE 99	Updated	-	Jonathan
-	57a5cfec9ef231a007043cc1917e8988	-1	en	Wii	HE 99	Updated	-	sanguinehearts
+	57a5cfec9ef231a007043cc1917e8988	-1	en	Wii	HE 100	Updated	-	sanguinehearts
 
 	084ed0fa98a6d1e9368d67fe9cfbd417	-1	en	Windows	HE 71	Demo	-	khalek
 	c8aac5e3e701874e2fa4117896f9e1b1	-1	en	Mac	HE 73	Demo	-	khalek, sev
