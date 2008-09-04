@@ -93,14 +93,13 @@ SeekableReadStream *FSDirectory::openFile(const String &name) {
 	return stream;
 }
 
-SharedPtr<FSDirectory> FSDirectory::getSubDirectory(const String &name) {
+FSDirectory *FSDirectory::getSubDirectory(const String &name) {
 	if (name.empty() || !_node.isDirectory()) {
-		// return a null SharedPtr
-		return SharedPtr<FSDirectory>();
+		return 0;
 	}
 
 	FilesystemNode node = lookupCache(_subDirCache, name);
-	return SharedPtr<FSDirectory>(new FSDirectory(node));
+	return new FSDirectory(node);
 }
 
 void FSDirectory::cacheDirectoryRecursive(FilesystemNode node, int depth, const String& prefix) {

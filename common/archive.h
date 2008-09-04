@@ -136,7 +136,7 @@ public:
 	 * Create a new FSDirectory pointing to a sub directory of the instance.
 	 * @return A new FSDirectory instance conveniently wrapped in a SharedPtr.
 	 */
-	SharedPtr<FSDirectory> getSubDirectory(const String &name);
+	FSDirectory *getSubDirectory(const String &name);
 
 	virtual bool hasFile(const String &name);
 	virtual int matchPattern(StringList &list, const String &pattern);
