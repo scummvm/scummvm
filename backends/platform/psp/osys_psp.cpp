@@ -98,7 +98,7 @@ OSystem_PSP::~OSystem_PSP() {
 
 
 void OSystem_PSP::initBackend() {
-	_savefile = new DefaultSaveFileManager();
+	_savefile = new DefaultSaveFileManager("ms0:/scummvm_savegames");
 	_timer = new DefaultTimerManager();
 	setTimerCallback(&timer_handler, 10);
 
