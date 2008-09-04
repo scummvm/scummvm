@@ -1056,6 +1056,84 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesCD,
 		"intro"
 	},
+	{ // Supplied by SiRoCs in bug report #2093672
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
+			EN_USA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesCD,
+		"intro"
+	},
+	{ // Supplied by SiRoCs in bug report #2093672
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
+			FR_FRA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesCD,
+		"intro"
+	},
+	{ // Supplied by SiRoCs in bug report #2093672
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
+			IT_ITA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesCD,
+		"intro"
+	},
+	{ // Supplied by SiRoCs in bug report #2093672
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
+			DE_DEU,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesCD,
+		"intro"
+	},
+	{ // Supplied by SiRoCs in bug report #2093672
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
+			ES_ESP,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesCD,
+		"intro"
+	},
+	{ // Supplied by SiRoCs in bug report #2093672
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
+			EN_GRB,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesCD,
+		"intro"
+	},
 	{
 		{
 			"lostintime",
