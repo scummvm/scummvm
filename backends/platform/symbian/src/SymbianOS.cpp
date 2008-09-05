@@ -137,6 +137,7 @@ OSystem_SDL_Symbian::zoneDesc OSystem_SDL_Symbian::_zones[TOTAL_ZONES] = {
 };
 OSystem_SDL_Symbian::OSystem_SDL_Symbian() :_channels(0),_stereo_mix_buffer(0) {
 	_RFs = &CEikonEnv::Static()->FsSession();
+	_fsFactory = new SymbianFilesystemFactory();
 }
 
 void OSystem_SDL_Symbian::initBackend() {
@@ -160,8 +161,6 @@ void OSystem_SDL_Symbian::initBackend() {
 	actions->initInstanceMain(this);
 	actions->loadMapping();
 	initZones();
-	
-	_fsFactory = new SymbianFilesystemFactory();
 }
 
 OSystem_SDL_Symbian::~OSystem_SDL_Symbian() {
