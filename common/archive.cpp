@@ -43,7 +43,7 @@ int Archive::matchPattern(StringList &list, const String &pattern) {
 
 	StringList::iterator it = allNames.begin();
 	for ( ; it != allNames.end(); it++) {
-		if (matchString(it->c_str(), lowercasePattern.c_str())) {
+		if (it->matchString(lowercasePattern)) {
 			list.push_back(*it);
 			matches++;
 		}

@@ -154,7 +154,7 @@ bool FilesystemNode::lookupFile(FSList &results, const Common::String &p, bool h
 		} else {
 			Common::String filename = entry->getName();
 			filename.toUppercase();
-			if (Common::matchString(filename.c_str(), pattern.c_str())) {
+			if (filename.matchString(pattern)) {
 				results.push_back(*entry);
 
 				if (!exhaustive)
