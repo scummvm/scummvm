@@ -36,7 +36,7 @@
 
 #define VECTOR_RENDERER_FAST_TRIANGLES
 
-/** HELPER MACROS for BESENHALM's circle drawing algorithm **/
+/** HELPER MACROS for BRESENHAM's circle drawing algorithm **/
 #define __BE_ALGORITHM() { \
 	if (f >= 0) { \
 		y--; \
