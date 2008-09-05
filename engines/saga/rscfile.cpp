@@ -805,7 +805,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 		free(resourcePointer);
 	} else {
 		// The IHNM demo has a fixed music track and doesn't load a song table
-		_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
+		_vm->_music->setVolume(_vm->_musicVolume, 1);
 		_vm->_music->play(3, MUSIC_LOOP);
 		free(resourcePointer);
 	}

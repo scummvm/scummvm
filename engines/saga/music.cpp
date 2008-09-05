@@ -404,7 +404,7 @@ void Music::musicVolumeGauge() {
 }
 
 void Music::setVolume(int volume, int time) {
-	_targetVolume = volume * 2; // ScummVM has different volume scale
+	_targetVolume = volume;
 	_currentVolumePercent = 0;
 
 	if (volume == -1) // Set Full volume
@@ -585,7 +585,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 
 	_player->_parser = parser;
-	setVolume(_vm->_musicVolume == 10 ? 255 : _vm->_musicVolume * 25);
+	setVolume(_vm->_musicVolume);
 
 	if (flags & MUSIC_LOOP)
 		_player->setLoop(true);
@@ -603,7 +603,7 @@ void Music::pause(void) {
 }
 
 void Music::resume(void) {
-	_player->setVolume(_vm->_musicVolume == 10 ? 255 : _vm->_musicVolume * 25);
+	_player->setVolume(_vm->_musicVolume);
 	_player->setPlaying(true);
 }
 
