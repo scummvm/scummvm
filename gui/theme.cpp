@@ -26,6 +26,7 @@
 #include "gui/eval.h"
 #include "common/file.h"
 
+#include "common/archive.h"
 #include "common/unzip.h"
 
 namespace GUI {
@@ -69,24 +70,11 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 			return font;
 
 #ifdef USE_ZLIB
-		unzFile zipFile = unzOpen((_stylefile + ".zip").c_str());
-		if (zipFile && unzLocateFile(zipFile, cacheFilename.c_str(), 2) == UNZ_OK) {
-			unz_file_info fileInfo;
-			unzOpenCurrentFile(zipFile);
-			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-			uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
-			assert(buffer);
-			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
-			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
-			unzCloseCurrentFile(zipFile);
-			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
-
-			font = Graphics::NewFont::loadFromCache(stream);
-
-			delete[] buffer;
-			buffer = 0;
+		ZipArchive zipArchive(_stylefile + ".zip");
+		if (zipArchive.hasFile(cacheFilename)) {
+			Common::FilePtr stream(zipArchive.openFile(cacheFilename));
+			font = Graphics::NewFont::loadFromCache(*stream.get());
 		}
-		unzClose(zipFile);
 #endif
 		if (font)
 			return font;
@@ -99,24 +87,11 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 
 #ifdef USE_ZLIB
 	if (!font) {
-		unzFile zipFile = unzOpen((_stylefile + ".zip").c_str());
-		if (zipFile && unzLocateFile(zipFile, filename, 2) == UNZ_OK) {
-			unz_file_info fileInfo;
-			unzOpenCurrentFile(zipFile);
-			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-			uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
-			assert(buffer);
-			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
-			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
-			unzCloseCurrentFile(zipFile);
-			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
-
-			font = Graphics::NewFont::loadFont(stream);
-
-			delete[] buffer;
-			buffer = 0;
+		ZipArchive zipArchive(_stylefile + ".zip");
+		if (zipArchive.hasFile(filename)) {
+			Common::FilePtr stream(zipArchive.openFile(filename));
+			font = Graphics::NewFont::loadFont(*stream.get());
 		}
-		unzClose(zipFile);
 	}
 #endif
 
@@ -158,37 +133,20 @@ bool Theme::loadConfigFile(const Common::String &stylefile) {
 	if (ConfMan.hasKey("extrapath"))
 		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
 
-	if (!_configFile.loadFromFile(stylefile + ".ini")) {
-#ifdef USE_ZLIB
-		// Maybe find a nicer solution to this
-		unzFile zipFile = unzOpen((stylefile + ".zip").c_str());
-		if (zipFile && unzLocateFile(zipFile, (stylefile + ".ini").c_str(), 2) == UNZ_OK) {
-			unz_file_info fileInfo;
-			unzOpenCurrentFile(zipFile);
-			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-			uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
-			assert(buffer);
-			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
-			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
-			unzCloseCurrentFile(zipFile);
-			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
-			if (!_configFile.loadFromStream(stream)) {
-				unzClose(zipFile);
-				return false;
-			}
-			delete[] buffer;
-			buffer = 0;
-		} else {
-			unzClose(zipFile);
-			return false;
-		}
-		unzClose(zipFile);
-#else
-		return false;
-#endif
-	}
+	if (_configFile.loadFromFile(stylefile + ".ini"))
+		return true;
 
-	return true;
+#ifdef USE_ZLIB
+	// Maybe find a nicer solution to this
+	ZipArchive zipArchive(stylefile + ".zip");
+	if (zipArchive.hasFile(stylefile + ".ini")) {
+		Common::FilePtr stream(zipArchive.openFile(stylefile + ".ini"));
+		if (_configFile.loadFromStream(*stream.get()))
+			return true;
+	}
+#endif
+
+	return false;
 }
 
 bool Theme::themeConfigUseable(const Common::String &stylefile, const Common::String &style, Common::String *cStyle, Common::ConfigFile *cfg) {
@@ -210,30 +168,16 @@ bool Theme::themeConfigUseable(const Common::String &stylefile, const Common::St
 	if (!file.open(stylefile + ".ini")) {
 #ifdef USE_ZLIB
 		// Maybe find a nicer solution to this
-		unzFile zipFile = unzOpen((stylefile + ".zip").c_str());
-		if (zipFile && unzLocateFile(zipFile, (stylefile + ".ini").c_str(), 2) == UNZ_OK) {
+		ZipArchive zipArchive(stylefile + ".zip");
+		if (zipArchive.hasFile(stylefile + ".ini")) {
 			if (!style.empty() || cStyle || cfg) {
-				unz_file_info fileInfo;
-				unzOpenCurrentFile(zipFile);
-				unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-				uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
-				assert(buffer);
-				memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
-				unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
-				unzCloseCurrentFile(zipFile);
-				Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
-				if (!cfg->loadFromStream(stream)) {
-					unzClose(zipFile);
+				Common::FilePtr stream(zipArchive.openFile(stylefile + ".ini"));
+				if (!cfg->loadFromStream(*stream.get()))
 					return false;
-				}
-				delete[] buffer;
-				buffer = 0;
 			}
 		} else {
-			unzClose(zipFile);
 			return false;
 		}
-		unzClose(zipFile);
 #else
 		return false;
 #endif
