@@ -84,6 +84,10 @@
 #ifdef ENABLE_M4
 	"M4 "
 #endif
+#ifdef ENABLE_TINSEL
+	"Tinsel "
+#endif
+
 
 
 
