@@ -47,6 +47,11 @@ protected:
 	virtual AbstractFilesystemNode *makeNode(const Common::String &path) const {
 		return new POSIXFilesystemNode(path);
 	}
+	
+	/**
+	 * Plain constructor, for internal use only (hence protected).
+	 */
+	POSIXFilesystemNode() : _isDirectory(false), _isValid(false) {}
 
 public:
 	/**

@@ -117,20 +117,15 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 	
 		for (int i = 0; i < 26; i++) {
 			if (ulDrvMap & 1) {
-				char drive_root[4];
+				char *drive_root = "A:";
+				drive_root[0] += i;
 	
-				drive_root[0] = i + 'A';
-				drive_root[1] = ':';
-				drive_root[2] = '/';
-				drive_root[3] = 0;
-	
-				POSIXFilesystemNode entry;
-	
-				entry._isDirectory = true;
-				entry._isValid = true;
-				entry._path = drive_root;
-				entry._displayName = "[" + Common::String(drive_root, 2) + "]";
-				myList.push_back(new POSIXFilesystemNode(entry));
+                POSIXFilesystemNode *entry = new POSIXFilesystemNode();
+				entry->_isDirectory = true;
+				entry->_isValid = true;
+				entry->_path = drive_root;
+				entry->_displayName = "[" + entry->_path + "]";
+				myList.push_back(entry);
 			}
 	
 			ulDrvMap >>= 1;
@@ -160,7 +155,7 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 		// Start with a clone of this node, with the correct path set
 		POSIXFilesystemNode entry(*this);
 		entry._displayName = dp->d_name;
-		if (_path != "/")
+		if (_path.lastChar() != '/')
 			entry._path += '/';
 		entry._path += entry._displayName;
 
@@ -211,6 +206,12 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 AbstractFilesystemNode *POSIXFilesystemNode::getParent() const {
 	if (_path == "/")
 		return 0;	// The filesystem root has no parent
+
+#ifdef __OS2__
+    if (_path.size() == 3 && _path.hasSuffix(":/"))
+        // This is a root directory of a drive
+        return makeNode("/");   // return a virtual root for a list of drives
+#endif
 
 	const char *start = _path.c_str();
 	const char *end = start + _path.size();
