@@ -97,11 +97,5 @@ const char *gScummVMFeatures = ""
 #ifdef USE_FLUIDSYNTH
 	"FluidSynth "
 #endif
-
-#ifdef __SYMBIAN32__
-// we want a list of compiled in engines visible in the program,
-// because we also release special builds with only one engine
-#include "backends/platform/symbian/src/main_features.inl"
-#endif
 	;
 
