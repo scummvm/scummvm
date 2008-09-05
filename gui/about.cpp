@@ -57,7 +57,7 @@ enum {
 
 static const char *copyright_text[] = {
 "\\C""",
-"\\C""Copyright (C) 2002-2007 The ScummVM project",
+"\\C""Copyright (C) 2001-2008 The ScummVM project",
 "\\C""http://www.scummvm.org",
 "\\C""",
 "\\C""ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
