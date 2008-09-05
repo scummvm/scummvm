@@ -605,13 +605,18 @@ bool matchString(const char *str, const char *pat) {
 	for (;;) {
 		switch (*pat) {
 		case '*':
+			// Record pattern / string possition for backtracking
 			p = ++pat;
 			q = str;
+			// If pattern ended with * -> match
+			if (!*pat)
+				return true;
 			break;
 
 		default:
 			if (*pat != *str) {
 				if (p) {
+					// No match, oops -> try to backtrack
 					pat = p;
 					str = ++q;
 					if (!*str)

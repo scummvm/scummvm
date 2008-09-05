@@ -191,6 +191,14 @@ class StringTestSuite : public CxxTest::TestSuite
 	}
 
 	void test_matchString(void) {
+		TS_ASSERT( Common::matchString("",  "*"));
+		TS_ASSERT( Common::matchString("a",  "*"));
+		TS_ASSERT( Common::matchString("monkey.s01",  "*"));
+
+		TS_ASSERT(!Common::matchString("",  "?"));
+		TS_ASSERT( Common::matchString("a",  "?"));
+		TS_ASSERT(!Common::matchString("monkey.s01",  "?"));
+
 		TS_ASSERT( Common::matchString("monkey.s01",  "monkey.s??"));
 		TS_ASSERT( Common::matchString("monkey.s99",  "monkey.s??"));
 		TS_ASSERT(!Common::matchString("monkey.s101", "monkey.s??"));
