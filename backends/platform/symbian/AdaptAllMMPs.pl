@@ -83,8 +83,7 @@ my @excludes_graphics = (
 	"iff.cpp"
 ); 
 
-my @excludes_gui = ( 
-	"dialog.cpp"
+my @excludes_gui = ( 	
 ); 
 
 # the USE_ARM_* defines not parsed correctly, exclude manually:
