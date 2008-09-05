@@ -939,8 +939,6 @@ void ThemeEngine::debugWidgetPosition(const char *name, const Common::Rect &r) {
  *	Screen/overlay management
  *********************************************************/
 void ThemeEngine::updateScreen() {
-	ThemeItem *item = 0;
-
 	if (!_bufferQueue.empty()) {
 		_vectorRenderer->setSurface(_backBuffer);
 		

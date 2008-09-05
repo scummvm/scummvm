@@ -88,6 +88,7 @@ class ThemeItem {
 public:
 	ThemeItem(ThemeEngine *engine, const Common::Rect &area) : 
 		_engine(engine), _area(area) {}
+	virtual ~ThemeItem() {}
 
 	virtual void drawSelf(bool doDraw, bool doRestore) = 0;
 
