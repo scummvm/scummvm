@@ -106,7 +106,7 @@ NewGui::~NewGui() {
 	delete _theme;
 }
 
-bool NewGui::loadNewTheme(const Common::String &filename, ThemeEngine::GraphicsMode gfx) {
+bool NewGui::loadNewTheme(Common::String filename, ThemeEngine::GraphicsMode gfx) {
 	if (_theme && filename == _theme->getThemeFileName() && gfx == _theme->getGraphicsMode())
 		return true;
 	
@@ -124,8 +124,6 @@ bool NewGui::loadNewTheme(const Common::String &filename, ThemeEngine::GraphicsM
 	}
 
 	delete _theme;
-	_theme = 0;
-
 	_theme = new ThemeEngine(filename, gfx);
 
 	if (!_theme)
