@@ -130,6 +130,16 @@ static Common::String getDefaultConfigFileName() {
 	return configFile;
 }
 
+Common::SeekableReadStream *OSystem_SDL_Symbian::openConfigFileForReading() {
+	Common::FilesystemNode file(getDefaultConfigFileName());
+	return file.openForReading();
+}
+
+Common::WriteStream *OSystem_SDL_Symbian::openConfigFileForWriting() {
+	Common::FilesystemNode file(getDefaultConfigFileName());
+	return file.openForWriting();
+}
+
 OSystem_SDL_Symbian::zoneDesc OSystem_SDL_Symbian::_zones[TOTAL_ZONES] = {
         { 0, 0, 320, 145 },
         { 0, 145, 150, 55 },
