@@ -126,10 +126,9 @@ FIXME: The config file loading code below needs to be cleaned up.
  Port specific variants should be pushed into the respective ports.
 
  Ideally, the default OSystem::openConfigFileForReading/Writing methods
- should be removed completely. 
+ should be removed completely.
 */
 
-#include "common/file.h"
 
 #ifdef __PLAYSTATION2__
 #include "backends/platform/ps2/systemps2.h"

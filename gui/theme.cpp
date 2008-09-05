@@ -24,6 +24,7 @@
 
 #include "gui/theme.h"
 #include "gui/eval.h"
+#include "common/file.h"
 
 #include "common/unzip.h"
 

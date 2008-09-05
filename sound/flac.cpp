@@ -27,7 +27,7 @@
 
 #ifdef USE_FLAC
 
-#include "common/file.h"
+#include "common/stream.h"
 #include "common/util.h"
 
 #include "sound/audiostream.h"

@@ -28,7 +28,6 @@
 #include "common/system.h"
 #include "common/rect.h"
 #include "common/str.h"
-#include "common/file.h"
 #include "common/config-file.h"
 
 #include "graphics/surface.h"

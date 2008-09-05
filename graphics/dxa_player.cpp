@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/file.h"
 #include "graphics/dxa_player.h"
 #include "common/util.h"
 
