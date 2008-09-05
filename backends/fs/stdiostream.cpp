@@ -118,8 +118,10 @@
 	size_t	symbian_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle);
 	bool	symbian_feof(FILE* handle);
 	long int symbian_ftell(FILE* handle);
-	int		symbian_fseek(FILE* handle, long int offset, int whence);
+	int	symbian_fseek(FILE* handle, long int offset, int whence);
 	void	symbian_clearerr(FILE* handle);
+	void	symbian_fflush(FILE* handle);
+	int     symbian_ferror(FILE* handle);
 
 	// Only functions used in the ScummVM source have been defined here!
 	#define fopen(name, mode)					symbian_fopen(name, mode)
@@ -130,6 +132,8 @@
 	#define ftell(handle)						symbian_ftell(handle)
 	#define fseek(handle, offset, whence)		symbian_fseek(handle, offset, whence)
 	#define clearerr(handle)					symbian_clearerr(handle)
+	#define fflush(handle)					    symbian_fflush(handle)
+	#define ferror(handle)					    symbian_ferror(handle)
 #endif
 
 

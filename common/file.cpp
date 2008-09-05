@@ -133,7 +133,7 @@
 	#define ftell(handle)						symbian_ftell(handle)
 	#define fseek(handle, offset, whence)		symbian_fseek(handle, offset, whence)
 	#define clearerr(handle)					symbian_clearerr(handle)
-    #define fflush(handle)					    symbian_fflush(handle)
+    	#define fflush(handle)					    symbian_fflush(handle)
 	#define ferror(handle)					    symbian_ferror(handle)
 #endif
 
