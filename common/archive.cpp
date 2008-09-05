@@ -25,10 +25,32 @@
 
 #include "common/archive.h"
 #include "common/fs.h"
-#include "common/file.h"
 #include "common/util.h"
 
 namespace Common {
+
+
+int Archive::matchPattern(StringList &list, const String &pattern) {
+	// Get all "names" (TODO: "files" ?)
+	StringList allNames;
+	getAllNames(allNames);
+
+	int matches = 0;
+
+	// need to match lowercase key
+	String lowercasePattern = pattern;
+	lowercasePattern.toLowercase();
+
+	StringList::iterator it = allNames.begin();
+	for ( ; it != allNames.end(); it++) {
+		if (matchString(it->c_str(), lowercasePattern.c_str())) {
+			list.push_back(*it);
+			matches++;
+		}
+	}
+
+	return matches;
+}
 
 
 FSDirectory::FSDirectory(const FilesystemNode &node, int depth)
@@ -158,7 +180,8 @@ int FSDirectory::matchPattern(StringList &list, const String &pattern) {
 	NodeCache::iterator it = _fileCache.begin();
 	for ( ; it != _fileCache.end(); it++) {
 		if (matchString((*it)._key.c_str(), lowercasePattern.c_str())) {
-			list.push_back((*it)._key.c_str());
+			list.push_back((*it)._key);
+			matches++;
 		}
 	}
 
@@ -282,6 +305,5 @@ SeekableReadStream *SearchSet::openFile(const String &name) {
 
 	return 0;
 }
-
 
 } // namespace Common

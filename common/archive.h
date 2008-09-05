@@ -62,7 +62,7 @@ public:
 	 *
 	 * @return The number of names added to list.
 	 */
-	virtual int matchPattern(StringList &list, const String &pattern) = 0;
+	virtual int matchPattern(StringList &list, const String &pattern);
 
 	/**
 	 * Add all the names present in the Archive. Returned
@@ -142,7 +142,6 @@ public:
 	virtual int matchPattern(StringList &list, const String &pattern);
 	virtual SeekableReadStream *openFile(const String &name);
 };
-
 
 
 /**
