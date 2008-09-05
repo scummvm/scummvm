@@ -1116,6 +1116,7 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 		_heResId = pop();
 		break;
 	case 128:
+		// TODO: Clear Heap
 		break;
 	case 129:
 		// Dummy case
@@ -2139,31 +2140,30 @@ void ScummEngine_v100he::o100_systemOps() {
 	byte string[1024];
 
 	byte subOp = fetchScriptByte();
-	subOp -= 61;
 
 	switch (subOp) {
-	case 0:
+	case 61:
 		restart();
 		break;
-	case 67:
+	case 128:
 		clearDrawObjectQueue();
 		break;
-	case 71:
+	case 132:
 		// Confirm shutdown
 		quitGame();
 		break;
-	case 72:
+	case 133:
 		quitGame();
 		break;
-	case 73:
+	case 134:
 		copyScriptString(string, sizeof(string));
 		debug(0, "Start game (%s)", string);
 		break;
-	case 74:
+	case 135:
 		copyScriptString(string, sizeof(string));
 		debug(0, "Start executable (%s)", string);
 		break;
-	case 75:
+	case 136:
 		restoreBackgroundHE(Common::Rect(_screenWidth, _screenHeight));
 		updatePalette();
 		break;
@@ -2496,65 +2496,64 @@ void ScummEngine_v100he::o100_getWizData() {
 	int32 x, y;
 
 	byte subOp = fetchScriptByte();
-	subOp -= 20;
 
 	switch (subOp) {
-	case 0:
+	case 20:
 		y = pop();
 		x = pop();
 		state = pop();
 		resId = pop();
 		push(_wiz->getWizPixelColor(resId, state, x, y, 0));
 		break;
-	case 6:
+	case 26:
 		resId = pop();
 		push(_wiz->getWizImageStates(resId));
 		break;
-	case 13:
+	case 33:
 		y = pop();
 		x = pop();
 		state = pop();
 		resId = pop();
 		push(_wiz->isWizPixelNonTransparent(resId, state, x, y, 0));
 		break;
-	case 19:
+	case 39:
 		state = pop();
 		resId = pop();
 		_wiz->getWizImageDim(resId, state, w, h);
 		push(h);
 		break;
-	case 34:
+	case 54:
 		type = pop();
 		state = pop();
 		resId = pop();
 		push(_wiz->getWizImageData(resId, state, type));
 		break;
-	case 64:
+	case 84:
 		state = pop();
 		resId = pop();
 		_wiz->getWizImageDim(resId, state, w, h);
 		push(w);
 		break;
-	case 65:
+	case 85:
 		state = pop();
 		resId = pop();
 		_wiz->getWizImageSpot(resId, state, x, y);
 		push(x);
 		break;
-	case 66:
+	case 86:
 		state = pop();
 		resId = pop();
 		_wiz->getWizImageSpot(resId, state, x, y);
 		push(y);
 		break;
-	case 111:
+	case 131:
 		pop();
 		copyScriptString(filename, sizeof(filename));
 		pop();
 		push(0);
 		debug(0, "o100_getWizData() case 111 unhandled");
 		break;
-	case 112:
+	case 132:
 		h = pop();
 		w = pop();
 		y = pop();
@@ -2899,30 +2898,29 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 void ScummEngine_v100he::o100_getVideoData() {
 	// Uses Bink video
 	byte subOp = fetchScriptByte();
-	subOp -= 26;
 
 	switch (subOp) {
-	case 0:
+	case 26:
 		pop();
 		push(_moviePlay->getFrameCount());
 		break;
-	case 13:
+	case 39:
 		pop();
 		push(_moviePlay->getHeight());
 		break;
-	case 14:
+	case 40:
 		pop();
 		push(_moviePlay->getImageNum());
 		break;
-	case 28:
+	case 54:
 		debug(0, "o100_getVideoData: subOp 28 stub (%d, %d)", pop(), pop());
 		push(0);
 		break;
-	case 47:
+	case 73:
 		pop();
 		push(_moviePlay->getCurFrame());
 		break;
-	case 58:
+	case 84:
 		pop();
 		push(_moviePlay->getWidth());
 		break;

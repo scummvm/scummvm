@@ -546,6 +546,7 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		_res->unlock(rtRoomImage, resid);
 		break;
 	case 116:
+		// TODO: Clear Heap
 		break;
 	case 117:		// SO_LOAD_CHARSET
 		resid = pop();
