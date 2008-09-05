@@ -169,23 +169,7 @@ int FSDirectory::matchPattern(StringList &list, const String &pattern) {
 		_cached = true;
 	}
 
-	int matches = 0;
-
-	// need to match lowercase key
-	String lowercasePattern = pattern;
-	lowercasePattern.toLowercase();
-
-	// Full *key* match, with path separators (backslashes) considered
-	// as normal characters.
-	NodeCache::iterator it = _fileCache.begin();
-	for ( ; it != _fileCache.end(); it++) {
-		if (matchString((*it)._key.c_str(), lowercasePattern.c_str())) {
-			list.push_back((*it)._key);
-			matches++;
-		}
-	}
-
-	return matches;
+	return Archive::matchPattern(list, pattern);
 }
 
 
