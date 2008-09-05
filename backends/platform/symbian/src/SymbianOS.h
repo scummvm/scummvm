@@ -63,6 +63,9 @@ public:
 
 	// Overloaded from SDL_Commmon
 	void quit();
+
+	// Returns reference to File session
+	RFs& FsSession();
 protected:
 	//
 	// The mixer callback function, passed on to OSystem::setSoundCallback().

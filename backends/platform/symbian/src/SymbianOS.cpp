@@ -672,6 +672,14 @@ int symbian_fseek(FILE* handle, long int offset, int whence) {
 void symbian_clearerr(FILE* /*handle*/) {
 }
 
+void	symbian_fflush(FILE* handle) {
+	((TSymbianFileEntry*)(handle))->iFileHandle.Flush();
+}
+
+int     symbian_ferror(FILE* /*handle*/) {
+	return 0;
+}
+
 /** Vibration support */
 #ifdef  USE_VIBRA_SE_PXXX
 void OSystem_SDL_Symbian::initializeVibration() {

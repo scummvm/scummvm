@@ -156,6 +156,5 @@ void inline *scumm_bsearch(const void *key, const void *base, size_t nmemb, size
 namespace Symbian {
 extern void FatalError(const char *msg);
 extern char* GetExecutablePath();
-#define DYNAMIC_MODULES 1
 }
 #endif
