@@ -85,7 +85,6 @@ SOURCEPATH ..\..\..\..\gui
 //SOURCE KeysDialog.cpp
 //SOURCE Actions.cpp
 
-
 SOURCEPATH ..\..\..\..\sound
 //START_AUTO_OBJECTS_SOUND_//
 

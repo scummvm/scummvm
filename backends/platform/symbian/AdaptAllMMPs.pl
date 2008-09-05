@@ -83,6 +83,10 @@ my @excludes_graphics = (
 	"iff.cpp"
 ); 
 
+my @excludes_gui = ( 
+	"dialog.cpp"
+); 
+
 # the USE_ARM_* defines not parsed correctly, exclude manually:
 my @excludes_scumm = (
 	".*ARM.*",		# the *ARM.s files are added in .mpp files based on WINS/ARM build!
@@ -95,7 +99,7 @@ my @excludes_scumm = (
 #arseModule(mmpStr,		dirStr,		ifdefArray,				[exclusionsArray])
 ParseModule("_base",	"base",		\@section_empty); # now in ./TRG/ScummVM_TRG.mmp, these never change anyways...
 ParseModule("_base",	"common",	\@section_empty);
-ParseModule("_base",	"gui",		\@section_empty);
+ParseModule("_base",	"gui",		\@section_empty,		\@excludes_gui);
 ParseModule("_base",	"graphics",	\@section_empty,		\@excludes_graphics);
 ParseModule("_base",	"sound",	\@section_empty,		\@excludes_snd);
 
@@ -111,7 +115,7 @@ ParseModule("_sword1",	"sword1",	\@section_empty);
 ParseModule("_sword2",	"sword2",	\@section_empty);
 ParseModule("_lure",	"lure",		\@section_empty);
 ParseModule("_cine",	"cine",		\@section_empty);
-ParseModule("_agi",		"agi",		\@section_empty);
+ParseModule("_agi",	"agi",		\@section_empty);
 ParseModule("_touche",	"touche",	\@section_empty);
 ParseModule("_parallaction","parallaction",\@section_empty);
 ParseModule("_cruise",	"cruise",	\@section_empty);
