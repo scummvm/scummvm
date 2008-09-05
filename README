@@ -1240,7 +1240,7 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
              SWORD1
              SWORD2
              TOUCHE
-	
+
 --save-slot/-x:
 
      This switch may be used to load a savegame directly from the command line.
