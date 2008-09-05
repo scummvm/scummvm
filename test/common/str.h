@@ -158,6 +158,25 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str2, "Test it, NOW! 42");
 	}
 
+	void test_deleteChar( void )
+	{
+		Common::String str("01234567890123456789012345678901");
+		str.deleteChar(10);
+		TS_ASSERT_EQUALS( str, "0123456789123456789012345678901" );
+		str.deleteChar(10);
+		TS_ASSERT_EQUALS( str, "012345678923456789012345678901" );
+	}
+
+	void test_sharing( void )
+	{
+		Common::String str("01234567890123456789012345678901");
+		Common::String str2(str);
+		TS_ASSERT_EQUALS( str2, "01234567890123456789012345678901" );
+		str.deleteLastChar();
+		TS_ASSERT_EQUALS( str, "0123456789012345678901234567890" );
+		TS_ASSERT_EQUALS( str2, "01234567890123456789012345678901" );
+	}
+
 	void test_lastPathComponent(void) {
 		TS_ASSERT(Common::lastPathComponent("/", '/') == "");
 		TS_ASSERT(Common::lastPathComponent("/foo/bar", '/') == "bar");
