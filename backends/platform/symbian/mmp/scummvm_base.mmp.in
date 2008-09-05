@@ -108,7 +108,7 @@ SOURCE	   backends\saves\savefile.cpp
 SOURCE	   backends\saves\default\default-saves.cpp
 SOURCE	   backends\saves\compressed\compressed-saves.cpp
 SOURCE	   engines\engine.cpp
-
-
+SOURCE	   backends\fs\abstract-fs.cpp
+SOURCE	   backends\fs\stdiostream.cpp
 // backend specific includes
-// backend specific includes
+
