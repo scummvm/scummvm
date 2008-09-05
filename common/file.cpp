@@ -200,9 +200,11 @@ static FILE *fopenNoCase(const String &filename, const String &directory, const 
 
 #ifdef __amigaos4__
 	//
-	// Work around for possibility that someone uses AmigaOS "newlib" build with SmartFileSystem (blocksize 512 bytes), leading
-	// to buffer size being only 512 bytes. "Clib2" sets the buffer size to 8KB, resulting smooth movie playback. This forces the buffer
-	// to be enough also when using "newlib" compile on SFS.
+	// Work around for possibility that someone uses AmigaOS "newlib" build
+	// with SmartFileSystem (blocksize 512 bytes), leading to buffer size
+	// being only 512 bytes. "Clib2" sets the buffer size to 8KB, resulting
+	// smooth movie playback. This forces the buffer to be enough also when
+	// using "newlib" compile on SFS.
 	//
 	if (file) {
 		setvbuf(file, NULL, _IOFBF, 8192);

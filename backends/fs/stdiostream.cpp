@@ -194,6 +194,21 @@ void StdioStream::flush() {
 
 StdioStream *StdioStream::makeFromPath(const Common::String &path, bool writeMode) {
 	FILE *handle = fopen(path.c_str(), writeMode ? "wb" : "rb");
+
+#ifdef __amigaos4__
+	//
+	// Work around for possibility that someone uses AmigaOS "newlib" build
+	// with SmartFileSystem (blocksize 512 bytes), leading to buffer size
+	// being only 512 bytes. "Clib2" sets the buffer size to 8KB, resulting
+	// smooth movie playback. This forces the buffer to be enough also when
+	// using "newlib" compile on SFS.
+	//
+	if (handle && !writeMode) {
+		setvbuf(handle, NULL, _IOFBF, 8192);
+	}
+#endif
+
+
 	if (handle)
 		return new StdioStream(handle);
 	return 0;
