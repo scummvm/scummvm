@@ -70,7 +70,7 @@ enum {
 	kHelpCmd = 'HELP',
 	kAboutCmd = 'ABOU',
 	kQuitCmd = 'QUIT',
-	kRTLCmd = 'RTL',
+	kRTLCmd = 'RTL ',
 	kChooseCmd = 'CHOS'
 };
 

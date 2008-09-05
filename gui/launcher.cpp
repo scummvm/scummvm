@@ -65,7 +65,7 @@ enum {
 	kLoadGameCmd = 'LOAD',
 	kQuitCmd = 'QUIT',
 	kChooseCmd = 'CHOS',
-	kDelCmd = 'DEL',
+	kDelCmd = 'DEL ',
 
 
 	kCmdGlobalGraphicsOverride = 'OGFX',
