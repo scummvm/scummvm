@@ -27,7 +27,7 @@ chdir("../../../");
 	"mmp/scummvm_sword1.mmp", 
 	"mmp/scummvm_sword2.mmp", 
 	"mmp/scummvm_touche.mmp", 
-
+	"mmp/scummvm_tinsel.mmp", 
 
 	# Target Platform Project Files
 	"S60/ScummVM_S60.mmp",  
@@ -103,8 +103,8 @@ chdir("engines/");
 ParseModule("_scumm",	"scumm",	\@sections_scumm,		\@excludes_scumm );
 ParseModule("_queen",	"queen",	\@section_empty);
 ParseModule("_agos",	"agos",		\@section_empty);
-ParseModule("_sky",		"sky",		\@section_empty);
-ParseModule("_gob",		"gob",		\@section_empty);
+ParseModule("_sky",	"sky",		\@section_empty);
+ParseModule("_gob",	"gob",		\@section_empty);
 ParseModule("_saga",	"saga",		\@section_empty);
 ParseModule("_kyra",	"kyra",		\@section_empty);
 ParseModule("_sword1",	"sword1",	\@section_empty);
@@ -118,7 +118,8 @@ ParseModule("_cruise",	"cruise",	\@section_empty);
 ParseModule("_drascula","drascula",	\@section_empty);
 ParseModule("_igor",	"igor",		\@section_empty);
 ParseModule("_made",	"made",		\@section_empty);
-ParseModule("_m4",		"m4",		\@section_empty);
+ParseModule("_m4",	"m4",		\@section_empty);
+ParseModule("_tinsel",	"tinsel",	\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P
