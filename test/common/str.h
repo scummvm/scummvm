@@ -189,4 +189,22 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(Common::normalizePath("foo//./bar//", '/') == "foo/bar");
 		TS_ASSERT(Common::normalizePath("foo//.bar//", '/') == "foo/.bar");
 	}
+
+	void test_matchString(void) {
+		TS_ASSERT( Common::matchString("monkey.s01",  "monkey.s??"));
+		TS_ASSERT( Common::matchString("monkey.s99",  "monkey.s??"));
+		TS_ASSERT(!Common::matchString("monkey.s101", "monkey.s??"));
+
+		TS_ASSERT( Common::matchString("monkey.s01",  "monkey.s?1"));
+		TS_ASSERT(!Common::matchString("monkey.s99",  "monkey.s?1"));
+		TS_ASSERT(!Common::matchString("monkey.s101", "monkey.s?1"));
+
+		TS_ASSERT( Common::matchString("monkey.s01",  "monkey.s*"));
+		TS_ASSERT( Common::matchString("monkey.s99",  "monkey.s*"));
+		TS_ASSERT( Common::matchString("monkey.s101", "monkey.s*"));
+
+		TS_ASSERT( Common::matchString("monkey.s01",  "monkey.s*1"));
+		TS_ASSERT(!Common::matchString("monkey.s99",  "monkey.s*1"));
+		TS_ASSERT( Common::matchString("monkey.s101", "monkey.s*1"));
+	}
 };

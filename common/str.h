@@ -149,6 +149,30 @@ public:
 	bool contains(const char *x) const;
 	bool contains(char x) const;
 
+	/**
+	 * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
+	 * Taken from exult/files/listfiles.cc
+	 *
+	 * Token meaning:
+	 *		"*": any character, any amount of times.
+	 *		"?": any character, only once.
+	 *
+	 * Example strings/patterns:
+	 *		String: monkey.s01	 Pattern: monkey.s??	=> true
+	 *		String: monkey.s101	 Pattern: monkey.s??	=> false
+	 *		String: monkey.s99	 Pattern: monkey.s?1	=> false
+	 *		String: monkey.s101	 Pattern: monkey.s*		=> true
+	 *		String: monkey.s99	 Pattern: monkey.s*1	=> false
+	 *
+	 * @param str Text to be matched against the given pattern.
+	 * @param pat Glob pattern.
+	 *
+	 * @return true if str matches the pattern, false otherwise.
+	 */
+	bool matchString(const char *pat) const;
+	bool matchString(const String &pat) const;
+
+
 	inline const char *c_str() const		{ return _str; }
 	inline uint size() const				{ return _size; }
 
@@ -172,11 +196,19 @@ public:
 	/** Set character c at position p. */
 	void insertChar(char c, uint32 p);
 
+	/** Clears the string, making it empty. */
 	void clear();
 
+	/** Convert all characters in the string to lowercase. */
 	void toLowercase();
+
+	/** Convert all characters in the string to uppercase. */
 	void toUppercase();
 	
+	/**
+	 * Removes trailing and leading whitespaces. Uses isspace() to decide
+	 * what is whitespace and what not.
+	 */
 	void trim();
 
 	uint hash() const;
@@ -257,6 +289,27 @@ Common::String lastPathComponent(const Common::String &path, const char sep);
 Common::String normalizePath(const Common::String &path, const char sep);
 
 
+/**
+ * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
+ * Taken from exult/files/listfiles.cc
+ *
+ * Token meaning:
+ *		"*": any character, any amount of times.
+ *		"?": any character, only once.
+ *
+ * Example strings/patterns:
+ *		String: monkey.s01	 Pattern: monkey.s??	=> true
+ *		String: monkey.s101	 Pattern: monkey.s??	=> false
+ *		String: monkey.s99	 Pattern: monkey.s?1	=> false
+ *		String: monkey.s101	 Pattern: monkey.s*		=> true
+ *		String: monkey.s99	 Pattern: monkey.s*1	=> false
+ *
+ * @param str Text to be matched against the given pattern.
+ * @param pat Glob pattern.
+ *
+ * @return true if str matches the pattern, false otherwise.
+ */
+bool matchString(const char *str, const char *pat);
 
 
 class StringList : public Array<String> {

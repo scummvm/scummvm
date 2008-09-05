@@ -63,39 +63,6 @@ extern bool isSmartphone(void);
 
 namespace Common {
 
-bool matchString(const char *str, const char *pat) {
-	const char *p = 0;
-	const char *q = 0;
-
-	for (;;) {
-		switch (*pat) {
-		case '*':
-			p = ++pat;
-			q = str;
-			break;
-
-		default:
-			if (*pat != *str) {
-				if (p) {
-					pat = p;
-					str = ++q;
-					if (!*str)
-						return !*pat;
-					break;
-				}
-				else
-					return false;
-			}
-			// fallthrough
-		case '?':
-			if (!*str)
-				return !*pat;
-			pat++;
-			str++;
-		}
-	}
-}
-
 StringTokenizer::StringTokenizer(const String &str, const String &delimiters) : _str(str), _delimiters(delimiters) {
 	reset();
 }

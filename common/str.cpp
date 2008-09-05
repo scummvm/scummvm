@@ -311,6 +311,14 @@ bool String::contains(char x) const {
 	return strchr(c_str(), x) != NULL;
 }
 
+bool String::matchString(const char *pat) const {
+	return Common::matchString(c_str(), pat);
+}
+
+bool String::matchString(const String &pat) const {
+	return Common::matchString(c_str(), pat.c_str());
+}
+
 void String::deleteLastChar() {
 	deleteChar(_size - 1);
 }
@@ -585,6 +593,42 @@ Common::String normalizePath(const Common::String &path, const char sep) {
 	}
 
 	return result;
+}
+
+bool matchString(const char *str, const char *pat) {
+	assert(str);
+	assert(pat);
+
+	const char *p = 0;
+	const char *q = 0;
+
+	for (;;) {
+		switch (*pat) {
+		case '*':
+			p = ++pat;
+			q = str;
+			break;
+
+		default:
+			if (*pat != *str) {
+				if (p) {
+					pat = p;
+					str = ++q;
+					if (!*str)
+						return !*pat;
+					break;
+				}
+				else
+					return false;
+			}
+			// fallthrough
+		case '?':
+			if (!*str)
+				return !*pat;
+			pat++;
+			str++;
+		}
+	}
 }
 
 }	// End of namespace Common
