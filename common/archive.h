@@ -71,9 +71,7 @@ public:
 	 *
 	 * @return The number of names added to list.
 	 */
-	virtual int getAllNames(StringList &list) {
-		return matchPattern(list, "*");
-	}
+	virtual int getAllNames(StringList &list) = 0;
 
 	/**
 	 * Create a stream bound to a file in the archive.
@@ -139,7 +137,7 @@ public:
 	FSDirectory *getSubDirectory(const String &name);
 
 	virtual bool hasFile(const String &name);
-	virtual int matchPattern(StringList &list, const String &pattern);
+	virtual int getAllNames(StringList &list);
 	virtual SeekableReadStream *openFile(const String &name);
 };
 
@@ -166,9 +164,6 @@ class SearchSet : public Archive {
 	void insert(const Node& node);
 
 public:
-	SearchSet();
-	virtual ~SearchSet();
-
 	/**
 	 * Add a new Archive to the searchable set.
 	 */
@@ -191,6 +186,9 @@ public:
 
 	virtual bool hasFile(const String &name);
 	virtual int matchPattern(StringList &list, const String &pattern);
+	virtual int getAllNames(StringList &list) {
+		return matchPattern(list, "*");
+	}
 
 	/**
 	 * Implements openFile from Archive base class. The current policy is

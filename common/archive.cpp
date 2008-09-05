@@ -159,30 +159,29 @@ void FSDirectory::cacheDirectoryRecursive(FilesystemNode node, int depth, const 
 
 }
 
-int FSDirectory::matchPattern(StringList &list, const String &pattern) {
-	if (pattern.empty() || !_node.isDirectory()) {
+int FSDirectory::getAllNames(StringList &list) {
+	if (!_node.isDirectory())
 		return 0;
-	}
 
+	// Cache dir data
 	if (!_cached) {
 		cacheDirectoryRecursive(_node, _depth, "");
 		_cached = true;
 	}
 
-	return Archive::matchPattern(list, pattern);
+	// Small optimization: Ensure the StringList has to grow at most once
+	list.reserve(list.size() + _fileCache.size());
+	
+	// Add all filenames from our cache
+	NodeCache::iterator it = _fileCache.begin();
+	for ( ; it != _fileCache.end(); it++) {
+		list.push_back((*it)._key);
+	}
+	
+	return _fileCache.size();
 }
 
 
-
-
-
-SearchSet::SearchSet() {
-
-}
-
-SearchSet::~SearchSet() {
-
-}
 
 SearchSet::ArchiveList::iterator SearchSet::find(const String &name) const {
 	ArchiveList::iterator it = _list.begin();
