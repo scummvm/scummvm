@@ -323,7 +323,7 @@ bool VQAMovie::open(const char *filename) {
 					uint32 scanTag = readTag();
 					uint32 scanSize = _file.readUint32BE();
 
-					if (_file.eof())
+					if (_file.eos())
 						break;
 
 					if (scanTag == MKID_BE('VQFR')) {
@@ -396,7 +396,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 		uint32 tag = readTag();
 		uint32 size = _file.readUint32BE();
 
-		if (_file.eof()) {
+		if (_file.eos()) {
 			// This happens at the last frame. Apparently it has
 			// no sound?
 			break;
@@ -596,7 +596,7 @@ void VQAMovie::play() {
 			uint32 tag = readTag();
 			uint32 size = _file.readUint32BE();
 
-			if (_file.eof()) {
+			if (_file.eos()) {
 				warning("VQAMovie::play: Unexpected EOF");
 				break;
 			}

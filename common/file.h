@@ -92,15 +92,6 @@ public:
 	void clearIOFailed();
 	bool eos() const;
 
-	/**
-	 * Checks for end of file.
-	 *
-	 * @deprecated: use eos() instead
-	 *
-	 * @return: true if the end of file is reached, false otherwise.
-	 */
-	virtual bool eof() const { return eos(); }
-
 	virtual uint32 pos() const;
 	virtual uint32 size() const;
 	void seek(int32 offs, int whence = SEEK_SET);

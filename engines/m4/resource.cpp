@@ -76,11 +76,11 @@ FileSystem::FileSystem(const char *hashFilename) {
 	}
 
 	/* load hagfile records and update the list */
-	while (!hashFile.eof()) {
+	while (!hashFile.eos()) {
 		HashHagEntry entry;
 		hashFile.read(entry.filename, kM4MaxFilenameSize);
 		entry.fileIndex = hashFile.readByte();
-		if (hashFile.eof())
+		if (hashFile.eos())
 			break;
 
 		changeExtension(_hagEntries[entry.fileIndex].filename, entry.filename, "HAG");

@@ -55,7 +55,7 @@ Common::MemoryReadStream *RedReader::loadFromRed(const char *redFilename, const 
 
 bool RedReader::seekFile(Common::File &fd, FileEntry &fileEntry, const char *filename) {
 	char arcFilename[13];
-	while (!fd.eof()) {
+	while (!fd.eos()) {
 		fd.skip(8); // skip unknown
 		fileEntry.compSize = fd.readUint32LE();
 		fileEntry.origSize = fd.readUint32LE();

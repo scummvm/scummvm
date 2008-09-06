@@ -95,13 +95,13 @@ void PmvPlayer::play(const char *filename) {
 	// get it to work well?
 	_audioStream = Audio::makeAppendableAudioStream(soundFreq, Audio::Mixer::FLAG_UNSIGNED);
 
-	while (!_abort && !_fd->eof()) {
+	while (!_abort && !_fd->eos()) {
 
 		int32 frameTime = _vm->_system->getMillis();
 
 		readChunk(chunkType, chunkSize);
 
-		if (_fd->eof())
+		if (_fd->eos())
 			break;
 
 		frameData = new byte[chunkSize];
