@@ -125,8 +125,8 @@ DriverTinyGL::DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscr
 	memset(_storedDisplay, 0, 640 * 480 * 2);
 
 	_currentShadowArray = NULL;
-	
-	TGLfloat ambientSource[] = {0.0, 0.0, 0.0, 1.0};
+
+	TGLfloat ambientSource[] = { 0.6, 0.6, 0.6, 1.0 };
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, ambientSource);
 }
 
@@ -376,60 +376,42 @@ void DriverTinyGL::setupLight(Scene::Light *light, int lightId) {
 	tglEnable(TGL_LIGHTING);
 	float lightColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	float lightDir[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float lightDir[] = { 0.0f, 0.0f, 0.0f };
 
-	lightPos[0] = light->_pos.x();
-	lightPos[1] = light->_pos.y();
-	lightPos[2] = light->_pos.z();
-	float intensity = light->_intensity / 1.5f;
-	lightColor[0] = ((float)light->_color.red() / 15.0f) * light->_intensity;
-	lightColor[1] = ((float)light->_color.blue() / 15.0f) * light->_intensity;
-	lightColor[2] = ((float)light->_color.green() / 15.0f) * light->_intensity;
+	float intensity = light->_intensity / 1.3f;
+	lightColor[0] = ((float)light->_color.red() / 15.0f) * intensity;
+	lightColor[1] = ((float)light->_color.blue() / 15.0f) * intensity;
+	lightColor[2] = ((float)light->_color.green() / 15.0f) * intensity;
 
 	if (strcmp(light->_type.c_str(), "omni") == 0) {
+		lightPos[0] = light->_pos.x();
+		lightPos[1] = light->_pos.y();
+		lightPos[2] = light->_pos.z();
 		tglDisable(TGL_LIGHT0 + lightId);
-		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, lightColor);
+		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
 		tglEnable(TGL_LIGHT0 + lightId);
 	} else if (strcmp(light->_type.c_str(), "direct") == 0) {
 		tglDisable(TGL_LIGHT0 + lightId);
-/*		ambientLight[0] = (float)light->_color.red() / 256.0f;
-		ambientLight[1] = (float)light->_color.blue() / 256.0f;
-		ambientLight[2] = (float)light->_color.green() / 256.0f;
-		lightColor[0] = light->_intensity;
-		lightColor[1] = light->_intensity;
-		lightColor[2] = light->_intensity;
-		lightDir[0] = light->_dir.x();
-		lightDir[1] = light->_dir.y();
-		lightDir[2] = light->_dir.z();
-//		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
+		lightDir[0] = -light->_dir.x();
+		lightDir[1] = -light->_dir.y();
+		lightDir[2] = -light->_dir.z();
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, lightColor);
-		tglLightfv(TGL_LIGHT0 + lightId, TGL_AMBIENT, ambientLight);
-		tglLightfv(TGL_LIGHT0 + lightId, TGL_SPECULAR, lightColor);
-		tglLightfv(TGL_LIGHT0 + lightId, TGL_SPOT_DIRECTION, lightDir);
-//		tglLightf(TGL_LIGHT0 + lightId, TGL_CONSTANT_ATTENUATION, 0.0f);
-//		tglLightf(TGL_LIGHT0 + lightId, TGL_LINEAR_ATTENUATION, 0.0f);
-//		tglLightf(TGL_LIGHT0 + lightId, TGL_QUADRATIC_ATTENUATION, 1.0f);
-		tglEnable(TGL_LIGHT0 + lightId);*/
+		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightDir);
+		tglEnable(TGL_LIGHT0 + lightId);
 	} else if (strcmp(light->_type.c_str(), "spot") == 0) {
 		tglDisable(TGL_LIGHT0 + lightId);
-/*		lightColor[0] = (float)light->_color.red() / 256.0f;
-		lightColor[1] = (float)light->_color.blue() / 256.0f;
-		lightColor[2] = (float)light->_color.green() / 256.0f;
+		lightPos[0] = light->_pos.x();
+		lightPos[1] = light->_pos.y();
+		lightPos[2] = light->_pos.z();
 		lightDir[0] = light->_dir.x();
 		lightDir[1] = light->_dir.y();
 		lightDir[2] = light->_dir.z();
-		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, lightColor);
-		tglLightfv(TGL_LIGHT0 + lightId, TGL_AMBIENT, ambientLight);
-		tglLightfv(TGL_LIGHT0 + lightId, TGL_SPECULAR, lightColor);
+		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_SPOT_DIRECTION, lightDir);
-		tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_EXPONENT, 64.0f * light->_intensity);
-		tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_CUTOFF, 90.0f);
-		tglLightf(TGL_LIGHT0 + lightId, TGL_CONSTANT_ATTENUATION, 0.0f);
-		tglLightf(TGL_LIGHT0 + lightId, TGL_LINEAR_ATTENUATION, 0.0f);
-		tglLightf(TGL_LIGHT0 + lightId, TGL_QUADRATIC_ATTENUATION, 1.0f);
-		tglEnable(TGL_LIGHT0 + lightId);*/
+		tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_CUTOFF, 90);
+		tglEnable(TGL_LIGHT0 + lightId);
 	} else {
 		error("Scene::setupLights() Unknown type of light: %s", light->_type.c_str());
 	}

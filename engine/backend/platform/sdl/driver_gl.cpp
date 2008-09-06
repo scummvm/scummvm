@@ -71,6 +71,9 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 
 	_currentShadowArray = NULL;
 
+	GLfloat ambientSource[] = { 0.6, 0.6, 0.6, 1.0 };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientSource);
+
 	glPolygonOffset(-6.0, -6.0);
 }
 
@@ -332,60 +335,42 @@ void DriverGL::setupLight(Scene::Light *light, int lightId) {
 	glEnable(GL_LIGHTING);
 	float lightColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	float lightDir[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float lightDir[] = { 0.0f, 0.0f, 0.0f };
 
-	lightPos[0] = light->_pos.x();
-	lightPos[1] = light->_pos.y();
-	lightPos[2] = light->_pos.z();
-	float intensity = light->_intensity / 1.5f;
-	lightColor[0] = ((float)light->_color.red() / 15.0f) * light->_intensity;
-	lightColor[1] = ((float)light->_color.blue() / 15.0f) * light->_intensity;
-	lightColor[2] = ((float)light->_color.green() / 15.0f) * light->_intensity;
+	float intensity = light->_intensity / 1.3f;
+	lightColor[0] = ((float)light->_color.red() / 15.0f) * intensity;
+	lightColor[1] = ((float)light->_color.blue() / 15.0f) * intensity;
+	lightColor[2] = ((float)light->_color.green() / 15.0f) * intensity;
 
 	if (strcmp(light->_type.c_str(), "omni") == 0) {
+		lightPos[0] = light->_pos.x();
+		lightPos[1] = light->_pos.y();
+		lightPos[2] = light->_pos.z();
 		glDisable(GL_LIGHT0 + lightId);
-		glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
 		glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, lightColor);
+		glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
 		glEnable(GL_LIGHT0 + lightId);
 	} else if (strcmp(light->_type.c_str(), "direct") == 0) {
 		glDisable(GL_LIGHT0 + lightId);
-/*		ambientLight[0] = (float)light->_color.red() / 256.0f;
-		ambientLight[1] = (float)light->_color.blue() / 256.0f;
-		ambientLight[2] = (float)light->_color.green() / 256.0f;
-		lightColor[0] = light->_intensity;
-		lightColor[1] = light->_intensity;
-		lightColor[2] = light->_intensity;
-		lightDir[0] = light->_dir.x();
-		lightDir[1] = light->_dir.y();
-		lightDir[2] = light->_dir.z();
-//		glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
+		lightDir[0] = -light->_dir.x();
+		lightDir[1] = -light->_dir.y();
+		lightDir[2] = -light->_dir.z();
 		glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, lightColor);
-		glLightfv(GL_LIGHT0 + lightId, GL_AMBIENT, ambientLight);
-		glLightfv(GL_LIGHT0 + lightId, GL_SPECULAR, lightColor);
-		glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
-		glLightf(GL_LIGHT0 + lightId, GL_CONSTANT_ATTENUATION, 0.0f);
-		glLightf(GL_LIGHT0 + lightId, GL_LINEAR_ATTENUATION, 0.0f);
-		glLightf(GL_LIGHT0 + lightId, GL_QUADRATIC_ATTENUATION, 1.0f);
-		glEnable(GL_LIGHT0 + lightId);*/
+		glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightDir);
+		glEnable(GL_LIGHT0 + lightId);
 	} else if (strcmp(light->_type.c_str(), "spot") == 0) {
 		glDisable(GL_LIGHT0 + lightId);
-/*		lightColor[0] = (float)light->_color.red() / 256.0f;
-		lightColor[1] = (float)light->_color.blue() / 256.0f;
-		lightColor[2] = (float)light->_color.green() / 256.0f;
+		lightPos[0] = light->_pos.x();
+		lightPos[1] = light->_pos.y();
+		lightPos[2] = light->_pos.z();
 		lightDir[0] = light->_dir.x();
 		lightDir[1] = light->_dir.y();
 		lightDir[2] = light->_dir.z();
-		glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
 		glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, lightColor);
-		glLightfv(GL_LIGHT0 + lightId, GL_AMBIENT, ambientLight);
-		glLightfv(GL_LIGHT0 + lightId, GL_SPECULAR, lightColor);
+		glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
 		glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
-		glLightf(GL_LIGHT0 + lightId, GL_SPOT_EXPONENT, 64.0f * light->_intensity);
-		glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, 90.0f);
-		glLightf(GL_LIGHT0 + lightId, GL_CONSTANT_ATTENUATION, 0.0f);
-		glLightf(GL_LIGHT0 + lightId, GL_LINEAR_ATTENUATION, 0.0f);
-		glLightf(GL_LIGHT0 + lightId, GL_QUADRATIC_ATTENUATION, 1.0f);
-		glEnable(GL_LIGHT0 + lightId);*/
+		glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, 90);
+		glEnable(GL_LIGHT0 + lightId);
 	} else {
 		error("Scene::setupLights() Unknown type of light: %s", light->_type.c_str());
 	}
