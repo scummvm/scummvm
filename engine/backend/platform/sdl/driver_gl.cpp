@@ -369,7 +369,7 @@ void DriverGL::setupLight(Scene::Light *light, int lightId) {
 		glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, lightColor);
 		glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
 		glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
-		glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, 90);
+		glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, light->_penumbraangle);
 		glEnable(GL_LIGHT0 + lightId);
 	} else {
 		error("Scene::setupLights() Unknown type of light: %s", light->_type.c_str());
