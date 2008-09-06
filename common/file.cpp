@@ -28,47 +28,11 @@
 #include "common/hashmap.h"
 #include "common/util.h"
 #include "common/hash-str.h"
-#include <errno.h>
 
 #include "backends/fs/stdiostream.h"
 
 #if defined(MACOSX) || defined(IPHONE)
 #include "CoreFoundation/CoreFoundation.h"
-#endif
-
-#ifdef __PLAYSTATION2__
-	// for those replaced fopen/fread/etc functions
-	typedef unsigned long	uint64;
-	typedef signed long	int64;
-	#include "backends/platform/ps2/fileio.h"
-
-	#define fopen(a, b)			ps2_fopen(a, b)
-#endif
-
-#ifdef __DS__
-
-	// These functions replease the standard library functions of the same name.
-	// As this header is included after the standard one, I have the chance to #define
-	// all of these to my own code.
-	//
-	// A #define is the only way, as redefinig the functions would cause linker errors.
-
-	// These functions need to be #undef'ed, as their original definition
-	// in devkitarm is done with #includes (ugh!)
-
-	#include "backends/fs/ds/ds-fs.h"
-
-	// Only functions used in the ScummVM source have been defined here!
-	#define fopen(name, mode)					DS::std_fopen(name, mode)
-
-#endif
-
-#ifdef __SYMBIAN32__
-
-	#define FILE void
-
-	FILE*	symbian_fopen(const char* name, const char* mode);
-	#define fopen(name, mode)					symbian_fopen(name, mode)
 #endif
 
 namespace Common {
@@ -81,8 +45,8 @@ typedef HashMap<String, int> StringIntMap;
 static StringIntMap *_defaultDirectories;
 static StringMap *_filesMap;
 
-static FILE *fopenNoCase(const String &filename, const String &directory, const char *mode) {
-	FILE *file;
+static SeekableReadStream *fopenNoCase(const String &filename, const String &directory) {
+	SeekableReadStream *handle;
 	String dirBuf(directory);
 	String fileBuf(filename);
 
@@ -102,50 +66,37 @@ static FILE *fopenNoCase(const String &filename, const String &directory, const 
 	//
 	// Try to open the file normally
 	//
-	file = fopen(pathBuf.c_str(), mode);
+	handle = StdioStream::makeFromPath(pathBuf, false);
 
 	//
 	// Try again, with file name converted to upper case
 	//
-	if (!file) {
+	if (!handle) {
 		fileBuf.toUppercase();
 		pathBuf = dirBuf + fileBuf;
-		file = fopen(pathBuf.c_str(), mode);
+		handle = StdioStream::makeFromPath(pathBuf, false);
 	}
 
 	//
 	// Try again, with file name converted to lower case
 	//
-	if (!file) {
+	if (!handle) {
 		fileBuf.toLowercase();
 		pathBuf = dirBuf + fileBuf;
-		file = fopen(pathBuf.c_str(), mode);
+		handle = StdioStream::makeFromPath(pathBuf, false);
 	}
 
 	//
 	// Try again, with file name capitalized
 	//
-	if (!file) {
+	if (!handle) {
 		fileBuf.toLowercase();
 		fileBuf.setChar(toupper(fileBuf[0]),0);
 		pathBuf = dirBuf + fileBuf;
-		file = fopen(pathBuf.c_str(), mode);
+		handle = StdioStream::makeFromPath(pathBuf, false);
 	}
 
-#ifdef __amigaos4__
-	//
-	// Work around for possibility that someone uses AmigaOS "newlib" build
-	// with SmartFileSystem (blocksize 512 bytes), leading to buffer size
-	// being only 512 bytes. "Clib2" sets the buffer size to 8KB, resulting
-	// smooth movie playback. This forces the buffer to be enough also when
-	// using "newlib" compile on SFS.
-	//
-	if (file) {
-		setvbuf(file, NULL, _IOFBF, 8192);
-	}
-#endif
-
-	return file;
+	return handle;
 }
 
 void File::addDefaultDirectory(const String &directory) {
@@ -218,7 +169,6 @@ File::~File() {
 
 
 bool File::open(const String &filename) {
-	FILE *file = 0;
 	assert(!filename.empty());
 	assert(!_handle);
 
@@ -231,36 +181,36 @@ bool File::open(const String &filename) {
 	if (_filesMap && _filesMap->contains(fname)) {
 		fname = (*_filesMap)[fname];
 		debug(3, "Opening hashed: %s", fname.c_str());
-		file = fopen(fname.c_str(), "rb");
+		_handle = StdioStream::makeFromPath(fname, false);
 	} else if (_filesMap && _filesMap->contains(fname + ".")) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
 		fname = (*_filesMap)[fname + "."];
 		debug(3, "Opening hashed: %s", fname.c_str());
-		file = fopen(fname.c_str(), "rb");
+		_handle = StdioStream::makeFromPath(fname, false);
 	} else {
 
 		if (_defaultDirectories) {
 			// Try all default directories
 			StringIntMap::const_iterator x(_defaultDirectories->begin());
-			for (; file == NULL && x != _defaultDirectories->end(); ++x) {
-				file = fopenNoCase(filename, x->_key, "rb");
+			for (; _handle == NULL && x != _defaultDirectories->end(); ++x) {
+				_handle = fopenNoCase(filename, x->_key);
 			}
 		}
 
 		// Last resort: try the current directory
-		if (file == NULL)
-			file = fopenNoCase(filename, "", "rb");
+		if (_handle == NULL)
+			_handle = fopenNoCase(filename, "");
 
 		// Last last (really) resort: try looking inside the application bundle on Mac OS X for the lowercase file.
 #if defined(MACOSX) || defined(IPHONE)
-		if (!file) {
+		if (!_handle) {
 			CFStringRef cfFileName = CFStringCreateWithBytes(NULL, (const UInt8 *)filename.c_str(), filename.size(), kCFStringEncodingASCII, false);
 			CFURLRef fileUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), cfFileName, NULL, NULL);
 			if (fileUrl) {
 				UInt8 buf[256];
 				if (CFURLGetFileSystemRepresentation(fileUrl, false, (UInt8 *)buf, 256)) {
-					file = fopen((char *)buf, "rb");
+					_handle = StdioStream::makeFromPath((char *)buf, false);
 				}
 				CFRelease(fileUrl);
 			}
@@ -270,9 +220,6 @@ bool File::open(const String &filename) {
 
 	}
 	
-	if (file)
-		_handle = new StdioStream(file);
-
 	if (_handle == NULL)
 		debug(2, "File %s not opened", filename.c_str());
 	else
