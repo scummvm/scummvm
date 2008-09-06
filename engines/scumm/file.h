@@ -39,7 +39,7 @@ public:
 	virtual bool open(const Common::String &filename) = 0;
 	virtual bool openSubFile(const Common::String &filename) = 0;
 
-	virtual bool eof() = 0;
+	virtual bool eos() = 0;
 	virtual uint32 pos() = 0;
 	virtual uint32 size() = 0;
 	virtual void seek(int32 offs, int whence = SEEK_SET) = 0;
@@ -51,6 +51,7 @@ private:
 	byte _encbyte;
 	uint32	_subFileStart;
 	uint32	_subFileLen;
+	bool	_myIoFailed;
 public:
 	ScummFile();
 	void setEnc(byte value);
@@ -61,7 +62,10 @@ public:
 	bool open(const Common::String &filename);
 	bool openSubFile(const Common::String &filename);
 
-	bool eof();
+	bool ioFailed() const { return _myIoFailed || BaseScummFile::ioFailed(); }
+	void clearIOFailed() { _myIoFailed = false; BaseScummFile::clearIOFailed(); }
+
+	bool eos();
 	uint32 pos();
 	uint32 size();
 	void seek(int32 offs, int whence = SEEK_SET);
@@ -106,7 +110,7 @@ public:
 	bool openSubFile(const Common::String &filename);
 
 	void close();
-	bool eof() { return _stream->eos(); }
+	bool eos() { return _stream->eos(); }
 	uint32 pos() { return _stream->pos(); }
 	uint32 size() { return _stream->size(); }
 	void seek(int32 offs, int whence = SEEK_SET) { _stream->seek(offs, whence); }

@@ -125,8 +125,8 @@ bool ScummFile::openSubFile(const Common::String &filename) {
 }
 
 
-bool ScummFile::eof() {
-	return _subFileLen ? (pos() >= _subFileLen) : File::eof();
+bool ScummFile::eos() {
+	return _subFileLen ? (pos() >= _subFileLen) : File::eos();
 }
 
 uint32 ScummFile::pos() {
@@ -167,7 +167,7 @@ uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 		uint32 newPos = curPos + dataSize;
 		if (newPos > _subFileLen) {
 			dataSize = _subFileLen - curPos;
-			_ioFailed = true;
+			_myIoFailed = true;
 		}
 	}
 
