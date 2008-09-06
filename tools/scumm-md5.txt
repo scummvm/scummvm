@@ -469,7 +469,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	e44ea295a3f8fe4f41983080dab1e9ce	-1	fr	Mac	HE 90	Updated	-	ThierryFR
 	746e88c172a5b7a1ae89ac0ee3ee681a	-1	ru	Windows	HE 90	Updated	-	sev
 	a197a87ae77f3b3333f09a7a2c448fe2	-1	en	Windows	HE 99	Updated	-	Jonathan
-	57a5cfec9ef231a007043cc1917e8988	-1	en	Wii	HE 100	Updated	-	sanguinehearts
+	57a5cfec9ef231a007043cc1917e8988	-1	en	Wii	HE 100	-	-	sanguinehearts
 
 	084ed0fa98a6d1e9368d67fe9cfbd417	-1	en	Windows	HE 71	Demo	-	khalek
 	c8aac5e3e701874e2fa4117896f9e1b1	-1	en	Mac	HE 73	Demo	-	khalek, sev
@@ -789,6 +789,7 @@ spyfox	SPY Fox 1: Dry Cereal
 	72ac6bc980d5101c2142189d746bd62f	-1	ru	Windows	HE 99	-	-	sev
 	3de99ef0523f8ca7958faa3afccd035a	-1	us	All	HE 100	Updated	-	Kirben
 	23394c8d29cc63c61313959431a12476	-1	en	Windows	HE 100	Updated	-	Jonathan
+	50b831f11b8c4b83784cf81f4dcc69ea	-1	en	Wii	HE 100	-	-	sanguinehearts
 
 	53e94115b55dd51d4b8ff0871aa1df1e	20103	en	All	-	Demo	-	khalek, sev
 	fbdd947d21e8f5bac6d6f7a316af1c5a	15693	en	All	-	Demo	-	sev
