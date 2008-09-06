@@ -68,7 +68,7 @@ public:
 	bool openSubFile(const Common::String &filename);
 
 	void close();
-	bool eof() { return _stream->eos(); }
+	bool eos() { return _stream->eos(); }
 	uint32 pos() { return _stream->pos(); }
 	uint32 size() { return _stream->size(); }
 	void seek(int32 offs, int whence = SEEK_SET) { _stream->seek(offs, whence); }

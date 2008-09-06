@@ -35,17 +35,13 @@ namespace Common {
 
 class FilesystemNode;
 
-
 /**
  * TODO: vital to document this core class properly!!! For both users and implementors
  */
 class File : public SeekableReadStream, public NonCopyable {
 protected:
 	/** File handle to the actual file; 0 if no file is open. */
-	void *_handle;
-
-	/** Status flag which tells about recent I/O failures. */
-	bool _ioFailed;
+	SeekableReadStream *_handle;
 
 	/** The name of this file, for debugging. */
 	String _name;
@@ -94,14 +90,16 @@ public:
 
 	bool ioFailed() const;
 	void clearIOFailed();
-	bool eos() const { return eof(); }
+	bool eos() const;
 
 	/**
 	 * Checks for end of file.
 	 *
+	 * @deprecated: use eos() instead
+	 *
 	 * @return: true if the end of file is reached, false otherwise.
 	 */
-	virtual bool eof() const;
+	virtual bool eof() const { return eos(); }
 
 	virtual uint32 pos() const;
 	virtual uint32 size() const;
@@ -119,7 +117,7 @@ public:
 class DumpFile : public WriteStream, public NonCopyable {
 protected:
 	/** File handle to the actual file; 0 if no file is open. */
-	void *_handle;
+	WriteStream *_handle;
 
 public:
 	DumpFile();
@@ -140,14 +138,6 @@ public:
 
 	bool ioFailed() const;
 	void clearIOFailed();
-	bool eos() const { return eof(); }
-
-	/**
-	 * Checks for end of file.
-	 *
-	 * @return: true if the end of file is reached, false otherwise.
-	 */
-	virtual bool eof() const;
 
 	virtual uint32 write(const void *dataPtr, uint32 dataSize);
 

@@ -229,7 +229,7 @@ public:
 	 *
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
-	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::SeekableReadStream *openForReading() const;
 
 	/**
 	 * Creates a WriteStream instance corresponding to the file
@@ -238,7 +238,7 @@ public:
 	 *
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
-	virtual Common::WriteStream *openForWriting();
+	virtual Common::WriteStream *openForWriting() const;
 };
 
 } // End of namespace Common

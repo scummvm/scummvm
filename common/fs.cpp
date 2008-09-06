@@ -173,7 +173,7 @@ bool FilesystemNode::lookupFile(FSList &results, const Common::String &p, bool h
 	return !results.empty();
 }
 
-Common::SeekableReadStream *FilesystemNode::openForReading() {
+Common::SeekableReadStream *FilesystemNode::openForReading() const {
 	if (_realNode == 0)
 		return 0;
 
@@ -188,7 +188,7 @@ Common::SeekableReadStream *FilesystemNode::openForReading() {
 	return _realNode->openForReading();
 }
 
-Common::WriteStream *FilesystemNode::openForWriting() {
+Common::WriteStream *FilesystemNode::openForWriting() const {
 	if (_realNode == 0)
 		return 0;
 

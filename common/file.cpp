@@ -30,6 +30,8 @@
 #include "common/hash-str.h"
 #include <errno.h>
 
+#include "backends/fs/stdiostream.h"
+
 #if defined(MACOSX) || defined(IPHONE)
 #include "CoreFoundation/CoreFoundation.h"
 #endif
@@ -41,22 +43,6 @@
 	#include "backends/platform/ps2/fileio.h"
 
 	#define fopen(a, b)			ps2_fopen(a, b)
-	#define fclose(a)			ps2_fclose(a)
-	#define fseek(a, b, c)			ps2_fseek(a, b, c)
-	#define ftell(a)			ps2_ftell(a)
-	#define feof(a)				ps2_feof(a)
-	#define fread(a, b, c, d)		ps2_fread(a, b, c, d)
-	#define fwrite(a, b, c, d)		ps2_fwrite(a, b, c, d)
-
-	//#define fprintf				ps2_fprintf	// used in common/util.cpp
-	//#define fflush(a)			ps2_fflush(a)	// used in common/util.cpp
-
-	//#define fgetc(a)			ps2_fgetc(a)	// not used
-	//#define fgets(a, b, c)			ps2_fgets(a, b, c)	// not used
-	//#define fputc(a, b)			ps2_fputc(a, b)	// not used
-	//#define fputs(a, b)			ps2_fputs(a, b)	// not used
-
-	//#define fsize(a)			ps2_fsize(a)	// not used -- and it is not a standard function either
 #endif
 
 #ifdef __DS__
@@ -69,72 +55,20 @@
 
 	// These functions need to be #undef'ed, as their original definition
 	// in devkitarm is done with #includes (ugh!)
-	#undef feof
-	#undef clearerr
-	//#undef getc
-	//#undef ferror
 
 	#include "backends/fs/ds/ds-fs.h"
 
-
-	//void	std_fprintf(FILE* handle, const char* fmt, ...);	// used in common/util.cpp
-	//void	std_fflush(FILE* handle);	// used in common/util.cpp
-
-	//char*	std_fgets(char* str, int size, FILE* file);	// not used
-	//int	std_getc(FILE* handle);	// not used
-	//char*	std_getcwd(char* dir, int dunno);	// not used
-	//void	std_cwd(char* dir);	// not used
-	//int	std_ferror(FILE* handle);	// not used
-
 	// Only functions used in the ScummVM source have been defined here!
 	#define fopen(name, mode)					DS::std_fopen(name, mode)
-	#define fclose(handle)						DS::std_fclose(handle)
-	#define fread(ptr, size, items, file)		DS::std_fread(ptr, size, items, file)
-	#define fwrite(ptr, size, items, file)		DS::std_fwrite(ptr, size, items, file)
-	#define feof(handle)						DS::std_feof(handle)
-	#define ftell(handle)						DS::std_ftell(handle)
-	#define fseek(handle, offset, whence)		DS::std_fseek(handle, offset, whence)
-	#define clearerr(handle)					DS::std_clearerr(handle)
-
-	//#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
-
-	//#define fprintf(file, fmt, ...)				{ char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); }
-	//#define fflush(file)						DS::std_fflush(file)	// used in common/util.cpp
-
-	//#define fgets(str, size, file)				DS::std_fgets(str, size, file)	// not used
-	//#define getc(handle)						DS::std_getc(handle)	// not used
-	//#define getcwd(dir, dunno)					DS::std_getcwd(dir, dunno)	// not used
-	#define ferror(handle)						DS::std_ferror(handle)
 
 #endif
 
 #ifdef __SYMBIAN32__
-	#undef feof
-	#undef clearerr
 
 	#define FILE void
 
 	FILE*	symbian_fopen(const char* name, const char* mode);
-	void	symbian_fclose(FILE* handle);
-	size_t	symbian_fread(const void* ptr, size_t size, size_t numItems, FILE* handle);
-	size_t	symbian_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle);
-	bool	symbian_feof(FILE* handle);
-	long int symbian_ftell(FILE* handle);
-	int		symbian_fseek(FILE* handle, long int offset, int whence);
-	void	symbian_clearerr(FILE* handle);
-	void	symbian_fflush(FILE* handle);
-	int     symbian_ferror(FILE* handle);
-	// Only functions used in the ScummVM source have been defined here!
 	#define fopen(name, mode)					symbian_fopen(name, mode)
-	#define fclose(handle)						symbian_fclose(handle)
-	#define fread(ptr, size, items, file)		symbian_fread(ptr, size, items, file)
-	#define fwrite(ptr, size, items, file)		symbian_fwrite(ptr, size, items, file)
-	#define feof(handle)						symbian_feof(handle)
-	#define ftell(handle)						symbian_ftell(handle)
-	#define fseek(handle, offset, whence)		symbian_fseek(handle, offset, whence)
-	#define clearerr(handle)					symbian_clearerr(handle)
-    	#define fflush(handle)					    symbian_fflush(handle)
-	#define ferror(handle)					    symbian_ferror(handle)
 #endif
 
 namespace Common {
@@ -275,7 +209,7 @@ void File::resetDefaultDirectories() {
 }
 
 File::File()
-	: _handle(0), _ioFailed(false) {
+	: _handle(0) {
 }
 
 File::~File() {
@@ -284,6 +218,7 @@ File::~File() {
 
 
 bool File::open(const String &filename) {
+	FILE *file = 0;
 	assert(!filename.empty());
 	assert(!_handle);
 
@@ -296,36 +231,36 @@ bool File::open(const String &filename) {
 	if (_filesMap && _filesMap->contains(fname)) {
 		fname = (*_filesMap)[fname];
 		debug(3, "Opening hashed: %s", fname.c_str());
-		_handle = fopen(fname.c_str(), "rb");
+		file = fopen(fname.c_str(), "rb");
 	} else if (_filesMap && _filesMap->contains(fname + ".")) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
 		fname = (*_filesMap)[fname + "."];
 		debug(3, "Opening hashed: %s", fname.c_str());
-		_handle = fopen(fname.c_str(), "rb");
+		file = fopen(fname.c_str(), "rb");
 	} else {
 
 		if (_defaultDirectories) {
 			// Try all default directories
 			StringIntMap::const_iterator x(_defaultDirectories->begin());
-			for (; _handle == NULL && x != _defaultDirectories->end(); ++x) {
-				_handle = fopenNoCase(filename, x->_key, "rb");
+			for (; file == NULL && x != _defaultDirectories->end(); ++x) {
+				file = fopenNoCase(filename, x->_key, "rb");
 			}
 		}
 
 		// Last resort: try the current directory
-		if (_handle == NULL)
-			_handle = fopenNoCase(filename, "", "rb");
+		if (file == NULL)
+			file = fopenNoCase(filename, "", "rb");
 
 		// Last last (really) resort: try looking inside the application bundle on Mac OS X for the lowercase file.
 #if defined(MACOSX) || defined(IPHONE)
-		if (!_handle) {
+		if (!file) {
 			CFStringRef cfFileName = CFStringCreateWithBytes(NULL, (const UInt8 *)filename.c_str(), filename.size(), kCFStringEncodingASCII, false);
 			CFURLRef fileUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), cfFileName, NULL, NULL);
 			if (fileUrl) {
 				UInt8 buf[256];
 				if (CFURLGetFileSystemRepresentation(fileUrl, false, (UInt8 *)buf, 256)) {
-					_handle = fopen((char *)buf, "rb");
+					file = fopen((char *)buf, "rb");
 				}
 				CFRelease(fileUrl);
 			}
@@ -334,6 +269,9 @@ bool File::open(const String &filename) {
 #endif
 
 	}
+	
+	if (file)
+		_handle = new StdioStream(file);
 
 	if (_handle == NULL)
 		debug(2, "File %s not opened", filename.c_str());
@@ -368,7 +306,7 @@ bool File::open(const FilesystemNode &node) {
 	clearIOFailed();
 	_name.clear();
 
-	_handle = fopen(node.getPath().c_str(), "rb");
+	_handle = node.openForReading();
 
 	if (_handle == NULL)
 		debug(2, "File %s not found", filename.c_str());
@@ -410,8 +348,7 @@ bool File::exists(const String &filename) {
 }
 
 void File::close() {
-	if (_handle)
-		fclose((FILE *)_handle);
+	delete _handle;
 	_handle = NULL;
 }
 
@@ -421,59 +358,37 @@ bool File::isOpen() const {
 
 bool File::ioFailed() const {
 	// TODO/FIXME: Just use ferror() here?
-	return _ioFailed != 0;
+	return !_handle || _handle->ioFailed();
 }
 
 void File::clearIOFailed() {
-	// TODO/FIXME: Just use clearerr() here?
-	_ioFailed = false;
+	if (_handle)
+		_handle->clearIOFailed();
 }
 
-bool File::eof() const {
+bool File::eos() const {
 	assert(_handle);
-
-	return feof((FILE *)_handle) != 0;
+	return _handle->eos();
 }
 
 uint32 File::pos() const {
 	assert(_handle);
-
-	return ftell((FILE *)_handle);
+	return _handle->pos();
 }
 
 uint32 File::size() const {
 	assert(_handle);
-
-	uint32 oldPos = ftell((FILE *)_handle);
-	fseek((FILE *)_handle, 0, SEEK_END);
-	uint32 length = ftell((FILE *)_handle);
-	fseek((FILE *)_handle, oldPos, SEEK_SET);
-
-	return length;
+	return _handle->size();
 }
 
 void File::seek(int32 offs, int whence) {
 	assert(_handle);
-
-	if (fseek((FILE *)_handle, offs, whence) != 0)
-		clearerr((FILE *)_handle);
+	_handle->seek(offs, whence);
 }
 
 uint32 File::read(void *ptr, uint32 len) {
-	byte *ptr2 = (byte *)ptr;
-	uint32 real_len;
-
 	assert(_handle);
-
-	if (len == 0)
-		return 0;
-
-	real_len = fread(ptr2, 1, len, (FILE *)_handle);
-	if (real_len < len) {
-		_ioFailed = true;
-	}
-
-	return real_len;
+	return _handle->read(ptr, len);
 }
 
 
@@ -491,7 +406,7 @@ bool DumpFile::open(const String &filename) {
 	String fname(filename);
 	fname.toLowercase();
 	
-	_handle = fopenNoCase(filename, "", "wb");
+	_handle = StdioStream::makeFromPath(filename, true);
 
 	if (_handle == NULL)
 		debug(2, "Failed to open '%s' for writing", filename.c_str());
@@ -513,7 +428,7 @@ bool DumpFile::open(const FilesystemNode &node) {
 		return false;
 	}*/
 
-	_handle = fopen(node.getPath().c_str(), "wb");
+	_handle = node.openForWriting();
 
 	if (_handle == NULL)
 		debug(2, "File %s not found", node.getName().c_str());
@@ -522,8 +437,7 @@ bool DumpFile::open(const FilesystemNode &node) {
 }
 
 void DumpFile::close() {
-	if (_handle)
-		fclose((FILE *)_handle);
+	delete _handle;
 	_handle = NULL;
 }
 
@@ -533,33 +447,22 @@ bool DumpFile::isOpen() const {
 
 bool DumpFile::ioFailed() const {
 	assert(_handle);
-	return ferror((FILE *)_handle) != 0;
+	return _handle->ioFailed();
 }
 
 void DumpFile::clearIOFailed() {
 	assert(_handle);
-	clearerr((FILE *)_handle);
-}
-
-bool DumpFile::eof() const {
-	assert(_handle);
-	return feof((FILE *)_handle) != 0;
+	_handle->clearIOFailed();
 }
 
 uint32 DumpFile::write(const void *ptr, uint32 len) {
 	assert(_handle);
-
-	if (len == 0)
-		return 0;
-
-	return (uint32)fwrite(ptr, 1, len, (FILE *)_handle);
+	return _handle->write(ptr, len);
 }
 
 void DumpFile::flush() {
 	assert(_handle);
-	// TODO: Should check the return value of fflush, and if it is non-zero,
-	// check errno and set an error flag.
-	fflush((FILE *)_handle);
+	_handle->flush();
 }
 
 }	// End of namespace Common
