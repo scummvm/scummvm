@@ -166,9 +166,12 @@ char *SeekableReadStream::readLine_NEW(char *buf, size_t bufSize) {
 		c = readByte();
 		
 		// If end-of-file occurs before any characters are read, return
-		// NULL and the buffer contents remain unchanged. If an error
-		/// occurs, return NULL and the buffer contents are indeterminate.
-		if (ioFailed() || (len == 0 && eos()))
+		// NULL and the buffer contents remain unchanged.
+		if (len == 0 && eos())
+			return 0;
+		
+		// If an error occurs, return NULL and the buffer contents are indeterminate.
+		if (ioFailed())
 			return 0;
 
 		// Check for CR or CR/LF

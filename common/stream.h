@@ -317,20 +317,7 @@ public:
 	void skip(uint32 offset) { seek(offset, SEEK_CUR); }
 
 	/**
-	 * Read one line of text from a CR or CR/LF terminated plain text file.
-	 * This method is a rough analog of the (f)gets function.
-	 *
-	 * @deprecated This method has a major flaw: There is no way to detect
-	 * whether a line exceeeds the length of the buffer, resulting in breakage
-	 * when overlong lines are encountered.
-	 * Use readLine_NEW() or readline() instead.
-	 *
-	 * @param buf	the buffer to store into
-	 * @param bufSize	the size of the buffer
-	 * @return a pointer to the read string, or NULL if an error occurred
-	 *
-	 * @note The line terminator (CR or CR/LF) is stripped and not inserted
-	 *       into the buffer.
+	 * DEPRECATED: Do not use this method! Instead use readLine_NEW() or readline().
 	 */
 	virtual char *readLine_OLD(char *buf, size_t bufSize);
 
@@ -350,6 +337,9 @@ public:
 	 * This method does not distinguish between end-of-file and error;
 	 * callers muse use ioFailed() or eos() to determine which occurred.
 	 *
+	 * @note This methods is closely modeled after the standard fgets()
+	 *       function from stdio.h.
+	 *
 	 * @param buf	the buffer to store into
 	 * @param bufSize	the size of the buffer
 	 * @return a pointer to the read string, or NULL if an error occurred
@@ -360,7 +350,7 @@ public:
 	/**
 	 * Reads a full line and returns it as a Common::String. Reading
 	 * stops when the end of a line is reached (CR, CR/LF or LF), and
-	 * at end-of-file or error. 
+	 * at end-of-file or error.
 	 *
 	 * Upon successful completion, return a string with the content
 	 * of the line, *without* the end of a line marker. This method
