@@ -165,14 +165,19 @@ class SearchSet : public Archive {
 
 public:
 	/**
-	 * Add a new Archive to the searchable set.
+	 * Add a new archive to the searchable set.
 	 */
 	void add(const String& name, ArchivePtr archive, uint priority = 0);
 
 	/**
-	 * Remove an Archive from the searchable set.
+	 * Remove an archive from the searchable set.
 	 */
 	void remove(const String& name);
+
+	/**
+	 * Check if a given archive name is already present.
+	 */
+	bool hasArchive(const String &name) const;
 
 	/**
      * Empties the searchable set.

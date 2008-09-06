@@ -225,6 +225,10 @@ void SearchSet::remove(const String& name) {
 	}
 }
 
+bool SearchSet::hasArchive(const String &name) const {
+	return (find(name) != _list.end());
+}
+
 void SearchSet::clear() {
 	_list.clear();
 }
