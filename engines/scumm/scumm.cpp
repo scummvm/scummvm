@@ -1530,6 +1530,12 @@ void ScummEngine_v99he::resetScumm() {
 	byte *data = defineArray(129, kStringArray, 0, 0, 0, len);
 	memcpy(data, _filenamePattern.pattern, len);
 }
+
+void ScummEngine_v100he::resetScumm() {
+	ScummEngine_v99he::resetScumm();
+
+	memset(_debugInputBuffer, 0, sizeof(_debugInputBuffer));
+}
 #endif
 
 void ScummEngine::setupMusic(int midi) {

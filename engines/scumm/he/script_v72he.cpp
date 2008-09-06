@@ -1635,13 +1635,10 @@ void ScummEngine_v72he::o72_drawWizImage() {
 	_wiz->displayWizImage(&wi);
 }
 
-void ScummEngine_v72he::o72_debugInput() {
-	byte string[255];
+void ScummEngine_v72he::debugInput(byte* string) {
 	byte *debugInputString;
 
-	copyScriptString(string, sizeof(string));
-
-	DebugInputDialog dialog(this, (char*)string);
+	DebugInputDialog dialog(this, (char *)string);
 	runDialog(dialog);
 	while (!dialog.done) {
 		parseEvents();
@@ -1652,6 +1649,13 @@ void ScummEngine_v72he::o72_debugInput() {
 	debugInputString = defineArray(0, kStringArray, 0, 0, 0, dialog.buffer.size());
 	memcpy(debugInputString, dialog.buffer.c_str(), dialog.buffer.size());
 	push(readVar(0));
+}
+
+void ScummEngine_v72he::o72_debugInput() {
+	byte string[255];
+
+	copyScriptString(string, sizeof(string));
+	debugInput(string);
 }
 
 void ScummEngine_v72he::o72_jumpToScript() {
