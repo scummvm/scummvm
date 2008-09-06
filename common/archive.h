@@ -56,26 +56,26 @@ public:
 	virtual bool hasFile(const String &name) = 0;
 
 	/**
-	 * Add names to the provided list according to the pattern. Returned
-	 * names can be used as parameters to fileOpen.
+	 * Add all the names present in the Archive which match pattern to
+	 * list. Returned names can be used as parameters to openFile.
 	 * Must not remove elements from the list.
 	 *
-	 * @return The number of names added to list.
+	 * @return the number of names added to list
 	 */
 	virtual int matchPattern(StringList &list, const String &pattern);
 
 	/**
-	 * Add all the names present in the Archive. Returned
-	 * names can be used as parameters to fileOpen.
+	 * Add all the names present in the Archive to list. Returned
+	 * names can be used as parameters to openFile.
 	 * Must not remove elements from the list.
 	 *
-	 * @return The number of names added to list.
+	 * @return the number of names added to list
 	 */
 	virtual int getAllNames(StringList &list) = 0;
 
 	/**
 	 * Create a stream bound to a file in the archive.
-	 * @return The newly created input stream.
+	 * @return the newly created input stream
 	 */
 	virtual SeekableReadStream *openFile(const String &name) = 0;
 };
@@ -132,7 +132,7 @@ public:
 
 	/**
 	 * Create a new FSDirectory pointing to a sub directory of the instance.
-	 * @return A new FSDirectory instance conveniently wrapped in a SharedPtr.
+	 * @return a new FSDirectory instance
 	 */
 	FSDirectory *getSubDirectory(const String &name);
 
