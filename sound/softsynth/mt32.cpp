@@ -98,7 +98,7 @@ public:
 	}
 	bool readBit8u(MT32Emu::Bit8u *in) {
 		byte b = _in.readByte();
-		if (_in.eof())
+		if (_in.eos())
 			return false;
 		*in = b;
 		return true;
@@ -111,7 +111,7 @@ public:
 		return !_out.ioFailed();
 	}
 	bool isEOF() {
-		return _in.isOpen() ? _in.eof() : _out.eof();
+		return _in.isOpen() && _in.eos();
 	}
 };
 
