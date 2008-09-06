@@ -97,9 +97,6 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -191,9 +188,6 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -262,6 +256,14 @@
 			</File>
 			<File
 				RelativePath="..\..\common\algorithm.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\archive.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\archive.h"
 				>
 			</File>
 			<File
