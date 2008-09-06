@@ -146,7 +146,7 @@ StdioStream::~StdioStream() {
 }
 
 bool StdioStream::ioFailed() const {
-	return ferror((FILE *)_handle) != 0;
+	return eos() || ferror((FILE *)_handle) != 0;
 }
 
 void StdioStream::clearIOFailed() {
