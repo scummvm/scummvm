@@ -46,6 +46,12 @@ extern "C" int residual_main(int argc, char *argv[]);
 #pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
 #pragma warning( disable : 4244 ) // turn off "conversion type" warning
 #pragma warning( disable : 4250 ) // turn off "inherits via dominance" warning
+
+// vsnprintf is already defined in Visual Studio 2008
+#if (_MSC_VER < 1500)
+	#define vsnprintf _vsnprintf
+#endif
+		
 #endif
 
 #ifndef LOCAL_PI
