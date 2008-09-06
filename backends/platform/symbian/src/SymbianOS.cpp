@@ -479,6 +479,26 @@ RFs& OSystem_SDL_Symbian::FsSession() {
 	return *_RFs;
 }
 
+// Symbian bsearch implementation is flawed
+void* scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *)) {
+	// Perform binary search
+	size_t lo = 0;
+	size_t hi = nmemb;
+	while (lo < hi) {
+		size_t mid = (lo + hi) / 2;
+		const void *p = ((const char *)base) + mid * size;
+		int tmp = (*compar)(key, p);
+		if (tmp < 0)
+			hi = mid;
+		else if (tmp > 0)
+			lo = mid + 1;
+		else
+			return (void *)p;
+	}
+
+	return NULL;
+}
+
 FILE*	symbian_fopen(const char* name, const char* mode) {
 	TSymbianFileEntry* fileEntry = new TSymbianFileEntry;
 	fileEntry->iInputPos = KErrNotFound;
