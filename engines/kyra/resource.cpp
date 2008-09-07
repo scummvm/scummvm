@@ -40,7 +40,8 @@ Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles
 
 	Common::SharedPtr<Common::Archive> path(new Common::FSDirectory(ConfMan.get("path")));
 	Common::SharedPtr<Common::Archive> extrapath(new Common::FSDirectory(ConfMan.get("extrapath")));
-	_vm->_system->addSysArchivesToSearchSet(_files);
+
+	_vm->_system->addSysArchivesToSearchSet(_files, 3);
 	_files.add("path", path, 3);
 	_files.add("extrapath", extrapath, 3);
 	// compressed installer archives are added at level '2',
@@ -208,7 +209,8 @@ bool Resource::loadFileList(const char * const *filelist, uint32 numFiles) {
 void Resource::unloadPakFile(Common::String filename) {
 	filename.toUppercase();
 	_archiveFiles->remove(filename);
-	_protectedFiles->remove(filename);
+	// We do not remove files from '_protectedFiles' here, since
+	// those are protected against unloading.
 }
 
 bool Resource::isInPakList(Common::String filename) {
