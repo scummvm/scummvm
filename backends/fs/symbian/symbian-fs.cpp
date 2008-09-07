@@ -138,15 +138,7 @@ AbstractFilesystemNode *SymbianFilesystemNode::getChild(const Common::String &n)
 
 	if (_path.lastChar() != '\\')
 		newPath += '\\';
-	newPath += n;
-
-	TPtrC8 ptr((const unsigned char*) newPath.c_str(), newPath.size());
-	TFileName fname;
-	fname.Copy(ptr);
-	TBool isFolder = EFalse;
-	BaflUtils::IsFolder(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), fname, isFolder);
-	if (!isFolder)
-		return 0;
+	newPath += n;	
 
 	return new SymbianFilesystemNode(newPath);
 }

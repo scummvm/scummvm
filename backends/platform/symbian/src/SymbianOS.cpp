@@ -29,6 +29,7 @@
 #include "backends/fs/symbian/symbian-fs-factory.h"
 #include "backends/platform/symbian/src/SymbianOS.h"
 #include "backends/platform/symbian/src/SymbianActions.h"
+#include "backends/saves/default/default-saves.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -150,7 +151,7 @@ void OSystem_SDL_Symbian::initBackend() {
 	Common::String savePath;
 	savePath = Symbian::GetExecutablePath();
 	savePath += DEFAULT_SAVE_PATH "\\";
-	ConfMan.registerDefault("savepath", savePath);
+   _savefile = new DefaultSaveFileManager(savePath);
 
 	// If savepath has not already been set then set it
 	if (!ConfMan.hasKey("savepath")) {
