@@ -114,7 +114,7 @@ void File::addDefaultDirectory(const FilesystemNode &directory) {
 }
 
 void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, const String &prefix) {
-	if (level <= 0)
+	if (level <= 0 || !dir.exists() || !dir.isDirectory())
 		return;
 
 	FSList fslist;
