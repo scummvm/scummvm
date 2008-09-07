@@ -462,6 +462,8 @@ bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
 bool ThemeEngine::loadTheme(Common::String fileName) {
 	unloadTheme();
 
+	warning("Loading theme: %s.\n", fileName.c_str());
+
 	if (fileName != "builtin") {
 		if (fileName.hasSuffix(".zip"))
 			ImageMan.addArchive(fileName);
@@ -1004,7 +1006,7 @@ void ThemeEngine::setUpCursor() {
 
 bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale) {
 	if (!_system->hasFeature(OSystem::kFeatureCursorHasPalette))
-		return false;
+		return true;
 		
 	const Surface *cursor = _bitmaps[filename];
 	
