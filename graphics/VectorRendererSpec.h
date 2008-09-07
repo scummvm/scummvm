@@ -76,15 +76,15 @@ public:
 	void setBevelColor(uint8 r, uint8 g, uint8 b) { _bevelColor = RGBToColor<PixelFormat>(r, g, b); }
     void setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2);
 
-    virtual void copyFrame(OSystem *sys, const Common::Rect &r);
-    virtual void copyWholeFrame(OSystem *sys) { copyFrame(sys, Common::Rect(0, 0, _activeSurface->w, _activeSurface->h)); }
+    void copyFrame(OSystem *sys, const Common::Rect &r);
+    void copyWholeFrame(OSystem *sys) { copyFrame(sys, Common::Rect(0, 0, _activeSurface->w, _activeSurface->h)); }
     
-    virtual void fillSurface();
-    virtual void blitSurface(const Graphics::Surface *source, const Common::Rect &r);
-    virtual void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r);
-    virtual void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r);
+    void fillSurface();
+    void blitSurface(const Graphics::Surface *source, const Common::Rect &r);
+    void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r);
+    void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r);
 	
-    virtual void applyScreenShading(GUI::Theme::ShadingStyle shadingStyle);
+    void applyScreenShading(GUI::Theme::ShadingStyle shadingStyle);
 
 protected:
 
@@ -96,7 +96,7 @@ protected:
 	 * @param y Vertical coordinate of the pixel.
 	 * @param color Color of the pixel
 	 */
-	virtual inline void putPixel(int x, int y, PixelType color) {
+	inline void putPixel(int x, int y, PixelType color) {
 		PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
 		*ptr = color;
 	}
@@ -110,11 +110,8 @@ protected:
 	 * @param color Color of the pixel
 	 * @param alpha Alpha intensity of the pixel (0-255)
 	 */
-	virtual inline void blendPixel(int x, int y, PixelType color, uint8 alpha) {
-		if (alpha == 255)
-			putPixel(x, y, color);
-		else if (alpha > 0)
-			blendPixelPtr((PixelType*)Base::_activeSurface->getBasePtr(x, y), color, alpha);
+	inline void blendPixel(int x, int y, PixelType color, uint8 alpha) {
+		blendPixelPtr((PixelType*)Base::_activeSurface->getBasePtr(x, y), color, alpha);
 	}
 
 	/**
@@ -129,7 +126,7 @@ protected:
 	 * @param color Color of the pixel
 	 * @param alpha Alpha intensity of the pixel (0-255)
 	 */
-    virtual inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha);
+    inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha);
 
 	/**
 	 * PRIMITIVE DRAWING ALGORITHMS
@@ -194,7 +191,7 @@ protected:
 	 * @param max Maximum amount of the progress.
 	 * @return Composite color of the gradient at the given "progress" amount.
 	 */
-    virtual inline PixelType calcGradient(uint32 pos, uint32 max);
+    inline PixelType calcGradient(uint32 pos, uint32 max);
 
 	/**
 	 * Fills several pixels in a row with a given color and the specifed alpha blending.
@@ -206,7 +203,7 @@ protected:
 	 * @param color Color of the pixel
 	 * @param alpha Alpha intensity of the pixel (0-255)
 	 */
-	virtual inline void blendFill(PixelType *first, PixelType *last, PixelType color, uint8 alpha) {
+	inline void blendFill(PixelType *first, PixelType *last, PixelType color, uint8 alpha) {
 		while (first != last) blendPixelPtr(first++, color, alpha);
 	}
 
@@ -226,9 +223,9 @@ protected:
 	 * @param last Pointer to the last pixel to fill.
 	 * @param color Color of the pixel
 	 */
-    virtual inline void colorFill(PixelType *first, PixelType *last, PixelType color);
+    inline void colorFill(PixelType *first, PixelType *last, PixelType color);
 	
-	virtual void areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset);
+	void areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset);
 
 	PixelType _fgColor; /** Foreground color currently being used to draw on the renderer */
 	PixelType _bgColor; /** Background color currently being used to draw on the renderer */

@@ -75,9 +75,9 @@ const uint16 inv_sqrt_tbl[] = {
 inline uint32 fp_sqroot(uint32 x) {
     int bit;
 
-#if defined(__arm__)
-	__asm__ ("clz  %0, %1\nrsb  %0, %0, #31\n" : "=r"(bit) : "r" (x));
-#elif defined(__i386__)
+//#if defined(ARM9)
+//	__asm__ ("clz  %0, %1\nrsb  %0, %0, #31\n" : "=r"(bit) : "r" (x));
+#if defined(__i386__)
 	__asm__("bsrl %1, %0" : "=r" (bit) : "r" (x));
 #else
 	unsigned int mask = 0x40000000;
@@ -100,7 +100,10 @@ inline uint32 circleSqrt(int x) {
 }
 
 
-/** HELPER MACROS for BESENHALM's circle drawing algorithm **/
+/*
+	HELPER MACROS for Bresenham's circle drawing algorithm 
+	Note the proper spelling on this header.
+*/
 #define __BE_ALGORITHM() { \
 	if (f >= 0) { \
 		y--; \
@@ -174,17 +177,6 @@ inline uint32 circleSqrt(int x) {
 	blendPixelPtr(ptr4 + (x) + (py), color, a); \
 	blendPixelPtr(ptr4 + (y) + (px), color, a); \
 }
-
-/*#define __WU_ALGORITHM() { \
-	oldT = T; \
-	T = fp_sqroot(rsq - ((y * y) << 16)) ^ 0xFFFF; \
-	py += p; \
-	if (T < oldT) { \
-		x--; px -= p; \
-	} \
-	a2 = (T >> 8); \
-	a1 = ~a2; \
-} */
 
 // optimized Wu's algorithm
 #define __WU_ALGORITHM() {\
@@ -400,13 +392,6 @@ applyScreenShading(GUI::Theme::ShadingStyle shadingStyle) {
 template <typename PixelType, typename PixelFormat>
 inline void VectorRendererSpec<PixelType, PixelFormat>::
 blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha)	{
-	if (!ptr) return;
-		
-	if (alpha == 255) {
-		*ptr = color;
-		return;
-	}
-
 	register int idst = *ptr;
 	register int isrc = color;
 
