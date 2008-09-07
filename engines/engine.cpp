@@ -56,7 +56,11 @@ Engine::Engine(OSystem *syst)
 		_eventMan(_system->getEventManager()),
 		_saveFileMan(_system->getSavefileManager()),
 		_targetName(ConfMan.getActiveDomainName()),
-		_gameDataPath(ConfMan.get("path")),
+		
+		// FIXME: Temporary workaround for "missing" slashes at the end
+		// of _gameDataPath. This can go once we completed the transition
+		// to the new Archive/SearchPath system. See also bug #2098279.
+		_gameDataPath(ConfMan.get("path") + '/'),
 		_pauseLevel(0),
 		_mainMenuDialog(NULL) {
 

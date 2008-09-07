@@ -79,8 +79,8 @@ bool Resource::reset() {
 		} else {
 			if (_vm->gameFlags().isTalkie) {
 				// Add default file directories
-				Common::File::addDefaultDirectory(ConfMan.get("path") + "hof_cd");
-				Common::File::addDefaultDirectory(ConfMan.get("path") + "HOF_CD");
+				Common::File::addDefaultDirectory(ConfMan.get("path") + "/hof_cd");
+				Common::File::addDefaultDirectory(ConfMan.get("path") + "/HOF_CD");
 			}
 
 			loadPakFile("INTROGEN.PAK");
@@ -95,8 +95,8 @@ bool Resource::reset() {
 		}
 
 		// Add default file directories
-		Common::File::addDefaultDirectory(ConfMan.get("path") + "malcolm");
-		Common::File::addDefaultDirectory(ConfMan.get("path") + "MALCOLM");
+		Common::File::addDefaultDirectory(ConfMan.get("path") + "/malcolm");
+		Common::File::addDefaultDirectory(ConfMan.get("path") + "/MALCOLM");
 
 		if (!loadFileList("FILEDATA.FDT"))
 			error("couldn't load file: 'FILEDATA.FDT'");
