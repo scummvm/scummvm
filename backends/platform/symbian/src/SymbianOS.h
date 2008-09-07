@@ -27,11 +27,6 @@
 
 #include "backends/platform/sdl/sdl.h"
 
-/** Vibration support */
-#ifdef USE_VIBRA_SE_PXXX
-#include <vibration.h>
-#endif
-
 #define TOTAL_ZONES 3
 class RFs;
 
