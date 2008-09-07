@@ -41,9 +41,9 @@ Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles
 	Common::SharedPtr<Common::Archive> path(new Common::FSDirectory(ConfMan.get("path")));
 	Common::SharedPtr<Common::Archive> extrapath(new Common::FSDirectory(ConfMan.get("extrapath")));
 
+	_files.add("path", path, 4);
+	_files.add("extrapath", extrapath, 4);
 	_vm->_system->addSysArchivesToSearchSet(_files, 3);
-	_files.add("path", path, 3);
-	_files.add("extrapath", extrapath, 3);
 	// compressed installer archives are added at level '2',
 	// but that's done in Resource::reset not here
 	_files.add("protected", _protectedFiles, 1);
