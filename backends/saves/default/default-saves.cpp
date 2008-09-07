@@ -36,7 +36,7 @@
 #include <string.h>
 #include <errno.h>
 
-#if defined(UNIX) || defined(__SYMBIAN32__)
+#if defined(UNIX)
 #include <sys/stat.h>
 #endif
 
@@ -46,8 +46,6 @@
 #else
 #define DEFAULT_SAVE_PATH ".scummvm"
 #endif
-#elif defined(__SYMBIAN32__)
-#define DEFAULT_SAVE_PATH "Savegames"
 #endif
 
 DefaultSaveFileManager::DefaultSaveFileManager() {
@@ -63,10 +61,6 @@ DefaultSaveFileManager::DefaultSaveFileManager() {
 		savePath += "/" DEFAULT_SAVE_PATH;
 		ConfMan.registerDefault("savepath", savePath);
 	}
-#elif defined(__SYMBIAN32__)
-	savePath = Symbian::GetExecutablePath();
-	savePath += DEFAULT_SAVE_PATH "\\";
-	ConfMan.registerDefault("savepath", savePath);
 #endif
 #endif // #ifdef DEFAULT_SAVE_PATH
 }
@@ -95,7 +89,7 @@ void DefaultSaveFileManager::checkPath(const Common::FilesystemNode &dir) {
 	const Common::String path = dir.getPath();
 	clearError();
 
-#if defined(UNIX) || defined(__SYMBIAN32__)
+#if defined(UNIX)
 	struct stat sb;
 
 	// Check whether the dir exists
@@ -107,11 +101,9 @@ void DefaultSaveFileManager::checkPath(const Common::FilesystemNode &dir) {
 		case EACCES:
 			setError(SFM_DIR_ACCESS, "Search or write permission denied: "+path);
 			break;
-#if !defined(__SYMBIAN32__)
 		case ELOOP:
 			setError(SFM_DIR_LOOP, "Too many symbolic links encountered while traversing the path: "+path);
 			break;
-#endif
 		case ENAMETOOLONG:
 			setError(SFM_DIR_NAMETOOLONG, "The path name is too long: "+path);
 			break;
@@ -129,11 +121,9 @@ void DefaultSaveFileManager::checkPath(const Common::FilesystemNode &dir) {
 				case EMLINK:
 					setError(SFM_DIR_LINKMAX, "The link count of the parent directory would exceed {LINK_MAX}: "+path);
 					break;
-#if !defined(__SYMBIAN32__)
 				case ELOOP:
 					setError(SFM_DIR_LOOP, "Too many symbolic links encountered while traversing the path: "+path);
 					break;
-#endif
 				case ENAMETOOLONG:
 					setError(SFM_DIR_NAMETOOLONG, "The path name is too long: "+path);
 					break;
