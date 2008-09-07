@@ -271,15 +271,11 @@
 		}
 		# below here you could specify weird & experimental combinations, non-ready engines
 	
-			# a small version of the saga engine, because it is so big (no tremor,mad,zlib)
-			#$VariationSets{'ALL'}{'saga_mini'} = "saga";
+			# Separate version for the broken sword engines (1&2)
+			$VariationSets{'ALL'}{'brokensword'} = "$DefaultFeatures sword1 sword2";
 		
-			# a smaller version of scumm without support for v7, v8 and HE games
-			#$VariationSets{'ALL'}{'scumm_no78he'} = "$DefaultFeatures scumm";
-	
-			# maybe you feel lucky and want to test the sword engines? :P
-			#$VariationSets{'S60v2'}{'test_sword'} = "$DefaultFeatures mpeg2 sword1 sword2";
-			#$VariationSets{'UIQ2'}{'test_sword'}  = "$DefaultFeatures mpeg2 sword1 sword2";
+			# Separate version for Scumm games (COMI) since memory usage might be high
+			$VariationSets{'ALL'}{'scumm'} = "$DefaultFeatures scumm scumm_7_8 he";			
 	
 			# for mega-fast-testing only plz! Warning: contains to engines!
 			#$VariationSets{'ALL'}{'fast_empty'} = "";
