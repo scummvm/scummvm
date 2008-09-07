@@ -95,6 +95,7 @@ private:
 
 class ResArchiveLoader {
 public:
+	virtual ~ResArchiveLoader() {}
 	virtual bool checkFilename(Common::String filename) const = 0;
 	virtual bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const = 0;
 	virtual Common::Archive *load(Resource *owner, const Common::String &filename, Common::SeekableReadStream &stream) const = 0;
