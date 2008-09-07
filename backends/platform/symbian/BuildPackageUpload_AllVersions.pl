@@ -443,6 +443,10 @@ my $header = "
 	PrintMessage("Cleaning for $Target") if (!$ReallyQuiet);
 	system("bldmake bldfiles > NUL 2> NUL");
 	PrintErrorMessage("'bldmake bldfiles' exited with value " . ($? >> 8)) if ($? >> 8);
+
+	system("abld MAKEFILE $TargetName > NUL 2> NUL");
+	PrintErrorMessage("'abld MAKEFILE $TargetName' exited with value " . ($? >> 8)) if ($? >> 8);	
+
 	system("abld CLEAN $TargetName UREL > NUL 2> NUL");
 	PrintErrorMessage("'abld CLEAN $TargetName urel' exited with value " . ($? >> 8)) if ($? >> 8);	
 	# remove file so we are sure that after .lib generation we have a fresh copy!
@@ -455,10 +459,10 @@ my $header = "
 
 	my $OldSize = (-s $build_log_err);
 	$Redirection = ($RedirectSTDERR ? "2>> $build_log_err" : "");
-	system("abld BUILD $TargetName UREL $Redirection >> $build_log_out");
+	system("abld TARGET $TargetName UREL $Redirection >> $build_log_out");
 	$OK = 0 if ($? >> 8);
 #	print "  STDERR: ".((-s $build_log_err)-$OldSize)." bytes output written to $build_log_err\n+--------------------------------------------------------------------------------------\n" if ($OldSize != (-s $build_log_err));
-	PrintErrorMessage("'abld BUILD $TargetName UREL' exited with value " . ($? >> 8)) if ($? >> 8);
+	PrintErrorMessage("'abld TARGET $TargetName UREL' exited with value " . ($? >> 8)) if ($? >> 8);
 	return 0 if (!$OK); # ABLD always returns ok :( grr	
 	PrintMessage("Done.") if (!$ReallyQuiet);
 
@@ -475,7 +479,7 @@ my $header = "
 	}
 	else
 	{
-		PrintErrorMessage("'abld BUILD $TargetName UREL' apparently failed.");
+		PrintErrorMessage("'abld TARGET $TargetName UREL' apparently failed.");
 		if ($HaltOnError)
  		{
 			PrintErrorMessage("Halting on error as requested!");
