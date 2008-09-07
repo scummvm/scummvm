@@ -69,6 +69,18 @@ static const PictureGameDescription gameDescriptions[] = {
 		},
 	},
 
+
+	{
+		{
+			"toltecs",
+			0,
+			AD_ENTRY1s("WESTERN", "ba1742d3193b68ceb9434e2ab7a09a9b", 391462783),
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 
