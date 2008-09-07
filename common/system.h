@@ -43,6 +43,7 @@ namespace Common {
 	struct Event;
 	class EventManager;
 	class SaveFileManager;
+	class SearchSet;
 	class TimerManager;
 	class SeekableReadStream;
 	class WriteStream;
@@ -905,6 +906,17 @@ public:
 	 * @return the FSNode factory for the current architecture
 	 */
 	virtual FilesystemFactory *getFilesystemFactory() = 0;
+
+	/**
+	 * Add system specific Common::Archive objects to the given SearchSet.
+	 * E.g. on Unix the dir corresponding to DATA_PATH (if set), or on
+	 * Mac OS X the 'Resource' dir in the app bundle.
+	 *
+	 * @todo Come up with a better name. This one sucks.
+	 *
+	 * @todo Allow specifying a priority with which the new dirs are added?
+	 */
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s) {}
 
 	/**
 	 * Open the default config file for reading, by returning a suitable

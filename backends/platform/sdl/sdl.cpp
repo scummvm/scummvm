@@ -32,6 +32,7 @@
 #endif
 
 #include "backends/platform/sdl/sdl.h"
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/util.h"
@@ -71,6 +72,9 @@
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 #endif
 
+#if defined(MACOSX) || defined(IPHONE)
+#include "CoreFoundation/CoreFoundation.h"
+#endif
 
 
 static Uint32 timer_handler(Uint32 interval, void *param) {
@@ -270,6 +274,38 @@ FilesystemFactory *OSystem_SDL::getFilesystemFactory() {
 	assert(_fsFactory);
 	return _fsFactory;
 }
+
+void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s) {
+
+#ifdef DATA_PATH
+	// Add the global DATA_PATH to the directory search list
+	// FIXME: We use depth = 4 for now, to match the old code. May want to change that
+	Common::FilesystemNode dataNode(DATA_PATH);
+	if (dataNode.exists() && dataNode.isDirectory()) {
+		Common::ArchivePtr dataArchive(new Common::FSDirectory(dataNode, 4));
+		s.add(DATA_PATH, dataArchive);
+	}
+#endif
+
+#if defined(MACOSX) || defined(IPHONE)
+	// Get URL of the Resource directory of the .app bundle
+	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
+	if (fileUrl) {
+		// Try to convert the URL to an absolute path
+		UInt8 buf[MAXPATHLEN];
+		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
+			// Success: Add it to the search path
+			Common::String bundlePath((const char *)buf);
+			Common::ArchivePtr bundleArchive(new Common::FSDirectory(bundlePath));
+			s.add("__OSX_BUNDLE__", bundleArchive);
+		}
+		CFRelease(fileUrl);
+	}
+
+#endif
+
+}
+
 
 static Common::String getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
