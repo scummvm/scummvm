@@ -104,19 +104,19 @@
 	*/
 
 #elif defined (__WINS__) // WINS
-	extern "C" int SDL_snprintf(char *text, size_t maxlen, const char *fmt, ...);
-	extern "C" int SDL_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap);
-	#define snprintf(buf,len,args...) SDL_snprintf(buf,len,args)
-	#define vsnprintf(buf,len,format,valist) SDL_vsnprintf(buf,len,format,valist)
+	extern "C" int symbian_snprintf(char *text, size_t maxlen, const char *fmt, ...);
+	extern "C" int symbian_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap);
+	#define snprintf(buf,len,args...) symbian_snprintf(buf,len,args)
+	#define vsnprintf(buf,len,format,valist) symbian_vsnprintf(buf,len,format,valist)
 
 	void*	symbian_malloc	(size_t _size);
 
 	#define malloc symbian_malloc
 #else // GCCE and the rest
-	extern "C" int SDL_snprintf(char *text, size_t maxlen, const char *fmt, ...);
-	extern "C" int SDL_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap);
-	#define snprintf(buf,len,args...) SDL_snprintf(buf,len,args)
-	#define vsnprintf(buf,len,format,valist) SDL_vsnprintf(buf,len,format,valist)
+	extern "C" int symbian_snprintf(char *text, size_t maxlen, const char *fmt, ...);
+	extern "C" int symbian_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap);
+	#define snprintf(buf,len,args...) symbian_snprintf(buf,len,args)
+	#define vsnprintf(buf,len,format,valist) symbian_vsnprintf(buf,len,format,valist)
 #endif
 
 #ifndef __WINS__
