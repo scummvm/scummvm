@@ -238,8 +238,8 @@ void Util::getMouseState(int16 *pX, int16 *pY, int16 *pButtons) {
 }
 
 void Util::setMousePos(int16 x, int16 y) {
-	x = CLIP<int>(x + _vm->_video->_screenDeltaX, 0, _vm->_width);
-	y = CLIP<int>(y + _vm->_video->_screenDeltaY, 0, _vm->_height);
+	x = CLIP<int>(x + _vm->_video->_screenDeltaX, 0, _vm->_width - 1);
+	y = CLIP<int>(y + _vm->_video->_screenDeltaY, 0, _vm->_height - 1);
 	g_system->warpMouse(x, y);
 }
 
