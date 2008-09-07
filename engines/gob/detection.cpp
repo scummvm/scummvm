@@ -1880,6 +1880,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro"
 	},
+	{ // Supplied by goodoldgeorg in bug report #2098838
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "08a96bf061af1fa4f75c6a7cc56b60a4", 20734979),
+			PL_POL,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
 	{
 		{
 			"dynasty",
