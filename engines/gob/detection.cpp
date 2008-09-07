@@ -1294,6 +1294,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro"
 	},
+	{ // Supplied by SiRoCs in bug report #2098621
+		{
+			"gob3",
+			"",
+			AD_ENTRY1s("intro.stk", "d3b72938fbbc8159198088811f9e6d19", 160382),
+			ES_ESP,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob3,
+		kFeaturesAdlib,
+		"intro"
+	},
 	{
 		{
 			"gob3",
