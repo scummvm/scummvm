@@ -103,7 +103,7 @@ public:
 
 	/**
 	 * Create a new node referring to a child node of the current node, which
-	 * must be a directory node (an assertion is triggered otherwise).
+	 * must be a directory node (otherwise an invalid node is returned).
 	 * If a child matching the name exists, a normal node for it is returned.
 	 * If no child with the name exists, a node for it is still returned,
 	 * but exists() will return 'false' for it. This node can however be used
