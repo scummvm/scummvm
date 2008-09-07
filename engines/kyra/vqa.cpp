@@ -38,6 +38,7 @@
 #include "kyra/sound.h"
 #include "kyra/screen.h"
 #include "kyra/vqa.h"
+#include "kyra/resource.h"
 
 namespace Kyra {
 
@@ -90,10 +91,10 @@ uint32 VQAMovie::readTag() {
 	// Some tags have to be on an even offset, so they are padded with a
 	// zero byte. Skip that.
 
-	uint32 tag = _file.readUint32BE();
+	uint32 tag = _file->readUint32BE();
 
 	if (!(tag & 0xFF000000)) {
-		tag = (tag << 8) | _file.readByte();
+		tag = (tag << 8) | _file->readByte();
 	}
 
 	return tag;
@@ -184,18 +185,19 @@ bool VQAMovie::open(const char *filename) {
 	debugC(9, kDebugLevelMovie, "VQAMovie::open('%s')", filename);
 	close();
 
-	if (!_file.open(filename))
+	_file = _vm->resource()->getFileStream(filename);
+	if (!_file)
 		return false;
 
-	if (_file.readUint32BE() != MKID_BE('FORM')) {
+	if (_file->readUint32BE() != MKID_BE('FORM')) {
 		warning("VQAMovie::open: Cannot find `FORM' tag");
 		return false;
 	}
 
 	// For now, we ignore the size of the FORM chunk.
-	_file.readUint32BE();
+	_file->readUint32BE();
 
-	if (_file.readUint32BE() != MKID_BE('WVQA')) {
+	if (_file->readUint32BE() != MKID_BE('WVQA')) {
 		warning("WQAMovie::open: Cannot find `WVQA' tag");
 		return false;
 	}
@@ -208,30 +210,30 @@ bool VQAMovie::open(const char *filename) {
 
 	while (!foundHeader || !foundFrameInfo) {
 		uint32 tag = readTag();
-		uint32 size = _file.readUint32BE();
+		uint32 size = _file->readUint32BE();
 
 		switch (tag) {
 		case MKID_BE('VQHD'):	// VQA header
-			_header.version     = _file.readUint16LE();
-			_header.flags       = _file.readUint16LE();
-			_header.numFrames   = _file.readUint16LE();
-			_header.width       = _file.readUint16LE();
-			_header.height      = _file.readUint16LE();
-			_header.blockW      = _file.readByte();
-			_header.blockH      = _file.readByte();
-			_header.frameRate   = _file.readByte();
-			_header.cbParts     = _file.readByte();
-			_header.colors      = _file.readUint16LE();
-			_header.maxBlocks   = _file.readUint16LE();
-			_header.unk1        = _file.readUint32LE();
-			_header.unk2        = _file.readUint16LE();
-			_header.freq        = _file.readUint16LE();
-			_header.channels    = _file.readByte();
-			_header.bits        = _file.readByte();
-			_header.unk3        = _file.readUint32LE();
-			_header.unk4        = _file.readUint16LE();
-			_header.maxCBFZSize = _file.readUint32LE();
-			_header.unk5        = _file.readUint32LE();
+			_header.version     = _file->readUint16LE();
+			_header.flags       = _file->readUint16LE();
+			_header.numFrames   = _file->readUint16LE();
+			_header.width       = _file->readUint16LE();
+			_header.height      = _file->readUint16LE();
+			_header.blockW      = _file->readByte();
+			_header.blockH      = _file->readByte();
+			_header.frameRate   = _file->readByte();
+			_header.cbParts     = _file->readByte();
+			_header.colors      = _file->readUint16LE();
+			_header.maxBlocks   = _file->readUint16LE();
+			_header.unk1        = _file->readUint32LE();
+			_header.unk2        = _file->readUint16LE();
+			_header.freq        = _file->readUint16LE();
+			_header.channels    = _file->readByte();
+			_header.bits        = _file->readByte();
+			_header.unk3        = _file->readUint32LE();
+			_header.unk4        = _file->readUint16LE();
+			_header.maxCBFZSize = _file->readUint32LE();
+			_header.unk5        = _file->readUint32LE();
 
 			// Kyrandia 3 uses version 1 VQA files, and is the only
 			// known game to do so. This version of the format has
@@ -301,7 +303,7 @@ bool VQAMovie::open(const char *filename) {
 			foundFrameInfo = true;
 
 			for (int i = 0; i < _header.numFrames; i++) {
-				_frameInfo[i] = 2 * _file.readUint32LE();
+				_frameInfo[i] = 2 * _file->readUint32LE();
 			}
 
 			// HACK: This flag is set in jung2.vqa, and its
@@ -317,31 +319,31 @@ bool VQAMovie::open(const char *filename) {
 			// to the first VQFR chunk.
 
 			if (_frameInfo[0] & 0x01000000) {
-				uint32 oldPos = _file.pos();
+				uint32 oldPos = _file->pos();
 
 				while (1) {
 					uint32 scanTag = readTag();
-					uint32 scanSize = _file.readUint32BE();
+					uint32 scanSize = _file->readUint32BE();
 
-					if (_file.eos())
+					if (_file->eos())
 						break;
 
 					if (scanTag == MKID_BE('VQFR')) {
-						_frameInfo[0] = (_file.pos() - 8) | 0x80000000;
+						_frameInfo[0] = (_file->pos() - 8) | 0x80000000;
 						break;
 					}
 
-					_file.seek(scanSize, SEEK_CUR);
+					_file->seek(scanSize, SEEK_CUR);
 				}
 
-				_file.seek(oldPos);
+				_file->seek(oldPos);
 			}
 
 			break;
 
 		default:
 			warning("VQAMovie::open: Unknown tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
-			_file.seek(size, SEEK_CUR);
+			_file->seek(size, SEEK_CUR);
 			break;
 		}
 	}
@@ -372,8 +374,8 @@ void VQAMovie::close() {
 		_vectorPointers = NULL;
 		_stream = NULL;
 
-		if (_file.isOpen())
-			_file.close();
+		delete _file;
+		_file = 0;
 
 		freeBuffers();
 
@@ -390,13 +392,13 @@ void VQAMovie::displayFrame(uint frameNum) {
 	bool foundFrame = false;
 	uint i;
 
-	_file.seek(_frameInfo[frameNum] & 0x7FFFFFFF);
+	_file->seek(_frameInfo[frameNum] & 0x7FFFFFFF);
 
 	while (!foundSound || !foundFrame) {
 		uint32 tag = readTag();
-		uint32 size = _file.readUint32BE();
+		uint32 size = _file->readUint32BE();
 
-		if (_file.eos()) {
+		if (_file->eos()) {
 			// This happens at the last frame. Apparently it has
 			// no sound?
 			break;
@@ -410,18 +412,18 @@ void VQAMovie::displayFrame(uint frameNum) {
 		case MKID_BE('SND0'):	// Uncompressed sound
 			foundSound = true;
 			inbuf = new byte[size];
-			_file.read(inbuf, size);
+			_file->read(inbuf, size);
 			assert(_stream);
 			_stream->queueBuffer(inbuf, size);
 			break;
 
 		case MKID_BE('SND1'):	// Compressed sound, almost like AUD
 			foundSound = true;
-			outsize = _file.readUint16LE();
-			insize = _file.readUint16LE();
+			outsize = _file->readUint16LE();
+			insize = _file->readUint16LE();
 
 			inbuf = new byte[insize];
-			_file.read(inbuf, insize);
+			_file->read(inbuf, insize);
 
 			if (insize == outsize) {
 				assert(_stream);
@@ -438,50 +440,50 @@ void VQAMovie::displayFrame(uint frameNum) {
 		case MKID_BE('SND2'):	// Compressed sound
 			foundSound = true;
 			warning("VQAMovie::displayFrame: `SND2' is not implemented");
-			_file.seek(size, SEEK_CUR);
+			_file->seek(size, SEEK_CUR);
 			break;
 
 		case MKID_BE('VQFR'):
 			foundFrame = true;
-			end = _file.pos() + size - 8;
+			end = _file->pos() + size - 8;
 
-			while (_file.pos() < end) {
+			while (_file->pos() < end) {
 				tag = readTag();
-				size = _file.readUint32BE();
+				size = _file->readUint32BE();
 
 				switch (tag) {
 				case MKID_BE('CBF0'):	// Full codebook
-					_file.read(_codeBook, size);
+					_file->read(_codeBook, size);
 					break;
 
 				case MKID_BE('CBFZ'):	// Full codebook
 					inbuf = (byte *)allocBuffer(0, size);
-					_file.read(inbuf, size);
+					_file->read(inbuf, size);
 					Screen::decodeFrame4(inbuf, _codeBook, _codeBookSize);
 					break;
 
 				case MKID_BE('CBP0'):	// Partial codebook
 					_compressedCodeBook = false;
-					_file.read(_partialCodeBook + _partialCodeBookSize, size);
+					_file->read(_partialCodeBook + _partialCodeBookSize, size);
 					_partialCodeBookSize += size;
 					_numPartialCodeBooks++;
 					break;
 
 				case MKID_BE('CBPZ'):	// Partial codebook
 					_compressedCodeBook = true;
-					_file.read(_partialCodeBook + _partialCodeBookSize, size);
+					_file->read(_partialCodeBook + _partialCodeBookSize, size);
 					_partialCodeBookSize += size;
 					_numPartialCodeBooks++;
 					break;
 
 				case MKID_BE('CPL0'):	// Palette
 					assert(size <= 3 * 256);
-					_file.read(_vm->screen()->_currentPalette, size);
+					_file->read(_vm->screen()->_currentPalette, size);
 					break;
 
 				case MKID_BE('CPLZ'):	// Palette
 					inbuf = (byte *)allocBuffer(0, size);
-					_file.read(inbuf, size);
+					_file->read(inbuf, size);
 					Screen::decodeFrame4(inbuf, _vm->screen()->_currentPalette, 768);
 					break;
 
@@ -489,14 +491,14 @@ void VQAMovie::displayFrame(uint frameNum) {
 					assert(size / 2 <= _numVectorPointers);
 
 					for (i = 0; i < size / 2; i++)
-						_vectorPointers[i] = _file.readUint16LE();
+						_vectorPointers[i] = _file->readUint16LE();
 					break;
 
 				case MKID_BE('VPTZ'):	// Frame data
 					inbuf = (byte *)allocBuffer(0, size);
 					outbuf = (byte *)allocBuffer(1, 2 * _numVectorPointers);
 
-					_file.read(inbuf, size);
+					_file->read(inbuf, size);
 					size = Screen::decodeFrame4(inbuf, outbuf, 2 * _numVectorPointers);
 
 					assert(size / 2 <= _numVectorPointers);
@@ -507,7 +509,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 
 				default:
 					warning("VQAMovie::displayFrame: Unknown `VQFR' sub-tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
-					_file.seek(size, SEEK_CUR);
+					_file->seek(size, SEEK_CUR);
 					break;
 				}
 
@@ -517,7 +519,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 
 		default:
 			warning("VQAMovie::displayFrame: Unknown tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
-			_file.seek(size, SEEK_CUR);
+			_file->seek(size, SEEK_CUR);
 			break;
 		}
 	}
@@ -592,11 +594,11 @@ void VQAMovie::play() {
 	uint32 insize, outsize;
 
 	if (_stream) {
-		while (_file.pos() < (_frameInfo[0] & 0x7FFFFFFF)) {
+		while (_file->pos() < (_frameInfo[0] & 0x7FFFFFFF)) {
 			uint32 tag = readTag();
-			uint32 size = _file.readUint32BE();
+			uint32 size = _file->readUint32BE();
 
-			if (_file.eos()) {
+			if (_file->eos()) {
 				warning("VQAMovie::play: Unexpected EOF");
 				break;
 			}
@@ -604,16 +606,16 @@ void VQAMovie::play() {
 			switch (tag) {
 			case MKID_BE('SND0'):	// Uncompressed sound
 				inbuf = new byte[size];
-				_file.read(inbuf, size);
+				_file->read(inbuf, size);
 				_stream->queueBuffer(inbuf, size);
 				break;
 
 			case MKID_BE('SND1'):	// Compressed sound
-				outsize = _file.readUint16LE();
-				insize = _file.readUint16LE();
+				outsize = _file->readUint16LE();
+				insize = _file->readUint16LE();
 
 				inbuf = new byte[insize];
-				_file.read(inbuf, insize);
+				_file->read(inbuf, insize);
 
 				if (insize == outsize) {
 					_stream->queueBuffer(inbuf, insize);
@@ -627,17 +629,17 @@ void VQAMovie::play() {
 
 			case MKID_BE('SND2'):	// Compressed sound
 				warning("VQAMovie::play: `SND2' is not implemented");
-				_file.seek(size, SEEK_CUR);
+				_file->seek(size, SEEK_CUR);
 				break;
 
 			case MKID_BE('CMDS'):	// Unused tag, always empty in kyra3
 				debugC(9, kDebugLevelMovie, "VQAMovie::play: skipping CMDS tag");
-				_file.seek(size, SEEK_CUR);
+				_file->seek(size, SEEK_CUR);
 				break;
 
 			default:
 				warning("VQAMovie::play: Unknown tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
-				_file.seek(size, SEEK_CUR);
+				_file->seek(size, SEEK_CUR);
 				break;
 			}
 		}

@@ -212,7 +212,7 @@ public:
 	StaticResource(KyraEngine_v1 *vm) : _vm(vm), _resList(), _fileLoader(0), _builtIn(0), _filenameTable(0) {}
 	~StaticResource() { deinit(); }
 
-	static bool checkKyraDat();
+	static bool checkKyraDat(Resource *res);
 
 	bool init();
 	void deinit();

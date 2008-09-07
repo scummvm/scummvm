@@ -4122,9 +4122,9 @@ bool SoundTownsPC98_v2::init() {
 	// this misses the possibility that we play the tracks
 	// right off CD. So we should find another way to
 	// check if we have access to CD audio.
+	Resource *res = _vm->resource();
 	if (_musicEnabled &&
-		(Common::File::exists("track1.mp3") || Common::File::exists("track1.ogg") ||
-		 Common::File::exists("track1.flac") || Common::File::exists("track1.fla")))
+		(res->exists("track1.mp3") || res->exists("track1.ogg") || res->exists("track1.flac") || res->exists("track1.fla")))
 			_musicEnabled = 2;
 	
 	return _driver->init();

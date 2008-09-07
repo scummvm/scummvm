@@ -61,7 +61,7 @@ bool Resource::reset() {
 	if (!dir.exists() || !dir.isDirectory())
 		error("invalid game path '%s'", dir.getPath().c_str());
 
-	if (!loadPakFile(StaticResource::staticDataFilename()) || !StaticResource::checkKyraDat()) {
+	if (!loadPakFile(StaticResource::staticDataFilename()) || !StaticResource::checkKyraDat(this)) {
 		Common::String errorMessage = "You're missing the '" + StaticResource::staticDataFilename() + "' file or it got corrupted, (re)get it from the ScummVM website";
 		_vm->GUIErrorMessage(errorMessage);
 		error(errorMessage.c_str());
@@ -71,10 +71,6 @@ bool Resource::reset() {
 		// We only need kyra.dat for the demo.
 		if (_vm->gameFlags().isDemo)
 			return true;
-
-		// only VRM file we need in the *whole* game for kyra1
-		if (_vm->gameFlags().isTalkie)
-			loadPakFile("CHAPTER1.VRM");
 	} else if (_vm->game() == GI_KYRA2) {
 		if (_vm->gameFlags().useInstallerPackage)
 			_files.add("installer", loadInstallerArchive("WESTWOOD", "%03d", 6), 2);
@@ -118,7 +114,8 @@ bool Resource::reset() {
 
 		for (uint i = 0; i < ARRAYSIZE(list); ++i) {
 			Common::ArchivePtr archive = loadArchive(list[i]);
-			_protectedFiles->add(list[i], archive, 0);
+			if (archive)
+				_protectedFiles->add(list[i], archive, 0);
 		}
 	} else {
 		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -158,20 +155,20 @@ bool Resource::loadPakFile(Common::String filename) {
 }
 
 bool Resource::loadFileList(const Common::String &filedata) {
-	Common::File f;
+	Common::SeekableReadStream *f = getFileStream(filedata);
 
-	if (!f.open(filedata))
+	if (!f)
 		return false;
 
 	uint32 filenameOffset = 0;
-	while ((filenameOffset = f.readUint32LE()) != 0) {
-		uint32 offset = f.pos();
-		f.seek(filenameOffset, SEEK_SET);
+	while ((filenameOffset = f->readUint32LE()) != 0) {
+		uint32 offset = f->pos();
+		f->seek(filenameOffset, SEEK_SET);
 
 		uint8 buffer[13];
-		f.read(buffer, sizeof(buffer)-1);
+		f->read(buffer, sizeof(buffer)-1);
 		buffer[12] = 0;
-		f.seek(offset + 16, SEEK_SET);
+		f->seek(offset + 16, SEEK_SET);
 
 		Common::String filename = Common::String((char *)buffer);
 		filename.toUppercase();
@@ -183,12 +180,14 @@ bool Resource::loadFileList(const Common::String &filedata) {
 				// so we don't do anything here if they are non
 				// existant.
 			} else if (!loadPakFile(filename)) {
+				delete f;
 				error("couldn't load file '%s'", filename.c_str());
 				return false;
 			}
 		}
 	}
 
+	delete f;
 	return true;
 }
 

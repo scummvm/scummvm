@@ -45,20 +45,20 @@ namespace Kyra {
 
 #define RESFILE_VERSION 32
 
-bool StaticResource::checkKyraDat() {
-	Common::File kyraDat;
-	if (!kyraDat.open(StaticResource::staticDataFilename()))
+bool StaticResource::checkKyraDat(Resource *res) {
+	Common::SharedPtr<Common::SeekableReadStream> kyraDat(res->getFileStream(StaticResource::staticDataFilename()));
+	if (!kyraDat)
 		return false;
 
-	uint32 size = kyraDat.size() - 16;
+	uint32 size = kyraDat->size() - 16;
 	uint8 digest[16];
-	kyraDat.seek(size, SEEK_SET);
-	if (kyraDat.read(digest, 16) != 16)
+	kyraDat->seek(size, SEEK_SET);
+	if (kyraDat->read(digest, 16) != 16)
 		return false;
-	kyraDat.close();
 
 	uint8 digestCalc[16];
-	if (!Common::md5_file(StaticResource::staticDataFilename().c_str(), digestCalc, size))
+	kyraDat->seek(0, SEEK_SET);
+	if (!Common::md5_file(*kyraDat, digestCalc, size))
 		return false;
 
 	for (int i = 0; i < 16; ++i)
