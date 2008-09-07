@@ -63,7 +63,7 @@ bool FilesystemNode::exists() const {
 
 FilesystemNode FilesystemNode::getChild(const Common::String &n) const {
 	// If this node is invalid or not a directory, return an invalid node
-	if (_realNode == 0 || !_realNode->isDirectory())
+	if (_realNode == 0 || !_realNode->isDirectory())
 		return FilesystemNode();
 
 	AbstractFilesystemNode *node = _realNode->getChild(n);
