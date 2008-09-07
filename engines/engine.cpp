@@ -60,7 +60,11 @@ Engine::Engine(OSystem *syst)
 		// FIXME: Temporary workaround for "missing" slashes at the end
 		// of _gameDataPath. This can go once we completed the transition
 		// to the new Archive/SearchPath system. See also bug #2098279.
+#ifdef __SYMBIAN32__
+		_gameDataPath(ConfMan.get("path")),
+#else
 		_gameDataPath(ConfMan.get("path") + '/'),
+#endif
 		_pauseLevel(0),
 		_mainMenuDialog(NULL) {
 
