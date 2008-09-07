@@ -913,20 +913,20 @@ int ScummEngine::init() {
 	// Add default file directories.
 	if (((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST)) && (_game.version <= 4)) {
 		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
-		File::addDefaultDirectory(_gameDataPath + "ROOMS/");
-		File::addDefaultDirectory(_gameDataPath + "rooms/");
+		File::addDefaultDirectory(_gameDataDir.getChild("ROOMS"));
+		File::addDefaultDirectory(_gameDataDir.getChild("rooms"));
 	}
 
 	if ((_game.platform == Common::kPlatformMacintosh) && (_game.version == 3)) {
 		// This is for the Mac version of Indy3/Loom
-		File::addDefaultDirectory(_gameDataPath + "Rooms 1/");
-		File::addDefaultDirectory(_gameDataPath + "Rooms 2/");
-		File::addDefaultDirectory(_gameDataPath + "Rooms 3/");
+		File::addDefaultDirectory(_gameDataDir.getChild("Rooms 1"));
+		File::addDefaultDirectory(_gameDataDir.getChild("Rooms 2"));
+		File::addDefaultDirectory(_gameDataDir.getChild("Rooms 3"));
 	}
 
 #ifdef ENABLE_SCUMM_7_8
 #ifdef MACOSX
-	if (_game.version == 8 && !memcmp(_gameDataPath.c_str(), "/Volumes/MONKEY3_", 17)) {
+	if (_game.version == 8 && !memcmp(_gameDataDir.getPath().c_str(), "/Volumes/MONKEY3_", 17)) {
 		// Special case for COMI on Mac OS X. The mount points on OS X depend
 		// on the volume name. Hence if playing from CD, we'd get a problem.
 		// So if loading of a resource file fails, we fall back to the (fixed)
@@ -943,16 +943,16 @@ int ScummEngine::init() {
 #endif
 	if (_game.version == 8) {
 		// This is for COMI
-		File::addDefaultDirectory(_gameDataPath + "RESOURCE/");
-		File::addDefaultDirectory(_gameDataPath + "resource/");
+		File::addDefaultDirectory(_gameDataDir.getChild("RESOURCE"));
+		File::addDefaultDirectory(_gameDataDir.getChild("resource"));
 	}
 
 	if (_game.version == 7) {
 		// This is for Full Throttle & The Dig
-		File::addDefaultDirectory(_gameDataPath + "VIDEO/");
-		File::addDefaultDirectory(_gameDataPath + "video/");
-		File::addDefaultDirectory(_gameDataPath + "DATA/");
-		File::addDefaultDirectory(_gameDataPath + "data/");
+		File::addDefaultDirectory(_gameDataDir.getChild("VIDEO"));
+		File::addDefaultDirectory(_gameDataDir.getChild("video"));
+		File::addDefaultDirectory(_gameDataDir.getChild("DATA"));
+		File::addDefaultDirectory(_gameDataDir.getChild("data"));
 	}
 #endif
 

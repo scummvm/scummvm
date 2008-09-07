@@ -230,12 +230,12 @@ namespace Sword2 {
 
 Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 	// Add default file directories
-	Common::File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
-	Common::File::addDefaultDirectory(_gameDataPath + "SWORD2/");
-	Common::File::addDefaultDirectory(_gameDataPath + "VIDEO/");
-	Common::File::addDefaultDirectory(_gameDataPath + "clusters/");
-	Common::File::addDefaultDirectory(_gameDataPath + "sword2/");
-	Common::File::addDefaultDirectory(_gameDataPath + "video/");
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("CLUSTERS"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("SWORD2"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("VIDEO"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("clusters"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("sword2"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("video"));
 
 	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2demo"))
 		_features = GF_DEMO;

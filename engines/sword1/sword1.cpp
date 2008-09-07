@@ -257,14 +257,14 @@ SwordEngine::SwordEngine(OSystem *syst)
 		_features = 0;
 
 	// Add default file directories
-	Common::File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
-	Common::File::addDefaultDirectory(_gameDataPath + "MUSIC/");
-	Common::File::addDefaultDirectory(_gameDataPath + "SPEECH/");
-	Common::File::addDefaultDirectory(_gameDataPath + "VIDEO/");
-	Common::File::addDefaultDirectory(_gameDataPath + "clusters/");
-	Common::File::addDefaultDirectory(_gameDataPath + "music/");
-	Common::File::addDefaultDirectory(_gameDataPath + "speech/");
-	Common::File::addDefaultDirectory(_gameDataPath + "video/");
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("CLUSTERS"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("MUSIC"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("SPEECH"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("VIDEO"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("clusters"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("music"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("speech"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("video"));
 }
 
 SwordEngine::~SwordEngine() {

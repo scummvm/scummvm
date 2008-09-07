@@ -56,15 +56,7 @@ Engine::Engine(OSystem *syst)
 		_eventMan(_system->getEventManager()),
 		_saveFileMan(_system->getSavefileManager()),
 		_targetName(ConfMan.getActiveDomainName()),
-		
-		// FIXME: Temporary workaround for "missing" slashes at the end
-		// of _gameDataPath. This can go once we completed the transition
-		// to the new Archive/SearchPath system. See also bug #2098279.
-#ifdef __SYMBIAN32__
-		_gameDataPath(ConfMan.get("path")),
-#else
-		_gameDataPath(ConfMan.get("path") + '/'),
-#endif
+		_gameDataDir(ConfMan.get("path")),
 		_pauseLevel(0),
 		_mainMenuDialog(NULL) {
 
@@ -158,12 +150,12 @@ void Engine::checkCD() {
 	char buffer[MAXPATHLEN];
 	int i;
 
-	if (strlen(_gameDataPath.c_str()) == 0) {
+	if (_gameDataDir.getPath().empty()) {
 		// That's it! I give up!
 		if (getcwd(buffer, MAXPATHLEN) == NULL)
 			return;
 	} else
-		strncpy(buffer, _gameDataPath.c_str(), MAXPATHLEN);
+		strncpy(buffer, _gameDataDir.getPath().c_str(), MAXPATHLEN);
 
 	for (i = 0; i < MAXPATHLEN - 1; i++) {
 		if (buffer[i] == '\\')

@@ -107,7 +107,7 @@ M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc) :
 	// FIXME
 	_vm = this;
 
-	Common::File::addDefaultDirectory(_gameDataPath);
+	Common::File::addDefaultDirectory(_gameDataDir);
 	Common::File::addDefaultDirectory("goodstuf");	// FIXME: This is nonsense
 	Common::File::addDefaultDirectory("resource");	// FIXME: This is nonsense
 
