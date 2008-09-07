@@ -109,6 +109,6 @@ SOURCE	   backends\saves\compressed\compressed-saves.cpp
 SOURCE	   engines\engine.cpp
 SOURCE	   engines\dialogs.cpp
 SOURCE	   backends\fs\abstract-fs.cpp
-SOURCE	   backends\fs\stdiostream.cpp
+SOURCE	   backends\fs\symbian\symbianstream.cpp
 // backend specific includes
 
