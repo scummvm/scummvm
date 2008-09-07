@@ -209,7 +209,7 @@ public:
 
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual FilesystemFactory *getFilesystemFactory();
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s);
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, uint priority = 0);
 
 	virtual Common::SeekableReadStream *openConfigFileForReading();
 	virtual Common::WriteStream *openConfigFileForWriting();

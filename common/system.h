@@ -914,9 +914,10 @@ public:
 	 *
 	 * @todo Come up with a better name. This one sucks.
 	 *
-	 * @todo Allow specifying a priority with which the new dirs are added?
+	 * @param s		the SearchSet to which the system specific dirs, if any, are added
+	 * @param priority	the priority with which those dirs are added
 	 */
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s) {}
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, uint priority = 0) {}
 
 	/**
 	 * Open the default config file for reading, by returning a suitable

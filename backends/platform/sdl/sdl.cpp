@@ -275,7 +275,7 @@ FilesystemFactory *OSystem_SDL::getFilesystemFactory() {
 	return _fsFactory;
 }
 
-void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s) {
+void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, uint priority) {
 
 #ifdef DATA_PATH
 	// Add the global DATA_PATH to the directory search list
@@ -283,7 +283,7 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s) {
 	Common::FilesystemNode dataNode(DATA_PATH);
 	if (dataNode.exists() && dataNode.isDirectory()) {
 		Common::ArchivePtr dataArchive(new Common::FSDirectory(dataNode, 4));
-		s.add(DATA_PATH, dataArchive);
+		s.add(DATA_PATH, dataArchive, priority);
 	}
 #endif
 
@@ -297,7 +297,7 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s) {
 			// Success: Add it to the search path
 			Common::String bundlePath((const char *)buf);
 			Common::ArchivePtr bundleArchive(new Common::FSDirectory(bundlePath));
-			s.add("__OSX_BUNDLE__", bundleArchive);
+			s.add("__OSX_BUNDLE__", bundleArchive, priority);
 		}
 		CFRelease(fileUrl);
 	}
