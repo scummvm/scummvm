@@ -257,8 +257,16 @@ bool md5_file(const FilesystemNode &file, uint8 digest[16], uint32 length) {
 		warning("md5_file: using a directory FilesystemNode");
 		return false;
 	}
+	
+	ReadStream *stream = file.openForReading();
+	if (!stream) {
+		warning("md5_file: failed to open '%s'", file.getPath().c_str());
+		return false;
+	}
 
-	return md5_file(file.getPath().c_str(), digest, length);
+	bool result =  md5_file(*stream, digest, length);
+	delete stream;
+	return result;
 }
 
 bool md5_file(const char *name, uint8 digest[16], uint32 length) {
