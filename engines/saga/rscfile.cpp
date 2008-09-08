@@ -384,24 +384,24 @@ bool Resource::createContexts() {
 	if (!soundFileInArray) {
 		if (_vm->getGameType() == GType_ITE) {
 			// If the sound file is not specified in the detector table, add it here
-			if (Common::File::exists("sounds.rsc") || Common::File::exists("sounds.cmp")) {
+			if (Common::File::exists("sounds.rsc")) {
 				_contextsCount++;
 				soundFileIndex = _contextsCount - 1;
-				if (Common::File::exists("sounds.rsc")) {
-					sprintf(soundFileName, "sounds.rsc");
-				} else {
-					sprintf(soundFileName, "sounds.cmp");
-					_vm->_gf_compressed_sounds = true;
-				}
-			} else if (Common::File::exists("soundsd.rsc") || Common::File::exists("soundsd.cmp")) {
+				sprintf(soundFileName, "sounds.rsc");
+			} else if (Common::File::exists("sounds.cmp")) {
 				_contextsCount++;
 				soundFileIndex = _contextsCount - 1;
-				if (Common::File::exists("soundsd.rsc")) {
-					sprintf(soundFileName, "soundsd.rsc");
-				} else {
-					sprintf(soundFileName, "soundsd.cmp");
-					_vm->_gf_compressed_sounds = true;
-				}
+				sprintf(soundFileName, "sounds.cmp");
+				_vm->_gf_compressed_sounds = true;
+			} else if (Common::File::exists("soundsd.rsc")) {
+				_contextsCount++;
+				soundFileIndex = _contextsCount - 1;
+				sprintf(soundFileName, "soundsd.rsc");
+			} else if (Common::File::exists("soundsd.cmp")) {
+				_contextsCount++;
+				soundFileIndex = _contextsCount - 1;
+				sprintf(soundFileName, "soundsd.cmp");
+				_vm->_gf_compressed_sounds = true;
 			} else {
 				// No sound file found, don't add any file to the array
 				soundFileInArray = true;
@@ -410,15 +410,15 @@ bool Resource::createContexts() {
 			}
 		} else {
 			// If the sound file is not specified in the detector table, add it here
-			if (Common::File::exists("sfx.res") || Common::File::exists("sfx.cmp")) {
+			if (Common::File::exists("sfx.res")) {
 				_contextsCount++;
 				soundFileIndex = _contextsCount - 1;
-				if (Common::File::exists("sfx.res")) {
-					sprintf(soundFileName, "sfx.res");
-				} else {
-					sprintf(soundFileName, "sfx.cmp");
-					_vm->_gf_compressed_sounds = true;
-				}
+				sprintf(soundFileName, "sfx.res");
+			} else if (Common::File::exists("sfx.cmp")) {
+				_contextsCount++;
+				soundFileIndex = _contextsCount - 1;
+				sprintf(soundFileName, "sfx.cmp");
+				_vm->_gf_compressed_sounds = true;
 			} else {
 				// No sound file found, don't add any file to the array
 				soundFileInArray = true;
@@ -429,24 +429,24 @@ bool Resource::createContexts() {
 	if (!voicesFileInArray) {
 		if (_vm->getGameType() == GType_ITE) {
 			// If the voices file is not specified in the detector table, add it here
-			if (Common::File::exists("voices.rsc") || Common::File::exists("voices.cmp")) {
+			if (Common::File::exists("voices.rsc")) {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
-				if (Common::File::exists("voices.rsc")) {
-					sprintf(_voicesFileName[0], "voices.rsc");
-				} else {
-					sprintf(_voicesFileName[0], "voices.cmp");
-					_vm->_gf_compressed_sounds = true;
-				}
-			} else if (Common::File::exists("voicesd.rsc") || Common::File::exists("voicesd.cmp")) {
+				sprintf(_voicesFileName[0], "voices.rsc");
+			} else if (Common::File::exists("voices.cmp")) {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
-				if (Common::File::exists("voicesd.rsc")) {
-					sprintf(_voicesFileName[0], "voicesd.rsc");
-				} else {
-					sprintf(_voicesFileName[0], "voicesd.cmp");
-					_vm->_gf_compressed_sounds = true;
-				}
+				sprintf(_voicesFileName[0], "voices.cmp");
+				_vm->_gf_compressed_sounds = true;
+			} else if (Common::File::exists("voicesd.rsc")) {
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
+				sprintf(_voicesFileName[0], "voicesd.rsc");
+			} else if (Common::File::exists("voicesd.cmp")) {
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
+				sprintf(_voicesFileName[0], "voicesd.cmp");
+				_vm->_gf_compressed_sounds = true;
 			} else if (Common::File::exists("inherit the earth voices") ||
 					   Common::File::exists("inherit the earth voices.cmp")) {
 				_contextsCount++;
@@ -493,15 +493,15 @@ bool Resource::createContexts() {
 					sprintf(_voicesFileName[0], "voicess.cmp");
 					_vm->_gf_compressed_sounds = true;
 				}
-			} else if (Common::File::exists("voicesd.res") || Common::File::exists("voicesd.cmp")) {
+			} else if (Common::File::exists("voicesd.res")) {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
-				if (Common::File::exists("voicesd.res")) {
-					sprintf(_voicesFileName[0], "voicesd.res");
-				} else {
-					sprintf(_voicesFileName[0], "voicesd.cmp");
-					_vm->_gf_compressed_sounds = true;
-				}
+				sprintf(_voicesFileName[0], "voicesd.res");
+			} else if (Common::File::exists("voicesd.cmp")) {
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
+				sprintf(_voicesFileName[0], "voicesd.cmp");
+				_vm->_gf_compressed_sounds = true;
 			} else {
 				// No voice file found, don't add any file to the array
 				voicesFileInArray = true;
@@ -521,20 +521,22 @@ bool Resource::createContexts() {
 
 	if (_vm->getGameType() == GType_ITE) {
 		// Check for digital music in ITE
-		if (Common::File::exists("music.rsc") || Common::File::exists("music.cmp")) {
+		if (Common::File::exists("music.rsc")) {
 			_contextsCount++;
 			digitalMusic = true;
-			if (Common::File::exists("music.cmp"))
-				sprintf(musicFileName, "music.cmp");
-			else
-				sprintf(musicFileName, "music.rsc");
-		} else if (Common::File::exists("musicd.rsc") || Common::File::exists("musicd.cmp")) {
+			sprintf(musicFileName, "music.rsc");
+		} else if (Common::File::exists("music.cmp")) {
 			_contextsCount++;
 			digitalMusic = true;
-			if (Common::File::exists("musicd.cmp"))
-				sprintf(musicFileName, "musicd.cmp");
-			else
-				sprintf(musicFileName, "musicd.rsc");
+			sprintf(musicFileName, "music.cmp");
+		} else if (Common::File::exists("musicd.rsc")) {
+			_contextsCount++;
+			digitalMusic = true;
+			sprintf(musicFileName, "musicd.rsc");
+		} else if (Common::File::exists("musicd.cmp")) {
+			_contextsCount++;
+			digitalMusic = true;
+			sprintf(musicFileName, "musicd.cmp");
 		} else {
 			digitalMusic = false;
 		}
