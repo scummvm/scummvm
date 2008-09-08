@@ -156,7 +156,7 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 	}
 
 	// Add the game path to the directory search list
-	Common::File::addDefaultDirectory(path);
+	Common::File::addDefaultDirectoryRecursive(path);
 
 	// Add extrapath (if any) to the directory search list
 	if (ConfMan.hasKey("extrapath"))
@@ -285,12 +285,12 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 			// Try to run the game
 			int result = runGame(plugin, system, specialDebug);
-			
+
 			// Did an error occur ?
 			if (result != 0) {
 				// TODO: Show an informative error dialog if starting the selected game failed.
 			}
-			
+
 			// Quit unless an error occurred, or Return to launcher was requested
 			if (result == 0 && !g_system->getEventManager()->shouldRTL())
 				break;
