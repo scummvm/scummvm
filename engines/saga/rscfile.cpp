@@ -814,40 +814,14 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	_vm->_script->_globalVoiceLUT.freeMem();
 
-	switch (chapter) {
-	case 1:
-		_vm->_sndRes->setVoiceBank(1);
-		voiceLUTResourceID = 23;
-		break;
-	case 2:
-		_vm->_sndRes->setVoiceBank(2);
-		voiceLUTResourceID = 24;
-		break;
-	case 3:
-		_vm->_sndRes->setVoiceBank(3);
-		voiceLUTResourceID = 25;
-		break;
-	case 4:
-		_vm->_sndRes->setVoiceBank(4);
-		voiceLUTResourceID = 26;
-		break;
-	case 5:
-		_vm->_sndRes->setVoiceBank(5);
-		voiceLUTResourceID = 27;
-		break;
-	case 6:
-		_vm->_sndRes->setVoiceBank(6);
-		voiceLUTResourceID = 28;
-		break;
-	case 7:
+	if (chapter != 7) {
+		int voiceBank = (chapter == 8) ? 0 : chapter;
+		_vm->_sndRes->setVoiceBank(voiceBank);
+		voiceLUTResourceID = 22 + voiceBank;
+	} else {
 		// IHNM demo
 		_vm->_sndRes->setVoiceBank(0);
 		voiceLUTResourceID = 17;
-		break;
-	case 8:
-		_vm->_sndRes->setVoiceBank(0);
-		voiceLUTResourceID = 22;
-		break;
 	}
 
 	if (voiceLUTResourceID) {
