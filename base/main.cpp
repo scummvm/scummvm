@@ -155,6 +155,14 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 		system.setWindowCaption(caption.c_str());
 	}
 
+	// FIXME: at this moment, game path handling is being discussed in the mailing list,
+	// while Common::File is being reworked under the hood. After commit 34444, which
+	// changed the implementation of Common::File (specifically removing usage of fopen
+	// and fOpenNoCase, which implicitly supported backslashes in file names), some games
+	// stopped working. Example of this are the HE games which use subdirectories: Kirben
+	// found this issue on lost-win-demo at first. Thus, in commit 34450, searching the
+	// game path was made recursive as a temporary fix/workaround.
+
 	// Add the game path to the directory search list
 	Common::File::addDefaultDirectoryRecursive(path);
 
