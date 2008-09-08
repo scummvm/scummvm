@@ -241,9 +241,9 @@ void LoLEngine::resetSkipFlag(bool removeEvent) {
 
 void LoLEngine::setupPrologueData(bool load) {
 	static const char * const fileList[] = {
-		"general.pak", "introvoc.pak", "startup.pak", "intro1.pak",
-		"intro2.pak", "intro3.pak", "intro4.pak", "intro5.pak",
-		"intro6.pak", "intro7.pak", "intro8.pak", "intro9.pak"
+		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK", "INTRO1.PAK",
+		"INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "INTRO5.PAK",
+		"INTRO6.PAK", "INTRO7.PAK", "INTRO8.PAK", "INTRO9.PAK"
 	};
 
 	char filename[32];
@@ -585,22 +585,22 @@ int LoLEngine::selectionCharInfo(int character) {
 
 	switch (character) {
 	case 0:
-		strcpy(filename, "face09.shp");
+		strcpy(filename, "FACE09.SHP");
 		vocFilename[3] = 'A';
 		break;
 	
 	case 1:
-		strcpy(filename, "face01.shp");
+		strcpy(filename, "FACE01.SHP");
 		vocFilename[3] = 'M';
 		break;
 	
 	case 2:
-		strcpy(filename, "face08.shp");
+		strcpy(filename, "FACE08.SHP");
 		vocFilename[3] = 'K';
 		break;
 	
 	case 3:
-		strcpy(filename, "face05.shp");
+		strcpy(filename, "FACE05.SHP");
 		vocFilename[3] = 'C';
 		break;
 	
