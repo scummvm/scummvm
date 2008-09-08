@@ -308,6 +308,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\resource_intern.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\resource_intern.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\saveload.cpp"
 			>
 		</File>
