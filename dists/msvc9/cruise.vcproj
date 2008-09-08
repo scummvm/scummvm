@@ -228,10 +228,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\cruise\decompiler.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\cruise\delphine-unpack.cpp"
 			>
 		</File>
