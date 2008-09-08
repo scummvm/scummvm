@@ -126,7 +126,7 @@
 				ForceConformanceInForLoopScope="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				WarnAsError="false"
+				WarnAsError="true"
 				DebugInformationFormat="0"
 			/>
 			<Tool
