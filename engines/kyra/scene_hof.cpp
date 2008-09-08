@@ -517,7 +517,7 @@ void KyraEngine_HoF::runSceneScript7() {
 
 void KyraEngine_HoF::initSceneAnims(int unk1) {
 	debugC(9, kDebugLevelMain, "KyraEngine_HoF::initSceneAnims(%d)", unk1);
-	for (int i = 0; i < ARRAYSIZE(_animObjects); ++i)
+	for (int i = 0; i < 41; ++i)
 		_animObjects[i].enabled = 0;
 
 	bool animInit = false;
