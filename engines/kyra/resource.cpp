@@ -38,7 +38,7 @@ namespace Kyra {
 Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(new Common::SearchSet()), _protectedFiles(new Common::SearchSet()), _loaders(), _vm(vm) {
 	initializeLoaders();
 
-	Common::SharedPtr<Common::Archive> path(new Common::FSDirectory(ConfMan.get("path")));
+	Common::SharedPtr<Common::Archive> path(new Common::FSDirectory(ConfMan.get("path"), 2));
 	Common::SharedPtr<Common::Archive> extrapath(new Common::FSDirectory(ConfMan.get("extrapath")));
 
 	_files.add("path", path, 4);

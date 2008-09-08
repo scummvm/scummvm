@@ -241,27 +241,21 @@ void LoLEngine::resetSkipFlag(bool removeEvent) {
 
 void LoLEngine::setupPrologueData(bool load) {
 	static const char * const fileList[] = {
-		"xxx/general.pak",
-		"xxx/introvoc.pak",
-		"xxx/startup.pak",
-		"xxx/intro1.pak",
-		"xxx/intro2.pak",
-		"xxx/intro3.pak",
-		"xxx/intro4.pak",
-		"xxx/intro5.pak",
-		"xxx/intro6.pak",
-		"xxx/intro7.pak",
-		"xxx/intro8.pak",
-		"xxx/intro9.pak"
+		"general.pak", "introvoc.pak", "startup.pak", "intro1.pak",
+		"intro2.pak", "intro3.pak", "intro4.pak", "intro5.pak",
+		"intro6.pak", "intro7.pak", "intro8.pak", "intro9.pak"
 	};
 
-	char filepath[32];
-	char *filename = filepath;
+	char filename[32];
 	for (uint i = 0; i < ARRAYSIZE(fileList); ++i) {
-		strcpy(filename, fileList[i]);
-		memcpy(filename, _languageExt[_lang], 3);
-		if (!_flags.isTalkie)
-			filename += 4;		
+		filename[0] = '\0';
+
+		if (_flags.isTalkie) {
+			strcpy(filename, _languageExt[_lang]);
+			strcat(filename, "/");
+		}
+
+		strcat(filename, fileList[i]);
 		
 		if (load) {
 			if (!_res->loadPakFile(filename))
