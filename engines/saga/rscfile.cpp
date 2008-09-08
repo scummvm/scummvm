@@ -661,9 +661,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	if (chapter < 0)
 		chapter = (_vm->getGameId() != GID_IHNM_DEMO) ? 8 : 7;
 
-	// TODO
-	//if (module.voiceLUT)
-	//	free module.voiceLUT;
+	_vm->_script->_globalVoiceLUT.freeMem();
 
 	// TODO: close chapter context, or rather reassign it in our case
 
@@ -769,7 +767,6 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->_sprite->_mainSprites.freeMem();
 	_vm->_sprite->loadList(_metaResource.mainSpritesID, _vm->_sprite->_mainSprites);
 
-
 	_vm->_actor->loadObjList(_metaResource.objectCount, _metaResource.objectsResourceID);
 
 	_vm->_resource->loadResource(resourceContext, _metaResource.cutawayListResourceID, resourcePointer, resourceLength);
@@ -811,8 +808,6 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	}
 
 	int voiceLUTResourceID = 0;
-
-	_vm->_script->_globalVoiceLUT.freeMem();
 
 	if (chapter != 7) {
 		int voiceBank = (chapter == 8) ? 0 : chapter;
