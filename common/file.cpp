@@ -23,140 +23,47 @@
  *
  */
 
+#include "common/archive.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/hashmap.h"
 #include "common/util.h"
-#include "common/hash-str.h"
-
-#include "backends/fs/stdiostream.h"
-
-#if defined(MACOSX) || defined(IPHONE)
-#include "CoreFoundation/CoreFoundation.h"
-#endif
+#include "common/system.h"
 
 namespace Common {
 
-typedef HashMap<String, int> StringIntMap;
+static Common::SearchSet *s_searchSet = 0;
 
-// The following two objects could be turned into static members of class
-// File. However, then we would be forced to #include hashmap in file.h
-// which seems to be a high price just for a simple beautification...
-static StringIntMap *_defaultDirectories;
-static StringMap *_filesMap;
-
-static SeekableReadStream *fopenNoCase(const String &filename, const String &directory) {
-	SeekableReadStream *handle;
-	String dirBuf(directory);
-	String fileBuf(filename);
-
-#if !defined(__GP32__) && !defined(PALMOS_MODE)
-	// Add a trailing slash, if necessary.
-	if (!dirBuf.empty()) {
-		const char c = dirBuf.lastChar();
-		if (c != ':' && c != '/' && c != '\\')
-			dirBuf += '/';
-	}
-#endif
-
-	// Append the filename to the path string
-	String pathBuf(dirBuf);
-	pathBuf += fileBuf;
-
-	//
-	// Try to open the file normally
-	//
-	handle = StdioStream::makeFromPath(pathBuf, false);
-
-	//
-	// Try again, with file name converted to upper case
-	//
-	if (!handle) {
-		fileBuf.toUppercase();
-		pathBuf = dirBuf + fileBuf;
-		handle = StdioStream::makeFromPath(pathBuf, false);
-	}
-
-	//
-	// Try again, with file name converted to lower case
-	//
-	if (!handle) {
-		fileBuf.toLowercase();
-		pathBuf = dirBuf + fileBuf;
-		handle = StdioStream::makeFromPath(pathBuf, false);
-	}
-
-	//
-	// Try again, with file name capitalized
-	//
-	if (!handle) {
-		fileBuf.toLowercase();
-		fileBuf.setChar(toupper(fileBuf[0]),0);
-		pathBuf = dirBuf + fileBuf;
-		handle = StdioStream::makeFromPath(pathBuf, false);
-	}
-
-	return handle;
-}
 
 void File::addDefaultDirectory(const String &directory) {
 	FilesystemNode dir(directory);
 	addDefaultDirectoryRecursive(dir, 1);
 }
 
-void File::addDefaultDirectoryRecursive(const String &directory, int level, const String &prefix) {
+void File::addDefaultDirectoryRecursive(const String &directory, int level) {
 	FilesystemNode dir(directory);
-	addDefaultDirectoryRecursive(dir, level, prefix);
+	addDefaultDirectoryRecursive(dir, level);
 }
 
 void File::addDefaultDirectory(const FilesystemNode &directory) {
 	addDefaultDirectoryRecursive(directory, 1);
 }
 
-void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, const String &prefix) {
+void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level) {
 	if (level <= 0 || !dir.exists() || !dir.isDirectory())
 		return;
 
-	FSList fslist;
-	if (!dir.getChildren(fslist, FilesystemNode::kListAll)) {
-		// Failed listing the contents of this node, so it is either not a
-		// directory, or just doesn't exist at all.
-		return;
+	if (!s_searchSet) {
+		s_searchSet = new Common::SearchSet();
+		g_system->addSysArchivesToSearchSet(*s_searchSet);
 	}
 
-	if (!_defaultDirectories)
-		_defaultDirectories = new StringIntMap;
-
-	// Do not add directories multiple times, unless this time they are added
-	// with a bigger depth.
-	const String &directory(dir.getPath());
-	if (_defaultDirectories->contains(directory) && (*_defaultDirectories)[directory] >= level)
-		return;
-	(*_defaultDirectories)[directory] = level;
-
-	if (!_filesMap)
-		_filesMap = new StringMap;
-
-	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory()) {
-			addDefaultDirectoryRecursive(file->getPath(), level - 1, prefix + file->getName() + "/");
-		} else {
-			String lfn(prefix);
-			lfn += file->getName();
-			lfn.toLowercase();
-			if (!_filesMap->contains(lfn)) {
-				(*_filesMap)[lfn] = file->getPath();
-			}
-		}
-	}
+	Common::ArchivePtr dataArchive(new Common::FSDirectory(dir, level));
+	s_searchSet->add(dir.getPath(), dataArchive, 1);
 }
 
 void File::resetDefaultDirectories() {
-	delete _defaultDirectories;
-	delete _filesMap;
-
-	_defaultDirectories = 0;
-	_filesMap = 0;
+	delete s_searchSet;
+	s_searchSet = 0;
 }
 
 File::File()
@@ -175,49 +82,19 @@ bool File::open(const String &filename) {
 	_name.clear();
 	clearIOFailed();
 
-	String fname(filename);
-	fname.toLowercase();
-
-	if (_filesMap && _filesMap->contains(fname)) {
-		fname = (*_filesMap)[fname];
-		debug(3, "Opening hashed: %s", fname.c_str());
-		_handle = StdioStream::makeFromPath(fname, false);
-	} else if (_filesMap && _filesMap->contains(fname + ".")) {
+	if (s_searchSet && s_searchSet->hasFile(filename)) {
+		debug(3, "Opening hashed: %s", filename.c_str());
+		_handle = s_searchSet->openFile(filename);
+	} else if (s_searchSet && s_searchSet->hasFile(filename + ".")) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
-		fname = (*_filesMap)[fname + "."];
-		debug(3, "Opening hashed: %s", fname.c_str());
-		_handle = StdioStream::makeFromPath(fname, false);
+		debug(3, "Opening hashed: %s.", filename.c_str());
+		_handle = s_searchSet->openFile(filename);
 	} else {
-
-		if (_defaultDirectories) {
-			// Try all default directories
-			StringIntMap::const_iterator x(_defaultDirectories->begin());
-			for (; _handle == NULL && x != _defaultDirectories->end(); ++x) {
-				_handle = fopenNoCase(filename, x->_key);
-			}
-		}
-
 		// Last resort: try the current directory
-		if (_handle == NULL)
-			_handle = fopenNoCase(filename, "");
-
-		// Last last (really) resort: try looking inside the application bundle on Mac OS X for the lowercase file.
-#if defined(MACOSX) || defined(IPHONE)
-		if (!_handle) {
-			CFStringRef cfFileName = CFStringCreateWithBytes(NULL, (const UInt8 *)filename.c_str(), filename.size(), kCFStringEncodingASCII, false);
-			CFURLRef fileUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), cfFileName, NULL, NULL);
-			if (fileUrl) {
-				UInt8 buf[256];
-				if (CFURLGetFileSystemRepresentation(fileUrl, false, (UInt8 *)buf, 256)) {
-					_handle = StdioStream::makeFromPath((char *)buf, false);
-				}
-				CFRelease(fileUrl);
-			}
-			CFRelease(cfFileName);
-		}
-#endif
-
+		FilesystemNode file(filename);
+		if (file.exists() && !file.isDirectory())
+			_handle = file.openForReading();
 	}
 	
 	if (_handle == NULL)
@@ -264,34 +141,20 @@ bool File::open(const FilesystemNode &node) {
 }
 
 bool File::exists(const String &filename) {
-	// First try to find the file via a FilesystemNode (in case an absolute
-	// path was passed). This is only used to filter out directories.
-	FilesystemNode file(filename);
-	if (file.exists())
-		return !file.isDirectory();
-
-	// See if the file is already mapped
-	if (_filesMap && _filesMap->contains(filename)) {
-		FilesystemNode file2((*_filesMap)[filename]);
-
-		if (file2.exists())
-			return !file2.isDirectory();
+	if (s_searchSet && s_searchSet->hasFile(filename)) {
+		return true;
+	} else if (s_searchSet && s_searchSet->hasFile(filename + ".")) {
+		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
+		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
+		return true;
+	} else {
+		// Last resort: try the current directory
+		FilesystemNode file(filename);
+		if (file.exists() && !file.isDirectory())
+			return true;
 	}
-
-	// Try all default directories
-	if (_defaultDirectories) {
-		StringIntMap::const_iterator i(_defaultDirectories->begin());
-		for (; i != _defaultDirectories->end(); ++i) {
-			FilesystemNode file2(i->_key + filename);
-
-			if(file2.exists())
-				return !file2.isDirectory();
-		}
-	}
-
-	//Try opening the file inside the local directory as a last resort
-	File tmp;
-	return tmp.open(filename);
+	
+	return false;
 }
 
 void File::close() {
@@ -350,15 +213,8 @@ bool DumpFile::open(const String &filename) {
 	assert(!filename.empty());
 	assert(!_handle);
 
-	String fname(filename);
-	fname.toLowercase();
-	
-	_handle = StdioStream::makeFromPath(filename, true);
-
-	if (_handle == NULL)
-		debug(2, "Failed to open '%s' for writing", filename.c_str());
-
-	return _handle != NULL;
+	FilesystemNode node(filename);
+	return open(node);
 }
 
 bool DumpFile::open(const FilesystemNode &node) {
