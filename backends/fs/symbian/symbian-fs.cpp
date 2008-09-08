@@ -32,6 +32,8 @@
 #include <f32file.h>
 #include <bautils.h>
 
+#define KDriveLabelSize 30
+
 /**
  * Implementation of the ScummVM file system API based on POSIX.
  *
@@ -41,10 +43,9 @@ class SymbianFilesystemNode : public AbstractFilesystemNode {
 protected:
 	Common::String _displayName;
 	Common::String _path;
-	bool _isDirectory;
-	bool _isValid;
-	bool _isPseudoRoot;
-
+	TBool _isDirectory;
+	TBool _isValid;
+	TBool _isPseudoRoot;
 public:
 	/**
 	 * Creates a SymbianFilesystemNode with the root node as path.
@@ -62,9 +63,9 @@ public:
 
 	virtual bool exists() const {
 		TFileName fname;
-		TPtrC8 ptr((const unsigned char*)_path.c_str(),_path.size());
+		TPtrC8 ptr((const unsigned char*) _path.c_str(), _path.size());
 		fname.Copy(ptr);
-		TBool fileExists = BaflUtils::FileExists(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), fname);
+		TBool fileExists = BaflUtils::FileExists(static_cast<OSystem_SDL_Symbian*> (g_system)->FsSession(), fname);
 		return fileExists;
 	}
 	virtual Common::String getDisplayName() const { return _displayName; }
@@ -99,8 +100,8 @@ static void fixFilePath(Common::String& aPath){
 
 SymbianFilesystemNode::SymbianFilesystemNode(bool aIsRoot) {
 	_path = "";
-	_isValid = true;
-	_isDirectory = true;
+	_isValid = ETrue;
+	_isDirectory = ETrue;
 	_isPseudoRoot = aIsRoot;
 	_displayName = "Root";
 
@@ -108,9 +109,9 @@ SymbianFilesystemNode::SymbianFilesystemNode(bool aIsRoot) {
 
 SymbianFilesystemNode::SymbianFilesystemNode(const Common::String &path) {
 	if (path.size() == 0)
-		_isPseudoRoot = true;
+		_isPseudoRoot = ETrue;
 	else
-		_isPseudoRoot = false;
+		_isPseudoRoot = EFalse;
 
 	_path = path;
 
@@ -124,11 +125,11 @@ SymbianFilesystemNode::SymbianFilesystemNode(const Common::String &path) {
 	fname.Copy(ptr);
 
 	if (static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession().Entry(fname, fileAttribs) == KErrNone) {
-		_isValid = true;
+		_isValid = ETrue;
 		_isDirectory = fileAttribs.IsDir();
 	} else {
-		_isValid = false;
-		_isDirectory = false;
+		_isValid = ETrue;
+		_isDirectory = EFalse;
 	}
 }
 
@@ -138,6 +139,7 @@ AbstractFilesystemNode *SymbianFilesystemNode::getChild(const Common::String &n)
 
 	if (_path.lastChar() != '\\')
 		newPath += '\\';
+
 	newPath += n;	
 
 	return new SymbianFilesystemNode(newPath);
@@ -155,14 +157,14 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		TChar driveLetter;
 		TUint driveLetterValue;
 		TVolumeInfo volumeInfo;
-		TBuf8<30> driveLabel8;
-		TBuf8<30> driveString8;
+		TBuf8<KDriveLabelSize> driveLabel8;
+		TBuf8<KDriveLabelSize> driveString8;
 
 		for (driveNumber=EDriveA; driveNumber<=EDriveZ; driveNumber++) {
 			TInt err = fs.Volume(volumeInfo, driveNumber);
 			if (err != KErrNone)
 				continue;
-			if (fs.DriveToChar(driveNumber,driveLetter) != KErrNone)
+			if (fs.DriveToChar(driveNumber, driveLetter) != KErrNone)
 				continue;
 
 			driveLetterValue = driveLetter;
@@ -178,40 +180,46 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 			sprintf(path,"%c:\\", driveNumber+'A');
 
 			SymbianFilesystemNode entry(false);
-			entry._displayName = (char*)driveString8.PtrZ(); // drive_name
-			entry._isDirectory = true;
-			entry._isValid = true;
-			entry._isPseudoRoot = false;
+			entry._displayName = (char*) driveString8.PtrZ(); // drive_name
+			entry._isDirectory = ETrue;
+			entry._isValid = ETrue;
+			entry._isPseudoRoot = EFalse;
 			entry._path = path;
 			myList.push_back(new SymbianFilesystemNode(entry));
 		}
 	} else {
-		TPtrC8 ptr((const unsigned char*)_path.c_str(),_path.size());
+		TPtrC8 ptr((const unsigned char*) _path.c_str(), _path.size());
 		TFileName fname;
-		fname.Copy(ptr);
 		TBuf8<256>nameBuf;
 		CDir* dirPtr;
-		if (static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession().GetDir(fname,KEntryAttNormal|KEntryAttDir,0,dirPtr)==KErrNone) {
+		fname.Copy(ptr);
+
+		if (_path.lastChar() != '\\')
+			fname.Append('\\');
+		
+		if (static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession().GetDir(fname, KEntryAttNormal|KEntryAttDir, 0, dirPtr) == KErrNone) {
 			CleanupStack::PushL(dirPtr);
 			TInt cnt=dirPtr->Count();
 			for (TInt loop=0;loop<cnt;loop++) {
 				TEntry fileentry=(*dirPtr)[loop];
 				nameBuf.Copy(fileentry.iName);
-				SymbianFilesystemNode entry(false);
-				entry._isPseudoRoot = false;
+				SymbianFilesystemNode entry(EFalse);
+				entry._isPseudoRoot = EFalse;
 
-				entry._displayName =(char*)nameBuf.PtrZ();
+				entry._displayName =(char*) nameBuf.PtrZ();
 				entry._path = _path;
-				entry._path +=(char*)nameBuf.PtrZ();
+
+				if (entry._path.lastChar() != '\\')
+					entry._path+= '\\';
+
+				entry._path +=(char*) nameBuf.PtrZ();
 				entry._isDirectory = fileentry.IsDir();
 
 				// Honor the chosen mode
 				if ((mode == Common::FilesystemNode::kListFilesOnly && entry._isDirectory) ||
 					(mode == Common::FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
 					continue;
-
-				if (entry._isDirectory)
-					entry._path += "\\";
+			
 				myList.push_back(new SymbianFilesystemNode(entry));
 			}
 			CleanupStack::PopAndDestroy(dirPtr);
@@ -227,18 +235,18 @@ AbstractFilesystemNode *SymbianFilesystemNode::getParent() const {
 	// Root node is its own parent. Still we can't just return this
 	// as the GUI code will call delete on the old node.
 	if (!_isPseudoRoot && _path.size() > 3) {
-		p = new SymbianFilesystemNode(false);
+		p = new SymbianFilesystemNode(EFalse);
 		const char *start = _path.c_str();
 		const char *end = lastPathComponent(_path, '\\');
 
 		p->_path = Common::String(start, end - start);
-		p->_isValid = true;
-		p->_isDirectory = true;
+		p->_isValid = ETrue;
+		p->_isDirectory = ETrue;
 		p->_displayName = lastPathComponent(p->_path, '\\');
 	}
 	else
 	{
-		p = new SymbianFilesystemNode(true);
+		p = new SymbianFilesystemNode(ETrue);
 	}
 
 	return p;
