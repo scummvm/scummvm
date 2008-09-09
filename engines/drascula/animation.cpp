@@ -1010,10 +1010,6 @@ void DrasculaEngine::animation_17_2() {
 	flags[40] = 1;
 }
 
-void DrasculaEngine::animation_19_2() {
-	talk_vonBraun(5, kVonBraunDoor);
-}
-
 void DrasculaEngine::animation_20_2() {
 	talk_vonBraun(7, kVonBraunDoor);
 	talk_vonBraun(8, kVonBraunDoor);
@@ -1042,10 +1038,6 @@ void DrasculaEngine::animation_20_2() {
 
 		breakOut = 1;
 	}
-}
-
-void DrasculaEngine::animation_21_2() {
-	talk_vonBraun(6, kVonBraunDoor);
 }
 
 void DrasculaEngine::animation_23_2() {
@@ -1514,10 +1506,6 @@ void DrasculaEngine::animation_1_5() {
 	converse(8);
 }
 
-void DrasculaEngine::animation_2_5() {
-	talk_bj(22);
-}
-
 void DrasculaEngine::animation_3_5() {
 	talk_bj(23);
 	pickObject(10);
@@ -1837,14 +1825,6 @@ void DrasculaEngine::animation_15_5() {
 	talk_mus(7);
 }
 
-void DrasculaEngine::animation_16_5() {
-	talk_mus(8);
-}
-
-void DrasculaEngine::animation_17_5() {
-	talk_mus(9);
-}
-
 void DrasculaEngine::animation_1_6() {
 	trackProtagonist = 0;
 	curX = 103;
@@ -1917,18 +1897,6 @@ void DrasculaEngine::animation_1_6() {
 	clearRoom();
 	enterRoom(102);
 	activatePendulum();
-}
-
-void DrasculaEngine::animation_2_6() {
-	talk_drascula(24, 1);
-}
-
-void DrasculaEngine::animation_3_6() {
-	talk_drascula(24, 1);
-}
-
-void DrasculaEngine::animation_4_6() {
-	talk_drascula(25, 1);
 }
 
 void DrasculaEngine::animation_5_6() {
@@ -2080,19 +2048,11 @@ void DrasculaEngine::animation_12_6() {
 	talk_bartender(14, 1);
 }
 
-void DrasculaEngine::animation_13_6() {
-	talk_bartender(15, 1);
-}
-
 void DrasculaEngine::animation_14_6() {
 	talk_bartender(24, 1);
 	addObject(21);
 	flags[10] = 1;
 	breakOut = 1;
-}
-
-void DrasculaEngine::animation_15_6() {
-	talk_bartender(16, 1);
 }
 
 void DrasculaEngine::animation_18_6() {

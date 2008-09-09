@@ -151,6 +151,12 @@ enum AnimFrameTypes {
 	kFramePendulum = 7
 };
 
+enum DialogOptionStatus {
+	kDialogOptionUnselected = 1,
+	kDialogOptionSelected = 2,
+	kDialogOptionClicked = 3
+};
+
 #define TEXTD_START 68
 
 struct DrasculaGameDescription;
@@ -499,8 +505,9 @@ public:
 	bool checkMenuFlags();
 	void setupRoomsTable();
 	bool roomParse(int, int);
+	void cleanupString(char *string);
 	void converse(int);
-	void print_abc_opc(const char *, int, int, int);
+	void print_abc_opc(const char *, int, int);
 	void response(int);
 	void activatePendulum();
 
@@ -578,9 +585,7 @@ public:
 	void animation_16_2();
 	void animation_17_2();
 	void animation_18_2();
-	void animation_19_2();
 	void animation_20_2();
-	void animation_21_2();
 	void animation_22_2();
 	void animation_23_2();
 	void animation_23_joined();
@@ -618,7 +623,6 @@ public:
 	void animation_9_4();
 	//
 	void animation_1_5();
-	void animation_2_5();
 	void animation_3_5();
 	void animation_4_5();
 	void animation_5_5();
@@ -632,13 +636,8 @@ public:
 	void animation_13_5();
 	void animation_14_5();
 	void animation_15_5();
-	void animation_16_5();
-	void animation_17_5();
 	//
 	void animation_1_6();
-	void animation_2_6();
-	void animation_3_6();
-	void animation_4_6();
 	void animation_5_6();
 	void animation_6_6();
 	void animation_7_6();
@@ -646,9 +645,7 @@ public:
 	void animation_10_6();
 	void animation_11_6();
 	void animation_12_6();
-	void animation_13_6();
 	void animation_14_6();
-	void animation_15_6();
 	void animation_18_6();
 	void animation_19_6();
 

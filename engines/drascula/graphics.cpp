@@ -254,9 +254,11 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 	}	// for
 }
 
-void DrasculaEngine::print_abc_opc(const char *said, int screenX, int screenY, int game) {
+void DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 	int signY, letterY, letterX = 0;
 	uint len = strlen(said);
+
+	int screenX = 1;
 
 	for (uint h = 0; h < len; h++) {
 		if (game == 1) {

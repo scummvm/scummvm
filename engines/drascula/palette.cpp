@@ -27,6 +27,17 @@
 
 namespace Drascula {
 
+const char colorTable[][3] = {
+	{    0,    0,    0 }, { 0x10, 0x3E, 0x28 },
+	{    0,    0,    0 },	// unused
+	{ 0x16, 0x3F, 0x16 }, { 0x09, 0x3F, 0x12 },
+	{ 0x3F, 0x3F, 0x15 },
+	{    0,    0,    0 },	// unused
+	{ 0x38,    0,    0 }, { 0x3F, 0x27, 0x0B },
+	{ 0x2A,    0, 0x2A }, { 0x30, 0x30, 0x30 },
+	{   98,   91,  100 }
+};
+
 void DrasculaEngine::setRGB(byte *pal, int colorCount) {
 	int x, cnt = 0;
 
@@ -69,17 +80,6 @@ void DrasculaEngine::setPalette(byte *PalBuf) {
 
 void DrasculaEngine::color_abc(int cl) {
 	_color = cl;
-
-	char colorTable[][3] = {
-		{    0,    0,    0 }, { 0x10, 0x3E, 0x28 },
-		{    0,    0,    0 },	// unused
-		{ 0x16, 0x3F, 0x16 }, { 0x09, 0x3F, 0x12 },
-		{ 0x3F, 0x3F, 0x15 },
-		{    0,    0,    0 },	// unused
-		{ 0x38,    0,    0 }, { 0x3F, 0x27, 0x0B },
-		{ 0x2A,    0, 0x2A }, { 0x30, 0x30, 0x30 },
-		{   98,   91,  100 }
-	};
 
 	for (int i = 0; i <= 2; i++)
 		gamePalette[254][i] = colorTable[cl][i];
