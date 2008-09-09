@@ -216,7 +216,7 @@ public:
 
 	virtual void enter() {
 		_vm->_gfx->clearScreen();
-		int x = 0, y = 0;
+		int x = 0, y = 0, i = 0;
 		if (_vm->getPlatform() == Common::kPlatformPC) {
 			x = 20;
 			y = 50;
@@ -227,10 +227,9 @@ public:
 
 		bool complete[3];
 		_vm->_saveLoad->getGamePartProgress(complete, 3);
-		for (int i = 0; i < 3 && complete[i]; i++, _availItems++) ;
+		for (i = 0; i < 3 && complete[i]; i++, _availItems++) ;
 
 		// TODO: keep track of and destroy menu item frames/surfaces
-		int i;
 		for (i = 0; i < _availItems; i++) {
 			_lines[i] = new GfxObj(0, renderMenuItem(_menuStrings[i]), "MenuItem");
 			uint id = _vm->_gfx->setItem(_lines[i], MENUITEMS_X, MENUITEMS_Y + MENUITEM_HEIGHT * i, 0xFF);
