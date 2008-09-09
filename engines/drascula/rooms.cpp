@@ -1840,41 +1840,31 @@ bool DrasculaEngine::exitRoom(int l) {
 
 	int roomNum = 0;
 
-	if (currentChapter == 1) {
-		if (objectNum[l] == 105 && flags[0] == 0)
-			talk(442);
-		else {
-			updateDoor(l);
-			if (isDoor[l] != 0) {
-				gotoObject(roomObjX[l], roomObjY[l]);
-				trackProtagonist = trackObj[l];
-				updateRoom();
-				updateScreen();
-				characterMoved = 0;
-				trackProtagonist = trackCharacter_alkeva[l];
-				objExit = alapuertakeva[l];
-				doBreak = 1;
-				previousMusic = roomMusic;
+	if (currentChapter == 1 && objectNum[l] == 105 && flags[0] == 0) {
+		talk(442);
+		return false;
+	}
 
-				if (objectNum[l] == 105) {
-					animation_2_1();
-					return true;
-				}
-				clearRoom();
-				sscanf(_targetSurface[l], "%d", &roomNum);
-				curX = -1;
-				enterRoom(roomNum);
-			}
+	updateDoor(l);
+	if (isDoor[l] != 0 && 
+		((currentChapter != 3 && currentChapter != 5) || visible[l] == 1)) {
+		gotoObject(roomObjX[l], roomObjY[l]);
+		if (currentChapter != 2) {
+			trackProtagonist = trackObj[l];
+			updateRoom();
+			updateScreen();
 		}
-	} else if (currentChapter == 2) {
-		updateDoor(l);
-		if (isDoor[l] != 0) {
-			gotoObject(roomObjX[l], roomObjY[l]);
-			characterMoved = 0;
-			trackProtagonist = trackCharacter_alkeva[l];
-			objExit = alapuertakeva[l];
-			doBreak = 1;
-			previousMusic = roomMusic;
+		characterMoved = 0;
+		trackProtagonist = trackCharacter_alkeva[l];
+		objExit = alapuertakeva[l];
+		doBreak = 1;
+		previousMusic = roomMusic;
+
+		// Object specific actions
+		if (currentChapter == 1 && objectNum[l] == 105) {
+			animation_2_1();
+			return true;
+		} else if (currentChapter == 2) {
 			if (objectNum[l] == 136)
 				animation_2_2();
 			if (objectNum[l] == 124)
@@ -1882,7 +1872,8 @@ bool DrasculaEngine::exitRoom(int l) {
 			if (objectNum[l] == 173) {
 				animation_35_2();
 				return true;
-			} if (objectNum[l] == 146 && flags[39] == 1) {
+			} 
+			if (objectNum[l] == 146 && flags[39] == 1) {
 				flags[5] = 1;
 				flags[11] = 1;
 			}
@@ -1891,86 +1882,20 @@ bool DrasculaEngine::exitRoom(int l) {
 				removeObject(kItemEarWithEarPlug);
 				addObject(kItemEarplugs);
 			}
-			clearRoom();
-			sscanf(_targetSurface[l], "%d", &roomNum);
-			curX =- 1;
-			enterRoom(roomNum);
+		} else if (currentChapter == 4 && objectNum[l] == 108) {
+			gotoObject(171, 78);
 		}
-	} else if (currentChapter == 3) {
-		updateDoor(l);
-		if (isDoor[l] != 0 && visible[l] == 1) {
-			gotoObject(roomObjX[l], roomObjY[l]);
-			trackProtagonist = trackObj[l];
-			updateRoom();
-			updateScreen();
-			characterMoved = 0;
-			trackProtagonist = trackCharacter_alkeva[l];
-			objExit = alapuertakeva[l];
-			doBreak = 1;
-			previousMusic = roomMusic;
-			clearRoom();
-			sscanf(_targetSurface[l], "%d", &roomNum);
-			curX =- 1;
-			enterRoom(roomNum);
-		}
-	} else if (currentChapter == 4) {
-		updateDoor(l);
-		if (isDoor[l] != 0) {
-			gotoObject(roomObjX[l], roomObjY[l]);
-			trackProtagonist = trackObj[l];
-			updateRoom();
-			updateScreen();
-			characterMoved = 0;
-			trackProtagonist = trackCharacter_alkeva[l];
-			objExit = alapuertakeva[l];
-			doBreak = 1;
-			previousMusic = roomMusic;
 
-			if (objectNum[l] == 108)
-				gotoObject(171, 78);
-			clearRoom();
-			sscanf(_targetSurface[l], "%d", &roomNum);
-			curX = -1;
-			enterRoom(roomNum);
-		}
-	} else if (currentChapter == 5) {
-		updateDoor(l);
-		if (isDoor[l] != 0 && visible[l] == 1) {
-			gotoObject(roomObjX[l], roomObjY[l]);
-			trackProtagonist = trackObj[l];
-			updateRoom();
-			updateScreen();
-			characterMoved = 0;
-			trackProtagonist = trackCharacter_alkeva[l];
-			objExit = alapuertakeva[l];
-			doBreak = 1;
-			previousMusic = roomMusic;
+		if (currentChapter == 5)
 			hare_se_ve = 1;
-			clearRoom();
-			sscanf(_targetSurface[l], "%d", &roomNum);
-			curX = -1;
-			enterRoom(roomNum);
-		}
-	} else if (currentChapter == 6) {
-		updateDoor(l);
-		if (isDoor[l] != 0) {
-			gotoObject(roomObjX[l], roomObjY[l]);
-			trackProtagonist = trackObj[l];
-			updateRoom();
-			updateScreen();
-			characterMoved = 0;
-			trackProtagonist = trackCharacter_alkeva[l];
-			objExit = alapuertakeva[l];
-			doBreak = 1;
-			previousMusic = roomMusic;
-			clearRoom();
-			sscanf(_targetSurface[l], "%d", &roomNum);
-			curX = -1;
-			enterRoom(roomNum);
 
-			if (objExit == 105)
-				animation_19_6();
-		}
+		clearRoom();
+		sscanf(_targetSurface[l], "%d", &roomNum);
+		curX = -1;
+		enterRoom(roomNum);
+
+		if (currentChapter == 6 && objExit == 105)
+			animation_19_6();
 	}
 
 	return false;
