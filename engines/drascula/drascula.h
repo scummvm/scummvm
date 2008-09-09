@@ -46,7 +46,7 @@
 
 namespace Drascula {
 
-#define DRASCULA_DAT_VER 2
+#define DRASCULA_DAT_VER 3
 #define DATAALIGNMENT 4
 
 enum DrasculaGameFeatures {
@@ -155,6 +155,33 @@ enum DialogOptionStatus {
 	kDialogOptionUnselected = 1,
 	kDialogOptionSelected = 2,
 	kDialogOptionClicked = 3
+};
+
+enum TalkSequenceCommands {
+	kPause = 0,
+	kSetFlag = 1,
+	kClearFlag = 2,
+	kPickObject = 3,
+	kAddObject = 4,
+	kBreakOut = 5,
+	kTalkerGeneral = 6,
+	kTalkerDrunk = 7,
+	kTalkerPianist = 8,
+	kTalkerBJ = 9,
+	kTalkerVBNormal = 10,
+	kTalkerVBDoor = 11,
+	kTalkerIgorSeated = 12,
+	kTalkerWerewolf = 13,
+	kTalkerMus = 14,
+	kTalkerDrascula = 15,
+	kTalkerBartender = 16
+};
+
+struct TalkSequenceCommand {
+	int chapter;
+	int sequence;
+	int commandType;
+	int action;
 };
 
 #define TEXTD_START 68
@@ -506,6 +533,7 @@ public:
 	void setupRoomsTable();
 	bool roomParse(int, int);
 	void cleanupString(char *string);
+	void checkTalkSequence(int sequence);
 	void converse(int);
 	void print_abc_opc(const char *, int, int);
 	void response(int);
@@ -567,24 +595,16 @@ public:
 	void animation_3_1();
 	void animation_4_1();
 	//
-	void animation_1_2();
 	void animation_2_2();
-	void animation_3_2();
 	void animation_4_2();
 	void animation_5_2();
 	void animation_6_2();
 	void animation_7_2();
-	void animation_8_2();
-	void animation_9_2();
-	void animation_10_2();
 	void animation_11_2();
 	void animation_12_2();
 	void animation_13_2();
 	void animation_14_2();
-	void animation_15_2();
 	void animation_16_2();
-	void animation_17_2();
-	void animation_18_2();
 	void animation_20_2();
 	void animation_22_2();
 	void animation_23_2();
@@ -594,9 +614,7 @@ public:
 	void animation_25_2();
 	void animation_26_2();
 	void animation_27_2();
-	void animation_28_2();
 	void animation_29_2();
-	void animation_30_2();
 	void animation_31_2();
 	void animation_32_2();
 	void animation_33_2();
@@ -604,7 +622,6 @@ public:
 	void animation_35_2();
 	void animation_36_2();
 	//
-	void animation_1_3();
 	void animation_2_3();
 	void animation_3_3();
 	void animation_4_3();
@@ -613,40 +630,22 @@ public:
 	void animation_ray();
 	//
 	void animation_1_4();
-	void animation_2_4();
-	void animation_3_4();
-	void animation_4_4();
 	void animation_5_4();
 	void animation_6_4();
 	void animation_7_4();
 	void animation_8_4();
-	void animation_9_4();
 	//
 	void animation_1_5();
-	void animation_3_5();
-	void animation_4_5();
 	void animation_5_5();
-	void animation_6_5();
-	void animation_7_5();
-	void animation_8_5();
-	void animation_9_5();
-	void animation_10_5();
 	void animation_11_5();
 	void animation_12_5();
 	void animation_13_5();
 	void animation_14_5();
-	void animation_15_5();
 	//
 	void animation_1_6();
 	void animation_5_6();
 	void animation_6_6();
-	void animation_7_6();
 	void animation_9_6();
-	void animation_10_6();
-	void animation_11_6();
-	void animation_12_6();
-	void animation_14_6();
-	void animation_18_6();
 	void animation_19_6();
 
 	void update_1_pre();
@@ -689,6 +688,7 @@ private:
 	int _roomPreUpdatesSize;
 	int _roomUpdatesSize;
 	int _roomActionsSize;
+	int _talkSequencesSize;
 	int _numLangs;
 
 	char ***_text;
@@ -715,6 +715,7 @@ private:
 	int *_pianistX, *_drunkX;
 	RoomUpdate *_roomPreUpdates, *_roomUpdates;
 	RoomTalkAction *_roomActions;
+	TalkSequenceCommand *_talkSequences;
 
 	char ***loadTexts(Common::File &in);
 	void freeTexts(char ***ptr);

@@ -675,11 +675,6 @@ void DrasculaEngine::animation_4_1() {
 	loadPic(97, extraSurface);
 }
 
-void DrasculaEngine::animation_1_2() {
-	gotoObject(178, 121);
-	gotoObject(169, 135);
-}
-
 void DrasculaEngine::animation_2_2() {
 	trackProtagonist = 0;
 	copyBackground();
@@ -713,12 +708,6 @@ void DrasculaEngine::animation_2_2() {
 	playSound(1);
 	hipo_sin_nadie(12);
 	finishSound();
-}
-
-void DrasculaEngine::animation_3_2() {
-	gotoObject(163, 106);
-	gotoObject(287, 101);
-	trackProtagonist = 0;
 }
 
 void DrasculaEngine::animation_4_2() {
@@ -791,32 +780,6 @@ void DrasculaEngine::animation_4_2() {
 	flags[4] = 1;
 }
 
-void DrasculaEngine::animation_8_2() {
-	talk_pianist(6);
-	talk(358);
-	talk_pianist(7);
-	talk_pianist(8);
-}
-
-void DrasculaEngine::animation_9_2() {
-	talk_pianist(9);
-	talk_pianist(10);
-	talk_pianist(11);
-}
-
-void DrasculaEngine::animation_10_2() {
-	talk_pianist(12);
-	talk(361);
-	pause(40);
-	talk_pianist(13);
-	talk(362);
-	talk_pianist(14);
-	talk(363);
-	talk_pianist(15);
-	talk(364);
-	talk_pianist(16);
-}
-
 void DrasculaEngine::animation_14_2() {
 	int cabinPos[6] = { 150, 6, 69, -160, 158, 161 };
 	int l = 0;
@@ -845,14 +808,6 @@ void DrasculaEngine::animation_14_2() {
 	finishSound();
 
 	loadPic(99, backSurface);
-}
-
-void DrasculaEngine::animation_15_2() {
-	talk_drunk(8);
-	pause(7);
-	talk_drunk(9);
-	talk_drunk(10);
-	talk_drunk(11);
 }
 
 void DrasculaEngine::animation_16_2() {
@@ -1002,12 +957,6 @@ asco:
 		playMusic(roomMusic);
 	else
 		stopMusic();
-}
-
-void DrasculaEngine::animation_17_2() {
-	talk_drunk(13);
-	talk_drunk(14);
-	flags[40] = 1;
 }
 
 void DrasculaEngine::animation_20_2() {
@@ -1184,11 +1133,6 @@ void DrasculaEngine::animation_27_2() {
 	talk_vonBraun(26, kVonBraunNormal);
 }
 
-void DrasculaEngine::animation_28_2() {
-	for(int i = 27; i <= 30; i++)
-		talk_vonBraun(i, kVonBraunNormal);
-}
-
 void DrasculaEngine::animation_29_2() {
 	if (flags[33] == 0) {
 		talk_vonBraun(32, kVonBraunNormal);
@@ -1218,11 +1162,6 @@ void DrasculaEngine::animation_29_2() {
 		breakOut = 1;
 	} else
 		talk(386);
-}
-
-void DrasculaEngine::animation_30_2() {
-	talk_vonBraun(31, kVonBraunNormal);
-	talk(396);
 }
 
 void DrasculaEngine::animation_31_2() {
@@ -1300,13 +1239,6 @@ void DrasculaEngine::animation_35_2() {
 	pause(10);
 
 	fadeToBlack(2);
-}
-
-void DrasculaEngine::animation_1_3() {
-	talk(413);
-	grr();
-	pause(50);
-	talk(414);
 }
 
 void DrasculaEngine::animation_2_3() {
@@ -1430,29 +1362,6 @@ void DrasculaEngine::animation_ray() {
 	finishSound();
 }
 
-void DrasculaEngine::animation_2_4() {
-	talk_igor(16, kIgorSeated);
-	talk(278);
-	talk_igor(17, kIgorSeated);
-	talk(279);
-	talk_igor(18, kIgorSeated);
-}
-
-void DrasculaEngine::animation_3_4() {
-	talk_igor(19, kIgorSeated);
-	talk_igor(20, kIgorSeated);
-	talk(281);
-}
-
-void DrasculaEngine::animation_4_4() {
-	talk(287);
-	talk_igor(21, kIgorSeated);
-	talk(284);
-	talk_igor(22, kIgorSeated);
-	talk(285);
-	talk_igor(23, kIgorSeated);
-}
-
 void DrasculaEngine::animation_7_4() {
 	black();
 	talk(427);
@@ -1504,33 +1413,6 @@ void DrasculaEngine::animation_1_5() {
 
 	trackProtagonist = 1;
 	converse(8);
-}
-
-void DrasculaEngine::animation_3_5() {
-	talk_bj(23);
-	pickObject(10);
-	breakOut = 1;
-}
-
-void DrasculaEngine::animation_4_5() {
-	flags[7] = 1;
-	updateRoom();
-	updateScreen();
-	talk(228);
-	talk_werewolf(1);
-	talk_werewolf(2);
-	pause(23);
-	talk(229);
-	talk_werewolf(3);
-	talk_werewolf(4);
-	talk(230);
-	talk_werewolf(5);
-	talk(231);
-	talk_werewolf(6);
-	talk_werewolf(7);
-	pause(33);
-	talk(232);
-	talk_werewolf(8);
 }
 
 void DrasculaEngine::animation_5_5(){
@@ -1606,41 +1488,6 @@ void DrasculaEngine::animation_5_5(){
 	clearRoom();
 
 	loadPic(49, bgSurface, HALF_PAL);
-}
-
-void DrasculaEngine::animation_6_5() {
-	talk_werewolf(9);
-	talk(234);
-}
-
-void DrasculaEngine::animation_7_5() {
-	talk_werewolf(10);
-	talk(236);
-	talk_werewolf(11);
-	talk_werewolf(12);
-	talk_werewolf(13);
-	pause(34);
-	talk_werewolf(14);
-}
-
-void DrasculaEngine::animation_8_5() {
-	talk_werewolf(15);
-	talk(238);
-	talk_werewolf(16);
-}
-
-void DrasculaEngine::animation_9_5() {
-	flags[4] = 1;
-	talk(401);
-	withoutVerb();
-	removeObject(15);
-}
-
-void DrasculaEngine::animation_10_5() {
-	flags[3] = 1;
-	talk(401);
-	withoutVerb();
-	removeObject(12);
 }
 
 void DrasculaEngine::animation_11_5() {
@@ -1817,14 +1664,6 @@ void DrasculaEngine::animation_14_5() {
 	fadeToBlack(1);
 }
 
-void DrasculaEngine::animation_15_5() {
-	talk_mus(4);
-	talk_mus(5);
-	talk_mus(6);
-	talk(291);
-	talk_mus(7);
-}
-
 void DrasculaEngine::animation_1_6() {
 	trackProtagonist = 0;
 	curX = 103;
@@ -1943,11 +1782,6 @@ void DrasculaEngine::animation_6_6() {
 	flags[2] = 1;
 }
 
-void DrasculaEngine::animation_7_6() {
-	flags[8] = 1;
-	updateVisible();
-}
-
 void DrasculaEngine::animation_9_6() {
 	int v_cd;
 
@@ -2022,44 +1856,6 @@ void DrasculaEngine::animation_9_6() {
 	playMusic(3);
 	playFLI("crd.bin", 1);
 	stopMusic();
-}
-
-void DrasculaEngine::animation_10_6() {
-	playSound(14);
-	copyBackground();
-	updateRefresh_pre();
-	copyBackground(164, 85, 155, 48, 113, 114, drawSurface3, screenSurface);
-	updateScreen();
-	finishSound();
-	talk_bartender(23, 1);
-	flags[7] = 1;
-}
-
-void DrasculaEngine::animation_11_6() {
-	talk_bartender(10, 1);
-	talk(268);
-	talk_bartender(11, 1);
-}
-
-void DrasculaEngine::animation_12_6() {
-	talk_bartender(12, 1);
-	talk(270);
-	talk_bartender(13, 1);
-	talk_bartender(14, 1);
-}
-
-void DrasculaEngine::animation_14_6() {
-	talk_bartender(24, 1);
-	addObject(21);
-	flags[10] = 1;
-	breakOut = 1;
-}
-
-void DrasculaEngine::animation_18_6() {
-	flags[6] = 1;
-	withoutVerb();
-	removeObject(21);
-	animate("beb.bin", 10);
 }
 
 void DrasculaEngine::animation_19_6() {
@@ -2216,12 +2012,6 @@ void DrasculaEngine::animation_13_2() {
 	converse(2);
 
 	loadPic(964, frontSurface);
-}
-
-void DrasculaEngine::animation_18_2() {
-	talk(378);
-	talk_vonBraun(4, kVonBraunDoor);
-	converse(3);
 }
 
 void DrasculaEngine::animation_22_2() {
@@ -2656,11 +2446,6 @@ void DrasculaEngine::animation_8_4() {
 
 	loadPic(96, frontSurface);
 	openDoor(7, 2);
-}
-
-void DrasculaEngine::animation_9_4() {
-	animate("st.bin", 14);
-	fadeToBlack(1);
 }
 
 void DrasculaEngine::activatePendulum() {

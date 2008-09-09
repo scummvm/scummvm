@@ -27,6 +27,76 @@
 
 namespace Drascula {
 
+void DrasculaEngine::checkTalkSequence(int sequence) {
+	bool seen = false;
+
+	for (int i = 0; i < _talkSequencesSize; i++) {
+		if (_talkSequences[i].chapter == currentChapter &&
+			_talkSequences[i].sequence == sequence) {
+			seen = true;
+		
+			// do action
+			switch (_talkSequences[i].commandType) {
+				case kPause:
+					pause(_talkSequences[i].action);
+					break;
+				case kSetFlag:
+					flags[_talkSequences[i].action] = 1;
+					break;
+				case kClearFlag:
+					flags[_talkSequences[i].action] = 0;
+					break;
+				case kPickObject:
+					pickObject(_talkSequences[i].action);
+					break;
+				case kAddObject:
+					addObject(_talkSequences[i].action);
+					break;
+				case kBreakOut:
+					breakOut = 1;
+					break;
+				case kTalkerGeneral:
+					talk(_talkSequences[i].action);
+					break;
+				case kTalkerDrunk:
+					talk_drunk(_talkSequences[i].action);
+					break;
+				case kTalkerPianist:
+					talk_pianist(_talkSequences[i].action);
+					break;
+				case kTalkerBJ:
+					talk_bj(_talkSequences[i].action);
+					break;
+				case kTalkerVBNormal:
+					talk_vonBraun(_talkSequences[i].action, kVonBraunNormal);
+					break;
+				case kTalkerVBDoor:
+					talk_vonBraun(_talkSequences[i].action, kVonBraunDoor);
+					break;
+				case kTalkerIgorSeated:
+					talk_igor(_talkSequences[i].action, kIgorSeated);
+					break;
+				case kTalkerWerewolf:
+					talk_werewolf(_talkSequences[i].action);
+					break;
+				case kTalkerMus:
+					talk_mus(_talkSequences[i].action);
+					break;
+				case kTalkerDrascula:
+					talk_drascula(_talkSequences[i].action, 1);
+					break;
+				case kTalkerBartender:
+					talk_bartender(_talkSequences[i].action, 1);
+					break;
+				default:
+					error("checkTalkSequence: Unknown command");
+			}
+
+		} else if (seen) // Stop searching down the list
+			break;
+	}	
+}
+
 void DrasculaEngine::cleanupString(char *string) {
 	uint len = strlen(string);
 	for (uint h = 0; h < len; h++)
@@ -179,81 +249,21 @@ void DrasculaEngine::converse(int index) {
 }
 
 void DrasculaEngine::response(int function) {
-	if (currentChapter == 1) {
-		if (function >= 10 && function <= 12)
-			talk_drunk(function - 9);
-	} else if (currentChapter == 2) {
-		if (function == 8)
-			animation_8_2();
-		else if (function == 9)
-			animation_9_2();
-		else if (function == 10)
-			animation_10_2();
-		else if (function == 15)
-			animation_15_2();
-		else if (function == 16)
+	checkTalkSequence(function);
+
+	if (currentChapter == 2) {
+		if (function == 16)
 			animation_16_2();
-		else if (function == 17)
-			animation_17_2();
-		else if (function == 19)
-			talk_vonBraun(5, kVonBraunDoor);
 		else if (function == 20)
 			animation_20_2();
-		else if (function == 21)
-			talk_vonBraun(6, kVonBraunDoor);
 		else if (function == 23)
 			animation_23_2();
-		else if (function == 28)
-			animation_28_2();
 		else if (function == 29)
 			animation_29_2();
-		else if (function == 30)
-			animation_30_2();
 		else if (function == 31)
 			animation_31_2();
 	} else if (currentChapter == 3) {
 		grr();
-	} else if (currentChapter == 4) {
-		if (function == 2)
-			animation_2_4();
-		else if (function == 3)
-			animation_3_4();
-		else if (function == 4)
-			animation_4_4();
-	} else if (currentChapter == 5) {
-		if (function == 2)
-			talk_bj(22);
-		else if (function == 3)
-			animation_3_5();
-		else if (function == 6)
-			animation_6_5();
-		else if (function == 7)
-			animation_7_5();
-		else if (function == 8)
-			animation_8_5();
-		else if (function == 15)
-			animation_15_5();
-		else if (function == 16)
-			talk_mus(8);
-		else if (function == 17)
-			talk_mus(9);
-	} else if (currentChapter == 6) {
-		if (function == 2)
-			talk_drascula(24, 1);
-		else if (function == 3)
-			talk_drascula(24, 1);
-		else if (function == 4)
-			talk_drascula(25, 1);
-		else if (function == 11)
-			animation_11_6();
-		else if (function == 12)
-			animation_12_6();
-		else if (function == 13)
-			talk_bartender(15, 1);
-		else if (function == 14)
-			animation_14_6();
-		else if (function == 15)
-			talk_bartender(16, 1);
 	}
 }
 

@@ -86,6 +86,7 @@ DrasculaEngine::~DrasculaEngine() {
 	free(_roomPreUpdates);
 	free(_roomUpdates);
 	free(_roomActions);
+	free(_talkSequences);
 	freeTexts(_text);
 	freeTexts(_textd);
 	freeTexts(_textb);
@@ -440,7 +441,8 @@ bool DrasculaEngine::runCurrentChapter() {
 			// made the character start walking off screen, as his actual position was
 			// different than the displayed one
 			if (roomNumber == 3 && (curX == 279) && (curY + curHeight == 101)) {
-				animation_1_2();
+				gotoObject(178, 121);
+				gotoObject(169, 135);
 			} else if (roomNumber == 14 && (curX == 214) && (curY + curHeight == 121)) {
 				walkToObject = 1;
 				gotoObject(190, 130);
@@ -968,6 +970,15 @@ bool DrasculaEngine::loadDrasculaDat() {
 		_roomActions[i].action = in.readSint16BE();
 		_roomActions[i].objectID = in.readSint16BE();
 		_roomActions[i].speechID = in.readSint16BE();
+	}
+
+	_talkSequencesSize = in.readUint16BE();
+	_talkSequences = (TalkSequenceCommand *)malloc(sizeof(TalkSequenceCommand) * _talkSequencesSize);
+	for (i = 0; i < _talkSequencesSize; i++) {
+		_talkSequences[i].chapter = in.readSint16BE();
+		_talkSequences[i].sequence = in.readSint16BE();
+		_talkSequences[i].commandType = in.readSint16BE();
+		_talkSequences[i].action = in.readSint16BE();
 	}
 
 	_numLangs = in.readUint16BE();
