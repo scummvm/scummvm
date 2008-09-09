@@ -267,7 +267,7 @@ private:
 	void freeHofShapeAnimDataV2(void *&ptr, int &size);
 
 	const char *getFilename(const char *name);
-	uint8 *getFile(const char *name, int &size);
+	Common::SeekableReadStream *getFile(const char *name);
 
 	enum kResTypes {
 		kLanguageList,

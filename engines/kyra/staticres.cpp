@@ -308,28 +308,27 @@ bool StaticResource::init() {
 	}
 
 	char errorBuffer[100];
-	int tempSize = 0;
-	uint8 *temp = getFile("INDEX", tempSize);
-	if (!temp) {
+	Common::SeekableReadStream *index = getFile("INDEX");
+	if (!index) {
 		snprintf(errorBuffer, sizeof(errorBuffer), "is missing an '%s' entry", getFilename("INDEX"));
 		outputError(errorBuffer);
 		return false;
 	}
 
-	if (tempSize != 3*4) {
-		delete[] temp;
+	if (index->size() != 3*4) {
+		delete index;
 
 		snprintf(errorBuffer, sizeof(errorBuffer), "has incorrect header size for entry '%s'", getFilename("INDEX"));
 		outputError(errorBuffer);
 		return false;
 	}
 
-	uint32 version = READ_BE_UINT32(temp);
-	uint32 gameID = READ_BE_UINT32((temp+4));
-	uint32 featuresValue = READ_BE_UINT32((temp+8));
+	uint32 version = index->readUint32BE();
+	uint32 gameID = index->readUint32BE();
+	uint32 featuresValue = index->readUint32BE();
 
-	delete[] temp;
-	temp = 0;
+	delete index;
+	index = 0;
 
 	if (version != RESFILE_VERSION) {
 		snprintf(errorBuffer, sizeof(errorBuffer), "has invalid version %d required, you got %d", RESFILE_VERSION, version);
@@ -553,82 +552,86 @@ bool StaticResource::loadLanguageTable(const char *filename, void *&ptr, int &si
 }
 
 bool StaticResource::loadStringTable(const char *filename, void *&ptr, int &size) {
-	uint8 *filePtr = getFile(filename, size);
-	if (!filePtr)
+	Common::SeekableReadStream *file = getFile(filename);
+	if (!file)
 		return false;
-	uint8 *src = filePtr;
 
-	uint32 count = READ_BE_UINT32(src); src += 4;
+	uint32 count = file->readUint32BE();
 	size = count;
 	char **output = new char*[count];
 	assert(output);
 
-	const char *curPos = (const char*)src;
 	for (uint32 i = 0; i < count; ++i) {
-		int strLen = strlen(curPos);
-		output[i] = new char[strLen+1];
-		assert(output[i]);
-		memcpy(output[i], curPos, strLen+1);
-		curPos += strLen+1;
+		Common::String string;
+		char c = 0;
+		while ((c = (char)file->readByte()) != 0)
+			string += c;
+
+		output[i] = new char[string.size()+1];
+		strcpy(output[i], string.c_str());
 	}
 
-	delete[] filePtr;
+	delete file;
 	ptr = output;
 
 	return true;
 }
 
 bool StaticResource::loadRawData(const char *filename, void *&ptr, int &size) {
-	ptr = getFile(filename, size);
-	if (!ptr)
+	Common::SeekableReadStream *file = getFile(filename);
+	if (!file)
 		return false;
+
+	ptr = new uint8[file->size()];
+	file->read(ptr, file->size());
+	size = file->size();
+	delete file;
+
 	return true;
 }
 
 bool StaticResource::loadShapeTable(const char *filename, void *&ptr, int &size) {
-	uint8 *filePtr = getFile(filename, size);
-	if (!filePtr)
+	Common::SeekableReadStream *file = getFile(filename);
+	if (!file)
 		return false;
-	uint8 *src = filePtr;
 
-	uint32 count = READ_BE_UINT32(src); src += 4;
+	uint32 count = file->readUint32BE();
 	size = count;
 	Shape *loadTo = new Shape[count];
 	assert(loadTo);
 
 	for (uint32 i = 0; i < count; ++i) {
-		loadTo[i].imageIndex = *src++;
-		loadTo[i].x = *src++;
-		loadTo[i].y = *src++;
-		loadTo[i].w = *src++;
-		loadTo[i].h = *src++;
-		loadTo[i].xOffset = *src++;
-		loadTo[i].yOffset = *src++;
+		loadTo[i].imageIndex = file->readByte();
+		loadTo[i].x = file->readByte();
+		loadTo[i].y = file->readByte();
+		loadTo[i].w = file->readByte();
+		loadTo[i].h = file->readByte();
+		loadTo[i].xOffset = file->readSByte();
+		loadTo[i].yOffset = file->readSByte();
 	}
 
-	delete[] filePtr;
+	delete file;
 	ptr = loadTo;
 
 	return true;
 }
 
 bool StaticResource::loadRoomTable(const char *filename, void *&ptr, int &size) {
-	uint8 *filePtr = getFile(filename, size);
-	if (!filePtr)
+	Common::SeekableReadStream *file = getFile(filename);
+	if (!file)
 		return false;
-	uint8 *src = filePtr;
 
-	uint32 count = READ_BE_UINT32(src); src += 4;
+	uint32 count = file->readUint32BE();
 	size = count;
 	Room *loadTo = new Room[count];
 	assert(loadTo);
 
 	for (uint32 i = 0; i < count; ++i) {
-		loadTo[i].nameIndex = *src++;
-		loadTo[i].northExit = READ_BE_UINT16(src); src += 2;
-		loadTo[i].eastExit = READ_BE_UINT16(src); src += 2;
-		loadTo[i].southExit = READ_BE_UINT16(src); src += 2;
-		loadTo[i].westExit = READ_BE_UINT16(src); src += 2;
+		loadTo[i].nameIndex = file->readByte();
+		loadTo[i].northExit = file->readUint16BE();
+		loadTo[i].eastExit = file->readUint16BE();
+		loadTo[i].southExit = file->readUint16BE();
+		loadTo[i].westExit = file->readUint16BE();
 		memset(&loadTo[i].itemsTable[0], 0xFF, sizeof(byte)*6);
 		memset(&loadTo[i].itemsTable[6], 0, sizeof(byte)*6);
 		memset(loadTo[i].itemsXPos, 0, sizeof(uint16)*12);
@@ -636,7 +639,7 @@ bool StaticResource::loadRoomTable(const char *filename, void *&ptr, int &size) 
 		memset(loadTo[i].needInit, 0, sizeof(loadTo[i].needInit));
 	}
 
-	delete[] filePtr;
+	delete file;
 	ptr = loadTo;
 
 	return true;
@@ -651,10 +654,10 @@ bool StaticResource::loadPaletteTable(const char *filename, void *&ptr, int &siz
 	++temp;
 	int end = atoi(temp);
 
-	char **table = new char*[end-start+1];
+	uint8 **table = new uint8*[end-start+1];
 	assert(table);
 
-	char file[64];
+	char baseFilename[64];
 	temp = filename;
 	temp = strstr(temp, " ");
 	++temp;
@@ -662,16 +665,24 @@ bool StaticResource::loadPaletteTable(const char *filename, void *&ptr, int &siz
 	if (temp == NULL)
 		return false;
 	++temp;
-	strncpy(file, temp, 64);
+	strncpy(baseFilename, temp, 64);
 
 	char name[64];
 	for (int i = start; i <= end; ++i) {
-		snprintf(name, 64, "%s%d.PAL", file, i);
-		table[(start != 0) ? (i-start) : i] = (char*)getFile(name, size);
-		if (!table[(start != 0) ? (i-start) : i]) {
+		snprintf(name, 64, "%s%d.PAL", baseFilename, i);
+
+		Common::SeekableReadStream *file = getFile(name);
+		if (!file) {
+			for (int j = start; j < i; ++i)
+				delete[] table[j-start];
 			delete[] table;
+
 			return false;
 		}
+
+		table[i-start] = new uint8[file->size()];
+		file->read(table[i-start], file->size());
+		delete file;
 	}
 
 	ptr = table;
@@ -680,86 +691,67 @@ bool StaticResource::loadPaletteTable(const char *filename, void *&ptr, int &siz
 }
 
 bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &size) {
-	int filesize;
-	uint8 *filePtr = getFile(filename, filesize);
+	Common::SeekableReadStream *file = getFile(filename);
 
-	if (!filePtr)
+	if (!file)
 		return false;
 
-	uint16 *hdr = (uint16 *) filePtr;
-	int numSeq = READ_BE_UINT16(hdr++);
+	int numSeq = file->readUint16BE();
+	uint32 offset = 2;
 	Sequence *tmp_s = new Sequence[numSeq];
-	char *tmp_c = 0;
 
 	size = sizeof(HofSeqData) + numSeq * (sizeof(Sequence) + 28);
 
 	for (int i = 0; i < numSeq; i++) {
-		const uint8 *offset = (const uint8 *)(filePtr + READ_BE_UINT16(hdr++));
-		tmp_s[i].flags = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_c = new char[14];
-		memcpy(tmp_c, offset, 14);
-		tmp_s[i].wsaFile = tmp_c;
-		offset += 14;
-		tmp_c = new char[14];
-		memcpy(tmp_c, offset, 14);
-		tmp_s[i].cpsFile = tmp_c;
-		offset += 14;
-		tmp_s[i].startupCommand = *offset++;
-		tmp_s[i].finalCommand = *offset++;
-		tmp_s[i].stringIndex1 = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_s[i].stringIndex2 = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_s[i].startFrame = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_s[i].numFrames = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_s[i].frameDelay = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_s[i].xPos = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_s[i].yPos = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_s[i].duration = READ_BE_UINT16(offset);
+		file->seek(offset, SEEK_SET); offset += 2;
+		file->seek(file->readUint16BE(), SEEK_SET);
+
+		tmp_s[i].flags = file->readUint16BE();
+		tmp_s[i].wsaFile = new char[14];
+		file->read(const_cast<char*>(tmp_s[i].wsaFile), 14);
+		tmp_s[i].cpsFile = new char[14];
+		file->read(const_cast<char*>(tmp_s[i].cpsFile), 14);
+		tmp_s[i].startupCommand = file->readByte();
+		tmp_s[i].finalCommand = file->readByte();
+		tmp_s[i].stringIndex1 = file->readUint16BE();
+		tmp_s[i].stringIndex2 = file->readUint16BE();
+		tmp_s[i].startFrame = file->readUint16BE();
+		tmp_s[i].numFrames = file->readUint16BE();
+		tmp_s[i].frameDelay = file->readUint16BE();
+		tmp_s[i].xPos = file->readUint16BE();
+		tmp_s[i].yPos = file->readUint16BE();
+		tmp_s[i].duration = file->readUint16BE();
 	}
 
-	int numSeqN = READ_BE_UINT16(hdr++);
+	file->seek(offset, SEEK_SET); offset += 2;
+	int numSeqN = file->readUint16BE();
 	NestedSequence *tmp_n = new NestedSequence[numSeqN];
 	size += (numSeqN * (sizeof(NestedSequence) + 14));
 
 	for (int i = 0; i < numSeqN; i++) {
-		const uint8 *offset = (const uint8 *)(filePtr + READ_BE_UINT16(hdr++));
-		tmp_n[i].flags = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_c = new char[14];
-		memcpy(tmp_c, offset, 14);
-		tmp_n[i].wsaFile = tmp_c;
-		offset += 14;
-		tmp_n[i].startframe = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_n[i].endFrame = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_n[i].frameDelay = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_n[i].x = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_n[i].y = READ_BE_UINT16(offset);
-		offset += 2;
-		uint16 ctrlOffs = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_n[i].startupCommand = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_n[i].finalCommand = READ_BE_UINT16(offset);
+		file->seek(offset, SEEK_SET); offset += 2;
+		file->seek(file->readUint16BE(), SEEK_SET);
+
+		tmp_n[i].flags = file->readUint16BE();
+		tmp_n[i].wsaFile = new char[14];
+		file->read(const_cast<char*>(tmp_n[i].wsaFile), 14);
+		tmp_n[i].startframe = file->readUint16BE();
+		tmp_n[i].endFrame = file->readUint16BE();
+		tmp_n[i].frameDelay = file->readUint16BE();
+		tmp_n[i].x = file->readUint16BE();
+		tmp_n[i].y = file->readUint16BE();
+		uint16 ctrlOffs = file->readUint16BE();
+		tmp_n[i].startupCommand = file->readUint16BE();
+		tmp_n[i].finalCommand = file->readUint16BE();
 
 		if (ctrlOffs) {
-			int num_c = *(filePtr + ctrlOffs);
-			const uint16 *in_c = (uint16*) (filePtr + ctrlOffs + 1);
+			file->seek(ctrlOffs, SEEK_SET);
+			int num_c = file->readByte();
 			FrameControl *tmp_f = new FrameControl[num_c];
 
 			for (int ii = 0; ii < num_c; ii++) {
-				tmp_f[ii].index = READ_BE_UINT16(in_c++);
-				tmp_f[ii].delay = READ_BE_UINT16(in_c++);
+				tmp_f[ii].index = file->readUint16BE();
+				tmp_f[ii].delay = file->readUint16BE();
 			}
 			
 			tmp_n[i].wsaControl = (const FrameControl*) tmp_f;
@@ -770,7 +762,7 @@ bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &
 		}
 	}
 
-	delete[] filePtr;
+	delete file;
 
 	HofSeqData *loadTo = new HofSeqData;
 	assert(loadTo);
@@ -786,65 +778,53 @@ bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &
 }
 
 bool StaticResource::loadShapeAnimData_v1(const char *filename, void *&ptr, int &size) {
-	int filesize;
-	uint8 *filePtr = getFile(filename, filesize);
-	uint8 *src = filePtr;
+	Common::SeekableReadStream *file = getFile(filename);
 
-	if (!filePtr)
+	if (!file)
 		return false;
 
-	size = *src++;
+	size = file->readByte(); 
 	ItemAnimData_v1 *loadTo = new ItemAnimData_v1[size];
 	assert(loadTo);
 
 	for (int i = 0; i < size; i++) {
-		loadTo[i].itemIndex = (int16) READ_BE_UINT16(src);
-		src += 2;
-		loadTo[i].y = READ_BE_UINT16(src);
-		src += 2;
+		loadTo[i].itemIndex = file->readSint16BE();
+		loadTo[i].y = file->readUint16BE();
 		uint16 *tmp_f = new uint16[20];
-		for (int ii = 0; ii < 20; ii++) {
-			tmp_f[ii] = READ_BE_UINT16(src);
-			src += 2;
-		}
+		for (int ii = 0; ii < 20; ii++)
+			tmp_f[ii] = file->readUint16BE();
 		loadTo[i].frames = tmp_f;
 	}
 
-	delete[] filePtr;
+	delete file;
 	ptr = loadTo;
 
 	return true;
 }
 
 bool StaticResource::loadShapeAnimData_v2(const char *filename, void *&ptr, int &size) {
-	int filesize;
-	uint8 *filePtr = getFile(filename, filesize);
-	uint8 *src = filePtr;
+	Common::SeekableReadStream *file = getFile(filename);
 
-	if (!filePtr)
+	if (!file)
 		return false;
 
-	size = *src++;
+	size = file->readByte();
 	ItemAnimData_v2 *loadTo = new ItemAnimData_v2[size];
 	assert(loadTo);
 
 	for (int i = 0; i < size; i++) {
-		loadTo[i].itemIndex = (int16) READ_BE_UINT16(src);
-		src += 2;
-		loadTo[i].numFrames = *src++;
+		loadTo[i].itemIndex = file->readSint16BE();
+		loadTo[i].numFrames = file->readByte();
 		FrameControl *tmp_f = new FrameControl[loadTo[i].numFrames];
 		for (int ii = 0; ii < loadTo[i].numFrames; ii++) {
-			tmp_f[ii].index = READ_BE_UINT16(src);
-			src += 2;
-			tmp_f[ii].delay = READ_BE_UINT16(src);
-			src += 2;
+			tmp_f[ii].index = file->readUint16BE();
+			tmp_f[ii].delay = file->readUint16BE();
 		}
 		loadTo[i].frames = tmp_f;
 	}
 
-	delete[] filePtr;
+	delete file;
 	ptr = loadTo;
-
 	return true;
 }
 
@@ -949,11 +929,8 @@ const char *StaticResource::getFilename(const char *name) {
 	return filename.c_str();
 }
 
-uint8 *StaticResource::getFile(const char *name, int &size) {
-	uint32 tempSize = 0;
-	uint8 *data = _vm->resource()->fileData(getFilename(name), &tempSize);
-	size = tempSize;
-	return data;
+Common::SeekableReadStream *StaticResource::getFile(const char *name) {
+	return _vm->resource()->getFileStream(getFilename(name));
 }
 
 #pragma mark -
