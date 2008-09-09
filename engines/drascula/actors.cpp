@@ -189,7 +189,7 @@ void DrasculaEngine::moveCharacters() {
 		}
 	}
 
-	if (currentChapter == 1 || currentChapter == 4 || currentChapter == 5 || currentChapter == 6) {
+	if (currentChapter != 2 && currentChapter != 3) {
 		if (hare_se_ve == 0) {
 			increaseFrameNum();
 			return;
