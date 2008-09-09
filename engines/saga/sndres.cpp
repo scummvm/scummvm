@@ -169,7 +169,6 @@ void SndRes::playVoice(uint32 resourceId) {
 }
 
 bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buffer, bool onlyHeader) {
-	byte *soundResource;
 	Audio::AudioStream *voxStream;
 	size_t soundResourceLength;
 	bool result = false;
@@ -180,13 +179,13 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	byte flags;
 	size_t voxSize;
 	const GameSoundInfo *soundInfo;
+	Common::File* file;
 
 	if (resourceId == (uint32)-1) {
 		return false;
 	}
 
 	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
-		Common::File soundFile;
 		char soundFileName[40];
 		int dirIndex = resourceId / 64;
 	
@@ -199,14 +198,22 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		} else {
 			sprintf(soundFileName, "SFX/SFX%d/SFX%03x", dirIndex, resourceId);
 		}
-		soundFile.open(soundFileName);
-		soundResourceLength = soundFile.size();
-		soundResource = new byte[soundResourceLength];
-		soundFile.read(soundResource, soundResourceLength);
-		soundFile.close();
+		
+		file = new Common::File();
+
+		file->open(soundFileName);
+		soundResourceLength = file->size();
 	} else {
-		_vm->_resource->loadResource(context, resourceId, soundResource, soundResourceLength);
+
+		ResourceData* resourceData = _vm->_resource->getResourceData(context, resourceId);
+		file = context->getFile(resourceData);
+	
+		file->seek(resourceData->offset);
+		soundResourceLength = resourceData->size;
+
 	}
+
+	Common::SeekableReadStream& readS = *file;
 
 	if ((context->fileType & GAME_VOICEFILE) != 0) {
 		soundInfo = _vm->getVoiceInfo();
@@ -220,16 +227,20 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		context->table[resourceId].fillSoundPatch(soundInfo);
 	}
 
-	MemoryReadStream readS(soundResource, soundResourceLength);
 
 	resourceType = soundInfo->resourceType;
 
 	if (soundResourceLength >= 8) {
-		if (!memcmp(soundResource, "Creative", 8)) {
+		byte header[8];
+
+		readS.read(&header, 8);
+		readS.seek(readS.pos() - 8);
+
+		if (!memcmp(header, "Creative", 8)) {
 			resourceType = kSoundVOC;
-		} else if (!memcmp(soundResource, "RIFF", 4) != 0) {
+		} else if (!memcmp(header, "RIFF", 4) != 0) {
 			resourceType = kSoundWAV;
-		} else if (!memcmp(soundResource, "FORM", 4) != 0) {
+		} else if (!memcmp(header, "FORM", 4) != 0) {
 			resourceType = kSoundAIFF;
 		}
 
@@ -244,11 +255,11 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			uncompressedSound = true;
 
 		if ((_vm->getFeatures() & GF_COMPRESSED_SOUNDS) && !uncompressedSound) {
-			if (soundResource[0] == char(0)) {
+			if (header[0] == char(0)) {
 				resourceType = kSoundMP3;
-			} else if (soundResource[0] == char(1)) {
+			} else if (header[0] == char(1)) {
 				resourceType = kSoundOGG;
-			} else if (soundResource[0] == char(2)) {
+			} else if (header[0] == char(2)) {
 				resourceType = kSoundFLAC;
 			}
 		}
@@ -268,9 +279,9 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		buffer.stereo = false;
 		if (onlyHeader) {
 			buffer.buffer = NULL;
-			free(soundResource);
 		} else {
-			buffer.buffer = soundResource;
+			buffer.buffer = (byte *) malloc(soundResourceLength);
+			readS.read(buffer.buffer, soundResourceLength);
 		}
 		result = true;
 		break;
@@ -284,9 +295,10 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			buffer.buffer = NULL;
 		} else {
 			buffer.buffer = (byte *)malloc(buffer.size);
-			memcpy(buffer.buffer, soundResource + 36, buffer.size);
+
+			readS.seek(readS.pos() + 36);
+			readS.read(buffer.buffer, buffer.size);
 		}
-		free(soundResource);
 		result = true;
 		break;
 	case kSoundVOX:
@@ -297,7 +309,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		buffer.size = soundResourceLength * 4;
 		if (onlyHeader) {
 			buffer.buffer = NULL;
-			free(soundResource);
 		} else {
 			voxStream = Audio::makeADPCMStream(&readS, false, soundResourceLength, Audio::kADPCMOki);
 			buffer.buffer = (byte *)malloc(buffer.size);
@@ -325,7 +336,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			}
 			result = true;
 		}
-		free(soundResource);
 		break;
 	case kSoundWAV:
 		if (Audio::loadWAVFromStream(readS, size, rate, flags)) {
@@ -342,7 +352,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			}
 			result = true;
 		}
-		free(soundResource);
 		break;
 	case kSoundAIFF:
 		if (Audio::loadAIFFFromStream(readS, size, rate, flags)) {
@@ -359,7 +368,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			}
 			result = true;
 		}
-		free(soundResource);
 		break;
 	case kSoundMP3:
 	case kSoundOGG:
@@ -382,11 +390,16 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		buffer.buffer = NULL;
 
 		result = true;
-		free(soundResource);
 		break;
 	default:
 		error("SndRes::load Unknown sound type");
 	}
+
+
+	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
+		delete file;
+	}
+
 
 	// In ITE CD De some voices are absent and contain just 5 bytes header
 	// Round it to even number so soundmanager will not crash.
