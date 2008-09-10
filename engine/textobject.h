@@ -59,13 +59,13 @@ public:
 	void setText(char *text);
 	void setX(int x) { _x = x; }
 	void setY(int y) { _y = y; }
-	void subBaseOffestY() {
+	void subBaseOffsetY() {
 		if (_font)
 			_y -= _font->getBaseOffsetY();
 		else
 			_y -= 5;
 	}
-	int getBaseOffestY() {
+	int getBaseOffsetY() {
 		if (_font)
 			return _font->getBaseOffsetY();
 		else
