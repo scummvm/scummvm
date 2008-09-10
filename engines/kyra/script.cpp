@@ -435,59 +435,35 @@ void EMCInterpreter::cmd_eval(EMCState* script) {
 
 	switch (_parameter) {
 	case 0:
-		if (!val2 || !val1)
-			ret = 0;
-		else
-			ret = 1;
+		ret = (val2 && val1) ? 1 : 0;
 		break;
 
 	case 1:
-		if (val2 || val1)
-			ret = 1;
-		else
-			ret = 0;
+		ret = (val2 || val1) ? 1 : 0;
 		break;
 
 	case 2:
-		if (val1 == val2)
-			ret = 1;
-		else
-			ret = 0;
+		ret = (val1 == val2) ? 1 : 0;
 		break;
 
 	case 3:
-		if (val1 != val2)
-			ret = 1;
-		else
-			ret = 0;
+		ret = (val1 != val2) ? 1 : 0;
 		break;
 
 	case 4:
-		if (val1 > val2)
-			ret = 1;
-		else
-			ret = 0;
+		ret = (val1 > val2) ? 1 : 0;
 		break;
 
 	case 5:
-		if (val1 >= val2)
-			ret = 1;
-		else
-			ret = 0;
+		ret = (val1 >= val2) ? 1 : 0;
 		break;
 
 	case 6:
-		if (val1 < val2)
-			ret = 1;
-		else
-			ret = 0;
+		ret = (val1 < val2) ? 1 : 0;
 		break;
 
 	case 7:
-		if (val1 <= val2)
-			ret = 1;
-		else
-			ret = 0;
+		ret = (val1 <= val2) ? 1 : 0;
 		break;
 
 	case 8:
