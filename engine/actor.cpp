@@ -363,7 +363,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 		_sayLineText = NULL;
 	}
 
-	_sayLineText = new TextObject();
+	_sayLineText = new TextObject(false);
 	_sayLineText->setDefaults(&sayLineDefaults);
 	_sayLineText->setText((char *)msg);
 	_sayLineText->setFGColor(&_talkColor);

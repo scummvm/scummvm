@@ -37,7 +37,7 @@ TextObjectDefaults sayLineDefaults;
 TextObjectDefaults printLineDefaults;
 TextObjectDefaults textObjectDefaults;
 
-TextObject::TextObject() :
+TextObject::TextObject(bool blastDraw) :
 		_created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
 		_numberLines(1), _disabled(false), _font(NULL), _textBitmap(NULL),
 		_bitmapWidthPtr(NULL), _textObjectHandle(NULL) {
@@ -45,6 +45,7 @@ TextObject::TextObject() :
 	_fgColor._vals[0] = 0;
 	_fgColor._vals[1] = 0;
 	_fgColor._vals[2] = 0;
+	_blastDraw = blastDraw;
 }
 
 void TextObject::setText(char *text) {
@@ -212,10 +213,11 @@ void TextObject::draw() {
 	for (int i = 0; i < _numberLines; i++) {
 		int y;
 
-		if (_height != 0)
-			y = _y + 5;
+		if (_blastDraw)
+			y = _y;
 		else
-			y = _y + 5;
+			y = _y - _font->getBaseOffsetY();
+
 		if (y < 0)
 			y = 0;
 		

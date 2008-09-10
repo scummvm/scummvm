@@ -51,7 +51,7 @@ extern TextObjectDefaults textObjectDefaults;
 
 class TextObject {
 public:
-	TextObject();
+	TextObject(bool blastDraw);
 	~TextObject();
 	void createBitmap();
 	void destroyBitmap();
@@ -59,6 +59,18 @@ public:
 	void setText(char *text);
 	void setX(int x) { _x = x; }
 	void setY(int y) { _y = y; }
+	void subBaseOffestY() {
+		if (_font)
+			_y -= _font->getBaseOffsetY();
+		else
+			_y -= 5;
+	}
+	int getBaseOffestY() {
+		if (_font)
+			return _font->getBaseOffsetY();
+		else
+			return 5;
+	}
 	void setWidth(int width) { _width = width; }
 	void setHeight(int height) { _height = height; }
 	void setFGColor(Color *fgColor) { _fgColor = fgColor; }
@@ -86,6 +98,7 @@ protected:
 	int _width, _height;
 	int _justify, _numberLines;
 	bool _disabled;
+	bool _blastDraw;
 	Font *_font;
 	char _textID[256];
 	uint8 *_textBitmap;

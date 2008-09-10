@@ -2288,7 +2288,7 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 		if (strmatch(key_text, "x"))
 			textObject->setX(atoi(lua_getstring(lua_getresult(2))));
 		else if (strmatch(key_text, "y"))
-			textObject->setY(atoi(lua_getstring(lua_getresult(2))));
+			textObject->setY(atoi(lua_getstring(lua_getresult(2))) + textObject->getBaseOffestY());
 		else if (strmatch(key_text, "width"))
 			textObject->setWidth(atoi(lua_getstring(lua_getresult(2))));
 		else if (strmatch(key_text, "height"))
@@ -2384,13 +2384,13 @@ static void ChangeTextObject() {
 		return;
 	}
 
+	modifyObject->destroyBitmap();
+
 	if (lua_istable(tableObj))
 		getTextObjectParams(modifyObject, tableObj);
 	else if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 		warning("Expecting table parameter!");
 
-	// to modify current bitmap it need recreate it
-	modifyObject->destroyBitmap();
 	modifyObject->createBitmap();
 
 	lua_pushnumber(modifyObject->getBitmapWidth());
@@ -2415,7 +2415,7 @@ static void SetTextSpeed() {
 }
 
 static void MakeTextObject() {
-	TextObject *textObject = new TextObject();
+	TextObject *textObject = new TextObject(false);
 	lua_Object tableObj;
 	const char *line;
 
@@ -2434,6 +2434,8 @@ static void MakeTextObject() {
 	//printf("Make: %s\n", (char *)text.c_str());
 
 	textObject->setText((char *)text.c_str());
+	textObject->subBaseOffestY();
+
 	textObject->createBitmap();
 	g_engine->registerTextObject(textObject);
 
@@ -2472,7 +2474,7 @@ static void GetTextCharPosition() {
 
 static void BlastText() {
 	DEBUG_FUNCTION();
-	TextObject *textObject = new TextObject();
+	TextObject *textObject = new TextObject(true);
 	lua_Object tableObj;
 	const char *line;
 
