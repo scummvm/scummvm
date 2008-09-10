@@ -265,7 +265,7 @@ bool DefaultEventManager::playback(Common::Event &event) {
 			case Common::EVENT_RBUTTONUP:
 			case Common::EVENT_WHEELUP:
 			case Common::EVENT_WHEELDOWN:
-//				_boss->warpMouse(_playbackEvent.mouse.x, _playbackEvent.mouse.y);
+				_boss->warpMouse(_playbackEvent.mouse.x, _playbackEvent.mouse.y);
 				break;
 			default:
 				break;
@@ -345,7 +345,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = _boss->getMillis();
 	bool result;
 
-	result = false;//_boss->pollEvent(event);
+	result = _boss->pollEvent(event);
 
 	if (_recordMode != kPassthrough)  {
 

@@ -186,6 +186,10 @@ void DriverSDL::handleKbdMouse() {
 	}
 }
 
+void DriverSDL::warpMouse(int x, int y) {
+	SDL_WarpMouse(x, y);
+}
+
 bool DriverSDL::pollEvent(Common::Event &event) {
 	SDL_Event ev;
 	int axis;

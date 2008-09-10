@@ -142,6 +142,8 @@ public:
 
 	virtual void getTimeAndDate(struct tm &t) const = 0;
 
+	virtual void warpMouse(int x, int y) = 0;
+
 	friend class DefaultEventManager;
 	/**
 	 * Get the next event in the event queue.

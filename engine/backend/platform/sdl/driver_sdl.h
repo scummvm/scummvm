@@ -58,6 +58,7 @@ public:
 
 	const char *getVideoDeviceName();
 
+	void warpMouse(int x, int y);
 	bool pollEvent(Common::Event &event);
 	uint32 getMillis();
 	void delayMillis(uint msecs);
