@@ -244,7 +244,7 @@ int16 AGOSEngine::matchSaveGame(const char *name, uint16 max) {
 void AGOSEngine::userGame(bool load) {
 	WindowBlock *window = _windowArray[4];
 	const char *message1;
-	int i, numSaveGames;
+	int i = 0, numSaveGames;
 	char *name;
 	char buf[8];
 
