@@ -127,61 +127,22 @@ void DrasculaEngine::fadeFromBlack(int fadeSpeed) {
 	}
 }
 
-void DrasculaEngine::assignDefaultPalette() {
+void DrasculaEngine::assignPalette(DacPalette256 pal) {
 	int color, component;
 
 	for (color = 235; color < 253; color++)
 		for (component = 0; component < 3; component++)
-			defaultPalette[color][component] = gamePalette[color][component];
+			pal[color][component] = gamePalette[color][component];
 }
 
-void DrasculaEngine::assignBrightPalette() {
-	int color, component;
-
-	for (color = 235; color < 253; color++) {
-		for (component = 0; component < 3; component++)
-			brightPalette[color][component] = gamePalette[color][component];
-	}
-}
-
-void DrasculaEngine::assignDarkPalette() {
-	int color, component;
-
-	for (color = 235; color < 253; color++) {
-		for (component = 0; component < 3; component++)
-			darkPalette[color][component] = gamePalette[color][component];
-	}
-}
-
-void DrasculaEngine::setDefaultPalette() {
+void DrasculaEngine::setDefaultPalette(DacPalette256 pal) {
 	int color, component;
 
 	for (color = 235; color < 253; color++) {
 		for (component = 0; component < 3; component++) {
-			gamePalette[color][component] = defaultPalette[color][component];
+			gamePalette[color][component] = pal[color][component];
 		}
 	}
-	setPalette((byte *)&gamePalette);
-}
-
-void DrasculaEngine::setBrightPalette() {
-	int color, component;
-
-	for (color = 235; color < 253; color++) {
-		for (component = 0; component < 3; component++)
-			gamePalette[color][component] = brightPalette[color][component];
-	}
-
-	setPalette((byte *)&gamePalette);
-}
-
-void DrasculaEngine::setDarkPalette() {
-	int color, component;
-
-	for (color = 235; color < 253; color++ )
-		for (component = 0; component < 3; component++)
-			gamePalette[color][component] = darkPalette[color][component];
-
 	setPalette((byte *)&gamePalette);
 }
 

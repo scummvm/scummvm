@@ -261,7 +261,7 @@ int DrasculaEngine::go() {
 		for (i = 0; i < 6; i++)
 			strcpy(iconName[i + 1], _textverbs[i]);
 
-		assignDefaultPalette();
+		assignPalette(defaultPalette);
 		if (!runCurrentChapter()) {
 			endChapter();
 			break;

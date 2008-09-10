@@ -1523,7 +1523,7 @@ void DrasculaEngine::animation_12_5() {
 	updateRoom();
 	updateScreen();
 
-	setDarkPalette();
+	setDefaultPalette(darkPalette);
 
 	for (color = 0; color < 255; color++)
 		for (component = 0; component < 3; component++) {
@@ -1579,7 +1579,7 @@ void DrasculaEngine::animation_12_5() {
 
 	animate("frel.bin", 16);
 	clearRoom();
-	setBrightPalette();
+	setDefaultPalette(brightPalette);
 	setPalette((byte *)&gamePalette);
 
 	flags[1] = 1;

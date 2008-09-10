@@ -286,7 +286,8 @@ public:
 	typedef signed char DacPalette256[256][3];
 
 	void setRGB(byte *pal, int plt);
-	void assignDefaultPalette();
+	void assignPalette(DacPalette256 pal);
+	void setDefaultPalette(DacPalette256 pal);
 	void setPalette(byte *PalBuf);
 	void copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
 				int height, byte *src, byte *dest);
@@ -414,8 +415,6 @@ public:
 	void openDoor(int nflag, int doorNum);
 	void showMap();
 
-	void setDarkPalette();
-
 	void withoutVerb();
 	void enterRoom(int);
 	void clearRoom();
@@ -484,11 +483,7 @@ public:
 	void updateRoom();
 	bool loadGame(const char *);
 	void updateDoor(int);
-	void setDefaultPalette();
 	void setPaletteBase(int darkness);
-	void assignBrightPalette();
-	void assignDarkPalette();
-	void setBrightPalette();
 	void updateVisible();
 	void startWalking();
 	void updateRefresh();

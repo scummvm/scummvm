@@ -1115,10 +1115,10 @@ void DrasculaEngine::updateRefresh_pre() {
 void DrasculaEngine::update_1_pre() {
 	if (curX > 98 && curX < 153) {
 		changeColor = 1;
-		setDarkPalette();
+		setDefaultPalette(darkPalette);
 	} else {
 		changeColor = 0;
-		setBrightPalette();
+		setDefaultPalette(brightPalette);
 	}
 
 	if (flags[8] == 0)
@@ -1184,10 +1184,10 @@ void DrasculaEngine::update_3() {
 void DrasculaEngine::update_4() {
 	if (curX > 190) {
 		changeColor = 1;
-		setDarkPalette();
+		setDefaultPalette(darkPalette);
 	} else {
 		changeColor = 0;
-		setBrightPalette();
+		setDefaultPalette(brightPalette);
 	}
 }
 
@@ -1195,10 +1195,10 @@ void DrasculaEngine::update_6_pre() {
 	if ((curX > 149 && curY + curHeight > 160 && curX < 220 && curY + curHeight < 188) ||
 		(curX > 75 && curY + curHeight > 183 && curX < 145)) {
 		changeColor = 0;
-		setBrightPalette();
+		setDefaultPalette(brightPalette);
 	} else {
 		changeColor = 1;
-		setDarkPalette();
+		setDefaultPalette(darkPalette);
 	}
 }
 
@@ -1741,15 +1741,15 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 
 	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, backSurface, drawSurface3);
 
-	setDefaultPalette();
+	setDefaultPalette(defaultPalette);
 	if (palLevel != 0)
 		setPaletteBase(palLevel);
-	assignBrightPalette();
-	setDefaultPalette();
+	assignPalette(brightPalette);
+	setDefaultPalette(defaultPalette);
 	setPaletteBase(palLevel + 2);
-	assignDarkPalette();
+	assignPalette(darkPalette);
 
-	setBrightPalette();
+	setDefaultPalette(brightPalette);
 	changeColor = -1;
 
 	if (currentChapter == 2)
