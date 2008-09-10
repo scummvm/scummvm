@@ -253,11 +253,11 @@ Model::HierNode *Model::copyHierarchy() {
 	std::memcpy(result, _rootHierNode, _numHierNodes * sizeof(HierNode));
 	// Now adjust pointers
 	for (int i = 0; i < _numHierNodes; i++) {
-		if (result[i]._parent != NULL)
+		if (result[i]._parent)
 			result[i]._parent = result + (_rootHierNode[i]._parent - _rootHierNode);
-		if (result[i]._child != NULL)
+		if (result[i]._child)
 			result[i]._child = result + (_rootHierNode[i]._child - _rootHierNode);
-		if (result[i]._sibling != NULL)
+		if (result[i]._sibling)
 			result[i]._sibling = result + (_rootHierNode[i]._sibling - _rootHierNode);
 	}
 	return result;

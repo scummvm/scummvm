@@ -197,7 +197,7 @@ void registerDefaults() {
 	DO_OPTION(shortCmd, longCmd) \
 	char *endptr = 0; \
 	int intValue; intValue = (int)strtol(option, &endptr, 0); \
-	if (endptr == NULL || *endptr != 0) usage("--%s: Invalid number '%s'", longCmd, option);
+	if (!endptr || *endptr != 0) usage("--%s: Invalid number '%s'", longCmd, option);
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",
 // resp. between "--some-option" and "--no-some-option".

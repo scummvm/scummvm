@@ -31,19 +31,19 @@ ZBuffer *ZB_open(int xsize, int ysize, int mode, void *frame_buffer) {
 	size = zb->xsize * zb->ysize * sizeof(unsigned short);
 
 	zb->zbuf = (unsigned short *)gl_malloc(size);
-	if (zb->zbuf == NULL)
+	if (!zb->zbuf)
 		goto error;
 
 	size = zb->xsize * zb->ysize * sizeof(unsigned int);
 
 	zb->zbuf2 = (unsigned int *)gl_malloc(size);
-	if (zb->zbuf2 == NULL) {
+	if (!zb->zbuf2) {
 		gl_free(zb->zbuf);
 		goto error;
 	}
-	if (frame_buffer == NULL) {
+	if (!frame_buffer) {
 		zb->pbuf = (PIXEL *)gl_malloc(zb->ysize * zb->linesize);
-		if (zb->pbuf == NULL) {
+		if (!zb->pbuf) {
 			gl_free(zb->zbuf);
 			gl_free(zb->zbuf2);
 			goto error;
@@ -95,7 +95,7 @@ void ZB_resize(ZBuffer *zb, void *frame_buffer, int xsize, int ysize) {
 	if (zb->frame_buffer_allocated)
 		gl_free(zb->pbuf);
 
-	if (frame_buffer == NULL) {
+	if (!frame_buffer) {
 		zb->pbuf = (PIXEL *)gl_malloc(zb->ysize * zb->linesize);
 		zb->frame_buffer_allocated = 1;
 	} else {

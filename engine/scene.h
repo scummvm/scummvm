@@ -50,10 +50,10 @@ public:
 	int _maxVolume;
 
 	void drawBackground() const {
-		if (_currSetup->_bkgndZBm != NULL) // Some screens have no zbuffer mask (eg, Alley)
+		if (_currSetup->_bkgndZBm) // Some screens have no zbuffer mask (eg, Alley)
 			_currSetup->_bkgndZBm->draw();
 
-		if (_currSetup->_bkgndBm == NULL) {
+		if (!_currSetup->_bkgndBm) {
 			// This should fail softly, for some reason jumping to the signpost (sg) will load
 			// the scene in such a way that the background isn't immediately available
 			warning("Background hasn't loaded yet for setup %s in %s!", _currSetup->_name.c_str(), _name.c_str());
@@ -83,9 +83,6 @@ public:
 
 	// Sector access functions
 	int getSectorCount() {
-		// TODO: Find where this is called before we're initialized
-		if (this == NULL)
-			return 0;
 		return _numSectors;
 	}
 	Sector *getSectorBase(int id) { 

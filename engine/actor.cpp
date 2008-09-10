@@ -159,13 +159,13 @@ void Actor::walkForward() {
 	Sector::ExitInfo ei;
 
 	g_engine->currScene()->findClosestSector(_pos, &currSector, &_pos);
-	if (currSector == NULL) { // Shouldn't happen...
+	if (!currSector) { // Shouldn't happen...
 		_pos += forwardVec * dist;
 		_walkedCur = true;
 		return;
 	}
 
-	while (currSector != NULL) {
+	while (currSector) {
 		prevSector = currSector;
 		Vector3d puckVector = currSector->projectToPuckVector(forwardVec);
 		puckVector /= puckVector.magnitude();
@@ -210,7 +210,7 @@ Vector3d Actor::puckVector() const {
 	Vector3d forwardVec(-std::sin(yaw_rad), std::cos(yaw_rad), 0);
 
 	Sector *sector = g_engine->currScene()->findPointSector(_pos, 0x1000);
-	if (sector == NULL)
+	if (!sector)
 		return forwardVec;
 	else
 		return sector->projectToPuckVector(forwardVec);
@@ -351,7 +351,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 			_lipSynch = g_resourceloader->loadLipSynch(soundLip.c_str());
 			// If there's no lip synch file then load the mumble chore if it exists
 			// (the mumble chore doesn't exist with the cat races announcer)
-			if (_lipSynch == NULL && _mumbleChore != -1)
+			if (!_lipSynch && _mumbleChore != -1)
 				_mumbleCostume->playChoreLooping(_mumbleChore);
 			
 			_talkAnim = -1;
@@ -398,15 +398,15 @@ void Actor::shutUp() {
 		g_imuse->stopSound(_talkSoundName.c_str());
 		_talkSoundName = "";
 	}
-	if (_lipSynch != NULL) {
-		if ((_talkAnim != -1) && (_talkChore[_talkAnim] >= 0))
+	if (_lipSynch) {
+		if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
 			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
 		_lipSynch = NULL;
 	} else if (_mumbleChore >= 0) {
 		_mumbleCostume->stopChore(_mumbleChore);
 	}
 
-	if (_sayLineText != NULL) {
+	if (_sayLineText) {
 		g_engine->killTextObject(_sayLineText);
 		_sayLineText = NULL;
 	}
@@ -456,7 +456,7 @@ void Actor::popCostume() {
 			newCost = NULL;
 		else
 			newCost = _costumeStack.back();
-		if (newCost == NULL) {
+		if (!newCost) {
 			if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
 				printf("Popped (freed) the last costume for an actor.\n");
 		}
@@ -568,7 +568,7 @@ void Actor::update() {
 	_currTurnDir = 0;
 
 	// Update lip synching
-	if (_lipSynch != NULL) {
+	if (_lipSynch) {
 		int posSound;
 		
 		// While getPosIn60HzTicks will return "-1" to indicate that the

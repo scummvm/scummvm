@@ -174,11 +174,11 @@ void gl_enable_disable_light(GLContext *c, int light, int v) {
 		l->prev = NULL;
 	} else if (!v && l->enabled) {
 		l->enabled = 0;
-		if (l->prev == NULL)
+		if (!l->prev)
 			c->first_light = l->next;
 		else
 			l->prev->next=l->next;
-		if (l->next != NULL)
+		if (l->next)
 			l->next->prev=l->prev;
 	}
 }

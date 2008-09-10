@@ -74,7 +74,7 @@ void TextObject::setDefaults(TextObjectDefaults *defaults) {
 }
 
 int TextObject::getBitmapWidth() {
-	if (_bitmapWidthPtr == NULL)
+	if (!_bitmapWidthPtr)
 		return 0;
 
 	int width = 0;

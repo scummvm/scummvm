@@ -84,7 +84,7 @@ void gl_add_select(GLContext *c, unsigned int zmin, unsigned int zmax) {
 	int n, i;
 
 	if (!c->select_overflow) {
-		if (c->select_hit == NULL) {
+		if (!c->select_hit) {
 			n = c->name_stack_size;
 			if ((c->select_ptr-c->select_buffer + 3 + n) > c->select_size) {
 				c->select_overflow = 1;

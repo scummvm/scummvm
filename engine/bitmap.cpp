@@ -117,9 +117,9 @@ void Bitmap::draw() const {
 }
 
 Bitmap::~Bitmap() {
-	if(_data != NULL) {
+	if (_data) {
 		for (int i = 0; i < _numImages; i++)
-			if(_data[i])
+			if (_data[i])
 				delete[] _data[i];
 
 		delete[] _data;

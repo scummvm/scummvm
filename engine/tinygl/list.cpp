@@ -32,11 +32,11 @@ static void delete_list(GLContext *c, int list) {
 	GLList *l;
 
 	l = find_list(c, list);
-	assert(l != NULL);
+	assert(l);
   
 	// free param buffer
 	pb = l->first_op_buffer;
-	while (pb != NULL) {
+	while (pb) {
 		pb1 = pb->next;
 		gl_free(pb);
 		pb = pb1;

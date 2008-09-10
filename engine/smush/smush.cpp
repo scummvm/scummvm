@@ -105,7 +105,7 @@ void Smush::deinit() {
 		delete[] _externalBuffer;
 		_externalBuffer = NULL;
 	}
-	if (_videoLooping && _startPos != NULL) {
+	if (_videoLooping && _startPos) {
 		delete[] _startPos->tmpBuf;
 		delete[] _startPos;
 		_startPos = NULL;
@@ -362,7 +362,7 @@ struct SavePos *zlibFile::getPos() {
 }
 
 bool zlibFile::setPos(struct SavePos *pos) { 
-	if (pos == NULL) {
+	if (!pos) {
 		warning("Unable to rewind SMUSH movie (no position passed)!");
 		return false;
 	}

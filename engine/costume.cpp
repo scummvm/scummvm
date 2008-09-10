@@ -200,7 +200,7 @@ void BitmapComponent::setKey(int val) {
 /* In case you feel like drawing the missing bitmap anyway...
 	// Assume that all objects the scene file forgot about are OBJSTATE_STATE class
 	state = new ObjectState(0, ObjectState::OBJSTATE_STATE, bitmap, NULL, true);
-	if (state == NULL) {
+	if (!state) {
 		if (debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("Couldn't find bitmap %s in current scene\n", _filename.c_str());
 		return;
@@ -242,7 +242,7 @@ void ModelComponent::init() {
 		
 		// Get the default colormap if we haven't found
 		// a valid colormap
-		if (cmap == NULL) {
+		if (!cmap) {
 			if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 				warning("No colormap specified for %s, using %s\n", _filename.c_str(), DEFAULT_COLORMAP);
 
@@ -942,8 +942,7 @@ void Costume::playChore(int num) {
 void Costume::setColormap(char *map) {
 	// Sometimes setColormap is called on a null costume,
 	// see where raoul is gone in hh.set
-	// ??? this == null - aquadran
-	if (this == NULL || !map)
+	if (!map)
 		return;
 	_cmap = g_resourceloader->loadColormap(map);
 	for (int i = 0; i < _numComponents; i++)

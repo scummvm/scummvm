@@ -324,7 +324,7 @@ void DriverTinyGL::drawModelFace(const Model::Face *face, float *vertices, float
 	for (int i = 0; i < face->_numVertices; i++) {
 		tglNormal3fv(vertNormals + 3 * face->_vertices[i]);
 
-		if (face->_texVertices != NULL)
+		if (face->_texVertices)
 			tglTexCoord2fv(textureVerts + 2 * face->_texVertices[i]);
 
 		tglVertex3fv(vertices + 3 * face->_vertices[i]);
@@ -348,7 +348,7 @@ void DriverTinyGL::translateViewpoint() {
 void DriverTinyGL::drawHierachyNode(const Model::HierNode *node) {
 	translateViewpoint(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
 	if (node->_hierVisible) {
-		if (node->_mesh != NULL && node->_meshVisible) {
+		if (node->_mesh && node->_meshVisible) {
 			tglPushMatrix();
 			tglTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
 			node->_mesh->draw();
@@ -356,14 +356,14 @@ void DriverTinyGL::drawHierachyNode(const Model::HierNode *node) {
 			tglPopMatrix();
 		}
 
-		if (node->_child != NULL) {
+		if (node->_child) {
 			node->_child->draw();
 			tglMatrixMode(TGL_MODELVIEW);
 		}
 	}
 	translateViewpoint();
 
-	if (node->_sibling != NULL)
+	if (node->_sibling)
 		node->_sibling->draw();
 }
 

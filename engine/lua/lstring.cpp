@@ -41,7 +41,7 @@ static int32 newsize(stringtable *tb) {
 
 	// count how many entries are really in use
 	for (i = 0; i < size; i++)
-		if (tb->hash[i] != NULL && tb->hash[i] != &EMPTY)
+		if (tb->hash[i] && tb->hash[i] != &EMPTY)
 			realuse++;
 	if (2 * (realuse + 1) <= size)  // +1 is the new element
 		return size;  // don't need to grow, just rehash to clear EMPTYs
@@ -59,7 +59,7 @@ static void grow(stringtable *tb) {
 	// rehash
 	tb->nuse = 0;
 	for (i = 0; i < tb->size; i++) {
-		if (tb->hash[i] != NULL && tb->hash[i] != &EMPTY) {
+		if (tb->hash[i] && tb->hash[i] != &EMPTY) {
 			int32 h = tb->hash[i]->hash % ns;
 			while (newhash[h])
 				h = (h + 1) % ns;

@@ -250,7 +250,7 @@ void Scene::findClosestSector(Vector3d p, Sector **sect, Vector3d *closestPt) {
 			continue;
 		Vector3d closestPt = sector->closestPoint(p);
 		float thisDist = (closestPt - p).magnitude();
-		if (resultSect == NULL || thisDist < minDist) {
+		if (!resultSect || thisDist < minDist) {
 			resultSect = sector;
 			resultPt = closestPt;
 			minDist = thisDist;

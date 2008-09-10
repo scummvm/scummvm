@@ -303,7 +303,7 @@ static void FunctionName() {
 	int curr_line = lua_currentline(lua_getparam(1));
 	if (curr_line > 0)
 		sprintf(buf + strlen(buf), " at line %d", curr_line);
-	if (filename != NULL)
+	if (filename)
 		sprintf(buf + strlen(buf), " [in file %.100s]", filename);
 	lua_pushstring(buf);
 }
@@ -490,7 +490,7 @@ static void SetActorWalkChore() {
 	act = check_actor(1);
 	chore = check_int(2);
 	costume = get_costume(act, 3, "SetActorWalkChore");
-	if (costume == NULL) {
+	if (!costume) {
 		if (debugLevel == DEBUG_CHORES || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("SetActorWalkChore() could not find the requested costume, attempting to load...");
 		act->pushCostume(lua_getstring(lua_getparam(3)));
@@ -858,7 +858,7 @@ static void SetActorWalkDominate() {
 	
 	DEBUG_FUNCTION();
 	act = check_actor(1);
-	if (act == NULL) {
+	if (!act) {
 		lua_pushnil();
 		return;
 	}
@@ -1115,7 +1115,7 @@ static void ActorLookAt() {
 		nullvector = true;
 		if (lua_isnumber(y))
 			rate = luaL_check_number(3);
-	} else if ( lua_isnumber(x)) { // look at xyz
+	} else if (lua_isnumber(x)) { // look at xyz
 		float fX;
 		float fY;
 		float fZ;
@@ -1860,7 +1860,7 @@ static void GetCurrentSetup() {
 	DEBUG_FUNCTION();
 	name = luaL_check_string(1);
 	scene = g_engine->findScene(name);
-	if (scene == NULL) {
+	if (!scene) {
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("GetCurrentSetup() Requested scene (%s) is not loaded!", name);
 		lua_pushnil();
@@ -2357,7 +2357,7 @@ static void KillTextObject() {
 	textObjectParm = check_textobject(1);
 
 	delText = TextObjectExists((char *) textObjectParm->name());
-	if (delText != NULL)
+	if (delText)
 		g_engine->killTextObject(delText);
 }
 
@@ -2505,7 +2505,7 @@ static void SetSpeechMode() {
 	
 	DEBUG_FUNCTION();
 	mode = check_int(1);
-	if ((mode >= 1) && (mode <= 3))
+	if (mode >= 1 && mode <= 3)
 		g_engine->setSpeechMode(mode);
 }
 
@@ -2959,7 +2959,7 @@ static void SubmitSaveGameData() {
 	table = lua_getparam(1);
 
 	savedState = g_engine->savedState();
-	if (savedState == NULL)
+	if (!savedState)
 		error("Cannot obtain saved game!");
 	savedState->beginSection('SUBS');
 	count = 0;
@@ -3828,7 +3828,7 @@ int bundle_dofile(const char *filename) {
 		delete b;
 		// Don't print warnings on Scripts\foo.lua,
 		// d:\grimFandango\Scripts\foo.lua
-		if (std::strstr(filename, "Scripts\\") == NULL && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
+		if (!std::strstr(filename, "Scripts\\") && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
 			warning("Cannot find script %s\n", filename);
 
 		return 2;
