@@ -1763,7 +1763,10 @@ static void MakeSectorActive() {
 		return;
 	}
 
-	numSectors = g_engine->currScene()->getSectorCount();
+	if (g_engine->currScene())
+		numSectors = g_engine->currScene()->getSectorCount();
+	else
+		numSectors = 0;
 
 	if (lua_isstring(sectorName)) {
 		const char *name = luaL_check_string(1);
