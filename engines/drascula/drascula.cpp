@@ -259,7 +259,7 @@ int DrasculaEngine::go() {
 		memset(iconName, 0, sizeof(iconName));
 
 		for (i = 0; i < 6; i++)
-			strcpy(iconName[i + 1], _textverbs[_lang][i]);
+			strcpy(iconName[i + 1], _textverbs[i]);
 
 		assignDefaultPalette();
 		if (!runCurrentChapter()) {
@@ -563,12 +563,12 @@ bool DrasculaEngine::runCurrentChapter() {
 			withoutVerb();
 		} else if (key == Common::KEYCODE_v) {
 			withVoices = 1;
-			print_abc(_textsys[_lang][2], 96, 86);
+			print_abc(_textsys[2], 96, 86);
 			updateScreen();
 			delay(1410);
 		} else if (key == Common::KEYCODE_t) {
 			withVoices = 0;
-			print_abc(_textsys[_lang][3], 94, 86);
+			print_abc(_textsys[3], 94, 86);
 			updateScreen();
 			delay(1460);
 		} else if (key == Common::KEYCODE_ESCAPE) {
@@ -1002,24 +1002,22 @@ bool DrasculaEngine::loadDrasculaDat() {
 	return true;
 }
 
-char ***DrasculaEngine::loadTexts(Common::File &in) {
+char **DrasculaEngine::loadTexts(Common::File &in) {
 	int numTexts = in.readUint16BE();
-	char ***res;
+	char **res = (char **)malloc(sizeof(char *) * numTexts);
 	int entryLen;
-	char *pos;
+	char *pos = 0;
 	int len;
-
-	res = (char ***)malloc(sizeof(char *) * _numLangs);
 
 	for (int lang = 0; lang < _numLangs; lang++) {
 		entryLen = in.readUint16BE();
-
-		res[lang] = (char **)malloc(sizeof(char *) * numTexts);
-
 		pos = (char *)malloc(entryLen);
-		res[lang][0] = pos;
-
-		in.read(res[lang][0], entryLen);
+		if (lang == _lang) {
+			res[0] = pos;
+			in.read(res[0], entryLen);
+		} else {
+			in.read(pos, entryLen);
+		}
 
 		pos += DATAALIGNMENT;
 
@@ -1029,23 +1027,19 @@ char ***DrasculaEngine::loadTexts(Common::File &in) {
 			len = READ_BE_UINT16(pos);
 			pos += 2 + len;
 
-			res[lang][i] = pos;
+			if (lang == _lang)
+				res[i] = pos;
 		}
 	}
 
 	return res;
 }
 
-void DrasculaEngine::freeTexts(char ***ptr) {
+void DrasculaEngine::freeTexts(char **ptr) {
 	if (!ptr)
 		return;
 
-	for (int lang = 0; lang < _numLangs; lang++) {
-		if (ptr[lang]) {
-			free(ptr[lang][0]);
-			free(ptr[lang]);
-		}
-	}
+	free(ptr[0]);
 	free(ptr);
 }
 

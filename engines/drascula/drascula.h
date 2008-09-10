@@ -691,21 +691,21 @@ private:
 	int _talkSequencesSize;
 	int _numLangs;
 
-	char ***_text;
-	char ***_textd;
-	char ***_textb;
-	char ***_textbj;
-	char ***_texte;
-	char ***_texti;
-	char ***_textl;
-	char ***_textp;
-	char ***_textt;
-	char ***_textvb;
-	char ***_textsys;
-	char ***_texthis;
-	char ***_textverbs;
-	char ***_textmisc;
-	char ***_textd1;
+	char **_text;
+	char **_textd;
+	char **_textb;
+	char **_textbj;
+	char **_texte;
+	char **_texti;
+	char **_textl;
+	char **_textp;
+	char **_textt;
+	char **_textvb;
+	char **_textsys;
+	char **_texthis;
+	char **_textverbs;
+	char **_textmisc;
+	char **_textd1;
 	ItemLocation *_itemLocations;
 	int *_polX, *_polY;
 	int *_verbBarX;
@@ -717,8 +717,8 @@ private:
 	RoomTalkAction *_roomActions;
 	TalkSequenceCommand *_talkSequences;
 
-	char ***loadTexts(Common::File &in);
-	void freeTexts(char ***ptr);
+	char **loadTexts(Common::File &in);
+	void freeTexts(char **ptr);
 };
 
 } // End of namespace Drascula

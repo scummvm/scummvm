@@ -139,19 +139,19 @@ void DrasculaEngine::converse(int index) {
 	_arj.close();
 
 	if (currentChapter == 2 && !strcmp(fileName, "op_5.cal") && flags[38] == 1 && flags[33] == 1) {
-		strcpy(phrase3, _text[_lang][405]);
+		strcpy(phrase3, _text[405]);
 		strcpy(sound3, "405.als");
 		answer3 = 31;
 	}
 
 	if (currentChapter == 6 && !strcmp(fileName, "op_12.cal") && flags[7] == 1) {
-		strcpy(phrase3, _text[_lang][273]);
+		strcpy(phrase3, _text[273]);
 		strcpy(sound3, "273.als");
 		answer3 = 14;
 	}
 
 	if (currentChapter == 6 && !strcmp(fileName, "op_12.cal") && flags[10] == 1) {
-		strcpy(phrase3, _text[_lang][274]);
+		strcpy(phrase3, _text[274]);
 		strcpy(sound3, "274.als");
 		answer3 = 15;
 	}

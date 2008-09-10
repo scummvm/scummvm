@@ -184,9 +184,9 @@ bool DrasculaEngine::room_3(int fl) {
 	if (pickedObject == kVerbTalk && fl == 129) {
 		talk(23);
 		pause(6);
-		talk_sync(_text[_lang][50], "50.als", "11111111111144432554433");
+		talk_sync(_text[50], "50.als", "11111111111144432554433");
 	} else if (pickedObject == kVerbTalk && fl == 133) {
-		talk_sync(_text[_lang][322], "322.als", "13333334125433333333");
+		talk_sync(_text[322], "322.als", "13333334125433333333");
 		updateRoom();
 		updateScreen();
 		pause(25);
@@ -407,7 +407,7 @@ bool DrasculaEngine::room_15(int fl) {
 		talk(336);
 		trackProtagonist = 3;
 		talk(337);
-		talk_sync(_text[_lang][46], "46.als", "4442444244244");
+		talk_sync(_text[46], "46.als", "4442444244244");
 		trackProtagonist = 1;
 	} else if (pickedObject == 18 && fl == 188 && flags[26] == 0) {
 		copyBackground();
@@ -441,7 +441,7 @@ bool DrasculaEngine::room_16(int fl) {
 	else if (pickedObject == kVerbTalk && fl == 183) {
 		talk(341);
 		pause(10);
-		talk_sync(_text[_lang][50], "50.als", "11111111111144432554433");
+		talk_sync(_text[50], "50.als", "11111111111144432554433");
 		pause(3);
 		talk_trunk(83);
 	} else if (pickedObject == kVerbOpen && fl == 183) {
@@ -948,19 +948,19 @@ bool DrasculaEngine::room_59(int fl) {
 			talk_htel(240);
 
 			color_abc(kColorBrown);
-			talk_solo(_textvb[_lang][58], "VB58.als");
+			talk_solo(_textvb[58], "VB58.als");
 			talk_htel(241);
 			color_abc(kColorBrown);
-			talk_solo(_textvb[_lang][59], "VB59.als");
+			talk_solo(_textvb[59], "VB59.als");
 			talk_htel(242);
 			color_abc(kColorBrown);
-			talk_solo(_textvb[_lang][60], "VB60.als");
+			talk_solo(_textvb[60], "VB60.als");
 			talk_htel(196);
 			color_abc(kColorBrown);
-			talk_solo(_textvb[_lang][61],"VB61.als");
+			talk_solo(_textvb[61],"VB61.als");
 			talk_htel(244);
 			color_abc(kColorBrown);
-			talk_solo(_textvb[_lang][62], "VB62.als");
+			talk_solo(_textvb[62], "VB62.als");
 			clearRoom();
 			loadPic("aux59.alg", drawSurface3);
 			loadPic(96, frontSurface, COMPLETE_PAL);

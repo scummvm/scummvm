@@ -61,7 +61,7 @@ bool DrasculaEngine::confirmExit() {
 
 	color_abc(kColorRed);
 	updateRoom();
-	centerText(_textsys[_lang][1], 160, 87);
+	centerText(_textsys[1], 160, 87);
 	updateScreen();
 
 	delay(100);

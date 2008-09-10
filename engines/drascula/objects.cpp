@@ -256,7 +256,7 @@ void DrasculaEngine::updateVisible() {
 		if (roomNumber == 22 && flags[27] == 1)
 			visible[3] = 0;
 		if (roomNumber == 26 && flags[21] == 0)
-			strcpy(objName[2], _textmisc[_lang][0]);
+			strcpy(objName[2], _textmisc[0]);
 		if (roomNumber == 26 && flags[18] == 1)
 			visible[2] = 0;
 		if (roomNumber == 26 && flags[12] == 1)

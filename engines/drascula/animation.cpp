@@ -87,7 +87,7 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		color_abc(kColorRed);
-		centerText(_textmisc[_lang][1], 160, 100);
+		centerText(_textmisc[1], 160, 100);
 		updateScreen();
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
@@ -219,12 +219,12 @@ void DrasculaEngine::animation_1_1() {
 		loadPic("plan1.alg", screenSurface, HALF_PAL);
 		updateScreen();
 		pause(10);
-		talk_solo(_textd[_lang][4],"d4.als");
+		talk_solo(_textd[4],"d4.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		loadPic("plan1.alg", screenSurface, HALF_PAL);
 		updateScreen();
-		talk_solo(_textd[_lang][5], "d5.als");
+		talk_solo(_textd[5], "d5.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		if (animate("lib2.bin", 16))
@@ -233,7 +233,7 @@ void DrasculaEngine::animation_1_1() {
 		loadPic("plan2.alg", screenSurface, HALF_PAL);
 		updateScreen();
 		pause(20);
-		talk_solo(_textd[_lang][6], "d6.als");
+		talk_solo(_textd[6], "d6.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		if (animate("lib2.bin", 16))
@@ -244,12 +244,12 @@ void DrasculaEngine::animation_1_1() {
 		pause(20);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_solo(_textd[_lang][7], "d7.als");
+		talk_solo(_textd[7], "d7.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		loadPic("plan3.alg", screenSurface, HALF_PAL);
 		updateScreen();
-		talk_solo(_textd[_lang][8], "d8.als");
+		talk_solo(_textd[8], "d8.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
@@ -436,7 +436,7 @@ void DrasculaEngine::animation_2_1() {
 
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_solo(_textbj[_lang][1], "BJ1.als");
+		talk_solo(_textbj[1], "BJ1.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
@@ -449,7 +449,7 @@ void DrasculaEngine::animation_2_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		color_solo = kColorYellow;
-		talk_solo(_text[_lang][214], "214.als");
+		talk_solo(_text[214], "214.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		clearRoom();
@@ -523,7 +523,7 @@ void DrasculaEngine::animation_2_1() {
 		pause(120);
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
-		talk_solo(_text[_lang][223], "223.als");
+		talk_solo(_text[223], "223.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		color_solo = kColorWhite;
@@ -532,7 +532,7 @@ void DrasculaEngine::animation_2_1() {
 			break;
 		updateScreen();
 		pause(110);
-		talk_solo(_textbj[_lang][11], "BJ11.als");
+		talk_solo(_textbj[11], "BJ11.als");
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE))
 			break;
 		updateRoom();
@@ -836,7 +836,7 @@ void DrasculaEngine::animation_16_2() {
 	copyBackground();
 
 	if (_lang != kSpanish)
-		centerText(_texthis[_lang][1], 180, 180);
+		centerText(_texthis[1], 180, 180);
 
 	updateScreen();
 
@@ -866,7 +866,7 @@ void DrasculaEngine::animation_16_2() {
 	copyBackground();
 
 	if (_lang != kSpanish)
-		centerText(_texthis[_lang][2], 180, 180);
+		centerText(_texthis[2], 180, 180);
 
 	updateScreen();
 	key = getScan();
@@ -892,7 +892,7 @@ void DrasculaEngine::animation_16_2() {
 	copyBackground();
 
 	if (_lang != kSpanish)
-		centerText(_texthis[_lang][3], 180, 180);
+		centerText(_texthis[3], 180, 180);
 
 	updateScreen();
 	key = getScan();
@@ -917,7 +917,7 @@ void DrasculaEngine::animation_16_2() {
 	copyBackground(0, 0, 0, 0, 320, 200, drawSurface3, screenSurface);
 
 	if (_lang != kSpanish)
-		centerText(_texthis[_lang][1], 180, 180);
+		centerText(_texthis[1], 180, 180);
 
 	updateScreen();
 	key = getScan();
@@ -1660,7 +1660,7 @@ void DrasculaEngine::animation_14_5() {
 	trackProtagonist = 3;
 	updateRoom();
 	updateScreen();
-	talk_solo(_textd[_lang][18], "d18.als");
+	talk_solo(_textd[18], "d18.als");
 	fadeToBlack(1);
 }
 
@@ -1818,11 +1818,11 @@ void DrasculaEngine::animation_9_6() {
 	clearRoom();
 	loadPic("nota.alg", bgSurface, COMPLETE_PAL);
 	color_abc(kColorWhite);
-	talk_solo(_textbj[_lang][24], "bj24.als");
-	talk_solo(_textbj[_lang][25], "bj25.als");
-	talk_solo(_textbj[_lang][26], "bj26.als");
-	talk_solo(_textbj[_lang][27], "bj27.als");
-	talk_solo(_textbj[_lang][28], "bj28.als");
+	talk_solo(_textbj[24], "bj24.als");
+	talk_solo(_textbj[25], "bj25.als");
+	talk_solo(_textbj[26], "bj26.als");
+	talk_solo(_textbj[27], "bj27.als");
+	talk_solo(_textbj[28], "bj28.als");
 	trackProtagonist = 3;
 	clearRoom();
 	loadPic(96, frontSurface, COMPLETE_PAL);
@@ -1837,7 +1837,7 @@ void DrasculaEngine::animation_9_6() {
 	copyBackground(0, 0, 0, 0, 320, 200, screenSurface, bgSurface);
 	updateScreen();
 	color_abc(kColorLightGreen);
-	talk_solo(_textmisc[_lang][2], "s15.als");
+	talk_solo(_textmisc[2], "s15.als");
 	loadPic("nota2.alg", bgSurface);
 	trackProtagonist = 0;
 	updateRoom();
@@ -2219,7 +2219,7 @@ void DrasculaEngine::animation_5_2() {
 	loadPic("aux5.alg", drawSurface3);
 	flags[8] = 1;
 	curX = curX - 4;
-	talk_sync(_text[_lang][46], "46.als", "4442444244244");
+	talk_sync(_text[46], "46.als", "4442444244244");
 	withoutVerb();
 }
 
