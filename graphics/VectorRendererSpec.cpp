@@ -371,15 +371,17 @@ applyScreenShading(GUI::Theme::ShadingStyle shadingStyle) {
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(0, 0);
 	uint8 r, g, b;
 	uint lum;
+
+	uint32 shiftMask = (uint32)(
+		(1 << PixelFormat::kGreenShift) | 
+		(1 << PixelFormat::kRedShift) | 
+		(1 << PixelFormat::kBlueShift));
+
+	shiftMask = (~shiftMask) >> 1;
 	
 	if (shadingStyle == GUI::Theme::kShadingDim) {
-		while (pixels--) {
-			colorToRGB<PixelFormat>(*ptr, r, g, b);
-			r = r * _dimPercentValue >> 8;
-			g = g * _dimPercentValue >> 8;
-			b = b * _dimPercentValue >> 8;
-			*ptr++ = RGBToColor<PixelFormat>(r, g, b);
-		}
+		while (pixels--)
+			*ptr++ = (*ptr >> 1) & shiftMask;
 	} else if (shadingStyle == GUI::Theme::kShadingLuminance) {
 		while (pixels--) {
 			colorToRGB<PixelFormat>(*ptr, r, g, b);
@@ -424,24 +426,18 @@ calcGradient(uint32 pos, uint32 max) {
 template <typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 colorFill(PixelType *first, PixelType *last, PixelType color) {
-	if (first == last) {
-		*first = color;
-		return;
-	}
-
-	register PixelType *ptr = first;
 	register int count = (last - first);
 	register int n = (count + 7) >> 3;
 	switch (count % 8) {
 	case 0: do { 
-				*ptr++ = color;
-	case 7:		*ptr++ = color;
-	case 6:		*ptr++ = color;
-	case 5:		*ptr++ = color;
-	case 4:		*ptr++ = color;
-	case 3:		*ptr++ = color;
-	case 2:		*ptr++ = color;
-	case 1:		*ptr++ = color;
+				*first++ = color;
+	case 7:		*first++ = color;
+	case 6:		*first++ = color;
+	case 5:		*first++ = color;
+	case 4:		*first++ = color;
+	case 3:		*first++ = color;
+	case 2:		*first++ = color;
+	case 1:		*first++ = color;
 			} while (--n > 0);
 	}
 }
