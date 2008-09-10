@@ -1114,10 +1114,8 @@ void DrasculaEngine::updateRefresh_pre() {
 
 void DrasculaEngine::update_1_pre() {
 	if (curX > 98 && curX < 153) {
-		changeColor = 1;
 		setDefaultPalette(darkPalette);
 	} else {
-		changeColor = 0;
 		setDefaultPalette(brightPalette);
 	}
 
@@ -1183,10 +1181,8 @@ void DrasculaEngine::update_3() {
 
 void DrasculaEngine::update_4() {
 	if (curX > 190) {
-		changeColor = 1;
 		setDefaultPalette(darkPalette);
 	} else {
-		changeColor = 0;
 		setDefaultPalette(brightPalette);
 	}
 }
@@ -1194,10 +1190,8 @@ void DrasculaEngine::update_4() {
 void DrasculaEngine::update_6_pre() {
 	if ((curX > 149 && curY + curHeight > 160 && curX < 220 && curY + curHeight < 188) ||
 		(curX > 75 && curY + curHeight > 183 && curX < 145)) {
-		changeColor = 0;
 		setDefaultPalette(brightPalette);
 	} else {
-		changeColor = 1;
 		setDefaultPalette(darkPalette);
 	}
 }
@@ -1750,7 +1744,6 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	assignPalette(darkPalette);
 
 	setDefaultPalette(brightPalette);
-	changeColor = -1;
 
 	if (currentChapter == 2)
 		color_abc(kColorLightGreen);

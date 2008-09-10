@@ -202,7 +202,6 @@ int DrasculaEngine::go() {
 		talkHeight = TALK_HEIGHT; talkWidth = TALK_WIDTH;
 		hasAnswer = 0;
 		savedTime = 0;
-		changeColor = 0;
 		breakOut = 0;
 		vonBraunX = 120; trackVonBraun = 1; vonBraunHasMoved = 0;
 		framesWithoutAction = 0;

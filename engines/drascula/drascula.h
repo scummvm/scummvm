@@ -378,7 +378,6 @@ public:
 	int timeDiff, startTime;
 	int hasAnswer;
 	int savedTime;
-	int changeColor;
 	int breakOut;
 	int vonBraunX, trackVonBraun, vonBraunHasMoved;
 	float newHeight, newWidth;
