@@ -2736,21 +2736,7 @@ bool Screen::loadPalette(const char *filename, uint8 *palData) {
 
 	if (palData && fileSize) {
 		debugC(9, kDebugLevelScreen,"Loading a palette of size %u from '%s'", fileSize, filename);
-		if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-			assert(fileSize % 2 == 0);
-			assert(fileSize / 2 <= 256);
-			fileSize >>= 1;
-			const uint16 *src = (const uint16 *)srcData;
-			for (uint i = 0; i < fileSize; ++i) {
-				uint16 col = READ_BE_UINT16(src); ++src;
-				palData[2] = (col & 0xF) << 2; col >>= 4;
-				palData[1] = (col & 0xF) << 2; col >>= 4;
-				palData[0] = (col & 0xF) << 2; col >>= 4;
-				palData += 3;
-			}
-		} else {
-			memcpy(palData, srcData, fileSize);
-		}
+		loadPalette(srcData, palData, fileSize);
 	}
 	delete[] srcData;
 	return true;
