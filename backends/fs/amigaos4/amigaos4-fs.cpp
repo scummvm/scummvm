@@ -36,7 +36,6 @@
 #endif
 
 #include "common/util.h"
-#include "engines/engine.h"		// FIXME: Why is this here????
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/stdiostream.h"
 
@@ -155,7 +154,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode() {
 AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 	ENTER();
 
-	int len = 0, offset = p.size();
+	int offset = p.size();
 
 	//assert(offset > 0);
 
@@ -165,7 +164,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 	}
 
 	_sPath = p;
-	_sDisplayName = lastPathComponent(_sPath);
+	_sDisplayName = ::lastPathComponent(_sPath);
 	_pFileLock = 0;
 	_bIsDirectory = false;
 
