@@ -112,6 +112,30 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
+	{	// Multilingual floppy with *.gra files.
+		// Note: It contains no english subtitles.
+		// Reported on our forums.
+		{
+			"dw",
+			"Floppy",
+			{
+				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
+				{"french.txt", 0, NULL, -1},
+				{"german.txt", 0, NULL, -1},
+				{"italian.txt", 0, NULL, -1},
+				{"spanish.txt", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE
+		},
+		GID_DW1,
+		0,
+		GF_FLOPPY | GF_USE_4FLAGS,
+		TINSEL_V1,
+	},
+
 	{	// English CD. This version has *.gra files
 		{
 			"dw",
