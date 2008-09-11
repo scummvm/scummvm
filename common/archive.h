@@ -31,6 +31,7 @@
 #include "common/hash-str.h"
 #include "common/list.h"
 #include "common/ptr.h"
+#include "common/singleton.h"
 #include "common/stream.h"
 
 namespace Common {
@@ -201,6 +202,56 @@ public:
 	 */
 	virtual SeekableReadStream *openFile(const String &name);
 };
+
+
+
+
+class SearchManager : public Singleton<SearchManager>, public Archive {
+
+	SearchSet	_searchSet;
+
+public:
+	/**
+	 *	Add an existing Archive. This is meant to support searching in system-specific
+	 *  archives, namely the MACOSX/IPHONE bundles.
+	 */
+	void addArchive(const String &name, ArchivePtr archive);
+
+	/**
+	 *	Create and add a FSDirectory by name
+	 */
+	void addDirectory(const String &name, const String &directory);
+
+	/**
+	 *	Create and add a FSDirectory and its subdirectories by name
+	 */
+	void addDirectoryRecursive(const String &name, const String &directory, int depth = 4);
+
+	/**
+	 *	Remove an archive from the pool.
+	 */
+	void remove(const String &name);
+
+	/**
+	 *	Clears the archive
+	 */
+	void clear();
+
+
+	virtual bool hasFile(const String &name);
+	virtual int getAllNames(StringList &list) {
+		return matchPattern(list, "*");
+	}
+
+	/**
+	 * Implements openFile from Archive base class. The current policy is
+	 * opening the first file encountered that matches the name.
+	 */
+	virtual SeekableReadStream *openFile(const String &name);
+};
+
+/** Shortcut for accessing the search manager. */
+#define SearchMan		Common::SearchManager::instance()
 
 } // namespace Common
 
