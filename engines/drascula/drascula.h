@@ -543,6 +543,8 @@ public:
 	bool roomParse(int, int);
 	void cleanupString(char *string);
 	void checkTalkSequence(int sequence);
+	void doTalkSequenceCommand(TalkSequenceCommand cmd);
+	void playTalkSequence(TalkSequenceCommand *seq, int size);
 	void converse(int);
 	void print_abc_opc(const char *, int, int);
 	void response(int);

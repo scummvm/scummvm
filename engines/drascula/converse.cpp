@@ -35,66 +35,73 @@ void DrasculaEngine::checkTalkSequence(int sequence) {
 			_talkSequences[i].sequence == sequence) {
 			seen = true;
 		
-			// do action
-			switch (_talkSequences[i].commandType) {
-				case kPause:
-					pause(_talkSequences[i].action);
-					break;
-				case kSetFlag:
-					flags[_talkSequences[i].action] = 1;
-					break;
-				case kClearFlag:
-					flags[_talkSequences[i].action] = 0;
-					break;
-				case kPickObject:
-					pickObject(_talkSequences[i].action);
-					break;
-				case kAddObject:
-					addObject(_talkSequences[i].action);
-					break;
-				case kBreakOut:
-					breakOut = 1;
-					break;
-				case kTalkerGeneral:
-					talk(_talkSequences[i].action);
-					break;
-				case kTalkerDrunk:
-					talk_drunk(_talkSequences[i].action);
-					break;
-				case kTalkerPianist:
-					talk_pianist(_talkSequences[i].action);
-					break;
-				case kTalkerBJ:
-					talk_bj(_talkSequences[i].action);
-					break;
-				case kTalkerVBNormal:
-					talk_vonBraun(_talkSequences[i].action, kVonBraunNormal);
-					break;
-				case kTalkerVBDoor:
-					talk_vonBraun(_talkSequences[i].action, kVonBraunDoor);
-					break;
-				case kTalkerIgorSeated:
-					talk_igor(_talkSequences[i].action, kIgorSeated);
-					break;
-				case kTalkerWerewolf:
-					talk_werewolf(_talkSequences[i].action);
-					break;
-				case kTalkerMus:
-					talk_mus(_talkSequences[i].action);
-					break;
-				case kTalkerDrascula:
-					talk_drascula(_talkSequences[i].action, 1);
-					break;
-				case kTalkerBartender:
-					talk_bartender(_talkSequences[i].action, 1);
-					break;
-				default:
-					error("checkTalkSequence: Unknown command");
-			}
-
+			doTalkSequenceCommand(_talkSequences[i]);
 		} else if (seen) // Stop searching down the list
 			break;
 	}	
+}
+
+void DrasculaEngine::playTalkSequence(TalkSequenceCommand *seq, int size) {
+	for (int i = 0; i < size; i++)
+		doTalkSequenceCommand(seq[i]);
+}
+
+void DrasculaEngine::doTalkSequenceCommand(TalkSequenceCommand cmd) {
+	switch (cmd.commandType) {
+		case kPause:
+			pause(cmd.action);
+			break;
+		case kSetFlag:
+			flags[cmd.action] = 1;
+			break;
+		case kClearFlag:
+			flags[cmd.action] = 0;
+			break;
+		case kPickObject:
+			pickObject(cmd.action);
+			break;
+		case kAddObject:
+			addObject(cmd.action);
+			break;
+		case kBreakOut:
+			breakOut = 1;
+			break;
+		case kTalkerGeneral:
+			talk(cmd.action);
+			break;
+		case kTalkerDrunk:
+			talk_drunk(cmd.action);
+			break;
+		case kTalkerPianist:
+			talk_pianist(cmd.action);
+			break;
+		case kTalkerBJ:
+			talk_bj(cmd.action);
+			break;
+		case kTalkerVBNormal:
+			talk_vonBraun(cmd.action, kVonBraunNormal);
+			break;
+		case kTalkerVBDoor:
+			talk_vonBraun(cmd.action, kVonBraunDoor);
+			break;
+		case kTalkerIgorSeated:
+			talk_igor(cmd.action, kIgorSeated);
+			break;
+		case kTalkerWerewolf:
+			talk_werewolf(cmd.action);
+			break;
+		case kTalkerMus:
+			talk_mus(cmd.action);
+			break;
+		case kTalkerDrascula:
+			talk_drascula(cmd.action, 1);
+			break;
+		case kTalkerBartender:
+			talk_bartender(cmd.action, 1);
+			break;
+		default:
+			error("doTalkSequenceCommand: Unknown command");
+	}
 }
 
 void DrasculaEngine::cleanupString(char *string) {

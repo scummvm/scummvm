@@ -1100,22 +1100,29 @@ void DrasculaEngine::animation_27_2() {
 
 void DrasculaEngine::animation_29_2() {
 	if (flags[33] == 0) {
-		talk_vonBraun(32, kVonBraunNormal);
-		talk(398);
-		talk_vonBraun(33, kVonBraunNormal);
-		talk(399);
-		talk_vonBraun(34, kVonBraunNormal);
-		talk_vonBraun(35, kVonBraunNormal);
-		talk(400);
-		talk_vonBraun(36, kVonBraunNormal);
-		talk_vonBraun(37, kVonBraunNormal);
-		talk(386);
-		talk_vonBraun(38, kVonBraunNormal);
-		talk_vonBraun(39, kVonBraunNormal);
-		talk(401);
-		talk_vonBraun(40, kVonBraunNormal);
-		talk_vonBraun(41, kVonBraunNormal);
-		flags[33] = 1;
+		// TODO: eventually move this to drascula.dat, along with any other
+		// sequences
+		TalkSequenceCommand anim29_2Seq[] = {
+			// Chapter, sequence,		 command type, action
+			{		 -1,	  -1,	  kTalkerVBNormal,	  32 },
+			{		 -1,	  -1,	   kTalkerGeneral,	 398 },
+			{		 -1,	  -1,	  kTalkerVBNormal,	  33 },
+			{		 -1,	  -1,	   kTalkerGeneral,	 399 },
+			{		 -1,	  -1,	  kTalkerVBNormal,	  34 },
+			{		 -1,	  -1,	  kTalkerVBNormal,	  35 },
+			{		 -1,	  -1,	   kTalkerGeneral,	 400 },
+			{		 -1,	  -1,	  kTalkerVBNormal,	  36 },
+			{		 -1,	  -1,	  kTalkerVBNormal,	  37 },
+			{		 -1,	  -1,	   kTalkerGeneral,	 386 },
+			{		 -1,	  -1,	  kTalkerVBNormal,	  38 },
+			{		 -1,	  -1,	  kTalkerVBNormal,	  39 },
+			{		 -1,	  -1,	   kTalkerGeneral,	 401 },
+			{		 -1,	  -1,	  kTalkerVBNormal,	  40 },
+			{		 -1,	  -1,	  kTalkerVBNormal,	  41 },
+			{		 -1,	  -1,			 kSetFlag,	   1 }
+		};
+
+		playTalkSequence(anim29_2Seq, ARRAYSIZE(anim29_2Seq));
 	} else
 		talk_vonBraun(43, kVonBraunNormal);
 

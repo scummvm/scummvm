@@ -1524,13 +1524,7 @@ bool DrasculaEngine::checkAction(int fl) {
 				talk(495);
 			} else
 				hasAnswer = 0;
-		} else if (currentChapter == 5) {
-			if (pickedObject == kVerbLook && fl == 9) {
-				talk(482);
-				talk(483);
-			} else
-				hasAnswer = 0;
-		} else if (currentChapter == 6) {
+		} else if (currentChapter == 5 || currentChapter == 6) {
 			if (pickedObject == kVerbLook && fl == 9) {
 				talk(482);
 				talk(483);
@@ -1854,21 +1848,29 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 			flags[7] = 1;
 			updateRoom();
 			updateScreen();
-			talk(228);
-			talk_werewolf(1);
-			talk_werewolf(2);
-			pause(23);
-			talk(229);
-			talk_werewolf(3);
-			talk_werewolf(4);
-			talk(230);
-			talk_werewolf(5);
-			talk(231);
-			talk_werewolf(6);
-			talk_werewolf(7);
-			pause(33);
-			talk(232);
-			talk_werewolf(8);
+
+			// TODO: eventually move this to drascula.dat, along with any other
+			// sequences
+			TalkSequenceCommand room45Seq[] = {
+				// Chapter, sequence,		 command type, action
+				{		 -1,	  -1,	  kTalkerGeneral,	 228 },
+				{		 -1,	  -1,	 kTalkerWerewolf,	   1 },
+				{		 -1,	  -1,	 kTalkerWerewolf,	   2 },
+				{		 -1,	  -1,			  kPause,	  23 },
+				{		 -1,	  -1,	  kTalkerGeneral,	 229 },
+				{		 -1,	  -1,	 kTalkerWerewolf,	   3 },
+				{		 -1,	  -1,	 kTalkerWerewolf,	   4 },
+				{		 -1,	  -1,	  kTalkerGeneral,	 230 },
+				{		 -1,	  -1,	 kTalkerWerewolf,	   5 },
+				{		 -1,	  -1,	  kTalkerGeneral,	 231 },
+				{		 -1,	  -1,	 kTalkerWerewolf,	   6 },
+				{		 -1,	  -1,	 kTalkerWerewolf,	   7 },
+				{		 -1,	  -1,			  kPause,	  33 },
+				{		 -1,	  -1,	  kTalkerGeneral,	 232 },
+				{		 -1,	  -1,	 kTalkerWerewolf,	   8 },
+			};
+
+			playTalkSequence(room45Seq, ARRAYSIZE(room45Seq));
 		}
 	}
 
