@@ -496,7 +496,6 @@ public:
 	~SaveLoadChooser();
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	const String &getResultString() const;
 	void setList(const StringList& list);
 	int runModal(const EnginePlugin *plugin, const String &target);
 
@@ -533,10 +532,6 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 SaveLoadChooser::~SaveLoadChooser() {
 }
 
-const Common::String &SaveLoadChooser::getResultString() const {
-	return _list->getSelectedString();
-}
-
 int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) {
 	if (_gfxWidget)
 		_gfxWidget->setGfx(0);
@@ -557,7 +552,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 	case GUI::kListItemActivatedCmd:
 	case GUI::kListItemDoubleClickedCmd:
 		if (selItem >= 0) {
-			if (!getResultString().empty()) {
+			if (!_list->getSelectedString().empty()) {
 				_list->endEditMode();
 				setResult(atoi(_saveList[selItem].save_slot().c_str()));
 				close();
@@ -565,7 +560,6 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		}
 		break;
 	case kChooseCmd:
-		_list->endEditMode();
 		setResult(atoi(_saveList[selItem].save_slot().c_str()));
 		close();
 		break;
@@ -575,10 +569,10 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 
 		// Disable these buttons if nothing is selected, or if an empty
 		// list item is selected.
-		_chooseButton->setEnabled(selItem >= 0 && (!getResultString().empty()));
+		_chooseButton->setEnabled(selItem >= 0 && (!_list->getSelectedString().empty()));
 		_chooseButton->draw();
 		// Delete will always be disabled if the engine doesn't support it.
-		_deleteButton->setEnabled(_delSupport && (selItem >= 0) && (!getResultString().empty()));
+		_deleteButton->setEnabled(_delSupport && (selItem >= 0) && (!_list->getSelectedString().empty()));
 		_deleteButton->draw();
 	} break;
 	case kDelCmd:
@@ -632,7 +626,7 @@ void SaveLoadChooser::updateSaveList() {
 
 	StringList saveNames;
 	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x)
-		saveNames.push_back(x->description().c_str());
+		saveNames.push_back(x->description());
 	_list->setList(saveNames);
 }
 
