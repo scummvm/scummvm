@@ -148,10 +148,11 @@ public:
 	virtual Common::String getName() const;
 
 	/**
-	 * Return a string representation of the file which can be passed to fopen(),
-	 * and is suitable for archiving (i.e. writing to the config file).
-	 * This will usually be a 'path' (hence the name of the method), but can
-	 * be anything that fulfills the above criterions.
+	 * Return a string representation of the file which is suitable for
+	 * archiving (i.e. writing to the config file). This will usually be a
+	 * 'path' (hence the name of the method), but can be anything that meets
+	 * the above criterions. What a 'path' is differs greatly from system to
+	 * system anyway.
 	 *
 	 * @note Do not assume that this string contains (back)slashes or any
 	 *       other kind of 'path separators'.
