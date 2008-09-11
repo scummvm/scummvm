@@ -90,7 +90,7 @@ void DrasculaEngine::moveCursor() {
 void DrasculaEngine::setCursor(int cursor) {
 	switch (cursor) {
 		case kCursorCrosshair:
-			CursorMan.replaceCursor((const byte *)crosshairCursor, 40, 25, 0, 0);
+			CursorMan.replaceCursor((const byte *)crosshairCursor, 40, 25, 20, 17);
 			break;
 		case kCursorCurrentItem:
 			CursorMan.replaceCursor((const byte *)mouseCursor, OBJWIDTH, OBJHEIGHT, 20, 17);
