@@ -1067,6 +1067,7 @@ public:
 	bool hasFeature(MetaEngineFeature f) const;
 	bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 	SaveStateList listSaves(const char *target) const;
+	void removeSaveState(const char *target, int slot) const;
 };
 
 bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -1145,6 +1146,16 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 	}
 
 	return saveList;
+}
+
+void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
+	char extension[6];
+	snprintf(extension, sizeof(extension), ".%03d", slot);
+
+	Common::String filename = target;
+	filename += extension;
+
+	g_system->getSavefileManager()->removeSavefile(filename.c_str());
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(KYRA)

@@ -188,6 +188,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual void removeSaveState(const char *target, int slot) const;
 };
 
 bool LureMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -232,6 +233,16 @@ SaveStateList LureMetaEngine::listSaves(const char *target) const {
 	}
 
 	return saveList;
+}
+
+void LureMetaEngine::removeSaveState(const char *target, int slot) const {
+	char extension[6];
+	snprintf(extension, sizeof(extension), ".%03d", slot);
+
+	Common::String filename = target;
+	filename += extension;
+
+	g_system->getSavefileManager()->removeSavefile(filename.c_str());
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(LURE)

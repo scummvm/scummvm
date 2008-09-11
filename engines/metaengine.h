@@ -101,12 +101,10 @@ public:
 	 * For most engines this just amounts to calling _saveFileMan->removeSaveFile().  
 	 * Engines which keep an index file will also update it accordingly.
 	 *
+	 * @param target	name of a config manager target
 	 * @param slot		slot number of the save state to be removed
-	 *
-	 * @todo  This method is currently never called. Rather, LauncherDialog::loadGame
-	 *        directly calls _saveFileMan->removeSaveFile() if kSupportsDeleteSave is set.
 	 */
-	virtual void removeSaveState(int slot) const {};
+	virtual void removeSaveState(const char *target, int slot) const {};
 
 	
 	/** @name MetaEngineFeature flags */

@@ -940,7 +940,6 @@ void LauncherDialog::editGame(int item) {
 }
 
 void LauncherDialog::loadGame(int item) {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	String gameId = ConfMan.get("gameid", _domains[item]);
 	if (gameId.empty())
 		gameId = _domains[item];
@@ -956,8 +955,7 @@ void LauncherDialog::loadGame(int item) {
 		bool delSupport = (*plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
 
 		if ((*plugin)->hasFeature(MetaEngine::kSupportsListSaves) && 
-			(*plugin)->hasFeature(MetaEngine::kSupportsDirectLoad)) 
-		{
+			(*plugin)->hasFeature(MetaEngine::kSupportsDirectLoad)) {
 			do {
 				Common::StringList saveNames = generateSavegameList(item, plugin);
 				_loadDialog->setList(saveNames);
@@ -971,14 +969,12 @@ void LauncherDialog::loadGame(int item) {
 						MessageDialog alert("Do you really want to delete this savegame?", 
 									"Delete", "Cancel");
 						if (alert.runModal() == GUI::kMessageOK) {
-							saveFileMan->removeSavefile(filename.c_str());
-						  	if ((saveList.size() - 1) == 0) {
-								//ConfMan.setInt("save_slot", -1);
-							}
+							(*plugin)->removeSaveState(description.c_str(), atoi(saveList[idx].save_slot().c_str()));
+						  	/*if ((saveList.size() - 1) == 0) {
+								ConfMan.setInt("save_slot", -1);
+							}*/
 						}
-					}
-					// Load the savegame
-					else {
+					} else { // Load the savegame
 						int slot = atoi(saveList[idx].save_slot().c_str());
 						//const char *file = saveList[idx].filename().c_str();
 						//printf("Loading slot: %d\n", slot);
@@ -988,8 +984,7 @@ void LauncherDialog::loadGame(int item) {
 						close();
 					}
 				}
-			}
-			while (_loadDialog->delSave());
+			} while (_loadDialog->delSave());
 		} else {
 			MessageDialog dialog
 				("Sorry, this game does not yet support loading games from the launcher.", "OK");

@@ -85,6 +85,7 @@ public:
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual void removeSaveState(const char *target, int slot) const;
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 };
@@ -194,6 +195,16 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 	}
 
 	return saveList;
+}
+
+void Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
+	char extension[6];
+	snprintf(extension, sizeof(extension), ".%03d", slot);
+
+	Common::String filename = target;
+	filename += extension;
+
+	g_system->getSavefileManager()->removeSavefile(filename.c_str());
 }
 
 PluginError Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) const {

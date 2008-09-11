@@ -682,6 +682,7 @@ public:
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual void removeSaveState(const char *target, int slot) const;
 };
 
 bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -973,6 +974,16 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 	}
 
 	return saveList;
+}
+
+void ScummMetaEngine::removeSaveState(const char *target, int slot) const {
+	char extension[6];
+	snprintf(extension, sizeof(extension), ".s%02d", slot);
+
+	Common::String filename = target;
+	filename += extension;
+
+	g_system->getSavefileManager()->removeSavefile(filename.c_str());
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SCUMM)
