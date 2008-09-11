@@ -92,7 +92,7 @@ AbstractFilesystemNode *POSIXFilesystemNode::getChild(const Common::String &n) c
 	assert(_isDirectory);
 	
 	// Make sure the string contains no slashes
-	assert(Common::find(n.begin(), n.end(), '/') == n.end());
+	assert(!n.contains('/'));
 
 	// We assume here that _path is already normalized (hence don't bother to call
 	//  Common::normalizePath on the final path).
