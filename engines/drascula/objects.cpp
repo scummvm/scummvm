@@ -73,6 +73,9 @@ int DrasculaEngine::removeObject(int obj) {
 }
 
 void DrasculaEngine::gotoObject(int pointX, int pointY) {
+	bool cursorVisible = isCursorVisible();
+	hideCursor();
+
 	if (currentChapter == 5 || currentChapter == 6) {
 		if (hare_se_ve == 0) {
 			curX = roomX;
@@ -99,6 +102,9 @@ void DrasculaEngine::gotoObject(int pointX, int pointY) {
 	}
 	updateRoom();
 	updateScreen();
+
+	if (cursorVisible)
+		showCursor();
 }
 
 void DrasculaEngine::checkObjects() {

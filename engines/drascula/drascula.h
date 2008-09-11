@@ -182,6 +182,11 @@ enum MouseCursors {
 	kCursorCurrentItem = 1
 };
 
+enum DoorActions {
+	kCloseDoor = 0,
+	kOpenDoor = 1
+};
+
 struct TalkSequenceCommand {
 	int chapter;
 	int sequence;
@@ -361,7 +366,7 @@ public:
 	int roomObjX[40], roomObjY[40], trackObj[40];
 	int inventoryObjects[43];
 	char _targetSurface[40][20];
-	int _destX[40], _destY[40], trackCharacter_alkeva[40], alapuertakeva[40];
+	int _destX[40], _destY[40], trackCharacter_alkeva[40], roomExits[40];
 	int x1[40], y1[40], x2[40], y2[40];
 	int takeObject, pickedObject;
 	int withVoices;
@@ -420,7 +425,7 @@ public:
 	void moveVonBraun();
 	void placeVonBraun(int pointX);
 	void hipo_sin_nadie(int counter);
-	void openDoor(int nflag, int doorNum);
+	void toggleDoor(int nflag, int doorNum, int action);
 	void showMap();
 
 	void enterRoom(int);
@@ -483,7 +488,6 @@ public:
 	void hiccup(int);
 	void finishSound();
 	void stopSound();
-	void closeDoor(int nflag, int doorNum);
 	void playMusic(int p);
 	void stopMusic();
 	int musicStatus();
@@ -505,6 +509,7 @@ public:
 	void setCursor(int cursor);
 	void showCursor();
 	void hideCursor();
+	bool isCursorVisible();
 	void enterName();
 	bool soundIsActive();
 	void waitFrameSSN();

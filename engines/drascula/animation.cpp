@@ -941,7 +941,7 @@ void DrasculaEngine::animation_20_2() {
 		talk_vonBraun(12, kVonBraunDoor);
 		flags[18] = 0;
 		flags[14] = 1;
-		openDoor(15, 1);
+		toggleDoor(15, 1, kOpenDoor);
 		exitRoom(1);
 		animation_23_2();
 		exitRoom(0);
@@ -2320,7 +2320,7 @@ void DrasculaEngine::animation_5_4(){
 	curY = 82;
 	updateRoom();
 	updateScreen();
-	openDoor(2, 0);
+	toggleDoor(2, 0, kOpenDoor);
 	loadPic("auxigor.alg", frontSurface);
 	igorX = 100;
 	igorY = 65;
@@ -2371,7 +2371,7 @@ void DrasculaEngine::animation_8_4() {
 	}
 
 	loadPic(96, frontSurface);
-	openDoor(7, 2);
+	toggleDoor(7, 2, kOpenDoor);
 }
 
 void DrasculaEngine::activatePendulum() {
