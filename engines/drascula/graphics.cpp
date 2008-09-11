@@ -168,9 +168,7 @@ void DrasculaEngine::copyBackground(int xorg, int yorg, int xdes, int ydes, int 
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
 	for (int x = 0; x < height; x++) {
-		memcpy(dest, src, width);
-		dest += 320;
-		src += 320;
+		memcpy(dest + 320 * x, src + 320 * x, width);
 	}
 }
 
@@ -226,9 +224,7 @@ void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int wi
 	ptr += xdes + ydes * 320;
 	buffer += xorg + yorg * 320;
 	for (int x = 0; x < height; x++) {
-		memcpy(ptr, buffer, width);
-		ptr += 320;
-		buffer += 320;
+		memcpy(ptr + 320 * x, buffer + 320 * x, width);
 	}
 
 	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
