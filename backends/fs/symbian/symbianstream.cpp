@@ -24,9 +24,9 @@
  */	
 
 #include "common/scummsys.h"
-#include "backends/fs/StdioStream.h"
+#include "backends/fs/symbian/symbianstream.h"
 #include "common/system.h"
-#include "backends/platform/symbian/src/SymbianOS.h"
+#include "backends/platform/symbian/src/symbianos.h"
 
 #include <f32file.h>
 
@@ -173,31 +173,31 @@ size_t ReadData(const void* ptr, size_t size, size_t numItems, TSymbianFileEntry
 	return pointer.Length() / size;
 }
 
-StdioStream::StdioStream(void *handle) : _handle(handle) {
+SymbianStdioStream::SymbianStdioStream(void *handle) : _handle(handle) {
 	assert(handle);
 }
 
-StdioStream::~StdioStream() {
+SymbianStdioStream::~SymbianStdioStream() {
 	((TSymbianFileEntry*)(_handle))->_fileHandle.Close();
 
 	delete (TSymbianFileEntry*)(_handle);
 }
 
-bool StdioStream::ioFailed() const {
+bool SymbianStdioStream::ioFailed() const {
 	return eos() || ((TSymbianFileEntry*)(_handle))->_lastError != 0;
 }
 
-void StdioStream::clearIOFailed() {
+void SymbianStdioStream::clearIOFailed() {
 	((TSymbianFileEntry*)(_handle))->_lastError = 0;
 }
 
-bool StdioStream::eos() const {
+bool SymbianStdioStream::eos() const {
 	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(_handle));
 
 	return entry->_eofReached != 0;
 }
 
-uint32 StdioStream::pos() const {
+uint32 SymbianStdioStream::pos() const {
 	TInt pos = 0;
 	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(_handle));
 
@@ -210,7 +210,7 @@ uint32 StdioStream::pos() const {
 	return pos;
 }
 
-uint32 StdioStream::size() const {
+uint32 SymbianStdioStream::size() const {
 
 	TInt length = 0;
 	((TSymbianFileEntry*)(_handle))->_fileHandle.Size(length);
@@ -218,7 +218,7 @@ uint32 StdioStream::size() const {
 	return length;
 }
 
-void StdioStream::seek(int32 offs, int whence) {
+void SymbianStdioStream::seek(int32 offs, int whence) {
 	assert(_handle);
 
 	TSeek seekMode = ESeekStart;
@@ -249,11 +249,11 @@ void StdioStream::seek(int32 offs, int whence) {
 	}	
 }
 
-uint32 StdioStream::read(void *ptr, uint32 len) {
+uint32 SymbianStdioStream::read(void *ptr, uint32 len) {
 	return (uint32)ReadData((byte *)ptr, 1, len, (TSymbianFileEntry *)_handle);
 }
 
-uint32 StdioStream::write(const void *ptr, uint32 len) {
+uint32 SymbianStdioStream::write(const void *ptr, uint32 len) {
 	TPtrC8 pointer( (unsigned char*) ptr, len);
 
 	((TSymbianFileEntry*)(_handle))->_inputPos = KErrNotFound;
@@ -267,14 +267,14 @@ uint32 StdioStream::write(const void *ptr, uint32 len) {
 	return 0;
 }
 
-void StdioStream::flush() {
+void SymbianStdioStream::flush() {
 	((TSymbianFileEntry*)(_handle))->_fileHandle.Flush();
 }
 
-StdioStream *StdioStream::makeFromPath(const Common::String &path, bool writeMode) {
+SymbianStdioStream *SymbianStdioStream::makeFromPath(const Common::String &path, bool writeMode) {
 	void *handle = CreateSymbianFileEntry(path.c_str(), writeMode ? "wb" : "rb");
 	if (handle)
-		return new StdioStream(handle);
+		return new SymbianStdioStream(handle);
 	return 0;
 }
 

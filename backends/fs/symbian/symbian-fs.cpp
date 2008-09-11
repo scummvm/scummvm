@@ -24,8 +24,8 @@
 
 #if defined (__SYMBIAN32__)
 #include "backends/fs/abstract-fs.h"
-#include "backends/fs/stdiostream.h"
-#include "backends/platform/symbian/src/SymbianOS.h"
+#include "backends/fs/symbian/symbianstream.h"
+#include "backends/platform/symbian/src/symbianos.h"
 
 #include <dirent.h>
 #include <eikenv.h>
@@ -253,11 +253,12 @@ AbstractFilesystemNode *SymbianFilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *SymbianFilesystemNode::openForReading() {
-	return StdioStream::makeFromPath(getPath().c_str(), false);
+	return SymbianStdioStream::makeFromPath(getPath().c_str(), false);
 }
 
 Common::WriteStream *SymbianFilesystemNode::openForWriting() {
-	return StdioStream::makeFromPath(getPath().c_str(), true);
+	return SymbianStdioStream::makeFromPath(getPath().c_str(), true);
 }
-
 #endif //#if defined (__SYMBIAN32__)
+
+
