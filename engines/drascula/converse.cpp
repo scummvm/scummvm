@@ -122,7 +122,7 @@ void DrasculaEngine::converse(int index) {
 
 	breakOut = 0;
 
-	withoutVerb();
+	selectVerb(0);
 
 	getStringFromLine(buffer, size, phrase1);
 	getStringFromLine(buffer, size, phrase2);

@@ -37,8 +37,14 @@ void DrasculaEngine::updateVolume(Audio::Mixer::SoundType soundType, int prevVol
 }
 
 void DrasculaEngine::volumeControls() {
+	if (_lang == kSpanish)
+		loadPic(95, tableSurface);
+
 	copyRect(1, 56, 73, 63, 177, 97, tableSurface, screenSurface);
 	updateScreen(73, 63, 73, 63, 177, 97, screenSurface);
+
+	setCursor(kCursorCrosshair);
+	showCursor();
 
 	for (;;) {
 		int masterVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16), 0, 15);
@@ -56,8 +62,6 @@ void DrasculaEngine::volumeControls() {
 		copyBackground(183, 56, 82, masterVolumeY, 39, 2 + masterVolume * 4, tableSurface, screenSurface);
 		copyBackground(183, 56, 138, voiceVolumeY, 39, 2 + voiceVolume * 4, tableSurface, screenSurface);
 		copyBackground(183, 56, 194, musicVolumeY, 39, 2 + musicVolume * 4, tableSurface, screenSurface);
-
-		setCursorTable();
 
 		updateScreen();
 
@@ -83,6 +87,11 @@ void DrasculaEngine::volumeControls() {
 		}
 
 	}
+
+	if (_lang == kSpanish)
+		loadPic(974, tableSurface);
+
+	selectVerb(0);
 
 	updateEvents();
 }

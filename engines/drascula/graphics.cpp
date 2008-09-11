@@ -24,6 +24,7 @@
  */
 
 #include "drascula/drascula.h"
+#include "graphics/cursorman.h"
 
 namespace Drascula {
 
@@ -47,6 +48,10 @@ void DrasculaEngine::allocMemory() {
 	assert(tableSurface);
 	extraSurface = (byte *)malloc(64000);
 	assert(extraSurface);
+	crosshairCursor = (byte *)malloc(40 * 25);
+	assert(crosshairCursor);
+	mouseCursor = (byte *)malloc(OBJWIDTH * OBJHEIGHT);
+	assert(mouseCursor);
 }
 
 void DrasculaEngine::freeMemory() {
@@ -58,6 +63,8 @@ void DrasculaEngine::freeMemory() {
 	free(drawSurface3);
 	free(extraSurface);
 	free(frontSurface);
+	free(crosshairCursor);
+	free(mouseCursor);
 }
 
 void DrasculaEngine::moveCursor() {
@@ -78,14 +85,26 @@ void DrasculaEngine::moveCursor() {
 		showMenu();
 	else if (menuBar == 1)
 		clearMenu();
-
-	int cursorPos[6] = { 0, 0, mouseX - 20, mouseY - 17, OBJWIDTH, OBJHEIGHT };
-	copyRectClip(cursorPos, drawSurface3, screenSurface);
 }
 
-void DrasculaEngine::setCursorTable() {
-	int cursorPos[6] = { 225, 56, mouseX - 20, mouseY - 12, 40, 25 };
-	copyRectClip(cursorPos, tableSurface, screenSurface);
+void DrasculaEngine::setCursor(int cursor) {
+	switch (cursor) {
+		case kCursorCrosshair:
+			CursorMan.replaceCursor((const byte *)crosshairCursor, 40, 25, 0, 0);
+			break;
+		case kCursorCurrentItem:
+			CursorMan.replaceCursor((const byte *)mouseCursor, OBJWIDTH, OBJHEIGHT, 20, 17);
+		default:
+			break;
+	}
+}
+
+void DrasculaEngine::showCursor() {
+	CursorMan.showMouse(true);
+}
+
+void DrasculaEngine::hideCursor() {
+	CursorMan.showMouse(false);
 }
 
 void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int colorCount) {
@@ -244,7 +263,7 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 		}	// for
 
 		int textPos[6] = { letterX, letterY, screenX, screenY, CHAR_WIDTH, CHAR_HEIGHT };
-		copyRectClip(textPos, textSurface, screenSurface);
+		copyRectClip(textPos, tableSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH;
 		if (screenX > 317) {

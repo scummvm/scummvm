@@ -180,7 +180,7 @@ int DrasculaEngine::init() {
 
 int DrasculaEngine::go() {
 	currentChapter = 1; // values from 1 to 6 will start each part of game
-	hay_que_load = 0;
+	loadedDifferentChapter = 0;
 
 	checkCD();
 
@@ -223,9 +223,6 @@ int DrasculaEngine::go() {
 		withVoices = 0;
 		selectionMade = 0;
 
-		if (currentChapter != 6)
-			loadPic(95, tableSurface);
-
 		if (currentChapter != 3)
 			loadPic(96, frontSurface, COMPLETE_PAL);
 
@@ -236,7 +233,7 @@ int DrasculaEngine::go() {
 			loadPic("aux13.alg", bgSurface, COMPLETE_PAL);
 			loadPic(96, frontSurface);
 		} else if (currentChapter == 4) {
-			if (hay_que_load == 0)
+			if (loadedDifferentChapter == 0)
 				animation_ray();
 			loadPic(96, frontSurface);
 			clearRoom();
@@ -246,9 +243,14 @@ int DrasculaEngine::go() {
 			drasculaX = 62, drasculaY = 99, trackDrascula = 1;
 			actorFrames[kFramePendulum] = 0;
 			flag_tv = 0;
-
-			loadPic(95, tableSurface);
 		}
+
+		loadPic(95, tableSurface);
+		for (i = 0; i < 25; i++)
+			memcpy(crosshairCursor + i * 40, tableSurface + 225 + (56 + i) * 320, 40);
+
+		if (_lang == kSpanish)
+			loadPic(974, tableSurface);
 
 		if (currentChapter != 2) {
 			loadPic(99, backSurface);
@@ -290,11 +292,6 @@ bool DrasculaEngine::runCurrentChapter() {
 
 	rightMouseButton = 0;
 
-	if (_lang == kSpanish)
-		textSurface = extraSurface;
-	else
-		textSurface = tableSurface;
-
 	previousMusic = -1;
 
 	if (currentChapter != 2) {
@@ -323,14 +320,14 @@ bool DrasculaEngine::runCurrentChapter() {
 	if (currentChapter == 1) {
 		pickObject(28);
 
-		if (hay_que_load == 0)
+		if (loadedDifferentChapter == 0)
 			animation_1_1();
 
-		withoutVerb();
+		selectVerb(0);
 		loadPic("2aux62.alg", drawSurface2);
 		trackProtagonist = 1;
 		objExit = 104;
-		if (hay_que_load != 0) {
+		if (loadedDifferentChapter != 0) {
 			if (!loadGame(saveName)) {
 				return true;
 			}
@@ -344,7 +341,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		addObject(kItemPhone);
 		trackProtagonist = 3;
 		objExit = 162;
-		if (hay_que_load == 0)
+		if (loadedDifferentChapter == 0)
 			enterRoom(14);
 		else {
 			if (!loadGame(saveName)) {
@@ -362,7 +359,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		flags[1] = 1;
 		trackProtagonist = 1;
 		objExit = 99;
-		if (hay_que_load == 0)
+		if (loadedDifferentChapter == 0)
 			enterRoom(20);
 		else {
 			if (!loadGame(saveName)) {
@@ -376,7 +373,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		addObject(kItemReefer2);
 		addObject(kItemOneCoin2);
 		objExit = 100;
-		if (hay_que_load == 0) {
+		if (loadedDifferentChapter == 0) {
 			enterRoom(21);
 			trackProtagonist = 0;
 			curX = 235;
@@ -398,7 +395,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		addObject(20);
 		trackProtagonist = 1;
 		objExit = 100;
-		if (hay_que_load == 0) {
+		if (loadedDifferentChapter == 0) {
 			enterRoom(45);
 		} else {
 			if (!loadGame(saveName)) {
@@ -411,7 +408,7 @@ bool DrasculaEngine::runCurrentChapter() {
 
 		trackProtagonist = 1;
 		objExit = 104;
-		if (hay_que_load == 0) {
+		if (loadedDifferentChapter == 0) {
 			enterRoom(58);
 			animation_1_6();
 		} else {
@@ -421,6 +418,8 @@ bool DrasculaEngine::runCurrentChapter() {
 			loadPic("auxdr.alg", drawSurface2);
 		}
 	}
+
+	showCursor();
 
 	while (1) {
 		if (characterMoved == 0) {
@@ -523,7 +522,7 @@ bool DrasculaEngine::runCurrentChapter() {
 #ifndef _WIN32_WCE
 			updateEvents();
 #endif
-			withoutVerb();
+			selectVerb(0);
 		}
 
 		if (leftMouseButton == 1 && menuBar == 1) {
@@ -559,7 +558,7 @@ bool DrasculaEngine::runCurrentChapter() {
 			if (!saveLoadScreen())
 				return true;
 		} else if (key == Common::KEYCODE_F8) {
-			withoutVerb();
+			selectVerb(0);
 		} else if (key == Common::KEYCODE_v) {
 			withVoices = 1;
 			print_abc(_textsys[2], 96, 86);

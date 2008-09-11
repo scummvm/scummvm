@@ -554,7 +554,7 @@ bool DrasculaEngine::room_21(int fl) {
 	} else if(pickedObject == 7 && fl == 101) {
 		flags[28] = 1;
 		openDoor(0, 1);
-		withoutVerb();
+		selectVerb(0);
 	} else if (pickedObject == 21 && fl == 179) {
 		animate("st.bin", 14);
 		fadeToBlack(1);
@@ -576,7 +576,7 @@ bool DrasculaEngine::room_22(int fl) {
 		playSound(1);
 		hiccup(14);
 		finishSound();
-		withoutVerb();
+		selectVerb(0);
 		removeObject(22);
 		updateVisible();
 		trackProtagonist = 3;
@@ -687,7 +687,7 @@ bool DrasculaEngine::room_27(int fl) {
 	else if (pickedObject == 17 && fl == 116) {
 		flags[23] = 1;
 		openDoor(5,3);
-		withoutVerb();
+		selectVerb(0);
 	} else if (fl == 150)
 		talk(460);
 	else
@@ -816,16 +816,16 @@ bool DrasculaEngine::room_53(int fl) {
 	} else if (pickedObject == 12 && fl == 52) {
 		flags[3] = 1;
 		talk(401);
-		withoutVerb();
+		selectVerb(0);
 		removeObject(12);
 	} else if (pickedObject == 15 && fl == 52) {
 		flags[4] = 1;
 		talk(401);
-		withoutVerb();
+		selectVerb(0);
 		removeObject(15);
 	} else if (pickedObject == 16 && fl == 121) {
 		flags[2] = 1;
-		withoutVerb();
+		selectVerb(0);
 		updateVisible();
 		pickedObject = kVerbMove;
 	} else if (pickedObject == 16) {
@@ -864,7 +864,7 @@ bool DrasculaEngine::room_54(int fl) {
 	} else if (pickedObject == 10 && fl == 119) {
 		pause(4);
 		talk(436);
-		withoutVerb();
+		selectVerb(0);
 		removeObject(10);
 	} else
 		hasAnswer = 0;
@@ -968,7 +968,7 @@ bool DrasculaEngine::room_59(int fl) {
 			loadPic(59, bgSurface, HALF_PAL);
 			trackProtagonist = 3;
 			talk(245);
-			withoutVerb();
+			selectVerb(0);
 			flags[11] = 1;
 		}
 	} else
@@ -991,11 +991,11 @@ bool DrasculaEngine::room_60(int fl) {
 		talk(266);
 		talk_bartender(1, 1);
 		converse(12);
-		withoutVerb();
+		selectVerb(0);
 		pickedObject = 0;
 	} else if (pickedObject == 21 && fl == 56) {
 		flags[6] = 1;
-		withoutVerb();
+		selectVerb(0);
 		removeObject(21);
 		animate("beb.bin", 10);
 	} else if (pickedObject == 9 && fl == 56 && flags[6] == 1) {
@@ -1482,6 +1482,7 @@ void DrasculaEngine::update_102() {
 }
 
 bool DrasculaEngine::checkAction(int fl) {
+	hideCursor();
 	characterMoved = 0;
 	updateRoom();
 	updateScreen();
@@ -1500,7 +1501,7 @@ bool DrasculaEngine::checkAction(int fl) {
 				|| (pickedObject == kVerbOpen && fl == 22 && flags[23] == 0)) {
 				talk(164);
 				flags[23] = 1;
-				withoutVerb();
+				selectVerb(0);
 				addObject(kItemMoney);
 				addObject(kItemTwoCoins);
 			} else if (pickedObject == kVerbLook && fl == 22 && flags[23] == 1)
@@ -1511,7 +1512,7 @@ bool DrasculaEngine::checkAction(int fl) {
 			hasAnswer = 0;
 		} else if (currentChapter == 4) {
 			if ((pickedObject == 18 && fl == 19) || (pickedObject == 19 && fl == 18)) {
-				withoutVerb();
+				selectVerb(0);
 				chooseObject(21);
 				removeObject(18);
 				removeObject(19);
@@ -1547,8 +1548,10 @@ bool DrasculaEngine::checkAction(int fl) {
 				hasAnswer = 0;
 		} else if (currentChapter == 3) {
 			if (roomNumber == 13) {
-				if (room(13, fl))
+				if (room(13, fl)) {
+					showCursor();
 					return true;
+				}
 			} else
 				hasAnswer = 0;
 		} else if (currentChapter == 4) {
@@ -1559,14 +1562,18 @@ bool DrasculaEngine::checkAction(int fl) {
 			else if (pickedObject == 12 && fl == 50 && flags[18] == 0)
 				talk(487);
 			else if (roomNumber == 21) {
-				if (room(21, fl))
+				if (room(21, fl)) {
+					showCursor();
 					return true;
+				}
 			} else
 				hasAnswer = 0;
 		} else if (currentChapter == 5) {
 			if (roomNumber == 56) {
-				if (room(56, fl))
+				if (room(56, fl)) {
+					showCursor();
 					return true;
+				}
 			} else
 				hasAnswer = 0;
 		} else if (currentChapter == 6) {
@@ -1577,8 +1584,10 @@ bool DrasculaEngine::checkAction(int fl) {
 			else if (roomNumber == 102)
 				room(102, fl);
 			else if (roomNumber == 60) {
-				if (room(60, fl))
+				if (room(60, fl)) {
+					showCursor();
 					return true;
+				}
 			}
 			else
 				hasAnswer = 0;
@@ -1594,6 +1603,7 @@ bool DrasculaEngine::checkAction(int fl) {
 	if (hasAnswer == 0 && (hasName == 1 || menuScreen == 1))
 		room(0, -1);
 
+	showCursor();
 	return false;
 }
 
@@ -1619,6 +1629,7 @@ bool DrasculaEngine::room(int rN, int fl) {
 
 void DrasculaEngine::enterRoom(int roomIndex) {
 	debug(2, "Entering room %d", roomIndex);
+	showCursor();
 
 	char fileName[20];
 	sprintf(fileName, "%d.ald", roomIndex);
@@ -1872,6 +1883,7 @@ void DrasculaEngine::clearRoom() {
 
 bool DrasculaEngine::exitRoom(int l) {
 	debug(2, "Exiting room from door %d", l);
+	hideCursor();
 
 	int roomNum = 0;
 
@@ -2022,7 +2034,7 @@ void DrasculaEngine::openDoor(int nflag, int doorNum) {
 		updateRoom();
 		updateScreen();
 		finishSound();
-		withoutVerb();
+		selectVerb(0);
 	}
 }
 
@@ -2035,7 +2047,7 @@ void DrasculaEngine::closeDoor(int nflag, int doorNum) {
 		updateRoom();
 		updateScreen();
 		finishSound();
-		withoutVerb();
+		selectVerb(0);
 	}
 }
 

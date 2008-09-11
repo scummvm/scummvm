@@ -177,6 +177,11 @@ enum TalkSequenceCommands {
 	kTalkerBartender = 16
 };
 
+enum MouseCursors {
+	kCursorCrosshair = 0,
+	kCursorCurrentItem = 1
+};
+
 struct TalkSequenceCommand {
 	int chapter;
 	int sequence;
@@ -319,6 +324,9 @@ public:
 	DacPalette256 brightPalette;
 	DacPalette256 darkPalette;
 
+	byte *crosshairCursor;
+	byte *mouseCursor;
+
 	// Graphics buffers/pointers
 	byte *VGA;
 	byte *bgSurface;
@@ -365,7 +373,8 @@ public:
 	int flags[NUM_FLAGS];
 
 	int frame_y;
-	int curX, curY, characterMoved, curDirection, trackProtagonist, num_frame, hare_se_ve;
+	int curX, curY, characterMoved, curDirection, trackProtagonist, num_frame;
+	int hare_se_ve;		// TODO: what is this for?
 	int roomX, roomY, checkFlags;
 	int doBreak;
 	int stepX, stepY;
@@ -390,7 +399,7 @@ public:
 	int framesWithoutAction;
 	int term_int;
 	int currentChapter;
-	int hay_que_load;
+	int loadedDifferentChapter;
 	char saveName[13];
 	int _color;
 	int musicStopped;
@@ -414,7 +423,6 @@ public:
 	void openDoor(int nflag, int doorNum);
 	void showMap();
 
-	void withoutVerb();
 	void enterRoom(int);
 	void clearRoom();
 	void gotoObject(int, int);
@@ -494,7 +502,9 @@ public:
 	bool exitRoom(int);
 	bool pickupObject();
 	bool checkAction(int);
-	void setCursorTable();
+	void setCursor(int cursor);
+	void showCursor();
+	void hideCursor();
 	void enterName();
 	bool soundIsActive();
 	void waitFrameSSN();
