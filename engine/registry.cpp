@@ -99,7 +99,7 @@ const char *Registry::get(const char *key, const char *defval) const {
 		return _voiceEffects.c_str();
 	} else if (strcasecmp("TextSpeed", key) == 0) {
 		return _textSpeed.c_str();
-	} else if (strcasecmp("SpeechMode", key) == 0) {
+	} else if (strcasecmp("TextMode", key) == 0) {
 		return _speechMode.c_str();
 	} else if (strcasecmp("MovementMode", key) == 0) {
 		return _movement.c_str();
@@ -125,8 +125,8 @@ const char *Registry::get(const char *key, const char *defval) const {
 void Registry::set(const char *key, const char *val) {
 	// Hack: Don't save these, so we can run in good_times mode
 	// without new games being bogus.
-//	if (strstr(key, "GrimLastSet") || strstr(key, "GrimMannyState"))
-//		return;
+	if (strstr(key, "GrimLastSet") || strstr(key, "GrimMannyState"))
+		return;
 
 	_dirty = true;
 	assert(val);
@@ -164,7 +164,7 @@ void Registry::set(const char *key, const char *val) {
 	} else if (strcasecmp("TextSpeed", key) == 0) {
 		_textSpeed = val;
 		return;
-	} else if (strcasecmp("SpeechMode", key) == 0) {
+	} else if (strcasecmp("TextMode", key) == 0) {
 		_speechMode = val;
 		return;
 	} else if (strcasecmp("MovementMode", key) == 0) {
