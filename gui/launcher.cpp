@@ -476,7 +476,6 @@ class SaveLoadChooser : public GUI::Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 protected:
-	bool			_delSave;
 	bool			_delSupport;
 	GUI::ListWidget		*_list;
 	GUI::ButtonWidget	*_chooseButton;
@@ -484,8 +483,13 @@ protected:
 	GUI::GraphicsWidget	*_gfxWidget;
 	GUI::ContainerWidget	*_container;
 
+	const EnginePlugin		*_plugin;
+	String					_target;
+	SaveStateList			_saveList;
+
 	uint8 _fillR, _fillG, _fillB;
 
+	void updateSaveList();
 	void updateInfos(bool redraw);
 public:
 	SaveLoadChooser(const String &title, const String &buttonLabel);
@@ -494,15 +498,15 @@ public:
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	const String &getResultString() const;
 	void setList(const StringList& list);
-	int runModal(bool delSupport);
+	int runModal(const EnginePlugin *plugin, const String &target);
 
 	virtual void reflowLayout();
 
-	bool delSave() { return _delSave; };
+	virtual void close();
 };
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
-	: Dialog("scummsaveload"), _delSave(0), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
+	: Dialog("scummsaveload"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
 
 	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
 
@@ -533,41 +537,41 @@ const Common::String &SaveLoadChooser::getResultString() const {
 	return _list->getSelectedString();
 }
 
-void SaveLoadChooser::setList(const StringList& list) {
-	_list->setList(list);
-}
-
-int SaveLoadChooser::runModal(bool delSupport) {
+int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) {
 	if (_gfxWidget)
 		_gfxWidget->setGfx(0);
-	_delSave = false;
-	_delSupport = delSupport;
+
+	_plugin = plugin;
+	_target = target;
+	_delSupport = (*_plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
+	updateSaveList();
+
 	int ret = Dialog::runModal();
 	return ret;
 }
 
 void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	int selItem = _list->getSelected();
+
 	switch (cmd) {
 	case GUI::kListItemActivatedCmd:
 	case GUI::kListItemDoubleClickedCmd:
 		if (selItem >= 0) {
 			if (!getResultString().empty()) {
 				_list->endEditMode();
-				setResult(selItem);
+				setResult(atoi(_saveList[selItem].save_slot().c_str()));
 				close();
 			}
 		}
 		break;
 	case kChooseCmd:
 		_list->endEditMode();
-		setResult(selItem);
+		setResult(atoi(_saveList[selItem].save_slot().c_str()));
 		close();
 		break;
 	case GUI::kListSelectionChangedCmd: {
-		if (_gfxWidget) {
+		if (_gfxWidget)
 			updateInfos(true);
-		}
 
 		// Disable these buttons if nothing is selected, or if an empty
 		// list item is selected.
@@ -578,14 +582,22 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		_deleteButton->draw();
 	} break;
 	case kDelCmd:
-		setResult(selItem);
-		_delSave = true;		
+		if (selItem >= 0 && _delSupport) {
+			MessageDialog alert("Do you really want to delete this savegame?", 
+								"Delete", "Cancel");
+			if (alert.runModal() == GUI::kMessageOK) {
+				(*_plugin)->removeSaveState(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
 
-		// Disable these buttons again after deleteing a selection
-		_chooseButton->setEnabled(false);
-		_deleteButton->setEnabled(false);
-		
-		close();
+				setResult(-1);
+				_list->setSelected(-1);
+
+				updateSaveList();
+
+				// Disable these buttons again after deleteing a selection
+				_chooseButton->setEnabled(false);
+				_deleteButton->setEnabled(false);
+			}
+		}
 		break;
 	case kCloseCmd:
 		setResult(-1);
@@ -606,6 +618,23 @@ void SaveLoadChooser::updateInfos(bool redraw) {
 		_gfxWidget->draw();
 }
 
+void SaveLoadChooser::close() {
+	_plugin = 0;
+	_target.clear();
+	_saveList.clear();
+	_list->setList(StringList());
+
+	Dialog::close();
+}
+
+void SaveLoadChooser::updateSaveList() {
+	_saveList = (*_plugin)->listSaves(_target.c_str());
+
+	StringList saveNames;
+	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x)
+		saveNames.push_back(x->description().c_str());
+	_list->setList(saveNames);
+}
 
 #pragma mark -
 
@@ -945,46 +974,20 @@ void LauncherDialog::loadGame(int item) {
 		gameId = _domains[item];
 
 	const EnginePlugin *plugin = 0;
-	GameDescriptor game = EngineMan.findGame(gameId, &plugin);
+	EngineMan.findGame(gameId, &plugin);
 
-	String description = _domains[item];
-	description.toLowercase();
+	String target = _domains[item];
+	target.toLowercase();
 
-	int idx;
 	if (plugin) {
-		bool delSupport = (*plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
-
 		if ((*plugin)->hasFeature(MetaEngine::kSupportsListSaves) && 
 			(*plugin)->hasFeature(MetaEngine::kSupportsDirectLoad)) {
-			do {
-				Common::StringList saveNames = generateSavegameList(item, plugin);
-				_loadDialog->setList(saveNames);
-				SaveStateList saveList = (*plugin)->listSaves(description.c_str());
-				idx = _loadDialog->runModal(delSupport);
-				if (idx >= 0) {
-					// Delete the savegame
-					if (_loadDialog->delSave()) {
-						String filename = saveList[idx].filename();
-						//printf("Deleting file: %s\n", filename.c_str());
-						MessageDialog alert("Do you really want to delete this savegame?", 
-									"Delete", "Cancel");
-						if (alert.runModal() == GUI::kMessageOK) {
-							(*plugin)->removeSaveState(description.c_str(), atoi(saveList[idx].save_slot().c_str()));
-						  	/*if ((saveList.size() - 1) == 0) {
-								ConfMan.setInt("save_slot", -1);
-							}*/
-						}
-					} else { // Load the savegame
-						int slot = atoi(saveList[idx].save_slot().c_str());
-						//const char *file = saveList[idx].filename().c_str();
-						//printf("Loading slot: %d\n", slot);
-						//printf("Loading file: %s\n", file);
-						ConfMan.setActiveDomain(_domains[item]);
-						ConfMan.setInt("save_slot", slot, Common::ConfigManager::kTransientDomain);
-						close();
-					}
-				}
-			} while (_loadDialog->delSave());
+			int slot = _loadDialog->runModal(plugin, target);
+			if (slot >= 0) {
+				ConfMan.setActiveDomain(_domains[item]);
+				ConfMan.setInt("save_slot", slot, Common::ConfigManager::kTransientDomain);
+				close();
+			}
 		} else {
 			MessageDialog dialog
 				("Sorry, this game does not yet support loading games from the launcher.", "OK");
@@ -994,19 +997,6 @@ void LauncherDialog::loadGame(int item) {
 		MessageDialog dialog("ScummVM could not find any engine capable of running the selected game!", "OK");
 		dialog.runModal();
 	}
-}
-
-Common::StringList LauncherDialog::generateSavegameList(int item, const EnginePlugin *plugin) {
-	String description = _domains[item];
-	description.toLowercase();
-	
-	StringList saveNames;
-	SaveStateList saveList = (*plugin)->listSaves(description.c_str());
-
-	for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x)
-		saveNames.push_back(x->description().c_str());
-
-	return saveNames;
 }
 
 void LauncherDialog::handleKeyDown(Common::KeyState state) {
