@@ -735,12 +735,12 @@ case $_host_os in
 		-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
 		;;
 	mingw*)
-		DEFINES="$DEFINES -DWIN32"
+		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
 		LIBS="$LIBS -lmingw32 -lopengl32 -lglu32"
 		OBJS="$OBJS residualico.o"
 		;;
 	cygwin*)
-		DEFINES="$DEFINES -mno-cygwin -DWIN32"
+		DEFINES="$DEFINES -mno-cygwin -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
 		LIBS="$LIBS -mno-cygwin -lmingw32 -lopengl32 -lglu32"
 		OBJS="$OBJS residualico.o"
 		;;
