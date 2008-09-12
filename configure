@@ -1059,12 +1059,12 @@ case $_host_os in
 		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		;;
 	mingw*)
-		DEFINES="$DEFINES -DWIN32"
+		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
 		LIBS="$LIBS -lmingw32 -lwinmm"
 		OBJS="$OBJS scummvmico.o"
 		;;
 	cygwin*)
-		DEFINES="$DEFINES -mno-cygwin -DWIN32"
+		DEFINES="$DEFINES -mno-cygwin -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
 		LIBS="$LIBS -mno-cygwin -lmingw32 -lwinmm"
 		OBJS="$OBJS scummvmico.o"
 		;;
