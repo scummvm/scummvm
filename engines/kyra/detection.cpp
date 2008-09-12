@@ -1138,8 +1138,13 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-				if (Kyra::KyraEngine_v1::readSaveHeader(in, false, header) == Kyra::KyraEngine_v1::kRSHENoError)
+				if (Kyra::KyraEngine_v1::readSaveHeader(in, false, header) == Kyra::KyraEngine_v1::kRSHENoError) {
+					// Workaround for old savegames using 'German' as description for kyra3 start savegame (slot 0)
+					if (slotNum == 0 && header.gameID == Kyra::GI_KYRA3)
+						header.description = "New Game";
+
 					saveList.push_back(SaveStateDescriptor(slotNum, header.description, *file));
+				}
 				delete in;
 			}
 		}
