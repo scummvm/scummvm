@@ -46,7 +46,7 @@
 
 namespace Drascula {
 
-#define DRASCULA_DAT_VER 3
+#define DRASCULA_DAT_VER 4
 #define DATAALIGNMENT 4
 
 enum DrasculaGameFeatures {
@@ -164,17 +164,32 @@ enum TalkSequenceCommands {
 	kPickObject = 3,
 	kAddObject = 4,
 	kBreakOut = 5,
-	kTalkerGeneral = 6,
-	kTalkerDrunk = 7,
-	kTalkerPianist = 8,
-	kTalkerBJ = 9,
-	kTalkerVBNormal = 10,
-	kTalkerVBDoor = 11,
-	kTalkerIgorSeated = 12,
-	kTalkerWerewolf = 13,
-	kTalkerMus = 14,
-	kTalkerDrascula = 15,
-	kTalkerBartender = 16
+	kConverse = 6,
+	kPlaceVB = 7,
+	kUpdateRoom = 8,
+	kUpdateScreen = 9,
+	kTrackProtagonist = 10,
+	kPlaySound = 11,
+	kFinishSound = 12,
+	kTalkerGeneral = 13,
+	kTalkerDrunk = 14,
+	kTalkerPianist = 15,
+	kTalkerBJ = 16,
+	kTalkerVBNormal = 17,
+	kTalkerVBDoor = 18,
+	kTalkerIgorSeated = 19,
+	kTalkerWerewolf = 20,
+	kTalkerMus = 21,
+	kTalkerDrascula = 22,
+	kTalkerBartender0 = 23,
+	kTalkerBartender1 = 24
+};
+
+enum CharacterDirections {
+	kDirectionUp = 0,
+	kDirectionDown = 1,
+	kDirectionLeft = 2,
+	kDirectionRight = 3
 };
 
 enum MouseCursors {
@@ -308,7 +323,6 @@ public:
 
 	void copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 				int height, byte *src, byte *dest);
-	void copyRectClip(int *Array, byte *src, byte *dest);
 	void updateScreen() {
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	}
@@ -542,9 +556,8 @@ public:
 	void setupRoomsTable();
 	bool roomParse(int, int);
 	void cleanupString(char *string);
-	void checkTalkSequence(int sequence);
+	void playTalkSequence(int sequence);
 	void doTalkSequenceCommand(TalkSequenceCommand cmd);
-	void playTalkSequence(TalkSequenceCommand *seq, int size);
 	void converse(int);
 	void print_abc_opc(const char *, int, int);
 	void response(int);
@@ -617,7 +630,6 @@ public:
 	void animation_14_2();
 	void animation_16_2();
 	void animation_20_2();
-	void animation_22_2();
 	void animation_23_2();
 	void animation_23_joined();
 	void animation_23_joined2();

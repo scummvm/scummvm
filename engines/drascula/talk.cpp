@@ -594,9 +594,9 @@ void DrasculaEngine::talk_blind(int index) {
 	const char *said = _textd[index + TEXTD_START - 1];
 	const char *syncChar = _textd1[index - 1];
 
-	byte *faceBuffer;
 	int p = 0;
-	int pos_blind[6] = { 0, 2, 73, 1, 126, 149 };
+	int bX = 0;
+	int h = 149;
 	int length = strlen(said);
 
 	color_abc(kColorBrown);
@@ -608,26 +608,24 @@ void DrasculaEngine::talk_blind(int index) {
 
 	do {
 		copyBackground();
-		pos_blind[5] = 149;
+		h = 149;
 		char c = toupper(syncChar[p]);
 
 		if (c == '0' || c == '2' || c == '4' || c == '6')
-			pos_blind[0] = 1;
+			bX = 1;
 		else
-			pos_blind[0] = 132;
+			bX = 132;
 
 		if (c == '0' || c == '1')
-			faceBuffer = drawSurface3;
+			copyRect(bX, 2, 73, 1, 126, h, drawSurface3, screenSurface);
 		else if (c == '2' || c == '3')
-			faceBuffer = extraSurface;
+			copyRect(bX, 2, 73, 1, 126, h, extraSurface, screenSurface);
 		else if (c == '4' || c == '5')
-			faceBuffer = backSurface;
+			copyRect(bX, 2, 73, 1, 126, h, backSurface, screenSurface);
 		else {
-			faceBuffer = frontSurface;
-			pos_blind[5] = 146;
+			h = 146;
+			copyRect(bX, 2, 73, 1, 126, h, frontSurface, screenSurface);
 		}
-
-		copyRectClip( pos_blind, faceBuffer, screenSurface);
 
 		if (withVoices == 0)
 			centerText(said, 310, 71);
@@ -772,7 +770,6 @@ void DrasculaEngine::talk_htel(int index) {
 	char filename[20];
 	sprintf(filename, "%i.als", index);
 	const char *said = _text[index];
-	char *faceBuffer;
 	int x_talk[3] = {1, 94, 187};
 	int face, curScreen;
 	int length = strlen(said);
@@ -785,17 +782,15 @@ void DrasculaEngine::talk_htel(int index) {
 		face = _rnd->getRandomNumber(2);
 		curScreen = _rnd->getRandomNumber(2);
 
-		if (face == 0 && curScreen == 0)
-			faceBuffer = (char *)drawSurface3;
-		else if (curScreen == 1)
-			faceBuffer = (char *)frontSurface;
-		else
-			faceBuffer = (char *)backSurface;
-
 		copyBackground();
 
-		copyBackground(x_talk[face], 1, 45, 24, 92, 108, (byte *)faceBuffer, screenSurface);
-
+		if (face == 0 && curScreen == 0)
+			copyBackground(x_talk[face], 1, 45, 24, 92, 108, drawSurface3, screenSurface);
+		else if (curScreen == 1)
+			copyBackground(x_talk[face], 1, 45, 24, 92, 108, frontSurface, screenSurface);
+		else
+			copyBackground(x_talk[face], 1, 45, 24, 92, 108, backSurface, screenSurface);
+		
 		if (withVoices == 0)
 			centerText(said, 90, 50);
 

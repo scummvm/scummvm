@@ -27,7 +27,7 @@
 
 namespace Drascula {
 
-void DrasculaEngine::checkTalkSequence(int sequence) {
+void DrasculaEngine::playTalkSequence(int sequence) {
 	bool seen = false;
 
 	for (int i = 0; i < _talkSequencesSize; i++) {
@@ -39,11 +39,6 @@ void DrasculaEngine::checkTalkSequence(int sequence) {
 		} else if (seen) // Stop searching down the list
 			break;
 	}	
-}
-
-void DrasculaEngine::playTalkSequence(TalkSequenceCommand *seq, int size) {
-	for (int i = 0; i < size; i++)
-		doTalkSequenceCommand(seq[i]);
 }
 
 void DrasculaEngine::doTalkSequenceCommand(TalkSequenceCommand cmd) {
@@ -65,6 +60,27 @@ void DrasculaEngine::doTalkSequenceCommand(TalkSequenceCommand cmd) {
 			break;
 		case kBreakOut:
 			breakOut = 1;
+			break;
+		case kConverse:
+			converse(cmd.action);
+			break;
+		case kPlaceVB:
+			placeVonBraun(cmd.action);
+			break;
+		case kUpdateRoom:
+			updateRoom();
+			break;
+		case kUpdateScreen:
+			updateScreen();
+			break;
+		case kTrackProtagonist:
+			trackProtagonist = cmd.action;
+			break;
+		case kPlaySound:
+			playSound(cmd.action);
+			break;
+		case kFinishSound:
+			finishSound();
 			break;
 		case kTalkerGeneral:
 			talk(cmd.action);
@@ -96,11 +112,14 @@ void DrasculaEngine::doTalkSequenceCommand(TalkSequenceCommand cmd) {
 		case kTalkerDrascula:
 			talk_drascula(cmd.action, 1);
 			break;
-		case kTalkerBartender:
+		case kTalkerBartender0:
+			talk_bartender(cmd.action, 0);
+			break;
+		case kTalkerBartender1:
 			talk_bartender(cmd.action, 1);
 			break;
 		default:
-			error("doTalkSequenceCommand: Unknown command");
+			error("doTalkSequenceCommand: Unknown command: %d", cmd.commandType);
 	}
 }
 
@@ -256,7 +275,7 @@ void DrasculaEngine::converse(int index) {
 }
 
 void DrasculaEngine::response(int function) {
-	checkTalkSequence(function);
+	playTalkSequence(function);
 
 	if (currentChapter == 2) {
 		if (function == 16)

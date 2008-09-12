@@ -55,7 +55,7 @@ void DrasculaEngine::updateAnim2(int y, int px, int py, int width, int height, i
 // This is the game's introduction sequence
 void DrasculaEngine::animation_1_1() {
 	int l, l2, p;
-	int pixelPos[6];
+	//int pixelPos[6];
 
 	while (term_int == 0) {
 		playMusic(29);
@@ -147,19 +147,13 @@ void DrasculaEngine::animation_1_1() {
 				break;
 
 		l2 = 0; p = 0;
-		pixelPos[3] = 45;
-		pixelPos[4] = 63;
-		pixelPos[5] = 31;
 
 		for (l = 0; l < 180; l++) {
 			copyBackground(0, 0, 320 - l, 0, l, 200, drawSurface3, screenSurface);
 			copyBackground(l, 0, 0, 0, 320 - l, 200, bgSurface, screenSurface);
 
-			pixelPos[0] = interf_x[l2];
-			pixelPos[1] = interf_y[l2];
-			pixelPos[2] = 156 - l;
-
-			copyRectClip(pixelPos, drawSurface2, screenSurface);
+			copyRect(interf_x[l2], interf_y[l2], 156 - l, 45, 63, 31, 
+					 drawSurface2, screenSurface);
 			updateScreen();
 			p++;
 			if (p == 6) {
@@ -485,23 +479,8 @@ void DrasculaEngine::animation_2_1() {
 		curX = 100;
 		curY = 95;
 
-		talk_bj(2);
-		talk(215);
-		talk_bj(3);
-		talk(216);
-		talk_bj(4);
-		talk_bj(5);
-		talk_bj(6);
-		talk(217);
-		talk_bj(7);
-		talk(218);
-		talk_bj(8);
-		talk(219);
-		talk_bj(9);
-		talk(220);
-		talk(221);
-		talk_bj(10);
-		talk(222);
+		playTalkSequence(2);	// sequence 2, chapter 1
+
 		if (animate("gaf.bin", 15))
 			break;
 		if (animate("bjb.bin", 14))
@@ -594,28 +573,7 @@ void DrasculaEngine::animation_2_1() {
 void DrasculaEngine::animation_3_1() {
 	loadPic("an11y13.alg", extraSurface);
 
-	talk(192);
-	talk_bartender(1);
-	talk(193);
-	talk_bartender(2);
-	talk(194);
-	talk_bartender(3);
-	talk(195);
-	talk_bartender(4);
-	talk(196);
-	talk_bartender(5);
-	talk_bartender(6);
-	talk(197);
-	talk_bartender(7);
-	talk(198);
-	talk_bartender(8);
-	talk(199);
-	talk_bartender(9);
-	talk(200);
-	talk(201);
-	talk(202);
-
-	flags[0] = 1;
+	playTalkSequence(3);	// sequence 3, chapter 1
 
 	loadPic(97, extraSurface);
 }
@@ -757,7 +715,7 @@ void DrasculaEngine::animation_4_2() {
 }
 
 void DrasculaEngine::animation_14_2() {
-	int cabinPos[6] = { 150, 6, 69, -160, 158, 161 };
+	int cY = -160;
 	int l = 0;
 
 	loadPic("an14_2.alg", backSurface);
@@ -767,8 +725,8 @@ void DrasculaEngine::animation_14_2() {
 		updateRefresh_pre();
 		moveCharacters();
 		moveVonBraun();
-		cabinPos[3] = n;
-		copyRectClip(cabinPos, backSurface, screenSurface);
+		cY = n;
+		copyRect(150, 6, 69, cY, 158, 161, backSurface, screenSurface);
 		updateRefresh();
 		updateScreen();
 		l++;
@@ -1050,7 +1008,7 @@ void DrasculaEngine::animation_23_joined2() {
 }
 
 void DrasculaEngine::animation_25_2() {
-	int cabinPos[6] = { 150, 6, 69, 0, 158, 161 };
+	int cY = 0;
 
 	loadPic("an14_2.alg", backSurface);
 	loadPic(18, bgSurface);
@@ -1066,9 +1024,9 @@ void DrasculaEngine::animation_25_2() {
 		moveCharacters();
 		moveVonBraun();
 
-		cabinPos[3] = n;
+		cY = n;
 
-		copyRectClip(cabinPos, backSurface, screenSurface);
+		copyRect(150, 6, 69, cY, 158, 161, backSurface, screenSurface);
 
 		updateRefresh();
 		updateScreen();
@@ -1100,29 +1058,7 @@ void DrasculaEngine::animation_27_2() {
 
 void DrasculaEngine::animation_29_2() {
 	if (flags[33] == 0) {
-		// TODO: eventually move this to drascula.dat, along with any other
-		// sequences
-		TalkSequenceCommand anim29_2Seq[] = {
-			// Chapter, sequence,		 command type, action
-			{		 -1,	  -1,	  kTalkerVBNormal,	  32 },
-			{		 -1,	  -1,	   kTalkerGeneral,	 398 },
-			{		 -1,	  -1,	  kTalkerVBNormal,	  33 },
-			{		 -1,	  -1,	   kTalkerGeneral,	 399 },
-			{		 -1,	  -1,	  kTalkerVBNormal,	  34 },
-			{		 -1,	  -1,	  kTalkerVBNormal,	  35 },
-			{		 -1,	  -1,	   kTalkerGeneral,	 400 },
-			{		 -1,	  -1,	  kTalkerVBNormal,	  36 },
-			{		 -1,	  -1,	  kTalkerVBNormal,	  37 },
-			{		 -1,	  -1,	   kTalkerGeneral,	 386 },
-			{		 -1,	  -1,	  kTalkerVBNormal,	  38 },
-			{		 -1,	  -1,	  kTalkerVBNormal,	  39 },
-			{		 -1,	  -1,	   kTalkerGeneral,	 401 },
-			{		 -1,	  -1,	  kTalkerVBNormal,	  40 },
-			{		 -1,	  -1,	  kTalkerVBNormal,	  41 },
-			{		 -1,	  -1,			 kSetFlag,	   1 }
-		};
-
-		playTalkSequence(anim29_2Seq, ARRAYSIZE(anim29_2Seq));
+		playTalkSequence(29);	// sequence 29, chapter 2
 	} else
 		talk_vonBraun(43, kVonBraunNormal);
 
@@ -1142,38 +1078,9 @@ void DrasculaEngine::animation_31_2() {
 	pause(15);
 	gotoObject(159, 140);
 	loadPic(99, backSurface);
-	trackProtagonist = 2;
-	updateRoom();
-	updateScreen();
-	pause(78);
-	trackProtagonist = 0;
-	updateRoom();
-	updateScreen();
-	pause(22);
-	talk(406);
-	placeVonBraun(98);
-	talk_vonBraun(45, kVonBraunNormal);
-	talk_vonBraun(46, kVonBraunNormal);
-	talk_vonBraun(47, kVonBraunNormal);
-	talk(407);
-	talk_vonBraun(48, kVonBraunNormal);
-	talk_vonBraun(49, kVonBraunNormal);
-	talk(408);
-	talk_vonBraun(50, kVonBraunNormal);
-	talk_vonBraun(51, kVonBraunNormal);
-	talk(409);
-	talk_vonBraun(52, kVonBraunNormal);
-	talk_vonBraun(53, kVonBraunNormal);
-	pause(12);
-	talk_vonBraun(54, kVonBraunNormal);
-	talk_vonBraun(55, kVonBraunNormal);
-	talk(410);
-	talk_vonBraun(56, kVonBraunNormal);
 
-	breakOut = 1;
+	playTalkSequence(31);	// sequence 31, chapter 2
 
-	flags[38] = 0;
-	flags[36] = 1;
 	selectVerb(0);
 	removeObject(kItemLeaves);
 	removeObject(kItemBubbleGum);
@@ -1583,12 +1490,11 @@ void DrasculaEngine::animation_13_5() {
 	int frame = 0;
 	int frus_x[] = {1, 46, 91, 136, 181, 226, 271};
 	int frus_y[] = {1, 1, 1, 1, 1, 1, 1, 89};
-	int pos_frusky[6] = { 1, 1, frank_x, 81, 44, 87 };
 
 	loadPic("auxfr.alg", backSurface);
 
 	updateRoom();
-	copyRectClip(pos_frusky, backSurface, screenSurface);
+	copyRect(1, 1, frank_x, 81, 44, 87, backSurface, screenSurface);
 	updateScreen();
 	pause(15);
 
@@ -1596,10 +1502,7 @@ void DrasculaEngine::animation_13_5() {
 
 	for (;;) {
 		updateRoom();
-		pos_frusky[0] = frus_x[frame];
-		pos_frusky[1] = frus_y[frame];
-		pos_frusky[2] = frank_x;
-		copyRectClip( pos_frusky, backSurface, screenSurface);
+		copyRect(frus_x[frame], frus_y[frame], frank_x, 81, 44, 87, backSurface, screenSurface);
 		updateScreen();
 		frank_x -= 5;
 		frame++;
@@ -1708,15 +1611,15 @@ void DrasculaEngine::animation_1_6() {
 }
 
 void DrasculaEngine::animation_5_6() {
-	int pos_pen[6] = { 1, 29, 204, -125, 18, 125 };
+	int pY = -125;
 
 	animate("man.bin", 14);
 
 	for (int n = -125; n <= 0; n = n + 2) {
 		copyBackground();
 		updateRefresh_pre();
-		pos_pen[3] = n;
-		copyRectClip(pos_pen, drawSurface3, screenSurface);
+		pY = n;
+		copyRect(1, 29, 204, pY, 18, 125, drawSurface3, screenSurface);
 
 		updateRefresh();
 
@@ -1932,15 +1835,7 @@ void DrasculaEngine::animation_26_2() {
 void DrasculaEngine::animation_11_2() {
 	loadPic("an11y13.alg", extraSurface);
 
-	talk(352);
-	talk_bartender(1);
-	talk(353);
-	talk_bartender(17);
-	talk(354);
-	talk_bartender(18);
-	talk(355);
-	pause(40);
-	talk_bartender(82);
+	playTalkSequence(11);	// sequence 11, chapter 2
 
 	loadPic(974, extraSurface);
 }
@@ -1949,39 +1844,10 @@ void DrasculaEngine::animation_13_2() {
 	loadPic("an11y13.alg", frontSurface);
 
 	if (flags[41] == 0) {
-		talk(103);
-		talk_drunk(4);
-		flags[12] = 1;
-		talk(367);
-		talk_drunk(5);
-		flags[12] = 1;
-		talk(368);
-		talk_drunk(6);
-		talk_drunk(7);
-		flags[41] = 1;
+		playTalkSequence(13);	// sequence 13, chapter 2
 	}
-	converse(2);
 
 	loadPic(964, frontSurface);
-}
-
-void DrasculaEngine::animation_22_2() {
-	talk(374);
-
-	trackProtagonist=2;
-	updateRoom();
-	updateScreen();
-	playSound(13);
-	finishSound();
-	trackProtagonist = 1;
-
-	talk_vonBraun(1, kVonBraunDoor);
-	talk(375);
-	talk_vonBraun(2, kVonBraunDoor);
-	talk(376);
-	talk_vonBraun(3, kVonBraunDoor);
-
-	flags[18] = 1;
 }
 
 void DrasculaEngine::animation_24_2() {

@@ -764,7 +764,6 @@ void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int w
 	float totalX, totalY;
 	int n, m;
 	float pixelX, pixelY;
-	int pixelPos[6];
 
 	newWidth = (width * factor) / 100;
 	newHeight = (height * factor) / 100;
@@ -777,14 +776,8 @@ void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int w
 
 	for (n = 0; n < newHeight; n++) {
 		for (m = 0; m < newWidth; m++) {
-			pixelPos[0] = (int)pixelX;
-			pixelPos[1] = (int)pixelY;
-			pixelPos[2] = xx2 + m;
-			pixelPos[3] = yy2 + n;
-			pixelPos[4] = 1;
-			pixelPos[5] = 1;
-
-			copyRectClip(pixelPos, dir_inicio, dir_fin);
+			copyRect((int)pixelX, (int)pixelY, xx2 + m, yy2 + n, 
+					 1, 1, dir_inicio, dir_fin);
 
 			pixelX += totalX;
 		}

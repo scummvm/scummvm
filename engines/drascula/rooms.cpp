@@ -29,6 +29,24 @@
 
 namespace Drascula {
 
+struct doorInfo {
+	int chapter;
+	int doorNum;
+	int flag;
+};
+
+doorInfo doors[] = {
+	{	2,	138,	 0 },	{	2,	136,	 8 },
+	{	2,	156,	16 },	{	2,	163,	17 },
+	{	2,	177,	15 },	{	2,	175,	40 },
+	{	2,	173,	36 },	{	4,	103,	 0 },
+	{	4,	104,	 1 },	{	4,	105,	 1 },
+	{	4,	106,	 2 },	{	4,	107,	 2 },
+	{	4,	110,	 6 },	{	4,	114,	 4 },
+	{	4,	115,	 4 },	{	4,	117,	 5 },
+	{	4,	120,	 8 },	{	4,	122,	 7 }
+};
+
 typedef bool (DrasculaEngine::*RoomParser)(int args);
 
 struct DrasculaRoomParser {
@@ -480,7 +498,7 @@ bool DrasculaEngine::room_17(int fl) {
 	} else if (pickedObject == kVerbOpen && fl == 177 && flags[18] == 1)
 		talk(346);
 	else if (pickedObject == kVerbOpen && fl == 177 && flags[14] == 0 && flags[18] == 0)
-		animation_22_2();
+		playTalkSequence(22);	// sequence 22, chapter 2
 	else if (pickedObject == kVerbOpen && fl == 177 && flags[14] == 1)
 		toggleDoor(15, 1, kOpenDoor);
 	else if (pickedObject == kVerbClose && fl == 177 && flags[14] == 1)
@@ -1124,8 +1142,8 @@ void DrasculaEngine::update_1_pre() {
 }
 
 void DrasculaEngine::update_2() {
-	int batPos[6];
 	int difference;
+	int w, h;
 	int batX[] = {0, 38, 76, 114, 152, 190, 228, 266,
 					0, 38, 76, 114, 152, 190, 228, 266,
 					0, 38, 76, 114, 152, 190,
@@ -1145,24 +1163,19 @@ void DrasculaEngine::update_2() {
 	if (actorFrames[kFrameBat] == 41)
 		actorFrames[kFrameBat] = 0;
 
-	batPos[0] = batX[actorFrames[kFrameBat]];
-	batPos[1] = batY[actorFrames[kFrameBat]];
-
 	if (actorFrames[kFrameBat] < 22) {
-		batPos[4] = 37;
-		batPos[5] = 21;
+		w = 37;
+		h = 21;
 	} else if (actorFrames[kFrameBat] > 27) {
-		batPos[4] = 57;
-		batPos[5] = 36;
+		w = 57;
+		h = 36;
 	} else {
-		batPos[4] = 47;
-		batPos[5] = 22;
+		w = 47;
+		h = 22;
 	}
 
-	batPos[2] = 239;
-	batPos[3] = 19;
-
-	copyRectClip(batPos, drawSurface3, screenSurface);
+	copyRect(batX[actorFrames[kFrameBat]], batY[actorFrames[kFrameBat]], 
+			 239, 19, w, h, drawSurface3, screenSurface);
 	difference = getTime() - savedTime;
 	if (difference >= 6) {
 		actorFrames[kFrameBat]++;
@@ -1845,32 +1858,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 		if (roomNumber == 45)
 			hare_se_ve = 0;
 		if (roomNumber == 49 && flags[7] == 0) {
-			flags[7] = 1;
-			updateRoom();
-			updateScreen();
-
-			// TODO: eventually move this to drascula.dat, along with any other
-			// sequences
-			TalkSequenceCommand room45Seq[] = {
-				// Chapter, sequence,		 command type, action
-				{		 -1,	  -1,	  kTalkerGeneral,	 228 },
-				{		 -1,	  -1,	 kTalkerWerewolf,	   1 },
-				{		 -1,	  -1,	 kTalkerWerewolf,	   2 },
-				{		 -1,	  -1,			  kPause,	  23 },
-				{		 -1,	  -1,	  kTalkerGeneral,	 229 },
-				{		 -1,	  -1,	 kTalkerWerewolf,	   3 },
-				{		 -1,	  -1,	 kTalkerWerewolf,	   4 },
-				{		 -1,	  -1,	  kTalkerGeneral,	 230 },
-				{		 -1,	  -1,	 kTalkerWerewolf,	   5 },
-				{		 -1,	  -1,	  kTalkerGeneral,	 231 },
-				{		 -1,	  -1,	 kTalkerWerewolf,	   6 },
-				{		 -1,	  -1,	 kTalkerWerewolf,	   7 },
-				{		 -1,	  -1,			  kPause,	  33 },
-				{		 -1,	  -1,	  kTalkerGeneral,	 232 },
-				{		 -1,	  -1,	 kTalkerWerewolf,	   8 },
-			};
-
-			playTalkSequence(room45Seq, ARRAYSIZE(room45Seq));
+			playTalkSequence(4);	// sequence 4, chapter 5
 		}
 	}
 
@@ -1974,24 +1962,6 @@ void DrasculaEngine::updateRoom() {
 }
 
 void DrasculaEngine::updateDoor(int doorNum) {
-	struct doorInfo {
-		int chapter;
-		int doorNum;
-		int flag;
-	};
-
-	doorInfo doors[] = {
-		{	2,	138,	 0 },	{	2,	136,	 8 },
-		{	2,	156,	16 },	{	2,	163,	17 },
-		{	2,	177,	15 },	{	2,	175,	40 },
-		{	2,	173,	36 },	{	4,	103,	 0 },
-		{	4,	104,	 1 },	{	4,	105,	 1 },
-		{	4,	106,	 2 },	{	4,	107,	 2 },
-		{	4,	110,	 6 },	{	4,	114,	 4 },
-		{	4,	115,	 4 },	{	4,	117,	 5 },
-		{	4,	120,	 8 },	{	4,	122,	 7 }
-	};
-
 	if (currentChapter != 2 && currentChapter != 4)
 		return;
 

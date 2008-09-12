@@ -165,24 +165,7 @@ void DrasculaEngine::copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 								   int height, byte *src, byte *dest) {
 	int y, x;
 
-	dest += xdes + ydes * 320;
-	src += xorg + yorg * 320;
-
-	for (y = 0; y < height; y++)
-		for (x = 0; x < width; x++)
-			if (src[x + y * 320] != 255)
-				dest[x + y * 320] = src[x + y * 320];
-}
-
-void DrasculaEngine::copyRectClip(int *Array, byte *src, byte *dest) {
-	int y, x;
-	int xorg = Array[0];
-	int yorg = Array[1];
-	int xdes = Array[2];
-	int ydes = Array[3];
-	int width = Array[4];
-	int height = Array[5];
-
+	//
 	if (ydes < 0) {
 		yorg += -ydes;
 		height += ydes;
@@ -197,6 +180,7 @@ void DrasculaEngine::copyRectClip(int *Array, byte *src, byte *dest) {
 		width -= (xdes + width) - 320;
 	if ((ydes + height) > 199)
 		height -= (ydes + height) - 200;
+	//
 
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
@@ -258,8 +242,8 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 			}	// if
 		}	// for
 
-		int textPos[6] = { letterX, letterY, screenX, screenY, CHAR_WIDTH, CHAR_HEIGHT };
-		copyRectClip(textPos, tableSurface, screenSurface);
+		copyRect(letterX, letterY, screenX, screenY, 
+				 CHAR_WIDTH, CHAR_HEIGHT, tableSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH;
 		if (screenX > 317) {
@@ -310,8 +294,8 @@ void DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 			}	// if
 		}	// for
 
-		int textPos[6] = { letterX, letterY, screenX, screenY, CHAR_WIDTH_OPC, CHAR_HEIGHT_OPC };
-		copyRectClip(textPos, backSurface, screenSurface);
+		copyRect(letterX, letterY, screenX, screenY, 
+				 CHAR_WIDTH_OPC, CHAR_HEIGHT_OPC, backSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH_OPC;
 	}
