@@ -53,9 +53,9 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 		case MKID_BE('STRK'):
 			_inData = false;
 			if (available_size >= (size + 8)) {
-				MemoryChunk c((byte *)_tbuffer + offset);
-				if (c.size() != 14 && c.size() != 10) {
-					error("STRK has an invalid size : %d", c.size());
+				int32 subSize = READ_BE_UINT32((byte *)_tbuffer + offset + 4);
+				if (subSize != 14 && subSize != 10) {
+					error("STRK has an invalid size : %d", subSize);
 				}
 			} else
 				return false;
@@ -63,7 +63,9 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 		case MKID_BE('SMRK'):
 			_inData = false;
 			if (available_size >= (size + 8)) {
-				MemoryChunk c((byte *)_tbuffer + offset);
+				int32 subSize = READ_BE_UINT32((byte *)_tbuffer + offset + 4);
+				if (subSize != 0)
+					error("SMRK has an invalid size : %d", subSize);
 				_markReached = true;
 			} else
 				return false;
@@ -71,9 +73,9 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 		case MKID_BE('SHDR'):
 			_inData = false;
 			if (available_size >= (size + 8)) {
-				MemoryChunk c((byte *)_tbuffer + offset);
-				if (c.size() != 4)
-					error("SHDR has an invalid size : %d", c.size());
+				int32 subSize = READ_BE_UINT32((byte *)_tbuffer + offset + 4);
+				if (subSize != 4)
+					error("SHDR has an invalid size : %d", subSize);
 			} else
 				return false;
 			break;

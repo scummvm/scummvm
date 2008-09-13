@@ -34,30 +34,7 @@
 
 namespace Scumm {
 
-BaseChunk::BaseChunk() :
-	_type(0),
-	_size(0),
-	_curPos(0),
-	_name("") {
-}
-
-bool BaseChunk::eos() const {
-	return _curPos >= _size;
-}
-
-int32 BaseChunk::pos() const {
-	return _curPos;
-}
-
-Chunk::type BaseChunk::getType() const {
-	return _type;
-}
-
-int32 BaseChunk::size() const {
-	return _size;
-}
-
-bool BaseChunk::seek(int32 delta, int dir) {
+bool Chunk::seek(int32 delta, int dir) {
 	switch (dir) {
 	case SEEK_CUR:
 		_curPos += delta;
@@ -136,34 +113,6 @@ uint32 FileChunk::read(void *buffer, uint32 dataSize) {
 	dataSize = _data->read(buffer, dataSize);
 	_curPos += dataSize;
 
-	return dataSize;
-}
-
-MemoryChunk::MemoryChunk(byte *data) {
-	if (data == 0)
-		error("Chunk() called with NULL pointer");
-
-	_type = (Chunk::type)READ_BE_UINT32(data);
-	_size = READ_BE_UINT32(data + 4);
-	_data = data + sizeof(Chunk::type) + sizeof(uint32);
-	_curPos = 0;
-}
-
-Chunk *MemoryChunk::subBlock() {
-	MemoryChunk *ptr = new MemoryChunk(_data + _curPos);
-	skip(sizeof(Chunk::type) + sizeof(uint32) + ptr->size());
-	return ptr;
-}
-
-void MemoryChunk::reseek() {
-}
-
-uint32 MemoryChunk::read(void *buffer, uint32 dataSize) {
-	if (dataSize <= 0 || (_curPos + dataSize) > _size)
-		error("invalid buffer read request");
-
-	memcpy(buffer, _data + _curPos, dataSize);
-	_curPos += dataSize;
 	return dataSize;
 }
 

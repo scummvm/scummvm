@@ -105,7 +105,7 @@ private:
 
 protected:
 	void decode();
-	bool handleMap(Chunk &c);
+	bool handleMap(byte *data);
 	bool handleSubTags(int32 &offset);
 
 public:
