@@ -61,10 +61,10 @@ bool Infogrames::Instruments::load(const char *ins) {
 
 bool Infogrames::Instruments::load(Common::SeekableReadStream &ins) {
 	int i;
-	uint32 fsize;
-	uint32 offset[32];
-	uint32 offsetRepeat[32];
-	uint32 dataOffset;
+	int32 fsize;
+	int32 offset[32];
+	int32 offsetRepeat[32];
+	int32 dataOffset;
 
 	unload();
 

@@ -156,11 +156,11 @@ void Archive::closeArchivedFile() {
 }
 
 
-uint32 Archive::size() const {
+int32 Archive::size() const {
 	return (_file == true ? _fileEndOffset - _fileOffset : 0);
 }
 
-uint32 Archive::pos() const {
+int32 Archive::pos() const {
 	return (_file == true ? _fileCursor - _fileOffset : 0 );
 }
 
@@ -168,7 +168,7 @@ bool Archive::eos() const {
 	return (_file == true ? _fileCursor == _fileEndOffset : true );
 }
 
-void Archive::seek(int32 offs, int whence) {
+bool Archive::seek(int32 offs, int whence) {
 	assert(_file == true && _fileCursor <= _fileEndOffset);
 
 	switch (whence) {
@@ -184,7 +184,7 @@ void Archive::seek(int32 offs, int whence) {
 	}
 	assert(_fileCursor <= _fileEndOffset && _fileCursor >= _fileOffset);
 
-	_archive.seek(_fileCursor, SEEK_SET);
+	return _archive.seek(_fileCursor, SEEK_SET);
 }
 
 uint32 Archive::read(void *dataPtr, uint32 dataSize) {
@@ -234,16 +234,16 @@ public:
 		return _input->read(data, dataSize);
 	}
 
-	uint32 pos() const {
+	int32 pos() const {
 		return _input->pos();
 	}
 
-	uint32 size() const {
+	int32 size() const {
 		return _input->size();
 	}
 
-	void seek(int32 offset, int whence) {
-		_input->seek(offset, whence);
+	bool seek(int32 offset, int whence) {
+		return _input->seek(offset, whence);
 	}
 
 };
@@ -798,11 +798,11 @@ public:
 		if (_dispose) delete _stream;
 	}
 
-	uint32 size() const {
+	int32 size() const {
 		return _stream->size();
 	}
 
-	uint32 pos() const {
+	int32 pos() const {
 		return _stream->pos();
 	}
 
@@ -810,8 +810,8 @@ public:
 		return _stream->eos();
 	}
 
-	void seek(int32 offs, int whence = SEEK_SET) {
-		_stream->seek(offs, whence);
+	bool seek(int32 offs, int whence = SEEK_SET) {
+		return _stream->seek(offs, whence);
 	}
 
 	uint32 read(void *dataPtr, uint32 dataSize) {

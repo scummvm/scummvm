@@ -320,16 +320,16 @@ bool ArjFile::eos() {
 	return _uncompressed->eos();
 }
 
-uint32 ArjFile::pos() {
+int32 ArjFile::pos() {
 	return _uncompressed->pos();
 }
 
-uint32 ArjFile::size() {
+int32 ArjFile::size() {
 	return _uncompressed->size();
 }
 
-void ArjFile::seek(int32 offset, int whence) {
-	_uncompressed->seek(offset, whence);
+bool ArjFile::seek(int32 offset, int whence) {
+	return _uncompressed->seek(offset, whence);
 }
 
 void ArjFile::init_getbits() {

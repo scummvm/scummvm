@@ -125,13 +125,13 @@ public:
 		return (_zlibErr == Z_STREAM_END);
 		//return _pos == _origSize;
 	}
-	uint32 pos() const {
+	int32 pos() const {
 		return _pos;
 	}
-	uint32 size() const {
+	int32 size() const {
 		return _origSize;
 	}
-	void seek(int32 offset, int whence = SEEK_SET) {
+	bool seek(int32 offset, int whence = SEEK_SET) {
 		int32 newPos = 0;
 		assert(whence != SEEK_END);	// SEEK_END not supported
 		switch(whence) {
@@ -155,7 +155,7 @@ public:
 			_wrapped->seek(0, SEEK_SET);
 			_zlibErr = inflateReset(&_stream);
 			if (_zlibErr != Z_OK)
-				return;
+				return false;	// FIXME: STREAM REWRITE
 			_stream.next_in = _buf;
 			_stream.avail_in = 0;
 		}
@@ -169,6 +169,8 @@ public:
 		while (!ioFailed() && offset > 0) {
 			offset -= read(tmpBuf, MIN((int32)sizeof(tmpBuf), offset));
 		}
+		
+		return true;	// FIXME: STREAM REWRITE
 	}
 };
 

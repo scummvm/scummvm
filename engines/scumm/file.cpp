@@ -42,9 +42,9 @@ void ScummFile::setEnc(byte value) {
 	_encbyte = value;
 }
 
-void ScummFile::setSubfileRange(uint32 start, uint32 len) {
+void ScummFile::setSubfileRange(int32 start, int32 len) {
 	// TODO: Add sanity checks
-	const uint32 fileSize = File::size();
+	const int32 fileSize = File::size();
 	assert(start <= fileSize);
 	assert(start + len <= fileSize);
 	_subFileStart = start;
@@ -129,15 +129,15 @@ bool ScummFile::eos() {
 	return _subFileLen ? (pos() >= _subFileLen) : File::eos();
 }
 
-uint32 ScummFile::pos() {
+int32 ScummFile::pos() {
 	return File::pos() - _subFileStart;
 }
 
-uint32 ScummFile::size() {
+int32 ScummFile::size() {
 	return _subFileLen ? _subFileLen : File::size();
 }
 
-void ScummFile::seek(int32 offs, int whence) {
+bool ScummFile::seek(int32 offs, int whence) {
 	if (_subFileLen) {
 		// Constrain the seek to the subfile
 		switch (whence) {
@@ -154,7 +154,7 @@ void ScummFile::seek(int32 offs, int whence) {
 		assert((int32)_subFileStart <= offs && offs <= (int32)(_subFileStart + _subFileLen));
 		whence = SEEK_SET;
 	}
-	File::seek(offs, whence);
+	return File::seek(offs, whence);
 }
 
 uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
@@ -162,9 +162,9 @@ uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 
 	if (_subFileLen) {
 		// Limit the amount we read by the subfile boundaries.
-		const uint32 curPos = pos();
+		const int32 curPos = pos();
 		assert(_subFileLen >= curPos);
-		uint32 newPos = curPos + dataSize;
+		int32 newPos = curPos + dataSize;
 		if (newPos > _subFileLen) {
 			dataSize = _subFileLen - curPos;
 			_myIoFailed = true;

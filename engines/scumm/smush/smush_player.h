@@ -121,7 +121,7 @@ private:
 
 	bool readString(const char *file);
 	void decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height);
-	void checkBlock(const Chunk &, Chunk::type, uint32 = 0);
+	void checkBlock(const Chunk &, Chunk::type, int32 = 0);
 	void handleAnimHeader(Chunk &);
 	void handleFrame(Chunk &);
 	void handleNewPalette(Chunk &);

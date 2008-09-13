@@ -62,11 +62,11 @@ public:
 	
 	bool isOpen() const { return isOpenFlag; }
 	virtual bool eos() const;
-	virtual void skip(uint32 size);
+	virtual bool skip(uint32 size);
 	
-	virtual uint32 pos() const;
-	virtual uint32 size() const;
-	virtual void seek(int32 pos, int whence);
+	virtual int32 pos() const;
+	virtual int32 size() const;
+	virtual bool seek(int32 pos, int whence);
 
 	uint32 read(void *buf, uint32 size);
 	uint32 write(const void *buf, uint32 size);

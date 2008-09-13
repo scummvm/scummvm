@@ -115,9 +115,9 @@ public:
 
 	uint32 read(void *dataPtr, uint32 dataSize);
 	bool eos();
-	uint32 pos();
-	uint32 size();
-	void seek(int32 offset, int whence = SEEK_SET);
+	int32 pos();
+	int32 size();
+	bool seek(int32 offset, int whence = SEEK_SET);
 	bool isOpen() { return _isOpen; }
 
 private:

@@ -1013,7 +1013,7 @@ bool IIgsSoundMgr::loadInstrumentHeaders(const Common::String &exePath, const II
 
 	// Open the executable file and check that it has correct size
 	file.open(exePath);
-	if (file.size() != exeInfo.exeSize) {
+	if (file.size() != (int32)exeInfo.exeSize) {
 		debugC(3, kDebugLevelSound, "Apple IIGS executable (%s) has wrong size (Is %d, should be %d)",
 			exePath.c_str(), file.size(), exeInfo.exeSize);
 	}
@@ -1023,7 +1023,7 @@ bool IIgsSoundMgr::loadInstrumentHeaders(const Common::String &exePath, const II
 	file.close();
 
 	// Check that we got enough data to be able to parse the instruments
-	if (data && data->size() >= (exeInfo.instSetStart + exeInfo.instSet.byteCount)) {
+	if (data && data->size() >= (int32)(exeInfo.instSetStart + exeInfo.instSet.byteCount)) {
 		// Check instrument set's length (The info's saved in the executable)
 		data->seek(exeInfo.instSetStart - 4);
 		uint16 instSetByteCount = data->readUint16LE();

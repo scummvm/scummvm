@@ -113,13 +113,7 @@ bool File::open(const FilesystemNode &node) {
 	} else if (node.isDirectory()) {
 		warning("File::open: Trying to open a FilesystemNode which is a directory");
 		return false;
-	} /*else if (!node.isReadable() && mode == kFileReadMode) {
-		warning("File::open: Trying to open an unreadable FilesystemNode object for reading");
-		return false;
-	} else if (!node.isWritable() && mode == kFileWriteMode) {
-		warning("File::open: Trying to open an unwritable FilesystemNode object for writing");
-		return false;
-	}*/
+	}
 
 	String filename(node.getName());
 
@@ -181,19 +175,19 @@ bool File::eos() const {
 	return _handle->eos();
 }
 
-uint32 File::pos() const {
+int32 File::pos() const {
 	assert(_handle);
 	return _handle->pos();
 }
 
-uint32 File::size() const {
+int32 File::size() const {
 	assert(_handle);
 	return _handle->size();
 }
 
-void File::seek(int32 offs, int whence) {
+bool File::seek(int32 offs, int whence) {
 	assert(_handle);
-	_handle->seek(offs, whence);
+	return _handle->seek(offs, whence);
 }
 
 uint32 File::read(void *ptr, uint32 len) {
@@ -223,13 +217,7 @@ bool DumpFile::open(const FilesystemNode &node) {
 	if (node.isDirectory()) {
 		warning("File::open: Trying to open a FilesystemNode which is a directory");
 		return false;
-	} /*else if (!node.isReadable() && mode == kFileReadMode) {
-		warning("File::open: Trying to open an unreadable FilesystemNode object for reading");
-		return false;
-	} else if (!node.isWritable() && mode == kFileWriteMode) {
-		warning("File::open: Trying to open an unwritable FilesystemNode object for writing");
-		return false;
-	}*/
+	}
 
 	_handle = node.openForWriting();
 
@@ -263,9 +251,9 @@ uint32 DumpFile::write(const void *ptr, uint32 len) {
 	return _handle->write(ptr, len);
 }
 
-void DumpFile::flush() {
+bool DumpFile::flush() {
 	assert(_handle);
-	_handle->flush();
+	return _handle->flush();
 }
 
 }	// End of namespace Common

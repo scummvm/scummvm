@@ -55,10 +55,10 @@ protected:
 
 public:
 	Chunk::type getType() const;
-	uint32 size() const;
+	int32 size() const;
 	bool eos() const;
-	uint32 pos() const;
-	void seek(int32 delta, int dir);
+	int32 pos() const;
+	bool seek(int32 delta, int dir);
 };
 
 class FileChunk : public BaseChunk {

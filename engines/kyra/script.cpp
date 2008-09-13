@@ -255,13 +255,13 @@ uint32 ScriptFileParser::getIFFBlockSize(const uint32 chunkName) {
 
 	_stream->seek(_startOffset + 0x0C);
 
-	while (_stream->pos() < _endOffset) {
+	while ((uint)_stream->pos() < _endOffset) {
 		uint32 chunk = _stream->readUint32LE();
 		uint32 size_temp = _stream->readUint32BE();
 
 		if (chunk != chunkName) {
 			_stream->seek((size_temp + 1) & (~1), SEEK_CUR);
-			assert(_stream->pos() <= _endOffset);
+			assert((uint)_stream->pos() <= _endOffset);
 		} else {
 			size = size_temp;
 			break;
@@ -274,13 +274,13 @@ uint32 ScriptFileParser::getIFFBlockSize(const uint32 chunkName) {
 bool ScriptFileParser::loadIFFBlock(const uint32 chunkName, void *loadTo, uint32 ptrSize) {
 	_stream->seek(_startOffset + 0x0C);
 
-	while (_stream->pos() < _endOffset) {
+	while ((uint)_stream->pos() < _endOffset) {
 		uint32 chunk = _stream->readUint32LE();
 		uint32 chunkSize = _stream->readUint32BE();
 
 		if (chunk != chunkName) {
 			_stream->seek((chunkSize + 1) & (~1), SEEK_CUR);
-			assert(_stream->pos() <= _endOffset);
+			assert((uint)_stream->pos() <= _endOffset);
 		} else {
 			uint32 loadSize = 0;
 

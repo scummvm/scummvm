@@ -75,8 +75,10 @@ public:
 	 * Commit any buffered data to the underlying channel or
 	 * storage medium; unbuffered streams can use the default
 	 * implementation.
+	 *
+	 * @return true on success, false in case of a failure
 	 */
-	virtual void flush() {}
+	virtual bool flush() { return true; }
 
 	/**
 	 * Finalize and close this stream. To be called right before this
@@ -85,7 +87,7 @@ public:
 	 * closing (and this flushing, if buffered) the stream.
 	 *
 	 * After this method has been called, no further writes may be
-	 * peformed on the stream. Calling ioFailed() is allowed.
+	 * performed on the stream. Calling ioFailed() is allowed.
 	 *
 	 * By default, this just flushes the stream.
 	 */
@@ -303,18 +305,46 @@ public:
 /**
  * Interface for a seekable & readable data stream.
  *
- * @todo We really need better error handling here!
- *       Like seek should somehow indicate whether it failed.
+ * @todo Get rid of SEEK_SET, SEEK_CUR, or SEEK_END, use our own constants
  */
 class SeekableReadStream : virtual public ReadStream {
 public:
 
-	virtual uint32 pos() const = 0;
-	virtual uint32 size() const = 0;
+	/**
+	 * Obtains the current value of the stream position indicator of the
+	 * stream.
+	 *
+	 * @return the current position indicator, or -1 if an error occurred.
+	 */
+	virtual int32 pos() const = 0;
 
-	virtual void seek(int32 offset, int whence = SEEK_SET) = 0;
+	/**
+	 * Obtains the total size of the stream, measured in bytes.
+	 * If this value is unknown or can not be computed, -1 is returned.
+	 *
+	 * @return the size of the stream, or -1 if an error occurred
+	 */
+	virtual int32 size() const = 0;
 
-	void skip(uint32 offset) { seek(offset, SEEK_CUR); }
+	/**
+	 * Sets the stream position indicator for the stream. The new position,
+	 * measured in bytes, is obtained by adding offset bytes to the position
+	 * specified by whence. If whence is set to SEEK_SET, SEEK_CUR, or
+	 * SEEK_END, the offset is relative to the start of the file, the current
+	 * position indicator, or end-of-file, respectively. A successful call
+	 * to the seek() method clears the end-of-file indicator for the stream.
+	 *
+	 * @param offset	the relative offset in bytes
+	 * @param whence	the seek reference: SEEK_SET, SEEK_CUR, or SEEK_END
+	 * @return true on success, false in case of a failure
+	 */
+	virtual bool seek(int32 offset, int whence = SEEK_SET) = 0;
+
+	/**
+	 * TODO: Get rid of this??? Or keep it and document it
+	 * @return true on success, false in case of a failure
+	 */
+	virtual bool skip(uint32 offset) { return seek(offset, SEEK_CUR); }
 
 	/**
 	 * DEPRECATED: Do not use this method! Instead use readLine_NEW() or readline().
@@ -401,10 +431,10 @@ protected:
 public:
 	SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool disposeParentStream = false);
 
-	virtual uint32 pos() const { return _pos - _begin; }
-	virtual uint32 size() const { return _end - _begin; }
+	virtual int32 pos() const { return _pos - _begin; }
+	virtual int32 size() const { return _end - _begin; }
 
-	virtual void seek(int32 offset, int whence = SEEK_SET);
+	virtual bool seek(int32 offset, int whence = SEEK_SET);
 };
 
 /**
@@ -471,10 +501,10 @@ protected:
 public:
 	BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, bool disposeParentStream = false);
 
-	virtual uint32 pos() const { return _parentStream->pos() - (_bufSize - _pos); }
-	virtual uint32 size() const { return _parentStream->size(); }
+	virtual int32 pos() const { return _parentStream->pos() - (_bufSize - _pos); }
+	virtual int32 size() const { return _parentStream->size(); }
 
-	virtual void seek(int32 offset, int whence = SEEK_SET);
+	virtual bool seek(int32 offset, int whence = SEEK_SET);
 };
 
 
@@ -516,11 +546,11 @@ public:
 
 	uint32 read(void *dataPtr, uint32 dataSize);
 
-	bool eos() const { return _pos == _size; }
-	uint32 pos() const { return _pos; }
-	uint32 size() const { return _size; }
+	bool eos() const { return _pos == _size; }	// FIXME: Wrong
+	int32 pos() const { return _pos; }
+	int32 size() const { return _size; }
 
-	void seek(int32 offs, int whence = SEEK_SET);
+	bool seek(int32 offs, int whence = SEEK_SET);
 };
 
 

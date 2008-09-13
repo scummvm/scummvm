@@ -112,24 +112,26 @@ bool UclInSaveFile::eos(void) const {
 	return bufTell() == bufSize();
 }
 
-uint32 UclInSaveFile::pos(void) const {
+int32 UclInSaveFile::pos(void) const {
 	return bufTell();
 }
 
-uint32 UclInSaveFile::size(void) const {
+int32 UclInSaveFile::size(void) const {
 	return bufSize();
 }
 
-void UclInSaveFile::seek(int pos, int whence) {
+bool UclInSaveFile::seek(int pos, int whence) {
 	bufSeek(pos, whence);
+	return true;
 }
 
 uint32 UclInSaveFile::read(void *ptr, uint32 size) {
 	return (uint32)bufRead(ptr, (int)size);
 }
 
-void UclInSaveFile::skip(uint32 offset) {
+bool UclInSaveFile::skip(uint32 offset) {
 	bufSeek(offset, SEEK_CUR);
+	return true;s
 }
 
 UclOutSaveFile::UclOutSaveFile(const char *filename, OSystem_PS2 *system, Gs2dScreen *screen, McAccess *mc) : RawWriteFile(mc) {
@@ -168,12 +170,12 @@ void UclOutSaveFile::clearIOFailed(void) {
 	_ioFailed = false;
 }
 
-void UclOutSaveFile::flush(void) {
+bool UclOutSaveFile::flush(void) {
 	if (_pos != 0) {
 		if (_wasFlushed) {
 			printf("Multiple calls to UclOutSaveFile::flush!\n");
 			_ioFailed = true;
-			return;
+			return false;
 		}
 		uint32 compSize = _pos * 2;
 		uint8 *compBuf = (uint8*)memalign(64, compSize + 8);
@@ -193,6 +195,7 @@ void UclOutSaveFile::flush(void) {
 		}
 		_wasFlushed = true;
 	}
+	return true;
 }
 
 /* ----------------------------------------- Glue Classes for POSIX Memory Card Access ----------------------------------------- */
@@ -216,11 +219,11 @@ uint32 Ps2McReadFile::write(const void *src, uint32 len) {
 	return 0;
 }
 
-uint32 Ps2McReadFile::tell(void) {
+int32 Ps2McReadFile::tell(void) {
 	return bufTell();
 }
 
-uint32 Ps2McReadFile::size(void) {
+int32 Ps2McReadFile::size(void) {
 	return bufSize();
 }
 
@@ -253,11 +256,11 @@ uint32 Ps2McWriteFile::write(const void *src, uint32 len) {
 	return len;
 }
 
-uint32 Ps2McWriteFile::tell(void) {
+int32 Ps2McWriteFile::tell(void) {
 	return bufTell();
 }
 
-uint32 Ps2McWriteFile::size(void) {
+int32 Ps2McWriteFile::size(void) {
 	return bufTell();
 }
 

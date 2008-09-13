@@ -104,10 +104,10 @@ public:
 	Common::String name() const;
 	bool openArchivedFile(const char *name);
 	void closeArchivedFile();
-	uint32 size() const;
-	uint32 pos() const;
+	int32 size() const;
+	int32 pos() const;
 	bool eos() const;
-	void seek(int32 offs, int whence = SEEK_SET);
+	bool seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *dataPtr, uint32 dataSize);
 };
 

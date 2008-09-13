@@ -544,10 +544,10 @@ void Converse::loadConversation(const char *convName) {
 							 curNode, _convNodes[curNode]->entries.size() - 1);
 				// Seek to chunk data (i.e. TEXT/MESG tag, which is usually right
 				// after this chunk but it can be further on in conditional reply chunks
-				assert(data >= convS->pos());
+				assert((int)data >= convS->pos());
 				// If the entry's data is not right after the entry, remember the position
 				// to return to after the data is read
-				if (chunk == CHUNK_CRPL && data != convS->pos())
+				if (chunk == CHUNK_CRPL && (int)data != convS->pos())
 					returnAddress = convS->pos();
 				convS->seek(data, SEEK_SET);
 				}

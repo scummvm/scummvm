@@ -41,7 +41,7 @@ public:
 	UclOutSaveFile(const char *filename, OSystem_PS2 *system, Gs2dScreen *screen, McAccess *mc);
 	virtual ~UclOutSaveFile(void);
 	virtual uint32 write(const void *ptr, uint32 size);
-	virtual void flush(void);
+	virtual bool flush(void);
 	virtual bool ioFailed(void) const;
 	virtual void clearIOFailed(void);
 private:
@@ -60,11 +60,11 @@ public:
 	virtual uint32 read(void *ptr, uint32 size);
 	virtual bool ioFailed(void) const;
 	virtual void clearIOFailed(void);
-	virtual void skip(uint32 offset);
+	virtual bool skip(uint32 offset);
 
-	virtual uint32 pos(void) const;
-	virtual uint32 size(void) const;
-	virtual void seek(int pos, int whence = SEEK_SET);
+	virtual int32 pos(void) const;
+	virtual int32 size(void) const;
+	virtual bool seek(int pos, int whence = SEEK_SET);
 private:
 	Gs2dScreen *_screen;
 	bool _ioFailed;
@@ -75,7 +75,7 @@ public:
 	AutoSaveFile(Ps2SaveFileManager *saveMan, const char *filename);
 	~AutoSaveFile(void);
 	virtual uint32 write(const void *ptr, uint32 size);
-	virtual void flush(void) {}
+	virtual bool flush(void) {}
 	virtual bool ioFailed(void) { return false; };
 	virtual void clearIOFailed(void) {}
 private:
@@ -95,8 +95,8 @@ public:
 	virtual bool open(const char *name);
 	virtual uint32 read(void *dest, uint32 len);
 	virtual uint32 write(const void *src, uint32 len);
-	virtual uint32 tell(void);
-	virtual uint32 size(void);
+	virtual int32 tell(void);
+	virtual int32 size(void);
 	virtual int seek(int32 offset, int origin);
 	virtual bool eof(void);
 };
@@ -108,8 +108,8 @@ public:
 	virtual bool open(const char *name);
 	virtual uint32 read(void *dest, uint32 len);
 	virtual uint32 write(const void *src, uint32 len);
-	virtual uint32 tell(void);
-	virtual uint32 size(void);
+	virtual int32 tell(void);
+	virtual int32 size(void);
 	virtual int seek(int32 offset, int origin);
 	virtual bool eof(void);
 };

@@ -61,7 +61,7 @@ void loadTextData(const char *filename) {
 	const uint bytesPerChar = fontDataSize / numChars; // Observed values: 64.
 	static const uint bytesPerRow = FONT_WIDTH / 2;    // The input font data is 4-bit so it takes only half the space
 
-	if (headerSize + fontDataSize != fileHandle.size()) {
+	if (headerSize + fontDataSize != (uint)fileHandle.size()) {
 		warning("loadTextData: file '%s' (entrySize = %d, entryCount = %d) is of incorrect size %d", filename, entrySize, entryCount, fileHandle.size());
 	}
 

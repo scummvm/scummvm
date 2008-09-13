@@ -52,7 +52,7 @@ protected:
 	Audio::SoundHandle _handle;
 
 	/** Sample index buffer and number of entries */
-	uint32 *_sampleIndex;
+	int32 *_sampleIndex;
 
 	/** Number of entries in the sample index */
 	long _sampleIndexLen;

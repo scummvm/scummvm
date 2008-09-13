@@ -269,7 +269,7 @@ byte *MidiPlayer::convertHMPtoSMF(byte *data, uint32 inSize, uint32 &outSize) {
 		byte lastCmd = 0;
 
 		// Now we can finally convert the track
-		uint32 endPos = readS.pos() + trackLength;
+		int32 endPos = readS.pos() + trackLength;
 		while (readS.pos() < endPos) {
 			// Convert the VLQ
 			byte vlq[4];

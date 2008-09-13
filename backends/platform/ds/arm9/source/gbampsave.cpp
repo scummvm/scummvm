@@ -54,8 +54,8 @@ bool GBAMPSaveFile::eos() const {
 	return DS::std_feof(handle);
 }
 
-void GBAMPSaveFile::skip(uint32 bytes) {
-	DS::std_fseek(handle, bytes, SEEK_CUR);
+bool GBAMPSaveFile::skip(uint32 bytes) {
+	return DS::std_fseek(handle, bytes, SEEK_CUR) == 0;
 }
 
 void GBAMPSaveFile::flushSaveBuffer() {
@@ -67,11 +67,11 @@ void GBAMPSaveFile::flushSaveBuffer() {
 	}
 }
 
-uint32 GBAMPSaveFile::pos() const {
+int32 GBAMPSaveFile::pos() const {
 	return DS::std_ftell(handle);
 }
 
-uint32 GBAMPSaveFile::size() const {
+int32 GBAMPSaveFile::size() const {
 	int position = pos();
 	DS::std_fseek(handle, 0, SEEK_END);
 	int size = DS::std_ftell(handle);
@@ -80,7 +80,7 @@ uint32 GBAMPSaveFile::size() const {
 }
 
 void GBAMPSaveFile::seek(int32 pos, int whence) {
-	DS::std_fseek(handle, pos, whence);
+	return DS::std_fseek(handle, pos, whence) == 0;
 }
 
 

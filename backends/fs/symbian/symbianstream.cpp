@@ -104,10 +104,9 @@ size_t ReadData(const void* ptr, size_t size, size_t numItems, TSymbianFileEntry
 	TPtr8 pointer ( (unsigned char*) ptr, totsize);
 	
 	// Nothing cached and we want to load at least KInputBufferLength bytes
-	if(totsize >= KInputBufferLength) {	
+	if (totsize >= KInputBufferLength) {	
 		TUint32 totLength = 0;
-		if(entry->_inputPos != KErrNotFound)
-		{
+		if (entry->_inputPos != KErrNotFound) {
 			TPtr8 cacheBuffer( (unsigned char*) entry->_inputBuffer+entry->_inputPos, entry->_inputBufferLen - entry->_inputPos, KInputBufferLength);
 			pointer.Append(cacheBuffer);
 			entry->_inputPos = KErrNotFound;
@@ -121,44 +120,39 @@ size_t ReadData(const void* ptr, size_t size, size_t numItems, TSymbianFileEntry
 		
 		pointer.Set((unsigned char*) ptr, totLength, totsize);
 		
-	}
-	else {
+	} else {
 		// Nothing in buffer	
-		if(entry->_inputPos == KErrNotFound) {
+		if (entry->_inputPos == KErrNotFound) {
 			TPtr8 cacheBuffer( (unsigned char*) entry->_inputBuffer, KInputBufferLength);
 			entry->_lastError = entry->_fileHandle.Read(cacheBuffer);			
 			
-			if(cacheBuffer.Length() >= totsize) {
+			if (cacheBuffer.Length() >= totsize) {
 				pointer.Copy(cacheBuffer.Left(totsize));
 				entry->_inputPos = totsize;
 				entry->_inputBufferLen = cacheBuffer.Length();
-			}
-			else {
+			} else {
 				pointer.Copy(cacheBuffer);
 				entry->_inputPos = KErrNotFound;
 			}
 			
-		}
-		else {
+		} else {
 			TPtr8 cacheBuffer( (unsigned char*) entry->_inputBuffer, entry->_inputBufferLen, KInputBufferLength);
 			
-			if(entry->_inputPos+totsize < entry->_inputBufferLen) {
+			if (entry->_inputPos+totsize < entry->_inputBufferLen) {
 				pointer.Copy(cacheBuffer.Mid(entry->_inputPos, totsize));
 				entry->_inputPos+=totsize;
-			}
-			else {
+			} else {
 				
 				pointer.Copy(cacheBuffer.Mid(entry->_inputPos, entry->_inputBufferLen-entry->_inputPos));
 				cacheBuffer.SetLength(0);
 				entry->_lastError = entry->_fileHandle.Read(cacheBuffer);
 				
-				if(cacheBuffer.Length() >= totsize-pointer.Length()) {
+				if (cacheBuffer.Length() >= totsize-pointer.Length()) {
 					TUint32 restSize = totsize-pointer.Length();
 					pointer.Append(cacheBuffer.Left(restSize));
 					entry->_inputPos = restSize;
 					entry->_inputBufferLen = cacheBuffer.Length();
-				}
-				else {
+				} else {
 					pointer.Append(cacheBuffer);
 					entry->_inputPos = KErrNotFound;
 				}
@@ -166,7 +160,7 @@ size_t ReadData(const void* ptr, size_t size, size_t numItems, TSymbianFileEntry
 		}
 	}	
 	
-	if((numItems * size) != pointer.Length() && entry->_lastError == KErrNone)	{
+	if((numItems * size) != pointer.Length() && entry->_lastError == KErrNone) {
 		entry->_eofReached = ETrue;
 	}
 
@@ -197,20 +191,19 @@ bool SymbianStdioStream::eos() const {
 	return entry->_eofReached != 0;
 }
 
-uint32 SymbianStdioStream::pos() const {
+int32 SymbianStdioStream::pos() const {
 	TInt pos = 0;
 	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(_handle));
 
 	entry->_lastError = entry->_fileHandle.Seek(ESeekCurrent, pos);
-	if(entry->_lastError == KErrNone && entry->_inputPos != KErrNotFound)
-		{
-		pos+=(entry->_inputPos - entry->_inputBufferLen);
-		}
+	if (entry->_lastError == KErrNone && entry->_inputPos != KErrNotFound) {
+		pos += (entry->_inputPos - entry->_inputBufferLen);
+	}
 
 	return pos;
 }
 
-uint32 SymbianStdioStream::size() const {
+int32 SymbianStdioStream::size() const {
 
 	TInt length = 0;
 	((TSymbianFileEntry*)(_handle))->_fileHandle.Size(length);
@@ -218,21 +211,21 @@ uint32 SymbianStdioStream::size() const {
 	return length;
 }
 
-void SymbianStdioStream::seek(int32 offs, int whence) {
+bool SymbianStdioStream::seek(int32 offs, int whence) {
 	assert(_handle);
 
 	TSeek seekMode = ESeekStart;
 	TInt pos = offs;
 	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(_handle));
 
-	switch(whence) {
+	switch (whence) {
 	case SEEK_SET:
 		seekMode = ESeekStart;
 		break;
 	case SEEK_CUR:
 		seekMode = ESeekCurrent;
-		if(entry->_inputPos != KErrNotFound) {
-			pos+=(entry->_inputPos - entry->_inputBufferLen);
+		if (entry->_inputPos != KErrNotFound) {
+			pos += (entry->_inputPos - entry->_inputBufferLen);
 		}
 		break;
 	case SEEK_END:
@@ -243,10 +236,9 @@ void SymbianStdioStream::seek(int32 offs, int whence) {
 	
 	entry->_inputPos = KErrNotFound;
 	entry->_eofReached = EFalse;
-	if (entry->_fileHandle.Seek(seekMode, pos) != 0)
-	{
-		((TSymbianFileEntry *)(_handle))->_lastError = 0;	// FIXME: why do we call clearerr here?
-	}	
+	entry->_fileHandle.Seek(seekMode, pos);
+	
+	return true;	// FIXME: Probably should return a value based on what _fileHandle.Seek returns
 }
 
 uint32 SymbianStdioStream::read(void *ptr, uint32 len) {
@@ -267,8 +259,9 @@ uint32 SymbianStdioStream::write(const void *ptr, uint32 len) {
 	return 0;
 }
 
-void SymbianStdioStream::flush() {
+bool SymbianStdioStream::flush() {
 	((TSymbianFileEntry*)(_handle))->_fileHandle.Flush();
+	return true;
 }
 
 SymbianStdioStream *SymbianStdioStream::makeFromPath(const Common::String &path, bool writeMode) {

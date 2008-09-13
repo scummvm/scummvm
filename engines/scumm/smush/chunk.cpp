@@ -45,7 +45,7 @@ bool BaseChunk::eos() const {
 	return _curPos >= _size;
 }
 
-uint32 BaseChunk::pos() const {
+int32 BaseChunk::pos() const {
 	return _curPos;
 }
 
@@ -53,11 +53,11 @@ Chunk::type BaseChunk::getType() const {
 	return _type;
 }
 
-uint32 BaseChunk::size() const {
+int32 BaseChunk::size() const {
 	return _size;
 }
 
-void BaseChunk::seek(int32 delta, int dir) {
+bool BaseChunk::seek(int32 delta, int dir) {
 	switch (dir) {
 	case SEEK_CUR:
 		_curPos += delta;
@@ -85,6 +85,8 @@ void BaseChunk::seek(int32 delta, int dir) {
 		warning("Looks like you compressed file %s in wrong way. It has FLU index which was not updated", _name.c_str());
 		error("invalid seek request : %d > %d (delta == %d)", _curPos, _size, delta);
 	}
+	
+	return true;
 }
 
 FileChunk::FileChunk(BaseScummFile *data, int offset) {

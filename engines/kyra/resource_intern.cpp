@@ -127,8 +127,8 @@ bool ResLoaderPak::checkFilename(Common::String filename) const {
 }
 
 bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
-	uint32 filesize = stream.size();
-	uint32 offset = 0;
+	int32 filesize = stream.size();
+	int32 offset = 0;
 	bool switchEndian = false;
 	bool firstFile = true;
 
@@ -138,7 +138,7 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 		offset = SWAP_BYTES_32(offset);
 	}
 
-	Common::String file = "";
+	Common::String file;
 	while (!stream.eos()) {
 		// The start offset of a file should never be in the filelist
 		if (offset < stream.pos() || offset > filesize)
@@ -146,7 +146,7 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 
 		byte c = 0;
 
-		file = "";
+		file.clear();
 
 		while (!stream.eos() && (c = stream.readByte()) != 0)
 			file += c;
@@ -196,9 +196,9 @@ struct PlainArchiveListSearch {
 } // end of anonymous namespace
 
 Common::Archive *ResLoaderPak::load(Resource *owner, const Common::String &filename, Common::SeekableReadStream &stream) const {
-	uint32 filesize = stream.size();
+	int32 filesize = stream.size();
 	
-	uint32 startoffset = 0, endoffset = 0;
+	int32 startoffset = 0, endoffset = 0;
 	bool switchEndian = false;
 	bool firstFile = true;
 
@@ -210,7 +210,7 @@ Common::Archive *ResLoaderPak::load(Resource *owner, const Common::String &filen
 
 	PlainArchive::FileInputList files;
 
-	Common::String file = "";
+	Common::String file;
 	while (!stream.eos()) {
 		// The start offset of a file should never be in the filelist
 		if (startoffset < stream.pos() || startoffset > filesize) {
@@ -218,7 +218,7 @@ Common::Archive *ResLoaderPak::load(Resource *owner, const Common::String &filen
 			return false;
 		}
 
-		file = "";
+		file.clear();
 		byte c = 0;
 
 		while (!stream.eos() && (c = stream.readByte()) != 0)
@@ -301,7 +301,7 @@ bool ResLoaderInsMalcolm::checkFilename(Common::String filename) const {
 
 bool ResLoaderInsMalcolm::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
 	stream.seek(3, SEEK_SET);
-	uint32 size = stream.readUint32LE();
+	int32 size = stream.readUint32LE();
 
 	if (size+7 > stream.size())
 		return false;
@@ -322,13 +322,13 @@ Common::Archive *ResLoaderInsMalcolm::load(Resource *owner, const Common::String
 
 	// first file is the index table
 	uint32 size = stream.readUint32LE();
-	Common::String temp = "";
+	Common::String temp;
 
 	for (uint32 i = 0; i < size; ++i) {
 		byte c = stream.readByte();
 
 		if (c == '\\') {
-			temp = "";
+			temp.clear();
 		} else if (c == 0x0D) {
 			// line endings are CRLF
 			c = stream.readByte();
@@ -363,12 +363,12 @@ bool ResLoaderTlk::checkFilename(Common::String filename) const {
 
 bool ResLoaderTlk::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
 	uint16 entries = stream.readUint16LE();
-	uint32 entryTableSize = (entries * 8);
+	int32 entryTableSize = (entries * 8);
 
 	if (entryTableSize + 2 > stream.size())
 		return false;
 
-	uint32 offset = 0;
+	int32 offset = 0;
 
 	for (uint i = 0; i < entries; ++i) {
 		stream.readUint32LE();

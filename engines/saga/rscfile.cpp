@@ -121,7 +121,7 @@ bool Resource::loadSagaContext(ResourceContext *context, uint32 contextOffset, u
 			resourceData->offset = contextOffset + readS1.readUint32();
 			resourceData->size = readS1.readUint32();
 			//sanity check
-			if ((resourceData->offset > context->file->size()) || (resourceData->size > contextSize)) {
+			if ((resourceData->offset > (uint)context->file->size()) || (resourceData->size > contextSize)) {
 				result = false;
 				break;
 			}
@@ -181,8 +181,8 @@ bool Resource::loadMacContext(ResourceContext *context) {
 	macDataLength = context->file->readUint32BE();
 	macMapLength = context->file->readUint32BE();
 
-	if (macDataOffset >= context->file->size() || macMapOffset >= context->file->size() ||
-		macDataLength + macMapLength > context->file->size()) {
+	if (macDataOffset >= (uint)context->file->size() || macMapOffset >= (uint)context->file->size() ||
+		macDataLength + macMapLength > (uint)context->file->size()) {
 			return false;
 	}
 

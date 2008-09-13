@@ -497,7 +497,7 @@ enum CineSaveGameFormat detectSaveGameFormat(Common::SeekableReadStream &fHandle
 		
 		uint animEntrySize = animEntrySizeChoices[i];
 		// Jump over the animDataTable entries and the screen parameters
-		uint32 newPos = animDataTableStart + animEntrySize * animEntriesCount + sizeofScreenParams;
+		int32 newPos = animDataTableStart + animEntrySize * animEntriesCount + sizeofScreenParams;
 		// Check that there's data left after the point we're going to jump to
 		if (newPos >= fHandle.size()) {
 			continue;

@@ -181,15 +181,15 @@ uint32 DSSaveFile::read(void *buf, uint32 size) {
 	return size;
 }
 
-uint32 DSSaveFile::pos() const {
+int32 DSSaveFile::pos() const {
 	return ptr;
 }
 
-uint32 DSSaveFile::size() const {
+int32 DSSaveFile::size() const {
 	return save.size;
 }
 
-void DSSaveFile::seek(int32 pos, int whence) {
+bool DSSaveFile::seek(int32 pos, int whence) {
 	switch (whence) {
 		case SEEK_SET: {
 			ptr = pos;
@@ -204,15 +204,17 @@ void DSSaveFile::seek(int32 pos, int whence) {
 			break;
 		}
 	}
+	return true;
 }
 
 bool DSSaveFile::eos() const {
 	return ptr >= (int) save.size;
 }
 
-void DSSaveFile::skip(uint32 bytes) {
+bool DSSaveFile::skip(uint32 bytes) {
 	ptr = ptr + bytes;
 	if (ptr > (int) save.size) ptr = save.size;
+	return true;
 }
 
 uint32 DSSaveFile::write(const void *buf, uint32 size) {

@@ -43,11 +43,11 @@ public:
 	virtual uint32 write(const void *buf, uint32 size);
 	
 	virtual bool eos() const;
-	virtual void skip(uint32 bytes);
+	virtual bool skip(uint32 bytes);
 
-	virtual uint32 pos() const;
-	virtual uint32 size() const;
-	virtual void seek(int32 pos, int whence);
+	virtual int32 pos() const;
+	virtual int32 size() const;
+	virtual bool seek(int32 pos, int whence);
 	
 	void flushSaveBuffer();
 	

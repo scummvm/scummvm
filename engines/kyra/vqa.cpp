@@ -406,7 +406,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 
 		byte *inbuf, *outbuf;
 		uint32 insize, outsize;
-		uint32 end;
+		int32 end;
 
 		switch (tag) {
 		case MKID_BE('SND0'):	// Uncompressed sound
@@ -594,7 +594,7 @@ void VQAMovie::play() {
 	uint32 insize, outsize;
 
 	if (_stream) {
-		while (_file->pos() < (_frameInfo[0] & 0x7FFFFFFF)) {
+		while ((uint)_file->pos() < (_frameInfo[0] & 0x7FFFFFFF)) {
 			uint32 tag = readTag();
 			uint32 size = _file->readUint32BE();
 

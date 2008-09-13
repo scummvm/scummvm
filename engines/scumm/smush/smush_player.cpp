@@ -315,7 +315,7 @@ void SmushPlayer::release() {
 	_codec47 = 0;
 }
 
-void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, uint32 min_size) {
+void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, int32 min_size) {
 	if (type_expected != b.getType()) {
 		error("Chunk type is different from expected : %x != %x", b.getType(), type_expected);
 	}
