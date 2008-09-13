@@ -85,6 +85,7 @@ static const StringMap platformMap[] = {
 	{ "PC-Engine",		"kPlatformPCEngine" },
 	{ "SEGA",		"kPlatformSegaCD" },
 	{ "Windows",		"kPlatformWindows" },
+	{ "Wii",		"kPlatformWii" },
 
 	{ "All?",		"kPlatformUnknown" },
 	{ "All",		"kPlatformUnknown" },
