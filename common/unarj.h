@@ -31,46 +31,31 @@
 
 namespace Common {
 
-#define HEADER_ID     0xEA60
-#define HEADER_ID_HI    0xEA
-#define HEADER_ID_LO    0x60
-#define FIRST_HDR_SIZE    30
-#define FIRST_HDR_SIZE_V  34
-#define COMMENT_MAX     2048
-#define FNAME_MAX           512
-#define HEADERSIZE_MAX   (FIRST_HDR_SIZE + 10 + FNAME_MAX + COMMENT_MAX)
-#define CRC_MASK        0xFFFFFFFFL
-#define MAXSFX              25000L
+#define ARJ_UCHAR_MAX 255
+#define ARJ_CHAR_BIT 8
 
-#define CODE_BIT    16
-#define CHAR_BIT  8
-#define ARJ_UCHAR_MAX 255		// UCHAR_MAX is defined in limits.h in MSVC
-#define THRESHOLD	3
-#define DDICSIZ	  26624
-#define MAXDICBIT   16
-#define MATCHBIT	 8
-#define MAXMATCH   256
-#define NC		  (ARJ_UCHAR_MAX + MAXMATCH + 2 - THRESHOLD)
-#define NP		  (MAXDICBIT + 1)
-#define CBIT		 9
-#define NT		  (CODE_BIT + 3)
-#define PBIT		 5
-#define TBIT		 5
+#define ARJ_COMMENT_MAX 2048
+#define ARJ_FILENAME_MAX 512
 
-#if NT > NP
-#define NPT NT
+#define ARJ_CODE_BIT 16
+#define ARJ_THRESHOLD 3
+#define ARJ_DICSIZ 26624
+#define ARJ_FDICSIZ ARJ_DICSIZ
+#define ARJ_MAXDICBIT   16
+#define ARJ_MAXMATCH   256
+#define ARJ_NC (ARJ_UCHAR_MAX + ARJ_MAXMATCH + 2 - ARJ_THRESHOLD)
+#define ARJ_NP (ARJ_MAXDICBIT + 1)
+#define ARJ_NT (ARJ_CODE_BIT + 3)
+
+#if ARJ_NT > ARJ_NP
+#define ARJ_NPT ARJ_NT
 #else
-#define NPT NP
+#define ARJ_NPT ARJ_NP
 #endif
 
-#define CTABLESIZE  4096
-#define PTABLESIZE   256
+#define ARJ_CTABLESIZE 4096
+#define ARJ_PTABLESIZE 256
 
-#define STRTP		  9
-#define STOPP		 13
-
-#define STRTL		  0
-#define STOPL		  7
 
 struct ArjHeader {
 	int32 pos;
@@ -92,9 +77,8 @@ struct ArjHeader {
 	uint16 entryPos;
 	uint16 fileMode;
 	uint16 hostData;
-	char   filename[FNAME_MAX];
-	char   comment[COMMENT_MAX];
-	uint16 extHeaderSize;
+	char   filename[ARJ_FILENAME_MAX];
+	char   comment[ARJ_COMMENT_MAX];
 
 	uint32 headerCrc;
 };
@@ -143,6 +127,7 @@ private:
 	void decode_f();
 
 	uint16 _bitbuf;
+	uint16 _bytebuf;
 	int32 _compsize;
 	int32 _origsize;
 	byte _subbitbuf;
@@ -163,18 +148,18 @@ private:
 	int16 decode_len(void);
 
 private:
-	byte  _text[DDICSIZ];
+	byte  _ntext[ARJ_FDICSIZ];
 
 	int16  _getlen;
 	int16  _getbuf;
 
-	uint16 _left[2 * NC - 1];
-	uint16 _right[2 * NC - 1];
-	byte  _c_len[NC];
-	byte  _pt_len[NPT];
+	uint16 _left[2 * ARJ_NC - 1];
+	uint16 _right[2 * ARJ_NC - 1];
+	byte  _c_len[ARJ_NC];
+	byte  _pt_len[ARJ_NPT];
 
-	uint16 _c_table[CTABLESIZE];
-	uint16 _pt_table[PTABLESIZE];
+	uint16 _c_table[ARJ_CTABLESIZE];
+	uint16 _pt_table[ARJ_PTABLESIZE];
 	uint16 _blocksize;
 
 

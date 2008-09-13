@@ -23,28 +23,9 @@
  *
  */
 
-// Heavily based on Unarj 2.65
-
-/* UNARJ.C, UNARJ, R JUNG, 06/05/02
- * Main Extractor routine
- * Copyright (c) 1991-2002 by ARJ Software, Inc.  All rights reserved.
- *
- *   This code may be freely used in programs that are NOT ARJ archivers
- *   (both compress and extract ARJ archives).
- *
- *   If you wish to distribute a modified version of this program, you
- *   MUST indicate that it is a modified version both in the program and
- *   source code.
- *
- *   We are holding the copyright on the source code, so please do not
- *   delete our name from the program files or from the documentation.
- *
- *   We wish to give credit to Haruhiko Okumura for providing the
- *   basic ideas for ARJ and UNARJ in his program AR.  Please note
- *   that UNARJ is significantly different from AR from an archive
- *   structural point of view.
- *
- */
+//
+// This file is heavily based on the arj code available under the GPL
+// from http://arj.sourceforge.net/ , version 3.10.22 .
 
 #include "common/scummsys.h"
 #include "common/util.h"
@@ -52,18 +33,38 @@
 
 namespace Common {
 
+#define HEADER_ID     0xEA60
+#define HEADER_ID_HI    0xEA
+#define HEADER_ID_LO    0x60
+
+#define FIRST_HDR_SIZE    30
+#define HEADERSIZE_MAX   (FIRST_HDR_SIZE + 10 + ARJ_FILENAME_MAX + ARJ_COMMENT_MAX)
+#define CRC_MASK        0xFFFFFFFFL
+#define HSLIMIT_ARJ		524288L
+
+#define CBIT		 9
+#define PBIT		 5
+#define TBIT		 5
+
+//
+// Source for InitCRC, GetCRC: crc32.c
+//
+
 static uint32 CRCtable[256];
 
 static void	InitCRC(void) {
 	const uint32 poly = 0xEDB88320;
 	int i, j;
-	uint32 n;
+	uint32 r;
 
 	for (i = 0; i < 256; i++) {
-		n = i;
+		r = i;
 		for (j = 0; j < 8; j++)
-			n = (n & 1) ? ((n >> 1) ^ poly) : (n >> 1);
-		CRCtable[i] = n;
+			if (r & 1)
+				r = (r >> 1) ^ poly;
+			else
+				r >>= 1;
+		CRCtable[i] = r;
 	}
 }
 
@@ -124,41 +125,47 @@ void ArjFile::registerArchive(const String &filename) {
 	debug(0, "ArjFile::registerArchive(%s): Located %d files", filename.c_str(), _headers.size());
 }
 
+//
+// Source for findHeader and readHeader: arj_arcv.c
+//
+
 int32 ArjFile::findHeader(void) {
-	long arcpos, lastpos;
-	int c;
+	long end_pos, tmp_pos;
+	int id;
 	byte header[HEADERSIZE_MAX];
 	uint32 crc;
-	uint16 headersize;
+	uint16 basic_hdr_size;
 
-	arcpos = _currArchive.pos();
+	tmp_pos = _currArchive.pos();
 	_currArchive.seek(0L, SEEK_END);
-	lastpos = _currArchive.pos() - 2;
-	if (lastpos > MAXSFX)
-		lastpos = MAXSFX;
+	end_pos = _currArchive.pos() - 2;
+	if (end_pos >= tmp_pos + HSLIMIT_ARJ)
+		end_pos = tmp_pos + HSLIMIT_ARJ;
 
-	for ( ; arcpos < lastpos; arcpos++) {
-		_currArchive.seek(arcpos, SEEK_SET);
-		c = _currArchive.readByte();
-		while (arcpos < lastpos) {
-			if (c != HEADER_ID_LO)  // low order first
-				c = _currArchive.readByte();
-			else if ((c = _currArchive.readByte()) == HEADER_ID_HI)
-				break;
-			arcpos++;
+	while (tmp_pos < end_pos) {
+		_currArchive.seek(tmp_pos, SEEK_SET);
+		id = _currArchive.readByte();
+		while (tmp_pos < end_pos) {
+			if (id == HEADER_ID_LO)
+				if ((id = _currArchive.readByte()) == HEADER_ID_HI)
+					break;
+			else
+				id = _currArchive.readByte();
+			tmp_pos++;
 		}
-		if (arcpos >= lastpos)
-			break;
-		if ((headersize = _currArchive.readUint16LE()) <= HEADERSIZE_MAX) {
-			_currArchive.read(header, headersize);
-			crc = GetCRC(header, headersize);
+		if (tmp_pos >= end_pos)
+			return -1;
+		if ((basic_hdr_size = _currArchive.readUint16LE()) <= HEADERSIZE_MAX) {
+			_currArchive.read(header, basic_hdr_size);
+			crc = GetCRC(header, basic_hdr_size);
 			if (crc == _currArchive.readUint32LE()) {
-				_currArchive.seek(arcpos, SEEK_SET);
-				return arcpos;
+				_currArchive.seek(tmp_pos, SEEK_SET);
+				return tmp_pos;
 			}
 		}
+		tmp_pos++;
 	}
-	return -1;		  // could not find a valid header
+	return -1;
 }
 
 ArjHeader *ArjFile::readHeader() {
@@ -166,6 +173,7 @@ ArjHeader *ArjFile::readHeader() {
 	ArjHeader *head;
 	byte headData[HEADERSIZE_MAX];
 
+	// Strictly check the header ID
 	header.id = _currArchive.readUint16LE();
 	if (header.id != HEADER_ID) {
 		warning("ArjFile::readHeader(): Bad header ID (%x)", header.id);
@@ -199,7 +207,7 @@ ArjHeader *ArjFile::readHeader() {
 	header.flags = readS.readByte();
 	header.method = readS.readByte();
 	header.fileType = readS.readByte();
-	(void)readS.readByte();
+	(void)readS.readByte(); // password_modifier
 	header.timeStamp = readS.readUint32LE();
 	header.compSize = readS.readSint32LE();
 	header.origSize = readS.readSint32LE();
@@ -208,20 +216,20 @@ ArjHeader *ArjFile::readHeader() {
 	header.fileMode = readS.readUint16LE();
 	header.hostData = readS.readUint16LE();
 
+	// static int check_file_size()
 	if (header.origSize < 0 || header.compSize < 0) {
 		warning("ArjFile::readHeader(): Wrong file size");
 		return NULL;
 	}
 
-	strncpy(header.filename, (const char *)&headData[header.firstHdrSize], FNAME_MAX);
+	strncpy(header.filename, (const char *)&headData[header.firstHdrSize], ARJ_FILENAME_MAX);
 
-	strncpy(header.comment, (const char *)&headData[header.firstHdrSize + strlen(header.filename) + 1], COMMENT_MAX);
+	strncpy(header.comment, (const char *)&headData[header.firstHdrSize + strlen(header.filename) + 1], ARJ_COMMENT_MAX);
 
-	/* if extheadersize == 0 then no CRC */
-	/* otherwise read extheader data and read 4 bytes for CRC */
-
-	while ((header.extHeaderSize = _currArchive.readUint16LE()) != 0)
-		_currArchive.seek((long)(header.extHeaderSize + 4), SEEK_CUR);
+    // Process extended headers, if any
+    uint16 extHeaderSize;
+	while ((extHeaderSize = _currArchive.readUint16LE()) != 0)
+		_currArchive.seek((long)(extHeaderSize + 4), SEEK_CUR);
 
 	header.pos = _currArchive.pos();
 
@@ -332,41 +340,58 @@ bool ArjFile::seek(int32 offset, int whence) {
 	return _uncompressed->seek(offset, whence);
 }
 
+//
+// Source for init_getbits: arj_file.c (decode_start_stub)
+//
+
 void ArjFile::init_getbits() {
 	_bitbuf = 0;
-	_subbitbuf = 0;
+	_bytebuf = 0;
 	_bitcount = 0;
-	fillbuf(2 * CHAR_BIT);
+	fillbuf(ARJ_CHAR_BIT * 2);
 }
 
-void ArjFile::fillbuf(int n) {    // Shift bitbuf n bits left, read n bits
-	_bitbuf = (_bitbuf << n) & 0xFFFF;  /* lose the first n bits */
-	while (n > _bitcount) {
-		_bitbuf |= _subbitbuf << (n -= _bitcount);
-		if (_compsize != 0) {
+//
+// Source for fillbuf, getbits: decode.c 
+//
+
+void ArjFile::fillbuf(int n) {
+	while (_bitcount < n) {
+		_bitbuf = (_bitbuf << _bitcount) | (_bytebuf >> (8 - _bitcount));
+		n -= _bitcount;
+		if (_compsize > 0) {
 			_compsize--;
-			_subbitbuf = _compressed->readByte();
-		} else
-			_subbitbuf = 0;
-		_bitcount = CHAR_BIT;
+			_bytebuf = _compressed->readByte();
+		} else {
+			_bytebuf = 0;
+		}
+		_bitcount = 8;
 	}
-	_bitbuf |= _subbitbuf >> (_bitcount -= n);
+	_bitcount -= n;
+	_bitbuf = ( _bitbuf << n) | (_bytebuf >> (8-n));
+	_bytebuf <<= n;
 }
 
+// Reads a series of bits into the input buffer */
 uint16 ArjFile::getbits(int n) {
-	uint16 x;
+	uint16 rc;
 
-	x = _bitbuf >> (2 * CHAR_BIT - n);
+	rc = _bitbuf >> (ARJ_CODE_BIT - n);
 	fillbuf(n);
-	return x;
+	return rc;
 }
 
 
 
-/* Huffman decode routines */
+//
+// Huffman decode routines
+// Source: decode.c
+//
 
+// Creates a table for decoding
 void ArjFile::make_table(int nchar, byte *bitlen, int tablebits, uint16 *table, int tablesize) {
-	uint16 count[17], weight[17], start[18], *p;
+	uint16 count[17], weight[17], start[18];
+	uint16 *p;
 	uint i, k, len, ch, jutbits, avail, nextcode, mask;
 
 	for (i = 1; i <= 16; i++)
@@ -415,7 +440,8 @@ void ArjFile::make_table(int nchar, byte *bitlen, int tablebits, uint16 *table, 
 			while (i != 0) {
 				if (*p == 0) {
 					_right[avail] = _left[avail] = 0;
-					*p = avail++;
+					*p = avail;
+					avail++;
 				}
 				if (k & mask)
 					p = &_right[*p];
@@ -430,6 +456,7 @@ void ArjFile::make_table(int nchar, byte *bitlen, int tablebits, uint16 *table, 
 	}
 }
 
+// Reads length of data pending
 void ArjFile::read_pt_len(int nn, int nbit, int i_special) {
 	int i, n;
 	int16 c;
@@ -445,9 +472,9 @@ void ArjFile::read_pt_len(int nn, int nbit, int i_special) {
 	} else {
 		i = 0;
 		while (i < n) {
-			c = _bitbuf >> (13);
+			c = _bitbuf >> 13;
 			if (c == 7) {
-				mask = 1 << (12);
+				mask = 1 << 12;
 				while (mask & _bitbuf) {
 					mask >>= 1;
 					c++;
@@ -463,10 +490,11 @@ void ArjFile::read_pt_len(int nn, int nbit, int i_special) {
 		}
 		while (i < nn)
 			_pt_len[i++] = 0;
-		make_table(nn, _pt_len, 8, _pt_table, PTABLESIZE);  // replaced sizeof
+		make_table(nn, _pt_len, 8, _pt_table, ARJ_PTABLESIZE);
 	}
 }
 
+// Reads a character table
 void ArjFile::read_c_len() {
 	int16 i, c, n;
 	uint16 mask;
@@ -474,82 +502,87 @@ void ArjFile::read_c_len() {
 	n = getbits(CBIT);
 	if (n == 0) {
 		c = getbits(CBIT);
-		for (i = 0; i < NC; i++)
+		for (i = 0; i < ARJ_NC; i++)
 			_c_len[i] = 0;
-		for (i = 0; i < CTABLESIZE; i++)
+		for (i = 0; i < ARJ_CTABLESIZE; i++)
 			_c_table[i] = c;
 	} else {
 		i = 0;
 		while (i < n) {
 			c = _pt_table[_bitbuf >> (8)];
-			if (c >= NT) {
-				mask = 1 << (7);
+			if (c >= ARJ_NT) {
+				mask = 1 << 7;
 				do {
 					if (_bitbuf & mask)
 						c = _right[c];
 					else
 						c = _left[c];
 					mask >>= 1;
-				} while (c >= NT);
+				} while (c >= ARJ_NT);
 			}
 			fillbuf((int)(_pt_len[c]));
 			if (c <= 2) {
 				if (c == 0)
 					c = 1;
-				else if (c == 1)
-					c = getbits(4) + 3;
-				else
-					c = getbits(CBIT) + 20;
+				else if (c == 1) {
+					c = getbits(4);
+					c += 3;
+				} else {
+					c = getbits(CBIT);
+					c += 20;
+				}
 				while (--c >= 0)
 					_c_len[i++] = 0;
 			}
 			else
 				_c_len[i++] = (byte)(c - 2);
 		}
-		while (i < NC)
+		while (i < ARJ_NC)
 			_c_len[i++] = 0;
-		make_table(NC, _c_len, 12, _c_table, CTABLESIZE);  // replaced sizeof
+		make_table(ARJ_NC, _c_len, 12, _c_table, ARJ_CTABLESIZE);
 	}
 }
 
+// Decodes a single character
 uint16 ArjFile::decode_c() {
 	uint16 j, mask;
 
 	if (_blocksize == 0) {
-		_blocksize = getbits(16);
-		read_pt_len(NT, TBIT, 3);
+		_blocksize = getbits(ARJ_CODE_BIT);
+		read_pt_len(ARJ_NT, TBIT, 3);
 		read_c_len();
-		read_pt_len(NP, PBIT, -1);
+		read_pt_len(ARJ_NP, PBIT, -1);
 	}
 	_blocksize--;
 	j = _c_table[_bitbuf >> 4];
-	if (j >= NC) {
-		mask = 1 << (3);
+	if (j >= ARJ_NC) {
+		mask = 1 << 3;
 		do {
 			if (_bitbuf & mask)
 				j = _right[j];
 			else
 				j = _left[j];
 			mask >>= 1;
-		} while (j >= NC);
+		} while (j >= ARJ_NC);
 	}
 	fillbuf((int)(_c_len[j]));
 	return j;
 }
 
+// Decodes a control character
 uint16 ArjFile::decode_p() {
 	uint16 j, mask;
 
-	j = _pt_table[_bitbuf >> (8)];
-	if (j >= NP) {
-		mask = 1 << (7);
+	j = _pt_table[_bitbuf >> 8];
+	if (j >= ARJ_NP) {
+		mask = 1 << 7;
 		do {
 			if (_bitbuf & mask)
 				j = _right[j];
 			else
 				j = _left[j];
 			mask >>= 1;
-		} while (j >= NP);
+		} while (j >= ARJ_NP);
 	}
 	fillbuf((int)(_pt_len[j]));
 	if (j != 0) {
@@ -559,63 +592,59 @@ uint16 ArjFile::decode_p() {
 	return j;
 }
 
+// Initializes memory for decoding
 void ArjFile::decode_start() {
 	_blocksize = 0;
 	init_getbits();
 }
 
+// Decodes the entire file
 void ArjFile::decode() {
 	int16 i;
-	int16 j;
-	int16 c;
 	int16 r;
+	int16 c;
+	int16 j;
 	int32 count;
 
 	decode_start();
-	count = 0;
+	count = _origsize;
 	r = 0;
 
-	while (count < _origsize) {
+	while (count > 0) {
 		if ((c = decode_c()) <= ARJ_UCHAR_MAX) {
-			_text[r] = (byte) c;
-			count++;
-			if (++r >= DDICSIZ) {
+			_ntext[r] = (byte) c;
+			count--;
+			if (++r >= ARJ_DICSIZ) {
 				r = 0;
-				_outstream->write(_text, DDICSIZ);
+				_outstream->write(_ntext, ARJ_DICSIZ);
 			}
 		} else {
-			j = c - (ARJ_UCHAR_MAX + 1 - THRESHOLD);
-			count += j;
-			i = decode_p();
-			if ((i = r - i - 1) < 0)
-				i += DDICSIZ;
-			if (r > i && r < DDICSIZ - MAXMATCH - 1) {
+			j = c - (ARJ_UCHAR_MAX + 1 - ARJ_THRESHOLD);
+			count -= j;
+			i = r - decode_p() - 1;
+			if (i < 0)
+				i += ARJ_DICSIZ;
+			if (r > i && r < ARJ_DICSIZ - ARJ_MAXMATCH - 1) {
 				while (--j >= 0)
-					_text[r++] = _text[i++];
+					_ntext[r++] = _ntext[i++];
 			} else {
 				while (--j >= 0) {
-					_text[r] = _text[i];
-					if (++r >= DDICSIZ) {
+					_ntext[r] = _ntext[i];
+					if (++r >= ARJ_DICSIZ) {
 						r = 0;
-						_outstream->write(_text, DDICSIZ);
+						_outstream->write(_ntext, ARJ_DICSIZ);
 					}
-					if (++i >= DDICSIZ)
+					if (++i >= ARJ_DICSIZ)
 						i = 0;
 				}
 			}
 		}
 	}
-	if (r != 0)
-		_outstream->write(_text, r);
+	if (r > 0)
+		_outstream->write(_ntext, r);
 }
 
-/* Macros */
-
-#define BFIL {_getbuf|=_bitbuf>>_getlen;fillbuf(CODE_BIT-_getlen);_getlen=CODE_BIT;}
-#define GETBIT(c) {if(_getlen<=0)BFIL c=(_getbuf&0x8000)!=0;_getbuf<<=1;_getlen--;}
-#define BPUL(l) {_getbuf<<=l;_getlen-=l;}
-#define GETBITS(c,l) {if(_getlen<l)BFIL c=(uint16)_getbuf>>(CODE_BIT-l);BPUL(l)}
-
+// Backward pointer decoding
 int16 ArjFile::decode_ptr() {
 	int16 c = 0;
 	int16 width;
@@ -623,20 +652,21 @@ int16 ArjFile::decode_ptr() {
 	int16 pwr;
 
 	plus = 0;
-	pwr = 1 << (STRTP);
-	for (width = (STRTP); width < (STOPP); width++) {
-		GETBIT(c);
+	pwr = 1 << 9; 
+	for (width = 9; width < 13; width++) {
+		c = getbits(1);
 		if (c == 0)
 			break;
 		plus += pwr;
 		pwr <<= 1;
 	}
 	if (width != 0)
-		GETBITS(c, width);
+		c = getbits(width);
 	c += plus;
 	return c;
 }
 
+// Reference length decoding
 int16 ArjFile::decode_len() {
 	int16 c = 0;
 	int16 width;
@@ -644,62 +674,60 @@ int16 ArjFile::decode_len() {
 	int16 pwr;
 
 	plus = 0;
-	pwr = 1 << (STRTL);
-	for (width = (STRTL); width < (STOPL); width++) {
-		GETBIT(c);
+	pwr = 1;
+	for (width = 0; width < 7; width++) {
+		c = getbits(1);
 		if (c == 0)
 			break;
 		plus += pwr;
 		pwr <<= 1;
 	}
 	if (width != 0)
-		GETBITS(c, width);
+		c = getbits(width);
 	c += plus;
 	return c;
 }
 
+// Decodes the entire file, using method 4
 void ArjFile::decode_f() {
 	int16 i;
 	int16 j;
 	int16 c;
 	int16 r;
-	int16 pos1;
-	int32 count;
+	uint32 ncount;
 
 	init_getbits();
+	ncount = 0;
 	_getlen = _getbuf = 0;
-	count = 0;
 	r = 0;
 
-	while (count < _origsize) {
+	while (ncount < (uint32)_origsize) {
 		c = decode_len();
 		if (c == 0) {
-			GETBITS(c, CHAR_BIT);
-			_text[r] = (byte)c;
-			count++;
-			if (++r >= DDICSIZ) {
+			ncount++;
+			_ntext[r] = (byte)getbits(8);
+			if (++r >= ARJ_FDICSIZ) {
 				r = 0;
-				_outstream->write(_text, DDICSIZ);
+				_outstream->write(_ntext, ARJ_FDICSIZ);
 			}
 		} else {
-			j = c - 1 + THRESHOLD;
-			count += j;
-			pos1 = decode_ptr();
-			if ((i = r - pos1 - 1) < 0)
-				i += DDICSIZ;
+			j = c - 1 + ARJ_THRESHOLD;
+			ncount += j;
+			if ((i = r - decode_ptr() - 1) < 0)
+				i += ARJ_FDICSIZ;
 			while (j-- > 0) {
-				_text[r] = _text[i];
-				if (++r >= DDICSIZ) {
+				_ntext[r] = _ntext[i];
+				if (++r >= ARJ_FDICSIZ) {
 					r = 0;
-					_outstream->write(_text, DDICSIZ);
+					_outstream->write(_ntext, ARJ_FDICSIZ);
 				}
-				if (++i >= DDICSIZ)
+				if (++i >= ARJ_FDICSIZ)
 					i = 0;
 			}
 		}
 	}
 	if (r != 0)
-		_outstream->write(_text, r);
+		_outstream->write(_ntext, r);
 }
 
 
