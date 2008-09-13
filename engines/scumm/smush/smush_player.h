@@ -51,7 +51,7 @@ private:
 	StringResource *_strings;
 	Codec37Decoder *_codec37;
 	Codec47Decoder *_codec47;
-	FileChunk *_base;
+	Chunk *_base;
 	byte *_frameBuffer;
 	byte *_specialBuffer;
 

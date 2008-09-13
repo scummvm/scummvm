@@ -66,7 +66,8 @@ bool Chunk::seek(int32 delta, int dir) {
 	return true;
 }
 
-FileChunk::FileChunk(BaseScummFile *data, int offset) {
+Chunk::Chunk(BaseScummFile *data, int offset)
+ : _type(0), _size(0), _curPos(0) {
 	_data = data;
 	_deleteData = false;
 
@@ -77,11 +78,12 @@ FileChunk::FileChunk(BaseScummFile *data, int offset) {
 	_curPos = 0;
 }
 
-FileChunk::FileChunk(const Common::String &name, int offset) {
+Chunk::Chunk(const Common::String &name, int offset)
+ : _type(0), _size(0), _curPos(0) {
 	_data = new ScummFile();
 	_deleteData = true;
 	if (!g_scumm->openFile(*_data, name))
-		error("FileChunk: Unable to open file %s", name.c_str());
+		error("Chunk: Unable to open file %s", name.c_str());
 
 	_data->seek(offset, SEEK_SET);
 	_type = _data->readUint32BE();
@@ -91,22 +93,22 @@ FileChunk::FileChunk(const Common::String &name, int offset) {
 	_name = name;
 }
 
-FileChunk::~FileChunk() {
+Chunk::~Chunk() {
 	if (_deleteData)
 		delete _data;
 }
 
-Chunk *FileChunk::subBlock() {
-	FileChunk *ptr = new FileChunk(_data, _offset + _curPos);
+Chunk *Chunk::subBlock() {
+	Chunk *ptr = new Chunk(_data, _offset + _curPos);
 	skip(sizeof(Chunk::type) + sizeof(uint32) + ptr->size());
 	return ptr;
 }
 
-void FileChunk::reseek() {
+void Chunk::reseek() {
 	_data->seek(_offset + _curPos, SEEK_SET);
 }
 
-uint32 FileChunk::read(void *buffer, uint32 dataSize) {
+uint32 Chunk::read(void *buffer, uint32 dataSize) {
 	if (dataSize <= 0 || (_curPos + dataSize) > _size)
 		error("invalid buffer read request");
 

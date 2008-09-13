@@ -34,7 +34,6 @@ namespace Scumm {
 
 class BaseScummFile;
 
-// Common functionality for concrete chunks (FileChunk, MemoryChunk)
 class Chunk : public Common::SeekableReadStream {
 public:
 	typedef uint32 type;
@@ -45,32 +44,24 @@ protected:
 	uint32 _curPos;
 	Common::String _name;
 
-	Chunk() : _type(0), _size(0), _curPos(0) {}
-
-
-public:
-	Chunk::type getType() const { return _type; }
-	int32 size() const { return _size; }
-	bool eos() const { return _curPos >= _size; }
-	int32 pos() const { return _curPos; }
-	bool seek(int32 delta, int dir);
-
-	virtual Chunk *subBlock() = 0;
-	virtual void reseek() = 0;
-};
-
-class FileChunk : public Chunk {
-private:
 	BaseScummFile *_data;
 	bool _deleteData;
 	uint32 _offset;
 
-	FileChunk(BaseScummFile *data, int offset);
+	Chunk(BaseScummFile *data, int offset);
+
 public:
-	FileChunk(const Common::String &name, int offset = 0);
-	virtual ~FileChunk();
+	Chunk(const Common::String &name, int offset = 0);
+	virtual ~Chunk();
+
+	Chunk::type getType() const { return _type; }
 	Chunk *subBlock();
 	void reseek();
+
+	int32 size() const { return _size; }
+	bool eos() const { return _curPos >= _size; }
+	int32 pos() const { return _curPos; }
+	bool seek(int32 delta, int dir);
 	uint32 read(void *buffer, uint32 size);
 };
 

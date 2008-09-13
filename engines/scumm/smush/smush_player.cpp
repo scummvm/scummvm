@@ -992,7 +992,7 @@ void SmushPlayer::parseNextFrame() {
 
 		if (_seekFile.size() > 0) {
 			delete _base;
-			_base = new FileChunk(_seekFile);
+			_base = new Chunk(_seekFile);
 
 			if (_seekPos > 0) {
 				assert(_seekPos > 8);
