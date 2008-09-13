@@ -32,7 +32,7 @@
 :"ScummVM"
 
 ; UID is the app's UID
-#{"ScummVM UIQ3"},(0xA0000657),0,130,0
+#{"ScummVM UIQ3"},(0xA0000657),0,13,0
 
 ; ProductID for UIQ 3.0
 ; Product/platform version UID, Major, Minor, Build, Product ID
