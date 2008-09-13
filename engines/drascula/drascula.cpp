@@ -714,7 +714,7 @@ void DrasculaEngine::updateEvents() {
 #else
 	while (eventMan->pollEvent(event)) {
 #endif
-	switch (event.type) {
+		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_keyPressed = event.kbd;
 			break;

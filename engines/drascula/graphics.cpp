@@ -228,15 +228,15 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 				letterX = _charMap[i].mappedChar;
 
 				switch (_charMap[i].charType) {
-					case 0:		// letters
-						letterY = (_lang == kSpanish) ? 149 : 158;
-						break;
-					case 1:		// signs
-						letterY = (_lang == kSpanish) ? 160 : 169;
-						break;
-					case 2:		// accented
-						letterY = 180;
-						break;
+				case 0:		// letters
+					letterY = (_lang == kSpanish) ? 149 : 158;
+					break;
+				case 1:		// signs
+					letterY = (_lang == kSpanish) ? 160 : 169;
+					break;
+				case 2:		// accented
+					letterY = 180;
+					break;
 				}	// switch
 				break;
 			}	// if

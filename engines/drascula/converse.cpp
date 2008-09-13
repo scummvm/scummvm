@@ -43,83 +43,83 @@ void DrasculaEngine::playTalkSequence(int sequence) {
 
 void DrasculaEngine::doTalkSequenceCommand(TalkSequenceCommand cmd) {
 	switch (cmd.commandType) {
-		case kPause:
-			pause(cmd.action);
-			break;
-		case kSetFlag:
-			flags[cmd.action] = 1;
-			break;
-		case kClearFlag:
-			flags[cmd.action] = 0;
-			break;
-		case kPickObject:
-			pickObject(cmd.action);
-			break;
-		case kAddObject:
-			addObject(cmd.action);
-			break;
-		case kBreakOut:
-			breakOut = 1;
-			break;
-		case kConverse:
-			converse(cmd.action);
-			break;
-		case kPlaceVB:
-			placeVonBraun(cmd.action);
-			break;
-		case kUpdateRoom:
-			updateRoom();
-			break;
-		case kUpdateScreen:
-			updateScreen();
-			break;
-		case kTrackProtagonist:
-			trackProtagonist = cmd.action;
-			break;
-		case kPlaySound:
-			playSound(cmd.action);
-			break;
-		case kFinishSound:
-			finishSound();
-			break;
-		case kTalkerGeneral:
-			talk(cmd.action);
-			break;
-		case kTalkerDrunk:
-			talk_drunk(cmd.action);
-			break;
-		case kTalkerPianist:
-			talk_pianist(cmd.action);
-			break;
-		case kTalkerBJ:
-			talk_bj(cmd.action);
-			break;
-		case kTalkerVBNormal:
-			talk_vonBraun(cmd.action, kVonBraunNormal);
-			break;
-		case kTalkerVBDoor:
-			talk_vonBraun(cmd.action, kVonBraunDoor);
-			break;
-		case kTalkerIgorSeated:
-			talk_igor(cmd.action, kIgorSeated);
-			break;
-		case kTalkerWerewolf:
-			talk_werewolf(cmd.action);
-			break;
-		case kTalkerMus:
-			talk_mus(cmd.action);
-			break;
-		case kTalkerDrascula:
-			talk_drascula(cmd.action, 1);
-			break;
-		case kTalkerBartender0:
-			talk_bartender(cmd.action, 0);
-			break;
-		case kTalkerBartender1:
-			talk_bartender(cmd.action, 1);
-			break;
-		default:
-			error("doTalkSequenceCommand: Unknown command: %d", cmd.commandType);
+	case kPause:
+		pause(cmd.action);
+		break;
+	case kSetFlag:
+		flags[cmd.action] = 1;
+		break;
+	case kClearFlag:
+		flags[cmd.action] = 0;
+		break;
+	case kPickObject:
+		pickObject(cmd.action);
+		break;
+	case kAddObject:
+		addObject(cmd.action);
+		break;
+	case kBreakOut:
+		breakOut = 1;
+		break;
+	case kConverse:
+		converse(cmd.action);
+		break;
+	case kPlaceVB:
+		placeVonBraun(cmd.action);
+		break;
+	case kUpdateRoom:
+		updateRoom();
+		break;
+	case kUpdateScreen:
+		updateScreen();
+		break;
+	case kTrackProtagonist:
+		trackProtagonist = cmd.action;
+		break;
+	case kPlaySound:
+		playSound(cmd.action);
+		break;
+	case kFinishSound:
+		finishSound();
+		break;
+	case kTalkerGeneral:
+		talk(cmd.action);
+		break;
+	case kTalkerDrunk:
+		talk_drunk(cmd.action);
+		break;
+	case kTalkerPianist:
+		talk_pianist(cmd.action);
+		break;
+	case kTalkerBJ:
+		talk_bj(cmd.action);
+		break;
+	case kTalkerVBNormal:
+		talk_vonBraun(cmd.action, kVonBraunNormal);
+		break;
+	case kTalkerVBDoor:
+		talk_vonBraun(cmd.action, kVonBraunDoor);
+		break;
+	case kTalkerIgorSeated:
+		talk_igor(cmd.action, kIgorSeated);
+		break;
+	case kTalkerWerewolf:
+		talk_werewolf(cmd.action);
+		break;
+	case kTalkerMus:
+		talk_mus(cmd.action);
+		break;
+	case kTalkerDrascula:
+		talk_drascula(cmd.action, 1);
+		break;
+	case kTalkerBartender0:
+		talk_bartender(cmd.action, 0);
+		break;
+	case kTalkerBartender1:
+		talk_bartender(cmd.action, 1);
+		break;
+	default:
+		error("doTalkSequenceCommand: Unknown command: %d", cmd.commandType);
 	}
 }
 

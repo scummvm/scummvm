@@ -30,13 +30,13 @@ namespace Drascula {
 
 void DrasculaEngine::setCursor(int cursor) {
 	switch (cursor) {
-		case kCursorCrosshair:
-			CursorMan.replaceCursor((const byte *)crosshairCursor, 40, 25, 20, 17);
-			break;
-		case kCursorCurrentItem:
-			CursorMan.replaceCursor((const byte *)mouseCursor, OBJWIDTH, OBJHEIGHT, 20, 17);
-		default:
-			break;
+	case kCursorCrosshair:
+		CursorMan.replaceCursor((const byte *)crosshairCursor, 40, 25, 20, 17);
+		break;
+	case kCursorCurrentItem:
+		CursorMan.replaceCursor((const byte *)mouseCursor, OBJWIDTH, OBJHEIGHT, 20, 17);
+	default:
+		break;
 	}
 }
 
