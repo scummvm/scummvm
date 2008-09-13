@@ -320,6 +320,8 @@ protected:
 	virtual bool handleNextCharsetCode(Actor *a, int *c);
 	virtual int convertMessageToString(const byte *msg, byte *dst, int dstSize);
 
+	void debugInput(byte *string);
+
 	/* HE version 72 script opcodes */
 	void o72_pushDWord();
 	void o72_getScriptString();
@@ -602,8 +604,11 @@ protected:
 
 	const OpcodeEntryV100he *_opcodesV100he;
 
+	byte _debugInputBuffer[256];
 public:
 	ScummEngine_v100he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v99he(syst, dr) {}
+
+	virtual void resetScumm();
 
 protected:
 	virtual void setupOpcodes();
@@ -643,6 +648,7 @@ protected:
 	void o100_videoOps();
 	void o100_wait();
 	void o100_writeFile();
+	void o100_debugInput();
 	void o100_isResourceLoaded();
 	void o100_getResourceSize();
 	void o100_getSpriteGroupInfo();

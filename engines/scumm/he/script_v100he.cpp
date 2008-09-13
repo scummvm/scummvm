@@ -29,6 +29,7 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/dialogs.h"
 #include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
@@ -256,7 +257,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o90_cond),
 		OPCODE(o90_cos),
 		/* A8 */
-		OPCODE(o6_invalid),
+		OPCODE(o100_debugInput),
 		OPCODE(o80_getFileSize),
 		OPCODE(o6_getActorFromXY),
 		OPCODE(o72_findAllObjects),
@@ -2339,6 +2340,30 @@ void ScummEngine_v100he::o100_writeFile() {
 		break;
 	default:
 		error("o100_writeFile: default case %d", subOp);
+	}
+}
+
+void ScummEngine_v100he::o100_debugInput() {
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 0:
+		copyScriptString(_debugInputBuffer, sizeof(_debugInputBuffer));
+		break;
+	case 26:
+		pop();
+		break;
+	case 27:
+		copyScriptString(_debugInputBuffer, sizeof(_debugInputBuffer));
+		break;
+	case 80:
+		copyScriptString(_debugInputBuffer, sizeof(_debugInputBuffer));
+		break;
+	case 92:
+		debugInput(_debugInputBuffer);
+		break;
+	default:
+		error("o100_debugInput: default case %d", subOp);
 	}
 }
 
