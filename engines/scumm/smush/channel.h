@@ -28,10 +28,11 @@
 
 #include "common/util.h"
 
-namespace Scumm {
+namespace Common {
+	class SeekableReadStream;
+}
 
-class Chunk;
-class ContChunk;
+namespace Scumm {
 
 class SmushChannel {
 protected:
@@ -55,7 +56,7 @@ protected:
 public:
 	SmushChannel(int32 track);
 	virtual ~SmushChannel();
-	virtual bool appendData(Chunk &b, int32 size) = 0;
+	virtual bool appendData(Common::SeekableReadStream &b, int32 size) = 0;
 	virtual bool setParameters(int32, int32, int32, int32, int32) = 0;
 	virtual bool checkParameters(int32, int32, int32, int32, int32) = 0;
 	virtual bool isTerminated() const = 0;
@@ -83,7 +84,7 @@ public:
 	bool isTerminated() const;
 	bool setParameters(int32 duration, int32 flags, int32 vol1, int32 vol2, int32 index);
 	bool checkParameters(int32 index, int32 duration, int32 flags, int32 vol1, int32 vol2);
-	bool appendData(Chunk &b, int32 size);
+	bool appendData(Common::SeekableReadStream &b, int32 size);
 	byte *getSoundData();
 	int32 getRate() { return 22050; }
 	bool getParameters(bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) {
@@ -113,7 +114,7 @@ public:
 	bool isTerminated() const;
 	bool setParameters(int32 nbframes, int32 size, int32 track_flags, int32 unk1, int32);
 	bool checkParameters(int32 index, int32 nbframes, int32 size, int32 track_flags, int32 unk1);
-	bool appendData(Chunk &b, int32 size);
+	bool appendData(Common::SeekableReadStream &b, int32 size);
 	byte *getSoundData();
 	int32 getRate() { return _rate; }
 	bool getParameters(bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) {

@@ -31,7 +31,6 @@
 #include "scumm/nut_renderer.h"
 
 #include "scumm/smush/smush_player.h"
-#include "scumm/smush/chunk.h"
 
 namespace Scumm {
 
@@ -67,9 +66,9 @@ class Insane {
 	void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						   int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				  int32 setupsan13, Chunk &b, int32 size, int32 flags, int16 par1,
+				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags, int16 par1,
 				  int16 par2, int16 par3, int16 par4);
-	void procSKIP(Chunk &b);
+	void procSKIP(int32 subSize, Common::SeekableReadStream &b);
 	void escapeKeyHandler(void);
 
  private:
@@ -434,22 +433,22 @@ class Insane {
 	void ouchSoundEnemy(void);
 	bool weaponEnemyIsEffective(void);
 	void iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 				  int16 par1, int16 par2, int16 par3, int16 par4);
 	void iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 				  int16 command, int16 par1, int16, int16);
 	void iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 				  int16 par1, int16 par2, int16 par3, int16 par4);
 	void iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 				  int16 par1, int16 par2, int16 par3, int16 par4);
 	void iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 				  int16 par1, int16 par2, int16 par3, int16 par4);
 	void iactScene21(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 				  int16 par1, int16 par2, int16 par3, int16 par4);
 	bool isBitSet(int n);
 	void setBit(int n);

@@ -29,7 +29,6 @@
 #include "scumm/scumm.h"	// For DEBUG_SMUSH
 #include "scumm/util.h"
 #include "scumm/smush/channel.h"
-#include "scumm/smush/chunk.h"
 
 namespace Scumm {
 
@@ -60,10 +59,10 @@ bool ImuseChannel::checkParameters(int32 index, int32 nbframes, int32 size, int3
 	return true;
 }
 
-bool ImuseChannel::appendData(Chunk &b, int32 size) {
+bool ImuseChannel::appendData(Common::SeekableReadStream &b, int32 size) {
 	if (_dataSize == -1) {
 		assert(size > 8);
-		Chunk::type imus_type = b.readUint32BE();
+		uint32 imus_type = b.readUint32BE();
 		/*uint32 imus_size =*/ b.readUint32BE();
 		if (imus_type != MKID_BE('iMUS'))
 			error("Invalid Chunk for imuse_channel");
@@ -197,7 +196,7 @@ void ImuseChannel::decode() {
 
 bool ImuseChannel::handleSubTags(int32 &offset) {
 	if (_tbufferSize - offset >= 8) {
-		Chunk::type type = READ_BE_UINT32(_tbuffer + offset);
+		uint32 type = READ_BE_UINT32(_tbuffer + offset);
 		uint32 size = READ_BE_UINT32(_tbuffer + offset + 4);
 		uint32 available_size = _tbufferSize - offset;
 		switch (type) {

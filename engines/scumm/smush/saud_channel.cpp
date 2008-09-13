@@ -25,10 +25,10 @@
 
 
 #include "common/endian.h"
+#include "common/stream.h"
 
 #include "scumm/util.h"
 #include "scumm/smush/channel.h"
-#include "scumm/smush/chunk.h"
 
 namespace Scumm {
 
@@ -45,7 +45,7 @@ bool SaudChannel::isTerminated() const {
 
 bool SaudChannel::handleSubTags(int32 &offset) {
 	if (_tbufferSize - offset >= 8) {
-		Chunk::type type = READ_BE_UINT32(_tbuffer + offset);
+		uint32 type = READ_BE_UINT32(_tbuffer + offset);
 		uint32 size = READ_BE_UINT32(_tbuffer + offset + 4);
 		uint32 available_size = _tbufferSize - offset;
 
@@ -121,10 +121,10 @@ bool SaudChannel::checkParameters(int32 index, int32 nb, int32 flags, int32 volu
 	return true;
 }
 
-bool SaudChannel::appendData(Chunk &b, int32 size) {
+bool SaudChannel::appendData(Common::SeekableReadStream &b, int32 size) {
 	if (_dataSize == -1) {
 		assert(size > 8);
-		Chunk::type saud_type = b.readUint32BE();
+		uint32 saud_type = b.readUint32BE();
 		/*uint32 saud_size =*/ b.readUint32BE();
 		if (saud_type != MKID_BE('SAUD'))
 			error("Invalid Chunk for SaudChannel : %X", saud_type);
