@@ -187,10 +187,10 @@ endif
 
 LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -Wl,--wrap,time -mno-fpu -Wl,-Map,map.txt
 
-INCLUDES= -I./ -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/common -I$(portdir)/source \
-			-I$(portdir)/data -I$(libndsdir)/include -I$(portdir)/../commoninclude\
-			-I$(libndsdir)/include -I$(libndsdir)/include/nds -I$(srcdir)/engines -I$(portdir)/source/mad\
-			-I$(portdir)/source/libcartreset -include $(srcdir)/common/scummsys.h
+INCLUDES= -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/engines \
+			-I$(portdir)/data -I$(portdir)/../commoninclude \
+			-I$(portdir)/source -I$(portdir)/source/mad -I$(portdir)/source/libcartreset \
+			-I$(libndsdir)/include -include $(srcdir)/common/scummsys.h
 
 
 LIBS	= -lm -L$(libndsdir)/lib -L$(portdir)/lib -lnds9
@@ -338,36 +338,17 @@ endef
 ##############
 # Replacement rule for the one in makefile.common
 ##############
-ifndef HAVE_GCC3
-# If you use GCC, disable the above and enable this for intelligent
-# dependency tracking.
-#.cpp.o:
-%.o:%.cpp
-	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-#	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
-	$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
-	$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
-else
-# If you even have GCC 3.x, you can use this build rule, which is safer; the above
-# rule can get you into a bad state if you Ctrl-C at the wrong moment.
-# Also, with this GCC inserts additional dummy rules for the involved headers,
-# which ensures a smooth compilation even if said headers become obsolete.
-#.cpp.o:
-%.o:%.cpp
+%.o: %.cpp
 #	echo !!!!!!!!!!!! $(notdir $<)
 #	ifeq ( $(notdir $<), $(findstring $(notdir $<), $(OPTLIST)) )
 #	 OPTFLAG=-O3
 #	else
 #	 OPTFLAG=-Os
 #	endif
-
 #	export OPTFLAG = ;
 #	echo !!!!!!!! $(OPTFLAG)
-
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(if $(findstring $(notdir $<), $(OPTLIST)), $(OPT_SPEED), $(OPT_SIZE)) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o 
-endif
 
 
 #---------------------------------------------------------------------------------
@@ -417,6 +398,7 @@ endif
 	padbin 16 $(basename $@).ds.gba
 
 #---------------------------------------------------------------------------------
+# FIXME: The following rule hardcodes the input & output filename -- shouldn't it use $< and $@ instead?
 %.bin: %.elf
 	$(OBJCOPY) -S scummvm.elf scummvm-stripped.elf
 	$(OBJCOPY) -O binary scummvm-stripped.elf scummvm.bin
@@ -424,4 +406,3 @@ endif
 #%.o: %.s
 #	$(MKDIR) $(*D)/$(DEPDIR)
 #	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-

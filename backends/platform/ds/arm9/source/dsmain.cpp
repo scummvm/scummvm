@@ -65,6 +65,7 @@
 //#define USE_LIBCARTRESET
 
 #include <nds.h>
+#include <nds/registers_alt.h>
 
 //#include <ARM9/console.h> //basic print funcionality
 
@@ -75,13 +76,11 @@
 #include "icons_raw.h"
 #include "fat/gba_nds_fat.h"
 #include "fat/disc_io.h"
-#include "common/config-manager.h"
-#include "engines/scumm/scumm.h"
+//#include "common/config-manager.h"
 #include "keyboard_raw.h"
 #include "keyboard_pal_raw.h"
 #define V16(a, b) ((a << 12) | b)
 #include "touchkeyboard.h"
-#include "registers_alt.h"
 //#include "compact_flash.h"
 #include "dsoptions.h"
 #ifdef USE_DEBUGGER
