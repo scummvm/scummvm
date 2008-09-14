@@ -79,7 +79,7 @@ int32 GBAMPSaveFile::size() const {
 	return size;
 }
 
-void GBAMPSaveFile::seek(int32 pos, int whence) {
+bool GBAMPSaveFile::seek(int32 pos, int whence) {
 	return DS::std_fseek(handle, pos, whence) == 0;
 }
 
