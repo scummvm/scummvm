@@ -114,11 +114,11 @@ StdioStream::~StdioStream() {
 	fclose((FILE *)_handle);
 }
 
-bool StdioStream::ioFailed() const {
-	return eos() || ferror((FILE *)_handle) != 0;
+bool StdioStream::err() const {
+	return ferror((FILE *)_handle) != 0;
 }
 
-void StdioStream::clearIOFailed() {
+void StdioStream::clearErr() {
 	clearerr((FILE *)_handle);
 }
 

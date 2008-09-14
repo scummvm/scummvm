@@ -42,13 +42,13 @@ public:
 	virtual ~UclOutSaveFile(void);
 	virtual uint32 write(const void *ptr, uint32 size);
 	virtual bool flush(void);
-	virtual bool ioFailed(void) const;
-	virtual void clearIOFailed(void);
+	virtual bool err(void) const;
+	virtual void clearErr(void);
 private:
 	OSystem_PS2 *_system;
 	Gs2dScreen *_screen;
 
-	bool _ioFailed, _wasFlushed;
+	bool _err, _wasFlushed;
 	char _fileName[128];
 };
 
@@ -58,8 +58,8 @@ public:
 	virtual ~UclInSaveFile(void);
 	virtual bool eos(void) const;
 	virtual uint32 read(void *ptr, uint32 size);
-	virtual bool ioFailed(void) const;
-	virtual void clearIOFailed(void);
+	virtual bool err(void) const;
+	virtual void clearErr(void);
 	virtual bool skip(uint32 offset);
 
 	virtual int32 pos(void) const;
@@ -67,7 +67,7 @@ public:
 	virtual bool seek(int pos, int whence = SEEK_SET);
 private:
 	Gs2dScreen *_screen;
-	bool _ioFailed;
+	bool _err;
 };
 
 class AutoSaveFile : public Common::OutSaveFile {
@@ -76,8 +76,8 @@ public:
 	~AutoSaveFile(void);
 	virtual uint32 write(const void *ptr, uint32 size);
 	virtual bool flush(void) {}
-	virtual bool ioFailed(void) { return false; };
-	virtual void clearIOFailed(void) {}
+	virtual bool err(void) const { return false; }
+	virtual void clearErr(void) {}
 private:
 	Ps2SaveFileManager *_saveMan;
 	char _fileName[256];
@@ -111,7 +111,6 @@ public:
 	virtual int32 tell(void);
 	virtual int32 size(void);
 	virtual int seek(int32 offset, int origin);
-	virtual bool eof(void);
 };
 
 #endif // __PS2_SAVEFILE__

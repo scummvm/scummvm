@@ -423,6 +423,7 @@ void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t ou
 		}
 
 		for (c = 0; c < fg_runcount && !readS.eos(); c++) {
+			// FIXME: eos changed; error handling?
 			*outPointer = readS.readByte();
 			if (outPointer < outPointerEnd)
 				outPointer++;

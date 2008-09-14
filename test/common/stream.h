@@ -19,6 +19,10 @@ class ReadLineStreamTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(0 != ms.readLine_NEW(buffer, sizeof(buffer)));
 		TS_ASSERT(0 == strcmp(buffer, "c\n"));
 
+		TS_ASSERT(!ms.eos());
+
+		TS_ASSERT(0 == ms.readLine_NEW(buffer, sizeof(buffer)));
+
 		TS_ASSERT(ms.eos());
 	}
 

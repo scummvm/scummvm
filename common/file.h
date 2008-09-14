@@ -90,6 +90,8 @@ public:
 
 	bool ioFailed() const;
 	void clearIOFailed();
+	bool err() const;
+	void clearErr();
 	bool eos() const;
 
 	virtual int32 pos() const;
@@ -126,9 +128,8 @@ public:
 	 */
 	bool isOpen() const;
 
-
-	bool ioFailed() const;
-	void clearIOFailed();
+	bool err() const;
+	void clearErr();
 
 	virtual uint32 write(const void *dataPtr, uint32 dataSize);
 

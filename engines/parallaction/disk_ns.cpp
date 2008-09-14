@@ -165,7 +165,7 @@ int32 Archive::pos() const {
 }
 
 bool Archive::eos() const {
-	return (_file == true ? _fileCursor == _fileEndOffset : true );
+	return (_file == true ? _fileCursor == _fileEndOffset : true ); // FIXME (eos definition change)
 }
 
 bool Archive::seek(int32 offs, int whence) {

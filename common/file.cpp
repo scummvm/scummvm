@@ -170,6 +170,16 @@ void File::clearIOFailed() {
 		_handle->clearIOFailed();
 }
 
+bool File::err() const {
+	assert(_handle);
+	return _handle->err();
+}
+
+void File::clearErr() {
+	assert(_handle);
+	_handle->clearErr();
+}
+
 bool File::eos() const {
 	assert(_handle);
 	return _handle->eos();
@@ -236,12 +246,12 @@ bool DumpFile::isOpen() const {
 	return _handle != NULL;
 }
 
-bool DumpFile::ioFailed() const {
+bool DumpFile::err() const {
 	assert(_handle);
 	return _handle->ioFailed();
 }
 
-void DumpFile::clearIOFailed() {
+void DumpFile::clearErr() {
 	assert(_handle);
 	_handle->clearIOFailed();
 }

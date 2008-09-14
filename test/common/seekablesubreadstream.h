@@ -23,6 +23,8 @@ class SeekableSubReadStreamTestSuite : public CxxTest::TestSuite {
 			TS_ASSERT_EQUALS( i, b );
 		}
 
+		TS_ASSERT( !ssrs.eos() );
+		TS_ASSERT( 0 == ssrs.read(&b, 1) );
 		TS_ASSERT( ssrs.eos() );
 	}
 
@@ -52,9 +54,12 @@ class SeekableSubReadStreamTestSuite : public CxxTest::TestSuite {
 
 		ssrs.seek(0, SEEK_END);
 		TS_ASSERT_EQUALS( ssrs.pos(), (uint32)8 );
+		TS_ASSERT( !ssrs.eos() );
+		b = ssrs.readByte();
 		TS_ASSERT( ssrs.eos() );
 
 		ssrs.seek(3, SEEK_END);
+		TS_ASSERT( !ssrs.eos() );
 		TS_ASSERT_EQUALS( ssrs.pos(), (uint32)5 );
 		b = ssrs.readByte();
 		TS_ASSERT_EQUALS( b, 6 );

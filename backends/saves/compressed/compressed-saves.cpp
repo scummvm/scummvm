@@ -98,8 +98,8 @@ public:
 		delete _wrapped;
 	}
 
-	bool ioFailed() const { return (_zlibErr != Z_OK) && (_zlibErr != Z_STREAM_END); }
-	void clearIOFailed() { /* errors here are not recoverable!  */ }
+	bool err() const { return (_zlibErr != Z_OK) && (_zlibErr != Z_STREAM_END); }
+	void clearErr() { /* errors here are not recoverable!  */ }
 
 	uint32 read(void *dataPtr, uint32 dataSize) {
 		_stream.next_out = (byte *)dataPtr;
@@ -166,7 +166,7 @@ public:
 		// huge amounts of data, but usually client code will only skip a few
 		// bytes, so this should be fine.
 		byte tmpBuf[1024];
-		while (!ioFailed() && offset > 0) {
+		while (!err() && offset > 0) {
 			offset -= read(tmpBuf, MIN((int32)sizeof(tmpBuf), offset));
 		}
 		
@@ -236,14 +236,15 @@ public:
 		delete _wrapped;
 	}
 
-	bool ioFailed() const {
-		return (_zlibErr != Z_OK && _zlibErr != Z_STREAM_END) || _wrapped->ioFailed();
+	bool err() const {
+		// CHECKME: does Z_STREAM_END make sense here?
+		return (_zlibErr != Z_OK && _zlibErr != Z_STREAM_END) || _wrapped->err();
 	}
 
-	void clearIOFailed() {
+	void clearErr() {
 		// Note: we don't reset the _zlibErr here, as it is not
-		// clear in general ho
-		_wrapped->clearIOFailed();
+		// clear in general how
+		_wrapped->clearErr();
 	}
 
 	void finalize() {
@@ -267,7 +268,7 @@ public:
 	}
 
 	uint32 write(const void *dataPtr, uint32 dataSize) {
-		if (ioFailed())
+		if (err())
 			return 0;
 
 		// Hook in the new data ...

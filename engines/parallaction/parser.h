@@ -456,7 +456,7 @@ public:
 	}
 
 	bool eos() const {
-		return _pos == _size;
+		return _pos == _size; // FIXME (eos definition change)
 	}
 
 };

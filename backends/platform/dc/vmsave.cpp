@@ -269,6 +269,7 @@ class InVMSave : public Common::InSaveFile {
 private:
   char *buffer;
   int _pos, _size;
+  bool _eos;
 
   uint32 read(void *buf, uint32 cnt);
   bool skip(uint32 offset);
@@ -276,7 +277,7 @@ private:
 
 public:
   InVMSave()
-    : _pos(0), buffer(NULL)
+    : _pos(0), buffer(NULL), _eos(false)
   { }
 
   ~InVMSave()
@@ -285,7 +286,8 @@ public:
       delete[] buffer;
   }
 
-  bool eos() const { return _pos >= _size; }
+  bool eos() const { return _eos; }
+  void clearErr() { _eos = false; }
   int32 pos() const { return _pos; }
   int32 size() const { return _size; }
 
@@ -312,8 +314,8 @@ public:
 
   ~OutVMSave();
 
-  bool ioFailed() const { return iofailed; }
-  void clearIOFailed() { iofailed = false; }
+  bool err() const { return iofailed; }
+  void clearErr() { iofailed = false; }
   void finalize();
 };
 
@@ -370,6 +372,7 @@ uint32 InVMSave::read(void *buf, uint32 cnt)
   int nbyt = cnt;
   if (_pos + nbyt > _size) {
     cnt = (_size - _pos);
+    _eos = true;
     nbyt = cnt;
   }
   if (nbyt)
@@ -404,6 +407,7 @@ bool InVMSave::seek(int32 offs, int whence)
     _pos = 0;
   else if (_pos > _size)
     _pos = _size;
+  _eos = false;
   return true;
 }
 

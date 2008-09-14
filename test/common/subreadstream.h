@@ -21,6 +21,8 @@ class SubReadStreamTestSuite : public CxxTest::TestSuite {
 			TS_ASSERT_EQUALS( i, b );
 		}
 
+		TS_ASSERT( !srs.eos() );
+		b = srs.readByte();
 		TS_ASSERT( srs.eos() );
 	}
 };

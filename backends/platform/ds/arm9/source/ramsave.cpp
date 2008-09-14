@@ -64,6 +64,7 @@ DSSaveFile::DSSaveFile(SCUMMSave* s, bool compressed, u8* data) {
 	}
 	
 	isTempFile = false;
+	eosReached = false;
 }
 
 DSSaveFile::~DSSaveFile() {
@@ -167,11 +168,13 @@ int DSSaveFile::saveToSaveRAM(vu8* address) {
 
 void DSSaveFile::reset() {
 	ptr = 0;
+	eosReached = false;
 }
 
 uint32 DSSaveFile::read(void *buf, uint32 size) {
 	if (ptr + size > save.size) {
 		size = save.size - ptr;
+		eosReached = true;
 		if (size < 0) size = 0;
 	}
 	memcpy(buf, saveData + ptr, size);
@@ -204,11 +207,16 @@ bool DSSaveFile::seek(int32 pos, int whence) {
 			break;
 		}
 	}
+	eosReached = false;
 	return true;
 }
 
 bool DSSaveFile::eos() const {
-	return ptr >= (int) save.size;
+	return eosReached;
+}
+
+void DSSaveFile::clearErr() {
+	eosReached = false;
 }
 
 bool DSSaveFile::skip(uint32 bytes) {

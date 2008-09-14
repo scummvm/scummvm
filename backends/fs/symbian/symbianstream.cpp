@@ -177,12 +177,13 @@ SymbianStdioStream::~SymbianStdioStream() {
 	delete (TSymbianFileEntry*)(_handle);
 }
 
-bool SymbianStdioStream::ioFailed() const {
-	return eos() || ((TSymbianFileEntry*)(_handle))->_lastError != 0;
+bool SymbianStdioStream::err() const {
+	return ((TSymbianFileEntry*)(_handle))->_lastError != 0;
 }
 
-void SymbianStdioStream::clearIOFailed() {
+void SymbianStdioStream::clearErr() {
 	((TSymbianFileEntry*)(_handle))->_lastError = 0;
+	((TSymbianFileEntry*)(_handle))->_eofReached = 0;
 }
 
 bool SymbianStdioStream::eos() const {

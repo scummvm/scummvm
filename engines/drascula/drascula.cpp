@@ -598,8 +598,10 @@ char *DrasculaEngine::getLine(char *buf, int len) {
 
 	for (;;) {
 		b = buf;
-		while (!_arj.eos()) {
+		while (true) {
 			c = ~_arj.readByte();
+			if (_arj.eos()) break;
+
 			if (c == '\r')
 				continue;
 			if (c == '\n' || b - buf >= (len - 1))

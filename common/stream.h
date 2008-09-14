@@ -41,19 +41,30 @@ public:
 	virtual ~Stream() {}
 
 	/**
-	 * Returns true if any I/O failure occurred.
-	 * This flag is never cleared automatically. In order to clear it,
-	 * client code has to call clearIOFailed() explicitly.
-	 *
-	 * @todo Instead of returning a plain bool, maybe we should define
-	 *       a list of error codes which can be returned here.
+	 * DEPRECATED: Use err() or eos() instead.
+	 * Returns true if any I/O failure occurred or the end of the
+	 * stream was reached while reading.
 	 */
-	virtual bool ioFailed() const { return false; }
+	virtual bool ioFailed() const { return err(); }
 
 	/**
+	 * DEPRECATED: Don't use this unless you are still using ioFailed().
 	 * Reset the I/O error status.
 	 */
-	virtual void clearIOFailed() {}
+	virtual void clearIOFailed() { clearErr(); }
+
+	/**
+	 * Returns true if an I/O failure occurred.
+	 * This flag is never cleared automatically. In order to clear it,
+	 * client code has to call clearErr() explicitly.
+	 */
+	virtual bool err() const { return false; }
+
+	/**
+	 * Reset the I/O error status as returned by err().
+	 * For a ReadStream, also reset the end-of-stream status returned by eos().
+	 */
+	virtual void clearErr() {}
 };
 
 /**
@@ -87,7 +98,7 @@ public:
 	 * closing (and this flushing, if buffered) the stream.
 	 *
 	 * After this method has been called, no further writes may be
-	 * performed on the stream. Calling ioFailed() is allowed.
+	 * performed on the stream. Calling err() is allowed.
 	 *
 	 * By default, this just flushes the stream.
 	 */
@@ -153,7 +164,9 @@ public:
 class ReadStream : virtual public Stream {
 public:
 	/**
-	 * Returns true if the end of the stream has been reached.
+	 * Returns true if a read failed because the stream has been reached.
+	 * This flag is cleared by clearErr().
+	 * For a SeekableReadStream, it is also cleared by a successful seek.
 	 */
 	virtual bool eos() const = 0;
 
@@ -172,10 +185,16 @@ public:
 	// in general should not overload them.
 
 	/**
+	 * DEPRECATED
+	 * Default implementation for backward compatibility
+	 */
+	virtual bool ioFailed() { return (eos() || err()); }
+
+	/**
 	 * Read an unsigned byte from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	byte readByte() {
 		byte b = 0;
@@ -187,7 +206,7 @@ public:
 	 * Read a signed byte from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ). 
 	 */
 	int8 readSByte() {
 		int8 b = 0;
@@ -200,7 +219,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	uint16 readUint16LE() {
 		uint16 a = readByte();
@@ -213,7 +232,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	uint32 readUint32LE() {
 		uint32 a = readUint16LE();
@@ -226,7 +245,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	uint16 readUint16BE() {
 		uint16 b = readByte();
@@ -239,7 +258,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	uint32 readUint32BE() {
 		uint32 b = readUint16BE();
@@ -252,7 +271,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	int16 readSint16LE() {
 		return (int16)readUint16LE();
@@ -263,7 +282,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	int32 readSint32LE() {
 		return (int32)readUint32LE();
@@ -274,7 +293,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	int16 readSint16BE() {
 		return (int16)readUint16BE();
@@ -285,7 +304,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	int32 readSint32BE() {
 		return (int32)readUint32BE();
@@ -295,7 +314,9 @@ public:
 	 * Read the specified amount of data into a malloc'ed buffer
 	 * which then is wrapped into a MemoryReadStream.
 	 * The returned stream might contain less data than requested,
-	 * if reading more failed.
+	 * if reading more failed, because of an I/O error or because
+	 * the end of the stream was reached. Which can be determined by
+	 * calling err() and eos().
 	 */
 	MemoryReadStream *readStream(uint32 dataSize);
 
@@ -365,7 +386,7 @@ public:
 	 * and the buffer contents remain unchanged.  If an error occurs,
 	 * returns NULL and the buffer contents are indeterminate.
 	 * This method does not distinguish between end-of-file and error;
-	 * callers muse use ioFailed() or eos() to determine which occurred.
+	 * callers must use err() or eos() to determine which occurred.
 	 *
 	 * @note This methods is closely modeled after the standard fgets()
 	 *       function from stdio.h.
@@ -403,6 +424,7 @@ protected:
 	bool _disposeParentStream;
 	uint32 _pos;
 	uint32 _end;
+	bool _eos;
 public:
 	SubReadStream(ReadStream *parentStream, uint32 end, bool disposeParentStream = false)
 		: _parentStream(parentStream),
@@ -415,7 +437,9 @@ public:
 		if (_disposeParentStream) delete _parentStream;
 	}
 
-	virtual bool eos() const { return _pos == _end; }
+	virtual bool eos() const { return _eos; }
+	virtual bool err() const { return _parentStream->err(); }
+	virtual void clearErr() { _eos = false; _parentStream->clearErr(); }
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
 
@@ -487,6 +511,8 @@ public:
 	virtual bool eos() const { return (_pos == _bufSize) && _parentStream->eos(); }
 	virtual bool ioFailed() const { return _parentStream->ioFailed(); }
 	virtual void clearIOFailed() { _parentStream->clearIOFailed(); }
+	virtual bool err() const { return _parentStream->err(); }
+	virtual void clearErr() { _parentStream->clearErr(); }
 
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
@@ -521,6 +547,7 @@ private:
 	uint32 _pos;
 	byte _encbyte;
 	bool _disposeMemory;
+	bool _eos;
 
 public:
 
@@ -535,7 +562,8 @@ public:
 		_size(dataSize),
 		_pos(0),
 		_encbyte(0),
-		_disposeMemory(disposeMemory) {}
+		_disposeMemory(disposeMemory),
+		_eos(false) {}
 
 	~MemoryReadStream() {
 		if (_disposeMemory)
@@ -546,7 +574,9 @@ public:
 
 	uint32 read(void *dataPtr, uint32 dataSize);
 
-	bool eos() const { return _pos == _size; }	// FIXME: Wrong
+	bool eos() const { return _eos; }
+	void clearErr() { _eos = false; }
+
 	int32 pos() const { return _pos; }
 	int32 size() const { return _size; }
 
@@ -603,7 +633,6 @@ public:
 		return dataSize;
 	}
 
-	bool eos() const { return _pos == _bufSize; }
 	uint32 pos() const { return _pos; }
 	uint32 size() const { return _bufSize; }
 };
@@ -657,7 +686,6 @@ public:
 		return dataSize;
 	}
 
-	bool eos() const { return false; }
 	uint32 pos() const { return _pos; }
 	uint32 size() const { return _size; }
 

@@ -9,7 +9,7 @@ class BufferedReadStreamTestSuite : public CxxTest::TestSuite {
 		Common::MemoryReadStream ms(contents, 10);
 
 		// Use a buffer size of 4 -- note that 10 % 4 != 0,
-		// so we test what happens if the cache can't be completly
+		// so we test what happens if the cache can't be completely
 		// refilled.
 		Common::BufferedReadStream srs(&ms, 4);
 
@@ -21,6 +21,10 @@ class BufferedReadStreamTestSuite : public CxxTest::TestSuite {
 			TS_ASSERT_EQUALS( i, b );
 		}
 
-		TS_ASSERT( srs.eos() );
+		TS_ASSERT( !srs.eos() );
+
+		b = srs.readByte();
+
+		TS_ASSERT ( srs.eos() );
 	}
 };

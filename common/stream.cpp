@@ -43,8 +43,10 @@ MemoryReadStream *ReadStream::readStream(uint32 dataSize) {
 
 uint32 MemoryReadStream::read(void *dataPtr, uint32 dataSize) {
 	// Read at most as many bytes as are still available...
-	if (dataSize > _size - _pos)
+	if (dataSize > _size - _pos) {
 		dataSize = _size - _pos;
+		_eos = true;
+	}
 	memcpy(dataPtr, _ptr, dataSize);
 
 	if (_encbyte) {
@@ -81,7 +83,9 @@ bool MemoryReadStream::seek(int32 offs, int whence) {
 	}
 	// Post-Condition
 	assert(_pos <= _size);
-	
+
+	// Reset end-of-stream flag on a successful seek
+	_eos = false;	
 	return true;	// FIXME: STREAM REWRITE
 }
 
@@ -158,22 +162,27 @@ char *SeekableReadStream::readLine_NEW(char *buf, size_t bufSize) {
 
 	// If end-of-file occurs before any characters are read, return NULL
 	// and the buffer contents remain unchanged. 
-	if (eos() || ioFailed()) {
+	if (eos() || err()) {
 		return 0;
 	}
 
-	// Loop as long as the stream has not ended, there is still free
-	// space in the buffer, and the line has not ended
-	while (!eos() && len + 1 < bufSize && c != LF) {
+	// Loop as long as there is still free space in the buffer,
+	// and the line has not ended
+	while (len + 1 < bufSize && c != LF) {
 		c = readByte();
-		
-		// If end-of-file occurs before any characters are read, return
-		// NULL and the buffer contents remain unchanged.
-		if (len == 0 && eos())
-			return 0;
-		
-		// If an error occurs, return NULL and the buffer contents are indeterminate.
-		if (ioFailed())
+
+		if (eos()) {
+			// If end-of-file occurs before any characters are read, return
+			// NULL and the buffer contents remain unchanged.
+			if (len == 0)
+				return 0;
+
+			break;
+		}
+
+		// If an error occurs, return NULL and the buffer contents
+		// are indeterminate.
+		if (err())
 			return 0;
 
 		// Check for CR or CR/LF
@@ -183,23 +192,24 @@ char *SeekableReadStream::readLine_NEW(char *buf, size_t bufSize) {
 		if (c == CR) {
 			// Look at the next char -- is it LF? If not, seek back
 			c = readByte();
-			if (c != LF && !eos())
+
+			if (err()) {
+				return 0; // error: the buffer contents are indeterminate
+			}
+			if (eos()) {
+				// The CR was the last character in the file.
+				// Reset the eos() flag since we successfully finished a line
+				clearErr();
+			} else if (c != LF) {
 				seek(-1, SEEK_CUR);
+			}
+
 			// Treat CR & CR/LF as plain LF
 			c = LF;
 		}
 		
 		*p++ = c;
 		len++;
-	}
-
-	// FIXME:
-	// This should fix a bug while using readLine with Common::File
-	// it seems that it sets the eos flag after an invalid read
-	// and at the same time the ioFailed flag
-	// the config file parser fails out of that reason for the new themes
-	if (eos()) {
-		clearIOFailed();
 	}
 
 	// We always terminate the buffer if no error occured
@@ -226,9 +236,13 @@ String SeekableReadStream::readLine() {
 
 
 uint32 SubReadStream::read(void *dataPtr, uint32 dataSize) {
-	dataSize = MIN(dataSize, _end - _pos);
+	if (dataSize > _end - _pos) {
+		dataSize = _end - _pos;
+		_eos = true;
+	}
 
 	dataSize = _parentStream->read(dataPtr, dataSize);
+	_eos |= _parentStream->eos();
 	_pos += dataSize;
 
 	return dataSize;
@@ -241,6 +255,7 @@ SeekableSubReadStream::SeekableSubReadStream(SeekableReadStream *parentStream, u
 	assert(_begin <= _end);
 	_pos = _begin;
 	_parentStream->seek(_pos);
+	_eos = false;
 }
 
 bool SeekableSubReadStream::seek(int32 offset, int whence) {
@@ -261,7 +276,10 @@ bool SeekableSubReadStream::seek(int32 offset, int whence) {
 	assert(_pos >= _begin);
 	assert(_pos <= _end);
 
-	return _parentStream->seek(_pos);
+	bool ret = _parentStream->seek(_pos);
+	if (ret) _eos = false; // reset eos on successful seek
+
+	return ret;
 }
 
 BufferedReadStream::BufferedReadStream(ReadStream *parentStream, uint32 bufSize, bool disposeParentStream)

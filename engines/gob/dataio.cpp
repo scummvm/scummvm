@@ -95,7 +95,7 @@ bool DataStream::eos() const {
 	if (_stream)
 		return _stream->eos();
 
-	return pos() >= size();
+	return pos() >= size(); // FIXME (eos definition change)
 }
 
 uint32 DataStream::read(void *dataPtr, uint32 dataSize) {

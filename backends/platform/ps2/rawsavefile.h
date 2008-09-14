@@ -40,11 +40,14 @@ public:
 	int bufTell(void) const;
 	int bufSeek(int ofs, int whence);
 	int bufSize(void) const;
+	bool bufEof(void) const;
+	void bufClearErr(void);
 protected:
 	McAccess *_mcAccess;
 	int _size;
 	uint8 *_buf;
 	int _pos;
+	bool _eof;
 };
 
 class RawWriteFile {

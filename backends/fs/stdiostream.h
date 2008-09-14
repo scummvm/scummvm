@@ -46,8 +46,8 @@ public:
 	StdioStream(void *handle);
 	virtual ~StdioStream();
 
-	bool ioFailed() const;
-	void clearIOFailed();
+	bool err() const;
+	void clearErr();
 	bool eos() const;
 
 	virtual uint32 write(const void *dataPtr, uint32 dataSize);

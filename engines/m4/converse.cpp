@@ -406,10 +406,12 @@ void Converse::loadConversation(const char *convName) {
 	convS->read(buffer, 8);
 	if (debugFlag) printf("Conversation name: %s\n", buffer);
 
-	while(!convS->eos()) {
+	while(true) {
 		chunkPos = convS->pos();
-		if (debugFlag) printf("***** Pos: %i -> ", chunkPos);
 		chunk = convS->readUint32LE();	// read chunk
+		if (convS->eos()) break;
+
+		if (debugFlag) printf("***** Pos: %i -> ", chunkPos);
 		switch(chunk) {
 			case CHUNK_DECL:	// Declare
 				if (debugFlag) printf("DECL chunk\n");
@@ -714,7 +716,7 @@ void Converse::loadConversationMads(const char *convName) {
 	printf("Chunk 0\n");
 	printf("Conv stream size: %i\n", convS->size());
 
-	while(!convS->eos()) {
+	while(!convS->eos()) { // FIXME (eos changed)
 		printf("%i ", convS->readByte());
 	}
 	printf("\n");
@@ -725,7 +727,7 @@ void Converse::loadConversationMads(const char *convName) {
 	printf("Chunk 1\n");
 	printf("Conv stream size: %i\n", convS->size());
 
-	while(!convS->eos()) {
+	while(!convS->eos()) { // FIXME (eos changed)
 		printf("%i ", convS->readByte());
 	}
 	printf("\n");
@@ -736,7 +738,7 @@ void Converse::loadConversationMads(const char *convName) {
 	printf("Chunk 2\n");
 	printf("Conv stream size: %i\n", convS->size());
 
-	while(!convS->eos()) {
+	while(!convS->eos()) { // FIXME (eos changed)
 		printf("%i ", convS->readByte());
 	}
 	printf("\n");
@@ -790,7 +792,7 @@ void Converse::loadConversationMads(const char *convName) {
 	convS->read(buffer, 14);		// speech file
 	printf("Speech file: %s\n", buffer);
 
-	while(!convS->eos()) {
+	while(!convS->eos()) { // FIXME: eos changed
 		printf("%i ", convS->readByte());
 	}
 	printf("\n");
@@ -803,9 +805,12 @@ void Converse::loadConversationMads(const char *convName) {
 	printf("Chunk 1: conversation nodes\n");
 	printf("Conv stream size: %i\n", convS->size());
 
-	while(!convS->eos()) {
+	while(true) {
+		uint16 id = convS->readUint16LE();
+		if (convS->eos()) break;
+
 		curEntry = new ConvEntry();
-		curEntry->id = convS->readUint16LE();
+		curEntry->id = id;
 		curEntry->entryCount = convS->readUint16LE();
 		curEntry->flags = convS->readUint16LE();
 		if (curEntry->entryCount == 1 && curEntry->flags != 65535) {
@@ -839,10 +844,13 @@ void Converse::loadConversationMads(const char *convName) {
 
 	*buffer = 0;
 
-	while(!convS->eos()) {
+	while(true) {
 		//if (curPos == 0)
 		//	printf("%i: Offset %i: ", _convStrings.size(), convS->pos());
-		buffer[curPos++] = convS->readByte();
+		uint8 b = convS->readByte();
+		if (convS->eos()) break;
+
+		buffer[curPos++] = b;
 		if (buffer[curPos - 1] == '~') {		// filter out special characters
 			curPos--;
 			continue;
@@ -892,9 +900,12 @@ void Converse::loadConversationMads(const char *convName) {
 	//printf("Chunk 3 - MESG chunk data\n");
 	//printf("Conv stream size: %i\n", convS->size());
 
-	while(!convS->eos()) {
+	while(true) {
+		uint16 index = convS->readUint16LE();
+		if (convS->eos()) break;
+
 		curMessage = new MessageEntry();
-		stringIndex = convS->readUint16LE();
+		stringIndex = index;
 		stringCount = convS->readUint16LE();
 		*buffer = 0;
 		//printf("Message: %i\n", _madsMessageList.size());
@@ -915,7 +926,7 @@ void Converse::loadConversationMads(const char *convName) {
 	convS = convData.getItemStream(6);
 	printf("Chunk 6\n");
 	printf("Conv stream size: %i\n", convS->size());
-	/*while(!convS->eos()) {
+	/*while(!convS->eos()) { // FIXME (eos changed)
 		printf("%i ", convS->readByte());
 		printf("%i ", convS->readByte());
 		printf("%i ", convS->readByte());
@@ -954,8 +965,10 @@ void Converse::readConvEntryActions(Common::SubReadStream *convS, ConvEntry *cur
 	int messageIndex = 0;
 	int unk = 0;
 
-	while(!convS->eos()) {
+	while(true) {
 		chunk = convS->readByte();
+		if (convS->eos()) break;
+
 		type = convS->readByte();
 
 		switch (chunk) {
