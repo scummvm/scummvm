@@ -220,7 +220,7 @@ const char *KyraEngine_v1::getSavegameFilename(int num) {
 	assert(num >= 0 && num <= 999);
 
 	char extension[5];
-	sprintf(extension, "%.3d", num);
+	sprintf(extension, "%03d", num);
 
 	filename = _targetName + "." + extension;
 
@@ -240,6 +240,13 @@ bool KyraEngine_v1::saveFileLoadable(int slot) {
 	}
 
 	return false;
+}
+
+void KyraEngine_v1::checkAutosave() {
+	if (shouldPerformAutoSave(_lastAutosave)) {
+		saveGame(getSavegameFilename(999), "Autosave", 0);
+		_lastAutosave = _system->getMillis();
+	}
 }
 
 } // end of namespace Kyra

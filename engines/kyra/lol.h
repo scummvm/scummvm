@@ -147,6 +147,9 @@ private:
 	void setHandItem(uint16) {}
 	void removeHandItem() {}
 	bool lineIsPassable(int, int) { return false; }
+
+	// save
+	void saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumbnail) {}
 };
 
 } // end of namespace Kyra

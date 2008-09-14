@@ -181,6 +181,9 @@ int KyraEngine_v1::init() {
 			_gameToLoad = -1;
 	}
 
+	// Prevent autosave on game startup
+	_lastAutosave = _system->getMillis();
+
 	return 0;
 }
 

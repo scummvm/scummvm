@@ -462,7 +462,12 @@ void KyraEngine_HoF::runLoop() {
 			_drawNoShapeFlag = 0;
 			_gui->optionsButton(0);
 			_deathHandler = -1;
+
+			if (!_runFlag || !quit())
+				break;
 		}
+
+		checkAutosave();
 
 		if (_system->getMillis() > _nextIdleAnim)
 			showIdleAnim();

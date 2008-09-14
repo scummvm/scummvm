@@ -271,6 +271,9 @@ protected:
 	// save/load
 	int _gameToLoad;
 
+	uint32 _lastAutosave;
+	void checkAutosave();
+
 	const char *getSavegameFilename(int num);
 	bool saveFileLoadable(int slot);
 
@@ -294,6 +297,8 @@ protected:
 	};
 
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, bool loadThumbnail, SaveHeader &header);
+
+	virtual void saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 
 	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header);
 	Common::WriteStream *openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const;

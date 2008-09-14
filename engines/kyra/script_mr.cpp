@@ -293,7 +293,7 @@ int KyraEngine_MR::o3_updateScore(EMCState *script) {
 
 int KyraEngine_MR::o3_makeSecondChanceSave(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_makeSecondChanceSave(%p) ()", (const void *)script);
-	saveGame(getSavegameFilename(999), "SECOND CHANCE SAVE GAME", 0);
+	saveGame(getSavegameFilename(999), "Autosave", 0);
 	return 0;
 }
 
