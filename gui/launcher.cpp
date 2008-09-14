@@ -990,7 +990,7 @@ void LauncherDialog::loadGame(int item) {
 			}
 		} else {
 			MessageDialog dialog
-				("Sorry, this game does not yet support loading games from the launcher.", "OK");
+				("This game does not support loading games from the launcher.", "OK");
 			dialog.runModal();
 		}
 	} else {
