@@ -204,7 +204,10 @@ void GUI_LoK::createScreenThumbnail(Graphics::Surface &dst) {
 	uint8 *screen = new uint8[Screen::SCREEN_W*Screen::SCREEN_H];
 	if (screen) {
 		_screen->queryPageFromDisk("SEENPAGE.TMP", 0, screen);
-		::createThumbnail(&dst, screen, Screen::SCREEN_W, Screen::SCREEN_H, _screen->getPalette(2));
+
+		uint8 screenPal[768];
+		_screen->getRealPalette(2, screenPal);
+		::createThumbnail(&dst, screen, Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
 	}
 	delete[] screen;
 }

@@ -152,6 +152,8 @@ public:
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
 	void setScreenPalette(const uint8 *palData);
 	const uint8 *getScreenPalette() const { return _screenPalette; }
+
+	void getRealPalette(int num, uint8 *dst);
 	uint8 *getPalette(int num);
 
 	// gui specific (processing on _curPage)

@@ -43,6 +43,7 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 	header.originalSave = false;
 	header.oldHeader = false;
 	header.flags = 0;
+	header.thumbnail = 0;
 
 	if (type == MKID_BE('KYRA') || type == MKID_BE('ARYK')) { // old Kyra1 header ID
 		header.gameID = GI_KYRA1;

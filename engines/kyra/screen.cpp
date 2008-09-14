@@ -476,6 +476,25 @@ void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
 	setScreenPalette(_currentPalette);
 }
 
+void Screen::getRealPalette(int num, uint8 *dst) {
+	debugC(9, kDebugLevelScreen, "Screen::setRealPalette(%d, %p)", num, (const void *)dst);
+	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
+	const uint8 *palData = getPalette(num);
+
+	if (!palData) {
+		memset(dst, 0, colors * 3);
+		return;
+	}
+
+	for (int i = 0; i < colors; ++i) {
+		dst[0] = (palData[0] << 2) | (palData[0] & 3);
+		dst[1] = (palData[1] << 2) | (palData[1] & 3);
+		dst[2] = (palData[2] << 2) | (palData[2] & 3);
+		dst += 3;
+		palData += 3;
+	}
+}
+
 void Screen::setScreenPalette(const uint8 *palData) {
 	debugC(9, kDebugLevelScreen, "Screen::setScreenPalette(%p)", (const void *)palData);
 

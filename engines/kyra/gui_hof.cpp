@@ -796,7 +796,9 @@ int GUI_HoF::optionsButton(Button *button) {
 #pragma mark -
 
 void GUI_HoF::createScreenThumbnail(Graphics::Surface &dst) {
-	::createThumbnail(&dst, _vm->_screenBuffer, Screen::SCREEN_W, Screen::SCREEN_H, _screen->getPalette(1));
+	uint8 screenPal[768];
+	_screen->getRealPalette(1, screenPal);
+	::createThumbnail(&dst, _vm->_screenBuffer, Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
 }
 
 void GUI_HoF::setupPalette() {

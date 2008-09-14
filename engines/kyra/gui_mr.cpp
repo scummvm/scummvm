@@ -1141,7 +1141,9 @@ GUI_MR::GUI_MR(KyraEngine_MR *vm) : GUI_v2(vm), _vm(vm), _screen(vm->_screen) {
 }
 
 void GUI_MR::createScreenThumbnail(Graphics::Surface &dst) {
-	::createThumbnail(&dst, _vm->_screenBuffer, Screen::SCREEN_W, Screen::SCREEN_H, _screen->getPalette(0));
+	uint8 screenPal[768];
+	_screen->getRealPalette(0, screenPal);
+	::createThumbnail(&dst, _vm->_screenBuffer, Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
 }
 
 void GUI_MR::flagButtonEnable(Button *button) {
