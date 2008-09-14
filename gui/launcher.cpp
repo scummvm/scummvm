@@ -513,7 +513,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 
 	// Add choice list
 	_list = new GUI::ListWidget(this, "scummsaveload_list");
-	_list->setNumberingMode(GUI::kListNumberingZero);
+	_list->setNumberingMode(GUI::kListNumberingOff);
 
 	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
 	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
@@ -625,8 +625,13 @@ void SaveLoadChooser::updateSaveList() {
 	_saveList = (*_plugin)->listSaves(_target.c_str());
 
 	StringList saveNames;
-	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x)
-		saveNames.push_back(x->description());
+	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
+		Common::String description = x->save_slot();
+		description += ". ";
+		description += x->description();
+
+		saveNames.push_back(description);
+	}
 	_list->setList(saveNames);
 }
 
