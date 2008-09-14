@@ -61,6 +61,11 @@ static bool launcherDialog(OSystem &system) {
 		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 
 		system.initSize(320, 200);
+
+		if (ConfMan.hasKey("aspect_ratio"))
+			system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+		if (ConfMan.hasKey("fullscreen"))
+			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 	system.endGFXTransaction();
 
 	// Set initial window caption
