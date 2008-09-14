@@ -1068,6 +1068,7 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 	SaveStateList listSaves(const char *target) const;
 	void removeSaveState(const char *target, int slot) const;
+	Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot) const;
 };
 
 bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -1075,7 +1076,8 @@ bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDirectLoad) ||
-		(f == kSupportsDeleteSave);
+		(f == kSupportsDeleteSave) ||
+		(f == kSupportsThumbnails);
 }
 
 bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
@@ -1199,6 +1201,22 @@ void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
 		}
 	}
 
+}
+
+Graphics::Surface *KyraMetaEngine::loadThumbnailFromSlot(const char *target, int slot) const {
+	char extension[6];
+	snprintf(extension, sizeof(extension), ".%03d", slot);
+
+	Common::String filename = target;
+	filename += extension;
+
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
+	Kyra::KyraEngine_v1::SaveHeader header;
+
+	if (in && Kyra::KyraEngine_v1::readSaveHeader(in, true, header) == Kyra::KyraEngine_v1::kRSHENoError)
+		return header.thumbnail;
+	
+	return 0;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(KYRA)

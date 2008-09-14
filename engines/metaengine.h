@@ -106,6 +106,18 @@ public:
 	 */
 	virtual void removeSaveState(const char *target, int slot) const {};
 
+	/**
+	 * Loads a thumbnail from the specified save state.
+	 *
+	 * This can return '0' to indicate that no thumbnail was found.
+	 * If it returns a valid Graphics::Surface object, it must be the same
+	 * format as the overlay.
+	 *
+	 * @param target	name of a config manager target
+	 * @param slot		slot number of the save state
+	 */
+	virtual Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot) const { return 0; }
+
 	
 	/** @name MetaEngineFeature flags */
 	//@{
@@ -131,7 +143,13 @@ public:
 		 * Deleting Saves from the Launcher (i.e. implements the
 		 * removeSaveState() method)
 		 */
-		kSupportsDeleteSave     = 3
+		kSupportsDeleteSave     = 3,
+
+		/**
+		 * Features a thumbnail in savegames (i.e. implements the
+		 * loadThumbnailFromSlot method)
+		 */
+		kSupportsThumbnails		= 4
 	};	
 
 	/**

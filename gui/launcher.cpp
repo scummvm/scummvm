@@ -46,6 +46,7 @@
 #include "gui/TabWidget.h"
 #include "gui/PopUpWidget.h"
 #include "graphics/cursorman.h"
+#include "graphics/scaler.h"
 
 #include "sound/mididrv.h"
 
@@ -539,6 +540,7 @@ int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) 
 	_plugin = plugin;
 	_target = target;
 	_delSupport = (*_plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
+	reflowLayout();
 	updateSaveList();
 
 	int ret = Dialog::runModal();
@@ -601,13 +603,48 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 }
 
 void SaveLoadChooser::reflowLayout() {
-	_container->setFlags(GUI::WIDGET_INVISIBLE);
-	_gfxWidget->setFlags(GUI::WIDGET_INVISIBLE);
+	if (g_gui.evaluator()->getVar("scummsaveload_extinfo.visible") == 1 && (_plugin && (*_plugin)->hasFeature(MetaEngine::kSupportsThumbnails))) {
+		int thumbX = g_gui.evaluator()->getVar("scummsaveload_thumbnail.x");
+		int thumbY = g_gui.evaluator()->getVar("scummsaveload_thumbnail.y");
+		int hPad = g_gui.evaluator()->getVar("scummsaveload_thumbnail.hPad");
+		int vPad = g_gui.evaluator()->getVar("scummsaveload_thumbnail.vPad");
+		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
+
+		_container->resize(thumbX - hPad, thumbY - vPad, kThumbnailWidth + hPad * 2, thumbH + vPad * 2/* + kLineHeight * 4*/);
+
+		// Add the thumbnail display
+		_gfxWidget->resize(thumbX, thumbY, kThumbnailWidth, thumbH);
+
+		_container->clearFlags(GUI::WIDGET_INVISIBLE);
+		_gfxWidget->clearFlags(GUI::WIDGET_INVISIBLE);
+
+		_fillR = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
+		_fillG = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
+		_fillB = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillB");
+		updateInfos(false);
+	} else {
+		_container->setFlags(GUI::WIDGET_INVISIBLE);
+		_gfxWidget->setFlags(GUI::WIDGET_INVISIBLE);
+	}
+
 	Dialog::reflowLayout();
 }
 
 void SaveLoadChooser::updateInfos(bool redraw) {
-	_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
+	int selItem = _list->getSelected();
+	Graphics::Surface *thumb = 0;
+	if (selItem >= 0 && !_list->getSelectedString().empty())
+		thumb = (*_plugin)->loadThumbnailFromSlot(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
+
+	if (thumb) {
+		_gfxWidget->setGfx(thumb);
+		_gfxWidget->useAlpha(256);
+		thumb->free();
+		delete thumb;
+	} else {
+		_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
+	}
+
 	if (redraw)
 		_gfxWidget->draw();
 }
