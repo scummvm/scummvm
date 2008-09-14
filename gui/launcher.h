@@ -54,6 +54,7 @@ protected:
 	ListWidget		*_list;
 	ButtonWidget	*_addButton;
 	Widget			*_startButton;
+	Widget			*_loadButton;
 	Widget			*_editButton;
 	Widget			*_removeButton;
 #ifndef DISABLE_FANCY_THEMES

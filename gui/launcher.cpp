@@ -662,8 +662,9 @@ LauncherDialog::LauncherDialog()
 	new ButtonWidget(this, "launcher_options_button", "Options", kOptionsCmd, 'O');
 	_startButton =
 			new ButtonWidget(this, "launcher_start_button", "Start", kStartCmd, 'S');
-	
-	new ButtonWidget(this, "launcher_loadGame_button", "Load", kLoadGameCmd, 'L');
+
+	_loadButton =
+		new ButtonWidget(this, "launcher_loadGame_button", "Load", kLoadGameCmd, 'L');
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	_addButton =
@@ -1066,6 +1067,10 @@ void LauncherDialog::updateButtons() {
 	if (enable != _removeButton->isEnabled()) {
 		_removeButton->setEnabled(enable);
 		_removeButton->draw();
+	}
+	if (enable != _loadButton->isEnabled()) {
+		_loadButton->setEnabled(enable);
+		_loadButton->draw();
 	}
 
 	// Update the label of the "Add" button depending on whether shift is pressed or not
