@@ -43,8 +43,8 @@ class DSFileSystemNode : public AbstractFilesystemNode {
 protected:
 	static ZipFile* _zipFile;
 
-	String _displayName;
-	String _path;
+	Common::String _displayName;
+	Common::String _path;
 	bool _isDirectory;
 	bool _isValid;
 
@@ -59,7 +59,7 @@ public:
 	 *
 	 * @param path String with the path the new node should point to.
 	 */
-	DSFileSystemNode(const String &path);
+	DSFileSystemNode(const Common::String &path);
 
 	/**
 	 * Creates a DSFilesystemNode for a given path.
@@ -67,7 +67,7 @@ public:
 	 * @param path String with the path the new node should point to.
 	 * @param path true if path is a directory, false otherwise.
 	 */
-	DSFileSystemNode(const String& path, bool isDir);
+	DSFileSystemNode(const Common::String& path, bool isDir);
 
 	/**
 	 * Copy constructor.
@@ -75,9 +75,9 @@ public:
 	DSFileSystemNode(const DSFileSystemNode *node);
 
 	virtual bool exists() const { return true; }		//FIXME: this is just a stub
-	virtual String getDisplayName() const {  return _displayName; }
-	virtual String getName() const {  return _displayName; }
-	virtual String getPath() const { return _path; }
+	virtual Common::String getDisplayName() const {  return _displayName; }
+	virtual Common::String getName() const {  return _displayName; }
+	virtual Common::String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
 	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
@@ -108,8 +108,8 @@ public:
  */
 class GBAMPFileSystemNode : public AbstractFilesystemNode {
 protected:
-	String _displayName;
-	String _path;
+	Common::String _displayName;
+	Common::String _path;
 	bool _isDirectory;
 	bool _isValid;
 
@@ -124,7 +124,7 @@ public:
 	 *
 	 * @param path String with the path the new node should point to.
 	 */
-	GBAMPFileSystemNode(const String &path);
+	GBAMPFileSystemNode(const Common::String &path);
 
 	/**
 	 * Creates a DSFilesystemNode for a given path.
@@ -132,7 +132,7 @@ public:
 	 * @param path String with the path the new node should point to.
 	 * @param path true if path is a directory, false otherwise.
 	 */
-	GBAMPFileSystemNode(const String &path, bool isDirectory);
+	GBAMPFileSystemNode(const Common::String &path, bool isDirectory);
 
 	/**
 	 * Copy constructor.
@@ -140,9 +140,9 @@ public:
 	GBAMPFileSystemNode(const GBAMPFileSystemNode *node);
 
 	virtual bool exists() const { return _isValid || _isDirectory; }
-	virtual String getDisplayName() const {  return _displayName; }
-	virtual String getName() const {  return _displayName; }
-	virtual String getPath() const { return _path; }
+	virtual Common::String getDisplayName() const {  return _displayName; }
+	virtual Common::String getName() const {  return _displayName; }
+	virtual Common::String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
 	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
