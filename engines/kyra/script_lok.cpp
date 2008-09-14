@@ -1747,7 +1747,8 @@ int KyraEngine_LoK::o1_pauseMusicSeconds(EMCState *script) {
 }
 
 int KyraEngine_LoK::o1_resetMaskRegion(EMCState *script) {
-	warning("STUB: o1_resetMaskRegion");
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_resetMaskRegion(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	_screen->fillRect(stackPos(1), stackPos(2), stackPos(1)+stackPos(3), stackPos(2)+stackPos(4), 0, 5);
 	return 0;
 }
 
