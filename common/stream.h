@@ -169,10 +169,10 @@ public:
 
 
 	// The remaining methods all have default implementations; subclasses
-	// need not (and should not) overload them.
+	// in general should not overload them.
 
 	/**
-	 * Read am unsigned byte from the stream and return it.
+	 * Read an unsigned byte from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
 	 * calling ioFailed()).
