@@ -247,8 +247,8 @@ void KyraEngine_v1::delayWithTicks(int ticks) {
 }
 
 void KyraEngine_v1::registerDefaultSettings() {
-	if (_flags.gameID != GI_KYRA3)
-		ConfMan.registerDefault("cdaudio", (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98));
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+		ConfMan.registerDefault("cdaudio", true);
 	if (_flags.fanLang != Common::UNK_LANG) {
 		// HACK/WORKAROUND: Since we can't use registerDefault here to overwrite
 		// the global subtitles settings, we're using this hack to enable subtitles
@@ -265,7 +265,7 @@ void KyraEngine_v1::readSettings() {
 	
 	if (!ConfMan.getBool("music_mute")) {
 		_configMusic = 1;
-		if (_flags.gameID != GI_KYRA3 && ConfMan.getBool("cdaudio") && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98))
+		if (ConfMan.getBool("cdaudio") && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98))
 			_configMusic = 2;
 	}
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
