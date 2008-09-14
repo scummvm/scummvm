@@ -1135,7 +1135,10 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 		
-		if (slotNum >= 0 && slotNum <= 999) {
+		// HACK: Until we have a way to check whether a save is deletable in our launcher delete savegame dialog.
+		// We do not list slot 0 here, since it's for restarting the game and it should never be deleted.
+		// The downside of it is of course we can not load it via the menu and it isn't listed via --list-saves.
+		if (slotNum > 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
 				if (Kyra::KyraEngine_v1::readSaveHeader(in, false, header) == Kyra::KyraEngine_v1::kRSHENoError) {
@@ -1154,7 +1157,7 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 }
 
 void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
-	// Slot 0 can't be delted, it's for restarting the game(s)
+	// Slot 0 can't be deleted, it's for restarting the game(s)
 	if (slot == 0)
 		return;
 
