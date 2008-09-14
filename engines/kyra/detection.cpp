@@ -1128,7 +1128,7 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 
 	Common::StringList filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
@@ -1154,13 +1154,48 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 }
 
 void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
+	// Slot 0 can't be delted, it's for restarting the game(s)
+	if (slot == 0)
+		return;
+
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+
 	char extension[6];
 	snprintf(extension, sizeof(extension), ".%03d", slot);
 
 	Common::String filename = target;
 	filename += extension;
 
-	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+	saveFileMan->removeSavefile(filename.c_str());
+
+	Common::StringList filenames;
+	Common::String pattern = target;
+	pattern += ".???";
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+
+		// Rename every slot greater than the deleted slot,
+		// Also do not rename quicksaves.
+		if (slotNum > slot && slotNum < 990) {
+			// FIXME: Our savefile renaming done here is inconsitent with what we do in 
+			// GUI_v2::deleteMenu. While here we rename every slot with a greater equal
+			// number of the deleted slot to deleted slot, deleted slot + 1 etc.,
+			// we only rename the following slots in GUI_v2::deleteMenu until a slot
+			// is missing.
+			saveFileMan->renameSavefile(file->c_str(), filename.c_str());
+
+			++slot;
+			snprintf(extension, sizeof(extension), ".%03d", slot);
+
+			filename = target;
+			filename += extension;
+		}
+	}
+
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(KYRA)
