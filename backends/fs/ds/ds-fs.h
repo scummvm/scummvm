@@ -189,7 +189,8 @@ long int std_ftell(FILE* handle);
 int		std_fseek(FILE* handle, long int offset, int whence);
 void	std_clearerr(FILE* handle);
 void	std_cwd(char* dir);
-void	std_fflush(FILE* handle);
+int		std_fflush(FILE* handle);
+int		std_ferror(FILE* handle);
 
 } //namespace DS
 

@@ -677,9 +677,10 @@ bool std_feof(FILE* handle) {
 	return handle->pos >= handle->size;
 }
 
-void std_fflush(FILE* handle) {
+int std_fflush(FILE* handle) {
 	//FIXME: not implemented?
 //	consolePrintf("fflush ");
+	return 0;
 }
 
 char* std_fgets(char* str, int size, FILE* file) {
@@ -748,6 +749,12 @@ int std_fseek(FILE* handle, long int offset, int whence) {
 	return 0;
 }
 
+int std_ferror(FILE* handle) {
+	//FIXME: not implemented?
+//	consolePrintf("ferror ");
+	return 0;
+}
+
 void std_clearerr(FILE* handle) {
 	//FIXME: not implemented?
 //	consolePrintf("clearerr ");
@@ -808,10 +815,6 @@ void std_cwd(char* dir) {
 		}
 //		consolePrintf("CWD: %s\n", currentDir);
 	}
-}
-
-int std_ferror(FILE* handle) {
-	return 0;
 }
 
 } // namespace DS
