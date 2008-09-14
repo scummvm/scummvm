@@ -67,7 +67,12 @@ endif
 # NOTE: The header and libs for the debugger is assumed to be in the libnds
 # folder.
 
-VPATH = $(srcdir)
+vpath %.h $(srcdir)
+vpath %.cpp $(srcdir)
+vpath %.c $(srcdir)
+vpath %.m $(srcdir)
+vpath %.asm $(srcdir)
+vpath %.s $(srcdir)
 
 # Command to build libmad is:
 # ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork'
