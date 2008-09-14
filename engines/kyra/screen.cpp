@@ -477,7 +477,7 @@ void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
 }
 
 void Screen::getRealPalette(int num, uint8 *dst) {
-	debugC(9, kDebugLevelScreen, "Screen::setRealPalette(%d, %p)", num, (const void *)dst);
+	debugC(9, kDebugLevelScreen, "Screen::getRealPalette(%d, %p)", num, (const void *)dst);
 	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
 	const uint8 *palData = getPalette(num);
 
