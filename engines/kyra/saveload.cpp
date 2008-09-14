@@ -216,15 +216,17 @@ Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, con
 
 const char *KyraEngine_v1::getSavegameFilename(int num) {
 	static Common::String filename;
+	filename = getSavegameFilename(_targetName, num);
+	return filename.c_str();
+}
 
+Common::String KyraEngine_v1::getSavegameFilename(const Common::String &target, int num) {
 	assert(num >= 0 && num <= 999);
 
 	char extension[5];
 	sprintf(extension, "%03d", num);
 
-	filename = _targetName + "." + extension;
-
-	return filename.c_str();
+	return target + "." + extension;
 }
 
 bool KyraEngine_v1::saveFileLoadable(int slot) {

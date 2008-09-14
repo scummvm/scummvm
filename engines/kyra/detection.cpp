@@ -1164,12 +1164,7 @@ void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
 		return;
 
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".%03d", slot);
-
-	Common::String filename = target;
-	filename += extension;
+	Common::String filename = Kyra::KyraEngine_v1::getSavegameFilename(target, slot);
 
 	saveFileMan->removeSavefile(filename.c_str());
 
@@ -1193,22 +1188,14 @@ void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
 			// is missing.
 			saveFileMan->renameSavefile(file->c_str(), filename.c_str());
 
-			++slot;
-			snprintf(extension, sizeof(extension), ".%03d", slot);
-
-			filename = target;
-			filename += extension;
+			filename = Kyra::KyraEngine_v1::getSavegameFilename(target, ++slot);
 		}
 	}
 
 }
 
 Graphics::Surface *KyraMetaEngine::loadThumbnailFromSlot(const char *target, int slot) const {
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".%03d", slot);
-
-	Common::String filename = target;
-	filename += extension;
+	Common::String filename = Kyra::KyraEngine_v1::getSavegameFilename(target, slot);
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 	Kyra::KyraEngine_v1::SaveHeader header;

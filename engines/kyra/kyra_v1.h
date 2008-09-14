@@ -275,6 +275,7 @@ protected:
 	void checkAutosave();
 
 	const char *getSavegameFilename(int num);
+	static Common::String getSavegameFilename(const Common::String &target, int num);
 	bool saveFileLoadable(int slot);
 
 	struct SaveHeader {
