@@ -206,7 +206,7 @@ void KyraEngine_LoK::loadGame(const char *fileName) {
 	_mousePressFlag = false;
 	setMousePos(brandonX, brandonY);
 	
-	if (in->ioFailed())
+	if (in->err())
 		error("Load failed ('%s', '%s').", fileName, header.description.c_str());
 	else
 		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", header.description.c_str());
@@ -289,7 +289,7 @@ void KyraEngine_LoK::saveGame(const char *fileName, const char *saveName, const 
 	out->finalize();
 
 	// check for errors
-	if (out->ioFailed())
+	if (out->err())
 		warning("Can't write file '%s'. (Disk full?)", fileName);
 	else
 		debugC(1, kDebugLevelMain, "Saved game '%s.'", saveName);

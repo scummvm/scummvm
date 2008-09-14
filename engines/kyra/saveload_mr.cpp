@@ -112,7 +112,7 @@ void KyraEngine_MR::saveGame(const char *fileName, const char *saveName, const G
 	out->finalize();
 
 	// check for errors
-	if (out->ioFailed())
+	if (out->err())
 		warning("Can't write file '%s'. (Disk full?)", fileName);
 	else
 		debugC(1, kDebugLevelMain, "Saved game '%s.'", saveName);
@@ -283,7 +283,7 @@ void KyraEngine_MR::loadGame(const char *fileName) {
 	_sceneExit3 = in.readUint16();
 	_sceneExit4 = in.readUint16();
 
-	if (saveFile->ioFailed())
+	if (saveFile->err())
 		error("Load failed ('%s', '%s').", fileName, header.description.c_str());
 	else
 		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", header.description.c_str());
