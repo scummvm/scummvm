@@ -188,19 +188,19 @@ void Screen::setResolution() {
 
 	if (_vm->gameFlags().useHiResOverlay) {
 		_system->beginGFXTransaction();
-			_vm->initCommonGFX(true);
 			if (_debugEnabled)
 				_system->initSize(960, 400);
 			else
 				_system->initSize(640, 400);
+			_vm->initCommonGFX(true);
 		_system->endGFXTransaction();
 	} else {
 		_system->beginGFXTransaction();
-			_vm->initCommonGFX(false);
 			if (_debugEnabled)
 				_system->initSize(640, 200);
 			else
 				_system->initSize(320, 200);
+			_vm->initCommonGFX(false);
 		_system->endGFXTransaction();
 	}
 
