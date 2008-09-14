@@ -979,12 +979,7 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 }
 
 void ScummMetaEngine::removeSaveState(const char *target, int slot) const {
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".s%02d", slot);
-
-	Common::String filename = target;
-	filename += extension;
-
+	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
 	g_system->getSavefileManager()->removeSavefile(filename.c_str());
 }
 

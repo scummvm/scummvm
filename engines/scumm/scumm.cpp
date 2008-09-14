@@ -2014,7 +2014,6 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 	if (_saveLoadFlag) {
 		bool success;
 		const char *errMsg = 0;
-		char filename[256];
 
 		if (_game.version == 8 && _saveTemporaryState)
 			VAR(VAR_GAME_LOADED) = 0;
@@ -2035,13 +2034,13 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : 203;
 		}
 
-		makeSavegameName(filename, _saveLoadSlot, _saveTemporaryState);
+		Common::String filename = makeSavegameName(_saveLoadSlot, _saveTemporaryState);
 		if (!success) {
-			displayMessage(0, errMsg, filename);
+			displayMessage(0, errMsg, filename.c_str());
 		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
 			// Display "Save successful" message, except for auto saves
 			char buf[256];
-			snprintf(buf, sizeof(buf), "Successfully saved game state in file:\n\n%s", filename);
+			snprintf(buf, sizeof(buf), "Successfully saved game state in file:\n\n%s", filename.c_str());
 
 			GUI::TimedMessageDialog dialog(buf, 1500);
 			runDialog(dialog);

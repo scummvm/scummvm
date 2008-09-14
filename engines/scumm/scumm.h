@@ -614,11 +614,16 @@ protected:
 	void saveLoadResource(Serializer *ser, int type, int index);	// "Obsolete"
 	void saveResource(Serializer *ser, int type, int index);
 	void loadResource(Serializer *ser, int type, int index);
-	void makeSavegameName(char *out, int slot, bool temporary);
+
+	Common::String makeSavegameName(int slot, bool temporary) const {
+		return makeSavegameName(_targetName, slot, temporary);		
+	}
 
 	int getKeyState(int key);
 
 public:
+	static Common::String makeSavegameName(const Common::String &target, int slot, bool temporary);
+
 	bool getSavegameName(int slot, Common::String &desc);
 	void listSavegames(bool *marks, int num);
 

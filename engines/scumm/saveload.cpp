@@ -103,17 +103,17 @@ static bool saveSaveGameHeader(Common::OutSaveFile *out, SaveGameHeader &hdr) {
 }
 
 bool ScummEngine::saveState(int slot, bool compat) {
-	char filename[256];
+	Common::String filename;
 	Common::OutSaveFile *out;
 	SaveGameHeader hdr;
 
 	if (_saveLoadSlot == 255) {
 		// Allow custom filenames for save game system in HE Games
-		memcpy(filename, _saveLoadFileName, sizeof(_saveLoadFileName));
+		filename = _saveLoadFileName;
 	} else {
-		makeSavegameName(filename, slot, compat);
+		filename = makeSavegameName(slot, compat);
 	}
-	if (!(out = _saveFileMan->openForSaving(filename)))
+	if (!(out = _saveFileMan->openForSaving(filename.c_str())))
 		return false;
 
 	memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
@@ -128,11 +128,11 @@ bool ScummEngine::saveState(int slot, bool compat) {
 	out->finalize();
 	if (out->ioFailed()) {
 		delete out;
-		debug(1, "State save as '%s' FAILED", filename);
+		debug(1, "State save as '%s' FAILED", filename.c_str());
 		return false;
 	}
 	delete out;
-	debug(1, "State saved as '%s'", filename);
+	debug(1, "State saved as '%s'", filename.c_str());
 	return true;
 }
 
@@ -145,7 +145,7 @@ static bool loadSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &h
 }
 
 bool ScummEngine::loadState(int slot, bool compat) {
-	char filename[256];
+	Common::String filename;
 	Common::SeekableReadStream *in;
 	int i, j;
 	SaveGameHeader hdr;
@@ -153,15 +153,15 @@ bool ScummEngine::loadState(int slot, bool compat) {
 
 	if (_saveLoadSlot == 255) {
 		// Allow custom filenames for save game system in HE Games
-		memcpy(filename, _saveLoadFileName, sizeof(_saveLoadFileName));
+		filename = _saveLoadFileName;
 	} else {
-		makeSavegameName(filename, slot, compat);
+		filename = makeSavegameName(slot, compat);
 	}
-	if (!(in = _saveFileMan->openForLoading(filename)))
+	if (!(in = _saveFileMan->openForLoading(filename.c_str())))
 		return false;
 
 	if (!loadSaveGameHeader(in, hdr)) {
-		warning("Invalid savegame '%s'", filename);
+		warning("Invalid savegame '%s'", filename.c_str());
 		delete in;
 		return false;
 	}
@@ -177,14 +177,14 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// to work around a bug from the stone age (see below for more
 	// information).
 	if (hdr.ver < VER(7) || hdr.ver > CURRENT_VER) {
-		warning("Invalid version of '%s'", filename);
+		warning("Invalid version of '%s'", filename.c_str());
 		delete in;
 		return false;
 	}
 
 	// We (deliberately) broke HE savegame compatibility at some point.
 	if (hdr.ver < VER(50) && _game.heversion >= 71) {
-		warning("Unsupported version of '%s'", filename);
+		warning("Unsupported version of '%s'", filename.c_str());
 		delete in;
 		return false;
 	}
@@ -391,7 +391,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	if (VAR_VOICE_MODE != 0xFF)
 		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
 
-	debug(1, "State loaded from '%s'", filename);
+	debug(1, "State loaded from '%s'", filename.c_str());
 
 	_sound->pauseSounds(false);
 
@@ -407,23 +407,24 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	return true;
 }
 
-void ScummEngine::makeSavegameName(char *out, int slot, bool temporary) {
-	sprintf(out, "%s.%c%.2d", _targetName.c_str(), temporary ? 'c' : 's', slot);
+Common::String ScummEngine::makeSavegameName(const Common::String &target, int slot, bool temporary) {
+	char extension[6];
+	snprintf(extension, sizeof(extension), ".%c%02d", temporary ? 'c' : 's', slot);
+	return (target + extension);
 }
 
 void ScummEngine::listSavegames(bool *marks, int num) {
 	assert(marks);
 
-	char prefix[256];
 	char slot[3];
 	int slotNum;
 	Common::StringList files;
 
-	makeSavegameName(prefix, 99, false);
-	prefix[strlen(prefix)-2] = '*';
-	prefix[strlen(prefix)-1] = 0;
+	Common::String prefix = makeSavegameName(99, false);
+	prefix.setChar(prefix.size()-2, '*');
+	prefix.setChar(prefix.size()-1, 0);
 	memset(marks, false, num * sizeof(bool));	//assume no savegames for this title
-	files = _saveFileMan->listSavefiles(prefix);
+	files = _saveFileMan->listSavefiles(prefix.c_str());
 
 	for (Common::StringList::const_iterator file = files.begin(); file != files.end(); ++file) {
 		//Obtain the last 2 digits of the filename, since they correspond to the save slot
@@ -442,11 +443,10 @@ bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion
 bool ScummEngine::getSavegameName(int slot, Common::String &desc) {
 	Common::InSaveFile *in = 0;
 	bool result = false;
-	char filename[256];
 
 	desc.clear();
-	makeSavegameName(filename, slot, false);
-	in = _saveFileMan->openForLoading(filename);
+	Common::String filename = makeSavegameName(slot, false);
+	in = _saveFileMan->openForLoading(filename.c_str());
 	if (in) {
 		result = Scumm::getSavegameName(in, desc, _game.heversion);
 		delete in;
@@ -481,16 +481,14 @@ bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion
 }
 
 Graphics::Surface *ScummEngine::loadThumbnailFromSlot(const char *target, int slot) {
-	char filename[256];
 	Common::SeekableReadStream *in;
 	SaveGameHeader hdr;
 
 	if (slot < 0)
 		return  0;
 
-	// TODO: Remove code duplication (check: makeSavegameName)
-	snprintf(filename, sizeof(filename), "%s.s%02d", target, slot);
-	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
+	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
+	if (!(in = g_system->getSavefileManager()->openForLoading(filename.c_str()))) {
 		return 0;
 	}
 
@@ -521,15 +519,14 @@ Graphics::Surface *ScummEngine::loadThumbnailFromSlot(const char *target, int sl
 }
 
 bool ScummEngine::loadInfosFromSlot(int slot, InfoStuff *stuff) {
-	char filename[256];
 	Common::SeekableReadStream *in;
 	SaveGameHeader hdr;
 
 	if (slot < 0)
 		return  0;
 
-	makeSavegameName(filename, slot, false);
-	if (!(in = _saveFileMan->openForLoading(filename))) {
+	Common::String filename = makeSavegameName(slot, false);
+	if (!(in = _saveFileMan->openForLoading(filename.c_str()))) {
 		return false;
 	}
 
