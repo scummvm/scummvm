@@ -49,9 +49,12 @@ public:
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
+	virtual void reflowLayout();
+
 protected:
 	Engine			*_engine;
 
+	GUI::GraphicsWidget *_logo;
 	GUI::ButtonWidget	*_rtlButton;
 	GUI::Dialog		*_aboutDialog;
 	GUI::Dialog		*_optionsDialog;

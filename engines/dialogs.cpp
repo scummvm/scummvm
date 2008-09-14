@@ -35,6 +35,7 @@
 #include "gui/eval.h"
 #include "gui/newgui.h"
 #include "gui/ListWidget.h"
+#include "gui/theme.h"
 
 #include "engines/dialogs.h"
 #include "engines/engine.h"
@@ -77,7 +78,18 @@ enum {
 MainMenuDialog::MainMenuDialog(Engine *engine)
 	: GlobalDialog("globalmain"), _engine(engine) {
 
+#ifndef DISABLE_FANCY_THEMES
+	_logo = 0;
+	if (g_gui.evaluator()->getVar("global_logo.visible") == 1 && g_gui.theme()->supportsImages()) {
+		_logo = new GUI::GraphicsWidget(this, "global_logo");
+		_logo->useThemeTransparency(true);
+		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::Theme::kImageLogoSmall));
+	} else {
+		new StaticTextWidget(this, "global_title", "ScummVM");
+	}
+#else
 	new StaticTextWidget(this, "global_title", "ScummVM");
+#endif
 
 	new StaticTextWidget(this, "global_version", gScummVMVersionDate);
 		
@@ -134,6 +146,37 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	default:
 		GlobalDialog::handleCommand(sender, cmd, data);
 	}
+}
+
+void MainMenuDialog::reflowLayout() {
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.evaluator()->getVar("global_logo.visible") == 1 && g_gui.theme()->supportsImages()) {
+		if (!_logo)
+			_logo = new GUI::GraphicsWidget(this, "global_logo");
+		_logo->useThemeTransparency(true);
+		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::Theme::kImageLogoSmall));
+
+		GUI::StaticTextWidget *title = (StaticTextWidget *)findWidget("global_title");
+		if (title) {
+			removeWidget(title);
+			title->setNext(0);
+			delete title;
+		}
+	} else {
+		GUI::StaticTextWidget *title = (StaticTextWidget *)findWidget("global_title");
+		if (!title)
+			new StaticTextWidget(this, "global_title", "ScummVM");
+
+		if (_logo) {
+			removeWidget(_logo);
+			_logo->setNext(0);
+			delete _logo;
+			_logo = 0;
+		}
+	}
+#endif
+
+	Dialog::reflowLayout();
 }
 
 enum {

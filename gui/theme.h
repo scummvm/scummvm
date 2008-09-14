@@ -356,7 +356,8 @@ public:
 
 	//! Special image ids for images used in the GUI
 	enum kThemeImages {
-		kImageLogo = 0		//! ScummVM Logo used in the launcher
+		kImageLogo = 0,		//! ScummVM Logo used in the launcher
+		kImageLogoSmall		//! ScummVM logo used in the GMM
 	};
 
 	/**

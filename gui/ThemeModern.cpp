@@ -1159,6 +1159,15 @@ OverlayColor ThemeModern::getColor(State state) {
 	return _colors[kColorStateEnabled];
 }
 
+const Graphics::Surface *ThemeModern::getImageSurface(const kThemeImages n) const {
+	if (n == kImageLogo)
+		return _images[kThemeLogo];
+	else if (n == kImageLogoSmall)
+		return _images[kThemeLogoSmall];
+	else
+		return 0;
+}
+
 void ThemeModern::resetupGuiRenderer() {
 	if (_lastUsedBitMask == gBitFormat || !_initOk) {
 		// ok same format no need to reload
@@ -1334,6 +1343,7 @@ void ThemeModern::processExtraValues() {
 	_imageHandles[kWidgetArrow] = _evaluator->getStringVar("pix_widget_arrow");
 
 	_imageHandles[kThemeLogo] = _evaluator->getStringVar("pix_theme_logo");
+	_imageHandles[kThemeLogoSmall] = _evaluator->getStringVar("pix_theme_logo_small");
 
 	_imageHandles[kGUICursor] = _evaluator->getStringVar("pix_cursor_image");
 
