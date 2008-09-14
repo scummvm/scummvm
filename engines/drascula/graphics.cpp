@@ -376,6 +376,8 @@ void DrasculaEngine::screenSaver() {
 	int tempLine[320];
 	int tempRow[200];
 
+	hideCursor();
+
 	clearRoom();
 
 	loadPic("sv.alg", bgSurface, HALF_PAL);
@@ -464,6 +466,7 @@ void DrasculaEngine::screenSaver() {
 	free(ghost);
 
 	loadPic(roomNumber, bgSurface, HALF_PAL);
+	showCursor();
 }
 
 void DrasculaEngine::playFLI(const char *filefli, int vel) {
