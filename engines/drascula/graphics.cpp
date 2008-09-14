@@ -301,51 +301,45 @@ void DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 	}
 }
 
+// TODO: Clean this up and refactor it if possible
 void DrasculaEngine::centerText(const char *message, int textX, int textY) {
-	char bb[200], m2[200], m1[200], mb[10][50];
-	char m3[200];
-	int h, fil, textX3, textX2, textX1, conta_f = 0, ya = 0;
+	char messageReversed[200], m2[200], m1[200], m3[200];
+	char msgMultiLine[10][50];	// the resulting multiline message to be printed on screen
+	int h, fil, textX3, textX2, textX1, numLines = 0;
 
 	strcpy(m1, " ");
 	strcpy(m2, " ");
 	strcpy(m3, " ");
-	strcpy(bb, " ");
+	strcpy(messageReversed, " ");
 
 	for (h = 0; h < 10; h++)
-		strcpy(mb[h], " ");
-
-	if (textX > 160)
-		ya = 1;
+		strcpy(msgMultiLine[h], " ");
 
 	strcpy(m1, message);
-	textX = CLIP<int>(textX, 60, 255);
+	textX1 = CLIP<int>(textX, 60, 255);
 
-	textX1 = textX;
-
-	if (ya == 1)
-		textX1 = 315 - textX;
-
-	textX2 = (strlen(m1) / 2) * CHAR_WIDTH;
+	if (textX1 > 160)
+		textX1 = 315 - textX1;
 
 	while (true) {
-		strcpy(bb, m1);
-		scumm_strrev(bb);
+		strcpy(messageReversed, m1);
+		scumm_strrev(messageReversed);
+
+		textX2 = (strlen(m1) / 2) * CHAR_WIDTH;
 
 		if (textX1 < textX2) {
 			strcpy(m3, strrchr(m1, ' '));
-			strcpy(m1, strstr(bb, " "));
+			strcpy(m1, strstr(messageReversed, " "));
 			scumm_strrev(m1);
 			m1[strlen(m1) - 1] = '\0';
 			strcat(m3, m2);
 			strcpy(m2, m3);
 		};
 
-		textX2 = (strlen(m1) / 2) * CHAR_WIDTH;
-
 		if (textX1 < textX2)
 			continue;
 
-		strcpy(mb[conta_f], m1);
+		strcpy(msgMultiLine[numLines], m1);
 
 		if (!strcmp(m2, ""))
 			break;
@@ -355,14 +349,14 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 		scumm_strrev(m2);
 		strcpy(m1, m2);
 		strcpy(m2, "");
-		conta_f++;
+		numLines++;
 	}
 
-	fil = textY - (((conta_f + 3) * CHAR_HEIGHT));
+	fil = textY - (((numLines + 3) * CHAR_HEIGHT));
 
-	for (h = 0; h < conta_f + 1; h++) {
-		textX3 = strlen(mb[h]) / 2;
-		print_abc(mb[h], ((textX) - textX3 * CHAR_WIDTH) - 1, fil);
+	for (h = 0; h < numLines + 1; h++) {
+		textX3 = strlen(msgMultiLine[h]) / 2;
+		print_abc(msgMultiLine[h], (textX - textX3 * CHAR_WIDTH) - 1, fil);
 		fil = fil + CHAR_HEIGHT + 2;
 	}
 }
