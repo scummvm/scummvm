@@ -264,9 +264,10 @@ void KyraEngine_v1::readSettings() {
 	_configMusic = 0;
 	
 	if (!ConfMan.getBool("music_mute")) {
-		_configMusic = 1;
-		if (ConfMan.getBool("cdaudio") && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98))
-			_configMusic = 2;
+		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+			_configMusic = ConfMan.getBool("cdaudio") ? 2 : 1;
+		else
+			_configMusic = 1;
 	}
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 
