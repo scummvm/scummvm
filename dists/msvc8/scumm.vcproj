@@ -178,14 +178,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\scumm\smush\chunk.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\chunk.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\scumm\smush\chunk_type.h"
 				>
 			</File>
