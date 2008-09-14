@@ -683,6 +683,7 @@ public:
 
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual void removeSaveState(const char *target, int slot) const;
+	virtual Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot) const;
 };
 
 bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -690,7 +691,8 @@ bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDirectLoad) ||
-		(f == kSupportsDeleteSave);
+		(f == kSupportsDeleteSave) ||
+		(f == kSupportsThumbnails);
 }
 
 GameList ScummMetaEngine::getSupportedGames() const {
@@ -984,6 +986,10 @@ void ScummMetaEngine::removeSaveState(const char *target, int slot) const {
 	filename += extension;
 
 	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+}
+
+Graphics::Surface *ScummMetaEngine::loadThumbnailFromSlot(const char *target, int slot) const {
+	return ScummEngine::loadThumbnailFromSlot(target, slot);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SCUMM)

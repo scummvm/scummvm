@@ -627,12 +627,14 @@ public:
 
 // thumbnail + info stuff
 public:
-	Graphics::Surface *loadThumbnailFromSlot(int slot);
+	Graphics::Surface *loadThumbnailFromSlot(int slot) {
+		return loadThumbnailFromSlot(_targetName.c_str(), slot);
+	}
+	static Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot);
+
 	bool loadInfosFromSlot(int slot, InfoStuff *stuff);
 
 protected:
-	Graphics::Surface *loadThumbnail(Common::SeekableReadStream *file);
-
 	void saveInfos(Common::WriteStream* file);
 	bool loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff);
 

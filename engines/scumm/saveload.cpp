@@ -73,20 +73,6 @@ struct SaveInfoSection {
 
 #define INFOSECTION_VERSION 2
 
-Graphics::Surface *ScummEngine::loadThumbnail(Common::SeekableReadStream *file) {
-	if (!Graphics::checkThumbnailHeader(*file))
-		return 0;
-
-	Graphics::Surface *thumb = new Graphics::Surface();
-	assert(thumb);
-	if (!Graphics::loadThumbnail(*file, *thumb)) {
-		delete thumb;
-		return 0;
-	}
-
-	return thumb;
-}
-
 #pragma mark -
 
 void ScummEngine::requestSave(int slot, const char *name, bool temporary) {
@@ -494,7 +480,7 @@ bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion
 	return true;
 }
 
-Graphics::Surface *ScummEngine::loadThumbnailFromSlot(int slot) {
+Graphics::Surface *ScummEngine::loadThumbnailFromSlot(const char *target, int slot) {
 	char filename[256];
 	Common::SeekableReadStream *in;
 	SaveGameHeader hdr;
@@ -502,8 +488,9 @@ Graphics::Surface *ScummEngine::loadThumbnailFromSlot(int slot) {
 	if (slot < 0)
 		return  0;
 
-	makeSavegameName(filename, slot, false);
-	if (!(in = _saveFileMan->openForLoading(filename))) {
+	// TODO: Remove code duplication (check: makeSavegameName)
+	snprintf(filename, sizeof(filename), "%s.s%02d", target, slot);
+	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
 		return 0;
 	}
 
@@ -519,7 +506,15 @@ Graphics::Surface *ScummEngine::loadThumbnailFromSlot(int slot) {
 		return 0;
 	}
 
-	Graphics::Surface *thumb = loadThumbnail(in);
+	Graphics::Surface *thumb = 0;
+	if (Graphics::checkThumbnailHeader(*in)) {
+		thumb = new Graphics::Surface();
+		assert(thumb);
+		if (!Graphics::loadThumbnail(*in, *thumb)) {
+			delete thumb;
+			thumb = 0;
+		}
+	}
 
 	delete in;
 	return thumb;
