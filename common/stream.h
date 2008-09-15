@@ -430,7 +430,8 @@ public:
 		: _parentStream(parentStream),
 		  _disposeParentStream(disposeParentStream),
 		  _pos(0),
-		  _end(end) {
+		  _end(end),
+		  _eos(false) {
 		assert(parentStream);
 	}
 	~SubReadStream() {
