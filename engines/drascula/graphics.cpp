@@ -301,63 +301,65 @@ void DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 	}
 }
 
-// TODO: Clean this up and refactor it if possible
+bool DrasculaEngine::textFitsCentered(char *text, int x) {
+	int len = strlen(text);
+	int x1 = CLIP<int>(x - len * CHAR_WIDTH / 2, 60, 255);
+	// Print up to pixel 280, not 320, to have 40 pixels space to the right
+	// This resembles the way that the original printed text on screen
+	return (x1 + len * CHAR_WIDTH) <= 280;
+}
+
 void DrasculaEngine::centerText(const char *message, int textX, int textY) {
-	char messageReversed[200], m2[200], m1[200], m3[200];
-	char msgMultiLine[10][50];	// the resulting multiline message to be printed on screen
-	int h, fil, textX3, textX2, textX1, numLines = 0;
+	char msg[200];
+	char messageLine[200];
+	char tmpMessageLine[200];
+	*messageLine = 0;
+	*tmpMessageLine = 0;
+	char *curWord;
+	int curLine = 0;
+	int x = 0;
+	int y = textY - (3 * CHAR_HEIGHT);	// original starts printing 3 lines above textY
+	int len = 0;
 
-	strcpy(m1, " ");
-	strcpy(m2, " ");
-	strcpy(m3, " ");
-	strcpy(messageReversed, " ");
+	strcpy(msg, message);
 
-	for (h = 0; h < 10; h++)
-		strcpy(msgMultiLine[h], " ");
-
-	strcpy(m1, message);
-	textX1 = CLIP<int>(textX, 60, 255);
-
-	if (textX1 > 160)
-		textX1 = 315 - textX1;
-
-	while (true) {
-		strcpy(messageReversed, m1);
-		scumm_strrev(messageReversed);
-
-		textX2 = (strlen(m1) / 2) * CHAR_WIDTH;
-
-		if (textX1 < textX2) {
-			strcpy(m3, strrchr(m1, ' '));
-			strcpy(m1, strstr(messageReversed, " "));
-			scumm_strrev(m1);
-			m1[strlen(m1) - 1] = '\0';
-			strcat(m3, m2);
-			strcpy(m2, m3);
-		};
-
-		if (textX1 < textX2)
-			continue;
-
-		strcpy(msgMultiLine[numLines], m1);
-
-		if (!strcmp(m2, ""))
-			break;
-
-		scumm_strrev(m2);
-		m2[strlen(m2) - 1] = '\0';
-		scumm_strrev(m2);
-		strcpy(m1, m2);
-		strcpy(m2, "");
-		numLines++;
+	// If the message fits on screen as-is, just print it here
+	if (textFitsCentered(msg, textX)) {
+		x = CLIP<int>(textX - strlen(msg) * CHAR_WIDTH / 2, 60, 255);
+		print_abc(msg, x, y);
+		return;
 	}
 
-	fil = textY - (((numLines + 3) * CHAR_HEIGHT));
+	// Message doesn't fit on screen, split it
 
-	for (h = 0; h < numLines + 1; h++) {
-		textX3 = strlen(msgMultiLine[h]) / 2;
-		print_abc(msgMultiLine[h], (textX - textX3 * CHAR_WIDTH) - 1, fil);
-		fil = fil + CHAR_HEIGHT + 2;
+	// Get a word from the message
+	curWord = strtok(msg, " ");
+	while (curWord != NULL) {
+		// Check if the word and the current line fit on screen
+		if (strlen(tmpMessageLine) > 0)
+			strcat(tmpMessageLine, " ");
+		strcat(tmpMessageLine, curWord);
+		if (textFitsCentered(tmpMessageLine, textX)) {
+			// Line fits, so add the word to the current message line
+			strcpy(messageLine, tmpMessageLine);
+		} else {
+			// Line doesn't fit, so show the current line on screen and
+			// create a new one
+			// If it goes off screen, print_abc will adjust it
+			x = CLIP<int>(textX - strlen(messageLine) * CHAR_WIDTH / 2, 60, 255);
+			print_abc(messageLine, x, y + curLine * CHAR_HEIGHT);
+			strcpy(messageLine, curWord);
+			strcpy(tmpMessageLine, curWord);
+			curLine++;
+		}
+
+		// Get next word
+		curWord = strtok (NULL, " ");
+
+		if (curWord == NULL) {
+			x = CLIP<int>(textX - strlen(messageLine) * CHAR_WIDTH / 2, 60, 255);
+			print_abc(messageLine, x, y + curLine * CHAR_HEIGHT);
+		}
 	}
 }
 
