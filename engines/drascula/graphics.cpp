@@ -304,9 +304,7 @@ void DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 bool DrasculaEngine::textFitsCentered(char *text, int x) {
 	int len = strlen(text);
 	int x1 = CLIP<int>(x - len * CHAR_WIDTH / 2, 60, 255);
-	// Print up to pixel 280, not 320, to have 40 pixels space to the right
-	// This resembles the way that the original printed text on screen
-	return (x1 + len * CHAR_WIDTH) <= 280;
+	return (x1 + len * CHAR_WIDTH) <= 320;
 }
 
 void DrasculaEngine::centerText(const char *message, int textX, int textY) {
