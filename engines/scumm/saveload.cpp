@@ -126,7 +126,7 @@ bool ScummEngine::saveState(int slot, bool compat) {
 	Serializer ser(0, out, CURRENT_VER);
 	saveOrLoad(&ser);
 	out->finalize();
-	if (out->ioFailed()) {
+	if (out->err()) {
 		delete out;
 		debug(1, "State save as '%s' FAILED", filename.c_str());
 		return false;
@@ -141,7 +141,7 @@ static bool loadSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &h
 	hdr.size = in->readUint32LE();
 	hdr.ver = in->readUint32LE();
 	in->read(hdr.name, sizeof(hdr.name));
-	return !in->ioFailed() && hdr.type == MKID_BE('SCVM');
+	return !in->err() && hdr.type == MKID_BE('SCVM');
 }
 
 bool ScummEngine::loadState(int slot, bool compat) {
