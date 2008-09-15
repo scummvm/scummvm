@@ -52,6 +52,7 @@ protected:
 	int _zlibErr;
 	uint32 _pos;
 	uint32 _origSize;
+	bool _eos;
 
 public:
 
@@ -78,6 +79,7 @@ public:
 		}
 		_pos = 0;
 		w->seek(0, SEEK_SET);
+		_eos = false;
 
 		// Adding 32 to windowBits indicates to zlib that it is supposed to
 		// automatically detect whether gzip or zlib headers are used for
@@ -99,7 +101,10 @@ public:
 	}
 
 	bool err() const { return (_zlibErr != Z_OK) && (_zlibErr != Z_STREAM_END); }
-	void clearErr() { /* errors here are not recoverable!  */ }
+	void clearErr() {
+		// only reset _eos; I/O errors are not recoverable
+		_eos = false;
+	}
 
 	uint32 read(void *dataPtr, uint32 dataSize) {
 		_stream.next_out = (byte *)dataPtr;
@@ -118,12 +123,14 @@ public:
 		// Update the position counter
 		_pos += dataSize - _stream.avail_out;
 
+		if (_zlibErr == Z_STREAM_END && _stream.avail_out > 0)
+			_eos = true;
+
 		return dataSize - _stream.avail_out;
 	}
 
 	bool eos() const {
-		return (_zlibErr == Z_STREAM_END);
-		//return _pos == _origSize;
+		return _eos;
 	}
 	int32 pos() const {
 		return _pos;
@@ -170,6 +177,7 @@ public:
 			offset -= read(tmpBuf, MIN((int32)sizeof(tmpBuf), offset));
 		}
 		
+		_eos = false;
 		return true;	// FIXME: STREAM REWRITE
 	}
 };
