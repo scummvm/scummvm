@@ -206,7 +206,7 @@ void KyraEngine_LoK::loadGame(const char *fileName) {
 	_mousePressFlag = false;
 	setMousePos(brandonX, brandonY);
 	
-	if (in->err())
+	if (in->err() || in->eos())
 		error("Load failed ('%s', '%s').", fileName, header.description.c_str());
 	else
 		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", header.description.c_str());

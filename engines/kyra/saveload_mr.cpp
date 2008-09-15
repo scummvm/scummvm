@@ -283,7 +283,7 @@ void KyraEngine_MR::loadGame(const char *fileName) {
 	_sceneExit3 = in.readUint16();
 	_sceneExit4 = in.readUint16();
 
-	if (saveFile->err())
+	if (saveFile->err() || saveFile->eos())
 		error("Load failed ('%s', '%s').", fileName, header.description.c_str());
 	else
 		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", header.description.c_str());
