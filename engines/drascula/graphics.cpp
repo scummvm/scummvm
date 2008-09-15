@@ -303,8 +303,8 @@ void DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 
 bool DrasculaEngine::textFitsCentered(char *text, int x) {
 	int len = strlen(text);
-	int x1 = CLIP<int>(x - len * CHAR_WIDTH / 2, 60, 255);
-	return (x1 + len * CHAR_WIDTH) <= 320;
+	int tmp = CLIP<int>(x - len * CHAR_WIDTH / 2, 60, 255);
+	return (tmp + len * CHAR_WIDTH) <= 320;
 }
 
 void DrasculaEngine::centerText(const char *message, int textX, int textY) {
@@ -317,7 +317,6 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	int curLine = 0;
 	int x = 0;
 	int y = textY - (3 * CHAR_HEIGHT);	// original starts printing 3 lines above textY
-	int len = 0;
 
 	strcpy(msg, message);
 
