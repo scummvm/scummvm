@@ -105,6 +105,19 @@ public:
 	byte *getCharData(byte ch) const {
 		return _fontData + 0x298 + READ_LE_UINT16(&_fontData[0xE0 + (ch - 0x21) * 2]);
 	}
+	int16 getTextWidth(byte *text) {
+		int16 width = 0;
+		while (*text && *text < 0xF0) {
+			byte ch = *text++;
+			if (ch <= 0x20) {
+				width += getWidth();
+			} else {
+				width += getCharWidth(ch) + getSpacing() - 1;
+			}
+		}
+		return width;
+	}
+
 protected:
 	byte *_fontData;
 };
