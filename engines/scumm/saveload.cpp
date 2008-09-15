@@ -421,8 +421,8 @@ void ScummEngine::listSavegames(bool *marks, int num) {
 	Common::StringList files;
 
 	Common::String prefix = makeSavegameName(99, false);
-	prefix.setChar(prefix.size()-2, '*');
-	prefix.setChar(prefix.size()-1, 0);
+	prefix.setChar('*', prefix.size()-2);
+	prefix.setChar(0, prefix.size()-1);
 	memset(marks, false, num * sizeof(bool));	//assume no savegames for this title
 	files = _saveFileMan->listSavefiles(prefix.c_str());
 
