@@ -628,7 +628,7 @@ void DrasculaEngine::talk_blind(int index) {
 		}
 
 		if (withVoices == 0)
-			centerText(said, 310, 71);
+			centerText(said, 260, 71);
 
 		updateScreen();
 		pause(2);
