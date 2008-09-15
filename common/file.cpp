@@ -108,10 +108,10 @@ bool File::open(const String &filename) {
 bool File::open(const FilesystemNode &node) {
 
 	if (!node.exists()) {
-		warning("File::open: Trying to open a FilesystemNode which does not exist");
+		warning("File::open: FilesystemNode does not exist");
 		return false;
 	} else if (node.isDirectory()) {
-		warning("File::open: Trying to open a FilesystemNode which is a directory");
+		warning("File::open: FilesystemNode is a directory");
 		return false;
 	}
 
@@ -225,7 +225,7 @@ bool DumpFile::open(const FilesystemNode &node) {
 	assert(!_handle);
 
 	if (node.isDirectory()) {
-		warning("File::open: Trying to open a FilesystemNode which is a directory");
+		warning("DumpFile::open: FilesystemNode is a directory");
 		return false;
 	}
 

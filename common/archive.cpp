@@ -100,10 +100,10 @@ SeekableReadStream *FSDirectory::openFile(const String &name) {
 	FilesystemNode node = lookupCache(_fileCache, name);
 
 	if (!node.exists()) {
-		warning("FSDirectory::openFile: Trying to open a FilesystemNode which does not exist");
+		warning("FSDirectory::openFile: FilesystemNode does not exist");
 		return 0;
 	} else if (node.isDirectory()) {
-		warning("FSDirectory::openFile: Trying to open a FilesystemNode which is a directory");
+		warning("FSDirectory::openFile: FilesystemNode is a directory");
 		return 0;
 	}
 

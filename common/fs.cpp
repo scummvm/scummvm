@@ -178,10 +178,10 @@ Common::SeekableReadStream *FilesystemNode::openForReading() const {
 		return 0;
 
 	if (!_realNode->exists()) {
-		warning("File::open: Trying to open a FilesystemNode which does not exist");
+		warning("FilesystemNode::openForReading: FilesystemNode does not exist");
 		return false;
 	} else if (_realNode->isDirectory()) {
-		warning("File::open: Trying to open a FilesystemNode which is a directory");
+		warning("FilesystemNode::openForReading: FilesystemNode is a directory");
 		return false;
 	}
 
@@ -193,7 +193,7 @@ Common::WriteStream *FilesystemNode::openForWriting() const {
 		return 0;
 
 	if (_realNode->isDirectory()) {
-		warning("File::open: Trying to open a FilesystemNode which is a directory");
+		warning("FilesystemNode::openForWriting: FilesystemNode is a directory");
 		return 0;
 	}
 
