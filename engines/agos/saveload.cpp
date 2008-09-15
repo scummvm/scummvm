@@ -1056,7 +1056,7 @@ bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 		writeVariable(i, f->readUint16BE());
 	}
 
-	if (f->ioFailed()) {
+	if (f->err()) {
 		error("load failed");
 	}
 
@@ -1140,7 +1140,7 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 	}
 
 	f->finalize();
-	bool result = !f->ioFailed();
+	bool result = !f->err();
 
 	delete f;
 	_lockWord &= ~0x100;
@@ -1331,7 +1331,7 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 		_superRoomNumber = f->readUint16BE();
 	}
 
-	if (f->ioFailed()) {
+	if (f->err()) {
 		error("load failed");
 	}
 
@@ -1503,7 +1503,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	}
 
 	f->finalize();
-	bool result = !f->ioFailed();
+	bool result = !f->err();
 
 	delete f;
 	_lockWord &= ~0x100;
