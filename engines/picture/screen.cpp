@@ -769,6 +769,14 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 
 	debug(0, "## item->lineCount = %d", item->lineCount);
 
+	if (item->lineCount > 0) {
+		int16 ysub = (font.getHeight() - 1) * item->lineCount;
+		if (item->lines[0].y - 4 < ysub)
+			ysub = item->lines[0].y - 4;
+		for (int16 l = 0; l < item->lineCount; l++)
+			item->lines[l].y -= ysub;
+	}
+
 	int16 textDurationMultiplier = item->duration + 8;
 	// TODO: Check sound/text flags
 	if (*textData == 0xFE) {
