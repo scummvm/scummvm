@@ -1603,29 +1603,53 @@ static void LocalizeString() {
 }
 
 static void SayLine() {
-	int pan = 64, param_number = 2;
+	int vol = 64, paramId = 2;
 	char msgId[32];
 	std::string msg = "";
-	lua_Object param2;
+	lua_Object paramObj;
 	Actor *act;
 
 	DEBUG_FUNCTION();
-	param2 = lua_getparam(param_number++);
+	paramObj = lua_getparam(paramId++);
 	act = check_actor(1);
-	if (!lua_isnil(param2)) {
+	if (!lua_isnil(paramObj)) {
 		do {
-			if (lua_isstring(param2)) {
-				const char *tmpstr = lua_getstring(param2);
+			if (lua_isstring(paramObj)) {
+				const char *tmpstr = lua_getstring(paramObj);
 				msg = parseMsgText(tmpstr, msgId);
-			} else if (lua_isnumber(param2)) {
-				pan = 64;
-			} else if (lua_istable(param2)) {
-				warning("SayLine() param is table");
+			} else if (lua_isnumber(paramObj)) {
+				// ignore
+			} else if (lua_istable(paramObj)) {
+				const char *key_text = NULL;
+				lua_Object key = LUA_NOOBJECT;
+				for (;;) {
+					lua_pushobject(paramObj);
+					if (key_text)
+						lua_pushobject(key);
+					else
+						lua_pushnil();
+					// If the call to "next" fails then register an error
+					if (lua_call("next") != 0) {
+						error("SayLine failed to get next key!\n");
+						return;
+					}
+					key = lua_getresult(1);
+					if (lua_isnil(key)) 
+						break;
+					warning("SayLine() not null table");
+					key_text = lua_getstring(key);
+					if (strmatch(key_text, "x"))
+						int x = atoi(lua_getstring(lua_getresult(2)));
+					else if (strmatch(key_text, "y"))
+						int y = atoi(lua_getstring(lua_getresult(2)));
+					else
+						error("Unknown SayLine key '%s'\n", key_text);
+				}
 			} else {
-				error("SayLine() unknown type of param");
+					error("SayLine() unknown type of param");
 			}
-			param2 = lua_getparam(param_number++);
-		} while (!lua_isnil(param2));
+			paramObj = lua_getparam(paramId++);
+		} while (!lua_isnil(paramObj));
 		if (msg.empty()) {
 			if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 				warning("SayLine: Did not find a message ID!");
