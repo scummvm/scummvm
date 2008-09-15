@@ -66,6 +66,7 @@
 
 #include <nds.h>
 #include <nds/registers_alt.h>
+#include <nds/arm9/exceptions.h>
 
 //#include <ARM9/console.h> //basic print funcionality
 
@@ -76,7 +77,6 @@
 #include "icons_raw.h"
 #include "fat/gba_nds_fat.h"
 #include "fat/disc_io.h"
-//#include "common/config-manager.h"
 #include "keyboard_raw.h"
 #include "keyboard_pal_raw.h"
 #define V16(a, b) ((a << 12) | b)
@@ -94,6 +94,26 @@
 #include "profiler/cyg-profile.h"
 #endif
 #include "backends/fs/ds/ds-fs.h"
+
+extern "C" u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState);
+extern const char __itcm_start[];
+static const char *registerNames[] =
+	{	"r0","r1","r2","r3","r4","r5","r6","r7",
+		"r8 ","r9 ","r10","r11","r12","sp ","lr ","pc " };
+
+/*
+extern "C" void* __real_malloc(size_t size);
+
+extern "C" void* __wrap_malloc(size_t size) {
+	void* res = __real_malloc(size);
+	if (res) {
+		return res;
+	} else {
+		consolePrintf("Failed alloc %d\n", size);
+		return NULL;
+	}
+}
+*/
 
 namespace DS {
 
@@ -167,7 +187,7 @@ bool displayModeIs8Bit = false;
 u8 gameID;
 
 bool snapToBorder = false;
-bool consoleEnable = true;
+bool consoleEnable = false;
 bool gameScreenSwap = false;
 bool isCpuScalerEnabled();
 //#define HEAVY_LOGGING
@@ -196,6 +216,13 @@ int mouseHotspotX, mouseHotspotY;
 bool cursorEnable = false;
 bool mouseCursorVisible = true;
 bool rightButtonDown = false;
+bool touchPadStyle = false;
+int touchPadSensitivity = 8;
+bool tapScreenClicks = true;
+
+int tapCount = 0;
+int tapTimeout = 0;
+int tapComplete = 0;
 
 // Dragging
 int dragStartX, dragStartY;
@@ -212,7 +239,14 @@ int gameHeight = 200;
 // Scale
 bool twoHundredPercentFixedScale = false;
 bool cpuScalerEnable = false;
-#define NUM_SUPPORTED_GAMES 20
+
+		// 100    256
+		// 150	  192
+		// 200	  128
+
+		// (256 << 8) / scale 
+		
+
 
 #ifdef USE_PROFILER
 int hBlankCount = 0;
@@ -220,6 +254,7 @@ int hBlankCount = 0;
 
 u8* scalerBackBuffer = NULL;
 
+#define NUM_SUPPORTED_GAMES 21
 
 gameListType gameList[NUM_SUPPORTED_GAMES] = {
 	// Unknown game - use normal SCUMM controls
@@ -247,6 +282,7 @@ gameListType gameList[NUM_SUPPORTED_GAMES] = {
 	{"elvira2",		CONT_SIMON},
 	{"elvira1",		CONT_SIMON},
 	{"waxworks",		CONT_SIMON},
+	{"parallaction",	CONT_NIPPON},
 };
 
 gameListType* currentGame = NULL;
@@ -259,6 +295,7 @@ bool penHeld;
 bool penReleased;
 bool penDownLastFrame;
 s32 penX, penY;
+s32 penDownX, penDownY;
 int keysDownSaved;
 int keysReleasedSaved;
 int keysChangedSaved;
@@ -298,8 +335,40 @@ void setCpuScalerEnable(bool enable) {
 	cpuScalerEnable = enable;
 }
 
+void setTrackPadStyleEnable(bool enable) {
+	touchPadStyle = enable;
+}
+
+void setTapScreenClicksEnable(bool enable) {
+	tapScreenClicks = enable;
+}
+
+void setGameScreenSwap(bool enable) {
+	gameScreenSwap = enable;
+}
+
+void setSensitivity(int sensitivity) {
+	touchPadSensitivity = sensitivity;
+}
+
+void setTopScreenZoom(int percentage) {
+		// 100    256
+		// 150	  192
+		// 200	  128
+
+		// (256 << 8) / scale 
+		
+	s32 scale = (percentage << 8) / 100;
+	subScreenScale = (256 * 256) / scale;
+
+//	consolePrintf("Scale is %d %%\n", percentage);
+}
 
 //	return (ConfMan.hasKey("cpu_scaler", "ds") && ConfMan.getBool("cpu_scaler", "ds"));
+
+controlType getControlType() {
+	return currentGame->control;
+}
 
 
 //plays an 8 bit mono sample at 11025Hz
@@ -428,14 +497,14 @@ void initGame() {
 	consolePrintf("initing game...");
 	#endif
 
-	static bool firstTime = true;
+//	static bool firstTime = true;
 
 
 	setOptions();
 
 	//strcpy(gameName, ConfMan.getActiveDomain().c_str());
 	strcpy(gameName, ConfMan.get("gameid").c_str());
-	consolePrintf("\n\n\n\nCurrent game: '%s' %d\n", gameName, gameName[0]);
+//	consolePrintf("\n\n\n\nCurrent game: '%s' %d\n", gameName, gameName[0]);
 
 	currentGame = &gameList[0];		// Default game
 	
@@ -446,16 +515,12 @@ void initGame() {
 		}
 	}
 		
-	if (firstTime) {
+/*	if (firstTime) {
 		firstTime = false;
 
-		if (ConfMan.hasKey("22khzaudio", "ds") && ConfMan.getBool("22khzaudio", "ds")) {
-			startSound(22050, 8192);
-		} else {
-			startSound(11025, 4096);
-		}
 
 	}
+*/
 	#ifdef HEAVY_LOGGING
 	consolePrintf("done\n");
 	#endif
@@ -630,7 +695,7 @@ void checkSleepMode() {
 
 void setShowCursor(bool enable)
 {
-	if (currentGame->control == CONT_SCUMM_SAMNMAX)
+	if ((currentGame) && (currentGame->control == CONT_SCUMM_SAMNMAX))
 	{
 		if (cursorEnable) {
 			sprites[1].attribute[0] = ATTR0_BMP | 150;
@@ -653,23 +718,28 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, 
 	mouseHotspotX = hotspotX;
 	mouseHotspotY = hotspotY;
 
+	//consolePrintf("Set cursor icon %d, %d\n", w, h);
+
 	{
 		int off = 128*64;
 	
 	
 		memset(SPRITE_GFX + off, 0, 32 * 32 * 2);
 		memset(SPRITE_GFX_SUB + off, 0, 32 * 32 * 2);
+
 	
 		for (uint y=0; y<h; y++) {
 			for (uint x=0; x<w; x++) {
 				int color = icon[y*w+x];
+
+				//consolePrintf("%d:%d ", color, OSystem_DS::instance()->getDSPaletteEntry(color));
 	
 				if (color == keycolor) {
 					SPRITE_GFX[off+(y)*32+x] = 0x0000; // black background
 					SPRITE_GFX_SUB[off+(y)*32+x] = 0x0000; // black background
 				} else {
-					SPRITE_GFX[off+(y)*32+x] = BG_PALETTE[color] | 0x8000;
-					SPRITE_GFX_SUB[off+(y)*32+x] = BG_PALETTE[color] | 0x8000;
+					SPRITE_GFX[off+(y)*32+x] = OSystem_DS::instance()->getDSCursorPaletteEntry(color) | 0x8000;
+					SPRITE_GFX_SUB[off+(y)*32+x] = OSystem_DS::instance()->getDSCursorPaletteEntry(color) | 0x8000;
 				}
 			}
 		}
@@ -732,6 +802,7 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, 
 		sprites[1].attribute[1] = ATTR1_SIZE_64 | pos;
 		sprites[1].attribute[2] = ATTR2_ALPHA(1) | 176;
 	}
+
 }
 
 
@@ -744,6 +815,7 @@ void displayMode16Bit() {
 
 	u16 buffer[32 * 32 * 2];
 
+	releaseAllKeys();
 
 	if (displayModeIs8Bit) {
 //		static int test = 0;
@@ -1108,7 +1180,7 @@ void setKeyboardEnable(bool en) {
 
 	} else {
 
-
+		DS::releaseAllKeys();
 		// Restore the palette that the keyboard has used
 		for (int r = 0; r < 256; r++) {
 			BG_PALETTE_SUB[r] = BG_PALETTE[r];
@@ -1154,6 +1226,194 @@ bool getKeyboardEnable() {
 
 bool getIsDisplayMode8Bit() {
 	return displayModeIs8Bit;
+}
+
+void doScreenTapMode(OSystem_DS* system)
+{
+	Common::Event event;
+	static bool left = false, right = false;
+
+	if (left) {
+		event.type = Common::EVENT_LBUTTONUP;
+		event.mouse = Common::Point(getPenX(), getPenY());
+		system->addEvent(event);
+		left = false;
+	}
+
+	if (right) {
+		event.type = Common::EVENT_RBUTTONUP;
+		event.mouse = Common::Point(getPenX(), getPenY());
+		system->addEvent(event);
+		right = false;
+	}
+
+
+	if (tapComplete == 1) {
+		event.type = Common::EVENT_LBUTTONDOWN;
+		event.mouse = Common::Point(getPenX(), getPenY());
+		system->addEvent(event);
+		tapComplete = 0;
+		left = true;
+	} else if (tapComplete == 2) {
+		event.type = Common::EVENT_RBUTTONDOWN;
+		event.mouse = Common::Point(getPenX(), getPenY());
+		system->addEvent(event);
+		tapComplete = 0;
+		right = true;
+	}
+
+
+	if (getKeysDown() & KEY_LEFT) {
+		event.type = Common::EVENT_LBUTTONDOWN;
+		event.mouse = Common::Point(getPenX(), getPenY());
+		system->addEvent(event);
+	}
+
+	if (getKeysReleased() & KEY_LEFT) {
+		event.type = Common::EVENT_LBUTTONUP;
+		event.mouse = Common::Point(getPenX(), getPenY());
+		system->addEvent(event);
+	}
+
+
+	if (getKeysDown() & KEY_RIGHT) {
+		event.type = Common::EVENT_RBUTTONDOWN;
+		event.mouse = Common::Point(getPenX(), getPenY());
+		system->addEvent(event);
+	}
+
+	if (getKeysReleased() & KEY_RIGHT) {
+		event.type = Common::EVENT_RBUTTONUP;
+		event.mouse = Common::Point(getPenX(), getPenY());
+		system->addEvent(event);
+	}
+
+	event.type = Common::EVENT_MOUSEMOVE;
+	event.mouse = Common::Point(getPenX(), getPenY());
+	system->addEvent(event);
+}
+
+void doButtonSelectMode(OSystem_DS* system)
+{
+	Common::Event event;
+
+
+	if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {
+		event.type = Common::EVENT_MOUSEMOVE;
+		event.mouse = Common::Point(getPenX(), getPenY());
+		system->addEvent(event);
+		//consolePrintf("x=%d   y=%d  \n", getPenX(), getPenY());
+	}
+
+	static bool leftButtonDown = false;
+	static bool rightButtonDown = false;
+
+	if (getPenReleased() && (leftButtonDown || rightButtonDown)) {
+		if (leftButtonDown) {
+			event.type = Common::EVENT_LBUTTONUP;
+		} else {
+			event.type = Common::EVENT_RBUTTONUP;
+		}
+
+		event.mouse = Common::Point(getPenX(), getPenY());
+		system->addEvent(event);
+	}
+
+
+	if ((mouseMode != MOUSE_HOVER) || (!displayModeIs8Bit)) {
+		if (getPenDown() && (!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {	
+			if ((mouseMode == MOUSE_LEFT) || (!displayModeIs8Bit)) {
+				event.type = Common::EVENT_LBUTTONDOWN;
+				leftButtonDown = true;
+			} else {
+				event.type = Common::EVENT_RBUTTONDOWN;
+				rightButtonDown = true;
+			}
+
+			event.mouse = Common::Point(getPenX(), getPenY());
+			system->addEvent(event);
+		}
+		
+	} else {
+		// In hover mode, D-pad left and right click the mouse when the pen is on the screen
+
+		if (getPenHeld()) {
+			if (getKeysDown() & KEY_LEFT) {
+				event.type = Common::EVENT_LBUTTONDOWN;
+				event.mouse = Common::Point(getPenX(), getPenY());
+				system->addEvent(event);
+			}
+			if (getKeysReleased() & KEY_LEFT) {
+				event.type = Common::EVENT_LBUTTONUP;
+				event.mouse = Common::Point(getPenX(), getPenY());
+				system->addEvent(event);
+			}
+
+
+			if (getKeysDown() & KEY_RIGHT) {
+				event.type = Common::EVENT_RBUTTONDOWN;
+				event.mouse = Common::Point(getPenX(), getPenY());
+				system->addEvent(event);
+			}
+			if (getKeysReleased() & KEY_RIGHT) {
+				event.type = Common::EVENT_RBUTTONUP;
+				event.mouse = Common::Point(getPenX(), getPenY());
+				system->addEvent(event);
+			}
+		}
+	}
+
+	if (!((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) && (!getIndyFightState()) && (!getKeyboardEnable())) {
+
+		if (!getPenHeld() || (mouseMode != MOUSE_HOVER)) {
+			if (getKeysDown() & KEY_LEFT) {
+				mouseMode = MOUSE_LEFT;
+			}
+		
+			if (rightButtonDown)
+			{
+				Common::Event event;
+				event.mouse = Common::Point(getPenX(), getPenY());
+				event.type = Common::EVENT_RBUTTONUP;
+				system->addEvent(event);
+				rightButtonDown = false;
+			}
+				
+		
+			if (getKeysDown() & KEY_RIGHT) {
+				if ((currentGame->control != CONT_SCUMM_SAMNMAX) && (currentGame->control != CONT_FUTURE_WARS) && (currentGame->control != CONT_GOBLINS)) {
+					mouseMode = MOUSE_RIGHT;
+				} else {
+					// If we're playing sam and max, click and release the right mouse
+					// button to change verb
+					Common::Event event;
+		
+					if (currentGame->control == CONT_FUTURE_WARS) {
+						event.mouse = Common::Point(320 - 128, 200 - 128);
+						event.type = Common::EVENT_MOUSEMOVE;
+						system->addEvent(event);
+					} else {
+						event.mouse = Common::Point(getPenX(), getPenY());
+					}
+					
+					rightButtonDown = true;
+		
+		
+					event.type = Common::EVENT_RBUTTONDOWN;
+					system->addEvent(event);
+		
+					//event.type = Common::EVENT_RBUTTONUP;
+					//system->addEvent(event);
+				}
+			}
+		
+		
+		
+			if (getKeysDown() & KEY_UP) {
+				mouseMode = MOUSE_HOVER;
+			}
+		}
+	}
 }
 
 void addEventsToQueue() {
@@ -1285,54 +1545,6 @@ void addEventsToQueue() {
 
 				}
 	
-				if (!getPenHeld() || (mouseMode != MOUSE_HOVER)) {
-					if (getKeysDown() & KEY_LEFT) {
-						mouseMode = MOUSE_LEFT;
-					}
-
-					if (rightButtonDown)
-					{
-						Common::Event event;
-						event.mouse = Common::Point(getPenX(), getPenY());
-						event.type = Common::EVENT_RBUTTONUP;
-						system->addEvent(event);
-						rightButtonDown = false;
-					}
-						
-
-					if (getKeysDown() & KEY_RIGHT) {
-						if ((currentGame->control != CONT_SCUMM_SAMNMAX) && (currentGame->control != CONT_FUTURE_WARS) && (currentGame->control != CONT_GOBLINS)) {
-							mouseMode = MOUSE_RIGHT;
-						} else {
-							// If we're playing sam and max, click and release the right mouse
-							// button to change verb
-							Common::Event event;
-
-							if (currentGame->control == CONT_FUTURE_WARS) {
-								event.mouse = Common::Point(320 - 128, 200 - 128);
-								event.type = Common::EVENT_MOUSEMOVE;
-								system->addEvent(event);
-							} else {
-								event.mouse = Common::Point(getPenX(), getPenY());
-							}
-							
-							rightButtonDown = true;
-
-		
-							event.type = Common::EVENT_RBUTTONDOWN;
-							system->addEvent(event);
-		
-							//event.type = Common::EVENT_RBUTTONUP;
-							//system->addEvent(event);
-						}
-					}
-
-
-
-					if (getKeysDown() & KEY_UP) {
-						mouseMode = MOUSE_HOVER;
-					}
-				}
 	
 					
 				
@@ -1358,52 +1570,13 @@ void addEventsToQueue() {
 	
 		if (!keyboardEnable) {
 
-			if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {
-				event.type = Common::EVENT_MOUSEMOVE;
-				event.mouse = Common::Point(getPenX(), getPenY());
-				system->addEvent(event);
-				//consolePrintf("x=%d   y=%d  \n", getPenX(), getPenY());
+			if ((tapScreenClicks) && (getIsDisplayMode8Bit()))
+			{
+				doScreenTapMode(system);
 			}
-
-			if ((mouseMode != MOUSE_HOVER) || (!displayModeIs8Bit)) {
-					if (getPenDown() && (!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {	
-						event.type = ((mouseMode == MOUSE_LEFT) || (!displayModeIs8Bit))? Common::EVENT_LBUTTONDOWN: Common::EVENT_RBUTTONDOWN;
-						event.mouse = Common::Point(getPenX(), getPenY());
-						system->addEvent(event);
-					}
-					
-					if (getPenReleased()) {
-						event.type = mouseMode == MOUSE_LEFT? Common::EVENT_LBUTTONUP: Common::EVENT_RBUTTONUP;
-						event.mouse = Common::Point(getPenX(), getPenY());
-						system->addEvent(event);
-					}
-			} else {
-				// In hover mode, D-pad left and right click the mouse when the pen is on the screen
-	
-				if (getPenHeld()) {
-					if (getKeysDown() & KEY_LEFT) {
-						event.type = Common::EVENT_LBUTTONDOWN;
-						event.mouse = Common::Point(getPenX(), getPenY());
-						system->addEvent(event);
-					}
-					if (getKeysReleased() & KEY_LEFT) {
-						event.type = Common::EVENT_LBUTTONUP;
-						event.mouse = Common::Point(getPenX(), getPenY());
-						system->addEvent(event);
-					}
-
-
-					if (getKeysDown() & KEY_RIGHT) {
-						event.type = Common::EVENT_RBUTTONDOWN;
-						event.mouse = Common::Point(getPenX(), getPenY());
-						system->addEvent(event);
-					}
-					if (getKeysReleased() & KEY_RIGHT) {
-						event.type = Common::EVENT_RBUTTONUP;
-						event.mouse = Common::Point(getPenX(), getPenY());
-						system->addEvent(event);
-					}
-				}
+			else
+			{
+				doButtonSelectMode(system);
 			}
 			
 			if (((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) || (indyFightState))  && (displayModeIs8Bit)) {
@@ -1536,8 +1709,8 @@ void triggerIcon(int imageNum) {
 	
 
 void setIcon(int num, int x, int y, int imageNum, int flags, bool enable) {
-	sprites[num].attribute[0] = ATTR0_BMP | (enable? y: 192) | (!enable? ATTR0_DISABLED: 0); 
-	sprites[num].attribute[1] = ATTR1_SIZE_32 | x | flags;
+	sprites[num].attribute[0] = ATTR0_BMP | (enable? (y & 0xFF): 192) | (!enable? ATTR0_DISABLED: 0); 
+	sprites[num].attribute[1] = ATTR1_SIZE_32 | (x & 0x1FF) | flags;
 	sprites[num].attribute[2] = ATTR2_ALPHA(1)| (imageNum * 16);
 }
 
@@ -1551,27 +1724,29 @@ void updateStatus() {
 	int offs;
 
 	if (displayModeIs8Bit) {
-		switch (mouseMode) {
-			case MOUSE_LEFT: {
-				offs = 1;
-				break;
+		if (!tapScreenClicks) {
+			switch (mouseMode) {
+				case MOUSE_LEFT: {
+					offs = 1;
+					break;
+				}
+				case MOUSE_RIGHT: {
+					offs = 2;
+					break;
+				}
+ 				case MOUSE_HOVER: {
+					offs = 0;
+					break;
+				}
+				default: {
+					// Nothing!
+					offs = 0;
+					break;
+				}
 			}
-			case MOUSE_RIGHT: {
-				offs = 2;
-				break;
-			}
-			case MOUSE_HOVER: {
-				offs = 0;
-				break;
-			}
-			default: {
-				// Nothing!
-				offs = 0;
-				break;
-			}
+		
+			setIcon(0, 208, 150, offs, 0, true);
 		}
-	
-		setIcon(0, 208, 150, offs, 0, true);
 	
 		if (indyFightState) {
 			setIcon(1, (190 - 32), 150, 3, (indyFightRight? 0: ATTR1_FLIP_X), true);
@@ -1630,7 +1805,7 @@ void setMainScreenScroll(int x, int y) {
 		BG3_CX = x + (((frameCount & 1) == 0)? 64: 0);
 		BG3_CY = y;
 		
-		if (!gameScreenSwap) {
+		if ((!gameScreenSwap) || (touchPadStyle)) {
 			touchX = x >> 8;
 			touchY = y >> 8;
 		}
@@ -1659,7 +1834,7 @@ void setMainScreenScale(int x, int y) {
 			BG3_YDY = y;
 		}
 		
-		if (!gameScreenSwap) {		
+		if ((!gameScreenSwap) || (touchPadStyle)) {		
 			touchScX = x;
 			touchScY = y;
 		}
@@ -1675,7 +1850,7 @@ void setZoomedScreenScroll(int x, int y, bool shake) {
 		touchY = y >> 8;
 	} else */{
 
-		if (gameScreenSwap) {
+		if ((gameScreenSwap) && (!touchPadStyle)) {
 			touchX = x >> 8;
 			touchY = y >> 8;
 		}
@@ -1695,7 +1870,7 @@ void setZoomedScreenScale(int x, int y) {
 
 	} else */{
 
-		if (gameScreenSwap) {
+		if ((gameScreenSwap) && (!touchPadStyle)) {
 			touchScX = x;
 			touchScY = y;
 		}
@@ -1756,18 +1931,22 @@ void VBlankHandler(void) {
 
 	frameCount++;
 	
-	if ((cursorEnable) && (mouseCursorVisible))
-	{
+	if ((cursorEnable) && (mouseCursorVisible)) {
 		if (!keyboardEnable) {
 			storedMouseX = penX;
 			storedMouseY = penY;
 		}
 
-		setIconMain(3, storedMouseX - mouseHotspotX, storedMouseY - mouseHotspotY, 8, 0, true);
-	}
-	else
-	{
+		if (gameScreenSwap) {
+			setIcon(3, storedMouseX - mouseHotspotX, storedMouseY - mouseHotspotY, 8, 0, true);
+			setIconMain(3, 0, 0, 0, 0, false);
+		} else {
+			setIconMain(3, storedMouseX - mouseHotspotX, storedMouseY - mouseHotspotY, 8, 0, true);
+			setIcon(3, 0, 0, 0, 0, false);
+		}
+	} else {
 		setIconMain(3, 0, 0, 0, 0, false);
+		setIcon(3, 0, 0, 0, 0, false);
 	}
 
 
@@ -1825,7 +2004,7 @@ void VBlankHandler(void) {
     SUB_BG3_YDX = 0;
     SUB_BG3_YDY = (int) (subScreenHeight / 192.0f * 256);*/
 
-	static int ratio = ( 320 << 8) / SCUMM_GAME_WIDTH;
+	static int ratio = (320 << 8) / SCUMM_GAME_WIDTH;
 	
 	bool zooming = false;
 	
@@ -1850,8 +2029,12 @@ void VBlankHandler(void) {
 		subScreenWidth = 256 >> 1;
 		subScreenHeight = 192 >> 1;
 	} else {
-		subScreenWidth = (((SCUMM_GAME_HEIGHT * 256) / 192) * subScreenScale) >> 8;
-		subScreenHeight = SCUMM_GAME_HEIGHT * subScreenScale >> 8;
+//		subScreenWidth = (((SCUMM_GAME_HEIGHT * 256) / 192) * subScreenScale) >> 8;
+//		subScreenHeight = SCUMM_GAME_HEIGHT * subScreenScale >> 8;
+
+
+		subScreenWidth = (256 * subScreenScale) >> 8; 
+		subScreenHeight = (192 * subScreenScale) >> 8;
 		
 		if ( ((subScreenWidth) > 256 - 8) && ((subScreenWidth) < 256 + 8) ) {
 			subScreenWidth = 256;
@@ -2214,41 +2397,139 @@ void penUpdate() {
 
 //	if (getKeysHeld() & KEY_L) consolePrintf("%d, %d   penX=%d, penY=%d tz=%d\n", IPC->touchXpx, IPC->touchYpx, penX, penY, IPC->touchZ1);
 
-	if ((penDownFrames > 1)) {			// Is this right?  Dunno, but it works for me.
+	bool penDownThisFrame = (IPC->touchZ1 > 0) && (IPC->touchXpx > 0) && (IPC->touchYpx > 0);
+	bool firstFrame = penDownFrames == 2;
+	static bool moved = false;
 
-		if ((penHeld)) {
-			penHeld = true;
+	if ((tapScreenClicks) && (!getKeyboardEnable()) && (getIsDisplayMode8Bit())) {
+
+		if ((tapTimeout >= 0)) {
+			tapTimeout++;
+	
+			if (((tapTimeout > 15) || (tapCount == 2)) && (tapCount > 0)) {
+				tapComplete = tapCount;
+				tapCount = 0;
+//				consolePrintf("Taps: %d\n", tapComplete);
+			}
+		}
+
+		
+
+		if ((penHeld) && (!penDownThisFrame)) {
+			if ((touchPadStyle) || (moved) || (tapCount == 1)) {
+				if ((penDownFrames > 0) && (penDownFrames < 6) && ((tapTimeout == -1) || (tapTimeout > 2))) {
+					tapCount++;
+					tapTimeout = 0;
+//					consolePrintf("Tap! %d\n", penDownFrames);
+					moved = false;
+				}
+			}
+		}
+	}
+
+	
+
+	if ((touchPadStyle) && (getIsDisplayMode8Bit())) {
+	
+		if ((penDownFrames > 0)) {			
+	
+	
+			if ((penHeld)) {
+	
+				if (penDownThisFrame)
+				{
+					if (penDownFrames >= 2) {
+						int diffX = IPC->touchXpx - penDownX;
+						int diffY = IPC->touchYpx - penDownY;
+
+						int speed = ABS(diffX) + ABS(diffY);
+
+						if ((ABS(diffX) < 35) && (ABS(diffY) < 35))
+						{
+	
+							if (speed >= 8)
+							{
+								diffX *= ((speed >> 3) * touchPadSensitivity) >> 3;
+								diffY *= ((speed >> 3) * touchPadSensitivity) >> 3;
+							}
+		
+							penX += diffX;
+							penY += diffY;
+							if (penX > 255) penX = 255;
+							if (penX < 0) penX = 0;
+							if (penY > 191) penY = 191;
+							if (penY < 0) penY = 0;
+						}
+	
+//						consolePrintf("x: %d y: %d\n", IPC->touchYpx - penDownY, IPC->touchYpx - penDownY);
+						penDownX = IPC->touchXpx;
+						penDownY = IPC->touchYpx;
+	
+					}
+				}
+				else
+				{
+				}
+	
+	
+			} else {
+				penDown = true;
+				penHeld = true;
+				penDownSaved = true;
+	
+				// First frame, so save pen positions
+				if (penDownThisFrame) {
+					penDownX = IPC->touchXpx;
+					penDownY = IPC->touchYpx;
+				}
+			}
+	
+		} else {
+			if (penHeld) {
+				penReleased = true;
+				penReleasedSaved = true;
+			} else {
+				penReleased = false;
+			}
+	
 			penDown = false;
+			penHeld = false;
+		}
+	} else {
+		if ((penDownFrames > 1)) {			// Is this right?  Dunno, but it works for me.
+	
+			if ((penHeld)) {
+				penHeld = true;
+				penDown = false;
+			} else {
+				penDown = true;
+				penHeld = true;
+				penDownSaved = true;
+			}
 
 			if ((IPC->touchZ1 > 0) && (IPC->touchXpx > 0) && (IPC->touchYpx > 0)) {
 				penX = IPC->touchXpx + touchXOffset;
 				penY = IPC->touchYpx + touchYOffset;
+				moved = true;
 			}
+					
 
+	
 		} else {
-			penDown = true;
-			penHeld = true;
-			penDownSaved = true;
-
-			//if ( (ABS(penX - IPC->touchXpx) < 10) && (ABS(penY - IPC->touchYpx) < 10) ) {
-			if ((IPC->touchZ1 > 0) && (IPC->touchXpx > 0) && (IPC->touchYpx > 0)) {
-				penX = IPC->touchXpx;
-				penY = IPC->touchYpx;
+			if (penHeld) {
+				penReleased = true;
+				penReleasedSaved = true;
+			} else {
+				penReleased = false;
 			}
-			//}
+	
+			penDown = false;
+			penHeld = false;
 		}
-
-	} else {
-		if (penHeld) {
-			penReleased = true;
-			penReleasedSaved = true;
-		} else {
-			penReleased = false;
-		}
-
-		penDown = false;
-		penHeld = false;
+	
+	
 	}
+
 
 
 	if ((IPC->touchZ1 > 0) || ((penDownFrames == 2)) ) {
@@ -2258,7 +2539,6 @@ void penUpdate() {
 		penDownLastFrame = false;
 		penDownFrames = 0;
 	}
-	
 }
 
 int leftHandedSwap(int keys) {
@@ -2345,8 +2625,7 @@ int getPenX() {
 	int x = ((penX * touchScX) >> 8) + touchX;
 	x = x < 0? 0: (x > gameWidth - 1? gameWidth - 1: x);
 
-	if (snapToBorder)
-	{
+	if (snapToBorder) {
 		if (x < 8) x = 0;
 		if (x > gameWidth - 8) x = gameWidth - 1;
 	}
@@ -2358,8 +2637,7 @@ int getPenY() {
 	int y = ((penY * touchScY) >> 8) + touchY;
 	y = y < 0? 0: (y > gameHeight - 1? gameHeight - 1: y);
 
-	if (snapToBorder)
-	{
+	if (snapToBorder) {
 		if (y < 8) y = 0;
 		if (y > gameHeight - 8) y = gameHeight - 1;
 	}
@@ -2375,6 +2653,8 @@ GLvector getPenPos() {
 	
 	return v;
 }
+
+#ifdef GBA_SRAM_SAVE
 
 void formatSramOption() {
 	consolePrintf("The following files are present in save RAM:\n");
@@ -2397,7 +2677,7 @@ void formatSramOption() {
 		}
 	}
 }
-
+#endif
 
 void setIndyFightState(bool st) {
 	indyFightState = st;
@@ -2495,8 +2775,6 @@ struct cardTranslate {
 	char dldiId[5];
 };
 
-#define NUM_CARD_READERS 7
-
 cardTranslate cardReaderTable[] = {
 	{DEVICE_TYPE_M3SD,		DEVICE_M3SD,	"M3SD"},
 	{DEVICE_TYPE_M3CF,		DEVICE_M3CF,	"M3CF"},
@@ -2518,13 +2796,13 @@ void reboot() {
 
 		consolePrintf("DLDI Device ID: %s\n", id);
 
-		for (int r = 0; r < NUM_CARD_READERS; r++) {
+		for (int r = 0; r < ARRAYSIZE(cardReaderTable); r++) {
 			if (!stricmp(id, cardReaderTable[r].dldiId)) {
 				deviceType = cardReaderTable[r].cartResetId;
 			}
 		}
 	} else {
-		for (int r = 0; r < NUM_CARD_READERS; r++) {
+		for (int r = 0; r < ARRAYSIZE(cardReaderTable); r++) {
 			if (disc_getDeviceId() == cardReaderTable[r].svmId) {
 				deviceType = cardReaderTable[r].cartResetId;
 			}
@@ -2572,13 +2850,66 @@ void powerOff() {
 /////////////////
 
 
-int main(void)
-{
+
+void dsExceptionHandler() {
+	consolePrintf("Blue screen of death");
+	setExceptionHandler(NULL);
+
+	
+	u32	currentMode = getCPSR() & 0x1f;
+	u32 thumbState = ((*(u32*)0x027FFD90) & 0x20);
+
+	u32 codeAddress, exceptionAddress = 0;
+
+	int offset = 8;
+
+	if ( currentMode == 0x17 ) {
+		consolePrintf("\x1b[10Cdata abort!\n\n");
+		codeAddress = exceptionRegisters[15] - offset;
+		if (	(codeAddress > 0x02000000 && codeAddress < 0x02400000) ||
+				(codeAddress > (u32)__itcm_start && codeAddress < (u32)(__itcm_start + 32768)) )
+			exceptionAddress = getExceptionAddress( codeAddress, thumbState);
+		else
+			exceptionAddress = codeAddress;
+			
+	} else {
+		if (thumbState)
+			offset = 2;
+		else
+			offset = 4;
+		consolePrintf("\x1b[5Cundefined instruction!\n\n");
+		codeAddress = exceptionRegisters[15] - offset;
+		exceptionAddress = codeAddress;
+	}
+
+	consolePrintf("  pc: %08X addr: %08X\n\n",codeAddress,exceptionAddress);
+
+	int i;
+	for ( i=0; i < 8; i++ ) {
+		consolePrintf(	"  %s: %08X   %s: %08X\n",
+					registerNames[i], exceptionRegisters[i],
+					registerNames[i+8],exceptionRegisters[i+8]);
+	}
+//	u32 *stack = (u32 *)exceptionRegisters[13];
+//	for ( i=0; i<10; i++ ) {
+//		consolePrintf( "\x1b[%d;2H%08X: %08X %08X", i + 14, (u32)&stack[i*2],stack[i*2], stack[(i*2)+1] );
+//	}
+
+	memoryReport();
+
+	while(1);
+}
+
+
+
+
+int main(void) {
 
 	soundCallback = NULL;
 
 	initHardware();
 
+	setExceptionHandler(dsExceptionHandler);
 
 #ifdef USE_DEBUGGER
 	for (int r = 0; r < 150; r++) {
@@ -2662,36 +2993,33 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.11.1 beta2");
+	consolePrintf("Version 0.13.0 SVN ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");
-	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_B)
 	consolePrintf("build B\n");
 	consolePrintf("BASS, QUEEN\n");
-	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_C)
 	consolePrintf("build C\n");
 	consolePrintf("Simon/Elvira/Waxworks (AGOS)\n");
-	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_D)
 	consolePrintf("build D\n");
 	consolePrintf("AGI, CINE, GOB\n");
-	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_E)
 	consolePrintf("build E\n");
 	consolePrintf("Inherit the Earth (SAGA)\n");
-	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_F)
 	consolePrintf("build F\n");
 	consolePrintf("The Legend of Kyrandia (KYRA)\n");
-	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_G)
-	consolePrintf("build F\n");
-	consolePrintf("Lure of the Temptress (LURE)\n");
-	consolePrintf("-------------------------------\n");
+	consolePrintf("build G\n");
+	consolePrintf("Lure of the Tempress (LURE)\n");
+#elif defined(DS_BUILD_H)
+	consolePrintf("build H\n");
+	consolePrintf("Nippon Safes (PARALLATION)\n");
 #endif
+	consolePrintf("-------------------------------\n");
 	consolePrintf("L/R + D-pad/pen:    Scroll view\n");
 	consolePrintf("D-pad left:   Left mouse button\n");
 	consolePrintf("D-pad right: Right mouse button\n");
@@ -2807,9 +3135,11 @@ int main(void)
 	g_system = new OSystem_DS();
 	assert(g_system);
 
+#ifdef GBA_SRAM_SAVE
 	if ((keysHeld() & KEY_L) && (keysHeld() & KEY_R)) {
 		formatSramOption();
 	}
+#endif
 
 	IPC->adpcm.semaphore = false;
 
@@ -2830,6 +3160,8 @@ int main(void)
 	const char *argv[] = {"/scummvmds", "--config=scummvmf.ini"};
 #elif defined(DS_BUILD_G)
 	const char *argv[] = {"/scummvmds", "--config=scummvmg.ini"};
+#elif defined(DS_BUILD_H)
+	const char *argv[] = {"/scummvmds", "--config=scummvmh.ini"};
 #endif
 
 	while (1) {

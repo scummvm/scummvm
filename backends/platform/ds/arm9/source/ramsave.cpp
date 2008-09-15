@@ -19,7 +19,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  */
- // Save in order 1,2,3,4,larger 2,5
+#ifdef GBA_SRAM_SAVE
+
+
 #include "ramsave.h"
 #include "nds.h"
 #include "compressor/lz.h"
@@ -237,7 +239,7 @@ uint32 DSSaveFile::write(const void *buf, uint32 size) {
 	return size;
 }
 
-bool DSSaveFile::matches(char* prefix, int num) {
+bool DSSaveFile::matches(const char *prefix, int num) {
 	char str[16];
 	if (isValid()) {
 		sprintf(str, "%s%02d", prefix, num);
@@ -251,7 +253,7 @@ bool DSSaveFile::matches(char* prefix, int num) {
 	}
 }
 
-bool DSSaveFile::matches(char* filename) {
+bool DSSaveFile::matches(const char *filename) {
 	if (isValid()) {
 		return !strcmp(save.name, filename);
 	} else {
@@ -532,3 +534,5 @@ int DSSaveFileManager::getExtraData() {
 		return 0;
 	}
 }
+
+#endif

@@ -416,6 +416,7 @@ FILE* std_fopen(const char* name, const char* mode) {
 	if (DS::isGBAMPAvailable()) {
 		FAT_chdir("/");
 
+		// Turn all back slashes into forward slashes for gba_nds_fat
 		char* p = realName;
 		while (*p) {
 			if (*p == '\\') *p = '/';
@@ -441,6 +442,7 @@ FILE* std_fopen(const char* name, const char* mode) {
 	int r = 0;
 	while (handle[r].used) r++;
 
+#ifdef GBA_SRAM_SAVE
 	if (strchr(mode, 'w')) {
 //		consolePrintf("Writing %s\n", realName);
 		handle[r].sramFile = (DSSaveFile *) DSSaveFileManager::instance()->openSavefile(realName, true);
@@ -448,6 +450,7 @@ FILE* std_fopen(const char* name, const char* mode) {
 //		consolePrintf("Reading %s\n", realName);
 		handle[r].sramFile = (DSSaveFile *) DSSaveFileManager::instance()->openSavefile(realName, false);
 	}
+#endif
 
 	if (handle[r].sramFile) {
 		handle[r].used = true;

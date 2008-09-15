@@ -78,8 +78,8 @@ public:
 	
 	bool isValid() { return save.isValid; }
 	bool isTemp() { return isTempFile; }
-	bool matches(char* prefix, int num);
-	bool matches(char* filename);
+	bool matches(const char *prefix, int num);
+	bool matches(const char *filename);
 	
 	void clearData();
 	void compress();

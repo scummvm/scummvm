@@ -52,17 +52,32 @@ protected:
 	Common::Event eventQueue[96];
 	int queuePos;
 	
+#ifdef GBA_SRAM_SAVE
 	DSSaveFileManager saveManager;
+#endif
 	GBAMPSaveFileManager mpSaveManager;
 	DSAudioMixer* _mixer;
 	DSTimerManager* _timer;
 	Graphics::Surface _framebuffer;
 	bool _frameBufferExists;
-
+	bool _graphicsEnable;
 
 	static OSystem_DS* _instance;
+
+	u16 _palette[256];
+	u16 _cursorPalette[256];
+
+	u8 _cursorImage[64 * 64];
+	uint _cursorW;
+	uint _cursorH;
+	int _cursorHotX;
+	int _cursorHotY;
+	byte _cursorKey;
+	int _cursorScale;
+
 	
 	Graphics::Surface* createTempFrameBuffer();
+	bool _disableCursorPalette;
 
 public:
 	typedef void (*SoundProc)(byte *buf, int len);
@@ -159,7 +174,16 @@ public:
 	virtual void clearAutoComplete();
 	virtual void setCharactersEntered(int count);
 
+	u16 getDSPaletteEntry(u32 entry) { return _palette[entry]; }
+	u16 getDSCursorPaletteEntry(u32 entry) { return !_disableCursorPalette? _cursorPalette[entry]: _palette[entry]; }
+
+	virtual void setCursorPalette(const byte *colors, uint start, uint num);
+
+	virtual void disableCursorPalette(bool dis) { _disableCursorPalette = dis; refreshCursor(); }
+
 	FilesystemFactory *getFilesystemFactory();
+
+	void refreshCursor();
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {

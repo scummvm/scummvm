@@ -402,6 +402,23 @@ void createKeyEvent(int keyNum, Common::Event& event)
 	}				
 }
 
+void releaseAllKeys() {
+	for (int r = 0; r < DS_NUM_KEYS; r++) {
+		if (keys[r].pressed) {
+			DS::setKeyHighlight(r, false);
+
+			OSystem_DS* system = OSystem_DS::instance();
+			
+			Common::Event event;
+			createKeyEvent(r, event);
+			event.type = Common::EVENT_KEYUP;
+			system->addEvent(event);
+
+			keys[r].pressed = false;
+		}
+	}	
+}
+
 void addKeyboardEvents() {
 	bool resetShift = false;
 
@@ -446,7 +463,7 @@ void addKeyboardEvents() {
 //				consolePrintf("Key: %d\n", r);
 				if ((keys[r].character == Common::KEYCODE_INVALID)) {
 					// Close button
-					DS::closed = true;
+					//DS::closed = true;
 				} else {
 					createKeyEvent(r, event);
 				}				
@@ -492,9 +509,14 @@ void addKeyboardEvents() {
 			   	OSystem_DS* system = OSystem_DS::instance();
 				
 				Common::Event event;
-				createKeyEvent(r, event);
-				event.type = Common::EVENT_KEYUP;
-				system->addEvent(event);
+				if ((keys[r].character == Common::KEYCODE_INVALID)) {
+					// Close button
+					DS::closed = true;
+				} else {
+					createKeyEvent(r, event);
+					event.type = Common::EVENT_KEYUP;
+					system->addEvent(event);
+				}
 
 				keys[r].pressed = false;
 
