@@ -715,7 +715,7 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 		} else
 			break;
 	}
-	
+
 	item->slotIndex = slotIndex;
 	item->slotOffset = textData - _vm->_script->getSlotData(slotIndex);
 
@@ -762,7 +762,7 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 			}
 		}
 	}
-	
+
 	addTalkTextRect(font, x, y, length, width, item);
 
 	debug(0, "## item->lineCount = %d", item->lineCount);
