@@ -705,7 +705,7 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 		}
 
 		if (_playTimeSupport) {
-			Common::String time = "Playtime:";
+			Common::String time = "Playtime: ";
 			if (desc.contains("play_time"))
 				time += desc.getVal("play_time");
 			else
