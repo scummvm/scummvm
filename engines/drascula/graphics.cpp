@@ -192,25 +192,7 @@ void DrasculaEngine::copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 }
 
 void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer) {
-	byte *ptr = VGA;
-
-	ptr += xdes + ydes * 320;
-	buffer += xorg + yorg * 320;
-
-	/* Unoptimized code
-	for (int x = 0; x < height; x++) {
-		memcpy(ptr + 320 * x, buffer + 320 * x, width);
-	} */
-
-	// A bit more optimized code, thanks to Fingolfin
-	// Uses 2 less registers and performs 2 less multiplications
-	int x = height;
-	while (x--) {
-		memcpy(ptr, buffer, width);
-		ptr += 320;
-		buffer += 320;
-	}
-
+	copyBackground(xorg, yorg, xdes, ydes, width, height, buffer, VGA);
 	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 	_system->updateScreen();
 }
@@ -316,7 +298,8 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	char *curWord;
 	int curLine = 0;
 	int x = 0;
-	int y = textY - (3 * CHAR_HEIGHT);	// original starts printing 3 lines above textY
+	// original starts printing 4 lines above textY
+	int y = CLIP<int>(textY - (4 * CHAR_HEIGHT), 0, 320);
 
 	strcpy(msg, message);
 
@@ -351,7 +334,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 		}
 
 		// Get next word
-		curWord = strtok (NULL, " ");
+		curWord = strtok(NULL, " ");
 
 		if (curWord == NULL) {
 			x = CLIP<int>(textX - strlen(messageLine) * CHAR_WIDTH / 2, 60, 255);
