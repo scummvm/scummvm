@@ -3,6 +3,9 @@ MODULE := engines/picture
 MODULE_OBJS = \
 	animation.o \
 	detection.o \
+	menu.o \
+	microtiles.o \
+	movie.o \
 	palette.o \
 	picture.o \
 	resource.o \
