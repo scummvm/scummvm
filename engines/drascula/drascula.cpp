@@ -65,7 +65,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	if (cd_num >= 0)
 		_system->openCD(cd_num);
 
-	_lang = 0;
+	_lang = kEnglish;
 }
 
 DrasculaEngine::~DrasculaEngine() {
@@ -113,23 +113,23 @@ int DrasculaEngine::init() {
 
 	switch (getLanguage()) {
 	case Common::EN_ANY:
-		_lang = 0;
+		_lang = kEnglish;
 		break;
 	case Common::ES_ESP:
-		_lang = 1;
+		_lang = kSpanish;
 		break;
 	case Common::DE_DEU:
-		_lang = 2;
+		_lang = kGerman;
 		break;
 	case Common::FR_FRA:
-		_lang = 3;
+		_lang = kFrench;
 		break;
 	case Common::IT_ITA:
-		_lang = 4;
+		_lang = kItalian;
 		break;
 	default:
 		warning("Unknown game language. Falling back to English");
-		_lang = 0;
+		_lang = kEnglish;
 	}
 
 	_charMap = 0;
