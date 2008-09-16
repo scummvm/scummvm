@@ -310,6 +310,14 @@ struct TalkTextItem {
 	TextRect lines[15];
 };
 
+struct GuiTextWrapState {
+	int16 len, len1, len2;
+	byte *sourceString;
+	byte *destString;
+	int16 width;
+	byte textBuffer[100];
+};
+
 class Screen {
 public:
 	Screen(PictureEngine *vm);
@@ -348,8 +356,8 @@ public:
 	// Font/text
 	void registerFont(uint fontIndex, uint resIndex);
 	void drawGuiTextMulti(byte *textData);
-	void wrapGuiText(uint fontResIndex, int maxWidth, int &width, byte *&sourceString, byte *&destString, byte &len);
-	void drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex);
+	void wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wrapState);
+	void drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex, GuiTextWrapState &wrapState);
 
 	int16 drawString(int16 x, int16 y, byte color, uint fontResIndex, byte *text, int len = -1, int16 *ywobble = NULL, bool outline = false);
 	void drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, byte color, bool outline);
@@ -377,10 +385,6 @@ public:
 
 	uint _fontResIndexArray[10];
 	byte _fontColor1, _fontColor2;
-
-	// TODO: Remove this _tempXXX stuff
-	byte _tempString[100];
-	byte _tempStringLen1, _tempStringLen2;
 
 	// Screen shaking
 	bool _shakeActive;

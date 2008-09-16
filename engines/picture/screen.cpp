@@ -629,54 +629,54 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 		y += 18;
 	}
 
-	int width = 0;
-	byte *sourceString;
-	byte *destString;
-	byte len;
+	GuiTextWrapState wrapState;
+	wrapState.width = 0;
+	wrapState.destString = wrapState.textBuffer;
+	wrapState.len = 0;
+	wrapState.len1 = 0;
+	wrapState.len2 = 0;
 
-	_tempStringLen1 = 0;
-	destString = _tempString;
 	y = _verbLineY;
 	
-	memset(_tempString, 0, sizeof(_tempString));
+	memset(wrapState.textBuffer, 0, sizeof(wrapState.textBuffer));
 	
 	for (int16 i = 0; i <= _verbLineNum; i++) {
-		sourceString = _vm->_script->getSlotData(_verbLineItems[i].slotIndex) + _verbLineItems[i].slotOffset;
-		wrapGuiText(_fontResIndexArray[0], _verbLineWidth, width, sourceString, destString, len);
-		_tempStringLen1 += len;
+		wrapState.sourceString = _vm->_script->getSlotData(_verbLineItems[i].slotIndex) + _verbLineItems[i].slotOffset;
+		wrapGuiText(_fontResIndexArray[0], _verbLineWidth, wrapState);
+		wrapState.len1 += wrapState.len;
 	}
 
 	if (_verbLineCount != 1) {
 		int16 charWidth;
-		if (*sourceString < 0xF0) {
-			while (*sourceString > 0x20 && *sourceString < 0xF0 && len > 0) {
-				byte ch = *sourceString--;
-				_tempStringLen1--;
-				len--;
+		if (*wrapState.sourceString < 0xF0) {
+			while (*wrapState.sourceString > 0x20 && *wrapState.sourceString < 0xF0 && wrapState.len > 0) {
+				byte ch = *wrapState.sourceString--;
+				wrapState.len1--;
+				wrapState.len--;
 				charWidth = font.getCharWidth(ch) + font.getSpacing() - 1;
-				width -= charWidth;
+				wrapState.width -= charWidth;
 			}
-			width += charWidth;
-			sourceString++;
-			_tempStringLen1 -= len;
-			_tempStringLen2 = len + 1;
+			wrapState.width += charWidth;
+			wrapState.sourceString++;
+			wrapState.len1 -= wrapState.len;
+			wrapState.len2 = wrapState.len + 1;
 			
-			drawGuiText(_verbLineX - 1 - (width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0]);
+			drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
 
-			destString = _tempString;
-			width = 0;
-			wrapGuiText(_fontResIndexArray[0], _verbLineWidth, width, sourceString, destString, len);
+			wrapState.destString = wrapState.textBuffer;
+			wrapState.width = 0;
+			wrapGuiText(_fontResIndexArray[0], _verbLineWidth, wrapState);
+			wrapState.len1 += wrapState.len;
 			
-			_tempStringLen1 += len;
 			y += 9;
 		}
 		y += 9;
 	}
 	
-	_tempStringLen1 -= len;
-	_tempStringLen2 = len;
+	wrapState.len1 -= wrapState.len;
+	wrapState.len2 = wrapState.len;
 
-	drawGuiText(_verbLineX - 1 - (width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0]);
+	drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
 
 }
 
@@ -852,58 +852,62 @@ void Screen::drawGuiTextMulti(byte *textData) {
 			return;
 	}
 
+	GuiTextWrapState wrapState;
+	wrapState.sourceString = textData;
+
 	do {
 	
-		if (*textData == 0x0A) {
+		if (*wrapState.sourceString == 0x0A) {
 			// Set text position
-			y = textData[1];
-			x = READ_LE_UINT32(textData + 2);
-			textData += 4;
-		} else if (*textData == 0x0B) {
+			y = wrapState.sourceString[1];
+			x = READ_LE_UINT32(wrapState.sourceString + 2);
+			wrapState.sourceString += 4;
+		} else if (*wrapState.sourceString == 0x0B) {
 			// Inc text position
-			y += textData[1]; // CHECKME: Maybe these are signed?
-			x += textData[2];
-			textData += 3;
+			y += wrapState.sourceString[1]; // CHECKME: Maybe these are signed?
+			x += wrapState.sourceString[2];
+			wrapState.sourceString += 3;
 		} else {
-			byte *destString = _tempString;
-			int width = 0;
-			_tempStringLen1 = 0;
-			wrapGuiText(_fontResIndexArray[1], 640, width, textData, destString, _tempStringLen2);
-			drawGuiText(x - width / 2, y, _fontColor1, _fontColor2, _fontResIndexArray[1]);
+			wrapState.destString = wrapState.textBuffer;
+			wrapState.width = 0;
+			wrapGuiText(_fontResIndexArray[1], 640, wrapState);
+			wrapState.len1 = 0;
+			wrapState.len2 = wrapState.len;
+			drawGuiText(x - wrapState.width / 2, y, _fontColor1, _fontColor2, _fontResIndexArray[1], wrapState);
 		}
 	
-	} while (*textData != 0xFF);
+	} while (*wrapState.sourceString != 0xFF);
 
 }
 
-void Screen::wrapGuiText(uint fontResIndex, int maxWidth, int &width, byte *&sourceString, byte *&destString, byte &len) {
+void Screen::wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wrapState) {
 
 	Font font(_vm->_res->load(fontResIndex));
 
-	len = 0;
-	while (*sourceString >= 0x20 && *sourceString < 0xF0) {
-		byte ch = *sourceString;
+	wrapState.len = 0;
+	while (*wrapState.sourceString >= 0x20 && *wrapState.sourceString < 0xF0) {
+		byte ch = *wrapState.sourceString;
 		byte charWidth;
 		if (ch <= 0x20)
 			charWidth = font.getWidth();
 		else
 			charWidth = font.getCharWidth(ch) + font.getSpacing() - 1;
-		if (width + charWidth >= maxWidth)
+		if (wrapState.width + charWidth >= maxWidth)
 			break;
-		len++;
-		width += charWidth;
-		*destString++ = *sourceString++;
+		wrapState.len++;
+		wrapState.width += charWidth;
+		*wrapState.destString++ = *wrapState.sourceString++;
 	}
 }
 
-void Screen::drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex) {
+void Screen::drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex, GuiTextWrapState &wrapState) {
 
-	debug(0, "Screen::drawGuiText(%d, %d, %d, %d, %d) _tempStringLen1 = %d; _tempStringLen2 = %d", x, y, fontColor1, fontColor2, fontResIndex, _tempStringLen1, _tempStringLen2);
+	debug(0, "Screen::drawGuiText(%d, %d, %d, %d, %d) wrapState.len1 = %d; wrapState.len2 = %d", x, y, fontColor1, fontColor2, fontResIndex, wrapState.len1, wrapState.len2);
 
 	int16 ywobble = 1;
 
-	x = drawString(x + 1, y + _vm->_cameraHeight, fontColor1, fontResIndex, _tempString, _tempStringLen1, &ywobble, false);
-	x = drawString(x, y + _vm->_cameraHeight, fontColor2, fontResIndex, _tempString + _tempStringLen1, _tempStringLen2, &ywobble, false);
+	x = drawString(x + 1, y + _vm->_cameraHeight, fontColor1, fontResIndex, wrapState.textBuffer, wrapState.len1, &ywobble, false);
+	x = drawString(x, y + _vm->_cameraHeight, fontColor2, fontResIndex, wrapState.textBuffer + wrapState.len1, wrapState.len2, &ywobble, false);
 
 }
 
