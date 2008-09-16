@@ -94,7 +94,6 @@ OSystem_PSP_GU::OSystem_PSP_GU() {
 	//decompress keyboard data
 	uLongf kbdSize = KBD_DATA_SIZE;
 	keyboard_letters = (unsigned char *)memalign(16, KBD_DATA_SIZE);
-	assert(Z_OK == 
 	if (!uncompress((Bytef *)keyboard_letters, &kbdSize, (const Bytef *)keyboard_letters_compressed, size_keyboard_letters_compressed))
 		error("OSystem_PSP_GU: uncompressing keyboard_letters failed");
 		
