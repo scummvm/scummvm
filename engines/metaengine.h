@@ -107,18 +107,16 @@ public:
 	virtual void removeSaveState(const char *target, int slot) const {};
 
 	/**
-	 * Loads a thumbnail from the specified save state.
+	 * Returns meta infos from the specified save state.
 	 *
-	 * This can return '0' to indicate that no thumbnail was found.
-	 * If it returns a valid Graphics::Surface object, it must be the same
-	 * format as the overlay.
+	 * Depending on the MetaEngineFeatures set this can include
+	 * thumbnails, save date / time, play time.
 	 *
 	 * @param target	name of a config manager target
 	 * @param slot		slot number of the save state
 	 */
-	virtual Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot) const { return 0; }
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const { return SaveStateDescriptor(); }
 
-	
 	/** @name MetaEngineFeature flags */
 	//@{
 	
@@ -146,10 +144,17 @@ public:
 		kSupportsDeleteSave     = 3,
 
 		/**
-		 * Features a thumbnail in savegames (i.e. implements the
-		 * loadThumbnailFromSlot method)
+		 * Features meta infos for savestates (i.e. implements the
+		 * querySaveMetaInfos method properly)
 		 */
-		kSupportsThumbnails		= 4
+		kSupportsMetaInfos		= 4,
+
+		/**
+		 * Features a thumbnail in savegames (i.e. includes a thumbnail
+		 * in savestates returned via querySaveMetaInfo). This flag may 
+		 * only be set when 'kSupportsMetaInfos' is set.
+		 */
+		kSupportsThumbnails		= 5
 	};	
 
 	/**

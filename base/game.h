@@ -29,6 +29,7 @@
 #include "common/str.h"
 #include "common/array.h"
 #include "common/hash-str.h"
+#include "common/ptr.h"
 
 namespace Graphics {
 	struct Surface;
@@ -119,15 +120,16 @@ public:
  */
 class SaveStateDescriptor : public Common::StringMap {
 protected:
-	Graphics::Surface	*_thumbnail;	// can be NULL
+	Common::SharedPtr<Graphics::Surface> _thumbnail; // can be 0
+
 public:
-	SaveStateDescriptor() : _thumbnail(0) {
+	SaveStateDescriptor() : _thumbnail() {
 		setVal("save_slot", "-1");	// FIXME: default to 0 (first slot) or to -1 (invalid slot) ?
 		setVal("description", "");
 		setVal("filename", "");
 	}
 
-	SaveStateDescriptor(int s, const Common::String &d, const Common::String &f) : _thumbnail(0) {
+	SaveStateDescriptor(int s, const Common::String &d, const Common::String &f) : _thumbnail() {
 		char buf[16];
 		sprintf(buf, "%d", s);
 		setVal("save_slot", buf);
@@ -135,14 +137,10 @@ public:
 		setVal("filename", f);
 	}
 
-	SaveStateDescriptor(const Common::String &s, const Common::String &d, const Common::String &f) : _thumbnail(0) {
+	SaveStateDescriptor(const Common::String &s, const Common::String &d, const Common::String &f) : _thumbnail() {
 		setVal("save_slot", s);
 		setVal("description", d);
 		setVal("filename", f);
-	}
-
-	~SaveStateDescriptor() {
-		setThumbnail(0);
 	}
 
 	/** The saveslot id, as it would be passed to the "-x" command line switch. */
@@ -163,19 +161,30 @@ public:
 	/** The filename of the savestate, for use with the SaveFileManager API (read-only variant). */
 	const Common::String &filename() const { return getVal("filename"); }
 
+	/** Optional entries only included when querying via MetaEngine::querySaveMetaInfo */
+
+	/**
+	 * Returns the value of a given key as boolean.
+	 * It accepts 'true', 'yes' and '1' for true and
+	 * 'false', 'no' and '0' for false.
+	 * (FIXME:) On unknown value it errors out ScummVM.
+	 * On unknown key it returns false as default.
+	 */
+	bool getBool(const Common::String &key) const;
+
+	/**
+	 * Sets the 'is_deletable' key, which indicates, if the
+	 * given savestate is safe for deletion.
+	 */
+	void setDeletableFlag(bool state);
+
 	/**
 	 * Return a thumbnail graphics surface representing the savestate visually
 	 * This is usually a scaled down version of the game graphics. The size
 	 * should be either 160x100 or 160x120 pixels, depending on the aspect
 	 * ratio of the game. If another ratio is required, contact the core team.
-	 *
-	 * TODO: it is probably a bad idea to read this for *all* games at once,
-	 * at least on low-end devices. So this info should probably normally only
-	 * be included optionally. I.e. only upon a query for a specific savegame...
-	 * To this end, add a getFullSaveStateInfo(target, slot) to the plugin API.
 	 */
-	const Graphics::Surface *getThumbnail() const { return _thumbnail; }
-
+	const Graphics::Surface *getThumbnail() const { return _thumbnail.get(); }
 	
 	void setThumbnail(Graphics::Surface *t);
 };

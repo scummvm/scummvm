@@ -69,9 +69,30 @@ void GameDescriptor::updateDesc(const char *extra) {
 }
 
 void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
-	if (_thumbnail && _thumbnail != t) {
-		_thumbnail->free();
-		delete _thumbnail;
-	}
-	_thumbnail = t;
+	if (_thumbnail.get() == t)
+		return;
+
+	_thumbnail = Common::SharedPtr<Graphics::Surface>(t, Graphics::SharedPtrSurfaceDeleter());
 }
+
+bool SaveStateDescriptor::getBool(const Common::String &key) const {
+	if (contains(key)) {
+		Common::String value = getVal(key);
+		if (value.equalsIgnoreCase("true") ||
+			value.equalsIgnoreCase("yes") || 
+			value.equals("1"))
+			return true;
+		if (value.equalsIgnoreCase("false") ||
+			value.equalsIgnoreCase("no") || 
+			value.equals("0"))
+			return false;
+		error("SaveStateDescriptor: %s '%s' has unknown value '%s' for boolean '%s'",
+				save_slot().c_str(), description().c_str(), value.c_str(), key.c_str());
+	}
+	return false;
+}
+
+void SaveStateDescriptor::setDeletableFlag(bool state) {
+	setVal("is_deletable", state ? "true" : "false");
+}
+

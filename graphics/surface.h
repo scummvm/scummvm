@@ -30,7 +30,6 @@
 
 namespace Graphics {
 
-
 /**
  * An arbitrary graphics surface, which can be the target (or source) of blit
  * operations, font rendering, etc.
@@ -67,6 +66,12 @@ struct Surface {
 	 */
 	void free();
 
+	/**
+	 * Copies data from another Surface, this calls *free* on the current surface, to assure
+	 * it being clean.
+	 */
+	void copyFrom(const Surface &surf);
+
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color);
 	void hLine(int x, int y, int x2, uint32 color);
 	void vLine(int x, int y, int y2, uint32 color);
@@ -74,6 +79,18 @@ struct Surface {
 	void frameRect(const Common::Rect &r, uint32 color);
 	// See comment in graphics/surface.cpp about it
 	void move(int dx, int dy, int height);
+};
+
+/**
+ * For safe deletion of surface with SharedPtr.
+ * The deleter assures Surface::free is called on
+ * deletion.
+ */
+struct SharedPtrSurfaceDeleter {
+	void operator()(Surface *ptr) {
+		ptr->free();
+		delete ptr;
+	}
 };
 
 

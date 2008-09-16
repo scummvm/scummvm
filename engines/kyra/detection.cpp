@@ -1068,7 +1068,7 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 	SaveStateList listSaves(const char *target) const;
 	void removeSaveState(const char *target, int slot) const;
-	Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -1077,6 +1077,7 @@ bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDirectLoad) ||
 		(f == kSupportsDeleteSave) ||
+	   	(f == kSupportsMetaInfos) ||
 		(f == kSupportsThumbnails);
 }
 
@@ -1137,10 +1138,7 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 		
-		// HACK: Until we have a way to check whether a save is deletable in our launcher delete savegame dialog.
-		// We do not list slot 0 here, since it's for restarting the game and it should never be deleted.
-		// The downside of it is of course we can not load it via the menu and it isn't listed via --list-saves.
-		if (slotNum > 0 && slotNum <= 999) {
+		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
 				if (Kyra::KyraEngine_v1::readSaveHeader(in, false, header) == Kyra::KyraEngine_v1::kRSHENoError) {
@@ -1194,16 +1192,28 @@ void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
 
 }
 
-Graphics::Surface *KyraMetaEngine::loadThumbnailFromSlot(const char *target, int slot) const {
+SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Kyra::KyraEngine_v1::getSavegameFilename(target, slot);
-
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
-	Kyra::KyraEngine_v1::SaveHeader header;
 
-	if (in && Kyra::KyraEngine_v1::readSaveHeader(in, true, header) == Kyra::KyraEngine_v1::kRSHENoError)
-		return header.thumbnail;
+	if (in) {
+		Kyra::KyraEngine_v1::SaveHeader header;
+		Kyra::KyraEngine_v1::kReadSaveHeaderError error;
+
+		error = Kyra::KyraEngine_v1::readSaveHeader(in, true, header);
+		delete in;
+		
+		if (error == Kyra::KyraEngine_v1::kRSHENoError) {
+			SaveStateDescriptor desc(slot, header.description, filename);
+
+			desc.setDeletableFlag(slot != 0);
+			desc.setThumbnail(header.thumbnail);
+
+			return desc;
+		}
+	}
 	
-	return 0;
+	return SaveStateDescriptor();
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(KYRA)

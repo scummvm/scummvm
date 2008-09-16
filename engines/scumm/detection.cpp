@@ -683,7 +683,7 @@ public:
 
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual void removeSaveState(const char *target, int slot) const;
-	virtual Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot) const;
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -692,6 +692,7 @@ bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDirectLoad) ||
 		(f == kSupportsDeleteSave) ||
+		(f == kSupportsMetaInfos) ||
 		(f == kSupportsThumbnails);
 }
 
@@ -983,8 +984,25 @@ void ScummMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(filename.c_str());
 }
 
-Graphics::Surface *ScummMetaEngine::loadThumbnailFromSlot(const char *target, int slot) const {
-	return ScummEngine::loadThumbnailFromSlot(target, slot);
+SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
+
+	if (!in)
+		return SaveStateDescriptor();
+
+	Common::String saveDesc;
+	Scumm::getSavegameName(in, saveDesc, 0);	// FIXME: heversion?!?
+	delete in;
+
+	// TODO: Cleanup
+	Graphics::Surface *thumbnail = ScummEngine::loadThumbnailFromSlot(target, slot);
+	
+	SaveStateDescriptor desc(slot, saveDesc, filename);
+	desc.setDeletableFlag(true);
+	desc.setThumbnail(thumbnail);
+
+	return desc;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SCUMM)

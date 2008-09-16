@@ -477,7 +477,6 @@ class SaveLoadChooser : public GUI::Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 protected:
-	bool			_delSupport;
 	GUI::ListWidget		*_list;
 	GUI::ButtonWidget	*_chooseButton;
 	GUI::ButtonWidget	*_deleteButton;
@@ -485,13 +484,16 @@ protected:
 	GUI::ContainerWidget	*_container;
 
 	const EnginePlugin		*_plugin;
+	bool					_delSupport;
+	bool					_metaInfoSupport;
+	bool					_thumbnailSupport;
 	String					_target;
 	SaveStateList			_saveList;
 
 	uint8 _fillR, _fillG, _fillB;
 
 	void updateSaveList();
-	void updateInfos(bool redraw);
+	void updateSelection(bool redraw);
 public:
 	SaveLoadChooser(const String &title, const String &buttonLabel);
 	~SaveLoadChooser();
@@ -528,6 +530,8 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 
 	_deleteButton = new GUI::ButtonWidget(this, "scummsaveload_delete", "Delete", kDelCmd, 0);
 	_deleteButton->setEnabled(false);
+
+	_delSupport = _metaInfoSupport = _thumbnailSupport = false;
 }
 
 SaveLoadChooser::~SaveLoadChooser() {
@@ -540,6 +544,8 @@ int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) 
 	_plugin = plugin;
 	_target = target;
 	_delSupport = (*_plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
+	_metaInfoSupport = (*_plugin)->hasFeature(MetaEngine::kSupportsMetaInfos);
+	_thumbnailSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSupportsThumbnails);
 	reflowLayout();
 	updateSaveList();
 
@@ -566,16 +572,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		close();
 		break;
 	case GUI::kListSelectionChangedCmd: {
-		if (_gfxWidget)
-			updateInfos(true);
-
-		// Disable these buttons if nothing is selected, or if an empty
-		// list item is selected.
-		_chooseButton->setEnabled(selItem >= 0 && (!_list->getSelectedString().empty()));
-		_chooseButton->draw();
-		// Delete will always be disabled if the engine doesn't support it.
-		_deleteButton->setEnabled(_delSupport && (selItem >= 0) && (!_list->getSelectedString().empty()));
-		_deleteButton->draw();
+		updateSelection(true);
 	} break;
 	case kDelCmd:
 		if (selItem >= 0 && _delSupport) {
@@ -588,10 +585,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 				_list->setSelected(-1);
 
 				updateSaveList();
-
-				// Disable these buttons again after deleteing a selection
-				_chooseButton->setEnabled(false);
-				_deleteButton->setEnabled(false);
+				updateSelection(true);
 			}
 		}
 		break;
@@ -603,7 +597,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 }
 
 void SaveLoadChooser::reflowLayout() {
-	if (g_gui.evaluator()->getVar("scummsaveload_extinfo.visible") == 1 && (_plugin && (*_plugin)->hasFeature(MetaEngine::kSupportsThumbnails))) {
+	if (g_gui.evaluator()->getVar("scummsaveload_extinfo.visible") == 1 && _thumbnailSupport) {
 		int thumbX = g_gui.evaluator()->getVar("scummsaveload_thumbnail.x");
 		int thumbY = g_gui.evaluator()->getVar("scummsaveload_thumbnail.y");
 		int hPad = g_gui.evaluator()->getVar("scummsaveload_thumbnail.hPad");
@@ -621,7 +615,7 @@ void SaveLoadChooser::reflowLayout() {
 		_fillR = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
 		_fillG = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
 		_fillB = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillB");
-		updateInfos(false);
+		updateSelection(false);
 	} else {
 		_container->setFlags(GUI::WIDGET_INVISIBLE);
 		_gfxWidget->setFlags(GUI::WIDGET_INVISIBLE);
@@ -630,23 +624,39 @@ void SaveLoadChooser::reflowLayout() {
 	Dialog::reflowLayout();
 }
 
-void SaveLoadChooser::updateInfos(bool redraw) {
+void SaveLoadChooser::updateSelection(bool redraw) {
 	int selItem = _list->getSelected();
-	Graphics::Surface *thumb = 0;
-	if (selItem >= 0 && !_list->getSelectedString().empty())
-		thumb = (*_plugin)->loadThumbnailFromSlot(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
 
-	if (thumb) {
-		_gfxWidget->setGfx(thumb);
-		_gfxWidget->useAlpha(256);
-		thumb->free();
-		delete thumb;
-	} else {
-		_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
+	bool isDeletable = _delSupport;
+
+	if (selItem >= 0 && !_list->getSelectedString().empty() && _metaInfoSupport) {
+		SaveStateDescriptor desc = (*_plugin)->querySaveMetaInfos(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
+
+		isDeletable = desc.getBool("is_deletable") && _delSupport;
+
+		if (_thumbnailSupport) {
+			const Graphics::Surface *thumb = desc.getThumbnail();
+			if (thumb) {
+				_gfxWidget->setGfx(thumb);
+				_gfxWidget->useAlpha(256);
+			} else {
+				_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
+			}
+		}
 	}
 
-	if (redraw)
+
+	// Disable these buttons if nothing is selected, or if an empty
+	// list item is selected.
+	_chooseButton->setEnabled(selItem >= 0 && (!_list->getSelectedString().empty()));
+	// Delete will always be disabled if the engine doesn't support it.
+	_deleteButton->setEnabled(isDeletable && (selItem >= 0) && (!_list->getSelectedString().empty()));
+
+	if (redraw) {
 		_gfxWidget->draw();
+		_chooseButton->draw();
+		_deleteButton->draw();
+	}
 }
 
 void SaveLoadChooser::close() {
