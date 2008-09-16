@@ -773,7 +773,7 @@ void DrasculaEngine::animation_16_2() {
 		if (i < 4)
 			sprintf(curPic, "his%i.alg", i);
 		else
-			strcpy(curPic, "his4_1.alg");
+			strcpy(curPic, "his4_2.alg");
 
 		loadPic(curPic, screenSurface, HALF_PAL);
 		centerText(_texthis[i], 180, 180);
@@ -783,12 +783,15 @@ void DrasculaEngine::animation_16_2() {
 			goto asco;
 
 		delay(3000);
-		fadeToBlack(1);
 
-		if (getScan() != 0)
-			goto asco;
+		if (i < 4) {
+			fadeToBlack(1);
 
-		clearRoom();
+			if (getScan() != 0)
+				goto asco;
+
+			clearRoom();
+		}
 	}
 
 	loadPic("his4_1.alg", bgSurface, HALF_PAL);
