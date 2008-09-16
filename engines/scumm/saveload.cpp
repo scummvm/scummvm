@@ -542,16 +542,8 @@ bool ScummEngine::loadInfosFromSlot(int slot, InfoStuff *stuff) {
 		return false;
 	}
 
-	uint32 type = in->readUint32BE();
-
-	// Check for the THMB header. Also, work around a bug which caused
-	// the chunk type (incorrectly) to be written in LE on LE machines.
-	if (! (type == MKID_BE('THMB') || (hdr.ver < VER(55) && type == MKID_BE('BMHT')))){
-		delete in;
+	if (!Graphics::skipThumbnailHeader(*in))
 		return false;
-	}
-	uint32 size = in->readUint32BE();
-	in->skip(size - 8);
 
 	if (!loadInfos(in, stuff)) {
 		delete in;
