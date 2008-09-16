@@ -399,6 +399,7 @@ public:
 	void fadeToBlack(int fadeSpeed);
 	signed char adjustToVGA(signed char value);
 	void color_abc(int cl);
+	bool textFitsCentered(char *text, int x);	
 	void centerText(const char *,int,int);
 	void playSound(int soundNum);
 	bool animate(const char *animation, int FPS);
