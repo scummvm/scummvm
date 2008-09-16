@@ -744,124 +744,61 @@ void DrasculaEngine::animation_14_2() {
 	loadPic(99, backSurface);
 }
 
+// The drunk tells us about Von Braun
 void DrasculaEngine::animation_16_2() {
+	char curPic[20];
 	talk_drunk(12);
 	talk(371);
 
 	clearRoom();
 
+	// FIXME: Track 31 is missing from the soundtrack available
+	// from ScummVM's downloads page, so for now we're using the
+	// Spanish track 29
+#if 1
+	playMusic(30);
+#else
 	if (_lang == kSpanish)
 		playMusic(30);
 	else
 		playMusic(32);
+#endif
 
-	int key = getScan();
-	if (key != 0)
+	if (getScan() != 0)
 		goto asco;
 
 	color_abc(kColorDarkGreen);
 
-	loadPic("his1.alg", bgSurface, HALF_PAL);
+	for (int i = 1; i <= 4; i++) {
+		if (i < 4)
+			sprintf(curPic, "his%i.alg", i);
+		else
+			strcpy(curPic, "his4_1.alg");
 
-	copyBackground();
+		loadPic(curPic, screenSurface, HALF_PAL);
+		centerText(_texthis[i], 180, 180);
+		updateScreen();
 
-	centerText(_texthis[1], 180, 180);
+		if (getScan() != 0)
+			goto asco;
 
-	updateScreen();
+		delay(3000);
+		fadeToBlack(1);
 
-	key = getScan();
-	if (key != 0)
-		goto asco;
+		if (getScan() != 0)
+			goto asco;
 
-	if (_lang == kSpanish)
-		_system->delayMillis(3000);
-	else
-		_system->delayMillis(4000);
+		clearRoom();
+	}
 
-	key = getScan();
-	if (key != 0)
-		goto asco;
-
-	fadeToBlack(1);
-	key = getScan();
-	if (key != 0)
-		goto asco;
-
-	clearRoom();
-	loadPic("his2.alg", bgSurface, HALF_PAL);
-	copyBackground();
-
-	centerText(_texthis[2], 180, 180);
-
-	updateScreen();
-	key = getScan();
-	if (key != 0)
-		goto asco;
-
-	if (_lang == kSpanish)
-		_system->delayMillis(3000);
-	else
-		_system->delayMillis(4000);
-
-	key = getScan();
-	if (key != 0)
-		goto asco;
-
-	fadeToBlack(1);
-	key = getScan();
-	if (key != 0)
-		goto asco;
-
-	clearRoom();
-	loadPic("his3.alg", bgSurface, HALF_PAL);
-	copyBackground();
-
-	centerText(_texthis[3], 180, 180);
-
-	updateScreen();
-	key = getScan();
-	if (key != 0)
-		goto asco;
-
-	if (_lang == kSpanish)
-		_system->delayMillis(3000);
-	else
-		_system->delayMillis(4000);
-
-	key = getScan();
-	if (key != 0)
-		goto asco;
-
-	fadeToBlack(1);
-
-	clearRoom();
 	loadPic("his4_1.alg", bgSurface, HALF_PAL);
 	loadPic("his4_2.alg", drawSurface3);
-
-	copyBackground(0, 0, 0, 0, 320, 200, drawSurface3, screenSurface);
-
-	centerText(_texthis[1], 180, 180);
-
-	updateScreen();
-	key = getScan();
-	if (key != 0)
-		goto asco;
-
-	if (_lang == kSpanish)
-		_system->delayMillis(2000);
-	else
-		_system->delayMillis(4000);
-
-	key = getScan();
-	if (key != 0)
-		goto asco;
 
 	for (int l = 1; l < 200; l++) {
 		copyBackground(0, 0, 0, l, 320, 200 - l, drawSurface3, screenSurface);
 		copyBackground(0, 200 - l, 0, 0, 320, l, bgSurface, screenSurface);
 		updateScreen();
-		key = getScan();
-		if (key != 0)
+		if (getScan() != 0)
 			goto asco;
 	}
 
