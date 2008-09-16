@@ -630,9 +630,9 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	}
 
 	GuiTextWrapState wrapState;
+	int16 len;
 	wrapState.width = 0;
 	wrapState.destString = wrapState.textBuffer;
-	wrapState.len = 0;
 	wrapState.len1 = 0;
 	wrapState.len2 = 0;
 
@@ -642,39 +642,39 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	
 	for (int16 i = 0; i <= _verbLineNum; i++) {
 		wrapState.sourceString = _vm->_script->getSlotData(_verbLineItems[i].slotIndex) + _verbLineItems[i].slotOffset;
-		wrapGuiText(_fontResIndexArray[0], _verbLineWidth, wrapState);
-		wrapState.len1 += wrapState.len;
+		len = wrapGuiText(_fontResIndexArray[0], _verbLineWidth, wrapState);
+		wrapState.len1 += len;
 	}
 
 	if (_verbLineCount != 1) {
 		int16 charWidth;
 		if (*wrapState.sourceString < 0xF0) {
-			while (*wrapState.sourceString > 0x20 && *wrapState.sourceString < 0xF0 && wrapState.len > 0) {
+			while (*wrapState.sourceString > 0x20 && *wrapState.sourceString < 0xF0 && len > 0) {
 				byte ch = *wrapState.sourceString--;
 				wrapState.len1--;
-				wrapState.len--;
+				len--;
 				charWidth = font.getCharWidth(ch) + font.getSpacing() - 1;
 				wrapState.width -= charWidth;
 			}
 			wrapState.width += charWidth;
 			wrapState.sourceString++;
-			wrapState.len1 -= wrapState.len;
-			wrapState.len2 = wrapState.len + 1;
+			wrapState.len1 -= len;
+			wrapState.len2 = len + 1;
 			
 			drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
 
 			wrapState.destString = wrapState.textBuffer;
 			wrapState.width = 0;
-			wrapGuiText(_fontResIndexArray[0], _verbLineWidth, wrapState);
-			wrapState.len1 += wrapState.len;
+			len = wrapGuiText(_fontResIndexArray[0], _verbLineWidth, wrapState);
+			wrapState.len1 += len;
 			
 			y += 9;
 		}
 		y += 9;
 	}
 	
-	wrapState.len1 -= wrapState.len;
-	wrapState.len2 = wrapState.len;
+	wrapState.len1 -= len;
+	wrapState.len2 = len;
 
 	drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
 
@@ -870,9 +870,8 @@ void Screen::drawGuiTextMulti(byte *textData) {
 		} else {
 			wrapState.destString = wrapState.textBuffer;
 			wrapState.width = 0;
-			wrapGuiText(_fontResIndexArray[1], 640, wrapState);
 			wrapState.len1 = 0;
-			wrapState.len2 = wrapState.len;
+			wrapState.len2 = wrapGuiText(_fontResIndexArray[1], 640, wrapState);
 			drawGuiText(x - wrapState.width / 2, y, _fontColor1, _fontColor2, _fontResIndexArray[1], wrapState);
 		}
 	
@@ -880,11 +879,11 @@ void Screen::drawGuiTextMulti(byte *textData) {
 
 }
 
-void Screen::wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wrapState) {
+int16 Screen::wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wrapState) {
 
 	Font font(_vm->_res->load(fontResIndex));
-
-	wrapState.len = 0;
+	int16 len = 0;
+	
 	while (*wrapState.sourceString >= 0x20 && *wrapState.sourceString < 0xF0) {
 		byte ch = *wrapState.sourceString;
 		byte charWidth;
@@ -894,10 +893,13 @@ void Screen::wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wrap
 			charWidth = font.getCharWidth(ch) + font.getSpacing() - 1;
 		if (wrapState.width + charWidth >= maxWidth)
 			break;
-		wrapState.len++;
+		len++;
 		wrapState.width += charWidth;
 		*wrapState.destString++ = *wrapState.sourceString++;
 	}
+	
+	return len;
+	
 }
 
 void Screen::drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex, GuiTextWrapState &wrapState) {

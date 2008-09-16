@@ -311,7 +311,7 @@ struct TalkTextItem {
 };
 
 struct GuiTextWrapState {
-	int16 len, len1, len2;
+	int16 len1, len2;
 	byte *sourceString;
 	byte *destString;
 	int16 width;
@@ -356,7 +356,7 @@ public:
 	// Font/text
 	void registerFont(uint fontIndex, uint resIndex);
 	void drawGuiTextMulti(byte *textData);
-	void wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wrapState);
+	int16 wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wrapState);
 	void drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex, GuiTextWrapState &wrapState);
 
 	int16 drawString(int16 x, int16 y, byte color, uint fontResIndex, byte *text, int len = -1, int16 *ywobble = NULL, bool outline = false);
