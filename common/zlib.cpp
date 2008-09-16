@@ -34,8 +34,8 @@
 
 namespace Common {
 
-int uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen) {
-	return ::uncompress(dst, dstLen, src, srcLen);
+bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen) {
+	return Z_OK == ::uncompress(dst, dstLen, src, srcLen);
 }
 
 } // end of namespace Common

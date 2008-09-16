@@ -22,26 +22,23 @@
  * $Id$
  */
 
+#ifndef COMMON_ZLIB_H
+#define COMMON_ZLIB_H
+
 #include "common/scummsys.h"
 
 #if defined(USE_ZLIB)
 
-#ifndef COMMON_ZLIB_H
-#define COMMON_ZLIB_H
-
-#ifdef __SYMBIAN32__
-#include <zlib\zlib.h>
-#else
-#include <zlib.h>
-#endif
-
 namespace Common {
 
-enum {
-	ZLIB_OK = Z_OK
-};
-
-int uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen);
+/**
+ * Thin wrapper around zlib's uncompress() function. This wrapper makes
+ * it possible to uncompress data in engines without being forced to link
+ * them against zlib, thus simplifying the build system.
+ * 
+ * @return true on success (i.e. Z_OK), false otherwise
+ */
+bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen);
 
 } // end of namespace Common
 

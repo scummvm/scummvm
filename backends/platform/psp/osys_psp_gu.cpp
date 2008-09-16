@@ -94,19 +94,24 @@ OSystem_PSP_GU::OSystem_PSP_GU() {
 	//decompress keyboard data
 	uLongf kbdSize = KBD_DATA_SIZE;
 	keyboard_letters = (unsigned char *)memalign(16, KBD_DATA_SIZE);
-	assert(Z_OK == uncompress((Bytef *)keyboard_letters, &kbdSize, (const Bytef *)keyboard_letters_compressed, size_keyboard_letters_compressed));
-
+	assert(Z_OK == 
+	if (!uncompress((Bytef *)keyboard_letters, &kbdSize, (const Bytef *)keyboard_letters_compressed, size_keyboard_letters_compressed))
+		error("OSystem_PSP_GU: uncompressing keyboard_letters failed");
+		
 	kbdSize = KBD_DATA_SIZE;
 	keyboard_letters_shift = (unsigned char *)memalign(16, KBD_DATA_SIZE);
-	assert(Z_OK == uncompress((Bytef *)keyboard_letters_shift, &kbdSize, (const Bytef *)keyboard_letters_shift_compressed, size_keyboard_letters_shift_compressed));
+	if (!uncompress((Bytef *)keyboard_letters_shift, &kbdSize, (const Bytef *)keyboard_letters_shift_compressed, size_keyboard_letters_shift_compressed))
+		error("OSystem_PSP_GU: uncompressing keyboard_letters_shift failed");
 
 	kbdSize = KBD_DATA_SIZE;
 	keyboard_symbols = (unsigned char *)memalign(16, KBD_DATA_SIZE);
-	assert(Z_OK == uncompress((Bytef *)keyboard_symbols, &kbdSize, (const Bytef *)keyboard_symbols_compressed, size_keyboard_symbols_compressed));
+	if (!uncompress((Bytef *)keyboard_symbols, &kbdSize, (const Bytef *)keyboard_symbols_compressed, size_keyboard_symbols_compressed))
+		error("OSystem_PSP_GU: uncompressing keyboard_symbols failed");
 
 	kbdSize = KBD_DATA_SIZE;
 	keyboard_symbols_shift = (unsigned char *)memalign(16, KBD_DATA_SIZE);
-	assert(Z_OK == uncompress((Bytef *)keyboard_symbols_shift, &kbdSize, (const Bytef *)keyboard_symbols_shift_compressed, size_keyboard_symbols_shift_compressed));
+	if (!uncompress((Bytef *)keyboard_symbols_shift, &kbdSize, (const Bytef *)keyboard_symbols_shift_compressed, size_keyboard_symbols_shift_compressed))
+		error("OSystem_PSP_GU: uncompressing keyboard_symbols_shift failed");
 
 	_keyboardVisible = false;
 	_clut = (unsigned short*)(((unsigned int)clut256)|0x40000000);
