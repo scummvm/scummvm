@@ -490,7 +490,7 @@ void Screen::drawSprite(SpriteDrawItem *sprite) {
 	SpriteReader spriteReader(source, sprite);
 
 	if (sprite->flags & 0x40) {
-		// TODO: Shadow sprites
+		// Shadow sprites
 		if (sprite->flags & 1) {
 			SpriteFilterScaleDown spriteScaler(sprite, &spriteReader);
 			drawSpriteCore(dest, spriteScaler, sprite);
@@ -642,14 +642,14 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	
 	for (int16 i = 0; i <= _verbLineNum; i++) {
 		sourceString = _vm->_script->getSlotData(_verbLineItems[i].slotIndex) + _verbLineItems[i].slotOffset;
-		preprocessText(_fontResIndexArray[0], _verbLineWidth, width, sourceString, destString, len);
+		wrapGuiText(_fontResIndexArray[0], _verbLineWidth, width, sourceString, destString, len);
 		_tempStringLen1 += len;
 	}
 
 	if (_verbLineCount != 1) {
 		int16 charWidth;
 		if (*sourceString < 0xF0) {
-			while (*sourceString > 0x20 && *sourceString < 0xF0 && len > 0/*CHECKME, len check added*/) {
+			while (*sourceString > 0x20 && *sourceString < 0xF0 && len > 0) {
 				byte ch = *sourceString--;
 				_tempStringLen1--;
 				len--;
@@ -661,11 +661,11 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 			_tempStringLen1 -= len;
 			_tempStringLen2 = len + 1;
 			
-			drawStringEx(_verbLineX - 1 - (width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0]);
+			drawGuiText(_verbLineX - 1 - (width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0]);
 
 			destString = _tempString;
 			width = 0;
-			preprocessText(_fontResIndexArray[0], _verbLineWidth, width, sourceString, destString, len);
+			wrapGuiText(_fontResIndexArray[0], _verbLineWidth, width, sourceString, destString, len);
 			
 			_tempStringLen1 += len;
 			y += 9;
@@ -676,7 +676,7 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	_tempStringLen1 -= len;
 	_tempStringLen2 = len;
 
-	drawStringEx(_verbLineX - 1 - (width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0]);
+	drawGuiText(_verbLineX - 1 - (width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0]);
 
 }
 
@@ -840,7 +840,7 @@ void Screen::registerFont(uint fontIndex, uint resIndex) {
 	_fontResIndexArray[fontIndex] = resIndex;
 }
 
-void Screen::printText(byte *textData) {
+void Screen::drawGuiTextMulti(byte *textData) {
 
 	int16 x = 0, y = 0;
 
@@ -868,15 +868,15 @@ void Screen::printText(byte *textData) {
 			byte *destString = _tempString;
 			int width = 0;
 			_tempStringLen1 = 0;
-			preprocessText(_fontResIndexArray[1], 640, width, textData, destString, _tempStringLen2);
-			drawStringEx(x - width / 2, y, _fontColor1, _fontColor2, _fontResIndexArray[1]);
+			wrapGuiText(_fontResIndexArray[1], 640, width, textData, destString, _tempStringLen2);
+			drawGuiText(x - width / 2, y, _fontColor1, _fontColor2, _fontResIndexArray[1]);
 		}
 	
 	} while (*textData != 0xFF);
 
 }
 
-void Screen::preprocessText(uint fontResIndex, int maxWidth, int &width, byte *&sourceString, byte *&destString, byte &len) {
+void Screen::wrapGuiText(uint fontResIndex, int maxWidth, int &width, byte *&sourceString, byte *&destString, byte &len) {
 
 	Font font(_vm->_res->load(fontResIndex));
 
@@ -896,9 +896,9 @@ void Screen::preprocessText(uint fontResIndex, int maxWidth, int &width, byte *&
 	}
 }
 
-void Screen::drawStringEx(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex) {
+void Screen::drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex) {
 
-	debug(0, "Screen::drawStringEx(%d, %d, %d, %d, %d) _tempStringLen1 = %d; _tempStringLen2 = %d", x, y, fontColor1, fontColor2, fontResIndex, _tempStringLen1, _tempStringLen2);
+	debug(0, "Screen::drawGuiText(%d, %d, %d, %d, %d) _tempStringLen1 = %d; _tempStringLen2 = %d", x, y, fontColor1, fontColor2, fontResIndex, _tempStringLen1, _tempStringLen2);
 
 	int16 ywobble = 1;
 

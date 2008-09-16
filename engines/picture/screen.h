@@ -347,9 +347,9 @@ public:
 
 	// Font/text
 	void registerFont(uint fontIndex, uint resIndex);
-	void printText(byte *textData);
-	void preprocessText(uint fontResIndex, int maxWidth, int &width, byte *&sourceString, byte *&destString, byte &len);
-	void drawStringEx(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex);
+	void drawGuiTextMulti(byte *textData);
+	void wrapGuiText(uint fontResIndex, int maxWidth, int &width, byte *&sourceString, byte *&destString, byte &len);
+	void drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex);
 
 	int16 drawString(int16 x, int16 y, byte color, uint fontResIndex, byte *text, int len = -1, int16 *ywobble = NULL, bool outline = false);
 	void drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, byte color, bool outline);
