@@ -187,6 +187,21 @@ public:
 	const Graphics::Surface *getThumbnail() const { return _thumbnail.get(); }
 	
 	void setThumbnail(Graphics::Surface *t);
+
+	/**
+	 * Sets the 'save_date' key properly, based on the given values
+	 */
+	void setSaveDate(int year, int month, int day);
+
+	/**
+	 * Sets the 'save_time' key properly, based on the given values
+	 */
+	void setSaveTime(int hour, int min);
+
+	/**
+	 * Sets the 'play_time' key properly, based on the given values
+	 */
+	void setPlayTime(int hours, int minutes);
 };
 
 /** List of savestates. */

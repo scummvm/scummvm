@@ -482,11 +482,16 @@ protected:
 	GUI::ButtonWidget	*_deleteButton;
 	GUI::GraphicsWidget	*_gfxWidget;
 	GUI::ContainerWidget	*_container;
+	GUI::StaticTextWidget	*_date;
+	GUI::StaticTextWidget	*_time;
+	GUI::StaticTextWidget	*_playtime;
 
 	const EnginePlugin		*_plugin;
 	bool					_delSupport;
 	bool					_metaInfoSupport;
 	bool					_thumbnailSupport;
+	bool					_saveDateSupport;
+	bool					_playTimeSupport;
 	String					_target;
 	SaveStateList			_saveList;
 
@@ -523,6 +528,10 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 
+	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", kTextAlignCenter);
+	_time = new StaticTextWidget(this, 0, 0, 10, 10, "No time saved", kTextAlignCenter);
+	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", kTextAlignCenter);
+
 	// Buttons
 	new GUI::ButtonWidget(this, "scummsaveload_cancel", "Cancel", kCloseCmd, 0);
 	_chooseButton = new GUI::ButtonWidget(this, "scummsaveload_choose", buttonLabel, kChooseCmd, 0);
@@ -546,6 +555,8 @@ int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) 
 	_delSupport = (*_plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
 	_metaInfoSupport = (*_plugin)->hasFeature(MetaEngine::kSupportsMetaInfos);
 	_thumbnailSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSupportsThumbnails);
+	_saveDateSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSupportsSaveDate);
+	_playTimeSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSupportsSavePlayTime);
 	reflowLayout();
 	updateSaveList();
 
@@ -604,13 +615,42 @@ void SaveLoadChooser::reflowLayout() {
 		int vPad = g_gui.evaluator()->getVar("scummsaveload_thumbnail.vPad");
 		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
 
-		_container->resize(thumbX - hPad, thumbY - vPad, kThumbnailWidth + hPad * 2, thumbH + vPad * 2/* + kLineHeight * 4*/);
+		int textLines = 0;
+		if (_saveDateSupport)
+			textLines += 2;
+		if (_playTimeSupport)
+			textLines += 1;
+
+		if (textLines)
+			++textLines;
+
+		_container->resize(thumbX - hPad, thumbY - vPad, kThumbnailWidth + hPad * 2, thumbH + vPad * 2 + kLineHeight * textLines);
 
 		// Add the thumbnail display
 		_gfxWidget->resize(thumbX, thumbY, kThumbnailWidth, thumbH);
 
+		int height = thumbY + thumbH + kLineHeight;
+
+		if (_saveDateSupport) {
+			_date->resize(thumbX, height, kThumbnailWidth, kLineHeight);
+			height += kLineHeight;
+			_time->resize(thumbX, height, kThumbnailWidth, kLineHeight);
+			height += kLineHeight;
+		}
+
+		if (_playTimeSupport)
+			_playtime->resize(thumbX, height, kThumbnailWidth, kLineHeight);
+
 		_container->clearFlags(GUI::WIDGET_INVISIBLE);
 		_gfxWidget->clearFlags(GUI::WIDGET_INVISIBLE);
+
+		if (_saveDateSupport) {
+			_date->clearFlags(GUI::WIDGET_INVISIBLE);
+			_time->clearFlags(GUI::WIDGET_INVISIBLE);
+		}
+
+		if (_playTimeSupport)
+			_playtime->clearFlags(GUI::WIDGET_INVISIBLE);
 
 		_fillR = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
 		_fillG = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
@@ -619,6 +659,9 @@ void SaveLoadChooser::reflowLayout() {
 	} else {
 		_container->setFlags(GUI::WIDGET_INVISIBLE);
 		_gfxWidget->setFlags(GUI::WIDGET_INVISIBLE);
+		_date->setFlags(GUI::WIDGET_INVISIBLE);
+		_time->setFlags(GUI::WIDGET_INVISIBLE);
+		_playtime->setFlags(GUI::WIDGET_INVISIBLE);
 	}
 
 	Dialog::reflowLayout();
@@ -643,6 +686,33 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 				_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
 			}
 		}
+
+		if (_saveDateSupport) {
+			Common::String date = "Date: ";
+			if (desc.contains("save_date"))
+				date += desc.getVal("save_date");
+			else
+				date = "No date saved";
+
+			Common::String time = "Time: ";
+			if (desc.contains("save_time"))
+				time += desc.getVal("save_time");
+			else
+				time = "No time saved";
+
+			_date->setLabel(date);
+			_time->setLabel(time);
+		}
+
+		if (_playTimeSupport) {
+			Common::String time = "Playtime:";
+			if (desc.contains("play_time"))
+				time += desc.getVal("play_time");
+			else
+				time = "No playtime saved";
+
+			_playtime->setLabel(time);
+		}
 	}
 
 
@@ -654,6 +724,9 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 
 	if (redraw) {
 		_gfxWidget->draw();
+		_date->draw();
+		_time->draw();
+		_playtime->draw();
 		_chooseButton->draw();
 		_deleteButton->draw();
 	}

@@ -693,7 +693,9 @@ bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDirectLoad) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSupportsMetaInfos) ||
-		(f == kSupportsThumbnails);
+		(f == kSupportsThumbnails) ||
+		(f == kSupportsSaveDate) ||
+		(f == kSupportsSavePlayTime);
 }
 
 GameList ScummMetaEngine::getSupportedGames() const {
@@ -1001,6 +1003,27 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 	SaveStateDescriptor desc(slot, saveDesc, filename);
 	desc.setDeletableFlag(true);
 	desc.setThumbnail(thumbnail);
+
+	InfoStuff infos;
+	memset(&infos, 0, sizeof(infos));
+	if (ScummEngine::loadInfosFromSlot(target, slot, &infos)) {
+		int day = (infos.date >> 24) & 0xFF;
+		int month = (infos.date >> 16) & 0xFF;
+		int year = infos.date & 0xFFFF;
+
+		desc.setSaveDate(year, month, day);
+		
+		int hour = (infos.time >> 8) & 0xFF;
+		int minutes = infos.time & 0xFF;
+
+		desc.setSaveTime(hour, minutes);
+
+		minutes = infos.playtime / 60;
+		hour = minutes / 60;
+		minutes %= 60;
+
+		desc.setPlayTime(hour, minutes);
+	}
 
 	return desc;
 }

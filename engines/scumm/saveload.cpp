@@ -518,15 +518,15 @@ Graphics::Surface *ScummEngine::loadThumbnailFromSlot(const char *target, int sl
 	return thumb;
 }
 
-bool ScummEngine::loadInfosFromSlot(int slot, InfoStuff *stuff) {
+bool ScummEngine::loadInfosFromSlot(const char *target, int slot, InfoStuff *stuff) {
 	Common::SeekableReadStream *in;
 	SaveGameHeader hdr;
 
 	if (slot < 0)
 		return  0;
 
-	Common::String filename = makeSavegameName(slot, false);
-	if (!(in = _saveFileMan->openForLoading(filename.c_str()))) {
+	Common::String filename = makeSavegameName(target, slot, false);
+	if (!(in = g_system->getSavefileManager()->openForLoading(filename.c_str()))) {
 		return false;
 	}
 
@@ -598,9 +598,8 @@ bool ScummEngine::loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff) 
 	stuff->playtime = section.playtime;
 
 	// Skip over the remaining (unsupported) data
-	if (section.size > SaveInfoSectionSize) {
+	if (section.size > SaveInfoSectionSize)
 		file->skip(section.size - SaveInfoSectionSize);
-	}
 
 	return true;
 }

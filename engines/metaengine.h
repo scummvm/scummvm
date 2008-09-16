@@ -151,10 +151,26 @@ public:
 
 		/**
 		 * Features a thumbnail in savegames (i.e. includes a thumbnail
-		 * in savestates returned via querySaveMetaInfo). This flag may 
-		 * only be set when 'kSupportsMetaInfos' is set.
+		 * in savestates returned via querySaveMetaInfo).
+		 * This flag may only be set when 'kSupportsMetaInfos' is set.
 		 */
-		kSupportsThumbnails		= 5
+		kSupportsThumbnails		= 5,
+
+		/**
+		 * Features 'save_date' and 'save_time' entries in the 
+		 * savestate returned by querySaveMetaInfo. Those values
+		 * indicate the date/time the savegame was created.
+		 * This flag may only be set when 'kSupportsMetaInfos' is set.
+		 */
+		kSupportsSaveDate		= 6,
+
+		/**
+		 * Features 'play_time' entry in the savestate returned by
+		 * querySaveMetaInfo. It indicates how long the user played
+		 * the game till the save.
+		 * This flag may only be set when 'kSupportsMetaInfos' is set.
+		 */
+		kSupportsSavePlayTime	= 7
 	};	
 
 	/**

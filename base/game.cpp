@@ -96,3 +96,21 @@ void SaveStateDescriptor::setDeletableFlag(bool state) {
 	setVal("is_deletable", state ? "true" : "false");
 }
 
+void SaveStateDescriptor::setSaveDate(int year, int month, int day) {
+	char buffer[32];
+	snprintf(buffer, 32, "%.2d.%.2d.%.4d", day, month, year);
+	setVal("save_date", buffer);
+}
+
+void SaveStateDescriptor::setSaveTime(int hour, int min) {
+	char buffer[32];
+	snprintf(buffer, 32, "%.2d:%.2d", hour, min);
+	setVal("save_time", buffer);
+}
+
+void SaveStateDescriptor::setPlayTime(int hours, int minutes) {
+	char buffer[32];
+	snprintf(buffer, 32, "%.2d:%.2d", hours, minutes);
+	setVal("play_time", buffer);
+}
+
