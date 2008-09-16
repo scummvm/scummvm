@@ -150,7 +150,18 @@ void DrasculaEngine::playFile(const char *fname) {
 	if (_arj.open(fname)) {
 		int soundSize = _arj.size();
 		byte *soundData = (byte *)malloc(soundSize);
-		_arj.seek(32);
+
+		if (!(!strcmp(fname, "3.als") && soundSize == 145166 && _lang != kSpanish)) {
+			_arj.seek(32);
+		} else {
+			// WORKAROUND: File 3.als with English speech files has a big silence at
+			// its beginning and end. We seek past the silence at the beginning,
+			// and ignore the silence at the end
+			// Fixes bug #2111815 - "DRASCULA: Voice delayed"
+			_arj.seek(73959, SEEK_SET);
+			soundSize = 117158 - 73959;
+		}
+
 		_arj.read(soundData, soundSize);
 		_arj.close();
 
