@@ -52,6 +52,8 @@ struct ToltecsGameDescription;
 class AnimationPlayer;
 class ArchiveReader;
 class Input;
+class MenuSystem;
+class MoviePlayer;
 class Palette;
 class ResourceCache;
 class ScriptInterpreter;
@@ -102,6 +104,8 @@ public:
 	AnimationPlayer *_anim;
 	ArchiveReader *_arc;
 	Input *_input;
+	MenuSystem *_menuSystem;
+	MoviePlayer *_moviePlayer;
 	Palette *_palette;
 	ResourceCache *_res;
 	ScriptInterpreter *_script;
