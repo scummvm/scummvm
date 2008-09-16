@@ -60,7 +60,6 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 	int x_talk3[4] = {  80, 102, 124, 146 };
 	int x_talk4[4] = { 119, 158, 197, 236 };
 	int face = 0;
-	int length = strlen(said);
 
 	color_abc(kColorWhite);
 
@@ -140,7 +139,6 @@ void DrasculaEngine::talk_drascula(int index, int talkerType) {
 	sprintf(filename, "d%i.als", index);
 	int x_talk[8] = { 1, 40, 79, 118, 157, 196, 235, 274 };
 	int face;
-	int length = strlen(said);
 	int offset = (talkerType == 0) ? 0 : 7;
 	int offset2 = (talkerType == 0) ? 90 : 58;
 
@@ -199,7 +197,6 @@ void DrasculaEngine::talk_drascula_big(int index) {
 	int x_talk[4] = {47, 93, 139, 185};
 	int face;
 	int l = 0;
-	int length = strlen(said);
 
 	color_abc(kColorRed);
 
@@ -228,7 +225,6 @@ void DrasculaEngine::talk_drascula_big(int index) {
 }
 
 void DrasculaEngine::talk_solo(const char *said, const char *filename) {
-	int length = strlen(said);
 
 	if (currentChapter == 1)
 		color_abc(color_solo);
@@ -273,7 +269,6 @@ void DrasculaEngine::talk_bartender(int index, int talkerType) {
 
 	int x_talk[9] = { 1, 23, 45, 67, 89, 111, 133, 155, 177 };
 	int face;
-	int length = strlen(said);
 
 	color_abc(kColorMaroon);
 
@@ -323,7 +318,6 @@ void DrasculaEngine::talk_bj(int index) {
 	const char *said = _textbj[index];
 	int x_talk[5] = { 64, 92, 120, 148, 176 };
 	int face;
-	int length = strlen(said);
 
 	color_abc(kColorWhite);
 
@@ -378,7 +372,6 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 
 	int y_mask_talk = 170;
 	int face;
-	int length = strlen(said);
 
 	if (currentChapter == 6) {
 		if (flags[0] == 0 && roomNumber == 102) {
@@ -541,7 +534,6 @@ void DrasculaEngine::talk_vonBraun(int index, int talkerType) {
 	const char *said = _textvb[index];
 	int x_talk[6] = {1, 27, 53, 79, 105, 131};
 	int face;
-	int length = strlen(said);
 
 	color_abc(kColorBrown);
 
@@ -596,7 +588,6 @@ void DrasculaEngine::talk_blind(int index) {
 	int p = 0;
 	int bX = 0;
 	int h = 149;
-	int length = strlen(said);
 
 	color_abc(kColorBrown);
 
@@ -639,7 +630,6 @@ void DrasculaEngine::talk_hacker(int index) {
 	char filename[20];
 	sprintf(filename, "d%i.als", index);
 	const char *said = _textd[index];
-	int length = strlen(said);
 
 	copyBackground();
 	updateScreen();
@@ -681,7 +671,6 @@ void DrasculaEngine::talk_pen(const char *said, const char *filename, int talker
 	int x_talk[8] = {112, 138, 164, 190, 216, 242, 268, 294};
 	int x_talk2[5] = {122, 148, 174, 200, 226};
 	int face;
-	int length = strlen(said);
 
 	flags[1] = 1;
 
@@ -735,7 +724,6 @@ void DrasculaEngine::talk_bj_bed(int index) {
 	const char *said = _textbj[index];
 	int x_talk[5] = {51, 101, 151, 201, 251};
 	int face;
-	int length = strlen(said);
 
 	color_abc(kColorWhite);
 
@@ -771,7 +759,6 @@ void DrasculaEngine::talk_htel(int index) {
 	const char *said = _text[index];
 	int x_talk[3] = {1, 94, 187};
 	int face, curScreen;
-	int length = strlen(said);
 
 	color_abc(kColorYellow);
 
@@ -805,7 +792,6 @@ void DrasculaEngine::talk_sync(const char *said, const char *filename, const cha
 	int talkOffset = 1;
 	int y_mask_talk = 170;
 	int p, face = 0;
-	int length = strlen(said);
 	char buf[2];
 
 	color_abc(kColorYellow);
@@ -891,7 +877,6 @@ void DrasculaEngine::talk_trunk(int index) {
 	sprintf(filename, "d%i.als", index);
 	const char *said = _text[index];
 	int face = 0, cara_antes;
-	int length = strlen(said);
 
 	cara_antes = flags[19];
 
@@ -920,7 +905,6 @@ void DrasculaEngine::talk_trunk(int index) {
 
 void DrasculaEngine::talk_generic(const char* said, const char* filename, int* faces, int faceCount, int* coords, byte* surface) {
 	int face;
-	int length = strlen(said);
 	talkInit(filename);
 
 	do {
@@ -947,8 +931,6 @@ void DrasculaEngine::talk_generic(const char* said, const char* filename, int* f
 
 
 void DrasculaEngine::grr() {
-	int length = 30;
-
 	color_abc(kColorDarkGreen);
 
 	playFile("s10.als");
