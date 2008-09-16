@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/gzip-stream.h"
+#include "common/zlib.h"
 #include "backends/saves/compressed/compressed-saves.h"
 
 

@@ -7,7 +7,6 @@ MODULE_OBJS := \
 	config-manager.o \
 	file.o \
 	fs.o \
-	gzip-stream.o \
 	hashmap.o \
 	memorypool.o \
 	md5.o \
