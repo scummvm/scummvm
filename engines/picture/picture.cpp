@@ -41,11 +41,15 @@
 
 #include "picture/picture.h"
 #include "picture/animation.h"
+#include "picture/menu.h"
+#include "picture/movie.h"
 #include "picture/palette.h"
 #include "picture/resource.h"
 #include "picture/script.h"
 #include "picture/screen.h"
 #include "picture/segmap.h"
+
+#include "picture/microtiles.h"
 
 namespace Picture {
 
@@ -132,14 +136,54 @@ int PictureEngine::go() {
 	_anim = new AnimationPlayer(this);
 	_palette = new Palette(this);
 	_segmap = new SegmentMap(this);
+	_moviePlayer = new MoviePlayer(this);
+	_menuSystem = new MenuSystem(this);
 
 	_system->showMouse(true);
 
-#if 1
+//#define TEST_MOVIE
+#ifdef TEST_MOVIE
+	_screen->registerFont(0, 0x0D);
+	_screen->registerFont(1, 0x0E);
+	_moviePlayer->playMovie(0x000012D8);
+#endif
 
+//#define TEST_MENU
+#ifdef TEST_MENU
+	_screen->registerFont(0, 0x0D);
+	_screen->registerFont(1, 0x0E);
+	_screen->loadMouseCursor(12);
+	_palette->loadAddPalette(9, 224);
+	_palette->setDeltaPalette(_palette->getMainPalette(), 7, 0, 31, 224);
+	_screen->finishTextDrawItems();
+	_screen->clearSprites();
+	while (1) {
+		updateInput();
+		_menuSystem->update();
+		updateScreen();
+	}
+#endif
+
+//#define TEST_MICROTILES
+#ifdef TEST_MICROTILES
+	MicroTileArray *uta = new MicroTileArray(0, 0, 640, 480);
+	uta->unite(Common::Rect(10, 10, 50, 50));
+	uta->unite(Common::Rect(45, 45, 60, 60));
+	Common::Rect *rects;
+	int n_rects;
+	n_rects = uta->getRectangles(rects);
+	printf("n_rects = %d\n", n_rects); fflush(stdout);
+	for (int i = 0; i < n_rects; i++) {
+		printf("%d, %d, %d, %d\n", rects[i].left, rects[i].top, rects[i].right, rects[i].bottom);
+		fflush(stdout);
+	}
+	_system->quit();
+	delete uta;
+#endif
+
+#if 1
 	_script->loadScript(0, 0);
 	_script->runScript(0);
-	
 #endif
 
 	delete _arc;
@@ -149,6 +193,8 @@ int PictureEngine::go() {
 	delete _anim;
 	delete _palette;
 	delete _segmap;
+	delete _moviePlayer;
+	delete _menuSystem;
 
 	return 0;
 }

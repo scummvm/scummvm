@@ -54,17 +54,20 @@ ScriptInterpreter::ScriptInterpreter(PictureEngine *vm) : _vm(vm) {
 
 	_savedSp = 0;
 
+	_slots[kMaxScriptSlots - 1].size = 1024;
+ 	_slots[kMaxScriptSlots - 1].data = new byte[_slots[kMaxScriptSlots - 1].size];
+
 }
 
 ScriptInterpreter::~ScriptInterpreter() {
 	delete[] _stack;
+	for (int i = 0; i < kMaxScriptSlots; i++)
+		delete[] _slots[i].data;
 }
 
 void ScriptInterpreter::loadScript(uint resIndex, uint slotIndex) {
 
-	if (_slots[slotIndex].data) {
-		delete[] _slots[slotIndex].data;
-	}
+	delete[] _slots[slotIndex].data;
 
  	_slots[slotIndex].resIndex = resIndex;
 	byte *scriptData = _vm->_res->load(resIndex);
@@ -134,13 +137,6 @@ int16 ScriptInterpreter::readInt16() {
 	int16 value = READ_LE_UINT16(_code);
 	_code += 2;
 	return value;
-}
-
-void look(byte *code) {
-	char ln[256];
-	snprintf(ln, 256, "\t\t\t%02X %02X %02X %02X %02X %02X %02X %02X",
-		code[0], code[1], code[2], code[3], code[4], code[5], code[6], code[7]);
-	debug(1, "%s", ln);
 }
 
 void ScriptInterpreter::execOpcode(byte opcode) {
@@ -493,8 +489,8 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 
 	case 6:// ok
 	{
-		debug(0, "o2_printText()");
-		_vm->_screen->printText((byte*)localPtr(arg16(3)));
+		debug(0, "o2_drawGuiTextMulti()");
+		_vm->_screen->drawGuiTextMulti((byte*)localPtr(arg16(3)));
 		break;
 	}
 
@@ -638,6 +634,7 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 			To avoid crashes we skip searching the rectangle index for now when scene 215 is active.
 			I don't know yet whether this is a bug in the original engine as well or just here.
 			Needs some more checking.
+			Annoyingly scene 215 is the map which becomes unusable with this hack.
 		*/
 		if (_vm->_sceneResIndex != 215) {
 			if (_vm->_mouseY < _vm->_cameraHeight) {
@@ -916,6 +913,7 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 	case 65:// TODO
 	{
 		debug(0, "o2_playMovie(%d, %d)", arg16(3), arg16(5));
+		// TODO: Enable once the player is ready: _vm->_moviePlayer->playMovie()
 		break;
 	}
 	
