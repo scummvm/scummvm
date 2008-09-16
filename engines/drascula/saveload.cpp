@@ -255,9 +255,6 @@ void DrasculaEngine::saveGame(char gameName[]) {
 		warning("Can't write file '%s'. (Disk full?)", gameName);
 
 	delete out;
-
-	playSound(99);
-	finishSound();
 }
 
 } // End of namespace Drascula
