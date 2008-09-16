@@ -37,10 +37,7 @@
 #include "common/keyboard.h"
 #include "common/unarj.h"
 
-#include "sound/audiostream.h"
 #include "sound/mixer.h"
-#include "sound/voc.h"
-#include "sound/audiocd.h"
 
 #include "engines/engine.h"
 
@@ -477,7 +474,7 @@ public:
 	void placeDrascula();
 
 	void talkInit(const char *filename);
-	bool isTalkFinished(int* length);
+	bool isTalkFinished();
 	void talk_igor(int, int);
 	void talk_drascula(int index, int talkerType = 0);
 	void talk_solo(const char *, const char *);
@@ -505,6 +502,7 @@ public:
 	void stopSound();
 	void playMusic(int p);
 	void stopMusic();
+	void updateMusic();
 	int musicStatus();
 	void updateRoom();
 	bool loadGame(const char *);

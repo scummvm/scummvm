@@ -36,9 +36,8 @@ void DrasculaEngine::talkInit(const char *filename) {
 	playFile(filename);
 }
 
-bool DrasculaEngine::isTalkFinished(int* length) {
-	byte key = getScan();
-	if (key != 0)
+bool DrasculaEngine::isTalkFinished() {
+	if (getScan() != 0)
 		stopSound();
 	if (soundIsActive())
 		return false;
@@ -119,7 +118,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 			updateScreen();
 			pause(3);
 		}
-	} while	(!isTalkFinished(&length));
+	} while	(!isTalkFinished());
 
 	if ((talkerType == kIgorFront && currentChapter == 6) || 
 		 talkerType == kIgorDoor || talkerType == kIgorSeated || talkerType == kIgorWig) {
@@ -176,7 +175,7 @@ void DrasculaEngine::talk_drascula(int index, int talkerType) {
 
 		pause(3);
 
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
 
 	if (talkerType == 0)
 		copyBackground();
@@ -225,7 +224,7 @@ void DrasculaEngine::talk_drascula_big(int index) {
 		byte key = getScan();
 		if (key == Common::KEYCODE_ESCAPE)
 			term_int = 1;
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
 }
 
 void DrasculaEngine::talk_solo(const char *said, const char *filename) {
@@ -251,7 +250,7 @@ void DrasculaEngine::talk_solo(const char *said, const char *filename) {
 				centerText(said, 173, 92);
 		}
 		updateScreen();
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
 
 	if (currentChapter == 6) {
 		copyBackground();
@@ -312,7 +311,7 @@ void DrasculaEngine::talk_bartender(int index, int talkerType) {
 		updateScreen();
 
 		pause(3);
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
 
 	updateRoom();
 	updateScreen();
@@ -360,7 +359,7 @@ void DrasculaEngine::talk_bj(int index) {
 
 			updateScreen();
 		}
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
 
 	updateRoom();
 	updateScreen();
@@ -477,7 +476,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 		updateScreen();
 
 		pause(3);
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
 
 	updateRoom();
 	updateScreen();
@@ -577,7 +576,7 @@ void DrasculaEngine::talk_vonBraun(int index, int talkerType) {
 
 			updateScreen();
 		}
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
 
 	updateRoom();
 	updateScreen();
@@ -633,7 +632,7 @@ void DrasculaEngine::talk_blind(int index) {
 		updateScreen();
 		pause(2);
 		p++;
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
 }
 
 void DrasculaEngine::talk_hacker(int index) {
@@ -653,7 +652,7 @@ void DrasculaEngine::talk_hacker(int index) {
 		if (withVoices == 0)
 			centerText(said, 156, 170);
 		updateScreen();
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
 }
 
 void DrasculaEngine::talk_werewolf(int index) {
@@ -722,7 +721,7 @@ void DrasculaEngine::talk_pen(const char *said, const char *filename, int talker
 		updateScreen();
 
 		pause(3);
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
 
 	flags[1] = 0;
 	copyBackground();
@@ -760,7 +759,7 @@ void DrasculaEngine::talk_bj_bed(int index) {
 		updateScreen();
 
 		pause(3);
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
 
 	updateRoom();
 	updateScreen();
@@ -796,7 +795,7 @@ void DrasculaEngine::talk_htel(int index) {
 
 		updateScreen();
 		pause(3);
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
 
 	copyBackground();
 	updateScreen();
@@ -879,7 +878,7 @@ void DrasculaEngine::talk_sync(const char *said, const char *filename, const cha
 
 		p++;
 		pause(3);
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
 
 	if (currentChapter == 1 && musicStatus() == 0 && flags[11] == 0)
 		playMusic(roomMusic);
@@ -912,7 +911,7 @@ void DrasculaEngine::talk_trunk(int index) {
 		updateScreen();
 
 		pause(4);
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
 
 	flags[19] = cara_antes;
 	updateRoom();
@@ -940,7 +939,29 @@ void DrasculaEngine::talk_generic(const char* said, const char* filename, int* f
 		updateScreen();
 
 		pause(3);
-	} while (!isTalkFinished(&length));
+	} while (!isTalkFinished());
+
+	updateRoom();
+	updateScreen();
+}
+
+
+void DrasculaEngine::grr() {
+	int length = 30;
+
+	color_abc(kColorDarkGreen);
+
+	playFile("s10.als");
+
+	updateRoom();
+	copyBackground(253, 110, 150, 65, 20, 30, drawSurface3, screenSurface);
+
+	if (withVoices == 0)
+		centerText("groaaarrrrgghhhh!", 153, 65);
+
+	updateScreen();
+
+	while (!isTalkFinished());
 
 	updateRoom();
 	updateScreen();

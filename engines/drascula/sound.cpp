@@ -23,6 +23,10 @@
  *
  */
 
+#include "sound/mixer.h"
+#include "sound/voc.h"
+#include "sound/audiocd.h"
+
 #include "drascula/drascula.h"
 
 namespace Drascula {
@@ -117,6 +121,10 @@ void DrasculaEngine::playMusic(int p) {
 
 void DrasculaEngine::stopMusic() {
 	AudioCD.stop();
+}
+
+void DrasculaEngine::updateMusic() {
+	AudioCD.updateCD();
 }
 
 int DrasculaEngine::musicStatus() {

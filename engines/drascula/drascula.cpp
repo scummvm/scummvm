@@ -709,7 +709,7 @@ void DrasculaEngine::updateEvents() {
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
 
-	AudioCD.updateCD();
+	updateMusic();
 
 #ifdef _WIN32_WCE
 	if (eventMan->pollEvent(event)) {

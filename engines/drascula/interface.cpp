@@ -226,25 +226,4 @@ void DrasculaEngine::showMap() {
 	}
 }
 
-void DrasculaEngine::grr() {
-	int length = 30;
-
-	color_abc(kColorDarkGreen);
-
-	playFile("s10.als");
-
-	updateRoom();
-	copyBackground(253, 110, 150, 65, 20, 30, drawSurface3, screenSurface);
-
-	if (withVoices == 0)
-		centerText("groaaarrrrgghhhh!", 153, 65);
-
-	updateScreen();
-
-	while (!isTalkFinished(&length));
-
-	updateRoom();
-	updateScreen();
-}
-
 } // End of namespace Drascula
