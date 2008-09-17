@@ -211,7 +211,7 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	sprite.baseColor = drawRequest.baseColor;
 	sprite.x = drawRequest.x;
 	sprite.y = drawRequest.y;
-	sprite.ybottom = drawRequest.y;
+	sprite.priority = drawRequest.y;
 	sprite.resIndex = drawRequest.resIndex;
 	
 	spriteData = _vm->_res->load(drawRequest.resIndex);
@@ -395,7 +395,7 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 
 	// Add sprite sorted by priority
 	Common::List<SpriteDrawItem>::iterator iter = _spriteDrawList.begin();
-	while (iter != _spriteDrawList.end() && (*iter).ybottom <= sprite.ybottom) {
+	while (iter != _spriteDrawList.end() && (*iter).priority <= sprite.priority) {
 		iter++;
 	}
 	_spriteDrawList.insert(iter, sprite);

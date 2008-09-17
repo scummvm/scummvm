@@ -77,10 +77,10 @@ void SegmentMap::load(byte *source) {
 		maskRect.width = READ_LE_UINT16(source + 6);
 		maskRect.maskOffset = READ_LE_UINT16(source + 8);
 		maskRect.maskOffset -= maskRectDataSize;
-		maskRect.ybottom = READ_LE_UINT16(source + 10);
+		maskRect.priority = READ_LE_UINT16(source + 10);
 
 		debug(0, "SegmentMap::load() (%d, %d, %d, %d, %04X, %d)",
-			maskRect.x, maskRect.y, maskRect.width, maskRect.height, maskRect.maskOffset, maskRect.ybottom);
+			maskRect.x, maskRect.y, maskRect.width, maskRect.height, maskRect.maskOffset, maskRect.priority);
 
 		source += 12;
 		_maskRects.push_back(maskRect);
@@ -395,7 +395,7 @@ void SegmentMap::restoreMasksBySprite(SpriteDrawItem *sprite) {
 	for (uint i = 0; i < _maskRects.size(); i++) {
 	
 #if 0
-	if ( *(__int16 *)((char *)&spriteDrawList[0].y2 + v5) <= (unsigned __int16)v3->ybottom )
+	if ( *(__int16 *)((char *)&spriteDrawList[0].y2 + v5) <= (unsigned __int16)v3->priority )
 	{
 	  if ( (unsigned __int16)(*(__int16 *)((char *)&spriteDrawList[0].height + v5)
 							+ *(__int16 *)((char *)&spriteDrawList[0].y + v5)) > v3->y )
@@ -410,7 +410,7 @@ void SegmentMap::restoreMasksBySprite(SpriteDrawItem *sprite) {
 
 #endif
 	
-		if (sprite->ybottom <= _maskRects[i].ybottom) {
+		if (sprite->priority <= _maskRects[i].priority) {
 			restoreMask(i);
 		}
 	}
