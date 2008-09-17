@@ -26,7 +26,7 @@
 #define LAUNCHER_DIALOG_H
 
 #include "gui/dialog.h"
-#include "base/game.h"
+#include "engines/game.h"
 #include "common/str.h"
 
 namespace GUI {

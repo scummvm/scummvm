@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef BASE_GAME_H
-#define BASE_GAME_H
+#ifndef ENGINES_GAME_H
+#define ENGINES_GAME_H
 
 #include "common/str.h"
 #include "common/array.h"

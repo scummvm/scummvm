@@ -29,7 +29,7 @@
 #include "common/str.h"
 #include "common/error.h"
 
-#include "base/game.h"
+#include "engines/game.h"
 #include "base/plugins.h"
 
 class Engine;

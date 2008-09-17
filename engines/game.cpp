@@ -23,7 +23,7 @@
  *
  */
 
-#include "base/game.h"
+#include "engines/game.h"
 #include "base/plugins.h"
 #include "graphics/surface.h"
 
