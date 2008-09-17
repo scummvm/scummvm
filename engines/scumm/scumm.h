@@ -463,8 +463,8 @@ protected:
 	void loadCJKFont();
 	void setupMusic(int midi);
 	virtual void syncSoundSettings();
-	void setTalkspeed(int talkspeed);
-	int getTalkspeed();
+	void setTalkDelay(int talkdelay);
+	int getTalkDelay();
 
 	// Scumm main loop & helper functions.
 	virtual void scummLoop(int delta);

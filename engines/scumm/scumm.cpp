@@ -1693,17 +1693,17 @@ void ScummEngine::syncSoundSettings() {
 	if (VAR_VOICE_MODE != 0xFF)
 		VAR(VAR_VOICE_MODE) = _voiceMode;
 
-	_defaultTalkDelay = getTalkspeed();
+	_defaultTalkDelay = getTalkDelay();
 	if (VAR_CHARINC != 0xFF)
 		VAR(VAR_CHARINC) = _defaultTalkDelay;
 }
 
-void ScummEngine::setTalkspeed(int talkspeed) {
-	ConfMan.setInt("talkspeed", (talkspeed * 255 + 9 / 2) / 9);
+void ScummEngine::setTalkDelay(int talkdelay) {
+	ConfMan.setInt("talkspeed", ((9 - talkdelay) * 255 + 9 / 2) / 9);
 }
 
-int ScummEngine::getTalkspeed() {
-	return (ConfMan.getInt("talkspeed") * 9 + 255 / 2) / 255;
+int ScummEngine::getTalkDelay() {
+	return 9 - (ConfMan.getInt("talkspeed") * 9 + 255 / 2) / 255;
 }
 
 

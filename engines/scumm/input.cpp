@@ -523,7 +523,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		_defaultTalkDelay = 9 - runDialog(dlg);
 
 		// Save the new talkspeed value to ConfMan
-		setTalkspeed(_defaultTalkDelay);
+		setTalkDelay(_defaultTalkDelay);
 
 		if (VAR_CHARINC != 0xFF)
 			VAR(VAR_CHARINC) = _defaultTalkDelay;
