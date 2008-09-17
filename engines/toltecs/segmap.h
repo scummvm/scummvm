@@ -83,7 +83,7 @@ public: // for debugging purposes
 		int16 y, x;
 		int16 height, width;
 		int16 maskOffset;
-		int16 ybottom;
+		int16 priority;
 	};
 
 	struct SegmapPathRect {
