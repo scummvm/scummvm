@@ -440,7 +440,10 @@ FILE* std_fopen(const char* name, const char* mode) {
 
 	// Allocate a file handle
 	int r = 0;
-	while (handle[r].used) r++;
+	while (handle[r].used) {
+		r++;
+		assert(r < MAX_FILE_HANDLES);
+	}
 
 #ifdef GBA_SRAM_SAVE
 	if (strchr(mode, 'w')) {
@@ -532,69 +535,6 @@ size_t std_fread(const void* ptr, size_t size, size_t numItems, FILE* handle) {
 			return bytes / size;
 		}
 		return numItems;
-
-/*		int item = 0;
-		u8* data = (u8 *) ptr;
-		while ((item < numItems) && (!FAT_feof((FAT_FILE *) handle))) {
-
-
-			int bytes = 0;
-			while ((bytes < size) && (!FAT_feof((FAT_FILE *) handle))) {
-				*data++ = FAT_fgetc((FAT_FILE *) handle);
-				bytes++;
-			}
-
-			item++;
-
-		}
-
-		return item;
-*/
-		int items = 0;
-
-		//for (int r = 0; r < numItems; r++) {
-			if (!std_feof(handle)) {
-/*				for (int t = 0; t < size; t++) {
-					if (feof(handle)) eof = true;
-					*(((char *) (ptr)) + r * size + t) = getc(handle);
-				}*/
-				int left = size * numItems;
-				int bytesRead = -1;
-
-				while ((left > 0) && (!FAT_feof((FAT_FILE *) handle))) {
-					int amount = left > 8192? 8192: left;
-//					do {
-						bytesRead = FAT_fread((void *) ptr, 1, amount, (FAT_FILE *) handle);
-/*						if (bytesRead == 0) {
-							consolePrintf("Pos:%d items:%d num:%d amount:%d read:%d\n", ftell(handle), items, numItems, amount, bytesRead);
-							left++;
-
-							int pos = ftell(handle);
-
-							fseek(handle, 0, SEEK_SET);
-							int c = getc(handle);
-							fseek(handle, pos - 1024, SEEK_SET);
-							fread(ptr, 1024, 1, handle);
-							swiWaitForVBlank();
-							//while (true);
-						}
-
-					} while (bytesRead == 0);
-*/
-					left -= bytesRead;
-					ptr = ((char *) (ptr)) + bytesRead;
-				}
-
-				items = numItems - (left / size);
-
-//				FAT_fread((void *) ptr, size, 1, ((int) (handle)) - 1);
-//				ptr = ((char *) (ptr)) + size;
-			}
-//		}
-
-//		consolePrintf("...done %d \n", items)
-
-		return items;
 	}
 
 	if (handle->sramFile) {
@@ -661,10 +601,6 @@ size_t std_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle) {
 	}
 }
 
-void std_fprintf(FILE* handle, const char* fmt, ...) {
-	consolePrintf(fmt);
-}
-
 bool std_feof(FILE* handle) {
 //	consolePrintf("feof ");
 
@@ -684,39 +620,6 @@ int std_fflush(FILE* handle) {
 	//FIXME: not implemented?
 //	consolePrintf("fflush ");
 	return 0;
-}
-
-char* std_fgets(char* str, int size, FILE* file) {
-//	consolePrintf("fgets file=%d ", file);
-
-	if (DS::isGBAMPAvailable()) {
-		char* s = str;
-		while ((*s++ = std_getc(file)) >= 32) {
-//			consolePrintf("%d ", *s);
-		}
-		*s = 0;
-
-//		consolePrintf("Read:%s\n", str);
-
-		return str;
-	}
-
-	if (file->sramFile) {
-		file->pos--;
-		int p = -1;
-		do {
-			file->pos++;
-			p++;
-			file->sramFile->read((char *) &str[p], 1);
-//			consolePrintf("%d,", str[p]);
-		} while ((str[p] >= 32) && (!std_feof(file)) && (p < size));
-		str[p + 1] = 0;
-		file->pos++;
-//		consolePrintf("Read:%s\n", str);
-		return str;
-	}
-
-	return NULL;
 }
 
 long int std_ftell(FILE* handle) {
@@ -763,61 +666,9 @@ void std_clearerr(FILE* handle) {
 //	consolePrintf("clearerr ");
 }
 
-int std_getc(FILE* handle) {
-	if (DS::isGBAMPAvailable()) {
-		char c;
-		FAT_fread(&c, 1, 1, (FAT_FILE *) handle);
-
-		return c;
-	}
-
-//	consolePrintf("fgetc ");
-	return 0;				// Not supported yet
+void std_fprintf(FILE* handle, const char* fmt, ...) {
+	consolePrintf(fmt);
 }
 
-char* std_getcwd(char* dir, int dunno) {
-//	consolePrintf("getcwd ");
-	dir[0] = '\0';
-	return dir;			// Not supported yet
-}
-
-void std_cwd(char* dir) {
-	char buffer[128];
-	strcpy(buffer, dir);
-	char* realName = buffer;
-
-	if (DS::isGBAMPAvailable()) {
-		if ((strlen(dir) >= 4) && (dir[0] == 'm') && (dir[1] == 'p') && (dir[2] == ':') && (dir[3] == '/')) {
-			realName += 4;
-		}
-
-	//	consolePrintf("Real cwd:%d\n", realName);
-
-		char* p = realName;
-		while (*p) {
-			if (*p == '\\') *p = '/';
-			p++;
-		}
-
-	//	consolePrintf("Real cwd:%d\n", realName);
-		FAT_chdir(realName);
-	} else {
-		if ((strlen(dir) >= 4) && (dir[0] == 'd') && (dir[1] == 's') && (dir[2] == ':') && (dir[3] == '/')) {
-			realName += 4;
-		}
-
-		char* p = realName;
-		while (*p) {
-			if (*p == '\\') *p = '/';
-			p++;
-		}
-
-		strcpy(currentDir, realName);
-		if (*(currentDir + strlen(currentDir) - 1) == '/') {
-			*(currentDir + strlen(currentDir) - 1) = '\0';
-		}
-//		consolePrintf("CWD: %s\n", currentDir);
-	}
-}
 
 } // namespace DS

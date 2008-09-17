@@ -194,8 +194,29 @@ Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) {
 	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
 	char name[256];
 	
-	DS::std_cwd((char*)getSavePath()); //TODO : Check this suspicious const-cast
-//	consolePrintf("Save path: '%s', pattern: '%s'\n", getSavePath(),pattern);
+	{
+		char dir[128];
+		strcpy(dir, getSavePath());
+		char *realName = dir;
+
+		if ((strlen(dir) >= 4) && (dir[0] == 'm') && (dir[1] == 'p') && (dir[2] == ':') && (dir[3] == '/')) {
+			realName += 4;
+		}
+
+	//	consolePrintf("Real cwd:%d\n", realName);
+
+		char* p = realName;
+		while (*p) {
+			if (*p == '\\') *p = '/';
+			p++;
+		}
+
+	//	consolePrintf("Real cwd:%d\n", realName);
+		FAT_chdir(realName);
+
+	}
+
+//	consolePrintf("Save path: '%s', pattern: '%s'\n", getSavePath(), pattern);
 
 	
 	int fileType = FAT_FindFirstFileLFN(name);
@@ -208,7 +229,7 @@ Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) {
 
 			FAT_GetLongFilename(name);
 
-			for (int r = 0; r < strlen(name); r++) {
+			for (int r = 0; name[r] != 0; r++) {
 				name[r] = tolower(name[r]);
 			}
 			
