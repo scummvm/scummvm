@@ -82,17 +82,13 @@ public:
 public: // for debugging purposes
 
 	struct SegmapMaskRect {
-		int16 y, x;
-		int16 height, width;
-		int16 maskOffset;
+		int16 x, y;
+		int16 width, height;
 		int16 priority;
+		Graphics::Surface *surface;
 	};
 
 	struct SegmapPathRect {
-	    /*
-		int16 y, x;
-		int16 height, width;
-		*/
 		int16 x1, y1, x2, y2;
 	};
 	
@@ -129,6 +125,9 @@ public: // for debugging purposes
 	int16 _pathNodesCount;
 
 	int16 findNextPathRect(int16 srcRectIndex, int16 destX, int16 destY);
+
+	void loadSegmapMaskRectSurface(byte *maskData, SegmapMaskRect &maskRect);
+	void freeSegmapMaskRectSurfaces();
 
 };
 

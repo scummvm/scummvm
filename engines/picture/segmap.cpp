@@ -45,22 +45,23 @@
 namespace Picture {
 
 SegmentMap::SegmentMap(PictureEngine *vm) : _vm(vm) {
-	_maskRectData = new byte[32768];
 }
 
 SegmentMap::~SegmentMap() {
-	delete[] _maskRectData;
+	freeSegmapMaskRectSurfaces();
 }
 
 void SegmentMap::load(byte *source) {
 
 	// TODO: Use MemoryReadStream
 
+	freeSegmapMaskRectSurfaces();
 	_maskRects.clear();
 	_pathRects.clear();
 	_infoRects.clear();
 
 	// Load mask rects
+	byte *maskData = source + 2;
 	uint16 maskSize = READ_LE_UINT16(source);
 	source += 2;
 	uint16 maskRectCount = READ_LE_UINT16(source);
@@ -71,24 +72,24 @@ void SegmentMap::load(byte *source) {
 
 	for (uint16 i = 0; i < maskRectCount; i++) {
 		SegmapMaskRect maskRect;
+		int16 maskOffset;
 		maskRect.y = READ_LE_UINT16(source);
 		maskRect.x = READ_LE_UINT16(source + 2);
 		maskRect.height = READ_LE_UINT16(source + 4);
 		maskRect.width = READ_LE_UINT16(source + 6);
-		maskRect.maskOffset = READ_LE_UINT16(source + 8);
-		maskRect.maskOffset -= maskRectDataSize;
+		maskOffset = READ_LE_UINT16(source + 8);
 		maskRect.priority = READ_LE_UINT16(source + 10);
+		loadSegmapMaskRectSurface(maskData + maskOffset, maskRect);
 
 		debug(0, "SegmentMap::load() (%d, %d, %d, %d, %04X, %d)",
-			maskRect.x, maskRect.y, maskRect.width, maskRect.height, maskRect.maskOffset, maskRect.priority);
+			maskRect.x, maskRect.y, maskRect.width, maskRect.height, maskOffset, maskRect.priority);
 
 		source += 12;
 		_maskRects.push_back(maskRect);
 	}
 
-	memcpy(_maskRectData, source, maskSize - maskRectDataSize);
 	source += maskSize - maskRectDataSize;
-	
+
 	// Load path rects
 
 	source += 2; // skip rects array size
@@ -306,7 +307,7 @@ void SegmentMap::findPath(int16 *pointsArray, int16 destX, int16 destY, int16 so
 
 	pointsCount = 2;
 
-    adjustPathPoint(sourceX, sourceY);
+	adjustPathPoint(sourceX, sourceY);
 	currentRectIndex = findPathRectAtPoint(sourceX, sourceY);
 
 	adjustPathPoint(destX, destY);
@@ -390,44 +391,59 @@ void SegmentMap::getRgbModifiertAtPoint(int16 x, int16 y, int16 id, byte &r, byt
 	debug(0, "SegmentMap::getRgbModifiertAtPoint() r: %d; g: %d; b: %d", r, g, b);
 }
 
-void SegmentMap::restoreMasksBySprite(SpriteDrawItem *sprite) {
-	// TODO: This needs more optimization
-	for (uint i = 0; i < _maskRects.size(); i++) {
-	
-#if 0
-	if ( *(__int16 *)((char *)&spriteDrawList[0].y2 + v5) <= (unsigned __int16)v3->priority )
-	{
-	  if ( (unsigned __int16)(*(__int16 *)((char *)&spriteDrawList[0].height + v5)
-							+ *(__int16 *)((char *)&spriteDrawList[0].y + v5)) > v3->y )
-	  {
-		if ( (unsigned __int16)(v3->height + v3->y) > *(__int16 *)((char *)&spriteDrawList[0].y + v5) )
-		{
-		  if ( (unsigned __int16)(*(__int16 *)((char *)&spriteDrawList[0].width + v5)
-								+ *(__int16 *)((char *)&spriteDrawList[0].x + v5)) > v3->x )
-		  {
-			if ( (unsigned __int16)(v3->width + v3->x) > *(__int16 *)((char *)&spriteDrawList[0].x + v5) )
-			{
+void SegmentMap::loadSegmapMaskRectSurface(byte *maskData, SegmapMaskRect &maskRect) {
 
-#endif
-	
-		if (sprite->priority <= _maskRects[i].priority) {
-			restoreMask(i);
+	maskRect.surface = new Graphics::Surface();
+	maskRect.surface->create(maskRect.width, maskRect.height, 1);
+
+	byte *backScreen = _vm->_screen->_backScreen + maskRect.x + (maskRect.y * _vm->_sceneWidth);
+	byte *dest = (byte*)maskRect.surface->getBasePtr(0, 0);
+
+	for (int16 h = 0; h < maskRect.height; h++) {
+		int16 w = maskRect.width;
+		while (w > 0) {
+			byte mask = *maskData++;
+			byte count = mask & 0x7F;
+			if (mask & 0x80)
+				memcpy(dest, backScreen, count);
+			else
+				memset(dest, 0xFF, count);
+			w -= count;
+			dest += count;
+			backScreen += count;
 		}
+		backScreen += _vm->_sceneWidth - maskRect.width;
 	}
 
 }
 
+void SegmentMap::freeSegmapMaskRectSurfaces() {
+	for (uint i = 0; i < _maskRects.size(); i++) {
+		delete _maskRects[i].surface;
+	}
+}
+
+void SegmentMap::restoreMasksBySprite(SpriteDrawItem *sprite) {
+	// TODO: This needs more optimization
+	for (uint i = 0; i < _maskRects.size(); i++) {
+		if (sprite->priority <= _maskRects[i].priority) {
+			restoreMask(i);
+		}
+	}
+}
+
 void SegmentMap::restoreMask(int16 index) {
+
 	// TODO: This needs more optimization
 	SegmapMaskRect *maskRect = &_maskRects[index];
 
-	int16 maskX = maskRect->x, maskY = maskRect->y;
 	int16 skipX = 0;
 	int16 x = maskRect->x - _vm->_cameraX;
 	int16 y = maskRect->y - _vm->_cameraY;
 	int16 width = maskRect->width;
 	int16 height = maskRect->height;
-	byte *mask = _maskRectData + maskRect->maskOffset;
+	byte *maskSurface = (byte*)maskRect->surface->getBasePtr(0, 0);
+	byte *frontScreen;
 
 	debug(0, "SegmentMap::restoreMask() screenX = %d; screenY = %d; maskX = %d; maskY = %d",
 		x, y, maskRect->x, maskRect->y);
@@ -439,19 +455,14 @@ void SegmentMap::restoreMask(int16 index) {
 	if (x < 0) {
 		skipX = -x;
 		x = 0;
+		width -= skipX;
 	}
 
 	if (y < 0) {
 		int16 skipY = -y;
-		for (int16 h = 0; h < skipY; h++) {
-			int16 w = width;
-			while (w > 0) {
-				w -= (*mask++) & 0x7F;
-			}
-		}
+		maskSurface += maskRect->width * skipY;
 		y = 0;
 		height -= skipY;
-		maskY += skipY;
 	}
 
 	if (x + width >= 640) {
@@ -462,38 +473,20 @@ void SegmentMap::restoreMask(int16 index) {
 		height -= y + height - _vm->_cameraHeight;
 	}
 
-	byte *backScreen = _vm->_screen->_backScreen + maskX + (maskY * _vm->_sceneWidth);
-	byte *frontScreen = _vm->_screen->_frontScreen + x + (y * 640);
+	frontScreen = _vm->_screen->_frontScreen + x + (y * 640);
 
 	for (int16 h = 0; h < height; h++) {
-		byte *src = backScreen;
-		byte *dst = frontScreen;
-		byte maskLine[640], *maskLineP = maskLine;
-
-		int16 w = width;
-		while (w > 0) {
-			byte m = *mask++;
-			byte count = m & 0x7F;
-			if (m & 0x80)
-				memset(maskLineP, 1, count);
-			else
-	   			memset(maskLineP, 0, count);
-			maskLineP += count;
-			w -= count;
+		maskSurface += skipX;
+		for (int16 w = 0; w < width; w++) {
+			if (*maskSurface != 0xFF)
+				*frontScreen = *maskSurface;
+			frontScreen++;
+			maskSurface++;
 		}
-
-		src += skipX;
-		for (int16 c = skipX; c < width; c++) {
-			if (maskLine[c] == 1)
-				*dst = *src;
-			dst++;
-			src++;
-		}
-
-		backScreen += _vm->_sceneWidth;
-		frontScreen += 640;
+		frontScreen += 640 - width;
+		maskSurface += maskRect->width - width - skipX;
 	}
-	
+
 }
 
 void SegmentMap::debugDrawRects(Graphics::Surface *surf) {
