@@ -270,7 +270,7 @@ void PictureEngine::updateInput() {
 
 			// FIXME: This is just for debugging
 			switch (event.kbd.keycode) {
-			case Common::KEYCODE_F6:
+			case Common::KEYCODE_F5:
 				savegame("toltecs.001");
 				break;
 			case Common::KEYCODE_F9:
