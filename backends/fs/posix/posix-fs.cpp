@@ -62,6 +62,11 @@ POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p) {
 		_path = p;
 	}
 	
+#ifdef __OS2__
+	// On OS/2, 'X:/' is a root of drive X, so we should not remove that last
+	// slash.
+	if (!(_path.size() == 3 && _path.hasSuffix(":/")))
+#endif
 	// Normalize the path (that is, remove unneeded slashes etc.)
 	_path = Common::normalizePath(_path, '/');
 	_displayName = Common::lastPathComponent(_path, '/');
@@ -97,7 +102,7 @@ AbstractFilesystemNode *POSIXFilesystemNode::getChild(const Common::String &n) c
 	// We assume here that _path is already normalized (hence don't bother to call
 	//  Common::normalizePath on the final path).
 	Common::String newPath(_path);
-	if (_path != "/")
+	if (_path.lastChar() != '/')
 		newPath += '/';
 	newPath += n;
 
@@ -117,14 +122,14 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 	
 		for (int i = 0; i < 26; i++) {
 			if (ulDrvMap & 1) {
-				char *drive_root = "A:";
+				char drive_root[] = "A:/";
 				drive_root[0] += i;
 	
                 POSIXFilesystemNode *entry = new POSIXFilesystemNode();
 				entry->_isDirectory = true;
 				entry->_isValid = true;
 				entry->_path = drive_root;
-				entry->_displayName = "[" + entry->_path + "]";
+				entry->_displayName = "[" + Common::String(drive_root, 2) + "]";
 				myList.push_back(entry);
 			}
 	
