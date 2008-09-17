@@ -3318,7 +3318,9 @@ void TownsPC98_OpnDriver::reset() {
 	if (_pcmChannel)
 		_pcmChannel->reset();
 
-	_musicPlaying = _sfxPlaying = _fading = false;
+	_musicPlaying = false;
+	_sfxPlaying = false;
+	_fading = false;
 	_looping = 0;
 	_musicTickCounter = 0;
 	_sfxData = 0;
