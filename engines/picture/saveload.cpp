@@ -90,21 +90,6 @@ void PictureEngine::savegame(const char *filename) {
 	_anim->saveState(out);
 	_screen->saveState(out);
 
-/*
-case 0: return "mouseDisabled";
-case 1: return "mouseY";
-case 2: return "mouseX";
-case 3: return "mouseButton";
-*/
-
-/*
-PersistentGameVarRef <offset screenFlag01, 2>
-PersistentGameVarRef <offset currentSequenceResIndex, 4>
-PersistentGameVarRef <offset currentSequenceLoopCount, 4>
-PersistentGameVarRef <offset sequenceVolume, 4>
-PersistentGameVarRef <offset dword_99AC0, 4>
-*/
-
 	delete out;
 
 }
