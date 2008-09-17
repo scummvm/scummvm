@@ -299,7 +299,7 @@ SeekableReadStream *SearchSet::openFile(const String &name) {
 DECLARE_SINGLETON(SearchManager);
 
 void SearchManager::addArchive(const String &name, ArchivePtr archive) {
-	_searchSet.add(name, archive);
+	add(name, archive);
 }
 
 void SearchManager::addDirectory(const String &name, const String &directory) {
@@ -307,23 +307,7 @@ void SearchManager::addDirectory(const String &name, const String &directory) {
 }
 
 void SearchManager::addDirectoryRecursive(const String &name, const String &directory, int depth) {
-	_searchSet.add(name, SharedPtr<FSDirectory>(new FSDirectory(directory, depth)));
-}
-
-void SearchManager::remove(const String &name) {
-	_searchSet.remove(name);
-}
-
-void SearchManager::clear() {
-	_searchSet.clear();
-}
-
-bool SearchManager::hasFile(const String &name) {
-	return _searchSet.hasFile(name);
-}
-
-SeekableReadStream *SearchManager::openFile(const String &name) {
-	return _searchSet.openFile(name);
+	add(name, SharedPtr<FSDirectory>(new FSDirectory(directory, depth)));
 }
 
 
