@@ -4,12 +4,18 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 0.13.0 (????-??-??)
  General:
    - Added MIDI driver for Atari ST / FreeMint.
+   - Added a 'Load' button to the Launcher (not supported by all engines).
+   - Added a new global main menu (GMM) dialog usable from all engines.
+   - Added the ability to return to the launcher from running games (via the GMM).
 
  New Games:
    - Added support for Discworld.
 
  KYRA:
-   - Added support for Auto-save feature
+   - Added support for Auto-save feature.
+
+ SCUMM:
+   - Fixed a long-time bug which caused talkspeed and talkdelay to be mixed up.
 
 0.12.0 (2008-08-31)
  New Games:
