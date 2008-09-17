@@ -12,7 +12,8 @@ MODULE_OBJS = \
 	saveload.o \
 	screen.o \
 	script.o \
-	segmap.o
+	segmap.o \
+	sprite.o
 
 
 # This module can be built as a plugin
