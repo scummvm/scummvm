@@ -514,6 +514,7 @@ public:
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	: Dialog("scummsaveload"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
+	_delSupport = _metaInfoSupport = _thumbnailSupport = _saveDateSupport = _playTimeSupport = false;
 
 	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
 
@@ -647,10 +648,15 @@ void SaveLoadChooser::reflowLayout() {
 		if (_saveDateSupport) {
 			_date->clearFlags(GUI::WIDGET_INVISIBLE);
 			_time->clearFlags(GUI::WIDGET_INVISIBLE);
+		} else {
+			_date->setFlags(GUI::WIDGET_INVISIBLE);
+			_time->setFlags(GUI::WIDGET_INVISIBLE);
 		}
 
 		if (_playTimeSupport)
 			_playtime->clearFlags(GUI::WIDGET_INVISIBLE);
+		else
+			_playtime->setFlags(GUI::WIDGET_INVISIBLE);
 
 		_fillR = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
 		_fillG = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
