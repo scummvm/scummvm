@@ -138,6 +138,7 @@ public:
 	FSDirectory *getSubDirectory(const String &name);
 
 	virtual bool hasFile(const String &name);
+	virtual int matchPattern(StringList &list, const String &pattern);
 	virtual int getAllNames(StringList &list);
 	virtual SeekableReadStream *openFile(const String &name);
 };
@@ -192,9 +193,7 @@ public:
 
 	virtual bool hasFile(const String &name);
 	virtual int matchPattern(StringList &list, const String &pattern);
-	virtual int getAllNames(StringList &list) {
-		return matchPattern(list, "*");
-	}
+	virtual int getAllNames(StringList &list);
 
 	/**
 	 * Implements openFile from Archive base class. The current policy is

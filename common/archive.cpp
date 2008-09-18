@@ -159,6 +159,29 @@ void FSDirectory::cacheDirectoryRecursive(FilesystemNode node, int depth, const 
 
 }
 
+int FSDirectory::matchPattern(StringList &list, const String &pattern) {
+	if (!_node.isDirectory())
+		return 0;
+
+	// Cache dir data
+	if (!_cached) {
+		cacheDirectoryRecursive(_node, _depth, "");
+		_cached = true;
+	}
+
+	// Small optimization: Ensure the StringList has to grow at most once
+	list.reserve(list.size() + _fileCache.size());
+	
+	// Add all filenames from our cache
+	NodeCache::iterator it = _fileCache.begin();
+	for ( ; it != _fileCache.end(); it++) {
+		if (it->_key.matchString(pattern));
+			list.push_back(it->_key);
+	}
+	
+	return _fileCache.size();
+}
+
 int FSDirectory::getAllNames(StringList &list) {
 	if (!_node.isDirectory())
 		return 0;
@@ -266,13 +289,22 @@ bool SearchSet::hasFile(const String &name) {
 }
 
 int SearchSet::matchPattern(StringList &list, const String &pattern) {
-	// Shall we short circuit out if pattern is empty?
-
 	int matches = 0;
 
 	ArchiveList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++) {
 		matches += (*it)._arc->matchPattern(list, pattern);
+	}
+
+	return matches;
+}
+
+int SearchSet::getAllNames(StringList &list) {
+	int matches = 0;
+
+	ArchiveList::iterator it = _list.begin();
+	for ( ; it != _list.end(); it++) {
+		matches += (*it)._arc->getAllNames(list);
 	}
 
 	return matches;
@@ -292,8 +324,6 @@ SeekableReadStream *SearchSet::openFile(const String &name) {
 
 	return 0;
 }
-
-
 
 
 DECLARE_SINGLETON(SearchManager);
