@@ -92,9 +92,6 @@ NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
 	if (themefile.compareToIgnoreCase("default") == 0)
 		themefile = "builtin";
 		
-//	if (themefile != "builtin" && !themefile.hasSuffix(".zip"))
-//		themefile += ".zip";
-		
 	ConfMan.registerDefault("gui_renderer", 2);
 	ThemeEngine::GraphicsMode gfxMode = (ThemeEngine::GraphicsMode)ConfMan.getInt("gui_renderer");
 

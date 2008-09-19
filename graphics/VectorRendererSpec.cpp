@@ -372,16 +372,27 @@ applyScreenShading(GUI::Theme::ShadingStyle shadingStyle) {
 	uint8 r, g, b;
 	uint lum;
 
-	uint32 shiftMask = (uint32)(
+	const uint32 shiftMask = (uint32)~(
 		(1 << PixelFormat::kGreenShift) | 
 		(1 << PixelFormat::kRedShift) | 
-		(1 << PixelFormat::kBlueShift));
-
-	shiftMask = (~shiftMask) >> 1;
+		(1 << PixelFormat::kBlueShift)) >> 1;
 	
 	if (shadingStyle == GUI::Theme::kShadingDim) {
-		while (pixels--)
-			*ptr++ = (*ptr >> 1) & shiftMask;
+
+		int n = (pixels + 7) >> 3;
+		switch (pixels % 8) {
+		case 0: do { 
+					*ptr++ = (*ptr >> 1) & shiftMask;
+		case 7:		*ptr++ = (*ptr >> 1) & shiftMask;
+		case 6:		*ptr++ = (*ptr >> 1) & shiftMask;
+		case 5:		*ptr++ = (*ptr >> 1) & shiftMask;
+		case 4:		*ptr++ = (*ptr >> 1) & shiftMask;
+		case 3:		*ptr++ = (*ptr >> 1) & shiftMask;
+		case 2:		*ptr++ = (*ptr >> 1) & shiftMask;
+		case 1:		*ptr++ = (*ptr >> 1) & shiftMask;
+				} while (--n > 0);
+		}
+
 	} else if (shadingStyle == GUI::Theme::kShadingLuminance) {
 		while (pixels--) {
 			colorToRGB<PixelFormat>(*ptr, r, g, b);
