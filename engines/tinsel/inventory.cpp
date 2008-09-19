@@ -525,9 +525,9 @@ CONFBOX restartBox[] = {
 	};
 #else
 CONFBOX soundBox[] = {
-	{ SLIDER, MIDIVOL, NULL, SIX_MVOL_SLIDER,	142, 25,	MAXMIDIVOL, 2, &volMidi, 0 },
-	{ SLIDER, NOFUNC, NULL, SIX_SVOL_SLIDER,	142, 25+40,	MAXSAMPVOL, 2, &volSound, 0 },
-	{ SLIDER, NOFUNC, NULL, SIX_VVOL_SLIDER,	142, 25+2*40,	MAXSAMPVOL, 2, &volVoice, 0 }
+	{ SLIDER, MIDIVOL, NULL, SIX_MVOL_SLIDER,	142, 25,	Audio::Mixer::kMaxChannelVolume, 2, &volMidi, 0 },
+	{ SLIDER, NOFUNC, NULL, SIX_SVOL_SLIDER,	142, 25+40,	Audio::Mixer::kMaxChannelVolume, 2, &volSound, 0 },
+	{ SLIDER, NOFUNC, NULL, SIX_VVOL_SLIDER,	142, 25+2*40,	Audio::Mixer::kMaxChannelVolume, 2, &volVoice, 0 }
 };
 #endif
 

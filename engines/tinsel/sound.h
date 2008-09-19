@@ -37,7 +37,6 @@
 
 namespace Tinsel {
 
-#define MAXSAMPVOL 127
 
 /*----------------------------------------------------------------------*\
 |*				Function Prototypes			*|

@@ -39,9 +39,9 @@ namespace Tinsel {
 //----------------- GLOBAL GLOBAL DATA --------------------
 
 int dclickSpeed = DOUBLE_CLICK_TIME;
-int volMidi = MAXMIDIVOL;
-int volSound = MAXSAMPVOL;
-int volVoice = MAXSAMPVOL;
+int volMidi = Audio::Mixer::kMaxChannelVolume;
+int volSound = Audio::Mixer::kMaxChannelVolume;
+int volVoice = Audio::Mixer::kMaxChannelVolume;
 int speedText = DEFTEXTSPEED;
 int bSubtitles = false;
 int bSwapButtons = 0;
@@ -57,9 +57,9 @@ bool bNoBlocking;
  */
 void WriteConfig(void) {
 	ConfMan.setInt("dclick_speed", dclickSpeed);
-	ConfMan.setInt("music_volume", (volMidi * Audio::Mixer::kMaxChannelVolume) / MAXMIDIVOL);
-	ConfMan.setInt("sfx_volume", (volSound * Audio::Mixer::kMaxChannelVolume) / MAXSAMPVOL);
-	ConfMan.setInt("speech_volume", (volVoice * Audio::Mixer::kMaxChannelVolume) / MAXSAMPVOL);
+	ConfMan.setInt("music_volume", volMidi);
+	ConfMan.setInt("sfx_volume", volSound);
+	ConfMan.setInt("speech_volume", volVoice);
 	ConfMan.setInt("talkspeed", (speedText * 255) / 100);
 	ConfMan.setBool("subtitles", bSubtitles);
 	//ConfMan.setBool("swap_buttons", bSwapButtons ? 1 : 0);
@@ -101,9 +101,9 @@ void ReadConfig(void) {
 	if (ConfMan.hasKey("dclick_speed"))
 		dclickSpeed = ConfMan.getInt("dclick_speed");
 
-	volMidi = (ConfMan.getInt("music_volume") * MAXMIDIVOL) / Audio::Mixer::kMaxChannelVolume;
-	volSound = (ConfMan.getInt("sfx_volume") * MAXSAMPVOL) / Audio::Mixer::kMaxChannelVolume;
-	volVoice = (ConfMan.getInt("speech_volume") * MAXSAMPVOL) / Audio::Mixer::kMaxChannelVolume;
+	volMidi = ConfMan.getInt("music_volume");
+	volSound = ConfMan.getInt("sfx_volume");
+	volVoice = ConfMan.getInt("speech_volume");
 
 	if (ConfMan.hasKey("talkspeed"))
 		speedText = (ConfMan.getInt("talkspeed") * 100) / 255;
