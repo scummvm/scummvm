@@ -151,12 +151,6 @@
 				RelativePath="..\..\base\commandLine.h">
 			</File>
 			<File
-				RelativePath="..\..\base\game.cpp">
-			</File>
-			<File
-				RelativePath="..\..\base\game.h">
-			</File>
-			<File
 				RelativePath="..\..\base\internal_version.h">
 			</File>
 			<File
@@ -1115,6 +1109,12 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\engine.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\game.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\game.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\metaengine.h">
