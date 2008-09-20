@@ -244,9 +244,6 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	_list->setEditable(saveMode);
 	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
 
-	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
-	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
-
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 
 	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", kTextAlignCenter);
@@ -257,6 +254,9 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	new GUI::ButtonWidget(this, "scummsaveload_cancel", "Cancel", kCloseCmd, 0);
 	_chooseButton = new GUI::ButtonWidget(this, "scummsaveload_choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
+
+	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
+	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
 }
 
 SaveLoadChooser::~SaveLoadChooser() {
