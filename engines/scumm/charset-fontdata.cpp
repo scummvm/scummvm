@@ -1070,6 +1070,7 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 	: CharsetRendererV3(vm) {
 
 	_fontHeight = 8;
+	_curId = 0;
 
 	switch (language) {
 	case Common::DE_DEU:
