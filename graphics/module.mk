@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	scaler.o \
 	scaler/thumbnail_intern.o \
 	surface.o \
+	thumbnail.o \
 	VectorRenderer.o \
 	VectorRendererSpec.o
 
