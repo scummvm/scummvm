@@ -79,15 +79,17 @@ void String::initWithCStr(const char *str, uint32 len) {
 }
 
 String::String(const String &str)
- : _size(str._size), _str(str.isStorageIntern() ? _storage : str._str) {
+ : _size(str._size) {
 	if (str.isStorageIntern()) {
 		// String in internal storage: just copy it
-		memcpy(_storage, str._storage, sizeof(_storage));
+		memcpy(_storage, str._storage, _builtinCapacity);
+		_str = _storage;
 	} else {
 		// String in external storage: use refcount mechanism
 		str.incRefCount();
 		_extern._refCount = str._extern._refCount;
 		_extern._capacity = str._extern._capacity;
+		_str = str._str;
 	}
 	assert(_str != 0);
 }
