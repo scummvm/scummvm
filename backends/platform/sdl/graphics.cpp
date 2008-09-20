@@ -692,7 +692,7 @@ bool OSystem_SDL::saveScreenshot(const char *filename) {
 void OSystem_SDL::setFullscreenMode(bool enable) {
 	Common::StackLock lock(_graphicsMutex);
 
-	if (_fullscreen != enable || _transactionMode == kTransactionCommit) {
+	if (_fullscreen != enable && _transactionMode == kTransactionCommit) {
 		assert(_hwscreen != 0);
 		_fullscreen = enable;
 
