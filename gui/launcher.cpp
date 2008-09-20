@@ -517,6 +517,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	_delSupport = _metaInfoSupport = _thumbnailSupport = _saveDateSupport = _playTimeSupport = false;
 
 //	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
+	_backgroundType = Theme::kDialogBackgroundDefault;
 
 	new StaticTextWidget(this, "ScummSaveLoad.Title", title);
 
@@ -622,15 +623,12 @@ void SaveLoadChooser::reflowLayout() {
 		int thumbY = y + kLineHeight;
 
 		int textLines = 0;
-		if (_saveDateSupport)
-			textLines += 2;
-		if (_playTimeSupport)
-			textLines += 1;
+		if (!_saveDateSupport)
+			textLines++;
+		if (!_playTimeSupport)
+			textLines++;
 
-		if (textLines)
-			++textLines;
-
-		_container->resize(x, y, w, h + textLines * kLineHeight);
+		_container->resize(x, y, w, h - (kLineHeight * textLines));
 		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH); 
 
 		int height = thumbY + thumbH + kLineHeight;
