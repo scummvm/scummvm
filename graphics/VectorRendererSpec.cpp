@@ -933,7 +933,7 @@ drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, P
 	}
 
 	i = h - bevel;
-	j = bevel;
+	j = bevel - 1;
 	ptr_left = (PixelType *)_activeSurface->getBasePtr(x + w - bevel, y);
 	while (i--) {
 		colorFill(ptr_left + j, ptr_left + bevel, bottom_color);
