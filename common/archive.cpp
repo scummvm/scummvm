@@ -175,7 +175,7 @@ int FSDirectory::matchPattern(StringList &list, const String &pattern) {
 	// Add all filenames from our cache
 	NodeCache::iterator it = _fileCache.begin();
 	for ( ; it != _fileCache.end(); it++) {
-		if (it->_key.matchString(pattern));
+		if (it->_key.matchString(pattern))
 			list.push_back(it->_key);
 	}
 	
