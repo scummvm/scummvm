@@ -83,13 +83,16 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::Theme::kImageLogoSmall));
 	} else {
-		new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+		StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+		title->setAlign(GUI::kTextAlignCenter);
 	}
 #else
-	new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+	StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+	title->setAlign(GUI::kTextAlignCenter);
 #endif
 
-	new StaticTextWidget(this, "GlobalMenu.Version", gScummVMVersionDate);
+	StaticTextWidget *version = new StaticTextWidget(this, "GlobalMenu.Version", gScummVMVersionDate);
+	version->setAlign(GUI::kTextAlignCenter);
 		
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", "Resume", kPlayCmd, 'P');
 
@@ -162,8 +165,10 @@ void MainMenuDialog::reflowLayout() {
 		}
 	} else {
 		GUI::StaticTextWidget *title = (StaticTextWidget *)findWidget("GlobalMenu.Title");
-		if (!title)
-			new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+		if (!title) {
+			title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+			title->setAlign(GUI::kTextAlignCenter);
+		}
 
 		if (_logo) {
 			removeWidget(_logo);
