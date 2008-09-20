@@ -503,6 +503,8 @@ public:
 	const Graphics::Surface *getImageSurface(const kThemeImages n) const {
 		if (n == kImageLogo)
 			return _bitmaps.contains("logo.bmp") ? _bitmaps["logo.bmp"] : 0;
+		else if (n == kImageLogoSmall)
+			return _bitmaps.contains("logo_small.bmp") ? _bitmaps["logo_small.bmp"] : 0;
 			
 		return 0;
 	}

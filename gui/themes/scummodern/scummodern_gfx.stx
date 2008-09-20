@@ -56,6 +56,7 @@
 		<bitmap filename = 'cursor.bmp'/>
 		<bitmap filename = 'cursor_small.bmp'/>
 		<bitmap filename = 'checkbox.bmp'/>
+		<bitmap filename = 'logo_small.bmp'/>
 	</bitmaps>
 
 	<fonts>
@@ -117,6 +118,7 @@
 					gradient_start = '208, 112, 8'
 					gradient_end = '232, 192, 16'
 					shadow = '3'
+					gradient_factor = '3'
 		/>
 	</drawdata>
 

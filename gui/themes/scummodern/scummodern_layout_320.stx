@@ -34,6 +34,7 @@
 		<def var = 'PopUpWidget.labelSpacing' value = '6' />
 
 		<def var = 'ShowLauncherLogo' value = '0'/>
+		<def var = 'ShowGlobalMenuLogo' value = '0'/>
 		<def var = 'ScummSaveLoad.ExtInfo.Visible' value = '0'/>
 
 		<widget name = 'Button'
@@ -443,6 +444,41 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' center = 'true'>
+			<widget name = 'Title'
+					width = '120'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Version'
+					width = '120'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Resume'
+					width = '70'
+					height = 'Globals.Button.Height'
+			/>
+			<space size = '4'/>
+			<widget name = 'Options'
+					width = '70'
+					height = 'Globals.Button.Height'
+			/>
+			<widget name = 'About'
+					width = '70'
+					height = 'Globals.Button.Height'
+			/>
+			<space size = '4'/>
+			<widget name = 'RTL'
+					width = '70'
+					height = 'Globals.Button.Height'
+			/>
+			<widget name = 'Quit'
+					width = '70'
+					height = 'Globals.Button.Height'
+			/>
 		</layout>
 	</dialog>
 

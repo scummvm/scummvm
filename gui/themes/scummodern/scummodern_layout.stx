@@ -43,6 +43,7 @@
 		<def var = 'PopUpWidget.labelSpacing' value = '10' />
 		
 		<def var = 'ShowLauncherLogo' value = '1'/>
+		<def var = 'ShowGlobalMenuLogo' value = '1'/>
 		
 		<def var = 'ScummSaveLoad.ExtInfo.Visible' value = '1'/>
 
@@ -108,7 +109,7 @@
 					<widget name = 'LoadGameButton' 
 							type = 'Button'
 					/>
-					<space size = '16' />
+					<space size = '10' />
 					<widget name = 'AddGameButton' 
 							type = 'Button' 
 					/>
@@ -118,14 +119,14 @@
 					<widget name = 'RemoveGameButton' 
 							type = 'Button' 
 					/>
-					<space size = '16' />
+					<space size = '10' />
 					<widget name = 'OptionsButton' 
 							type = 'Button' 
 					/>
 					<widget name = 'AboutButton' 
 							type = 'Button' 
 					/>
-					<space size = '16' />
+					<space size = '10' />
 					<widget name = 'QuitButton' 
 							type = 'Button' 
 					/>
@@ -457,6 +458,41 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' center = 'true'>
+			<widget name = 'Logo'
+					width = '210'
+					height = '40'
+			/>
+			<widget name = 'Version'
+					width = '210'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Resume'
+					width = '150'
+					height = 'Globals.Button.Height'
+			/>
+			<space size = '10'/>
+			<widget name = 'Options'
+					width = '150'
+					height = 'Globals.Button.Height'
+			/>
+			<widget name = 'About'
+					width = '150'
+					height = 'Globals.Button.Height'
+			/>
+			<space size = '10'/>
+			<widget name = 'RTL'
+					width = '150'
+					height = 'Globals.Button.Height'
+			/>
+			<widget name = 'Quit'
+					width = '150'
+					height = 'Globals.Button.Height'
+			/>
 		</layout>
 	</dialog>
 	
