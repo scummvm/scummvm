@@ -56,6 +56,13 @@ struct ScriptWalk {
 	int16 scaling;
 };
 
+struct SegmapMaskRect {
+	int16 x, y;
+	int16 width, height;
+	int16 priority;
+	Graphics::Surface *surface;
+};
+
 class SegmentMap {
 public:
 	SegmentMap(ToltecsEngine *vm);
@@ -71,20 +78,10 @@ public:
 	int8 getScalingAtPoint(int16 x, int16 y);
 	void getRgbModifiertAtPoint(int16 x, int16 y, int16 id, byte &r, byte &g, byte &b);
 
-	void restoreMasksBySprite(SpriteDrawItem *sprite);
-	void restoreMask(int16 index);
-
-	void debugDrawRects(Graphics::Surface *surf);
+	void addMasksToRenderQueue();
 
 //protected:
 public: // for debugging purposes
-
-	struct SegmapMaskRect {
-		int16 x, y;
-		int16 width, height;
-		int16 priority;
-		Graphics::Surface *surface;
-	};
 
 	struct SegmapPathRect {
 		int16 x1, y1, x2, y2;
