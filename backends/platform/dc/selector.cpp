@@ -26,8 +26,8 @@
 #include <common/scummsys.h>
 #include <engines/engine.h>
 #include <engines/metaengine.h>
+#include <engines/game.h>
 #include <base/plugins.h>
-#include <base/game.h>
 #include <common/fs.h>
 #include <common/events.h>
 #include "dc.h"
