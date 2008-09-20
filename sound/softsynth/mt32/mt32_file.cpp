@@ -44,10 +44,6 @@ namespace MT32Emu {
 		return fread(in, 1, size, fp);
 	}
 
-	bool ANSIFile::readLine(char *in, size_t size) {
-		return fgets(in, (int)size, fp) != NULL;
-	}
-
 	bool ANSIFile::readBit8u(Bit8u *in) {
 		int c = fgetc(fp);
 		if (c == EOF)

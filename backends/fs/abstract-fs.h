@@ -43,21 +43,20 @@ typedef Common::Array<AbstractFilesystemNode *>	AbstractFSList;
  */
 class AbstractFilesystemNode {
 protected:
-	friend class FilesystemNode;
-	typedef Common::String String;
-	typedef FilesystemNode::ListMode ListMode;
+	friend class Common::FilesystemNode;
+	typedef Common::FilesystemNode::ListMode ListMode;
 
 	/**
-	 * Returns the child node with the given name. If no child with this name
-	 * exists, returns 0. When called on a non-directory node, it should
-	 * handle this gracefully by returning 0.
+	 * Returns the child node with the given name. When called on a non-directory
+	 * node, it should handle this gracefully by returning 0.
+	 * When called with a name not matching any of the files/dirs contained in this
+	 * directory, a valid node shold be returned, which returns 'false' upon calling
+	 * the exists() method. The idea is that this node can then still can be used to
+	 * create a new file via the openForWriting() method.
 	 *
 	 * Example:
 	 *			Calling getChild() for a node with path "/foo/bar" using name="file.txt",
 	 *			would produce a new node with "/foo/bar/file.txt" as path.
-	 *
-	 * @note This function will append a separator char (\ or /) to the end of the
-	 * path if needed.
 	 *
 	 * @note Handling calls on non-dir nodes gracefully makes it possible to
 	 * switch to a lazy type detection scheme in the future.
@@ -71,6 +70,19 @@ protected:
 	 * The parent of the root is the root itself.
 	 */
 	virtual AbstractFilesystemNode *getParent() const = 0;
+
+	/**
+	 * Returns the last component of a given path.
+	 *
+	 * Examples:
+	 *			/foo/bar.txt would return /bar.txt
+	 *			/foo/bar/    would return /bar/
+	 *
+	 * @param str String containing the path.
+	 * @param sep character used to separate path components
+	 * @return Pointer to the first char of the last component inside str.
+	 */
+	static const char *lastPathComponent(const Common::String &str, const char sep);
 
 public:
 	/**
@@ -149,9 +161,26 @@ public:
 	 */
 	virtual bool isWritable() const = 0;
 
-	/* TODO:
-	bool isFile();
-	*/
+
+	/**
+	 * Creates a SeekableReadStream instance corresponding to the file
+	 * referred by this node. This assumes that the node actually refers
+	 * to a readable file. If this is not the case, 0 is returned.
+	 *
+	 * @return pointer to the stream object, 0 in case of a failure
+	 */
+	virtual Common::SeekableReadStream *openForReading() = 0;
+
+	/**
+	 * Creates a WriteStream instance corresponding to the file
+	 * referred by this node. This assumes that the node actually refers
+	 * to a readable file. If this is not the case, 0 is returned.
+	 *
+	 * @return pointer to the stream object, 0 in case of a failure
+	 */
+	virtual Common::WriteStream *openForWriting() = 0;
 };
+
+
 
 #endif //BACKENDS_ABSTRACT_FS_H

@@ -168,9 +168,12 @@ ScummVM Team
        Johannes Schickel    
 
     Miscellaneous:
-       David Corrales-Lopez  - Filesystem access improvements
+       David Corrales-Lopez  - Filesystem access improvements (GSoC 2007
+                               task)
        Jerome Fisher         - MT-32 emulator
        Jochen Hoenicke       - Speaker & PCjr sound support, Adlib work
+       Chris Page            - Return to launcher, savestate improvements,
+                               leak fixes, ... (GSoC 2008 task)
        Robin Watts           - ARM assembly routines for nice speedups on
                                several ports; improvements to the sound mixer
 

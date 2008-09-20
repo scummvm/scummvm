@@ -110,9 +110,10 @@ public:
 	virtual const char *getName() const;
 	virtual const char *getCopyright() const;
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const FSList &fslist) const;
+	virtual GameList detectGames(const Common::FSList &fslist) const;	
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 
@@ -127,6 +128,13 @@ const char *SkyMetaEngine::getCopyright() const {
 	return "Beneath a Steel Sky (C) Revolution";
 }
 
+bool SkyMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad);
+}
+
 GameList SkyMetaEngine::getSupportedGames() const {
 	GameList games;
 	games.push_back(skySetting);
@@ -139,7 +147,7 @@ GameDescriptor SkyMetaEngine::findGame(const char *gameid) const {
 	return GameDescriptor();
 }
 
-GameList SkyMetaEngine::detectGames(const FSList &fslist) const {
+GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 	GameList detectedGames;
 	bool hasSkyDsk = false;
 	bool hasSkyDnr = false;
@@ -147,7 +155,7 @@ GameList SkyMetaEngine::detectGames(const FSList &fslist) const {
 	int dataDiskSize = -1;
 
 	// Iterate over all files in the given directory
-	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
 			const char *fileName = file->getName().c_str();
 
@@ -257,7 +265,7 @@ namespace Sky {
 
 void *SkyEngine::_itemList[300];
 
-SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false, false };
+SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
 
 SkyEngine::SkyEngine(OSystem *syst)
 	: Engine(syst), _fastMode(0), _debugger(0) {
@@ -277,6 +285,8 @@ SkyEngine::~SkyEngine() {
 	delete _skyDisk;
 	delete _skyControl;
 	delete _skyCompact;
+	if (_skyIntro)
+		delete _skyIntro;
 
 	for (int i = 0; i < 300; i++)
 		if (_itemList[i])
@@ -288,7 +298,6 @@ GUI::Debugger *SkyEngine::getDebugger() {
 }
 
 void SkyEngine::initVirgin() {
-
 	_skyScreen->setPalette(60111);
 	_skyScreen->showScreen(60110);
 }
@@ -340,25 +349,23 @@ void SkyEngine::handleKey(void) {
 
 int SkyEngine::go() {
 
-	_systemVars.quitGame = false;
-
 	_keyPressed.reset();
 
 	uint16 result = 0;
-	if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") >= 0)
-		result = _skyControl->quickXRestore(ConfMan.getInt("save_slot"));
+	if (ConfMan.hasKey("save_slot")) {
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0 && saveSlot <= 999)
+			result = _skyControl->quickXRestore(ConfMan.getInt("save_slot"));
+	}
 
 	if (result != GAME_RESTORED) {
 		bool introSkipped = false;
 		if (_systemVars.gameVersion > 267) { // don't do intro for floppydemos
 			_skyIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
 			introSkipped = !_skyIntro->doIntro(_floppyIntro);
-			_systemVars.quitGame = _skyIntro->_quitProg;
-
-			delete _skyIntro;
 		}
 
-		if (!_systemVars.quitGame) {
+		if (!quit()) {
 			_skyLogic->initScreen0();
 			if (introSkipped)
 				_skyControl->restartGame();
@@ -368,7 +375,7 @@ int SkyEngine::go() {
 	_lastSaveTime = _system->getMillis();
 
 	uint32 delayCount = _system->getMillis();
-	while (!_systemVars.quitGame) {
+	while (!quit()) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
 
@@ -440,7 +447,7 @@ int SkyEngine::init() {
 	_floppyIntro = ConfMan.getBool("alt_intro");
 
 	_skyDisk = new Disk();
-	_skySound = new Sound(_mixer, _skyDisk, ConfMan.getInt("sfx_volume"));
+	_skySound = new Sound(_mixer, _skyDisk, Audio::Mixer::kMaxChannelVolume);
 
 	_systemVars.gameVersion = _skyDisk->determineGameVersion();
 
@@ -475,6 +482,7 @@ int SkyEngine::init() {
 	_systemVars.systemFlags |= SF_PLAY_VOCS;
 	_systemVars.gameSpeed = 50;
 
+	_skyIntro = 0;
 	_skyCompact = new SkyCompact();
 	_skyText = new Text(_skyDisk, _skyCompact);
 	_skyMouse = new Mouse(_system, _skyDisk, _skyCompact);
@@ -614,9 +622,6 @@ void SkyEngine::delay(int32 amount) {
 				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
 					_skyMouse->mouseMoved(event.mouse.x, event.mouse.y);
 				_skyMouse->buttonPressed(1);
-				break;
-			case Common::EVENT_QUIT:
-				_systemVars.quitGame = true;
 				break;
 			default:
 				break;

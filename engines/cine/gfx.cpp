@@ -200,9 +200,15 @@ void FWRenderer::incrustSprite(const objectStruct &obj) {
 	width = animDataTable[obj.frame]._realWidth;
 	height = animDataTable[obj.frame]._height;
 
-	assert(mask);
-
-	drawSpriteRaw(data, mask, width, height, _background, x, y);
+	// There was an assert(mask) here before but it made savegame loading
+	// in Future Wars sometimes fail the assertion (e.g. see bug #2055912).
+	// Not drawing sprites that have no mask seems to work, but not sure
+	// if this is really a correct way to fix this.
+	if (mask) {
+		drawSpriteRaw(data, mask, width, height, _background, x, y);
+	} else { // mask == NULL
+		warning("FWRenderer::incrustSprite: Skipping maskless sprite (frame=%d)", obj.frame);
+	}
 }
 
 /*! \brief Draw command box on screen
@@ -368,7 +374,7 @@ int FWRenderer::drawChar(char character, int x, int y) {
 		x += 5;
 	} else if ((width = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterWidth)) {
 		idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
-		drawSpriteRaw(g_cine->_textHandler.textTable[idx][0], g_cine->_textHandler.textTable[idx][1], 16, 8, _backBuffer, x, y);
+		drawSpriteRaw(g_cine->_textHandler.textTable[idx][FONT_DATA], g_cine->_textHandler.textTable[idx][FONT_MASK], FONT_WIDTH, FONT_HEIGHT, _backBuffer, x, y);
 		x += width + 1;
 	}
 
@@ -436,6 +442,9 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	switch (it->type) {
 	// color sprite
 	case 0:
+		if (objectTable[it->objIdx].frame < 0) {
+			return;
+		}
 		sprite = &animDataTable[objectTable[it->objIdx].frame];
 		len = sprite->_realWidth * sprite->_height;
 		mask = new byte[len];
@@ -1037,7 +1046,7 @@ int OSRenderer::drawChar(char character, int x, int y) {
 		x += 5;
 	} else if ((width = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterWidth)) {
 		idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
-		drawSpriteRaw2(g_cine->_textHandler.textTable[idx][0], 0, 16, 8, _backBuffer, x, y);
+		drawSpriteRaw2(g_cine->_textHandler.textTable[idx][FONT_DATA], 0, FONT_WIDTH, FONT_HEIGHT, _backBuffer, x, y);
 		x += width + 1;
 	}
 
@@ -1664,6 +1673,16 @@ void gfxResetRawPage(byte *pageRaw) {
 }
 
 void gfxConvertSpriteToRaw(byte *dst, const byte *src, uint16 w, uint16 h) {
+	// Output is 4 bits per pixel.
+	// Pixels are in 16 pixel chunks (8 bytes of source per 16 pixels of output).
+	// The source data is interleaved so that
+	// 1st big-endian 16-bit value contains all bit position 0 values for 16 pixels,
+	// 2nd big-endian 16-bit value contains all bit position 1 values for 16 pixels,
+	// 3rd big-endian 16-bit value contains all bit position 2 values for 16 pixels,
+	// 4th big-endian 16-bit value contains all bit position 3 values for 16 pixels.
+	// 1st pixel's bits are in the 16th bits,
+	// 2nd pixel's bits are in the 15th bits,
+	// 3rd pixel's bits are in the 14th bits etc.
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w / 8; ++x) {
 			for (int bit = 0; bit < 16; ++bit) {

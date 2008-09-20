@@ -213,6 +213,7 @@ protected:
 	// savename menu
 	bool _finishNameInput, _cancelNameInput;
 	Common::KeyState _keyPressed;
+	uint32 _lastScreenUpdate;
 
 	const char *nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8 c2, uint8 c3, int bufferSize);
 	int finishSavename(Button *caller);

@@ -97,8 +97,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_vc_get_out_of_code = 0;
 	_gameOffsetsPtr = 0;
 
-	_quit = false;
-
 	_debugger = 0;
 
 	_gameFile = 0;
@@ -508,24 +506,24 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	// Add default file directories for Acorn version of
 	// Simon the Sorcerer 1
-	File::addDefaultDirectory(_gameDataPath + "execute");
-	File::addDefaultDirectory(_gameDataPath + "EXECUTE");
+	File::addDefaultDirectory(_gameDataDir.getChild("execute"));
+	File::addDefaultDirectory(_gameDataDir.getChild("EXECUTE"));
 
 	// Add default file directories for Amiga/Macintosh
 	// verisons of Simon the Sorcerer 2
-	File::addDefaultDirectory(_gameDataPath + "voices");
-	File::addDefaultDirectory(_gameDataPath + "VOICES");
+	File::addDefaultDirectory(_gameDataDir.getChild("voices"));
+	File::addDefaultDirectory(_gameDataDir.getChild("VOICES"));
 
 	// Add default file directories for Amiga & Macintosh
 	// versions of The Feeble Files
-	File::addDefaultDirectory(_gameDataPath + "gfx");
-	File::addDefaultDirectory(_gameDataPath + "GFX");
-	File::addDefaultDirectory(_gameDataPath + "movies");
-	File::addDefaultDirectory(_gameDataPath + "MOVIES");
-	File::addDefaultDirectory(_gameDataPath + "sfx");
-	File::addDefaultDirectory(_gameDataPath + "SFX");
-	File::addDefaultDirectory(_gameDataPath + "speech");
-	File::addDefaultDirectory(_gameDataPath + "SPEECH");
+	File::addDefaultDirectory(_gameDataDir.getChild("gfx"));
+	File::addDefaultDirectory(_gameDataDir.getChild("GFX"));
+	File::addDefaultDirectory(_gameDataDir.getChild("movies"));
+	File::addDefaultDirectory(_gameDataDir.getChild("MOVIES"));
+	File::addDefaultDirectory(_gameDataDir.getChild("sfx"));
+	File::addDefaultDirectory(_gameDataDir.getChild("SFX"));
+	File::addDefaultDirectory(_gameDataDir.getChild("speech"));
+	File::addDefaultDirectory(_gameDataDir.getChild("SPEECH"));
 
 	syst->getEventManager()->registerRandomSource(_rnd, "agos");
 }
@@ -550,6 +548,7 @@ int AGOSEngine::init() {
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 
 	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) ||
 		(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
@@ -574,7 +573,7 @@ int AGOSEngine::init() {
 		if (ret)
 			warning("MIDI Player init failed: \"%s\"", _midi.getErrorName (ret));
 
-		_midi.setVolume(ConfMan.getInt("music_volume"));
+		_midi.setVolume(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
 
 
 		_midiEnabled = true;
@@ -952,7 +951,7 @@ void AGOSEngine::pauseEngineIntern(bool pauseIt) {
 void AGOSEngine::pause() {
 	pauseEngine(true);
 
-	while (_pause && !_quit) {
+	while (_pause && !quit()) {
 		delay(1);
 		if (_keyPressed.keycode == Common::KEYCODE_p)
 			pauseEngine(false);
@@ -989,7 +988,7 @@ int AGOSEngine::go() {
 		(getFeatures() & GF_DEMO)) {
 		int i;
 
-		while (!_quit) {
+		while (!quit()) {
 			for (i = 0; i < 4; i++) {
 				setWindowImage(3, 9902 + i);
 				debug(0, "Displaying image %d", 9902 + i);
@@ -1018,7 +1017,7 @@ int AGOSEngine::go() {
 	runSubroutine101();
 	permitInput();
 
-	while (!_quit) {
+	while (!quit()) {
 		waitForInput();
 		handleVerbClicked(_verbHitArea);
 		delay(100);
@@ -1082,6 +1081,14 @@ void AGOSEngine::shutdown() {
 uint32 AGOSEngine::getTime() const {
 	// FIXME: calling time() is not portable, use OSystem::getMillis instead
 	return (uint32)time(NULL);
+}
+
+
+void AGOSEngine::syncSoundSettings() {
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	_midi.setVolume(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
 }
 
 } // End of namespace AGOS

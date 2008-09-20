@@ -2310,7 +2310,7 @@ void ScummEngine_v6::o6_systemOps() {
 		pauseGame();
 		break;
 	case 160:		// SO_QUIT
-		shutDown();
+		quitGame();
 		break;
 	default:
 		error("o6_systemOps invalid case %d", subOp);
@@ -2374,7 +2374,7 @@ void ScummEngine_v6::o6_printEgo() {
 void ScummEngine_v6::o6_talkActor() {
 	int offset = _scriptPointer - _scriptOrgPointer;
 
-	// WORKAROUNDfor bug #896489: see below for detailed description
+	// WORKAROUND for bug #896489: see below for detailed description
 	if (_forcedWaitForMessage) {
 		if (VAR(VAR_HAVE_MSG)) {
 			_scriptPointer--;

@@ -27,7 +27,6 @@
 #define SCUMM_SMUSH_PLAYER_H
 
 #include "common/util.h"
-#include "scumm/smush/chunk.h"
 #include "scumm/sound.h"
 
 namespace Scumm {
@@ -51,7 +50,7 @@ private:
 	StringResource *_strings;
 	Codec37Decoder *_codec37;
 	Codec47Decoder *_codec47;
-	FileChunk *_base;
+	Common::SeekableReadStream *_base;
 	byte *_frameBuffer;
 	byte *_specialBuffer;
 
@@ -84,11 +83,6 @@ private:
 	bool _insanity;
 	bool _middleAudio;
 	bool _skipPalette;
-#ifdef _WIN32_WCE
-	bool _inTimer;
-	int16 _inTimerCount;
-	int16 _inTimerCountRedraw;
-#endif
 
 public:
 	SmushPlayer(ScummEngine_v7 *scumm);
@@ -126,22 +120,21 @@ private:
 
 	bool readString(const char *file);
 	void decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height);
-	void checkBlock(const Chunk &, Chunk::type, uint32 = 0);
-	void handleAnimHeader(Chunk &);
-	void handleFrame(Chunk &);
-	void handleNewPalette(Chunk &);
+	void handleAnimHeader(int32 subSize, Common::SeekableReadStream &);
+	void handleFrame(int32 frameSize, Common::SeekableReadStream &);
+	void handleNewPalette(int32 subSize, Common::SeekableReadStream &);
 #ifdef USE_ZLIB
-	void handleZlibFrameObject(Chunk &b);
+	void handleZlibFrameObject(int32 subSize, Common::SeekableReadStream &b);
 #endif
-	void handleFrameObject(Chunk &);
-	void handleSoundBuffer(int32, int32, int32, int32, int32, int32, Chunk &, int32);
-	void handleSoundFrame(Chunk &);
-	void handleStore(Chunk &);
-	void handleFetch(Chunk &);
-	void handleIACT(Chunk &);
-	void handleTextResource(Chunk &);
-	void handleDeltaPalette(Chunk &);
-	void readPalette(byte *, Chunk &);
+	void handleFrameObject(int32 subSize, Common::SeekableReadStream &);
+	void handleSoundBuffer(int32, int32, int32, int32, int32, int32, Common::SeekableReadStream &, int32);
+	void handleSoundFrame(int32 subSize, Common::SeekableReadStream &);
+	void handleStore(int32 subSize, Common::SeekableReadStream &);
+	void handleFetch(int32 subSize, Common::SeekableReadStream &);
+	void handleIACT(int32 subSize, Common::SeekableReadStream &);
+	void handleTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &);
+	void handleDeltaPalette(int32 subSize, Common::SeekableReadStream &);
+	void readPalette(byte *, Common::SeekableReadStream &);
 
 	void timerCallback();
 };

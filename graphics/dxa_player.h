@@ -27,11 +27,7 @@
 #define GRAPHICS_DXA_PLAYER_H
 
 #include "common/scummsys.h"
-#include "common/file.h"
-
-namespace Common {
-	class File;
-}
+#include "common/stream.h"
 
 namespace Graphics {
 

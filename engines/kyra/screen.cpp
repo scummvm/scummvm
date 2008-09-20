@@ -188,19 +188,19 @@ void Screen::setResolution() {
 
 	if (_vm->gameFlags().useHiResOverlay) {
 		_system->beginGFXTransaction();
-			_vm->initCommonGFX(true);
 			if (_debugEnabled)
 				_system->initSize(960, 400);
 			else
 				_system->initSize(640, 400);
+			_vm->initCommonGFX(true);
 		_system->endGFXTransaction();
 	} else {
 		_system->beginGFXTransaction();
-			_vm->initCommonGFX(false);
 			if (_debugEnabled)
 				_system->initSize(640, 200);
 			else
 				_system->initSize(320, 200);
+			_vm->initCommonGFX(false);
 		_system->endGFXTransaction();
 	}
 
@@ -476,6 +476,25 @@ void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
 	setScreenPalette(_currentPalette);
 }
 
+void Screen::getRealPalette(int num, uint8 *dst) {
+	debugC(9, kDebugLevelScreen, "Screen::getRealPalette(%d, %p)", num, (const void *)dst);
+	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
+	const uint8 *palData = getPalette(num);
+
+	if (!palData) {
+		memset(dst, 0, colors * 3);
+		return;
+	}
+
+	for (int i = 0; i < colors; ++i) {
+		dst[0] = (palData[0] << 2) | (palData[0] & 3);
+		dst[1] = (palData[1] << 2) | (palData[1] & 3);
+		dst[2] = (palData[2] << 2) | (palData[2] & 3);
+		dst += 3;
+		palData += 3;
+	}
+}
+
 void Screen::setScreenPalette(const uint8 *palData) {
 	debugC(9, kDebugLevelScreen, "Screen::setScreenPalette(%p)", (const void *)palData);
 
@@ -554,19 +573,16 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 
 	copyOverlayRegion(x1, y1, x2, y2, w, h, srcPage, dstPage);
 
-	if (flags & CR_X_FLIPPED) {
+	if (flags & CR_NO_P_CHECK) {
 		while (h--) {
-			for (int i = 0; i < w; ++i) {
-				if (src[i] || (flags & CR_NO_P_CHECK))
-					dst[w-i] = src[i];
-			}
+			memcpy(dst, src, w);
 			src += SCREEN_W;
 			dst += SCREEN_W;
 		}
 	} else {
 		while (h--) {
 			for (int i = 0; i < w; ++i) {
-				if (src[i] || (flags & CR_NO_P_CHECK))
+				if (src[i])
 					dst[i] = src[i];
 			}
 			src += SCREEN_W;
@@ -2739,21 +2755,7 @@ bool Screen::loadPalette(const char *filename, uint8 *palData) {
 
 	if (palData && fileSize) {
 		debugC(9, kDebugLevelScreen,"Loading a palette of size %u from '%s'", fileSize, filename);
-		if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-			assert(fileSize % 2 == 0);
-			assert(fileSize / 2 <= 256);
-			fileSize >>= 1;
-			const uint16 *src = (const uint16 *)srcData;
-			for (uint i = 0; i < fileSize; ++i) {
-				uint16 col = READ_BE_UINT16(src); ++src;
-				palData[2] = (col & 0xF) << 2; col >>= 4;
-				palData[1] = (col & 0xF) << 2; col >>= 4;
-				palData[0] = (col & 0xF) << 2; col >>= 4;
-				palData += 3;
-			}
-		} else {
-			memcpy(palData, srcData, fileSize);
-		}
+		loadPalette(srcData, palData, fileSize);
 	}
 	delete[] srcData;
 	return true;

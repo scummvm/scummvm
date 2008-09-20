@@ -218,8 +218,4 @@ bool operator!=(const Common::SharedPtr<T1> &l, const Common::SharedPtr<T2> &r) 
 	return l.get() != r.get();
 }
 
-
 #endif
-
-
-

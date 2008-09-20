@@ -32,6 +32,8 @@
 #include "common/array.h"
 #include "common/func.h"
 
+#include "graphics/surface.h"
+
 namespace Kyra {
 
 #define BUTTON_FUNCTOR(type, x, y) Button::Callback(new Common::Functor1Mem<Button*, int, type>(x, y))
@@ -153,6 +155,8 @@ public:
 
 	void processHighlights(Menu &menu, int mouseX, int mouseY);
 
+	// utilities for thumbnail creation
+	virtual void createScreenThumbnail(Graphics::Surface &dst) = 0;
 protected:
 	KyraEngine_v1 *_vm;
 	Screen *_screen;

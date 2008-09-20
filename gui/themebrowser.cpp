@@ -140,33 +140,31 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 	if (level < 0)
 		return;
 
-	FilesystemNode node(dir);
+	Common::FilesystemNode node(dir);
 
 	if (!node.exists() || !node.isReadable())
 		return;
 
-	FSList fslist;
-	
-#ifdef USE_ZLIB
-	if (node.lookupFile(fslist, "*.zip", false, true, 0)) {
-		for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
-			Entry th;
-			if (isTheme(*i, th)) {
-				bool add = true;
-				
-				for (ThList::const_iterator p = list.begin(); p != list.end(); ++p) {
-					if (p->name == th.name || p->file == th.file) {
-						add = false;
-						break;
-					}
-				}
+	Common::FSList fslist;
+	if (!node.getChildren(fslist, Common::FilesystemNode::kListAll))
+		return;
 
-				if (add)
-					list.push_back(th);	
+	for (Common::FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
+		Entry th;
+		if (isTheme(*i, th)) {
+			bool add = true;
+			
+			for (ThList::const_iterator p = list.begin(); p != list.end(); ++p) {
+				if (p->name == th.name || p->file == th.file) {
+					add = false;
+					break;
+				}
 			}
+
+			if (add)
+				list.push_back(th);	
 		}
 	}
-#endif
 
 	if (node.lookupFile(fslist, "THEMERC", false, true, 1)) {
 		for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
@@ -188,7 +186,7 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 	}
 }
 
-bool ThemeBrowser::isTheme(const FilesystemNode &node, Entry &out) {
+bool ThemeBrowser::isTheme(const Common::FilesystemNode &node, Entry &out) {
 	out.file = node.getPath();	
 	
 #ifdef USE_ZLIB

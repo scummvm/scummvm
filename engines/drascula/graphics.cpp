@@ -47,6 +47,10 @@ void DrasculaEngine::allocMemory() {
 	assert(tableSurface);
 	extraSurface = (byte *)malloc(64000);
 	assert(extraSurface);
+	crosshairCursor = (byte *)malloc(40 * 25);
+	assert(crosshairCursor);
+	mouseCursor = (byte *)malloc(OBJWIDTH * OBJHEIGHT);
+	assert(mouseCursor);
 }
 
 void DrasculaEngine::freeMemory() {
@@ -58,10 +62,12 @@ void DrasculaEngine::freeMemory() {
 	free(drawSurface3);
 	free(extraSurface);
 	free(frontSurface);
+	free(crosshairCursor);
+	free(mouseCursor);
 }
 
 void DrasculaEngine::moveCursor() {
-	copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+	copyBackground();
 
 	updateRefresh_pre();
 	moveCharacters();
@@ -78,14 +84,6 @@ void DrasculaEngine::moveCursor() {
 		showMenu();
 	else if (menuBar == 1)
 		clearMenu();
-
-	int cursorPos[6] = { 0, 0, mouseX - 20, mouseY - 17, OBJWIDTH, OBJHEIGHT };
-	copyRectClip(cursorPos, drawSurface3, screenSurface);
-}
-
-void DrasculaEngine::setCursorTable() {
-	int cursorPos[6] = { 225, 56, mouseX - 20, mouseY - 12, 40, 25 };
-	copyRectClip(cursorPos, tableSurface, screenSurface);
 }
 
 void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int colorCount) {
@@ -148,7 +146,15 @@ void DrasculaEngine::copyBackground(int xorg, int yorg, int xdes, int ydes, int 
 								  int height, byte *src, byte *dest) {
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
+	/* Unoptimized code
 	for (int x = 0; x < height; x++) {
+		memcpy(dest + 320 * x, src + 320 * x, width);
+	} */
+
+	// A bit more optimized code, thanks to Fingolfin
+	// Uses 2 less registers and performs 2 less multiplications
+	int x = height;
+	while (x--) {
 		memcpy(dest, src, width);
 		dest += 320;
 		src += 320;
@@ -159,24 +165,7 @@ void DrasculaEngine::copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 								   int height, byte *src, byte *dest) {
 	int y, x;
 
-	dest += xdes + ydes * 320;
-	src += xorg + yorg * 320;
-
-	for (y = 0; y < height; y++)
-		for (x = 0; x < width; x++)
-			if (src[x + y * 320] != 255)
-				dest[x + y * 320] = src[x + y * 320];
-}
-
-void DrasculaEngine::copyRectClip(int *Array, byte *src, byte *dest) {
-	int y, x;
-	int xorg = Array[0];
-	int yorg = Array[1];
-	int xdes = Array[2];
-	int ydes = Array[3];
-	int width = Array[4];
-	int height = Array[5];
-
+	//
 	if (ydes < 0) {
 		yorg += -ydes;
 		height += ydes;
@@ -191,6 +180,7 @@ void DrasculaEngine::copyRectClip(int *Array, byte *src, byte *dest) {
 		width -= (xdes + width) - 320;
 	if ((ydes + height) > 199)
 		height -= (ydes + height) - 200;
+	//
 
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
@@ -202,16 +192,7 @@ void DrasculaEngine::copyRectClip(int *Array, byte *src, byte *dest) {
 }
 
 void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer) {
-	byte *ptr = VGA;
-
-	ptr += xdes + ydes * 320;
-	buffer += xorg + yorg * 320;
-	for (int x = 0; x < height; x++) {
-		memcpy(ptr, buffer, width);
-		ptr += 320;
-		buffer += 320;
-	}
-
+	copyBackground(xorg, yorg, xdes, ydes, width, height, buffer, VGA);
 	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
 	_system->updateScreen();
 }
@@ -229,22 +210,22 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 				letterX = _charMap[i].mappedChar;
 
 				switch (_charMap[i].charType) {
-					case 0:		// letters
-						letterY = (_lang == kSpanish) ? 149 : 158;
-						break;
-					case 1:		// signs
-						letterY = (_lang == kSpanish) ? 160 : 169;
-						break;
-					case 2:		// accented
-						letterY = 180;
-						break;
+				case 0:		// letters
+					letterY = (_lang == kSpanish) ? 149 : 158;
+					break;
+				case 1:		// signs
+					letterY = (_lang == kSpanish) ? 160 : 169;
+					break;
+				case 2:		// accented
+					letterY = 180;
+					break;
 				}	// switch
 				break;
 			}	// if
 		}	// for
 
-		int textPos[6] = { letterX, letterY, screenX, screenY, CHAR_WIDTH, CHAR_HEIGHT };
-		copyRectClip(textPos, textSurface, screenSurface);
+		copyRect(letterX, letterY, screenX, screenY, 
+				 CHAR_WIDTH, CHAR_HEIGHT, tableSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH;
 		if (screenX > 317) {
@@ -254,9 +235,11 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 	}	// for
 }
 
-void DrasculaEngine::print_abc_opc(const char *said, int screenX, int screenY, int game) {
+void DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 	int signY, letterY, letterX = 0;
 	uint len = strlen(said);
+
+	int screenX = 1;
 
 	for (uint h = 0; h < len; h++) {
 		if (game == 1) {
@@ -293,76 +276,70 @@ void DrasculaEngine::print_abc_opc(const char *said, int screenX, int screenY, i
 			}	// if
 		}	// for
 
-		int textPos[6] = { letterX, letterY, screenX, screenY, CHAR_WIDTH_OPC, CHAR_HEIGHT_OPC };
-		copyRectClip(textPos, backSurface, screenSurface);
+		copyRect(letterX, letterY, screenX, screenY, 
+				 CHAR_WIDTH_OPC, CHAR_HEIGHT_OPC, backSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH_OPC;
 	}
 }
 
+bool DrasculaEngine::textFitsCentered(char *text, int x) {
+	int len = strlen(text);
+	int tmp = CLIP<int>(x - len * CHAR_WIDTH / 2, 60, 255);
+	return (tmp + len * CHAR_WIDTH) <= 320;
+}
+
 void DrasculaEngine::centerText(const char *message, int textX, int textY) {
-	char bb[200], m2[200], m1[200], mb[10][50];
-	char m3[200];
-	int h, fil, textX3, textX2, textX1, conta_f = 0, ya = 0;
+	char msg[200];
+	char messageLine[200];
+	char tmpMessageLine[200];
+	*messageLine = 0;
+	*tmpMessageLine = 0;
+	char *curWord;
+	int curLine = 0;
+	int x = 0;
+	// original starts printing 4 lines above textY
+	int y = CLIP<int>(textY - (4 * CHAR_HEIGHT), 0, 320);
 
-	strcpy(m1, " ");
-	strcpy(m2, " ");
-	strcpy(m3, " ");
-	strcpy(bb, " ");
+	strcpy(msg, message);
 
-	for (h = 0; h < 10; h++)
-		strcpy(mb[h], " ");
-
-	if (textX > 160)
-		ya = 1;
-
-	strcpy(m1, message);
-	textX = CLIP<int>(textX, 60, 255);
-
-	textX1 = textX;
-
-	if (ya == 1)
-		textX1 = 315 - textX;
-
-	textX2 = (strlen(m1) / 2) * CHAR_WIDTH;
-
-	while (true) {
-		strcpy(bb, m1);
-		scumm_strrev(bb);
-
-		if (textX1 < textX2) {
-			strcpy(m3, strrchr(m1, ' '));
-			strcpy(m1, strstr(bb, " "));
-			scumm_strrev(m1);
-			m1[strlen(m1) - 1] = '\0';
-			strcat(m3, m2);
-			strcpy(m2, m3);
-		};
-
-		textX2 = (strlen(m1) / 2) * CHAR_WIDTH;
-
-		if (textX1 < textX2)
-			continue;
-
-		strcpy(mb[conta_f], m1);
-
-		if (!strcmp(m2, ""))
-			break;
-
-		scumm_strrev(m2);
-		m2[strlen(m2) - 1] = '\0';
-		scumm_strrev(m2);
-		strcpy(m1, m2);
-		strcpy(m2, "");
-		conta_f++;
+	// If the message fits on screen as-is, just print it here
+	if (textFitsCentered(msg, textX)) {
+		x = CLIP<int>(textX - strlen(msg) * CHAR_WIDTH / 2, 60, 255);
+		print_abc(msg, x, y);
+		return;
 	}
 
-	fil = textY - (((conta_f + 3) * CHAR_HEIGHT));
+	// Message doesn't fit on screen, split it
 
-	for (h = 0; h < conta_f + 1; h++) {
-		textX3 = strlen(mb[h]) / 2;
-		print_abc(mb[h], ((textX) - textX3 * CHAR_WIDTH) - 1, fil);
-		fil = fil + CHAR_HEIGHT + 2;
+	// Get a word from the message
+	curWord = strtok(msg, " ");
+	while (curWord != NULL) {
+		// Check if the word and the current line fit on screen
+		if (strlen(tmpMessageLine) > 0)
+			strcat(tmpMessageLine, " ");
+		strcat(tmpMessageLine, curWord);
+		if (textFitsCentered(tmpMessageLine, textX)) {
+			// Line fits, so add the word to the current message line
+			strcpy(messageLine, tmpMessageLine);
+		} else {
+			// Line doesn't fit, so show the current line on screen and
+			// create a new one
+			// If it goes off screen, print_abc will adjust it
+			x = CLIP<int>(textX - strlen(messageLine) * CHAR_WIDTH / 2, 60, 255);
+			print_abc(messageLine, x, y + curLine * CHAR_HEIGHT);
+			strcpy(messageLine, curWord);
+			strcpy(tmpMessageLine, curWord);
+			curLine++;
+		}
+
+		// Get next word
+		curWord = strtok(NULL, " ");
+
+		if (curWord == NULL) {
+			x = CLIP<int>(textX - strlen(messageLine) * CHAR_WIDTH / 2, 60, 255);
+			print_abc(messageLine, x, y + curLine * CHAR_HEIGHT);
+		}
 	}
 }
 
@@ -374,6 +351,8 @@ void DrasculaEngine::screenSaver() {
 	int count2 = 0;
 	int tempLine[320];
 	int tempRow[200];
+
+	hideCursor();
 
 	clearRoom();
 
@@ -463,6 +442,7 @@ void DrasculaEngine::screenSaver() {
 	free(ghost);
 
 	loadPic(roomNumber, bgSurface, HALF_PAL);
+	showCursor();
 }
 
 void DrasculaEngine::playFLI(const char *filefli, int vel) {
@@ -621,12 +601,11 @@ void DrasculaEngine::decodeRLE(byte* srcPtr, byte* dstPtr) {
 			pixel = *srcPtr++;
 		}
 		for (uint j = 0; j < repeat; j++) {
-			curByte++;
-			if (curByte > 64000) {
+			*dstPtr++ = pixel;
+			if (++curByte >= 64000) {
 				stopProcessing = true;
 				break;
 			}
-			*dstPtr++ = pixel;
 		}
 	}
 }

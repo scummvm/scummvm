@@ -115,7 +115,8 @@ Common::EventManager *OSystem::getEventManager() {
 
 void OSystem::clearScreen() {
 	Graphics::Surface *screen = lockScreen();
-	memset(screen->pixels, 0, screen->h * screen->pitch);
+	if (screen && screen->pixels)
+		memset(screen->pixels, 0, screen->h * screen->pitch);
 	unlockScreen();
 }
 
@@ -125,10 +126,9 @@ FIXME: The config file loading code below needs to be cleaned up.
  Port specific variants should be pushed into the respective ports.
 
  Ideally, the default OSystem::openConfigFileForReading/Writing methods
- should be removed completely. 
+ should be removed completely.
 */
 
-#include "common/file.h"
 
 #ifdef __PLAYSTATION2__
 #include "backends/platform/ps2/systemps2.h"
@@ -163,7 +163,7 @@ static Common::String getDefaultConfigFileName() {
 }
 
 Common::SeekableReadStream *OSystem::openConfigFileForReading() {
-	FilesystemNode file(getDefaultConfigFileName());
+	Common::FilesystemNode file(getDefaultConfigFileName());
 	return file.openForReading();
 }
 
@@ -171,7 +171,7 @@ Common::WriteStream *OSystem::openConfigFileForWriting() {
 #ifdef __DC__
 	return 0;
 #else
-	FilesystemNode file(getDefaultConfigFileName());
+	Common::FilesystemNode file(getDefaultConfigFileName());
 	return file.openForWriting();
 #endif
 }

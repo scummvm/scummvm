@@ -30,9 +30,10 @@
 #include "common/singleton.h"
 #include "common/util.h"
 
-#ifdef DYNAMIC_MODULES
-#include "common/fs.h"
-#endif
+namespace Common {
+	class FSList;
+}
+
 
 /**
  * @page pagePlugins An overview of the ScummVM plugin system
@@ -258,7 +259,7 @@ protected:
 	 * @param dirs	the reference to the list of directories to be used when
 	 * 		searching for plugins.
 	 */
-	virtual void addCustomDirectories(FSList &dirs) const;
+	virtual void addCustomDirectories(Common::FSList &dirs) const;
 };
 
 #endif // DYNAMIC_MODULES

@@ -61,7 +61,7 @@ bool XMLParser::parserError(const char *errorString, ...) {
 
 	char lineStr[70];
 	_stream->seek(original_pos - 35, SEEK_SET);
-	_stream->readLine(lineStr, 70);
+	_stream->readLine_NEW(lineStr, 70);
 	
 	for (int i = 0; i < 70; ++i)
 		if (lineStr[i] == '\n')
@@ -106,15 +106,16 @@ bool XMLParser::parseActiveKey(bool closed) {
 		key->layout = layout->children[key->name];
 	
 		Common::StringMap localMap = key->values;
+		int keyCount = localMap.size();
 	
 		for (Common::List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
-			if (localMap.contains(i->name))
-				localMap.erase(i->name);
-			else if (i->required)
+			if (i->required && !localMap.contains(i->name))
 				return parserError("Missing required property '%s' inside key '%s'", i->name.c_str(), key->name.c_str());
+			else if (localMap.contains(i->name))
+				keyCount--;
 		}
 	
-		if (localMap.empty() == false)
+		if (keyCount > 0)
 			return parserError("Unhandled property inside key '%s': '%s'", key->name.c_str(), localMap.begin()->_key.c_str());
 			
 	} else {

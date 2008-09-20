@@ -397,6 +397,18 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_FLOPPY_FLAGS
 	},
 
+	{ // Floppy version extracted
+		{
+			"kyra2",
+			"Extracted",
+			AD_ENTRY1("FATE.PAK", "e0a70c31b022cb4bb3061890020fc27c"),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA2_FLOPPY_FLAGS
+	},
+
 	{ // CD version
 		{
 			"kyra2",
@@ -1052,10 +1064,22 @@ public:
 		return "The Legend of Kyrandia (C) Westwood Studios";
 	}
 
+	bool hasFeature(MetaEngineFeature f) const;
 	bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
-
 	SaveStateList listSaves(const char *target) const;
+	void removeSaveState(const char *target, int slot) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
+
+bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad) ||
+		(f == kSupportsDeleteSave) ||
+	   	(f == kSupportsMetaInfos) ||
+		(f == kSupportsThumbnails);
+}
 
 bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const KYRAGameDescription *gd = (const KYRAGameDescription *)desc;
@@ -1107,7 +1131,7 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 
 	Common::StringList filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
@@ -1117,8 +1141,13 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-				if (Kyra::KyraEngine_v1::readSaveHeader(in, header) == Kyra::KyraEngine_v1::kRSHENoError)
+				if (Kyra::KyraEngine_v1::readSaveHeader(in, false, header) == Kyra::KyraEngine_v1::kRSHENoError) {
+					// Workaround for old savegames using 'German' as description for kyra3 start savegame (slot 0)
+					if (slotNum == 0 && header.gameID == Kyra::GI_KYRA3)
+						header.description = "New Game";
+
 					saveList.push_back(SaveStateDescriptor(slotNum, header.description, *file));
+				}
 				delete in;
 			}
 		}
@@ -1127,8 +1156,69 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
+void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
+	// Slot 0 can't be deleted, it's for restarting the game(s)
+	if (slot == 0)
+		return;
+
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::String filename = Kyra::KyraEngine_v1::getSavegameFilename(target, slot);
+
+	saveFileMan->removeSavefile(filename.c_str());
+
+	Common::StringList filenames;
+	Common::String pattern = target;
+	pattern += ".???";
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+
+		// Rename every slot greater than the deleted slot,
+		// Also do not rename quicksaves.
+		if (slotNum > slot && slotNum < 990) {
+			// FIXME: Our savefile renaming done here is inconsitent with what we do in 
+			// GUI_v2::deleteMenu. While here we rename every slot with a greater equal
+			// number of the deleted slot to deleted slot, deleted slot + 1 etc.,
+			// we only rename the following slots in GUI_v2::deleteMenu until a slot
+			// is missing.
+			saveFileMan->renameSavefile(file->c_str(), filename.c_str());
+
+			filename = Kyra::KyraEngine_v1::getSavegameFilename(target, ++slot);
+		}
+	}
+
+}
+
+SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String filename = Kyra::KyraEngine_v1::getSavegameFilename(target, slot);
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
+
+	if (in) {
+		Kyra::KyraEngine_v1::SaveHeader header;
+		Kyra::KyraEngine_v1::kReadSaveHeaderError error;
+
+		error = Kyra::KyraEngine_v1::readSaveHeader(in, true, header);
+		delete in;
+		
+		if (error == Kyra::KyraEngine_v1::kRSHENoError) {
+			SaveStateDescriptor desc(slot, header.description, filename);
+
+			desc.setDeletableFlag(slot != 0);
+			desc.setThumbnail(header.thumbnail);
+
+			return desc;
+		}
+	}
+	
+	return SaveStateDescriptor();
+}
+
 #if PLUGIN_ENABLED_DYNAMIC(KYRA)
 	REGISTER_PLUGIN_DYNAMIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
 #else
 	REGISTER_PLUGIN_STATIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
 #endif
+

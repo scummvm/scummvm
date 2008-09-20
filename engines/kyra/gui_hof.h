@@ -41,6 +41,8 @@ public:
 	void initStaticData();
 
 	int optionsButton(Button *button);
+
+	void createScreenThumbnail(Graphics::Surface &dst);
 private:
 	const char *getMenuTitle(const Menu &menu);
 	const char *getMenuItemTitle(const MenuItem &menuItem);

@@ -313,6 +313,7 @@ struct Cnv : public Frames {
 	uint16	_height;	//
 	byte**	field_8;	// unused
 	byte*	_data;
+	bool 	_freeData;
 
 public:
 	Cnv() {
@@ -320,12 +321,14 @@ public:
 		_data = NULL;
 	}
 
-	Cnv(uint16 numFrames, uint16 width, uint16 height, byte* data) : _count(numFrames), _width(width), _height(height), _data(data) {
+	Cnv(uint16 numFrames, uint16 width, uint16 height, byte* data, bool freeData = false)
+		: _count(numFrames), _width(width), _height(height), _data(data), _freeData(freeData) {
 
 	}
 
 	~Cnv() {
-		free(_data);
+		if (_freeData)
+			free(_data);
 	}
 
 	byte* getFramePtr(uint16 index) {
@@ -410,6 +413,7 @@ public:
 	uint frame;
 	uint layer;
 	uint transparentKey;
+	uint scale;
 
 	GfxObj(uint type, Frames *frames, const char *name = NULL);
 	virtual ~GfxObj();
@@ -495,13 +499,19 @@ enum {
 
 class BalloonManager {
 public:
+	enum TextColor {
+		kSelectedColor = 0,
+		kUnselectedColor = 1,
+		kNormalColor = 2
+	};
+
 	virtual ~BalloonManager() { }
 
 	virtual void freeBalloons() = 0;
 	virtual int setLocationBalloon(char *text, bool endGame) = 0;
-	virtual int setDialogueBalloon(char *text, uint16 winding, byte textColor) = 0;
-	virtual int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor) = 0;
-	virtual void setBalloonText(uint id, char *text, byte textColor) = 0;
+	virtual int setDialogueBalloon(char *text, uint16 winding, TextColor textColor) = 0;
+	virtual int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, TextColor textColor) = 0;
+	virtual void setBalloonText(uint id, char *text, TextColor textColor) = 0;
 	virtual int hitTestDialogueBalloon(int x, int y) = 0;
 };
 
@@ -640,8 +650,12 @@ public:
 	void drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
 
 	void drawGfxObject(GfxObj *obj, Graphics::Surface &surf, bool scene);
-    void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
-	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor);
+    void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
+	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
+
+	void bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
+	void bltMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
+	void bltNoMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, byte transparentColor);
 };
 
 

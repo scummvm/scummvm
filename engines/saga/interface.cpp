@@ -688,7 +688,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 			setMode(kPanelMain);
 			_vm->_script->setNoPendingVerb();
 		} else if (ascii == 'q' || ascii == 'Q') {
-			_vm->shutDown();
+			_vm->quitGame();
 		}
 		break;
 	case kPanelBoss:
@@ -1084,7 +1084,7 @@ void Interface::setQuit(PanelButton *panelButton) {
 			if (_vm->getGameId() == GID_IHNM_DEMO)
 				_vm->_scene->creditsScene();	// display sales info for IHNM demo
 			else
-				_vm->shutDown();
+				_vm->quitGame();
 			break;
 	}
 }
@@ -1153,6 +1153,7 @@ void Interface::setLoad(PanelButton *panelButton) {
 						debug(1, "Loading save game %d", _vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
 						setMode(kPanelMain);
 						_vm->load(_vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber));
+						_vm->syncSoundSettings();
 					}
 				}
 			}
@@ -1616,6 +1617,7 @@ void Interface::setOption(PanelButton *panelButton) {
 					debug(1, "Loading save game %d", _vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
 					setMode(kPanelMain);
 					_vm->load(_vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber));
+					_vm->syncSoundSettings();
 				}
 			}
 		} else {
@@ -1644,14 +1646,16 @@ void Interface::setOption(PanelButton *panelButton) {
 		}
 		break;
 	case kTextMusic:
-		_vm->_musicVolume = (_vm->_musicVolume + 1) % 11;
-		_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
-		ConfMan.setInt("music_volume", _vm->_musicVolume * 25);
+		_vm->_musicVolume = _vm->_musicVolume + 25;
+		if (_vm->_musicVolume > 255) _vm->_musicVolume = 0;
+		_vm->_music->setVolume(_vm->_musicVolume, 1);
+		ConfMan.setInt("music_volume", _vm->_musicVolume);
 		break;
 	case kTextSound:
-		_vm->_soundVolume = (_vm->_soundVolume + 1) % 11;
-		_vm->_sound->setVolume(_vm->_soundVolume == 10 ? 255 : _vm->_soundVolume * 25);
-		ConfMan.setInt("sfx_volume", _vm->_soundVolume * 25);
+		_vm->_soundVolume = _vm->_soundVolume + 25;
+		if (_vm->_soundVolume > 255) _vm->_soundVolume = 0;
+		ConfMan.setInt("sound_volume", _vm->_soundVolume);
+		_vm->_sound->setVolume();
 		break;
 	case kTextVoices:
 		if (_vm->_voiceFilesExist) {
@@ -1669,6 +1673,11 @@ void Interface::setOption(PanelButton *panelButton) {
 			_vm->_subtitlesEnabled = true;								// Set it to "Text"
 			_vm->_voicesEnabled = false;
 		}
+		
+		_vm->_speechVolume = _vm->_speechVolume + 25;
+		if (_vm->_speechVolume > 255) _vm->_speechVolume = 0;
+		ConfMan.setInt("speech_volume", _vm->_speechVolume);
+		_vm->_sound->setVolume();
 
 		ConfMan.setBool("subtitles", _vm->_subtitlesEnabled);
 		ConfMan.setBool("voices", _vm->_voicesEnabled);
@@ -2269,13 +2278,13 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 		break;
 	case kTextMusic:
 		if (_vm->_musicVolume)
-			textId = kText10Percent + _vm->_musicVolume - 1;
+			textId = kText10Percent + _vm->_musicVolume / 25 - 1;
 		else
 			textId = kTextOff;
 		break;
 	case kTextSound:
 		if (_vm->_soundVolume)
-			textId = kText10Percent + _vm->_soundVolume - 1;
+			textId = kText10Percent + _vm->_soundVolume / 25  - 1;
 		else
 			textId = kTextOff;
 		break;

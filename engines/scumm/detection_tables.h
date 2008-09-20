@@ -472,12 +472,14 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "fbear", "fbdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "fbear", "Fatty Bear Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "fbear", "Fatty Bear", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "fbear", "jfbear", kGenHEPC, Common::JA_JPN, Common::kPlatform3DO, 0 },
 
 	{ "puttmoon", "puttmoon", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttmoon", "moondemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttmoon", "Putt-Putt Moon Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttmoon", "Putt-Putt Moon", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
+	{ "puttputt", "jputtputt", kGenHEPC, Common::JA_JPN, Common::kPlatform3DO, 0 },
 	{ "puttputt", "puttputt", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttputt", "puttdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttputt", "Putt-Putt's Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },

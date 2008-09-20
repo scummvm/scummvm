@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -101,6 +100,7 @@ int CineEngine::go() {
 	delete renderer;
 	delete[] collisionPage;
 	delete g_sound;
+	
 	return 0;
 }
 

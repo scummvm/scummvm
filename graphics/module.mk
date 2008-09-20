@@ -15,7 +15,7 @@ MODULE_OBJS := \
 	mpeg_player.o \
 	primitives.o \
 	scaler.o \
-	scaler/thumbnail.o \
+	scaler/thumbnail_intern.o \
 	surface.o \
 	VectorRenderer.o \
 	VectorRendererSpec.o

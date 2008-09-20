@@ -1,6 +1,8 @@
 MODULE := backends
 
 MODULE_OBJS := \
+	fs/abstract-fs.o \
+	fs/stdiostream.o \
 	fs/amigaos4/amigaos4-fs-factory.o \
 	fs/ds/ds-fs-factory.o \
 	fs/palmos/palmos-fs-factory.o \
@@ -17,6 +19,7 @@ MODULE_OBJS := \
 	midi/coremidi.o \
 	midi/quicktime.o \
 	midi/seq.o \
+	midi/stmidi.o \
 	midi/timidity.o \
 	midi/dmedia.o \
 	midi/windows.o \

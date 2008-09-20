@@ -27,6 +27,7 @@
 #define PARALLACTION_PARSER_H
 
 #include "common/stream.h"
+#include "common/stack.h"
 #include "parallaction/objects.h"
 #include "parallaction/walk.h"
 
@@ -455,7 +456,7 @@ public:
 	}
 
 	bool eos() const {
-		return _pos == _size;
+		return _pos == _size; // FIXME (eos definition change)
 	}
 
 };

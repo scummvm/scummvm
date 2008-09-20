@@ -49,7 +49,9 @@ MidiPlayer::MidiPlayer() {
 	_enable_sfx = true;
 	_current = 0;
 
-	_masterVolume = 255;
+	_musicVolume = 255;
+	_sfxVolume = 255;
+
 	resetVolumeTable();
 	_paused = false;
 
@@ -104,10 +106,13 @@ void MidiPlayer::send(uint32 b) {
 
 	byte channel = (byte)(b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {
-		// Adjust volume changes by master volume.
+		// Adjust volume changes by master music and master sfx volume.
 		byte volume = (byte)((b >> 16) & 0x7F);
 		_current->volume[channel] = volume;
-		volume = volume * _masterVolume / 255;
+		if (_current == &_sfx)
+			volume = volume * _sfxVolume / 255;
+		else if (_current == &_music)
+			volume = volume * _musicVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
 	} else if ((b & 0xF0) == 0xC0 && _map_mt32_to_gm) {
 		b = (b & 0xFFFF00FF) | (MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8);
@@ -133,8 +138,12 @@ void MidiPlayer::send(uint32 b) {
 	if (!_current->channel[channel])
 		_current->channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
 	if (_current->channel[channel]) {
-		if (channel == 9)
-			_current->channel[9]->volume(_current->volume[9] * _masterVolume / 255);
+		if (channel == 9) {
+			if (_current == &_sfx)
+				_current->channel[9]->volume(_current->volume[9] * _sfxVolume / 255);
+			else if (_current == &_music)
+				_current->channel[9]->volume(_current->volume[9] * _musicVolume / 255);
+		}
 		_current->channel[channel]->send(b);
 		if ((b & 0xFFF0) == 0x79B0) {
 			// We have received a "Reset All Controllers" message
@@ -143,7 +152,10 @@ void MidiPlayer::send(uint32 b) {
 			// consistent behaviour, explicitly set the volume to
 			// what we think it should be.
 
-			_current->channel[channel]->volume(_current->volume[channel] * _masterVolume / 255);
+			if (_current == &_sfx)
+				_current->channel[channel]->volume(_current->volume[channel] * _sfxVolume / 255);
+			else if (_current == &_music)
+				_current->channel[channel]->volume(_current->volume[channel] * _musicVolume / 255);
 		}
 	}
 }
@@ -255,30 +267,36 @@ void MidiPlayer::pause(bool b) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i < 16; ++i) {
 		if (_music.channel[i])
-			_music.channel[i]->volume(_paused ? 0 : (_music.volume[i] * _masterVolume / 255));
+			_music.channel[i]->volume(_paused ? 0 : (_music.volume[i] * _musicVolume / 255));
 		if (_sfx.channel[i])
-			_sfx.channel[i]->volume(_paused ? 0 : (_sfx.volume[i] * _masterVolume / 255));
+			_sfx.channel[i]->volume(_paused ? 0 : (_sfx.volume[i] * _sfxVolume / 255));
 	}
 }
 
-void MidiPlayer::setVolume(int volume) {
-	if (volume < 0)
-		volume = 0;
-	else if (volume > 255)
-		volume = 255;
+void MidiPlayer::setVolume(int musicVol, int sfxVol) {
+	if (musicVol < 0)
+		musicVol = 0;
+	else if (musicVol > 255)
+		musicVol = 255;
+	if (sfxVol < 0)
+		sfxVol = 0;
+	else if (sfxVol > 255)
+		sfxVol = 255;
 
-	if (_masterVolume == volume)
+	if (_musicVolume == musicVol && _sfxVolume == sfxVol)
 		return;
-	_masterVolume = volume;
+
+	_musicVolume = musicVol;
+	_sfxVolume = sfxVol;
 
 	// Now tell all the channels this.
 	Common::StackLock lock(_mutex);
 	if (_driver && !_paused) {
 		for (int i = 0; i < 16; ++i) {
 			if (_music.channel[i])
-				_music.channel[i]->volume(_music.volume[i] * _masterVolume / 255);
+				_music.channel[i]->volume(_music.volume[i] * _musicVolume / 255);
 			if (_sfx.channel[i])
-				_sfx.channel[i]->volume(_sfx.volume[i] * _masterVolume / 255);
+				_sfx.channel[i]->volume(_sfx.volume[i] * _sfxVolume / 255);
 		}
 	}
 }
@@ -354,7 +372,7 @@ void MidiPlayer::resetVolumeTable() {
 	for (i = 0; i < 16; ++i) {
 		_music.volume[i] = _sfx.volume[i] = 127;
 		if (_driver)
-			_driver->send(((_masterVolume >> 1) << 16) | 0x7B0 | i);
+			_driver->send(((_musicVolume >> 1) << 16) | 0x7B0 | i);
 	}
 }
 

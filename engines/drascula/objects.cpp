@@ -51,7 +51,9 @@ void DrasculaEngine::chooseObject(int object) {
 		if (takeObject == 1 && menuScreen == 0)
 			addObject(pickedObject);
 	}
-	copyBackground(_x1d_menu[object], _y1d_menu[object], 0, 0, OBJWIDTH,OBJHEIGHT, backSurface, drawSurface3);
+	for (int i = 0; i < OBJHEIGHT; i++)
+		memcpy(mouseCursor + i * OBJWIDTH, backSurface + _x1d_menu[object] + (_y1d_menu[object] + i) * 320, OBJWIDTH);
+	setCursor(kCursorCurrentItem);
 	takeObject = 1;
 	pickedObject = object;
 }
@@ -70,23 +72,10 @@ int DrasculaEngine::removeObject(int obj) {
 	return result;
 }
 
-void DrasculaEngine::withoutVerb() {
-	int c = (menuScreen == 1) ? 0 : 171;
-
-	if (currentChapter == 5) {
-		if (takeObject == 1 && pickedObject != 16)
-			addObject(pickedObject);
-	} else {
-		if (takeObject == 1)
-			addObject(pickedObject);
-	}
-	copyBackground(0, c, 0, 0, OBJWIDTH,OBJHEIGHT, backSurface, drawSurface3);
-
-	takeObject = 0;
-	hasName = 0;
-}
-
 void DrasculaEngine::gotoObject(int pointX, int pointY) {
+	bool cursorVisible = isCursorVisible();
+	hideCursor();
+
 	if (currentChapter == 5 || currentChapter == 6) {
 		if (hare_se_ve == 0) {
 			curX = roomX;
@@ -113,6 +102,9 @@ void DrasculaEngine::gotoObject(int pointX, int pointY) {
 	}
 	updateRoom();
 	updateScreen();
+
+	if (cursorVisible)
+		showCursor();
 }
 
 void DrasculaEngine::checkObjects() {
@@ -186,7 +178,7 @@ bool DrasculaEngine::pickupObject() {
 	}
 	updateEvents();
 	if (takeObject == 0)
-		withoutVerb();
+		selectVerb(0);
 
 	return false;
 }
@@ -256,7 +248,7 @@ void DrasculaEngine::updateVisible() {
 		if (roomNumber == 22 && flags[27] == 1)
 			visible[3] = 0;
 		if (roomNumber == 26 && flags[21] == 0)
-			strcpy(objName[2], _textmisc[_lang][0]);
+			strcpy(objName[2], _textmisc[0]);
 		if (roomNumber == 26 && flags[18] == 1)
 			visible[2] = 0;
 		if (roomNumber == 26 && flags[12] == 1)

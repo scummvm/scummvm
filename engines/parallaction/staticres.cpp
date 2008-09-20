@@ -29,7 +29,7 @@
 
 namespace Parallaction {
 
-byte Parallaction_ns::_resMouseArrow[256] = {
+byte Input::_resMouseArrow_NS[256] = {
 	0x12, 0x13, 0x13, 0x13, 0x13, 0x13, 0x13, 0x13, 0x13, 0x13, 0x13, 0x13, 0x13, 0x13, 0x00, 0x00,
 	0x11, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x13, 0x00, 0x00, 0x00,
 	0x11, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x13, 0x00, 0x00, 0x00, 0x00,
@@ -335,12 +335,6 @@ const Parallaction_br::Callable Parallaction_br::_dosCallables[] = {
 
 void Parallaction_ns::initResources() {
 
-//	_zoneFlagNamesRes = _zoneFlagNamesRes_ns;
-//	_zoneTypeNamesRes = _zoneTypeNamesRes_ns;
-//	_commandsNamesRes = _commandsNamesRes_ns;
-	_callableNamesRes = _callableNamesRes_ns;
-//	_instructionNamesRes = _instructionNamesRes_ns;
-
 	_callableNames = new Table(ARRAYSIZE(_callableNamesRes_ns), _callableNamesRes_ns);
 
 	_localFlagNames = new FixedTable(NUM_LOCATIONS, 1);
@@ -355,13 +349,6 @@ void Parallaction_ns::initResources() {
 }
 
 void Parallaction_br::initResources() {
-
-//	_zoneFlagNamesRes = _zoneFlagNamesRes_br;
-//	_zoneTypeNamesRes = _zoneTypeNamesRes_br;
-//	_commandsNamesRes = _commandsNamesRes_br;
-	_callableNamesRes = _callableNamesRes_br;
-//	_instructionNamesRes = _instructionNamesRes_br;
-//	_audioCommandsNamesRes = _audioCommandsNamesRes_br;
 
 	_callableNames = new Table(ARRAYSIZE(_callableNamesRes_br), _callableNamesRes_br);
 

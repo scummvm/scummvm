@@ -247,15 +247,16 @@ void TextviewView::scriptDone() {
 }
 
 void TextviewView::processLines() {
+	_script->readLine_OLD(_currentLine, 79);
 	if (_script->eos())
 		error("Attempted to read past end of response file");
 
 	while (!_script->eos()) {
-		_script->readLine(_currentLine, 79);
-
 		// Commented out line, so go loop for another
-		if (_currentLine[0] == '#')
+		if (_currentLine[0] == '#') {
+			_script->readLine_OLD(_currentLine, 79);
 			continue;
+		}
 
 		// Process the line
 		char *cStart = strchr(_currentLine, '[');
@@ -284,6 +285,8 @@ void TextviewView::processLines() {
 			processText();
 			break;
 		}
+
+		_script->readLine_OLD(_currentLine, 79);
 	}
 }
 
@@ -594,6 +597,7 @@ void AnimviewView::scriptDone() {
 }
 
 void AnimviewView::processLines() {
+	_script->readLine_OLD(_currentLine, 79);
 	if (_script->eos()) {
 		// end of script, end animation
 		scriptDone();
@@ -601,8 +605,6 @@ void AnimviewView::processLines() {
 	}
 
 	while (!_script->eos()) {
-		_script->readLine(_currentLine, 79);
-
 		// Process the line
 		char *cStart = strchr(_currentLine, '-');
 		if (cStart) {
@@ -635,6 +637,8 @@ void AnimviewView::processLines() {
 			//printf("File: %s\n", _currentLine);
 			break;
 		}
+
+		_script->readLine_OLD(_currentLine, 79);
 	}
 }
 

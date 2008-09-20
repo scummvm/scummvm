@@ -276,31 +276,14 @@ void Script::sfTakeObject(SCRIPTFUNC_PARAMS) {
 	if (obj->_sceneNumber != ITE_SCENE_INV) {
 		obj->_sceneNumber = ITE_SCENE_INV;
 
-		// WORKAROUND for a problematic object in IHNM
-		// There are 3 different scenes in front of the zeppelin, in Gorrister's chapter. A scene where the
-		// zeppelin is in the air (scene 17), a scene where it approaches Gorrister's (scene 16) and another one
-		// where it has landed (scene 18).
-		// In two of these scenes (the "on air" and "approaching" ones), when the player uses the knife with the
-		// rope, the associated script picks up object id 16392. In the "zeppelin landed" scene (scene 18), the
-		// associated script picks up object id 16390. This seems to be a script bug, as it should be id 16392,
-		// like in the other two scenes, as it is the same object (the rope). Picking up object 16390 leads to an
-		// assertion anyway, therefore we change the problematic object (16390) to the correct one (16392) here.
-		// Fixes bug #1861126 - "IHNM: Crash when Gorrister cuts sheet in the mooring ring"
-		if (_vm->getGameType() == GType_IHNM) {
-			if (_vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() == 18) {
-				if (objectId == 16390)
-					objectId = 16392;
-			}
-		}
-
-		// WORKAROUND for two incorrect object sprites in the IHNM demo
-		// (the mirror and the icon in Ted's part). Set them correctly here
-		if (_vm->getGameId() == GID_IHNM_DEMO) {
-			if (objectId == 16408)
-				obj->_spriteListResourceId = 24;
-			if (objectId == 16409)
-				obj->_spriteListResourceId = 25;
-		}
+		// Normally, when objects are picked up, they should always have the same
+		// _spriteListResourceId as their _index value. Some don't in IHNM, so
+		// we fix their sprite here
+		// Fixes bugs #2057200 - "IHNM: Invisible inventory objects", 
+		// #1861126 - "IHNM: Crash when Gorrister cuts sheet in the mooring ring"
+		// and some incorrect objects in the IHNM demo
+		if (_vm->getGameType() == GType_IHNM)
+			obj->_spriteListResourceId = obj->_index;
 
 		_vm->_interface->addToInventory(objectId);
 	}
@@ -356,7 +339,7 @@ void Script::sfMainMode(SCRIPTFUNC_PARAMS) {
 	// exit the game. Known non-interactive demos are GID_ITE_MACDEMO1 and
 	// GID_ITE_WINDEMO1
 	if (_vm->getFeatures() & GF_NON_INTERACTIVE)
-		_vm->shutDown();
+		_vm->quitGame();
 }
 
 // Script function #6 (0x06) blocking
@@ -572,7 +555,7 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	}
 
 	if (_vm->getGameType() == GType_ITE && sceneNumber < 0) {
-		_vm->shutDown();
+		_vm->quitGame();
 		return;
 	}
 
@@ -1482,7 +1465,7 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 		int16 param = thread->pop() + 9;
 
 		if (param >= 9 && param <= 34) {
-			_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
+			_vm->_music->setVolume(_vm->_musicVolume, 1);
 			_vm->_music->play(param);
 		} else {
 			_vm->_music->stop();
@@ -1499,7 +1482,7 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 		if (param1 >= _vm->_music->_songTableLen) {
 			warning("sfPlayMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTableLen - 1);
 		} else {
-			_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
+			_vm->_music->setVolume(_vm->_musicVolume, 1);
 			_vm->_music->play(_vm->_music->_songTable[param1], param2 ? MUSIC_LOOP : MUSIC_NORMAL);
 			if (!_vm->_scene->haveChapterPointsChanged()) {
 				_vm->_scene->setCurrentMusicTrack(param1);
@@ -1945,7 +1928,7 @@ void Script::sfQueueMusic(SCRIPTFUNC_PARAMS) {
 	if (param1 >= _vm->_music->_songTableLen) {
 		warning("sfQueueMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTableLen - 1);
 	} else {
-		_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
+		_vm->_music->setVolume(_vm->_musicVolume, 1);
 		event.type = kEvTOneshot;
 		event.code = kMusicEvent;
 		event.param = _vm->_music->_songTable[param1];

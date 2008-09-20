@@ -113,7 +113,7 @@ bool ResourceManager::init() {
 	// The resource.inf file is a simple text file containing the names of
 	// all the resource files.
 
-	while (file.readLine(_resFiles[_totalClusters].fileName, sizeof(_resFiles[_totalClusters].fileName))) {
+	while (file.readLine_OLD(_resFiles[_totalClusters].fileName, sizeof(_resFiles[_totalClusters].fileName))) {
 		_resFiles[_totalClusters].numEntries = -1;
 		_resFiles[_totalClusters].entryTab = NULL;
 		if (++_totalClusters >= MAX_res_files) {
@@ -412,7 +412,7 @@ Common::File *ResourceManager::openCluFile(uint16 fileNum) {
 		// quit while the game is asking for the user to insert a CD.
 		// But recovering from this situation gracefully is just too
 		// much trouble, so quit now.
-		if (_vm->_quit)
+		if (_vm->quit())
 			g_system->quit();
 
 		// If the file is supposed to be on hard disk, or we're

@@ -38,7 +38,7 @@
 #include "create_drascula.h"
 #include "staticdata.h"
 
-#define DRASCULA_DAT_VER 2	// 1 byte
+#define DRASCULA_DAT_VER 4	// 1 byte
 
 static void writeByte(FILE *fp, uint8 b) {
 	fwrite(&b, 1, 1, fp);
@@ -170,6 +170,16 @@ int main(int argc, char *argv[]) {
 		writeSint16BE(outFile, roomActions[i].action);
 		writeSint16BE(outFile, roomActions[i].objectID);
 		writeSint16BE(outFile, roomActions[i].speechID);
+	}
+
+	// Write talk sequences
+	writeUint16BE(outFile, ARRAYSIZE(talkSequences));
+
+	for (i = 0; i < ARRAYSIZE(talkSequences); i++) {
+		writeSint16BE(outFile, talkSequences[i].chapter);
+		writeSint16BE(outFile, talkSequences[i].sequence);
+		writeSint16BE(outFile, talkSequences[i].commandType);
+		writeSint16BE(outFile, talkSequences[i].action);
 	}
 
 	// langs

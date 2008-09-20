@@ -28,7 +28,7 @@
 #include "common/system.h"
 #include "common/rect.h"
 #include "common/str.h"
-#include "common/file.h"
+#include "common/fs.h"
 #include "common/config-file.h"
 
 #include "graphics/surface.h"
@@ -305,7 +305,7 @@ public:
 	bool isThemeLoadingRequired();
 	virtual ThemeEval *evaluator() = 0;
 
-	static bool themeConfigUseable(const FilesystemNode &node, Common::String &themeName);
+	static bool themeConfigUseable(const Common::FilesystemNode &node, Common::String &themeName);
 	static bool themeConfigParseHeader(Common::String header, Common::String &themeName);
 
 	virtual const Common::String &getThemeFileName() const = 0;
@@ -321,7 +321,8 @@ public:
 
 	//! Special image ids for images used in the GUI
 	enum kThemeImages {
-		kImageLogo = 0		//! ScummVM Logo used in the launcher
+		kImageLogo = 0,		//! ScummVM Logo used in the launcher
+		kImageLogoSmall		//! ScummVM logo used in the GMM
 	};
 
 	/**

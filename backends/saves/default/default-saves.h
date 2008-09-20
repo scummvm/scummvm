@@ -28,6 +28,7 @@
 
 #include "common/savefile.h"
 #include "common/str.h"
+#include "common/fs.h"
 
 /**
  * Provides a default savefile manager implementation for common platforms.
@@ -54,7 +55,7 @@ protected:
 	 * Checks the given path for read access, existence, etc.
 	 * Sets the internal error and error message accordingly.
 	 */
-	void checkPath(const FilesystemNode &dir);
+	void checkPath(const Common::FilesystemNode &dir);
 };
 
 #endif

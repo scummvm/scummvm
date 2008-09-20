@@ -183,13 +183,12 @@ uint16 Script::readLineToken(bool errorOnEOF) {
 
 	clearTokens();
 
-	bool inBlockComment = false, inLineComment;
+	bool inBlockComment = false;
 
 	char buf[200];
 	char *line = NULL;
+	char *start;
 	do {
-		inLineComment = false;
-
 		line = readLine(buf, 200);
 
 		if (line == NULL) {
@@ -198,21 +197,27 @@ uint16 Script::readLineToken(bool errorOnEOF) {
 			else
 				return 0;
 		}
-		line = Common::ltrim(line);
+		start = Common::ltrim(line);
 
-		if (isCommentLine(line)) {
-			inLineComment = true;
+		if (isCommentLine(start)) {
+			// ignore this line
+			start[0] = '\0';
 		} else
-		if (isStartOfCommentBlock(line)) {
+		if (isStartOfCommentBlock(start)) {
+			// mark this and the following lines as comment
 			inBlockComment = true;
 		} else
-		if (isEndOfCommentBlock(line)) {
+		if (isEndOfCommentBlock(start)) {
+			// comment is finished, so stop ignoring
 			inBlockComment = false;
+			// the current line must be skipped, though,
+			// as it contains the end-of-comment marker
+			start[0] = '\0';
 		}
 
-	} while (inLineComment || inBlockComment || strlen(line) == 0);
+	} while (inBlockComment || strlen(start) == 0);
 
-	return fillTokens(line);
+	return fillTokens(start);
 }
 
 
@@ -403,7 +408,9 @@ void PreProcessor::preprocessScript(Script &script, StatementList &list) {
 			break;
 
 		StatementDef *def = findDef(_tokens[0]);
-		assert(def);
+		if (!def) {
+			error("PreProcessor::preprocessScript: unknown statement '%s' found\n", _tokens[0]);
+		}
 
 		text = def->makeLine(script);
 		int score = getDefScore(def);

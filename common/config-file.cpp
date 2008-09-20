@@ -77,7 +77,6 @@ bool ConfigFile::loadFromSaveFile(const char *filename) {
 }
 
 bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
-	char buf[MAXLINELEN];
 	Section section;
 	KeyValue kv;
 	String comment;
@@ -86,18 +85,21 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 	// TODO: Detect if a section occurs multiple times (or likewise, if
 	// a key occurs multiple times inside one section).
 
-	while (!stream.eos()) {
+	while (!stream.eos() && !stream.ioFailed()) {
 		lineno++;
-		if (!stream.readLine(buf, MAXLINELEN))
-			break;
 
-		if (buf[0] == '#') {
+		// Read a line
+		String line = stream.readLine();
+
+		if (line.size() == 0) {
+			// Do nothing
+		} else if (line[0] == '#') {
 			// Accumulate comments here. Once we encounter either the start
 			// of a new section, or a key-value-pair, we associate the value
 			// of the 'comment' variable with that entity.
-			comment += buf;
+			comment += line;
 			comment += "\n";
-		} else if (buf[0] == '(') {
+		} else if (line[0] == '(') {
 			// HACK: The following is a hack added by Kirben to support the
 			// "map.ini" used in the HE SCUMM game "SPY Fox in Hold the Mustard".
 			//
@@ -105,11 +107,11 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			// but the current design of this class doesn't allow to do that
 			// in a nice fashion (a "isMustard" parameter is *not* a nice
 			// solution).
-			comment += buf;
+			comment += line;
 			comment += "\n";
-		} else if (buf[0] == '[') {
+		} else if (line[0] == '[') {
 			// It's a new section which begins here.
-			char *p = buf + 1;
+			const char *p = line.c_str() + 1;
 			// Get the section name, and check whether it's valid (that
 			// is, verify that it only consists of alphanumerics,
 			// dashes and underscores).
@@ -121,23 +123,25 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			else if (*p != ']')
 				error("ConfigFile::loadFromStream: Invalid character '%c' occured in section name in line %d", *p, lineno);
 
-			*p = 0;
-
 			// Previous section is finished now, store it.
 			if (!section.name.empty())
 				_sections.push_back(section);
 
-			section.name = buf + 1;
+			section.name = String(line.c_str() + 1, p);
 			section.keys.clear();
 			section.comment = comment;
 			comment.clear();
 
 			assert(isValidName(section.name));
 		} else {
-			// Skip leading & trailing whitespaces
-			char *t = rtrim(ltrim(buf));
+			// This line should be a line with a 'key=value' pair, or an empty one.
+			
+			// Skip leading whitespaces
+			const char *t = line.c_str();
+			while (isspace(*t))
+				t++;
 
-			// Skip empty lines
+			// Skip empty lines / lines with only whitespace
 			if (*t == 0)
 				continue;
 
@@ -146,14 +150,20 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 				error("ConfigFile::loadFromStream: Key/value pair found outside a section in line %d", lineno);
 			}
 
-			// Split string at '=' into 'key' and 'value'.
-			char *p = strchr(t, '=');
+			// Split string at '=' into 'key' and 'value'. First, find the "=" delimeter.
+			const char *p = strchr(t, '=');
 			if (!p)
-				error("ConfigFile::loadFromStream: Junk found in line line %d: '%s'", lineno, t);
-			*p = 0;
+				error("Config file buggy: Junk found in line line %d: '%s'", lineno, t);
 
-			kv.key = rtrim(t);
-			kv.value = ltrim(p + 1);
+			// Extract the key/value pair
+			kv.key = String(t, p);
+			kv.value = String(p + 1);
+			
+			// Trim of spaces
+			kv.key.trim();
+			kv.value.trim();
+
+			// Store comment
 			kv.comment = comment;
 			comment.clear();
 
@@ -225,7 +235,7 @@ bool ConfigFile::saveToStream(WriteStream &stream) {
 void ConfigFile::removeSection(const String &section) {
 	assert(isValidName(section));
 	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
-		if (!scumm_stricmp(section.c_str(), i->name.c_str())) {
+		if (section.equalsIgnoreCase(i->name)) {
 			_sections.erase(i);
 			return;
 		}
@@ -318,7 +328,7 @@ const ConfigFile::SectionKeyList ConfigFile::getKeys(const String &section) cons
 
 ConfigFile::Section *ConfigFile::getSection(const String &section) {
 	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
-		if (!scumm_stricmp(section.c_str(), i->name.c_str())) {
+		if (section.equalsIgnoreCase(i->name)) {
 			return &(*i);
 		}
 	}
@@ -327,7 +337,7 @@ ConfigFile::Section *ConfigFile::getSection(const String &section) {
 
 const ConfigFile::Section *ConfigFile::getSection(const String &section) const {
 	for (List<Section>::const_iterator i = _sections.begin(); i != _sections.end(); ++i) {
-		if (!scumm_stricmp(section.c_str(), i->name.c_str())) {
+		if (section.equalsIgnoreCase(i->name)) {
 			return &(*i);
 		}
 	}
@@ -340,7 +350,7 @@ bool ConfigFile::Section::hasKey(const String &key) const {
 
 const ConfigFile::KeyValue* ConfigFile::Section::getKey(const String &key) const {
 	for (List<KeyValue>::const_iterator i = keys.begin(); i != keys.end(); ++i) {
-		if (!scumm_stricmp(key.c_str(), i->key.c_str())) {
+		if (key.equalsIgnoreCase(i->key)) {
 			return &(*i);
 		}
 	}
@@ -349,7 +359,7 @@ const ConfigFile::KeyValue* ConfigFile::Section::getKey(const String &key) const
 
 void ConfigFile::Section::setKey(const String &key, const String &value) {
 	for (List<KeyValue>::iterator i = keys.begin(); i != keys.end(); ++i) {
-		if (!scumm_stricmp(key.c_str(), i->key.c_str())) {
+		if (key.equalsIgnoreCase(i->key)) {
 			i->value = value;
 			return;
 		}
@@ -363,7 +373,7 @@ void ConfigFile::Section::setKey(const String &key, const String &value) {
 
 void ConfigFile::Section::removeKey(const String &key) {
 	for (List<KeyValue>::iterator i = keys.begin(); i != keys.end(); ++i) {
-		if (!scumm_stricmp(key.c_str(), i->key.c_str())) {
+		if (key.equalsIgnoreCase(i->key)) {
 			keys.erase(i);
 			return;
 		}

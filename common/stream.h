@@ -41,19 +41,30 @@ public:
 	virtual ~Stream() {}
 
 	/**
-	 * Returns true if any I/O failure occurred.
-	 * This flag is never cleared automatically. In order to clear it,
-	 * client code has to call clearIOFailed() explicitly.
-	 *
-	 * @todo Instead of returning a plain bool, maybe we should define
-	 *       a list of error codes which can be returned here.
+	 * DEPRECATED: Use err() or eos() instead.
+	 * Returns true if any I/O failure occurred or the end of the
+	 * stream was reached while reading.
 	 */
-	virtual bool ioFailed() const { return false; }
+	virtual bool ioFailed() const { return err(); }
 
 	/**
+	 * DEPRECATED: Don't use this unless you are still using ioFailed().
 	 * Reset the I/O error status.
 	 */
-	virtual void clearIOFailed() {}
+	virtual void clearIOFailed() { clearErr(); }
+
+	/**
+	 * Returns true if an I/O failure occurred.
+	 * This flag is never cleared automatically. In order to clear it,
+	 * client code has to call clearErr() explicitly.
+	 */
+	virtual bool err() const { return false; }
+
+	/**
+	 * Reset the I/O error status as returned by err().
+	 * For a ReadStream, also reset the end-of-stream status returned by eos().
+	 */
+	virtual void clearErr() {}
 };
 
 /**
@@ -75,8 +86,10 @@ public:
 	 * Commit any buffered data to the underlying channel or
 	 * storage medium; unbuffered streams can use the default
 	 * implementation.
+	 *
+	 * @return true on success, false in case of a failure
 	 */
-	virtual void flush() {}
+	virtual bool flush() { return true; }
 
 	/**
 	 * Finalize and close this stream. To be called right before this
@@ -85,7 +98,7 @@ public:
 	 * closing (and this flushing, if buffered) the stream.
 	 *
 	 * After this method has been called, no further writes may be
-	 * peformed on the stream. Calling ioFailed() is allowed.
+	 * performed on the stream. Calling err() is allowed.
 	 *
 	 * By default, this just flushes the stream.
 	 */
@@ -151,7 +164,9 @@ public:
 class ReadStream : virtual public Stream {
 public:
 	/**
-	 * Returns true if the end of the stream has been reached.
+	 * Returns true if a read failed because the stream has been reached.
+	 * This flag is cleared by clearErr().
+	 * For a SeekableReadStream, it is also cleared by a successful seek.
 	 */
 	virtual bool eos() const = 0;
 
@@ -167,13 +182,19 @@ public:
 
 
 	// The remaining methods all have default implementations; subclasses
-	// need not (and should not) overload them.
+	// in general should not overload them.
 
 	/**
-	 * Read am unsigned byte from the stream and return it.
+	 * DEPRECATED
+	 * Default implementation for backward compatibility
+	 */
+	virtual bool ioFailed() { return (eos() || err()); }
+
+	/**
+	 * Read an unsigned byte from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	byte readByte() {
 		byte b = 0;
@@ -185,7 +206,7 @@ public:
 	 * Read a signed byte from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ). 
 	 */
 	int8 readSByte() {
 		int8 b = 0;
@@ -198,7 +219,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	uint16 readUint16LE() {
 		uint16 a = readByte();
@@ -211,7 +232,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	uint32 readUint32LE() {
 		uint32 a = readUint16LE();
@@ -224,7 +245,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	uint16 readUint16BE() {
 		uint16 b = readByte();
@@ -237,7 +258,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	uint32 readUint32BE() {
 		uint32 b = readUint16BE();
@@ -250,7 +271,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	int16 readSint16LE() {
 		return (int16)readUint16LE();
@@ -261,7 +282,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	int32 readSint32LE() {
 		return (int32)readUint32LE();
@@ -272,7 +293,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	int16 readSint16BE() {
 		return (int16)readUint16BE();
@@ -283,7 +304,7 @@ public:
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling ioFailed()).
+	 * calling err() and eos() ).
 	 */
 	int32 readSint32BE() {
 		return (int32)readUint32BE();
@@ -293,7 +314,9 @@ public:
 	 * Read the specified amount of data into a malloc'ed buffer
 	 * which then is wrapped into a MemoryReadStream.
 	 * The returned stream might contain less data than requested,
-	 * if reading more failed.
+	 * if reading more failed, because of an I/O error or because
+	 * the end of the stream was reached. Which can be determined by
+	 * calling err() and eos().
 	 */
 	MemoryReadStream *readStream(uint32 dataSize);
 
@@ -303,57 +326,89 @@ public:
 /**
  * Interface for a seekable & readable data stream.
  *
- * @todo We really need better error handling here!
- *       Like seek should somehow indicate whether it failed.
+ * @todo Get rid of SEEK_SET, SEEK_CUR, or SEEK_END, use our own constants
  */
 class SeekableReadStream : virtual public ReadStream {
 public:
 
-	virtual uint32 pos() const = 0;
-	virtual uint32 size() const = 0;
-
-	virtual void seek(int32 offset, int whence = SEEK_SET) = 0;
-
-	void skip(uint32 offset) { seek(offset, SEEK_CUR); }
+	/**
+	 * Obtains the current value of the stream position indicator of the
+	 * stream.
+	 *
+	 * @return the current position indicator, or -1 if an error occurred.
+	 */
+	virtual int32 pos() const = 0;
 
 	/**
-	 * Read one line of text from a CR or CR/LF terminated plain text file.
-	 * This method is a rough analog of the (f)gets function.
+	 * Obtains the total size of the stream, measured in bytes.
+	 * If this value is unknown or can not be computed, -1 is returned.
 	 *
-	 * @bug A main difference (and flaw) in this function is that there is no
-	 * way to detect that a line exceeeds the length of the buffer.
-	 * Code which needs this should use the new readLine_NEW() method instead.
-	 *
-	 * @param buf	the buffer to store into
-	 * @param bufSize	the size of the buffer
-	 * @return a pointer to the read string, or NULL if an error occurred
-	 *
-	 * @note The line terminator (CR or CR/LF) is stripped and not inserted
-	 *       into the buffer.
+	 * @return the size of the stream, or -1 if an error occurred
 	 */
-	virtual char *readLine(char *buf, size_t bufSize);
+	virtual int32 size() const = 0;
+
+	/**
+	 * Sets the stream position indicator for the stream. The new position,
+	 * measured in bytes, is obtained by adding offset bytes to the position
+	 * specified by whence. If whence is set to SEEK_SET, SEEK_CUR, or
+	 * SEEK_END, the offset is relative to the start of the file, the current
+	 * position indicator, or end-of-file, respectively. A successful call
+	 * to the seek() method clears the end-of-file indicator for the stream.
+	 *
+	 * @param offset	the relative offset in bytes
+	 * @param whence	the seek reference: SEEK_SET, SEEK_CUR, or SEEK_END
+	 * @return true on success, false in case of a failure
+	 */
+	virtual bool seek(int32 offset, int whence = SEEK_SET) = 0;
+
+	/**
+	 * TODO: Get rid of this??? Or keep it and document it
+	 * @return true on success, false in case of a failure
+	 */
+	virtual bool skip(uint32 offset) { return seek(offset, SEEK_CUR); }
+
+	/**
+	 * DEPRECATED: Do not use this method! Instead use readLine_NEW() or readline().
+	 */
+	virtual char *readLine_OLD(char *buf, size_t bufSize);
 
 	/**
 	 * Reads at most one less than the number of characters specified
 	 * by bufSize from the and stores them in the string buf. Reading
-	 * stops when the end of a line is reached (CR, CR/LF or LF), at
-	 * end-of-file or error.  The newline, if any, is retained (CR and
-	 * CR/LF are translated to LF = 0xA = '\n').  If any characters are
-	 * read and there is no error, a `\0' character is appended to end
-	 * the string.
+	 * stops when the end of a line is reached (CR, CR/LF or LF), and
+	 * at end-of-file or error. The newline, if any, is retained (CR
+	 * and CR/LF are translated to LF = 0xA = '\n'). If any characters
+	 * are read and there is no error, a `\0' character is appended
+	 * to end the string.
 	 *
 	 * Upon successful completion, return a pointer to the string. If
 	 * end-of-file occurs before any characters are read, returns NULL
 	 * and the buffer contents remain unchanged.  If an error occurs,
 	 * returns NULL and the buffer contents are indeterminate.
 	 * This method does not distinguish between end-of-file and error;
-	 * callers muse use ioFailed() or eos() to determine which occurred.
+	 * callers must use err() or eos() to determine which occurred.
+	 *
+	 * @note This methods is closely modeled after the standard fgets()
+	 *       function from stdio.h.
 	 *
 	 * @param buf	the buffer to store into
 	 * @param bufSize	the size of the buffer
 	 * @return a pointer to the read string, or NULL if an error occurred
 	 */
 	virtual char *readLine_NEW(char *s, size_t bufSize);
+
+
+	/**
+	 * Reads a full line and returns it as a Common::String. Reading
+	 * stops when the end of a line is reached (CR, CR/LF or LF), and
+	 * at end-of-file or error.
+	 *
+	 * Upon successful completion, return a string with the content
+	 * of the line, *without* the end of a line marker. This method
+	 * does not indicate whether an error occured. Callers muse use
+	 * ioFailed() or eos() to determine whether an exception occurred.
+	 */
+	virtual String readLine();
 };
 
 /**
@@ -369,19 +424,23 @@ protected:
 	bool _disposeParentStream;
 	uint32 _pos;
 	uint32 _end;
+	bool _eos;
 public:
 	SubReadStream(ReadStream *parentStream, uint32 end, bool disposeParentStream = false)
 		: _parentStream(parentStream),
 		  _disposeParentStream(disposeParentStream),
 		  _pos(0),
-		  _end(end) {
+		  _end(end),
+		  _eos(false) {
 		assert(parentStream);
 	}
 	~SubReadStream() {
 		if (_disposeParentStream) delete _parentStream;
 	}
 
-	virtual bool eos() const { return _pos == _end; }
+	virtual bool eos() const { return _eos; }
+	virtual bool err() const { return _parentStream->err(); }
+	virtual void clearErr() { _eos = false; _parentStream->clearErr(); }
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
 
@@ -397,10 +456,10 @@ protected:
 public:
 	SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool disposeParentStream = false);
 
-	virtual uint32 pos() const { return _pos - _begin; }
-	virtual uint32 size() const { return _end - _begin; }
+	virtual int32 pos() const { return _pos - _begin; }
+	virtual int32 size() const { return _end - _begin; }
 
-	virtual void seek(int32 offset, int whence = SEEK_SET);
+	virtual bool seek(int32 offset, int whence = SEEK_SET);
 };
 
 /**
@@ -453,6 +512,8 @@ public:
 	virtual bool eos() const { return (_pos == _bufSize) && _parentStream->eos(); }
 	virtual bool ioFailed() const { return _parentStream->ioFailed(); }
 	virtual void clearIOFailed() { _parentStream->clearIOFailed(); }
+	virtual bool err() const { return _parentStream->err(); }
+	virtual void clearErr() { _parentStream->clearErr(); }
 
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
@@ -467,10 +528,10 @@ protected:
 public:
 	BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, bool disposeParentStream = false);
 
-	virtual uint32 pos() const { return _parentStream->pos() - (_bufSize - _pos); }
-	virtual uint32 size() const { return _parentStream->size(); }
+	virtual int32 pos() const { return _parentStream->pos() - (_bufSize - _pos); }
+	virtual int32 size() const { return _parentStream->size(); }
 
-	virtual void seek(int32 offset, int whence = SEEK_SET);
+	virtual bool seek(int32 offset, int whence = SEEK_SET);
 };
 
 
@@ -487,6 +548,7 @@ private:
 	uint32 _pos;
 	byte _encbyte;
 	bool _disposeMemory;
+	bool _eos;
 
 public:
 
@@ -501,7 +563,8 @@ public:
 		_size(dataSize),
 		_pos(0),
 		_encbyte(0),
-		_disposeMemory(disposeMemory) {}
+		_disposeMemory(disposeMemory),
+		_eos(false) {}
 
 	~MemoryReadStream() {
 		if (_disposeMemory)
@@ -512,11 +575,13 @@ public:
 
 	uint32 read(void *dataPtr, uint32 dataSize);
 
-	bool eos() const { return _pos == _size; }
-	uint32 pos() const { return _pos; }
-	uint32 size() const { return _size; }
+	bool eos() const { return _eos; }
+	void clearErr() { _eos = false; }
 
-	void seek(int32 offs, int whence = SEEK_SET);
+	int32 pos() const { return _pos; }
+	int32 size() const { return _size; }
+
+	bool seek(int32 offs, int whence = SEEK_SET);
 };
 
 
@@ -569,7 +634,6 @@ public:
 		return dataSize;
 	}
 
-	bool eos() const { return _pos == _bufSize; }
 	uint32 pos() const { return _pos; }
 	uint32 size() const { return _bufSize; }
 };
@@ -623,7 +687,6 @@ public:
 		return dataSize;
 	}
 
-	bool eos() const { return false; }
 	uint32 pos() const { return _pos; }
 	uint32 size() const { return _size; }
 

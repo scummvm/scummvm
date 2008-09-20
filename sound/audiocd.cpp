@@ -29,7 +29,6 @@
 #include "sound/vorbis.h"
 #include "sound/flac.h"
 #include "engines/engine.h"
-#include "common/file.h"
 #include "common/util.h"
 #include "common/system.h"
 

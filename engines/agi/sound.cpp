@@ -1013,7 +1013,7 @@ bool IIgsSoundMgr::loadInstrumentHeaders(const Common::String &exePath, const II
 
 	// Open the executable file and check that it has correct size
 	file.open(exePath);
-	if (file.size() != exeInfo.exeSize) {
+	if (file.size() != (int32)exeInfo.exeSize) {
 		debugC(3, kDebugLevelSound, "Apple IIGS executable (%s) has wrong size (Is %d, should be %d)",
 			exePath.c_str(), file.size(), exeInfo.exeSize);
 	}
@@ -1023,7 +1023,7 @@ bool IIgsSoundMgr::loadInstrumentHeaders(const Common::String &exePath, const II
 	file.close();
 
 	// Check that we got enough data to be able to parse the instruments
-	if (data && data->size() >= (exeInfo.instSetStart + exeInfo.instSet.byteCount)) {
+	if (data && data->size() >= (int32)(exeInfo.instSetStart + exeInfo.instSet.byteCount)) {
 		// Check instrument set's length (The info's saved in the executable)
 		data->seek(exeInfo.instSetStart - 4);
 		uint16 instSetByteCount = data->readUint16LE();
@@ -1107,14 +1107,14 @@ bool IIgsSoundMgr::loadWaveFile(const Common::String &wavePath, const IIgsExeInf
 }
 
 /**
- * A function object (i.e. a functor) for testing if a FilesystemNode
+ * A function object (i.e. a functor) for testing if a Common::FilesystemNode
  * object's name is equal (Ignoring case) to a string or to at least
  * one of the strings in a list of strings. Can be used e.g. with find_if().
  */
-struct fsnodeNameEqualsIgnoreCase : public Common::UnaryFunction<const FilesystemNode&, bool> {
+struct fsnodeNameEqualsIgnoreCase : public Common::UnaryFunction<const Common::FilesystemNode&, bool> {
 	fsnodeNameEqualsIgnoreCase(const Common::StringList &str) : _str(str) {}
 	fsnodeNameEqualsIgnoreCase(const Common::String str) { _str.push_back(str); }
-	bool operator()(const FilesystemNode &param) const {
+	bool operator()(const Common::FilesystemNode &param) const {
 		for (Common::StringList::const_iterator iter = _str.begin(); iter != _str.end(); iter++)
 			if (param.getName().equalsIgnoreCase(*iter))
 				return true;
@@ -1139,9 +1139,9 @@ bool SoundMgr::loadInstruments() {
 	}
 
 	// List files in the game path
-	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly)) {
+	Common::FSList fslist;
+	Common::FilesystemNode dir(ConfMan.get("path"));
+	if (!dir.getChildren(fslist, Common::FilesystemNode::kListFilesOnly)) {
 		warning("Invalid game path (\"%s\"), not loading Apple IIGS instruments", dir.getPath().c_str());
 		return false;
 	}
@@ -1157,7 +1157,7 @@ bool SoundMgr::loadInstruments() {
 	waveNames.push_back("SIERRAST");
 
 	// Search for the executable file and the wave file (i.e. check if any of the filenames match)
-	FSList::const_iterator exeFsnode, waveFsnode;
+	Common::FSList::const_iterator exeFsnode, waveFsnode;
 	exeFsnode  = Common::find_if(fslist.begin(), fslist.end(), fsnodeNameEqualsIgnoreCase(exeNames));
 	waveFsnode = Common::find_if(fslist.begin(), fslist.end(), fsnodeNameEqualsIgnoreCase(waveNames));
 

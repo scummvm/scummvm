@@ -53,7 +53,6 @@ MODULE_OBJS := \
 	scumm.o \
 	sound.o \
 	string.o \
-	thumbnail.o \
 	usage_bits.o \
 	util.o \
 	vars.o \
@@ -82,7 +81,6 @@ MODULE_OBJS += \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
 	smush/channel.o \
-	smush/chunk.o \
 	smush/codec1.o \
 	smush/codec37.o \
 	smush/codec47.o \

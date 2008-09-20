@@ -346,8 +346,7 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 		return;
 
 	// TODO: add conversion to OverlayColor
-	_gfx.create(gfx->w, gfx->h, gfx->bytesPerPixel);
-	memcpy(_gfx.pixels, gfx->pixels, gfx->h * gfx->pitch);
+	_gfx.copyFrom(*gfx);
 }
 
 void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {

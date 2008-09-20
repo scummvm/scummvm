@@ -32,24 +32,55 @@
 namespace Common {
 
 class MemoryPool {
-private:
+protected:
 	MemoryPool(const MemoryPool&);
 	MemoryPool& operator=(const MemoryPool&);
+	
+	struct Page {
+		void *start;
+		size_t numChunks;
+	};
 
 	size_t			_chunkSize;
-	Array<void*>	_pages;
-	void*			_next;
+	Array<Page>		_pages;
+	void			*_next;
+	size_t			_chunksPerPage;
 
-	void*	allocPage();
-	bool	isPointerInPage(void* ptr, void* page);
+	void	allocPage();
+	void	addPageToPool(const Page &page);
+	bool	isPointerInPage(void *ptr, const Page &page);
+
 public:
 	MemoryPool(size_t chunkSize);
 	~MemoryPool();
 
-	void*	malloc();
-	void 	free(void* ptr);
+	void 	*malloc();
+	void 	free(void *ptr);
 
 	void	freeUnusedPages();
+};
+
+template<size_t CHUNK_SIZE, size_t NUM_INTERNAL_CHUNKS = 32>
+class FixedSizeMemoryPool : public MemoryPool {
+private:
+	enum {
+		REAL_CHUNK_SIZE = (CHUNK_SIZE + sizeof(void*) - 1) & (~(sizeof(void*) - 1))
+	};
+
+	byte	_storage[NUM_INTERNAL_CHUNKS * REAL_CHUNK_SIZE];
+public:
+	FixedSizeMemoryPool() : MemoryPool(CHUNK_SIZE) {
+		assert(REAL_CHUNK_SIZE == _chunkSize);
+		// Insert some static storage
+		Page internalPage = { _storage, NUM_INTERNAL_CHUNKS };
+		addPageToPool(internalPage);
+	}
+};
+
+template<size_t CHUNK_SIZE>
+class FixedSizeMemoryPool<CHUNK_SIZE,0> : public MemoryPool {
+public:
+	FixedSizeMemoryPool() : MemoryPool(CHUNK_SIZE) {}
 };
 
 }	// End of namespace Common

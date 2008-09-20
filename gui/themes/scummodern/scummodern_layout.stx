@@ -105,6 +105,9 @@
 					<widget name = 'StartButton' 
 							type = 'Button'
 					/>
+					<widget name = 'LoadGameButton' 
+							type = 'Button'
+					/>
 					<space size = '16' />
 					<widget name = 'AddGameButton' 
 							type = 'Button' 
@@ -568,6 +571,10 @@
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<space/>
+				<widget name = 'Delete'
+						type = 'Button'
+				/>
+				<space size = '32'/>
 				<widget name = 'Cancel'
 						type = 'Button'
 				/>

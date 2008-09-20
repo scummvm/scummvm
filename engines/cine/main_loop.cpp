@@ -25,7 +25,6 @@
 
 
 #include "common/scummsys.h"
-#include "common/events.h"
 #include "common/system.h"
 
 #include "cine/main_loop.h"
@@ -60,9 +59,6 @@ static void processEvent(Common::Event &event) {
 		mouseRight = 1;
 		break;
 	case Common::EVENT_MOUSEMOVE:
-		break;
-	case Common::EVENT_QUIT:
-		exitEngine = 1;
 		break;
 	case Common::EVENT_KEYDOWN:
 		switch (event.kbd.keycode) {
@@ -258,12 +254,8 @@ void purgeSeqList() {
 
 void CineEngine::mainLoop(int bootScriptIdx) {
 	bool playerAction;
-	uint16 quitFlag;
 	byte di;
 	uint16 mouseButton;
-
-	quitFlag = 0;
-	exitEngine = 0;
 
 	if (_preLoad == false) {
 		resetBgIncrustList();
@@ -418,7 +410,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			if ("quit"[menuCommandLen] == (char)di) {
 				++menuCommandLen;
 				if (menuCommandLen == 4) {
-					quitFlag = 1;
+					quitGame();
 				}
 			} else {
 				menuCommandLen = 0;
@@ -427,7 +419,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 		manageEvents();
 
-	} while (!exitEngine && !quitFlag && _danKeysPressed != 7);
+	} while (!quit() && _danKeysPressed != 7);
 
 	hideMouse();
 	g_sound->stopMusic();

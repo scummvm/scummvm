@@ -28,7 +28,6 @@
 #include "common/stream.h"
 #include "common/util.h"
 #include "common/system.h"
-#include "common/events.h"
 #include "kyra/screen.h"
 #include "kyra/kyra_lok.h"
 #include "kyra/sprites.h"

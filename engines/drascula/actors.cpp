@@ -28,45 +28,45 @@
 namespace Drascula {
 
 void DrasculaEngine::placeIgor() {
-	int pos_igor[6] = { 1, 0, igorX, igorY, 54, 61 };
+	int igY = 0;
 
 	if (currentChapter == 4) {
-		pos_igor[1] = 138;
+		igY = 138;
 	} else {
 		if (trackIgor == 3)
-			pos_igor[1] = 138;
+			igY = 138;
 		else if (trackIgor == 1)
-			pos_igor[1] = 76;
+			igY = 76;
 	}
 
-	copyRectClip(pos_igor, frontSurface, screenSurface);
+	copyRect(1, igY, igorX, igorY, 54, 61, frontSurface, screenSurface);
 }
 
 void DrasculaEngine::placeDrascula() {
-	int pos_dr[6] = { 0, 122, drasculaX, drasculaY, 45, 77 };
+	int drX = 0;
 
 	if (trackDrascula == 1)
-		pos_dr[0] = 47;
+		drX = 47;
 	else if (trackDrascula == 0)
-		pos_dr[0] = 1;
+		drX = 1;
 	else if (trackDrascula == 3 && currentChapter == 1)
-		pos_dr[0] = 93;
+		drX = 93;
 
 	if (currentChapter == 6)
-		copyRectClip(pos_dr, drawSurface2, screenSurface);
+		copyRect(drX, 122, drasculaX, drasculaY, 45, 77, drawSurface2, screenSurface);
 	else
-		copyRectClip(pos_dr, backSurface, screenSurface);
+		copyRect(drX, 122, drasculaX, drasculaY, 45, 77, backSurface, screenSurface);
 }
 
 void DrasculaEngine::placeBJ() {
-	int pos_bj[6] = { 0, 99, bjX, bjY, 26, 76 };
+	int bX = 0;
 
 	if (trackBJ == 3)
-		pos_bj[0] = 10;
+		bX = 10;
 	else if (trackBJ == 0)
-		pos_bj[0] = 37;
+		bX = 37;
 
-	copyRectClip(pos_bj, drawSurface3, screenSurface);
+	copyRect(bX, 99, bjX, bjY, 26, 76, drawSurface3, screenSurface);
 }
 
 void DrasculaEngine::hiccup(int counter) {
@@ -189,7 +189,7 @@ void DrasculaEngine::moveCharacters() {
 		}
 	}
 
-	if (currentChapter == 1 || currentChapter == 4 || currentChapter == 5 || currentChapter == 6) {
+	if (currentChapter != 2 && currentChapter != 3) {
 		if (hare_se_ve == 0) {
 			increaseFrameNum();
 			return;
@@ -212,25 +212,29 @@ void DrasculaEngine::moveCharacters() {
 		if (trackProtagonist == 0) {
 			curPos[1] = 0;
 			if (currentChapter == 2)
-				copyRectClip(curPos, extraSurface, screenSurface);
+				copyRect(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
+						 extraSurface, screenSurface);
 			else
 				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], extraSurface, screenSurface);
 		} else if (trackProtagonist == 1) {
 			if (currentChapter == 2)
-				copyRectClip(curPos, extraSurface, screenSurface);
+				copyRect(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
+						 extraSurface, screenSurface);
 			else
 				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], extraSurface, screenSurface);
 		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
-				copyRectClip(curPos, backSurface, screenSurface);
+				copyRect(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
+						 backSurface, screenSurface);
 			else
 				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], backSurface, screenSurface);
 		} else {
 			if (currentChapter == 2)
-				copyRectClip(curPos, frontSurface, screenSurface);
+				copyRect(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
+						 frontSurface, screenSurface);
 			else
 				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], frontSurface, screenSurface);
@@ -250,25 +254,29 @@ void DrasculaEngine::moveCharacters() {
 		if (trackProtagonist == 0) {
 			curPos[1] = 0;
 			if (currentChapter == 2)
-				copyRectClip(curPos, extraSurface, screenSurface);
+				copyRect(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
+						 extraSurface, screenSurface);
 			else
 				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], extraSurface, screenSurface);
 		} else if (trackProtagonist == 1) {
 			if (currentChapter == 2)
-				copyRectClip(curPos, extraSurface, screenSurface);
+				copyRect(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
+						 extraSurface, screenSurface);
 			else
 				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], extraSurface, screenSurface);
 		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
-				copyRectClip(curPos, backSurface, screenSurface);
+				copyRect(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
+						 backSurface, screenSurface);
 			else
 				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], backSurface, screenSurface);
 		} else {
 			if (currentChapter == 2)
-				copyRectClip(curPos, frontSurface, screenSurface);
+				copyRect(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
+						 frontSurface, screenSurface);
 			else
 				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
 									factor_red[curY + curHeight], frontSurface, screenSurface);
@@ -288,11 +296,11 @@ void DrasculaEngine::quadrant_1() {
 	distanceY = (curY + curHeight) - roomY;
 
 	if (distanceX < distanceY) {
-		curDirection = 0;
+		curDirection = kDirectionUp;
 		trackProtagonist = 2;
 		stepX = (int)(distanceX / (distanceY / STEP_Y));
 	} else {
-		curDirection = 7;
+		curDirection = kDirectionUp;
 		trackProtagonist = 0;
 		stepY = (int)(distanceY / (distanceX / STEP_X));
 	}
@@ -309,11 +317,11 @@ void DrasculaEngine::quadrant_2() {
 	distanceY = (curY + curHeight) - roomY;
 
 	if (distanceX < distanceY) {
-		curDirection = 1;
+		curDirection = kDirectionRight;
 		trackProtagonist = 2;
 		stepX = (int)(distanceX / (distanceY / STEP_Y));
 	} else {
-		curDirection = 2;
+		curDirection = kDirectionRight;
 		trackProtagonist = 1;
 		stepY = (int)(distanceY / (distanceX / STEP_X));
 	}
@@ -330,11 +338,11 @@ void DrasculaEngine::quadrant_3() {
 	distanceY = roomY - (curY + curHeight);
 
 	if (distanceX < distanceY) {
-		curDirection = 5;
+		curDirection = kDirectionLeft;
 		trackProtagonist = 3;
 		stepX = (int)(distanceX / (distanceY / STEP_Y));
 	} else {
-		curDirection = 6;
+		curDirection = kDirectionLeft;
 		trackProtagonist = 0;
 		stepY = (int)(distanceY / (distanceX / STEP_X));
 	}
@@ -351,11 +359,11 @@ void DrasculaEngine::quadrant_4() {
 	distanceY = roomY - (curY + curHeight);
 
 	if (distanceX < distanceY) {
-		curDirection = 4;
+		curDirection = kDirectionDown;
 		trackProtagonist = 3;
 		stepX = (int)(distanceX / (distanceY / STEP_Y));
 	} else {
-		curDirection = 3;
+		curDirection = kDirectionDown;
 		trackProtagonist = 1;
 		stepY = (int)(distanceY / (distanceX / STEP_X));
 	}
@@ -370,16 +378,16 @@ void DrasculaEngine::increaseFrameNum() {
 		if (num_frame == 6)
 			num_frame = 0;
 
-		if (curDirection == 0 || curDirection == 7) {
+		if (curDirection == kDirectionUp) {
 			curX -= stepX;
 			curY -= stepY;
-		} else if (curDirection == 1 || curDirection == 2) {
+		} else if (curDirection == kDirectionRight) {
 			curX += stepX;
 			curY -= stepY;
-		} else if (curDirection == 3 || curDirection == 4) {
+		} else if (curDirection == kDirectionDown) {
 			curX += stepX;
 			curY += stepY;
-		} else if (curDirection == 5 || curDirection == 6) {
+		} else if (curDirection == kDirectionLeft) {
 			curX -= stepX;
 			curY += stepY;
 		}
@@ -394,13 +402,13 @@ void DrasculaEngine::increaseFrameNum() {
 }
 
 void DrasculaEngine::walkDown() {
-	curDirection = 4;
+	curDirection = kDirectionDown;
 	trackProtagonist = 3;
 	stepX = 0;
 }
 
 void DrasculaEngine::walkUp() {
-	curDirection = 0;
+	curDirection = kDirectionUp;
 	trackProtagonist = 2;
 	stepX = 0;
 }
@@ -432,7 +440,8 @@ void DrasculaEngine::moveVonBraun() {
 			actorFrames[kFrameVonBraun] = 1;
 	}
 
-	copyRectClip(pos_vb, frontSurface, screenSurface);
+	copyRect(pos_vb[0], pos_vb[1], pos_vb[2], pos_vb[3], pos_vb[4], pos_vb[5],
+			 frontSurface, screenSurface);
 }
 
 void DrasculaEngine::placeVonBraun(int pointX) {

@@ -31,6 +31,7 @@ RawReadFile::RawReadFile(McAccess *mcAccess) {
 	_size = -1;
 	_pos = 0;
 	_buf = NULL;
+	_eof = false;
 }
 
 RawReadFile::~RawReadFile(void) {
@@ -79,12 +80,16 @@ int RawReadFile::bufSeek(int ofs, int whence) {
 		_pos = 0;
 	else if (_pos > _size)
 		_pos = _size;
+
+	_eof = false;
 	return _pos;
 }
 
 int RawReadFile::bufRead(void *dest, int size) {
-	if (_pos + size > _size)
+	if (_pos + size > _size) {
 		size = _size - _pos;
+		_eof = true;
+	}
 	memcpy(dest, _buf + _pos, size);
 	_pos += size;
 	return size;
@@ -94,7 +99,13 @@ int RawReadFile::bufSize(void) const {
 	return _size;
 }
 
+bool RawReadFile::bufEof(void) const {
+	return _eof;
+}
 
+void RawReadFile::bufClearErr(void) const {
+	_eof = false;
+}
 
 RawWriteFile::RawWriteFile(McAccess *mcAccess) {
 	_mcAccess = mcAccess;

@@ -28,7 +28,7 @@
 ;&EN
 
 ; UID is the app's UID
-#{"ScummVM S90"},(0x101f9b57),0,120,0
+#{"ScummVM S90"},(0x101f9b57),0,130,0
 
 ; Platform type -- disabled: seems to be causing trouble
 ;(0x101FBE04), 0, 0, 0, {"Series90ProductID"}

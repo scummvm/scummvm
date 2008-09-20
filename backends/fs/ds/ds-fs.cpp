@@ -24,6 +24,7 @@
 #include "common/util.h"
 //#include <NDS/ARM9/console.h> //basic print funcionality
 #include "backends/fs/ds/ds-fs.h"
+#include "backends/fs/stdiostream.h"
 #include "dsmain.h"
 #include "fat/gba_nds_fat.h"
 
@@ -55,7 +56,7 @@ DSFileSystemNode::DSFileSystemNode() {
 	}
 }
 
-DSFileSystemNode::DSFileSystemNode(const String& path) {
+DSFileSystemNode::DSFileSystemNode(const Common::String& path) {
 //	consolePrintf("--%s ",path.c_str());
 
 	char disp[128];
@@ -70,7 +71,7 @@ DSFileSystemNode::DSFileSystemNode(const String& path) {
 
 	strcpy(disp, pathStr + lastSlash + 1);
 
-	_displayName = String(disp);
+	_displayName = Common::String(disp);
 	_path = path;
 //	_isValid = true;
 //	_isDirectory = false;
@@ -98,7 +99,7 @@ DSFileSystemNode::DSFileSystemNode(const String& path) {
 //	consolePrintf("%s - Found: %d, Dir: %d\n", pathStr, _isValid, _isDirectory);
 }
 
-DSFileSystemNode::DSFileSystemNode(const String& path, bool isDir) {
+DSFileSystemNode::DSFileSystemNode(const Common::String& path, bool isDir) {
 //	consolePrintf("--%s ",path.c_str());
 
 	char disp[128];
@@ -112,7 +113,7 @@ DSFileSystemNode::DSFileSystemNode(const String& path, bool isDir) {
 
 	strcpy(disp, pathStr + lastSlash + 1);
 
-	_displayName = String(disp);
+	_displayName = Common::String(disp);
 	_path = path;
 	_isValid = true;
 	_isDirectory = isDir;
@@ -167,10 +168,10 @@ bool DSFileSystemNode::getChildren(AbstractFSList &dirList, ListMode mode, bool 
 			_zipFile->getFileName(n);
 
 //			consolePrintf("file: %s\n", n);
-			if ( (_zipFile->isDirectory() && ((mode == FilesystemNode::kListDirectoriesOnly) || (mode == FilesystemNode::kListAll)) )
-				|| (!_zipFile->isDirectory() && ((mode == FilesystemNode::kListFilesOnly) || (mode == FilesystemNode::kListAll)) ) )
+			if ( (_zipFile->isDirectory() && ((mode == Common::FilesystemNode::kListDirectoriesOnly) || (mode == Common::FilesystemNode::kListAll)) )
+				|| (!_zipFile->isDirectory() && ((mode == Common::FilesystemNode::kListFilesOnly) || (mode == Common::FilesystemNode::kListAll)) ) )
 			{
-				DSFileSystemNode* dsfsn = new DSFileSystemNode("ds:/" + String(n), _zipFile->isDirectory());
+				DSFileSystemNode* dsfsn = new DSFileSystemNode("ds:/" + Common::String(n), _zipFile->isDirectory());
 				dsfsn->_isDirectory = _zipFile->isDirectory();
 				dirList.push_back((dsfsn));
 			}
@@ -195,13 +196,21 @@ AbstractFilesystemNode* DSFileSystemNode::getParent() const {
 			}
 		}
 
-		p = new DSFileSystemNode(String(path, lastSlash));
+		p = new DSFileSystemNode(Common::String(path, lastSlash));
 		((DSFileSystemNode *) (p))->_isDirectory = true;
 	} else {
 		p = new DSFileSystemNode();
 	}
 
 	return p;
+}
+
+Common::SeekableReadStream *DSFileSystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *DSFileSystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -216,7 +225,7 @@ GBAMPFileSystemNode::GBAMPFileSystemNode() {
 	_path = "mp:/";
 }
 
-GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path) {
+GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path) {
 //	consolePrintf("'%s'",path.c_str());
 
 	char disp[128];
@@ -245,13 +254,13 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path) {
 	}
 //	consolePrintf("Path: %s  (%d)\n", check, success);
 
-	_displayName = String(disp);
+	_displayName = Common::String(disp);
 	_path = path;
 	_isValid = success == FT_FILE;
 	_isDirectory = success == FT_DIR;
 }
 
-GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path, bool isDirectory) {
+GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path, bool isDirectory) {
 //	consolePrintf("'%s'",path.c_str());
 
 	char disp[128];
@@ -265,7 +274,7 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path, bool isDirectory) {
 
 	strcpy(disp, pathStr + lastSlash + 1);
 
-	_displayName = String(disp);
+	_displayName = Common::String(disp);
 	_path = path;
 	_isValid = true;
 	_isDirectory = isDirectory;
@@ -313,8 +322,8 @@ bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode, bo
 
 	while (entryType != TYPE_NO_MORE) {
 
-		if ( ((entryType == TYPE_DIR) && ((mode == FilesystemNode::kListDirectoriesOnly) || (mode == FilesystemNode::kListAll)))
-		||   ((entryType == TYPE_FILE) && ((mode == FilesystemNode::kListFilesOnly) || (mode == FilesystemNode::kListAll))) ) {
+		if ( ((entryType == TYPE_DIR) && ((mode == Common::FilesystemNode::kListDirectoriesOnly) || (mode == Common::FilesystemNode::kListAll)))
+		||   ((entryType == TYPE_FILE) && ((mode == Common::FilesystemNode::kListFilesOnly) || (mode == Common::FilesystemNode::kListAll))) ) {
 			GBAMPFileSystemNode* dsfsn;
 
 			consolePrintf("Fname: %s\n", fname);
@@ -322,9 +331,9 @@ bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode, bo
 			if (strcmp(fname, ".") && strcmp(fname, "..")) {
 
 				if (!strcmp(path, "/")) {
-					dsfsn = new GBAMPFileSystemNode("mp:" + String(path) + String(fname), entryType == TYPE_DIR);
+					dsfsn = new GBAMPFileSystemNode("mp:" + Common::String(path) + Common::String(fname), entryType == TYPE_DIR);
 				} else {
-					dsfsn = new GBAMPFileSystemNode("mp:" + String(path) + String("/") + String(fname), entryType == TYPE_DIR);
+					dsfsn = new GBAMPFileSystemNode("mp:" + Common::String(path) + Common::String("/") + Common::String(fname), entryType == TYPE_DIR);
 				}
 
 //				dsfsn->_isDirectory = entryType == DIR;
@@ -358,13 +367,21 @@ AbstractFilesystemNode* GBAMPFileSystemNode::getParent() const {
 			}
 		}
 
-		p = new GBAMPFileSystemNode(String(path, lastSlash));
+		p = new GBAMPFileSystemNode(Common::String(path, lastSlash));
 		p->_isDirectory = true;
 	} else {
 		p = new GBAMPFileSystemNode();
 	}
 
 	return p;
+}
+
+Common::SeekableReadStream *GBAMPFileSystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *GBAMPFileSystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 // Stdio replacements
@@ -399,6 +416,7 @@ FILE* std_fopen(const char* name, const char* mode) {
 	if (DS::isGBAMPAvailable()) {
 		FAT_chdir("/");
 
+		// Turn all back slashes into forward slashes for gba_nds_fat
 		char* p = realName;
 		while (*p) {
 			if (*p == '\\') *p = '/';
@@ -422,8 +440,12 @@ FILE* std_fopen(const char* name, const char* mode) {
 
 	// Allocate a file handle
 	int r = 0;
-	while (handle[r].used) r++;
+	while (handle[r].used) {
+		r++;
+		assert(r < MAX_FILE_HANDLES);
+	}
 
+#ifdef GBA_SRAM_SAVE
 	if (strchr(mode, 'w')) {
 //		consolePrintf("Writing %s\n", realName);
 		handle[r].sramFile = (DSSaveFile *) DSSaveFileManager::instance()->openSavefile(realName, true);
@@ -431,6 +453,7 @@ FILE* std_fopen(const char* name, const char* mode) {
 //		consolePrintf("Reading %s\n", realName);
 		handle[r].sramFile = (DSSaveFile *) DSSaveFileManager::instance()->openSavefile(realName, false);
 	}
+#endif
 
 	if (handle[r].sramFile) {
 		handle[r].used = true;
@@ -512,69 +535,6 @@ size_t std_fread(const void* ptr, size_t size, size_t numItems, FILE* handle) {
 			return bytes / size;
 		}
 		return numItems;
-
-/*		int item = 0;
-		u8* data = (u8 *) ptr;
-		while ((item < numItems) && (!FAT_feof((FAT_FILE *) handle))) {
-
-
-			int bytes = 0;
-			while ((bytes < size) && (!FAT_feof((FAT_FILE *) handle))) {
-				*data++ = FAT_fgetc((FAT_FILE *) handle);
-				bytes++;
-			}
-
-			item++;
-
-		}
-
-		return item;
-*/
-		int items = 0;
-
-		//for (int r = 0; r < numItems; r++) {
-			if (!std_feof(handle)) {
-/*				for (int t = 0; t < size; t++) {
-					if (feof(handle)) eof = true;
-					*(((char *) (ptr)) + r * size + t) = getc(handle);
-				}*/
-				int left = size * numItems;
-				int bytesRead = -1;
-
-				while ((left > 0) && (!FAT_feof((FAT_FILE *) handle))) {
-					int amount = left > 8192? 8192: left;
-//					do {
-						bytesRead = FAT_fread((void *) ptr, 1, amount, (FAT_FILE *) handle);
-/*						if (bytesRead == 0) {
-							consolePrintf("Pos:%d items:%d num:%d amount:%d read:%d\n", ftell(handle), items, numItems, amount, bytesRead);
-							left++;
-
-							int pos = ftell(handle);
-
-							fseek(handle, 0, SEEK_SET);
-							int c = getc(handle);
-							fseek(handle, pos - 1024, SEEK_SET);
-							fread(ptr, 1024, 1, handle);
-							swiWaitForVBlank();
-							//while (true);
-						}
-
-					} while (bytesRead == 0);
-*/
-					left -= bytesRead;
-					ptr = ((char *) (ptr)) + bytesRead;
-				}
-
-				items = numItems - (left / size);
-
-//				FAT_fread((void *) ptr, size, 1, ((int) (handle)) - 1);
-//				ptr = ((char *) (ptr)) + size;
-			}
-//		}
-
-//		consolePrintf("...done %d \n", items)
-
-		return items;
 	}
 
 	if (handle->sramFile) {
@@ -641,10 +601,6 @@ size_t std_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle) {
 	}
 }
 
-void std_fprintf(FILE* handle, const char* fmt, ...) {
-	consolePrintf(fmt);
-}
-
 bool std_feof(FILE* handle) {
 //	consolePrintf("feof ");
 
@@ -660,42 +616,10 @@ bool std_feof(FILE* handle) {
 	return handle->pos >= handle->size;
 }
 
-void std_fflush(FILE* handle) {
+int std_fflush(FILE* handle) {
 	//FIXME: not implemented?
 //	consolePrintf("fflush ");
-}
-
-char* std_fgets(char* str, int size, FILE* file) {
-//	consolePrintf("fgets file=%d ", file);
-
-	if (DS::isGBAMPAvailable()) {
-		char* s = str;
-		while ((*s++ = std_getc(file)) >= 32) {
-//			consolePrintf("%d ", *s);
-		}
-		*s = 0;
-
-//		consolePrintf("Read:%s\n", str);
-
-		return str;
-	}
-
-	if (file->sramFile) {
-		file->pos--;
-		int p = -1;
-		do {
-			file->pos++;
-			p++;
-			file->sramFile->read((char *) &str[p], 1);
-//			consolePrintf("%d,", str[p]);
-		} while ((str[p] >= 32) && (!std_feof(file)) && (p < size));
-		str[p + 1] = 0;
-		file->pos++;
-//		consolePrintf("Read:%s\n", str);
-		return str;
-	}
-
-	return NULL;
+	return 0;
 }
 
 long int std_ftell(FILE* handle) {
@@ -731,92 +655,20 @@ int std_fseek(FILE* handle, long int offset, int whence) {
 	return 0;
 }
 
+int std_ferror(FILE* handle) {
+	//FIXME: not implemented?
+//	consolePrintf("ferror ");
+	return 0;
+}
+
 void std_clearerr(FILE* handle) {
 	//FIXME: not implemented?
 //	consolePrintf("clearerr ");
 }
 
-int std_getc(FILE* handle) {
-	if (DS::isGBAMPAvailable()) {
-		char c;
-		FAT_fread(&c, 1, 1, (FAT_FILE *) handle);
-
-		return c;
-	}
-
-//	consolePrintf("fgetc ");
-	return 0;				// Not supported yet
+void std_fprintf(FILE* handle, const char* fmt, ...) {
+	consolePrintf(fmt);
 }
 
-char* std_getcwd(char* dir, int dunno) {
-//	consolePrintf("getcwd ");
-	dir[0] = '\0';
-	return dir;			// Not supported yet
-}
-
-void std_cwd(char* dir) {
-	char buffer[128];
-	strcpy(buffer, dir);
-	char* realName = buffer;
-
-	if (DS::isGBAMPAvailable()) {
-		if ((strlen(dir) >= 4) && (dir[0] == 'm') && (dir[1] == 'p') && (dir[2] == ':') && (dir[3] == '/')) {
-			realName += 4;
-		}
-
-	//	consolePrintf("Real cwd:%d\n", realName);
-
-		char* p = realName;
-		while (*p) {
-			if (*p == '\\') *p = '/';
-			p++;
-		}
-
-	//	consolePrintf("Real cwd:%d\n", realName);
-		FAT_chdir(realName);
-	} else {
-		if ((strlen(dir) >= 4) && (dir[0] == 'd') && (dir[1] == 's') && (dir[2] == ':') && (dir[3] == '/')) {
-			realName += 4;
-		}
-
-		char* p = realName;
-		while (*p) {
-			if (*p == '\\') *p = '/';
-			p++;
-		}
-
-		strcpy(currentDir, realName);
-		if (*(currentDir + strlen(currentDir) - 1) == '/') {
-			*(currentDir + strlen(currentDir) - 1) = '\0';
-		}
-//		consolePrintf("CWD: %s\n", currentDir);
-	}
-}
-
-int std_ferror(FILE* handle) {
-	return 0;
-}
 
 } // namespace DS
-
-/**
- * Returns the last component of a given path.
- *
- * Examples:
- *			/foo/bar.txt would return /bar.txt
- *			/foo/bar/    would return /bar/
- *
- * @param str String containing the path.
- * @return Pointer to the first char of the last component inside str.
- */
-const char *lastPathComponent(const Common::String &str) {
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '/' && *cur != '\\') {
-		--cur;
-	}
-
-	return cur + 1;
-}
-

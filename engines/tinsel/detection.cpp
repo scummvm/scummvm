@@ -29,6 +29,7 @@
 #include "common/file.h"
 
 #include "tinsel/tinsel.h"
+#include "tinsel/savescn.h"	// needed by TinselMetaEngine::listSaves
 
 
 namespace Tinsel {
@@ -111,6 +112,30 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
+	{	// Multilingual floppy with *.gra files.
+		// Note: It contains no english subtitles.
+		// Reported on our forums.
+		{
+			"dw",
+			"Floppy",
+			{
+				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
+				{"french.txt", 0, NULL, -1},
+				{"german.txt", 0, NULL, -1},
+				{"italian.txt", 0, NULL, -1},
+				{"spanish.txt", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE
+		},
+		GID_DW1,
+		0,
+		GF_FLOPPY | GF_USE_4FLAGS,
+		TINSEL_V1,
+	},
+
 	{	// English CD. This version has *.gra files
 		{
 			"dw",
@@ -127,6 +152,96 @@ static const TinselGameDescription gameDescriptions[] = {
 		GID_DW1,
 		0,
 		GF_CD,
+		TINSEL_V1,
+	},
+
+	{	// Multilingual CD with english speech and *.gra files.
+		// Note: It contains no english subtitles.
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
+				{"english.smp", 0, NULL, -1},
+				{"french.txt", 0, NULL, -1},
+				{"german.txt", 0, NULL, -1},
+				{"italian.txt", 0, NULL, -1},
+				{"spanish.txt", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE
+		},
+		GID_DW1,
+		0,
+		GF_CD | GF_USE_4FLAGS,
+		TINSEL_V1,
+	},
+	{
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
+				{"english.smp", 0, NULL, -1},
+				{"french.txt", 0, NULL, -1},
+				{"german.txt", 0, NULL, -1},
+				{"italian.txt", 0, NULL, -1},
+				{"spanish.txt", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE
+		},
+		GID_DW1,
+		0,
+		GF_CD | GF_USE_4FLAGS,
+		TINSEL_V1,
+	},
+	{
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
+				{"english.smp", 0, NULL, -1},
+				{"french.txt", 0, NULL, -1},
+				{"german.txt", 0, NULL, -1},
+				{"italian.txt", 0, NULL, -1},
+				{"spanish.txt", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE
+		},
+		GID_DW1,
+		0,
+		GF_CD | GF_USE_4FLAGS,
+		TINSEL_V1,
+	},
+	{
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
+				{"english.smp", 0, NULL, -1},
+				{"french.txt", 0, NULL, -1},
+				{"german.txt", 0, NULL, -1},
+				{"italian.txt", 0, NULL, -1},
+				{"spanish.txt", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			Common::ADGF_DROPLANGUAGE
+		},
+		GID_DW1,
+		0,
+		GF_CD | GF_USE_4FLAGS,
 		TINSEL_V1,
 	},
 
@@ -189,25 +304,6 @@ static const TinselGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 
-/**
- * The fallback game descriptor used by the Tinsel engine's fallbackDetector.
- * Contents of this struct are to be overwritten by the fallbackDetector.
- */
-static TinselGameDescription g_fallbackDesc = {
-	{
-		"",
-		"",
-		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
-		Common::UNK_LANG,
-		Common::kPlatformPC,
-		Common::ADGF_NO_FLAGS
-	},
-	0,
-	0,
-	0,
-	0,
-};
-
 } // End of namespace Tinsel
 
 static const Common::ADParams detectionParams = {
@@ -238,14 +334,41 @@ public:
 	}
 
 	virtual const char *getCopyright() const {
+		// FIXME: Bad copyright string.
+		// Should be something like "Tinsel (C) Psygnosis" or so... ???
 		return "Tinsel Engine";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 
-	const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const;
-
+	virtual bool hasFeature(MetaEngineFeature f) const;	
+	virtual SaveStateList listSaves(const char *target) const;
 };
+
+bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves);
+}
+
+namespace Tinsel {
+extern int getList(Common::SaveFileManager *saveFileMan, const Common::String &target);
+}
+
+SaveStateList TinselMetaEngine::listSaves(const char *target) const {
+	int numStates = Tinsel::getList(g_system->getSavefileManager(), target);
+
+	SaveStateList saveList;
+	for (int i = 0; i < numStates; i++) {
+		SaveStateDescriptor sd(i,
+				Tinsel::ListEntry(i, Tinsel::LE_DESC),
+				Tinsel::ListEntry(i, Tinsel::LE_NAME));
+		// TODO: Also add savedFiles[i].dateTime to the SaveStateDescriptor
+		saveList.push_back(sd);
+	}
+
+	return saveList;
+}
+
 
 bool TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const Tinsel::TinselGameDescription *gd = (const Tinsel::TinselGameDescription *)desc;
@@ -253,21 +376,6 @@ bool TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const Comm
 		*engine = new Tinsel::TinselEngine(syst, gd);
 	}
 	return gd != 0;
-}
-
-const Common::ADGameDescription *TinselMetaEngine::fallbackDetect(const FSList *fslist) const {
-	// Set the default values for the fallback descriptor's ADGameDescription part.
-	Tinsel::g_fallbackDesc.desc.language = Common::UNK_LANG;
-	Tinsel::g_fallbackDesc.desc.platform = Common::kPlatformPC;
-	Tinsel::g_fallbackDesc.desc.flags = Common::ADGF_NO_FLAGS;
-
-	// Set default values for the fallback descriptor's TinselGameDescription part.
-	Tinsel::g_fallbackDesc.gameID = 0;
-	Tinsel::g_fallbackDesc.features = 0;
-	Tinsel::g_fallbackDesc.version = 0;
-
-	//return (const Common::ADGameDescription *)&Tinsel::g_fallbackDesc;
-	return NULL;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TINSEL)

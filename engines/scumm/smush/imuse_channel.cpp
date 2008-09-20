@@ -29,7 +29,6 @@
 #include "scumm/scumm.h"	// For DEBUG_SMUSH
 #include "scumm/util.h"
 #include "scumm/smush/channel.h"
-#include "scumm/smush/chunk.h"
 
 namespace Scumm {
 
@@ -60,10 +59,10 @@ bool ImuseChannel::checkParameters(int32 index, int32 nbframes, int32 size, int3
 	return true;
 }
 
-bool ImuseChannel::appendData(Chunk &b, int32 size) {
+bool ImuseChannel::appendData(Common::SeekableReadStream &b, int32 size) {
 	if (_dataSize == -1) {
 		assert(size > 8);
-		Chunk::type imus_type = b.readUint32BE();
+		uint32 imus_type = b.readUint32BE();
 		/*uint32 imus_size =*/ b.readUint32BE();
 		if (imus_type != MKID_BE('iMUS'))
 			error("Invalid Chunk for imuse_channel");
@@ -104,35 +103,45 @@ bool ImuseChannel::appendData(Chunk &b, int32 size) {
 	return true;
 }
 
-bool ImuseChannel::handleMap(Chunk &map) {
-	while (!map.eos()) {
-		Chunk *sub = map.subBlock();
-		switch (sub->getType()) {
+bool ImuseChannel::handleMap(byte *data) {
+	// Read the chunk size & skip over the chunk header
+	int32 size = READ_BE_UINT32(data + 4);
+	data += 8;
+
+	while (size > 0) {
+		uint32 subType = READ_BE_UINT32(data);
+		int32 subSize = READ_BE_UINT32(data + 4);
+		data += 8;
+		size -= 8;
+
+		switch (subType) {
 		case MKID_BE('FRMT'):
-			if (sub->size() != 20)
+			if (subSize != 20)
 				error("invalid size for FRMT Chunk");
-			/*uint32 imuse_start =*/ sub->readUint32BE();
-			sub->skip(4);
-			_bitsize = sub->readUint32BE();
-			_rate = sub->readUint32BE();
-			_channels = sub->readUint32BE();
+			//uint32 imuse_start = READ_BE_UINT32(data);
+			//uint32 unk = READ_BE_UINT32(data+4);
+			_bitsize = READ_BE_UINT32(data+8);
+			_rate = READ_BE_UINT32(data+12);
+			_channels = READ_BE_UINT32(data+16);
 			assert(_channels == 1 || _channels == 2);
 			break;
 		case MKID_BE('TEXT'):
 			// Ignore this
 			break;
 		case MKID_BE('REGN'):
-			if (sub->size() != 8)
+			if (subSize != 8)
 				error("invalid size for REGN Chunk");
 			break;
 		case MKID_BE('STOP'):
-			if (sub->size() != 4)
+			if (subSize != 4)
 				error("invalid size for STOP Chunk");
 			break;
 		default:
-			error("Unknown iMUS subChunk found : %s, %d", tag2str(sub->getType()), sub->size());
+			error("Unknown iMUS subChunk found : %s, %d", tag2str(subType), subSize);
 		}
-		delete sub;
+		
+		data += subSize;
+		size -= subSize;
 	}
 	return true;
 }
@@ -187,15 +196,14 @@ void ImuseChannel::decode() {
 
 bool ImuseChannel::handleSubTags(int32 &offset) {
 	if (_tbufferSize - offset >= 8) {
-		Chunk::type type = READ_BE_UINT32(_tbuffer + offset);
+		uint32 type = READ_BE_UINT32(_tbuffer + offset);
 		uint32 size = READ_BE_UINT32(_tbuffer + offset + 4);
 		uint32 available_size = _tbufferSize - offset;
 		switch (type) {
 		case MKID_BE('MAP '):
 			_inData = false;
 			if (available_size >= (size + 8)) {
-				MemoryChunk c((byte *)_tbuffer + offset);
-				handleMap(c);
+				handleMap((byte *)_tbuffer + offset);
 			}
 			break;
 		case MKID_BE('DATA'):

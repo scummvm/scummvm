@@ -41,14 +41,6 @@ enum {
 	kMouseRightDown		= 8
 };
 
-struct InputData {
-	uint16			_event;
-	Common::Point	_mousePos;
-	int16		_inventoryIndex;
-	ZonePtr		_zone;
-	uint		_label;
-};
-
 enum MouseTriState {
 	MOUSE_ENABLED_SHOW,
 	MOUSE_ENABLED_HIDE,
@@ -56,10 +48,7 @@ enum MouseTriState {
 };
 
 class Input {
-	void updateGameInput();
-
-	// input-only
-	InputData	_inputData;
+	int 		updateGameInput();
 
 	bool		_hasKeyPressEvent;
 	Common::KeyState _keyPressed;
@@ -69,7 +58,7 @@ class Input {
 
 	int16		_transCurrentHoverItem;
 
-	InputData	*translateInput();
+	void		translateInput();
 	bool		translateGameInput();
 	bool		updateInventoryInput();
 	void 		takeAction(ZonePtr z);
@@ -85,6 +74,17 @@ class Input {
 	void	enterInventoryMode();
 	void 	exitInventoryMode();
 
+	int		_gameType;
+
+	static byte _resMouseArrow_NS[256];
+	Frames	*_mouseArrow;
+	Frames	*_comboArrow;
+	Frames	*_dinoCursor;
+	Frames	*_dougCursor;
+	Frames	*_donnaCursor;
+
+	void initCursors();
+
 public:
 	enum {
 		kInputModeGame = 0,
@@ -95,18 +95,8 @@ public:
 	};
 
 
-	Input(Parallaction *vm) : _vm(vm) {
-		_transCurrentHoverItem = 0;
-		_hasDelayedAction = false;  // actived when the character needs to move before taking an action
-		_mouseState = MOUSE_DISABLED;
-		_activeItem._index = 0;
-		_activeItem._id = 0;
-		_mouseButtons = 0;
-		_delayedActionZone = nullZonePtr;
-	}
-
-	virtual ~Input() { }
-
+	Input(Parallaction *vm);
+	virtual ~Input();
 
 	void			getCursorPos(Common::Point& p) {
 		p = _mousePos;
@@ -116,7 +106,7 @@ public:
 	InventoryItem	_activeItem;
 
 	void	readInput();
-	InputData* 	updateInput();
+	int 	updateInput();
 	void	trackMouse(ZonePtr z);
 	void	waitForButtonEvent(uint32 buttonEventMask, int32 timeout = -1);
 	uint32	getLastButtonEvent() { return _mouseButtons; }
@@ -129,6 +119,9 @@ public:
 	void setMouseState(MouseTriState state);
 	MouseTriState getMouseState();
 	bool isMouseEnabled();
+
+	void setArrowCursor();
+	void setInventoryCursor(ItemName name);
 };
 
 } // namespace Parallaction

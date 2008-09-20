@@ -904,7 +904,7 @@ if test "$?" -gt 0; then
 fi
 
 case $cxx_version in
-	2.95.[2-9]|2.95.[2-9][-.]*|3.[0-9]|3.[0-9].[0-9]|3.[0-9].[0-9][-.]*|4.[0-9].[0-9]|4.[0-9].[0-9][-.]*)
+	2.95.[2-9]|2.95.[2-9][-.]*|3.[0-9]|3.[0-9].[0-9]|3.[0-9].[0-9][-.]*|4.[0-9]|4.[0-9].[0-9]|4.[0-9].[0-9][-.]*)
 		_cxx_major=`echo $cxx_version | cut -d '.' -f 1`
 		_cxx_minor=`echo $cxx_version | cut -d '.' -f 2`
 		cxx_version="$cxx_version, ok"
@@ -1030,7 +1030,6 @@ echo "$_have_x86"
 #
 # Determine build settings
 #
-# TODO - also add an command line option to override this?!?
 echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
@@ -1046,7 +1045,7 @@ case $_host_os in
 		type_4_byte='long'
 		;;	
 	solaris*)
-		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		DEFINES="$DEFINES -DUNIX -DSOLARIS -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lbind -lsocket for the timidity MIDI driver
 		LIBS="$LIBS -lnsl -lsocket"
 		;;
@@ -1060,12 +1059,12 @@ case $_host_os in
 		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		;;
 	mingw*)
-		DEFINES="$DEFINES -DWIN32"
+		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
 		LIBS="$LIBS -lmingw32 -lwinmm"
 		OBJS="$OBJS scummvmico.o"
 		;;
 	cygwin*)
-		DEFINES="$DEFINES -mno-cygwin -DWIN32"
+		DEFINES="$DEFINES -mno-cygwin -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
 		LIBS="$LIBS -mno-cygwin -lmingw32 -lwinmm"
 		OBJS="$OBJS scummvmico.o"
 		;;
@@ -1074,7 +1073,6 @@ case $_host_os in
 		;;
 	mint*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-		LIBS="$LIBS -lsocket"
 		;;
 	amigaos*)
 		# TODO: anything to be added here?

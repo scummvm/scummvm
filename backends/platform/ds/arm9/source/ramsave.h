@@ -52,6 +52,7 @@ class DSSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
 	SCUMMSave* origHeader;
 	bool isOpenFlag;
 	bool isTempFile;
+	bool eosReached;
 	
 public:
 	DSSaveFile();
@@ -62,11 +63,12 @@ public:
 	
 	bool isOpen() const { return isOpenFlag; }
 	virtual bool eos() const;
-	virtual void skip(uint32 size);
+	virtual void clearErr();
+	virtual bool skip(uint32 size);
 	
-	virtual uint32 pos() const;
-	virtual uint32 size() const;
-	virtual void seek(int32 pos, int whence);
+	virtual int32 pos() const;
+	virtual int32 size() const;
+	virtual bool seek(int32 pos, int whence);
 
 	uint32 read(void *buf, uint32 size);
 	uint32 write(const void *buf, uint32 size);
@@ -76,8 +78,8 @@ public:
 	
 	bool isValid() { return save.isValid; }
 	bool isTemp() { return isTempFile; }
-	bool matches(char* prefix, int num);
-	bool matches(char* filename);
+	bool matches(const char *prefix, int num);
+	bool matches(const char *filename);
 	
 	void clearData();
 	void compress();

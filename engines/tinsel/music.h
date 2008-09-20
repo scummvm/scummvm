@@ -34,8 +34,6 @@
 
 namespace Tinsel {
 
-#define MAXMIDIVOL 127
-
 bool PlayMidiSequence(		// Plays the specified MIDI sequence through the sound driver
 	uint32 dwFileOffset,		// handle of MIDI sequence data
 	bool bLoop);			// Whether to loop the sequence

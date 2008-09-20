@@ -49,7 +49,7 @@ namespace Tinsel {
 //----------------- LOCAL DEFINES --------------------
 
 #define ITERATION_BASE		FRAC_ONE
-#define ITER_ACCELLERATION	(10L << (FRAC_BITS - 4))
+#define ITER_ACCELERATION	(10L << (FRAC_BITS - 4))
 
 
 //----------------- LOCAL GLOBAL DATA --------------------
@@ -404,7 +404,8 @@ static void MoveCursor(void) {
 	newY = intToFrac(ptMouse.y);
 
 	// modify mouse driver position depending on cursor keys
-	if ((dir = _vm->getKeyDirection()) != 0) {
+	dir = _vm->getKeyDirection();
+	if (dir != 0) {
 		if (dir & MSK_LEFT)
 			newX -= IterationSize;
 
@@ -417,7 +418,7 @@ static void MoveCursor(void) {
 		if (dir & MSK_DOWN)
 			newY += IterationSize;
 
-		IterationSize += ITER_ACCELLERATION;
+		IterationSize += ITER_ACCELERATION;
 
 		// set new mouse driver position
 		_vm->setMousePosition(Common::Point(fracToInt(newX), fracToInt(newY)));

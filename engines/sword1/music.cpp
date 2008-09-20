@@ -80,7 +80,7 @@ BaseAudioStream::~BaseAudioStream() {
 void BaseAudioStream::reinit(int size, int rate, byte flags) {
 	_isStereo = (flags & Audio::Mixer::FLAG_STEREO) != 0;
 	_rate = rate;
-	assert((uint)size <= (_sourceStream->size() - _sourceStream->pos()));
+	assert(size <= (_sourceStream->size() - _sourceStream->pos()));
 	_bitsPerSample = ((flags & Audio::Mixer::FLAG_16BITS) != 0) ? 16 : 8;
 	_samplesLeft = (size * 8) / _bitsPerSample;
 	if ((_bitsPerSample != 16) && (_bitsPerSample != 8))

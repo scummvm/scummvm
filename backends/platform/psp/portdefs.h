@@ -43,7 +43,6 @@
 
 #include "trace.h"
 
-#define	SCUMMVM_SAVEPATH	"ms0:/scummvm_savegames"
 
 #define	BREAKPOINT	asm("break\n")
 

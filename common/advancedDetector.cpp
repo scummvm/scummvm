@@ -82,12 +82,12 @@ static void upgradeTargetIfNecessary(const Common::ADParams &params) {
 	if (params.obsoleteList == 0)
 		return;
 
-	const char *gameid = ConfMan.get("gameid").c_str();
+	String gameid = ConfMan.get("gameid");
 
 	for (const Common::ADObsoleteGameID *o = params.obsoleteList; o->from; ++o) {
-		if (!scumm_stricmp(gameid, o->from)) {
+		if (gameid.equalsIgnoreCase(o->from)) {
 			gameid = o->to;
-			ConfMan.set("gameid", o->to);
+			ConfMan.set("gameid", gameid);
 
 			if (o->platform != Common::kPlatformUnknown)
 				ConfMan.set("platform", Common::getPlatformCode(o->platform));

@@ -322,8 +322,6 @@ void SaveLoadChooser::reflowLayout() {
 		if (!g_gui.xmlEval()->getWidgetData("ScummSaveLoad.Thumbnail", x, y, w, h))
 			error("Error when loading position data for Save/Load Thumbnails.");
 			
-		_container->resize(x, y, w, h);
-			
 		int thumbW = kThumbnailWidth;	
 		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
 		int thumbX = x + (w >> 1) - (thumbW >> 1);
@@ -398,8 +396,7 @@ void SaveLoadChooser::updateInfos(bool redraw) {
 		int hours = minutes / 60;
 		minutes %= 60;
 
-		snprintf(buffer, 32, "Playtime: %.2d:%.2d",
-			hours & 0xFF, minutes & 0xFF);
+		snprintf(buffer, 32, "Playtime: %.2d:%.2d", hours, minutes);
 		_playtime->setLabel(buffer);
 	} else {
 		_date->setLabel("No date saved");
@@ -434,7 +431,7 @@ Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 	return descriptions;
 }
 
-MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
+ScummMenuDialog::ScummMenuDialog(ScummEngine *scumm)
 	: ScummDialog("ScummMain"), _vm(scumm) {
 
 	new GUI::ButtonWidget(this, "ScummMain.Resume", "Resume", kPlayCmd, 'P');
@@ -462,7 +459,7 @@ MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 	_loadDialog = new SaveLoadChooser("Load game:", "Load", false, scumm);
 }
 
-MainMenuDialog::~MainMenuDialog() {
+ScummMenuDialog::~ScummMenuDialog() {
 	delete _aboutDialog;
 	delete _optionsDialog;
 #ifndef DISABLE_HELP
@@ -472,7 +469,7 @@ MainMenuDialog::~MainMenuDialog() {
 	delete _loadDialog;
 }
 
-void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void ScummMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSaveCmd:
 		save();
@@ -495,7 +492,7 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 #endif
 	case kQuitCmd:
-		_vm->_quit = true;
+		_vm->quitGame();
 		close();
 		break;
 	default:
@@ -503,7 +500,7 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-void MainMenuDialog::save() {
+void ScummMenuDialog::save() {
 	int idx;
 	_saveDialog->setList(generateSavegameList(_vm, true));
 	idx = _saveDialog->runModal();
@@ -522,7 +519,7 @@ void MainMenuDialog::save() {
 	}
 }
 
-void MainMenuDialog::load() {
+void ScummMenuDialog::load() {
 	int idx;
 	_loadDialog->setList(generateSavegameList(_vm, false));
 	idx = _loadDialog->runModal();

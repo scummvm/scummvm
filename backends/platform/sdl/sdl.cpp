@@ -32,9 +32,9 @@
 #endif
 
 #include "backends/platform/sdl/sdl.h"
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "common/file.h"
 #include "common/util.h"
 
 #include "backends/saves/default/default-saves.h"
@@ -72,6 +72,9 @@
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 #endif
 
+#if defined(MACOSX) || defined(IPHONE)
+#include "CoreFoundation/CoreFoundation.h"
+#endif
 
 
 static Uint32 timer_handler(Uint32 interval, void *param) {
@@ -196,6 +199,7 @@ OSystem_SDL::OSystem_SDL()
 	_soundMutex(0), _soundCond(0), _soundThread(0),
 	_soundThreadIsRunning(false), _soundThreadShouldQuit(false),
 #endif
+	_fsFactory(0),
 	_savefile(0),
 	_mixer(0),
 	_timer(0),
@@ -213,6 +217,19 @@ OSystem_SDL::OSystem_SDL()
 	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
 
 	_inited = false;
+
+
+	#if defined(__amigaos4__)
+		_fsFactory = new AmigaOSFilesystemFactory();
+	#elif defined(UNIX)
+		_fsFactory = new POSIXFilesystemFactory();
+	#elif defined(WIN32)
+		_fsFactory = new WindowsFilesystemFactory();
+	#elif defined(__SYMBIAN32__)
+		// Do nothing since its handled by the Symbian SDL inheritance
+	#else
+		#error Unknown and unsupported FS backend
+	#endif
 }
 
 OSystem_SDL::~OSystem_SDL() {
@@ -254,18 +271,41 @@ Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 }
 
 FilesystemFactory *OSystem_SDL::getFilesystemFactory() {
-	#if defined(__amigaos4__)
-		return &AmigaOSFilesystemFactory::instance();	
-	#elif defined(UNIX)
-		return &POSIXFilesystemFactory::instance();
-	#elif defined(WIN32)
-		return &WindowsFilesystemFactory::instance();
-	#elif defined(__SYMBIAN32__)
-		// Do nothing since its handled by the Symbian SDL inheritance
-	#else
-		#error Unknown and unsupported backend in OSystem_SDL::getFilesystemFactory
-	#endif
+	assert(_fsFactory);
+	return _fsFactory;
 }
+
+void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, uint priority) {
+
+#ifdef DATA_PATH
+	// Add the global DATA_PATH to the directory search list
+	// FIXME: We use depth = 4 for now, to match the old code. May want to change that
+	Common::FilesystemNode dataNode(DATA_PATH);
+	if (dataNode.exists() && dataNode.isDirectory()) {
+		Common::ArchivePtr dataArchive(new Common::FSDirectory(dataNode, 4));
+		s.add(DATA_PATH, dataArchive, priority);
+	}
+#endif
+
+#if defined(MACOSX) || defined(IPHONE)
+	// Get URL of the Resource directory of the .app bundle
+	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
+	if (fileUrl) {
+		// Try to convert the URL to an absolute path
+		UInt8 buf[MAXPATHLEN];
+		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
+			// Success: Add it to the search path
+			Common::String bundlePath((const char *)buf);
+			Common::ArchivePtr bundleArchive(new Common::FSDirectory(bundlePath));
+			s.add("__OSX_BUNDLE__", bundleArchive, priority);
+		}
+		CFRelease(fileUrl);
+	}
+
+#endif
+
+}
+
 
 static Common::String getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
@@ -292,20 +332,19 @@ static Common::String getDefaultConfigFileName() {
 		CreateDirectory(configFile, NULL);
 		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
 
-		if (fopen(configFile, "r") == NULL) {
+		FILE *tmp = NULL;
+		if ((tmp = fopen(configFile, "r")) == NULL) {
 			// Check windows directory
 			char oldConfigFile[MAXPATHLEN];
 			GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
 			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
-			if (fopen(oldConfigFile, "r")) {
-				printf("The default location of the config file (scummvm.ini) in ScummVM has changed,\n");
-				printf("under Windows NT4/2000/XP/Vista. You may want to consider moving your config\n");
-				printf("file from the old default location:\n");
-				printf("%s\n", oldConfigFile);
-				printf("to the new default location:\n");
-				printf("%s\n\n", configFile);
+			if ((tmp = fopen(oldConfigFile, "r"))) {
 				strcpy(configFile, oldConfigFile);
+
+				fclose(tmp);
 			}
+		} else {
+			fclose(tmp);
 		}
 	} else {
 		// Check windows directory
@@ -334,23 +373,13 @@ static Common::String getDefaultConfigFileName() {
 }
 
 Common::SeekableReadStream *OSystem_SDL::openConfigFileForReading() {
-	Common::File *confFile = new Common::File();
-	assert(confFile);
-	if (!confFile->open(getDefaultConfigFileName())) {
-		delete confFile;
-		confFile = 0;
-	}
-	return confFile;
+	Common::FilesystemNode file(getDefaultConfigFileName());
+	return file.openForReading();
 }
 
 Common::WriteStream *OSystem_SDL::openConfigFileForWriting() {
-	Common::DumpFile *confFile = new Common::DumpFile();
-	assert(confFile);
-	if (!confFile->open(getDefaultConfigFileName())) {
-		delete confFile;
-		confFile = 0;
-	}
-	return confFile;
+	Common::FilesystemNode file(getDefaultConfigFileName());
+	return file.openForWriting();
 }
 
 void OSystem_SDL::setWindowCaption(const char *caption) {
@@ -435,15 +464,21 @@ void OSystem_SDL::quit() {
 }
 
 void OSystem_SDL::setupIcon() {
-	int w, h, ncols, nbytes, i;
-	unsigned int rgba[256], icon[32 * 32];
-	unsigned char mask[32][4];
+	int x, y, w, h, ncols, nbytes, i;
+	unsigned int rgba[256];
+        unsigned int *icon;
 
 	sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes);
-	if ((w != 32) || (h != 32) || (ncols > 255) || (nbytes > 1)) {
-		warning("Could not load the icon (%d %d %d %d)", w, h, ncols, nbytes);
+	if ((w > 512) || (h > 512) || (ncols > 255) || (nbytes > 1)) {
+		warning("Could not load the built-in icon (%d %d %d %d)", w, h, ncols, nbytes);
 		return;
 	}
+	icon = (unsigned int*)malloc(w*h*sizeof(unsigned int));
+	if (!icon) {
+		warning("Could not allocate temp storage for the built-in icon");
+		return;
+	}
+
 	for (i = 0; i < ncols; i++) {
 		unsigned char code;
 		char color[32];
@@ -457,26 +492,27 @@ void OSystem_SDL::setupIcon() {
 			sscanf(color + 1, "%06x", &col);
 			col |= 0xFF000000;
 		} else {
-			warning("Could not load the icon (%d %s - %s) ", code, color, scummvm_icon[1 + i]);
+			warning("Could not load the built-in icon (%d %s - %s) ", code, color, scummvm_icon[1 + i]);
+			free(icon);
 			return;
 		}
 
 		rgba[code] = col;
 	}
-	memset(mask, 0, sizeof(mask));
-	for (h = 0; h < 32; h++) {
-		const char *line = scummvm_icon[1 + ncols + h];
-		for (w = 0; w < 32; w++) {
-			icon[w + 32 * h] = rgba[(int)line[w]];
-			if (rgba[(int)line[w]] & 0xFF000000) {
-				mask[h][w >> 3] |= 1 << (7 - (w & 0x07));
-			}
+	for (y = 0; y < h; y++) {
+		const char *line = scummvm_icon[1 + ncols + y];
+		for (x = 0; x < w; x++) {
+			icon[x + w * y] = rgba[(int)line[x]];
 		}
 	}
 
-	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, 32, 32, 32, 32 * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
-	SDL_WM_SetIcon(sdl_surf, (unsigned char *) mask);
+	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, w, h, 32, w * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
+	if (!sdl_surf) {
+		warning("SDL_CreateRGBSurfaceFrom(icon) failed");
+	}
+	SDL_WM_SetIcon(sdl_surf, NULL);
 	SDL_FreeSurface(sdl_surf);
+	free(icon);
 }
 
 OSystem::MutexRef OSystem_SDL::createMutex(void) {
@@ -515,7 +551,7 @@ void OSystem_SDL::mixerProducerThread() {
 		// Generate samples and put them into the next buffer
 		nextSoundBuffer = _activeSoundBuf ^ 1;
 		_mixer->mixCallback(_soundBuffers[nextSoundBuffer], _soundBufSize);
-		
+
 		// Swap buffers
 		_activeSoundBuf = nextSoundBuffer;
 	}
@@ -559,7 +595,7 @@ void OSystem_SDL::deinitThreadedMixer() {
 		SDL_CondBroadcast(_soundCond);
 		SDL_WaitThread(_soundThread, NULL);
 
-		// Kill the mutex & cond variables. 
+		// Kill the mutex & cond variables.
 		// Attention: AT this point, the mixer callback must not be running
 		// anymore, else we will crash!
 		SDL_DestroyMutex(_soundMutex);
@@ -582,10 +618,10 @@ void OSystem_SDL::mixCallback(void *arg, byte *samples, int len) {
 
 	// Lock mutex, to ensure our data is not overwritten by the producer thread
 	SDL_LockMutex(this_->_soundMutex);
-	
+
 	// Copy data from the current sound buffer
 	memcpy(samples, this_->_soundBuffers[this_->_activeSoundBuf], len);
-	
+
 	// Unlock mutex and wake up the produced thread
 	SDL_UnlockMutex(this_->_soundMutex);
 	SDL_CondSignal(this_->_soundCond);
@@ -645,7 +681,7 @@ void OSystem_SDL::setupMixer() {
 		// even if it didn't. Probably only happens for "weird" rates, though.
 		_samplesPerSec = obtained.freq;
 		debug(1, "Output sample rate: %d Hz", _samplesPerSec);
-	
+
 		// Tell the mixer that we are ready and start the sound processing
 		_mixer->setOutputRate(_samplesPerSec);
 		_mixer->setReady(true);

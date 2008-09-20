@@ -62,7 +62,7 @@ void ScummEngine_v4::readIndexFile() {
 	closeRoom();
 	openRoom(0);
 
-	while (!_fileHandle->eof()) {
+	while (!_fileHandle->eos()) {
 		// Figure out the sizes of various resources
 		itemsize = _fileHandle->readUint32LE();
 		blocktype = _fileHandle->readUint16LE();

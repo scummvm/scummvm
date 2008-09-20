@@ -907,7 +907,7 @@ protected:
 	int _dbgPass;
 
 	// save/load specific
-	void saveGame(const char *fileName, const char *saveName);
+	void saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumbnail);
 	void loadGame(const char *fileName);
 };
 

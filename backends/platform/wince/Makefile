@@ -45,8 +45,8 @@ ENABLE_DRASCULA = STATIC_PLUGIN
 
 USE_MAD           = 1
 USE_MPEG2         = 1
-USE_TREMOR        = 1
-#USE_TREMOLO       = 1
+#USE_TREMOR        = 1
+USE_TREMOLO       = 1
 USE_FLAC          = 1
 USE_ZLIB          = 1
 
@@ -139,7 +139,7 @@ LIBS += -ltremorce
 endif
 
 ifdef USE_TREMOLO
-DEFINES += -DUSE_TREMOR -DUSE_VORBIS
+DEFINES += -DUSE_TREMOR -DUSE_VORBIS -DUSE_TREMOLO
 INCLUDES += -Ilibs/include/tremolo
 LIBS += -llibTremolo
 endif

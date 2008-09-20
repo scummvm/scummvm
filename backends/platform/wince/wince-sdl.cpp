@@ -461,7 +461,7 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	_orientationLandscape(0), _newOrientation(0), _panelInitialized(false),
 	_panelVisible(true), _panelStateForced(false), _forceHideMouse(false), _unfilteredkeys(false),
 	_freeLook(false), _forcePanelInvisible(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
-	_scalersChanged(false), _lastKeyPressed(0), _tapTime(0), _closeClick(false),
+	_scalersChanged(false), _lastKeyPressed(0), _tapTime(0), _closeClick(false), _noDoubleTapRMB(false),
 	_saveToolbarState(false), _saveActiveToolbar(NAME_MAIN_PANEL), _rbutton(false), _hasfocus(true),
 	_usesEmulatedMouse(false), _mouseBackupOld(NULL), _mouseBackupToolbar(NULL), _mouseBackupDim(0)
 {
@@ -1059,13 +1059,10 @@ void OSystem_WINCE3::update_game_settings() {
 			panel->setVisible(false);
 
 		_saveToolbarState = true;
-
-		// Set Smush Force Redraw rate for Full Throttle
-		if (!ConfMan.hasKey("Smush_force_redraw")) {
-			ConfMan.setInt("Smush_force_redraw", 30);
-			ConfMan.flushToDisk();
-		}
 	}
+
+	if (ConfMan.hasKey("no_doubletap_rightclick"))
+		_noDoubleTapRMB = ConfMan.getBool("no_doubletap_rightclick");
 
 	compute_sample_rate();
 }
@@ -2340,7 +2337,7 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 					if (_closeClick && (GetTickCount() - _tapTime < 1000)) {
 						if (event.mouse.y <= 20 && _panelInitialized) {		// top of screen (show panel)
 							swap_panel_visibility();
-						} else {		// right click
+						} else if (!_noDoubleTapRMB) {		// right click
 							event.type = Common::EVENT_RBUTTONDOWN;
 							_rbutton = true;
 						}

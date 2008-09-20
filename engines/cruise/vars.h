@@ -86,7 +86,7 @@ struct filesData2Struct {
 	int16 field_2;
 };
 
-struct fileName {
+struct dataFileName {
 	char name[13];
 };
 
@@ -103,7 +103,7 @@ struct setHeaderEntry {
 
 struct volumeDataStruct {
 	char ident[10];
-	fileName *ptr;
+	dataFileName *ptr;
 	int16 diskNumber;
 	int32 size;
 };

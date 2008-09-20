@@ -103,13 +103,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 		lineno++;
 
 		// Read a line
-		String line;
-		while (line.lastChar() != '\n') {
-			char buf[256];
-			if (!stream.readLine_NEW(buf, 256))
-				break;
-			line += buf;
-		}
+		String line = stream.readLine();
 
 		if (line.size() == 0) {
 			// Do nothing
@@ -118,6 +112,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 			// of a new domain, or a key-value-pair, we associate the value
 			// of the 'comment' variable with that entity.
 			comment += line;
+			comment += "\n";
 		} else if (line[0] == '[') {
 			// It's a new domain which begins here.
 			const char *p = line.c_str() + 1;

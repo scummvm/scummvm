@@ -206,7 +206,7 @@ void KyraEngine_LoK::loadGame(const char *fileName) {
 	_mousePressFlag = false;
 	setMousePos(brandonX, brandonY);
 	
-	if (in->ioFailed())
+	if (in->err() || in->eos())
 		error("Load failed ('%s', '%s').", fileName, header.description.c_str());
 	else
 		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", header.description.c_str());
@@ -218,13 +218,13 @@ void KyraEngine_LoK::loadGame(const char *fileName) {
 	delete in;
 }
 
-void KyraEngine_LoK::saveGame(const char *fileName, const char *saveName) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::saveGame('%s', '%s')", fileName, saveName);
+void KyraEngine_LoK::saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumb) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::saveGame('%s', '%s', %p)", fileName, saveName, (const void *)thumb);
 	
-	if (_quitFlag)
+	if (quit())
 		return;
 
-	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName);
+	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName, thumb);
 	if (!out)
 		return;
 	
@@ -289,7 +289,7 @@ void KyraEngine_LoK::saveGame(const char *fileName, const char *saveName) {
 	out->finalize();
 
 	// check for errors
-	if (out->ioFailed())
+	if (out->err())
 		warning("Can't write file '%s'. (Disk full?)", fileName);
 	else
 		debugC(1, kDebugLevelMain, "Saved game '%s.'", saveName);

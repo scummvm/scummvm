@@ -36,7 +36,7 @@ public:
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 protected:
 	void addGame();
-	void automaticScanDirectory(const FilesystemNode &node);
+	void automaticScanDirectory(const Common::FilesystemNode &node);
 };
 
 typedef GUI::LauncherDialog GUILauncherDialog;

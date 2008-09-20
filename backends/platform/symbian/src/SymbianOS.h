@@ -27,12 +27,8 @@
 
 #include "backends/platform/sdl/sdl.h"
 
-/** Vibration support */
-#ifdef USE_VIBRA_SE_PXXX
-#include <vibration.h>
-#endif
-
 #define TOTAL_ZONES 3
+class RFs;
 
 class OSystem_SDL_Symbian : public OSystem_SDL {
 public:
@@ -62,6 +58,9 @@ public:
 
 	// Overloaded from SDL_Commmon
 	void quit();
+
+	// Returns reference to File session
+	RFs& FsSession();
 protected:
 	//
 	// The mixer callback function, passed on to OSystem::setSoundCallback().
@@ -70,7 +69,6 @@ protected:
 	//
 	static void symbianMixCallback(void *s, byte *samples, int len);
 
-	virtual FilesystemFactory *getFilesystemFactory();
 
 	virtual Common::SeekableReadStream *openConfigFileForReading();
 	virtual Common::WriteStream *openConfigFileForWriting();
@@ -134,6 +132,7 @@ protected:
 	} zoneDesc;
 
 	static zoneDesc _zones[TOTAL_ZONES];
+	RFs* _RFs;
 };
 
 #endif

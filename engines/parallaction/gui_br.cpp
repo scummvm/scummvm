@@ -28,6 +28,7 @@
 #include "parallaction/gui.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
+#include "parallaction/saveload.h"
 
 namespace Parallaction {
 
@@ -40,11 +41,11 @@ protected:
 	Palette blackPal;
 	Palette pal;
 
-	Parallaction_br *_vm;
+	Parallaction *_vm;
 	int _fadeSteps;
 
 public:
-	SplashInputState_BR(Parallaction_br *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm)  {
+	SplashInputState_BR(Parallaction *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm)  {
 	}
 
 	virtual MenuInputState* run() {
@@ -52,8 +53,6 @@ public:
 			pal.fadeTo(blackPal, 1);
 			_vm->_gfx->setPalette(pal);
 			_fadeSteps--;
-			// TODO: properly implement timers to avoid delay calls
-			_vm->_system->delayMillis(20);
 			return this;
 		}
 
@@ -75,7 +74,7 @@ public:
 		_vm->showSlide(_slideName.c_str(), CENTER_LABEL_HORIZONTAL, CENTER_LABEL_VERTICAL);
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 
-		_startTime = g_system->getMillis();
+		_startTime = _vm->_system->getMillis();
 		_fadeSteps = -1;
 	}
 };
@@ -152,6 +151,8 @@ class MainMenuInputState_BR : public MenuInputState {
 	static const char *_menuStrings[NUM_MENULINES];
 	static const MenuOptions _options[NUM_MENULINES];
 
+	static const char *_firstLocation[];
+
 	int _availItems;
 	int _selection;
 
@@ -166,16 +167,18 @@ class MainMenuInputState_BR : public MenuInputState {
 
 	void performChoice(int selectedItem) {
 		switch (selectedItem) {
-		case kMenuQuit:
-			_engineFlags |= kEngineQuit;
+		case kMenuQuit: {
+			_vm->_quit = true;
+			_vm->quitGame();
 			break;
+		}
 
 		case kMenuLoadGame:
 			warning("loadgame not yet implemented");
 			break;
 
 		default:
-			_vm->startPart(selectedItem);
+			_vm->scheduleLocationSwitch(_firstLocation[selectedItem]);
 		}
 	}
 
@@ -213,29 +216,38 @@ public:
 
 	virtual void enter() {
 		_vm->_gfx->clearScreen();
-		int x = 0, y = 0;
+		int x = 0, y = 0, i = 0;
 		if (_vm->getPlatform() == Common::kPlatformPC) {
 			x = 20;
 			y = 50;
 		}
 		_vm->showSlide("tbra", x, y);
 
-		// TODO: load progress from savefile
-		int progress = 3;
-		_availItems = 4 + progress;
+		_availItems = 4;
+
+		bool complete[3];
+		_vm->_saveLoad->getGamePartProgress(complete, 3);
+		for (i = 0; i < 3 && complete[i]; i++, _availItems++) ;
 
 		// TODO: keep track of and destroy menu item frames/surfaces
-		int i;
 		for (i = 0; i < _availItems; i++) {
 			_lines[i] = new GfxObj(0, renderMenuItem(_menuStrings[i]), "MenuItem");
 			uint id = _vm->_gfx->setItem(_lines[i], MENUITEMS_X, MENUITEMS_Y + MENUITEM_HEIGHT * i, 0xFF);
 			_vm->_gfx->setItemFrame(id, 0);
 		}
 		_selection = -1;
-		_vm->setArrowCursor();
+		_vm->_input->setArrowCursor();
 		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 	}
 
+};
+
+const char *MainMenuInputState_BR::_firstLocation[] = {
+	"intro.0",
+	"museo.1",
+	"start.2",
+	"bolscoi.3",
+	"treno.4"
 };
 
 const char *MainMenuInputState_BR::_menuStrings[NUM_MENULINES] = {
@@ -264,27 +276,22 @@ const MainMenuInputState_BR::MenuOptions MainMenuInputState_BR::_options[NUM_MEN
 
 
 
-void Parallaction_br::startGui() {
+void Parallaction_br::startGui(bool showSplash) {
 	_menuHelper = new MenuInputHelper;
-	new SplashInputState0_BR(this, _menuHelper);
-	new SplashInputState1_BR(this, _menuHelper);
+
 	new MainMenuInputState_BR(this, _menuHelper);
 
-	_menuHelper->setState("intro0");
+	if (showSplash) {
+		new SplashInputState0_BR(this, _menuHelper);
+		new SplashInputState1_BR(this, _menuHelper);
+		_menuHelper->setState("intro0");
+	} else {
+		_menuHelper->setState("mainmenu");
+	}
+
 	_input->_inputMode = Input::kInputModeMenu;
-
-	do {
-		_input->readInput();
-		if (!_menuHelper->run()) break;
-		_gfx->beginFrame();
-		_gfx->updateScreen();
-	} while (true);
-
-	delete _menuHelper;
-	_menuHelper = 0;
-
-	_input->_inputMode = Input::kInputModeGame;
 }
+
 
 
 

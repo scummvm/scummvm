@@ -30,6 +30,8 @@ MODULE_OBJS := \
 	inter_bargon.o \
 	inter_v3.o \
 	inter_v4.o \
+	inter_v5.o \
+	inter_v6.o \
 	map.o \
 	map_v1.o \
 	map_v2.o \
@@ -53,6 +55,7 @@ MODULE_OBJS := \
 	video.o \
 	video_v1.o \
 	video_v2.o \
+	video_v6.o \
 	sound/sound.o \
 	sound/sounddesc.o \
 	sound/pcspeaker.o \

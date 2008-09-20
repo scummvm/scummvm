@@ -660,9 +660,10 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Miscellaneous");
-		add_person("David Corrales-Lopez", "david_corrales", "Filesystem access improvements");
+		add_person("David Corrales-Lopez", "david_corrales", "Filesystem access improvements (GSoC 2007 task)");
 		add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
 		add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, Adlib work");
+		add_person("Chris Page", "cp88", "Return to launcher, savestate improvements, leak fixes, ... (GSoC 2008 task)");
 		add_person("Robin Watts", "robinwatts", "ARM assembly routines for nice speedups on several ports; improvements to the sound mixer");
 	  end_section();
     end_section();

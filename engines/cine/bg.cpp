@@ -41,10 +41,18 @@ byte loadCtFW(const char *ctName) {
 	uint16 header[32];
 	byte *ptr, *dataPtr;
 
+	int16 foundFileIdx = findFileInBundle(ctName);
+	if (foundFileIdx == -1) {
+		warning("loadCtFW: Unable to find collision data file '%s'", ctName);
+		// FIXME: Rework this function's return value policy and return an appropriate value here.
+		// The return value isn't yet used for anything so currently it doesn't really matter.
+		return 0;
+	}
+
 	if (currentCtName != ctName)
 		strcpy(currentCtName, ctName);
 
-	ptr = dataPtr = readBundleFile(findFileInBundle(ctName));
+	ptr = dataPtr = readBundleFile(foundFileIdx);
 
 	loadRelatedPalette(ctName);
 

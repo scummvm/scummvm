@@ -34,28 +34,24 @@ const String String::emptyString;
 const char *String::emptyString = "";
 #endif
 
-static int computeCapacity(int len) {
-	// By default, for the capacity we use the nearest multiple of 32
-	// that leaves at least 16 chars of extra space (in case the string
-	// grows a bit).
-	// Finally, we subtract 1 to compensate for the trailing zero byte.
-	len += 16;
-	return ((len + 32 - 1) & ~0x1F) - 1;
+static uint32 computeCapacity(uint32 len) {
+	// By default, for the capacity we use the next multiple of 32
+	return ((len + 32 - 1) & ~0x1F);
 }
 
-String::String(const char *str) : _len(0), _str(_storage) {
+String::String(const char *str) : _size(0), _str(_storage) {
 	if (str == 0) {
 		_storage[0] = 0;
-		_len = 0;
+		_size = 0;
 	} else
 		initWithCStr(str, strlen(str));
 }
 
-String::String(const char *str, uint32 len) : _len(0), _str(_storage) {
+String::String(const char *str, uint32 len) : _size(0), _str(_storage) {
 	initWithCStr(str, len);
 }
 
-String::String(const char *beginP, const char *endP) : _len(0), _str(_storage) {
+String::String(const char *beginP, const char *endP) : _size(0), _str(_storage) {
 	assert(endP >= beginP);
 	initWithCStr(beginP, endP - beginP);
 }
@@ -67,13 +63,13 @@ void String::initWithCStr(const char *str, uint32 len) {
 	// for GCC 2.95.x compatibility (see also tracker item #1602879).
 	_storage[0] = 0;
 
-	_len = len;
+	_size = len;
 
 	if (len >= _builtinCapacity) {
 		// Not enough internal storage, so allocate more
-		_extern._capacity = computeCapacity(len);
+		_extern._capacity = computeCapacity(len+1);
 		_extern._refCount = 0;
-		_str = (char *)malloc(_extern._capacity+1);
+		_str = (char *)malloc(_extern._capacity);
 		assert(_str != 0);
 	}
 
@@ -83,10 +79,10 @@ void String::initWithCStr(const char *str, uint32 len) {
 }
 
 String::String(const String &str)
- : _len(str._len), _str(str.isStorageIntern() ? _storage : str._str) {
+ : _size(str._size), _str(str.isStorageIntern() ? _storage : str._str) {
 	if (str.isStorageIntern()) {
 		// String in internal storage: just copy it
-		memcpy(_storage, str._storage, _builtinCapacity);
+		memcpy(_storage, str._storage, sizeof(_storage));
 	} else {
 		// String in external storage: use refcount mechanism
 		str.incRefCount();
@@ -97,14 +93,14 @@ String::String(const String &str)
 }
 
 String::String(char c)
-: _len(0), _str(_storage) {
+: _size(0), _str(_storage) {
 
 	_storage[0] = c;
 	_storage[1] = 0;
 
 	// TODO/FIXME: There is no reason for the following check -- we *do*
 	// allow strings to contain 0 bytes!
-	_len = (c == 0) ? 0 : 1;
+	_size = (c == 0) ? 0 : 1;
 }
 
 String::~String() {
@@ -112,16 +108,16 @@ String::~String() {
 }
 
 void String::makeUnique() {
-	ensureCapacity(_len, true);
+	ensureCapacity(_size, true);
 }
 
 /**
- * Ensure that enough storage is available to store at least new_len
+ * Ensure that enough storage is available to store at least new_size
  * characters plus a null byte. In addition, if we currently share
  * the storage with another string, unshare it, so that we can safely
  * write to the storage.
  */
-void String::ensureCapacity(uint32 new_len, bool keep_old) {
+void String::ensureCapacity(uint32 new_size, bool keep_old) {
 	bool isShared;
 	uint32 curCapacity, newCapacity;
 	char *newStorage;
@@ -129,7 +125,7 @@ void String::ensureCapacity(uint32 new_len, bool keep_old) {
 
 	if (isStorageIntern()) {
 		isShared = false;
-		curCapacity = _builtinCapacity - 1;
+		curCapacity = _builtinCapacity;
 	} else {
 		isShared = (oldRefCount && *oldRefCount > 1);
 		curCapacity = _extern._capacity;
@@ -137,30 +133,30 @@ void String::ensureCapacity(uint32 new_len, bool keep_old) {
 
 	// Special case: If there is enough space, and we do not share
 	// the storage, then there is nothing to do.
-	if (!isShared && new_len <= curCapacity)
+	if (!isShared && new_size < curCapacity)
 		return;
 
-	if (isShared && new_len <= _builtinCapacity - 1) {
+	if (isShared && new_size < _builtinCapacity) {
 		// We share the storage, but there is enough internal storage: Use that.
 		newStorage = _storage;
-		newCapacity = _builtinCapacity - 1;
+		newCapacity = _builtinCapacity;
 	} else {
 		// We need to allocate storage on the heap!
 
 		// Compute a suitable new capacity limit
-		newCapacity = computeCapacity(new_len);
+		newCapacity = MAX(curCapacity * 2, computeCapacity(new_size+1));
 
 		// Allocate new storage
-		newStorage = (char *)malloc(newCapacity+1);
+		newStorage = (char *)malloc(newCapacity);
 		assert(newStorage);
 	}
 
 	// Copy old data if needed, elsewise reset the new storage.
 	if (keep_old) {
-		assert(_len <= newCapacity);
-		memcpy(newStorage, _str, _len + 1);
+		assert(_size < newCapacity);
+		memcpy(newStorage, _str, _size + 1);
 	} else {
-		_len = 0;
+		_size = 0;
 		newStorage[0] = 0;
 	}
 
@@ -210,7 +206,7 @@ void String::decRefCount(int *oldRefCount) {
 String& String::operator  =(const char *str) {
 	uint32 len = strlen(str);
 	ensureCapacity(len, false);
-	_len = len;
+	_size = len;
 	memmove(_str, str, len + 1);
 	return *this;
 }
@@ -221,16 +217,16 @@ String &String::operator  =(const String &str) {
 
 	if (str.isStorageIntern()) {
 		decRefCount(_extern._refCount);
-		_len = str._len;
+		_size = str._size;
 		_str = _storage;
-		memcpy(_str, str._str, _len + 1);
+		memcpy(_str, str._str, _size + 1);
 	} else {
 		str.incRefCount();
 		decRefCount(_extern._refCount);
 
 		_extern._refCount = str._extern._refCount;
 		_extern._capacity = str._extern._capacity;
-		_len = str._len;
+		_size = str._size;
 		_str = str._str;
 	}
 
@@ -240,7 +236,7 @@ String &String::operator  =(const String &str) {
 String& String::operator  =(char c) {
 	decRefCount(_extern._refCount);
 	_str = _storage;
-	_len = 1;
+	_size = 1;
 	_str[0] = c;
 	_str[1] = 0;
 	return *this;
@@ -249,30 +245,30 @@ String& String::operator  =(char c) {
 String &String::operator +=(const char *str) {
 	int len = strlen(str);
 	if (len > 0) {
-		ensureCapacity(_len + len, true);
+		ensureCapacity(_size + len, true);
 
-		memcpy(_str + _len, str, len + 1);
-		_len += len;
+		memcpy(_str + _size, str, len + 1);
+		_size += len;
 	}
 	return *this;
 }
 
 String &String::operator +=(const String &str) {
-	int len = str._len;
+	int len = str._size;
 	if (len > 0) {
-		ensureCapacity(_len + len, true);
+		ensureCapacity(_size + len, true);
 
-		memcpy(_str + _len, str._str, len + 1);
-		_len += len;
+		memcpy(_str + _size, str._str, len + 1);
+		_size += len;
 	}
 	return *this;
 }
 
 String &String::operator +=(char c) {
-	ensureCapacity(_len + 1, true);
+	ensureCapacity(_size + 1, true);
 
-	_str[_len++] = c;
-	_str[_len] = 0;
+	_str[_size++] = c;
+	_str[_size] = 0;
 
 	return *this;
 }
@@ -293,10 +289,10 @@ bool String::hasPrefix(const char *x) const {
 bool String::hasSuffix(const char *x) const {
 	assert(x != 0);
 	// Compare x with the end of _str.
-	const uint32 x_len = strlen(x);
-	if (x_len > _len)
+	const uint32 x_size = strlen(x);
+	if (x_size > _size)
 		return false;
-	const char *y = c_str() + _len - x_len;
+	const char *y = c_str() + _size - x_size;
 	while (*x && *x == *y) {
 		++x;
 		++y;
@@ -315,66 +311,74 @@ bool String::contains(char x) const {
 	return strchr(c_str(), x) != NULL;
 }
 
+bool String::matchString(const char *pat) const {
+	return Common::matchString(c_str(), pat);
+}
+
+bool String::matchString(const String &pat) const {
+	return Common::matchString(c_str(), pat.c_str());
+}
+
 void String::deleteLastChar() {
-	deleteChar(_len - 1);
+	deleteChar(_size - 1);
 }
 
 void String::deleteChar(uint32 p) {
-	assert(p < _len);
+	assert(p < _size);
 
 	makeUnique();
-	while (p++ < _len)
+	while (p++ < _size)
 		_str[p-1] = _str[p];
-	_len--;
+	_size--;
 }
 
 void String::clear() {
 	decRefCount(_extern._refCount);
 
-	_len = 0;
+	_size = 0;
 	_str = _storage;
 	_storage[0] = 0;
 }
 
 void String::setChar(char c, uint32 p) {
-	assert(p <= _len);
+	assert(p <= _size);
 
 	makeUnique();
 	_str[p] = c;
 }
 
 void String::insertChar(char c, uint32 p) {
-	assert(p <= _len);
+	assert(p <= _size);
 
-	ensureCapacity(_len + 1, true);
-	_len++;
-	for (uint32 i = _len; i > p; --i)
+	ensureCapacity(_size + 1, true);
+	_size++;
+	for (uint32 i = _size; i > p; --i)
 		_str[i] = _str[i-1];
 	_str[p] = c;
 }
 
 void String::toLowercase() {
 	makeUnique();
-	for (uint32 i = 0; i < _len; ++i)
+	for (uint32 i = 0; i < _size; ++i)
 		_str[i] = tolower(_str[i]);
 }
 
 void String::toUppercase() {
 	makeUnique();
-	for (uint32 i = 0; i < _len; ++i)
+	for (uint32 i = 0; i < _size; ++i)
 		_str[i] = toupper(_str[i]);
 }
 
 void String::trim() {
-	if (_len == 0)
+	if (_size == 0)
 		return;
 
 	makeUnique();
 
 	// Trim trailing whitespace
-	while (_len >= 1 && isspace(_str[_len-1]))
-		_len--;
-	_str[_len] = 0;
+	while (_size >= 1 && isspace(_str[_size-1]))
+		_size--;
+	_str[_size] = 0;
 
 	// Trim leading whitespace
 	char *t = _str;
@@ -382,8 +386,8 @@ void String::trim() {
 		t++;
 
 	if (t != _str) {
-		_len -= t - _str;
-		memmove(_str, t, _len + 1);
+		_size -= t - _str;
+		memmove(_str, t, _size + 1);
 	}
 }
 
@@ -522,6 +526,114 @@ char *rtrim(char *t) {
 
 char *trim(char *t) {
 	return rtrim(ltrim(t));
+}
+
+Common::String lastPathComponent(const Common::String &path, const char sep) {
+	const char *str = path.c_str();
+	const char *last = str + path.size();
+
+	// Skip over trailing slashes
+	while (last > str && *(last-1) == sep)
+		--last;
+
+	// Path consisted of only slashes -> return empty string
+	if (last == str)
+		return Common::String();
+	
+	// Now scan the whole component
+	const char *first = last - 1;
+	while (first >= str && *first != sep)
+		--first;
+	
+	if (*first == sep)
+		first++;
+
+	return Common::String(first, last);
+}
+
+Common::String normalizePath(const Common::String &path, const char sep) {
+	if (path.empty())
+		return path;
+
+	const char *cur = path.c_str();
+	Common::String result;
+
+	// If there is a leading slash, preserve that:
+	if (*cur == sep) {
+		result += sep;
+		while (*cur == sep)
+			++cur;
+	}
+	
+	// Scan till the end of the String
+	while (*cur != 0) {
+		const char *start = cur;
+		
+		// Scan till the next path separator resp. the end of the string
+		while (*cur != sep && *cur != 0)
+			cur++;
+		
+		const Common::String component(start, cur);
+
+		// Skip empty components and dot components, add all others
+		if (!component.empty() && component != ".") {
+			// Add a separator before the component, unless the result
+			// string already ends with one (which happens only if the
+			// path *starts* with a separator).
+			if (!result.empty() && result.lastChar() != sep)
+				result += sep;
+
+			// Add the component
+			result += component;
+		}
+
+		// Skip over separator chars
+		while (*cur == sep)
+			cur++;
+	}
+
+	return result;
+}
+
+bool matchString(const char *str, const char *pat) {
+	assert(str);
+	assert(pat);
+
+	const char *p = 0;
+	const char *q = 0;
+
+	for (;;) {
+		switch (*pat) {
+		case '*':
+			// Record pattern / string possition for backtracking
+			p = ++pat;
+			q = str;
+			// If pattern ended with * -> match
+			if (!*pat)
+				return true;
+			break;
+
+		default:
+			if (*pat != *str) {
+				if (p) {
+					// No match, oops -> try to backtrack
+					pat = p;
+					str = ++q;
+					if (!*str)
+						return !*pat;
+					break;
+				}
+				else
+					return false;
+			}
+			// fallthrough
+		case '?':
+			if (!*str)
+				return !*pat;
+			pat++;
+			str++;
+		}
+	}
 }
 
 }	// End of namespace Common

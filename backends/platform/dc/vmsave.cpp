@@ -269,14 +269,15 @@ class InVMSave : public Common::InSaveFile {
 private:
   char *buffer;
   int _pos, _size;
+  bool _eos;
 
   uint32 read(void *buf, uint32 cnt);
-  void skip(uint32 offset);
-  void seek(int32 offs, int whence);
+  bool skip(uint32 offset);
+  bool seek(int32 offs, int whence);
 
 public:
   InVMSave()
-    : _pos(0), buffer(NULL)
+    : _pos(0), buffer(NULL), _eos(false)
   { }
 
   ~InVMSave()
@@ -285,9 +286,10 @@ public:
       delete[] buffer;
   }
 
-  bool eos() const { return _pos >= _size; }
-  uint32 pos() const { return _pos; }
-  uint32 size() const { return _size; }
+  bool eos() const { return _eos; }
+  void clearErr() { _eos = false; }
+  int32 pos() const { return _pos; }
+  int32 size() const { return _size; }
 
   bool readSaveGame(const char *filename)
   { return ::readSaveGame(buffer, _size, filename); }
@@ -312,8 +314,8 @@ public:
 
   ~OutVMSave();
 
-  bool ioFailed() const { return iofailed; }
-  void clearIOFailed() { iofailed = false; }
+  bool err() const { return iofailed; }
+  void clearErr() { iofailed = false; }
   void finalize();
 };
 
@@ -370,6 +372,7 @@ uint32 InVMSave::read(void *buf, uint32 cnt)
   int nbyt = cnt;
   if (_pos + nbyt > _size) {
     cnt = (_size - _pos);
+    _eos = true;
     nbyt = cnt;
   }
   if (nbyt)
@@ -378,15 +381,16 @@ uint32 InVMSave::read(void *buf, uint32 cnt)
   return cnt;
 }
 
-void InVMSave::skip(uint32 offset)
+bool InVMSave::skip(uint32 offset)
 {
   int nbyt = offset;
   if (_pos + nbyt > _size)
     nbyt = (_size - _pos);
   _pos += nbyt;
+  return true;
 }
 
-void InVMSave::seek(int32 offs, int whence)
+bool InVMSave::seek(int32 offs, int whence)
 {
   switch(whence) {
   case SEEK_SET:
@@ -403,6 +407,8 @@ void InVMSave::seek(int32 offs, int whence)
     _pos = 0;
   else if (_pos > _size)
     _pos = _size;
+  _eos = false;
+  return true;
 }
 
 uint32 OutVMSave::write(const void *buf, uint32 cnt)

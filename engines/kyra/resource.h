@@ -35,74 +35,16 @@
 #include "common/hashmap.h"
 #include "common/stream.h"
 #include "common/ptr.h"
+#include "common/archive.h"
 
 #include "kyra/kyra_v1.h"
 #include "kyra/kyra_hof.h"
 
 namespace Kyra {
 
-struct ResFileEntry {
-	Common::String parent;
-	uint32 size;
-
-	bool preload;
-	bool mounted;
-	bool prot;
-
-	enum kType {
-		kRaw = 0,
-		kPak = 1,
-		kInsMal = 2,
-		kTlk = 3,
-		kAutoDetect
-	};
-	kType type;
-	uint32 offset;
-};
-
-struct CompFileEntry {
-	uint32 size;
-	uint8 *data;
-};
-
-typedef Common::HashMap<Common::String, ResFileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ResFileMap;
-typedef Common::HashMap<Common::String, CompFileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CompFileMap;
 class Resource;
 
-class ResArchiveLoader {
-public:
-	struct File {
-		File() : filename(), entry() {}
-		File(const Common::String &f, const ResFileEntry &e) : filename(f), entry(e) {}
-
-		bool operator ==(const Common::String &r) const {
-			return filename.equalsIgnoreCase(r);
-		}
-
-		Common::String filename;
-		ResFileEntry entry;
-	};
-	typedef Common::List<File> FileList;
-
-	virtual ~ResArchiveLoader() {}
-
-	virtual bool checkFilename(Common::String filename) const = 0;
-	virtual bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const = 0;
-	virtual bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const = 0;
-	// parameter 'archive' can be deleted by this method and it may not be deleted from the caller
-	virtual Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const = 0;
-
-	virtual ResFileEntry::kType getType() const = 0;
-protected:
-};
-
-class CompArchiveLoader {
-public:
-	virtual ~CompArchiveLoader() {}
-
-	virtual bool checkForFiles() const = 0;
-	virtual bool loadFile(CompFileMap &loadTo) const = 0;
-};
+class ResArchiveLoader;
 
 class Resource {
 public:
@@ -111,9 +53,9 @@ public:
 
 	bool reset();
 
-	bool loadPakFile(const Common::String &filename);
-	void unloadPakFile(const Common::String &filename);
-	bool isInPakList(const Common::String &filename);
+	bool loadPakFile(Common::String filename);
+	void unloadPakFile(Common::String filename);
+	bool isInPakList(Common::String filename);
 
 	bool loadFileList(const Common::String &filedata);
 	bool loadFileList(const char * const *filelist, uint32 numFiles);
@@ -127,27 +69,20 @@ public:
 
 	bool loadFileToBuf(const char *file, void *buf, uint32 maxSize);
 protected:
-	void checkFile(const Common::String &file);
-	bool isAccessable(const Common::String &file);
+	typedef Common::HashMap<Common::String, Common::ArchivePtr, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> ArchiveMap;
+	ArchiveMap _archiveCache;
 
-	void detectFileTypes();
+	Common::SearchSet _files;
+	Common::SharedPtr<Common::SearchSet> _archiveFiles;
+	Common::SharedPtr<Common::SearchSet> _protectedFiles;
+
+	Common::ArchivePtr loadArchive(const Common::String &file);
+	Common::ArchivePtr loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset);
 
 	void initializeLoaders();
-	const ResArchiveLoader *getLoader(ResFileEntry::kType type) const;
+
 	typedef Common::List<Common::SharedPtr<ResArchiveLoader> > LoaderList;
-	typedef LoaderList::iterator LoaderIterator;
-	typedef LoaderList::const_iterator CLoaderIterator;
 	LoaderList _loaders;
-	ResFileMap _map;
-
-	typedef Common::List<Common::SharedPtr<CompArchiveLoader> > CompLoaderList;
-	typedef CompLoaderList::iterator CompLoaderIterator;
-	typedef CompLoaderList::const_iterator CCompLoaderIterator;
-	CompLoaderList _compLoaders;
-	CompFileMap _compFiles;
-
-	void tryLoadCompFiles();
-	void clearCompFileList();
 
 	KyraEngine_v1 *_vm;
 };
@@ -277,7 +212,7 @@ public:
 	StaticResource(KyraEngine_v1 *vm) : _vm(vm), _resList(), _fileLoader(0), _builtIn(0), _filenameTable(0) {}
 	~StaticResource() { deinit(); }
 
-	static bool checkKyraDat();
+	static bool checkKyraDat(Resource *res);
 
 	bool init();
 	void deinit();
@@ -332,7 +267,7 @@ private:
 	void freeHofShapeAnimDataV2(void *&ptr, int &size);
 
 	const char *getFilename(const char *name);
-	uint8 *getFile(const char *name, int &size);
+	Common::SeekableReadStream *getFile(const char *name);
 
 	enum kResTypes {
 		kLanguageList,

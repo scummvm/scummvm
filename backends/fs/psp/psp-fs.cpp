@@ -26,6 +26,7 @@
 
 #include "engines/engine.h"
 #include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -39,8 +40,8 @@
  */
 class PSPFilesystemNode : public AbstractFilesystemNode {
 protected:
-	String _displayName;
-	String _path;
+	Common::String _displayName;
+	Common::String _path;
 	bool _isDirectory;
 	bool _isValid;
 
@@ -53,47 +54,26 @@ public:
 	/**
 	 * Creates a PSPFilesystemNode for a given path.
 	 *
-	 * @param path String with the path the new node should point to.
+	 * @param path Common::String with the path the new node should point to.
 	 * @param verify true if the isValid and isDirectory flags should be verified during the construction.
 	 */
 	PSPFilesystemNode(const Common::String &p, bool verify);
 
 	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
-	virtual String getDisplayName() const { return _displayName; }
-	virtual String getName() const { return _displayName; }
-	virtual String getPath() const { return _path; }
+	virtual Common::String getDisplayName() const { return _displayName; }
+	virtual Common::String getName() const { return _displayName; }
+	virtual Common::String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }
 	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }
 
-	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
+
+	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::WriteStream *openForWriting();
 };
-
-/**
- * Returns the last component of a given path.
- *
- * Examples:
- *			/foo/bar.txt would return /bar.txt
- *			/foo/bar/    would return /bar/
- *
- * @param str String containing the path.
- * @return Pointer to the first char of the last component inside str.
- */
-const char *lastPathComponent(const Common::String &str) {
-	if(str.empty())
-		return "";
-
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '/') {
-		--cur;
-	}
-
-	return cur + 1;
-}
 
 PSPFilesystemNode::PSPFilesystemNode() {
 	_isDirectory = true;
@@ -106,7 +86,7 @@ PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
 	assert(p.size() > 0);
 
 	_path = p;
-	_displayName = lastPathComponent(_path);
+	_displayName = lastPathComponent(_path, '/');
 	_isValid = true;
 	_isDirectory = true;
 
@@ -117,12 +97,12 @@ PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
 	}
 }
 
-AbstractFilesystemNode *PSPFilesystemNode::getChild(const String &n) const {
+AbstractFilesystemNode *PSPFilesystemNode::getChild(const Common::String &n) const {
 	// FIXME: Pretty lame implementation! We do no error checking to speak
 	// of, do not check if this is a special node, etc.
 	assert(_isDirectory);
 
-	String newPath(_path);
+	Common::String newPath(_path);
 	if (_path.lastChar() != '/')
 		newPath += '/';
 	newPath += n;
@@ -157,8 +137,8 @@ bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 				entry._path += "/";
 
 			// Honor the chosen mode
-			if ((mode == FilesystemNode::kListFilesOnly && entry._isDirectory) ||
-			   (mode == FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
+			if ((mode == Common::FilesystemNode::kListFilesOnly && entry._isDirectory) ||
+			   (mode == Common::FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
 				continue;
 
 			myList.push_back(new PSPFilesystemNode(entry));
@@ -176,9 +156,17 @@ AbstractFilesystemNode *PSPFilesystemNode::getParent() const {
 		return 0;
 
 	const char *start = _path.c_str();
-	const char *end = lastPathComponent(_path);
+	const char *end = lastPathComponent(_path, '/');
 
-	return new PSPFilesystemNode(String(start, end - start), false);
+	return new PSPFilesystemNode(Common::String(start, end - start), false);
+}
+
+Common::SeekableReadStream *PSPFilesystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *PSPFilesystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 #endif //#ifdef __PSP__

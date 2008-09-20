@@ -91,6 +91,9 @@
 			/>
 			<widget name = 'GameList'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
+				<widget name = 'LoadGameButton' 
+						height = '20' 
+				/>
 				<widget name = 'AddGameButton' 
 						height = '20'
 				/>
@@ -556,6 +559,10 @@
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<space/>
+				<widget name = 'Delete'
+						type = 'Button'
+				/>
+				<space size = '32'/>
 				<widget name = 'Cancel'
 						type = 'Button'
 				/>

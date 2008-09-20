@@ -28,8 +28,6 @@
 #include "common/fs.h"
 #include "common/error.h"
 
-#include "base/game.h"	// For PlainGameDescriptor and GameList
-
 #include "engines/metaengine.h"
 
 namespace Common {

@@ -39,32 +39,37 @@ public:
 	virtual bool open(const Common::String &filename) = 0;
 	virtual bool openSubFile(const Common::String &filename) = 0;
 
-	virtual bool eof() = 0;
-	virtual uint32 pos() = 0;
-	virtual uint32 size() = 0;
-	virtual void seek(int32 offs, int whence = SEEK_SET) = 0;
+	virtual bool eos() = 0;
+	virtual int32 pos() = 0;
+	virtual int32 size() = 0;
+	virtual bool seek(int32 offs, int whence = SEEK_SET) = 0;
 	virtual uint32 read(void *dataPtr, uint32 dataSize) = 0;
 };
 
 class ScummFile : public BaseScummFile {
 private:
 	byte _encbyte;
-	uint32	_subFileStart;
-	uint32	_subFileLen;
+	int32	_subFileStart;
+	int32	_subFileLen;
+	bool	_myIoFailed;
+
+	void setSubfileRange(int32 start, int32 len);
+	void resetSubfile();
+
 public:
 	ScummFile();
 	void setEnc(byte value);
 
-	void setSubfileRange(uint32 start, uint32 len);
-	void resetSubfile();
-
 	bool open(const Common::String &filename);
 	bool openSubFile(const Common::String &filename);
 
-	bool eof();
-	uint32 pos();
-	uint32 size();
-	void seek(int32 offs, int whence = SEEK_SET);
+	bool ioFailed() const { return _myIoFailed || BaseScummFile::ioFailed(); }
+	void clearIOFailed() { _myIoFailed = false; BaseScummFile::clearIOFailed(); }
+
+	bool eos();
+	int32 pos();
+	int32 size();
+	bool seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *dataPtr, uint32 dataSize);
 };
 
@@ -106,10 +111,10 @@ public:
 	bool openSubFile(const Common::String &filename);
 
 	void close();
-	bool eof() { return _stream->eos(); }
-	uint32 pos() { return _stream->pos(); }
-	uint32 size() { return _stream->size(); }
-	void seek(int32 offs, int whence = SEEK_SET) { _stream->seek(offs, whence); }
+	bool eos() { return _stream->eos(); }
+	int32 pos() { return _stream->pos(); }
+	int32 size() { return _stream->size(); }
+	bool seek(int32 offs, int whence = SEEK_SET) { return _stream->seek(offs, whence); }
 	uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
 };
 

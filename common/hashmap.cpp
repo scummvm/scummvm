@@ -24,70 +24,86 @@
  */
 
 // The hash map (associative array) implementation in this file is
-// based on code by Andrew Y. Ng, 1996:
-
-/* 
- * Copyright (c) 1998-2003 Massachusetts Institute of Technology. 
- * This code was developed as part of the Haystack research project 
- * (http://haystack.lcs.mit.edu/). Permission is hereby granted, 
- * free of charge, to any person obtaining a copy of this software 
- * and associated documentation files (the "Software"), to deal in 
- * the Software without restriction, including without limitation 
- * the rights to use, copy, modify, merge, publish, distribute, 
- * sublicense, and/or sell copies of the Software, and to permit 
- * persons to whom the Software is furnished to do so, subject to 
- * the following conditions: 
- * 
- * The above copyright notice and this permission notice shall be 
- * included in all copies or substantial portions of the Software. 
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
- * OTHER DEALINGS IN THE SOFTWARE. 
- */
+// based on the PyDict implementation of CPython. The erase() method
+// is based on example code in the Wikipedia article on Hash tables.
 
 #include "common/hashmap.h"
 
 namespace Common {
 
-// const char *:
+// Hash function for strings, taken from CPython.
 uint hashit(const char *p) {
-	uint hash = 0;
+	uint hash = *p << 7;
 	byte c;
-	while ((c = *p++))
-		hash = (hash * 31 + c);
-	return hash;
+	int size = 0;
+	while ((c = *p++)) {
+		hash = (1000003 * hash) ^ c;
+		size++;
+	}
+	return hash ^ size;
 }
 
+// Like hashit, but converts every char to lowercase before hashing.
 uint hashit_lower(const char *p) {
-	uint hash = 0;
+	uint hash = tolower(*p) << 7;
 	byte c;
-	while ((c = *p++))
-		hash = (hash * 31 + tolower(c));
-	return hash;
+	int size = 0;
+	while ((c = *p++)) {
+		hash = (1000003 * hash) ^ tolower(c);
+		size++;
+	}
+	return hash ^ size;
 }
 
-// The following table is taken from the GNU ISO C++ Library's hashtable.h file.
-static const uint primes[] = {
-	53ul,         97ul,         193ul,       389ul,       769ul,
-	1543ul,       3079ul,       6151ul,      12289ul,     24593ul,
-	49157ul,      98317ul,      196613ul,    393241ul,    786433ul,
-	1572869ul,    3145739ul,    6291469ul,   12582917ul,  25165843ul,
-	50331653ul,   100663319ul,  201326611ul, 402653189ul, 805306457ul,
-	1610612741ul, 3221225473ul, 4294967291ul
-};
+#ifdef DEBUG_HASH_COLLISIONS
+static double
+	g_collisions = 0,
+	g_lookups = 0,
+	g_collPerLook = 0,
+	g_capacity = 0,
+	g_size = 0;
+static int g_max_capacity = 0, g_max_size = 0;
+static int g_totalHashmaps = 0;
+static int g_stats[4] = {0,0,0,0};
 
-uint nextTableSize(uint x) {
-	int i = 0;
-	while (x >= primes[i])
-		i++;
-	return primes[i];
+void updateHashCollisionStats(int collisions, int lookups, int arrsize, int nele) {
+	g_collisions += collisions;
+	g_lookups += lookups;
+	if (lookups)
+		g_collPerLook += (double)collisions / (double)lookups;
+	g_capacity += arrsize;
+	g_size += nele;
+	g_totalHashmaps++;
+	
+	if (3*nele <= 2*8)
+		g_stats[0]++;
+	if (3*nele <= 2*16)
+		g_stats[1]++;
+	if (3*nele <= 2*32)
+		g_stats[2]++;
+	if (3*nele <= 2*64)
+		g_stats[3]++;
+	
+	g_max_capacity = MAX(g_max_capacity, arrsize);
+	g_max_size = MAX(g_max_size, nele);
+
+	fprintf(stdout, "%d hashmaps: colls %.1f; lookups %.1f; ratio %.3f%%; size %f (max: %d); capacity %f (max: %d)\n",
+		g_totalHashmaps,
+		g_collisions / g_totalHashmaps,
+		g_lookups / g_totalHashmaps,
+		100 * g_collPerLook / g_totalHashmaps,
+		g_size / g_totalHashmaps, g_max_size,
+		g_capacity / g_totalHashmaps, g_max_capacity);
+	fprintf(stdout, "  %d less than %d; %d less than %d; %d less than %d; %d less than %d\n",
+			g_stats[0], 2*8/3, 
+			g_stats[1],2*16/3, 
+			g_stats[2],2*32/3, 
+			g_stats[3],2*64/3);
+
+	// TODO:
+	// * Should record the maximal size of the map during its lifetime, not that at its death
+	// * Should do some statistics: how many maps are less than 2/3*8, 2/3*16, 2/3*32, ...
 }
-
+#endif
 
 }	// End of namespace Common

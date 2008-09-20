@@ -25,6 +25,7 @@
 #include "gui/dialog.h"
 #include "gui/newgui.h"
 #include "gui/ListWidget.h"
+#include "gui/TabWidget.h"
 #include "osystem_ds.h"
 #include "engines/scumm/scumm.h"
 #include "touchkeyboard.h"
@@ -41,8 +42,67 @@ namespace Scumm {
 
 namespace DS {
 
-DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(5, 0, 320 - 5, 230 - 20) {
-	addButton(this, 10, 175, "Close", GUI::kCloseCmd, 'C');
+DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
+
+	addButton(this, 10, 170, "Close", GUI::kCloseCmd, 'C');
+	_tab = new GUI::TabWidget(this, 5, 5, 300, 230 - 20 - 40 - 10);
+
+	_tab->addTab("Controls");
+
+	_leftHandedCheckbox = new GUI::CheckboxWidget(_tab, 5, 5, 130, 20, "Left handed mode", 0, 'L');
+	_indyFightCheckbox = new GUI::CheckboxWidget(_tab, 5, 20, 140, 20, "Indy fight controls", 0, 'I');
+	_showCursorCheckbox = new GUI::CheckboxWidget(_tab, 150, 5, 130, 20, "Show mouse cursor", 0, 'T');
+	_snapToBorderCheckbox = new GUI::CheckboxWidget(_tab, 150, 20, 130, 20, "Snap to edges", 0, 'T');
+
+	new GUI::StaticTextWidget(_tab, 20, 35, 100, 15, "Touch X Offset", GUI::kTextAlignLeft);
+	_touchX = new GUI::SliderWidget(_tab, 130, 35, 130, 12, 1);
+	_touchX->setMinValue(-8);
+	_touchX->setMaxValue(+8);
+	_touchX->setValue(0);
+	_touchX->setFlags(GUI::WIDGET_CLEARBG);
+
+	new GUI::StaticTextWidget(_tab, 20, 50, 100, 15, "Touch Y Offset", GUI::kTextAlignLeft);
+	_touchY = new GUI::SliderWidget(_tab, 130, 50, 130, 12, 2);
+	_touchY->setMinValue(-8);
+	_touchY->setMaxValue(+8);
+	_touchY->setValue(0);
+	_touchY->setFlags(GUI::WIDGET_CLEARBG);
+
+	new GUI::StaticTextWidget(_tab, 130 + 65 - 10, 65, 20, 15, "0", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(_tab, 130 + 130 - 10, 65, 20, 15, "8", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(_tab, 130 - 20, 65, 20, 15, "-8", GUI::kTextAlignCenter);
+
+
+	_touchPadStyle = new GUI::CheckboxWidget(_tab, 5, 80, 270, 20, "Use laptop trackpad-style cursor control", 0x20000001, 'T');
+	_screenTaps = new GUI::CheckboxWidget(_tab, 5, 95, 285, 20, "Tap for left click, double tap right click", 0x20000002, 'T');
+
+	_sensitivityLabel = new GUI::StaticTextWidget(_tab, 20, 110, 110, 15, "Sensitivity", GUI::kTextAlignLeft);
+	_sensitivity = new GUI::SliderWidget(_tab, 130, 110, 130, 12, 1);
+	_sensitivity->setMinValue(4);
+	_sensitivity->setMaxValue(16);
+	_sensitivity->setValue(8);
+	_sensitivity->setFlags(GUI::WIDGET_CLEARBG);
+
+	_tab->addTab("Graphics");
+
+	new GUI::StaticTextWidget(_tab, 5, 70, 180, 15, "Initial top screen scale:", GUI::kTextAlignLeft);
+
+	_100PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 85, 230, 20, "100%", 0x30000001, 'T');
+	_150PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 100, 230, 20, "150%", 0x30000002, 'T');
+	_200PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 115, 230, 20, "200%", 0x30000003, 'T');
+
+	new GUI::StaticTextWidget(_tab, 5, 5, 180, 15, "Main screen scaling:", GUI::kTextAlignLeft);
+
+	_hardScaler = new GUI::CheckboxWidget(_tab, 5, 20, 270, 20, "Hardware scale (fast, but low quality)", 0x10000001, 'T');
+	_cpuScaler = new GUI::CheckboxWidget(_tab, 5, 35, 270, 20, "Software scale (good quality, but slower)", 0x10000002, 'S');
+	_unscaledCheckbox = new GUI::CheckboxWidget(_tab, 5, 50, 270, 20, "Unscaled (you must scroll left and right)", 0x10000003, 'S');
+
+	_tab->addTab("General");
+
+	_highQualityAudioCheckbox = new GUI::CheckboxWidget(_tab, 5, 5, 250, 20, "High quality audio (slower) (reboot)", 0, 'T');
+	_disablePowerOff = new GUI::CheckboxWidget(_tab, 5, 20, 200, 20, "Disable power off", 0, 'T');
+
+	_tab->setActiveTab(0);
 
 	_radioButtonMode = false;
 	
@@ -52,46 +112,17 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(5, 0, 320 - 5, 230 - 20) {
 	}
 #endif
 
-	new GUI::StaticTextWidget(this, 90, 10, 130, 15, "ScummVM DS Options", GUI::kTextAlignCenter);
+//	new GUI::StaticTextWidget(this, 90, 10, 130, 15, "ScummVM DS Options", GUI::kTextAlignCenter);
 
-	_leftHandedCheckbox = new GUI::CheckboxWidget(this, 5, 70, 130, 20, "Left handed mode", 0, 'L');
-	_indyFightCheckbox = new GUI::CheckboxWidget(this, 5, 40, 200, 20, "Indy fighting controls", 0, 'I');
-	_twoHundredPercentCheckbox = new GUI::CheckboxWidget(this, 5, 55, 230, 20, "Zoomed screen at fixed 200% zoom", 0, 'T');
-	_highQualityAudioCheckbox = new GUI::CheckboxWidget(this, 5, 25, 250, 20, "High quality audio (slower) (reboot)", 0, 'T');
-	_disablePowerOff = new GUI::CheckboxWidget(this, 5, 85, 130, 20, "Disable power off", 0, 'T');
-	_showCursorCheckbox = new GUI::CheckboxWidget(this, 5, 100, 130, 20, "Show mouse cursor", 0, 'T');
 
 //#ifdef ALLOW_CPU_SCALER
 //	_cpuScaler = new GUI::CheckboxWidget(this, 160, 115, 90, 20, "CPU scaler", 0, 'T');
 //#endif
 
-	new GUI::StaticTextWidget(this, 180, 70, 130, 15, "Main screen:", GUI::kTextAlignLeft);
-
-	_hardScaler = new GUI::CheckboxWidget(this, 140, 85, 170, 20, "Hardware scale (fast)", 0x10000001, 'T');
-	_cpuScaler = new GUI::CheckboxWidget(this, 140, 100, 170, 20, "Software scale (quality)", 0x10000002, 'S');
-	_unscaledCheckbox = new GUI::CheckboxWidget(this, 140, 115, 170, 20, "Unscaled", 0x10000003, 'S');
 	
 
 
-	_snapToBorderCheckbox = new GUI::CheckboxWidget(this, 5, 115, 120, 20, "Snap to border", 0, 'T');
 
-	new GUI::StaticTextWidget(this, 20, 145, 110, 15, "Touch X Offset", GUI::kTextAlignLeft);
-	_touchX = new GUI::SliderWidget(this, 130, 145, 130, 12, 1);
-	_touchX->setMinValue(-8);
-	_touchX->setMaxValue(+8);
-	_touchX->setValue(0);
-	_touchX->setFlags(GUI::WIDGET_CLEARBG);
-
-	new GUI::StaticTextWidget(this, 20, 160, 110, 15, "Touch Y Offset", GUI::kTextAlignLeft);
-	_touchY = new GUI::SliderWidget(this, 130, 160, 130, 12, 2);
-	_touchY->setMinValue(-8);
-	_touchY->setMaxValue(+8);
-	_touchY->setValue(0);
-	_touchY->setFlags(GUI::WIDGET_CLEARBG);
-
-	new GUI::StaticTextWidget(this, 130 + 65 - 10, 175, 20, 15, "0", GUI::kTextAlignCenter);
-	new GUI::StaticTextWidget(this, 130 + 130 - 10, 175, 20, 15, "8", GUI::kTextAlignCenter);
-	new GUI::StaticTextWidget(this, 130 - 10, 175, 20, 15, "-8", GUI::kTextAlignCenter);
 
 #ifdef DS_SCUMM_BUILD
 	_delDialog = new Scumm::SaveLoadChooser("Delete game:", "Delete", false, Scumm::g_scumm);
@@ -125,10 +156,36 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(5, 0, 320 - 5, 230 - 20) {
 		_unscaledCheckbox->setState(false);
 	}
 
-	if (ConfMan.hasKey("twohundredpercent", "ds")) {
-		_twoHundredPercentCheckbox->setState(ConfMan.getBool("twohundredpercent", "ds"));
+	
+	if (ConfMan.hasKey("topscreenzoom", "ds")) {
+
+		_100PercentCheckbox->setState(false);		
+		_150PercentCheckbox->setState(false);		
+		_200PercentCheckbox->setState(false);		
+		
+		switch (ConfMan.getInt("topscreenzoom", "ds"))
+		{
+			case 100: {
+				_100PercentCheckbox->setState(true);
+				break;
+			}
+
+			case 150: {
+				_150PercentCheckbox->setState(true);
+				break;
+			}
+
+			case 200: {
+				_200PercentCheckbox->setState(true);
+				break;
+			}
+		}
+
+	} else if (ConfMan.hasKey("twohundredpercent", "ds")) {
+		_200PercentCheckbox->setState(ConfMan.getBool("twohundredpercent", "ds"));
 	} else {
-		_twoHundredPercentCheckbox->setState(false);
+		// No setting
+		_150PercentCheckbox->setState(true);
 	}
 
 	if (ConfMan.hasKey("22khzaudio", "ds")) {
@@ -165,6 +222,29 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(5, 0, 320 - 5, 230 - 20) {
 		_touchY->setValue(0);
 	}
 
+	if (ConfMan.hasKey("sensitivity", "ds")) {
+		_sensitivity->setValue(ConfMan.getInt("sensitivity", "ds"));
+	} else {
+		_sensitivity->setValue(8);
+	}
+
+	if (ConfMan.hasKey("touchpad", "ds")) {
+		_touchPadStyle->setState(ConfMan.getBool("touchpad", "ds"));
+	} else {
+		_touchPadStyle->setState(0);
+	}
+
+	if (ConfMan.hasKey("screentaps", "ds")) {
+		_screenTaps->setState(ConfMan.getBool("screentaps", "ds"));
+	} else {
+		_screenTaps->setState(0);
+	}
+
+	_screenTaps->setEnabled(!_touchPadStyle->getState());
+	_sensitivity->setEnabled(_touchPadStyle->getState());
+	_sensitivityLabel->setEnabled(_touchPadStyle->getState());
+	_sensitivityLabel->draw();
+
 	if (!_cpuScaler->getState() && !_unscaledCheckbox->getState()) {
 		_hardScaler->setState(true);
 	}
@@ -180,7 +260,7 @@ DSOptionsDialog::~DSOptionsDialog() {
 void DSOptionsDialog::updateConfigManager() {
 	ConfMan.setBool("lefthanded", _leftHandedCheckbox->getState(), "ds");
 	ConfMan.setBool("unscaled", _unscaledCheckbox->getState(), "ds");
-	ConfMan.setBool("twohundredpercent", _twoHundredPercentCheckbox->getState(), "ds");
+//	ConfMan.setBool("twohundredpercent", _twoHundredPercentCheckbox->getState(), "ds");
 	ConfMan.setBool("22khzaudio", _highQualityAudioCheckbox->getState(), "ds");
 	ConfMan.setBool("disablepoweroff", _disablePowerOff->getState(), "ds");
 #ifdef ALLOW_CPU_SCALER
@@ -190,6 +270,24 @@ void DSOptionsDialog::updateConfigManager() {
 	ConfMan.setInt("yoffset", _touchY->getValue(), "ds");
 	ConfMan.setBool("showcursor", _showCursorCheckbox->getState(), "ds");
 	ConfMan.setBool("snaptoborder", _snapToBorderCheckbox->getState(), "ds");
+	ConfMan.setBool("touchpad", _touchPadStyle->getState(), "ds");
+	ConfMan.setBool("screentaps", _screenTaps->getState(), "ds");
+	ConfMan.setInt("sensitivity", _sensitivity->getValue(), "ds");
+
+	u32 zoomLevel = 150;
+
+	if (_100PercentCheckbox->getState()) {
+		zoomLevel = 100;
+	} else if (_150PercentCheckbox->getState()) {
+		zoomLevel = 150;
+	} else if (_200PercentCheckbox->getState()) {
+		zoomLevel = 200;
+	}
+
+	consolePrintf("Saved zoom: %d\n", zoomLevel);
+
+	ConfMan.setInt("topscreenzoom", zoomLevel, "ds");
+
 	DS::setOptions();
 }
 
@@ -226,6 +324,70 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 		guard = false;
 
 	}
+
+	if ((!guard) && (_radioButtonMode))
+	{
+		guard = true;
+
+		if ((sender == _touchPadStyle) && (cmd == 0x20000001)) {
+
+			if (_touchPadStyle->getState()) {
+				// Swap screens when turning on trackpad style, it feels
+				// much more natural!
+				DS::setGameScreenSwap(true);
+
+				_screenTaps->setState(true);
+				_screenTaps->setEnabled(false);
+				_screenTaps->draw();
+				_sensitivity->setEnabled(true);
+				_sensitivityLabel->setEnabled(true);
+				_sensitivityLabel->draw();
+				_sensitivity->draw();
+			} else {
+				DS::setGameScreenSwap(false);
+
+				_screenTaps->setEnabled(true);
+				_screenTaps->setState(false);
+				_screenTaps->draw();
+				_sensitivity->setEnabled(false);
+				_sensitivityLabel->setEnabled(false);
+				_sensitivityLabel->draw();
+				_sensitivity->draw();
+			}
+		}
+
+		guard = false;
+	}
+
+	if ((!guard) && (_radioButtonMode)) {
+
+		guard = true;
+
+		if (cmd == 0x30000001) {
+			_100PercentCheckbox->setState(true);
+			_150PercentCheckbox->setState(false);
+			_200PercentCheckbox->setState(false);
+			DS::setTopScreenZoom(100);
+		}
+
+		if (cmd == 0x30000002) {
+			_100PercentCheckbox->setState(false);
+			_150PercentCheckbox->setState(true);
+			_200PercentCheckbox->setState(false);
+			DS::setTopScreenZoom(150);
+		}
+
+		if (cmd == 0x30000003) {
+			_100PercentCheckbox->setState(false);
+			_150PercentCheckbox->setState(false);
+			_200PercentCheckbox->setState(true);
+			DS::setTopScreenZoom(200);
+		}
+
+		guard = false;
+
+	}
+
 
 	if (cmd == GUI::kCloseCmd) {
 		updateConfigManager();
@@ -297,6 +459,8 @@ void showOptionsDialog() {
 }
 
 void setOptions() {
+	static bool firstLoad = true;
+
 	ConfMan.addGameDomain("ds");
 
 	if (ConfMan.hasKey("lefthanded", "ds")) {
@@ -327,10 +491,16 @@ void setOptions() {
 		DS::setUnscaledMode(false);
 	}
 
-	if (ConfMan.hasKey("twohundredpercent", "ds")) {
-		DS::set200PercentFixedScale(ConfMan.getBool("twohundredpercent", "ds"));
-	} else {
-		DS::set200PercentFixedScale(false);
+	if (firstLoad) {
+		if (ConfMan.hasKey("topscreenzoom", "ds")) {
+			DS::setTopScreenZoom(ConfMan.getInt("topscreenzoom", "ds"));
+		} else {
+			if (ConfMan.hasKey("twohundredpercent", "ds")) {
+				DS::setTopScreenZoom(200);
+			} else {
+				DS::setTopScreenZoom(150);
+			}
+		}
 	}
 
 	if (ConfMan.hasKey("xoffset", "ds")) {
@@ -345,6 +515,12 @@ void setOptions() {
 		DS::setTouchXOffset(0);
 	}
 
+	if (ConfMan.hasKey("sensitivity", "ds")) {
+		DS::setSensitivity(ConfMan.getInt("sensitivity", "ds"));
+	} else {
+		DS::setSensitivity(8);
+	}
+
 #ifdef ALLOW_CPU_SCALER
 	if (ConfMan.hasKey("cpu_scaler", "ds")) {
 		DS::setCpuScalerEnable(ConfMan.getBool("cpu_scaler", "ds"));
@@ -353,6 +529,33 @@ void setOptions() {
 	}
 #endif	
 
+	if (ConfMan.hasKey("screentaps", "ds")) {
+		DS::setTapScreenClicksEnable(ConfMan.getBool("screentaps", "ds"));
+	} else {
+		DS::setTapScreenClicksEnable(false);
+	}
+
+	if (ConfMan.hasKey("touchpad", "ds")) {
+		bool enable = ConfMan.getBool("touchpad", "ds");
+		
+		DS::setTrackPadStyleEnable(enable);
+
+		if ((enable) and (firstLoad)) {
+			// If we've just booted up, want to swap screens when trackpad mode is in use
+			// but not every time we enter the options dialog.
+			DS::setGameScreenSwap(true);
+		}
+
+		if (enable) {
+			DS::setTapScreenClicksEnable(true);
+		}
+			
+	} else {
+		DS::setTrackPadStyleEnable(false);
+	}
+
+
+	firstLoad = false;
 }
 
 }

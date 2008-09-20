@@ -38,6 +38,7 @@
 #include "base/version.h"
 
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
@@ -62,6 +63,11 @@ static bool launcherDialog(OSystem &system) {
 		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 
 		system.initSize(320, 200);
+
+		if (ConfMan.hasKey("aspect_ratio"))
+			system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+		if (ConfMan.hasKey("fullscreen"))
+			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 	system.endGFXTransaction();
 
 	// Set initial window caption
@@ -156,8 +162,16 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 		system.setWindowCaption(caption.c_str());
 	}
 
+	// FIXME: at this moment, game path handling is being discussed in the mailing list,
+	// while Common::File is being reworked under the hood. After commit 34444, which
+	// changed the implementation of Common::File (specifically removing usage of fopen
+	// and fOpenNoCase, which implicitly supported backslashes in file names), some games
+	// stopped working. Example of this are the HE games which use subdirectories: Kirben
+	// found this issue on lost-win-demo at first. Thus, in commit 34450, searching the
+	// game path was made recursive as a temporary fix/workaround.
+
 	// Add the game path to the directory search list
-	Common::File::addDefaultDirectory(path);
+	Common::File::addDefaultDirectoryRecursive(path);
 
 	// Add extrapath (if any) to the directory search list
 	if (ConfMan.hasKey("extrapath"))
@@ -202,7 +216,8 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 	// Reset the file/directory mappings
 	Common::File::resetDefaultDirectories();
 
-	return 0;
+	// Return result (== 0 means no error)
+	return result;
 }
 
 
@@ -263,13 +278,13 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain()) {
-		launcherDialog(system);
-
 		// Discard any command line options. Those that affect the graphics
 		// mode etc. already have should have been handled by the backend at
 		// this point. And the others (like bootparam etc.) should not
 		// blindly be passed to the first game launched from the launcher.
 		ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
+
+		launcherDialog(system);
 	}
 
 	// FIXME: We're now looping the launcher. This, of course, doesn't
@@ -285,11 +300,18 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 			// Try to run the game
 			int result = runGame(plugin, system, specialDebug);
-			// TODO: We should keep running if starting the selected game failed
-			// (so instead of just quitting, show a nice error dialog to the
-			// user and let him pick another game).
-			if (result == 0)
+
+			// Did an error occur ?
+			if (result != 0) {
+				// TODO: Show an informative error dialog if starting the selected game failed.
+			}
+
+			// Quit unless an error occurred, or Return to launcher was requested
+			if (result == 0 && !g_system->getEventManager()->shouldRTL())
 				break;
+
+			// Reset RTL flag in case we want to load another engine
+			g_system->getEventManager()->resetRTL();
 
 			// Discard any command line options. It's unlikely that the user
 			// wanted to apply them to *all* games ever launched.

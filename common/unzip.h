@@ -65,9 +65,12 @@
 #ifndef _unz_H
 #define _unz_H
 
-#include "common/scummsys.h"
-
 #ifdef USE_ZLIB
+
+#include "common/scummsys.h"
+#include "common/archive.h"
+#include "common/stream.h"
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -302,6 +305,49 @@ extern int ZEXPORT unzGetLocalExtrafield OF((unzFile file,
 }
 #endif
 
-#endif
+
+class ZipArchive : Common::Archive {
+	unzFile _zipFile;
+
+public:
+	ZipArchive(const Common::String &name) {
+		_zipFile = unzOpen(name.c_str());
+	}
+	~ZipArchive() {
+		unzClose(_zipFile);
+	}
+
+	virtual bool hasFile(const Common::String &name) {
+		return (_zipFile && unzLocateFile(_zipFile, name.c_str(), 2) == UNZ_OK);
+	}
+
+	virtual int getAllNames(Common::StringList &list) {
+		// TODO
+		return 0;
+	}
+
+	virtual Common::SeekableReadStream *openFile(const Common::String &name) {
+		if (!_zipFile)
+			return 0;
+	
+		unzLocateFile(_zipFile, name.c_str(), 2);
+
+		unz_file_info fileInfo;
+		unzOpenCurrentFile(_zipFile);
+		unzGetCurrentFileInfo(_zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+		byte *buffer = (byte *)calloc(fileInfo.uncompressed_size+1, 1);
+		assert(buffer);
+		unzReadCurrentFile(_zipFile, buffer, fileInfo.uncompressed_size);
+		unzCloseCurrentFile(_zipFile);
+		return new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size+1, true);
+		
+		// FIXME: instead of reading all into a memory stream, we could
+		// instead create a new ZipStream class. But then we have to be
+		// careful to handle the case where the client code opens multiple
+		// files in the archive and tries to use them indepenendtly.
+	}
+};
+
+#endif // USE_ZLIB
 
 #endif /* _unz_H */

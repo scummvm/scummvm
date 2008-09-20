@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "engines/engine.h"
 
 #include "common/config-manager.h"
@@ -42,7 +40,6 @@
 #include "scumm/sound.h"
 #include "scumm/util.h"
 #include "scumm/smush/channel.h"
-#include "scumm/smush/chunk.h"
 #include "scumm/smush/codec37.h"
 #include "scumm/smush/codec47.h"
 #include "scumm/smush/smush_font.h"
@@ -54,10 +51,6 @@
 #include "sound/mixer.h"
 #include "sound/vorbis.h"
 #include "sound/mp3.h"
-
-#ifdef DUMP_SMUSH_FRAMES
-#include <png.h>
-#endif
 
 #include "common/zlib.h"
 
@@ -212,10 +205,6 @@ static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_enc
 
 void SmushPlayer::timerCallback() {
 	parseNextFrame();
-#ifdef _WIN32_WCE
-	_inTimer = true;
-	_inTimerCount++;
-#endif
 }
 
 SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
@@ -252,11 +241,6 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
 	_paused = false;
 	_pauseStartTime = 0;
 	_pauseTime = 0;
-#ifdef _WIN32_WCE
-	_inTimer = false;
-	_inTimerCount = 0;
-	_inTimerCountRedraw = ConfMan.getInt("Smush_force_redraw");
-#endif
 }
 
 SmushPlayer::~SmushPlayer() {
@@ -328,16 +312,7 @@ void SmushPlayer::release() {
 	_codec47 = 0;
 }
 
-void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, uint32 min_size) {
-	if (type_expected != b.getType()) {
-		error("Chunk type is different from expected : %x != %x", b.getType(), type_expected);
-	}
-	if (min_size > b.size()) {
-		error("Chunk size is inferior than minimum required size : %d < %d", b.size(), min_size);
-	}
-}
-
-void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frames, int32 flags, int32 vol, int32 pan, Chunk &b, int32 size) {
+void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frames, int32 flags, int32 vol, int32 pan, Common::SeekableReadStream &b, int32 size) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleSoundBuffer(%d, %d)", track_id, index);
 //	if ((flags & 128) == 128) {
 //		return;
@@ -360,8 +335,7 @@ void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frame
 	c->appendData(b, size);
 }
 
-void SmushPlayer::handleSoundFrame(Chunk &b) {
-	checkBlock(b, MKID_BE('PSAD'));
+void SmushPlayer::handleSoundFrame(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleSoundFrame()");
 
 	int32 track_id = b.readUint16LE();
@@ -373,28 +347,28 @@ void SmushPlayer::handleSoundFrame(Chunk &b) {
 	if (index == 0) {
 		debugC(DEBUG_SMUSH, "track_id:%d, max_frames:%d, flags:%d, vol:%d, pan:%d", track_id, max_frames, flags, vol, pan);
 	}
-	int32 size = b.size() - 10;
+	int32 size = subSize - 10;
 	handleSoundBuffer(track_id, index, max_frames, flags, vol, pan, b, size);
 }
 
-void SmushPlayer::handleStore(Chunk &b) {
+void SmushPlayer::handleStore(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleStore()");
-	checkBlock(b, MKID_BE('STOR'), 4);
+	assert(subSize >= 4);
 	_storeFrame = true;
 }
 
-void SmushPlayer::handleFetch(Chunk &b) {
+void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFetch()");
-	checkBlock(b, MKID_BE('FTCH'), 6);
+	assert(subSize >= 6);
 
 	if (_frameBuffer != NULL) {
 		memcpy(_dst, _frameBuffer, _width * _height);
 	}
 }
 
-void SmushPlayer::handleIACT(Chunk &b) {
-	checkBlock(b, MKID_BE('IACT'), 8);
+void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::IACT()");
+	assert(subSize >= 8);
 
 	int code = b.readUint16LE();
 	int flags = b.readUint16LE();
@@ -415,7 +389,7 @@ void SmushPlayer::handleIACT(Chunk &b) {
 	int index = b.readUint16LE();
 	int nbframes = b.readUint16LE();
 	int32 size = b.readUint32LE();
-	int32 bsize = b.size() - 18;
+	int32 bsize = subSize - 18;
 
 	if (_vm->_game.id != GID_CMI) {
 		int32 track = track_id;
@@ -519,7 +493,7 @@ void SmushPlayer::handleIACT(Chunk &b) {
 	}
 }
 
-void SmushPlayer::handleTextResource(Chunk &b) {
+void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &b) {
 	int pos_x = b.readSint16LE();
 	int pos_y = b.readSint16LE();
 	int flags = b.readSint16LE();
@@ -531,10 +505,10 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 
 	const char *str;
 	char *string = NULL, *string2 = NULL;
-	if (b.getType() == MKID_BE('TEXT')) {
-		string = (char *)malloc(b.size() - 16);
+	if (subType == MKID_BE('TEXT')) {
+		string = (char *)malloc(subSize - 16);
 		str = string;
-		b.read(string, b.size() - 16);
+		b.read(string, subSize - 16);
 	} else {
 		int string_id = b.readUint16LE();
 		if (!_strings)
@@ -702,7 +676,7 @@ bool SmushPlayer::readString(const char *file) {
 	return false;
 }
 
-void SmushPlayer::readPalette(byte *out, Chunk &in) {
+void SmushPlayer::readPalette(byte *out, Common::SeekableReadStream &in) {
 	in.read(out, 0x300);
 }
 
@@ -711,11 +685,10 @@ static byte delta_color(byte org_color, int16 delta_color) {
 	return CLIP(t, 0, 255);
 }
 
-void SmushPlayer::handleDeltaPalette(Chunk &b) {
-	checkBlock(b, MKID_BE('XPAL'));
+void SmushPlayer::handleDeltaPalette(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleDeltaPalette()");
 
-	if (b.size() == 0x300 * 3 + 4) {
+	if (subSize == 0x300 * 3 + 4) {
 
 		b.readUint16LE();
 		b.readUint16LE();
@@ -725,7 +698,7 @@ void SmushPlayer::handleDeltaPalette(Chunk &b) {
 		}
 		readPalette(_pal, b);
 		setDirtyColors(0, 255);
-	} else if (b.size() == 6) {
+	} else if (subSize == 6) {
 
 		b.readUint16LE();
 		b.readUint16LE();
@@ -740,9 +713,9 @@ void SmushPlayer::handleDeltaPalette(Chunk &b) {
 	}
 }
 
-void SmushPlayer::handleNewPalette(Chunk &b) {
-	checkBlock(b, MKID_BE('NPAL'), 0x300);
+void SmushPlayer::handleNewPalette(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleNewPalette()");
+	assert(subSize >= 0x300);
 
 	if (_skipPalette)
 		return;
@@ -805,21 +778,20 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 }
 
 #ifdef USE_ZLIB
-void SmushPlayer::handleZlibFrameObject(Chunk &b) {
+void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStream &b) {
 	if (_skipNext) {
 		_skipNext = false;
 		return;
 	}
 
-	int32 chunkSize = b.size();
+	int32 chunkSize = subSize;
 	byte *chunkBuffer = (byte *)malloc(chunkSize);
 	assert(chunkBuffer);
 	b.read(chunkBuffer, chunkSize);
 
 	unsigned long decompressedSize = READ_BE_UINT32(chunkBuffer);
 	byte *fobjBuffer = (byte *)malloc(decompressedSize);
-	int result = Common::uncompress(fobjBuffer, &decompressedSize, chunkBuffer + 4, chunkSize - 4);
-	if (result != Common::ZLIB_OK)
+	if (!Common::uncompress(fobjBuffer, &decompressedSize, chunkBuffer + 4, chunkSize - 4))
 		error("SmushPlayer::handleZlibFrameObject() Zlib uncompress error");
 	free(chunkBuffer);
 
@@ -836,8 +808,8 @@ void SmushPlayer::handleZlibFrameObject(Chunk &b) {
 }
 #endif
 
-void SmushPlayer::handleFrameObject(Chunk &b) {
-	checkBlock(b, MKID_BE('FOBJ'), 14);
+void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b) {
+	assert(subSize >= 14);
 	if (_skipNext) {
 		_skipNext = false;
 		return;
@@ -852,7 +824,7 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	b.readUint16LE();
 	b.readUint16LE();
 
-	int32 chunk_size = b.size() - 14;
+	int32 chunk_size = subSize - 14;
 	byte *chunk_buffer = (byte *)malloc(chunk_size);
 	assert(chunk_buffer);
 	b.read(chunk_buffer, chunk_size);
@@ -862,8 +834,7 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	free(chunk_buffer);
 }
 
-void SmushPlayer::handleFrame(Chunk &b) {
-	checkBlock(b, MKID_BE('FRME'));
+void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame(%d)", _frame);
 	_skipNext = false;
 
@@ -871,54 +842,57 @@ void SmushPlayer::handleFrame(Chunk &b) {
 		_vm->_insane->procPreRendering();
 	}
 
-	while (!b.eos()) {
-		Chunk *sub = b.subBlock();
-		switch (sub->getType()) {
+	while (frameSize > 0) {
+		const uint32 subType = b.readUint32BE();
+		const int32 subSize = b.readUint32BE();
+		const int32 subOffset = b.pos();
+		switch (subType) {
 		case MKID_BE('NPAL'):
-			handleNewPalette(*sub);
+			handleNewPalette(subSize, b);
 			break;
 		case MKID_BE('FOBJ'):
-			handleFrameObject(*sub);
+			handleFrameObject(subSize, b);
 			break;
 #ifdef USE_ZLIB
 		case MKID_BE('ZFOB'):
-			handleZlibFrameObject(*sub);
+			handleZlibFrameObject(subSize, b);
 			break;
 #endif
 		case MKID_BE('PSAD'):
 			if (!_compressedFileMode)
-				handleSoundFrame(*sub);
+				handleSoundFrame(subSize, b);
 			break;
 		case MKID_BE('TRES'):
-			handleTextResource(*sub);
+			handleTextResource(subType, subSize, b);
 			break;
 		case MKID_BE('XPAL'):
-			handleDeltaPalette(*sub);
+			handleDeltaPalette(subSize, b);
 			break;
 		case MKID_BE('IACT'):
-			handleIACT(*sub);
+			handleIACT(subSize, b);
 			break;
 		case MKID_BE('STOR'):
-			handleStore(*sub);
+			handleStore(subSize, b);
 			break;
 		case MKID_BE('FTCH'):
-			handleFetch(*sub);
+			handleFetch(subSize, b);
 			break;
 		case MKID_BE('SKIP'):
-			_vm->_insane->procSKIP(*sub);
+			_vm->_insane->procSKIP(subSize, b);
 			break;
 		case MKID_BE('TEXT'):
-			handleTextResource(*sub);
+			handleTextResource(subType, subSize, b);
 			break;
 		default:
-			error("Unknown frame subChunk found : %s, %d", tag2str(sub->getType()), sub->size());
+			error("Unknown frame subChunk found : %s, %d", tag2str(subType), subSize);
 		}
 
-		b.reseek();
-		if (sub->size() & 1)
+		frameSize -= subSize + 8;
+		b.seek(subOffset + subSize, SEEK_SET);
+		if (subSize & 1) {
 			b.skip(1);
-
-		delete sub;
+			frameSize--;
+		}
 	}
 
 	if (_insanity) {
@@ -926,23 +900,16 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	}
 
 	if (_width != 0 && _height != 0) {
-#ifdef _WIN32_WCE
-		if (!_inTimer || _inTimerCount == _inTimerCountRedraw) {
-			updateScreen();
-			_inTimerCount = 0;
-		}
-#else
 		updateScreen();
-#endif
 	}
 	_smixer->handleFrame();
 
 	_frame++;
 }
 
-void SmushPlayer::handleAnimHeader(Chunk &b) {
-	checkBlock(b, MKID_BE('AHDR'), 0x300 + 6);
+void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleAnimHeader()");
+	assert(subSize >= 0x300 + 6);
 
 	/* _version = */ b.readUint16LE();
 	_nbframes = b.readUint16LE();
@@ -1004,7 +971,6 @@ SmushFont *SmushPlayer::getFont(int font) {
 }
 
 void SmushPlayer::parseNextFrame() {
-	Chunk *sub;
 
 	if (_seekPos >= 0) {
 		if (_smixer)
@@ -1012,15 +978,23 @@ void SmushPlayer::parseNextFrame() {
 
 		if (_seekFile.size() > 0) {
 			delete _base;
-			_base = new FileChunk(_seekFile);
+
+			ScummFile *tmp = new ScummFile();
+			if (!g_scumm->openFile(*tmp, _seekFile))
+				error("SmushPlayer: Unable to open file %s", _seekFile.c_str());
+			_base = tmp;
+			_base->readUint32BE();
+			_base->readUint32BE();
 
 			if (_seekPos > 0) {
 				assert(_seekPos > 8);
 				// In this case we need to get palette and number of frames
-				sub = _base->subBlock();
-				checkBlock(*sub, MKID_BE('AHDR'));
-				handleAnimHeader(*sub);
-				delete sub;
+				const uint32 subType = _base->readUint32BE();
+				const int32 subSize = _base->readUint32BE();
+				const int32 subOffset = _base->pos();
+				assert(subType == MKID_BE('AHDR'));
+				handleAnimHeader(subSize, *_base);
+				_base->seek(subOffset + subSize, SEEK_SET);
 
 				_middleAudio = true;
 				_seekPos -= 8;
@@ -1034,7 +1008,7 @@ void SmushPlayer::parseNextFrame() {
 			_skipPalette = true;
 		}
 
-		_base->seek(_seekPos, SEEK_SET);
+		_base->seek(_seekPos + 8, SEEK_SET);
 		_frame = _seekFrame;
 		_startFrame = _frame;
 		_startTime = _vm->_system->getMillis();
@@ -1049,21 +1023,22 @@ void SmushPlayer::parseNextFrame() {
 		return;
 	}
 
-	sub = _base->subBlock();
+	const uint32 subType = _base->readUint32BE();
+	const int32 subSize = _base->readUint32BE();
+	const int32 subOffset = _base->pos();
 
-	switch (sub->getType()) {
+	switch (subType) {
 	case MKID_BE('AHDR'): // FT INSANE may seek file to the beginning
-		handleAnimHeader(*sub);
+		handleAnimHeader(subSize, *_base);
 		break;
 	case MKID_BE('FRME'):
-		handleFrame(*sub);
+		handleFrame(subSize, *_base);
 		break;
 	default:
-		error("Unknown Chunk found at %x: %x, %d", _base->pos(), sub->getType(), sub->size());
+		error("Unknown Chunk found at %x: %x, %d", subOffset, subType, subSize);
 	}
-	delete sub;
 
-	_base->reseek();
+	_base->seek(subOffset + subSize, SEEK_SET);
 
 	if (_insanity)
 		_vm->_sound->processSound();
@@ -1098,57 +1073,6 @@ void SmushPlayer::warpMouse(int x, int y, int buttons) {
 }
 
 void SmushPlayer::updateScreen() {
-#ifdef DUMP_SMUSH_FRAMES
-	char fileName[100];
-	// change path below for dump png files
-	sprintf(fileName, "/path/to/somethere/%s%04d.png", _vm->getBaseName(), _frame);
-	FILE *file = fopen(fileName, "wb");
-	if (file == NULL)
-		error("can't open file for writing png");
-
-	png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-	if (png_ptr == NULL) {
-		fclose(file);
-		error("can't write png header");
-	}
-	png_infop info_ptr = png_create_info_struct(png_ptr);
-	if (info_ptr == NULL) {
-		fclose(file);
-		error("can't create png info struct");
-	}
-	if (setjmp(png_ptr->jmpbuf)) {
-		fclose(file);
-		error("png jmpbuf error");
-	}
-
-	png_init_io(png_ptr, file);
-
-	png_set_IHDR(png_ptr, info_ptr, _width, _height, 8, PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE,
-							PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-
-	png_colorp palette = (png_colorp)png_malloc(png_ptr, PNG_MAX_PALETTE_LENGTH * sizeof (png_color));
-	for (int i = 0; i != 256; ++i) {
-		(palette + i)->red = _pal[i * 3 + 0];
-		(palette + i)->green = _pal[i * 3 + 1];
-		(palette + i)->blue = _pal[i * 3 + 2];
-	}
-
-	png_set_PLTE(png_ptr, info_ptr, palette, PNG_MAX_PALETTE_LENGTH);
-
-	png_write_info(png_ptr, info_ptr);
-	png_set_flush(png_ptr, 10);
-
-	png_bytep row_pointers[480];
-	for (int y = 0 ; y < _height ; y++)
-		row_pointers[y] = (png_byte *) (_dst + y * _width);
-	png_write_image(png_ptr, row_pointers);
-	png_write_end(png_ptr, info_ptr);
-	png_free(png_ptr, palette);
-
-	fclose(file);
-	png_destroy_write_struct(&png_ptr, &info_ptr);
-#endif
-
 	uint32 end_time, start_time = _vm->_system->getMillis();
 	_updateNeeded = true;
 	end_time = _vm->_system->getMillis();
@@ -1326,14 +1250,10 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 				_vm->_system->updateScreen();
 				_updateNeeded = false;
 			}
-#ifdef _WIN32_WCE
-			_inTimer = false;
-			_inTimerCount = 0;
-#endif
 		}
 		if (_endOfFile)
 			break;
-		if (_vm->_quit || _vm->_saveLoadFlag || _vm->_smushVideoShouldFinish) {
+		if (_vm->quit() || _vm->_saveLoadFlag || _vm->_smushVideoShouldFinish) {
 			_smixer->stop();
 			_vm->_mixer->stopHandle(_compressedFileSoundHandle);
 			_vm->_mixer->stopHandle(_IACTchannel);

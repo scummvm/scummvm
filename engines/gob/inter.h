@@ -529,6 +529,102 @@ protected:
 	void o4_playVmdOrMusic();
 };
 
+class Inter_v5 : public Inter_v4 {
+public:
+	Inter_v5(GobEngine *vm);
+	virtual ~Inter_v5() {}
+
+protected:
+	typedef void (Inter_v5::*OpcodeDrawProcV5)();
+	typedef bool (Inter_v5::*OpcodeFuncProcV5)(OpFuncParams &);
+	typedef void (Inter_v5::*OpcodeGoblinProcV5)(OpGobParams &);
+	struct OpcodeDrawEntryV5 {
+		OpcodeDrawProcV5 proc;
+		const char *desc;
+	};
+	struct OpcodeFuncEntryV5 {
+		OpcodeFuncProcV5 proc;
+		const char *desc;
+	};
+	struct OpcodeGoblinEntryV5 {
+		OpcodeGoblinProcV5 proc;
+		const char *desc;
+	};
+	const OpcodeDrawEntryV5 *_opcodesDrawV5;
+	const OpcodeFuncEntryV5 *_opcodesFuncV5;
+	const OpcodeGoblinEntryV5 *_opcodesGoblinV5;
+	static const int _goblinFuncLookUp[][2];
+
+	virtual void setupOpcodes();
+	virtual void executeDrawOpcode(byte i);
+	virtual bool executeFuncOpcode(byte i, byte j, OpFuncParams &params);
+	virtual void executeGoblinOpcode(int i, OpGobParams &params);
+	virtual const char *getOpcodeDrawDesc(byte i);
+	virtual const char *getOpcodeFuncDesc(byte i, byte j);
+	virtual const char *getOpcodeGoblinDesc(int i);
+
+	byte _byte_8AA14;
+
+	void o5_deleteFile();
+
+	bool o5_istrlen(OpFuncParams &params);
+
+	void o5_spaceShooter(OpGobParams &params);
+	void o5_getSystemCDSpeed(OpGobParams &params);
+	void o5_getSystemRAM(OpGobParams &params);
+	void o5_getSystemCPUSpeed(OpGobParams &params);
+	void o5_getSystemDrawSpeed(OpGobParams &params);
+	void o5_totalSystemSpecs(OpGobParams &params);
+	void o5_saveSystemSpecs(OpGobParams &params);
+	void o5_loadSystemSpecs(OpGobParams &params);
+
+	void o5_gob92(OpGobParams &params);
+	void o5_gob95(OpGobParams &params);
+	void o5_gob96(OpGobParams &params);
+	void o5_gob97(OpGobParams &params);
+	void o5_gob98(OpGobParams &params);
+	void o5_gob100(OpGobParams &params);
+	void o5_gob200(OpGobParams &params);
+};
+
+class Inter_v6 : public Inter_v5 {
+public:
+	Inter_v6(GobEngine *vm);
+	virtual ~Inter_v6() {}
+
+protected:
+	typedef void (Inter_v6::*OpcodeDrawProcV6)();
+	typedef bool (Inter_v6::*OpcodeFuncProcV6)(OpFuncParams &);
+	typedef void (Inter_v6::*OpcodeGoblinProcV6)(OpGobParams &);
+	struct OpcodeDrawEntryV6 {
+		OpcodeDrawProcV6 proc;
+		const char *desc;
+	};
+	struct OpcodeFuncEntryV6 {
+		OpcodeFuncProcV6 proc;
+		const char *desc;
+	};
+	struct OpcodeGoblinEntryV6 {
+		OpcodeGoblinProcV6 proc;
+		const char *desc;
+	};
+	const OpcodeDrawEntryV6 *_opcodesDrawV6;
+	const OpcodeFuncEntryV6 *_opcodesFuncV6;
+	const OpcodeGoblinEntryV6 *_opcodesGoblinV6;
+	static const int _goblinFuncLookUp[][2];
+
+	virtual void setupOpcodes();
+	virtual void executeDrawOpcode(byte i);
+	virtual bool executeFuncOpcode(byte i, byte j, OpFuncParams &params);
+	virtual void executeGoblinOpcode(int i, OpGobParams &params);
+	virtual const char *getOpcodeDrawDesc(byte i);
+	virtual const char *getOpcodeFuncDesc(byte i, byte j);
+	virtual const char *getOpcodeGoblinDesc(int i);
+
+	bool o6_loadCursor(OpFuncParams &params);
+	bool o6_evaluateStore(OpFuncParams &params);
+};
+
 } // End of namespace Gob
 
 #endif // GOB_INTER_H

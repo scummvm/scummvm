@@ -525,7 +525,7 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 	_themeName.clear();
 	
 	char fileNameBuffer[32];
-	char stxHeader[128];
+	Common::String stxHeader;
 	int parseCount = 0;
 	
 #ifdef USE_ZLIB
@@ -546,9 +546,9 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 				Common::MemoryReadStream *stream = new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size+1, true);
 				
 				if (!strcmp(fileNameBuffer, "THEMERC")) {
-					stream->readLine(stxHeader, 128);
+					stxHeader = stream->readLine();
 
-					if (!themeConfigParseHeader(stxHeader, _themeName)) {
+					if (!themeConfigParseHeader(stxHeader.c_str(), _themeName)) {
 						warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
 						return false;
 					}
@@ -591,9 +591,9 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 				} else if (i->getName() == "THEMERC") {
 					Common::File f;
 					f.open(*i);
-					f.readLine(stxHeader, 128);
+					stxHeader = f.readLine();
 
-					if (!themeConfigParseHeader(stxHeader, _themeName)) {
+					if (!themeConfigParseHeader(stxHeader.c_str(), _themeName)) {
 						warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
 						return false;
 					}

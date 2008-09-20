@@ -153,7 +153,7 @@ void SymbianActions::initInstanceGame() {
 
 
 	// Save
-	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche || is_feeble)
+	if (is_simon || is_sword2 || is_gob || is_kyra || is_feeble)
 		_action_enabled[ACTION_SAVE] = false;
 	else {
 		_action_enabled[ACTION_SAVE] = true;

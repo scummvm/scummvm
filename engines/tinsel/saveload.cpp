@@ -246,16 +246,11 @@ static char *NewName(void) {
  * Store the file details, ordered by time, in savedFiles[] and return
  * the number of files found).
  */
-int getList(void) {
-	// No change since last call?
-	// TODO/FIXME: Just always reload this data? Be careful about slow downs!!!
-	if (!NeedLoad)
-		return numSfiles;
-
+int getList(Common::SaveFileManager *saveFileMan, const Common::String &target) {
 	int i;
 
-	const Common::String pattern = _vm->getSavegamePattern();
-	Common::StringList files = _vm->getSaveFileMan()->listSavefiles(pattern.c_str());
+	const Common::String pattern = target +  ".???";
+	Common::StringList files = saveFileMan->listSavefiles(pattern.c_str());
 
 	numSfiles = 0;
 
@@ -264,7 +259,7 @@ int getList(void) {
 			break;
 
 		const Common::String &fname = *file;
-		Common::InSaveFile *f = _vm->getSaveFileMan()->openForLoading(fname.c_str());
+		Common::InSaveFile *f = saveFileMan->openForLoading(fname.c_str());
 		if (f == NULL) {
 			continue;
 		}
@@ -302,6 +297,15 @@ int getList(void) {
 	NeedLoad = false;
 
 	return numSfiles;
+}
+
+int getList(void) {
+	// No change since last call?
+	// TODO/FIXME: Just always reload this data? Be careful about slow downs!!!
+	if (!NeedLoad)
+		return numSfiles;
+
+	return getList(_vm->getSaveFileMan(), _vm->getTargetName());
 }
 
 

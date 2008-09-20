@@ -147,7 +147,7 @@ void CEActionsPocket::initInstanceGame() {
 	_key_action[POCKET_ACTION_PAUSE].setKey(VK_SPACE);
 	_action_enabled[POCKET_ACTION_PAUSE] = true;
 	// Save
-	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche || is_feeble)
+	if (is_simon || is_sword2 || is_gob || is_kyra || is_feeble)
 		_action_enabled[POCKET_ACTION_SAVE] = false;
 	else if (is_queen) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;

@@ -200,6 +200,7 @@ private:
 	bool _zoomUp;			// zooming up mode
 	bool _zoomDown;			// zooming down mode
 
+	bool _noDoubleTapRMB;	// disable double tap -> rmb click 
 	bool _rbutton;			// double tap -> right button simulation
 	bool _closeClick;		// flag when taps are spatially close together
 

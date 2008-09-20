@@ -25,7 +25,6 @@
 
 
 #include "common/endian.h"
-#include "common/events.h"
 #include "common/savefile.h"
 
 #include "cine/cine.h"
@@ -125,7 +124,6 @@ static const int16 canUseOnItemTable[] = { 1, 0, 0, 1, 1, 0, 0 };
 CommandeType objectListCommand[20];
 int16 objListTab[20];
 
-uint16 exitEngine;
 Common::Array<uint16> zoneData;
 Common::Array<uint16> zoneQuery; //!< Only exists in Operation Stealth
 
@@ -499,7 +497,7 @@ enum CineSaveGameFormat detectSaveGameFormat(Common::SeekableReadStream &fHandle
 		
 		uint animEntrySize = animEntrySizeChoices[i];
 		// Jump over the animDataTable entries and the screen parameters
-		uint32 newPos = animDataTableStart + animEntrySize * animEntriesCount + sizeofScreenParams;
+		int32 newPos = animDataTableStart + animEntrySize * animEntriesCount + sizeofScreenParams;
 		// Check that there's data left after the point we're going to jump to
 		if (newPos >= fHandle.size()) {
 			continue;
@@ -1094,7 +1092,7 @@ bool CineEngine::makeLoad(char *saveName) {
 		// that's not implemented here because it was never used in a stable
 		// release of ScummVM but only during development (From revision 31453,
 		// which introduced the problem, until revision 32073, which fixed it).
-		// Therefore be bail out if we detect this particular savegame format.
+		// Therefore we bail out if we detect this particular savegame format.
 		warning("Detected a known broken savegame format, not loading savegame");
 		load = false; // Don't load the savegame
 	} else if (saveGameFormat == ANIMSIZE_UNKNOWN) {
@@ -1223,7 +1221,7 @@ void CineEngine::makeSystemMenu(void) {
 			{
 				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
 				if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
-					exitEngine = 1;
+					quitGame();
 				}
 				break;
 			}

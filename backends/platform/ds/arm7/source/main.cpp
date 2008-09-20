@@ -233,7 +233,7 @@ void DummyHandler() {
 	REG_IF = REG_IF;
 }
 
-uint16 powerManagerWrite(uint32 command, u32 data, bool enable) {
+void powerManagerWrite(uint32 command, u32 data, bool enable) {
 
   uint16 result;
   SerialWaitBusy();
@@ -261,9 +261,6 @@ uint16 powerManagerWrite(uint32 command, u32 data, bool enable) {
   REG_SPICNT = SPI_ENABLE | SPI_BAUD_1MHz;
   REG_SPIDATA = enable? (result | data): (result & ~data);
   SerialWaitBusy();
-  
-  // FIXME: This function should either return something, or have a comment
-  // explaining why it is valid for it to not return something. :-)
 }
 
 /*

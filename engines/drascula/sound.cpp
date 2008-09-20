@@ -23,6 +23,10 @@
  *
  */
 
+#include "sound/mixer.h"
+#include "sound/voc.h"
+#include "sound/audiocd.h"
+
 #include "drascula/drascula.h"
 
 namespace Drascula {
@@ -37,8 +41,14 @@ void DrasculaEngine::updateVolume(Audio::Mixer::SoundType soundType, int prevVol
 }
 
 void DrasculaEngine::volumeControls() {
+	if (_lang == kSpanish)
+		loadPic(95, tableSurface);
+
 	copyRect(1, 56, 73, 63, 177, 97, tableSurface, screenSurface);
 	updateScreen(73, 63, 73, 63, 177, 97, screenSurface);
+
+	setCursor(kCursorCrosshair);
+	showCursor();
 
 	for (;;) {
 		int masterVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16), 0, 15);
@@ -56,8 +66,6 @@ void DrasculaEngine::volumeControls() {
 		copyBackground(183, 56, 82, masterVolumeY, 39, 2 + masterVolume * 4, tableSurface, screenSurface);
 		copyBackground(183, 56, 138, voiceVolumeY, 39, 2 + voiceVolume * 4, tableSurface, screenSurface);
 		copyBackground(183, 56, 194, musicVolumeY, 39, 2 + musicVolume * 4, tableSurface, screenSurface);
-
-		setCursorTable();
 
 		updateScreen();
 
@@ -84,6 +92,11 @@ void DrasculaEngine::volumeControls() {
 
 	}
 
+	if (_lang == kSpanish)
+		loadPic(974, tableSurface);
+
+	selectVerb(0);
+
 	updateEvents();
 }
 
@@ -108,6 +121,10 @@ void DrasculaEngine::playMusic(int p) {
 
 void DrasculaEngine::stopMusic() {
 	AudioCD.stop();
+}
+
+void DrasculaEngine::updateMusic() {
+	AudioCD.updateCD();
 }
 
 int DrasculaEngine::musicStatus() {
@@ -141,7 +158,18 @@ void DrasculaEngine::playFile(const char *fname) {
 	if (_arj.open(fname)) {
 		int soundSize = _arj.size();
 		byte *soundData = (byte *)malloc(soundSize);
-		_arj.seek(32);
+
+		if (!(!strcmp(fname, "3.als") && soundSize == 145166 && _lang != kSpanish)) {
+			_arj.seek(32);
+		} else {
+			// WORKAROUND: File 3.als with English speech files has a big silence at
+			// its beginning and end. We seek past the silence at the beginning,
+			// and ignore the silence at the end
+			// Fixes bug #2111815 - "DRASCULA: Voice delayed"
+			_arj.seek(73959, SEEK_SET);
+			soundSize = 117158 - 73959;
+		}
+
 		_arj.read(soundData, soundSize);
 		_arj.close();
 

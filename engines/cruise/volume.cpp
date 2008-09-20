@@ -395,12 +395,12 @@ int16 readVolCnf(void) {
 	}
 
 	for (i = 0; i < numOfDisks; i++) {
-		fileName *ptr;
+		dataFileName *ptr;
 
 		fileHandle.read(&volumeData[i].size, 4);
 		flipLong(&volumeData[i].size);
 
-		ptr = (fileName *) mallocAndZero(volumeData[i].size);
+		ptr = (dataFileName *) mallocAndZero(volumeData[i].size);
 
 		volumeData[i].ptr = ptr;
 

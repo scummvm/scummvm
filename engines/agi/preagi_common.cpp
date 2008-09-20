@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/events.h"
-
 #include "agi/preagi.h"
 #include "agi/font.h"
 #include "agi/graphics.h"
@@ -122,11 +120,12 @@ void PreAgiEngine::printStrXOR(char *szMsg) {
 int PreAgiEngine::getSelection(SelectionTypes type) {
 	Common::Event event;
 
-	for (;;) {
+	while (!quit()) {
 		while (_eventMan->pollEvent(event)) {
 			switch(event.type) {
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
-				_system->quit();
+				return 0;
 			case Common::EVENT_RBUTTONUP:
 				return 0;
 			case Common::EVENT_LBUTTONUP:

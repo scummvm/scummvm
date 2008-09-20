@@ -1,29 +1,28 @@
 ScummVM Windows CE FAQ
 Last updated: $Date$
-Release version: 0.11.0
+Release version: 0.12.0
 ------------------------------------------------------------------------
 
 New in this version
 -------------------
 
-0.11.0
-- Redesigned 'Free Look' action (Pocket PCs)
-In order to accommodate for the requirements of the lure engine, the
-usage characteristics of the 'Free Look' action have been improved. The
-new behavior is available for use in all engines, but is is *strongly*
-recommended for at least when playing 'Lure of the Temptress'. By using
-the new scheme, when in 'Free Look' mode, it is now possible to enter
-left clicks by clicking a second time near the current location of the
-mouse pointer. Left and Right clicks at the current point location
-are also available by using the respective actions' bound key.
+0.12.0:
+- Improved SMUSH support (deprecated 'Smush_force_redraw' option)
+No skipped frames in Full Throttle action sequences. The 'Smush_force_redraw'
+option is not needed/honored anymore.
 
-- Reduced optimization build
-The ScummVM executable has grown quite large, prohibiting some devices
-from running memory demanding games (or any games at all). Code
-optimization level has been reduced to offset the growth of the executable.
-Games run slightly slower. This will be addressed before next release.
+- Fixed MultiFuntion key in Full Throttle
 
-- Several bugfixes
+- Improved sound output
+Fixed a long standing bug which led to distorted sound output in all games.
+
+- Switched to faster ogg vorbis library
+Robin Watts' libTremolo is used for ogg vorbis (tremor) replay. Info patch
+by Lostech.
+
+- New right click through double tap inhibiting option
+Check out the 'no_doubletap_rightclick' option if double-tapping as a right
+click input method annoys you. Patch by spookypeanut.
 
 ------------------------------------------------------------------------
 
@@ -109,10 +108,10 @@ and report your success ...
 How do I install ScummVM for Windows CE ?
 -----------------------------------------
 
-Simple! Unpack the release package on your desktop pc, then copy all its contents
-to a folder on your device. Typically, you should at least have scummvm.exe,
-modern.ini and modern.zip in the same directory. Finally, upload your beloved games
-and fire it up :-)
+Simple! Unpack the release package on your desktop pc, then copy all its
+contents to a folder on your device. Typically, you should at least have
+scummvm.exe, modern.ini and modern.zip in the same directory. Finally, upload
+your beloved games and fire it up :-)
 
 Some devices (like Pocket PC 2000) require GAPI to be present.
 
@@ -184,18 +183,19 @@ The following actions are available :
   * Right click    : acts as a right mouse button click
   * Cursor         : hide or display the mouse cursor
   * Free look      : go in or out of free-look mode. In this mode, you can tap
-                     the screen to look for interesting locations without walking.
-                     Cling a second time near the pointer's location equals to left click.
+                     the screen to look for interesting locations without 
+                     walking. Click a second time near the pointer's location 
+                     equals to a left click.
   * Zoom up        : magnify the upper part of the screen for 640x480 games
                      rendered on a QVGA device.
   * Zoom down      : magnify the lower part of the screen for 640x480 games
                      rendered on a QVGA device.
-  * Multi Function : this key performs a different function depending on the game
-                   : Full Throttle    -> win an action sequence (cheat)
-                   : Fate of Atlantis -> sucker punch (cheat)
-                   : Bargon           -> F1 (start the game)
-                   : All AGI games    -> bring up the predictive input dialog
-  * Bind keys      : map a key action to a device button
+  * Multi Function : performs a different function depending on the game :
+                     Full Throttle    -> win an action sequence (cheat)
+                     Fate of Atlantis -> sucker punch (cheat)
+                     Bargon           -> F1 (start the game)
+                     All AGI games    -> bring up the predictive input dialog
+  * Bind keys        map a key action to a device button
   * Up,Down,Left   :
     Right,         : emulate mouse/stylus behavior
     Left Click     :
@@ -245,11 +245,11 @@ the list of available actions for Smartphones:
   * Skip           : skip a non interactive sequence, the current dialog or
                      behaves like the ESC key on a regular keyboard
   * Zone           : switch between the 3 different mouse zones
-  * Multi Function : this key performs a different function depending on the game
-                   : Full Throttle    -> win an action sequence (cheat)
-                   : Fate of Atlantis -> sucker punch (cheat)
-                   : Bargon           -> F1 (start the game)
-                   : All AGI games    -> bring up the predictive input dialog
+  * Multi Function : performs a different function depending on the game
+                     Full Throttle    -> win an action sequence (cheat)
+                     Fate of Atlantis -> sucker punch (cheat)
+                     Bargon           -> F1 (start the game)
+                     All AGI games    -> bring up the predictive input dialog
   * Bind keys      : map a key action to a device button
   * Keyboard       : hide or display the virtual keyboard
   * Rotate         : rotate the screen (also rotates dpad keys)
@@ -287,32 +287,34 @@ Some parameters are specific to this port :
 
 Game specific sections (f.e. [monkey2]) - performance options
 
- *  high_sample_rate       bool     Desktop quality (22 kHz) sound output if set.
-                                    11 kHz otherwise.  The default is 11 kHz.
-                                    If you have a fast device, you can set this to
-                                    true to enjoy better sound effects and music.
+ *  high_sample_rate       bool     Desktop quality (22 kHz) sound output if
+                                    set.  The default is 11 kHz.
+                                    If you have a fast device, you can set this
+                                    to true to enjoy better sound effects and 
+                                    music.
  *  FM_high_quality        bool     Desktop quality FM synthesis if set. Lower
-                                    quality otherwise. The default is low quality.
-                                    You can change this if you have a fast device.
- *  sound_thread_priority  int      Set the priority of the sound thread (0, 1, 2).
-                                    Depending on the release, this is set to 1
-                                    internally (above normal). If you get sound
-                                    stuttering try setting this to a higher value.
+                                    quality otherwise. The default is low 
+                                    quality. You can change this if you have a
+                                    fast device.
+ *  sound_thread_priority  int      Set the priority of the sound thread (0, 1,
+                                    2). Depending on the release, this is set
+                                    to 1 internally (above normal).
+                                    If you get sound stuttering try setting
+                                    this to a higher value.
                                     Set to 0 if your device is fast enough or if
-                                    you prefer better audio/video synchronization.
- *  Smush_force_redraw     int      Force a Smush frame redraw every X missed
-                                    frames. Mainly used for Full Throttle action
-                                    sequences. Setting it lower gives more
-                                    priority to screen redraws. Setting it higher
-                                    gives more priority to stylus/keyboard input.
-                                    The default is 30.
+                                    you prefer better audio/video sync.
 
 Game specific sections (f.e. [monkey2]) - game options
 
- *  landscape              int      0: Portrait, 1: Landscape, 2: Inverse Landscape
-                                    You can also use this in the [scummvm] section
-                                    in QVGA Pocket PCs to display the launcher in
-                                    landscape, for example, at startup.
+ *  landscape                int    0: Portrait, 1: Landscape, 
+                                    2: Inverse Landscape.
+                                    You can also use this in the [scummvm]
+                                    section to display the launcher in landscape
+                                    for example, at startup.
+ *  no_doubletap_rightclick  int    1: Turn off the default behavior of 
+                                    simulating a right-click when the screen is
+                                    double-tapped. 
+
 
 [scummvm] section - keys definition
 
@@ -335,18 +337,18 @@ You can tweak these parameters to customize how the cursor is handled.
                                     consider being repeated.
  *  repeatX               int       Number of key repeat events before changing
                                     horizontal cursor behaviour.
- *  stepX1                int       Horizontal cursor offset value when the key is
-                                    not repeated.
- *  stepX2                int       Horizontal cursor offset value when the key is
-                                    repeated less than repeatX.
- *  stepX3                int       Horizontal cursor offset value when the key is
-                                    repeated more than repeatX.
+ *  stepX1                int       Horizontal cursor offset value when the key
+                                    is not repeated.
+ *  stepX2                int       Horizontal cursor offset value when the key
+                                    is repeated less than repeatX.
+ *  stepX3                int       Horizontal cursor offset value when the key
+                                    is repeated more than repeatX.
  *  repeatY               int       Number of key repeat events before changing
-                                    vertical cursor behaviour.
+                                    vertical cursor behavior.
  *  stepY1                int       Vertical cursor offset value when the key is
                                     not repeated.
- *  stepY2                int       Horizontal cursor offset value when the key is
-                                    repeated less than repeatY.
+ *  stepY2                int       Horizontal cursor offset value when the key
+                                    is repeated less than repeatY.
  *  stepY3                int       Vertical cursor offset value when the key is
                                     repeated more than repeatY.
 
@@ -361,8 +363,8 @@ Game specific questions
 I need to press a special key
 -----------------------------
 
-Bring up the virtual keyboard. On Smartphones take a look at the Keyboard action above.
-On Pocket PCs it's easier to double-tap at the top of the screen.
+Bring up the virtual keyboard. On Smartphones take a look at the Keyboard 
+action above. On Pocket PCs it's easier to double-tap at the top of the screen.
 
 The panel is obscuring the playfield area
 -----------------------------------------
@@ -383,17 +385,18 @@ Bind and use the quit action to quit.
 I cannot rotate the screen to landscape/inverse landscape
 ---------------------------------------------------------
 
-Depending on the video driver, ScummVM may opt to not provide such functionality.
-In general, when ScummVM starts in normal "portrait" orientation, the device driver
-reports better display characteristics and you should consider launching from portrait.
+Depending on the video driver, ScummVM may opt to not provide such
+functionality.  In general, when ScummVM starts in normal "portrait"
+orientation, the device driver reports better display characteristics and you
+should consider launching from portrait.
 
 I'm having problems. Is there diagnostic output available ?
 -----------------------------------------------------------
 
 Insert a line in the [scummvm] section of scummvm.ini with the following:
 debuglevel=1
-Run ScummVM. When it closes scummvm_stdout.txt and scummvm_stderr.txt files will be
-available at the program directory (see section above).
+Run ScummVM. When it closes scummvm_stdout.txt and scummvm_stderr.txt files
+will be available at the program directory (see section above).
 
 ScummVM crashes and returns to desktop
 --------------------------------------
@@ -548,18 +551,19 @@ Use the Multi Function action.
 -- AGI engine games --
 ----------------------
 
-Do you expect me to play these games on keyboard less devices ?
+Do you expect me to play these games on keyboard-less devices ?
 ---------------------------------------------------------------
 
 Sure we do :-)
-If you want to get some mileage on your stylus you can use the virtual keyboard.
-There is a very useful alternative though, the AGI engine's predictive input dialog.
-It requires a dictionary to be present. Just tap on the command line or use the
-Multi Function action to bring it up. On Smartphones, when the dialog is shown
-all key mapping is disabled temporarily (including mouse emulation). Input is
-performed either by pressing the phone's numeric keypad keys and dpad enter to
-close the dialog, or by navigating the buttons using the dpad arrows and pressing
-with dpad enter. Check the main Readme file for more information on this.
+If you want to get some mileage on your stylus you can use the virtual
+keyboard.  There is a very useful alternative though, the AGI engine's
+predictive input dialog.  It requires a dictionary to be present. Just tap on
+the command line or use the Multi Function action to bring it up. On
+Smartphones, when the dialog is shown all key mapping is disabled temporarily
+(including mouse emulation). Input is performed either by pressing the phone's
+numeric keypad keys and dpad enter to close the dialog, or by navigating the
+buttons using the dpad arrows and pressing with dpad enter. Check the main
+Readme file for more information on this.
 
 ---------------------------
 -- Lure of the Temptress --
@@ -595,8 +599,9 @@ I think I found a bug, ScummVM crashes in ...
 
 See the "Reporting Bugs" section in ScummVM readme.
 
-If you have a Pocket PC or Handheld PC, be sure to include its resolution (obtained
-on the second dialog displayed on the "About" menu) in your bug report.
+If you have a Pocket PC or Handheld PC, be sure to include its resolution
+(obtained on the second dialog displayed on the "About" menu) in your bug
+report.
 
 If you cannot reproduce this bug on another ScummVM version, you can cross
 post your bug report on ScummVM forums.
@@ -618,6 +623,26 @@ http://www.scummvm.org/
 ------------------------------------------------------------------------
 Old news follow ...
 ------------------------------------------------------------------------
+
+0.11.0:
+- Redesigned 'Free Look' action (Pocket PCs)
+In order to accommodate for the requirements of the lure engine, the
+usage characteristics of the 'Free Look' action have been improved. The
+new behavior is available for use in all engines, but is is *strongly*
+recommended for at least when playing 'Lure of the Temptress'. By using
+the new scheme, when in 'Free Look' mode, it is now possible to enter
+left clicks by clicking a second time near the current location of the
+mouse pointer. Left and Right clicks at the current point location
+are also available by using the respective actions' bound key.
+
+- Reduced optimization build
+The ScummVM executable has grown quite large, prohibiting some devices
+from running memory demanding games (or any games at all). Code
+optimization level has been reduced to offset the growth of the executable.
+Games run slightly slower. This will be addressed before next release.
+
+- Several bugfixes
+
 
 0.10.0:
 Major improvements have taken place in this version, mostly for behind-

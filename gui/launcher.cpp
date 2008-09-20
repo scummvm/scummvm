@@ -29,6 +29,7 @@
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/util.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "gui/about.h"
@@ -44,6 +45,7 @@
 #include "gui/TabWidget.h"
 #include "gui/PopUpWidget.h"
 #include "graphics/cursorman.h"
+#include "graphics/scaler.h"
 
 #include "sound/mididrv.h"
 
@@ -61,7 +63,10 @@ enum {
 	kAddGameCmd = 'ADDG',
 	kEditGameCmd = 'EDTG',
 	kRemoveGameCmd = 'REMG',
+	kLoadGameCmd = 'LOAD',
 	kQuitCmd = 'QUIT',
+	kChooseCmd = 'CHOS',
+	kDelCmd = 'DEL ',
 
 
 	kCmdGlobalGraphicsOverride = 'OGFX',
@@ -390,7 +395,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 		if (browser.runModal() > 0) {
 			// User made this choice...
-			FilesystemNode file(browser.getResult());
+			Common::FilesystemNode file(browser.getResult());
 			_soundFont->setLabel(file.getPath());
 
 			if (!file.getPath().empty() && (file.getPath() != "None"))
@@ -408,7 +413,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		BrowserDialog browser("Select directory with game data", true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			FilesystemNode dir(browser.getResult());
+			Common::FilesystemNode dir(browser.getResult());
 
 			// TODO: Verify the game can be found in the new directory... Best
 			// done with optional specific gameid to pluginmgr detectgames?
@@ -426,7 +431,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		BrowserDialog browser("Select additional game directory", true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			FilesystemNode dir(browser.getResult());
+			Common::FilesystemNode dir(browser.getResult());
 			_extraPathWidget->setLabel(dir.getPath());
 			draw();
 		}
@@ -438,7 +443,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		BrowserDialog browser("Select directory for saved games", true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			FilesystemNode dir(browser.getResult());
+			Common::FilesystemNode dir(browser.getResult());
 			_savePathWidget->setLabel(dir.getPath());
 			draw();
 		}
@@ -468,6 +473,296 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
+class SaveLoadChooser : public GUI::Dialog {
+	typedef Common::String String;
+	typedef Common::StringList StringList;
+protected:
+	GUI::ListWidget		*_list;
+	GUI::ButtonWidget	*_chooseButton;
+	GUI::ButtonWidget	*_deleteButton;
+	GUI::GraphicsWidget	*_gfxWidget;
+	GUI::ContainerWidget	*_container;
+	GUI::StaticTextWidget	*_date;
+	GUI::StaticTextWidget	*_time;
+	GUI::StaticTextWidget	*_playtime;
+
+	const EnginePlugin		*_plugin;
+	bool					_delSupport;
+	bool					_metaInfoSupport;
+	bool					_thumbnailSupport;
+	bool					_saveDateSupport;
+	bool					_playTimeSupport;
+	String					_target;
+	SaveStateList			_saveList;
+
+	uint8 _fillR, _fillG, _fillB;
+
+	void updateSaveList();
+	void updateSelection(bool redraw);
+public:
+	SaveLoadChooser(const String &title, const String &buttonLabel);
+	~SaveLoadChooser();
+
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	void setList(const StringList& list);
+	int runModal(const EnginePlugin *plugin, const String &target);
+
+	virtual void reflowLayout();
+
+	virtual void close();
+};
+
+SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
+	: Dialog("ScummSaveLoad"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
+	_delSupport = _metaInfoSupport = _thumbnailSupport = _saveDateSupport = _playTimeSupport = false;
+
+//	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
+
+	new StaticTextWidget(this, "ScummSaveLoad.Title", title);
+
+	// Add choice list
+	_list = new GUI::ListWidget(this, "ScummSaveLoad.List");
+	_list->setNumberingMode(GUI::kListNumberingOff);
+
+	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
+//	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
+
+	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
+
+	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", kTextAlignCenter);
+	_time = new StaticTextWidget(this, 0, 0, 10, 10, "No time saved", kTextAlignCenter);
+	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", kTextAlignCenter);
+
+	// Buttons
+	new GUI::ButtonWidget(this, "ScummSaveLoad.Cancel", "Cancel", kCloseCmd, 0);
+	_chooseButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Choose", buttonLabel, kChooseCmd, 0);
+	_chooseButton->setEnabled(false);
+
+	_deleteButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Delete", "Delete", kDelCmd, 0);
+	_deleteButton->setEnabled(false);
+
+	_delSupport = _metaInfoSupport = _thumbnailSupport = false;
+}
+
+SaveLoadChooser::~SaveLoadChooser() {
+}
+
+int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) {
+	if (_gfxWidget)
+		_gfxWidget->setGfx(0);
+
+	_plugin = plugin;
+	_target = target;
+	_delSupport = (*_plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
+	_metaInfoSupport = (*_plugin)->hasFeature(MetaEngine::kSupportsMetaInfos);
+	_thumbnailSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSupportsThumbnails);
+	_saveDateSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSupportsSaveDate);
+	_playTimeSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSupportsSavePlayTime);
+	reflowLayout();
+	updateSaveList();
+
+	int ret = Dialog::runModal();
+	return ret;
+}
+
+void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	int selItem = _list->getSelected();
+
+	switch (cmd) {
+	case GUI::kListItemActivatedCmd:
+	case GUI::kListItemDoubleClickedCmd:
+		if (selItem >= 0) {
+			if (!_list->getSelectedString().empty()) {
+				_list->endEditMode();
+				setResult(atoi(_saveList[selItem].save_slot().c_str()));
+				close();
+			}
+		}
+		break;
+	case kChooseCmd:
+		setResult(atoi(_saveList[selItem].save_slot().c_str()));
+		close();
+		break;
+	case GUI::kListSelectionChangedCmd: {
+		updateSelection(true);
+	} break;
+	case kDelCmd:
+		if (selItem >= 0 && _delSupport) {
+			MessageDialog alert("Do you really want to delete this savegame?", 
+								"Delete", "Cancel");
+			if (alert.runModal() == GUI::kMessageOK) {
+				(*_plugin)->removeSaveState(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
+
+				setResult(-1);
+				_list->setSelected(-1);
+
+				updateSaveList();
+				updateSelection(true);
+			}
+		}
+		break;
+	case kCloseCmd:
+		setResult(-1);
+	default:
+		Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+void SaveLoadChooser::reflowLayout() {
+	if (g_gui.xmlEval()->getVar("Globals.ScummSaveLoad.ExtInfo.Visible") == 1 && _thumbnailSupport) {
+		int16 x, y;
+		uint16 w, h;
+		
+		if (!g_gui.xmlEval()->getWidgetData("ScummSaveLoad.Thumbnail", x, y, w, h))
+			error("Error when loading position data for Save/Load Thumbnails.");
+			
+		int thumbW = kThumbnailWidth;	
+		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
+		int thumbX = x + (w >> 1) - (thumbW >> 1);
+		int thumbY = y + kLineHeight;
+
+		int textLines = 0;
+		if (_saveDateSupport)
+			textLines += 2;
+		if (_playTimeSupport)
+			textLines += 1;
+
+		if (textLines)
+			++textLines;
+
+		_container->resize(x, y, w, h + textLines * kLineHeight);
+		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH); 
+
+		int height = thumbY + thumbH + kLineHeight;
+
+		if (_saveDateSupport) {
+			_date->resize(thumbX, height, kThumbnailWidth, kLineHeight);
+			height += kLineHeight;
+			_time->resize(thumbX, height, kThumbnailWidth, kLineHeight);
+			height += kLineHeight;
+		}
+
+		if (_playTimeSupport)
+			_playtime->resize(thumbX, height, kThumbnailWidth, kLineHeight);
+
+		_container->clearFlags(GUI::WIDGET_INVISIBLE);
+		_gfxWidget->clearFlags(GUI::WIDGET_INVISIBLE);
+
+		if (_saveDateSupport) {
+			_date->clearFlags(GUI::WIDGET_INVISIBLE);
+			_time->clearFlags(GUI::WIDGET_INVISIBLE);
+		} else {
+			_date->setFlags(GUI::WIDGET_INVISIBLE);
+			_time->setFlags(GUI::WIDGET_INVISIBLE);
+		}
+
+		if (_playTimeSupport)
+			_playtime->clearFlags(GUI::WIDGET_INVISIBLE);
+		else
+			_playtime->setFlags(GUI::WIDGET_INVISIBLE);
+
+		_fillR = 0;
+		_fillG = 0;
+		_fillB = 0;
+		updateSelection(false);
+	} else {
+		_container->setFlags(GUI::WIDGET_INVISIBLE);
+		_gfxWidget->setFlags(GUI::WIDGET_INVISIBLE);
+		_date->setFlags(GUI::WIDGET_INVISIBLE);
+		_time->setFlags(GUI::WIDGET_INVISIBLE);
+		_playtime->setFlags(GUI::WIDGET_INVISIBLE);
+	}
+
+	Dialog::reflowLayout();
+}
+
+void SaveLoadChooser::updateSelection(bool redraw) {
+	int selItem = _list->getSelected();
+
+	bool isDeletable = _delSupport;
+
+	if (selItem >= 0 && !_list->getSelectedString().empty() && _metaInfoSupport) {
+		SaveStateDescriptor desc = (*_plugin)->querySaveMetaInfos(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
+
+		isDeletable = desc.getBool("is_deletable") && _delSupport;
+
+		if (_thumbnailSupport) {
+			const Graphics::Surface *thumb = desc.getThumbnail();
+			if (thumb) {
+				_gfxWidget->setGfx(thumb);
+				_gfxWidget->useAlpha(256);
+			} else {
+				_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
+			}
+		}
+
+		if (_saveDateSupport) {
+			Common::String date = "Date: ";
+			if (desc.contains("save_date"))
+				date += desc.getVal("save_date");
+			else
+				date = "No date saved";
+
+			Common::String time = "Time: ";
+			if (desc.contains("save_time"))
+				time += desc.getVal("save_time");
+			else
+				time = "No time saved";
+
+			_date->setLabel(date);
+			_time->setLabel(time);
+		}
+
+		if (_playTimeSupport) {
+			Common::String time = "Playtime: ";
+			if (desc.contains("play_time"))
+				time += desc.getVal("play_time");
+			else
+				time = "No playtime saved";
+
+			_playtime->setLabel(time);
+		}
+	}
+
+
+	// Disable these buttons if nothing is selected, or if an empty
+	// list item is selected.
+	_chooseButton->setEnabled(selItem >= 0 && (!_list->getSelectedString().empty()));
+	// Delete will always be disabled if the engine doesn't support it.
+	_deleteButton->setEnabled(isDeletable && (selItem >= 0) && (!_list->getSelectedString().empty()));
+
+	if (redraw) {
+		_gfxWidget->draw();
+		_date->draw();
+		_time->draw();
+		_playtime->draw();
+		_chooseButton->draw();
+		_deleteButton->draw();
+	}
+}
+
+void SaveLoadChooser::close() {
+	_plugin = 0;
+	_target.clear();
+	_saveList.clear();
+	_list->setList(StringList());
+
+	Dialog::close();
+}
+
+void SaveLoadChooser::updateSaveList() {
+	_saveList = (*_plugin)->listSaves(_target.c_str());
+
+	StringList saveNames;
+	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
+		Common::String description = x->save_slot();
+		description += ". ";
+		description += x->description();
+
+		saveNames.push_back(description);
+	}
+	_list->setList(saveNames);
+}
 
 #pragma mark -
 
@@ -502,6 +797,9 @@ LauncherDialog::LauncherDialog()
 	_startButton =
 			new ButtonWidget(this, "Launcher.StartButton", "Start", kStartCmd, 'S');
 
+	_loadButton =
+		new ButtonWidget(this, "Launcher.LoadGameButton", "Load", kLoadGameCmd, 'L');
+
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	_addButton =
 		new ButtonWidget(this, "Launcher.AddGameButton", "Add Game...", kAddGameCmd, 'A');
@@ -529,6 +827,9 @@ LauncherDialog::LauncherDialog()
 
 	// Create file browser dialog
 	_browser = new BrowserDialog("Select directory with game data", true);
+
+	// Create Load dialog
+	_loadDialog = new SaveLoadChooser("Load game:", "Load");
 }
 
 void LauncherDialog::selectGame(const String &name) {
@@ -546,6 +847,7 @@ void LauncherDialog::selectGame(const String &name) {
 
 LauncherDialog::~LauncherDialog() {
 	delete _browser;
+	delete _loadDialog;
 }
 
 void LauncherDialog::open() {
@@ -654,9 +956,9 @@ void LauncherDialog::addGame() {
 
 	if (_browser->runModal() > 0) {
 		// User made his choice...
-		FilesystemNode dir(_browser->getResult());
-		FSList files;
-		if (!dir.getChildren(files, FilesystemNode::kListAll)) {
+		Common::FilesystemNode dir(_browser->getResult());
+		Common::FSList files;
+		if (!dir.getChildren(files, Common::FilesystemNode::kListAll)) {
 			error("browser returned a node that is not a directory: '%s'",
 					dir.getPath().c_str());
 		}
@@ -795,6 +1097,37 @@ void LauncherDialog::editGame(int item) {
 	}
 }
 
+void LauncherDialog::loadGame(int item) {
+	String gameId = ConfMan.get("gameid", _domains[item]);
+	if (gameId.empty())
+		gameId = _domains[item];
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	String target = _domains[item];
+	target.toLowercase();
+
+	if (plugin) {
+		if ((*plugin)->hasFeature(MetaEngine::kSupportsListSaves) && 
+			(*plugin)->hasFeature(MetaEngine::kSupportsDirectLoad)) {
+			int slot = _loadDialog->runModal(plugin, target);
+			if (slot >= 0) {
+				ConfMan.setActiveDomain(_domains[item]);
+				ConfMan.setInt("save_slot", slot, Common::ConfigManager::kTransientDomain);
+				close();
+			}
+		} else {
+			MessageDialog dialog
+				("This game does not support loading games from the launcher.", "OK");
+			dialog.runModal();
+		}
+	} else {
+		MessageDialog dialog("ScummVM could not find any engine capable of running the selected game!", "OK");
+		dialog.runModal();
+	}
+}
+
 void LauncherDialog::handleKeyDown(Common::KeyState state) {
 	Dialog::handleKeyDown(state);
 	updateButtons();
@@ -817,6 +1150,9 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kEditGameCmd:
 		editGame(item);
+		break;
+	case kLoadGameCmd:
+		loadGame(item);
 		break;
 	case kOptionsCmd: {
 		GlobalOptionsDialog options;
@@ -865,6 +1201,10 @@ void LauncherDialog::updateButtons() {
 	if (enable != _removeButton->isEnabled()) {
 		_removeButton->setEnabled(enable);
 		_removeButton->draw();
+	}
+	if (enable != _loadButton->isEnabled()) {
+		_loadButton->setEnabled(enable);
+		_loadButton->draw();
 	}
 
 	// Update the label of the "Add" button depending on whether shift is pressed or not

@@ -419,7 +419,7 @@ protected:
 	int o2_getVocHigh(EMCState *script);
 
 	// save/load specific
-	virtual void saveGame(const char *fileName, const char *saveName) = 0;
+	virtual void saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 	virtual void loadGame(const char *fileName) = 0;
 };
 

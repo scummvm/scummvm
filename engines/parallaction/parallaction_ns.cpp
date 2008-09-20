@@ -29,27 +29,61 @@
 
 #include "parallaction/parallaction.h"
 #include "parallaction/input.h"
+#include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 
 
 namespace Parallaction {
 
 
-#define MOUSEARROW_WIDTH		16
-#define MOUSEARROW_HEIGHT		16
+class LocationName {
 
-#define MOUSECOMBO_WIDTH		32	// sizes for cursor + selected inventory item
-#define MOUSECOMBO_HEIGHT		32
+	Common::String _slide;
+	Common::String _character;
+	Common::String _location;
 
-LocationName::LocationName() {
-	_buf = 0;
-	_hasSlide = false;
-	_hasCharacter = false;
-}
+	bool _hasCharacter;
+	bool _hasSlide;
+	char *_buf;
 
-LocationName::~LocationName() {
-	free(_buf);
-}
+public:
+	LocationName() {
+		_buf = 0;
+		_hasSlide = false;
+		_hasCharacter = false;
+	}
+
+	~LocationName() {
+		free(_buf);
+	}
+
+	void bind(const char*);
+
+	const char *location() const {
+		return _location.c_str();
+	}
+
+	bool hasCharacter() const {
+		return _hasCharacter;
+	}
+
+	const char *character() const {
+		return _character.c_str();
+	}
+
+	bool hasSlide() const {
+		return _hasSlide;
+	}
+
+	const char *slide() const {
+		return _slide.c_str();
+	}
+
+	const char *c_str() const {
+		return _buf;
+	}
+};
+
 
 
 /*
@@ -135,7 +169,6 @@ int Parallaction_ns::init() {
 
 	initResources();
 	initFonts();
-	initCursors();
 	_locationParser = new LocationParser_ns(this);
 	_locationParser->init();
 	_programParser = new ProgramParser_ns(this);
@@ -155,6 +188,8 @@ int Parallaction_ns::init() {
 	_inTestResult = false;
 
 	_location._animations.push_front(_char._ani);
+
+	_saveLoad = new SaveLoad_ns(this, _saveFileMan);
 
 	Parallaction::init();
 
@@ -181,32 +216,6 @@ void Parallaction_ns::freeFonts() {
 
 }
 
-void Parallaction_ns::initCursors() {
-	_comboArrow = _disk->loadPointer("pointer");
-	_mouseArrow = _resMouseArrow;
-}
-
-void Parallaction_ns::setArrowCursor() {
-
-	debugC(1, kDebugInput, "setting mouse cursor to arrow");
-
-	// this stuff is needed to avoid artifacts with labels and selected items when switching cursors
-	_input->stopHovering();
-	_input->_activeItem._id = 0;
-
-	_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
-}
-
-void Parallaction_ns::setInventoryCursor(ItemName name) {
-	assert(name > 0);
-
-	byte *v8 = _comboArrow->getData(0);
-
-	// FIXME: destination offseting is not clear
-	_inventoryRenderer->drawItem(name, v8 + 7 * MOUSECOMBO_WIDTH + 7, MOUSECOMBO_WIDTH);
-	_system->setMouseCursor(v8, MOUSECOMBO_WIDTH, MOUSECOMBO_HEIGHT, 0, 0, 0);
-}
-
 
 void Parallaction_ns::callFunction(uint index, void* parm) {
 	assert(index < 25);	// magic value 25 is maximum # of callables for Nippon Safes
@@ -216,13 +225,13 @@ void Parallaction_ns::callFunction(uint index, void* parm) {
 
 
 int Parallaction_ns::go() {
-	renameOldSavefiles();
+	_saveLoad->renameOldSavefiles();
 
 	_globalFlagsNames = _disk->loadTable("global");
 
 	startGui();
 
-	while ((_engineFlags & kEngineQuit) == 0) {
+	while (!quit()) {
 		runGame();
 	}
 
@@ -242,7 +251,7 @@ void Parallaction_ns::switchBackground(const char* background, const char* mask)
 			v2 += 4;
 		}
 
-		g_system->delayMillis(20);
+		_vm->_system->delayMillis(20);
 		_gfx->setPalette(pal);
 		_gfx->updateScreen();
 	}
@@ -252,16 +261,6 @@ void Parallaction_ns::switchBackground(const char* background, const char* mask)
 	return;
 }
 
-
-void Parallaction_ns::showSlide(const char *name, int x, int y) {
-	BackgroundInfo *info = new BackgroundInfo;
-	_disk->loadSlide(*info, name);
-
-	info->x = (x == CENTER_LABEL_HORIZONTAL) ? ((_vm->_screenWidth - info->width) >> 1) : x;
-	info->y = (y == CENTER_LABEL_VERTICAL) ? ((_vm->_screenHeight - info->height) >> 1) : y;
-
-	_gfx->setBackground(kBackgroundSlide, info);
-}
 
 void Parallaction_ns::runPendingZones() {
 	if (_activeZone) {
@@ -287,7 +286,7 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	_zoneTrap = nullZonePtr;
 
-	setArrowCursor();
+	_input->setArrowCursor();
 
 	_gfx->showGfxObj(_char._ani->gfxobj, false);
 	_location._animations.remove(_char._ani);
@@ -428,6 +427,7 @@ void Parallaction_ns::changeCharacter(const char *name) {
 }
 
 void Parallaction_ns::cleanupGame() {
+	_inTestResult = false;
 
 	_engineFlags &= ~kEngineTransformedDonna;
 
@@ -440,17 +440,21 @@ void Parallaction_ns::cleanupGame() {
 	memset(_locationNames, 0, sizeof(_locationNames));
 
 	// this flag tells freeZones to unconditionally remove *all* Zones
-	_engineFlags |= kEngineQuit;
+	_vm->_quit = true;
 
 	freeZones();
 	freeAnimations();
 
 	// this dangerous flag can now be cleared
-	_engineFlags &= ~kEngineQuit;
+	_vm->_quit = false;
 
 	// main character animation is restored
 	_location._animations.push_front(_char._ani);
 	_score = 0;
+
+	_soundMan->stopMusic();
+	_introSarcData3 = 200;
+	_introSarcData2 = 1;
 
 	return;
 }

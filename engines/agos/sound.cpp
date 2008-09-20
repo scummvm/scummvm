@@ -56,10 +56,12 @@ protected:
 public:
 	BaseSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false);
 	BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, bool bigEndian = false);
+	virtual ~BaseSound();
+	void close();
+	
 	void playSound(uint sound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol = 0) {
 		playSound(sound, sound, type, handle, flags, vol);
 	}
-	virtual ~BaseSound();
 	virtual void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol = 0) = 0;
 	virtual Audio::AudioStream *makeAudioStream(uint sound) { return NULL; }
 };
@@ -182,6 +184,12 @@ BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, bool bigE
 	_file = file;
 	_offsets = offsets;
 	_freeOffsets = false;
+}
+
+void BaseSound::close() {
+	if (_freeOffsets) {
+		free(_offsets);
+	}
 }
 
 BaseSound::~BaseSound() {
@@ -555,6 +563,9 @@ void Sound::readSfxFile(const char *filename) {
 
 void Sound::loadSfxTable(File *gameFile, uint32 base) {
 	stopAll();
+	
+	if (_effects)
+		_effects->close();
 
 	if (_vm->getPlatform() == Common::kPlatformWindows)
 		_effects = new WavSound(_mixer, gameFile, base);

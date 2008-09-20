@@ -84,8 +84,8 @@ void Journal::use() {
 			case Common::EVENT_WHEELDOWN:
 				handleMouseWheel(1);
 				break;
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
-				_vm->quitGame();
 				return;
 			default:
 				break;
@@ -385,16 +385,18 @@ void Journal::drawPanelText(int y, const char *text) {
 	char s[128];
 	strncpy(s, text, 127);
 	s[127] = 0;
+	char *p;
+
 	// remove leading and trailing spaces (necessary for spanish version)
-	for (char *p = s + strlen(s) - 1; p >= s && *p == ' '; --p) {
+	for (p = s + strlen(s) - 1; p >= s && *p == ' '; --p) {
 		*p = 0;
 	}
 	text = s;
-	for (char *p = s; *p == ' '; ++p) {
+	for (p = s; *p == ' '; ++p) {
 		text = p + 1;
 	}
 	// draw the substrings
-	char *p = (char *)strchr(text, ' ');
+	p = (char *)strchr(text, ' ');
 	if (!p) {
 		int x = (128 - _vm->display()->textWidth(text)) / 2;
 		_vm->display()->setText(x, y, text, false);

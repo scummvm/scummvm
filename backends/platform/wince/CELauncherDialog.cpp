@@ -72,10 +72,10 @@ void CELauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 d
 	}
 }
 
-void CELauncherDialog::automaticScanDirectory(const FilesystemNode &node) {
+void CELauncherDialog::automaticScanDirectory(const Common::FilesystemNode &node) {
 	// First check if we have a recognized game in the current directory
-	FSList files;
-	node.getChildren(files, FilesystemNode::kListFilesOnly);
+	Common::FSList files;
+	node.getChildren(files, Common::FilesystemNode::kListFilesOnly);
 	// detect
 	GameList candidates(EngineMan.detectGames(files));
 	// insert
@@ -85,9 +85,9 @@ void CELauncherDialog::automaticScanDirectory(const FilesystemNode &node) {
 		addGameToConf(result);
 	}
 	// Then recurse on the subdirectories
-	FSList dirs;
-	node.getChildren(dirs, FilesystemNode::kListDirectoriesOnly);
-	for (FSList::const_iterator currentDir = dirs.begin(); currentDir != dirs.end(); ++currentDir)
+	Common::FSList dirs;
+	node.getChildren(dirs, Common::FilesystemNode::kListDirectoriesOnly);
+	for (Common::FSList::const_iterator currentDir = dirs.begin(); currentDir != dirs.end(); ++currentDir)
 		automaticScanDirectory(*currentDir);
 
 }

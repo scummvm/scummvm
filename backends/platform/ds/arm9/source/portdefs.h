@@ -81,7 +81,10 @@ void consolePrintf(const char* s, ...);
 
 #define ITCM_DATA	__attribute__((section(".itcm")))
 
-
+// Since I can't change the engine at the moment (post lockdown) this define can go here.
+// This define changes the mouse-relative motion which doesn't make sense on a touch screen to 
+// a more conventional form of input where the menus can be clicked on.
+#define LURE_CLICKABLE_MENUS
 
 //#include "common/array.h"
 //#include "common/str.h"

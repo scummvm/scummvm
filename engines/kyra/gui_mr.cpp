@@ -33,6 +33,8 @@
 
 #include "common/savefile.h"
 
+#include "graphics/scaler.h"
+
 namespace Kyra {
 
 void KyraEngine_MR::loadButtonShapes() {
@@ -868,7 +870,7 @@ void KyraEngine_MR::processAlbum() {
 	albumNewPage();
 	_album.running = true;
 
-	while (_album.running && !_quitFlag) {
+	while (_album.running && !quit()) {
 		updateInput();
 		checkInput(buttonList);
 		removeInputTop();
@@ -1136,6 +1138,12 @@ int KyraEngine_MR::albumClose(Button *caller) {
 #pragma mark -
 
 GUI_MR::GUI_MR(KyraEngine_MR *vm) : GUI_v2(vm), _vm(vm), _screen(vm->_screen) {
+}
+
+void GUI_MR::createScreenThumbnail(Graphics::Surface &dst) {
+	uint8 screenPal[768];
+	_screen->getRealPalette(0, screenPal);
+	::createThumbnail(&dst, _vm->_screenBuffer, Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
 }
 
 void GUI_MR::flagButtonEnable(Button *button) {
@@ -1450,7 +1458,7 @@ int GUI_MR::gameOptions(Button *caller) {
 
 	if (_vm->_lang != lang) {
 		_reloadTemporarySave = true;
-		_vm->saveGame(_vm->getSavegameFilename(999), "Temporary Kyrandia 3 Savegame");
+		_vm->saveGame(_vm->getSavegameFilename(999), "Temporary Kyrandia 3 Savegame", 0);
 		if (!_vm->loadLanguageFile("ITEMS.", _vm->_itemFile))
 			error("Couldn't load ITEMS");
 		if (!_vm->loadLanguageFile("SCORE.", _vm->_scoreFile))

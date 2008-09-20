@@ -255,13 +255,13 @@ uint32 ScriptFileParser::getIFFBlockSize(const uint32 chunkName) {
 
 	_stream->seek(_startOffset + 0x0C);
 
-	while (_stream->pos() < _endOffset) {
+	while ((uint)_stream->pos() < _endOffset) {
 		uint32 chunk = _stream->readUint32LE();
 		uint32 size_temp = _stream->readUint32BE();
 
 		if (chunk != chunkName) {
 			_stream->seek((size_temp + 1) & (~1), SEEK_CUR);
-			assert(_stream->pos() <= _endOffset);
+			assert((uint)_stream->pos() <= _endOffset);
 		} else {
 			size = size_temp;
 			break;
@@ -274,13 +274,13 @@ uint32 ScriptFileParser::getIFFBlockSize(const uint32 chunkName) {
 bool ScriptFileParser::loadIFFBlock(const uint32 chunkName, void *loadTo, uint32 ptrSize) {
 	_stream->seek(_startOffset + 0x0C);
 
-	while (_stream->pos() < _endOffset) {
+	while ((uint)_stream->pos() < _endOffset) {
 		uint32 chunk = _stream->readUint32LE();
 		uint32 chunkSize = _stream->readUint32BE();
 
 		if (chunk != chunkName) {
 			_stream->seek((chunkSize + 1) & (~1), SEEK_CUR);
-			assert(_stream->pos() <= _endOffset);
+			assert((uint)_stream->pos() <= _endOffset);
 		} else {
 			uint32 loadSize = 0;
 
@@ -435,59 +435,35 @@ void EMCInterpreter::cmd_eval(EMCState* script) {
 
 	switch (_parameter) {
 	case 0:
-		if (!val2 || !val1)
-			ret = 0;
-		else
-			ret = 1;
+		ret = (val2 && val1) ? 1 : 0;
 		break;
 
 	case 1:
-		if (val2 || val1)
-			ret = 1;
-		else
-			ret = 0;
+		ret = (val2 || val1) ? 1 : 0;
 		break;
 
 	case 2:
-		if (val1 == val2)
-			ret = 1;
-		else
-			ret = 0;
+		ret = (val1 == val2) ? 1 : 0;
 		break;
 
 	case 3:
-		if (val1 != val2)
-			ret = 1;
-		else
-			ret = 0;
+		ret = (val1 != val2) ? 1 : 0;
 		break;
 
 	case 4:
-		if (val1 > val2)
-			ret = 1;
-		else
-			ret = 0;
+		ret = (val1 > val2) ? 1 : 0;
 		break;
 
 	case 5:
-		if (val1 >= val2)
-			ret = 1;
-		else
-			ret = 0;
+		ret = (val1 >= val2) ? 1 : 0;
 		break;
 
 	case 6:
-		if (val1 < val2)
-			ret = 1;
-		else
-			ret = 0;
+		ret = (val1 < val2) ? 1 : 0;
 		break;
 
 	case 7:
-		if (val1 <= val2)
-			ret = 1;
-		else
-			ret = 0;
+		ret = (val1 <= val2) ? 1 : 0;
 		break;
 
 	case 8:

@@ -32,10 +32,10 @@
 
 namespace Kyra {
 
-void KyraEngine_MR::saveGame(const char *fileName, const char *saveName) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::saveGame('%s', '%s')", fileName, saveName);
+void KyraEngine_MR::saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumb) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::saveGame('%s', '%s', %p)", fileName, saveName, (const void *)thumb);
 
-	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName);
+	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName, thumb);
 	if (!out) {
 		warning("Can't open file '%s', game not loadable", fileName);
 		return;
@@ -112,7 +112,7 @@ void KyraEngine_MR::saveGame(const char *fileName, const char *saveName) {
 	out->finalize();
 
 	// check for errors
-	if (out->ioFailed())
+	if (out->err())
 		warning("Can't write file '%s'. (Disk full?)", fileName);
 	else
 		debugC(1, kDebugLevelMain, "Saved game '%s.'", saveName);
@@ -283,7 +283,7 @@ void KyraEngine_MR::loadGame(const char *fileName) {
 	_sceneExit3 = in.readUint16();
 	_sceneExit4 = in.readUint16();
 
-	if (saveFile->ioFailed())
+	if (saveFile->err() || saveFile->eos())
 		error("Load failed ('%s', '%s').", fileName, header.description.c_str());
 	else
 		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", header.description.c_str());

@@ -295,8 +295,11 @@ void Globals::loadMadsVocab() {
 	char buffer[30];
 	strcpy(buffer, "");
 
-	while(!vocabS->eos()) {
-		buffer[curPos++] = vocabS->readByte();
+	while(true) {
+		uint8 b = vocabS->readByte();
+		if (vocabS->eos()) break;
+
+		buffer[curPos++] = b;
 		if (buffer[curPos - 1] == '\0') {
 			// end of string, add it to the strings list
 			_madsVocab.push_back(strdup(buffer));
@@ -315,8 +318,11 @@ void Globals::loadMadsQuotes() {
 	char buffer[128];
 	strcpy(buffer, "");
 
-	while(!quoteS->eos()) {
-		buffer[curPos++] = quoteS->readByte();
+	while(true) {
+		uint8 b = quoteS->readByte();
+		if (quoteS->eos()) break;
+
+		buffer[curPos++] = b;
 		if (buffer[curPos - 1] == '\0') {
 			// end of string, add it to the strings list
 			_madsQuotes.push_back(strdup(buffer));

@@ -118,8 +118,6 @@ public:
 
 	virtual void pauseEngineIntern(bool pause);
 
-	bool quit() const { return _quitFlag; }
-
 	uint8 game() const { return _flags.gameID; }
 	const GameFlags &gameFlags() const { return _flags; }
 
@@ -153,9 +151,6 @@ public:
 	void setVolume(kVolumeEntry vol, uint8 value);
 	uint8 getVolume(kVolumeEntry vol);
 
-	// quit handling
-	virtual void quitGame();
-
 	// game flag handling
 	int setGameFlag(int flag);
 	int queryGameFlag(int flag) const;
@@ -177,9 +172,6 @@ public:
 protected:
 	virtual int go() = 0;
 	virtual int init();
-
-	// quit Handling
-	bool _quitFlag;
 
 	// intern
 	Resource *_res;
@@ -279,7 +271,11 @@ protected:
 	// save/load
 	int _gameToLoad;
 
+	uint32 _lastAutosave;
+	void checkAutosave();
+
 	const char *getSavegameFilename(int num);
+	static Common::String getSavegameFilename(const Common::String &target, int num);
 	bool saveFileLoadable(int slot);
 
 	struct SaveHeader {
@@ -290,6 +286,8 @@ protected:
 
 		bool originalSave;	// savegame from original interpreter
 		bool oldHeader;		// old scummvm save header
+
+		Graphics::Surface *thumbnail;
 	};
 
 	enum kReadSaveHeaderError {
@@ -299,10 +297,12 @@ protected:
 		kRSHEIoError = 3
 	};
 
-	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, SaveHeader &header);
+	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, bool loadThumbnail, SaveHeader &header);
+
+	virtual void saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 
 	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header);
-	Common::WriteStream *openSaveForWriting(const char *filename, const char *saveName) const;
+	Common::WriteStream *openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const;
 };
 
 } // End of namespace Kyra

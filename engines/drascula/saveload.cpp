@@ -50,7 +50,7 @@ bool DrasculaEngine::saveLoadScreen() {
 		}
 	}
 	for (n = 0; n < NUM_SAVES; n++)
-		sav->readLine(names[n], 23);
+		sav->readLine_OLD(names[n], 23);
 	delete sav;
 
 	loadPic("savescr.alg", bgSurface, HALF_PAL);
@@ -60,16 +60,16 @@ bool DrasculaEngine::saveLoadScreen() {
 	select[0] = 0;
 
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+	setCursor(kCursorCrosshair);
 
 	for (;;) {
 		y = 27;
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 		for (n = 0; n < NUM_SAVES; n++) {
 			print_abc(names[n], 116, y);
 			y = y + 9;
 		}
 		print_abc(select, 117, 15);
-		setCursorTable();
 		updateScreen();
 		y = 27;
 
@@ -172,6 +172,8 @@ bool DrasculaEngine::saveLoadScreen() {
 		delay(5);
 	}
 
+	selectVerb(0);
+
 	clearRoom();
 	loadPic(roomNumber, bgSurface, HALF_PAL);
 	selectionMade = 0;
@@ -198,7 +200,7 @@ bool DrasculaEngine::loadGame(const char *gameName) {
 	if (savedChapter != currentChapter) {
 		strcpy(saveName, gameName);
 		currentChapter = savedChapter - 1;
-		hay_que_load = 1;
+		loadedDifferentChapter = 1;
 		return false;
 	}
 	sav->read(currentData, 20);
@@ -216,10 +218,10 @@ bool DrasculaEngine::loadGame(const char *gameName) {
 
 	takeObject = sav->readSint32LE();
 	pickedObject = sav->readSint32LE();
-	hay_que_load = 0;
+	loadedDifferentChapter = 0;
 	sscanf(currentData, "%d.ald", &roomNum);
 	enterRoom(roomNum);
-	withoutVerb();
+	selectVerb(0);
 
 	return true;
 }
@@ -253,9 +255,6 @@ void DrasculaEngine::saveGame(char gameName[]) {
 		warning("Can't write file '%s'. (Disk full?)", gameName);
 
 	delete out;
-
-	playSound(99);
-	finishSound();
 }
 
 } // End of namespace Drascula

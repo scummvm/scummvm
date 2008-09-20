@@ -71,7 +71,7 @@ uint32 AutoSaveFile::write(const void *ptr, uint32 size) {
 UclInSaveFile::UclInSaveFile(const char *filename, Gs2dScreen *screen, McAccess *mcAccess) : RawReadFile(mcAccess) {
 	_screen = screen;
 
-	_ioFailed = true;
+	_err = true;
 
 	if (bufOpen(filename)) {
 		if ((_size > 8) && (*(uint32 *)_buf == UCL_MAGIC)) {
@@ -82,13 +82,13 @@ UclInSaveFile::UclInSaveFile(const char *filename, Gs2dScreen *screen, McAccess 
 				free(_buf);
 				_buf = decBuf;
 				_size = resSize;
-				_ioFailed = false;
+				_err = false;
 				_pos = 0;
 			} else
 				free(decBuf);
 		}
 	}
-	if (_ioFailed) {
+	if (_err) {
 		if (_buf)
 			free(_buf);
 		_buf = NULL;
@@ -100,36 +100,39 @@ UclInSaveFile::~UclInSaveFile(void) {
 	_screen->wantAnim(false);
 }
 
-bool UclInSaveFile::ioFailed(void) const {
-	return _ioFailed;
+bool UclInSaveFile::err(void) const {
+	return _err;
 }
 
-void UclInSaveFile::clearIOFailed(void) {
-	_ioFailed = false;
+void UclInSaveFile::clearErr(void) {
+	_err = false;
+	bufClearErr();
 }
 
 bool UclInSaveFile::eos(void) const {
-	return bufTell() == bufSize();
+	return bufEof();
 }
 
-uint32 UclInSaveFile::pos(void) const {
+int32 UclInSaveFile::pos(void) const {
 	return bufTell();
 }
 
-uint32 UclInSaveFile::size(void) const {
+int32 UclInSaveFile::size(void) const {
 	return bufSize();
 }
 
-void UclInSaveFile::seek(int pos, int whence) {
+bool UclInSaveFile::seek(int pos, int whence) {
 	bufSeek(pos, whence);
+	return true;
 }
 
 uint32 UclInSaveFile::read(void *ptr, uint32 size) {
 	return (uint32)bufRead(ptr, (int)size);
 }
 
-void UclInSaveFile::skip(uint32 offset) {
+bool UclInSaveFile::skip(uint32 offset) {
 	bufSeek(offset, SEEK_CUR);
+	return true;
 }
 
 UclOutSaveFile::UclOutSaveFile(const char *filename, OSystem_PS2 *system, Gs2dScreen *screen, McAccess *mc) : RawWriteFile(mc) {
@@ -137,7 +140,7 @@ UclOutSaveFile::UclOutSaveFile(const char *filename, OSystem_PS2 *system, Gs2dSc
 	_system = system;
 	strcpy(_fileName, filename);
 
-	_ioFailed = !bufOpen(filename);
+	_err = !bufOpen(filename);
 
 	_wasFlushed = false;
 }
@@ -146,7 +149,7 @@ UclOutSaveFile::~UclOutSaveFile(void) {
 	if (_pos != 0) {
 		printf("Engine didn't call SaveFile::flush()\n");
 		flush();
-		if (ioFailed()) {
+		if (err()) {
 			// unable to save to memory card and it's too late to return an error code to the engine
 			_system->msgPrintf(5000, "!WARNING!\nCan't write to memory card.\nGame was NOT saved.");
 			printf("~UclOutSaveFile: Flush failed!\n");
@@ -160,20 +163,20 @@ uint32 UclOutSaveFile::write(const void *ptr, uint32 size) {
 	return size;
 }
 
-bool UclOutSaveFile::ioFailed(void) const {
-	return _ioFailed;
+bool UclOutSaveFile::err(void) const {
+	return _err;
 }
 
-void UclOutSaveFile::clearIOFailed(void) {
-	_ioFailed = false;
+void UclOutSaveFile::clearErr(void) {
+	_err = false;
 }
 
-void UclOutSaveFile::flush(void) {
+bool UclOutSaveFile::flush(void) {
 	if (_pos != 0) {
 		if (_wasFlushed) {
 			printf("Multiple calls to UclOutSaveFile::flush!\n");
-			_ioFailed = true;
-			return;
+			_err = true;
+			return false;
 		}
 		uint32 compSize = _pos * 2;
 		uint8 *compBuf = (uint8*)memalign(64, compSize + 8);
@@ -188,11 +191,12 @@ void UclOutSaveFile::flush(void) {
 		_pos = compSize + 8;
 		if (!bufFlush()) {
 			printf("UclOutSaveFile::flush failed!\n");
-			_ioFailed = true;
+			_err = true;
 			removeFile();
 		}
 		_wasFlushed = true;
 	}
+	return true;
 }
 
 /* ----------------------------------------- Glue Classes for POSIX Memory Card Access ----------------------------------------- */
@@ -216,11 +220,11 @@ uint32 Ps2McReadFile::write(const void *src, uint32 len) {
 	return 0;
 }
 
-uint32 Ps2McReadFile::tell(void) {
+int32 Ps2McReadFile::tell(void) {
 	return bufTell();
 }
 
-uint32 Ps2McReadFile::size(void) {
+int32 Ps2McReadFile::size(void) {
 	return bufSize();
 }
 
@@ -253,11 +257,11 @@ uint32 Ps2McWriteFile::write(const void *src, uint32 len) {
 	return len;
 }
 
-uint32 Ps2McWriteFile::tell(void) {
+int32 Ps2McWriteFile::tell(void) {
 	return bufTell();
 }
 
-uint32 Ps2McWriteFile::size(void) {
+int32 Ps2McWriteFile::size(void) {
 	return bufTell();
 }
 
@@ -267,6 +271,3 @@ int Ps2McWriteFile::seek(int32 offset, int origin) {
 	return 0;
 }
 
-bool Ps2McWriteFile::eof(void) {
-	return true;
-}

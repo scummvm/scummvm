@@ -29,8 +29,6 @@
  * And there's still a bit of tidying and commenting to do yet.
  */
 
-//#define USE_3FLAGS 1
-
 #include "tinsel/actors.h"
 #include "tinsel/anim.h"
 #include "tinsel/background.h"
@@ -370,9 +368,7 @@ enum BFUNC {
 	NOFUNC, SAVEGAME, LOADGAME, IQUITGAME, CLOSEWIN,
 	OPENLOAD, OPENSAVE, OPENREST,
 	OPENSOUND, OPENCONT,
-#ifndef JAPAN
 	OPENSUBT,
-#endif
 	OPENQUIT,
 	INITGAME, MIDIVOL,
 	CLANG, RLANG
@@ -402,9 +398,7 @@ struct CONFBOX {
 #define SIX_RESTART_OPTION	2
 #define SIX_SOUND_OPTION	3
 #define SIX_CONTROL_OPTION	4
-#ifndef JAPAN
 #define SIX_SUBTITLES_OPTION	5
-#endif
 #define SIX_QUIT_OPTION		6
 #define SIX_RESUME_OPTION	7
 #define SIX_LOAD_HEADING	8
@@ -531,9 +525,9 @@ CONFBOX restartBox[] = {
 	};
 #else
 CONFBOX soundBox[] = {
-	{ SLIDER, MIDIVOL, NULL, SIX_MVOL_SLIDER,	142, 25,	MAXMIDIVOL, 2, &volMidi, 0 },
-	{ SLIDER, NOFUNC, NULL, SIX_SVOL_SLIDER,	142, 25+40,	MAXSAMPVOL, 2, &volSound, 0 },
-	{ SLIDER, NOFUNC, NULL, SIX_VVOL_SLIDER,	142, 25+2*40,	MAXSAMPVOL, 2, &volVoice, 0 }
+	{ SLIDER, MIDIVOL, NULL, SIX_MVOL_SLIDER,	142, 25,	Audio::Mixer::kMaxChannelVolume, 2, &volMidi, 0 },
+	{ SLIDER, NOFUNC, NULL, SIX_SVOL_SLIDER,	142, 25+40,	Audio::Mixer::kMaxChannelVolume, 2, &volSound, 0 },
+	{ SLIDER, NOFUNC, NULL, SIX_VVOL_SLIDER,	142, 25+2*40,	Audio::Mixer::kMaxChannelVolume, 2, &volVoice, 0 }
 };
 #endif
 
@@ -568,41 +562,60 @@ CONFBOX controlBox[] = {
 
 
 /*-------------------------------------------------------------*\
-| This is the subtitles 'menu'.					|
+| This is the subtitles 'menu'.                                 |
 \*-------------------------------------------------------------*/
 
-#ifndef JAPAN
 CONFBOX subtitlesBox[] = {
 
-#ifdef USE_5FLAGS
+ { SLIDER, NOFUNC, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, &speedText, 0 },
+ { TOGGLE, NOFUNC, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, &bSubtitles, 0 },
+
+};
+
+CONFBOX subtitlesBox3Flags[] = {
+
+ { FRGROUP, NOFUNC, NULL, USE_POINTER,	15, 118,	56, 32, NULL, FIX_FR },
+ { FRGROUP, NOFUNC, NULL, USE_POINTER,	85, 118,	56, 32, NULL, FIX_GR },
+ { FRGROUP, NOFUNC, NULL, USE_POINTER,	155, 118,	56, 32, NULL, FIX_SP },
+
+ { SLIDER, NOFUNC, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, &speedText, 0 },
+ { TOGGLE, NOFUNC, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, &bSubtitles, 0 },
+
+ { ARSGBUT, CLANG, NULL, USE_POINTER,	230, 110,	23, 19, NULL, IX_TICK1 },
+ { AAGBUT, RLANG, NULL, USE_POINTER,	230, 140,	23, 19, NULL, IX_CROSS1 }
+
+};
+
+CONFBOX subtitlesBox4Flags[] = {
+
+ { FRGROUP, NOFUNC, NULL, USE_POINTER,	20, 100,	56, 32, NULL, FIX_FR },
+ { FRGROUP, NOFUNC, NULL, USE_POINTER,	108, 100,	56, 32, NULL, FIX_GR },
+ { FRGROUP, NOFUNC, NULL, USE_POINTER,	64, 137,	56, 32, NULL, FIX_IT },
+ { FRGROUP, NOFUNC, NULL, USE_POINTER,	152, 137,	56, 32, NULL, FIX_SP },
+
+ { SLIDER, NOFUNC, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, &speedText, 0 },
+ { TOGGLE, NOFUNC, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, &bSubtitles, 0 },
+
+ { ARSGBUT, CLANG, NULL, USE_POINTER,	230, 110,	23, 19, NULL, IX_TICK1 },
+ { AAGBUT, RLANG, NULL, USE_POINTER,	230, 140,	23, 19, NULL, IX_CROSS1 }
+
+};
+
+CONFBOX subtitlesBox5Flags[] = {
+
  { FRGROUP, NOFUNC, NULL, USE_POINTER,	15, 100,	56, 32, NULL, FIX_UK },
  { FRGROUP, NOFUNC, NULL, USE_POINTER,	85, 100,	56, 32, NULL, FIX_FR },
  { FRGROUP, NOFUNC, NULL, USE_POINTER,	155, 100,	56, 32, NULL, FIX_GR },
  { FRGROUP, NOFUNC, NULL, USE_POINTER,	50, 137,	56, 32, NULL, FIX_IT },
  { FRGROUP, NOFUNC, NULL, USE_POINTER,	120, 137,	56, 32, NULL, FIX_SP },
-#endif
-#ifdef USE_4FLAGS
- { FRGROUP, NOFUNC, NULL, USE_POINTER,	20, 100,	56, 32, NULL, FIX_FR },
- { FRGROUP, NOFUNC, NULL, USE_POINTER,	108, 100,	56, 32, NULL, FIX_GR },
- { FRGROUP, NOFUNC, NULL, USE_POINTER,	64, 137,	56, 32, NULL, FIX_IT },
- { FRGROUP, NOFUNC, NULL, USE_POINTER,	152, 137,	56, 32, NULL, FIX_SP },
-#endif
-#ifdef USE_3FLAGS
- { FRGROUP, NOFUNC, NULL, USE_POINTER,	15, 118,	56, 32, NULL, FIX_FR },
- { FRGROUP, NOFUNC, NULL, USE_POINTER,	85, 118,	56, 32, NULL, FIX_GR },
- { FRGROUP, NOFUNC, NULL, USE_POINTER,	155, 118,	56, 32, NULL, FIX_SP },
-#endif
 
  { SLIDER, NOFUNC, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, &speedText, 0 },
  { TOGGLE, NOFUNC, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, &bSubtitles, 0 },
 
-#if defined(USE_3FLAGS) || defined(USE_4FLAGS) || defined(USE_5FLAGS)
  { ARSGBUT, CLANG, NULL, USE_POINTER,	230, 110,	23, 19, NULL, IX_TICK1 },
  { AAGBUT, RLANG, NULL, USE_POINTER,	230, 140,	23, 19, NULL, IX_CROSS1 }
-#endif
 
 };
-#endif
 
 
 /*-------------------------------------------------------------*\
@@ -610,7 +623,7 @@ CONFBOX subtitlesBox[] = {
 \*-------------------------------------------------------------*/
 
 CONFBOX quitBox[] = {
-#ifdef JAPAN
+#ifdef g
  { AAGBUT, IQUITGAME, NULL, USE_POINTER,70, 44,	23, 19, NULL, IX_TICK1 },
  { AAGBUT, CLOSEWIN, NULL, USE_POINTER,	30, 44,	23, 19, NULL, IX_CROSS1 }
 #else
@@ -652,13 +665,9 @@ CONFINIT ciSound	= { 10, 5, 20, 16, false, soundBox,	ARRAYSIZE(soundBox),	NO_HEA
 #else
 	CONFINIT ciControl	= { 10, 5, 20, 16, false, controlBox,	ARRAYSIZE(controlBox),	NO_HEADING };
 #endif
-#ifndef JAPAN
-#if defined(USE_3FLAGS) || defined(USE_4FLAGS) || defined(USE_5FLAGS)
-CONFINIT ciSubtitles	= { 10, 6, 20, 16, false, subtitlesBox,	ARRAYSIZE(subtitlesBox),	NO_HEADING };
-#else
+
 CONFINIT ciSubtitles	= { 10, 3, 20, 16, false, subtitlesBox,	ARRAYSIZE(subtitlesBox),	NO_HEADING };
-#endif
-#endif
+
 CONFINIT ciQuit		= { 4, 2, 98, 53, false, quitBox,	ARRAYSIZE(quitBox),	SIX_QUIT_HEADING };
 
 CONFINIT ciTopWin	= { 6, 5, 72, 23, false, topwinBox,	0,					NO_HEADING };
@@ -762,45 +771,39 @@ static void ConfActionSpecial(int i);
 
 
 
-#ifndef JAPAN
 bool LanguageChange(void) {
-	LANGUAGE nLang;
+	LANGUAGE nLang = TXT_ENGLISH;
 
-#ifdef USE_3FLAGS
-	// VERY quick dodgy bodge
-	if (cd.selBox == 0)
-		nLang = TXT_FRENCH;
-	else if (cd.selBox == 1)
-		nLang = TXT_GERMAN;
-	else
-		nLang = TXT_SPANISH;
-	if (nLang != language) {
-#elif defined(USE_4FLAGS)
-	nLang = (LANGUAGE)(cd.selBox + 1);
-	if (nLang != language) {
-#else
-	if (cd.selBox != language) {
+	if (_vm->getFeatures() & GF_USE_3FLAGS) {
+		// VERY quick dodgy bodge
+		if (cd.selBox == 0)
+			nLang = TXT_FRENCH;		// = 1
+		else if (cd.selBox == 1)
+			nLang = TXT_GERMAN;		// = 2
+		else
+			nLang = TXT_SPANISH;	// = 4
+	} else if (_vm->getFeatures() & GF_USE_4FLAGS) {
+		nLang = (LANGUAGE)(cd.selBox + 1);
+	} else if (_vm->getFeatures() & GF_USE_5FLAGS) {
 		nLang = (LANGUAGE)cd.selBox;
-#endif
+	}
+
+	if (nLang != g_language) {
 		KillInventory();
 		ChangeLanguage(nLang);
-		language = nLang;
+		g_language = nLang;
 		return true;
-	}
-	else
+	} else
 		return false;
 }
-#endif
 
 /**************************************************************************/
 /******************** Some miscellaneous functions ************************/
 /**************************************************************************/
 
-/*---------------------------------------------------------------------*\
-|	DumpIconArray()/DumpDobjArray()/DumpObjArray()			|
-|-----------------------------------------------------------------------|
-| Delete all the objects in iconArray[]/DobjArray[]/objArray[]		|
-\*---------------------------------------------------------------------*/
+/**
+ * Delete all the objects in iconArray[]
+ */
 static void DumpIconArray(void){
 	for (int i = 0; i < MAX_ICONS; i++) {
 		if (iconArray[i] != NULL) {
@@ -813,7 +816,6 @@ static void DumpIconArray(void){
 /**
  * Delete all the objects in DobjArray[]
  */
-
 static void DumpDobjArray(void) {
 	for (int i = 0; i < MAX_WCOMP; i++) {
 		if (DobjArray[i] != NULL) {
@@ -826,7 +828,6 @@ static void DumpDobjArray(void) {
 /**
  * Delete all the objects in objArray[]
  */
-
 static void DumpObjArray(void) {
 	for (int i = 0; i < MAX_WCOMP; i++) {
 		if (objArray[i] != NULL) {
@@ -886,7 +887,6 @@ bool IsInInventory(int object, int invnum) {
 /**
  * Returns which item is held (INV_NOICON (-1) if none)
  */
-
 int WhichItemHeld(void) {
 	return HeldItem;
 }
@@ -895,7 +895,6 @@ int WhichItemHeld(void) {
  * Called from the cursor module when it re-initialises (at the start of
  * a new scene). For if we are holding something at scene-change time.
  */
-
 void InventoryIconCursor(void) {
 	INV_OBJECT *invObj;
 
@@ -908,7 +907,6 @@ void InventoryIconCursor(void) {
 /**
  * Returns TRUE if the inventory is active.
  */
-
 bool InventoryActive(void) {
 	return (InventoryState == ACTIVE_INV);
 }
@@ -1214,8 +1212,8 @@ void Select(int i, bool force) {
 
 		break;
 
-#if defined(USE_3FLAGS) || defined(USE_4FLAGS) || defined(USE_5FLAGS)
 	case FRGROUP:
+		assert((_vm->getFeatures() & GF_USE_3FLAGS) || (_vm->getFeatures() & GF_USE_4FLAGS) || (_vm->getFeatures() & GF_USE_5FLAGS));
 		iconArray[HL2] = RectangleObject(BackPal(), COL_HILIGHT, cd.Box[i].w+6, cd.Box[i].h+6);
 		MultiInsertObject(GetPlayfieldList(FIELD_STATUS), iconArray[HL2]);
 		MultiSetAniXY(iconArray[HL2],
@@ -1224,7 +1222,7 @@ void Select(int i, bool force) {
 		MultiSetZPosition(iconArray[HL2], Z_INV_BRECT+1);
 
 		break;
-#endif
+
 	default:
 		break;
 	}
@@ -1276,7 +1274,6 @@ void DropItem(int item) {
  * Stick the item into an inventory list (ItemOrder[]), and hold the
  * item if requested.
  */
-
 void AddToInventory(int invno, int icon, bool hold) {
 	int	i;
 	bool	bOpen;
@@ -1407,12 +1404,12 @@ int InvArea(int x, int y) {
 	int RightX = MultiRightmost(RectObject) + 1;
 	int BottomY = MultiLowest(RectObject) + 1;
 
-// Outside the whole rectangle?
+	// Outside the whole rectangle?
 	if (x <= LeftX - EXTRA || x > RightX + EXTRA
 	|| y <= TopY - EXTRA || y > BottomY + EXTRA)
 		return I_NOTIN;
 
-// The bottom line
+	// The bottom line
 	if (y > BottomY - 2 - EXTRA) {		// Below top of bottom line?
 		if (x <= LeftX + 2 + EXTRA)
 			return I_BLEFT;		// Bottom left corner
@@ -1422,7 +1419,7 @@ int InvArea(int x, int y) {
 			return I_BOTTOM;	// Just plain bottom
 	}
 
-// The top line
+	// The top line
 	if (y <= TopY + 2 + EXTRA) {		// Above bottom of top line?
 		if (x <= LeftX + 2 + EXTRA)
 			return I_TLEFT;		// Top left corner
@@ -1432,24 +1429,24 @@ int InvArea(int x, int y) {
 			return I_TOP;		// Just plain top
 	}
 
-// Sides
+	// Sides
 	if (x <= LeftX + 2 + EXTRA)		// Left of right of left side?
 		return I_LEFT;
 	else if (x > RightX - 2 - EXTRA)		// Right of left of right side?
 		return I_RIGHT;
 
-// From here down still needs fixing up properly
-/*
-* In the move area?
-*/
+	// From here down still needs fixing up properly
+	/*
+	 * In the move area?
+	 */
 	if (ino != INV_CONF
 	&& x >= LeftX + M_SW - 2 && x <= RightX - M_SW + 3 &&
 	   y >= TopY + M_TH - 2  && y < TopY + M_TBB + 2)
 		return I_MOVE;
 
-/*
-* Scroll bits
-*/
+	/*
+	 * Scroll bits
+	 */
 	if (ino == INV_CONF && cd.bExtraWin) {
 	} else {
 		if (x > RightX - M_IAL + 3 && x <= RightX - M_IAR + 1) {
@@ -1476,7 +1473,6 @@ int InvArea(int x, int y) {
  * Returns the id of the icon displayed under the given position.
  * Also return co-ordinates of items tag display position, if requested.
  */
-
 int InvItem(int *x, int *y, bool update) {
 	int itop, ileft;
 	int row, col;
@@ -1510,7 +1506,6 @@ int InvItem(int *x, int *y, bool update) {
 /**
  * Returns the id of the icon displayed under the given position.
  */
-
 int InvItemId(int x, int y) {
 	int itop, ileft;
 	int row, col;
@@ -1539,21 +1534,21 @@ int InvItemId(int x, int y) {
 	return INV_NOICON;
 }
 
-/*---------------------------------------------------------------------*\
-|	WhichInvBox()							|
-|-----------------------------------------------------------------------|
-| Finds which box the cursor is in.					|
-\*---------------------------------------------------------------------*/
-#define MD_YSLIDTOP	7
-#define MD_YSLIDBOT	18
-#define MD_YBUTTOP	9
-#define MD_YBUTBOT	16
-#define MD_XLBUTL	1
-#define MD_XLBUTR	10
-#define MD_XRBUTL	105
-#define MD_XRBUTR	114
-
+/**
+ * Finds which box the cursor is in.
+ */
 static int WhichInvBox(int curX, int curY, bool bSlides) {
+	enum {
+		MD_YSLIDTOP	= 7,
+		MD_YSLIDBOT	= 18,
+		MD_YBUTTOP	= 9,
+		MD_YBUTBOT	= 16,
+		MD_XLBUTL	= 1,
+		MD_XLBUTR	= 10,
+		MD_XRBUTL	= 105,
+		MD_XRBUTR	= 114
+	};
+
 	if (bSlides) {
 		for (int i = 0; i < numMdSlides; i++) {
 			if (curY > MultiHighest(mdSlides[i].obj) && curY < MultiLowest(mdSlides[i].obj)
@@ -1841,7 +1836,6 @@ void InvLabels(bool InBody, int aniX, int aniY) {
  * It seems to set up slideStuff[], an array of possible first-displayed
  * icons set against the matching y-positions of the slider.
  */
-
 void AdjustTop(void) {
 	int tMissing, bMissing, nMissing;
 	int nslideY;
@@ -1904,7 +1898,6 @@ void AdjustTop(void) {
 /**
  * Insert an inventory icon object onto the display list.
  */
-
 OBJECT *AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
 	INV_OBJECT *invObj;		// Icon data
 	const MULTI_INIT *pmi;		// Its INIT structure - from the reel
@@ -1929,7 +1922,6 @@ OBJECT *AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
 /**
  * Create display objects for the displayed icons in an inventory window.
  */
-
 void FillInInventory(void) {
 	int	Index;		// Index into ItemOrder[]
 	int	n = 0;		// index into iconArray[]
@@ -2010,7 +2002,6 @@ void AddBackground(OBJECT **rect, OBJECT **title, int extraH, int extraV, int te
 /**
  * Insert a part of the inventory window frame onto the display list.
  */
-
 static OBJECT *AddObject(const FREEL *pfreel, int num) {
 	const MULTI_INIT *pmi;	// Get the MULTI_INIT structure
 	IMAGE *pim;
@@ -2043,7 +2034,6 @@ static OBJECT *AddObject(const FREEL *pfreel, int num) {
 /**
  * Display the scroll bar slider.
  */
-
 void AddSlider(OBJECT **slide, const FILM *pfilm) {
 	SlideObject = *slide = AddObject(&pfilm->reels[IX_SLIDE], -1);
 	MultiSetAniXY(*slide, MultiRightmost(RectObject)-M_SXOFF+2, InvD[ino].inventoryY + slideY);
@@ -2062,7 +2052,6 @@ enum {
 /**
  * Display a box with some text in it.
  */
-
 void AddBox(int *pi, int i) {
 	int x	= InvD[ino].inventoryX + cd.Box[i].xpos;
 	int y	= InvD[ino].inventoryY + cd.Box[i].ypos;
@@ -2126,8 +2115,8 @@ void AddBox(int *pi, int i) {
 
 		break;
 
-#if defined(USE_3FLAGS) || defined(USE_4FLAGS) || defined(USE_5FLAGS)
 	case FRGROUP:
+		assert((_vm->getFeatures() & GF_USE_3FLAGS) || (_vm->getFeatures() & GF_USE_4FLAGS) || (_vm->getFeatures() & GF_USE_5FLAGS));
 		assert(flagFilm != 0); // Language flags not declared!
 
 		pfilm = (const FILM *)LockMem(flagFilm);
@@ -2141,7 +2130,7 @@ void AddBox(int *pi, int i) {
 		*pi += 1;
 
 		break;
-#endif
+
 	case FLIP:
 		pfilm = (const FILM *)LockMem(winPartsf);
 
@@ -2234,7 +2223,6 @@ static void AddBoxes(bool posnSlide) {
 /**
  * Display the scroll bar slider.
  */
-
 void AddEWSlider(OBJECT **slide, const FILM *pfilm) {
 	SlideObject = *slide = AddObject(&pfilm->reels[IX_SLIDE], -1);
 	MultiSetAniXY(*slide, InvD[ino].inventoryX + 24 + 127, slideY);
@@ -2244,7 +2232,6 @@ void AddEWSlider(OBJECT **slide, const FILM *pfilm) {
 /**
  * AddExtraWindow
  */
-
 int AddExtraWindow(int x, int y, OBJECT **retObj) {
 	int	n = 0;
 	const FILM *pfilm;
@@ -2479,7 +2466,7 @@ void ConstructInventory(InventoryType filling) {
 
 	OBJECT **rect, **title;
 
-// Draw background, slider and icons
+	// Draw background, slider and icons
 	if (filling == FULL) {
 		rect = &retObj[n++];
 		title = &retObj[n++];
@@ -2495,8 +2482,7 @@ void ConstructInventory(InventoryType filling) {
 		}
 
 		FillInInventory();
-	}
-	else if (filling == CONF) {
+	} else if (filling == CONF) {
 		rect = &retObj[n++];
 		title = &retObj[n++];
 
@@ -2800,7 +2786,6 @@ bool convHid(void) {
 /**
  * Start up an inventory window.
  */
-
 void PopUpInventory(int invno) {
 	assert((invno == INV_1 || invno == INV_2 || invno == INV_CONV || invno == INV_CONF)); // Trying to open illegal inventory
 
@@ -2849,7 +2834,6 @@ void SetConfGlobals(CONFINIT *ci) {
 /**
  * PopupConf
  */
-
 void PopUpConf(CONFTYPE type) {
 	int curX, curY;
 
@@ -2903,11 +2887,27 @@ void PopUpConf(CONFTYPE type) {
 		SetConfGlobals(&ciSound);
 		break;
 
-#ifndef JAPAN
 	case SUBT:
+		if (_vm->getFeatures() & GF_USE_3FLAGS) {
+			ciSubtitles.v = 6;
+			ciSubtitles.Box = subtitlesBox3Flags;
+			ciSubtitles.NumBoxes = ARRAYSIZE(subtitlesBox3Flags);
+		} else if (_vm->getFeatures() & GF_USE_4FLAGS) {
+			ciSubtitles.v = 6;
+			ciSubtitles.Box = subtitlesBox4Flags;
+			ciSubtitles.NumBoxes = ARRAYSIZE(subtitlesBox4Flags);
+		} else if (_vm->getFeatures() & GF_USE_5FLAGS) {
+			ciSubtitles.v = 6;
+			ciSubtitles.Box = subtitlesBox4Flags;
+			ciSubtitles.NumBoxes = ARRAYSIZE(subtitlesBox4Flags);
+		} else {
+			ciSubtitles.v = 3;
+			ciSubtitles.Box = subtitlesBox;
+			ciSubtitles.NumBoxes = ARRAYSIZE(subtitlesBox);
+		}
+
 		SetConfGlobals(&ciSubtitles);
 		break;
-#endif
 
 	case TOPWIN:
 		SetConfGlobals(&ciTopWin);
@@ -2927,25 +2927,21 @@ void PopUpConf(CONFTYPE type) {
 
 	if (type == SAVE || type == LOAD)
 		Select(0, false);
-#ifndef JAPAN
-#if !defined(USE_3FLAGS) || !defined(USE_4FLAGS) || !defined(USE_5FLAGS)
 	else if (type == SUBT) {
-#ifdef USE_3FLAGS
-		// VERY quick dirty bodges
-		if (language == TXT_FRENCH)
-			Select(0, false);
-		else if (language == TXT_GERMAN)
-			Select(1, false);
-		else
-			Select(2, false);
-#elif defined(USE_4FLAGS)
-		Select(language-1, false);
-#else
-		Select(language, false);
-#endif
+		if (_vm->getFeatures() & GF_USE_3FLAGS) {
+			// VERY quick dirty bodges
+			if (g_language == TXT_FRENCH)
+				Select(0, false);
+			else if (g_language == TXT_GERMAN)
+				Select(1, false);
+			else
+				Select(2, false);
+		} else if (_vm->getFeatures() & GF_USE_4FLAGS) {
+			Select(g_language-1, false);
+		} else if (_vm->getFeatures() & GF_USE_5FLAGS) {
+			Select(g_language, false);
+		}
 	}
-#endif
-#endif // JAPAN
 
 	GetCursorXY(&curX, &curY, false);
 	InvCursor(IC_AREA, curX, curY);
@@ -2954,7 +2950,6 @@ void PopUpConf(CONFTYPE type) {
 /**
  * Close down an inventory window.
  */
-
 void KillInventory(void) {
 	if (objArray[0] != NULL) {
 		DumpObjArray();
@@ -2976,6 +2971,9 @@ void KillInventory(void) {
 	if (bOpenConf) {
 		bOpenConf = false;
 		PopUpConf(OPTION);
+		
+		// Write config changes
+		WriteConfig();
 	} else if (ino == INV_CONF)
 		InventoryIconCursor();
 }
@@ -3073,7 +3071,7 @@ void InventoryProcess(CORO_PARAM, const void *) {
 					InvLoadGame();
 					break;
 				case IQUITGAME:
-					_vm->quitFlag = true;
+					_vm->quitGame();
 					break;
 				case CLOSEWIN:
 					KillInventory();
@@ -3098,12 +3096,10 @@ void InventoryProcess(CORO_PARAM, const void *) {
 					KillInventory();
 					PopUpConf(CONTROLS);
 					break;
-	#ifndef JAPAN
 				case OPENSUBT:
 					KillInventory();
 					PopUpConf(SUBT);
 					break;
-	#endif
 				case OPENQUIT:
 					KillInventory();
 					PopUpConf(QUIT);
@@ -3112,7 +3108,6 @@ void InventoryProcess(CORO_PARAM, const void *) {
 					KillInventory();
 					bRestart = true;
 					break;
-	#if defined(USE_3FLAGS) || defined(USE_4FLAGS) || defined(USE_5FLAGS)
 				case CLANG:
 					if (!LanguageChange())
 						KillInventory();
@@ -3120,7 +3115,6 @@ void InventoryProcess(CORO_PARAM, const void *) {
 				case RLANG:
 					KillInventory();
 					break;
-	#endif
 				default:
 					break;
 				}
@@ -3344,10 +3338,8 @@ static void SlideMSlider(int x, SSFN fn) {
 
 	case S_END:			// End of a drag on the slider
 		AddBoxes(false);	// Might change position slightly
-#ifndef JAPAN
 		if (ino == INV_CONF && cd.Box == subtitlesBox)
-			Select(language, false);
-#endif
+			Select(g_language, false);
 		break;
 	}
 }
@@ -3780,8 +3772,8 @@ void ConfAction(int i, bool dbl) {
 			}
 			break;
 
-#if defined(USE_3FLAGS) || defined(USE_4FLAGS) || defined(USE_5FLAGS)
 		case FRGROUP:
+			assert((_vm->getFeatures() & GF_USE_3FLAGS) || (_vm->getFeatures() & GF_USE_4FLAGS) || (_vm->getFeatures() & GF_USE_5FLAGS));
 			if (dbl) {
 				Select(i, false);
 				LanguageChange();
@@ -3789,7 +3781,6 @@ void ConfAction(int i, bool dbl) {
 				Select(i, false);
 			}
 			break;
-#endif
 
 		case AAGBUT:
 		case ARSGBUT:

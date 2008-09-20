@@ -48,6 +48,7 @@ class DefaultEventManager : public Common::EventManager {
 	int _buttonState;
 	int _modifierState;
 	bool _shouldQuit;
+	bool _shouldRTL;
 
 	class RandomSourceRecord {
 	public:
@@ -107,6 +108,7 @@ public:
 	~DefaultEventManager();
 
 	virtual bool pollEvent(Common::Event &event);
+	virtual void pushEvent(Common::Event event);
 	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name);
 	virtual void processMillis(uint32 &millis);
 
@@ -114,6 +116,8 @@ public:
 	virtual int getButtonState() const { return _buttonState; }
 	virtual int getModifierState() const { return _modifierState; }
 	virtual int shouldQuit() const { return _shouldQuit; }
+	virtual int shouldRTL() const { return _shouldRTL; }
+	virtual void resetRTL() { _shouldRTL = false; }
 };
 
 #endif

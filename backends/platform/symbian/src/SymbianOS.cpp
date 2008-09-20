@@ -24,10 +24,12 @@
 
 #include <eikenv.h> // for CEikonEnv::Static() @ Symbian::FatalError()
 #include <sdlapp.h> // for CSDLApp::GetExecutablePathCStr() @ Symbian::GetExecutablePath()
+#include <bautils.h>
 	
 #include "backends/fs/symbian/symbian-fs-factory.h"
 #include "backends/platform/symbian/src/SymbianOS.h"
 #include "backends/platform/symbian/src/SymbianActions.h"
+#include "backends/saves/default/default-saves.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -45,16 +47,7 @@
 
 
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
-
-
-#define KInputBufferLength 128
-// Symbian libc file functionality in order to provide shared file handles
-struct TSymbianFileEntry {
-	RFile iFileHandle;
-	char iInputBuffer[KInputBufferLength];
-	TInt iInputBufferLen;
-	TInt iInputPos;
-};
+#define DEFAULT_SAVE_PATH "Savegames"
 
 #define FILE void
 
@@ -123,10 +116,6 @@ void OSystem_SDL_Symbian::setFeatureState(Feature f, bool enable) {
 	}
 }
 
-FilesystemFactory *OSystem_SDL_Symbian::getFilesystemFactory() {
-	return &SymbianFilesystemFactory::instance();
-}
-
 static Common::String getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 	strcpy(configFile, Symbian::GetExecutablePath());
@@ -135,25 +124,14 @@ static Common::String getDefaultConfigFileName() {
 }
 
 Common::SeekableReadStream *OSystem_SDL_Symbian::openConfigFileForReading() {
-	Common::File *confFile = new Common::File();
-	assert(confFile);
-	if (!confFile->open(getDefaultConfigFileName())) {
-		delete confFile;
-		confFile = 0;
-	}
-	return confFile;
+	Common::FilesystemNode file(getDefaultConfigFileName());
+	return file.openForReading();
 }
 
 Common::WriteStream *OSystem_SDL_Symbian::openConfigFileForWriting() {
-	Common::DumpFile *confFile = new Common::DumpFile();
-	assert(confFile);
-	if (!confFile->open(getDefaultConfigFileName())) {
-		delete confFile;
-		confFile = 0;
-	}
-	return confFile;
+	Common::FilesystemNode file(getDefaultConfigFileName());
+	return file.openForWriting();
 }
-
 
 OSystem_SDL_Symbian::zoneDesc OSystem_SDL_Symbian::_zones[TOTAL_ZONES] = {
         { 0, 0, 320, 145 },
@@ -161,10 +139,33 @@ OSystem_SDL_Symbian::zoneDesc OSystem_SDL_Symbian::_zones[TOTAL_ZONES] = {
         { 150, 145, 170, 55 }
 };
 OSystem_SDL_Symbian::OSystem_SDL_Symbian() :_channels(0),_stereo_mix_buffer(0) {
+	_RFs = &CEikonEnv::Static()->FsSession();
+	_fsFactory = new SymbianFilesystemFactory();
 }
 
 void OSystem_SDL_Symbian::initBackend() {
+	// First set the extrapath (for installed dat files etc)
 	ConfMan.set("extrapath", Symbian::GetExecutablePath());
+
+	// Calculate the default savepath
+	Common::String savePath;
+	savePath = Symbian::GetExecutablePath();
+	savePath += DEFAULT_SAVE_PATH "\\";
+   _savefile = new DefaultSaveFileManager(savePath);
+
+	// If savepath has not already been set then set it
+	if (!ConfMan.hasKey("savepath")) {
+		ConfMan.set("savepath", savePath);
+	
+	}
+
+	// Ensure that the current set path (might have been altered by the user) exists
+	Common::String currentPath = ConfMan.get("savepath");
+	TFileName fname;
+	TPtrC8 ptr((const unsigned char*)currentPath.c_str(),currentPath.size());
+	fname.Copy(ptr);
+	BaflUtils::EnsurePathExistsL(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), fname);		
+
 	ConfMan.setBool("FM_high_quality", false);
 #if !defined(S60) || defined(S60V3) // S60 has low quality as default
 	ConfMan.setBool("FM_medium_quality", true);
@@ -488,223 +489,60 @@ void OSystem_SDL_Symbian::initZones() {
 	}
 }
 
-FILE*	symbian_fopen(const char* name, const char* mode) {
-	TSymbianFileEntry* fileEntry = new TSymbianFileEntry;
-	fileEntry->iInputPos = KErrNotFound;
-
-	if (fileEntry != NULL) {
-		TInt modeLen = strlen(mode);
-
-		TPtrC8 namePtr((unsigned char*) name, strlen(name));
-		TFileName tempFileName;
-		tempFileName.Copy(namePtr);
-
-		TInt fileMode = EFileRead;
-
-		if (mode[0] == 'a')
-			fileMode = EFileWrite;
-
-		if (!((modeLen > 1 && mode[1] == 'b') || (modeLen > 2 && mode[2] == 'b'))) {
-			fileMode |= EFileStreamText;
-		}
-
-		if ((modeLen > 1 && mode[1] == '+') || (modeLen > 2 && mode[2] == '+')) {
-			fileMode = fileMode| EFileWrite;
-		}
-
-		fileMode = fileMode| EFileShareAny;
-
-		switch(mode[0]) {
-		case 'a':
-			if (fileEntry->iFileHandle.Open(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
-				if (fileEntry->iFileHandle.Create(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
-					delete fileEntry;
-					fileEntry = NULL;
-				}
-			}
-			break;
-		case 'r':
-			if (fileEntry->iFileHandle.Open(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
-				delete fileEntry;
-				fileEntry = NULL;
-			}
-			break;
-
-		case 'w':
-			if (fileEntry->iFileHandle.Replace(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
-				delete fileEntry;
-				fileEntry = NULL;
-			}
-			break;
-		}
-	}
-	return (FILE*) fileEntry;
+RFs& OSystem_SDL_Symbian::FsSession() {
+	return *_RFs;
 }
 
-void symbian_fclose(FILE* handle) {
-	((TSymbianFileEntry*)(handle))->iFileHandle.Close();
-
-	delete (TSymbianFileEntry*)(handle);
-}
-
-size_t symbian_fread(const void* ptr, size_t size, size_t numItems, FILE* handle) {
-	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(handle));
-	TUint32 totsize = size*numItems;
-	TPtr8 pointer ( (unsigned char*) ptr, totsize);
-
-	// Nothing cached and we want to load at least KInputBufferLength bytes
-	if(totsize >= KInputBufferLength) {	
-		TUint32 totLength = 0;
-		if(entry->iInputPos != KErrNotFound)
-		{
-			TPtr8 cacheBuffer( (unsigned char*) entry->iInputBuffer+entry->iInputPos, entry->iInputBufferLen - entry->iInputPos, KInputBufferLength);
-			pointer.Append(cacheBuffer);
-			entry->iInputPos = KErrNotFound;
-			totLength+=pointer.Length();
-			pointer.Set(totLength+(unsigned char*) ptr, 0, totsize-totLength);
-		}
-
-		entry->iFileHandle.Read(pointer);
-		totLength+=pointer.Length();
-
-		pointer.Set((unsigned char*) ptr, totLength, totsize);
-
-	}
-	else {
-		// Nothing in buffer	
-		if(entry->iInputPos == KErrNotFound) {
-			TPtr8 cacheBuffer( (unsigned char*) entry->iInputBuffer, KInputBufferLength);
-			entry->iFileHandle.Read(cacheBuffer);
-
-			if(cacheBuffer.Length() >= totsize) {
-				pointer.Copy(cacheBuffer.Left(totsize));
-				entry->iInputPos = totsize;
-				entry->iInputBufferLen = cacheBuffer.Length();
-			}
-			else {
-				pointer.Copy(cacheBuffer);
-				entry->iInputPos = KErrNotFound;
-			}
-
-		}
-		else {
-			TPtr8 cacheBuffer( (unsigned char*) entry->iInputBuffer, entry->iInputBufferLen, KInputBufferLength);
-
-			if(entry->iInputPos+totsize < entry->iInputBufferLen) {
-				pointer.Copy(cacheBuffer.Mid(entry->iInputPos, totsize));
-				entry->iInputPos+=totsize;
-			}
-			else {
-			
-			pointer.Copy(cacheBuffer.Mid(entry->iInputPos, entry->iInputBufferLen-entry->iInputPos));
-			cacheBuffer.SetLength(0);
-			entry->iFileHandle.Read(cacheBuffer);
-
-			if(cacheBuffer.Length() >= totsize-pointer.Length()) {
-					TUint32 restSize = totsize-pointer.Length();
-					pointer.Append(cacheBuffer.Left(restSize));
-					entry->iInputPos = restSize;
-					entry->iInputBufferLen = cacheBuffer.Length();
-				}
-				else {
-					pointer.Append(cacheBuffer);
-					entry->iInputPos = KErrNotFound;
-				}
-			}
-		}
-	}	
-
-	return pointer.Length()/size;
-}
-
-size_t symbian_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle) {
-	TPtrC8 pointer( (unsigned char*) ptr, size*numItems);
-
-	((TSymbianFileEntry*)(handle))->iInputPos = KErrNotFound;
-	if (((TSymbianFileEntry*)(handle))->iFileHandle.Write(pointer) == KErrNone) {
-		return numItems;
+// Symbian bsearch implementation is flawed
+void* scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *)) {
+	// Perform binary search
+	size_t lo = 0;
+	size_t hi = nmemb;
+	while (lo < hi) {
+		size_t mid = (lo + hi) / 2;
+		const void *p = ((const char *)base) + mid * size;
+		int tmp = (*compar)(key, p);
+		if (tmp < 0)
+			hi = mid;
+		else if (tmp > 0)
+			lo = mid + 1;
+		else
+			return (void *)p;
 	}
 
-	return 0;
+	return NULL;
 }
 
-bool symbian_feof(FILE* handle) {
-	TInt pos = 0;
-	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(handle));
-
-	if (entry->iFileHandle.Seek(ESeekCurrent, pos) == KErrNone) {
-
-		TInt size = 0;
-		if (entry->iFileHandle.Size(size) == KErrNone) {
-			if(entry->iInputPos == KErrNotFound && pos == size) 			
-				return true;
-
-			if(entry->iInputPos != KErrNotFound && pos == size && entry->iInputPos == entry->iInputBufferLen)
-				return true;
-
-			return false;
-		}
-	}
-	return true;
-}
-
-long int symbian_ftell(FILE* handle) {
-	TInt pos = 0;
-	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(handle));
-
-	entry->iFileHandle.Seek(ESeekCurrent, pos);
-	if(entry->iInputPos != KErrNotFound)
-		{
-		pos+=(entry->iInputPos - entry->iInputBufferLen);
-		}
-	return pos;
-}
-
-int symbian_fseek(FILE* handle, long int offset, int whence) {
-
-	TSeek seekMode = ESeekStart;
-	TInt pos = offset;
-	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(handle));
-
-	switch(whence) {
-	case SEEK_SET:
-		seekMode = ESeekStart;
-		break;
-	case SEEK_CUR:
-		seekMode = ESeekCurrent;
-		if(entry->iInputPos != KErrNotFound) {
-			pos+=(entry->iInputPos - entry->iInputBufferLen);
-		}
-		break;
-	case SEEK_END:
-		seekMode = ESeekEnd;
-		break;
-
-	}
-	
-	entry->iInputPos = KErrNotFound;
-
-	return entry->iFileHandle.Seek(seekMode, pos);
-}
-
-void symbian_clearerr(FILE* /*handle*/) {
+extern "C"
+{
+// Include the snprintf and vsnprintf implementations as 'C' code
+#include "vsnprintf.h"
 }
 
 /** Vibration support */
 #ifdef  USE_VIBRA_SE_PXXX
 void OSystem_SDL_Symbian::initializeVibration() {
-	_vibrationApi = SonyEricsson::CVibration::NewL();
+#ifdef UIQ3
+#else
+#endif
 }
 
 void OSystem_SDL_Symbian::vibrationOn(int vibraLength) {
-	// initialize?
+#ifdef UIQ3
+		// initialize?
 	if (!_vibrationApi) _vibrationApi = SonyEricsson::CVibration::NewL();
 	// do it!
 	_vibrationApi->VibrationOn(1, 1, vibraLength);
+#else
+
+#endif
 }
 
 void OSystem_SDL_Symbian::vibrationOff() {
+#ifdef UIQ3
+#else
 	_vibrationApi->VibrationOff();
+#endif
 }
 
 #endif //  USE_SE_PXX_VIBRA

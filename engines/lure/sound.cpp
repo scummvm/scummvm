@@ -220,10 +220,12 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 	newEntry->channel = channelCtr;
 	newEntry->numChannels = numChannels;
 	newEntry->flags = rec.flags;
+
 	if (_isRoland)
 		newEntry->volume = rec.volume;
 	else /* resource volumes do not seem to work well with our adlib emu */
 		newEntry->volume = 240; /* 255 causes clipping with adlib */
+
 	_activeSounds.push_back(SoundList::value_type(newEntry));
 
 	musicInterface_Play(rec.soundNumber, channelCtr, numChannels);
@@ -278,6 +280,23 @@ uint8 SoundManager::descIndexOf(uint8 soundNumber) {
 	}
 
 	return 0xff;   // Couldn't find entry
+}
+
+// Used to sync the volume for all channels with the Config Manager
+//
+void SoundManager::syncSounds() {
+	Game &game = Game::getReference();
+	musicInterface_TidySounds();
+
+	g_system->lockMutex(_soundMutex);
+	MusicListIterator i;
+	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
+		if ((*i)->isMusic())
+			(*i)->setVolume(game.musicVolume());
+		else
+			(*i)->setVolume(game.sfxVolume());
+	}
+	g_system->unlockMutex(_soundMutex);
 }
 
 SoundDescResource *SoundManager::findSound(uint8 soundNumber) {
@@ -402,9 +421,8 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, u
 		return;
 
 	bool isMusic = (soundNumber & 0x80) != 0;
-	uint8 volume = isMusic ? game.musicVolume() : game.sfxVolume();
 
-	if (!game.soundFlag() || (volume == 0))
+	if (!game.soundFlag())
 		// Don't play sounds if sound is turned off
 		return;
 
@@ -563,12 +581,12 @@ void SoundManager::doTimer() {
 /*------------------------------------------------------------------------*/
 
 MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
-					 uint8 channelNum, uint8 soundNum, bool isMusic, uint8 numChannels, void *soundData, uint32 size) {
+					 uint8 channelNum, uint8 soundNum, bool isMus, uint8 numChannels, void *soundData, uint32 size) {
 	_driver = driver;
 	_channels = channels;
 	_soundNumber = soundNum;
 	_channelNumber = channelNum;
-	_isMusic = isMusic;
+	_isMusic = isMus;
 
 	_numChannels = numChannels;
 	_volume = 0;
@@ -576,7 +594,11 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 		/* 90 is power on default for midi compliant devices */
 		_channels[_channelNumber + i].volume = 90;
 	}
-	setVolume(240); /* 255 causes clipping with mastervol 192 and adlib */
+
+	if (_isMusic)
+		setVolume(ConfMan.getInt("music_volume"));
+	else
+		setVolume(ConfMan.getInt("sfx_volume"));		
 
 	_passThrough = false;
 

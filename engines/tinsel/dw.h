@@ -110,8 +110,11 @@ typedef int HPOLYGON;
 
 // Language for the resource strings
 enum LANGUAGE {
-	TXT_ENGLISH, TXT_FRENCH, TXT_GERMAN,
-		TXT_ITALIAN, TXT_SPANISH
+	TXT_ENGLISH,
+	TXT_FRENCH,
+	TXT_GERMAN,
+	TXT_ITALIAN,
+	TXT_SPANISH
 };
 
 } // end of namespace Tinsel

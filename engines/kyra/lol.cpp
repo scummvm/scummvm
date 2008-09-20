@@ -183,15 +183,11 @@ void LoLEngine::updateInput() {
 
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_quitFlag = true;
-			break;
-
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == '.' || event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				_eventList.push_back(Event(event, true));
 			else if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
-				_quitFlag = true;
+				quitGame();
 			else
 				_eventList.push_back(event);
 			break;
@@ -245,27 +241,21 @@ void LoLEngine::resetSkipFlag(bool removeEvent) {
 
 void LoLEngine::setupPrologueData(bool load) {
 	static const char * const fileList[] = {
-		"xxx/general.pak",
-		"xxx/introvoc.pak",
-		"xxx/startup.pak",
-		"xxx/intro1.pak",
-		"xxx/intro2.pak",
-		"xxx/intro3.pak",
-		"xxx/intro4.pak",
-		"xxx/intro5.pak",
-		"xxx/intro6.pak",
-		"xxx/intro7.pak",
-		"xxx/intro8.pak",
-		"xxx/intro9.pak"
+		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK", "INTRO1.PAK",
+		"INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "INTRO5.PAK",
+		"INTRO6.PAK", "INTRO7.PAK", "INTRO8.PAK", "INTRO9.PAK"
 	};
 
-	char filepath[32];
-	char *filename = filepath;
+	char filename[32];
 	for (uint i = 0; i < ARRAYSIZE(fileList); ++i) {
-		strcpy(filename, fileList[i]);
-		memcpy(filename, _languageExt[_lang], 3);
-		if (!_flags.isTalkie)
-			filename += 4;		
+		filename[0] = '\0';
+
+		if (_flags.isTalkie) {
+			strcpy(filename, _languageExt[_lang]);
+			strcat(filename, "/");
+		}
+
+		strcat(filename, fileList[i]);
 		
 		if (load) {
 			if (!_res->loadPakFile(filename))
@@ -307,7 +297,7 @@ void LoLEngine::showIntro() {
 	_screen->hideMouse();
 
 	uint32 palNextFadeStep = 0;
-	while (!_tim->finished() && !_quitFlag && !skipFlag()) {
+	while (!_tim->finished() && !quit() && !skipFlag()) {
 		updateInput();
 		_tim->exec(intro, false);
 		_screen->checkedPageUpdate(8, 4);
@@ -385,14 +375,14 @@ int LoLEngine::chooseCharacter() {
 	_screen->fadePalette(_screen->getPalette(0), 30, 0);
 	
 	bool kingIntro = true;
-	while (!_quitFlag) {
+	while (!quit()) {
 		if (kingIntro)
 			kingSelectionIntro();
 
 		if (_charSelection < 0)
 			processCharacterSelection();
 
-		if (_quitFlag)
+		if (quit())
 			break;
 
 		if (_charSelection == 100) {
@@ -413,11 +403,11 @@ int LoLEngine::chooseCharacter() {
 		}
 	}
 
-	if (_quitFlag)
+	if (quit())
 		return -1;
 
 	uint32 waitTime = _system->getMillis() + 420 * _tickLength;
-	while (waitTime > _system->getMillis() && !skipFlag() && !_quitFlag) {
+	while (waitTime > _system->getMillis() && !skipFlag() && !quit()) {
 		updateInput();
 		_system->delayMillis(10);
 	}
@@ -449,7 +439,7 @@ void LoLEngine::kingSelectionIntro() {
 	_chargenWSA->setDrawPage(0);
 	
 	int index = 4;
-	while (_sound->voiceIsPlaying("KING01") && _charSelection == -1 && !_quitFlag && !skipFlag()) {
+	while (_sound->voiceIsPlaying("KING01") && _charSelection == -1 && !quit() && !skipFlag()) {
 		index = MAX(index, 4);
 
 		_chargenWSA->displayFrame(_chargenFrameTable[index], 0, 0, 0);
@@ -460,7 +450,7 @@ void LoLEngine::kingSelectionIntro() {
 		_screen->updateScreen();
 
 		uint32 waitEnd = _system->getMillis() + 7 * _tickLength;
-		while (waitEnd > _system->getMillis() && _charSelection == -1 && !_quitFlag && !skipFlag()) {
+		while (waitEnd > _system->getMillis() && _charSelection == -1 && !quit() && !skipFlag()) {
 			_charSelection = getCharSelection();
 			_system->delayMillis(10);
 		}
@@ -491,7 +481,7 @@ void LoLEngine::kingSelectionReminder() {
 	_chargenWSA->setDrawPage(0);
 	
 	int index = 0;
-	while (_sound->voiceIsPlaying("KING02") && _charSelection == -1 && !_quitFlag && index < 15) {
+	while (_sound->voiceIsPlaying("KING02") && _charSelection == -1 && !quit() && index < 15) {
 		_chargenWSA->displayFrame(_chargenFrameTable[index+9], 0, 0, 0);
 		_screen->copyRegion(_selectionPosTable[_reminderChar1IdxTable[index]*2+0], _selectionPosTable[_reminderChar1IdxTable[index]*2+1], _charPreviews[0].x, _charPreviews[0].y, 32, 32, 4, 0);
 		_screen->copyRegion(_selectionPosTable[_reminderChar2IdxTable[index]*2+0], _selectionPosTable[_reminderChar2IdxTable[index]*2+1], _charPreviews[1].x, _charPreviews[1].y, 32, 32, 4, 0);
@@ -500,7 +490,7 @@ void LoLEngine::kingSelectionReminder() {
 		_screen->updateScreen();
 
 		uint32 waitEnd = _system->getMillis() + 8 * _tickLength;
-		while (waitEnd > _system->getMillis() && !_quitFlag) {
+		while (waitEnd > _system->getMillis() && !quit()) {
 			_charSelection = getCharSelection();
 			_system->delayMillis(10);
 		}
@@ -521,14 +511,14 @@ void LoLEngine::kingSelectionOutro() {
 	_chargenWSA->setDrawPage(0);
 
 	int index = 0;
-	while (_sound->voiceIsPlaying("KING03") && !_quitFlag && !skipFlag()) {
+	while (_sound->voiceIsPlaying("KING03") && !quit() && !skipFlag()) {
 		index = MAX(index, 4);
 
 		_chargenWSA->displayFrame(_chargenFrameTable[index], 0, 0, 0);
 		_screen->updateScreen();
 
 		uint32 waitEnd = _system->getMillis() + 8 * _tickLength;
-		while (waitEnd > _system->getMillis() && !_quitFlag && !skipFlag()) {
+		while (waitEnd > _system->getMillis() && !quit() && !skipFlag()) {
 			updateInput();
 			_system->delayMillis(10);
 		}
@@ -547,10 +537,10 @@ void LoLEngine::processCharacterSelection() {
 	debugC(9, kDebugLevelMain, "LoLEngine::processCharacterSelection()");
 	
 	_charSelection = -1;
-	while (!_quitFlag && _charSelection == -1) {
+	while (!quit() && _charSelection == -1) {
 		uint32 nextKingMessage = _system->getMillis() + 900 * _tickLength;
 
-		while (nextKingMessage > _system->getMillis() && _charSelection == -1 && !_quitFlag) {
+		while (nextKingMessage > _system->getMillis() && _charSelection == -1 && !quit()) {
 			updateSelectionAnims();
 			_charSelection = getCharSelection();
 			_system->delayMillis(10);
@@ -595,22 +585,22 @@ int LoLEngine::selectionCharInfo(int character) {
 
 	switch (character) {
 	case 0:
-		strcpy(filename, "face09.shp");
+		strcpy(filename, "FACE09.SHP");
 		vocFilename[3] = 'A';
 		break;
 	
 	case 1:
-		strcpy(filename, "face01.shp");
+		strcpy(filename, "FACE01.SHP");
 		vocFilename[3] = 'M';
 		break;
 	
 	case 2:
-		strcpy(filename, "face08.shp");
+		strcpy(filename, "FACE08.SHP");
 		vocFilename[3] = 'K';
 		break;
 	
 	case 3:
-		strcpy(filename, "face05.shp");
+		strcpy(filename, "FACE05.SHP");
 		vocFilename[3] = 'C';
 		break;
 	
@@ -669,12 +659,12 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 	int index = 0;
 	file[4] = '0';
 	
-	while (_charSelectionInfoResult == -1 && !_quitFlag) {
+	while (_charSelectionInfoResult == -1 && !quit()) {
 		if (!_sound->voicePlay(file))
 			break;
 
 		int i = 0;
-		while (_sound->voiceIsPlaying(file) && _charSelectionInfoResult == -1 && !_quitFlag) {
+		while (_sound->voiceIsPlaying(file) && _charSelectionInfoResult == -1 && !quit()) {
 			_screen->drawShape(0, _screen->getPtrToShape(_screen->getCPagePtr(9), _charInfoFrameTable[i]), 11, 130, 0, 0);
 			_screen->updateScreen();
 

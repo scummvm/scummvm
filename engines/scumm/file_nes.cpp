@@ -1124,8 +1124,7 @@ bool ScummNESFile::generateResource(int res) {
 	write_byte(&out, 0xD1);
 	write_byte(&out, 0xF5);
 
-	if (_stream)
-		delete _stream;
+	delete _stream;
 
 	_stream = new Common::MemoryReadStream(_buf, bufsize);
 
@@ -1221,8 +1220,7 @@ bool ScummNESFile::generateIndex() {
 	for (i = 0; i < (int)sizeof(lfl_index); i++)
 		write_byte(&out, ((byte *)&lfl_index)[i]);
 
-	if (_stream)
-		delete _stream;
+	delete _stream;
 
 	_stream = new Common::MemoryReadStream(_buf, bufsize);
 

@@ -54,10 +54,27 @@ namespace Queen {
 class AudioStreamWrapper : public Audio::AudioStream {
 protected:
 	Audio::AudioStream *_stream;
+	int _rate;
 
 public:
 	AudioStreamWrapper(Audio::AudioStream *stream) {
 		_stream = stream;
+
+		int rate = _stream->getRate();
+
+		// A file where the sample rate claims to be 11025 Hz is
+		// probably compressed with the old tool. We force the real
+		// sample rate, which is 11840 Hz.
+		//
+		// However, a file compressed with the newer tool is not
+		// guaranteed to have a sample rate of 11840 Hz. LAME will
+		// automatically resample it to 12000 Hz. So in all other
+		// cases, we use the rate from the file.
+
+		if (rate == 11025)
+			_rate = 11840;
+		else
+			_rate = rate;
 	}
 	~AudioStreamWrapper() {
 		delete _stream;
@@ -75,7 +92,7 @@ public:
 		return _stream->endOfStream();
 	}
 	int getRate() const {
-		return 11840;
+		return _rate;
 	}
 	int32 getTotalPlayTime() {
 		return _stream->getTotalPlayTime();
@@ -261,8 +278,6 @@ void PCSound::playSpeech(const char *base) {
 
 void PCSound::setVolume(int vol) {
 	Sound::setVolume(vol);
-	// Set mixer music volume to maximum, since music volume is regulated by MusicPlayer's MIDI messages
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
 	_music->setVolume(vol);
 }
 
@@ -316,7 +331,8 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 	if (sound) {
 		f->read(sound, size);
 		byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, soundHandle, sound, size, 11840, flags);
+		Audio::Mixer::SoundType type = (soundHandle == &_speechHandle) ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
+		_mixer->playRaw(type, soundHandle, sound, size, 11840, flags);
 	}
 }
 

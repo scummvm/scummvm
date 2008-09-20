@@ -311,8 +311,6 @@ void GUI::updateSaveList() {
 		s1 -= '0';
 		s2 -= '0';
 		s3 -= '0';
-		if (s1 == 9 && s2 == 9 && s3 == 9)
-			continue;
 		_saveSlots.push_back(s1*100+s2*10+s3);
 	}
 
@@ -378,9 +376,6 @@ bool MainMenu::getInput() {
 
 	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_vm->quitGame();
-			break;
 		case Common::EVENT_LBUTTONUP:
 			return true;
 		default:

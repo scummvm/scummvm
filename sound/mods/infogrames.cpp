@@ -25,6 +25,7 @@
 
 #include "sound/mods/infogrames.h"
 #include "common/endian.h"
+#include "common/file.h"
 
 namespace Audio {
 
@@ -50,12 +51,20 @@ void Infogrames::Instruments::init() {
 	_sampleData = 0;
 }
 
+bool Infogrames::Instruments::load(const char *ins) {
+	Common::File f;
+
+	if (f.open(ins))
+		return load(f);
+	return false;
+}
+
 bool Infogrames::Instruments::load(Common::SeekableReadStream &ins) {
 	int i;
-	uint32 fsize;
-	uint32 offset[32];
-	uint32 offsetRepeat[32];
-	uint32 dataOffset;
+	int32 fsize;
+	int32 offset[32];
+	int32 offsetRepeat[32];
+	int32 dataOffset;
 
 	unload();
 
@@ -189,6 +198,14 @@ void Infogrames::reset() {
 
 	for (i = 0; i < 4; i++)
 		_chn[i].cmdBlockIndices = 0;
+}
+
+bool Infogrames::load(const char *dum) {
+	Common::File f;
+
+	if (f.open(dum))
+		return load(f);
+	return false;
 }
 
 bool Infogrames::load(Common::SeekableReadStream &dum) {

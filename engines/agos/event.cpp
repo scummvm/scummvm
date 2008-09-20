@@ -142,7 +142,7 @@ bool AGOSEngine::kickoffTimeEvents() {
 
 	cur_time = getTime() - _gameStoppedClock;
 
-	while ((te = _firstTimeStruct) != NULL && te->time <= cur_time && !_quit) {
+	while ((te = _firstTimeStruct) != NULL && te->time <= cur_time && !quit()) {
 		result = true;
 		_pendingDeleteTimeEvent = te;
 		invokeTimeEvent(te);
@@ -520,8 +520,8 @@ void AGOSEngine::delay(uint amount) {
 					setBitFlag(92, false);
 				_rightButtonDown++;
 				break;
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
-				_quit = true;
 				return;
 			default:
 				break;
@@ -544,7 +544,7 @@ void AGOSEngine::delay(uint amount) {
 		_system->delayMillis(this_delay);
 
 		cur = _system->getMillis();
-	} while (cur < start + amount && !_quit);
+	} while (cur < start + amount && !quit());
 }
 
 void AGOSEngine::timer_callback() {

@@ -47,6 +47,8 @@ public:
 	int redrawButtonCallback(Button *button);
 
 	int optionsButton(Button *button);
+
+	void createScreenThumbnail(Graphics::Surface &dst);
 private:
 	void getInput();
 

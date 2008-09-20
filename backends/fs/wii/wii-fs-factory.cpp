@@ -42,7 +42,7 @@ AbstractFilesystemNode *WiiFilesystemFactory::makeCurrentDirectoryFileNode() con
 		return new WiiFilesystemNode();
 }
 
-AbstractFilesystemNode *WiiFilesystemFactory::makeFileNodePath(const String &path) const {
+AbstractFilesystemNode *WiiFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new WiiFilesystemNode(path, true);
 }
 #endif

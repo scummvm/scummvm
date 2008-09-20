@@ -20,7 +20,7 @@
  *
  */
  
- #ifndef _CDAUDIO_H_
+#ifndef _CDAUDIO_H_
 #define _CDAUDIO_H_
 
 namespace DS {

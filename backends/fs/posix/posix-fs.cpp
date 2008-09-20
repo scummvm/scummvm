@@ -24,85 +24,20 @@
 
 #if defined(UNIX)
 
-#include "backends/fs/abstract-fs.h"
+#include "backends/fs/posix/posix-fs.h"
+#include "backends/fs/stdiostream.h"
+#include "common/algorithm.h"
 
-#ifdef MACOSX
-#include <sys/types.h>
-#endif
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <dirent.h>
 #include <stdio.h>
-#include <unistd.h>
 
-/**
- * Implementation of the ScummVM file system API based on POSIX.
- *
- * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
- */
-class POSIXFilesystemNode : public AbstractFilesystemNode {
-protected:
-	Common::String _displayName;
-	Common::String _path;
-	bool _isDirectory;
-	bool _isValid;
+#ifdef __OS2__
+#define INCL_DOS
+#include <os2.h>
+#endif
 
-public:
-	/**
-	 * Creates a POSIXFilesystemNode with the root node as path.
-	 */
-	POSIXFilesystemNode();
-
-	/**
-	 * Creates a POSIXFilesystemNode for a given path.
-	 *
-	 * @param path String with the path the new node should point to.
-	 * @param verify true if the isValid and isDirectory flags should be verified during the construction.
-	 */
-	POSIXFilesystemNode(const Common::String &path, bool verify);
-
-	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
-	virtual Common::String getDisplayName() const { return _displayName; }
-	virtual Common::String getName() const { return _displayName; }
-	virtual Common::String getPath() const { return _path; }
-	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }
-	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }
-
-	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFilesystemNode *getParent() const;
-
-private:
-	/**
-	 * Tests and sets the _isValid and _isDirectory flags, using the stat() function.
-	 */
-	virtual void setFlags();
-};
-
-/**
- * Returns the last component of a given path.
- *
- * Examples:
- *			/foo/bar.txt would return /bar.txt
- *			/foo/bar/    would return /bar/
- *
- * @param str String containing the path.
- * @return Pointer to the first char of the last component inside str.
- */
-const char *lastPathComponent(const Common::String &str) {
-	if(str.empty())
-		return "";
-
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '/') {
-		--cur;
-	}
-
-	return cur + 1;
-}
 
 void POSIXFilesystemNode::setFlags() {
 	struct stat st;
@@ -111,15 +46,7 @@ void POSIXFilesystemNode::setFlags() {
 	_isDirectory = _isValid ? S_ISDIR(st.st_mode) : false;
 }
 
-POSIXFilesystemNode::POSIXFilesystemNode() {
-	// The root dir.
-	_path = "/";
-	_displayName = _path;
-	_isValid = true;
-	_isDirectory = true;
-}
-
-POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p, bool verify) {
+POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p) {
 	assert(p.size() > 0);
 
 	// Expand "~/" to the value of the HOME env variable
@@ -134,29 +61,84 @@ POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p, bool verify) {
 	} else {
 		_path = p;
 	}
+	
+#ifdef __OS2__
+	// On OS/2, 'X:/' is a root of drive X, so we should not remove that last
+	// slash.
+	if (!(_path.size() == 3 && _path.hasSuffix(":/")))
+#endif
+	// Normalize the path (that is, remove unneeded slashes etc.)
+	_path = Common::normalizePath(_path, '/');
+	_displayName = Common::lastPathComponent(_path, '/');
 
-	_displayName = lastPathComponent(_path);
-
-	if (verify) {
-		setFlags();
+	// TODO: should we turn relative paths into absolute ones?
+	// Pro: Ensures the "getParent" works correctly even for relative dirs.
+	// Contra: The user may wish to use (and keep!) relative paths in his
+	//   config file, and converting relative to absolute paths may hurt him...
+	//
+	// An alternative approach would be to change getParent() to work correctly
+	// if "_path" is the empty string.
+#if 0
+	if (!_path.hasPrefix("/")) {
+		char buf[MAXPATHLEN+1];
+		getcwd(buf, MAXPATHLEN);
+		strcat(buf, "/");
+		_path = buf + _path;
 	}
+#endif
+	// TODO: Should we enforce that the path is absolute at this point?
+	//assert(_path.hasPrefix("/"));
+
+	setFlags();
 }
 
 AbstractFilesystemNode *POSIXFilesystemNode::getChild(const Common::String &n) const {
-	// FIXME: Pretty lame implementation! We do no error checking to speak
-	// of, do not check if this is a special node, etc.
+	assert(!_path.empty());
 	assert(_isDirectory);
+	
+	// Make sure the string contains no slashes
+	assert(!n.contains('/'));
 
+	// We assume here that _path is already normalized (hence don't bother to call
+	//  Common::normalizePath on the final path).
 	Common::String newPath(_path);
 	if (_path.lastChar() != '/')
 		newPath += '/';
 	newPath += n;
 
-	return new POSIXFilesystemNode(newPath, true);
+	return makeNode(newPath);
 }
 
 bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
+
+#ifdef __OS2__
+	if (_path == "/") {
+		// Special case for the root dir: List all DOS drives
+		ULONG ulDrvNum;
+		ULONG ulDrvMap;
+	
+		DosQueryCurrentDisk(&ulDrvNum, &ulDrvMap);
+	
+		for (int i = 0; i < 26; i++) {
+			if (ulDrvMap & 1) {
+				char drive_root[] = "A:/";
+				drive_root[0] += i;
+	
+                POSIXFilesystemNode *entry = new POSIXFilesystemNode();
+				entry->_isDirectory = true;
+				entry->_isValid = true;
+				entry->_path = drive_root;
+				entry->_displayName = "[" + Common::String(drive_root, 2) + "]";
+				myList.push_back(entry);
+			}
+	
+			ulDrvMap >>= 1;
+		}
+		
+		return true;
+	}
+#endif
 
 	DIR *dirp = opendir(_path.c_str());
 	struct dirent *dp;
@@ -175,12 +157,12 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 			continue;
 		}
 
-		Common::String newPath(_path);
-		if (newPath.lastChar() != '/')
-			newPath += '/';
-		newPath += dp->d_name;
-
-		POSIXFilesystemNode entry(newPath, false);
+		// Start with a clone of this node, with the correct path set
+		POSIXFilesystemNode entry(*this);
+		entry._displayName = dp->d_name;
+		if (_path.lastChar() != '/')
+			entry._path += '/';
+		entry._path += entry._displayName;
 
 #if defined(SYSTEM_NOT_SUPPORTING_D_TYPE)
 		/* TODO: d_type is not part of POSIX, so it might not be supported
@@ -215,12 +197,9 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 			continue;
 
 		// Honor the chosen mode
-		if ((mode == FilesystemNode::kListFilesOnly && entry._isDirectory) ||
-			(mode == FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
+		if ((mode == Common::FilesystemNode::kListFilesOnly && entry._isDirectory) ||
+			(mode == Common::FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
 			continue;
-
-		if (entry._isDirectory)
-			entry._path += "/";
 
 		myList.push_back(new POSIXFilesystemNode(entry));
 	}
@@ -231,12 +210,39 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 
 AbstractFilesystemNode *POSIXFilesystemNode::getParent() const {
 	if (_path == "/")
-		return 0;
+		return 0;	// The filesystem root has no parent
+
+#ifdef __OS2__
+    if (_path.size() == 3 && _path.hasSuffix(":/"))
+        // This is a root directory of a drive
+        return makeNode("/");   // return a virtual root for a list of drives
+#endif
 
 	const char *start = _path.c_str();
-	const char *end = lastPathComponent(_path);
+	const char *end = start + _path.size();
+	
+	// Strip of the last component. We make use of the fact that at this
+	// point, _path is guaranteed to be normalized
+	while (end > start && *(end-1) != '/')
+		end--;
 
-	return new POSIXFilesystemNode(Common::String(start, end - start), true);
+	if (end == start) {
+		// This only happens if we were called with a relative path, for which
+		// there simply is no parent.
+		// TODO: We could also resolve this by assuming that the parent is the
+		//       current working directory, and returning a node referring to that.
+		return 0;
+	}
+
+	return makeNode(Common::String(start, end));
+}
+
+Common::SeekableReadStream *POSIXFilesystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *POSIXFilesystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 #endif //#if defined(UNIX)

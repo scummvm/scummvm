@@ -26,7 +26,6 @@
 #include "kyra/kyra_lok.h"
 
 #include "common/file.h"
-#include "common/events.h"
 #include "common/system.h"
 #include "common/savefile.h"
 
@@ -119,7 +118,11 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 
 	delete[] _characterList;
 
+	delete[] _roomTable;
+
 	delete[] _movFacingTable;
+
+	delete[] _defaultShapeTable;
 
 	delete[] _gui->_scrollUpButton.data0ShapePtr;
 	delete[] _gui->_scrollUpButton.data1ShapePtr;
@@ -300,7 +303,7 @@ int KyraEngine_LoK::go() {
 		if (_gameToLoad == -1) {
 			setGameFlag(0xEF);
 			seq_intro();
-			if (_quitFlag)
+			if (quit())
 				return 0;
 			if (_skipIntroFlag && _abortIntroFlag)
 				resetGameFlag(0xEF);
@@ -388,7 +391,7 @@ void KyraEngine_LoK::startup() {
 			_gui->buttonMenuCallback(0);
 			_menuDirectlyToLoad = false;
 		} else
-			saveGame(getSavegameFilename(0), "New game");
+			saveGame(getSavegameFilename(0), "New game", 0);
 	} else {
 		_screen->setFont(Screen::FID_8_FNT);
 		loadGame(getSavegameFilename(_gameToLoad));
@@ -399,9 +402,11 @@ void KyraEngine_LoK::startup() {
 void KyraEngine_LoK::mainLoop() {
 	debugC(9, kDebugLevelMain, "KyraEngine_LoK::mainLoop()");
 
-	while (!_quitFlag) {
+	while (!quit()) {
 		int32 frameTime = (int32)_system->getMillis();
 		_skipFlag = false;
+
+		checkAutosave();
 
 		if (_currentCharacter->sceneId == 210) {
 			updateKyragemFading();
@@ -444,7 +449,7 @@ void KyraEngine_LoK::mainLoop() {
 }
 
 void KyraEngine_LoK::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {
-	while (_system->getMillis() < timestamp && !_quitFlag) {
+	while (_system->getMillis() < timestamp && !quit()) {
 		if (updateTimers)
 			_timer->update();
 
@@ -470,13 +475,13 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 					else {
 						char savegameName[14];
 						sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');
-						saveGame(saveLoadSlot, savegameName);
+						saveGame(saveLoadSlot, savegameName, 0);
 					}
 				} else if (event.kbd.flags == Common::KBD_CTRL) {
 					if (event.kbd.keycode == 'd')
 						_debugger->attach();
 					else if (event.kbd.keycode == 'q')
-						_quitFlag = true;
+						quitGame();
 				} else if (event.kbd.keycode == '.') {
 					_skipFlag = true;
 				} else if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_ESCAPE) {
@@ -487,9 +492,6 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				_animator->_updateScreen = true;
-				break;
-			case Common::EVENT_QUIT:
-				quitGame();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				_mousePressFlag = true;
@@ -529,26 +531,23 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 		if (_skipFlag && !_abortIntroFlag && !queryGameFlag(0xFE))
 			_skipFlag = false;
 
-		if (amount > 0 && !_skipFlag && !_quitFlag)
+		if (amount > 0 && !_skipFlag && !quit())
 			_system->delayMillis(10);
 
 		if (_skipFlag)
 			_sound->voiceStop();
-	} while (!_skipFlag && _system->getMillis() < start + amount && !_quitFlag);
+	} while (!_skipFlag && _system->getMillis() < start + amount && !quit());
 }
 
 void KyraEngine_LoK::waitForEvent() {
 	bool finished = false;
 	Common::Event event;
 
-	while (!finished && !_quitFlag) {
+	while (!finished && !quit()) {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				finished = true;
-				break;
-			case Common::EVENT_QUIT:
-				quitGame();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				finished = true;

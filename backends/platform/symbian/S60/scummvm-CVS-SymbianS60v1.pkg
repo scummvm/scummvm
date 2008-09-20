@@ -16,7 +16,7 @@
 ; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 ;
 ; $URL:$
-; $Id:$
+; $Id$
 ;
 ;
 
@@ -28,7 +28,7 @@
 ;&EN
 
 ; UID is the app's UID
-#{"ScummVM S60v1"},(0x101f9b57),0,120,0
+#{"ScummVM S60v1"},(0x101f9b57),0,130,0
 
 ; Platform type
 (0x101F6F88), 0, 0, 0, {"Series60ProductID"}

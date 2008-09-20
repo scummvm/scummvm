@@ -218,7 +218,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			0,
 			{
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				{"packet.005", 0, "f80e10e37000a2201eabf8dad82c7f64", 16184223},
+				{"packet.005", 0, "58caac54b891f5d7f335e710e45e5d29", 16209623},
 				{NULL, 0, NULL, 0}
 			},
 			Common::IT_ITA,

@@ -25,10 +25,13 @@
 #ifndef ENGINES_ENGINE_H
 #define ENGINES_ENGINE_H
 
+#include "common/events.h"
+#include "common/fs.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 
 class OSystem;
+
 namespace Audio {
 	class Mixer;
 }
@@ -39,7 +42,10 @@ namespace Common {
 }
 namespace GUI {
 	class Debugger;
+	class Dialog;
 }
+
+using GUI::Dialog;
 
 class Engine {
 public:
@@ -50,9 +56,13 @@ public:
 protected:
 	Common::EventManager *_eventMan;
 	Common::SaveFileManager *_saveFileMan;
+	
+	Dialog *_mainMenuDialog;
+	virtual int runDialog(Dialog &dialog);
 
 	const Common::String _targetName; // target name for saves
-	const Common::String _gameDataPath;
+	
+	const Common::FilesystemNode _gameDataDir;
 
 private:
 	/**
@@ -82,7 +92,7 @@ public:
 	 * Start the main engine loop.
 	 * The return value is not yet used, but could indicate whether the user
 	 * wants to return to the launch or to fully quit ScummVM.
-	 * @return a result code
+	 * @return 0 for success, else an error code.
 	 */
 	virtual int go() = 0;
 
@@ -109,9 +119,31 @@ public:
 	void pauseEngine(bool pause);
 
 	/**
+	 * Quit the engine, sends a Quit event to the Event Manager
+	 */
+	void quitGame();
+
+	/**
 	 * Return whether the engine is currently paused or not.
 	 */
 	bool isPaused() const { return _pauseLevel != 0; }
+
+	/**
+	 * Return whether or not the ENGINE should quit
+	 */
+	bool quit() const { return (_eventMan->shouldQuit() || _eventMan->shouldRTL()); }
+
+	/** Run the Global Main Menu Dialog
+	 */
+	virtual void mainMenuDialog();
+
+	/** Sync the engine's sound settings with the config manager
+	 */
+	virtual void syncSoundSettings();
+
+	/** Determine whether the engine supports the specified MetaEngine feature
+	 */
+	virtual bool hasFeature(int f);
 
 public:
 

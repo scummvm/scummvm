@@ -293,7 +293,7 @@ int KyraEngine_MR::o3_updateScore(EMCState *script) {
 
 int KyraEngine_MR::o3_makeSecondChanceSave(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_makeSecondChanceSave(%p) ()", (const void *)script);
-	saveGame(getSavegameFilename(999), "SECOND CHANCE SAVE GAME");
+	saveGame(getSavegameFilename(999), "Autosave", 0);
 	return 0;
 }
 
@@ -786,7 +786,7 @@ int KyraEngine_MR::o3_daggerWarning(EMCState *script) {
 	_screen->_curPage = curPageBackUp;
 	_screen->showMouse();
 
-	while (!_quitFlag) {
+	while (!quit()) {
 		int keys = checkInput(0);
 		removeInputTop();
 

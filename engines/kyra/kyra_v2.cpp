@@ -159,7 +159,7 @@ void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
 
 		if (amount > 0)
 			_system->delayMillis(amount > 10 ? 10 : amount);
-	} while (!skipFlag() && _system->getMillis() < start + amount && !_quitFlag);
+	} while (!skipFlag() && _system->getMillis() < start + amount && !quit());
 }
 
 int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
@@ -186,7 +186,7 @@ int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 				} else {
 					char savegameName[14];
 					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');
-					saveGame(saveLoadSlot, savegameName);
+					saveGame(saveLoadSlot, savegameName, 0);
 				}
 			} else if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == 'd')
@@ -238,15 +238,11 @@ void KyraEngine_v2::updateInput() {
 
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_quitFlag = true;
-			break;
-
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == '.' || event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				_eventList.push_back(Event(event, true));
 			else if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
-				_quitFlag = true;
+				quitGame();
 			else
 				_eventList.push_back(event);
 			break;

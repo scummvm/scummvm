@@ -26,10 +26,11 @@
 #define COMMON_MD5_H
 
 #include "common/scummsys.h"
-#include "common/fs.h"
-#include "common/stream.h"
 
 namespace Common {
+
+class FilesystemNode;
+class ReadStream;
 
 bool md5_file(const char *name, uint8 digest[16], uint32 length = 0);
 bool md5_file(const FilesystemNode &file, uint8 digest[16], uint32 length = 0);

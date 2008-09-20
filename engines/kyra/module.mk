@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	kyra_mr.o \
 	lol.o \
 	resource.o \
+	resource_intern.o \
 	saveload.o \
 	saveload_lok.o \
 	saveload_hof.o \

@@ -130,7 +130,7 @@ void CEActionsSmartphone::initInstanceGame() {
 
 	// Initialize keys for different actions
 	// Save
-	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche || is_feeble)
+	if (is_simon || is_sword2 || is_gob || is_kyra || is_feeble)
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = false;
 	else if (is_queen) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;

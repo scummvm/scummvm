@@ -23,6 +23,7 @@
  *
  */
 
+
 #include "gob/videoplayer.h"
 #include "gob/global.h"
 #include "gob/util.h"
@@ -568,7 +569,7 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 
 	_vm->_util->processInput();
 
-	if (_vm->_quitRequested) {
+	if (_vm->quit()) {
 		_primaryVideo->getVideo()->disableSound();
 		return true;
 	}

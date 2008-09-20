@@ -219,7 +219,7 @@ void PBMDecoder::readBODY(Common::IFFChunk& chunk) {
 
 	switch (_bitmapHeader.pack) {
 	case 0:
-		while (!chunk.eos()) {
+		while (!chunk.hasReadAll()) {
 			((byte*)_surface->pixels)[si++] = chunk.readByte();
 		}
 		break;
@@ -245,7 +245,9 @@ PackBitsReadStream::~PackBitsReadStream() {
 }
 
 bool PackBitsReadStream::eos() const {
-	return _input->eos() & (_rStoragePos == _wStoragePos);
+	//FIXME: eos definition needs to be changed in parallaction engine
+	// which is the only place where this class is used
+	return _input->eos() && (_rStoragePos == _wStoragePos);
 }
 
 uint32 PackBitsReadStream::read(void *dataPtr, uint32 dataSize) {
@@ -291,6 +293,9 @@ void PackBitsReadStream::unpack() {
 
 	while (_out < _outEnd && !_input->eos()) {
 		byteRun = _input->readByte();
+		//FIXME: eos definition needs to be changed in parallaction engine
+		// which is the only place where this class is used
+		//if (_input->eos()) break;
 		if (byteRun <= 127) {
 			i = byteRun + 1;
 			for (j = 0; j < i; j++) {

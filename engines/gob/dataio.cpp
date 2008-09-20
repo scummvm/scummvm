@@ -62,38 +62,40 @@ DataStream::~DataStream() {
 	}
 }
 
-uint32 DataStream::pos() const {
+int32 DataStream::pos() const {
 	if (_stream)
 		return _stream->pos();
 
-	uint32 resPos = _io->getChunkPos(_handle);
-	if (resPos != 0xFFFFFFFF)
+	int32 resPos = _io->getChunkPos(_handle);
+	if (resPos != -1)
 		return resPos;
 
 	return _io->file_getHandle(_handle)->pos();
 }
 
-uint32 DataStream::size() const {
+int32 DataStream::size() const {
 	if (_stream)
 		return _stream->size();
 
 	return _size;
 }
 
-void DataStream::seek(int32 offset, int whence) {
+bool DataStream::seek(int32 offset, int whence) {
 	if (_stream)
-		_stream->seek(offset, whence);
+		return _stream->seek(offset, whence);
 	else if ((_handle < 50) || (_handle >= 128))
-		_io->file_getHandle(_handle)->seek(offset, whence);
-	else
-	_io->seekChunk(_handle, offset, whence);
+		return _io->file_getHandle(_handle)->seek(offset, whence);
+	else {
+		_io->seekChunk(_handle, offset, whence);
+		return true;
+	}
 }
 
 bool DataStream::eos() const {
 	if (_stream)
 		return _stream->eos();
 
-	return pos() >= size();
+	return pos() >= size(); // FIXME (eos definition change)
 }
 
 uint32 DataStream::read(void *dataPtr, uint32 dataSize) {

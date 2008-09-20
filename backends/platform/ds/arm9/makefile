@@ -8,25 +8,29 @@ libndsdir = $(DEVKITPRO)/libnds
 # Select the build by setting SCUMM_BUILD to a,b,c,d,e,f or g.
 # Anything else gets build a.
 
-ifeq ($(SCUMM_BUILD),g)
-        DS_BUILD_G = 1
-else
- ifeq ($(SCUMM_BUILD),f)
-        DS_BUILD_F = 1
+ifeq ($(SCUMM_BUILD),h)
+        DS_BUILD_H = 1
  else
-  ifeq ($(SCUMM_BUILD),e)
-        DS_BUILD_E = 1
+ ifeq ($(SCUMM_BUILD),g)
+        DS_BUILD_G = 1
   else
-   ifeq ($(SCUMM_BUILD),d)
-        DS_BUILD_D = 1
+  ifeq ($(SCUMM_BUILD),f)
+        DS_BUILD_F = 1
+  else
+   ifeq ($(SCUMM_BUILD),e)
+        DS_BUILD_E = 1
    else
-    ifeq ($(SCUMM_BUILD),c)
-        DS_BUILD_C = 1
+    ifeq ($(SCUMM_BUILD),d)
+        DS_BUILD_D = 1
     else
-     ifeq ($(SCUMM_BUILD),b)
-        DS_BUILD_B = 1
+     ifeq ($(SCUMM_BUILD),c)
+        DS_BUILD_C = 1
      else
+      ifeq ($(SCUMM_BUILD),b)
+        DS_BUILD_B = 1
+      else
         DS_BUILD_A = 1
+      endif
      endif
     endif
    endif
@@ -67,7 +71,12 @@ endif
 # NOTE: The header and libs for the debugger is assumed to be in the libnds
 # folder.
 
-VPATH = $(srcdir)
+vpath %.h $(srcdir)
+vpath %.cpp $(srcdir)
+vpath %.c $(srcdir)
+vpath %.m $(srcdir)
+vpath %.asm $(srcdir)
+vpath %.s $(srcdir)
 
 # Command to build libmad is:
 # ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork'
@@ -75,8 +84,8 @@ VPATH = $(srcdir)
 # I actually had to use
 # ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork' LDFLAGS='C:/Progra~1/devkitpro/libnds/lib/libnds9.a' --disable-shared --disable-debugging
 
-USE_ARM_SOUND_ASM = 1
 ARM = 1
+USE_ARM_SOUND_ASM = 1
 USE_ARM_COSTUME_ASM = 1
 
 ifdef DS_BUILD_A
@@ -135,6 +144,13 @@ ifdef DS_BUILD_G
 	BUILD=scummvm-G
 endif
 
+ifdef DS_BUILD_H
+	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_H
+	LOGO = logog.bmp
+	ENABLE_PARALLACTION = STATIC_PLUGIN
+	BUILD=scummvm-H
+endif
+
 
 ARM7BIN	:= -7 $(CURDIR)/../../arm7/arm7.bin
 ICON		:= -b ../../../logo.bmp "ScummVM;By Neil Millstone;"
@@ -146,6 +162,7 @@ CFLAGS	=	-Wno-multichar -Wall\
 		-Wno-multichar -mcpu=arm9tdmi -mtune=arm9tdmi \
 		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
 		-mthumb-interwork -DUSE_ARM_COSTUME_ASM=1
+
 
 # -ffast-math 
 
@@ -160,7 +177,7 @@ ifdef USE_PROFILER
 endif
 
 CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor -Wno-unknown-pragmas -Wno-reorder  \
-		-fno-exceptions -fno-rtti -mthumb-interwork
+		-fno-exceptions -fno-rtti -mthumb-interwork -ffunction-sections -fdata-sections
 
 #		-mthumb
 
@@ -180,12 +197,12 @@ ifdef USE_MAD
 endif
 
 
-LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -Wl,--wrap,time -mno-fpu -Wl,-Map,map.txt
+LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -Wl,--wrap,time -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections
 
-INCLUDES= -I./ -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/common -I$(portdir)/source \
-			-I$(portdir)/data -I$(libndsdir)/include -I$(portdir)/../commoninclude\
-			-I$(libndsdir)/include -I$(libndsdir)/include/nds -I$(srcdir)/engines -I$(portdir)/source/mad\
-			-I$(portdir)/source/libcartreset -include $(srcdir)/common/scummsys.h
+INCLUDES= -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/engines \
+			-I$(portdir)/data -I$(portdir)/../commoninclude \
+			-I$(portdir)/source -I$(portdir)/source/mad -I$(portdir)/source/libcartreset \
+			-I$(libndsdir)/include -include $(srcdir)/common/scummsys.h
 
 
 LIBS	= -lm -L$(libndsdir)/lib -L$(portdir)/lib -lnds9
@@ -232,7 +249,8 @@ endif
 DATA_OBJS := $(portdir)/data/icons.o $(portdir)/data/keyboard.o $(portdir)/data/keyboard_pal.o $(portdir)/data/default_font.o $(portdir)/data/8x8font_tga.o
 
 
-COMPRESSOR_OBJS := $(portdir)/source/compressor/lz.o
+COMPRESSOR_OBJS := 
+#$(portdir)/source/compressor/lz.o
 
 FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o\
 			$(portdir)/source/fat/io_fcsr.o $(portdir)/source/fat/io_m3cf.o\
@@ -252,14 +270,15 @@ FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o
 #			$(portdir)/source/fat/io_sd_common.o $(portdir)/source/fat/io_scsd_s.o \
 #			$(portdir)/source/fat/io_sc_common.o $(portdir)/source/fat/io_sd_common.o
 
-LIBCARTRESET_OBJS := $(portdir)/source/libcartreset/cartreset.o
+LIBCARTRESET_OBJS := 
+#$(portdir)/source/libcartreset/cartreset.o
 
 # Files in this list will be optimisied for speed, otherwise they will be optimised for space
 OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp mixer.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp
 #OPTLIST :=
 
 # Compiler options for files which should be optimised for speed
-OPT_SPEED := -O2
+OPT_SPEED := -O3
 
 # Compiler options for files which should be optimised for space
 OPT_SIZE := -Os
@@ -281,7 +300,7 @@ ndsall:
 include $(srcdir)/Makefile.common
 
 semiclean:
-	$(RM) $(portdir)/source/dsoptions.o $(portdir)/source/dsmain.o $(FAT_OBJS) $(DATA_OBJS) $(portdir)/source/wordcompletion.o
+	$(RM) $(portdir)/source/dsoptions.o $(portdir)/source/dsmain.o $(FAT_OBJS) $(DATA_OBJS) $(portdir)/source/wordcompletion.o $(portdir)/source/dsoptions.o 
 
 clean:
 	$(RM) $(OBJS) $(EXECUTABLE)
@@ -333,36 +352,17 @@ endef
 ##############
 # Replacement rule for the one in makefile.common
 ##############
-ifndef HAVE_GCC3
-# If you use GCC, disable the above and enable this for intelligent
-# dependency tracking.
-#.cpp.o:
-%.o:%.cpp
-	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-#	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
-	$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
-	$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
-else
-# If you even have GCC 3.x, you can use this build rule, which is safer; the above
-# rule can get you into a bad state if you Ctrl-C at the wrong moment.
-# Also, with this GCC inserts additional dummy rules for the involved headers,
-# which ensures a smooth compilation even if said headers become obsolete.
-#.cpp.o:
-%.o:%.cpp
+%.o: %.cpp
 #	echo !!!!!!!!!!!! $(notdir $<)
 #	ifeq ( $(notdir $<), $(findstring $(notdir $<), $(OPTLIST)) )
 #	 OPTFLAG=-O3
 #	else
 #	 OPTFLAG=-Os
 #	endif
-
 #	export OPTFLAG = ;
 #	echo !!!!!!!! $(OPTFLAG)
-
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(if $(findstring $(notdir $<), $(OPTLIST)), $(OPT_SPEED), $(OPT_SIZE)) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o 
-endif
 
 
 #---------------------------------------------------------------------------------
@@ -412,6 +412,7 @@ endif
 	padbin 16 $(basename $@).ds.gba
 
 #---------------------------------------------------------------------------------
+# FIXME: The following rule hardcodes the input & output filename -- shouldn't it use $< and $@ instead?
 %.bin: %.elf
 	$(OBJCOPY) -S scummvm.elf scummvm-stripped.elf
 	$(OBJCOPY) -O binary scummvm-stripped.elf scummvm.bin
@@ -419,4 +420,3 @@ endif
 #%.o: %.s
 #	$(MKDIR) $(*D)/$(DEPDIR)
 #	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-

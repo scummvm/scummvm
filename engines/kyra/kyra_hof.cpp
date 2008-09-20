@@ -306,8 +306,10 @@ int KyraEngine_HoF::go() {
 			_res->loadFileList(_ingamePakList, _ingamePakListSize);
 		}
 
-		if (_flags.platform == Common::kPlatformPC98)
+		if (_flags.platform == Common::kPlatformPC98) {
 			_res->loadPakFile("AUDIO.PAK");
+			_sound->loadSoundFile("sound.dat");
+		}
 	}
 
 	_menuDirectlyToLoad = (_menuChoice == 3) ? true : false;
@@ -434,7 +436,7 @@ void KyraEngine_HoF::startup() {
 	if (_gameToLoad == -1) {
 		snd_playWanderScoreViaMap(52, 1);
 		enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
-		saveGame(getSavegameFilename(0), "New Game");
+		saveGame(getSavegameFilename(0), "New Game", 0);
 	} else {
 		loadGame(getSavegameFilename(_gameToLoad));
 	}
@@ -452,16 +454,20 @@ void KyraEngine_HoF::startup() {
 void KyraEngine_HoF::runLoop() {
 	_screen->updateScreen();
 
-	_quitFlag = false;
 	_runFlag = true;
-	while (!_quitFlag && _runFlag) {
+	while (!quit() && _runFlag) {
 		if (_deathHandler >= 0) {
 			removeHandItem();
 			delay(5);
 			_drawNoShapeFlag = 0;
 			_gui->optionsButton(0);
 			_deathHandler = -1;
+
+			if (!_runFlag || !quit())
+				break;
 		}
+
+		checkAutosave();
 
 		if (_system->getMillis() > _nextIdleAnim)
 			showIdleAnim();
@@ -1578,10 +1584,14 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
 	if (vocIndex != -1)
 		_sound->voicePlay(_ingameSoundList[vocIndex], true);
-	else if (_flags.platform != Common::kPlatformFMTowns)
+	else if (_flags.platform == Common::kPlatformPC)
+		KyraEngine_v1::snd_playSoundEffect(track);
+
 		// TODO ?? Maybe there is a way to let users select whether they want
 		// voc, midi or adl sfx (even though it makes no sense to choose anything but voc).
-		KyraEngine_v1::snd_playSoundEffect(track);
+		// The PC-98 version has support for non-pcm sound effects, but only for tracks 
+		// which also have voc files. The syntax would be:
+		// KyraEngine_v1::snd_playSoundEffect(vocIndex);
 }
 
 #pragma mark -
@@ -1620,7 +1630,7 @@ void KyraEngine_HoF::loadInvWsa(const char *filename, int run, int delayTime, in
 	_invWsa.timer = _system->getMillis();
 
 	if (run) {
-		while (_invWsa.running && !skipFlag() && !_quitFlag) {
+		while (_invWsa.running && !skipFlag() && !quit()) {
 			update();
 			_system->delayMillis(10);
 		}
@@ -1994,7 +2004,7 @@ void KyraEngine_HoF::playTim(const char *filename) {
 		return;
 
 	_tim->resetFinishedFlag();
-	while (!_quitFlag && !_tim->finished()) {
+	while (!quit() && !_tim->finished()) {
 		_tim->exec(tim, 0);
 		if (_chatText)
 			updateWithText();

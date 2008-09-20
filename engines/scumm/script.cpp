@@ -625,10 +625,10 @@ void ScummEngine::writeVar(uint var, int value) {
 
 		if (var == VAR_CHARINC) {
 			if (ConfMan.hasKey("talkspeed")) {
-				value = getTalkspeed();
+				value = getTalkDelay();
 			} else {
 				// Save the new talkspeed value to ConfMan
-				setTalkspeed(value);
+				setTalkDelay(value);
 			}
 		}
 

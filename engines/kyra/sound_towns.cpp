@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/system.h"
 #include "kyra/resource.h"
 #include "kyra/sound.h"
@@ -64,13 +63,13 @@ public:
 	MidiDriver *device() { return 0; }
 	byte getNumber() { return 0; }
 	void release() { }
-	void send(uint32 b) { }
+	void send(uint32) { }
 	void noteOff(byte note);
 	void noteOn(byte note, byte onVelo);
-	void programChange(byte program) {}
+	void programChange(byte) {}
 	void pitchBend(int16 value);
 	void controlChange(byte control, byte value);
-	void pitchBendFactor(byte value) { }
+	void pitchBendFactor(byte) { }
 	void sysEx_customInstrument(uint32 unused, const byte *instr);
 
 protected:
@@ -427,7 +426,7 @@ void Towns_EuphonyPcmChannel::nextTick(int32 *outbuf, int buflen) {
 		return;
 	}
 
-	float phaseStep = SoundTowns::semitoneAndSampleRate_to_sampleStep(_note, _voice->_snd[_current]->keyNote -
+	float phaseStep = SoundTowns::calculatePhaseStep(_note, _voice->_snd[_current]->keyNote -
 		_voice->_env[_current]->rootKeyOffset, _voice->_snd[_current]->samplingRate, _rate, _frequencyOffs);
 
 	int32 looplength = _voice->_snd[_current]->loopLength;
@@ -819,7 +818,8 @@ void Towns_EuphonyParser::parseNextEvent(EventInfo &info) {
 		}
 	}
 
-	while (true) {
+	bool loop = true;
+	while (loop) {
 		byte cmd = *pos;
 		byte evt = (cmd & 0xF0);
 
@@ -853,7 +853,7 @@ void Towns_EuphonyParser::parseNextEvent(EventInfo &info) {
 				info.basic.param2 = onVelo;
 
 				pos += 12;
-				break;
+				loop = false;
 			} else {
 				pos += 6;
 			}
@@ -870,7 +870,7 @@ void Towns_EuphonyParser::parseNextEvent(EventInfo &info) {
 				info.basic.param1 = pos[4];
 				info.basic.param2 = pos[5];
 				pos += 6;
-				break;
+				loop = false;
 			} else {
 				pos += 6;
 			}
@@ -889,7 +889,7 @@ void Towns_EuphonyParser::parseNextEvent(EventInfo &info) {
 			_tempo[2] = tempo & 0xff;
 			info.ext.data = (byte*) _tempo;
 			pos += 6;
-			break;
+			loop = false;
 		} else if (cmd == 0xFD || cmd == 0xFE) {
 			// End of track.
 			if (_autoLoop) {
@@ -906,12 +906,12 @@ void Towns_EuphonyParser::parseNextEvent(EventInfo &info) {
 			info.event = 0xFF;
 			info.ext.type = 0x2F;
 			info.ext.data = pos;
-			break;
+			loop = false;
 		} else {
 			error("Unknown Euphony music event 0x%02X", (int)cmd);
 			memset(&info, 0, sizeof(info));
 			pos = 0;
-			break;
+			loop = false;
 		}
 	}
 	_position._play_pos = pos;
@@ -1085,7 +1085,7 @@ void Towns_EuphonyTrackQueue::initDriver() {
 
 class TownsPC98_OpnOperator {
 public:
-	TownsPC98_OpnOperator(double rate, const uint8 *rateTable,
+	TownsPC98_OpnOperator(const uint32 timerbase, const uint8 *rateTable,
 		const uint8 *shiftTable, const uint8 *attackDecayTable, const uint32 *frqTable,
 		const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable);
 	~TownsPC98_OpnOperator() {}
@@ -1095,7 +1095,7 @@ public:
 	void frequency(int freq);
 	void updatePhaseIncrement();
 	void recalculateRates();
-	void generateOutput(int phasebuf, int *_feedbuf, int &out);
+	void generateOutput(int32 phasebuf, int32 *feedbuf, int32 &out);
 
 	void feedbackLevel(int32 level) {_feedbackLevel = level ? level + 6 : 0; }
 	void detune(int value) { _detn = &_detnTbl[value << 5]; }
@@ -1111,6 +1111,7 @@ public:
 
 protected:
 	EnvelopeState _state;
+	bool _playing;
 	uint32 _feedbackLevel;
 	uint32 _multiple;
 	uint32 _totalLevel;
@@ -1137,8 +1138,8 @@ protected:
 	const int32 *_tLvlTbl;
 	const int32 *_detnTbl;
 
-	const double _tickLength;
-	double _tick;
+	const uint32 _tickLength;
+	uint32 _timer;
 	int32 _currentLevel;
 
 	struct EvpState {
@@ -1147,23 +1148,31 @@ protected:
 	} fs_a, fs_d, fs_s, fs_r;
 };
 
-TownsPC98_OpnOperator::TownsPC98_OpnOperator(double rate, const uint8 *rateTable, 
+TownsPC98_OpnOperator::TownsPC98_OpnOperator(const uint32 timerbase, const uint8 *rateTable,
 	const uint8 *shiftTable, const uint8 *attackDecayTable,	const uint32 *frqTable,
 	const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable) :
 	_rateTbl(rateTable), _rshiftTbl(shiftTable), _adTbl(attackDecayTable), _fTbl(frqTable),
-	_sinTbl(sineTable), _tLvlTbl(tlevelOut), _detnTbl(detuneTable), _tickLength(rate * 65536.0),
+	_sinTbl(sineTable), _tLvlTbl(tlevelOut), _detnTbl(detuneTable), _tickLength(timerbase * 2),
 	_specifiedAttackRate(0), _specifiedDecayRate(0), _specifiedReleaseRate(0), _specifiedSustainRate(0),
 	_phase(0), _state(s_ready) {
-	
+
 	reset();
 }
 
 void TownsPC98_OpnOperator::keyOn() {
+	if (_playing)
+		return;
+
+	_playing = true;
 	_state = s_attacking;
 	_phase = 0;
 }
 
 void TownsPC98_OpnOperator::keyOff() {
+	if (!_playing)
+		return;
+	
+	_playing = false;
 	if (_state != s_ready)
 		_state = s_releasing;
 }
@@ -1172,6 +1181,7 @@ void TownsPC98_OpnOperator::frequency(int freq) {
 	uint8 block = (freq >> 11);
 	uint16 pos = (freq & 0x7ff);
 	uint8 c = pos >> 7;
+
 	_kcode = (block << 2) | ((c < 7) ? 0 : ((c > 8) ? 3 : c - 6 ));
 	_frequency = _fTbl[pos << 1] >> (7 - block);
 }
@@ -1204,44 +1214,44 @@ void TownsPC98_OpnOperator::recalculateRates() {
 	fs_r.shift = _rshiftTbl[r + k];
 }
 
-void TownsPC98_OpnOperator::generateOutput(int phasebuf, int *_feedbuf, int &out) {
+void TownsPC98_OpnOperator::generateOutput(int32 phasebuf, int32 *feed, int32 &out) {
 	if (_state == s_ready)
 		return;
 
-	_tick += _tickLength;
-	while (_tick > 0x30000) {
-		_tick -= 0x30000;
+	_timer += _tickLength;
+	while (_timer > 0x5B8D80) {
+		_timer -= 0x5B8D80;
 		++_tickCount;
 
 		int32 levelIncrement = 0;
 		uint32 targetTime = 0;
 		int32 targetLevel = 0;
-		EnvelopeState next_state = s_ready;
+		EnvelopeState nextState = s_ready;
 
 		switch (_state) {
 			case s_ready:
 				return;
 			case s_attacking:
-				next_state = s_decaying;
+				nextState = s_decaying;
 				targetTime = (1 << fs_a.shift) - 1;
 				targetLevel = 0;
 				levelIncrement = (~_currentLevel * _adTbl[fs_a.rate + ((_tickCount >> fs_a.shift) & 7)]) >> 4;
 				break;
 			case s_decaying:
 				targetTime = (1 << fs_d.shift) - 1;
-				next_state = s_sustaining;
+				nextState = s_sustaining;
 				targetLevel = _sustainLevel;
 				levelIncrement = _adTbl[fs_d.rate + ((_tickCount >> fs_d.shift) & 7)];
 				break;
 			case s_sustaining:
 				targetTime = (1 << fs_s.shift) - 1;
-				next_state = s_ready;
+				nextState = s_sustaining;
 				targetLevel = 1023;
 				levelIncrement = _adTbl[fs_s.rate + ((_tickCount >> fs_s.shift) & 7)];
 				break;
 			case s_releasing:
 				targetTime = (1 << fs_r.shift) - 1;
-				next_state = s_ready;
+				nextState = s_ready;
 				targetLevel = 1023;
 				levelIncrement = _adTbl[fs_r.rate + ((_tickCount >> fs_r.shift) & 7)];
 				break;
@@ -1249,31 +1259,29 @@ void TownsPC98_OpnOperator::generateOutput(int phasebuf, int *_feedbuf, int &out
 
 		if (!(_tickCount & targetTime)) {
 			_currentLevel += levelIncrement;
-			if ((!targetLevel && _currentLevel <= targetLevel) || (targetLevel && _currentLevel >= targetLevel)) {
+			if ((_state == s_attacking && _currentLevel <= targetLevel) || (_state != s_attacking && _currentLevel >= targetLevel)) {
 				if (_state != s_decaying)
 					_currentLevel = targetLevel;
-				if (_state != s_sustaining)
-					_state = next_state;
+				_state = nextState;
 			}
 		}
 	}
 
 	uint32 lvlout = _totalLevel + (uint32) _currentLevel;
 
-	int outp = 0;
-	int *i = &outp, *o = &outp;
+
+	int32 outp = 0;
+	int32 *i = &outp, *o = &outp;
 	int phaseShift = 0;
 
-	if (_feedbuf) {
-		o = &_feedbuf[0];
-		i = &_feedbuf[1];
-		phaseShift = _feedbackLevel ? ((_feedbuf[0] + _feedbuf[1]) << _feedbackLevel) : 0;
-		if (phasebuf == -1)
-			*i = 0;
+	if (feed) {
+		o = &feed[0];
+		i = &feed[1];
+		phaseShift = _feedbackLevel ? ((*o + *i) << _feedbackLevel) : 0;
 		*o = *i;
 	} else {
 		phaseShift = phasebuf << 15;
-	}		
+	}
 
 	if (lvlout < 832) {
 		uint32 index = (lvlout << 3) + _sinTbl[(((int32)((_phase & 0xffff0000)
@@ -1285,15 +1293,11 @@ void TownsPC98_OpnOperator::generateOutput(int phasebuf, int *_feedbuf, int &out
 
 	_phase += _phaseIncrement;
 	out += *o;
-	if (out > 32767)
-		out = 32767;
-	if (out < -32767)
-		out = -32767;
 }
 
 void TownsPC98_OpnOperator::reset(){
 	keyOff();
-	_tick = 0;
+	_timer = 0;
 	_keyScale2 = 0;
 	_currentLevel = 1023;
 
@@ -1306,7 +1310,7 @@ void TownsPC98_OpnOperator::reset(){
 	decayRate(0);
 	releaseRate(0);
 	sustainRate(0);
-	feedbackLevel(0);	
+	feedbackLevel(0);
 	totalLevel(127);
 }
 
@@ -1332,40 +1336,34 @@ public:
 	virtual ~TownsPC98_OpnChannel();
 	virtual void init();
 
-	typedef bool (TownsPC98_OpnChannel::*ControlEventFunc)(uint8 para);
-
 	typedef enum channelState {
 		CHS_RECALCFREQ		=	0x01,
 		CHS_KEYOFF			=	0x02,
-		CHS_SSG				=	0x04,
-		CHS_PITCHWHEELOFF	=	0x08,
-		CHS_ALL_BUT_EOT		=	0x0f,
+		CHS_SSGOFF			=	0x04,
+		CHS_VBROFF			=	0x08,
+		CHS_ALLOFF			=	0x0f,
+		CHS_PROTECT			=	0x40,
 		CHS_EOT				=	0x80
 	} ChannelState;
 
 	virtual void loadData(uint8 *data);
 	virtual void processEvents();
 	virtual void processFrequency();
-	bool processControlEvent(uint8 cmd);
-	void writeReg(uint8 regAdress, uint8 value);
+	virtual bool processControlEvent(uint8 cmd);
 
 	virtual void keyOn();
-	virtual void keyOff();	
-	
+	void keyOff();
+
 	void setOutputLevel();
-	void fadeStep();
+	virtual void fadeStep();
 	void reset();
 
-	void updateEnv();
-	void generateOutput(int16 &leftSample, int16 &rightSample, int *del, int *feed);
-
-	bool _enableLeft;
-	bool _enableRight;
-	bool _updateEnvelopes;
-	const uint8 _idFlag;
-	int _feedbuf[3];
+	const uint8 _idFlag;	
 
 protected:
+	void setupVibrato();
+	bool processVibrato();
+
 	bool control_dummy(uint8 para);
 	bool control_f0_setPatch(uint8 para);
 	bool control_f1_presetOutputLevel(uint8 para);
@@ -1374,52 +1372,47 @@ protected:
 	bool control_f4_setOutputLevel(uint8 para);
 	bool control_f5_setTempo(uint8 para);
 	bool control_f6_repeatSection(uint8 para);
-	bool control_f7_setupPitchWheel(uint8 para);
-	bool control_f8_togglePitchWheel(uint8 para);
+	bool control_f7_setupVibrato(uint8 para);
+	bool control_f8_toggleVibrato(uint8 para);
 	bool control_fa_writeReg(uint8 para);
-	bool control_fb_incOutLevel(uint8 para);
-	bool control_fc_decOutLevel(uint8 para);
+	virtual bool control_fb_incOutLevel(uint8 para);
+	virtual bool control_fc_decOutLevel(uint8 para);
 	bool control_fd_jump(uint8 para);
-	bool control_ff_endOfTrack(uint8 para);
-
-	bool control_f0_setPatchSSG(uint8 para);
-	bool control_f1_setTotalLevel(uint8 para);
-	bool control_f4_setAlgorithm(uint8 para);
-	bool control_f9_unkSSG(uint8 para);
-	bool control_fb_incOutLevelSSG(uint8 para);
-	bool control_fc_decOutLevelSSG(uint8 para);
-	bool control_ff_endOfTrackSSG(uint8 para);
+	virtual bool control_ff_endOfTrack(uint8 para);
 
 	uint8 _ticksLeft;
 	uint8 _algorithm;
-	uint8 _instrID;
+	uint8 _instr;
 	uint8 _totalLevel;
 	uint8 _frqBlockMSB;
 	int8 _frqLSB;
 	uint8 _keyOffTime;
-	bool _protect;
+	bool _hold;
 	uint8 *_dataPtr;
-	uint8 _ptchWhlInitDelayLo;
-	uint8 _ptchWhlInitDelayHi;
-	int16 _ptchWhlModInitVal;
-	uint8 _ptchWhlDuration;
-	uint8 _ptchWhlCurDelay;
-	int16 _ptchWhlModCurVal;
-	uint8 _ptchWhlDurLeft;
-	uint16 frequency;
+	uint8 _vbrInitDelayHi;
+	uint8 _vbrInitDelayLo;
+	int16 _vbrModInitVal;
+	uint8 _vbrDuration;
+	uint8 _vbrCurDelay;
+	int16 _vbrModCurVal;
+	uint8 _vbrDurLeft;
+	uint16 _frequency;
+	uint8 _block;
 	uint8 _regOffset;
 	uint8 _flags;
-	uint8 _ssg1;
-	uint8 _ssg2;
+	uint8 _ssgTl;
+	uint8 _ssgStep;
+	uint8 _ssgTicksLeft;
+	uint8 _ssgTargetLvl;
+	uint8 _ssgStartLvl;
 
 	const uint8 _chanNum;
 	const uint8 _keyNum;
 	const uint8 _part;
 
 	TownsPC98_OpnDriver *_drv;
-	TownsPC98_OpnOperator **_opr;
-	uint16 _frqTemp;
 
+	typedef bool (TownsPC98_OpnChannel::*ControlEventFunc)(uint8 para);
 	const ControlEventFunc *controlEvents;
 };
 
@@ -1427,24 +1420,169 @@ class TownsPC98_OpnChannelSSG : public TownsPC98_OpnChannel {
 public:
 	TownsPC98_OpnChannelSSG(TownsPC98_OpnDriver *driver, uint8 regOffs,
 		uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id);
-	~TownsPC98_OpnChannelSSG() {}
+	virtual ~TownsPC98_OpnChannelSSG() {}
 	void init();
 
+	virtual void loadData(uint8 *data);
 	void processEvents();
 	void processFrequency();
+	bool processControlEvent(uint8 cmd);
 
 	void keyOn();
-	void keyOff();
-	void loadData(uint8 *data);
+	void nextShape();
 
-private:
-	void opn_SSG_UNK(uint8 a);
+	void protect();
+	void restore();
+
+	void fadeStep();
+
+protected:
+	void setOutputLevel(uint8 lvl);
+
+	bool control_f0_setInstr(uint8 para);
+	bool control_f1_setTotalLevel(uint8 para);
+	bool control_f4_setAlgorithm(uint8 para);
+	bool control_f9_loadCustomPatch(uint8 para);
+	bool control_fb_incOutLevel(uint8 para);
+	bool control_fc_decOutLevel(uint8 para);
+	bool control_ff_endOfTrack(uint8 para);
+
+	typedef bool (TownsPC98_OpnChannelSSG::*ControlEventFunc)(uint8 para);
+	const ControlEventFunc *controlEvents;
 };
 
+class TownsPC98_OpnSfxChannel : public TownsPC98_OpnChannelSSG {
+public:
+	TownsPC98_OpnSfxChannel(TownsPC98_OpnDriver *driver, uint8 regOffs,
+		uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id) :
+		TownsPC98_OpnChannelSSG(driver, regOffs, flgs, num, key, prt, id) {}
+	~TownsPC98_OpnSfxChannel() {}
 
-class TownsPC98_OpnDriver : public Audio::AudioStream {
-friend class TownsPC98_OpnChannel;
-friend class TownsPC98_OpnChannelSSG;
+	void loadData(uint8 *data);
+};
+
+class TownsPC98_OpnChannelPCM : public TownsPC98_OpnChannel {
+public:
+	TownsPC98_OpnChannelPCM(TownsPC98_OpnDriver *driver, uint8 regOffs,
+		uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id);
+	~TownsPC98_OpnChannelPCM() {}
+	void init();
+
+	void loadData(uint8 *data);
+	void processEvents();
+	bool processControlEvent(uint8 cmd);
+
+private:
+	bool control_f1_prcStart(uint8 para);
+	bool control_ff_endOfTrack(uint8 para);
+
+	typedef bool (TownsPC98_OpnChannelPCM::*ControlEventFunc)(uint8 para);
+	const ControlEventFunc *controlEvents;
+};
+
+class TownsPC98_OpnSquareSineSource {
+public:
+	TownsPC98_OpnSquareSineSource(const uint32 timerbase);
+	~TownsPC98_OpnSquareSineSource();
+
+	void init(const int *rsTable, const int *rseTable);
+	void reset();
+	void writeReg(uint8 address, uint8 value, bool force = false);
+
+	void nextTick(int32 *buffer, uint32 bufferSize);
+
+	uint8 chanEnable() { return _chanEnable; }
+private:
+	void updatesRegs();
+
+	uint8 _updateRequestBuf[32];
+	int _updateRequest;
+	int _rand;
+
+	int8 _evpTimer;
+	uint32 _pReslt;
+	uint8 _attack;
+
+	bool _evpUpdate, _cont;
+
+	int _evpUpdateCnt;
+	uint8 _outN;
+	int _nTick;
+
+	int32 *_tlTable;
+	int32 *_tleTable;
+
+	const uint32 _tickLength;
+	uint32 _timer;
+
+	struct Channel {
+		int tick;
+		uint8 smp;
+		uint8 out;
+
+		uint8 frqL;
+		uint8 frqH;
+		uint8 vol;
+	} _channels[3];
+
+	uint8 _noiseGenerator;
+	uint8 _chanEnable;
+
+	uint8 *const *_reg;
+
+	bool _ready;
+};
+
+class TownsPC98_OpnPercussionSource {
+public:
+	TownsPC98_OpnPercussionSource(const uint32 timerbase);
+	~TownsPC98_OpnPercussionSource() {}
+
+	void init(const uint8 *instrData = 0);
+	void reset();
+	void writeReg(uint8 address, uint8 value);
+
+	void nextTick(int32 *buffer, uint32 bufferSize);
+
+private:
+	struct RhtChannel {
+		const uint8 *data;
+
+		const uint8 *start;
+		const uint8 *end;
+		const uint8 *pos;
+		uint32 size;
+		bool active;
+		uint8 level;
+
+		int8 decState;
+		uint8 decStep;
+
+		int16 samples[2];
+		int out;
+
+		uint8 startPosH;
+		uint8 startPosL;
+		uint8 endPosH;
+		uint8 endPosL;
+	};
+
+	void recalcOuput(RhtChannel *ins);
+	void advanceInput(RhtChannel *ins);
+
+	RhtChannel _rhChan[6];
+
+	uint8 _totalLevel;
+
+	const uint32 _tickLength;
+	uint32 _timer;
+
+	uint8 *const *_reg;
+
+	bool _ready;
+};
+
+class TownsPC98_OpnCore : public Audio::AudioStream {
 public:
 	enum OpnType {
 		OD_TOWNS,
@@ -1452,21 +1590,13 @@ public:
 		OD_TYPE86
 	};
 
-	TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type);
-	~TownsPC98_OpnDriver();
+	TownsPC98_OpnCore(Audio::Mixer *mixer, OpnType type);
+	virtual ~TownsPC98_OpnCore();
 
-	bool init();
-	void loadData(uint8 *data, bool loadPaused = false);
-	void reset();
-	void fadeOut();
-	
-	void pause() { _playing = false; }
-	void cont() { _playing = true; }
+	virtual bool init();
+	virtual void reset();
 
-	void callback();
-	void nextTick(int16 *buffer, uint32 bufferSize);
-
-	bool looping() { return _looping == _updateChannelsFlag ? true : false; }
+	void writeReg(uint8 part, uint8 regAddress, uint8 value);
 
 	// AudioStream interface
 	int inline readBuffer(int16 *buffer, const int numSamples);
@@ -1477,24 +1607,34 @@ public:
 protected:
 	void generateTables();
 
-	TownsPC98_OpnChannel **_channels;
-	TownsPC98_OpnChannelSSG **_ssgChannels;
-	//TownsPC98_OpnChannel *_adpcmChannel;
+	void toggleRegProtection(bool prot) { _regProtectionFlag = prot; }
+	uint8 readSSGStatus() { return _ssg->chanEnable(); }
 
-	void setTempo(uint8 tempo);
+	virtual void timerCallbackA() = 0;
+	virtual void timerCallbackB() = 0;
 
-	void lock() { _mutex.lock(); }
-	void unlock() { _mutex.unlock(); }
+	const int _numChan;
+	const int _numSSG;
+	const bool _hasPercussion;
 
-	Audio::Mixer *_mixer;
-	Common::Mutex _mutex;
-	Audio::SoundHandle _soundHandle;
+private:
+	void nextTick(int32 *buffer, uint32 bufferSize);
+	void generateOutput(int32 &leftSample, int32 &rightSample, int32 *del, int32 *feed);
+	
+	struct ChanInternal {
+		uint16 frqTemp;
+		bool enableLeft;
+		bool enableRight;
+		bool updateEnvelopeParameters;
+		int32 feedbuf[3];
+		uint8 algorithm;
+		TownsPC98_OpnOperator **opr;
+	};
 
-	const uint8 *_opnCarrier;
-	const uint8 *_opnFreqTable;
-	const uint8 *_opnFxCmdLen;
-	const uint8 *_opnLvlPresets;
-
+	TownsPC98_OpnSquareSineSource *_ssg;
+	TownsPC98_OpnPercussionSource *_prc;
+	ChanInternal *_chanInternal;
+		
 	uint8 *_oprRates;
 	uint8 *_oprRateshift;
 	uint8 *_oprAttackDecay;
@@ -1503,34 +1643,112 @@ protected:
 	int32 *_oprLevelOut;
 	int32 *_oprDetune;
 
-	uint8 *_trackData;
-	uint8 *_patches;
+	bool _regProtectionFlag;
 
-	uint8 _cbCounter;
-	uint8 _updateChannelsFlag;
-	uint8 _finishedChannelsFlag;
-	uint16 _tempo;
-	bool _playing;
-	bool _fading;
-	uint8 _looping;
-	uint32 _tickCounter;
+	typedef void (TownsPC98_OpnCore::*OpnTimerProc)();
 
-	bool _updateEnvelopes;
-	int _ssgFlag;
+	struct OpnTimer {
+		bool enabled;
+		uint16 value;
+		
+		int32 smpTillCb;
+		uint32 smpTillCbRem;
+		int32 smpPerCb;
+		uint32 smpPerCbRem;
 
-	int32 _samplesTillCallback;
-	int32 _samplesTillCallbackRemainder;
-	int32 _samplesPerCallback;
-	int32 _samplesPerCallbackRemainder;
+		OpnTimerProc cb;
+	};
 
-	const int _numChan;
-	const int _numSSG;
-	const bool _hasADPCM;
-	const bool _hasStereo;
+	OpnTimer _timers[2];
 
-	double _baserate;
-	static const uint8 _drvTables[];
+	const float _baserate;
+	uint32 _timerbase;
+
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
+
+	static const uint8 _percussionData[];
 	static const uint32 _adtStat[];
+	static const uint8 _detSrc[];
+	static const int _ssgTables[];
+
+	bool _ready;
+};
+
+class TownsPC98_OpnDriver : public TownsPC98_OpnCore {
+friend class TownsPC98_OpnChannel;
+friend class TownsPC98_OpnChannelSSG;
+friend class TownsPC98_OpnSfxChannel;
+friend class TownsPC98_OpnChannelPCM;
+public:
+	TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type);
+	~TownsPC98_OpnDriver();
+
+	void loadMusicData(uint8 *data, bool loadPaused = false);
+	void loadSoundEffectData(uint8 *data, uint8 trackNum);
+	bool init();
+	void reset();
+
+	void fadeStep();
+
+	void pause() { _musicPlaying = false; }
+	void cont() { _musicPlaying = true; }
+
+	void timerCallbackB();
+	void timerCallbackA();
+	
+	bool looping() { return _looping == _updateChannelsFlag ? true : false; }
+	bool musicPlaying() { return _musicPlaying; }
+
+protected:
+	void startSoundEffect();
+
+	void setMusicTempo(uint8 tempo);
+	void setSfxTempo(uint16 tempo);
+
+	void lock() { _mutex.lock(); }
+	void unlock() { _mutex.unlock(); }
+
+	TownsPC98_OpnChannel **_channels;
+	TownsPC98_OpnChannelSSG **_ssgChannels;
+	TownsPC98_OpnSfxChannel **_sfxChannels;
+	TownsPC98_OpnChannelPCM *_rhythmChannel;
+
+	Common::Mutex _mutex;
+
+	const uint8 *_opnCarrier;
+	const uint8 *_opnFreqTable;
+	const uint8 *_opnFreqTableSSG;
+	const uint8 *_opnFxCmdLen;
+	const uint8 *_opnLvlPresets;
+
+	uint8 *_musicBuffer;
+	uint8 *_sfxBuffer;
+	uint8 *_trackPtr;
+	uint8 *_patches;
+	uint8 *_ssgPatches;
+
+	uint8 _updateChannelsFlag;
+	uint8 _updateSSGFlag;
+	uint8 _updateRhythmFlag;
+	uint8 _updateSfxFlag;
+	uint8 _finishedChannelsFlag;
+	uint8 _finishedSSGFlag;
+	uint8 _finishedRhythmFlag;
+	uint8 _finishedSfxFlag;
+
+	bool _musicPlaying;
+	bool _sfxPlaying;
+	uint8 _fading;
+	uint8 _looping;
+	uint32 _musicTickCounter;
+
+	int _sfxOffs;
+	uint8 *_sfxData;
+	uint16 _sfxOffsets[2];
+
+	static const uint8 _drvTables[];
+	
 	bool _ready;
 };
 
@@ -1538,33 +1756,20 @@ TownsPC98_OpnChannel::TownsPC98_OpnChannel(TownsPC98_OpnDriver *driver, uint8 re
 	uint8 key, uint8 prt, uint8 id) : _drv(driver), _regOffset(regOffs), _flags(flgs), _chanNum(num), _keyNum(key),
 	_part(prt), _idFlag(id) {
 
-	_ticksLeft = _algorithm = _instrID = _totalLevel = _frqBlockMSB = _keyOffTime = _ssg1 = _ssg2 = 0;
-	_ptchWhlInitDelayLo = _ptchWhlInitDelayHi = _ptchWhlDuration = _ptchWhlCurDelay = _ptchWhlDurLeft = 0;
+	_ticksLeft = _algorithm = _instr = _totalLevel = _frqBlockMSB = _keyOffTime = 0;
+	_ssgStartLvl = _ssgTl = _ssgStep = _ssgTicksLeft = _ssgTargetLvl = _block = 0;
+	_vbrInitDelayHi = _vbrInitDelayLo = _vbrDuration = _vbrCurDelay = _vbrDurLeft = 0;
 	_frqLSB = 0;
-	_protect = _updateEnvelopes = false;
-	_enableLeft = _enableRight = true;
-	_dataPtr = 0;		
-	_ptchWhlModInitVal = _ptchWhlModCurVal = 0;
-	frequency = _frqTemp = 0;
-	memset(&_feedbuf, 0, sizeof(int) * 3);
-	_opr = 0;
+	_hold = false;
+	_dataPtr = 0;
+	_vbrModInitVal = _vbrModCurVal = 0;
+	_frequency = 0;
 }
 
 TownsPC98_OpnChannel::~TownsPC98_OpnChannel() {
-	if (_opr) {
-		for (int i = 0; i < 4; i++)
-			delete _opr[i];
-		delete [] _opr;
-	}
 }
 
 void TownsPC98_OpnChannel::init() {
-	
-	_opr = new TownsPC98_OpnOperator*[4];
-	for (int i = 0; i < 4; i++)
-		_opr[i] = new TownsPC98_OpnOperator(_drv->_baserate, _drv->_oprRates, _drv->_oprRateshift,
-			_drv->_oprAttackDecay, _drv->_oprFrq, _drv->_oprSinTbl, _drv->_oprLevelOut, _drv->_oprDetune);
-
 	#define Control(x)	&TownsPC98_OpnChannel::control_##x
 	static const ControlEventFunc ctrlEvents[] = {
 		Control(f0_setPatch),
@@ -1574,8 +1779,8 @@ void TownsPC98_OpnChannel::init() {
 		Control(f4_setOutputLevel),
 		Control(f5_setTempo),
 		Control(f6_repeatSection),
-		Control(f7_setupPitchWheel),
-		Control(f8_togglePitchWheel),
+		Control(f7_setupVibrato),
+		Control(f8_toggleVibrato),
 		Control(dummy),
 		Control(fa_writeReg),
 		Control(fb_incOutLevel),
@@ -1592,20 +1797,24 @@ void TownsPC98_OpnChannel::init() {
 void TownsPC98_OpnChannel::keyOff() {
 	// all operators off
 	uint8 value = _keyNum & 0x0f;
-	uint8 regAdress = 0x28;
-	writeReg(regAdress, value);
+	if (_part)
+		value |= 4;
+	uint8 regAddress = 0x28;
+	_drv->writeReg(0, regAddress, value);
 	_flags |= CHS_KEYOFF;
 }
 
 void TownsPC98_OpnChannel::keyOn() {
 	// all operators on
 	uint8 value = _keyNum | 0xf0;
-	uint8 regAdress = 0x28;
-	writeReg(regAdress, value);
+	if (_part)
+		value |= 4;
+	uint8 regAddress = 0x28;
+	_drv->writeReg(0, regAddress, value);
 }
 
 void TownsPC98_OpnChannel::loadData(uint8 *data) {
-	_flags = (_flags & ~CHS_EOT) | CHS_ALL_BUT_EOT;
+	_flags = (_flags & ~CHS_EOT) | CHS_ALLOFF;
 	_ticksLeft = 1;
 	_dataPtr = data;
 	_totalLevel = 0x7F;
@@ -1645,13 +1854,13 @@ void TownsPC98_OpnChannel::processEvents() {
 	if (_flags & CHS_EOT)
 		return;
 
-	if (_protect == false && _ticksLeft == _keyOffTime)
+	if (!_hold && _ticksLeft == _keyOffTime)
 		keyOff();
 
 	if (--_ticksLeft)
 		return;
 
-	if (_protect == false)
+	if (!_hold)
 		keyOff();
 
 	uint8 cmd = 0;
@@ -1669,14 +1878,14 @@ void TownsPC98_OpnChannel::processEvents() {
 
 	if (cmd == 0x80) {
 		keyOff();
-		_protect = false;
+		_hold = false;
 	} else {
 		keyOn();
 
-		if (_protect == false || cmd != _frqBlockMSB)
+		if (_hold == false || cmd != _frqBlockMSB)
 			_flags |= CHS_RECALCFREQ;
-	
-		_protect = (para & 0x80) ? true : false;
+
+		_hold = (para & 0x80) ? true : false;
 		_frqBlockMSB = cmd;
 	}
 
@@ -1685,37 +1894,47 @@ void TownsPC98_OpnChannel::processEvents() {
 
 void TownsPC98_OpnChannel::processFrequency() {
 	if (_flags & CHS_RECALCFREQ) {
-		uint8 block = (_frqBlockMSB & 0x70) >> 1;
-		uint16 bfreq = ((const uint16*)_drv->_opnFreqTable)[_frqBlockMSB & 0x0f];
-		frequency = (bfreq + _frqLSB) | (block << 8);
+		
+		_frequency = (((const uint16*)_drv->_opnFreqTable)[_frqBlockMSB & 0x0f] + _frqLSB) | (((_frqBlockMSB & 0x70) >> 1) << 8);
 
-		writeReg(_regOffset + 0xa4, (frequency >> 8));
-		writeReg(_regOffset + 0xa0, (frequency & 0xff));
+		_drv->writeReg(_part, _regOffset + 0xa4, (_frequency >> 8));
+		_drv->writeReg(_part, _regOffset + 0xa0, (_frequency & 0xff));
 
-		_ptchWhlCurDelay = _ptchWhlInitDelayHi;
-		if (_flags & CHS_KEYOFF) {
-			_ptchWhlModCurVal = _ptchWhlModInitVal;
-			_ptchWhlCurDelay += _ptchWhlInitDelayLo;
-		}
-
-		_ptchWhlDurLeft = (_ptchWhlDuration >> 1);
-		_flags &= ~(CHS_KEYOFF | CHS_RECALCFREQ);
+		setupVibrato();
 	}
 
-	if (!(_flags & CHS_PITCHWHEELOFF)) {
-		if (--_ptchWhlCurDelay)
+	if (!(_flags & CHS_VBROFF)) {
+		if (!processVibrato())
 			return;
-		_ptchWhlCurDelay = _ptchWhlInitDelayHi;
-		frequency += _ptchWhlModCurVal;
 
-		writeReg(_regOffset + 0xa4, (frequency >> 8));
-		writeReg(_regOffset + 0xa0, (frequency & 0xff));
-
-		if(!--_ptchWhlDurLeft) {
-			_ptchWhlDurLeft = _ptchWhlDuration;
-			_ptchWhlModCurVal = -_ptchWhlModCurVal;
-		}
+		_drv->writeReg(_part, _regOffset + 0xa4, (_frequency >> 8));
+		_drv->writeReg(_part, _regOffset + 0xa0, (_frequency & 0xff));
 	}
+}
+
+void TownsPC98_OpnChannel::setupVibrato() {
+	_vbrCurDelay = _vbrInitDelayHi;
+	if (_flags & CHS_KEYOFF) {
+		_vbrModCurVal = _vbrModInitVal;
+		_vbrCurDelay += _vbrInitDelayLo;
+	}
+	_vbrDurLeft = (_vbrDuration >> 1);
+	_flags &= ~(CHS_KEYOFF | CHS_RECALCFREQ);
+}
+
+bool TownsPC98_OpnChannel::processVibrato() {
+	if (--_vbrCurDelay)
+		return false;
+
+	_vbrCurDelay = _vbrInitDelayHi;
+	_frequency += _vbrModCurVal;
+
+	if(!--_vbrDurLeft) {
+		_vbrDurLeft = _vbrDuration;
+		_vbrModCurVal = -_vbrModCurVal;
+	}
+
+	return true;
 }
 
 bool TownsPC98_OpnChannel::processControlEvent(uint8 cmd) {
@@ -1729,7 +1948,7 @@ void TownsPC98_OpnChannel::setOutputLevel() {
 
 	for (int i = 0; i < 4; i++) {
 		if (outopr & 1)
-			writeReg(reg, _totalLevel);
+			_drv->writeReg(_part, reg, _totalLevel);
 		outopr >>= 1;
 		reg += 4;
 	}
@@ -1743,254 +1962,59 @@ void TownsPC98_OpnChannel::fadeStep() {
 }
 
 void TownsPC98_OpnChannel::reset() {
-	for (int i = 0; i < 4; i++)
-		_opr[i]->reset();
+	_hold = false;
+	_keyOffTime = 0;
+	_ticksLeft = 1;
 
-	_updateEnvelopes = false;
-	_enableLeft = _enableRight = true;
-	memset(&_feedbuf, 0, sizeof(int) * 3);
-}
-
-void TownsPC98_OpnChannel::updateEnv() {
-	for (int i = 0; i < 4 ; i++)
-		_opr[i]->updatePhaseIncrement();
-}
-
-void TownsPC98_OpnChannel::generateOutput(int16 &leftSample, int16 &rightSample, int *del, int *feed) {
-	int phbuf1, phbuf2, output;
-	phbuf1 = phbuf2 = output = 0;
+	_flags = (_flags & ~CHS_EOT) | CHS_ALLOFF;
 	
-	switch (_algorithm) {
-		case 0:
-			_opr[0]->generateOutput(0, feed, phbuf1);
-			_opr[2]->generateOutput(*del, 0, phbuf2);
-			*del = 0;
-			_opr[1]->generateOutput(phbuf1, 0, *del);
-			_opr[3]->generateOutput(phbuf2, 0, output);
-			break;
-		case 1:
-			_opr[0]->generateOutput(0, feed, phbuf1);
-			_opr[2]->generateOutput(*del, 0, phbuf2);
-			_opr[1]->generateOutput(0, 0, phbuf1);					
-			_opr[3]->generateOutput(phbuf2, 0, output);
-			*del = phbuf1;
-			break;
-		case 2:
-			_opr[0]->generateOutput(0, feed, phbuf2);
-			_opr[2]->generateOutput(*del, 0, phbuf2);
-			_opr[1]->generateOutput(0, 0, phbuf1);
-			_opr[3]->generateOutput(phbuf2, 0, output);
-			*del = phbuf1;
-			break;
-		case 3:
-			_opr[0]->generateOutput(0, feed, phbuf2);
-			_opr[2]->generateOutput(0, 0, *del);
-			_opr[1]->generateOutput(phbuf2, 0, phbuf1);
-			_opr[3]->generateOutput(*del, 0, output);
-			*del = phbuf1;
-			break;
-		case 4:
-			_opr[0]->generateOutput(0, feed, phbuf1);
-			_opr[2]->generateOutput(0, 0, phbuf2);
-			_opr[1]->generateOutput(phbuf1, 0, output);					
-			_opr[3]->generateOutput(phbuf2, 0, output);
-			*del = 0;
-			break;
-		case 5:
-			*del = feed[1];
-			_opr[0]->generateOutput(-1, feed, phbuf1);
-			_opr[2]->generateOutput(*del, 0, output);
-			_opr[1]->generateOutput(*del, 0, output);
-			_opr[3]->generateOutput(*del, 0, output);
-			break;
-		case 6:
-			_opr[0]->generateOutput(0, feed, phbuf1);
-			_opr[2]->generateOutput(0, 0, output);
-			_opr[1]->generateOutput(phbuf1, 0, output);
-			_opr[3]->generateOutput(0, 0, output);
-			*del = 0;
-			break;
-		case 7:
-			_opr[0]->generateOutput(0, feed, output);
-			_opr[2]->generateOutput(0, 0, output);
-			_opr[1]->generateOutput(0, 0, output);
-			_opr[3]->generateOutput(0, 0, output);
-			*del = 0;
-			break;
-		};
+	_totalLevel = 0;
+	_algorithm = 0;
+	_flags = CHS_EOT;
+	_algorithm = 0;
 
-	if (_enableLeft) {
-		int l = output + leftSample;
-		if (l > 32767)
-			l = 32767;
-		if (l < -32767)
-			l = -32767;
-		leftSample = (int16) l;
-	}
+	_block = 0;
+	_frequency = 0;
+	_frqBlockMSB = 0;
+	_frqLSB = 0;
 
-	if (_enableRight) {
-		int r = output + rightSample;
-		if (r > 32767)
-			r = 32767;
-		if (r < -32767)
-			r = -32767;
-		rightSample = (int16) r;
-	}
-}
-
-void TownsPC98_OpnChannel::writeReg(uint8 regAdress, uint8 value) {
-	uint8 h = regAdress & 0xf0;
-	uint8 l = (regAdress & 0x0f);
-	static const uint8 oprOrdr[] = { 0, 2, 1, 3 };
-	uint8 o = oprOrdr[(l - _regOffset) >> 2];
+	_ssgTl = 0;
+	_ssgStartLvl = 0;
+	_ssgTargetLvl = 0;
+	_ssgStep = 0;
+	_ssgTicksLeft = 0;
 	
-	switch (h) {
-		case 0x00:
-			// ssg
-			warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAdress);
-			break;
-		case 0x10:
-			// adpcm
-			warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAdress);
-			break;
-		case 0x20:
-			if (l == 8) {
-				// Key on/off
-				for (int i = 0; i < 4; i++) {
-					if ((value >> (4 + i)) & 1)
-						_opr[i]->keyOn();
-					else
-						_opr[i]->keyOff();
-				}
-			} else if (l == 2) {
-				// LFO
-				warning("TownsPC98_OpnDriver: TRYING TO USE LFO (NOT SUPPORTED)");
-			} else if (l == 7) {
-				// Timers; Ch 3/6 special mode
-				warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE (NOT SUPPORTED)");
-			} else if (l == 4 || l == 5) {
-				// Timer A
-				warning("TownsPC98_OpnDriver: TRYING TO USE TIMER_A (NOT SUPPORTED)");
-			} else if (l == 6) {
-				// Timer B
-				warning("TownsPC98_OpnDriver: TRYING TO USE TIMER_B (NOT SUPPORTED)");
-			} else if (l == 10 || l == 11) {
-				// DAC
-				warning("TownsPC98_OpnDriver: TRYING TO USE DAC (NOT SUPPORTED)");
-			}
-			break;
-
-		case 0x30:
-			// detune, multiple
-			_opr[o]->detune((value >> 4) & 7);
-			_opr[o]->multiple(value & 0x0f);
-			_updateEnvelopes = true;
-			break;
-
-		case 0x40:
-			// total level
-			_opr[o]->totalLevel(value & 0x7f);
-			break;
-
-		case 0x50:
-			// rate scaling, attack rate
-			_opr[o]->attackRate(value & 0x1f);
-			if (_opr[o]->scaleRate(value >> 6))
-				_updateEnvelopes = true;
-			break;
-
-		case 0x60:
-			// first decay rate, amplitude modulation
-			_opr[o]->decayRate(value & 0x1f);
-			if (value & 0x80)
-				warning("TownsPC98_OpnDriver: TRYING TO USE AMP MODULATION (NOT SUPPORTED)");
-
-			break;
-
-		case 0x70:
-			// secondary decay rate
-			_opr[o]->sustainRate(value & 0x1f);
-			break;
-
-		case 0x80:
-			// secondary amplitude, release rate;
-			_opr[o]->sustainLevel(value >> 4);
-			_opr[o]->releaseRate(value & 0x0f);
-			break;
-
-		case 0x90:
-			// ssg
-			warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAdress);
-			break;
-
-		case 0xa0:
-			// frequency
-			l -= _regOffset;
-			if (l == 0) {
-				_frqTemp = (_frqTemp & 0xff00) | value;
-				_updateEnvelopes = true;
-				for (int i = 0; i < 4; i++)
-					_opr[i]->frequency(_frqTemp);
-			} else if (l == 4) {
-				_frqTemp = (_frqTemp & 0xff) | (value << 8);
-			} else if (l == 8) {
-				// Ch 3/6 special mode frq
-				warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE FREQ (NOT SUPPORTED)");
-			} else if (l == 12) {
-				// Ch 3/6 special mode frq
-				warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE FREQ (NOT SUPPORTED)");
-			}
-			break;
-
-		case 0xb0:
-			l -= _regOffset;
-			if (l == 0) {
-				// feedback, _algorithm
-				_opr[0]->feedbackLevel((value >> 3) & 7);
-				_opr[1]->feedbackLevel(0);
-				_opr[2]->feedbackLevel(0);
-				_opr[3]->feedbackLevel(0);
-			} else if (l == 4) {
-				// stereo, LFO sensitivity
-				_enableLeft = value & 0x80 ? true : false;
-				_enableRight = value & 0x40 ? true : false;
-				uint8 ams = (value & 0x3F) >> 3;
-				if (ams)
-					warning("TownsPC98_OpnDriver: TRYING TO USE AMP MODULATION SENSITIVITY (NOT SUPPORTED)");
-				uint8 fms = value & 3;
-				if (fms)
-					warning("TownsPC98_OpnDriver: TRYING TO USE FREQ MODULATION SENSITIVITY (NOT SUPPORTED)");
-			}
-			break;
-
-		default:
-			warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAdress);
-			break;
-	}
+	_vbrInitDelayHi = 0;
+	_vbrInitDelayLo = 0;
+	_vbrModInitVal = 0;
+	_vbrDuration = 0;
+	_vbrCurDelay = 0;
+	_vbrModCurVal = 0;
+	_vbrDurLeft = 0;
 }
 
 bool TownsPC98_OpnChannel::control_f0_setPatch(uint8 para) {
-	_instrID = para;
+	_instr = para;
 	uint8 reg = _regOffset + 0x80;
 
 	for (int i = 0; i < 4; i++) {
 		// set release rate for each operator
-		writeReg(reg, 0x0f);
+		_drv->writeReg(_part, reg, 0x0f);
 		reg += 4;
 	}
 
-	const uint8 *tptr = _drv->_patches + ((uint32)_instrID << 5);
+	const uint8 *tptr = _drv->_patches + ((uint32)_instr << 5);
 	reg = _regOffset + 0x30;
 
 	// write registers 0x30 to 0x8f
 	for (int i = 0; i < 6; i++) {
-		writeReg(reg, tptr[0]);
+		_drv->writeReg(_part, reg, tptr[0]);
 		reg += 4;
-		writeReg(reg, tptr[2]);
+		_drv->writeReg(_part, reg, tptr[2]);
 		reg += 4;
-		writeReg(reg, tptr[1]);
+		_drv->writeReg(_part, reg, tptr[1]);
 		reg += 4;
-		writeReg(reg, tptr[3]);
+		_drv->writeReg(_part, reg, tptr[3]);
 		reg += 4;
 		tptr += 4;
 	}
@@ -1998,7 +2022,7 @@ bool TownsPC98_OpnChannel::control_f0_setPatch(uint8 para) {
 	reg = _regOffset + 0xB0;
 	_algorithm = tptr[0] & 7;
 	// set feedback and algorithm
-	writeReg(reg, tptr[0]);
+	_drv->writeReg(_part, reg, tptr[0]);
 
 	setOutputLevel();
 	return true;
@@ -2033,7 +2057,7 @@ bool TownsPC98_OpnChannel::control_f4_setOutputLevel(uint8 para) {
 }
 
 bool TownsPC98_OpnChannel::control_f5_setTempo(uint8 para) {
-	_drv->setTempo(para);
+	_drv->setMusicTempo(para);
 	return true;
 }
 
@@ -2043,7 +2067,7 @@ bool TownsPC98_OpnChannel::control_f6_repeatSection(uint8 para) {
 
 	if (*_dataPtr) {
 		// repeat section until counter has reached zero
-		_dataPtr = _drv->_trackData + READ_LE_UINT16(_dataPtr + 2);
+		_dataPtr = _drv->_trackPtr + READ_LE_UINT16(_dataPtr + 2);
 	} else {
 		// reset counter, advance to next section
 		_dataPtr[0] = _dataPtr[1];
@@ -2052,35 +2076,36 @@ bool TownsPC98_OpnChannel::control_f6_repeatSection(uint8 para) {
 	return true;
 }
 
-bool TownsPC98_OpnChannel::control_f7_setupPitchWheel(uint8 para) {
-	_ptchWhlInitDelayLo = _dataPtr[0];
-	_ptchWhlInitDelayHi = para;
-	_ptchWhlModInitVal = (int16) READ_LE_UINT16(_dataPtr + 1);
-	_ptchWhlDuration = _dataPtr[3];
+bool TownsPC98_OpnChannel::control_f7_setupVibrato(uint8 para) {
+	_vbrInitDelayHi = _dataPtr[0];
+	_vbrInitDelayLo = para;
+	_vbrModInitVal = (int16) READ_LE_UINT16(_dataPtr + 1);
+	_vbrDuration = _dataPtr[3];
 	_dataPtr += 4;
-	_flags = (_flags & ~CHS_PITCHWHEELOFF) | CHS_KEYOFF | CHS_RECALCFREQ;
+	_flags = (_flags & ~CHS_VBROFF) | CHS_KEYOFF | CHS_RECALCFREQ;
 	return true;
 }
 
-bool TownsPC98_OpnChannel::control_f8_togglePitchWheel(uint8 para) {
+bool TownsPC98_OpnChannel::control_f8_toggleVibrato(uint8 para) {
 	if (para == 0x10) {
 		if (*_dataPtr++) {
-			_flags = (_flags & ~CHS_PITCHWHEELOFF) | CHS_KEYOFF;
+			_flags = (_flags & ~CHS_VBROFF) | CHS_KEYOFF;
 		} else {
-			_flags |= CHS_PITCHWHEELOFF;
+			_flags |= CHS_VBROFF;
 		}
 	} else {
-		//uint8 skipChannels = para / 36;
-		//uint8 entry = para % 36;
-		//TownsPC98_OpnDriver::TownsPC98_OpnChannel *t = &chan[skipChannels];
-		////// NOT IMPLEMENTED
-		//t->unnamedEntries[entry] = *_dataPtr++;
+		/* NOT IMPLEMENTED
+		uint8 skipChannels = para / 36;
+		uint8 entry = para % 36;
+		TownsPC98_OpnDriver::TownsPC98_OpnChannel *t = &chan[skipChannels];
+		
+		t->unnamedEntries[entry] = *_dataPtr++;*/
 	}
 	return true;
 }
 
 bool TownsPC98_OpnChannel::control_fa_writeReg(uint8 para) {
-	writeReg(para, *_dataPtr++);
+	_drv->writeReg(_part, para, *_dataPtr++);
 	return true;
 }
 
@@ -2113,7 +2138,7 @@ bool TownsPC98_OpnChannel::control_fc_decOutLevel(uint8 para) {
 }
 
 bool TownsPC98_OpnChannel::control_fd_jump(uint8 para) {
-	uint8 *tmp = _drv->_trackData + READ_LE_UINT16(_dataPtr - 1);
+	uint8 *tmp = _drv->_trackPtr + READ_LE_UINT16(_dataPtr - 1);
 	_dataPtr = (tmp[1] == 1) ? tmp : ++_dataPtr;
 	return true;
 }
@@ -2127,7 +2152,7 @@ bool TownsPC98_OpnChannel::control_ff_endOfTrack(uint8 para) {
 	uint16 val = READ_LE_UINT16(--_dataPtr);
 	if (val) {
 		// loop
-		_dataPtr = _drv->_trackData + val;
+		_dataPtr = _drv->_trackPtr + val;
 		return true;
 	} else {
 		// quit parsing for active channel
@@ -2139,31 +2164,248 @@ bool TownsPC98_OpnChannel::control_ff_endOfTrack(uint8 para) {
 	}
 }
 
-bool TownsPC98_OpnChannel::control_f0_setPatchSSG(uint8 para) {
-	_instrID = para << 4;
+TownsPC98_OpnChannelSSG::TownsPC98_OpnChannelSSG(TownsPC98_OpnDriver *driver, uint8 regOffs,
+		uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id) :
+		TownsPC98_OpnChannel(driver, regOffs, flgs, num, key, prt, id) {
+}
+
+void TownsPC98_OpnChannelSSG::init() {
+	_algorithm = 0x80;
+
+	#define Control(x)	&TownsPC98_OpnChannelSSG::control_##x
+	static const ControlEventFunc ctrlEventsSSG[] = {
+		Control(f0_setInstr),
+		Control(f1_setTotalLevel),
+		Control(f2_setKeyOffTime),
+		Control(f3_setFreqLSB),
+		Control(f4_setAlgorithm),
+		Control(f5_setTempo),
+		Control(f6_repeatSection),
+		Control(f7_setupVibrato),
+		Control(f8_toggleVibrato),
+		Control(f9_loadCustomPatch),
+		Control(fa_writeReg),
+		Control(fb_incOutLevel),
+		Control(fc_decOutLevel),
+		Control(fd_jump),
+		Control(dummy),
+		Control(ff_endOfTrack)
+	};
+	#undef Control
+
+	controlEvents = ctrlEventsSSG;
+}
+
+void TownsPC98_OpnChannelSSG::processEvents() {
+	if (_flags & CHS_EOT)
+		return;
+
+	_drv->toggleRegProtection(_flags & CHS_PROTECT ? true : false);
+
+	if (!_hold && _ticksLeft == _keyOffTime)
+		nextShape();
+
+	if (!--_ticksLeft) {
+
+		uint8 cmd = 0;
+		bool loop = true;
+
+		while (loop) {
+			cmd = *_dataPtr++;
+			if (cmd < 0xf0)
+				loop = false;
+			else if (!processControlEvent(cmd))
+				return;
+		}
+
+		uint8 para = *_dataPtr++;
+
+		if (cmd == 0x80) {
+			nextShape();
+			_hold = false;
+		} else {
+			if (!_hold) {
+				_instr &= 0xf0;
+				_ssgStep = _drv->_ssgPatches[_instr];
+				_ssgTicksLeft = _drv->_ssgPatches[_instr + 1] & 0x7f;
+				_ssgTargetLvl = _drv->_ssgPatches[_instr + 2];
+				_ssgStartLvl = _drv->_ssgPatches[_instr + 3];
+				_flags = (_flags & ~CHS_SSGOFF) | CHS_KEYOFF;
+			}
+
+			keyOn();
+
+			if (_hold == false || cmd != _frqBlockMSB)
+				_flags |= CHS_RECALCFREQ;
+
+			_hold = (para & 0x80) ? true : false;
+			_frqBlockMSB = cmd;
+		}
+
+		_ticksLeft = para & 0x7f;
+	}
+
+	if (!(_flags & CHS_SSGOFF)) {
+		if (--_ssgTicksLeft) {
+			if (!_drv->_fading)
+				setOutputLevel(_ssgStartLvl);
+			return;
+		}
+
+		_ssgTicksLeft = _drv->_ssgPatches[_instr + 1] & 0x7f;
+
+		if (_drv->_ssgPatches[_instr + 1] & 0x80) {
+			uint8 t = _ssgStartLvl - _ssgStep;
+
+			if (_ssgStep <= _ssgStartLvl && _ssgTargetLvl < t) {
+				if (!_drv->_fading)
+					setOutputLevel(t);
+				return;
+			}
+		} else {
+			int t = _ssgStartLvl + _ssgStep;
+			uint8 p = (uint8) (t & 0xff);
+
+			if (t < 256 && _ssgTargetLvl > p) {
+				if (!_drv->_fading)
+					setOutputLevel(p);
+				return;
+			}
+		}
+
+		setOutputLevel(_ssgTargetLvl);
+		if (_ssgStartLvl && !(_instr & 8)){
+			_instr += 4;
+			_ssgStep = _drv->_ssgPatches[_instr];
+			_ssgTicksLeft = _drv->_ssgPatches[_instr + 1] & 0x7f;
+			_ssgTargetLvl = _drv->_ssgPatches[_instr + 2];
+		} else {
+			_flags |= CHS_SSGOFF;
+			setOutputLevel(0);
+		}
+	}
+}
+
+void TownsPC98_OpnChannelSSG::processFrequency() {
+	if (_algorithm & 0x40)
+		return;
+
+	if (_flags & CHS_RECALCFREQ) {
+		_block = _frqBlockMSB >> 4;
+		_frequency = ((const uint16*)_drv->_opnFreqTableSSG)[_frqBlockMSB & 0x0f] + _frqLSB;
+
+		uint16 f = _frequency >> _block;
+		_drv->writeReg(_part, _regOffset << 1, f & 0xff);
+		_drv->writeReg(_part, (_regOffset << 1) + 1, f >> 8);
+
+		setupVibrato();
+	}
+
+	if (!(_flags & (CHS_EOT | CHS_VBROFF | CHS_SSGOFF))) {
+		if (!processVibrato())
+			return;
+
+		uint16 f = _frequency >> _block;
+		_drv->writeReg(_part, _regOffset << 1, f & 0xff);
+		_drv->writeReg(_part, (_regOffset << 1) + 1, f >> 8);
+	}
+}
+
+bool TownsPC98_OpnChannelSSG::processControlEvent(uint8 cmd) {
+	uint8 para = *_dataPtr++;
+	return (this->*controlEvents[cmd & 0x0f])(para);
+}
+
+void TownsPC98_OpnChannelSSG::nextShape() {
+	_instr = (_instr & 0xf0) + 0x0c;
+	_ssgStep = _drv->_ssgPatches[_instr];
+	_ssgTicksLeft = _drv->_ssgPatches[_instr + 1] & 0x7f;
+	_ssgTargetLvl = _drv->_ssgPatches[_instr + 2];
+}
+
+void TownsPC98_OpnChannelSSG::keyOn() {
+	uint8 c = 0x7b;
+	uint8 t = (_algorithm & 0xC0) << 1;
+	if (_algorithm & 0x80)
+		t |= 4;
+
+	c = (c << (_regOffset + 1)) | (c >> (7 - _regOffset));
+	t = (t << (_regOffset + 1)) | (t >> (7 - _regOffset));
+
+	if (!(_algorithm & 0x80))
+		_drv->writeReg(_part, 6, _algorithm & 0x7f);
+
+	uint8 e = (_drv->readSSGStatus() & c) | t;
+	_drv->writeReg(_part, 7, e);
+}
+
+void TownsPC98_OpnChannelSSG::protect() {
+	_flags |= CHS_PROTECT;
+}
+
+void TownsPC98_OpnChannelSSG::restore() {
+	_flags &= ~CHS_PROTECT;
+	keyOn();
+	_drv->writeReg(_part, 8 + _regOffset, _ssgTl);
+	uint16 f = _frequency >> _block;
+	_drv->writeReg(_part, _regOffset << 1, f & 0xff);
+	_drv->writeReg(_part, (_regOffset << 1) + 1, f >> 8);
+}
+
+void TownsPC98_OpnChannelSSG::loadData(uint8 *data) {
+	_drv->toggleRegProtection(_flags & CHS_PROTECT ? true : false);
+	TownsPC98_OpnChannel::loadData(data);
+	setOutputLevel(0);
+	_algorithm = 0x80;
+}
+
+void TownsPC98_OpnChannelSSG::setOutputLevel(uint8 lvl) {
+	_ssgStartLvl = lvl;
+	uint16 newTl = (((uint16)_totalLevel + 1) * (uint16)lvl) >> 8;
+	if (newTl == _ssgTl)
+		return;
+	_ssgTl = newTl;
+	_drv->writeReg(_part, 8 + _regOffset, _ssgTl);
+}
+
+void TownsPC98_OpnChannelSSG::fadeStep() {
+	_totalLevel--;
+	if ((int8)_totalLevel < 0)
+		_totalLevel = 0;
+	setOutputLevel(_ssgStartLvl);
+}
+
+bool TownsPC98_OpnChannelSSG::control_f0_setInstr(uint8 para) {
+	_instr = para << 4;
 	para = (para >> 3) & 0x1e;
 	if (para)
 		return control_f4_setAlgorithm(para | 0x40);
 	return true;
 }
 
-bool TownsPC98_OpnChannel::control_f1_setTotalLevel(uint8 para) {
+bool TownsPC98_OpnChannelSSG::control_f1_setTotalLevel(uint8 para) {
 	if (!_drv->_fading)
 		_totalLevel = para;
 	return true;
 }
 
-bool TownsPC98_OpnChannel::control_f4_setAlgorithm(uint8 para) {
+bool TownsPC98_OpnChannelSSG::control_f4_setAlgorithm(uint8 para) {
 	_algorithm = para;
 	return true;
 }
 
-bool TownsPC98_OpnChannel::control_f9_unkSSG(uint8 para) {
-	_dataPtr += 5;
+bool TownsPC98_OpnChannelSSG::control_f9_loadCustomPatch(uint8 para) {
+	_instr = (_drv->_sfxOffs + 10 + _regOffset) << 4;
+	_drv->_ssgPatches[_instr] = *_dataPtr++;
+	_drv->_ssgPatches[_instr + 3] = para;
+	_drv->_ssgPatches[_instr + 4] = *_dataPtr++;
+	_drv->_ssgPatches[_instr + 6] = *_dataPtr++;
+	_drv->_ssgPatches[_instr + 8] = *_dataPtr++;
+	_drv->_ssgPatches[_instr + 12] = *_dataPtr++;
 	return true;
 }
 
-bool TownsPC98_OpnChannel::control_fb_incOutLevelSSG(uint8 para) {
+bool TownsPC98_OpnChannelSSG::control_fb_incOutLevel(uint8 para) {
 	_dataPtr--;
 	if (_drv->_fading)
 		return true;
@@ -2175,7 +2417,7 @@ bool TownsPC98_OpnChannel::control_fb_incOutLevelSSG(uint8 para) {
 	return true;
 }
 
-bool TownsPC98_OpnChannel::control_fc_decOutLevelSSG(uint8 para) {
+bool TownsPC98_OpnChannelSSG::control_fc_decOutLevel(uint8 para) {
 	_dataPtr--;
 	if (_drv->_fading)
 		return true;
@@ -2186,200 +2428,513 @@ bool TownsPC98_OpnChannel::control_fc_decOutLevelSSG(uint8 para) {
 	return true;
 }
 
-bool TownsPC98_OpnChannel::control_ff_endOfTrackSSG(uint8 para) {
-	uint16 val = READ_LE_UINT16(--_dataPtr);
-	if (val) {
-		// loop
-		_dataPtr = _drv->_trackData + val;
-		return true;
+bool TownsPC98_OpnChannelSSG::control_ff_endOfTrack(uint8 para) {
+	if (!_drv->_sfxOffs) {
+		uint16 val = READ_LE_UINT16(--_dataPtr);
+		if (val) {
+			// loop
+			_dataPtr = _drv->_trackPtr + val;
+			return true;
+		} else {
+			// stop parsing
+			if (!_drv->_fading)
+				setOutputLevel(0);
+			--_dataPtr;
+			_flags |= CHS_EOT;
+			_drv->_finishedSSGFlag |= _idFlag;
+		}
 	} else {
-		// quit parsing for active channel
-		--_dataPtr;
+		// end of sfx track - restore ssg music channel
 		_flags |= CHS_EOT;
-		//_finishedChannelsFlag |= _idFlag;
-		keyOff();
-		return false;
+		_drv->_finishedSfxFlag |= _idFlag;
+		_drv->_ssgChannels[_chanNum]->restore();
 	}
+
+	return false;
 }
 
-TownsPC98_OpnChannelSSG::TownsPC98_OpnChannelSSG(TownsPC98_OpnDriver *driver, uint8 regOffs, 
+void TownsPC98_OpnSfxChannel::loadData(uint8 *data) {
+	_flags = CHS_ALLOFF;
+	_ticksLeft = 1;
+	_dataPtr = data;
+	_ssgTl = 0xff;
+	_algorithm = 0x80;
+}
+
+TownsPC98_OpnChannelPCM::TownsPC98_OpnChannelPCM(TownsPC98_OpnDriver *driver, uint8 regOffs,
 		uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id) :
 		TownsPC98_OpnChannel(driver, regOffs, flgs, num, key, prt, id) {
 }
 
-void TownsPC98_OpnChannelSSG::init() {
+void TownsPC98_OpnChannelPCM::init() {
 	_algorithm = 0x80;
-	
-	_opr = new TownsPC98_OpnOperator*[4];
-	for (int i = 0; i < 4; i++)
-		_opr[i] = new TownsPC98_OpnOperator(_drv->_baserate, _drv->_oprRates, _drv->_oprRateshift,
-			_drv->_oprAttackDecay, _drv->_oprFrq, _drv->_oprSinTbl, _drv->_oprLevelOut, _drv->_oprDetune);
 
-	#define Control(x)	&TownsPC98_OpnChannelSSG::control_##x
-	static const ControlEventFunc ctrlEventsSSG[] = {
-		Control(f0_setPatchSSG),
-		Control(f1_setTotalLevel),
-		Control(f2_setKeyOffTime),
-		Control(f3_setFreqLSB),
-		Control(f4_setOutputLevel),
-		Control(f5_setTempo),
-		Control(f6_repeatSection),
-		Control(f7_setupPitchWheel),
-		Control(f8_togglePitchWheel),
-		Control(f9_unkSSG),
-		Control(fa_writeReg),
-		Control(fb_incOutLevelSSG),
-		Control(fc_decOutLevelSSG),
-		Control(fd_jump),
+	#define Control(x)	&TownsPC98_OpnChannelPCM::control_##x
+	static const ControlEventFunc ctrlEventsPCM[] = {
 		Control(dummy),
-		Control(ff_endOfTrackSSG)
+		Control(f1_prcStart),
+		Control(dummy),
+		Control(dummy),
+		Control(dummy),
+		Control(dummy),
+		Control(f6_repeatSection),
+		Control(dummy),
+		Control(dummy),
+		Control(dummy),
+		Control(fa_writeReg),
+		Control(dummy),
+		Control(dummy),
+		Control(dummy),
+		Control(dummy),
+		Control(ff_endOfTrack)
 	};
 	#undef Control
 
-	controlEvents = ctrlEventsSSG;
+	controlEvents = ctrlEventsPCM;
 }
 
-void TownsPC98_OpnChannelSSG::processEvents() {
+void TownsPC98_OpnChannelPCM::loadData(uint8 *data) {
+	_flags = (_flags & ~CHS_EOT) | CHS_ALLOFF;
+	_ticksLeft = 1;
+	_dataPtr = data;
+	_totalLevel = 0x7F;
+}
+
+void TownsPC98_OpnChannelPCM::processEvents()  {
 	if (_flags & CHS_EOT)
 		return;
 
-	_drv->_ssgFlag = (_flags & CHS_SSG) ? -1 : 0;
-
-	if (_protect == false && _ticksLeft == _keyOffTime)
-		keyOff();
-
 	if (--_ticksLeft)
 		return;
-
-	if (_protect == false)
-		keyOff();
 
 	uint8 cmd = 0;
 	bool loop = true;
 
 	while (loop) {
 		cmd = *_dataPtr++;
-		if (cmd < 0xf0)
+		if (cmd == 0x80) {
 			loop = false;
-		else if (!processControlEvent(cmd))
+		} else if (cmd < 0xf0) {
+			_drv->writeReg(_part, 0x10, cmd);
+		} else if (!processControlEvent(cmd)) {
 			return;
+		}
 	}
 
+	_ticksLeft = *_dataPtr++;
+}
+
+bool TownsPC98_OpnChannelPCM::processControlEvent(uint8 cmd) {
 	uint8 para = *_dataPtr++;
+	return (this->*controlEvents[cmd & 0x0f])(para);
+}
 
-	if (cmd == 0x80) {
-		keyOff();
-		_protect = false;
+bool TownsPC98_OpnChannelPCM::control_f1_prcStart(uint8 para) {
+	_totalLevel = para;
+	_drv->writeReg(_part, 0x11, para);
+	return true;
+}
+
+bool TownsPC98_OpnChannelPCM::control_ff_endOfTrack(uint8 para) {
+	uint16 val = READ_LE_UINT16(--_dataPtr);
+	if (val) {
+		// loop
+		_dataPtr = _drv->_trackPtr + val;
+		return true;
 	} else {
-		keyOn();
+		// quit parsing for active channel
+		--_dataPtr;
+		_flags |= CHS_EOT;
+		_drv->_finishedRhythmFlag |= _idFlag;
+		return false;
+	}
+}
 
-		if (_protect == false || cmd != _frqBlockMSB)
-			_flags |= CHS_RECALCFREQ;
+TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerbase) : 	_tlTable(0),
+	_tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _ready(0) {
+	memset(_channels, 0, sizeof(Channel) * 3);
 	
-		_protect = (para & 0x80) ? true : false;
-		_frqBlockMSB = cmd;
-	}
+	static uint8 *const reg [] = {
+		&_channels[0].frqL,
+		&_channels[0].frqH,
+		&_channels[1].frqL,
+		&_channels[1].frqH,
+		&_channels[2].frqL,
+		&_channels[2].frqH,
+		&_noiseGenerator,
+		&_chanEnable,
+		&_channels[0].vol,
+		&_channels[1].vol,
+		&_channels[2].vol,
+	};
 
-	_ticksLeft = para & 0x7f;
+	_reg = reg;
 
-	if (!(_flags & CHS_SSG)) {
-
-	}
+	reset();
 }
 
-void TownsPC98_OpnChannelSSG::processFrequency() {
-	if (_flags & CHS_RECALCFREQ) {
-		uint8 block = (_frqBlockMSB & 0x70) >> 1;
-		uint16 bfreq = ((const uint16*)_drv->_opnFreqTable)[_frqBlockMSB & 0x0f];
-		frequency = (bfreq + _frqLSB) | (block << 8);
-
-		writeReg(_regOffset + 0xa4, (frequency >> 8));
-		writeReg(_regOffset + 0xa0, (frequency & 0xff));
-
-		_ptchWhlCurDelay = _ptchWhlInitDelayHi;
-		if (_flags & CHS_KEYOFF) {
-			_ptchWhlModCurVal = _ptchWhlModInitVal;
-			_ptchWhlCurDelay += _ptchWhlInitDelayLo;
-		}
-
-		_ptchWhlDurLeft = (_ptchWhlDuration >> 1);
-		_flags &= ~(CHS_KEYOFF | CHS_RECALCFREQ);
-	}
-
-	if (!(_flags & CHS_PITCHWHEELOFF)) {
-		if (--_ptchWhlCurDelay)
-			return;
-		_ptchWhlCurDelay = _ptchWhlInitDelayHi;
-		frequency += _ptchWhlModCurVal;
-
-		writeReg(_regOffset + 0xa4, (frequency >> 8));
-		writeReg(_regOffset + 0xa0, (frequency & 0xff));
-
-		if(!--_ptchWhlDurLeft) {
-			_ptchWhlDurLeft = _ptchWhlDuration;
-			_ptchWhlModCurVal = -_ptchWhlModCurVal;
-		}
-	}
+TownsPC98_OpnSquareSineSource::~TownsPC98_OpnSquareSineSource() {
+	delete [] _tlTable;
+	delete [] _tleTable;
 }
 
-void TownsPC98_OpnChannelSSG::keyOff() {
-	// all operators off
-	uint8 value = _keyNum & 0x0f;
-	uint8 regAdress = 0x28;
-	writeReg(regAdress, value);
-	_flags |= CHS_KEYOFF;
-}
-
-void TownsPC98_OpnChannelSSG::keyOn() {
-	// all operators on
-	uint8 value = _keyNum | 0xf0;
-	uint8 regAdress = 0x28;
-	writeReg(regAdress, value);
-}
-
-void TownsPC98_OpnChannelSSG::loadData(uint8 *data) {
-	_drv->_ssgFlag = (_flags & CHS_SSG) ? -1 : 0;
-	opn_SSG_UNK(0);
-	TownsPC98_OpnChannel::loadData(data);
-	_algorithm = 0x80;
-}
-
-void TownsPC98_OpnChannelSSG::opn_SSG_UNK(uint8 a) {
-	_ssg1 = a;
-	uint16 h = (_totalLevel + 1) * a;
-	if ((h >> 8) == _ssg2)
+void TownsPC98_OpnSquareSineSource::init(const int *rsTable, const int *rseTable) {
+	if (_ready) {
+		reset();
 		return;
-	_ssg2 = (h >> 8);
-	writeReg(8 + _regOffset, _ssg2);
+	}
+
+	delete [] _tlTable;
+	delete [] _tleTable;
+	_tlTable = new int32[16];
+	_tleTable = new int32[32];
+	float a, b, d;
+	d = 801.0f;
+
+	for (int i = 0; i < 16; i++) {
+		b = 1.0f / rsTable[i];
+		a = 1.0f / d + b + 1.0f / 1000.0f;
+		float v = (b / a) * 32767.0f;
+		_tlTable[i] = (int32) v;
+
+		b = 1.0f / rseTable[i];
+		a = 1.0f / d + b + 1.0f / 1000.0f;
+		v = (b / a) * 32767.0f;
+		_tleTable[i] = (int32) v;
+	}
+
+	for (int i = 16; i < 32; i++) {
+		b = 1.0f / rseTable[i];
+		a = 1.0f / d + b + 1.0f / 1000.0f;
+		float v = (b / a) * 32767.0f;
+		_tleTable[i] = (int32) v;
+	}
+
+	_ready = true;
 }
 
-TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) :
-	_mixer(mixer), _trackData(0), _playing(false), _fading(false), _channels(0), _ssgChannels(0),
-	_looping(0), _opnCarrier(_drvTables + 76), _opnFreqTable(_drvTables + 84),
-	_opnFxCmdLen(_drvTables + 36), _opnLvlPresets(_drvTables + (type == OD_TOWNS ? 52 : 220)) ,
-	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0), _oprFrq(0),	_oprSinTbl(0), _oprLevelOut(0),
-	_oprDetune(0), _cbCounter(4), _tickCounter(0), _updateChannelsFlag(type == OD_TYPE26 ? 0x07 : 0x3F),
-	_finishedChannelsFlag(0), _samplesTillCallback(0), _samplesTillCallbackRemainder(0), _ready(false),
-	_numSSG(type == OD_TOWNS ? 0 : 3), _hasADPCM(type == OD_TYPE86 ? true : false),
-	_numChan(type == OD_TYPE26 ? 3 : 6), _hasStereo(type == OD_TYPE26 ? false : true) {	
-	setTempo(84);
-	_baserate = (486202500.0 / (double)getRate()) / 10368.0;
+void TownsPC98_OpnSquareSineSource::reset() {
+	_rand = 1;
+	_outN = 1;
+	_updateRequest = -1;
+	_nTick = _evpUpdateCnt = 0;
+	_evpTimer = 0x1f;
+	_pReslt = 0x1f;
+	_attack = 0;
+	_cont = false;
+	_evpUpdate = true;
+	_timer = 0;
+
+	for (int i = 0; i < 3; i++) {
+		_channels[i].tick = 0;
+		_channels[i].smp = _channels[i].out = 0;
+	}
+
+	for (int i = 0; i < 14; i++)
+		writeReg(i, 0, true);
+
+	writeReg(7, 0xbf, true);
 }
 
-TownsPC98_OpnDriver::~TownsPC98_OpnDriver() {
+void TownsPC98_OpnSquareSineSource::writeReg(uint8 address, uint8 value, bool force) {
+	if (address > 10 || *_reg[address] == value) {
+		if ((address == 11 || address == 12 || address == 13) && value)
+			warning("TownsPC98_OpnSquareSineSource: unsupported reg address: %d", address);
+		return;
+	}
+
+	if (!force) {
+		if (_updateRequest == 31) {
+			warning("TownsPC98_OpnSquareSineSource: event buffer overflow");
+			_updateRequest = -1;
+		}
+		_updateRequestBuf[++_updateRequest] = value;
+		_updateRequestBuf[++_updateRequest] = address;
+		return;
+	}
+
+	*_reg[address] = value;
+}
+
+void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
+	if (!_ready)
+		return;
+
+	for (uint32 i = 0; i < bufferSize; i++) {
+		_timer += _tickLength;
+		while (_timer > 0x5B8D80) {
+			_timer -= 0x5B8D80;
+
+			if (++_nTick >= (_noiseGenerator & 0x1f)) {
+				if ((_rand + 1) & 2)
+					_outN ^= 1;
+
+				_rand = (((_rand & 1) ^ ((_rand >> 3) & 1)) << 16) | (_rand >> 1);
+				_nTick = 0;
+			}
+
+			for (int ii = 0; ii < 3; ii++) {
+				if (++_channels[ii].tick >= (((_channels[ii].frqH & 0x0f) << 8) | _channels[ii].frqL)) {
+					_channels[ii].tick = 0;
+					_channels[ii].smp ^= 1;
+				}
+				_channels[ii].out = (_channels[ii].smp | ((_chanEnable >> ii) & 1)) & (_outN | ((_chanEnable >> (ii + 3)) & 1));
+			}
+
+			if (_evpUpdate) {
+				if (++_evpUpdateCnt >= 0) {
+					_evpUpdateCnt = 0;
+
+					if (--_evpTimer < 0) {
+						if (_cont) {
+							_evpTimer &= 0x1f;
+						} else {
+							_evpUpdate = false;
+							_evpTimer = 0;
+						}
+					}
+				}
+			}
+			_pReslt = _evpTimer ^ _attack;
+			updatesRegs();
+		}
+
+		int32 finOut = 0;
+		for (int ii = 0; ii < 3; ii++) {
+			if ((_channels[ii].vol >> 4) & 1)
+				finOut += _tleTable[_channels[ii].out ? _pReslt : 0];
+			else
+				finOut += _tlTable[_channels[ii].out ? (_channels[ii].vol & 0x0f) : 0];
+		}
+
+		finOut /= 2;
+		buffer[i << 1] += finOut;
+		buffer[(i << 1) + 1] += finOut;
+	}
+}
+
+void TownsPC98_OpnSquareSineSource::updatesRegs() {
+	for (int i = 0; i < _updateRequest;) {
+		uint8 b = _updateRequestBuf[i++];
+		uint8 a = _updateRequestBuf[i++];
+		writeReg(a, b, true);
+	}
+	_updateRequest = -1;
+}
+
+TownsPC98_OpnPercussionSource::TownsPC98_OpnPercussionSource(const uint32 timerbase) :
+	_tickLength(timerbase * 2), _timer(0), _ready(false) {
+	
+	memset(_rhChan, 0, sizeof(RhtChannel) * 6);
+		static uint8 *const reg [] = {
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		&_rhChan[0].startPosL,
+		&_rhChan[1].startPosL,
+		&_rhChan[2].startPosL,
+		&_rhChan[3].startPosL,
+		&_rhChan[4].startPosL,
+		&_rhChan[5].startPosL,
+		&_rhChan[0].startPosH,
+		&_rhChan[1].startPosH,
+		&_rhChan[2].startPosH,
+		&_rhChan[3].startPosH,
+		&_rhChan[4].startPosH,
+		&_rhChan[5].startPosH,
+		&_rhChan[0].endPosL,
+		&_rhChan[1].endPosL,
+		&_rhChan[2].endPosL,
+		&_rhChan[3].endPosL,
+		&_rhChan[4].endPosL,
+		&_rhChan[5].endPosL,
+		&_rhChan[0].endPosH,
+		&_rhChan[1].endPosH,
+		&_rhChan[2].endPosH,
+		&_rhChan[3].endPosH,
+		&_rhChan[4].endPosH,
+		&_rhChan[5].endPosH,
+	};
+
+	_reg = reg;
+}
+
+void TownsPC98_OpnPercussionSource::init(const uint8 *instrData) {
+	if (_ready) {
+		reset();
+		return;
+	}
+
+	const uint8 *start = instrData;
+	const uint8 *pos = start;
+
+	if (instrData) {
+		for (int i = 0; i < 6; i++) {
+			_rhChan[i].data = start + READ_BE_UINT16(pos);
+			pos += 2;
+			_rhChan[i].size = READ_BE_UINT16(pos);
+			pos += 2;
+		}
+		reset();
+		_ready = true;
+	} else {
+		memset(_rhChan, 0, sizeof(RhtChannel) * 6);
+		_ready = false;
+	}
+}
+
+void TownsPC98_OpnPercussionSource::reset() {
+	_timer = 0;
+	_totalLevel = 63;
+
+	for (int i = 0; i < 6; i++) {
+		RhtChannel *s = &_rhChan[i];
+		s->pos = s->start = s->data;
+		s->end = s->data + s->size;
+		s->active = false;
+		s->level = 0;
+		s->out = 0;
+		s->decStep = 1;
+		s->decState = 0;
+		s->samples[0] = s->samples[1] = 0;
+		s->startPosH = s->startPosL = s->endPosH = s->endPosL = 0;
+	}
+}
+
+void TownsPC98_OpnPercussionSource::writeReg(uint8 address, uint8 value) {
+	if (!_ready)
+		return;
+
+	 uint8 h = address >> 4;
+	 uint8 l = address & 15;
+
+	if (address > 15)
+		*_reg[address] = value;
+
+	if (address == 0) {
+		if (value & 0x80) {
+			//key off
+			for (int i = 0; i < 6; i++) {
+				if ((value >> i) & 1)
+					_rhChan[i].active = false;
+			}
+		} else {
+			//key on
+			for (int i = 0; i < 6; i++) {
+				if ((value >> i) & 1) {
+					RhtChannel *s = &_rhChan[i];
+					s->pos = s->start;
+					s->active = true;
+					s->out = 0;
+					s->samples[0] = s->samples[1] = 0;
+					s->decStep = 1;
+					s->decState = 0;
+				}
+			}
+		}
+	} else if (address == 1) {
+		// total level
+		_totalLevel = (value & 63) ^ 63;
+		for (int i = 0; i < 6; i++)
+			recalcOuput(&_rhChan[i]);
+	} else if (!h && l & 8) {
+		// instrument level
+		l &= 7;
+		_rhChan[l].level = (value & 0x1f) ^ 0x1f;
+		recalcOuput(&_rhChan[l]);
+	} else if (h & 3) {
+		l &= 7;
+		if (h == 1) {
+			// set start offset
+			_rhChan[l].start  = _rhChan[l].data + ((_rhChan[l].startPosH << 8 | _rhChan[l].startPosL) << 8);
+		} else if (h == 2) {
+			// set end offset
+			_rhChan[l].end = _rhChan[l].data + ((_rhChan[l].endPosH << 8 | _rhChan[l].endPosL) << 8) + 255;
+		}
+	}
+}
+
+void TownsPC98_OpnPercussionSource::nextTick(int32 *buffer, uint32 bufferSize) {
+	if (!_ready)
+		return;
+
+	for (uint32 i = 0; i < bufferSize; i++) {
+		_timer += _tickLength;
+		while (_timer > 0x5B8D80) {
+			_timer -= 0x5B8D80;
+
+			for (int ii = 0; ii < 6; ii++) {
+				RhtChannel *s = &_rhChan[ii];
+				if (s->active) {
+					recalcOuput(s);
+					if (s->decStep) {
+						advanceInput(s);
+						if (s->pos == s->end)
+							s->active = false;
+					}
+					s->decStep ^= 1;
+				}
+			}
+		}
+
+		int32 finOut = 0;
+
+		for (int ii = 0; ii < 6; ii++) {
+			if (_rhChan[ii].active)
+				finOut += _rhChan[ii].out;
+		}
+
+		finOut *= 7;
+
+		buffer[i << 1] += finOut;
+		buffer[(i << 1) + 1] += finOut;
+	}
+}
+
+void TownsPC98_OpnPercussionSource::recalcOuput(RhtChannel *ins) {
+	uint32 s = _totalLevel + ins->level;
+	uint32 x = s > 62 ? 0 : (1 + (s >> 3));
+	int32 y = s > 62 ? 0 : (15 - (s & 7));
+	ins->out = ((ins->samples[ins->decStep] * y) >> x) & ~3;
+}
+
+void TownsPC98_OpnPercussionSource::advanceInput(RhtChannel *ins) {
+	static const int8 adjustIndex[] = {-1, -1, -1, -1, 2, 5, 7, 9 };
+
+	static const int16 stepTable[] = { 16, 17, 19, 21, 23, 25, 28, 31, 34, 37, 41, 45, 50, 55,
+		60, 66, 73, 80, 88, 97, 107, 118, 130, 143, 157, 173, 190, 209, 230, 253, 279, 307, 337,
+		371, 408, 449, 494, 544, 598, 658, 724, 796, 876, 963, 1060, 1166, 1282, 1411, 1552
+	};
+	
+	uint8 cur = (int8) *ins->pos++;
+
+	for (int i = 0; i < 2; i++) {
+		int b = (2 * (cur & 7) + 1) * stepTable[ins->decState] / 8;
+		ins->samples[i] = CLIP<int16>(ins->samples[i ^ 1] + (cur & 8 ? b : -b), -2048, 2047);
+		ins->decState = CLIP<int8>(ins->decState + adjustIndex[cur & 7], 0, 48);
+		cur >>= 4;
+	}
+}
+
+TownsPC98_OpnCore::TownsPC98_OpnCore(Audio::Mixer *mixer, OpnType type) :
+	_mixer(mixer),
+	_chanInternal(0), _ssg(0), _prc(0),
+	_numChan(type == OD_TYPE26 ? 3 : 6), _numSSG(type == OD_TOWNS ? 0 : 3), _hasPercussion(type == OD_TYPE86 ? true : false),
+	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0),	_oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0),
+	_baserate(55125.0f / (float)mixer->getOutputRate()),
+	_regProtectionFlag(false), _ready(false) {
+
+	memset(&_timers[0], 0, sizeof(OpnTimer));
+	memset(&_timers[1], 0, sizeof(OpnTimer));	
+	_timers[0].cb = &TownsPC98_OpnCore::timerCallbackA;
+	_timers[1].cb = &TownsPC98_OpnCore::timerCallbackB;
+	_timerbase = (uint32)(_baserate * 1000000.0f);
+}
+
+TownsPC98_OpnCore::~TownsPC98_OpnCore() {
 	_mixer->stopHandle(_soundHandle);
-
-	if (_channels) {
-		for (int i = 0; i < _numChan; i++)
-			delete _channels[i];
-		delete [] _channels;
-	}
-
-	if (_ssgChannels) {
-		for (int i = 0; i < _numSSG; i++)
-			delete _ssgChannels[i];
-		delete [] _ssgChannels;
-	}
+	delete _ssg;
+	delete _prc;
+	delete [] _chanInternal;
 
 	delete [] _oprRates;
 	delete [] _oprRateshift;
@@ -2387,235 +2942,280 @@ TownsPC98_OpnDriver::~TownsPC98_OpnDriver() {
 	delete [] _oprAttackDecay;
 	delete [] _oprSinTbl;
 	delete [] _oprLevelOut;
-	delete [] _oprDetune;	
+	delete [] _oprDetune;
 }
 
-bool TownsPC98_OpnDriver::init() {
+bool TownsPC98_OpnCore::init() {
 	if (_ready) {
 		reset();
 		return true;
 	}
 
 	generateTables();
+	
+	TownsPC98_OpnOperator **opr = new TownsPC98_OpnOperator*[_numChan << 2];
+	for (int i = 0; i < (_numChan << 2); i++)
+		opr[i] = new TownsPC98_OpnOperator(_timerbase, _oprRates, _oprRateshift, _oprAttackDecay, _oprFrq, _oprSinTbl, _oprLevelOut, _oprDetune);
 
-	if (_channels) {
-		for (int i = 0; i < _numChan; i++) {
-			if (_channels[i])
-				delete _channels[i];
-		}
-		delete [] _channels;
-	}
-	_channels = new TownsPC98_OpnChannel*[_numChan];
+	_chanInternal = new ChanInternal[_numChan];
 	for (int i = 0; i < _numChan; i++) {
-		int ii = i * 6;
-		_channels[i] = new TownsPC98_OpnChannel(this, _drvTables[ii], _drvTables[ii + 1],
-			_drvTables[ii + 2],	_drvTables[ii + 3],	_drvTables[ii + 4], _drvTables[ii + 5]);
-		_channels[i]->init();
+		memset(&_chanInternal[i], 0, sizeof(ChanInternal));
+		_chanInternal[i].opr = &opr[i << 2];
 	}
 
-	if (_ssgChannels) {
-		for (int i = 0; i < _numSSG; i++) {
-			if (_ssgChannels[i])
-				delete _ssgChannels[i];
-		}
-		delete [] _ssgChannels;
-	}
 	if (_numSSG) {
-		_ssgChannels = new TownsPC98_OpnChannelSSG*[_numSSG];
-		for (int i = 0; i < _numSSG; i++) {
-			int ii = i * 6;
-			_ssgChannels[i] = new TownsPC98_OpnChannelSSG(this, _drvTables[ii], _drvTables[ii + 1],
-				_drvTables[ii + 2],	_drvTables[ii + 3],	_drvTables[ii + 4], _drvTables[ii + 5]);
-			_ssgChannels[i]->init();
-		}
+		_ssg = new TownsPC98_OpnSquareSineSource(_timerbase);
+		_ssg->init(&_ssgTables[0], &_ssgTables[16]);
+	}
+
+	if (_hasPercussion) {
+		_prc = new TownsPC98_OpnPercussionSource(_timerbase);
+		_prc->init(_percussionData);
 	}
 
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType,
 		&_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 
 	_ready = true;
+
 	return true;
 }
 
-int inline TownsPC98_OpnDriver::readBuffer(int16 *buffer, const int numSamples) {
+void TownsPC98_OpnCore::reset() {	
+	for (int i = 0; i < _numChan; i++) {
+		for (int ii = 0; ii < 4; ii++)
+			_chanInternal[i].opr[ii]->reset();
+		memset(&_chanInternal[i].feedbuf, 0, 3);
+		_chanInternal[i].algorithm = 0;
+		_chanInternal[i].frqTemp = 0;
+		_chanInternal[i].enableLeft = _chanInternal[i].enableRight = true;
+		_chanInternal[i].updateEnvelopeParameters = false;
+	}
+
+	writeReg(0, 27, 0x33);
+
+	if (_ssg)
+		_ssg->reset();
+
+	if (_prc)
+		_prc->reset();
+}
+
+void TownsPC98_OpnCore::writeReg(uint8 part, uint8 regAddress, uint8 value) {
+	if (_regProtectionFlag || !_ready)
+		return;
+
+	static const uint8 oprOrdr[] = { 0, 2, 1, 3 };
+	
+	uint8 h = regAddress & 0xf0;
+	uint8 l = (regAddress & 0x0f);
+	
+	ChanInternal *c = &_chanInternal[(h < 0x30) ? ((value & 3) + ((value & 4) ? 3 : 0)) : ((l & 3) + 3 * part)];
+	TownsPC98_OpnOperator **co = c->opr;
+	TownsPC98_OpnOperator *o = (h < 0x30) ? 0 : c->opr[oprOrdr[(l - (l & 3)) >> 2]];
+
+	switch (h) {
+		case 0x00:
+			// ssg
+			if (_ssg)
+				_ssg->writeReg(regAddress, value);
+			break;
+		case 0x10:
+			// pcm rhythm channel
+			if (_prc)
+				_prc->writeReg(regAddress - 0x10, value);
+			break;
+		case 0x20:
+			if (l == 8) {
+				// Key on/off
+				for (int i = 0; i < 4; i++) {
+					if ((value >> (4 + i)) & 1)
+						co[i]->keyOn();
+					else
+						co[i]->keyOff();
+				}
+			} else if (l == 4) {
+				// Timer A
+				_timers[0].value = (_timers[0].value & 0xff00) | value;
+			} else if (l == 5) {
+				// Timer A
+				_timers[0].value = (_timers[0].value & 0xff) | (value << 8);				
+			} else if (l == 6) {
+				// Timer B
+				_timers[1].value = value & 0xff;
+			} else if (l == 7) {
+				_timers[0].enabled = (value & 1) ? 1 : 0;
+				_timers[1].enabled = (value & 2) ? 1 : 0;
+
+				float spc = (float)(0x400 - _timers[0].value) / _baserate;
+				_timers[0].smpPerCb = (int32) spc;
+				_timers[0].smpPerCbRem = (uint32) ((spc - (float)_timers[0].smpPerCb) * 1000000.0f);
+
+				spc = (float)(0x100 - _timers[1].value) * 16.0f / _baserate;
+				_timers[1].smpPerCb = (int32) spc;
+				_timers[1].smpPerCbRem = (uint32) ((spc - (float)_timers[1].smpPerCb) * 1000000.0f);
+
+				if (value & 10) {
+					_timers[0].smpTillCb = _timers[0].smpPerCb;
+					_timers[0].smpTillCbRem = _timers[0].smpTillCbRem;
+				}		
+
+				if (value & 20) {
+					_timers[1].smpTillCb = _timers[1].smpPerCb;
+					_timers[1].smpTillCbRem = _timers[1].smpTillCbRem;
+				} 
+			} else if (l == 2) {
+				// LFO
+				warning("TownsPC98_OpnDriver: TRYING TO USE LFO (NOT SUPPORTED)");
+			} else if (l == 10 || l == 11) {
+				// DAC
+				warning("TownsPC98_OpnDriver: TRYING TO USE DAC (NOT SUPPORTED)");
+			}
+			break;
+
+		case 0x30:
+			// detune, multiple
+			o->detune((value >> 4) & 7);
+			o->multiple(value & 0x0f);
+			c->updateEnvelopeParameters = true;
+			break;
+
+		case 0x40:
+			// total level
+			o->totalLevel(value & 0x7f);
+			break;
+
+		case 0x50:
+			// rate scaling, attack rate
+			o->attackRate(value & 0x1f);
+			if (o->scaleRate(value >> 6))
+				c->updateEnvelopeParameters = true;
+			break;
+
+		case 0x60:
+			// first decay rate, amplitude modulation
+			o->decayRate(value & 0x1f);
+			if (value & 0x80)
+				warning("TownsPC98_OpnDriver: TRYING TO USE AMP MODULATION (NOT SUPPORTED)");
+			break;
+
+		case 0x70:
+			// secondary decay rate
+			o->sustainRate(value & 0x1f);
+			break;
+
+		case 0x80:
+			// secondary amplitude, release rate;
+			o->sustainLevel(value >> 4);
+			o->releaseRate(value & 0x0f);
+			break;
+
+		case 0x90:
+			warning("TownsPC98_OpnDriver: TRYING TO SSG ENVELOPE SHAPES (NOT SUPPORTED)");
+			break;
+
+		case 0xa0:
+			// frequency
+			l &= ~3;
+			if (l == 0) {
+				c->frqTemp = (c->frqTemp & 0xff00) | value;
+				c->updateEnvelopeParameters = true;
+				for (int i = 0; i < 4; i++)
+					co[i]->frequency(c->frqTemp);
+			} else if (l == 4) {
+				c->frqTemp = (c->frqTemp & 0xff) | (value << 8);
+			} else if (l == 8) {
+				// Ch 3/6 special mode frq
+				warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE FREQ (NOT SUPPORTED)");
+			} else if (l == 12) {
+				// Ch 3/6 special mode frq
+				warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE FREQ (NOT SUPPORTED)");
+			}
+			break;
+
+		case 0xb0:
+			l &= ~3;
+			if (l == 0) {
+				// feedback, _algorithm
+				co[0]->feedbackLevel((value >> 3) & 7);
+				c->algorithm = value & 7;
+			} else if (l == 4) {
+				// stereo, LFO sensitivity
+				c->enableLeft = value & 0x80 ? true : false;
+				c->enableRight = value & 0x40 ? true : false;
+				uint8 ams = (value & 0x3F) >> 3;
+				if (ams)
+					warning("TownsPC98_OpnDriver: TRYING TO USE AMP MODULATION SENSITIVITY (NOT SUPPORTED)");
+				uint8 fms = value & 3;
+				if (fms)
+					warning("TownsPC98_OpnDriver: TRYING TO USE FREQ MODULATION SENSITIVITY (NOT SUPPORTED)");
+			}
+			break;
+
+		default:
+			warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAddress);
+			break;
+	}
+}
+
+int inline TownsPC98_OpnCore::readBuffer(int16 *buffer, const int numSamples) {
 	memset(buffer, 0, sizeof(int16) * numSamples);
+	int32 *tmp = new int32[numSamples];
+	int32 *tmpStart = tmp;
+	memset(tmp, 0, sizeof(int32) * numSamples);
 	int32 samplesLeft = numSamples >> 1;
+
 	while (samplesLeft) {
-		if (!_samplesTillCallback) {
-			callback();
-			_samplesTillCallback = _samplesPerCallback;
-			_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
-			if (_samplesTillCallbackRemainder >= _tempo) {
-				_samplesTillCallback++;
-				_samplesTillCallbackRemainder -= _tempo;
+
+		int32 render = samplesLeft;
+
+		for (int i = 0; i < 2; i++) {
+			if (_timers[i].enabled && _timers[i].cb) {
+				if (!_timers[i].smpTillCb) {
+					(this->*_timers[i].cb)();
+					_timers[i].smpTillCb = _timers[i].smpPerCb;
+
+					_timers[i].smpTillCbRem += _timers[i].smpPerCbRem;
+					if (_timers[i].smpTillCbRem >= _timerbase) {
+						_timers[i].smpTillCb++;
+						_timers[i].smpTillCbRem -= _timerbase;
+					}
+				}
+				render = MIN(render, _timers[i].smpTillCb);
 			}
 		}
 
-		int32 render = MIN(samplesLeft, _samplesTillCallback);
 		samplesLeft -= render;
-		_samplesTillCallback -= render;
 
-		nextTick(buffer, render);
+		for (int i = 0; i < 2; i++) {
+			if (_timers[i].enabled && _timers[i].cb) {
+				_timers[i].smpTillCb -= render;
+			}
+		}
+
+		nextTick(tmp, render);
+
+		if (_ssg)
+			_ssg->nextTick(tmp, render);
+		if (_prc)
+			_prc->nextTick(tmp, render);
 
 		for (int i = 0; i < render; ++i) {
-			buffer[i << 1] <<= 2;
-			buffer[(i << 1) + 1] <<= 2;
+			int32 l = CLIP<int32>(tmp[i << 1], -32767, 32767);
+			buffer[i << 1] = (int16) l;
+			int32 r = CLIP<int32>(tmp[(i << 1) + 1], -32767, 32767);
+			buffer[(i << 1) + 1] = (int16) r;
 		}
 
 		buffer += (render << 1);
+		tmp += (render << 1);
 	}
 
+	delete [] tmpStart;
 	return numSamples;
 }
 
-void TownsPC98_OpnDriver::loadData(uint8 *data, bool loadPaused) {
-	if (!_ready) {
-		warning("TownsPC98_OpnDriver: Driver must be initialized before loading data");
-		return;
-	}
-
-	if (!data) {
-		warning("TownsPC98_OpnDriver: Invalid music file data");
-		return;
-	}
-
-	lock();
-	_trackData = data;
-
-	reset();
-	
-	uint8 *src_a = data;
-
-	for (uint8 i = 0; i < 3; i++) {
-		_channels[i]->loadData(data + READ_LE_UINT16(src_a));
-		src_a += 2;
-	}
-
-	for (int i = 0; i < _numSSG; i++) {
-		_ssgChannels[i]->loadData(data + READ_LE_UINT16(src_a));
-		src_a += 2;
-	}
-
-	for (uint8 i = 3; i < _numChan; i++) {
-		_channels[i]->loadData(data + READ_LE_UINT16(src_a));
-		src_a += 2;
-	}
-
-	if (_hasADPCM) {
-		//_adpcmChannel->loadData(data + READ_LE_UINT16(src_a));
-		src_a += 2;
-	}
-
-	_ssgFlag = 0;
-
-	_patches = src_a + 4;
-	_cbCounter = 4;
-	_finishedChannelsFlag = 0;
-
-	// AH 0x17
-	unlock();
-	_playing = (loadPaused ? false : true);
-}
-
-void TownsPC98_OpnDriver::reset() {
-	for (int i = 0; i < (_numChan); i++)
-		_channels[i]->reset();
-	for (int i = 0; i < (_numSSG); i++)
-		_ssgChannels[i]->reset();
-
-	_playing = _fading = false;
-	_looping = 0;
-	_tickCounter = 0;
-}
-
-void TownsPC98_OpnDriver::fadeOut() {
-	if (!_playing)
-		return;
-
-	_fading = true;
-
-	for (int i = 0; i < 20; i++) {		
-		lock();
-		uint32 dTime = _tickCounter + 2;
-		for (int j = 0; j < _numChan; j++) {
-			if (_updateChannelsFlag & _channels[j]->_idFlag)
-				_channels[j]->fadeStep();
-		}
-		for (int j = 0; j < _numSSG; j++)
-			_ssgChannels[j]->fadeStep();
-
-		unlock();
-
-		while (_playing) {
-			if (_tickCounter >= dTime)
-				break;
-		}
-	}
-
-	_fading = false;
-
-	reset();
-}
-
-void TownsPC98_OpnDriver::callback() {
-	if (!_playing || --_cbCounter)
-		return;
-
-	_cbCounter = 4;
-	_tickCounter++;
-
-	lock();
-
-	for (int i = 0; i < _numChan; i++) {
-		if (_updateChannelsFlag & _channels[i]->_idFlag) {
-			_channels[i]->processEvents();
-			_channels[i]->processFrequency();
-		}
-	}
-
-	if (_numSSG) {
-		for (int i = 0; i < _numSSG; i++) {
-			_ssgChannels[i]->processEvents();
-			_ssgChannels[i]->processFrequency();
-		}
-	}
-	
-	_ssgFlag = 0;
-
-	unlock();
-
-	if (_finishedChannelsFlag == _updateChannelsFlag)
-		reset();
-}
-
-void TownsPC98_OpnDriver::nextTick(int16 *buffer, uint32 bufferSize) {
-	if (!_playing)
-		return;	
-
-	for (int i = 0; i < _numChan ; i++) {
-		if (_channels[i]->_updateEnvelopes) {
-			_channels[i]->_updateEnvelopes = false;
-			_channels[i]->updateEnv();
-		}
-		
-		for (uint32 ii = 0; ii < bufferSize ; ii++)
-			_channels[i]->generateOutput(buffer[ii * 2],
-			buffer[ii * 2 + 1],	&_channels[i]->_feedbuf[2], _channels[i]->_feedbuf);
-	}
-
-	for (int i = 0; i < _numSSG ; i++) {
-		if (_ssgChannels[i]->_updateEnvelopes) {
-			_ssgChannels[i]->_updateEnvelopes = false;
-			_ssgChannels[i]->updateEnv();
-		}
-		
-		for (uint32 ii = 0; ii < bufferSize ; ii++)
-			_ssgChannels[i]->generateOutput(buffer[ii * 2],
-			buffer[ii * 2 + 1],	&_ssgChannels[i]->_feedbuf[2], _ssgChannels[i]->_feedbuf);
-	}
-}
-
-void TownsPC98_OpnDriver::generateTables() {
+void TownsPC98_OpnCore::generateTables() {
 	delete [] _oprRates;
 	_oprRates = new uint8[128];
 	memset(_oprRates, 0x90, 32);
@@ -2641,7 +3241,7 @@ void TownsPC98_OpnDriver::generateTables() {
 	delete [] _oprFrq;
 	_oprFrq = new uint32[0x1000];
 	for (uint32 i = 0; i < 0x1000; i++)
-		_oprFrq[i] = (uint32)(_baserate * (double)(i << 11));
+		_oprFrq[i] = (uint32)(_baserate * (float)(i << 11));
 
 	delete [] _oprAttackDecay;
 	_oprAttackDecay = new uint8[152];
@@ -2675,22 +3275,416 @@ void TownsPC98_OpnDriver::generateTables() {
 	uint8 *dtt = new uint8[128];
 	memset(dtt, 0, 36);
 	memset(dtt + 36, 1, 8);
-	memcpy(dtt + 44, _drvTables + 144, 84);
+	memcpy(dtt + 44, _detSrc, 84);
 
 	delete [] _oprDetune;
 	_oprDetune = new int32[256];
 	for (int i = 0; i < 128; i++) {
-		_oprDetune[i] = (int32)	((double)dtt[i] * _baserate * 64.0);
+		_oprDetune[i] = (int32)	((float)dtt[i] * _baserate * 64.0);
 		_oprDetune[i + 128] = -_oprDetune[i];
 	}
 
 	delete [] dtt;
 }
 
-void TownsPC98_OpnDriver::setTempo(uint8 tempo) {
-	_tempo = tempo;
-	_samplesPerCallback = getRate() / _tempo;
-	_samplesPerCallbackRemainder = getRate() % _tempo;
+void TownsPC98_OpnCore::nextTick(int32 *buffer, uint32 bufferSize) {
+	if (!_ready)
+		return;
+
+	for (int i = 0; i < _numChan; i++) {
+		TownsPC98_OpnOperator **o = _chanInternal[i].opr;
+
+		if (_chanInternal[i].updateEnvelopeParameters) {
+			_chanInternal[i].updateEnvelopeParameters = false;
+			for (int ii = 0; ii < 4 ; ii++)
+				o[ii]->updatePhaseIncrement();
+		}
+
+		for (uint32 ii = 0; ii < bufferSize ; ii++) {
+			int32 phbuf1, phbuf2, output;
+			phbuf1 = phbuf2 = output = 0;
+			
+			int32 *leftSample = &buffer[ii * 2];
+			int32 *rightSample = &buffer[ii * 2 + 1];
+			int32 *del = &_chanInternal[i].feedbuf[2];
+			int32 *feed = _chanInternal[i].feedbuf;
+			
+			switch (_chanInternal[i].algorithm) {
+			case 0:
+				o[0]->generateOutput(0, feed, phbuf1);
+				o[2]->generateOutput(*del, 0, phbuf2);
+				*del = 0;
+				o[1]->generateOutput(phbuf1, 0, *del);
+				o[3]->generateOutput(phbuf2, 0, output);
+				break;
+			case 1:
+				o[0]->generateOutput(0, feed, phbuf1);
+				o[2]->generateOutput(*del, 0, phbuf2);
+				o[1]->generateOutput(0, 0, phbuf1);
+				o[3]->generateOutput(phbuf2, 0, output);
+				*del = phbuf1;
+				break;
+			case 2:
+				o[0]->generateOutput(0, feed, phbuf2);
+				o[2]->generateOutput(*del, 0, phbuf2);
+				o[1]->generateOutput(0, 0, phbuf1);
+				o[3]->generateOutput(phbuf2, 0, output);
+				*del = phbuf1;
+				break;
+			case 3:
+				o[0]->generateOutput(0, feed, phbuf2);
+				o[2]->generateOutput(0, 0, *del);
+				o[1]->generateOutput(phbuf2, 0, phbuf1);
+				o[3]->generateOutput(*del, 0, output);
+				*del = phbuf1;
+				break;
+			case 4:
+				o[0]->generateOutput(0, feed, phbuf1);
+				o[2]->generateOutput(0, 0, phbuf2);
+				o[1]->generateOutput(phbuf1, 0, output);
+				o[3]->generateOutput(phbuf2, 0, output);
+				*del = 0;
+				break;
+			case 5:
+				o[0]->generateOutput(0, feed, phbuf1);
+				o[2]->generateOutput(*del, 0, output);
+				o[1]->generateOutput(phbuf1, 0, output);
+				o[3]->generateOutput(phbuf1, 0, output);
+				*del = phbuf1;
+				break;
+			case 6:
+				o[0]->generateOutput(0, feed, phbuf1);
+				o[2]->generateOutput(0, 0, output);
+				o[1]->generateOutput(phbuf1, 0, output);
+				o[3]->generateOutput(0, 0, output);
+				*del = 0;
+				break;
+			case 7:
+				o[0]->generateOutput(0, feed, output);
+				o[2]->generateOutput(0, 0, output);
+				o[1]->generateOutput(0, 0, output);
+				o[3]->generateOutput(0, 0, output);
+				*del = 0;
+				break;
+			};
+
+			int32 finOut = ((output * 7) / 2);
+
+			if (_chanInternal[i].enableLeft)
+				*leftSample += finOut;
+
+			if (_chanInternal[i].enableRight)
+				*rightSample += finOut;
+		}
+	}
+}
+
+TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) : TownsPC98_OpnCore(mixer, type),
+	_channels(0), _ssgChannels(0), _sfxChannels(0), _rhythmChannel(0),	
+	_trackPtr(0), _sfxData(0), _sfxOffs(0), _ssgPatches(0),	
+
+	_opnCarrier(_drvTables + 76), _opnFreqTable(_drvTables + 108), _opnFreqTableSSG(_drvTables + 132),
+	_opnFxCmdLen(_drvTables + 36), _opnLvlPresets(_drvTables + (type == OD_TOWNS ? 52 : 84)),
+	
+	_updateChannelsFlag(type == OD_TYPE26 ? 0x07 : 0x3F), _finishedChannelsFlag(0),
+	_updateSSGFlag(type == OD_TOWNS ? 0x00 : 0x07), _finishedSSGFlag(0),
+	_updateRhythmFlag(type == OD_TYPE86 ? 0x01 : 0x00), _finishedRhythmFlag(0),
+	_updateSfxFlag(type == OD_TOWNS ? 0x00 : 0x06), _finishedSfxFlag(0),
+	
+	_musicTickCounter(0),
+	
+	_musicPlaying(false), _sfxPlaying(false), _fading(false), _looping(0), _ready(false) {
+}
+
+TownsPC98_OpnDriver::~TownsPC98_OpnDriver() {
+	if (_channels) {
+		for (int i = 0; i < _numChan; i++)
+			delete _channels[i];
+		delete [] _channels;
+	}
+
+	if (_ssgChannels) {
+		for (int i = 0; i < _numSSG; i++)
+			delete _ssgChannels[i];
+		delete [] _ssgChannels;
+	}
+
+	if (_sfxChannels) {
+		for (int i = 0; i < 2; i++)
+			delete _sfxChannels[i];
+		delete [] _sfxChannels;
+	}
+
+	if (_rhythmChannel)
+		delete _rhythmChannel;
+
+	delete [] _ssgPatches;
+}
+
+bool TownsPC98_OpnDriver::init() {
+	if (_ready) {
+		reset();
+		return true;
+	}
+
+	TownsPC98_OpnCore::init();
+
+	_channels = new TownsPC98_OpnChannel*[_numChan];
+	for (int i = 0; i < _numChan; i++) {
+		int ii = i * 6;
+		_channels[i] = new TownsPC98_OpnChannel(this, _drvTables[ii], _drvTables[ii + 1],
+			_drvTables[ii + 2],	_drvTables[ii + 3],	_drvTables[ii + 4], _drvTables[ii + 5]);
+		_channels[i]->init();
+	}
+
+	if (_numSSG) {
+		_ssgPatches = new uint8[256];
+		memcpy(_ssgPatches, _drvTables + 156, 256);
+
+		_ssgChannels = new TownsPC98_OpnChannelSSG*[_numSSG];
+		for (int i = 0; i < _numSSG; i++) {
+			int ii = i * 6;
+			_ssgChannels[i] = new TownsPC98_OpnChannelSSG(this, _drvTables[ii], _drvTables[ii + 1],
+				_drvTables[ii + 2],	_drvTables[ii + 3],	_drvTables[ii + 4], _drvTables[ii + 5]);
+			_ssgChannels[i]->init();
+		}
+
+		_sfxChannels = new TownsPC98_OpnSfxChannel*[2];
+		for (int i = 0; i < 2; i++) {
+			int ii = (i + 1) * 6;
+			_sfxChannels[i] = new TownsPC98_OpnSfxChannel(this, _drvTables[ii], _drvTables[ii + 1],
+				_drvTables[ii + 2],	_drvTables[ii + 3],	_drvTables[ii + 4], _drvTables[ii + 5]);
+			_sfxChannels[i]->init();
+		}
+	}
+
+	if (_hasPercussion) {
+		_rhythmChannel = new TownsPC98_OpnChannelPCM(this, 0, 0, 0, 0, 0, 1);
+		_rhythmChannel->init();
+	}
+
+	setMusicTempo(84);
+	setSfxTempo(654);
+
+	_ready = true;
+
+	return true;
+}
+
+void TownsPC98_OpnDriver::loadMusicData(uint8 *data, bool loadPaused) {
+	if (!_ready) {
+		warning("TownsPC98_OpnDriver: Driver must be initialized before loading data");
+		return;
+	}
+
+	if (!data) {
+		warning("TownsPC98_OpnDriver: Invalid music file data");
+		return;
+	}
+
+	reset();
+
+	lock();
+
+	uint8 *src_a = _trackPtr = _musicBuffer = data;
+
+	for (uint8 i = 0; i < 3; i++) {
+		_channels[i]->loadData(data + READ_LE_UINT16(src_a));
+		src_a += 2;
+	}
+
+	for (int i = 0; i < _numSSG; i++) {
+		_ssgChannels[i]->loadData(data + READ_LE_UINT16(src_a));
+		src_a += 2;
+	}
+
+	for (uint8 i = 3; i < _numChan; i++) {
+		_channels[i]->loadData(data + READ_LE_UINT16(src_a));
+		src_a += 2;
+	}
+
+	if (_hasPercussion) {
+		_rhythmChannel->loadData(data + READ_LE_UINT16(src_a));
+		src_a += 2;
+	}
+
+	toggleRegProtection(false);
+
+	_patches = src_a + 4;
+	_finishedChannelsFlag = _finishedSSGFlag = _finishedRhythmFlag = 0;
+
+	_musicPlaying = (loadPaused ? false : true);	
+
+	unlock();
+}
+
+void TownsPC98_OpnDriver::loadSoundEffectData(uint8 *data, uint8 trackNum) {
+	if (!_ready) {
+		warning("TownsPC98_OpnDriver: Driver must be initialized before loading data");
+		return;
+	}
+
+	if (!_sfxChannels) {
+		warning("TownsPC98_OpnDriver: Sound effects not supported by this configuration");
+		return;
+	}
+
+	if (!data) {
+		warning("TownsPC98_OpnDriver: Invalid sound effects file data");
+		return;
+	}
+
+	lock();
+	_sfxData = _sfxBuffer = data;
+	_sfxOffsets[0] = READ_LE_UINT16(&_sfxData[(trackNum << 2)]);
+	_sfxOffsets[1] = READ_LE_UINT16(&_sfxData[(trackNum << 2) + 2]);
+	_sfxPlaying = true;
+	_finishedSfxFlag = 0;
+	unlock();
+}
+
+void TownsPC98_OpnDriver::reset() {
+	lock();
+
+	TownsPC98_OpnCore::reset();
+
+	for (int i = 0; i < _numChan; i++)
+		_channels[i]->reset();
+	for (int i = 0; i < _numSSG; i++)
+		_ssgChannels[i]->reset();
+
+	if (_numSSG) {
+		for (int i = 0; i < 2; i++)
+			_sfxChannels[i]->reset();
+
+		memcpy(_ssgPatches, _drvTables + 156, 256);
+	}
+
+	if (_rhythmChannel)
+		_rhythmChannel->reset();
+
+	_musicPlaying = false;
+	_sfxPlaying = false;
+	_fading = false;
+	_looping = 0;
+	_musicTickCounter = 0;
+	_sfxData = 0;
+
+	unlock();
+}
+
+void TownsPC98_OpnDriver::fadeStep() {
+	if (!_musicPlaying)
+		return;
+
+	lock();
+
+	for (int j = 0; j < _numChan; j++) {
+		if (_updateChannelsFlag & _channels[j]->_idFlag)
+			_channels[j]->fadeStep();
+	}
+		
+	for (int j = 0; j < _numSSG; j++) {
+		if (_updateSSGFlag & _ssgChannels[j]->_idFlag)
+			_ssgChannels[j]->fadeStep();
+	}
+
+	if (!_fading) {
+		_fading = 19;
+		if (_hasPercussion) {
+			if (_updateRhythmFlag & _rhythmChannel->_idFlag)
+				_rhythmChannel->reset();
+		}
+	} else {
+		if (!--_fading)
+			reset();
+	}
+
+	unlock();
+}
+
+void TownsPC98_OpnDriver::timerCallbackB() {
+	lock();
+
+	_sfxOffs = 0;
+
+	if (_musicPlaying) {
+		_musicTickCounter++;
+
+		for (int i = 0; i < _numChan; i++) {
+			if (_updateChannelsFlag & _channels[i]->_idFlag) {
+				_channels[i]->processEvents();
+				_channels[i]->processFrequency();
+			}
+		}
+
+		for (int i = 0; i < _numSSG; i++) {
+			if (_updateSSGFlag & _ssgChannels[i]->_idFlag) {
+				_ssgChannels[i]->processEvents();
+				_ssgChannels[i]->processFrequency();
+			}
+		}
+		
+		if (_hasPercussion)
+			if (_updateRhythmFlag & _rhythmChannel->_idFlag)
+				_rhythmChannel->processEvents();
+	}
+
+	toggleRegProtection(false);
+
+	if (_finishedChannelsFlag == _updateChannelsFlag && _finishedSSGFlag == _updateSSGFlag && _finishedRhythmFlag == _updateRhythmFlag)
+		_musicPlaying = false;
+
+	unlock();
+}
+
+void TownsPC98_OpnDriver::timerCallbackA() {
+	lock();
+
+	if (_sfxChannels && _sfxPlaying) {
+		if (_sfxData)
+			startSoundEffect();
+
+		_sfxOffs = 3;
+		_trackPtr = _sfxBuffer;
+
+		for (int i = 0; i < 2; i++) {
+			if (_updateSfxFlag & _sfxChannels[i]->_idFlag) {
+				_sfxChannels[i]->processEvents();
+				_sfxChannels[i]->processFrequency();
+			}
+		}
+
+		_trackPtr = _musicBuffer;
+	}
+
+	if (_finishedSfxFlag == _updateSfxFlag)
+		_sfxPlaying = false;
+
+	unlock();
+}
+
+void TownsPC98_OpnDriver::setMusicTempo(uint8 tempo) {
+	writeReg(0, 0x26, tempo);
+	writeReg(0, 0x27, 0x33);
+}
+
+void TownsPC98_OpnDriver::setSfxTempo(uint16 tempo) {
+	writeReg(0, 0x24, tempo & 0xff);
+	writeReg(0, 0x25, tempo >> 8);
+	writeReg(0, 0x27, 0x33);
+}
+
+void TownsPC98_OpnDriver::startSoundEffect() {
+	for (int i = 0; i < 2; i++) {
+		if (_sfxOffsets[i]) {
+			_ssgChannels[i + 1]->protect();
+			_sfxChannels[i]->reset();
+			_sfxChannels[i]->loadData(_sfxData + _sfxOffsets[i]);
+		}
+	}
+
+	_sfxData = 0;
 }
 
 const uint8 TownsPC98_OpnDriver::_drvTables[] = {
@@ -2706,55 +3700,63 @@ const uint8 TownsPC98_OpnDriver::_drvTables[] = {
 	0x01, 0x01, 0x01, 0x01,	0x01, 0x01, 0x04, 0x05,
 	0x02, 0x06, 0x02, 0x00, 0x00, 0x02, 0x00, 0x02,
 
-	//	fmt level presets 
+	//	fmt level presets
 	0x54, 0x50,	0x4C, 0x48,	0x44, 0x40, 0x3C, 0x38,
 	0x34, 0x30, 0x2C, 0x28, 0x24, 0x20, 0x1C, 0x18,
 	0x14, 0x10, 0x0C, 0x08,	0x04, 0x90, 0x90, 0x90,
-	
+
 	//	carriers
 	0x08, 0x08, 0x08, 0x08,	0x0C, 0x0E, 0x0E, 0x0F,
 
-	//	frequencies
-	0x6A, 0x02, 0x8F, 0x02, 0xB6, 0x02,	0xDF, 0x02,
-	0x0B, 0x03, 0x39, 0x03, 0x6A, 0x03, 0x9E, 0x03,
-	0xD5, 0x03,	0x10, 0x04, 0x4E, 0x04, 0x8F, 0x04,
-	0x00, 0x00, 0x00, 0x00,
-
-	//	unused
-	0x01, 0x00,	0x00, 0x00, 0x03, 0x00, 0x00, 0x00,
-	0x02, 0x00,	0x00, 0x00,	0x05, 0x00, 0x00, 0x00,
-	0x04, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00,
-	0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
-
-	//	detune
-	0x02, 0x02, 0x02, 0x02, 0x02, 0x03, 0x03, 0x03,
-	0x04, 0x04, 0x04, 0x05, 0x05, 0x06, 0x06, 0x07,
-	0x08, 0x08, 0x08, 0x08, 0x01, 0x01,	0x01, 0x01,
-	0x02, 0x02, 0x02, 0x02, 0x02, 0x03,	0x03, 0x03,
-	0x04, 0x04, 0x04, 0x05, 0x05, 0x06, 0x06, 0x07,
-	0x08, 0x08, 0x09, 0x0a,	0x0b, 0x0c, 0x0d, 0x0e,
-	0x10, 0x10, 0x10, 0x10,	0x02, 0x02, 0x02, 0x02,
-	0x02, 0x03, 0x03, 0x03, 0x04, 0x04, 0x04, 0x05,
-	0x05, 0x06,	0x06, 0x07, 0x08, 0x08, 0x09, 0x0a,
-	0x0b, 0x0c,	0x0d, 0x0e, 0x10, 0x11, 0x13, 0x14,
-	0x16, 0x16, 0x16, 0x16,
-
-	//	pc98 level presets 
+	//	pc98 level presets
 	0x40, 0x3B, 0x38, 0x34, 0x30, 0x2A, 0x28, 0x25,
 	0x22, 0x20, 0x1D, 0x1A, 0x18, 0x15, 0x12, 0x10,
-	0x0D, 0x0A, 0x08, 0x05, 0x02, 0x90, 0x90, 0x90
-};
+	0x0D, 0x0A, 0x08, 0x05, 0x02, 0x90, 0x90, 0x90,
 
-const uint32 TownsPC98_OpnDriver::_adtStat[] = {
-	0x00010001, 0x00010001,	0x00010001, 0x01010001,
-	0x00010101, 0x00010101, 0x00010101, 0x01010101,
-	0x01010101, 0x01010101, 0x01010102, 0x01010102,
-	0x01020102, 0x01020102, 0x01020202, 0x01020202,
-	0x02020202, 0x02020202, 0x02020204, 0x02020204,
-	0x02040204, 0x02040204, 0x02040404, 0x02040404,
-	0x04040404, 0x04040404, 0x04040408, 0x04040408,
-	0x04080408, 0x04080408, 0x04080808, 0x04080808,
-	0x08080808, 0x08080808, 0x10101010, 0x10101010
+	//	frequencies
+	0x6A, 0x02, 0x8F, 0x02, 0xB6, 0x02, 0xDF, 0x02,
+	0x0B, 0x03, 0x39, 0x03, 0x6A, 0x03, 0x9E, 0x03,
+	0xD5, 0x03, 0x10, 0x04, 0x4E, 0x04, 0x8F, 0x04,
+
+	//	ssg frequencies
+	0xE8, 0x0E, 0x12, 0x0E, 0x48, 0x0D, 0x89, 0x0C,
+	0xD5, 0x0B, 0x2B, 0x0B, 0x8A, 0x0A, 0xF3, 0x09,
+	0x64, 0x09, 0xDD, 0x08, 0x5E, 0x08, 0xE6, 0x07,
+
+	// ssg patch data
+	0x00, 0x00, 0xFF, 0xFF, 0x00, 0x81, 0x00, 0x00,
+	0x00, 0x81, 0x00, 0x00, 0xFF, 0x81, 0x00, 0x00,
+	0x00, 0x01, 0xFF, 0xFF, 0x37, 0x81, 0xC8, 0x00,
+	0x00, 0x81, 0x00, 0x00, 0x0A, 0x81, 0x00, 0x00,
+	0x00, 0x01, 0xFF, 0xFF, 0x37, 0x81, 0xC8, 0x00,
+	0x01, 0x81, 0x00, 0x00, 0x0A, 0x81, 0x00, 0x00,
+	0x00, 0x01, 0xFF, 0xFF, 0xFF, 0x81, 0xBE, 0x00,
+	0x00, 0x81, 0x00, 0x00, 0x0A, 0x81, 0x00, 0x00,
+	0x00, 0x01, 0xFF, 0xFF, 0xFF, 0x81, 0xBE, 0x00,
+	0x01, 0x81, 0x00, 0x00, 0x0A, 0x81, 0x00, 0x00,
+	0x00, 0x01, 0xFF, 0xFF, 0xFF, 0x81, 0xBE, 0x00,
+	0x04, 0x81, 0x00, 0x00, 0x0A, 0x81, 0x00, 0x00,
+	0x00, 0x01, 0xFF, 0xFF, 0xFF, 0x81, 0xBE, 0x00,
+	0x0A, 0x81, 0x00, 0x00, 0x0A, 0x81, 0x00, 0x00,
+	0x00, 0x01, 0xFF, 0xFF, 0xFF, 0x81, 0x01, 0x00,
+	0xFF, 0x81, 0x00, 0x00, 0xFF, 0x81, 0x00, 0x00,
+	0xFF, 0x01, 0xFF, 0xFF, 0xFF, 0x81, 0xFF, 0x00,
+	0x01, 0x81, 0x00, 0x00, 0x0A, 0x81, 0x00, 0x00,
+	0x64, 0x01, 0xFF, 0x64, 0xFF, 0x81, 0xFF, 0x00,
+	0x01, 0x81, 0x00, 0x00, 0x0A, 0x81, 0x00, 0x00,
+
+	0x02, 0x01, 0xFF, 0x28, 0xFF, 0x81, 0xF0, 0x00,
+	0x00, 0x81, 0x00, 0x00, 0x0A, 0x81, 0x00, 0x00,
+	0x00, 0x01, 0xFF, 0xFF, 0xFF, 0x81, 0xC8, 0x00,
+	0x01, 0x81, 0x00, 0x00, 0x28, 0x81, 0x00, 0x00,
+	0x00, 0x01, 0xFF, 0x78, 0x5F, 0x81, 0xA0, 0x00,
+	0x05, 0x81, 0x00, 0x00, 0x28, 0x81, 0x00, 0x00,
+	0x00, 0x01, 0xFF, 0xFF, 0x00, 0x81, 0x00, 0x00,
+	0x00, 0x81, 0x00, 0x00, 0xFF, 0x81, 0x00, 0x00,
+	0x00, 0x01, 0xFF, 0xFF, 0x00, 0x81, 0x00, 0x00,
+	0x00, 0x81, 0x00, 0x00, 0xFF, 0x81, 0x00, 0x00,
+	0x00, 0x01, 0xFF, 0xFF, 0x00, 0x81, 0x00, 0x00,
+	0x00, 0x81, 0x00, 0x00, 0xFF, 0x81, 0x00, 0x00
 };
 
 SoundTowns::SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer)
@@ -2916,7 +3918,8 @@ void SoundTowns::playSoundEffect(uint8 track) {
 	}
 
 	playbackBufferSize -= 0x20;
-	uint32 outputRate = uint32(11025 * semitoneAndSampleRate_to_sampleStep(note, sfxRootNoteOffs, sfxRate, 11025, 0x2000));
+
+	uint32 outputRate = uint32(11025 * calculatePhaseStep(note, sfxRootNoteOffs, sfxRate, 11025, 0x2000));
 
 	_currentSFX = Audio::makeLinearInputStream(sfxPlaybackBuffer, playbackBufferSize,
 		outputRate, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LITTLE_ENDIAN | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
@@ -2995,7 +3998,7 @@ void SoundTowns::onTimer(void *data) {
 		music->_parser->onTimer();
 }
 
-float SoundTowns::semitoneAndSampleRate_to_sampleStep(int8 semiTone, int8 semiToneRootkey,
+float SoundTowns::calculatePhaseStep(int8 semiTone, int8 semiToneRootkey,
 	uint32 sampleRate, uint32 outputRate, int32 pitchWheel) {
 	if (semiTone < 0)
 		semiTone = 0;
@@ -3050,18 +4053,18 @@ bool SoundPC98::init() {
 void SoundPC98::playTrack(uint8 track) {
 	if (--track >= 56)
 		track -= 55;
- 
+
 	if (track == _lastTrack && _musicEnabled)
 		return;
 
-	haltTrack();
+	beginFadeOut();
 
 	char musicfile[13];
 	sprintf(musicfile, fileListEntry(0), track);
 	delete[] _musicTrackData;
 	_musicTrackData = _vm->resource()->fileData(musicfile, 0);
 	if (_musicEnabled)
-		_driver->loadData(_musicTrackData);
+		_driver->loadMusicData(_musicTrackData);
 
 	_lastTrack = track;
 }
@@ -3074,29 +4077,42 @@ void SoundPC98::haltTrack() {
 }
 
 void SoundPC98::beginFadeOut() {
-	_driver->fadeOut();
+	if (!_driver->musicPlaying())
+		return;
+
+	for (int i = 0; i < 20; i++) {
+		_driver->fadeStep();
+		_vm->delay(32);
+	}
 	haltTrack();
 }
 
-void SoundPC98::playSoundEffect(uint8) {
-	/// TODO ///
+void SoundPC98::playSoundEffect(uint8 track) {
+	if (!_sfxTrackData)
+		return;
+
+	//	This has been disabled for now since I don't know
+	//	how to make up the correct track number. It probably
+	//	needs a map.
+	//_driver->loadSoundEffectData(_sfxTrackData, track);
 }
 
 
 //	KYRA 2
 
 SoundTownsPC98_v2::SoundTownsPC98_v2(KyraEngine_v1 *vm, Audio::Mixer *mixer) :
-	Sound(vm, mixer), _currentSFX(0), _musicTrackData(0), _lastTrack(-1), _driver(0), _useFmSfx(false) {
+	Sound(vm, mixer), _currentSFX(0), _musicTrackData(0), _sfxTrackData(0), _lastTrack(-1), _driver(0), _useFmSfx(false) {
 }
 
 SoundTownsPC98_v2::~SoundTownsPC98_v2() {
 	delete[] _musicTrackData;
+	delete[] _sfxTrackData;
 	delete _driver;
 }
 
 bool SoundTownsPC98_v2::init() {
-	_driver = new TownsPC98_OpnDriver(_mixer, /*_vm->gameFlags().platform == Common::kPlatformPC98 ?
-		TownsPC98_OpnDriver::OD_TYPE86 :*/ TownsPC98_OpnDriver::OD_TOWNS);
+	_driver = new TownsPC98_OpnDriver(_mixer, _vm->gameFlags().platform == Common::kPlatformPC98 ?
+		TownsPC98_OpnDriver::OD_TYPE86 : TownsPC98_OpnDriver::OD_TOWNS);
 	_useFmSfx = _vm->gameFlags().platform == Common::kPlatformPC98 ? true : false;
 	_vm->checkCD();
 	// FIXME: While checking for 'track1.XXX(X)' looks like
@@ -3106,11 +4122,17 @@ bool SoundTownsPC98_v2::init() {
 	// this misses the possibility that we play the tracks
 	// right off CD. So we should find another way to
 	// check if we have access to CD audio.
+	Resource *res = _vm->resource();
 	if (_musicEnabled &&
-		(Common::File::exists("track1.mp3") || Common::File::exists("track1.ogg") ||
-		 Common::File::exists("track1.flac") || Common::File::exists("track1.fla")))
+		(res->exists("track1.mp3") || res->exists("track1.ogg") || res->exists("track1.flac") || res->exists("track1.fla")))
 			_musicEnabled = 2;
+	
 	return _driver->init();
+}
+
+void SoundTownsPC98_v2::loadSoundFile(Common::String file) {
+	delete [] _sfxTrackData;
+	_sfxTrackData = _vm->resource()->fileData(file.c_str(), 0);
 }
 
 void SoundTownsPC98_v2::process() {
@@ -3138,9 +4160,9 @@ void SoundTownsPC98_v2::playTrack(uint8 track) {
 	char musicfile[13];
 	sprintf(musicfile, fileListEntry(0), track);
 	delete[] _musicTrackData;
-	
+
 	_musicTrackData = _vm->resource()->fileData(musicfile, 0);
-	_driver->loadData(_musicTrackData, true);
+	_driver->loadMusicData(_musicTrackData, true);
 
 	if (_musicEnabled == 2 && trackNum != -1) {
 		AudioCD.play(trackNum+1, _driver->looping() ? -1 : 1, 0, 0);
@@ -3160,7 +4182,14 @@ void SoundTownsPC98_v2::haltTrack() {
 }
 
 void SoundTownsPC98_v2::beginFadeOut() {
-	_driver->fadeOut();
+	if (!_driver->musicPlaying())
+		return;
+
+	for (int i = 0; i < 20; i++) {
+		_driver->fadeStep();
+		_vm->delay(32);
+	}
+
 	haltTrack();
 }
 
@@ -3221,7 +4250,7 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, bool) {
 		sfx[i] = cmd;
 	}
 
-	uint32 outputRate = uint32(11025 * SoundTowns::semitoneAndSampleRate_to_sampleStep(0x3c, 0x3c, sfxRate, 11025, 0x2000));
+	uint32 outputRate = uint32(11025 * SoundTowns::calculatePhaseStep(0x3c, 0x3c, sfxRate, 11025, 0x2000));
 
 	_currentSFX = Audio::makeLinearInputStream(sfx, outsize, outputRate,
 		Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LITTLE_ENDIAN | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
@@ -3233,16 +4262,163 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, bool) {
 }
 
 void SoundTownsPC98_v2::playSoundEffect(uint8 track) {
-	if (!_useFmSfx)
+	if (!_useFmSfx || !_sfxTrackData)
 		return;
 
-	uint8 *sd = _vm->resource()->fileData("sound.dat", 0);
-
-
-	//TODO
-
-	delete [] sd;
+	_driver->loadSoundEffectData(_sfxTrackData, track);
 }
+
+// static resources
+
+const uint32 TownsPC98_OpnCore::_adtStat[] = {
+	0x00010001, 0x00010001,	0x00010001, 0x01010001,
+	0x00010101, 0x00010101, 0x00010101, 0x01010101,
+	0x01010101, 0x01010101, 0x01010102, 0x01010102,
+	0x01020102, 0x01020102, 0x01020202, 0x01020202,
+	0x02020202, 0x02020202, 0x02020204, 0x02020204,
+	0x02040204, 0x02040204, 0x02040404, 0x02040404,
+	0x04040404, 0x04040404, 0x04040408, 0x04040408,
+	0x04080408, 0x04080408, 0x04080808, 0x04080808,
+	0x08080808, 0x08080808, 0x10101010, 0x10101010
+};
+
+const uint8 TownsPC98_OpnCore::_detSrc[] = {
+	0x02, 0x02, 0x02, 0x02, 0x02, 0x03, 0x03, 0x03,
+	0x04, 0x04, 0x04, 0x05, 0x05, 0x06, 0x06, 0x07,
+	0x08, 0x08, 0x08, 0x08, 0x01, 0x01,	0x01, 0x01,
+	0x02, 0x02, 0x02, 0x02, 0x02, 0x03,	0x03, 0x03,
+	0x04, 0x04, 0x04, 0x05, 0x05, 0x06, 0x06, 0x07,
+	0x08, 0x08, 0x09, 0x0a,	0x0b, 0x0c, 0x0d, 0x0e,
+	0x10, 0x10, 0x10, 0x10,	0x02, 0x02, 0x02, 0x02,
+	0x02, 0x03, 0x03, 0x03, 0x04, 0x04, 0x04, 0x05,
+	0x05, 0x06,	0x06, 0x07, 0x08, 0x08, 0x09, 0x0a,
+	0x0b, 0x0c,	0x0d, 0x0e, 0x10, 0x11, 0x13, 0x14,
+	0x16, 0x16, 0x16, 0x16
+};
+
+const int TownsPC98_OpnCore::_ssgTables[] = {
+	0x01202A, 0x0092D2, 0x006B42, 0x0053CB, 0x003DF8, 0x003053, 0x0022DA, 0x001A8C,
+	0x00129B, 0x000DC1, 0x000963, 0x0006C9, 0x000463, 0x0002FA, 0x0001B6, 0x0000FB,
+	0x0193B6, 0x01202A, 0x00CDB1, 0x0092D2, 0x007D7D, 0x006B42, 0x005ECD, 0x0053CB,
+	0x00480F, 0x003DF8, 0x0036B9, 0x003053, 0x00290A, 0x0022DA, 0x001E6B, 0x001A8C,
+	0x001639, 0x00129B, 0x000FFF, 0x000DC1, 0x000B5D, 0x000963, 0x0007FB, 0x0006C9,
+	0x000575, 0x000463, 0x00039D, 0x0002FA, 0x000242, 0x0001B6, 0x00014C, 0x0000FB
+};
+
+const uint8 TownsPC98_OpnCore::_percussionData[] = {
+	0,24,1,192,1,216,2,128,4,88,23,64,27,152,1,128,29,24,2,128,31,152,0,128,136,128,128,128,0,136,97,103,153,139,34,163,72,195,27,69,1,154,137,35,8,51,169,122,164,75,133,203,81,146,168,121,185,68,202,8,33,237,49,177,12,133,140,17,160,42,161,10,0,137,176, 57,
+	233,41,160,136,235,65,177,137,128,26,164,28,3,157,51,137,1,152,113,161,40,146,115,192,56,5,169,66,161,56,1,50,145,59,39,168,97,1,160,57,7,153,50,153,32,2,25,129,32,20,186,66,129,24,153,164,142,130,169,153,26,242,138,217,9,128,204,58,209,172,40, 176, 141,
+	128,155,144,203,139,0,235,9,177,172,0,185,168,138,25,240,59,211,139,19,176,90,160,17,26,132,41,1,5,25,3,50,144,115,147,42,39,152,41,3,56,193,105,130,155,66,200,26,19,218,154,49,201,171,138,176,251,139,185,172,136,189,139,145,207,41,160,171,152, 186, 139,
+	186,141,128,218,171,51,217,170,56,163,12,4,155,81,147,42,37,152,32,54,136,49,50,48,37,32,69,0,17,50,50,83,2,16,68,20,8,66,4,154,84,145,24,33,24,32,17,18,145,32,22,168,49,163,1,33,50,184,115,129,25,66,1,24,67,2,80,35,40,53,2,65,51,19,67,37,0,52,35,49, 37,
+	34,49,37,17,52,17,35,35,35,34,32,49,33,152,34,145,24,24,128,138,128,184,9,177,171,168,185,155,152,172,155,186,172,185,172,155,186,173,153,202,187,185,202,170,171,202,186,169,170,170,171,139,154,171,153,154,169,10,168,154,128,168,154,0,153, 152, 136, 137,
+	128,153,0,152,8,128,137,0,136,136,8,9,8,9,8,24,153,128,136,153,144,0,161,138,1,169,136,128,160,168,152,153,138,137,154,153,153,154,153,170,168,170,185,168,169,154,169,171,153,169,170,153,152,154,153,137,169,137,136,144,152,144,128,128,144,129,129, 0, 33,
+	0,17,17,17,33,33,18,18,34,34,34,34,34,34,35,19,35,19,35,35,18,19,18,35,18,33,0,8,8,8,8,8,8,8,160,205,65,176,171,203,16,240,95,242,120,145,156,66,177,26,19,153,9,35,35,239,56,132,138,154,50,145,203,25,32,20,237,24,130,138,160,27,39,173,50,203,64,145, 139,
+	18,168,48,146,171,65,18,176,12,52,128,25,5,57,240,104,161,25,129,18,188,114,160,26,36,200,154,18,1,128,186,73,162,173,32,184,25,144,137,234,8,154,32,160,158,18,187,81,2,235,41,36,144,154,17,67,128,33,160,114,146,26,37,33,232,41,130,41,178,29,50, 251, 24,
+	1,153,138,160,76,179,155,11,0,38,252,41,146,41,178,27,193,43,39,170,136,17,129,8,49,233,48,129,11,6,26,130,136,128,64,1,248,105,145,9,16,144,140,5,25,168,16,186,48,5,171,217,57,134,171,8,34,188,20,203,41,6,155,161,89,164,140,2,136,51,202,41,131, 56, 144,
+	8,97,144,146,13,69,200,42,130,25,152,57,6,220,88,177,26,148,9,168,8,67,192,156,65,145,137,10,4,154,18,157,67,160,154,1,50,188,82,170,82,185,49,220,97,144,10,8,16,145,9,136,18,202,51,184,141,114,179,139,24,19,8,250,121,160,40,160,10,18,152,168,42,35, 216,
+	187,120,145,18,156,203,84,144,9,144,26,66,161,13,1,128,17,154,18,142,6,154,65,192,29,35,186,64,192,24,9,146,56,185,16,248,121,176,40,129,136,171,96,147,140,50,203,64,144,41,128,161,187,71,200,24,129,24,217,56,20,220,24,4,169,9,1,33,201,26,134,141,51,201,
+	25,16,33,235,32,144,33,153,169,99,160,11,3,136,58,210,33,203,48,163,17,219,128,140,38,8,184,141,50,131,159,33,128,153,25,18,153,88,242,43,3,9,136,157,53,202,40,145,25,2,204,105,146,156,66,152,8,153,33,128,129,136,153,50,186,55,188,51,249,64,178, 27, 128,
+	48,177,156,18,35,175,51,189,32,51,234,155,69,184,26,2,152,9,17,136,144,137,50,235,115,216,24,2,170,67,187,49,129,155,4,27,129,56,232,43,39,203,40,3,154,169,66,184,114,224,25,2,9,128,11,35,155,18,11,202,84,169,26,5,154,8,160,98,185,17,187,50, 23, 188, 33,
+	1,139,4,154,90,147,12,3,43,2,170,171,103,193,28,132,137,8,129,24,170,50,201,42,35,202,169,52,201,33,218,40,39,203,0,40,147,29,163,139,83,185,1,4,159,34,160,12,21,155,40,129,137,58,151,13,2,136,144,16,153,40,17,131,207,51,144,140,4,154,17,146,170,73, 163,
+	44,164,12,152,37,203,17,128,144,139,23,154,128,138,38,216,41,1,0,233,73,131,171,49,136,9,164,46,3,171,32,0,145,157,38,187,64,176,58,134,155,18,136,217,64,1,200,140,38,153,170,66,161,8,169,65,185,98,200,41,3,155,144,58,23,187,1,145,40,147,189,32, 68, 249,
+	1,112,255,199,195,19,108,76,187,247,247,183,40,168,212,245,199,227,68,45,59,10,145,177,198,24,130,76,26,193,180,129,0,162,42,160,199,162,0,16,152,137,132,168,195,130,162,181,227,163,161,179,211,180,179,164,128,162,161,194,164,179,40,153,195,213,146, 178,
+	147,176,50,186,161,196,151,58,16,28,162,160,131,122,155,33,241,146,128,40,26,128,154,36,170,89,59,9,24,144,77,161,8,177,112,139,33,232,148,24,41,61,9,26,162,32,30,58,153,32,59,73,59,11,79,137,57,9,49,30,24,153,131,25,106,61,153,73,28,56,27, 41, 137, 148,
+	76,43,74,58,13,161,3,171,149,32,77,10,74,42,168,16,0,123,138,129,162,178,225,50,140,161,0,147,10,129,41,244,210,165,1,152,24,162,184,166,32,144,59,216,132,177,8,145,67,143,146,160,183,162,130,24,192,32,225,146,144,33,44,73,30,129,137,32,76, 152, 25, 161,
+	2,154,32,177,132,232,2,136,210,128,149,177,32,58,27,168,225,133,8,44,107,136,25,136,17,26,58,46,16,11,145,17,144,79,136,144,136,145,152,33,31,162,130,200,82,153,74,137,147,26,0,13,133,170,149,16,192,0,178,0,128,152,182,150,9,16,9,137,33,59,63,10,152, 32,
+	179,192,5,154,228,182,145,130,144,42,128,242,2,136,41,168,17,76,57,31,129,136,17,47,8,41,138,32,138,123,59,58,10,136,161,4,46,25,145,136,129,25,56,28,91,41,154,108,9,16,44,24,137,48,15,0,194,162,41,194,56,241,163,146,0,139,7,186,150,129,152,1,208,33,176,
+	136,164,163,185,7,138,130,242,162,163,177,88,136,184,166,146,0,25,25,177,199,146,16,136,9,145,178,178,0,147,138,229,18,152,25,144,163,246,162,129,129,184,5,152,178,145,148,136,146,95,152,128,144,33,170,81,11,40,202,131,0,243,24,1,11,148,42, 24, 163, 140,
+	120,9,76,58,153,145,56,30,72,46,42,9,8,57,91,76,59,26,160,129,41,76,10,57,192,163,129,16,225,2,27,40,200,48,91,226,40,145,43,177,177,182,196,145,33,184,165,17,192,163,194,129,211,128,162,197,129,0,136,211,146,8,162,144,0,167,160,1,176,150,137,1, 24, 243,
+	0,129,145,25,123,169,130,168,132,41,63,42,136,137,120,26,136,8,24,89,29,58,177,193,147,1,26,162,176,167,180,8,49,28,29,178,162,88,43,42,57,43,61,8,29,129,128,128,123,137,24,243,16,136,16,46,0,169,149,128,1,60,153,72,154,90,25,25,25,8,91,73,12,16,137,144,
+	72,11,8,167,128,129,9,138,166,193,147,162,123,137,145,1,162,26,1,219,147,129,210,147,243,1,243,16,144,145,160,131,200,4,59,75,57,218,2,178,77,24,60,11,147,10,50,141,64,27,185,122,161,41,128,90,136,24,46,16,139,16,24,28,124,9,41,8,26,121,10,42,40,139,129,
+	0,201,135,137,56,176,176,35,215,145,1,26,145,144,160,135,138,1,177,146,146,161,65,242,136,164,177,1,1,186,151,208,148,129,10,32,241,145,163,178,17,168,136,151,168,2,148,185,133,176,130,129,154,163,215,0,146,136,40,211,161,131,171,81,144,170, 21, 184, 56,
+	195,168,133,177,91,16,187,5,145,153,66,172,18,177,42,120,138,27,134,26,106,42,138,146,184,66,75,46,41,168,0,145,57,91,75,27,24,27,48,169,40,122,9,109,10,8,177,146,16,74,30,129,160,162,146,41,124,138,24,145,152,3,1,14,3,139,1,192,161,151,177,122,8, 10, 0,
+	176,130,129,27,88,225,0,2,154,129,129,193,49,203,81,153,226,33,0,30,0,176,179,18,9,96,156,162,148,160,129,2,29,195,128,0,56,156,20,232,129,128,32,10,144,74,183,9,145,162,1,162,138,23,171,1,164,224,34,43,43,177,200,135,161,91,57,154,177,148, 145, 146, 58,
+	108,136,170,35,208,177,34,128,44,129,155,151,243,16,1,154,72,193,144,18,11,122,160,153,5,192,24,130,184,132,226,0,128,153,131,181,136,65,154,128,17,170,39,28,59,144,168,80,25,47,24,26,144,32,47,41,153,161,148,8,92,9,9,129,144,33,26,47,24,137,108, 25, 10,
+	17,10,73,75,47,24,184,48,8,45,57,138,136,150,10,48,139,136,35,203,121,8,27,179,161,106,0,29,16,176,179,3,185,19,227,41,145,168,61,197,177,20,10,57,42,250,147,196,16,41,138,24,195,208,135,137,0,145,160,2,210,146,195,177,132,136,153,167,210,146,162, 40, 8,
+	138,148,227,145,17,137,40,169,179,130,242,2,196,9,146,145,169,167,146,130,137,136,51,220,17,163,28,74,10,76,40,140,5,137,43,18,12,107,137,40,8,201,50,0,143,3,138,161,134,138,104,169,16,162,160,121,25,28,129,152,32,56,14,16,184,146,3,46,25, 176, 129, 179,
+	193,17,130,202,135,8,57,25,154,148,184,120,9,153,211,165,24,128,26,17,242,161,18,185,81,42,11,17,12,25,181,137,66,42,47,41,184,166,129,24,91,27,136,196,0,0,74,28,178,161,149,160,32,8,225,32,128,59,8,169,50,139,47,72,186,16,132,9,122,9,160,146,144,89,153,
+	10,149,178,0,121,11,146,152,162,48,13,123,177,24,0,106,27,9,144,132,12,17,0,168,0,181,56,169,129,242,195,129,17,154,64,161,244,16,137,24,144,144,164,129,75,42,176,149,9,179,148,203,4,166,136,163,128,227,163,8,57,11,30,165,0,74,59,62,9,208,131,144,40, 76,
+	26,27,196,129,1,25,43,49,174,67,153,136,106,152,41,25,28,2,43,44,104,45,59,8,43,128,144,120,25,12,17,152,9,130,155,151,145,74,40,13,48,192,58,90,43,43,177,146,49,31,75,24,217,131,0,76,26,152,149,161,24,74,154,193,166,145,32,27,161,164,176,135,152,24,193,
+	162,146,164,58,227,193,148,161,128,18,234,130,180,145,2,200,1,163,186,98,184,129,149,153,49,42,186,151,242,129,1,43,8,177,212,165,8,40,137,24,8,144,90,9,25,48,44,46,24,138,40,144,108,58,27,128,181,128,80,29,42,152,162,130,25,106,136,11,148,8,144,128,136,
+	112,139,80,153,24,136,129,46,0,60,129,208,1,3,13,57,168,144,1,242,17,9,26,2,185,27,55,140,73,137,179,16,192,3,145,143,33,9,171,135,160,17,137,10,151,168,3,178,44,17,208,144,167,0,40,155,16,167,152,18,144,26,160,199,1,136,91,136,160,178,150,161,1,10, 181,
+	145,161,1,145,161,198,2,9,90,137,177,160,150,40,29,129,144,145,162,57,77,169,16,148,42,42,40,141,34,170,121,154,210,131,162,107,8,9,160,195,40,73,139,18,224,162,34,139,0,244,178,163,24,26,146,194,166,49,29,42,137,130,192,16,93,128,154,19,59, 11, 122, 11,
+	146,177,120,42,26,43,164,152,17,60,63,137,128,48,10,58,92,9,59,91,75,139,32,25,25,61,74,28,177,40,130,74,29,73,168,130,128,48,14,8,77,9,25,26,179,211,32,78,26,41,152,161,180,89,59,9,153,166,160,3,26,57,106,154,88,184,40,1,27,58,73,143,131,169,3,161, 184,
+	122,152,16,181,145,129,17,15,129,193,147,145,192,33,193,162,183,163,136,178,129,178,197,2,41,216,131,168,163,181,226,163,178,1,33,187,166,212,129,1,27,24,162,184,151,8,16,160,144,181,210,72,168,128,32,42,25,40,142,5,185,88,58,11,58,177,32,129,63,42, 136,
+	186,53,29,75,58,144,144,129,77,128,11,144,133,29,40,152,24,161,129,80,155,60,3,12,89,8,60,152,152,49,136,47,57,224,129,16,41,90,139,162,147,170,51,169,27,17,95,26,26,160,5,139,48,76,10,228,146,1,136,44,161,147,209,130,137,73,224,1,162,195,32,210,177,180,
+	179,148,145,154,132,242,146,1,152,32,192,1,144,155,7,177,168,5,138,178,148,152,150,136,89,152,9,41,196,145,40,28,16,8,10,178,167,24,1,44,123,137,136,145,194,48,27,74,26,192,179,135,136,88,27,10,177,163,164,128,73,24,31,8,0,192,149,144,129,9,106, 41, 200,
+	161,151,41,138,0,24,226,162,49,42,11,90,136,136,152,17,145,10,63,40,11,56,245,162,16,26,73,11,144,135,137,58,106,10,25,8,57,137,28,33,129,156,113,10,10,161,18,8,153,77,3,217,0,1,242,128,193,18,128,75,60,178,154,37,45,58,29,144,1,184,66,41,29, 8, 145, 10,
+	194,33,148,170,107,89,139,128,163,178,16,63,59,176,144,151,129,42,74,10,129,192,2,128,154,97,192,0,177,128,178,183,16,16,155,149,145,184,84,138,8,192,161,20,225,0,130,138,165,0,28,148,153,18,209,128,88,153,89,152,9,17,9,29,130,43,122,153,24, 32, 202, 49,
+	24,43,106,154,130,193,27,51,29,28,133,138,65,11,123,25,10,40,152,44,130,26,43,148,45,73,140,33,8,153,88,128,61,144,42,59,225,128,18,155,50,75,186,20,202,120,144,42,92,176,162,165,25,2,169,152,135,185,19,152,8,146,160,123,195,137,132,209,0,16, 11, 2, 242,
+	146,164,152,73,193,136,130,178,1,136,169,23,169,128,164,242,129,178,129,32,138,180,167,153,132,8,138,2,209,4,138,1,128,138,92,136,44,129,136,162,33,63,40,141,2,160,144,106,137,64,155,17,129,60,30,146,26,17,28,48,46,169,51,154,91,137,41,26,32,143,18, 138,
+	1,32,28,123,177,9,181,195,56,57,14,145,161,17,17,31,41,152,145,194,194,20,153,41,9,243,129,180,0,128,45,16,43,170,135,144,16,25,42,137,242,163,194,16,0,57,14,130,194,178,16,33,30,8,59,211,163,160,5,137,44,10,17,170,3,120,9,44,146,136,131,140, 91, 9, 171,
+	7,161,32,73,13,8,161,40,106,11,25,129,59,0,49,31,42,28,40,11,0,81,176,61,32,138,25,178,241,148,136,106,8,136,128,177,90,8,155,96,176,9,18,217,132,129,10,81,156,40,178,161,36,169,76,147,203,150,0,10,146,200,147,149,128,144,148,154,182,24,0,137,11,134,211,
+	24,136,129,145,209,33,8,43,163,243,88,41,13,0,160,145,33,31,32,185,145,4,155,17,32,47,161,128,73,160,44,56,176,75,74,12,35,141,104,137,9,89,152,58,56,44,41,30,41,40,157,48,128,154,88,41,42,8,14,3,184,59,120,152,9,56,10,128,41,57,227,186,52,152,62, 8, 56,
+	242,0,58,8,156,34,243,128,24,176,51,169,58,183,192,146,164,177,18,170,7,177,208,132,161,24,136,27,147,243,128,133,10,24,161,161,178,214,17,160,25,16,161,137,165,192,48,27,72,58,218,133,162,26,72,27,10,197,178,49,138,89,56,142,1,24,11,0,44,105, 10, 25, 0,
+	194,9,3,47,8,138,147,18,28,48,202,147,199,146,25,161,0,145,194,163,57,11,146,248,130,32,57,63,154,16,48,14,128,144,209,133,26,56,154,182,162,195,18,152,44,194,180,168,5,24,137,138,35,192,232,66,176,161,24,41,26,244,129,163,160,75,129,226,147,40, 145, 61,
+	13,130,177,17,137,112,170,130,0,136,75,152,177,241,34,0,59,156,51,186,178,91,132,137,137,122,1,45,28,50,172,57,108,8,26,136,32,152,46,144,131,171,4,152,18,141,148,1,216,32,9,60,169,66,152,128,72,90,201,1,17,201,136,3,195,26,73,133,200,176, 150, 146, 169,
+	24,33,178,184,151,73,11,28,72,44,153,82,153,17,42,57,78,153,8,160,0,1,123,11,19,171,195,18,59,31,129,10,162,2,58,96,142,130,26,75,128,176,17,180,123,9,90,137,211,145,32,26,76,43,145,130,12,90,41,27,58,160,160,128,178,7,76,59,0,203,180,147,33,62,10,0,243,
+	129,146,73,29,145,144,0,26,56,153,185,83,8,76,27,166,161,193,146,131,224,145,165,161,40,168,149,162,226,2,136,138,163,131,211,0,59,146,218,148,1,192,16,16,58,248,88,144,177,136,1,58,45,9,195,197,147,48,29,10,0,162,176,64,122,9,10,17,9,153,56, 75, 27, 31,
+	72,136,9,129,129,61,45,59,10,161,18,122,43,59,41,169,34,155,130,131,219,120,162,27,49,208,160,131,156,66,12,145,50,240,16,136,12,162,40,129,130,15,129,162,146,180,83,139,58,217,129,177,4,0,169,197,163,144,242,131,168,179,179,17,197,145,178,164, 128, 160,
+	211,2,244,163,145,162,129,212,177,163,17,208,163,195,180,57,24,170,182,164,129,0,60,60,169,149,162,177,122,26,24,136,136,133,43,27,178,56,77,24,128,240,0,2,44,46,8,128,193,146,64,27,42,16,193,25,0,192,148,11,52,47,153,147,243,0,24,73,28,144, 161, 150, 9,
+	8,73,170,2,162,25,27,147,167,131,29,1,168,200,165,16,91,137,8,162,176,35,41,31,24,169,50,168,58,123,144,48,128,13,73,169,144,16,57,123,44,200,163,56,153,80,10,176,146,57,94,8,152,131,9,168,125,26,145,177,132,137,41,60,26,144,243,32,192,34,60, 43, 26, 16,
+	249,164,16,58,61,11,130,243,146,2,42,44,27,128,165,137,49,45,28,16,43,8,211,48,28,152,105,9,9,163,161,169,35,107,42,232,164,130,168,72,42,168,210,148,144,136,129,3,217,194,50,27,192,41,210,147,40,76,226,1,161,1,155,132,145,147,171,67,173,210,132,161,106,
+	137,56,169,209,131,64,13,129,9,194,17,57,61,169,17,128,40,31,16,10,162,57,61,75,139,40,242,17,58,59,138,179,144,50,105,140,179,243,57,40,26,9,243,130,24,29,57,128,210,129,25,59,91,137,162,178,72,27,181,168,19,129,8,184,231,147,178,32,28,184,198,148, 144,
+	1,26,128,16,192,2,26,144,244,129,0,16,10,197,177,181,1,41,9,178,165,211,129,25,145,137,210,147,152,210,163,132,194,17,91,169,145,181,130,9,89,137,152,178,4,128,9,63,160,128,106,8,25,43,10,32,47,26,123,152,24,40,25,27,18,186,35,158,64,42,216,33,25,58, 58,
+	45,184,147,29,72,46,9,0,178,146,58,77,26,25,209,165,128,145,17,153,128,129,148,240,129,1,40,31,0,152,242,163,16,59,44,24,243,146,128,1,26,26,179,213,145,130,176,131,40,25,145,219,179,167,8,33,59,14,176,166,16,136,74,128,176,128,149,8,8,209,148,152,0, 72,
+	153,161,178,35,62,75,154,163,153,19,62,170,133,179,136,89,12,129,164,144,3,47,58,193,177,148,0,61,43,10,129,17,41,61,43,25,8,126,26,25,137,145,34,44,45,129,216,179,1,90,25,137,32,227,8,16,9,170,49,31,32,29,128,145,148,75,25,75,153,162,192,35,12, 80, 136,
+	176,8,194,24,1,176,21,154,145,80,251,130,2,30,9,8,130,145,128,98,27,26,129,136,162,15,33,168,59,65,177,77,141,1,128,168,113,10,137,178,163,146,132,74,153,224,164,33,184,19,184,228,161,17,91,152,25,146,152,44,121,9,160,145,17,25,28,93,128,152,2,25,27,161,
+	210,129,146,45,179,227,163,162,9,40,193,148,179,57,107,140,196,32,25,57,47,136,210,130,24,40,28,152,210,182,145,40,8,129,184,147,147,140,163,166,160,34,45,144,194,161,134,41,46,152,162,162,3,44,58,75,209,162,144,57,129,47,152,130,59,16,248,129,17,26, 57,
+	9,29,167,2,60,42,138,136,209,130,90,42,42,176,146,178,120,28,8,160,145,16,33,31,1,8,160,129,128,242,164,32,152,177,146,213,196,128,40,26,160,163,180,146,108,60,144,144,136,147,137,40,90,161,3,17,219,243,33,184,130,60,136,243,178,179,132,26,8,168,212,147,
+	16,57,42,31,145,145,160,32,43,184,66,45,180,33,140,226,1,91,152,16,144,193,162,48,77,25,137,153,17,178,78,0,0,16,14,90,152,153,19,129,13,123,137,129,160,1,73,44,9,129,0,153,120,10,9,162,195,32,139,28,151,161,2,128,26,45,193,146,48,29,146,153, 194, 5, 59,
+	29,128,144,195,1,64,43,208,178,149,8,9,16,240,163,129,16,42,185,181,211,24,48,45,137,149,9,24,41,75,184,177,4,43,91,128,180,16,144,29,25,184,167,1,59,60,153,148,161,146,91,42,186,4,24,145,123,11,2,178,77,136,26,25,195,40,115,61,27,168,177,3,59,79,26, 25,
+	144,1,48,13,56,154,248,1,16,9,129,8,2,178,31,130,153,162,20,15,33,170,56,40,29,28,128,152,149,144,56,120,11,162,212,129,144,145,59,180,243,147,145,144,16,152,48,241,0,161,176,1,134,10,129,200,166,144,128,121,26,24,177,178,196,48,75,138,41,180,195,26, 24,
+	89,138,24,33,187,41,84,155,57,79,136,160,210,130,0,58,58,168,243,132,27,41,75,138,3,8,61,8,29,145,179,76,24,28,146,208,2,49,140,75,196,144,0,40,44,179,208,3,176,33,15,177,2,160,106,8,160,164,164,8,73,27,226,179,161,1,57,1,196,211,128,40,156,145,166, 178,
+	131,29,128,145,162,165,40,27,216,146,135,144,40,160,194,177,145,20,139,200,151,178,17,136,40,25,205,130,17,11,17,129,156,38,26,25,137,179,163,11,79,16,12,146,147,143,89,25,136,136,25,48,26,46,129,40,29,42,29,8,145,2,56,27,62,8,25,212,161,48,43, 144, 129,
+	29,145,144,41,106,10,107,43,184,131,1,36,61,13,138,2,194,1,16,27,75,186,181,151,8,1,161,138,211,129,2,59,248,129,16,0,144,63,152,150,136,24,25,128,30,161,128,17,24,225,146,10,16,0,9,227,183,129,40,60,26,162,194,181,24,90,9,24,0,176,161,193,194,35,12, 63,
+	8,210,162,1,32,78,28,152,164,144,16,48,45,137,162,147,168,152,98,27,43,33,12,160,165,129,137,63,41,153,153,151,16,91,26,8,8,9,56,10,46,24,146,57,168,160,166,241,129,32,140,16,145,179,164,137,113,138,208,131,26,25,1,42,178,196,106,24,171,18,196,8, 18, 29,
+	41,194,128,3,249,57,162,152,48,184,120,160,208,33,137,74,57,187,149,129,26,35,158,72,128,168,32,26,25,180,75,2,136,15,163,161,136,120,27,41,160,128,182,56,60,25,12,178,151,128,168,72,10,152,4,177,26,147,137,113,44,42,33,220,2,152,41,82,11, 210, 163, 184,
+	133,162,10,196,128,3,234,40,149,152,161,1,44,129,194,4,225,16,58,168,24,194,146,146,154,49,21,218,33,152,248,129,194,147,0,28,1,195,162,20,140,42,25,160,198,1,33,136,142,3,25,24,141,16,177,208,112,0,138,41,160,130,45,60,32,170,73,24,75,59,161,176,49,159,
+	97,26,168,149,145,32,28,25,184,211,129,179,74,73,8,153,136,193,151,160,32,48,143,9,147,181,145,32,60,9,187,133,166,144,32,152,25,136,161,150,168,145,81,10,42,0,169,182,148,136,58,41,187,182,211,131,16,137,25,243,144,129,2,9,8,202,7,25,185,21,144,136,153,
+	65,184,137,56,151,10,153,49,16,145,14,56,176,11,192,19,89,91,44,168,147,2,8,147,63,27,1,136,229,129,73,26,136,26,137,81,170,147,77,72,12,42,42,192,24,104,91,26,27,65,177,27,32,41,60,14,136,17,170,150,129,24,58,11,16,251,162,19,57,31,0,152,129,145,17, 61,
+	14,1,129,27,129,66,169,178,74,12,11,19,198,145,75,33,138,174,133,1,184,57,40,136,169,20,1,60,174,20,154,201,67,26,162,151,42,16,138,59,130,204,20,169,59,180,59,114,184,56,178,242,128,130,43,8,194,3,229,144,33,185,144,34,181,145,168,17,149,153,74,35, 220,
+	129,128,1,88,59,75,225,136,130,168,17,144,12,151,8,25,179,8,1,240,16,8,25,145,211,41,130,138,115,169,160,163,168,84,154,74,0,170,144,211,149,2,30,128,137,9,149,1,144,58,60,57,153,178,150,17,29,27,74,25,195,152,56,15,1,25,26,152,149,80,153,57,73,140, 128,
+	160,144,113,27,56,28,25,4,42,44,137,60,171,130,50,240,8,5,139,145,1,105,137,200,80,137,145,146,178,179,160,46,16,240,195,131,128,144,24,164,198,128,0,136,137,131,194,165,177,2,161,147,11,144,188,181,148,144,23,0,28,224,128,131,192,32,1,224,1,168,132,145,
+	9,41,208,58,137,179,151,145,16,1,30,8,145,178,1,47,32,186,72,169,146,75,8,41,48,136,89,13,48,9,10,124,26,11,42,32,129,91,77,16,12,128,42,57,138,10,60,2,63,9,0,93,128,152,90,8,10,24,40,44,144,29,49,188,48,72,25,30,177,33,128,186,120,129,186,133, 152, 130,
+	24,156,51,154,8,226,2,56,155,2,179,233,167,128,24,129,176,136,151,8,184,0,33,224,152,21,177,24,10,163,16,250,17,130,171,83,137,136,37,12,56,242,154,17,160,145,82,13,3,201,128,18,137,24,162,63,162,8,107,178,128,57,158,32,24,200,18,0,106,154,73,16, 248, 8,
+	73,137,57,75,0,128,12,65,137,59,75,28,144,129,122,0,58,140,160,195,145,105,56,28,153,145,164,88,8,28,25,153,9,162,113,89,153,136,33,234,147,128,41,72,11,138,151,144,145,16,43,58,248,130,178,42,4,40,10,196,154,147,216,24,7,136,10,161,148,210,161, 98, 138,
+	137,128,146,176,33,105,27,43,163,49,185,6,10,136,43,67,174,161,162,151,137,1,64,200,193,24,64,200,56,145,242,24,57,137,1,128,3,162,175,80,128,162,152,25,58,175,17,17,0,200,64,168,162,91,1,154,44,211,177,35,64,160,161,144,4,241,41,209,162,25,1,3,242, 176,
+	134,153,42,41,136,135,154,2,130,46,41,161,153,180,145,34,26,46,18,242,137,146,129,25,128,11,151,161,40,179,27,122,168,59,137,181,50,172,36,56,15,9,129,137,128,75,2,58,12,52,141,8,24,58,153,157,122,145,9,1,80,27,184,32,74,219,50,57,168,153,180,48,28, 143,
+	131,144,178,65,13,48,168,162,147,155,121,9,170,5,16,153,21,29,144,161,91,0,184,57,128,137,17,159,88,178,128,105,152,9,162,33,164,141,88,178,224,1,0,16,27,185,150,161,9,4,139,16,128,160,194,144,65,180,46,40,136,27,135,160,16,44,57,145,236,2,195,40,75,177,
+	2,200,179,146,186,104,50,141,24,169,165,148,11,97,10,11,130,177,49,57,78,42,154,128,165,59,33,28,30,1,136,16,192,41,128,152,123,136,24,1,169,113,10,11,49,153,14,147,19,45,43,8,176,210,148,8,16,11,96,144,192,163,150,10,128,43,26,150,178,165,24,41,171, 18,
+	27,215,1,8,128,136,40,35,208,11,161,193,18,73,154,133,155,165,164,10,49,154,8,199,0,2,168,64,192,0,40,162,43,202,180,150,10,106,24,185,145,131,184,113,43,24,162,187,73,146,42,81,171,121,58,155,151,16,43,32,31,9,160,146,17,136,94,10,24,145,25, 9, 130, 59,
+	65,13,91,25,169,146,176,112,42,59,16,217,130,20,13,25,9,40,161,138,68,169,154,18,62,154,180,145,135,152,56,58,155,165,211,8,40,42,10,198,1,2,184,57,184,224,51,154,27,134,168,19,202,73,75,184,35,176,75,24,25,209,51,157,19,30,184,179,3,33,148,45, 232, 146,
+	129,168,41,32,170,149,193,35,136,16,50,191,56,146,173,149,16,24,41,30,129,168,209,3,57,31,0,16,176,147,41,152,10,17,181,14,40,144,49,170,75,97,141,25,162,146,72,177,92,137,137,19,137,153,113,154,2,41,60,129,217,2,211,152,73,42,193,197,146,147, 10, 59, 0,
+	192,196,132,41,160,25,88,169,16,40,241,1,153,81,28,10,147,161,209,88,75,9,161,162,180,16,43,57,235,33,56,156,129,144,2,135,31,128,145,136,163,56,59,154,57,167,160,105,137,0,138,163,3,41,47,185,211,131,41,41,60,139,182,146,16,16,43,242,144,145,129,16,179,
+	183,1,26,9,147,240,131,160,91,74,152,184,166,178,33,140,9,4,162,233,34,136,129,144,163,60,142,144,149,128,33,73,13,161,194,131,0,26,56,142,128,163,128,1,233,56,209,41,145,194,147,179,149,64,30,8,128,216,18,24,43,43,32,153,25,74,109,137,153,48,8,137, 122,
+	25,144,26,43,59,30,33,41,27,24,96,153,160,50,76,27,47,152,145,163,73,40,14,152,131,176,74,90,8,8,200,67,155,154,50,49,155,28,124,177,152,1,2,17,62,138,180,176,4,25,9,177,245,162,129,40,25,176,164,130,172,4,8,181,194,49,11,168,154,165,133,152,40,136, 226,
+	179,19,26,185,16,167,194,16,25,57,243,136,147,1,31,25,184,132,160,33,62,138,129,130,41,121,137,153,145,26,17,107,136,179,1,61,60,26,162,168,148,64,31,25,32,168,152,64,31,137,8,129,33,62,24,137,8,16,59,47,153,33,162,91,59,41,170,145,5,43,60,41,13,178,134,
+	57,153,12,194,227,8,2,128,57,208,162,19,216,32,178,25,128,160,48,194,195,37,155,10,33,251,163,146,16,136,12,166,195,160,148,129,176,147,178,150,160,72,162,162,193,162,60,200,145,5,144,25,122,216,129,161,130,0,10,73,1,241,2,9,168,33,13,161,165,24,64, 203,
+	50,1,14,9,9,129,161,106,33,27,13,164,128,40,41,107,169,160,33,136,60,92,168,152,2,91,57,176,129,0,144,47,136,162,164,128,80,43,154,179,213,130,74,27,0,145,145,167,58,59,160,9,26,76,8,171,5,49,28,44,169,162,183,130,72,28,144,179,228,2,25,26,129, 186, 151,
+	1,75,128,169,17,178,15,57,170,16,166,16,57,8,139,162,181,1,8,152,164,181,41,81,43,10,242,145,57,139,89,8,193,18,154,32,176,10,165,129,137,147,177,134,0,25,25,201,147,227,129,72,59,185,167,128,129,160,91,25,176,130,147,145,9,160,5,202,17,16, 186, 136, 37,
+	177,56,76,42,169,186,48,9,145,57,24,128,41,169,134,137,145,147,28,41,168,131,228,32,27,9,60,129,178,64,60,45,25,9,24,152,49,31,136,57,42,0,25,12,181,18,153,57,96,169,177,132,153,123,9,152,129,177,17,74,43,24,169,128,121,137,25,1,139,96,42,10,146,178, 18,
+	44,29,1,161,164,146,31,137,146,177,19,1,10,26,209,165,146,43,40,138,240,130,18,144,25,40,212,1,58,11,152,196,147,10,74,26,152,225,130,146,58,60,210,145,16,148,16,185,192,18,44,42,57,199,162,1,9,87,47,186,215,231,197,179,180,195,212,164,32,59,92, 126, 62,
+	41,59,76,59,60,168,179,213,197,163,72,44,25,74,126,127,127,79,26,177,148,90,27,225,247,165,0,152,147,123,138,211,164,72,126,127,46,210,196,163,228,215,64,11,210,180,1,8,58,153,1,224,149,57,76,27,24,76,42,43,136,128,243,179,130,106,60,42,42,92,28,243,231,
+	147,24,57,44,58,94,45,8,57,139,214,148,40,77,26,9,16,10,144,64,62,43,25,123,59,138,162,48,63,26,41,92,60,43,176,3,59,232,214,164,16,75,75,76,60,153,179,33,62,26,136,40,75,169,197,163,129,57,60,59,75,138,145,64,63,138,179,1,42,136,90,43,176,214,180,1, 25,
+	152,195,129,129,106,76,60,137,145,178,2,25,10,228,130,57,59,44,41,154,165,105,76,44,144,16,76,26,41,76,26,152,1,58,26,9,193,165,16,92,26,41,77,59,76,76,60,26,136,161,130,152,195,163,211,146,0,57,11,211,130,8,25,40,62,153,162,17,109,60,153,146,40, 76, 60,
+	26,160,179,211,163,32,60,42,153,179,194,199,130,24,58,43,58,27,128,161,195,129,226,196,147,90,59,75,44,136,128,145,160,148,123,59,42,26,41,26,57,27,192,215,147,57,59,27,161,145,213,130,106,76,43,9,144,162,129,177,181,130,136,194,146,40,10,129,25,210,146,
+	178,197,196,179,196,130,8,41,9,144,178,130,209,182,17,92,43,176,147,144,212,130,136,0,177,130,73,62,10,161,130,91,75,59,43,57,46,25,41,77,10,177,164,16,26,136,210,197,179,130,128,57,77,43,25,75,10,227,179,180,179,146,128,57,185,183,163,145,0,8,8,10, 119,
+	114,120,16,210,244,60,28,41,25,152,149,56,161,35,44,89,27,24,136,24,164,211,17,233,176,136,192,129,179,17,17,25,0,10,46,160,132,49,66,24,132,177,147,193,56,72,26,29,232,168,176,12,137,41,139,147,9,1,41,15,91,136,35,148,21,18,48,40,1,168,167,144,0,42,172,
+	177,204,193,155,232,152,152,26,152,41,146,17,6,4,65,34,35,135,4,16,32,9,24,186,176,0,250,153,204,186,173,154,153,177,3,65,41,34,145,134,35,65,98,49,50,50,2,33,169,138,155,175,170,172,204,192,138,234,136,155,136,10,32,18,5,52,48,24,162,17,67,54,66,51, 34,
+	131,184,174,234,153,10,9,40,0,152,251,168,142,154,9,16,33,49,33,128,154,170,156,34,54,54,33,68,0,1,136,201,137,26,88,48,35,99,8,152,189,189,187,155,171,16,24,130,145,188,175,203,144,49,115,67,67,50,19,2,1,0,0,130,131,1,136,206,216,188,203, 204, 187, 187,
+	156,153,0,0,51,17,34,24,112,20,69,67,67,34,19,0,136,169,185,137,186,232,185,219,201,203,187,173,170,154,153,129,131,6,2,19,49,49,21,65,19,53,51,83,34,16,168,201,154,172,156,138,0,1,24,201,233,186,204,186,171,137,3,37,48,24,128,201,202,202,129,17, 48, 21,
+	22,20,19,19,32,16,2,66,52,68,4,3,1,203,235,188,189,186,171,153,137,153,170,219,170,140,9,17,53,115,50,52,67,51,51,51,17,130,0,145,154,169,188,236,187,190,203,187,172,171,138,136,17,33,18,2,34,98,98,50,50,52,66,34,35,2,19,24,169,203,203,188,219, 169, 154,
+	9,137,171,204,188,203,184,136,34,83,50,33,153,184,170,170,152,40,57,19,36,50,50,18,35,17,2,49,49,66,66,66,34,17,168,233,202,202,170,171,170,186,219,203,188,188,154,138,25,33,68,52,68,67,67,36,51,36,18,17,17,136,8,170,176,202,188,206,202,171,172,186, 169,
+	153,8,25,144,128,1,34,68,52,68,51,52,34,49,18,34,2,144,136,155,140,187,186,186,154,154,185,185,153,9,9,0,24,0,128,144,168,169,170,154,154,153,9,8,16,8,0,144,19,35,68,51,52,67,51,66,34,50,33,1,144,185,186,172,204,187,188,173,172,186,172,186, 154, 138, 41,
+	33,52,53,83,50,51,52,52,37,34,34,18,16,144,152,154,187,219,203,188,173,186,186,186,170,154,153,138,144,16,17,67,82,50,51,21,34,19,33,2,18,33,1,8,153,169,153,153,136,128,0,136,154,153,153,8,8,1,16,0,169,170,187,171,171,154,153,153,152,153,153,0,16,51, 83,
+	66,50,67,50,51,67,51,52,35,18,136,186,219,187,189,186,171,187,173,187,188,187,203,138,9,16,33,50,52,53,67,67,147,8,128,128,128,128,128,128,128,128,0,240,255,55,232,23,220,0,148,1,9,18,148,10,189,32,163,62,160,5,137,12,149,42,153,144,34,42,8, 1, 138, 181,
+	45,136,18,144,105,138,1,160,14,128,132,145,186,37,138,41,192,48,145,46,160,33,44,24,225,16,13,132,136,137,16,148,25,170,194,82,152,136,91,24,42,169,33,233,131,179,24,185,149,16,57,172,164,18,10,211,160,147,211,33,138,243,129,16,41,193,0,43, 132, 155, 73,
+	58,145,244,145,43,35,9,171,16,110,25,8,28,74,162,128,26,27,82,45,136,153,18,8,136,8
+};
 
 } // end of namespace Kyra
 

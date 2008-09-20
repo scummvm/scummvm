@@ -85,6 +85,9 @@
 			/>
 			<widget name = 'GameList'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6'>
+				<widget name = 'LoadGameButton' 
+						height = 'Globals.Button.Height' 
+				/>
 				<widget name = 'AddGameButton' 
 						height = 'Globals.Button.Height' 
 				/>
@@ -546,6 +549,10 @@
 			<widget name = 'List' />
 			<layout type = 'horizontal' padding = '0, 0, 16, 0'>
 				<space/>
+				<widget name = 'Delete'
+						type = 'Button'
+				/>
+				<space size = '16'/>
 				<widget name = 'Cancel'
 						type = 'Button'
 				/>

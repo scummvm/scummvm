@@ -54,8 +54,8 @@ bool GBAMPSaveFile::eos() const {
 	return DS::std_feof(handle);
 }
 
-void GBAMPSaveFile::skip(uint32 bytes) {
-	DS::std_fseek(handle, bytes, SEEK_CUR);
+bool GBAMPSaveFile::skip(uint32 bytes) {
+	return DS::std_fseek(handle, bytes, SEEK_CUR) == 0;
 }
 
 void GBAMPSaveFile::flushSaveBuffer() {
@@ -67,11 +67,11 @@ void GBAMPSaveFile::flushSaveBuffer() {
 	}
 }
 
-uint32 GBAMPSaveFile::pos() const {
+int32 GBAMPSaveFile::pos() const {
 	return DS::std_ftell(handle);
 }
 
-uint32 GBAMPSaveFile::size() const {
+int32 GBAMPSaveFile::size() const {
 	int position = pos();
 	DS::std_fseek(handle, 0, SEEK_END);
 	int size = DS::std_ftell(handle);
@@ -79,8 +79,8 @@ uint32 GBAMPSaveFile::size() const {
 	return size;
 }
 
-void GBAMPSaveFile::seek(int32 pos, int whence) {
-	DS::std_fseek(handle, pos, whence);
+bool GBAMPSaveFile::seek(int32 pos, int whence) {
+	return DS::std_fseek(handle, pos, whence) == 0;
 }
 
 
@@ -155,11 +155,13 @@ GBAMPSaveFile* GBAMPSaveFileManager::openSavefile(char const* name, bool saveOrL
 		sprintf(fileSpec, "%s/%s", getSavePath(), name);
 	}
 	
-//	consolePrintf(fileSpec);
+//	consolePrintf("Opening the file: %s\n", fileSpec);
 	GBAMPSaveFile* sf = new GBAMPSaveFile(fileSpec, saveOrLoad);
 	if (sf->isOpen()) {
+//		consolePrintf("Ok");
 		return sf;	
 	} else {
+//		consolePrintf("Fail");
 		delete sf;
 		return NULL;	
 	}
@@ -192,8 +194,29 @@ Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) {
 	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
 	char name[256];
 	
-	DS::std_cwd((char*)getSavePath()); //TODO : Check this suspicious const-cast
-//	consolePrintf("Save path: '%s', pattern: '%s'\n", getSavePath(),pattern);
+	{
+		char dir[128];
+		strcpy(dir, getSavePath());
+		char *realName = dir;
+
+		if ((strlen(dir) >= 4) && (dir[0] == 'm') && (dir[1] == 'p') && (dir[2] == ':') && (dir[3] == '/')) {
+			realName += 4;
+		}
+
+	//	consolePrintf("Real cwd:%d\n", realName);
+
+		char* p = realName;
+		while (*p) {
+			if (*p == '\\') *p = '/';
+			p++;
+		}
+
+	//	consolePrintf("Real cwd:%d\n", realName);
+		FAT_chdir(realName);
+
+	}
+
+//	consolePrintf("Save path: '%s', pattern: '%s'\n", getSavePath(), pattern);
 
 	
 	int fileType = FAT_FindFirstFileLFN(name);
@@ -206,7 +229,7 @@ Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) {
 
 			FAT_GetLongFilename(name);
 
-			for (int r = 0; r < strlen(name); r++) {
+			for (int r = 0; name[r] != 0; r++) {
 				name[r] = tolower(name[r]);
 			}
 			

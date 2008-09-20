@@ -2076,6 +2076,8 @@ bool LogicDemo::changeToSpecialRoom() {
 		displayRoom(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
 		playCutaway("CLOGO.CUT");
 		sceneReset();
+		if (_vm->quit())
+			return true;
 		currentRoom(ROOM_HOTEL_LOBBY);
 		entryObj(584);
 		displayRoom(currentRoom(), RDM_FADE_JOE, 100, 2, true);
@@ -2129,7 +2131,11 @@ bool LogicGame::changeToSpecialRoom() {
 	} else if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
 		displayRoom(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
 		playCutaway("COPY.CUT");
+		if (_vm->quit())
+			return true;
 		playCutaway("CLOGO.CUT");
+		if (_vm->quit())
+			return true;
 		if (_vm->resource()->getPlatform() != Common::kPlatformAmiga) {
 			if (ConfMan.getBool("alt_intro") && _vm->resource()->isCD()) {
 				playCutaway("CINTR.CUT");
@@ -2137,7 +2143,11 @@ bool LogicGame::changeToSpecialRoom() {
 				playCutaway("CDINT.CUT");
 			}
 		}
+		if (_vm->quit())
+			return true;
 		playCutaway("CRED.CUT");
+		if (_vm->quit())
+			return true;
 		_vm->display()->palSetPanel();
 		sceneReset();
 		currentRoom(ROOM_HOTEL_LOBBY);

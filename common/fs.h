@@ -32,15 +32,10 @@
 class AbstractFilesystemNode;
 
 namespace Common {
-	class SeekableReadStream;
-	class WriteStream;
-}
-
-//namespace Common {
 
 class FilesystemNode;
-//class SeekableReadStream;
-//class WriteStream;
+class SeekableReadStream;
+class WriteStream;
 
 /**
  * List of multiple file system nodes. E.g. the contents of a given directory.
@@ -107,17 +102,29 @@ public:
 	virtual bool exists() const;
 
 	/**
-	 * Fetch a child node of this node, with the given name. Only valid for
-	 * directory nodes (an assertion is triggered otherwise).
-	 * If no child node with the given name exists, an invalid node is returned.
+	 * Create a new node referring to a child node of the current node, which
+	 * must be a directory node (otherwise an invalid node is returned).
+	 * If a child matching the name exists, a normal node for it is returned.
+	 * If no child with the name exists, a node for it is still returned,
+	 * but exists() will return 'false' for it. This node can however be used
+	 * to create a new file using the openForWriting() method.
+	 *
+	 * @todo If openForWriting() (or a hypothetical future mkdir() method) is used,
+	 *       this should affect what exists/isDirectory/isReadable/isWritable return
+	 *       for existing nodes. However, this is not the case for many existing
+	 *       FSNode implementations. Either fix those, or document that FSNodes
+	 *       can become 'stale'...
+	 *
+	 * @param name	the name of a child of this directory
+	 * @return the node referring to the child with the given name
 	 */
 	FilesystemNode getChild(const Common::String &name) const;
 
 	/**
-	 * Return a list of child nodes of this directory node. If called on a node
+	 * Return a list of all child nodes of this directory node. If called on a node
 	 * that does not represent a directory, false is returned.
 	 *
-	 * @return true if succesful, false otherwise (e.g. when the directory does not exist).
+	 * @return true if successful, false otherwise (e.g. when the directory does not exist).
 	 */
 	virtual bool getChildren(FSList &fslist, ListMode mode = kListDirectoriesOnly, bool hidden = false) const;
 
@@ -141,10 +148,11 @@ public:
 	virtual Common::String getName() const;
 
 	/**
-	 * Return a string representation of the file which can be passed to fopen(),
-	 * and is suitable for archiving (i.e. writing to the config file).
-	 * This will usually be a 'path' (hence the name of the method), but can
-	 * be anything that fulfills the above criterions.
+	 * Return a string representation of the file which is suitable for
+	 * archiving (i.e. writing to the config file). This will usually be a
+	 * 'path' (hence the name of the method), but can be anything that meets
+	 * the above criterions. What a 'path' is differs greatly from system to
+	 * system anyway.
 	 *
 	 * @note Do not assume that this string contains (back)slashes or any
 	 *       other kind of 'path separators'.
@@ -222,7 +230,7 @@ public:
 	 *
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
-	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::SeekableReadStream *openForReading() const;
 
 	/**
 	 * Creates a WriteStream instance corresponding to the file
@@ -231,9 +239,9 @@ public:
 	 *
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
-	virtual Common::WriteStream *openForWriting();
+	virtual Common::WriteStream *openForWriting() const;
 };
 
-//} // End of namespace Common
+} // End of namespace Common
 
 #endif //COMMON_FS_H

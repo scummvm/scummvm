@@ -55,12 +55,19 @@ enum TinselGameFeatures {
 	GF_DEMO = 1 << 0,
 	GF_CD = 1 << 1,
 	GF_FLOPPY = 1 << 2,
-	GF_SCNFILES = 1 << 3
+	GF_SCNFILES = 1 << 3,
+
+	// The GF_USE_?FLAGS values specify how many country flags are displayed
+	// in the subtitles options dialog.
+	// None of these defined -> 1 language, in ENGLISH.TXT
+	GF_USE_3FLAGS = 1 << 4,	// French, German, Spanish
+	GF_USE_4FLAGS = 1 << 5,	// French, German, Spanish, Italian
+	GF_USE_5FLAGS = 1 << 6	// All 5 flags
 };
 
 enum TinselEngineVersion {
-	TINSEL_V0 = 1 << 0,	// Used in the DW1 demo only
-	TINSEL_V1 = 1 << 1
+	TINSEL_V0 = 0,	// Used in the DW1 demo only
+	TINSEL_V1 = 1
 };
 
 struct TinselGameDescription;
@@ -72,7 +79,7 @@ enum TinselKeyDirection {
 
 typedef bool (*KEYFPTR)(const Common::KeyState &);
 
-class TinselEngine : public ::Engine {
+class TinselEngine : public Engine {
 	int _gameId;
 	Common::KeyState _keyPressed;
 	Common::RandomSource _random;
@@ -100,8 +107,8 @@ public:
 	Common::Language getLanguage() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
-	bool quitFlag;
 
+	MidiDriver *_driver;
 	SoundManager *_sound;
 	MusicPlayer *_music;
 
@@ -120,7 +127,6 @@ private:
 
 public:
 	const Common::String getTargetName() const { return _targetName; }
-	Common::String getSavegamePattern() const;
 	Common::String getSavegameFilename(int16 saveNum) const;
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
 	Graphics::Surface &screen() { return _screenSurface; }

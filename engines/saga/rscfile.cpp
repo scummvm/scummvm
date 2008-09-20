@@ -121,7 +121,7 @@ bool Resource::loadSagaContext(ResourceContext *context, uint32 contextOffset, u
 			resourceData->offset = contextOffset + readS1.readUint32();
 			resourceData->size = readS1.readUint32();
 			//sanity check
-			if ((resourceData->offset > context->file->size()) || (resourceData->size > contextSize)) {
+			if ((resourceData->offset > (uint)context->file->size()) || (resourceData->size > contextSize)) {
 				result = false;
 				break;
 			}
@@ -181,8 +181,8 @@ bool Resource::loadMacContext(ResourceContext *context) {
 	macDataLength = context->file->readUint32BE();
 	macMapLength = context->file->readUint32BE();
 
-	if (macDataOffset >= context->file->size() || macMapOffset >= context->file->size() ||
-		macDataLength + macMapLength > context->file->size()) {
+	if (macDataOffset >= (uint)context->file->size() || macMapOffset >= (uint)context->file->size() ||
+		macDataLength + macMapLength > (uint)context->file->size()) {
 			return false;
 	}
 
@@ -384,24 +384,24 @@ bool Resource::createContexts() {
 	if (!soundFileInArray) {
 		if (_vm->getGameType() == GType_ITE) {
 			// If the sound file is not specified in the detector table, add it here
-			if (Common::File::exists("sounds.rsc") || Common::File::exists("sounds.cmp")) {
+			if (Common::File::exists("sounds.rsc")) {
 				_contextsCount++;
 				soundFileIndex = _contextsCount - 1;
-				if (Common::File::exists("sounds.rsc")) {
-					sprintf(soundFileName, "sounds.rsc");
-				} else {
-					sprintf(soundFileName, "sounds.cmp");
-					_vm->_gf_compressed_sounds = true;
-				}
-			} else if (Common::File::exists("soundsd.rsc") || Common::File::exists("soundsd.cmp")) {
+				sprintf(soundFileName, "sounds.rsc");
+			} else if (Common::File::exists("sounds.cmp")) {
 				_contextsCount++;
 				soundFileIndex = _contextsCount - 1;
-				if (Common::File::exists("soundsd.rsc")) {
-					sprintf(soundFileName, "soundsd.rsc");
-				} else {
-					sprintf(soundFileName, "soundsd.cmp");
-					_vm->_gf_compressed_sounds = true;
-				}
+				sprintf(soundFileName, "sounds.cmp");
+				_vm->_gf_compressed_sounds = true;
+			} else if (Common::File::exists("soundsd.rsc")) {
+				_contextsCount++;
+				soundFileIndex = _contextsCount - 1;
+				sprintf(soundFileName, "soundsd.rsc");
+			} else if (Common::File::exists("soundsd.cmp")) {
+				_contextsCount++;
+				soundFileIndex = _contextsCount - 1;
+				sprintf(soundFileName, "soundsd.cmp");
+				_vm->_gf_compressed_sounds = true;
 			} else {
 				// No sound file found, don't add any file to the array
 				soundFileInArray = true;
@@ -410,15 +410,15 @@ bool Resource::createContexts() {
 			}
 		} else {
 			// If the sound file is not specified in the detector table, add it here
-			if (Common::File::exists("sfx.res") || Common::File::exists("sfx.cmp")) {
+			if (Common::File::exists("sfx.res")) {
 				_contextsCount++;
 				soundFileIndex = _contextsCount - 1;
-				if (Common::File::exists("sfx.res")) {
-					sprintf(soundFileName, "sfx.res");
-				} else {
-					sprintf(soundFileName, "sfx.cmp");
-					_vm->_gf_compressed_sounds = true;
-				}
+				sprintf(soundFileName, "sfx.res");
+			} else if (Common::File::exists("sfx.cmp")) {
+				_contextsCount++;
+				soundFileIndex = _contextsCount - 1;
+				sprintf(soundFileName, "sfx.cmp");
+				_vm->_gf_compressed_sounds = true;
 			} else {
 				// No sound file found, don't add any file to the array
 				soundFileInArray = true;
@@ -429,24 +429,24 @@ bool Resource::createContexts() {
 	if (!voicesFileInArray) {
 		if (_vm->getGameType() == GType_ITE) {
 			// If the voices file is not specified in the detector table, add it here
-			if (Common::File::exists("voices.rsc") || Common::File::exists("voices.cmp")) {
+			if (Common::File::exists("voices.rsc")) {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
-				if (Common::File::exists("voices.rsc")) {
-					sprintf(_voicesFileName[0], "voices.rsc");
-				} else {
-					sprintf(_voicesFileName[0], "voices.cmp");
-					_vm->_gf_compressed_sounds = true;
-				}
-			} else if (Common::File::exists("voicesd.rsc") || Common::File::exists("voicesd.cmp")) {
+				sprintf(_voicesFileName[0], "voices.rsc");
+			} else if (Common::File::exists("voices.cmp")) {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
-				if (Common::File::exists("voicesd.rsc")) {
-					sprintf(_voicesFileName[0], "voicesd.rsc");
-				} else {
-					sprintf(_voicesFileName[0], "voicesd.cmp");
-					_vm->_gf_compressed_sounds = true;
-				}
+				sprintf(_voicesFileName[0], "voices.cmp");
+				_vm->_gf_compressed_sounds = true;
+			} else if (Common::File::exists("voicesd.rsc")) {
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
+				sprintf(_voicesFileName[0], "voicesd.rsc");
+			} else if (Common::File::exists("voicesd.cmp")) {
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
+				sprintf(_voicesFileName[0], "voicesd.cmp");
+				_vm->_gf_compressed_sounds = true;
 			} else if (Common::File::exists("inherit the earth voices") ||
 					   Common::File::exists("inherit the earth voices.cmp")) {
 				_contextsCount++;
@@ -493,15 +493,15 @@ bool Resource::createContexts() {
 					sprintf(_voicesFileName[0], "voicess.cmp");
 					_vm->_gf_compressed_sounds = true;
 				}
-			} else if (Common::File::exists("voicesd.res") || Common::File::exists("voicesd.cmp")) {
+			} else if (Common::File::exists("voicesd.res")) {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
-				if (Common::File::exists("voicesd.res")) {
-					sprintf(_voicesFileName[0], "voicesd.res");
-				} else {
-					sprintf(_voicesFileName[0], "voicesd.cmp");
-					_vm->_gf_compressed_sounds = true;
-				}
+				sprintf(_voicesFileName[0], "voicesd.res");
+			} else if (Common::File::exists("voicesd.cmp")) {
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
+				sprintf(_voicesFileName[0], "voicesd.cmp");
+				_vm->_gf_compressed_sounds = true;
 			} else {
 				// No voice file found, don't add any file to the array
 				voicesFileInArray = true;
@@ -521,20 +521,22 @@ bool Resource::createContexts() {
 
 	if (_vm->getGameType() == GType_ITE) {
 		// Check for digital music in ITE
-		if (Common::File::exists("music.rsc") || Common::File::exists("music.cmp")) {
+		if (Common::File::exists("music.rsc")) {
 			_contextsCount++;
 			digitalMusic = true;
-			if (Common::File::exists("music.cmp"))
-				sprintf(musicFileName, "music.cmp");
-			else
-				sprintf(musicFileName, "music.rsc");
-		} else if (Common::File::exists("musicd.rsc") || Common::File::exists("musicd.cmp")) {
+			sprintf(musicFileName, "music.rsc");
+		} else if (Common::File::exists("music.cmp")) {
 			_contextsCount++;
 			digitalMusic = true;
-			if (Common::File::exists("musicd.cmp"))
-				sprintf(musicFileName, "musicd.cmp");
-			else
-				sprintf(musicFileName, "musicd.rsc");
+			sprintf(musicFileName, "music.cmp");
+		} else if (Common::File::exists("musicd.rsc")) {
+			_contextsCount++;
+			digitalMusic = true;
+			sprintf(musicFileName, "musicd.rsc");
+		} else if (Common::File::exists("musicd.cmp")) {
+			_contextsCount++;
+			digitalMusic = true;
+			sprintf(musicFileName, "musicd.cmp");
 		} else {
 			digitalMusic = false;
 		}
@@ -661,9 +663,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	if (chapter < 0)
 		chapter = (_vm->getGameId() != GID_IHNM_DEMO) ? 8 : 7;
 
-	// TODO
-	//if (module.voiceLUT)
-	//	free module.voiceLUT;
+	_vm->_script->_globalVoiceLUT.freeMem();
 
 	// TODO: close chapter context, or rather reassign it in our case
 
@@ -769,7 +769,6 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->_sprite->_mainSprites.freeMem();
 	_vm->_sprite->loadList(_metaResource.mainSpritesID, _vm->_sprite->_mainSprites);
 
-
 	_vm->_actor->loadObjList(_metaResource.objectCount, _metaResource.objectsResourceID);
 
 	_vm->_resource->loadResource(resourceContext, _metaResource.cutawayListResourceID, resourcePointer, resourceLength);
@@ -805,49 +804,21 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 		free(resourcePointer);
 	} else {
 		// The IHNM demo has a fixed music track and doesn't load a song table
-		_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
+		_vm->_music->setVolume(_vm->_musicVolume, 1);
 		_vm->_music->play(3, MUSIC_LOOP);
 		free(resourcePointer);
 	}
 
 	int voiceLUTResourceID = 0;
 
-	_vm->_script->_globalVoiceLUT.freeMem();
-
-	switch (chapter) {
-	case 1:
-		_vm->_sndRes->setVoiceBank(1);
-		voiceLUTResourceID = 23;
-		break;
-	case 2:
-		_vm->_sndRes->setVoiceBank(2);
-		voiceLUTResourceID = 24;
-		break;
-	case 3:
-		_vm->_sndRes->setVoiceBank(3);
-		voiceLUTResourceID = 25;
-		break;
-	case 4:
-		_vm->_sndRes->setVoiceBank(4);
-		voiceLUTResourceID = 26;
-		break;
-	case 5:
-		_vm->_sndRes->setVoiceBank(5);
-		voiceLUTResourceID = 27;
-		break;
-	case 6:
-		_vm->_sndRes->setVoiceBank(6);
-		voiceLUTResourceID = 28;
-		break;
-	case 7:
+	if (chapter != 7) {
+		int voiceBank = (chapter == 8) ? 0 : chapter;
+		_vm->_sndRes->setVoiceBank(voiceBank);
+		voiceLUTResourceID = 22 + voiceBank;
+	} else {
 		// IHNM demo
 		_vm->_sndRes->setVoiceBank(0);
 		voiceLUTResourceID = 17;
-		break;
-	case 8:
-		_vm->_sndRes->setVoiceBank(0);
-		voiceLUTResourceID = 22;
-		break;
 	}
 
 	if (voiceLUTResourceID) {

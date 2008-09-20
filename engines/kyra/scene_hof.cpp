@@ -277,7 +277,7 @@ int KyraEngine_HoF::trySceneChange(int *moveTable, int unk1, int updateChar) {
 	int changedScene = 0;
 	const int *moveTableStart = moveTable;
 	_unk4 = 0;
-	while (running && !_quitFlag) {
+	while (running && !quit()) {
 		if (*moveTable >= 0 && *moveTable <= 7) {
 			_mainCharacter.facing = getOppositeFacingDirection(*moveTable);
 			unkFlag = true;
@@ -517,7 +517,7 @@ void KyraEngine_HoF::runSceneScript7() {
 
 void KyraEngine_HoF::initSceneAnims(int unk1) {
 	debugC(9, kDebugLevelMain, "KyraEngine_HoF::initSceneAnims(%d)", unk1);
-	for (int i = 0; i < ARRAYSIZE(_animObjects); ++i)
+	for (int i = 0; i < 41; ++i)
 		_animObjects[i].enabled = 0;
 
 	bool animInit = false;

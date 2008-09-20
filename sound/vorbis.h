@@ -31,7 +31,6 @@
 #ifdef USE_VORBIS
 
 namespace Common {
-	class File;
 	class SeekableReadStream;
 }
 
