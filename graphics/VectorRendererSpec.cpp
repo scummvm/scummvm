@@ -382,14 +382,14 @@ applyScreenShading(GUI::Theme::ShadingStyle shadingStyle) {
 		int n = (pixels + 7) >> 3;
 		switch (pixels % 8) {
 		case 0: do { 
-					*ptr++ = (*ptr >> 1) & shiftMask;
-		case 7:		*ptr++ = (*ptr >> 1) & shiftMask;
-		case 6:		*ptr++ = (*ptr >> 1) & shiftMask;
-		case 5:		*ptr++ = (*ptr >> 1) & shiftMask;
-		case 4:		*ptr++ = (*ptr >> 1) & shiftMask;
-		case 3:		*ptr++ = (*ptr >> 1) & shiftMask;
-		case 2:		*ptr++ = (*ptr >> 1) & shiftMask;
-		case 1:		*ptr++ = (*ptr >> 1) & shiftMask;
+					*ptr = (*ptr >> 1) & shiftMask; ++ptr;
+		case 7:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
+		case 6:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
+		case 5:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
+		case 4:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
+		case 3:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
+		case 2:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
+		case 1:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
 				} while (--n > 0);
 		}
 
