@@ -140,6 +140,7 @@ int16 AnimationPlayer::getStatus() {
 void AnimationPlayer::unpackFrame() {
 	_vm->_screen->unpackRle(_animBuffer, _vm->_screen->_frontScreen, _width, _height);
 	_vm->_screen->unpackRle(_animBuffer, _vm->_screen->_backScreen, _width, _height);
+	_vm->_screen->_fullRefresh = true;
 }
 
 void AnimationPlayer::saveState(Common::WriteStream *out) {

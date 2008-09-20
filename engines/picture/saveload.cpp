@@ -141,7 +141,6 @@ void PictureEngine::loadgame(const char *filename) {
 	delete in;
 
 	loadScene(_sceneResIndex);
-	_screen->clearSprites();
 
 	_newCameraX = _cameraX;
 	_newCameraY = _cameraY;

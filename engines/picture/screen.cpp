@@ -38,6 +38,7 @@
 
 #include "picture/picture.h"
 #include "picture/palette.h"
+#include "picture/render.h"
 #include "picture/resource.h"
 #include "picture/screen.h"
 #include "picture/script.h"
@@ -76,12 +77,18 @@ Screen::Screen(PictureEngine *vm) : _vm(vm) {
 	_talkTextFontColor = 0;
 	_talkTextMaxWidth = 520;
 
+	_renderQueue = new RenderQueue(_vm);
+	_fullRefresh = false;
+	_guiRefresh = false;
+
 }
 
 Screen::~Screen() {
 
 	delete[] _frontScreen;
 	delete[] _backScreen;
+	
+	delete _renderQueue;
 
 }
 
@@ -157,7 +164,9 @@ void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
 			}
 		}
 	}
-	
+
+	_guiRefresh = true;
+
 }
 
 void Screen::startShakeScreen(int16 shakeCounter) {
@@ -263,9 +272,6 @@ void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, i
 
 void Screen::clearSprites() {
 
-	_spriteDrawList.clear();
-	// TODO
-
 }
 
 void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
@@ -337,6 +343,8 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	wrapState.len2 = len;
 
 	drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
+
+	_guiRefresh = true;
 
 }
 
@@ -463,7 +471,7 @@ void Screen::addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 
 
 }
 
-void Screen::drawTalkTextItems() {
+void Screen::addTalkTextItemsToRenderQueue() {
 
 	for (int16 i = 0; i <= _talkTextItemNum; i++) {
 		TalkTextItem *item = &_talkTextItems[i];
@@ -477,8 +485,8 @@ void Screen::drawTalkTextItems() {
 			item->duration = 0;
 
 		for (byte j = 0; j < item->lineCount; j++) {
-			drawString(item->lines[j].x, item->lines[j].y, item->color, _fontResIndexArray[item->fontNum],
-				text, item->lines[j].length, NULL, true);
+			_renderQueue->addText(item->lines[j].x, item->lines[j].y, item->color, _fontResIndexArray[item->fontNum],
+				text, item->lines[j].length);
 			text += item->lines[j].length;
 		}
 		
@@ -536,6 +544,8 @@ void Screen::drawGuiTextMulti(byte *textData) {
 		}
 	
 	} while (*wrapState.sourceString != 0xFF);
+
+	_guiRefresh = true;
 
 }
 
@@ -636,6 +646,55 @@ void Screen::drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, b
 
 }
 
+void Screen::drawSurface(int16 x, int16 y, Graphics::Surface *surface) {
+
+	int16 skipX = 0;
+	int16 width = surface->w;
+	int16 height = surface->h;
+	byte *surfacePixels = (byte*)surface->getBasePtr(0, 0);
+	byte *frontScreen;
+
+	// Not on screen, skip
+	if (x + width < 0 || y + height < 0 || x >= 640 || y >= _vm->_cameraHeight)
+		return;
+
+	if (x < 0) {
+		skipX = -x;
+		x = 0;
+		width -= skipX;
+	}
+
+	if (y < 0) {
+		int16 skipY = -y;
+		surfacePixels += surface->w * skipY;
+		y = 0;
+		height -= skipY;
+	}
+
+	if (x + width >= 640) {
+		width -= x + width - 640;
+	}
+
+	if (y + height >= _vm->_cameraHeight) {
+		height -= y + height - _vm->_cameraHeight;
+	}
+
+	frontScreen = _vm->_screen->_frontScreen + x + (y * 640);
+
+	for (int16 h = 0; h < height; h++) {
+		surfacePixels += skipX;
+		for (int16 w = 0; w < width; w++) {
+			if (*surfacePixels != 0xFF)
+				*frontScreen = *surfacePixels;
+			frontScreen++;
+			surfacePixels++;
+		}
+		frontScreen += 640 - width;
+		surfacePixels += surface->w - width - skipX;
+	}
+
+}
+
 void Screen::saveState(Common::WriteStream *out) {
 
 	// Save verb line
@@ -728,6 +787,7 @@ void Screen::loadState(Common::ReadStream *in) {
 			in->read(gui, 640);
 			gui += 640;
 		}
+		_guiRefresh = true;
 	}
 
 	// Load fonts

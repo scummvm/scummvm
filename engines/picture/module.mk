@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	movie.o \
 	palette.o \
 	picture.o \
+	render.o \
 	resource.o \
 	saveload.o \
 	screen.o \

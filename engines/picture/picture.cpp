@@ -44,11 +44,11 @@
 #include "picture/menu.h"
 #include "picture/movie.h"
 #include "picture/palette.h"
+#include "picture/render.h"
 #include "picture/resource.h"
 #include "picture/script.h"
 #include "picture/screen.h"
 #include "picture/segmap.h"
-
 #include "picture/microtiles.h"
 
 namespace Picture {
@@ -90,8 +90,6 @@ int PictureEngine::init() {
 }
 
 int PictureEngine::go() {
-
-	_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
 
  	_quitGame = false;
 	_counter01 = 0;
@@ -164,23 +162,6 @@ int PictureEngine::go() {
 	}
 #endif
 
-//#define TEST_MICROTILES
-#ifdef TEST_MICROTILES
-	MicroTileArray *uta = new MicroTileArray(0, 0, 640, 480);
-	uta->unite(Common::Rect(10, 10, 50, 50));
-	uta->unite(Common::Rect(45, 45, 60, 60));
-	Common::Rect *rects;
-	int n_rects;
-	n_rects = uta->getRectangles(rects);
-	printf("n_rects = %d\n", n_rects); fflush(stdout);
-	for (int i = 0; i < n_rects; i++) {
-		printf("%d, %d, %d, %d\n", rects[i].left, rects[i].top, rects[i].right, rects[i].bottom);
-		fflush(stdout);
-	}
-	_system->quit();
-	delete uta;
-#endif
-
 #if 1
 	_script->loadScript(0, 0);
 	_script->runScript(0);
@@ -233,6 +214,9 @@ void PictureEngine::loadScene(uint resIndex) {
 	// Load scene segmap
  	_segmap->load(scene + imageSize + 4);
 
+	_screen->_fullRefresh = true;
+	_screen->_renderQueue->clear();
+
 }
 
 void PictureEngine::updateScreen() {
@@ -240,21 +224,19 @@ void PictureEngine::updateScreen() {
 	// FIXME: Quick hack, sometimes cameraY was negative (the code in updateCamera was at fault)
 	if (_cameraY < 0) _cameraY = 0;
 
-	// TODO: Optimize redraw by using dirty rectangles
-	byte *destp = _screen->_frontScreen;
-	byte *srcp = _screen->_backScreen + _cameraX + _cameraY * _sceneWidth;
-	for (uint y = 0; y < MIN<uint>(_cameraHeight, 400); y++) {
-		memcpy(destp, srcp, MIN<uint>(_sceneWidth, 640));
-		destp += 640;
-		srcp += _sceneWidth;
+	_segmap->addMasksToRenderQueue();
+	_screen->addTalkTextItemsToRenderQueue();
+
+	_screen->_renderQueue->update();
+
+	//printf("_guiHeight = %d\n", _guiHeight); fflush(stdout);
+
+	if (_screen->_guiRefresh && _guiHeight > 0 && _cameraHeight > 0) {
+		_system->copyRectToScreen((const byte *)_screen->_frontScreen + _cameraHeight * 640,
+			640, 0, _cameraHeight, 640, _guiHeight);
+		_screen->_guiRefresh = false;
 	}
 
-	_screen->drawSprites();
-	_screen->clearSprites();
-
-	_screen->drawTalkTextItems();
-
-	_system->copyRectToScreen((const byte *)_screen->_frontScreen, 640, 0, 0, 640, 400);
 	_system->updateScreen();
 
 	updateCamera();
@@ -270,7 +252,7 @@ void PictureEngine::updateInput() {
 
 			// FIXME: This is just for debugging
 			switch (event.kbd.keycode) {
-			case Common::KEYCODE_F5:
+			case Common::KEYCODE_F7:
 				savegame("toltecs.001");
 				break;
 			case Common::KEYCODE_F9:
@@ -344,6 +326,15 @@ void PictureEngine::updateInput() {
 
 }
 
+void PictureEngine::setGuiHeight(int16 guiHeight) {
+	if (guiHeight != _guiHeight) {
+		_guiHeight = guiHeight;
+		_cameraHeight = 400 - _guiHeight;
+		debug(0, "PictureEngine::setGuiHeight() _guiHeight = %d; _cameraHeight = %d", _guiHeight, _cameraHeight);
+		// TODO: clearScreen();
+	}
+}
+
 void PictureEngine::setCamera(int16 x, int16 y) {
 
 	_screen->finishTextDrawItems();
@@ -358,8 +349,6 @@ void PictureEngine::setCamera(int16 x, int16 y) {
 		y = _sceneHeight - _cameraHeight;
 	*/
 
-	// TODO DirtyRect clearing stuff
-	
 	_screen->clearSprites();
 	
 	_cameraX = x;
@@ -368,17 +357,6 @@ void PictureEngine::setCamera(int16 x, int16 y) {
 	_cameraY = y;
 	_newCameraY = y;
 
-	// TODO More DirtyRect clearing stuff
-
-}
-
-void PictureEngine::setGuiHeight(int16 guiHeight) {
-	if (guiHeight != _guiHeight) {
-		_guiHeight = guiHeight;
-		_cameraHeight = 400 - _guiHeight;
-		debug(0, "PictureEngine::setGuiHeight() _guiHeight = %d; _cameraHeight = %d", _guiHeight, _cameraHeight);
-		// TODO: clearScreen();
-	}
 }
 
 void PictureEngine::scrollCameraUp(int16 delta) {
@@ -387,7 +365,6 @@ void PictureEngine::scrollCameraUp(int16 delta) {
 			_newCameraY = 0;
 		else
 			_newCameraY -= delta;
-		_screen->finishTextDrawItems();
 	}
 }
 
@@ -398,7 +375,6 @@ void PictureEngine::scrollCameraDown(int16 delta) {
 			delta += (_sceneHeight - _cameraHeight) - (delta + _newCameraY);
 		_newCameraY += delta;
 		debug(0, "PictureEngine::scrollCameraDown() _newCameraY = %d; delta = %d", _newCameraY, delta);
-		_screen->finishTextDrawItems();
 	}
 }
 
@@ -408,7 +384,6 @@ void PictureEngine::scrollCameraLeft(int16 delta) {
 			_newCameraX = 0;
 		else
 			_newCameraX -= delta;
-		_screen->finishTextDrawItems();
 	}
 }
 
@@ -419,7 +394,6 @@ void PictureEngine::scrollCameraRight(int16 delta) {
 			delta += (_sceneWidth - 640) - (delta + _newCameraX);
 		_newCameraX += delta;
 		debug(0, "PictureEngine::scrollCameraRight() _newCameraX = %d; delta = %d", _newCameraY, delta);
-		_screen->finishTextDrawItems();
 	}
 }
 
@@ -428,11 +402,15 @@ void PictureEngine::updateCamera() {
 	if (_cameraX != _newCameraX) {
 		//dirtyFullRefresh = -1;
 		_cameraX = _newCameraX;
+		_screen->_fullRefresh = true;
+		_screen->finishTextDrawItems();
 	}
 
 	if (_cameraY != _newCameraY) {
 		//dirtyFullRefresh = -1;
 		_cameraY = _newCameraY;
+		_screen->_fullRefresh = true;
+		_screen->finishTextDrawItems();
 	}
 
 	debug(0, "PictureEngine::updateCamera() _cameraX = %d; _cameraY = %d", _cameraX, _cameraY);

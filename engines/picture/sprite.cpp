@@ -38,6 +38,7 @@
 
 #include "picture/picture.h"
 #include "picture/palette.h"
+#include "picture/render.h"
 #include "picture/resource.h"
 #include "picture/screen.h"
 #include "picture/script.h"
@@ -47,7 +48,7 @@ namespace Picture {
 
 class SpriteReader : public SpriteFilter {
 public:
-	SpriteReader(byte *source, SpriteDrawItem *sprite) : SpriteFilter(sprite), _source(source) {
+	SpriteReader(byte *source, const SpriteDrawItem &sprite) : SpriteFilter(sprite), _source(source) {
 		_curWidth = _sprite->origWidth;
 		_curHeight = _sprite->origHeight;
 	}
@@ -97,7 +98,7 @@ protected:
 
 class SpriteFilterScaleDown : public SpriteFilter {
 public:
-	SpriteFilterScaleDown(SpriteDrawItem *sprite, SpriteReader *reader) : SpriteFilter(sprite), _reader(reader) {
+	SpriteFilterScaleDown(const SpriteDrawItem &sprite, SpriteReader *reader) : SpriteFilter(sprite), _reader(reader) {
 		_height = _sprite->height;
 		_yerror = _sprite->yerror;
 		_origHeight = _sprite->origHeight;
@@ -148,7 +149,7 @@ protected:
 
 class SpriteFilterScaleUp : public SpriteFilter {
 public:
-	SpriteFilterScaleUp(SpriteDrawItem *sprite, SpriteReader *reader) : SpriteFilter(sprite), _reader(reader) {
+	SpriteFilterScaleUp(const SpriteDrawItem &sprite, SpriteReader *reader) : SpriteFilter(sprite), _reader(reader) {
 		_height = _sprite->height;
 		_yerror = _sprite->yerror;
 		_origHeight = _sprite->origHeight;
@@ -207,12 +208,15 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	if (drawRequest.flags == 0xFFFF)
 		return;
 
+	frameNum = drawRequest.flags & 0x0FFF;
+
 	sprite.flags = 0;
 	sprite.baseColor = drawRequest.baseColor;
 	sprite.x = drawRequest.x;
 	sprite.y = drawRequest.y;
 	sprite.priority = drawRequest.y;
 	sprite.resIndex = drawRequest.resIndex;
+	sprite.frameNum = frameNum;
 	
 	spriteData = _vm->_res->load(drawRequest.resIndex);
 	
@@ -227,8 +231,6 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	if (drawRequest.flags & 0x4000) {
 		sprite.flags |= 0x40;
 	}
-
-	frameNum = drawRequest.flags & 0x0FFF;
 
 	// First initialize the sprite item with the values from the sprite resource
 
@@ -393,48 +395,43 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	if (sprite.width <= 0)
 		return;
 
-	// Add sprite sorted by priority
-	Common::List<SpriteDrawItem>::iterator iter = _spriteDrawList.begin();
-	while (iter != _spriteDrawList.end() && (*iter).priority <= sprite.priority) {
-		iter++;
-	}
-	_spriteDrawList.insert(iter, sprite);
+	_renderQueue->addSprite(sprite);
 	
 }
 
-void Screen::drawSprite(SpriteDrawItem *sprite) {
+void Screen::drawSprite(const SpriteDrawItem &sprite) {
 
 	debug(0, "Screen::drawSprite() x = %d; y = %d; flags = %04X; resIndex = %d; offset = %08X; drawX = %d; drawY = %d",
-		sprite->x, sprite->y, sprite->flags, sprite->resIndex, sprite->offset,
-		sprite->x - _vm->_cameraX, sprite->y - _vm->_cameraY);
+		sprite.x, sprite.y, sprite.flags, sprite.resIndex, sprite.offset,
+		sprite.x - _vm->_cameraX, sprite.y - _vm->_cameraY);
 	debug(0, "Screen::drawSprite() width = %d; height = %d; origWidth = %d; origHeight = %d",
-		sprite->width, sprite->height, sprite->origWidth, sprite->origHeight);
+		sprite.width, sprite.height, sprite.origWidth, sprite.origHeight);
 
-	byte *source = _vm->_res->load(sprite->resIndex) + sprite->offset;
-	byte *dest = _frontScreen + (sprite->x - _vm->_cameraX) + (sprite->y - _vm->_cameraY) * 640;
+	byte *source = _vm->_res->load(sprite.resIndex) + sprite.offset;
+	byte *dest = _frontScreen + sprite.x + sprite.y * 640;
 
 	SpriteReader spriteReader(source, sprite);
 
-	if (sprite->flags & 0x40) {
+	if (sprite.flags & 0x40) {
 		// Shadow sprites
-		if (sprite->flags & 1) {
+		if (sprite.flags & 1) {
 			SpriteFilterScaleDown spriteScaler(sprite, &spriteReader);
 			drawSpriteCore(dest, spriteScaler, sprite);
-		} else if (sprite->flags & 2) {
+		} else if (sprite.flags & 2) {
 			SpriteFilterScaleUp spriteScaler(sprite, &spriteReader);
 			drawSpriteCore(dest, spriteScaler, sprite);
 		} else {
 			drawSpriteCore(dest, spriteReader, sprite);
 		}
-	} else if (sprite->flags & 0x10) {
+	} else if (sprite.flags & 0x10) {
 		// 256 color sprite
 		drawSpriteCore(dest, spriteReader, sprite);
 	} else {
 		// 16 color sprite
-		if (sprite->flags & 1) {
+		if (sprite.flags & 1) {
 			SpriteFilterScaleDown spriteScaler(sprite, &spriteReader);
 			drawSpriteCore(dest, spriteScaler, sprite);
-		} else if (sprite->flags & 2) {
+		} else if (sprite.flags & 2) {
 			SpriteFilterScaleUp spriteScaler(sprite, &spriteReader);
 			drawSpriteCore(dest, spriteScaler, sprite);
 		} else {
@@ -446,13 +443,13 @@ void Screen::drawSprite(SpriteDrawItem *sprite) {
 
 }
 
-void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sprite) {
+void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, const SpriteDrawItem &sprite) {
 
 	int16 destInc;
 
-	if (sprite->flags & 4) {
+	if (sprite.flags & 4) {
 		destInc = -1;
-		dest += sprite->width;
+		dest += sprite.width;
 	} else {
 		destInc = 1;
 	}
@@ -461,10 +458,10 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sp
 	PixelPacket packet;
 	
 	byte *destp = dest;
-	int16 skipX = sprite->skipX;
+	int16 skipX = sprite.skipX;
 
-	int16 w = sprite->width;
-	int16 h = sprite->height;
+	int16 w = sprite.width;
+	int16 h = sprite.height;
 
 	do {
 		status = reader.readPacket(packet);
@@ -485,20 +482,20 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sp
 
 		w -= packet.count;
 
-		if (((sprite->flags & 0x40) && (packet.pixel != 0)) ||
-			((sprite->flags & 0x10) && (packet.pixel != 0xFF)) ||
-			!(sprite->flags & 0x10) && (packet.pixel != 0))
+		if (((sprite.flags & 0x40) && (packet.pixel != 0)) ||
+			((sprite.flags & 0x10) && (packet.pixel != 0xFF)) ||
+			!(sprite.flags & 0x10) && (packet.pixel != 0))
 		{
-			if (sprite->flags & 0x40) {
+			if (sprite.flags & 0x40) {
 				while (packet.count--) {
 					*dest = _vm->_palette->getColorTransPixel(*dest);
 					dest += destInc;
 				}
 			} else {
-				if (sprite->flags & 0x10) {
+				if (sprite.flags & 0x10) {
 					packet.pixel = ((packet.pixel << 4) & 0xF0) | ((packet.pixel >> 4) & 0x0F);
 				} else {
-					packet.pixel += sprite->baseColor - 1;
+					packet.pixel += sprite.baseColor - 1;
 				}
 				while (packet.count--) {
 					*dest = packet.pixel;
@@ -517,21 +514,13 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, SpriteDrawItem *sp
 			}
 			dest = destp + 640;
 			destp = dest;
-			skipX = sprite->skipX;
-			w = sprite->width;
+			skipX = sprite.skipX;
+			w = sprite.width;
 			h--;
 		}
 
 	} while (status != kSrsEndOfSprite && h > 0);
 
-}
-
-void Screen::drawSprites() {
-	for (Common::List<SpriteDrawItem>::iterator iter = _spriteDrawList.begin(); iter != _spriteDrawList.end(); iter++) {
-		SpriteDrawItem *sprite = &(*iter);
-		drawSprite(sprite);
-		_vm->_segmap->restoreMasksBySprite(sprite);
-	}
 }
 
 } // End of namespace Picture

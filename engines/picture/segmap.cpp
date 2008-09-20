@@ -38,6 +38,7 @@
 #include "sound/mixer.h"
 
 #include "picture/picture.h"
+#include "picture/render.h"
 #include "picture/resource.h"
 #include "picture/screen.h"
 #include "picture/segmap.h"
@@ -423,78 +424,9 @@ void SegmentMap::freeSegmapMaskRectSurfaces() {
 	}
 }
 
-void SegmentMap::restoreMasksBySprite(SpriteDrawItem *sprite) {
-	// TODO: This needs more optimization
+void SegmentMap::addMasksToRenderQueue() {
 	for (uint i = 0; i < _maskRects.size(); i++) {
-		if (sprite->priority <= _maskRects[i].priority) {
-			restoreMask(i);
-		}
-	}
-}
-
-void SegmentMap::restoreMask(int16 index) {
-
-	// TODO: This needs more optimization
-	SegmapMaskRect *maskRect = &_maskRects[index];
-
-	int16 skipX = 0;
-	int16 x = maskRect->x - _vm->_cameraX;
-	int16 y = maskRect->y - _vm->_cameraY;
-	int16 width = maskRect->width;
-	int16 height = maskRect->height;
-	byte *maskSurface = (byte*)maskRect->surface->getBasePtr(0, 0);
-	byte *frontScreen;
-
-	debug(0, "SegmentMap::restoreMask() screenX = %d; screenY = %d; maskX = %d; maskY = %d",
-		x, y, maskRect->x, maskRect->y);
-
-	// Not on screen, skip
-	if (x + width < 0 || y + height < 0 || x >= 640 || y >= _vm->_cameraHeight)
-		return;
-
-	if (x < 0) {
-		skipX = -x;
-		x = 0;
-		width -= skipX;
-	}
-
-	if (y < 0) {
-		int16 skipY = -y;
-		maskSurface += maskRect->width * skipY;
-		y = 0;
-		height -= skipY;
-	}
-
-	if (x + width >= 640) {
-		width -= x + width - 640;
-	}
-
-	if (y + height >= _vm->_cameraHeight) {
-		height -= y + height - _vm->_cameraHeight;
-	}
-
-	frontScreen = _vm->_screen->_frontScreen + x + (y * 640);
-
-	for (int16 h = 0; h < height; h++) {
-		maskSurface += skipX;
-		for (int16 w = 0; w < width; w++) {
-			if (*maskSurface != 0xFF)
-				*frontScreen = *maskSurface;
-			frontScreen++;
-			maskSurface++;
-		}
-		frontScreen += 640 - width;
-		maskSurface += maskRect->width - width - skipX;
-	}
-
-}
-
-void SegmentMap::debugDrawRects(Graphics::Surface *surf) {
-	for (uint16 i = 0; i < _pathRects.size(); i++) {
-		SegmapPathRect pathRect = _pathRects[i];
-		surf->frameRect(
-			Common::Rect(pathRect.x1, pathRect.y1, pathRect.x2, pathRect.y2),
-			255);
+		_vm->_screen->_renderQueue->addMask(_maskRects[i]);
 	}
 }
 
