@@ -24,6 +24,7 @@
  */
 
 #include "cruise/cruise_main.h"
+#include "common/endian.h"
 
 namespace Cruise {
 
@@ -412,7 +413,6 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 }
 
 int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentDestEntry) {
-	uint8 *ptr2;
 	uint8 *ptr3;
 	int offset;
 	int sec = 0;
@@ -422,28 +422,27 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 		sec = 1;
 	}
 
-	ptr2 = ptr + 4;
-
-	memcpy(&numIdx, ptr2, 2);
-	flipShort(&numIdx);
+	numIdx = READ_BE_UINT16(ptr + 4);
 
 	ptr3 = ptr + 6;
 
 	offset = currentEntryIdx * 16;
 
 	{
-		uint8 *ptr4;
 		int resourceSize;
 		int fileIndex;
 		setHeaderEntry localBuffer;
 		uint8 *ptr5;
 
-		ptr4 = ptr + offset + 6;
+		Common::MemoryReadStream s4(ptr + offset + 6, 16);
 
-		memcpy(&localBuffer, ptr4, sizeof(setHeaderEntry));
-
-		flipLong((int32 *) & localBuffer.field_0);
-		flipGen(&localBuffer.width, 12);
+		localBuffer.field_0 = s4.readUint32BE();
+		localBuffer.width = s4.readUint16BE();
+		localBuffer.height = s4.readUint16BE();
+		localBuffer.type = s4.readUint16BE();
+		localBuffer.transparency = s4.readUint16BE();
+		localBuffer.field_C = s4.readUint16BE();
+		localBuffer.field_E = s4.readUint16BE();
 
 		if (sec == 1) {
 			localBuffer.width = localBuffer.width - (localBuffer.type * 2);	// Type 1: Width - (1*2) , Type 5: Width - (5*2)
