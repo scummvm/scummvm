@@ -19,8 +19,6 @@ TODO
 	messy function
 - Extend savegame format (savegame version, description, more data)
 - When saving a game, save the whole screen when an animation is playing
-- Implement dirty rectangles (low priority)
-- Optimize segment mask redrawing (only redraw what's neccessary)
 
 BUGS
 ------
@@ -28,3 +26,8 @@ BUGS
 - Still some clipping issues (walking upstairs in the saloon, when on top of the tower in the hideout)
 - Crashes sometimes on scene changes
   (I guess because some talktext is still running although the slot used by it has changed)
+
+DONE
+------
+- Implement dirty rectangles (low priority)
+- Optimize segment mask redrawing (only redraw what's neccessary)
