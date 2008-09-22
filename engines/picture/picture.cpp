@@ -83,7 +83,7 @@ PictureEngine::~PictureEngine() {
 int PictureEngine::init() {
 	// Initialize backend
 	_system->beginGFXTransaction();
-	initCommonGFX(false);
+	initCommonGFX(true);
 	_system->initSize(640, 400);
 	_system->endGFXTransaction();
 	return 0;
