@@ -47,16 +47,23 @@ namespace Toltecs {
 class MoviePlayer {
 
 public:
-    MoviePlayer(ToltecsEngine *vm);
-    ~MoviePlayer();
+	MoviePlayer(ToltecsEngine *vm);
+	~MoviePlayer();
 
 	void playMovie(uint resIndex);
 	
 protected:
-    ToltecsEngine *_vm;
+	ToltecsEngine *_vm;
+	Audio::AppendableAudioStream *_audioStream;
+	Audio::SoundHandle _audioStreamHandle;
+
+	uint32 _chunkCount, _frameCount, _lastPrefetchOfs;
+	uint32 _soundChunkFramesLeft, _framesPerSoundChunk;
 
 	void unpackPalette(byte *source, byte *dest, int elemCount, int elemSize);
 	void unpackRle(byte *source, byte *dest);
+	
+	void fetchAudioChunks();
 
 };
 
