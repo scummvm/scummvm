@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://www.switchlink.se/svn/picture/resource.h $
+ * $URL: https://www.switchlink.se/svn/picture/movie.h $
  * $Id: resource.h 2 2008-08-04 12:18:15Z johndoe $
  *
  */
@@ -49,16 +49,23 @@ namespace Picture {
 class MoviePlayer {
 
 public:
-    MoviePlayer(PictureEngine *vm);
-    ~MoviePlayer();
+	MoviePlayer(PictureEngine *vm);
+	~MoviePlayer();
 
 	void playMovie(uint resIndex);
 	
 protected:
-    PictureEngine *_vm;
+	PictureEngine *_vm;
+	Audio::AppendableAudioStream *_audioStream;
+	Audio::SoundHandle _audioStreamHandle;
+
+	uint32 _chunkCount, _frameCount, _lastPrefetchOfs;
+	uint32 _soundChunkFramesLeft, _framesPerSoundChunk;
 
 	void unpackPalette(byte *source, byte *dest, int elemCount, int elemSize);
 	void unpackRle(byte *source, byte *dest);
+	
+	void fetchAudioChunks();
 
 };
 

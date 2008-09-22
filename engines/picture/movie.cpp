@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://www.switchlink.se/svn/picture/resource.cpp $
+ * $URL: https://www.switchlink.se/svn/picture/movie.cpp $
  * $Id: resource.cpp 2 2008-08-04 12:18:15Z johndoe $
  *
  */
@@ -51,7 +51,7 @@ MoviePlayer::~MoviePlayer() {
 
 void MoviePlayer::playMovie(uint resIndex) {
 
-	uint32 chunkCount, frameCount, subtitleSlot;
+	uint32 subtitleSlot;
 	byte moviePalette[768];
 	
 	memset(moviePalette, 0, sizeof(moviePalette));
@@ -61,19 +61,34 @@ void MoviePlayer::playMovie(uint resIndex) {
 
 	_vm->_arc->openResource(resIndex);
 
-	frameCount = _vm->_arc->readUint32LE();
-	chunkCount = _vm->_arc->readUint32LE();
 	subtitleSlot = kMaxScriptSlots - 1;
-	
-	// TODO: Read/figure out rest of the header
-	_vm->_arc->seek(0x10, SEEK_CUR);
+
+	_frameCount = _vm->_arc->readUint32LE();
+	_chunkCount = _vm->_arc->readUint32LE();
+
+	// TODO: Figure out rest of the header
+	_vm->_arc->readUint32LE();
+	_vm->_arc->readUint32LE();
+	_framesPerSoundChunk = _vm->_arc->readUint32LE();
+	_vm->_arc->readUint32LE();
+
 	_vm->_sceneWidth = 640;
 	_vm->_sceneHeight = 400;
 	_vm->_cameraHeight = 400;
 	_vm->_cameraX = 0;
 	_vm->_cameraY = 0;
 
-	while (chunkCount--) {
+	_audioStream = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_UNSIGNED);
+
+	_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
+
+	_soundChunkFramesLeft = 0;
+	_lastPrefetchOfs = 0;
+	fetchAudioChunks();
+
+	uint32 lastTime = _vm->_mixer->getSoundElapsedTime(_audioStreamHandle);
+
+	while (_chunkCount--) {
 
 		byte chunkType;
 		uint32 chunkSize;
@@ -93,12 +108,25 @@ void MoviePlayer::playMovie(uint resIndex) {
 		switch (chunkType) {
 		case 0: // image data
 		case 1:
+		
 			unpackRle(chunkBuffer, _vm->_screen->_backScreen);
 			// TODO: Rework this
 			_vm->_screen->updateShakeScreen();
+			_vm->_screen->_fullRefresh = true;
 			_vm->updateInput();
 			_vm->updateScreen();
-			g_system->delayMillis(80);
+
+			_soundChunkFramesLeft--;
+			if (_soundChunkFramesLeft <= _framesPerSoundChunk) {
+				fetchAudioChunks();
+			}
+
+			while (_vm->_mixer->getSoundElapsedTime(_audioStreamHandle) < lastTime + 111) {
+				g_system->delayMillis(0);
+			}
+
+			lastTime = _vm->_mixer->getSoundElapsedTime(_audioStreamHandle);
+
 			break;
 		case 2: // palette data
 			unpackPalette(chunkBuffer, moviePalette, 256, 3);
@@ -106,7 +134,6 @@ void MoviePlayer::playMovie(uint resIndex) {
 			break;
 		//case 3: -- what is this type
 		case 4: // audio data
-			// TODO: Handle audio data
 			break;
 		case 5:
 			// TODO: Check if the text is a subtitle (last character == 0xFE).
@@ -121,8 +148,8 @@ void MoviePlayer::playMovie(uint resIndex) {
 				_vm->_screen->startShakeScreen(chunkBuffer[0]);
 			break;
 		case 7: // setup subtitle parameters
-			_vm->_screen->_talkTextY = READ_LE_UINT16(&chunkBuffer[0]);
-			_vm->_screen->_talkTextX = READ_LE_UINT16(&chunkBuffer[2]);
+			_vm->_screen->_talkTextY = READ_LE_UINT16(chunkBuffer + 0);
+			_vm->_screen->_talkTextX = READ_LE_UINT16(chunkBuffer + 2);
 			_vm->_screen->_talkTextFontColor = chunkBuffer[4];
 			debug(0, "_talkTextX = %d; _talkTextY = %d; _talkTextFontColor = %d",
 				_vm->_screen->_talkTextX, _vm->_screen->_talkTextY, _vm->_screen->_talkTextFontColor);
@@ -141,7 +168,43 @@ void MoviePlayer::playMovie(uint resIndex) {
 
 	}
 
+	_audioStream->finish();
+	_vm->_mixer->stopHandle(_audioStreamHandle);
+
 	_vm->_arc->closeResource();
+	
+	debug(0, "playMovie() done");
+
+}
+
+void MoviePlayer::fetchAudioChunks() {
+
+	uint32 startOfs = _vm->_arc->pos();
+	uint32 chunkCount = _chunkCount;
+	uint prefetchChunkCount = 0;
+
+	if (_lastPrefetchOfs != 0)
+		_vm->_arc->seek(_lastPrefetchOfs, SEEK_SET);
+
+	while (chunkCount-- && prefetchChunkCount < _framesPerSoundChunk / 2) {
+		byte chunkType = _vm->_arc->readByte();
+		uint32 chunkSize = _vm->_arc->readUint32LE();
+		if (chunkType == 4) {
+			byte *chunkBuffer = new byte[chunkSize];
+			_vm->_arc->read(chunkBuffer, chunkSize);
+			_audioStream->queueBuffer(chunkBuffer, chunkSize);
+			chunkBuffer = NULL;
+			prefetchChunkCount++;
+			_soundChunkFramesLeft += _framesPerSoundChunk;
+			delete[] chunkBuffer;
+		} else {
+			_vm->_arc->seek(chunkSize, SEEK_CUR);
+		}
+	}
+
+	_lastPrefetchOfs = _vm->_arc->pos();
+
+	_vm->_arc->seek(startOfs, SEEK_SET);
 
 }
 
