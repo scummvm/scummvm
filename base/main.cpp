@@ -68,6 +68,17 @@ static bool launcherDialog(OSystem &system) {
 			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 	system.endGFXTransaction();
 
+	// When starting up launcher for the first time, the user might have specified
+	// a --gui-theme option, to allow that option to be working, we need to initialize
+	// GUI here.
+	// FIXME: Find a nicer way to allow --gui-theme to be working
+	GUI::NewGui::instance();
+
+	// Discard any command line options. Those that affect the graphics
+	// mode and the others (like bootparam etc.) should not
+	// blindly be passed to the first game launched from the launcher.
+	ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
+
 	// Set initial window caption
 	system.setWindowCaption(gScummVMFullVersion);
 
@@ -275,15 +286,8 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	system.initBackend();
 
 	// Unless a game was specified, show the launcher dialog
-	if (0 == ConfMan.getActiveDomain()) {
-		// Discard any command line options. Those that affect the graphics
-		// mode etc. already have should have been handled by the backend at
-		// this point. And the others (like bootparam etc.) should not
-		// blindly be passed to the first game launched from the launcher.
-		ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
-
+	if (0 == ConfMan.getActiveDomain())
 		launcherDialog(system);
-	}
 
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
