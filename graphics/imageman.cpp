@@ -47,7 +47,7 @@ ImageManager::~ImageManager() {
 
 bool ImageManager::addArchive(const Common::String &name) {
 #ifdef USE_ZLIB
-	ZipArchive *arch = new ZipArchive(name);
+	Common::ZipArchive *arch = new Common::ZipArchive(name);
 	if (!arch || !arch->isOpen())
 		return false;
 	_archives.add(name, Common::ArchivePtr(arch));
