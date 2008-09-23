@@ -120,7 +120,7 @@ ThemeModern::~ThemeModern() {
 	for (int i = 0; i < kImageHandlesMax; ++i) {
 		ImageMan.unregisterSurface(_imageHandles[i]);
 	}
-	ImageMan.remArchive(_stylefile + ".zip");
+	ImageMan.removeArchive(_stylefile + ".zip");
 }
 
 bool ThemeModern::init() {

@@ -26,12 +26,14 @@
 #define GRAPHICS_IMAGEMAN_H
 
 #include "common/scummsys.h"
+
+#include "common/archive.h"
 #include "common/singleton.h"
 #include "common/str.h"
 #include "common/list.h"
-#include "common/unzip.h"
 
 namespace Graphics {
+
 struct Surface;
 
 class ImageManager : public Common::Singleton<ImageManager> {
@@ -53,7 +55,7 @@ public:
 	 *
 	 * @param name the name of the archive
 	 */
-	void remArchive(const Common::String &name);
+	void removeArchive(const Common::String &name);
 
 	/**
 	 * registers a surface to the ImageManager.
@@ -93,20 +95,11 @@ private:
 		Surface *surface;
 	};
 	typedef Common::List<Entry*>::iterator Iterator;
-#ifdef USE_ZLIB
-	struct Archive {
-		unzFile file;
-		Common::String filename;
-	};
-	typedef Common::List<Archive>::iterator ZipIterator;
-#endif
 
 	Iterator searchHandle(const Common::String &name);
 
 	Common::List<Entry*> _surfaces;
-#ifdef USE_ZLIB
-	Common::List<Archive> _archives;
-#endif
+	Common::SearchSet _archives;
 };
 
 } // end of namespace Graphics
