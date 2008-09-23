@@ -386,12 +386,12 @@ typedef struct {
 */
 static int unzlocal_getShort(Common::File &fin, uLong *pX) {
 	*pX = fin.readUint16LE();
-	return UNZ_OK;
+	return fin.ioFailed() ? UNZ_ERRNO : UNZ_OK;
 }
 
 static int unzlocal_getLong(Common::File &fin, uLong *pX) {
 	*pX = fin.readUint32LE();
-	return UNZ_OK;
+	return fin.ioFailed() ? UNZ_ERRNO : UNZ_OK;
 }
 
 
