@@ -113,21 +113,16 @@ protected:
 
 	byte arg8(int16 offset);
 	int16 arg16(int16 offset);
-	int32 arg32(int16 offset);
 
 	void pushByte(byte value);
 	byte popByte();
 	void pushInt16(int16 value);
 	int16 popInt16();
-	void pushInt32(int32 value);
-	int32 popInt32();
 
 	void localWrite8(int16 offset, byte value);
 	byte localRead8(int16 offset);
 	void localWrite16(int16 offset, int16 value);
 	int16 localRead16(int16 offset);
-	void localWrite32(int16 offset, int32 value);
-	int32 localRead32(int16 offset);
 	byte *localPtr(int16 offset);
 
 };

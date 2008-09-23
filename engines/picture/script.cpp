@@ -1149,10 +1149,6 @@ int16 ScriptInterpreter::arg16(int16 offset) {
 	return READ_LE_UINT16(&_subCode[offset]);
 }
 
-int32 ScriptInterpreter::arg32(int16 offset) {
-	return READ_LE_UINT32(&_subCode[offset]);
-}
-
 void ScriptInterpreter::pushByte(byte value) {
 	_stack[_regs.sp] = value;
 	_regs.sp--;
@@ -1173,16 +1169,6 @@ int16 ScriptInterpreter::popInt16() {
 	return READ_LE_UINT16(_stack + _regs.sp);
 }
 
-void ScriptInterpreter::pushInt32(int32 value) {
-	WRITE_LE_UINT32(_stack + _regs.sp, value);
-	_regs.sp -= 4;
-}
-
-int32 ScriptInterpreter::popInt32() {
-	_regs.sp += 4;
-	return READ_LE_UINT32(_stack + _regs.sp);
-}
-
 void ScriptInterpreter::localWrite8(int16 offset, byte value) {
 	debug(1, "localWrite8(%d, %d)", offset, value);
 	_localData[offset] = value;
@@ -1201,16 +1187,6 @@ void ScriptInterpreter::localWrite16(int16 offset, int16 value) {
 int16 ScriptInterpreter::localRead16(int16 offset) {
 	debug(1, "localRead16(%d) -> %d", offset, (int16)READ_LE_UINT16(&_localData[offset]));
 	return (int16)READ_LE_UINT16(&_localData[offset]);
-}
-
-void ScriptInterpreter::localWrite32(int16 offset, int32 value) {
-	debug(1, "localWrite32(%d, %d)", offset, value);
-	WRITE_LE_UINT32(&_localData[offset], value);
-}
-
-int32 ScriptInterpreter::localRead32(int16 offset) {
-	debug(1, "localRead32(%d) -> %d", offset, (int32)READ_LE_UINT32(&_localData[offset]));
-	return (int32)READ_LE_UINT32(&_localData[offset]);
 }
 
 byte *ScriptInterpreter::localPtr(int16 offset) {
