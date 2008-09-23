@@ -1213,4 +1213,81 @@ extern int ZEXPORT unzGetGlobalComment (unzFile file, char *szComment, uLong uSi
 	return (int)uReadThis;
 }
 
+/*
+class ZipArchiveMember : public ArchiveMember {
+	unzFile _zipFile;
+
+public:
+	ZipArchiveMember(FilesystemNode &node) : _node(node) {
+	}
+
+	String getName() const {
+		...
+	}
+
+	SeekableReadStream *open() {
+		...
+	}
+};
+*/
+
+ZipArchive::ZipArchive(const Common::String &name) {
+	_zipFile = unzOpen(name.c_str());
+}
+
+ZipArchive::~ZipArchive() {
+	unzClose(_zipFile);
+}
+
+bool ZipArchive::hasFile(const Common::String &name) {
+	return (_zipFile && unzLocateFile(_zipFile, name.c_str(), 2) == UNZ_OK);
+}
+
+int ZipArchive::getAllNames(Common::StringList &list) {
+	return 0;
+}
+
+/*
+int ZipArchive::listMembers(Common::ArchiveMemberList &list) {
+	if (!_zipFile)
+		return 0;
+
+	int matches = 0;
+	int err = unzGoToFirstFile(_zipFile);
+
+	while (err == UNZ_OK) {
+		char szCurrentFileName[UNZ_MAXFILENAMEINZIP+1];
+		unzGetCurrentFileInfo(_zipFile, NULL,
+								szCurrentFileName, sizeof(szCurrentFileName)-1,
+								NULL, 0, NULL, 0);
+		
+		szCurrentFileName
+		matches++;
+		err = unzGoToNextFile(file);
+	}
+	return 0;
+}
+*/
+
+Common::SeekableReadStream *ZipArchive::openFile(const Common::String &name) {
+	if (!_zipFile)
+		return 0;
+
+	unzLocateFile(_zipFile, name.c_str(), 2);
+
+	unz_file_info fileInfo;
+	unzOpenCurrentFile(_zipFile);
+	unzGetCurrentFileInfo(_zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+	byte *buffer = (byte *)calloc(fileInfo.uncompressed_size+1, 1);
+	assert(buffer);
+	unzReadCurrentFile(_zipFile, buffer, fileInfo.uncompressed_size);
+	unzCloseCurrentFile(_zipFile);
+	return new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size+1, true);
+	
+	// FIXME: instead of reading all into a memory stream, we could
+	// instead create a new ZipStream class. But then we have to be
+	// careful to handle the case where the client code opens multiple
+	// files in the archive and tries to use them indepenendtly.
+}
+
 #endif

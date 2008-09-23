@@ -306,46 +306,18 @@ extern int ZEXPORT unzGetLocalExtrafield OF((unzFile file,
 #endif
 
 
-class ZipArchive : Common::Archive {
+class ZipArchive : public Common::Archive {
 	unzFile _zipFile;
 
 public:
-	ZipArchive(const Common::String &name) {
-		_zipFile = unzOpen(name.c_str());
-	}
-	~ZipArchive() {
-		unzClose(_zipFile);
-	}
-
-	virtual bool hasFile(const Common::String &name) {
-		return (_zipFile && unzLocateFile(_zipFile, name.c_str(), 2) == UNZ_OK);
-	}
-
-	virtual int getAllNames(Common::StringList &list) {
-		// TODO
-		return 0;
-	}
-
-	virtual Common::SeekableReadStream *openFile(const Common::String &name) {
-		if (!_zipFile)
-			return 0;
+	ZipArchive(const Common::String &name);
+	~ZipArchive();
 	
-		unzLocateFile(_zipFile, name.c_str(), 2);
+	bool isOpen() const { return _zipFile != 0; }
 
-		unz_file_info fileInfo;
-		unzOpenCurrentFile(_zipFile);
-		unzGetCurrentFileInfo(_zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-		byte *buffer = (byte *)calloc(fileInfo.uncompressed_size+1, 1);
-		assert(buffer);
-		unzReadCurrentFile(_zipFile, buffer, fileInfo.uncompressed_size);
-		unzCloseCurrentFile(_zipFile);
-		return new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size+1, true);
-		
-		// FIXME: instead of reading all into a memory stream, we could
-		// instead create a new ZipStream class. But then we have to be
-		// careful to handle the case where the client code opens multiple
-		// files in the archive and tries to use them indepenendtly.
-	}
+	virtual bool hasFile(const Common::String &name);
+	virtual int getAllNames(Common::StringList &list);	// FIXME: This one is not (yet?) implemented
+	virtual Common::SeekableReadStream *openFile(const Common::String &name);
 };
 
 #endif // USE_ZLIB
