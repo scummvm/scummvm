@@ -1,6 +1,22 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
+0.12.1 (20??-??-??)
+ Gob
+   - Recognize more different versions of supported games.
+
+ Kyrandia
+   - Better support for FM-Towns/PC-98 audio.
+
+ SAGA
+   - Fixed hang in storm clouds scene.
+
+ SCUMM
+   - Recognize more different versions of supported games.
+
+ Drascula
+   - Fixed crash in German version when printing too long words.
+
 0.12.0 (2008-08-31)
  New Games:
    - Added support for The Legend of Kyrandia: Book Two: Hand of Fate.
