@@ -54,7 +54,7 @@ protected:
 	 * than 8 makes no sense, since that's the size of member _extern
 	 * (on 32 bit machines; 12 bytes on systems with 64bit pointers).
 	 */
-	static const uint32 _builtinCapacity = 32;
+	static const uint32 _builtinCapacity = 32 - sizeof(uint32) - sizeof(char*);
 
 	/**
 	 * Length of the string. Stored to avoid having to call strlen
