@@ -22,7 +22,6 @@
  *
  */
 
-
 #include "common/system.h"
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
@@ -577,15 +576,12 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 	const byte *src = vs->getPixels(x, top);
 	int m = _textSurfaceMultiplier;
-	byte *dst;
 	int vsPitch;
 	int pitch = vs->pitch;
 
 	if (_useCJKMode && _textSurfaceMultiplier == 2) {
-		dst = _fmtownsBuf;
-
-		scale2x(dst, _screenWidth * m, src, vs->pitch,  width, height);
-		src = dst;
+		scale2x(_fmtownsBuf, _screenWidth * m, src, vs->pitch,  width, height);
+		src = _fmtownsBuf;
 
 		vsPitch = _screenWidth * m - width * m;
 
@@ -593,7 +589,6 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		vsPitch = vs->pitch - width;
 	}
 
-	dst = _compositeBuf;
 
 	if (_game.version < 7) {
 		// For The Dig, FT and COMI, we just blit everything to the screen at once.
@@ -613,12 +608,12 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 		// Compose the text over the game graphics
 #ifdef USE_ARM_GFX_ASM
-		asmDrawStripToScreen(height, width, text, src, dst, vs->pitch, width, _textSurface.pitch);
+		asmDrawStripToScreen(height, width, text, src, _compositeBuf, vs->pitch, width, _textSurface.pitch);
 #else
 		// We blit four pixels at a time, for improved performance.
 		const uint32 *src32 = (const uint32 *)src;
 		const uint32 *text32 = (const uint32 *)text;
-		uint32 *dst32 = (uint32 *)dst;
+		uint32 *dst32 = (uint32 *)_compositeBuf;
 		
 		vsPitch >>= 2;
 		const int textPitch = (_textSurface.pitch - width * m) >> 2;
