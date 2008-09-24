@@ -26,6 +26,13 @@
 #include "common/hash-str.h"
 #include "common/util.h"
 
+#include "common/memorypool.h"
+
+#if !defined(__SYMBIAN32__) 
+#include <new>
+#endif
+
+
 namespace Common {
 
 #if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
@@ -33,6 +40,9 @@ const String String::emptyString;
 #else
 const char *String::emptyString = "";
 #endif
+
+
+MemoryPool *g_refCountPool = 0;	// FIXME: This is never freed right now
 
 static uint32 computeCapacity(uint32 len) {
 	// By default, for the capacity we use the next multiple of 32
@@ -180,7 +190,11 @@ void String::ensureCapacity(uint32 new_size, bool keep_old) {
 void String::incRefCount() const {
 	assert(!isStorageIntern());
 	if (_extern._refCount == 0) {
-		_extern._refCount = new int(2);
+		if (g_refCountPool == 0)
+			g_refCountPool = new MemoryPool(sizeof(int));
+
+		_extern._refCount = (int *)g_refCountPool->malloc();
+		*_extern._refCount = 2;
 	} else {
 		++(*_extern._refCount);
 	}
@@ -196,7 +210,10 @@ void String::decRefCount(int *oldRefCount) {
 	if (!oldRefCount || *oldRefCount <= 0) {
 		// The ref count reached zero, so we free the string storage
 		// and the ref count storage.
-		delete oldRefCount;
+		if (oldRefCount) {
+			assert(g_refCountPool);
+			g_refCountPool->free(oldRefCount);
+		}
 		free(_str);
 
 		// Even though _str points to a freed memory block now,
