@@ -59,8 +59,9 @@ enum InterfaceUpdateFlags {
 #define RID_IHNM_BOSS_SCREEN 19		// not in demo
 #define RID_ITE_TYCHO_MAP 1686
 #define RID_ITE_SPR_CROSSHAIR (73 + 9)
-#define TIMETOSAVE (kScriptTimeTicksPerSecond * 1000 * 60 * 30)
-#define TIMETOBLINK	(kScriptTimeTicksPerSecond * 1000 * 1)
+#define TIMETOSAVE (1000000 * 60 * 30) // 30 minutes
+#define TIMETOBLINK_ITE	(1000000 * 1)
+#define TIMETOBLINK_IHNM	(1000000 / 10)
 
 // Converse-specific stuff
 

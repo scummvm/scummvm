@@ -64,7 +64,7 @@ struct GameDisplayInfo {
 	int saveReminderWidth;
 	int saveReminderHeight;
 	int saveReminderFirstSpriteNumber;
-	int saveReminderSecondSpriteNumber;
+	int saveReminderNumSprites;
 
 	int leftPortraitXOffset;
 	int leftPortraitYOffset;
@@ -230,7 +230,8 @@ static const GameDisplayInfo ITE_DisplayInfo = {
 	15,				// status BG color
 	308,137,		// save reminder pos
 	12,12,			// save reminder w & h
-	6,7,			// save reminder sprite numbers
+	6,				// save reminder first sprite number
+	2,				// number of save reminder sprites
 
 	5, 4,			// left portrait x, y offset
 	274, 4,			// right portrait x, y offset
@@ -376,7 +377,8 @@ static const GameDisplayInfo IHNM_DisplayInfo = {
 	250,		// status BG color
 	616, 304,	// save reminder pos
 	24, 24,		// save reminder w&h
-	0,1,		// save reminder sprite numbers
+	0,			// save reminder first sprite number
+	16,			// number of save reminder sprites
 
 	11, 12,		// left portrait x, y offset
 	-1, -1,		// right portrait x, y offset
