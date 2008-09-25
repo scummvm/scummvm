@@ -1763,8 +1763,8 @@ void ScummEngine_v6::akos_processQueue() {
 			a->_forceClip = param_1;
 			break;
 		case 6:
-			a->_offsX = param_1;
-			a->_offsY = param_2;
+			a->_heOffsX = param_1;
+			a->_heOffsY = param_2;
 			break;
 		case 7:
 #ifdef ENABLE_HE
@@ -1825,8 +1825,8 @@ void ScummEngine_v7::akos_processQueue() {
 			a->_forceClip = param_1;
 			break;
 		case 6:
-			a->_offsX = param_1;
-			a->_offsY = param_2;
+			a->_heOffsX = param_1;
+			a->_heOffsY = param_2;
 			break;
 		case 7:
 			if (param_1 != 0) {

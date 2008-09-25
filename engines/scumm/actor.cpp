@@ -50,9 +50,11 @@ Actor::Actor(ScummEngine *scumm, int id) :
 	assert(_vm != 0);
 }
 
-void Actor::initActor(int mode) {
-	// begin HE specific
+void ActorHE::initActor(int mode) {
+	Actor::initActor(mode);
+
 	if (mode == -1) {
+		_heOffsX = _heOffsY = 0;
 		_heSkipLimbs = false;
 		memset(_heTalkQueue, 0, sizeof(_heTalkQueue));
 	}
@@ -70,11 +72,18 @@ void Actor::initActor(int mode) {
 	_hePaletteNum = 0;
 	_heFlags = 0;
 	_heTalking = false;
-	// end HE specific
 
+	if (_vm->_game.heversion >= 61)
+		_flip = 0;
+
+	_clipOverride = _vm->_actorClipOverride;
+
+	_auxBlock.reset();
+}
+
+void Actor::initActor(int mode) {
 
 	if (mode == -1) {
-		_offsX = _offsY = 0;
 		_top = _bottom = 0;
 		_needRedraw = false;
 		_needBgReset = false;
@@ -132,9 +141,6 @@ void Actor::initActor(int mode) {
 	_forceClip = (_vm->_game.version >= 7) ? 100 : 0;
 	_ignoreTurns = false;
 
-	if (_vm->_game.heversion >= 61)
-		_flip = 0;
-
 	_talkFrequency = 256;
 	_talkPan = 64;
 	_talkVolume = 127;
@@ -147,10 +153,6 @@ void Actor::initActor(int mode) {
 
 	_walkScript = 0;
 	_talkScript = 0;
-
-	_clipOverride = _vm->_actorClipOverride;
-
-	_auxBlock.reset();
 
 	_vm->_classData[_number] = (_vm->_game.version >= 7) ? _vm->_classData[0] : 0;
 }
@@ -1434,39 +1436,28 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	}
 
 	setupActorScale();
+	
+	BaseCostumeRenderer *bcr = _vm->_costumeRenderer;
+	prepareDrawActorCostume(bcr);
 
-	BaseCostumeRenderer* bcr = _vm->_costumeRenderer;
+	// If the actor is partially hidden, redraw it next frame.
+	if (bcr->drawCostume(_vm->_virtscr[kMainVirtScreen], _vm->_gdi->_numStrips, this, _drawToBackBuf) & 1) {
+		_needRedraw = (_vm->_game.version <= 6);
+	}
+
+	if (!hitTestMode) {
+		// Record the vertical extent of the drawn actor
+		_top = bcr->_draw_top;
+		_bottom = bcr->_draw_bottom;
+	}
+}
+
+	
+void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 
 	bcr->_actorID = _number;
-
-	bcr->_actorX = _pos.x + _offsX;
-	bcr->_actorY = _pos.y + _offsY - _elevation;
-
-	if (_vm->_game.version <= 2) {
-		bcr->_actorX *= V12_X_MULTIPLIER;
-		bcr->_actorY *= V12_Y_MULTIPLIER;
-	}
-	bcr->_actorX -= _vm->_virtscr[kMainVirtScreen].xstart;
-
-	if (_vm->_game.platform == Common::kPlatformNES) {
-		// In the NES version, when the actor is facing right,
-		// we need to shift it 8 pixels to the left
-		if (_facing == 90)
-			bcr->_actorX -= 8;
-	} else if (_vm->_game.version <= 2) {
-		// HACK: We have to adjust the x position by one strip (8 pixels) in
-		// V2 games. However, it is not quite clear to me why. And to fully
-		// match the original, it seems we have to offset by 2 strips if the
-		// actor is facing left (270 degree).
-		// V1 games are once again slightly different, here we only have
-		// to adjust the 270 degree case...
-		if (_facing == 270)
-			bcr->_actorX += 16;
-		else if (_vm->_game.version == 2)
-			bcr->_actorX += 8;
-	}
-
-	bcr->_clipOverride = _clipOverride;
+	bcr->_actorX = _pos.x - _vm->_virtscr[kMainVirtScreen].xstart;
+	bcr->_actorY = _pos.y - _elevation;
 
 	if (_vm->_game.version == 4 && (_boxscale & 0x8000)) {
 		bcr->_scaleX = bcr->_scaleY = _vm->getScaleFromSlot((_boxscale & 0x7fff) + 1, _pos.x, _pos.y);
@@ -1478,8 +1469,6 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	bcr->_shadow_mode = _shadowMode;
 	if (_vm->_game.version >= 5 && _vm->_game.heversion == 0) {
 		bcr->_shadow_table = _vm->_shadowPalette;
-	} else if (_vm->_game.heversion == 70) {
-		bcr->_shadow_table = _vm->_HEV7ActorPalette;
 	}
 
 	bcr->setCostume(_costume, _heXmapNum);
@@ -1510,6 +1499,19 @@ void Actor::drawActorCostume(bool hitTestMode) {
 
 	bcr->_draw_top = 0x7fffffff;
 	bcr->_draw_bottom = 0;
+}
+
+void ActorHE::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
+	Actor::prepareDrawActorCostume(bcr);
+	
+	bcr->_actorX += _heOffsX;
+	bcr->_actorY += _heOffsY;
+
+	bcr->_clipOverride = _clipOverride;
+
+	if (_vm->_game.heversion == 70) {
+		bcr->_shadow_table = _vm->_HEV7ActorPalette;
+	}
 
 	bcr->_skipLimbs = (_heSkipLimbs != 0);
 	bcr->_paletteNum = _hePaletteNum;
@@ -1530,16 +1532,36 @@ void Actor::drawActorCostume(bool hitTestMode) {
 		}
 	}
 	_heNoTalkAnimation = 0;
+}
 
-	// If the actor is partially hidden, redraw it next frame.
-	if (bcr->drawCostume(_vm->_virtscr[kMainVirtScreen], _vm->_gdi->_numStrips, this, _drawToBackBuf) & 1) {
-		_needRedraw = (_vm->_game.version <= 6);
+void Actor_v2::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
+	Actor::prepareDrawActorCostume(bcr);
+
+	bcr->_actorX = _pos.x;
+	bcr->_actorY = _pos.y - _elevation;
+
+	if (_vm->_game.version <= 2) {
+		bcr->_actorX *= V12_X_MULTIPLIER;
+		bcr->_actorY *= V12_Y_MULTIPLIER;
 	}
+	bcr->_actorX -= _vm->_virtscr[kMainVirtScreen].xstart;
 
-	if (!hitTestMode) {
-		// Record the vertical extent of the drawn actor
-		_top = bcr->_draw_top;
-		_bottom = bcr->_draw_bottom;
+	if (_vm->_game.platform == Common::kPlatformNES) {
+		// In the NES version, when the actor is facing right,
+		// we need to shift it 8 pixels to the left
+		if (_facing == 90)
+			bcr->_actorX -= 8;
+	} else if (_vm->_game.version <= 2) {
+		// HACK: We have to adjust the x position by one strip (8 pixels) in
+		// V2 games. However, it is not quite clear to me why. And to fully
+		// match the original, it seems we have to offset by 2 strips if the
+		// actor is facing left (270 degree).
+		// V1 games are once again slightly different, here we only have
+		// to adjust the 270 degree case...
+		if (_facing == 270)
+			bcr->_actorX += 16;
+		else if (_vm->_game.version == 2)
+			bcr->_actorX += 8;
 	}
 }
 
@@ -2311,10 +2333,10 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 		for (int i = 0; i < _auxEntriesNum; ++i) {
 			AuxEntry *ae = &_auxEntries[i];
 			if (ae->actorNum != -1) {
-				Actor *a = derefActor(ae->actorNum, "postProcessAuxQueue");
+				ActorHE *a = (ActorHE *)derefActor(ae->actorNum, "postProcessAuxQueue");
 				const uint8 *cost = getResourceAddress(rtCostume, a->_costume);
-				int dy = a->_offsY + a->getPos().y;
-				int dx = a->_offsX + a->getPos().x;
+				int dy = a->_heOffsY + a->getPos().y;
+				int dx = a->_heOffsX + a->getPos().x;
 
 				if (_game.heversion >= 72)
 					dy -= a->getElevation();
@@ -2401,8 +2423,8 @@ void Actor::saveLoadWithSerializer(Serializer *ser) {
 	static const SaveLoadEntry actorEntries[] = {
 		MKLINE(Actor, _pos.x, sleInt16, VER(8)),
 		MKLINE(Actor, _pos.y, sleInt16, VER(8)),
-		MKLINE(Actor, _offsX, sleInt16, VER(32)),
-		MKLINE(Actor, _offsY, sleInt16, VER(32)),
+		MKLINE(Actor, _heOffsX, sleInt16, VER(32)),
+		MKLINE(Actor, _heOffsY, sleInt16, VER(32)),
 		MKLINE(Actor, _top, sleInt16, VER(8)),
 		MKLINE(Actor, _bottom, sleInt16, VER(8)),
 		MKLINE(Actor, _elevation, sleInt16, VER(8)),

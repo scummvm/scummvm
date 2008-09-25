@@ -95,10 +95,6 @@ protected:
 	Common::Point _pos;
 
 public:
-	/** HE specific: This rect is used to clip actor drawing. */
-	Common::Rect _clipOverride;
-
-	int _offsX, _offsY;
 	int _top, _bottom;
 	uint _width;
 	byte _number;
@@ -137,6 +133,11 @@ public:
 	CostumeData _cost;
 
 	/* HE specific */
+
+	/** This rect is used to clip actor drawing. */
+	Common::Rect _clipOverride;
+
+	int _heOffsX, _heOffsY;
 	bool _heNoTalkAnimation;
 	bool _heSkipLimbs;
 	bool _heTalking;
@@ -225,6 +226,7 @@ public:
 	virtual void walkActor();
 	void drawActorToBackBuf(int x, int y);
 	void drawActorCostume(bool hitTestMode = false);
+	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
 	void animateCostume();
 	void setActorCostume(int c);
 
@@ -336,6 +338,16 @@ protected:
 	bool findPathTowards(byte box, byte box2, byte box3, Common::Point &foundPath);
 };
 
+class ActorHE : public Actor {
+public:
+	ActorHE(ScummEngine *scumm, int id) : Actor(scumm, id) {}
+
+	virtual void initActor(int mode);
+
+protected:
+	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
+};
+
 class Actor_v3 : public Actor {
 public:
 	Actor_v3(ScummEngine *scumm, int id) : Actor(scumm, id) {}
@@ -357,6 +369,7 @@ public:
 
 protected:
 	virtual bool isPlayer();
+	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
 };
 
 class ActorC64 : public Actor_v2 {
