@@ -881,9 +881,9 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 		_vm->stopTalk();
 	}
 
-	// WORKAROUND: The green transparency of the tank in the Hall of Oddities is
-	// is positioned one pixel too far to the left. This appears to be a
-	// bug in the original game as well.
+	// WORKAROUND: The green transparency of the tank in the Hall of Oddities
+	// is positioned one pixel too far to the left. This appears to be a bug
+	// in the original game as well.
 	if (_vm->_game.id == GID_SAMNMAX && newRoom == 16 && _number == 5 && dstX == 235 && dstY == 236)
 		dstX++;
 
@@ -906,7 +906,7 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 		} else {
 #ifdef ENABLE_HE
 			if (_vm->_game.heversion >= 71)
-				((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
+				((ScummEngine_v71he *)_vm)->queueAuxBlock((ActorHE *)this);
 #endif
 			hideActor();
 		}
@@ -1210,6 +1210,10 @@ void Actor::hideActor() {
 	_cost.soundCounter = 0;
 	_needRedraw = false;
 	_needBgReset = true;
+}
+
+void ActorHE::hideActor() {
+	Actor::hideActor();
 	_auxBlock.reset();
 }
 
@@ -1633,13 +1637,15 @@ void Actor::startAnimActor(int f) {
 
 		if (isInCurrentRoom() && _costume != 0) {
 			_animProgress = 0;
-			_cost.animCounter = 0;
 			_needRedraw = true;
+			_cost.animCounter = 0;
 			// V1 - V2 games don't seem to need a _cost.reset() at this point.
 			// Causes Zak to lose his body in several scenes, see bug #771508
 			if (_vm->_game.version >= 3 && f == _initFrame) {
 				_cost.reset();
-				_auxBlock.reset();
+				if (_vm->_game.heversion != 0) {
+				((ActorHE *)this)->_auxBlock.reset();
+				}
 			}
 			_vm->_costumeLoader->costumeDecodeData(this, f, (uint) - 1);
 			_frame = f;
@@ -1780,7 +1786,7 @@ void ScummEngine::resetActorBgs() {
 		clearGfxUsageBit(strip, USAGE_BIT_DIRTY);
 		clearGfxUsageBit(strip, USAGE_BIT_RESTORED);
 		for (j = 1; j < _numActors; j++) {
-			if (_actors[j]->_heFlags & 1)
+			if (_game.heversion != 0 && ((ActorHE *)_actors[j])->_heFlags & 1)
 				continue;
 
 			if (testGfxUsageBit(strip, j) &&
@@ -1958,7 +1964,8 @@ void ScummEngine::actorTalk(const byte *msg) {
 				stopTalk();
 			}
 			setTalkingActor(a->_number);
-			a->_heTalking = true;
+			if (_game.heversion != 0)
+				((ActorHE *)a)->_heTalking = true;
 			if (!_string[0].no_talk_anim) {
 				a->runActorTalkScript(a->_talkStartFrame);
 				_useTalkAnims = true;
@@ -2031,7 +2038,8 @@ void ScummEngine::stopTalk() {
 		}
 		if (_game.version <= 7 && _game.heversion == 0)
 			setTalkingActor(0xFF);
-		a->_heTalking = false;
+		if (_game.heversion != 0)
+			((ActorHE *)a)->_heTalking = false;
 	}
 
 	if (_game.id == GID_DIG || _game.id == GID_CMI) {
@@ -2057,9 +2065,7 @@ void ScummEngine::stopTalk() {
 #pragma mark -
 
 
-void Actor::setActorCostume(int c) {
-	int i;
-
+void ActorHE::setActorCostume(int c) {
 	if (_vm->_game.heversion >= 61 && (c == -1  || c == -2)) {
 		_heSkipLimbs = (c == -1);
 		_needRedraw = true;
@@ -2071,27 +2077,43 @@ void Actor::setActorCostume(int c) {
 	if (_vm->_game.heversion == 61)
 		c &= 0xff;
 
+	if (_vm->_game.features & GF_NEW_COSTUMES) {
+#ifdef ENABLE_HE
+		if (_vm->_game.heversion >= 71)
+			((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
+#endif
+		_auxBlock.reset();
+		if (_visible) {
+			if (_vm->_game.heversion >= 60)
+				_needRedraw = true;
+		}
+	}
+
+	Actor::setActorCostume(c);
+
+	if (_vm->_game.heversion >= 71 && _vm->getTalkingActor() == _number) {
+		if (_vm->_game.heversion <= 95 || (_vm->_game.heversion >= 98 && _vm->VAR(_vm->VAR_SKIP_RESET_TALK_ACTOR) == 0)) {
+			_vm->setTalkingActor(0);
+		}
+	}
+}
+
+void Actor::setActorCostume(int c) {
+	int i;
+
 	_costumeNeedsInit = true;
 
 	if (_vm->_game.features & GF_NEW_COSTUMES) {
 		memset(_animVariable, 0, sizeof(_animVariable));
 
-#ifdef ENABLE_HE
-		if (_vm->_game.heversion >= 71)
-			((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
-#endif
-
 		_costume = c;
 		_cost.reset();
-		_auxBlock.reset();
 
 		if (_visible) {
 			if (_costume) {
 				_vm->ensureResourceLoaded(rtCostume, _costume);
 			}
 			startAnimActor(_initFrame);
-			if (_vm->_game.heversion >= 60)
-				_needRedraw = true;
 		}
 	} else {
 		if (_visible) {
@@ -2125,12 +2147,6 @@ void Actor::setActorCostume(int c) {
 	} else {
 		for (i = 0; i < 32; i++)
 			_palette[i] = 0xFF;
-	}
-
-	if (_vm->_game.heversion >= 71 && _vm->getTalkingActor() == _number) {
-		if (_vm->_game.heversion <= 95 || (_vm->_game.heversion >= 98 && _vm->VAR(_vm->VAR_SKIP_RESET_TALK_ACTOR) == 0)) {
-			_vm->setTalkingActor(0);
-		}
 	}
 }
 
@@ -2267,7 +2283,7 @@ bool Actor_v2::isPlayer() {
 	return _vm->VAR(42) <= _number && _number <= _vm->VAR(43);
 }
 
-void Actor::setHEFlag(int bit, int set) {
+void ActorHE::setHEFlag(int bit, int set) {
 	// Note that condition is inverted
 	if (!set) {
 		_heFlags |= bit;
@@ -2276,7 +2292,7 @@ void Actor::setHEFlag(int bit, int set) {
 	}
 }
 
-void Actor::setUserCondition(int slot, int set) {
+void ActorHE::setUserCondition(int slot, int set) {
 	const int condMaskCode = (_vm->_game.heversion >= 85) ? 0x1FFF : 0x3FF;
 	assertRange(1, slot, 32, "setUserCondition: Condition");
 	if (set == 0) {
@@ -2291,12 +2307,12 @@ void Actor::setUserCondition(int slot, int set) {
 	}
 }
 
-bool Actor::isUserConditionSet(int slot) const {
+bool ActorHE::isUserConditionSet(int slot) const {
 	assertRange(1, slot, 32, "isUserConditionSet: Condition");
 	return (_heCondMask & (1 << (slot + 0xF))) != 0;
 }
 
-void Actor::setTalkCondition(int slot) {
+void ActorHE::setTalkCondition(int slot) {
 	const int condMaskCode = (_vm->_game.heversion >= 85) ? 0x1FFF : 0x3FF;
 	assertRange(1, slot, 32, "setTalkCondition: Condition");
 	_heCondMask = (_heCondMask & ~condMaskCode) | 1;
@@ -2310,7 +2326,7 @@ void Actor::setTalkCondition(int slot) {
 	}
 }
 
-bool Actor::isTalkConditionSet(int slot) const {
+bool ActorHE::isTalkConditionSet(int slot) const {
 	assertRange(1, slot, 32, "isTalkConditionSet: Condition");
 	return (_heCondMask & (1 << (slot - 1))) != 0;
 }
@@ -2400,7 +2416,7 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 	_auxEntriesNum = 0;
 }
 
-void ScummEngine_v71he::queueAuxBlock(Actor *a) {
+void ScummEngine_v71he::queueAuxBlock(ActorHE *a) {
 	if (!a->_auxBlock.visible)
 		return;
 

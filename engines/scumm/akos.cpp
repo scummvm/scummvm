@@ -1664,28 +1664,28 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			akos_queCommand(9, a, a->_sound[a->getAnimVar(GB(2))], 0);
 			continue;
 		case AKC_C045:
-			a->setUserCondition(GB(3), a->getAnimVar(GB(4)));
+			((ActorHE *)a)->setUserCondition(GB(3), a->getAnimVar(GB(4)));
 			continue;
 		case AKC_C046:
-			a->setAnimVar(GB(4), a->isUserConditionSet(GB(3)));
+			a->setAnimVar(GB(4), ((ActorHE *)a)->isUserConditionSet(GB(3)));
 			continue;
 		case AKC_C047:
-			a->setTalkCondition(GB(3));
+			((ActorHE *)a)->setTalkCondition(GB(3));
 			continue;
 		case AKC_C048:
-			a->setAnimVar(GB(4), a->isTalkConditionSet(GB(3)));
+			a->setAnimVar(GB(4), ((ActorHE *)a)->isTalkConditionSet(GB(3)));
 			continue;
 		case AKC_C0A0:
 			akos_queCommand(8, a, GB(2), 0);
 			continue;
 		case AKC_C0A1:
-			if (a->_heTalking != 0) {
+			if (((ActorHE *)a)->_heTalking != 0) {
 				curpos = GUW(2);
 				break;
 			}
 			continue;
 		case AKC_C0A2:
-			if (a->_heTalking == 0) {
+			if (((ActorHE *)a)->_heTalking == 0) {
 				curpos = GUW(2);
 				break;
 			}
@@ -1775,13 +1775,13 @@ void ScummEngine_v6::akos_processQueue() {
 		case 8:
 			_actorToPrintStrFor = a->_number;
 
-			a->_talkPosX = a->_heTalkQueue[param_1].posX;
-			a->_talkPosY = a->_heTalkQueue[param_1].posY;
-			a->_talkColor = a->_heTalkQueue[param_1].color;
+			a->_talkPosX = ((ActorHE *)a)->_heTalkQueue[param_1].posX;
+			a->_talkPosY = ((ActorHE *)a)->_heTalkQueue[param_1].posY;
+			a->_talkColor = ((ActorHE *)a)->_heTalkQueue[param_1].color;
 
 			_string[0].loadDefault();
 			_string[0].color = a->_talkColor;
-			actorTalk(a->_heTalkQueue[param_1].sentence);
+			actorTalk(((ActorHE *)a)->_heTalkQueue[param_1].sentence);
 
 			break;
 		case 9:
