@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "scumm/actor.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/scumm.h"

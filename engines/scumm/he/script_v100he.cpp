@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "common/system.h"
 
 #include "scumm/actor.h"
@@ -381,7 +379,7 @@ const char *ScummEngine_v100he::getOpcodeDesc(byte i) {
 }
 
 void ScummEngine_v100he::o100_actorOps() {
-	Actor *a;
+	ActorHE *a;
 	int i, j, k;
 	int args[32];
 	byte string[256];
@@ -392,7 +390,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		return;
 	}
 
-	a = derefActorSafe(_curActor, "o100_actorOps");
+	a = (ActorHE *)derefActorSafe(_curActor, "o100_actorOps");
 	if (!a)
 		return;
 

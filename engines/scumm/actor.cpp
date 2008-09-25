@@ -1798,7 +1798,7 @@ void ScummEngine::resetActorBgs() {
 }
 
 // HE specific
-void Actor::drawActorToBackBuf(int x, int y) {
+void ActorHE::drawActorToBackBuf(int x, int y) {
 	int curTop = _top;
 	int curBottom = _bottom;
 

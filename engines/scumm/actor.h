@@ -224,7 +224,6 @@ public:
 	void faceToObject(int obj);
 	void turnToDirection(int newdir);
 	virtual void walkActor();
-	void drawActorToBackBuf(int x, int y);
 	void drawActorCostume(bool hitTestMode = false);
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
 	void animateCostume();
@@ -343,6 +342,7 @@ public:
 	ActorHE(ScummEngine *scumm, int id) : Actor(scumm, id) {}
 
 	virtual void initActor(int mode);
+	void drawActorToBackBuf(int x, int y);
 
 protected:
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
