@@ -510,7 +510,7 @@ void ScummEngine_v71he::o71_kernelSetFunctions() {
 		break;
 	case 20: // HE72+
 		a = (ActorHE *)derefActor(args[1], "o71_kernelSetFunctions: 20");
-		((ScummEngine_v71he *)this)->queueAuxBlock(a);
+		queueAuxBlock(a);
 		break;
 	case 21:
 		_skipDrawObject = 1;
