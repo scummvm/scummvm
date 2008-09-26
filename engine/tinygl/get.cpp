@@ -1,7 +1,7 @@
 
 #include "engine/tinygl/zgl.h"
 
-void glGetIntegerv(int pname,int *params) {
+void tglGetIntegerv(int pname,int *params) {
 	GLContext *c=gl_get_context();
 
 	switch (pname) {
@@ -32,7 +32,7 @@ void glGetIntegerv(int pname,int *params) {
 	}
 }
 
-void glGetFloatv(int pname, float *v) {
+void tglGetFloatv(int pname, float *v) {
 	int i;
 	int mnr = 0; // just a trick to return the correct matrix
 	GLContext *c = gl_get_context();

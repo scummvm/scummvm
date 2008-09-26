@@ -182,6 +182,72 @@ static void glShadowProjection(Vector3d light, Vector3d plane, Vector3d normal, 
 	glMultMatrixf((GLfloat *)mat);
 }
 
+void DriverGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2) {
+	if (_currentShadowArray)
+		return;
+
+	GLfloat top = 1000;
+	GLfloat right = -1000;
+	GLfloat left = 1000;
+	GLfloat bottom = -1000;
+	GLdouble winX, winY, winZ;
+
+	for (int i = 0; i < model->_numFaces; i++) {
+		Vector3d v;
+		float* pVertices;
+
+		for (int j = 0; j < model->_faces[i]._numVertices; j++) {
+			GLdouble modelView[16], projection[16];
+			GLint viewPort[4];
+
+			glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
+			glGetDoublev(GL_PROJECTION_MATRIX, projection);
+			glGetIntegerv(GL_VIEWPORT, viewPort);
+
+			pVertices = model->_vertices + 3 * model->_faces[i]._vertices[j];
+
+			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
+
+			gluProject(v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
+
+			if (winX > right)
+				right = winX;
+			if (winX < left)
+				left = winX;
+			if (winY < top)
+				top = winY;
+			if (winY > bottom)
+				bottom = winY;
+		}
+	}
+
+	float t = bottom;
+	bottom = 480 - top;
+	top = 480 - t;
+
+	if (left < 0)
+		left = 0;
+	if (right > 639)
+		right = 639;
+	if (top < 0)
+		top = 0;
+	if (bottom > 479)
+		bottom = 479;
+
+	if (top > 479 || left > 639 || bottom < 0 || right < 0) {
+		*x1 = -1;
+		*y1 = -1;
+		*x2 = -1;
+		*y2 = -1;
+		return;
+	}
+
+	*x1 = (int)left;
+	*y1 = (int)top;
+	*x2 = (int)right;
+	*y2 = (int)bottom;
+}
+
 void DriverGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_MODELVIEW);

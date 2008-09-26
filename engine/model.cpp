@@ -503,6 +503,9 @@ void Model::HierNode::update() {
 }
 
 void Model::Mesh::draw() const {
+	int winX1, winY1, winX2, winY2;
+	g_driver->getBoundingBoxPos(this, &winX1, &winY1, &winX2, &winY2);
+
 	for (int i = 0; i < _numFaces; i++)
 		_faces[i].draw(_vertices, _vertNormals, _textureVerts);
 }

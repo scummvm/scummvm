@@ -36,7 +36,7 @@
 #include "engine/tinygl/gl.h"
 #include "engine/tinygl/zgl.h"
 
-// func below is from Mesa glu sources
+// below funcs lookAt, transformPoint and tgluProject are from Mesa glu sources
 static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx,
 		TGLfloat centery, TGLfloat centerz, TGLfloat upx, TGLfloat upy, TGLfloat upz) {
 	TGLfloat m[16];
@@ -100,6 +100,40 @@ static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx
 	tglMultMatrixf(m);
 
 	tglTranslatef(-eyex, -eyey, -eyez);
+}
+
+static void transformPoint(TGLfloat out[4], const TGLfloat m[16], const TGLfloat in[4]) {
+#define M(row,col)  m[col * 4 + row]
+   out[0] = M(0, 0) * in[0] + M(0, 1) * in[1] + M(0, 2) * in[2] + M(0, 3) * in[3];
+   out[1] = M(1, 0) * in[0] + M(1, 1) * in[1] + M(1, 2) * in[2] + M(1, 3) * in[3];
+   out[2] = M(2, 0) * in[0] + M(2, 1) * in[1] + M(2, 2) * in[2] + M(2, 3) * in[3];
+   out[3] = M(3, 0) * in[0] + M(3, 1) * in[1] + M(3, 2) * in[2] + M(3, 3) * in[3];
+#undef M
+}
+
+TGLint tgluProject(TGLfloat objx, TGLfloat objy, TGLfloat objz, const TGLfloat model[16], const TGLfloat proj[16],
+		const TGLint viewport[4], TGLfloat *winx, TGLfloat *winy, TGLfloat *winz) {
+	TGLfloat in[4], out[4];
+
+	in[0] = objx;
+	in[1] = objy;
+	in[2] = objz;
+	in[3] = 1.0;
+	transformPoint(out, model, in);
+	transformPoint(in, proj, out);
+
+	if (in[3] == 0.0)
+		return TGL_FALSE;
+
+	in[0] /= in[3];
+	in[1] /= in[3];
+	in[2] /= in[3];
+
+	*winx = viewport[0] + (1 + in[0]) * viewport[2] / 2;
+	*winy = viewport[1] + (1 + in[1]) * viewport[3] / 2;
+	*winz = (1 + in[2]) / 2;
+
+	return TGL_TRUE;
 }
 
 DriverTinyGL::DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
@@ -241,6 +275,87 @@ static void tglShadowProjection(Vector3d light, Vector3d plane, Vector3d normal,
 	tglMultMatrixf(mat);
 }
 
+void DriverTinyGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2) {
+	if (_currentShadowArray)
+		return;
+
+	TGLfloat top = 1000;
+	TGLfloat right = -1000;
+	TGLfloat left = 1000;
+	TGLfloat bottom = -1000;
+	TGLfloat winX, winY, winZ;
+
+	for (int i = 0; i < model->_numFaces; i++) {
+		Vector3d v;
+		float* pVertices;
+
+		for (int j = 0; j < model->_faces[i]._numVertices; j++) {
+			TGLfloat modelView[16], projection[16];
+			TGLint viewPort[4];
+
+			tglGetFloatv(TGL_MODELVIEW_MATRIX, modelView);
+			tglGetFloatv(TGL_PROJECTION_MATRIX, projection);
+			tglGetIntegerv(TGL_VIEWPORT, viewPort);
+
+			pVertices = model->_vertices + 3 * model->_faces[i]._vertices[j];
+
+			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
+
+			tgluProject(v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
+
+			if (winX > right)
+				right = winX;
+			if (winX < left)
+				left = winX;
+			if (winY < top)
+				top = winY;
+			if (winY > bottom)
+				bottom = winY;
+		}
+	}
+
+	float t = bottom;
+	bottom = 480 - top;
+	top = 480 - t;
+
+	if (left < 0)
+		left = 0;
+	if (right > 639)
+		right = 639;
+	if (top < 0)
+		top = 0;
+	if (bottom > 479)
+		bottom = 479;
+
+	if (top > 479 || left > 639 || bottom < 0 || right < 0) {
+		*x1 = -1;
+		*y1 = -1;
+		*x2 = -1;
+		*y2 = -1;
+		return;
+	}
+
+	*x1 = (int)left;
+	*y1 = (int)top;
+	*x2 = (int)right;
+	*y2 = (int)bottom;
+/*
+	uint16 *dst = (uint16 *)_zb->pbuf;
+	uint16 c = 0xffff;
+	for (int x = left; x <= right; x++) {
+		WRITE_LE_UINT16(dst + 640 * (int)top + x, c);
+	}
+	for (int x = left; x <= right; x++) {
+		WRITE_LE_UINT16(dst + 640 * (int)bottom + x, c);
+	}
+	for (int y = top; y <= bottom; y++) {
+		WRITE_LE_UINT16(dst + 640 * y + (int)left, c);
+	}
+	for (int y = top; y <= bottom; y++) {
+		WRITE_LE_UINT16(dst + 640 * y + (int)right, c);
+	}*/
+}
+
 void DriverTinyGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_MODELVIEW);
@@ -254,6 +369,7 @@ void DriverTinyGL::startActorDraw(Vector3d pos, float yaw, float pitch, float ro
 		Sector *shadowSector = *i;
 		tglShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
+
 	tglTranslatef(pos.x(), pos.y(), pos.z());
 	tglRotatef(yaw, 0, 0, 1);
 	tglRotatef(pitch, 1, 0, 0);
