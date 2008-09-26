@@ -465,23 +465,9 @@ void Engine::updateDisplayScene() {
 		if (!_currScene)
 			return;
 
-		// Update actor costumes & sets
-		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
-			Actor *a = *i;
-
-			// Update the actor's costumes & chores
-			g_currentUpdatedActor = *i;
-			// Note that the actor need not be visible to update chores, for example:
-			// when Manny has just brought Meche back he is offscreen several times
-			// when he needs to perform certain chores
-			if (a->inSet(_currScene->name()))
-				a->update();
-		}
-		g_currentUpdatedActor = NULL;
+		g_driver->clearScreen();
 
 		_prevSmushFrame = 0;
-
-		g_driver->clearScreen();
 
 		_currScene->drawBackground();
 
@@ -519,6 +505,20 @@ void Engine::updateDisplayScene() {
 		g_driver->set3DMode();
 
 		_currScene->setupLights();
+
+		// Update actor costumes & sets
+		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
+			Actor *a = *i;
+
+			// Update the actor's costumes & chores
+			g_currentUpdatedActor = *i;
+			// Note that the actor need not be visible to update chores, for example:
+			// when Manny has just brought Meche back he is offscreen several times
+			// when he needs to perform certain chores
+			if (a->inSet(_currScene->name()))
+				a->update();
+		}
+		g_currentUpdatedActor = NULL;
 
 		// Draw actors
 		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
