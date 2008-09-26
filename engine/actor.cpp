@@ -375,9 +375,13 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 		_sayLineText->setX(640 / 2);
 		_sayLineText->setY(420);
 	} else {
-		// render at the top for active actors for now
-		_sayLineText->setX(640 / 2);
-		_sayLineText->setY(0);
+		if (_winX1 == 1000 || _winX2 == -1000 || _winY2 == -1000) {
+			_sayLineText->setX(640 / 2);
+			_sayLineText->setY(0);
+		} else {
+			_sayLineText->setX(_winX1);
+			_sayLineText->setY(_winY1);
+		}
 	}
 	_sayLineText->createBitmap();
 	g_engine->registerTextObject(_sayLineText);
