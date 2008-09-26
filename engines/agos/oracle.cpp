@@ -459,7 +459,7 @@ void AGOSEngine_Feeble::saveUserGame(int slot) {
 	}
 
 	windowPutChar(window, 0x7f);
-	for (;;) {
+	while (!quit()) {
 		_keyPressed.reset();
 		delay(1);
 

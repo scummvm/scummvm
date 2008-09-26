@@ -408,6 +408,10 @@ void ToucheEngine::op_setFlag() {
 	case 104:
 		_currentKeyCharNum = val;
 		break;
+	case 611:
+		if (val != 0)
+			quitGame();
+		break;
 	case 612:
 		_flagsTable[613] = getRandomNumber(val);
 		break;

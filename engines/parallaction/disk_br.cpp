@@ -91,7 +91,7 @@ struct Sprites : public Frames {
 
 
 
-void DosDisk_br::errorFileNotFound(const FilesystemNode &dir, const Common::String &filename) {
+void DosDisk_br::errorFileNotFound(const Common::FilesystemNode &dir, const Common::String &filename) {
 	error("File '%s' not found in directory '%s'", filename.c_str(), dir.getDisplayName().c_str());
 }
 
@@ -134,7 +134,7 @@ GfxObj* DosDisk_br::loadTalk(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadTalk(%s)", name);
 
 	Common::String path(name);
-	FilesystemNode node = _talDir.getChild(path);
+	Common::FilesystemNode node = _talDir.getChild(path);
 	if (!node.exists()) {
 		path += ".tal";
 		node = _talDir.getChild(path);
@@ -160,11 +160,11 @@ Script* DosDisk_br::loadLocation(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadLocation");
 
 	Common::String langs[4] = { "it", "fr", "en", "ge" };
-	FilesystemNode locDir = _partDir.getChild(langs[_language]);
+	Common::FilesystemNode locDir = _partDir.getChild(langs[_language]);
 
 	Common::String path(name);
 	path += ".slf";
-	FilesystemNode node = locDir.getChild(path);
+	Common::FilesystemNode node = locDir.getChild(path);
 	if (!node.exists()) {
 		path = Common::String(name) + ".loc";
 		node = locDir.getChild(path);
@@ -183,7 +183,7 @@ Script* DosDisk_br::loadScript(const char* name) {
 
 	Common::String path(name);
 	path += ".scr";
-	FilesystemNode node = _scrDir.getChild(path);
+	Common::FilesystemNode node = _scrDir.getChild(path);
 	if (!node.exists()) {
 		errorFileNotFound(_scrDir, path);
 	}
@@ -221,7 +221,7 @@ Frames* DosDisk_br::loadPointer(const char *name) {
 
 	Common::String path(name);
 	path += ".ras";
-	FilesystemNode node = _baseDir.getChild(path);
+	Common::FilesystemNode node = _baseDir.getChild(path);
 	if (!node.exists()) {
 		errorFileNotFound(_baseDir, path);
 	}
@@ -240,7 +240,7 @@ Font* DosDisk_br::loadFont(const char* name) {
 
 	Common::String path(name);
 	path += ".fnt";
-	FilesystemNode node = _baseDir.getChild(path);
+	Common::FilesystemNode node = _baseDir.getChild(path);
 	if (!node.exists()) {
 		errorFileNotFound(_baseDir, path);
 	}
@@ -255,7 +255,7 @@ GfxObj* DosDisk_br::loadObjects(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadObjects");
 
 	Common::String path(name);
-	FilesystemNode node = _partDir.getChild(path);
+	Common::FilesystemNode node = _partDir.getChild(path);
 	if (!node.exists()) {
 		errorFileNotFound(_partDir, path);
 	}
@@ -274,7 +274,7 @@ GfxObj* DosDisk_br::loadStatic(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadStatic");
 
 	Common::String path(name);
-	FilesystemNode node = _rasDir.getChild(path);
+	Common::FilesystemNode node = _rasDir.getChild(path);
 	if (!node.exists()) {
 		errorFileNotFound(_rasDir, path);
 	}
@@ -312,7 +312,7 @@ Frames* DosDisk_br::loadFrames(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadFrames");
 
 	Common::String path(name);
-	FilesystemNode node = _aniDir.getChild(path);
+	Common::FilesystemNode node = _aniDir.getChild(path);
 	if (!node.exists()) {
 		path += ".ani";
 		node = _aniDir.getChild(path);
@@ -336,7 +336,7 @@ void DosDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
 
 	Common::String path(name);
 	path += ".bmp";
-	FilesystemNode node = _baseDir.getChild(path);
+	Common::FilesystemNode node = _baseDir.getChild(path);
 	if (!node.exists()) {
 		errorFileNotFound(_baseDir, path);
 	}
@@ -357,11 +357,34 @@ void DosDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
 	return;
 }
 
+void DosDisk_br::loadMask(const char *name, MaskBuffer &buffer) {
+	if (!name) {
+		return;
+	}
+
+	Common::String filepath;
+	Common::FilesystemNode node;
+	Common::File stream;
+
+	filepath = Common::String(name) + ".msk";
+	node = _mskDir.getChild(filepath);
+	if (!node.exists()) {
+		errorFileNotFound(_mskDir, filepath);
+	}
+	stream.open(node);
+
+	// NOTE: info.width and info.height are only valid if the background graphics
+	// have already been loaded
+	buffer.bigEndian = false;
+	stream.read(buffer.data, buffer.size);
+	stream.close();
+}
+
 void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char *mask, const char* path) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadScenery");
 
 	Common::String filepath;
-	FilesystemNode node;
+	Common::FilesystemNode node;
 	Common::File stream;
 
 	if (name) {
@@ -424,7 +447,7 @@ Table* DosDisk_br::loadTable(const char* name) {
 
 	Common::String path(name);
 	path += ".tab";
-	FilesystemNode node = _partDir.getChild(path);
+	Common::FilesystemNode node = _partDir.getChild(path);
 	if (!node.exists()) {
 		errorFileNotFound(_partDir, path);
 	}
@@ -495,7 +518,7 @@ AmigaDisk_br::AmigaDisk_br(Parallaction *vm) : DosDisk_br(vm) {
 
 	_baseBkgDir = _baseDir.getChild("backs");
 
-	FilesystemNode commonDir = _baseDir.getChild("common");
+	Common::FilesystemNode commonDir = _baseDir.getChild("common");
 	_commonAniDir = commonDir.getChild("anims");
 	_commonBkgDir = commonDir.getChild("backs");
 	_commonMscDir = commonDir.getChild("msc");
@@ -509,33 +532,6 @@ AmigaDisk_br::~AmigaDisk_br() {
 
 }
 
-
-/*
-	FIXME: mask values are not computed correctly for level 1 and 2
-
-	NOTE: this routine is only able to build masks for Nippon Safes, since mask widths are hardcoded
-	into the main loop.
-*/
-void buildMask2(byte* buf) {
-
-	byte mask1[16] = { 0, 0x80, 0x20, 0xA0, 8, 0x88, 0x28, 0xA8, 2, 0x82, 0x22, 0xA2, 0xA, 0x8A, 0x2A, 0xAA };
-	byte mask0[16] = { 0, 0x40, 0x10, 0x50, 4, 0x44, 0x14, 0x54, 1, 0x41, 0x11, 0x51, 0x5, 0x45, 0x15, 0x55 };
-
-	byte plane0[40];
-	byte plane1[40];
-
-	for (int32 i = 0; i < _vm->_screenHeight; i++) {
-
-		memcpy(plane0, buf, 40);
-		memcpy(plane1, buf+40, 40);
-
-		for (uint32 j = 0; j < 40; j++) {
-			*buf++ = mask0[(plane0[j] & 0xF0) >> 4] | mask1[(plane1[j] & 0xF0) >> 4];
-			*buf++ = mask0[plane0[j] & 0xF] | mask1[plane1[j] & 0xF];
-		}
-
-	}
-}
 
 void AmigaDisk_br::loadBackground(BackgroundInfo& info, Common::SeekableReadStream &stream) {
 
@@ -565,33 +561,12 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, Common::SeekableReadStre
 	return;
 }
 
-void AmigaDisk_br::loadMask(BackgroundInfo& info, Common::SeekableReadStream &stream) {
-	stream.seek(0x30, SEEK_SET);
-
-	byte r, g, b;
-	for (uint i = 0; i < 4; i++) {
-		r = stream.readByte();
-		g = stream.readByte();
-		b = stream.readByte();
-
-		info.layers[i] = (((r << 4) & 0xF00) | (g & 0xF0) | (b >> 4)) & 0xFF;
-	}
-
-	stream.seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
-	Graphics::PackBitsReadStream unpackedStream(stream);
-
-	info.mask.create(info.width, info.height);
-	unpackedStream.read(info.mask.data, info.mask.size);
-	buildMask2(info.mask.data);
-
-	return;
-}
 
 void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadScenery '%s', '%s' '%s'", name, mask, path);
 
 	Common::String filepath;
-	FilesystemNode node;
+	Common::FilesystemNode node;
 	Common::File stream;
 
 	if (name) {
@@ -608,7 +583,7 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 		loadBackground(info, stream);
 		stream.close();
 	}
-
+#if 0
 	if (mask && _mskDir.exists()) {
 		filepath = Common::String(mask) + ".msk";
 		node = _mskDir.getChild(filepath);
@@ -619,11 +594,16 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 
 		if (node.exists()) {
 			stream.open(node);
+			stream.seek(0x30, SEEK_SET);
+			Graphics::PackBitsReadStream unpackedStream(stream);
+			info.mask.create(info.width, info.height);
+			unpackedStream.read(info.mask.data, info.mask.size);
+			// TODO: there is another step to do after decompression...
 			loadMask(info, stream);
 			stream.close();
 		}
 	}
-
+#endif
 	if (path && _pthDir.exists()) {
 		filepath = Common::String(path) + ".pth";
 		node = _pthDir.getChild(filepath);
@@ -650,7 +630,7 @@ void AmigaDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
 
 	Common::String path(name);
 	path += ".bkg";
-	FilesystemNode node = _baseBkgDir.getChild(path);
+	Common::FilesystemNode node = _baseBkgDir.getChild(path);
 	if (!node.exists()) {
 		errorFileNotFound(_baseBkgDir, path);
 	}
@@ -664,7 +644,7 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadStatic '%s'", name);
 
 	Common::String path(name);
-	FilesystemNode node = _rasDir.getChild(path);
+	Common::FilesystemNode node = _rasDir.getChild(path);
 	if (!node.exists()) {
 		errorFileNotFound(_rasDir, path);
 	}
@@ -707,7 +687,7 @@ Frames* AmigaDisk_br::loadFrames(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadFrames '%s'", name);
 
 	Common::String path(name);
-	FilesystemNode node = _aniDir.getChild(path);
+	Common::FilesystemNode node = _aniDir.getChild(path);
 	if (!node.exists()) {
 		path += ".ani";
 		node = _aniDir.getChild(path);
@@ -733,7 +713,7 @@ GfxObj* AmigaDisk_br::loadTalk(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadTalk '%s'", name);
 
 	Common::String path(name);
-	FilesystemNode node = _talDir.getChild(path);
+	Common::FilesystemNode node = _talDir.getChild(path);
 	if (!node.exists()) {
 		path += ".tal";
 		node = _talDir.getChild(path);
@@ -760,7 +740,7 @@ Font* AmigaDisk_br::loadFont(const char* name) {
 
 	Common::String path(name);
 	path += ".font";
-	FilesystemNode node = _fntDir.getChild(path);
+	Common::FilesystemNode node = _fntDir.getChild(path);
 	if (!node.exists()) {
 		errorFileNotFound(_fntDir, path);
 	}
@@ -775,8 +755,6 @@ Font* AmigaDisk_br::loadFont(const char* name) {
 	while ((ch = stream.readByte()) != 0x2F) fontDir += ch;
 	while ((ch = stream.readByte()) != 0) fontFile += ch;
 	stream.close();
-
-	printf("fontDir = %s, fontFile = %s\n", fontDir.c_str(), fontFile.c_str());
 
 	node = _fntDir.getChild(fontDir);
 	if (!node.exists()) {
@@ -795,7 +773,7 @@ Common::SeekableReadStream* AmigaDisk_br::loadMusic(const char* name) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadMusic");
 
 	Common::String path(name);
-	FilesystemNode node = _mscDir.getChild(path);
+	Common::FilesystemNode node = _mscDir.getChild(path);
 	if (!node.exists()) {
 		// TODO (Kirben): error out when music file is not found?
 		return 0;
@@ -811,7 +789,7 @@ Common::ReadStream* AmigaDisk_br::loadSound(const char* name) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadSound");
 
 	Common::String path(name);
-	FilesystemNode node = _sfxDir.getChild(path);
+	Common::FilesystemNode node = _sfxDir.getChild(path);
 	if (!node.exists()) {
 		errorFileNotFound(_sfxDir, path);
 	}
@@ -825,7 +803,7 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadObjects");
 
 	Common::String path(name);
-	FilesystemNode node = _partDir.getChild(path);
+	Common::FilesystemNode node = _partDir.getChild(path);
 	if (!node.exists()) {
 		errorFileNotFound(_partDir, path);
 	}

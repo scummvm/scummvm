@@ -389,7 +389,7 @@ void Screen::displayMsg(byte *text, int time) {
 		uint32 targetTime = _vm->getMillis() + (time * 1000);
 		_vm->sleepUntil(targetTime);
 	} else {
-		while (!_vm->_quit) {
+		while (!_vm->quit()) {
 			MouseEvent *me = _vm->mouseEvent();
 			if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN)))
 				break;
@@ -919,7 +919,7 @@ void Screen::rollCredits() {
 
 	while (1) {
 		char buffer[80];
-		char *line = f.readLine(buffer, sizeof(buffer));
+		char *line = f.readLine_OLD(buffer, sizeof(buffer));
 
 		if (!line || *line == 0) {
 			if (!hasCenterMark) {
@@ -1035,7 +1035,7 @@ void Screen::rollCredits() {
 
 	uint32 musicLength = MAX((int32)(1000 * (_vm->_sound->musicTimeRemaining() - 3)), 25 * (int32)scrollSteps);
 
-	while (scrollPos < scrollSteps && !_vm->_quit) {
+	while (scrollPos < scrollSteps && !_vm->quit()) {
 		clearScene();
 
 		for (i = startLine; i < lineCount; i++) {
@@ -1123,13 +1123,13 @@ void Screen::rollCredits() {
 		// The music should either have stopped or be about to stop, so
 		// wait for it to really happen.
 
-		while (_vm->_sound->musicTimeRemaining() && !_vm->_quit) {
+		while (_vm->_sound->musicTimeRemaining() && !_vm->quit()) {
 			updateDisplay(false);
 			_vm->_system->delayMillis(100);
 		}
 	}
 
-	if (_vm->_quit)
+	if (_vm->quit())
 		return;
 
 	waitForFade();

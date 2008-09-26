@@ -82,7 +82,7 @@ public:
 	int getTabPadding() const;
 
 	bool supportsImages() const { return true; }
-	const Graphics::Surface *getImageSurface(const kThemeImages n) const { return n == kImageLogo ? _images[kThemeLogo] : 0; }
+	const Graphics::Surface *getImageSurface(const kThemeImages n) const;
 private:
 	void colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end, uint factor = 1);
 	void drawRect(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
@@ -193,18 +193,19 @@ private:
 		kWidgetSmallBkgd = 38,
 
 		kThemeLogo = 39,
+		kThemeLogoSmall = 40,
 
-		kPopUpWidgetBkgdCorner = 40,
-		kPopUpWidgetBkgdTop = 41,
-		kPopUpWidgetBkgdLeft = 42,
-		kPopUpWidgetBkgd = 43,
+		kPopUpWidgetBkgdCorner = 41,
+		kPopUpWidgetBkgdTop = 42,
+		kPopUpWidgetBkgdLeft = 43,
+		kPopUpWidgetBkgd = 44,
 
-		kEditTextBkgdCorner = 44,
-		kEditTextBkgdTop = 45,
-		kEditTextBkgdLeft = 46,
-		kEditTextBkgd = 47,
+		kEditTextBkgdCorner = 45,
+		kEditTextBkgdTop = 46,
+		kEditTextBkgdLeft = 47,
+		kEditTextBkgd = 48,
 
-		kGUICursor = 48,
+		kGUICursor = 49,
 
 		kImageHandlesMax
 	};

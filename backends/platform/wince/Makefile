@@ -34,17 +34,19 @@ ENABLE_SWORD1 = STATIC_PLUGIN
 ENABLE_SWORD2 = STATIC_PLUGIN
 ENABLE_TOUCHE = STATIC_PLUGIN
 ENABLE_PARALLACTION = STATIC_PLUGIN
+ENABLE_DRASCULA = STATIC_PLUGIN
 #ENABLE_CRUISE = STATIC_PLUGIN
-#ENABLE_DRASCULA = STATIC_PLUGIN
 #ENABLE_IGOR = STATIC_PLUGIN
+#ENABLE_M4 = STATIC_PLUGIN
+#ENABLE_MADE = STATIC_PLUGIN
 
 ########################################################################
 ## Pick which libraries you want to use here
 
 USE_MAD           = 1
 USE_MPEG2         = 1
-USE_TREMOR        = 1
-#USE_TREMOLO       = 1
+#USE_TREMOR        = 1
+USE_TREMOLO       = 1
 USE_FLAC          = 1
 USE_ZLIB          = 1
 
@@ -137,7 +139,7 @@ LIBS += -ltremorce
 endif
 
 ifdef USE_TREMOLO
-DEFINES += -DUSE_TREMOR -DUSE_VORBIS
+DEFINES += -DUSE_TREMOR -DUSE_VORBIS -DUSE_TREMOLO
 INCLUDES += -Ilibs/include/tremolo
 LIBS += -llibTremolo
 endif

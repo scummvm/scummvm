@@ -49,7 +49,7 @@ void ScummEngine::loadCJKFont() {
 	Common::File fp;
 	_useCJKMode = false;
 	_textSurfaceMultiplier = 1;
-	_newLineCharacter = 0xfe;
+	_newLineCharacter = 0;
 
 	if (_game.version <= 5 && _game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) { // FM-TOWNS v3 / v5 Kanji
 		int numChar = 256 * 32;
@@ -277,7 +277,7 @@ CharsetRenderer::CharsetRenderer(ScummEngine *vm) {
 	_disableOffsX = false;
 
 	_vm = vm;
-	_curId = 0;
+	_curId = -1;
 }
 
 CharsetRenderer::~CharsetRenderer() {
@@ -289,7 +289,10 @@ CharsetRendererCommon::CharsetRendererCommon(ScummEngine *vm)
 	_shadowColor = 0;
 }
 
-void CharsetRendererCommon::setCurID(byte id) {
+void CharsetRendererCommon::setCurID(int32 id) {
+	if (id == -1)
+		return;
+
 	assertRange(0, id, _vm->_numCharsets - 1, "charset");
 
 	_curId = id;
@@ -308,7 +311,10 @@ void CharsetRendererCommon::setCurID(byte id) {
 	_numChars = READ_LE_UINT16(_fontPtr + 2);
 }
 
-void CharsetRendererV3::setCurID(byte id) {
+void CharsetRendererV3::setCurID(int32 id) {
+	if (id == -1)
+		return;
+
 	assertRange(0, id, _vm->_numCharsets - 1, "charset");
 
 	_curId = id;
@@ -668,7 +674,8 @@ void CharsetRenderer::translateColor() {
 
 void CharsetRenderer::saveLoadWithSerializer(Serializer *ser) {
 	static const SaveLoadEntry charsetRendererEntries[] = {
-		MKLINE(CharsetRenderer, _curId, sleByte, VER(73)),
+		MKLINE_OLD(CharsetRenderer, _curId, sleByte, VER(73), VER(73)),
+		MKLINE(CharsetRenderer, _curId, sleInt32, VER(74)),
 		MKLINE(CharsetRenderer, _color, sleByte, VER(73)),
 		MKEND()
 	};
@@ -988,7 +995,10 @@ CharsetRendererNut::~CharsetRendererNut() {
 	}
 }
 
-void CharsetRendererNut::setCurID(byte id) {
+void CharsetRendererNut::setCurID(int32 id) {
+	if (id == -1)
+		return;
+
 	int numFonts = ((_vm->_game.id == GID_CMI) && (_vm->_game.features & GF_DEMO)) ? 4 : 5;
 	assert(id < numFonts);
 	_curId = id;

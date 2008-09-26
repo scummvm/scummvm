@@ -34,8 +34,9 @@
 namespace Parallaction {
 
 // this is the size of the receiving buffer for unpacked frames,
-// since BRA uses some insanely big animations.
-#define MAXIMUM_UNPACKED_BITMAP_SIZE	640*401
+// since BRA uses some insanely big animations (the largest is
+// part0/ani/dino.ani).
+#define MAXIMUM_UNPACKED_BITMAP_SIZE	641*401
 
 
 void Gfx::registerVar(const Common::String &name, int32 initialValue) {
@@ -251,7 +252,7 @@ void Gfx::setPalette(Palette pal) {
 	byte sysPal[256*4];
 
 	uint n = pal.fillRGBA(sysPal);
-	g_system->setPalette(sysPal, 0, n);
+	_vm->_system->setPalette(sysPal, 0, n);
 }
 
 void Gfx::setBlackPalette() {
@@ -269,7 +270,7 @@ void Gfx::animatePalette() {
 
 	PaletteFxRange *range;
 	for (uint16 i = 0; i < 4; i++) {
-		range = &_backgroundInfo.ranges[i];
+		range = &_backgroundInfo->ranges[i];
 
 		if ((range->_flags & 1) == 0) continue;		// animated palette
 		range->_timer += range->_step * 2;	// update timer
@@ -327,7 +328,7 @@ void Gfx::drawInventory() {
 	_vm->_inventoryRenderer->getRect(r);
 	byte *data = _vm->_inventoryRenderer->getData();
 
-	g_system->copyRectToScreen(data, r.width(), r.left, r.top, r.width(), r.height());
+	_vm->_system->copyRectToScreen(data, r.width(), r.left, r.top, r.width(), r.height());
 }
 
 void Gfx::drawItems() {
@@ -335,11 +336,11 @@ void Gfx::drawItems() {
 		return;
 	}
 
-	Graphics::Surface *surf = g_system->lockScreen();
+	Graphics::Surface *surf = _vm->_system->lockScreen();
 	for (uint i = 0; i < _numItems; i++) {
 		drawGfxObject(_items[i].data, *surf, false);
 	}
-	g_system->unlockScreen();
+	_vm->_system->unlockScreen();
 }
 
 void Gfx::drawBalloons() {
@@ -347,19 +348,19 @@ void Gfx::drawBalloons() {
 		return;
 	}
 
-	Graphics::Surface *surf = g_system->lockScreen();
+	Graphics::Surface *surf = _vm->_system->lockScreen();
 	for (uint i = 0; i < _balloons.size(); i++) {
 		drawGfxObject(_balloons[i], *surf, false);
 	}
-	g_system->unlockScreen();
+	_vm->_system->unlockScreen();
 }
 
 void Gfx::clearScreen() {
-	g_system->clearScreen();
+	_vm->_system->clearScreen();
 }
 
 void Gfx::beginFrame() {
-	_skipBackground = (_backgroundInfo.bg.pixels == 0);	// don't render frame if background is missing
+	_skipBackground = (_backgroundInfo->bg.pixels == 0);	// don't render frame if background is missing
 
 	if (!_skipBackground) {
 		int32 oldBackgroundMode = _varBackgroundMode;
@@ -370,13 +371,19 @@ void Gfx::beginFrame() {
 				_bitmapMask.free();
 				break;
 			case 2:
-				_bitmapMask.create(_backgroundInfo.width, _backgroundInfo.height, 1);
+				_bitmapMask.create(_backgroundInfo->width, _backgroundInfo->height, 1);
 				byte *data = (byte*)_bitmapMask.pixels;
 				for (uint y = 0; y < _bitmapMask.h; y++) {
 					for (uint x = 0; x < _bitmapMask.w; x++) {
-						*data++ = _backgroundInfo.mask.getValue(x, y);
+						*data++ = _backgroundInfo->mask.getValue(x, y);
 					}
 				}
+#if 0
+				Common::DumpFile dump;
+				dump.open("maskdump.bin");
+				dump.write(_bitmapMask.pixels, _bitmapMask.w * _bitmapMask.h);
+				dump.close();
+#endif
 				break;
 			}
 		}
@@ -389,7 +396,7 @@ void Gfx::beginFrame() {
 		warning("Path zones are supported only in Big Red Adventure");
 	}
 
-	if (_skipBackground || (_vm->_screenWidth >= _backgroundInfo.width)) {
+	if (_skipBackground || (_vm->_screenWidth >= _backgroundInfo->width)) {
 		_varScrollX = 0;
 	} else {
 		_varScrollX = getVar("scroll_x");
@@ -416,41 +423,41 @@ void Gfx::updateScreen() {
 
 	if (!_skipBackground) {
 		// background may not cover the whole screen, so adjust bulk update size
-		uint w = MIN(_vm->_screenWidth, (int32)_backgroundInfo.width);
-		uint h = MIN(_vm->_screenHeight, (int32)_backgroundInfo.height);
+		uint w = MIN(_vm->_screenWidth, (int32)_backgroundInfo->width);
+		uint h = MIN(_vm->_screenHeight, (int32)_backgroundInfo->height);
 
 		byte *backgroundData = 0;
 		uint16 backgroundPitch = 0;
 		switch (_varBackgroundMode) {
 		case 1:
-			backgroundData = (byte*)_backgroundInfo.bg.getBasePtr(_varScrollX, 0);
-			backgroundPitch = _backgroundInfo.bg.pitch;
+			backgroundData = (byte*)_backgroundInfo->bg.getBasePtr(_varScrollX, 0);
+			backgroundPitch = _backgroundInfo->bg.pitch;
 			break;
 		case 2:
 			backgroundData = (byte*)_bitmapMask.getBasePtr(_varScrollX, 0);
 			backgroundPitch = _bitmapMask.pitch;
 			break;
 		}
-		g_system->copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo.x, _backgroundInfo.y, w, h);
+		_vm->_system->copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo->x, _backgroundInfo->y, w, h);
 	}
 
 	if (_varDrawPathZones == 1) {
-		Graphics::Surface *surf = g_system->lockScreen();
+		Graphics::Surface *surf = _vm->_system->lockScreen();
 		ZoneList::iterator b = _vm->_location._zones.begin();
 		ZoneList::iterator e = _vm->_location._zones.end();
 		for (; b != e; b++) {
 			ZonePtr z = *b;
 			if (z->_type & kZonePath) {
-				surf->frameRect(Common::Rect(z->_left, z->_top, z->_right, z->_bottom), 2);
+				surf->frameRect(Common::Rect(z->getX(), z->getY(), z->getX() + z->width(), z->getY() + z->height()), 2);
 			}
 		}
-		g_system->unlockScreen();
+		_vm->_system->unlockScreen();
 	}
 
 	_varRenderMode = _varAnimRenderMode;
 
 	// TODO: transform objects coordinates to be drawn with scrolling
-	Graphics::Surface *surf = g_system->lockScreen();
+	Graphics::Surface *surf = _vm->_system->lockScreen();
 	drawGfxObjects(*surf);
 
 	if (_halfbrite) {
@@ -474,7 +481,7 @@ void Gfx::updateScreen() {
 		}
 	}
 
-	g_system->unlockScreen();
+	_vm->_system->unlockScreen();
 
 	_varRenderMode = _varMiscRenderMode;
 
@@ -483,7 +490,7 @@ void Gfx::updateScreen() {
 	drawBalloons();
 	drawLabels();
 
-	g_system->updateScreen();
+	_vm->_system->updateScreen();
 	return;
 }
 
@@ -499,17 +506,17 @@ void Gfx::patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask) 
 	Common::Rect r(surf.w, surf.h);
 	r.moveTo(x, y);
 
-	uint16 z = (mask) ? _backgroundInfo.getLayer(y) : LAYER_FOREGROUND;
-	blt(r, (byte*)surf.pixels, &_backgroundInfo.bg, z, 0);
+	uint16 z = (mask) ? _backgroundInfo->getLayer(y) : LAYER_FOREGROUND;
+	blt(r, (byte*)surf.pixels, &_backgroundInfo->bg, z, 100, 0);
 }
 
 void Gfx::fillBackground(const Common::Rect& r, byte color) {
-	_backgroundInfo.bg.fillRect(r, color);
+	_backgroundInfo->bg.fillRect(r, color);
 }
 
 void Gfx::invertBackground(const Common::Rect& r) {
 
-	byte *d = (byte*)_backgroundInfo.bg.getBasePtr(r.left, r.top);
+	byte *d = (byte*)_backgroundInfo->bg.getBasePtr(r.left, r.top);
 
 	for (int i = 0; i < r.height(); i++) {
 		for (int j = 0; j < r.width(); j++) {
@@ -517,7 +524,7 @@ void Gfx::invertBackground(const Common::Rect& r) {
 			d++;
 		}
 
-		d += (_backgroundInfo.bg.pitch - r.width());
+		d += (_backgroundInfo->bg.pitch - r.width());
 	}
 
 }
@@ -594,30 +601,41 @@ void Gfx::updateFloatingLabel() {
 		return;
 	}
 
-	int16 _si, _di;
-
-	Common::Point	cursor;
-	_vm->_input->getCursorPos(cursor);
+	struct FloatingLabelTraits {
+		Common::Point _offsetWithItem;
+		Common::Point _offsetWithoutItem;
+		int	_minX;
+		int _minY;
+		int	_maxX;
+		int _maxY;
+	} *traits;
 
 	Common::Rect r;
 	_labels[_floatingLabel]->getRect(0, r);
 
-	if (_vm->_input->_activeItem._id != 0) {
-		_si = cursor.x + 16 - r.width()/2;
-		_di = cursor.y + 34;
+	if (_vm->getGameType() == GType_Nippon) {
+		FloatingLabelTraits traits_NS = {
+			Common::Point(16 - r.width()/2, 34),
+			Common::Point(8 - r.width()/2, 21),
+			0, 0, _vm->_screenWidth - r.width(), 190
+		};
+		traits = &traits_NS;
 	} else {
-		_si = cursor.x + 8 - r.width()/2;
-		_di = cursor.y + 21;
+		// FIXME: _maxY for BRA is not constant (390), but depends on _vm->_subtitleY
+		FloatingLabelTraits traits_BR = {
+			Common::Point(34 - r.width()/2, 70),
+			Common::Point(16 - r.width()/2, 37),
+			0, 0, _vm->_screenWidth - r.width(), 390
+		};
+		traits = &traits_BR;
 	}
 
-	if (_si < 0) _si = 0;
-	if (_di > 190) _di = 190;
+	Common::Point	cursor;
+	_vm->_input->getCursorPos(cursor);
+	Common::Point offset = (_vm->_input->_activeItem._id) ? traits->_offsetWithItem : traits->_offsetWithoutItem;
 
-	if (r.width() + _si > _vm->_screenWidth)
-		_si = _vm->_screenWidth - r.width();
-
-	_labels[_floatingLabel]->x = _si;
-	_labels[_floatingLabel]->y = _di;
+	_labels[_floatingLabel]->x = CLIP(cursor.x + offset.x, traits->_minX, traits->_maxX);
+	_labels[_floatingLabel]->y = CLIP(cursor.y + offset.y, traits->_minY, traits->_maxY);
 }
 
 
@@ -697,13 +715,13 @@ void Gfx::drawLabels() {
 
 	updateFloatingLabel();
 
-	Graphics::Surface* surf = g_system->lockScreen();
+	Graphics::Surface* surf = _vm->_system->lockScreen();
 
 	for (uint i = 0; i < _labels.size(); i++) {
 		drawGfxObject(_labels[i], *surf, false);
 	}
 
-	g_system->unlockScreen();
+	_vm->_system->unlockScreen();
 }
 
 
@@ -724,17 +742,17 @@ void Gfx::copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surf
 }
 
 void Gfx::grabBackground(const Common::Rect& r, Graphics::Surface &dst) {
-	copyRect(r, _backgroundInfo.bg, dst);
+	copyRect(r, _backgroundInfo->bg, dst);
 }
 
 
 Gfx::Gfx(Parallaction* vm) :
 	_vm(vm), _disk(vm->_disk) {
 
-	g_system->beginGFXTransaction();
-	g_system->initSize(_vm->_screenWidth, _vm->_screenHeight);
+	_vm->_system->beginGFXTransaction();
+	_vm->_system->initSize(_vm->_screenWidth, _vm->_screenHeight);
 	_vm->initCommonGFX(_vm->getGameType() == GType_BRA);
-	g_system->endGFXTransaction();
+	_vm->_system->endGFXTransaction();
 
 	setPalette(_palette);
 
@@ -743,6 +761,8 @@ Gfx::Gfx(Parallaction* vm) :
 
 	_screenX = 0;
 	_screenY = 0;
+
+	_backgroundInfo = 0;
 
 	_halfbrite = false;
 	_hbCircleRadius = 0;
@@ -766,7 +786,6 @@ Gfx::Gfx(Parallaction* vm) :
 		BackgroundInfo	paletteInfo;
 		_disk->loadSlide(paletteInfo, "pointer");
 		_backupPal.clone(paletteInfo.palette);
-		paletteInfo.free();
 	}
 
 	return;
@@ -774,7 +793,8 @@ Gfx::Gfx(Parallaction* vm) :
 
 Gfx::~Gfx() {
 
-	freeBackground();
+	delete _backgroundInfo;
+
 	freeLabels();
 
 	delete []_unpackedBitmap;
@@ -829,17 +849,11 @@ void Gfx::freeItems() {
 	_numItems = 0;
 }
 
-void Gfx::freeBackground() {
-	_backgroundInfo.free();
-}
-
-void Gfx::setBackground(uint type, const char* name, const char* mask, const char* path) {
-
-	freeBackground();
+void Gfx::setBackground(uint type, BackgroundInfo *info) {
+	delete _backgroundInfo;
+	_backgroundInfo = info;
 
 	if (type == kBackgroundLocation) {
-		_disk->loadScenery(_backgroundInfo, name, mask, path);
-
 		// The PC version of BRA needs the entries 20-31 of the palette to be constant, but
 		// the background resource files are screwed up. The right colors come from an unused
 		// bitmap (pointer.bmp). Nothing is known about the Amiga version so far.
@@ -847,19 +861,17 @@ void Gfx::setBackground(uint type, const char* name, const char* mask, const cha
 			int r, g, b;
 			for (uint i = 16; i < 32; i++) {
 				_backupPal.getEntry(i, r, g, b);
-				_backgroundInfo.palette.setEntry(i, r, g, b);
+				_backgroundInfo->palette.setEntry(i, r, g, b);
 			}
 		}
 
-		setPalette(_backgroundInfo.palette);
-		_palette.clone(_backgroundInfo.palette);
+		setPalette(_backgroundInfo->palette);
+		_palette.clone(_backgroundInfo->palette);
 	} else {
-		_disk->loadSlide(_backgroundInfo, name);
 		for (uint i = 0; i < 6; i++)
-			_backgroundInfo.ranges[i]._flags = 0;	// disable palette cycling for slides
-		setPalette(_backgroundInfo.palette);
+			_backgroundInfo->ranges[i]._flags = 0;	// disable palette cycling for slides
+		setPalette(_backgroundInfo->palette);
 	}
-
 }
 
 } // namespace Parallaction

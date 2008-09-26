@@ -31,12 +31,13 @@
 
 #include "common/endian.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "graphics/cursorman.h"
 
 namespace Cine {
 
-byte *page3Raw;
+byte *collisionPage;
 FWRenderer *renderer = NULL;
 
 static const byte mouseCursorNormal[] = {
@@ -91,7 +92,7 @@ static const byte cursorPalette[] = {
  */
 FWRenderer::FWRenderer() : _background(NULL), _palette(NULL), _cmd(""),
 	_cmdY(0), _messageBg(0), _backBuffer(new byte[_screenSize]),
-	_activeLowPal(NULL), _changePal(0) {
+	_activeLowPal(NULL), _changePal(0), _showCollisionPage(false) {
 
 	assert(_backBuffer);
 
@@ -125,6 +126,7 @@ void FWRenderer::clear() {
 	_cmdY = 0;
 	_messageBg = 0;
 	_changePal = 0;
+	_showCollisionPage = false;
 }
 
 /*! \brief Draw 1bpp sprite using selected color
@@ -198,9 +200,15 @@ void FWRenderer::incrustSprite(const objectStruct &obj) {
 	width = animDataTable[obj.frame]._realWidth;
 	height = animDataTable[obj.frame]._height;
 
-	assert(mask);
-
-	drawSpriteRaw(data, mask, width, height, _background, x, y);
+	// There was an assert(mask) here before but it made savegame loading
+	// in Future Wars sometimes fail the assertion (e.g. see bug #2055912).
+	// Not drawing sprites that have no mask seems to work, but not sure
+	// if this is really a correct way to fix this.
+	if (mask) {
+		drawSpriteRaw(data, mask, width, height, _background, x, y);
+	} else { // mask == NULL
+		warning("FWRenderer::incrustSprite: Skipping maskless sprite (frame=%d)", obj.frame);
+	}
 }
 
 /*! \brief Draw command box on screen
@@ -225,14 +233,18 @@ void FWRenderer::drawCommand() {
  * \param x Top left message box corner coordinate
  * \param y Top left message box corner coordinate
  * \param width Message box width
- * \param color Message box background color
+ * \param color Message box background color (Or if negative draws only the text)
+ * \note Negative colors are used in Operation Stealth's timed cutscenes
+ * (e.g. when first meeting The Movement for the Liberation of Santa Paragua).
  */
-void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte color) {
+void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color) {
 	int i, tx, ty, tw;
 	int line = 0, words = 0, cw = 0;
 	int space = 0, extraSpace = 0;
 
-	drawPlainBox(x, y, width, 4, color);
+	if (color >= 0) {
+		drawPlainBox(x, y, width, 4, color);
+	}
 	tx = x + 4;
 	ty = str[0] ? y - 5 : y + 4;
 	tw = width - 8;
@@ -252,7 +264,9 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte colo
 			}
 
 			ty += 9;
-			drawPlainBox(x, ty, width, 9, color);
+			if (color >= 0) {
+				drawPlainBox(x, ty, width, 9, color);
+			}
 			tx = x + 4;
 		}
 
@@ -269,33 +283,56 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, byte colo
 	}
 
 	ty += 9;
-	drawPlainBox(x, ty, width, 4, color);
-	drawDoubleBorder(x, y, width, ty - y + 4, 2);
+	if (color >= 0) {
+		drawPlainBox(x, ty, width, 4, color);
+		drawDoubleBorder(x, y, width, ty - y + 4, 2);
+	}
 }
 
 /*! \brief Draw rectangle on screen
  * \param x Top left corner coordinate
  * \param y Top left corner coordinate
- * \param width Rectangle width
- * \param height Rectangle height
+ * \param width Rectangle width (Negative values draw the box horizontally flipped)
+ * \param height Rectangle height (Negative values draw the box vertically flipped)
  * \param color Fill color
+ * \note An on-screen rectangle's drawn width is always at least one.
+ * \note An on-screen rectangle's drawn height is always at least one.
  */
 void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
-	int i;
-	byte *dest = _backBuffer + y * 320 + x;
+	// Make width's and height's absolute values at least one
+	// which forces this function to always draw something if the
+	// drawing position is inside screen bounds. This fixes at least
+	// the showing of the oxygen gauge meter in Operation Stealth's
+	// first arcade sequence where this function is called with a
+	// height of zero.
+	if (width == 0) {
+		width = 1;
+	}
+	if (height == 0) {
+		height = 1;
+	}
 
+	// Handle horizontally flipped boxes
 	if (width < 0) {
-		x += width;
-		width = -width;
+		width = ABS(width);
+		x -= width;
 	}
 
+	// Handle vertically flipped boxes
 	if (height < 0) {
-		y += height;
-		height = -height;
+		height = ABS(height);
+		y -= height;
 	}
 
-	for (i = 0; i < height; i++) {
-		memset(dest + i * 320, color, width);
+	// Clip the rectangle to screen dimensions
+	Common::Rect boxRect(x, y, x + width, y + height);
+	Common::Rect screenRect(320, 200);
+	boxRect.clip(screenRect);
+
+	// Draw the filled rectangle	
+	byte *dest = _backBuffer + boxRect.top * 320 + boxRect.left;
+	for (int i = 0; i < boxRect.height(); i++) {
+		memset(dest + i * 320, color, boxRect.width());
 	}
 }
 
@@ -335,9 +372,9 @@ int FWRenderer::drawChar(char character, int x, int y) {
 
 	if (character == ' ') {
 		x += 5;
-	} else if ((width = fontParamTable[(unsigned char)character].characterWidth)) {
-		idx = fontParamTable[(unsigned char)character].characterIdx;
-		drawSpriteRaw(g_cine->_textHandler.textTable[idx][0], g_cine->_textHandler.textTable[idx][1], 16, 8, _backBuffer, x, y);
+	} else if ((width = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterWidth)) {
+		idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
+		drawSpriteRaw(g_cine->_textHandler.textTable[idx][FONT_DATA], g_cine->_textHandler.textTable[idx][FONT_MASK], FONT_WIDTH, FONT_HEIGHT, _backBuffer, x, y);
 		x += width + 1;
 	}
 
@@ -405,7 +442,10 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	switch (it->type) {
 	// color sprite
 	case 0:
-		sprite = animDataTable + objectTable[it->objIdx].frame;
+		if (objectTable[it->objIdx].frame < 0) {
+			return;
+		}
+		sprite = &animDataTable[objectTable[it->objIdx].frame];
 		len = sprite->_realWidth * sprite->_height;
 		mask = new byte[len];
 		memcpy(mask, sprite->mask(), len);
@@ -422,6 +462,7 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 
 		_messageLen += messageTable[it->objIdx].size();
 		drawMessage(messageTable[it->objIdx].c_str(), it->x, it->y, it->width, it->color);
+		waitForPlayerClick = 1;
 		break;
 
 	// action failure message
@@ -433,12 +474,13 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		width = width > 300 ? 300 : width;
 
 		drawMessage(failureMessages[idx], (320 - width) / 2, 80, width, 4);
+		waitForPlayerClick = 1;
 		break;
 
 	// bitmap
 	case 4:
 		assert(it->objIdx < NUM_MAX_OBJECT);
-		obj = objectTable + it->objIdx;
+		obj = &objectTable[it->objIdx];
 
 		if (obj->frame < 0) {
 			return;
@@ -480,16 +522,28 @@ void FWRenderer::drawFrame() {
 	blit();
 }
 
+/*!
+ * \brief Turn on or off the showing of the collision page.
+ * If turned on the blitting routine shows the collision page instead of the back buffer.
+ * \note Useful for debugging collision page related problems.
+ */
+void FWRenderer::showCollisionPage(bool state) {
+	_showCollisionPage = state;
+}
+
 /*! \brief Update screen
  */
 void FWRenderer::blit() {
-	g_system->copyRectToScreen(_backBuffer, 320, 0, 0, 320, 200);
+	// Show the back buffer or the collision page. Normally the back
+	// buffer but showing the collision page is useful for debugging.
+	byte *source = (_showCollisionPage ? collisionPage : _backBuffer);
+	g_system->copyRectToScreen(source, 320, 0, 0, 320, 200);
 }
 
 /*! \brief Set player command string
  * \param cmd New command string
  */
-void FWRenderer::setCommand(const char *cmd) {
+void FWRenderer::setCommand(Common::String cmd) {
 	_cmd = cmd;
 }
 
@@ -615,6 +669,11 @@ void FWRenderer::removeBg(unsigned int idx) {
 
 void FWRenderer::saveBgNames(Common::OutSaveFile &fHandle) {
 	fHandle.write(_bgName, 13);
+}
+
+const char *FWRenderer::getBgName(uint idx) const {
+	assert(idx == 0);
+	return _bgName;
 }
 
 /*! \brief Restore active and backup palette from save
@@ -985,9 +1044,9 @@ int OSRenderer::drawChar(char character, int x, int y) {
 
 	if (character == ' ') {
 		x += 5;
-	} else if ((width = fontParamTable[(unsigned char)character].characterWidth)) {
-		idx = fontParamTable[(unsigned char)character].characterIdx;
-		drawSpriteRaw2(g_cine->_textHandler.textTable[idx][0], 0, 16, 8, _backBuffer, x, y);
+	} else if ((width = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterWidth)) {
+		idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
+		drawSpriteRaw2(g_cine->_textHandler.textTable[idx][FONT_DATA], 0, FONT_WIDTH, FONT_HEIGHT, _backBuffer, x, y);
 		x += width + 1;
 	}
 
@@ -1011,8 +1070,12 @@ void OSRenderer::drawBackground() {
 
 		assert(scroll);
 
-		memcpy(_backBuffer, main + mainShift, mainSize);
-		memcpy(_backBuffer + mainSize, scroll, mainShift);
+		if (mainSize > 0) { // Just a precaution
+			memcpy(_backBuffer, main + mainShift, mainSize);
+		}
+		if (mainShift > 0) { // Just a precaution
+			memcpy(_backBuffer + mainSize, scroll, mainShift);
+		}
 	}
 }
 
@@ -1021,10 +1084,11 @@ void OSRenderer::drawBackground() {
  * \todo Add handling of type 22 overlays
  */
 void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
-	int len;
+	int len, idx, width, height;
 	objectStruct *obj;
 	AnimData *sprite;
 	byte *mask;
+	byte color;
 
 	switch (it->type) {
 	// color sprite
@@ -1032,13 +1096,39 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		if (objectTable[it->objIdx].frame < 0) {
 			break;
 		}
-		sprite = animDataTable + objectTable[it->objIdx].frame;
+		sprite = &animDataTable[objectTable[it->objIdx].frame];
 		len = sprite->_realWidth * sprite->_height;
 		mask = new byte[len];
 		generateMask(sprite->data(), mask, len, objectTable[it->objIdx].part);
 		remaskSprite(mask, it);
 		drawMaskedSprite(objectTable[it->objIdx], mask);
 		delete[] mask;
+		break;
+
+	// game message
+	case 2:
+		if (it->objIdx >= messageTable.size()) {
+			return;
+		}
+
+		_messageLen += messageTable[it->objIdx].size();
+		drawMessage(messageTable[it->objIdx].c_str(), it->x, it->y, it->width, it->color);		
+		if (it->color >= 0) { // This test isn't in Future Wars's implementation
+			waitForPlayerClick = 1;
+		}
+		break;
+
+	// action failure message
+	case 3:
+		idx = it->objIdx * 4 + g_cine->_rnd.getRandomNumber(3);
+		len = strlen(failureMessages[idx]);
+		_messageLen += len;
+		width = 6 * len + 20;
+		width = width > 300 ? 300 : width;
+
+		// The used color here differs from Future Wars
+		drawMessage(failureMessages[idx], (320 - width) / 2, 80, width, _messageBg);
+		waitForPlayerClick = 1;
 		break;
 
 	// bitmap
@@ -1051,14 +1141,35 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	// masked background
 	case 20:
 		assert(it->objIdx < NUM_MAX_OBJECT);
-		obj = objectTable + it->objIdx;
-		sprite = animDataTable + obj->frame;
+		var5 = it->x; // A global variable updated here!
+		obj = &objectTable[it->objIdx];
+		sprite = &animDataTable[obj->frame];
 
-		if (obj->frame < 0 || it->x > 8 || !_bgTable[it->x].bg || sprite->_bpp != 1) {
+		if (obj->frame < 0 || it->x < 0 || it->x > 8 || !_bgTable[it->x].bg || sprite->_bpp != 1) {
 			break;
 		}
 
 		maskBgOverlay(_bgTable[it->x].bg, sprite->data(), sprite->_realWidth, sprite->_height, _backBuffer, obj->x, obj->y);
+		break;
+
+	// FIXME: Implement correct drawing of type 21 overlays.
+	// Type 21 overlays aren't just filled rectangles, I found their drawing routine
+	// from Operation Stealth's drawSprite routine. So they're likely some kind of sprites
+	// and it's just a coincidence that the oxygen meter during the first arcade sequence
+	// works even somehow currently. I tried the original under DOSBox and the oxygen gauge
+	// is a long red bar that gets shorter as the air runs out.
+	case 21:
+	// A filled rectangle:
+	case 22:
+		// TODO: Check it this implementation really works correctly (Some things might be wrong, needs testing).
+		assert(it->objIdx < NUM_MAX_OBJECT);
+		obj = &objectTable[it->objIdx];
+		color = obj->part & 0x0F;
+		width = obj->frame;
+		height = obj->costume;
+		drawPlainBox(obj->x, obj->y, width, height, color);
+		debug(5, "renderOverlay: type=%d, x=%d, y=%d, width=%d, height=%d, color=%d",
+			it->type, obj->x, obj->y, width, height, color);
 		break;
 
 	// something else
@@ -1332,6 +1443,11 @@ void OSRenderer::saveBgNames(Common::OutSaveFile &fHandle) {
 	}
 }
 
+const char *OSRenderer::getBgName(uint idx) const {
+	assert(idx < 9);
+	return _bgTable[idx].name;
+}
+
 /*! \brief Fade to black
  * \bug Operation Stealth sometimes seems to fade to black using
  * transformPalette resulting in double fadeout
@@ -1557,6 +1673,16 @@ void gfxResetRawPage(byte *pageRaw) {
 }
 
 void gfxConvertSpriteToRaw(byte *dst, const byte *src, uint16 w, uint16 h) {
+	// Output is 4 bits per pixel.
+	// Pixels are in 16 pixel chunks (8 bytes of source per 16 pixels of output).
+	// The source data is interleaved so that
+	// 1st big-endian 16-bit value contains all bit position 0 values for 16 pixels,
+	// 2nd big-endian 16-bit value contains all bit position 1 values for 16 pixels,
+	// 3rd big-endian 16-bit value contains all bit position 2 values for 16 pixels,
+	// 4th big-endian 16-bit value contains all bit position 3 values for 16 pixels.
+	// 1st pixel's bits are in the 16th bits,
+	// 2nd pixel's bits are in the 15th bits,
+	// 3rd pixel's bits are in the 14th bits etc.
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w / 8; ++x) {
 			for (int bit = 0; bit < 16; ++bit) {

@@ -124,7 +124,7 @@ struct SoundFileHandle {
 	Common::File file;
 	uint32 *idxTab;
 	uint32 idxLen;
-	uint32 fileSize;
+	int32 fileSize;
 	uint32 fileType;
 	volatile bool inUse;
 };

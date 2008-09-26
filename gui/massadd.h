@@ -38,14 +38,14 @@ class StaticTextWidget;
 
 class MassAddDialog : public Dialog {
 public:
-	MassAddDialog(const FilesystemNode &startDir);
+	MassAddDialog(const Common::FilesystemNode &startDir);
 
 	//void open();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	void handleTickle();
 
 private:
-	Common::Stack<FilesystemNode>  _scanStack;
+	Common::Stack<Common::FilesystemNode>  _scanStack;
 	GameList _games;
 
 	/**

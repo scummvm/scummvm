@@ -23,6 +23,7 @@
  */
 
 #include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 #include <kernel.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,8 +48,8 @@ class Ps2FilesystemNode : public AbstractFilesystemNode {
 friend class Ps2FilesystemFactory;
 
 protected:
-	String _displayName;
-	String _path;
+	Common::String _displayName;
+	Common::String _path;
 	bool _isDirectory;
 	bool _isRoot;
 
@@ -65,10 +66,10 @@ public:
 	/**
 	 * Creates a PS2FilesystemNode for a given path.
 	 * 
-	 * @param path String with the path the new node should point to.
+	 * @param path Common::String with the path the new node should point to.
 	 */
-	Ps2FilesystemNode(const String &path);
-	Ps2FilesystemNode(const String &path, bool verify);
+	Ps2FilesystemNode(const Common::String &path);
+	Ps2FilesystemNode(const Common::String &path, bool verify);
 	
 	/**
 	 * Copy constructor.
@@ -77,9 +78,9 @@ public:
 
 	virtual bool exists(void) const;
 
-	virtual String getDisplayName() const { return _displayName; }
-	virtual String getName() const { return _displayName; }
-	virtual String getPath() const { return _path; }
+	virtual Common::String getDisplayName() const { return _displayName; }
+	virtual Common::String getName() const { return _displayName; }
+	virtual Common::String getPath() const { return _path; }
 
 	virtual bool isDirectory() const {
 		return _isDirectory;
@@ -95,32 +96,13 @@ public:
 	}
 
 	virtual AbstractFilesystemNode *clone() const { return new Ps2FilesystemNode(this); }
-	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
+
+	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::WriteStream *openForWriting();
 };
-
-/**
- * Returns the last component of a given path.
- * 
- * @param str String containing the path.
- * @return Pointer to the first char of the last component inside str.
- */
-const char *lastPathComponent(const Common::String &str) {
-	if (str.empty())
-		return "";
-
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '/' && *cur != ':') {
-		--cur;
-	}
-
-	printf("romeo : lastPathComponent = %s\n", cur + 1);
-
-	return cur + 1;
-}
 
 Ps2FilesystemNode::Ps2FilesystemNode() {
 	_isDirectory = true;
@@ -129,12 +111,12 @@ Ps2FilesystemNode::Ps2FilesystemNode() {
 	_path = "";
 }
 
-Ps2FilesystemNode::Ps2FilesystemNode(const String &path) {
+Ps2FilesystemNode::Ps2FilesystemNode(const Common::String &path) {
 	_path = path;
 	_isDirectory = true;
 	if (strcmp(path.c_str(), "") == 0) {
 		_isRoot = true;
-		_displayName = String("PlayStation 2");
+		_displayName = Common::String("PlayStation 2");
 	} else {
 		_isRoot = false;
 		const char *dsplName = NULL, *pos = path.c_str();
@@ -142,18 +124,18 @@ Ps2FilesystemNode::Ps2FilesystemNode(const String &path) {
 			if (*pos++ == '/')
 				dsplName = pos;
 		if (dsplName)
-			_displayName = String(dsplName);
+			_displayName = Common::String(dsplName);
 		else
 			_displayName = getDeviceDescription(path.c_str());
 	}
 }
 
-Ps2FilesystemNode::Ps2FilesystemNode(const String &path, bool verify) {
+Ps2FilesystemNode::Ps2FilesystemNode(const Common::String &path, bool verify) {
 	_path = path;
 
 	if (strcmp(path.c_str(), "") == 0) {
 		_isRoot = true; /* root is always a dir*/
-		_displayName = String("PlayStation 2");
+		_displayName = Common::String("PlayStation 2");
 		_isDirectory = true;
 	} else {
 		_isRoot = false;
@@ -163,7 +145,7 @@ Ps2FilesystemNode::Ps2FilesystemNode(const String &path, bool verify) {
 				dsplName = pos;
 
 		if (dsplName) {
-			_displayName = String(dsplName);
+			_displayName = Common::String(dsplName);
 			if (verify)
 				_isDirectory = getDirectoryFlag(path.c_str());
 			else
@@ -228,7 +210,7 @@ bool Ps2FilesystemNode::getDirectoryFlag(const char *path) {
 	return false;
 }
 
-AbstractFilesystemNode *Ps2FilesystemNode::getChild(const String &n) const {
+AbstractFilesystemNode *Ps2FilesystemNode::getChild(const Common::String &n) const {
 	if (!_isDirectory)
 		return NULL;
 
@@ -306,9 +288,9 @@ bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 			while ((dreadRes = fio.dread(fd, &dirent)) > 0) {
 				if (dirent.name[0] == '.')
 					continue; // ignore '.' and '..'
-				if (((mode == FilesystemNode::kListDirectoriesOnly) && (dirent.stat.mode & FIO_S_IFDIR)) ||
-					((mode == FilesystemNode::kListFilesOnly) && !(dirent.stat.mode & FIO_S_IFDIR)) ||
-					(mode == FilesystemNode::kListAll)) {
+				if (((mode == Common::FilesystemNode::kListDirectoriesOnly) && (dirent.stat.mode & FIO_S_IFDIR)) ||
+					((mode == Common::FilesystemNode::kListFilesOnly) && !(dirent.stat.mode & FIO_S_IFDIR)) ||
+					(mode == Common::FilesystemNode::kListAll)) {
 
 					dirEntry._isDirectory = (bool)(dirent.stat.mode & FIO_S_IFDIR);
 					dirEntry._isRoot = false;
@@ -344,7 +326,7 @@ AbstractFilesystemNode *Ps2FilesystemNode::getParent() const {
 	}
 
 	if (slash)
-		return new Ps2FilesystemNode(String(_path.c_str(), slash - _path.c_str()));
+		return new Ps2FilesystemNode(Common::String(_path.c_str(), slash - _path.c_str()));
 	else
 		return new Ps2FilesystemNode();
 }
@@ -359,3 +341,10 @@ char *Ps2FilesystemNode::getDeviceDescription(const char *path) const {
 		return "Harddisk";	
 }
 
+Common::SeekableReadStream *Ps2FilesystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *Ps2FilesystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
+}

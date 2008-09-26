@@ -74,7 +74,9 @@ void IgorEngine::PART_22_ACTION_101() {
 void IgorEngine::PART_22_ACTION_102() {
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
-	for (int i = 9; i >= 0; --i) {
+	int i = 0;
+
+	for (i = 9; i >= 0; --i) {
 		WalkData *wd = &_walkData[0];
 		wd->setPos(138, 123, 1, _walkCurrentFrame);
 		WalkData::setNextFrame(1, _walkCurrentFrame);
@@ -89,7 +91,7 @@ void IgorEngine::PART_22_ACTION_102() {
 		moveIgor(wd->posNum, wd->frameNum);
 		waitForTimer(15);
 	}
-	int i = 16;
+	i = 16;
 	do {
 		if (compareGameTick(1, 16)) {
 			memcpy(_screenTextLayer + (i * 8 + 16) * 320, _screenLayer1 + (128 - i * 8) * 320, (i * 8 + 16) * 320);

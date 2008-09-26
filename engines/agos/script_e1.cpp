@@ -24,7 +24,6 @@
  */
 
 
-
 #include "agos/agos.h"
 #include "agos/vga.h"
 
@@ -565,7 +564,7 @@ void AGOSEngine_Elvira1::oe1_look() {
 		lobjFunc(l, "You can see ");	/* Show objects */
 	}
 	if (r && (r->flags & 4) && levelOf(i) < 10000) {
-		_quit = true;
+		quitGame();
 	}
 }
 
@@ -944,7 +943,7 @@ restart:
 			windowPutChar(window, *message2);
 
 		if (confirmYesOrNo(120, 62) == 0x7FFF) {
-			_quit = true;
+			quitGame();
 		} else {
 			goto restart;
 		}
@@ -1053,11 +1052,11 @@ uint AGOSEngine::confirmYesOrNo(uint16 x, uint16 y) {
 	ha->priority = 999;
 	ha->window = 0;
 
-	for (;;) {
+	while (!quit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
-		for (;;) {
+		while (!quit()) {
 			if (_lastHitArea3 != 0)
 				break;
 			delay(1);
@@ -1102,11 +1101,11 @@ uint AGOSEngine::continueOrQuit() {
 	ha->priority = 999;
 	ha->window = 0;
 
-	for (;;) {
+	while (!quit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
-		for (;;) {
+		while (!quit()) {
 			if (_lastHitArea3 != 0)
 				break;
 			delay(1);

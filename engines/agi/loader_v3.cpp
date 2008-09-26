@@ -47,15 +47,15 @@ int AgiLoader_v3::detectGame() {
 	int ec = errUnk;
 	bool found = false;
 
-	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
+	Common::FSList fslist;
+	Common::FilesystemNode dir(ConfMan.get("path"));
 
-	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly)) {
+	if (!dir.getChildren(fslist, Common::FilesystemNode::kListFilesOnly)) {
 		warning("AgiEngine: invalid game path '%s'", dir.getPath().c_str());
 		return errInvalidAGIFile;
 	}
 
-	for (FSList::const_iterator file = fslist.begin();
+	for (Common::FSList::const_iterator file = fslist.begin();
 	    file != fslist.end() && !found; ++file) {
 		Common::String f = file->getName();
 		f.toLowercase();
@@ -230,8 +230,8 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 			debugC(3, kDebugLevelResources, "offset = %d", agid->offset);
 			debugC(3, kDebugLevelResources, "x = %x %x", x[0], x[1]);
 			error("ACK! BAD RESOURCE");
-
-			g_system->quit();
+			
+			_vm->quitGame();
 		}
 
 		agid->len = READ_LE_UINT16((uint8 *) x + 3);	/* uncompressed size */

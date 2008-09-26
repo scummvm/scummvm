@@ -28,12 +28,16 @@
 
 #include "common/savefile.h"
 #include "common/str.h"
+#include "common/fs.h"
 
 /**
  * Provides a default savefile manager implementation for common platforms.
  */
 class DefaultSaveFileManager : public Common::SaveFileManager {
 public:
+	DefaultSaveFileManager();
+	DefaultSaveFileManager(const Common::String &defaultSavepath);
+
 	virtual Common::StringList listSavefiles(const char *pattern);
 	virtual Common::InSaveFile *openForLoading(const char *filename);
 	virtual Common::OutSaveFile *openForSaving(const char *filename);
@@ -51,7 +55,7 @@ protected:
 	 * Checks the given path for read access, existence, etc.
 	 * Sets the internal error and error message accordingly.
 	 */
-	void checkPath(const Common::String &path);
+	void checkPath(const Common::FilesystemNode &dir);
 };
 
 #endif

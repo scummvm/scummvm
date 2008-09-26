@@ -192,20 +192,19 @@ struct Dialogue {
 	~Dialogue();
 };
 
-struct GetData {	// size = 24
+struct GetData {
 	uint32			_icon;
 	GfxObj			*gfxobj;
-	byte		   *_backup;
-	uint16			field_14;		// unused
-	uint16			field_16;		// unused
+	MaskBuffer		_mask[2];
+	bool			hasMask;
 
 	GetData() {
 		_icon = 0;
-		_backup = NULL;
 		gfxobj = NULL;
+		hasMask = false;
 	}
 };
-struct SpeakData {	// size = 36
+struct SpeakData {
 	char		_name[32];
 	Dialogue	*_dialogue;
 
@@ -214,30 +213,25 @@ struct SpeakData {	// size = 36
 		_dialogue = NULL;
 	}
 };
-struct ExamineData {	// size = 28
+struct ExamineData {
 	GfxObj	*_cnv;
-	uint16		_opBase;		   // unused
-	uint16		field_12;			// unused
 	char*		_description;
 	char*		_filename;
 
 	ExamineData() {
-		_opBase = 0;
 		_description = NULL;
 		_filename = NULL;
 		_cnv = NULL;
 	}
 };
-struct DoorData {	// size = 28
+struct DoorData {
 	char*	_location;
 	GfxObj	*gfxobj;
-	byte*	_background;
 	Common::Point	_startPos;
 	uint16	_startFrame;
 
 	DoorData() {
 		_location = NULL;
-		_background = NULL;
 		_startFrame = 0;
 		gfxobj = NULL;
 	}
@@ -297,17 +291,19 @@ struct TypeData {
 #define ZONENAME_LENGTH 32
 
 struct Zone {
-	char			_name[ZONENAME_LENGTH];
-
+protected:
 	int16			_left;
 	int16			_top;
 	int16			_right;
 	int16			_bottom;
+
+public:
+	char			_name[ZONENAME_LENGTH];
+
 	uint32			_type;
 	uint32			_flags;
 	uint			_label;
-	uint16			field_2C;		// unused
-	uint16			field_2E;		// unused
+
 	TypeData		u;
 	CommandList		_commands;
 	Common::Point	_moveTo;
@@ -320,17 +316,41 @@ struct Zone {
 	Zone();
 	virtual ~Zone();
 
-	void getRect(Common::Rect& r) const;
 	void translate(int16 x, int16 y);
 	virtual uint16 width() const;
 	virtual uint16 height() const;
+
+	void setBox(int16 left, int16 top, int16 right, int16 bottom) {
+		setX(left);
+		setY(top);
+		_right = right;
+		_bottom = bottom;
+	}
+
+	void getBox(Common::Rect& r) {
+		r.left = getX();
+		r.right = getX() + width();
+		r.top = getY();
+		r.bottom = getY() + height();
+	}
+
+
+	// getters/setters
+	virtual int16 getX() 			{ return _left; }
+	virtual void  setX(int16 value) { _left = value; }
+
+	virtual int16 getY() 			{ return _top; }
+	virtual void  setY(int16 value) { _top = value; }
 };
 
 
 struct LocalVariable {
+protected:
 	int16		_value;
 	int16		_min;
 	int16		_max;
+
+public:
 
 	LocalVariable() {
 		_value = 0;
@@ -338,14 +358,59 @@ struct LocalVariable {
 		_max = 10000;
 	}
 
-	void wrap();
+	void setRange(int16 min, int16 max);
+
+	int16 getValue() const;
+	void setValue(int16 value);
 };
+
 
 enum ParaFlags {
 	kParaImmediate	= 1,				// instruction is using an immediate parameter
 	kParaLocal		= 2,				// instruction is using a local variable
 	kParaField		= 0x10,				// instruction is using an animation's field
-	kParaRandom		= 0x100
+	kParaRandom		= 0x100,
+
+	kParaLValue		= 0x20
+};
+
+
+struct AnimationField {
+	typedef Common::Functor0Mem<int16, Animation> Accessor;
+	typedef Common::Functor1Mem<int16, void, Animation> Mutator;
+
+	typedef Accessor::FuncType AccessorFunc;
+	typedef Mutator::FuncType MutatorFunc;
+
+protected:
+	Accessor *_accessor;
+	Mutator *_mutator;
+
+public:
+	AnimationField(Animation* instance, AccessorFunc accessor, MutatorFunc mutator) {
+		_accessor = new Accessor(instance, accessor);
+		_mutator = new Mutator(instance, mutator);
+	}
+
+	AnimationField(Animation* instance, AccessorFunc accessor) {
+		_accessor = new Accessor(instance, accessor);
+		_mutator = 0;
+	}
+
+	~AnimationField() {
+		delete _accessor;
+		delete _mutator;
+	}
+
+	int16 getValue() const {
+		assert(_accessor);
+		return _accessor->operator()();
+	}
+
+	void setValue(int16 value) {
+		assert(_mutator);
+		_mutator->operator()(value);
+	}
 };
 
 
@@ -353,16 +418,18 @@ struct ScriptVar {
 	uint32			_flags;
 
 	int16			_value;
-	int16*			_pvalue;
 	LocalVariable*	_local;
+	AnimationField*	_field;
 
 	ScriptVar();
+	~ScriptVar();
 
-	int16	getRValue();
-	int16*	getLValue();
+	int16	getValue();
+	void	setValue(int16 value);
 
 	void	setLocal(LocalVariable *local);
-	void	setField(int16 *field);
+	void	setField(Animation *anim, AnimationField::AccessorFunc accessor, AnimationField::MutatorFunc mutator);
+	void	setField(Animation *anim, AnimationField::AccessorFunc accessor);
 	void	setImmediate(int16 value);
 	void	setRandom(int16 seed);
 };
@@ -430,19 +497,13 @@ typedef Common::SharedPtr<Program> ProgramPtr;
 typedef Common::List<ProgramPtr> ProgramList;
 
 struct Animation : public Zone {
+protected:
+	int16		_frame;
+	int16		_z;
+public:
 
-	Common::Point	_oldPos;
 	GfxObj		*gfxobj;
 	char		*_scriptName;
-	int16		_frame;
-	uint16		field_50;		// unused
-	int16		_z;
-	uint16		field_54;		// unused
-	uint16		field_56;		// unused
-	uint16		field_58;		// unused
-	uint16		field_5A;		// unused
-	uint16		field_5C;		// unused
-	uint16		field_5E;		// unused
 
 	Animation();
 	virtual ~Animation();
@@ -452,6 +513,22 @@ struct Animation : public Zone {
 	byte* getFrameData(uint32 index) const;
 
 	void validateScriptVars();
+
+	int16 getFrameX() const;
+	int16 getFrameY() const;
+
+	// getters/setters used by scripts
+	int16 getX() 			{ return _left; }
+	void  setX(int16 value) { _left = value; }
+
+	int16 getY() 			{ return _top; }
+	void  setY(int16 value) { _top = value; }
+
+	int16 getZ() 			{ return _z; }
+	void  setZ(int16 value) { _z = value; }
+
+	int16 getF() 			{ return _frame; }
+	void  setF(int16 value) { _frame = value; }
 };
 
 class Table {

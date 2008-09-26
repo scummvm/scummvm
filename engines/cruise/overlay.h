@@ -129,7 +129,7 @@ struct objectParams {
 struct ovlDataStruct {
 
 	ovlData3Struct *arrayProc;
-	uint8 *ptr1;
+	ovlData3Struct *ptr1;
 	objDataStruct *arrayObject;
 	objectParams *arrayStates;
 	objectParams *arrayObjVar;

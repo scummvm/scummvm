@@ -28,13 +28,16 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/error.h"
-#include "common/fs.h"
 
-#include "base/game.h"
+#include "engines/game.h"
 #include "base/plugins.h"
 
 class Engine;
 class OSystem;
+
+namespace Common {
+	class FSList;
+}
 
 /**
  * A meta engine is essentially a factory for Engine instances with the
@@ -62,7 +65,7 @@ public:
 	 * (possibly empty) list of games supported by the engine which it was able
 	 * to detect amongst the given files.
 	 */
-	virtual GameList detectGames(const FSList &fslist) const = 0;
+	virtual GameList detectGames(const Common::FSList &fslist) const = 0;
 
 	/**
 	 * Tries to instantiate an engine instance based on the settings of
@@ -79,9 +82,9 @@ public:
 	/**
 	 * Return a list of all save states associated with the given target.
 	 *
-	 * In general, the caller will already have ensured that this (Meta)Engine
-	 * is responsible for the specified target by using findGame on it resp.
-	 * on the associated gameid from the relevant ConfMan entry, if present.
+	 * The caller has to ensure that this (Meta)Engine is responsible
+	 * for the specified target (by using findGame on it respectively
+	 * on the associated gameid from the relevant ConfMan entry, if present).
 	 *
 	 * The default implementation returns an empty list.
 	 *
@@ -91,6 +94,92 @@ public:
 	virtual SaveStateList listSaves(const char *target) const {
 		return SaveStateList();
 	}
+
+	/**
+	 * Remove the specified save state. 
+	 *
+	 * For most engines this just amounts to calling _saveFileMan->removeSaveFile().  
+	 * Engines which keep an index file will also update it accordingly.
+	 *
+	 * @param target	name of a config manager target
+	 * @param slot		slot number of the save state to be removed
+	 */
+	virtual void removeSaveState(const char *target, int slot) const {};
+
+	/**
+	 * Returns meta infos from the specified save state.
+	 *
+	 * Depending on the MetaEngineFeatures set this can include
+	 * thumbnails, save date / time, play time.
+	 *
+	 * @param target	name of a config manager target
+	 * @param slot		slot number of the save state
+	 */
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const { return SaveStateDescriptor(); }
+
+	/** @name MetaEngineFeature flags */
+	//@{
+	
+	/**
+	 * A feature in this context means an ability of the engine which can be
+	 * either available or not.
+	 */
+	enum MetaEngineFeature {
+		/** 'Return to launcher' feature (i.e. EVENT_RTL is handled) */
+		kSupportsRTL            = 0,
+
+		/**
+		 * Listing Save States (i.e. implements the listSaves() method;
+		 * used for --list-saves support)
+		 */
+		kSupportsListSaves      = 1,
+		
+		/** Loading from the Launcher / command line (-x) */
+		kSupportsDirectLoad     = 2,
+
+		/**
+		 * Deleting Saves from the Launcher (i.e. implements the
+		 * removeSaveState() method)
+		 */
+		kSupportsDeleteSave     = 3,
+
+		/**
+		 * Features meta infos for savestates (i.e. implements the
+		 * querySaveMetaInfos method properly)
+		 */
+		kSupportsMetaInfos		= 4,
+
+		/**
+		 * Features a thumbnail in savegames (i.e. includes a thumbnail
+		 * in savestates returned via querySaveMetaInfo).
+		 * This flag may only be set when 'kSupportsMetaInfos' is set.
+		 */
+		kSupportsThumbnails		= 5,
+
+		/**
+		 * Features 'save_date' and 'save_time' entries in the 
+		 * savestate returned by querySaveMetaInfo. Those values
+		 * indicate the date/time the savegame was created.
+		 * This flag may only be set when 'kSupportsMetaInfos' is set.
+		 */
+		kSupportsSaveDate		= 6,
+
+		/**
+		 * Features 'play_time' entry in the savestate returned by
+		 * querySaveMetaInfo. It indicates how long the user played
+		 * the game till the save.
+		 * This flag may only be set when 'kSupportsMetaInfos' is set.
+		 */
+		kSupportsSavePlayTime	= 7
+	};	
+
+	/**
+	 * Determine whether the engine supports the specified MetaEngine feature.
+	 * Used by e.g. the launcher to determine whether to enable the "Load" button.
+	 */	
+	virtual bool hasFeature(MetaEngineFeature f) const { return false; };
+
+	//@}
 };
 
 
@@ -107,7 +196,7 @@ private:
 
 public:
 	GameDescriptor findGame(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;
-	GameList detectGames(const FSList &fslist) const;
+	GameList detectGames(const Common::FSList &fslist) const;
 	const EnginePlugin::List &getPlugins() const;
 };
 

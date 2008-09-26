@@ -26,8 +26,8 @@
 #include <common/scummsys.h>
 #include <engines/engine.h>
 #include <engines/metaengine.h>
+#include <engines/game.h>
 #include <base/plugins.h>
-#include <base/game.h>
 #include <common/fs.h>
 #include <common/events.h>
 #include "dc.h"
@@ -146,12 +146,12 @@ struct Dir
 {
   char name[252];
   char deficon[256];
-  FilesystemNode node;
+  Common::FilesystemNode node;
 };
 
 static Game the_game;
 
-static bool isIcon(const FilesystemNode &entry)
+static bool isIcon(const Common::FilesystemNode &entry)
 {
   int l = entry.getDisplayName().size();
   if (l>4 && !strcasecmp(entry.getDisplayName().c_str()+l-4, ".ICO"))
@@ -198,14 +198,14 @@ static int findGames(Game *games, int max)
 {
   Dir *dirs = new Dir[MAX_DIR];
   int curr_game = 0, curr_dir = 0, num_dirs = 1;
-  dirs[0].node = FilesystemNode("");
+  dirs[0].node = Common::FilesystemNode("");
   while (curr_game < max && curr_dir < num_dirs) {
     strncpy(dirs[curr_dir].name, dirs[curr_dir].node.getPath().c_str(), 252);
     dirs[curr_dir].name[251] = '\0';
     dirs[curr_dir].deficon[0] = '\0';
-    FSList files, fslist;
-    dirs[curr_dir++].node.getChildren(fslist, FilesystemNode::kListAll);
-    for (FSList::const_iterator entry = fslist.begin(); entry != fslist.end();
+    Common::FSList files, fslist;
+    dirs[curr_dir++].node.getChildren(fslist, Common::FilesystemNode::kListAll);
+    for (Common::FSList::const_iterator entry = fslist.begin(); entry != fslist.end();
 	 ++entry) {
       if (entry->isDirectory()) {
 	if (num_dirs < MAX_DIR && strcasecmp(entry->getDisplayName().c_str(),

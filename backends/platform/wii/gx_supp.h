@@ -1,6 +1,7 @@
 /****************************************************************************
 *   Generic GX Scaler 
 *   softdev 2007
+*   dhewg 2008
 *
 *   This program is free software; you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -23,11 +24,17 @@
 #ifndef _WII_GX_SUPP_H_
 #define _WII_GX_SUPP_H_
 
+#include <gccore.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+extern GXRModeObj *vmode;
+
 void GX_InitVideo();
+void GX_SetTexTrans(float xT, float yT);
+void GX_SetCamPosZ(float f);
 
 void GX_Start(u16 width, u16 height, s16 haspect, s16 vaspect);
 void GX_Render(u16 width, u16 height, u8 *buffer, u16 pitch);

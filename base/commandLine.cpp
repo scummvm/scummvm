@@ -34,22 +34,6 @@
 
 #include "sound/mididrv.h"
 
-#ifdef IPHONE
-#include "backends/platform/iphone/osys_iphone.h"
-#endif
-
-#ifdef UNIX
-#ifdef MACOSX
-#define DEFAULT_SAVE_PATH "Documents/ScummVM Savegames"
-#else
-#define DEFAULT_SAVE_PATH ".scummvm"
-#endif
-#elif defined(__SYMBIAN32__)
-#define DEFAULT_SAVE_PATH "Savegames"
-#elif defined(PALMOS_MODE)
-#define DEFAULT_SAVE_PATH "/PALM/Programs/ScummVM/Saved"
-#endif
-
 #define DETECTOR_TESTING_HACK
 
 namespace Base {
@@ -72,6 +56,7 @@ static const char HELP_STRING[] =
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
+	"  --list-saves=TARGET	    Display a list of savegames for the game (TARGET) specified\n"
 	"\n"
 	"  -c, --config=CONFIG      Use alternate configuration file\n"
 	"  -p, --path=PATH          Path to where the game is installed\n"
@@ -181,9 +166,6 @@ void registerDefaults() {
 
 	// Game specific
 	ConfMan.registerDefault("path", "");
-	ConfMan.registerDefault("savepath", "");
-
-//	ConfMan.registerDefault("amiga", false);
 	ConfMan.registerDefault("platform", Common::kPlatformPC);
 	ConfMan.registerDefault("language", "en");
 	ConfMan.registerDefault("subtitles", false);
@@ -212,31 +194,6 @@ void registerDefaults() {
 	ConfMan.registerDefault("joystick_num", -1);
 	ConfMan.registerDefault("confirm_exit", false);
 	ConfMan.registerDefault("disable_sdl_parachute", false);
-#ifdef USE_ALSA
-	ConfMan.registerDefault("alsa_port", "65:0");
-#endif
-
-	// Register default savepath
-#ifdef DEFAULT_SAVE_PATH
-	char savePath[MAXPATHLEN];
-#if defined(UNIX) && !defined(IPHONE)
-	const char *home = getenv("HOME");
-	if (home && *home && strlen(home) < MAXPATHLEN) {
-		snprintf(savePath, MAXPATHLEN, "%s/%s", home, DEFAULT_SAVE_PATH);
-		ConfMan.registerDefault("savepath", savePath);
-	}
-#elif defined(__SYMBIAN32__)
-	strcpy(savePath, Symbian::GetExecutablePath());
-	strcat(savePath, DEFAULT_SAVE_PATH);
-	strcat(savePath, "\\");
-	ConfMan.registerDefault("savepath", savePath);
-#elif defined (IPHONE)
-	ConfMan.registerDefault("savepath", OSystem_IPHONE::getSavePath());
-
-#elif defined(PALMOS_MODE)
-	ConfMan.registerDefault("savepath", DEFAULT_SAVE_PATH);
-#endif
-#endif // #ifdef DEFAULT_SAVE_PATH
 
 	ConfMan.registerDefault("record_mode", "none");
 	ConfMan.registerDefault("record_file_name", "record.bin");
@@ -408,7 +365,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_OPTION('p', "path")
-				FilesystemNode path(option);
+				Common::FilesystemNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent game path '%s'", option);
 				} else if (!path.isReadable()) {
@@ -451,7 +408,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("soundfont")
-				FilesystemNode path(option);
+				Common::FilesystemNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent soundfont path '%s'", option);
 				} else if (!path.isReadable()) {
@@ -481,7 +438,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("savepath")
-				FilesystemNode path(option);
+				Common::FilesystemNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent savegames path '%s'", option);
 				} else if (!path.isWritable()) {
@@ -490,7 +447,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("extrapath")
-				FilesystemNode path(option);
+				Common::FilesystemNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent extra path '%s'", option);
 				} else if (!path.isReadable()) {
@@ -508,7 +465,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("themepath")
-				FilesystemNode path(option);
+				Common::FilesystemNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent theme path '%s'", option);
 				} else if (!path.isReadable()) {
@@ -666,9 +623,9 @@ static void runDetectorTest() {
 			gameid = name;
 		}
 
-		FilesystemNode dir(path);
-		FSList files;
-		if (!dir.getChildren(files, FilesystemNode::kListAll)) {
+		Common::FilesystemNode dir(path);
+		Common::FSList files;
+		if (!dir.getChildren(files, Common::FilesystemNode::kListAll)) {
 			printf(" ... invalid path, skipping\n");
 			continue;
 		}
@@ -779,7 +736,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	if (!settings.contains("savepath")) {
 		const char *dir = getenv("SCUMMVM_SAVEPATH");
 		if (dir && *dir && strlen(dir) < MAXPATHLEN) {
-			FilesystemNode saveDir(dir);
+			Common::FilesystemNode saveDir(dir);
 			if (!saveDir.exists()) {
 				warning("Non-existent SCUMMVM_SAVEPATH save path. It will be ignored.");
 			} else if (!saveDir.isWritable()) {

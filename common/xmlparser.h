@@ -40,145 +40,12 @@
 
 namespace Common {
 	
-/***********************************************
- **** XMLParser.cpp/h -- Generic XML Parser ****
- ***********************************************
+/*
+	XMLParser.cpp/h -- Generic XML Parser
+	=====================================
 
-	This is a simple implementation of a generic parser which is able to
-	interpret a subset of the XML language.
-	
-	The XMLParser class is virtual, and must be derived into a child class,
-	called a Custom Parser Class, which will manage the parsed data for your
-	specific needs.
-	
-	Custom Parser Classes have two basic requirements:
-	They must inherit directly the XMLParser class, and they must define the
-	parsing layout of the XML file.
-	
-	Declaring the XML layout is done with the help of the CUSTOM_XML_PARSER()
-	macro: this macro must appear once inside the Custom Parser Class 
-	declaration, and takes a single parameter, the name of the Custom Parser
-	Class.
-	
-	The macro must be followed by the actual layout of the XML files to be 
-	parsed, and closed with the PARSER_END() macro. The layout of XML files
-	is defined by the use of 3 helper macros: XML_KEY(), KEY_END() and 
-	XML_PROP().
-	
-	Here's a sample of its usage:
-	
-	===========	===========	===========	===========	===========	===========
-	
-	CUSTOM_XML_PARSER(ThemeParser) {
-		XML_KEY(render_info)
-			XML_KEY(palette)
-				XML_KEY(color)
-					XML_PROP(name, true)
-					XML_PROP(rgb, true)
-				KEY_END()
-			KEY_END()
-
-			XML_KEY(fonts)
-				XML_KEY(font)
-					XML_PROP(id, true)
-					XML_PROP(type, true)
-					XML_PROP(color, true)
-				KEY_END()
-			KEY_END()
-
-			XML_KEY(defaults)
-				XML_PROP(stroke, false)
-				XML_PROP(shadow, false)
-				XML_PROP(factor, false)
-				XML_PROP(fg_color, false)
-				XML_PROP(bg_color, false)
-				XML_PROP(gradient_start, false)
-				XML_PROP(gradient_end, false)
-				XML_PROP(gradient_factor, false)
-				XML_PROP(fill, false)
-			KEY_END()
-		KEY_END()
-	} PARSER_END()
-			
-	===========	===========	===========	===========	===========	===========
-	
-	The XML_KEY() macro takes a single argument, the name of the expected key.
-	Inside the scope of each key, you may define properties for the given key
-	with the XML_PROP() macro, which takes as parameters the name of the 
-	property and whether it's optional or required. You might also define the 
-	contained children keys, using the XML_KEY() macro again.
-	The scope of a XML key is closed with the KEY_END() macro.
-	
-	Keys which may contain any kind of Property names may be defined with the
-	XML_PROP_ANY() macro instead of the XML_PROP() macro. This macro takes no
-	arguments.
-	
-	As an example, the following XML layout:
-	
-		XML_KEY(palette)
-			XML_KEY(color)
-				XML_PROP(name, true)
-				XML_PROP(rgb, true)
-				XML_PROP(optional_param, false)
-			KEY_END()
-		KEY_END()
-		
-	will expect to parse a syntax like this:
-	
-		<palette>
-			<color name = "red" rgb = "255, 0, 0" />
-			<color name = "blue" rgb = "0, 0, 255" optional_param = "565" />
-		</palette>
-		
-	Once a layout has been defined, everytime a XML node (that is, a key and
-	all its properties) has been parsed, a specific callback funcion is called,
-	which should take care of managing the parsed data for the node.
-	
-	Callback functions must be explicitly declared with the following syntax:
-	
-		bool parserCallback_KEYNAME(ParserNode *node);
-		
-	A callback function is needed for each key that can be parsed, since they
-	are called automatically; the function will receive a pointer to the XML
-	Node that has been parsed. This XML Node has the following properties:
-	
-		- It's assured to be expected in the layout of the XML file (i.e. 
-		  has the proper position and depth in the XML tree).
-		
-		- It's assured to contain all the required Properties that have 
-		  been declared in the XML layout.
-		
-		- It's assured to contain NO unexpected properties (i.e. properties
-		  which haven't been declared in the XML layout).
-		
-	Further validation of the Node's data may be performed inside the callback
-	function. Once the node has been validated and its data has been parsed/
-	managed, the callback function is expected to return true.
-	
-	If the data in the XML Node is corrupted or there was a problem when 
-	parsing it, the callback function is expected to return false or, 
-	preferably, to throw a parserError() using the following syntax:
-	
-		return parserError("There was a problem in key '%s'.", arg1, ...);
-	
-	Also, note that the XML parser doesn't take into account the actual order
-	of the keys and properties in the XML layout definition, only its layout 
-	and relationships.
-	
-	Lastly, when defining your own Custom XML Parser, further customization 
-	may be accomplished _optionally_ by overloading several virtual functions
-	of the XMLParser class.
-	
-	Check the API documentation of the following functions for more info:
-		
-		virtual bool closedKeyCallback(ParserNode *node);
-		virtual bool skipComments();
-		virtual bool isValidNameChar(char c);
-		virtual void cleanup();
-		
-	Check the sample implementation of the GUI::ThemeParser custom parser
-	for a working sample of a Custom XML Parser.
-		
+	External documentation available at:
+		http://www.smartlikearoboc.com/scummvm_doc/xmlparser_doc.html
 */
 			
 #define XML_KEY(keyName) {\
@@ -226,43 +93,6 @@ namespace Common {
 	
 #define PARSER_END() layout.clear(); }
 
-class XMLStream {
-protected:
-	SeekableReadStream *_stream;
-	int _pos;
-
-public:
-	XMLStream() : _stream(0), _pos(0) {}
-
-	~XMLStream() {
-		delete _stream;
-	}
-
-	SeekableReadStream *stream() {
-		return _stream;
-	}
-
-	char operator [](int idx) {
-		assert(_stream && idx >= 0);
-
-		if (_pos + 1 != idx)
-			_stream->seek(idx, SEEK_SET);
-
-		_pos = idx;
-
-		return _stream->readByte();
-	}
-
-	void loadStream(SeekableReadStream *s) {
-		delete _stream;
-		_stream = s;
-	}
-
-	bool ready() {
-		return _stream != 0;
-	}
-};
-
 /**
  * The base XMLParser class implements generic functionality for parsing
  * XML-like files.
@@ -278,13 +108,14 @@ public:
 	/**
 	 * Parser constructor.
 	 */
-	XMLParser() : _XMLkeys(0) {}
+	XMLParser() : _XMLkeys(0), _stream(0) {}
 
 	virtual ~XMLParser() {
 		while (!_activeKey.empty())
 			delete _activeKey.pop();
 
 		delete _XMLkeys;
+		delete _stream;
 
 		for (Common::List<XMLKeyLayout*>::iterator i = _layoutList.begin();
 			i != _layoutList.end(); ++i)
@@ -352,7 +183,7 @@ public:
 		}
 
 		_fileName = filename;
-		_text.loadStream(f);
+		_stream = f;
 		return true;
 	}
 	
@@ -365,7 +196,7 @@ public:
 		}
 		
 		_fileName = node.getName();
-		_text.loadStream(f);
+		_stream = f;
 		return true;
 	}
 
@@ -381,13 +212,13 @@ public:
 	 *                   no longer needed by the parser.
 	 */
 	bool loadBuffer(const byte *buffer, uint32 size, bool disposable = false) {
-		_text.loadStream(new MemoryReadStream(buffer, size, disposable));
+		_stream = new MemoryReadStream(buffer, size, disposable);
 		_fileName = "Memory Stream";
 		return true;
 	}
 	
-	bool loadStream(MemoryReadStream *stream) {
-		_text.loadStream(stream);
+	bool loadStream(SeekableReadStream *stream) {
+		_stream = stream;
 		_fileName = "Compressed File Stream";
 		return true;
 	}
@@ -492,11 +323,11 @@ protected:
 	 * Skips spaces/whitelines etc. Returns true if any spaces were skipped.
 	 */
 	bool skipSpaces() {
-		if (!isspace(_text[_pos]))
+		if (!isspace(_char))
 			return false;
 
-		while (_text[_pos] && isspace(_text[_pos]))
-			_pos++;
+		while (_char && isspace(_char))
+			_char = _stream->readByte();
 
 		return true;
 	}
@@ -508,14 +339,31 @@ protected:
 	 * or to change the commenting syntax.
 	 */
 	virtual bool skipComments() {
-		if (_text[_pos] == '/' && _text[_pos + 1] == '*') {
-			_pos += 2;
-			while (_text[_pos++]) {
-				if (_text[_pos - 2] == '*' && _text[_pos - 1] == '/')
+		char endComment1 = 0, endComment2 = 0;
+
+		if (_char == '/') {
+			_char = _stream->readByte();
+
+			if (_char != '*') {
+				_stream->seek(-1, SEEK_CUR);
+				_char = '/';
+				return false;
+			}
+			
+			_char = _stream->readByte();
+
+			while (_char) {
+				endComment1 = endComment2;
+				endComment2 = _char;
+				_char = _stream->readByte();
+
+				if (endComment1 == '*' && endComment2 == '/')
 					break;
-				if (_text[_pos] == 0)
+
+				if (_char == 0)
 					parserError("Comment has no closure.");
 			}
+			_char = _stream->readByte();
 			return true;
 		}
 
@@ -527,7 +375,7 @@ protected:
 	 * Overload this if you want to support keys with strange characters
 	 * in their name.
 	 */
-	virtual bool isValidNameChar(char c) {
+	virtual inline bool isValidNameChar(char c) {
 		return isalnum(c) || c == '_';
 	}
 
@@ -537,10 +385,13 @@ protected:
 	 */
 	bool parseToken() {
 		_token.clear();
-		while (isValidNameChar(_text[_pos]))
-			_token += _text[_pos++];
 
-		return isspace(_text[_pos]) != 0 || _text[_pos] == '>' || _text[_pos] == '=' || _text[_pos] == '/';
+		while (isValidNameChar(_char)) {
+			_token += _char;
+			_char = _stream->readByte();
+		}
+
+		return isspace(_char) != 0 || _char == '>' || _char == '=' || _char == '/';
 	}
 
 	/**
@@ -599,7 +450,8 @@ protected:
 
 private:
 	int _pos; /** Current position on the XML buffer. */
-	XMLStream _text; /** Buffer with the text being parsed */
+	char _char;
+	SeekableReadStream *_stream;
 	Common::String _fileName;
 
 	ParserState _state; /** Internal state of the parser */

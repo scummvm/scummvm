@@ -147,8 +147,14 @@ void Screen_LoK::savePageToDisk(const char *file, int page) {
 
 void Screen_LoK::loadPageFromDisk(const char *file, int page) {
 	debugC(9, kDebugLevelScreen, "Screen_LoK::loadPageFromDisk('%s', %d)", file, page);
+	if (!_saveLoadPage[page/2]) {
+		warning("trying to restore page %d, but no backup found", page);
+		return;
+	}
+
 	copyBlockToPage(page, 0, 0, SCREEN_W, SCREEN_H, _saveLoadPage[page/2]);
 	delete[] _saveLoadPage[page/2];
+	_saveLoadPage[page/2] = 0;
 
 	if (_saveLoadPageOvl[page/2]) {
 		uint8 *dstPage = getOverlayPtr(page);
@@ -160,7 +166,17 @@ void Screen_LoK::loadPageFromDisk(const char *file, int page) {
 		memcpy(dstPage, _saveLoadPageOvl[page/2], SCREEN_OVL_SJIS_SIZE);
 		delete[] _saveLoadPageOvl[page/2];
 		_saveLoadPageOvl[page/2] = 0;
-	}	_saveLoadPage[page/2] = 0;
+	}
+}
+
+void Screen_LoK::queryPageFromDisk(const char *file, int page, uint8 *buffer) {
+	debugC(9, kDebugLevelScreen, "Screen_LoK::queryPageFromDisk('%s', %d, %p)", file, page, (const void *)buffer);
+	if (!_saveLoadPage[page/2]) {
+		warning("trying to query page %d, but no backup found", page);
+		return;
+	}
+
+	memcpy(buffer, _saveLoadPage[page/2], SCREEN_W*SCREEN_H);
 }
 
 void Screen_LoK::deletePageFromDisk(int page) {

@@ -244,9 +244,6 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	_list->setEditable(saveMode);
 	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
 
-	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
-	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
-
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 
 	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", kTextAlignCenter);
@@ -257,6 +254,9 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	new GUI::ButtonWidget(this, "scummsaveload_cancel", "Cancel", kCloseCmd, 0);
 	_chooseButton = new GUI::ButtonWidget(this, "scummsaveload_choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
+
+	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
+	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
 }
 
 SaveLoadChooser::~SaveLoadChooser() {
@@ -364,62 +364,50 @@ void SaveLoadChooser::reflowLayout() {
 
 void SaveLoadChooser::updateInfos(bool redraw) {
 	int selItem = _list->getSelected();
-	Graphics::Surface *thumb;
-	thumb = _vm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
+	Graphics::Surface *thumb = 0;
+	if (selItem >= 0 && !_list->getSelectedString().empty())
+		thumb = _vm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
 
 	if (thumb) {
 		_gfxWidget->setGfx(thumb);
 		_gfxWidget->useAlpha(256);
 		thumb->free();
+		delete thumb;
 	} else {
 		_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
 	}
 
-	delete thumb;
-	if (redraw)
-		_gfxWidget->draw();
-
 	InfoStuff infos;
 	memset(&infos, 0, sizeof(InfoStuff));
-	char buffer[32];
-	if (_vm->loadInfosFromSlot(_saveMode ? selItem + 1 : selItem, &infos)) {
+	if (selItem >= 0 && !_list->getSelectedString().empty() 
+		   && _vm->loadInfosFromSlot(_saveMode ? selItem + 1 : selItem, &infos)) {
+		char buffer[32];
 		snprintf(buffer, 32, "Date: %.2d.%.2d.%.4d",
 			(infos.date >> 24) & 0xFF, (infos.date >> 16) & 0xFF,
 			infos.date & 0xFFFF);
 		_date->setLabel(buffer);
-		if (redraw)
-			_date->draw();
 
 		snprintf(buffer, 32, "Time: %.2d:%.2d",
 			(infos.time >> 8) & 0xFF, infos.time & 0xFF);
 		_time->setLabel(buffer);
-		if (redraw)
-			_time->draw();
 
 		int minutes = infos.playtime / 60;
 		int hours = minutes / 60;
 		minutes %= 60;
 
-		snprintf(buffer, 32, "Playtime: %.2d:%.2d",
-			hours & 0xFF, minutes & 0xFF);
+		snprintf(buffer, 32, "Playtime: %.2d:%.2d", hours, minutes);
 		_playtime->setLabel(buffer);
-		if (redraw)
-			_playtime->draw();
 	} else {
-		snprintf(buffer, 32, "No date saved");
-		_date->setLabel(buffer);
-		if (redraw)
-			_date->draw();
+		_date->setLabel("No date saved");
+		_time->setLabel("No time saved");
+		_playtime->setLabel("No playtime saved");
+	}
 
-		snprintf(buffer, 32, "No time saved");
-		_time->setLabel(buffer);
-		if (redraw)
-			_time->draw();
-
-		snprintf(buffer, 32, "No playtime saved");
-		_playtime->setLabel(buffer);
-		if (redraw)
-			_playtime->draw();
+	if (redraw) {
+		_gfxWidget->draw();
+		_date->draw();
+		_time->draw();
+		_playtime->draw();
 	}
 }
 
@@ -442,7 +430,7 @@ Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 	return descriptions;
 }
 
-MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
+ScummMenuDialog::ScummMenuDialog(ScummEngine *scumm)
 	: ScummDialog("scummmain"), _vm(scumm) {
 
 	new GUI::ButtonWidget(this, "scummmain_resume", "Resume", kPlayCmd, 'P');
@@ -470,7 +458,7 @@ MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 	_loadDialog = new SaveLoadChooser("Load game:", "Load", false, scumm);
 }
 
-MainMenuDialog::~MainMenuDialog() {
+ScummMenuDialog::~ScummMenuDialog() {
 	delete _aboutDialog;
 	delete _optionsDialog;
 #ifndef DISABLE_HELP
@@ -480,7 +468,7 @@ MainMenuDialog::~MainMenuDialog() {
 	delete _loadDialog;
 }
 
-void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void ScummMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSaveCmd:
 		save();
@@ -503,7 +491,7 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 #endif
 	case kQuitCmd:
-		_vm->_quit = true;
+		_vm->quitGame();
 		close();
 		break;
 	default:
@@ -511,7 +499,7 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-void MainMenuDialog::save() {
+void ScummMenuDialog::save() {
 	int idx;
 	_saveDialog->setList(generateSavegameList(_vm, true));
 	idx = _saveDialog->runModal();
@@ -530,7 +518,7 @@ void MainMenuDialog::save() {
 	}
 }
 
-void MainMenuDialog::load() {
+void ScummMenuDialog::load() {
 	int idx;
 	_loadDialog->setList(generateSavegameList(_vm, false));
 	idx = _loadDialog->runModal();

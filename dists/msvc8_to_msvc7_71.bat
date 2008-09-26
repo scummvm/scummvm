@@ -19,20 +19,14 @@ rpl -e -q "\t\tKeyword=" "\tKeyword=" msvc71\*.vcproj
 rpl -e -q "\t<ToolFiles>\n\t</ToolFiles>\n" "" msvc71\*.vcproj
 rpl -e -q " /wd4996" "" msvc71\*.vcproj
 rpl -e -q "ExceptionHandling=\"1\"" "ExceptionHandling=\"true\"" msvc71\*.vcproj
-rpl -e -q "\t\t\t\tWarnAsError=\"false\"\n" "" msvc71\*.vcproj
 rpl -e -q "\t\t\t<Tool\n\t\t\t\tName=\"VCManagedResourceCompilerTool\"\n\t\t\t/>\n" "" msvc71\*.vcproj
 rpl -e -q "\t\t\t<Tool\n\t\t\t\tName=\"VCPreLinkEventTool\"\n\t\t\t/>\n" "" msvc71\*.vcproj
 rpl -e -q "\t\t\t<Tool\n\t\t\t\tName=\"VCALinkTool\"\n\t\t\t/>\n" "" msvc71\*.vcproj
 rpl -e -q "\t\t\t<Tool\n\t\t\t\tName=\"VCXDCMakeTool\"\n\t\t\t/>\n" "" msvc71\*.vcproj
 rpl -e -q "\t\t\t<Tool\n\t\t\t\tName=\"VCBscMakeTool\"\n\t\t\t/>\n" "" msvc71\*.vcproj
 rpl -e -q "\t\t\t<Tool\n\t\t\t\tName=\"VCFxCopTool\"\n\t\t\t/>\n" "" msvc71\*.vcproj
-rpl -e -q "WholeProgramOptimization=\"1\"" "WholeProgramOptimization=\"false\"" msvc71\*.vcproj
-rpl -e -q "Optimization=\"3\"" "Optimization=\"2\"" msvc71\*.vcproj
-rpl -e -q "InlineFunctionExpansion=\"2\"" "InlineFunctionExpansion=\"1\"" msvc71\*.vcproj
+rpl -e -q "WholeProgramOptimization=\"1\"" "WholeProgramOptimization=\"true\"" msvc71\*.vcproj
 rpl -e -q "ExceptionHandling=\"1\"" "ExceptionHandling=\"true\"" msvc71\*.vcproj
-rpl -e -q "\t\t\t\tWarnAsError=\"true\"\n" "" msvc71\*.vcproj
-rpl -e -q "\t\t\t\tDisableLanguageExtensions=\"false\"\n" "" msvc71\*.vcproj
-rpl -e -q "\t\t\t\tEnableFunctionLevelLinking=\"false\"\n" "\t\t\t\tEnableFunctionLevelLinking=\"false\"\n\t\t\t\tDisableLanguageExtensions=\"false\"\n" msvc71\*.vcproj
 rem Change multi-line XML closing tags to single line
 rpl -e -q "\"\n\t\0x3e\n" "\"\0x3e\n" msvc71\*.vcproj
 rpl -e -q "\"\n\t/\0x3e\n" "\"/\0x3e\n" msvc71\*.vcproj

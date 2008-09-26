@@ -328,7 +328,14 @@ enum {
 	kCursorHeight = 42,
 	kTextHeight = 16,
 	kMaxProgramDataSize = 61440,
-	kMaxSaveStates = 100
+	kMaxSaveStates = 100,
+	kGameStateDescriptionLen = 32,	// Need these two values defined here
+	kCurrentGameStateVersion = 6	// for --list-saves support
+};
+
+enum StringType {
+	kStringTypeDefault,
+	kStringTypeConversation
 };
 
 class MidiPlayer;
@@ -356,6 +363,7 @@ public:
 
 	virtual int init();
 	virtual int go();
+	virtual void syncSoundSettings();
 
 protected:
 
@@ -399,7 +407,7 @@ protected:
 	void setKeyCharMoney();
 	const char *getString(int num) const;
 	int getStringWidth(int num) const;
-	void drawString(uint16 color, int x, int y, int16 num);
+	void drawString(uint16 color, int x, int y, int16 num, StringType strType = kStringTypeDefault);
 	void drawGameString(uint16 color, int x1, int y, const char *str);
 	int restartKeyCharScriptOnAction(int action, int obj1, int obj2);
 	void buildSpriteScalingTable(int z1, int z2);

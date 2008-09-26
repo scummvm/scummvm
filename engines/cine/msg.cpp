@@ -34,29 +34,40 @@ namespace Cine {
 Common::StringList messageTable;
 
 void loadMsg(char *pMsgName) {
-	int i, count, len;
-	byte *ptr, *dataPtr;
-	const char *messagePtr;
+	uint32 sourceSize;
 
 	checkDataDisk(-1);
-
 	messageTable.clear();
-
-	ptr = dataPtr = readBundleFile(findFileInBundle(pMsgName));
+	byte *dataPtr = readBundleFile(findFileInBundle(pMsgName), &sourceSize);
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
-	count = READ_BE_UINT16(ptr);
-	ptr += 2;
+	uint count = READ_BE_UINT16(dataPtr);
+	uint messageLenPos = 2;
+	uint messageDataPos = messageLenPos + 2 * count;
 
-	messagePtr = (const char*)(ptr + 2 * count);
+	// Read in the messages
+	for (uint i = 0; i < count; i++) {
+		// Read message's length
+		uint messageLen = READ_BE_UINT16(dataPtr + messageLenPos);
+		messageLenPos += 2;
 
-	for (i = 0; i < count; i++) {
-		len = READ_BE_UINT16(ptr);
-		ptr += 2;
-		
-		messageTable.push_back(messagePtr);
-		messagePtr += len;
+		// Store the read message.
+		// This code works around input data that has empty strings residing outside the input
+		// buffer (e.g. message indexes 58-254 in BATEAU.MSG in PROCS08 in Operation Stealth).
+		if (messageDataPos < sourceSize) {
+			messageTable.push_back((const char *)(dataPtr + messageDataPos));
+		} else {			
+			if (messageLen > 0) { // Only warn about overflowing non-empty strings
+				warning("loadMsg(%s): message (%d. / %d) is overflowing the input buffer. Replacing it with an empty string", pMsgName, i + 1, count);
+			} else {
+				debugC(5, kCineDebugPart, "loadMsg(%s): empty message (%d. / %d) resides outside input buffer", pMsgName, i + 1, count);
+			}
+			// Message resides outside the input buffer so we replace it with an empty string
+			messageTable.push_back("");
+		}
+		// Jump to the next message
+		messageDataPos += messageLen;
 	}
 
 	free(dataPtr);

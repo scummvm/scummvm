@@ -64,19 +64,23 @@ bool Sword2Engine::initStartMenu() {
 	// extract the filenames
 
 	int start_ids[MAX_starts];
-	char buf[10];
-
 	int lineno = 0;
 
-	while (fp.readLine(buf, sizeof(buf))) {
+	while (!fp.eos() && !fp.ioFailed()) {
+		Common::String line = fp.readLine();
+
+		// Skip empty lines or, more likely, the end of the stream.
+		if (line.size() == 0)
+			continue;
+
 		char *errptr;
 		int id;
 
 		lineno++;
-		id = strtol(buf, &errptr, 10);
+		id = strtol(line.c_str(), &errptr, 10);
 
 		if (*errptr) {
-			warning("startup.inf:%d: Invalid string '%s'", lineno, buf);
+			warning("startup.inf:%d: Invalid string '%s'", lineno, line.c_str());
 			continue;
 		}
 
@@ -97,6 +101,10 @@ bool Sword2Engine::initStartMenu() {
 			break;
 		}
 	}
+
+	// An I/O error before EOS? That's bad, but this is not a vital file.
+	if (fp.ioFailed() && !fp.eos())
+		warning("I/O error while reading startup.inf");
 
 	fp.close();
 

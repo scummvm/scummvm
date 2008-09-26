@@ -95,7 +95,7 @@ int ToucheEngine::init() {
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	return 0;
 }
 
@@ -234,6 +234,13 @@ Common::Point ToucheEngine::getMousePos() const {
 	return _eventMan->getMousePos();
 }
 
+void ToucheEngine::syncSoundSettings() {
+	readConfigurationSettings();
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+}
+	
 void ToucheEngine::mainLoop() {
 	restart();
 
@@ -245,10 +252,13 @@ void ToucheEngine::mainLoop() {
 	_inp_rightMouseButtonPressed = false;
 
 	if (ConfMan.hasKey("save_slot")) {
-		loadGameState(ConfMan.getInt("save_slot"));
-		_newEpisodeNum = 0;
-		resetSortedKeyCharsTable();
-		showCursor(true);
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0 && saveSlot <= 99) {
+			loadGameState(saveSlot);
+			_newEpisodeNum = 0;
+			resetSortedKeyCharsTable();
+			showCursor(true);
+		}
 	} else {
 		_newEpisodeNum = ConfMan.getInt("boot_param");
 		if (_newEpisodeNum == 0) {
@@ -258,7 +268,7 @@ void ToucheEngine::mainLoop() {
 	}
 
 	uint32 frameTimeStamp = _system->getMillis();
-	for (uint32 cycleCounter = 0; _flagsTable[611] == 0; ++cycleCounter) {
+	for (uint32 cycleCounter = 0; !quit(); ++cycleCounter) {
 		if ((cycleCounter % 3) == 0) {
 			runCycle();
 		}
@@ -287,9 +297,6 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 	Common::Event event;
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_flagsTable[611] = 1;
-			break;
 		case Common::EVENT_KEYDOWN:
 			if (!handleKeyEvents) {
 				break;
@@ -297,7 +304,8 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 			_flagsTable[600] = event.kbd.keycode;
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				if (_displayQuitDialog) {
-					_flagsTable[611] = displayQuitDialog();
+					if (displayQuitDialog())
+						quitGame();
 				}
 			} else if (event.kbd.keycode == Common::KEYCODE_F5) {
 				if (_flagsTable[618] == 0 && !_hideInventoryTexts) {
@@ -1248,10 +1256,11 @@ int ToucheEngine::getStringWidth(int num) const {
 	return Graphics::getStringWidth16(str);
 }
 
-void ToucheEngine::drawString(uint16 color, int x, int y, int16 num) {
+void ToucheEngine::drawString(uint16 color, int x, int y, int16 num, StringType strType) {
+	const int xmax = (_language == Common::ES_ESP && strType == kStringTypeConversation) ? kScreenWidth - 20 : 0;
 	if (num) {
 		const char *str = getString(num);
-		Graphics::drawString16(_offscreenBuffer, kScreenWidth, color, x, y, str);
+		Graphics::drawString16(_offscreenBuffer, kScreenWidth, color, x, y, str, xmax);
 	}
 }
 
@@ -1828,7 +1837,7 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 	_menuRedrawCounter = 2;
 	Common::Rect rect(0, y, kScreenWidth, y + h);
 	i = -1;
-	while (_inp_rightMouseButtonPressed && _flagsTable[611] == 0) {
+	while (_inp_rightMouseButtonPressed && !quit()) {
 		Common::Point mousePos = getMousePos();
 		if (rect.contains(mousePos)) {
 			int c = (mousePos.y - y) / kTextHeight;
@@ -2414,7 +2423,7 @@ void ToucheEngine::drawCharacterConversation() {
 	}
 	drawConversationPanel();
 	for (int i = 0; i < 4; ++i) {
-		drawString(214, 42, 328 + i * kTextHeight, _conversationChoicesTable[_scrollConversationChoiceOffset + i].msg);
+		drawString(214, 42, 328 + i * kTextHeight, _conversationChoicesTable[_scrollConversationChoiceOffset + i].msg, kStringTypeConversation);
 	}
 	updateScreenArea(0, 320, kScreenWidth, kScreenHeight - 320);
 	_conversationAreaCleared = false;
@@ -2422,7 +2431,7 @@ void ToucheEngine::drawCharacterConversation() {
 
 void ToucheEngine::drawConversationString(int num, uint16 color) {
 	const int y = 328 + num * kTextHeight;
-	drawString(color, 42, y, _conversationChoicesTable[num + _scrollConversationChoiceOffset].msg);
+	drawString(color, 42, y, _conversationChoicesTable[num + _scrollConversationChoiceOffset].msg, kStringTypeConversation);
 	updateScreenArea(0, y, kScreenWidth, kTextHeight);
 }
 
@@ -2691,10 +2700,10 @@ bool ToucheEngine::sortPointsData(int num1, int num2) {
 		const int md2 = _programWalkTable[num1].point2;
 		_programPointsTable[md2].order = 0;
 	}
-	bool quit = false;
+	bool quitLoop = false;
 	int order = 1;
-	while (!quit) {
-		quit = true;
+	while (!quitLoop) {
+		quitLoop = true;
 		for (uint i = 0; i < _programWalkTable.size(); ++i) {
 			const int md1 = _programWalkTable[i].point1;
 			const int md2 = _programWalkTable[i].point2;
@@ -2702,11 +2711,11 @@ bool ToucheEngine::sortPointsData(int num1, int num2) {
 				assert((md2 & 0x4000) == 0);
 				if (_programPointsTable[md1].order == order - 1 && _programPointsTable[md2].order > order) {
 					_programPointsTable[md2].order = order;
-					quit = false;
+					quitLoop = false;
 				}
 				if (_programPointsTable[md2].order == order - 1 && _programPointsTable[md1].order > order) {
 					_programPointsTable[md1].order = order;
-					quit = false;
+					quitLoop = false;
 				}
 			}
 		}
@@ -2938,9 +2947,9 @@ void ToucheEngine::markWalkPoints(int keyChar) {
 	resetPointsData(0);
 	if (pointsDataNum != -1) {
 		_programPointsTable[pointsDataNum].order = 1;
-		bool quit = false;
-		while (!quit) {
-			quit = true;
+		bool quitLoop = false;
+		while (!quitLoop) {
+			quitLoop = true;
 			for (uint i = 0; i < _programWalkTable.size(); ++i) {
 				int16 md1 = _programWalkTable[i].point1;
 				int16 md2 = _programWalkTable[i].point2;
@@ -2948,11 +2957,11 @@ void ToucheEngine::markWalkPoints(int keyChar) {
 					assert((md2 & 0x4000) == 0);
 					if (_programPointsTable[md1].order != 0 && _programPointsTable[md2].order == 0) {
 						_programPointsTable[md2].order = 1;
-						quit = false;
+						quitLoop = false;
 					}
 					if (_programPointsTable[md2].order != 0 && _programPointsTable[md1].order == 0) {
 						_programPointsTable[md1].order = 1;
-						quit = false;
+						quitLoop = false;
 					}
 				}
 			}

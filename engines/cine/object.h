@@ -38,6 +38,17 @@ struct objectStruct {
 	int16 costume;
 	char name[20];
 	uint16 part;
+
+	/*! \brief Sets all member variables to zero. */
+	void clear() {
+		this->x = 0;
+		this->y = 0;
+		this->mask = 0;
+		this->frame = 0;
+		this->costume = 0;
+		memset(this->name, 0, sizeof(this->name));
+		this->part = 0;
+	}
 };
 
 struct overlay {
@@ -52,10 +63,10 @@ struct overlay {
 #define NUM_MAX_OBJECT 255
 #define NUM_MAX_VAR 255
 
-extern objectStruct objectTable[NUM_MAX_OBJECT];
-
+extern Common::Array<objectStruct> objectTable;
 extern Common::List<overlay> overlayList;
 
+void resetObjectTable();
 void loadObject(char *pObjectName);
 void setupObject(byte objIdx, uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue);

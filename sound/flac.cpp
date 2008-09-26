@@ -27,7 +27,7 @@
 
 #ifdef USE_FLAC
 
-#include "common/file.h"
+#include "common/stream.h"
 #include "common/util.h"
 
 #include "sound/audiostream.h"
@@ -70,9 +70,6 @@ typedef FLAC__StreamDecoderLengthStatus FLAC__SeekableStreamDecoderLengthStatus;
 typedef FLAC__StreamDecoder FLAC__SeekableStreamDecoder;
 
 #endif
-
-
-using Common::File;
 
 
 namespace Audio {
@@ -149,7 +146,7 @@ public:
 	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC ; }
 
 protected:
-	uint getChannels() const { return MIN(_streaminfo.channels, MAX_OUTPUT_CHANNELS); }
+	uint getChannels() const { return MIN<uint>(_streaminfo.channels, MAX_OUTPUT_CHANNELS); }
 
 	bool allocateBuffer(uint minSamples);
 
@@ -659,7 +656,7 @@ inline ::FLAC__StreamDecoderWriteStatus FlacInputStream::callbackWrite(const ::F
 
 inline ::FLAC__SeekableStreamDecoderSeekStatus FlacInputStream::callbackSeek(FLAC__uint64 absoluteByteOffset) {
 	_inStream->seek(absoluteByteOffset, SEEK_SET);
-	const bool result = (absoluteByteOffset == _inStream->pos());
+	const bool result = (absoluteByteOffset == (FLAC__uint64)_inStream->pos());
 
 #ifdef LEGACY_FLAC
 	return result ? FLAC__SEEKABLE_STREAM_DECODER_SEEK_STATUS_OK : FLAC__SEEKABLE_STREAM_DECODER_SEEK_STATUS_ERROR;

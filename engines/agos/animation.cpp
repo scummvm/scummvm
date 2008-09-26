@@ -26,7 +26,6 @@
 
 
 #include "common/endian.h"
-#include "common/events.h"
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
@@ -151,7 +150,7 @@ void MoviePlayer::play() {
 
 	startSound();
 
-	while (_frameNum < _framesCount)
+	while (_frameNum < _framesCount && !_vm->quit())
 		handleNextFrame();
 
 	closeFile();
@@ -167,7 +166,7 @@ void MoviePlayer::play() {
 		_vm->_system->setPalette(palette, 0, 256);
 	}
 
-	 _vm->fillBackGroundFromBack();
+	_vm->fillBackGroundFromBack();
 	_vm->_fastFadeOutFlag = true;
 }
 
@@ -278,9 +277,6 @@ void MoviePlayer::handleNextFrame() {
 			break;
 		case Common::EVENT_RBUTTONUP:
 			_rightButtonDown = false;
-			break;
-		case Common::EVENT_QUIT:
-			_vm->_quit = true;
 			break;
 		default:
 			break;

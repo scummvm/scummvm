@@ -101,14 +101,14 @@ bool Debugger::Cmd_Locations(int argc, const char **argv) {
 
 bool Debugger::Cmd_GlobalFlags(int argc, const char **argv) {
 
-	uint32 flags = _commandFlags;
+	uint32 flags = _globalFlags;
 
 	DebugPrintf("+------------------------------+---------+\n"
 				"| flag name                    |  value  |\n"
 				"+------------------------------+---------+\n");
-	for (uint i = 0; i < _vm->_globalTable->count(); i++) {
+	for (uint i = 0; i < _vm->_globalFlagsNames->count(); i++) {
 		const char *value = ((flags & (1 << i)) == 0) ? "OFF" : "ON";
-		DebugPrintf("|%-30s|   %-6s|\n", _vm->_globalTable->item(i),  value);
+		DebugPrintf("|%-30s|   %-6s|\n", _vm->_globalFlagsNames->item(i),  value);
 	}
 	DebugPrintf("+------------------------------+---------+\n");
 
@@ -157,7 +157,7 @@ bool Debugger::Cmd_Zones(int argc, const char **argv) {
 				"+--------------------+---+---+---+---+--------+--------+\n");
 	for ( ; b != e; b++) {
 		ZonePtr z = *b;
-		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", z->_name, z->_left, z->_top, z->_right, z->_bottom, z->_type, z->_flags );
+		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", z->_name, z->getX(), z->getY(), z->getX() + z->width(), z->getY() + z->height(), z->_type, z->_flags );
 	}
 	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n");
 
@@ -175,7 +175,7 @@ bool Debugger::Cmd_Animations(int argc, const char **argv) {
 				"+--------------------+---+---+---+---+--------+--------+\n");
 	for ( ; b != e; b++) {
 		AnimationPtr a = *b;
-		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", a->_name, a->_left, a->_top, a->_z, a->_frame, a->_type, a->_flags );
+		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", a->_name, a->getX(), a->getY(), a->getZ(), a->getF(), a->_type, a->_flags );
 	}
 	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n");
 
@@ -187,19 +187,19 @@ bool Debugger::Cmd_GfxObjects(int argc, const char **argv) {
 
 	const char *objType[] = { "DOOR", "GET", "ANIM" };
 
-	DebugPrintf("+--------------------+-----+-----+-----+-----+--------+--------+\n"
-				"| name               |  x  |  y  |  z  |  f  |  type  |  visi  |\n"
-				"+--------------------+-----+-----+-----+-----+--------+--------+\n");
+	DebugPrintf("+--------------------+-----+-----+-----+-------+-----+--------+--------+\n"
+				"| name               |  x  |  y  |  z  | layer |  f  |  type  |  visi  |\n"
+				"+--------------------+-----+-----+-----+-------+-----+--------+--------+\n");
 
 	GfxObjList::iterator b = _vm->_gfx->_gfxobjList.begin();
 	GfxObjList::iterator e = _vm->_gfx->_gfxobjList.end();
 
 	for ( ; b != e; b++) {
 		GfxObj *obj = *b;
-		DebugPrintf("|%-20s|%5i|%5i|%5i|%5i|%8s|%8x|\n", obj->getName(), obj->x, obj->y, obj->z, obj->frame, objType[obj->type], obj->isVisible() );
+		DebugPrintf("|%-20s|%5i|%5i|%5i|%7i|%5i|%8s|%8x|\n", obj->getName(), obj->x, obj->y, obj->z, obj->layer, obj->frame, objType[obj->type], obj->isVisible() );
 	}
 
-	DebugPrintf("+--------------------+-----+-----+-----+-----+--------+--------+\n");
+	DebugPrintf("+--------------------+-----+-----+-----+-------+-----+--------+--------+\n");
 
 	return true;
 }

@@ -652,7 +652,7 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 
 	if ((_vm->_map->getPass(_pressedMapX, _pressedMapY) == 0) &&
 	    ((_gobAction == 0) ||
-			(_vm->_map->_itemsMap[_pressedMapY][_pressedMapX] == 0))) {
+			(_vm->_map->getItem(_pressedMapX, _pressedMapY) == 0))) {
 
 		resDelta = -1;
 		resDeltaDir = 0;
@@ -727,17 +727,17 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 
 void Goblin::adjustTarget(void) {
 	if ((_gobAction == 4) &&
-	    (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX] == 0)) {
+	    (_vm->_map->getItem(_pressedMapX, _pressedMapY) == 0)) {
 
 		if ((_pressedMapY > 0) &&
-		    (_vm->_map->_itemsMap[_pressedMapY - 1][_pressedMapX] != 0)) {
+		    (_vm->_map->getItem(_pressedMapX, _pressedMapY - 1) != 0)) {
 			_pressedMapY--;
 		} else if ((_pressedMapX < (_vm->_map->_mapWidth - 1)) &&
-				(_vm->_map->_itemsMap[_pressedMapY][_pressedMapX + 1] != 0)) {
+				(_vm->_map->getItem(_pressedMapX + 1, _pressedMapY) != 0)) {
 			_pressedMapX++;
 		} else if ((_pressedMapX < (_vm->_map->_mapWidth - 1)) &&
 				(_pressedMapY > 0) &&
-				(_vm->_map->_itemsMap[_pressedMapY - 1][_pressedMapX + 1] != 0)) {
+				(_vm->_map->getItem(_pressedMapX + 1, _pressedMapY - 1) != 0)) {
 			_pressedMapY--;
 			_pressedMapX++;
 		}
@@ -747,7 +747,7 @@ void Goblin::adjustTarget(void) {
 }
 
 void Goblin::targetDummyItem(Gob_Object *gobDesc) {
-	if (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX] == 0 &&
+	if (_vm->_map->getItem(_pressedMapX, _pressedMapY) == 0 &&
 	    _vm->_map->getPass(_pressedMapX, _pressedMapY) == 1) {
 		if (gobDesc->curLookDir == 0) {
 			_vm->_map->_itemPoses[0].x = _pressedMapX;
@@ -771,7 +771,7 @@ void Goblin::targetItem(void) {
 	Gob_Object *itemDesc;
 
 	if ((_gobAction == 3) || (_gobAction == 4)) {
-		items = _vm->_map->_itemsMap[_pressedMapY][_pressedMapX];
+		items = _vm->_map->getItem(_pressedMapX, _pressedMapY);
 		if ((_gobAction == 4) && ((items & 0xFF00) != 0) &&
 		    (_objects[_itemToObject[(items & 0xFF00) >> 8]]->pickable == 1)) {
 			_destItemId = (items & 0xFF00) >> 8;
@@ -802,40 +802,40 @@ void Goblin::targetItem(void) {
 			_gobDestX = _vm->_map->_itemPoses[_destItemId].x;
 		} else if ((items & 0xFF00) != 0) {
 			if (_vm->_map->_itemPoses[_destItemId].orient == 4) {
-				if ((_vm->_map->_itemsMap[_pressedMapY][_pressedMapX - 1] & 0xFF00) ==
-						(_vm->_map->_itemsMap[_pressedMapY][_pressedMapX] & 0xFF00)) {
+				if ((_vm->_map->getItem(_pressedMapX - 1, _pressedMapY) & 0xFF00) ==
+						(_vm->_map->getItem(_pressedMapX, _pressedMapY) & 0xFF00)) {
 					_pressedMapX--;
 					_vm->_map->_destX = _pressedMapX;
 					_gobDestX = _pressedMapX;
 				}
 			} else if (_vm->_map->_itemPoses[_destItemId].orient == 0) {
 
-				if ((_vm->_map->_itemsMap[_pressedMapY][_pressedMapX + 1] & 0xFF00) ==
-						(_vm->_map->_itemsMap[_pressedMapY][_pressedMapX] & 0xFF00)) {
+				if ((_vm->_map->getItem(_pressedMapX + 1, _pressedMapY) & 0xFF00) ==
+						(_vm->_map->getItem(_pressedMapX, _pressedMapY) & 0xFF00)) {
 					_pressedMapX++;
 					_vm->_map->_destX = _pressedMapX;
 					_gobDestX = _pressedMapX;
 				}
 			}
 
-			if ((_vm->_map->_itemsMap[_pressedMapY + 1][_pressedMapX] & 0xFF00) ==
-			    (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX] & 0xFF00)) {
+			if ((_vm->_map->getItem(_pressedMapX, _pressedMapY + 1) & 0xFF00) ==
+			    (_vm->_map->getItem(_pressedMapX, _pressedMapY) & 0xFF00)) {
 				_pressedMapY++;
 				_vm->_map->_destY = _pressedMapY;
 				_gobDestY = _pressedMapY;
 			}
 		} else {
 			if (_vm->_map->_itemPoses[_destItemId].orient == 4) {
-				if ((_vm->_map->_itemsMap[_pressedMapY][_pressedMapX - 1]) ==
-				    (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX])) {
+				if ((_vm->_map->getItem(_pressedMapX - 1, _pressedMapY)) ==
+				    (_vm->_map->getItem(_pressedMapX, _pressedMapY))) {
 					_pressedMapX--;
 					_vm->_map->_destX = _pressedMapX;
 					_gobDestX = _pressedMapX;
 				}
 			} else if (_vm->_map->_itemPoses[_destItemId].orient == 0) {
 
-				if ((_vm->_map->_itemsMap[_pressedMapY][_pressedMapX + 1]) ==
-				    (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX])) {
+				if ((_vm->_map->getItem(_pressedMapX + 1, _pressedMapY)) ==
+				    (_vm->_map->getItem(_pressedMapX, _pressedMapY))) {
 					_pressedMapX++;
 					_vm->_map->_destX = _pressedMapX;
 					_gobDestX = _pressedMapX;
@@ -843,8 +843,8 @@ void Goblin::targetItem(void) {
 			}
 
 			if (_pressedMapY < (_vm->_map->_mapHeight-1)) {
-				if ((_vm->_map->_itemsMap[_pressedMapY + 1][_pressedMapX]) ==
-						(_vm->_map->_itemsMap[_pressedMapY][_pressedMapX])) {
+				if ((_vm->_map->getItem(_pressedMapX, _pressedMapY + 1)) ==
+						(_vm->_map->getItem(_pressedMapX, _pressedMapY))) {
 					_pressedMapY++;
 					_vm->_map->_destY = _pressedMapY;
 					_gobDestY = _pressedMapY;
@@ -931,37 +931,37 @@ void Goblin::moveFindItem(int16 posX, int16 posY) {
 		_pressedMapX = CLIP(posX / 12, 0, _vm->_map->_mapWidth - 1);
 		_pressedMapY = CLIP(posY / 6, 0, _vm->_map->_mapHeight - 1);
 
-		if ((_vm->_map->_itemsMap[_pressedMapY][_pressedMapX] == 0) && (i < 20)) {
+		if ((_vm->_map->getItem(_pressedMapX, _pressedMapY) == 0) && (i < 20)) {
 
 			if ((_pressedMapY < (_vm->_map->_mapHeight - 1)) &&
-					(_vm->_map->_itemsMap[_pressedMapY + 1][_pressedMapX] != 0)) {
+					(_vm->_map->getItem(_pressedMapX, _pressedMapY + 1) != 0)) {
 				_pressedMapY++;
 			} else if ((_pressedMapX < (_vm->_map->_mapWidth - 1)) &&
 					(_pressedMapY < (_vm->_map->_mapHeight - 1)) &&
-					(_vm->_map->_itemsMap[_pressedMapY + 1][_pressedMapX + 1] != 0)) {
+					(_vm->_map->getItem(_pressedMapX + 1, _pressedMapY + 1) != 0)) {
 				_pressedMapX++;
 				_pressedMapY++;
 			} else if ((_pressedMapX < (_vm->_map->_mapWidth - 1)) &&
-					(_vm->_map->_itemsMap[_pressedMapY][_pressedMapX + 1] != 0)) {
+					(_vm->_map->getItem(_pressedMapX + 1, _pressedMapY) != 0)) {
 				_pressedMapX++;
 			} else if ((_pressedMapX < (_vm->_map->_mapWidth - 1)) &&
 					(_pressedMapY > 0) &&
-					(_vm->_map->_itemsMap[_pressedMapY - 1][_pressedMapX + 1] != 0)) {
+					(_vm->_map->getItem(_pressedMapX + 1, _pressedMapY - 1) != 0)) {
 				_pressedMapX++;
 				_pressedMapY--;
 			} else if ((_pressedMapY > 0) &&
-					(_vm->_map->_itemsMap[_pressedMapY - 1][_pressedMapX] != 0)) {
+					(_vm->_map->getItem(_pressedMapX, _pressedMapY - 1) != 0)) {
 				_pressedMapY--;
 			} else if ((_pressedMapY > 0) && (_pressedMapX > 0) &&
-					(_vm->_map->_itemsMap[_pressedMapY - 1][_pressedMapX - 1] != 0)) {
+					(_vm->_map->getItem(_pressedMapX - 1, _pressedMapY - 1) != 0)) {
 				_pressedMapY--;
 				_pressedMapX--;
 			} else if ((_pressedMapX > 0) &&
-					(_vm->_map->_itemsMap[_pressedMapY][_pressedMapX - 1] != 0)) {
+					(_vm->_map->getItem(_pressedMapX - 1, _pressedMapY) != 0)) {
 				_pressedMapX--;
 			} else if ((_pressedMapX > 0) &&
 					(_pressedMapY < (_vm->_map->_mapHeight - 1)) &&
-					(_vm->_map->_itemsMap[_pressedMapY + 1][_pressedMapX - 1] != 0)) {
+					(_vm->_map->getItem(_pressedMapX - 1, _pressedMapY + 1) != 0)) {
 				_pressedMapX--;
 				_pressedMapY++;
 			}
@@ -1384,11 +1384,11 @@ void Goblin::pickItem(int16 indexToPocket, int16 idToPocket) {
 	for (int y = 0; y < _vm->_map->_mapHeight; y++) {
 		for (int x = 0; x < _vm->_map->_mapWidth; x++) {
 			if (_itemByteFlag == 1) {
-				if (((_vm->_map->_itemsMap[y][x] & 0xFF00) >> 8) == idToPocket)
-					_vm->_map->_itemsMap[y][x] &= 0xFF;
+				if (((_vm->_map->getItem(x, y) & 0xFF00) >> 8) == idToPocket)
+					_vm->_map->setItem(x, y, _vm->_map->getItem(x, y) & 0xFF);
 			} else {
-				if ((_vm->_map->_itemsMap[y][x] & 0xFF) == idToPocket)
-					_vm->_map->_itemsMap[y][x] &= 0xFF00;
+				if ((_vm->_map->getItem(x, y) & 0xFF) == idToPocket)
+					_vm->_map->setItem(x, y, _vm->_map->getItem(x, y) & 0xFF00);
 			}
 		}
 	}
@@ -1494,18 +1494,16 @@ void Goblin::swapItems(int16 indexToPick, int16 idToPick) {
 	if (_itemByteFlag == 0) {
 		for (y = 0; y < _vm->_map->_mapHeight; y++) {
 			for (x = 0; x < _vm->_map->_mapWidth; x++) {
-				if ((_vm->_map->_itemsMap[y][x] & 0xFF) == idToPick)
-					_vm->_map->_itemsMap[y][x] =
-					    (_vm->_map->_itemsMap[y][x] & 0xFF00) + idToPlace;
+				if ((_vm->_map->getItem(x, y) & 0xFF) == idToPick)
+					_vm->_map->setItem(x, y, (_vm->_map->getItem(x, y) & 0xFF00) + idToPlace);
 			}
 		}
 	} else {
 
 		for (y = 0; y < _vm->_map->_mapHeight; y++) {
 			for (x = 0; x < _vm->_map->_mapWidth; x++) {
-				if (((_vm->_map->_itemsMap[y][x] & 0xFF00) >> 8) == idToPick)
-					_vm->_map->_itemsMap[y][x] =
-					    (_vm->_map->_itemsMap[y][x] & 0xFF) + (idToPlace << 8);
+				if (((_vm->_map->getItem(x, y) & 0xFF00) >> 8) == idToPick)
+					_vm->_map->setItem(x, y, (_vm->_map->getItem(x, y) & 0xFF) + (idToPlace << 8));
 			}
 		}
 	}

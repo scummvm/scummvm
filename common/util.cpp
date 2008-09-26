@@ -63,39 +63,6 @@ extern bool isSmartphone(void);
 
 namespace Common {
 
-bool matchString(const char *str, const char *pat) {
-	const char *p = 0;
-	const char *q = 0;
-
-	for (;;) {
-		switch (*pat) {
-		case '*':
-			p = ++pat;
-			q = str;
-			break;
-
-		default:
-			if (*pat != *str) {
-				if (p) {
-					pat = p;
-					str = ++q;
-					if (!*str)
-						return !*pat;
-					break;
-				}
-				else
-					return false;
-			}
-			// fallthrough
-		case '?':
-			if (!*str)
-				return !*pat;
-			pat++;
-			str++;
-		}
-	}
-}
-
 StringTokenizer::StringTokenizer(const String &str, const String &delimiters) : _str(str), _delimiters(delimiters) {
 	reset();
 }
@@ -237,10 +204,9 @@ Language parseLanguage(const String &str) {
 	if (str.empty())
 		return UNK_LANG;
 
-	const char *s = str.c_str();
 	const LanguageDescription *l = g_languages;
 	for (; l->code; ++l) {
-		if (!scumm_stricmp(l->code, s))
+		if (str.equalsIgnoreCase(l->code))
 			return l->id;
 	}
 
@@ -278,6 +244,7 @@ const PlatformDescription g_platforms[] = {
 	{"c64", "c64", "c64", "Commodore 64", kPlatformC64},
 	{"pc", "dos", "ibm", "DOS", kPlatformPC},
 	{"pc98", "pc98", "pc98", "PC-98", kPlatformPC98},
+	{"wii", "wii", "wii", "Nintendo Wii", kPlatformWii},
 
 	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
 	// However, on the net many variations can be seen, like "FMTOWNS",
@@ -299,20 +266,18 @@ Platform parsePlatform(const String &str) {
 	if (str.empty())
 		return kPlatformUnknown;
 
-	const char *s = str.c_str();
-
 	// Handle some special case separately, for compatibility with old config
 	// files.
-	if (!strcmp(s, "1"))
+	if (str == "1")
 		return kPlatformAmiga;
-	else if (!strcmp(s, "2"))
+	else if (str == "2")
 		return kPlatformAtariST;
-	else if (!strcmp(s, "3"))
+	else if (str == "3")
 		return kPlatformMacintosh;
 
 	const PlatformDescription *l = g_platforms;
 	for (; l->code; ++l) {
-		if (!scumm_stricmp(l->code, s) || !scumm_stricmp(l->code2, s) || !scumm_stricmp(l->abbrev, s))
+		if (str.equalsIgnoreCase(l->code) || str.equalsIgnoreCase(l->code2) || str.equalsIgnoreCase(l->abbrev))
 			return l->id;
 	}
 
@@ -364,10 +329,9 @@ RenderMode parseRenderMode(const String &str) {
 	if (str.empty())
 		return kRenderDefault;
 
-	const char *s = str.c_str();
 	const RenderModeDescription *l = g_renderModes;
 	for (; l->code; ++l) {
-		if (!scumm_stricmp(l->code, s))
+		if (str.equalsIgnoreCase(l->code))
 			return l->id;
 	}
 

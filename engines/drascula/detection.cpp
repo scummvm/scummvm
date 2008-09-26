@@ -195,6 +195,38 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		},
 	},
 
+	{
+		// Drascula Spanish version (ScummVM repacked files)
+		{
+			"drascula",
+			0,
+			{
+				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
+				{"packet.004", 0, "a289d3cf80d50f25ec569b653248437e", 17205838},
+				{NULL, 0, NULL, 0}
+			},
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			GF_PACKED
+		},
+	},
+
+	{
+		// Drascula Italian version (ScummVM repacked files)
+		{
+			"drascula",
+			0,
+			{
+				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
+				{"packet.005", 0, "58caac54b891f5d7f335e710e45e5d29", 16209623},
+				{NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			GF_PACKED
+		},
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 

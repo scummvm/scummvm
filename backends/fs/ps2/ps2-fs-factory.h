@@ -35,11 +35,9 @@
  */
 class Ps2FilesystemFactory : public FilesystemFactory, public Common::Singleton<Ps2FilesystemFactory> {	
 public:
-	typedef Common::String String;
-		
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
-	virtual AbstractFilesystemNode *makeFileNodePath(const String &path) const;
+	virtual AbstractFilesystemNode *makeFileNodePath(const Common::String &path) const;
 	
 protected:
 	Ps2FilesystemFactory() {};

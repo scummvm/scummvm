@@ -352,6 +352,8 @@ public:
 	};
 
 public:
+	typedef void (*XMidiCallbackProc)(byte eventData, void *refCon);
+
 	MidiParser();
 	virtual ~MidiParser() { allNotesOff(); }
 
@@ -370,8 +372,10 @@ public:
 	uint32 getPPQN() { return _ppqn; }
 	virtual uint32 getTick() { return _position._play_tick; }
 
+	static void defaultXMidiCallback(byte eventData, void *refCon);
+
 	static MidiParser *createParser_SMF();
-	static MidiParser *createParser_XMIDI();
+	static MidiParser *createParser_XMIDI(XMidiCallbackProc proc = defaultXMidiCallback, void *refCon = 0);
 	static void timerCallback(void *data) { ((MidiParser *) data)->onTimer(); }
 };
 

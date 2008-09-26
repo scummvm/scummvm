@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/events.h"
 
 #include "gob/gob.h"
 #include "gob/util.h"
@@ -72,7 +71,7 @@ void Util::longDelay(uint16 msecs) {
 		_vm->_video->waitRetrace();
 		processInput();
 		delay(15);
-	} while (!_vm->_quitRequested &&
+	} while (!_vm->quit() &&
 	         ((g_system->getMillis() * _vm->_global->_speedFactor) < time));
 }
 
@@ -117,9 +116,6 @@ void Util::processInput(bool scroll) {
 			addKeyToBuffer(event.kbd);
 			break;
 		case Common::EVENT_KEYUP:
-			break;
-		case Common::EVENT_QUIT:
-			_vm->_quitRequested = true;
 			break;
 		default:
 			break;
@@ -238,7 +234,9 @@ void Util::getMouseState(int16 *pX, int16 *pY, int16 *pButtons) {
 }
 
 void Util::setMousePos(int16 x, int16 y) {
-	g_system->warpMouse(x + _vm->_video->_screenDeltaX, y + _vm->_video->_screenDeltaY);
+	x = CLIP<int>(x + _vm->_video->_screenDeltaX, 0, _vm->_width - 1);
+	y = CLIP<int>(y + _vm->_video->_screenDeltaY, 0, _vm->_height - 1);
+	g_system->warpMouse(x, y);
 }
 
 void Util::waitMouseUp(void) {

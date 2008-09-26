@@ -510,10 +510,11 @@ void Mult_v2::playMultInit() {
 	if (!_animSurf) {
 		int16 width, height;
 
-		for (int i = 0; i < _objCount; i++) {
-			delete _objects[i].pPosX;
-			delete _objects[i].pPosY;
-		}
+		if (_objects)
+			for (int i = 0; i < _objCount; i++) {
+				delete _objects[i].pPosX;
+				delete _objects[i].pPosY;
+			}
 
 		delete[] _objects;
 	

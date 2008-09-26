@@ -103,6 +103,8 @@ public:
 	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel);
 
 	int buttonMenuCallback(Button *caller);
+
+	void createScreenThumbnail(Graphics::Surface &dst);
 private:
 	void initStaticResource();
 
@@ -162,7 +164,7 @@ private:
 	bool _menuRestoreScreen;
 	uint8 _toplevelMenu;
 	int _savegameOffset;
-	char _savegameName[31];
+	char _savegameName[35];
 	const char *_specialSavegameString;
 	Common::KeyState _keyPressed;
 	int8 _mouseWheel;

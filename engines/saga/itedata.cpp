@@ -339,7 +339,7 @@ FxTable ITE_SfxTable[ITE_SFXCOUNT] = {
 	{ 73,    64 }
 };
 
-const char *ITEinterfaceTextStrings[][52] = {
+const char *ITEinterfaceTextStrings[][53] = {
 	{
 		// Note that the "Load Successful!" string is never used in ScummVM
 		"Walk to", "Look At", "Pick Up", "Talk to", "Open",
@@ -358,7 +358,8 @@ const char *ITEinterfaceTextStrings[][52] = {
 		"There's no opening to close.",
 		"I don't know how to do that.",
 		"Show Dialog",
-		"What is Rif's reply?"
+		"What is Rif's reply?",
+		"Loading a saved game"
 	},
 	// German
 	{
@@ -378,7 +379,8 @@ const char *ITEinterfaceTextStrings[][52] = {
 		"Hier ist keine \231ffnung zum Schlie$en.",
 		"Ich wei$ nicht, wie ich das machen soll.",
 		"Text zeigen",
-		"Wie lautet die Antwort?"
+		"Wie lautet die Antwort?",
+		"Spielstand wird geladen"
 	},
 	// Italian fan translation
 	{
@@ -398,7 +400,8 @@ const char *ITEinterfaceTextStrings[][52] = {
 		"Nessuna apertura da chiudere.",
 		"Non saprei come farlo.",
 		"Dialoghi",
-		"Come risponderebbe Rif?"
+		"Come risponderebbe Rif?",
+		"Vuoi davvero caricare il gioco?"
 	},
 	// Spanish IHNM
 	{
@@ -420,7 +423,8 @@ const char *ITEinterfaceTextStrings[][52] = {
 		NULL,
 		NULL,
 		NULL,
-		NULL
+		NULL,
+		"Cardango una partida guardada"
 	}
 };
 

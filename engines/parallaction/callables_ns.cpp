@@ -32,6 +32,7 @@
 
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
+#include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 
 
@@ -170,7 +171,7 @@ void Parallaction_ns::_c_fade(void *parm) {
 		_gfx->setPalette(pal);
 
 		_gfx->updateScreen();
-		g_system->delayMillis(20);
+		_vm->_system->delayMillis(20);
 	}
 
 	return;
@@ -211,21 +212,17 @@ void Parallaction_ns::_c_moveSarc(void *parm) {
 			}
 		}
 
-		_introSarcData1 = _introSarcData3 - _moveSarcZone1->_left;
-		a->_z = _introSarcData3;
-		a->_frame = _moveSarcZone1->_top - (_introSarcData1 / 20);
-		_introSarcData3 = _moveSarcZone1->_left;
+		_introSarcData1 = _introSarcData3 - _moveSarcZone1->getX();
+		a->setZ(_introSarcData3);
+		a->setF(_moveSarcZone1->getY() - (_introSarcData1 / 20));
+		_introSarcData3 = _moveSarcZone1->getX();
 
 		if (_introSarcData1 > 0) {
-			a->_left = _introSarcData1 / 2;
+			a->setX(_introSarcData1 / 2);
+			a->setY(2);
 		} else {
-			a->_left = -_introSarcData1 / 2;
-		}
-
-		if (_introSarcData1 > 0) {
-			a->_top = 2;
-		} else {
-			a->_top = -2;
+			a->setX(-_introSarcData1 / 2);
+			a->setY(-2);
 		}
 
 		return;
@@ -236,11 +233,11 @@ void Parallaction_ns::_c_moveSarc(void *parm) {
 	_moveSarcZone1->translate(_introSarcData1, -_introSarcData1 / 20);
 	_moveSarcZone0->translate(_introSarcData1, -_introSarcData1 / 20);
 
-	if (_moveSarcZones[0]->_left == 35 &&
-		_moveSarcZones[1]->_left == 68 &&
-		_moveSarcZones[2]->_left == 101 &&
-		_moveSarcZones[3]->_left == 134 &&
-		_moveSarcZones[4]->_left == 167) {
+	if (_moveSarcZones[0]->getX() == 35 &&
+		_moveSarcZones[1]->getX() == 68 &&
+		_moveSarcZones[2]->getX() == 101 &&
+		_moveSarcZones[3]->getX() == 134 &&
+		_moveSarcZones[4]->getX() == 167) {
 
 		a = findAnimation("finito");
 
@@ -261,7 +258,7 @@ void Parallaction_ns::_c_contaFoglie(void *parm) {
 	if (num_foglie != 6)
 		return;
 
-	_commandFlags |= 0x1000;
+	_globalFlags |= 0x1000;
 
 	return;
 }
@@ -291,8 +288,8 @@ void Parallaction_ns::_c_onMouse(void *parm) {
 
 void Parallaction_ns::_c_setMask(void *parm) {
 
-	memset(_gfx->_backgroundInfo.mask.data + 3600, 0, 3600);
-	_gfx->_backgroundInfo.layers[1] = 500;
+	memset(_gfx->_backgroundInfo->mask.data + 3600, 0, 3600);
+	_gfx->_backgroundInfo->layers[1] = 500;
 
 	return;
 }
@@ -309,7 +306,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 		_gfx->setPalette(_gfx->_palette);
 
 		_gfx->updateScreen();
-		g_system->delayMillis(20);
+		_vm->_system->delayMillis(20);
 	}
 
 	_input->waitForButtonEvent(kMouseLeftUp);
@@ -328,10 +325,10 @@ void Parallaction_ns::_c_frankenstein(void *parm) {
 	}
 
 	for (uint16 _di = 0; _di < 30; _di++) {
-		g_system->delayMillis(20);
+		_vm->_system->delayMillis(20);
 		_gfx->setPalette(pal0);
 		_gfx->updateScreen();
-		g_system->delayMillis(20);
+		_vm->_system->delayMillis(20);
 		_gfx->setPalette(pal1);
 		_gfx->updateScreen();
 	}
@@ -345,7 +342,7 @@ void Parallaction_ns::_c_frankenstein(void *parm) {
 
 void Parallaction_ns::_c_finito(void *parm) {
 
-	setPartComplete(_char);
+	_saveLoad->setPartComplete(_char.getBaseName());
 
 	cleanInventory();
 	cleanupGame();
@@ -482,8 +479,8 @@ void Parallaction_ns::_c_sketch(void *parm) {
 
 	Graphics::drawLine(oldx, oldy, newx, newy, 0, zeroMask, &_gfx->_backgroundInfo);
 
-	_rightHandAnim->_left = newx;
-	_rightHandAnim->_top = newy - 20;
+	_rightHandAnim->setX(newx);
+	_rightHandAnim->setY(newy - 20);
 
 	index++;
 
@@ -496,17 +493,17 @@ void Parallaction_ns::_c_sketch(void *parm) {
 void Parallaction_ns::_c_shade(void *parm) {
 
 	Common::Rect r(
-		_rightHandAnim->_left - 36,
-		_rightHandAnim->_top - 36,
-		_rightHandAnim->_left,
-		_rightHandAnim->_top
+		_rightHandAnim->getX() - 36,
+		_rightHandAnim->getY() - 36,
+		_rightHandAnim->getX(),
+		_rightHandAnim->getY()
 	);
 
-	uint16 _di = r.left/4 + r.top * _gfx->_backgroundInfo.mask.internalWidth;
+	uint16 _di = r.left/4 + r.top * _gfx->_backgroundInfo->mask.internalWidth;
 
 	for (uint16 _si = r.top; _si < r.bottom; _si++) {
-		memset(_gfx->_backgroundInfo.mask.data + _di, 0, r.width()/4+1);
-		_di += _gfx->_backgroundInfo.mask.internalWidth;
+		memset(_gfx->_backgroundInfo->mask.data + _di, 0, r.width()/4+1);
+		_di += _gfx->_backgroundInfo->mask.internalWidth;
 	}
 
 	return;

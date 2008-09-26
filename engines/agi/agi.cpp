@@ -25,7 +25,6 @@
 
 
 #include "common/md5.h"
-#include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -61,9 +60,6 @@ void AgiEngine::processEvents() {
 
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_game.quitProgNow = true;
-			break;
 		case Common::EVENT_PREDICTIVE_DIALOG:
 			if (_predictiveDialogRunning)
 				break;
@@ -738,6 +734,8 @@ void AgiEngine::initialize() {
 	_gfx->initVideo();
 	_sound->initSound();
 
+	_lastSaveTime = 0;
+
 	_timer->installTimerProc(agiTimerFunctionLow, 10 * 1000, NULL);
 
 	_game.ver = -1;		/* Don't display the conf file warning */
@@ -810,6 +808,16 @@ int AgiEngine::go() {
 	runGame();
 
 	return 0;
+}
+
+void AgiEngine::syncSoundSettings() {
+	int soundVolumeMusic = ConfMan.getInt("music_volume");
+	int soundVolumeSFX = ConfMan.getInt("music_volume");
+	int soundVolumeSpeech = ConfMan.getInt("music_volume");
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 }
 
 } // End of namespace Agi

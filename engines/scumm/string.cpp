@@ -279,7 +279,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 		}
 		c = *buffer++;
 
-		if (c == _newLineCharacter) {
+		if (_newLineCharacter != 0 && c == _newLineCharacter) {
 			c = 13;
 			break;
 		}

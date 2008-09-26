@@ -98,6 +98,7 @@ private:
 	void deselectSaveslots(void);
 	uint8 *_restoreBuf;
 	uint8 _saveFiles;
+	uint8 _numSaves;
 	uint8 _saveScrollPos;
 	uint8 _selectedSavegame;
 	uint8 _saveNames[64][32];

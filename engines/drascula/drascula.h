@@ -37,16 +37,13 @@
 #include "common/keyboard.h"
 #include "common/unarj.h"
 
-#include "sound/audiostream.h"
 #include "sound/mixer.h"
-#include "sound/voc.h"
-#include "sound/audiocd.h"
 
 #include "engines/engine.h"
 
 namespace Drascula {
 
-#define DRASCULA_DAT_VER 2
+#define DRASCULA_DAT_VER 4
 #define DATAALIGNMENT 4
 
 enum DrasculaGameFeatures {
@@ -135,6 +132,11 @@ enum IgorTalkerTypes {
 	kIgorWig = 4
 };
 
+enum VonBraunTalkerTypes {
+	kVonBraunNormal = 0,
+	kVonBraunDoor = 1
+};
+
 enum AnimFrameTypes {
 	kFrameBlind = 0,
 	kFrameSnore = 1,
@@ -144,6 +146,64 @@ enum AnimFrameTypes {
 	kFrameDrunk = 5,
 	kFrameCandles = 6,
 	kFramePendulum = 7
+};
+
+enum DialogOptionStatus {
+	kDialogOptionUnselected = 1,
+	kDialogOptionSelected = 2,
+	kDialogOptionClicked = 3
+};
+
+enum TalkSequenceCommands {
+	kPause = 0,
+	kSetFlag = 1,
+	kClearFlag = 2,
+	kPickObject = 3,
+	kAddObject = 4,
+	kBreakOut = 5,
+	kConverse = 6,
+	kPlaceVB = 7,
+	kUpdateRoom = 8,
+	kUpdateScreen = 9,
+	kTrackProtagonist = 10,
+	kPlaySound = 11,
+	kFinishSound = 12,
+	kTalkerGeneral = 13,
+	kTalkerDrunk = 14,
+	kTalkerPianist = 15,
+	kTalkerBJ = 16,
+	kTalkerVBNormal = 17,
+	kTalkerVBDoor = 18,
+	kTalkerIgorSeated = 19,
+	kTalkerWerewolf = 20,
+	kTalkerMus = 21,
+	kTalkerDrascula = 22,
+	kTalkerBartender0 = 23,
+	kTalkerBartender1 = 24
+};
+
+enum CharacterDirections {
+	kDirectionUp = 0,
+	kDirectionDown = 1,
+	kDirectionLeft = 2,
+	kDirectionRight = 3
+};
+
+enum MouseCursors {
+	kCursorCrosshair = 0,
+	kCursorCurrentItem = 1
+};
+
+enum DoorActions {
+	kCloseDoor = 0,
+	kOpenDoor = 1
+};
+
+struct TalkSequenceCommand {
+	int chapter;
+	int sequence;
+	int commandType;
+	int action;
 };
 
 #define TEXTD_START 68
@@ -248,13 +308,18 @@ public:
 	typedef signed char DacPalette256[256][3];
 
 	void setRGB(byte *pal, int plt);
-	void assignDefaultPalette();
+	void assignPalette(DacPalette256 pal);
+	void setDefaultPalette(DacPalette256 pal);
 	void setPalette(byte *PalBuf);
 	void copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
 				int height, byte *src, byte *dest);
+
+	void copyBackground() {
+		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+	}
+
 	void copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 				int height, byte *src, byte *dest);
-	void copyRectClip(int *Array, byte *src, byte *dest);
 	void updateScreen() {
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	}
@@ -274,6 +339,9 @@ public:
 	DacPalette256 defaultPalette;
 	DacPalette256 brightPalette;
 	DacPalette256 darkPalette;
+
+	byte *crosshairCursor;
+	byte *mouseCursor;
 
 	// Graphics buffers/pointers
 	byte *VGA;
@@ -309,7 +377,7 @@ public:
 	int roomObjX[40], roomObjY[40], trackObj[40];
 	int inventoryObjects[43];
 	char _targetSurface[40][20];
-	int _destX[40], _destY[40], trackCharacter_alkeva[40], alapuertakeva[40];
+	int _destX[40], _destY[40], trackCharacter_alkeva[40], roomExits[40];
 	int x1[40], y1[40], x2[40], y2[40];
 	int takeObject, pickedObject;
 	int withVoices;
@@ -321,7 +389,8 @@ public:
 	int flags[NUM_FLAGS];
 
 	int frame_y;
-	int curX, curY, characterMoved, curDirection, trackProtagonist, num_frame, hare_se_ve;
+	int curX, curY, characterMoved, curDirection, trackProtagonist, num_frame;
+	int hare_se_ve;		// TODO: what is this for?
 	int roomX, roomY, checkFlags;
 	int doBreak;
 	int stepX, stepY;
@@ -334,7 +403,6 @@ public:
 	int timeDiff, startTime;
 	int hasAnswer;
 	int savedTime;
-	int changeColor;
 	int breakOut;
 	int vonBraunX, trackVonBraun, vonBraunHasMoved;
 	float newHeight, newWidth;
@@ -347,7 +415,7 @@ public:
 	int framesWithoutAction;
 	int term_int;
 	int currentChapter;
-	int hay_que_load;
+	int loadedDifferentChapter;
 	char saveName[13];
 	int _color;
 	int musicStopped;
@@ -368,12 +436,9 @@ public:
 	void moveVonBraun();
 	void placeVonBraun(int pointX);
 	void hipo_sin_nadie(int counter);
-	void openDoor(int nflag, int doorNum);
+	void toggleDoor(int nflag, int doorNum, int action);
 	void showMap();
 
-	void setDarkPalette();
-
-	void withoutVerb();
 	void enterRoom(int);
 	void clearRoom();
 	void gotoObject(int, int);
@@ -399,6 +464,7 @@ public:
 	void fadeToBlack(int fadeSpeed);
 	signed char adjustToVGA(signed char value);
 	void color_abc(int cl);
+	bool textFitsCentered(char *text, int x);
 	void centerText(const char *,int,int);
 	void playSound(int soundNum);
 	bool animate(const char *animation, int FPS);
@@ -408,7 +474,7 @@ public:
 	void placeDrascula();
 
 	void talkInit(const char *filename);
-	bool isTalkFinished(int* length);
+	bool isTalkFinished();
 	void talk_igor(int, int);
 	void talk_drascula(int index, int talkerType = 0);
 	void talk_solo(const char *, const char *);
@@ -417,7 +483,7 @@ public:
 	void talk_bj_bed(int);
 	void talk_htel(int);
 	void talk_bj(int);
-	void talk_baul(int);
+	void talk_trunk(int);
 	void talk(int);
 	void talk(const char *, const char *);
 	void talk_sync(const char *, const char *, const char *);
@@ -425,9 +491,8 @@ public:
 	void talk_pianist(int);
 	void talk_werewolf(int);
 	void talk_mus(int);
-	void talk_dr_grande(int);
-	void talk_vonBraun(int);
-	void talk_vonBraunpuerta(int);
+	void talk_drascula_big(int);
+	void talk_vonBraun(int, int);
 	void talk_blind(int);
 	void talk_hacker(int);
 	void talk_generic(const char* said, const char* filename, int* faces, int faceCount, int* coords, byte* surface);
@@ -435,18 +500,14 @@ public:
 	void hiccup(int);
 	void finishSound();
 	void stopSound();
-	void closeDoor(int nflag, int doorNum);
 	void playMusic(int p);
 	void stopMusic();
+	void updateMusic();
 	int musicStatus();
 	void updateRoom();
 	bool loadGame(const char *);
 	void updateDoor(int);
-	void setDefaultPalette();
 	void setPaletteBase(int darkness);
-	void assignBrightPalette();
-	void assignDarkPalette();
-	void setBrightPalette();
 	void updateVisible();
 	void startWalking();
 	void updateRefresh();
@@ -458,7 +519,10 @@ public:
 	bool exitRoom(int);
 	bool pickupObject();
 	bool checkAction(int);
-	void setCursorTable();
+	void setCursor(int cursor);
+	void showCursor();
+	void hideCursor();
+	bool isCursorVisible();
 	void enterName();
 	bool soundIsActive();
 	void waitFrameSSN();
@@ -490,8 +554,11 @@ public:
 	bool checkMenuFlags();
 	void setupRoomsTable();
 	bool roomParse(int, int);
+	void cleanupString(char *string);
+	void playTalkSequence(int sequence);
+	void doTalkSequenceCommand(TalkSequenceCommand cmd);
 	void converse(int);
-	void print_abc_opc(const char *, int, int, int);
+	void print_abc_opc(const char *, int, int);
 	void response(int);
 	void activatePendulum();
 
@@ -551,28 +618,17 @@ public:
 	void animation_3_1();
 	void animation_4_1();
 	//
-	void animation_1_2();
 	void animation_2_2();
-	void animation_3_2();
 	void animation_4_2();
 	void animation_5_2();
 	void animation_6_2();
 	void animation_7_2();
-	void animation_8_2();
-	void animation_9_2();
-	void animation_10_2();
 	void animation_11_2();
 	void animation_12_2();
 	void animation_13_2();
 	void animation_14_2();
-	void animation_15_2();
 	void animation_16_2();
-	void animation_17_2();
-	void animation_18_2();
-	void animation_19_2();
 	void animation_20_2();
-	void animation_21_2();
-	void animation_22_2();
 	void animation_23_2();
 	void animation_23_joined();
 	void animation_23_joined2();
@@ -580,9 +636,7 @@ public:
 	void animation_25_2();
 	void animation_26_2();
 	void animation_27_2();
-	void animation_28_2();
 	void animation_29_2();
-	void animation_30_2();
 	void animation_31_2();
 	void animation_32_2();
 	void animation_33_2();
@@ -590,7 +644,6 @@ public:
 	void animation_35_2();
 	void animation_36_2();
 	//
-	void animation_1_3();
 	void animation_2_3();
 	void animation_3_3();
 	void animation_4_3();
@@ -599,48 +652,22 @@ public:
 	void animation_ray();
 	//
 	void animation_1_4();
-	void animation_2_4();
-	void animation_3_4();
-	void animation_4_4();
 	void animation_5_4();
 	void animation_6_4();
 	void animation_7_4();
 	void animation_8_4();
-	void animation_9_4();
 	//
 	void animation_1_5();
-	void animation_2_5();
-	void animation_3_5();
-	void animation_4_5();
 	void animation_5_5();
-	void animation_6_5();
-	void animation_7_5();
-	void animation_8_5();
-	void animation_9_5();
-	void animation_10_5();
 	void animation_11_5();
 	void animation_12_5();
 	void animation_13_5();
 	void animation_14_5();
-	void animation_15_5();
-	void animation_16_5();
-	void animation_17_5();
 	//
 	void animation_1_6();
-	void animation_2_6();
-	void animation_3_6();
-	void animation_4_6();
 	void animation_5_6();
 	void animation_6_6();
-	void animation_7_6();
 	void animation_9_6();
-	void animation_10_6();
-	void animation_11_6();
-	void animation_12_6();
-	void animation_13_6();
-	void animation_14_6();
-	void animation_15_6();
-	void animation_18_6();
 	void animation_19_6();
 
 	void update_1_pre();
@@ -683,23 +710,24 @@ private:
 	int _roomPreUpdatesSize;
 	int _roomUpdatesSize;
 	int _roomActionsSize;
+	int _talkSequencesSize;
 	int _numLangs;
 
-	char ***_text;
-	char ***_textd;
-	char ***_textb;
-	char ***_textbj;
-	char ***_texte;
-	char ***_texti;
-	char ***_textl;
-	char ***_textp;
-	char ***_textt;
-	char ***_textvb;
-	char ***_textsys;
-	char ***_texthis;
-	char ***_textverbs;
-	char ***_textmisc;
-	char ***_textd1;
+	char **_text;
+	char **_textd;
+	char **_textb;
+	char **_textbj;
+	char **_texte;
+	char **_texti;
+	char **_textl;
+	char **_textp;
+	char **_textt;
+	char **_textvb;
+	char **_textsys;
+	char **_texthis;
+	char **_textverbs;
+	char **_textmisc;
+	char **_textd1;
 	ItemLocation *_itemLocations;
 	int *_polX, *_polY;
 	int *_verbBarX;
@@ -709,9 +737,10 @@ private:
 	int *_pianistX, *_drunkX;
 	RoomUpdate *_roomPreUpdates, *_roomUpdates;
 	RoomTalkAction *_roomActions;
+	TalkSequenceCommand *_talkSequences;
 
-	char ***loadTexts(Common::File &in);
-	void freeTexts(char ***ptr);
+	char **loadTexts(Common::File &in);
+	void freeTexts(char **ptr);
 };
 
 } // End of namespace Drascula

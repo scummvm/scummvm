@@ -86,13 +86,12 @@ struct filesData2Struct {
 	int16 field_2;
 };
 
-struct fileName {
+struct dataFileName {
 	char name[13];
 };
 
 struct setHeaderEntry {
-	int16 field_0;		// offset ptr part 1
-	int16 field_2;		// offset ptr part 2
+	int32 field_0;		// offset ptr
 	int16 width;
 	int16 height;
 	int16 type;		// resource type, ie. sprites 0,1,4,5 and 8
@@ -103,7 +102,7 @@ struct setHeaderEntry {
 
 struct volumeDataStruct {
 	char ident[10];
-	fileName *ptr;
+	dataFileName *ptr;
 	int16 diskNumber;
 	int32 size;
 };

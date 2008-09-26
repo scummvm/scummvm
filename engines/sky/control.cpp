@@ -238,13 +238,17 @@ void Control::removePanel(void) {
 	free(_sprites.slide2);			free(_sprites.slode);
 	free(_sprites.slode2);			free(_sprites.musicBodge);
 	delete _controlPanel;			delete _exitButton;
-	delete _slide;					delete _slide2;
-	delete _slode;					delete _restorePanButton;
+	delete _slide;				delete _slide2;
+	delete _slode;				delete _restorePanButton;
+	delete _savePanel;			delete _saveButton;
+	delete _downFastButton;			delete _downSlowButton;
+	delete _upFastButton;			delete _upSlowButton;
+	delete _quitButton;			delete _autoSaveButton;
 	delete _savePanButton;			delete _dosPanButton;
 	delete _restartPanButton;		delete _fxPanButton;
 	delete _musicPanButton;			delete _bodge;
-	delete _yesNo;					delete _text;
-	delete _statusBar;				delete _restoreButton;
+	delete _yesNo;				delete _text;
+	delete _statusBar;			delete _restoreButton;
 
 	if (_textSprite) {
 		free(_textSprite);
@@ -492,7 +496,7 @@ void Control::doControlPanel(void) {
 	_curButtonText = 0;
 	uint16 clickRes = 0;
 
-	while (!quitPanel && !SkyEngine::_systemVars.quitGame) {
+	while (!quitPanel && !g_engine->quit()) {
 		_text->drawToScreen(WITH_MASK);
 		_system->updateScreen();
 		_mouseClicked = false;
@@ -524,7 +528,7 @@ void Control::doControlPanel(void) {
 	}
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
-	if (!SkyEngine::_systemVars.quitGame)
+	if (!g_engine->quit())
 		_system->updateScreen();
 	_skyScreen->forceRefresh();
 	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
@@ -603,7 +607,7 @@ uint16 Control::handleClick(ConResource *pButton) {
 	case QUIT_TO_DOS:
 		animClick(pButton);
 		if (getYesNo(quitDos))
-			SkyEngine::_systemVars.quitGame = true;
+			g_engine->quitGame();
 		return 0;
 	default:
 		error("Control::handleClick: unknown routine: %X",pButton->_onClick);
@@ -875,7 +879,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 	bool refreshNames = true;
 	bool refreshAll = true;
 	uint16 clickRes = 0;
-	while (!quitPanel && !SkyEngine::_systemVars.quitGame) {
+	while (!quitPanel && !g_engine->quit()) {
 		clickRes = 0;
 		if (refreshNames || refreshAll) {
 			if (refreshAll) {
@@ -986,7 +990,7 @@ void Control::handleKeyPress(Common::KeyState kbd, Common::String &textBuf) {
 	if (kbd.keycode == Common::KEYCODE_BACKSPACE) { // backspace
 		if (textBuf.size() > 0)
 			textBuf.deleteLastChar();
-	} else {
+	} else if (kbd.ascii) {
 		// Cannot enter text wider than the save/load panel
 		if (_enteredTextWidth >= PAN_LINE_WIDTH - 10)
 			return;
@@ -1545,9 +1549,6 @@ void Control::delay(unsigned int amount) {
 				break;
 			case Common::EVENT_WHEELDOWN:
 				_mouseWheel = 1;
-				break;
-			case Common::EVENT_QUIT:
-				SkyEngine::_systemVars.quitGame = true;
 				break;
 			default:
 				break;

@@ -73,7 +73,7 @@ public:
 	// Keyboard
 	int getSelection(SelectionTypes type);
 
-	int rnd(int hi) { return (_rnd->getRandomNumber(hi) + 1); }
+	int rnd(int hi) { return (_rnd->getRandomNumber(hi - 1) + 1); }
 
 	// Text
 	void drawStr(int row, int col, int attr, const char *buffer);

@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/savefile.h"
 
 #include "scumm/actor.h"
@@ -623,7 +622,7 @@ void ScummEngine_v60he::swapObjects(int object1, int object2) {
 }
 
 void ScummEngine_v60he::o60_actorOps() {
-	Actor *a;
+	ActorHE *a;
 	int i, j, k;
 	int args[8];
 
@@ -633,7 +632,7 @@ void ScummEngine_v60he::o60_actorOps() {
 		return;
 	}
 
-	a = derefActorSafe(_curActor, "o60_actorOps");
+	a = (ActorHE *)derefActorSafe(_curActor, "o60_actorOps");
 	if (!a)
 		return;
 

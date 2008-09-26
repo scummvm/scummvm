@@ -49,11 +49,10 @@ struct AnimHeader2Struct {
 	uint16 field_E;
 };
 
-AnimData animDataTable[NUM_MAX_ANIMDATA];
+Common::Array<AnimData> animDataTable;
 
 static const AnimDataEntry transparencyData[] = {
 	{"ALPHA", 0xF},
-	{"TITRE", 0xF},
 	{"TITRE2", 0xF},
 	{"ET", 0xC},
 	{"L311", 0x3},
@@ -511,14 +510,15 @@ int emptyAnimSpace(int start = 0) {
 
 /*! \brief Load SPL data into animDataTable
  * \param resourceName SPL filename
- * \param idx Target index in animDataTable
+ * \param idx Target index in animDataTable (-1 if any empty space will do)
+ * \return The number of the animDataTable entry after the loaded SPL data (-1 if error)
  */
-void loadSpl(const char *resourceName, int16 idx) {
+int loadSpl(const char *resourceName, int16 idx) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
 	int entry;
 
 	if (foundFileIdx < 0) {
-		return;
+		return -1;
 	}
 
 	byte *dataPtr = readBundleFile(foundFileIdx);
@@ -528,13 +528,20 @@ void loadSpl(const char *resourceName, int16 idx) {
 	animDataTable[entry].load(dataPtr, ANIM_RAW, partBuffer[foundFileIdx].unpackedSize, 1, foundFileIdx, 0, currentPartName);
 
 	free(dataPtr);
+	return entry + 1;
 }
 
 /*! \brief Load 1bpp mask
  * \param resourceName Mask filename
+ * \param idx Target index in animDataTable (-1 if any empty space will do)
+ * \return The number of the animDataTable entry after the loaded mask (-1 if error)
  */
-void loadMsk(const char *resourceName) {
+int loadMsk(const char *resourceName, int16 idx) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
+	if (foundFileIdx < 0) {
+		return -1;
+	}
+
 	int entry = 0;
 	byte *dataPtr = readBundleFile(foundFileIdx);
 	byte *ptr;
@@ -544,21 +551,28 @@ void loadMsk(const char *resourceName) {
 	loadAnimHeader(animHeader, readS);
 	ptr = dataPtr + 0x16;
 
+	entry = idx < 0 ? emptyAnimSpace() : idx;
+	assert(entry >= 0);
 	for (int16 i = 0; i < animHeader.numFrames; i++, entry++) {
-		entry = emptyAnimSpace(entry);
-		assert(entry >= 0);
 		animDataTable[entry].load(ptr, ANIM_MASK, animHeader.frameWidth, animHeader.frameHeight, foundFileIdx, i, currentPartName);
 		ptr += animHeader.frameWidth * animHeader.frameHeight;
 	}
 
 	free(dataPtr);
+	return entry;
 }
 
 /*! \brief Load animation
  * \param resourceName Animation filename
+ * \param idx Target index in animDataTable (-1 if any empty space will do)
+ * \return The number of the animDataTable entry after the loaded animation (-1 if error)
  */
-void loadAni(const char *resourceName) {
+int loadAni(const char *resourceName, int16 idx) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
+	if (foundFileIdx < 0) {
+		return -1;
+	}
+
 	int entry = 0;
 	byte *dataPtr = readBundleFile(foundFileIdx);
 	byte *ptr;
@@ -571,10 +585,18 @@ void loadAni(const char *resourceName) {
 
 	transparentColor = getAnimTransparentColor(resourceName);
 
-	for (int16 i = 0; i < animHeader.numFrames; i++, entry++) {
-		entry = emptyAnimSpace(entry);
-		assert(entry >= 0);
+	// TODO: Merge this special case hack into getAnimTransparentColor somehow.	
+	// HACK: Versions of TITRE.ANI with height 37 use color 0xF for transparency.
+	//       Versions of TITRE.ANI with height 57 use color 0x0 for transparency.
+	//       Fixes bug #2057619: FW: Glitches in title display of demo (regression).
+	if (scumm_stricmp(resourceName, "TITRE.ANI") == 0 && animHeader.frameHeight == 37) {
+		transparentColor = 0xF;
+	}
 
+	entry = idx < 0 ? emptyAnimSpace() : idx;
+	assert(entry >= 0);
+
+	for (int16 i = 0; i < animHeader.numFrames; i++, entry++) {
 		// special case transparency handling
 		if (!strcmp(resourceName, "L2202.ANI")) {
 			transparentColor = i < 2 ? 0 : 7;
@@ -587,6 +609,7 @@ void loadAni(const char *resourceName) {
 	}
 
 	free(dataPtr);
+	return entry;
 }
 
 /*! \brief Decode 16 color image with palette
@@ -642,15 +665,20 @@ void convert8BBP2(byte *dest, byte *source, int16 width, int16 height) {
 
 /*! \brief Load image set
  * \param resourceName Image set filename
- * \param idx Target index in animDataTable
+ * \param idx Target index in animDataTable (-1 if any empty space will do)
+ * \return The number of the animDataTable entry after the loaded image set (-1 if error)
  */
-void loadSet(const char *resourceName, int16 idx) {
+int loadSet(const char *resourceName, int16 idx) {
 	AnimHeader2Struct header2;
 	uint16 numSpriteInAnim;
 	int16 foundFileIdx = findFileInBundle(resourceName);
-	int16 entry = idx >= 0 ? idx : 0;
+	int16 entry;
 	byte *ptr, *startOfDataPtr, *dataPtr, *origDataPtr;
 	int type;
+
+	if (foundFileIdx < 0) {
+		return -1;
+	}
 
 	origDataPtr = dataPtr = readBundleFile(foundFileIdx);
 	assert(!memcmp(dataPtr, "SET", 3));
@@ -660,6 +688,9 @@ void loadSet(const char *resourceName, int16 idx) {
 	ptr += 2;
 
 	startOfDataPtr = ptr + numSpriteInAnim * 0x10;
+
+	entry = idx < 0 ? emptyAnimSpace() : idx;
+	assert(entry >= 0);
 
 	for (int16 i = 0; i < numSpriteInAnim; i++, entry++) {
 		Common::MemoryReadStream readS(ptr, 0x10);
@@ -673,9 +704,6 @@ void loadSet(const char *resourceName, int16 idx) {
 		header2.field_E = readS.readUint16BE();
 
 		ptr += 0x10;
-
-		entry = idx < 0 ? emptyAnimSpace(entry) : idx + i;
-		assert(entry >= 0);
 
 		dataPtr = startOfDataPtr + header2.field_0;
 
@@ -693,78 +721,59 @@ void loadSet(const char *resourceName, int16 idx) {
 	}
 
 	free(origDataPtr);
+	return entry;
 }
 
 /*! \brief Load SEQ data into animDataTable
  * \param resourceName SEQ data filename
- * \param idx Target index in animDataTable
+ * \param idx Target index in animDataTable (-1 if any empty space will do)
+ * \return The number of the animDataTable entry after the loaded SEQ data (-1 if error)
  */
-void loadSeq(const char *resourceName, int16 idx) {
+int loadSeq(const char *resourceName, int16 idx) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
+	if (foundFileIdx < 0) {
+		return -1;
+	}
+
 	byte *dataPtr = readBundleFile(foundFileIdx);
 	int entry = idx < 0 ? emptyAnimSpace() : idx;
 
 	animDataTable[entry].load(dataPtr+0x16, ANIM_RAW, partBuffer[foundFileIdx].unpackedSize-0x16, 1, foundFileIdx, 0, currentPartName);
 	free(dataPtr);
+	return entry + 1;
 }
 
-void loadResource(const char *resourceName) {
-	/* byte isMask = 0; */
-	/* byte isSpl = 0; */
-
-	if (strstr(resourceName, ".SPL")) {
-		loadSpl(resourceName, -1);
-		return;
-	} else if (strstr(resourceName, ".MSK")) {
-		loadMsk(resourceName);
-		return;
-	} else if (strstr(resourceName, ".ANI")) {
-		loadAni(resourceName);
-		return;
-	} else if (strstr(resourceName, ".ANM")) {
-		loadAni(resourceName);
-		return;
-	} else if (strstr(resourceName, ".SET")) {
-		loadSet(resourceName, -1);
-		return;
-	} else if (strstr(resourceName, ".SEQ")) {
-		loadSeq(resourceName, -1);
-		return;
-	} else if (strstr(resourceName, "ECHEC")) { // Echec (French) means failure
-		exitEngine = 1;
-		return;
-	}
-
-	error("loadResource: Cannot determine type for '%s'", resourceName);
-}
-
-/*! \todo There seems to be some additional resource file that is not loaded
+/*! \brief Load a resource into animDataTable
+ * \param resourceName Resource's filename
+ * \param idx Target index in animDataTable (-1 if any empty space will do)
+ * \return The number of the animDataTable entry after the loaded resource (-1 if error)
+ * \todo Implement loading of all resource types
  */
-void loadAbs(const char *resourceName, uint16 idx) {
-	/* byte isMask = 0; */
-	/* byte isSpl = 0; */
-
-	if (strstr(resourceName, ".SET")) {
-		loadSet(resourceName, idx);
-		return;
-	} else if (strstr(resourceName, ".H32")) {
-		warning("Ignoring file %s (load at %d)", resourceName, idx);
-		return;
-	} else if (strstr(resourceName, ".SEQ")) {
-		loadSeq(resourceName, idx);
-		return;
-	} else if (strstr(resourceName, ".SPL")) {
-		loadSpl(resourceName, idx);
-		return;
-	} else if (strstr(resourceName, ".AMI")) {
-		warning("Ignoring file %s (load at %d)", resourceName, idx);
-		return;
+int loadResource(const char *resourceName, int16 idx) {
+	int result = -1; // Return an error by default
+	if (strstr(resourceName, ".SPL")) {
+		result = loadSpl(resourceName, idx);
+	} else if (strstr(resourceName, ".MSK")) {
+		result = loadMsk(resourceName, idx);
 	} else if (strstr(resourceName, ".ANI")) {
-		warning("Ignoring file %s (load at %d)", resourceName, idx);
-		return;
+		result = loadAni(resourceName, idx);
+	} else if (strstr(resourceName, ".ANM")) {
+		result = loadAni(resourceName, idx);
+	} else if (strstr(resourceName, ".SET")) {
+		result = loadSet(resourceName, idx);
+	} else if (strstr(resourceName, ".SEQ")) {
+		result = loadSeq(resourceName, idx);
+	} else if (strstr(resourceName, ".H32")) {
+		warning("loadResource: Ignoring file '%s' (Load at %d)", resourceName, idx);
+	} else if (strstr(resourceName, ".AMI")) {
+		warning("loadResource: Ignoring file '%s' (Load at %d)", resourceName, idx);
+	} else if (strstr(resourceName, "ECHEC")) { // Echec (French) means failure
+		g_cine->quitGame();
+	} else {
+		error("loadResource: Cannot determine type for '%s'", resourceName);
 	}
 
-	error("loadAbs: Cannot determine type for '%s'", resourceName);
+	return result;
 }
 
 /*! \brief Load animDataTable from save
@@ -776,17 +785,9 @@ void loadAbs(const char *resourceName, uint16 idx) {
  * at a time.
  */
 void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGameFormat saveGameFormat) {
-	int16 currentAnim, foundFileIdx;
-	int8 isMask = 0, isSpl = 0;
-	byte *dataPtr, *ptr;
-	char *animName, part[256];
-	byte transparentColor = 0;
-	AnimHeaderStruct animHeader;
-
+	int16 currentAnim, foundFileIdx, frame;
+	char *animName, part[256], name[10];
 	uint16 width, height, bpp, var1;
-	int16  frame;
-	char name[10];
-	int type;
 
 	strcpy(part, currentPartName);
 
@@ -795,11 +796,8 @@ void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGam
 
 	const int entrySize = ((saveGameFormat == ANIMSIZE_23) ? 23 : 30);
 	const int fileStartPos = fHandle.pos();
-	for (currentAnim = 0; currentAnim < NUM_MAX_ANIMDATA; currentAnim += animHeader.numFrames) {
-		// Initialize the number of frames variable to a sane number.
-		// This is needed when using continue later in this function.
-		animHeader.numFrames = 1;
-
+	currentAnim = 0;
+	while (currentAnim < NUM_MAX_ANIMDATA) {
 		// Seek to the start of the current animation's entry
 		fHandle.seek(fileStartPos + currentAnim * entrySize);
 		// Read in the current animation entry
@@ -826,6 +824,7 @@ void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGam
 
 		// Don't try to load invalid entries.
 		if (foundFileIdx < 0 || !validPtr) {
+			currentAnim++; // Jump over the invalid entry
 			continue;
 		}
 
@@ -836,52 +835,10 @@ void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGam
 		}
 
 		animName = partBuffer[foundFileIdx].partName;
-		ptr = dataPtr = readBundleFile(foundFileIdx);
-
-		// isSpl and isMask are mutually exclusive cases
-		isSpl  = (strstr(animName, ".SPL")) ? 1 : 0;
-		isMask = (strstr(animName, ".MSK")) ? 1 : 0;
-
-		if (isSpl) {
-			width = (uint16) partBuffer[foundFileIdx].unpackedSize;
-			height = 1;
-			animHeader.numFrames = 1;
-			type = ANIM_RAW;
-		} else {
-			Common::MemoryReadStream readS(ptr, 0x16);
-			loadAnimHeader(animHeader, readS);
-			ptr += 0x16;
-
-			width = animHeader.frameWidth;
-			height = animHeader.frameHeight;
-
-			if (isMask) {
-				type = ANIM_MASK;
-			} else {
-				type = ANIM_MASKSPRITE;
-			}
-		}
-
-		loadRelatedPalette(animName);
-		transparentColor = getAnimTransparentColor(animName);
-		// Make sure we load at least one frame and also that we
-		// don't overflow the animDataTable by writing beyond its end.
-		animHeader.numFrames = CLIP<uint16>(animHeader.numFrames, 1, NUM_MAX_ANIMDATA - currentAnim);
-
-		// Load the frames
-		for (frame = 0; frame < animHeader.numFrames; frame++) {
-			// special case transparency handling
-			if (!strcmp(animName, "L2202.ANI")) {
-				transparentColor = (frame < 2) ? 0 : 7;
-			} else if (!strcmp(animName, "L4601.ANI")) {
-				transparentColor = (frame < 1) ? 0xE : 0;
-			}
-
-			// Load a single frame
-			animDataTable[currentAnim + frame].load(ptr + frame * width * height, type, width, height, foundFileIdx, frame, name, transparentColor);
-		}
-
-		free(dataPtr);
+		loadRelatedPalette(animName); // Is this for Future Wars only?
+		const int16 prevAnim = currentAnim;
+		currentAnim = loadResource(animName, currentAnim);
+		assert(currentAnim > prevAnim); // Make sure we advance forward
 	}
 
 	loadPart(part);

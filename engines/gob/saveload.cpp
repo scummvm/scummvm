@@ -513,7 +513,7 @@ bool StagedSave::read() {
 		return false;
 	}
 
-	uint32 saveSize = getSize();
+	int32 saveSize = getSize();
 	if (in->size() != saveSize) {
 		warning("Wrong size (%d != %d)", in->size(), saveSize);
 		return false;

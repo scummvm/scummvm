@@ -263,7 +263,7 @@ int KyraEngine_MR::go() {
 		running = false;
 	}
 
-	while (running && !_quitFlag) {
+	while (running && !quit()) {
 		_screen->_curPage = 0;
 		_screen->clearPage(0);
 
@@ -272,14 +272,14 @@ int KyraEngine_MR::go() {
 		// XXX
 		playMenuAudioFile();
 
-		for (int i = 0; i < 64 && !_quitFlag; ++i) {
+		for (int i = 0; i < 64 && !quit(); ++i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
 			_menuAnim->displayFrame(i, 0);
 			_screen->updateScreen();
 			delayUntil(nextRun);
 		}
 
-		for (int i = 64; i > 29 && !_quitFlag; --i) {
+		for (int i = 64; i > 29 && !quit(); --i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
 			_menuAnim->displayFrame(i, 0);
 			_screen->updateScreen();
@@ -508,7 +508,8 @@ void KyraEngine_MR::snd_playVoiceFile(int file) {
 	char filename[16];
 	snprintf(filename, 16, "%.08u", (uint)file);
 
-	_voiceSoundChannel = _soundDigital->playSound(filename, 0xFE, Audio::Mixer::kSpeechSoundType, 255);
+	if (speechEnabled())
+		_voiceSoundChannel = _soundDigital->playSound(filename, 0xFE, Audio::Mixer::kSpeechSoundType, 255);
 }
 
 bool KyraEngine_MR::snd_voiceIsPlaying() {
@@ -683,7 +684,7 @@ void KyraEngine_MR::startup() {
 	assert(_invWsa);
 	_invWsa->open("MOODOMTR.WSA", 1, 0);
 	_invWsaFrame = 6;
-	saveGame(getSavegameFilename(0), (const char*)getTableEntry(_optionsFile, 33));
+	saveGame(getSavegameFilename(0), "New Game", 0);
 	_soundDigital->beginFadeOut(_musicSoundChannel, 60);
 	delayWithTicks(60);
 	if (_gameToLoad == -1)
@@ -802,7 +803,12 @@ void KyraEngine_MR::openTalkFile(int file) {
 	}
 
 	_currentTalkFile = file;
-	_res->loadPakFile(talkFilename);
+	if (!_res->loadPakFile(talkFilename)) {
+		if (speechEnabled()) {
+			warning("Couldn't load file '%s' falling back to text only mode", talkFilename);
+			_configVoice = 0;
+		}
+	}
 }
 
 #pragma mark -
@@ -995,14 +1001,19 @@ void KyraEngine_MR::runLoop() {
 	_eventList.clear();
 
 	_runFlag = true;
-	while (_runFlag && !_quitFlag) {
+	while (_runFlag && !quit()) {
 		if (_deathHandler >= 0) {
 			removeHandItem();
 			delay(5);
 			_drawNoShapeFlag = 0;
 			_gui->optionsButton(0);
 			_deathHandler = -1;
+
+			if (quit())
+				break;
 		}
+
+		checkAutosave();
 		
 		if (_system->getMillis() >= _nextIdleAnim)
 			showIdleAnim();

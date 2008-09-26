@@ -79,13 +79,13 @@ const int PCSoundDriver::_noteTable[] = {
 const int PCSoundDriver::_noteTableCount = ARRAYSIZE(_noteTable);
 
 struct AdlibRegisterSoundInstrument {
-	uint16 vibrato;
-	uint16 attackDecay;
-	uint16 sustainRelease;
-	uint16 feedbackStrength;
-	uint16 keyScaling;
-	uint16 outputLevel;
-	uint16 freqMod;
+	uint8 vibrato;
+	uint8 attackDecay;
+	uint8 sustainRelease;
+	uint8 feedbackStrength;
+	uint8 keyScaling;
+	uint8 outputLevel;
+	uint8 freqMod;
 };
 
 struct AdlibSoundInstrument {
@@ -604,6 +604,7 @@ bool PCSoundFxPlayer::load(const char *song) {
 		_instrumentsData[i] = NULL;
 
 		char instrument[64];
+		memset(instrument, 0, 64); // Clear the data first
 		memcpy(instrument, _sfxData + 20 + i * 30, 12);
 		instrument[63] = '\0';
 

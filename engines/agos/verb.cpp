@@ -343,6 +343,9 @@ void AGOSEngine::handleVerbClicked(uint verb) {
 	Subroutine *sub;
 	int result;
 
+	if (quit())
+		return;
+
 	_objectItem = _hitAreaObjectItem;
 	if (_objectItem == _dummyItem2) {
 		_objectItem = me();

@@ -26,6 +26,8 @@
 #ifndef KYRA_VQA_H
 #define KYRA_VQA_H
 
+#include "common/stream.h"
+
 class OSystem;
 
 namespace Kyra {
@@ -98,7 +100,7 @@ protected:
 
 	void displayFrame(uint frameNum);
 
-	Common::File _file;
+	Common::SeekableReadStream *_file;
 
 	VQAHeader _header;
 	uint32 *_frameInfo;

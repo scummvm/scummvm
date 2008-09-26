@@ -579,6 +579,9 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 				_vm->_events->queue(&event);
 			}
 			return;
+		} else {
+			anim->currentFrame = 0;
+			anim->completed = 0;
 		}
 	}
 
@@ -866,7 +869,7 @@ int Anim::fillFrameOffsets(AnimationData *anim, bool reallyFill) {
 
 	readS._bigEndian = !_vm->isBigEndian(); // RLE has inversion BE<>LE
 
-	while (!readS.eos()) {
+	while (readS.pos() != readS.size()) {
 		if (reallyFill) {
 			anim->frameOffsets[currentFrame] = readS.pos();
 

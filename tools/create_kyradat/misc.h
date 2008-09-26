@@ -363,6 +363,7 @@ const int kyra2CDFile1EngNeed[] = {
 	k2SeqplayCreditsSpecial,
 	k2SeqplayStrings,
 	k2SeqplaySfxFiles,
+	k2SeqplayTlkFiles,
 	k2SeqplaySeqData,
 	k2SeqplayIntroTracks,
 	k2SeqplayFinaleTracks,
@@ -371,11 +372,19 @@ const int kyra2CDFile1EngNeed[] = {
 
 const int kyra2CDFile1FreNeed[] = {
 	k2SeqplayStrings,
+	k2SeqplayTlkFiles,
 	-1
 };
 
 const int kyra2CDFile1GerNeed[] = {
 	k2SeqplayStrings,
+	k2SeqplayTlkFiles,
+	-1
+};
+
+const int kyra2CDFile1ItaNeed[] = {
+	k2SeqplayStrings,
+	k2SeqplayTlkFiles,
 	-1
 };
 
@@ -472,6 +481,15 @@ const int kyra3Need[] = {
 	-1
 };
 
+const int lolDemoNeed[] = {
+	k2SeqplayPakFiles,
+	k2SeqplayStrings,
+	k2SeqplaySeqData,
+	k2SeqplaySfxFiles,
+	lSeqplayIntroTracks,
+	-1
+};
+
 const GameNeed gameNeedTable[] = {
 	{ kKyra1, -1, kyra1FloppyNeed },
 	{ kKyra1, kTalkieVersion, kyra1CDNeed },
@@ -485,6 +503,7 @@ const GameNeed gameNeedTable[] = {
 	{ kKyra2, k2CDFile1E, kyra2CDFile1EngNeed },
 	{ kKyra2, k2CDFile1F, kyra2CDFile1FreNeed },
 	{ kKyra2, k2CDFile1G, kyra2CDFile1GerNeed },
+	{ kKyra2, k2CDFile1I, kyra2CDFile1ItaNeed }, // Italian fan translation
 	{ kKyra2, k2CDFile2E, kyra2CDFile2EngNeed },
 	{ kKyra2, k2CDFile2F, kyra2CDFile2FreNeed },
 	{ kKyra2, k2CDFile2G, kyra2CDFile2GerNeed },
@@ -496,6 +515,7 @@ const GameNeed gameNeedTable[] = {
 	{ kKyra2, k2DemoVersionTlkE, kyra2TlkDemoNeed},
 	{ kKyra2, k2DemoVersionTlkF, kyra2TlkDemoNeed},
 	{ kKyra2, k2DemoVersionTlkG, kyra2TlkDemoNeed},
+	{ kLol, k2DemoLol, lolDemoNeed},
 
 	{ kKyra3, -1, kyra3Need },
 
@@ -512,14 +532,17 @@ const SpecialExtension specialTable[] = {
 	{ k2CDFile1E, "CD" },
 	{ k2CDFile1F, "CD" },
 	{ k2CDFile1G, "CD" },
+	{ k2CDFile1I, "CD" },
 	{ k2CDFile2E, "CD" },
 	{ k2CDFile2F, "CD" },
 	{ k2CDFile2G, "CD" },
+	
 	{ k2TownsFile1E, "TNS" },
 	{ k2TownsFile1J, "TNS" },
 	{ k2TownsFile2E, "TNS" },
 	{ k2TownsFile2J, "TNS" },
 	{ k2DemoVersion, "DEM" },
+	{ k2DemoLol, "DEM" },	
 
 	{ -1, 0 }
 };

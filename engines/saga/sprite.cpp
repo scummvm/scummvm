@@ -74,9 +74,11 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 Sprite::~Sprite(void) {
 	debug(8, "Shutting down sprite subsystem...");
 	_mainSprites.freeMem();
-	_inventorySprites.freeMem();
-	_arrowSprites.freeMem();
-	_saveReminderSprites.freeMem();
+	if (_vm->getGameType() == GType_IHNM) {
+		_inventorySprites.freeMem();
+		_arrowSprites.freeMem();
+		_saveReminderSprites.freeMem();
+	}
 	free(_decodeBuf);
 }
 
@@ -410,6 +412,8 @@ void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t ou
 
 	while (!readS.eos() && (outPointer < outPointerEnd)) {
 		bg_runcount = readS.readByte();
+		if (readS.eos())
+			break;
 		fg_runcount = readS.readByte();
 
 		for (c = 0; c < bg_runcount && !readS.eos(); c++) {
@@ -422,6 +426,8 @@ void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t ou
 
 		for (c = 0; c < fg_runcount && !readS.eos(); c++) {
 			*outPointer = readS.readByte();
+			if (readS.eos())
+				break;
 			if (outPointer < outPointerEnd)
 				outPointer++;
 			else

@@ -47,7 +47,7 @@ struct EMCData {
 };
 
 struct EMCState {
-	uint16 *ip;
+	const uint16 *ip;
 	const EMCData *dataPtr;
 	int16 retValue;
 	uint16 bp;

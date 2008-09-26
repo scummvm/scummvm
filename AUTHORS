@@ -6,6 +6,11 @@ ScummVM Team
      Max Horn             
      Eugene Sandulenko    
 
+  Retired Project Leaders
+  -----------------------
+     Vincent Hamm          - ScummVM co-founder, Original Cruise/CinE author
+     Ludvig Strigeus       - Original ScummVM and SimonVM author
+
   Engine Teams
   ------------
     SCUMM:
@@ -134,7 +139,6 @@ ScummVM Team
        Kostas Nakos         
 
     PlayStation 2:
-       Robert Goeffringmann 
        Max Lingua           
 
     PSP (PlayStation Portable):
@@ -163,9 +167,12 @@ ScummVM Team
        Johannes Schickel    
 
     Miscellaneous:
-       David Corrales-Lopez  - Filesystem access improvements
+       David Corrales-Lopez  - Filesystem access improvements (GSoC 2007
+                               task)
        Jerome Fisher         - MT-32 emulator
        Jochen Hoenicke       - Speaker & PCjr sound support, Adlib work
+       Chris Page            - Return to launcher, savestate improvements,
+                               leak fixes, ... (GSoC 2008 task)
        Robin Watts           - ARM assembly routines for nice speedups on
                                several ports; improvements to the sound mixer
 
@@ -184,13 +191,14 @@ ScummVM Team
      Nicolas Bacca         - Former WinCE porter
      Ralph Brorsen         - Help with GUI implementation
      Jamieson Christian    - iMUSE, MIDI, all things musical
+     Hans-Jorg Frieden     - Former AmigaOS 4 packager
+     Robert Goeffringmann  - Original PS2 porter
      Ruediger Hanke        - Port: MorphOS
-     Vincent Hamm          - ScummVM co-founder, Original Cruise/CinE author
      Felix Jakschitsch     - Zak256 reverse engineering
      Mutwin Kraus          - Original MacOS porter
      Peter Moraliyski      - Port: GP32
+     Juha Niemimaki        - Formaer AmigaOS 4 packager
      Jeremy Newman         - Former webmaster
-     Ludvig Strigeus       - Original ScummVM and SimonVM author
      Lionel Ulmer          - Port: X11
      Won Star              - Former GP32 porter
 
@@ -199,9 +207,7 @@ Other contributions
   Packages
   --------
     AmigaOS 4:
-       Hans-Jorg Frieden    
        Hubert Maier         
-       Juha Niemimaki       
 
     Atari/FreeMiNT:
        Keith Scroggins      
@@ -260,6 +266,7 @@ Other contributions
      Stuart Caie           - Decoders for Simon 1 Amiga data files
      Paolo Costabel        - PSP port contributions
      Thierry Crozat        - Support for Broken Sword 1 Macintosh version
+     Martin Doucha         - CinE engine objectification
      Thomas Fach-Pedersen  - ProTracker module player
      Benjamin Haisch       - Heavily improved de-/encoder for DXA videos
      Janne Huttunen        - V3 actor mask support, Dig/FT SMUSH audio
@@ -289,15 +296,18 @@ Special thanks to
    Sander Buskens   - For his work on the initial reversing of Monkey2
    Canadacow        - For the original MT-32 emulator
    Kevin Carnes     - For Scumm16, the basis of ScummVM's older gfx codecs
+   Curt Coder       - For the original TrollVM (preAGI) code
    Patrick Combet   - For the original Gobliiins ADL player
    Ivan Dubrov      - For contributing the initial version of the Gobliiins
                       engine
+   Till Kresslein   - For design of modern ScummVM GUI
    Jezar            - For his freeverb filter implementation
    Jim Leiterman    - Various info on his FM-TOWNS/Marty SCUMM ports
    lloyd            - For deep tech details about C64 Zak & MM
    Sarien Team      - Original AGI engine code
    Jimmi Thogersen  - For ScummRev, and much obscure code/documentation
    Tristan          - For additional work on the original MT-32 emulator
+   James Woodcock   - Soundtrack enhancements
 
    Tony Warriner and everyone at Revolution Software Ltd. for sharing with us
    the source of some of their brilliant games, allowing us to release

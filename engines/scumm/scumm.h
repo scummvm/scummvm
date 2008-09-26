@@ -46,7 +46,7 @@ namespace GUI {
 using GUI::Dialog;
 namespace Common {
 	class SeekableReadStream;
-	class OutSaveFile;
+	class WriteStream;
 }
 
 namespace Scumm {
@@ -462,9 +462,9 @@ protected:
 	virtual void loadLanguageBundle() {}
 	void loadCJKFont();
 	void setupMusic(int midi);
-	void updateSoundSettings();
-	void setTalkspeed(int talkspeed);
-	int getTalkspeed();
+	virtual void syncSoundSettings();
+	void setTalkDelay(int talkdelay);
+	int getTalkDelay();
 
 	// Scumm main loop & helper functions.
 	virtual void scummLoop(int delta);
@@ -496,22 +496,18 @@ protected:
 public:
 	void pauseGame();
 	void restart();
-	void shutDown();
-
-	/** We keep running until this is set to true. */
-	bool _quit;
 
 protected:
 	Dialog *_pauseDialog;
 	Dialog *_versionDialog;
-	Dialog *_mainMenuDialog;
+	Dialog *_scummMenuDialog;
 
 	virtual int runDialog(Dialog &dialog);
 	void confirmExitDialog();
 	void confirmRestartDialog();
 	void pauseDialog();
 	void versionDialog();
-	void mainMenuDialog();
+	void scummMenuDialog();
 
 	char displayMessage(const char *altButton, const char *message, ...);
 
@@ -560,7 +556,7 @@ protected:
 public:
 	int _numLocalScripts, _numImages, _numRooms, _numScripts, _numSounds;	// Used by HE games
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
-	int _numCharsets;	// FIXME - should be protected, used by CharsetRenderer
+	int32 _numCharsets;	// FIXME - should be protected, used by CharsetRenderer
 
 	BaseCostumeLoader *_costumeLoader;
 	BaseCostumeRenderer *_costumeRenderer;
@@ -618,11 +614,16 @@ protected:
 	void saveLoadResource(Serializer *ser, int type, int index);	// "Obsolete"
 	void saveResource(Serializer *ser, int type, int index);
 	void loadResource(Serializer *ser, int type, int index);
-	void makeSavegameName(char *out, int slot, bool temporary);
+
+	Common::String makeSavegameName(int slot, bool temporary) const {
+		return makeSavegameName(_targetName, slot, temporary);		
+	}
 
 	int getKeyState(int key);
 
 public:
+	static Common::String makeSavegameName(const Common::String &target, int slot, bool temporary);
+
 	bool getSavegameName(int slot, Common::String &desc);
 	void listSavegames(bool *marks, int num);
 
@@ -631,14 +632,19 @@ public:
 
 // thumbnail + info stuff
 public:
-	Graphics::Surface *loadThumbnailFromSlot(int slot);
-	bool loadInfosFromSlot(int slot, InfoStuff *stuff);
+	Graphics::Surface *loadThumbnailFromSlot(int slot) {
+		return loadThumbnailFromSlot(_targetName.c_str(), slot);
+	}
+	static Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot);
+
+	bool loadInfosFromSlot(int slot, InfoStuff *stuff) {
+		return loadInfosFromSlot(_targetName.c_str(), slot, stuff);
+	}
+	static bool loadInfosFromSlot(const char *target, int slot, InfoStuff *stuff);
 
 protected:
-	Graphics::Surface *loadThumbnail(Common::SeekableReadStream *file);
-	bool loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff);
-	void saveThumbnail(Common::OutSaveFile *file);
-	void saveInfos(Common::OutSaveFile* file);
+	void saveInfos(Common::WriteStream* file);
+	static bool loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff);
 
 	int32 _engineStartTime;
 	int32 _pauseStartTime;
@@ -673,7 +679,7 @@ protected:
 	void executeScript();
 	void updateScriptPtr();
 	virtual void runInventoryScript(int i);
-	void inventoryScript();
+	void inventoryScriptIndy3Mac();
 	void checkAndRunSentenceScript();
 	void runExitScript();
 	void runEntryScript();
@@ -912,7 +918,7 @@ public:
 	// Generic costume code
 	bool isCostumeInUse(int i) const;
 
-	Common::Rect _actorClipOverride;
+	Common::Rect _actorClipOverride;	// HE specific
 
 protected:
 	/* Should be in Graphics class? */

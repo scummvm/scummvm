@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/he/animation_he.h"
@@ -395,42 +393,41 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	int a, b;
 
 	int subOp = fetchScriptByte();
-	subOp -= 46;
 
 	switch (subOp) {
-	case -14: // HE99+
+	case 32: // HE99+
 		_wizParams.processFlags |= kWPFUseDefImgWidth;
 		_wizParams.resDefImgW = pop();
 		break;
-	case -13: // HE99+
+	case 33: // HE99+
 		_wizParams.processFlags |= kWPFUseDefImgHeight;
 		_wizParams.resDefImgH = pop();
 		break;
-	case 0:
+	case 46:
 		// Dummy case
 		pop();
 		break;
-	case 1:
+	case 47:
 		_wizParams.box.bottom = pop();
 		_wizParams.box.right = pop();
 		_wizParams.box.top = pop();
 		_wizParams.box.left = pop();
 		break;
-	case 2:
+	case 48:
 		_wizParams.processMode = 1;
 		break;
-	case 3:
+	case 49:
 		_wizParams.processFlags |= kWPFUseFile;
 		_wizParams.processMode = 3;
 		copyScriptString(_wizParams.filename, sizeof(_wizParams.filename));
 		break;
-	case 4:
+	case 50:
 		_wizParams.processFlags |= kWPFUseFile;
 		_wizParams.processMode = 4;
 		copyScriptString(_wizParams.filename, sizeof(_wizParams.filename));
 		_wizParams.fileWriteMode = pop();
 		break;
-	case 5:
+	case 51:
 		_wizParams.processFlags |= kWPFClipBox | 0x100;
 		_wizParams.processMode = 2;
 		_wizParams.box.bottom = pop();
@@ -440,19 +437,19 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.compType = pop();
 		adjustRect(_wizParams.box);
 		break;
-	case 6:
+	case 52:
 		_wizParams.processFlags |= kWPFNewState;
 		_wizParams.img.state = pop();
 		break;
-	case 7:
+	case 53:
 		_wizParams.processFlags |= kWPFRotate;
 		_wizParams.angle = pop();
 		break;
-	case 8:
+	case 54:
 		_wizParams.processFlags |= kWPFNewFlags;
 		_wizParams.img.flags |= pop();
 		break;
-	case 10:
+	case 56:
 		_wizParams.img.flags = pop();
 		_wizParams.img.state = pop();
 		_wizParams.img.y1 = pop();
@@ -460,7 +457,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.img.resNum = pop();
 		_wiz->displayWizImage(&_wizParams.img);
 		break;
-	case 11:
+	case 57:
 		_wizParams.img.resNum = pop();
 		_wizParams.processMode = 0;
 		_wizParams.processFlags = 0;
@@ -471,18 +468,18 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.spriteId = 0;
 		_wizParams.spriteGroup = 0;
 		break;
-	case 16: // HE99+
+	case 62: // HE99+
 		_wizParams.processFlags |= kWPFMaskImg;
 		_wizParams.sourceImage = pop();
 		break;
-	case 19:
-	case 108:
+	case 65:
+	case 154:
 		_wizParams.processFlags |= kWPFSetPos;
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
 		break;
-	case 20:
-	case 203: // HE98+
+	case 66:
+	case 249: // HE98+
 		b = pop();
 		a = pop();
 		_wizParams.processFlags |= kWPFRemapPalette;
@@ -495,7 +492,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.remapColor[a] = b;
 		_wizParams.remapNum++;
 		break;
-	case 21:
+	case 67:
 		_wizParams.processFlags |= kWPFClipBox;
 		_wizParams.box.bottom = pop();
 		_wizParams.box.right = pop();
@@ -503,26 +500,26 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box.left = pop();
 		adjustRect(_wizParams.box);
 		break;
-	case 40: // HE99+
+	case 86: // HE99+
 		_wizParams.processFlags |= kWPFPaletteNum;
 		_wizParams.img.palette = pop();
 		break;
-	case 46:
+	case 92:
 		_wizParams.processFlags |= kWPFScaled;
 		_wizParams.scale = pop();
 		break;
-	case 52:
+	case 98:
 		_wizParams.processFlags |= kWPFShadow;
 		_wizParams.img.shadow = pop();
 		break;
-	case 85: // HE99+
+	case 131: // HE99+
 		_wizParams.processFlags |= 0x1000 | 0x100 | 0x2;
 		_wizParams.processMode = 7;
 		_wizParams.polygonId2 = pop();
 		_wizParams.polygonId1 = pop();
 		_wizParams.compType = pop();
 		break;
-	case 87: // HE99+
+	case 133: // HE99+
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
 		_wizParams.processMode = 9;
 		_wizParams.fillColor = pop();
@@ -531,7 +528,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box2.top = pop();
 		_wizParams.box2.left = pop();
 		break;
-	case 88: // HE99+
+	case 134: // HE99+
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
 		_wizParams.processMode = 10;
 		_wizParams.fillColor = pop();
@@ -540,33 +537,33 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box2.top = pop();
 		_wizParams.box2.left = pop();
 		break;
-	case 89: // HE99+
+	case 135: // HE99+
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
 		_wizParams.processMode = 11;
 		_wizParams.fillColor = pop();
 		_wizParams.box2.top = _wizParams.box2.bottom = pop();
 		_wizParams.box2.left = _wizParams.box2.right = pop();
 		break;
-	case 90: // HE99+
+	case 136: // HE99+
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
 		_wizParams.processMode = 12;
 		_wizParams.fillColor = pop();
 		_wizParams.box2.top = _wizParams.box2.bottom = pop();
 		_wizParams.box2.left = _wizParams.box2.right = pop();
 		break;
-	case 91: // HE99+
+	case 137: // HE99+
 		_wizParams.processFlags |= kWPFDstResNum;
 		_wizParams.dstResNum = pop();
 		break;
-	case 93: // HE99+
+	case 139: // HE99+
 		_wizParams.processFlags |= kWPFThickLine;
 		_wizParams.lineUnk1 = pop();
 		_wizParams.lineUnk2 = pop();
 		break;
-	case 95: // HE99+
+	case 141: // HE99+
 		_wizParams.processMode = 13;
 		break;
-	case 96: // HE99+
+	case 142: // HE99+
 		_wizParams.field_239D = pop();
 		_wizParams.field_2399 = pop();
 		_wizParams.field_23A5 = pop();
@@ -574,13 +571,13 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		copyScriptString(_wizParams.string2, sizeof(_wizParams.string2));
 		_wizParams.processMode = 15;
 		break;
-	case 97: // HE99+
+	case 143: // HE99+
 		_wizParams.processMode = 16;
 		_wizParams.field_23AD = pop();
 		_wizParams.field_23A9 = pop();
 		copyScriptString(_wizParams.string1, sizeof(_wizParams.string1));
 		break;
-	case 143: // HE99+
+	case 189: // HE99+
 		_wizParams.processMode = 17;
 		_wizParams.field_23CD = pop();
 		_wizParams.field_23C9 = pop();
@@ -591,18 +588,18 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.field_23B5 = pop();
 		_wizParams.field_23B1 = pop();
 		break;
-	case 150: // HE99+
+	case 196: // HE99+
 		_wizParams.processMode = 14;
 		break;
-	case 171: // HE99+
+	case 217: // HE99+
 		_wizParams.processMode = 8;
 		break;
-	case 200:
+	case 246:
 		_wizParams.processFlags |= kWPFNewFlags | kWPFSetPos | 2;
 		_wizParams.img.flags |= kWIFIsPolygon;
 		_wizParams.polygonId1 = _wizParams.img.y1 = _wizParams.img.x1 = pop();
 		break;
-	case 209:
+	case 255:
 		if (_wizParams.img.resNum)
 			_wiz->processWizImage(&_wizParams);
 		break;
@@ -724,10 +721,9 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	int32 x, y;
 
 	byte subOp = fetchScriptByte();
-	subOp -= 30;
 
 	switch (subOp) {
-	case 0:
+	case 30:
 		spriteId = pop();
 		if (spriteId) {
 			_sprite->getSpritePosition(spriteId, x, y);
@@ -736,7 +732,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			push(0);
 		}
 		break;
-	case 1:
+	case 31:
 		spriteId = pop();
 		if (spriteId) {
 			_sprite->getSpritePosition(spriteId, x, y);
@@ -745,7 +741,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			push(0);
 		}
 		break;
-	case 2:
+	case 32:
 		spriteId = pop();
 		if (spriteId) {
 			_sprite->getSpriteImageDim(spriteId, x, y);
@@ -754,7 +750,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			push(0);
 		}
 		break;
-	case 3:
+	case 33:
 		spriteId = pop();
 		if (spriteId) {
 			_sprite->getSpriteImageDim(spriteId, x, y);
@@ -763,7 +759,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			push(0);
 		}
 		break;
-	case 4:
+	case 34:
 		spriteId = pop();
 		if (spriteId) {
 			_sprite->getSpriteDist(spriteId, x, y);
@@ -772,7 +768,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			push(0);
 		}
 		break;
-	case 5:
+	case 35:
 		spriteId = pop();
 		if (spriteId) {
 			_sprite->getSpriteDist(spriteId, x, y);
@@ -781,35 +777,35 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			push(0);
 		}
 		break;
-	case 6:
+	case 36:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpriteImageStateCount(spriteId));
 		else
 			push(0);
 		break;
-	case 7:
+	case 37:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpriteGroup(spriteId));
 		else
 			push(0);
 		break;
-	case 8:
+	case 38:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpriteDisplayX(spriteId));
 		else
 			push(0);
 		break;
-	case 9:
+	case 39:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpriteDisplayY(spriteId));
 		else
 			push(0);
 		break;
-	case 12:
+	case 42:
 		flags = pop();
 		spriteId = pop();
 		if (spriteId) {
@@ -836,14 +832,14 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			push(0);
 		}
 		break;
-	case 13:
+	case 43:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpritePriority(spriteId));
 		else
 			push(0);
 		break;
-	case 15:
+	case 45:
 		if (_game.heversion == 99) {
 			flags = getStackList(args, ARRAYSIZE(args));
 			type = pop();
@@ -864,77 +860,77 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			push(_sprite->findSpriteWithClassOf(x, y, groupId, 0, 0, 0));
 		}
 		break;
-	case 22:
+	case 52:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpriteImageState(spriteId));
 		else
 			push(0);
 		break;
-	case 32:
+	case 62:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpriteSourceImage(spriteId));
 		else
 			push(0);
 		break;
-	case 33:
+	case 63:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpriteImage(spriteId));
 		else
 			push(0);
 		break;
-	case 38:
+	case 68:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpriteFlagEraseType(spriteId));
 		else
 			push(1);
 		break;
-	case 52:
+	case 82:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpriteFlagAutoAnim(spriteId));
 		else
 			push(0);
 		break;
-	case 56:
+	case 86:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpritePalette(spriteId));
 		else
 			push(0);
 		break;
-	case 62:
+	case 92:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpriteScale(spriteId));
 		else
 			push(0);
 		break;
-	case 67:
+	case 97:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpriteAnimSpeed(spriteId));
 		else
 			push(1);
 		break;
-	case 68:
+	case 98:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpriteShadow(spriteId));
 		else
 			push(0);
 		break;
-	case 94:
+	case 124:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpriteFlagUpdateType(spriteId));
 		else
 			push(0);
 		break;
-	case 95:
+	case 125:
 		flags = getStackList(args, ARRAYSIZE(args));
 		spriteId = pop();
 		if (spriteId) {
@@ -943,7 +939,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			push(0);
 		}
 		break;
-	case 109:
+	case 139:
 		flags = pop();
 		spriteId = pop();
 		if (spriteId)
@@ -951,14 +947,14 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		else
 			push(0);
 		break;
-	case 110:
+	case 140:
 		spriteId = pop();
 		if (spriteId)
 			push(_sprite->getSpriteMaskImage(spriteId));
 		else
 			push(0);
 		break;
-	case 168:
+	case 198:
 		pop();
 		spriteId = pop();
 		if (spriteId)
@@ -978,10 +974,9 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 	int n;
 
 	byte subOp = fetchScriptByte();
-	subOp -= 34;
 
 	switch (subOp) {
-	case 0:
+	case 34:
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -994,7 +989,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			_sprite->setSpriteDist(spriteId, args[0], tmp[1]);
 		}
 		break;
-	case 1:
+	case 35:
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1007,7 +1002,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			_sprite->setSpriteDist(spriteId, tmp[0], args[0]);
 		}
 		break;
-	case 3:
+	case 37:
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1018,7 +1013,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteGroup(spriteId, args[0]);
 		break;
-	case 8:
+	case 42:
 		args[1] = pop();
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
@@ -1048,7 +1043,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 				break;
 			}
 		break;
-	case 9:
+	case 43:
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1059,7 +1054,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpritePriority(spriteId, args[0]);
 		break;
-	case 10:
+	case 44:
 		args[1] = pop();
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
@@ -1071,7 +1066,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->moveSprite(spriteId, args[0], args[1]);
 		break;
-	case 18:
+	case 52:
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1082,7 +1077,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteImageState(spriteId, args[0]);
 		break;
-	case 19:
+	case 53:
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1093,7 +1088,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteAngle(spriteId, args[0]);
 		break;
-	case 23:
+	case 57:
 		if (_game.features & GF_HE_985 || _game.heversion >= 99) {
 			_curMaxSpriteId = pop();
 			_curSpriteId = pop();
@@ -1105,7 +1100,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			_curMaxSpriteId = _curSpriteId; // to make all functions happy
 		}
 		break;
-	case 28: // HE99+
+	case 62: // HE99+
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1116,7 +1111,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteSourceImage(spriteId, args[0]);
 		break;
-	case 29:
+	case 63:
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1127,7 +1122,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteImage(spriteId, args[0]);
 		break;
-	case 31:
+	case 65:
 		args[1] = pop();
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
@@ -1139,7 +1134,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpritePosition(spriteId, args[0], args[1]);
 		break;
-	case 34:
+	case 68:
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1150,7 +1145,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteFlagEraseType(spriteId, args[0]);
 		break;
-	case 43:
+	case 77:
 		args[1] = pop();
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
@@ -1162,7 +1157,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteDist(spriteId, args[0], args[1]);
 		break;
-	case 48:
+	case 82:
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1173,7 +1168,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteFlagAutoAnim(spriteId, args[0]);
 		break;
-	case 52: // HE 98+
+	case 86: // HE 98+
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1184,7 +1179,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpritePalette(spriteId, args[0]);
 		break;
-	case 58: // HE 99+
+	case 92: // HE 99+
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1195,7 +1190,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteScale(spriteId, args[0]);
 		break;
-	case 63: // HE 98+
+	case 97: // HE 98+
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1206,7 +1201,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteAnimSpeed(spriteId, args[0]);
 		break;
-	case 64:
+	case 98:
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1217,7 +1212,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteShadow(spriteId, args[0]);
 		break;
-	case 90:
+	case 124:
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1228,7 +1223,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteFlagUpdateType(spriteId, args[0]);
 		break;
-	case 91:
+	case 125:
 		n = getStackList(args, ARRAYSIZE(args));
 		if (_curSpriteId != 0 && _curMaxSpriteId != 0 && n != 0) {
 			int *p = &args[n - 1];
@@ -1251,7 +1246,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			} while (--n);
 		}
 		break;
-	case 105: // HE 99+
+	case 139: // HE 99+
 		args[1] = pop();
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
@@ -1263,7 +1258,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteGeneralProperty(spriteId, args[0], args[1]);
 		break;
-	case 106: // HE 99+
+	case 140: // HE 99+
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1274,10 +1269,10 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteMaskImage(spriteId, args[0]);
 		break;
-	case 124:
+	case 158:
 		_sprite->resetTables(true);
 		break;
-	case 164:
+	case 198:
 		args[1] = pop();
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
@@ -1289,7 +1284,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteUserValue(spriteId, args[0], args[1]);
 		break;
-	case 183:
+	case 217:
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
 		spriteId = _curSpriteId;
@@ -1389,10 +1384,9 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 	int type, value1, value2, value3, value4;
 
 	byte subOp = fetchScriptByte();
-	subOp -= 37;
 
 	switch (subOp) {
-	case 0:
+	case 37:
 		type = pop() - 1;
 		switch (type) {
 		case 0:
@@ -1455,7 +1449,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 			error("o90_setSpriteGroupInfo subOp 0: Unknown case %d", subOp);
 		}
 		break;
-	case 5:
+	case 42:
 		type = pop();
 		value1 = pop();
 		if (!_curSpriteGroupId)
@@ -1478,14 +1472,14 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 			error("o90_setSpriteGroupInfo subOp 5: Unknown case %d", subOp);
 		}
 		break;
-	case 6:
+	case 43:
 		value1 = pop();
 		if (!_curSpriteGroupId)
 			break;
 
 		_sprite->setGroupPriority(_curSpriteGroupId, value1);
 		break;
-	case 7:
+	case 44:
 		value2 = pop();
 		value1 = pop();
 		if (!_curSpriteGroupId)
@@ -1493,17 +1487,17 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 
 		_sprite->moveGroup(_curSpriteGroupId, value1, value2);
 		break;
-	case 20:
+	case 57:
 		_curSpriteGroupId = pop();
 		break;
-	case 26:
+	case 63:
 		value1 = pop();
 		if (!_curSpriteGroupId)
 			break;
 
 		_sprite->setGroupImage(_curSpriteGroupId, value1);
 		break;
-	case 28:
+	case 65:
 		value2 = pop();
 		value1 = pop();
 		if (!_curSpriteGroupId)
@@ -1511,7 +1505,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 
 		_sprite->setGroupPosition(_curSpriteGroupId, value1, value2);
 		break;
-	case 30:
+	case 67:
 		value4 = pop();
 		value3 = pop();
 		value2 = pop();
@@ -1521,13 +1515,13 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 
 		_sprite->setGroupBounds(_curSpriteGroupId, value1, value2, value3, value4);
 		break;
-	case 56:
+	case 93:
 		if (!_curSpriteGroupId)
 			break;
 
 		_sprite->resetGroupBounds(_curSpriteGroupId);
 		break;
-	case 180:
+	case 217:
 		if (!_curSpriteGroupId)
 			break;
 
@@ -1545,52 +1539,51 @@ void ScummEngine_v90he::o90_getWizData() {
 	int32 x, y;
 
 	byte subOp = fetchScriptByte();
-	subOp -= 30;
 
 	switch (subOp) {
-	case 0:
+	case 30:
 		state = pop();
 		resId = pop();
 		_wiz->getWizImageSpot(resId, state, x, y);
 		push(x);
 		break;
-	case 1:
+	case 31:
 		state = pop();
 		resId = pop();
 		_wiz->getWizImageSpot(resId, state, x, y);
 		push(y);
 		break;
-	case 2:
+	case 32:
 		state = pop();
 		resId = pop();
 		_wiz->getWizImageDim(resId, state, w, h);
 		push(w);
 		break;
-	case 3:
+	case 33:
 		state = pop();
 		resId = pop();
 		_wiz->getWizImageDim(resId, state, w, h);
 		push(h);
 		break;
-	case 6:
+	case 36:
 		resId = pop();
 		push(_wiz->getWizImageStates(resId));
 		break;
-	case 15:
+	case 45:
 		y = pop();
 		x = pop();
 		state = pop();
 		resId = pop();
 		push(_wiz->isWizPixelNonTransparent(resId, state, x, y, 0));
 		break;
-	case 36:
+	case 66:
 		y = pop();
 		x = pop();
 		state = pop();
 		resId = pop();
 		push(_wiz->getWizPixelColor(resId, state, x, y, 0));
 		break;
-	case 100:
+	case 130:
 		h = pop();
 		w = pop();
 		y = pop();
@@ -1604,12 +1597,12 @@ void ScummEngine_v90he::o90_getWizData() {
 		}
 		push(computeWizHistogram(resId, state, x, y, w, h));
 		break;
-	case 109:
+	case 139:
 		pop();
 		pop();
 		push(0);
 		break;
-	case 111:
+	case 141:
 		pop();
 		copyScriptString(filename, sizeof(filename));
 		pop();
@@ -1622,13 +1615,13 @@ void ScummEngine_v90he::o90_getWizData() {
 }
 
 void ScummEngine_v90he::o90_getActorData() {
-	Actor *a;
+	ActorHE *a;
 
 	int subOp = pop();
 	int val = pop();
 	int act = pop();
 
-	a = derefActor(act, "o90_getActorData");
+	a = (ActorHE *)derefActor(act, "o90_getActorData");
 
 	switch (subOp) {
 	case 1:
@@ -1730,30 +1723,29 @@ void ScummEngine_v90he::o90_videoOps() {
 void ScummEngine_v90he::o90_getVideoData() {
 	// Uses Smacker video
 	byte subOp = fetchScriptByte();
-	subOp -= 32;
 
 	switch (subOp) {
-	case 0:		// Get width
+	case 32:	// Get width
 		pop();
 		push(_moviePlay->getWidth());
 		break;
-	case 1:		// Get height
+	case 33:	// Get height
 		pop();
 		push(_moviePlay->getHeight());
 		break;
-	case 4:		// Get frame count
+	case 36:		// Get frame count
 		pop();
 		push(_moviePlay->getFrameCount());
 		break;
-	case 20:	// Get current frame
+	case 52:	// Get current frame
 		pop();
 		push(_moviePlay->getCurFrame());
 		break;
-	case 31:	// Get image number
+	case 63:	// Get image number
 		pop();
 		push(_moviePlay->getImageNum());
 		break;
-	case 107:	// Get statistics
+	case 139:	// Get statistics
 		debug(0, "o90_getVideoData: subOp 107 stub (%d, %d)", pop(), pop());
 		push(0);
 		break;
@@ -1764,33 +1756,32 @@ void ScummEngine_v90he::o90_getVideoData() {
 
 void ScummEngine_v90he::o90_floodFill() {
 	byte subOp = fetchScriptByte();
-	subOp -= 54;
 
 	switch (subOp) {
-	case 0:
+	case 54:
 		pop();
 		break;
-	case 3:
+	case 57:
 		memset(&_floodFillParams, 0, sizeof(_floodFillParams));
 		_floodFillParams.box.left = 0;
 		_floodFillParams.box.top = 0;
 		_floodFillParams.box.right = 639;
 		_floodFillParams.box.bottom = 479;
 		break;
-	case 11:
+	case 65:
 		_floodFillParams.y = pop();
 		_floodFillParams.x = pop();
 		break;
-	case 12:
+	case 66:
 		_floodFillParams.flags = pop();
 		break;
-	case 13:
+	case 67:
 		_floodFillParams.box.bottom = pop();
 		_floodFillParams.box.right = pop();
 		_floodFillParams.box.top = pop();
 		_floodFillParams.box.left = pop();
 		break;
-	case 201:
+	case 255:
 		floodFill(&_floodFillParams, this);
 		break;
 	default:
@@ -2336,47 +2327,46 @@ void ScummEngine_v90he::o90_sortArray() {
 
 void ScummEngine_v90he::o90_getObjectData() {
 	byte subOp = fetchScriptByte();
-	subOp -= 32;
 
 	switch (subOp) {
-	case 0:
+	case 32:
 		if (_heObjectNum == -1)
 			push(0);
 		else
 			push(_objs[_heObjectNum].width);
 		break;
-	case 1:
+	case 33:
 		if (_heObjectNum == -1)
 			push(0);
 		else
 			push(_objs[_heObjectNum].height);
 		break;
-	case 4:
+	case 36:
 		if (_heObjectNum == -1)
 			push(0);
 		else
 			push(getObjectImageCount(_heObject));
 		break;
-	case 6:
+	case 38:
 		if (_heObjectNum == -1)
 			push(0);
 		else
 			push(_objs[_heObjectNum].x_pos);
 		break;
-	case 7:
+	case 39:
 		if (_heObjectNum == -1)
 			push(0);
 		else
 			push(_objs[_heObjectNum].y_pos);
 		break;
-	case 20:
+	case 52:
 		push(getState(_heObject));
 		break;
-	case 25:
+	case 57:
 		_heObject = pop();
 		_heObjectNum = getObjectIndex(_heObject);
 		break;
-	case 107:
+	case 139:
 		// Dummy case
 		pop();
 		push(0);
@@ -2391,10 +2381,9 @@ void ScummEngine_v90he::o90_getPaletteData() {
 	int palSlot, color;
 
 	byte subOp = fetchScriptByte();
-	subOp -= 45;
 
 	switch (subOp) {
-	case 0:
+	case 45:
 		e = pop();
 		d = pop();
 		palSlot = pop();
@@ -2403,23 +2392,23 @@ void ScummEngine_v90he::o90_getPaletteData() {
 		b = pop();
 		push(getHEPaletteSimilarColor(palSlot, b, c, d, e));
 		break;
-	case 7:
+	case 52:
 		c = pop();
 		b = pop();
 		palSlot = pop();
 		push(getHEPaletteColorComponent(palSlot, b, c));
 		break;
-	case 21:
+	case 66:
 		color = pop();
 		palSlot = pop();
 		push(getHEPaletteColor(palSlot, color));
 		break;
-	case 87:
+	case 132:
 		c = pop();
 		b = pop();
 		push(getHEPaletteColorComponent(1, b, c));
 		break;
-	case 172:
+	case 217:
 		pop();
 		c = pop();
 		c = MAX(0, c);
@@ -2438,20 +2427,19 @@ void ScummEngine_v90he::o90_paletteOps() {
 	int a, b, c, d, e;
 
 	byte subOp = fetchScriptByte();
-	subOp -= 57;
 
 	switch (subOp) {
-	case 0:
+	case 57:
 		_hePaletteNum = pop();
 		break;
-	case 6:
+	case 63:
 		b = pop();
 		a = pop();
 		if (_hePaletteNum != 0) {
 			setHEPaletteFromImage(_hePaletteNum, a, b);
 		}
 		break;
-	case 9:
+	case 66:
 		e = pop();
 		d = pop();
 		c = pop();
@@ -2463,7 +2451,7 @@ void ScummEngine_v90he::o90_paletteOps() {
 			}
 		}
 		break;
-	case 13:
+	case 70:
 		c = pop();
 		b = pop();
 		a = pop();
@@ -2473,31 +2461,31 @@ void ScummEngine_v90he::o90_paletteOps() {
 			}
 		}
 		break;
-	case 19: //HE99+
+	case 76: //HE99+
 		a = pop();
 		if (_hePaletteNum != 0) {
 			setHEPaletteFromCostume(_hePaletteNum, a);
 		}
 		break;
-	case 29:
+	case 86:
 		a = pop();
 		if (_hePaletteNum != 0) {
 			copyHEPalette(_hePaletteNum, a);
 		}
 		break;
-	case 118:
+	case 175:
 		b = pop();
 		a = pop();
 		if (_hePaletteNum != 0) {
 			setHEPaletteFromRoom(_hePaletteNum, a, b);
 		}
 		break;
-	case 160:
+	case 217:
 		if (_hePaletteNum != 0) {
 			restoreHEPalette(_hePaletteNum);
 		}
 		break;
-	case 198:
+	case 255:
 		_hePaletteNum = 0;
 		break;
 	default:
@@ -2580,13 +2568,13 @@ void ScummEngine_v90he::o90_kernelGetFunctions() {
 void ScummEngine_v90he::o90_kernelSetFunctions() {
 	int args[29];
 	int num, tmp;
-	Actor *a;
+	ActorHE *a;
 
 	num = getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
 	case 20:
-		a = derefActor(args[1], "o90_kernelSetFunctions: 20");
+		a = (ActorHE *)derefActor(args[1], "o90_kernelSetFunctions: 20");
 		queueAuxBlock(a);
 		break;
 	case 21:
@@ -2628,7 +2616,7 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		// Remote start script function
 		break;
 	case 1969:
-		a = derefActor(args[1], "o90_kernelSetFunctions: 1969");
+		a = (ActorHE *)derefActor(args[1], "o90_kernelSetFunctions: 1969");
 		tmp = a->_heCondMask;
 		tmp ^= args[2];
 		tmp &= 0x7FFF0000;

@@ -26,6 +26,7 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "engines/engine.h"
 #include "graphics/cursorman.h"
 #include "gui/newgui.h"
 #include "gui/dialog.h"
@@ -73,9 +74,9 @@ void GuiObject::reflowLayout() {
 			error("Widget <%s> has x + w > %d (%d)", _name.c_str(), g_system->getOverlayWidth(), _x + _w);
 		if (_y < 0)
 			error("Widget <%s> has y < 0", _name.c_str());
-		if (_y >= g_system->getOverlayWidth())
+		if (_y >= g_system->getOverlayHeight())
 			error("Widget <%s> has y > %d", _name.c_str(), g_system->getOverlayHeight());
-		if (_y + _h > g_system->getOverlayWidth())
+		if (_y + _h > g_system->getOverlayHeight())
 			error("Widget <%s> has y + h > %d (%d)", _name.c_str(), g_system->getOverlayHeight(), _y + _h);
 	}
 }
@@ -256,7 +257,7 @@ void NewGui::runLoop() {
 		Common::Event event;
 
 		while (eventMan->pollEvent(event)) {
-			if (activeDialog != getTopDialog() && event.type != Common::EVENT_QUIT && event.type != Common::EVENT_SCREEN_CHANGED)
+			if (activeDialog != getTopDialog() && event.type != Common::EVENT_SCREEN_CHANGED)
 				continue;
 
 			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
@@ -314,7 +315,8 @@ void NewGui::runLoop() {
 				activeDialog->handleMouseWheel(mouse.x, mouse.y, 1);
 				break;
 			case Common::EVENT_QUIT:
-				_system->quit();
+				if (!g_engine)
+					_system->quit();
 				return;
 			case Common::EVENT_SCREEN_CHANGED:
 				screenChange();

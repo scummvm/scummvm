@@ -174,13 +174,15 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 	if (_vm->getGameID() != GID_RTZ)
 		maskp = (byte*)_maskDrawCtx.destSurface->getBasePtr(x, y);
 
-	int32 sourcePitch, linePtrAdd;
+	int32 sourcePitch, linePtrAdd, sourceAdd;
 	byte *linePtr;
 
 	if (flipX) {
 		linePtrAdd = -1;
+		sourceAdd = sourceSurface->w;
 	} else {
 		linePtrAdd = 1;
+		sourceAdd = 0;
 	}
 
 	if (flipY) {
@@ -191,11 +193,7 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 	}
 
 	for (int16 yc = 0; yc < clipHeight; yc++) {
-		if (flipX) {
-			linePtr = source + sourceSurface->w;
-		} else {
-			linePtr = source;
-		}
+		linePtr = source + sourceAdd;
 		for (int16 xc = 0; xc < clipWidth; xc++) {
 			if (*linePtr && (_vm->getGameID() == GID_RTZ || (mask == 0 || maskp[xc] == 0))) {
 				if (*linePtr)
@@ -688,7 +686,7 @@ void Screen::printText(const char *text) {
 	
 	for (int textPos = 0; textPos < textLen; textPos++) {
 	
-		uint c = ((byte*)text)[textPos];
+		uint c = ((const byte*)text)[textPos];
 		int charWidth = _font->getCharWidth(c);
 
 		if (c == 9) {
@@ -806,7 +804,12 @@ void Screen::showWorkScreen() {
 
 void Screen::updateScreenAndWait(int delay) {
 	_vm->_system->updateScreen();
-	_vm->_system->delayMillis(delay);
+	uint32 startTime = _vm->_system->getMillis();
+	while (_vm->_system->getMillis() < startTime + delay) {
+		_vm->handleEvents();
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(5);
+	}
 }
 
 int16 Screen::addToSpriteList(int16 index, int16 xofs, int16 yofs) {

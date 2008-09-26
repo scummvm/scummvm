@@ -141,8 +141,6 @@ public:
 	bool getSubtitles() { return _useSubtitles; }
 	void setSubtitles(bool b) { _useSubtitles = b; }
 
-	bool _quit;
-
 	uint32 _features;
 
 	MemoryManager *_memory;
@@ -210,7 +208,6 @@ public:
 
 	void startGame();
 	void gameCycle();
-	void closeGame();
 	void restartGame();
 
 	void sleepUntil(uint32 time);

@@ -39,7 +39,6 @@
 
 #include "scumm/smush/smush_player.h"
 #include "scumm/smush/smush_font.h"
-#include "scumm/smush/chunk.h"
 
 #include "scumm/insane/insane.h"
 
@@ -1310,33 +1309,25 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 	free (string);
 }
 
-void Insane::procSKIP(Chunk &b) {
+void Insane::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 	int16 par1, par2;
 	_player->_skipNext = false;
 
 	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
-		_player->checkBlock(b, MKID_BE('SKIP'), 2);
+		assert(subSize >= 2);
 		par1 = b.readUint16LE();
-		if (isBitSet(par1))
-			_player->_skipNext = true;
-		return;
+		par2 = 0;
+	} else {
+		assert(subSize >= 4);
+		par1 = b.readUint16LE();
+		par2 = b.readUint16LE();
 	}
-
-	_player->checkBlock(b, MKID_BE('SKIP'), 4);
-
-	par1 = b.readUint16LE();
-	par2 = b.readUint16LE();
-
 
 	if (!par2) {
 		if (isBitSet(par1))
 			_player->_skipNext = true;
-		return;
-	}
-
-	if (isBitSet(par1) != isBitSet(par2)) {
+	} else if (isBitSet(par1) != isBitSet(par2)) {
 		_player->_skipNext = true;
-		return;
 	}
 }
 

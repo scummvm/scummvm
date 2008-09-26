@@ -80,7 +80,7 @@ DECLARE_INSTRUCTION_OPCODE(off) {
 DECLARE_INSTRUCTION_OPCODE(loop) {
 	InstructionPtr inst = *_ctxt.inst;
 
-	_ctxt.program->_loopCounter = inst->_opB.getRValue();
+	_ctxt.program->_loopCounter = inst->_opB.getValue();
 	_ctxt.program->_loopStart = _ctxt.ip;
 }
 
@@ -93,7 +93,7 @@ DECLARE_INSTRUCTION_OPCODE(endloop) {
 
 DECLARE_INSTRUCTION_OPCODE(inc) {
 	InstructionPtr inst = *_ctxt.inst;
-	int16 _si = inst->_opB.getRValue();
+	int16 _si = inst->_opB.getValue();
 
 	if (inst->_flags & kInstMod) {	// mod
 		int16 _bx = (_si > 0 ? _si : -_si);
@@ -102,29 +102,22 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 		_si = (_si > 0 ?  1 : -1);
 	}
 
-	int16* lvalue = inst->_opA.getLValue();
+	int16 lvalue = inst->_opA.getValue();
 
 	if (inst->_index == INST_INC) {
-		*lvalue += _si;
+		lvalue += _si;
 	} else {
-		*lvalue -= _si;
+		lvalue -= _si;
 	}
 
-	if (inst->_opA._flags & kParaLocal) {
-		inst->_opA._local->wrap();
-	}
+	inst->_opA.setValue(lvalue);
 
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(set) {
 	InstructionPtr inst = *_ctxt.inst;
-
-	int16 _si = inst->_opB.getRValue();
-	int16 *lvalue = inst->_opA.getLValue();
-
-	*lvalue = _si;
-
+	inst->_opA.setValue(inst->_opB.getValue());
 }
 
 
@@ -133,10 +126,10 @@ DECLARE_INSTRUCTION_OPCODE(put) {
 	Graphics::Surface v18;
 	v18.w = inst->_a->width();
 	v18.h = inst->_a->height();
-	v18.pixels = inst->_a->getFrameData(inst->_a->_frame);
+	v18.pixels = inst->_a->getFrameData(inst->_a->getF());
 
-	int16 x = inst->_opA.getRValue();
-	int16 y = inst->_opB.getRValue();
+	int16 x = inst->_opA.getValue();
+	int16 y = inst->_opB.getValue();
 	bool mask = (inst->_flags & kInstMaskedPut) == kInstMaskedPut;
 
 	_vm->_gfx->patchBackground(v18, x, y, mask);
@@ -176,8 +169,8 @@ DECLARE_INSTRUCTION_OPCODE(sound) {
 DECLARE_INSTRUCTION_OPCODE(move) {
 	InstructionPtr inst = (*_ctxt.inst);
 
-	int16 x = inst->_opA.getRValue();
-	int16 y = inst->_opB.getRValue();
+	int16 x = inst->_opA.getValue();
+	int16 y = inst->_opB.getValue();
 
 	_vm->_char.scheduleWalk(x, y);
 }
@@ -203,7 +196,7 @@ DECLARE_COMMAND_OPCODE(invalid) {
 DECLARE_COMMAND_OPCODE(set) {
 	if (_ctxt.cmd->u._flags & kFlagsGlobal) {
 		_ctxt.cmd->u._flags &= ~kFlagsGlobal;
-		_commandFlags |= _ctxt.cmd->u._flags;
+		_globalFlags |= _ctxt.cmd->u._flags;
 	} else {
 		_vm->setLocationFlags(_ctxt.cmd->u._flags);
 	}
@@ -213,7 +206,7 @@ DECLARE_COMMAND_OPCODE(set) {
 DECLARE_COMMAND_OPCODE(clear) {
 	if (_ctxt.cmd->u._flags & kFlagsGlobal) {
 		_ctxt.cmd->u._flags &= ~kFlagsGlobal;
-		_commandFlags &= ~_ctxt.cmd->u._flags;
+		_globalFlags &= ~_ctxt.cmd->u._flags;
 	} else {
 		_vm->clearLocationFlags(_ctxt.cmd->u._flags);
 	}
@@ -246,48 +239,21 @@ DECLARE_COMMAND_OPCODE(location) {
 
 
 DECLARE_COMMAND_OPCODE(open) {
-	_ctxt.cmd->u._zone->_flags &= ~kFlagsClosed;
-	if (_ctxt.cmd->u._zone->u.door->gfxobj) {
-		_vm->updateDoor(_ctxt.cmd->u._zone);
-	}
+	_vm->updateDoor(_ctxt.cmd->u._zone, false);
 }
 
 
 DECLARE_COMMAND_OPCODE(close) {
-	_ctxt.cmd->u._zone->_flags |= kFlagsClosed;
-	if (_ctxt.cmd->u._zone->u.door->gfxobj) {
-		_vm->updateDoor(_ctxt.cmd->u._zone);
-	}
-}
-
-void CommandExec_ns::updateGetZone(ZonePtr z, bool visible) {
-	if (!z) {
-		return;
-	}
-
-	if ((z->_type & 0xFFFF) == kZoneGet) {
-		_vm->_gfx->showGfxObj(z->u.get->gfxobj, visible);
-	}
+	_vm->updateDoor(_ctxt.cmd->u._zone, true);
 }
 
 DECLARE_COMMAND_OPCODE(on) {
-	ZonePtr z = _ctxt.cmd->u._zone;
-
-	if (z) {
-		z->_flags &= ~kFlagsRemove;
-		z->_flags |= kFlagsActive;
-		updateGetZone(z, true);
-	}
+	_vm->showZone(_ctxt.cmd->u._zone, true);
 }
 
 
 DECLARE_COMMAND_OPCODE(off) {
-	ZonePtr z = _ctxt.cmd->u._zone;
-
-	if (z) {
-		_ctxt.cmd->u._zone->_flags |= kFlagsRemove;
-		updateGetZone(z, false);
-	}
+	_vm->showZone(_ctxt.cmd->u._zone, false);
 }
 
 
@@ -299,7 +265,7 @@ DECLARE_COMMAND_OPCODE(call) {
 DECLARE_COMMAND_OPCODE(toggle) {
 	if (_ctxt.cmd->u._flags & kFlagsGlobal) {
 		_ctxt.cmd->u._flags &= ~kFlagsGlobal;
-		_commandFlags ^= _ctxt.cmd->u._flags;
+		_globalFlags ^= _ctxt.cmd->u._flags;
 	} else {
 		_vm->toggleLocationFlags(_ctxt.cmd->u._flags);
 	}
@@ -312,7 +278,8 @@ DECLARE_COMMAND_OPCODE(drop){
 
 
 DECLARE_COMMAND_OPCODE(quit) {
-	_engineFlags |= kEngineQuit;
+	_vm->_quit = true;
+	_vm->quitGame();
 }
 
 
@@ -325,58 +292,6 @@ DECLARE_COMMAND_OPCODE(stop) {
 	_ctxt.cmd->u._zone->_flags &= ~kFlagsActing;
 }
 
-
-void Parallaction_ns::drawAnimations() {
-	debugC(9, kDebugExec, "Parallaction_ns::drawAnimations()\n");
-
-	uint16 layer = 0;
-
-	for (AnimationList::iterator it = _location._animations.begin(); it != _location._animations.end(); it++) {
-
-		AnimationPtr anim = *it;
-		GfxObj *obj = anim->gfxobj;
-
-		// Validation is performed here, so that every animation is affected, instead that only the ones
-		// who *own* a script. In fact, some scripts can change values in other animations.
-		// The right way to do this would be to enforce validation when any variable is modified from
-		// a script.
-		anim->validateScriptVars();
-
-		if ((anim->_flags & kFlagsActive) && ((anim->_flags & kFlagsRemove) == 0))   {
-
-			if (anim->_flags & kFlagsNoMasked)
-				layer = 3;
-			else
-				layer = _gfx->_backgroundInfo.getLayer(anim->_top + anim->height());
-
-			if (obj) {
-				_gfx->showGfxObj(obj, true);
-				obj->frame =  anim->_frame;
-				obj->x = anim->_left;
-				obj->y = anim->_top;
-				obj->z = anim->_z;
-				obj->layer = layer;
-			}
-		}
-
-		if (((anim->_flags & kFlagsActive) == 0) && (anim->_flags & kFlagsRemove))   {
-			anim->_flags &= ~kFlagsRemove;
-			anim->_oldPos.x = -1000;
-		}
-
-		if ((anim->_flags & kFlagsActive) && (anim->_flags & kFlagsRemove))	{
-			anim->_flags &= ~kFlagsActive;
-			anim->_flags |= kFlagsRemove;
-			if (obj) {
-				_gfx->showGfxObj(obj, false);
-			}
-		}
-	}
-
-	debugC(9, kDebugExec, "Parallaction_ns::drawAnimations done()\n");
-
-	return;
-}
 
 void ProgramExec::runScript(ProgramPtr script, AnimationPtr a) {
 	debugC(9, kDebugExec, "runScript(Animation = %s)", a->_name);
@@ -418,7 +333,7 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 		AnimationPtr a = (*it)->_anim;
 
 		if (a->_flags & kFlagsCharacter)
-			a->_z = a->_top + a->height();
+			a->setZ(a->getFrameY() + a->height());
 
 		if ((a->_flags & kFlagsActing) == 0)
 			continue;
@@ -426,7 +341,7 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 		runScript(*it, a);
 
 		if (a->_flags & kFlagsCharacter)
-			a->_z = a->_top + a->height();
+			a->setZ(a->getFrameY() + a->height());
 	}
 
 	_modCounter++;
@@ -442,13 +357,13 @@ void CommandExec::runList(CommandList::iterator first, CommandList::iterator las
 	_ctxt.suspend = false;
 
 	for ( ; first != last; first++) {
-		if (_engineFlags & kEngineQuit)
+		if (_vm->quit())
 			break;
 
 		CommandPtr cmd = *first;
 
 		if (cmd->_flagsOn & kFlagsGlobal) {
-			useFlags = _commandFlags | kFlagsGlobal;
+			useFlags = _globalFlags | kFlagsGlobal;
 			useLocalFlags = false;
 		} else {
 			useFlags = _vm->getLocationFlags();
@@ -531,239 +446,6 @@ CommandExec_ns::CommandExec_ns(Parallaction_ns* vm) : _vm(vm) {
 CommandExec_ns::~CommandExec_ns() {
 
 }
-
-//
-//	ZONE TYPE: EXAMINE
-//
-
-void Parallaction::enterCommentMode(ZonePtr z) {
-	if (!z) {
-		return;
-	}
-
-	_commentZone = z;
-
-	ExamineData *data = _commentZone->u.examine;
-
-	if (!data->_description) {
-		return;
-	}
-
-	// TODO: move this balloons stuff into DialogueManager and BalloonManager
-	if (getGameType() == GType_Nippon) {
-		int id;
-		if (data->_filename) {
-			if (data->_cnv == 0) {
-				data->_cnv = _disk->loadStatic(data->_filename);
-			}
-
-			_gfx->setHalfbriteMode(true);
-			_balloonMan->setSingleBalloon(data->_description, 0, 90, 0, 0);
-			Common::Rect r;
-			data->_cnv->getRect(0, r);
-			id = _gfx->setItem(data->_cnv, 140, (_screenHeight - r.height())/2);
-			_gfx->setItemFrame(id, 0);
-			id = _gfx->setItem(_char._head, 100, 152);
-			_gfx->setItemFrame(id, 0);
-		} else {
-			_balloonMan->setSingleBalloon(data->_description, 140, 10, 0, 0);
-			id = _gfx->setItem(_char._talk, 190, 80);
-			_gfx->setItemFrame(id, 0);
-		}
-	} else
-	if (getGameType() == GType_BRA) {
-		_balloonMan->setSingleBalloon(data->_description, 0, 0, 1, 0);
-		int id = _gfx->setItem(_char._talk, 10, 80);
-		_gfx->setItemFrame(id, 0);
-	}
-
-	_input->_inputMode = Input::kInputModeComment;
-}
-
-void Parallaction::exitCommentMode() {
-	_input->_inputMode = Input::kInputModeGame;
-
-	hideDialogueStuff();
-	_gfx->setHalfbriteMode(false);
-
-	_cmdExec->run(_commentZone->_commands, _commentZone);
-	_commentZone = nullZonePtr;
-}
-
-void Parallaction::runCommentFrame() {
-	if (_input->_inputMode != Input::kInputModeComment) {
-		return;
-	}
-
-	if (_input->getLastButtonEvent() == kMouseLeftUp) {
-		exitCommentMode();
-	}
-}
-
-
-uint16 Parallaction::runZone(ZonePtr z) {
-	debugC(3, kDebugExec, "runZone (%s)", z->_name);
-
-	uint16 subtype = z->_type & 0xFFFF;
-
-	debugC(3, kDebugExec, "type = %x, object = %x", subtype, (z->_type & 0xFFFF0000) >> 16);
-	switch(subtype) {
-
-	case kZoneExamine:
-		enterCommentMode(z);
-		return 0;
-
-	case kZoneGet:
-		if (z->_flags & kFlagsFixed) break;
-		if (pickupItem(z) != 0) {
-			return 1;
-		}
-		z->_flags |= kFlagsRemove;
-		break;
-
-	case kZoneDoor:
-		if (z->_flags & kFlagsLocked) break;
-		z->_flags ^= kFlagsClosed;
-		updateDoor(z);
-		break;
-
-	case kZoneHear:
-		_soundMan->playSfx(z->u.hear->_name, z->u.hear->_channel, (z->_flags & kFlagsLooping) == kFlagsLooping, 60);
-		break;
-
-	case kZoneSpeak:
-		enterDialogueMode(z);
-		return 0;
-	}
-
-	debugC(3, kDebugExec, "runZone completed");
-
-	_cmdExec->run(z->_commands, z);
-
-	return 0;
-}
-
-//
-//	ZONE TYPE: DOOR
-//
-void Parallaction::updateDoor(ZonePtr z) {
-
-	if (z->u.door->gfxobj) {
-		uint frame = (z->_flags & kFlagsClosed ? 0 : 1);
-//		z->u.door->gfxobj->setFrame(frame);
-		z->u.door->gfxobj->frame = frame;
-	}
-
-	return;
-}
-
-
-
-//
-//	ZONE TYPE: GET
-//
-
-int16 Parallaction::pickupItem(ZonePtr z) {
-	int r = addInventoryItem(z->u.get->_icon);
-	if (r != -1) {
-		_gfx->showGfxObj(z->u.get->gfxobj, false);
-	}
-
-	return (r == -1);
-}
-
-
-
-ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
-//	printf("hitZone(%i, %i, %i)", type, x, y);
-
-	uint16 _di = y;
-	uint16 _si = x;
-
-	for (ZoneList::iterator it = _location._zones.begin(); it != _location._zones.end(); it++) {
-//		printf("Zone name: %s", z->_name);
-
-		ZonePtr z = *it;
-
-		if (z->_flags & kFlagsRemove) continue;
-
-		Common::Rect r;
-		z->getRect(r);
-		r.right++;		// adjust border because Common::Rect doesn't include bottom-right edge
-		r.bottom++;
-
-		r.grow(-1);		// allows some tolerance for mouse click
-
-		if (!r.contains(_si, _di)) {
-
-			// out of Zone, so look for special values
-			if ((z->_left == -2) || (z->_left == -3)) {
-
-				// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
-				// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
-				// but we need to check it separately here. The same workaround is applied in freeZones.
-				if ((((z->_type & 0xFFFF) == kZoneMerge) && (((_si == z->u.merge->_obj1) && (_di == z->u.merge->_obj2)) || ((_si == z->u.merge->_obj2) && (_di == z->u.merge->_obj1)))) ||
-					(((z->_type & 0xFFFF) == kZoneGet) && ((_si == z->u.get->_icon) || (_di == z->u.get->_icon)))) {
-
-					// special Zone
-					if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
-						return z;
-					if (z->_type == type)
-						return z;
-					if ((z->_type & 0xFFFF0000) == type)
-						return z;
-
-				}
-			}
-
-			if (z->_left != -1)
-				continue;
-			if (_si < _char._ani->_left)
-				continue;
-			if (_si > (_char._ani->_left + _char._ani->width()))
-				continue;
-			if (_di < _char._ani->_top)
-				continue;
-			if (_di > (_char._ani->_top + _char._ani->height()))
-				continue;
-
-		}
-
-		// normal Zone
-		if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
-			return z;
-		if (z->_type == type)
-			return z;
-		if ((z->_type & 0xFFFF0000) == type)
-			return z;
-
-	}
-
-
-	int16 _a, _b, _c, _d, _e, _f;
-	for (AnimationList::iterator ait = _location._animations.begin(); ait != _location._animations.end(); ait++) {
-
-		AnimationPtr a = *ait;
-
-		_a = (a->_flags & kFlagsActive) ? 1 : 0;															   // _a: active Animation
-		_e = ((_si >= a->_left + a->width()) || (_si <= a->_left)) ? 0 : 1;		// _e: horizontal range
-		_f = ((_di >= a->_top + a->height()) || (_di <= a->_top)) ? 0 : 1;		// _f: vertical range
-
-		_b = ((type != 0) || (a->_type == kZoneYou)) ? 0 : 1;										 // _b: (no type specified) AND (Animation is not the character)
-		_c = (a->_type & 0xFFFF0000) ? 0 : 1;															// _c: Animation is not an object
-		_d = ((a->_type & 0xFFFF0000) != type) ? 0 : 1;													// _d: Animation is an object of the same type
-
-		if ((_a != 0 && _e != 0 && _f != 0) && ((_b != 0 && _c != 0) || (a->_type == type) || (_d != 0))) {
-
-			return a;
-
-		}
-
-	}
-
-	return nullZonePtr;
-}
-
 
 void CommandExec_ns::init() {
 	Common::Array<const Opcode*> *table = 0;

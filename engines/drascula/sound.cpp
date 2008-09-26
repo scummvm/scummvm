@@ -23,6 +23,10 @@
  *
  */
 
+#include "sound/mixer.h"
+#include "sound/voc.h"
+#include "sound/audiocd.h"
+
 #include "drascula/drascula.h"
 
 namespace Drascula {
@@ -37,25 +41,31 @@ void DrasculaEngine::updateVolume(Audio::Mixer::SoundType soundType, int prevVol
 }
 
 void DrasculaEngine::volumeControls() {
-	int masterVolume, voiceVolume, musicVolume;
+	if (_lang == kSpanish)
+		loadPic(95, tableSurface);
 
 	copyRect(1, 56, 73, 63, 177, 97, tableSurface, screenSurface);
 	updateScreen(73, 63, 73, 63, 177, 97, screenSurface);
 
-	masterVolume = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16) * 4);
-	voiceVolume = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16) * 4);
-	musicVolume = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16) * 4);
+	setCursor(kCursorCrosshair);
+	showCursor();
 
 	for (;;) {
+		int masterVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16), 0, 15);
+		int voiceVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16), 0, 15);
+		int musicVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16), 0, 15);
+
+		int masterVolumeY = 72 + 61 - masterVolume * 4;
+		int voiceVolumeY = 72 + 61 - voiceVolume * 4;
+		int musicVolumeY = 72 + 61 - musicVolume * 4;
+
 		updateRoom();
 
 		copyRect(1, 56, 73, 63, 177, 97, tableSurface, screenSurface);
 
-		copyBackground(183, 56, 82, masterVolume, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16) * 4), tableSurface, screenSurface);
-		copyBackground(183, 56, 138, voiceVolume, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16) * 4), tableSurface, screenSurface);
-		copyBackground(183, 56, 194, musicVolume, 39, 2 + ((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16) * 4), tableSurface, screenSurface);
-
-		setCursorTable();
+		copyBackground(183, 56, 82, masterVolumeY, 39, 2 + masterVolume * 4, tableSurface, screenSurface);
+		copyBackground(183, 56, 138, voiceVolumeY, 39, 2 + voiceVolume * 4, tableSurface, screenSurface);
+		copyBackground(183, 56, 194, musicVolumeY, 39, 2 + musicVolume * 4, tableSurface, screenSurface);
 
 		updateScreen();
 
@@ -68,22 +78,24 @@ void DrasculaEngine::volumeControls() {
 		if (leftMouseButton == 1) {
 			delay(100);
 			if (mouseX > 80 && mouseX < 121) {
-				updateVolume(Audio::Mixer::kPlainSoundType, mouseY);
-				masterVolume = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16) * 4);
+				updateVolume(Audio::Mixer::kPlainSoundType, masterVolumeY);
 			}
 
 			if (mouseX > 136 && mouseX < 178) {
-				updateVolume(Audio::Mixer::kSFXSoundType, mouseY);
-				voiceVolume = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16) * 4);
+				updateVolume(Audio::Mixer::kSFXSoundType, voiceVolumeY);
 			}
 
 			if (mouseX > 192 && mouseX < 233) {
-				updateVolume(Audio::Mixer::kMusicSoundType, mouseY);
-				musicVolume = 72 + 61 - ((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16) * 4);
+				updateVolume(Audio::Mixer::kMusicSoundType, musicVolumeY);
 			}
 		}
 
 	}
+
+	if (_lang == kSpanish)
+		loadPic(974, tableSurface);
+
+	selectVerb(0);
 
 	updateEvents();
 }
@@ -109,6 +121,10 @@ void DrasculaEngine::playMusic(int p) {
 
 void DrasculaEngine::stopMusic() {
 	AudioCD.stop();
+}
+
+void DrasculaEngine::updateMusic() {
+	AudioCD.updateCD();
 }
 
 int DrasculaEngine::musicStatus() {
@@ -142,7 +158,18 @@ void DrasculaEngine::playFile(const char *fname) {
 	if (_arj.open(fname)) {
 		int soundSize = _arj.size();
 		byte *soundData = (byte *)malloc(soundSize);
-		_arj.seek(32);
+
+		if (!(!strcmp(fname, "3.als") && soundSize == 145166 && _lang != kSpanish)) {
+			_arj.seek(32);
+		} else {
+			// WORKAROUND: File 3.als with English speech files has a big silence at
+			// its beginning and end. We seek past the silence at the beginning,
+			// and ignore the silence at the end
+			// Fixes bug #2111815 - "DRASCULA: Voice delayed"
+			_arj.seek(73959, SEEK_SET);
+			soundSize = 117158 - 73959;
+		}
+
 		_arj.read(soundData, soundSize);
 		_arj.close();
 

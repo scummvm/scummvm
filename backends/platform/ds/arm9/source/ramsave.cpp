@@ -19,7 +19,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  */
- // Save in order 1,2,3,4,larger 2,5
+#ifdef GBA_SRAM_SAVE
+
+
 #include "ramsave.h"
 #include "nds.h"
 #include "compressor/lz.h"
@@ -64,6 +66,7 @@ DSSaveFile::DSSaveFile(SCUMMSave* s, bool compressed, u8* data) {
 	}
 	
 	isTempFile = false;
+	eosReached = false;
 }
 
 DSSaveFile::~DSSaveFile() {
@@ -167,11 +170,13 @@ int DSSaveFile::saveToSaveRAM(vu8* address) {
 
 void DSSaveFile::reset() {
 	ptr = 0;
+	eosReached = false;
 }
 
 uint32 DSSaveFile::read(void *buf, uint32 size) {
 	if (ptr + size > save.size) {
 		size = save.size - ptr;
+		eosReached = true;
 		if (size < 0) size = 0;
 	}
 	memcpy(buf, saveData + ptr, size);
@@ -181,15 +186,15 @@ uint32 DSSaveFile::read(void *buf, uint32 size) {
 	return size;
 }
 
-uint32 DSSaveFile::pos() const {
+int32 DSSaveFile::pos() const {
 	return ptr;
 }
 
-uint32 DSSaveFile::size() const {
+int32 DSSaveFile::size() const {
 	return save.size;
 }
 
-void DSSaveFile::seek(int32 pos, int whence) {
+bool DSSaveFile::seek(int32 pos, int whence) {
 	switch (whence) {
 		case SEEK_SET: {
 			ptr = pos;
@@ -204,15 +209,22 @@ void DSSaveFile::seek(int32 pos, int whence) {
 			break;
 		}
 	}
+	eosReached = false;
+	return true;
 }
 
 bool DSSaveFile::eos() const {
-	return ptr >= (int) save.size;
+	return eosReached;
 }
 
-void DSSaveFile::skip(uint32 bytes) {
+void DSSaveFile::clearErr() {
+	eosReached = false;
+}
+
+bool DSSaveFile::skip(uint32 bytes) {
 	ptr = ptr + bytes;
 	if (ptr > (int) save.size) ptr = save.size;
+	return true;
 }
 
 uint32 DSSaveFile::write(const void *buf, uint32 size) {
@@ -227,7 +239,7 @@ uint32 DSSaveFile::write(const void *buf, uint32 size) {
 	return size;
 }
 
-bool DSSaveFile::matches(char* prefix, int num) {
+bool DSSaveFile::matches(const char *prefix, int num) {
 	char str[16];
 	if (isValid()) {
 		sprintf(str, "%s%02d", prefix, num);
@@ -241,7 +253,7 @@ bool DSSaveFile::matches(char* prefix, int num) {
 	}
 }
 
-bool DSSaveFile::matches(char* filename) {
+bool DSSaveFile::matches(const char *filename) {
 	if (isValid()) {
 		return !strcmp(save.name, filename);
 	} else {
@@ -522,3 +534,5 @@ int DSSaveFileManager::getExtraData() {
 		return 0;
 	}
 }
+
+#endif

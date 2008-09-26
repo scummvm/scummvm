@@ -461,7 +461,7 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	_orientationLandscape(0), _newOrientation(0), _panelInitialized(false),
 	_panelVisible(true), _panelStateForced(false), _forceHideMouse(false), _unfilteredkeys(false),
 	_freeLook(false), _forcePanelInvisible(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
-	_scalersChanged(false), _lastKeyPressed(0), _tapTime(0), _closeClick(false),
+	_scalersChanged(false), _lastKeyPressed(0), _tapTime(0), _closeClick(false), _noDoubleTapRMB(false),
 	_saveToolbarState(false), _saveActiveToolbar(NAME_MAIN_PANEL), _rbutton(false), _hasfocus(true),
 	_usesEmulatedMouse(false), _mouseBackupOld(NULL), _mouseBackupToolbar(NULL), _mouseBackupDim(0)
 {
@@ -805,8 +805,16 @@ void OSystem_WINCE3::setupMixer() {
 		debug(1, "Sound opened OK, mixing at %d Hz", _sampleRate);
 
 		// Re-create mixer to match the output rate
+		int vol1 = _mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
+		int vol2 = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+		int vol3 = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
+		int vol4 = _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
 		delete(_mixer);
 		_mixer = new Audio::MixerImpl(this);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol1);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol2);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol3);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, vol4);
 		_mixer->setOutputRate(_sampleRate);
 		_mixer->setReady(true);
 		SDL_PauseAudio(0);
@@ -1051,13 +1059,10 @@ void OSystem_WINCE3::update_game_settings() {
 			panel->setVisible(false);
 
 		_saveToolbarState = true;
-
-		// Set Smush Force Redraw rate for Full Throttle
-		if (!ConfMan.hasKey("Smush_force_redraw")) {
-			ConfMan.setInt("Smush_force_redraw", 30);
-			ConfMan.flushToDisk();
-		}
 	}
+
+	if (ConfMan.hasKey("no_doubletap_rightclick"))
+		_noDoubleTapRMB = ConfMan.getBool("no_doubletap_rightclick");
 
 	compute_sample_rate();
 }
@@ -2254,14 +2259,17 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 				_lastKeyPressed = 0;
 				event.type = Common::EVENT_PREDICTIVE_DIALOG;
 				return true;
-			}
-
-			event.type = Common::EVENT_KEYDOWN;
+			} 			event.type = Common::EVENT_KEYDOWN;
 			if (!_unfilteredkeys)
 				event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 			else
 				event.kbd.keycode = (Common::KeyCode)mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
 			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
+
+			if (ev.key.keysym.mod == KMOD_RESERVED && ev.key.keysym.unicode == KMOD_SHIFT) {
+				event.kbd.ascii ^= 0x20;
+				event.kbd.flags = Common::KBD_SHIFT;
+			}
 
 			return true;
 
@@ -2289,6 +2297,11 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 			else
 				event.kbd.keycode = (Common::KeyCode)mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
 			event.kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode, _unfilteredkeys);
+
+			if (ev.key.keysym.mod == KMOD_RESERVED && ev.key.keysym.unicode == KMOD_SHIFT) {
+				event.kbd.ascii ^= 0x20;
+				event.kbd.flags = Common::KBD_SHIFT;
+			}
 
 			return true;
 
@@ -2324,7 +2337,7 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 					if (_closeClick && (GetTickCount() - _tapTime < 1000)) {
 						if (event.mouse.y <= 20 && _panelInitialized) {		// top of screen (show panel)
 							swap_panel_visibility();
-						} else {		// right click
+						} else if (!_noDoubleTapRMB) {		// right click
 							event.type = Common::EVENT_RBUTTONDOWN;
 							_rbutton = true;
 						}

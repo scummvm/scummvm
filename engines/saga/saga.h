@@ -295,7 +295,8 @@ enum TextStringIds {
 	kTextVoices,
 	kTextText,
 	kTextAudio,
-	kTextBoth
+	kTextBoth,
+	kTextLoadSavedGame
 };
 
 struct GameResourceDescription {
@@ -491,7 +492,6 @@ protected:
 public:
 	SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc);
 	virtual ~SagaEngine();
-	void shutDown() { _quit = true; }
 
 	void save(const char *fileName, const char *saveName);
 	void load(const char *fileName);
@@ -512,6 +512,8 @@ public:
 		return isSaveListFull() ? _saveFilesCount : _saveFilesCount + 1;
 	}
 
+	virtual void syncSoundSettings();
+	
 	int16 _framesEsc;
 
 	uint32 _globalFlags;
@@ -520,6 +522,7 @@ public:
 
 	int _soundVolume;
 	int _musicVolume;
+	int _speechVolume;
 	bool _subtitlesEnabled;
 	bool _voicesEnabled;
 	bool _voiceFilesExist;
@@ -609,8 +612,6 @@ public:
 	bool _leftMouseButtonPressed;
 	bool _rightMouseButtonPressed;
 	int _mouseClickCount;
-
-	bool _quit;
 
 //current game description
 	int _gameNumber;

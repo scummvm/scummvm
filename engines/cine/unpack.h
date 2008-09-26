@@ -35,14 +35,14 @@ namespace Cine {
  * A LZ77 style decompressor for Delphine's data files
  * used in at least Future Wars and Operation Stealth.
  * @note Works backwards in the source and destination buffers.
- * @note Can work with source and destination in the same buffer if there's space.
+ * @warning Having the source and destination in the same buffer when unpacking can cause errors!
  */
 class CineUnpacker {
 public:
 	/**
 	 * Unpacks packed data from the source buffer to the destination buffer.
-	 * @warning Do NOT call this on data that is not packed.
-	 * @note Source and destination buffer pointers can be the same as long as there's space for the unpacked data.
+	 * @note You may call this on already unpacked data but then source length must be equal to destination length.
+	 * @warning The source and destination should not point to the same buffer. If they do, errors may occur!
 	 * @param src Pointer to the source buffer.
 	 * @param srcLen Length of the source buffer.
 	 * @param dst Pointer to the destination buffer.

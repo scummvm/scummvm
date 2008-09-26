@@ -65,7 +65,7 @@ void KyraEngine_MR::timerRunSceneScript7(int arg) {
 void KyraEngine_MR::timerFleaDeath(int arg) {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::timerFleaDeath(%d)", arg);
 	_timer->setCountdown(4, 5400);
-	saveGame(getSavegameFilename(999), "SECOND CHANCE SAVE GAME");
+	saveGame(getSavegameFilename(999), "Autosave", 0);
 	_screen->hideMouse();
 	_timer->disable(4);
 	runAnimationScript("FLEADTH1.EMC", 0, 0, 1, 1);

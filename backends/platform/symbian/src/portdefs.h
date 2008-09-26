@@ -35,9 +35,6 @@
 #include <e32std.h>
 #include <math.h>
 
-//#define DISABLE_SCALERS // we only need 1x
-//#define DISABLE_HQ_SCALERS
-
 #if defined(USE_TREMOR) && !defined(USE_VORBIS)
 #define USE_VORBIS // make sure this one is defined together with USE_TREMOR!
 #endif
@@ -107,51 +104,31 @@
 	*/
 
 #elif defined (__WINS__) // WINS
+	extern "C" int symbian_snprintf(char *text, size_t maxlen, const char *fmt, ...);
+	extern "C" int symbian_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap);
+	#define snprintf(buf,len,args...) symbian_snprintf(buf,len,args)
+	#define vsnprintf(buf,len,format,valist) symbian_vsnprintf(buf,len,format,valist)
 
-	// let's just blatantly ignore this for now and just get it to work :P but does n't work from the debug function
-	int inline scumm_snprintf (char *str, unsigned long /*n*/, char const *fmt, ...) {
-		va_list args;
-		va_start(args, fmt);
-		vsprintf(str, fmt, args);
-		va_end(args);
-		return strlen(str);
-	}
-
-	int inline scumm_vsnprintf (char *str, unsigned long /*n*/, char const *fmt, va_list valist) {
-		vsprintf(str, fmt, valist);
-		return strlen(str);
-	}
-
-	#define snprintf					scumm_snprintf
-	#define vsnprintf					scumm_vsnprintf
 	void*	symbian_malloc	(size_t _size);
 
 	#define malloc symbian_malloc
 #else // GCCE and the rest
-	#define snprintf(buf,len,args...)	sprintf(buf,args)
-	#define vsnprintf(buf,len,format,valist)	vsprintf(buf,format,valist)
+	extern "C" int symbian_snprintf(char *text, size_t maxlen, const char *fmt, ...);
+	extern "C" int symbian_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap);
+	#define snprintf(buf,len,args...) symbian_snprintf(buf,len,args)
+	#define vsnprintf(buf,len,format,valist) symbian_vsnprintf(buf,len,format,valist)
 #endif
 
 #ifndef __WINS__
 #define USE_ARM_GFX_ASM
-#define ARM_USE_GFX_ASM
 #define USE_ARM_SMUSH_ASM
 #define USE_ARM_COSTUME_ASM
 #define USE_ARM_SOUND_ASM
 #endif
-// somehow nobody has this function...
-#define hypot(a, b)					sqrt((a)*(a) + (b)*(b))
 
 // Symbian bsearch implementation is flawed
-void inline *scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *)) {
-	size_t i;
-
-	for (i=0; i < nmemb; i++)
-		if (compar(key, (void *)((size_t)base + size * i)) == 0)
-			return (void *)((size_t)base + size * i);
-	return NULL;
-}
-#define bsearch						scumm_bsearch
+void *scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *));
+#define bsearch	scumm_bsearch
 
 // we cannot include SymbianOS.h everywhere, but this works too (functions code is in SymbianOS.cpp)
 namespace Symbian {

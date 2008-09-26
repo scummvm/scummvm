@@ -34,8 +34,8 @@
 #include "kyra/script.h"
 
 namespace Common {
-class InSaveFile;
-class OutSaveFile;
+class SeekableReadStream;
+class WriteStream;
 } // end of namespace Common
 
 class KyraMetaEngine;
@@ -64,14 +64,15 @@ struct GameFlags {
 enum {
 	GI_KYRA1 = 0,
 	GI_KYRA2 = 1,
-	GI_KYRA3 = 2
+	GI_KYRA3 = 2,
+	GI_LOL = 4
 };
 
 struct AudioDataStruct {
 	const char * const *_fileList;
-	const int _fileListLen;
-	const void * const _cdaTracks;
-	const int _cdaNumTracks;
+	int _fileListLen;
+	const void * _cdaTracks;
+	int _cdaNumTracks;
 };
 
 // TODO: this is just the start of makeing the debug output of the kyra engine a bit more useable
@@ -117,8 +118,6 @@ public:
 
 	virtual void pauseEngineIntern(bool pause);
 
-	bool quit() const { return _quitFlag; }
-
 	uint8 game() const { return _flags.gameID; }
 	const GameFlags &gameFlags() const { return _flags; }
 
@@ -152,9 +151,6 @@ public:
 	void setVolume(kVolumeEntry vol, uint8 value);
 	uint8 getVolume(kVolumeEntry vol);
 
-	// quit handling
-	virtual void quitGame();
-
 	// game flag handling
 	int setGameFlag(int flag);
 	int queryGameFlag(int flag) const;
@@ -176,9 +172,6 @@ public:
 protected:
 	virtual int go() = 0;
 	virtual int init();
-
-	// quit Handling
-	bool _quitFlag;
 
 	// intern
 	Resource *_res;
@@ -278,7 +271,11 @@ protected:
 	// save/load
 	int _gameToLoad;
 
+	uint32 _lastAutosave;
+	void checkAutosave();
+
 	const char *getSavegameFilename(int num);
+	static Common::String getSavegameFilename(const Common::String &target, int num);
 	bool saveFileLoadable(int slot);
 
 	struct SaveHeader {
@@ -289,6 +286,8 @@ protected:
 
 		bool originalSave;	// savegame from original interpreter
 		bool oldHeader;		// old scummvm save header
+
+		Graphics::Surface *thumbnail;
 	};
 
 	enum kReadSaveHeaderError {
@@ -298,10 +297,12 @@ protected:
 		kRSHEIoError = 3
 	};
 
-	static kReadSaveHeaderError readSaveHeader(Common::InSaveFile *file, SaveHeader &header);
+	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, bool loadThumbnail, SaveHeader &header);
 
-	Common::InSaveFile *openSaveForReading(const char *filename, SaveHeader &header);
-	Common::OutSaveFile *openSaveForWriting(const char *filename, const char *saveName) const;
+	virtual void saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumbnail) = 0;
+
+	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header);
+	Common::WriteStream *openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const;
 };
 
 } // End of namespace Kyra

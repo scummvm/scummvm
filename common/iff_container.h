@@ -162,7 +162,7 @@ public:
 	void incBytesRead(uint32 inc) {
 		bytesRead += inc;
 		if (bytesRead > size) {
-			error("Chunk overead");
+			error("Chunk overread");
 		}
 	}
 
@@ -172,19 +172,23 @@ public:
 		bytesRead = 0;
 	}
 
+	bool hasReadAll() const {
+		return (size - bytesRead) == 0;
+	}
+
 	void feed() {
 		if (size % 2) {
 			size++;
 		}
-		while (!_input->eos() && !eos()) {
+		while (!hasReadAll()) {
 			readByte();
 		}
 	}
 
 	// Common::ReadStream implementation
-	bool eos() const {
-		return (size - bytesRead) == 0;
-	}
+	bool eos() const { return _input->eos(); }
+	bool err() const { return _input->err(); }
+	void clearErr() { _input->clearErr(); }
 
 	uint32 read(void *dataPtr, uint32 dataSize) {
 		incBytesRead(dataSize);
@@ -209,7 +213,7 @@ public:
 		_chunk.feed();
 		_formChunk.incBytesRead(_chunk.size);
 
-		if (_formChunk.eos())
+		if (_formChunk.hasReadAll())
 			return 0;
 
 		_formChunk.incBytesRead(8);

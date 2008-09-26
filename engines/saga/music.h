@@ -105,7 +105,7 @@ protected:
 class Music {
 public:
 
-	Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enabled);
+	Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver);
 	~Music(void);
 	void setNativeMT32(bool b)	{ _player->setNativeMT32(b); }
 	bool hasNativeMT32()		{ return _player->hasNativeMT32(); }
@@ -133,7 +133,6 @@ private:
 	Audio::SoundHandle _musicHandle;
 	uint32 _trackNumber;
 
-	int _enabled;
 	bool _adlib;
 
 	int _targetVolume;

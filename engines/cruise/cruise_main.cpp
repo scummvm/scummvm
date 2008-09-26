@@ -243,7 +243,7 @@ ovlData3Struct *scriptFunc1Sub2(int32 scriptNumber, int32 param) {
 		return NULL;
 	}
 
-	return ((ovlData3Struct *) (ovlData->ptr1 + param * 0x1C));
+	return &ovlData->ptr1[param];
 }
 
 void scriptFunc2(int scriptNumber, scriptInstanceStruct * scriptHandle,

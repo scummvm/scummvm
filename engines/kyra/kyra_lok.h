@@ -214,7 +214,7 @@ public:
 protected:
 	int32 _speechPlayTime;
 
-	void saveGame(const char *fileName, const char *saveName);
+	void saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumbnail);
 	void loadGame(const char *fileName);
 
 protected:
@@ -633,7 +633,7 @@ protected:
 	int _soundFilesIntroSize;
 	const int32 *_cdaTrackTable;
 	int _cdaTrackTableSize;
-	const AudioDataStruct * _soundData;
+	AudioDataStruct _soundData[3];
 
 	// positions of the inventory
 	static const uint16 _itemPosX[];

@@ -62,7 +62,12 @@ const char *gScummVMVersionDate = SCUMMVM_VERSION " (" __DATE__ " " __TIME__ ")"
 const char *gScummVMFullVersion = "ScummVM " SCUMMVM_VERSION " (" __DATE__ " " __TIME__ ")";
 const char *gScummVMFeatures = ""
 #ifdef USE_TREMOR
+#ifdef USE_TREMOLO
+	// libTremolo is used on WinCE for better ogg performance
+	"Tremolo "
+#else
 	"Tremor "
+#endif
 #else
 #ifdef USE_VORBIS
 	"Vorbis "
@@ -91,12 +96,6 @@ const char *gScummVMFeatures = ""
 
 #ifdef USE_FLUIDSYNTH
 	"FluidSynth "
-#endif
-
-#ifdef __SYMBIAN32__
-// we want a list of compiled in engines visible in the program,
-// because we also release special builds with only one engine
-#include "backends/platform/symbian/src/main_features.inl"
 #endif
 	;
 

@@ -323,7 +323,38 @@ void Draw::adjustCoords(char adjust, int16 *coord1, int16 *coord2) {
 	}
 }
 
-void Draw::drawString(char *str, int16 x, int16 y, int16 color1, int16 color2,
+int Draw::stringLength(const char *str, int16 fontIndex) {
+	static const int8 dword_8F74C[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+	if ((fontIndex < 0) || (fontIndex > 7) || !_fonts[fontIndex])
+		return 0;
+
+	int len = 0;
+
+	if (_vm->_global->_language == 10) {
+
+		for (int i = 0; str[i] != 0; i++) {
+			if (((unsigned char) str[i+1]) < 128) {
+				len += dword_8F74C[4];
+				i++;
+			} else
+				len += _fonts[fontIndex]->itemWidth;
+		}
+
+	} else {
+
+		if (_fonts[fontIndex]->extraData)
+			while (*str != 0)
+				len += *(_fonts[fontIndex]->extraData + (*str++ - _fonts[fontIndex]->startItem));
+		else
+			len = (strlen(str) * _fonts[fontIndex]->itemWidth);
+
+	}
+
+	return len;
+}
+
+void Draw::drawString(const char *str, int16 x, int16 y, int16 color1, int16 color2,
 		int16 transp, SurfaceDesc *dest, Video::FontDesc *font) {
 
 	while (*str != '\0') {
@@ -337,7 +368,7 @@ void Draw::drawString(char *str, int16 x, int16 y, int16 color1, int16 color2,
 }
 
 void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
-		int16 bottom, char *str, int16 fontIndex, int16 color) {
+		int16 bottom, const char *str, int16 fontIndex, int16 color) {
 
 	adjustCoords(1, &left, &top);
 	adjustCoords(1, &right, &bottom);

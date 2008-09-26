@@ -92,6 +92,7 @@ int LureEngine::init() {
 	_room = new Room();
 	_fights = new FightsManager();
 
+	_gameToLoad = -1;
 	_initialised = true;
 	return 0;
 }
@@ -121,31 +122,38 @@ LureEngine &LureEngine::getReference() {
 }
 
 int LureEngine::go() {
-
-	if (ConfMan.getBool("copy_protection")) {
-		CopyProtectionDialog *dialog = new CopyProtectionDialog();
-		bool result = dialog->show();
-		delete dialog;
-		if (_events->quitFlag)
-			return 0;
-
-		if (!result)
-			error("Sorry - copy protection failed");
-	}
-
 	Game *gameInstance = new Game();
+	
+	// If requested, load a savegame instead of showing the intro
+	if (ConfMan.hasKey("save_slot")) {
+		_gameToLoad = ConfMan.getInt("save_slot");
+		if (_gameToLoad < 0 || _gameToLoad > 999)
+			_gameToLoad = -1;
+	}
+	
+	if (_gameToLoad == -1) {
+		if (ConfMan.getBool("copy_protection")) {
+			CopyProtectionDialog *dialog = new CopyProtectionDialog();
+			bool result = dialog->show();
+			delete dialog;
+			if (quit())
+				return 0;
 
-	if (ConfMan.getInt("boot_param") == 0) {
-		// Show the introduction
-		Sound.loadSection(Sound.isRoland() ? ROLAND_INTRO_SOUND_RESOURCE_ID : ADLIB_INTRO_SOUND_RESOURCE_ID);
+			if (!result)
+				error("Sorry - copy protection failed");
+		}
 
-		Introduction *intro = new Introduction();
-		intro->show();
-		delete intro;
+		if (ConfMan.getInt("boot_param") == 0) {
+			// Show the introduction
+			Sound.loadSection(Sound.isRoland() ? ROLAND_INTRO_SOUND_RESOURCE_ID : ADLIB_INTRO_SOUND_RESOURCE_ID);
+			Introduction *intro = new Introduction();
+			intro->show();
+			delete intro;
+		}
 	}
 
 	// Play the game
-	if (!_events->quitFlag) {
+	if (!quit()) {
 		// Play the game
 		Sound.loadSection(Sound.isRoland() ? ROLAND_MAIN_SOUND_RESOURCE_ID : ADLIB_MAIN_SOUND_RESOURCE_ID);
 		gameInstance->execute();
@@ -246,6 +254,10 @@ void LureEngine::GUIError(const char *msg, ...) {
 	Engine::GUIErrorMessage(buffer);
 }
 
+void LureEngine::syncSoundSettings() {	
+	Sound.syncSounds();
+}
+
 Common::String *LureEngine::detectSave(int slotNumber) {
 	Common::ReadStream *f = this->_saveFileMan->openForLoading(
 		generateSaveName(slotNumber));
@@ -272,6 +284,25 @@ Common::String *LureEngine::detectSave(int slotNumber) {
 
 	delete f;
 	return result;
+}
+
+Common::String getSaveName(Common::InSaveFile *in) {
+	// Check for header
+	char saveName[MAX_DESC_SIZE];
+	char buffer[5];
+	in->read(&buffer[0], 5);
+	if (memcmp(&buffer[0], "lure", 5) == 0) {
+		// Check language version
+		in->readByte();
+		in->readByte();
+		char *p = saveName;
+		int decCtr = MAX_DESC_SIZE - 1;
+		while ((decCtr > 0) && ((*p++ = in->readByte()) != 0)) --decCtr;
+		*p = '\0';
+
+	}
+
+	return Common::String(saveName);
 }
 
 } // End of namespace Lure

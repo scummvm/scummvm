@@ -544,8 +544,8 @@ bool ScummEngine::checkXYInBoxBounds(int boxnum, int x, int y) {
 	// Corner case: If the box is a simple line segment, we consider the
 	// point to be contained "in" (or rather, lying on) the line if it
 	// is very close to its projection to the line segment.
-	if (box.ul == box.ur && box.lr == box.ll ||
-		box.ul == box.ll && box.ur == box.lr) {
+	if ((box.ul == box.ur && box.lr == box.ll) ||
+		(box.ul == box.ll && box.ur == box.lr)) {
 
 		Common::Point tmp;
 		tmp = closestPtOnLine(box.ul, box.lr, p);
@@ -803,8 +803,8 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, Common::Point
 				}
 
 				if (box1.ul.y > box2.ur.y || box2.ul.y > box1.ur.y ||
-						(box1.ur.y == box2.ul.y || box2.ur.y == box1.ul.y) &&
-						box1.ul.y != box1.ur.y && box2.ul.y != box2.ur.y) {
+						((box1.ur.y == box2.ul.y || box2.ur.y == box1.ul.y) &&
+						box1.ul.y != box1.ur.y && box2.ul.y != box2.ur.y)) {
 					if (flag & 1)
 						SWAP(box1.ul.y, box1.ur.y);
 					if (flag & 2)
@@ -858,8 +858,8 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, Common::Point
 				}
 
 				if (box1.ul.x > box2.ur.x || box2.ul.x > box1.ur.x ||
-						(box1.ur.x == box2.ul.x || box2.ur.x == box1.ul.x) &&
-						box1.ul.x != box1.ur.x && box2.ul.x != box2.ur.x) {
+						((box1.ur.x == box2.ul.x || box2.ur.x == box1.ul.x) &&
+						box1.ul.x != box1.ur.x && box2.ul.x != box2.ur.x)) {
 					if (flag & 1)
 						SWAP(box1.ul.x, box1.ur.x);
 					if (flag & 2)
@@ -1074,8 +1074,8 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 				}
 				if (box.ur.y < box2.ul.y ||
 						box.ul.y > box2.ur.y ||
-						(box.ul.y == box2.ur.y ||
-						 box.ur.y == box2.ul.y) && box2.ur.y != box2.ul.y && box.ul.y != box.ur.y) {
+						((box.ul.y == box2.ur.y ||
+						 box.ur.y == box2.ul.y) && box2.ur.y != box2.ul.y && box.ul.y != box.ur.y)) {
 				} else {
 					return true;
 				}
@@ -1103,8 +1103,8 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 				}
 				if (box.ur.x < box2.ul.x ||
 						box.ul.x > box2.ur.x ||
-						(box.ul.x == box2.ur.x ||
-						 box.ur.x == box2.ul.x) && box2.ur.x != box2.ul.x && box.ul.x != box.ur.x) {
+						((box.ul.x == box2.ur.x ||
+						 box.ur.x == box2.ul.x) && box2.ur.x != box2.ul.x && box.ul.x != box.ur.x)) {
 
 				} else {
 					return true;

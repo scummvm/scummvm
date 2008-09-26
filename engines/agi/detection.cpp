@@ -2122,10 +2122,22 @@ public:
 		return "Sierra AGI Engine (C) Sierra On-Line Software";
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
-
-	const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const;
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual void removeSaveState(const char *target, int slot) const;
+	
+	const Common::ADGameDescription *fallbackDetect(const Common::FSList *fslist) const;
 };
+
+bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad) ||
+		(f == kSupportsDeleteSave);
+}
+
 
 bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const Agi::AGIGameDescription *gd = (const Agi::AGIGameDescription *)desc;
@@ -2147,7 +2159,48 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common:
 	return res;
 }
 
-const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const FSList *fslist) const {
+SaveStateList AgiMetaEngine::listSaves(const char *target) const {
+	const uint32 AGIflag = MKID_BE('AGI:');
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringList filenames;
+	char saveDesc[31];
+	Common::String pattern = target;
+	pattern += ".???";
+
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+		
+		if (slotNum >= 0 && slotNum <= 999) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				uint32 type = in->readUint32BE();
+				if (type == AGIflag)
+					in->read(saveDesc, 31);
+				saveList.push_back(SaveStateDescriptor(slotNum, Common::String(saveDesc), *file));
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
+}
+
+void AgiMetaEngine::removeSaveState(const char *target, int slot) const {
+	char extension[6];
+	snprintf(extension, sizeof(extension), ".%03d", slot);
+
+	Common::String filename = target;
+	filename += extension;
+
+	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+}
+
+const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSList *fslist) const {
 	typedef Common::HashMap<Common::String, int32> IntMap;
 	IntMap allFiles;
 	bool matchedUsingFilenames = false;
@@ -2156,7 +2209,7 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const FSList *fsl
 	WagFileParser wagFileParser;
 	Common::String wagFilePath;
 	Common::String description;
-	FSList fslistCurrentDir; // Only used if fslist == NULL
+	Common::FSList fslistCurrentDir; // Only used if fslist == NULL
 
 	// // Set the defaults for gameid and extra
 	_gameid = "agi-fanmade";
@@ -2169,8 +2222,8 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const FSList *fsl
 		if (path.empty())
 			path = ".";
 
-		FilesystemNode fsCurrentDir(path);
-		fsCurrentDir.getChildren(fslistCurrentDir, FilesystemNode::kListFilesOnly);
+		Common::FilesystemNode fsCurrentDir(path);
+		fsCurrentDir.getChildren(fslistCurrentDir, Common::FilesystemNode::kListFilesOnly);
 		fslist = &fslistCurrentDir;
 	}
 
@@ -2185,7 +2238,7 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const FSList *fsl
 	g_fallbackDesc.version = 0x2917;
 
 	// First grab all filenames and at the same time count the number of *.wag files
-	for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
+	for (Common::FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
 		if (file->isDirectory()) continue;
 		Common::String filename = file->getName();
 		filename.toLowercase();

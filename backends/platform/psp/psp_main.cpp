@@ -122,16 +122,6 @@ int main(void)
 {
 	SetupCallbacks();
 
-	//check if the save directory exists
-	SceUID fd = sceIoDopen(SCUMMVM_SAVEPATH);
-	if (fd < 0) {
-		//No? then let's create it.
-		sceIoMkdir(SCUMMVM_SAVEPATH, 0777);
-	} else {
-		//it exists, so close it again.
-		sceIoDclose(fd);
-	}
-
 	static char *argv[] = { "scummvm", NULL };
 	static int argc = sizeof(argv)/sizeof(char *)-1;
 

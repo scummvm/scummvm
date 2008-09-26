@@ -57,6 +57,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"inca2", "Inca II: Wiracocha"},
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
 	{"dynasty", "The Last Dynasty"},
+	{"urban", "Urban Runner"},
 	{0, 0}
 };
 
@@ -269,6 +270,19 @@ static const GOBGameDescription gameDescriptions[] = {
 			"gob1",
 			"Interactive Demo",
 			AD_ENTRY1("intro.stk", "e72bd1e3828c7dec4c8a3e58c48bdfdb"),
+			UNK_LANG,
+			kPlatformPC,
+			Common::ADGF_DEMO
+		},
+		kGameTypeGob1,
+		kFeaturesNone,
+		"intro"
+	},
+	{
+		{
+			"gob1",
+			"Interactive Demo",
+			AD_ENTRY1s("intro.stk", "a796096280d5efd48cf8e7dfbe426eb5", 193595),
 			UNK_LANG,
 			kPlatformPC,
 			Common::ADGF_DEMO
@@ -900,6 +914,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		"intro"
 	},
+ 	{ // Supplied by kizkoool in bugreport #2089734
+ 		{
+			"bargon",
+			"",
+			AD_ENTRY1s("intro.stk", "00f6b4e2ee26e5c40b488e2df5adcf03", 3975580),
+			FR_FRA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeBargon,
+		kFeaturesNone,
+		"intro"
+	},
 	{ // Supplied by glorfindel in bugreport #1722142
 		{
 			"bargon",
@@ -1035,6 +1062,84 @@ static const GOBGameDescription gameDescriptions[] = {
 			"lostintime",
 			"",
 			AD_ENTRY1s("intro.stk", "6263d09e996c1b4e84ef2d650b820e57", 4831170),
+			EN_GRB,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesCD,
+		"intro"
+	},
+	{ // Supplied by SiRoCs in bug report #2093672
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
+			EN_USA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesCD,
+		"intro"
+	},
+	{ // Supplied by SiRoCs in bug report #2093672
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
+			FR_FRA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesCD,
+		"intro"
+	},
+	{ // Supplied by SiRoCs in bug report #2093672
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
+			IT_ITA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesCD,
+		"intro"
+	},
+	{ // Supplied by SiRoCs in bug report #2093672
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
+			DE_DEU,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesCD,
+		"intro"
+	},
+	{ // Supplied by SiRoCs in bug report #2093672
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
+			ES_ESP,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesCD,
+		"intro"
+	},
+	{ // Supplied by SiRoCs in bug report #2093672
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
 			EN_GRB,
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
@@ -1183,6 +1288,19 @@ static const GOBGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1("intro.stk", "8d28ce1591b0e9cc79bf41cad0fc4c9c"),
 			UNK_LANG,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob3,
+		kFeaturesAdlib,
+		"intro"
+	},
+	{ // Supplied by SiRoCs in bug report #2098621
+		{
+			"gob3",
+			"",
+			AD_ENTRY1s("intro.stk", "d3b72938fbbc8159198088811f9e6d19", 160382),
+			ES_ESP,
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
@@ -1762,6 +1880,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro"
 	},
+	{ // Supplied by goodoldgeorg in bug report #2098838
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "08a96bf061af1fa4f75c6a7cc56b60a4", 20734979),
+			PL_POL,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
 	{
 		{
 			"dynasty",
@@ -1771,7 +1902,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeWoodruff,
+		kGameTypeDynasty,
 		kFeatures640,
 		"intro"
 	},
@@ -1784,7 +1915,20 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeWoodruff,
+		kGameTypeDynasty,
+		kFeatures640,
+		"intro"
+	},
+	{
+		{
+			"urban",
+			"",
+			AD_ENTRY1s("intro.stk", "3ab2c542bd9216ae5d02cc6f45701ae1", 1252436),
+			EN_USA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeUrban,
 		kFeatures640,
 		"intro"
 	},
@@ -1972,8 +2116,14 @@ public:
 		return "Goblins Games (C) Coktel Vision";
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 };
+
+bool GobMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsRTL);
+}
 
 bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const Gob::GOBGameDescription *gd = (const Gob::GOBGameDescription *)desc;

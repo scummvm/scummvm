@@ -29,7 +29,7 @@
 #include "engines/engine.h"
 
 namespace Common {
-	class InSaveFile;
+	class SeekableReadStream;
 }
 
 #if defined(_WIN32_WCE) && (_WIN32_WCE <= 300)
@@ -97,13 +97,13 @@ public:
 	void checkOptionSettings();
 	void readOptionSettings();
 	void writeOptionSettings();
+	virtual void syncSoundSettings();
 
 	int talkSpeed() const { return _talkSpeed; }
 	void talkSpeed(int speed) { _talkSpeed = speed; }
 	bool subtitles() const { return _subtitles; }
 	void subtitles(bool enable) { _subtitles = enable; }
-	void quitGame() { _quit = true; }
-
+	
 	void update(bool checkPlayerInput = false);
 
 	bool canLoadOrSave() const;
@@ -112,7 +112,7 @@ public:
 	void makeGameStateName(int slot, char *buf) const;
 	int getGameStateSlot(const char *filename) const;
 	void findGameStateDescriptions(char descriptions[100][32]);
-	Common::InSaveFile *readGameStateHeader(int slot, GameStateHeader *gsh);
+	Common::SeekableReadStream *readGameStateHeader(int slot, GameStateHeader *gsh);
 
 	enum {
 		SAVESTATE_CUR_VER  = 1,
@@ -137,7 +137,6 @@ protected:
 
 	int _talkSpeed;
 	bool _subtitles;
-	bool _quit;
 	uint32 _lastSaveTime;
 	uint32 _lastUpdateTime;
 

@@ -34,7 +34,7 @@
 namespace Audio {
 
 bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags, uint16 *wavType, int *blockAlign_) {
-	const uint32 initialPos = stream.pos();
+	const int32 initialPos = stream.pos();
 	byte buf[4+1];
 
 	buf[4] = 0;
@@ -45,7 +45,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 		return false;
 	}
 
-	uint32 wavLength = stream.readUint32LE();
+	int32 wavLength = stream.readUint32LE();
 
 	stream.read(buf, 4);
 	if (memcmp(buf, "WAVE", 4) != 0) {

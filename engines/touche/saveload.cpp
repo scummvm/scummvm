@@ -31,11 +31,6 @@
 
 namespace Touche {
 
-enum {
-	kCurrentGameStateVersion = 6,
-	kGameStateDescriptionLen = 32
-};
-
 static void saveOrLoad(Common::WriteStream &stream, uint16 &i) {
 	stream.writeUint16LE(i);
 }
@@ -292,7 +287,7 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	if (stream->readUint32LE() != saveLoadEndMarker) {
 		warning("Corrupted gamestate data");
 		// if that ever happens, exit the game
-		_flagsTable[611] = 1;
+		quitGame();
 	}
 	_flagsTable[614] = roomOffsX;
 	_flagsTable[615] = roomOffsY;

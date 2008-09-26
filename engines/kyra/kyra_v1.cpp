@@ -52,8 +52,6 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_gameSpeed = 60;
 	_tickLength = (uint8)(1000.0 / _gameSpeed);
 
-	_quitFlag = false;
-
 	_speechFile = "";
 	_trackMap = 0;
 	_trackMapSize = 0;
@@ -114,7 +112,7 @@ int KyraEngine_v1::init() {
 				_sound = new SoundTownsPC98_v2(this, _mixer);
 		} else if (_flags.platform == Common::kPlatformPC98) {
 			if (_flags.gameID == GI_KYRA1)
-				_sound = new SoundTowns/*SoundPC98*/(this, _mixer);
+				_sound = new SoundPC98(this, _mixer);
 			else
 				_sound = new SoundTownsPC98_v2(this, _mixer);
 		} else if (midiDriver == MD_ADLIB) {
@@ -152,6 +150,16 @@ int KyraEngine_v1::init() {
 	_res = new Resource(this);
 	assert(_res);
 	_res->reset();
+
+	if (_flags.isDemo) {
+		// HACK: check whether this is the HOF demo or the LOL demo.
+		// The LOL demo needs to be detected and run as KyraEngine_HoF,
+		// but the static resource loader and the sequence player will
+		// need correct IDs.
+		if (_res->exists("scene1.cps"))
+			_flags.gameID = GI_LOL;
+	}
+
 	_staticres = new StaticResource(this);
 	assert(_staticres);
 	if (!_staticres->init())
@@ -173,6 +181,9 @@ int KyraEngine_v1::init() {
 			_gameToLoad = -1;
 	}
 
+	// Prevent autosave on game startup
+	_lastAutosave = _system->getMillis();
+
 	return 0;
 }
 
@@ -188,12 +199,6 @@ KyraEngine_v1::~KyraEngine_v1() {
 	delete _timer;
 	delete _emc;
 	delete _debugger;
-}
-
-void KyraEngine_v1::quitGame() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::quitGame()");
-	_quitFlag = true;
-	// Nothing to do here
 }
 
 Common::Point KyraEngine_v1::getMousePos() const {
@@ -230,7 +235,7 @@ int KyraEngine_v1::resetGameFlag(int flag) {
 }
 
 void KyraEngine_v1::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {
-	while (_system->getMillis() < timestamp && !_quitFlag) {
+	while (_system->getMillis() < timestamp && !quit()) {
 		if (timestamp - _system->getMillis() >= 10)
 			delay(10, update, isMainLoop);
 	}
@@ -245,8 +250,8 @@ void KyraEngine_v1::delayWithTicks(int ticks) {
 }
 
 void KyraEngine_v1::registerDefaultSettings() {
-	if (_flags.gameID != GI_KYRA3)
-		ConfMan.registerDefault("cdaudio", (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98));
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+		ConfMan.registerDefault("cdaudio", true);
 	if (_flags.fanLang != Common::UNK_LANG) {
 		// HACK/WORKAROUND: Since we can't use registerDefault here to overwrite
 		// the global subtitles settings, we're using this hack to enable subtitles
@@ -262,9 +267,10 @@ void KyraEngine_v1::readSettings() {
 	_configMusic = 0;
 	
 	if (!ConfMan.getBool("music_mute")) {
-		_configMusic = 1;
-		if (_flags.gameID != GI_KYRA3 && ConfMan.getBool("cdaudio") && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98))
-			_configMusic = 2;
+		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+			_configMusic = ConfMan.getBool("cdaudio") ? 2 : 1;
+		else
+			_configMusic = 1;
 	}
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 

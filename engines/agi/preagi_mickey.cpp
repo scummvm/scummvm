@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/events.h"
 #include "common/savefile.h"
 #include "common/stream.h"
 
@@ -343,11 +342,12 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 
 	drawMenu(menu, *sel0, *sel1);
 
-	for (;;) {
+	for(;;) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
-				exit(0);
+				return 0;
 			case Common::EVENT_MOUSEMOVE:
 				if (iRow < 2) {
 					x = event.mouse.x / 8;
@@ -640,8 +640,8 @@ void Mickey::playSound(ENUM_MSA_SOUND iSound) {
 			if (iSound == IDI_MSA_SND_THEME) {
 				while (_vm->_system->getEventManager()->pollEvent(event)) {
 					switch(event.type) {
+					case Common::EVENT_RTL:
 					case Common::EVENT_QUIT:
-						_vm->_system->quit();
 					case Common::EVENT_LBUTTONUP:
 					case Common::EVENT_RBUTTONUP:
 					case Common::EVENT_KEYDOWN:
@@ -932,10 +932,17 @@ bool Mickey::loadGame() {
 			if (_vm->getSelection(kSelAnyKey) == 0)
 				return false;
 		} else {
-			if (infile->readUint32BE() != MKID_BE('MICK'))
-				error("Mickey::loadGame wrong save game format");
+			if (infile->readUint32BE() != MKID_BE('MICK')) {
+				warning("Mickey::loadGame wrong save game format");
+				return false;
+			}
 
 			saveVersion = infile->readByte();
+			if (saveVersion < 2) {
+				warning("The planet data in this save game is corrupted. Load aborted");
+				return false;
+			}
+
 			if (saveVersion != MSA_SAVEGAME_VERSION)
 				warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, MSA_SAVEGAME_VERSION);
 
@@ -953,7 +960,7 @@ bool Mickey::loadGame() {
 				_game.iPlanetXtal[i] = infile->readByte();
 
 			for(i = 0; i < IDI_MSA_MAX_PLANET; i++)
-				_game.iClue[i] = infile->readByte();
+				_game.iClue[i] = infile->readUint16LE();
 
 			infile->read(_game.szAddr, IDI_MSA_MAX_BUTTON + 1);
 
@@ -1058,7 +1065,7 @@ void Mickey::saveGame() {
 				outfile->writeByte(_game.iPlanetXtal[i]);
 
 			for(i = 0; i < IDI_MSA_MAX_PLANET; i++)
-				outfile->writeByte(_game.iClue[i]);
+				outfile->writeUint16LE(_game.iClue[i]);
 
 			outfile->write(_game.szAddr, IDI_MSA_MAX_BUTTON + 1);
 
@@ -1214,7 +1221,7 @@ void Mickey::gameOver() {
 	}
 
 	waitAnyKey();
-	exit(0);
+	_vm->quitGame();
 }
 
 void Mickey::flipSwitch() {
@@ -2053,8 +2060,8 @@ void Mickey::waitAnyKey(bool anim) {
 	for (;;) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
-				_vm->_system->quit();
 			case Common::EVENT_KEYDOWN:
 			case Common::EVENT_LBUTTONUP:
 			case Common::EVENT_RBUTTONUP:
@@ -2153,7 +2160,7 @@ void Mickey::run() {
 	intro();
 
 	// Game loop
-	for (;;) {
+	while (!_vm->quit()) {
 		drawRoom();
 
 		if (_game.fIntro) {

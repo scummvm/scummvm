@@ -2310,7 +2310,7 @@ void ScummEngine_v6::o6_systemOps() {
 		pauseGame();
 		break;
 	case 160:		// SO_QUIT
-		shutDown();
+		quitGame();
 		break;
 	default:
 		error("o6_systemOps invalid case %d", subOp);
@@ -2374,7 +2374,7 @@ void ScummEngine_v6::o6_printEgo() {
 void ScummEngine_v6::o6_talkActor() {
 	int offset = _scriptPointer - _scriptOrgPointer;
 
-	// WORKAROUNDfor bug #896489: see below for detailed description
+	// WORKAROUND for bug #896489: see below for detailed description
 	if (_forcedWaitForMessage) {
 		if (VAR(VAR_HAVE_MSG)) {
 			_scriptPointer--;
@@ -2389,6 +2389,15 @@ void ScummEngine_v6::o6_talkActor() {
 	}
 
 	_actorToPrintStrFor = pop();
+
+	// WORKAROUND for bug #2016521: "DOTT: Bernard impersonating LaVerne"
+	// Original script did not check for VAR_EGO == 2 before executing
+	// a talkActor opcode.
+	if (_game.id == GID_TENTACLE && vm.slot[_currentScript].number == 307
+			&& VAR(VAR_EGO) != 2 && _actorToPrintStrFor == 2) {
+		_scriptPointer += resStrLen(_scriptPointer) + 1;
+		return;
+	}
 
 	_string[0].loadDefault();
 	actorTalk(_scriptPointer);

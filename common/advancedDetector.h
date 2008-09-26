@@ -28,8 +28,6 @@
 #include "common/fs.h"
 #include "common/error.h"
 
-#include "base/game.h"	// For PlainGameDescriptor and GameList
-
 #include "engines/metaengine.h"
 
 namespace Common {
@@ -67,11 +65,6 @@ struct ADGameDescription {
 	 */
 	uint32 flags;
 };
-
-/**
- * A list of pointers to ADGameDescription structs (or subclasses thereof).
- */
-typedef Array<const ADGameDescription*> ADGameDescList;
 
 /**
  * End marker for a table of ADGameDescription structs. Use this to

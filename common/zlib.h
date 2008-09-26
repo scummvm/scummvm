@@ -8,44 +8,65 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
+ *
  */
-
-#include "common/scummsys.h"
-
-#if defined(USE_ZLIB)
 
 #ifndef COMMON_ZLIB_H
 #define COMMON_ZLIB_H
 
-#ifdef __SYMBIAN32__
-#include <zlib\zlib.h>
-#else
-#include <zlib.h>
-#endif
+#include "common/scummsys.h"
+#include "common/stream.h"
 
 namespace Common {
 
-enum {
-	ZLIB_OK = Z_OK
-};
+#if defined(USE_ZLIB)
 
-int uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen);
-
-} // end of namespace Common
+/**
+ * Thin wrapper around zlib's uncompress() function. This wrapper makes
+ * it possible to uncompress data in engines without being forced to link
+ * them against zlib, thus simplifying the build system.
+ * 
+ * @return true on success (i.e. Z_OK), false otherwise
+ */
+bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen);
 
 #endif
 
-#endif
+/**
+ * Take an arbitrary SeekableReadStream and wrap it in a custom stream which
+ * provides transparent on-the-fly decompression. Assumes the data it
+ * retrieves from the wrapped stream to be either uncompressed or in gzip
+ * format. In the former case, the original stream is returned unmodified
+ * (and in particular, not wrapped).
+ *
+ * It is safe to call this with a NULL parameter (in this case, NULL is
+ * returned).
+ */
+Common::SeekableReadStream *wrapCompressedReadStream(Common::SeekableReadStream *toBeWrapped);
 
+/**
+ * Take an arbitrary WriteStream and wrap it in a custom stream which provides
+ * transparent on-the-fly compression. The compressed data is written in the
+ * gzip format, unless ZLIB support has been disabled, in which case the given
+ * stream is returned unmodified (and in particular, not wrapped).
+ *
+ * It is safe to call this with a NULL parameter (in this case, NULL is
+ * returned).
+ */
+Common::WriteStream *wrapCompressedWriteStream(Common::WriteStream *toBeWrapped);
+
+}	// End of namespace Common
+
+#endif

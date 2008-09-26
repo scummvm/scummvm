@@ -206,13 +206,16 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 			{
 				int sceneOffset = (_vm->getFeatures() & GF_SCNFILES) ? 1 : 0;
 				int sceneNumber = (GetSceneHandle() >> SCNHANDLE_SHIFT) - sceneOffset;
-				if ((language == TXT_GERMAN) && 
+#if 0	// FIXME: Disabled this code for now, as it doesn't work as it should (see bug #2078922).
+				if ((g_language == TXT_GERMAN) && 
 					((sceneNumber >= 25 && sceneNumber <= 27) || (sceneNumber == 17))) {
 					// Skip to title screen
 					// It seems the German CD version uses scenes 25,26,27,17 for the intro,
 					// instead of 13,14,15,11;  also, the title screen is 11 instead of 10
 					SetNewScene((11 + sceneOffset) << SCNHANDLE_SHIFT, 1, TRANS_CUT);
-				} else if ((sceneNumber >= 13) && (sceneNumber <= 15) || (sceneNumber == 11)) {
+				} else
+#endif
+				if ((sceneNumber >= 13) && (sceneNumber <= 15) || (sceneNumber == 11)) {
 					// Skip to title screen
 					SetNewScene((10 + sceneOffset) << SCNHANDLE_SHIFT, 1, TRANS_CUT);
 				} else {
@@ -622,11 +625,11 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 	//bool adlib = (midiDriver == MD_ADLIB);
 
-	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+	_driver = MidiDriver::createMidi(midiDriver);
 	if (native_mt32)
-		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_music = new MusicPlayer(driver);
+	_music = new MusicPlayer(_driver);
 	//_music->setNativeMT32(native_mt32);
 	//_music->setAdlib(adlib);
 
@@ -638,13 +641,14 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	_mousePos.y = 0;
 	_keyHandler = NULL;
 	_dosPlayerDir = 0;
-	quitFlag = false;
 }
 
 TinselEngine::~TinselEngine() {
 	delete _sound;
 	delete _music;
 	delete _console;
+	delete _driver;
+	_screenSurface.free();
 	FreeSs();
 	FreeTextBuffer();
 	FreeHandleTable();
@@ -678,6 +682,8 @@ int TinselEngine::init() {
 #if 1
 	// FIXME: The following is taken from RestartGame().
 	// It may have to be adjusted a bit
+	CountOut = 1;
+
 	RebootCursor();
 	RebootDeadTags();
 	RebootMovers();
@@ -692,25 +698,8 @@ int TinselEngine::init() {
 
 	// TODO: More stuff from dos_main.c may have to be added here
 
-	// Set language - we'll be clever here and use the ScummVM language setting
-	language = TXT_ENGLISH;
-	switch (getLanguage()) {
-	case Common::FR_FRA:
-		language = TXT_FRENCH;
-		break;
-	case Common::DE_DEU:
-		language = TXT_GERMAN;
-		break;
-	case Common::IT_ITA:
-		language = TXT_ITALIAN;
-		break;
-	case Common::ES_ESP:
-		language = TXT_SPANISH;
-		break;
-	default:
-		language = TXT_ENGLISH;
-	}
-	ChangeLanguage(language);
+	// load in text strings
+	ChangeLanguage(g_language);
 
 	// load in graphics info
 	SetupHandleTable();
@@ -719,10 +708,6 @@ int TinselEngine::init() {
 	LoadBasicChunks();
 
 	return 0;
-}
-
-Common::String TinselEngine::getSavegamePattern() const {
-	return _targetName + ".???";
 }
 
 Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
@@ -755,7 +740,7 @@ int TinselEngine::go() {
 
 	// Foreground loop
 
-	while (!quitFlag) {
+	while (!quit()) {
 		assert(_console);
 		if (_console->isAttached())
 			_console->onFrame();
@@ -819,10 +804,6 @@ bool TinselEngine::pollEvent() {
 
 	// Handle the various kind of events
 	switch (event.type) {
-	case Common::EVENT_QUIT:
-		quitFlag = true;
-		break;
-
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:

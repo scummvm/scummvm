@@ -36,7 +36,7 @@ AbstractFilesystemNode *PalmOSFilesystemFactory::makeCurrentDirectoryFileNode() 
 	return new PalmOSFilesystemNode();
 }
 
-AbstractFilesystemNode *PalmOSFilesystemFactory::makeFileNodePath(const String &path) const {
+AbstractFilesystemNode *PalmOSFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new PalmOSFilesystemNode(path);
 }
 #endif

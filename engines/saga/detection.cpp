@@ -147,8 +147,19 @@ public:
 		return "Inherit the Earth (C) Wyrmkeep Entertainment";
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual void removeSaveState(const char *target, int slot) const;
 };
+
+bool SagaMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad) ||
+		(f == kSupportsDeleteSave);
+}
 
 bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const Saga::SAGAGameDescription *gd = (const Saga::SAGAGameDescription *)desc;
@@ -156,6 +167,46 @@ bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 		*engine = new Saga::SagaEngine(syst, gd);
 	}
 	return gd != 0;
+}
+
+SaveStateList SagaMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringList filenames;
+	char saveDesc[SAVE_TITLE_SIZE];
+	Common::String pattern = target;
+	pattern += ".s??";
+
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 2);
+		
+		if (slotNum >= 0 && slotNum <= 99) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				for (int i = 0; i < 3; i++)
+					in->readUint32BE();
+				in->read(saveDesc, SAVE_TITLE_SIZE);
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc, *file));
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
+}
+
+void SagaMetaEngine::removeSaveState(const char *target, int slot) const {
+	char extension[6];
+	snprintf(extension, sizeof(extension), ".s%02d", slot);
+
+	Common::String filename = target;
+	filename += extension;
+
+	g_system->getSavefileManager()->removeSavefile(filename.c_str());
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SAGA)

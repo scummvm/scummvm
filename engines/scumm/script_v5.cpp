@@ -1402,7 +1402,7 @@ void ScummEngine_v5::o5_ifClassOfIs() {
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		cls = getVarOrDirectWord(PARAM_1);
 		b = getClass(act, cls);
-		if (cls & 0x80 && !b || !(cls & 0x80) && b)
+		if (((cls & 0x80) && !b) || (!(cls & 0x80) && b))
 			cond = false;
 	}
 	if (cond)
@@ -1769,7 +1769,7 @@ void ScummEngine_v5::o5_systemOps() {
 		pauseGame();
 		break;
 	case 3:		// SO_QUIT
-		shutDown();
+		quitGame();
 		break;
 	default:
 		error("o5_systemOps: unknown subopcode %d", subOp);

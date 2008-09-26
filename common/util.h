@@ -53,28 +53,6 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 namespace Common {
 
 /**
- * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
- * Taken from exult/files/listfiles.cc
- *
- * Token meaning:
- *		"*": any character, any amount of times.
- *		"?": any character, only once.
- *
- * Example strings/patterns:
- *		String: monkey.s??	 Pattern: monkey.s01	=> true
- *		String: monkey.s??	 Pattern: monkey.s101	=> false
- *		String: monkey.s?1	 Pattern: monkey.s99	=> false
- *		String: monkey.s*	 Pattern: monkey.s101	=> true
- *		String: monkey.s*1	 Pattern: monkey.s99	=> false
- *
- * @param str Text to be matched against the given pattern.
- * @param pat Glob pattern.
- *
- * @return true if str matches the pattern, false otherwise.
- */
-bool matchString(const char *str, const char *pat);
-
-/**
  * A simple non-optimized string tokenizer.
  *
  * Example of use:
@@ -128,20 +106,20 @@ public:
 	/**
 	 * Generates a random unsigned integer in the interval [0, max].
 	 * @param max	the upper bound
-	 * @return	a random number in the interval [0, max].
+	 * @return	a random number in the interval [0, max]
 	 */
 	uint getRandomNumber(uint max);
 	/**
-	 * Generates a random unsigned integer in the interval [0, 1].
+	 * Generates a random bit, i.e. either 0 or 1.
 	 * Identical to getRandomNumber(1), but faster, hopefully.
-	 * @return	a random number in the interval [0, max].
+	 * @return	a random bit, either 0 or 1
 	 */
 	uint getRandomBit(void);
 	/**
 	 * Generates a random unsigned integer in the interval [min, max].
 	 * @param min	the lower bound
 	 * @param max	the upper bound
-	 * @return	a random number in the interval [min, max].
+	 * @return	a random number in the interval [min, max]
 	 */
 	uint getRandomNumberRng(uint min, uint max);
 };
@@ -210,6 +188,7 @@ enum Platform {
 
 	kPlatformApple2GS,
 	kPlatformPC98,
+	kPlatformWii,
 
 	kPlatformUnknown = -1
 };

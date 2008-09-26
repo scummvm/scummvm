@@ -123,7 +123,7 @@ void AGOSEngine::setup_cond_c_helper() {
 	clearName();
 	_lastNameOn = last;
 
-	for (;;) {
+	while (!quit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = 0;
 		_leftButtonDown = 0;
@@ -145,7 +145,7 @@ void AGOSEngine::setup_cond_c_helper() {
 			}
 
 			delay(100);
-		} while (_lastHitArea3 == (HitArea *) -1 || _lastHitArea3 == 0);
+		} while ((_lastHitArea3 == (HitArea *) -1 || _lastHitArea3 == 0) && !quit());
 
 		if (_lastHitArea == NULL) {
 		} else if (_lastHitArea->id == 0x7FFB) {
@@ -189,12 +189,12 @@ void AGOSEngine::waitForInput() {
 		resetVerbs();
 	}
 
-	while (!_quit) {
+	while (!quit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 		_dragAccept = 1;
 
-		while (!_quit) {
+		while (!quit()) {
 			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
 					_keyPressed.keycode == Common::KEYCODE_F10)
 				displayBoxStars();
@@ -563,16 +563,18 @@ bool AGOSEngine::processSpecialKeys() {
 	case Common::KEYCODE_PLUS:
 	case Common::KEYCODE_KP_PLUS:
 		if (_midiEnabled) {
-			_midi.setVolume(_midi.getVolume() + 16);
+			_midi.setVolume(_midi.getMusicVolume() + 16, _midi.getSFXVolume() + 16);
 		}
-		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 16);
+		ConfMan.setInt("music_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 16);
+		syncSoundSettings();
 		break;
 	case Common::KEYCODE_MINUS:
 	case Common::KEYCODE_KP_MINUS:
 		if (_midiEnabled) {
-			_midi.setVolume(_midi.getVolume() - 16);
+			_midi.setVolume(_midi.getMusicVolume() - 16, _midi.getSFXVolume() - 16);
 		}
-		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) - 16);
+		ConfMan.setInt("music_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) - 16);
+		syncSoundSettings();
 		break;
 	case Common::KEYCODE_m:
 		_musicPaused ^= 1;

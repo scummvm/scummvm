@@ -23,16 +23,17 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/md5.h"
 #include "kyra/kyra_v1.h"
 #include "kyra/kyra_lok.h"
+#include "kyra/lol.h"
 #include "kyra/kyra_v2.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/kyra_mr.h"
 #include "kyra/screen.h"
 #include "kyra/screen_lok.h"
+#include "kyra/screen_lol.h"
 #include "kyra/screen_hof.h"
 #include "kyra/screen_mr.h"
 #include "kyra/resource.h"
@@ -42,22 +43,22 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 28
+#define RESFILE_VERSION 32
 
-bool StaticResource::checkKyraDat() {
-	Common::File kyraDat;
-	if (!kyraDat.open(StaticResource::staticDataFilename()))
+bool StaticResource::checkKyraDat(Resource *res) {
+	Common::SharedPtr<Common::SeekableReadStream> kyraDat(res->getFileStream(StaticResource::staticDataFilename()));
+	if (!kyraDat)
 		return false;
 
-	uint32 size = kyraDat.size() - 16;
+	uint32 size = kyraDat->size() - 16;
 	uint8 digest[16];
-	kyraDat.seek(size, SEEK_SET);
-	if (kyraDat.read(digest, 16) != 16)
+	kyraDat->seek(size, SEEK_SET);
+	if (kyraDat->read(digest, 16) != 16)
 		return false;
-	kyraDat.close();
 
 	uint8 digestCalc[16];
-	if (!Common::md5_file(StaticResource::staticDataFilename().c_str(), digestCalc, size))
+	kyraDat->seek(0, SEEK_SET);
+	if (!Common::md5_file(*kyraDat, digestCalc, size))
 		return false;
 
 	for (int i = 0; i < 16; ++i)
@@ -278,6 +279,16 @@ bool StaticResource::init() {
 		{ 0, 0, 0 }
 	};
 
+	static const FilenameTable lolStaticRes[] = {
+		// Demo Sequence Player
+		{ k2SeqplayPakFiles, kStringList, "S_PAKFILES.TXT" },
+		{ k2SeqplayStrings, kLanguageList, "S_STRINGS." },
+		{ k2SeqplaySfxFiles, kStringList, "S_SFXFILES.TXT" },
+		{ k2SeqplaySeqData, k2SeqData, "S_DATA.SEQ" },
+		{ k2SeqplayIntroTracks, kStringList, "S_INTRO.TRA" },
+		{ 0, 0, 0 }
+	};
+
 	if (_vm->game() == GI_KYRA1) {
 		_builtIn = 0;
 		_filenameTable = kyra1StaticRes;
@@ -287,33 +298,37 @@ bool StaticResource::init() {
 	} else if (_vm->game() == GI_KYRA3) {
 		_builtIn = 0;
 		_filenameTable = kyra3StaticRes;
+	} else if (_vm->game() == GI_LOL) {
+		if (!_vm->gameFlags().isDemo)
+			return true;
+		_builtIn = 0;
+		_filenameTable = lolStaticRes;
 	} else {
-		error("unknown game ID");
+		error("StaticResource: Unknown game ID");
 	}
 
 	char errorBuffer[100];
-	int tempSize = 0;
-	uint8 *temp = getFile("INDEX", tempSize);
-	if (!temp) {
+	Common::SeekableReadStream *index = getFile("INDEX");
+	if (!index) {
 		snprintf(errorBuffer, sizeof(errorBuffer), "is missing an '%s' entry", getFilename("INDEX"));
 		outputError(errorBuffer);
 		return false;
 	}
 
-	if (tempSize != 3*4) {
-		delete[] temp;
+	if (index->size() != 3*4) {
+		delete index;
 
 		snprintf(errorBuffer, sizeof(errorBuffer), "has incorrect header size for entry '%s'", getFilename("INDEX"));
 		outputError(errorBuffer);
 		return false;
 	}
 
-	uint32 version = READ_BE_UINT32(temp);
-	uint32 gameID = READ_BE_UINT32((temp+4));
-	uint32 featuresValue = READ_BE_UINT32((temp+8));
+	uint32 version = index->readUint32BE();
+	uint32 gameID = index->readUint32BE();
+	uint32 featuresValue = index->readUint32BE();
 
-	delete[] temp;
-	temp = 0;
+	delete index;
+	index = 0;
 
 	if (version != RESFILE_VERSION) {
 		snprintf(errorBuffer, sizeof(errorBuffer), "has invalid version %d required, you got %d", RESFILE_VERSION, version);
@@ -537,82 +552,86 @@ bool StaticResource::loadLanguageTable(const char *filename, void *&ptr, int &si
 }
 
 bool StaticResource::loadStringTable(const char *filename, void *&ptr, int &size) {
-	uint8 *filePtr = getFile(filename, size);
-	if (!filePtr)
+	Common::SeekableReadStream *file = getFile(filename);
+	if (!file)
 		return false;
-	uint8 *src = filePtr;
 
-	uint32 count = READ_BE_UINT32(src); src += 4;
+	uint32 count = file->readUint32BE();
 	size = count;
 	char **output = new char*[count];
 	assert(output);
 
-	const char *curPos = (const char*)src;
 	for (uint32 i = 0; i < count; ++i) {
-		int strLen = strlen(curPos);
-		output[i] = new char[strLen+1];
-		assert(output[i]);
-		memcpy(output[i], curPos, strLen+1);
-		curPos += strLen+1;
+		Common::String string;
+		char c = 0;
+		while ((c = (char)file->readByte()) != 0)
+			string += c;
+
+		output[i] = new char[string.size()+1];
+		strcpy(output[i], string.c_str());
 	}
 
-	delete[] filePtr;
+	delete file;
 	ptr = output;
 
 	return true;
 }
 
 bool StaticResource::loadRawData(const char *filename, void *&ptr, int &size) {
-	ptr = getFile(filename, size);
-	if (!ptr)
+	Common::SeekableReadStream *file = getFile(filename);
+	if (!file)
 		return false;
+
+	ptr = new uint8[file->size()];
+	file->read(ptr, file->size());
+	size = file->size();
+	delete file;
+
 	return true;
 }
 
 bool StaticResource::loadShapeTable(const char *filename, void *&ptr, int &size) {
-	uint8 *filePtr = getFile(filename, size);
-	if (!filePtr)
+	Common::SeekableReadStream *file = getFile(filename);
+	if (!file)
 		return false;
-	uint8 *src = filePtr;
 
-	uint32 count = READ_BE_UINT32(src); src += 4;
+	uint32 count = file->readUint32BE();
 	size = count;
 	Shape *loadTo = new Shape[count];
 	assert(loadTo);
 
 	for (uint32 i = 0; i < count; ++i) {
-		loadTo[i].imageIndex = *src++;
-		loadTo[i].x = *src++;
-		loadTo[i].y = *src++;
-		loadTo[i].w = *src++;
-		loadTo[i].h = *src++;
-		loadTo[i].xOffset = *src++;
-		loadTo[i].yOffset = *src++;
+		loadTo[i].imageIndex = file->readByte();
+		loadTo[i].x = file->readByte();
+		loadTo[i].y = file->readByte();
+		loadTo[i].w = file->readByte();
+		loadTo[i].h = file->readByte();
+		loadTo[i].xOffset = file->readSByte();
+		loadTo[i].yOffset = file->readSByte();
 	}
 
-	delete[] filePtr;
+	delete file;
 	ptr = loadTo;
 
 	return true;
 }
 
 bool StaticResource::loadRoomTable(const char *filename, void *&ptr, int &size) {
-	uint8 *filePtr = getFile(filename, size);
-	if (!filePtr)
+	Common::SeekableReadStream *file = getFile(filename);
+	if (!file)
 		return false;
-	uint8 *src = filePtr;
 
-	uint32 count = READ_BE_UINT32(src); src += 4;
+	uint32 count = file->readUint32BE();
 	size = count;
 	Room *loadTo = new Room[count];
 	assert(loadTo);
 
 	for (uint32 i = 0; i < count; ++i) {
-		loadTo[i].nameIndex = *src++;
-		loadTo[i].northExit = READ_BE_UINT16(src); src += 2;
-		loadTo[i].eastExit = READ_BE_UINT16(src); src += 2;
-		loadTo[i].southExit = READ_BE_UINT16(src); src += 2;
-		loadTo[i].westExit = READ_BE_UINT16(src); src += 2;
+		loadTo[i].nameIndex = file->readByte();
+		loadTo[i].northExit = file->readUint16BE();
+		loadTo[i].eastExit = file->readUint16BE();
+		loadTo[i].southExit = file->readUint16BE();
+		loadTo[i].westExit = file->readUint16BE();
 		memset(&loadTo[i].itemsTable[0], 0xFF, sizeof(byte)*6);
 		memset(&loadTo[i].itemsTable[6], 0, sizeof(byte)*6);
 		memset(loadTo[i].itemsXPos, 0, sizeof(uint16)*12);
@@ -620,7 +639,7 @@ bool StaticResource::loadRoomTable(const char *filename, void *&ptr, int &size) 
 		memset(loadTo[i].needInit, 0, sizeof(loadTo[i].needInit));
 	}
 
-	delete[] filePtr;
+	delete file;
 	ptr = loadTo;
 
 	return true;
@@ -635,10 +654,10 @@ bool StaticResource::loadPaletteTable(const char *filename, void *&ptr, int &siz
 	++temp;
 	int end = atoi(temp);
 
-	char **table = new char*[end-start+1];
+	uint8 **table = new uint8*[end-start+1];
 	assert(table);
 
-	char file[64];
+	char baseFilename[64];
 	temp = filename;
 	temp = strstr(temp, " ");
 	++temp;
@@ -646,16 +665,24 @@ bool StaticResource::loadPaletteTable(const char *filename, void *&ptr, int &siz
 	if (temp == NULL)
 		return false;
 	++temp;
-	strncpy(file, temp, 64);
+	strncpy(baseFilename, temp, 64);
 
 	char name[64];
 	for (int i = start; i <= end; ++i) {
-		snprintf(name, 64, "%s%d.PAL", file, i);
-		table[(start != 0) ? (i-start) : i] = (char*)getFile(name, size);
-		if (!table[(start != 0) ? (i-start) : i]) {
+		snprintf(name, 64, "%s%d.PAL", baseFilename, i);
+
+		Common::SeekableReadStream *file = getFile(name);
+		if (!file) {
+			for (int j = start; j < i; ++i)
+				delete[] table[j-start];
 			delete[] table;
+
 			return false;
 		}
+
+		table[i-start] = new uint8[file->size()];
+		file->read(table[i-start], file->size());
+		delete file;
 	}
 
 	ptr = table;
@@ -664,86 +691,67 @@ bool StaticResource::loadPaletteTable(const char *filename, void *&ptr, int &siz
 }
 
 bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &size) {
-	int filesize;
-	uint8 *filePtr = getFile(filename, filesize);
+	Common::SeekableReadStream *file = getFile(filename);
 
-	if (!filePtr)
+	if (!file)
 		return false;
 
-	uint16 *hdr = (uint16 *) filePtr;
-	int numSeq = READ_BE_UINT16(hdr++);
+	int numSeq = file->readUint16BE();
+	uint32 offset = 2;
 	Sequence *tmp_s = new Sequence[numSeq];
-	char *tmp_c = 0;
 
 	size = sizeof(HofSeqData) + numSeq * (sizeof(Sequence) + 28);
 
 	for (int i = 0; i < numSeq; i++) {
-		const uint8 *offset = (const uint8 *)(filePtr + READ_BE_UINT16(hdr++));
-		tmp_s[i].flags = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_c = new char[14];
-		memcpy(tmp_c, offset, 14);
-		tmp_s[i].wsaFile = tmp_c;
-		offset += 14;
-		tmp_c = new char[14];
-		memcpy(tmp_c, offset, 14);
-		tmp_s[i].cpsFile = tmp_c;
-		offset += 14;
-		tmp_s[i].startupCommand = *offset++;
-		tmp_s[i].finalCommand = *offset++;
-		tmp_s[i].stringIndex1 = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_s[i].stringIndex2 = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_s[i].startFrame = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_s[i].numFrames = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_s[i].frameDelay = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_s[i].xPos = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_s[i].yPos = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_s[i].duration = READ_BE_UINT16(offset);
+		file->seek(offset, SEEK_SET); offset += 2;
+		file->seek(file->readUint16BE(), SEEK_SET);
+
+		tmp_s[i].flags = file->readUint16BE();
+		tmp_s[i].wsaFile = new char[14];
+		file->read(const_cast<char*>(tmp_s[i].wsaFile), 14);
+		tmp_s[i].cpsFile = new char[14];
+		file->read(const_cast<char*>(tmp_s[i].cpsFile), 14);
+		tmp_s[i].startupCommand = file->readByte();
+		tmp_s[i].finalCommand = file->readByte();
+		tmp_s[i].stringIndex1 = file->readUint16BE();
+		tmp_s[i].stringIndex2 = file->readUint16BE();
+		tmp_s[i].startFrame = file->readUint16BE();
+		tmp_s[i].numFrames = file->readUint16BE();
+		tmp_s[i].frameDelay = file->readUint16BE();
+		tmp_s[i].xPos = file->readUint16BE();
+		tmp_s[i].yPos = file->readUint16BE();
+		tmp_s[i].duration = file->readUint16BE();
 	}
 
-	int numSeqN = READ_BE_UINT16(hdr++);
+	file->seek(offset, SEEK_SET); offset += 2;
+	int numSeqN = file->readUint16BE();
 	NestedSequence *tmp_n = new NestedSequence[numSeqN];
 	size += (numSeqN * (sizeof(NestedSequence) + 14));
 
 	for (int i = 0; i < numSeqN; i++) {
-		const uint8 *offset = (const uint8 *)(filePtr + READ_BE_UINT16(hdr++));
-		tmp_n[i].flags = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_c = new char[14];
-		memcpy(tmp_c, offset, 14);
-		tmp_n[i].wsaFile = tmp_c;
-		offset += 14;
-		tmp_n[i].startframe = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_n[i].endFrame = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_n[i].frameDelay = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_n[i].x = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_n[i].y = READ_BE_UINT16(offset);
-		offset += 2;
-		uint16 ctrlOffs = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_n[i].startupCommand = READ_BE_UINT16(offset);
-		offset += 2;
-		tmp_n[i].finalCommand = READ_BE_UINT16(offset);
+		file->seek(offset, SEEK_SET); offset += 2;
+		file->seek(file->readUint16BE(), SEEK_SET);
+
+		tmp_n[i].flags = file->readUint16BE();
+		tmp_n[i].wsaFile = new char[14];
+		file->read(const_cast<char*>(tmp_n[i].wsaFile), 14);
+		tmp_n[i].startframe = file->readUint16BE();
+		tmp_n[i].endFrame = file->readUint16BE();
+		tmp_n[i].frameDelay = file->readUint16BE();
+		tmp_n[i].x = file->readUint16BE();
+		tmp_n[i].y = file->readUint16BE();
+		uint16 ctrlOffs = file->readUint16BE();
+		tmp_n[i].startupCommand = file->readUint16BE();
+		tmp_n[i].finalCommand = file->readUint16BE();
 
 		if (ctrlOffs) {
-			int num_c = *(filePtr + ctrlOffs);
-			const uint16 *in_c = (uint16*) (filePtr + ctrlOffs + 1);
+			file->seek(ctrlOffs, SEEK_SET);
+			int num_c = file->readByte();
 			FrameControl *tmp_f = new FrameControl[num_c];
 
 			for (int ii = 0; ii < num_c; ii++) {
-				tmp_f[ii].index = READ_BE_UINT16(in_c++);
-				tmp_f[ii].delay = READ_BE_UINT16(in_c++);
+				tmp_f[ii].index = file->readUint16BE();
+				tmp_f[ii].delay = file->readUint16BE();
 			}
 			
 			tmp_n[i].wsaControl = (const FrameControl*) tmp_f;
@@ -754,7 +762,7 @@ bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &
 		}
 	}
 
-	delete[] filePtr;
+	delete file;
 
 	HofSeqData *loadTo = new HofSeqData;
 	assert(loadTo);
@@ -770,65 +778,53 @@ bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &
 }
 
 bool StaticResource::loadShapeAnimData_v1(const char *filename, void *&ptr, int &size) {
-	int filesize;
-	uint8 *filePtr = getFile(filename, filesize);
-	uint8 *src = filePtr;
+	Common::SeekableReadStream *file = getFile(filename);
 
-	if (!filePtr)
+	if (!file)
 		return false;
 
-	size = *src++;
+	size = file->readByte(); 
 	ItemAnimData_v1 *loadTo = new ItemAnimData_v1[size];
 	assert(loadTo);
 
 	for (int i = 0; i < size; i++) {
-		loadTo[i].itemIndex = (int16) READ_BE_UINT16(src);
-		src += 2;
-		loadTo[i].y = READ_BE_UINT16(src);
-		src += 2;
+		loadTo[i].itemIndex = file->readSint16BE();
+		loadTo[i].y = file->readUint16BE();
 		uint16 *tmp_f = new uint16[20];
-		for (int ii = 0; ii < 20; ii++) {
-			tmp_f[ii] = READ_BE_UINT16(src);
-			src += 2;
-		}
+		for (int ii = 0; ii < 20; ii++)
+			tmp_f[ii] = file->readUint16BE();
 		loadTo[i].frames = tmp_f;
 	}
 
-	delete[] filePtr;
+	delete file;
 	ptr = loadTo;
 
 	return true;
 }
 
 bool StaticResource::loadShapeAnimData_v2(const char *filename, void *&ptr, int &size) {
-	int filesize;
-	uint8 *filePtr = getFile(filename, filesize);
-	uint8 *src = filePtr;
+	Common::SeekableReadStream *file = getFile(filename);
 
-	if (!filePtr)
+	if (!file)
 		return false;
 
-	size = *src++;
+	size = file->readByte();
 	ItemAnimData_v2 *loadTo = new ItemAnimData_v2[size];
 	assert(loadTo);
 
 	for (int i = 0; i < size; i++) {
-		loadTo[i].itemIndex = (int16) READ_BE_UINT16(src);
-		src += 2;
-		loadTo[i].numFrames = *src++;
+		loadTo[i].itemIndex = file->readSint16BE();
+		loadTo[i].numFrames = file->readByte();
 		FrameControl *tmp_f = new FrameControl[loadTo[i].numFrames];
 		for (int ii = 0; ii < loadTo[i].numFrames; ii++) {
-			tmp_f[ii].index = READ_BE_UINT16(src);
-			src += 2;
-			tmp_f[ii].delay = READ_BE_UINT16(src);
-			src += 2;
+			tmp_f[ii].index = file->readUint16BE();
+			tmp_f[ii].delay = file->readUint16BE();
 		}
 		loadTo[i].frames = tmp_f;
 	}
 
-	delete[] filePtr;
+	delete file;
 	ptr = loadTo;
-
 	return true;
 }
 
@@ -904,6 +900,7 @@ void StaticResource::freePaletteTable(void *&ptr, int &size) {
 	uint8 **data = (uint8**)ptr;
 	while (size--)
 		delete[] data[size];
+	delete[] data;
 	ptr = 0;
 	size = 0;
 }
@@ -917,6 +914,8 @@ const char *StaticResource::getFilename(const char *name) {
 		filename += ".K2";
 	else if (_vm->gameFlags().gameID == GI_KYRA3)
 		filename += ".K3";
+	else if (_vm->gameFlags().gameID == GI_LOL)
+		filename += ".LOL";
 
 	if (_vm->gameFlags().isTalkie && _vm->gameFlags().gameID != GI_KYRA3)
 		filename += ".CD";
@@ -930,11 +929,8 @@ const char *StaticResource::getFilename(const char *name) {
 	return filename.c_str();
 }
 
-uint8 *StaticResource::getFile(const char *name, int &size) {
-	uint32 tempSize = 0;
-	uint8 *data = _vm->resource()->fileData(getFilename(name), &tempSize);
-	size = tempSize;
-	return data;
+Common::SeekableReadStream *StaticResource::getFile(const char *name) {
+	return _vm->resource()->getFileStream(getFilename(name));
 }
 
 #pragma mark -
@@ -1034,38 +1030,51 @@ void KyraEngine_LoK::initStaticResource() {
 	}
 
 	// audio data tables
-#if 0
 	static const char *tIntro98[] = { "intro%d.dat" };
 	static const char *tIngame98[] = { "kyram%d.dat" };
-#endif
 
-	static const AudioDataStruct soundData_PC[] = {
-		{ _soundFilesIntro, _soundFilesIntroSize, 0, 0 },
-		{ _soundFiles, _soundFilesSize, 0, 0 },
-		{ 0, 0, 0, 0}
-	};
-
-	static const AudioDataStruct soundData_TOWNS[] = {
-		{ _soundFiles, _soundFilesSize, _cdaTrackTable, _cdaTrackTableSize },
-		{ _soundFiles, _soundFilesSize, _cdaTrackTable, _cdaTrackTableSize },
-		{ 0, 0, 0, 0}
-	};
-
-#if 0
-	static const AudioDataStruct soundData_PC98[] = {
-		{ tIntro98, 1, 0, 0 },
-		{ tIngame98, 1, 0, 0 },
-		{ 0, 0, 0, 0}
-	};
-#endif
-
-	if (_flags.platform == Common::kPlatformPC)
-		_soundData = soundData_PC;
-	else if (_flags.platform == Common::kPlatformFMTowns)
-		_soundData = soundData_TOWNS;
-	else if (_flags.platform == Common::kPlatformPC98)
-		_soundData = soundData_TOWNS/*soundData_PC98*/;
-
+	if (_flags.platform == Common::kPlatformPC) {
+		_soundData[0]._fileList = _soundFilesIntro;
+		_soundData[0]._fileListLen = _soundFilesIntroSize;
+		_soundData[0]._cdaTracks = 0;
+		_soundData[0]._cdaNumTracks = 0;
+		_soundData[1]._fileList = _soundFiles;
+		_soundData[1]._fileListLen = _soundFilesSize;
+		_soundData[1]._cdaTracks = 0;
+		_soundData[1]._cdaNumTracks = 0;
+		_soundData[2]._fileList = 0;
+		_soundData[2]._fileListLen = 0;
+		_soundData[2]._cdaTracks = 0;
+		_soundData[2]._cdaNumTracks = 0;
+	} else if (_flags.platform == Common::kPlatformFMTowns) {
+		_soundData[0]._fileList = _soundFiles;
+		_soundData[0]._fileListLen = _soundFilesSize;
+		_soundData[0]._cdaTracks = _cdaTrackTable;
+		_soundData[0]._cdaNumTracks = _cdaTrackTableSize;
+		_soundData[1]._fileList = _soundFiles;
+		_soundData[1]._fileListLen = _soundFilesSize;
+		_soundData[1]._cdaTracks = _cdaTrackTable;
+		_soundData[1]._cdaNumTracks = _cdaTrackTableSize;
+		_soundData[2]._fileList = 0;
+		_soundData[2]._fileListLen = 0;
+		_soundData[2]._cdaTracks = 0;
+		_soundData[2]._cdaNumTracks = 0;
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		_soundData[0]._fileList = tIntro98;
+		_soundData[0]._fileListLen = 1;
+		_soundData[0]._cdaTracks = 0;
+		_soundData[0]._cdaNumTracks = 0;
+		_soundData[1]._fileList = tIngame98;
+		_soundData[1]._fileListLen = 1;
+		_soundData[1]._cdaTracks = 0;
+		_soundData[1]._cdaNumTracks = 0;
+		_soundData[2]._fileList = 0;
+		_soundData[2]._fileListLen = 0;
+		_soundData[2]._cdaTracks = 0;
+		_soundData[2]._cdaNumTracks = 0;
+	} else {
+		memset(_soundData, 0, sizeof(_soundData));
+	}
 }
 
 void KyraEngine_LoK::loadMouseShapes() {
@@ -1263,38 +1272,50 @@ void KyraEngine_HoF::initStaticResource() {
 	static const char *fmtMusicFileListFinale[] = { "finale%d.twn" };
 	static const char *fmtMusicFileListIngame[] = { "km%02d.twn" };
 
-#if 0
 	static const char *pc98MusicFileListIntro[] = { "intro%d.86" };
 	static const char *pc98MusicFileListFinale[] = { "finale%d.86" };
 	static const char *pc98MusicFileListIngame[] = { "km%02d.86" };
-#endif
 
-	static const AudioDataStruct soundData_PC[] = {
-		{ _musicFileListIntro, _musicFileListIntroSize, 0, 0 },
-		{ _musicFileListIngame, _musicFileListIngameSize, 0, 0},
-		{ _musicFileListFinale, _musicFileListIntroSize, 0, 0 }
-	};
-
-	static const AudioDataStruct soundData_TOWNS[] = {
-		{ fmtMusicFileListIntro, 1, _cdaTrackTableIntro, _cdaTrackTableIntroSize >> 1 },
-		{ fmtMusicFileListIngame, 1, _cdaTrackTableIngame, _cdaTrackTableIngameSize >> 1 },
-		{ fmtMusicFileListFinale, 1, _cdaTrackTableFinale, _cdaTrackTableFinaleSize >> 1 }
-	};
-
-#if 0
-	static const AudioDataStruct soundData_PC98[] = {
-		{ pc98MusicFileListIntro, 1, 0, 0 },
-		{ pc98MusicFileListIngame, 1, 0, 0 },
-		{ pc98MusicFileListFinale, 1, 0, 0 }		
-	};
-#endif
-
-	if (_flags.platform == Common::kPlatformPC)
-		_soundData = soundData_PC;
-	else if (_flags.platform == Common::kPlatformFMTowns)
-		_soundData = soundData_TOWNS;
-	else if (_flags.platform == Common::kPlatformPC98)
-		_soundData = soundData_TOWNS/*soundData_PC98*/;
+	if (_flags.platform == Common::kPlatformPC) {
+		_soundData[0]._fileList = _musicFileListIntro;
+		_soundData[0]._fileListLen = _musicFileListIntroSize;
+		_soundData[0]._cdaTracks = 0;
+		_soundData[0]._cdaNumTracks = 0;
+		_soundData[1]._fileList = _musicFileListIngame;
+		_soundData[1]._fileListLen = _musicFileListIngameSize;
+		_soundData[1]._cdaTracks = 0;
+		_soundData[1]._cdaNumTracks = 0;
+		_soundData[2]._fileList = _musicFileListFinale;
+		_soundData[2]._fileListLen = _musicFileListIntroSize;
+		_soundData[2]._cdaTracks = 0;
+		_soundData[2]._cdaNumTracks = 0;
+	} else if (_flags.platform == Common::kPlatformFMTowns) {
+		_soundData[0]._fileList = fmtMusicFileListIntro;
+		_soundData[0]._fileListLen = 1;
+		_soundData[0]._cdaTracks = _cdaTrackTableIntro;
+		_soundData[0]._cdaNumTracks = _cdaTrackTableIntroSize >> 1;
+		_soundData[1]._fileList = fmtMusicFileListIngame;
+		_soundData[1]._fileListLen = 1;
+		_soundData[1]._cdaTracks = _cdaTrackTableIngame;
+		_soundData[1]._cdaNumTracks = _cdaTrackTableIngameSize >> 1;
+		_soundData[2]._fileList = fmtMusicFileListFinale;
+		_soundData[2]._fileListLen = 1;
+		_soundData[2]._cdaTracks = _cdaTrackTableFinale;
+		_soundData[2]._cdaNumTracks = _cdaTrackTableFinaleSize >> 1;
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		_soundData[0]._fileList = pc98MusicFileListIntro;
+		_soundData[0]._fileListLen = 1;
+		_soundData[0]._cdaTracks = 0;
+		_soundData[0]._cdaNumTracks = 0;
+		_soundData[1]._fileList = pc98MusicFileListIngame;
+		_soundData[1]._fileListLen = 1;
+		_soundData[1]._cdaTracks = 0;
+		_soundData[1]._cdaNumTracks = 0;
+		_soundData[2]._fileList = pc98MusicFileListFinale;
+		_soundData[2]._fileListLen = 1;
+		_soundData[2]._cdaTracks = 0;
+		_soundData[2]._cdaNumTracks = 0;
+	}
 
 	// setup sequence data
 	_sequences = _staticres->loadHofSequenceData(k2SeqplaySeqData, tmpSize);
@@ -1333,8 +1354,17 @@ void KyraEngine_HoF::initStaticResource() {
 		&KyraEngine_HoF::seq_demoDig, 0
 	};
 
-	_callbackS = (_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks;
-	_callbackN = (_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks;
+	static const SeqProc lolDemoSequenceCallbacks[] = {
+		&KyraEngine_HoF::seq_lolDemoScene1, 0, &KyraEngine_HoF::seq_lolDemoScene2, 0,
+		&KyraEngine_HoF::seq_lolDemoScene3, 0, &KyraEngine_HoF::seq_lolDemoScene4, 0,
+		&KyraEngine_HoF::seq_lolDemoScene5, &KyraEngine_HoF::seq_lolDemoText5,
+		&KyraEngine_HoF::seq_lolDemoScene6, 0
+	};
+
+	static const SeqProc lolDemoNestedSequenceCallbacks[] = { 0	};
+
+	_callbackS = _flags.gameID == GI_LOL ? lolDemoSequenceCallbacks : ((_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks);
+	_callbackN = _flags.gameID == GI_LOL ? lolDemoNestedSequenceCallbacks : ((_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks);
 }
 
 void KyraEngine_MR::initStaticResource() {
@@ -2234,6 +2264,106 @@ const int8 KyraEngine_MR::_albumWSAX[] = {
 const int8 KyraEngine_MR::_albumWSAY[] = {
 	 0, -1, 3, 0, -1,  0, -2, 0,
 	-1, -2, 2, 2, -6, -6, -6, 0
+};
+
+// lands of lore static res
+
+const ScreenDim Screen_LoL::_screenDimTable[] = {
+	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 }
+};
+
+const int Screen_LoL::_screenDimTableCount = ARRAYSIZE(Screen_LoL::_screenDimTable);
+
+const char * const LoLEngine::_languageExt[] = {
+	"ENG",
+	"FRE",
+	"GER"
+};
+
+const LoLEngine::CharacterPrev LoLEngine::_charPreviews[] = {
+	{ "Ak\'shel", 0x060, 0x7F, { 0x0F, 0x08, 0x05 } },
+	{  "Michael", 0x09A, 0x7F, { 0x06, 0x0A, 0x0F } },
+	{   "Kieran", 0x0D4, 0x7F, { 0x08, 0x06, 0x08 } },
+	{   "Conrad", 0x10F, 0x7F, { 0x0A, 0x0C, 0x0A } }
+};
+
+const uint8 LoLEngine::_chargenFrameTable[] = {
+	0x00, 0x01, 0x02, 0x03, 0x04,
+	0x05, 0x04, 0x03, 0x02, 0x01,
+	0x00, 0x00, 0x01, 0x02, 0x03,
+	0x04, 0x05, 0x06, 0x07, 0x08,
+	0x09, 0x0A, 0x0B, 0x0C, 0x0D,
+	0x0E, 0x0F, 0x10, 0x11, 0x12
+};
+
+const uint16 LoLEngine::_selectionPosTable[] = {
+	0x6F, 0x00, 0x8F, 0x00, 0xAF, 0x00,  0xCF, 0x00,
+	0xEF, 0x00, 0x6F, 0x20, 0x8F, 0x20,  0xAF, 0x20,
+	0xCF, 0x20, 0xEF, 0x20, 0x6F, 0x40,  0x8F, 0x40,
+	0xAF, 0x40, 0xCF, 0x40, 0xEF, 0x40, 0x10F, 0x00
+};
+
+const uint8 LoLEngine::_selectionChar1IdxTable[] = {
+	0, 0, 5, 5, 5, 5, 5, 5,
+	5, 5, 5, 0, 0, 5, 5, 5,
+	5, 5, 5, 5, 0, 0, 5, 5,
+	5, 5, 5
+};
+
+const uint8 LoLEngine::_selectionChar2IdxTable[] = {
+	1, 1, 6, 6, 1, 1, 6, 6,
+	6, 6, 6, 6, 6, 1, 1, 6,
+	6, 6, 1, 1, 6, 6, 6, 6,
+	6, 6, 6
+};
+
+const uint8 LoLEngine::_selectionChar3IdxTable[] = {
+	2, 2, 7, 7, 7, 7, 2, 2,
+	7, 7, 7, 7, 7, 7, 7, 2,
+	2, 7, 7, 7, 7, 2, 2, 7,
+	7, 7, 7
+};
+
+const uint8 LoLEngine::_selectionChar4IdxTable[] = {
+	3, 3, 8, 8, 8, 8, 3, 3,
+	8, 8, 3, 3, 8, 8, 8, 8,
+	8, 8, 8, 8, 8, 3, 3, 8,
+	8, 8, 8
+};
+
+const uint8 LoLEngine::_reminderChar1IdxTable[] = {
+	4, 4, 4, 5, 5, 5, 5, 5,
+	5, 5, 5, 5, 5, 5, 5, 5,
+	5
+};
+
+const uint8 LoLEngine::_reminderChar2IdxTable[] = {
+	9, 9, 9, 6, 6, 6, 6, 6,
+	6, 6, 6, 6, 6, 6, 6, 6,
+	6
+};
+
+const uint8 LoLEngine::_reminderChar3IdxTable[] = {
+	0xE, 0xE, 0xE, 0x7, 0x7, 0x7, 0x7, 0x7,
+	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
+	0x7
+};
+
+const uint8 LoLEngine::_reminderChar4IdxTable[] = {
+	0xF, 0xF, 0xF, 0x8, 0x8, 0x8, 0x8, 0x8,
+	0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8,
+	0x8
+};
+
+const uint8 LoLEngine::_selectionAnimIndexTable[] = {
+	0, 5, 1, 6, 2, 7, 3, 8
+};
+
+const uint8 LoLEngine::_charInfoFrameTable[] = {
+	0x0, 0x7, 0x8, 0x9, 0xA, 0xB, 0xA, 0x9,
+	0x8, 0x7, 0x0, 0x0, 0x7, 0x8, 0x9, 0xA,
+	0xB, 0xA, 0x9, 0x8, 0x7, 0x0, 0x0, 0x7,
+	0x8, 0x9, 0xA, 0xB, 0xA, 0x9, 0x8, 0x7
 };
 
 } // End of namespace Kyra

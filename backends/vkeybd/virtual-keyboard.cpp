@@ -30,6 +30,7 @@
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "graphics/imageman.h"
+#include "common/unzip.h"
 
 #define KEY_START_CHAR ('[')
 #define KEY_END_CHAR (']')
@@ -86,11 +87,6 @@ bool VirtualKeyboard::loadKeyboardPack(String packName) {
 		vkDir = new FilesystemNode(".");
 	}
 
-	// HACK/FIXME:
-	// - the ImageManager still needs the default directory to be added
-	// - would be nice for everything to use FSNodes
-	File::addDefaultDirectory(vkDir->getPath());
-
 	if (vkDir->getChild(packName + ".xml").exists()) {
 		// uncompressed keyboard pack
 		
@@ -100,28 +96,15 @@ bool VirtualKeyboard::loadKeyboardPack(String packName) {
 	} else if (vkDir->getChild(packName + ".zip").exists()) {
 		// compressed keyboard pack
 #ifdef USE_ZLIB
-		unzFile zipFile = unzOpen(vkDir->getChild(packName + ".zip").getPath().c_str());
-		if (zipFile && unzLocateFile(zipFile, (packName + ".xml").c_str(), 2) == UNZ_OK) {
-			unz_file_info fileInfo;
-			unzOpenCurrentFile(zipFile);
-			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-			byte *buffer = (byte *)malloc(fileInfo.uncompressed_size+1 * sizeof(byte));
-			assert(buffer);
-			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(byte));
-			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
-			unzCloseCurrentFile(zipFile);
-			if (!_parser->loadBuffer(buffer, fileInfo.uncompressed_size+1, true)) {
-				unzClose(zipFile);
+		ZipArchive arch(vkDir->getChild(packName + ".zip").getPath().c_str());
+		if (arch.hasFile(packName + ".xml")) {
+			if (!_parser->loadStream(arch.openFile(packName + ".xml")))
 				return false;
-			}
 		} else {
 			warning("Could not find %s.xml file in %s.zip keyboard pack", packName.c_str(), packName.c_str());
-			unzClose(zipFile);
 			return false;
 		}
-		unzClose(zipFile);
-
-		ImageMan.addArchive(packName + ".zip");
+		ImageMan.addArchive(vkDir->getChild(packName + ".zip").getPath().c_str());
 #else
 		return false;
 #endif

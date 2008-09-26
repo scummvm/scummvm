@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -57,6 +56,10 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Eng
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	// Use music volume for plain sound types (At least the Adlib player uses a plain sound type
+	// so previously the music and sfx volume controls didn't affect it at all).
+	// FIXME: Make Adlib player differentiate between playing sound effects and music and remove this.
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, ConfMan.getInt("music_volume"));
 
 	g_cine = this;
 
@@ -65,14 +68,9 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Eng
 
 CineEngine::~CineEngine() {
 	if (g_cine->getGameType() == Cine::GType_OS) {
-		freePoldatDat();
 		freeErrmessDat();
 	}
 	Common::clearAllSpecialDebugLevels();
-
-	free(palPtr);
-	free(partBuffer);
-	free(textDataPtr);
 }
 
 int CineEngine::init() {
@@ -100,13 +98,44 @@ int CineEngine::go() {
 	mainLoop(1);
 
 	delete renderer;
-	delete[] page3Raw;
+	delete[] collisionPage;
 	delete g_sound;
+	
 	return 0;
 }
 
+int CineEngine::getTimerDelay() const {
+	return (10923000 * _timerDelayMultiplier) / 1193180;
+}
+
+/*! \brief Modify game speed
+ * \param speedChange Negative values slow game down, positive values speed it up, zero does nothing
+ * \return Timer delay multiplier's value after the game speed change
+ */
+int CineEngine::modifyGameSpeed(int speedChange) {
+	// If we want more speed we decrement the timer delay multiplier and vice versa.
+	_timerDelayMultiplier = CLIP(_timerDelayMultiplier - speedChange, 1, 50);
+	return _timerDelayMultiplier;
+}
 
 void CineEngine::initialize() {
+	// Resize object table to its correct size and reset all its elements
+	objectTable.resize(NUM_MAX_OBJECT);
+	resetObjectTable();
+
+	// Resize animation data table to its correct size and reset all its elements
+	animDataTable.resize(NUM_MAX_ANIMDATA);
+	freeAnimDataTable();
+
+	// Resize zone data table to its correct size and reset all its elements
+	zoneData.resize(NUM_MAX_ZONE);
+	Common::set_to(zoneData.begin(), zoneData.end(), 0);
+
+	// Resize zone query table to its correct size and reset all its elements
+	zoneQuery.resize(NUM_MAX_ZONE);	
+	Common::set_to(zoneQuery.begin(), zoneQuery.end(), 0);
+
+	_timerDelayMultiplier = 12; // Set default speed
 	setupOpcodes();
 
 	initLanguage(g_cine->getLanguage());
@@ -117,16 +146,17 @@ void CineEngine::initialize() {
 		renderer = new FWRenderer;
 	}
 
-	page3Raw = new byte[320 * 200];
-	textDataPtr = (byte *)malloc(8000);
+	collisionPage = new byte[320 * 200];
 
-	partBuffer = (PartBuffer *)malloc(NUM_MAX_PARTDATA * sizeof(PartBuffer));
+	// Clear part buffer as there's nothing loaded into it yet.
+	// Its size will change when loading data into it with the loadPart function.
+	partBuffer.clear();
 
 	if (g_cine->getGameType() == Cine::GType_OS) {
 		readVolCnf();
 	}
 
-	loadTextData("texte.dat", textDataPtr);
+	loadTextData("texte.dat");
 
 	if (g_cine->getGameType() == Cine::GType_OS && !(g_cine->getFeatures() & GF_DEMO)) {
 		loadPoldatDat("poldat.dat");
@@ -142,8 +172,7 @@ void CineEngine::initialize() {
 	freeAnimDataTable();
 	overlayList.clear();
 	messageTable.clear();
-
-	memset(objectTable, 0, sizeof(objectTable));
+	resetObjectTable();
 
 	var8 = 0;
 

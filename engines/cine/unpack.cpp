@@ -100,6 +100,14 @@ bool CineUnpacker::unpack(const byte *src, uint srcLen, byte *dst, uint dstLen) 
 	_dstBegin = dst;
 	_dstEnd   = dst + dstLen;
 
+	// Handle already unpacked data here
+	if (srcLen == dstLen) {
+		// Source length is same as destination length so the source
+		// data is already unpacked. Let's just copy it then.
+		memcpy(dst, src, srcLen);
+		return true;
+	}
+
 	// Initialize other variables
 	_src = _srcBegin + srcLen - 4;
 	uint32 unpackedLength = readSource(); // Unpacked length in bytes

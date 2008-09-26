@@ -79,20 +79,18 @@ MidiDriver_ALSA::MidiDriver_ALSA()
 }
 
 int MidiDriver_ALSA::open() {
-	const char *var;
+	const char *var = NULL;
 
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 	_isOpen = true;
 
-	if (!(var = getenv("SCUMMVM_PORT"))) {
-		// use config option if no var specified
+	var = getenv("SCUMMVM_PORT");
+	if (!var && ConfMan.hasKey("alsa_port")) {
 		var = ConfMan.get("alsa_port").c_str();
-		if (parse_addr(var, &seq_client, &seq_port) < 0) {
-			error("Invalid port %s", var);
-			return -1;
-		}
-	} else {
+	}
+
+	if (var) {
 		if (parse_addr(var, &seq_client, &seq_port) < 0) {
 			error("Invalid port %s", var);
 			return -1;
@@ -120,14 +118,32 @@ int MidiDriver_ALSA::open() {
 		return -1;
 	}
 
-	if (seq_client != SND_SEQ_ADDRESS_SUBSCRIBERS) {
-		/* subscribe to MIDI port */
-		if (snd_seq_connect_to(seq_handle, my_port, seq_client, seq_port) < 0) {
-			error("Can't subscribe to MIDI port (%d:%d) see README for help", seq_client, seq_port);
+	if (var) {
+		if (seq_client != SND_SEQ_ADDRESS_SUBSCRIBERS) {
+			// subscribe to MIDI port
+			if (snd_seq_connect_to(seq_handle, my_port, seq_client, seq_port) < 0) {
+				error("Can't subscribe to MIDI port (%d:%d) see README for help", seq_client, seq_port);
+			}
 		}
-		else printf("Connected to Alsa sequencer client [%d:%d]\n", seq_client, seq_port);
+	} else {
+		int defaultPorts[] = {
+			65, 0,
+			17, 0
+		};
+		int i;
+
+		for (i = 0; i < ARRAYSIZE(defaultPorts); i += 2) {
+			seq_client = defaultPorts[i];
+			seq_port = defaultPorts[i + 1];
+			if (snd_seq_connect_to(seq_handle, my_port, seq_client, seq_port) >= 0)
+				break;
+		}
+
+		if (i >= ARRAYSIZE(defaultPorts))
+			error("Can't subscribe to MIDI port (65:0) or (17:0)");
 	}
 
+	printf("Connected to Alsa sequencer client [%d:%d]\n", seq_client, seq_port);
 	printf("ALSA client initialised [%d:0]\n", my_client);
 
 	return 0;

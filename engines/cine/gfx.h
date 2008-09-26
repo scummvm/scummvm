@@ -62,13 +62,14 @@ protected:
 	byte *_backBuffer; ///< Screen backbuffer
 	uint16 *_activeLowPal; ///< Active 16 color palette
 	int _changePal; ///< Load active palette to video backend on next frame
+	bool _showCollisionPage; ///< Should we show the collision page instead of the back buffer? Used for debugging.
 
 	void fillSprite(const objectStruct &obj, uint8 color = 0);
 	void drawMaskedSprite(const objectStruct &obj, const byte *mask);
 	virtual void drawSprite(const objectStruct &obj);
 
 	void drawCommand();
-	void drawMessage(const char *str, int x, int y, int width, byte color);
+	void drawMessage(const char *str, int x, int y, int width, int color);
 	void drawPlainBox(int x, int y, int width, int height, byte color);
 	void drawBorder(int x, int y, int width, int height, byte color);
 	void drawDoubleBorder(int x, int y, int width, int height, byte color);
@@ -94,7 +95,7 @@ public:
 
 	void drawFrame();
 	void blit();
-	void setCommand(const char *cmd);
+	void setCommand(Common::String cmd);
 
 	virtual void incrustMask(const objectStruct &obj, uint8 color = 0);
 	virtual void incrustSprite(const objectStruct &obj);
@@ -111,6 +112,7 @@ public:
 	virtual uint getScroll() const;
 	virtual void removeBg(unsigned int idx);
 	virtual void saveBgNames(Common::OutSaveFile &fHandle);
+	virtual const char *getBgName(uint idx = 0) const;
 
 	virtual void refreshPalette();
 	virtual void reloadPalette();
@@ -123,6 +125,7 @@ public:
 	void drawInputBox(const char *info, const char *input, int cursor, int x, int y, int width);
 
 	virtual void fadeToBlack();
+	void showCollisionPage(bool state);
 };
 
 /*! \brief Operation Stealth renderer
@@ -168,6 +171,7 @@ public:
 	uint getScroll() const;
 	void removeBg(unsigned int idx);
 	void saveBgNames(Common::OutSaveFile &fHandle);
+	const char *getBgName(uint idx = 0) const;
 
 	void refreshPalette();
 	void reloadPalette();
@@ -181,7 +185,7 @@ public:
 
 void gfxDrawSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy);
 
-extern byte *page3Raw;
+extern byte *collisionPage;
 extern FWRenderer *renderer;
 
 void setMouseCursor(int cursor);

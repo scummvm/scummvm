@@ -94,7 +94,7 @@ static int IHNMTextStringIdsLUT[56] = {
 	8,	// Give
 	10,	// Options
 	11,	// Test
-	12,	//
+	12,	// Demo
 	13,	// Help
 	14,	// Quit Game
 	16,	// Fast
@@ -358,15 +358,12 @@ void Interface::saveReminderCallback(void *refCon) {
 }
 
 void Interface::updateSaveReminder() {
-	// TODO: finish this
-	/*
 	if (_active && _panelMode == kPanelMain) {
-		_vm->_timer->removeTimerProc(&saveReminderCallback);
-		_saveReminderState = (_saveReminderState == 0) ? 1 : 0;
+		_saveReminderState = _saveReminderState % _vm->getDisplayInfo().saveReminderNumSprites + 1;
 		drawStatusBar();
-		_vm->_timer->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
+		_vm->_timer->removeTimerProc(&saveReminderCallback);
+		_vm->_timer->installTimerProc(&saveReminderCallback, ((_vm->getGameType() == GType_ITE) ? TIMETOBLINK_ITE : TIMETOBLINK_IHNM), this);
 	}
-	*/
 }
 
 int Interface::activate() {
@@ -423,7 +420,7 @@ void Interface::setMode(int mode) {
 
 	if (mode == kPanelMain) {
 		_inMainMode = true;
-		_saveReminderState = 1; //TODO: blinking timeout
+		_saveReminderState = 1;
 	} else if (mode == kPanelChapterSelection) {
 		_saveReminderState = 1;
 	} else if (mode == kPanelNull) {
@@ -688,7 +685,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 			setMode(kPanelMain);
 			_vm->_script->setNoPendingVerb();
 		} else if (ascii == 'q' || ascii == 'Q') {
-			_vm->shutDown();
+			_vm->quitGame();
 		}
 		break;
 	case kPanelBoss:
@@ -905,10 +902,13 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 		textFont = kKnownFontMedium;
 		textShadowKnownColor = kKnownColorVerbTextShadow;
 	} else {
-		if (panelButton->id < 39 || panelButton->id > 50) {
+		if ((panelButton->id < 39 || panelButton->id > 50) && panelButton->id != kTextLoadSavedGame) {
 			// Read non-hardcoded strings from the LUT string table, loaded from the game
 			// data files
 			text = _vm->_script->_mainStrings.getString(IHNMTextStringIdsLUT[panelButton->id]);
+		} else if (panelButton->id == kTextLoadSavedGame) {
+			// a bit of a kludge, but it will do
+			text = _vm->getTextString(52);
 		} else {
 			// Hardcoded strings in IHNM are read from the ITE hardcoded strings
 			text = _vm->getTextString(panelButton->id);
@@ -1081,7 +1081,7 @@ void Interface::setQuit(PanelButton *panelButton) {
 			if (_vm->getGameId() == GID_IHNM_DEMO)
 				_vm->_scene->creditsScene();	// display sales info for IHNM demo
 			else
-				_vm->shutDown();
+				_vm->quitGame();
 			break;
 	}
 }
@@ -1142,7 +1142,22 @@ void Interface::setLoad(PanelButton *panelButton) {
 	_loadPanel.currentButton = NULL;
 	switch (panelButton->id) {
 		case kTextOK:
-			setMode(kPanelMain);
+			if (_vm->getGameType() == GType_ITE) {
+				setMode(kPanelMain);
+			} else {
+				if (_vm->getSaveFilesCount() > 0) {
+					if (_vm->isSaveListFull() || (_optionSaveFileTitleNumber > 0)) {
+						debug(1, "Loading save game %d", _vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
+						setMode(kPanelMain);
+						_vm->load(_vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber));
+						_vm->syncSoundSettings();
+					}
+				}
+			}
+			break;
+		case kTextCancel:
+			// IHNM only
+			setMode(kPanelOption);
 			break;
 	}
 }
@@ -1402,6 +1417,10 @@ void Interface::setSave(PanelButton *panelButton) {
 				fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
 				_vm->save(fileName, _textInputString);
 			}
+			_vm->_timer->removeTimerProc(&saveReminderCallback);
+			_vm->_timer->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
+			setSaveReminderState(1);
+
 			_textInput = false;
 			setMode(kPanelOption);
 			break;
@@ -1573,7 +1592,6 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 }
 
 void Interface::setOption(PanelButton *panelButton) {
-	char * fileName;
 	_optionPanel.currentButton = NULL;
 	switch (panelButton->id) {
 	case kTextContinuePlaying:
@@ -1594,13 +1612,17 @@ void Interface::setOption(PanelButton *panelButton) {
 		setMode(kPanelQuit);
 		break;
 	case kTextLoad:
-		if (_vm->getSaveFilesCount() > 0) {
-			if (_vm->isSaveListFull() || (_optionSaveFileTitleNumber > 0)) {
-				debug(1, "Loading save game %d", _vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
-				fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
-				setMode(kPanelMain);
-				_vm->load(fileName);
+		if (_vm->getGameType() == GType_ITE) {
+			if (_vm->getSaveFilesCount() > 0) {
+				if (_vm->isSaveListFull() || (_optionSaveFileTitleNumber > 0)) {
+					debug(1, "Loading save game %d", _vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
+					setMode(kPanelMain);
+					_vm->load(_vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber));
+					_vm->syncSoundSettings();
+				}
 			}
+		} else {
+			setMode(kPanelLoad);
 		}
 		break;
 	case kTextSave:
@@ -1625,14 +1647,16 @@ void Interface::setOption(PanelButton *panelButton) {
 		}
 		break;
 	case kTextMusic:
-		_vm->_musicVolume = (_vm->_musicVolume + 1) % 11;
-		_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
-		ConfMan.setInt("music_volume", _vm->_musicVolume * 25);
+		_vm->_musicVolume = _vm->_musicVolume + 25;
+		if (_vm->_musicVolume > 255) _vm->_musicVolume = 0;
+		_vm->_music->setVolume(_vm->_musicVolume, 1);
+		ConfMan.setInt("music_volume", _vm->_musicVolume);
 		break;
 	case kTextSound:
-		_vm->_soundVolume = (_vm->_soundVolume + 1) % 11;
-		_vm->_sound->setVolume(_vm->_soundVolume == 10 ? 255 : _vm->_soundVolume * 25);
-		ConfMan.setInt("sfx_volume", _vm->_soundVolume * 25);
+		_vm->_soundVolume = _vm->_soundVolume + 25;
+		if (_vm->_soundVolume > 255) _vm->_soundVolume = 0;
+		ConfMan.setInt("sound_volume", _vm->_soundVolume);
+		_vm->_sound->setVolume();
 		break;
 	case kTextVoices:
 		if (_vm->_voiceFilesExist) {
@@ -1650,6 +1674,11 @@ void Interface::setOption(PanelButton *panelButton) {
 			_vm->_subtitlesEnabled = true;								// Set it to "Text"
 			_vm->_voicesEnabled = false;
 		}
+		
+		_vm->_speechVolume = _vm->_speechVolume + 25;
+		if (_vm->_speechVolume > 255) _vm->_speechVolume = 0;
+		ConfMan.setInt("speech_volume", _vm->_speechVolume);
+		_vm->_sound->setVolume();
 
 		ConfMan.setBool("subtitles", _vm->_subtitlesEnabled);
 		ConfMan.setBool("voices", _vm->_voicesEnabled);
@@ -1897,7 +1926,7 @@ void Interface::drawStatusBar() {
 		rect.right = rect.left + _vm->getDisplayInfo().saveReminderWidth;
 		rect.bottom = rect.top + _vm->getDisplayInfo().saveReminderHeight;
 		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_saveReminderSprites,
-			_saveReminderState == 1 ? _vm->getDisplayInfo().saveReminderFirstSpriteNumber : _vm->getDisplayInfo().saveReminderSecondSpriteNumber,
+			_vm->getDisplayInfo().saveReminderFirstSpriteNumber + _saveReminderState - 1,
 			rect, 256);
 
 	}
@@ -2250,13 +2279,13 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 		break;
 	case kTextMusic:
 		if (_vm->_musicVolume)
-			textId = kText10Percent + _vm->_musicVolume - 1;
+			textId = kText10Percent + _vm->_musicVolume / 25 - 1;
 		else
 			textId = kTextOff;
 		break;
 	case kTextSound:
 		if (_vm->_soundVolume)
-			textId = kText10Percent + _vm->_soundVolume - 1;
+			textId = kText10Percent + _vm->_soundVolume / 25  - 1;
 		else
 			textId = kTextOff;
 		break;

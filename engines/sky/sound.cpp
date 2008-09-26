@@ -1025,6 +1025,7 @@ Sound::Sound(Audio::Mixer *mixer, Disk *pDisk, uint8 pVolume) {
 	_mixer = mixer;
 	_saveSounds[0] = _saveSounds[1] = 0xFFFF;
 	_mainSfxVolume = pVolume;
+	_isPaused = false;
 }
 
 Sound::~Sound(void) {
@@ -1254,14 +1255,20 @@ bool Sound::startSpeech(uint16 textNum) {
 
 void Sound::fnPauseFx(void) {
 
-	_mixer->pauseID(SOUND_CH0, true);
-	_mixer->pauseID(SOUND_CH1, true);
+	if (!_isPaused) {
+		_isPaused = true;
+		_mixer->pauseID(SOUND_CH0, true);
+		_mixer->pauseID(SOUND_CH1, true);
+	}
 }
 
 void Sound::fnUnPauseFx(void) {
 
-	_mixer->pauseID(SOUND_CH0, false);
-	_mixer->pauseID(SOUND_CH1, false);
+	if (_isPaused) {
+		_isPaused = false;
+		_mixer->pauseID(SOUND_CH0, false);
+		_mixer->pauseID(SOUND_CH1, false);
+	}
 }
 
 } // End of namespace Sky

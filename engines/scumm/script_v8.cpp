@@ -424,10 +424,10 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 
 		if (var == VAR_CHARINC) {
 			if (ConfMan.hasKey("talkspeed")) {
-				value = getTalkspeed();
+				value = getTalkDelay();
 			} else {
 				// Save the new talkspeed value to ConfMan
-				setTalkspeed(value);
+				setTalkDelay(value);
 			}
 		}
 
@@ -1170,7 +1170,7 @@ void ScummEngine_v8::o8_systemOps() {
 		restart();
 		break;
 	case 0x29:		// SO_SYSTEM_QUIT Quit game
-		shutDown();
+		quitGame();
 		break;
 	default:
 		error("o8_systemOps: invalid case 0x%x", subOp);
@@ -1289,7 +1289,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		if (ConfMan.getBool("confirm_exit"))
 			confirmExitDialog();
 		else
-			_quit = true;
+			quitGame();
 		break;
 	case 108:	// buildPaletteShadow
 		setShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);

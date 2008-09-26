@@ -243,8 +243,19 @@ public:
 		return "Nippon Safes Inc. (C) Dynabyte";
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual void removeSaveState(const char *target, int slot) const;
 };
+
+bool ParallactionMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDirectLoad) ||
+		(f == kSupportsDeleteSave);
+}
 
 bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const Parallaction::PARALLACTIONGameDescription *gd = (const Parallaction::PARALLACTIONGameDescription *)desc;
@@ -263,6 +274,43 @@ bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 	}
 
 	return res;
+}
+
+SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringList filenames;
+	Common::String pattern = target;
+	pattern += ".0??";
+
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 2);
+
+		if (slotNum >= 0 && slotNum <= 99) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				Common::String saveDesc = in->readLine();
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc, *file));
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
+}
+
+void ParallactionMetaEngine::removeSaveState(const char *target, int slot) const {
+	char extension[6];
+	snprintf(extension, sizeof(extension), ".0%02d", slot);
+
+	Common::String filename = target;
+	filename += extension;
+
+	g_system->getSavefileManager()->removeSavefile(filename.c_str());
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PARALLACTION)

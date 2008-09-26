@@ -24,8 +24,6 @@
  * This file contains configuration functionality
  */
 
-//#define USE_3FLAGS 1
-
 #include "tinsel/config.h"
 #include "tinsel/dw.h"
 #include "tinsel/sound.h"
@@ -41,13 +39,13 @@ namespace Tinsel {
 //----------------- GLOBAL GLOBAL DATA --------------------
 
 int dclickSpeed = DOUBLE_CLICK_TIME;
-int volMidi = MAXMIDIVOL;
-int volSound = MAXSAMPVOL;
-int volVoice = MAXSAMPVOL;
+int volMidi = Audio::Mixer::kMaxChannelVolume;
+int volSound = Audio::Mixer::kMaxChannelVolume;
+int volVoice = Audio::Mixer::kMaxChannelVolume;
 int speedText = DEFTEXTSPEED;
 int bSubtitles = false;
 int bSwapButtons = 0;
-LANGUAGE language = TXT_ENGLISH;
+LANGUAGE g_language = TXT_ENGLISH;
 int bAmerica = 0;
 
 
@@ -55,19 +53,43 @@ int bAmerica = 0;
 bool bNoBlocking;
 
 /**
- * WriteConfig()
+ * Write settings to config manager and flush the config file to disk.
  */
-
 void WriteConfig(void) {
 	ConfMan.setInt("dclick_speed", dclickSpeed);
-	ConfMan.setInt("music_volume", (volMidi * Audio::Mixer::kMaxChannelVolume) / MAXMIDIVOL);
-	ConfMan.setInt("sfx_volume", (volSound * Audio::Mixer::kMaxChannelVolume) / MAXSAMPVOL);
-	ConfMan.setInt("speech_volume", (volVoice * Audio::Mixer::kMaxChannelVolume) / MAXSAMPVOL);
+	ConfMan.setInt("music_volume", volMidi);
+	ConfMan.setInt("sfx_volume", volSound);
+	ConfMan.setInt("speech_volume", volVoice);
 	ConfMan.setInt("talkspeed", (speedText * 255) / 100);
 	ConfMan.setBool("subtitles", bSubtitles);
 	//ConfMan.setBool("swap_buttons", bSwapButtons ? 1 : 0);
-	//ConfigData.language = language;	// not necessary, as language has been set in the launcher
 	//ConfigData.bAmerica = bAmerica;		// EN_USA / EN_GRB
+
+	// Store language for multilingual versions
+	if ((_vm->getFeatures() & GF_USE_3FLAGS) || (_vm->getFeatures() & GF_USE_4FLAGS) || (_vm->getFeatures() & GF_USE_5FLAGS)) {
+		Common::Language lang;
+		switch (g_language) {
+		case TXT_FRENCH:
+			lang = Common::FR_FRA;
+			break;
+		case TXT_GERMAN:
+			lang = Common::DE_DEU;
+			break;
+		case TXT_SPANISH:
+			lang = Common::ES_ESP;
+			break;
+		case TXT_ITALIAN:
+			lang = Common::IT_ITA;
+			break;
+		default:
+			lang = Common::EN_ANY;
+		}
+		
+		ConfMan.set("language", Common::getLanguageCode(lang));
+	}
+	
+	// Write to disk
+	ConfMan.flushToDisk();
 }
 
 /*---------------------------------------------------------------------*\
@@ -79,9 +101,9 @@ void ReadConfig(void) {
 	if (ConfMan.hasKey("dclick_speed"))
 		dclickSpeed = ConfMan.getInt("dclick_speed");
 
-	volMidi = (ConfMan.getInt("music_volume") * MAXMIDIVOL) / Audio::Mixer::kMaxChannelVolume;
-	volSound = (ConfMan.getInt("sfx_volume") * MAXSAMPVOL) / Audio::Mixer::kMaxChannelVolume;
-	volVoice = (ConfMan.getInt("speech_volume") * MAXSAMPVOL) / Audio::Mixer::kMaxChannelVolume;
+	volMidi = ConfMan.getInt("music_volume");
+	volSound = ConfMan.getInt("sfx_volume");
+	volVoice = ConfMan.getInt("speech_volume");
 
 	if (ConfMan.hasKey("talkspeed"))
 		speedText = (ConfMan.getInt("talkspeed") * 100) / 255;
@@ -94,24 +116,53 @@ void ReadConfig(void) {
 	//ConfigData.language = language;	// not necessary, as language has been set in the launcher
 	//ConfigData.bAmerica = bAmerica;		// EN_USA / EN_GRB
 
-// The flags here control how many country flags are displayed in one of the option dialogs.
-#if defined(USE_3FLAGS) || defined(USE_4FLAGS) || defined(USE_5FLAGS)
-	language = ConfigData.language;
- #ifdef USE_3FLAGS
-	if (language == TXT_ENGLISH || language == TXT_ITALIAN) {
-		language = TXT_GERMAN;
-		bSubtitles = true;
+	// Set language - we'll be clever here and use the ScummVM language setting
+	g_language = TXT_ENGLISH;
+	Common::Language lang = _vm->getLanguage();
+	if (lang == Common::UNK_LANG && ConfMan.hasKey("language"))
+		lang = Common::parseLanguage(ConfMan.get("language"));	// For multi-lingual versions, fall back to user settings
+	switch (lang) {
+	case Common::FR_FRA:
+		g_language = TXT_FRENCH;
+		break;
+	case Common::DE_DEU:
+		g_language = TXT_GERMAN;
+		break;
+	case Common::ES_ESP:
+		g_language = TXT_SPANISH;
+		break;
+	case Common::IT_ITA:
+		g_language = TXT_ITALIAN;
+		break;
+	default:
+		g_language = TXT_ENGLISH;
 	}
- #endif
- #ifdef USE_4FLAGS
-	if (language == TXT_ENGLISH) {
-		language = TXT_GERMAN;
+
+	if (lang == Common::JA_JPN) {
+		// TODO: Add support for JAPAN version
+	} else if (lang == Common::HB_ISR) {
+		// TODO: Add support for HEBREW version
+
+		// The Hebrew version appears to the software as being English
+		// but it needs to have subtitles on...
+		g_language = TXT_ENGLISH;
 		bSubtitles = true;
+	} else if (_vm->getFeatures() & GF_USE_3FLAGS) {
+		// 3 FLAGS version supports French, German, Spanish
+		// Fall back to German if necessary
+		if (g_language != TXT_FRENCH && g_language != TXT_GERMAN && g_language != TXT_SPANISH) {
+			g_language = TXT_GERMAN;
+			bSubtitles = true;
+		}
+	} else if (_vm->getFeatures() & GF_USE_4FLAGS) {
+		// 4 FLAGS version supports French, German, Spanish, Italian
+		// Fall back to German if necessary
+		if (g_language != TXT_FRENCH && g_language != TXT_GERMAN &&
+				g_language != TXT_SPANISH && g_language != TXT_ITALIAN) {
+			g_language = TXT_GERMAN;
+			bSubtitles = true;
+		}
 	}
- #endif
-#else
-	language = TXT_ENGLISH;
-#endif
 }
 
 bool isJapanMode() {

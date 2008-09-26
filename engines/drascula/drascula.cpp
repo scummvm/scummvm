@@ -65,7 +65,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	if (cd_num >= 0)
 		_system->openCD(cd_num);
 
-	_lang = 0;
+	_lang = kEnglish;
 }
 
 DrasculaEngine::~DrasculaEngine() {
@@ -86,6 +86,7 @@ DrasculaEngine::~DrasculaEngine() {
 	free(_roomPreUpdates);
 	free(_roomUpdates);
 	free(_roomActions);
+	free(_talkSequences);
 	freeTexts(_text);
 	freeTexts(_textd);
 	freeTexts(_textb);
@@ -112,23 +113,23 @@ int DrasculaEngine::init() {
 
 	switch (getLanguage()) {
 	case Common::EN_ANY:
-		_lang = 0;
+		_lang = kEnglish;
 		break;
 	case Common::ES_ESP:
-		_lang = 1;
+		_lang = kSpanish;
 		break;
 	case Common::DE_DEU:
-		_lang = 2;
+		_lang = kGerman;
 		break;
 	case Common::FR_FRA:
-		_lang = 3;
+		_lang = kFrench;
 		break;
 	case Common::IT_ITA:
-		_lang = 4;
+		_lang = kItalian;
 		break;
 	default:
 		warning("Unknown game language. Falling back to English");
-		_lang = 0;
+		_lang = kEnglish;
 	}
 
 	_charMap = 0;
@@ -162,6 +163,12 @@ int DrasculaEngine::init() {
 	_textmisc = 0;
 	_textd1 = 0;
 
+	_color = 0;
+	blinking = 0;
+	leftMouseButton = 0;
+	rightMouseButton = 0;
+	*textName = 0;
+
 	if (!loadDrasculaDat())
 		return 1;
 
@@ -173,7 +180,9 @@ int DrasculaEngine::init() {
 
 int DrasculaEngine::go() {
 	currentChapter = 1; // values from 1 to 6 will start each part of game
-	hay_que_load = 0;
+	loadedDifferentChapter = 0;
+
+	checkCD();
 
 	for (;;) {
 		int i;
@@ -193,7 +202,6 @@ int DrasculaEngine::go() {
 		talkHeight = TALK_HEIGHT; talkWidth = TALK_WIDTH;
 		hasAnswer = 0;
 		savedTime = 0;
-		changeColor = 0;
 		breakOut = 0;
 		vonBraunX = 120; trackVonBraun = 1; vonBraunHasMoved = 0;
 		framesWithoutAction = 0;
@@ -215,50 +223,46 @@ int DrasculaEngine::go() {
 		withVoices = 0;
 		selectionMade = 0;
 
-		if (currentChapter != 6)
-			loadPic(95, tableSurface);
+		if (currentChapter != 3)
+			loadPic(96, frontSurface, COMPLETE_PAL);
 
 		if (currentChapter == 1) {
-			loadPic(96, frontSurface, COMPLETE_PAL);
-			loadPic(99, backSurface);
-			loadPic(97, extraSurface);
 		} else if (currentChapter == 2) {
-			loadPic(96, frontSurface, COMPLETE_PAL);
 			loadPic("pts.alg", drawSurface2);
 		} else if (currentChapter == 3) {
 			loadPic("aux13.alg", bgSurface, COMPLETE_PAL);
 			loadPic(96, frontSurface);
-			loadPic(97, extraSurface);
-			loadPic(99, backSurface);
 		} else if (currentChapter == 4) {
-			loadPic(96, frontSurface, COMPLETE_PAL);
-			if (hay_que_load == 0)
+			if (loadedDifferentChapter == 0)
 				animation_ray();
 			loadPic(96, frontSurface);
 			clearRoom();
-			loadPic(99, backSurface);
-			loadPic(97, extraSurface);
 		} else if (currentChapter == 5) {
-			loadPic(96, frontSurface, COMPLETE_PAL);
-			loadPic(97, extraSurface);
-			loadPic(99, backSurface);
 		} else if (currentChapter == 6) {
 			igorX = 105, igorY = 85, trackIgor = 1;
 			drasculaX = 62, drasculaY = 99, trackDrascula = 1;
 			actorFrames[kFramePendulum] = 0;
 			flag_tv = 0;
+		}
 
-			loadPic(96, frontSurface, COMPLETE_PAL);
+		loadPic(95, tableSurface);
+		for (i = 0; i < 25; i++)
+			memcpy(crosshairCursor + i * 40, tableSurface + 225 + (56 + i) * 320, 40);
+
+		if (_lang == kSpanish)
+			loadPic(974, tableSurface);
+
+		if (currentChapter != 2) {
 			loadPic(99, backSurface);
 			loadPic(97, extraSurface);
-			loadPic(95, tableSurface);
 		}
+
 		memset(iconName, 0, sizeof(iconName));
 
 		for (i = 0; i < 6; i++)
-			strcpy(iconName[i + 1], _textverbs[_lang][i]);
+			strcpy(iconName[i + 1], _textverbs[i]);
 
-		assignDefaultPalette();
+		assignPalette(defaultPalette);
 		if (!runCurrentChapter()) {
 			endChapter();
 			break;
@@ -286,10 +290,7 @@ void DrasculaEngine::endChapter() {
 bool DrasculaEngine::runCurrentChapter() {
 	int n;
 
-	if (_lang == kSpanish)
-		textSurface = extraSurface;
-	else
-		textSurface = tableSurface;
+	rightMouseButton = 0;
 
 	previousMusic = -1;
 
@@ -319,14 +320,14 @@ bool DrasculaEngine::runCurrentChapter() {
 	if (currentChapter == 1) {
 		pickObject(28);
 
-		if (hay_que_load == 0)
+		if (loadedDifferentChapter == 0)
 			animation_1_1();
 
-		withoutVerb();
+		selectVerb(0);
 		loadPic("2aux62.alg", drawSurface2);
 		trackProtagonist = 1;
 		objExit = 104;
-		if (hay_que_load != 0) {
+		if (loadedDifferentChapter != 0) {
 			if (!loadGame(saveName)) {
 				return true;
 			}
@@ -340,7 +341,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		addObject(kItemPhone);
 		trackProtagonist = 3;
 		objExit = 162;
-		if (hay_que_load == 0)
+		if (loadedDifferentChapter == 0)
 			enterRoom(14);
 		else {
 			if (!loadGame(saveName)) {
@@ -358,7 +359,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		flags[1] = 1;
 		trackProtagonist = 1;
 		objExit = 99;
-		if (hay_que_load == 0)
+		if (loadedDifferentChapter == 0)
 			enterRoom(20);
 		else {
 			if (!loadGame(saveName)) {
@@ -372,7 +373,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		addObject(kItemReefer2);
 		addObject(kItemOneCoin2);
 		objExit = 100;
-		if (hay_que_load == 0) {
+		if (loadedDifferentChapter == 0) {
 			enterRoom(21);
 			trackProtagonist = 0;
 			curX = 235;
@@ -394,7 +395,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		addObject(20);
 		trackProtagonist = 1;
 		objExit = 100;
-		if (hay_que_load == 0) {
+		if (loadedDifferentChapter == 0) {
 			enterRoom(45);
 		} else {
 			if (!loadGame(saveName)) {
@@ -407,7 +408,7 @@ bool DrasculaEngine::runCurrentChapter() {
 
 		trackProtagonist = 1;
 		objExit = 104;
-		if (hay_que_load == 0) {
+		if (loadedDifferentChapter == 0) {
 			enterRoom(58);
 			animation_1_6();
 		} else {
@@ -417,6 +418,8 @@ bool DrasculaEngine::runCurrentChapter() {
 			loadPic("auxdr.alg", drawSurface2);
 		}
 	}
+
+	showCursor();
 
 	while (1) {
 		if (characterMoved == 0) {
@@ -436,7 +439,8 @@ bool DrasculaEngine::runCurrentChapter() {
 			// made the character start walking off screen, as his actual position was
 			// different than the displayed one
 			if (roomNumber == 3 && (curX == 279) && (curY + curHeight == 101)) {
-				animation_1_2();
+				gotoObject(178, 121);
+				gotoObject(169, 135);
 			} else if (roomNumber == 14 && (curX == 214) && (curY + curHeight == 121)) {
 				walkToObject = 1;
 				gotoObject(190, 130);
@@ -457,12 +461,26 @@ bool DrasculaEngine::runCurrentChapter() {
 				playMusic(roomMusic);
 		}
 
+		delay(25);
+#ifndef _WIN32_WCE
+		// FIXME
+		// This and the following #ifndefs disable the excess updateEvents() calls *within* the game loop.
+		// Events such as keypresses or mouse clicks are dropped on the ground with no processing
+		// by these calls. They are properly handled by the implicit call through getScan() below.
+		// It is not a good practice to not process events and indeed this created problems with synthesized
+		// events in the wince port.
 		updateEvents();
+#endif
 
 		if (menuScreen == 0 && takeObject == 1)
 			checkObjects();
 		
+#ifdef _WIN32_WCE
+		if (rightMouseButton)
+			if (menuScreen) {
+#else
 		if (rightMouseButton == 1 && menuScreen == 1) {
+#endif
 			delay(100);
 			if (currentChapter == 2)
 				loadPic(menuBackground, backSurface);
@@ -470,9 +488,24 @@ bool DrasculaEngine::runCurrentChapter() {
 				loadPic(99, backSurface);
 			setPalette((byte *)&gamePalette);
 			menuScreen = 0;
+#ifndef _WIN32_WCE
+			// FIXME: This call here is in hope that it will catch the rightmouseup event so the
+			// next if block won't be executed. This too is not a good coding practice. I've recoded it
+			// with a mutual exclusive if block for the menu. I would commit this properly but I cannot test
+			// for other (see Desktop) ports right now.
 			updateEvents();
+#endif
+#ifdef _WIN32_WCE
+			} else {
+#else
 		}
-		if (rightMouseButton == 1 && menuScreen == 0) {
+
+		// Do not show the inventory screen in chapter 5, if the right mouse button is clicked
+		// while the plug (object 16) is held
+		// Fixes bug #2059621 - "DRASCULA: Plug bug"
+		if (rightMouseButton == 1 && menuScreen == 0 && 
+			!(currentChapter == 5 && pickedObject == 16)) {
+#endif
 			delay(100);
 			characterMoved = 0;
 			if (trackProtagonist == 2)
@@ -486,8 +519,10 @@ bool DrasculaEngine::runCurrentChapter() {
 			else
 				loadPic("icons.alg", backSurface);
 			menuScreen = 1;
+#ifndef _WIN32_WCE
 			updateEvents();
-			withoutVerb();
+#endif
+			selectVerb(0);
 		}
 
 		if (leftMouseButton == 1 && menuBar == 1) {
@@ -523,15 +558,15 @@ bool DrasculaEngine::runCurrentChapter() {
 			if (!saveLoadScreen())
 				return true;
 		} else if (key == Common::KEYCODE_F8) {
-			withoutVerb();
+			selectVerb(0);
 		} else if (key == Common::KEYCODE_v) {
 			withVoices = 1;
-			print_abc(_textsys[_lang][2], 96, 86);
+			print_abc(_textsys[2], 96, 86);
 			updateScreen();
 			delay(1410);
 		} else if (key == Common::KEYCODE_t) {
 			withVoices = 0;
-			print_abc(_textsys[_lang][3], 94, 86);
+			print_abc(_textsys[3], 94, 86);
 			updateScreen();
 			delay(1460);
 		} else if (key == Common::KEYCODE_ESCAPE) {
@@ -563,8 +598,10 @@ char *DrasculaEngine::getLine(char *buf, int len) {
 
 	for (;;) {
 		b = buf;
-		while (!_arj.eos()) {
+		while (true) {
 			c = ~_arj.readByte();
+			if (_arj.eos()) break;
+
 			if (c == '\r')
 				continue;
 			if (c == '\n' || b - buf >= (len - 1))
@@ -672,10 +709,14 @@ void DrasculaEngine::updateEvents() {
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
 
-	AudioCD.updateCD();
+	updateMusic();
 
+#ifdef _WIN32_WCE
+	if (eventMan->pollEvent(event)) {
+#else
 	while (eventMan->pollEvent(event)) {
-	switch (event.type) {
+#endif
+		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_keyPressed = event.kbd;
 			break;
@@ -725,7 +766,6 @@ void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int w
 	float totalX, totalY;
 	int n, m;
 	float pixelX, pixelY;
-	int pixelPos[6];
 
 	newWidth = (width * factor) / 100;
 	newHeight = (height * factor) / 100;
@@ -738,14 +778,8 @@ void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int w
 
 	for (n = 0; n < newHeight; n++) {
 		for (m = 0; m < newWidth; m++) {
-			pixelPos[0] = (int)pixelX;
-			pixelPos[1] = (int)pixelY;
-			pixelPos[2] = xx2 + m;
-			pixelPos[3] = yy2 + n;
-			pixelPos[4] = 1;
-			pixelPos[5] = 1;
-
-			copyRectClip(pixelPos, dir_inicio, dir_fin);
+			copyRect((int)pixelX, (int)pixelY, xx2 + m, yy2 + n, 
+					 1, 1, dir_inicio, dir_fin);
 
 			pixelX += totalX;
 		}
@@ -762,7 +796,7 @@ void DrasculaEngine::hipo_sin_nadie(int counter){
 	do {
 		counter--;
 
-		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+		copyBackground();
 		if (currentChapter == 3)
 			updateScreen(0, 0, 0, y, 320, 200, screenSurface);
 		else
@@ -786,7 +820,7 @@ void DrasculaEngine::hipo_sin_nadie(int counter){
 		}
 	} while (counter > 0);
 
-	copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
+	copyBackground();
 	updateScreen();
 }
 
@@ -931,6 +965,15 @@ bool DrasculaEngine::loadDrasculaDat() {
 		_roomActions[i].speechID = in.readSint16BE();
 	}
 
+	_talkSequencesSize = in.readUint16BE();
+	_talkSequences = (TalkSequenceCommand *)malloc(sizeof(TalkSequenceCommand) * _talkSequencesSize);
+	for (i = 0; i < _talkSequencesSize; i++) {
+		_talkSequences[i].chapter = in.readSint16BE();
+		_talkSequences[i].sequence = in.readSint16BE();
+		_talkSequences[i].commandType = in.readSint16BE();
+		_talkSequences[i].action = in.readSint16BE();
+	}
+
 	_numLangs = in.readUint16BE();
 
 	_text = loadTexts(in);
@@ -952,24 +995,22 @@ bool DrasculaEngine::loadDrasculaDat() {
 	return true;
 }
 
-char ***DrasculaEngine::loadTexts(Common::File &in) {
+char **DrasculaEngine::loadTexts(Common::File &in) {
 	int numTexts = in.readUint16BE();
-	char ***res;
+	char **res = (char **)malloc(sizeof(char *) * numTexts);
 	int entryLen;
-	char *pos;
+	char *pos = 0;
 	int len;
-
-	res = (char ***)malloc(sizeof(char *) * _numLangs);
 
 	for (int lang = 0; lang < _numLangs; lang++) {
 		entryLen = in.readUint16BE();
-
-		res[lang] = (char **)malloc(sizeof(char *) * numTexts);
-
 		pos = (char *)malloc(entryLen);
-		res[lang][0] = pos;
-
-		in.read(res[lang][0], entryLen);
+		if (lang == _lang) {
+			res[0] = pos;
+			in.read(res[0], entryLen);
+		} else {
+			in.read(pos, entryLen);
+		}
 
 		pos += DATAALIGNMENT;
 
@@ -979,18 +1020,19 @@ char ***DrasculaEngine::loadTexts(Common::File &in) {
 			len = READ_BE_UINT16(pos);
 			pos += 2 + len;
 
-			res[lang][i] = pos;
+			if (lang == _lang)
+				res[i] = pos;
 		}
 	}
 
 	return res;
 }
 
-void DrasculaEngine::freeTexts(char ***ptr) {
-	for (int lang = 0; lang < _numLangs; lang++) {
-		free(ptr[lang][0] - DATAALIGNMENT);
-		free(ptr[lang]);
-	}
+void DrasculaEngine::freeTexts(char **ptr) {
+	if (!ptr)
+		return;
+
+	free(ptr[0]);
 	free(ptr);
 }
 

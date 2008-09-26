@@ -66,6 +66,11 @@ void Surface::free() {
 	bytesPerPixel = 0;
 }
 
+void Surface::copyFrom(const Surface &surf) {
+	create(surf.w, surf.h, surf.bytesPerPixel);
+	memcpy(pixels, surf.pixels, h * pitch);
+}
+
 void Surface::hLine(int x, int y, int x2, uint32 color) {
 	// Clipping
 	if (y < 0 || y >= h)

@@ -38,7 +38,7 @@ class ADPCMInputStream : public AudioStream {
 private:
 	Common::SeekableReadStream *_stream;
 	bool _disposeAfterUse;
-	uint32 _endpos;
+	int32 _endpos;
 	int _channels;
 	typesADPCM _type;
 	uint32 _blockAlign;

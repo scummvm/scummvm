@@ -74,8 +74,7 @@ void AGOSEngine::decompressData(const char *srcName, byte *dst, uint32 offset, u
 				error("decompressData: Read failed");
 
 			unsigned long decompressedSize = dstSize;
-			int result = Common::uncompress(dst, &decompressedSize, srcBuffer, srcSize);
-			if (result != Common::ZLIB_OK)
+			if (!Common::uncompress(dst, &decompressedSize, srcBuffer, srcSize))
 				error("decompressData: Zlib uncompress error");
 			free(srcBuffer);
 		} else {

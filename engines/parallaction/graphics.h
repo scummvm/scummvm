@@ -209,6 +209,42 @@ public:
 		return (m >> n) & 3;
 	}
 
+	inline byte* getPtr(uint16 x, uint16 y) const {
+		return data + (x >> 2) + y * internalWidth;
+	}
+
+	void bltOr(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {
+		assert((width <= w) && (width <= src.w) && (height <= h) && (height <= src.h));
+
+		byte *s = src.getPtr(sx, sy);
+		byte *d = getPtr(dx, dy);
+
+		// this code assumes buffers are aligned on 4-pixels boundaries, as the original does
+		uint16 linewidth = width >> 2;
+		for (uint16 i = 0; i < height; i++) {
+			for (uint16 j = 0; j < linewidth; j++) {
+				*d++ |= *s++;
+			}
+			d += internalWidth - linewidth;
+			s += src.internalWidth - linewidth;
+		}
+	}
+
+	void bltCopy(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {
+		assert((width <= w) && (width <= src.w) && (height <= h) && (height <= src.h));
+
+		byte *s = src.getPtr(sx, sy);
+		byte *d = getPtr(dx, dy);
+
+		// this code assumes buffers are aligned on 4-pixels boundaries, as the original does
+		for (uint16 i = 0; i < height; i++) {
+			memcpy(d, s, (width >> 2));
+			d += internalWidth;
+			s += src.internalWidth;
+		}
+	}
+
+
 };
 
 
@@ -277,6 +313,7 @@ struct Cnv : public Frames {
 	uint16	_height;	//
 	byte**	field_8;	// unused
 	byte*	_data;
+	bool 	_freeData;
 
 public:
 	Cnv() {
@@ -284,12 +321,14 @@ public:
 		_data = NULL;
 	}
 
-	Cnv(uint16 numFrames, uint16 width, uint16 height, byte* data) : _count(numFrames), _width(width), _height(height), _data(data) {
+	Cnv(uint16 numFrames, uint16 width, uint16 height, byte* data, bool freeData = false)
+		: _count(numFrames), _width(width), _height(height), _data(data), _freeData(freeData) {
 
 	}
 
 	~Cnv() {
-		free(_data);
+		if (_freeData)
+			free(_data);
 	}
 
 	byte* getFramePtr(uint16 index) {
@@ -374,6 +413,7 @@ public:
 	uint frame;
 	uint layer;
 	uint transparentKey;
+	uint scale;
 
 	GfxObj(uint type, Frames *frames, const char *name = NULL);
 	virtual ~GfxObj();
@@ -419,7 +459,9 @@ struct BackgroundInfo {
 	int 				layers[4];
 	PaletteFxRange		ranges[6];
 
-	BackgroundInfo() : x(0), y(0), width(0), height(0) {
+	bool				hasMask;
+
+	BackgroundInfo() : x(0), y(0), width(0), height(0), hasMask(false) {
 		layers[0] = layers[1] = layers[2] = layers[3] = 0;
 		memset(ranges, 0, sizeof(ranges));
 	}
@@ -436,7 +478,7 @@ struct BackgroundInfo {
 		return LAYER_FOREGROUND;
 	}
 
-	void free() {
+	~BackgroundInfo() {
 		bg.free();
 		mask.free();
 		path.free();
@@ -457,13 +499,19 @@ enum {
 
 class BalloonManager {
 public:
+	enum TextColor {
+		kSelectedColor = 0,
+		kUnselectedColor = 1,
+		kNormalColor = 2
+	};
+
 	virtual ~BalloonManager() { }
 
 	virtual void freeBalloons() = 0;
 	virtual int setLocationBalloon(char *text, bool endGame) = 0;
-	virtual int setDialogueBalloon(char *text, uint16 winding, byte textColor) = 0;
-	virtual int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor) = 0;
-	virtual void setBalloonText(uint id, char *text, byte textColor) = 0;
+	virtual int setDialogueBalloon(char *text, uint16 winding, TextColor textColor) = 0;
+	virtual int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, TextColor textColor) = 0;
+	virtual void setBalloonText(uint id, char *text, TextColor textColor) = 0;
 	virtual int hitTestDialogueBalloon(int x, int y) = 0;
 };
 
@@ -511,8 +559,8 @@ public:
 	void freeItems();
 
 	// background surface
-	BackgroundInfo	_backgroundInfo;
-	void setBackground(uint type, const char* name, const char* mask, const char* path);
+	BackgroundInfo	*_backgroundInfo;
+	void setBackground(uint type, BackgroundInfo *info);
 	void patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask = false);
 	void grabBackground(const Common::Rect& r, Graphics::Surface &dst);
 	void fillBackground(const Common::Rect& r, byte color);
@@ -602,8 +650,12 @@ public:
 	void drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
 
 	void drawGfxObject(GfxObj *obj, Graphics::Surface &surf, bool scene);
-    void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
-	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor);
+    void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
+	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
+
+	void bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
+	void bltMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
+	void bltNoMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, byte transparentColor);
 };
 
 

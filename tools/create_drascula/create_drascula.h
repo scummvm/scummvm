@@ -93,5 +93,39 @@ struct RoomUpdate {
 	int type;	// 0 - background, 1 - rect
 };
 
+enum TalkSequenceCommands {
+	kPause = 0,
+	kSetFlag = 1,
+	kClearFlag = 2,
+	kPickObject = 3,
+	kAddObject = 4,
+	kBreakOut = 5,
+	kConverse = 6,
+	kPlaceVB = 7,
+	kUpdateRoom = 8,
+	kUpdateScreen = 9,
+	kTrackProtagonist = 10,
+	kPlaySound = 11,
+	kFinishSound = 12,
+	kTalkerGeneral = 13,
+	kTalkerDrunk = 14,
+	kTalkerPianist = 15,
+	kTalkerBJ = 16,
+	kTalkerVBNormal = 17,
+	kTalkerVBDoor = 18,
+	kTalkerIgorSeated = 19,
+	kTalkerWerewolf = 20,
+	kTalkerMus = 21,
+	kTalkerDrascula = 22,
+	kTalkerBartender0 = 23,
+	kTalkerBartender1 = 24
+};
+
+struct TalkSequenceCommand {
+	int chapter;
+	int sequence;
+	int commandType;
+	int action;
+};
 
 #endif /* CREATE_DRASCULA_H */

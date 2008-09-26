@@ -174,6 +174,8 @@ enum kExtractID {
 	k3ItemMagicTable,
 	k3ItemStringMap,
 
+	lSeqplayIntroTracks,
+
 	kMaxResIDs
 };
 
@@ -202,20 +204,22 @@ enum kSpecial {
 	k2CDFile2E = 8,
 	k2CDFile2F = 9,
 	k2CDFile2G = 10,
+	// Italian fan translation
+	k2CDFile1I = 11,
 
-	k2TownsFile1E = 11,
-	k2TownsFile1J = 12,
-	k2TownsFile2E = 13,
-	k2TownsFile2J = 14,
+	k2TownsFile1E = 12,
+	k2TownsFile1J = 13,
+	k2TownsFile2E = 14,
+	k2TownsFile2J = 15,
 
-	k2FloppyFile1 = 15,
-	k2FloppyFile2 = 16,
+	k2FloppyFile1 = 16,
+	k2FloppyFile2 = 17,
 
-	k2DemoVersion = 17,
-
-	k2DemoVersionTlkE = 18,
-	k2DemoVersionTlkF = 19,
-	k2DemoVersionTlkG = 20
+	k2DemoVersion = 18,
+	k2DemoVersionTlkE = 19,
+	k2DemoVersionTlkF = 20,
+	k2DemoVersionTlkG = 21,
+	k2DemoLol = 22
 };
 
 struct SpecialExtension {
@@ -225,8 +229,9 @@ struct SpecialExtension {
 
 enum kGame {
 	kKyra1 = 0,
-	kKyra2,
-	kKyra3
+	kKyra2 = 1,
+	kKyra3 = 2,
+	kLol = 4
 };
 
 struct Game {

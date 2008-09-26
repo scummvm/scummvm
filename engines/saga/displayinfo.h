@@ -64,7 +64,7 @@ struct GameDisplayInfo {
 	int saveReminderWidth;
 	int saveReminderHeight;
 	int saveReminderFirstSpriteNumber;
-	int saveReminderSecondSpriteNumber;
+	int saveReminderNumSprites;
 
 	int leftPortraitXOffset;
 	int leftPortraitYOffset;
@@ -230,7 +230,8 @@ static const GameDisplayInfo ITE_DisplayInfo = {
 	15,				// status BG color
 	308,137,		// save reminder pos
 	12,12,			// save reminder w & h
-	6,7,			// save reminder sprite numbers
+	6,				// save reminder first sprite number
+	2,				// number of save reminder sprites
 
 	5, 4,			// left portrait x, y offset
 	274, 4,			// right portrait x, y offset
@@ -348,9 +349,9 @@ static PanelButton IHNM_QuitPanelButtons[] = {
 };
 
 static PanelButton IHNM_LoadPanelButtons[] = {
-	// TODO
-	{kPanelButtonLoad, 101,19, 60,16, kTextOK,'o',0, 0,0,0},
-	{kPanelButtonLoadText, -1,5, 0,0, kTextLoadSuccessful,'-',0, 0,0,0},
+	{kPanelButtonLoad,		26,80,	80,25,	kTextOK,'o',0, 0,0,0},
+	{kPanelButtonLoad,		156,80,	80,25,	kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonLoadText,	-1,30,	0,0,	kTextLoadSavedGame,'-',0, 0,0,0},
 };
 
 static PanelButton IHNM_SavePanelButtons[] = {
@@ -376,7 +377,8 @@ static const GameDisplayInfo IHNM_DisplayInfo = {
 	250,		// status BG color
 	616, 304,	// save reminder pos
 	24, 24,		// save reminder w&h
-	0,1,		// save reminder sprite numbers
+	0,			// save reminder first sprite number
+	16,			// number of save reminder sprites
 
 	11, 12,		// left portrait x, y offset
 	-1, -1,		// right portrait x, y offset

@@ -36,7 +36,7 @@
 namespace Common {
 
 class WriteStream;
-
+class SeekableReadStream;
 
 /**
  * The (singleton) configuration manager, used to query & set configuration
@@ -144,19 +144,11 @@ public:
 	bool				hasGameDomain(const String &domName) const;
 	const DomainMap &	getGameDomains() const { return _gameDomains; }
 
-/*
-	TODO: Callback/change notification system
-	typedef void (*ConfigCallback)(const ConstString &key, void *refCon);
-
-	void   registerCallback(ConfigCallback cfgc, void *refCon, const ConstString &key = String::emptyString)
-	void unregisterCallback(ConfigCallback cfgc, const ConstString &key = String::emptyString)
-*/
-
 private:
 	friend class Singleton<SingletonBaseType>;
 	ConfigManager();
 
-	void			loadFile(const String &filename);
+	void			loadFromStream(SeekableReadStream &stream);
 	void			writeDomain(WriteStream &stream, const String &name, const Domain &domain);
 
 	Domain			_transientDomain;

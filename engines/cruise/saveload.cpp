@@ -465,8 +465,7 @@ void saveCT(Common::OutSaveFile& currentSaveFile) {
 void loadSavegameDataSub6(Common::InSaveFile& currentSaveFile) {
 	int32 var;
 
-	var = currentSaveFile.readUint32LE();
-	flipLong(&var);
+	var = currentSaveFile.readUint32BE();
 
 	if (var) {
 		int i;

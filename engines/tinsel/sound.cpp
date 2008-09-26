@@ -74,7 +74,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 	assert(id > 0 && id < _sampleIndexLen);
 
 	// get file offset for this sample
-	uint32 dwSampleIndex = _sampleIndex[id];
+	int32 dwSampleIndex = _sampleIndex[id];
 	
 	// move to correct position in the sample file
 	_sampleStream.seek(dwSampleIndex);
@@ -166,7 +166,7 @@ void SoundManager::openSampleFiles(void) {
 
 		if (_sampleIndex == NULL) {
 			// allocate a buffer for the indices
-			_sampleIndex = (uint32 *)malloc(_sampleIndexLen);
+			_sampleIndex = (int32 *)malloc(_sampleIndexLen);
 
 			// make sure memory allocated
 			if (_sampleIndex == NULL) {

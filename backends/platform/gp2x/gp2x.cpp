@@ -219,7 +219,7 @@ void OSystem_GP2X::initBackend() {
 	// Create the savefile manager, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
 	if (_savefile == 0) {
-		_savefile = new DefaultSaveFileManager();
+		_savefile = new DefaultSaveFileManager(savePath);
 	}
 
 	// Create and hook up the mixer, if none exists yet (we check for this to

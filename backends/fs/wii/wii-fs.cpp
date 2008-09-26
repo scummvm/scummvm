@@ -23,6 +23,7 @@
 #if defined(__WII__)
 
 #include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 
 #include <sys/dir.h>
 
@@ -37,8 +38,8 @@
  */
 class WiiFilesystemNode : public AbstractFilesystemNode {
 protected:
-	String _displayName;
-	String _path;
+	Common::String _displayName;
+	Common::String _path;
 	bool _isDirectory, _isReadable, _isWritable;
 
 public:
@@ -50,50 +51,29 @@ public:
 	/**
 	 * Creates a WiiFilesystemNode for a given path.
 	 *
-	 * @param path String with the path the new node should point to.
+	 * @param path Common::String with the path the new node should point to.
 	 * @param verify true if the isValid and isDirectory flags should be verified during the construction.
 	 */
-	WiiFilesystemNode(const String &path, bool verify);
+	WiiFilesystemNode(const Common::String &path, bool verify);
 
 	virtual bool exists() const;
-	virtual String getDisplayName() const { return _displayName; }
-	virtual String getName() const { return _displayName; }
-	virtual String getPath() const { return _path; }
+	virtual Common::String getDisplayName() const { return _displayName; }
+	virtual Common::String getName() const { return _displayName; }
+	virtual Common::String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return _isReadable; }
 	virtual bool isWritable() const { return _isWritable; }
 
-	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
+
+	virtual Common::SeekableReadStream *openForReading();
+	virtual Common::WriteStream *openForWriting();
 
 private:
 	virtual void setFlags();
 };
-
-/**
- * Returns the last component of a given path.
- *
- * Examples:
- *						/foo/bar.txt would return /bar.txt
- *						/foo/bar/	 would return /bar/
- *
- * @param str String containing the path.
- * @return Pointer to the first char of the last component inside str.
- */
-const char *lastPathComponent(const Common::String &str) {
-	if(str.empty())
-		return "";
-
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '/') {
-		--cur;
-	}
-
-	return cur + 1;
-}
 
 void WiiFilesystemNode::setFlags() {
 	struct stat st;
@@ -118,12 +98,12 @@ WiiFilesystemNode::WiiFilesystemNode() {
 	setFlags();
 }
 
-WiiFilesystemNode::WiiFilesystemNode(const String &p, bool verify) {
+WiiFilesystemNode::WiiFilesystemNode(const Common::String &p, bool verify) {
 	assert(p.size() > 0);
 
 	_path = p;
 
-	_displayName = lastPathComponent(_path);
+	_displayName = lastPathComponent(_path, '/');
 
 	if (verify)
 		setFlags();
@@ -134,10 +114,10 @@ bool WiiFilesystemNode::exists() const {
 	return stat(_path.c_str (), &st) == 0;
 }
 
-AbstractFilesystemNode *WiiFilesystemNode::getChild(const String &n) const {
+AbstractFilesystemNode *WiiFilesystemNode::getChild(const Common::String &n) const {
 	assert(_isDirectory);
 
-	String newPath(_path);
+	Common::String newPath(_path);
 	if (newPath.lastChar() != '/')
 			newPath += '/';
 	newPath += n;
@@ -160,15 +140,15 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 		if (strcmp(filename, ".") == 0 || strcmp(filename, "..") == 0)
 			continue;
 
-		String newPath(_path);
+		Common::String newPath(_path);
 		if (newPath.lastChar() != '/')
 				newPath += '/';
 		newPath += filename;
 
 		bool isDir = S_ISDIR(st.st_mode);
 
-		if ((mode == FilesystemNode::kListFilesOnly && isDir) ||
-			(mode == FilesystemNode::kListDirectoriesOnly && !isDir))
+		if ((mode == Common::FilesystemNode::kListFilesOnly && isDir) ||
+			(mode == Common::FilesystemNode::kListDirectoriesOnly && !isDir))
 			continue;
 
 		if (isDir)
@@ -187,9 +167,17 @@ AbstractFilesystemNode *WiiFilesystemNode::getParent() const {
 		return 0;
 
 	const char *start = _path.c_str();
-	const char *end = lastPathComponent(_path);
+	const char *end = lastPathComponent(_path, '/');
 
-	return new WiiFilesystemNode(String(start, end - start), true);
+	return new WiiFilesystemNode(Common::String(start, end - start), true);
+}
+
+Common::SeekableReadStream *WiiFilesystemNode::openForReading() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *WiiFilesystemNode::openForWriting() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 #endif //#if defined(__WII__)

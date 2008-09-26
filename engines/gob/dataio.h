@@ -45,10 +45,10 @@ public:
 	DataStream(byte *buf, uint32 dSize, bool dispose = true);
 	virtual ~DataStream();
 
-	virtual uint32 pos() const;
-	virtual uint32 size() const;
+	virtual int32 pos() const;
+	virtual int32 size() const;
 
-	virtual void seek(int32 offset, int whence = SEEK_SET);
+	virtual bool seek(int32 offset, int whence = SEEK_SET);
 
 	virtual bool eos() const;
 

@@ -196,7 +196,9 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 			// Alt-Return and Alt-Enter toggle full screen mode
 			if (b == Common::KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN
 			                  || ev.key.keysym.sym == SDLK_KP_ENTER)) {
+				beginGFXTransaction();
 				setFullscreenMode(!_fullscreen);
+				endGFXTransaction();
 #ifdef USE_OSD
 				if (_fullscreen)
 					displayMessageOnOSD("Fullscreen mode");

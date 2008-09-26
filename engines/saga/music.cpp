@@ -249,6 +249,8 @@ void MusicPlayer::setVolume(int volume) {
 
 	_masterVolume = volume;
 
+	Common::StackLock lock(_mutex);
+
 	for (int i = 0; i < 16; ++i) {
 		if (_channel[i]) {
 			_channel[i]->volume(_channelVolume[i] * _masterVolume / 255);
@@ -346,7 +348,7 @@ void MusicPlayer::stopMusic() {
 	}
 }
 
-Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enabled) : _vm(vm), _mixer(mixer), _enabled(enabled), _adlib(false) {
+Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver) : _vm(vm), _mixer(mixer), _adlib(false) {
 	_player = new MusicPlayer(driver);
 	_currentVolume = 0;
 
@@ -402,7 +404,7 @@ void Music::musicVolumeGauge() {
 }
 
 void Music::setVolume(int volume, int time) {
-	_targetVolume = volume * 2; // ScummVM has different volume scale
+	_targetVolume = volume;
 	_currentVolumePercent = 0;
 
 	if (volume == -1) // Set Full volume
@@ -432,11 +434,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	uint32 loopStart;
 
 	debug(2, "Music::play %d, %d", resourceId, flags);
-
-	if (!_enabled) {
-		return;
-	}
-
+	
 	if (isPlaying() && _trackNumber == resourceId) {
 		return;
 	}
@@ -444,11 +442,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	_trackNumber = resourceId;
 	_player->stopMusic();
 	_mixer->stopHandle(_musicHandle);
-
-	if (!_vm->_musicVolume) {
-		return;
-	}
-
+	
 	int realTrackNumber;
 
 	if (_vm->getGameType() == GType_ITE) {
@@ -591,7 +585,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 
 	_player->_parser = parser;
-	setVolume(_vm->_musicVolume == 10 ? 255 : _vm->_musicVolume * 25);
+	setVolume(_vm->_musicVolume);
 
 	if (flags & MUSIC_LOOP)
 		_player->setLoop(true);
@@ -609,7 +603,7 @@ void Music::pause(void) {
 }
 
 void Music::resume(void) {
-	_player->setVolume(_vm->_musicVolume == 10 ? 255 : _vm->_musicVolume * 25);
+	_player->setVolume(_vm->_musicVolume);
 	_player->setPlaying(true);
 }
 

@@ -1319,6 +1319,7 @@ int FWScript::o1_loadBg() {
 	return 0;
 }
 
+/*! \brief Load collision table data */
 int FWScript::o1_loadCt() {
 	const char *param = getNextString();
 
@@ -1500,7 +1501,18 @@ int FWScript::o1_compareGlobalVar() {
 
 		debugC(5, kCineDebugScript, "Line: %d: compare globalVars[%d] and %d", _line, varIdx, value);
 
-		_compare = compareVars(_globalVars[varIdx], value);
+		// WORKAROUND for bug #2054882. Without this, the monks will always
+		// kill you as an impostor, even if you enter the monastery in disguise.
+		//
+		// TODO: Check whether this might be worked around in some other way
+		// like setting global variable 255 to 143 in Future Wars (This is
+		// supposedly what Future Wars checks for from time to time during
+		// gameplay to verify that copy protection was successfully passed).
+		if (varIdx == 255 && (g_cine->getGameType() == Cine::GType_FW)) {
+			_compare = kCmpEQ;
+		} else {
+			_compare = compareVars(_globalVars[varIdx], value);
+		}
 	}
 
 	return 0;
@@ -1789,7 +1801,14 @@ int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneI
 	int16 result = 0;
 
 	for (int16 i = 0; i < numZones; i++) {
-		idx = getZoneFromPositionRaw(page3Raw, lx + i, ly, 320);
+		// Don't try to read data in Operation Stealth if position isn't in 320x200 screen bounds.
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			if ((lx + i) < 0 || (lx + i) > 319 || ly < 0 || ly > 199) {
+				continue;
+			}
+		}
+
+		idx = getZoneFromPositionRaw(collisionPage, lx + i, ly, 320);
 
 		assert(idx >= 0 && idx < NUM_MAX_ZONE);
 

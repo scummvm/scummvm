@@ -625,10 +625,10 @@ void ScummEngine::writeVar(uint var, int value) {
 
 		if (var == VAR_CHARINC) {
 			if (ConfMan.hasKey("talkspeed")) {
-				value = getTalkspeed();
+				value = getTalkDelay();
 			} else {
 				// Save the new talkspeed value to ConfMan
-				setTalkspeed(value);
+				setTalkDelay(value);
 			}
 		}
 
@@ -769,14 +769,14 @@ void ScummEngine::runInventoryScript(int i) {
 	args[0] = i;
 	if (VAR(VAR_INVENTORY_SCRIPT)) {
 		if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
-			inventoryScript();
+			inventoryScriptIndy3Mac();
 		} else {
 			runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, args);
 		}
 	}
 }
 
-void ScummEngine::inventoryScript() {
+void ScummEngine::inventoryScriptIndy3Mac() {
 	VerbSlot *vs;
 	int args[24];
 	int j, slot;
@@ -1201,11 +1201,11 @@ void ScummEngine::runInputScript(int clickArea, int val, int mode) {
 		if (clickArea == kVerbClickArea && (val >= 101 && val <= 108)) {
 			if (val == 107) {
 				VAR(67) -= 2;
-				inventoryScript();
+				inventoryScriptIndy3Mac();
 				return;
 			} else if (val == 108) {
 				VAR(67) += 2;
-				inventoryScript();
+				inventoryScriptIndy3Mac();
 				return;
 			} else {
 				args[0] = 3;

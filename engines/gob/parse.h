@@ -33,7 +33,7 @@ public:
 	void skipExpr(char stopToken);
 	void printExpr(char stopToken);
 	void printVarIndex(void);
-	virtual int16 parseVarIndex(void) = 0;
+	virtual int16 parseVarIndex(uint16 *arg_0 = 0, uint16 *arg_4 = 0) = 0;
 	virtual int16 parseValExpr(byte stopToken = 99) = 0;
 	virtual int16 parseExpr(byte stopToken, byte *resultPtr) = 0;
 
@@ -60,7 +60,7 @@ public:
 	Parse_v1(GobEngine *vm);
 	virtual ~Parse_v1() {}
 
-	virtual int16 parseVarIndex(void);
+	virtual int16 parseVarIndex(uint16 *arg_0 = 0, uint16 *arg_4 = 0);
 	virtual int16 parseValExpr(byte stopToken = 99);
 	virtual int16 parseExpr(byte stopToken, byte *resultPtr);
 };
@@ -70,7 +70,7 @@ public:
 	Parse_v2(GobEngine *vm);
 	virtual ~Parse_v2() {}
 
-	virtual int16 parseVarIndex(void);
+	virtual int16 parseVarIndex(uint16 *arg_0 = 0, uint16 *arg_4 = 0);
 	virtual int16 parseValExpr(byte stopToken = 99);
 	virtual int16 parseExpr(byte stopToken, byte *resultPtr);
 };

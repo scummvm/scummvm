@@ -29,7 +29,6 @@
 
 #include "graphics/cursorman.h"
 
-#include "common/events.h"
 #include "common/savefile.h"
 #include "common/stream.h"
 
@@ -797,12 +796,12 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 	// Show the mouse cursor for the menu
 	CursorMan.showMouse(true);
 
-	for (;;) {
+	while (!_vm->quit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
+			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
-				_vm->_system->quit();
-				break;
+				return;
 			case Common::EVENT_MOUSEMOVE:
 				x = event.mouse.x / 8;
 				y = event.mouse.y / 8;
@@ -1014,7 +1013,7 @@ phase2:
 		if (parser(hdr.ofsDesc[iBlock] - _roomOffset, iBlock, roomdata) == IDI_WTP_PAR_BACK)
 			goto phase1;
 	}
-	for (;;) {
+	while (!_vm->quit()) {
 		for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
 			switch(parser(hdr.ofsBlock[iBlock] - _roomOffset, iBlock, roomdata)) {
 			case IDI_WTP_PAR_GOTO:

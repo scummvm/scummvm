@@ -30,14 +30,13 @@
 #include "scumm/scumm.h"
 
 #include "scumm/smush/smush_player.h"
-#include "scumm/smush/chunk.h"
 
 #include "scumm/insane/insane.h"
 
 namespace Scumm {
 
 void Insane::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) {
 	if (_keyboardDisable)
 		return;
@@ -67,7 +66,7 @@ void Insane::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) {
 	int16 par5, par6, par7, par9, par11, par13, tmp;
 
@@ -294,7 +293,7 @@ void Insane::removeEnemyFromMetList(int32 enemy1) {
 }
 
 void Insane::iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 command, int16 par1, int16, int16) {
 	int par2, par3;
 	if (command == 6) {
@@ -317,7 +316,7 @@ void Insane::iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) {
 	int16 par5;
 
@@ -393,7 +392,7 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) {
 	int16 par5;
 
@@ -478,7 +477,7 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) {
 	switch (par1) {
 	case 2:
@@ -524,7 +523,7 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::iactScene21(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
+					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) {
 	// void implementation
 }

@@ -60,6 +60,7 @@ class DefaultEventManager : public Common::EventManager {
 	int _buttonState;
 	int _modifierState;
 	bool _shouldQuit;
+	bool _shouldRTL;
 
 	class RandomSourceRecord {
 	public:
@@ -128,6 +129,9 @@ public:
 	virtual int getButtonState() const { return _buttonState; }
 	virtual int getModifierState() const { return _modifierState; }
 	virtual int shouldQuit() const { return _shouldQuit; }
+	virtual int shouldRTL() const { return _shouldRTL; }
+	virtual void resetRTL() { _shouldRTL = false; }
+	
 	virtual Common::Keymapper *getKeymapper() { return _keymapper; }
 };
 

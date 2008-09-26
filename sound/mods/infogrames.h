@@ -28,7 +28,6 @@
 
 #include "sound/mods/paula.h"
 #include "common/stream.h"
-#include "common/file.h"
 
 namespace Audio {
 
@@ -46,13 +45,7 @@ public:
 		~Instruments();
 
 		bool load(Common::SeekableReadStream &ins);
-		bool load(const char *ins) {
-			Common::File f;
-
-			if (f.open(ins))
-				return load(f);
-			return false;
-		}
+		bool load(const char *ins);
 		void unload(void);
 
 		uint8 getCount(void) const { return _count; }
@@ -82,13 +75,7 @@ public:
 	void setRepeating (int32 repCount) { _repCount = repCount; }
 
 	bool load(Common::SeekableReadStream &dum);
-	bool load(const char *dum) {
-		Common::File f;
-
-		if (f.open(dum))
-			return load(f);
-		return false;
-	}
+	bool load(const char *dum);
 	void unload(void);
 	void restart(void) {
 		if (_data) {

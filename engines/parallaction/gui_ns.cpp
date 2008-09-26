@@ -29,6 +29,7 @@
 #include "parallaction/gui.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
+#include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 
 
@@ -41,14 +42,14 @@ protected:
 	Common::String _nextState;
 	uint32	_startTime;
 
-	Parallaction_ns *_vm;
+	Parallaction *_vm;
 
 public:
-	SplashInputState_NS(Parallaction_ns *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm)  {
+	SplashInputState_NS(Parallaction *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm)  {
 	}
 
 	virtual MenuInputState* run() {
-		uint32 curTime = g_system->getMillis();
+		uint32 curTime = _vm->_system->getMillis();
 		if (curTime - _startTime > _timeOut) {
 			_vm->freeBackground();
 			return _helper->getState(_nextState);
@@ -59,14 +60,14 @@ public:
 	virtual void enter() {
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 		_vm->showSlide(_slideName.c_str());
-		_startTime = g_system->getMillis();
+		_startTime = _vm->_system->getMillis();
 	}
 };
 
 class SplashInputState0_NS : public SplashInputState_NS {
 
 public:
-	SplashInputState0_NS(Parallaction_ns *vm, MenuInputHelper *helper) : SplashInputState_NS(vm, "intro0", helper)  {
+	SplashInputState0_NS(Parallaction *vm, MenuInputHelper *helper) : SplashInputState_NS(vm, "intro0", helper)  {
 		_slideName = "intro";
 		_timeOut = 2000;
 		_nextState = "intro1";
@@ -76,7 +77,7 @@ public:
 class SplashInputState1_NS : public SplashInputState_NS {
 
 public:
-	SplashInputState1_NS(Parallaction_ns *vm, MenuInputHelper *helper) : SplashInputState_NS(vm, "intro1", helper) {
+	SplashInputState1_NS(Parallaction *vm, MenuInputHelper *helper) : SplashInputState_NS(vm, "intro1", helper) {
 		_slideName = "minintro";
 		_timeOut = 2000;
 		_nextState = "chooselanguage";
@@ -111,10 +112,10 @@ class ChooseLanguageInputState_NS : public MenuInputState {
 	static const Common::Rect _amigaLanguageSelectBlocks[4];
 	const Common::Rect *_blocks;
 
-	Parallaction_ns *_vm;
+	Parallaction *_vm;
 
 public:
-	ChooseLanguageInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("chooselanguage", helper), _vm(vm) {
+	ChooseLanguageInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("chooselanguage", helper), _vm(vm) {
 		_allowChoice = false;
 		_nextState = "selectgame";
 
@@ -178,7 +179,7 @@ public:
 		uint id = _vm->_gfx->createLabel(_vm->_introFont, "SELECT LANGUAGE", 1);
 		_vm->_gfx->showLabel(id, 60, 30);
 
-		_vm->setArrowCursor();
+		_vm->_input->setArrowCursor();
 	}
 };
 
@@ -203,13 +204,13 @@ class SelectGameInputState_NS : public MenuInputState {
 
 	uint	_labels[2];
 
-	Parallaction_ns *_vm;
+	Parallaction *_vm;
 
 	static const char *newGameMsg[4];
 	static const char *loadGameMsg[4];
 
 public:
-	SelectGameInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("selectgame", helper), _vm(vm) {
+	SelectGameInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("selectgame", helper), _vm(vm) {
 		_choice = 0;
 		_oldChoice = -1;
 
@@ -271,10 +272,10 @@ const char *SelectGameInputState_NS::loadGameMsg[4] = {
 
 class LoadGameInputState_NS : public MenuInputState {
 	bool _result;
-	Parallaction_ns *_vm;
+	Parallaction *_vm;
 
 public:
-	LoadGameInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("loadgame", helper), _vm(vm) { }
+	LoadGameInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("loadgame", helper), _vm(vm) { }
 
 	virtual MenuInputState* run() {
 		if (!_result) {
@@ -284,19 +285,19 @@ public:
 	}
 
 	virtual void enter() {
-		_result = _vm->loadGame();
+		_result = _vm->_saveLoad->loadGame();
 	}
 };
 
 
 
 class NewGameInputState_NS : public MenuInputState {
-	Parallaction_ns *_vm;
+	Parallaction *_vm;
 
 	static const char *introMsg3[4];
 
 public:
-	NewGameInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("newgame", helper), _vm(vm) {
+	NewGameInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("newgame", helper), _vm(vm) {
 	}
 
 	virtual MenuInputState* run() {
@@ -344,14 +345,15 @@ const char *NewGameInputState_NS::introMsg3[4] = {
 
 
 class StartDemoInputState_NS : public MenuInputState {
-	Parallaction_ns *_vm;
+	Parallaction *_vm;
 
 public:
-	StartDemoInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("startdemo", helper), _vm(vm) {
+	StartDemoInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("startdemo", helper), _vm(vm) {
 	}
 
 	virtual MenuInputState* run() {
 		_vm->scheduleLocationSwitch("fognedemo.dough");
+		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 		return 0;
 	}
 
@@ -371,7 +373,7 @@ class SelectCharacterInputState_NS : public MenuInputState {
 	static const Common::Rect codeSelectBlocks[9];
 	static const Common::Rect codeTrueBlocks[9];
 
-	Parallaction_ns *_vm;
+	Parallaction *_vm;
 
 	int guiGetSelectedBlock(const Common::Point &p) {
 
@@ -388,7 +390,7 @@ class SelectCharacterInputState_NS : public MenuInputState {
 			_vm->_gfx->invertBackground(codeTrueBlocks[selection]);
 			_vm->_gfx->updateScreen();
 			_vm->beep();
-			g_system->delayMillis(100);
+			_vm->_system->delayMillis(100);
 			_vm->_gfx->invertBackground(codeTrueBlocks[selection]);
 			_vm->_gfx->updateScreen();
 		}
@@ -424,7 +426,7 @@ class SelectCharacterInputState_NS : public MenuInputState {
 
 
 public:
-	SelectCharacterInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("selectcharacter", helper), _vm(vm) {
+	SelectCharacterInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("selectcharacter", helper), _vm(vm) {
 		_keys = (_vm->getPlatform() == Common::kPlatformAmiga && (_vm->getFeatures() & GF_LANG_MULT)) ? _amigaKeys : _pcKeys;
 		_block.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
 	}
@@ -443,7 +445,7 @@ public:
 	}
 
 	void delay() {
-		if (g_system->getMillis() - _startTime < 2000) {
+		if (_vm->_system->getMillis() - _startTime < 2000) {
 			return;
 		}
 		cleanup();
@@ -485,7 +487,7 @@ public:
 		_vm->_gfx->patchBackground(_emptySlots, SLOT_X, SLOT_Y, false);
 		_vm->_gfx->hideLabel(_labels[0]);
 		_vm->_gfx->showLabel(_labels[1], 60, 30);
-		_startTime = g_system->getMillis();
+		_startTime = _vm->_system->getMillis();
 		_state = DELAY;
 	}
 
@@ -508,7 +510,6 @@ public:
 			error("If you read this, either your CPU or transivity is broken (we believe the former).");
 		}
 
-		_vm->_inTestResult = false;
 		_vm->cleanupGame();
 		_vm->scheduleLocationSwitch(_charStartLocation[character]);
 	}
@@ -555,7 +556,7 @@ public:
 
 		cleanup();
 
-		_vm->setArrowCursor();
+		_vm->_input->setArrowCursor();
 		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 		_state = CHOICE;
 	}
@@ -620,7 +621,7 @@ const Common::Rect SelectCharacterInputState_NS::codeTrueBlocks[9] = {
 
 
 class ShowCreditsInputState_NS : public MenuInputState {
-	Parallaction_ns *_vm;
+	Parallaction *_vm;
 	int	_current;
 	uint32 _startTime;
 
@@ -632,7 +633,7 @@ class ShowCreditsInputState_NS : public MenuInputState {
 	static const Credit _credits[6];
 
 public:
-	ShowCreditsInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("showcredits", helper), _vm(vm) {
+	ShowCreditsInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("showcredits", helper), _vm(vm) {
 	}
 
 	void drawCurrentLabel() {
@@ -646,14 +647,14 @@ public:
 
 	virtual MenuInputState* run() {
 		if (_current == -1) {
-			_startTime = g_system->getMillis();
+			_startTime = _vm->_system->getMillis();
 			_current = 0;
 			drawCurrentLabel();
 			return this;
 		}
 
 		int event = _vm->_input->getLastButtonEvent();
-		uint32 curTime = g_system->getMillis();
+		uint32 curTime = _vm->_system->getMillis();
 		if ((event == kMouseLeftUp) || (curTime - _startTime > 5500)) {
 			_current++;
 			_startTime = curTime;
@@ -685,11 +686,11 @@ const ShowCreditsInputState_NS::Credit ShowCreditsInputState_NS::_credits[6] = {
 };
 
 class EndIntroInputState_NS : public MenuInputState {
-	Parallaction_ns *_vm;
+	Parallaction *_vm;
 	bool _isDemo;
 
 public:
-	EndIntroInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("endintro", helper), _vm(vm) {
+	EndIntroInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("endintro", helper), _vm(vm) {
 		_isDemo = (_vm->getFeatures() & GF_DEMO) != 0;
 	}
 
@@ -701,7 +702,8 @@ public:
 		}
 
 		if (_isDemo) {
-			_engineFlags |= kEngineQuit;
+			_vm->_quit = true;
+			_vm->quitGame();
 			return 0;
 		}
 
@@ -722,7 +724,7 @@ public:
 
 
 class EndPartInputState_NS : public MenuInputState {
-	Parallaction_ns *_vm;
+	Parallaction *_vm;
 	bool _allPartsComplete;
 
 	// part completion messages
@@ -738,7 +740,7 @@ class EndPartInputState_NS : public MenuInputState {
 
 
 public:
-	EndPartInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("endpart", helper), _vm(vm) {
+	EndPartInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("endpart", helper), _vm(vm) {
 	}
 
 	virtual MenuInputState* run() {
@@ -758,20 +760,23 @@ public:
 	}
 
 	virtual void enter() {
-		_allPartsComplete = _vm->allPartsComplete();
+		bool completed[3];
+		_vm->_saveLoad->getGamePartProgress(completed, 3);
+		_allPartsComplete = (completed[0] && completed[1] && completed[2]);
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 
+		uint16 language = _vm->getInternLanguage();
 		uint id[4];
 		if (_allPartsComplete) {
-			id[0] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg4[_language], 1);
-			id[1] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg5[_language], 1);
-			id[2] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg6[_language], 1);
-			id[3] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg7[_language], 1);
+			id[0] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg4[language], 1);
+			id[1] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg5[language], 1);
+			id[2] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg6[language], 1);
+			id[3] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg7[language], 1);
 		} else {
-			id[0] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg0[_language], 1);
-			id[1] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg1[_language], 1);
-			id[2] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg2[_language], 1);
-			id[3] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg3[_language], 1);
+			id[0] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg0[language], 1);
+			id[1] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg1[language], 1);
+			id[2] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg2[language], 1);
+			id[3] = _vm->_gfx->createLabel(_vm->_menuFont, endMsg3[language], 1);
 		}
 
 		_vm->_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 70);

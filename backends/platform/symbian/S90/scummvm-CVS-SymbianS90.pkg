@@ -28,7 +28,7 @@
 ;&EN
 
 ; UID is the app's UID
-#{"ScummVM S90"},(0x101f9b57),0,120,0
+#{"ScummVM S90"},(0x101f9b57),0,130,0
 
 ; Platform type -- disabled: seems to be causing trouble
 ;(0x101FBE04), 0, 0, 0, {"Series90ProductID"}
@@ -53,6 +53,7 @@
 "..\..\..\..\dists\engine-data\sky.cpt"-"!:\system\apps\scummvm\sky.cpt"
 "..\..\..\..\dists\engine-data\igor.tbl"-"!:\system\apps\scummvm\igor.tbl"
 "..\..\..\..\dists\engine-data\lure.dat"-"!:\system\apps\scummvm\lure.dat"
+"..\..\..\..\dists\engine-data\drascula.dat"-"!:\system\apps\scummvm\drascula.dat"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"!:\system\apps\ScummVM\scummvm.ini",FILENULL

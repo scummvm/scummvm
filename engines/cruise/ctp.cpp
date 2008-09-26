@@ -153,8 +153,8 @@ void makeCtStruct(uint8* str, int16 table[][40], int num, int z) {
 	int16* a2;
 
 	a1 = a2 = (int16*)str;
-	a2 += 4+sizeof(int16*); // skip header
-
+	a2 += sizeof(int16*) / sizeof(int16) + 6; // skip header
+	
 	int16* XArray = XMIN_XMAX;
 	int minY = *XArray++;
 
@@ -178,8 +178,8 @@ void makeCtStruct(uint8* str, int16 table[][40], int num, int z) {
 
 	adrStructPoly = (uint8*)a2;
 
-	*(uint16**)a2 = (uint16*)-1;
-
+	*(uint16**)a2 = (uint16*)-1; //chained list terminator
+	
 	a1+=sizeof(int16*);
 	*a1++=num;
 	*a1++=walkboxColor[num];
@@ -339,20 +339,20 @@ int initCt(const char *ctpName) {
 		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, 0 );
 	}
 
-	polyStructExp = adrStructPoly += 4;
+	polyStructExp = adrStructPoly += sizeof(int16 *);
 
 	for(int i= numberOfWalkboxes-1; i >=0; i--) {
 		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, walkboxZoom[i] * 20 );
 	}
 
-	int ctSize = (adrStructPoly - ptr) + 4; // for now, the +4 is a safe zone
+	int ctSize = (adrStructPoly - ptr) + sizeof(int16 *); // for now, the +sizeof(int16 *) is a safe zone
 	adrStructPoly = polyStructNorm = polyStruct = (uint8 *) malloc(ctSize);
 
 	for(int i= numberOfWalkboxes-1; i >=0; i--) {
 		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, 0);
 	}
 
-	polyStructExp = adrStructPoly += 4;
+	polyStructExp = adrStructPoly += sizeof(int16 *);
 
 	for(int i= numberOfWalkboxes-1; i >=0; i--) {
 		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, walkboxZoom[i] * 20);

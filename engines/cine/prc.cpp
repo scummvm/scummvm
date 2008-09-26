@@ -25,6 +25,7 @@
 
 
 #include "common/endian.h"
+#include "common/events.h"
 
 #include "cine/cine.h"
 #include "cine/various.h"
@@ -54,14 +55,16 @@ bool loadPrc(const char *pPrcName) {
 
 	// This is copy protection. Used to hang the machine
 	if (!scumm_stricmp(pPrcName, COPY_PROT_FAIL_PRC_NAME)) {
-		exitEngine = 1;
+		Common::Event event;
+		event.type = Common::EVENT_RTL;
+		g_system->getEventManager()->pushEvent(event);
 		return false;
 	}
 
 	checkDataDisk(-1);
 	if ((g_cine->getGameType() == Cine::GType_FW) &&
 		(!scumm_stricmp(pPrcName, BOOT_PRC_NAME) || !scumm_stricmp(pPrcName, "demo.prc"))) {
-		scriptPtr = dataPtr = readFile(pPrcName);
+		scriptPtr = dataPtr = readFile(pPrcName, (g_cine->getFeatures() & GF_CRYPTED_BOOT_PRC) != 0);
 	} else {
 		scriptPtr = dataPtr = readBundleFile(findFileInBundle(pPrcName));
 	}

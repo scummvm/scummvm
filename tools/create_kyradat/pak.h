@@ -35,7 +35,7 @@ public:
 	bool saveFile(const char *file);
 	void clearFile() { delete _fileList; _fileList = 0; }
 
-	const uint32 getFileSize() const { return _fileList->getTableSize()+5+4+_fileList->getFileSize(); }
+	uint32 getFileSize() const { return _fileList->getTableSize()+5+4+_fileList->getFileSize(); }
 
 	void drawFileList();
 

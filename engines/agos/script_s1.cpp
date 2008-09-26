@@ -24,7 +24,6 @@
  */
 
 
-
 #include "common/system.h"
 
 #include "agos/agos.h"
@@ -339,20 +338,10 @@ void AGOSEngine_Simon1::os1_pauseGame() {
 		break;
 	}
 
-	for (;;) {
+	while (!quit()) {
 		delay(1);
-#ifdef _WIN32_WCE
-		if (isSmartphone()) {
-			if (_keyPressed.keycode) {
-				if (_keyPressed.keycode == Common::KEYCODE_RETURN)
-					_quit = true;
-				else
-					break;
-			}
-		}
-#endif
 		if (_keyPressed.keycode == keyYes)
-			_quit = true;
+			quitGame();
 		else if (_keyPressed.keycode == keyNo)
 			break;
 	}

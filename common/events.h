@@ -27,6 +27,7 @@
 #define COMMON_EVENTS_H
 
 #include "common/keyboard.h"
+#include "common/queue.h"
 #include "common/rect.h"
 #include "common/system.h"
 #include "common/noncopyable.h"
@@ -57,6 +58,9 @@ enum EventType {
 	EVENT_WHEELDOWN = 9,
 	EVENT_MBUTTONDOWN = 13,
 	EVENT_MBUTTONUP = 14,
+
+	EVENT_MAINMENU = 15,
+	EVENT_RTL = 16,
 
 	EVENT_QUIT = 10,
 	EVENT_SCREEN_CHANGED = 11,
@@ -178,6 +182,17 @@ public:
 	 */
 	virtual int shouldQuit() const = 0;
 
+	/**
+	 * Should we return to the launcher?
+	 */
+	virtual int shouldRTL() const = 0;
+
+	/**
+	 * Reset the "return to launcher" flag (as returned shouldRTL()) to false.
+	 * Used when we have returned to the launcher.
+	 */
+	virtual void resetRTL() = 0;
+
 	// Optional: check whether a given key is currently pressed ????
 	//virtual bool isKeyPressed(int keycode) = 0;
 
@@ -187,6 +202,10 @@ public:
 	// replacing it by a generic getScreenChangeID method here
 
 	virtual Common::Keymapper *getKeymapper() = 0;
+
+protected:
+
+	Common::Queue<Common::Event> artificialEventQueue;
 };
 
 } // End of namespace Common

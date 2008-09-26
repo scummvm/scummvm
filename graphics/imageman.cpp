@@ -26,14 +26,13 @@
 #include "graphics/imageman.h"
 #include "graphics/surface.h"
 
+#include "common/unzip.h"
+
 DECLARE_SINGLETON(Graphics::ImageManager);
 
 namespace Graphics {
-ImageManager::ImageManager() : _surfaces()
-#ifdef USE_ZLIB
-, _archives()
-#endif
-{
+
+ImageManager::ImageManager() {
 }
 
 ImageManager::~ImageManager() {
@@ -44,36 +43,21 @@ ImageManager::~ImageManager() {
 		*pos = 0;
 	}
 	_surfaces.clear();
-#ifdef USE_ZLIB
-	for (ZipIterator pos2 = _archives.begin(); pos2 != _archives.end(); ++pos2) {
-		unzClose(pos2->file);
-	}
-	_archives.clear();
-#endif
 }
 
 bool ImageManager::addArchive(const Common::String &name) {
 #ifdef USE_ZLIB
-	unzFile newFile = unzOpen(name.c_str());
-	if (!newFile)
+	Common::ZipArchive *arch = new Common::ZipArchive(name);
+	if (!arch || !arch->isOpen())
 		return false;
-	Archive arch;
-	arch.file = newFile;
-	arch.filename = name;
-	_archives.push_back(arch);
+	_archives.add(name, Common::ArchivePtr(arch));
 #endif
 	return true;
 }
 
-void ImageManager::remArchive(const Common::String &name) {
+void ImageManager::removeArchive(const Common::String &name) {
 #ifdef USE_ZLIB
-	for (ZipIterator pos = _archives.begin(); pos != _archives.end(); ++pos) {
-		if (pos->filename.compareToIgnoreCase(name) == 0) {
-			unzClose(pos->file);
-			_archives.erase(pos);
-			break;
-		}
-	}
+	_archives.remove(name);
 #endif
 }
 
@@ -86,39 +70,21 @@ bool ImageManager::registerSurface(const Common::String &name, Surface *surf) {
 	if (!newHandle)
 		return false;
 
-	if (!surf) {
+	if (!surf)
 		surf = ImageDecoder::loadFile(name);
-		if (!surf) {
+
 #ifdef USE_ZLIB
-			ZipIterator file = _archives.end();
-			for (ZipIterator pos = _archives.begin(); pos != _archives.end(); ++pos) {
-				if (unzLocateFile(pos->file, name.c_str(), 2) == UNZ_OK) {
-					file = pos;
-					break;
-				}
-			}
-
-			if (file == _archives.end())
-				return false;
-
-			unz_file_info fileInfo;
-			unzOpenCurrentFile(file->file);
-			unzGetCurrentFileInfo(file->file, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-			uint8 *buffer = new uint8[fileInfo.uncompressed_size];
-			assert(buffer);
-			unzReadCurrentFile(file->file, buffer, fileInfo.uncompressed_size);
-			unzCloseCurrentFile(file->file);
-			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size);
-			surf = ImageDecoder::loadFile(stream);
-			delete[] buffer;
-
-			if (!surf)
-				return false;
-#else
-			return false;
-#endif
+	if (!surf) {
+		Common::SeekableReadStream *stream = _archives.openFile(name);
+		if (stream) {
+			surf = ImageDecoder::loadFile(*stream);
+			delete stream;
 		}
 	}
+#endif
+
+	if (!surf)
+		return false;
 
 	newHandle->surface = surf;
 	newHandle->name = name;

@@ -96,7 +96,8 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	_boss(boss),
 	_buttonState(0),
 	_modifierState(0),
-	_shouldQuit(false) {
+	_shouldQuit(false),
+	_shouldRTL(false) {
 
 	assert(_boss);
 
@@ -210,6 +211,9 @@ DefaultEventManager::~DefaultEventManager() {
 	_recordMode = kPassthrough;
 	_boss->unlockMutex(_timeMutex);
 	_boss->unlockMutex(_recorderMutex);
+
+	if (!artificialEventQueue.empty())
+		artificialEventQueue.clear();
 
 	if (_playbackFile != NULL) {
 		delete _playbackFile;
@@ -372,10 +376,8 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	if (!_artificialEventQueue.empty()) {
 		event = _artificialEventQueue.pop();
 		result = true;
-	}
-	
-	// poll for event from backend
-	if (!result) {
+	} else {
+		// poll for event from backend
 		result = _boss->pollEvent(event);
 		if (result) {
 			// send key press events to keymapper
@@ -415,7 +417,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_modifierState = event.kbd.flags;
-
 			// init continuous event stream
 			// not done on PalmOS because keyboard is emulated and keyup is not generated
 #if !defined(PALMOS_MODE)
@@ -424,8 +425,39 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_currentKeyDown.flags = event.kbd.flags;
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
+			// Global Main Menu
+			// FIXME: F6 is not the best trigger, it conflicts with some games!!!
+			if (event.kbd.keycode == Common::KEYCODE_F6) {
+				if (g_engine && !g_engine->isPaused()) {
+					Common::Event menuEvent;
+					menuEvent.type = Common::EVENT_MAINMENU;
+					
+					// FIXME: GSoC RTL branch passes the F6 key event to the
+					// engine, and also enqueues a EVENT_MAINMENU. For now,
+					// we just drop the key event and return an EVENT_MAINMENU
+					// instead. This way, we don't have to add special cases
+					// to engines (like it was the case for LURE in the RTL branch).
+					//
+					// However, this has other consequences, possibly negative ones.
+					// Like, what happens with key repeat for the trigger key?
+					
+					//pushEvent(menuEvent);
+					event = menuEvent;
 
-			if (event.kbd.keycode == Common::KEYCODE_F6 && event.kbd.flags == 0) {
+					// FIXME: Since now we do not push another MAINMENU event onto
+					// our event stack, the GMM would never open, so we have to do
+					// that here. Of course when the engine would handle MAINMENU
+					// as an event now and open up the GMM itself it would open the
+					// menu twice.
+					if (g_engine && !g_engine->isPaused())
+						g_engine->mainMenuDialog();
+
+					if (_shouldQuit)
+						event.type = Common::EVENT_QUIT;
+					else if (_shouldRTL)
+						event.type = Common::EVENT_RTL;
+				}
+			} else if (event.kbd.keycode == Common::KEYCODE_F7 && event.kbd.flags == 0) {
 				if (_vk->isDisplaying()) {
 					_vk->close(true);
 				} else {
@@ -435,7 +467,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 					if (!isPaused) g_engine->pauseEngine(false);
 					result = false;
 				}
-			} else if (event.kbd.keycode == Common::KEYCODE_F7 && event.kbd.flags == 0) {
+			} else if (event.kbd.keycode == Common::KEYCODE_F8 && event.kbd.flags == 0) {
 				if (!_remap) {
 					_remap = true;
 					Common::RemapDialog _remapDialog;
@@ -446,8 +478,8 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 					_remap = false;
 				}
 			}
-
 			break;
+
 		case Common::EVENT_KEYUP:
 			_modifierState = event.kbd.flags;
 			if (event.kbd.keycode == _currentKeyDown.keycode) {
@@ -464,6 +496,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_mousePos = event.mouse;
 			_buttonState |= LBUTTON;
 			break;
+
 		case Common::EVENT_LBUTTONUP:
 			_mousePos = event.mouse;
 			_buttonState &= ~LBUTTON;
@@ -473,9 +506,24 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_mousePos = event.mouse;
 			_buttonState |= RBUTTON;
 			break;
+
 		case Common::EVENT_RBUTTONUP:
 			_mousePos = event.mouse;
 			_buttonState &= ~RBUTTON;
+			break;
+
+		case Common::EVENT_MAINMENU:
+			if (g_engine && !g_engine->isPaused())
+				g_engine->mainMenuDialog();
+
+			if (_shouldQuit)
+				event.type = Common::EVENT_QUIT;
+			else if (_shouldRTL)
+				event.type = Common::EVENT_RTL;
+			break;
+
+		case Common::EVENT_RTL:
+			_shouldRTL = true;
 			break;
 
 		case Common::EVENT_QUIT:
@@ -488,6 +536,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 					g_engine->pauseEngine(false);
 			} else
 				_shouldQuit = true;
+
 			break;
 
 		default:
@@ -511,7 +560,13 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 }
 
 void DefaultEventManager::pushEvent(const Common::Event &event) {
-	_artificialEventQueue.push(event);
+
+	// If already received an EVENT_QUIT, don't add another one
+	if (event.type == Common::EVENT_QUIT) {
+		if (!_shouldQuit)
+			artificialEventQueue.push(event);
+	} else 
+		artificialEventQueue.push(event);	
 }
 
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)

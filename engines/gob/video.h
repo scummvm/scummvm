@@ -194,6 +194,15 @@ public:
 	virtual ~Video_v2() {}
 };
 
+class Video_v6 : public Video_v2 {
+public:
+	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
+			int16 x, int16 y, int16 transp, SurfaceDesc *destDesc);
+
+	Video_v6(GobEngine *vm);
+	virtual ~Video_v6() {}
+};
+
 class VideoDriver {
 public:
 	VideoDriver() {}

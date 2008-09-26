@@ -25,7 +25,7 @@
 
 #include "mt32emu.h"
 
-#if defined(MACOSX) || defined(__solaris__)
+#if defined(MACOSX) || defined(SOLARIS)
 // Older versions of Mac OS X didn't supply a powf function, so using it
 // will cause a binary incompatibility when trying to run a binary built
 // on a newer OS X release on an olderr one. And Solaris 8 doesn't provide

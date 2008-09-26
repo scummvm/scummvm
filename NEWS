@@ -2,10 +2,22 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
 0.13.0 (????-??-??)
+ General:
+   - Added MIDI driver for Atari ST / FreeMint.
+   - Added a 'Load' button to the Launcher (not supported by all engines).
+   - Added a new global main menu (GMM) dialog usable from all engines.
+   - Added the ability to return to the launcher from running games (via the GMM).
+
  New Games:
    - Added support for Discworld.
 
-0.12.0 (????-??-??)
+ KYRA:
+   - Added support for Auto-save feature.
+
+ SCUMM:
+   - Fixed a long-time bug which caused talkspeed and talkdelay to be mixed up.
+
+0.12.0 (2008-08-31)
  New Games:
    - Added support for The Legend of Kyrandia: Book Two: Hand of Fate.
    - Added support for The Legend of Kyrandia: Book Three: Malcolm's Revenge.
@@ -29,6 +41,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed crashes during certain music in Amiga versions of Elvira 1 and
      Simon the Sorcerer 1.
    - Fixed palette issues in Amiga versions of Simon the Sorcerer 1.
+
+ Queen:
+   - Speech is played at the correct sample rate. (It used to be pitched a bit
+     too low.)
 
  SCUMM:
    - Rewrote parts of Digital iMUSE, fixing some bugs.

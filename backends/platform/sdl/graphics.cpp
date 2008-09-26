@@ -691,19 +691,13 @@ bool OSystem_SDL::saveScreenshot(const char *filename) {
 
 void OSystem_SDL::setFullscreenMode(bool enable) {
 	Common::StackLock lock(_graphicsMutex);
+	
+	if (_fullscreen == enable)
+		return;
 
-	if (_fullscreen != enable || _transactionMode == kTransactionCommit) {
+	if (_transactionMode == kTransactionCommit) {
 		assert(_hwscreen != 0);
 		_fullscreen = enable;
-
-		if (_transactionMode == kTransactionActive) {
-			_transactionDetails.fs = enable;
-			_transactionDetails.fsChanged = true;
-
-			_transactionDetails.needHotswap = true;
-
-			return;
-		}
 
 		// Switch between fullscreen and windowed mode by invoking hotswapGFXMode().
 		// We used to use SDL_WM_ToggleFullScreen() in the past, but this caused various
@@ -713,6 +707,11 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 		// So, we just do it "manually" now. There shouldn't be any drawbacks to that
 		// anyway.
 		hotswapGFXMode();
+	} else if (_transactionMode == kTransactionActive) {
+		_transactionDetails.fs = enable;
+		_transactionDetails.fsChanged = true;
+
+		_transactionDetails.needHotswap = true;
 	}
 }
 

@@ -41,10 +41,18 @@ byte loadCtFW(const char *ctName) {
 	uint16 header[32];
 	byte *ptr, *dataPtr;
 
+	int16 foundFileIdx = findFileInBundle(ctName);
+	if (foundFileIdx == -1) {
+		warning("loadCtFW: Unable to find collision data file '%s'", ctName);
+		// FIXME: Rework this function's return value policy and return an appropriate value here.
+		// The return value isn't yet used for anything so currently it doesn't really matter.
+		return 0;
+	}
+
 	if (currentCtName != ctName)
 		strcpy(currentCtName, ctName);
 
-	ptr = dataPtr = readBundleFile(findFileInBundle(ctName));
+	ptr = dataPtr = readBundleFile(foundFileIdx);
 
 	loadRelatedPalette(ctName);
 
@@ -56,7 +64,7 @@ byte loadCtFW(const char *ctName) {
 		header[i] = readS.readUint16BE();
 	}
 
-	gfxConvertSpriteToRaw(page3Raw, ptr + 0x80, 160, 200);
+	gfxConvertSpriteToRaw(collisionPage, ptr + 0x80, 160, 200);
 
 	free(dataPtr);
 	return 0;
@@ -74,10 +82,10 @@ byte loadCtOS(const char *ctName) {
 	ptr += 2;
 
 	if (bpp == 8) {
-		memcpy(page3Raw, ptr + 256 * 3, 320 * 200);
+		memcpy(collisionPage, ptr + 256 * 3, 320 * 200);
 		renderer->loadCt256(ptr, ctName);
 	} else {
-		gfxConvertSpriteToRaw(page3Raw, ptr + 32, 160, 200);
+		gfxConvertSpriteToRaw(collisionPage, ptr + 32, 160, 200);
 		renderer->loadCt16(ptr, ctName);
 	}
 

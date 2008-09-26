@@ -27,6 +27,8 @@
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs-factory.h"
 
+namespace Common {
+
 FilesystemNode::FilesystemNode() {
 }
 
@@ -49,7 +51,7 @@ bool FilesystemNode::operator<(const FilesystemNode& node) const {
 	if (isDirectory() != node.isDirectory())
 		return isDirectory();
 
-	return scumm_stricmp(getDisplayName().c_str(), node.getDisplayName().c_str()) < 0;
+	return getDisplayName().compareToIgnoreCase(node.getDisplayName()) < 0;
 }
 
 bool FilesystemNode::exists() const {
@@ -60,10 +62,10 @@ bool FilesystemNode::exists() const {
 }
 
 FilesystemNode FilesystemNode::getChild(const Common::String &n) const {
-	if (_realNode == 0)
-		return *this;
+	// If this node is invalid or not a directory, return an invalid node
+	if (_realNode == 0 || !_realNode->isDirectory())
+		return FilesystemNode();
 
-	assert(_realNode->isDirectory());
 	AbstractFilesystemNode *node = _realNode->getChild(n);
 	return FilesystemNode(node);
 }
@@ -152,7 +154,7 @@ bool FilesystemNode::lookupFile(FSList &results, const Common::String &p, bool h
 		} else {
 			Common::String filename = entry->getName();
 			filename.toUppercase();
-			if (Common::matchString(filename.c_str(), pattern.c_str())) {
+			if (filename.matchString(pattern)) {
 				results.push_back(*entry);
 
 				if (!exhaustive)
@@ -170,3 +172,32 @@ bool FilesystemNode::lookupFile(FSList &results, const Common::String &p, bool h
 
 	return !results.empty();
 }
+
+Common::SeekableReadStream *FilesystemNode::openForReading() const {
+	if (_realNode == 0)
+		return 0;
+
+	if (!_realNode->exists()) {
+		warning("FilesystemNode::openForReading: FilesystemNode does not exist");
+		return false;
+	} else if (_realNode->isDirectory()) {
+		warning("FilesystemNode::openForReading: FilesystemNode is a directory");
+		return false;
+	}
+
+	return _realNode->openForReading();
+}
+
+Common::WriteStream *FilesystemNode::openForWriting() const {
+	if (_realNode == 0)
+		return 0;
+
+	if (_realNode->isDirectory()) {
+		warning("FilesystemNode::openForWriting: FilesystemNode is a directory");
+		return 0;
+	}
+
+	return _realNode->openForWriting();
+}
+
+}	// End of namespace Common

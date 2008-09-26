@@ -51,7 +51,7 @@ LANG                    SC
 END
 
 EPOCSTACKSIZE	80000
-EPOCHEAPSIZE	3000000 64000000
+EPOCHEAPSIZE	5000000 64000000
 
 START BITMAP    ScummVM.mbm
 TARGETPATH              \Resource\Apps
@@ -117,6 +117,7 @@ SOURCE backends\platform\symbian\src\ScummApp.cpp
 SOURCE gui\Key.cpp
 SOURCE gui\KeysDialog.cpp
 SOURCE gui\Actions.cpp
+SOURCE gui\Dialog.cpp
 
 // Special for graphics
 source graphics\iff.cpp

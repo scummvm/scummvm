@@ -435,13 +435,10 @@ void IIgsMidiChannel::stopSounds() {
 	_gsChannels.clear();
 }
 
-static int16 *buffer;
-
 int SoundMgr::initSound() {
 	int r = -1;
 
-	buffer = _sndBuffer = (int16 *)calloc(2, BUFFER_SIZE);
-
+	memset(_sndBuffer, 0, BUFFER_SIZE << 1);
 	_env = false;
 
 	switch (_vm->_soundemu) {
@@ -478,7 +475,6 @@ int SoundMgr::initSound() {
 void SoundMgr::deinitSound() {
 	debugC(3, kDebugLevelSound, "()");
 	_mixer->stopHandle(_soundHandle);
-	free(_sndBuffer);
 }
 
 void SoundMgr::stopNote(int i) {
@@ -1017,7 +1013,7 @@ bool IIgsSoundMgr::loadInstrumentHeaders(const Common::String &exePath, const II
 
 	// Open the executable file and check that it has correct size
 	file.open(exePath);
-	if (file.size() != exeInfo.exeSize) {
+	if (file.size() != (int32)exeInfo.exeSize) {
 		debugC(3, kDebugLevelSound, "Apple IIGS executable (%s) has wrong size (Is %d, should be %d)",
 			exePath.c_str(), file.size(), exeInfo.exeSize);
 	}
@@ -1027,7 +1023,7 @@ bool IIgsSoundMgr::loadInstrumentHeaders(const Common::String &exePath, const II
 	file.close();
 
 	// Check that we got enough data to be able to parse the instruments
-	if (data && data->size() >= (exeInfo.instSetStart + exeInfo.instSet.byteCount)) {
+	if (data && data->size() >= (int32)(exeInfo.instSetStart + exeInfo.instSet.byteCount)) {
 		// Check instrument set's length (The info's saved in the executable)
 		data->seek(exeInfo.instSetStart - 4);
 		uint16 instSetByteCount = data->readUint16LE();
@@ -1111,14 +1107,14 @@ bool IIgsSoundMgr::loadWaveFile(const Common::String &wavePath, const IIgsExeInf
 }
 
 /**
- * A function object (i.e. a functor) for testing if a FilesystemNode
+ * A function object (i.e. a functor) for testing if a Common::FilesystemNode
  * object's name is equal (Ignoring case) to a string or to at least
  * one of the strings in a list of strings. Can be used e.g. with find_if().
  */
-struct fsnodeNameEqualsIgnoreCase : public Common::UnaryFunction<const FilesystemNode&, bool> {
+struct fsnodeNameEqualsIgnoreCase : public Common::UnaryFunction<const Common::FilesystemNode&, bool> {
 	fsnodeNameEqualsIgnoreCase(const Common::StringList &str) : _str(str) {}
 	fsnodeNameEqualsIgnoreCase(const Common::String str) { _str.push_back(str); }
-	bool operator()(const FilesystemNode &param) const {
+	bool operator()(const Common::FilesystemNode &param) const {
 		for (Common::StringList::const_iterator iter = _str.begin(); iter != _str.end(); iter++)
 			if (param.getName().equalsIgnoreCase(*iter))
 				return true;
@@ -1143,9 +1139,9 @@ bool SoundMgr::loadInstruments() {
 	}
 
 	// List files in the game path
-	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly)) {
+	Common::FSList fslist;
+	Common::FilesystemNode dir(ConfMan.get("path"));
+	if (!dir.getChildren(fslist, Common::FilesystemNode::kListFilesOnly)) {
 		warning("Invalid game path (\"%s\"), not loading Apple IIGS instruments", dir.getPath().c_str());
 		return false;
 	}
@@ -1161,7 +1157,7 @@ bool SoundMgr::loadInstruments() {
 	waveNames.push_back("SIERRAST");
 
 	// Search for the executable file and the wave file (i.e. check if any of the filenames match)
-	FSList::const_iterator exeFsnode, waveFsnode;
+	Common::FSList::const_iterator exeFsnode, waveFsnode;
 	exeFsnode  = Common::find_if(fslist.begin(), fslist.end(), fsnodeNameEqualsIgnoreCase(exeNames));
 	waveFsnode = Common::find_if(fslist.begin(), fslist.end(), fsnodeNameEqualsIgnoreCase(waveNames));
 
@@ -1185,7 +1181,7 @@ bool SoundMgr::loadInstruments() {
 	return _gsSound.loadWaveFile(waveFsnode->getPath(), *exeInfo) && _gsSound.loadInstrumentHeaders(exeFsnode->getPath(), *exeInfo);
 }
 
-static void fillAudio(void *udata, int16 *stream, uint len) {
+void SoundMgr::fillAudio(void *udata, int16 *stream, uint len) {
 	SoundMgr *soundMgr = (SoundMgr *)udata;
 	uint32 p = 0;
 	static uint32 n = 0, s = 0;
@@ -1193,32 +1189,34 @@ static void fillAudio(void *udata, int16 *stream, uint len) {
 	len <<= 2;
 
 	debugC(5, kDebugLevelSound, "(%p, %p, %d)", (void *)udata, (void *)stream, len);
-	memcpy(stream, (uint8 *)buffer + s, p = n);
+	memcpy(stream, (uint8 *)_sndBuffer + s, p = n);
 	for (n = 0, len -= p; n < len; p += n, len -= n) {
 		soundMgr->playSound();
 		n = soundMgr->mixSound() << 1;
 		if (len < n) {
-			memcpy((uint8 *)stream + p, buffer, len);
+			memcpy((uint8 *)stream + p, _sndBuffer, len);
 			s = len;
 			n -= s;
 			return;
 		} else {
-			memcpy((uint8 *)stream + p, buffer, n);
+			memcpy((uint8 *)stream + p, _sndBuffer, n);
 		}
 	}
 	soundMgr->playSound();
 	n = soundMgr->mixSound() << 1;
-	memcpy((uint8 *)stream + p, buffer, s = len);
+	memcpy((uint8 *)stream + p, _sndBuffer, s = len);
 	n -= s;
 }
 
-SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) {
+SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) : _chn() {
 	_vm = agi;
 	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
 	_endflag = -1;
 	_playingSound = -1;
-	_sndBuffer = 0;
+	_env = false;
+	_playing = false;
+	_sndBuffer = (int16 *)calloc(2, BUFFER_SIZE);
 	_waveform = 0;
 }
 
@@ -1231,6 +1229,7 @@ void SoundMgr::setVolume(uint8 volume) {
 }
 
 SoundMgr::~SoundMgr() {
+	free(_sndBuffer);
 }
 
 } // End of namespace Agi

@@ -63,6 +63,8 @@ void MusicPlayer::setVolume(int volume) {
 
 	_masterVolume = volume;
 
+	Common::StackLock lock(_mutex);
+
 	for (int i = 0; i < 16; ++i) {
 		if (_channel[i]) {
 			_channel[i]->volume(_channelVolume[i] * _masterVolume / 255);

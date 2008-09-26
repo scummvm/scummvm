@@ -472,6 +472,7 @@ private:
 	const int16 *_waveform;
 
 	void premixerCall(int16 *buf, uint len);
+	void fillAudio(void *udata, int16 *stream, uint len);
 
 public:
 	void unloadSound(int);

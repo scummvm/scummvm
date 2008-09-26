@@ -54,14 +54,14 @@ protected:
 	 * than 8 makes no sense, since that's the size of member _extern
 	 * (on 32 bit machines; 12 bytes on systems with 64bit pointers).
 	 */
-	static const uint32 _builtinCapacity = 32;
+	static const uint32 _builtinCapacity = 32 - sizeof(uint32) - sizeof(char*);
 
 	/**
 	 * Length of the string. Stored to avoid having to call strlen
 	 * a lot. Yes, we limit ourselves to strings shorter than 4GB --
 	 * on purpose :-).
 	 */
-	uint32		_len;
+	uint32		_size;
 
 	/**
 	 * Pointer to the actual string storage. Either points to _storage,
@@ -97,7 +97,7 @@ public:
 #endif
 
 	/** Construct a new empty string. */
-	String() : _len(0), _str(_storage) { _storage[0] = 0; }
+	String() : _size(0), _str(_storage) { _storage[0] = 0; }
 
 	/** Construct a new string from the given NULL-terminated C string. */
 	String(const char *str);
@@ -149,14 +149,38 @@ public:
 	bool contains(const char *x) const;
 	bool contains(char x) const;
 
-	inline const char *c_str() const		{ return _str; }
-	inline uint size() const				{ return _len; }
+	/**
+	 * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
+	 * Taken from exult/files/listfiles.cc
+	 *
+	 * Token meaning:
+	 *		"*": any character, any amount of times.
+	 *		"?": any character, only once.
+	 *
+	 * Example strings/patterns:
+	 *		String: monkey.s01	 Pattern: monkey.s??	=> true
+	 *		String: monkey.s101	 Pattern: monkey.s??	=> false
+	 *		String: monkey.s99	 Pattern: monkey.s?1	=> false
+	 *		String: monkey.s101	 Pattern: monkey.s*		=> true
+	 *		String: monkey.s99	 Pattern: monkey.s*1	=> false
+	 *
+	 * @param str Text to be matched against the given pattern.
+	 * @param pat Glob pattern.
+	 *
+	 * @return true if str matches the pattern, false otherwise.
+	 */
+	bool matchString(const char *pat) const;
+	bool matchString(const String &pat) const;
 
-	inline bool empty() const	{ return (_len == 0); }
-	char lastChar() const	{ return (_len > 0) ? _str[_len-1] : 0; }
+
+	inline const char *c_str() const		{ return _str; }
+	inline uint size() const				{ return _size; }
+
+	inline bool empty() const	{ return (_size == 0); }
+	char lastChar() const	{ return (_size > 0) ? _str[_size-1] : 0; }
 
 	char operator [](int idx) const {
-		assert(_str && idx >= 0 && idx < (int)_len);
+		assert(_str && idx >= 0 && idx < (int)_size);
 		return _str[idx];
 	}
 
@@ -172,11 +196,19 @@ public:
 	/** Set character c at position p. */
 	void insertChar(char c, uint32 p);
 
+	/** Clears the string, making it empty. */
 	void clear();
 
+	/** Convert all characters in the string to lowercase. */
 	void toLowercase();
+
+	/** Convert all characters in the string to uppercase. */
 	void toUppercase();
 	
+	/**
+	 * Removes trailing and leading whitespaces. Uses isspace() to decide
+	 * what is whitespace and what not.
+	 */
 	void trim();
 
 	uint hash() const;
@@ -203,7 +235,7 @@ public:
 
 protected:
 	void makeUnique();
-	void ensureCapacity(uint32 new_len, bool keep_old);
+	void ensureCapacity(uint32 new_size, bool keep_old);
 	void incRefCount() const;
 	void decRefCount(int *oldRefCount);
 	void initWithCStr(const char *str, uint32 len);
@@ -218,7 +250,7 @@ String operator +(const String &x, const char *y);
 String operator +(const String &x, char y);
 String operator +(char x, const String &y);
 
-// Some useful additional comparision operators for Strings
+// Some useful additional comparison operators for Strings
 bool operator == (const char *x, const String &y);
 bool operator != (const char *x, const String &y);
 
@@ -227,16 +259,67 @@ extern char *ltrim(char *t);
 extern char *rtrim(char *t);
 extern char *trim(char *t);
 
+
+/**
+ * Returns the last component of a given path.
+ *
+ * Examples:
+ *			/foo/bar.txt would return 'bar.txt'
+ *			/foo/bar/    would return 'bar'
+ *			/foo/./bar//    would return 'bar'
+ *
+ * @param path the path of which we want to know the last component
+ * @param sep character used to separate path components
+ * @return The last component of the path.
+ */
+Common::String lastPathComponent(const Common::String &path, const char sep);
+
+/**
+ * Normalize a gien path to a canonical form. In particular:
+ * - trailing separators are removed:  /foo/bar/ -> /foo/bar
+ * - double separators (= empty components) are removed:   /foo//bar -> /foo/bar
+ * - dot components are removed:  /foo/./bar -> /foo/bar
+ *
+ * @todo remove double dot components:  /foo/baz/../bar -> /foo/bar
+ *
+ * @param path	the path to normalize
+ * @param sep	the separator token (usually '/' on Unix-style systems, or '\\' on Windows based stuff)
+ * @return	the normalized path
+ */
+Common::String normalizePath(const Common::String &path, const char sep);
+
+
+/**
+ * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
+ * Taken from exult/files/listfiles.cc
+ *
+ * Token meaning:
+ *		"*": any character, any amount of times.
+ *		"?": any character, only once.
+ *
+ * Example strings/patterns:
+ *		String: monkey.s01	 Pattern: monkey.s??	=> true
+ *		String: monkey.s101	 Pattern: monkey.s??	=> false
+ *		String: monkey.s99	 Pattern: monkey.s?1	=> false
+ *		String: monkey.s101	 Pattern: monkey.s*		=> true
+ *		String: monkey.s99	 Pattern: monkey.s*1	=> false
+ *
+ * @param str Text to be matched against the given pattern.
+ * @param pat Glob pattern.
+ *
+ * @return true if str matches the pattern, false otherwise.
+ */
+bool matchString(const char *str, const char *pat);
+
+
 class StringList : public Array<String> {
 public:
 	void push_back(const char *str) {
-		ensureCapacity(_size + 1);
-		_data[_size++] = str;
+		Array<String>::push_back(str);
 	}
 
 	void push_back(const String &str) {
-		ensureCapacity(_size + 1);
-		_data[_size++] = str;
+		Array<String>::push_back(str);
 	}
 };
 

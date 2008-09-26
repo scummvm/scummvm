@@ -31,7 +31,6 @@
 #ifdef USE_FLAC
 
 namespace Common {
-	class File;
 	class SeekableReadStream;
 }
 

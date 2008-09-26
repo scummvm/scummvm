@@ -25,7 +25,6 @@
 #ifndef POSIX_FILESYSTEM_FACTORY_H
 #define POSIX_FILESYSTEM_FACTORY_H
 
-#include "common/singleton.h"
 #include "backends/fs/fs-factory.h"
 
 /**
@@ -33,19 +32,10 @@
  *
  * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class POSIXFilesystemFactory : public FilesystemFactory, public Common::Singleton<POSIXFilesystemFactory> {
-public:
-	typedef Common::String String;
-
+class POSIXFilesystemFactory : public FilesystemFactory {
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
-	virtual AbstractFilesystemNode *makeFileNodePath(const String &path) const;
-
-protected:
-	POSIXFilesystemFactory() {};
-
-private:
-	friend class Common::Singleton<SingletonBaseType>;
+	virtual AbstractFilesystemNode *makeFileNodePath(const Common::String &path) const;
 };
 
 #endif /*POSIX_FILESYSTEM_FACTORY_H*/

@@ -41,14 +41,14 @@ public:
 	UclOutSaveFile(const char *filename, OSystem_PS2 *system, Gs2dScreen *screen, McAccess *mc);
 	virtual ~UclOutSaveFile(void);
 	virtual uint32 write(const void *ptr, uint32 size);
-	virtual void flush(void);
-	virtual bool ioFailed(void) const;
-	virtual void clearIOFailed(void);
+	virtual bool flush(void);
+	virtual bool err(void) const;
+	virtual void clearErr(void);
 private:
 	OSystem_PS2 *_system;
 	Gs2dScreen *_screen;
 
-	bool _ioFailed, _wasFlushed;
+	bool _err, _wasFlushed;
 	char _fileName[128];
 };
 
@@ -58,16 +58,16 @@ public:
 	virtual ~UclInSaveFile(void);
 	virtual bool eos(void) const;
 	virtual uint32 read(void *ptr, uint32 size);
-	virtual bool ioFailed(void) const;
-	virtual void clearIOFailed(void);
-	virtual void skip(uint32 offset);
+	virtual bool err(void) const;
+	virtual void clearErr(void);
+	virtual bool skip(uint32 offset);
 
-	virtual uint32 pos(void) const;
-	virtual uint32 size(void) const;
-	virtual void seek(int pos, int whence = SEEK_SET);
+	virtual int32 pos(void) const;
+	virtual int32 size(void) const;
+	virtual bool seek(int pos, int whence = SEEK_SET);
 private:
 	Gs2dScreen *_screen;
-	bool _ioFailed;
+	bool _err;
 };
 
 class AutoSaveFile : public Common::OutSaveFile {
@@ -75,9 +75,9 @@ public:
 	AutoSaveFile(Ps2SaveFileManager *saveMan, const char *filename);
 	~AutoSaveFile(void);
 	virtual uint32 write(const void *ptr, uint32 size);
-	virtual void flush(void) {}
-	virtual bool ioFailed(void) { return false; };
-	virtual void clearIOFailed(void) {}
+	virtual bool flush(void) {}
+	virtual bool err(void) const { return false; }
+	virtual void clearErr(void) {}
 private:
 	Ps2SaveFileManager *_saveMan;
 	char _fileName[256];
@@ -95,8 +95,8 @@ public:
 	virtual bool open(const char *name);
 	virtual uint32 read(void *dest, uint32 len);
 	virtual uint32 write(const void *src, uint32 len);
-	virtual uint32 tell(void);
-	virtual uint32 size(void);
+	virtual int32 tell(void);
+	virtual int32 size(void);
 	virtual int seek(int32 offset, int origin);
 	virtual bool eof(void);
 };
@@ -108,10 +108,9 @@ public:
 	virtual bool open(const char *name);
 	virtual uint32 read(void *dest, uint32 len);
 	virtual uint32 write(const void *src, uint32 len);
-	virtual uint32 tell(void);
-	virtual uint32 size(void);
+	virtual int32 tell(void);
+	virtual int32 size(void);
 	virtual int seek(int32 offset, int origin);
-	virtual bool eof(void);
 };
 
 #endif // __PS2_SAVEFILE__

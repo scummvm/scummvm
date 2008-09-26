@@ -109,6 +109,13 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 
 	int arg = (_game.version >= 6) ? obj : 0;
 
+	// WORKAROUND for bug #1917981: Game crash when finishing Indy3 demo.
+	// Script 94 tries to empty the inventory but does so in a bogus way.
+	// This causes it to try to remove object 0 from the inventory.
+	if (_game.id == GID_PASS && obj == 0 && vm.slot[_currentScript].number == 94)
+		return;
+	assert(obj > 0);
+
 	if (owner == 0) {
 		clearOwnerOf(obj);
 

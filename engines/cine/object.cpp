@@ -35,8 +35,15 @@
 
 namespace Cine {
 
-objectStruct objectTable[NUM_MAX_OBJECT];
+Common::Array<objectStruct> objectTable;
 Common::List<overlay> overlayList;
+
+/*! \brief Resets all elements in the object table. */
+void resetObjectTable() {
+	for (Common::Array<objectStruct>::iterator it = objectTable.begin(); it != objectTable.end(); it++) {
+		it->clear();
+	}
+}
 
 void loadObject(char *pObjectName) {
 	uint16 numEntry;

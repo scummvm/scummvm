@@ -22,8 +22,10 @@
  * $Id$
  *
  */
-#include "saga/saga.h"
 
+#include "common/config-manager.h"
+
+#include "saga/saga.h"
 #include "saga/sound.h"
 
 #include "sound/audiostream.h"
@@ -32,13 +34,13 @@
 
 namespace Saga {
 
-Sound::Sound(SagaEngine *vm, Audio::Mixer *mixer, int volume) :
+Sound::Sound(SagaEngine *vm, Audio::Mixer *mixer) :
 	_vm(vm), _mixer(mixer), _voxStream(0) {
 
 	for (int i = 0; i < SOUND_HANDLES; i++)
 		_handles[i].type = kFreeHandle;
 
-	setVolume(volume == 10 ? 255 : volume * 25);
+	setVolume();
 }
 
 Sound::~Sound() {
@@ -61,7 +63,8 @@ SndHandle *Sound::getHandle() {
 	return NULL;
 }
 
-void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume, bool loop) {
+void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume, 
+				sndHandleType handleType, bool loop) {
 	byte flags;
 
 	flags = Audio::Mixer::FLAG_AUTOFREE;
@@ -81,7 +84,12 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 		flags |= Audio::Mixer::FLAG_UNSIGNED;
 
 	if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS)) {
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer, buffer.size, buffer.frequency, flags, -1, volume);
+		if (handleType == kVoiceHandle)
+			_mixer->playRaw(Audio::Mixer::kSpeechSoundType, handle, buffer.buffer, 
+					buffer.size, buffer.frequency, flags, -1, volume);
+		else
+			_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer, 
+					buffer.size, buffer.frequency, flags, -1, volume);
 	} else {
 		Audio::AudioStream *stream = NULL;
 		MemoryReadStream *tmp = NULL;
@@ -116,12 +124,23 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 #endif
 			default:
 				// No compression, play it as raw sound
-				_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer, buffer.size, buffer.frequency, flags, -1, volume);
+				if (handleType == kVoiceHandle)
+					_mixer->playRaw(Audio::Mixer::kSpeechSoundType, handle, buffer.buffer, 
+							buffer.size, buffer.frequency, flags, -1, volume);
+				else
+					_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer, 
+							buffer.size, buffer.frequency, flags, -1, volume);
 				break;
 		}
 
-		if (stream != NULL)
-			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, stream, -1, volume, 0, true, false);
+		if (stream != NULL) {
+			if (handleType == kVoiceHandle)
+				_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, handle, stream, -1, 
+							volume, 0, true, false);
+			else
+				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, stream, -1, 
+							volume, 0, true, false);
+		}
 	}
 }
 
@@ -129,7 +148,7 @@ void Sound::playSound(SoundBuffer &buffer, int volume, bool loop) {
 	SndHandle *handle = getHandle();
 
 	handle->type = kEffectHandle;
-	playSoundBuffer(&handle->handle, buffer, 2 * volume, loop);
+	playSoundBuffer(&handle->handle, buffer, 2 * volume, handle->type, loop);
 }
 
 void Sound::pauseSound() {
@@ -156,7 +175,7 @@ void Sound::playVoice(SoundBuffer &buffer) {
 	SndHandle *handle = getHandle();
 
 	handle->type = kVoiceHandle;
-	playSoundBuffer(&handle->handle, buffer, 255, false);
+	playSoundBuffer(&handle->handle, buffer, 255, handle->type, false);
 }
 
 void Sound::pauseVoice() {
@@ -184,9 +203,11 @@ void Sound::stopAll() {
 	stopSound();
 }
 
-void Sound::setVolume(int volume) {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
+void Sound::setVolume() {
+	_vm->_soundVolume = ConfMan.getInt("sound_volume");
+	_vm->_speechVolume = ConfMan.getInt("speech_volume");
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _vm->_soundVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _vm->_speechVolume);
 }
 
 } // End of namespace Saga

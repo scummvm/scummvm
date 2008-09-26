@@ -39,7 +39,6 @@ public:
 	SndRes(SagaEngine *vm);
 	~SndRes();
 
-	int loadSound(uint32 resourceId);
 	void playSound(uint32 resourceId, int volume, bool loop);
 	void playVoice(uint32 resourceId);
 	int getVoiceLength(uint32 resourceId);

@@ -157,4 +157,81 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str, "TEST IT, NOW! 42");
 		TS_ASSERT_EQUALS(str2, "Test it, NOW! 42");
 	}
+
+	void test_deleteChar( void )
+	{
+		Common::String str("01234567890123456789012345678901");
+		str.deleteChar(10);
+		TS_ASSERT_EQUALS( str, "0123456789123456789012345678901" );
+		str.deleteChar(10);
+		TS_ASSERT_EQUALS( str, "012345678923456789012345678901" );
+	}
+
+	void test_sharing( void )
+	{
+		Common::String str("01234567890123456789012345678901");
+		Common::String str2(str);
+		TS_ASSERT_EQUALS( str2, "01234567890123456789012345678901" );
+		str.deleteLastChar();
+		TS_ASSERT_EQUALS( str, "0123456789012345678901234567890" );
+		TS_ASSERT_EQUALS( str2, "01234567890123456789012345678901" );
+	}
+
+	void test_lastPathComponent(void) {
+		TS_ASSERT(Common::lastPathComponent("/", '/') == "");
+		TS_ASSERT(Common::lastPathComponent("/foo/bar", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("/foo//bar/", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("/foo/./bar", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("/foo//./bar//", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("/foo//.bar//", '/') == ".bar");
+
+		TS_ASSERT(Common::lastPathComponent("", '/') == "");
+		TS_ASSERT(Common::lastPathComponent("foo/bar", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("foo//bar/", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("foo/./bar", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("foo//./bar//", '/') == "bar");
+		TS_ASSERT(Common::lastPathComponent("foo//.bar//", '/') == ".bar");
+	}
+
+	void test_normalizePath(void) {
+		TS_ASSERT(Common::normalizePath("/", '/') == "/");
+		TS_ASSERT(Common::normalizePath("/foo/bar", '/') == "/foo/bar");
+		TS_ASSERT(Common::normalizePath("/foo//bar/", '/') == "/foo/bar");
+		TS_ASSERT(Common::normalizePath("/foo/./bar", '/') == "/foo/bar");
+		TS_ASSERT(Common::normalizePath("/foo//./bar//", '/') == "/foo/bar");
+		TS_ASSERT(Common::normalizePath("/foo//.bar//", '/') == "/foo/.bar");
+
+		TS_ASSERT(Common::normalizePath("", '/') == "");
+		TS_ASSERT(Common::normalizePath("foo/bar", '/') == "foo/bar");
+		TS_ASSERT(Common::normalizePath("foo//bar/", '/') == "foo/bar");
+		TS_ASSERT(Common::normalizePath("foo/./bar", '/') == "foo/bar");
+		TS_ASSERT(Common::normalizePath("foo//./bar//", '/') == "foo/bar");
+		TS_ASSERT(Common::normalizePath("foo//.bar//", '/') == "foo/.bar");
+	}
+
+	void test_matchString(void) {
+		TS_ASSERT( Common::matchString("",  "*"));
+		TS_ASSERT( Common::matchString("a",  "*"));
+		TS_ASSERT( Common::matchString("monkey.s01",  "*"));
+
+		TS_ASSERT(!Common::matchString("",  "?"));
+		TS_ASSERT( Common::matchString("a",  "?"));
+		TS_ASSERT(!Common::matchString("monkey.s01",  "?"));
+
+		TS_ASSERT( Common::matchString("monkey.s01",  "monkey.s??"));
+		TS_ASSERT( Common::matchString("monkey.s99",  "monkey.s??"));
+		TS_ASSERT(!Common::matchString("monkey.s101", "monkey.s??"));
+
+		TS_ASSERT( Common::matchString("monkey.s01",  "monkey.s?1"));
+		TS_ASSERT(!Common::matchString("monkey.s99",  "monkey.s?1"));
+		TS_ASSERT(!Common::matchString("monkey.s101", "monkey.s?1"));
+
+		TS_ASSERT( Common::matchString("monkey.s01",  "monkey.s*"));
+		TS_ASSERT( Common::matchString("monkey.s99",  "monkey.s*"));
+		TS_ASSERT( Common::matchString("monkey.s101", "monkey.s*"));
+
+		TS_ASSERT( Common::matchString("monkey.s01",  "monkey.s*1"));
+		TS_ASSERT(!Common::matchString("monkey.s99",  "monkey.s*1"));
+		TS_ASSERT( Common::matchString("monkey.s101", "monkey.s*1"));
+	}
 };

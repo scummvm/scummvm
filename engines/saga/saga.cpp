@@ -64,7 +64,6 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	_leftMouseButtonPressed = _rightMouseButtonPressed = false;
 
 	_console = NULL;
-	_quit = false;
 
 	_resource = NULL;
 	_sndRes = NULL;
@@ -93,20 +92,20 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 
 	// The Linux version of Inherit the Earth puts all data files in an
 	// 'itedata' sub-directory, except for voices.rsc
-	Common::File::addDefaultDirectory(_gameDataPath + "itedata/");
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("itedata"));
 
 	// The Windows version of Inherit the Earth puts various data files in
 	// other subdirectories.
-	Common::File::addDefaultDirectory(_gameDataPath + "graphics/");
-	Common::File::addDefaultDirectory(_gameDataPath + "music/");
-	Common::File::addDefaultDirectory(_gameDataPath + "sound/");
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("graphics"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("music"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("sound"));
 
 	// The Multi-OS version puts the voices file in the root directory of
 	// the CD. The rest of the data files are in game/itedata
-	Common::File::addDefaultDirectory(_gameDataPath + "game/itedata/");
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("game").getChild("itedata"));
 
 	// Mac CD Wyrmkeep
-	Common::File::addDefaultDirectory(_gameDataPath + "patch/");
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("patch"));
 
 	_displayClip.left = _displayClip.top = 0;
 	syst->getEventManager()->registerRandomSource(_rnd, "saga");
@@ -142,8 +141,7 @@ SagaEngine::~SagaEngine() {
 }
 
 int SagaEngine::init() {
-	_soundVolume = ConfMan.getInt("sfx_volume") / 25;
-	_musicVolume = ConfMan.getInt("music_volume") / 25;
+	_musicVolume = ConfMan.getInt("music_volume");
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
 	_readingSpeed = getTalkspeed();
 	_copyProtection = ConfMan.getBool("copy_protection");
@@ -194,29 +192,21 @@ int SagaEngine::init() {
 	if (native_mt32)
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_music = new Music(this, _mixer, _driver, _musicVolume);
+	_music = new Music(this, _mixer, _driver);
 	_music->setNativeMT32(native_mt32);
 	_music->setAdlib(adlib);
-
-	if (!_musicVolume) {
-		debug(1, "Music disabled.");
-	}
-
 	_render = new Render(this, _system);
 	if (!_render->initialized()) {
 		return FAILURE;
 	}
 
 	// Initialize system specific sound
-	_sound = new Sound(this, _mixer, _soundVolume);
-	if (!_soundVolume) {
-		debug(1, "Sound disabled.");
-	}
-
+	_sound = new Sound(this, _mixer);
+	
 	_interface->converseInit();
 	_script->setVerb(_script->getVerbType(kVerbWalkTo));
 
-	_music->setVolume(-1, 1);
+	_music->setVolume(_musicVolume, 1);
 
 	_gfx->initPalette();
 
@@ -232,6 +222,8 @@ int SagaEngine::init() {
 			_voicesEnabled = true;
 		}
 	}
+
+	syncSoundSettings();
 
 	// FIXME: This is the ugly way of reducing redraw overhead. It works
 	//        well for 320x200 but it's unclear how well it will work for
@@ -255,14 +247,22 @@ int SagaEngine::go() {
 			_interface->addToInventory(_actor->objIndexToId(0));	// Magic hat
 		_scene->changeScene(ConfMan.getInt("boot_param"), 0, kTransitionNoFade);
 	} else if (ConfMan.hasKey("save_slot")) {
+		// Init the current chapter to 8 (character selection) for IHNM
+		if (getGameType() == GType_IHNM)
+			_scene->changeScene(-2, 0, kTransitionFade, 8);
+
 		// First scene sets up palette
 		_scene->changeScene(getStartSceneNumber(), 0, kTransitionNoFade);
 		_events->handleEvents(0); // Process immediate events
 
-		_interface->setMode(kPanelMain);
-		char *fileName;
-		fileName = calcSaveFileName(ConfMan.getInt("save_slot"));
+		if (getGameType() != GType_IHNM)
+			_interface->setMode(kPanelMain);
+		else
+			_interface->setMode(kPanelChapterSelection);
+
+		char *fileName = calcSaveFileName(ConfMan.getInt("save_slot"));
 		load(fileName);
+		syncSoundSettings();
 	} else {
 		_framesEsc = 0;
 		_scene->startScene();
@@ -270,7 +270,7 @@ int SagaEngine::go() {
 
 	uint32 currentTicks;
 
-	while (!_quit) {
+	while (!quit()) {
 		if (_console->isAttached())
 			_console->onFrame();
 
@@ -518,6 +518,18 @@ void SagaEngine::setTalkspeed(int talkspeed) {
 
 int SagaEngine::getTalkspeed() {
 	return (ConfMan.getInt("talkspeed") * 3 + 255 / 2) / 255;
+}
+
+void SagaEngine::syncSoundSettings() {
+	_subtitlesEnabled = ConfMan.getBool("subtitles");
+	_readingSpeed = getTalkspeed();
+
+	if (_readingSpeed > 3)
+		_readingSpeed = 0;
+
+	_musicVolume = ConfMan.getInt("music_volume");
+	_music->setVolume(_musicVolume, 1);
+	_sound->setVolume();
 }
 
 } // End of namespace Saga

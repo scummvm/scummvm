@@ -24,8 +24,33 @@
  */
 
 #include "drascula/drascula.h"
+#include "graphics/cursorman.h"
 
 namespace Drascula {
+
+void DrasculaEngine::setCursor(int cursor) {
+	switch (cursor) {
+	case kCursorCrosshair:
+		CursorMan.replaceCursor((const byte *)crosshairCursor, 40, 25, 20, 17);
+		break;
+	case kCursorCurrentItem:
+		CursorMan.replaceCursor((const byte *)mouseCursor, OBJWIDTH, OBJHEIGHT, 20, 17);
+	default:
+		break;
+	}
+}
+
+void DrasculaEngine::showCursor() {
+	CursorMan.showMouse(true);
+}
+
+void DrasculaEngine::hideCursor() {
+	CursorMan.showMouse(false);
+}
+
+bool DrasculaEngine::isCursorVisible() {
+	return CursorMan.isVisible();
+}
 
 void DrasculaEngine::selectVerbFromBar() {
 	for (int n = 0; n < 7; n++) {
@@ -36,7 +61,7 @@ void DrasculaEngine::selectVerbFromBar() {
 	}
 
 	// no verb selected
-	withoutVerb();
+	selectVerb(0);
 }
 
 void DrasculaEngine::selectVerb(int verb) {
@@ -50,10 +75,17 @@ void DrasculaEngine::selectVerb(int verb) {
 			addObject(pickedObject);
 	}
 
-	copyBackground(OBJWIDTH * verb, c, 0, 0, OBJWIDTH, OBJHEIGHT, backSurface, drawSurface3);
+	for (int i = 0; i < OBJHEIGHT; i++)
+		memcpy(mouseCursor + i * OBJWIDTH, backSurface + OBJWIDTH * verb + (c + i) * 320, OBJWIDTH);
+	setCursor(kCursorCurrentItem);
 
-	takeObject = 1;
-	pickedObject = verb;
+	if (verb > 0) {
+		takeObject = 1;
+		pickedObject = verb;
+	} else {
+		takeObject = 0;
+		hasName = 0;
+	}
 }
 
 bool DrasculaEngine::confirmExit() {
@@ -61,7 +93,7 @@ bool DrasculaEngine::confirmExit() {
 
 	color_abc(kColorRed);
 	updateRoom();
-	centerText(_textsys[_lang][1], 160, 87);
+	centerText(_textsys[1], 160, 87);
 	updateScreen();
 
 	delay(100);
@@ -114,7 +146,8 @@ void DrasculaEngine::clearMenu() {
 }
 
 void DrasculaEngine::enterName() {
-	Common::KeyCode key;
+	Common::KeyCode key, prevkey = Common::KEYCODE_INVALID;
+	int counter = 0;
 	int v = 0, h = 0;
 	char select2[23];
 	strcpy(select2, "                      ");
@@ -123,17 +156,25 @@ void DrasculaEngine::enterName() {
 		copyBackground(115, 14, 115, 14, 176, 9, bgSurface, screenSurface);
 		print_abc(select2, 117, 15);
 		updateScreen();
+		_system->delayMillis(100);
+
 		key = getScan();
-		delay(70);
-		if (key != 0) {
+
+		// Artifically decrease repeat rate.
+		// Part of bug fix#2017432 DRASCULA: Typing is slow when you save a game
+		// Alternative is to roll our own event loop
+		if (key == prevkey)
+			if (++counter == 3) {
+				counter = 0;
+				prevkey = Common::KEYCODE_INVALID;
+			}
+
+		if (key != 0 && key != prevkey) {
+			prevkey = key;
 			if (key >= 0 && key <= 0xFF && isalpha(key))
 				select2[v] = tolower(key);
-			else if ((key == Common::KEYCODE_LCTRL) || (key == Common::KEYCODE_RCTRL))
-				select2[v] = '\164';
-			else if (key >= Common::KEYCODE_0 && key <= Common::KEYCODE_9)
+			else if ((key >= Common::KEYCODE_0 && key <= Common::KEYCODE_9) || key == Common::KEYCODE_SPACE)
 				select2[v] = key;
-			else if (key == Common::KEYCODE_SPACE)
-				select2[v] = '\167';
 			else if (key == Common::KEYCODE_ESCAPE)
 				break;
 			else if (key == Common::KEYCODE_RETURN) {
@@ -183,27 +224,6 @@ void DrasculaEngine::showMap() {
 			hasName = 1;
 		}
 	}
-}
-
-void DrasculaEngine::grr() {
-	int length = 30;
-
-	color_abc(kColorDarkGreen);
-
-	playFile("s10.als");
-
-	updateRoom();
-	copyBackground(253, 110, 150, 65, 20, 30, drawSurface3, screenSurface);
-
-	if (withVoices == 0)
-		centerText("groaaarrrrgghhhh!", 153, 65);
-
-	updateScreen();
-
-	while (!isTalkFinished(&length));
-
-	updateRoom();
-	updateScreen();
 }
 
 } // End of namespace Drascula

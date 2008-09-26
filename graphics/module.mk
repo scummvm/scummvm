@@ -15,8 +15,9 @@ MODULE_OBJS := \
 	mpeg_player.o \
 	primitives.o \
 	scaler.o \
-	scaler/thumbnail.o \
+	scaler/thumbnail_intern.o \
 	surface.o \
+	thumbnail.o \
 	surface-keycolored.o
 
 ifndef DISABLE_SCALERS

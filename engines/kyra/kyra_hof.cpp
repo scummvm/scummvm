@@ -196,14 +196,18 @@ void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 		_seqWsaChatTimeout += pausedTime;
 		_seqWsaChatFrameTimeout += pausedTime;
 
-		for (int x = 0; x < 10; x++) {
-			if (_activeText[x].duration != -1)
-				_activeText[x].startTime += pausedTime;
+		if (_activeText) {
+			for (int x = 0; x < 10; x++) {
+				if (_activeText[x].duration != -1)
+					_activeText[x].startTime += pausedTime;
+			}
 		}
 
-		for (int x = 0; x < 8; x++) {
-			if (_activeWSA[x].flags != -1)
-				_activeWSA[x].nextFrame += pausedTime;
+		if (_activeWSA) {
+			for (int x = 0; x < 8; x++) {
+				if (_activeWSA[x].flags != -1)
+					_activeWSA[x].nextFrame += pausedTime;
+			}
 		}
 
 		_nextIdleAnim += pausedTime;
@@ -230,7 +234,7 @@ int KyraEngine_HoF::init() {
 	_gui = new GUI_HoF(this);
 	assert(_gui);
 	_gui->initStaticData();
-	_tim = new TIMInterpreter(this, _system);
+	_tim = new TIMInterpreter(this, _screen, _system);
 	assert(_tim);
 
 	if (_flags.isDemo && !_flags.isTalkie) {
@@ -251,7 +255,7 @@ int KyraEngine_HoF::init() {
 	_abortIntroFlag = false;
 
 	if (_sequenceStrings) {
-		for (int i = 0; i < 33; i++)
+		for (int i = 0; i < MIN(33, _sequenceStringsSize); i++)
 			_sequenceStringsDuration[i] = (int) strlen(_sequenceStrings[i]) * 8;
 	}
 
@@ -278,7 +282,10 @@ int KyraEngine_HoF::go() {
 			seq_showStarcraftLogo();
 
 		if (_flags.isDemo && !_flags.isTalkie) {
-			seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);
+			if (_flags.gameID == GI_LOL)
+				seq_playSequences(kSequenceLolDemoScene1, kSequenceLolDemoScene6);	
+			else
+				seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);
 			_menuChoice = 4;
 		} else {
 			seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
@@ -292,13 +299,17 @@ int KyraEngine_HoF::go() {
 	if (_menuChoice != 4) {
 		// load just the pak files needed for ingame
 		_res->loadPakFile(StaticResource::staticDataFilename());
-		if (_flags.platform == Common::kPlatformPC && _flags.isTalkie)
-			_res->loadFileList("FILEDATA.FDT");
-		else
+		if (_flags.platform == Common::kPlatformPC && _flags.isTalkie) {
+			if (!_res->loadFileList("FILEDATA.FDT"))
+				error("couldn't load 'FILEDATA.FDT'");
+		} else {
 			_res->loadFileList(_ingamePakList, _ingamePakListSize);
+		}
 
-		if (_flags.platform == Common::kPlatformPC98)
+		if (_flags.platform == Common::kPlatformPC98) {
 			_res->loadPakFile("AUDIO.PAK");
+			_sound->loadSoundFile("sound.dat");
+		}
 	}
 
 	_menuDirectlyToLoad = (_menuChoice == 3) ? true : false;
@@ -425,7 +436,7 @@ void KyraEngine_HoF::startup() {
 	if (_gameToLoad == -1) {
 		snd_playWanderScoreViaMap(52, 1);
 		enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
-		saveGame(getSavegameFilename(0), "New Game");
+		saveGame(getSavegameFilename(0), "New Game", 0);
 	} else {
 		loadGame(getSavegameFilename(_gameToLoad));
 	}
@@ -443,16 +454,20 @@ void KyraEngine_HoF::startup() {
 void KyraEngine_HoF::runLoop() {
 	_screen->updateScreen();
 
-	_quitFlag = false;
 	_runFlag = true;
-	while (!_quitFlag && _runFlag) {
+	while (!quit() && _runFlag) {
 		if (_deathHandler >= 0) {
 			removeHandItem();
 			delay(5);
 			_drawNoShapeFlag = 0;
 			_gui->optionsButton(0);
 			_deathHandler = -1;
+
+			if (!_runFlag || !quit())
+				break;
 		}
+
+		checkAutosave();
 
 		if (_system->getMillis() > _nextIdleAnim)
 			showIdleAnim();
@@ -1501,15 +1516,19 @@ void KyraEngine_HoF::openTalkFile(int newFile) {
 		_oldTalkFile = -1;
 	}
 
-	if (newFile == 0) {
+	if (newFile == 0)
 		strcpy(talkFilename, "ANYTALK.TLK");
-		_res->loadPakFile(talkFilename);
-	} else {
+	else
 		sprintf(talkFilename, "CH%dVOC.TLK", newFile);
-		_res->loadPakFile(talkFilename);
-	}
 
 	_oldTalkFile = newFile;
+
+	if (!_res->loadPakFile(talkFilename)) {
+		if (speechEnabled()) {
+			warning("Couldn't load file '%s' falling back to text only mode", talkFilename);
+			_configVoice = 0;
+		}
+	}
 }
 
 void KyraEngine_HoF::snd_playVoiceFile(int id) {
@@ -1545,7 +1564,8 @@ void KyraEngine_HoF::playVoice(int high, int low) {
 	if (!_flags.isTalkie)
 		return;
 	int vocFile = high * 10000 + low * 10;
-	snd_playVoiceFile(vocFile);
+	if (speechEnabled())
+		snd_playVoiceFile(vocFile);
 }
 
 void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
@@ -1564,10 +1584,14 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
 	if (vocIndex != -1)
 		_sound->voicePlay(_ingameSoundList[vocIndex], true);
-	else if (_flags.platform != Common::kPlatformFMTowns)
+	else if (_flags.platform == Common::kPlatformPC)
+		KyraEngine_v1::snd_playSoundEffect(track);
+
 		// TODO ?? Maybe there is a way to let users select whether they want
 		// voc, midi or adl sfx (even though it makes no sense to choose anything but voc).
-		KyraEngine_v1::snd_playSoundEffect(track);
+		// The PC-98 version has support for non-pcm sound effects, but only for tracks 
+		// which also have voc files. The syntax would be:
+		// KyraEngine_v1::snd_playSoundEffect(vocIndex);
 }
 
 #pragma mark -
@@ -1606,7 +1630,7 @@ void KyraEngine_HoF::loadInvWsa(const char *filename, int run, int delayTime, in
 	_invWsa.timer = _system->getMillis();
 
 	if (run) {
-		while (_invWsa.running && !skipFlag() && !_quitFlag) {
+		while (_invWsa.running && !skipFlag() && !quit()) {
 			update();
 			_system->delayMillis(10);
 		}
@@ -1980,7 +2004,7 @@ void KyraEngine_HoF::playTim(const char *filename) {
 		return;
 
 	_tim->resetFinishedFlag();
-	while (!_quitFlag && !_tim->finished()) {
+	while (!quit() && !_tim->finished()) {
 		_tim->exec(tim, 0);
 		if (_chatText)
 			updateWithText();

@@ -335,7 +335,7 @@ void KyraEngine_HoF::objectChatWaitToFinish() {
 	const uint32 endTime = _chatEndTime;
 	resetSkipFlag();
 
-	while (running && !_quitFlag) {
+	while (running && !quit()) {
 		if (!_emc->isValid(&_chatScriptState))
 			_emc->start(&_chatScriptState, 1);
 
@@ -353,7 +353,7 @@ void KyraEngine_HoF::objectChatWaitToFinish() {
 
 		uint32 nextFrame = _system->getMillis() + delayTime * _tickLength;
 
-		while (_system->getMillis() < nextFrame && !_quitFlag) {
+		while (_system->getMillis() < nextFrame && !quit()) {
 			updateWithText();
 
 			const uint32 curTime = _system->getMillis();
@@ -593,7 +593,7 @@ void KyraEngine_HoF::initTalkObject(int index) {
 
 	if (_currentTalkSections.STATim) {
 		_tim->resetFinishedFlag();
-		while (!_quitFlag && !_tim->finished()) {
+		while (!quit() && !_tim->finished()) {
 			_tim->exec(_currentTalkSections.STATim, false);
 			if (_chatText)
 				updateWithText();
@@ -609,7 +609,7 @@ void KyraEngine_HoF::deinitTalkObject(int index) {
 
 	if (_currentTalkSections.ENDTim) {
 		_tim->resetFinishedFlag();
-		while (!_quitFlag && !_tim->finished()) {
+		while (!quit() && !_tim->finished()) {
 			_tim->exec(_currentTalkSections.ENDTim, false);
 			if (_chatText)
 				updateWithText();
@@ -647,10 +647,10 @@ void KyraEngine_HoF::npcChatSequence(const char *str, int objectId, int vocHigh,
 		_chatVocHigh = _chatVocLow = -1;
 	}
 
-	while (((textEnabled() && _chatEndTime > _system->getMillis()) || (speechEnabled() && snd_voiceIsPlaying())) && !(_quitFlag || skipFlag())) {
+	while (((textEnabled() && _chatEndTime > _system->getMillis()) || (speechEnabled() && snd_voiceIsPlaying())) && !(quit() || skipFlag())) {
 		if ((!speechEnabled() && chatAnimEndTime > _system->getMillis()) || (speechEnabled() && snd_voiceIsPlaying())) {
 			_tim->resetFinishedFlag();
-			while (!_tim->finished() && !skipFlag() && !_quitFlag) {
+			while (!_tim->finished() && !skipFlag() && !quit()) {
 				if (_currentTalkSections.TLKTim)
 					_tim->exec(_currentTalkSections.TLKTim, false);
 				else

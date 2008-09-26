@@ -77,10 +77,10 @@ Map::~Map() {
 }
 
 void Map::placeItem(int16 x, int16 y, int16 id) {
-	if ((_itemsMap[y][x] & 0xFF00) != 0)
-		_itemsMap[y][x] = (_itemsMap[y][x] & 0xFF00) | id;
+	if ((getItem(x, y) & 0xFF00) != 0)
+		setItem(x, y, (getItem(x, y) & 0xFF00) | id);
 	else
-		_itemsMap[y][x] = (_itemsMap[y][x] & 0x00FF) | (id << 8);
+		setItem(x, y, (getItem(x, y) & 0x00FF) | (id << 8));
 }
 
 enum {

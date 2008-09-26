@@ -378,10 +378,11 @@ void KyraEngine_MR::loadSceneMsc() {
 	_screen->loadBitmap(filename, 5, 5, 0, true);
 
 	// HACK
-	uint8 data[320*200];
+	uint8 *data = new uint8[320*200];
 	_screen->copyRegionToBuffer(5, 0, 0, 320, 200, data);
 	_screen->clearPage(5);
 	_screen->copyBlockToPage(5, 0, _maskPageMinY, 320, height, data);
+	delete[] data;
 
 	musicUpdate(0);
 }
@@ -653,7 +654,7 @@ int KyraEngine_MR::trySceneChange(int *moveTable, int unk1, int updateChar) {
 	const int *moveTableStart = moveTable;
 	_unk4 = 0;
 
-	while (running && !_quitFlag) {
+	while (running && !quit()) {
 		if (*moveTable >= 0 && *moveTable <= 7) {
 			_mainCharacter.facing = getOppositeFacingDirection(*moveTable);
 			unkFlag = true;

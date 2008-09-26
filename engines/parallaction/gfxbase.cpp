@@ -32,7 +32,7 @@
 
 namespace Parallaction {
 
-GfxObj::GfxObj(uint objType, Frames *frames, const char* name) : _frames(frames), _keep(true), x(0), y(0), z(0), _flags(kGfxObjNormal), type(objType), frame(0), layer(3)  {
+GfxObj::GfxObj(uint objType, Frames *frames, const char* name) : _frames(frames), _keep(true), x(0), y(0), z(0), _flags(kGfxObjNormal), type(objType), frame(0), layer(3), scale(100)  {
 	if (name) {
 		_name = strdup(name);
 	} else {
@@ -180,9 +180,9 @@ void Gfx::drawGfxObject(GfxObj *obj, Graphics::Surface &surf, bool scene) {
 	data = obj->getData(obj->frame);
 
 	if (obj->getSize(obj->frame) == obj->getRawSize(obj->frame)) {
-		blt(rect, data, &surf, obj->layer, obj->transparentKey);
+		blt(rect, data, &surf, obj->layer, obj->scale, obj->transparentKey);
 	} else {
-		unpackBlt(rect, data, obj->getRawSize(obj->frame), &surf, obj->layer, obj->transparentKey);
+		unpackBlt(rect, data, obj->getRawSize(obj->frame), &surf, obj->layer, obj->scale, obj->transparentKey);
 	}
 
 }
@@ -233,7 +233,7 @@ void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surf
 	blt(r, _unpackedBitmap, surf, z, transparentColor);
 }
 #endif
-void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor) {
+void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor) {
 
 	byte *d = _unpackedBitmap;
 	uint pixelsLeftInLine = r.width();
@@ -259,11 +259,154 @@ void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surf
 		d += repeat;
 	}
 
-	blt(r, _unpackedBitmap, surf, z, transparentColor);
+	blt(r, _unpackedBitmap, surf, z, scale, transparentColor);
 }
 
 
-void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor) {
+void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor) {
+	if (scale == 100) {
+		// use optimized path
+		bltMaskNoScale(r, data, surf, z, transparentColor);
+		return;
+	}
+
+	Common::Rect q(r);
+	Common::Rect clipper(surf->w, surf->h);
+	q.clip(clipper);
+	if (!q.isValidRect()) return;
+
+	uint inc = r.width() * (100 - scale);
+	uint thr = r.width() * 100;
+	uint xAccum = 0, yAccum = 0;
+
+	Common::Point dp;
+	dp.x = q.left + (r.width() * (100 - scale)) / 200;
+	dp.y = q.top + (r.height() * (100 - scale)) / 100;
+	q.translate(-r.left, -r.top);
+	byte *s = data + q.left + q.top * r.width();
+	byte *d = (byte*)surf->getBasePtr(dp.x, dp.y);
+
+	uint line = 0, col = 0;
+
+	for (uint16 i = 0; i < q.height(); i++) {
+		yAccum += inc;
+
+		if (yAccum >= thr) {
+			yAccum -= thr;
+			s += r.width();
+			continue;
+		}
+
+		xAccum = 0;
+		byte *d2 = d;
+		col = 0;
+
+		for (uint16 j = 0; j < q.width(); j++) {
+			xAccum += inc;
+
+			if (xAccum >= thr) {
+				xAccum -= thr;
+				s++;
+				continue;
+			}
+
+			if (*s != transparentColor) {
+				byte v = _backgroundInfo->mask.getValue(dp.x + col, dp.y + line);
+				if (z >= v) *d2 = *s;
+			}
+
+			s++;
+			d2++;
+			col++;
+		}
+
+		s += r.width() - q.width();
+		d += surf->w;
+		line++;
+	}
+
+}
+
+void Gfx::bltMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor) {
+	if (!_backgroundInfo->mask.data || (z == LAYER_FOREGROUND)) {
+		// use optimized path
+		bltNoMaskNoScale(r, data, surf, transparentColor);
+		return;
+	}
+
+	Common::Point dp;
+	Common::Rect q(r);
+
+	Common::Rect clipper(surf->w, surf->h);
+
+	q.clip(clipper);
+	if (!q.isValidRect()) return;
+
+	dp.x = q.left;
+	dp.y = q.top;
+
+	q.translate(-r.left, -r.top);
+
+	byte *s = data + q.left + q.top * r.width();
+	byte *d = (byte*)surf->getBasePtr(dp.x, dp.y);
+
+	uint sPitch = r.width() - q.width();
+	uint dPitch = surf->w - q.width();
+
+	for (uint16 i = 0; i < q.height(); i++) {
+
+		for (uint16 j = 0; j < q.width(); j++) {
+			if (*s != transparentColor) {
+				byte v = _backgroundInfo->mask.getValue(dp.x + j, dp.y + i);
+				if (z >= v) *d = *s;
+			}
+
+			s++;
+			d++;
+		}
+
+		s += sPitch;
+		d += dPitch;
+	}
+
+}
+
+void Gfx::bltNoMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, byte transparentColor) {
+	Common::Point dp;
+	Common::Rect q(r);
+
+	Common::Rect clipper(surf->w, surf->h);
+
+	q.clip(clipper);
+	if (!q.isValidRect()) return;
+
+	dp.x = q.left;
+	dp.y = q.top;
+
+	q.translate(-r.left, -r.top);
+
+	byte *s = data + q.left + q.top * r.width();
+	byte *d = (byte*)surf->getBasePtr(dp.x, dp.y);
+
+	uint sPitch = r.width() - q.width();
+	uint dPitch = surf->w - q.width();
+
+	for (uint16 i = q.top; i < q.bottom; i++) {
+		for (uint16 j = q.left; j < q.right; j++) {
+			if (*s != transparentColor)
+				*d = *s;
+
+			s++;
+			d++;
+		}
+
+		s += sPitch;
+		d += dPitch;
+	}
+}
+
+
+void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor) {
 
 	Common::Point dp;
 	Common::Rect q(r);
@@ -291,8 +434,8 @@ void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16
 
 			for (uint16 j = 0; j < q.width(); j++) {
 				if (*s != transparentColor) {
-					if (_backgroundInfo.mask.data && (z < LAYER_FOREGROUND)) {
-						byte v = _backgroundInfo.mask.getValue(dp.x + j, dp.y + i);
+					if (_backgroundInfo->mask.data && (z < LAYER_FOREGROUND)) {
+						byte v = _backgroundInfo->mask.getValue(dp.x + j, dp.y + i);
 						if (z >= v) *d = 5;
 					} else {
 						*d = 5;
@@ -308,40 +451,7 @@ void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16
 		}
 
     } else {
-		if (_backgroundInfo.mask.data && (z < LAYER_FOREGROUND)) {
-
-			for (uint16 i = 0; i < q.height(); i++) {
-
-				for (uint16 j = 0; j < q.width(); j++) {
-					if (*s != transparentColor) {
-						byte v = _backgroundInfo.mask.getValue(dp.x + j, dp.y + i);
-						if (z >= v) *d = *s;
-					}
-
-					s++;
-					d++;
-				}
-
-				s += sPitch;
-				d += dPitch;
-			}
-
-		} else {
-
-			for (uint16 i = q.top; i < q.bottom; i++) {
-				for (uint16 j = q.left; j < q.right; j++) {
-					if (*s != transparentColor)
-						*d = *s;
-
-					s++;
-					d++;
-				}
-
-				s += sPitch;
-				d += dPitch;
-			}
-
-		}
+    	bltMaskScale(r, data, surf, z, scale, transparentColor);
 	}
 
 }

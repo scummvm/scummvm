@@ -36,7 +36,10 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "gui/message.h"
+#include "gui/newgui.h"
 #include "sound/mixer.h"
+#include "engines/dialogs.h"
+#include "engines/metaengine.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone(void);
@@ -53,8 +56,9 @@ Engine::Engine(OSystem *syst)
 		_eventMan(_system->getEventManager()),
 		_saveFileMan(_system->getSavefileManager()),
 		_targetName(ConfMan.getActiveDomainName()),
-		_gameDataPath(ConfMan.get("path")),
-		_pauseLevel(0) {
+		_gameDataDir(ConfMan.get("path")),
+		_pauseLevel(0),
+		_mainMenuDialog(NULL) {
 
 	g_engine = this;
 	_autosavePeriod = ConfMan.getInt("autosave_period");
@@ -72,7 +76,8 @@ Engine::Engine(OSystem *syst)
 
 Engine::~Engine() {
 	_mixer->stopAll();
-
+	
+	delete _mainMenuDialog;
 	g_engine = NULL;
 }
 
@@ -145,12 +150,12 @@ void Engine::checkCD() {
 	char buffer[MAXPATHLEN];
 	int i;
 
-	if (strlen(_gameDataPath.c_str()) == 0) {
+	if (_gameDataDir.getPath().empty()) {
 		// That's it! I give up!
 		if (getcwd(buffer, MAXPATHLEN) == NULL)
 			return;
 	} else
-		strncpy(buffer, _gameDataPath.c_str(), MAXPATHLEN);
+		strncpy(buffer, _gameDataDir.getPath().c_str(), MAXPATHLEN);
 
 	for (i = 0; i < MAXPATHLEN - 1; i++) {
 		if (buffer[i] == '\\')
@@ -210,3 +215,50 @@ void Engine::pauseEngineIntern(bool pause) {
 	// By default, just (un)pause all digital sounds
 	_mixer->pauseAll(pause);
 }
+
+void Engine::mainMenuDialog() {
+	if (!_mainMenuDialog)
+		_mainMenuDialog = new MainMenuDialog(this);
+	runDialog(*_mainMenuDialog);
+	syncSoundSettings();
+}
+
+int Engine::runDialog(Dialog &dialog) {
+	
+	pauseEngine(true);
+
+	int result = dialog.runModal();
+
+	pauseEngine(false);
+
+	return result;
+}
+
+void Engine::syncSoundSettings() {
+
+	// Sync the engine with the config manager
+	int soundVolumeMusic = ConfMan.getInt("music_volume");
+	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
+	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
+}
+
+void Engine::quitGame() {
+	Common::Event event;
+
+	event.type = Common::EVENT_QUIT;
+	_eventMan->pushEvent(event);
+}
+
+bool Engine::hasFeature(int f) {
+	const EnginePlugin *plugin = 0;
+	Common::String gameid = ConfMan.get("gameid");
+	gameid.toLowercase();
+	EngineMan.findGame(gameid, &plugin);
+	
+	return ( (*plugin)->hasFeature((MetaEngine::MetaEngineFeature)f) );
+}
+

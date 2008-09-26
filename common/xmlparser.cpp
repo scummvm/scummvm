@@ -37,7 +37,8 @@ using namespace Graphics;
 bool XMLParser::parserError(const char *errorString, ...) {
 	_state = kParserError;
 
-	int pos = _pos;
+	int original_pos = _stream->pos();
+	int pos = original_pos;
 	int lineCount = 1;
 	int lineStart = 0;
 
@@ -46,18 +47,21 @@ bool XMLParser::parserError(const char *errorString, ...) {
 		lineCount = 0;
 	} else {
 		do {
-			if (_text[pos] == '\n' || _text[pos] == '\r') {
+			if (_char == '\n' || _char == '\r') {
 				lineCount++;
 		
 				if (lineStart == 0)
 					lineStart = MAX(pos + 1, _pos - 60);
 			}
-		} while (pos-- > 0);
+			
+			_stream->seek(-1, SEEK_CUR);
+
+		} while (_stream->pos() > 0);
 	}
 
 	char lineStr[70];
-	_text.stream()->seek(lineStart, SEEK_SET);
-	_text.stream()->readLine(lineStr, 70);
+	_stream->seek(original_pos - 35, SEEK_SET);
+	_stream->readLine_NEW(lineStr, 70);
 	
 	for (int i = 0; i < 70; ++i)
 		if (lineStr[i] == '\n')
@@ -70,7 +74,7 @@ bool XMLParser::parserError(const char *errorString, ...) {
 
 	printf("%s%s%s\n", startFull ? "" : "...", lineStr, endFull ? "" : "...");
 
-	int cursor = MIN(_pos - lineStart, 70);
+	int cursor = 35;
 
 	if (!startFull)
 		cursor += 3;
@@ -102,15 +106,16 @@ bool XMLParser::parseActiveKey(bool closed) {
 		key->layout = layout->children[key->name];
 	
 		Common::StringMap localMap = key->values;
+		int keyCount = localMap.size();
 	
 		for (Common::List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
-			if (localMap.contains(i->name))
-				localMap.erase(i->name);
-			else if (i->required)
+			if (i->required && !localMap.contains(i->name))
 				return parserError("Missing required property '%s' inside key '%s'", i->name.c_str(), key->name.c_str());
+			else if (localMap.contains(i->name))
+				keyCount--;
 		}
 	
-		if (localMap.empty() == false)
+		if (keyCount > 0)
 			return parserError("Unhandled property inside key '%s': '%s'", key->name.c_str(), localMap.begin()->_key.c_str());
 			
 	} else {
@@ -149,14 +154,19 @@ bool XMLParser::parseKeyValue(Common::String keyName) {
 	_token.clear();
 	char stringStart;
 
-	if (_text[_pos] == '"' || _text[_pos] == '\'') {
-		stringStart = _text[_pos++];
+	if (_char == '"' || _char == '\'') {
+		stringStart = _char;
+		_char = _stream->readByte();
 
-		while (_text[_pos] && _text[_pos] != stringStart)
-			_token += _text[_pos++];
+		while (_char && _char != stringStart) {
+			_token += _char;
+			_char = _stream->readByte();
+		}
 
-		if (_text[_pos++] == 0)
+		if (_char == 0)
 			return false;
+
+		_char = _stream->readByte();
 
 	} else if (!parseToken()) {
 		return false;
@@ -185,7 +195,7 @@ bool XMLParser::closeKey() {
 
 bool XMLParser::parse() {
 
-	if (_text.ready() == false)
+	if (_stream == 0)
 		return parserError("XML stream not ready for reading.");
 		
 	if (_XMLkeys == 0)
@@ -202,8 +212,10 @@ bool XMLParser::parse() {
 	_state = kParserNeedKey;
 	_pos = 0;
 	_activeKey.clear();
+
+	_char = _stream->readByte();
 	
-	while (_text[_pos] && _state != kParserError) {
+	while (_char && _state != kParserError) {
 		if (skipSpaces())
 			continue;
 
@@ -212,18 +224,18 @@ bool XMLParser::parse() {
 
 		switch (_state) {
 			case kParserNeedKey:
-				if (_text[_pos++] != '<') {
+				if (_char != '<') {
 					parserError("Parser expecting key start.");
 					break;
 				}
 
-				if (_text[_pos] == 0) {
+				if ((_char = _stream->readByte()) == 0) {
 					parserError("Unexpected end of file.");
 					break;
 				}
 
-				if (_text[_pos] == '/' && _text[_pos + 1] != '*') {
-					_pos++;
+				if (_char == '/') { // FIXME: What if it's a comment start
+					_char = _stream->readByte();
 					activeClosure = true;
 				}
 
@@ -262,19 +274,25 @@ bool XMLParser::parse() {
 
 					activeClosure = false;
 
-					if (_text[_pos++] != '>')
+					if (_char != '>')
 						parserError("Invalid syntax in key closure.");
 					else 
 						_state = kParserNeedKey;
 
+					_char = _stream->readByte();
 					break;
 				}
 
-				selfClosure = (_text[_pos] == '/');
+				selfClosure = false;
 
-				if ((selfClosure && _text[_pos + 1] == '>') || _text[_pos] == '>') {
+				if (_char == '/') { // FIXME: comment start?
+					selfClosure = true;
+					_char = _stream->readByte();
+				}
+
+				if (_char == '>') {
 					if (parseActiveKey(selfClosure)) {
-						_pos += selfClosure ? 2 : 1;
+						_char = _stream->readByte();
 						_state = kParserNeedKey;
 					}
 					break;
@@ -288,11 +306,12 @@ bool XMLParser::parse() {
 				break;
 
 			case kParserNeedPropertyOperator:
-				if (_text[_pos++] != '=') 
+				if (_char != '=') 
 					parserError("Syntax error after key name.");
 				else  
 					_state = kParserNeedPropertyValue;
 
+				_char = _stream->readByte();
 				break;
 
 			case kParserNeedPropertyValue:

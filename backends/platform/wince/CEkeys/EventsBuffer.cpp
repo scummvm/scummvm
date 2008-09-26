@@ -36,9 +36,8 @@ namespace CEKEYS {
 			key->setKey(key->keycode());
 
 		ev.type = (pushed ? SDL_KEYDOWN : SDL_KEYUP);
-		ev.key.keysym.mod = (SDLMod)key->flags();
+		ev.key.keysym.unicode = (SDLMod)key->flags();	// HACK: put the flags into the unused unicode field
 		ev.key.keysym.sym = (SDLKey)key->keycode();
-		ev.key.keysym.unicode = key->keycode();
 		ev.key.keysym.mod = KMOD_RESERVED;
 		return (SDL_PushEvent(&ev) == 0);
 	}

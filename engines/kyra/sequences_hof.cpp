@@ -50,7 +50,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 	_sound->setSoundList(&_soundData[(startSeq > kSequenceZanfaun) ? kMusicFinale : kMusicIntro]);
 	_sound->loadSoundFile(0);
 
-	_screen->_charWidth = -2;
+	_screen->_charWidth = (_flags.gameID == GI_LOL) ? 0 : -2;
 
 	memset(_activeWSA, 0, sizeof(ActiveWSA) * 8);
 	for (int i = 0; i < 8; ++i)
@@ -75,7 +75,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 	_seqEndTime = 0;
 	_menuChoice = 0;
 
-	for (int seqNum = startSeq; seqNum <= endSeq && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice); seqNum++) {
+	for (int seqNum = startSeq; seqNum <= endSeq && !((skipFlag() && allowSkip) || quit() || (_abortIntroFlag && allowSkip) || _menuChoice); seqNum++) {
 		_screen->clearPage(0);
 		_screen->clearPage(8);
 		memcpy(_screen->getPalette(1), _screen->getPalette(0), 0x300);
@@ -131,7 +131,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 
 		seq_sequenceCommand(cseq.startupCommand);
 
-		if (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+		if (!((skipFlag() && allowSkip) || quit() || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 			_screen->copyPage(2, 0);
 			_screen->updateScreen();
 		}
@@ -165,7 +165,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 			_seqWsaCurrentFrame = cseq.startFrame;
 
 			bool loop = true;
-			while (loop && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+			while (loop && !((skipFlag() && allowSkip) || quit() || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 				_seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
 
 				if (_seqWsa || !cb)
@@ -189,16 +189,16 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 				seq_processWSAs();
 				seq_processText();
 
-				if ((_seqWsa || !cb) && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+				if ((_seqWsa || !cb) && !((skipFlag() && allowSkip) || quit() || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 					_screen->copyPage(2, 0);
 					_screen->updateScreen();
 				}
 
 				bool loop2 = true;
-				while (loop2 && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+				while (loop2 && !((skipFlag() && allowSkip) || quit() || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 					if (_seqWsa) {
 						seq_processText();
-						if (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+						if (!((skipFlag() && allowSkip) || quit() || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 							_screen->copyPage(2, 0);
 							_screen->updateScreen();
 						}
@@ -230,7 +230,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 		} else {
 			_seqFrameDelay = cseq.frameDelay;
 			_seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
-			while (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+			while (!((skipFlag() && allowSkip) || quit() || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 				_seqSubFrameStartTime = _system->getMillis();
 				seq_processWSAs();
 				if (cb)
@@ -262,7 +262,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 			dl = ct;
 		_seqEndTime = _system->getMillis() + dl;
 
-		while (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+		while (!((skipFlag() && allowSkip) || quit() || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 			_seqSubFrameStartTime = _system->getMillis();
 			seq_processWSAs();
 
@@ -300,8 +300,8 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 				_eventList.clear();
 				seqNum = kSequenceFirates;
 			}
-		} else if (seqNum == kSequenceDemoFisher && !(_abortIntroFlag || skipFlag())) {
-			seqNum = kSequenceDemoVirgin;
+		} else if (seqNum == endSeq && !(_abortIntroFlag || skipFlag())) {
+			seqNum = 0;
 		}
 
 		if (_menuChoice) {
@@ -1722,7 +1722,7 @@ int KyraEngine_HoF::seq_demoFisher(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 			_seqScrollTextCounter = 0;
 		}
 
-		seq_scrollPage();
+		seq_scrollPage(24, 144);
 		_seqFrameCounter++;
 		if (_seqFrameCounter < 0x256 || _seqFrameCounter > 0x31c) {
 			if (_seqFrameCounter < 0x174 || _seqFrameCounter > 0x1d7) {
@@ -1740,7 +1740,7 @@ int KyraEngine_HoF::seq_demoFisher(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		}
 
 	} else {
-		seq_scrollPage();
+		seq_scrollPage(24, 144);
 	}
 	return 0;
 }
@@ -1794,6 +1794,182 @@ int KyraEngine_HoF::seq_demoBail(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 int KyraEngine_HoF::seq_demoDig(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	return frm;
+}
+
+int KyraEngine_HoF::seq_lolDemoScene1(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
+	uint8 *tmpPal = _screen->getPalette(2);
+	
+	if (!(_seqFrameCounter % 100)) {
+		if (_seqFrameCounter == 0) {
+			_sound->haltTrack();
+			_sound->playTrack(6);
+		}
+		memcpy(tmpPal, _screen->getPalette(0), 0x300);
+		for (int i = 3; i < 0x300; i++) {
+			tmpPal[i] = ((int)tmpPal[i] * 120) / 64;
+			if (tmpPal[i] > 0x3f)
+				tmpPal[i] = 0x3f;			
+		}
+		seq_playTalkText(_rnd.getRandomBit());
+		_screen->setScreenPalette(tmpPal);
+		_screen->updateScreen();
+		delay(8);		
+	} else {
+		_screen->setScreenPalette(_screen->getPalette(0));
+		_screen->updateScreen();
+		if (_seqFrameCounter == 40)
+			seq_playTalkText(3);
+	}
+
+	_seqFrameCounter++;
+	return frm;
+}
+
+int KyraEngine_HoF::seq_lolDemoScene2(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
+	switch (_seqFrameCounter - 17) {
+		case 0:
+			_seqFrameDelay = 8;
+			break;
+		case 3:
+		case 6:
+		case 9:
+			seq_playTalkText(8);
+			break;
+		case 15:
+			seq_playTalkText(9);
+			break;
+		case 18:
+			seq_playTalkText(2);
+			break;
+		default:
+			break;
+	}
+	_seqFrameCounter++;
+	return frm;
+}
+
+int KyraEngine_HoF::seq_lolDemoScene3(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
+	if (_seqFrameCounter == 1)
+		seq_playTalkText(6);
+	else if (frm == 26)
+		seq_playTalkText(7);
+	
+	_seqFrameCounter++;
+	return frm;
+}
+
+int KyraEngine_HoF::seq_lolDemoScene4(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
+	switch (_seqFrameCounter) {
+		case 11:
+		case 14:
+		case 17:
+		case 20:
+			seq_playTalkText(8);
+			break;
+		case 22:
+			seq_playTalkText(11);
+			break;
+		case 24:
+			seq_playTalkText(8);
+			break;
+		case 30:
+			seq_playTalkText(15);
+			break;
+		case 34:
+			seq_playTalkText(14);
+			break;
+		case 38:
+			seq_playTalkText(13);
+			break;
+		case 42:
+			seq_playTalkText(12);
+			break;
+		default:
+			break;
+	}
+	
+	_seqFrameCounter++;
+	return frm;
+}
+
+int KyraEngine_HoF::seq_lolDemoScene5(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
+	switch (_seqFrameCounter++) {
+		case 0:
+		case 4:
+		case 6:
+		case 8:
+		case 10:
+		case 14:
+		case 16:
+		case 18:
+		case 20:
+		case 22:
+		case 24:
+		case 26:
+		case 28:
+		case 30:
+			seq_playTalkText(15);
+			break;
+		case 32:
+			seq_playTalkText(16);
+			break;
+		case 42:
+			seq_playTalkText(6);
+			break;
+		default:
+			break;
+	}
+	return frm;
+}
+
+int KyraEngine_HoF::seq_lolDemoText5(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
+	if (_seqFrameCounter++ == 100)
+		seq_playTalkText(5);
+	return frm;
+}
+
+int KyraEngine_HoF::seq_lolDemoScene6(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
+	while (_seqScrollTextCounter < 0x122) {		
+		_seqEndTime = _system->getMillis() + 6 * _tickLength;
+		if (!_seqFrameCounter) {
+			_screen->loadBitmap("adtext.cps", 4, 4, 0);
+			_screen->loadBitmap("adtext2.cps", 6, 6, 0);
+			_screen->copyPageMemory(6, 0, 4, 64000, 1024);
+			_screen->copyPageMemory(6, 1023, 6, 0, 64000);
+			_seqScrollTextCounter = 0;
+		}
+
+		if (_seqFrameCounter % 175) {
+			_screen->setScreenPalette(_screen->getPalette(0));
+		} else {
+			uint8 *tmpPal = _screen->getPalette(2);
+			memcpy(tmpPal, _screen->getPalette(0), 0x300);
+			for (int i = 3; i < 0x300; i++) {
+				tmpPal[i] = ((int)tmpPal[i] * 120) / 64;
+				if (tmpPal[i] > 0x3f)
+					tmpPal[i] = 0x3f;			
+			}
+			seq_playTalkText(_rnd.getRandomBit());
+			_screen->setScreenPalette(tmpPal);
+			_screen->updateScreen();
+			delay(8);
+		}
+		
+		if (_seqFrameCounter == 40 || _seqFrameCounter == 80 || _seqFrameCounter == 150 || _seqFrameCounter == 300)
+			seq_playTalkText(3);
+		
+		_screen->copyPage(12, 2);
+		seq_scrollPage(70, 130);
+		_screen->copyPage(2, 0);
+		_screen->updateScreen();
+		_seqFrameCounter++;
+		if (_seqFrameCounter < 128 || _seqFrameCounter > 207)
+			_seqScrollTextCounter++;
+		delayUntil(_seqEndTime);
+	}
+	_screen->copyPage(2, 12);
+
+	return 0;
 }
 
 uint32 KyraEngine_HoF::seq_activeTextsTimeLeft() {
@@ -1892,16 +2068,14 @@ void KyraEngine_HoF::seq_sequenceCommand(int command) {
 	switch (command) {
 	case 0:
 		memset(pal, 0, 0x300);
-		_screen->fadePalette(pal, 16);
+		_screen->fadePalette(pal, 36);
 		memcpy (_screen->getPalette(0), pal, 0x300);
 		memcpy (_screen->getPalette(1), pal, 0x300);
 		break;
 
 	case 1:
 		memset(pal, 0x3F, 0x300);
-		//////////XXX
-		//////////Unused anyway (at least by fm-towns intro/outro)
-
+		seq_playTalkText(_rnd.getRandomBit());
 		_screen->fadePalette(pal, 16);
 		memcpy (_screen->getPalette(0), pal, 0x300);
 		memcpy (_screen->getPalette(1), pal, 0x300);
@@ -2093,7 +2267,7 @@ void KyraEngine_HoF::seq_loadNestedSequence(int wsaNum, int seqNum) {
 void KyraEngine_HoF::seq_nestedSequenceFrame(int command, int wsaNum) {
 	int xa = 0, ya = 0;
 	command--;
-	if (!_activeWSA[wsaNum].movie || skipFlag() || _quitFlag || _abortIntroFlag)
+	if (!_activeWSA[wsaNum].movie || skipFlag() || quit() || _abortIntroFlag)
 		return;
 
 	switch (command) {
@@ -2293,7 +2467,7 @@ bool KyraEngine_HoF::seq_processNextSubFrame(int wsaNum) {
 
 void KyraEngine_HoF::seq_printCreditsString(uint16 strIndex, int x, int y, const uint8 *colorMap, uint8 textcolor) {
 	uint8 colormap[16];
-	if (skipFlag() || _quitFlag || _abortIntroFlag || _menuChoice)
+	if (skipFlag() || quit() || _abortIntroFlag || _menuChoice)
 		return;
 
 	memset(&_screen->getPalette(0)[0x2fa], 0x3f, 6);
@@ -2575,32 +2749,34 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 	delete[] textData;
 }
 
-void KyraEngine_HoF::seq_scrollPage() {
+void KyraEngine_HoF::seq_scrollPage(int bottom, int top) {
 	int dstY, dstH, srcH;
 
 	static const ScreenDim d = { 0x00, 0x00, 0x28, 0x320, 0xFF, 0xFE, 0x00, 0x00 };
 
-	if (_seqScrollTextCounter - 143 < 0) {
-		dstY = 144 - _seqScrollTextCounter;
+	if (_seqScrollTextCounter - (top - 1) < 0) {
+		dstY = top - _seqScrollTextCounter;
 		dstH = _seqScrollTextCounter;
 		srcH = 0;
 	} else {
 		dstY = 0;
-		srcH = _seqScrollTextCounter - 144;
-		dstH = (400 - srcH <= 144) ? 400 - srcH : 144;
+		srcH = _seqScrollTextCounter - top;
+		dstH = (400 - srcH <= top) ? 400 - srcH : top;
 	}
 
 	if (dstH > 0) {
-		for (int i = 0; i < 4; i++) {
-			const ItemAnimData_v1 *def = &_demoAnimData[i];
-			ActiveItemAnim *a = &_activeItemAnim[i];
+		if (_demoAnimData) {
+			for (int i = 0; i < 4; i++) {
+				const ItemAnimData_v1 *def = &_demoAnimData[i];			
+				ActiveItemAnim *a = &_activeItemAnim[i];
 
-			_screen->fillRect(12, def->y - 8, 28, def->y + 8, 0, 4);
-			_screen->drawShape(4, getShapePtr(def->itemIndex + def->frames[a->currentFrame]), 12, def->y - 8, 0, 0);
-			if(_seqFrameCounter % 2 == 0)
-				a->currentFrame = ++a->currentFrame % 20;
+				_screen->fillRect(12, def->y - 8, 28, def->y + 8, 0, 4);
+				_screen->drawShape(4, getShapePtr(def->itemIndex + def->frames[a->currentFrame]), 12, def->y - 8, 0, 0);
+				if(_seqFrameCounter % 2 == 0)
+					a->currentFrame = ++a->currentFrame % 20;
+			}
 		}
-		_screen->copyRegionEx(4, 0, srcH, 2, 2, dstY + 24, 320, dstH, &d);
+		_screen->copyRegionEx(4, 0, srcH, 2, 2, dstY + bottom, 320, dstH, &d);
 	}
 }
 
@@ -2654,8 +2830,15 @@ void KyraEngine_HoF::seq_init() {
 	_res->unloadAllPakFiles();
 	_res->loadPakFile(StaticResource::staticDataFilename());
 	_res->loadFileList(_sequencePakList, _sequencePakListSize);
+	
+	if (_flags.platform == Common::kPlatformPC98)
+		_sound->loadSoundFile("sound.dat");
 
 	int numShp = -1;
+
+	if (_flags.gameID == GI_LOL)
+		return;
+
 	if (_flags.isDemo && !_flags.isTalkie) {
 		_demoAnimData = _staticres->loadShapeAnimData_v1(k2SeqplayShapeAnimData, _itemAnimDataSize);
 		uint8 *shp = _res->fileData("icons.shp", 0);
@@ -2774,7 +2957,7 @@ void KyraEngine_HoF::seq_makeBookAppear() {
 
 		++_invWsa.curFrame;
 
-		if (_invWsa.curFrame >= _invWsa.lastFrame && !_quitFlag)
+		if (_invWsa.curFrame >= _invWsa.lastFrame && !quit())
 			break;
 
 		switch (_invWsa.curFrame) {

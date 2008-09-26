@@ -26,7 +26,7 @@
 #define LAUNCHER_DIALOG_H
 
 #include "gui/dialog.h"
-#include "base/game.h"
+#include "engines/game.h"
 #include "common/str.h"
 
 namespace GUI {
@@ -34,10 +34,9 @@ namespace GUI {
 class BrowserDialog;
 class ListWidget;
 class GraphicsWidget;
-
+class SaveLoadChooser;
 
 Common::String addGameToConf(const GameDescriptor &result);
-
 
 class LauncherDialog : public Dialog {
 	typedef Common::String String;
@@ -55,6 +54,7 @@ protected:
 	ListWidget		*_list;
 	ButtonWidget	*_addButton;
 	Widget			*_startButton;
+	Widget			*_loadButton;
 	Widget			*_editButton;
 	Widget			*_removeButton;
 #ifndef DISABLE_FANCY_THEMES
@@ -62,6 +62,7 @@ protected:
 #endif
 	StringList		_domains;
 	BrowserDialog	*_browser;
+	SaveLoadChooser	*_loadDialog;
 
 	virtual void reflowLayout();
 
@@ -73,7 +74,8 @@ protected:
 	virtual void addGame();
 	void removeGame(int item);
 	void editGame(int item);
-
+	void loadGame(int item);
+	
 	void selectGame(const String &name);
 };
 
