@@ -41,6 +41,8 @@ class Sector;
 
 typedef std::list<Sector *> SectorListType;
 
+extern int g_winX1, g_winY1, g_winX2, g_winY2;
+
 struct Shadow {
 	std::string name;
 	Vector3d pos;
@@ -227,6 +229,8 @@ private:
 	// lookAt
 	Vector3d _lookAtVector;
 	float _lookAtRate;
+
+	int _winX1, _winY1, _winX2, _winY2;
 
 	friend class Engine;
 };

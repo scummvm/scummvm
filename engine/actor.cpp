@@ -41,6 +41,8 @@
 #include <cmath>
 #include <cstring>
 
+int g_winX1, g_winY1, g_winX2, g_winY2;
+
 Actor::Actor(const char *name) :
 		_name(name), _setName(""), _talkColor(255, 255, 255), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
@@ -60,6 +62,8 @@ Actor::Actor(const char *name) :
 	_talkSoundName = "";
 	_activeShadowSlot = -1;
 	_shadowArray = new Shadow[5];
+	_winX1 = _winY1 = 1000;
+	_winX2 = _winY2 = -1000;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
@@ -601,6 +605,9 @@ void Actor::update() {
 }
 
 void Actor::draw() {
+	g_winX1 = g_winY1 = 1000;
+	g_winX2 = g_winY2 = -1000;
+
 	for (std::list<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++)
 		(*i)->setupTextures();
 
@@ -651,8 +658,11 @@ void Actor::draw() {
 				g_driver->setShadow(NULL);
 			}
 		}
-
 	}
+	_winX1 = g_winX1;
+	_winX2 = g_winX2;
+	_winY1 = g_winY1;
+	_winY2 = g_winY2;
 }
 
 // "Undraw objects" (handle objects for actors that may not be on screen)

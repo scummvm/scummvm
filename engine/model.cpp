@@ -505,6 +505,12 @@ void Model::HierNode::update() {
 void Model::Mesh::draw() const {
 	int winX1, winY1, winX2, winY2;
 	g_driver->getBoundingBoxPos(this, &winX1, &winY1, &winX2, &winY2);
+	if (winX1 != -1 && winY1 != -1 && winX2 != -1 && winY2 != -1) {
+		g_winX1 = MIN(g_winX1, winX1);
+		g_winY1 = MIN(g_winY1, winY1);
+		g_winX2 = MAX(g_winX2, winX2);
+		g_winY2 = MAX(g_winY2, winY2);
+	}
 
 	for (int i = 0; i < _numFaces; i++)
 		_faces[i].draw(_vertices, _vertNormals, _textureVerts);

@@ -276,8 +276,13 @@ static void tglShadowProjection(Vector3d light, Vector3d plane, Vector3d normal,
 }
 
 void DriverTinyGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2) {
-	if (_currentShadowArray)
+	if (_currentShadowArray) {
+		*x1 = -1;
+		*y1 = -1;
+		*x2 = -1;
+		*y2 = -1;
 		return;
+	}
 
 	TGLfloat top = 1000;
 	TGLfloat right = -1000;
@@ -383,7 +388,22 @@ void DriverTinyGL::finishActorDraw() {
 
 	if (_currentShadowArray) {
 		tglSetShadowMaskBuf(NULL);
-	}
+	}/* else {
+		uint16 *dst = (uint16 *)_zb->pbuf;
+		uint16 c = 0xffff;
+		for (int x = g_winX1; x <= g_winX2; x++) {
+			WRITE_LE_UINT16(dst + 640 * g_winY1 + x, c);
+		}
+		for (int x = g_winX1; x <= g_winX2; x++) {
+			WRITE_LE_UINT16(dst + 640 * g_winY2 + x, c);
+		}
+		for (int y = g_winY1; y <= g_winY2; y++) {
+			WRITE_LE_UINT16(dst + 640 * y + g_winX1, c);
+		}
+		for (int y = g_winY1; y <= g_winY2; y++) {
+			WRITE_LE_UINT16(dst + 640 * y + g_winX2, c);
+		}
+	}*/
 }
 
 void DriverTinyGL::drawShadowPlanes() {

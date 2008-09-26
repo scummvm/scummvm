@@ -183,8 +183,13 @@ static void glShadowProjection(Vector3d light, Vector3d plane, Vector3d normal, 
 }
 
 void DriverGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2) {
-	if (_currentShadowArray)
+	if (_currentShadowArray) {
+		*x1 = -1;
+		*y1 = -1;
+		*x2 = -1;
+		*y2 = -1;
 		return;
+	}
 
 	GLfloat top = 1000;
 	GLfloat right = -1000;
