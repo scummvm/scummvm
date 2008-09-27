@@ -112,7 +112,7 @@ public:
 	String(const String &str);
 	
 	/** Construct a string consisting of the given character. */
-	String(char c);
+	explicit String(char c);
 
 	~String();
 

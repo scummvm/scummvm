@@ -338,7 +338,7 @@ void SearchManager::addArchive(const String &name, ArchivePtr archive) {
 }
 
 void SearchManager::addDirectory(const String &name, const String &directory) {
-	addDirectoryRecursive(name, 1);
+	addDirectoryRecursive(name, directory, 1);
 }
 
 void SearchManager::addDirectoryRecursive(const String &name, const String &directory, int depth) {
