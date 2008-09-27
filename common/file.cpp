@@ -31,9 +31,6 @@
 
 namespace Common {
 
-static Common::SearchSet *s_searchSet = 0;
-
-
 void File::addDefaultDirectory(const String &directory) {
 	FilesystemNode dir(directory);
 	addDefaultDirectoryRecursive(dir, 1);
@@ -52,18 +49,12 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level) {
 	if (level <= 0 || !dir.exists() || !dir.isDirectory())
 		return;
 
-	if (!s_searchSet) {
-		s_searchSet = new Common::SearchSet();
-		g_system->addSysArchivesToSearchSet(*s_searchSet);
-	}
-
 	Common::ArchivePtr dataArchive(new Common::FSDirectory(dir, level));
-	s_searchSet->add(dir.getPath(), dataArchive, 1);
+	SearchMan.add(dir.getPath(), dataArchive);
 }
 
 void File::resetDefaultDirectories() {
-	delete s_searchSet;
-	s_searchSet = 0;
+	SearchMan.clear();
 }
 
 File::File()
@@ -82,14 +73,14 @@ bool File::open(const String &filename) {
 	_name.clear();
 	clearIOFailed();
 
-	if (s_searchSet && s_searchSet->hasFile(filename)) {
+	if (SearchMan.hasFile(filename)) {
 		debug(3, "Opening hashed: %s", filename.c_str());
-		_handle = s_searchSet->openFile(filename);
-	} else if (s_searchSet && s_searchSet->hasFile(filename + ".")) {
+		_handle = SearchMan.openFile(filename);
+	} else if (SearchMan.hasFile(filename + ".")) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
 		debug(3, "Opening hashed: %s.", filename.c_str());
-		_handle = s_searchSet->openFile(filename);
+		_handle = SearchMan.openFile(filename);
 	} else {
 		// Last resort: try the current directory
 		FilesystemNode file(filename);
@@ -135,9 +126,9 @@ bool File::open(const FilesystemNode &node) {
 }
 
 bool File::exists(const String &filename) {
-	if (s_searchSet && s_searchSet->hasFile(filename)) {
+	if (SearchMan.hasFile(filename)) {
 		return true;
-	} else if (s_searchSet && s_searchSet->hasFile(filename + ".")) {
+	} else if (SearchMan.hasFile(filename + ".")) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
 		return true;
