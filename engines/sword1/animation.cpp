@@ -265,7 +265,7 @@ void MoviePlayer::play(void) {
 	_currentFrame = 0;
 	bool terminated = false;
 	Common::EventManager *eventMan = _system->getEventManager();
-	while (!terminated && decodeFrame() && !_vm->quit()) {
+	while (!terminated && decodeFrame()) {
 		if (!_movieTexts.empty()) {
 			if (_currentFrame == _movieTexts[0]->_startFrame) {
 				_textMan->makeTextSprite(2, (uint8 *)_movieTexts[0]->_text, 600, LETTER_COL);
@@ -295,18 +295,18 @@ void MoviePlayer::play(void) {
 				handleScreenChanged();
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					_snd->stopHandle(_bgSoundHandle);
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					terminated = true;
-				}
 				break;
 			default:
 				break;
 			}
 		}
+		if (_vm->quit())
+			terminated = true;
 	}
 
-	if (_vm->quit())
+	if (terminated)
 		_snd->stopHandle(_bgSoundHandle);
 
 	while (!_movieTexts.empty()) {
