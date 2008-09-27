@@ -992,6 +992,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro"
 	},
+	{ // Supplied by goodoldgeorg in bug report #2105220
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "cd322cb3c64ef2ba2f2134aa2122cfe9", 3936700),
+			ES_ESP,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdlib,
+		"intro"
+	},
 	{
 		{
 			"lostintime",
