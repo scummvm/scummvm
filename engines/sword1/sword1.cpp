@@ -303,7 +303,7 @@ int SwordEngine::init() {
 	_music = new Music(_mixer);
 	_sound = new Sound("", _mixer, _resMan);
 	_menu = new Menu(_screen, _mouse);
-	_logic = new Logic(_objectMan, _resMan, _screen, _mouse, _sound, _music, _menu, _system, _mixer);
+	_logic = new Logic(this, _objectMan, _resMan, _screen, _mouse, _sound, _music, _menu, _system, _mixer);
 	_mouse->useLogicAndMenu(_logic, _menu);
 
 	syncSoundSettings();

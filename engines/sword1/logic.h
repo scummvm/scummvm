@@ -37,6 +37,7 @@ namespace Sword1 {
 #define NON_ZERO_SCRIPT_VARS 95
 #define NUM_SCRIPT_VARS		 1179
 
+class SwordEngine;
 class Text;
 class Sound;
 class EventManager;
@@ -51,7 +52,7 @@ typedef int (Logic::*BSMcodeTable)(Object *, int32, int32, int32, int32, int32, 
 
 class Logic {
 public:
-	Logic(ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu, OSystem *system, Audio::Mixer *mixer);
+	Logic(SwordEngine *vm, ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu, OSystem *system, Audio::Mixer *mixer);
 	~Logic(void);
 	void initialize(void);
 	void newScreen(uint32 screen);
@@ -64,6 +65,7 @@ public:
 // public for mouse (menu looking)
 	int cfnPresetScript	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 private:
+	SwordEngine *_vm;
 	ObjectMan *_objMan;
 	OSystem *_system;
 	Audio::Mixer *_mixer;
