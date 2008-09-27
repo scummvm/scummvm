@@ -438,7 +438,7 @@ bool MoviePlayerDXA::decodeFrame(void) {
 void MoviePlayerDXA::processFrame(void) {
 	// TODO: Handle the advanced cutscene packs. Do they really exist?
 
-	// We cannot draw the text to _drawBuffer, sinzce ethat's one of the
+	// We cannot draw the text to _drawBuffer, since that's one of the
 	// decoder's internal buffers. Instead, we copy part of _drawBuffer
 	// to the text sprite.
 
