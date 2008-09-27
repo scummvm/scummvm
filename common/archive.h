@@ -153,7 +153,7 @@ public:
  */
 class SearchSet : public Archive {
 	struct Node {
-		uint		_priority;
+		int			_priority;
 		String		_name;
 		ArchivePtr	_arc;
 	};
@@ -169,7 +169,7 @@ public:
 	/**
 	 * Add a new archive to the searchable set.
 	 */
-	void add(const String& name, ArchivePtr archive, uint priority = 0);
+	void add(const String& name, ArchivePtr archive, int priority = 0);
 
 	/**
 	 * Remove an archive from the searchable set.
@@ -184,12 +184,12 @@ public:
 	/**
      * Empties the searchable set.
      */
-	void clear();
+	virtual void clear();
 
 	/**
      * Change the order of searches.
      */
-	void setPriority(const String& name, uint priority);
+	void setPriority(const String& name, int priority);
 
 	virtual bool hasFile(const String &name);
 	virtual int matchPattern(StringList &list, const String &pattern);
@@ -205,6 +205,8 @@ public:
 
 class SearchManager : public Singleton<SearchManager>, public SearchSet {
 public:
+	SearchManager();
+
 	/**
 	 * Add an existing Archive. This is meant to support searching in system-specific
 	 * archives, namely the MACOSX/IPHONE bundles.
@@ -221,6 +223,10 @@ public:
 	 */
 	void addDirectoryRecursive(const String &name, const String &directory, int depth = 4);
 
+	/**
+	 * TODO
+	 */
+	virtual void clear();
 };
 
 /** Shortcut for accessing the search manager. */

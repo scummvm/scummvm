@@ -275,7 +275,7 @@ FilesystemFactory *OSystem_SDL::getFilesystemFactory() {
 	return _fsFactory;
 }
 
-void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, uint priority) {
+void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 
 #ifdef DATA_PATH
 	// Add the global DATA_PATH to the directory search list

@@ -917,7 +917,7 @@ public:
 	 * @param s		the SearchSet to which the system specific dirs, if any, are added
 	 * @param priority	the priority with which those dirs are added
 	 */
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, uint priority = 0) {}
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) {}
 
 	/**
 	 * Open the default config file for reading, by returning a suitable

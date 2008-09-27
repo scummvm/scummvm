@@ -26,6 +26,7 @@
 #include "common/archive.h"
 #include "common/fs.h"
 #include "common/util.h"
+#include "common/system.h"
 
 namespace Common {
 
@@ -231,7 +232,7 @@ void SearchSet::insert(const Node &node) {
 	_list.insert(it, node);
 }
 
-void SearchSet::add(const String& name, ArchivePtr archive, uint priority) {
+void SearchSet::add(const String& name, ArchivePtr archive, int priority) {
 	if (find(name) == _list.end()) {
 		Node node = { priority, name, archive };
 		insert(node);
@@ -256,7 +257,7 @@ void SearchSet::clear() {
 	_list.clear();
 }
 
-void SearchSet::setPriority(const String& name, uint priority) {
+void SearchSet::setPriority(const String& name, int priority) {
 	ArchiveList::iterator it = find(name);
 	if (it == _list.end()) {
 		warning("SearchSet::setPriority: archive '%s' is not present", name.c_str());
@@ -328,6 +329,10 @@ SeekableReadStream *SearchSet::openFile(const String &name) {
 
 DECLARE_SINGLETON(SearchManager);
 
+SearchManager::SearchManager() {
+	clear();	// Force a reset
+}
+
 void SearchManager::addArchive(const String &name, ArchivePtr archive) {
 	add(name, archive);
 }
@@ -337,8 +342,16 @@ void SearchManager::addDirectory(const String &name, const String &directory) {
 }
 
 void SearchManager::addDirectoryRecursive(const String &name, const String &directory, int depth) {
-	add(name, SharedPtr<FSDirectory>(new FSDirectory(directory, depth)));
+	add(name, ArchivePtr(new FSDirectory(directory, depth)));
 }
 
+void SearchManager::clear() {
+	SearchSet::clear();
+
+	// Always keep system specific archives in the SearchManager.
+	// But we give them a lower priority than the default priority (which is 0),
+	// so that archives added by client code are searched first.
+	g_system->addSysArchivesToSearchSet(*this, -1);
+}
 
 } // namespace Common
