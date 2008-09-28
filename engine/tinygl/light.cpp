@@ -149,8 +149,7 @@ void glopLightModel(GLContext *c, TGLParam *p) {
 		c->light_model_two_side = (int)v[0];
 		break;
 	default:
-		tgl_warning("glopLightModel: illegal pname: 0x%x", pname);
-		//assert(0);
+		warning("glopLightModel: illegal pname: 0x%x", pname);
 		break;
 	}
 }

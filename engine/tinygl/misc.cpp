@@ -94,7 +94,7 @@ void glopEnableDisable(GLContext *c, TGLParam *p) {
 		if (code >= TGL_LIGHT0 && code < TGL_LIGHT0 + T_MAX_LIGHTS) {
 			gl_enable_disable_light(c, code - TGL_LIGHT0, v);
 		} else {
-			//tgl_warning("glEnableDisable: 0x%X not supported.", code);
+			//warning("glEnableDisable: 0x%X not supported.", code);
 		}
 		break;
 	}
