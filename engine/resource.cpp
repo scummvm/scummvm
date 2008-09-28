@@ -146,7 +146,7 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	Block *b = getFileBlock(filename);
 	if (!b) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("Could not find bitmap %s\n", filename);
+			warning("Could not find bitmap %s", filename);
 		return NULL;
 	}
 
@@ -167,7 +167,7 @@ CMap *ResourceLoader::loadColormap(const char *filename) {
 
 	Block *b = getFileBlock(filename);
 	if (!b)
-		error("Could not find colormap %s\n", filename);
+		error("Could not find colormap %s", filename);
 	CMap *result = new CMap(filename, b->data(), b->len());
 	delete b;
 	_cache[fname] = result;
@@ -179,7 +179,7 @@ Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
 	makeLower(fname);
 	Block *b = getFileBlock(filename);
 	if (!b)
-		error("Could not find costume %s\n", filename);
+		error("Could not find costume %s", filename);
 	Costume *result = new Costume(filename, b->data(), b->len(), prevCost);
 	delete b;
 	return result;
@@ -195,7 +195,7 @@ Font *ResourceLoader::loadFont(const char *filename) {
 
 	Block *b = getFileBlock(filename);
 	if (!b)
-		error("Could not find font file %s\n", filename);
+		error("Could not find font file %s", filename);
 	Font *result = new Font(filename, b->data(), b->len());
 	delete b;
 	_cache[fname] = result;
@@ -212,7 +212,7 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 
 	Block *b = getFileBlock(filename);
 	if (!b)
-		error("Could not find keyframe file %s\n", filename);
+		error("Could not find keyframe file %s", filename);
 	KeyframeAnim *result = new KeyframeAnim(filename, b->data(), b->len());
 	delete b;
 	_cache[fname] = result;
@@ -232,7 +232,7 @@ LipSynch *ResourceLoader::loadLipSynch(const char *filename) {
 	Block *b = getFileBlock(filename);
 	if (!b) {
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("Could not find lipsynch file %s\n", filename);
+			warning("Could not find lipsynch file %s", filename);
 		result = NULL;
 	} else {
 		result = new LipSynch(filename, b->data(), b->len());
@@ -260,7 +260,7 @@ Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
 
 	Block *b = getFileBlock(filename);
 	if (!b)
-		error("Could not find material %s\n", filename);
+		error("Could not find material %s", filename);
 	Material *result = new Material(fname.c_str(), b->data(), b->len(), c);
 	delete b;
 	_cache[fname] = result;
@@ -277,7 +277,7 @@ Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
 
 	Block *b = getFileBlock(filename);
 	if (!b)
-		error("Could not find model %s\n", filename);
+		error("Could not find model %s", filename);
 	Model *result = new Model(filename, b->data(), b->len(), c);
 	delete b;
 	_cache[fname] = result;

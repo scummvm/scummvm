@@ -205,7 +205,7 @@ void glopVertex(GLContext *c, TGLParam *p) {
 		c->vertex_max <<= 1;	// just double size
 		newarray = (GLVertex *)gl_malloc(sizeof(GLVertex) * c->vertex_max);
 		if (!newarray) {
-			gl_fatal_error("unable to allocate GLVertex array.\n");
+			gl_fatal_error("unable to allocate GLVertex array.");
 		}
 		memcpy(newarray, c->vertex, n * sizeof(GLVertex));
 		gl_free(c->vertex);
@@ -319,7 +319,7 @@ void glopVertex(GLContext *c, TGLParam *p) {
 	case TGL_POLYGON:
 		break;
     default:
-		gl_fatal_error("glBegin: type %x not handled\n", c->begin_type);
+		gl_fatal_error("glBegin: type %x not handled", c->begin_type);
 	}
 
 	c->vertex_n = n;

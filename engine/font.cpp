@@ -47,7 +47,7 @@ Font::Font(const char *filename, const char *data, int /*len*/) :
 	// Read character indexes - are the key/value reversed?
 	_charIndex = new uint16[_numChars];
 	if (!_charIndex)
-		error("Could not load font %s. Out of memory\n", filename);
+		error("Could not load font %s. Out of memory", filename);
 	for (uint i = 0; i < _numChars; ++i) {
 		_charIndex[i] = READ_LE_UINT16(data + 2 * i);
 	}
@@ -57,7 +57,7 @@ Font::Font(const char *filename, const char *data, int /*len*/) :
 	// Read character headers
 	_charHeaders = new CharHeader[_numChars];
 	if (!_charHeaders)
-		error("Could not load font %s. Out of memory\n", filename);
+		error("Could not load font %s. Out of memory", filename);
 	for (uint i = 0; i < _numChars; ++i) {
 		_charHeaders[i].offset = READ_LE_UINT32(data);
 		_charHeaders[i].width = *(int8 *)(data + 4);
@@ -70,7 +70,7 @@ Font::Font(const char *filename, const char *data, int /*len*/) :
 	// Read font data
 	_fontData = new byte[_dataSize];
 	if (!_fontData)
-		error("Could not load font %s. Out of memory\n", filename);
+		error("Could not load font %s. Out of memory", filename);
 
 	memcpy(_fontData, data, _dataSize);
 }
@@ -105,7 +105,7 @@ uint16 Font::getCharIndex(unsigned char c) {
 			return i;
 	}
 	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-		warning("The requsted character (code 0x%x) does not correspond to anything in the font data!\n", c2);
+		warning("The requsted character (code 0x%x) does not correspond to anything in the font data!", c2);
 	// If we couldn't find the character then default to
 	// the first character in the font so that something
 	// gets loaded to prevent the game from crashing

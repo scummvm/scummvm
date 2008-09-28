@@ -64,7 +64,7 @@ Localizer::Localizer() {
 	f.close();
 
 	if (filesize < 4 || std::memcmp(data, "RCNE", 4) != 0)
-		error("Invalid magic reading grim.tab\n");
+		error("Invalid magic reading grim.tab");
 
 	// Decode the data
 	for (int i = 4; i < filesize; i++)

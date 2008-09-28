@@ -260,12 +260,12 @@ void Actor::setTurnChores(int left_chore, int right_chore, Costume *cost) {
 	_rightTurnChore = right_chore;
 
 	if ((left_chore >= 0 && right_chore < 0) || (left_chore < 0 && right_chore >= 0))
-		error("Unexpectedly got only one turn chore\n");
+		error("Unexpectedly got only one turn chore");
 }
 
 void Actor::setTalkChore(int index, int chore, Costume *cost) {
 	if (index < 1 || index > 10)
-		error("Got talk chore index out of range (%d)\n", index);
+		error("Got talk chore index out of range (%d)", index);
 
 	index--;
 

@@ -52,7 +52,7 @@ void TextObject::setText(char *text) {
 	if (strlen(text) < sizeof(_textID))
 		strcpy(_textID, text);
 	else {
-		error("Text ID exceeded maximum length (%d): %s\n", sizeof(_textID), text);
+		error("Text ID exceeded maximum length (%d): %s", sizeof(_textID), text);
 		// this should be good enough to still be unique
 		// but for debug purposes lets make this crash the program so we know about it
 		strncpy(_textID, text, sizeof(_textID));
@@ -152,8 +152,7 @@ void TextObject::createBitmap() {
 
 		_bitmapWidthPtr[j] = 0;
 		for (int i = 0; currentLine[i] != '\0'; ++i) {
-			_bitmapWidthPtr[j] += MAX(_font->getCharWidth(currentLine[i]),
-										_font->getCharDataWidth(currentLine[i]));
+			_bitmapWidthPtr[j] += MAX(_font->getCharWidth(currentLine[i]), _font->getCharDataWidth(currentLine[i]));
 		}
 
 		_textBitmap = new uint8[_font->getHeight() * (_bitmapWidthPtr[j] + 1)];
@@ -172,7 +171,7 @@ void TextObject::createBitmap() {
 				for (int r = 0; r < charDataWidth; r++) {
 					const byte pixel = *(_font->getCharData(ch) + r + (charDataWidth * line));
 					byte *dst = _textBitmap + offset + startingCol + r;
-					if ((*dst == 0) && (pixel != 0))
+					if (*dst == 0 && pixel != 0)
 						_textBitmap[offset + startingCol + r] = pixel;
 				}
 				if (line + startingLine >= _font->getHeight())

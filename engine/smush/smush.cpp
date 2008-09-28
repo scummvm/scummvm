@@ -504,7 +504,7 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 		}
 		if (result != Z_OK || fileEOF) {
 			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-				warning("zlibFile::read() Unknown decomp result: %d/%d\n", result, fileEOF);
+				warning("zlibFile::read() Unknown decomp result: %d/%d", result, fileEOF);
 			_fileDone = true;
 			break;
 		}

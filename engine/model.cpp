@@ -335,7 +335,7 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 	}
 
 	if (!ts.eof() && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
-		warning("Unexpected junk at end of model text\n");
+		warning("Unexpected junk at end of model text");
 }
 
 void Model::Geoset::changeMaterials(ResPtr<Material> *materials) {
@@ -366,7 +366,7 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 	if (std::sscanf(ts.currentLine(), "shadow %d", &_shadow) < 1) {
 		_shadow = 0;
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("Missing shadow directive in model\n");
+			warning("Missing shadow directive in model");
 	} else
 		ts.nextLine();
 	ts.scanString("geometrymode %d", 1, &_geometryMode);
@@ -417,10 +417,10 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 		int readlen;
 
 		if (ts.eof())
-			error("Expected face data, got EOF\n");
+			error("Expected face data, got EOF");
 
 		if (std::sscanf(ts.currentLine(), " %d: %d %i %d %d %d %f %d%n", &num, &materialid, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
-			error("Expected face data, got `%s'\n", ts.currentLine());
+			error("Expected face data, got '%s'", ts.currentLine());
 
 		_materialid[num] = materialid;
 		_faces[num]._material = materials[_materialid[num]];
@@ -436,7 +436,7 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 			int readlen2;
 
 			if (std::sscanf(ts.currentLine() + readlen, " %d, %d%n", _faces[num]._vertices + j, _faces[num]._texVertices + j, &readlen2) < 2)
-				error("Could not read vertex indices in line `%s'\n",
+				error("Could not read vertex indices in line '%s'",
 
 			ts.currentLine());
 			readlen += readlen2;

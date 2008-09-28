@@ -195,14 +195,14 @@ void BitmapComponent::setKey(int val) {
 	// as a different case then they were stored (tu_0_dorcu_door_open versus
 	// TU_0_DORCU_door_open), which was causing problems in the string comparison.
 	if(debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-		warning("Missing scene bitmap: %s\n", bitmap);
+		warning("Missing scene bitmap: %s", bitmap);
 	
 /* In case you feel like drawing the missing bitmap anyway...
 	// Assume that all objects the scene file forgot about are OBJSTATE_STATE class
 	state = new ObjectState(0, ObjectState::OBJSTATE_STATE, bitmap, NULL, true);
 	if (!state) {
 		if (debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("Couldn't find bitmap %s in current scene\n", _filename.c_str());
+			warning("Couldn't find bitmap %s in current scene", _filename.c_str());
 		return;
 	}
 	g_engine->currScene()->addObjectState(state);
@@ -244,7 +244,7 @@ void ModelComponent::init() {
 		// a valid colormap
 		if (!cmap) {
 			if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-				warning("No colormap specified for %s, using %s\n", _filename.c_str(), DEFAULT_COLORMAP);
+				warning("No colormap specified for %s, using %s", _filename.c_str(), DEFAULT_COLORMAP);
 
 			cmap = g_resourceloader->loadColormap(DEFAULT_COLORMAP);
 		}
@@ -266,7 +266,7 @@ void ModelComponent::init() {
 		if (mc)
 			mc->node()->addChild(_hier);
 		else if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("Parent of model %s wasn't a mesh\n", _filename.c_str());
+			warning("Parent of model %s wasn't a mesh", _filename.c_str());
 	}
 }
 
@@ -445,7 +445,7 @@ void KeyframeComponent::setKey(int val) {
 		break;
 	default:
 		if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("Unknown key %d for keyframe %s\n", val, _keyf->filename());
+			warning("Unknown key %d for keyframe %s", val, _keyf->filename());
 	}
 }
 
@@ -480,7 +480,7 @@ void KeyframeComponent::update() {
 				break;
 			default:
 				if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-					warning("Unknown repeat mode %d for keyframe %s\n", _repeatMode, _keyf->filename());
+					warning("Unknown repeat mode %d for keyframe %s", _repeatMode, _keyf->filename());
 		}
 	}
 	_keyf->animate(_hier, _currTime / 1000.0, _priority1, _priority2);
@@ -492,7 +492,7 @@ void KeyframeComponent::init() {
 		_hier = mc->hierarchy();
 	else {
 		if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("Parent of %s was not a model\n", _keyf->filename());
+			warning("Parent of %s was not a model", _keyf->filename());
 		_hier = NULL;
 	}
 }
@@ -500,7 +500,7 @@ void KeyframeComponent::init() {
 MeshComponent::MeshComponent(Costume::Component *parent, int parentID, const char *name, tag32 tag) :
 		Costume::Component(parent, parentID, tag), _name(name), _node(NULL) {
 	if (std::sscanf(name, "mesh %d", &_num) < 1)
-		error("Couldn't parse mesh name %s\n", name);
+		error("Couldn't parse mesh name %s", name);
 
 }
 
@@ -510,7 +510,7 @@ void MeshComponent::init() {
 		_node = mc->hierarchy() + _num;
 	else {
 		if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("Parent of mesh %d was not a model\n", _num);
+			warning("Parent of mesh %d was not a model", _num);
 		_node = NULL;
 	}
 }
@@ -533,7 +533,7 @@ MaterialComponent::MaterialComponent(Costume::Component *parent, int parentID, c
 		_num(0) {
 	
 	if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-		warning("Constructing MaterialComponent %s\n", filename);
+		warning("Constructing MaterialComponent %s", filename);
 }
 
 void MaterialComponent::init() {
@@ -542,7 +542,7 @@ void MaterialComponent::init() {
 	if (!cmap) {
 		// Use the default colormap if we're still drawing a blank
 		if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("MaterialComponent::init on %s\n", _filename.c_str());
+			warning("MaterialComponent::init on %s", _filename.c_str());
 		
 		cmap = g_resourceloader->loadColormap(DEFAULT_COLORMAP);
 	}
@@ -623,7 +623,7 @@ void SoundComponent::setKey(int val) {
 		break;
 	default:
 		if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("Unknown key %d for sound %s\n", val, _soundName.c_str());
+			warning("Unknown key %d for sound %s", val, _soundName.c_str());
 	}
 }
 
@@ -663,7 +663,7 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 		Component *prevComponent = NULL;
 		
 		if (std::sscanf(line, " %d %d %d %d %n", &id, &tagID, &hash, &parentID, &namePos) < 4)
-			error("Bad component specification line: `%s'\n", line);
+			error("Bad component specification line: `%s'", line);
 		ts.nextLine();
 
 		// A Parent ID of "-1" indicates that the component should
@@ -904,7 +904,7 @@ Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *paren
 
 	char t[4];
 	std::memcpy(t, &tag, sizeof(tag32));
-	error("loadComponent: Unknown tag '%c%c%c%c', name '%s'\n", t[0], t[1], t[2], t[3], name);
+	error("loadComponent: Unknown tag '%c%c%c%c', name '%s'", t[0], t[1], t[2], t[3], name);
 	return NULL;
 }
 

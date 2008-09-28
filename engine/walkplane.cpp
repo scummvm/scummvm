@@ -70,7 +70,7 @@ void Sector::load(TextSplitter &ts) {
 	else if (strcmp(buf, "invisible") == 0)
 		_visible = false;
 	else
-		error("Invalid visibility spec: %s\n", buf);
+		error("Invalid visibility spec: %s", buf);
 	ts.scanString(" height %f", 1, &_height);
 	ts.scanString(" numvertices %d", 1, &_numVertices);
 	_vertices = new Vector3d[_numVertices + 1];
@@ -144,7 +144,7 @@ bool Sector::isPointInSector(Vector3d point) const {
 
 Vector3d Sector::projectToPlane(Vector3d point) const {
 	if (_normal.z() == 0)
-		error("Trying to walk along vertical plane\n");
+		error("Trying to walk along vertical plane");
 
 	// Formula: return p - (n . (p - v_0))/(n . k) k
 	Vector3d result = point;
@@ -154,7 +154,7 @@ Vector3d Sector::projectToPlane(Vector3d point) const {
 
 Vector3d Sector::projectToPuckVector(Vector3d v) const {
 	if (_normal.z() == 0)
-		error("Trying to walk along vertical plane\n");
+		error("Trying to walk along vertical plane");
 
 	Vector3d result = v;
 	result.z() -= dot(_normal, v) / _normal.z();

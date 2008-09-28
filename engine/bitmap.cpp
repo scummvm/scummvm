@@ -41,7 +41,7 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
 
 	if (len < 8 || memcmp(data, "BM  F\0\0\0", 8) != 0) {
 		if (debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
-			error("Invalid magic loading bitmap\n");
+			error("Invalid magic loading bitmap");
 	}
 
 	strcpy(_filename, filename);

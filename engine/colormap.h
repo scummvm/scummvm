@@ -38,7 +38,7 @@ public:
 	CMap(const char *filename, const char *data, int len) :
 		Resource(filename) {
 	if (len < 4 || std::memcmp(data, "CMP ", 4) != 0)
-		error("Invalid magic loading colormap\n");
+		error("Invalid magic loading colormap");
 		std::memcpy(_colors, data + 64, sizeof(_colors));
 	}
 

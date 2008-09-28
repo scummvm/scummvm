@@ -107,15 +107,15 @@ bool TextSplitter::checkString(const char *needle) {
 
 void TextSplitter::expectString(const char *expected) {
 	if (!_currLine)
-		error("Expected `%s', got EOF\n", expected);
+		error("Expected `%s', got EOF", expected);
 	if (std::strcmp(currentLine(), expected) != 0)
-		error("Expected `%s', got `%s'\n", expected, currentLine());
+		error("Expected `%s', got '%s'", expected, currentLine());
 	nextLine();
 }
 
 void TextSplitter::scanString(const char *fmt, int field_count, ...) {
 	if (!_currLine)
-		error("Expected line of format `%s', got EOF\n", fmt);
+		error("Expected line of format '%s', got EOF", fmt);
 
 	std::va_list va;
 
@@ -126,7 +126,7 @@ void TextSplitter::scanString(const char *fmt, int field_count, ...) {
 #else
 	if (vsscanf(currentLine(), fmt, va) < field_count)
 #endif
-		error("Expected line of format `%s', got `%s'\n", fmt, currentLine());
+		error("Expected line of format '%s', got '%s'", fmt, currentLine());
 	va_end(va);
 
 	nextLine();

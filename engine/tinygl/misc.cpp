@@ -28,7 +28,7 @@ void glopViewport(GLContext *c, TGLParam *p) {
 			gl_fatal_error("glViewport: size too small");
 		}
 
-		tgl_trace("glViewport: %d %d %d %d\n", xmin, ymin, xsize, ysize);
+		tgl_trace("glViewport: %d %d %d %d", xmin, ymin, xsize, ysize);
 		c->viewport.xmin = xmin;
 		c->viewport.ymin = ymin;
 		c->viewport.xsize = xsize;
@@ -95,7 +95,7 @@ void glopEnableDisable(GLContext *c, TGLParam *p) {
 		if (code >= TGL_LIGHT0 && code < TGL_LIGHT0 + T_MAX_LIGHTS) {
 			gl_enable_disable_light(c, code - TGL_LIGHT0, v);
 		} else {
-			//fprintf(stderr, "glEnableDisable: 0x%X not supported.\n", code);
+			//tgl_warning("glEnableDisable: 0x%X not supported.", code);
 		}
 		break;
 	}

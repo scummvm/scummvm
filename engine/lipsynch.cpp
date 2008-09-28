@@ -40,7 +40,7 @@ LipSynch::LipSynch(const char *filename, const char *data, int len) :
 	int j;
 
 	if (std::memcmp(data, "LIP!", 4) != 0) {
-		error("Invalid file format in %s\n", filename);
+		error("Invalid file format in %s", filename);
 	} else {
 		_numEntries = (len - 8) / 4;
 
@@ -61,7 +61,7 @@ LipSynch::LipSynch(const char *filename, const char *data, int len) :
 				// Look for the animation corresponding to the phoneme
 				for (j = 0; j < _animTableSize && readPhoneme != _animTable[j].phoneme; j++);
 				if (readPhoneme != _animTable[j].phoneme) {
-					warning("Unknown phoneme: 0x%X in file %s\n", readPhoneme, filename);
+					warning("Unknown phoneme: 0x%X in file %s", readPhoneme, filename);
 					_entries[i].anim = 1;
 				} else
 					_entries[i].anim = _animTable[j].anim;

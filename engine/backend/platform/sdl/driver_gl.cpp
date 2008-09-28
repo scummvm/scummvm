@@ -588,7 +588,7 @@ void DriverGL::drawBitmap(const Bitmap *bitmap) {
 			if (bitmap->_currImage - 1 < bitmap->_numImages) {
 				drawDepthBitmap(bitmap->_x, bitmap->_y, bitmap->_width, bitmap->_height, bitmap->_data[bitmap->_currImage - 1]);
 			} else {
-				warning("zbuffer image has index out of bounds! %d/%d\n", bitmap->_currImage, bitmap->_numImages);
+				warning("zbuffer image has index out of bounds! %d/%d", bitmap->_currImage, bitmap->_numImages);
 			}
 		}
 	}
@@ -654,7 +654,7 @@ void DriverGL::destroyMaterial(Material *material) {
 
 void DriverGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	//	if (num != 0) {
-	//		warning("Animation not handled yet in GL texture path !\n");
+	//		warning("Animation not handled yet in GL texture path !");
 	//	}
 	if (y + h == 480) {
 		glRasterPos2i(x, _screenHeight - 1);

@@ -51,7 +51,7 @@ void KeyframeAnim::loadBinary(const char *data, int len) {
 		
 		memcpy(filebuf, data + 4, 36);
 		filebuf[36] = 0;
-		printf("Loading Keyframe '%s'.\n", filebuf);
+		printf("Loading Keyframe '%s'.", filebuf);
 	}
 	// Next four bytes are the flags
 	_flags = READ_LE_UINT32(data + 40);

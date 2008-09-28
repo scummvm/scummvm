@@ -217,11 +217,11 @@ static Costume *get_costume(Actor *a, int param, const char *called_from) {
 	if (lua_isnil(lua_getparam(param))) {
 		result = a->currentCostume();
 		if (!result && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
-			warning("Actor %s has no costume [%s]\n", a->name(), called_from);
+			warning("Actor %s has no costume [%s]", a->name(), called_from);
 	} else {
 		result = a->findCostume(luaL_check_string(param));
 		if (!result && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
-			warning("Actor %s has no costume %s [%s]\n", a->name(), lua_getstring(lua_getparam(param)), called_from);
+			warning("Actor %s has no costume %s [%s]", a->name(), lua_getstring(lua_getparam(param)), called_from);
 	}
 	return result;
 }
@@ -428,7 +428,7 @@ static void SetSayLineDefaults() {
 
 		// If the call to "next" fails then register an error
 		if (lua_call("next") != 0) {
-			error("SetSayLineDefaults failed to get next key!\n");
+			error("SetSayLineDefaults failed to get next key!");
 			return;
 		}
 		key = lua_getresult(1);
@@ -439,7 +439,7 @@ static void SetSayLineDefaults() {
 		if (strmatch(key_text, "font"))
 			sayLineDefaults.font = check_font(2);
 		else
-			error("Unknown SetSayLineDefaults key %s\n", key_text);
+			error("Unknown SetSayLineDefaults key %s", key_text);
 	}
 }
 
@@ -938,7 +938,7 @@ static void GetActorCostume() {
 	if (!c) {
 		lua_pushnil();
 		if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
-			printf("GetActorCostume() on '%s' when actor has no costume!\n", act->name());
+			printf("GetActorCostume() on '%s' when actor has no costume!", act->name());
 		return;
 	}
 	lua_pushstring(const_cast<char *>(c->filename()));
@@ -1108,7 +1108,7 @@ static void ActorLookAt() {
 	if (lua_isnil(x)) {
 		if (act->isLookAtVectorZero()) {
 			if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-				warning("Actor requested to look at nothing, already looking at nothing!\n");
+				warning("Actor requested to look at nothing, already looking at nothing!");
 			return;
 		}
 
@@ -1630,7 +1630,7 @@ static void SayLine() {
 						lua_pushnil();
 					// If the call to "next" fails then register an error
 					if (lua_call("next") != 0) {
-						error("SayLine failed to get next key!\n");
+						error("SayLine failed to get next key!");
 						return;
 					}
 					key = lua_getresult(1);
@@ -1643,7 +1643,7 @@ static void SayLine() {
 					else if (strmatch(key_text, "y"))
 						int y = atoi(lua_getstring(lua_getresult(2)));
 					else
-						error("Unknown SayLine key '%s'\n", key_text);
+						error("Unknown SayLine key '%s'", key_text);
 				}
 			} else {
 					error("SayLine() unknown type of param");
@@ -2028,7 +2028,7 @@ static void ImSetParam() {
 	default:
 		lua_pushnil();
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("ImSetParam() Unimplemented %d, %d\n", param, value);
+			warning("ImSetParam() Unimplemented %d, %d", param, value);
 	}
 }
 
@@ -2049,7 +2049,7 @@ void ImGetParam() {
 	default:
 		lua_pushnil();
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("ImGetParam() Unimplemented %d\n", param);
+			warning("ImGetParam() Unimplemented %d", param);
 	}
 }
 
@@ -2302,7 +2302,7 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 
 		// If the call to "next" fails then register an error
 		if (lua_call("next") != 0) {
-			error("getTextObjectParams failed to get next key!\n");
+			error("getTextObjectParams failed to get next key!");
 			return;
 		}
 		key = lua_getresult(1);
@@ -2335,7 +2335,7 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 		else if (strmatch(key_text, "rjustify"))
 			textObject->setJustify(3);
 		else
-			error("Unknown getTextObjectParams key '%s'\n", key_text);
+			error("Unknown getTextObjectParams key '%s'", key_text);
 	}
 }
 
@@ -3856,7 +3856,7 @@ int bundle_dofile(const char *filename) {
 		// Don't print warnings on Scripts\foo.lua,
 		// d:\grimFandango\Scripts\foo.lua
 		if (!std::strstr(filename, "Scripts\\") && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
-			warning("Cannot find script %s\n", filename);
+			warning("Cannot find script %s", filename);
 
 		return 2;
 	}
@@ -3897,7 +3897,7 @@ lua_Object getTableValue(lua_Object table, const char *name) {
 	lua_Object key = LUA_NOOBJECT;
 
 	if (!lua_istable(table)) {
-		error("getTableValue(): Parameter not a table!\n");
+		error("getTableValue(): Parameter not a table!");
 		return 0;
 	}
 	
@@ -3912,7 +3912,7 @@ lua_Object getTableValue(lua_Object table, const char *name) {
 		// that it doesn't understand then an infinite loop
 		// will be set up repeating the same error.
 		if (lua_call("next") != 0) {
-			error("getTableValue could not find the next key!\n");
+			error("getTableValue could not find the next key!");
 			return 0;
 		}
 		key = lua_getresult(1);
@@ -3937,7 +3937,7 @@ lua_Object getTableValue(lua_Object table, const char *name) {
 
 lua_Object getIndexedTableValue(lua_Object table, int index) {
 	if (!lua_istable(table)) {
-		error("getIndexedTableValue(): Parameter not a table!\n");
+		error("getIndexedTableValue(): Parameter not a table!");
 		return 0;
 	}
 	lua_pushobject(table);
@@ -3947,7 +3947,7 @@ lua_Object getIndexedTableValue(lua_Object table, int index) {
 		lua_pushnumber(index - 1);
 	// If the call to "next" fails then register an error
 	if (lua_call("next") != 0) {
-		error("getIndexedTableValue failed to get next key!\n");
+		error("getIndexedTableValue failed to get next key!");
 		return 0;
 	}
 	return lua_getresult(2);

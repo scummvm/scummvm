@@ -845,7 +845,7 @@ void Engine::setScene(const char *name) {
 	}
 	Block *b = g_resourceloader->getFileBlock(name);
 	if (!b)
-		warning("Could not find scene file %s\n", name);
+		warning("Could not find scene file %s", name);
 	_currScene = new Scene(name, b->data(), b->len());
 	registerScene(_currScene);
 	_currScene->setSoundParameters(20, 127);

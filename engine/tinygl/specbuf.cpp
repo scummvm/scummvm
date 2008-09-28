@@ -40,7 +40,7 @@ GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float s
 		return buf;     
 	}
 	//overwrite the lru buffer
-	//tgl_trace("overwriting spec buffer :(\n");
+	//tgl_trace("overwriting spec buffer :(");
 	oldest->shininess_i = shininess_i;
 	oldest->last_used = c->specbuf_used_counter++;
 	calc_buf(oldest, shininess);
