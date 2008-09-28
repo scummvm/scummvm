@@ -602,12 +602,6 @@
 					RelativePath="..\..\engine\tinygl\misc.cpp">
 				</File>
 				<File
-					RelativePath="..\..\engine\tinygl\msghandling.cpp">
-				</File>
-				<File
-					RelativePath="..\..\engine\tinygl\msghandling.h">
-				</File>
-				<File
 					RelativePath="..\..\engine\tinygl\opinfo.h">
 				</File>
 				<File

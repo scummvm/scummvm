@@ -1,10 +1,7 @@
 #ifndef _tgl_zgl_h_
 #define _tgl_zgl_h_
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <assert.h>
+#include "common/debug.h"
 
 #include "engine/tinygl/gl.h"
 #include "engine/tinygl/zbuffer.h"
@@ -14,7 +11,7 @@ enum {
 
 #define ADD_OP(a,b,c) OP_ ## a ,
 
-#include "opinfo.h"
+#include "engine/tinygl/opinfo.h"
 
 };
 

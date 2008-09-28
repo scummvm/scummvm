@@ -93,7 +93,6 @@
 		289EEF230D8921F600521A80 /* matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEEBF0D8921F600521A80 /* matrix.cpp */; };
 		289EEF240D8921F600521A80 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEEC00D8921F600521A80 /* memory.cpp */; };
 		289EEF250D8921F600521A80 /* misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEEC10D8921F600521A80 /* misc.cpp */; };
-		289EEF260D8921F600521A80 /* msghandling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEEC20D8921F600521A80 /* msghandling.cpp */; };
 		289EEF270D8921F600521A80 /* select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEEC60D8921F600521A80 /* select.cpp */; };
 		289EEF280D8921F600521A80 /* specbuf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEEC70D8921F600521A80 /* specbuf.cpp */; };
 		289EEF290D8921F600521A80 /* texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEEC90D8921F600521A80 /* texture.cpp */; };
@@ -303,8 +302,6 @@
 		289EEEBF0D8921F600521A80 /* matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = matrix.cpp; sourceTree = "<group>"; };
 		289EEEC00D8921F600521A80 /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = memory.cpp; sourceTree = "<group>"; };
 		289EEEC10D8921F600521A80 /* misc.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = misc.cpp; sourceTree = "<group>"; };
-		289EEEC20D8921F600521A80 /* msghandling.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = msghandling.cpp; sourceTree = "<group>"; };
-		289EEEC30D8921F600521A80 /* msghandling.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = msghandling.h; sourceTree = "<group>"; };
 		289EEEC40D8921F600521A80 /* opinfo.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = opinfo.h; sourceTree = "<group>"; };
 		289EEEC50D8921F600521A80 /* README.residual */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = README.residual; sourceTree = "<group>"; };
 		289EEEC60D8921F600521A80 /* select.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = select.cpp; sourceTree = "<group>"; };
@@ -681,8 +678,6 @@
 				289EEEBF0D8921F600521A80 /* matrix.cpp */,
 				289EEEC00D8921F600521A80 /* memory.cpp */,
 				289EEEC10D8921F600521A80 /* misc.cpp */,
-				289EEEC20D8921F600521A80 /* msghandling.cpp */,
-				289EEEC30D8921F600521A80 /* msghandling.h */,
 				289EEEC40D8921F600521A80 /* opinfo.h */,
 				289EEEC50D8921F600521A80 /* README.residual */,
 				289EEEC60D8921F600521A80 /* select.cpp */,
@@ -875,7 +870,6 @@
 				289EEF230D8921F600521A80 /* matrix.cpp in Sources */,
 				289EEF240D8921F600521A80 /* memory.cpp in Sources */,
 				289EEF250D8921F600521A80 /* misc.cpp in Sources */,
-				289EEF260D8921F600521A80 /* msghandling.cpp in Sources */,
 				289EEF270D8921F600521A80 /* select.cpp in Sources */,
 				289EEF280D8921F600521A80 /* specbuf.cpp in Sources */,
 				289EEF290D8921F600521A80 /* texture.cpp in Sources */,

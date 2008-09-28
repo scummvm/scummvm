@@ -14,7 +14,6 @@ MODULE_OBJS := \
 	matrix.o \
 	memory.o \
 	misc.o \
-	msghandling.o \
 	select.o \
 	specbuf.o \
 	texture.o \

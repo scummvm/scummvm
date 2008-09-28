@@ -28,7 +28,6 @@ void glopViewport(GLContext *c, TGLParam *p) {
 			gl_fatal_error("glViewport: size too small");
 		}
 
-		tgl_trace("glViewport: %d %d %d %d", xmin, ymin, xsize, ysize);
 		c->viewport.xmin = xmin;
 		c->viewport.ymin = ymin;
 		c->viewport.xsize = xsize;
