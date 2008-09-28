@@ -27,7 +27,7 @@ void tglGetIntegerv(int pname,int *params) {
 		*params = MAX_TEXTURE_STACK_DEPTH;
 		break;
 	default:
-		gl_fatal_error("glGet: option not implemented");
+		error("glGet: option not implemented");
 		break;
 	}
 }

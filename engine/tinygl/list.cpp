@@ -155,7 +155,7 @@ void glopCallList(GLContext *c, TGLParam *p) {
 	list = p[1].ui;
 	l = find_list(c, list);
 	if (!l)
-		gl_fatal_error("list %d not defined", list);
+		error("list %d not defined", list);
 	p = l->first_op_buffer->ops;
 
 	while (1) {

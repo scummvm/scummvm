@@ -5,7 +5,6 @@ MODULE_OBJS := \
 	arrays.o \
 	clear.o \
 	clip.o \
-	error.o \
 	get.o \
 	image_util.o \
 	init.o \

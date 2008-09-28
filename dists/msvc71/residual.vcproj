@@ -572,9 +572,6 @@
 					RelativePath="..\..\engine\tinygl\clip.cpp">
 				</File>
 				<File
-					RelativePath="..\..\engine\tinygl\error.cpp">
-				</File>
-				<File
 					RelativePath="..\..\engine\tinygl\get.cpp">
 				</File>
 				<File

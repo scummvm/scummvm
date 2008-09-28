@@ -18,13 +18,13 @@ void glopViewport(GLContext *c, TGLParam *p) {
 		ysize_req = ymin + ysize;
 
 		if (c->gl_resize_viewport && c->gl_resize_viewport(c, &xsize_req, &ysize_req) != 0) {
-			gl_fatal_error("glViewport: error while resizing display");
+			error("glViewport: error while resizing display");
 		}
 
 		xsize = xsize_req - xmin;
 		ysize = ysize_req - ymin;
 		if (xsize <= 0 || ysize <= 0) {
-			gl_fatal_error("glViewport: size too small");
+			error("glViewport: size too small");
 		}
 
 		c->viewport.xmin = xmin;

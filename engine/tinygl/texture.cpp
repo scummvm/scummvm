@@ -128,7 +128,7 @@ void glopTexImage2D(GLContext *c, TGLParam *p) {
 
 	if (!(target == TGL_TEXTURE_2D && level == 0 && components == 3 && border == 0
 				&& format == TGL_RGBA && type == TGL_UNSIGNED_BYTE)) {
-		gl_fatal_error("glTexImage2D: combination of parameters not handled");
+		error("glTexImage2D: combination of parameters not handled");
 	}
 
 	do_free = 0;
@@ -165,7 +165,7 @@ void glopTexEnv(GLContext *, TGLParam *p) {
 
 	if (target != TGL_TEXTURE_ENV) {
 error:
-		gl_fatal_error("glTexParameter: unsupported option");
+		error("glTexParameter: unsupported option");
 	}
 
 	if (pname != TGL_TEXTURE_ENV_MODE)
@@ -183,7 +183,7 @@ void glopTexParameter(GLContext *, TGLParam *p) {
 
 	if (target != TGL_TEXTURE_2D) {
 error:
-		gl_fatal_error("glTexParameter: unsupported option");
+		error("glTexParameter: unsupported option");
 	}
 
 	switch (pname) {
@@ -202,6 +202,6 @@ void glopPixelStore(GLContext *, TGLParam *p) {
 	int param = p[2].i;
 
 	if (pname != TGL_UNPACK_ALIGNMENT || param != 1) {
-		gl_fatal_error("glPixelStore: unsupported option");
+		error("glPixelStore: unsupported option");
 	}
 }
