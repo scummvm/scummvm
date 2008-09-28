@@ -232,8 +232,7 @@ void Scene::drawBitmaps(ObjectState::Position stage) {
 Sector *Scene::findPointSector(Vector3d p, int flags) {
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors + i;
-		if ((sector->type() & flags) && sector->visible() &&
-		    sector->isPointInSector(p))
+		if ((sector->type() & flags) && sector->visible() && sector->isPointInSector(p))
 			return sector;
 	}
 	return NULL;
