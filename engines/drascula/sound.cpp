@@ -26,6 +26,7 @@
 #include "sound/mixer.h"
 #include "sound/voc.h"
 #include "sound/audiocd.h"
+#include "common/config-manager.h"
 
 #include "drascula/drascula.h"
 
@@ -52,7 +53,7 @@ void DrasculaEngine::volumeControls() {
 
 	for (;;) {
 		int masterVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16), 0, 15);
-		int voiceVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 16), 0, 15);
+		int voiceVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 16), 0, 15);
 		int musicVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16), 0, 15);
 
 		int masterVolumeY = 72 + 61 - masterVolume * 4;
@@ -82,7 +83,7 @@ void DrasculaEngine::volumeControls() {
 			}
 
 			if (mouseX > 136 && mouseX < 178) {
-				updateVolume(Audio::Mixer::kSFXSoundType, voiceVolumeY);
+				updateVolume(Audio::Mixer::kSpeechSoundType, voiceVolumeY);
 			}
 
 			if (mouseX > 192 && mouseX < 233) {
@@ -173,7 +174,10 @@ void DrasculaEngine::playFile(const char *fname) {
 		_arj.read(soundData, soundSize);
 		_arj.close();
 
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_soundHandle, soundData, soundSize - 64,
+		if (ConfMan.getBool("speech_mute"))
+			memset(soundData, 0, soundSize); // Mute speech but keep the pause
+
+		_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_soundHandle, soundData, soundSize - 64,
 						11025, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
 	} else
 		warning("playFile: Could not open %s", fname);
