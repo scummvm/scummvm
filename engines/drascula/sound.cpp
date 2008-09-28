@@ -174,6 +174,7 @@ void DrasculaEngine::playFile(const char *fname) {
 		_arj.read(soundData, soundSize);
 		_arj.close();
 
+		_subtitlesDisabled = !ConfMan.getBool("subtitles");
 		if (ConfMan.getBool("speech_mute"))
 			memset(soundData, 0, soundSize); // Mute speech but keep the pause
 

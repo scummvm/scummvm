@@ -380,7 +380,7 @@ public:
 	int _destX[40], _destY[40], trackCharacter_alkeva[40], roomExits[40];
 	int x1[40], y1[40], x2[40], y2[40];
 	int takeObject, pickedObject;
-	int withVoices;
+	bool _subtitlesDisabled;
 	int menuBar, menuScreen, hasName;
 	char textName[20];
 	int curExcuseLook;

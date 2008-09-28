@@ -220,7 +220,7 @@ int DrasculaEngine::go() {
 
 		allocMemory();
 
-		withVoices = 0;
+		_subtitlesDisabled = !ConfMan.getBool("subtitles");
 		selectionMade = 0;
 
 		if (currentChapter != 3)
@@ -560,12 +560,16 @@ bool DrasculaEngine::runCurrentChapter() {
 		} else if (key == Common::KEYCODE_F8) {
 			selectVerb(0);
 		} else if (key == Common::KEYCODE_v) {
-			withVoices = 1;
+			_subtitlesDisabled = true;
+			ConfMan.setBool("subtitles", !_subtitlesDisabled);
+
 			print_abc(_textsys[2], 96, 86);
 			updateScreen();
 			delay(1410);
 		} else if (key == Common::KEYCODE_t) {
-			withVoices = 0;
+			_subtitlesDisabled = false;
+			ConfMan.setBool("subtitles", !_subtitlesDisabled);
+
 			print_abc(_textsys[3], 94, 86);
 			updateScreen();
 			delay(1460);
