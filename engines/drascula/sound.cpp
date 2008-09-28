@@ -176,7 +176,7 @@ void DrasculaEngine::playFile(const char *fname) {
 
 		_subtitlesDisabled = !ConfMan.getBool("subtitles");
 		if (ConfMan.getBool("speech_mute"))
-			memset(soundData, 0, soundSize); // Mute speech but keep the pause
+			memset(soundData, 0x80, soundSize); // Mute speech but keep the pause
 
 		_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_soundHandle, soundData, soundSize - 64,
 						11025, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
