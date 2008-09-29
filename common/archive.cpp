@@ -234,7 +234,7 @@ void SearchSet::insert(const Node &node) {
 
 void SearchSet::add(const String& name, ArchivePtr archive, int priority) {
 	if (find(name) == _list.end()) {
-		Node node = { priority, name, archive };
+		Node node(priority, name, archive);
 		insert(node);
 	} else {
 		warning("SearchSet::add: archive '%s' already present", name.c_str());

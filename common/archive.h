@@ -156,6 +156,9 @@ class SearchSet : public Archive {
 		int			_priority;
 		String		_name;
 		ArchivePtr	_arc;
+		Node(int priority, const String &name, ArchivePtr arc)
+			: _priority(priority), _name(name), _arc(arc) {
+		}
 	};
 	typedef List<Node> ArchiveList;
 	ArchiveList _list;
