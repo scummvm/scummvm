@@ -244,7 +244,10 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	_list->setEditable(saveMode);
 	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
 
-	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
+// Tanoku: SVNMerge removed this. Unconvinient. ///////////////
+//	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
+///////////////////////////////////////////////////////////////
+
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 
 	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", kTextAlignCenter);
@@ -255,6 +258,9 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	new GUI::ButtonWidget(this, "ScummSaveLoad.Cancel", "Cancel", kCloseCmd, 0);
 	_chooseButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
+
+	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
+//	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
 }
 
 SaveLoadChooser::~SaveLoadChooser() {

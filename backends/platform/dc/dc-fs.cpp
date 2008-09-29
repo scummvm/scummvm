@@ -54,7 +54,7 @@ public:
 	virtual AbstractFilesystemNode *getParent() const;
 
 	virtual Common::SeekableReadStream *openForReading();
-	virtual Common::WriteStream *openForWriting();
+	virtual Common::WriteStream *openForWriting() { return 0; }
 
 	static AbstractFilesystemNode *makeFileNodePath(const Common::String &path);
 };
@@ -67,6 +67,7 @@ public:
 	virtual bool isDirectory() const { return true; }
 	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
+	virtual Common::SeekableReadStream *openForReading() { return 0; }
 };
 
 /* A file/directory which does not exist */
@@ -76,6 +77,7 @@ public:
 
 	virtual bool exists() const { return false; }
 	virtual bool isReadable() const { return false; }
+	virtual Common::SeekableReadStream *openForReading() { return 0; }
 };
 
 AbstractFilesystemNode *RoninCDFileNode::makeFileNodePath(const Common::String &path) {
@@ -150,10 +152,6 @@ AbstractFilesystemNode *RoninCDFileNode::getParent() const {
 
 Common::SeekableReadStream *RoninCDFileNode::openForReading() {
 	return StdioStream::makeFromPath(getPath().c_str(), false);
-}
-
-Common::WriteStream *RoninCDFileNode::openForWriting() {
-	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 AbstractFilesystemNode *OSystem_Dreamcast::makeRootFileNode() const {

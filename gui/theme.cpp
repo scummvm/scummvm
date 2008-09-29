@@ -45,7 +45,7 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 			return font;
 
 #ifdef USE_ZLIB
-		ZipArchive zipArchive(getThemeFileName().c_str());
+		Common::ZipArchive zipArchive(getThemeFileName().c_str());
 		if (zipArchive.hasFile(cacheFilename)) {
 			Common::FilePtr stream(zipArchive.openFile(cacheFilename));
 			font = Graphics::NewFont::loadFromCache(*stream.get());
@@ -62,7 +62,8 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 
 #ifdef USE_ZLIB
 	if (!font) {
-		ZipArchive zipArchive(getThemeFileName().c_str());
+		Common::ZipArchive zipArchive(getThemeFileName().c_str());
+		
 		if (zipArchive.hasFile(filename)) {
 			Common::FilePtr stream(zipArchive.openFile(filename));
 			font = Graphics::NewFont::loadFont(*stream.get());
@@ -145,7 +146,8 @@ bool Theme::themeConfigUseable(const Common::FilesystemNode &node, Common::Strin
 		
 	if (node.getName().hasSuffix(".zip")) {		
 #ifdef USE_ZLIB
-		ZipArchive zipArchive(node.getPath().c_str());
+
+		Common::ZipArchive zipArchive(node.getPath().c_str());
 		if (zipArchive.hasFile("THEMERC")) {
 			Common::FilePtr stream(zipArchive.openFile("THEMERC"));
 			stxHeader = stream->readLine();

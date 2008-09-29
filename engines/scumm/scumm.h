@@ -918,7 +918,7 @@ public:
 	// Generic costume code
 	bool isCostumeInUse(int i) const;
 
-	Common::Rect _actorClipOverride;
+	Common::Rect _actorClipOverride;	// HE specific
 
 protected:
 	/* Should be in Graphics class? */

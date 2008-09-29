@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -1021,7 +1019,7 @@ void ScummEngine_v72he::o72_roomOps() {
 }
 
 void ScummEngine_v72he::o72_actorOps() {
-	Actor *a;
+	ActorHE *a;
 	int i, j, k;
 	int args[32];
 	byte string[256];
@@ -1032,7 +1030,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		return;
 	}
 
-	a = derefActorSafe(_curActor, "o72_actorOps");
+	a = (ActorHE *)derefActorSafe(_curActor, "o72_actorOps");
 	if (!a)
 		return;
 

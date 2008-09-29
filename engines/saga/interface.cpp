@@ -358,15 +358,12 @@ void Interface::saveReminderCallback(void *refCon) {
 }
 
 void Interface::updateSaveReminder() {
-	// TODO: finish this
-	/*
 	if (_active && _panelMode == kPanelMain) {
-		_vm->_timer->removeTimerProc(&saveReminderCallback);
-		_saveReminderState = (_saveReminderState == 0) ? 1 : 0;
+		_saveReminderState = _saveReminderState % _vm->getDisplayInfo().saveReminderNumSprites + 1;
 		drawStatusBar();
-		_vm->_timer->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
+		_vm->_timer->removeTimerProc(&saveReminderCallback);
+		_vm->_timer->installTimerProc(&saveReminderCallback, ((_vm->getGameType() == GType_ITE) ? TIMETOBLINK_ITE : TIMETOBLINK_IHNM), this);
 	}
-	*/
 }
 
 int Interface::activate() {
@@ -423,7 +420,7 @@ void Interface::setMode(int mode) {
 
 	if (mode == kPanelMain) {
 		_inMainMode = true;
-		_saveReminderState = 1; //TODO: blinking timeout
+		_saveReminderState = 1;
 	} else if (mode == kPanelChapterSelection) {
 		_saveReminderState = 1;
 	} else if (mode == kPanelNull) {
@@ -1420,6 +1417,10 @@ void Interface::setSave(PanelButton *panelButton) {
 				fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
 				_vm->save(fileName, _textInputString);
 			}
+			_vm->_timer->removeTimerProc(&saveReminderCallback);
+			_vm->_timer->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
+			setSaveReminderState(1);
+
 			_textInput = false;
 			setMode(kPanelOption);
 			break;
@@ -1925,7 +1926,7 @@ void Interface::drawStatusBar() {
 		rect.right = rect.left + _vm->getDisplayInfo().saveReminderWidth;
 		rect.bottom = rect.top + _vm->getDisplayInfo().saveReminderHeight;
 		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_saveReminderSprites,
-			_saveReminderState == 1 ? _vm->getDisplayInfo().saveReminderFirstSpriteNumber : _vm->getDisplayInfo().saveReminderSecondSpriteNumber,
+			_vm->getDisplayInfo().saveReminderFirstSpriteNumber + _saveReminderState - 1,
 			rect, 256);
 
 	}

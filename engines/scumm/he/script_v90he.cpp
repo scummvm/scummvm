@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/he/animation_he.h"
@@ -1617,13 +1615,13 @@ void ScummEngine_v90he::o90_getWizData() {
 }
 
 void ScummEngine_v90he::o90_getActorData() {
-	Actor *a;
+	ActorHE *a;
 
 	int subOp = pop();
 	int val = pop();
 	int act = pop();
 
-	a = derefActor(act, "o90_getActorData");
+	a = (ActorHE *)derefActor(act, "o90_getActorData");
 
 	switch (subOp) {
 	case 1:
@@ -2570,13 +2568,13 @@ void ScummEngine_v90he::o90_kernelGetFunctions() {
 void ScummEngine_v90he::o90_kernelSetFunctions() {
 	int args[29];
 	int num, tmp;
-	Actor *a;
+	ActorHE *a;
 
 	num = getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
 	case 20:
-		a = derefActor(args[1], "o90_kernelSetFunctions: 20");
+		a = (ActorHE *)derefActor(args[1], "o90_kernelSetFunctions: 20");
 		queueAuxBlock(a);
 		break;
 	case 21:
@@ -2618,7 +2616,7 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		// Remote start script function
 		break;
 	case 1969:
-		a = derefActor(args[1], "o90_kernelSetFunctions: 1969");
+		a = (ActorHE *)derefActor(args[1], "o90_kernelSetFunctions: 1969");
 		tmp = a->_heCondMask;
 		tmp ^= args[2];
 		tmp &= 0x7FFF0000;

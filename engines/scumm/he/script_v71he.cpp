@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "scumm/actor.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/scumm.h"
@@ -500,7 +498,7 @@ void ScummEngine_v71he::adjustRect(Common::Rect &rect) {
 void ScummEngine_v71he::o71_kernelSetFunctions() {
 	int args[29];
 	int num;
-	Actor *a;
+	ActorHE *a;
 
 	num = getStackList(args, ARRAYSIZE(args));
 
@@ -511,8 +509,8 @@ void ScummEngine_v71he::o71_kernelSetFunctions() {
 		virtScreenLoad(args[1], args[2], args[3], args[4], args[5]);
 		break;
 	case 20: // HE72+
-		a = derefActor(args[1], "o71_kernelSetFunctions: 20");
-		((ScummEngine_v71he *)this)->queueAuxBlock(a);
+		a = (ActorHE *)derefActor(args[1], "o71_kernelSetFunctions: 20");
+		queueAuxBlock(a);
 		break;
 	case 21:
 		_skipDrawObject = 1;
@@ -533,14 +531,14 @@ void ScummEngine_v71he::o71_kernelSetFunctions() {
 		redrawAllActors();
 		break;
 	case 26:
-		a = derefActor(args[1], "o71_kernelSetFunctions: 26");
+		a = (ActorHE *)derefActor(args[1], "o71_kernelSetFunctions: 26");
 		a->_auxBlock.r.left = 0;
 		a->_auxBlock.r.right = -1;
 		a->_auxBlock.r.top = 0;
 		a->_auxBlock.r.bottom = -2;
 		break;
 	case 30:
-		a = derefActor(args[1], "o71_kernelSetFunctions: 30");
+		a = (ActorHE *)derefActor(args[1], "o71_kernelSetFunctions: 30");
 		a->_clipOverride.bottom = args[2];
 		break;
 	case 42:

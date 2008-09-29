@@ -266,8 +266,6 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	_list->setEditable(true);
 	_list->setNumberingMode(GUI::kListNumberingOne);
 
-	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
-
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 
 	_date = new GUI::StaticTextWidget(this, 0, 0, 10, 10, "No date saved", GUI::kTextAlignCenter);
@@ -278,6 +276,9 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	new GUI::ButtonWidget(this, "ScummSaveLoad.Cancel", "Cancel", GUI::kCloseCmd, 0);
 	_chooseButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
+
+	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
+//	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
 }
 
 SaveLoadChooser::~SaveLoadChooser() {

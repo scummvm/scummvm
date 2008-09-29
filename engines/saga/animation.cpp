@@ -579,6 +579,9 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 				_vm->_events->queue(&event);
 			}
 			return;
+		} else {
+			anim->currentFrame = 0;
+			anim->completed = 0;
 		}
 	}
 

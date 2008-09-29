@@ -145,6 +145,7 @@ void OSystem_GP2X::initBackend() {
 			if (mkdir(enginedataPath, 0755) != 0)
 				warning("mkdir for '%s' failed!", enginedataPath);
 
+	//FIXME: Do not use File::addDefaultDirectory, rather implement OSystem::addSysArchivesToSearchSet() !
 	Common::File::addDefaultDirectory(enginedataPath);
 
 	// Note: Review and clean this, it's OTT at the moment.

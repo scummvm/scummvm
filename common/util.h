@@ -106,20 +106,20 @@ public:
 	/**
 	 * Generates a random unsigned integer in the interval [0, max].
 	 * @param max	the upper bound
-	 * @return	a random number in the interval [0, max].
+	 * @return	a random number in the interval [0, max]
 	 */
 	uint getRandomNumber(uint max);
 	/**
-	 * Generates a random unsigned integer in the interval [0, 1].
+	 * Generates a random bit, i.e. either 0 or 1.
 	 * Identical to getRandomNumber(1), but faster, hopefully.
-	 * @return	a random number in the interval [0, max].
+	 * @return	a random bit, either 0 or 1
 	 */
 	uint getRandomBit(void);
 	/**
 	 * Generates a random unsigned integer in the interval [min, max].
 	 * @param min	the lower bound
 	 * @param max	the upper bound
-	 * @return	a random number in the interval [min, max].
+	 * @return	a random number in the interval [min, max]
 	 */
 	uint getRandomNumberRng(uint min, uint max);
 };

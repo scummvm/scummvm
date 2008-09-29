@@ -66,8 +66,8 @@ static const char *sequenceList[20] = {
 // Basic movie player
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayer::MoviePlayer(Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system)
-	: _screen(screen), _textMan(textMan), _snd(snd), _system(system) {
+MoviePlayer::MoviePlayer(SwordEngine *vm, Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system)
+	: _vm(vm), _screen(screen), _textMan(textMan), _snd(snd), _system(system) {
 	_bgSoundStream = NULL;
 	_ticks = 0;
 	_textSpriteBuf = NULL;
@@ -295,16 +295,19 @@ void MoviePlayer::play(void) {
 				handleScreenChanged();
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					_snd->stopHandle(_bgSoundHandle);
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					terminated = true;
-				}
 				break;
 			default:
 				break;
 			}
 		}
+		if (_vm->quit())
+			terminated = true;
 	}
+
+	if (terminated)
+		_snd->stopHandle(_bgSoundHandle);
 
 	while (!_movieTexts.empty()) {
 		delete _movieTexts.remove_at(_movieTexts.size() - 1);
@@ -390,8 +393,8 @@ int SplittedAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 // Movie player for the new DXA movies
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayerDXA::MoviePlayerDXA(Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system)
-	: MoviePlayer(screen, textMan, snd, system) {
+MoviePlayerDXA::MoviePlayerDXA(SwordEngine *vm, Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system)
+	: MoviePlayer(vm, screen, textMan, snd, system) {
 	debug(0, "Creating DXA cutscene player");
 }
 
@@ -438,7 +441,7 @@ bool MoviePlayerDXA::decodeFrame(void) {
 void MoviePlayerDXA::processFrame(void) {
 	// TODO: Handle the advanced cutscene packs. Do they really exist?
 
-	// We cannot draw the text to _drawBuffer, sinzce ethat's one of the
+	// We cannot draw the text to _drawBuffer, since that's one of the
 	// decoder's internal buffers. Instead, we copy part of _drawBuffer
 	// to the text sprite.
 
@@ -492,8 +495,8 @@ void MoviePlayerDXA::updateScreen(void) {
 // Movie player for the old MPEG movies
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayerMPEG::MoviePlayerMPEG(Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system)
-	: MoviePlayer(screen, textMan, snd, system) {
+MoviePlayerMPEG::MoviePlayerMPEG(SwordEngine *vm, Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system)
+	: MoviePlayer(vm, screen, textMan, snd, system) {
 #ifdef BACKEND_8BIT
 	debug(0, "Creating MPEG cutscene player (8-bit)");
 #else
@@ -625,7 +628,7 @@ Audio::AudioStream *AnimationState::createAudioStream(const char *name, void *ar
 // Factory function for creating the appropriate cutscene player
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayer *makeMoviePlayer(uint32 id, Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system) {
+MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system) {
 #if defined(USE_ZLIB) || defined(USE_MPEG2)
 	char filename[20];
 #endif
@@ -634,7 +637,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, Screen *screen, Text *textMan, Audio::Mi
 	snprintf(filename, sizeof(filename), "%s.dxa", sequenceList[id]);
 
 	if (Common::File::exists(filename)) {
-		return new MoviePlayerDXA(screen, textMan, snd, system);
+		return new MoviePlayerDXA(vm, screen, textMan, snd, system);
 	}
 #endif
 
@@ -642,7 +645,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, Screen *screen, Text *textMan, Audio::Mi
 	snprintf(filename, sizeof(filename), "%s.mp2", sequenceList[id]);
 
 	if (Common::File::exists(filename)) {
-		return new MoviePlayerMPEG(screen, textMan, snd, system);
+		return new MoviePlayerMPEG(vm, screen, textMan, snd, system);
 	}
 #endif
 

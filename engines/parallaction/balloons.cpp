@@ -79,7 +79,7 @@ public:
 			token = tokenizer.nextToken();
 			token = expand(token);
 
-			if (token == '/') {
+			if (token == "/") {
 				tokenWidth = 0;
 				action();
 				textNewLine();

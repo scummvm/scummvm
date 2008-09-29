@@ -217,9 +217,9 @@ public:
 		return true;
 	}
 	
-	bool loadStream(MemoryReadStream *stream) {
+	bool loadStream(Common::SeekableReadStream *stream) {
 		_stream = stream;
-		_fileName = "Compressed File Stream";
+		_fileName = "File Stream";
 		return true;
 	}
 	

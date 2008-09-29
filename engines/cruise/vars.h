@@ -91,8 +91,7 @@ struct dataFileName {
 };
 
 struct setHeaderEntry {
-	int16 field_0;		// offset ptr part 1
-	int16 field_2;		// offset ptr part 2
+	int32 field_0;		// offset ptr
 	int16 width;
 	int16 height;
 	int16 type;		// resource type, ie. sprites 0,1,4,5 and 8

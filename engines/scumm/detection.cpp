@@ -25,6 +25,7 @@
 
 #include "base/plugins.h"
 
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/list.h"
@@ -211,9 +212,11 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 	// ever determine that this is insufficient, we can still
 	// switch to MD5 based detection).
 	const char *filename = (id == GID_CMI) ? "LANGUAGE.TAB" : "LANGUAGE.BND";
-	Common::File tmp;
+	Common::FilePtr tmp;
 	Common::FilesystemNode langFile;
-	if (!searchFSNode(fslist, filename, langFile) || !tmp.open(langFile)) {
+	if (searchFSNode(fslist, filename, langFile))
+		tmp = Common::FilePtr(langFile.openForReading());
+	if (!tmp) {
 		// try loading in RESOURCE sub dir...
 		Common::FilesystemNode resDir;
 		Common::FSList tmpList;
@@ -221,11 +224,11 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 			&& resDir.isDirectory()
 			&& resDir.getChildren(tmpList, Common::FilesystemNode::kListFilesOnly)
 			&& searchFSNode(tmpList, filename, langFile)) {
-			tmp.open(langFile);
+			tmp = Common::FilePtr(langFile.openForReading());
 		}
 	}
-	if (tmp.isOpen()) {
-		uint size = tmp.size();
+	if (tmp) {
+		uint size = tmp->size();
 		if (id == GID_CMI) {
 			switch (size) {
 			case 439080:	// 2daf3db71d23d99d19fc9a544fcf6431
@@ -450,8 +453,8 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 	// To do this, we take a close look at the detection file and
 	// try to filter out some cases.
 
-	Common::File tmp;
-	if (!tmp.open(d.node)) {
+	Common::FilePtr tmp(d.node.openForReading());
+	if (!tmp) {
 		warning("SCUMM testGame: failed to open '%s' for read access", d.node.getPath().c_str());
 		return false;
 	}
@@ -465,7 +468,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 
 		// Read a few bytes to narrow down the game.
 		byte buf[6];
-		tmp.read(buf, 6);
+		tmp->read(buf, 6);
 
 		if (buf[0] == 0xbc && buf[1] == 0xb9) {
 			// The NES version of MM

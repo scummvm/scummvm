@@ -82,7 +82,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 			copyBackground(igorX + 17, igorY, igorX + 17, igorY, 37, 24, bgSurface, screenSurface);
 			copyRect(x_talk0[face], 148, igorX + 17, igorY, 25, 24, frontSurface, screenSurface);
 			updateRefresh();
-			if (withVoices == 0)
+			if (!_subtitlesDisabled)
 				centerText(said, igorX + 26, igorY);
 			updateScreen();
 			pause(3);
@@ -95,13 +95,13 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 				copyBackground(igorX, igorY, igorX, igorY, 29, 25, bgSurface, screenSurface);
 			copyRect(x_talk1[face], 173, igorX, igorY, 29, 25, frontSurface, screenSurface);
 			updateRefresh();
-			if (withVoices == 0)
+			if (!_subtitlesDisabled)
 				centerText(said, igorX + 26, igorY);
 			updateScreen();
 			pause(3);
 		} else if (talkerType == kIgorDoor) {
 			updateRoom();
-			if (withVoices == 0)
+			if (!_subtitlesDisabled)
 				centerText(said, 87, 66);
 			updateScreen();
 		} else if (talkerType == kIgorSeated || talkerType == kIgorWig) {
@@ -111,7 +111,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 				copyBackground(x_talk4[face], 78, 199, 94, 38, 27, drawSurface3, screenSurface);
 			moveCharacters();
 			updateRefresh();
-			if (withVoices == 0)
+			if (!_subtitlesDisabled)
 				centerText(said, 221, 102);
 
 			updateScreen();
@@ -166,7 +166,7 @@ void DrasculaEngine::talk_drascula(int index, int talkerType) {
 
 		updateRefresh();
 
-		if (withVoices == 0)
+		if (!_subtitlesDisabled)
 			centerText(said, drasculaX + 19, drasculaY);
 
 		updateScreen();
@@ -211,7 +211,7 @@ void DrasculaEngine::talk_drascula_big(int index) {
 		if (l == 7)
 			l = 0;
 
-		if (withVoices == 0)
+		if (!_subtitlesDisabled)
 			centerText(said, 191, 69);
 
 		updateScreen();
@@ -237,7 +237,7 @@ void DrasculaEngine::talk_solo(const char *said, const char *filename) {
 		copyBackground();
 
 	do {
-		if (withVoices == 0) {
+		if (!_subtitlesDisabled) {
 			if (currentChapter == 1)
 				centerText(said, 156, 90);
 			else if (currentChapter == 6)
@@ -300,7 +300,7 @@ void DrasculaEngine::talk_bartender(int index, int talkerType) {
 		moveCharacters();
 		updateRefresh();
 
-		if (withVoices == 0)
+		if (!_subtitlesDisabled)
 			centerText(said, 132, 45);
 
 		updateScreen();
@@ -339,7 +339,7 @@ void DrasculaEngine::talk_bj(int index) {
 			moveCharacters();
 			updateRefresh();
 
-			if (withVoices == 0)
+			if (!_subtitlesDisabled)
 				centerText(said, bjX + 7, bjY);
 
 			updateScreen();
@@ -348,7 +348,7 @@ void DrasculaEngine::talk_bj(int index) {
 		} else {
 			updateRoom();
 
-			if (withVoices == 0)
+			if (!_subtitlesDisabled)
 				centerText(said, 93, 80);
 
 			updateScreen();
@@ -463,7 +463,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 			updateRefresh();
 		}
 
-		if (withVoices == 0)
+		if (!_subtitlesDisabled)
 			centerText(said, curX, curY);
 
 		updateScreen();
@@ -555,7 +555,7 @@ void DrasculaEngine::talk_vonBraun(int index, int talkerType) {
 				updateRefresh();
 			}
 
-			if (withVoices == 0)
+			if (!_subtitlesDisabled)
 				centerText(said, vonBraunX, 66);
 
 			updateScreen();
@@ -563,7 +563,7 @@ void DrasculaEngine::talk_vonBraun(int index, int talkerType) {
 		} else {
 			updateRoom();
 
-			if (withVoices == 0)
+			if (!_subtitlesDisabled)
 				centerText(said, 150, 80);
 
 			updateScreen();
@@ -617,7 +617,7 @@ void DrasculaEngine::talk_blind(int index) {
 			copyRect(bX, 2, 73, 1, 126, h, frontSurface, screenSurface);
 		}
 
-		if (withVoices == 0)
+		if (!_subtitlesDisabled)
 			centerText(said, 260, 71);
 
 		updateScreen();
@@ -639,7 +639,7 @@ void DrasculaEngine::talk_hacker(int index) {
 	talkInit(filename);
 
 	do {
-		if (withVoices == 0)
+		if (!_subtitlesDisabled)
 			centerText(said, 156, 170);
 		updateScreen();
 	} while (!isTalkFinished());
@@ -700,7 +700,7 @@ void DrasculaEngine::talk_pen(const char *said, const char *filename, int talker
 
 		updateRefresh();
 
-		if (withVoices == 0) {
+		if (!_subtitlesDisabled) {
 			if (talkerType == 0)
 				centerText(said, 160, 105);
 			else
@@ -741,7 +741,7 @@ void DrasculaEngine::talk_bj_bed(int index) {
 		moveCharacters();
 		updateRefresh();
 
-		if (withVoices == 0)
+		if (!_subtitlesDisabled)
 			centerText(said, 104, 102);
 
 		updateScreen();
@@ -777,7 +777,7 @@ void DrasculaEngine::talk_htel(int index) {
 		else
 			copyBackground(x_talk[face], 1, 45, 24, 92, 108, backSurface, screenSurface);
 		
-		if (withVoices == 0)
+		if (!_subtitlesDisabled)
 			centerText(said, 90, 50);
 
 		updateScreen();
@@ -857,7 +857,7 @@ void DrasculaEngine::talk_sync(const char *said, const char *filename, const cha
 			updateRefresh();
 		}
 
-		if (withVoices == 0)
+		if (!_subtitlesDisabled)
 			centerText(said, curX, curY);
 
 		updateScreen();
@@ -890,7 +890,7 @@ void DrasculaEngine::talk_trunk(int index) {
 		flags[19] = face;
 		updateRoom();
 
-		if (withVoices == 0)
+		if (!_subtitlesDisabled)
 			centerText(said, 263, 69);
 
 		updateScreen();
@@ -917,7 +917,7 @@ void DrasculaEngine::talk_generic(const char* said, const char* filename, int* f
 		moveCharacters();
 		updateRefresh();
 
-		if (withVoices == 0)
+		if (!_subtitlesDisabled)
 			centerText(said, coords[5], coords[6]);
 
 		updateScreen();
@@ -938,7 +938,7 @@ void DrasculaEngine::grr() {
 	updateRoom();
 	copyBackground(253, 110, 150, 65, 20, 30, drawSurface3, screenSurface);
 
-	if (withVoices == 0)
+	if (!_subtitlesDisabled)
 		centerText("groaaarrrrgghhhh!", 153, 65);
 
 	updateScreen();

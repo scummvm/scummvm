@@ -624,7 +624,6 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("PlayStation 2");
-		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "");
 		  add_person("Max Lingua", "sunmax", "");
 	  end_section();
 
@@ -685,10 +684,13 @@ begin_credits("Credits");
 		add_person("Nicolas Bacca", "arisme", "Former WinCE porter");
 		add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
 		add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
+		add_person("Hans-J&ouml;rg Frieden", "", "Former AmigaOS 4 packager");
+		add_person("Robert G&ouml;ffringmann", "lavosspawn", "Original PS2 porter");
 		add_person("R&uuml;diger Hanke", "", "Port: MorphOS");
 		add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");
 		add_person("Mutwin Kraus", "mutle", "Original MacOS porter");
 		add_person("Peter Moraliyski", "ph0x", "Port: GP32");
+		add_person("Juha Niemim&auml;ki", "", "Formaer AmigaOS 4 packager");
 		add_person("Jeremy Newman", "laxdragon", "Former webmaster");
 		add_person("Lionel Ulmer", "bbrox", "Port: X11");
 		add_person("Won Star", "wonst719", "Former GP32 porter");
@@ -701,9 +703,7 @@ begin_credits("Credits");
 
 	begin_section("Packages");
 	  begin_section("AmigaOS 4");
-		  add_person("Hans-J&ouml;rg Frieden", "", "");
 		  add_person("Hubert Maier", "Raziel_AOne", "");
-		  add_person("Juha Niemim&auml;ki", "", "");
 	  end_section();
 
 	  begin_section("Atari/FreeMiNT");
@@ -778,6 +778,7 @@ begin_credits("Credits");
 		  add_person("Stuart Caie", "", "Decoders for Simon 1 Amiga data files");
 		  add_person("Paolo Costabel", "", "PSP port contributions");
 		  add_person("Thierry Crozat", "criezy", "Support for Broken Sword 1 Macintosh version");
+		  add_person("Martin Doucha", "next_ghost", "CinE engine objectification");
 		  add_person("Thomas Fach-Pedersen", "madmoose", "ProTracker module player");
 		  add_person("Benjamin Haisch", "john_doe", "Heavily improved de-/encoder for DXA videos");
 		  add_person("Janne Huttunen", "", "V3 actor mask support, Dig/FT SMUSH audio");
@@ -812,14 +813,17 @@ begin_credits("Credits");
 	  add_person("Sander Buskens", "", "For his work on the initial reversing of Monkey2");
 	  add_person("", "Canadacow", "For the original MT-32 emulator");
 	  add_person("Kevin Carnes", "", "For Scumm16, the basis of ScummVM's older gfx codecs");
+	  add_person("Curt Coder", "", "For the original TrollVM (preAGI) code");
 	  add_person("Patrick Combet", "Dorian Gray", "For the original Gobliiins ADL player");
 	  add_person("Ivan Dubrov", "", "For contributing the initial version of the Gobliiins engine");
+	  add_person("Till Kresslein", "Krest", "For design of modern ScummVM GUI");
 	  add_person("", "Jezar", "For his freeverb filter implementation");
 	  add_person("Jim Leiterman", "", "Various info on his FM-TOWNS/Marty SCUMM ports");
 	  add_person("", "lloyd", "For deep tech details about C64 Zak &amp; MM");
 	  add_person("Sarien Team", "", "Original AGI engine code");
 	  add_person("Jimmi Th&oslash;gersen", "", "For ScummRev, and much obscure code/documentation");
 	  add_person("", "Tristan", "For additional work on the original MT-32 emulator");
+	  add_person("James Woodcock", "", "Soundtrack enhancements");
     end_persons();
 
   add_paragraph(

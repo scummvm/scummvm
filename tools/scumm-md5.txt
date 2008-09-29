@@ -89,8 +89,9 @@ maniac	Maniac Mansion
 	40564ec47da48a67787d1f9bd043902a	1988	en	DOS	V2 Demo	V2 Demo	non-interactive	Fingolfin
 
 zak	Zak McKracken and the Alien Mindbenders
-	55d3987641bf229c83bc729210173383	-1	en	C64	V1	-	-	
-	4973bbc3899e3826dbf316e1d7271ec7	-1	de	C64	V1	-	-	
+	55d3987641bf229c83bc729210173383	174848	en	C64	V1	-	-	
+	4973bbc3899e3826dbf316e1d7271ec7	196608	de	C64	V1	-	-	
+	7b60620558b8d6b7d7313b8ac7bb5a98	174848	it	C64	V1	-	-	
 	7020931d5a2be0a49d68e7a1882363e4	1896	en	DOS	V1	V1	-	Fingolfin
 	b23f7cd7c304d7dff08e92a96120d5b4	-1	en	DOS	V1	V1	alt?	Andrea Petrucci
 
@@ -660,6 +661,7 @@ puttrace	Putt-Putt Enters the Race
 	981e1e1891f2be7e25a01f50ae55a5af	-1	us	All	HE 98	-	-	Kirben
 	1ed22f601f8b3695804a6583cc3083f1	-1	nl	All	HE 98.5	-	-	daniel9
 	33e989f85da700e2014d00f345cab3d7	-1	fr	Windows	HE 98.5	-	-	gist974
+	5719fc8a13b4638b78d9d8d12f091f94	-1	fr	Windows	HE 98.5	-	-	thyphoon
 	b47be81e39a9710f6f595f7b527b60f8	-1	gb	Windows	HE 99	-	-	Reckless
 	055ffe4f47753e47594ac67823220c54	-1	de	All	HE 99	-	-	Joachim Eberhard
 	62050da376483d8edcbd98cd26b6cb57	-1	ru	Windows	HE 99	-	-	sev

@@ -61,6 +61,7 @@ struct CostumeData {
 	uint16 end[16];
 	uint16 frame[16];
 
+	/* HE specific */
 	uint16 heJumpOffsetTable[16];
 	uint16 heJumpCountTable[16];
 	uint32 heCondMaskTable[16];
@@ -95,10 +96,6 @@ protected:
 	Common::Point _pos;
 
 public:
-	/** HE specific: This rect is used to clip actor drawing. */
-	Common::Rect _clipOverride;
-
-	int _offsX, _offsY;
 	int _top, _bottom;
 	uint _width;
 	byte _number;
@@ -137,22 +134,11 @@ public:
 	CostumeData _cost;
 
 	/* HE specific */
-	bool _heNoTalkAnimation;
+	int _heOffsX, _heOffsY;
 	bool _heSkipLimbs;
-	bool _heTalking;
 	uint32 _heCondMask;
 	uint32 _hePaletteNum;
 	uint32 _heXmapNum;
-	byte _heFlags;
-
-	AuxBlock _auxBlock;
-
-	struct {
-		int16 posX;
-		int16 posY;
-		int16 color;
-		byte sentence[128];
-	} _heTalkQueue[16];
 
 protected:
 	struct ActorWalkData {
@@ -187,7 +173,7 @@ public:
 	virtual ~Actor() {}
 
 //protected:
-	void hideActor();
+	virtual void hideActor();
 	void showActor();
 
 	virtual void initActor(int mode);
@@ -223,10 +209,10 @@ public:
 	void faceToObject(int obj);
 	void turnToDirection(int newdir);
 	virtual void walkActor();
-	void drawActorToBackBuf(int x, int y);
 	void drawActorCostume(bool hitTestMode = false);
+	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
 	void animateCostume();
-	void setActorCostume(int c);
+	virtual void setActorCostume(int c);
 
 	void animateLimb(int limb, int f);
 
@@ -317,14 +303,6 @@ public:
 
 	void classChanged(int cls, bool value);
 
-	void setHEFlag(int bit, int set);
-
-	void setUserCondition(int slot, int set);
-	bool isUserConditionSet(int slot) const;
-
-	void setTalkCondition(int slot);
-	bool isTalkConditionSet(int slot) const;
-
 	// Used by the save/load system:
 	void saveLoadWithSerializer(Serializer *ser);
 
@@ -334,6 +312,46 @@ protected:
 	virtual bool isPlayer();
 
 	bool findPathTowards(byte box, byte box2, byte box3, Common::Point &foundPath);
+};
+
+class ActorHE : public Actor {
+public:
+	ActorHE(ScummEngine *scumm, int id) : Actor(scumm, id) {}
+
+	virtual void initActor(int mode);
+
+	virtual void hideActor();
+
+	void drawActorToBackBuf(int x, int y);
+
+	void setHEFlag(int bit, int set);
+
+	void setUserCondition(int slot, int set);
+	bool isUserConditionSet(int slot) const;
+
+	void setTalkCondition(int slot);
+	bool isTalkConditionSet(int slot) const;
+
+public:
+	/** This rect is used to clip actor drawing. */
+	Common::Rect _clipOverride;
+
+	bool _heNoTalkAnimation;
+	bool _heTalking;
+	byte _heFlags;
+
+	AuxBlock _auxBlock;
+
+	struct {
+		int16 posX;
+		int16 posY;
+		int16 color;
+		byte sentence[128];
+	} _heTalkQueue[16];
+
+
+	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
+	virtual void setActorCostume(int c);
 };
 
 class Actor_v3 : public Actor {
@@ -357,6 +375,7 @@ public:
 
 protected:
 	virtual bool isPlayer();
+	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
 };
 
 class ActorC64 : public Actor_v2 {

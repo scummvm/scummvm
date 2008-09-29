@@ -30,6 +30,7 @@
 #include "common/events.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
+#include "common/unzip.h"
 #include "graphics/imageman.h"
 #include "graphics/cursorman.h"
 #include "gui/launcher.h"
@@ -251,7 +252,7 @@ void ThemeEngine::unloadTheme() {
 		ImageMan.unregisterSurface(i->_key);
 
 	if (_themeFileName.hasSuffix(".zip"))
-		ImageMan.remArchive(_themeFileName);
+		ImageMan.removeArchive(_themeFileName);
 		
 	Common::File::resetDefaultDirectories();
 	
@@ -534,53 +535,36 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 	bool failed = false;
 	
 #ifdef USE_ZLIB
-	unzFile zipFile = unzOpen((themeName).c_str());
+	Common::ZipArchive zipFile(themeName.c_str());
+	Common::StringList zipContents;
 	
-	if (zipFile && unzGoToFirstFile(zipFile) == UNZ_OK) {
-		while (true) {
-			unz_file_info fileInfo;
-			unzOpenCurrentFile(zipFile);
-			unzGetCurrentFileInfo(zipFile, &fileInfo, fileNameBuffer, 32, NULL, 0, NULL, 0);
+	if (zipFile.isOpen() && zipFile.getAllNames(zipContents)) {
 		
-			if (matchString(fileNameBuffer, "*.stx") || !strcmp(fileNameBuffer, "THEMERC")) {
-				uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
-				assert(buffer);
-				memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
-				unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
-			
-				Common::MemoryReadStream *stream = new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size+1, true);
-				
-				if (!strcmp(fileNameBuffer, "THEMERC")) {
-					stxHeader = stream->readLine();
-
-					if (!themeConfigParseHeader(stxHeader.c_str(), _themeName)) {
-						warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
-						failed = true;
-					}
-						
-					delete stream;
-					
-				} else if (!failed) {
-					parseCount++;
-					
-					if (parser()->loadStream(stream) == false) {
-						warning("Failed to load stream for zipped file '%s'", fileNameBuffer);
-						failed = true;
-					}
-					
-					if (parser()->parse() == false) {
-						warning("Theme parsing failed on zipped file '%s'.", fileNameBuffer);
-						failed = true;
-					}
-					
-					parser()->close();
+		for (uint i = 0; i < zipContents.size(); ++i) {
+			if (!failed && matchString(zipContents[i].c_str(), "*.stx")) {	
+				if (parser()->loadStream(zipFile.openFile(zipContents[i])) == false) {
+					warning("Failed to load stream for zipped file '%s'", fileNameBuffer);
+					failed = true;
 				}
-			} 
-		
-			unzCloseCurrentFile(zipFile);
-		
-			if (unzGoToNextFile(zipFile) != UNZ_OK)
-				break;
+				
+				if (parser()->parse() == false) {
+					warning("Theme parsing failed on zipped file '%s'.", fileNameBuffer);
+					failed = true;
+				}
+				
+				parser()->close();
+				parseCount++;
+			} else if (zipContents[i] == "THEMERC") {
+				Common::SeekableReadStream *stream = zipFile.openFile(zipContents[i]);
+				stxHeader = stream->readLine();
+				
+				if (!themeConfigParseHeader(stxHeader.c_str(), _themeName)) {
+					warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
+					failed = true;
+				}
+					
+				delete stream;
+			}
 		}
 	} else {
 #endif
@@ -619,12 +603,8 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 			}
 		}
 #ifdef USE_ZLIB
-	}
-	
-	unzClose(zipFile);
-	
+	}	
 #endif
-
 
 	return (parseCount > 0 && _themeName.empty() == false && failed == false);
 }

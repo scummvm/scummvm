@@ -39,6 +39,7 @@ class WriteStream;
 
 namespace Scumm {
 
+class ActorHE;
 class ResExtractor;
 #ifdef ENABLE_HE
 class LogicHE;
@@ -243,7 +244,7 @@ public:
 	AuxEntry _auxEntries[16];
 	uint16 _auxEntriesNum;
 
-	void queueAuxBlock(Actor *a);
+	void queueAuxBlock(ActorHE *a);
 	void queueAuxEntry(int actorNum, int subIndex);
 
 	void remapHEPalette(const uint8 *src, uint8 *dst);

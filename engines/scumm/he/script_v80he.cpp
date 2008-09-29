@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "common/config-file.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -646,7 +644,7 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 
 
 	if (type == 2) {
-		Actor *a = derefActor(id, "drawLine");
+		ActorHE *a = (ActorHE *)derefActor(id, "drawLine");
 		a->drawActorToBackBuf(x, y);
 	} else if (type == 3) {
 		WizImage wi;
@@ -697,7 +695,7 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 			continue;
 
 		if (type == 2) {
-			Actor *a = derefActor(id, "drawLine");
+			ActorHE *a = (ActorHE *)derefActor(id, "drawLine");
 			a->drawActorToBackBuf(x, y);
 		} else if (type == 3) {
 			WizImage wi;
