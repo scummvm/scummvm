@@ -1393,7 +1393,21 @@ bool ZipArchive::hasFile(const Common::String &name) {
 }
 
 int ZipArchive::getAllNames(Common::StringList &list) {
-	return 0;
+	if (!_zipFile)
+		return 0;
+
+	if (unzGoToFirstFile(_zipFile) != UNZ_OK)
+		return 0;
+
+	char fileNameBuffer[UNZ_MAXFILENAMEINZIP + 1];
+	list.clear();
+
+	do {
+		unzGetCurrentFileInfo(_zipFile, 0, fileNameBuffer, UNZ_MAXFILENAMEINZIP + 1, 0, 0, 0, 0);
+		list.push_back(Common::String(fileNameBuffer));
+	} while (unzGoToNextFile(_zipFile) == UNZ_OK);
+
+	return list.size();
 }
 
 /*

@@ -44,7 +44,7 @@ public:
 	bool isOpen() const;
 
 	virtual bool hasFile(const String &name);
-	virtual int getAllNames(StringList &list);	// FIXME: This one is not (yet?) implemented
+	virtual int getAllNames(StringList &list);
 	virtual Common::SeekableReadStream *openFile(const Common::String &name);
 };
 
