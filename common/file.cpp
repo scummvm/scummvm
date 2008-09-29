@@ -80,16 +80,11 @@ bool File::open(const String &filename) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
 		debug(3, "Opening hashed: %s.", filename.c_str());
-		_handle = SearchMan.openFile(filename);
-	} else {
-		// Last resort: try the current directory
-		FilesystemNode file(filename);
-		if (file.exists() && !file.isDirectory())
-			_handle = file.openForReading();
+		_handle = SearchMan.openFile(filename + ".");
 	}
 	
 	if (_handle == NULL)
-		debug(2, "File %s not opened", filename.c_str());
+		debug(2, "File::open: '%s' not found", filename.c_str());
 	else
 		_name = filename;
 
@@ -118,7 +113,7 @@ bool File::open(const FilesystemNode &node) {
 	_handle = node.openForReading();
 
 	if (_handle == NULL)
-		debug(2, "File %s not found", filename.c_str());
+		debug(2, "File::open: '%s' not found", node.getPath().c_str());
 	else
 		_name = filename;
 
@@ -132,11 +127,6 @@ bool File::exists(const String &filename) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
 		return true;
-	} else {
-		// Last resort: try the current directory
-		FilesystemNode file(filename);
-		if (file.exists() && !file.isDirectory())
-			return true;
 	}
 	
 	return false;
