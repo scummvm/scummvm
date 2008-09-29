@@ -222,6 +222,13 @@ public:
 		_fileName = "Compressed File Stream";
 		return true;
 	}
+	
+	void close() {
+		if (_stream) {
+			delete _stream;
+			_stream = 0;
+		}
+	}
 
 	/**
 	 * The actual parsing function.
@@ -361,7 +368,7 @@ protected:
 					break;
 
 				if (_char == 0)
-					parserError("Comment has no closure.");
+					return parserError("Comment has no closure.");
 			}
 			_char = _stream->readByte();
 			return true;
@@ -449,7 +456,6 @@ protected:
 	Common::List<XMLKeyLayout*> _layoutList;
 
 private:
-	int _pos; /** Current position on the XML buffer. */
 	char _char;
 	SeekableReadStream *_stream;
 	Common::String _fileName;

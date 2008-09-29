@@ -43,7 +43,7 @@ bool XMLParser::parserError(const char *errorString, ...) {
 	int lineStart = 0;
 
 	if (_fileName == "Memory Stream") {
-		lineStart = MAX(0, _pos - 35);
+		lineStart = MAX(0, original_pos - 35);
 		lineCount = 0;
 	} else {
 		do {
@@ -51,7 +51,7 @@ bool XMLParser::parserError(const char *errorString, ...) {
 				lineCount++;
 		
 				if (lineStart == 0)
-					lineStart = MAX(pos + 1, _pos - 60);
+					lineStart = MAX(pos + 1, original_pos - 60);
 			}
 			
 			_stream->seek(-1, SEEK_CUR);
@@ -210,7 +210,6 @@ bool XMLParser::parse() {
 	bool selfClosure = false;
 
 	_state = kParserNeedKey;
-	_pos = 0;
 	_activeKey.clear();
 
 	_char = _stream->readByte();

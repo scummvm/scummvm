@@ -501,6 +501,7 @@ bool ThemeEngine::loadDefaultXML() {
 	// file inside the themes directory.
 	// Use the Python script "makedeftheme.py" to convert a normal XML theme
 	// into the "default.inc" file, which is ready to be included in the code.
+	bool result;
 
 #ifdef GUI_ENABLE_BUILTIN_THEME
 	const char *defaultXML =
@@ -513,7 +514,10 @@ bool ThemeEngine::loadDefaultXML() {
 	_themeName = "ScummVM Classic Theme (Builtin Version)";
 	_themeFileName = "builtin";
 
-	return parser()->parse();
+	result = parser()->parse();
+	parser()->close();
+	
+	return result;
 #else
 	warning("The built-in theme is not enabled in the current build. Please load an external theme");
 	return false;
@@ -527,6 +531,7 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 	char fileNameBuffer[32];
 	Common::String stxHeader;
 	int parseCount = 0;
+	bool failed = false;
 	
 #ifdef USE_ZLIB
 	unzFile zipFile = unzOpen((themeName).c_str());
@@ -550,19 +555,25 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 
 					if (!themeConfigParseHeader(stxHeader.c_str(), _themeName)) {
 						warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
-						return false;
+						failed = true;
 					}
 						
 					delete stream;
 					
-				} else {
+				} else if (!failed) {
 					parseCount++;
 					
-					if (parser()->loadStream(stream) == false || parser()->parse() == false) {
+					if (parser()->loadStream(stream) == false) {
 						warning("Failed to load stream for zipped file '%s'", fileNameBuffer);
-						unzClose(zipFile);
-						return false;
+						failed = true;
 					}
+					
+					if (parser()->parse() == false) {
+						warning("Theme parsing failed on zipped file '%s'.", fileNameBuffer);
+						failed = true;
+					}
+					
+					parser()->close();
 				}
 			} 
 		
@@ -581,13 +592,20 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 				return false;
 			
 			for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
-				if (i->getName().hasSuffix(".stx")) {
+				if (!failed && i->getName().hasSuffix(".stx")) {
 					parseCount++;
 					
-					if (parser()->loadFile(*i) == false || parser()->parse() == false) {
-						warning("Failed to parse STX file '%s'", i->getName().c_str());
-						return false;
+					if (parser()->loadFile(*i) == false) {
+						warning("Failed to load STX file '%s'", i->getName().c_str());
+						failed = true;
 					}
+					
+					if (parser()->parse() == false) {
+						warning("Failed to parse STX file '%s'", i->getName().c_str());
+						failed = true;
+					}
+					
+					parser()->close();
 				} else if (i->getName() == "THEMERC") {
 					Common::File f;
 					f.open(*i);
@@ -595,7 +613,7 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 
 					if (!themeConfigParseHeader(stxHeader.c_str(), _themeName)) {
 						warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
-						return false;
+						failed = true;
 					}
 				}
 			}
@@ -608,7 +626,7 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 #endif
 
 
-	return (parseCount > 0 && _themeName.empty() == false);
+	return (parseCount > 0 && _themeName.empty() == false && failed == false);
 }
 
 
