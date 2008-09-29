@@ -85,7 +85,7 @@ struct ArjHeader {
 
 typedef HashMap<String, int, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjFilesMap;
 
-class ArjFile : public File {
+class ArjFile : public SeekableReadStream, public NonCopyable {
 public:
 	ArjFile();
 	~ArjFile();
@@ -98,9 +98,9 @@ public:
 	void close();
 
 	uint32 read(void *dataPtr, uint32 dataSize);
-	bool eos();
-	int32 pos();
-	int32 size();
+	bool eos() const;
+	int32 pos() const;
+	int32 size() const;
 	bool seek(int32 offset, int whence = SEEK_SET);
 	bool isOpen() { return _isOpen; }
 
