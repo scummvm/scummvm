@@ -333,16 +333,16 @@ SearchManager::SearchManager() {
 	clear();	// Force a reset
 }
 
-void SearchManager::addArchive(const String &name, ArchivePtr archive) {
-	add(name, archive);
+void SearchManager::addArchive(const String &name, ArchivePtr archive, int priority) {
+	add(name, archive, priority);
 }
 
-void SearchManager::addDirectory(const String &name, const String &directory) {
-	addDirectoryRecursive(name, directory, 1);
+void SearchManager::addDirectory(const String &name, const String &directory, int priority) {
+	addDirectoryRecursive(name, directory, 1, priority);
 }
 
-void SearchManager::addDirectoryRecursive(const String &name, const String &directory, int depth) {
-	add(name, ArchivePtr(new FSDirectory(directory, depth)));
+void SearchManager::addDirectoryRecursive(const String &name, const String &directory, int depth, int priority) {
+	add(name, ArchivePtr(new FSDirectory(directory, depth)), priority);
 }
 
 void SearchManager::clear() {

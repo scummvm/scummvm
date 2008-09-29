@@ -211,17 +211,17 @@ public:
 	 * Add an existing Archive. This is meant to support searching in system-specific
 	 * archives, namely the MACOSX/IPHONE bundles.
 	 */
-	void addArchive(const String &name, ArchivePtr archive);
+	void addArchive(const String &name, ArchivePtr archive, int priority = 0);
 
 	/**
 	 * Create and add a FSDirectory by name
 	 */
-	void addDirectory(const String &name, const String &directory);
+	void addDirectory(const String &name, const String &directory, int priority = 0);
 
 	/**
 	 * Create and add a FSDirectory and its subdirectories by name
 	 */
-	void addDirectoryRecursive(const String &name, const String &directory, int depth = 4);
+	void addDirectoryRecursive(const String &name, const String &directory, int depth = 4, int priority = 0);
 
 	/**
 	 * TODO
