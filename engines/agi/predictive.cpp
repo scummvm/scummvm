@@ -491,7 +491,8 @@ void AgiEngine::loadDict(void) {
 	ConfMan.registerDefault("predictive_dictionary", "pred.dic");
 
 	uint32 time1 = _system->getMillis();
-	if (!inFile.open(ConfMan.get("predictive_dictionary")))
+	Common::String inFileName(ConfMan.get("predictive_dictionary"));
+	if (!inFile.open(inFileName))
 		return;
 
 	char *ptr;
@@ -505,7 +506,7 @@ void AgiEngine::loadDict(void) {
 	inFile.read(_predictiveDictText, size);
 	_predictiveDictText[size] = 0;
 	uint32 time2 = _system->getMillis();
-	debug("Time to read %s: %d bytes, %d ms", inFile.name(), size, time2-time1);
+	debug("Time to read %s: %d bytes, %d ms", inFileName.c_str(), size, time2-time1);
 	inFile.close();
 
 	ptr = _predictiveDictText;
