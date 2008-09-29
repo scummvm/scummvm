@@ -1399,17 +1399,12 @@ int ZipArchive::getAllNames(Common::StringList &list) {
 	if (unzGoToFirstFile(_zipFile) != UNZ_OK)
 		return 0;
 
-	char fileNameBuffer[UNZ_MAXFILENAMEINZIP+1];
+	char fileNameBuffer[UNZ_MAXFILENAMEINZIP + 1];
 	list.clear();
 		
 	do {
-		unzOpenCurrentFile(_zipFile);
-		unzGetCurrentFileInfo(_zipFile, 0, fileNameBuffer, UNZ_MAXFILENAMEINZIP+1, 0, 0, 0, 0);
-		
+		unzGetCurrentFileInfo(_zipFile, 0, fileNameBuffer, UNZ_MAXFILENAMEINZIP + 1, 0, 0, 0, 0);
 		list.push_back(Common::String(fileNameBuffer));
-		
-		unzCloseCurrentFile(_zipFile);
-
 	} while (unzGoToNextFile(_zipFile) == UNZ_OK);
 	
 	return list.size();
