@@ -1017,15 +1017,16 @@ void SmushPlayer::parseNextFrame() {
 	}
 
 	assert(_base);
+
+	const uint32 subType = _base->readUint32BE();
+	const int32 subSize = _base->readUint32BE();
+	const int32 subOffset = _base->pos();
+
 	if (_base->eos()) {
 		_vm->_smushVideoShouldFinish = true;
 		_endOfFile = true;
 		return;
 	}
-
-	const uint32 subType = _base->readUint32BE();
-	const int32 subSize = _base->readUint32BE();
-	const int32 subOffset = _base->pos();
 
 	switch (subType) {
 	case MKID_BE('AHDR'): // FT INSANE may seek file to the beginning
