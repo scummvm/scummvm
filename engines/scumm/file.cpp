@@ -125,15 +125,15 @@ bool ScummFile::openSubFile(const Common::String &filename) {
 }
 
 
-bool ScummFile::eos() {
+bool ScummFile::eos() const {
 	return _subFileLen ? (pos() >= _subFileLen) : File::eos(); // FIXME
 }
 
-int32 ScummFile::pos() {
+int32 ScummFile::pos() const {
 	return File::pos() - _subFileStart;
 }
 
-int32 ScummFile::size() {
+int32 ScummFile::size() const {
 	return _subFileLen ? _subFileLen : File::size();
 }
 
