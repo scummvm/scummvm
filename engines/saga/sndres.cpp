@@ -205,7 +205,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		soundResourceLength = file->size();
 	} else {
 
-		ResourceData* resourceData = _vm->_resource->getResourceData(context, resourceId);
+		ResourceData* resourceData = context->getResourceData(resourceId);
 		file = context->getFile(resourceData);
 	
 		file->seek(resourceData->offset);
@@ -373,7 +373,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	case kSoundOGG:
 	case kSoundFLAC:
 		ResourceData *resourceData;
-		resourceData = _vm->_resource->getResourceData(context, resourceId);
+		resourceData = context->getResourceData(resourceId);
 
 		// Read compressed sfx header
 		readS.seek(1);	// Skip compression identifier byte

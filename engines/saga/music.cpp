@@ -86,7 +86,7 @@ DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext
 
 	byte compressedHeader[10];
 
-	resourceData = _vm->_resource->getResourceData(context, resourceId);
+	resourceData = context->getResourceData(resourceId);
 	_file = context->getFile(resourceData);
 	_musicInfo = _vm->getMusicInfo();
 

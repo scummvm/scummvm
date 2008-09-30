@@ -309,8 +309,8 @@ bool Resource::loadContext(ResourceContext *context) {
 		for (i = 0; i < tableSize / 8; i++) {
 			subjectResourceId = readS2.readUint32();
 			patchResourceId = readS2.readUint32();
-			subjectResourceData = getResourceData(subjectContext, subjectResourceId);
-			resourceData = getResourceData(context, patchResourceId);
+			subjectResourceData = subjectContext->getResourceData(subjectResourceId);
+			resourceData = context->getResourceData(patchResourceId);
 			subjectResourceData->patchData = new PatchData(context->file);
 			subjectResourceData->offset = resourceData->offset;
 			subjectResourceData->size = resourceData->size;
@@ -632,7 +632,7 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&r
 
 	debug(8, "loadResource %d", resourceId);
 
-	resourceData = getResourceData(context, resourceId);
+	resourceData = context->getResourceData(resourceId);
 
 	file = context->getFile(resourceData);
 
