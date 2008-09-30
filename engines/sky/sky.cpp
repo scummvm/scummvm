@@ -161,7 +161,7 @@ GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 
 			if (0 == scumm_stricmp("sky.dsk", fileName)) {
 				Common::File dataDisk;
-				if (dataDisk.open(file->getPath())) {
+				if (dataDisk.open(*file)) {
 					hasSkyDsk = true;
 					dataDiskSize = dataDisk.size();
 				}
@@ -169,7 +169,7 @@ GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 
 			if (0 == scumm_stricmp("sky.dnr", fileName)) {
 				Common::File dinner;
-				if (dinner.open(file->getPath())) {
+				if (dinner.open(*file)) {
 					hasSkyDnr = true;
 					dinnerTableEntries = dinner.readUint32LE();
 				}
