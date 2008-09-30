@@ -196,16 +196,22 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 		_hasPlaybackEvent = false;
 	}
 
+#ifdef ENABLE_VKEYBD
 	_vk = new Common::VirtualKeyboard();
+#endif
+#ifdef ENABLE_KEYMAPPER
 	_keymapper = new Common::Keymapper(this);
 	_remap = false;
-
-	//init();
+#endif
 }
 
 DefaultEventManager::~DefaultEventManager() {
+#ifdef ENABLE_KEYMAPPER
 	delete _keymapper;
+#endif
+#ifdef ENABLE_VKEYBD
 	delete _vk;
+#endif
 	_boss->lockMutex(_timeMutex);
 	_boss->lockMutex(_recorderMutex);
 	_recordMode = kPassthrough;
@@ -265,11 +271,13 @@ DefaultEventManager::~DefaultEventManager() {
 }
 
 void DefaultEventManager::init() {
+#ifdef ENABLE_VKEYBD
 	if (ConfMan.hasKey("vkeybd_pack_name")) {
 		_vk->loadKeyboardPack(ConfMan.get("vkeybd_pack_name"));
 	} else {
 		_vk->loadKeyboardPack("vkeybd");
 	}
+#endif
 }
 
 bool DefaultEventManager::playback(Common::Event &event) {
@@ -379,6 +387,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	} else {
 		// poll for event from backend
 		result = _boss->pollEvent(event);
+#ifdef ENABLE_KEYMAPPER
 		if (result) {
 			// send key press events to keymapper
 			if (event.type == Common::EVENT_KEYDOWN) {
@@ -391,6 +400,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				}
 			}
 		}
+#endif
 	}
 
 	if (_recordMode != kPassthrough)  {
@@ -457,7 +467,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 					else if (_shouldRTL)
 						event.type = Common::EVENT_RTL;
 				}
-			} else if (event.kbd.keycode == Common::KEYCODE_F7 && event.kbd.flags == 0) {
+			}
+#ifdef ENABLE_VKEYBD	
+			else if (event.kbd.keycode == Common::KEYCODE_F7 && event.kbd.flags == 0) {
 				if (_vk->isDisplaying()) {
 					_vk->close(true);
 				} else {
@@ -467,7 +479,10 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 					if (!isPaused) g_engine->pauseEngine(false);
 					result = false;
 				}
-			} else if (event.kbd.keycode == Common::KEYCODE_F8 && event.kbd.flags == 0) {
+			}
+#endif
+#ifdef ENABLE_KEYMAPPER	
+			else if (event.kbd.keycode == Common::KEYCODE_F8 && event.kbd.flags == 0) {
 				if (!_remap) {
 					_remap = true;
 					Common::RemapDialog _remapDialog;
@@ -478,6 +493,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 					_remap = false;
 				}
 			}
+#endif
 			break;
 
 		case Common::EVENT_KEYUP:

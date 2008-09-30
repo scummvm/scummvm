@@ -68,6 +68,9 @@ _mt32emu=yes
 # default option behaviour yes/no
 _build_hq_scalers=yes
 _build_scalers=yes
+# default vkeybd/keymapper options
+_vkeybd=no
+_keymapper=no
 
 # Add an engine: id name build subengines
 add_engine() {
@@ -682,6 +685,10 @@ for ac_option in $@; do
 	--default-dynamic)        _plugins_default=dynamic ;;
 	--enable-mt32emu)         _mt32emu=yes    ;;
 	--disable-mt32emu)        _mt32emu=no     ;;
+	--enable-vkeybd)          _vkeybd=yes     ;;
+	--disable-vkeybd)         _vkeybd=no      ;;
+	--enable-keymapper)       _keymapper=yes  ;;
+	--disable-keymapper)      _keymapper=no   ;;
 	--with-fluidsynth-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDSYNTH_CFLAGS="-I$arg/include"
@@ -1587,6 +1594,12 @@ add_to_config_h_if_yes $_nasm '#define USE_NASM'
 add_to_config_mk_if_yes $_nasm 'HAVE_NASM = 1'
 
 #
+# Enable vkeybd / keymapper 
+#
+add_to_config_h_if_yes $_vkeybd '#define ENABLE_VKEYBD'
+add_to_config_h_if_yes $_keymapper '#define ENABLE_KEYMAPPER'
+
+#
 # figure out installation directories
 #
 test -z "$_bindir" && _bindir="$_prefix/bin"
@@ -1689,10 +1702,19 @@ if test "$_build_hq_scalers" = yes ; then
 fi
 
 if test "$_mt32emu" = yes ; then
-	echo ", MT-32 emu"
+	echo_n ", MT-32 emu"
+fi
+
+if test "$_vkeybd" = yes ; then
+	echo_n ", virtual keyboard"
+fi
+
+if test "$_keymapper" = yes ; then
+	echo ", keymapper"
 else
 	echo
 fi
+
 #
 # Backend related stuff
 #

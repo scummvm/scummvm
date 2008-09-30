@@ -23,8 +23,12 @@
 *
 */
 
-#ifndef COMMON_ACTION
-#define COMMON_ACTION
+#ifndef COMMON_ACTION_H
+#define COMMON_ACTION_H
+
+#include "common/scummsys.h"
+
+#ifdef ENABLE_KEYMAPPER
 
 #include "backends/keymapper/types.h"
 #include "common/events.h"
@@ -113,4 +117,6 @@ struct ActionPriorityComp : public BinaryFunction<Action, Action, bool> {
 
 } // end of namespace Common
 
-#endif
+#endif // #ifdef ENABLE_KEYMAPPER
+
+#endif // #ifndef COMMON_ACTION_H

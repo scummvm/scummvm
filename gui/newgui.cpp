@@ -237,7 +237,10 @@ void NewGui::runLoop() {
 	}
 
 	Common::EventManager *eventMan = _system->getEventManager();
+
+#ifdef ENABLE_KEYMAPPER
 	eventMan->getKeymapper()->pushKeymap("gui");
+#endif
 	while (!_dialogStack.empty() && activeDialog == getTopDialog()) {
 		if (_needRedraw) {
 			redraw();
@@ -329,7 +332,9 @@ void NewGui::runLoop() {
 		// Delay for a moment
 		_system->delayMillis(10);
 	}
+#ifdef ENABLE_KEYMAPPER
 	eventMan->getKeymapper()->popKeymap();
+#endif
 
 	// HACK: since we reopen all dialogs anyway on redraw
 	// we for now use Theme::closeAllDialogs here, until

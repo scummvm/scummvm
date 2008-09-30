@@ -26,6 +26,10 @@
 #ifndef COMMON_IMAGEMAP_H
 #define COMMON_IMAGEMAP_H
 
+#include "common/scummsys.h"
+
+#ifdef ENABLE_VKEYBD
+
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "backends/vkeybd/polygon.h"
@@ -50,4 +54,6 @@ protected:
 
 } // End of namespace Common
 
-#endif
+#endif // #ifdef ENABLE_VKEYBD
+
+#endif // #ifndef COMMON_IMAGEMAP_H

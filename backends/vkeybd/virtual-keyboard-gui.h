@@ -23,8 +23,12 @@
 *
 */
 
-#ifndef COMMON_VIRTUAL_KEYBOARD_GUI
-#define COMMON_VIRTUAL_KEYBOARD_GUI
+#ifndef COMMON_VIRTUAL_KEYBOARD_GUI_H
+#define COMMON_VIRTUAL_KEYBOARD_GUI_H
+
+#include "common/scummsys.h"
+
+#ifdef ENABLE_VKEYBD
 
 #include "backends/vkeybd/virtual-keyboard.h"
 #include "common/rect.h"
@@ -150,4 +154,6 @@ private:
 
 } // end of namespace Common
 
-#endif
+#endif // #ifdef ENABLE_VKEYBD
+
+#endif // #ifndef COMMON_VIRTUAL_KEYBOARD_GUI_H

@@ -24,6 +24,9 @@
 */
 
 #include "backends/keymapper/action.h"
+
+#ifdef ENABLE_KEYMAPPER
+
 #include "backends/keymapper/keymap.h"
 
 namespace Common {
@@ -51,3 +54,5 @@ const HardwareKey *Action::getMappedKey() const {
 }
 
 } // end of namespace Common
+
+#endif // #ifdef ENABLE_KEYMAPPER

@@ -24,6 +24,9 @@
  */
 
 #include "backends/vkeybd/virtual-keyboard.h"
+
+#ifdef ENABLE_VKEYBD
+
 #include "backends/vkeybd/virtual-keyboard-gui.h"
 #include "backends/vkeybd/virtual-keyboard-parser.h"
 #include "backends/vkeybd/keycode-descriptions.h"
@@ -388,3 +391,6 @@ bool VirtualKeyboard::KeyPressQueue::hasStringChanged() {
 }
 
 } // end of namespace Common
+
+#endif // #ifdef ENABLE_VKEYBD
+

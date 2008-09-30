@@ -24,6 +24,9 @@
 */
 
 #include "backends/keymapper/keymap.h"
+
+#ifdef ENABLE_KEYMAPPER
+
 #include "backends/keymapper/hardware-key.h"
 
 #define KEYMAP_KEY_PREFIX "keymap_"
@@ -297,3 +300,5 @@ Action *Keymap::getParentMappedAction(KeyState key) {
 }
 
 } // end of namespace Common
+
+#endif // #ifdef ENABLE_KEYMAPPER

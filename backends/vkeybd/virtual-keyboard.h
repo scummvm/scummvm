@@ -26,6 +26,10 @@
 #ifndef COMMON_VIRTUAL_KEYBOARD_H
 #define COMMON_VIRTUAL_KEYBOARD_H
 
+#include "common/scummsys.h"
+
+#ifdef ENABLE_VKEYBD
+
 class OSystem;
 
 #include "common/events.h"
@@ -246,8 +250,8 @@ protected:
 
 };
 
-
 } // End of namespace Common
 
+#endif // #ifdef ENABLE_VKEYBD
 
-#endif
+#endif // #ifndef COMMON_VIRTUAL_KEYBOARD_H

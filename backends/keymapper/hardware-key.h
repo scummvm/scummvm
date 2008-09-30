@@ -23,8 +23,12 @@
 *
 */
 
-#ifndef COMMON_HARDWAREKEY
-#define COMMON_HARDWAREKEY
+#ifndef COMMON_HARDWARE_KEY_H
+#define COMMON_HARDWARE_KEY_H
+
+#include "common/scummsys.h"
+
+#ifdef ENABLE_KEYMAPPER
 
 #include "backends/keymapper/types.h"
 
@@ -125,4 +129,6 @@ private:
 
 } // end of namespace Common
 
-#endif
+#endif // #ifdef ENABLE_KEYMAPPER
+
+#endif // #ifndef COMMON_HARDWARE_KEY_H

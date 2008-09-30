@@ -24,7 +24,11 @@
 */
 
 #include "backends/keymapper/keymapper.h"
+
+#ifdef ENABLE_KEYMAPPER
+
 #include "common/config-manager.h"
+
 namespace Common {
 
 void Keymapper::Domain::addKeymap(Keymap *map) {
@@ -217,3 +221,5 @@ const HardwareKey *Keymapper::getHardwareKey(const KeyState& key) {
 }
 
 } // end of namespace Common
+
+#endif // #ifdef ENABLE_KEYMAPPER

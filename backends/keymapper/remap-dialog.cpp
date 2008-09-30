@@ -23,6 +23,9 @@
  */
 
 #include "backends/keymapper/remap-dialog.h"
+
+#ifdef ENABLE_KEYMAPPER
+
 #include "gui/eval.h"
 #include "gui/newgui.h"
 #include "gui/PopUpWidget.h"
@@ -327,3 +330,5 @@ void RemapDialog::refreshKeymap() {
 
 
 } // end of namespace Common
+
+#endif // #ifdef ENABLE_KEYMAPPER

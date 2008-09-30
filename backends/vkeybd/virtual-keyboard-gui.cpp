@@ -24,6 +24,9 @@
 */
 
 #include "backends/vkeybd/virtual-keyboard-gui.h"
+
+#ifdef ENABLE_VKEYBD
+
 #include "graphics/cursorman.h"
 #include "gui/newgui.h"
 
@@ -414,3 +417,5 @@ void VirtualKeyboardGUI::removeCursor() {
 }
 
 } // end of namespace Common
+
+#endif // #ifdef ENABLE_VKEYBD

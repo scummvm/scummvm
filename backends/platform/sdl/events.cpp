@@ -524,6 +524,7 @@ bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {
 }
 
 void OSystem_SDL::setupKeymapper() {
+#ifdef ENABLE_KEYMAPPER
 	using namespace Common;
 	Keymapper *mapper = getEventManager()->getKeymapper();
 
@@ -578,5 +579,6 @@ void OSystem_SDL::setupKeymapper() {
 	mapper->addGlobalKeymap(guiMap);
 
 	mapper->pushKeymap("global");
+#endif
 }
 

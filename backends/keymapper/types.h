@@ -23,8 +23,12 @@
 *
 */
 
-#ifndef COMMON_TYPES
-#define COMMON_TYPES
+#ifndef COMMON_TYPES_H
+#define COMMON_TYPES_H
+
+#include "common/scummsys.h"
+
+#ifdef ENABLE_KEYMAPPER
 
 namespace Common {
 
@@ -68,4 +72,6 @@ enum ActionType {
 
 } // end of namespace Common
 
-#endif
+#endif // #ifdef ENABLE_KEYMAPPER
+
+#endif // #ifndef COMMON_TYPES_H

@@ -26,6 +26,10 @@
 #ifndef COMMON_POLYGON_H
 #define COMMON_POLYGON_H
 
+#include "common/scummsys.h"
+
+#ifdef ENABLE_VKEYBD
+
 #include "common/array.h"
 #include "common/rect.h"
 
@@ -111,4 +115,6 @@ private:
 
 } // end of namespace Common
 
-#endif
+#endif // #ifdef ENABLE_VKEYBD
+
+#endif // #ifndef COMMON_POLYGON_H

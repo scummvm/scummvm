@@ -23,8 +23,12 @@
 *
 */
 
-#ifndef COMMON_KEYMAPPER
-#define COMMON_KEYMAPPER
+#ifndef COMMON_KEYMAPPER_H
+#define COMMON_KEYMAPPER_H
+
+#include "common/scummsys.h"
+
+#ifdef ENABLE_KEYMAPPER
 
 #include "common/events.h"
 #include "common/list.h"
@@ -201,4 +205,6 @@ private:
 
 } // end of namespace Common
 
-#endif
+#endif // #ifdef ENABLE_KEYMAPPER
+
+#endif // #ifndef COMMON_KEYMAPPER_H

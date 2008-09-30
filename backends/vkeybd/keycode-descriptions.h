@@ -1,5 +1,7 @@
-#ifndef KEYCODE_DESCRIPTIONS
-#define KEYCODE_DESCRIPTIONS
+#ifndef KEYCODE_DESCRIPTIONS_H
+#define KEYCODE_DESCRIPTIONS_H
+
+#ifdef ENABLE_VKEYBD
 
 static const char *keycodeDescTable[] = {
 	"",
@@ -328,4 +330,6 @@ static const char *keycodeDescTable[] = {
 };
 static const int keycodeDescTableSize = 322;
 
-#endif
+#endif // #ifdef ENABLE_VKEYBD
+
+#endif // #ifndef KEYCODE_DESCRIPTIONS_H

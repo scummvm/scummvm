@@ -25,6 +25,10 @@
 #ifndef REMAP_DIALOG_H
 #define REMAP_DIALOG_H
 
+#include "common/scummsys.h"
+
+#ifdef ENABLE_KEYMAPPER
+
 #include "backends/keymapper/keymapper.h"
 #include "gui/dialog.h"
 
@@ -89,4 +93,6 @@ protected:
 
 } // end of namespace Common
 
-#endif
+#endif // #ifdef ENABLE_KEYMAPPER
+
+#endif // #ifndef REMAP_DIALOG_H

@@ -25,6 +25,8 @@
 
 #include "backends/vkeybd/virtual-keyboard-parser.h"
 
+#ifdef ENABLE_VKEYBD
+
 #include "common/keyboard.h"
 #include "graphics/imageman.h"
 #include "common/util.h"
@@ -361,3 +363,5 @@ bool VirtualKeyboardParser::parseRectAsPolygon(Polygon *poly, const String& coor
 }
 
 } // end of namespace GUI
+
+#endif // #ifdef ENABLE_VKEYBD

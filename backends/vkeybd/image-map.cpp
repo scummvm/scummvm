@@ -25,6 +25,8 @@
 
 #include "backends/vkeybd/image-map.h"
 
+#ifdef ENABLE_VKEYBD
+
 namespace Common {
 
 ImageMap::~ImageMap() {
@@ -67,3 +69,5 @@ String ImageMap::findMapArea(int16 x, int16 y) {
 
 
 } // End of namespace Common
+
+#endif // #ifdef ENABLE_VKEYBD

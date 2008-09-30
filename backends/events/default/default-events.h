@@ -31,8 +31,12 @@
 #include "common/savefile.h"
 
 namespace Common {
+#ifdef ENABLE_KEYMAPPER
 	class Keymapper;
+#endif
+#ifdef ENABLE_VKEYBD
 	class VirtualKeyboard;
+#endif
 }
 
 /*
@@ -50,9 +54,14 @@ use a subclass of EventProvider.
 class DefaultEventManager : public Common::EventManager {
 	OSystem *_boss;
 
+#ifdef ENABLE_VKEYBD
 	Common::VirtualKeyboard *_vk;
+#endif
+
+#ifdef ENABLE_KEYMAPPER
 	Common::Keymapper *_keymapper;
 	bool _remap;
+#endif
 
 	Common::Queue<Common::Event> _artificialEventQueue;
 
@@ -132,7 +141,9 @@ public:
 	virtual int shouldRTL() const { return _shouldRTL; }
 	virtual void resetRTL() { _shouldRTL = false; }
 	
+#ifdef ENABLE_KEYMAPPER
 	virtual Common::Keymapper *getKeymapper() { return _keymapper; }
+#endif
 };
 
 #endif

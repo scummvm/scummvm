@@ -200,8 +200,9 @@ public:
 
 	// TODO: Consider removing OSystem::getScreenChangeID and
 	// replacing it by a generic getScreenChangeID method here
-
+#ifdef ENABLE_KEYMAPPER
 	virtual Common::Keymapper *getKeymapper() = 0;
+#endif
 
 protected:
 

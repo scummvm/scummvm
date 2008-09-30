@@ -25,6 +25,8 @@
 
 #include "backends/vkeybd/polygon.h"
 
+#ifdef ENABLE_VKEYBD
+
 namespace Common {
 
 bool Polygon::contains(int16 x, int16 y) const {
@@ -53,3 +55,5 @@ bool Polygon::contains(int16 x, int16 y) const {
 }
 
 } // end of namespace Common
+
+#endif // #ifdef ENABLE_VKEYBD

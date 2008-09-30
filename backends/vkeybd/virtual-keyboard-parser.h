@@ -23,8 +23,12 @@
  *
  */
 
-#ifndef COMMON_VIRTUAL_KEYBOARD_PARSER
-#define COMMON_VIRTUAL_KEYBOARD_PARSER
+#ifndef COMMON_VIRTUAL_KEYBOARD_PARSER_H
+#define COMMON_VIRTUAL_KEYBOARD_PARSER_H
+
+#include "common/scummsys.h"
+
+#ifdef ENABLE_VKEYBD
 
 #include "common/xmlparser.h"
 #include "backends/vkeybd/virtual-keyboard.h"
@@ -264,4 +268,6 @@ protected:
 
 } // end of namespace GUI
 
-#endif
+#endif // #ifdef ENABLE_VKEYBD
+
+#endif // #ifndef COMMON_VIRTUAL_KEYBOARD_PARSER_H
