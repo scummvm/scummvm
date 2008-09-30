@@ -27,6 +27,7 @@
 
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
+#include "common/fs.h"
 
 #include "SDL.h"
 #include "SDL_loadso.h"
@@ -78,8 +79,8 @@ public:
 };
 
 
-Plugin* SDLPluginProvider::createPlugin(const Common::String &filename) const {
-	return new SDLPlugin(filename);
+Plugin* SDLPluginProvider::createPlugin(const Common::FilesystemNode &node) const {
+	return new SDLPlugin(node.getPath());
 }
 
 

@@ -27,6 +27,7 @@
 
 #include "backends/plugins/dc/dc-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
+#include "common/fs.h"
 
 #include "dcloader.h"
 
@@ -83,12 +84,13 @@ public:
 };
 
 
-Plugin* DCPluginProvider::createPlugin(const Common::String &filename) const {
-	return new DCPlugin(filename);
+Plugin* DCPluginProvider::createPlugin(const Common::FilesystemNode &node) const {
+	return new DCPlugin(node.getPath());
 }
 
-bool DCPluginProvider::isPluginFilename(const Common::String &filename) const {
+bool DCPluginProvider::isPluginFilename(const Common::FilesystemNode &node) const {
 	// Check the plugin suffix
+	Common::String filename = node.getName();
 	if (!filename.hasSuffix(".PLG"))
 		return false;
 

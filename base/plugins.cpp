@@ -231,8 +231,8 @@ PluginList FilePluginProvider::getPlugins() {
 		}
 
 		for (Common::FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
-			if (isPluginFilename(i->getName())) {
-				pl.push_back(createPlugin(i->getPath()));
+			if (isPluginFilename(*i)) {
+				pl.push_back(createPlugin(*i));
 			}
 		}
 	}
@@ -240,7 +240,9 @@ PluginList FilePluginProvider::getPlugins() {
 	return pl;
 }
 
-bool FilePluginProvider::isPluginFilename(const Common::String &filename) const {
+bool FilePluginProvider::isPluginFilename(const Common::FilesystemNode &node) const {
+	Common::String filename = node.getName();
+
 #ifdef PLUGIN_PREFIX
 	// Check the plugin prefix
 	if (!filename.hasPrefix(PLUGIN_PREFIX))

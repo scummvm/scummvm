@@ -32,7 +32,7 @@
 
 class SDLPluginProvider : public FilePluginProvider {
 protected:
-	Plugin* createPlugin(const Common::String &filename) const;
+	Plugin* createPlugin(const Common::FilesystemNode &node) const;
 };
 
 #endif // defined(DYNAMIC_MODULES) && defined(UNIX)

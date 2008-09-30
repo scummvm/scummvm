@@ -32,9 +32,9 @@
 
 class Win32PluginProvider : public FilePluginProvider {
 protected:
-	Plugin* createPlugin(const Common::String &filename) const;
+	Plugin* createPlugin(const Common::FilesystemNode &node) const;
 
-	bool isPluginFilename(const Common::String &filename) const;
+	bool isPluginFilename(const Common::FilesystemNode &node) const;
 
 	virtual void addCustomDirectories(Common::StringList &dirs) const {}
 };

@@ -27,6 +27,7 @@
 
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
+#include "common/fs.h"
 
 #include <dlfcn.h>
 
@@ -78,8 +79,8 @@ public:
 };
 
 
-Plugin* POSIXPluginProvider::createPlugin(const Common::String &filename) const {
-	return new POSIXPlugin(filename);
+Plugin* POSIXPluginProvider::createPlugin(const Common::FilesystemNode &node) const {
+	return new POSIXPlugin(node.getPath());
 }
 
 
