@@ -91,7 +91,7 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	out->writeSint16BE((int16)_game.lognum);
 
 	out->writeSint16BE((int16)_game.playerControl);
-	out->writeSint16BE((int16)quit());
+	out->writeSint16BE((int16)shouldQuit());
 	out->writeSint16BE((int16)_game.statusLine);
 	out->writeSint16BE((int16)_game.clockEnabled);
 	out->writeSint16BE((int16)_game.exitAllLogics);

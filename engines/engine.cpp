@@ -168,7 +168,7 @@ void Engine::checkCD() {
 		GUI::MessageDialog dialog(
 			"You appear to be playing this game directly\n"
 			"from the CD. This is known to cause problems,\n"
-			"and it's therefore recommended that you copy\n"
+			"and it is therefore recommended that you copy\n"
 			"the data files to your hard disk instead.\n"
 			"See the README file for details.", "OK");
 		dialog.runModal();
@@ -224,11 +224,8 @@ void Engine::mainMenuDialog() {
 }
 
 int Engine::runDialog(Dialog &dialog) {
-	
 	pauseEngine(true);
-
 	int result = dialog.runModal();
-
 	pauseEngine(false);
 
 	return result;
@@ -254,6 +251,7 @@ void Engine::quitGame() {
 }
 
 bool Engine::hasFeature(int f) {
+	// TODO: In each engine, keep a ref to the corresponding MetaEngine?
 	const EnginePlugin *plugin = 0;
 	Common::String gameid = ConfMan.get("gameid");
 	gameid.toLowercase();

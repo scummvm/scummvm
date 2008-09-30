@@ -99,7 +99,7 @@ void CUP_Player::play() {
 	debug(1, "rate %d width %d height %d", _playbackRate, _width, _height);
 
 	int ticks = _system->getMillis();
-	while (_dataSize != 0 && !_vm->quit()) {
+	while (_dataSize != 0 && !_vm->shouldQuit()) {
 		while (parseNextBlockTag(_fileStream)) {
 			if (_fileStream.ioFailed()) {
 				return;
@@ -190,7 +190,7 @@ void CUP_Player::waitForSfxChannel(int channel) {
 	CUP_SfxChannel *sfxChannel = &_sfxChannels[channel];
 	debug(1, "waitForSfxChannel %d", channel);
 	if ((sfxChannel->flags & kSfxFlagLoop) == 0) {
-		while (_mixer->isSoundHandleActive(sfxChannel->handle) && !_vm->quit()) {
+		while (_mixer->isSoundHandleActive(sfxChannel->handle) && !_vm->shouldQuit()) {
 			_vm->parseEvents();
 			_system->delayMillis(10);
 		}

@@ -437,7 +437,7 @@ int QueenEngine::go() {
 	}
 	_lastSaveTime = _lastUpdateTime = _system->getMillis();
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 		if (_logic->newRoom() > 0) {
 			_logic->update();
 			_logic->oldRoom(_logic->currentRoom());

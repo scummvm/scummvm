@@ -421,7 +421,7 @@ int Sword2Engine::init() {
 		// player will kill the music for us. Otherwise, the restore
 		// will either have killed the music, or done a crossfade.
 
-		if (quit())
+		if (shouldQuit())
 			return 0;
 
 		if (result)
@@ -493,7 +493,7 @@ int Sword2Engine::go() {
 		// because we want the break to happen before updating the
 		// screen again.
 
-		if (quit())
+		if (shouldQuit())
 			break;
 
 		// creates the debug text blocks

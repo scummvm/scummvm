@@ -212,7 +212,7 @@ uint8 Screen::getFadeStatus() {
 }
 
 void Screen::waitForFade() {
-	while (getFadeStatus() != RDFADE_NONE && getFadeStatus() != RDFADE_BLACK && !_vm->quit()) {
+	while (getFadeStatus() != RDFADE_NONE && getFadeStatus() != RDFADE_BLACK && !_vm->shouldQuit()) {
 		updateDisplay();
 		_vm->_system->delayMillis(20);
 	}

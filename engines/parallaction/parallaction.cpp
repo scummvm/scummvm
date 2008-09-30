@@ -326,7 +326,7 @@ void Parallaction::processInput(int event) {
 void Parallaction::runGame() {
 
 	int event = _input->updateInput();
-	if (quit())
+	if (shouldQuit())
 		return;
 
 	runGuiFrame();
@@ -337,7 +337,7 @@ void Parallaction::runGame() {
 		processInput(event);
 		runPendingZones();
 
-		if (quit())
+		if (shouldQuit())
 			return;
 
 		if (_engineFlags & kEngineChangeLocation) {

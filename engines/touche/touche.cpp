@@ -268,7 +268,7 @@ void ToucheEngine::mainLoop() {
 	}
 
 	uint32 frameTimeStamp = _system->getMillis();
-	for (uint32 cycleCounter = 0; !quit(); ++cycleCounter) {
+	for (uint32 cycleCounter = 0; !shouldQuit(); ++cycleCounter) {
 		if ((cycleCounter % 3) == 0) {
 			runCycle();
 		}
@@ -1837,7 +1837,7 @@ int ToucheEngine::handleActionMenuUnderCursor(const int16 *actions, int offs, in
 	_menuRedrawCounter = 2;
 	Common::Rect rect(0, y, kScreenWidth, y + h);
 	i = -1;
-	while (_inp_rightMouseButtonPressed && !quit()) {
+	while (_inp_rightMouseButtonPressed && !shouldQuit()) {
 		Common::Point mousePos = getMousePos();
 		if (rect.contains(mousePos)) {
 			int c = (mousePos.y - y) / kTextHeight;

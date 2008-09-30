@@ -123,7 +123,7 @@ void AGOSEngine::setup_cond_c_helper() {
 	clearName();
 	_lastNameOn = last;
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = 0;
 		_leftButtonDown = 0;
@@ -145,7 +145,7 @@ void AGOSEngine::setup_cond_c_helper() {
 			}
 
 			delay(100);
-		} while ((_lastHitArea3 == (HitArea *) -1 || _lastHitArea3 == 0) && !quit());
+		} while ((_lastHitArea3 == (HitArea *) -1 || _lastHitArea3 == 0) && !shouldQuit());
 
 		if (_lastHitArea == NULL) {
 		} else if (_lastHitArea->id == 0x7FFB) {
@@ -189,12 +189,12 @@ void AGOSEngine::waitForInput() {
 		resetVerbs();
 	}
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 		_dragAccept = 1;
 
-		while (!quit()) {
+		while (!shouldQuit()) {
 			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
 					_keyPressed.keycode == Common::KEYCODE_F10)
 				displayBoxStars();

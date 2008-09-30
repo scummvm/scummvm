@@ -302,7 +302,7 @@ void MoviePlayer::play(void) {
 				break;
 			}
 		}
-		if (_vm->quit())
+		if (_vm->shouldQuit())
 			terminated = true;
 	}
 

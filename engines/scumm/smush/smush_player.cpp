@@ -1254,7 +1254,7 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 		}
 		if (_endOfFile)
 			break;
-		if (_vm->quit() || _vm->_saveLoadFlag || _vm->_smushVideoShouldFinish) {
+		if (_vm->shouldQuit() || _vm->_saveLoadFlag || _vm->_smushVideoShouldFinish) {
 			_smixer->stop();
 			_vm->_mixer->stopHandle(_compressedFileSoundHandle);
 			_vm->_mixer->stopHandle(_IACTchannel);

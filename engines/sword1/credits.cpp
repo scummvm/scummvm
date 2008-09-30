@@ -125,7 +125,7 @@ void CreditsPlayer::play(void) {
 	uint16 renderY = BUFSIZE_Y / 2;
 	uint16 clearY = 0xFFFF;
 	bool clearLine = false;
-	while (((*textData != FNT_EOB) || (scrollY != renderY)) && !g_engine->quit()) {
+	while (((*textData != FNT_EOB) || (scrollY != renderY)) && !g_engine->shouldQuit()) {
 		if ((int32)_mixer->getSoundElapsedTime(bgSound) - relDelay < (SCROLL_TIMING * 2)) { // sync to audio
 			if (scrollY < BUFSIZE_Y - CREDITS_Y)
 				_system->copyRectToScreen(screenBuf + scrollY * CREDITS_X, CREDITS_X, START_X, START_Y, CREDITS_X, CREDITS_Y);
@@ -175,7 +175,7 @@ void CreditsPlayer::play(void) {
 	uint8 *revoBuf = credFile.decompressFile(REVO_LOGO);
 	uint8 *revoPal = credFile.fetchFile(REVO_PAL, &_palLen);
 	_palLen /= 3;
-	while ((_mixer->getSoundElapsedTime(bgSound) < LOGO_FADEUP_TIME) && !g_engine->quit()) {
+	while ((_mixer->getSoundElapsedTime(bgSound) < LOGO_FADEUP_TIME) && !g_engine->shouldQuit()) {
 		delay(100);
 	}
 	memset(_palette, 0, 256 * 4);
@@ -184,13 +184,13 @@ void CreditsPlayer::play(void) {
 	_system->updateScreen();
 
 	fadePalette(revoPal, true, _palLen);
-	while ((_mixer->getSoundElapsedTime(bgSound) < LOGO_FADEDOWN_TIME) && !g_engine->quit()) {
+	while ((_mixer->getSoundElapsedTime(bgSound) < LOGO_FADEDOWN_TIME) && !g_engine->shouldQuit()) {
 		delay(100);
 	}
 	fadePalette(revoPal, false, _palLen);
 	delay(3000);
 
-	if (g_engine->quit())
+	if (g_engine->shouldQuit())
 		_mixer->stopAll();
 	free(revoBuf);
 }
@@ -200,7 +200,7 @@ void CreditsPlayer::fadePalette(uint8 *srcPal, bool fadeup, uint16 len) {
 	int fadeStart = fadeup ? 0 : 12;
 
 	int relDelay = _system->getMillis();
-	for (int fadeStep = fadeStart; (fadeStep >= 0) && (fadeStep <= 12) && !g_engine->quit(); fadeStep += fadeDir) {
+	for (int fadeStep = fadeStart; (fadeStep >= 0) && (fadeStep <= 12) && !g_engine->shouldQuit(); fadeStep += fadeDir) {
 		for (uint16 cnt = 0; cnt < len * 3; cnt++)
 			_palette[(cnt / 3) * 4 + (cnt % 3)] = (srcPal[cnt] * fadeStep) / 12;
 		_system->setPalette(_palette, 0, 256);
@@ -293,7 +293,7 @@ void CreditsPlayer::delay(int msecs) {
 		if (msecs > 0)
 			_system->delayMillis(10);
 
-	} while ((_system->getMillis() < start + msecs) && !g_engine->quit());
+	} while ((_system->getMillis() < start + msecs) && !g_engine->shouldQuit());
 }
 
 ArcFile::ArcFile(void) {

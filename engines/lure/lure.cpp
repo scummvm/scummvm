@@ -136,7 +136,7 @@ int LureEngine::go() {
 			CopyProtectionDialog *dialog = new CopyProtectionDialog();
 			bool result = dialog->show();
 			delete dialog;
-			if (quit())
+			if (shouldQuit())
 				return 0;
 
 			if (!result)
@@ -153,7 +153,7 @@ int LureEngine::go() {
 	}
 
 	// Play the game
-	if (!quit()) {
+	if (!shouldQuit()) {
 		// Play the game
 		Sound.loadSection(Sound.isRoland() ? ROLAND_MAIN_SOUND_RESOURCE_ID : ADLIB_MAIN_SOUND_RESOURCE_ID);
 		gameInstance->execute();

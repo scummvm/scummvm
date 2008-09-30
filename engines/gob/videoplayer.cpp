@@ -569,7 +569,7 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 
 	_vm->_util->processInput();
 
-	if (_vm->quit()) {
+	if (_vm->shouldQuit()) {
 		_primaryVideo->getVideo()->disableSound();
 		return true;
 	}

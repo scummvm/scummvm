@@ -365,7 +365,7 @@ int SkyEngine::go() {
 			introSkipped = !_skyIntro->doIntro(_floppyIntro);
 		}
 
-		if (!quit()) {
+		if (!shouldQuit()) {
 			_skyLogic->initScreen0();
 			if (introSkipped)
 				_skyControl->restartGame();
@@ -375,7 +375,7 @@ int SkyEngine::go() {
 	_lastSaveTime = _system->getMillis();
 
 	uint32 delayCount = _system->getMillis();
-	while (!quit()) {
+	while (!shouldQuit()) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
 

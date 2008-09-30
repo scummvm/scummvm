@@ -1286,7 +1286,7 @@ void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vga_res) {
 		if (getGameType() == GType_WW && (mode == 6 || mode == 8 || mode == 9)) {
 			setWindowImage(mode, vga_res);
 		} else {
-			while (_copyScnFlag && !quit())
+			while (_copyScnFlag && !shouldQuit())
 				delay(1);
 
 			setWindowImage(mode, vga_res);

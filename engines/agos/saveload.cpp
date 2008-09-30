@@ -279,11 +279,11 @@ restart:
 	name = buf;
 	_saveGameNameLen = 0;
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 		windowPutChar(window, 128);
 		_keyPressed.reset();
 
-		while (!quit()) {
+		while (!shouldQuit()) {
 			delay(10);
 			if (_keyPressed.ascii && _keyPressed.ascii < 128) {
 				i = _keyPressed.ascii;
@@ -443,7 +443,7 @@ void AGOSEngine_Elvira2::userGame(bool load) {
 
 		name = buf + 192;
 
-		while (!quit()) {
+		while (!shouldQuit()) {
 			windowPutChar(window, 128);
 
 			_saveLoadEdit = true;
@@ -516,7 +516,7 @@ int AGOSEngine_Elvira2::userGameGetKey(bool *b, char *buf, uint maxChar) {
 
 	_keyPressed.reset();
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
@@ -526,7 +526,7 @@ int AGOSEngine_Elvira2::userGameGetKey(bool *b, char *buf, uint maxChar) {
 				return _keyPressed.ascii;
 			}
 			delay(10);
-		} while (_lastHitArea3 == 0 && !quit());
+		} while (_lastHitArea3 == 0 && !shouldQuit());
 
 		ha = _lastHitArea;
 		if (ha == NULL || ha->id < 200) {
@@ -708,7 +708,7 @@ restart:;
 			_saveGameNameLen++;
 		}
 
-		while (!quit()) {
+		while (!shouldQuit()) {
 			windowPutChar(window, 127);
 
 			_saveLoadEdit = true;
@@ -787,7 +787,7 @@ int AGOSEngine_Simon1::userGameGetKey(bool *b, char *buf, uint maxChar) {
 
 	_keyPressed.reset();
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
@@ -797,7 +797,7 @@ int AGOSEngine_Simon1::userGameGetKey(bool *b, char *buf, uint maxChar) {
 				return _keyPressed.ascii;
 			}
 			delay(10);
-		} while (_lastHitArea3 == 0 && !quit());
+		} while (_lastHitArea3 == 0 && !shouldQuit());
 
 		ha = _lastHitArea;
 		if (ha == NULL || ha->id < 205) {

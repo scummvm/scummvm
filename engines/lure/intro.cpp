@@ -60,13 +60,13 @@ bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySiz
 	screen.update();
 	Palette p(paletteId);
 
-	if (LureEngine::getReference().quit()) return true;
+	if (LureEngine::getReference().shouldQuit()) return true;
 	
 	if (isEGA) screen.setPalette(&p);
 	else screen.paletteFadeIn(&p);
 
 	bool result = interruptableDelay(delaySize);
-	if (LureEngine::getReference().quit()) return true;
+	if (LureEngine::getReference().shouldQuit()) return true;
 
 	if (!isEGA)
 		screen.paletteFadeOut();
@@ -84,7 +84,7 @@ bool Introduction::interruptableDelay(uint32 milliseconds) {
 	if (events.interruptableDelay(milliseconds)) {
 		if (events.type() == Common::EVENT_KEYDOWN)
 			return events.event().kbd.keycode == 27;
-		else if (LureEngine::getReference().quit())
+		else if (LureEngine::getReference().shouldQuit())
 			return true;
 		else if (events.type() == Common::EVENT_LBUTTONDOWN)
 			return false;

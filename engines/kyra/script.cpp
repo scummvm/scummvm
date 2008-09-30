@@ -178,7 +178,7 @@ bool EMCInterpreter::start(EMCState *script, int function) {
 }
 
 bool EMCInterpreter::isValid(EMCState *script) {
-	if (!script->ip || !script->dataPtr || _vm->quit())
+	if (!script->ip || !script->dataPtr || _vm->shouldQuit())
 		return false;
 	return true;
 }

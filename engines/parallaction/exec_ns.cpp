@@ -357,7 +357,7 @@ void CommandExec::runList(CommandList::iterator first, CommandList::iterator las
 	_ctxt.suspend = false;
 
 	for ( ; first != last; first++) {
-		if (_vm->quit())
+		if (_vm->shouldQuit())
 			break;
 
 		CommandPtr cmd = *first;

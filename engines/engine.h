@@ -79,6 +79,13 @@ private:
 	int _pauseLevel;
 
 public:
+	/** @name Overloadable methods
+	 *
+	 *  All Engine subclasses should consider overloading some or all of the following methods.
+	 */
+	//@{
+
+
 	Engine(OSystem *syst);
 	virtual ~Engine();
 
@@ -96,7 +103,9 @@ public:
 	 */
 	virtual int go() = 0;
 
-	/** Specific for each engine: prepare error string. */
+	/**
+	 * Prepare an error string, which is printed by the error() function.
+	 */
 	virtual void errorString(const char *buf_input, char *buf_output);
 
 	/**
@@ -104,6 +113,35 @@ public:
 	 * invoke the debugger when a severe error is reported.
 	 */
 	virtual GUI::Debugger *getDebugger() { return 0; }
+
+	/** Sync the engine's sound settings with the config manager
+	 */
+	virtual void syncSoundSettings();
+
+protected:
+
+	/**
+	 * Actual implementation of pauseEngine by subclasses. See there
+	 * for details.
+	 */
+	virtual void pauseEngineIntern(bool pause);
+
+	//@}
+
+
+public:
+
+	/**
+	 * Quit the engine, sends a Quit event to the Event Manager
+	 */
+	void quitGame();
+
+	// TODO: Rename "quit" to "shouldQuit"
+	/**
+	 * Return whether or not the ENGINE should quit
+	 */
+	bool shouldQuit() const { return (_eventMan->shouldQuit() || _eventMan->shouldRTL()); }
+
 
 	/**
 	 * Pause or resume the engine. This should stop/resume any audio playback
@@ -119,35 +157,26 @@ public:
 	void pauseEngine(bool pause);
 
 	/**
-	 * Quit the engine, sends a Quit event to the Event Manager
-	 */
-	void quitGame();
-
-	/**
 	 * Return whether the engine is currently paused or not.
 	 */
 	bool isPaused() const { return _pauseLevel != 0; }
 
 	/**
-	 * Return whether or not the ENGINE should quit
+	 * Run the Global Main Menu Dialog
 	 */
-	bool quit() const { return (_eventMan->shouldQuit() || _eventMan->shouldRTL()); }
+	void mainMenuDialog();
 
-	/** Run the Global Main Menu Dialog
+	/**
+	 * Determine whether the engine supports the specified MetaEngine feature.
 	 */
-	virtual void mainMenuDialog();
-
-	/** Sync the engine's sound settings with the config manager
-	 */
-	virtual void syncSoundSettings();
-
-	/** Determine whether the engine supports the specified MetaEngine feature
-	 */
-	virtual bool hasFeature(int f);
+	bool hasFeature(int f);
 
 public:
 
-	/** Setup the backend's graphics mode. */
+	/**
+	 * Setup the backend's graphics mode.
+	 * @todo Must be public because e.g. Saga's Gfx class wants to invoke it. Move it to a better place?
+	 */
 	void initCommonGFX(bool defaultTo1XScaler);
 
 	/** On some systems, check if the game appears to be run from CD. */
@@ -156,14 +185,12 @@ public:
 	/** Indicate whether an autosave should be performed. */
 	bool shouldPerformAutoSave(int lastSaveTime);
 
-	/** Initialized graphics and shows error message. */
-	void GUIErrorMessage(const Common::String msg);
-
 	/**
-	 * Actual implementation of pauseEngine by subclasses. See there
-	 * for details.
+	 * Initialized graphics and shows error message.
+	 * @todo Move this to a better place (not just engines need to access it, so it neither
+	 *       needs to nor should be contained in class Engine)
 	 */
-	virtual void pauseEngineIntern(bool pause);
+	void GUIErrorMessage(const Common::String msg);
 };
 
 extern Engine *g_engine;
