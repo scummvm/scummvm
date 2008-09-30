@@ -101,10 +101,10 @@ void ThemeBrowser::updateListing() {
 	// files in other places are ignored in this dialog
 	// TODO: let the user browse the complete FS too/only the FS?
 	if (ConfMan.hasKey("themepath"))
-		addDir(_themes, ConfMan.get("themepath"), 0);
+		addDir(_themes, Common::FilesystemNode(ConfMan.get("themepath")), 0);
 
 #ifdef DATA_PATH
-	addDir(_themes, DATA_PATH);
+	addDir(_themes, Common::FilesystemNode(DATA_PATH));
 #endif
 
 #ifdef MACOSX
@@ -112,7 +112,7 @@ void ThemeBrowser::updateListing() {
 	if (resourceUrl) {
 		char buf[256];
 		if (CFURLGetFileSystemRepresentation(resourceUrl, true, (UInt8 *)buf, 256)) {
-			Common::String resourcePath = buf;
+			Common::FilesystemNode resourcePath(buf);
 			addDir(_themes, resourcePath, 0);
 		}
 		CFRelease(resourceUrl);
@@ -120,9 +120,9 @@ void ThemeBrowser::updateListing() {
 #endif
 
 	if (ConfMan.hasKey("extrapath"))
-		addDir(_themes, ConfMan.get("extrapath"));
+		addDir(_themes, Common::FilesystemNode(ConfMan.get("extrapath")));
 
-	addDir(_themes, ".", 0);
+	addDir(_themes, Common::FilesystemNode("."), 0);
 
 	// Populate the ListWidget
 	Common::StringList list;
@@ -137,11 +137,9 @@ void ThemeBrowser::updateListing() {
 	draw();
 }
 
-void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
+void ThemeBrowser::addDir(ThList &list, const Common::FilesystemNode &node, int level) {
 	if (level < 0)
 		return;
-
-	Common::FilesystemNode node(dir);
 
 	if (!node.exists() || !node.isReadable())
 		return;
@@ -152,7 +150,7 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 
 	for (Common::FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
 		if (i->isDirectory()) {
-			addDir(list, i->getPath(), level-1);
+			addDir(list, *i, level-1);
 		} else {
 			Entry th;
 			if (isTheme(*i, th)) {
@@ -176,7 +174,8 @@ bool ThemeBrowser::isTheme(const Common::FilesystemNode &node, Entry &out) {
 	Common::String type;
 
 	out.file = node.getName();
-	for (int i = out.file.size()-1; out.file[i] != '.' && i > 0; --i) {
+	// Remove the filename extension
+	while (out.file.lastChar() != '.') {
 		out.file.deleteLastChar();
 	}
 	out.file.deleteLastChar();

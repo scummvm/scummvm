@@ -57,7 +57,7 @@ private:
 
 	void updateListing();
 
-	void addDir(ThList &list, const Common::String &dir, int level = 4);
+	void addDir(ThList &list, const Common::FilesystemNode &node, int level = 4);
 	bool isTheme(const Common::FilesystemNode &node, Entry &out);
 };
 
