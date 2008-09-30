@@ -1007,7 +1007,7 @@ const IIgsExeInfo *SoundMgr::getIIgsExeInfo(enum AgiGameID gameid) const {
 	return NULL;
 }
 
-bool IIgsSoundMgr::loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exeInfo) {
+bool IIgsSoundMgr::loadInstrumentHeaders(const Common::FilesystemNode &exePath, const IIgsExeInfo &exeInfo) {
 	bool loadedOk = false; // Was loading successful?
 	Common::File file;
 
@@ -1015,7 +1015,7 @@ bool IIgsSoundMgr::loadInstrumentHeaders(const Common::String &exePath, const II
 	file.open(exePath);
 	if (file.size() != (int32)exeInfo.exeSize) {
 		debugC(3, kDebugLevelSound, "Apple IIGS executable (%s) has wrong size (Is %d, should be %d)",
-			exePath.c_str(), file.size(), exeInfo.exeSize);
+			exePath.getPath().c_str(), file.size(), exeInfo.exeSize);
 	}
 
 	// Read the whole executable file into memory
@@ -1029,7 +1029,7 @@ bool IIgsSoundMgr::loadInstrumentHeaders(const Common::String &exePath, const II
 		uint16 instSetByteCount = data->readUint16LE();
 		if (instSetByteCount != exeInfo.instSet.byteCount) {
 			debugC(3, kDebugLevelSound, "Wrong instrument set size (Is %d, should be %d) in Apple IIGS executable (%s)",
-				instSetByteCount, exeInfo.instSet.byteCount, exePath.c_str());
+				instSetByteCount, exeInfo.instSet.byteCount, exePath.getPath().c_str());
 		}
 
 		// Check instrument set's md5sum
@@ -1038,7 +1038,7 @@ bool IIgsSoundMgr::loadInstrumentHeaders(const Common::String &exePath, const II
 		Common::md5_file_string(*data, md5str, exeInfo.instSet.byteCount);
 		if (scumm_stricmp(md5str, exeInfo.instSet.md5)) {
 			warning("Unknown Apple IIGS instrument set (md5: %s) in %s, trying to use it nonetheless",
-				md5str, exePath.c_str());
+				md5str, exePath.getPath().c_str());
 		}
 
 		// Read in the instrument set one instrument at a time
@@ -1051,7 +1051,7 @@ bool IIgsSoundMgr::loadInstrumentHeaders(const Common::String &exePath, const II
 		for (uint i = 0; i < exeInfo.instSet.instCount; i++) {
 			if (!instrument.read(*data)) {
 				warning("Error loading Apple IIGS instrument (%d. of %d) from %s, not loading more instruments",
-					i + 1, exeInfo.instSet.instCount, exePath.c_str());
+					i + 1, exeInfo.instSet.instCount, exePath.getPath().c_str());
 				break;
 			}
 			_instruments.push_back(instrument); // Add the successfully loaded instrument to the instruments array
@@ -1060,7 +1060,7 @@ bool IIgsSoundMgr::loadInstrumentHeaders(const Common::String &exePath, const II
 		// Loading was successful only if all instruments were loaded successfully
 		loadedOk = (_instruments.size() == exeInfo.instSet.instCount);
 	} else // Couldn't read enough data from the executable file
-		warning("Error loading instruments from Apple IIGS executable (%s)", exePath.c_str());
+		warning("Error loading instruments from Apple IIGS executable (%s)", exePath.getPath().c_str());
 
 	return loadedOk;
 }
@@ -1078,7 +1078,7 @@ bool SoundMgr::convertWave(Common::SeekableReadStream &source, int8 *dest, uint 
 	return !source.ioFailed();
 }
 
-bool IIgsSoundMgr::loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo) {
+bool IIgsSoundMgr::loadWaveFile(const Common::FilesystemNode &wavePath, const IIgsExeInfo &exeInfo) {
 	Common::File file;
 
 	// Open the wave file and read it into memory
@@ -1101,7 +1101,7 @@ bool IIgsSoundMgr::loadWaveFile(const Common::String &wavePath, const IIgsExeInf
 		_wave.resize(uint8Wave->size());
 		return SoundMgr::convertWave(*uint8Wave, _wave.begin(), uint8Wave->size());
 	} else { // Couldn't read the wave file or it had incorrect size
-		warning("Error loading Apple IIGS wave file (%s), not loading instruments", wavePath.c_str());
+		warning("Error loading Apple IIGS wave file (%s), not loading instruments", wavePath.getPath().c_str());
 		return false;
 	}
 }
@@ -1178,7 +1178,7 @@ bool SoundMgr::loadInstruments() {
 	// None of the tested SIERRASTANDARD-files have zeroes in them so
 	// there's no need to check for prematurely ending samples here.
 	_gsSound.setProgramChangeMapping(&exeInfo->instSet.progToInst);
-	return _gsSound.loadWaveFile(waveFsnode->getPath(), *exeInfo) && _gsSound.loadInstrumentHeaders(exeFsnode->getPath(), *exeInfo);
+	return _gsSound.loadWaveFile(*waveFsnode, *exeInfo) && _gsSound.loadInstrumentHeaders(*exeFsnode, *exeInfo);
 }
 
 void SoundMgr::fillAudio(void *udata, int16 *stream, uint len) {
