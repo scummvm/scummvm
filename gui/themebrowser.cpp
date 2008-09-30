@@ -89,7 +89,7 @@ void ThemeBrowser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 void ThemeBrowser::updateListing() {
 	_themes.clear();
 
-	// classic is always build in
+	// classic is always built-in
 	Entry th;
 	th.name = "ScummVM Classic Theme (Builtin Version)";
 	th.file = "builtin";
@@ -100,7 +100,7 @@ void ThemeBrowser::updateListing() {
 	// files in other places are ignored in this dialog
 	// TODO: let the user browse the complete FS too/only the FS?
 	if (ConfMan.hasKey("themepath"))
-		addDir(_themes, ConfMan.get("themepath"), 0);
+		addDir(_themes, ConfMan.get("themepath"));
 
 #ifdef DATA_PATH
 	addDir(_themes, DATA_PATH);
@@ -112,7 +112,7 @@ void ThemeBrowser::updateListing() {
 		char buf[256];
 		if (CFURLGetFileSystemRepresentation(resourceUrl, true, (UInt8 *)buf, 256)) {
 			Common::String resourcePath = buf;
-			addDir(_themes, resourcePath, 0);
+			addDir(_themes, resourcePath);
 		}
 		CFRelease(resourceUrl);
 	}
@@ -121,7 +121,7 @@ void ThemeBrowser::updateListing() {
 	if (ConfMan.hasKey("extrapath"))
 		addDir(_themes, ConfMan.get("extrapath"));
 
-	addDir(_themes, ".", 0);
+	addDir(_themes, ".");
 
 	// Populate the ListWidget
 	Common::StringList list;
@@ -136,9 +136,7 @@ void ThemeBrowser::updateListing() {
 	draw();
 }
 
-void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
-	if (level < 0)
-		return;
+void ThemeBrowser::addDir(ThList &list, const Common::String &dir) {
 
 	Common::FilesystemNode node(dir);
 

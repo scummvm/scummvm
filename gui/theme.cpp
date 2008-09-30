@@ -134,6 +134,8 @@ bool Theme::themeConfigUseable(const Common::FilesystemNode &node, Common::Strin
 	Common::String stxHeader;
 	bool foundHeader = false;
 	
+// Not needed atm, using FSNodes.
+/*	
 	if (ConfMan.hasKey("themepath"))
 		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
 
@@ -143,10 +145,11 @@ bool Theme::themeConfigUseable(const Common::FilesystemNode &node, Common::Strin
 
 	if (ConfMan.hasKey("extrapath"))
 		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
+*/
 		
-	if (node.getName().hasSuffix(".zip")) {		
+	if (node.getName().hasSuffix(".zip")) {
+		
 #ifdef USE_ZLIB
-
 		Common::ZipArchive zipArchive(node.getPath().c_str());
 		if (zipArchive.hasFile("THEMERC")) {
 			Common::FilePtr stream(zipArchive.openFile("THEMERC"));
@@ -157,7 +160,8 @@ bool Theme::themeConfigUseable(const Common::FilesystemNode &node, Common::Strin
 		}
 #else
 		return false;
-#endif	
+#endif
+
 	} else if (node.isDirectory()) {			
 		Common::FilesystemNode headerfile = node.getChild("THEMERC");
 		if (!headerfile.exists() || !headerfile.isReadable() || headerfile.isDirectory())
