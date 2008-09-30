@@ -96,7 +96,12 @@ DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext
 
 	_compressedStream = NULL;
 
-	if (scumm_stricmp(_file->name(), "music.cmp") == 0 || scumm_stricmp(_file->name(), "musicd.cmp") == 0) {
+	// FIXME: It is a bad idea to use the File::getName() method to distinguish
+	// files here (note that it is for debugging purposes only, though that was
+	// not correctly documented in the past).
+	// A better way is to keep track of this via some flag, which indicates
+	// whether the music file contains compressed data.
+	if (scumm_stricmp(_file->getName(), "music.cmp") == 0 || scumm_stricmp(_file->getName(), "musicd.cmp") == 0) {
 		// Read compressed header to determine compression type
 		_file->seek((long)resourceData->offset, SEEK_SET);
 		_file->read(compressedHeader, 9);

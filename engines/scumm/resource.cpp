@@ -676,7 +676,7 @@ int ScummEngine::loadResource(int type, int idx) {
 		if (tag != _res->tags[type] && _game.heversion < 70) {
 			error("%s %d not in room %d at %d+%d in file %s",
 					_res->name[type], idx, roomNr,
-					_fileOffset, fileOffs, _fileHandle->name());
+					_fileOffset, fileOffs, _fileHandle->getName());
 		}
 
 		size = _fileHandle->readUint32BE();
