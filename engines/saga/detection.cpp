@@ -50,7 +50,6 @@ struct SAGAGameDescription {
 	const GameFontDescription *fontDescriptions;
 	const GameSoundInfo *voiceInfo;
 	const GameSoundInfo *sfxInfo;
-	int patchesCount;
 	const GamePatchDescription *patchDescriptions;
 };
 
@@ -95,7 +94,6 @@ Common::Platform SagaEngine::getPlatform() const { return _gameDescription->desc
 int SagaEngine::getGameNumber() const { return _gameNumber; }
 int SagaEngine::getStartSceneNumber() const { return _gameDescription->startSceneNumber; }
 
-int SagaEngine::getPatchesCount() const { return _gameDescription->patchesCount; }
 const GamePatchDescription *SagaEngine::getPatchDescriptions() const { return _gameDescription->patchDescriptions; }
 const Common::ADGameFileDescription *SagaEngine::getFilesDescriptions() const { return _gameDescription->desc.filesDescriptions; }
 

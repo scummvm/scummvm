@@ -160,7 +160,8 @@ static const GamePatchDescription ITEPatch_Files[] = {
 	{   "credit4n.dlt", GAME_RESOURCEFILE, 1797, NULL}, // PC
 	{   "credit4m.dlt", GAME_RESOURCEFILE, 1797, NULL}, // Macintosh
 	{       "p2_a.voc", GAME_VOICEFILE,       4, NULL},
-	{       "p2_a.iaf", GAME_VOICEFILE,       4, &ITEPC_GameSound}
+	{       "p2_a.iaf", GAME_VOICEFILE,       4, &ITEPC_GameSound},
+	{             NULL,              0,       0, NULL}
 };
 
 static const GamePatchDescription ITEMacPatch_Files[] = {
@@ -171,7 +172,8 @@ static const GamePatchDescription ITEMacPatch_Files[] = {
 	{      "wyrm4.dlt", GAME_RESOURCEFILE, 1533, NULL},
 	{   "credit3m.dlt", GAME_RESOURCEFILE, 1796, NULL},
 	{   "credit4m.dlt", GAME_RESOURCEFILE, 1797, NULL},
-	{       "p2_a.iaf", GAME_VOICEFILE,       4, &MAC_GameSound}
+	{       "p2_a.iaf", GAME_VOICEFILE,       4, &MAC_GameSound},
+	{             NULL,              0,       0, NULL}
 };
 
 static const SAGAGameDescription gameDescriptions[] = {
@@ -209,7 +211,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEDEMO_GameFonts,
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
-		0,
 		NULL,
 	},
 
@@ -237,7 +238,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEDEMO_GameVoice,
 		&MAC_GameSound,
-		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 	},
 
@@ -266,7 +266,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEDEMO_GameVoice,
 		&MAC_GameSound,
-		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 	},
 
@@ -295,7 +294,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEDEMO_GameVoice,
 		&ITEPC_GameSound,
-		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
 
@@ -324,7 +322,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEWINDEMO1_GameSound,
 		&ITEWINDEMO1_GameSound,
-		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
 
@@ -360,7 +357,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEMACCD_G_GameSound,
 		&ITEMACCD_G_GameSound,
-		0,
 		NULL,
 	},
 
@@ -387,7 +383,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&MAC_GameSound,
 		&MAC_GameSound,
-		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 	},
 
@@ -422,7 +417,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&MAC_GameSound,
 		&ITEPC_GameSound,
-		0,
 		NULL,
 	},
 
@@ -454,7 +448,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&MAC_GameSound,
 		&ITEPC_GameSound,
-		0,
 		NULL,
 	},
 
@@ -481,7 +474,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&ITEPC_GameSound,
 		&ITEPC_GameSound,
-		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
 
@@ -508,7 +500,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&ITEPC_GameSound,
 		&ITEPC_GameSound,
-		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
 
@@ -535,7 +526,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&ITEPC_GameSound,
 		&ITEPC_GameSound,
-		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
 
@@ -563,7 +553,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&ITEPC_GameSound,
 		&ITEPC_GameSound,
-		0,
 		NULL,
 	},
 
@@ -593,7 +582,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
-		0,
 		NULL,
 	},
 
@@ -620,7 +608,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
-		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
 
@@ -647,7 +634,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
-		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
 
@@ -683,7 +669,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMDEMO_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		0,
 		NULL,
 	},
 
@@ -718,7 +703,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		0,
 		NULL,
 	},
 
@@ -751,7 +735,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		0,
 		NULL,
 	},
 
@@ -782,7 +765,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		0,
 		NULL,
 	},
 
@@ -813,7 +795,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		0,
 		NULL,
 	},
 
@@ -845,7 +826,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		0,
 		NULL,
 	},
 
@@ -876,7 +856,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		0,
 		NULL,
 	},
 	// I Have No Mouth And I Must Scream - Mac English CD
@@ -904,10 +883,9 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&MAC_GameSound,
 		&MAC_GameSound,
-		0,
 		NULL,
 	},
-	{ AD_TABLE_END_MARKER, 0, 0, 0, 0, NULL, 0, NULL, NULL, NULL, 0, NULL }
+	{ AD_TABLE_END_MARKER, 0, 0, 0, 0, NULL, 0, NULL, NULL, NULL, NULL }
 };
 
 } // End of namespace Saga

@@ -263,7 +263,6 @@ bool Resource::loadMacContext(ResourceContext *context) {
 
 bool Resource::loadContext(ResourceContext *context) {
 	size_t i;
-	int j;
 	const GamePatchDescription *patchDescription;
 	ResourceData *resourceData;
 	uint16 subjectResourceType;
@@ -320,8 +319,7 @@ bool Resource::loadContext(ResourceContext *context) {
 	}
 
 	//process external patch files
-	for (j = 0; j < _vm->getPatchesCount(); j++) {
-		patchDescription = &_vm->getPatchDescriptions()[j];
+	for (patchDescription = _vm->getPatchDescriptions(); patchDescription->fileName; ++patchDescription) {
 		if ((patchDescription->fileType & context->fileType) != 0) {
 			if (patchDescription->resourceId < context->count) {
 				resourceData = &context->table[patchDescription->resourceId];
