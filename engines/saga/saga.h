@@ -643,7 +643,6 @@ public:
 	int getGameNumber() const;
 	int getStartSceneNumber() const;
 
-	int getPatchesCount() const;
 	const GamePatchDescription *getPatchDescriptions() const;
 
 	const Common::ADGameFileDescription *getFilesDescriptions() const;
