@@ -1400,14 +1400,15 @@ int ZipArchive::getAllNames(Common::StringList &list) {
 		return 0;
 
 	char fileNameBuffer[UNZ_MAXFILENAMEINZIP + 1];
-	list.clear();
+	int fileCount = 0;
 
 	do {
 		unzGetCurrentFileInfo(_zipFile, 0, fileNameBuffer, UNZ_MAXFILENAMEINZIP + 1, 0, 0, 0, 0);
 		list.push_back(Common::String(fileNameBuffer));
+		fileCount++;
 	} while (unzGoToNextFile(_zipFile) == UNZ_OK);
 
-	return list.size();
+	return fileCount;
 }
 
 /*
