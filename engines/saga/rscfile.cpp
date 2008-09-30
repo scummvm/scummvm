@@ -319,7 +319,7 @@ bool Resource::loadContext(ResourceContext *context) {
 	}
 
 	//process external patch files
-	for (patchDescription = _vm->getPatchDescriptions(); patchDescription; ++patchDescription) {
+	for (patchDescription = _vm->getPatchDescriptions(); patchDescription && patchDescription->fileName; ++patchDescription) {
 		if ((patchDescription->fileType & context->fileType) != 0) {
 			if (patchDescription->resourceId < context->count) {
 				resourceData = &context->table[patchDescription->resourceId];
