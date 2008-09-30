@@ -1010,12 +1010,8 @@ void ScummEngine_v60he::o60_openFile() {
 			// TODO / FIXME: Consider using listSavefiles to avoid unneccessary openForLoading calls
 			_hInFileTable[slot] = _saveFileMan->openForLoading(filename);
 			if (_hInFileTable[slot] == 0) {
-				Common::File *f = new Common::File();
-				f->open(filename);
-				if (!f->isOpen())
-					delete f;
-				else
-					_hInFileTable[slot] = f;
+				Common::FilesystemNode node(filename);
+				_hInFileTable[slot] = node.openForReading();
 			}
 			break;
 		case 2:

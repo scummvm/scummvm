@@ -159,15 +159,16 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 
 	/* initiate stuff */
 	fi.memory = NULL;
-	fi.file = new Common::File;
+	fi.file = NULL;
 
 	if (_fileName.empty()) { // We are running for the first time
 		_fileName = _vm->generateFilename(-3);
 	}
 
 	/* get file size */
-	fi.file->open(_fileName);
-	if (!fi.file->isOpen()) {
+	Common::FilesystemNode node(_fileName);
+	fi.file = node.openForReading();
+	if (!fi.file) {
 		error("Cannot open file %s", _fileName.c_str());
 	}
 
@@ -199,12 +200,8 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 
 	/* free stuff and close file */
 	cleanup:
-	if (fi.file != NULL) {
-		fi.file->close();
-		delete fi.file;
-	}
-	if (fi.memory != NULL)
-		free(fi.memory);
+	delete fi.file;
+	free(fi.memory);
 
 	return ressize;
 }
