@@ -173,14 +173,14 @@ bool WagFileParser::checkWagVersion(Common::SeekableReadStream &stream) {
 	}
 }
 
-bool WagFileParser::parse(const char *filename) {
+bool WagFileParser::parse(const Common::FilesystemNode &node) {
 	Common::File file;
 	WagProperty property; // Temporary property used for reading
 	Common::MemoryReadStream *stream = NULL; // The file is to be read fully into memory and handled using this
 
 	_parsedOk = false; // We haven't parsed the file yet
 
-	if (file.open(filename)) { // Open the file
+	if (file.open(node)) { // Open the file
 		stream = file.readStream(file.size()); // Read the file into memory
 		if (stream != NULL && stream->size() == file.size()) { // Check that the whole file was read into memory
 			if (checkWagVersion(*stream)) { // Check that WinAGI version string is valid
@@ -202,15 +202,15 @@ bool WagFileParser::parse(const char *filename) {
 				_parsedOk = endOfProperties(*stream) && property.readOk();
 
 				if (!_parsedOk) // Error parsing stream
-					warning("Error parsing WAG file (%s). WAG file ignored", filename);
+					warning("Error parsing WAG file (%s). WAG file ignored", node.getPath().c_str());
 			} else // Invalid WinAGI version string or it couldn't be read
-				warning("Invalid WAG file (%s) version or error reading it. WAG file ignored", filename);
+				warning("Invalid WAG file (%s) version or error reading it. WAG file ignored", node.getPath().c_str());
 		} else // Couldn't fully read file into memory
-			warning("Error reading WAG file (%s) into memory. WAG file ignored", filename);
+			warning("Error reading WAG file (%s) into memory. WAG file ignored", node.getPath().c_str());
 	} else // Couldn't open file
-		warning("Couldn't open WAG file (%s). WAG file ignored", filename);
+		warning("Couldn't open WAG file (%s). WAG file ignored", node.getPath().c_str());
 
-	if (stream != NULL) delete stream; // If file was read into memory, deallocate that buffer
+	delete stream;
 	return _parsedOk;
 }
 
