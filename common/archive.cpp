@@ -352,6 +352,10 @@ void SearchManager::clear() {
 	// But we give them a lower priority than the default priority (which is 0),
 	// so that archives added by client code are searched first.
 	g_system->addSysArchivesToSearchSet(*this, -1);
+
+	// Add the current dir as a very last resort.
+	// See also bug #2137680.
+	add(".", ArchivePtr(new FSDirectory(".")), -2);
 }
 
 } // namespace Common
