@@ -25,9 +25,9 @@
 #ifndef ENGINES_ENGINE_H
 #define ENGINES_ENGINE_H
 
+#include "common/scummsys.h"
 #include "common/events.h"
 #include "common/fs.h"
-#include "common/scummsys.h"
 #include "common/str.h"
 
 class OSystem;
@@ -45,7 +45,16 @@ namespace GUI {
 	class Dialog;
 }
 
-using GUI::Dialog;
+/**
+ * Setup the backend's graphics mode.
+ */
+void initCommonGFX(bool defaultTo1XScaler);
+
+/**
+ * Initialized graphics and shows error message.
+ */
+void GUIErrorMessage(const Common::String msg);
+
 
 class Engine {
 public:
@@ -57,19 +66,14 @@ protected:
 	Common::EventManager *_eventMan;
 	Common::SaveFileManager *_saveFileMan;
 	
-	Dialog *_mainMenuDialog;
-	virtual int runDialog(Dialog &dialog);
+	GUI::Dialog *_mainMenuDialog;
+	virtual int runDialog(GUI::Dialog &dialog);
 
 	const Common::String _targetName; // target name for saves
 	
 	const Common::FSNode _gameDataDir;
 
 private:
-	/**
-	 * The autosave interval, given in second. Used by shouldPerformAutoSave.
-	 */
-	int _autosavePeriod;
-
 	/**
 	 * The pause level, 0 means 'running', a positive value indicates
 	 * how often the engine has been paused (and hence how often it has
@@ -79,12 +83,12 @@ private:
 	int _pauseLevel;
 
 public:
+
 	/** @name Overloadable methods
 	 *
 	 *  All Engine subclasses should consider overloading some or all of the following methods.
 	 */
 	//@{
-
 
 	Engine(OSystem *syst);
 	virtual ~Engine();
@@ -114,7 +118,11 @@ public:
 	 */
 	virtual GUI::Debugger *getDebugger() { return 0; }
 
-	/** Sync the engine's sound settings with the config manager
+	/**
+	 * Notify the engine that the sound settings in the config manager may have
+	 * changed and that it hence should adjust any internal volume etc. values
+	 * accordingly.
+	 * @todo find a better name for this
 	 */
 	virtual void syncSoundSettings();
 
@@ -132,15 +140,16 @@ protected:
 public:
 
 	/**
-	 * Quit the engine, sends a Quit event to the Event Manager
+	 * Request the engine to quit. Sends a EVENT_QUIT event to the Event
+	 * Manager.
 	 */
 	void quitGame();
 
 	/**
-	 * Return whether or not the ENGINE should quit
+	 * Return whether the ENGINE should quit respectively should return to the
+	 * launcher.
 	 */
 	bool shouldQuit() const { return (_eventMan->shouldQuit() || _eventMan->shouldRTL()); }
-
 
 	/**
 	 * Pause or resume the engine. This should stop/resume any audio playback
@@ -163,7 +172,7 @@ public:
 	/**
 	 * Run the Global Main Menu Dialog
 	 */
-	void mainMenuDialog();
+	void openMainMenuDialog();
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.
@@ -172,24 +181,16 @@ public:
 
 public:
 
-	/**
-	 * Setup the backend's graphics mode.
-	 * @todo Must be public because e.g. Saga's Gfx class wants to invoke it. Move it to a better place?
-	 */
-	void initCommonGFX(bool defaultTo1XScaler);
-
 	/** On some systems, check if the game appears to be run from CD. */
 	void checkCD();
 
-	/** Indicate whether an autosave should be performed. */
-	bool shouldPerformAutoSave(int lastSaveTime);
+protected:
 
 	/**
-	 * Initialized graphics and shows error message.
-	 * @todo Move this to a better place (not just engines need to access it, so it neither
-	 *       needs to nor should be contained in class Engine)
+	 * Indicate whether an autosave should be performed.
 	 */
-	void GUIErrorMessage(const Common::String msg);
+	bool shouldPerformAutoSave(int lastSaveTime);
+
 };
 
 extern Engine *g_engine;

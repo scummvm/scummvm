@@ -106,7 +106,7 @@ bool ResourceManager::init() {
 	Common::File file;
 
 	if (!file.open("resource.inf")) {
-		_vm->GUIErrorMessage("Broken Sword 2: Cannot open resource.inf");
+		GUIErrorMessage("Broken Sword 2: Cannot open resource.inf");
 		return false;
 	}
 
@@ -117,7 +117,7 @@ bool ResourceManager::init() {
 		_resFiles[_totalClusters].numEntries = -1;
 		_resFiles[_totalClusters].entryTab = NULL;
 		if (++_totalClusters >= MAX_res_files) {
-			_vm->GUIErrorMessage("Broken Sword 2: Too many entries in resource.inf");
+			GUIErrorMessage("Broken Sword 2: Too many entries in resource.inf");
 			return false;
 		}
 	}
@@ -126,7 +126,7 @@ bool ResourceManager::init() {
 
 	// Now load in the binary id to res conversion table
 	if (!file.open("resource.tab")) {
-		_vm->GUIErrorMessage("Broken Sword 2: Cannot open resource.tab");
+		GUIErrorMessage("Broken Sword 2: Cannot open resource.tab");
 		return false;
 	}
 
@@ -143,14 +143,14 @@ bool ResourceManager::init() {
 
 	if (file.ioFailed()) {
 		file.close();
-		_vm->GUIErrorMessage("Broken Sword 2: Cannot read resource.tab");
+		GUIErrorMessage("Broken Sword 2: Cannot read resource.tab");
 		return false;
 	}
 
 	file.close();
 
 	if (!file.open("cd.inf")) {
-		_vm->GUIErrorMessage("Broken Sword 2: Cannot open cd.inf");
+		GUIErrorMessage("Broken Sword 2: Cannot open cd.inf");
 		return false;
 	}
 
@@ -164,7 +164,7 @@ bool ResourceManager::init() {
 		if (file.ioFailed()) {
 			delete cdInf;
 			file.close();
-			_vm->GUIErrorMessage("Broken Sword 2: Cannot read cd.inf");
+			GUIErrorMessage("Broken Sword 2: Cannot read cd.inf");
 			return false;
 		}
 
@@ -190,7 +190,7 @@ bool ResourceManager::init() {
 		// the resource manager will print a fatal error.
 
 		if (cdInf[i].cd == 0 && !Common::File::exists((char *)cdInf[i].clusterName)) {
-			_vm->GUIErrorMessage("Broken Sword 2: Cannot find " + Common::String((char *)cdInf[i].clusterName));
+			GUIErrorMessage("Broken Sword 2: Cannot find " + Common::String((char *)cdInf[i].clusterName));
 			delete[] cdInf;
 			return false;
 		}
@@ -206,7 +206,7 @@ bool ResourceManager::init() {
 
 		if (j == _totalClusters) {
 			delete[] cdInf;
-			_vm->GUIErrorMessage(Common::String(_resFiles[i].fileName) + " is not in cd.inf");
+			GUIErrorMessage(Common::String(_resFiles[i].fileName) + " is not in cd.inf");
 			return false;
 		}
 

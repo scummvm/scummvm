@@ -64,7 +64,7 @@ bool Resource::reset() {
 
 	if (!loadPakFile(StaticResource::staticDataFilename()) || !StaticResource::checkKyraDat(this)) {
 		Common::String errorMessage = "You're missing the '" + StaticResource::staticDataFilename() + "' file or it got corrupted, (re)get it from the ScummVM website";
-		_vm->GUIErrorMessage(errorMessage);
+		GUIErrorMessage(errorMessage);
 		error(errorMessage.c_str());
 	}
 

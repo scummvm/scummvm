@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/savefile.h"
@@ -251,7 +249,7 @@ void LureEngine::GUIError(const char *msg, ...) {
 	vsnprintf(buffer, STRINGBUFLEN, msg, va);
 	va_end(va);
 
-	Engine::GUIErrorMessage(buffer);
+	GUIErrorMessage(buffer);
 }
 
 void LureEngine::syncSoundSettings() {	

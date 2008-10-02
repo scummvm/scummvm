@@ -192,7 +192,7 @@ void Screen::setResolution() {
 				_system->initSize(960, 400);
 			else
 				_system->initSize(640, 400);
-			_vm->initCommonGFX(true);
+			initCommonGFX(true);
 		_system->endGFXTransaction();
 	} else {
 		_system->beginGFXTransaction();
@@ -200,7 +200,7 @@ void Screen::setResolution() {
 				_system->initSize(640, 200);
 			else
 				_system->initSize(320, 200);
-			_vm->initCommonGFX(false);
+			initCommonGFX(false);
 		_system->endGFXTransaction();
 	}
 

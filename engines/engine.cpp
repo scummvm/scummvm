@@ -61,7 +61,6 @@ Engine::Engine(OSystem *syst)
 		_mainMenuDialog(NULL) {
 
 	g_engine = this;
-	_autosavePeriod = ConfMan.getInt("autosave_period");
 
 	// FIXME: Get rid of the following again. It is only here temporarily.
 	// We really should never run with a non-working Mixer, so ought to handle
@@ -81,7 +80,7 @@ Engine::~Engine() {
 	g_engine = NULL;
 }
 
-void Engine::initCommonGFX(bool defaultTo1XScaler) {
+void initCommonGFX(bool defaultTo1XScaler) {
 	const Common::ConfigManager::Domain *transientDomain = ConfMan.getDomain(Common::ConfigManager::kTransientDomain);
 	const Common::ConfigManager::Domain *gameDomain = ConfMan.getActiveDomain();
 
@@ -101,11 +100,11 @@ void Engine::initCommonGFX(bool defaultTo1XScaler) {
 		// FIXME: As a hack, we use "1x" here. Would be nicer to use
 		// getDefaultGraphicsMode() instead, but right now, we do not specify
 		// whether that is a 1x scaler or not...
-		_system->setGraphicsMode("1x");
+		g_system->setGraphicsMode("1x");
 	} else {
 		// Override global scaler with any game-specific define
 		if (ConfMan.hasKey("gfx_mode")) {
-			_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+			g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 		}
 	}
 
@@ -118,11 +117,22 @@ void Engine::initCommonGFX(bool defaultTo1XScaler) {
 
 	// (De)activate aspect-ratio correction as determined by the config settings
 	if (gameDomain && gameDomain->contains("aspect_ratio"))
-		_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
 
 	// (De)activate fullscreen mode as determined by the config settings
 	if (gameDomain && gameDomain->contains("fullscreen"))
-		_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+}
+
+void GUIErrorMessage(const Common::String msg) {
+	g_system->setWindowCaption("Error");
+	g_system->beginGFXTransaction();
+		initCommonGFX(false);
+		g_system->initSize(320, 200);
+	g_system->endGFXTransaction();
+
+	GUI::MessageDialog dialog(msg);
+	dialog.runModal();
 }
 
 void Engine::checkCD() {
@@ -178,22 +188,12 @@ void Engine::checkCD() {
 
 bool Engine::shouldPerformAutoSave(int lastSaveTime) {
 	const int diff = _system->getMillis() - lastSaveTime;
-	return _autosavePeriod != 0 && diff > _autosavePeriod * 1000;
+	const int autosavePeriod = ConfMan.getInt("autosave_period");
+	return autosavePeriod != 0 && diff > autosavePeriod * 1000;
 }
 
 void Engine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
-}
-
-void Engine::GUIErrorMessage(const Common::String msg) {
-	_system->setWindowCaption("Error");
-	_system->beginGFXTransaction();
-		initCommonGFX(false);
-		_system->initSize(320, 200);
-	_system->endGFXTransaction();
-
-	GUI::MessageDialog dialog(msg);
-	dialog.runModal();
 }
 
 void Engine::pauseEngine(bool pause) {
@@ -216,14 +216,14 @@ void Engine::pauseEngineIntern(bool pause) {
 	_mixer->pauseAll(pause);
 }
 
-void Engine::mainMenuDialog() {
+void Engine::openMainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
 	runDialog(*_mainMenuDialog);
 	syncSoundSettings();
 }
 
-int Engine::runDialog(Dialog &dialog) {
+int Engine::runDialog(GUI::Dialog &dialog) {
 	pauseEngine(true);
 	int result = dialog.runModal();
 	pauseEngine(false);
