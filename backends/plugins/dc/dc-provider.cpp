@@ -84,11 +84,11 @@ public:
 };
 
 
-Plugin* DCPluginProvider::createPlugin(const Common::FilesystemNode &node) const {
+Plugin* DCPluginProvider::createPlugin(const Common::FSNode &node) const {
 	return new DCPlugin(node.getPath());
 }
 
-bool DCPluginProvider::isPluginFilename(const Common::FilesystemNode &node) const {
+bool DCPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
 	Common::String filename = node.getName();
 	if (!filename.hasSuffix(".PLG"))

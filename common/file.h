@@ -34,7 +34,7 @@
 
 namespace Common {
 
-class FilesystemNode;
+class FSNode;
 
 /**
  * TODO: vital to document this core class properly!!! For both users and implementors
@@ -52,8 +52,8 @@ public:
 	static void addDefaultDirectory(const String &directory);
 	static void addDefaultDirectoryRecursive(const String &directory, int level = 4);
 
-	static void addDefaultDirectory(const FilesystemNode &directory);
-	static void addDefaultDirectoryRecursive(const FilesystemNode &directory, int level = 4);
+	static void addDefaultDirectory(const FSNode &directory);
+	static void addDefaultDirectoryRecursive(const FSNode &directory, int level = 4);
 
 	static void resetDefaultDirectories();
 
@@ -100,7 +100,7 @@ public:
 	 * @param	archive		the archive in which to search for the file
 	 * @return	true if file was opened successfully, false otherwise
 	 */
-	virtual bool open(const FilesystemNode &node);
+	virtual bool open(const FSNode &node);
 
 	/**
 	 * Try to 'open' the given stream. That is, we just wrap around it, and if stream
@@ -161,7 +161,7 @@ public:
 	virtual ~DumpFile();
 
 	virtual bool open(const String &filename);
-	virtual bool open(const FilesystemNode &node);
+	virtual bool open(const FSNode &node);
 
 	virtual void close();
 

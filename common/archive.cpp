@@ -54,7 +54,7 @@ int Archive::matchPattern(StringList &list, const String &pattern) {
 }
 
 
-FSDirectory::FSDirectory(const FilesystemNode &node, int depth)
+FSDirectory::FSDirectory(const FSNode &node, int depth)
   : _node(node), _cached(false), _depth(depth) {
 }
 
@@ -65,11 +65,11 @@ FSDirectory::FSDirectory(const String &name, int depth)
 FSDirectory::~FSDirectory() {
 }
 
-FilesystemNode FSDirectory::getFSNode() const {
+FSNode FSDirectory::getFSNode() const {
 	return _node;
 }
 
-FilesystemNode FSDirectory::lookupCache(NodeCache &cache, const String &name) {
+FSNode FSDirectory::lookupCache(NodeCache &cache, const String &name) {
 	// make caching as lazy as possible
 	if (!name.empty()) {
 		if (!_cached) {
@@ -81,7 +81,7 @@ FilesystemNode FSDirectory::lookupCache(NodeCache &cache, const String &name) {
 			return cache[name];
 	}
 
-	return FilesystemNode();
+	return FSNode();
 }
 
 bool FSDirectory::hasFile(const String &name) {
@@ -89,7 +89,7 @@ bool FSDirectory::hasFile(const String &name) {
 		return false;
 	}
 
-	FilesystemNode node = lookupCache(_fileCache, name);
+	FSNode node = lookupCache(_fileCache, name);
 	return node.exists();
 }
 
@@ -98,13 +98,13 @@ SeekableReadStream *FSDirectory::openFile(const String &name) {
 		return 0;
 	}
 
-	FilesystemNode node = lookupCache(_fileCache, name);
+	FSNode node = lookupCache(_fileCache, name);
 
 	if (!node.exists()) {
-		warning("FSDirectory::openFile: FilesystemNode does not exist");
+		warning("FSDirectory::openFile: FSNode does not exist");
 		return 0;
 	} else if (node.isDirectory()) {
-		warning("FSDirectory::openFile: FilesystemNode is a directory");
+		warning("FSDirectory::openFile: FSNode is a directory");
 		return 0;
 	}
 
@@ -121,17 +121,17 @@ FSDirectory *FSDirectory::getSubDirectory(const String &name) {
 		return 0;
 	}
 
-	FilesystemNode node = lookupCache(_subDirCache, name);
+	FSNode node = lookupCache(_subDirCache, name);
 	return new FSDirectory(node);
 }
 
-void FSDirectory::cacheDirectoryRecursive(FilesystemNode node, int depth, const String& prefix) {
+void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) {
 	if (depth <= 0) {
 		return;
 	}
 
 	FSList list;
-	node.getChildren(list, FilesystemNode::kListAll, false);
+	node.getChildren(list, FSNode::kListAll, false);
 
 	FSList::iterator it = list.begin();
 	for ( ; it != list.end(); it++) {

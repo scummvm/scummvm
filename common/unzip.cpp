@@ -1363,7 +1363,7 @@ class ZipArchiveMember : public ArchiveMember {
 	unzFile _zipFile;
 
 public:
-	ZipArchiveMember(FilesystemNode &node) : _node(node) {
+	ZipArchiveMember(FSNode &node) : _node(node) {
 	}
 
 	String getName() const {

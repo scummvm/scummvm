@@ -79,7 +79,7 @@ public:
 };
 
 
-Plugin* SDLPluginProvider::createPlugin(const Common::FilesystemNode &node) const {
+Plugin* SDLPluginProvider::createPlugin(const Common::FSNode &node) const {
 	return new SDLPlugin(node.getPath());
 }
 

@@ -93,21 +93,21 @@ typedef SharedPtr<Archive> ArchivePtr;
  * Searching is case-insensitive, as the main intended goal is supporting
  * retrieval of game data. First case-insensitive match is returned when
  * searching, thus making FSDirectory heavily dependant on the underlying
- * FilesystemNode implementation.
+ * FSNode implementation.
  */
 class FSDirectory : public Archive {
-	FilesystemNode	_node;
+	FSNode	_node;
 
 	// Caches are case insensitive, clashes are dealt with when creating
 	// Key is stored in lowercase.
-	typedef HashMap<String, FilesystemNode, IgnoreCase_Hash, IgnoreCase_EqualTo> NodeCache;
+	typedef HashMap<String, FSNode, IgnoreCase_Hash, IgnoreCase_EqualTo> NodeCache;
 	NodeCache	_fileCache, _subDirCache;
 
 	// look for a match
-	FilesystemNode lookupCache(NodeCache &cache, const String &name);
+	FSNode lookupCache(NodeCache &cache, const String &name);
 
 	// cache management
-	void cacheDirectoryRecursive(FilesystemNode node, int depth, const String& prefix);
+	void cacheDirectoryRecursive(FSNode node, int depth, const String& prefix);
 	bool _cached;
 	int	_depth;
 
@@ -122,14 +122,14 @@ public:
 	 * Create a FSDirectory representing a tree with the specified depth. Will result in an
 	 * unbound FSDirectory if node does not exist or is not a directory.
 	 */
-	FSDirectory(const FilesystemNode &node, int depth = 1);
+	FSDirectory(const FSNode &node, int depth = 1);
 
 	virtual ~FSDirectory();
 
 	/**
 	 * This return the underlying FSNode of the FSDirectory.
 	 */
-	FilesystemNode getFSNode() const;
+	FSNode getFSNode() const;
 
 	/**
 	 * Create a new FSDirectory pointing to a sub directory of the instance.

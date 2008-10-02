@@ -29,7 +29,7 @@
 #include "backends/fs/abstract-fs.h"
 
 /**
- * Creates concrete FilesystemNode objects depending on the current architecture.
+ * Creates concrete FSNode objects depending on the current architecture.
  */
 class FilesystemFactory {
 public:
@@ -44,7 +44,7 @@ public:
 	 * emulate it or simply return some "sensible" default directory node,
 	 * e.g. the same value as getRoot() returns.
 	 */
-	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const = 0;
+	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const = 0;
 
 	/**
 	 * Construct a node based on a path; the path is in the same format as it
@@ -54,9 +54,9 @@ public:
 	 * identical to oldNode. Hence, we can use the "path" value for persistent
 	 * storage e.g. in the config file.
 	 *
-	 * @param path The path string to create a FilesystemNode for.
+	 * @param path The path string to create a FSNode for.
 	 */
-	virtual AbstractFilesystemNode *makeFileNodePath(const Common::String &path) const = 0;
+	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const = 0;
 
 	/**
 	 * Returns a special node representing the filesystem root.
@@ -65,7 +65,7 @@ public:
 	 * On Unix, this will be simply the node for / (the root directory).
 	 * On Windows, it will be a special node which "contains" all drives (C:, D:, E:).
 	 */
-	virtual AbstractFilesystemNode *makeRootFileNode() const = 0;
+	virtual AbstractFSNode *makeRootFileNode() const = 0;
 };
 
 #endif /*FILESYSTEM_FACTORY_H*/

@@ -178,7 +178,7 @@ static Common::String generateFilenameForDetection(const char *pattern, Filename
 }
 
 struct DetectorDesc {
-	Common::FilesystemNode node;
+	Common::FSNode node;
 	Common::String md5;
 	const MD5Table *md5Entry;	// Entry of the md5 table corresponding to this file, if any.
 };
@@ -192,7 +192,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 // when performing the matching. The first match is returned, so if you
 // search for "resource" and two nodes "RESOURE and "resource" are present,
 // the first match is used.
-static bool searchFSNode(const Common::FSList &fslist, const Common::String &name, Common::FilesystemNode &result) {
+static bool searchFSNode(const Common::FSList &fslist, const Common::String &name, Common::FSNode &result) {
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!scumm_stricmp(file->getName().c_str(), name.c_str())) {
 			result = *file;
@@ -213,16 +213,16 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 	// switch to MD5 based detection).
 	const char *filename = (id == GID_CMI) ? "LANGUAGE.TAB" : "LANGUAGE.BND";
 	Common::FilePtr tmp;
-	Common::FilesystemNode langFile;
+	Common::FSNode langFile;
 	if (searchFSNode(fslist, filename, langFile))
 		tmp = Common::FilePtr(langFile.openForReading());
 	if (!tmp) {
 		// try loading in RESOURCE sub dir...
-		Common::FilesystemNode resDir;
+		Common::FSNode resDir;
 		Common::FSList tmpList;
 		if (searchFSNode(fslist, "RESOURCE", resDir)
 			&& resDir.isDirectory()
-			&& resDir.getChildren(tmpList, Common::FilesystemNode::kListFilesOnly)
+			&& resDir.getChildren(tmpList, Common::FSNode::kListFilesOnly)
 			&& searchFSNode(tmpList, filename, langFile)) {
 			tmp = Common::FilePtr(langFile.openForReading());
 		}
@@ -787,8 +787,8 @@ PluginError ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 
 	// Fetch the list of files in the current directory
 	Common::FSList fslist;
-	Common::FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.getChildren(fslist, Common::FilesystemNode::kListFilesOnly)) {
+	Common::FSNode dir(ConfMan.get("path"));
+	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly)) {
 		return kInvalidPathError;
 	}
 

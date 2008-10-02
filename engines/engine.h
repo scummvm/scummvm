@@ -62,7 +62,7 @@ protected:
 
 	const Common::String _targetName; // target name for saves
 	
-	const Common::FilesystemNode _gameDataDir;
+	const Common::FSNode _gameDataDir;
 
 private:
 	/**

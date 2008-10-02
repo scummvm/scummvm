@@ -32,7 +32,7 @@
 
 class POSIXPluginProvider : public FilePluginProvider {
 protected:
-	Plugin* createPlugin(const Common::FilesystemNode &node) const;
+	Plugin* createPlugin(const Common::FSNode &node) const;
 };
 
 #endif // defined(DYNAMIC_MODULES) && defined(UNIX)

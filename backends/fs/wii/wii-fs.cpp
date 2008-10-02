@@ -34,9 +34,9 @@
 /**
  * Implementation of the ScummVM file system API based on Wii.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
+ * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class WiiFilesystemNode : public AbstractFilesystemNode {
+class WiiFilesystemNode : public AbstractFSNode {
 protected:
 	Common::String _displayName;
 	Common::String _path;
@@ -64,9 +64,9 @@ public:
 	virtual bool isReadable() const { return _isReadable; }
 	virtual bool isWritable() const { return _isWritable; }
 
-	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
+	virtual AbstractFSNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFilesystemNode *getParent() const;
+	virtual AbstractFSNode *getParent() const;
 
 	virtual Common::SeekableReadStream *openForReading();
 	virtual Common::WriteStream *openForWriting();
@@ -114,7 +114,7 @@ bool WiiFilesystemNode::exists() const {
 	return stat(_path.c_str (), &st) == 0;
 }
 
-AbstractFilesystemNode *WiiFilesystemNode::getChild(const Common::String &n) const {
+AbstractFSNode *WiiFilesystemNode::getChild(const Common::String &n) const {
 	assert(_isDirectory);
 
 	Common::String newPath(_path);
@@ -147,8 +147,8 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 
 		bool isDir = S_ISDIR(st.st_mode);
 
-		if ((mode == Common::FilesystemNode::kListFilesOnly && isDir) ||
-			(mode == Common::FilesystemNode::kListDirectoriesOnly && !isDir))
+		if ((mode == Common::FSNode::kListFilesOnly && isDir) ||
+			(mode == Common::FSNode::kListDirectoriesOnly && !isDir))
 			continue;
 
 		if (isDir)
@@ -162,7 +162,7 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 	return true;
 }
 
-AbstractFilesystemNode *WiiFilesystemNode::getParent() const {
+AbstractFSNode *WiiFilesystemNode::getParent() const {
 	if (_path == "/")
 		return 0;
 

@@ -34,9 +34,9 @@
  */
 class AmigaOSFilesystemFactory : public FilesystemFactory {
 public:
-	virtual AbstractFilesystemNode *makeRootFileNode() const;
-	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
-	virtual AbstractFilesystemNode *makeFileNodePath(const Common::String &path) const;
+	virtual AbstractFSNode *makeRootFileNode() const;
+	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
+	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
 };
 
 #endif /*AMIGAOS_FILESYSTEM_FACTORY_H*/

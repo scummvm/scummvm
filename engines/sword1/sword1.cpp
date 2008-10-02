@@ -143,7 +143,7 @@ void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound) {
 			for (int cnt = 0; cnt < ARRAYSIZE(g_dirNames); cnt++)
 				if (scumm_stricmp(file->getName().c_str(), g_dirNames[cnt]) == 0) {
 					Common::FSList fslist2;
-					if (file->getChildren(fslist2, Common::FilesystemNode::kListFilesOnly))
+					if (file->getChildren(fslist2, Common::FSNode::kListFilesOnly))
 						Sword1CheckDirectory(fslist2, filesFound);
 				}
 		}

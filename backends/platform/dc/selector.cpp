@@ -146,12 +146,12 @@ struct Dir
 {
   char name[252];
   char deficon[256];
-  Common::FilesystemNode node;
+  Common::FSNode node;
 };
 
 static Game the_game;
 
-static bool isIcon(const Common::FilesystemNode &entry)
+static bool isIcon(const Common::FSNode &entry)
 {
   int l = entry.getDisplayName().size();
   if (l>4 && !strcasecmp(entry.getDisplayName().c_str()+l-4, ".ICO"))
@@ -198,13 +198,13 @@ static int findGames(Game *games, int max)
 {
   Dir *dirs = new Dir[MAX_DIR];
   int curr_game = 0, curr_dir = 0, num_dirs = 1;
-  dirs[0].node = Common::FilesystemNode("");
+  dirs[0].node = Common::FSNode("");
   while (curr_game < max && curr_dir < num_dirs) {
     strncpy(dirs[curr_dir].name, dirs[curr_dir].node.getPath().c_str(), 252);
     dirs[curr_dir].name[251] = '\0';
     dirs[curr_dir].deficon[0] = '\0';
     Common::FSList files, fslist;
-    dirs[curr_dir++].node.getChildren(fslist, Common::FilesystemNode::kListAll);
+    dirs[curr_dir++].node.getChildren(fslist, Common::FSNode::kListAll);
     for (Common::FSList::const_iterator entry = fslist.begin(); entry != fslist.end();
 	 ++entry) {
       if (entry->isDirectory()) {

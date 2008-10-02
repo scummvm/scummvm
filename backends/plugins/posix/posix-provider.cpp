@@ -79,7 +79,7 @@ public:
 };
 
 
-Plugin* POSIXPluginProvider::createPlugin(const Common::FilesystemNode &node) const {
+Plugin* POSIXPluginProvider::createPlugin(const Common::FSNode &node) const {
 	return new POSIXPlugin(node.getPath());
 }
 

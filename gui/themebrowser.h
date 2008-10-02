@@ -57,8 +57,8 @@ private:
 
 	void updateListing();
 
-	void addDir(ThList &list, const Common::FilesystemNode &node, int level = 4);
-	bool isTheme(const Common::FilesystemNode &node, Entry &out);
+	void addDir(ThList &list, const Common::FSNode &node, int level = 4);
+	bool isTheme(const Common::FSNode &node, Entry &out);
 };
 
 } // end of namespace GUI

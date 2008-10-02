@@ -29,11 +29,11 @@
 
 DECLARE_SINGLETON(WiiFilesystemFactory);
 
-AbstractFilesystemNode *WiiFilesystemFactory::makeRootFileNode() const {
+AbstractFSNode *WiiFilesystemFactory::makeRootFileNode() const {
 	return new WiiFilesystemNode();
 }
 
-AbstractFilesystemNode *WiiFilesystemFactory::makeCurrentDirectoryFileNode() const {
+AbstractFSNode *WiiFilesystemFactory::makeCurrentDirectoryFileNode() const {
 	char buf[MAXPATHLEN];
 
 	if (getcwd(buf, MAXPATHLEN))
@@ -42,7 +42,7 @@ AbstractFilesystemNode *WiiFilesystemFactory::makeCurrentDirectoryFileNode() con
 		return new WiiFilesystemNode();
 }
 
-AbstractFilesystemNode *WiiFilesystemFactory::makeFileNodePath(const Common::String &path) const {
+AbstractFSNode *WiiFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new WiiFilesystemNode(path, true);
 }
 #endif

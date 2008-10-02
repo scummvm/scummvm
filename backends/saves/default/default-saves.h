@@ -55,7 +55,7 @@ protected:
 	 * Checks the given path for read access, existence, etc.
 	 * Sets the internal error and error message accordingly.
 	 */
-	void checkPath(const Common::FilesystemNode &dir);
+	void checkPath(const Common::FSNode &dir);
 };
 
 #endif

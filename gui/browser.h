@@ -50,7 +50,7 @@ public:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 #endif
 
-	const Common::FilesystemNode	&getResult() { return _choice; }
+	const Common::FSNode	&getResult() { return _choice; }
 
 protected:
 #ifdef MACOSX
@@ -58,10 +58,10 @@ protected:
 #else
 	ListWidget		*_fileList;
 	StaticTextWidget	*_currentPath;
-	Common::FilesystemNode	_node;
+	Common::FSNode	_node;
 	Common::FSList			_nodeContent;
 #endif
-	Common::FilesystemNode	_choice;
+	Common::FSNode	_choice;
 	bool			_isDirBrowser;
 
 #ifndef MACOSX

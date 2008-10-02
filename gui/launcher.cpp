@@ -395,7 +395,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 		if (browser.runModal() > 0) {
 			// User made this choice...
-			Common::FilesystemNode file(browser.getResult());
+			Common::FSNode file(browser.getResult());
 			_soundFont->setLabel(file.getPath());
 
 			if (!file.getPath().empty() && (file.getPath() != "None"))
@@ -413,11 +413,11 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		BrowserDialog browser("Select directory with game data", true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			Common::FilesystemNode dir(browser.getResult());
+			Common::FSNode dir(browser.getResult());
 
 			// TODO: Verify the game can be found in the new directory... Best
 			// done with optional specific gameid to pluginmgr detectgames?
-			// FSList files = dir.listDir(FilesystemNode::kListFilesOnly);
+			// FSList files = dir.listDir(FSNode::kListFilesOnly);
 
 			_gamePathWidget->setLabel(dir.getPath());
 			draw();
@@ -431,7 +431,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		BrowserDialog browser("Select additional game directory", true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			Common::FilesystemNode dir(browser.getResult());
+			Common::FSNode dir(browser.getResult());
 			_extraPathWidget->setLabel(dir.getPath());
 			draw();
 		}
@@ -443,7 +443,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		BrowserDialog browser("Select directory for saved games", true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			Common::FilesystemNode dir(browser.getResult());
+			Common::FSNode dir(browser.getResult());
 			_savePathWidget->setLabel(dir.getPath());
 			draw();
 		}
@@ -953,9 +953,9 @@ void LauncherDialog::addGame() {
 
 	if (_browser->runModal() > 0) {
 		// User made his choice...
-		Common::FilesystemNode dir(_browser->getResult());
+		Common::FSNode dir(_browser->getResult());
 		Common::FSList files;
-		if (!dir.getChildren(files, Common::FilesystemNode::kListAll)) {
+		if (!dir.getChildren(files, Common::FSNode::kListAll)) {
 			error("browser returned a node that is not a directory: '%s'",
 					dir.getPath().c_str());
 		}

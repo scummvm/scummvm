@@ -57,7 +57,7 @@ Resource::~Resource() {
 bool Resource::reset() {
 	unloadAllPakFiles();
 
-	Common::FilesystemNode dir(ConfMan.get("path"));
+	Common::FSNode dir(ConfMan.get("path"));
 
 	if (!dir.exists() || !dir.isDirectory())
 		error("invalid game path '%s'", dir.getPath().c_str());
@@ -103,7 +103,7 @@ bool Resource::reset() {
 	}
 
 	Common::FSList fslist;
-	if (!dir.getChildren(fslist, Common::FilesystemNode::kListFilesOnly))
+	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly))
 		error("can't list files inside game path '%s'", dir.getPath().c_str());
 
 	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().isTalkie) {

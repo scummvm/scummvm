@@ -1007,7 +1007,7 @@ const IIgsExeInfo *SoundMgr::getIIgsExeInfo(enum AgiGameID gameid) const {
 	return NULL;
 }
 
-bool IIgsSoundMgr::loadInstrumentHeaders(const Common::FilesystemNode &exePath, const IIgsExeInfo &exeInfo) {
+bool IIgsSoundMgr::loadInstrumentHeaders(const Common::FSNode &exePath, const IIgsExeInfo &exeInfo) {
 	bool loadedOk = false; // Was loading successful?
 	Common::File file;
 
@@ -1078,7 +1078,7 @@ bool SoundMgr::convertWave(Common::SeekableReadStream &source, int8 *dest, uint 
 	return !source.ioFailed();
 }
 
-bool IIgsSoundMgr::loadWaveFile(const Common::FilesystemNode &wavePath, const IIgsExeInfo &exeInfo) {
+bool IIgsSoundMgr::loadWaveFile(const Common::FSNode &wavePath, const IIgsExeInfo &exeInfo) {
 	Common::File file;
 
 	// Open the wave file and read it into memory
@@ -1107,14 +1107,14 @@ bool IIgsSoundMgr::loadWaveFile(const Common::FilesystemNode &wavePath, const II
 }
 
 /**
- * A function object (i.e. a functor) for testing if a Common::FilesystemNode
+ * A function object (i.e. a functor) for testing if a Common::FSNode
  * object's name is equal (Ignoring case) to a string or to at least
  * one of the strings in a list of strings. Can be used e.g. with find_if().
  */
-struct fsnodeNameEqualsIgnoreCase : public Common::UnaryFunction<const Common::FilesystemNode&, bool> {
+struct fsnodeNameEqualsIgnoreCase : public Common::UnaryFunction<const Common::FSNode&, bool> {
 	fsnodeNameEqualsIgnoreCase(const Common::StringList &str) : _str(str) {}
 	fsnodeNameEqualsIgnoreCase(const Common::String str) { _str.push_back(str); }
-	bool operator()(const Common::FilesystemNode &param) const {
+	bool operator()(const Common::FSNode &param) const {
 		for (Common::StringList::const_iterator iter = _str.begin(); iter != _str.end(); iter++)
 			if (param.getName().equalsIgnoreCase(*iter))
 				return true;
@@ -1140,8 +1140,8 @@ bool SoundMgr::loadInstruments() {
 
 	// List files in the game path
 	Common::FSList fslist;
-	Common::FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.getChildren(fslist, Common::FilesystemNode::kListFilesOnly)) {
+	Common::FSNode dir(ConfMan.get("path"));
+	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly)) {
 		warning("Invalid game path (\"%s\"), not loading Apple IIGS instruments", dir.getPath().c_str());
 		return false;
 	}

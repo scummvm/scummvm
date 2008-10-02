@@ -101,10 +101,10 @@ void ThemeBrowser::updateListing() {
 	// files in other places are ignored in this dialog
 	// TODO: let the user browse the complete FS too/only the FS?
 	if (ConfMan.hasKey("themepath"))
-		addDir(_themes, Common::FilesystemNode(ConfMan.get("themepath")), 0);
+		addDir(_themes, Common::FSNode(ConfMan.get("themepath")), 0);
 
 #ifdef DATA_PATH
-	addDir(_themes, Common::FilesystemNode(DATA_PATH));
+	addDir(_themes, Common::FSNode(DATA_PATH));
 #endif
 
 #ifdef MACOSX
@@ -112,7 +112,7 @@ void ThemeBrowser::updateListing() {
 	if (resourceUrl) {
 		char buf[256];
 		if (CFURLGetFileSystemRepresentation(resourceUrl, true, (UInt8 *)buf, 256)) {
-			Common::FilesystemNode resourcePath(buf);
+			Common::FSNode resourcePath(buf);
 			addDir(_themes, resourcePath, 0);
 		}
 		CFRelease(resourceUrl);
@@ -120,9 +120,9 @@ void ThemeBrowser::updateListing() {
 #endif
 
 	if (ConfMan.hasKey("extrapath"))
-		addDir(_themes, Common::FilesystemNode(ConfMan.get("extrapath")));
+		addDir(_themes, Common::FSNode(ConfMan.get("extrapath")));
 
-	addDir(_themes, Common::FilesystemNode("."), 0);
+	addDir(_themes, Common::FSNode("."), 0);
 
 	// Populate the ListWidget
 	Common::StringList list;
@@ -137,7 +137,7 @@ void ThemeBrowser::updateListing() {
 	draw();
 }
 
-void ThemeBrowser::addDir(ThList &list, const Common::FilesystemNode &node, int level) {
+void ThemeBrowser::addDir(ThList &list, const Common::FSNode &node, int level) {
 	if (level < 0)
 		return;
 
@@ -145,7 +145,7 @@ void ThemeBrowser::addDir(ThList &list, const Common::FilesystemNode &node, int 
 		return;
 
 	Common::FSList fslist;
-	if (!node.getChildren(fslist, Common::FilesystemNode::kListAll))
+	if (!node.getChildren(fslist, Common::FSNode::kListAll))
 		return;
 
 	for (Common::FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
@@ -169,7 +169,7 @@ void ThemeBrowser::addDir(ThList &list, const Common::FilesystemNode &node, int 
 	}
 }
 
-bool ThemeBrowser::isTheme(const Common::FilesystemNode &node, Entry &out) {
+bool ThemeBrowser::isTheme(const Common::FSNode &node, Entry &out) {
 	Common::ConfigFile cfg;
 	Common::String type;
 

@@ -32,20 +32,20 @@
 namespace Common {
 
 void File::addDefaultDirectory(const String &directory) {
-	FilesystemNode dir(directory);
+	FSNode dir(directory);
 	addDefaultDirectoryRecursive(dir, 1);
 }
 
 void File::addDefaultDirectoryRecursive(const String &directory, int level) {
-	FilesystemNode dir(directory);
+	FSNode dir(directory);
 	addDefaultDirectoryRecursive(dir, level);
 }
 
-void File::addDefaultDirectory(const FilesystemNode &directory) {
+void File::addDefaultDirectory(const FSNode &directory) {
 	addDefaultDirectoryRecursive(directory, 1);
 }
 
-void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level) {
+void File::addDefaultDirectoryRecursive(const FSNode &dir, int level) {
 	if (level <= 0 || !dir.exists() || !dir.isDirectory())
 		return;
 
@@ -89,7 +89,7 @@ bool File::open(const String &filename, Archive &archive) {
 	return open(stream, filename);
 }
 
-bool File::open(const FilesystemNode &node) {
+bool File::open(const FSNode &node) {
 	assert(!_handle);
 
 	if (!node.exists()) {
@@ -196,15 +196,15 @@ bool DumpFile::open(const String &filename) {
 	assert(!filename.empty());
 	assert(!_handle);
 
-	FilesystemNode node(filename);
+	FSNode node(filename);
 	return open(node);
 }
 
-bool DumpFile::open(const FilesystemNode &node) {
+bool DumpFile::open(const FSNode &node) {
 	assert(!_handle);
 
 	if (node.isDirectory()) {
-		warning("DumpFile::open: FilesystemNode is a directory");
+		warning("DumpFile::open: FSNode is a directory");
 		return false;
 	}
 

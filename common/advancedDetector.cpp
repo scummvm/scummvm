@@ -246,9 +246,9 @@ PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) c
 		path = ".";
 		warning("No path was provided. Assuming the data files are in the current directory");
 	}
-	FilesystemNode dir(path);
+	FSNode dir(path);
 	FSList files;
-	if (!dir.isDirectory() || !dir.getChildren(files, FilesystemNode::kListAll)) {
+	if (!dir.isDirectory() || !dir.getChildren(files, FSNode::kListAll)) {
 		warning("Game data path does not exist or is not a directory (%s)", path.c_str());
 		return kNoGameDataFoundError;
 	}
@@ -290,7 +290,7 @@ PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) c
 
 typedef HashMap<String, bool, IgnoreCase_Hash, IgnoreCase_EqualTo> StringSet;
 typedef HashMap<String, int32, IgnoreCase_Hash, IgnoreCase_EqualTo> IntMap;
-typedef HashMap<String, FilesystemNode, IgnoreCase_Hash, IgnoreCase_EqualTo> FileMap;
+typedef HashMap<String, FSNode, IgnoreCase_Hash, IgnoreCase_EqualTo> FileMap;
 
 static void reportUnknown(const StringMap &filesMD5, const IntMap &filesSize) {
 	// TODO: This message should be cleaned up / made more specific.

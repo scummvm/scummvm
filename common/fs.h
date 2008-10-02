@@ -29,11 +29,11 @@
 #include "common/ptr.h"
 #include "common/str.h"
 
-class AbstractFilesystemNode;
+class AbstractFSNode;
 
 namespace Common {
 
-class FilesystemNode;
+class FSNode;
 class SeekableReadStream;
 class WriteStream;
 
@@ -42,21 +42,22 @@ class WriteStream;
  * This is subclass instead of just a typedef so that we can use forward
  * declarations of it in other places.
  */
-class FSList : public Common::Array<FilesystemNode> {};
+class FSList : public Common::Array<FSNode> {};
 
 /**
- * FilesystemNode provides an abstraction for file paths, allowing for portable
- * file system browsing. To this ends, multiple or single roots have to be supported
- * (compare Unix with a single root, Windows with multiple roots C:, D:, ...).
+ * FSNode, short for "File System Node", provides an abstraction for file
+ * paths, allowing for portable file system browsing. This means for example,
+ * that multiple or single roots have to be supported (compare Unix with a
+ * single root, Windows with multiple roots C:, D:, ...).
  *
  * To this end, we abstract away from paths; implementations can be based on
  * paths (and it's left to them whether / or \ or : is the path separator :-);
  * but it is also possible to use inodes or vrefs (MacOS 9) or anything else.
  */
-class FilesystemNode {
+class FSNode {
 private:
-	Common::SharedPtr<AbstractFilesystemNode>	_realNode;
-	FilesystemNode(AbstractFilesystemNode *realNode);
+	Common::SharedPtr<AbstractFSNode>	_realNode;
+	FSNode(AbstractFSNode *realNode);
 
 public:
 	/**
@@ -69,14 +70,14 @@ public:
 	};
 
 	/**
-	 * Create a new pathless FilesystemNode. Since there's no path associated
+	 * Create a new pathless FSNode. Since there's no path associated
 	 * with this node, path-related operations (i.e. exists(), isDirectory(),
 	 * getPath()) will always return false or raise an assertion.
 	 */
-	FilesystemNode();
+	FSNode();
 
 	/**
-	 * Create a new FilesystemNode referring to the specified path. This is
+	 * Create a new FSNode referring to the specified path. This is
 	 * the counterpart to the path() method.
 	 *
 	 * If path is empty or equals ".", then a node representing the "current
@@ -84,15 +85,15 @@ public:
 	 * operating system doesn't support the concept), some other directory is
 	 * used (usually the root directory).
 	 */
-	explicit FilesystemNode(const Common::String &path);
+	explicit FSNode(const Common::String &path);
 
-	virtual ~FilesystemNode() {}
+	virtual ~FSNode() {}
 
 	/**
 	 * Compare the name of this node to the name of another. Directories
 	 * go before normal files.
 	 */
-	bool operator<(const FilesystemNode& node) const;
+	bool operator<(const FSNode& node) const;
 
 	/**
 	 * Indicates whether the object referred by this node exists in the filesystem or not.
@@ -118,7 +119,7 @@ public:
 	 * @param name	the name of a child of this directory
 	 * @return the node referring to the child with the given name
 	 */
-	FilesystemNode getChild(const Common::String &name) const;
+	FSNode getChild(const Common::String &name) const;
 
 	/**
 	 * Return a list of all child nodes of this directory node. If called on a node
@@ -165,7 +166,7 @@ public:
 	 * Get the parent node of this node. If this node has no parent node,
 	 * then it returns a duplicate of this node.
 	 */
-	FilesystemNode getParent() const;
+	FSNode getParent() const;
 
 	/**
 	 * Indicates whether the node refers to a directory or not.

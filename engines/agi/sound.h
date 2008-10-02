@@ -402,8 +402,8 @@ public:
 	// For initializing
 	IIgsSoundMgr();
 	void setProgramChangeMapping(const MidiProgramChangeMapping *mapping);
-	bool loadInstrumentHeaders(const Common::FilesystemNode &exePath, const IIgsExeInfo &exeInfo);
-	bool loadWaveFile(const Common::FilesystemNode &wavePath, const IIgsExeInfo &exeInfo);
+	bool loadInstrumentHeaders(const Common::FSNode &exePath, const IIgsExeInfo &exeInfo);
+	bool loadWaveFile(const Common::FSNode &wavePath, const IIgsExeInfo &exeInfo);
 	// Miscellaneous methods
 	uint activeSounds() const; ///< How many active sounds are playing?
 	void stopSounds(); ///< Stops all sounds

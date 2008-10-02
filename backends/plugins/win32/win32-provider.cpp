@@ -97,11 +97,11 @@ public:
 };
 
 
-Plugin* Win32PluginProvider::createPlugin(const Common::FilesystemNode &node) const {
+Plugin* Win32PluginProvider::createPlugin(const Common::FSNode &node) const {
 	return new Win32Plugin(node.getPath());
 }
 
-bool Win32PluginProvider::isPluginFilename(const Common::FilesystemNode &node) const {
+bool Win32PluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
 	Common::String filename = node.getName();
 	if (!filename.hasSuffix(".dll"))

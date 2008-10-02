@@ -35,9 +35,9 @@
  */
 class PalmOSFilesystemFactory : public FilesystemFactory, public Common::Singleton<PalmOSFilesystemFactory> {
 public:
-	virtual AbstractFilesystemNode *makeRootFileNode() const;
-	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
-	virtual AbstractFilesystemNode *makeFileNodePath(const Common::String &path) const;
+	virtual AbstractFSNode *makeRootFileNode() const;
+	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
+	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
 
 protected:
 	PalmOSFilesystemFactory() {};

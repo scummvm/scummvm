@@ -28,15 +28,15 @@
 
 DECLARE_SINGLETON(PalmOSFilesystemFactory);
 
-AbstractFilesystemNode *PalmOSFilesystemFactory::makeRootFileNode() const {
+AbstractFSNode *PalmOSFilesystemFactory::makeRootFileNode() const {
 	return new PalmOSFilesystemNode();
 }
 
-AbstractFilesystemNode *PalmOSFilesystemFactory::makeCurrentDirectoryFileNode() const {
+AbstractFSNode *PalmOSFilesystemFactory::makeCurrentDirectoryFileNode() const {
 	return new PalmOSFilesystemNode();
 }
 
-AbstractFilesystemNode *PalmOSFilesystemFactory::makeFileNodePath(const Common::String &path) const {
+AbstractFSNode *PalmOSFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new PalmOSFilesystemNode(path);
 }
 #endif

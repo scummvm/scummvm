@@ -41,9 +41,9 @@ extern OSystem_PS2 *g_systemPs2;
 /**
  * Implementation of the ScummVM file system API based on the Ps2SDK.
  * 
- * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
+ * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class Ps2FilesystemNode : public AbstractFilesystemNode {
+class Ps2FilesystemNode : public AbstractFSNode {
 
 friend class Ps2FilesystemFactory;
 
@@ -95,10 +95,10 @@ public:
 		return false;
 	}
 
-	virtual AbstractFilesystemNode *clone() const { return new Ps2FilesystemNode(this); }
-	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
+	virtual AbstractFSNode *clone() const { return new Ps2FilesystemNode(this); }
+	virtual AbstractFSNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFilesystemNode *getParent() const;
+	virtual AbstractFSNode *getParent() const;
 
 	virtual Common::SeekableReadStream *openForReading();
 	virtual Common::WriteStream *openForWriting();
@@ -210,7 +210,7 @@ bool Ps2FilesystemNode::getDirectoryFlag(const char *path) {
 	return false;
 }
 
-AbstractFilesystemNode *Ps2FilesystemNode::getChild(const Common::String &n) const {
+AbstractFSNode *Ps2FilesystemNode::getChild(const Common::String &n) const {
 	if (!_isDirectory)
 		return NULL;
 
@@ -288,9 +288,9 @@ bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 			while ((dreadRes = fio.dread(fd, &dirent)) > 0) {
 				if (dirent.name[0] == '.')
 					continue; // ignore '.' and '..'
-				if (((mode == Common::FilesystemNode::kListDirectoriesOnly) && (dirent.stat.mode & FIO_S_IFDIR)) ||
-					((mode == Common::FilesystemNode::kListFilesOnly) && !(dirent.stat.mode & FIO_S_IFDIR)) ||
-					(mode == Common::FilesystemNode::kListAll)) {
+				if (((mode == Common::FSNode::kListDirectoriesOnly) && (dirent.stat.mode & FIO_S_IFDIR)) ||
+					((mode == Common::FSNode::kListFilesOnly) && !(dirent.stat.mode & FIO_S_IFDIR)) ||
+					(mode == Common::FSNode::kListAll)) {
 
 					dirEntry._isDirectory = (bool)(dirent.stat.mode & FIO_S_IFDIR);
 					dirEntry._isRoot = false;
@@ -312,7 +312,7 @@ bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 	}
 }
 
-AbstractFilesystemNode *Ps2FilesystemNode::getParent() const {
+AbstractFSNode *Ps2FilesystemNode::getParent() const {
 	if (_isRoot)
 		return new Ps2FilesystemNode(this);
 

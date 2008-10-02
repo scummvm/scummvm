@@ -173,7 +173,7 @@ bool WagFileParser::checkWagVersion(Common::SeekableReadStream &stream) {
 	}
 }
 
-bool WagFileParser::parse(const Common::FilesystemNode &node) {
+bool WagFileParser::parse(const Common::FSNode &node) {
 	WagProperty property; // Temporary property used for reading
 	Common::SeekableReadStream *stream = NULL; // The file stream
 

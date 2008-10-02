@@ -2207,7 +2207,7 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSL
 	bool matchedUsingWag = false;
 	int wagFileCount = 0;
 	WagFileParser wagFileParser;
-	Common::FilesystemNode wagFileNode;
+	Common::FSNode wagFileNode;
 	Common::String description;
 	Common::FSList fslistCurrentDir; // Only used if fslist == NULL
 
@@ -2222,8 +2222,8 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSL
 		if (path.empty())
 			path = ".";
 
-		Common::FilesystemNode fsCurrentDir(path);
-		fsCurrentDir.getChildren(fslistCurrentDir, Common::FilesystemNode::kListFilesOnly);
+		Common::FSNode fsCurrentDir(path);
+		fsCurrentDir.getChildren(fslistCurrentDir, Common::FSNode::kListFilesOnly);
 		fslist = &fslistCurrentDir;
 	}
 

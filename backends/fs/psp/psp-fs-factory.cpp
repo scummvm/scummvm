@@ -28,15 +28,15 @@
 
 DECLARE_SINGLETON(PSPFilesystemFactory);
 
-AbstractFilesystemNode *PSPFilesystemFactory::makeRootFileNode() const {
+AbstractFSNode *PSPFilesystemFactory::makeRootFileNode() const {
 	return new PSPFilesystemNode();
 }
 
-AbstractFilesystemNode *PSPFilesystemFactory::makeCurrentDirectoryFileNode() const {
+AbstractFSNode *PSPFilesystemFactory::makeCurrentDirectoryFileNode() const {
 	return new PSPFilesystemNode();
 }
 
-AbstractFilesystemNode *PSPFilesystemFactory::makeFileNodePath(const Common::String &path) const {
+AbstractFSNode *PSPFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new PSPFilesystemNode(path, true);
 }
 #endif

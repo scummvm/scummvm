@@ -58,7 +58,7 @@ enum {
 
 
 
-MassAddDialog::MassAddDialog(const Common::FilesystemNode &startDir)
+MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	: Dialog("massadddialog"),
 	_dirsScanned(0),
 	_okButton(0),
@@ -156,10 +156,10 @@ void MassAddDialog::handleTickle() {
 
 	// Perform a breadth-first scan of the filesystem.
 	while (!_scanStack.empty() && (g_system->getMillis() - t) < kMaxScanTime) {
-		Common::FilesystemNode dir = _scanStack.pop();
+		Common::FSNode dir = _scanStack.pop();
 
 		Common::FSList files;
-		if (!dir.getChildren(files, Common::FilesystemNode::kListAll)) {
+		if (!dir.getChildren(files, Common::FSNode::kListAll)) {
 			error("browser returned a node that is not a directory: '%s'",
 					dir.getPath().c_str());
 		}
