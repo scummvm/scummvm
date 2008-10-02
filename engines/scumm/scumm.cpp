@@ -1016,7 +1016,7 @@ int ScummEngine::init() {
 
 
 			// We now have to determine the correct _filenamePattern. To do this
-			// we simply hardcode the possibilites.
+			// we simply hardcode the possibilities.
 			const char *p1 = 0, *p2 = 0;
 			switch (_game.id) {
 			case GID_INDY4:
