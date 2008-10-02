@@ -182,111 +182,102 @@ void HotSpotList::dump() {
 	}
 }
 
-void HotSpotList::loadHotSpotsM4(Common::SeekableReadStream* hotspotStream, int hotspotCount) {
+uint32 HotSpotList::readHotSpotInteger(Common::SeekableReadStream* hotspotStream) {
+	if (_vm->isM4())
+		return hotspotStream->readUint32LE();
+	else
+		return hotspotStream->readUint16LE();
+}
+
+void HotSpotList::loadHotSpots(Common::SeekableReadStream* hotspotStream, int hotspotCount) {
+	HotSpot *currentHotSpot;
 	uint32 x1, y1, x2, y2;
 	char buffer[256];
 	uint32 strLength = 0;
 	uint32 index = 0;
-	HotSpot *currentHotSpot;
 	uint32 feetX, feetY;
+	int cursorOffset = (_vm ->isM4()) ? 0 : 1;
 
 	for (int i = 0; i < hotspotCount; i++) {
-		x1 = hotspotStream->readUint32LE();
-		y1 = hotspotStream->readUint32LE();
-		x2 = hotspotStream->readUint32LE();
-		y2 = hotspotStream->readUint32LE();
+		x1 = readHotSpotInteger(hotspotStream);
+		y1 = readHotSpotInteger(hotspotStream);
+		x2 = readHotSpotInteger(hotspotStream);
+		y2 = readHotSpotInteger(hotspotStream);
 		index = add(new HotSpot(x1, y1, x2, y2), i == 0);
 		currentHotSpot = get(index);
-		feetX = hotspotStream->readUint32LE();
-		feetY = hotspotStream->readUint32LE();
+		feetX = readHotSpotInteger(hotspotStream);
+		feetY = readHotSpotInteger(hotspotStream);
 		currentHotSpot->setFeet(feetX, feetY);
 		currentHotSpot->setFacing((uint8)hotspotStream->readByte());
 		currentHotSpot->setActive(hotspotStream->readByte() != 0);
-		currentHotSpot->setCursor((uint8)hotspotStream->readByte());
-		hotspotStream->readByte();					// syntax (unused)
-		hotspotStream->readUint32LE();				// vocabID
-		hotspotStream->readUint32LE();				// verbID
-		strLength = hotspotStream->readUint32LE();	// vocabLength
-		hotspotStream->read(buffer, strLength);		// vocab (the hotspot's name)
-		// Capitalize the hotspot's name here
-		str_upper(buffer);
-		currentHotSpot->setVocab(buffer);
-		// Verbs are used internally by the game scripts in Orion Burger
-		strLength = hotspotStream->readUint32LE();	// verbLength
-		hotspotStream->read(buffer, strLength);		// verb
-		// Capitalize the hotspot's verb here
-		str_upper(buffer);
-		currentHotSpot->setVerb(buffer);
-		strLength = hotspotStream->readUint32LE();	// prepLength
-		hotspotStream->read(buffer, strLength);		// prep
-		str_upper(buffer);
-		
-		/* Hotspot names for non-English versions are stored in prep.
-		   Prep can be set two ways: For English versions, copy the
-		   text from vocab. For non-English versions, use the prep text
-		   from the room file.
-		*/
-		if (strlen(buffer) > 0 && strcmp(buffer, "--") != 0 && strcmp(buffer, "ON") != 0)
-			currentHotSpot->setPrep(buffer);
-		else
-			currentHotSpot->setPrep(currentHotSpot->getVocab());
 
-		// The following values are not used at all by Orion Burger
-		strLength = hotspotStream->readUint32LE();	// spriteLength
-		hotspotStream->read(buffer, strLength);		// sprite
-		hotspotStream->readUint16LE();				// sprite hash
-	}
-}
-
-void HotSpotList::loadHotSpotsMads(Common::SeekableReadStream* hotspotStream, int hotspotCount) {
-	uint16 x1, y1, x2, y2;
-	HotSpot *currentHotSpot;
-	uint16 feetX, feetY;
-	uint16 index = 0;
-
-	for (int i = 0; i < hotspotCount; i++) {
-		x1 = hotspotStream->readUint16LE();
-		y1 = hotspotStream->readUint16LE();
-		x2 = hotspotStream->readUint16LE();
-		y2 = hotspotStream->readUint16LE();
-		index = add(new HotSpot(x1, y1, x2, y2), i == 0);
-		currentHotSpot = get(index);
-		//printf("x1, y1, x2, y2: %i %i %i %i\n", x1, y1, x2, y2);
-		feetX = hotspotStream->readUint16LE();
-		feetY = hotspotStream->readUint16LE();
-		currentHotSpot->setFeet(feetX, feetY);
-		currentHotSpot->setFacing((uint8)hotspotStream->readByte());
-		index = hotspotStream->readByte();		// unknown (initial facing?)
-
-		hotspotStream->readByte();				// unused (always 255)
+		if (!_vm->isM4())
+			hotspotStream->readByte();				// unused (always 255)
 
 		index = hotspotStream->readByte();		// cursor
 		if (index == 0)
 			currentHotSpot->setCursor(0);
 		else
-			currentHotSpot->setCursor(index - 1);
+			currentHotSpot->setCursor(index - cursorOffset);
 
 		// Rex Nebular doesn't have this field
-		if (_vm->getGameType() != GType_RexNebular) {
+		if (!_vm->isM4() && _vm->getGameType() != GType_RexNebular) {
 			// This looks to be some sort of bitmask. Perhaps it signifies
 			// the valid verbs for this hotspot
 			index = hotspotStream->readUint16LE();		// unknown
 			//printf("%i ", index);
 		}
 
-		index = hotspotStream->readUint16LE();		// noun index
-		currentHotSpot->setVocabID(index);
-		currentHotSpot->setVocab(_vm->_globals->getVocab(index - 1));
-		index = hotspotStream->readUint16LE();		// verb index (default left click verb)
-		currentHotSpot->setVerbID(index);
-		if (index != 0) {
-			currentHotSpot->setVerb(_vm->_globals->getVocab(index - 1));
+		if (_vm->isM4())
+			hotspotStream->readByte();					// syntax (unused)
+
+		currentHotSpot->setVocabID(readHotSpotInteger(hotspotStream));
+		currentHotSpot->setVerbID(readHotSpotInteger(hotspotStream));
+
+		// Load hotspot related strings (verb, vocab/noun etc)
+		// These are loaded inside the hotspot data in M4 games,
+		// and inside the global vocab data (vocab.dat) in MADS games
+		if (_vm->isM4()) {
+			strLength = hotspotStream->readUint32LE();	// vocabLength
+			hotspotStream->read(buffer, strLength);		// vocab (the hotspot's name)
+			// Capitalize the hotspot's name here
+			str_upper(buffer);
+			currentHotSpot->setVocab(buffer);
+			// Verbs are used internally by the game scripts in Orion Burger
+			strLength = hotspotStream->readUint32LE();	// verbLength
+			hotspotStream->read(buffer, strLength);		// verb
+			// Capitalize the hotspot's verb here
+			str_upper(buffer);
+			currentHotSpot->setVerb(buffer);
+
+			/* Hotspot names for non-English versions are stored in prep.
+			   Prep can be set two ways: For English versions, copy the
+			   text from vocab. For non-English versions, use the prep text
+			   from the room file.
+			*/
+			strLength = hotspotStream->readUint32LE();	// prepLength
+			hotspotStream->read(buffer, strLength);		// prep
+			str_upper(buffer);
+			
+			if (strlen(buffer) > 0 && strcmp(buffer, "--") != 0 && strcmp(buffer, "ON") != 0)
+				currentHotSpot->setPrep(buffer);
+			else
+				currentHotSpot->setPrep(currentHotSpot->getVocab());
+
+			// The following values are not used at all by Orion Burger
+			strLength = hotspotStream->readUint32LE();	// spriteLength
+			hotspotStream->read(buffer, strLength);		// sprite
+			hotspotStream->readUint16LE();				// sprite hash
 		} else {
+			currentHotSpot->setVocab("");
 			currentHotSpot->setVerb("");
+
+			if (currentHotSpot->getVocabID() > 0)
+				currentHotSpot->setVocab(_vm->_globals->getVocab(currentHotSpot->getVocabID() - 1));
+
+			if (currentHotSpot->getVerbID() > 0)
+				currentHotSpot->setVerb(_vm->_globals->getVocab(currentHotSpot->getVerbID() - 1));
 		}
-		//printf("%s ", currentHotSpot->getVerb());
-		//printf("%s ", currentHotSpot->getVocab());
-		//printf("\n");
 	}
 }
 

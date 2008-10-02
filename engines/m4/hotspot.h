@@ -105,9 +105,9 @@ public:
 
 	void dump();
 
-	void loadHotSpotsM4(Common::SeekableReadStream* hotspotStream, int hotspotCount);
-	void loadHotSpotsMads(Common::SeekableReadStream* hotspotStream, int hotspotCount);
+	void loadHotSpots(Common::SeekableReadStream* hotspotStream, int hotspotCount);
 
+	uint32 readHotSpotInteger(Common::SeekableReadStream* hotspotStream);
 private:
 	typedef Common::Array<HotSpot*> HotSpotArray;
 	HotSpotArray _hotspots;
