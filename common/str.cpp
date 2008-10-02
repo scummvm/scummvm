@@ -339,7 +339,8 @@ bool String::matchString(const String &pat) const {
 }
 
 void String::deleteLastChar() {
-	deleteChar(_size - 1);
+	if (_size > 0)
+		deleteChar(_size - 1);
 }
 
 void String::deleteChar(uint32 p) {
