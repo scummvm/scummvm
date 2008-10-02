@@ -174,11 +174,17 @@ bool ThemeBrowser::isTheme(const Common::FSNode &node, Entry &out) {
 	Common::String type;
 
 	out.file = node.getName();
+	
+	// Only accept .ini and .zip fies
+	if (!out.file.hasSuffix(".ini") && !out.file.hasSuffix(".zip"))
+		return false;
+	
 	// Remove the filename extension
-	while (out.file.lastChar() != '.') {
+	while (!out.file.empty() && out.file.lastChar() != '.') {
 		out.file.deleteLastChar();
 	}
-	out.file.deleteLastChar();
+	if (out.file.lastChar() == '.')
+		out.file.deleteLastChar();
 
 	if (out.file.empty())
 		return false;
