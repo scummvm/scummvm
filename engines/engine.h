@@ -136,7 +136,6 @@ public:
 	 */
 	void quitGame();
 
-	// TODO: Rename "quit" to "shouldQuit"
 	/**
 	 * Return whether or not the ENGINE should quit
 	 */
