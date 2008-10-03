@@ -29,48 +29,48 @@
 
 namespace Common {
 
-FilesystemNode::FilesystemNode() {
+FSNode::FSNode() {
 }
 
-FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) 
+FSNode::FSNode(AbstractFSNode *realNode) 
 	: _realNode(realNode) {
 }
 
-FilesystemNode::FilesystemNode(const Common::String &p) {
+FSNode::FSNode(const Common::String &p) {
 	FilesystemFactory *factory = g_system->getFilesystemFactory();
-	AbstractFilesystemNode *tmp = 0;
+	AbstractFSNode *tmp = 0;
 	
 	if (p.empty() || p == ".")
 		tmp = factory->makeCurrentDirectoryFileNode();
 	else
 		tmp = factory->makeFileNodePath(p);
-	_realNode = Common::SharedPtr<AbstractFilesystemNode>(tmp);
+	_realNode = Common::SharedPtr<AbstractFSNode>(tmp);
 }
 
-bool FilesystemNode::operator<(const FilesystemNode& node) const {
+bool FSNode::operator<(const FSNode& node) const {
 	if (isDirectory() != node.isDirectory())
 		return isDirectory();
 
 	return getDisplayName().compareToIgnoreCase(node.getDisplayName()) < 0;
 }
 
-bool FilesystemNode::exists() const {
+bool FSNode::exists() const {
 	if (_realNode == 0)
 		return false;
 
 	return _realNode->exists();
 }
 
-FilesystemNode FilesystemNode::getChild(const Common::String &n) const {
+FSNode FSNode::getChild(const Common::String &n) const {
 	// If this node is invalid or not a directory, return an invalid node
 	if (_realNode == 0 || !_realNode->isDirectory())
-		return FilesystemNode();
+		return FSNode();
 
-	AbstractFilesystemNode *node = _realNode->getChild(n);
-	return FilesystemNode(node);
+	AbstractFSNode *node = _realNode->getChild(n);
+	return FSNode(node);
 }
 
-bool FilesystemNode::getChildren(FSList &fslist, ListMode mode, bool hidden) const {
+bool FSNode::getChildren(FSList &fslist, ListMode mode, bool hidden) const {
 	if (!_realNode || !_realNode->isDirectory())
 		return false;
 
@@ -81,61 +81,61 @@ bool FilesystemNode::getChildren(FSList &fslist, ListMode mode, bool hidden) con
 
 	fslist.clear();
 	for (AbstractFSList::iterator i = tmp.begin(); i != tmp.end(); ++i) {
-		fslist.push_back(FilesystemNode(*i));
+		fslist.push_back(FSNode(*i));
 	}
 
 	return true;
 }
 
-Common::String FilesystemNode::getDisplayName() const {
+Common::String FSNode::getDisplayName() const {
 	assert(_realNode);
 	return _realNode->getDisplayName();
 }
 
-Common::String FilesystemNode::getName() const {
+Common::String FSNode::getName() const {
 	assert(_realNode);
 	return _realNode->getName();
 }
 
-FilesystemNode FilesystemNode::getParent() const {
+FSNode FSNode::getParent() const {
 	if (_realNode == 0)
 		return *this;
 
-	AbstractFilesystemNode *node = _realNode->getParent();
+	AbstractFSNode *node = _realNode->getParent();
 	if (node == 0) {
 		return *this;
 	} else {
-		return FilesystemNode(node);
+		return FSNode(node);
 	}
 }
 
-Common::String FilesystemNode::getPath() const {
+Common::String FSNode::getPath() const {
 	assert(_realNode);
 	return _realNode->getPath();
 }
 
-bool FilesystemNode::isDirectory() const {
+bool FSNode::isDirectory() const {
 	if (_realNode == 0)
 		return false;
 
 	return _realNode->isDirectory();
 }
 
-bool FilesystemNode::isReadable() const {
+bool FSNode::isReadable() const {
 	if (_realNode == 0)
 		return false;
 
 	return _realNode->isReadable();
 }
 
-bool FilesystemNode::isWritable() const {
+bool FSNode::isWritable() const {
 	if (_realNode == 0)
 		return false;
 
 	return _realNode->isWritable();
 }
 
-bool FilesystemNode::lookupFile(FSList &results, const Common::String &p, bool hidden, bool exhaustive, int depth) const {
+bool FSNode::lookupFile(FSList &results, const Common::String &p, bool hidden, bool exhaustive, int depth) const {
 	if (!isDirectory())
 		return false;
 
@@ -146,7 +146,7 @@ bool FilesystemNode::lookupFile(FSList &results, const Common::String &p, bool h
 	pattern.toUppercase();
 
 	// First match all files on this level
-	getChildren(children, FilesystemNode::kListAll, hidden);
+	getChildren(children, FSNode::kListAll, hidden);
 	for (FSList::iterator entry = children.begin(); entry != children.end(); ++entry) {
 		if (entry->isDirectory()) {
 			if (depth != 0)
@@ -173,27 +173,27 @@ bool FilesystemNode::lookupFile(FSList &results, const Common::String &p, bool h
 	return !results.empty();
 }
 
-Common::SeekableReadStream *FilesystemNode::openForReading() const {
+Common::SeekableReadStream *FSNode::openForReading() const {
 	if (_realNode == 0)
 		return 0;
 
 	if (!_realNode->exists()) {
-		warning("FilesystemNode::openForReading: FilesystemNode does not exist");
+		warning("FSNode::openForReading: FSNode does not exist");
 		return false;
 	} else if (_realNode->isDirectory()) {
-		warning("FilesystemNode::openForReading: FilesystemNode is a directory");
+		warning("FSNode::openForReading: FSNode is a directory");
 		return false;
 	}
 
 	return _realNode->openForReading();
 }
 
-Common::WriteStream *FilesystemNode::openForWriting() const {
+Common::WriteStream *FSNode::openForWriting() const {
 	if (_realNode == 0)
 		return 0;
 
 	if (_realNode->isDirectory()) {
-		warning("FilesystemNode::openForWriting: FilesystemNode is a directory");
+		warning("FSNode::openForWriting: FSNode is a directory");
 		return 0;
 	}
 

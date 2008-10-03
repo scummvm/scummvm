@@ -246,15 +246,15 @@ void md5_finish(md5_context *ctx, uint8 digest[16]) {
 	PUT_UINT32(ctx->state[3], digest, 12);
 }
 
-bool md5_file(const FilesystemNode &file, uint8 digest[16], uint32 length) {
+bool md5_file(const FSNode &file, uint8 digest[16], uint32 length) {
 	if (!file.exists()) {
-		warning("md5_file: using an inexistent FilesystemNode");
+		warning("md5_file: using an inexistent FSNode");
 		return false;
 	} else if (!file.isReadable()) {
-		warning("md5_file: using an unreadable FilesystemNode");
+		warning("md5_file: using an unreadable FSNode");
 		return false;
 	} else if (file.isDirectory()) {
-		warning("md5_file: using a directory FilesystemNode");
+		warning("md5_file: using a directory FSNode");
 		return false;
 	}
 	
@@ -316,7 +316,7 @@ bool md5_file(ReadStream &stream, uint8 digest[16], uint32 length) {
 	return true;
 }
 
-bool md5_file_string(const FilesystemNode &file, char *md5str, uint32 length) {
+bool md5_file_string(const FSNode &file, char *md5str, uint32 length) {
 	uint8 digest[16];
 	if (!md5_file(file, digest, length))
 		return false;

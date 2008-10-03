@@ -150,7 +150,7 @@ void MoviePlayer::play() {
 
 	startSound();
 
-	while (_frameNum < _framesCount && !_vm->quit())
+	while (_frameNum < _framesCount && !_vm->shouldQuit())
 		handleNextFrame();
 
 	closeFile();

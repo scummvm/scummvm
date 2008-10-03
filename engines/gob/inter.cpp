@@ -259,7 +259,7 @@ void Inter::funcBlock(int16 retFlag) {
 		if (executeFuncOpcode(cmd2, cmd, params))
 			return;
 
-		if (_vm->quit())
+		if (_vm->shouldQuit())
 			break;
 
 		if (_break) {
@@ -279,7 +279,7 @@ void Inter::funcBlock(int16 retFlag) {
 void Inter::callSub(int16 retFlag) {
 	byte block;
 
-	while (!_vm->quit() && _vm->_global->_inter_execPtr &&
+	while (!_vm->shouldQuit() && _vm->_global->_inter_execPtr &&
 			(_vm->_global->_inter_execPtr != _vm->_game->_totFileData)) {
 
 		block = *_vm->_global->_inter_execPtr;

@@ -125,7 +125,7 @@ DSFileSystemNode::DSFileSystemNode(const DSFileSystemNode* node) {
 	//TODO: not implemented?
 }
 
-AbstractFilesystemNode *DSFileSystemNode::getChild(const Common::String& n) const {
+AbstractFSNode *DSFileSystemNode::getChild(const Common::String& n) const {
 	if (_path.lastChar() == '\\') {
 		return new DSFileSystemNode(_path + n);
 	} else {
@@ -168,8 +168,8 @@ bool DSFileSystemNode::getChildren(AbstractFSList &dirList, ListMode mode, bool 
 			_zipFile->getFileName(n);
 
 //			consolePrintf("file: %s\n", n);
-			if ( (_zipFile->isDirectory() && ((mode == Common::FilesystemNode::kListDirectoriesOnly) || (mode == Common::FilesystemNode::kListAll)) )
-				|| (!_zipFile->isDirectory() && ((mode == Common::FilesystemNode::kListFilesOnly) || (mode == Common::FilesystemNode::kListAll)) ) )
+			if ( (_zipFile->isDirectory() && ((mode == Common::FSNode::kListDirectoriesOnly) || (mode == Common::FSNode::kListAll)) )
+				|| (!_zipFile->isDirectory() && ((mode == Common::FSNode::kListFilesOnly) || (mode == Common::FSNode::kListAll)) ) )
 			{
 				DSFileSystemNode* dsfsn = new DSFileSystemNode("ds:/" + Common::String(n), _zipFile->isDirectory());
 				dsfsn->_isDirectory = _zipFile->isDirectory();
@@ -182,7 +182,7 @@ bool DSFileSystemNode::getChildren(AbstractFSList &dirList, ListMode mode, bool 
 	return true;
 }
 
-AbstractFilesystemNode* DSFileSystemNode::getParent() const {
+AbstractFSNode* DSFileSystemNode::getParent() const {
 //	consolePrintf("parent\n");
 	DSFileSystemNode *p;
 
@@ -285,7 +285,7 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const GBAMPFileSystemNode* node) {
 	//TODO: not implemented?
 }
 
-AbstractFilesystemNode *GBAMPFileSystemNode::getChild(const Common::String& n) const {
+AbstractFSNode *GBAMPFileSystemNode::getChild(const Common::String& n) const {
 	if (_path.lastChar() == '\\') {
 		return new DSFileSystemNode(_path + n);
 	} else {
@@ -322,8 +322,8 @@ bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode, bo
 
 	while (entryType != TYPE_NO_MORE) {
 
-		if ( ((entryType == TYPE_DIR) && ((mode == Common::FilesystemNode::kListDirectoriesOnly) || (mode == Common::FilesystemNode::kListAll)))
-		||   ((entryType == TYPE_FILE) && ((mode == Common::FilesystemNode::kListFilesOnly) || (mode == Common::FilesystemNode::kListAll))) ) {
+		if ( ((entryType == TYPE_DIR) && ((mode == Common::FSNode::kListDirectoriesOnly) || (mode == Common::FSNode::kListAll)))
+		||   ((entryType == TYPE_FILE) && ((mode == Common::FSNode::kListFilesOnly) || (mode == Common::FSNode::kListAll))) ) {
 			GBAMPFileSystemNode* dsfsn;
 
 			consolePrintf("Fname: %s\n", fname);
@@ -353,7 +353,7 @@ bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode, bo
 	return true;
 }
 
-AbstractFilesystemNode* GBAMPFileSystemNode::getParent() const {
+AbstractFSNode* GBAMPFileSystemNode::getParent() const {
 //	consolePrintf("parent\n");
 	GBAMPFileSystemNode *p;
 

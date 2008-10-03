@@ -192,7 +192,7 @@ void Screen::setResolution() {
 				_system->initSize(960, 400);
 			else
 				_system->initSize(640, 400);
-			_vm->initCommonGFX(true);
+			initCommonGFX(true);
 		_system->endGFXTransaction();
 	} else {
 		_system->beginGFXTransaction();
@@ -200,7 +200,7 @@ void Screen::setResolution() {
 				_system->initSize(640, 200);
 			else
 				_system->initSize(320, 200);
-			_vm->initCommonGFX(false);
+			initCommonGFX(false);
 		_system->endGFXTransaction();
 	}
 
@@ -384,7 +384,7 @@ void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *u
 	getFadeParams(palData, delay, delayInc, diff);
 
 	int delayAcc = 0;
-	while (!_vm->quit()) {
+	while (!_vm->shouldQuit()) {
 		delayAcc += delayInc;
 
 		int refreshed = fadePalStep(palData, diff);
@@ -401,7 +401,7 @@ void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *u
 		delayAcc &= 0xFF;
 	}
 
-	if (_vm->quit()) {
+	if (_vm->shouldQuit()) {
 		setScreenPalette(palData);
 		if (upFunc && upFunc->isValid())
 			(*upFunc)();
@@ -750,7 +750,7 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 
 	int32 start, now;
 	int wait;
-	for (y = 0; y < h && !_vm->quit(); ++y) {
+	for (y = 0; y < h && !_vm->shouldQuit(); ++y) {
 		start = (int32)_system->getMillis();
 		int y_cur = y;
 		for (x = 0; x < w; ++x) {
@@ -775,7 +775,7 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 
 	copyOverlayRegion(sx, sy, sx, sy, w, h, srcPage, dstPage);
 
-	if (_vm->quit()) {
+	if (_vm->shouldQuit()) {
 		copyRegion(sx, sy, sx, sy, w, h, srcPage, dstPage);
 		_system->updateScreen();
 	}

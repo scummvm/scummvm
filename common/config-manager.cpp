@@ -77,8 +77,9 @@ void ConfigManager::loadDefaultConfigFile() {
 void ConfigManager::loadConfigFile(const String &filename) {
 	_filename = filename;
 
+	FSNode node(filename);
 	File cfg_file;
-	if (!cfg_file.open(filename)) {
+	if (!cfg_file.open(node)) {
 		printf("Creating configuration file: %s\n", filename.c_str());
 	} else {
 		printf("Using configuration file: %s\n", _filename.c_str());

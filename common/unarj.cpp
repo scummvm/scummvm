@@ -324,15 +324,15 @@ uint32 ArjFile::read(void *dataPtr, uint32 dataSize) {
 	return _uncompressed->read(dataPtr, dataSize);
 }
 
-bool ArjFile::eos() {
+bool ArjFile::eos() const {
 	return _uncompressed->eos();
 }
 
-int32 ArjFile::pos() {
+int32 ArjFile::pos() const {
 	return _uncompressed->pos();
 }
 
-int32 ArjFile::size() {
+int32 ArjFile::size() const {
 	return _uncompressed->size();
 }
 

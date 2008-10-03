@@ -368,11 +368,11 @@ void AGOSEngine_Waxworks::oww_pauseGame() {
 	uint32 pauseTime = getTime();
 	haltAnimation();
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
-		while (!quit()) {
+		while (!shouldQuit()) {
 			if (_lastHitArea3 != 0)
 				break;
 			delay(1);

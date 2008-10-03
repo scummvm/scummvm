@@ -48,9 +48,9 @@ int AgiLoader_v3::detectGame() {
 	bool found = false;
 
 	Common::FSList fslist;
-	Common::FilesystemNode dir(ConfMan.get("path"));
+	Common::FSNode dir(ConfMan.get("path"));
 
-	if (!dir.getChildren(fslist, Common::FilesystemNode::kListFilesOnly)) {
+	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly)) {
 		warning("AgiEngine: invalid game path '%s'", dir.getPath().c_str());
 		return errInvalidAGIFile;
 	}

@@ -2207,7 +2207,7 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSL
 	bool matchedUsingWag = false;
 	int wagFileCount = 0;
 	WagFileParser wagFileParser;
-	Common::String wagFilePath;
+	Common::FSNode wagFileNode;
 	Common::String description;
 	Common::FSList fslistCurrentDir; // Only used if fslist == NULL
 
@@ -2222,8 +2222,8 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSL
 		if (path.empty())
 			path = ".";
 
-		Common::FilesystemNode fsCurrentDir(path);
-		fsCurrentDir.getChildren(fslistCurrentDir, Common::FilesystemNode::kListFilesOnly);
+		Common::FSNode fsCurrentDir(path);
+		fsCurrentDir.getChildren(fslistCurrentDir, Common::FSNode::kListFilesOnly);
 		fslist = &fslistCurrentDir;
 	}
 
@@ -2246,7 +2246,7 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSL
 
 		if (filename.hasSuffix(".wag")) {
 			// Save latest found *.wag file's path (Can be used to open the file, the name can't)
-			wagFilePath = file->getPath();
+			wagFileNode = *file;
 			wagFileCount++; // Count found *.wag files
 		}
 	}
@@ -2298,7 +2298,7 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSL
 
 	// WinAGI produces *.wag file with interpreter version, game name and other parameters.
 	// If there's exactly one *.wag file and it parses successfully then we'll use its information.
-	if (wagFileCount == 1 && wagFileParser.parse(wagFilePath.c_str())) {
+	if (wagFileCount == 1 && wagFileParser.parse(wagFileNode)) {
 		matchedUsingWag = true;
 
 		const WagProperty *wagAgiVer = wagFileParser.getProperty(WagProperty::PC_INTVERSION);

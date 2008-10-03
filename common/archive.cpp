@@ -26,6 +26,7 @@
 #include "common/archive.h"
 #include "common/fs.h"
 #include "common/util.h"
+#include "common/system.h"
 
 namespace Common {
 
@@ -53,7 +54,7 @@ int Archive::matchPattern(StringList &list, const String &pattern) {
 }
 
 
-FSDirectory::FSDirectory(const FilesystemNode &node, int depth)
+FSDirectory::FSDirectory(const FSNode &node, int depth)
   : _node(node), _cached(false), _depth(depth) {
 }
 
@@ -64,11 +65,11 @@ FSDirectory::FSDirectory(const String &name, int depth)
 FSDirectory::~FSDirectory() {
 }
 
-FilesystemNode FSDirectory::getFSNode() const {
+FSNode FSDirectory::getFSNode() const {
 	return _node;
 }
 
-FilesystemNode FSDirectory::lookupCache(NodeCache &cache, const String &name) {
+FSNode FSDirectory::lookupCache(NodeCache &cache, const String &name) {
 	// make caching as lazy as possible
 	if (!name.empty()) {
 		if (!_cached) {
@@ -80,7 +81,7 @@ FilesystemNode FSDirectory::lookupCache(NodeCache &cache, const String &name) {
 			return cache[name];
 	}
 
-	return FilesystemNode();
+	return FSNode();
 }
 
 bool FSDirectory::hasFile(const String &name) {
@@ -88,7 +89,7 @@ bool FSDirectory::hasFile(const String &name) {
 		return false;
 	}
 
-	FilesystemNode node = lookupCache(_fileCache, name);
+	FSNode node = lookupCache(_fileCache, name);
 	return node.exists();
 }
 
@@ -97,13 +98,13 @@ SeekableReadStream *FSDirectory::openFile(const String &name) {
 		return 0;
 	}
 
-	FilesystemNode node = lookupCache(_fileCache, name);
+	FSNode node = lookupCache(_fileCache, name);
 
 	if (!node.exists()) {
-		warning("FSDirectory::openFile: FilesystemNode does not exist");
+		warning("FSDirectory::openFile: FSNode does not exist");
 		return 0;
 	} else if (node.isDirectory()) {
-		warning("FSDirectory::openFile: FilesystemNode is a directory");
+		warning("FSDirectory::openFile: FSNode is a directory");
 		return 0;
 	}
 
@@ -120,17 +121,17 @@ FSDirectory *FSDirectory::getSubDirectory(const String &name) {
 		return 0;
 	}
 
-	FilesystemNode node = lookupCache(_subDirCache, name);
+	FSNode node = lookupCache(_subDirCache, name);
 	return new FSDirectory(node);
 }
 
-void FSDirectory::cacheDirectoryRecursive(FilesystemNode node, int depth, const String& prefix) {
+void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) {
 	if (depth <= 0) {
 		return;
 	}
 
 	FSList list;
-	node.getChildren(list, FilesystemNode::kListAll, false);
+	node.getChildren(list, FSNode::kListAll, false);
 
 	FSList::iterator it = list.begin();
 	for ( ; it != list.end(); it++) {
@@ -231,9 +232,9 @@ void SearchSet::insert(const Node &node) {
 	_list.insert(it, node);
 }
 
-void SearchSet::add(const String& name, ArchivePtr archive, uint priority) {
+void SearchSet::add(const String& name, ArchivePtr archive, int priority) {
 	if (find(name) == _list.end()) {
-		Node node = { priority, name, archive };
+		Node node(priority, name, archive);
 		insert(node);
 	} else {
 		warning("SearchSet::add: archive '%s' already present", name.c_str());
@@ -256,7 +257,7 @@ void SearchSet::clear() {
 	_list.clear();
 }
 
-void SearchSet::setPriority(const String& name, uint priority) {
+void SearchSet::setPriority(const String& name, int priority) {
 	ArchiveList::iterator it = find(name);
 	if (it == _list.end()) {
 		warning("SearchSet::setPriority: archive '%s' is not present", name.c_str());
@@ -328,17 +329,33 @@ SeekableReadStream *SearchSet::openFile(const String &name) {
 
 DECLARE_SINGLETON(SearchManager);
 
-void SearchManager::addArchive(const String &name, ArchivePtr archive) {
-	add(name, archive);
+SearchManager::SearchManager() {
+	clear();	// Force a reset
 }
 
-void SearchManager::addDirectory(const String &name, const String &directory) {
-	addDirectoryRecursive(name, 1);
+void SearchManager::addArchive(const String &name, ArchivePtr archive, int priority) {
+	add(name, archive, priority);
 }
 
-void SearchManager::addDirectoryRecursive(const String &name, const String &directory, int depth) {
-	add(name, SharedPtr<FSDirectory>(new FSDirectory(directory, depth)));
+void SearchManager::addDirectory(const String &name, const String &directory, int priority) {
+	addDirectoryRecursive(name, directory, 1, priority);
 }
 
+void SearchManager::addDirectoryRecursive(const String &name, const String &directory, int depth, int priority) {
+	add(name, ArchivePtr(new FSDirectory(directory, depth)), priority);
+}
+
+void SearchManager::clear() {
+	SearchSet::clear();
+
+	// Always keep system specific archives in the SearchManager.
+	// But we give them a lower priority than the default priority (which is 0),
+	// so that archives added by client code are searched first.
+	g_system->addSysArchivesToSearchSet(*this, -1);
+
+	// Add the current dir as a very last resort.
+	// See also bug #2137680.
+	add(".", ArchivePtr(new FSDirectory(".")), -2);
+}
 
 } // namespace Common

@@ -460,7 +460,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 					// as an event now and open up the GMM itself it would open the
 					// menu twice.
 					if (g_engine && !g_engine->isPaused())
-						g_engine->mainMenuDialog();
+						g_engine->openMainMenuDialog();
 
 					if (_shouldQuit)
 						event.type = Common::EVENT_QUIT;
@@ -530,7 +530,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 		case Common::EVENT_MAINMENU:
 			if (g_engine && !g_engine->isPaused())
-				g_engine->mainMenuDialog();
+				g_engine->openMainMenuDialog();
 
 			if (_shouldQuit)
 				event.type = Common::EVENT_QUIT;

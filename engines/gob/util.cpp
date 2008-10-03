@@ -71,7 +71,7 @@ void Util::longDelay(uint16 msecs) {
 		_vm->_video->waitRetrace();
 		processInput();
 		delay(15);
-	} while (!_vm->quit() &&
+	} while (!_vm->shouldQuit() &&
 	         ((g_system->getMillis() * _vm->_global->_speedFactor) < time));
 }
 

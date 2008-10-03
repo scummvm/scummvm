@@ -143,7 +143,7 @@ void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound) {
 			for (int cnt = 0; cnt < ARRAYSIZE(g_dirNames); cnt++)
 				if (scumm_stricmp(file->getName().c_str(), g_dirNames[cnt]) == 0) {
 					Common::FSList fslist2;
-					if (file->getChildren(fslist2, Common::FilesystemNode::kListFilesOnly))
+					if (file->getChildren(fslist2, Common::FSNode::kListFilesOnly))
 						Sword1CheckDirectory(fslist2, filesFound);
 				}
 		}
@@ -303,7 +303,7 @@ int SwordEngine::init() {
 	_music = new Music(_mixer);
 	_sound = new Sound("", _mixer, _resMan);
 	_menu = new Menu(_screen, _mouse);
-	_logic = new Logic(_objectMan, _resMan, _screen, _mouse, _sound, _music, _menu, _system, _mixer);
+	_logic = new Logic(this, _objectMan, _resMan, _screen, _mouse, _sound, _music, _menu, _system, _mixer);
 	_mouse->useLogicAndMenu(_logic, _menu);
 
 	syncSoundSettings();
@@ -703,7 +703,7 @@ int SwordEngine::go() {
 			_systemVars.controlPanelMode = CP_NEWGAME;
 			if (_control->runPanel() == CONTROL_GAME_RESTORED)
 				_control->doRestore();
-			else if (!quit())
+			else if (!shouldQuit())
 				_logic->startPositions(0);
 		} else {
 			// no savegames, start new game.
@@ -712,10 +712,10 @@ int SwordEngine::go() {
 	}
 	_systemVars.controlPanelMode = CP_NORMAL;
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 		uint8 action = mainLoop();
 
-		if (!quit()) {
+		if (!shouldQuit()) {
 			// the mainloop was left, we have to reinitialize.
 			reinitialize();
 			if (action == CONTROL_GAME_RESTORED)
@@ -756,7 +756,7 @@ uint8 SwordEngine::mainLoop(void) {
 	uint8 retCode = 0;
 	_keyPressed.reset();
 
-	while ((retCode == 0) && (!quit())) {
+	while ((retCode == 0) && (!shouldQuit())) {
 		// do we need the section45-hack from sword.c here?
 		checkCd();
 
@@ -805,9 +805,9 @@ uint8 SwordEngine::mainLoop(void) {
 			}
 			_mouseState = 0;
 			_keyPressed.reset();
-		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) && (retCode == 0) && (!quit()));
+		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) && (retCode == 0) && (!shouldQuit()));
 
-		if ((retCode == 0) && (Logic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade && (!quit())) {
+		if ((retCode == 0) && (Logic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade && (!shouldQuit())) {
 			_screen->fadeDownPalette();
 			int32 relDelay = (int32)_system->getMillis();
 			while (_screen->stillFading()) {

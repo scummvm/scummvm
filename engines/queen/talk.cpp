@@ -807,7 +807,7 @@ void Talk::speakSegment(
 
 	switch (command) {
 	case SPEAK_PAUSE:
-		for (i = 0; i < 10 && !_vm->input()->talkQuit() && !_vm->quit(); i++) {
+		for (i = 0; i < 10 && !_vm->input()->talkQuit() && !_vm->shouldQuit(); i++) {
 			_vm->update();
 		}
 		return;

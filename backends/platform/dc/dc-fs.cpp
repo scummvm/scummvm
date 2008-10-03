@@ -33,9 +33,9 @@
 /**
  * Implementation of the ScummVM file system API based on Ronin.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
+ * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class RoninCDFileNode : public AbstractFilesystemNode {
+class RoninCDFileNode : public AbstractFSNode {
 protected:
 	Common::String _path;
 
@@ -49,14 +49,14 @@ public:
 	virtual bool isReadable() const { return true; }
 	virtual bool isWritable() const { return false; }
 
-	virtual AbstractFilesystemNode *getChild(const Common::String &n) const { return NULL; }
+	virtual AbstractFSNode *getChild(const Common::String &n) const { return NULL; }
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const { return false; }
-	virtual AbstractFilesystemNode *getParent() const;
+	virtual AbstractFSNode *getParent() const;
 
 	virtual Common::SeekableReadStream *openForReading();
 	virtual Common::WriteStream *openForWriting() { return 0; }
 
-	static AbstractFilesystemNode *makeFileNodePath(const Common::String &path);
+	static AbstractFSNode *makeFileNodePath(const Common::String &path);
 };
 
 /* A directory */
@@ -65,7 +65,7 @@ public:
 	RoninCDDirectoryNode(const Common::String &path) : RoninCDFileNode(path) {};
 
 	virtual bool isDirectory() const { return true; }
-	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
+	virtual AbstractFSNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual Common::SeekableReadStream *openForReading() { return 0; }
 };
@@ -80,7 +80,7 @@ public:
 	virtual Common::SeekableReadStream *openForReading() { return 0; }
 };
 
-AbstractFilesystemNode *RoninCDFileNode::makeFileNodePath(const Common::String &path) {
+AbstractFSNode *RoninCDFileNode::makeFileNodePath(const Common::String &path) {
 	assert(path.size() > 0);
 
 	int fd;
@@ -96,7 +96,7 @@ AbstractFilesystemNode *RoninCDFileNode::makeFileNodePath(const Common::String &
 	}
 }
 
-AbstractFilesystemNode *RoninCDDirectoryNode::getChild(const Common::String &n) const {
+AbstractFSNode *RoninCDDirectoryNode::getChild(const Common::String &n) const {
 	Common::String newPath(_path);
 	if (_path.lastChar() != '/')
 		newPath += '/';
@@ -122,13 +122,13 @@ bool RoninCDDirectoryNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 
 		if (dp->d_size < 0) {
 			// Honor the chosen mode
-			if (mode == Common::FilesystemNode::kListFilesOnly)
+			if (mode == Common::FSNode::kListFilesOnly)
 				continue;
 
 			myList.push_back(new RoninCDDirectoryNode(newPath+"/"));
 		} else {
 			// Honor the chosen mode
-			if (mode == Common::FilesystemNode::kListDirectoriesOnly)
+			if (mode == Common::FSNode::kListDirectoriesOnly)
 				continue;
 
 			myList.push_back(new RoninCDFileNode(newPath));
@@ -139,7 +139,7 @@ bool RoninCDDirectoryNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 	return true;
 }
 
-AbstractFilesystemNode *RoninCDFileNode::getParent() const {
+AbstractFSNode *RoninCDFileNode::getParent() const {
 	if (_path == "/")
 		return 0;
 
@@ -154,16 +154,16 @@ Common::SeekableReadStream *RoninCDFileNode::openForReading() {
 	return StdioStream::makeFromPath(getPath().c_str(), false);
 }
 
-AbstractFilesystemNode *OSystem_Dreamcast::makeRootFileNode() const {
+AbstractFSNode *OSystem_Dreamcast::makeRootFileNode() const {
 	return new RoninCDDirectoryNode("/");
 }
 
-AbstractFilesystemNode *OSystem_Dreamcast::makeCurrentDirectoryFileNode() const {
+AbstractFSNode *OSystem_Dreamcast::makeCurrentDirectoryFileNode() const {
 	return makeRootFileNode();
 }
 
-AbstractFilesystemNode *OSystem_Dreamcast::makeFileNodePath(const Common::String &path) const {
-	AbstractFilesystemNode *node = RoninCDFileNode::makeFileNodePath(path);
+AbstractFSNode *OSystem_Dreamcast::makeFileNodePath(const Common::String &path) const {
+	AbstractFSNode *node = RoninCDFileNode::makeFileNodePath(path);
 	return (node? node : new RoninCDNonexistingNode(path));
 }
 

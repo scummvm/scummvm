@@ -370,11 +370,11 @@ void AGOSEngine_Elvira2::oe2_pauseGame() {
 	uint32 pauseTime = getTime();
 	haltAnimation();
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
-		while (!quit()) {
+		while (!shouldQuit()) {
 			if (processSpecialKeys() != 0 || _lastHitArea3 != 0)
 				break;
 			delay(1);

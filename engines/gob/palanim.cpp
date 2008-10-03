@@ -132,7 +132,7 @@ void PalAnim::fade(Video::PalDesc *palDesc, int16 fadeV, int16 allColors) {
 	bool stop;
 	int16 i;
 
-	if (_vm->quit())
+	if (_vm->shouldQuit())
 		return;
 
 	_fadeValue = (fadeV < 0) ? -fadeV : 2;

@@ -215,7 +215,7 @@ void Control::askForCd(void) {
 				notAccepted = false;
 			}
 		}
-	} while (notAccepted && (!g_engine->quit()));
+	} while (notAccepted && (!g_engine->shouldQuit()));
 
 	_resMan->resClose(fontId);
 	free(_screenBuf);
@@ -317,7 +317,7 @@ uint8 Control::runPanel(void) {
 		}
 		delay(1000 / 12);
 		newMode = getClicks(mode, &retVal);
-	} while ((newMode != BUTTON_DONE) && (retVal == 0) && (!g_engine->quit()));
+	} while ((newMode != BUTTON_DONE) && (retVal == 0) && (!g_engine->shouldQuit()));
 
 	if (SwordEngine::_systemVars.controlPanelMode == CP_NORMAL) {
 		uint8 volL, volR;

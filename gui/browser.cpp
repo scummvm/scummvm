@@ -107,7 +107,7 @@ int BrowserDialog::runModal() {
 			err = FSRefMakePath(&ref, (UInt8*)buf, sizeof(buf)-1);
 			assert(err == noErr);
 
-			_choice = Common::FilesystemNode(buf);
+			_choice = Common::FSNode(buf);
 			choiceMade = true;
 		}
 
@@ -160,9 +160,9 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 
 void BrowserDialog::open() {
 	if (ConfMan.hasKey("browser_lastpath"))
-		_node = Common::FilesystemNode(ConfMan.get("browser_lastpath"));
+		_node = Common::FSNode(ConfMan.get("browser_lastpath"));
 	if (!_node.isDirectory())
-		_node = Common::FilesystemNode(".");
+		_node = Common::FSNode(".");
 
 	// Alway refresh file list
 	updateListing();
@@ -227,9 +227,9 @@ void BrowserDialog::updateListing() {
 	ConfMan.set("browser_lastpath", _node.getPath());
 
 	// Read in the data from the file system
-	Common::FilesystemNode::ListMode listMode =
-	         _isDirBrowser ? Common::FilesystemNode::kListDirectoriesOnly
-	                       : Common::FilesystemNode::kListAll;
+	Common::FSNode::ListMode listMode =
+	         _isDirBrowser ? Common::FSNode::kListDirectoriesOnly
+	                       : Common::FSNode::kListAll;
 	if (!_node.getChildren(_nodeContent, listMode)) {
 		_nodeContent.clear();
 	} else {

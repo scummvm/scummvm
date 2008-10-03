@@ -231,7 +231,7 @@ int Parallaction_ns::go() {
 
 	startGui();
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 		runGame();
 	}
 

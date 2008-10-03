@@ -71,9 +71,10 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 
 #ifdef USE_ZLIB
 		Common::ZipArchive zipArchive(_stylefile + ".zip");
-		if (zipArchive.hasFile(cacheFilename)) {
-			Common::FilePtr stream(zipArchive.openFile(cacheFilename));
-			font = Graphics::NewFont::loadFromCache(*stream.get());
+		Common::SeekableReadStream *stream(zipArchive.openFile(cacheFilename));
+		if (stream) {
+			font = Graphics::NewFont::loadFromCache(*stream);
+			delete stream;
 		}
 #endif
 		if (font)
@@ -88,9 +89,10 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 #ifdef USE_ZLIB
 	if (!font) {
 		Common::ZipArchive zipArchive(_stylefile + ".zip");
-		if (zipArchive.hasFile(filename)) {
-			Common::FilePtr stream(zipArchive.openFile(filename));
-			font = Graphics::NewFont::loadFont(*stream.get());
+		Common::SeekableReadStream *stream(zipArchive.openFile(filename));
+		if (stream) {
+			font = Graphics::NewFont::loadFont(*stream);
+			delete stream;
 		}
 	}
 #endif
@@ -139,10 +141,9 @@ bool Theme::loadConfigFile(const Common::String &stylefile) {
 #ifdef USE_ZLIB
 	// Maybe find a nicer solution to this
 	Common::ZipArchive zipArchive(stylefile + ".zip");
-	if (zipArchive.hasFile(stylefile + ".ini")) {
-		Common::FilePtr stream(zipArchive.openFile(stylefile + ".ini"));
-		if (_configFile.loadFromStream(*stream.get()))
-			return true;
+	Common::File file;
+	if (file.open(stylefile + ".ini", zipArchive)) {
+		return _configFile.loadFromStream(file);
 	}
 #endif
 

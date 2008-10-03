@@ -101,10 +101,10 @@ void ThemeBrowser::updateListing() {
 	// files in other places are ignored in this dialog
 	// TODO: let the user browse the complete FS too/only the FS?
 	if (ConfMan.hasKey("themepath"))
-		addDir(_themes, ConfMan.get("themepath"), 0);
+		addDir(_themes, Common::FSNode(ConfMan.get("themepath")), 0);
 
 #ifdef DATA_PATH
-	addDir(_themes, DATA_PATH);
+	addDir(_themes, Common::FSNode(DATA_PATH));
 #endif
 
 #ifdef MACOSX
@@ -112,7 +112,7 @@ void ThemeBrowser::updateListing() {
 	if (resourceUrl) {
 		char buf[256];
 		if (CFURLGetFileSystemRepresentation(resourceUrl, true, (UInt8 *)buf, 256)) {
-			Common::String resourcePath = buf;
+			Common::FSNode resourcePath(buf);
 			addDir(_themes, resourcePath, 0);
 		}
 		CFRelease(resourceUrl);
@@ -120,9 +120,9 @@ void ThemeBrowser::updateListing() {
 #endif
 
 	if (ConfMan.hasKey("extrapath"))
-		addDir(_themes, ConfMan.get("extrapath"));
+		addDir(_themes, Common::FSNode(ConfMan.get("extrapath")));
 
-	addDir(_themes, ".", 0);
+	addDir(_themes, Common::FSNode("."), 0);
 
 	// Populate the ListWidget
 	Common::StringList list;
@@ -137,22 +137,20 @@ void ThemeBrowser::updateListing() {
 	draw();
 }
 
-void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
+void ThemeBrowser::addDir(ThList &list, const Common::FSNode &node, int level) {
 	if (level < 0)
 		return;
-
-	Common::FilesystemNode node(dir);
 
 	if (!node.exists() || !node.isReadable())
 		return;
 
 	Common::FSList fslist;
-	if (!node.getChildren(fslist, Common::FilesystemNode::kListAll))
+	if (!node.getChildren(fslist, Common::FSNode::kListAll))
 		return;
 
 	for (Common::FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
 		if (i->isDirectory()) {
-			addDir(list, i->getPath(), level-1);
+			addDir(list, *i, level-1);
 		} else {
 			Entry th;
 			if (isTheme(*i, th)) {
@@ -171,15 +169,22 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 	}
 }
 
-bool ThemeBrowser::isTheme(const Common::FilesystemNode &node, Entry &out) {
+bool ThemeBrowser::isTheme(const Common::FSNode &node, Entry &out) {
 	Common::ConfigFile cfg;
 	Common::String type;
 
 	out.file = node.getName();
-	for (int i = out.file.size()-1; out.file[i] != '.' && i > 0; --i) {
+	
+	// Only accept .ini and .zip fies
+	if (!out.file.hasSuffix(".ini") && !out.file.hasSuffix(".zip"))
+		return false;
+	
+	// Remove the filename extension
+	while (!out.file.empty() && out.file.lastChar() != '.') {
 		out.file.deleteLastChar();
 	}
-	out.file.deleteLastChar();
+	if (out.file.lastChar() == '.')
+		out.file.deleteLastChar();
 
 	if (out.file.empty())
 		return false;

@@ -246,9 +246,9 @@ PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) c
 		path = ".";
 		warning("No path was provided. Assuming the data files are in the current directory");
 	}
-	FilesystemNode dir(path);
+	FSNode dir(path);
 	FSList files;
-	if (!dir.isDirectory() || !dir.getChildren(files, FilesystemNode::kListAll)) {
+	if (!dir.isDirectory() || !dir.getChildren(files, FSNode::kListAll)) {
 		warning("Game data path does not exist or is not a directory (%s)", path.c_str());
 		return kNoGameDataFoundError;
 	}
@@ -290,6 +290,7 @@ PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) c
 
 typedef HashMap<String, bool, IgnoreCase_Hash, IgnoreCase_EqualTo> StringSet;
 typedef HashMap<String, int32, IgnoreCase_Hash, IgnoreCase_EqualTo> IntMap;
+typedef HashMap<String, FSNode, IgnoreCase_Hash, IgnoreCase_EqualTo> FileMap;
 
 static void reportUnknown(const StringMap &filesMD5, const IntMap &filesSize) {
 	// TODO: This message should be cleaned up / made more specific.
@@ -307,10 +308,10 @@ static void reportUnknown(const StringMap &filesMD5, const IntMap &filesSize) {
 	printf("\n");
 }
 
-static ADGameDescList detectGameFilebased(const StringMap &allFiles, const Common::ADParams &params);
+static ADGameDescList detectGameFilebased(const FileMap &allFiles, const Common::ADParams &params);
 
 static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra) {
-	StringMap allFiles;
+	FileMap allFiles;
 
 	StringSet detectFiles;
 	StringMap filesMD5;
@@ -334,7 +335,7 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 		if (tstr.lastChar() == '.')
 			tstr.deleteLastChar();
 
-		allFiles[tstr] = file->getPath();	// Record the presence of this file
+		allFiles[tstr] = *file;	// Record the presence of this file
 	}
 
 	// Compute the set of files for which we need MD5s for. I.e. files which are
@@ -356,7 +357,7 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 		debug(3, "+ %s", fname.c_str());
 
 		char md5str[32+1];
-		if (!md5_file_string(allFiles[fname].c_str(), md5str, params.md5Bytes))
+		if (!md5_file_string(allFiles[fname], md5str, params.md5Bytes))
 			continue;
 		filesMD5[fname] = md5str;
 
@@ -464,7 +465,7 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
  * the maximal number of matching files. In case of a tie, the entry
  * coming first in the list is chosen.
  */
-static ADGameDescList detectGameFilebased(const StringMap &allFiles, const Common::ADParams &params) {
+static ADGameDescList detectGameFilebased(const FileMap &allFiles, const Common::ADParams &params) {
 	const ADFileBasedFallback *ptr;
 	const char* const* filenames;
 

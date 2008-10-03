@@ -496,7 +496,7 @@ void Control::doControlPanel(void) {
 	_curButtonText = 0;
 	uint16 clickRes = 0;
 
-	while (!quitPanel && !g_engine->quit()) {
+	while (!quitPanel && !g_engine->shouldQuit()) {
 		_text->drawToScreen(WITH_MASK);
 		_system->updateScreen();
 		_mouseClicked = false;
@@ -528,7 +528,7 @@ void Control::doControlPanel(void) {
 	}
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
-	if (!g_engine->quit())
+	if (!g_engine->shouldQuit())
 		_system->updateScreen();
 	_skyScreen->forceRefresh();
 	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
@@ -879,7 +879,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 	bool refreshNames = true;
 	bool refreshAll = true;
 	uint16 clickRes = 0;
-	while (!quitPanel && !g_engine->quit()) {
+	while (!quitPanel && !g_engine->shouldQuit()) {
 		clickRes = 0;
 		if (refreshNames || refreshAll) {
 			if (refreshAll) {

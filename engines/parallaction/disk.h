@@ -211,21 +211,21 @@ protected:
 
 	Parallaction	*_vm;
 
-	Common::FilesystemNode	_baseDir;
-	Common::FilesystemNode	_partDir;
+	Common::FSNode	_baseDir;
+	Common::FSNode	_partDir;
 
-	Common::FilesystemNode	_aniDir;
-	Common::FilesystemNode	_bkgDir;
-	Common::FilesystemNode	_mscDir;
-	Common::FilesystemNode	_mskDir;
-	Common::FilesystemNode	_pthDir;
-	Common::FilesystemNode	_rasDir;
-	Common::FilesystemNode	_scrDir;
-	Common::FilesystemNode	_sfxDir;
-	Common::FilesystemNode	_talDir;
+	Common::FSNode	_aniDir;
+	Common::FSNode	_bkgDir;
+	Common::FSNode	_mscDir;
+	Common::FSNode	_mskDir;
+	Common::FSNode	_pthDir;
+	Common::FSNode	_rasDir;
+	Common::FSNode	_scrDir;
+	Common::FSNode	_sfxDir;
+	Common::FSNode	_talDir;
 
 protected:
-	void errorFileNotFound(const Common::FilesystemNode &dir, const Common::String &filename);
+	void errorFileNotFound(const Common::FSNode &dir, const Common::String &filename);
 	Font *createFont(const char *name, Common::ReadStream &stream);
 	Sprites*	createSprites(Common::ReadStream &stream);
 	void loadBitmap(Common::SeekableReadStream &stream, Graphics::Surface &surf, byte *palette);
@@ -273,14 +273,14 @@ protected:
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
 	void loadBackground(BackgroundInfo& info, Common::SeekableReadStream &stream);
 
-	Common::FilesystemNode	_baseBkgDir;
-	Common::FilesystemNode	_fntDir;
-	Common::FilesystemNode	_commonAniDir;
-	Common::FilesystemNode	_commonBkgDir;
-	Common::FilesystemNode	_commonMscDir;
-	Common::FilesystemNode	_commonMskDir;
-	Common::FilesystemNode	_commonPthDir;
-	Common::FilesystemNode	_commonTalDir;
+	Common::FSNode	_baseBkgDir;
+	Common::FSNode	_fntDir;
+	Common::FSNode	_commonAniDir;
+	Common::FSNode	_commonBkgDir;
+	Common::FSNode	_commonMscDir;
+	Common::FSNode	_commonMskDir;
+	Common::FSNode	_commonPthDir;
+	Common::FSNode	_commonTalDir;
 
 public:
 	AmigaDisk_br(Parallaction *vm);

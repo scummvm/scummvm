@@ -90,6 +90,18 @@ struct ResourceContext {
 			return file;
 		}
 	}
+
+	bool validResourceId(uint32 resourceId) const {
+		return (resourceId < count);
+	}
+
+	ResourceData *getResourceData(uint32 resourceId) const {
+		if (resourceId >= count) {
+			error("ResourceContext::getResourceData() wrong resourceId %d", resourceId);
+		}
+		return &table[resourceId];
+	}
+
 };
 
 struct MetaResource {
@@ -122,7 +134,6 @@ public:
 	bool createContexts();
 	void clearContexts();
 	void loadResource(ResourceContext *context, uint32 resourceId, byte*&resourceBuffer, size_t &resourceSize);
-	size_t getResourceSize(ResourceContext *context, uint32 resourceId);
 	uint32 convertResourceId(uint32 resourceId);
 
 	void loadGlobalResources(int chapter, int actorsEntrance);
@@ -135,26 +146,6 @@ public:
 			}
 		}
 		return NULL;
-	}
-
-	bool validResourceId(ResourceContext *context, uint32 resourceId) const {
-		return (resourceId < context->count);
-	}
-
-	size_t getResourceSize(ResourceContext *context, uint32 resourceId) const {
-		return getResourceData(context, resourceId)->size;
-	}
-
-	size_t getResourceOffset(ResourceContext *context, uint32 resourceId) const {
-		return getResourceData(context, resourceId)->offset;
-	}
-
-	ResourceData *getResourceData(ResourceContext *context, uint32 resourceId) const {
-		if (!validResourceId(context, resourceId)) {
-			warning("Resource::getResourceData() wrong resourceId %d", resourceId);
-			assert(0);
-		}
-		return &context->table[resourceId];
 	}
 
 private:

@@ -957,7 +957,7 @@ void Scene::loadSceneResourceList(uint32 resourceId) {
 			_resourceList[i].resourceId = readS.readUint16();
 			_resourceList[i].resourceType = readS.readUint16();
 			// demo version may contain invalid resourceId
-			_resourceList[i].invalid = !_vm->_resource->validResourceId(_sceneContext, _resourceList[i].resourceId);
+			_resourceList[i].invalid = !_sceneContext->validResourceId(_resourceList[i].resourceId);
 		}
 
 	}

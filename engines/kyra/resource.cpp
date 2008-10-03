@@ -57,14 +57,14 @@ Resource::~Resource() {
 bool Resource::reset() {
 	unloadAllPakFiles();
 
-	Common::FilesystemNode dir(ConfMan.get("path"));
+	Common::FSNode dir(ConfMan.get("path"));
 
 	if (!dir.exists() || !dir.isDirectory())
 		error("invalid game path '%s'", dir.getPath().c_str());
 
 	if (!loadPakFile(StaticResource::staticDataFilename()) || !StaticResource::checkKyraDat(this)) {
 		Common::String errorMessage = "You're missing the '" + StaticResource::staticDataFilename() + "' file or it got corrupted, (re)get it from the ScummVM website";
-		_vm->GUIErrorMessage(errorMessage);
+		GUIErrorMessage(errorMessage);
 		error(errorMessage.c_str());
 	}
 
@@ -103,7 +103,7 @@ bool Resource::reset() {
 	}
 
 	Common::FSList fslist;
-	if (!dir.getChildren(fslist, Common::FilesystemNode::kListFilesOnly))
+	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly))
 		error("can't list files inside game path '%s'", dir.getPath().c_str());
 
 	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().isTalkie) {

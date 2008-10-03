@@ -223,7 +223,7 @@ public:
 	 * @param filename Name of the file to be parsed.
 	 * @return True if parsed successfully, false otherwise.
 	 */
-	bool parse(const char *filename);
+	bool parse(const Common::FSNode &node);
 
 	/**
 	 * Get list of the loaded properties.

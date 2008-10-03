@@ -159,33 +159,33 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 
 	/* initiate stuff */
 	fi.memory = NULL;
-	fi.file = new Common::File;
+	fi.file = NULL;
 
 	if (_fileName.empty()) { // We are running for the first time
 		_fileName = _vm->generateFilename(-3);
 	}
 
-
 	/* get file size */
-	fi.file->open(_fileName);
-	if (!fi.file->isOpen()) {
+	Common::FSNode node(_fileName);
+	fi.file = node.openForReading();
+	if (!fi.file) {
 		error("Cannot open file %s", _fileName.c_str());
 	}
 
 	fi.total_size = fi.file->size();
 	if (fi.total_size == -1) {
-		error("Cannot get size of file %s", fi.file->name());
+		error("Cannot get size of file %s", _fileName.c_str());
 		goto cleanup;
 	}
 	if (fi.total_size == 0) {
-		error("%s: file has a size of 0", fi.file->name());
+		error("%s: file has a size of 0", _fileName.c_str());
 		goto cleanup;
 	}
 
 	/* read all of file */
 	fi.memory = (byte *)malloc(fi.total_size);
 	if (fi.file->read(fi.memory, fi.total_size) == 0) {
-		error("Cannot read from file %s", fi.file->name());
+		error("Cannot read from file %s", _fileName.c_str());
 		goto cleanup;
 	}
 
@@ -200,10 +200,8 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 
 	/* free stuff and close file */
 	cleanup:
-	if (fi.file != NULL)
-		fi.file->close();
-	if (fi.memory != NULL)
-		free(fi.memory);
+	delete fi.file;
+	free(fi.memory);
 
 	return ressize;
 }
@@ -371,19 +369,19 @@ byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 		fwr = find_resource(fi, (is_icon ? "-3" : "-1"), name, lang, &level);
 		if (fwr == NULL) {
 			error("%s: could not find `%s' in `%s' resource.",
-					fi->file->name(), &name[1], (is_icon ? "group_icon" : "group_cursor"));
+					_fileName.c_str(), &name[1], (is_icon ? "group_icon" : "group_cursor"));
 			return NULL;
 		}
 
 		if (get_resource_entry(fi, fwr, &iconsize) != NULL) {
 		    if (iconsize == 0) {
-				debugC(DEBUG_RESOURCE, "%s: icon resource `%s' is empty, skipping", fi->file->name(), name);
+				debugC(DEBUG_RESOURCE, "%s: icon resource `%s' is empty, skipping", _fileName.c_str(), name);
 				skipped++;
 				continue;
 		    }
 		    if ((uint32)iconsize != FROM_LE_32(icondir->entries[c].bytes_in_res)) {
 				debugC(DEBUG_RESOURCE, "%s: mismatch of size in icon resource `%s' and group (%d != %d)",
-					fi->file->name(), name, iconsize, FROM_LE_32(icondir->entries[c].bytes_in_res));
+					_fileName.c_str(), name, iconsize, FROM_LE_32(icondir->entries[c].bytes_in_res));
 		    }
 		    size += iconsize; /* size += FROM_LE_32(icondir->entries[c].bytes_in_res); */
 
@@ -419,7 +417,7 @@ byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 		fwr = find_resource(fi, (is_icon ? "-3" : "-1"), name, lang, &level);
 		if (fwr == NULL) {
 			error("%s: could not find `%s' in `%s' resource.",
-				fi->file->name(), &name[1], (is_icon ? "group_icon" : "group_cursor"));
+				_fileName.c_str(), &name[1], (is_icon ? "group_icon" : "group_cursor"));
 			return NULL;
 		}
 
@@ -675,7 +673,7 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
 		LE32(mz_header->lfanew);
 
 		if (mz_header->lfanew < sizeof(DOSImageHeader)) {
-			error("%s: not a Windows library", fi->file->name());
+			error("%s: not a Windows library", _fileName.c_str());
 			return false;
 		}
 	}
@@ -724,7 +722,7 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
 		RETURN_IF_BAD_POINTER(false, pe_header->optional_header.data_directory[IMAGE_DIRECTORY_ENTRY_RESOURCE]);
 		Win32ImageDataDirectory *dir = pe_header->optional_header.data_directory + IMAGE_DIRECTORY_ENTRY_RESOURCE;
 		if (dir->size == 0) {
-			error("%s: file contains no resources", fi->file->name());
+			error("%s: file contains no resources", _fileName.c_str());
 			return false;
 		}
 
@@ -735,7 +733,7 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
 	}
 
 	/* other (unknown) header signature was found */
-	error("%s: not a Windows library", fi->file->name());
+	error("%s: not a Windows library", _fileName.c_str());
 	return false;
 }
 

@@ -187,7 +187,7 @@ public:
 		return true;
 	}
 	
-	bool loadFile(const FilesystemNode &node) {
+	bool loadFile(const FSNode &node) {
 		Common::File *f = new Common::File;
 		
 		if (!f->open(node)) {

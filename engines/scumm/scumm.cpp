@@ -24,7 +24,6 @@
  */
 
 
-
 #include "common/config-manager.h"
 #include "common/md5.h"
 #include "common/events.h"
@@ -1017,7 +1016,7 @@ int ScummEngine::init() {
 
 
 			// We now have to determine the correct _filenamePattern. To do this
-			// we simply hardcode the possibilites.
+			// we simply hardcode the possibilities.
 			const char *p1 = 0, *p2 = 0;
 			switch (_game.id) {
 			case GID_INDY4:
@@ -1726,7 +1725,7 @@ int ScummEngine::go() {
 
 	int diff = 0;	// Duration of one loop iteration
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 
 		if (_debugger->isAttached())
 			_debugger->onFrame();
@@ -1759,7 +1758,7 @@ int ScummEngine::go() {
 		diff = _system->getMillis() - diff;
 
 
-		if (quit()) {
+		if (shouldQuit()) {
 			// TODO: Maybe perform an autosave on exit?
 		}
 	}
@@ -1777,7 +1776,7 @@ void ScummEngine::waitForTimer(int msec_delay) {
 
 	start_time = _system->getMillis();
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
 		parseEvents();
 		_system->updateScreen();
@@ -1900,7 +1899,7 @@ load_game:
 	checkExecVerbs();
 	checkAndRunSentenceScript();
 
-	if (quit())
+	if (shouldQuit())
 		return;
 
 	// HACK: If a load was requested, immediately perform it. This avoids

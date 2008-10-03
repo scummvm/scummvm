@@ -102,10 +102,10 @@ namespace Scumm {
 #endif
 
 #define RETURN_IF_BAD_POINTER(r, x) \
-	if (!check_offset(fi->memory, fi->total_size, fi->file->name(), &(x), sizeof(x))) \
+	if (!check_offset(fi->memory, fi->total_size, _fileName.c_str(), &(x), sizeof(x))) \
 		return (r);
 #define RETURN_IF_BAD_OFFSET(r, x, s) \
-	if (!check_offset(fi->memory, fi->total_size, fi->file->name(), x, s)) \
+	if (!check_offset(fi->memory, fi->total_size, _fileName.c_str(), x, s)) \
 		return (r);
 
 class ScummEngine_v70he;
@@ -168,7 +168,7 @@ class Win32ResExtractor : public ResExtractor {
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 	struct WinLibrary {
-		Common::File *file;
+		Common::SeekableReadStream *file;
 		byte *memory;
 		byte *first_resource;
 		int total_size;

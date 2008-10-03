@@ -55,7 +55,7 @@ static const GameSettings drasculaSettings[] = {
 DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
 	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	_rnd = new Common::RandomSource();
@@ -220,7 +220,7 @@ int DrasculaEngine::go() {
 
 		allocMemory();
 
-		withVoices = 0;
+		_subtitlesDisabled = !ConfMan.getBool("subtitles");
 		selectionMade = 0;
 
 		if (currentChapter != 3)
@@ -560,12 +560,16 @@ bool DrasculaEngine::runCurrentChapter() {
 		} else if (key == Common::KEYCODE_F8) {
 			selectVerb(0);
 		} else if (key == Common::KEYCODE_v) {
-			withVoices = 1;
+			_subtitlesDisabled = true;
+			ConfMan.setBool("subtitles", !_subtitlesDisabled);
+
 			print_abc(_textsys[2], 96, 86);
 			updateScreen();
 			delay(1410);
 		} else if (key == Common::KEYCODE_t) {
-			withVoices = 0;
+			_subtitlesDisabled = false;
+			ConfMan.setBool("subtitles", !_subtitlesDisabled);
+
 			print_abc(_textsys[3], 94, 86);
 			updateScreen();
 			delay(1460);

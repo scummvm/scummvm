@@ -24,7 +24,7 @@
 
 #include "backends/fs/abstract-fs.h"
 
-const char *AbstractFilesystemNode::lastPathComponent(const Common::String &str, const char sep) {
+const char *AbstractFSNode::lastPathComponent(const Common::String &str, const char sep) {
 	// TODO: Get rid of this eventually! Use Common::lastPathComponent instead
 	if(str.empty())
 		return "";

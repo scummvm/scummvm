@@ -189,9 +189,9 @@ class OSystem_Dreamcast : public OSystem, public FilesystemFactory {
 
   // Filesystem
   FilesystemFactory *getFilesystemFactory() { return this; }
-  AbstractFilesystemNode *makeRootFileNode() const;
-  AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
-  AbstractFilesystemNode *makeFileNodePath(const Common::String &path) const;
+  AbstractFSNode *makeRootFileNode() const;
+  AbstractFSNode *makeCurrentDirectoryFileNode() const;
+  AbstractFSNode *makeFileNodePath(const Common::String &path) const;
 
  private:
 

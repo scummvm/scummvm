@@ -571,7 +571,7 @@ int16 ScriptFunctions::sfGetCdTime(int16 argc, int16 *argv) {
 	// This one is called loads of times, so it has been commented out to reduce spam
 	//warning("Unimplemented opcode: sfGetCdTime");
 	// TODO
-	return 0;
+	return 32000;
 }
 
 int16 ScriptFunctions::sfPlayCdSegment(int16 argc, int16 *argv) {

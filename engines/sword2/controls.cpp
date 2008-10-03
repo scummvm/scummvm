@@ -396,7 +396,7 @@ int Dialog::runModal() {
 
 		_vm->_system->delayMillis(20);
 
-		if (_vm->quit())
+		if (_vm->shouldQuit())
 			setResult(0);
 	}
 
@@ -842,7 +842,7 @@ int StartDialog::runModal() {
 		if (startDialog.runModal())
 			return 1;
 
-		if (_vm->quit())
+		if (_vm->shouldQuit())
 			return 0;
 
 		RestoreDialog restoreDialog(_vm);
@@ -850,7 +850,7 @@ int StartDialog::runModal() {
 		if (restoreDialog.runModal())
 			return 0;
 
-		if (_vm->quit())
+		if (_vm->shouldQuit())
 			return 0;
 	}
 

@@ -965,7 +965,7 @@ void AGOSEngine::writeVariable(uint16 variable, uint16 contents) {
 int AGOSEngine::runScript() {
 	bool flag;
 
-	if (quit())
+	if (shouldQuit())
 		return 1;
 
 	do {
@@ -1010,9 +1010,9 @@ int AGOSEngine::runScript() {
 			error("Invalid opcode '%d' encountered", _opcode);
 
 		executeOpcode(_opcode);
-	} while  (getScriptCondition() != flag && !getScriptReturn() && !quit());
+	} while  (getScriptCondition() != flag && !getScriptReturn() && !shouldQuit());
 
-	return (quit()) ? 1 : getScriptReturn();
+	return (shouldQuit()) ? 1 : getScriptReturn();
 }
 
 Child *nextSub(Child *sub, int16 key) {
@@ -1066,7 +1066,7 @@ void AGOSEngine::waitForSync(uint a) {
 	_exitCutscene = false;
 	_rightButtonDown = false;
 
-	while (_vgaWaitFor != 0 && !quit()) {
+	while (_vgaWaitFor != 0 && !shouldQuit()) {
 		if (_rightButtonDown) {
 			if (_vgaWaitFor == 200 && (getGameType() == GType_FF || !getBitFlag(14))) {
 				skipSpeech();

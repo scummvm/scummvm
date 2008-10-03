@@ -270,7 +270,7 @@ int SagaEngine::go() {
 
 	uint32 currentTicks;
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 		if (_console->isAttached())
 			_console->onFrame();
 

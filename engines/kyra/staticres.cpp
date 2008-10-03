@@ -361,7 +361,7 @@ void StaticResource::deinit() {
 
 void StaticResource::outputError(const Common::String &error) {
 	Common::String errorMessage = "Your '" + StaticResource::staticDataFilename() + "' file " + error + ", reget a correct version from the ScummVM website";
-	_vm->GUIErrorMessage(errorMessage);
+	GUIErrorMessage(errorMessage);
 	::error(errorMessage.c_str());
 }
 

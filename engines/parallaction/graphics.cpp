@@ -750,8 +750,8 @@ Gfx::Gfx(Parallaction* vm) :
 	_vm(vm), _disk(vm->_disk) {
 
 	_vm->_system->beginGFXTransaction();
-	_vm->_system->initSize(_vm->_screenWidth, _vm->_screenHeight);
-	_vm->initCommonGFX(_vm->getGameType() == GType_BRA);
+		_vm->_system->initSize(_vm->_screenWidth, _vm->_screenHeight);
+		initCommonGFX(_vm->getGameType() == GType_BRA);
 	_vm->_system->endGFXTransaction();
 
 	setPalette(_palette);

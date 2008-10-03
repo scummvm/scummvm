@@ -33,9 +33,9 @@
 /**
  * Implementation of the ScummVM file system API based on PalmOS VFS API.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
+ * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class PalmOSFilesystemNode : public AbstractFilesystemNode {
+class PalmOSFilesystemNode : public AbstractFSNode {
 protected:
 	Common::String _displayName;
 	Common::String _path;
@@ -64,9 +64,9 @@ public:
 	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
 	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 
-	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
+	virtual AbstractFSNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFilesystemNode *getParent() const;
+	virtual AbstractFSNode *getParent() const;
 
 	virtual Common::SeekableReadStream *openForReading();
 	virtual Common::WriteStream *openForWriting();
@@ -90,8 +90,8 @@ void PalmOSFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const ch
 
 	isDir = (find_data->attributes & vfsFileAttrDirectory);
 
-	if ((!isDir && mode == Common::FilesystemNode::kListDirectoriesOnly) ||
-		(isDir && mode == Common::FilesystemNode::kListFilesOnly))
+	if ((!isDir && mode == Common::FSNode::kListDirectoriesOnly) ||
+		(isDir && mode == Common::FSNode::kListFilesOnly))
 		return;
 
 	entry._isDirectory = isDir;
@@ -139,7 +139,7 @@ PalmOSFilesystemNode::PalmOSFilesystemNode(const Common::String &p) {
 	_isPseudoRoot = false;
 }
 
-AbstractFilesystemNode *PalmOSFilesystemNode::getChild(const Common::String &n) const {
+AbstractFSNode *PalmOSFilesystemNode::getChild(const Common::String &n) const {
 	assert(_isDirectory);
 
 	Common::String newPath(_path);
@@ -190,7 +190,7 @@ bool PalmOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 	return true;
 }
 
-AbstractFilesystemNode *PalmOSFilesystemNode::getParent() const {
+AbstractFSNode *PalmOSFilesystemNode::getParent() const {
 	PalmOSFilesystemNode *p = 0;
 
 	if (!_isPseudoRoot) {

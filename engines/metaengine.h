@@ -115,7 +115,9 @@ public:
 	 * @param target	name of a config manager target
 	 * @param slot		slot number of the save state
 	 */
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const { return SaveStateDescriptor(); }
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+		return SaveStateDescriptor();
+	}
 
 	/** @name MetaEngineFeature flags */
 	//@{
@@ -177,7 +179,9 @@ public:
 	 * Determine whether the engine supports the specified MetaEngine feature.
 	 * Used by e.g. the launcher to determine whether to enable the "Load" button.
 	 */	
-	virtual bool hasFeature(MetaEngineFeature f) const { return false; };
+	virtual bool hasFeature(MetaEngineFeature f) const {
+		return false;
+	}
 
 	//@}
 };

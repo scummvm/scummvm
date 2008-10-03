@@ -1363,7 +1363,7 @@ class ZipArchiveMember : public ArchiveMember {
 	unzFile _zipFile;
 
 public:
-	ZipArchiveMember(FilesystemNode &node) : _node(node) {
+	ZipArchiveMember(FSNode &node) : _node(node) {
 	}
 
 	String getName() const {
@@ -1393,7 +1393,22 @@ bool ZipArchive::hasFile(const Common::String &name) {
 }
 
 int ZipArchive::getAllNames(Common::StringList &list) {
-	return 0;
+	if (!_zipFile)
+		return 0;
+
+	if (unzGoToFirstFile(_zipFile) != UNZ_OK)
+		return 0;
+
+	char fileNameBuffer[UNZ_MAXFILENAMEINZIP + 1];
+	int fileCount = 0;
+
+	do {
+		unzGetCurrentFileInfo(_zipFile, 0, fileNameBuffer, UNZ_MAXFILENAMEINZIP + 1, 0, 0, 0, 0);
+		list.push_back(Common::String(fileNameBuffer));
+		fileCount++;
+	} while (unzGoToNextFile(_zipFile) == UNZ_OK);
+
+	return fileCount;
 }
 
 /*
