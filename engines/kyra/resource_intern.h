@@ -50,7 +50,7 @@ public:
 	PlainArchive(Resource *owner, const Common::String &filename, const FileInputList &files);
 
 	bool hasFile(const Common::String &name);
-	int getAllNames(Common::StringList &list);
+	int listMembers(Common::ArchiveMemberList &list);
 	Common::SeekableReadStream *openFile(const Common::String &name);
 private:
 	struct Entry {
@@ -80,7 +80,7 @@ public:
 	~CachedArchive();
 
 	bool hasFile(const Common::String &name);
-	int getAllNames(Common::StringList &list);
+	int listMembers(Common::ArchiveMemberList &list);
 	Common::SeekableReadStream *openFile(const Common::String &name);
 private:
 	struct Entry {

@@ -36,6 +36,35 @@
 
 namespace Common {
 
+class ArchiveMember {
+public:
+	virtual ~ArchiveMember() { }
+	virtual String getName() const = 0;
+	virtual SeekableReadStream *open() = 0;
+};
+
+typedef List<SharedPtr<ArchiveMember> > ArchiveMemberList;
+
+class Archive;
+
+/**
+ * Simple ArchiveMemeber implementation which allows
+ * creation of ArchiveMember compatible objects via
+ * a simple Archive and name pair.
+ *
+ * Note that GenericArchiveMember objects will not
+ * be working anymore after the 'parent' object
+ * is destroyed.
+ */
+class GenericArchiveMember : public ArchiveMember {
+	Archive *_parent;
+	String _name;
+public:
+	GenericArchiveMember(String name, Archive *parent);
+	String getName() const;
+	SeekableReadStream *open();
+};
+
 /**
  * FilePtr is a convenient way to keep track of a SeekableReadStream without
  * having to worry about releasing its memory.
@@ -63,7 +92,7 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	virtual int matchPattern(StringList &list, const String &pattern);
+	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
 
 	/**
 	 * Add all the names present in the Archive to list. Returned
@@ -72,7 +101,7 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	virtual int getAllNames(StringList &list) = 0;
+	virtual int listMembers(ArchiveMemberList &list) = 0;
 
 	/**
 	 * Create a stream bound to a file in the archive.
@@ -138,8 +167,8 @@ public:
 	FSDirectory *getSubDirectory(const String &name);
 
 	virtual bool hasFile(const String &name);
-	virtual int matchPattern(StringList &list, const String &pattern);
-	virtual int getAllNames(StringList &list);
+	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
+	virtual int listMembers(ArchiveMemberList &list);
 	virtual SeekableReadStream *openFile(const String &name);
 };
 
@@ -195,8 +224,8 @@ public:
 	void setPriority(const String& name, int priority);
 
 	virtual bool hasFile(const String &name);
-	virtual int matchPattern(StringList &list, const String &pattern);
-	virtual int getAllNames(StringList &list);
+	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
+	virtual int listMembers(ArchiveMemberList &list);
 
 	/**
 	 * Implements openFile from Archive base class. The current policy is

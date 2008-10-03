@@ -51,11 +51,11 @@ bool PlainArchive::hasFile(const Common::String &name) {
 	return (_files.find(name) != _files.end());
 }
 
-int PlainArchive::getAllNames(Common::StringList &list) {
+int PlainArchive::listMembers(Common::ArchiveMemberList &list) {
 	int count = 0;
 
 	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
-		list.push_back(i->_key);
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, this)));
 		++count;
 	}
 
@@ -98,11 +98,11 @@ bool CachedArchive::hasFile(const Common::String &name) {
 	return (_files.find(name) != _files.end());
 }
 
-int CachedArchive::getAllNames(Common::StringList &list) {
+int CachedArchive::listMembers(Common::ArchiveMemberList &list) {
 	int count = 0;
 
 	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
-		list.push_back(i->_key);
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, this)));
 		++count;
 	}
 

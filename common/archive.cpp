@@ -30,11 +30,23 @@
 
 namespace Common {
 
+GenericArchiveMember::GenericArchiveMember(String name, Archive *parent)
+	: _parent(parent), _name(name) {
+}
 
-int Archive::matchPattern(StringList &list, const String &pattern) {
+String GenericArchiveMember::getName() const {
+	return _name;
+}
+
+SeekableReadStream *GenericArchiveMember::open() {
+	return _parent->openFile(_name);
+}
+
+
+int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern) {
 	// Get all "names" (TODO: "files" ?)
-	StringList allNames;
-	getAllNames(allNames);
+	ArchiveMemberList allNames;
+	listMembers(allNames);
 
 	int matches = 0;
 
@@ -42,9 +54,9 @@ int Archive::matchPattern(StringList &list, const String &pattern) {
 	String lowercasePattern = pattern;
 	lowercasePattern.toLowercase();
 
-	StringList::iterator it = allNames.begin();
+	ArchiveMemberList::iterator it = allNames.begin();
 	for ( ; it != allNames.end(); it++) {
-		if (it->matchString(lowercasePattern)) {
+		if ((*it)->getName().matchString(lowercasePattern)) {
 			list.push_back(*it);
 			matches++;
 		}
@@ -53,6 +65,34 @@ int Archive::matchPattern(StringList &list, const String &pattern) {
 	return matches;
 }
 
+/**
+ *  FSDirectoryMemeber is the implementation of ArchiveMember used by
+ *  by FSDirectory. It is right now a light wrapper or FSNode.
+ */
+class FSDirectoryMember : public ArchiveMember {
+	FSNode 	_node;
+  
+public:
+	FSDirectoryMember(FSNode &node) : _node(node) {
+	}
+
+	/*
+		NOTE/FIXME: since I assume that the only use case for getName()
+		is for error messages, I am returning the full path of the node
+		here. This seems better than we did before, when matchPattern
+		and getAllNames used to work with StringList, and we used to
+		put the relative path of the file to the list instead.
+	*/
+	String getName() const {
+		return _node.getPath();
+	}
+
+	SeekableReadStream *open() {
+		return _node.openForReading();
+	}
+};
+
+typedef SharedPtr<FSDirectoryMember> FSDirectoryMemberPtr;
 
 FSDirectory::FSDirectory(const FSNode &node, int depth)
   : _node(node), _cached(false), _depth(depth) {
@@ -160,7 +200,7 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& 
 
 }
 
-int FSDirectory::matchPattern(StringList &list, const String &pattern) {
+int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &pattern) {
 	if (!_node.isDirectory())
 		return 0;
 
@@ -170,40 +210,25 @@ int FSDirectory::matchPattern(StringList &list, const String &pattern) {
 		_cached = true;
 	}
 
-	// Small optimization: Ensure the StringList has to grow at most once
-	list.reserve(list.size() + _fileCache.size());
-	
-	// Add all filenames from our cache
+	String lowercasePattern(pattern);
+	lowercasePattern.toLowercase();
+
+	int matches = 0;
 	NodeCache::iterator it = _fileCache.begin();
 	for ( ; it != _fileCache.end(); it++) {
-		if (it->_key.matchString(pattern))
-			list.push_back(it->_key);
+		if ((*it)._key.matchString(lowercasePattern)) {
+			list.push_back(FSDirectoryMemberPtr(new FSDirectoryMember((*it)._value)));
+			matches++;
+		}
 	}
-	
-	return _fileCache.size();
+	return matches;
 }
 
-int FSDirectory::getAllNames(StringList &list) {
-	if (!_node.isDirectory())
-		return 0;
-
-	// Cache dir data
-	if (!_cached) {
-		cacheDirectoryRecursive(_node, _depth, "");
-		_cached = true;
-	}
-
-	// Small optimization: Ensure the StringList has to grow at most once
-	list.reserve(list.size() + _fileCache.size());
-	
-	// Add all filenames from our cache
-	NodeCache::iterator it = _fileCache.begin();
-	for ( ; it != _fileCache.end(); it++) {
-		list.push_back((*it)._key);
-	}
-	
-	return _fileCache.size();
+int FSDirectory::listMembers(ArchiveMemberList &list) {
+	return listMatchingMembers(list, "*");
 }
+
+
 
 
 
@@ -289,23 +314,23 @@ bool SearchSet::hasFile(const String &name) {
 	return false;
 }
 
-int SearchSet::matchPattern(StringList &list, const String &pattern) {
+int SearchSet::listMatchingMembers(ArchiveMemberList &list, const String &pattern) {
 	int matches = 0;
 
 	ArchiveList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++) {
-		matches += (*it)._arc->matchPattern(list, pattern);
+		matches += (*it)._arc->listMatchingMembers(list, pattern);
 	}
 
 	return matches;
 }
 
-int SearchSet::getAllNames(StringList &list) {
+int SearchSet::listMembers(ArchiveMemberList &list) {
 	int matches = 0;
 
 	ArchiveList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++) {
-		matches += (*it)._arc->getAllNames(list);
+		matches += (*it)._arc->listMembers(list);
 	}
 
 	return matches;

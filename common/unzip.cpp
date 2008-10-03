@@ -1392,26 +1392,6 @@ bool ZipArchive::hasFile(const Common::String &name) {
 	return (_zipFile && unzLocateFile(_zipFile, name.c_str(), 2) == UNZ_OK);
 }
 
-int ZipArchive::getAllNames(Common::StringList &list) {
-	if (!_zipFile)
-		return 0;
-
-	if (unzGoToFirstFile(_zipFile) != UNZ_OK)
-		return 0;
-
-	char fileNameBuffer[UNZ_MAXFILENAMEINZIP + 1];
-	int fileCount = 0;
-
-	do {
-		unzGetCurrentFileInfo(_zipFile, 0, fileNameBuffer, UNZ_MAXFILENAMEINZIP + 1, 0, 0, 0, 0);
-		list.push_back(Common::String(fileNameBuffer));
-		fileCount++;
-	} while (unzGoToNextFile(_zipFile) == UNZ_OK);
-
-	return fileCount;
-}
-
-/*
 int ZipArchive::listMembers(Common::ArchiveMemberList &list) {
 	if (!_zipFile)
 		return 0;
@@ -1424,14 +1404,13 @@ int ZipArchive::listMembers(Common::ArchiveMemberList &list) {
 		unzGetCurrentFileInfo(_zipFile, NULL,
 								szCurrentFileName, sizeof(szCurrentFileName)-1,
 								NULL, 0, NULL, 0);
-		
-		szCurrentFileName
+		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(szCurrentFileName, this)));
 		matches++;
-		err = unzGoToNextFile(file);
+		err = unzGoToNextFile(_zipFile);
 	}
-	return 0;
+
+	return matches;
 }
-*/
 
 Common::SeekableReadStream *ZipArchive::openFile(const Common::String &name) {
 	if (!_zipFile)
