@@ -40,6 +40,10 @@
 #include "kyra/kyra_v1.h"
 #include "kyra/kyra_hof.h"
 
+namespace Common {
+class ArchiveMember;
+} // end of namespace Common
+
 namespace Kyra {
 
 class Resource;
@@ -47,6 +51,7 @@ class Resource;
 class ResArchiveLoader;
 
 class Resource {
+	friend class StaticResource;
 public:
 	Resource(KyraEngine_v1 *vm);
 	~Resource();
@@ -77,6 +82,7 @@ protected:
 	Common::SharedPtr<Common::SearchSet> _protectedFiles;
 
 	Common::ArchivePtr loadArchive(const Common::String &file);
+	Common::ArchivePtr loadArchive(const Common::String &name, Common::SharedPtr<Common::ArchiveMember> member);
 	Common::ArchivePtr loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset);
 
 	void initializeLoaders();
@@ -207,12 +213,12 @@ struct Room;
 
 class StaticResource {
 public:
-	static const Common::String staticDataFilename() { return "kyra.dat"; }
+	static const Common::String staticDataFilename() { return "KYRA.DAT"; }
 
 	StaticResource(KyraEngine_v1 *vm) : _vm(vm), _resList(), _fileLoader(0), _builtIn(0), _filenameTable(0) {}
 	~StaticResource() { deinit(); }
 
-	static bool checkKyraDat(Resource *res);
+	bool loadStaticResourceFile();
 
 	bool init();
 	void deinit();
@@ -233,7 +239,7 @@ public:
 	bool prefetchId(int id);
 	void unloadId(int id);
 private:
-	void outputError(const Common::String &error);
+	bool tryKyraDatLoad();
 
 	KyraEngine_v1 *_vm;
 

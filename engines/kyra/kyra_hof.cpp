@@ -298,7 +298,8 @@ int KyraEngine_HoF::go() {
 
 	if (_menuChoice != 4) {
 		// load just the pak files needed for ingame
-		_res->loadPakFile(StaticResource::staticDataFilename());
+		_staticres->loadStaticResourceFile();
+
 		if (_flags.platform == Common::kPlatformPC && _flags.isTalkie) {
 			if (!_res->loadFileList("FILEDATA.FDT"))
 				error("couldn't load 'FILEDATA.FDT'");
