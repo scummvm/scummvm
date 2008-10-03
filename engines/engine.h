@@ -30,6 +30,8 @@
 #include "common/fs.h"
 #include "common/str.h"
 
+#include "engines/metaengine.h"
+
 class OSystem;
 
 namespace Audio {
@@ -177,7 +179,7 @@ public:
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.
 	 */
-	bool hasFeature(int f);
+	bool hasFeature(MetaEngine::MetaEngineFeature f);
 
 public:
 

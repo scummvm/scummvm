@@ -250,13 +250,13 @@ void Engine::quitGame() {
 	_eventMan->pushEvent(event);
 }
 
-bool Engine::hasFeature(int f) {
+bool Engine::hasFeature(MetaEngine::MetaEngineFeature f) {
 	// TODO: In each engine, keep a ref to the corresponding MetaEngine?
 	const EnginePlugin *plugin = 0;
 	Common::String gameid = ConfMan.get("gameid");
 	gameid.toLowercase();
 	EngineMan.findGame(gameid, &plugin);
-	
-	return ( (*plugin)->hasFeature((MetaEngine::MetaEngineFeature)f) );
+	assert(plugin);
+	return ( (*plugin)->hasFeature(f) );
 }
 
