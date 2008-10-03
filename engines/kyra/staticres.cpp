@@ -145,20 +145,22 @@ bool StaticResource::loadStaticResourceFile() {
 	bool foundWorkingKyraDat = false;
 	for (Common::ArchiveMemberList::iterator i = kyraDatFiles.begin(); i != kyraDatFiles.end(); ++i) {
 		Common::SeekableReadStream *file = (*i)->open();
-		if (checkKyraDat(file)) {
-			file->seek(0, SEEK_SET);
-
-			Common::ArchivePtr archive = res->loadArchive(staticDataFilename(), *i);
-			if (archive) {
-				res->_archiveFiles->add(staticDataFilename(), archive, 0);
-				foundWorkingKyraDat = tryKyraDatLoad();
-			}
+		if (!checkKyraDat(file)) {
+			delete file;
+			continue;
 		}
 
-		delete file;
+		delete file; file = 0;
 
-		if (foundWorkingKyraDat)
+		Common::ArchivePtr archive = res->loadArchive(staticDataFilename(), *i);
+		if (!archive)
+			continue;
+	
+		res->_archiveFiles->add(staticDataFilename(), archive, 0);
+		if (tryKyraDatLoad()) {
+			foundWorkingKyraDat = true;
 			break;
+		}
 
 		res->_archiveCache.erase(staticDataFilename());
 		res->_archiveFiles->remove(staticDataFilename());

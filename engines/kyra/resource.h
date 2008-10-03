@@ -40,10 +40,6 @@
 #include "kyra/kyra_v1.h"
 #include "kyra/kyra_hof.h"
 
-namespace Common {
-class ArchiveMember;
-} // end of namespace Common
-
 namespace Kyra {
 
 class Resource;
