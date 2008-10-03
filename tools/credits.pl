@@ -578,7 +578,7 @@ begin_credits("Credits");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
 
-	  begin_section("Tinsel;");
+	  begin_section("Tinsel");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Paul Gilbert", "dreammaster", "");
 		  add_person("Sven Hesse", "DrMcCoy", "");
@@ -690,7 +690,7 @@ begin_credits("Credits");
 		add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");
 		add_person("Mutwin Kraus", "mutle", "Original MacOS porter");
 		add_person("Peter Moraliyski", "ph0x", "Port: GP32");
-		add_person("Juha Niemim&auml;ki", "", "Formaer AmigaOS 4 packager");
+		add_person("Juha Niemim&auml;ki", "", "Former AmigaOS 4 packager");
 		add_person("Jeremy Newman", "laxdragon", "Former webmaster");
 		add_person("Lionel Ulmer", "bbrox", "Port: X11");
 		add_person("Won Star", "wonst719", "Former GP32 porter");
