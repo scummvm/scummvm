@@ -1,0 +1,9 @@
+﻿[Desktop Entry]
+Encoding=UTF-8
+Name=Residual
+Exec=residual
+Icon=residual.xpm
+Terminal=false
+Type=Application
+Categories=Application;Game;AdventureGame;
+StartupNotify=false
