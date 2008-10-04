@@ -16,7 +16,7 @@ install: all
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/pixmaps/"
 	$(INSTALL) -c -m 644 "$(srcdir)/icons/residual.xpm" "$(DESTDIR)$(PREFIX)/share/pixmaps/residual.xpm"
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/doc/residual/"
-	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING.LGPL" "$(srcdir)/COPYING.GPL" "$(srcdir)/NEWS" "$(srcdir)/README" "$(srcdir)/TODO""$(DESTDIR)$(PREFIX)/share/doc/residual/"
+	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING.LGPL" "$(srcdir)/COPYING.GPL" "$(srcdir)/NEWS" "$(srcdir)/README" "$(srcdir)/TODO" "$(DESTDIR)$(PREFIX)/share/doc/residual/"
 
 uninstall:
 	rm -f "$(DESTDIR)$(BINDIR)/residual$(EXEEXT)"
