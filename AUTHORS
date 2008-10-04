@@ -20,6 +20,7 @@ Contributors:
    Joost Peters          - Various code fixes
    Christian Neumair     - Various optimisation patches
    Daniel Schepler       - Initial engine codebase, LUA support
+   Pino Toscano          - Debian GNU/Linux maintainer
    Lionel Ulmer          - OpenGL optimisations
 
 ScummVM code:

@@ -471,6 +471,7 @@ begin_credits("Credits");
 		  add_person("Joost Peters", "joostp", "Various code fixes");
 		  add_person("Christian Neumair", "mannythegnome", "Various optimisation patches");
 		  add_person("Daniel Schepler", "", "Initial engine codebase, LUA support");
+		  add_person("Pino Toscano", "pinotree", "Debian GNU/Linux maintainer");
 		  add_person("Lionel Ulmer", "bbrox", "OpenGL optimisations");
 	  end_persons();
   end_section();
