@@ -318,6 +318,8 @@ Special configuration feature:
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
+  --enable-profiling       enable building with gprof profile information
+  --enable-release         set flags to build release binary
 
 Optional Libraries:
   --with-ogg-prefix=DIR    Prefix where libogg is installed (optional)
