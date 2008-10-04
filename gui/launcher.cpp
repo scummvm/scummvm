@@ -554,10 +554,10 @@ int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) 
 	_plugin = plugin;
 	_target = target;
 	_delSupport = (*_plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
-	_metaInfoSupport = (*_plugin)->hasFeature(MetaEngine::kSupportsMetaInfos);
-	_thumbnailSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSupportsThumbnails);
-	_saveDateSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSupportsSaveDate);
-	_playTimeSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSupportsSavePlayTime);
+	_metaInfoSupport = (*_plugin)->hasFeature(MetaEngine::kSavesSupportMetaInfo);
+	_thumbnailSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSavesSupportThumbnail);
+	_saveDateSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSavesSupportCreationDate);
+	_playTimeSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSavesSupportPlayTime);
 	reflowLayout();
 	updateSaveList();
 

@@ -1077,8 +1077,8 @@ bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDirectLoad) ||
 		(f == kSupportsDeleteSave) ||
-	   	(f == kSupportsMetaInfos) ||
-		(f == kSupportsThumbnails);
+	   	(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail);
 }
 
 bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {

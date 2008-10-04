@@ -178,6 +178,10 @@ public:
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.
+	 *
+	 * FIXME: This should not call through to the MetaEngine, but rather should support
+	 * its own list of features. In particular, kSupportsRTL should be an EngineFeature,
+	 * not a MetaEngineFeature.
 	 */
 	bool hasFeature(MetaEngine::MetaEngineFeature f);
 
