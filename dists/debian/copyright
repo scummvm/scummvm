@@ -1,0 +1,101 @@
+Residual was debianized by Pino Toscano <pino@kde.org> the 4th Oct 2008.
+
+It was downloaded from <http://www.scummvm.org/>.
+
+Upstream Authors: see `/usr/share/doc/residual/AUTHORS'.
+
+Copyright:
+
+Most of the files are released under the GNU General Public License v2:
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+
+On Debian GNU/Linux systems, the complete text of the GNU Lesser General
+Public License can be found in `/usr/share/common-licenses/LGPL-2'.
+
+Files released as GPL v2 or later:
+
+    common/algorithm.h
+    common/array.h
+    common/config-file.cpp
+    common/config-file.h
+    common/config-manager.cpp
+    common/config-manager.h
+    common/endian.h
+    common/error.h
+    common/events.h
+    common/file.cpp
+    common/file.h
+    common/frac.h
+    common/fs.cpp
+    common/fs.h
+    common/func.h
+    common/hashmap.cpp
+    common/hashmap.h
+    common/hash-str.h
+    common/keyboard.h
+    common/list.h
+    common/memorypool.cpp
+    common/memorypool.h
+    common/mutex.cpp
+    common/mutex.h
+    common/noncopyable.h
+    common/ptr.h
+    common/rect.h
+    common/savefile.h
+    common/singleton.h
+    common/str.cpp
+    common/stream.cpp
+    common/stream.h
+    common/str.h
+    common/timer.h
+    common/util.cpp
+    common/util.h
+    config.guess
+    config.sub
+    configure
+    engine/backend/events/default/default-events.cpp
+    engine/backend/events/default/default-events.h
+    engine/backend/fs/abstract-fs.h
+    engine/backend/fs/amigaos4/amigaos4-fs.cpp
+    engine/backend/fs/amigaos4/amigaos4-fs-factory.cpp
+    engine/backend/fs/amigaos4/amigaos4-fs-factory.h
+    engine/backend/fs/fs-factory.h
+    engine/backend/fs/posix/posix-fs.cpp
+    engine/backend/fs/posix/posix-fs-factory.cpp
+    engine/backend/fs/posix/posix-fs-factory.h
+    engine/backend/fs/windows/windows-fs.cpp
+    engine/backend/fs/windows/windows-fs-factory.cpp
+    engine/backend/fs/windows/windows-fs-factory.h
+    engine/backend/saves/compressed/compressed-saves.cpp
+    engine/backend/saves/compressed/compressed-saves.h
+    engine/backend/saves/default/default-saves.cpp
+    engine/backend/saves/default/default-saves.h
+    engine/backend/saves/savefile.cpp
+    engine/backend/timer/default/default-timer.cpp
+    engine/backend/timer/default/default-timer.h
+    engine/cmd_line.cpp
+    engine/cmd_line.h
+    mixer/audiostream.cpp
+    mixer/audiostream.h
+    mixer/mixer.cpp
+    mixer/mixer.h
+    mixer/mixer_intern.h
+    mixer/rate.cpp
+    mixer/rate.h
+
+
+The Debian packaging is licensed under the GPL,
+see `/usr/share/common-licenses/GPL'.
