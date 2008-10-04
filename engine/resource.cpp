@@ -81,7 +81,7 @@ ResourceLoader::ResourceLoader() {
 	fsdir->lookupFile(*fslist, "*.mus", false, true, 0);
 	for (FSList::const_iterator findfile = fslist->begin(); findfile != fslist->end(); ++findfile) {
 		Common::String filename(findfile->getName());
-		l = new Lab(filename.c_str());
+		l = new Lab(findfile->getPath().c_str());
 		if (l->isOpen()) {
 			_labs.push_back(l);
 			lab_counter++;
