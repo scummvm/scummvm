@@ -195,7 +195,10 @@ int16 ScriptFunctions::sfClearScreen(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfShowPage(int16 argc, int16 *argv) {
 	_vm->_screen->show();
-	return 0;
+	// NOTE: We need to return something != 0 here or some game scripts won't
+	//       work correctly. The actual meaning of this value is unknown to me.
+	//       0x38 was found out by analyzing debug output of the original engine.
+	return 0x38;
 }
 
 int16 ScriptFunctions::sfPollEvent(int16 argc, int16 *argv) {
