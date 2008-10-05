@@ -188,7 +188,7 @@ bool XMLParser::closeKey() {
 	if (ignore == false)
 		result = closedKeyCallback(_activeKey.top());
 		
-	delete _activeKey.pop();
+	freeNode(_activeKey.pop());
 	
 	return result;
 }
@@ -202,7 +202,7 @@ bool XMLParser::parse() {
 		buildLayout();
 
 	while (!_activeKey.empty())
-		delete _activeKey.pop();
+		freeNode(_activeKey.pop());
 
 	cleanup();
 
@@ -253,7 +253,7 @@ bool XMLParser::parse() {
 						break;
 					}
 				} else {
-					ParserNode *node = new ParserNode;
+					ParserNode *node = allocNode(); //new ParserNode;
 					node->name = _token;
 					node->ignore = false;
 					node->depth = _activeKey.size();

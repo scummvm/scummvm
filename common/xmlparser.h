@@ -47,6 +47,8 @@ namespace Common {
 	External documentation available at:
 		http://www.smartlikearoboc.com/scummvm_doc/xmlparser_doc.html
 */
+
+#define MAX_XML_DEPTH 8
 			
 #define XML_KEY(keyName) {\
 		lay =  new CustomXMLKeyLayout;\
@@ -112,7 +114,7 @@ public:
 
 	virtual ~XMLParser() {
 		while (!_activeKey.empty())
-			delete _activeKey.pop();
+			freeNode(_activeKey.pop());
 
 		delete _XMLkeys;
 		delete _stream;
@@ -166,6 +168,18 @@ public:
 		int depth;
 		XMLKeyLayout *layout;
 	};
+	
+	FixedSizeMemoryPool<sizeof(ParserNode), MAX_XML_DEPTH> _nodePool;
+
+	ParserNode *allocNode() {
+		void* mem = _nodePool.malloc();
+		return new (mem) ParserNode;
+	} 
+
+	void freeNode(ParserNode *node) {
+		node->~ParserNode();
+		_nodePool.free(node);
+	}
 
 	/**
 	 * Loads a file into the parser.
