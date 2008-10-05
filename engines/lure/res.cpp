@@ -558,6 +558,13 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 	if (h != NULL)
 		return h;
 
+	// If it's NPC with a schedule, then activate the schedule
+	if ((res->npcScheduleId != 0) && (res->npcSchedule.isEmpty())) {
+		Resources &resources = Resources::getReference();
+		CharacterScheduleEntry *entry = resources.charSchedules().getEntry(res->npcScheduleId);
+		res->npcSchedule.addFront(DISPATCH_ACTION, entry, res->roomNumber);
+	}
+
 	// Check the script load flag
 	if (res->scriptLoadFlag) {
 		// Execute a script rather than doing a standard load

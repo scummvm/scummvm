@@ -543,6 +543,7 @@ public:
 	uint16 delayCtr;
 	uint8 flags2;
 	uint8 headerFlags;
+	uint16 npcScheduleId;
 
 	// Runtime fields
 	uint16 actionCtr;

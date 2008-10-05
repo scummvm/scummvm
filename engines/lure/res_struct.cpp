@@ -434,13 +434,8 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	talkGate = 0;
 	scriptHotspotId = 0;
 
-	// Set up NPC schedule if any
-	uint16 npcScheduleId = READ_LE_UINT16(&rec->npcSchedule);
-	if (npcScheduleId != 0) {
-		Resources &res = Resources::getReference();
-		CharacterScheduleEntry *entry = res.charSchedules().getEntry(npcScheduleId);
-		npcSchedule.addFront(DISPATCH_ACTION, entry, roomNumber);
-	}
+	// Get the NPC schedule, if any
+	npcScheduleId = READ_LE_UINT16(&rec->npcSchedule);
 }
 
 void HotspotData::saveToStream(WriteStream *stream) {
