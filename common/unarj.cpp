@@ -146,10 +146,10 @@ int32 ArjFile::findHeader(void) {
 		_currArchive.seek(tmp_pos, SEEK_SET);
 		id = _currArchive.readByte();
 		while (tmp_pos < end_pos) {
-			if (id == HEADER_ID_LO)
+			if (id == HEADER_ID_LO) {
 				if ((id = _currArchive.readByte()) == HEADER_ID_HI)
 					break;
-			else
+			} else
 				id = _currArchive.readByte();
 			tmp_pos++;
 		}
