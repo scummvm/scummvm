@@ -28,15 +28,15 @@
 
 DECLARE_SINGLETON(Ps2FilesystemFactory);
 
-AbstractFilesystemNode *Ps2FilesystemFactory::makeRootFileNode() const {
+AbstractFSNode *Ps2FilesystemFactory::makeRootFileNode() const {
 	return new Ps2FilesystemNode();
 }
 
-AbstractFilesystemNode *Ps2FilesystemFactory::makeCurrentDirectoryFileNode() const {
+AbstractFSNode *Ps2FilesystemFactory::makeCurrentDirectoryFileNode() const {
 	return new Ps2FilesystemNode();
 }
 
-AbstractFilesystemNode *Ps2FilesystemFactory::makeFileNodePath(const Common::String &path) const {
+AbstractFSNode *Ps2FilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	// return new Ps2FilesystemNode(path);
 
 	Ps2FilesystemNode *nf = new Ps2FilesystemNode(path, true);

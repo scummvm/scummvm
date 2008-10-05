@@ -210,9 +210,9 @@ void Scene::loadSceneResources(int sceneNumber) {
 		_sceneResources.parallax->clear();
 		_sceneResources.props->clear();
 
-		_sceneResources.hotspots->loadHotSpotsM4(sceneS, _sceneResources.hotspotCount);
-		_sceneResources.parallax->loadHotSpotsM4(sceneS, _sceneResources.parallaxCount);
-		_sceneResources.props->loadHotSpotsM4(sceneS, _sceneResources.propsCount);
+		_sceneResources.hotspots->loadHotSpots(sceneS, _sceneResources.hotspotCount);
+		_sceneResources.parallax->loadHotSpots(sceneS, _sceneResources.parallaxCount);
+		_sceneResources.props->loadHotSpots(sceneS, _sceneResources.propsCount);
 
 		// Note that toss() deletes the MemoryReadStream
 		_vm->res()->toss(filename);
@@ -235,7 +235,7 @@ void Scene::loadSceneHotSpotsMads(int sceneNumber) {
 	// Clear current hotspot lists
 	_sceneResources.hotspots->clear();
 
-	_sceneResources.hotspots->loadHotSpotsMads(hotspotStream, _sceneResources.hotspotCount);
+	_sceneResources.hotspots->loadHotSpots(hotspotStream, _sceneResources.hotspotCount);
 
 	delete hotspotStream;
 }

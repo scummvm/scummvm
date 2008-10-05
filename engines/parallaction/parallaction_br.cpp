@@ -104,7 +104,7 @@ int Parallaction_br::go() {
 
 	bool splash = true;
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 
 		if (getFeatures() & GF_DEMO) {
 			scheduleLocationSwitch("camalb.1");
@@ -117,7 +117,7 @@ int Parallaction_br::go() {
 
 //		initCharacter();
 
-		while (((_engineFlags & kEngineReturn) == 0) && (!quit())) {
+		while (((_engineFlags & kEngineReturn) == 0) && (!shouldQuit())) {
 			runGame();
 		}
 		_engineFlags &= ~kEngineReturn;

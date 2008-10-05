@@ -263,7 +263,6 @@ bool Resource::loadMacContext(ResourceContext *context) {
 
 bool Resource::loadContext(ResourceContext *context) {
 	size_t i;
-	int j;
 	const GamePatchDescription *patchDescription;
 	ResourceData *resourceData;
 	uint16 subjectResourceType;
@@ -310,8 +309,8 @@ bool Resource::loadContext(ResourceContext *context) {
 		for (i = 0; i < tableSize / 8; i++) {
 			subjectResourceId = readS2.readUint32();
 			patchResourceId = readS2.readUint32();
-			subjectResourceData = getResourceData(subjectContext, subjectResourceId);
-			resourceData = getResourceData(context, patchResourceId);
+			subjectResourceData = subjectContext->getResourceData(subjectResourceId);
+			resourceData = context->getResourceData(patchResourceId);
 			subjectResourceData->patchData = new PatchData(context->file);
 			subjectResourceData->offset = resourceData->offset;
 			subjectResourceData->size = resourceData->size;
@@ -320,8 +319,7 @@ bool Resource::loadContext(ResourceContext *context) {
 	}
 
 	//process external patch files
-	for (j = 0; j < _vm->getPatchesCount(); j++) {
-		patchDescription = &_vm->getPatchDescriptions()[j];
+	for (patchDescription = _vm->getPatchDescriptions(); patchDescription && patchDescription->fileName; ++patchDescription) {
 		if ((patchDescription->fileType & context->fileType) != 0) {
 			if (patchDescription->resourceId < context->count) {
 				resourceData = &context->table[patchDescription->resourceId];
@@ -634,7 +632,7 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&r
 
 	debug(8, "loadResource %d", resourceId);
 
-	resourceData = getResourceData(context, resourceId);
+	resourceData = context->getResourceData(resourceId);
 
 	file = context->getFile(resourceData);
 

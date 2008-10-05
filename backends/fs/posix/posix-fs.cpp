@@ -92,7 +92,7 @@ POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p) {
 	setFlags();
 }
 
-AbstractFilesystemNode *POSIXFilesystemNode::getChild(const Common::String &n) const {
+AbstractFSNode *POSIXFilesystemNode::getChild(const Common::String &n) const {
 	assert(!_path.empty());
 	assert(_isDirectory);
 	
@@ -197,8 +197,8 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 			continue;
 
 		// Honor the chosen mode
-		if ((mode == Common::FilesystemNode::kListFilesOnly && entry._isDirectory) ||
-			(mode == Common::FilesystemNode::kListDirectoriesOnly && !entry._isDirectory))
+		if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) ||
+			(mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
 			continue;
 
 		myList.push_back(new POSIXFilesystemNode(entry));
@@ -208,7 +208,7 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 	return true;
 }
 
-AbstractFilesystemNode *POSIXFilesystemNode::getParent() const {
+AbstractFSNode *POSIXFilesystemNode::getParent() const {
 	if (_path == "/")
 		return 0;	// The filesystem root has no parent
 

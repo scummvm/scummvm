@@ -35,8 +35,8 @@ namespace Kyra {
 
 // -> PlainArchive implementation
 
-PlainArchive::PlainArchive(Resource *owner, const Common::String &filename, const FileInputList &files)
-	: _owner(owner), _filename(filename), _files() {
+PlainArchive::PlainArchive(Common::SharedPtr<Common::ArchiveMember> file, const FileInputList &files)
+	: _file(file), _files() {
 	for (FileInputList::iterator i = files.begin(); i != files.end(); ++i) {
 		Entry entry;
 
@@ -51,11 +51,11 @@ bool PlainArchive::hasFile(const Common::String &name) {
 	return (_files.find(name) != _files.end());
 }
 
-int PlainArchive::getAllNames(Common::StringList &list) {
+int PlainArchive::listMembers(Common::ArchiveMemberList &list) {
 	int count = 0;
 
 	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
-		list.push_back(i->_key);
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, this)));
 		++count;
 	}
 
@@ -67,7 +67,7 @@ Common::SeekableReadStream *PlainArchive::openFile(const Common::String &name) {
 	if (fDesc == _files.end())
 		return 0;
 
-	Common::SeekableReadStream *parent = _owner->getFileStream(_filename);
+	Common::SeekableReadStream *parent = _file->open();
 	if (!parent)
 		return 0;
 
@@ -98,11 +98,11 @@ bool CachedArchive::hasFile(const Common::String &name) {
 	return (_files.find(name) != _files.end());
 }
 
-int CachedArchive::getAllNames(Common::StringList &list) {
+int CachedArchive::listMembers(Common::ArchiveMemberList &list) {
 	int count = 0;
 
 	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
-		list.push_back(i->_key);
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, this)));
 		++count;
 	}
 
@@ -195,7 +195,7 @@ struct PlainArchiveListSearch {
 
 } // end of anonymous namespace
 
-Common::Archive *ResLoaderPak::load(Resource *owner, const Common::String &filename, Common::SeekableReadStream &stream) const {
+Common::Archive *ResLoaderPak::load(Common::SharedPtr<Common::ArchiveMember> memberFile, Common::SeekableReadStream &stream) const {
 	int32 filesize = stream.size();
 	
 	int32 startoffset = 0, endoffset = 0;
@@ -214,7 +214,7 @@ Common::Archive *ResLoaderPak::load(Resource *owner, const Common::String &filen
 	while (!stream.eos()) {
 		// The start offset of a file should never be in the filelist
 		if (startoffset < stream.pos() || startoffset > filesize) {
-			warning("PAK file '%s' is corrupted", filename.c_str());
+			warning("PAK file '%s' is corrupted", memberFile->getName().c_str());
 			return false;
 		}
 
@@ -225,14 +225,14 @@ Common::Archive *ResLoaderPak::load(Resource *owner, const Common::String &filen
 			file += c;
 
 		if (stream.eos()) {
-			warning("PAK file '%s' is corrupted", filename.c_str());
+			warning("PAK file '%s' is corrupted", memberFile->getName().c_str());
 			return false;
 		}
 
 		// Quit now if we encounter an empty string
 		if (file.empty()) {
 			if (firstFile) {
-				warning("PAK file '%s' is corrupted", filename.c_str());
+				warning("PAK file '%s' is corrupted", memberFile->getName().c_str());
 				return false;
 			} else {
 				break;
@@ -287,7 +287,7 @@ Common::Archive *ResLoaderPak::load(Resource *owner, const Common::String &filen
 		}
 	}
 
-	return new PlainArchive(owner, filename, files);
+	return new PlainArchive(memberFile, files);
 }
 
 // -> ResLoaderInsMalcolm implementation
@@ -313,7 +313,7 @@ bool ResLoaderInsMalcolm::isLoadable(const Common::String &filename, Common::See
 	return (buffer[0] == 0x0D && buffer[1] == 0x0A);
 }
 
-Common::Archive *ResLoaderInsMalcolm::load(Resource *owner, const Common::String &filename, Common::SeekableReadStream &stream) const {
+Common::Archive *ResLoaderInsMalcolm::load(Common::SharedPtr<Common::ArchiveMember> memberFile, Common::SeekableReadStream &stream) const {
 	Common::List<Common::String> filenames;
 	PlainArchive::FileInputList files;
 
@@ -353,7 +353,7 @@ Common::Archive *ResLoaderInsMalcolm::load(Resource *owner, const Common::String
 		files.push_back(entry);
 	}
 
-	return new PlainArchive(owner, filename, files);
+	return new PlainArchive(memberFile, files);
 }
 
 bool ResLoaderTlk::checkFilename(Common::String filename) const {
@@ -381,7 +381,7 @@ bool ResLoaderTlk::isLoadable(const Common::String &filename, Common::SeekableRe
 	return true;
 }
 
-Common::Archive *ResLoaderTlk::load(Resource *owner, const Common::String &filename, Common::SeekableReadStream &stream) const {
+Common::Archive *ResLoaderTlk::load(Common::SharedPtr<Common::ArchiveMember> file, Common::SeekableReadStream &stream) const {
 	uint16 entries = stream.readUint16LE();
 	PlainArchive::FileInputList files;
 	
@@ -405,7 +405,7 @@ Common::Archive *ResLoaderTlk::load(Resource *owner, const Common::String &filen
 		files.push_back(entry);
 	}
 
-	return new PlainArchive(owner, filename, files);
+	return new PlainArchive(file, files);
 }
 
 // InstallerLoader implementation

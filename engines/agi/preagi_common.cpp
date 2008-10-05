@@ -120,7 +120,7 @@ void PreAgiEngine::printStrXOR(char *szMsg) {
 int PreAgiEngine::getSelection(SelectionTypes type) {
 	Common::Event event;
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 		while (_eventMan->pollEvent(event)) {
 			switch(event.type) {
 			case Common::EVENT_RTL:

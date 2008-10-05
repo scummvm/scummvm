@@ -104,8 +104,7 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	new GUI::ButtonWidget(this, "GlobalMenu.About", "About", kAboutCmd, 'A');
 
 	_rtlButton = new GUI::ButtonWidget(this, "GlobalMenu.RTL", "Return to Launcher", kRTLCmd, 'R');	
-	// '0' corresponds to the kSupportsRTL MetaEngineFeature
-	_rtlButton->setEnabled(_engine->hasFeature(0));
+	_rtlButton->setEnabled(_engine->hasFeature(MetaEngine::kSupportsRTL));
 
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Quit", "Quit", kQuitCmd, 'Q');

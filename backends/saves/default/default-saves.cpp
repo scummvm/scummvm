@@ -71,7 +71,7 @@ DefaultSaveFileManager::DefaultSaveFileManager(const Common::String &defaultSave
 
 
 Common::StringList DefaultSaveFileManager::listSavefiles(const char *pattern) {
-	Common::FilesystemNode savePath(getSavePath());
+	Common::FSNode savePath(getSavePath());
 	Common::FSList savefiles;
 	Common::StringList results;
 	Common::String search(pattern);
@@ -85,7 +85,7 @@ Common::StringList DefaultSaveFileManager::listSavefiles(const char *pattern) {
 	return results;
 }
 
-void DefaultSaveFileManager::checkPath(const Common::FilesystemNode &dir) {
+void DefaultSaveFileManager::checkPath(const Common::FSNode &dir) {
 	const Common::String path = dir.getPath();
 	clearError();
 
@@ -152,7 +152,7 @@ void DefaultSaveFileManager::checkPath(const Common::FilesystemNode &dir) {
 #else
 	if (!dir.exists()) {
 		// TODO: We could try to mkdir the directory here; or rather, we could
-		// add a mkdir method to FilesystemNode and invoke that here.
+		// add a mkdir method to FSNode and invoke that here.
 		setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+path);
 	} else if (!dir.isDirectory()) {
 		setError(SFM_DIR_NOTDIR, "The given savepath is not a directory: "+path);
@@ -162,11 +162,11 @@ void DefaultSaveFileManager::checkPath(const Common::FilesystemNode &dir) {
 
 Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename) {
 	// Ensure that the savepath is valid. If not, generate an appropriate error.
-	Common::FilesystemNode savePath(getSavePath());
+	Common::FSNode savePath(getSavePath());
 	checkPath(savePath);
 
 	if (getError() == SFM_NO_ERROR) {
-		Common::FilesystemNode file = savePath.getChild(filename);
+		Common::FSNode file = savePath.getChild(filename);
 
 		// Open the file for reading
 		Common::SeekableReadStream *sf = file.openForReading();
@@ -179,11 +179,11 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename)
 
 Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename) {
 	// Ensure that the savepath is valid. If not, generate an appropriate error.
-	Common::FilesystemNode savePath(getSavePath());
+	Common::FSNode savePath(getSavePath());
 	checkPath(savePath);
 
 	if (getError() == SFM_NO_ERROR) {
-		Common::FilesystemNode file = savePath.getChild(filename);
+		Common::FSNode file = savePath.getChild(filename);
 
 		// Open the file for saving
 		Common::WriteStream *sf = file.openForWriting();
@@ -197,10 +197,10 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 bool DefaultSaveFileManager::removeSavefile(const char *filename) {
 	clearError();
 
-	Common::FilesystemNode savePath(getSavePath());
-	Common::FilesystemNode file = savePath.getChild(filename);
+	Common::FSNode savePath(getSavePath());
+	Common::FSNode file = savePath.getChild(filename);
 
-	// TODO: Add new method FilesystemNode::remove()
+	// TODO: Add new method FSNode::remove()
 	if (remove(file.getPath().c_str()) != 0) {
 #ifndef _WIN32_WCE
 		if (errno == EACCES)

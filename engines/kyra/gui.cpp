@@ -427,7 +427,7 @@ int MainMenu::handle(int dim) {
 
 	Common::Rect menuRect(x + 16, y + 4, x + width - 16, y + 4 + fh * 4);
 
-	while (!_vm->quit()) {
+	while (!_vm->shouldQuit()) {
 		updateAnimation();
 		bool mousePressed = getInput();
 
@@ -458,7 +458,7 @@ int MainMenu::handle(int dim) {
 		_system->delayMillis(10);
 	}
 
-	if (_vm->quit())
+	if (_vm->shouldQuit())
 		command = -1;
 
 	_screen->copyRegion(backUpX, backUpY, backUpX, backUpY, backUpWidth, backUpHeight, 3, 0);

@@ -26,17 +26,17 @@
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.cpp"
 
-AbstractFilesystemNode *POSIXFilesystemFactory::makeRootFileNode() const {
+AbstractFSNode *POSIXFilesystemFactory::makeRootFileNode() const {
 	return new POSIXFilesystemNode("/");
 }
 
-AbstractFilesystemNode *POSIXFilesystemFactory::makeCurrentDirectoryFileNode() const {
+AbstractFSNode *POSIXFilesystemFactory::makeCurrentDirectoryFileNode() const {
 	char buf[MAXPATHLEN];
 	getcwd(buf, MAXPATHLEN);
 	return new POSIXFilesystemNode(buf);
 }
 
-AbstractFilesystemNode *POSIXFilesystemFactory::makeFileNodePath(const Common::String &path) const {
+AbstractFSNode *POSIXFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	assert(!path.empty());
 	return new POSIXFilesystemNode(path);
 }

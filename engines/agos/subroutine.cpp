@@ -555,7 +555,7 @@ int AGOSEngine::startSubroutine(Subroutine *sub) {
 	_currentTable = sub;
 restart:
 
-	if (quit())
+	if (shouldQuit())
 		return result;
 
 	while ((byte *)sl != (byte *)sub) {

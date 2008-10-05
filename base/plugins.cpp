@@ -207,8 +207,8 @@ PluginList FilePluginProvider::getPlugins() {
 	Common::FSList pluginDirs;
 
 	// Add the default directories
-	pluginDirs.push_back(Common::FilesystemNode("."));
-	pluginDirs.push_back(Common::FilesystemNode("plugins"));
+	pluginDirs.push_back(Common::FSNode("."));
+	pluginDirs.push_back(Common::FSNode("plugins"));
 
 	// Add the provider's custom directories
 	addCustomDirectories(pluginDirs);
@@ -216,14 +216,14 @@ PluginList FilePluginProvider::getPlugins() {
 	// Add the user specified directory
 	Common::String pluginsPath(ConfMan.get("pluginspath"));
 	if (!pluginsPath.empty())
-		pluginDirs.push_back(Common::FilesystemNode(pluginsPath));
+		pluginDirs.push_back(Common::FSNode(pluginsPath));
 
 	Common::FSList::const_iterator dir;
 	for (dir = pluginDirs.begin(); dir != pluginDirs.end(); dir++) {
 		// Load all plugins.
 		// Scan for all plugins in this directory
 		Common::FSList files;
-		if (!dir->getChildren(files, Common::FilesystemNode::kListFilesOnly)) {
+		if (!dir->getChildren(files, Common::FSNode::kListFilesOnly)) {
 			debug(1, "Couldn't open plugin directory '%s'", dir->getPath().c_str());
 			continue;
 		} else {
@@ -231,8 +231,8 @@ PluginList FilePluginProvider::getPlugins() {
 		}
 
 		for (Common::FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
-			if (isPluginFilename(i->getName())) {
-				pl.push_back(createPlugin(i->getPath()));
+			if (isPluginFilename(*i)) {
+				pl.push_back(createPlugin(*i));
 			}
 		}
 	}
@@ -240,7 +240,9 @@ PluginList FilePluginProvider::getPlugins() {
 	return pl;
 }
 
-bool FilePluginProvider::isPluginFilename(const Common::String &filename) const {
+bool FilePluginProvider::isPluginFilename(const Common::FSNode &node) const {
+	Common::String filename = node.getName();
+
 #ifdef PLUGIN_PREFIX
 	// Check the plugin prefix
 	if (!filename.hasPrefix(PLUGIN_PREFIX))
@@ -258,7 +260,7 @@ bool FilePluginProvider::isPluginFilename(const Common::String &filename) const 
 
 void FilePluginProvider::addCustomDirectories(Common::FSList &dirs) const {
 #ifdef PLUGIN_DIRECTORY
-	dirs.push_back(Common::FilesystemNode(PLUGIN_DIRECTORY));
+	dirs.push_back(Common::FSNode(PLUGIN_DIRECTORY));
 #endif
 }
 

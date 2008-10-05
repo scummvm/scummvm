@@ -159,7 +159,7 @@ void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
 
 		if (amount > 0)
 			_system->delayMillis(amount > 10 ? 10 : amount);
-	} while (!skipFlag() && _system->getMillis() < start + amount && !quit());
+	} while (!skipFlag() && _system->getMillis() < start + amount && !shouldQuit());
 }
 
 int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {

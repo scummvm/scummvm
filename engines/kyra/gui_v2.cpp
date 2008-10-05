@@ -409,7 +409,7 @@ void GUI_v2::getInput() {
 
 	_vm->checkInput(_menuButtonList);
 	_vm->removeInputTop();
-	if (_vm->quit()) {
+	if (_vm->shouldQuit()) {
 		_displayMenu = false;
 		_isLoadMenu = false;
 		_isSaveMenu = false;
@@ -749,7 +749,7 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 
 	_keyPressed.reset();
 	_cancelNameInput = _finishNameInput = false;
-	while (running && !_vm->quit()) {
+	while (running && !_vm->shouldQuit()) {
 		processHighlights(_savenameMenu, _vm->_mouseX, _vm->_mouseY);
 		checkTextfieldInput();
 		if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER || _finishNameInput) {

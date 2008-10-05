@@ -46,9 +46,10 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 
 #ifdef USE_ZLIB
 		Common::ZipArchive zipArchive(getThemeFileName().c_str());
-		if (zipArchive.hasFile(cacheFilename)) {
-			Common::FilePtr stream(zipArchive.openFile(cacheFilename));
-			font = Graphics::NewFont::loadFromCache(*stream.get());
+		Common::SeekableReadStream *stream(zipArchive.openFile(cacheFilename));
+		if (stream) {
+			font = Graphics::NewFont::loadFromCache(*stream);
+			delete stream;
 		}
 #endif
 		if (font)
@@ -64,9 +65,10 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 	if (!font) {
 		Common::ZipArchive zipArchive(getThemeFileName().c_str());
 		
-		if (zipArchive.hasFile(filename)) {
-			Common::FilePtr stream(zipArchive.openFile(filename));
-			font = Graphics::NewFont::loadFont(*stream.get());
+		Common::SeekableReadStream *stream(zipArchive.openFile(filename));
+		if (stream) {
+			font = Graphics::NewFont::loadFont(*stream);
+			delete stream;
 		}
 	}
 #endif
@@ -130,22 +132,9 @@ bool Theme::themeConfigParseHeader(Common::String header, Common::String &themeN
 	return tok.empty();
 }
 
-bool Theme::themeConfigUseable(const Common::FilesystemNode &node, Common::String &themeName) {
+bool Theme::themeConfigUseable(const Common::FSNode &node, Common::String &themeName) {
 	Common::String stxHeader;
 	bool foundHeader = false;
-	
-// Not needed atm, using FSNodes.
-/*	
-	if (ConfMan.hasKey("themepath"))
-		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
-
-#ifdef DATA_PATH
-	Common::File::addDefaultDirectoryRecursive(DATA_PATH);
-#endif
-
-	if (ConfMan.hasKey("extrapath"))
-		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
-*/
 		
 	if (node.getName().hasSuffix(".zip")) {
 		
@@ -163,7 +152,7 @@ bool Theme::themeConfigUseable(const Common::FilesystemNode &node, Common::Strin
 #endif
 
 	} else if (node.isDirectory()) {			
-		Common::FilesystemNode headerfile = node.getChild("THEMERC");
+		Common::FSNode headerfile = node.getChild("THEMERC");
 		if (!headerfile.exists() || !headerfile.isReadable() || headerfile.isDirectory())
 			return false;
 			

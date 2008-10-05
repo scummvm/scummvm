@@ -858,7 +858,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		BrowserDialog browser("Select directory for savegames", true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			Common::FilesystemNode dir(browser.getResult());
+			Common::FSNode dir(browser.getResult());
 			if (dir.isWritable()) {
 				_savePath->setLabel(dir.getPath());
 			} else {
@@ -874,7 +874,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		BrowserDialog browser("Select directory for GUI themes", true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			Common::FilesystemNode dir(browser.getResult());
+			Common::FSNode dir(browser.getResult());
 			_themePath->setLabel(dir.getPath());
 			draw();
 		}
@@ -884,7 +884,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		BrowserDialog browser("Select directory for extra files", true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			Common::FilesystemNode dir(browser.getResult());
+			Common::FSNode dir(browser.getResult());
 			_extraPath->setLabel(dir.getPath());
 			draw();
 		}
@@ -895,7 +895,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		BrowserDialog browser("Select directory for plugins", true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			Common::FilesystemNode dir(browser.getResult());
+			Common::FSNode dir(browser.getResult());
 			_pluginsPath->setLabel(dir.getPath());
 			draw();
 		}
@@ -906,7 +906,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		BrowserDialog browser("Select SoundFont", false);
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			Common::FilesystemNode file(browser.getResult());
+			Common::FSNode file(browser.getResult());
 			_soundFont->setLabel(file.getPath());
 
 			if (!file.getPath().empty() && (file.getPath() != "None"))

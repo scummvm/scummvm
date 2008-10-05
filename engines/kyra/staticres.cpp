@@ -45,20 +45,20 @@ namespace Kyra {
 
 #define RESFILE_VERSION 32
 
-bool StaticResource::checkKyraDat(Resource *res) {
-	Common::SharedPtr<Common::SeekableReadStream> kyraDat(res->getFileStream(StaticResource::staticDataFilename()));
-	if (!kyraDat)
+namespace {
+bool checkKyraDat(Common::SeekableReadStream *file) {
+	if (!file)
 		return false;
 
-	uint32 size = kyraDat->size() - 16;
+	uint32 size = file->size() - 16;
 	uint8 digest[16];
-	kyraDat->seek(size, SEEK_SET);
-	if (kyraDat->read(digest, 16) != 16)
+	file->seek(size, SEEK_SET);
+	if (file->read(digest, 16) != 16)
 		return false;
 
 	uint8 digestCalc[16];
-	kyraDat->seek(0, SEEK_SET);
-	if (!Common::md5_file(*kyraDat, digestCalc, size))
+	file->seek(0, SEEK_SET);
+	if (!Common::md5_file(*file, digestCalc, size))
 		return false;
 
 	for (int i = 0; i < 16; ++i)
@@ -66,6 +66,7 @@ bool StaticResource::checkKyraDat(Resource *res) {
 			return false;
 	return true;
 }
+} // end of anonymous namespace
 
 // used for the KYRA.DAT file which still uses
 // the old flag system, we just convert it, which
@@ -131,6 +132,83 @@ static const LanguageTypes languages[] = {
 	{ GF_JAPANESE, "JPN" },
 	{ 0, 0 }
 };
+
+bool StaticResource::loadStaticResourceFile() {
+	Resource *res = _vm->resource();
+
+	if (res->_archiveCache.find(staticDataFilename()) != res->_archiveCache.end())
+		return true;
+
+	Common::ArchiveMemberList kyraDatFiles;
+	res->_files.listMatchingMembers(kyraDatFiles, staticDataFilename());
+
+	bool foundWorkingKyraDat = false;
+	for (Common::ArchiveMemberList::iterator i = kyraDatFiles.begin(); i != kyraDatFiles.end(); ++i) {
+		Common::SeekableReadStream *file = (*i)->open();
+		if (!checkKyraDat(file)) {
+			delete file;
+			continue;
+		}
+
+		delete file; file = 0;
+
+		Common::ArchivePtr archive = res->loadArchive(staticDataFilename(), *i);
+		if (!archive)
+			continue;
+	
+		res->_archiveFiles->add(staticDataFilename(), archive, 0);
+		if (tryKyraDatLoad()) {
+			foundWorkingKyraDat = true;
+			break;
+		}
+
+		res->_archiveCache.erase(staticDataFilename());
+		res->_archiveFiles->remove(staticDataFilename());
+		unloadId(-1);
+	}
+
+	if (!foundWorkingKyraDat) {
+		Common::String errorMessage = "You're missing the '" + StaticResource::staticDataFilename() + "' file or it got corrupted, (re)get it from the ScummVM website";
+		GUIErrorMessage(errorMessage);
+		error(errorMessage.c_str());
+	}
+
+	return true;
+}
+
+bool StaticResource::tryKyraDatLoad() {
+	Common::SeekableReadStream *index = getFile("INDEX");
+	if (!index)
+		return false;
+
+	if (index->size() != 3*4) {
+		delete index;
+		return false;
+	}
+
+	uint32 version = index->readUint32BE();
+	uint32 gameID = index->readUint32BE();
+	uint32 featuresValue = index->readUint32BE();
+
+	delete index;
+	index = 0;
+
+	if (version != RESFILE_VERSION)
+		return false;
+
+	if (gameID != _vm->game())
+		return false;
+
+	uint32 gameFeatures = createFeatures(_vm->gameFlags());
+	if ((featuresValue & GAME_FLAGS) != gameFeatures)
+		return false;
+
+	// load all tables for now
+	if (!prefetchId(-1))
+		return false;
+
+	return true;
+}
 
 bool StaticResource::init() {
 #define proc(x) &StaticResource::x
@@ -307,65 +385,14 @@ bool StaticResource::init() {
 		error("StaticResource: Unknown game ID");
 	}
 
-	char errorBuffer[100];
-	Common::SeekableReadStream *index = getFile("INDEX");
-	if (!index) {
-		snprintf(errorBuffer, sizeof(errorBuffer), "is missing an '%s' entry", getFilename("INDEX"));
-		outputError(errorBuffer);
-		return false;
-	}
-
-	if (index->size() != 3*4) {
-		delete index;
-
-		snprintf(errorBuffer, sizeof(errorBuffer), "has incorrect header size for entry '%s'", getFilename("INDEX"));
-		outputError(errorBuffer);
-		return false;
-	}
-
-	uint32 version = index->readUint32BE();
-	uint32 gameID = index->readUint32BE();
-	uint32 featuresValue = index->readUint32BE();
-
-	delete index;
-	index = 0;
-
-	if (version != RESFILE_VERSION) {
-		snprintf(errorBuffer, sizeof(errorBuffer), "has invalid version %d required, you got %d", RESFILE_VERSION, version);
-		outputError(errorBuffer);
-		return false;
-	}
-
-	if (gameID != _vm->game()) {
-		outputError("does not include support for your game");
-		return false;
-	}
-
-	uint32 gameFeatures = createFeatures(_vm->gameFlags());
-	if ((featuresValue & GAME_FLAGS) != gameFeatures) {
-		outputError("does not include support for your game version");
-		return false;
-	}
-
-	// load all tables for now
-	if (!prefetchId(-1)) {
-		outputError("is lacking entries for your game version");
-		return false;
-	}
-	return true;
+	return loadStaticResourceFile();
 }
 
 void StaticResource::deinit() {
 	unloadId(-1);
 }
 
-void StaticResource::outputError(const Common::String &error) {
-	Common::String errorMessage = "Your '" + StaticResource::staticDataFilename() + "' file " + error + ", reget a correct version from the ScummVM website";
-	_vm->GUIErrorMessage(errorMessage);
-	::error(errorMessage.c_str());
-}
-
-const char * const*StaticResource::loadStrings(int id, int &strings) {
+const char * const *StaticResource::loadStrings(int id, int &strings) {
 	const char * const*temp = (const char* const*)getData(id, kStringList, strings);
 	if (temp)
 		return temp;

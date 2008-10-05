@@ -100,10 +100,10 @@ void ThemeBrowser::updateListing() {
 	// files in other places are ignored in this dialog
 	// TODO: let the user browse the complete FS too/only the FS?
 	if (ConfMan.hasKey("themepath"))
-		addDir(_themes, ConfMan.get("themepath"));
+		addDir(_themes, Common::FSNode(ConfMan.get("themepath")));
 
 #ifdef DATA_PATH
-	addDir(_themes, DATA_PATH);
+	addDir(_themes, Common::FSNode(DATA_PATH));
 #endif
 
 #ifdef MACOSX
@@ -111,7 +111,7 @@ void ThemeBrowser::updateListing() {
 	if (resourceUrl) {
 		char buf[256];
 		if (CFURLGetFileSystemRepresentation(resourceUrl, true, (UInt8 *)buf, 256)) {
-			Common::String resourcePath = buf;
+			Common::FSNode resourcePath(buf);
 			addDir(_themes, resourcePath);
 		}
 		CFRelease(resourceUrl);
@@ -119,9 +119,9 @@ void ThemeBrowser::updateListing() {
 #endif
 
 	if (ConfMan.hasKey("extrapath"))
-		addDir(_themes, ConfMan.get("extrapath"));
+		addDir(_themes, Common::FSNode(ConfMan.get("extrapath")));
 
-	addDir(_themes, ".");
+	addDir(_themes, Common::FSNode("."));
 
 	// Populate the ListWidget
 	Common::StringList list;
@@ -136,18 +136,17 @@ void ThemeBrowser::updateListing() {
 	draw();
 }
 
-void ThemeBrowser::addDir(ThList &list, const Common::String &dir) {
 
-	Common::FilesystemNode node(dir);
-
+void ThemeBrowser::addDir(ThList &list, const Common::FSNode &node) {
 	if (!node.exists() || !node.isReadable())
 		return;
 
 	Common::FSList fslist;
-	if (!node.getChildren(fslist, Common::FilesystemNode::kListAll))
+	if (!node.getChildren(fslist, Common::FSNode::kListAll))
 		return;
 
 	for (Common::FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
+		
 		Entry th;
 		if (isTheme(*i, th)) {
 			bool add = true;
@@ -166,6 +165,7 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir) {
 
 	if (node.lookupFile(fslist, "THEMERC", false, true, 1)) {
 		for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
+			
 			Entry th;
 			if (isTheme(i->getParent(), th)) {
 				bool add = true;
@@ -184,7 +184,7 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir) {
 	}
 }
 
-bool ThemeBrowser::isTheme(const Common::FilesystemNode &node, Entry &out) {
+bool ThemeBrowser::isTheme(const Common::FSNode &node, Entry &out) {
 	out.file = node.getPath();	
 	
 #ifdef USE_ZLIB

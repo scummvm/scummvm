@@ -536,13 +536,14 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 	
 #ifdef USE_ZLIB
 	Common::ZipArchive zipFile(themeName.c_str());
-	Common::StringList zipContents;
+	Common::ArchiveMemberList zipContents;
 	
-	if (zipFile.isOpen() && zipFile.getAllNames(zipContents)) {
+	if (zipFile.isOpen() && zipFile.listMembers(zipContents)) {
 		
-		for (uint i = 0; i < zipContents.size(); ++i) {
-			if (!failed && matchString(zipContents[i].c_str(), "*.stx")) {	
-				if (parser()->loadStream(zipFile.openFile(zipContents[i])) == false) {
+//		for (uint i = 0; i < zipContents.size(); ++i) {
+		for (Common::ArchiveMemberList::iterator za = zipContents.begin(); za != zipContents.end(); ++za) {
+			if (!failed && matchString((*za)->getName().c_str(), "*.stx")) {	
+				if (parser()->loadStream((*za)->open()) == false) {
 					warning("Failed to load stream for zipped file '%s'", fileNameBuffer);
 					failed = true;
 				}
@@ -554,8 +555,8 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 				
 				parser()->close();
 				parseCount++;
-			} else if (zipContents[i] == "THEMERC") {
-				Common::SeekableReadStream *stream = zipFile.openFile(zipContents[i]);
+			} else if ((*za)->getName() == "THEMERC") {
+				Common::SeekableReadStream *stream = (*za)->open();
 				stxHeader = stream->readLine();
 				
 				if (!themeConfigParseHeader(stxHeader.c_str(), _themeName)) {
@@ -569,10 +570,10 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 	} else {
 #endif
         
-        FilesystemNode node(themeName);
+        FSNode node(themeName);
 		if (node.exists() && node.isReadable() && node.isDirectory()) {
 			FSList fslist;
-			if (!node.getChildren(fslist, FilesystemNode::kListFilesOnly))
+			if (!node.getChildren(fslist, FSNode::kListFilesOnly))
 				return false;
 			
 			for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {

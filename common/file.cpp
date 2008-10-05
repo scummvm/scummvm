@@ -32,20 +32,20 @@
 namespace Common {
 
 void File::addDefaultDirectory(const String &directory) {
-	FilesystemNode dir(directory);
+	FSNode dir(directory);
 	addDefaultDirectoryRecursive(dir, 1);
 }
 
 void File::addDefaultDirectoryRecursive(const String &directory, int level) {
-	FilesystemNode dir(directory);
+	FSNode dir(directory);
 	addDefaultDirectoryRecursive(dir, level);
 }
 
-void File::addDefaultDirectory(const FilesystemNode &directory) {
+void File::addDefaultDirectory(const FSNode &directory) {
 	addDefaultDirectoryRecursive(directory, 1);
 }
 
-void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level) {
+void File::addDefaultDirectoryRecursive(const FSNode &dir, int level) {
 	if (level <= 0 || !dir.exists() || !dir.isDirectory())
 		return;
 
@@ -65,60 +65,58 @@ File::~File() {
 	close();
 }
 
-
 bool File::open(const String &filename) {
+	return open(filename, SearchMan);
+}
+
+bool File::open(const String &filename, Archive &archive) {
 	assert(!filename.empty());
 	assert(!_handle);
 
-	_name.clear();
 	clearIOFailed();
 
-	if (SearchMan.hasFile(filename)) {
+	SeekableReadStream *stream = 0;
+	if (archive.hasFile(filename)) {
 		debug(3, "Opening hashed: %s", filename.c_str());
-		_handle = SearchMan.openFile(filename);
-	} else if (SearchMan.hasFile(filename + ".")) {
+		stream = archive.openFile(filename);
+	} else if (archive.hasFile(filename + ".")) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
 		debug(3, "Opening hashed: %s.", filename.c_str());
-		_handle = SearchMan.openFile(filename + ".");
+		stream = archive.openFile(filename + ".");
 	}
 	
-	if (_handle == NULL)
-		debug(2, "File::open: '%s' not found", filename.c_str());
-	else
-		_name = filename;
-
-	return _handle != NULL;
+	return open(stream, filename);
 }
 
-bool File::open(const FilesystemNode &node) {
+bool File::open(const FSNode &node) {
+	assert(!_handle);
 
 	if (!node.exists()) {
-		warning("File::open: FilesystemNode does not exist");
+		warning("File::open: '%s' does not exist", node.getPath().c_str());
 		return false;
 	} else if (node.isDirectory()) {
-		warning("File::open: FilesystemNode is a directory");
+		warning("File::open: '%s' is a directory", node.getPath().c_str());
 		return false;
 	}
 
-	String filename(node.getName());
+	SeekableReadStream *stream = node.openForReading();
+	return open(stream, node.getPath());
+}
 
-	if (_handle) {
-		error("File::open: This file object already is opened (%s), won't open '%s'", _name.c_str(), filename.c_str());
-	}
-
+bool File::open(SeekableReadStream *stream, const Common::String &name) {
+	assert(!_handle);
 	clearIOFailed();
-	_name.clear();
 
-	_handle = node.openForReading();
-
-	if (_handle == NULL)
-		debug(2, "File::open: '%s' not found", node.getPath().c_str());
-	else
-		_name = filename;
-
+	if (stream) {
+		_handle = stream;
+		_name = name;
+	} else {
+		debug(2, "File::open: opening '%s' failed", name.c_str());
+	}
 	return _handle != NULL;
 }
+
 
 bool File::exists(const String &filename) {
 	if (SearchMan.hasFile(filename)) {
@@ -198,15 +196,15 @@ bool DumpFile::open(const String &filename) {
 	assert(!filename.empty());
 	assert(!_handle);
 
-	FilesystemNode node(filename);
+	FSNode node(filename);
 	return open(node);
 }
 
-bool DumpFile::open(const FilesystemNode &node) {
+bool DumpFile::open(const FSNode &node) {
 	assert(!_handle);
 
 	if (node.isDirectory()) {
-		warning("DumpFile::open: FilesystemNode is a directory");
+		warning("DumpFile::open: FSNode is a directory");
 		return false;
 	}
 

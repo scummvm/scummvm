@@ -26,15 +26,15 @@
 #include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/fs/windows/windows-fs.cpp"
 
-AbstractFilesystemNode *WindowsFilesystemFactory::makeRootFileNode() const {
+AbstractFSNode *WindowsFilesystemFactory::makeRootFileNode() const {
 	return new WindowsFilesystemNode();
 }
 
-AbstractFilesystemNode *WindowsFilesystemFactory::makeCurrentDirectoryFileNode() const {
+AbstractFSNode *WindowsFilesystemFactory::makeCurrentDirectoryFileNode() const {
 	return new WindowsFilesystemNode("", true);
 }
 
-AbstractFilesystemNode *WindowsFilesystemFactory::makeFileNodePath(const Common::String &path) const {
+AbstractFSNode *WindowsFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new WindowsFilesystemNode(path, false);
 }
 #endif

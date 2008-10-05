@@ -36,6 +36,35 @@
 
 namespace Common {
 
+class ArchiveMember {
+public:
+	virtual ~ArchiveMember() { }
+	virtual String getName() const = 0;
+	virtual SeekableReadStream *open() = 0;
+};
+
+typedef List<SharedPtr<ArchiveMember> > ArchiveMemberList;
+
+class Archive;
+
+/**
+ * Simple ArchiveMemeber implementation which allows
+ * creation of ArchiveMember compatible objects via
+ * a simple Archive and name pair.
+ *
+ * Note that GenericArchiveMember objects will not
+ * be working anymore after the 'parent' object
+ * is destroyed.
+ */
+class GenericArchiveMember : public ArchiveMember {
+	Archive *_parent;
+	String _name;
+public:
+	GenericArchiveMember(String name, Archive *parent);
+	String getName() const;
+	SeekableReadStream *open();
+};
+
 /**
  * FilePtr is a convenient way to keep track of a SeekableReadStream without
  * having to worry about releasing its memory.
@@ -63,7 +92,7 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	virtual int matchPattern(StringList &list, const String &pattern);
+	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
 
 	/**
 	 * Add all the names present in the Archive to list. Returned
@@ -72,7 +101,7 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	virtual int getAllNames(StringList &list) = 0;
+	virtual int listMembers(ArchiveMemberList &list) = 0;
 
 	/**
 	 * Create a stream bound to a file in the archive.
@@ -93,21 +122,21 @@ typedef SharedPtr<Archive> ArchivePtr;
  * Searching is case-insensitive, as the main intended goal is supporting
  * retrieval of game data. First case-insensitive match is returned when
  * searching, thus making FSDirectory heavily dependant on the underlying
- * FilesystemNode implementation.
+ * FSNode implementation.
  */
 class FSDirectory : public Archive {
-	FilesystemNode	_node;
+	FSNode	_node;
 
 	// Caches are case insensitive, clashes are dealt with when creating
 	// Key is stored in lowercase.
-	typedef HashMap<String, FilesystemNode, IgnoreCase_Hash, IgnoreCase_EqualTo> NodeCache;
+	typedef HashMap<String, FSNode, IgnoreCase_Hash, IgnoreCase_EqualTo> NodeCache;
 	NodeCache	_fileCache, _subDirCache;
 
 	// look for a match
-	FilesystemNode lookupCache(NodeCache &cache, const String &name);
+	FSNode lookupCache(NodeCache &cache, const String &name);
 
 	// cache management
-	void cacheDirectoryRecursive(FilesystemNode node, int depth, const String& prefix);
+	void cacheDirectoryRecursive(FSNode node, int depth, const String& prefix);
 	bool _cached;
 	int	_depth;
 
@@ -122,14 +151,14 @@ public:
 	 * Create a FSDirectory representing a tree with the specified depth. Will result in an
 	 * unbound FSDirectory if node does not exist or is not a directory.
 	 */
-	FSDirectory(const FilesystemNode &node, int depth = 1);
+	FSDirectory(const FSNode &node, int depth = 1);
 
 	virtual ~FSDirectory();
 
 	/**
 	 * This return the underlying FSNode of the FSDirectory.
 	 */
-	FilesystemNode getFSNode() const;
+	FSNode getFSNode() const;
 
 	/**
 	 * Create a new FSDirectory pointing to a sub directory of the instance.
@@ -138,8 +167,8 @@ public:
 	FSDirectory *getSubDirectory(const String &name);
 
 	virtual bool hasFile(const String &name);
-	virtual int matchPattern(StringList &list, const String &pattern);
-	virtual int getAllNames(StringList &list);
+	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
+	virtual int listMembers(ArchiveMemberList &list);
 	virtual SeekableReadStream *openFile(const String &name);
 };
 
@@ -156,6 +185,9 @@ class SearchSet : public Archive {
 		int			_priority;
 		String		_name;
 		ArchivePtr	_arc;
+		Node(int priority, const String &name, ArchivePtr arc)
+			: _priority(priority), _name(name), _arc(arc) {
+		}
 	};
 	typedef List<Node> ArchiveList;
 	ArchiveList _list;
@@ -192,8 +224,8 @@ public:
 	void setPriority(const String& name, int priority);
 
 	virtual bool hasFile(const String &name);
-	virtual int matchPattern(StringList &list, const String &pattern);
-	virtual int getAllNames(StringList &list);
+	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
+	virtual int listMembers(ArchiveMemberList &list);
 
 	/**
 	 * Implements openFile from Archive base class. The current policy is

@@ -2760,11 +2760,11 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 				// Walking done
 				h.currentActions().top().setAction(DISPATCH_ACTION);
 
-			if (h.destHotspotId() != 0) {
+//			if (h.destHotspotId() != 0) {
 				// Walking to an exit, check for any required room change
 				if (Support::checkRoomChange(h))
 					break;
-			}
+//			}
 		}
 
 		h.setOccupied(true);

@@ -29,7 +29,7 @@
 
 DECLARE_SINGLETON(DSFilesystemFactory);
 
-AbstractFilesystemNode *DSFilesystemFactory::makeRootFileNode() const {
+AbstractFSNode *DSFilesystemFactory::makeRootFileNode() const {
 	if (DS::isGBAMPAvailable()) {
 		return new DS::GBAMPFileSystemNode();
 	} else {
@@ -37,7 +37,7 @@ AbstractFilesystemNode *DSFilesystemFactory::makeRootFileNode() const {
 	}
 }
 
-AbstractFilesystemNode *DSFilesystemFactory::makeCurrentDirectoryFileNode() const {
+AbstractFSNode *DSFilesystemFactory::makeCurrentDirectoryFileNode() const {
 	if (DS::isGBAMPAvailable()) {
 		return new DS::GBAMPFileSystemNode();
 	} else {
@@ -45,7 +45,7 @@ AbstractFilesystemNode *DSFilesystemFactory::makeCurrentDirectoryFileNode() cons
 	}
 }
 
-AbstractFilesystemNode *DSFilesystemFactory::makeFileNodePath(const Common::String &path) const {
+AbstractFSNode *DSFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	if (DS::isGBAMPAvailable()) {
 		return new DS::GBAMPFileSystemNode(path);
 	} else {

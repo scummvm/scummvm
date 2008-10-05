@@ -379,7 +379,7 @@ void MoviePlayer::play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn
 	bool startNextText = false;
 
 	// This happens if the user quits during the "eye" cutscene.
-	if (_vm->quit())
+	if (_vm->shouldQuit())
 		return;
 
 	_numSpeechLines = numLines;

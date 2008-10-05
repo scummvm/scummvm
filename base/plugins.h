@@ -32,6 +32,7 @@
 
 namespace Common {
 	class FSList;
+	class FSNode;
 }
 
 
@@ -238,19 +239,19 @@ protected:
 	 * Subclasses of FilePluginProvider have to at least overload this method.
 	 * If the file is not found, or does not contain loadable code, 0 is returned instead.
 	 *
-	 * @param filename	the name of the loadable code module
+	 * @param node	the FSNode of the loadable code module
 	 * @return	a pointer to a Plugin instance, or 0 if an error occurred.
 	 */
-	virtual Plugin *createPlugin(const Common::String &filename) const = 0;
+	virtual Plugin *createPlugin(const Common::FSNode &node) const = 0;
 
 	/**
-	 * Check if the supplied filename corresponds to a loadable plugin file in
-	 * the current platform.
+	 * Check if the supplied file corresponds to a loadable plugin file in
+	 * the current platform. Usually, this will just check the file name.
 	 *
-	 * @param filename	the name of the file to check
+	 * @param node	the FSNode of the file to check
 	 * @return	true if the filename corresponds to a plugin, false otherwise
 	 */
-	virtual bool isPluginFilename(const Common::String &filename) const;
+	virtual bool isPluginFilename(const Common::FSNode &node) const;
 
 	/**
 	 * Optionally add to the list of directories to be searched for

@@ -151,7 +151,7 @@ void Game::execute() {
 
 	bool initialRestart = true;
 
-	while (!engine.quit()) {
+	while (!engine.shouldQuit()) {
 
 		if ((_state & GS_RESTART) != 0) {
 			res.reset();
@@ -171,7 +171,7 @@ void Game::execute() {
 		mouse.cursorOn();
 
 		// Main game loop
-		while (!engine.quit() && ((_state & GS_RESTART) == 0)) {
+		while (!engine.shouldQuit() && ((_state & GS_RESTART) == 0)) {
 			// If time for next frame, allow everything to update
 			if (system.getMillis() > timerVal + GAME_FRAME_DELAY) {
 				timerVal = system.getMillis();
@@ -1025,7 +1025,7 @@ bool Game::getYN() {
 		}
 
 		g_system->delayMillis(10);
-	} while (!engine.quit() && !breakFlag);
+	} while (!engine.shouldQuit() && !breakFlag);
 
 	screen.update();
 	if (!vKbdFlag)

@@ -280,7 +280,7 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 #ifdef DATA_PATH
 	// Add the global DATA_PATH to the directory search list
 	// FIXME: We use depth = 4 for now, to match the old code. May want to change that
-	Common::FilesystemNode dataNode(DATA_PATH);
+	Common::FSNode dataNode(DATA_PATH);
 	if (dataNode.exists() && dataNode.isDirectory()) {
 		Common::ArchivePtr dataArchive(new Common::FSDirectory(dataNode, 4));
 		s.add(DATA_PATH, dataArchive, priority);
@@ -373,12 +373,12 @@ static Common::String getDefaultConfigFileName() {
 }
 
 Common::SeekableReadStream *OSystem_SDL::openConfigFileForReading() {
-	Common::FilesystemNode file(getDefaultConfigFileName());
+	Common::FSNode file(getDefaultConfigFileName());
 	return file.openForReading();
 }
 
 Common::WriteStream *OSystem_SDL::openConfigFileForWriting() {
-	Common::FilesystemNode file(getDefaultConfigFileName());
+	Common::FSNode file(getDefaultConfigFileName());
 	return file.openForWriting();
 }
 

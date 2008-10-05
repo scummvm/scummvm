@@ -2160,7 +2160,7 @@ void Mickey::run() {
 	intro();
 
 	// Game loop
-	while (!_vm->quit()) {
+	while (!_vm->shouldQuit()) {
 		drawRoom();
 
 		if (_game.fIntro) {

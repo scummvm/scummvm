@@ -57,16 +57,10 @@ Resource::~Resource() {
 bool Resource::reset() {
 	unloadAllPakFiles();
 
-	Common::FilesystemNode dir(ConfMan.get("path"));
+	Common::FSNode dir(ConfMan.get("path"));
 
 	if (!dir.exists() || !dir.isDirectory())
 		error("invalid game path '%s'", dir.getPath().c_str());
-
-	if (!loadPakFile(StaticResource::staticDataFilename()) || !StaticResource::checkKyraDat(this)) {
-		Common::String errorMessage = "You're missing the '" + StaticResource::staticDataFilename() + "' file or it got corrupted, (re)get it from the ScummVM website";
-		_vm->GUIErrorMessage(errorMessage);
-		error(errorMessage.c_str());
-	}
 
 	if (_vm->game() == GI_KYRA1) {
 		// We only need kyra.dat for the demo.
@@ -103,7 +97,7 @@ bool Resource::reset() {
 	}
 
 	Common::FSList fslist;
-	if (!dir.getChildren(fslist, Common::FilesystemNode::kListFilesOnly))
+	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly))
 		error("can't list files inside game path '%s'", dir.getPath().c_str());
 
 	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().isTalkie) {
@@ -276,16 +270,27 @@ Common::ArchivePtr Resource::loadArchive(const Common::String &file) {
 	if (cachedArchive != _archiveCache.end())
 		return cachedArchive->_value;
 
-	Common::SeekableReadStream *stream = getFileStream(file);
+	Common::ArchiveMemberList list;
+	_files.listMatchingMembers(list, file);
+
+	if (list.empty())
+		return Common::ArchivePtr();
+
+	return loadArchive(file, *list.begin());
+}
+
+Common::ArchivePtr Resource::loadArchive(const Common::String &name, Common::SharedPtr<Common::ArchiveMember> member) {
+	Common::SeekableReadStream *stream = member->open();
+
 	if (!stream)
 		return Common::ArchivePtr();
 
 	Common::ArchivePtr archive;
 	for (LoaderList::const_iterator i = _loaders.begin(); i != _loaders.end(); ++i) {
-		if ((*i)->checkFilename(file)) {
-			if ((*i)->isLoadable(file, *stream)) {
+		if ((*i)->checkFilename(name)) {
+			if ((*i)->isLoadable(name, *stream)) {
 				stream->seek(0, SEEK_SET);
-				archive = Common::ArchivePtr((*i)->load(this, file, *stream));
+				archive = Common::ArchivePtr((*i)->load(member, *stream));
 				break;
 			} else {
 				stream->seek(0, SEEK_SET);
@@ -298,7 +303,7 @@ Common::ArchivePtr Resource::loadArchive(const Common::String &file) {
 	if (!archive)
 		return Common::ArchivePtr();
 
-	_archiveCache[file] = archive;
+	_archiveCache[name] = archive;
 	return archive;
 }
 

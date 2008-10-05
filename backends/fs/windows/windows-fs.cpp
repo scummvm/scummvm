@@ -55,9 +55,9 @@
 /**
  * Implementation of the ScummVM file system API based on Windows API.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
+ * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class WindowsFilesystemNode : public AbstractFilesystemNode {
+class WindowsFilesystemNode : public AbstractFSNode {
 protected:
 	Common::String _displayName;
 	Common::String _path;
@@ -95,9 +95,9 @@ public:
 	virtual bool isReadable() const { return _access(_path.c_str(), R_OK) == 0; }
 	virtual bool isWritable() const { return _access(_path.c_str(), W_OK) == 0; }
 
-	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
+	virtual AbstractFSNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFilesystemNode *getParent() const;
+	virtual AbstractFSNode *getParent() const;
 
 	virtual Common::SeekableReadStream *openForReading();
 	virtual Common::WriteStream *openForWriting();
@@ -142,8 +142,8 @@ void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const c
 
 	isDirectory = (find_data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ? true : false);
 
-	if ((!isDirectory && mode == Common::FilesystemNode::kListDirectoriesOnly) ||
-		(isDirectory && mode == Common::FilesystemNode::kListFilesOnly))
+	if ((!isDirectory && mode == Common::FSNode::kListDirectoriesOnly) ||
+		(isDirectory && mode == Common::FSNode::kListFilesOnly))
 		return;
 
 	entry._isDirectory = isDirectory;
@@ -223,7 +223,7 @@ WindowsFilesystemNode::WindowsFilesystemNode(const Common::String &p, const bool
 	_isPseudoRoot = false;
 }
 
-AbstractFilesystemNode *WindowsFilesystemNode::getChild(const Common::String &n) const {
+AbstractFSNode *WindowsFilesystemNode::getChild(const Common::String &n) const {
 	assert(_isDirectory);
 
 	Common::String newPath(_path);
@@ -285,7 +285,7 @@ bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 	return true;
 }
 
-AbstractFilesystemNode *WindowsFilesystemNode::getParent() const {
+AbstractFSNode *WindowsFilesystemNode::getParent() const {
 	assert(_isValid || _isPseudoRoot);
 
 	if (_isPseudoRoot)

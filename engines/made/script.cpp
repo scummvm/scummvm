@@ -30,6 +30,7 @@
 #include "made/script.h"
 #include "made/database.h"
 #include "made/scriptfuncs.h"
+#include "made/screen.h"
 
 namespace Made {
 
@@ -44,47 +45,47 @@ ScriptStack::ScriptStack() {
 ScriptStack::~ScriptStack() {
 }
 
-int16 ScriptStack::top() {
+inline int16 ScriptStack::top() {
 	return _stack[_stackPos];
 }
 
-int16 ScriptStack::pop() {
+inline int16 ScriptStack::pop() {
 	if (_stackPos == kScriptStackSize)
 		error("ScriptStack::pop() Stack underflow");
 	return _stack[_stackPos++];
 }
 
-void ScriptStack::push(int16 value) {
+inline void ScriptStack::push(int16 value) {
 	if (_stackPos == 0)
 		error("ScriptStack::push() Stack overflow");
 	_stack[--_stackPos] = value;
 }
 
-void ScriptStack::setTop(int16 value) {
+inline void ScriptStack::setTop(int16 value) {
 	_stack[_stackPos] = value;
 }
 
-int16 ScriptStack::peek(int16 index) {
+inline int16 ScriptStack::peek(int16 index) {
 	return _stack[index];
 }
 
-void ScriptStack::poke(int16 index, int16 value) {
+inline void ScriptStack::poke(int16 index, int16 value) {
 	_stack[index] = value;
 }
 
-void ScriptStack::alloc(int16 count) {
+inline void ScriptStack::alloc(int16 count) {
 	_stackPos -= count;
 }
 
-void ScriptStack::free(int16 count) {
+inline void ScriptStack::free(int16 count) {
 	_stackPos += count;
 }
 
-void ScriptStack::setStackPos(int16 stackPtr) {
+inline void ScriptStack::setStackPos(int16 stackPtr) {
 	_stackPos = stackPtr;
 }
 
-int16 *ScriptStack::getStackPtr() {
+inline int16 *ScriptStack::getStackPtr() {
 	return &_stack[_stackPos];
 }
 
@@ -187,6 +188,9 @@ ScriptInterpreter::~ScriptInterpreter() {
 }
 
 void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
+
+	uint32 opcodeSleepCounter = 0;
+
 	_vm->_quit = false;
 	_runningScriptObjectIndex = scriptObjectIndex;
 
@@ -194,19 +198,27 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 
 	_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 	_codeIp = _codeBase;
-	
+
 	while (!_vm->_quit) {
 
 		_vm->handleEvents();
 
 		byte opcode = readByte();
+
 		if (opcode >= 1 && opcode <= _commandsMax) {
 			debug(4, "[%04X:%04X] %s", _runningScriptObjectIndex, (uint) (_codeIp - _codeBase), _commands[opcode - 1].desc);
 			(this->*_commands[opcode - 1].proc)();
 		} else {
 			warning("ScriptInterpreter::runScript(%d) Unknown opcode %02X", _runningScriptObjectIndex, opcode);
 		}
-		
+
+		/* We sleep a little after 500 opcodes to reduce the CPU load.
+		*/
+		if (++opcodeSleepCounter > 500) {
+			_vm->_screen->updateScreenAndWait(5);
+			opcodeSleepCounter = 0;
+		}
+
 	}
 }
 

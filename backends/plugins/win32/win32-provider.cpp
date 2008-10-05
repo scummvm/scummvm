@@ -27,6 +27,7 @@
 
 #include "backends/plugins/win32/win32-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
+#include "common/fs.h"
 
 #include <windows.h>
 
@@ -96,12 +97,13 @@ public:
 };
 
 
-Plugin* Win32PluginProvider::createPlugin(const Common::String &filename) const {
-	return new Win32Plugin(filename);
+Plugin* Win32PluginProvider::createPlugin(const Common::FSNode &node) const {
+	return new Win32Plugin(node.getPath());
 }
 
-bool Win32PluginProvider::isPluginFilename(const Common::String &filename) const {
+bool Win32PluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
+	Common::String filename = node.getName();
 	if (!filename.hasSuffix(".dll"))
 		return false;
 

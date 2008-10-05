@@ -47,9 +47,9 @@ const uint32 kExAllBufferSize = 40960; // TODO: is this okay for sure?
 /**
  * Implementation of the ScummVM file system API.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
+ * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class AmigaOSFilesystemNode : public AbstractFilesystemNode {
+class AmigaOSFilesystemNode : public AbstractFSNode {
 protected:
 	BPTR _pFileLock;
 	Common::String _sDisplayName;
@@ -58,7 +58,7 @@ protected:
 	bool _bIsValid;
 
 	/**
-	 * Obtain the FileInfoBlock protection value for this FilesystemNode,
+	 * Obtain the FileInfoBlock protection value for this FSNode,
 	 * as defined in the <proto/dos.h> header.
 	 *
 	 * @return -1 if there were errors, 0 or a positive integer otherwise.
@@ -103,9 +103,9 @@ public:
 	virtual bool isReadable() const;
 	virtual bool isWritable() const;
 
-	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
+	virtual AbstractFSNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFilesystemNode *getParent() const;
+	virtual AbstractFSNode *getParent() const;
 
 	virtual Common::SeekableReadStream *openForReading();
 	virtual Common::WriteStream *openForWriting();
@@ -302,7 +302,7 @@ bool AmigaOSFilesystemNode::exists() const {
 	return nodeExists;
 }
 
-AbstractFilesystemNode *AmigaOSFilesystemNode::getChild(const Common::String &n) const {
+AbstractFSNode *AmigaOSFilesystemNode::getChild(const Common::String &n) const {
 	ENTER();
 	if (!_bIsDirectory) {
 		debug(6, "Not a directory");
@@ -371,9 +371,9 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 
 				struct ExAllData *ead = data;
 				do {
-					if ((mode == Common::FilesystemNode::kListAll) ||
-						(EAD_IS_DRAWER(ead) && (mode == Common::FilesystemNode::kListDirectoriesOnly)) ||
-						(EAD_IS_FILE(ead) && (mode == Common::FilesystemNode::kListFilesOnly))) {
+					if ((mode == Common::FSNode::kListAll) ||
+						(EAD_IS_DRAWER(ead) && (mode == Common::FSNode::kListDirectoriesOnly)) ||
+						(EAD_IS_FILE(ead) && (mode == Common::FSNode::kListFilesOnly))) {
 						Common::String full_path = _sPath;
 						full_path += (char*)ead->ed_Name;
 
@@ -381,7 +381,7 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 						if (lock) {
 							AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(lock, (char *)ead->ed_Name);
 							if (entry) {
-								//FIXME: since the isValid() function is no longer part of the AbstractFilesystemNode
+								//FIXME: since the isValid() function is no longer part of the AbstractFSNode
 								//       specification, the following call had to be changed:
 								//          if (entry->isValid())
 								//		 Please verify that the logic of the code remains coherent. Also, remember
@@ -433,7 +433,7 @@ int AmigaOSFilesystemNode::getFibProtection() const {
 	return fibProt;
 }
 
-AbstractFilesystemNode *AmigaOSFilesystemNode::getParent() const {
+AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
 	ENTER();
 
 	if (!_bIsDirectory) {
@@ -543,7 +543,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
 
 				AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(volumeLock, buffer);
 				if (entry) {
-					//FIXME: since the isValid() function is no longer part of the AbstractFilesystemNode
+					//FIXME: since the isValid() function is no longer part of the AbstractFSNode
 					//       specification, the following call had to be changed:
 					//          if (entry->isValid())
 					//		 Please verify that the logic of the code remains coherent. Also, remember

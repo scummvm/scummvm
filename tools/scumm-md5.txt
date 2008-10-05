@@ -185,6 +185,7 @@ monkey	The Secret of Monkey Island
 	9e5e0fb43bd22f4628719b7501adb717	-1	fr	Atari	No Adlib	EGA	-	Andreas Bylund
 	927a764615c7fcdd72f591355e089d8c	-1	de	Atari	No Adlib	EGA	-	Joachim Eberhard
 	0a41311d462b6639fc45297b9044bf16	-1	es	Atari	No Adlib	EGA	-	
+
 	49210e124e4c2b30f1290a9ef6306301	8357	en	DOS	EGA	EGA	8 disk v1.0, 9/18/90	Fingolfin
 	1dd3c11ea4439adfe681e4e405b624e1	-1	fr	DOS	EGA	EGA	8 disk	Andrea Petrucci
 	fc6b6148e80d67939d9a18697c0f626a	-1	de	DOS	EGA	EGA	8 disk	ghoostkilla
@@ -201,12 +202,14 @@ monkey	The Secret of Monkey Island
 	319a4dde52c7960b5aae8a1ec348d918	-1	de	Amiga	VGA	VGA	V1.2r	ghoostkilla
 	fb66aa42de21675116346213f176a366	-1	it	Amiga	VGA	VGA	-	Andrea Petrucci
 	870d1e3c86bc50846d808d14a36b4e08	-1	es	Amiga	VGA	VGA	-	Andreas Bylund
+
 	c7890e038806df2bb5c0c8c6f1986ea2	-1	en	DOS	VGA	VGA	8 disk	Andrea Petrucci
 	15e03ffbfeddb9c2aebc13dcb2a4a8f4	8357	en	DOS	VGA	VGA	4 disk	
 	08656dd9698ddf1023ba9bf8a195e37b	-1	en	DOS	VGA	VGA	V1.1	crossbow777
 	d0b531227a27c6662018d2bd05aac52a	8357	de	DOS	VGA	VGA	4 disk v1.1, 14.Feb.91	Fingolfin
 	66fd5ff9a810dfeb6d6bdada18221140	-1	it	DOS	VGA	VGA	4 disk	Andrea Petrucci
 	45152f7cf2ba8f43cf8a8ea2e740ae09	8357	es	DOS	VGA	VGA	4 disk	Fingolfin
+	a01fab4a64d47b96e2e58e6b0f825cc7	8347	fr	DOS	VGA	VGA	8 disk v1.0, 6/4/91 II	Sebast26
 
 	8776caed014c321272af407c1502a2df	8955	en	Mac	CD	-	Mac v2.4	Petr Maruska (#1749232)
 
@@ -217,6 +220,7 @@ monkey	The Secret of Monkey Island
 	f049e38c1f8302b5db6170f1872af89a	8955	es	DOS	CD	CD	CD-ROM v2.3	Fingolfin, Andrej Sinicyn, Andrea Petrucci
 	2ccd8891ce4d3f1a334d21bff6a88ca2	9455	en	Mac	CD	-	Mac v2.4	Fingolfin, Lars N&aelig;sbye Christensen
 	b9ba19ce376efc69be78ef3baef8d2b9	-1	en	Mac	CD	-	alt?	Grant Yeager	
+
 	c13225cb1bbd3bc9fe578301696d8021	-1	en	SEGA	SEGA	-	-	
 	057c9b456dedcc4d71b991a3072a20b3	9465	jp	SEGA	SEGA	-	-	GloKidd
 
@@ -661,8 +665,8 @@ puttrace	Putt-Putt Enters the Race
 	981e1e1891f2be7e25a01f50ae55a5af	-1	us	All	HE 98	-	-	Kirben
 	1ed22f601f8b3695804a6583cc3083f1	-1	nl	All	HE 98.5	-	-	daniel9
 	33e989f85da700e2014d00f345cab3d7	-1	fr	Windows	HE 98.5	-	-	gist974
-	5719fc8a13b4638b78d9d8d12f091f94	-1	fr	Windows	HE 98.5	-	-	thyphoon
 	b47be81e39a9710f6f595f7b527b60f8	-1	gb	Windows	HE 99	-	-	Reckless
+	5719fc8a13b4638b78d9d8d12f091f94	-1	fr	Windows	HE 99	-	-	thyphoon
 	055ffe4f47753e47594ac67823220c54	-1	de	All	HE 99	-	-	Joachim Eberhard
 	62050da376483d8edcbd98cd26b6cb57	-1	ru	Windows	HE 99	-	-	sev
 

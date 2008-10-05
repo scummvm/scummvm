@@ -168,7 +168,7 @@ class Win32ResExtractor : public ResExtractor {
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 	struct WinLibrary {
-		Common::File *file;
+		Common::SeekableReadStream *file;
 		byte *memory;
 		byte *first_resource;
 		int total_size;

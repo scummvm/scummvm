@@ -173,44 +173,40 @@ bool WagFileParser::checkWagVersion(Common::SeekableReadStream &stream) {
 	}
 }
 
-bool WagFileParser::parse(const char *filename) {
-	Common::File file;
+bool WagFileParser::parse(const Common::FSNode &node) {
 	WagProperty property; // Temporary property used for reading
-	Common::MemoryReadStream *stream = NULL; // The file is to be read fully into memory and handled using this
+	Common::SeekableReadStream *stream = NULL; // The file stream
 
 	_parsedOk = false; // We haven't parsed the file yet
 
-	if (file.open(filename)) { // Open the file
-		stream = file.readStream(file.size()); // Read the file into memory
-		if (stream != NULL && stream->size() == file.size()) { // Check that the whole file was read into memory
-			if (checkWagVersion(*stream)) { // Check that WinAGI version string is valid
-				// It seems we've got a valid *.wag file so let's parse its properties from the start.
-				stream->seek(0); // Rewind the stream
-				if (!_propList.empty()) _propList.clear(); // Clear out old properties (If any)
+	stream = node.openForReading(); // Open the file
+	if (stream) { // Check that opening the file was succesful
+		if (checkWagVersion(*stream)) { // Check that WinAGI version string is valid
+			// It seems we've got a valid *.wag file so let's parse its properties from the start.
+			stream->seek(0); // Rewind the stream
+			if (!_propList.empty()) _propList.clear(); // Clear out old properties (If any)
 
-				do { // Parse the properties
-					if (property.read(*stream)) { // Read the property and check it was read ok
-						_propList.push_back(property); // Add read property to properties list
-						debug(4, "WagFileParser::parse: Read property with code %d, type %d, number %d, size %d, data \"%s\"",
-							property.getCode(), property.getType(), property.getNumber(), property.getSize(), property.getData());
-					} else // Reading failed, let's bail out
-						break;
-				} while (!endOfProperties(*stream)); // Loop until the end of properties
+			do { // Parse the properties
+				if (property.read(*stream)) { // Read the property and check it was read ok
+					_propList.push_back(property); // Add read property to properties list
+					debug(4, "WagFileParser::parse: Read property with code %d, type %d, number %d, size %d, data \"%s\"",
+						property.getCode(), property.getType(), property.getNumber(), property.getSize(), property.getData());
+				} else // Reading failed, let's bail out
+					break;
+			} while (!endOfProperties(*stream)); // Loop until the end of properties
 
-				// File was parsed successfully only if we got to the end of properties
-				// and all the properties were read successfully (Also the last).
-				_parsedOk = endOfProperties(*stream) && property.readOk();
+			// File was parsed successfully only if we got to the end of properties
+			// and all the properties were read successfully (Also the last).
+			_parsedOk = endOfProperties(*stream) && property.readOk();
 
-				if (!_parsedOk) // Error parsing stream
-					warning("Error parsing WAG file (%s). WAG file ignored", filename);
-			} else // Invalid WinAGI version string or it couldn't be read
-				warning("Invalid WAG file (%s) version or error reading it. WAG file ignored", filename);
-		} else // Couldn't fully read file into memory
-			warning("Error reading WAG file (%s) into memory. WAG file ignored", filename);
+			if (!_parsedOk) // Error parsing stream
+				warning("Error parsing WAG file (%s). WAG file ignored", node.getPath().c_str());
+		} else // Invalid WinAGI version string or it couldn't be read
+			warning("Invalid WAG file (%s) version or error reading it. WAG file ignored", node.getPath().c_str());
 	} else // Couldn't open file
-		warning("Couldn't open WAG file (%s). WAG file ignored", filename);
+		warning("Couldn't open WAG file (%s). WAG file ignored", node.getPath().c_str());
 
-	if (stream != NULL) delete stream; // If file was read into memory, deallocate that buffer
+	delete stream;
 	return _parsedOk;
 }
 

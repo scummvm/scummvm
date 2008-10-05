@@ -35,16 +35,16 @@
 /**
  * Implementation of the ScummVM file system API based on POSIX.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
+ * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class POSIXFilesystemNode : public AbstractFilesystemNode {
+class POSIXFilesystemNode : public AbstractFSNode {
 protected:
 	Common::String _displayName;
 	Common::String _path;
 	bool _isDirectory;
 	bool _isValid;
 	
-	virtual AbstractFilesystemNode *makeNode(const Common::String &path) const {
+	virtual AbstractFSNode *makeNode(const Common::String &path) const {
 		return new POSIXFilesystemNode(path);
 	}
 	
@@ -69,9 +69,9 @@ public:
 	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }
 	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }
 
-	virtual AbstractFilesystemNode *getChild(const Common::String &n) const;
+	virtual AbstractFSNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFilesystemNode *getParent() const;
+	virtual AbstractFSNode *getParent() const;
 
 	virtual Common::SeekableReadStream *openForReading();
 	virtual Common::WriteStream *openForWriting();

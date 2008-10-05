@@ -740,7 +740,7 @@ int TinselEngine::go() {
 
 	// Foreground loop
 
-	while (!quit()) {
+	while (!shouldQuit()) {
 		assert(_console);
 		if (_console->isAttached())
 			_console->onFrame();

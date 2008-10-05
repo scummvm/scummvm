@@ -141,9 +141,9 @@ void Mouse::waitForRelease() {
 	LureEngine &engine = LureEngine::getReference();
 
 	do {
-		while (e.pollEvent() && !engine.quit()) ;
+		while (e.pollEvent() && !engine.shouldQuit()) ;
 		g_system->delayMillis(20);
-	} while (!engine.quit() && (lButton() || rButton() || mButton()));
+	} while (!engine.shouldQuit() && (lButton() || rButton() || mButton()));
 }
 
 /*--------------------------------------------------------------------------*/
@@ -211,7 +211,7 @@ bool Events::interruptableDelay(uint32 milliseconds) {
 	uint32 delayCtr = g_system->getMillis() + milliseconds;
 
 	while (g_system->getMillis() < delayCtr) {
-		if (engine.quit()) return true;
+		if (engine.shouldQuit()) return true;
 
 		if (events.pollEvent()) {
 			if (((events.type() == Common::EVENT_KEYDOWN) && (events.event().kbd.ascii != 0)) ||

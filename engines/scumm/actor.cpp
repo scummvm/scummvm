@@ -1475,7 +1475,7 @@ void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 		bcr->_shadow_table = _vm->_shadowPalette;
 	}
 
-	bcr->setCostume(_costume, _heXmapNum);
+	bcr->setCostume(_costume, (_vm->_game.heversion == 0) ? 0 : _heXmapNum);
 	bcr->setPalette(_palette);
 	bcr->setFacing(this);
 

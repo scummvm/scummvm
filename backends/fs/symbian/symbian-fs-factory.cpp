@@ -26,17 +26,17 @@
 #include "backends/fs/symbian/symbian-fs-factory.h"
 #include "backends/fs/symbian/symbian-fs.cpp"
 
-AbstractFilesystemNode *SymbianFilesystemFactory::makeRootFileNode() const {
+AbstractFSNode *SymbianFilesystemFactory::makeRootFileNode() const {
 	return new SymbianFilesystemNode(true);
 }
 
-AbstractFilesystemNode *SymbianFilesystemFactory::makeCurrentDirectoryFileNode() const {
+AbstractFSNode *SymbianFilesystemFactory::makeCurrentDirectoryFileNode() const {
 	char path[MAXPATHLEN];
 	getcwd(path, MAXPATHLEN);
 	return new SymbianFilesystemNode(path);
 }
 
-AbstractFilesystemNode *SymbianFilesystemFactory::makeFileNodePath(const Common::String &path) const {
+AbstractFSNode *SymbianFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new SymbianFilesystemNode(path);
 }
 #endif

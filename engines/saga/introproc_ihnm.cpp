@@ -59,11 +59,11 @@ int Scene::IHNMStartProc() {
 
 		// Play Cyberdreams logo for 168 frames
 		if (!playTitle(0, logoLength, true)) {
-			if (_vm->quit())
+			if (_vm->shouldQuit())
 				return !SUCCESS;
 			// Play Dreamers Guild logo for 10 seconds
 			if (!playLoopingTitle(1, 10)) {
-				if (_vm->quit())
+				if (_vm->shouldQuit())
 					return !SUCCESS;
 				// Play the title music
 				_vm->_music->play(1, MUSIC_NORMAL);
@@ -74,7 +74,7 @@ int Scene::IHNMStartProc() {
 	} else {
 		_vm->_music->play(1, MUSIC_NORMAL);
 		playTitle(0, 10);
-		if (_vm->quit())
+		if (_vm->shouldQuit())
 			return !SUCCESS;
 		playTitle(2, 12);
 	}
@@ -193,7 +193,7 @@ bool Scene::playTitle(int title, int time, int mode) {
 
 	_vm->_gfx->getCurrentPal(pal_cut);
 
-	while (!done && !_vm->quit()) {
+	while (!done && !_vm->shouldQuit()) {
 		curTime = _vm->_system->getMillis();
 
 		switch (phase) {

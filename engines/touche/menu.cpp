@@ -433,7 +433,7 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 			_system->delayMillis(10);
 		}
 		_fullRedrawCounter = 2;
-		if (!menuData.exit && quit()) {
+		if (!menuData.exit && shouldQuit()) {
 			if (displayQuitDialog())
 				quitGame();
 		}

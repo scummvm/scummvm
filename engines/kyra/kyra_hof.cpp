@@ -298,7 +298,8 @@ int KyraEngine_HoF::go() {
 
 	if (_menuChoice != 4) {
 		// load just the pak files needed for ingame
-		_res->loadPakFile(StaticResource::staticDataFilename());
+		_staticres->loadStaticResourceFile();
+
 		if (_flags.platform == Common::kPlatformPC && _flags.isTalkie) {
 			if (!_res->loadFileList("FILEDATA.FDT"))
 				error("couldn't load 'FILEDATA.FDT'");
@@ -317,7 +318,7 @@ int KyraEngine_HoF::go() {
 
 	if (_menuChoice & 1) {
 		startup();
-		if (!quit())
+		if (!shouldQuit())
 			runLoop();
 		cleanup();
 		
@@ -455,7 +456,7 @@ void KyraEngine_HoF::runLoop() {
 	_screen->updateScreen();
 
 	_runFlag = true;
-	while (!quit() && _runFlag) {
+	while (!shouldQuit() && _runFlag) {
 		if (_deathHandler >= 0) {
 			removeHandItem();
 			delay(5);
@@ -463,7 +464,7 @@ void KyraEngine_HoF::runLoop() {
 			_gui->optionsButton(0);
 			_deathHandler = -1;
 
-			if (!_runFlag || !quit())
+			if (!_runFlag || !shouldQuit())
 				break;
 		}
 
@@ -1630,7 +1631,7 @@ void KyraEngine_HoF::loadInvWsa(const char *filename, int run, int delayTime, in
 	_invWsa.timer = _system->getMillis();
 
 	if (run) {
-		while (_invWsa.running && !skipFlag() && !quit()) {
+		while (_invWsa.running && !skipFlag() && !shouldQuit()) {
 			update();
 			_system->delayMillis(10);
 		}
@@ -2004,7 +2005,7 @@ void KyraEngine_HoF::playTim(const char *filename) {
 		return;
 
 	_tim->resetFinishedFlag();
-	while (!quit() && !_tim->finished()) {
+	while (!shouldQuit() && !_tim->finished()) {
 		_tim->exec(tim, 0);
 		if (_chatText)
 			updateWithText();

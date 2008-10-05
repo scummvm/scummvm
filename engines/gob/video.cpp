@@ -171,7 +171,7 @@ void Video::clearScreen() {
 void Video::setSize(bool defaultTo1XScaler) {
 	_vm->_system->beginGFXTransaction();
 		_vm->_system->initSize(_vm->_width, _vm->_height);
-		_vm->initCommonGFX(defaultTo1XScaler);
+		initCommonGFX(defaultTo1XScaler);
 	_vm->_system->endGFXTransaction();
 }
 

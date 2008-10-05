@@ -152,7 +152,7 @@ GameList Sword2MetaEngine::detectGames(const Common::FSList &fslist) const {
 
 				if (0 == scumm_stricmp("clusters", fileName)) {
 					Common::FSList recList;
-					if (file->getChildren(recList, Common::FilesystemNode::kListAll)) {
+					if (file->getChildren(recList, Common::FSNode::kListAll)) {
 						GameList recGames(detectGames(recList));
 						if (!recGames.empty()) {
 							detectedGames.push_back(recGames);
@@ -212,8 +212,8 @@ PluginError Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) con
 	assert(engine);
 
 	Common::FSList fslist;
-	Common::FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.getChildren(fslist, Common::FilesystemNode::kListAll)) {
+	Common::FSNode dir(ConfMan.get("path"));
+	if (!dir.getChildren(fslist, Common::FSNode::kListAll)) {
 		return kInvalidPathError;
 	}
 
@@ -421,7 +421,7 @@ int Sword2Engine::init() {
 		// player will kill the music for us. Otherwise, the restore
 		// will either have killed the music, or done a crossfade.
 
-		if (quit())
+		if (shouldQuit())
 			return 0;
 
 		if (result)
@@ -493,7 +493,7 @@ int Sword2Engine::go() {
 		// because we want the break to happen before updating the
 		// screen again.
 
-		if (quit())
+		if (shouldQuit())
 			break;
 
 		// creates the debug text blocks

@@ -88,6 +88,9 @@ public:
 	 *
 	 * The default implementation returns an empty list.
 	 *
+	 * @note MetaEngines must indicate that this function has been implemented
+	 *       via the kSupportsListSaves feature flag.
+	 *
 	 * @param target	name of a config manager target
 	 * @return			a list of save state descriptors
 	 */
@@ -100,6 +103,9 @@ public:
 	 *
 	 * For most engines this just amounts to calling _saveFileMan->removeSaveFile().  
 	 * Engines which keep an index file will also update it accordingly.
+	 *
+	 * @note MetaEngines must indicate that this function has been implemented
+	 *       via the kSupportsDeleteSave feature flag.
 	 *
 	 * @param target	name of a config manager target
 	 * @param slot		slot number of the save state to be removed
@@ -115,7 +121,9 @@ public:
 	 * @param target	name of a config manager target
 	 * @param slot		slot number of the save state
 	 */
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const { return SaveStateDescriptor(); }
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+		return SaveStateDescriptor();
+	}
 
 	/** @name MetaEngineFeature flags */
 	//@{
@@ -125,59 +133,66 @@ public:
 	 * either available or not.
 	 */
 	enum MetaEngineFeature {
-		/** 'Return to launcher' feature (i.e. EVENT_RTL is handled) */
-		kSupportsRTL            = 0,
+		/**
+		 * 'Return to launcher' feature is supported, i.e., EVENT_RTL is handled-
+		 */
+		kSupportsRTL,
 
 		/**
-		 * Listing Save States (i.e. implements the listSaves() method;
-		 * used for --list-saves support)
+		 * Listing all Save States for a given target is supported, i.e.,
+		 * the listSaves() method is implemented.
+		 * Used for --list-saves support, as well as the GMM load dialog.
 		 */
-		kSupportsListSaves      = 1,
+		kSupportsListSaves,
 		
-		/** Loading from the Launcher / command line (-x) */
-		kSupportsDirectLoad     = 2,
+		/**
+		 * Loading from the Launcher / command line (-x)
+		 */
+		kSupportsDirectLoad,
 
 		/**
 		 * Deleting Saves from the Launcher (i.e. implements the
 		 * removeSaveState() method)
 		 */
-		kSupportsDeleteSave     = 3,
+		kSupportsDeleteSave,
 
 		/**
 		 * Features meta infos for savestates (i.e. implements the
 		 * querySaveMetaInfos method properly)
 		 */
-		kSupportsMetaInfos		= 4,
+		kSavesSupportMetaInfo,
 
 		/**
 		 * Features a thumbnail in savegames (i.e. includes a thumbnail
 		 * in savestates returned via querySaveMetaInfo).
-		 * This flag may only be set when 'kSupportsMetaInfos' is set.
+		 * This flag may only be set when 'kSavesSupportMetaInfo' is set.
 		 */
-		kSupportsThumbnails		= 5,
+		kSavesSupportThumbnail,
 
 		/**
 		 * Features 'save_date' and 'save_time' entries in the 
 		 * savestate returned by querySaveMetaInfo. Those values
 		 * indicate the date/time the savegame was created.
-		 * This flag may only be set when 'kSupportsMetaInfos' is set.
+		 * This flag may only be set when 'kSavesSupportMetaInfo' is set.
 		 */
-		kSupportsSaveDate		= 6,
+		kSavesSupportCreationDate,
 
 		/**
 		 * Features 'play_time' entry in the savestate returned by
 		 * querySaveMetaInfo. It indicates how long the user played
 		 * the game till the save.
-		 * This flag may only be set when 'kSupportsMetaInfos' is set.
+		 * This flag may only be set when 'kSavesSupportMetaInfo' is set.
 		 */
-		kSupportsSavePlayTime	= 7
+		kSavesSupportPlayTime
 	};	
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.
 	 * Used by e.g. the launcher to determine whether to enable the "Load" button.
 	 */	
-	virtual bool hasFeature(MetaEngineFeature f) const { return false; };
+	virtual bool hasFeature(MetaEngineFeature f) const {
+		return false;
+	}
 
 	//@}
 };

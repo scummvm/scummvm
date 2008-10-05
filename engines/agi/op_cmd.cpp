@@ -1739,7 +1739,7 @@ int AgiEngine::runLogic(int n) {
 	curLogic->cIP = curLogic->sIP;
 
 	timerHack = 0;
-	while (ip < _game.logics[n].size && !quit()) {
+	while (ip < _game.logics[n].size && !shouldQuit()) {
 		if (_debug.enabled) {
 			if (_debug.steps > 0) {
 				if (_debug.logic0 || n) {

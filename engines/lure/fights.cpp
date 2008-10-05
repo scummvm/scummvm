@@ -117,7 +117,7 @@ void FightsManager::fightLoop() {
 	uint32 timerVal = g_system->getMillis();
 
 	// Loop for the duration of the battle
-	while (!engine.quit() && (playerFight.fwhits != GENERAL_MAGIC_ID)) {
+	while (!engine.shouldQuit() && (playerFight.fwhits != GENERAL_MAGIC_ID)) {
 		checkEvents();
 
 		if (g_system->getMillis() > timerVal + GAME_FRAME_DELAY) {
