@@ -38,6 +38,25 @@ const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const Pla
 	return 0;
 }
 
+GameDescriptor::GameDescriptor() {
+	setVal("gameid", "");
+	setVal("description", "");
+}
+
+GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd) {
+	setVal("gameid", pgd.gameid);
+	setVal("description", pgd.description);
+}
+
+GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l, Common::Platform p) {
+	setVal("gameid", g);
+	setVal("description", d);
+	if (l != Common::UNK_LANG)
+		setVal("language", Common::getLanguageCode(l));
+	if (p != Common::kPlatformUnknown)
+		setVal("platform", Common::getPlatformCode(p));
+}
+
 void GameDescriptor::updateDesc(const char *extra) {
 	// TODO: The format used here (LANG/PLATFORM/EXTRA) is not set in stone.
 	// We may want to change the order (PLATFORM/EXTRA/LANG, anybody?), or

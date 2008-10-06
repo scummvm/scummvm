@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/events.h"
 
 #include "base/plugins.h"
 #include "common/config-manager.h"

@@ -27,6 +27,7 @@
 
 #include "common/config-manager.h"
 #include "common/advancedDetector.h"
+#include "common/system.h"
 
 #include "parallaction/parallaction.h"
 

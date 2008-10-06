@@ -28,6 +28,8 @@
 #include "agi/preagi_troll.h"
 #include "agi/graphics.h"
 
+#include "common/events.h"
+
 #include "graphics/cursorman.h"
 
 namespace Agi {

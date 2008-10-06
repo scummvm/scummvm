@@ -31,6 +31,7 @@
 
 #include "engines/engine.h"
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/timer.h"
 #include "common/savefile.h"
@@ -250,13 +251,20 @@ void Engine::quitGame() {
 	_eventMan->pushEvent(event);
 }
 
-bool Engine::hasFeature(MetaEngine::MetaEngineFeature f) {
-	// TODO: In each engine, keep a ref to the corresponding MetaEngine?
+bool Engine::shouldQuit() const {
+	return (_eventMan->shouldQuit() || _eventMan->shouldRTL());
+}
+
+bool Engine::hasFeature(EngineFeature f) {
+	// TODO: Get rid of this hack!!!
+	if (f != kSupportsRTL)
+		return false;
+
 	const EnginePlugin *plugin = 0;
 	Common::String gameid = ConfMan.get("gameid");
 	gameid.toLowercase();
 	EngineMan.findGame(gameid, &plugin);
 	assert(plugin);
-	return ( (*plugin)->hasFeature(f) );
+	return ( (*plugin)->hasFeature(MetaEngine::kSupportsRTL) );
 }
 

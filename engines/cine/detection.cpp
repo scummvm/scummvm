@@ -28,6 +28,7 @@
 #include "base/plugins.h"
 
 #include "common/advancedDetector.h"
+#include "common/system.h"
 
 #include "cine/cine.h"
 

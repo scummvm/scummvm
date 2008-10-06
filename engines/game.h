@@ -62,25 +62,12 @@ const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const Pla
  */
 class GameDescriptor : public Common::StringMap {
 public:
-	GameDescriptor() {
-		setVal("gameid", "");
-		setVal("description", "");
-	}
-
-	GameDescriptor(const PlainGameDescriptor &pgd) {
-		setVal("gameid", pgd.gameid);
-		setVal("description", pgd.description);
-	}
-
-	GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l  = Common::UNK_LANG,
-	             Common::Platform p = Common::kPlatformUnknown) {
-		setVal("gameid", g);
-		setVal("description", d);
-		if (l != Common::UNK_LANG)
-			setVal("language", Common::getLanguageCode(l));
-		if (p != Common::kPlatformUnknown)
-			setVal("platform", Common::getPlatformCode(p));
-	}
+	GameDescriptor();
+	GameDescriptor(const PlainGameDescriptor &pgd);
+	GameDescriptor(const Common::String &gameid,
+	              const Common::String &description,
+	              Common::Language language = Common::UNK_LANG,
+	              Common::Platform platform = Common::kPlatformUnknown);
 
 	/**
 	 * Update the description string by appending (LANG/PLATFORM/EXTRA) to it.

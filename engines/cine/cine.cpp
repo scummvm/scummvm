@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"

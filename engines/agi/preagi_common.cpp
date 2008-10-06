@@ -30,6 +30,8 @@
 
 #include "agi/preagi_common.h"
 
+#include "common/events.h"
+
 namespace Agi {
 
 // Screen functions

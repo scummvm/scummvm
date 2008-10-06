@@ -26,11 +26,8 @@
 #define ENGINES_ENGINE_H
 
 #include "common/scummsys.h"
-#include "common/events.h"
 #include "common/fs.h"
 #include "common/str.h"
-
-#include "engines/metaengine.h"
 
 class OSystem;
 
@@ -73,7 +70,7 @@ protected:
 
 	const Common::String _targetName; // target name for saves
 	
-	const Common::FSNode _gameDataDir;
+	const Common::FSNode _gameDataDir;	// FIXME: Get rid of this
 
 private:
 	/**
@@ -151,7 +148,7 @@ public:
 	 * Return whether the ENGINE should quit respectively should return to the
 	 * launcher.
 	 */
-	bool shouldQuit() const { return (_eventMan->shouldQuit() || _eventMan->shouldRTL()); }
+	bool shouldQuit() const;
 
 	/**
 	 * Pause or resume the engine. This should stop/resume any audio playback
@@ -176,14 +173,24 @@ public:
 	 */
 	void openMainMenuDialog();
 
+
 	/**
-	 * Determine whether the engine supports the specified MetaEngine feature.
-	 *
-	 * FIXME: This should not call through to the MetaEngine, but rather should support
-	 * its own list of features. In particular, kSupportsRTL should be an EngineFeature,
-	 * not a MetaEngineFeature.
+	 * A feature in this context means an ability of the engine which can be
+	 * either available or not.
 	 */
-	bool hasFeature(MetaEngine::MetaEngineFeature f);
+	enum EngineFeature {
+		/**
+		 * 'Return to launcher' feature is supported, i.e., EVENT_RTL is handled.
+		 */
+		kSupportsRTL
+	};
+
+	/**
+	 * Determine whether the engine supports the specified feature.
+	 *
+	 * @todo  Let this return false by default, or even turn it into a pure virtual method.
+	 */
+	bool hasFeature(EngineFeature f);
 
 public:
 

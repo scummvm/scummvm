@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/advancedDetector.h"
 #include "common/savefile.h"
+#include "common/system.h"
 
 #include "base/plugins.h"
 

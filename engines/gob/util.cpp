@@ -33,6 +33,8 @@
 #include "gob/video.h"
 #include "gob/sound/sound.h"
 
+#include "common/events.h"
+
 namespace Gob {
 
 Util::Util(GobEngine *vm) : _vm(vm) {

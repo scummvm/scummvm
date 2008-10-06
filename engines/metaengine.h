@@ -26,7 +26,6 @@
 #define ENGINES_METAENGINE_H
 
 #include "common/scummsys.h"
-#include "common/str.h"
 #include "common/error.h"
 
 #include "engines/game.h"
@@ -37,6 +36,7 @@ class OSystem;
 
 namespace Common {
 	class FSList;
+	class String;
 }
 
 /**
@@ -134,7 +134,7 @@ public:
 	 */
 	enum MetaEngineFeature {
 		/**
-		 * 'Return to launcher' feature is supported, i.e., EVENT_RTL is handled-
+		 * 'Return to launcher' feature is supported, i.e., EVENT_RTL is handled.
 		 */
 		kSupportsRTL,
 

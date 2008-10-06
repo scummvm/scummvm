@@ -31,6 +31,7 @@
 
 #include "common/config-manager.h"
 #include "common/advancedDetector.h"
+#include "common/system.h"
 
 #include "saga/displayinfo.h"
 #include "saga/rscfile.h"

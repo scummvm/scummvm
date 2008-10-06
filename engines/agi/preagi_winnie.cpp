@@ -29,6 +29,7 @@
 
 #include "graphics/cursorman.h"
 
+#include "common/events.h"
 #include "common/savefile.h"
 #include "common/stream.h"
 
