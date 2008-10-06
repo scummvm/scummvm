@@ -44,6 +44,7 @@ namespace Common {
  *       indicates which button was pressed.
  */
 enum EventType {
+	EVENT_INVALID = 0,
 	/** A key was pressed, details in Event::kbd. */
 	EVENT_KEYDOWN = 1,
 	/** A key was released, details in Event::kbd. */
@@ -121,6 +122,8 @@ struct Event {
 	 * screen area as defined by the most recent call to initSize().
 	 */
 	Common::Point mouse;
+	
+	Event() : type(EVENT_INVALID), synthetic(false) {}
 };
 
 
