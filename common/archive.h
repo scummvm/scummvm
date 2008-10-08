@@ -164,7 +164,7 @@ public:
 	 * Create a new FSDirectory pointing to a sub directory of the instance.
 	 * @return a new FSDirectory instance
 	 */
-	FSDirectory *getSubDirectory(const String &name);
+	FSDirectory *getSubDirectory(const String &name, int depth = 1);
 
 	virtual bool hasFile(const String &name);
 	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
