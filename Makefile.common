@@ -178,7 +178,7 @@ dist-src: \
 
 
 # Themes files
-DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,modern.ini modern.zip classic080.ini)
+DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,scummodern.zip scummclassic.zip)
 
 # Engine data files
 DIST_FILES_ENGINEDATA=
