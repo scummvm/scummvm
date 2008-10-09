@@ -39,6 +39,7 @@ class ZipArchive : public Archive {
 
 public:
 	ZipArchive(const String &name);
+	ZipArchive(const Common::FSNode &node);
 	~ZipArchive();
 	
 	bool isOpen() const;

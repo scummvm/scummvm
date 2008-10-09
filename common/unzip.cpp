@@ -79,6 +79,7 @@
 #include <zlib.h>
 #endif
 
+#include "common/fs.h"
 #include "common/unzip.h"
 #include "common/file.h"
 
@@ -90,7 +91,6 @@ typedef unzFile__ *unzFile;
 #else
 typedef voidp unzFile;
 #endif
-
 
 #define UNZ_OK                                  (0)
 #define UNZ_END_OF_LIST_OF_FILE (-100)
@@ -487,7 +487,7 @@ static uLong unzlocal_SearchCentralDir(Common::File &fin) {
      Else, the return value is a unzFile Handle, usable with other function
 	   of this unzip package.
 */
-unzFile unzOpen(const char *path) {
+unzFile unzOpen(const Common::FSNode &node) {
 	unz_s *us = new unz_s;
 	uLong central_pos,uL;
 
@@ -501,7 +501,7 @@ unzFile unzOpen(const char *path) {
 
 	int err=UNZ_OK;
 
-	if (!us->file.open(path)) {
+	if (!us->file.open(node)) {
 		delete us;
 		return NULL;
 	}
@@ -1377,7 +1377,11 @@ public:
 */
 
 ZipArchive::ZipArchive(const Common::String &name) {
-	_zipFile = unzOpen(name.c_str());
+	_zipFile = unzOpen(Common::FSNode(name));
+}
+
+ZipArchive::ZipArchive(const Common::FSNode &node) {
+	_zipFile = unzOpen(node);
 }
 
 ZipArchive::~ZipArchive() {

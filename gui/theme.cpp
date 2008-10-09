@@ -137,9 +137,8 @@ bool Theme::themeConfigUseable(const Common::FSNode &node, Common::String &theme
 	bool foundHeader = false;
 		
 	if (node.getName().hasSuffix(".zip")) {
-		
 #ifdef USE_ZLIB
-		Common::ZipArchive zipArchive(node.getPath().c_str());
+		Common::ZipArchive zipArchive(node);
 		if (zipArchive.hasFile("THEMERC")) {
 			Common::FilePtr stream(zipArchive.openFile("THEMERC"));
 			stxHeader = stream->readLine();
