@@ -534,44 +534,49 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 	int parseCount = 0;
 	bool failed = false;
 	
-#ifdef USE_ZLIB
-	Common::ZipArchive zipFile(themeName.c_str());
-	Common::ArchiveMemberList zipContents;
+	FSNode node(themeName);
+	if (!node.exists() || !node.isReadable())
+		return false;
 	
-	if (zipFile.isOpen() && zipFile.listMembers(zipContents)) {
-		
-//		for (uint i = 0; i < zipContents.size(); ++i) {
-		for (Common::ArchiveMemberList::iterator za = zipContents.begin(); za != zipContents.end(); ++za) {
-			if (!failed && matchString((*za)->getName().c_str(), "*.stx")) {	
-				if (parser()->loadStream((*za)->open()) == false) {
-					warning("Failed to load stream for zipped file '%s'", fileNameBuffer);
-					failed = true;
-				}
+#ifdef USE_ZLIB
+	if (node.getPath().hasSuffix(".zip") && !node.isDirectory()) {
+		Common::ZipArchive zipFile(node);
+		Common::ArchiveMemberList zipContents;
+	
+		if (zipFile.isOpen() && zipFile.listMembers(zipContents)) {
+			for (Common::ArchiveMemberList::iterator za = zipContents.begin(); za != zipContents.end(); ++za) {
+				if (!failed && matchString((*za)->getName().c_str(), "*.stx")) {	
+					if (parser()->loadStream((*za)->open()) == false) {
+						warning("Failed to load stream for zipped file '%s'", fileNameBuffer);
+						failed = true;
+					}
 				
-				if (parser()->parse() == false) {
-					warning("Theme parsing failed on zipped file '%s'.", fileNameBuffer);
-					failed = true;
-				}
+					if (parser()->parse() == false) {
+						warning("Theme parsing failed on zipped file '%s'.", fileNameBuffer);
+						failed = true;
+					}
 				
-				parser()->close();
-				parseCount++;
-			} else if ((*za)->getName() == "THEMERC") {
-				Common::SeekableReadStream *stream = (*za)->open();
-				stxHeader = stream->readLine();
+					parser()->close();
+					parseCount++;
+				} else if ((*za)->getName() == "THEMERC") {
+					Common::SeekableReadStream *stream = (*za)->open();
+					stxHeader = stream->readLine();
 				
-				if (!themeConfigParseHeader(stxHeader.c_str(), _themeName)) {
-					warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
-					failed = true;
-				}
+					if (!themeConfigParseHeader(stxHeader.c_str(), _themeName)) {
+						warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
+						failed = true;
+					}
 					
-				delete stream;
+					delete stream;
+				}
 			}
+		} else {
+			warning("Failed to open Zip archive '%s'.\n", themeName.c_str());
+			return false;
 		}
 	} else {
 #endif
-        
-        FSNode node(themeName);
-		if (node.exists() && node.isReadable() && node.isDirectory()) {
+		if (node.isDirectory()) {
 			FSList fslist;
 			if (!node.getChildren(fslist, FSNode::kListFilesOnly))
 				return false;
