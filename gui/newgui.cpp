@@ -88,7 +88,7 @@ NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
 	memset(_cursor, 0xFF, sizeof(_cursor));
 
 
-	ConfMan.registerDefault("gui_theme", "scummodern.zip");
+	ConfMan.registerDefault("gui_theme", "scummmodern.zip");
 	Common::String themefile(ConfMan.get("gui_theme"));
 	if (themefile.compareToIgnoreCase("default") == 0)
 		themefile = "builtin";
