@@ -29,9 +29,10 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "gui/about.h"
-#include "gui/eval.h"
 #include "gui/newgui.h"
 #include "gui/widget.h"
+
+#include "gui/ThemeEval.h"
 
 namespace GUI {
 
@@ -85,9 +86,9 @@ AboutDialog::AboutDialog()
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	_xOff = g_gui.evaluator()->getVar("aboutXOff");
-	_yOff = g_gui.evaluator()->getVar("aboutYOff");
-	int outerBorder = g_gui.evaluator()->getVar("aboutOuterBorder");
+	_xOff = g_gui.xmlEval()->getVar("Globals.About.XOffset", 5);
+	_yOff = g_gui.xmlEval()->getVar("Globals.About.YOffset", 5);
+	int outerBorder = g_gui.xmlEval()->getVar("Globals.About.OuterBorder");
 
 	_w = screenW - 2 * outerBorder;
 	_h = screenH - 2 * outerBorder;
@@ -203,7 +204,7 @@ void AboutDialog::close() {
 }
 
 void AboutDialog::drawDialog() {
-	g_gui.theme()->setDrawArea(Common::Rect(_x, _y, _x+_w, _y+_h));
+//	g_gui.theme()->setDrawArea(Common::Rect(_x, _y, _x+_w, _y+_h));
 	Dialog::drawDialog();
 
 	// Draw text
@@ -265,10 +266,10 @@ void AboutDialog::drawDialog() {
 			while (*str && *str == ' ')
 				str++;
 
-		g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()), str, state, align, false, 0, false);
+		if (y > _y && y + g_gui.theme()->getFontHeight() < _y + _h)
+			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()), str, state, align, false, 0, false);
 		y += _lineHeight;
 	}
-	g_gui.theme()->resetDrawArea();
 }
 
 void AboutDialog::handleTickle() {
@@ -316,9 +317,9 @@ void AboutDialog::reflowLayout() {
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	_xOff = g_gui.evaluator()->getVar("aboutXOff");
-	_yOff = g_gui.evaluator()->getVar("aboutYOff");
-	int outerBorder = g_gui.evaluator()->getVar("aboutOuterBorder");
+	_xOff = g_gui.xmlEval()->getVar("Globals.About.XOffset", 5);
+	_yOff = g_gui.xmlEval()->getVar("Globals.About.YOffset", 5);
+	int outerBorder = g_gui.xmlEval()->getVar("Globals.About.OuterBorder");
 
 	_w = screenW - 2 * outerBorder;
 	_h = screenH - 2 * outerBorder;

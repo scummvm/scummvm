@@ -133,29 +133,29 @@ int BrowserDialog::runModal() {
  */
 
 BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
-	: Dialog("browser") {
+	: Dialog("Browser") {
 
 	_isDirBrowser = dirBrowser;
 	_fileList = NULL;
 	_currentPath = NULL;
 
 	// Headline - TODO: should be customizable during creation time
-	new StaticTextWidget(this, "browser_headline", title);
+	new StaticTextWidget(this, "Browser.Headline", title);
 
 	// Current path - TODO: handle long paths ?
-	_currentPath = new StaticTextWidget(this, "browser_path", "DUMMY");
+	_currentPath = new StaticTextWidget(this, "Browser.Path", "DUMMY");
 
 	// Add file list
-	_fileList = new ListWidget(this, "browser_list");
+	_fileList = new ListWidget(this, "Browser.List");
 	_fileList->setNumberingMode(kListNumberingOff);
 	_fileList->setEditable(false);
 
-	_fileList->setHints(THEME_HINT_PLAIN_COLOR);
+	_backgroundType = GUI::Theme::kDialogBackgroundPlain;
 
 	// Buttons
-	new ButtonWidget(this, "browser_up", "Go up", kGoUpCmd, 0);
-	new ButtonWidget(this, "browser_cancel", "Cancel", kCloseCmd, 0);
-	new ButtonWidget(this, "browser_choose", "Choose", kChooseCmd, 0);
+	new ButtonWidget(this, "Browser.Up", "Go up", kGoUpCmd, 0);
+	new ButtonWidget(this, "Browser.Cancel", "Cancel", kCloseCmd, 0);
+	new ButtonWidget(this, "Browser.Choose", "Choose", kChooseCmd, 0);
 }
 
 void BrowserDialog::open() {

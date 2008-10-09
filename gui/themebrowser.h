@@ -46,7 +46,6 @@ public:
 private:
 	struct Entry {
 		Common::String name;
-		Common::String type;
 		Common::String file;
 	};
 
@@ -57,7 +56,7 @@ private:
 
 	void updateListing();
 
-	void addDir(ThList &list, const Common::FSNode &node, int level = 4);
+	void addDir(ThList &list, const Common::FSNode &node);
 	bool isTheme(const Common::FSNode &node, Entry &out);
 };
 

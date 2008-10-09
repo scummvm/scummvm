@@ -26,6 +26,7 @@
 #define OPTIONS_DIALOG_H
 
 #include "gui/dialog.h"
+#include "gui/TabWidget.h"
 #include "common/str.h"
 
 #ifdef SMALL_SCREEN_DEVICE
@@ -80,6 +81,9 @@ protected:
 	void setMIDISettingsState(bool enabled);
 	void setVolumeSettingsState(bool enabled);
 	void setSubtitleSettingsState(bool enabled);
+	
+	TabWidget *_tabWidget;
+	int _graphicsTabId;
 
 private:
 	//
@@ -118,6 +122,7 @@ private:
 	ButtonWidget *_subToggleButton;
 	int _subMode;
 	static const char *_subModeDesc[];
+	static const char *_lowresSubModeDesc[];
 	StaticTextWidget *_subSpeedDesc;
 	SliderWidget *_subSpeedSlider;
 	StaticTextWidget *_subSpeedLabel;
@@ -166,7 +171,7 @@ protected:
 	// Misc controls
 	//
 	StaticTextWidget *_curTheme;
-
+	PopUpWidget *_rendererPopUp;
 	PopUpWidget *_autosavePeriodPopUp;
 };
 

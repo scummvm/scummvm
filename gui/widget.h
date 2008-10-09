@@ -93,7 +93,6 @@ protected:
 	GuiObject	*_boss;
 	Widget		*_next;
 	uint16		_id;
-	uint16		_hints;
 	bool		_hasFocus;
 	Theme::WidgetStateInfo _state;
 
@@ -141,10 +140,6 @@ public:
 	void setFlags(int flags);
 	void clearFlags(int flags);
 	int getFlags() const		{ return _flags; }
-
-	void setHints(int hints)	{ _hints |= hints; }
-	void clearHints(int hints)	{ _hints &= ~hints; }
-	int getHints() const		{ return _hints; }
 
 	void setEnabled(bool e)		{ if (e) setFlags(WIDGET_ENABLED); else clearFlags(WIDGET_ENABLED); }
 	bool isEnabled() const;

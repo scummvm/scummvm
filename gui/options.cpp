@@ -25,9 +25,9 @@
 #include "gui/browser.h"
 #include "gui/themebrowser.h"
 #include "gui/chooser.h"
-#include "gui/eval.h"
 #include "gui/message.h"
 #include "gui/newgui.h"
+#include "gui/ThemeEval.h"
 #include "gui/options.h"
 #include "gui/PopUpWidget.h"
 #include "gui/TabWidget.h"
@@ -73,18 +73,24 @@ static const int outputRateValues[] = { 0, 22050, 8000, 11025, 44100, 48000, -1 
 
 
 OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
-	: Dialog(x, y, w, h), _domain(domain) {
+	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _tabWidget(0) {
 	init();
 }
 
 OptionsDialog::OptionsDialog(const String &domain, const String &name)
-	: Dialog(name), _domain(domain) {
+	: Dialog(name), _domain(domain), _graphicsTabId(-1), _tabWidget(0) {
 	init();
 }
 
 const char *OptionsDialog::_subModeDesc[] = {
 	"Speech Only",
 	"Speech and Subtitles",
+	"Subtitles Only"
+};
+
+const char *OptionsDialog::_lowresSubModeDesc[] = {
+	"Speech Only",
+	"Speech & Subs",
 	"Subtitles Only"
 };
 
@@ -417,7 +423,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		else
 			_subMode = 0;
 
-		_subToggleButton->setLabel(_subModeDesc[_subMode]);
+		_subToggleButton->setLabel(g_system->getOverlayWidth() > 320 ? _subModeDesc[_subMode] : _lowresSubModeDesc[_subMode]);
 		_subToggleButton->draw();
 		_subSpeedDesc->draw();
 		_subSpeedSlider->draw();
@@ -500,7 +506,7 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 
-	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
+	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
 
 	// The GFX mode popup
 	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup", "Graphics mode:", labelWidth);
@@ -537,7 +543,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 }
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
-	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
+	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
 
 	// The MIDI mode popup & a label
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", "Music driver:", labelWidth);
@@ -643,7 +649,10 @@ int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 void OptionsDialog::reflowLayout() {
 	Dialog::reflowLayout();
 
-	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
+	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
+	
+	if (_graphicsTabId != -1 && _tabWidget)
+		_tabWidget->setTabTitle(_graphicsTabId, g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
 
 	if (_midiPopUp)
 		_midiPopUp->changeLabelWidth(labelWidth);
@@ -659,27 +668,26 @@ void OptionsDialog::reflowLayout() {
 
 
 GlobalOptionsDialog::GlobalOptionsDialog()
-	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "globaloptions") {
+	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "GlobalOptions") {
 
 	// The tab widget
-	TabWidget *tab = new TabWidget(this, "globaloptions_tabwidget");
-	tab->setHints(THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND);
+	TabWidget *tab = new TabWidget(this, "GlobalOptions.TabWidget");
 
 	//
 	// 1) The graphics tab
 	//
-	tab->addTab("Graphics");
-	addGraphicControls(tab, "globaloptions_");
+	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
+	addGraphicControls(tab, "GlobalOptions_Graphics.");
 
 	//
 	// 2) The audio tab
 	//
 	tab->addTab("Audio");
-	addAudioControls(tab, "globaloptions_");
-	addSubtitleControls(tab, "globaloptions_");
+	addAudioControls(tab, "GlobalOptions_Audio.");
+	addSubtitleControls(tab, "GlobalOptions_Audio.");
 
 	tab->addTab("Volume");
-	addVolumeControls(tab, "globaloptions_");
+	addVolumeControls(tab, "GlobalOptions_Volume.");
 
 	// TODO: cd drive setting
 
@@ -687,7 +695,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	// 3) The MIDI tab
 	//
 	tab->addTab("MIDI");
-	addMIDIControls(tab, "globaloptions_");
+	addMIDIControls(tab, "GlobalOptions_MIDI.");
 
 	//
 	// 4) The miscellaneous tab
@@ -699,33 +707,40 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	// truncated in the small version of the GUI.
 
 	// Save game path
-	new ButtonWidget(tab, "globaloptions_savebutton", "Save Path: ", kChooseSaveDirCmd, 0);
-	_savePath = new StaticTextWidget(tab, "globaloptions_savepath", "/foo/bar");
+	new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", "Save Path: ", kChooseSaveDirCmd, 0);
+	_savePath = new StaticTextWidget(tab, "GlobalOptions_Paths.SavePath", "/foo/bar");
 
-	new ButtonWidget(tab, "globaloptions_themebutton", "Theme Path:", kChooseThemeDirCmd, 0);
-	_themePath = new StaticTextWidget(tab, "globaloptions_themepath", "None");
+	new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", "Theme Path:", kChooseThemeDirCmd, 0);
+	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", "None");
 
-	new ButtonWidget(tab, "globaloptions_extrabutton", "Extra Path:", kChooseExtraDirCmd, 0);
-	_extraPath = new StaticTextWidget(tab, "globaloptions_extrapath", "None");
+	new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", "Extra Path:", kChooseExtraDirCmd, 0);
+	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", "None");
 
 #ifdef DYNAMIC_MODULES
-	new ButtonWidget(tab, "globaloptions_pluginsbutton", "Plugins Path:", kChoosePluginsDirCmd, 0);
-	_pluginsPath = new StaticTextWidget(tab, "globaloptions_pluginspath", "None");
+	new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", "Plugins Path:", kChoosePluginsDirCmd, 0);
+	_pluginsPath = new StaticTextWidget(tab, "GlobalOptions_Paths.PluginsPath", "None");
 #endif
 #endif
 
 #ifdef SMALL_SCREEN_DEVICE
-	new ButtonWidget(tab, "globaloptions_keysbutton", "Keys", kChooseKeyMappingCmd, 0);
+	new ButtonWidget(tab, "GlobalOptions.KeysButton", "Keys", kChooseKeyMappingCmd, 0);
 #endif
 
 	tab->addTab("Misc");
 
-	new ButtonWidget(tab, "globaloptions_themebutton2", "Theme:", kChooseThemeCmd, 0);
-	_curTheme = new StaticTextWidget(tab, "globaloptions_curtheme", g_gui.theme()->getThemeName());
+	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", "Theme:", kChooseThemeCmd, 0);
+	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
+	
 
-	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
-
-	_autosavePeriodPopUp = new PopUpWidget(tab, "globaloptions_autosaveperiod", "Autosave:", labelWidth);
+	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
+	
+	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.Renderer", "GUI Renderer:", labelWidth);
+	
+	for (int i = 1; i < GUI::ThemeEngine::kGfxMAX; ++i) {
+		_rendererPopUp->appendEntry(GUI::ThemeEngine::rendererModeLabels[i], i);
+	}
+	
+	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriod", "Autosave:", labelWidth);
 
 	for (int i = 0; savePeriodLabels[i]; i++) {
 		_autosavePeriodPopUp->appendEntry(savePeriodLabels[i], savePeriodValues[i]);
@@ -736,10 +751,11 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	// Activate the first tab
 	tab->setActiveTab(0);
+	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
-	new ButtonWidget(this, "globaloptions_cancel", "Cancel", kCloseCmd, 0);
-	new ButtonWidget(this, "globaloptions_ok", "OK", kOKCmd, 0);
+	new ButtonWidget(this, "GlobalOptions.Cancel", "Cancel", kCloseCmd, 0);
+	new ButtonWidget(this, "GlobalOptions.Ok", "OK", kOKCmd, 0);
 
 #ifdef SMALL_SCREEN_DEVICE
 	_keysDialog = new KeysDialog();
@@ -796,6 +812,8 @@ void GlobalOptionsDialog::open() {
 		if (value == savePeriodValues[i])
 			_autosavePeriodPopUp->setSelected(i);
 	}
+	
+	_rendererPopUp->setSelected(ConfMan.getInt("gui_renderer") - 1);
 }
 
 void GlobalOptionsDialog::close() {
@@ -825,6 +843,11 @@ void GlobalOptionsDialog::close() {
 #endif
 
 		ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
+		
+		if ((int)_rendererPopUp->getSelectedTag() != ConfMan.getInt("gui_renderer")) {
+			g_gui.loadNewTheme(g_gui.theme()->getThemeFileName(), (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag());
+			ConfMan.setInt("gui_renderer", _rendererPopUp->getSelectedTag(), _domain);
+		}
 	}
 	OptionsDialog::close();
 }
@@ -906,7 +929,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			const Common::String &theme = browser.selected();
-			if (0 != theme.compareToIgnoreCase(g_gui.theme()->getStylefileName()))
+			if (0 != theme.compareToIgnoreCase(g_gui.theme()->getThemeFileName()))
 				if (g_gui.loadNewTheme(theme)) {
 					_curTheme->setLabel(g_gui.theme()->getThemeName());
 					ConfMan.set("gui_theme", theme);

@@ -28,49 +28,18 @@
 #include "common/system.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "common/fs.h"
 #include "common/config-file.h"
 
 #include "graphics/surface.h"
 #include "graphics/fontman.h"
 
 #define THEME_VERSION 24
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_THEME_V23"
 
 namespace GUI {
 
-class Eval;
-
-//! Hint to the theme engine that the widget is used in a non-standard way.
-enum ThemeHint {
-	//! Indicates that this is the first time the widget is drawn.
-	THEME_HINT_FIRST_DRAW = 1 << 0,
-
-	/**
-	 * Indicates that the widget will be redrawn often, e.g. list widgets.
-	 * It may therefore be a good idea to save the background so that it
-	 * can be redrawn quickly.
-	 */
-	THEME_HINT_SAVE_BACKGROUND = 1 << 1,
-
-	//! Indicates that this is the launcher dialog (maybe delete this in the future)
-	THEME_HINT_MAIN_DIALOG = 1 << 2,
-
-	//! Indicates special colorfade
-	THEME_HINT_SPECIAL_COLOR = 1 << 3,
-
-	//! Indicates no colorfade
-	THEME_HINT_PLAIN_COLOR = 1 << 4,
-
-	//! Indictaes that a shadows should be drawn around the background
-	THEME_HINT_USE_SHADOW = 1 << 5,
-
-	/**
-	 * Indicates that no background should be restored when drawing the widget
-	 * (note that this can be silently ignored if for example the theme does
-	 * alpha blending and would blend over an already drawn widget)
-	 * TODO: currently only ThemeModern::drawButton supports this
-	 */
-	THEME_HINT_NO_BACKGROUND_RESTORE = 1 << 6
-};
+class ThemeEval;
 
 /**
  * Our theme renderer class.
@@ -91,6 +60,13 @@ public:
 		kTextAlignCenter,	//! Text should be centered
 		kTextAlignRight		//! Text should be aligned to the right
 	};
+	
+	//! Vertical alignment of the text.
+	enum TextAlignVertical {
+		kTextAlignVBottom,
+		kTextAlignVCenter,
+		kTextAlignVTop
+	};
 
 	//! Widget background type
 	enum WidgetBackground {
@@ -100,6 +76,14 @@ public:
 		kWidgetBackgroundBorderSmall,	//! Same as kWidgetBackgroundPlain just with a small border
 		kWidgetBackgroundEditText,		//! Background used for edit text fields
 		kWidgetBackgroundSlider			//! Background used for sliders
+	};
+	
+	//! Dialog background type
+	enum DialogBackground {
+		kDialogBackgroundMain,
+		kDialogBackgroundSpecial,
+		kDialogBackgroundPlain,
+		kDialogBackgroundDefault
 	};
 
 	//! State of the widget to be drawn
@@ -221,7 +205,7 @@ public:
 	 *
 	 * @see closeAllDialogs
 	 */
-	virtual void openDialog(bool topDialog) = 0;
+	virtual void openDialog(bool topDialog, ShadingStyle shading = kShadingNone) = 0;
 
 	/**
 	 * This indicates that all dialogs have been closed.
@@ -229,6 +213,21 @@ public:
 	 * @see openDialog
 	 */
 	virtual void closeAllDialogs() = 0;
+
+	/**
+	 * Closes the topmost dialog, and redraws the screen
+	 * accordingly.
+	 *
+	 * TODO: Make this purely virtual by making ThemeClassic
+	 * and ThemeModern implement it too.
+	 *
+	 * @returns True if the dialog was sucessfully closed.
+	 *          If we weren't able to restore the screen after closing
+	 *          the dialog, we return false, which means we need to redraw
+	 *          the dialog stack from scratch.
+	 */
+	virtual void startBuffering() = 0;
+	virtual void finishBuffering() = 0;
 
 	/**
 	 * Clear the complete GUI screen.
@@ -243,42 +242,12 @@ public:
 	 */
 	virtual void updateScreen() = 0;
 
-	/**
-	 * Set the active screen area, in which the renderer is able to
-	 * draw.
-	 *
-	 * This does not affect the coordinates for the draw* functions,
-	 * it just marks the screen rect given in param r as writeable.
-	 *
-	 * This is for example used in the credits dialog, which, if not
-	 * just a part of the screen would be marked as writeable, would
-	 * draw parts of the scrolling text outside the dialog box and
-	 * thus would look strange.
-	 *
-	 * The active area defaults to the whole screen, so there is just
-	 * need to use this function if you want to limit it.
-	 *
-	 * @param r	rect of the screen, which should be writeable
-	 *
-	 * @see resetDrawArea
-	 */
-	virtual void setDrawArea(const Common::Rect &r) { _drawArea = r; }
-
-	/**
-	 * Resets the draw area to the whole screen.
-	 *
-	 * @see setDrawArea
-	 */
-	virtual void resetDrawArea() = 0;
-
-	virtual const Common::ConfigFile &getConfigFile() const { return _configFile; }
-
 	virtual const Graphics::Font *getFont(FontStyle font = kFontStyleBold) const = 0;
 	virtual int getFontHeight(FontStyle font = kFontStyleBold) const = 0;
 	virtual int getStringWidth(const Common::String &str, FontStyle font = kFontStyleBold) const = 0;
 	virtual int getCharWidth(byte c, FontStyle font = kFontStyleBold) const = 0;
 
-	virtual void drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state = kStateEnabled) = 0;
+	virtual void drawDialogBackground(const Common::Rect &r, DialogBackground type, WidgetStateInfo state = kStateEnabled) = 0;
 	virtual void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, TextAlign align = kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold) = 0;
 	// this should ONLY be used by the debugger until we get a nicer solution
 	virtual void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled) = 0;
@@ -332,20 +301,16 @@ public:
 		return kTextAlignCenter;
 	}
 
-	void processResSection(Common::ConfigFile &config, const Common::String &name, bool skipDefs = false, const Common::String &prefix = "");
-	void processSingleLine(const Common::String &section, const Common::String &prefix, const Common::String &name, const Common::String &str);
-	void setSpecialAlias(const Common::String &alias, const Common::String &name);
 
 	bool isThemeLoadingRequired();
-	bool sectionIsSkipped(Common::ConfigFile &config, const char *name, int w, int h);
-	void loadTheme(Common::ConfigFile &config, bool reset = true);
-	void loadTheme(Common::ConfigFile &config, bool reset, bool doBackendSpecificPostProcessing);
-	Eval *_evaluator;
+	virtual ThemeEval *evaluator() = 0;
 
-	static bool themeConfigUseable(const Common::String &file, const Common::String &style="", Common::String *cStyle=0, Common::ConfigFile *cfg=0);
+	static bool themeConfigUseable(const Common::FSNode &node, Common::String &themeName);
+	static bool themeConfigParseHeader(Common::String header, Common::String &themeName);
 
-	const Common::String &getStylefileName() const { return _stylefile; }
-	const Common::String &getThemeName() const { return _stylename; }
+	virtual const Common::String &getThemeFileName() const = 0;
+	virtual const Common::String &getThemeName() const = 0;
+	virtual int getGraphicsMode() const = 0;
 
 	/**
 	 * Checks if the theme renderer supports drawing of images.
@@ -370,18 +335,9 @@ public:
 	 */
 	virtual const Graphics::Surface *getImageSurface(const kThemeImages n) const { return 0; }
 protected:
-	bool loadConfigFile(const Common::String &file);
-	void getColorFromConfig(const Common::String &name, OverlayColor &col);
-	void getColorFromConfig(const Common::String &value, uint8 &r, uint8 &g, uint8 &b);
 
 	const Graphics::Font *loadFont(const char *filename);
 	Common::String genCacheFilename(const char *filename);
-
-	Common::String _stylefile, _stylename;
-
-	Common::Rect _drawArea;
-	Common::ConfigFile _configFile;
-	Common::ConfigFile _defaultConfig;
 
 public:
 	bool needThemeReload() { return ((_loadedThemeX != g_system->getOverlayWidth()) ||

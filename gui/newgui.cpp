@@ -29,9 +29,7 @@
 #include "graphics/cursorman.h"
 #include "gui/newgui.h"
 #include "gui/dialog.h"
-#include "gui/eval.h"
-#include "gui/ThemeModern.h"
-#include "gui/ThemeClassic.h"
+#include "gui/ThemeEngine.h"
 
 #include "common/config-manager.h"
 
@@ -58,15 +56,12 @@ enum {
 
 void GuiObject::reflowLayout() {
 	if (!_name.empty()) {
-		if ((_x = g_gui.evaluator()->getVar(_name + ".x")) == EVAL_UNDEF_VAR)
-			error("Undefined variable %s.x", _name.c_str());
-		if ((_y = g_gui.evaluator()->getVar(_name + ".y")) == EVAL_UNDEF_VAR)
-			error("Undefined variable %s.y", _name.c_str());
-		_w = g_gui.evaluator()->getVar(_name + ".w");
-		_h = g_gui.evaluator()->getVar(_name + ".h");
+		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, _w, _h)) {
+			warning("Could not load widget position for '%s'", _name.c_str());
+		}
 
 		if (_x < 0)
-			error("Widget <%s> has x < 0", _name.c_str());
+			error("Widget <%s> has x < 0: %d", _name.c_str(), _x);
 		if (_x >= g_system->getOverlayWidth())
 			error("Widget <%s> has x > %d", _name.c_str(), g_system->getOverlayWidth());
 		if (_x + _w > g_system->getOverlayWidth())
@@ -81,7 +76,7 @@ void GuiObject::reflowLayout() {
 }
 
 // Constructor
-NewGui::NewGui() : _needRedraw(false),
+NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
 	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 	_theme = 0;
 	_useStdCursor = false;
@@ -92,33 +87,16 @@ NewGui::NewGui() : _needRedraw(false),
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
 
-	bool loadClassicTheme = true;
-#ifndef DISABLE_FANCY_THEMES
-	ConfMan.registerDefault("gui_theme", "default");
-	Common::String style(ConfMan.get("gui_theme"));
-	// The default theme for now is the 'modern' theme.
-	if (style.compareToIgnoreCase("default") == 0)
-		style = "modern";
 
-	Common::String styleType;
-	Common::ConfigFile cfg;
-	if (loadNewTheme(style)) {
-	   loadClassicTheme = false;
-	} else {
-	   loadClassicTheme = true;
-	   warning("falling back to classic style");
-	}
-#endif
+	ConfMan.registerDefault("gui_theme", "scummodern.zip");
+	Common::String themefile(ConfMan.get("gui_theme"));
+	if (themefile.compareToIgnoreCase("default") == 0)
+		themefile = "builtin";
+		
+	ConfMan.registerDefault("gui_renderer", 2);
+	ThemeEngine::GraphicsMode gfxMode = (ThemeEngine::GraphicsMode)ConfMan.getInt("gui_renderer");
 
-	if (loadClassicTheme) {
-		_theme = new ThemeClassic(_system);
-		assert(_theme);
-		if (!_theme->init()) {
-			error("Couldn't initialize classic theme");
-		}
-	}
-
-	_theme->resetDrawArea();
+	loadNewTheme(themefile, gfxMode);
 	_themeChange = false;
 }
 
@@ -126,11 +104,14 @@ NewGui::~NewGui() {
 	delete _theme;
 }
 
-bool NewGui::loadNewTheme(const Common::String &style) {
-	Common::String styleType;
-	Common::ConfigFile cfg;
-
-	Common::String oldTheme = (_theme != 0) ? _theme->getStylefileName() : "";
+bool NewGui::loadNewTheme(Common::String filename, ThemeEngine::GraphicsMode gfx) {
+	if (_theme && filename == _theme->getThemeFileName() && gfx == _theme->getGraphicsMode())
+		return true;
+	
+	Common::String oldTheme = (_theme != 0) ? _theme->getThemeFileName() : "";
+	
+	if (gfx == ThemeEngine::kGfxDisabled)
+		gfx = (ThemeEngine::GraphicsMode)ConfMan.getInt("gui_renderer");
 
 	if (_theme)
 		_theme->disable();
@@ -141,38 +122,12 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 	}
 
 	delete _theme;
-	_theme = 0;
-
-	if (style.compareToIgnoreCase("classic (builtin)") == 0 ||
-		style.compareToIgnoreCase("classic") == 0) {
-		_theme = new ThemeClassic(_system, style);
-	} else {
-		if (Theme::themeConfigUseable(style, "", &styleType, &cfg)) {
-			if (0 == styleType.compareToIgnoreCase("classic"))
-				_theme = new ThemeClassic(_system, style, &cfg);
-#ifndef DISABLE_FANCY_THEMES
-			else if (0 == styleType.compareToIgnoreCase("modern"))
-				_theme = new ThemeModern(_system, style, &cfg);
-#endif
-			else
-				warning("Unsupported theme type '%s'", styleType.c_str());
-		} else {
-			warning("Config '%s' is NOT usable for themes or not found", style.c_str());
-		}
-	}
-	cfg.clear();
+	_theme = new ThemeEngine(filename, gfx);
 
 	if (!_theme)
 		return (!oldTheme.empty() ? loadNewTheme(oldTheme) : false);
 
-	if (!_theme->init()) {
-		warning("Could not initialize your preferred theme");
-		delete _theme;
-		_theme = 0;
-		loadNewTheme(oldTheme);
-		return false;
-	}
-	_theme->resetDrawArea();
+	_theme->init();
 
 	if (!oldTheme.empty())
 		screenChange();
@@ -185,29 +140,35 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 void NewGui::redraw() {
 	int i;
 
-	// Restore the overlay to its initial state, then draw all dialogs.
-	// This is necessary to get the blending right.
-	_theme->clearAll();
+	if (_redrawStatus == kRedrawDisabled)
+		return;
 
-	_theme->closeAllDialogs();
-	//for (i = 0; i < _dialogStack.size(); ++i)
-	//	_theme->closeDialog();
-
-	for (i = 0; i < _dialogStack.size(); i++) {
-		// Special treatment when topmost dialog has dimsInactive() set to false
-		// This is the case for PopUpWidget which should not dim a dialog
-		// which it belongs to
-		if ((i == _dialogStack.size() - 2) && !_dialogStack[i + 1]->dimsInactive())
-			_theme->openDialog(true);
-		else if ((i != (_dialogStack.size() - 1)) || !_dialogStack[i]->dimsInactive())
-			_theme->openDialog(false);
-		else
+	switch (_redrawStatus) {
+		case kRedrawCloseDialog:
+		case kRedrawFull:
+		case kRedrawTopDialog:
+			_theme->clearAll();
 			_theme->openDialog(true);
 
-		_dialogStack[i]->drawDialog();
+			for (i = 0; i < _dialogStack.size() - 1; i++) {
+				_dialogStack[i]->drawDialog();	
+			}
+
+			_theme->finishBuffering();
+			_theme->updateScreen();
+
+		case kRedrawOpenDialog:
+			_theme->openDialog(true, (Theme::ShadingStyle)xmlEval()->getVar("Dialog." + _dialogStack.top()->_name + ".Shading", 0));
+			_dialogStack.top()->drawDialog();
+			_theme->finishBuffering();
+			break;
+
+		default:
+			return;
 	}
 
 	_theme->updateScreen();
+	_redrawStatus = kRedrawDisabled;
 }
 
 Dialog *NewGui::getTopDialog() const {
@@ -236,12 +197,11 @@ void NewGui::runLoop() {
 	}
 
 	Common::EventManager *eventMan = _system->getEventManager();
+	uint32 lastRedraw = 0;
+	const uint32 waitTime = 1000 / 45;
 
 	while (!_dialogStack.empty() && activeDialog == getTopDialog()) {
-		if (_needRedraw) {
-			redraw();
-			_needRedraw = false;
-		}
+		redraw();
 
 		// Don't "tickle" the dialog until the theme has had a chance
 		// to re-allocate buffers in case of a scaler change.
@@ -250,9 +210,15 @@ void NewGui::runLoop() {
 
 		if (_useStdCursor)
 			animateCursor();
-		_theme->updateScreen();
-		_system->updateScreen();
-
+//		_theme->updateScreen();
+//		_system->updateScreen();
+		
+		if (lastRedraw + waitTime < _system->getMillis()) {
+			_theme->updateScreen();
+			_system->updateScreen();
+			lastRedraw = _system->getMillis();
+		}
+	
 		Common::Event event;
 
 		while (eventMan->pollEvent(event)) {
@@ -272,7 +238,14 @@ void NewGui::runLoop() {
 				_theme->refresh();
 
 				_themeChange = false;
+				_redrawStatus = kRedrawFull;
 				redraw();
+			}
+			
+			if (lastRedraw + waitTime < _system->getMillis()) {
+				_theme->updateScreen();
+				_system->updateScreen();
+				lastRedraw = _system->getMillis();
 			}
 
 			switch (event.type) {
@@ -329,11 +302,6 @@ void NewGui::runLoop() {
 		_system->delayMillis(10);
 	}
 
-	// HACK: since we reopen all dialogs anyway on redraw
-	// we for now use Theme::closeAllDialogs here, until
-	// we properly add (and implement) Theme::closeDialog
-	_theme->closeAllDialogs();
-
 	if (didSaveState) {
 		_theme->disable();
 		restoreState();
@@ -365,7 +333,7 @@ void NewGui::restoreState() {
 
 void NewGui::openDialog(Dialog *dialog) {
 	_dialogStack.push(dialog);
-	_needRedraw = true;
+	_redrawStatus = kRedrawOpenDialog;
 	
 	// We reflow the dialog just before opening it. If the screen changed
 	// since the last time we looked, also refresh the loaded theme,
@@ -392,7 +360,7 @@ void NewGui::closeTopDialog() {
 
 	// Remove the dialog from the stack
 	_dialogStack.pop();
-	_needRedraw = true;
+	_redrawStatus = kRedrawCloseDialog;
 }
 
 void NewGui::setupCursor() {
@@ -430,7 +398,7 @@ void NewGui::animateCursor() {
 }
 
 WidgetSize NewGui::getWidgetSize() {
-	return (WidgetSize)(_theme->_evaluator->getVar("widgetSize"));
+	return (WidgetSize)(g_gui.xmlEval()->getVar("Globals.WidgetSize"));
 }
 
 void NewGui::clearDragWidget() {
@@ -450,7 +418,10 @@ void NewGui::screenChange() {
 	// We need to redraw immediately. Otherwise
 	// some other event may cause a widget to be
 	// redrawn before redraw() has been called.
+	_redrawStatus = kRedrawFull;
 	redraw();
+	_system->showOverlay();
+	_system->updateScreen();
 }
 
 } // End of namespace GUI

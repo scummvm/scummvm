@@ -17,7 +17,9 @@ MODULE_OBJS := \
 	scaler.o \
 	scaler/thumbnail_intern.o \
 	surface.o \
-	thumbnail.o
+	thumbnail.o \
+	VectorRenderer.o \
+	VectorRendererSpec.o
 
 ifndef DISABLE_SCALERS
 MODULE_OBJS += \

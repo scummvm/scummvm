@@ -36,9 +36,10 @@
 #endif
 
 #include "gui/about.h"
-#include "gui/eval.h"
+#include "gui/theme.h"
 #include "gui/newgui.h"
 #include "gui/ListWidget.h"
+#include "gui/ThemeEval.h"
 
 #include "scumm/dialogs.h"
 #include "scumm/sound.h"
@@ -212,9 +213,8 @@ static const ResString string_map_table_v345[] = {
 
 #pragma mark -
 
-ScummDialog::ScummDialog(String name)
-	: GUI::Dialog(name) {
-_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
+ScummDialog::ScummDialog(String name) : GUI::Dialog(name) {
+	_backgroundType = GUI::Theme::kDialogBackgroundSpecial;
 }
 
 #pragma mark -
@@ -233,16 +233,20 @@ enum {
 };
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine)
-	: Dialog("scummsaveload"), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0), _vm(engine) {
+	: Dialog("ScummSaveLoad"), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0), _vm(engine) {
+		
+	_backgroundType = GUI::Theme::kDialogBackgroundSpecial;
 
-	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
-
-	new StaticTextWidget(this, "scummsaveload_title", title);
+	new StaticTextWidget(this, "ScummSaveLoad.Title", title);
 
 	// Add choice list
-	_list = new GUI::ListWidget(this, "scummsaveload_list");
+	_list = new GUI::ListWidget(this, "ScummSaveLoad.List");
 	_list->setEditable(saveMode);
 	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
+
+// Tanoku: SVNMerge removed this. Unconvinient. ///////////////
+//	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
+///////////////////////////////////////////////////////////////
 
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 
@@ -251,12 +255,12 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", kTextAlignCenter);
 
 	// Buttons
-	new GUI::ButtonWidget(this, "scummsaveload_cancel", "Cancel", kCloseCmd, 0);
-	_chooseButton = new GUI::ButtonWidget(this, "scummsaveload_choose", buttonLabel, kChooseCmd, 0);
+	new GUI::ButtonWidget(this, "ScummSaveLoad.Cancel", "Cancel", kCloseCmd, 0);
+	_chooseButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
 
 	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
-	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
+//	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
 }
 
 SaveLoadChooser::~SaveLoadChooser() {
@@ -317,17 +321,20 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 }
 
 void SaveLoadChooser::reflowLayout() {
-	if (g_gui.evaluator()->getVar("scummsaveload_extinfo.visible") == 1) {
-		int thumbX = g_gui.evaluator()->getVar("scummsaveload_thumbnail.x");
-		int thumbY = g_gui.evaluator()->getVar("scummsaveload_thumbnail.y");
-		int hPad = g_gui.evaluator()->getVar("scummsaveload_thumbnail.hPad");
-		int vPad = g_gui.evaluator()->getVar("scummsaveload_thumbnail.vPad");
+	if (g_gui.xmlEval()->getVar("Globals.ScummSaveLoad.ExtInfo.Visible") == 1) {
+		int16 x, y;
+		uint16 w, h;
+		
+		if (!g_gui.xmlEval()->getWidgetData("ScummSaveLoad.Thumbnail", x, y, w, h))
+			error("Error when loading position data for Save/Load Thumbnails.");
+			
+		int thumbW = kThumbnailWidth;	
 		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
-
-		_container->resize(thumbX - hPad, thumbY - vPad, kThumbnailWidth + hPad * 2, thumbH + vPad * 2 + kLineHeight * 4);
-
-		// Add the thumbnail display
-		_gfxWidget->resize(thumbX, thumbY, kThumbnailWidth, thumbH);
+		int thumbX = x + (w >> 1) - (thumbW >> 1);
+		int thumbY = y + kLineHeight;
+		
+		_container->resize(x, y, w, h);
+		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH); 
 
 		int height = thumbY + thumbH + kLineHeight;
 
@@ -347,9 +354,9 @@ void SaveLoadChooser::reflowLayout() {
 		_time->clearFlags(GUI::WIDGET_INVISIBLE);
 		_playtime->clearFlags(GUI::WIDGET_INVISIBLE);
 
-		_fillR = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
-		_fillG = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
-		_fillB = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillB");
+		_fillR = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
+		_fillG = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
+		_fillB = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillB");
 		updateInfos(false);
 	} else {
 		_container->setFlags(GUI::WIDGET_INVISIBLE);
@@ -431,20 +438,20 @@ Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 }
 
 ScummMenuDialog::ScummMenuDialog(ScummEngine *scumm)
-	: ScummDialog("scummmain"), _vm(scumm) {
+	: ScummDialog("ScummMain"), _vm(scumm) {
 
-	new GUI::ButtonWidget(this, "scummmain_resume", "Resume", kPlayCmd, 'P');
+	new GUI::ButtonWidget(this, "ScummMain.Resume", "Resume", kPlayCmd, 'P');
 
-	new GUI::ButtonWidget(this, "scummmain_load", "Load", kLoadCmd, 'L');
-	new GUI::ButtonWidget(this, "scummmain_save", "Save", kSaveCmd, 'S');
+	new GUI::ButtonWidget(this, "ScummMain.Load", "Load", kLoadCmd, 'L');
+	new GUI::ButtonWidget(this, "ScummMain.Save", "Save", kSaveCmd, 'S');
 
-	new GUI::ButtonWidget(this, "scummmain_options", "Options", kOptionsCmd, 'O');
+	new GUI::ButtonWidget(this, "ScummMain.Options", "Options", kOptionsCmd, 'O');
 #ifndef DISABLE_HELP
-	new GUI::ButtonWidget(this, "scummmain_help", "Help", kHelpCmd, 'H');
+	new GUI::ButtonWidget(this, "ScummMain.Help", "Help", kHelpCmd, 'H');
 #endif
-	new GUI::ButtonWidget(this, "scummmain_about", "About", kAboutCmd, 'A');
+	new GUI::ButtonWidget(this, "ScummMain.About", "About", kAboutCmd, 'A');
 
-	new GUI::ButtonWidget(this, "scummmain_quit", "Quit", kQuitCmd, 'Q');
+	new GUI::ButtonWidget(this, "ScummMain.Quit", "Quit", kQuitCmd, 'Q');
 
 	//
 	// Create the sub dialog(s)
@@ -564,29 +571,29 @@ enum {
 //  "" as value for the domain, and in fact provide a somewhat better user
 // experience at the same time.
 ConfigDialog::ConfigDialog()
-	: GUI::OptionsDialog("", "scummconfig") {
+	: GUI::OptionsDialog("", "ScummConfig") {
 
 	//
 	// Sound controllers
 	//
 
-	addVolumeControls(this, "scummconfig_");
+	addVolumeControls(this, "ScummConfig.");
 
 	//
 	// Some misc options
 	//
 
 	// SCUMM has a talkspeed range of 0-9
-	addSubtitleControls(this, "scummconfig_", 9);
+	addSubtitleControls(this, "ScummConfig.", 9);
 
 	//
 	// Add the buttons
 	//
 
-	new GUI::ButtonWidget(this, "scummconfig_ok", "OK", GUI::OptionsDialog::kOKCmd, 'O');
-	new GUI::ButtonWidget(this, "scummconfig_cancel", "Cancel", kCloseCmd, 'C');
+	new GUI::ButtonWidget(this, "ScummConfig.Ok", "OK", GUI::OptionsDialog::kOKCmd, 'O');
+	new GUI::ButtonWidget(this, "ScummConfig.Cancel", "Cancel", kCloseCmd, 'C');
 #ifdef SMALL_SCREEN_DEVICE
-	new GUI::ButtonWidget(this, "scummconfig_keys", "Keys", kKeysCmd, 'K');
+	new GUI::ButtonWidget(this, "ScummConfig.Keys", "Keys", kKeysCmd, 'K');
 #endif
 
 #ifdef SMALL_SCREEN_DEVICE
@@ -626,22 +633,23 @@ enum {
 };
 
 HelpDialog::HelpDialog(const GameSettings &game)
-	: ScummDialog("scummhelp"), _game(game) {
-	_title = new StaticTextWidget(this, "scummhelp_title", "");
+	: ScummDialog("ScummHelp"), _game(game) {
+	_title = new StaticTextWidget(this, "ScummHelp.Title", "");
 
 	_page = 1;
+	_backgroundType = GUI::Theme::kDialogBackgroundDefault;
 
 	_numPages = ScummHelp::numPages(_game.id);
 
-	_prevButton = new GUI::ButtonWidget(this, "scummhelp_prev", "Previous", kPrevCmd, 'P');
-	_nextButton = new GUI::ButtonWidget(this, "scummhelp_next", "Next", kNextCmd, 'N');
-	new GUI::ButtonWidget(this, "scummhelp_close", "Close", kCloseCmd, 'C');
+	_prevButton = new GUI::ButtonWidget(this, "ScummHelp.Prev", "Previous", kPrevCmd, 'P');
+	_nextButton = new GUI::ButtonWidget(this, "ScummHelp.Next", "Next", kNextCmd, 'N');
+	new GUI::ButtonWidget(this, "ScummHelp.Close", "Close", kCloseCmd, 'C');
 	_prevButton->clearFlags(WIDGET_ENABLED);
 
 	// Dummy entries
 	for (int i = 0; i < HELP_NUM_LINES; i++) {
-		_key[i] = new StaticTextWidget(this, 0, 0, 10, 10, "", kTextAlignLeft);
-		_dsc[i] = new StaticTextWidget(this, 0, 0, 10, 10, "", kTextAlignLeft);
+		_key[i] = new StaticTextWidget(this, 0, 0, 10, 10, "", Graphics::kTextAlignRight);
+		_dsc[i] = new StaticTextWidget(this, 0, 0, 10, 10, "", Graphics::kTextAlignLeft);
 	}
 
 }
@@ -649,22 +657,21 @@ HelpDialog::HelpDialog(const GameSettings &game)
 void HelpDialog::reflowLayout() {
 	ScummDialog::reflowLayout();
 
-	_drawingHints &= ~GUI::THEME_HINT_SPECIAL_COLOR;
-
 	int lineHeight = g_gui.getFontHeight();
-
-	int keyX = g_gui.evaluator()->getVar("scummhelp_key.x");
-	int keyYoff = g_gui.evaluator()->getVar("scummhelp_key.yoffset");
-	int keyW = g_gui.evaluator()->getVar("scummhelp_key.w");
-	int keyH = g_gui.evaluator()->getVar("scummhelp_key.h");
-	int dscX = g_gui.evaluator()->getVar("scummhelp_dsc.x");
-	int dscYoff = g_gui.evaluator()->getVar("scummhelp_dsc.yoffset");
-	int dscW = g_gui.evaluator()->getVar("scummhelp_dsc.w");
-	int dscH = g_gui.evaluator()->getVar("scummhelp_dsc.h");
+	int16 x, y;
+	uint16 w, h;
+	
+	g_gui.xmlEval()->getWidgetData("ScummHelp.HelpText", x, y, w, h);
+	
+	int keyW = w * 20 / 100;
+	int dscX = x + keyW + 32;
+	int dscW = w * 80 / 100;
+	
+	int xoff = (_w >> 1) - (w >> 1);
 
 	for (int i = 0; i < HELP_NUM_LINES; i++) {
-		_key[i]->resize(keyX, keyYoff + lineHeight * (i + 2), keyW, keyH);
-		_dsc[i]->resize(dscX, dscYoff + lineHeight * (i + 2), dscW, dscH);
+		_key[i]->resize(xoff + x, y + lineHeight * i, keyW, lineHeight + 2);
+		_dsc[i]->resize(xoff + dscX, y + lineHeight * i, dscW, lineHeight + 2);
 	}
 
 	displayKeyBindings();
@@ -836,7 +843,7 @@ void ConfirmDialog::handleKeyDown(Common::KeyState state) {
 
 ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, int maxVal,
 		int val, uint16 incKey, uint16 decKey)
-	: GUI::Dialog("scummDummyDialog", false),
+	: GUI::Dialog("scummDummyDialog"),
 	_label(label), _min(minVal), _max(maxVal),
 	_value(val), _incKey(incKey), _decKey(decKey) {
 	assert(_min <= _value && _value <= _max);
@@ -844,8 +851,7 @@ ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, 
 
 void ValueDisplayDialog::drawDialog() {
 	const int labelWidth = _w - 8 - _percentBarWidth;
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h),
-				GUI::THEME_HINT_SAVE_BACKGROUND | GUI::THEME_HINT_FIRST_DRAW);
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), GUI::Theme::kDialogBackgroundDefault);
 	g_gui.theme()->drawText(Common::Rect(_x+4, _y+4, _x+labelWidth+4,
 				_y+g_gui.theme()->getFontHeight()+4), _label);
 	g_gui.theme()->drawSlider(Common::Rect(_x+4+labelWidth, _y+4, _x+_w-4, _y+_h-4),
@@ -937,7 +943,10 @@ void SubtitleSettingsDialog::cycleValue() {
 	if (_value > 2)
 		_value = 0;
 
-	setInfoText(subtitleDesc[_value]);
+	if (_value == 1 && g_system->getOverlayWidth() <= 320)
+		setInfoText("Speech & Subs");
+	else
+		setInfoText(subtitleDesc[_value]);
 
 	_timer = getMillis() + 1500;
 }

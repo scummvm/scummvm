@@ -9,7 +9,7 @@ MODULE_OBJS := \
 	dialog.o \
 	editable.o \
 	EditTextWidget.o \
-	eval.o \
+	ThemeEngine.o \
 	launcher.o \
 	ListWidget.o \
 	massadd.o \
@@ -23,9 +23,9 @@ MODULE_OBJS := \
 	themebrowser.o \
 	widget.o \
 	theme.o \
-	ThemeClassic.o \
-	ThemeModern.o \
-	theme-config.o
+	ThemeEval.o \
+	ThemeLayout.o \
+	ThemeParser.o
 
 # Include common rules
 include $(srcdir)/rules.mk

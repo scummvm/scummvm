@@ -23,40 +23,15 @@
  */
 
 #include "gui/theme.h"
-#include "gui/eval.h"
 #include "common/file.h"
-
 #include "common/archive.h"
 #include "common/unzip.h"
 
 namespace GUI {
 
-Theme::Theme() : _drawArea(), _stylefile(""), _configFile(), _loadedThemeX(0), _loadedThemeY(0) {
-	Common::MemoryReadStream s((const byte *)_defaultConfigINI, strlen(_defaultConfigINI));
-	_defaultConfig.loadFromStream(s);
+Theme::Theme() : _loadedThemeX(0), _loadedThemeY(0) {}
 
-	_evaluator = new Eval();
-}
-
-Theme::~Theme() {
-	delete _evaluator;
-}
-
-void Theme::getColorFromConfig(const Common::String &value, OverlayColor &color) {
-	const char *postfixes[] = {".r", ".g", ".b"};
-	int rgb[3];
-
-	for (int cnt = 0; cnt < 3; cnt++)
-		rgb[cnt] = _evaluator->getVar(value + postfixes[cnt], 0);
-
-	color = g_system->RGBToColor(rgb[0], rgb[1], rgb[2]);
-}
-
-void Theme::getColorFromConfig(const Common::String &value, uint8 &r, uint8 &g, uint8 &b) {
-	r = _evaluator->getVar(value + ".r", 0);
-	g = _evaluator->getVar(value + ".g", 0);
-	b = _evaluator->getVar(value + ".b", 0);
-}
+Theme::~Theme() {}
 
 const Graphics::Font *Theme::loadFont(const char *filename) {
 	const Graphics::NewFont *font = 0;
@@ -70,7 +45,7 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 			return font;
 
 #ifdef USE_ZLIB
-		Common::ZipArchive zipArchive(_stylefile + ".zip");
+		Common::ZipArchive zipArchive(getThemeFileName().c_str());
 		Common::SeekableReadStream *stream(zipArchive.openFile(cacheFilename));
 		if (stream) {
 			font = Graphics::NewFont::loadFromCache(*stream);
@@ -88,7 +63,8 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 
 #ifdef USE_ZLIB
 	if (!font) {
-		Common::ZipArchive zipArchive(_stylefile + ".zip");
+		Common::ZipArchive zipArchive(getThemeFileName().c_str());
+		
 		Common::SeekableReadStream *stream(zipArchive.openFile(filename));
 		if (stream) {
 			font = Graphics::NewFont::loadFont(*stream);
@@ -124,83 +100,71 @@ Common::String Theme::genCacheFilename(const char *filename) {
 	return "";
 }
 
-bool Theme::loadConfigFile(const Common::String &stylefile) {
-	if (ConfMan.hasKey("themepath"))
-		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
+bool Theme::isThemeLoadingRequired() {
+	int x = g_system->getOverlayWidth(), y = g_system->getOverlayHeight();
 
-#ifdef DATA_PATH
-	Common::File::addDefaultDirectoryRecursive(DATA_PATH);
-#endif
+	if (_loadedThemeX == x && _loadedThemeY == y)
+		return false;
 
-	if (ConfMan.hasKey("extrapath"))
-		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
+	_loadedThemeX = x;
+	_loadedThemeY = y;
 
-	if (_configFile.loadFromFile(stylefile + ".ini"))
-		return true;
-
-#ifdef USE_ZLIB
-	// Maybe find a nicer solution to this
-	Common::ZipArchive zipArchive(stylefile + ".zip");
-	Common::File file;
-	if (file.open(stylefile + ".ini", zipArchive)) {
-		return _configFile.loadFromStream(file);
-	}
-#endif
-
-	return false;
+	return true;
 }
 
-bool Theme::themeConfigUseable(const Common::String &stylefile, const Common::String &style, Common::String *cStyle, Common::ConfigFile *cfg) {
-	if (ConfMan.hasKey("themepath"))
-		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
+bool Theme::themeConfigParseHeader(Common::String header, Common::String &themeName) {	
+	header.trim();
+	
+	if (header[0] != '[' || header.lastChar() != ']')
+		return false;
+		
+	header.deleteChar(0);
+	header.deleteLastChar();
+	
+	Common::StringTokenizer tok(header, ":");
+	
+	if (tok.nextToken() != SCUMMVM_THEME_VERSION_STR)
+		return false;
+		
+	themeName = tok.nextToken();
+	Common::String author = tok.nextToken();
 
-#ifdef DATA_PATH
-	Common::File::addDefaultDirectoryRecursive(DATA_PATH);
-#endif
+	return tok.empty();
+}
 
-	if (ConfMan.hasKey("extrapath"))
-		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
-
-	Common::File file;
-	Common::ConfigFile configFile;
-	if (!cfg && (cStyle || !style.empty()))
-		cfg = &configFile;
-
-	if (!file.open(stylefile + ".ini")) {
+bool Theme::themeConfigUseable(const Common::FSNode &node, Common::String &themeName) {
+	Common::String stxHeader;
+	bool foundHeader = false;
+		
+	if (node.getName().hasSuffix(".zip")) {
+		
 #ifdef USE_ZLIB
-		// Maybe find a nicer solution to this
-		Common::ZipArchive zipArchive(stylefile + ".zip");
-		if (zipArchive.hasFile(stylefile + ".ini")) {
-			if (!style.empty() || cStyle || cfg) {
-				Common::FilePtr stream(zipArchive.openFile(stylefile + ".ini"));
-				if (!cfg->loadFromStream(*stream.get()))
-					return false;
-			}
-		} else {
-			return false;
+		Common::ZipArchive zipArchive(node.getPath().c_str());
+		if (zipArchive.hasFile("THEMERC")) {
+			Common::FilePtr stream(zipArchive.openFile("THEMERC"));
+			stxHeader = stream->readLine();
+			// TODO: Read first line of file. How?
+			if (themeConfigParseHeader(stxHeader.c_str(), themeName))
+				foundHeader = true;
 		}
 #else
 		return false;
 #endif
+
+	} else if (node.isDirectory()) {			
+		Common::FSNode headerfile = node.getChild("THEMERC");
+		if (!headerfile.exists() || !headerfile.isReadable() || headerfile.isDirectory())
+			return false;
+			
+		// TODO: File or FilePtr?
+		Common::File f;
+		f.open(headerfile);
+		stxHeader = f.readLine();
+		if (themeConfigParseHeader(stxHeader.c_str(), themeName))
+			foundHeader = true;
 	}
 
-	if (!style.empty() || cStyle || cfg) {
-		if (file.isOpen()) {
-			if (!cfg->loadFromStream(file))
-				return false;
-			file.close();
-		}
-
-		Common::String temp;
-		if (!cfg->getKey("type", "theme", temp))
-			return false;
-		if (cStyle)
-			*cStyle = temp;
-		if (0 != temp.compareToIgnoreCase(style) && !style.empty())
-			return false;
-	}
-
-	return true;
+	return foundHeader;
 }
 
 } // End of namespace GUI

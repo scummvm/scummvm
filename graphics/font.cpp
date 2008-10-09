@@ -48,7 +48,29 @@ int NewFont::getCharWidth(byte chr) const {
 	return desc.width[chr - desc.firstchar];
 }
 
-void NewFont::drawChar(Surface *dst, byte chr, int tx, int ty, uint32 color) const {
+
+template <int bytesPerPixel>
+void drawCharIntern(byte *ptr, uint pitch, const bitmap_t *src, int h, int minX, int maxX, const uint32 color) {
+	while (h-- > 0) {
+		const bitmap_t buffer = READ_UINT16(src);
+		src++;
+
+		int x = minX;
+		uint mask = 0x8000 >> minX;
+		for (; x < maxX; x++, mask >>= 1) {
+			if ((buffer & mask) != 0) {
+				if (bytesPerPixel == 1)
+					ptr[x] = color;
+				else if (bytesPerPixel == 2)
+					((uint16 *)ptr)[x] = color;
+			}
+		}
+		
+		ptr += pitch;
+	}
+}
+
+void NewFont::drawChar(Surface *dst, byte chr, const int tx, const int ty, const uint32 color) const {
 	assert(dst != 0);
 
 	assert(desc.bits != 0 && desc.maxwidth <= 17);
@@ -80,25 +102,14 @@ void NewFont::drawChar(Surface *dst, byte chr, int tx, int ty, uint32 color) con
 
 	const bitmap_t *tmp = desc.bits + (desc.offset ? desc.offset[chr] : (chr * desc.fbbh));
 
-	for (int y = 0; y < bbh; y++, ptr += dst->pitch) {
-		const bitmap_t buffer = READ_UINT16(tmp);
-		tmp++;
-		bitmap_t mask = 0x8000;
-		if (ty + desc.ascent - bby - bbh + y < 0 ||
-		    ty + desc.ascent - bby - bbh + y >= dst->h)
-			continue;
+	int y = MIN(bbh, ty + desc.ascent - bby);
+	tmp += bbh - y;
+	y -= MAX(0, ty + desc.ascent - bby - dst->h);
 
-		for (int x = 0; x < bbw; x++, mask >>= 1) {
-			if (tx + bbx + x < 0 || tx + bbx + x >= dst->w)
-				continue;
-			if ((buffer & mask) != 0) {
-				if (dst->bytesPerPixel == 1)
-					ptr[x] = color;
-				else if (dst->bytesPerPixel == 2)
-					((uint16 *)ptr)[x] = color;
-			}
-		}
-	}
+	if (dst->bytesPerPixel == 1)
+		drawCharIntern<1>(ptr, dst->pitch, tmp, y, MAX(0, -(tx + bbx)), MIN(bbw, dst->w - tx - bbx), color);
+	else if (dst->bytesPerPixel == 2)
+		drawCharIntern<2>(ptr, dst->pitch, tmp, y, MAX(0, -(tx + bbx)), MIN(bbw, dst->w - tx - bbx), color);
 }
 
 

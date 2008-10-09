@@ -33,12 +33,15 @@
 #include "gui/theme.h"
 #include "gui/widget.h"
 
+#include "gui/ThemeEngine.h"
+
 class OSystem;
 
 namespace GUI {
 
 class Dialog;
 class Eval;
+class ThemeEval;
 
 #define g_gui	(GUI::NewGui::instance())
 
@@ -75,9 +78,10 @@ public:
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 
-	bool loadNewTheme(const Common::String &file);
+	bool loadNewTheme(Common::String file, ThemeEngine::GraphicsMode gfx = ThemeEngine::kGfxDisabled);
 	Theme *theme() { return _theme; }
-	Eval *evaluator() { return _theme->_evaluator; }
+	
+	ThemeEval *xmlEval() { return _theme->evaluator(); }
 
 	const Graphics::Font &getFont(Theme::FontStyle style = Theme::kFontStyleBold) const { return *(_theme->getFont(style)); }
 	int getFontHeight(Theme::FontStyle style = Theme::kFontStyleBold) const { return _theme->getFontHeight(style); }
@@ -90,12 +94,21 @@ public:
 
 	void screenChange();
 
+	enum RedrawStatus {
+		kRedrawDisabled = 0,
+		kRedrawOpenDialog,
+		kRedrawCloseDialog,
+		kRedrawTopDialog,
+		kRedrawFull
+	};
+
 protected:
 	OSystem			*_system;
 
 	Theme		*_theme;
 
-	bool		_needRedraw;
+//	bool		_needRedraw;
+	RedrawStatus _redrawStatus;
 	int			_lastScreenChangeID;
 	DialogStack	_dialogStack;
 

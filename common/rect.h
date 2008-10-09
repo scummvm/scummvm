@@ -124,6 +124,16 @@ struct Rect {
 		return contains(p.x, p.y);
 	}
 
+	/*! @brief check if the given rect is _fully_ contained inside this rectangle
+
+		@param r The rectangle to check
+
+		@retur true if the given rect is inside, false otherwise
+	*/
+	bool contains(const Rect &r) const {
+		return (left < r.left) && (right > r.right) && (top < r.top) && (bottom > r.bottom);
+	}
+
 	/*!	@brief check if given rectangle intersects with this rectangle
 
 		@param r the rectangle to check

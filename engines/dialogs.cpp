@@ -32,7 +32,6 @@
 #include "graphics/scaler.h"
 
 #include "gui/about.h"
-#include "gui/eval.h"
 #include "gui/newgui.h"
 #include "gui/ListWidget.h"
 #include "gui/theme.h"
@@ -59,9 +58,7 @@ using GUI::WIDGET_ENABLED;
 typedef GUI::OptionsDialog GUI_OptionsDialog;
 typedef GUI::Dialog GUI_Dialog;
 
-GlobalDialog::GlobalDialog(String name)
-	: GUI::Dialog(name) {
-_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;}
+GlobalDialog::GlobalDialog(String name) : GUI::Dialog(name) {}
 
 enum {
 	kSaveCmd = 'SAVE',
@@ -76,37 +73,41 @@ enum {
 };
 
 MainMenuDialog::MainMenuDialog(Engine *engine)
-	: GlobalDialog("globalmain"), _engine(engine) {
+	: GlobalDialog("GlobalMenu"), _engine(engine) {
+	_backgroundType = GUI::Theme::kDialogBackgroundSpecial;
 
 #ifndef DISABLE_FANCY_THEMES
 	_logo = 0;
-	if (g_gui.evaluator()->getVar("global_logo.visible") == 1 && g_gui.theme()->supportsImages()) {
-		_logo = new GUI::GraphicsWidget(this, "global_logo");
+	if (g_gui.xmlEval()->getVar("Globals.ShowGlobalMenuLogo", 0) == 1 && g_gui.theme()->supportsImages()) {
+		_logo = new GUI::GraphicsWidget(this, "GlobalMenu.Logo");
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::Theme::kImageLogoSmall));
 	} else {
-		new StaticTextWidget(this, "global_title", "ScummVM");
+		StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+		title->setAlign(GUI::kTextAlignCenter);
 	}
 #else
-	new StaticTextWidget(this, "global_title", "ScummVM");
+	StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+	title->setAlign(GUI::kTextAlignCenter);
 #endif
 
-	new StaticTextWidget(this, "global_version", gScummVMVersionDate);
+	StaticTextWidget *version = new StaticTextWidget(this, "GlobalMenu.Version", gScummVMVersionDate);
+	version->setAlign(GUI::kTextAlignCenter);
 		
-	new GUI::ButtonWidget(this, "globalmain_resume", "Resume", kPlayCmd, 'P');
+	new GUI::ButtonWidget(this, "GlobalMenu.Resume", "Resume", kPlayCmd, 'P');
 
 //	new GUI::ButtonWidget(this, "globalmain_load", "Load", kLoadCmd, 'L');
 //	new GUI::ButtonWidget(this, "globalmain_save", "Save", kSaveCmd, 'S');
 
-	new GUI::ButtonWidget(this, "globalmain_options", "Options", kOptionsCmd, 'O');
+	new GUI::ButtonWidget(this, "GlobalMenu.Options", "Options", kOptionsCmd, 'O');
 
-	new GUI::ButtonWidget(this, "globalmain_about", "About", kAboutCmd, 'A');
+	new GUI::ButtonWidget(this, "GlobalMenu.About", "About", kAboutCmd, 'A');
 
-	_rtlButton = new GUI::ButtonWidget(this, "globalmain_rtl", "Return to Launcher", kRTLCmd, 'R');	
+	_rtlButton = new GUI::ButtonWidget(this, "GlobalMenu.RTL", "Return to Launcher", kRTLCmd, 'R');	
 	_rtlButton->setEnabled(_engine->hasFeature(Engine::kSupportsRTL));
 
 
-	new GUI::ButtonWidget(this, "globalmain_quit", "Quit", kQuitCmd, 'Q');
+	new GUI::ButtonWidget(this, "GlobalMenu.Quit", "Quit", kQuitCmd, 'Q');
 
 	_aboutDialog = new GUI::AboutDialog();
 	_optionsDialog = new ConfigDialog();
@@ -149,22 +150,24 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 void MainMenuDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES
-	if (g_gui.evaluator()->getVar("global_logo.visible") == 1 && g_gui.theme()->supportsImages()) {
+	if (g_gui.xmlEval()->getVar("Globals.ShowGlobalMenuLogo", 0) == 1 && g_gui.theme()->supportsImages()) {
 		if (!_logo)
-			_logo = new GUI::GraphicsWidget(this, "global_logo");
+			_logo = new GUI::GraphicsWidget(this, "GlobalMenu.Logo");
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::Theme::kImageLogoSmall));
 
-		GUI::StaticTextWidget *title = (StaticTextWidget *)findWidget("global_title");
+		GUI::StaticTextWidget *title = (StaticTextWidget *)findWidget("GlobalMenu.Title");
 		if (title) {
 			removeWidget(title);
 			title->setNext(0);
 			delete title;
 		}
 	} else {
-		GUI::StaticTextWidget *title = (StaticTextWidget *)findWidget("global_title");
-		if (!title)
-			new StaticTextWidget(this, "global_title", "ScummVM");
+		GUI::StaticTextWidget *title = (StaticTextWidget *)findWidget("GlobalMenu.Title");
+		if (!title) {
+			title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+			title->setAlign(GUI::kTextAlignCenter);
+		}
 
 		if (_logo) {
 			removeWidget(_logo);
@@ -212,30 +215,30 @@ enum {
 //  "" as value for the domain, and in fact provide a somewhat better user
 // experience at the same time.
 ConfigDialog::ConfigDialog()
-	: GUI::OptionsDialog("", "scummconfig") {
+	: GUI::OptionsDialog("", "ScummConfig") {
 
 	//
 	// Sound controllers
 	//
 
-	addVolumeControls(this, "scummconfig_");
+	addVolumeControls(this, "ScummConfig.");
 
 	//
 	// Some misc options
 	//
 
 	// SCUMM has a talkspeed range of 0-9
-	addSubtitleControls(this, "scummconfig_", 9);
+	addSubtitleControls(this, "ScummConfig.", 9);
 
 	//
 	// Add the buttons
 	//
 
-	new GUI::ButtonWidget(this, "scummconfig_ok", "OK", GUI::OptionsDialog::kOKCmd, 'O');
-	new GUI::ButtonWidget(this, "scummconfig_cancel", "Cancel", kCloseCmd, 'C');
+	new GUI::ButtonWidget(this, "ScummConfig.Ok", "OK", GUI::OptionsDialog::kOKCmd, 'O');
+	new GUI::ButtonWidget(this, "ScummConfig.Cancel", "Cancel", kCloseCmd, 'C');
 
 #ifdef SMALL_SCREEN_DEVICE
-	new GUI::ButtonWidget(this, "scummconfig_keys", "Keys", kKeysCmd, 'K');
+	new GUI::ButtonWidget(this, "ScummConfig.Keys", "Keys", kKeysCmd, 'K');
 
 	//
 	// Create the sub dialog(s)

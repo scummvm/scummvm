@@ -43,21 +43,21 @@ enum {
 // but for now this simple browser works,
 // also it will get its own theme config values
 // and not use 'browser_' anymore
-ThemeBrowser::ThemeBrowser() : Dialog("browser") {
+ThemeBrowser::ThemeBrowser() : Dialog("Browser") {
 	_fileList = 0;
 
-	new StaticTextWidget(this, "browser_headline", "Select a Theme");
+	new StaticTextWidget(this, "Browser.Headline", "Select a Theme");
 
 	// Add file list
-	_fileList = new ListWidget(this, "browser_list");
+	_fileList = new ListWidget(this, "Browser.List");
 	_fileList->setNumberingMode(kListNumberingOff);
 	_fileList->setEditable(false);
 
-	_fileList->setHints(THEME_HINT_PLAIN_COLOR);
+	_backgroundType = GUI::Theme::kDialogBackgroundPlain;
 
 	// Buttons
-	new ButtonWidget(this, "browser_cancel", "Cancel", kCloseCmd, 0);
-	new ButtonWidget(this, "browser_choose", "Choose", kChooseCmd, 0);
+	new ButtonWidget(this, "Browser.Cancel", "Cancel", kCloseCmd, 0);
+	new ButtonWidget(this, "Browser.Choose", "Choose", kChooseCmd, 0);
 }
 
 void ThemeBrowser::open() {
@@ -89,11 +89,10 @@ void ThemeBrowser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 void ThemeBrowser::updateListing() {
 	_themes.clear();
 
-	// classic is always build in
+	// classic is always built-in
 	Entry th;
-	th.name = "Classic (Builtin)";
-	th.type = "Classic";
-	th.file = "Classic (Builtin)";
+	th.name = "ScummVM Classic Theme (Builtin Version)";
+	th.file = "builtin";
 	_themes.push_back(th);
 
 	// we are using only the paths 'themepath', 'extrapath', DATA_PATH and '.'
@@ -101,7 +100,7 @@ void ThemeBrowser::updateListing() {
 	// files in other places are ignored in this dialog
 	// TODO: let the user browse the complete FS too/only the FS?
 	if (ConfMan.hasKey("themepath"))
-		addDir(_themes, Common::FSNode(ConfMan.get("themepath")), 0);
+		addDir(_themes, Common::FSNode(ConfMan.get("themepath")));
 
 #ifdef DATA_PATH
 	addDir(_themes, Common::FSNode(DATA_PATH));
@@ -113,7 +112,7 @@ void ThemeBrowser::updateListing() {
 		char buf[256];
 		if (CFURLGetFileSystemRepresentation(resourceUrl, true, (UInt8 *)buf, 256)) {
 			Common::FSNode resourcePath(buf);
-			addDir(_themes, resourcePath, 0);
+			addDir(_themes, resourcePath);
 		}
 		CFRelease(resourceUrl);
 	}
@@ -122,7 +121,7 @@ void ThemeBrowser::updateListing() {
 	if (ConfMan.hasKey("extrapath"))
 		addDir(_themes, Common::FSNode(ConfMan.get("extrapath")));
 
-	addDir(_themes, Common::FSNode("."), 0);
+	addDir(_themes, Common::FSNode("."));
 
 	// Populate the ListWidget
 	Common::StringList list;
@@ -137,10 +136,8 @@ void ThemeBrowser::updateListing() {
 	draw();
 }
 
-void ThemeBrowser::addDir(ThList &list, const Common::FSNode &node, int level) {
-	if (level < 0)
-		return;
 
+void ThemeBrowser::addDir(ThList &list, const Common::FSNode &node) {
 	if (!node.exists() || !node.isReadable())
 		return;
 
@@ -149,12 +146,30 @@ void ThemeBrowser::addDir(ThList &list, const Common::FSNode &node, int level) {
 		return;
 
 	for (Common::FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
-		if (i->isDirectory()) {
-			addDir(list, *i, level-1);
-		} else {
+		
+		Entry th;
+		if (isTheme(*i, th)) {
+			bool add = true;
+			
+			for (ThList::const_iterator p = list.begin(); p != list.end(); ++p) {
+				if (p->name == th.name || p->file == th.file) {
+					add = false;
+					break;
+				}
+			}
+
+			if (add)
+				list.push_back(th);	
+		}
+	}
+
+	if (node.lookupFile(fslist, "THEMERC", false, true, 1)) {
+		for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
+			
 			Entry th;
-			if (isTheme(*i, th)) {
+			if (isTheme(i->getParent(), th)) {
 				bool add = true;
+				
 				for (ThList::const_iterator p = list.begin(); p != list.end(); ++p) {
 					if (p->name == th.name || p->file == th.file) {
 						add = false;
@@ -170,34 +185,18 @@ void ThemeBrowser::addDir(ThList &list, const Common::FSNode &node, int level) {
 }
 
 bool ThemeBrowser::isTheme(const Common::FSNode &node, Entry &out) {
-	Common::ConfigFile cfg;
-	Common::String type;
-
-	out.file = node.getName();
+	out.file = node.getPath();	
 	
-	// Only accept .ini and .zip fies
-	if (!out.file.hasSuffix(".ini") && !out.file.hasSuffix(".zip"))
+#ifdef USE_ZLIB
+	if (!out.file.hasSuffix(".zip") && !node.isDirectory())
 		return false;
-	
-	// Remove the filename extension
-	while (!out.file.empty() && out.file.lastChar() != '.') {
-		out.file.deleteLastChar();
-	}
-	if (out.file.lastChar() == '.')
-		out.file.deleteLastChar();
-
-	if (out.file.empty())
+#else
+	if (!node.isDirectory())
 		return false;
-
-	if (!Theme::themeConfigUseable(out.file, "", &type, &cfg))
+#endif
+		
+	if (!Theme::themeConfigUseable(node, out.name))
 		return false;
-
-	out.type = type;
-
-	if (cfg.hasKey("name", "theme"))
-		cfg.getKey("name", "theme", out.name);
-	else
-		out.name = out.file;
 
 	return true;
 }

@@ -252,15 +252,17 @@ enum {
 };
 
 
+
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
-	: Dialog("scummsaveload"), _list(0), _chooseButton(0), _gfxWidget(0) {
+	: Dialog("ScummSaveLoad"), _list(0), _chooseButton(0), _gfxWidget(0) {
 
 //	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
+	_backgroundType = GUI::Theme::kDialogBackgroundSpecial;
 
-	new GUI::StaticTextWidget(this, "scummsaveload_title", title);
+	new GUI::StaticTextWidget(this, "ScummSaveLoad.Title", title);
 
 	// Add choice list
-	_list = new GUI::ListWidget(this, "scummsaveload_list");
+	_list = new GUI::ListWidget(this, "ScummSaveLoad.List");
 	_list->setEditable(true);
 	_list->setNumberingMode(GUI::kListNumberingOne);
 
@@ -271,12 +273,12 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	_playtime = new GUI::StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", GUI::kTextAlignCenter);
 
 	// Buttons
-	new GUI::ButtonWidget(this, "scummsaveload_cancel", "Cancel", GUI::kCloseCmd, 0);
-	_chooseButton = new GUI::ButtonWidget(this, "scummsaveload_choose", buttonLabel, kChooseCmd, 0);
+	new GUI::ButtonWidget(this, "ScummSaveLoad.Cancel", "Cancel", GUI::kCloseCmd, 0);
+	_chooseButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
 
 	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
-	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
+//	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
 }
 
 SaveLoadChooser::~SaveLoadChooser() {

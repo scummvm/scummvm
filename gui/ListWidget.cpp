@@ -27,8 +27,9 @@
 #include "gui/ListWidget.h"
 #include "gui/ScrollBarWidget.h"
 #include "gui/dialog.h"
-#include "gui/eval.h"
 #include "gui/newgui.h"
+
+#include "gui/ThemeEval.h"
 
 namespace GUI {
 
@@ -45,7 +46,6 @@ ListWidget::ListWidget(GuiObject *boss, const String &name)
 	_scrollBar->setTarget(this);
 
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
-	setHints(THEME_HINT_SAVE_BACKGROUND | THEME_HINT_USE_SHADOW);
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
@@ -75,7 +75,6 @@ ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h)
 	_scrollBar->setTarget(this);
 
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
-	setHints(THEME_HINT_SAVE_BACKGROUND | THEME_HINT_USE_SHADOW);
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
@@ -361,7 +360,8 @@ void ListWidget::drawWidget() {
 	Common::String buffer;
 
 	// Draw a thin frame around the list.
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), _hints, Theme::kWidgetBackgroundBorder);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0, Theme::kWidgetBackgroundBorder);
+	const int scrollbarW = (_scrollBar && _scrollBar->isVisible()) ? _scrollBarWidth : 0;
 
 	// Draw the list items
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
@@ -374,7 +374,8 @@ void ListWidget::drawWidget() {
 			if (_hasFocus)
 				inverted = true;
 			else
-				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, y - 1, _x + _w - 1, y + fontHeight - 1), _hints, Theme::kWidgetBackgroundBorderSmall);
+				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, y - 1, _x + _w - 1, y + fontHeight - 1), 
+													0, Theme::kWidgetBackgroundBorderSmall);
 		}
 
 		Common::Rect r(getEditRect());
@@ -385,7 +386,8 @@ void ListWidget::drawWidget() {
 			char temp[10];
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
-			g_gui.theme()->drawText(Common::Rect(_x, y, _x + r.left + _leftPadding, y + fontHeight - 2), buffer, _state, Theme::kTextAlignLeft, inverted, _leftPadding);
+			g_gui.theme()->drawText(Common::Rect(_x, y, _x + r.left + _leftPadding, y + fontHeight - 2), 
+									buffer, _state, Theme::kTextAlignLeft, inverted, _leftPadding);
 			pad = 0;
 		}
 
@@ -394,20 +396,22 @@ void ListWidget::drawWidget() {
 		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
 			adjustOffset();
-			width = _w - r.left - _hlRightPadding - _leftPadding;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight-2), buffer, _state, Theme::kTextAlignLeft, inverted, pad);
+			width = _w - r.left - _hlRightPadding - _leftPadding - scrollbarW;
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight-2), 
+									buffer, _state, Theme::kTextAlignLeft, inverted, pad);
 		} else {
 			int maxWidth = _textWidth[i];
 			buffer = _list[pos];
 			if (_selectedItem != pos) {
 				width = g_gui.getStringWidth(buffer) + pad;
 				if (width > _w - r.left)
-					width = _w - r.left;
+					width = _w - r.left - _hlRightPadding - scrollbarW;
 			} else
-				width = _w - r.left - _hlRightPadding;
+				width = _w - r.left - _hlRightPadding - scrollbarW;
 			if (width > maxWidth)
 				maxWidth = width;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight-2), buffer, _state, Theme::kTextAlignLeft, inverted, pad);
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight-2), 
+									buffer, _state, Theme::kTextAlignLeft, inverted, pad);
 		}
 
 		_textWidth[i] = width;
@@ -480,12 +484,12 @@ void ListWidget::abortEditMode() {
 void ListWidget::reflowLayout() {
 	Widget::reflowLayout();
 
-	_leftPadding = g_gui.evaluator()->getVar("ListWidget.leftPadding", 0);
-	_rightPadding = g_gui.evaluator()->getVar("ListWidget.rightPadding", 0);
-	_topPadding = g_gui.evaluator()->getVar("ListWidget.topPadding", 0);
-	_bottomPadding = g_gui.evaluator()->getVar("ListWidget.bottomPadding", 0);
-	_hlLeftPadding = g_gui.evaluator()->getVar("ListWidget.hlLeftPadding", 0);
-	_hlRightPadding = g_gui.evaluator()->getVar("ListWidget.hlRightPadding", 0);
+	_leftPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Left", 0);
+	_rightPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Right", 0);
+	_topPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Top", 0);
+	_bottomPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Bottom", 0);
+	_hlLeftPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.hlLeftPadding", 0);
+	_hlRightPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.hlRightPadding", 0);
 
 	if (g_gui.getWidgetSize() == kBigWidgetSize) {
 		_scrollBarWidth =  kBigScrollBarWidth;
@@ -493,7 +497,19 @@ void ListWidget::reflowLayout() {
 		_scrollBarWidth = kNormalScrollBarWidth;
 	}
 
-	_entriesPerPage = (_h - _topPadding - _bottomPadding) / kLineHeight;
+	// HACK: Once we take padding into account, there are times where
+	// integer rounding leaves a big chunk of white space in the bottom
+	// of the list.
+	// We do a rough rounding on the decimal places of Entries Per Page,
+	// to add another entry even if it goes a tad over the padding.
+	_entriesPerPage = ((_h - _topPadding - _bottomPadding) << 16) / kLineHeight;
+	
+	if ((uint)(_entriesPerPage & 0xFFFF) >= 0xF000)
+		_entriesPerPage += (1 << 16);
+
+	_entriesPerPage >>= 16;
+	
+	assert(_entriesPerPage > 0);
 
 	delete[] _textWidth;
 	_textWidth = new int[_entriesPerPage];

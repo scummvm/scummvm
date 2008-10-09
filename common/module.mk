@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	system.o \
 	unarj.o \
 	unzip.o \
+	xmlparser.o \
 	zlib.o
 
 # Include common rules

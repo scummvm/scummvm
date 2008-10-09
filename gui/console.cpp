@@ -24,7 +24,7 @@
 
 #include "gui/console.h"
 #include "gui/ScrollBarWidget.h"
-#include "gui/eval.h"
+#include "gui/ThemeEval.h"
 
 #include "engines/engine.h"
 #include "base/version.h"
@@ -97,17 +97,14 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 void ConsoleDialog::init() {
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
-	int f = g_gui.evaluator()->getVar("Console.font");
 
-	if (f == EVAL_UNDEF_VAR)
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
-	else
-		_font = g_gui.theme()->getFont((Theme::FontStyle)f);
+	_font = FontMan.getFontByUsage((Graphics::FontManager::FontUsage)
+		g_gui.xmlEval()->getVar("Console.Font", Graphics::FontManager::kConsoleFont));
 
-	_leftPadding = g_gui.evaluator()->getVar("Console.leftPadding", 0);
-	_rightPadding = g_gui.evaluator()->getVar("Console.rightPadding", 0);
-	_topPadding = g_gui.evaluator()->getVar("Console.topPadding", 0);
-	_bottomPadding = g_gui.evaluator()->getVar("Console.bottomPadding", 0);
+	_leftPadding = g_gui.xmlEval()->getVar("Globals.Console.Padding.Left", 0);
+	_rightPadding = g_gui.xmlEval()->getVar("Globals.Console.Padding.Right", 0);
+	_topPadding = g_gui.xmlEval()->getVar("Globals.Console.Padding.Top", 0);
+	_bottomPadding = g_gui.xmlEval()->getVar("Globals.Console.Padding.Bottom", 0);
 
 	// Calculate the real width/height (rounded to char/line multiples)
 	_w = (uint16)(_widthPercent * screenW);
@@ -121,8 +118,6 @@ void ConsoleDialog::init() {
 	else
 		scrollBarWidth = kNormalScrollBarWidth;
 	_scrollBar->resize(_w - scrollBarWidth - 1, 0, scrollBarWidth, _h);
-
-	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 
 	_pageWidth = (_w - scrollBarWidth - 2 - _leftPadding - _topPadding - scrollBarWidth) / kConsoleCharWidth;
 	_linesPerPage = (_h - 2 - _topPadding - _bottomPadding) / kConsoleLineHeight;
@@ -154,8 +149,6 @@ void ConsoleDialog::open() {
 	if (_w != w || _h != h)
 		init();
 
-	_drawingHints |= THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
-
 	_y = -_h;
 	_slideTime = g_system->getMillis();
 	_slideMode = kDownSlideMode;
@@ -172,7 +165,7 @@ void ConsoleDialog::close() {
 }
 
 void ConsoleDialog::drawDialog() {
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _drawingHints);
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _backgroundType);
 	// FIXME: for the old theme the frame around the console vanishes
 	// when any action is processed if we enable this
 	// _drawingHints &= ~THEME_HINT_FIRST_DRAW;
@@ -231,7 +224,6 @@ void ConsoleDialog::handleTickle() {
 
 	// Perform the "slide animation".
 	if (_slideMode != kNoSlideMode) {
-		_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 		const float tmp = (float)(g_system->getMillis() - _slideTime) / kConsoleSlideDownDuration;
 		if (_slideMode == kUpSlideMode) {
 			_y = (int)(_h * (0.0 - tmp));

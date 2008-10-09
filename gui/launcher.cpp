@@ -35,7 +35,6 @@
 #include "gui/about.h"
 #include "gui/browser.h"
 #include "gui/chooser.h"
-#include "gui/eval.h"
 #include "gui/launcher.h"
 #include "gui/massadd.h"
 #include "gui/message.h"
@@ -50,6 +49,7 @@
 
 #include "sound/mididrv.h"
 
+#include "gui/ThemeEval.h"
 
 
 using Common::ConfigManager;
@@ -148,9 +148,9 @@ protected:
 };
 
 EditGameDialog::EditGameDialog(const String &domain, const String &desc)
-	: OptionsDialog(domain, "gameoptions") {
+	: OptionsDialog(domain, "GameOptions") {
 
-	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
+	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
 	String gamePath(ConfMan.get("path", _domain));
@@ -164,8 +164,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// GUI:  Add tab widget
-	TabWidget *tab = new TabWidget(this, "gameoptions_tabwidget");
-	tab->setHints(THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND);
+	TabWidget *tab = new TabWidget(this, "GameOptions.TabWidget");
 
 	//
 	// 1) The game tab
@@ -173,15 +172,15 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	tab->addTab("Game");
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, "gameoptions_id", "ID:");
-	_domainWidget = new DomainEditTextWidget(tab, "gameoptions_domain", _domain);
+	new StaticTextWidget(tab, "GameOptions_Game.Id", "ID:");
+	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain);
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, "gameoptions_name", "Name:");
-	_descriptionWidget = new EditTextWidget(tab, "gameoptions_desc", description);
+	new StaticTextWidget(tab, "GameOptions_Game.Name", "Name:");
+	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description);
 
 	// Language popup
-	_langPopUp = new PopUpWidget(tab, "gameoptions_lang", "Language:", labelWidth);
+	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.Lang", "Language:", labelWidth);
 	_langPopUp->appendEntry("<default>");
 	_langPopUp->appendEntry("");
 	const Common::LanguageDescription *l = Common::g_languages;
@@ -190,7 +189,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// Platform popup
-	_platformPopUp = new PopUpWidget(tab, "gameoptions_platform", "Platform:", labelWidth);
+	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.Platform", "Platform:", labelWidth);
 	_platformPopUp->appendEntry("<default>");
 	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;
@@ -201,39 +200,39 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 3) The graphics tab
 	//
-	tab->addTab("Graphics");
+	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
 
-	_globalGraphicsOverride = new CheckboxWidget(tab, "gameoptions_graphicsCheckbox", "Override global graphic settings", kCmdGlobalGraphicsOverride, 0);
+	_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", "Override global graphic settings", kCmdGlobalGraphicsOverride, 0);
 
-	addGraphicControls(tab, "gameoptions_");
+	addGraphicControls(tab, "GameOptions_Graphics.");
 
 	//
 	// 4) The audio tab
 	//
 	tab->addTab("Audio");
 
-	_globalAudioOverride = new CheckboxWidget(tab, "gameoptions_audioCheckbox", "Override global audio settings", kCmdGlobalAudioOverride, 0);
+	_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", "Override global audio settings", kCmdGlobalAudioOverride, 0);
 
-	addAudioControls(tab, "gameoptions_");
-	addSubtitleControls(tab, "gameoptions_");
+	addAudioControls(tab, "GameOptions_Audio.");
+	addSubtitleControls(tab, "GameOptions_Audio.");
 
 	//
 	// 5) The volume tab
 	//
 	tab->addTab("Volume");
 
-	_globalVolumeOverride = new CheckboxWidget(tab, "gameoptions_volumeCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
+	_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
 
-	addVolumeControls(tab, "gameoptions_");
+	addVolumeControls(tab, "GameOptions_Volume.");
 
 	//
 	// 6) The MIDI tab
 	//
 	tab->addTab("MIDI");
 
-	_globalMIDIOverride = new CheckboxWidget(tab, "gameoptions_midiCheckbox", "Override global MIDI settings", kCmdGlobalMIDIOverride, 0);
+	_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", "Override global MIDI settings", kCmdGlobalMIDIOverride, 0);
 
-	addMIDIControls(tab, "gameoptions_");
+	addMIDIControls(tab, "GameOptions_MIDI.");
 
 	//
 	// 2) The 'Path' tab
@@ -244,35 +243,36 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// in the small version of the GUI.
 
 	// GUI:  Button + Label for the game path
-	new ButtonWidget(tab, "gameoptions_gamepath", "Game Path:", kCmdGameBrowser, 0);
-	_gamePathWidget = new StaticTextWidget(tab, "gameoptions_gamepathText", gamePath);
+	new ButtonWidget(tab, "GameOptions_Paths.Gamepath", "Game Path:", kCmdGameBrowser, 0);
+	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
-	new ButtonWidget(tab, "gameoptions_extrapath", "Extra Path:", kCmdExtraBrowser, 0);
-	_extraPathWidget = new StaticTextWidget(tab, "gameoptions_extrapathText", extraPath);
+	new ButtonWidget(tab, "GameOptions_Paths.Extrapath", "Extra Path:", kCmdExtraBrowser, 0);
+	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath);
 	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
 		_extraPathWidget->setLabel("None");
 	}
 
 	// GUI:  Button + Label for the save path
-	new ButtonWidget(tab, "gameoptions_savepath", "Save Path:", kCmdSaveBrowser, 0);
-	_savePathWidget = new StaticTextWidget(tab, "gameoptions_savepathText", savePath);
+	new ButtonWidget(tab, "GameOptions_Paths.Savepath", "Save Path:", kCmdSaveBrowser, 0);
+	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath);
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
 	}
-
+	
 	// Activate the first tab
 	tab->setActiveTab(0);
+	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
-	new ButtonWidget(this, "gameoptions_cancel", "Cancel", kCloseCmd, 0);
-	new ButtonWidget(this, "gameoptions_ok", "OK", kOKCmd, 0);
+	new ButtonWidget(this, "GameOptions.Cancel", "Cancel", kCloseCmd, 0);
+	new ButtonWidget(this, "GameOptions.Ok", "OK", kOKCmd, 0);
 }
 
 void EditGameDialog::reflowLayout() {
 	OptionsDialog::reflowLayout();
 
-	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
+	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
 
 	if (_langPopUp)
 		_langPopUp->changeLabelWidth(labelWidth);
@@ -513,17 +513,18 @@ public:
 };
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
-	: Dialog("scummsaveload"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
+	: Dialog("ScummSaveLoad"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
 	_delSupport = _metaInfoSupport = _thumbnailSupport = _saveDateSupport = _playTimeSupport = false;
 
-	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
+//	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
+	_backgroundType = Theme::kDialogBackgroundDefault;
 
-	new StaticTextWidget(this, "scummsaveload_title", title);
+	new StaticTextWidget(this, "ScummSaveLoad.Title", title);
 
 	// Add choice list
-	_list = new GUI::ListWidget(this, "scummsaveload_list");
+	_list = new GUI::ListWidget(this, "ScummSaveLoad.List");
 	_list->setNumberingMode(GUI::kListNumberingOff);
-
+	
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 
 	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", kTextAlignCenter);
@@ -531,17 +532,17 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", kTextAlignCenter);
 
 	// Buttons
-	new GUI::ButtonWidget(this, "scummsaveload_cancel", "Cancel", kCloseCmd, 0);
-	_chooseButton = new GUI::ButtonWidget(this, "scummsaveload_choose", buttonLabel, kChooseCmd, 0);
+	new GUI::ButtonWidget(this, "ScummSaveLoad.Cancel", "Cancel", kCloseCmd, 0);
+	_chooseButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
 
-	_deleteButton = new GUI::ButtonWidget(this, "scummsaveload_delete", "Delete", kDelCmd, 0);
+	_deleteButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Delete", "Delete", kDelCmd, 0);
 	_deleteButton->setEnabled(false);
 
 	_delSupport = _metaInfoSupport = _thumbnailSupport = false;
 
 	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
-	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
+//	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
 }
 
 SaveLoadChooser::~SaveLoadChooser() {
@@ -609,26 +610,26 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 }
 
 void SaveLoadChooser::reflowLayout() {
-	if (g_gui.evaluator()->getVar("scummsaveload_extinfo.visible") == 1 && _thumbnailSupport) {
-		int thumbX = g_gui.evaluator()->getVar("scummsaveload_thumbnail.x");
-		int thumbY = g_gui.evaluator()->getVar("scummsaveload_thumbnail.y");
-		int hPad = g_gui.evaluator()->getVar("scummsaveload_thumbnail.hPad");
-		int vPad = g_gui.evaluator()->getVar("scummsaveload_thumbnail.vPad");
+	if (g_gui.xmlEval()->getVar("Globals.ScummSaveLoad.ExtInfo.Visible") == 1 && _thumbnailSupport) {
+		int16 x, y;
+		uint16 w, h;
+		
+		if (!g_gui.xmlEval()->getWidgetData("ScummSaveLoad.Thumbnail", x, y, w, h))
+			error("Error when loading position data for Save/Load Thumbnails.");
+			
+		int thumbW = kThumbnailWidth;	
 		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
+		int thumbX = x + (w >> 1) - (thumbW >> 1);
+		int thumbY = y + kLineHeight;
 
 		int textLines = 0;
-		if (_saveDateSupport)
-			textLines += 2;
-		if (_playTimeSupport)
-			textLines += 1;
+		if (!_saveDateSupport)
+			textLines++;
+		if (!_playTimeSupport)
+			textLines++;
 
-		if (textLines)
-			++textLines;
-
-		_container->resize(thumbX - hPad, thumbY - vPad, kThumbnailWidth + hPad * 2, thumbH + vPad * 2 + kLineHeight * textLines);
-
-		// Add the thumbnail display
-		_gfxWidget->resize(thumbX, thumbY, kThumbnailWidth, thumbH);
+		_container->resize(x, y, w, h - (kLineHeight * textLines));
+		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH); 
 
 		int height = thumbY + thumbH + kLineHeight;
 
@@ -658,9 +659,9 @@ void SaveLoadChooser::reflowLayout() {
 		else
 			_playtime->setFlags(GUI::WIDGET_INVISIBLE);
 
-		_fillR = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
-		_fillG = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
-		_fillB = g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillB");
+		_fillR = 0;
+		_fillG = 0;
+		_fillB = 0;
 		updateSelection(false);
 	} else {
 		_container->setFlags(GUI::WIDGET_INVISIBLE);
@@ -765,7 +766,7 @@ void SaveLoadChooser::updateSaveList() {
 
 LauncherDialog::LauncherDialog()
 	: Dialog(0, 0, 320, 200) {
-	_drawingHints |= THEME_HINT_MAIN_DIALOG;
+	_backgroundType = GUI::Theme::kDialogBackgroundMain;
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
@@ -775,39 +776,39 @@ LauncherDialog::LauncherDialog()
 
 #ifndef DISABLE_FANCY_THEMES
 	_logo = 0;
-	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1 && g_gui.theme()->supportsImages()) {
-		_logo = new GraphicsWidget(this, "launcher_logo");
+	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
+		_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(Theme::kImageLogo));
 
-		new StaticTextWidget(this, "launcher_version", gScummVMVersionDate);
+		new StaticTextWidget(this, "Launcher.Version", gScummVMVersionDate);
 	} else
-		new StaticTextWidget(this, "launcher_version", gScummVMFullVersion);
+		new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
 #else
 	// Show ScummVM version
-	new StaticTextWidget(this, "launcher_version", gScummVMFullVersion);
+	new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
 #endif
 
-	new ButtonWidget(this, "launcher_quit_button", "Quit", kQuitCmd, 'Q');
-	new ButtonWidget(this, "launcher_about_button", "About", kAboutCmd, 'B');
-	new ButtonWidget(this, "launcher_options_button", "Options", kOptionsCmd, 'O');
+	new ButtonWidget(this, "Launcher.QuitButton", "Quit", kQuitCmd, 'Q');
+	new ButtonWidget(this, "Launcher.AboutButton", "About", kAboutCmd, 'B');
+	new ButtonWidget(this, "Launcher.OptionsButton", "Options", kOptionsCmd, 'O');
 	_startButton =
-			new ButtonWidget(this, "launcher_start_button", "Start", kStartCmd, 'S');
+			new ButtonWidget(this, "Launcher.StartButton", "Start", kStartCmd, 'S');
 
 	_loadButton =
-		new ButtonWidget(this, "launcher_loadGame_button", "Load", kLoadGameCmd, 'L');
+		new ButtonWidget(this, "Launcher.LoadGameButton", "Load", kLoadGameCmd, 'L');
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	_addButton =
-		new ButtonWidget(this, "launcher_addGame_button", "Add Game...", kAddGameCmd, 'A');
+		new ButtonWidget(this, "Launcher.AddGameButton", "Add Game...", kAddGameCmd, 'A');
 	_editButton =
-		new ButtonWidget(this, "launcher_editGame_button", "Edit Game...", kEditGameCmd, 'E');
+		new ButtonWidget(this, "Launcher.EditGameButton", "Edit Game...", kEditGameCmd, 'E');
 	_removeButton =
-		new ButtonWidget(this, "launcher_removeGame_button", "Remove Game", kRemoveGameCmd, 'R');
+		new ButtonWidget(this, "Launcher.RemoveGameButton", "Remove Game", kRemoveGameCmd, 'R');
 
 
 	// Add list with game titles
-	_list = new ListWidget(this, "launcher_list");
+	_list = new ListWidget(this, "Launcher.GameList");
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 
@@ -1218,21 +1219,21 @@ void LauncherDialog::updateButtons() {
 
 void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES
-	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1 && g_gui.theme()->supportsImages()) {
-		StaticTextWidget *ver = (StaticTextWidget*)findWidget("launcher_version");
+	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
+		StaticTextWidget *ver = (StaticTextWidget*)findWidget("Launcher.Version");
 		if (ver) {
-			ver->setAlign((Graphics::TextAlignment)g_gui.evaluator()->getVar("launcher_version.align"));
+			ver->setAlign((Graphics::TextAlignment)g_gui.xmlEval()->getVar("Launcher.Version.Align", Graphics::kTextAlignCenter));
 			ver->setLabel(gScummVMVersionDate);
 		}
 
 		if (!_logo)
-			_logo = new GraphicsWidget(this, "launcher_logo");
+			_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(Theme::kImageLogo));
 	} else {
-		StaticTextWidget *ver = (StaticTextWidget*)findWidget("launcher_version");
+		StaticTextWidget *ver = (StaticTextWidget*)findWidget("Launcher.Version");
 		if (ver) {
-			ver->setAlign((Graphics::TextAlignment)g_gui.evaluator()->getVar("launcher_version.align"));
+			ver->setAlign((Graphics::TextAlignment)g_gui.xmlEval()->getVar("Launcher.Version.Align", Graphics::kTextAlignCenter));
 			ver->setLabel(gScummVMFullVersion);
 		}
 
