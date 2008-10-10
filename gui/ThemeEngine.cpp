@@ -47,7 +47,7 @@ using namespace Graphics;
 
 const char *ThemeEngine::rendererModeLabels[] = {
 	"Disabled GFX",
-	"Stardard Renderer (16bpp)",
+	"Standard Renderer (16bpp)",
 	"Antialiased Renderer (16bpp)"
 };
 
