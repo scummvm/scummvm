@@ -189,28 +189,20 @@ public:
 	 * @param filename Name of the file to load.
 	 */
 	bool loadFile(const Common::String &filename) {
-		Common::File *f = new Common::File;
-
-		if (!f->open(filename)) {
-			delete f;
+		_stream = SearchMan.openFile(filename);
+		if (!_stream)
 			return false;
-		}
 
 		_fileName = filename;
-		_stream = f;
 		return true;
 	}
 	
 	bool loadFile(const FSNode &node) {
-		Common::File *f = new Common::File;
-		
-		if (!f->open(node)) {
-			delete f;
+		_stream = node.openForReading();
+		if (!_stream)
 			return false;
-		}
 		
 		_fileName = node.getName();
-		_stream = f;
 		return true;
 	}
 
@@ -238,10 +230,8 @@ public:
 	}
 	
 	void close() {
-		if (_stream) {
-			delete _stream;
-			_stream = 0;
-		}
+		delete _stream;
+		_stream = 0;
 	}
 
 	/**
