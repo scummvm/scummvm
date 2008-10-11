@@ -214,6 +214,10 @@ void Parallaction_ns::freeFonts() {
 	delete _menuFont;
 	delete _introFont;
 
+	_menuFont  = 0;
+	_dialogueFont = 0;
+	_labelFont = 0;
+	_introFont = 0;
 }
 
 

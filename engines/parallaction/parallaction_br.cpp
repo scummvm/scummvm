@@ -131,11 +131,13 @@ int Parallaction_br::go() {
 
 
 void Parallaction_br::freeFonts() {
-
 	delete _menuFont;
 	delete _dialogueFont;
 
-	return;
+	_menuFont  = 0;
+	_dialogueFont = 0;
+	_labelFont = 0;
+	_introFont = 0;
 }
 
 
