@@ -472,12 +472,12 @@ bool ThemeEngine::loadTheme(Common::String fileName) {
 
 	if (fileName == "builtin") {
 		if (!loadDefaultXML())
-			error("Could not load default embeded theme");
+			error("Could not load default embedded theme");
 	} else if (!loadThemeXML(fileName)) {
 		warning("Could not parse custom theme '%s'. Falling back to default theme", fileName.c_str());
 		
-		if (!loadDefaultXML()) // if we can't load the embeded theme, this is a complete failure
-			error("Could not load default embeded theme");
+		if (!loadDefaultXML()) // if we can't load the embedded theme, this is a complete failure
+			error("Could not load default embedded theme");
 	}
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
