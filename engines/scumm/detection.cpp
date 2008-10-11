@@ -212,11 +212,11 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 	// ever determine that this is insufficient, we can still
 	// switch to MD5 based detection).
 	const char *filename = (id == GID_CMI) ? "LANGUAGE.TAB" : "LANGUAGE.BND";
-	Common::FilePtr tmp;
+	Common::File tmp;
 	Common::FSNode langFile;
 	if (searchFSNode(fslist, filename, langFile))
-		tmp = Common::FilePtr(langFile.openForReading());
-	if (!tmp) {
+		tmp.open(langFile);
+	if (!tmp.isOpen()) {
 		// try loading in RESOURCE sub dir...
 		Common::FSNode resDir;
 		Common::FSList tmpList;
@@ -224,11 +224,11 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 			&& resDir.isDirectory()
 			&& resDir.getChildren(tmpList, Common::FSNode::kListFilesOnly)
 			&& searchFSNode(tmpList, filename, langFile)) {
-			tmp = Common::FilePtr(langFile.openForReading());
+			tmp.open(langFile);
 		}
 	}
-	if (tmp) {
-		uint size = tmp->size();
+	if (tmp.isOpen()) {
+		uint size = tmp.size();
 		if (id == GID_CMI) {
 			switch (size) {
 			case 439080:	// 2daf3db71d23d99d19fc9a544fcf6431
@@ -453,8 +453,8 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 	// To do this, we take a close look at the detection file and
 	// try to filter out some cases.
 
-	Common::FilePtr tmp(d.node.openForReading());
-	if (!tmp) {
+	Common::File tmp;
+	if (!tmp.open(d.node)) {
 		warning("SCUMM testGame: failed to open '%s' for read access", d.node.getPath().c_str());
 		return false;
 	}
@@ -468,7 +468,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 
 		// Read a few bytes to narrow down the game.
 		byte buf[6];
-		tmp->read(buf, 6);
+		tmp.read(buf, 6);
 
 		if (buf[0] == 0xbc && buf[1] == 0xb9) {
 			// The NES version of MM

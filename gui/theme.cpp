@@ -140,8 +140,9 @@ bool Theme::themeConfigUseable(const Common::FSNode &node, Common::String &theme
 #ifdef USE_ZLIB
 		Common::ZipArchive zipArchive(node);
 		if (zipArchive.hasFile("THEMERC")) {
-			Common::FilePtr stream(zipArchive.openFile("THEMERC"));
-			stxHeader = stream->readLine();
+			Common::File stream;
+			stream.open("THEMERC", zipArchive);
+			stxHeader = stream.readLine();
 			// TODO: Read first line of file. How?
 			if (themeConfigParseHeader(stxHeader.c_str(), themeName))
 				foundHeader = true;
