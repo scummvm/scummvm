@@ -334,9 +334,9 @@ public:
 	 * @see kThemeImages
 	 */
 	virtual const Graphics::Surface *getImageSurface(const kThemeImages n) const { return 0; }
-protected:
 
-	const Graphics::Font *loadFont(const char *filename);
+protected:
+	const Graphics::Font *loadFont(const Common::String &filename);
 	Common::String genCacheFilename(const char *filename);
 
 public:
@@ -344,7 +344,6 @@ public:
 									 (_loadedThemeY != g_system->getOverlayHeight())); }
 
 private:
-	static const char *_defaultConfigINI;
 	int _loadedThemeX, _loadedThemeY;
 };
 } // end of namespace GUI

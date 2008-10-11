@@ -411,7 +411,7 @@ bool ThemeEngine::addFont(const Common::String &fontId, const Common::String &fi
 		_texts[textId]->_fontPtr = FontMan.getFontByName(file);
 
 		if (!_texts[textId]->_fontPtr) {
-			_texts[textId]->_fontPtr = loadFont(file.c_str());
+			_texts[textId]->_fontPtr = loadFont(file);
 			
 			if (!_texts[textId]->_fontPtr)
 				error("Couldn't load %s font '%s'", fontId.c_str(), file.c_str());
@@ -473,8 +473,7 @@ bool ThemeEngine::loadTheme(Common::String fileName) {
 	if (fileName == "builtin") {
 		if (!loadDefaultXML())
 			error("Could not load default embeded theme");
-	}
-	else if (!loadThemeXML(fileName)) {
+	} else if (!loadThemeXML(fileName)) {
 		warning("Could not parse custom theme '%s'. Falling back to default theme", fileName.c_str());
 		
 		if (!loadDefaultXML()) // if we can't load the embeded theme, this is a complete failure
@@ -545,7 +544,7 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 	
 		if (zipFile.isOpen() && zipFile.listMembers(zipContents)) {
 			for (Common::ArchiveMemberList::iterator za = zipContents.begin(); za != zipContents.end(); ++za) {
-				if (!failed && matchString((*za)->getName().c_str(), "*.stx")) {	
+				if (!failed && (*za)->getName().hasSuffix(".stx")) {
 					if (parser()->loadStream((*za)->open()) == false) {
 						warning("Failed to load stream for zipped file '%s'", fileNameBuffer);
 						failed = true;
@@ -562,7 +561,7 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 					Common::SeekableReadStream *stream = (*za)->open();
 					stxHeader = stream->readLine();
 				
-					if (!themeConfigParseHeader(stxHeader.c_str(), _themeName)) {
+					if (!themeConfigParseHeader(stxHeader, _themeName)) {
 						warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
 						failed = true;
 					}
@@ -601,7 +600,7 @@ bool ThemeEngine::loadThemeXML(Common::String themeName) {
 					f.open(*i);
 					stxHeader = f.readLine();
 
-					if (!themeConfigParseHeader(stxHeader.c_str(), _themeName)) {
+					if (!themeConfigParseHeader(stxHeader, _themeName)) {
 						warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
 						failed = true;
 					}

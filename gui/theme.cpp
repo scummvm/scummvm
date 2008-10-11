@@ -33,9 +33,9 @@ Theme::Theme() : _loadedThemeX(0), _loadedThemeY(0) {}
 
 Theme::~Theme() {}
 
-const Graphics::Font *Theme::loadFont(const char *filename) {
+const Graphics::Font *Theme::loadFont(const Common::String &filename) {
 	const Graphics::NewFont *font = 0;
-	Common::String cacheFilename = genCacheFilename(filename);
+	Common::String cacheFilename = genCacheFilename(filename.c_str());
 	Common::File fontFile;
 
 	if (!cacheFilename.empty()) {
@@ -45,7 +45,7 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 			return font;
 
 #ifdef USE_ZLIB
-		Common::ZipArchive zipArchive(getThemeFileName().c_str());
+		Common::ZipArchive zipArchive(getThemeFileName());
 		Common::SeekableReadStream *stream(zipArchive.openFile(cacheFilename));
 		if (stream) {
 			font = Graphics::NewFont::loadFromCache(*stream);
@@ -63,7 +63,7 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 
 #ifdef USE_ZLIB
 	if (!font) {
-		Common::ZipArchive zipArchive(getThemeFileName().c_str());
+		Common::ZipArchive zipArchive(getThemeFileName());
 		
 		Common::SeekableReadStream *stream(zipArchive.openFile(filename));
 		if (stream) {
@@ -76,7 +76,7 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 	if (font) {
 		if (!cacheFilename.empty()) {
 			if (!Graphics::NewFont::cacheFontData(*font, cacheFilename)) {
-				warning("Couldn't create cache file for font '%s'", filename);
+				warning("Couldn't create cache file for font '%s'", filename.c_str());
 			}
 		}
 	}
@@ -133,35 +133,26 @@ bool Theme::themeConfigParseHeader(Common::String header, Common::String &themeN
 }
 
 bool Theme::themeConfigUseable(const Common::FSNode &node, Common::String &themeName) {
-	Common::String stxHeader;
+	Common::File stream;
 	bool foundHeader = false;
 		
 	if (node.getName().hasSuffix(".zip")) {
 #ifdef USE_ZLIB
 		Common::ZipArchive zipArchive(node);
 		if (zipArchive.hasFile("THEMERC")) {
-			Common::File stream;
 			stream.open("THEMERC", zipArchive);
-			stxHeader = stream.readLine();
-			// TODO: Read first line of file. How?
-			if (themeConfigParseHeader(stxHeader.c_str(), themeName))
-				foundHeader = true;
 		}
-#else
-		return false;
 #endif
-
 	} else if (node.isDirectory()) {			
 		Common::FSNode headerfile = node.getChild("THEMERC");
 		if (!headerfile.exists() || !headerfile.isReadable() || headerfile.isDirectory())
 			return false;
-			
-		// TODO: File or FilePtr?
-		Common::File f;
-		f.open(headerfile);
-		stxHeader = f.readLine();
-		if (themeConfigParseHeader(stxHeader.c_str(), themeName))
-			foundHeader = true;
+		stream.open(headerfile);
+	}
+	
+	if (stream.isOpen()) {
+		Common::String stxHeader = stream.readLine();
+		foundHeader = themeConfigParseHeader(stxHeader, themeName);
 	}
 
 	return foundHeader;
