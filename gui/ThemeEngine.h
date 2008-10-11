@@ -144,8 +144,6 @@ protected:
 
 class ThemeEngine : public Theme {
 protected:
-	typedef Common::String String;
-	typedef GUI::Dialog Dialog;
 	typedef Common::HashMap<Common::String, Graphics::Surface*> ImagesMap;
 
 	friend class GUI::Dialog;
@@ -458,11 +456,6 @@ public:
 	 */
 	bool addTextData(const Common::String &drawDataId, const Common::String &textDataId, TextAlign alignH, TextAlignVertical alignV);
 
-	/** Interface to the new Theme XML parser */
-	ThemeParser *parser() {
-		return _parser;
-	}
-
 	/**
 	 *	Returns if the Theme is ready to draw stuff on screen.
 	 *	Must be called instead of just checking _initOk, because
@@ -559,12 +552,12 @@ protected:
 	 *	Note that ThemeName is an identifier, not a filename.
 	 *
 	 *	@param ThemeName Theme identifier.
-	 *	@returns True if the theme was succesfully loaded.
+	 *	@returns true if the theme was successfully loaded.
 	 */
-	bool loadThemeXML(Common::String themeName);
+	bool loadThemeXML(const Common::String &themeName);
 	
 	/**
-	 *	Loads the default theme file (the embeded XML file found
+	 *	Loads the default theme file (the embedded XML file found
 	 *	in ThemeDefaultXML.cpp).
 	 *	Called only when no other themes are available.
 	 */

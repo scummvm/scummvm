@@ -508,14 +508,14 @@ bool ThemeEngine::loadDefaultXML() {
 #include "themes/default.inc"
 	;
 	
-	if (!parser()->loadBuffer((const byte*)defaultXML, strlen(defaultXML), false))
+	if (!_parser->loadBuffer((const byte*)defaultXML, strlen(defaultXML), false))
 		return false;
 		
 	_themeName = "ScummVM Classic Theme (Builtin Version)";
 	_themeFileName = "builtin";
 
-	result = parser()->parse();
-	parser()->close();
+	result = _parser->parse();
+	_parser->close();
 	
 	return result;
 #else
@@ -524,94 +524,71 @@ bool ThemeEngine::loadDefaultXML() {
 #endif
 }
 
-bool ThemeEngine::loadThemeXML(Common::String themeName) {
+bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 	assert(_parser);
 	_themeName.clear();
-	
-	char fileNameBuffer[32];
-	Common::String stxHeader;
-	int parseCount = 0;
-	bool failed = false;
 	
 	FSNode node(themeName);
 	if (!node.exists() || !node.isReadable())
 		return false;
-	
+
+	Common::ArchivePtr archive;
+
+	if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
 #ifdef USE_ZLIB
-	if (node.getPath().hasSuffix(".zip") && !node.isDirectory()) {
-		Common::ZipArchive zipFile(node);
-		Common::ArchiveMemberList zipContents;
-	
-		if (zipFile.isOpen() && zipFile.listMembers(zipContents)) {
-			for (Common::ArchiveMemberList::iterator za = zipContents.begin(); za != zipContents.end(); ++za) {
-				if (!failed && (*za)->getName().hasSuffix(".stx")) {
-					if (parser()->loadStream((*za)->open()) == false) {
-						warning("Failed to load stream for zipped file '%s'", fileNameBuffer);
-						failed = true;
-					}
-				
-					if (parser()->parse() == false) {
-						warning("Theme parsing failed on zipped file '%s'.", fileNameBuffer);
-						failed = true;
-					}
-				
-					parser()->close();
-					parseCount++;
-				} else if ((*za)->getName() == "THEMERC") {
-					Common::SeekableReadStream *stream = (*za)->open();
-					stxHeader = stream->readLine();
-				
-					if (!themeConfigParseHeader(stxHeader, _themeName)) {
-						warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
-						failed = true;
-					}
-					
-					delete stream;
-				}
-			}
-		} else {
-			warning("Failed to open Zip archive '%s'.\n", themeName.c_str());
+		Common::ZipArchive *zipArchive = new Common::ZipArchive(node);
+		archive = Common::ArchivePtr(zipArchive);
+
+		if (!zipArchive || !zipArchive->isOpen()) {
+			warning("Failed to open Zip archive '%s'.", themeName.c_str());
 			return false;
 		}
-	} else {
+		
 #endif
-		if (node.isDirectory()) {
-			FSList fslist;
-			if (!node.getChildren(fslist, FSNode::kListFilesOnly))
-				return false;
-			
-			for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
-				if (!failed && i->getName().hasSuffix(".stx")) {
-					parseCount++;
-					
-					if (parser()->loadFile(*i) == false) {
-						warning("Failed to load STX file '%s'", i->getName().c_str());
-						failed = true;
-					}
-					
-					if (parser()->parse() == false) {
-						warning("Failed to parse STX file '%s'", i->getName().c_str());
-						failed = true;
-					}
-					
-					parser()->close();
-				} else if (i->getName() == "THEMERC") {
-					Common::File f;
-					f.open(*i);
-					stxHeader = f.readLine();
+	} else if (node.isDirectory()) {
+		archive = Common::ArchivePtr(new Common::FSDirectory(node));
+	}
 
-					if (!themeConfigParseHeader(stxHeader, _themeName)) {
-						warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
-						failed = true;
-					}
-				}
-			}
+	Common::File themercFile;
+	themercFile.open("THEMERC", *archive);
+	if (!themercFile.isOpen()) {
+		warning("Theme '%s' contains no 'THEMERC' file.", themeName.c_str());
+		return false;
+	}
+
+	Common::String stxHeader = themercFile.readLine();
+	if (!themeConfigParseHeader(stxHeader, _themeName) || _themeName.empty()) {
+		warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
+		return false;
+	}
+
+	Common::ArchiveMemberList members;
+	if (0 == archive->listMatchingMembers(members, "*.stx")) {
+		warning("Found no STX files for theme '%s'.", themeName.c_str());
+		return false;
+	}
+
+	// Loop over all STX files
+	for (Common::ArchiveMemberList::iterator i = members.begin(); i != members.end(); ++i) {
+		assert((*i)->getName().hasSuffix(".stx"));
+
+		if (_parser->loadStream((*i)->open()) == false) {
+			warning("Failed to load STX file '%s'", (*i)->getName().c_str());
+			_parser->close();
+			return false;
 		}
-#ifdef USE_ZLIB
-	}	
-#endif
+	
+		if (_parser->parse() == false) {
+			warning("Failed to parse STX file '%s'", (*i)->getName().c_str());
+			_parser->close();
+			return false;
+		}
+	
+		_parser->close();
+	}
 
-	return (parseCount > 0 && _themeName.empty() == false && failed == false);
+	assert(!_themeName.empty());
+	return true;
 }
 
 
