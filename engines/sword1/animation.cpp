@@ -184,7 +184,7 @@ bool MoviePlayer::load(uint32 id) {
 	if (SwordEngine::_systemVars.showText) {
 		sprintf(fileName, "%s.txt", sequenceList[id]);
 		if (f.open(fileName)) {
-			char line[120];
+			char line[240];
 			int lineNo = 0;
 			int lastEnd = -1;
 
