@@ -205,7 +205,7 @@ void M4Engine::eventHandler() {
 	uint32 keycode = 0;
 
 	if ((event = _events->handleEvents()) != MEVENT_NO_EVENT) {
-		if (_viewManager->viewCount() > 0)
+		if (_viewManager->containsViews())
 			_viewManager->handleMouseEvents(event);
 	}
 

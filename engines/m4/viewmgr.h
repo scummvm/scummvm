@@ -176,7 +176,7 @@ public:
 	}
 	bool contains(int screenType) { return getView(screenType) != NULL; }
 	View *getView(int screenType);
-	int viewCount() { return _views.size(); }
+	int containsViews() { return !_views.empty(); }
 
 	void showTextView(const char *textViewName, bool returnToMainMenu = true);
 	void showAnimView(const char *animViewName, bool returnToMainMenu = true);
