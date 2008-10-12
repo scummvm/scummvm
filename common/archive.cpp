@@ -71,7 +71,7 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern)
  */
 class FSDirectoryMember : public ArchiveMember {
 	FSNode 	_node;
-  
+
 public:
 	FSDirectoryMember(FSNode &node) : _node(node) {
 	}
@@ -98,11 +98,31 @@ FSDirectory::FSDirectory(const FSNode &node, int depth)
   : _node(node), _cached(false), _depth(depth) {
 }
 
+FSDirectory::FSDirectory(const String &prefix, const FSNode &node, int depth)
+  : _node(node), _cached(false), _depth(depth) {
+
+	setPrefix(prefix);
+}
+
 FSDirectory::FSDirectory(const String &name, int depth)
   : _node(name), _cached(false), _depth(depth) {
 }
 
+FSDirectory::FSDirectory(const String &prefix, const String &name, int depth)
+  : _node(name), _cached(false), _depth(depth) {
+
+	setPrefix(prefix);
+}
+
 FSDirectory::~FSDirectory() {
+}
+
+void FSDirectory::setPrefix(const String &prefix) {
+	_prefix = prefix;
+
+	if (!_prefix.empty() && !_prefix.hasSuffix("/")) {
+		_prefix += "/";
+	}
 }
 
 FSNode FSDirectory::getFSNode() const {
@@ -113,7 +133,7 @@ FSNode FSDirectory::lookupCache(NodeCache &cache, const String &name) {
 	// make caching as lazy as possible
 	if (!name.empty()) {
 		if (!_cached) {
-			cacheDirectoryRecursive(_node, _depth, "");
+			cacheDirectoryRecursive(_node, _depth, _prefix);
 			_cached = true;
 		}
 
@@ -157,12 +177,16 @@ SeekableReadStream *FSDirectory::openFile(const String &name) {
 }
 
 FSDirectory *FSDirectory::getSubDirectory(const String &name, int depth) {
+	return getSubDirectory(String::emptyString, name, depth);
+}
+
+FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &name, int depth) {
 	if (name.empty() || !_node.isDirectory()) {
 		return 0;
 	}
 
 	FSNode node = lookupCache(_subDirCache, name);
-	return new FSDirectory(node, depth);
+	return new FSDirectory(prefix, node, depth);
 }
 
 void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) {

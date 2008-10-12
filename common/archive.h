@@ -36,6 +36,14 @@
 
 namespace Common {
 
+/**
+ * ArchiveMember is an abstract interface to represent elements inside
+ * implementations of Archive.
+ *
+ * Archive subclasses must provide their own implementation of ArchiveMember,
+ * and use it when serving calls to listMembers() and listMatchingMembers().
+ * Alternatively, the GenericArchiveMember below can be used.
+ */
 class ArchiveMember {
 public:
 	virtual ~ArchiveMember() { }
@@ -48,7 +56,7 @@ typedef List<SharedPtr<ArchiveMember> > ArchiveMemberList;
 class Archive;
 
 /**
- * Simple ArchiveMemeber implementation which allows
+ * Simple ArchiveMember implementation which allows
  * creation of ArchiveMember compatible objects via
  * a simple Archive and name pair.
  *
@@ -65,11 +73,6 @@ public:
 	SeekableReadStream *open();
 };
 
-/**
- * FilePtr is a convenient way to keep track of a SeekableReadStream without
- * having to worry about releasing its memory.
- */
-typedef SharedPtr<SeekableReadStream> FilePtr;
 
 /**
  * Archive allows searches of (file)names into an arbitrary container.
@@ -116,13 +119,32 @@ typedef SharedPtr<Archive> ArchivePtr;
 
 /**
  * FSDirectory models a directory tree from the filesystem and allows users
- * to access it through the Archive interface. FSDirectory can represent a
- * single directory, or a tree with specified depth, rooted in a 'base'
- * directory.
- * Searching is case-insensitive, as the main intended goal is supporting
- * retrieval of game data. First case-insensitive match is returned when
- * searching, thus making FSDirectory heavily dependant on the underlying
- * FSNode implementation.
+ * to access it through the Archive interface. Searching is case-insensitive,
+ * since the intended goal is supporting retrieval of game data.
+ *
+ * FSDirectory can represent a single directory, or a tree with specified depth,
+ * depending on the value passed to the 'depth' parameter in the constructors.
+ * Filenames are cached with their relative path, with elements separated by
+ * backslashes, e.g.:
+ *
+ * c:\my\data\file.ext
+ *
+ * would be cached as 'data/file.ext' if FSDirectory was created on 'c:/my' with
+ * depth > 1. If depth was 1, then the 'data' subdirectory would have been
+ * ignored, instead.
+ * Again, only BACKSLASHES are used as separators independently from the
+ * underlying file system.
+ *
+ * Relative paths can be specified when calling matching functions like openFile(),
+ * hasFile(), listMatchingMembers() and listMembers(). Please see the function
+ * specific comments for more information.
+ *
+ * Client code can customize cache by using the constructors with the 'prefix'
+ * parameter. In this case, the prefix is prepended to each entry in the cache,
+ * and effectively treated as a 'virtual' parent subdirectory. FSDirectory adds
+ * a trailing backslash to prefix if needed. Following on with the previous example
+ * and using 'your' as prefix, the cache entry would have been 'your/data/file.ext'.
+ *
  */
 class FSDirectory : public Archive {
 	FSNode	_node;
@@ -131,6 +153,8 @@ class FSDirectory : public Archive {
 	// Key is stored in lowercase.
 	typedef HashMap<String, FSNode, IgnoreCase_Hash, IgnoreCase_EqualTo> NodeCache;
 	NodeCache	_fileCache, _subDirCache;
+	Common::String	_prefix;	// string that is prepended to each cache item key
+	void setPrefix(const String &prefix);
 
 	// look for a match
 	FSNode lookupCache(NodeCache &cache, const String &name);
@@ -143,15 +167,18 @@ class FSDirectory : public Archive {
 public:
 	/**
 	 * Create a FSDirectory representing a tree with the specified depth. Will result in an
-	 * unbound FSDirectory if name is not found on the filesystem or is not a directory.
+	 * unbound FSDirectory if name is not found on the filesystem or if the node is not a
+	 * valid directory.
 	 */
 	FSDirectory(const String &name, int depth = 1);
+	FSDirectory(const FSNode &node, int depth = 1);
 
 	/**
-	 * Create a FSDirectory representing a tree with the specified depth. Will result in an
-	 * unbound FSDirectory if node does not exist or is not a directory.
+	 * Create a FSDirectory representing a tree with the specified depth. The parameter
+	 * prefix is prepended to the keys in the cache. See class comment.
 	 */
-	FSDirectory(const FSNode &node, int depth = 1);
+	FSDirectory(const String &prefix, const String &name, int depth = 1);
+	FSDirectory(const String &prefix, const FSNode &node, int depth = 1);
 
 	virtual ~FSDirectory();
 
@@ -161,14 +188,33 @@ public:
 	FSNode getFSNode() const;
 
 	/**
-	 * Create a new FSDirectory pointing to a sub directory of the instance.
+	 * Create a new FSDirectory pointing to a sub directory of the instance. See class comment
+	 * for an explanation of the prefix parameter.
 	 * @return a new FSDirectory instance
 	 */
 	FSDirectory *getSubDirectory(const String &name, int depth = 1);
+	FSDirectory *getSubDirectory(const String &prefix, const String &name, int depth = 1);
 
+	/**
+	 * Checks for existence in the cache. A full match of relative path and filename is needed
+	 * for success.
+	 */
 	virtual bool hasFile(const String &name);
+
+	/**
+	 * Returns a list of matching file names. Pattern can use GLOB wildcards.
+	 */
 	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
+
+	/**
+	 * Returns a list of all the files in the cache.
+	 */
 	virtual int listMembers(ArchiveMemberList &list);
+
+	/**
+	 * Open the specified file. A full match of relative path and filename is needed
+	 * for success.
+	 */
 	virtual SeekableReadStream *openFile(const String &name);
 };
 
