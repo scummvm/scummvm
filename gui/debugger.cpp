@@ -410,7 +410,7 @@ bool Debugger::Cmd_DebugFlagsList(int argc, const char **argv) {
 
 	DebugPrintf("Engine debug levels:\n");
 	DebugPrintf("--------------------\n");
-	if (!debugLevels.size()) {
+	if (debugLevels.empty()) {
 		DebugPrintf("No engine debug levels\n");
 		return true;
 	}
