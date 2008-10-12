@@ -649,15 +649,15 @@ protected:
 	 *
 	 *	This function is called from all the Widget Drawing methods.
 	 */
-	inline void queueDD(DrawData type,  const Common::Rect &r, uint32 dynamic = 0);
-	inline void queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
+	void queueDD(DrawData type,  const Common::Rect &r, uint32 dynamic = 0);
+	void queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
 		bool elipsis, TextAlign alignH = kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0);
-	inline void queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha);
+	void queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha);
 	
 	/**
 	 *	DEBUG: Draws a white square around the given position and writes the given next to it.
 	 */
-	inline void debugWidgetPosition(const char *name, const Common::Rect &r);
+	void debugWidgetPosition(const char *name, const Common::Rect &r);
 
 	
 	/**
@@ -728,7 +728,7 @@ protected:
 	bool _useCursor;
 	int _cursorHotspotX, _cursorHotspotY;
 	int _cursorTargetScale;
-#define MAX_CURS_COLORS 255
+	enum { MAX_CURS_COLORS = 255 };
 	byte *_cursor;
 	bool _needPaletteUpdates;
 	uint _cursorWidth, _cursorHeight;
