@@ -31,10 +31,9 @@
 
 namespace Common {
 
-/*!		@brief simple class for handling both 2D position and size
-
-	This small class is an helper for position and size values.
-*/
+/**
+ * Simple class for handling both 2D position and size.
+ */
 struct Point {
 	int16 x;	//!< The horizontal part of the point
 	int16 y;	//!< The vertical part of the point
@@ -65,23 +64,23 @@ struct Point {
 	}
 };
 
-/*!		@brief simple class for handling a rectangular zone.
-
-	This small class is an helper for rectangles.
-	Note: This implementation is built around the assumption that (top,left) is
-	part of the rectangle, but (bottom,right) is not! This is reflected in
-	various methods, including contains(), intersects() and others.
-
-	Another very wide spread approach to rectangle classes treats (bottom,right)
-	also as a part of the rectangle.
-
-	Coneptually, both are sound, but the approach we use saves many intermediate
-	computations (like computing the height in our case is done by doing this:
-	  height = bottom - top;
-	while in the alternate system, it would be
-	  height = bottom - top + 1;
-
-	When writing code using our Rect class, always keep this principle in mind!
+/**
+ * Simple class for handling a rectangular zone.
+ *
+ * Note: This implementation is built around the assumption that (top,left) is
+ * part of the rectangle, but (bottom,right) is not. This is reflected in
+ * various methods, including contains(), intersects() and others.
+ *
+ * Another very wide spread approach to rectangle classes treats (bottom,right)
+ * also as a part of the rectangle.
+ *
+ * Conceptually, both are sound, but the approach we use saves many intermediate
+ * computations (like computing the height in our case is done by doing this:
+ *   height = bottom - top;
+ * while in the alternate system, it would be
+ *   height = bottom - top + 1;
+ *
+ * When writing code using our Rect class, always keep this principle in mind!
 */
 struct Rect {
 	int16 top, left;		//!< The point at the top left of the rectangle (part of the rect).
@@ -103,51 +102,56 @@ struct Rect {
 		bottom = top + aHeight;
 	}
 
-	/*!	@brief check if given position is inside this rectangle
-
-		@param x the horizontal position to check
-		@param y the vertical position to check
-
-		@return true if the given position is inside this rectangle, false otherwise
-	*/
+	/**
+	 * Check if given position is inside this rectangle.
+	 *
+	 * @param x the horizontal position to check
+	 * @param y the vertical position to check
+	 *
+	 * @return true if the given position is inside this rectangle, false otherwise
+	 */
 	bool contains(int16 x, int16 y) const {
 		return (left <= x) && (x < right) && (top <= y) && (y < bottom);
 	}
 
-	/*!	@brief check if given point is inside this rectangle
-
-		@param p the point to check
-
-		@return true if the given point is inside this rectangle, false otherwise
-	*/
+	/**
+	 * Check if given point is inside this rectangle.
+	 *
+	 * @param p the point to check
+	 *
+	 * @return true if the given point is inside this rectangle, false otherwise
+	 */
 	bool contains(const Point &p) const {
 		return contains(p.x, p.y);
 	}
 
-	/*! @brief check if the given rect is _fully_ contained inside this rectangle
-
-		@param r The rectangle to check
-
-		@retur true if the given rect is inside, false otherwise
-	*/
+	/**
+	 * Check if the given rect is _fully_ contained inside this rectangle.
+	 *
+	 * @param r The rectangle to check
+	 *
+	 * @return true if the given rect is inside, false otherwise
+	 */
 	bool contains(const Rect &r) const {
 		return (left < r.left) && (right > r.right) && (top < r.top) && (bottom > r.bottom);
 	}
 
-	/*!	@brief check if given rectangle intersects with this rectangle
-
-		@param r the rectangle to check
-
-		@return true if the given rectangle is inside the rectangle, false otherwise
-	*/
+	/**
+	 * Check if given rectangle intersects with this rectangle
+	 *
+	 * @param r the rectangle to check
+	 *
+	 * @return true if the given rectangle is inside the rectangle, false otherwise
+	 */
 	bool intersects(const Rect &r) const {
 		return (left < r.right) && (r.left < right) && (top < r.bottom) && (r.top < bottom);
 	}
 
-	/*!	@brief extend this rectangle so that it contains r
-
-		@param r the rectangle to extend by
-	*/
+	/**
+	 * Extend this rectangle so that it contains r
+	 *
+	 * @param r the rectangle to extend by
+	 */
 	void extend(const Rect &r) {
 		left = MIN(left, r.left);
 		right = MAX(right, r.right);
@@ -155,10 +159,11 @@ struct Rect {
 		bottom = MAX(bottom, r.bottom);
 	}
 
-	/*!	@brief extend this rectangle in all four directions by the given number of pixels
-
-		@param offset the size to grow by
-	*/
+	/**
+	 * Extend this rectangle in all four directions by the given number of pixels
+	 *
+	 * @param offset the size to grow by
+	 */
 	void grow(int16 offset) {
 		top -= offset;
 		left -= offset;
@@ -215,7 +220,9 @@ struct Rect {
 		debug(debuglevel, "%s %d, %d, %d, %d", caption, left, top, right, bottom);
 	}
 
-	/*! @brief create a rectangle around the given center */
+	/**
+	 * Create a rectangle around the given center.
+	 */
 	static Rect center(int16 cx, int16 cy, int16 w, int16 h) {
 		w /= 2;
 		h /= 2;
