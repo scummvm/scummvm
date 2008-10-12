@@ -271,8 +271,6 @@ protected:
 	Common::HashMap<Common::String, PaletteColor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _palette;
 };
 
-
-
-}
+} // End of namespace GUI
 
 #endif

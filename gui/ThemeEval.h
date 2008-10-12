@@ -109,7 +109,6 @@ private:
 	Common::String _curDialog;
 };
 
-
-}
+} // End of namespace GUI
 
 #endif

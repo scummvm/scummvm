@@ -303,7 +303,7 @@ public:
 
 
 	bool isThemeLoadingRequired();
-	virtual ThemeEval *evaluator() = 0;
+	virtual ThemeEval *getEvaluator() = 0;
 
 	static bool themeConfigUseable(const Common::FSNode &node, Common::String &themeName);
 	static bool themeConfigParseHeader(Common::String header, Common::String &themeName);

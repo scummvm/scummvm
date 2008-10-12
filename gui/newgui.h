@@ -81,7 +81,7 @@ public:
 	bool loadNewTheme(Common::String file, ThemeEngine::GraphicsMode gfx = ThemeEngine::kGfxDisabled);
 	Theme *theme() { return _theme; }
 	
-	ThemeEval *xmlEval() { return _theme->evaluator(); }
+	ThemeEval *xmlEval() { return _theme->getEvaluator(); }
 
 	const Graphics::Font &getFont(Theme::FontStyle style = Theme::kFontStyleBold) const { return *(_theme->getFont(style)); }
 	int getFontHeight(Theme::FontStyle style = Theme::kFontStyleBold) const { return _theme->getFontHeight(style); }

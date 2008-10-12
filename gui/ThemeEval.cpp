@@ -176,4 +176,4 @@ bool ThemeEval::addImportedLayout(const Common::String &name) {
 	return true;
 }
 
-}
+} // End of namespace GUI

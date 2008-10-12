@@ -253,8 +253,6 @@ public:
 	/** Default destructor */
 	~ThemeEngine();
 	
-	GUI::ThemeEval *themeEval() { return _themeEval; }
-
 	/**
 	 *	VIRTUAL METHODS
 	 *	This is the implementation of the GUI::Theme API to allow
@@ -483,7 +481,7 @@ public:
 	void finishBuffering() { _buffering = false; }
 	void startBuffering() { _buffering = true; }
 	
-	ThemeEval *evaluator() { return _themeEval; }
+	ThemeEval *getEvaluator() { return _themeEval; }
 	VectorRenderer *renderer() { return _vectorRenderer; }
 	
 	bool supportsImages() const { return true; }
@@ -674,7 +672,7 @@ protected:
 	/** XML Parser, does the Theme parsing instead of the default parser */
 	GUI::ThemeParser *_parser;
 	
-	/** Theme evaluator (changed from GUI::Eval to add functionality) */
+	/** Theme getEvaluator (changed from GUI::Eval to add functionality) */
 	GUI::ThemeEval *_themeEval;
 
 	/** Main screen surface. This is blitted straight into the overlay. */
