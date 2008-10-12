@@ -51,7 +51,7 @@ namespace Common {
 #define MAX_XML_DEPTH 8
 			
 #define XML_KEY(keyName) {\
-		lay =  new CustomXMLKeyLayout;\
+		lay = new CustomXMLKeyLayout;\
 		lay->callback = (&kLocalParserName::parserCallback_##keyName);\
 		layout.top()->children[#keyName] = lay;\
 		layout.push(lay); \
@@ -169,16 +169,14 @@ public:
 		XMLKeyLayout *layout;
 	};
 	
-	FixedSizeMemoryPool<sizeof(ParserNode), MAX_XML_DEPTH> _nodePool;
+	ObjectPool<ParserNode, MAX_XML_DEPTH> _nodePool;
 
 	ParserNode *allocNode() {
-		void* mem = _nodePool.malloc();
-		return new (mem) ParserNode;
+		return new (_nodePool) ParserNode;
 	} 
 
 	void freeNode(ParserNode *node) {
-		node->~ParserNode();
-		_nodePool.free(node);
+		_nodePool.deleteChunk(node);
 	}
 
 	/**

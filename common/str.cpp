@@ -193,7 +193,7 @@ void String::incRefCount() const {
 		if (g_refCountPool == 0)
 			g_refCountPool = new MemoryPool(sizeof(int));
 
-		_extern._refCount = (int *)g_refCountPool->malloc();
+		_extern._refCount = (int *)g_refCountPool->allocChunk();
 		*_extern._refCount = 2;
 	} else {
 		++(*_extern._refCount);
@@ -212,7 +212,7 @@ void String::decRefCount(int *oldRefCount) {
 		// and the ref count storage.
 		if (oldRefCount) {
 			assert(g_refCountPool);
-			g_refCountPool->free(oldRefCount);
+			g_refCountPool->freeChunk(oldRefCount);
 		}
 		free(_str);
 

@@ -29,6 +29,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 
+
 namespace Common {
 
 class MemoryPool {
@@ -54,10 +55,12 @@ public:
 	MemoryPool(size_t chunkSize);
 	~MemoryPool();
 
-	void 	*malloc();
-	void 	free(void *ptr);
+	void 	*allocChunk();
+	void 	freeChunk(void *ptr);
 
 	void	freeUnusedPages();
+	
+	size_t	getChunkSize() const { return _chunkSize; }
 };
 
 template<size_t CHUNK_SIZE, size_t NUM_INTERNAL_CHUNKS = 32>
@@ -83,6 +86,33 @@ public:
 	FixedSizeMemoryPool() : MemoryPool(CHUNK_SIZE) {}
 };
 
+
+template<class T, size_t NUM_INTERNAL_CHUNKS = 32>
+class ObjectPool : public FixedSizeMemoryPool<sizeof(T), NUM_INTERNAL_CHUNKS> {
+public:
+	void deleteChunk(T *ptr) {
+		ptr->~T();
+		freeChunk(ptr);
+	}
+};
+
 }	// End of namespace Common
+
+// Provide a custom placement new operator, using an arbitrary
+// MemoryPool.
+//
+// This *should* work with all C++ implementations, but may not.
+//
+// For details on using placement new for custom allocators, see e.g.
+// <http://www.parashift.com/c++-faq-lite/dtors.html#faq-11.14>
+
+inline void* operator new(size_t nbytes, Common::MemoryPool& pool) {
+	assert(nbytes <= pool.getChunkSize());
+	return pool.allocChunk();
+}
+
+inline void operator delete(void* p, Common::MemoryPool& pool) {
+	pool.freeChunk(p);
+}
 
 #endif

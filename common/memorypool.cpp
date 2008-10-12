@@ -79,7 +79,7 @@ void MemoryPool::addPageToPool(const Page &page) {
 	_next = page.start;
 }
 
-void *MemoryPool::malloc() {
+void *MemoryPool::allocChunk() {
 	if (!_next)	// No free chunks left? Allocate a new page
 		allocPage();
 
@@ -89,7 +89,7 @@ void *MemoryPool::malloc() {
 	return result;
 }
 
-void MemoryPool::free(void* ptr) {
+void MemoryPool::freeChunk(void *ptr) {
 	// Add the chunk back to (the start of) the list of free chunks
 	*(void**)ptr = _next;
 	_next = ptr;
