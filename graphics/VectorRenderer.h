@@ -38,18 +38,18 @@ namespace Graphics {
 class VectorRenderer;
 
 struct DrawStep {
-	struct { 
+	struct Color { 
 		uint8 r, g, b;
 		bool set;
-	}	
-	fgColor, /** Foreground color */
-	bgColor, /** backgroudn color */
-	gradColor1, /** gradient start*/
-	gradColor2, /** gradient end */
-	bevelColor;
+	};
+	Color fgColor; /**< Foreground color */
+	Color bgColor; /**< background color */
+	Color gradColor1; /**< gradient start*/
+	Color gradColor2; /**< gradient end */
+	Color bevelColor;
 
 	bool autoWidth, autoHeight;
-	int16 x, y, w, h; /** width, height and position, if not measured automatically.
+	int16 x, y, w, h; /**< width, height and position, if not measured automatically.
 	 					  negative values mean counting from the opposite direction */
 	
 	enum VectorAlignment {
@@ -61,12 +61,12 @@ struct DrawStep {
 		kVectorAlignCenter
 	} xAlign, yAlign;
 
-	uint8 shadow, stroke, factor, radius, bevel; /** Misc options... */
+	uint8 shadow, stroke, factor, radius, bevel; /**< Misc options... */
 
-	uint8 fillMode; /** active fill mode */
-	uint32 extraData; /** Generic parameter for extra options (orientation/bevel) */
+	uint8 fillMode; /**< active fill mode */
+	uint32 extraData; /**< Generic parameter for extra options (orientation/bevel) */
 
-	uint32 scale; /** scale of all the coordinates in FIXED POINT with 16 bits mantissa */
+	uint32 scale; /**< scale of all the coordinates in FIXED POINT with 16 bits mantissa */
 
 	void (VectorRenderer::*drawingCall)(const Common::Rect &, const DrawStep &); /** Pointer to drawing function */
 	Graphics::Surface *blitSrc;
@@ -322,7 +322,7 @@ public:
 	 * Sets the stroke width. All shapes drawn with a stroke will
 	 * have that width. Pass 0 to disable shape stroking.
 	 *
-	 * @param width Witdh of the stroke in pixels.
+	 * @param width Width of the stroke in pixels.
 	 */
 	virtual void setStrokeWidth(int width) {
 		_strokeWidth = width;
@@ -504,7 +504,7 @@ public:
 	/**
 	 * Applies a convolution matrix on the given surface area.
 	 * Call applyConvolutionMatrix() instead if you want to use
-	 * the embeded matrixes (blur/sharpen masks, bevels, etc).
+	 * the embedded matrixes (blur/sharpen masks, bevels, etc).
 	 *
 	 * @param area Area in which the convolution matrix will be applied.
 	 * @param filter Convolution matrix (3X3)
@@ -534,22 +534,22 @@ public:
 	virtual void applyScreenShading(GUI::Theme::ShadingStyle) = 0;
 
 protected:
-	Surface *_activeSurface; /** Pointer to the surface currently being drawn */
+	Surface *_activeSurface; /**< Pointer to the surface currently being drawn */
 
-	FillMode _fillMode; /** Defines in which way (if any) are filled the drawn shapes */
+	FillMode _fillMode; /**< Defines in which way (if any) are filled the drawn shapes */
 	
-	int _shadowOffset; /** offset for drawn shadows */
-	int _bevel; /** amount of fake bevel */
-	bool _disableShadows; /** Disables temporarily shadow drawing for overlayed images. */
-	int _strokeWidth; /** Width of the stroke of all drawn shapes */
-	uint32 _dynamicData; /** Dynamic data from the GUI Theme that modifies the drawing of the current shape */
+	int _shadowOffset; /**< offset for drawn shadows */
+	int _bevel; /**< amount of fake bevel */
+	bool _disableShadows; /**< Disables temporarily shadow drawing for overlayed images. */
+	int _strokeWidth; /**< Width of the stroke of all drawn shapes */
+	uint32 _dynamicData; /**< Dynamic data from the GUI Theme that modifies the drawing of the current shape */
 
-	int _gradientFactor; /** Multiplication factor of the active gradient */
-	int _gradientBytes[3]; /** Color bytes of the active gradient, used to speed up calculation */
+	int _gradientFactor; /**< Multiplication factor of the active gradient */
+	int _gradientBytes[3]; /**< Color bytes of the active gradient, used to speed up calculation */
 	
 	static const ConvolutionDataSet _convolutionData[kConvolutionMAX];
 	
-	static const int _dimPercentValue = 256 * 50 / 100; /** default value for screen dimming (50%) */
+	static const int _dimPercentValue = 256 * 50 / 100; /**< default value for screen dimming (50%) */
 };
 
 } // end of namespace Graphics

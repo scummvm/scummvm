@@ -194,7 +194,7 @@ protected:
     inline PixelType calcGradient(uint32 pos, uint32 max);
 
 	/**
-	 * Fills several pixels in a row with a given color and the specifed alpha blending.
+	 * Fills several pixels in a row with a given color and the specified alpha blending.
 	 *
 	 * @see blendPixelPtr
 	 * @see blendPixel
@@ -227,11 +227,11 @@ protected:
 	
 	void areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset);
 
-	PixelType _fgColor; /** Foreground color currently being used to draw on the renderer */
-	PixelType _bgColor; /** Background color currently being used to draw on the renderer */
+	PixelType _fgColor; /**< Foreground color currently being used to draw on the renderer */
+	PixelType _bgColor; /**< Background color currently being used to draw on the renderer */
 
-	PixelType _gradientStart; /** Start color for the fill gradient */
-	PixelType _gradientEnd; /** End color for the fill gradient */
+	PixelType _gradientStart; /**< Start color for the fill gradient */
+	PixelType _gradientEnd; /**< End color for the fill gradient */
 	
 	PixelType _bevelColor;
 	PixelType _bitmapAlphaColor;
@@ -243,7 +243,7 @@ protected:
  *
  * This templated class inherits all the functionality of the VectorRendererSpec
  * class but uses better looking yet slightly slower AA algorithms for drawing
- * most primivitves. May be used in faster platforms.
+ * most primitives. May be used in faster platforms.
  *                    
  * TODO: Expand documentation.
  *
