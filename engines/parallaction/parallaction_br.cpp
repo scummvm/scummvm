@@ -50,7 +50,7 @@ int Parallaction_br::init() {
 	if (getGameType() == GType_BRA) {
 		if (getPlatform() == Common::kPlatformPC) {
 			if (getFeatures() & GF_DEMO) {
-				_disk = new DosDemo_br(this);
+				_disk = new DosDemoDisk_br(this);
 			} else {
 				_disk = new DosDisk_br(this);
 			}
@@ -61,6 +61,8 @@ int Parallaction_br::init() {
 			_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
 			_soundMan = new AmigaSoundMan(this);
 		}
+
+		_disk->init();
 	} else {
 		error("unknown game type");
 	}
@@ -236,7 +238,7 @@ void Parallaction_br::changeLocation(char *location) {
 			_char._objs = _disk->loadObjects("icons.ico");
 		}
 
-		parseLocation("common");
+		parseLocation("common.slf");
 	}
 
 	freeLocation();

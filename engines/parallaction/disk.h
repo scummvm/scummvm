@@ -28,6 +28,7 @@
 
 #define PATH_LEN 200
 
+#include "common/archive.h"
 #include "common/fs.h"
 #include "common/file.h"
 
@@ -53,6 +54,8 @@ class Disk {
 public:
 	Disk() { }
 	virtual ~Disk() { }
+
+	virtual void init() { }
 
 	virtual Common::String selectArchive(const Common::String &name) = 0;
 	virtual void setLanguage(uint16 language) = 0;
@@ -201,31 +204,31 @@ public:
 };
 
 
+class Disk_br : public Disk {
+	Common::SeekableReadStream *openFile_internal(bool errorOnNotFound, const Common::String &name, const Common::String &ext);
+protected:
+	Common::SearchSet	_sset;
+
+	Common::SeekableReadStream *tryOpenFile(const Common::String &name, const Common::String &ext = Common::String::emptyString);
+	Common::SeekableReadStream *openFile(const Common::String &name, const Common::String &ext = Common::String::emptyString);
+	void errorFileNotFound(const Common::String &filename);
+};
+
 //	for the moment DosDisk_br subclasses Disk. When Amiga support will
 //  be taken into consideration, it might be useful to add another level
 //  like we did for Nippon Safes.
-class DosDisk_br : public Disk {
+class DosDisk_br : public Disk_br {
 
 protected:
 	uint16			_language;
 
 	Parallaction	*_vm;
 
-	Common::FSNode	_baseDir;
-	Common::FSNode	_partDir;
+	Common::SharedPtr<Common::FSDirectory> _baseDir;
+	Common::String		_currentPart;
 
-	Common::FSNode	_aniDir;
-	Common::FSNode	_bkgDir;
-	Common::FSNode	_mscDir;
-	Common::FSNode	_mskDir;
-	Common::FSNode	_pthDir;
-	Common::FSNode	_rasDir;
-	Common::FSNode	_scrDir;
-	Common::FSNode	_sfxDir;
-	Common::FSNode	_talDir;
 
 protected:
-	void errorFileNotFound(const Common::FSNode &dir, const Common::String &filename);
 	Font *createFont(const char *name, Common::ReadStream &stream);
 	Sprites*	createSprites(Common::ReadStream &stream);
 	void loadBitmap(Common::SeekableReadStream &stream, Graphics::Surface &surf, byte *palette);
@@ -234,6 +237,8 @@ protected:
 public:
 	DosDisk_br(Parallaction *vm);
 	virtual ~DosDisk_br();
+
+	virtual void init();
 
 	Common::String selectArchive(const Common::String &name);
 	void setLanguage(uint16 language);
@@ -254,37 +259,33 @@ public:
 	void loadMask(const char *name, MaskBuffer &buffer);
 };
 
-class DosDemo_br : public DosDisk_br {
+class DosDemoDisk_br : public DosDisk_br {
 
 public:
-	DosDemo_br(Parallaction *vm);
-	virtual ~DosDemo_br();
+	DosDemoDisk_br(Parallaction *vm);
+	virtual ~DosDemoDisk_br();
+
+	virtual void init();
 
 	Common::String selectArchive(const Common::String& name);
-
 };
 
 class AmigaDisk_br : public DosDisk_br {
 
 protected:
+	Common::SharedPtr<Common::FSDirectory> _baseDir;
+	Common::String		_currentPart;
+
 	BackgroundInfo	_backgroundTemp;
 
 	Sprites*	createSprites(Common::ReadStream &stream);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
 	void loadBackground(BackgroundInfo& info, Common::SeekableReadStream &stream);
-
-	Common::FSNode	_baseBkgDir;
-	Common::FSNode	_fntDir;
-	Common::FSNode	_commonAniDir;
-	Common::FSNode	_commonBkgDir;
-	Common::FSNode	_commonMscDir;
-	Common::FSNode	_commonMskDir;
-	Common::FSNode	_commonPthDir;
-	Common::FSNode	_commonTalDir;
-
 public:
 	AmigaDisk_br(Parallaction *vm);
 	virtual ~AmigaDisk_br();
+
+	virtual void init();
 
 	GfxObj* loadTalk(const char *name);
 	Font* loadFont(const char* name);
