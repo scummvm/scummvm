@@ -322,7 +322,7 @@ char *ListEntry(int i, letype which) {
 }
 
 static void DoSync(Serializer &s) {
-	int	sg;
+	int	sg = 0;
 
 	syncSavedData(s, *srsd);
 	syncGlobInfo(s);		// Glitter globals
