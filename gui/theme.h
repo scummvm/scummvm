@@ -56,9 +56,9 @@ public:
 
 	//! Defined the align of the text
 	enum TextAlign {
-		kTextAlignLeft,		//! Text should be aligned to the left
-		kTextAlignCenter,	//! Text should be centered
-		kTextAlignRight		//! Text should be aligned to the right
+		kTextAlignLeft,		//!< Text should be aligned to the left
+		kTextAlignCenter,	//!< Text should be centered
+		kTextAlignRight		//!< Text should be aligned to the right
 	};
 	
 	//! Vertical alignment of the text.
@@ -70,12 +70,12 @@ public:
 
 	//! Widget background type
 	enum WidgetBackground {
-		kWidgetBackgroundNo,			//! No background at all
-		kWidgetBackgroundPlain,			//! Simple background, this may not include borders
-		kWidgetBackgroundBorder,		//! Same as kWidgetBackgroundPlain just with a border
-		kWidgetBackgroundBorderSmall,	//! Same as kWidgetBackgroundPlain just with a small border
-		kWidgetBackgroundEditText,		//! Background used for edit text fields
-		kWidgetBackgroundSlider			//! Background used for sliders
+		kWidgetBackgroundNo,			//!< No background at all
+		kWidgetBackgroundPlain,			//!< Simple background, this may not include borders
+		kWidgetBackgroundBorder,		//!< Same as kWidgetBackgroundPlain just with a border
+		kWidgetBackgroundBorderSmall,	//!< Same as kWidgetBackgroundPlain just with a small border
+		kWidgetBackgroundEditText,		//!< Background used for edit text fields
+		kWidgetBackgroundSlider			//!< Background used for sliders
 	};
 	
 	//! Dialog background type
@@ -88,9 +88,9 @@ public:
 
 	//! State of the widget to be drawn
 	enum State {
-		kStateDisabled,		//! Indicates that the widget is disabled, that does NOT include that it is invisible
-		kStateEnabled,		//! Indicates that the widget is enabled
-		kStateHighlight		//! Indicates that the widget is highlighted by the user
+		kStateDisabled,		//!< Indicates that the widget is disabled, that does NOT include that it is invisible
+		kStateEnabled,		//!< Indicates that the widget is enabled
+		kStateHighlight		//!< Indicates that the widget is highlighted by the user
 	};
 
 	typedef State WidgetStateInfo;
@@ -105,20 +105,20 @@ public:
 
 	//! Font style selector
 	enum FontStyle {
-		kFontStyleBold = 0,			//! A bold font. This is also the default font.
-		kFontStyleNormal = 1,		//! A normal font.
-		kFontStyleItalic = 2,		//! Italic styled font.
-		kFontStyleFixedNormal = 3,	//! Fixed size font.
-		kFontStyleFixedBold = 4,	//! Fixed size bold font.
-		kFontStyleFixedItalic = 5,	//! Fixed size italic font.
+		kFontStyleBold = 0,			//!< A bold font. This is also the default font.
+		kFontStyleNormal = 1,		//!< A normal font.
+		kFontStyleItalic = 2,		//!< Italic styled font.
+		kFontStyleFixedNormal = 3,	//!< Fixed size font.
+		kFontStyleFixedBold = 4,	//!< Fixed size bold font.
+		kFontStyleFixedItalic = 5,	//!< Fixed size italic font.
 		kFontStyleMax
 	};
 
 	//! Function used to process areas other than the current dialog
 	enum ShadingStyle {
-		kShadingNone,		//! No special post processing
-		kShadingDim,		//! Dimming unused areas
-		kShadingLuminance	//! Converting colors to luminance for unused areas
+		kShadingNone,		//!< No special post processing
+		kShadingDim,		//!< Dimming unused areas
+		kShadingLuminance	//!< Converting colors to luminance for unused areas
 	};
 
 	/**
@@ -321,8 +321,8 @@ public:
 
 	//! Special image ids for images used in the GUI
 	enum kThemeImages {
-		kImageLogo = 0,		//! ScummVM Logo used in the launcher
-		kImageLogoSmall		//! ScummVM logo used in the GMM
+		kImageLogo = 0,		//!< ScummVM Logo used in the launcher
+		kImageLogoSmall		//!< ScummVM logo used in the GMM
 	};
 
 	/**
