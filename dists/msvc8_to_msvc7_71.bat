@@ -12,7 +12,8 @@ if not exist rpl.exe goto no_rpl
 echo Creating MSVC71 project files from the MSVC8 ones
 copy /y msvc8\*.vcproj msvc71\
 copy /y msvc8\*.sln msvc71\
-rpl -e -q "Version=\"8,00\"" "Version=\"7.10\"" msvc71\*.vcproj
+rpl -e -q "Version=\"8.00\"" "Version=\"7.10\"" msvc71\*.vcproj
+rpl -e -q "Version=\"8,00\"" "Version=\"7,10\"" msvc71\*.vcproj
 for %%i in (msvc71\*.vcproj) do rpl -e -q "RootNamespace=\"%%~ni\"\n" "" %%i
 rpl -e -q "RootNamespace=" "#RootNamespace=" msvc71\*.vcproj
 rpl -e -q "\t\tKeyword=" "\tKeyword=" msvc71\*.vcproj
@@ -64,6 +65,7 @@ rpl -e -q "\"VCXMLDataGeneratorTool\"/>\n" "\"VCXMLDataGeneratorTool\"/>\n\t\t\t
 rpl -e -q "\"VCManagedWrapperGeneratorTool\"/>\n" "\"VCManagedWrapperGeneratorTool\"/>\n\t\t\t<Tool\n\t\t\t\tName=\"VCAuxiliaryManagedWrapperGeneratorTool\"/>\n" msvc71\*.vcproj
 			
 rpl -e -q "Format Version 9.00" "Format Version 8.00" msvc71\scummvm.sln
+rpl -e -q "Format Version 9,00" "Format Version 8,00" msvc71\scummvm.sln
 rpl -e -q "# Visual C++ Express 2005\n" "" msvc71\scummvm.sln
 rpl -e -q "# Visual Studio 2005\n" "" msvc71\scummvm.sln
 rpl -e -q "\"\nEndProject\n" "\"\n\tProjectSection(ProjectDependencies) = postProject\n\tEndProjectSection\nEndProject\n" msvc71\scummvm.sln
@@ -78,12 +80,14 @@ echo Creating MSVC71 project files from the MSVC7 ones
 copy /y msvc71\*.vcproj msvc7\
 copy /y msvc71\*.sln msvc7\
 rpl -e -q "Version=\"7.10\"" "Version=\"7.00\"" msvc7\*.vcproj
+rpl -e -q "Version=\"7,10\"" "Version=\"7,00\"" msvc7\*.vcproj
 rpl -e -q "\t\t\t<Tool\n\t\t\t\tName=\"VCXMLDataGeneratorTool\"/>\n" "" msvc7\*.vcproj
 rpl -e -q "\t\t\t<Tool\n\t\t\t\tName=\"VCManagedWrapperGeneratorTool\"/>\n" "" msvc7\*.vcproj
 rpl -e -q "\t\t\t<Tool\n\t\t\t\tName=\"VCAuxiliaryManagedWrapperGeneratorTool\"/>\n" "" msvc7\*.vcproj
 rpl -e -q "\t<References>\n\t</References>\n" "" msvc7\*.vcproj
 
 rpl -e -q "Format Version 8.00" "Format Version 7.00" msvc7\scummvm.sln
+rpl -e -q "Format Version 8,00" "Format Version 7,00" msvc7\scummvm.sln
 rpl -e -q "\tProjectSection(ProjectDependencies) = postProject\n\tEndProjectSection\n" "" msvc7\scummvm.sln
 goto the_end
 

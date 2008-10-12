@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="7.00"
 	Name="scummvm"
 	ProjectGUID="{8434CB15-D08F-427D-9E6D-581AE5B28440}"
 	Keyword="Win32Proj">
