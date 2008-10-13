@@ -388,15 +388,14 @@ uint32 Sword2Engine::getSaveDescription(uint16 slotNo, byte *description) {
 }
 
 bool Sword2Engine::saveExists() {
-	for (int i = 0; i <= 99; i++)
-		if (saveExists(i))
-			return true;
-	return false;
+	Common::String pattern = _targetName + ".???";
+	Common::StringList filenames = _saveFileMan->listSavefiles(pattern.c_str());
+
+	return !filenames.empty();
 }
 
 bool Sword2Engine::saveExists(uint16 slotNo) {
 	char *saveFileName = getSaveFileName(slotNo);
-
 	Common::InSaveFile *in;
 
 	if (!(in = _saveFileMan->openForLoading(saveFileName))) {
