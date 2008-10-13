@@ -286,12 +286,6 @@ public:
 	SearchManager();
 
 	/**
-	 * Add an existing Archive. This is meant to support searching in system-specific
-	 * archives, namely the MACOSX/IPHONE bundles.
-	 */
-	void addArchive(const String &name, ArchivePtr archive, int priority = 0);
-
-	/**
 	 * Create and add a FSDirectory by name
 	 */
 	void addDirectory(const String &name, const String &directory, int priority = 0);

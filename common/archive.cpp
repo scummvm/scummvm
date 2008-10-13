@@ -382,10 +382,6 @@ SearchManager::SearchManager() {
 	clear();	// Force a reset
 }
 
-void SearchManager::addArchive(const String &name, ArchivePtr archive, int priority) {
-	add(name, archive, priority);
-}
-
 void SearchManager::addDirectory(const String &name, const String &directory, int priority) {
 	addDirectoryRecursive(name, directory, 1, priority);
 }
