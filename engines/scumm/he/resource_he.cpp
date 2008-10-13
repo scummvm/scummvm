@@ -166,8 +166,7 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 	}
 
 	/* get file size */
-	Common::FSNode node(_fileName);
-	fi.file = node.openForReading();
+	fi.file = SearchMan.openFile(_fileName);
 	if (!fi.file) {
 		error("Cannot open file %s", _fileName.c_str());
 	}
