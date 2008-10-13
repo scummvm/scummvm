@@ -89,7 +89,7 @@ void Text::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 pen) {
 	assert(!_textBlocks[slot]); // if this triggers, the speechDriver failed to call Text::releaseText.
 	_textBlocks[slot] = (FrameHeader*)malloc(sprSize + sizeof(FrameHeader));
 
-	memcpy( _textBlocks[slot]->runTimeComp, "Nu  ", 4);
+	memcpy(_textBlocks[slot]->runTimeComp, "Nu  ", 4);
 	_textBlocks[slot]->compSize	= 0;
 	_textBlocks[slot]->width	= _resMan->toUint16(sprWidth);
 	_textBlocks[slot]->height	= _resMan->toUint16(sprHeight);
@@ -179,13 +179,14 @@ FrameHeader *Text::giveSpriteData(uint32 textTarget) {
 	return _textBlocks[textTarget];
 }
 
-void Text::releaseText(uint32 id) {
+void Text::releaseText(uint32 id, bool updateCount) {
 	id &= ITM_ID;
 	assert(id < MAX_TEXT_OBS);
 	if (_textBlocks[id]) {
 		free(_textBlocks[id]);
 		_textBlocks[id] = NULL;
-		_textCount--;
+		if (updateCount)
+			_textCount--;
 	}
 }
 

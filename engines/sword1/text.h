@@ -52,7 +52,7 @@ public:
 	FrameHeader *giveSpriteData(uint32 textTarget);
 	uint32 lowTextManager(uint8 *text, int32 width, uint8 pen);
 	void makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 pen);
-	void releaseText(uint32 id);
+	void releaseText(uint32 id, bool updateCount = true);
 
 private:
 	uint16 analyzeSentence(uint8 *text, uint16 maxWidth, LineInfo *info);
