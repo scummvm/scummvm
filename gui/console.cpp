@@ -109,6 +109,8 @@ void ConsoleDialog::init() {
 	// Calculate the real width/height (rounded to char/line multiples)
 	_w = (uint16)(_widthPercent * screenW);
 	_h = (uint16)((_heightPercent * screenH - 2) / kConsoleLineHeight);
+	
+	_w = _w - _w / 20;
 	_h = _h * kConsoleLineHeight + 2;
 
 	// Set scrollbar dimensions
@@ -144,11 +146,14 @@ void ConsoleDialog::open() {
 	// Calculate the real width/height (rounded to char/line multiples)
 	uint16 w = (uint16)(_widthPercent * screenW);
 	uint16 h = (uint16)((_heightPercent * screenH - 2) / kConsoleLineHeight);
+	
 	h = h * kConsoleLineHeight + 2;
+	w = w - w / 20;
 
 	if (_w != w || _h != h)
 		init();
 
+	_x = _w / 40;
 	_y = -_h;
 	_slideTime = g_system->getMillis();
 	_slideMode = kDownSlideMode;
@@ -165,7 +170,7 @@ void ConsoleDialog::close() {
 }
 
 void ConsoleDialog::drawDialog() {
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _backgroundType);
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x + _w, _y + _h), Theme::kDialogBackgroundPlain/*_backgroundType*/);
 	// FIXME: for the old theme the frame around the console vanishes
 	// when any action is processed if we enable this
 	// _drawingHints &= ~THEME_HINT_FIRST_DRAW;
@@ -201,6 +206,8 @@ void ConsoleDialog::drawLine(int line, bool restoreBg) {
 		g_gui.theme()->drawChar(Common::Rect(x, y, x+kConsoleCharWidth, y+kConsoleLineHeight), c, _font);
 		x += kConsoleCharWidth;
 	}
+	
+	g_gui.theme()->updateScreen();
 }
 
 void ConsoleDialog::reflowLayout() {
