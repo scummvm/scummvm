@@ -184,7 +184,7 @@ bool MoviePlayer::load(uint32 id) {
 	if (SwordEngine::_systemVars.showText) {
 		sprintf(fileName, "%s.txt", sequenceList[id]);
 		if (f.open(fileName)) {
-			char line[120];
+			char line[240];
 			int lineNo = 0;
 			int lastEnd = -1;
 
@@ -278,7 +278,7 @@ void MoviePlayer::play(void) {
 				_textSpriteBuf = (byte *)calloc(_textHeight, _textWidth);
 			}
 			if (_currentFrame == _movieTexts[0]->_endFrame) {
-				_textMan->releaseText(2);
+				_textMan->releaseText(2, false);
 				free(_textSpriteBuf);
 				_textSpriteBuf = NULL;
 				delete _movieTexts.remove_at(0);
@@ -309,9 +309,14 @@ void MoviePlayer::play(void) {
 		}
 	}
 
-	while (!_movieTexts.empty()) {
-		delete _movieTexts.remove_at(_movieTexts.size() - 1);
+	if (_textSpriteBuf) {
+		_textMan->releaseText(2, false);
+		free(_textSpriteBuf);
+		_textSpriteBuf = NULL;
 	}
+
+	while (!_movieTexts.empty())
+		delete _movieTexts.remove_at(_movieTexts.size() - 1);
 
 	while (_snd->isSoundHandleActive(_bgSoundHandle))
 		_system->delayMillis(100);
