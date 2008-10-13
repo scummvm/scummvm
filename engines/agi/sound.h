@@ -467,6 +467,7 @@ private:
 	int _endflag;
 	int _playingSound;
 	uint8 _env;
+	bool _disabledMidi;
 
 	int16 *_sndBuffer;
 	const int16 *_waveform;

@@ -454,7 +454,7 @@ int SoundMgr::initSound() {
 		_waveform = waveformMac;
 		break;
 	case SOUND_EMU_APPLE2GS:
-		loadInstruments();
+		_disabledMidi = !loadInstruments();
 		break;
 	}
 
@@ -514,6 +514,9 @@ void SoundMgr::playNote(int i, int freq, int vol) {
 }
 
 void SoundMgr::playMidiSound() {
+	if (_disabledMidi)
+		return;
+
 	const uint8 *p;
 	uint8 parm1, parm2;
 	static uint8 cmd, ch;
@@ -1218,6 +1221,7 @@ SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) : _chn() {
 	_playing = false;
 	_sndBuffer = (int16 *)calloc(2, BUFFER_SIZE);
 	_waveform = 0;
+	_disabledMidi = false;
 }
 
 void SoundMgr::premixerCall(int16 *data, uint len) {
