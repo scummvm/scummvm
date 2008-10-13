@@ -84,6 +84,7 @@ CachedArchive::CachedArchive(const FileInputList &files)
 		entry.data = i->data;
 		entry.size = i->size;
 
+		i->name.toLowercase();
 		_files[i->name] = entry;
 	}
 }
@@ -348,6 +349,7 @@ Common::Archive *ResLoaderInsMalcolm::load(Common::SharedPtr<Common::ArchiveMemb
 		entry.size = stream.readUint32LE();
 		entry.offset = stream.pos();
 		entry.name = *file;
+		entry.name.toLowercase();
 		stream.seek(entry.size, SEEK_CUR);
 
 		files.push_back(entry);
@@ -696,9 +698,9 @@ bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 
 }
 
 void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex2, int cnt) {
-	const uint8 *tbl1 = _tables[srcIndex];
+	uint8 *tbl1 = _tables[srcIndex];
 	uint8 *tbl2 = _tables[dstIndex];
-	const uint8 *tbl3 = dstIndex2 == 0xff ? 0 : _tables[dstIndex2];
+	uint8 *tbl3 = dstIndex2 == 0xff ? 0 : _tables[dstIndex2];
 
 	if (!cnt)
 		return;
@@ -845,7 +847,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 	uint32 bytesleft = 0;
 	bool startFile = true;
 
-	Common::String filenameBase =filename;
+	Common::String filenameBase = filename;
 	Common::String filenameTemp;
 	char filenameExt[4];
 

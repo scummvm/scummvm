@@ -1528,7 +1528,7 @@ private:
 	uint8 _noiseGenerator;
 	uint8 _chanEnable;
 
-	uint8 *const *_reg;
+	uint8 **_reg;
 
 	bool _ready;
 };
@@ -1536,7 +1536,7 @@ private:
 class TownsPC98_OpnPercussionSource {
 public:
 	TownsPC98_OpnPercussionSource(const uint32 timerbase);
-	~TownsPC98_OpnPercussionSource() {}
+	~TownsPC98_OpnPercussionSource() { delete [] _reg; }
 
 	void init(const uint8 *instrData = 0);
 	void reset();
@@ -1577,7 +1577,7 @@ private:
 	const uint32 _tickLength;
 	uint32 _timer;
 
-	uint8 *const *_reg;
+	uint8 **_reg;
 
 	bool _ready;
 };
@@ -2554,7 +2554,7 @@ TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerb
 	_tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _ready(0) {
 	memset(_channels, 0, sizeof(Channel) * 3);
 	
-	static uint8 *const reg [] = {
+	uint8 *reg[] = {
 		&_channels[0].frqL,
 		&_channels[0].frqH,
 		&_channels[1].frqL,
@@ -2568,7 +2568,8 @@ TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerb
 		&_channels[2].vol,
 	};
 
-	_reg = reg;
+	_reg = new uint8 *[ARRAYSIZE(reg)];
+	memcpy (_reg, reg, sizeof(uint8*) * ARRAYSIZE(reg));;
 
 	reset();
 }
@@ -2576,6 +2577,7 @@ TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerb
 TownsPC98_OpnSquareSineSource::~TownsPC98_OpnSquareSineSource() {
 	delete [] _tlTable;
 	delete [] _tleTable;
+	delete [] _reg;
 }
 
 void TownsPC98_OpnSquareSineSource::init(const int *rsTable, const int *rseTable) {
@@ -2726,7 +2728,7 @@ TownsPC98_OpnPercussionSource::TownsPC98_OpnPercussionSource(const uint32 timerb
 	_tickLength(timerbase * 2), _timer(0), _ready(false) {
 	
 	memset(_rhChan, 0, sizeof(RhtChannel) * 6);
-		static uint8 *const reg [] = {
+	uint8 *reg[] = {
 		0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0,
 		&_rhChan[0].startPosL,
@@ -2755,7 +2757,8 @@ TownsPC98_OpnPercussionSource::TownsPC98_OpnPercussionSource(const uint32 timerb
 		&_rhChan[5].endPosH,
 	};
 
-	_reg = reg;
+	_reg = new uint8 *[ARRAYSIZE(reg)];
+	memcpy (_reg, reg, sizeof(uint8*) * ARRAYSIZE(reg));
 }
 
 void TownsPC98_OpnPercussionSource::init(const uint8 *instrData) {
