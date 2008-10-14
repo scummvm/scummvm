@@ -49,6 +49,7 @@
 #include "picture/script.h"
 #include "picture/screen.h"
 #include "picture/segmap.h"
+#include "picture/sound.h"
 #include "picture/microtiles.h"
 
 namespace Picture {
@@ -136,6 +137,8 @@ int PictureEngine::go() {
 	_segmap = new SegmentMap(this);
 	_moviePlayer = new MoviePlayer(this);
 	_menuSystem = new MenuSystem(this);
+	
+	_sound = new Sound(this);
 
 	_system->showMouse(true);
 
@@ -143,7 +146,10 @@ int PictureEngine::go() {
 #ifdef TEST_MOVIE
 	_screen->registerFont(0, 0x0D);
 	_screen->registerFont(1, 0x0E);
-	_moviePlayer->playMovie(0x000012D8);
+	//_moviePlayer->playMovie(0x000012D8);
+	//_moviePlayer->playMovie(0x000012D7);
+	//_moviePlayer->playMovie(0x);
+	_moviePlayer->playMovie(0x000012E0);
 #endif
 
 //#define TEST_MENU
@@ -153,7 +159,7 @@ int PictureEngine::go() {
 	_screen->loadMouseCursor(12);
 	_palette->loadAddPalette(9, 224);
 	_palette->setDeltaPalette(_palette->getMainPalette(), 7, 0, 31, 224);
-	_screen->finishTextDrawItems();
+	_screen->finishTalkTextItems();
 	_screen->clearSprites();
 	while (1) {
 		updateInput();
@@ -176,6 +182,8 @@ int PictureEngine::go() {
 	delete _segmap;
 	delete _moviePlayer;
 	delete _menuSystem;
+	
+	delete _sound;
 
 	return 0;
 }
@@ -337,7 +345,7 @@ void PictureEngine::setGuiHeight(int16 guiHeight) {
 
 void PictureEngine::setCamera(int16 x, int16 y) {
 
-	_screen->finishTextDrawItems();
+	_screen->finishTalkTextItems();
 
 	/*
 	// TODO: Fix checks; sometimes cameraY ended up being negative
@@ -403,14 +411,14 @@ void PictureEngine::updateCamera() {
 		//dirtyFullRefresh = -1;
 		_cameraX = _newCameraX;
 		_screen->_fullRefresh = true;
-		_screen->finishTextDrawItems();
+		_screen->finishTalkTextItems();
 	}
 
 	if (_cameraY != _newCameraY) {
 		//dirtyFullRefresh = -1;
 		_cameraY = _newCameraY;
 		_screen->_fullRefresh = true;
-		_screen->finishTextDrawItems();
+		_screen->finishTalkTextItems();
 	}
 
 	debug(0, "PictureEngine::updateCamera() _cameraX = %d; _cameraY = %d", _cameraX, _cameraY);
@@ -440,6 +448,7 @@ void PictureEngine::talk(int16 slotIndex, int16 slotOffset) {
 		if (_doSpeech) {
 			int16 resIndex = READ_LE_UINT16(scanData + 1);
 			debug(0, "PictureEngine::talk() playSound(resIndex: %d)", resIndex);
+			_sound->playSpeech(resIndex);
 		}
 		if (_doText) {
 			_screen->updateTalkText(slotIndex, slotOffset);

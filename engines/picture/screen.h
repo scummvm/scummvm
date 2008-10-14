@@ -199,7 +199,8 @@ public:
 	void addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 width, TalkTextItem *item);
 	void addTalkTextItemsToRenderQueue();
 	int16 getTalkTextDuration();
-	void finishTextDrawItems();
+	void finishTalkTextItems();
+	void keepTalkTextItemsAlive();
 
 	// Font/text
 	void registerFont(uint fontIndex, uint resIndex);

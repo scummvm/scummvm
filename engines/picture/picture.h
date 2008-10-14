@@ -61,6 +61,7 @@ class ResourceCache;
 class ScriptInterpreter;
 class Screen;
 class SegmentMap;
+class Sound;
 
 class PictureEngine : public ::Engine {
 	Common::KeyState _keyPressed;
@@ -114,6 +115,7 @@ public:
 	ScriptInterpreter *_script;
 	Screen *_screen;
 	SegmentMap *_segmap;
+	Sound *_sound;
 
 	uint _sceneResIndex;
 	int16 _sceneWidth, _sceneHeight;

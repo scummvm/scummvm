@@ -498,9 +498,19 @@ int16 Screen::getTalkTextDuration() {
 	return _talkTextItems[_talkTextItemNum].duration;
 }
 
-void Screen::finishTextDrawItems() {
+void Screen::finishTalkTextItems() {
 	for (int16 i = 0; i <= _talkTextItemNum; i++) {
 		_talkTextItems[i].duration = 0;
+	}
+}
+
+void Screen::keepTalkTextItemsAlive() {
+	for (int16 i = 0; i <= _talkTextItemNum; i++) {
+		TalkTextItem *item = &_talkTextItems[i];
+		if (item->fontNum == -1)
+			item->duration = 0;
+		else if (item->duration > 0)
+			item->duration = 2;
 	}
 }
 
