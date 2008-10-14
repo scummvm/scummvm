@@ -116,10 +116,10 @@ bool XMLParser::parseActiveKey(bool closed) {
 		}
 	
 		if (keyCount > 0)
-			return parserError("Unhandled property inside key '%s': '%s'", key->name.c_str(), localMap.begin()->_key.c_str());
+			return parserError("Unhandled property inside key '%s'.", key->name.c_str());
 			
 	} else {
-		return parserError("Unexpected key in the active scope: '%s'.", key->name.c_str());
+		return parserError("Unexpected key in the active scope ('%s').", key->name.c_str());
 	}
 
 	// check if any of the parents must be ignored.

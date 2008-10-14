@@ -59,7 +59,7 @@ enum {
 
 
 MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
-	: Dialog("massadddialog"),
+	: Dialog("MassAdd"),
 	_dirsScanned(0),
 	_okButton(0),
 	_dirProgressText(0),
@@ -68,27 +68,22 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	// The dir we start our scan at
 	_scanStack.push(startDir);
 
+//	Removed for now... Why would you put a title on mass add dialog called "Mass Add Dialog"?
+//	new StaticTextWidget(this, "massadddialog_caption",	"Mass Add Dialog");
 
-	// Create dialog items
-	// We need:
-	// - "OK" button, only enabled after the scan has finished
-	// - "Cancel" / "Abort" button, always active
-	// - static text as headline for the dialog
-	// - static text displaying the progress text
-	// - (future) a listbox showing all the games we added/are going to add
-
-	new StaticTextWidget(this, "massadddialog_caption",	"Mass Add Dialog");
-
-	_dirProgressText = new StaticTextWidget(this, "massadddialog_dirprogress",
+	_dirProgressText = new StaticTextWidget(this, "MassAdd.DirProgressText",
 											"... progress ...");
 
-	_gameProgressText = new StaticTextWidget(this, "massadddialog_gameprogress",
+	_gameProgressText = new StaticTextWidget(this, "MassAdd.GameProgressText",
 											 "... progress ...");
+											
+	_dirProgressText->setAlign(Graphics::kTextAlignCenter);
+	_gameProgressText->setAlign(Graphics::kTextAlignCenter);
 
-	_okButton = new ButtonWidget(this, "massadddialog_ok", "OK", kOkCmd, Common::ASCII_RETURN);
+	_okButton = new ButtonWidget(this, "MassAdd.Ok", "OK", kOkCmd, Common::ASCII_RETURN);
 	_okButton->setEnabled(false);
 
-	new ButtonWidget(this, "massadddialog_cancel", "Cancel", kCancelCmd, Common::ASCII_ESCAPE);
+	new ButtonWidget(this, "MassAdd.Cancel", "Cancel", kCancelCmd, Common::ASCII_ESCAPE);
 
 	// Build a map from all configured game paths to the targets using them
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
