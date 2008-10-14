@@ -41,6 +41,7 @@
 #include "toltecs/script.h"
 #include "toltecs/screen.h"
 #include "toltecs/segmap.h"
+#include "toltecs/sound.h"
 
 namespace Toltecs {
 
@@ -445,7 +446,7 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 
 		debug(0, "o2_updateScreen()");
 
-		// TODO? updateSamples();
+		_vm->_sound->updateSpeech();
 
 		_vm->_screen->updateShakeScreen();
 
@@ -592,6 +593,7 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 	{
 		debug(0, "o2_loadScene(resIndex: %d; flag: %d)", arg16(4), arg8(3));
 		if (arg8(3) == 0) {
+			_vm->_sound->stopSpeech();
 			_vm->loadScene(arg16(4));
 		} else {
 			_vm->_screen->loadMouseCursor(arg16(4));
@@ -845,7 +847,10 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 
 	case 54:// TODO
 	{
-		debug(0, "o2_playSound2(%d, %d, %d)", arg16(7), arg16(5), arg16(3));
+		//debug(0, "o2_playSound2(%d, %d, %d)", arg16(7), arg16(5), arg16(3));
+		
+		_vm->_sound->playSound(arg16(3), arg16(5), arg16(7));
+		
 		break;
 	}
 
@@ -878,21 +883,25 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 
 	case 59:// TODO
 	{
-		debug(0, "o2_precacheResources(%04X)", arg16(3));
+		debug(0, "o2_precacheSprites(%04X)", arg16(3));
 		break;
 	}
 
 	case 60:// TODO
 	{
 		debug(0, "o2_precacheSounds1(%04X)", arg16(3));
-		// CHECKME
-		_vm->_screen->clearSprites();
 		break;
 	}
 
 	case 61:// TODO
 	{
 		debug(0, "o2_deleteAllPbfFilesByExternalArray()");
+		break;
+	}
+
+	case 62:// TODO - this opcode was never executed while I completed the game
+	{
+		debug(0, "o2_precacheSounds2(%04X)", arg16(3));
 		break;
 	}
 

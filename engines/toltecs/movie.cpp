@@ -54,7 +54,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 	
 	memset(moviePalette, 0, sizeof(moviePalette));
 
-	_vm->_screen->finishTextDrawItems();
+	_vm->_screen->finishTalkTextItems();
 	_vm->_screen->clearSprites();
 
 	_vm->_arc->openResource(resIndex);
@@ -154,7 +154,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 			break;
 		case 8: // stop subtitles
 			_vm->_script->getSlotData(subtitleSlot)[0] = 0xFF;
-			_vm->_screen->finishTextDrawItems();
+			_vm->_screen->finishTalkTextItems();
 			break;
 		default:
 			error("Unknown chunk type %d at %08X", chunkType, _vm->_arc->pos() - 5 - chunkSize);

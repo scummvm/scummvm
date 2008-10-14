@@ -14,6 +14,7 @@ MODULE_OBJS = \
 	screen.o \
 	script.o \
 	segmap.o \
+	sound.o \
 	sprite.o
 
 
