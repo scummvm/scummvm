@@ -105,6 +105,7 @@ namespace Common {
  * @see XMLParser::keyCallback()
  */
 class XMLParser {
+	static const int kErrorMessageWidth = 512;
 
 public:
 	/**

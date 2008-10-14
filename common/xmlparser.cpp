@@ -36,61 +36,71 @@ using namespace Graphics;
 
 bool XMLParser::parserError(const char *errorString, ...) {
 	_state = kParserError;
-
-	int original_pos = _stream->pos();
-	int pos = original_pos;
-	int lineCount = 1;
-	int lineStart = 0;
-
-	if (_fileName == "Memory Stream") {
-		lineStart = MAX(0, original_pos - 35);
-		lineCount = 0;
-	} else {
-		do {
-			if (_char == '\n' || _char == '\r') {
-				lineCount++;
-		
-				if (lineStart == 0)
-					lineStart = MAX(pos + 1, original_pos - 60);
-			}
-			
-			_stream->seek(-1, SEEK_CUR);
-
-		} while (_stream->pos() > 0);
-	}
-
-	char lineStr[70];
-	_stream->seek(original_pos - 35, SEEK_SET);
-	_stream->readLine_NEW(lineStr, 70);
 	
-	for (int i = 0; i < 70; ++i)
-		if (lineStr[i] == '\n')
-			lineStr[i] = ' ';
+	const int startPosition = _stream->pos();
+	const int middle = kErrorMessageWidth / 2;
+	
+	int currentPosition = startPosition;
+	int lineCount = 1, realMiddle = 0;
+	char errorBuffer[kErrorMessageWidth];
+	char c, *errorKeyStart = 0;
+	
+	_stream->seek(0, SEEK_SET);
+	
+	while (currentPosition--) {
+		c = _stream->readByte();
+		
+		if (c == '\n' || c == '\r')
+			lineCount++;
+	}
+	
+	_stream->seek(-middle, SEEK_CUR);
+	
+	for (int i = 0, j = 0; i < kErrorMessageWidth; ++i, ++j) {
+		c = _stream->readByte();
+		
+		if (c == '\n' || c == '\r') {
+			errorBuffer[i++] = ' ';
+			j++;
+			
+			while (c && isspace(c)) {
+				c = _stream->readByte();
+				j++;
+			}
+		}
+			
+		errorBuffer[i] = c;
+		if (!realMiddle && j >= middle)
+			realMiddle = i;
+	}
+		
+	for (int i = realMiddle; i >= 0; --i)
+		if (errorBuffer[i] == '<') {
+			errorKeyStart = &errorBuffer[i];
+			break;
+		}
+		
+	for (int i = realMiddle; i < kErrorMessageWidth; ++i)
+		if (errorBuffer[i] == '>') {
+			errorBuffer[i + 1] = 0;
+			break;
+		}
+	
+	fprintf(stderr, "\n  File <%s>, line %d:\n", _fileName.c_str(), lineCount);
+	
+	if (!errorKeyStart)
+		fprintf(stderr, "...%s%s\n", errorBuffer, errorBuffer[strlen(errorBuffer) - 1] == '>' ? "" : "...");
+	else
+		fprintf(stderr, "%s%s\n", errorKeyStart, errorBuffer[strlen(errorBuffer) - 1] == '>' ? "" : "...");
 
-	printf("\n  File <%s>, line %d:\n", _fileName.c_str(), lineCount);
-
-	bool startFull = lineStr[0] == '<';
-	bool endFull = lineStr[strlen(lineStr) - 1] == '>';
-
-	printf("%s%s%s\n", startFull ? "" : "...", lineStr, endFull ? "" : "...");
-
-	int cursor = 35;
-
-	if (!startFull)
-		cursor += 3;
-
-	while (cursor--)
-		printf(" ");
-
-	printf("^\n");
-	printf("Parser error: ");
+	fprintf(stderr, "\nParser error: ");
 
 	va_list args;
 	va_start(args, errorString);
-	vprintf(errorString, args);
+	vfprintf(stderr, errorString, args);
 	va_end(args);
 
-	printf("\n\n");
+	fprintf(stderr, "\n\n");
 
 	return false;
 }
