@@ -57,7 +57,7 @@ enum {
 void GuiObject::reflowLayout() {
 	if (!_name.empty()) {
 		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, _w, _h)) {
-			warning("Could not load widget position for '%s'", _name.c_str());
+			error("Could not load widget position for '%s'", _name.c_str());
 		}
 
 		if (_x < 0)
