@@ -142,6 +142,9 @@ void NewGui::redraw() {
 
 	if (_redrawStatus == kRedrawDisabled)
 		return;
+		
+	if (_dialogStack.empty())
+		return;
 
 	switch (_redrawStatus) {
 		case kRedrawCloseDialog:
@@ -331,7 +334,7 @@ void NewGui::restoreState() {
 	_stateIsSaved = false;
 }
 
-void NewGui::openDialog(Dialog *dialog) {
+void NewGui::openDialog(Dialog *dialog) {	
 	_dialogStack.push(dialog);
 	_redrawStatus = kRedrawOpenDialog;
 	
