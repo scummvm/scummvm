@@ -151,6 +151,8 @@ void ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, bool center
 		layout = new ThemeLayoutVertical(_curLayout.top(), spacing, center);
 	else if (type == ThemeLayout::kLayoutHorizontal)
 		layout = new ThemeLayoutHorizontal(_curLayout.top(), spacing, center);
+
+	assert(layout);
 	
 	layout->setPadding(
 		getVar("Globals.Padding.Left", 0),

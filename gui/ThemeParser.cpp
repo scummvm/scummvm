@@ -605,7 +605,10 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 		
 	else if (node->values["type"] == "horizontal")
 		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutHorizontal, spacing, node->values["center"] == "true");
-		
+	else
+		return parserError("Invalid layout type. Only 'horizontal' and 'vertical' layouts allowed.");
+
+
 	if (node->values.contains("padding")) {
 		int paddingL, paddingR, paddingT, paddingB;
 		
