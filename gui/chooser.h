@@ -45,7 +45,7 @@ protected:
 	ButtonWidget	*_chooseButton;
 
 public:
-	ChooserDialog(const String &title, String prefix = "defaultChooser_", const String &buttonLabel = "Choose");
+	ChooserDialog(const String &title, String dialogId = "Browser");
 
 	void setList(const StringList& list);
 
