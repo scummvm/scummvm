@@ -349,32 +349,35 @@ protected:
 	 * or to change the commenting syntax.
 	 */
 	virtual bool skipComments() {
-		char endComment1 = 0, endComment2 = 0;
-
-		if (_char == '/') {
+		if (_char == '<') {
 			_char = _stream->readByte();
 
-			if (_char != '*') {
+			if (_char != '!') {
 				_stream->seek(-1, SEEK_CUR);
-				_char = '/';
+				_char = '<';
 				return false;
 			}
 			
+			if (_stream->readByte() != '-' || _stream->readByte() != '-')
+				return parserError("Malformed comment syntax.");
+				
 			_char = _stream->readByte();
+			bool dash = false;
 
 			while (_char) {
-				endComment1 = endComment2;
-				endComment2 = _char;
+				if (_char == '-') {
+					if (dash && _stream->readByte() == '>') {
+						_char = _stream->readByte();
+						return true;
+					}
+						
+					dash = !dash;
+				}
+						
 				_char = _stream->readByte();
-
-				if (endComment1 == '*' && endComment2 == '/')
-					break;
-
-				if (_char == 0)
-					return parserError("Comment has no closure.");
 			}
-			_char = _stream->readByte();
-			return true;
+			
+			return parserError("Comment has no closure.");
 		}
 
 		return false;

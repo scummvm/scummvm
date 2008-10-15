@@ -34,7 +34,7 @@ def buildAllThemes():
 			buildTheme(f)
 			
 def parseSTX(theme_file, def_file):
-	comm = re.compile("\/\*(.*?)\*\/", re.DOTALL)
+	comm = re.compile("<!--(.*?)-->", re.DOTALL)
 
 	output = ""
 	for line in theme_file:

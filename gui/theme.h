@@ -35,7 +35,7 @@
 #include "graphics/fontman.h"
 
 #define THEME_VERSION 24
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_THEME_V23"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.2"
 
 namespace GUI {
 
