@@ -677,3 +677,14 @@ void OSystem_PSP::setWindowCaption(const char *caption) {
 void OSystem_PSP::displayMessageOnOSD(const char *msg) {
 }
 
+#define PSP_CONFIG_FILE "ms0:/scummvm.ini"
+
+Common::SeekableReadStream *OSystem_PSP::openConfigFileForReading() {
+	Common::FSNode file(PSP_CONFIG_FILE);
+	return file.openForReading();
+}
+
+Common::WriteStream *OSystem_PSP::openConfigFileForWriting() {
+	Common::FSNode file(PSP_CONFIG_FILE);
+	return file.openForWriting();
+}

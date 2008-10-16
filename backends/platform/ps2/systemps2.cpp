@@ -770,6 +770,7 @@ void OSystem_PS2::quit(void) {
 }
 
 void OSystem_PS2::makeConfigPath(char *dest) {
+	// FIXME: Maybe merge this method into openConfigFileForReading/openConfigFileForWriting ?
 	FILE *handle;
 	strcpy(dest, "cdfs:/ScummVM.ini");
 	handle = ps2_fopen(dest, "r");
@@ -781,6 +782,20 @@ void OSystem_PS2::makeConfigPath(char *dest) {
 		ps2_fclose(handle);
 	else
 		strcpy(dest, "mc0:ScummVM/scummvm.ini");
+}
+
+Common::SeekableReadStream *OSystem_PS2::openConfigFileForReading() {
+	char configFile[MAXPATHLEN];
+	makeConfigPath(configFile);
+	Common::FSNode file(configFile);
+	return file.openForReading();
+}
+
+Common::WriteStream *OSystem_PS2::openConfigFileForWriting() {
+	char configFile[MAXPATHLEN];
+	makeConfigPath(configFile);
+	Common::FSNode file(configFile);
+	return file.openForWriting();
 }
 
 bool OSystem_PS2::runningFromHost(void) {

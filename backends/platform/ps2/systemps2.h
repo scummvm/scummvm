@@ -107,6 +107,9 @@ public:
 
 	virtual void quit();
 
+	virtual Common::SeekableReadStream *openConfigFileForReading();
+	virtual Common::WriteStream *openConfigFileForWriting();
+
 	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
 
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);

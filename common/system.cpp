@@ -122,21 +122,9 @@ void OSystem::clearScreen() {
 
 
 /*
-FIXME: The config file loading code below needs to be cleaned up.
- Port specific variants should be pushed into the respective ports.
-
- Ideally, the default OSystem::openConfigFileForReading/Writing methods
- should be removed completely.
+ FIXME: Maybe we should push the default config file loading/saving code below
+ out to all the backends?
 */
-
-
-#ifdef __PLAYSTATION2__
-#include "backends/platform/ps2/systemps2.h"
-#endif
-
-#ifdef IPHONE
-#include "backends/platform/iphone/osys_iphone.h"
-#endif
 
 
 #if defined(UNIX)
@@ -145,25 +133,8 @@ FIXME: The config file loading code below needs to be cleaned up.
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 #endif
 
-static Common::String getDefaultConfigFileName() {
-	char configFile[MAXPATHLEN];
-#if defined(PALMOS_MODE)
-	strcpy(configFile,"/PALM/Programs/ScummVM/" DEFAULT_CONFIG_FILE);
-#elif defined(IPHONE)
-	strcpy(configFile, OSystem_IPHONE::getConfigPath());
-#elif defined(__PLAYSTATION2__)
-	((OSystem_PS2*)g_system)->makeConfigPath(configFile);
-#elif defined(__PSP__)
-	strcpy(configFile, "ms0:/" DEFAULT_CONFIG_FILE);
-#else
-	strcpy(configFile, DEFAULT_CONFIG_FILE);
-#endif
-
-	return configFile;
-}
-
 Common::SeekableReadStream *OSystem::openConfigFileForReading() {
-	Common::FSNode file(getDefaultConfigFileName());
+	Common::FSNode file(DEFAULT_CONFIG_FILE);
 	return file.openForReading();
 }
 
@@ -171,7 +142,7 @@ Common::WriteStream *OSystem::openConfigFileForWriting() {
 #ifdef __DC__
 	return 0;
 #else
-	Common::FSNode file(getDefaultConfigFileName());
+	Common::FSNode file(DEFAULT_CONFIG_FILE);
 	return file.openForWriting();
 #endif
 }

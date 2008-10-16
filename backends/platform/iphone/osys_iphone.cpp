@@ -1312,8 +1312,14 @@ OSystem *OSystem_IPHONE_create() {
 	return new OSystem_IPHONE();
 }
 
-const char* OSystem_IPHONE::getConfigPath() {
-	return SCUMMVM_PREFS_PATH;
+Common::SeekableReadStream *OSystem_IPHONE::openConfigFileForReading() {
+	Common::FSNode file(SCUMMVM_PREFS_PATH);
+	return file.openForReading();
+}
+
+Common::WriteStream *OSystem_IPHONE::openConfigFileForWriting() {
+	Common::FSNode file(SCUMMVM_PREFS_PATH);
+	return file.openForWriting();
 }
 
 void iphone_main(int argc, char *argv[]) {

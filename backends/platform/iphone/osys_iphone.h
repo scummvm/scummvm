@@ -177,7 +177,8 @@ public:
 	void startSoundsystem();
 	void stopSoundsystem();
 
-	static const char* getConfigPath();
+	virtual Common::SeekableReadStream *openConfigFileForReading();
+	virtual Common::WriteStream *openConfigFileForWriting();
 
 protected:
 	inline void addDirtyRect(int16 x1, int16 y1, int16 w, int16 h);

@@ -171,10 +171,22 @@ Common::SaveFileManager *OSystem_PalmBase::getSavefileManager() {
 	return _saveMgr;
 }
 
-Audio::Mixer * OSystem_PalmBase::getMixer() {
+Audio::Mixer *OSystem_PalmBase::getMixer() {
 	return _mixerMgr;
 }
 
-Common::TimerManager * OSystem_PalmBase::getTimerManager() {
+Common::TimerManager *OSystem_PalmBase::getTimerManager() {
 	return _timerMgr;
+}
+
+#define PALMOS_CONFIG_FILE "/PALM/Programs/ScummVM/scummvm.ini"
+
+Common::SeekableReadStream *OSystem_PalmBase::openConfigFileForReading() {
+	Common::FSNode file(PALMOS_CONFIG_FILE);
+	return file.openForReading();
+}
+
+Common::WriteStream *OSystem_PalmBase::openConfigFileForWriting() {
+	Common::FSNode file(PALMOS_CONFIG_FILE);
+	return file.openForWriting();
 }

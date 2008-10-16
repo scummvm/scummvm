@@ -257,6 +257,9 @@ public:
 
 	Common::SaveFileManager *getSavefileManager();
 	Common::TimerManager *getTimerManager();
+
+	virtual Common::SeekableReadStream *openConfigFileForReading();
+	virtual Common::WriteStream *openConfigFileForWriting();
 };
 
 #endif
