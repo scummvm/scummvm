@@ -895,9 +895,11 @@ void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font 
 
 	Common::Rect charArea = r;
 	charArea.clip(_screen->w, _screen->h);
+
+	uint32 color = _system->RGBToColor(_texts[kTextDataDefault]->_color.r, _texts[kTextDataDefault]->_color.g, _texts[kTextDataDefault]->_color.b);
 		
 	restoreBackground(charArea);
-	font->drawChar(_screen, ch, charArea.left, charArea.top, 0);
+	font->drawChar(_screen, ch, charArea.left, charArea.top, color);
 	addDirtyRect(charArea);
 }
 
