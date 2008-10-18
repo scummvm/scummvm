@@ -132,6 +132,9 @@ bool Theme::isThemeLoadingRequired() {
 bool Theme::themeConfigParseHeader(Common::String header, Common::String &themeName) {	
 	header.trim();
 	
+	if (header.empty())
+		return false;
+	
 	if (header[0] != '[' || header.lastChar() != ']')
 		return false;
 		
