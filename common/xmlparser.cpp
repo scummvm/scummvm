@@ -38,12 +38,9 @@ bool XMLParser::parserError(const char *errorString, ...) {
 	_state = kParserError;
 	
 	const int startPosition = _stream->pos();
-	const int middle = kErrorMessageWidth / 2;
-	
 	int currentPosition = startPosition;
-	int lineCount = 1, realMiddle = 0;
-	char errorBuffer[kErrorMessageWidth];
-	char c, *errorKeyStart = 0;
+	int lineCount = 1;
+	char c = 0;
 	
 	_stream->seek(0, SEEK_SET);
 	
@@ -54,46 +51,40 @@ bool XMLParser::parserError(const char *errorString, ...) {
 			lineCount++;
 	}
 	
-	_stream->seek(-MIN(middle, startPosition), SEEK_CUR);
-	
-	for (int i = 0, j = 0; i < kErrorMessageWidth; ++i, ++j) {
+	assert(_stream->pos() == startPosition);
+	currentPosition = startPosition;
+
+	int keyOpening = 0;
+	int keyClosing = 0;
+
+	while (currentPosition-- && keyOpening == 0) {
+		_stream->seek(-2, SEEK_CUR);
 		c = _stream->readByte();
-		
-		if (c == '\n' || c == '\r') {
-			errorBuffer[i++] = ' ';
-			j++;
-			
-			while (c && isspace(c)) {
-				c = _stream->readByte();
-				j++;
-			}
-		}
-			
-		errorBuffer[i] = c;
-		if (!realMiddle && j >= middle)
-			realMiddle = i;
+
+		if (c == '<')
+			keyOpening = currentPosition - 1;
+		else if (c == '>')
+			keyClosing = currentPosition;
 	}
-		
-	for (int i = realMiddle; i >= 0; --i)
-		if (errorBuffer[i] == '<') {
-			errorKeyStart = &errorBuffer[i];
-			break;
-		}
-		
-	for (int i = realMiddle; i < kErrorMessageWidth; ++i)
-		if (errorBuffer[i] == '>') {
-			errorBuffer[i + 1] = 0;
-			break;
-		}
+
+	_stream->seek(startPosition, SEEK_SET);
+	currentPosition = startPosition;
+	while (keyClosing == 0 && c && currentPosition++) {
+		c = _stream->readByte();
+
+		if (c == '>')
+			keyClosing = currentPosition;
+	}
 	
 	fprintf(stderr, "\n  File <%s>, line %d:\n", _fileName.c_str(), lineCount);
 	
-	if (!errorKeyStart)
-		fprintf(stderr, "...%s%s\n", errorBuffer, errorBuffer[strlen(errorBuffer) - 1] == '>' ? "" : "...");
-	else
-		fprintf(stderr, "%s%s\n", errorKeyStart, errorBuffer[strlen(errorBuffer) - 1] == '>' ? "" : "...");
+	currentPosition = (keyClosing - keyOpening);
+	_stream->seek(keyOpening, SEEK_SET);
 
-	fprintf(stderr, "\nParser error: ");
+	while (currentPosition--)
+		fprintf(stderr, "%c", _stream->readByte());
+
+	fprintf(stderr, "\n\nParser error: ");
 
 	va_list args;
 	va_start(args, errorString);
@@ -277,6 +268,9 @@ bool XMLParser::parse() {
 				} else if (_char == '/') {
 					_char = _stream->readByte();
 					activeClosure = true;
+				} else if (_char == '?') {
+					parserError("Unexpected header. There may only be one XML header per file.");
+					break;
 				}
 
 				_state = kParserNeedKeyName;

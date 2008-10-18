@@ -406,7 +406,7 @@ protected:
 			_char = _stream->readByte();
 		}
 
-		return isspace(_char) != 0 || _char == '>' || _char == '=' || _char == '/' || _char == '?';
+		return isspace(_char) != 0 || _char == '>' || _char == '=' || _char == '/';
 	}
 
 	/**
