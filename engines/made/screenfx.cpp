@@ -64,8 +64,32 @@ void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palet
 		vfx00(surface, palette, newPalette, colorCount);
 		break;
 
+	case 1:
+		vfx01(surface, palette, newPalette, colorCount);
+		break;
+
 	case 2:
 		vfx02(surface, palette, newPalette, colorCount);
+		break;
+
+	case 3:
+		vfx03(surface, palette, newPalette, colorCount);
+		break;
+
+	case 4:
+		vfx04(surface, palette, newPalette, colorCount);
+		break;
+
+	case 5:
+		vfx05(surface, palette, newPalette, colorCount);
+		break;
+
+	case 6:
+		vfx06(surface, palette, newPalette, colorCount);
+		break;
+
+	case 7:
+		vfx07(surface, palette, newPalette, colorCount);
 		break;
 
 	case 9:		// "Checkerboard" effect
@@ -94,6 +118,10 @@ void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palet
 
 	case 15:
 		vfx15(surface, palette, newPalette, colorCount);
+		break;
+
+	case 16:
+		vfx16(surface, palette, newPalette, colorCount);
 		break;
 
 	case 17:	// Palette fadeout/fadein
@@ -229,14 +257,71 @@ void ScreenEffects::copyRect(Graphics::Surface *surface, int16 x1, int16 y1, int
 void ScreenEffects::vfx00(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	setPalette(palette);
 	_screen->showWorkScreen();
-	// FIXME: For Manhole; causes sluggish mouse
+	// Workaround for The Manhole, else animations will be shown too fast
 	_screen->updateScreenAndWait(100);
+}
+
+void ScreenEffects::vfx01(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	for (int x = 0; x < 320; x += 8) {
+		copyRect(surface, x, 0, x + 8, 200);
+		setBlendedPalette(palette, newPalette, colorCount, x, 312);
+		_screen->updateScreenAndWait(25);
+	}
+ 	setPalette(palette);
 }
 
 void ScreenEffects::vfx02(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int x = 312; x >= 0; x -= 8) {
 		copyRect(surface, x, 0, x + 8, 200);
 		setBlendedPalette(palette, newPalette, colorCount, 312 - x, 312);
+		_screen->updateScreenAndWait(25);
+	}
+ 	setPalette(palette);
+}
+
+void ScreenEffects::vfx03(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	for (int y = 0; y < 200; y += 10) {
+		copyRect(surface, 0, y, 320, y + 10);
+		setBlendedPalette(palette, newPalette, colorCount, y, 190);
+		_screen->updateScreenAndWait(25);
+	}
+ 	setPalette(palette);
+}
+
+void ScreenEffects::vfx04(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	for (int y = 190; y >= 0; y -= 10) {
+		copyRect(surface, 0, y, 320, y + 10);
+		setBlendedPalette(palette, newPalette, colorCount, 190 - y, 190);
+		_screen->updateScreenAndWait(25);
+	}
+ 	setPalette(palette);
+}
+
+void ScreenEffects::vfx05(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	for (int y = 0; y < 100; y += 10) {
+		copyRect(surface, 0, y + 100, 320, y + 110);
+		copyRect(surface, 0, 90 - y, 320, 100 - y);
+		setBlendedPalette(palette, newPalette, colorCount, y, 90);
+		_screen->updateScreenAndWait(25);
+	}
+ 	setPalette(palette);
+}
+
+void ScreenEffects::vfx06(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	for (int x = 0; x < 160; x += 8) {
+		copyRect(surface, x + 160, 0, x + 168, 200);
+		copyRect(surface, 152 - x, 0, 160 - x, 200);
+		setBlendedPalette(palette, newPalette, colorCount, x, 152);
+		_screen->updateScreenAndWait(25);
+	}
+ 	setPalette(palette);
+}
+
+void ScreenEffects::vfx07(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	for (int x = 152; x >= 0; x -= 8) {
+		copyRect(surface, x + 160, 0, x + 168, 200);
+		copyRect(surface, 152 - x, 0, 160 - x, 200);
+		setBlendedPalette(palette, newPalette, colorCount, 152 - x, 152);
 		_screen->updateScreenAndWait(25);
 	}
  	setPalette(palette);
@@ -312,6 +397,17 @@ void ScreenEffects::vfx15(Graphics::Surface *surface, byte *palette, byte *newPa
 	for (int i = 0; i < 27; i++) {
 		copyFxRect(surface, 160 - x, 0, 160 + x, 200);
 		x += 8;
+		setBlendedPalette(palette, newPalette, colorCount, i, 27);
+		_screen->updateScreenAndWait(25);
+	}
+ 	setPalette(palette);
+}
+
+void ScreenEffects::vfx16(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	int16 y = 8;
+	for (int i = 0; i < 27; i++) {
+		copyFxRect(surface, 0, 100 - y, 320, 100 + y);
+		y += 5;
 		setBlendedPalette(palette, newPalette, colorCount, i, 27);
 		_screen->updateScreenAndWait(25);
 	}

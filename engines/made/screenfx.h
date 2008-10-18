@@ -54,7 +54,13 @@ private:
 	void copyFxRect(Graphics::Surface *surface, int16 x1, int16 y1, int16 x2, int16 y2);
 	void copyRect(Graphics::Surface *surface, int16 x1, int16 y1, int16 x2, int16 y2);
 	void vfx00(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
+	void vfx01(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 	void vfx02(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
+	void vfx03(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
+	void vfx04(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
+	void vfx05(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
+	void vfx06(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
+	void vfx07(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 	void vfx09(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 	void vfx10(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 	void vfx11(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
@@ -62,6 +68,7 @@ private:
 	void vfx13(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 	void vfx14(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 	void vfx15(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
+	void vfx16(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 	void vfx17(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 };
 
