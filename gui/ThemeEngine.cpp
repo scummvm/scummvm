@@ -899,10 +899,13 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, Wid
 void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state) {
 	if (!ready())
 		return;
+
+	Common::Rect charArea = r;
+	charArea.clip(_screen->w, _screen->h);
 		
-	restoreBackground(r);
-	font->drawChar(_screen, ch, r.left, r.top, 0);
-	addDirtyRect(r);
+	restoreBackground(charArea);
+	font->drawChar(_screen, ch, charArea.left, charArea.top, 0);
+	addDirtyRect(charArea);
 }
 
 void ThemeEngine::debugWidgetPosition(const char *name, const Common::Rect &r) {
