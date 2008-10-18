@@ -22,7 +22,7 @@
  - $Id$
  -
  -->
-
+<?xml version = "1.0"?>
 <render_info>
 	<palette>
 		<color name = 'darkred'

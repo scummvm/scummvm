@@ -129,6 +129,7 @@ public:
 
 	/** Active state for the parser */
 	enum ParserState {
+		kParserNeedHeader,
 		kParserNeedKey,
 		kParserNeedKeyName,
 
@@ -166,6 +167,7 @@ public:
 		Common::String name;
 		Common::StringMap values;
 		bool ignore;
+		bool header;
 		int depth;
 		XMLKeyLayout *layout;
 	};
@@ -404,7 +406,7 @@ protected:
 			_char = _stream->readByte();
 		}
 
-		return isspace(_char) != 0 || _char == '>' || _char == '=' || _char == '/';
+		return isspace(_char) != 0 || _char == '>' || _char == '=' || _char == '/' || _char == '?';
 	}
 
 	/**
@@ -451,6 +453,8 @@ protected:
 		va_end(args);
 		return (*key == 0);
 	}
+	
+	bool parseXMLHeader(ParserNode *node);
 
 	/**
 	 * Overload if your parser needs to support parsing the same file

@@ -54,7 +54,7 @@ bool XMLParser::parserError(const char *errorString, ...) {
 			lineCount++;
 	}
 	
-	_stream->seek(-middle, SEEK_CUR);
+	_stream->seek(-MIN(middle, startPosition), SEEK_CUR);
 	
 	for (int i = 0, j = 0; i < kErrorMessageWidth; ++i, ++j) {
 		c = _stream->readByte();
@@ -105,11 +105,32 @@ bool XMLParser::parserError(const char *errorString, ...) {
 	return false;
 }
 
+bool XMLParser::parseXMLHeader(ParserNode *node) {
+	assert(node->header);
+	
+	if (_activeKey.size() != 1)
+		return parserError("XML Header is expected in the global scope.");
+		
+	if (!node->values.contains("version"))
+		return parserError("Missing XML version in XML header.");
+		
+	if (node->values["version"] != "1.0")
+		return parserError("Unsupported XML version.");
+		
+	return true;
+}
+
 bool XMLParser::parseActiveKey(bool closed) {
 	bool ignore = false;
 	assert(_activeKey.empty() == false);
 
 	ParserNode *key = _activeKey.top();
+	
+	if (key->name == "xml" && key->header == true) {
+		assert(closed);
+		return parseXMLHeader(key) && closeKey();
+	}
+	
 	XMLKeyLayout *layout = (_activeKey.size() == 1) ? _XMLkeys : getParentNode(key)->layout;
 	
 	if (layout->children.contains(key->name)) {
@@ -217,9 +238,10 @@ bool XMLParser::parse() {
 	cleanup();
 
 	bool activeClosure = false;
-	bool selfClosure = false;
+	bool activeHeader = false;
+	bool selfClosure;
 
-	_state = kParserNeedKey;
+	_state = kParserNeedHeader;
 	_activeKey.clear();
 
 	_char = _stream->readByte();
@@ -232,6 +254,7 @@ bool XMLParser::parse() {
 			continue;
 
 		switch (_state) {
+			case kParserNeedHeader:
 			case kParserNeedKey:
 				if (_char != '<') {
 					parserError("Parser expecting key start.");
@@ -243,7 +266,15 @@ bool XMLParser::parse() {
 					break;
 				}
 
-				if (_char == '/') { // FIXME: What if it's a comment start
+				if (_state == kParserNeedHeader) {
+					if (_char != '?') {
+						parserError("Expecting XML header.");
+						break;
+					}
+					
+					_char = _stream->readByte();
+					activeHeader = true;
+				} else if (_char == '/') {
 					_char = _stream->readByte();
 					activeClosure = true;
 				}
@@ -266,6 +297,7 @@ bool XMLParser::parse() {
 					ParserNode *node = allocNode(); //new ParserNode;
 					node->name = _token;
 					node->ignore = false;
+					node->header = activeHeader;
 					node->depth = _activeKey.size();
 					node->layout = 0;
 					_activeKey.push(node);
@@ -291,23 +323,29 @@ bool XMLParser::parse() {
 					_char = _stream->readByte();
 					break;
 				}
-
+				
 				selfClosure = false;
 
-				if (_char == '/') { // FIXME: comment start?
+				if (_char == '/' || (_char == '?' && activeHeader)) {
 					selfClosure = true;
 					_char = _stream->readByte();
 				}
 
 				if (_char == '>') {
-					if (parseActiveKey(selfClosure)) {
+					if (activeHeader && !selfClosure) {
+						parserError("XML Header must be self-closed.");
+					} else if (parseActiveKey(selfClosure)) {
 						_char = _stream->readByte();
 						_state = kParserNeedKey;
 					}
+					
+					activeHeader = false;
 					break;
 				}
-
-				if (!parseToken()) 
+				
+				if (selfClosure)
+					parserError("Expecting key closure after '/' symbol.");
+				else if (!parseToken()) 
 					parserError("Error when parsing key value.");
 				else 
 					_state = kParserNeedPropertyOperator;

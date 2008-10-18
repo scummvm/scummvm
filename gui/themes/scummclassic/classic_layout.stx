@@ -22,7 +22,7 @@
  - $Id$
  -
  -->
-
+<?xml version = "1.0"?>
 <layout_info resolution = '-320xY, -256x240'>
 	<globals>
 		<def var = 'Line.Height' value = '16' />
