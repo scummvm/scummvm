@@ -46,19 +46,33 @@ ImageManager::~ImageManager() {
 }
 
 bool ImageManager::addArchive(const Common::String &name) {
+	Common::Archive *arch = 0;
+
+	if (name.hasSuffix(".zip")) {
 #ifdef USE_ZLIB
-	Common::ZipArchive *arch = new Common::ZipArchive(name);
-	if (!arch || !arch->isOpen())
+		Common::ZipArchive *zip = new Common::ZipArchive(name);
+		if (!zip || !zip->isOpen())
+			return false;
+
+		arch = zip;
+#else
 		return false;
-	_archives.add(name, Common::ArchivePtr(arch));
 #endif
+	} else {
+		Common::FSDirectory *dir = new Common::FSDirectory(name);
+		if (!dir || !dir->getFSNode().isDirectory())	
+			return false;
+
+		arch = dir;
+	}
+
+	_archives.add(name, Common::ArchivePtr(arch));
 	return true;
 }
 
 void ImageManager::removeArchive(const Common::String &name) {
-#ifdef USE_ZLIB
-	_archives.remove(name);
-#endif
+	if (_archives.hasArchive(name))
+		_archives.remove(name);
 }
 
 bool ImageManager::registerSurface(const Common::String &name, Surface *surf) {
@@ -73,7 +87,6 @@ bool ImageManager::registerSurface(const Common::String &name, Surface *surf) {
 	if (!surf)
 		surf = ImageDecoder::loadFile(name);
 
-#ifdef USE_ZLIB
 	if (!surf) {
 		Common::SeekableReadStream *stream = _archives.openFile(name);
 		if (stream) {
@@ -81,7 +94,6 @@ bool ImageManager::registerSurface(const Common::String &name, Surface *surf) {
 			delete stream;
 		}
 	}
-#endif
 
 	if (!surf)
 		return false;

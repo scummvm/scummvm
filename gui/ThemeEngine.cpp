@@ -251,10 +251,7 @@ void ThemeEngine::unloadTheme() {
 	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i)
 		ImageMan.unregisterSurface(i->_key);
 
-	if (_themeFileName.hasSuffix(".zip"))
-		ImageMan.removeArchive(_themeFileName);
-		
-	Common::File::resetDefaultDirectories();
+	ImageMan.removeArchive(_themeFileName);
 	
 	_themeEval->reset();
 	_themeOk = false;
@@ -463,12 +460,8 @@ bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
 bool ThemeEngine::loadTheme(Common::String fileName) {
 	unloadTheme();
 
-	if (fileName != "builtin") {
-		if (fileName.hasSuffix(".zip"))
-			ImageMan.addArchive(fileName);
-		else 
-			Common::File::addDefaultDirectory(fileName);
-	}
+	if (fileName != "builtin")
+		ImageMan.addArchive(fileName);
 
 	if (fileName == "builtin") {
 		if (!loadDefaultXML())

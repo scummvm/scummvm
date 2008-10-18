@@ -33,26 +33,51 @@ Theme::Theme() : _loadedThemeX(0), _loadedThemeY(0) {}
 
 Theme::~Theme() {}
 
-const Graphics::Font *Theme::loadFont(const Common::String &filename) {
+const Graphics::Font *Theme::loadFontFromArchive(const Common::String &filename) {
+	Common::Archive *arch = 0;
 	const Graphics::NewFont *font = 0;
+
+	if (getThemeFileName().hasSuffix(".zip")) {
+#ifdef USE_ZLIB
+		Common::ZipArchive *zip = new Common::ZipArchive(getThemeFileName());
+		if (!zip || !zip->isOpen())
+			return 0;
+
+		arch = zip;
+#else
+		return 0;
+#endif
+	} else {
+		Common::FSDirectory *dir = new Common::FSDirectory(getThemeFileName());
+		if (!dir || !dir->getFSNode().isDirectory())	
+			return 0;
+
+		arch = dir;
+	}
+
+	Common::SeekableReadStream *stream(arch->openFile(filename));
+	if (stream) {
+		font = Graphics::NewFont::loadFromCache(*stream);
+		delete stream;
+	}
+
+	delete arch;
+	return font;
+}
+
+const Graphics::Font *Theme::loadFont(const Common::String &filename) {
+	const Graphics::Font *font = 0;
 	Common::String cacheFilename = genCacheFilename(filename.c_str());
 	Common::File fontFile;
 
 	if (!cacheFilename.empty()) {
 		if (fontFile.open(cacheFilename))
 			font = Graphics::NewFont::loadFromCache(fontFile);
+
 		if (font)
 			return font;
 
-#ifdef USE_ZLIB
-		Common::ZipArchive zipArchive(getThemeFileName());
-		Common::SeekableReadStream *stream(zipArchive.openFile(cacheFilename));
-		if (stream) {
-			font = Graphics::NewFont::loadFromCache(*stream);
-			delete stream;
-		}
-#endif
-		if (font)
+		if ((font = loadFontFromArchive(cacheFilename)))
 			return font;
 	}
 
@@ -61,21 +86,13 @@ const Graphics::Font *Theme::loadFont(const Common::String &filename) {
 		font = Graphics::NewFont::loadFont(fontFile);
 	}
 
-#ifdef USE_ZLIB
 	if (!font) {
-		Common::ZipArchive zipArchive(getThemeFileName());
-		
-		Common::SeekableReadStream *stream(zipArchive.openFile(filename));
-		if (stream) {
-			font = Graphics::NewFont::loadFont(*stream);
-			delete stream;
-		}
+		font = loadFontFromArchive(filename);
 	}
-#endif
 
 	if (font) {
 		if (!cacheFilename.empty()) {
-			if (!Graphics::NewFont::cacheFontData(*font, cacheFilename)) {
+			if (!Graphics::NewFont::cacheFontData(*(Graphics::NewFont*)font, cacheFilename)) {
 				warning("Couldn't create cache file for font '%s'", filename.c_str());
 			}
 		}

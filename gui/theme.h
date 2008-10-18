@@ -337,6 +337,7 @@ public:
 
 protected:
 	const Graphics::Font *loadFont(const Common::String &filename);
+	const Graphics::Font *loadFontFromArchive(const Common::String &filename);
 	Common::String genCacheFilename(const char *filename);
 
 public:
