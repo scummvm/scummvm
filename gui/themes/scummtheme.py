@@ -35,12 +35,15 @@ def buildAllThemes():
 			
 def parseSTX(theme_file, def_file):
 	comm = re.compile("<!--(.*?)-->", re.DOTALL)
+	head = re.compile("<\?(.*?)\?>")
 
 	output = ""
 	for line in theme_file:
 		output +=  line.rstrip("\r\n\t ").lstrip() + " \n"
-		
-	output = re.sub(comm, "", output).replace("\t", " ").replace("  ", " ").replace("\"", "'").splitlines()
+	
+	output = re.sub(comm, "", output)
+	output = re.sub(head, "", output)
+	output = output.replace("\t", " ").replace("  ", " ").replace("\"", "'").splitlines()
 		
 	for line in output:
 		if line and not line.isspace():
@@ -51,6 +54,8 @@ def buildDefTheme(themeName):
 	
 	if not os.path.isdir(themeName):
 		print "Cannot open default theme dir."
+		
+	def_file.write(""" "<?xml version = '1.0'?>"\n""")
 		
 	for filename in os.listdir(themeName):
 		filename = os.path.join(themeName, filename)
