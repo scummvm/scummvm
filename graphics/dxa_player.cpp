@@ -29,7 +29,11 @@
 #include "common/util.h"
 
 #ifdef USE_ZLIB
-#include <zlib.h>
+  #ifdef __SYMBIAN32__
+    #include <zlib\zlib.h>
+  #else
+    #include <zlib.h>
+  #endif
 #endif
 
 namespace Graphics {
