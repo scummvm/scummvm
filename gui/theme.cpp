@@ -92,7 +92,7 @@ const Graphics::Font *Theme::loadFont(const Common::String &filename) {
 
 	if (font) {
 		if (!cacheFilename.empty()) {
-			if (!Graphics::NewFont::cacheFontData(*(Graphics::NewFont*)font, cacheFilename)) {
+			if (!Graphics::NewFont::cacheFontData(*(const Graphics::NewFont*)font, cacheFilename)) {
 				warning("Couldn't create cache file for font '%s'", filename.c_str());
 			}
 		}
