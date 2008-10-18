@@ -29,11 +29,7 @@
 #include "common/util.h"
 
 #ifdef USE_ZLIB
-  #ifdef __SYMBIAN32__
-    #include <zlib\zlib.h>
-  #else
-    #include <zlib.h>
-  #endif
+  #include "common/zlib.h"
 #endif
 
 namespace Graphics {
@@ -218,18 +214,8 @@ void DXAPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 
 void DXAPlayer::decodeZlib(byte *data, int size, int totalSize) {
 #ifdef USE_ZLIB
-	z_stream  _d_stream;
-	_d_stream.zalloc = (alloc_func)0;
-	_d_stream.zfree = (free_func)0;
-	_d_stream.opaque = (voidpf)0;
-	_d_stream.next_in   = _inBuffer;
-	_d_stream.avail_in  = size;
-	_d_stream.total_in  = size;
-	_d_stream.next_out  = data;
-	_d_stream.avail_out = totalSize;
-	inflateInit(&_d_stream);
-	inflate(&_d_stream, Z_FINISH);
-	inflateEnd(&_d_stream);
+	unsigned long dstLen = totalSize;
+	Common::uncompress(data, &dstLen, _inBuffer, size);
 #endif
 }
 
