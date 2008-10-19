@@ -1088,7 +1088,6 @@ int FWScript::o1_unloadMask0() {
 	debugC(5, kCineDebugScript, "Line: %d: removeSpriteOverlay(%d)", _line, param);
 	removeOverlay(param, 0);
 	return 0;
-	return 0;
 }
 
 int FWScript::o1_addToBgList() {
