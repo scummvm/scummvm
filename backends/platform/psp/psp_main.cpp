@@ -118,8 +118,7 @@ int SetupCallbacks(void) {
 }
 
 #undef main
-int main(void)
-{
+int main(void) {
 	SetupCallbacks();
 
 	static char *argv[] = { "scummvm", NULL };

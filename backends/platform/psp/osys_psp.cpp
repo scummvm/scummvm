@@ -370,9 +370,9 @@ OverlayColor OSystem_PSP::RGBToColor(uint8 r, uint8 g, uint8 b) {
 }
 
 void OSystem_PSP::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-		r = ((color & 0x1F) << 3);
-		g = (((color >> 5) & 0x1F) << 3);
-		b = (((color >> 10) & 0x1F) << 3);
+	r = ((color & 0x1F) << 3);
+	g = (((color >> 5) & 0x1F) << 3);
+	b = (((color >> 10) & 0x1F) << 3);
 }
 
 OverlayColor OSystem_PSP::ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
@@ -385,11 +385,11 @@ OverlayColor OSystem_PSP::ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
 }
 
 void OSystem_PSP::colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) {
-		colorToRGB(color, r, g, b);
-		if (color & 0x8000)
-			a = 255;
-		else
-			a = 0;
+	colorToRGB(color, r, g, b);
+	if (color & 0x8000)
+		a = 255;
+	else
+		a = 0;
 }
 
 void OSystem_PSP::grabPalette(byte *colors, uint start, uint num) {
@@ -452,11 +452,9 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 	if (buttonsChanged & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_SELECT | PSP_CTRL_SQUARE)) {
 		if (buttonsChanged & PSP_CTRL_CROSS) {
 			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP;
-		}
-		else if (buttonsChanged & PSP_CTRL_CIRCLE) {
+		} else if (buttonsChanged & PSP_CTRL_CIRCLE) {
 			event.type = (pad.Buttons & PSP_CTRL_CIRCLE) ? Common::EVENT_RBUTTONDOWN : Common::EVENT_RBUTTONUP;
-		}
-		else {
+		} else {
 			//any of the other buttons.
 			event.type = buttonsChanged & pad.Buttons ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
 			event.kbd.flags = 0;
@@ -494,23 +492,23 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 
 		if (pad.Lx < 100) {
 			analogStepAmountX = pad.Lx - 100;
-		}
-		else if (pad.Lx > 155) {
+		} else if (pad.Lx > 155) {
 			analogStepAmountX = pad.Lx - 155;
 		}
 
 		if (pad.Ly < 100) {
 			analogStepAmountY = pad.Ly - 100;
-		}
-		else if (pad.Ly > 155) {
+		} else if (pad.Ly > 155) {
 			analogStepAmountY = pad.Ly - 155;
 		}
 
 		if (pad.Buttons & PAD_DIR_MASK ||
 		    analogStepAmountX != 0 || analogStepAmountY != 0) {
 			if (_prevButtons & PAD_DIR_MASK) {
-				if (_padAccel < 16) _padAccel++;
-			} else _padAccel = 0;
+				if (_padAccel < 16)
+					_padAccel++;
+			} else
+				_padAccel = 0;
 
 			_prevButtons = pad.Buttons;
 
@@ -526,34 +524,38 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 			// If no movement then this has no effect
 			if (pad.Buttons & PSP_CTRL_TRIANGLE) {
 				// Fine control mode for analog
-					if (analogStepAmountX != 0)
+					if (analogStepAmountX != 0) {
 						if (analogStepAmountX > 0)
 							newX += analogStepAmountX - (analogStepAmountX - 1);
 						else
 							newX -= -analogStepAmountX - (-analogStepAmountX - 1);
+					}
 
-					if (analogStepAmountY != 0)
+					if (analogStepAmountY != 0) {
 						if (analogStepAmountY > 0)
 							newY += analogStepAmountY - (analogStepAmountY - 1);
 						else
 							newY -= -analogStepAmountY - (-analogStepAmountY - 1);
-			}
-			else {
+					}
+			} else {
 				newX += analogStepAmountX >> ((_screenWidth == 640) ? 2 : 3);
 				newY += analogStepAmountY >> ((_screenWidth == 640) ? 2 : 3);
 			}
 
-			if (newX < 0) newX = 0;
-			if (newY < 0) newY = 0;
-			if (_overlayVisible)
-			{
-				if (newX >= _overlayWidth) newX = _overlayWidth - 1;
-				if (newY >= _overlayHeight) newY = _overlayHeight - 1;
-			}
-			else
-			{
-				if (newX >= _screenWidth) newX = _screenWidth - 1;
-				if (newY >= _screenHeight) newY = _screenHeight - 1;
+			if (newX < 0)
+				newX = 0;
+			if (newY < 0)
+				newY = 0;
+			if (_overlayVisible) {
+				if (newX >= _overlayWidth)
+					newX = _overlayWidth - 1;
+				if (newY >= _overlayHeight)
+					newY = _overlayHeight - 1;
+			} else {
+				if (newX >= _screenWidth)
+					newX = _screenWidth - 1;
+				if (newY >= _screenHeight)
+					newY = _screenHeight - 1;
 			}
 
 			if ((_mouseX != newX) || (_mouseY != newY)) {
