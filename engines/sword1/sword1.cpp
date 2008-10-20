@@ -222,24 +222,23 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 			uint pos = 0;
 			do {
 				stop = in->readByte();
-				if (pos < (sizeof(saveDesc) - 1)) { 	
-					if ((stop == 10) || (stop == 255) || (in->eos())) {
+				if (pos < (sizeof(saveDesc) - 1)) {
+					if ((stop == 10) || (stop == 255) || (in->eos()))
 						saveDesc[pos++] = '\0';
-					}
-					else if (stop >= 32) {
+					else if (stop >= 32)
 						saveDesc[pos++] = stop;
-					}
 				}
 			} while ((stop != 10) && (stop != 255) && (!in->eos()));
+
 			if (saveDesc[0] != 0) {
 				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc, *file));
 				file++;
 			}
 		} while ((stop != 255) && (!in->eos()));
 	}
-	
+
 	delete in;
-		
+
 	return saveList;
 }
 
