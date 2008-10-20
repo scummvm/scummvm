@@ -347,16 +347,6 @@ void PictureEngine::setCamera(int16 x, int16 y) {
 
 	_screen->finishTalkTextItems();
 
-	/*
-	// TODO: Fix checks; sometimes cameraY ended up being negative
-
-	if (x > _sceneWidth)
-		x = _sceneWidth;
-	
-	if (y > _sceneHeight - _cameraHeight)
-		y = _sceneHeight - _cameraHeight;
-	*/
-
 	_screen->clearSprites();
 	
 	_cameraX = x;

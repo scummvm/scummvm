@@ -366,12 +366,12 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 
 	while (1) {
 		if (*textData == 0x0A) {
-			x = CLIP<int16>(textData[3], 120, _talkTextMaxWidth);
+			x = CLIP<int16>(READ_LE_UINT16(&textData[3]), 120, _talkTextMaxWidth);
 			y = CLIP<int16>(READ_LE_UINT16(&textData[1]), 4, _vm->_cameraHeight - 16);
 			maxWidth = 624 - ABS(x - 320) * 2;
 			textData += 4;
 		} else if (*textData == 0x14) {
-			item->color = textData[1];
+			item->color = ((textData[1] << 4) & 0xF0) | ((textData[1] >> 4) & 0x0F);
 			textData += 2;
 		} else if (*textData == 0x19) {
 			durationModifier = textData[1];

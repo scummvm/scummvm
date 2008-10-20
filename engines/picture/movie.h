@@ -66,7 +66,9 @@ protected:
 	void unpackRle(byte *source, byte *dest);
 	
 	void fetchAudioChunks();
-
+	
+	bool handleInput();
+	
 };
 
 } // End of namespace Picture
