@@ -211,8 +211,13 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 		uint8 stop;
 		char saveDesc[32];
 		do {
-			// Obtain the last digit of the filename, since they correspond to the save slot
-			int slotNum = atoi(file->c_str() + file->size() - 1);
+			if (file->compareToIgnoreCase("SAVEGAME.INF") == 0) {
+				file++;
+				continue;
+			}
+
+			// Obtain the last 3 digits of the filename, since they correspond to the save slot
+			int slotNum = atoi(file->c_str() + file->size() - 3);
 
 			uint pos = 0;
 			do {
