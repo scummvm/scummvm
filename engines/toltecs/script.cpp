@@ -36,6 +36,7 @@
 
 #include "toltecs/toltecs.h"
 #include "toltecs/animation.h"
+#include "toltecs/movie.h"
 #include "toltecs/palette.h"
 #include "toltecs/resource.h"
 #include "toltecs/script.h"
@@ -920,7 +921,7 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 	case 65:// TODO
 	{
 		debug(0, "o2_playMovie(%d, %d)", arg16(3), arg16(5));
-		// TODO: Enable once the player is ready: _vm->_moviePlayer->playMovie()
+		_vm->_moviePlayer->playMovie(arg16(3));
 		break;
 	}
 	

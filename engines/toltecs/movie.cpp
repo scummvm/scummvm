@@ -148,7 +148,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 		case 7: // setup subtitle parameters
 			_vm->_screen->_talkTextY = READ_LE_UINT16(chunkBuffer + 0);
 			_vm->_screen->_talkTextX = READ_LE_UINT16(chunkBuffer + 2);
-			_vm->_screen->_talkTextFontColor = chunkBuffer[4];
+			_vm->_screen->_talkTextFontColor = ((chunkBuffer[4] << 4) & 0xF0) | ((chunkBuffer[4] >> 4) & 0x0F);
 			debug(0, "_talkTextX = %d; _talkTextY = %d; _talkTextFontColor = %d",
 				_vm->_screen->_talkTextX, _vm->_screen->_talkTextY, _vm->_screen->_talkTextFontColor);
 			break;
@@ -157,12 +157,15 @@ void MoviePlayer::playMovie(uint resIndex) {
 			_vm->_screen->finishTalkTextItems();
 			break;
 		default:
-			error("Unknown chunk type %d at %08X", chunkType, _vm->_arc->pos() - 5 - chunkSize);
+			error("MoviePlayer::playMovie(%04X) Unknown chunk type %d at %08X", resIndex, chunkType, _vm->_arc->pos() - 5 - chunkSize);
 		}
 
 		delete[] chunkBuffer;
 
 		_vm->_arc->seek(movieOffset, SEEK_SET);
+		
+		if (!handleInput())
+			break;
 
 	}
 
@@ -238,5 +241,24 @@ void MoviePlayer::unpackRle(byte *source, byte *dest) {
 	}
 }
 
+bool MoviePlayer::handleInput() {
+	Common::Event event;
+	Common::EventManager *eventMan = g_system->getEventManager();
+	while (eventMan->pollEvent(event)) {
+	switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				return false;
+			break;
+		case Common::EVENT_QUIT:
+			g_system->quit();
+			return false;
+			break;
+		default:
+			break;
+		}
+	}
+	return true;
+}
 
 } // End of namespace Toltecs
