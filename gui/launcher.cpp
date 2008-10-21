@@ -552,6 +552,11 @@ int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) 
 	if (_gfxWidget)
 		_gfxWidget->setGfx(0);
 
+	// Set up the game domain as newly active domain, so
+	// target specific savepath will be checked
+	String oldDomain = ConfMan.getActiveDomainName();
+	ConfMan.setActiveDomain(target);
+
 	_plugin = plugin;
 	_target = target;
 	_delSupport = (*_plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
@@ -563,6 +568,10 @@ int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) 
 	updateSaveList();
 
 	int ret = Dialog::runModal();
+
+	// Revert to the old active domain
+	ConfMan.setActiveDomain(oldDomain);
+
 	return ret;
 }
 

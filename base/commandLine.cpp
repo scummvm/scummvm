@@ -567,6 +567,11 @@ static void listSaves(const char *target) {
 	// Grab the "target" domain, if any
 	const Common::ConfigManager::Domain *domain = ConfMan.getDomain(target);
 
+	// Set up the game domain as newly active domain, so
+	// target specific savepath will be checked
+	Common::String oldDomain = ConfMan.getActiveDomainName();
+	ConfMan.setActiveDomain(target);
+
 	// Grab the gameid from the domain resp. use the target as gameid
 	Common::String gameid;
 	if (domain)
@@ -596,6 +601,9 @@ static void listSaves(const char *target) {
 		printf("  %-4s %s\n", x->save_slot().c_str(), x->description().c_str());
 		// TODO: Could also iterate over the full hashmap, printing all key-value pairs
 	}
+
+	// Revert to the old active domain
+	ConfMan.setActiveDomain(oldDomain);
 }
 
 
