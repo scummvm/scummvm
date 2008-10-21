@@ -142,10 +142,10 @@ public:
 		kFeatureAutoComputeDirtyRects,
 
 		/**
-		 * This flag determines either cursor can have its own palette or not
+		 * This flag determines whether or not the cursor can have its own palette.
 		 * It is currently used only by some Macintosh versions of Humongous
-		 * Entertainment games. If backend doesn't implement this feature then
-		 * engine switches to b/w version of cursors.
+		 * Entertainment games. If the backend doesn't implement this feature then
+		 * the engine switches to b/w versions of cursors.
 		 */
 		kFeatureCursorHasPalette,
 
