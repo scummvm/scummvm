@@ -136,11 +136,11 @@ static const LanguageTypes languages[] = {
 bool StaticResource::loadStaticResourceFile() {
 	Resource *res = _vm->resource();
 
-	if (res->_archiveCache.find(staticDataFilename()) != res->_archiveCache.end())
+	if (res->isInCacheList(staticDataFilename()))
 		return true;
 
 	Common::ArchiveMemberList kyraDatFiles;
-	res->_files.listMatchingMembers(kyraDatFiles, staticDataFilename());
+	res->listFiles(staticDataFilename(), kyraDatFiles);
 
 	bool foundWorkingKyraDat = false;
 	for (Common::ArchiveMemberList::iterator i = kyraDatFiles.begin(); i != kyraDatFiles.end(); ++i) {
@@ -152,18 +152,15 @@ bool StaticResource::loadStaticResourceFile() {
 
 		delete file; file = 0;
 
-		Common::ArchivePtr archive = res->loadArchive(staticDataFilename(), *i);
-		if (!archive)
+		if (!res->loadPakFile(staticDataFilename(), *i))
 			continue;
-	
-		res->_archiveFiles->add(staticDataFilename(), archive, 0);
+
 		if (tryKyraDatLoad()) {
 			foundWorkingKyraDat = true;
 			break;
 		}
 
-		res->_archiveCache.erase(staticDataFilename());
-		res->_archiveFiles->remove(staticDataFilename());
+		res->unloadPakFile(staticDataFilename(), true);
 		unloadId(-1);
 	}
 

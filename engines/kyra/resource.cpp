@@ -108,7 +108,13 @@ bool Resource::reset() {
 		};
 
 		for (uint i = 0; i < ARRAYSIZE(list); ++i) {
-			Common::ArchivePtr archive = loadArchive(list[i]);
+			Common::ArchiveMemberList fileList;
+			listFiles(list[i], fileList);
+
+			if (fileList.empty())
+				error("Couldn't load PAK file '%s'", list[i]);
+
+			Common::ArchivePtr archive = loadArchive(list[i], *fileList.begin());
 			if (archive)
 				_protectedFiles->add(list[i], archive, 0);
 		}
@@ -137,14 +143,26 @@ bool Resource::reset() {
 bool Resource::loadPakFile(Common::String filename) {
 	filename.toUppercase();
 
-	if (_archiveFiles->hasArchive(filename) || _protectedFiles->hasArchive(filename))
+	Common::ArchiveMemberList list;
+	_files.listMatchingMembers(list, filename);
+
+	if (list.empty())
+		return false;
+
+	return loadPakFile(filename, *list.begin());
+}
+
+bool Resource::loadPakFile(Common::String name, Common::SharedPtr<Common::ArchiveMember> file) {
+	name.toUppercase();
+
+	if (_archiveFiles->hasArchive(name) || _protectedFiles->hasArchive(name))
 		return true;
 
-	Common::ArchivePtr archive = loadArchive(filename);
+	Common::ArchivePtr archive = loadArchive(name, file);
 	if (!archive)
 		return false;
 
-	_archiveFiles->add(filename, archive, 0);
+	_archiveFiles->add(name, archive, 0);
 
 	return true;
 }
@@ -200,9 +218,11 @@ bool Resource::loadFileList(const char * const *filelist, uint32 numFiles) {
 	return true;
 }
 
-void Resource::unloadPakFile(Common::String filename) {
+void Resource::unloadPakFile(Common::String filename, bool remFromCache) {
 	filename.toUppercase();
 	_archiveFiles->remove(filename);
+	if (remFromCache)
+		_archiveCache.erase(filename);
 	// We do not remove files from '_protectedFiles' here, since
 	// those are protected against unloading.
 }
@@ -212,9 +232,18 @@ bool Resource::isInPakList(Common::String filename) {
 	return (_archiveFiles->hasArchive(filename) || _protectedFiles->hasArchive(filename));
 }
 
+bool Resource::isInCacheList(Common::String name) {
+	name.toUppercase();
+	return (_archiveCache.find(name) != _archiveCache.end());
+}
+
 void Resource::unloadAllPakFiles() {
 	_archiveFiles->clear();
 	_protectedFiles->clear();
+}
+
+void Resource::listFiles(const Common::String &pattern, Common::ArchiveMemberList &list) {
+	_files.listMatchingMembers(list, pattern);
 }
 
 uint8 *Resource::fileData(const char *file, uint32 *size) {
@@ -265,21 +294,11 @@ Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) 
 	return _files.openFile(file);
 }
 
-Common::ArchivePtr Resource::loadArchive(const Common::String &file) {
-	ArchiveMap::iterator cachedArchive = _archiveCache.find(file);
+Common::ArchivePtr Resource::loadArchive(const Common::String &name, Common::SharedPtr<Common::ArchiveMember> member) {
+	ArchiveMap::iterator cachedArchive = _archiveCache.find(name);
 	if (cachedArchive != _archiveCache.end())
 		return cachedArchive->_value;
 
-	Common::ArchiveMemberList list;
-	_files.listMatchingMembers(list, file);
-
-	if (list.empty())
-		return Common::ArchivePtr();
-
-	return loadArchive(file, *list.begin());
-}
-
-Common::ArchivePtr Resource::loadArchive(const Common::String &name, Common::SharedPtr<Common::ArchiveMember> member) {
 	Common::SeekableReadStream *stream = member->open();
 
 	if (!stream)

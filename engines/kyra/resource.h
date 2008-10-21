@@ -47,7 +47,6 @@ class Resource;
 class ResArchiveLoader;
 
 class Resource {
-	friend class StaticResource;
 public:
 	Resource(KyraEngine_v1 *vm);
 	~Resource();
@@ -55,13 +54,19 @@ public:
 	bool reset();
 
 	bool loadPakFile(Common::String filename);
-	void unloadPakFile(Common::String filename);
+	bool loadPakFile(Common::String name, Common::SharedPtr<Common::ArchiveMember> file);
+	void unloadPakFile(Common::String filename, bool remFromCache = false);
 	bool isInPakList(Common::String filename);
+	bool isInCacheList(Common::String name);
 
 	bool loadFileList(const Common::String &filedata);
 	bool loadFileList(const char * const *filelist, uint32 numFiles);
-	// This unloads *all* pakfiles, even kyra.dat and protected ones
+
+	// This unloads *all* pakfiles, even kyra.dat and protected ones.
+	// It does not remove files from cache though!
 	void unloadAllPakFiles();
+
+	void listFiles(const Common::String &pattern, Common::ArchiveMemberList &list);
 
 	bool exists(const char *file, bool errorOutOnFail=false);
 	uint32 getFileSize(const char *file);
@@ -77,7 +82,6 @@ protected:
 	Common::SharedPtr<Common::SearchSet> _archiveFiles;
 	Common::SharedPtr<Common::SearchSet> _protectedFiles;
 
-	Common::ArchivePtr loadArchive(const Common::String &file);
 	Common::ArchivePtr loadArchive(const Common::String &name, Common::SharedPtr<Common::ArchiveMember> member);
 	Common::ArchivePtr loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset);
 
