@@ -283,7 +283,6 @@ public:
 
 class SearchManager : public Singleton<SearchManager>, public SearchSet {
 public:
-	SearchManager();
 
 	/**
 	 * Create and add a FSDirectory by name
@@ -300,6 +299,10 @@ public:
 	 * specific dirs + current dir).
 	 */
 	virtual void clear();
+
+private:
+	friend class Common::Singleton<SingletonBaseType>;
+	SearchManager();
 };
 
 /** Shortcut for accessing the search manager. */
