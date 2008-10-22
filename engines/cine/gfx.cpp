@@ -980,19 +980,15 @@ void OSRenderer::clear() {
  */
 void OSRenderer::incrustMask(const objectStruct &obj, uint8 color) {
 	const byte *data = animDataTable[obj.frame].data();
-	int x, y, width, height, i;
+	int x, y, width, height;
 
 	x = obj.x;
 	y = obj.y;
 	width = animDataTable[obj.frame]._realWidth;
 	height = animDataTable[obj.frame]._height;
 
-	for (i = 0; i < 8; i++) {
-		if (!_bgTable[i].bg) {
-			continue;
-		}
-
-		gfxFillSprite(data, width, height, _bgTable[i].bg, x, y, color);
+	if (_bgTable[_currentBg].bg) {
+		gfxFillSprite(data, width, height, _bgTable[_currentBg].bg, x, y, color);
 	}
 }
 
@@ -1017,7 +1013,7 @@ void OSRenderer::drawSprite(const objectStruct &obj) {
  */
 void OSRenderer::incrustSprite(const objectStruct &obj) {
 	const byte *data = animDataTable[obj.frame].data();
-	int x, y, width, height, transColor, i;
+	int x, y, width, height, transColor;
 
 	x = obj.x;
 	y = obj.y;
@@ -1025,12 +1021,8 @@ void OSRenderer::incrustSprite(const objectStruct &obj) {
 	width = animDataTable[obj.frame]._realWidth;
 	height = animDataTable[obj.frame]._height;
 
-	for (i = 0; i < 8; i++) {
-		if (!_bgTable[i].bg) {
-			continue;
-		}
-
-		drawSpriteRaw2(data, transColor, width, height, _bgTable[i].bg, x, y);
+	if (_bgTable[_currentBg].bg) {
+		drawSpriteRaw2(data, transColor, width, height, _bgTable[_currentBg].bg, x, y);
 	}
 }
 
