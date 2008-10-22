@@ -585,7 +585,8 @@ void FWRenderer::reloadPalette() {
 /*! \brief Load background into renderer
  * \param bg Raw background data
  */
-void FWRenderer::loadBg16(const byte *bg, const char *name) {
+void FWRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
+	assert(idx == 0);
 	int i;
 
 	if (!_background) {
@@ -609,20 +610,8 @@ void FWRenderer::loadBg16(const byte *bg, const char *name) {
 
 /*! \brief Placeholder for Operation Stealth implementation
  */
-void FWRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
-	error("Future Wars renderer doesn't support multiple backgrounds");
-}
-
-/*! \brief Placeholder for Operation Stealth implementation
- */
 void FWRenderer::loadCt16(const byte *ct, const char *name) {
 	error("Future Wars renderer doesn't support multiple backgrounds");
-}
-
-/*! \brief Placeholder for Operation Stealth implementation
- */
-void FWRenderer::loadBg256(const byte *bg, const char *name) {
-	error("Future Wars renderer doesn't support 256 color mode");
 }
 
 /*! \brief Placeholder for Operation Stealth implementation
@@ -1281,14 +1270,6 @@ void OSRenderer::transformPalette(int first, int last, int r, int g, int b) {
 /*! \brief Load 16 color background into renderer
  * \param bg Raw background data
  * \param name Background filename
- */
-void OSRenderer::loadBg16(const byte *bg, const char *name) {
-	loadBg16(bg, name, 0);
-}
-
-/*! \brief Load 16 color background into renderer
- * \param bg Raw background data
- * \param name Background filename
  * \param pos Background index
  */
 void OSRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
@@ -1323,14 +1304,6 @@ void OSRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
  */
 void OSRenderer::loadCt16(const byte *ct, const char *name) {
 	loadBg16(ct, name, 8);
-}
-
-/*! \brief Load 256 color background into renderer
- * \param bg Raw background data
- * \param name Background filename
- */
-void OSRenderer::loadBg256(const byte *bg, const char *name) {
-	loadBg256(bg, name, 0);
 }
 
 /*! \brief Load 256 color background into renderer

@@ -100,11 +100,9 @@ public:
 	virtual void incrustMask(const objectStruct &obj, uint8 color = 0);
 	virtual void incrustSprite(const objectStruct &obj);
 
-	virtual void loadBg16(const byte *bg, const char *name);
-	virtual void loadBg16(const byte *bg, const char *name, unsigned int idx);
+	virtual void loadBg16(const byte *bg, const char *name, unsigned int idx = 0);
 	virtual void loadCt16(const byte *ct, const char *name);
-	virtual void loadBg256(const byte *bg, const char *name);
-	virtual void loadBg256(const byte *bg, const char *name, unsigned int idx);
+	virtual void loadBg256(const byte *bg, const char *name, unsigned int idx = 0);
 	virtual void loadCt256(const byte *ct, const char *name);
 	virtual void selectBg(unsigned int idx);
 	virtual void selectScrollBg(unsigned int idx);
@@ -159,11 +157,9 @@ public:
 	void incrustMask(const objectStruct &obj, uint8 color = 0);
 	void incrustSprite(const objectStruct &obj);
 
-	void loadBg16(const byte *bg, const char *name);
-	void loadBg16(const byte *bg, const char *name, unsigned int idx);
+	void loadBg16(const byte *bg, const char *name, unsigned int idx = 0);
 	void loadCt16(const byte *ct, const char *name);
-	void loadBg256(const byte *bg, const char *name);
-	void loadBg256(const byte *bg, const char *name, unsigned int idx);
+	void loadBg256(const byte *bg, const char *name, unsigned int idx = 0);
 	void loadCt256(const byte *ct, const char *name);
 	void selectBg(unsigned int idx);
 	void selectScrollBg(unsigned int idx);
