@@ -208,8 +208,10 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 
 	Common::InSaveFile *in = saveFileMan->openForLoading("SAVEGAME.INF");
 	if (in) {
-		uint8 stop;
+		// FIXME: Is it ok to initialize the stop-variable to zero?
+		uint8 stop = 0;
 		char saveDesc[32];
+		// FIXME: What about if file-iterator goes beyond end before stop == 255 || in->eos()?
 		do {
 			if (file->compareToIgnoreCase("SAVEGAME.INF") == 0) {
 				file++;

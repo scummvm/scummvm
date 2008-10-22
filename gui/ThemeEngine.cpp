@@ -525,7 +525,8 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 	if (!node.exists() || !node.isReadable())
 		return false;
 
-	Common::Archive *archive;
+	// FIXME: Should this be initialized to something else than NULL?
+	Common::Archive *archive = NULL;
 
 	if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
 #ifdef USE_ZLIB
@@ -544,6 +545,8 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 	}
 
 	Common::File themercFile;
+	// FIXME: Possibly dereferencing a NULL pointer here if the node's
+	// name doesn't have a ".zip" suffix and the node is not a directory.
 	themercFile.open("THEMERC", *archive);
 	if (!themercFile.isOpen()) {
 		delete archive;
