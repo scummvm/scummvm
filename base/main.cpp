@@ -186,7 +186,7 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 	// found this issue on lost-win-demo at first. Thus, in commit 34450, searching the
 	// game path was made recursive as a temporary fix/workaround.
 	dir = Common::FSNode(path);
-	SearchMan.addDirectory(dir.getPath(), dir);
+	SearchMan.addDirectory(dir.getPath(), dir, 0, 4);
 
 	// Add extrapath (if any) to the directory search list
 	if (ConfMan.hasKey("extrapath")) {
