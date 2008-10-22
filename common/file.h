@@ -50,13 +50,7 @@ protected:
 public:
 
 	static void addDefaultDirectory(const String &directory);
-	static void addDefaultDirectoryRecursive(const String &directory, int level = 4);
-
 	static void addDefaultDirectory(const FSNode &directory);
-	static void addDefaultDirectoryRecursive(const FSNode &directory, int level = 4);
-
-	static void resetDefaultDirectories();
-
 
 	File();
 	virtual ~File();

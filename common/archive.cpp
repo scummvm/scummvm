@@ -382,12 +382,16 @@ SearchManager::SearchManager() {
 	clear();	// Force a reset
 }
 
-void SearchManager::addDirectory(const String &name, const String &directory, int priority) {
-	addDirectoryRecursive(name, directory, 1, priority);
+void SearchManager::addDirectory(const String &name, const String &directory, int priority, int depth) {
+	FSNode dir(directory);
+	addDirectory(name, dir, priority, depth);
 }
 
-void SearchManager::addDirectoryRecursive(const String &name, const String &directory, int depth, int priority) {
-	add(name, ArchivePtr(new FSDirectory(directory, depth)), priority);
+void SearchManager::addDirectory(const String &name, const FSNode &dir, int priority, int depth) {
+	if (!dir.exists() || !dir.isDirectory())
+		return;
+
+	add(name, ArchivePtr(new FSDirectory(dir, depth)), priority);
 }
 
 void SearchManager::clear() {
@@ -400,7 +404,7 @@ void SearchManager::clear() {
 
 	// Add the current dir as a very last resort.
 	// See also bug #2137680.
-	add(".", ArchivePtr(new FSDirectory(".")), -2);
+	addDirectory(".", ".", -2);
 }
 
 } // namespace Common

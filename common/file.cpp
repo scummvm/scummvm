@@ -33,28 +33,11 @@ namespace Common {
 
 void File::addDefaultDirectory(const String &directory) {
 	FSNode dir(directory);
-	addDefaultDirectoryRecursive(dir, 1);
+	addDefaultDirectory(dir);
 }
 
-void File::addDefaultDirectoryRecursive(const String &directory, int level) {
-	FSNode dir(directory);
-	addDefaultDirectoryRecursive(dir, level);
-}
-
-void File::addDefaultDirectory(const FSNode &directory) {
-	addDefaultDirectoryRecursive(directory, 1);
-}
-
-void File::addDefaultDirectoryRecursive(const FSNode &dir, int level) {
-	if (level <= 0 || !dir.exists() || !dir.isDirectory())
-		return;
-
-	Common::ArchivePtr dataArchive(new Common::FSDirectory(dir, level));
-	SearchMan.add(dir.getPath(), dataArchive);
-}
-
-void File::resetDefaultDirectories() {
-	SearchMan.clear();
+void File::addDefaultDirectory(const FSNode &dir) {
+	SearchMan.addDirectory(dir.getPath(), dir);
 }
 
 File::File()

@@ -288,15 +288,16 @@ public:
 	/**
 	 * Create and add a FSDirectory by name
 	 */
-	void addDirectory(const String &name, const String &directory, int priority = 0);
+	void addDirectory(const String &name, const String &directory, int priority = 0, int depth = 1);
 
 	/**
-	 * Create and add a FSDirectory and its subdirectories by name
+	 * Create and add a FSDirectory by FSNode
 	 */
-	void addDirectoryRecursive(const String &name, const String &directory, int depth = 4, int priority = 0);
+	void addDirectory(const String &name, const FSNode &directory, int priority = 0, int depth = 1);
 
 	/**
-	 * TODO
+	 * Resets the search manager to the default list of search paths (system
+	 * specific dirs + current dir).
 	 */
 	virtual void clear();
 };

@@ -171,6 +171,13 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 		system.setWindowCaption(caption.c_str());
 	}
 
+	//
+	// Setup varios paths in the SearchManager
+	//
+	Common::FSNode dir;
+
+	// Add the game path to the directory search list
+	//
 	// FIXME: at this moment, game path handling is being discussed in the mailing list,
 	// while Common::File is being reworked under the hood. After commit 34444, which
 	// changed the implementation of Common::File (specifically removing usage of fopen
@@ -178,22 +185,20 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 	// stopped working. Example of this are the HE games which use subdirectories: Kirben
 	// found this issue on lost-win-demo at first. Thus, in commit 34450, searching the
 	// game path was made recursive as a temporary fix/workaround.
-
-	// Add the game path to the directory search list
-	Common::File::addDefaultDirectoryRecursive(path);
+	dir = Common::FSNode(path);
+	SearchMan.addDirectory(dir.getPath(), dir);
 
 	// Add extrapath (if any) to the directory search list
-	if (ConfMan.hasKey("extrapath"))
-		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath"));
+	if (ConfMan.hasKey("extrapath")) {
+		dir = Common::FSNode(ConfMan.get("extrapath"));
+		SearchMan.addDirectory(dir.getPath(), dir);
+	}
 
 	// If a second extrapath is specified on the app domain level, add that as well.
-	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain))
-		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain));
-
-#ifdef DATA_PATH
-	// Add the global DATA_PATH to the directory search list
-	Common::File::addDefaultDirectoryRecursive(DATA_PATH);
-#endif
+	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain)) {
+		dir = Common::FSNode(ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain));
+		SearchMan.addDirectory(dir.getPath(), dir);
+	}
 
 	// On creation the engine should've set up all debug levels so we can use
 	// the command line arugments here
@@ -223,7 +228,7 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 	delete engine;
 
 	// Reset the file/directory mappings
-	Common::File::resetDefaultDirectories();
+	SearchMan.clear();
 
 	// Return result (== 0 means no error)
 	return result;
