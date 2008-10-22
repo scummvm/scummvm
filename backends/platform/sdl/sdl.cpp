@@ -282,8 +282,7 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 	// FIXME: We use depth = 4 for now, to match the old code. May want to change that
 	Common::FSNode dataNode(DATA_PATH);
 	if (dataNode.exists() && dataNode.isDirectory()) {
-		Common::ArchivePtr dataArchive(new Common::FSDirectory(dataNode, 4));
-		s.add(DATA_PATH, dataArchive, priority);
+		s.add(DATA_PATH, new Common::FSDirectory(dataNode, 4), priority);
 	}
 #endif
 
@@ -296,8 +295,7 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
 			// Success: Add it to the search path
 			Common::String bundlePath((const char *)buf);
-			Common::ArchivePtr bundleArchive(new Common::FSDirectory(bundlePath));
-			s.add("__OSX_BUNDLE__", bundleArchive, priority);
+			s.add("__OSX_BUNDLE__", new Common::FSDirectory(bundlePath), priority);
 		}
 		CFRelease(fileUrl);
 	}

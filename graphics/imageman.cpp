@@ -66,7 +66,7 @@ bool ImageManager::addArchive(const Common::String &name) {
 		arch = dir;
 	}
 
-	_archives.add(name, Common::ArchivePtr(arch));
+	_archives.add(name, arch);
 	return true;
 }
 

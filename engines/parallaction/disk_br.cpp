@@ -129,8 +129,7 @@ Common::String DosDisk_br::selectArchive(const Common::String& name) {
 
 	debugC(5, kDebugDisk, "DosDisk_br::selectArchive: adding part directory to search set");
 	_sset.remove("part");
-	Common::SharedPtr<Common::FSDirectory> partDir(_baseDir->getSubDirectory(name, 3));
-	_sset.add("part", partDir, 10);
+	_sset.add("part", _baseDir->getSubDirectory(name, 3), 10);
 
 	return oldPath;
 }
@@ -149,7 +148,8 @@ void DosDisk_br::init() {
 	// TODO: clarify whether the engine or OSystem should add the base game directory to the search manager.
 	// Right now, I am keeping an internal search set to do the job.
 	_baseDir = Common::SharedPtr<Common::FSDirectory>(new Common::FSDirectory(ConfMan.get("path")));
-	_sset.add("base", _baseDir, 5);
+	// FIXME: We use this gross hack here since we switched SearchSet to accept plain pointers
+	_sset.add("base", _baseDir.get(), 5, false);
 }
 
 
@@ -392,7 +392,8 @@ void DosDemoDisk_br::init() {
 	// TODO: clarify whether the engine or OSystem should add the base game directory to the search manager.
 	// Right now, I am keeping an internal search set to do the job.
 	_baseDir = Common::SharedPtr<Common::FSDirectory>(new Common::FSDirectory(ConfMan.get("path"), 2));
-	_sset.add("base", _baseDir, 5);
+	// FIXME: We use this gross hack here since we switched SearchSet to accept plain pointers
+	_sset.add("base", _baseDir.get(), 5, false);
 }
 
 
@@ -413,14 +414,13 @@ AmigaDisk_br::AmigaDisk_br(Parallaction *vm) : DosDisk_br(vm) {
 
 void AmigaDisk_br::init() {
 	_baseDir = Common::SharedPtr<Common::FSDirectory>(new Common::FSDirectory(ConfMan.get("path")));
-	_sset.add("base", _baseDir, 5);
+	// FIXME: We use this gross hack here since we switched SearchSet to accept plain pointers
+	_sset.add("base", _baseDir.get(), 5, false);
 
 	const Common::String subDirNames[3] = { "fonts", "backs", "common" };
 	const Common::String subDirPrefixes[3] = { "fonts", "backs", Common::String::emptyString };
-	for (int i = 0; i < 3; i++) {
-		Common::SharedPtr<Common::Archive> subDir(_baseDir->getSubDirectory(subDirPrefixes[i], subDirNames[i], 2));
-		_sset.add(subDirNames[i], subDir, 6);
-	}
+	for (int i = 0; i < 3; i++)
+		_sset.add(subDirNames[i], _baseDir->getSubDirectory(subDirPrefixes[i], subDirNames[i], 2), 6);
 }
 
 AmigaDisk_br::~AmigaDisk_br() {
@@ -623,8 +623,7 @@ Common::String AmigaDisk_br::selectArchive(const Common::String& name) {
 
 	debugC(5, kDebugDisk, "AmigaDisk_br::selectArchive: adding part directory to search set");
 	_sset.remove("part");
-	Common::SharedPtr<Common::FSDirectory> partDir(_baseDir->getSubDirectory(name, 3));
-	_sset.add("part", partDir, 10);
+	_sset.add("part", _baseDir->getSubDirectory(name, 3), 10);
 
 	return oldPath;
 }

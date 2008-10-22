@@ -281,9 +281,9 @@ void SearchSet::insert(const Node &node) {
 	_list.insert(it, node);
 }
 
-void SearchSet::add(const String& name, ArchivePtr archive, int priority) {
+void SearchSet::add(const String& name, Archive *archive, int priority, bool autoFree) {
 	if (find(name) == _list.end()) {
-		Node node(priority, name, archive);
+		Node node(priority, name, archive, autoFree);
 		insert(node);
 	} else {
 		warning("SearchSet::add: archive '%s' already present", name.c_str());
@@ -294,6 +294,8 @@ void SearchSet::add(const String& name, ArchivePtr archive, int priority) {
 void SearchSet::remove(const String& name) {
 	ArchiveList::iterator it = find(name);
 	if (it != _list.end()) {
+		if (it->_autoFree)
+			delete it->_arc;
 		_list.erase(it);
 	}
 }
@@ -303,6 +305,11 @@ bool SearchSet::hasArchive(const String &name) const {
 }
 
 void SearchSet::clear() {
+	for (ArchiveList::iterator i = _list.begin(); i != _list.end(); ++i) {
+		if (i->_autoFree)
+			delete i->_arc;
+	}
+
 	_list.clear();
 }
 
@@ -391,7 +398,7 @@ void SearchManager::addDirectory(const String &name, const FSNode &dir, int prio
 	if (!dir.exists() || !dir.isDirectory())
 		return;
 
-	add(name, ArchivePtr(new FSDirectory(dir, depth)), priority);
+	add(name, new FSDirectory(dir, depth), priority);
 }
 
 void SearchManager::clear() {

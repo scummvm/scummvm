@@ -35,23 +35,22 @@
 
 namespace Kyra {
 
-Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(new Common::SearchSet()), _protectedFiles(new Common::SearchSet()), _loaders(), _vm(vm) {
+Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(), _protectedFiles(), _loaders(), _vm(vm) {
 	initializeLoaders();
 
-	Common::SharedPtr<Common::Archive> path(new Common::FSDirectory(ConfMan.get("path"), 2));
-	Common::SharedPtr<Common::Archive> extrapath(new Common::FSDirectory(ConfMan.get("extrapath")));
-
-	_files.add("path", path, 4);
-	_files.add("extrapath", extrapath, 4);
-	_vm->_system->addSysArchivesToSearchSet(_files, 3);
+	_files.add("global_search", &Common::SearchManager::instance(), 3, false);
 	// compressed installer archives are added at level '2',
 	// but that's done in Resource::reset not here
-	_files.add("protected", _protectedFiles, 1);
-	_files.add("archives", _archiveFiles, 0);
+	_files.add("protected", &_protectedFiles, 1, false);
+	_files.add("archives", &_archiveFiles, 0, false);
 }
 
 Resource::~Resource() {
 	_loaders.clear();
+
+	for (ArchiveMap::iterator i = _archiveCache.begin(); i != _archiveCache.end(); ++i)
+		delete i->_value;
+	_archiveCache.clear();
 }
 
 bool Resource::reset() {
@@ -68,7 +67,7 @@ bool Resource::reset() {
 			return true;
 	} else if (_vm->game() == GI_KYRA2) {
 		if (_vm->gameFlags().useInstallerPackage)
-			_files.add("installer", loadInstallerArchive("WESTWOOD", "%03d", 6), 2);
+			_files.add("installer", loadInstallerArchive("WESTWOOD", "%03d", 6), 2, false);
 
 		// mouse pointer, fonts, etc. required for initializing
 		if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie) {
@@ -91,7 +90,7 @@ bool Resource::reset() {
 		return true;
 	} else if (_vm->game() == GI_LOL) {
 		if (_vm->gameFlags().useInstallerPackage)
-			_files.add("installer", loadInstallerArchive("WESTWOOD", "%d", 0), 2);
+			_files.add("installer", loadInstallerArchive("WESTWOOD", "%d", 0), 2, false);
 
 		return true;
 	}
@@ -114,9 +113,9 @@ bool Resource::reset() {
 			if (fileList.empty())
 				error("Couldn't load PAK file '%s'", list[i]);
 
-			Common::ArchivePtr archive = loadArchive(list[i], *fileList.begin());
+			Common::Archive *archive = loadArchive(list[i], *fileList.begin());
 			if (archive)
-				_protectedFiles->add(list[i], archive, 0);
+				_protectedFiles.add(list[i], archive, 0, false);
 		}
 	} else {
 		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -155,14 +154,14 @@ bool Resource::loadPakFile(Common::String filename) {
 bool Resource::loadPakFile(Common::String name, Common::SharedPtr<Common::ArchiveMember> file) {
 	name.toUppercase();
 
-	if (_archiveFiles->hasArchive(name) || _protectedFiles->hasArchive(name))
+	if (_archiveFiles.hasArchive(name) || _protectedFiles.hasArchive(name))
 		return true;
 
-	Common::ArchivePtr archive = loadArchive(name, file);
+	Common::Archive *archive = loadArchive(name, file);
 	if (!archive)
 		return false;
 
-	_archiveFiles->add(name, archive, 0);
+	_archiveFiles.add(name, archive, 0, false);
 
 	return true;
 }
@@ -220,16 +219,24 @@ bool Resource::loadFileList(const char * const *filelist, uint32 numFiles) {
 
 void Resource::unloadPakFile(Common::String filename, bool remFromCache) {
 	filename.toUppercase();
-	_archiveFiles->remove(filename);
-	if (remFromCache)
-		_archiveCache.erase(filename);
+
 	// We do not remove files from '_protectedFiles' here, since
 	// those are protected against unloading.
+	if (_archiveFiles.hasArchive(filename)) {
+		_archiveFiles.remove(filename);
+		if (remFromCache) {
+			ArchiveMap::iterator iter = _archiveCache.find(filename);
+			if (iter != _archiveCache.end()) {
+				delete iter->_value;
+				_archiveCache.erase(filename);
+			}
+		}
+	}
 }
 
 bool Resource::isInPakList(Common::String filename) {
 	filename.toUppercase();
-	return (_archiveFiles->hasArchive(filename) || _protectedFiles->hasArchive(filename));
+	return (_archiveFiles.hasArchive(filename) || _protectedFiles.hasArchive(filename));
 }
 
 bool Resource::isInCacheList(Common::String name) {
@@ -238,8 +245,8 @@ bool Resource::isInCacheList(Common::String name) {
 }
 
 void Resource::unloadAllPakFiles() {
-	_archiveFiles->clear();
-	_protectedFiles->clear();
+	_archiveFiles.clear();
+	_protectedFiles.clear();
 }
 
 void Resource::listFiles(const Common::String &pattern, Common::ArchiveMemberList &list) {
@@ -294,7 +301,7 @@ Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) 
 	return _files.openFile(file);
 }
 
-Common::ArchivePtr Resource::loadArchive(const Common::String &name, Common::SharedPtr<Common::ArchiveMember> member) {
+Common::Archive *Resource::loadArchive(const Common::String &name, Common::SharedPtr<Common::ArchiveMember> member) {
 	ArchiveMap::iterator cachedArchive = _archiveCache.find(name);
 	if (cachedArchive != _archiveCache.end())
 		return cachedArchive->_value;
@@ -302,14 +309,14 @@ Common::ArchivePtr Resource::loadArchive(const Common::String &name, Common::Sha
 	Common::SeekableReadStream *stream = member->open();
 
 	if (!stream)
-		return Common::ArchivePtr();
+		return 0;
 
-	Common::ArchivePtr archive;
+	Common::Archive *archive = 0;
 	for (LoaderList::const_iterator i = _loaders.begin(); i != _loaders.end(); ++i) {
 		if ((*i)->checkFilename(name)) {
 			if ((*i)->isLoadable(name, *stream)) {
 				stream->seek(0, SEEK_SET);
-				archive = Common::ArchivePtr((*i)->load(member, *stream));
+				archive = (*i)->load(member, *stream);
 				break;
 			} else {
 				stream->seek(0, SEEK_SET);
@@ -320,20 +327,20 @@ Common::ArchivePtr Resource::loadArchive(const Common::String &name, Common::Sha
 	delete stream;
 
 	if (!archive)
-		return Common::ArchivePtr();
+		return 0;
 
 	_archiveCache[name] = archive;
 	return archive;
 }
 
-Common::ArchivePtr Resource::loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset) {
+Common::Archive *Resource::loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset) {
 	ArchiveMap::iterator cachedArchive = _archiveCache.find(file);
 	if (cachedArchive != _archiveCache.end())
 		return cachedArchive->_value;
 
-	Common::ArchivePtr archive(InstallerLoader::load(this, file, ext, offset));
+	Common::Archive *archive = InstallerLoader::load(this, file, ext, offset);
 	if (!archive)
-		return Common::ArchivePtr();
+		return 0;
 
 	_archiveCache[file] = archive;
 	return archive;

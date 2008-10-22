@@ -114,9 +114,6 @@ public:
 };
 
 
-typedef SharedPtr<Archive> ArchivePtr;
-
-
 /**
  * FSDirectory models a directory tree from the filesystem and allows users
  * to access it through the Archive interface. Searching is case-insensitive,
@@ -228,11 +225,12 @@ public:
  */
 class SearchSet : public Archive {
 	struct Node {
-		int			_priority;
-		String		_name;
-		ArchivePtr	_arc;
-		Node(int priority, const String &name, ArchivePtr arc)
-			: _priority(priority), _name(name), _arc(arc) {
+		int		_priority;
+		String	_name;
+		Archive	*_arc;
+		bool	_autoFree;
+		Node(int priority, const String &name, Archive *arc, bool autoFree)
+			: _priority(priority), _name(name), _arc(arc), _autoFree(autoFree) {
 		}
 	};
 	typedef List<Node> ArchiveList;
@@ -244,10 +242,12 @@ class SearchSet : public Archive {
 	void insert(const Node& node);
 
 public:
+	virtual ~SearchSet() { clear(); }
+
 	/**
 	 * Add a new archive to the searchable set.
 	 */
-	void add(const String& name, ArchivePtr archive, int priority = 0);
+	void add(const String& name, Archive *arch, int priority = 0, bool autoFree = true);
 
 	/**
 	 * Remove an archive from the searchable set.

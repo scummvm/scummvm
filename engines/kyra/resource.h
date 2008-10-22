@@ -55,8 +55,11 @@ public:
 
 	bool loadPakFile(Common::String filename);
 	bool loadPakFile(Common::String name, Common::SharedPtr<Common::ArchiveMember> file);
+
 	void unloadPakFile(Common::String filename, bool remFromCache = false);
+
 	bool isInPakList(Common::String filename);
+
 	bool isInCacheList(Common::String name);
 
 	bool loadFileList(const Common::String &filedata);
@@ -75,15 +78,15 @@ public:
 
 	bool loadFileToBuf(const char *file, void *buf, uint32 maxSize);
 protected:
-	typedef Common::HashMap<Common::String, Common::ArchivePtr, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> ArchiveMap;
+	typedef Common::HashMap<Common::String, Common::Archive*, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> ArchiveMap;
 	ArchiveMap _archiveCache;
 
 	Common::SearchSet _files;
-	Common::SharedPtr<Common::SearchSet> _archiveFiles;
-	Common::SharedPtr<Common::SearchSet> _protectedFiles;
+	Common::SearchSet _archiveFiles;
+	Common::SearchSet _protectedFiles;
 
-	Common::ArchivePtr loadArchive(const Common::String &name, Common::SharedPtr<Common::ArchiveMember> member);
-	Common::ArchivePtr loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset);
+	Common::Archive *loadArchive(const Common::String &name, Common::SharedPtr<Common::ArchiveMember> member);
+	Common::Archive *loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset);
 
 	void initializeLoaders();
 

@@ -525,38 +525,42 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 	if (!node.exists() || !node.isReadable())
 		return false;
 
-	Common::ArchivePtr archive;
+	Common::Archive *archive;
 
 	if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
 #ifdef USE_ZLIB
 		Common::ZipArchive *zipArchive = new Common::ZipArchive(node);
-		archive = Common::ArchivePtr(zipArchive);
+		archive = zipArchive;
 
 		if (!zipArchive || !zipArchive->isOpen()) {
+			delete zipArchive;
 			warning("Failed to open Zip archive '%s'.", themeName.c_str());
 			return false;
 		}
 		
 #endif
 	} else if (node.isDirectory()) {
-		archive = Common::ArchivePtr(new Common::FSDirectory(node));
+		archive = new Common::FSDirectory(node);
 	}
 
 	Common::File themercFile;
 	themercFile.open("THEMERC", *archive);
 	if (!themercFile.isOpen()) {
+		delete archive;
 		warning("Theme '%s' contains no 'THEMERC' file.", themeName.c_str());
 		return false;
 	}
 
 	Common::String stxHeader = themercFile.readLine();
 	if (!themeConfigParseHeader(stxHeader, _themeName) || _themeName.empty()) {
+		delete archive;
 		warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
 		return false;
 	}
 
 	Common::ArchiveMemberList members;
 	if (0 == archive->listMatchingMembers(members, "*.stx")) {
+		delete archive;
 		warning("Found no STX files for theme '%s'.", themeName.c_str());
 		return false;
 	}
@@ -566,12 +570,14 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 		assert((*i)->getName().hasSuffix(".stx"));
 
 		if (_parser->loadStream((*i)->open()) == false) {
+			delete archive;
 			warning("Failed to load STX file '%s'", (*i)->getName().c_str());
 			_parser->close();
 			return false;
 		}
 	
 		if (_parser->parse() == false) {
+			delete archive;
 			warning("Failed to parse STX file '%s'", (*i)->getName().c_str());
 			_parser->close();
 			return false;
@@ -580,6 +586,7 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 		_parser->close();
 	}
 
+	delete archive;
 	assert(!_themeName.empty());
 	return true;
 }
