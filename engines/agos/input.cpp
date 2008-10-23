@@ -560,6 +560,7 @@ bool AGOSEngine::processSpecialKeys() {
 			if (_subtitles)
 				_speech ^= 1;
 		}
+		break;
 	case Common::KEYCODE_PLUS:
 	case Common::KEYCODE_KP_PLUS:
 		if (_midiEnabled) {
