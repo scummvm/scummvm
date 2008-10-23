@@ -802,7 +802,6 @@ uint8 SwordEngine::mainLoop(void) {
 				retCode = CONTROL_RESTART_GAME;
 
 			// The control panel is triggered by F5 or ESC.
-			// FIXME: This is a very strange way of detecting F5...
 			else if (((_keyPressed.keycode == Common::KEYCODE_F5 || _keyPressed.keycode == Common::KEYCODE_ESCAPE)
 			         && (Logic::_scriptVars[MOUSE_STATUS] & 1)) || (_systemVars.controlPanelMode)) {
 				retCode = _control->runPanel();
