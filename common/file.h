@@ -27,13 +27,13 @@
 #define COMMON_FILE_H
 
 #include "common/scummsys.h"
-#include "common/archive.h"
 #include "common/noncopyable.h"
 #include "common/str.h"
 #include "common/stream.h"
 
 namespace Common {
 
+class Archive;
 class FSNode;
 
 /**

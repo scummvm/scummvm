@@ -25,6 +25,7 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/util.h"
 #include "common/system.h"
 

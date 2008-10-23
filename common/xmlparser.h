@@ -27,7 +27,7 @@
 #define XML_PARSER_H
 
 #include "common/scummsys.h"
-#include "graphics/surface.h"
+#include "common/archive.h"
 #include "common/system.h"
 #include "common/xmlparser.h"
 #include "common/stream.h"
@@ -37,6 +37,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/stack.h"
+
 
 namespace Common {
 	

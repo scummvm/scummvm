@@ -34,6 +34,7 @@
 #include "sound/wave.h"
 #include "graphics/cursorman.h"
 
+#include "common/archive.h"
 #include "common/stream.h"
 #include "common/system.h"
 

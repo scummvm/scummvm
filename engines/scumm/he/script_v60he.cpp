@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/archive.h"
 #include "common/savefile.h"
 
 #include "scumm/actor.h"
