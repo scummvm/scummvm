@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
- 
+
  #ifndef _BLITTERS_H_
  #define _BLITTERS_H_
 
@@ -29,23 +29,23 @@
 
 namespace DS {
 
-void asmDrawStripToScreen(int height, int width, byte const* text, byte const* src, byte* dst, 
+void asmDrawStripToScreen(int height, int width, byte const* text, byte const* src, byte* dst,
 	int vsPitch, int vmScreenWidth, int textSurfacePitch);
 void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height);
 void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, int destStride, int srcStride, const u16* palette);
 void Rescale_320x256x1555_To_256x256x1555(u16* dest, const u16* src, int destStride, int srcStride);
 
 }
-	
+
 #else
 
 extern "C" {
 
-void asmDrawStripToScreen(int height, int width, byte const* text, byte const* src, byte* dst, 
+void ITCM_CODE asmDrawStripToScreen(int height, int width, byte const* text, byte const* src, byte* dst,
 	int vsPitch, int vmScreenWidth, int textSurfacePitch);
-void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height);
-void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, int destStride, int srcStride, const u16* palette, u32 numLines);
-void Rescale_320x256x1555_To_256x256x1555(u16* dest, const u16* src, int destStride, int srcStride);
+void ITCM_CODE asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height);
+void ITCM_CODE Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, int destStride, int srcStride, const u16* palette, u32 numLines);
+void ITCM_CODE Rescale_320x256x1555_To_256x256x1555(u16* dest, const u16* src, int destStride, int srcStride);
 
 }
 
