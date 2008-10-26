@@ -148,7 +148,7 @@ public:
 		/**
 		 * Loading from the Launcher / command line (-x)
 		 */
-		kSupportsDirectLoad,
+		kSupportsLoadingDuringStartup,
 
 		/**
 		 * Deleting Saves from the Launcher (i.e. implements the

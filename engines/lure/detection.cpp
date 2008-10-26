@@ -195,7 +195,7 @@ bool LureMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
-		(f == kSupportsDirectLoad) ||
+		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave);
 }
 

@@ -542,7 +542,7 @@ bool CineMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
-		(f == kSupportsDirectLoad);
+		(f == kSupportsLoadingDuringStartup);
 }
 
 bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {

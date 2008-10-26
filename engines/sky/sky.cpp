@@ -132,7 +132,7 @@ bool SkyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
-		(f == kSupportsDirectLoad);
+		(f == kSupportsLoadingDuringStartup);
 }
 
 GameList SkyMetaEngine::getSupportedGames() const {
