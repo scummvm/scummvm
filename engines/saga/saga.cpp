@@ -102,7 +102,10 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 
 	// The Multi-OS version puts the voices file in the root directory of
 	// the CD. The rest of the data files are in game/itedata
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("game").getChild("itedata"));
+	// FIXME: This stops games from working under Windows. An assert is thrown when
+	// starting the games (_realNode is null in FSNode::getPath() in common/fs.cpp line 113)
+	// Commenting it out for now
+	//Common::File::addDefaultDirectory(_gameDataDir.getChild("game").getChild("itedata"));
 
 	// Mac CD Wyrmkeep
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("patch"));
