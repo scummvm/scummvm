@@ -207,36 +207,57 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 	Common::StringList::const_iterator file = filenames.begin();
 
 	Common::InSaveFile *in = saveFileMan->openForLoading("SAVEGAME.INF");
+
 	if (in) {
-		// FIXME: Is it ok to initialize the stop-variable to zero?
+		Common::Array<uint32> offsets;
 		uint8 stop = 0;
-		char saveDesc[32];
-		// FIXME: What about if file-iterator goes beyond end before stop == 255 || in->eos()?
-		do {
+		int slotsInFile = 0;
+
+		// Find the offset for each savegame name in the file.
+		while (stop != 255 && !in->eos()) {
+			offsets.push_back(in->pos());
+			slotsInFile++;
+			stop = 0;
+			while (stop != 10 && stop != 255 && !in->eos())
+				stop = in->readByte();
+		}
+
+		// Match the savegames to the save slot names.
+		while (file != filenames.end()) {
+			char saveDesc[32];
+
 			if (file->compareToIgnoreCase("SAVEGAME.INF") == 0) {
 				file++;
 				continue;
 			}
-
+			
 			// Obtain the last 3 digits of the filename, since they correspond to the save slot
 			int slotNum = atoi(file->c_str() + file->size() - 3);
 
-			uint pos = 0;
-			do {
-				stop = in->readByte();
-				if (pos < (sizeof(saveDesc) - 1)) {
-					if ((stop == 10) || (stop == 255) || (in->eos()))
-						saveDesc[pos++] = '\0';
-					else if (stop >= 32)
-						saveDesc[pos++] = stop;
-				}
-			} while ((stop != 10) && (stop != 255) && (!in->eos()));
+			if (slotNum >= 0 && slotNum < slotsInFile) {
+				in->seek(offsets[slotNum]);
 
-			if (saveDesc[0] != 0) {
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc, *file));
-				file++;
+				uint pos = 0;
+				do {
+					stop = in->readByte();
+					if (pos < sizeof(saveDesc) - 1) {
+						if (stop == 10 || stop == 255 || in->eos())
+							saveDesc[pos++] = '\0';
+						else if (stop >= 32)
+							saveDesc[pos++] = stop;
+					}
+				} while (stop != 10 && stop != 255 && !in->eos());
 			}
-		} while ((stop != 255) && (!in->eos()));
+
+			if (saveDesc[0] == 0)
+				strcpy(saveDesc, "Unnamed savegame");
+
+			// FIXME: The in-game dialog shows the first save slot as 1, not 0,
+			// but if we change the numbering here, the launcher won̈́t set
+			// "save_slot" correctly.
+			saveList.push_back(SaveStateDescriptor(slotNum, saveDesc, *file));
+			file++;
+		}
 	}
 
 	delete in;
