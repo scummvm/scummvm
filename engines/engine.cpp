@@ -183,6 +183,17 @@ void Engine::checkCD() {
 			"the data files to your hard disk instead.\n"
 			"See the README file for details.", "OK");
 		dialog.runModal();
+	} else {
+		// If we reached here, the game has audio tracks,
+		// it's not ran from the CD and the tracks have not
+		// been ripped.
+		GUI::MessageDialog dialog(
+			"This game has audio tracks in its disk. These\n"
+			"tracks need to be ripped from the disk using\n"
+			"an appropriate CD audio extracting tool in\n"
+			"order to listen to the game's music.\n"
+			"See the README file for details.", "OK");
+		dialog.runModal();
 	}
 #endif
 }
