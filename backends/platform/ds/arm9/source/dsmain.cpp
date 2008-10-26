@@ -2237,7 +2237,7 @@ void uploadSpriteGfx() {
 	vramSetBankE(VRAM_E_MAIN_SPRITE); 
 
 	// Convert texture from 24bit 888 to 16bit 1555, remembering to set top bit!
-	u8* srcTex = (u8 *) icons_raw;
+	u8* srcTex = (u8 *) ::icons_raw;
 	for (int r = 32 * 256 ; r >= 0; r--) {
 		SPRITE_GFX_SUB[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
 		SPRITE_GFX[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);

@@ -178,7 +178,7 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 	
 	for (int r = 0; r < KEYBOARD_DATA_SIZE / 2; r++) {
 //		*saveSpace++ = ((u16 *) CHAR_BASE_BLOCK_SUB(tileBase))[r];
-		((u16 *) CHAR_BASE_BLOCK_SUB(tileBase))[r] = ((u16 *) (keyboard_raw))[r];
+		((u16 *) CHAR_BASE_BLOCK_SUB(tileBase))[r] = ((u16 *) (::keyboard_raw))[r];
 	}
 	
 	for (int r = 0; r < 16; r++) {
@@ -189,7 +189,7 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 	for (int tile = 0; tile < 94; tile++) {
 		
 		u16* tileAddr = (u16 *) (CHAR_BASE_BLOCK_SUB(tileBase) + ((KEYBOARD_DATA_SIZE) + (tile * 32)));
-		u8* src = ((u8 *) (_8x8font_tga_raw)) + 18 + tile * 8;
+		u8* src = ((u8 *) (::_8x8font_tga_raw)) + 18 + tile * 8;
 
 		for (int y = 0 ; y < 8; y++) {
 			for (int x = 0; x < 2; x++) {
