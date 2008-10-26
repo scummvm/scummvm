@@ -205,28 +205,30 @@ public:
 
 
 class Disk_br : public Disk {
+
 	Common::SeekableReadStream *openFile_internal(bool errorOnNotFound, const Common::String &name, const Common::String &ext);
+
 protected:
+	Parallaction	*_vm;
 	Common::SearchSet	_sset;
+	Common::FSDirectory *_baseDir;
+
+	uint16			_language;
+	Common::String		_currentPart;
 
 	Common::SeekableReadStream *tryOpenFile(const Common::String &name, const Common::String &ext = Common::String::emptyString);
 	Common::SeekableReadStream *openFile(const Common::String &name, const Common::String &ext = Common::String::emptyString);
 	void errorFileNotFound(const Common::String &filename);
+
+public:
+	Disk_br(Parallaction *vm);
+	virtual ~Disk_br();
 };
 
 //	for the moment DosDisk_br subclasses Disk. When Amiga support will
 //  be taken into consideration, it might be useful to add another level
 //  like we did for Nippon Safes.
 class DosDisk_br : public Disk_br {
-
-protected:
-	uint16			_language;
-
-	Parallaction	*_vm;
-
-	Common::SharedPtr<Common::FSDirectory> _baseDir;
-	Common::String		_currentPart;
-
 
 protected:
 	Font *createFont(const char *name, Common::ReadStream &stream);
@@ -236,7 +238,6 @@ protected:
 
 public:
 	DosDisk_br(Parallaction *vm);
-	virtual ~DosDisk_br();
 
 	virtual void init();
 
@@ -263,7 +264,6 @@ class DosDemoDisk_br : public DosDisk_br {
 
 public:
 	DosDemoDisk_br(Parallaction *vm);
-	virtual ~DosDemoDisk_br();
 
 	virtual void init();
 
@@ -273,9 +273,6 @@ public:
 class AmigaDisk_br : public DosDisk_br {
 
 protected:
-	Common::SharedPtr<Common::FSDirectory> _baseDir;
-	Common::String		_currentPart;
-
 	BackgroundInfo	_backgroundTemp;
 
 	Sprites*	createSprites(Common::ReadStream &stream);
@@ -283,7 +280,6 @@ protected:
 	void loadBackground(BackgroundInfo& info, Common::SeekableReadStream &stream);
 public:
 	AmigaDisk_br(Parallaction *vm);
-	virtual ~AmigaDisk_br();
 
 	virtual void init();
 

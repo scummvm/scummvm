@@ -140,22 +140,17 @@ void DosDisk_br::setLanguage(uint16 language) {
 	_language = language;
 }
 
-DosDisk_br::DosDisk_br(Parallaction* vm) : _vm(vm) {
+DosDisk_br::DosDisk_br(Parallaction* vm) : Disk_br(vm) {
 }
 
 
 void DosDisk_br::init() {
 	// TODO: clarify whether the engine or OSystem should add the base game directory to the search manager.
 	// Right now, I am keeping an internal search set to do the job.
-	_baseDir = Common::SharedPtr<Common::FSDirectory>(new Common::FSDirectory(ConfMan.get("path")));
-	// FIXME: We use this gross hack here since we switched SearchSet to accept plain pointers
-	_sset.add("base", _baseDir.get(), 5, false);
+	_baseDir = new Common::FSDirectory(ConfMan.get("path"));
+	_sset.add("base", _baseDir, 5, false);
 }
 
-
-DosDisk_br::~DosDisk_br() {
-	_sset.clear();
-}
 
 GfxObj* DosDisk_br::loadTalk(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadTalk(%s)", name);
@@ -391,15 +386,10 @@ DosDemoDisk_br::DosDemoDisk_br(Parallaction *vm) : DosDisk_br(vm) {
 void DosDemoDisk_br::init() {
 	// TODO: clarify whether the engine or OSystem should add the base game directory to the search manager.
 	// Right now, I am keeping an internal search set to do the job.
-	_baseDir = Common::SharedPtr<Common::FSDirectory>(new Common::FSDirectory(ConfMan.get("path"), 2));
-	// FIXME: We use this gross hack here since we switched SearchSet to accept plain pointers
-	_sset.add("base", _baseDir.get(), 5, false);
+	_baseDir = new Common::FSDirectory(ConfMan.get("path"), 2);
+	_sset.add("base", _baseDir, 5, false);
 }
 
-
-DosDemoDisk_br::~DosDemoDisk_br() {
-
-}
 
 Common::String DosDemoDisk_br::selectArchive(const Common::String& name) {
 	debugC(5, kDebugDisk, "DosDemoDisk_br::selectArchive");
@@ -413,20 +403,14 @@ AmigaDisk_br::AmigaDisk_br(Parallaction *vm) : DosDisk_br(vm) {
 }
 
 void AmigaDisk_br::init() {
-	_baseDir = Common::SharedPtr<Common::FSDirectory>(new Common::FSDirectory(ConfMan.get("path")));
-	// FIXME: We use this gross hack here since we switched SearchSet to accept plain pointers
-	_sset.add("base", _baseDir.get(), 5, false);
+	_baseDir = new Common::FSDirectory(ConfMan.get("path"));
+	_sset.add("base", _baseDir, 5, false);
 
 	const Common::String subDirNames[3] = { "fonts", "backs", "common" };
 	const Common::String subDirPrefixes[3] = { "fonts", "backs", Common::String::emptyString };
 	for (int i = 0; i < 3; i++)
 		_sset.add(subDirNames[i], _baseDir->getSubDirectory(subDirPrefixes[i], subDirNames[i], 2), 6);
 }
-
-AmigaDisk_br::~AmigaDisk_br() {
-	_sset.clear();
-}
-
 
 void AmigaDisk_br::loadBackground(BackgroundInfo& info, Common::SeekableReadStream &stream) {
 
@@ -627,6 +611,17 @@ Common::String AmigaDisk_br::selectArchive(const Common::String& name) {
 
 	return oldPath;
 }
+
+
+Disk_br::Disk_br(Parallaction *vm) : _vm(vm), _baseDir(0) {
+
+}
+
+Disk_br::~Disk_br() {
+	delete _baseDir;
+	_sset.clear();
+}
+
 
 
 } // namespace Parallaction
