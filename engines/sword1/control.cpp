@@ -737,8 +737,7 @@ void Control::readSavegameDescriptions(void) {
 						_saveNames[curFileNum][pos++] = ch;
 				}
 			} while ((ch != 10) && (ch != 255) && (!inf->eos()));
-			if (_saveNames[curFileNum][0] != 0)
-				curFileNum++;
+			curFileNum++;
 		} while ((ch != 255) && (!inf->eos()));
 		_saveFiles = curFileNum;
 	}
