@@ -37,7 +37,8 @@ void File::addDefaultDirectory(const String &directory) {
 }
 
 void File::addDefaultDirectory(const FSNode &dir) {
-	SearchMan.addDirectory(dir.getPath(), dir);
+	if (dir.exists() && dir.isDirectory())
+		SearchMan.addDirectory(dir.getPath(), dir);
 }
 
 File::File()
