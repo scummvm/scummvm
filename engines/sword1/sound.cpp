@@ -262,29 +262,54 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 		headerPos++;
 	if (headerPos < 100) {
 		int32 resSize;
+		int16 *srcData;
+		uint32 srcPos;
+		int16 length;
+		cSize /= 2;
 		headerPos += 4; // skip 'data' tag
 		if (_cowMode != CowDemo) {
 			resSize = READ_LE_UINT32(fBuf + headerPos) >> 1;
 			headerPos += 4;
 		} else {
-			// the demo speech files have the uncompressed size embedded
-			// in the compressed stream *sigh*
-			if (READ_LE_UINT16(fBuf + headerPos) == 1) {
-				resSize = READ_LE_UINT16(fBuf + headerPos + 2);
-				resSize |= READ_LE_UINT16(fBuf + headerPos + 6) << 16;
-			} else
-				resSize = READ_LE_UINT32(fBuf + headerPos + 2);
-			resSize >>= 1;
+			// the demo speech files have the uncompressed size
+			// embedded in the compressed stream *sigh*
+			//
+			// But not always, apparently. See bug #2182450. Is
+			// there any way to figure out the size other than
+			// decoding the sound in that case?
+
+			if (fBuf[headerPos + 1] == 0) {
+				if (READ_LE_UINT16(fBuf + headerPos) == 1) {
+					resSize = READ_LE_UINT16(fBuf + headerPos + 2);
+					resSize |= READ_LE_UINT16(fBuf + headerPos + 6) << 16;
+				} else
+					resSize = READ_LE_UINT32(fBuf + headerPos + 2);
+				resSize >>= 1;
+			} else {
+				resSize = 0;
+				srcData = (int16*)fBuf;
+				srcPos = headerPos >> 1;
+				while (srcPos < cSize) {
+					length = (int16)READ_LE_UINT16(srcData + srcPos);
+					srcPos++;
+					if (length < 0) {
+						resSize -= length;
+						srcPos++;
+					} else {
+						resSize += length;
+						srcPos += length;
+					}
+				}
+			}
 		}
 		assert(!(headerPos & 1));
-		int16 *srcData = (int16*)fBuf;
-		uint32 srcPos = headerPos >> 1;
-		cSize /= 2;
+		srcData = (int16*)fBuf;
+		srcPos = headerPos >> 1;
 		uint32 dstPos = 0;
 		int16 *dstData = (int16*)malloc(resSize * 2);
 		int32 samplesLeft = resSize;
 		while (srcPos < cSize && samplesLeft > 0) {
-			int16 length = (int16)READ_LE_UINT16(srcData + srcPos);
+			length = (int16)READ_LE_UINT16(srcData + srcPos);
 			srcPos++;
 			if (length < 0) {
 				length = -length;
