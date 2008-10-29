@@ -151,22 +151,44 @@ inline uint32 fp_sqroot(uint32 x) {
 }
 
 
+extern int gBitFormat;
 
 namespace Graphics {
     
 VectorRenderer *createRenderer(int mode) {
-	switch (mode) {
-	case GUI::ThemeEngine::kGfxStandard16bit:
-		return new VectorRendererSpec<uint16, ColorMasks<565> >;
+#ifdef DISABLE_FANCY_THEMES
+	assert(mode == GUI::ThemeEngine::kGfxStandard16bit);
+	return new VectorRendererSpec<uint16, ColorMasks<VECTOR_RENDERER_FORMAT> >;
+#else
+#define CREATE_RENDERER_16(bitFormat) \
+	switch (mode) { \
+	case GUI::ThemeEngine::kGfxStandard16bit: \
+		return new VectorRendererSpec<uint16, ColorMasks<bitFormat> >; \
+	\
+	case GUI::ThemeEngine::kGfxAntialias16bit: \
+		return new VectorRendererAA<uint16, ColorMasks<bitFormat> >; \
+	\
+	default: \
+		return 0; \
+	}
 
-#ifndef DISABLE_FANCY_THEMES
-	case GUI::ThemeEngine::kGfxAntialias16bit:
-		return new VectorRendererAA<uint16, ColorMasks<565> >;
-#endif
-
-	default:
+	// FIXME/TODO: This looks like a real gross hack.
+	// It might be fine to assume that '1555' only happens for PSP
+	// so it could maybe be handled via DISABLE_FANCY_THEMES,
+	// same goes for 4444, which is only used by DC port.
+	if (gBitFormat == 1555) {
+		CREATE_RENDERER_16(1555)
+	} else if (gBitFormat == 4444) {
+		CREATE_RENDERER_16(4444)
+	} else if (gBitFormat == 555) {
+		CREATE_RENDERER_16(555)
+	} else if (gBitFormat == 565) {
+		CREATE_RENDERER_16(565)
+	} else {
 		return 0;
 	}
+#undef CREATE_RENDERER_16
+#endif
 }
      
 #ifndef DISABLE_FANCY_THEMES
