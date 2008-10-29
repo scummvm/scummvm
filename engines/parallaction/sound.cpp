@@ -47,7 +47,7 @@ public:
 	MidiPlayer(MidiDriver *driver);
 	~MidiPlayer();
 
-	void play(const char *filename);
+	void play(Common::SeekableReadStream *stream);
 	void stop();
 	void updateTimer();
 	void adjustVolume(int diff);
@@ -93,29 +93,17 @@ MidiPlayer::~MidiPlayer() {
 	close();
 }
 
-void MidiPlayer::play(const char *filename) {
-	stop();
-
-	if (!scumm_strnicmp(_vm->_location._name, "museo", 5)) return;
-	if (!scumm_strnicmp(_vm->_location._name, "intgrottadopo", 13)) return;
-	if (!scumm_strnicmp(_vm->_location._name, "caveau", 6)) return;
-	if (!scumm_strnicmp(_vm->_location._name, "estgrotta", 9)) return;
-	if (!scumm_strnicmp(_vm->_location._name, "plaza1", 6)) return;
-	if (!scumm_strnicmp(_vm->_location._name, "endtgz", 6)) return;
-
-	char path[PATH_LEN];
-	sprintf(path, "%s.mid", filename);
-
-	Common::File stream;
-
-	if (!stream.open(path))
+void MidiPlayer::play(Common::SeekableReadStream *stream) {
+	if (!stream) {
+		stop();
 		return;
+	}
 
-	int size = stream.size();
+	int size = stream->size();
 
 	_midiData = (uint8 *)malloc(size);
 	if (_midiData) {
-		stream.read(_midiData, size);
+		stream->read(_midiData, size);
 		_mutex.lock();
 		_parser->loadMusic(_midiData, size);
 		_parser->setTrack(0);
@@ -239,10 +227,32 @@ DosSoundMan::~DosSoundMan() {
 	delete _midiPlayer;
 }
 
+bool DosSoundMan::isLocationSilent(const char *locationName) {
+
+	// these are the prefixes for location names with no background midi music
+	const char *noMusicPrefix[] = { "museo", "intgrottadopo", "caveau", "estgrotta", "plaza1", "endtgz", "common", 0 };
+	Common::String s(locationName);
+
+	for (int i = 0; noMusicPrefix[i]; i++) {
+		if (s.hasPrefix(noMusicPrefix[i])) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void DosSoundMan::playMusic() {
 	debugC(1, kDebugAudio, "DosSoundMan::playMusic()");
 
-	_midiPlayer->play(_musicFile);
+	if (isLocationSilent(_vm->_location._name)) {
+		// just stop the music if this location is silent
+		_midiPlayer->stop();
+		return;
+	}
+
+	Common::SeekableReadStream *stream = _vm->_disk->loadMusic(_musicFile);
+	_midiPlayer->play(stream);
 }
 
 void DosSoundMan::stopMusic() {
@@ -291,14 +301,7 @@ void DosSoundMan::playLocationMusic(const char *location) {
 		debugC(2, kDebugExec, "changeLocation: started music 'soft'");
 	}
 
-	if (!scumm_stricmp(location, "museo") ||
-		!scumm_stricmp(location, "caveau") ||
-		!scumm_strnicmp(location, "plaza1", 6) ||
-		!scumm_stricmp(location, "estgrotta") ||
-		!scumm_stricmp(location, "intgrottadopo") ||
-		!scumm_stricmp(location, "endtgz") ||
-		!scumm_stricmp(location, "common")) {
-
+	if (isLocationSilent(location)) {
 		stopMusic();
 		_musicData1 = 1;
 

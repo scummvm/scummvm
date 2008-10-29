@@ -70,6 +70,8 @@ class DosSoundMan : public SoundMan {
 	MidiPlayer	*_midiPlayer;
 	int			_musicData1;
 
+	bool isLocationSilent(const char *locationName);
+
 public:
 	DosSoundMan(Parallaction *vm, MidiDriver *midiDriver);
 	~DosSoundMan();
