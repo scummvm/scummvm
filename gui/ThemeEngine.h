@@ -238,16 +238,25 @@ public:
 	enum GraphicsMode {
 		kGfxDisabled = 0,	/** No GFX */
 		kGfxStandard16bit,	/** 2BPP with the standard (aliased) renderer. */
-#ifndef DISABLE_FANCY_THEMES
-		kGfxAntialias16bit,	/** 2BPP with the optimized AA renderer. */
-#endif
-		kGfxMAX
+		kGfxAntialias16bit	/** 2BPP with the optimized AA renderer. */
 	};
 
 	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
 	static const int kDirtyRectangleThreshold = 1;
 	
-	static const char *rendererModeLabels[];
+	struct Renderer {
+		const char *name;
+		const char *cfg;
+		GraphicsMode mode;
+	};
+
+	static const Renderer _rendererModes[];
+	static const uint _rendererModesSize;
+
+	static const GraphicsMode _defaultRendererMode;
+
+	static GraphicsMode findMode(const Common::String &cfg);
+	static const char *findModeConfigName(GraphicsMode mode);
 	
 	/** Default constructor */
 	ThemeEngine(Common::String fileName, GraphicsMode mode);

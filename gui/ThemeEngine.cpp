@@ -45,14 +45,40 @@ namespace GUI {
 
 using namespace Graphics;
 
-const char *ThemeEngine::rendererModeLabels[] = {
-	"Disabled GFX",
-	"Standard Renderer (16bpp)",
+const ThemeEngine::Renderer ThemeEngine::_rendererModes[] = {
+	{ "Disabled GFX", "none", kGfxDisabled },
+	{ "Standard Renderer (16bpp)", "normal_16bpp", kGfxStandard16bit },
 #ifndef DISABLE_FANCY_THEMES
-	"Antialiased Renderer (16bpp)"
+	{ "Antialiased Renderer (16bpp)", "aa_16bpp", kGfxAntialias16bit }
 #endif
 };
 
+const uint ThemeEngine::_rendererModesSize = ARRAYSIZE(ThemeEngine::_rendererModes);
+
+const ThemeEngine::GraphicsMode ThemeEngine::_defaultRendererMode = 
+#ifndef DISABLE_FANCY_THEMES
+	ThemeEngine::kGfxAntialias16bit;
+#else
+	ThemeEngine::kGfxStandard16bit;
+#endif
+
+ThemeEngine::GraphicsMode ThemeEngine::findMode(const Common::String &cfg) {
+	for (uint i = 0; i < _rendererModesSize; ++i) {
+		if (cfg.equalsIgnoreCase(_rendererModes[i].cfg))
+			return _rendererModes[i].mode;
+	}
+
+	return kGfxDisabled;
+}
+
+const char *ThemeEngine::findModeConfigName(GraphicsMode mode) {
+	for (uint i = 0; i < _rendererModesSize; ++i) {
+		if (mode == _rendererModes[i].mode)
+			return _rendererModes[i].cfg;
+	}
+
+	return findModeConfigName(kGfxDisabled);
+}
 
 /**********************************************************
  *	ThemeItem functions for drawing queues.

@@ -736,9 +736,8 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	
 	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.Renderer", "GUI Renderer:", labelWidth);
 	
-	for (int i = 1; i < GUI::ThemeEngine::kGfxMAX; ++i) {
-		_rendererPopUp->appendEntry(GUI::ThemeEngine::rendererModeLabels[i], i);
-	}
+	for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
+		_rendererPopUp->appendEntry(GUI::ThemeEngine::_rendererModes[i].name, GUI::ThemeEngine::_rendererModes[i].mode);
 	
 	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriod", "Autosave:", labelWidth);
 
@@ -813,7 +812,10 @@ void GlobalOptionsDialog::open() {
 			_autosavePeriodPopUp->setSelected(i);
 	}
 	
-	_rendererPopUp->setSelected(ConfMan.getInt("gui_renderer") - 1);
+	ThemeEngine::GraphicsMode mode = ThemeEngine::findMode(ConfMan.get("gui_renderer"));
+	if (mode == ThemeEngine::kGfxDisabled)
+		mode = ThemeEngine::_defaultRendererMode;
+	_rendererPopUp->setSelectedTag(mode);
 }
 
 void GlobalOptionsDialog::close() {
@@ -844,9 +846,11 @@ void GlobalOptionsDialog::close() {
 
 		ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
 		
-		if ((int)_rendererPopUp->getSelectedTag() != ConfMan.getInt("gui_renderer")) {
-			g_gui.loadNewTheme(g_gui.theme()->getThemeFileName(), (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag());
-			ConfMan.setInt("gui_renderer", _rendererPopUp->getSelectedTag(), _domain);
+		GUI::ThemeEngine::GraphicsMode selected = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
+		const char *cfg = GUI::ThemeEngine::findModeConfigName(selected);
+		if (!ConfMan.get("gui_renderer").equalsIgnoreCase(cfg)) {
+			g_gui.loadNewTheme(g_gui.theme()->getThemeFileName(), selected);
+			ConfMan.set("gui_renderer", cfg, _domain);
 		}
 	}
 	OptionsDialog::close();
