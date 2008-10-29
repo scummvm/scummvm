@@ -48,7 +48,9 @@ using namespace Graphics;
 const char *ThemeEngine::rendererModeLabels[] = {
 	"Disabled GFX",
 	"Standard Renderer (16bpp)",
+#ifndef DISABLE_FANCY_THEMES
 	"Antialiased Renderer (16bpp)"
+#endif
 };
 
 
@@ -320,7 +322,9 @@ void ThemeEngine::screenInit(bool backBuffer) {
 void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 	switch (mode) {
 	case kGfxStandard16bit:
+#ifndef DISABLE_FANCY_THEMES
 	case kGfxAntialias16bit:
+#endif
 		_bytesPerPixel = sizeof(uint16);
 		screenInit<uint16>(kEnableBackCaching);
 		break;

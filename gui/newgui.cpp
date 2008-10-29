@@ -93,7 +93,11 @@ NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
 	if (themefile.compareToIgnoreCase("default") == 0)
 		themefile = "builtin";
 		
+#ifndef DISABLE_FANCY_THEMES
 	ConfMan.registerDefault("gui_renderer", 2);
+#else
+	ConfMan.registerDefault("gui_renderer", 1);
+#endif
 	ThemeEngine::GraphicsMode gfxMode = (ThemeEngine::GraphicsMode)ConfMan.getInt("gui_renderer");
 
 	loadNewTheme(themefile, gfxMode);

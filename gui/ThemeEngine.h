@@ -238,7 +238,9 @@ public:
 	enum GraphicsMode {
 		kGfxDisabled = 0,	/** No GFX */
 		kGfxStandard16bit,	/** 2BPP with the standard (aliased) renderer. */
+#ifndef DISABLE_FANCY_THEMES
 		kGfxAntialias16bit,	/** 2BPP with the optimized AA renderer. */
+#endif
 		kGfxMAX
 	};
 

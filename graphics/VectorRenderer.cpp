@@ -37,6 +37,7 @@
 
 namespace Graphics {
 
+#ifndef DISABLE_FANCY_THEMES
 const VectorRenderer::ConvolutionDataSet VectorRenderer::_convolutionData[VectorRenderer::kConvolutionMAX] = {
 	{ {{1, 1, 1}, {1, 8, 1}, {1, 1, 1}}, 16, 0 }, // soft blur matrix
 	{ {{2, 2, 2}, {2, 2, 2}, {2, 2, 2}}, 18, 0 }, // hard blur matrix
@@ -45,6 +46,7 @@ const VectorRenderer::ConvolutionDataSet VectorRenderer::_convolutionData[Vector
 	{ {{-1, -1, -1}, {-1, 9, -1}, {-1, -1, -1}}, 1, 0}, // sharpen matrix
 	{ {{1, 1, 1}, {1, -7, 1}, {1, 1, 1}}, 1, 0} // edge find matrix
 };
+#endif
 
 /********************************************************************
  * DRAWSTEP handling functions

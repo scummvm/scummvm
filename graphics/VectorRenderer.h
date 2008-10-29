@@ -114,6 +114,7 @@ public:
 		kTriangleRight
 	};
 	
+#ifndef DISABLE_FANCY_THEMES
 	enum ConvolutionData {
 		kConvolutionSoftBlur,
 		kConvolutionHardBlur,
@@ -129,6 +130,7 @@ public:
 		int divisor;
 		int offset;
 	};
+#endif
 
 	/**
 	 * Draws a line by considering the special cases for optimization.
@@ -501,6 +503,7 @@ public:
 	virtual void disableShadows() { _disableShadows = true; }
 	virtual void enableShadows() { _disableShadows = false; }
 	
+#ifndef DISABLE_FANCY_THEMES
 	/**
 	 * Applies a convolution matrix on the given surface area.
 	 * Call applyConvolutionMatrix() instead if you want to use
@@ -526,6 +529,7 @@ public:
 	virtual void applyConvolutionMatrix(const ConvolutionData id, const Common::Rect &area) {
 		areaConvolution(area, _convolutionData[id].matrix, _convolutionData[id].divisor, _convolutionData[id].offset);
 	}
+#endif
 	
 	/**
 	 * Applies a whole-screen shading effect, used before opening a new dialog.
@@ -547,9 +551,9 @@ protected:
 	int _gradientFactor; /**< Multiplication factor of the active gradient */
 	int _gradientBytes[3]; /**< Color bytes of the active gradient, used to speed up calculation */
 	
+#ifndef DISABLE_FANCY_THEMES
 	static const ConvolutionDataSet _convolutionData[kConvolutionMAX];
-	
-	static const int _dimPercentValue = 256 * 50 / 100; /**< default value for screen dimming (50%) */
+#endif
 };
 
 } // end of namespace Graphics

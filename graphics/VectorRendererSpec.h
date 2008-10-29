@@ -225,7 +225,9 @@ protected:
 	 */
     inline void colorFill(PixelType *first, PixelType *last, PixelType color);
 	
+#ifndef DISABLE_FANCY_THEMES
 	void areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset);
+#endif
 
 	PixelType _fgColor; /**< Foreground color currently being used to draw on the renderer */
 	PixelType _bgColor; /**< Background color currently being used to draw on the renderer */
@@ -238,6 +240,7 @@ protected:
 };
 
 
+#ifndef DISABLE_FANCY_THEMES
 /**
  * VectorRendererAA: Anti-Aliased Vector Renderer Class
  *
@@ -291,6 +294,7 @@ protected:
 //            Common::Rect(x, y, x + w + blur * 2, y + h + blur * 2));
 	}
 };
+#endif
      
 }
 #endif

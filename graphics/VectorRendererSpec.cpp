@@ -159,14 +159,17 @@ VectorRenderer *createRenderer(int mode) {
 	case GUI::ThemeEngine::kGfxStandard16bit:
 		return new VectorRendererSpec<uint16, ColorMasks<565> >;
 
+#ifndef DISABLE_FANCY_THEMES
 	case GUI::ThemeEngine::kGfxAntialias16bit:
 		return new VectorRendererAA<uint16, ColorMasks<565> >;
+#endif
 
 	default:
 		return 0;
 	}
 }
      
+#ifndef DISABLE_FANCY_THEMES
 template <typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset) {
@@ -201,6 +204,7 @@ areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv,
 		}		
 	}
 }
+#endif
 
 template <typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
@@ -1409,7 +1413,7 @@ drawRoundedSquareFakeBevel(int x1, int y1, int r, int w, int h, int amount) {
 
 
 
-
+#ifndef DISABLE_FANCY_THEMES
 
 /********************************************************************
  * ANTIALIASED PRIMITIVES drawing algorithms - VectorRendererAA
@@ -1587,5 +1591,6 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode f
 	}
 }
 
+#endif
      
 }
