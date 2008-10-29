@@ -809,9 +809,9 @@ LauncherDialog::LauncherDialog()
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	_addButton =
-		new ButtonWidget(this, "Launcher.AddGameButton", "Add Game...", kAddGameCmd, 'A');
+		new ButtonWidget(this, "Launcher.AddGameButton", "Add Game", kAddGameCmd, 'A');
 	_editButton =
-		new ButtonWidget(this, "Launcher.EditGameButton", "Edit Game...", kEditGameCmd, 'E');
+		new ButtonWidget(this, "Launcher.EditGameButton", "Edit Game", kEditGameCmd, 'E');
 	_removeButton =
 		new ButtonWidget(this, "Launcher.RemoveGameButton", "Remove Game", kRemoveGameCmd, 'R');
 
@@ -1217,8 +1217,8 @@ void LauncherDialog::updateButtons() {
 	// Update the label of the "Add" button depending on whether shift is pressed or not
 	int modifiers = g_system->getEventManager()->getModifierState();
 	const char *newAddButtonLabel = ((modifiers & Common::KBD_SHIFT) != 0)
-		? "Mass Add..."
-		: "Add Game...";
+		? "Mass Add"
+		: "Add Game";
 
 	if (_addButton->getLabel() != newAddButtonLabel) {
 		_addButton->setLabel(newAddButtonLabel);
