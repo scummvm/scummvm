@@ -90,8 +90,8 @@ VectorRenderer *createRenderer(int mode);
  * the actual rendering functionality for each Byte Depth / Byte Format
  * combination, and may also contain platform specific code.
  *
- * When specifing define DISABLE_FANCY_THEMES some eye candy related code
- * gets stripped of. This is especially useful for small devices like NDS.
+ * When specifying define DISABLE_FANCY_THEMES eye candy related code
+ * gets stripped off. This is especially useful for small devices like NDS.
  * Also note that if you specify DISABLE_FANCY_THEMES, you'll need to 
  * specify a forced overlay bit format via VECTOR_RENDERER_FORMAT define.
  * The value looks like 'XYZ' for RXGYBZ mode, so R5G5B5 would be specified
