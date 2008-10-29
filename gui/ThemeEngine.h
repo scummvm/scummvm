@@ -376,6 +376,7 @@ public:
 	 *	@param special Deprecated.
 	 */
 	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false) {
+		r.clip(_screen->w, _screen->h);
 		_dirtyScreen.push_back(r);
 		return true;
 	}
