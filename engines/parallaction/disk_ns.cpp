@@ -250,16 +250,23 @@ public:
 
 
 
-void Disk_ns::errorFileNotFound(const char *s) {
-	error("File '%s' not found", s);
-}
-
 Disk_ns::Disk_ns(Parallaction *vm) : _vm(vm) {
 
 }
 
 Disk_ns::~Disk_ns() {
 
+}
+
+void Disk_ns::errorFileNotFound(const char *s) {
+	error("File '%s' not found", s);
+}
+
+Common::SeekableReadStream *Disk_ns::openFile(const char *filename) {
+	Common::File *stream = new Common::File;
+	if (!stream->open(filename))
+		errorFileNotFound(filename);
+	return stream;
 }
 
 
@@ -271,34 +278,10 @@ Common::String Disk_ns::selectArchive(const Common::String& name) {
 
 void Disk_ns::setLanguage(uint16 language) {
 	debugC(1, kDebugDisk, "setLanguage(%i)", language);
-
-	switch (language) {
-	case 0:
-		strcpy(_languageDir, "it/");
-		break;
-
-	case 1:
-		strcpy(_languageDir, "fr/");
-		break;
-
-	case 2:
-		strcpy(_languageDir, "en/");
-		break;
-
-	case 3:
-		strcpy(_languageDir, "ge/");
-		break;
-
-	default:
-		error("unknown language");
-
-	}
-
-	_languageDir[2] = '\0';
-	_locArchive.open(_languageDir);
-	_languageDir[2] = '/';
-
-	return;
+	assert(language < 4);
+	const char *languages[] = { "it", "fr", "en", "ge" };
+	sprintf(_languageDir, "%s/", languages[language]);
+	_locArchive.open(languages[language]);
 }
 
 #pragma mark -
@@ -312,7 +295,6 @@ DosDisk_ns::DosDisk_ns(Parallaction* vm) : Disk_ns(vm) {
 DosDisk_ns::~DosDisk_ns() {
 }
 
-
 //
 // loads a cnv from an external file
 //
@@ -322,46 +304,23 @@ Cnv* DosDisk_ns::loadExternalCnv(const char *filename) {
 
 	sprintf(path, "%s.cnv", filename);
 
-	Common::File stream;
+	Common::SeekableReadStream *stream = openFile(path);
 
-	if (!stream.open(path))
-		errorFileNotFound(path);
-
-	uint16 numFrames = stream.readByte();
-	uint16 width = stream.readByte();
-	uint16 height = stream.readByte();
-
+	uint16 numFrames = stream->readByte();
+	uint16 width = stream->readByte();
+	uint16 height = stream->readByte();
 	uint32 decsize = numFrames * width * height;
 	byte *data = (byte*)malloc(decsize);
-	stream.read(data, decsize);
+	stream->read(data, decsize);
+	Cnv *cnv = new Cnv(numFrames, width, height, data);
 
-	return new Cnv(numFrames, width, height, data);
+	delete stream;
+
+	return cnv;
 }
 
-Frames* DosDisk_ns::loadExternalStaticCnv(const char *filename) {
 
-	char path[PATH_LEN];
-
-	sprintf(path, "%s.cnv", filename);
-
-	Common::File stream;
-
-	if (!stream.open(path))
-		errorFileNotFound(path);
-
-	Graphics::Surface *cnv = new Graphics::Surface;
-
-	stream.skip(1);
-	byte w = stream.readByte();
-	byte h = stream.readByte();
-
-	cnv->create(w, h, 1);
-	stream.read(cnv->pixels, w*h);
-
-	return new SurfaceToFrames(cnv);
-}
-
-Cnv* DosDisk_ns::loadCnv(const char *filename) {
+Frames* DosDisk_ns::loadCnv(const char *filename) {
 
 	char path[PATH_LEN];
 
@@ -435,18 +394,15 @@ Script* DosDisk_ns::loadScript(const char* name) {
 }
 
 GfxObj* DosDisk_ns::loadHead(const char* name) {
-
 	char path[PATH_LEN];
-
 	sprintf(path, "%shead", name);
 	path[8] = '\0';
-
-	return new GfxObj(0, loadExternalStaticCnv(path));
+	return new GfxObj(0, loadExternalCnv(path));
 }
 
 
 Frames* DosDisk_ns::loadPointer(const char *name) {
-	return loadExternalStaticCnv(name);
+	return loadExternalCnv(name);
 }
 
 
@@ -458,7 +414,6 @@ Font* DosDisk_ns::loadFont(const char* name) {
 
 
 GfxObj* DosDisk_ns::loadObjects(const char *name) {
-
 	char path[PATH_LEN];
 	sprintf(path, "%sobj", name);
 	return new GfxObj(0, loadExternalCnv(path), name);
@@ -466,28 +421,7 @@ GfxObj* DosDisk_ns::loadObjects(const char *name) {
 
 
 GfxObj* DosDisk_ns::loadStatic(const char* name) {
-
-	char path[PATH_LEN];
-
-	strcpy(path, name);
-	if (!_resArchive.openArchivedFile(path)) {
-		sprintf(path, "%s.pp", name);
-		if (!_resArchive.openArchivedFile(path))
-			errorFileNotFound(path);
-	}
-
-	Graphics::Surface* cnv = new Graphics::Surface;
-
-	_resArchive.skip(1);
-	byte w = _resArchive.readByte();
-	byte h = _resArchive.readByte();
-
-	cnv->create(w, h, 1);
-
-	Graphics::PackBitsReadStream decoder(_resArchive);
-	decoder.read(cnv->pixels, w*h);
-
-	return new GfxObj(0, new SurfaceToFrames(cnv), name);
+	return new GfxObj(0, loadCnv(name), name);
 }
 
 Frames* DosDisk_ns::loadFrames(const char* name) {
@@ -624,27 +558,16 @@ void DosDisk_ns::loadScenery(BackgroundInfo& info, const char *name, const char 
 Table* DosDisk_ns::loadTable(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.tab", name);
-
-	Common::File	stream;
-	if (!stream.open(path))
-		errorFileNotFound(path);
-
-	Table *t = createTableFromStream(100, stream);
-
-	stream.close();
-
+	Common::SeekableReadStream *stream = openFile(path);
+	Table *t = createTableFromStream(100, *stream);
+	delete stream;
 	return t;
 }
 
 Common::SeekableReadStream* DosDisk_ns::loadMusic(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.mid", name);
-
-	Common::File *stream = new Common::File;
-	if (!stream->open(path))
-		errorFileNotFound(path);
-
-	return stream;
+	return openFile(path);
 }
 
 
@@ -1018,11 +941,11 @@ Script* AmigaDisk_ns::loadScript(const char* name) {
 Frames* AmigaDisk_ns::loadPointer(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadPointer");
 
-	Common::File stream;
-	if (!stream.open(name))
-		errorFileNotFound(name);
+	Common::SeekableReadStream *stream = openFile(name);
+	Frames *frames = makeStaticCnv(*stream);
+	delete stream;
 
-	return makeStaticCnv(stream);
+	return frames;
 }
 
 GfxObj* AmigaDisk_ns::loadStatic(const char* name) {
@@ -1342,10 +1265,7 @@ Table* AmigaDisk_ns::loadTable(const char* name) {
 	Common::SeekableReadStream *stream;
 
 	if (!scumm_stricmp(name, "global")) {
-		Common::File *s = new Common::File;
-		if (!s->open(path))
-			errorFileNotFound(path);
-
+		Common::SeekableReadStream *s = openFile(path);
 		dispose = true;
 		stream = s;
 	} else {
@@ -1371,19 +1291,20 @@ Font* AmigaDisk_ns::loadFont(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%sfont", name);
 
+	Font *font = 0;
+
 	if (_vm->getFeatures() & GF_LANG_IT) {
 		// Italian version has separate font files
-		Common::File stream;
-		if (!stream.open(path))
-			errorFileNotFound(path);
-
-		return createFont(name, stream);
+		Common::SeekableReadStream *stream = openFile(path);
+		font = createFont(name, *stream);
+		delete stream;
 	} else {
 		if (!_resArchive.openArchivedFile(path))
 			errorFileNotFound(path);
-
-		return createFont(name, _resArchive);
+		font = createFont(name, _resArchive);
 	}
+
+	return font;
 }
 
 

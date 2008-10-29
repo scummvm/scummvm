@@ -124,6 +124,7 @@ protected:
 
 protected:
 	void errorFileNotFound(const char *s);
+	Common::SeekableReadStream *openFile(const char *filename);
 
 public:
 	Disk_ns(Parallaction *vm);
@@ -138,8 +139,7 @@ class DosDisk_ns : public Disk_ns {
 private:
 	void unpackBackground(Common::ReadStream *stream, byte *screen, byte *mask, byte *path);
 	Cnv* loadExternalCnv(const char *filename);
-	Cnv* loadCnv(const char *filename);
-	Frames* loadExternalStaticCnv(const char *filename);
+	Frames* loadCnv(const char *filename);
 	void loadBackground(BackgroundInfo& info, const char *filename);
 	void loadMaskAndPath(BackgroundInfo& info, const char *name);
 	void parseDepths(BackgroundInfo &info, Common::SeekableReadStream &stream);
