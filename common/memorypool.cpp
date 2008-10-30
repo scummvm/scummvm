@@ -28,6 +28,11 @@
 
 namespace Common {
 
+enum {
+	INITIAL_CHUNKS_PER_PAGE = 8
+};
+
+
 MemoryPool::MemoryPool(size_t chunkSize) {
 	// You must at least fit the pointer in the node (technically unneeded considering the next rounding statement)
 	_chunkSize = MAX(chunkSize, sizeof(void*));
@@ -37,7 +42,7 @@ MemoryPool::MemoryPool(size_t chunkSize) {
 
 	_next = NULL;
 	
-	_chunksPerPage = 8;
+	_chunksPerPage = INITIAL_CHUNKS_PER_PAGE;
 }
 
 MemoryPool::~MemoryPool() {
@@ -50,9 +55,12 @@ void MemoryPool::allocPage() {
 	
 	// Allocate a new page
 	page.numChunks = _chunksPerPage;
+	assert(page.numChunks * _chunkSize < 16*1024*1024);	// Refuse to allocate pages bigger than 16 MB
+
 	page.start = ::malloc(page.numChunks * _chunkSize);
 	assert(page.start);
 	_pages.push_back(page);
+
 	
 	// Next time, we'll alocate a page twice as big as this one.
 	_chunksPerPage *= 2;
@@ -122,8 +130,6 @@ void MemoryPool::freeUnusedPages() {
 	}
 
 	// Free all pages which are not in use.
-	// TODO: Might want to reset _chunksPerPage here (e.g. to the largest
-	//      _pages[i].numChunks value still in use).
 	size_t freedPagesCount = 0;
 	for (size_t i = 0; i < _pages.size(); ++i)  {
 		if (numberOfFreeChunksPerPage[i] == _pages[i].numChunks) {
@@ -141,6 +147,8 @@ void MemoryPool::freeUnusedPages() {
 		}
 	}
 
+//	printf("freed %d pages out of %d\n", (int)freedPagesCount, (int)_pages.size());
+
 	for (size_t i = 0; i < _pages.size(); )  {
 		if (_pages[i].start == NULL) {
 			_pages.remove_at(i);
@@ -150,7 +158,12 @@ void MemoryPool::freeUnusedPages() {
 		}
 	}
 
-	//printf("%d freed pages\n", freedPagesCount); 
+	// Reset _chunksPerPage
+	_chunksPerPage = INITIAL_CHUNKS_PER_PAGE;
+	for (size_t i = 0; i < _pages.size(); ++i) {
+		if (_chunksPerPage < _pages[i].numChunks)
+			_chunksPerPage = _pages[i].numChunks;
+	}
 }
 
 }	// End of namespace Common
