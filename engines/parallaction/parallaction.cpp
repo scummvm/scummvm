@@ -89,6 +89,7 @@ Parallaction::~Parallaction() {
 	delete _callableNames;
 	delete _cmdExec;
 	delete _programExec;
+	delete _saveLoad;
 
 	_gfx->clearGfxObjects(kGfxObjCharacter | kGfxObjNormal);
 	hideDialogueStuff();

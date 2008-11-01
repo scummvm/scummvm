@@ -903,7 +903,7 @@ Cnv* AmigaDisk_ns::makeCnv(Common::SeekableReadStream &stream) {
 
 	free(buf);
 
-	return new Cnv(numFrames, width, height, data);
+	return new Cnv(numFrames, width, height, data, true);
 }
 #undef NUM_PLANES
 

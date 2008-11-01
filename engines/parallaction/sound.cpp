@@ -312,9 +312,13 @@ void DosSoundMan::playLocationMusic(const char *location) {
 AmigaSoundMan::AmigaSoundMan(Parallaction *vm) : SoundMan(vm) {
 	_musicStream = 0;
 	_channels[0].data = 0;
+	_channels[0].dispose = false;
 	_channels[1].data = 0;
+	_channels[1].dispose = false;
 	_channels[2].data = 0;
+	_channels[2].dispose = false;
 	_channels[3].data = 0;
+	_channels[3].dispose = false;
 }
 
 AmigaSoundMan::~AmigaSoundMan() {
@@ -340,7 +344,7 @@ void AmigaSoundMan::loadChannelData(const char *filename, Channel *ch) {
 		ch->header.samplesPerHiCycle = 0;
 		ch->header.samplesPerSec = 11934;
 		ch->header.volume = 160;
-		ch->data = new int8[AMIGABEEP_SIZE * NUM_REPEATS];
+		ch->data = (int8*)malloc(AMIGABEEP_SIZE * NUM_REPEATS);
 		int8* odata = ch->data;
 		for (uint i = 0; i < NUM_REPEATS; i++) {
 			memcpy(odata, res_amigaBeep, AMIGABEEP_SIZE);
@@ -363,6 +367,8 @@ void AmigaSoundMan::playSfx(const char *filename, uint channel, bool looping, in
 		warning("unknown sfx channel");
 		return;
 	}
+
+	stopSfx(channel);
 
 	debugC(1, kDebugAudio, "AmigaSoundMan::playSfx(%s, %i)", filename, channel);
 

@@ -765,6 +765,7 @@ Gfx::Gfx(Parallaction* vm) :
 	_backgroundInfo = 0;
 
 	_halfbrite = false;
+	_nextProjectorPos = 0;
 	_hbCircleRadius = 0;
 
 	_unpackedBitmap = new byte[MAXIMUM_UNPACKED_BITMAP_SIZE];
