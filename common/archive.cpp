@@ -153,6 +153,24 @@ bool FSDirectory::hasFile(const String &name) {
 	return node.exists();
 }
 
+ArchiveMemberPtr FSDirectory::getMember(const String &name) {
+	if (name.empty() || !_node.isDirectory()) {
+		return ArchiveMemberPtr();
+	}
+
+	FSNode node = lookupCache(_fileCache, name);
+
+	if (!node.exists()) {
+		warning("FSDirectory::getMember: FSNode does not exist");
+		return ArchiveMemberPtr();
+	} else if (node.isDirectory()) {
+		warning("FSDirectory::getMember: FSNode is a directory");
+		return ArchiveMemberPtr();
+	}
+
+	return ArchiveMemberPtr(new FSDirectoryMember(node));
+}
+
 SeekableReadStream *FSDirectory::openFile(const String &name) {
 	if (name.empty() || !_node.isDirectory()) {
 		return 0;
@@ -365,6 +383,21 @@ int SearchSet::listMembers(ArchiveMemberList &list) {
 	}
 
 	return matches;
+}
+
+ArchiveMemberPtr SearchSet::getMember(const String &name) {
+	if (name.empty()) {
+		return ArchiveMemberPtr();
+	}
+
+	ArchiveList::iterator it = _list.begin();
+	for ( ; it != _list.end(); it++) {
+		if ((*it)._arc->hasFile(name)) {
+			return (*it)._arc->getMember(name);
+		}
+	}
+
+	return ArchiveMemberPtr();
 }
 
 SeekableReadStream *SearchSet::openFile(const String &name) {

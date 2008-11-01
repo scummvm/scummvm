@@ -1416,6 +1416,13 @@ int ZipArchive::listMembers(Common::ArchiveMemberList &list) {
 	return matches;
 }
 
+ArchiveMemberPtr ZipArchive::getMember(const String &name) {
+	if (!_zipFile || !hasFile(name))
+		return ArchiveMemberPtr();
+
+	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
+}
+
 Common::SeekableReadStream *ZipArchive::openFile(const Common::String &name) {
 	if (!_zipFile)
 		return 0;

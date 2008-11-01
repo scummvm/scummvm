@@ -62,6 +62,13 @@ int PlainArchive::listMembers(Common::ArchiveMemberList &list) {
 	return count;
 }
 
+Common::ArchiveMemberPtr PlainArchive::getMember(const Common::String &name) {
+	if (!hasFile(name))
+		return Common::ArchiveMemberPtr();
+
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+}
+
 Common::SeekableReadStream *PlainArchive::openFile(const Common::String &name) {
 	FileMap::const_iterator fDesc = _files.find(name);
 	if (fDesc == _files.end())
@@ -108,6 +115,13 @@ int CachedArchive::listMembers(Common::ArchiveMemberList &list) {
 	}
 
 	return count;
+}
+
+Common::ArchiveMemberPtr CachedArchive::getMember(const Common::String &name) {
+	if (!hasFile(name))
+		return Common::ArchiveMemberPtr();
+
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
 Common::SeekableReadStream *CachedArchive::openFile(const Common::String &name) {

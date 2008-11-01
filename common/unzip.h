@@ -39,14 +39,15 @@ class ZipArchive : public Archive {
 
 public:
 	ZipArchive(const String &name);
-	ZipArchive(const Common::FSNode &node);
+	ZipArchive(const FSNode &node);
 	~ZipArchive();
 	
 	bool isOpen() const;
 
 	virtual bool hasFile(const String &name);
-	virtual int listMembers(Common::ArchiveMemberList &list);
-	virtual Common::SeekableReadStream *openFile(const Common::String &name);
+	virtual int listMembers(ArchiveMemberList &list);
+	virtual ArchiveMemberPtr getMember(const String &name);
+	virtual SeekableReadStream *openFile(const String &name);
 };
 
 }	// End of namespace Common

@@ -51,7 +51,8 @@ public:
 	virtual SeekableReadStream *open() = 0;
 };
 
-typedef List<SharedPtr<ArchiveMember> > ArchiveMemberList;
+typedef SharedPtr<ArchiveMember> ArchiveMemberPtr;
+typedef List<ArchiveMemberPtr> ArchiveMemberList;
 
 class Archive;
 
@@ -105,6 +106,11 @@ public:
 	 * @return the number of names added to list
 	 */
 	virtual int listMembers(ArchiveMemberList &list) = 0;
+
+	/**
+	 * Returns a ArchiveMember representation of the given file.
+	 */
+	virtual ArchiveMemberPtr getMember(const String &name) = 0;
 
 	/**
 	 * Create a stream bound to a file in the archive.
@@ -209,6 +215,12 @@ public:
 	virtual int listMembers(ArchiveMemberList &list);
 
 	/**
+	 * Get a ArchiveMember representation of the specified file. A full match of relative
+	 * path and filename is needed for success.
+	 */
+	virtual ArchiveMemberPtr getMember(const String &name);
+
+	/**
 	 * Open the specified file. A full match of relative path and filename is needed
 	 * for success.
 	 */
@@ -272,6 +284,8 @@ public:
 	virtual bool hasFile(const String &name);
 	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
 	virtual int listMembers(ArchiveMemberList &list);
+
+	virtual ArchiveMemberPtr getMember(const String &name);
 
 	/**
 	 * Implements openFile from Archive base class. The current policy is

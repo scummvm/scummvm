@@ -107,15 +107,15 @@ bool Resource::reset() {
 		};
 
 		for (uint i = 0; i < ARRAYSIZE(list); ++i) {
-			Common::ArchiveMemberList fileList;
-			listFiles(list[i], fileList);
+			Common::ArchiveMemberPtr file = _files.getMember(list[i]);
+			if (!file)
+				error("Couldn't find PAK file '%s'", list[i]);
 
-			if (fileList.empty())
-				error("Couldn't load PAK file '%s'", list[i]);
-
-			Common::Archive *archive = loadArchive(list[i], *fileList.begin());
+			Common::Archive *archive = loadArchive(list[i], file);
 			if (archive)
 				_protectedFiles.add(list[i], archive, 0, false);
+			else
+				error("Couldn't load PAK file '%s'", list[i]);
 		}
 	} else {
 		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -142,13 +142,12 @@ bool Resource::reset() {
 bool Resource::loadPakFile(Common::String filename) {
 	filename.toUppercase();
 
-	Common::ArchiveMemberList list;
-	_files.listMatchingMembers(list, filename);
 
-	if (list.empty())
+	Common::ArchiveMemberPtr file = _files.getMember(filename);
+	if (!file)
 		return false;
 
-	return loadPakFile(filename, *list.begin());
+	return loadPakFile(filename, file);
 }
 
 bool Resource::loadPakFile(Common::String name, Common::SharedPtr<Common::ArchiveMember> file) {
