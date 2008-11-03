@@ -193,8 +193,12 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 void MainMenuDialog::reflowLayout() {
-	_loadButton->setEnabled(_engine->canLoadGameStateCurrently());
-	_saveButton->setEnabled(_engine->canSaveGameStateCurrently());
+	if (_engine->hasFeature(Engine::kSupportsListSaves)) {
+		if (_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime)) 
+			_loadButton->setEnabled(_engine->canLoadGameStateCurrently());
+		if (_engine->hasFeature(Engine::kSupportsSavingDuringRuntime))
+			_saveButton->setEnabled(_engine->canSaveGameStateCurrently());
+	}
 
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowGlobalMenuLogo", 0) == 1 && g_gui.theme()->supportsImages()) {
