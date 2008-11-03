@@ -31,6 +31,7 @@ MODULE_OBJS := \
 	saves/default/default-saves.o \
 	saves/compressed/compressed-saves.o \
 	saves/posix/posix-saves.o \
+	saves/psp/psp-saves.o \
 	timer/default/default-timer.o
 
 # Include common rules
