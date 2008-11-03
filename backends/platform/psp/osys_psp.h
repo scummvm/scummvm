@@ -112,6 +112,7 @@ public:
 	virtual OverlayColor ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b);
 	virtual void colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b);
 	virtual void grabPalette(byte *colors, uint start, uint num);
+	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<1555>(); }
 
 	virtual bool showMouse(bool visible);
 
