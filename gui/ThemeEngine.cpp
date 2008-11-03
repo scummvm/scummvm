@@ -1039,9 +1039,7 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	uint colorsFound = 0;
 	const OverlayColor *src = (const OverlayColor*)cursor->pixels;
 
-	byte *table = new byte[65536];
-	assert(table);
-	memset(table, 0, sizeof(byte)*65536);
+	Common::HashMap<int, int>	colorToIndex;
 
 	byte r, g, b;
 
@@ -1051,16 +1049,16 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 
 	_cursor = new byte[_cursorWidth * _cursorHeight];
 	assert(_cursor);
-	memset(_cursor, 255, sizeof(byte)*_cursorWidth*_cursorHeight);
+	memset(_cursor, 0xFF, sizeof(byte) * _cursorWidth * _cursorHeight);
 
 	for (uint y = 0; y < _cursorHeight; ++y) {
 		for (uint x = 0; x < _cursorWidth; ++x) {
 			_system->colorToRGB(src[x], r, g, b);
 			uint16 col = RGBToColor<ColorMasks<565> >(r, g, b);
-			if (!table[col] && col != transparency) {
-				table[col] = colorsFound++;
+			if (!colorToIndex.contains(col) && col != transparency) {
+				const int index = colorsFound++;
+				colorToIndex[col] = index;
 
-				uint index = table[col];
 				_cursorPal[index * 4 + 0] = r;
 				_cursorPal[index * 4 + 1] = g;
 				_cursorPal[index * 4 + 2] = b;
@@ -1073,7 +1071,7 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 			}
 
 			if (col != transparency) {
-				uint index = table[col];
+				const int index = colorToIndex[col];
 				_cursor[y * _cursorWidth + x] = index;
 			}
 		}
@@ -1081,8 +1079,7 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	}
 
 	_useCursor = true;
-	delete[] table;
-	
+
 	return true;
 }
 
