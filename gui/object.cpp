@@ -25,6 +25,7 @@
 #include "common/system.h"
 #include "gui/object.h"
 #include "gui/widget.h"
+#include "gui/newgui.h"
 
 namespace GUI {
 
@@ -41,5 +42,25 @@ uint32 GuiObject::getMillis() {
 	return g_system->getMillis();
 }
 
+void GuiObject::reflowLayout() {
+	if (!_name.empty()) {
+		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, _w, _h)) {
+			error("Could not load widget position for '%s'", _name.c_str());
+		}
+
+		if (_x < 0)
+			error("Widget <%s> has x < 0: %d", _name.c_str(), _x);
+		if (_x >= g_system->getOverlayWidth())
+			error("Widget <%s> has x > %d", _name.c_str(), g_system->getOverlayWidth());
+		if (_x + _w > g_system->getOverlayWidth())
+			error("Widget <%s> has x + w > %d (%d)", _name.c_str(), g_system->getOverlayWidth(), _x + _w);
+		if (_y < 0)
+			error("Widget <%s> has y < 0", _name.c_str());
+		if (_y >= g_system->getOverlayHeight())
+			error("Widget <%s> has y > %d", _name.c_str(), g_system->getOverlayHeight());
+		if (_y + _h > g_system->getOverlayHeight())
+			error("Widget <%s> has y + h > %d (%d)", _name.c_str(), g_system->getOverlayHeight(), _y + _h);
+	}
+}
 
 } // End of namespace GUI
