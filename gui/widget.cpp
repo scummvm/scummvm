@@ -359,8 +359,8 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 	_gfx.create(w, h, sizeof(OverlayColor));
 
 	OverlayColor *dst = (OverlayColor*)_gfx.pixels;
-	// TODO: get rid of g_system usage
-	OverlayColor fillCol = g_system->RGBToColor(r, g, b);
+	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
+	OverlayColor fillCol = Graphics::RGBToColor(r, g, b, overlayFormat);
 	while (h--) {
 		for (int i = 0; i < w; ++i) {
 			*dst++ = fillCol;

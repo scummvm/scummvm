@@ -120,13 +120,14 @@ Surface *BMPDecoder::decodeImage(Common::SeekableReadStream &stream) {
 	newSurf->create(info.width, info.height, sizeof(OverlayColor));
 	assert(newSurf->pixels);
 	OverlayColor *curPixel = (OverlayColor*)newSurf->pixels + (newSurf->h-1) * newSurf->w;
+	PixelFormat overlayFormat = g_system->getOverlayFormat();
 	int pitchAdd = info.width % 4;
 	for (int i = 0; i < newSurf->h; ++i) {
 		for (int i2 = 0; i2 < newSurf->w; ++i2) {
 			b = stream.readByte();
 			g = stream.readByte();
 			r = stream.readByte();
-			*curPixel = g_system->RGBToColor(r, g, b);
+			*curPixel = RGBToColor(r, g, b, overlayFormat);
 			++curPixel;
 		}
 		stream.seek(pitchAdd, SEEK_CUR);
