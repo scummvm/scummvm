@@ -105,9 +105,9 @@ void InitScalers(uint32 BitFormat) {
 	gBitFormat = BitFormat;
 #ifndef DISABLE_HQ_SCALERS
 	if (gBitFormat == 555)
-		InitLUT<ColorMasks<555> >();
+		InitLUT<Graphics::ColorMasks<555> >();
 	if (gBitFormat == 565)
-		InitLUT<ColorMasks<565> >();
+		InitLUT<Graphics::ColorMasks<565> >();
 #endif
 }
 

@@ -176,6 +176,7 @@ public:
 	void deleteMutex(MutexRef mutex);
 
 	// Overlay
+	virtual Graphics::PixelFormat getOverlayFormat() const { return _overlayFormat; }
 	virtual void showOverlay();
 	virtual void hideOverlay();
 	virtual void clearOverlay();
@@ -246,6 +247,7 @@ protected:
 	SDL_Surface *_overlayscreen;
 	int _overlayWidth, _overlayHeight;
 	bool _overlayVisible;
+	Graphics::PixelFormat _overlayFormat;
 
 	// Audio
 	int _samplesPerSec;

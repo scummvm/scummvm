@@ -396,6 +396,18 @@ void OSystem_SDL::loadGFXMode() {
 	if (_overlayscreen == NULL)
 		error("allocating _overlayscreen failed");
 
+	_overlayFormat.bytesPerPixel = _overlayscreen->format->BytesPerPixel;
+
+	_overlayFormat.rLoss = _overlayscreen->format->Rloss;
+	_overlayFormat.gLoss = _overlayscreen->format->Gloss;
+	_overlayFormat.bLoss = _overlayscreen->format->Bloss;
+	_overlayFormat.aLoss = _overlayscreen->format->Aloss;
+
+	_overlayFormat.rShift = _overlayscreen->format->Rshift;
+	_overlayFormat.gShift = _overlayscreen->format->Gshift;
+	_overlayFormat.bShift = _overlayscreen->format->Bshift;
+	_overlayFormat.aShift = _overlayscreen->format->Ashift;
+
 	_tmpscreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth + 3, _overlayHeight + 3,
 						16,
 						_hwscreen->format->Rmask,

@@ -30,12 +30,12 @@
 #include "graphics/colormasks.h"
 
 
-#define highBits	ColorMasks<bitFormat>::highBits
-#define lowBits		ColorMasks<bitFormat>::lowBits
-#define qhighBits	ColorMasks<bitFormat>::qhighBits
-#define qlowBits	ColorMasks<bitFormat>::qlowBits
-#define redblueMask	ColorMasks<bitFormat>::kRedBlueMask
-#define greenMask	ColorMasks<bitFormat>::kGreenMask
+#define highBits	Graphics::ColorMasks<bitFormat>::highBits
+#define lowBits		Graphics::ColorMasks<bitFormat>::lowBits
+#define qhighBits	Graphics::ColorMasks<bitFormat>::qhighBits
+#define qlowBits	Graphics::ColorMasks<bitFormat>::qlowBits
+#define redblueMask	Graphics::ColorMasks<bitFormat>::kRedBlueMask
+#define greenMask	Graphics::ColorMasks<bitFormat>::kGreenMask
 
 
 /**

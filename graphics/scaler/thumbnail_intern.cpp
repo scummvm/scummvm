@@ -118,7 +118,7 @@ static bool grabScreen565(Graphics::Surface *surf) {
 			g = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4 + 1];
 			b = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4 + 2];
 
-			((uint16*)surf->pixels)[y * surf->w + x] = RGBToColor<ColorMasks<565> >(r, g, b);
+			((uint16*)surf->pixels)[y * surf->w + x] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
 		}
 	}
 
@@ -209,7 +209,7 @@ bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h,
 			g = palette[pixels[y * w + x] * 3 + 1];
 			b = palette[pixels[y * w + x] * 3 + 2];
 
-			((uint16 *)screen.pixels)[y * screen.w + x] = RGBToColor<ColorMasks<565> >(r, g, b);
+			((uint16 *)screen.pixels)[y * screen.w + x] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
 		}
 	}
 

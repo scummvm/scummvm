@@ -62,11 +62,11 @@ bool OSystem::setGraphicsMode(const char *name) {
 }
 
 OverlayColor OSystem::RGBToColor(uint8 r, uint8 g, uint8 b) {
-	return ::RGBToColor<ColorMasks<565> >(r, g, b);
+	return Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
 }
 
 void OSystem::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-	::colorToRGB<ColorMasks<565> >(color, r, g, b);
+	Graphics::colorToRGB<Graphics::ColorMasks<565> >(color, r, g, b);
 }
 
 OverlayColor OSystem::ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {

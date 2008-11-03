@@ -31,6 +31,8 @@
 #include "common/noncopyable.h"
 #include "common/rect.h"
 
+#include "graphics/colormasks.h"
+
 namespace Audio {
 	class Mixer;
 }
@@ -569,6 +571,12 @@ public:
 
 	/** Deactivate the overlay mode. */
 	virtual void hideOverlay() = 0;
+
+	/**
+	 * Returns the pixel format description of the overlay.
+	 * @see Graphics::PixelFormat
+	 */
+	virtual Graphics::PixelFormat getOverlayFormat() const = 0;
 
 	/**
 	 * Reset the overlay.
