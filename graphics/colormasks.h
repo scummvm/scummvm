@@ -275,21 +275,21 @@ struct PixelFormat {
 	uint32 rMask, gMask, bMask, aMask; /**< Binary mask used to retrieve individual color values. */
 };
 
-template<class Mask>
-PixelFormat createPixelFormatFromMask() {
+template<int bitFormat>
+PixelFormat createPixelFormat() {
 	PixelFormat format;
 
-	format.bytesPerPixel = Mask::kBytesPerPixel;
+	format.bytesPerPixel = ColorMasks<bitFormat>::kBytesPerPixel;
 
-	format.rLoss = 8 - Mask::kRedBits;
-	format.gLoss = 8 - Mask::kGreenBits;
-	format.bLoss = 8 - Mask::kBlueBits;
-	format.aLoss = 8 - Mask::kAlphaBits;
+	format.rLoss = 8 - ColorMasks<bitFormat>::kRedBits;
+	format.gLoss = 8 - ColorMasks<bitFormat>::kGreenBits;
+	format.bLoss = 8 - ColorMasks<bitFormat>::kBlueBits;
+	format.aLoss = 8 - ColorMasks<bitFormat>::kAlphaBits;
 
-	format.rShift = Mask::kRedShift;
-	format.gShift = Mask::kGreenShift;
-	format.bShift = Mask::kBlueShift;
-	format.aShift = Mask::kAlphaShift;
+	format.rShift = ColorMasks<bitFormat>::kRedShift;
+	format.gShift = ColorMasks<bitFormat>::kGreenShift;
+	format.bShift = ColorMasks<bitFormat>::kBlueShift;
+	format.aShift = ColorMasks<bitFormat>::kAlphaShift;
 
 	return format;
 }
