@@ -23,40 +23,31 @@
  *
  */
 
-#if !defined(BACKEND_SAVES_DEFAULT_H) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
-#define BACKEND_SAVES_DEFAULT_H
+#if !defined(BACKEND_POSIX_SAVES_H) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
+#define BACKEND_POSIX_SAVES_H
 
-#include "common/scummsys.h"
-#include "common/savefile.h"
-#include "common/str.h"
-#include "common/fs.h"
+#include "backends/saves/default/default-saves.h"
 
+#if defined(UNIX)
 /**
- * Provides a default savefile manager implementation for common platforms.
+ * Customization of the DefaultSaveFileManager for POSIX platforms.
+ * The only two differences are that the default constructor sets
+ * up the savepath based on HOME, and that checkPath tries to
+ * create the savedir, if missing, via the mkdir() syscall.
  */
-class DefaultSaveFileManager : public Common::SaveFileManager {
+class POSIXSaveFileManager : public DefaultSaveFileManager {
 public:
-	DefaultSaveFileManager();
-	DefaultSaveFileManager(const Common::String &defaultSavepath);
-
-	virtual Common::StringList listSavefiles(const char *pattern);
-	virtual Common::InSaveFile *openForLoading(const char *filename);
-	virtual Common::OutSaveFile *openForSaving(const char *filename);
-	virtual bool removeSavefile(const char *filename);
+	POSIXSaveFileManager();
+//	POSIXSaveFileManager(const Common::String &defaultSavepath);
 
 protected:
 	/**
-	 * Get the path to the savegame directory.
-	 * Should only be used internally since some platforms
-	 * might implement savefiles in a completely different way.
-	 */
-	virtual Common::String getSavePath() const;
-
-	/**
 	 * Checks the given path for read access, existence, etc.
+	 * In addition, tries to create a missing savedir, if possible.
 	 * Sets the internal error and error message accordingly.
 	 */
 	virtual void checkPath(const Common::FSNode &dir);
 };
+#endif
 
 #endif

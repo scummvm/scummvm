@@ -25,44 +25,18 @@
 
 #if !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
+#include "backends/saves/default/default-saves.h"
+#include "backends/saves/compressed/compressed-saves.h"
+
 #include "common/savefile.h"
 #include "common/util.h"
 #include "common/fs.h"
 #include "common/config-manager.h"
-#include "backends/saves/default/default-saves.h"
-#include "backends/saves/compressed/compressed-saves.h"
 
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#include <errno.h>	// for removeSavefile()
 
-#if defined(UNIX)
-#include <sys/stat.h>
-#endif
-
-#ifdef UNIX
-#ifdef MACOSX
-#define DEFAULT_SAVE_PATH "Documents/ScummVM Savegames"
-#else
-#define DEFAULT_SAVE_PATH ".scummvm"
-#endif
-#endif
 
 DefaultSaveFileManager::DefaultSaveFileManager() {
-	// Register default savepath
-	// TODO: Remove this code here, and instead leave setting the
-	// default savepath to the ports using this class.
-#ifdef DEFAULT_SAVE_PATH
-	Common::String savePath;
-#if defined(UNIX) && !defined(IPHONE)
-	const char *home = getenv("HOME");
-	if (home && *home && strlen(home) < MAXPATHLEN) {
-		savePath = home;
-		savePath += "/" DEFAULT_SAVE_PATH;
-		ConfMan.registerDefault("savepath", savePath);
-	}
-#endif
-#endif // #ifdef DEFAULT_SAVE_PATH
 }
 
 DefaultSaveFileManager::DefaultSaveFileManager(const Common::String &defaultSavepath) {
@@ -86,78 +60,12 @@ Common::StringList DefaultSaveFileManager::listSavefiles(const char *pattern) {
 }
 
 void DefaultSaveFileManager::checkPath(const Common::FSNode &dir) {
-	const Common::String path = dir.getPath();
 	clearError();
-
-#if defined(UNIX)
-	struct stat sb;
-
-	// Check whether the dir exists
-	if (stat(path.c_str(), &sb) == -1) {
-		// The dir does not exist, or stat failed for some other reason.
-		// If the problem was that the path pointed to nothing, try
-		// to create the dir (ENOENT case).
-		switch (errno) {
-		case EACCES:
-			setError(SFM_DIR_ACCESS, "Search or write permission denied: "+path);
-			break;
-		case ELOOP:
-			setError(SFM_DIR_LOOP, "Too many symbolic links encountered while traversing the path: "+path);
-			break;
-		case ENAMETOOLONG:
-			setError(SFM_DIR_NAMETOOLONG, "The path name is too long: "+path);
-			break;
-		case ENOENT:
-			if (mkdir(path.c_str(), 0755) != 0) {
-				// mkdir could fail for various reasons: The parent dir doesn't exist,
-				// or is not writeable, the path could be completly bogus, etc.
-				warning("mkdir for '%s' failed!", path.c_str());
-				perror("mkdir");
-
-				switch (errno) {
-				case EACCES:
-					setError(SFM_DIR_ACCESS, "Search or write permission denied: "+path);
-					break;
-				case EMLINK:
-					setError(SFM_DIR_LINKMAX, "The link count of the parent directory would exceed {LINK_MAX}: "+path);
-					break;
-				case ELOOP:
-					setError(SFM_DIR_LOOP, "Too many symbolic links encountered while traversing the path: "+path);
-					break;
-				case ENAMETOOLONG:
-					setError(SFM_DIR_NAMETOOLONG, "The path name is too long: "+path);
-					break;
-				case ENOENT:
-					setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+path);
-					break;
-				case ENOTDIR:
-					setError(SFM_DIR_NOTDIR, "A component of the path prefix is not a directory: "+path);
-					break;
-				case EROFS:
-					setError(SFM_DIR_ROFS, "The parent directory resides on a read-only file system:"+path);
-					break;
-				}
-			}
-			break;
-		case ENOTDIR:
-			setError(SFM_DIR_NOTDIR, "A component of the path prefix is not a directory: "+path);
-			break;
-		}
-	} else {
-		// So stat() succeeded. But is the path actually pointing to a directory?
-		if (!S_ISDIR(sb.st_mode)) {
-			setError(SFM_DIR_NOTDIR, "The given savepath is not a directory: "+path);
-		}
-	}
-#else
 	if (!dir.exists()) {
-		// TODO: We could try to mkdir the directory here; or rather, we could
-		// add a mkdir method to FSNode and invoke that here.
-		setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+path);
+		setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+dir.getPath());
 	} else if (!dir.isDirectory()) {
-		setError(SFM_DIR_NOTDIR, "The given savepath is not a directory: "+path);
+		setError(SFM_DIR_NOTDIR, "The given savepath is not a directory: "+dir.getPath());
 	}
-#endif
 }
 
 Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename) {

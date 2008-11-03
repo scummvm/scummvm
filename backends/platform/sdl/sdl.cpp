@@ -37,7 +37,11 @@
 #include "common/events.h"
 #include "common/util.h"
 
-#include "backends/saves/default/default-saves.h"
+#ifdef UNIX
+  #include "backends/saves/posix/posix-saves.h"
+#else
+  #include "backends/saves/default/default-saves.h"
+#endif
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer_intern.h"
 
@@ -150,7 +154,11 @@ void OSystem_SDL::initBackend() {
 	// Create the savefile manager, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
 	if (_savefile == 0) {
-		_savefile = new DefaultSaveFileManager();
+#ifdef UNIX
+	_savefile = new POSIXSaveFileManager();
+#else
+	_savefile = new DefaultSaveFileManager();
+#endif
 	}
 
 	// Create and hook up the mixer, if none exists yet (we check for this to
