@@ -264,15 +264,14 @@ void colorToARGB(uint32 color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) {
  *
  * A minor difference between ColorMasks and PixelFormat is that ColorMasks
  * stores the bit count per channel in 'kFooBits', while PixelFormat stores
- * the loss compared to 8 bits per channel in '#Loss'.
+ * the loss compared to 8 bits per channel in '#Loss'. It also doesn't
+ * contain mask values.
  */
 struct PixelFormat {
 	byte bytesPerPixel; /**< Number of bytes used in the pixel format. */
 
 	byte rLoss, gLoss, bLoss, aLoss; /**< Precision loss of each color component. */
 	byte rShift, gShift, bShift, aShift; /**< Binary left shift of each color component in the pixel value. */
-
-	uint32 rMask, gMask, bMask, aMask; /**< Binary mask used to retrieve individual color values. */
 };
 
 template<int bitFormat>
