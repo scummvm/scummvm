@@ -45,9 +45,9 @@ void ThemeLayout::importLayout(ThemeLayout *layout) {
 	
 	if (getLayoutType() == layout->getLayoutType()) {
 		for (uint i = 0; i < layout->_children.size(); ++i)
-			_children.push_back(layout->_children[i]->buildCopy()); 
+			_children.push_back(layout->_children[i]->makeClone()); 
 	} else {
-		_children.push_back(layout->buildCopy()); 
+		_children.push_back(layout->makeClone()); 
 	}
 }
 
@@ -152,8 +152,7 @@ void ThemeLayoutVertical::reflowLayout() {
 		
 		if (_centered && _children[i]->getWidth() < _w && _w != -1) {
 			_children[i]->setX((_w >> 1) - (_children[i]->getWidth() >> 1));
-		}
-		else
+		} else
 			_children[i]->setX(curX);
 
 		curY += _children[i]->getHeight() + _spacing;	

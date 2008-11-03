@@ -115,7 +115,7 @@ public:
 		return true;
 	}
 	
-	virtual ThemeLayout *buildCopy() = 0;
+	virtual ThemeLayout *makeClone() = 0;
 	void importLayout(ThemeLayout *layout);
 	
 protected:
@@ -148,7 +148,7 @@ public:
 	const char *getName() { return "Global Layout"; }
 	LayoutType getLayoutType() { return kLayoutMain; }
 	
-	ThemeLayout *buildCopy() { assert(!"Do not copy Main Layouts!"); return 0; }
+	ThemeLayout *makeClone() { assert(!"Do not copy Main Layouts!"); return 0; }
 	
 protected:
 	int16 _defaultX;
@@ -168,11 +168,11 @@ public:
 	LayoutType getLayoutType() { return kLayoutVertical; }
 	
 	
-	ThemeLayout *buildCopy() { 
+	ThemeLayout *makeClone() { 
 		ThemeLayoutVertical *n = new ThemeLayoutVertical(*this);
 		
-		for (uint i = 0; i < n->_children.size(); ++ i)
-			n->_children[i] = n->_children[i]->buildCopy();
+		for (uint i = 0; i < n->_children.size(); ++i)
+			n->_children[i] = n->_children[i]->makeClone();
 		
 		return n;
 	}
@@ -190,11 +190,11 @@ public:
 	const char *getName() { return "Horizontal Layout"; }
 	LayoutType getLayoutType() { return kLayoutHorizontal; }
 	
-	ThemeLayout *buildCopy() { 
+	ThemeLayout *makeClone() { 
 		ThemeLayoutHorizontal *n = new ThemeLayoutHorizontal(*this);
 		
 		for (uint i = 0; i < n->_children.size(); ++ i)
-			n->_children[i] = n->_children[i]->buildCopy();
+			n->_children[i] = n->_children[i]->makeClone();
 		
 		return n;
 	}
@@ -211,7 +211,7 @@ public:
 	void reflowLayout() {}
 	LayoutType getLayoutType() { return kLayoutWidget; }
 	
-	ThemeLayout *buildCopy() { return new ThemeLayoutWidget(*this); }
+	ThemeLayout *makeClone() { return new ThemeLayoutWidget(*this); }
 };
 
 class ThemeLayoutSpacing : public ThemeLayout {
@@ -231,7 +231,7 @@ public:
 	LayoutType getLayoutType() { return kLayoutWidget; }
 	const char *getName() { return "SPACE"; }
 	
-	ThemeLayout *buildCopy() { return new ThemeLayoutSpacing(*this); }
+	ThemeLayout *makeClone() { return new ThemeLayoutSpacing(*this); }
 };
 
 }
