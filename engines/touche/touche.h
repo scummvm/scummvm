@@ -496,7 +496,7 @@ protected:
 	void saveGameStateData(Common::WriteStream *stream);
 	void loadGameStateData(Common::ReadStream *stream);
 	bool saveGameState(int num, const char *description);
-	bool loadGameState(int num);
+	int loadGameState(int num);
 	void readGameStateDescription(int num, char *description, int len);
 	void generateGameStateFileName(int num, char *dst, int len, bool prefixOnly = false) const;
 	int getGameStateFileSlot(const char *filename) const;

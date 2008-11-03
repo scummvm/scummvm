@@ -33,7 +33,9 @@
 #include "common/advancedDetector.h"
 #include "common/system.h"
 
+#include "saga/animation.h"
 #include "saga/displayinfo.h"
+#include "saga/events.h"
 #include "saga/rscfile.h"
 #include "saga/interface.h"
 #include "saga/scene.h"
@@ -157,7 +159,9 @@ bool SagaMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+		(f == kSupportsDeleteSave) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
@@ -235,6 +239,26 @@ int SagaEngine::getDisplayWidth() const {
 int SagaEngine::getDisplayHeight() const {
 	const GameDisplayInfo &di = _gameDescription->gameType == GType_ITE ? ITE_DisplayInfo : IHNM_DisplayInfo;
 	return di.logicalHeight;
+}
+
+int SagaEngine::loadGameState(int slot) {
+	// Init the current chapter to 8 (character selection) for IHNM
+	if (getGameType() == GType_IHNM)
+		_scene->changeScene(-2, 0, kTransitionFade, 8);
+
+	// First scene sets up palette
+	_scene->changeScene(getStartSceneNumber(), 0, kTransitionNoFade);
+	_events->handleEvents(0); // Process immediate events
+
+	if (getGameType() != GType_IHNM)
+		_interface->setMode(kPanelMain);
+	else
+		_interface->setMode(kPanelChapterSelection);
+
+	load(calcSaveFileName((uint)slot));
+	syncSoundSettings();
+
+	return 0;	// TODO: return success/failure
 }
 
 } // End of namespace Saga

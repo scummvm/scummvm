@@ -108,7 +108,7 @@ public:
 
 	bool canLoadOrSave() const;
 	void saveGameState(int slot, const char *desc);
-	void loadGameState(int slot);
+	int loadGameState(int slot);
 	void makeGameStateName(int slot, char *buf) const;
 	int getGameStateSlot(const char *filename) const;
 	void findGameStateDescriptions(char descriptions[100][32]);

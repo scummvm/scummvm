@@ -340,7 +340,7 @@ bool ToucheEngine::saveGameState(int num, const char *description) {
 	return saveOk;
 }
 
-bool ToucheEngine::loadGameState(int num) {
+int ToucheEngine::loadGameState(int num) {
 	bool loadOk = false;
 	char gameStateFileName[64];
 	generateGameStateFileName(num, gameStateFileName, 63);
@@ -360,7 +360,7 @@ bool ToucheEngine::loadGameState(int num) {
 		}
 		delete f;
 	}
-	return loadOk;
+	return loadOk ? 0 : 1;
 }
 
 void ToucheEngine::readGameStateDescription(int num, char *description, int len) {

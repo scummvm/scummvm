@@ -27,6 +27,7 @@
 
 #include "common/str.h"
 #include "gui/dialog.h"
+#include "gui/launcher.h"
 #include "gui/options.h"
 #include "gui/widget.h"
 
@@ -56,8 +57,11 @@ protected:
 
 	GUI::GraphicsWidget *_logo;
 	GUI::ButtonWidget	*_rtlButton;
+	GUI::ButtonWidget	*_loadButton;
+	GUI::ButtonWidget	*_saveButton;
 	GUI::Dialog		*_aboutDialog;
 	GUI::Dialog		*_optionsDialog;
+	GUI::SaveLoadChooser	*_loadDialog;
 
 };
 

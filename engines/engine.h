@@ -125,6 +125,26 @@ public:
 	 */
 	virtual void syncSoundSettings();
 
+	/** 
+	 * Load a game state 
+	 */
+	virtual int loadGameState(int slot);
+
+	/**
+	 * Indicates whether a game state can be loaded 
+	 */
+	virtual bool canLoadGameStateCurrently();
+
+	/**
+	 * Save a game state 
+	 */
+	virtual int saveGameState(int slot);
+
+	/**
+	 * Indicates whether a game state can be saved
+	 */
+	virtual bool canSaveGameStateCurrently();
+
 protected:
 
 	/**
@@ -182,7 +202,24 @@ public:
 		/**
 		 * 'Return to launcher' feature is supported, i.e., EVENT_RTL is handled.
 		 */
-		kSupportsRTL
+		kSupportsRTL = 0,
+		
+		/**
+		 * Listing all Save States for a given target is supported, i.e.,
+		 * the listSaves() method is implemented.
+		 * Used for --list-saves support, as well as the GMM load dialog.
+		 */
+		kSupportsListSaves = 1,
+
+		/** 
+		 * Loading from the in-game common ScummVM options dialog is supported
+		 */
+		kSupportsLoadingDuringRuntime = 8,
+
+		/** 
+		 * Saving from the in-game common ScummVM options dialog is supported
+		 */
+		kSupportsSavingDuringRuntime = 9
 	};
 
 	/**

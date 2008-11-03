@@ -33,6 +33,7 @@
 
 #include "gui/about.h"
 #include "gui/newgui.h"
+#include "gui/launcher.h"
 #include "gui/ListWidget.h"
 #include "gui/theme.h"
 
@@ -96,8 +97,15 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", "Resume", kPlayCmd, 'P');
 
-//	new GUI::ButtonWidget(this, "globalmain_load", "Load", kLoadCmd, 'L');
-//	new GUI::ButtonWidget(this, "globalmain_save", "Save", kSaveCmd, 'S');
+	_loadButton = new GUI::ButtonWidget(this, "GlobalMenu.Load", "Load", kLoadCmd, 'L');
+	// TODO: setEnabled -> setVisible
+	_loadButton->setEnabled(_engine->hasFeature(Engine::kSupportsListSaves) && 
+							_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
+ 
+	_saveButton = new GUI::ButtonWidget(this, "GlobalMenu.Save", "Save", kSaveCmd, 'S');
+	// TODO: setEnabled -> setVisible
+	_saveButton->setEnabled(_engine->hasFeature(Engine::kSupportsListSaves) && 
+							_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Options", "Options", kOptionsCmd, 'O');
 
@@ -111,17 +119,53 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 
 	_aboutDialog = new GUI::AboutDialog();
 	_optionsDialog = new ConfigDialog();
+	_loadDialog = new GUI::SaveLoadChooser("Load game:", "Load");
 }
 
 MainMenuDialog::~MainMenuDialog() {
 	delete _aboutDialog;
 	delete _optionsDialog;
+	delete _loadDialog;
+	//delete _saveDialog;
 }
 
 void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kPlayCmd:
 		close();
+		break;
+	case kLoadCmd:
+		{
+		String gameId = ConfMan.get("gameid");
+
+		const EnginePlugin *plugin = 0;
+		EngineMan.findGame(gameId, &plugin);
+
+		int slot = _loadDialog->runModal(plugin, ConfMan.getActiveDomainName());
+
+		if (slot >= 0) {
+			_engine->loadGameState(slot);
+			close();
+		}
+
+		}
+		break;
+	case kSaveCmd:
+		/*
+		String gameId = ConfMan.get("gameid");
+
+		const EnginePlugin *plugin = 0;
+		EngineMan.findGame(gameId, &plugin);
+
+		int slot = _saveDialog->runModal(plugin, ConfMan.getActiveDomainName());
+
+		if (slot >= 0) {
+			_engine->saveGameState(slot);
+			close();
+		}
+
+		}
+		*/
 		break;
 	case kOptionsCmd:
 		_optionsDialog->runModal();
@@ -149,6 +193,9 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 void MainMenuDialog::reflowLayout() {
+	_loadButton->setEnabled(_engine->canLoadGameStateCurrently());
+	_saveButton->setEnabled(_engine->canSaveGameStateCurrently());
+
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowGlobalMenuLogo", 0) == 1 && g_gui.theme()->supportsImages()) {
 		if (!_logo)

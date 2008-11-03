@@ -427,8 +427,8 @@ protected:
 	void dialogueReplyToQuestion(int x, int y, int r, int g, int b, int reply = 0);
 
 	void saveOrLoadGameState(TypeSerializer &typeSerializer);
-	void loadGameState(int slot);
-	void saveGameState(int slot);
+	int loadGameState(int slot);
+	int saveGameState(int slot);
 	void generateGameStateFileName(int num, char *dst, int len) const;
 
 	MidiPlayer *_midiPlayer;

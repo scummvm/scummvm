@@ -183,7 +183,17 @@ public:
 		 * the game till the save.
 		 * This flag may only be set when 'kSavesSupportMetaInfo' is set.
 		 */
-		kSavesSupportPlayTime
+		kSavesSupportPlayTime,
+		
+		/** 
+		 *Features loading from the Common ScummVM options dialog in-game 
+		 */
+		kSupportsLoadingDuringRuntime,
+
+		/** 
+		 *Features saving from the Common ScummVM options dialog in-game 
+		 */
+		kSupportsSavingDuringRuntime
 	};	
 
 	/**

@@ -351,7 +351,7 @@ void QueenEngine::saveGameState(int slot, const char *desc) {
 	}
 }
 
-void QueenEngine::loadGameState(int slot) {
+int QueenEngine::loadGameState(int slot) {
 	debug(3, "Loading game from slot %d", slot);
 	GameStateHeader header;
 	Common::InSaveFile *file = readGameStateHeader(slot, &header);
@@ -374,6 +374,8 @@ void QueenEngine::loadGameState(int slot) {
 		delete[] saveData;
 		delete file;
 	}
+
+	return 0;	// TODO: return success/failure
 }
 
 Common::InSaveFile *QueenEngine::readGameStateHeader(int slot, GameStateHeader *gsh) {

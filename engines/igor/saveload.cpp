@@ -156,7 +156,7 @@ void IgorEngine::saveOrLoadGameState(TypeSerializer &typeSerializer) {
 	}
 }
 
-void IgorEngine::loadGameState(int slot) {
+int IgorEngine::loadGameState(int slot) {
 	char name[64];
 	generateGameStateFileName(slot, name, 63);
 	Common::InSaveFile *isf = _saveFileMan->openForLoading(name);
@@ -175,9 +175,11 @@ void IgorEngine::loadGameState(int slot) {
 		}
 		debug(0, "Loaded state, current part %d", _currentPart);
 	}
+
+	return 0;	// TODO: return success/failure
 }
 
-void IgorEngine::saveGameState(int slot) {
+int IgorEngine::saveGameState(int slot) {
 	char name[64];
 	generateGameStateFileName(slot, name, 63);
 	Common::OutSaveFile *osf = _saveFileMan->openForSaving(name);
@@ -187,6 +189,8 @@ void IgorEngine::saveGameState(int slot) {
 		saveOrLoadGameState(ts);
 		delete osf;
 	}
+
+	return 0;	// TODO: return success/failure
 }
 
 void IgorEngine::generateGameStateFileName(int num, char *dst, int len) const {

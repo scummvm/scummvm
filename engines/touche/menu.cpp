@@ -331,7 +331,7 @@ void ToucheEngine::handleMenuAction(void *menu, int actionId) {
 		break;
 	case kActionPerformSaveLoad:
 		if (menuData->mode == kMenuLoadStateMode) {
-			if (loadGameState(_saveLoadCurrentSlot)) {
+			if (loadGameState(_saveLoadCurrentSlot) == 0) {
 				menuData->quit = true;
 			}
 		} else if (menuData->mode == kMenuSaveStateMode) {

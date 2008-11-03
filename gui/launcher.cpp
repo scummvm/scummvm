@@ -473,45 +473,6 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-class SaveLoadChooser : public GUI::Dialog {
-	typedef Common::String String;
-	typedef Common::StringList StringList;
-protected:
-	GUI::ListWidget		*_list;
-	GUI::ButtonWidget	*_chooseButton;
-	GUI::ButtonWidget	*_deleteButton;
-	GUI::GraphicsWidget	*_gfxWidget;
-	GUI::ContainerWidget	*_container;
-	GUI::StaticTextWidget	*_date;
-	GUI::StaticTextWidget	*_time;
-	GUI::StaticTextWidget	*_playtime;
-
-	const EnginePlugin		*_plugin;
-	bool					_delSupport;
-	bool					_metaInfoSupport;
-	bool					_thumbnailSupport;
-	bool					_saveDateSupport;
-	bool					_playTimeSupport;
-	String					_target;
-	SaveStateList			_saveList;
-
-	uint8 _fillR, _fillG, _fillB;
-
-	void updateSaveList();
-	void updateSelection(bool redraw);
-public:
-	SaveLoadChooser(const String &title, const String &buttonLabel);
-	~SaveLoadChooser();
-
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	void setList(const StringList& list);
-	int runModal(const EnginePlugin *plugin, const String &target);
-
-	virtual void reflowLayout();
-
-	virtual void close();
-};
-
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	: Dialog("ScummSaveLoad"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
 	_delSupport = _metaInfoSupport = _thumbnailSupport = _saveDateSupport = _playTimeSupport = false;

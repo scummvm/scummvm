@@ -650,6 +650,9 @@ public:
 	const Common::Rect &getDisplayClip() const { return _displayClip;}
 	int getDisplayWidth() const;
 	int getDisplayHeight() const;
+	int loadGameState(int slot);
+	bool canLoadGameStateCurrently();
+	bool canSaveGameStateCurrently();
 	const GameDisplayInfo &getDisplayInfo();
 
 	const char *getTextString(int textStringId);

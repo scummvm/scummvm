@@ -462,6 +462,15 @@
 					height = 'Globals.Button.Height'
 			/>
 			<space size = '4'/>
+			<widget name = 'Load'
+					width = '70'
+					height = 'Globals.Button.Height'
+			/>
+			<widget name = 'Save'
+					width = '70'
+					height = 'Globals.Button.Height'
+			/>					
+			<space size = '4'/>
 			<widget name = 'Options'
 					width = '70'
 					height = 'Globals.Button.Height'

@@ -255,6 +255,26 @@ void Engine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 }
 
+int Engine::loadGameState(int slot) {
+	// Do nothing by default
+	return 0;
+}
+
+bool Engine::canLoadGameStateCurrently() {
+	// Do not allow loading by default
+	return false;
+}
+
+int Engine::saveGameState(int slot) {
+	// Do nothing by default
+	return 0;
+}
+
+bool Engine::canSaveGameStateCurrently() {
+	// Do not allow saving by default
+	return false;
+}
+
 void Engine::quitGame() {
 	Common::Event event;
 
