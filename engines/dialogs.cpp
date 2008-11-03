@@ -144,6 +144,10 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		int slot = _loadDialog->runModal(plugin, ConfMan.getActiveDomainName());
 
 		if (slot >= 0) {
+			// FIXME: For now we just ignore the return
+			// value, which is quite bad since it could
+			// be a fatal loading error, which renders
+			// the engine unusable.
 			_engine->loadGameState(slot);
 			close();
 		}

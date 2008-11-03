@@ -126,22 +126,28 @@ public:
 	virtual void syncSoundSettings();
 
 	/** 
-	 * Load a game state 
+	 * Load a game state.
+	 * @return returns 0 on success, anything else indicates failure
+	 * @todo define proper error values
 	 */
 	virtual int loadGameState(int slot);
 
 	/**
-	 * Indicates whether a game state can be loaded 
+	 * Indicates whether a game state can be loaded.
 	 */
 	virtual bool canLoadGameStateCurrently();
 
 	/**
-	 * Save a game state 
+	 * Save a game state.
+	 * @return returns 0 on success, anything else indicates failure
+	 *
+	 * @todo define proper error values
+	 * @todo actually we need to pass the user entered name to the engine
 	 */
 	virtual int saveGameState(int slot);
 
 	/**
-	 * Indicates whether a game state can be saved
+	 * Indicates whether a game state can be saved.
 	 */
 	virtual bool canSaveGameStateCurrently();
 

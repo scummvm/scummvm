@@ -186,12 +186,12 @@ public:
 		kSavesSupportPlayTime,
 		
 		/** 
-		 *Features loading from the Common ScummVM options dialog in-game 
+		 * Features loading from the Common ScummVM options dialog in-game.
 		 */
 		kSupportsLoadingDuringRuntime,
 
 		/** 
-		 *Features saving from the Common ScummVM options dialog in-game 
+		 * Features saving from the Common ScummVM options dialog in-game.
 		 */
 		kSupportsSavingDuringRuntime
 	};	
