@@ -1023,12 +1023,13 @@ void ThemeEngine::setUpCursor() {
 bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale) {
 	if (!_system->hasFeature(OSystem::kFeatureCursorHasPalette))
 		return true;
-		
-	const Surface *cursor = _bitmaps[filename];
 	
+	// Try to locate the specified file among all loaded bitmaps
+	const Surface *cursor = _bitmaps[filename];
 	if (!cursor)
 		return false;
-		
+	
+	// Set up the cursor parameters
 	_cursorHotspotX = hotspotX;
 	_cursorHotspotY = hotspotY;
 	_cursorTargetScale = scale;
@@ -1036,26 +1037,30 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	_cursorWidth = cursor->w;
 	_cursorHeight = cursor->h;
 
-	uint colorsFound = 0;
-	const OverlayColor *src = (const OverlayColor*)cursor->pixels;
-
-	Common::HashMap<int, int>	colorToIndex;
-
-	byte r, g, b;
-
-	uint16 transparency = RGBToColor<ColorMasks<565> >(255, 0, 255);
-
+	// Allocate a new buffer for the cursor
 	delete[] _cursor;
-
 	_cursor = new byte[_cursorWidth * _cursorHeight];
 	assert(_cursor);
 	memset(_cursor, 0xFF, sizeof(byte) * _cursorWidth * _cursorHeight);
 
+	// Now, scan the bitmap. We have to convert it from 16 bit color mode
+	// to 8 bit mode, and have to create a suitable palette on the fly.
+	uint colorsFound = 0;
+	Common::HashMap<int, int>	colorToIndex;
+	const OverlayColor *src = (const OverlayColor*)cursor->pixels;
 	for (uint y = 0; y < _cursorHeight; ++y) {
 		for (uint x = 0; x < _cursorWidth; ++x) {
+			byte r, g, b;
 			_system->colorToRGB(src[x], r, g, b);
-			uint16 col = RGBToColor<ColorMasks<565> >(r, g, b);
-			if (!colorToIndex.contains(col) && col != transparency) {
+			const int col = (r << 16) | (g << 8) | b;
+
+			// Skip transparent colors
+			// (transparent actually is 0xFF00FF), but the RGB convert chops of the lower bits
+			if ((r > 0xF1) && (g < 0x03) && (b > 0xF1))
+				continue;
+
+			// If there is no entry yet for this color in the palette: Add one
+			if (!colorToIndex.contains(col)) {
 				const int index = colorsFound++;
 				colorToIndex[col] = index;
 
@@ -1065,15 +1070,14 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 				_cursorPal[index * 4 + 3] = 0xFF;
 
 				if (colorsFound > MAX_CURS_COLORS) {
-					warning("Cursor contains too much colors (%d, but only %d are allowed)", colorsFound, MAX_CURS_COLORS);
+					warning("Cursor contains too many colors (%d, but only %d are allowed)", colorsFound, MAX_CURS_COLORS);
 					return false;
 				}
 			}
 
-			if (col != transparency) {
-				const int index = colorToIndex[col];
-				_cursor[y * _cursorWidth + x] = index;
-			}
+			// Copy pixel from the 16 bit source surface to the 8bit target surface
+			const int index = colorToIndex[col];
+			_cursor[y * _cursorWidth + x] = index;
 		}
 		src += _cursorWidth;
 	}
