@@ -65,6 +65,8 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
+	_isSaveAllowed = false;
+
 	// sets up all engine specific debug levels
 	Common::addSpecialDebugLevel(kDebugLevelScriptFuncs, "ScriptFuncs", "Script function debug level");
 	Common::addSpecialDebugLevel(kDebugLevelScript, "Script", "Script interpreter debug level");

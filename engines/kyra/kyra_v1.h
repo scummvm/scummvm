@@ -274,6 +274,11 @@ protected:
 	uint32 _lastAutosave;
 	void checkAutosave();
 
+	bool _isSaveAllowed;
+
+	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
+	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
+
 	const char *getSavegameFilename(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	bool saveFileLoadable(int slot);
@@ -299,6 +304,8 @@ protected:
 
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, bool loadThumbnail, SaveHeader &header);
 
+	int loadGameState(int slot);
+	virtual void loadGame(const char *fileName) = 0;
 	virtual void saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 
 	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header);

@@ -2303,10 +2303,22 @@ void SoundAdlibPC::play(uint8 track) {
 	if ((soundId == 0xFFFF && _v2) || (soundId == 0xFF && !_v2) || !_soundDataPtr)
 		return;
 
+	// HACK: Since we might call this when the engines is paused (on game load via GMM)
+	// we must unpause the engine here, so this will work properly
+
+	int pauseCount = 0;
+	while (_vm->isPaused()) {
+		++pauseCount;
+		_vm->pauseEngine(false);
+	}
+	
 	while ((_driver->callback(16, 0) & 8)) {
 		// We call the system delay and not the game delay to avoid concurrency issues.
 		_vm->_system->delayMillis(10);
 	}
+
+	while (pauseCount--)
+		_vm->pauseEngine(true);
 
 	if (_sfxPlayingSound != -1) {
 		// Restore the sounds's normal values.

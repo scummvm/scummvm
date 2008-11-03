@@ -164,7 +164,12 @@ void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
 
 int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::checkInput(%p, %d)", (const void*)buttonList, mainLoop);
+	if (mainLoop)
+		_isSaveAllowed = true;
+
 	updateInput();
+
+	_isSaveAllowed = false;
 
 	int keys = 0;
 	int8 mouseWheel = 0;

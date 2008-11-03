@@ -149,6 +149,7 @@ private:
 	bool lineIsPassable(int, int) { return false; }
 
 	// save
+	void loadGame(const char *fileName) {}
 	void saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumbnail) {}
 };
 

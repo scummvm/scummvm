@@ -244,6 +244,16 @@ bool KyraEngine_v1::saveFileLoadable(int slot) {
 	return false;
 }
 
+int KyraEngine_v1::loadGameState(int slot) {
+	if (!_isSaveAllowed)
+		return -1;
+	
+	const char *filename = getSavegameFilename(slot);
+	loadGame(filename);
+
+	return 0;
+}
+
 void KyraEngine_v1::checkAutosave() {
 	if (shouldPerformAutoSave(_lastAutosave)) {
 		saveGame(getSavegameFilename(999), "Autosave", 0);

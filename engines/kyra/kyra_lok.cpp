@@ -463,7 +463,12 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 
 	uint32 start = _system->getMillis();
 	do {
+		if (isMainLoop)
+			_isSaveAllowed = true;
+
 		while (_eventMan->pollEvent(event)) {
+			_isSaveAllowed = false;
+
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
@@ -513,6 +518,9 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 			default:
 				break;
 			}
+
+			if (isMainLoop)
+				_isSaveAllowed = true;
 		}
 
 		if (_debugger->isAttached())
