@@ -1054,8 +1054,8 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 			_system->colorToRGB(src[x], r, g, b);
 			const int col = (r << 16) | (g << 8) | b;
 
-			// Skip transparent colors
-			// (transparent actually is 0xFF00FF), but the RGB convert chops of the lower bits
+			// Skip transparency (the transparent color actually is 0xFF00FF,
+			// but the RGB conversion chops of the lower bits).
 			if ((r > 0xF1) && (g < 0x03) && (b > 0xF1))
 				continue;
 
