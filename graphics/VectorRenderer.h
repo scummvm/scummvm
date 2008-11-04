@@ -44,7 +44,7 @@ namespace Graphics {
 class VectorRenderer;
 
 struct DrawStep {
-	struct Color { 
+	struct Color {
 		uint8 r, g, b;
 		bool set;
 	};
@@ -57,7 +57,7 @@ struct DrawStep {
 	bool autoWidth, autoHeight;
 	int16 x, y, w, h; /**< width, height and position, if not measured automatically.
 	 					  negative values mean counting from the opposite direction */
-	
+
 	enum VectorAlignment {
 		kVectorAlignManual,
 		kVectorAlignLeft,
@@ -92,7 +92,7 @@ VectorRenderer *createRenderer(int mode);
  *
  * When specifying define DISABLE_FANCY_THEMES eye candy related code
  * gets stripped off. This is especially useful for small devices like NDS.
- * Also note that if you specify DISABLE_FANCY_THEMES, you'll need to 
+ * Also note that if you specify DISABLE_FANCY_THEMES, you'll need to
  * specify a forced overlay bit format via VECTOR_RENDERER_FORMAT define.
  * The value looks like 'XYZ' for RXGYBZ mode, so R5G5B5 would be specified
  * via:
@@ -105,9 +105,9 @@ VectorRenderer *createRenderer(int mode);
  */
 class VectorRenderer {
 public:
-	VectorRenderer() : _shadowOffset(0), _fillMode(kFillDisabled), 
-		_activeSurface(NULL), _strokeWidth(1), _gradientFactor(1), _disableShadows(false) {
-	
+	VectorRenderer() : _activeSurface(NULL), _fillMode(kFillDisabled), _shadowOffset(0),
+		_disableShadows(false), _strokeWidth(1), _gradientFactor(1) {
+
 	}
 
 	virtual ~VectorRenderer() {}
@@ -127,7 +127,7 @@ public:
 		kTriangleLeft,
 		kTriangleRight
 	};
-	
+
 #ifndef DISABLE_FANCY_THEMES
 	enum ConvolutionData {
 		kConvolutionSoftBlur,
@@ -138,7 +138,7 @@ public:
 		kConvolutionEdgeDetect,
 		kConvolutionMAX
 	};
-	
+
 	struct ConvolutionDataSet {
 		int matrix[3][3];
 		int divisor;
@@ -212,7 +212,7 @@ public:
 	 * @param bevel Amount of bevel. Must be positive.
 	 */
 	virtual void drawBeveledSquare(int x, int y, int w, int h, int bevel) = 0;
-	
+
 	/**
 	 * Draws a tab-like shape, specially thought for the Tab widget.
 	 * If a radius is given, the tab will have rounded corners. Otherwise,
@@ -225,8 +225,8 @@ public:
 	 * @param r Radius of the corners of the tab (0 for squared tabs).
 	 */
 	virtual void drawTab(int x, int y, int r, int w, int h) = 0;
-	
-	
+
+
 	/**
 	 * Simple helper function to draw a cross.
 	 */
@@ -282,7 +282,7 @@ public:
 	 * @param b	value of the blue color byte
 	 */
 	virtual void setBgColor(uint8 r, uint8 g, uint8 b) = 0;
-	
+
 	virtual void setBevelColor(uint8 r, uint8 g, uint8 b) = 0;
 
 	/**
@@ -356,7 +356,7 @@ public:
 		if (offset >= 0)
 			_shadowOffset = offset;
 	}
-	
+
 	virtual void setBevel(int amount) {
 		if (amount >= 0)
 			_bevel = amount;
@@ -386,7 +386,7 @@ public:
 	int stepGetRadius(const DrawStep &step, const Common::Rect &area);
 
 	/**
-	 * DrawStep callback functions for each drawing feature 
+	 * DrawStep callback functions for each drawing feature
 	 */
 	void drawCallback_CIRCLE(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h, radius;
@@ -430,19 +430,19 @@ public:
 		stepGetPositions(step, area, x, y, w, h);
 		drawBeveledSquare(x, y, w, h, _bevel);
 	}
-	
+
 	void drawCallback_TAB(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
 		drawTab(x, y, stepGetRadius(step, area), w, h);
 	}
-	
+
 	void drawCallback_BITMAP(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
 		blitAlphaBitmap(step.blitSrc, Common::Rect(x, y, x + w, y + h));
 	}
-	
+
 	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
@@ -453,7 +453,7 @@ public:
 
 	/**
 	 * Draws the specified draw step on the screen.
-	 * 
+	 *
 	 * @see DrawStep
 	 * @param area Zone to paint on
 	 * @param step Pointer to a DrawStep struct.
@@ -467,9 +467,9 @@ public:
 	 * @param r Zone of the surface to copy into the overlay.
 	 */
 	virtual void copyFrame(OSystem *sys, const Common::Rect &r) = 0;
-	
+
 	/**
-	 * Copies the current surface to the system overlay 
+	 * Copies the current surface to the system overlay
 	 *
 	 * @param sys Pointer to the global System class
 	 */
@@ -480,7 +480,7 @@ public:
 	 *
 	 * Note that the source surface and the active
 	 * surface are expected to be of the same size, hence the area delimited
-	 * by "r" in the source surface will be blitted into the area delimited by 
+	 * by "r" in the source surface will be blitted into the area delimited by
 	 * "r" on the current surface.
 	 *
 	 * If you wish to blit a smaller surface into the active drawing area, use
@@ -490,7 +490,7 @@ public:
 	 * @param r Position in the active drawing surface to do the blitting.
 	 */
 	virtual void blitSurface(const Graphics::Surface *source, const Common::Rect &r) = 0;
-	
+
 	/**
 	 * Blits a given graphics surface into a small area of the current drawing surface.
 	 *
@@ -499,24 +499,24 @@ public:
 	 * blitted into the active surface, at the position specified by "r".
 	 */
 	virtual void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) = 0;
-	
+
 	virtual void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) = 0;
-	
+
 	/**
 	 * Draws a string into the screen. Wrapper for the Graphics::Font string drawing
 	 * method.
 	 */
-	virtual void drawString(const Graphics::Font *font, const Common::String &text, 
-	                        const Common::Rect &area, GUI::Theme::TextAlign alignH, 
+	virtual void drawString(const Graphics::Font *font, const Common::String &text,
+	                        const Common::Rect &area, GUI::Theme::TextAlign alignH,
 	                        GUI::Theme::TextAlignVertical alignV, int deltax, bool useEllipsis) = 0;
-	
+
 	/**
 	 * Allows to temporarily enable/disable all shadows drawing.
 	 * i.e. for performance issues, blitting, etc
 	 */
 	virtual void disableShadows() { _disableShadows = true; }
 	virtual void enableShadows() { _disableShadows = false; }
-	
+
 #ifndef DISABLE_FANCY_THEMES
 	/**
 	 * Applies a convolution matrix on the given surface area.
@@ -531,7 +531,7 @@ public:
 	 * @param offset Offset on the convolution area.
 	 */
 	virtual void areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset) = 0;
-	
+
 	/**
 	 * Applies one of the predefined convolution effects on the given area.
 	 *
@@ -544,7 +544,7 @@ public:
 		areaConvolution(area, _convolutionData[id].matrix, _convolutionData[id].divisor, _convolutionData[id].offset);
 	}
 #endif
-	
+
 	/**
 	 * Applies a whole-screen shading effect, used before opening a new dialog.
 	 * Currently supports screen dimmings and luminance (b&w).
@@ -555,7 +555,7 @@ protected:
 	Surface *_activeSurface; /**< Pointer to the surface currently being drawn */
 
 	FillMode _fillMode; /**< Defines in which way (if any) are filled the drawn shapes */
-	
+
 	int _shadowOffset; /**< offset for drawn shadows */
 	int _bevel; /**< amount of fake bevel */
 	bool _disableShadows; /**< Disables temporarily shadow drawing for overlayed images. */
@@ -564,7 +564,7 @@ protected:
 
 	int _gradientFactor; /**< Multiplication factor of the active gradient */
 	int _gradientBytes[3]; /**< Color bytes of the active gradient, used to speed up calculation */
-	
+
 #ifndef DISABLE_FANCY_THEMES
 	static const ConvolutionDataSet _convolutionData[kConvolutionMAX];
 #endif

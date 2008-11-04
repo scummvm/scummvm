@@ -55,7 +55,7 @@ const ThemeEngine::Renderer ThemeEngine::_rendererModes[] = {
 
 const uint ThemeEngine::_rendererModesSize = ARRAYSIZE(ThemeEngine::_rendererModes);
 
-const ThemeEngine::GraphicsMode ThemeEngine::_defaultRendererMode = 
+const ThemeEngine::GraphicsMode ThemeEngine::_defaultRendererMode =
 #ifndef DISABLE_FANCY_THEMES
 	ThemeEngine::kGfxAntialias16bit;
 #else
@@ -96,14 +96,14 @@ void ThemeItemDrawData::drawSelf(bool draw, bool restore) {
 		for (step = _data->_steps.begin(); step != _data->_steps.end(); ++step)
 			_engine->renderer()->drawStep(_area, *step, _dynamicData);
 	}
-	
+
 	_engine->addDirtyRect(extendedRect);
 }
 
 void ThemeItemTextData::drawSelf(bool draw, bool restore) {
 	if (_restoreBg || restore)
 		_engine->restoreBackground(_area);
-	
+
 	if (draw) {
 		_engine->renderer()->setFgColor(_data->_color.r, _data->_color.g, _data->_color.b);
 		_engine->renderer()->drawString(_data->_fontPtr, _text, _area, _alignH, _alignV, _deltax, _ellipsis);
@@ -160,10 +160,10 @@ const ThemeEngine::DrawDataInfo ThemeEngine::kDrawDataDefaults[] = {
 	{kDDTabBackground, "tab_background", true, kDDNone},
 
 	{kDDScrollbarBase, "scrollbar_base", true, kDDNone},
-	
+
 	{kDDScrollbarButtonIdle, "scrollbar_button_idle", true, kDDNone},
 	{kDDScrollbarButtonHover, "scrollbar_button_hover", false, kDDScrollbarButtonIdle},
-		
+
 	{kDDScrollbarHandleIdle, "scrollbar_handle_idle", false, kDDNone},
 	{kDDScrollbarHandleHover, "scrollbar_handle_hover", false, kDDScrollbarBase},
 
@@ -188,20 +188,20 @@ const ThemeEngine::TextDataInfo ThemeEngine::kTextDataDefaults[] = {
 /**********************************************************
  *	ThemeEngine class
  *********************************************************/
-ThemeEngine::ThemeEngine(Common::String fileName, GraphicsMode mode) : 
-	_vectorRenderer(0), _system(0), _graphicsMode(kGfxDisabled), _font(0),
-	_screen(0), _backBuffer(0), _bytesPerPixel(0), _initOk(false), 
-	_themeOk(false), _enabled(false), _buffering(false), _cursor(0) {
+ThemeEngine::ThemeEngine(Common::String fileName, GraphicsMode mode) :
+	_system(0), _vectorRenderer(0), _screen(0), _backBuffer(0),
+	_buffering(false), _bytesPerPixel(0),  _graphicsMode(kGfxDisabled),
+	_font(0), _initOk(false), _themeOk(false), _enabled(false), _cursor(0) {
 	_system = g_system;
 	_parser = new ThemeParser(this);
 	_themeEval = new GUI::ThemeEval();
-	
+
 	_useCursor = false;
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
 		_widgets[i] = 0;
 	}
-	
+
 	for (int i = 0; i < kTextDataMAX; ++i) {
 		_texts[i] = 0;
 	}
@@ -219,7 +219,7 @@ ThemeEngine::~ThemeEngine() {
 	delete _parser;
 	delete _themeEval;
 	delete[] _cursor;
-	
+
 	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i)
 		ImageMan.unregisterSurface(i->_key);
 }
@@ -238,7 +238,7 @@ bool ThemeEngine::init() {
 		clearAll();
 		resetDrawArea();
 	}
-	
+
 	if (_screen->w >= 400 && _screen->h >= 300) {
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	} else {
@@ -270,17 +270,17 @@ void ThemeEngine::unloadTheme() {
 		delete _widgets[i];
 		_widgets[i] = 0;
 	}
-	
+
 	for (int i = 0; i < kTextDataMAX; ++i) {
 		delete _texts[i];
 		_texts[i] = 0;
 	}
-	
+
 	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i)
 		ImageMan.unregisterSurface(i->_key);
 
 	ImageMan.removeArchive(_themeFileName);
-	
+
 	_themeEval->reset();
 	_themeOk = false;
 }
@@ -297,7 +297,7 @@ void ThemeEngine::refresh() {
 	init();
 	if (_enabled) {
 		_system->showOverlay();
-		
+
 		if (_useCursor) {
 			CursorMan.replaceCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
 			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
@@ -308,10 +308,10 @@ void ThemeEngine::refresh() {
 void ThemeEngine::enable() {
 	init();
 	resetDrawArea();
-	
+
 	if (_useCursor)
 		setUpCursor();
-	
+
 	_system->showOverlay();
 	clearAll();
 	_enabled = true;
@@ -319,26 +319,26 @@ void ThemeEngine::enable() {
 
 void ThemeEngine::disable() {
 	_system->hideOverlay();
-	
+
 	if (_useCursor) {
 		CursorMan.popCursorPalette();
 		CursorMan.popCursor();
 	}
-	
+
 	_enabled = false;
 }
 
-template<typename PixelType> 
+template<typename PixelType>
 void ThemeEngine::screenInit(bool backBuffer) {
 	uint32 width = _system->getOverlayWidth();
 	uint32 height = _system->getOverlayHeight();
-	
+
 	if (backBuffer) {
 		freeBackbuffer();
 		_backBuffer = new Surface;
 		_backBuffer->create(width, height, sizeof(PixelType));
 	}
-	
+
 	freeScreen();
 	_screen = new Surface;
 	_screen->create(width, height, sizeof(PixelType));
@@ -366,7 +366,7 @@ void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 
 bool ThemeEngine::isWidgetCached(DrawData type, const Common::Rect &r) {
 	return _widgets[type] && _widgets[type]->_cached &&
-		_widgets[type]->_surfaceCache->w == r.width() && 
+		_widgets[type]->_surfaceCache->w == r.width() &&
 		_widgets[type]->_surfaceCache->h == r.height();
 }
 
@@ -377,11 +377,11 @@ void ThemeEngine::drawCached(DrawData type, const Common::Rect &r) {
 
 void ThemeEngine::calcBackgroundOffset(DrawData type) {
 	uint maxShadow = 0;
-	for (Common::List<Graphics::DrawStep>::const_iterator step = _widgets[type]->_steps.begin(); 
+	for (Common::List<Graphics::DrawStep>::const_iterator step = _widgets[type]->_steps.begin();
 		step != _widgets[type]->_steps.end(); ++step) {
-		if ((step->autoWidth || step->autoHeight) && step->shadow > maxShadow) 
+		if ((step->autoWidth || step->autoHeight) && step->shadow > maxShadow)
 			maxShadow = step->shadow;
-			
+
 		if (step->drawingCall == &Graphics::VectorRenderer::drawCallback_BEVELSQ && step->bevel > maxShadow)
 			maxShadow = step->bevel;
 	}
@@ -402,7 +402,7 @@ void ThemeEngine::restoreBackground(Common::Rect r, bool special) {
  *********************************************************/
 void ThemeEngine::addDrawStep(const Common::String &drawDataId, Graphics::DrawStep step) {
 	DrawData id = getDrawDataId(drawDataId);
-	
+
 	assert(_widgets[id] != 0);
 	_widgets[id]->_steps.push_back(step);
 }
@@ -413,25 +413,25 @@ bool ThemeEngine::addTextData(const Common::String &drawDataId, const Common::St
 
 	if (id == -1 || textId == -1 || !_widgets[id])
 		return false;
-	
+
 	_widgets[id]->_textDataId = textId;
 	_widgets[id]->_textAlignH = alignH;
-	_widgets[id]->_textAlignV = alignV;	
+	_widgets[id]->_textAlignV = alignV;
 
 	return true;
 }
 
 bool ThemeEngine::addFont(const Common::String &fontId, const Common::String &file, int r, int g, int b) {
 	TextData textId = getTextDataId(fontId);
-	
+
 	if (textId == -1)
 		return false;
-		
+
 	if (_texts[textId] != 0)
 		delete _texts[textId];
-		
+
 	_texts[textId] = new TextDrawData;
-	
+
 	if (file == "default") {
 		_texts[textId]->_fontPtr = _font;
 	} else {
@@ -439,29 +439,29 @@ bool ThemeEngine::addFont(const Common::String &fontId, const Common::String &fi
 
 		if (!_texts[textId]->_fontPtr) {
 			_texts[textId]->_fontPtr = loadFont(file);
-			
+
 			if (!_texts[textId]->_fontPtr)
 				error("Couldn't load %s font '%s'", fontId.c_str(), file.c_str());
 
 			FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
 		}
 	}
-	
+
 	_texts[textId]->_color.r = r;
 	_texts[textId]->_color.g = g;
 	_texts[textId]->_color.b = b;
 	return true;
-	
+
 }
 
 bool ThemeEngine::addBitmap(const Common::String &filename) {
 	if (_bitmaps.contains(filename)) {
 		ImageMan.unregisterSurface(filename);
 	}
-	
+
 	ImageMan.registerSurface(filename, 0);
 	_bitmaps[filename] = ImageMan.getSurface(filename);
-	
+
 	return _bitmaps[filename] != 0;
 }
 
@@ -470,7 +470,7 @@ bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
 
 	if (data_id == -1)
 		return false;
-		
+
 	if (_widgets[data_id] != 0)
 		delete _widgets[data_id];
 
@@ -498,7 +498,7 @@ bool ThemeEngine::loadTheme(Common::String fileName) {
 			error("Could not load default embedded theme");
 	} else if (!loadThemeXML(fileName)) {
 		warning("Could not parse custom theme '%s'. Falling back to default theme", fileName.c_str());
-		
+
 		if (!loadDefaultXML()) // if we can't load the embedded theme, this is a complete failure
 			error("Could not load default embedded theme");
 	}
@@ -513,13 +513,13 @@ bool ThemeEngine::loadTheme(Common::String fileName) {
 			if (_widgets[i]->_cached) {}
 		}
 	}
-	
+
 	_themeOk = true;
 	return true;
 }
 
 bool ThemeEngine::loadDefaultXML() {
-	
+
 	// The default XML theme is included on runtime from a pregenerated
 	// file inside the themes directory.
 	// Use the Python script "makedeftheme.py" to convert a normal XML theme
@@ -530,16 +530,16 @@ bool ThemeEngine::loadDefaultXML() {
 	const char *defaultXML =
 #include "themes/default.inc"
 	;
-	
+
 	if (!_parser->loadBuffer((const byte*)defaultXML, strlen(defaultXML), false))
 		return false;
-		
+
 	_themeName = "ScummVM Classic Theme (Builtin Version)";
 	_themeFileName = "builtin";
 
 	result = _parser->parse();
 	_parser->close();
-	
+
 	return result;
 #else
 	warning("The built-in theme is not enabled in the current build. Please load an external theme");
@@ -550,7 +550,7 @@ bool ThemeEngine::loadDefaultXML() {
 bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 	assert(_parser);
 	_themeName.clear();
-	
+
 	FSNode node(themeName);
 	if (!node.exists() || !node.isReadable())
 		return false;
@@ -568,7 +568,7 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 			warning("Failed to open Zip archive '%s'.", themeName.c_str());
 			return false;
 		}
-		
+
 #endif
 	} else if (node.isDirectory()) {
 		archive = new Common::FSDirectory(node);
@@ -608,14 +608,14 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 			_parser->close();
 			return false;
 		}
-	
+
 		if (_parser->parse() == false) {
 			delete archive;
 			warning("Failed to parse STX file '%s'", (*i)->getName().c_str());
 			_parser->close();
 			return false;
 		}
-	
+
 		_parser->close();
 	}
 
@@ -632,19 +632,19 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 void ThemeEngine::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic) {
 	if (_widgets[type] == 0)
 		return;
-		
+
 	Common::Rect area = r;
 	area.clip(_screen->w, _screen->h);
 
 	ThemeItemDrawData *q = new ThemeItemDrawData(this, _widgets[type], area, dynamic);
-	
+
 	if (_buffering) {
 		if (_widgets[type]->_buffer) {
-			_bufferQueue.push_back(q);	
+			_bufferQueue.push_back(q);
 		} else {
 			if (kDrawDataDefaults[type].parent != kDDNone && kDrawDataDefaults[type].parent != type)
 				queueDD(kDrawDataDefaults[type].parent, r);
-			
+
 			_screenQueue.push_back(q);
 		}
 	} else {
@@ -655,7 +655,7 @@ void ThemeEngine::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic) 
 
 void ThemeEngine::queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
 	bool ellipsis, TextAlign alignH, TextAlignVertical alignV, int deltax) {
-		
+
 	if (_texts[type] == 0)
 		return;
 
@@ -663,8 +663,8 @@ void ThemeEngine::queueDDText(TextData type, const Common::Rect &r, const Common
 	area.clip(_screen->w, _screen->h);
 
 	ThemeItemTextData *q = new ThemeItemTextData(this, _texts[type], area, text, alignH, alignV, ellipsis, restoreBg, deltax);
-	
-	if (_buffering) {		
+
+	if (_buffering) {
 		_screenQueue.push_back(q);
 	} else {
 		q->drawSelf(true, false);
@@ -678,7 +678,7 @@ void ThemeEngine::queueBitmap(const Graphics::Surface *bitmap, const Common::Rec
 	area.clip(_screen->w, _screen->h);
 
 	ThemeItemBitmap *q = new ThemeItemBitmap(this, area, bitmap, alpha);
-	
+
 	if (_buffering) {
 		_bufferQueue.push_back(q);
 	} else {
@@ -695,7 +695,7 @@ void ThemeEngine::queueBitmap(const Graphics::Surface *bitmap, const Common::Rec
 void ThemeEngine::drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, uint16 hints) {
 	if (!ready())
 		return;
-		
+
 	DrawData dd = kDDButtonIdle;
 
 	if (state == kStateEnabled)
@@ -722,13 +722,13 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str,
 
 	Common::Rect r2 = r;
 	DrawData dd = kDDCheckboxDefault;
-	
+
 	if (checked)
 		dd = kDDCheckboxSelected;
-		
+
 	if (state == kStateDisabled)
 		dd = kDDCheckboxDisabled;
-	
+
 	TextData td = (state == kStateHighlight) ? kTextDataHover : getTextData(dd);
 	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
 
@@ -736,19 +736,19 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str,
 	r2.right = r2.left + checkBoxSize;
 
 	queueDD(dd, r2);
-	
+
 	r2.left = r2.right + checkBoxSize;
 	r2.right = r.right;
-	
+
 	queueDDText(td, r2, str, false, false, _widgets[kDDCheckboxDefault]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
 	if (!ready())
 		return;
-		
+
 	DrawData dd = kDDSliderFull;
-	
+
 	if (state == kStateHighlight)
 		dd = kDDSliderHover;
 	else if (state == kStateDisabled)
@@ -759,7 +759,7 @@ void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo s
 //	r2.top++; r2.bottom--; r2.left++; r2.right--;
 
 	drawWidgetBackground(r, 0, kWidgetBackgroundSlider, kStateEnabled);
-	
+
 	if (width > r.width() * 5 / 100)
 		queueDD(dd, r2);
 }
@@ -767,46 +767,46 @@ void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo s
 void ThemeEngine::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState, WidgetStateInfo state) {
 	if (!ready())
 		return;
-		
+
 	queueDD(kDDScrollbarBase, r);
-	
+
 	Common::Rect r2 = r;
 	const int buttonExtra = (r.width() * 120) / 100;
-	
+
 	r2.bottom = r2.top + buttonExtra;
 	queueDD(scrollState == kScrollbarStateUp ? kDDScrollbarButtonHover : kDDScrollbarButtonIdle, r2, Graphics::VectorRenderer::kTriangleUp);
-	
+
 	r2.translate(0, r.height() - r2.height());
 	queueDD(scrollState == kScrollbarStateDown ? kDDScrollbarButtonHover : kDDScrollbarButtonIdle, r2, Graphics::VectorRenderer::kTriangleDown);
-	
+
 	r2 = r;
 	r2.left += 1;
 	r2.right -= 1;
 	r2.top += sliderY;
 	r2.bottom = r2.top + sliderHeight - 1;
-	
+
 	r2.top += r.width() / 5;
-	r2.bottom -= r.width() / 5; 
+	r2.bottom -= r.width() / 5;
 	queueDD(scrollState == kScrollbarStateSlider ? kDDScrollbarHandleHover : kDDScrollbarHandleIdle, r2);
 }
 
 void ThemeEngine::drawDialogBackground(const Common::Rect &r, DialogBackground bgtype, WidgetStateInfo state) {
 	if (!ready())
 		return;
-		
+
 	switch (bgtype) {
 		case kDialogBackgroundMain:
 			queueDD(kDDMainDialogBackground, r);
 			break;
-			
+
 		case kDialogBackgroundSpecial:
 			queueDD(kDDSpecialColorBackground, r);
 			break;
-			
+
 		case kDialogBackgroundPlain:
 			queueDD(kDDPlainColorBackground, r);
 			break;
-			
+
 		case kDialogBackgroundDefault:
 			queueDD(kDDDefaultBackground, r);
 			break;
@@ -816,7 +816,7 @@ void ThemeEngine::drawDialogBackground(const Common::Rect &r, DialogBackground b
 void ThemeEngine::drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo state) {
 	if (!ready())
 		return;
-	
+
 	if (erase) {
 		restoreBackground(r);
 		addDirtyRect(r);
@@ -827,11 +827,11 @@ void ThemeEngine::drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo s
 void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state, TextAlign align) {
 	if (!ready())
 		return;
-		
+
 	DrawData dd = (state == kStateHighlight) ? kDDPopUpHover : kDDPopUpIdle;
-	
+
 	queueDD(dd, r);
-	
+
 	if (!sel.empty()) {
 		Common::Rect text(r.left, r.top, r.right - 16, r.bottom);
 		queueDDText(getTextData(dd), text, sel, false, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV, deltax);
@@ -841,27 +841,27 @@ void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &s
 void ThemeEngine::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, WidgetStateInfo state, int alpha, bool themeTrans) {
 	if (!ready())
 		return;
-	
+
 	queueBitmap(&surface, r, themeTrans);
 }
 
 void ThemeEngine::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, WidgetStateInfo state) {
 	if (!ready())
 		return;
-		
+
 	switch (background) {
 	case kWidgetBackgroundBorderSmall:
 		queueDD(kDDWidgetBackgroundSmall, r);
 		break;
-		
+
 	case kWidgetBackgroundEditText:
 		queueDD(kDDWidgetBackgroundEditText, r);
 		break;
-		
+
 	case kWidgetBackgroundSlider:
 		queueDD(kDDWidgetBackgroundSlider, r);
 		break;
-		
+
 	default:
 		queueDD(kDDWidgetBackgroundDefault, r);
 		break;
@@ -871,21 +871,21 @@ void ThemeEngine::drawWidgetBackground(const Common::Rect &r, uint16 hints, Widg
 void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, WidgetStateInfo state) {
 	if (!ready())
 		return;
-		
+
 	const int tabOffset = 2;
 	tabWidth -= tabOffset;
-	
+
 	queueDD(kDDTabBackground, Common::Rect(r.left, r.top, r.right, r.top + tabHeight));
-	
+
 	for (int i = 0; i < (int)tabs.size(); ++i) {
 		if (i == active)
 			continue;
-	
+
 		Common::Rect tabRect(r.left + i * (tabWidth + tabOffset), r.top, r.left + i * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight);
 		queueDD(kDDTabInactive, tabRect);
 		queueDDText(getTextData(kDDTabInactive), tabRect, tabs[i], false, false, _widgets[kDDTabInactive]->_textAlignH, _widgets[kDDTabInactive]->_textAlignV);
 	}
-	
+
 	if (active >= 0) {
 		Common::Rect tabRect(r.left + active * (tabWidth + tabOffset), r.top, r.left + active * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight);
 		const uint16 tabLeft = active * (tabWidth + tabOffset);
@@ -897,19 +897,19 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, co
 
 void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
 	if (!ready())
-		return;	
-		
+		return;
+
 	if (inverted) {
 		queueDD(kDDTextSelectionBackground, r);
 		queueDDText(kTextDataInverted, r, str, false, useEllipsis, align, kTextAlignVCenter, deltax);
 		return;
 	}
-	
+
 	switch (font) {
 		case kFontStyleNormal:
 			queueDDText(kTextDataNormalFont, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
 			return;
-			
+
 		default:
 			break;
 	}
@@ -918,11 +918,11 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, Wid
 		case kStateDisabled:
 			queueDDText(kTextDataDisabled, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
 			return;
-			
+
 		case kStateHighlight:
 			queueDDText(kTextDataHover, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
 			return;
-		
+
 		case kStateEnabled:
 			queueDDText(kTextDataDefault, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
 			return;
@@ -937,7 +937,7 @@ void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font 
 	charArea.clip(_screen->w, _screen->h);
 
 	uint32 color = _system->RGBToColor(_texts[kTextDataDefault]->_color.r, _texts[kTextDataDefault]->_color.g, _texts[kTextDataDefault]->_color.b);
-		
+
 	restoreBackground(charArea);
 	font->drawChar(_screen, ch, charArea.left, charArea.top, color);
 	addDirtyRect(charArea);
@@ -959,28 +959,28 @@ void ThemeEngine::debugWidgetPosition(const char *name, const Common::Rect &r) {
 void ThemeEngine::updateScreen() {
 	if (!_bufferQueue.empty()) {
 		_vectorRenderer->setSurface(_backBuffer);
-		
+
 		for (Common::List<ThemeItem*>::iterator q = _bufferQueue.begin(); q != _bufferQueue.end(); ++q) {
 			(*q)->drawSelf(true, false);
 			delete *q;
 		}
-			
+
 		_vectorRenderer->setSurface(_screen);
 		_vectorRenderer->blitSurface(_backBuffer, Common::Rect(0, 0, _screen->w, _screen->h));
 		_bufferQueue.clear();
 	}
-	
+
 	if (!_screenQueue.empty()) {
 		_vectorRenderer->disableShadows();
 		for (Common::List<ThemeItem*>::iterator q = _screenQueue.begin(); q != _screenQueue.end(); ++q) {
 			(*q)->drawSelf(true, false);
 			delete *q;
 		}
-			
+
 		_vectorRenderer->enableShadows();
 		_screenQueue.clear();
 	}
-		
+
 	renderDirtyScreen();
 }
 
@@ -996,14 +996,14 @@ void ThemeEngine::renderDirtyScreen() {
 
 		_vectorRenderer->copyFrame(_system, *i);
 	}
-		
+
 	_dirtyScreen.clear();
 }
 
 void ThemeEngine::openDialog(bool doBuffer, ShadingStyle style) {
 	if (doBuffer)
 		_buffering = true;
-		
+
 	if (style != kShadingNone) {
 		_vectorRenderer->applyScreenShading(style);
 		addDirtyRect(Common::Rect(0, 0, _screen->w, _screen->h));
@@ -1023,12 +1023,12 @@ void ThemeEngine::setUpCursor() {
 bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale) {
 	if (!_system->hasFeature(OSystem::kFeatureCursorHasPalette))
 		return true;
-	
+
 	// Try to locate the specified file among all loaded bitmaps
 	const Surface *cursor = _bitmaps[filename];
 	if (!cursor)
 		return false;
-	
+
 	// Set up the cursor parameters
 	_cursorHotspotX = hotspotX;
 	_cursorHotspotY = hotspotY;

@@ -47,8 +47,8 @@ class ThemeEval;
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
-	
-	struct { 
+
+	struct {
 		uint8 r, g, b;
 	} _color;
 };
@@ -56,13 +56,13 @@ struct TextDrawData {
 struct WidgetDrawData {
 	/** List of all the steps needed to draw this widget */
 	Common::List<Graphics::DrawStep> _steps;
-	
+
 	int _textDataId;
 	GUI::Theme::TextAlign _textAlignH;
 	GUI::Theme::TextAlignVertical _textAlignV;
 
 	/** Extra space that the widget occupies when it's drawn.
-	    E.g. when taking into account rounded corners, drop shadows, etc 
+	    E.g. when taking into account rounded corners, drop shadows, etc
 		Used when restoring the widget background */
 	uint16 _backgroundOffset;
 
@@ -84,22 +84,22 @@ struct WidgetDrawData {
 };
 
 class ThemeItem {
-	
+
 public:
-	ThemeItem(ThemeEngine *engine, const Common::Rect &area) : 
+	ThemeItem(ThemeEngine *engine, const Common::Rect &area) :
 		_engine(engine), _area(area) {}
 	virtual ~ThemeItem() {}
 
 	virtual void drawSelf(bool doDraw, bool doRestore) = 0;
 
 protected:
-	Common::Rect _area;
 	ThemeEngine *_engine;
+	Common::Rect _area;
 };
 
 class ThemeItemDrawData : public ThemeItem {
 public:
-	ThemeItemDrawData(ThemeEngine *engine, const WidgetDrawData *data, const Common::Rect &area, uint32 dynData) : 
+	ThemeItemDrawData(ThemeEngine *engine, const WidgetDrawData *data, const Common::Rect &area, uint32 dynData) :
 		ThemeItem(engine, area), _dynamicData(dynData), _data(data) {}
 
 	void drawSelf(bool draw, bool restore);
@@ -113,8 +113,8 @@ class ThemeItemTextData : public ThemeItem {
 public:
 	ThemeItemTextData(ThemeEngine *engine, const TextDrawData *data, const Common::Rect &area, const Common::String &text,
 		GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV,
-		bool ellipsis, bool restoreBg, int deltaX) : 
-		ThemeItem(engine, area), _data(data), _text(text), _alignH(alignH), _alignV(alignV), 
+		bool ellipsis, bool restoreBg, int deltaX) :
+		ThemeItem(engine, area), _data(data), _text(text), _alignH(alignH), _alignV(alignV),
 		_ellipsis(ellipsis), _restoreBg(restoreBg), _deltax(deltaX) {}
 
 	void drawSelf(bool draw, bool restore);
@@ -131,7 +131,7 @@ protected:
 
 class ThemeItemBitmap : public ThemeItem {
 public:
-	ThemeItemBitmap(ThemeEngine *engine, const Common::Rect &area, const Graphics::Surface *bitmap, bool alpha) : 
+	ThemeItemBitmap(ThemeEngine *engine, const Common::Rect &area, const Graphics::Surface *bitmap, bool alpha) :
 		ThemeItem(engine, area), _bitmap(bitmap), _alpha(alpha) {}
 
 	void drawSelf(bool draw, bool restore);
@@ -148,11 +148,11 @@ protected:
 
 	friend class GUI::Dialog;
 	friend class GUI::GuiObject;
-	
+
 	/** Sets whether backcaching is enabled */
 	static const bool kEnableBackCaching = true;
 
-	/** 
+	/**
 	 *	DrawData sets enumeration.
 	 *	Each DD set corresponds to the actual looks
 	 *	of a widget in a given state.
@@ -163,7 +163,7 @@ protected:
 		kDDPlainColorBackground,
 		kDDDefaultBackground,
 		kDDTextSelectionBackground,
-		
+
 		kDDWidgetBackgroundDefault,
 		kDDWidgetBackgroundSmall,
 		kDDWidgetBackgroundEditText,
@@ -193,13 +193,13 @@ protected:
 
 		kDDPopUpIdle,
 		kDDPopUpHover,
-		
+
 		kDDCaret,
 		kDDSeparator,
 		kDrawDataMAX,
 		kDDNone = -1
 	};
-	
+
 	/**
 	 * Default values for each DrawData item.
 	 * @see kDrawDataDefaults[] for implementation.
@@ -210,8 +210,8 @@ protected:
 		bool buffer; 		/** Sets whether this item is buffered on the backbuffer or drawn directly to the screen. */
 		DrawData parent; 	/** Parent DrawData item, for items that overlay. E.g. kButtonIdle -> kButtonHover */
 	} kDrawDataDefaults[];
-	
-	
+
+
 	enum TextData {
 		kTextDataNone = -1,
 		kTextDataDefault = 0,
@@ -223,13 +223,13 @@ protected:
 		kTextDataNormalFont,
 		kTextDataMAX
 	};
-	
+
 	static const struct TextDataInfo {
 		TextData id;
 		const char *name;
 	} kTextDataDefaults[];
-	
-	
+
+
 public:
 	/** Graphics mode enumeration.
 	 *	Each item represents a set of BPP and Renderer modes for a given
@@ -243,7 +243,7 @@ public:
 
 	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
 	static const int kDirtyRectangleThreshold = 1;
-	
+
 	struct Renderer {
 		const char *name;
 		const char *cfg;
@@ -257,13 +257,13 @@ public:
 
 	static GraphicsMode findMode(const Common::String &cfg);
 	static const char *findModeConfigName(GraphicsMode mode);
-	
+
 	/** Default constructor */
 	ThemeEngine(Common::String fileName, GraphicsMode mode);
 
 	/** Default destructor */
 	~ThemeEngine();
-	
+
 	/**
 	 *	VIRTUAL METHODS
 	 *	This is the implementation of the GUI::Theme API to allow
@@ -278,7 +278,7 @@ public:
 	void refresh();
 	void enable();
 	void disable();
-	
+
 	/**
 	 *	Implementation of the GUI::Theme API. Called when a
 	 *	new dialog is opened. Note that the boolean parameter
@@ -289,7 +289,7 @@ public:
 	 *						  until disabled.
 	 */
 	void openDialog(bool enableBuffering, ShadingStyle shading = kShadingNone);
-	
+
 	/**
 	 *	The updateScreen() method is called every frame.
 	 *	It processes all the drawing queues and then copies dirty rects
@@ -297,86 +297,86 @@ public:
 	 */
 	void updateScreen();
 
-	/** Since the rendering pipeline changes, closing all dialogs causes no effect 
+	/** Since the rendering pipeline changes, closing all dialogs causes no effect
 		TODO: remove this from the original GUI::Theme API */
 	void closeAllDialogs() {}
-	
+
 	/** Drawing area has been removed: it was too hackish. A workaround is on the works.
 	 	TODO: finish the workaround for the credits dialog
 		TODO: remove this from the original GUI::Theme API */
 	void resetDrawArea() {}
 
-	
+
 	/**
 	 *	FONT MANAGEMENT METHODS
 	 */
-	
+
 	TextData fontStyleToData(FontStyle font) const {
 		switch (font) {
 			case kFontStyleNormal:
 				return kTextDataNormalFont;
-			
+
 			default:
 				return kTextDataDefault;
 		}
 	}
-	
+
 	const Graphics::Font *getFont(FontStyle font) const { return _texts[fontStyleToData(font)]->_fontPtr; }
-	
-	int getFontHeight(FontStyle font = kFontStyleBold) const { 
+
+	int getFontHeight(FontStyle font = kFontStyleBold) const {
 		return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getFontHeight() : 0;
 	}
-	
+
 	int getStringWidth(const Common::String &str, FontStyle font) const {
 		return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getStringWidth(str) : 0;
 	}
-	
-	int getCharWidth(byte c, FontStyle font) const { 
-		return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getCharWidth(c) : 0; 
+
+	int getCharWidth(byte c, FontStyle font) const {
+		return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getCharWidth(c) : 0;
 	}
 
 
 	/**
 	 *	WIDGET DRAWING METHODS
 	 */
-	void drawWidgetBackground(const Common::Rect &r, uint16 hints, 
+	void drawWidgetBackground(const Common::Rect &r, uint16 hints,
 		WidgetBackground background = kWidgetBackgroundPlain, WidgetStateInfo state = kStateEnabled);
-		
-	void drawButton(const Common::Rect &r, const Common::String &str, 
+
+	void drawButton(const Common::Rect &r, const Common::String &str,
 		WidgetStateInfo state = kStateEnabled, uint16 hints = 0);
-	
-	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, 
+
+	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface,
 		WidgetStateInfo state = kStateEnabled, int alpha = 256, bool themeTrans = false);
-	
-	void drawSlider(const Common::Rect &r, int width, 
+
+	void drawSlider(const Common::Rect &r, int width,
 		WidgetStateInfo state = kStateEnabled);
-	
-	void drawCheckbox(const Common::Rect &r, const Common::String &str, 
+
+	void drawCheckbox(const Common::Rect &r, const Common::String &str,
 		bool checked, WidgetStateInfo state = kStateEnabled);
-	
-	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, 
-		const Common::Array<Common::String> &tabs, int active, uint16 hints, 
+
+	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth,
+		const Common::Array<Common::String> &tabs, int active, uint16 hints,
 		int titleVPad, WidgetStateInfo state = kStateEnabled);
-	
-	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, 
+
+	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight,
 		ScrollbarState, WidgetStateInfo state = kStateEnabled);
-	
-	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, 
+
+	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel,
 		int deltax, WidgetStateInfo state = kStateEnabled, TextAlign align = kTextAlignLeft);
-	
-	void drawCaret(const Common::Rect &r, bool erase, 
+
+	void drawCaret(const Common::Rect &r, bool erase,
 		WidgetStateInfo state = kStateEnabled);
-	
+
 	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled);
 
 	void drawDialogBackground(const Common::Rect &r, DialogBackground type, WidgetStateInfo state);
-	
-	void drawText(const Common::Rect &r, const Common::String &str, 
+
+	void drawText(const Common::Rect &r, const Common::String &str,
 		WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font);
-	
-	void drawChar(const Common::Rect &r, byte ch, 
+
+	void drawChar(const Common::Rect &r, byte ch,
 		const Graphics::Font *font, WidgetStateInfo state);
-	
+
 	/**
 	 *	Actual implementation of a Dirty Rect drawing routine.
 	 * 	Dirty rectangles are queued on a list and are later merged/calculated
@@ -409,7 +409,7 @@ public:
 
 		return kDDNone;
 	}
-	
+
 	TextData getTextDataId(const Common::String &name) {
 		for (int i = 0; i < kTextDataMAX; ++i)
 			if (name.compareToIgnoreCase(kTextDataDefaults[i].name) == 0)
@@ -428,7 +428,7 @@ public:
 	 *	@param step The actual DrawStep struct to be added.
 	 */
 	void addDrawStep(const Common::String &drawDataId, Graphics::DrawStep step);
-	
+
 	/**
 	 *	Interfacefor the ThemeParser class: Parsed DrawData sets are added via this function.
 	 *	The goal of the function is to initialize each DrawData set before their DrawSteps can
@@ -437,10 +437,10 @@ public:
 	 *
 	 *	@param data The representing DrawData name, as found on Theme Description XML files.
 	 *	@param cached Whether this DD set will be cached beforehand.
-	 */ 
+	 */
 	bool addDrawData(const Common::String &data, bool cached);
-	
-	
+
+
 	/**
 	 *	Interface for the ThemeParser class: Loads a font to use on the GUI from the given
 	 *	filename.
@@ -450,8 +450,8 @@ public:
 	 *	@param r, g, b Color of the font.
 	 */
 	bool addFont(const Common::String &fontName, const Common::String &file, int r, int g, int b);
-	
-	
+
+
 	/**
 	 *	Interface for the ThemeParser class: Loads a bitmap file to use on the GUI.
 	 * 	The filename is also used as its identifier.
@@ -459,9 +459,9 @@ public:
 	 *	@param filename Name of the bitmap file.
 	 */
 	bool addBitmap(const Common::String &filename);
-	
+
 	/**
-	 *	Adds a new TextStep from the ThemeParser. This will be deprecated/removed once the 
+	 *	Adds a new TextStep from the ThemeParser. This will be deprecated/removed once the
 	 *	new Font API is in place.
 	 */
 	bool addTextData(const Common::String &drawDataId, const Common::String &textDataId, TextAlign alignH, TextAlignVertical alignV);
@@ -478,7 +478,7 @@ public:
 
 	/** Custom implementation of the GUI::Theme API, changed to use the XML parser. */
 	bool loadTheme(Common::String themeName);
-	
+
 	/**
 	 *	Changes the active graphics mode of the GUI; may be used to either
 	 *	initialize the GUI or to change the mode while the GUI is already running.
@@ -492,26 +492,26 @@ public:
 	 */
 	void finishBuffering() { _buffering = false; }
 	void startBuffering() { _buffering = true; }
-	
+
 	ThemeEval *getEvaluator() { return _themeEval; }
 	VectorRenderer *renderer() { return _vectorRenderer; }
-	
+
 	bool supportsImages() const { return true; }
 	bool ownCursor() const { return _useCursor; }
-	
+
 	Graphics::Surface *getBitmap(const Common::String &name) {
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
 	}
-	
+
 	const Graphics::Surface *getImageSurface(const kThemeImages n) const {
 		if (n == kImageLogo)
 			return _bitmaps.contains("logo.bmp") ? _bitmaps["logo.bmp"] : 0;
 		else if (n == kImageLogoSmall)
 			return _bitmaps.contains("logo_small.bmp") ? _bitmaps["logo_small.bmp"] : 0;
-			
+
 		return 0;
 	}
-	
+
 	/**
 	 *	Interface for the Theme Parser: Creates a new cursor by loading the given
 	 *	bitmap and sets it as the active cursor.
@@ -546,7 +546,7 @@ protected:
 	const Common::String &getThemeName() const { return _themeName; }
 	const Common::String &getThemeFileName() const { return _themeFileName; }
 	int getGraphicsMode() const { return _graphicsMode; }
-	
+
 	/**
 	 *	Initializes the drawing screen surfaces, _screen and _backBuffer.
 	 *	If the surfaces already exist, they are cleared and re-initialized.
@@ -565,7 +565,7 @@ protected:
 	 *	@returns true if the theme was successfully loaded.
 	 */
 	bool loadThemeXML(const Common::String &themeName);
-	
+
 	/**
 	 *	Loads the default theme file (the embedded XML file found
 	 *	in ThemeDefaultXML.cpp).
@@ -586,7 +586,7 @@ protected:
 	void screenChange() {
 		error("Screen Changes are not supported yet. Fix this!");
 	}
-	
+
 	/**
 	 *	Actual Dirty Screen handling function.
 	 *	Handles all the dirty squares in the list, merges and optimizes
@@ -602,7 +602,7 @@ protected:
 		delete _vectorRenderer;
 		_vectorRenderer = 0;
 	}
-	
+
 	/**
 	 * Frees the Back buffer surface, only if it's available.
 	 */
@@ -624,11 +624,11 @@ protected:
 			_screen = 0;
 		}
 	}
-	
+
 	TextData getTextData(DrawData ddId) {
 		return _widgets[ddId] ? (TextData)_widgets[ddId]->_textDataId : kTextDataNone;
 	}
-	
+
 	/**
 	 * Draws a cached widget directly on the screen. Currently deprecated.
 	 *
@@ -636,7 +636,7 @@ protected:
 	 * @param r Position on screen to draw the widget.
 	 */
 	void drawCached(DrawData type, const Common::Rect &r);
-	
+
 	/**
 	 *	Calculates the background threshold offset of a given DrawData item.
 	 *	After fully loading all DrawSteps of a DrawData item, this function must be
@@ -647,7 +647,7 @@ protected:
 	 *	@param type DrawData type of the widget.
 	 */
 	void calcBackgroundOffset(DrawData type);
-	
+
 	/**
 	 *	Generates a DrawQueue item and enqueues it so it's drawn to the screen
 	 *	when the drawing queue is processed.
@@ -663,13 +663,13 @@ protected:
 	void queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
 		bool elipsis, TextAlign alignH = kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0);
 	void queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha);
-	
+
 	/**
 	 *	DEBUG: Draws a white square around the given position and writes the given next to it.
 	 */
 	void debugWidgetPosition(const char *name, const Common::Rect &r);
 
-	
+
 	/**
 	 *	Default values from GUI::Theme
 	 */
@@ -677,29 +677,29 @@ protected:
 	int getTabPadding() const { return 3; }
 
 	OSystem *_system; /** Global system object. */
-	
+
 	/** Vector Renderer object, does the actual drawing on screen */
 	Graphics::VectorRenderer *_vectorRenderer;
-	
+
 	/** XML Parser, does the Theme parsing instead of the default parser */
 	GUI::ThemeParser *_parser;
-	
+
 	/** Theme getEvaluator (changed from GUI::Eval to add functionality) */
 	GUI::ThemeEval *_themeEval;
 
 	/** Main screen surface. This is blitted straight into the overlay. */
 	Graphics::Surface *_screen;
-	
+
 	/** Backbuffer surface. Stores previous states of the screen to blit back */
 	Graphics::Surface *_backBuffer;
-	
-	/** Sets whether the current drawing is being buffered (stored for later 
+
+	/** Sets whether the current drawing is being buffered (stored for later
 		processing) or drawn directly to the screen. */
-	bool _buffering; 
+	bool _buffering;
 
 	/** Bytes per pixel of the Active Drawing Surface (i.e. the screen) */
 	int _bytesPerPixel;
-	
+
 	/** Current graphics mode */
 	GraphicsMode _graphicsMode;
 
@@ -710,18 +710,18 @@ protected:
 	/** Array of all the DrawData elements than can be drawn to the screen.
 		Must be full so the renderer can work. */
 	WidgetDrawData *_widgets[kDrawDataMAX];
-	
+
 	/** Array of all the text fonts that can be drawn. */
 	TextDrawData *_texts[kTextDataMAX];
-	
+
 	ImagesMap _bitmaps;
-	
+
 	/** List of all the dirty screens that must be blitted to the overlay. */
 	Common::List<Common::Rect> _dirtyScreen;
-	
+
 	/** Queue with all the drawing that must be done to the Back Buffer */
 	Common::List<ThemeItem*> _bufferQueue;
-	
+
 	/** Queue with all the drawing that must be done to the screen */
 	Common::List<ThemeItem*> _screenQueue;
 
@@ -731,10 +731,10 @@ protected:
 
 	Common::String _themeName; /** Name of the currently loaded theme */
 	Common::String _themeFileName;
-	
+
 	/** Custom Cursor Management */
 	void setUpCursor();
-	
+
 	bool _useCursor;
 	int _cursorHotspotX, _cursorHotspotY;
 	int _cursorTargetScale;
