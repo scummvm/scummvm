@@ -166,27 +166,32 @@ public:
 	void setDeletableFlag(bool state);
 
 	/**
-	 * Return a thumbnail graphics surface representing the savestate visually
+	 * Return a thumbnail graphics surface representing the savestate visually.
 	 * This is usually a scaled down version of the game graphics. The size
 	 * should be either 160x100 or 160x120 pixels, depending on the aspect
 	 * ratio of the game. If another ratio is required, contact the core team.
 	 */
 	const Graphics::Surface *getThumbnail() const { return _thumbnail.get(); }
 	
+	/**
+	 * Set a thumbnail graphics surface representing the savestate visually.
+	 * Ownership of the surface is transferred to the SaveStateDescriptor.
+	 * Hence the caller must not delete the surface.
+	 */
 	void setThumbnail(Graphics::Surface *t);
 
 	/**
-	 * Sets the 'save_date' key properly, based on the given values
+	 * Sets the 'save_date' key properly, based on the given values.
 	 */
 	void setSaveDate(int year, int month, int day);
 
 	/**
-	 * Sets the 'save_time' key properly, based on the given values
+	 * Sets the 'save_time' key properly, based on the given values.
 	 */
 	void setSaveTime(int hour, int min);
 
 	/**
-	 * Sets the 'play_time' key properly, based on the given values
+	 * Sets the 'play_time' key properly, based on the given values.
 	 */
 	void setPlayTime(int hours, int minutes);
 };
