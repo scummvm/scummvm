@@ -104,6 +104,7 @@ void MidiPlayer::play(Common::SeekableReadStream *stream) {
 	_midiData = (uint8 *)malloc(size);
 	if (_midiData) {
 		stream->read(_midiData, size);
+		delete stream;
 		_mutex.lock();
 		_parser->loadMusic(_midiData, size);
 		_parser->setTrack(0);
