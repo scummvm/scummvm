@@ -476,8 +476,8 @@ public:
 		return _initOk && _themeOk;
 	}
 
-	/** Custom implementation of the GUI::Theme API, changed to use the XML parser. */
-	bool loadTheme(Common::String themeName);
+	/** Load the them from the file with the specified name. */
+	bool loadTheme(const Common::String &fileName);
 
 	/**
 	 *	Changes the active graphics mode of the GUI; may be used to either

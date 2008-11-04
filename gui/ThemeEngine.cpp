@@ -487,18 +487,19 @@ bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
 /**********************************************************
  *	Theme XML loading
  *********************************************************/
-bool ThemeEngine::loadTheme(Common::String fileName) {
+bool ThemeEngine::loadTheme(const Common::String &fileName) {
 	unloadTheme();
 
-	if (fileName != "builtin")
+	bool tryAgain = false;
+	if (fileName != "builtin") {
 		ImageMan.addArchive(fileName);
+		if (!loadThemeXML(fileName)) {
+			warning("Could not parse custom theme '%s'. Falling back to default theme", fileName.c_str());
+			tryAgain = true;	// Fall back to default builtin theme
+		}
+	}
 
-	if (fileName == "builtin") {
-		if (!loadDefaultXML())
-			error("Could not load default embedded theme");
-	} else if (!loadThemeXML(fileName)) {
-		warning("Could not parse custom theme '%s'. Falling back to default theme", fileName.c_str());
-
+	if (fileName == "builtin" || tryAgain) {
 		if (!loadDefaultXML()) // if we can't load the embedded theme, this is a complete failure
 			error("Could not load default embedded theme");
 	}
@@ -571,8 +572,12 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 
 #endif
 	} else if (node.isDirectory()) {
+		warning("Don't know how to open theme '%s'", themeName.c_str());
 		archive = new Common::FSDirectory(node);
 	}
+
+	if (!archive)
+		return false;
 
 	Common::File themercFile;
 	// FIXME: Possibly dereferencing a NULL pointer here if the node's
