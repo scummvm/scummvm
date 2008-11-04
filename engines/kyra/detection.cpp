@@ -1073,12 +1073,16 @@ public:
 
 bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
 	   	(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportThumbnail);
+}
+
+bool Kyra::KyraEngine_v1::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
 		(f == kSupportsLoadingDuringRuntime);
 }
 

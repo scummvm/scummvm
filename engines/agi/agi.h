@@ -696,7 +696,8 @@ struct StringData {
 class AgiBase : public ::Engine {
 protected:
 	// Engine API
-	int init();
+	virtual int init();
+	virtual bool hasFeature(EngineFeature f) const;
 
 	virtual void initialize() = 0;
 
@@ -743,7 +744,10 @@ class AgiEngine : public AgiBase {
 	int _gameId;
 
 protected:
-	int go();
+	// Engine APIs
+	virtual int go();
+	virtual void syncSoundSettings();
+
 	void initialize();
 
 	uint32 _lastSaveTime;
@@ -755,7 +759,6 @@ public:
 		return _gameId;
 	}
 
-	virtual void syncSoundSettings();
 
 private:
 

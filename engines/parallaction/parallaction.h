@@ -227,7 +227,9 @@ public:
 	Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc);
 	~Parallaction();
 
-	int init();
+	// Engine APIs
+	virtual int init();
+	virtual bool hasFeature(EngineFeature f) const;
 
 	// info
 	int32			_screenWidth;
@@ -360,8 +362,9 @@ public:
 	Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc) { }
 	~Parallaction_ns();
 
-	int init();
-	int go();
+	// Engine APIs
+	virtual int init();
+	virtual int go();
 
 public:
 	virtual void 	parseLocation(const char *filename);

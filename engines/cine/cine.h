@@ -70,8 +70,11 @@ typedef Common::HashMap<Common::String, const char *> StringPtrHashMap;
 class CineEngine : public Engine {
 
 protected:
-	int init();
-	int go();
+	// Engine APIs
+	virtual int init();
+	virtual int go();
+	virtual bool hasFeature(EngineFeature f) const;
+
 	void shutdown();
 
 	bool initGame();

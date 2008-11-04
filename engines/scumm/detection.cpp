@@ -691,7 +691,6 @@ public:
 
 bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
@@ -699,6 +698,10 @@ bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
 		(f == kSavesSupportPlayTime);
+}
+
+bool ScummEngine::hasFeature(EngineFeature f) const {
+	return	(f == kSupportsRTL);
 }
 
 GameList ScummMetaEngine::getSupportedGames() const {

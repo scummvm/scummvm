@@ -193,10 +193,14 @@ public:
 
 bool LureMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave);
+}
+
+bool Lure::LureEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL);
 }
 
 bool LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {

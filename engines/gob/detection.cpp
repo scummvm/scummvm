@@ -2134,10 +2134,13 @@ public:
 };
 
 bool GobMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return false;
+}
+
+bool Gob::GobEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL);
 }
-
 bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const Gob::GOBGameDescription *gd = (const Gob::GOBGameDescription *)desc;
 	if (gd) {

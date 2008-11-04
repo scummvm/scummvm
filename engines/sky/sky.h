@@ -58,7 +58,6 @@ class Debugger;
 class SkyCompact;
 
 class SkyEngine : public Engine {
-	GUI::Debugger *getDebugger();
 protected:
 	Common::KeyState _keyPressed;
 	bool _floppyIntro;
@@ -89,15 +88,19 @@ public:
 	static SystemVars _systemVars;
 
 protected:
+	// Engine APIs
+	virtual int init();
+	virtual int go();
+	virtual GUI::Debugger *getDebugger();
+	virtual bool hasFeature(EngineFeature f) const;
+
 	byte _fastMode;
 
 	void delay(int32 amount);
-	int go();
 	void handleKey(void);
 
 	uint32 _lastSaveTime;
 
-	int init();
 	void initItemList();
 
 	void initVirgin();

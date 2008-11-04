@@ -252,10 +252,14 @@ public:
 
 bool ParallactionMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave);
+}
+
+bool Parallaction::Parallaction::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL);
 }
 
 bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {

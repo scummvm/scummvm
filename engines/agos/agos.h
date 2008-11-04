@@ -163,7 +163,13 @@ class AGOSEngine : public Engine {
 	friend class Debugger;
 	friend class MoviePlayer;
 
-	GUI::Debugger *getDebugger();
+	// Engine APIs
+	virtual int init();
+	virtual int go();
+	virtual GUI::Debugger *getDebugger();
+	virtual bool hasFeature(EngineFeature f) const;
+	virtual void syncSoundSettings();
+	virtual void pauseEngineIntern(bool pause);
 
 public:
 	virtual void setupOpcodes();
@@ -588,7 +594,6 @@ protected:
 
 	void loadSoundFile(const char *filename);
 
-	virtual void syncSoundSettings();
 
 	int getUserFlag(Item *item, int a);
 	int getUserFlag1(Item *item, int a);
@@ -1147,9 +1152,6 @@ protected:
 	void loadVGAVideoFile(uint16 id, uint8 type);
 	bool loadVGASoundFile(uint16 id, uint8 type);
 
-	int init();
-	int go();
-
 	void openGameFile();
 	void readGameFile(void *dst, uint32 offs, uint32 size);
 
@@ -1210,7 +1212,6 @@ protected:
 	void checkTimerCallback();
 	void delay(uint delay);
 	void pause();
-	virtual void pauseEngineIntern(bool pause);
 
 	void waitForMark(uint i);
 	void scrollScreen();

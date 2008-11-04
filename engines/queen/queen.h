@@ -97,7 +97,6 @@ public:
 	void checkOptionSettings();
 	void readOptionSettings();
 	void writeOptionSettings();
-	virtual void syncSoundSettings();
 
 	int talkSpeed() const { return _talkSpeed; }
 	void talkSpeed(int speed) { _talkSpeed = speed; }
@@ -129,10 +128,12 @@ public:
 
 protected:
 
-	GUI::Debugger *getDebugger();
-
-	int go();
-	int init();
+	// Engine APIs
+	virtual int init();
+	virtual int go();
+	virtual GUI::Debugger *getDebugger();
+	virtual bool hasFeature(EngineFeature f) const;
+	virtual void syncSoundSettings();
 
 
 	int _talkSpeed;

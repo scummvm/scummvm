@@ -156,10 +156,14 @@ public:
 
 bool SagaMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
+		(f == kSupportsDeleteSave);
+}
+
+bool Saga::SagaEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

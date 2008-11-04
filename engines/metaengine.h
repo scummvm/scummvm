@@ -134,11 +134,6 @@ public:
 	 */
 	enum MetaEngineFeature {
 		/**
-		 * 'Return to launcher' feature is supported, i.e., EVENT_RTL is handled.
-		 */
-		kSupportsRTL,
-
-		/**
 		 * Listing all Save States for a given target is supported, i.e.,
 		 * the listSaves() method is implemented.
 		 * Used for --list-saves support, as well as the GMM load dialog.
@@ -183,18 +178,8 @@ public:
 		 * the game till the save.
 		 * This flag may only be set when 'kSavesSupportMetaInfo' is set.
 		 */
-		kSavesSupportPlayTime,
-		
-		/** 
-		 * Features loading from the Common ScummVM options dialog in-game.
-		 */
-		kSupportsLoadingDuringRuntime,
-
-		/** 
-		 * Features saving from the Common ScummVM options dialog in-game.
-		 */
-		kSupportsSavingDuringRuntime
-	};	
+		kSavesSupportPlayTime
+	};
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.

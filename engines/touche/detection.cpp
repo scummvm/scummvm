@@ -145,10 +145,14 @@ public:
 
 bool ToucheMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave);
+}
+
+bool Touche::ToucheEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL);
 }
 
 bool ToucheMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {

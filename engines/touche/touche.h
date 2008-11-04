@@ -361,8 +361,10 @@ public:
 	ToucheEngine(OSystem *system, Common::Language language);
 	virtual ~ToucheEngine();
 
+	// Engine APIs
 	virtual int init();
 	virtual int go();
+	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 
 protected:

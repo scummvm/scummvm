@@ -486,9 +486,13 @@ inline uint16 objectIndexToId(int type, int index) {
 class SagaEngine : public Engine {
 	friend class Scene;
 
-protected:
-	int go();
-	int init();
+public:
+	// Engine APIs
+	virtual int init();
+	virtual int go();
+	virtual bool hasFeature(EngineFeature f) const;
+	virtual void syncSoundSettings();
+
 public:
 	SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc);
 	virtual ~SagaEngine();
@@ -512,8 +516,6 @@ public:
 		return isSaveListFull() ? _saveFilesCount : _saveFilesCount + 1;
 	}
 
-	virtual void syncSoundSettings();
-	
 	int16 _framesEsc;
 
 	uint32 _globalFlags;

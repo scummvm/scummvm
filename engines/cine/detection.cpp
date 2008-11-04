@@ -540,9 +540,13 @@ public:
 
 bool CineMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup);
+}
+
+bool Cine::CineEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL);
 }
 
 bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {

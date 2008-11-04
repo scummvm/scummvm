@@ -130,9 +130,13 @@ const char *SkyMetaEngine::getCopyright() const {
 
 bool SkyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup);
+}
+
+bool Sky::SkyEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL);
 }
 
 GameList SkyMetaEngine::getSupportedGames() const {

@@ -190,10 +190,12 @@ private:
 
 	uint32 _pauseStart;
 
-	int go();
-	int init();
+	// Engine APIs
+	virtual int init();
+	virtual int go();
+	virtual bool hasFeature(EngineFeature f) const;
+	virtual void pauseEngineIntern(bool pause);
 
-	void pauseEngineIntern(bool pause);
 	bool initGameParts();
 	void deinitGameParts();
 

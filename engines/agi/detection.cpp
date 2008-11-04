@@ -2132,10 +2132,13 @@ public:
 
 bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave);
+}
+
+bool AgiBase::hasFeature(EngineFeature f) const {
+	return (f == kSupportsRTL);
 }
 
 

@@ -83,6 +83,39 @@ private:
 
 public:
 
+
+	/**
+	 * A feature in this context means an ability of the engine which can be
+	 * either available or not.
+	 * @see Engine::hasFeature()
+	 */
+	enum EngineFeature {
+		/**
+		 * 'Return to launcher' feature is supported, i.e., EVENT_RTL is handled
+		 * either directly, or indirectly (that is, the engine calls and honors
+		 * the result of the Engine::shouldQuit() method appropriately).
+		 */
+		kSupportsRTL,
+		
+		/** 
+		 * Loading savestates during runtime is supported, that is, this engine
+		 * implements loadGameState() and canLoadGameStateCurrently().
+		 * If this feature is supported, then the corresponding MetaEngine *must*
+		 * support the kSupportsListSaves feature.
+		 */
+		kSupportsLoadingDuringRuntime,
+
+		/** 
+		 * Loading savestates during runtime is supported, that is, this engine
+		 * implements saveGameState() and canSaveGameStateCurrently().
+		 * If this feature is supported, then the corresponding MetaEngine *must*
+		 * support the kSupportsListSaves feature.
+		 */
+		kSupportsSavingDuringRuntime
+	};
+
+
+
 	/** @name Overloadable methods
 	 *
 	 *  All Engine subclasses should consider overloading some or all of the following methods.
@@ -116,6 +149,13 @@ public:
 	 * invoke the debugger when a severe error is reported.
 	 */
 	virtual GUI::Debugger *getDebugger() { return 0; }
+
+	/**
+	 * Determine whether the engine supports the specified feature.
+	 */
+	virtual bool hasFeature(EngineFeature f) const { return false; }
+	
+//	virtual EnginePlugin *getMetaEnginePlugin() const;
 
 	/**
 	 * Notify the engine that the sound settings in the config manager may have
@@ -198,42 +238,6 @@ public:
 	 * Run the Global Main Menu Dialog
 	 */
 	void openMainMenuDialog();
-
-
-	/**
-	 * A feature in this context means an ability of the engine which can be
-	 * either available or not.
-	 */
-	enum EngineFeature {
-		/**
-		 * 'Return to launcher' feature is supported, i.e., EVENT_RTL is handled.
-		 */
-		kSupportsRTL = 0,
-		
-		/**
-		 * Listing all Save States for a given target is supported, i.e.,
-		 * the listSaves() method is implemented.
-		 * Used for --list-saves support, as well as the GMM load dialog.
-		 */
-		kSupportsListSaves = 1,
-
-		/** 
-		 * Loading from the in-game common ScummVM options dialog is supported
-		 */
-		kSupportsLoadingDuringRuntime = 8,
-
-		/** 
-		 * Saving from the in-game common ScummVM options dialog is supported
-		 */
-		kSupportsSavingDuringRuntime = 9
-	};
-
-	/**
-	 * Determine whether the engine supports the specified feature.
-	 *
-	 * @todo  Let this return false by default, or even turn it into a pure virtual method.
-	 */
-	bool hasFeature(EngineFeature f);
 
 public:
 

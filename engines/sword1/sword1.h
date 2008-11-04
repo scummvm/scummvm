@@ -77,12 +77,15 @@ public:
 	virtual ~SwordEngine();
 	static SystemVars _systemVars;
 	void reinitialize(void);
-	virtual void syncSoundSettings();
 
 	uint32 _features;
 protected:
-	int go();
-	int init();
+	// Engine APIs
+	virtual int init();
+	virtual int go();
+	virtual bool hasFeature(EngineFeature f) const;
+	virtual void syncSoundSettings();
+
 private:
 	void delay(int32 amount);
 

@@ -92,10 +92,14 @@ public:
 
 bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave);
+}
+
+bool Sword2::Sword2Engine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL);
 }
 
 GameList Sword2MetaEngine::getSupportedGames() const {

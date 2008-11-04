@@ -106,9 +106,13 @@ public:
 
 bool SwordMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup);
+}
+
+bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL);
 }
 
 GameList SwordMetaEngine::getSupportedGames() const {

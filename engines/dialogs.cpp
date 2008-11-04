@@ -99,13 +99,11 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 
 	_loadButton = new GUI::ButtonWidget(this, "GlobalMenu.Load", "Load", kLoadCmd, 'L');
 	// TODO: setEnabled -> setVisible
-	_loadButton->setEnabled(_engine->hasFeature(Engine::kSupportsListSaves) && 
-							_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
+	_loadButton->setEnabled(_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
  
 	_saveButton = new GUI::ButtonWidget(this, "GlobalMenu.Save", "Save", kSaveCmd, 'S');
 	// TODO: setEnabled -> setVisible
-	_saveButton->setEnabled(_engine->hasFeature(Engine::kSupportsListSaves) && 
-							_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
+	_saveButton->setEnabled(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Options", "Options", kOptionsCmd, 'O');
 
@@ -197,12 +195,10 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 void MainMenuDialog::reflowLayout() {
-	if (_engine->hasFeature(Engine::kSupportsListSaves)) {
-		if (_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime)) 
-			_loadButton->setEnabled(_engine->canLoadGameStateCurrently());
-		if (_engine->hasFeature(Engine::kSupportsSavingDuringRuntime))
-			_saveButton->setEnabled(_engine->canSaveGameStateCurrently());
-	}
+	if (_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime)) 
+		_loadButton->setEnabled(_engine->canLoadGameStateCurrently());
+	if (_engine->hasFeature(Engine::kSupportsSavingDuringRuntime))
+		_saveButton->setEnabled(_engine->canSaveGameStateCurrently());
 
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowGlobalMenuLogo", 0) == 1 && g_gui.theme()->supportsImages()) {

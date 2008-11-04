@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
@@ -80,10 +78,14 @@ const char *QueenMetaEngine::getCopyright() const {
 
 bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave);
+}
+
+bool Queen::QueenEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL);
 }
 
 GameList QueenMetaEngine::getSupportedGames() const {

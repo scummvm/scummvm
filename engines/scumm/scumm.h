@@ -447,6 +447,8 @@ public:
 	virtual int go();
 	virtual void errorString(const char *buf_input, char *buf_output);
 	virtual GUI::Debugger *getDebugger();
+	virtual bool hasFeature(EngineFeature f) const;
+	virtual void syncSoundSettings();
 	virtual void pauseEngineIntern(bool pause);
 
 protected:
@@ -462,7 +464,6 @@ protected:
 	virtual void loadLanguageBundle() {}
 	void loadCJKFont();
 	void setupMusic(int midi);
-	virtual void syncSoundSettings();
 	void setTalkDelay(int talkdelay);
 	int getTalkDelay();
 

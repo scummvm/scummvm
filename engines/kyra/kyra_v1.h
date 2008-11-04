@@ -114,9 +114,6 @@ public:
 	KyraEngine_v1(OSystem *system, const GameFlags &flags);
 	virtual ~KyraEngine_v1();
 
-	::GUI::Debugger *getDebugger();
-
-	virtual void pauseEngineIntern(bool pause);
 
 	uint8 game() const { return _flags.gameID; }
 	const GameFlags &gameFlags() const { return _flags; }
@@ -170,8 +167,11 @@ public:
 	virtual void delayWithTicks(int ticks);
 
 protected:
-	virtual int go() = 0;
+	// Engine APIs
 	virtual int init();
+	virtual ::GUI::Debugger *getDebugger();
+	virtual bool hasFeature(EngineFeature f) const;
+	virtual void pauseEngineIntern(bool pause);
 
 	// intern
 	Resource *_res;

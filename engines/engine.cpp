@@ -286,27 +286,14 @@ bool Engine::shouldQuit() const {
 	return (_eventMan->shouldQuit() || _eventMan->shouldRTL());
 }
 
-bool Engine::hasFeature(EngineFeature f) {
-	// TODO: Get rid of this hack!!!
-	if (f != kSupportsRTL && f != kSupportsListSaves &&
-		f != kSupportsLoadingDuringRuntime &&
-		f != kSupportsSavingDuringRuntime)
-		return false;
+/*
+EnginePlugin *Engine::getMetaEnginePlugin() const {
 
 	const EnginePlugin *plugin = 0;
 	Common::String gameid = ConfMan.get("gameid");
 	gameid.toLowercase();
 	EngineMan.findGame(gameid, &plugin);
-	assert(plugin);
-	if (f == kSupportsRTL)
-		return (*plugin)->hasFeature(MetaEngine::kSupportsRTL);
-	else if (f == kSupportsListSaves)
-		return (*plugin)->hasFeature(MetaEngine::kSupportsListSaves);
-	else if (f == kSupportsLoadingDuringRuntime)
-		return (*plugin)->hasFeature(MetaEngine::kSupportsLoadingDuringRuntime);
-	else if (f == kSupportsSavingDuringRuntime)
-		return (*plugin)->hasFeature(MetaEngine::kSupportsSavingDuringRuntime);
-	else
-		return false;
+	return plugin;
 }
 
+*/

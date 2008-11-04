@@ -69,10 +69,12 @@ public:
 	~LureEngine();
 	static LureEngine &getReference();
 
+	// Engine APIs
 	virtual int init();
 	virtual int go();
-	virtual void pauseEngineIntern(bool pause);
+	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
+	virtual void pauseEngineIntern(bool pause);
 
 	Disk &disk() { return *_disk; }
 
