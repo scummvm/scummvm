@@ -87,10 +87,6 @@ ArjFile::~ArjFile() {
 
 	for (uint i = 0; i < _headers.size(); i++)
 		delete _headers[i];
-
-	_headers.clear();
-	_fileMap.clear();
-	_archMap.clear();
 }
 
 void ArjFile::registerArchive(const String &filename) {
