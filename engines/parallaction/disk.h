@@ -125,6 +125,7 @@ protected:
 protected:
 	void errorFileNotFound(const char *s);
 	Common::SeekableReadStream *openFile(const char *filename);
+	Common::SeekableReadStream *tryOpenFile(const char *filename);
 
 public:
 	Disk_ns(Parallaction *vm);
@@ -148,6 +149,8 @@ private:
 
 protected:
 	Gfx	 *_gfx;
+	Common::SeekableReadStream *tryOpenArchivedFile(const char* name);
+	Common::SeekableReadStream *openArchivedFile(const char* name);
 
 public:
 	DosDisk_ns(Parallaction *vm);
@@ -172,12 +175,12 @@ public:
 class AmigaDisk_ns : public Disk_ns {
 
 protected:
-	Cnv* makeCnv(Common::SeekableReadStream &stream);
-	Frames* makeStaticCnv(Common::SeekableReadStream &stream);
+	Cnv* makeCnv(Common::SeekableReadStream *stream, bool disposeStream);
 	void patchFrame(byte *dst, byte *dlta, uint16 bytesPerPlane, uint16 height);
 	void unpackFrame(byte *dst, byte *src, uint16 planeSize);
 	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height);
-	Common::SeekableReadStream *openArchivedFile(const char* name, bool errorOnFileNotFound = false);
+	Common::SeekableReadStream *tryOpenArchivedFile(const char* name);
+	Common::SeekableReadStream *openArchivedFile(const char* name);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
 	void loadMask(BackgroundInfo& info, const char *name);
 	void loadPath(BackgroundInfo& info, const char *name);
