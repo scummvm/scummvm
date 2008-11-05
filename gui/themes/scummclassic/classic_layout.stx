@@ -105,7 +105,7 @@
 						height = '20'
 				/>
 			</layout>
-			<space size = '12'/>
+			<space size = '4'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'QuitButton' 
 						height = '20'

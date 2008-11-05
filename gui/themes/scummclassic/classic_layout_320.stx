@@ -60,7 +60,7 @@
 				size = '-1, Globals.Line.Height'
 		/>
 		<widget name = 'ListWidget'
-				padding = '5, 0, 8, 0'
+				padding = '5, 0, 0, 0'
 		/>
 		<widget name = 'PopUpWidget'
 				padding = '7, 5, 0, 0'
@@ -101,7 +101,6 @@
 						height = '12'
 				/>
 			</layout>
-			<space size = '4'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'QuitButton' 
 						height = '12'
