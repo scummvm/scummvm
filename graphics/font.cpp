@@ -827,7 +827,7 @@ void Font::drawString(Surface *dst, const Common::String &s, int x, int y, int w
 	}
 
 	if (align == kTextAlignCenter)
-		x = x + (w - width - 1)/2;
+		x = x + (w - width)/2;
 	else if (align == kTextAlignRight)
 		x = x + w - width;
 	x += deltax;
