@@ -1013,7 +1013,7 @@
 "height = 'Globals.Line.Height' "
 "/> "
 "<widget name = 'List'/> "
-"<layout type = 'horizontal' padding = '0, 0, 16, 0'> "
+"<layout type = 'horizontal' padding = '0, 0, 8, 0'> "
 "<widget name = 'Up' "
 "type = 'Button' "
 "/> "
