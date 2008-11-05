@@ -766,7 +766,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
 MusicDevices TownsEmuMusicPlugin::getDevices() const {
@@ -775,10 +775,10 @@ MusicDevices TownsEmuMusicPlugin::getDevices() const {
 	return devices;
 }
 
-PluginError TownsEmuMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+Common::Error TownsEmuMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_YM2612(mixer);
 
-	return kNoError;
+	return Common::kNoError;
 }
 
 MidiDriver *MidiDriver_YM2612_create(Audio::Mixer *mixer) {

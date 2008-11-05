@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
@@ -115,7 +113,7 @@ public:
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const Common::FSList &fslist) const;	
 
-	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
 	virtual SaveStateList listSaves(const char *target) const;
 };
@@ -203,10 +201,10 @@ GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 	return detectedGames;
 }
 
-PluginError SkyMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error SkyMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 	*engine = new Sky::SkyEngine(syst);
-	return kNoError;
+	return Common::kNoError;
 }
 
 SaveStateList SkyMetaEngine::listSaves(const char *target) const {

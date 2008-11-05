@@ -132,18 +132,18 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 
 	// Create the game engine
 	Engine *engine = 0;
-	PluginError err = (*plugin)->createInstance(&system, &engine);
-	if (!engine || err != kNoError) {
+	Common::Error err = (*plugin)->createInstance(&system, &engine);
+	if (!engine || err != Common::kNoError) {
 		// TODO: Show an error dialog or so?
 		// TODO: Also take 'err' into consideration...
 		//GUI::MessageDialog alert("ScummVM could not find any game in the specified directory!");
 		//alert.runModal();
 		const char *errMsg = 0;
 		switch (err) {
-		case kInvalidPathError:
+		case Common::kInvalidPathError:
 			errMsg = "Invalid game path";
 			break;
-		case kNoGameDataFoundError:
+		case Common::kNoGameDataFoundError:
 			errMsg = "Unable to locate game data";
 			break;
 		default:

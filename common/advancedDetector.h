@@ -201,7 +201,7 @@ public:
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const FSList &fslist) const;
-	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
 	// To be provided by subclasses
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const = 0;

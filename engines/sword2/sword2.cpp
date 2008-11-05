@@ -87,7 +87,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual void removeSaveState(const char *target, int slot) const;
 
-	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 };
 
 bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -211,14 +211,14 @@ void Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(filename.c_str());
 }
 
-PluginError Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(syst);
 	assert(engine);
 
 	Common::FSList fslist;
 	Common::FSNode dir(ConfMan.get("path"));
 	if (!dir.getChildren(fslist, Common::FSNode::kListAll)) {
-		return kInvalidPathError;
+		return Common::kInvalidPathError;
 	}
 
 	// Invoke the detector
@@ -228,11 +228,11 @@ PluginError Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) con
 	for (uint i = 0; i < detectedGames.size(); i++) {
 		if (detectedGames[i].gameid() == gameid) {
 			*engine = new Sword2::Sword2Engine(syst);
-			return kNoError;
+			return Common::kNoError;
 		}
 	}
 
-	return kNoGameDataFoundError;
+	return Common::kNoGameDataFoundError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD2)

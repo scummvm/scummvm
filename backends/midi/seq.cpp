@@ -184,7 +184,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
 MusicDevices SeqMusicPlugin::getDevices() const {
@@ -195,10 +195,10 @@ MusicDevices SeqMusicPlugin::getDevices() const {
 	return devices;
 }
 
-PluginError SeqMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+Common::Error SeqMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_SEQ();
 
-	return kNoError;
+	return Common::kNoError;
 }
 
 MidiDriver *MidiDriver_SEQ_create(Audio::Mixer *mixer) {

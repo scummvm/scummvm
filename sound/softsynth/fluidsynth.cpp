@@ -230,7 +230,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
 MusicDevices FluidSynthMusicPlugin::getDevices() const {
@@ -239,7 +239,7 @@ MusicDevices FluidSynthMusicPlugin::getDevices() const {
 	return devices;
 }
 
-PluginError FluidSynthMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+Common::Error FluidSynthMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_FluidSynth(mixer);
 
 	return kNoError;

@@ -682,7 +682,7 @@ public:
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 	
-	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -765,7 +765,7 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
  *
  * This is heavily based on our MD5 detection scheme.
  */
-PluginError ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(syst);
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
@@ -792,7 +792,7 @@ PluginError ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	Common::FSList fslist;
 	Common::FSNode dir(ConfMan.get("path"));
 	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly)) {
-		return kInvalidPathError;
+		return Common::kInvalidPathError;
 	}
 
 	// Invoke the detector, but fixed to the specified gameid.
@@ -801,7 +801,7 @@ PluginError ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 
 	// Unable to locate game data
 	if (results.empty()) {
-		return kNoGameDataFoundError;
+		return Common::kNoGameDataFoundError;
 	}
 
 	// No unique match found. If a platform override is present, try to
@@ -943,7 +943,7 @@ PluginError ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 		error("Engine_SCUMM_create(): Unknown version of game engine");
 	}
 
-	return kNoError;
+	return Common::kNoError;
 }
 
 const char *ScummMetaEngine::getName() const {

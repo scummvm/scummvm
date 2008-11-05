@@ -495,7 +495,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
 MusicDevices MT32EmuMusicPlugin::getDevices() const {
@@ -504,10 +504,10 @@ MusicDevices MT32EmuMusicPlugin::getDevices() const {
 	return devices;
 }
 
-PluginError MT32EmuMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+Common::Error MT32EmuMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_MT32(mixer);
 
-	return kNoError;
+	return Common::kNoError;
 }
 
 MidiDriver *MidiDriver_MT32_create(Audio::Mixer *mixer) {

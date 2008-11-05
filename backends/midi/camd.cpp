@@ -177,7 +177,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
 MusicDevices CamdMusicPlugin::getDevices() const {
@@ -188,10 +188,10 @@ MusicDevices CamdMusicPlugin::getDevices() const {
 	return devices;
 }
 
-PluginError CamdMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+Common::Error CamdMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_CAMD();
 
-	return kNoError;
+	return Common::kNoError;
 }
 
 MidiDriver *MidiDriver_CAMD_create(Audio::Mixer *mixer) {

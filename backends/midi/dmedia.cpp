@@ -189,7 +189,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
 MusicDevices DMediaMusicPlugin::getDevices() const {
@@ -200,10 +200,10 @@ MusicDevices DMediaMusicPlugin::getDevices() const {
 	return devices;
 }
 
-PluginError DMediaMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+Common::Error DMediaMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_DMEDIA();
 
-	return kNoError;
+	return Common::kNoError;
 }
 
 MidiDriver *MidiDriver_DMEDIA_create(Audio::Mixer *mixer) {

@@ -75,9 +75,9 @@ public:
 	 * @param syst	Pointer to the global OSystem object
 	 * @param engine	Pointer to a pointer which the MetaEngine sets to
 	 *					the newly create Engine, or 0 in case of an error
-	 * @return		a PluginError describing the error which occurred, or kNoError
+	 * @return		a Common::Error describing the error which occurred, or kNoError
 	 */
-	virtual PluginError createInstance(OSystem *syst, Engine **engine) const = 0;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const = 0;
 
 	/**
 	 * Return a list of all save states associated with the given target.

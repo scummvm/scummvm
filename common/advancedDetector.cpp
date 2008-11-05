@@ -220,7 +220,7 @@ GameList AdvancedMetaEngine::detectGames(const FSList &fslist) const {
 	return detectedGames;
 }
 
-PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 	upgradeTargetIfNecessary(params);
 

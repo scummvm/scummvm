@@ -525,7 +525,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
 MusicDevices TimidityMusicPlugin::getDevices() const {
@@ -534,10 +534,10 @@ MusicDevices TimidityMusicPlugin::getDevices() const {
 	return devices;
 }
 
-PluginError TimidityMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+Common::Error TimidityMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_TIMIDITY();
 
-	return kNoError;
+	return Common::kNoError;
 }
 
 MidiDriver *MidiDriver_TIMIDITY_create(Audio::Mixer *mixer) {

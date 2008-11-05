@@ -65,7 +65,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual void removeSaveState(const char *target, int slot) const;
 
-	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 };
 
 const char *QueenMetaEngine::getName() const {
@@ -174,10 +174,10 @@ void QueenMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(filename.c_str());
 }
 
-PluginError QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 	*engine = new Queen::QueenEngine(syst);
-	return kNoError;
+	return Common::kNoError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(QUEEN)

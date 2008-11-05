@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "sword1/sword1.h"
 
 #include "base/plugins.h"
@@ -101,7 +100,7 @@ public:
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
 
-	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 };
 
 bool SwordMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -195,10 +194,10 @@ GameList SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 	return detectedGames;
 }
 
-PluginError SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 	*engine = new SwordEngine(syst);
-	return kNoError;
+	return Common::kNoError;
 }
 
 SaveStateList SwordMetaEngine::listSaves(const char *target) const {

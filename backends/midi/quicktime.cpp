@@ -274,7 +274,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
 };
 
 MusicDevices QuickTimeMusicPlugin::getDevices() const {
@@ -285,10 +285,10 @@ MusicDevices QuickTimeMusicPlugin::getDevices() const {
 	return devices;
 }
 
-PluginError QuickTimeMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+Common::Error QuickTimeMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_QT();
 
-	return kNoError;
+	return Common::kNoError;
 }
 
 MidiDriver *MidiDriver_QT_create(Audio::Mixer *mixer) {

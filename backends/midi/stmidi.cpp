@@ -119,7 +119,7 @@ public:
         }
 
         MusicDevices getDevices() const;
-        PluginError createInstance(Audio::Mixer *mixer, MidiDriver **mididriver)
+        Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver)
  const;
 };
 
@@ -131,10 +131,10 @@ MusicDevices StMidiMusicPlugin::getDevices() const {
         return devices;
 }
 
-PluginError StMidiMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+Common::Error StMidiMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
         *mididriver = new MidiDriver_STMIDI();
 
-        return kNoError;
+        return Common::kNoError;
 }
 
 MidiDriver *MidiDriver_STMIDI_create(Audio::Mixer *mixer) {

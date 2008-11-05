@@ -32,6 +32,8 @@
 
 /**
  * Errors used in the SaveFileManager class.
+ *
+ * @todo	Merge this partially into Common::Error. We only need a small subset of these errors, though.
  */
 enum SFMError {
 	SFM_NO_ERROR,			//Default state, indicates no error has been recorded
@@ -44,17 +46,26 @@ enum SFMError {
 	SFM_DIR_ROFS			//mkdir()::EROFS: The parent directory resides on a read-only file system
 };
 
+namespace Common {
+
 /**
  * Error codes which may be reported by plugins under various circumstances.
- * @todo Turn this into a global 'ErrorCode' enum used by all of ScummVM ?
+ *
+ * @todo Clarify the names, and add doxygen comments to each error.
+ * @todo Add more error values, e.g. for load/save errors. Use those in SaveFileManager,
+ *       (Meta)Engine save/load API, Engine::init() and Engine::go(), ...
+ * @todo Maybe add an API which keeps track of an error message,
+ *       similiar to SDL_SetError/SDL_GetError/SDL_ClearError?
  */
-enum PluginError {
-	kNoError = 0,	// No error occured
-	kInvalidPathError,
-	kNoGameDataFoundError,
-	kUnsupportedGameidError,
+enum Error {
+	kNoError = 0,				//!< No error occured
+	kInvalidPathError,			//!< Engine initialization: Invalid game path was passed
+	kNoGameDataFoundError,		//!< Engine initialization: No game data was found in the specified location
+	kUnsupportedGameidError,	//!< Engine initialization: Gameid not supported by this (Meta)Engine
 
-	kUnknownError		// Catch-all error, used if no other error code matches
+	kUnknownError				//!< Catch-all error, used if no other error code matches
 };
+
+} // End of namespace Common
 
 #endif //COMMON_ERROR_H
