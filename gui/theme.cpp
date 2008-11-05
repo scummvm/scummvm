@@ -156,7 +156,7 @@ bool Theme::themeConfigUseable(const Common::FSNode &node, Common::String &theme
 	Common::File stream;
 	bool foundHeader = false;
 		
-	if (node.getName().hasSuffix(".zip")) {
+	if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
 #ifdef USE_ZLIB
 		Common::ZipArchive zipArchive(node);
 		if (zipArchive.hasFile("THEMERC")) {
