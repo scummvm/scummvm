@@ -259,7 +259,7 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 			// FIXME: The in-game dialog shows the first save slot as 1, not 0,
 			// but if we change the numbering here, the launcher won̈́t set
 			// "save_slot" correctly.
-			saveList.push_back(SaveStateDescriptor(slotNum, saveDesc, *file));
+			saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
 			file++;
 		}
 	}

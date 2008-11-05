@@ -197,7 +197,7 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 				for (int i = 0; i < 3; i++)
 					in->readUint32BE();
 				in->read(saveDesc, SAVE_TITLE_SIZE);
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc, *file));
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
 				delete in;
 			}
 		}

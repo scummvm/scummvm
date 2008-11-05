@@ -184,7 +184,7 @@ SaveStateList ToucheMetaEngine::listSaves(const char *target) const {
 				in->readUint16LE();
 				in->readUint16LE();
 				in->read(saveDesc, Touche::kGameStateDescriptionLen);
-				saveList.push_back(SaveStateDescriptor(slotNum, Common::String(saveDesc), *file));
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
 				delete in;
 			}
 		}
@@ -205,7 +205,7 @@ SaveStateList ToucheMetaEngine::listSaves(const char *target) const {
 				in->readUint16LE();
 				in->readUint16LE();
 				in->read(saveDesc, Touche::kGameStateDescriptionLen);
-				saveList.push_back(SaveStateDescriptor(slotNum, Common::String(saveDesc), *file));
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
 				delete in;
 			}
 		}

@@ -1151,7 +1151,7 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 					if (slotNum == 0 && header.gameID == Kyra::GI_KYRA3)
 						header.description = "New Game";
 
-					saveList.push_back(SaveStateDescriptor(slotNum, header.description, *file));
+					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
 				}
 				delete in;
 			}
@@ -1209,7 +1209,7 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 		delete in;
 		
 		if (error == Kyra::KyraEngine_v1::kRSHENoError) {
-			SaveStateDescriptor desc(slot, header.description, filename);
+			SaveStateDescriptor desc(slot, header.description);
 
 			desc.setDeletableFlag(slot != 0);
 			desc.setThumbnail(header.thumbnail);

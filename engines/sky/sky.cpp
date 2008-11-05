@@ -239,7 +239,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 	// Slot 0 is the autosave, if it exists.
 	// TODO: Check for the existence of the autosave -- but this require us
 	// to know which SKY variant we are looking at.
-	saveList.insert_at(0, SaveStateDescriptor(0, "*AUTOSAVE*", ""));
+	saveList.insert_at(0, SaveStateDescriptor(0, "*AUTOSAVE*"));
 
 	// Prepare the list of savestates by looping over all matching savefiles
 	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
@@ -250,7 +250,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 			int slotNum = atoi(ext.c_str());
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-				saveList.push_back(SaveStateDescriptor(slotNum+1, savenames[slotNum], *file));
+				saveList.push_back(SaveStateDescriptor(slotNum+1, savenames[slotNum]));
 				delete in;
 			}
 		}

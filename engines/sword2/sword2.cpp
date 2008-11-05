@@ -192,7 +192,7 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 			if (in) {
 				in->readUint32LE();
 				in->read(saveDesc, SAVE_DESCRIPTION_LEN);
-				saveList.push_back(SaveStateDescriptor(slotNum, Common::String(saveDesc), *file));
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
 				delete in;
 			}
 		}

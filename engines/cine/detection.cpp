@@ -590,7 +590,7 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 				}
 			} while (ch >= 32 && !in->eos());
 			if (saveDesc[0] != 0) {
-				saveList.push_back(SaveStateDescriptor(slotNum, Common::String(saveDesc), *file));
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
 				file++;
 			}
 		} while (!in->eos());

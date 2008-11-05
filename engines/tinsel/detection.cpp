@@ -359,9 +359,7 @@ SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 
 	SaveStateList saveList;
 	for (int i = 0; i < numStates; i++) {
-		SaveStateDescriptor sd(i,
-				Tinsel::ListEntry(i, Tinsel::LE_DESC),
-				Tinsel::ListEntry(i, Tinsel::LE_NAME));
+		SaveStateDescriptor sd(i, Tinsel::ListEntry(i, Tinsel::LE_DESC));
 		// TODO: Also add savedFiles[i].dateTime to the SaveStateDescriptor
 		saveList.push_back(sd);
 	}

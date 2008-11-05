@@ -102,7 +102,7 @@ public:
 /**
  * A hashmap describing details about a given save state.
  * TODO
- * Guaranteed to contain save_slot, filename and description values.
+ * Guaranteed to contain save_slot and description values.
  * Additional ideas: Playtime, creation date, thumbnail, ...
  */
 class SaveStateDescriptor : public Common::StringMap {
@@ -113,21 +113,18 @@ public:
 	SaveStateDescriptor() : _thumbnail() {
 		setVal("save_slot", "-1");	// FIXME: default to 0 (first slot) or to -1 (invalid slot) ?
 		setVal("description", "");
-		setVal("filename", "");
 	}
 
-	SaveStateDescriptor(int s, const Common::String &d, const Common::String &f) : _thumbnail() {
+	SaveStateDescriptor(int s, const Common::String &d) : _thumbnail() {
 		char buf[16];
 		sprintf(buf, "%d", s);
 		setVal("save_slot", buf);
 		setVal("description", d);
-		setVal("filename", f);
 	}
 
-	SaveStateDescriptor(const Common::String &s, const Common::String &d, const Common::String &f) : _thumbnail() {
+	SaveStateDescriptor(const Common::String &s, const Common::String &d) : _thumbnail() {
 		setVal("save_slot", s);
 		setVal("description", d);
-		setVal("filename", f);
 	}
 
 	/** The saveslot id, as it would be passed to the "-x" command line switch. */
@@ -141,12 +138,6 @@ public:
 
 	/** A human readable description of the save state (read-only variant). */
 	const Common::String &description() const { return getVal("description"); }
-
-	/** The filename of the savestate, for use with the SaveFileManager API. */
-	Common::String &filename() { return getVal("filename"); }
-
-	/** The filename of the savestate, for use with the SaveFileManager API (read-only variant). */
-	const Common::String &filename() const { return getVal("filename"); }
 
 	/** Optional entries only included when querying via MetaEngine::querySaveMetaInfo */
 

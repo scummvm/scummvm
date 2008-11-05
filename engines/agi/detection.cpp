@@ -2184,7 +2184,7 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 				uint32 type = in->readUint32BE();
 				if (type == AGIflag)
 					in->read(saveDesc, 31);
-				saveList.push_back(SaveStateDescriptor(slotNum, Common::String(saveDesc), *file));
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
 				delete in;
 			}
 		}
