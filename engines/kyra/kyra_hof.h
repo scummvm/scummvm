@@ -292,8 +292,8 @@ protected:
 	void seq_init();
 	void seq_uninit();
 
-	int init();
-	int go();
+	Common::Error init();
+	Common::Error go();
 
 	Screen_HoF *_screen;
 	TextDisplayer_HoF *_text;

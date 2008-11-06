@@ -309,7 +309,7 @@ SwordEngine::~SwordEngine() {
 	delete _resMan;
 }
 
-int SwordEngine::init() {
+Common::Error SwordEngine::init() {
 
 	_system->beginGFXTransaction();
 		initCommonGFX(true);
@@ -377,7 +377,7 @@ int SwordEngine::init() {
 	_mouse->initialize();
 	_control = new Control(_saveFileMan, _resMan, _objectMan, _system, _mouse, _sound, _music);
 
-	return 0;
+	return Common::kNoError;
 }
 
 void SwordEngine::reinitialize(void) {
@@ -719,7 +719,7 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 #endif
 }
 
-int SwordEngine::go() {
+Common::Error SwordEngine::go() {
 	uint16 startPos = ConfMan.getInt("boot_param");
 	if (startPos) {
 		_logic->startPositions(startPos);
@@ -757,7 +757,7 @@ int SwordEngine::go() {
 		}
 	}
 
-	return 0;
+	return Common::kNoError;
 }
 
 void SwordEngine::checkCd(void) {

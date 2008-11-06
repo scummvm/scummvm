@@ -528,7 +528,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	syst->getEventManager()->registerRandomSource(_rnd, "agos");
 }
 
-int AGOSEngine::init() {
+Common::Error AGOSEngine::init() {
 	if (getGameId() == GID_DIMP) {
 		_screenWidth = 496;
 		_screenHeight = 400;
@@ -663,7 +663,7 @@ int AGOSEngine::init() {
 	if (gDebugLevel == 5)
 		_startVgaScript = true;
 
-	return 0;
+	return Common::kNoError;
 }
 
 static const uint16 initialVideoWindows_Simon[20] = {
@@ -958,7 +958,7 @@ void AGOSEngine::pause() {
 	}
 }
 
-int AGOSEngine::go() {
+Common::Error AGOSEngine::go() {
 	loadGamePcFile();
 
 	addTimeEvent(0, 1);
@@ -1023,7 +1023,7 @@ int AGOSEngine::go() {
 		delay(100);
 	}
 
-	return 0;
+	return Common::kNoError;
 }
 
 

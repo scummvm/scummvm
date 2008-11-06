@@ -219,7 +219,7 @@ void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 	}
 }
 
-int KyraEngine_HoF::init() {
+Common::Error KyraEngine_HoF::init() {
 	_screen = new Screen_HoF(this, _system);
 	assert(_screen);
 	_screen->setResolution();
@@ -261,7 +261,7 @@ int KyraEngine_HoF::init() {
 
 	// No mouse display in demo
 	if (_flags.isDemo && !_flags.isTalkie)
-		return 0;
+		return Common::kNoError;
 
 	_res->exists("PWGMOUSE.SHP", true);
 	uint8 *shapes = _res->fileData("PWGMOUSE.SHP", 0);
@@ -273,10 +273,10 @@ int KyraEngine_HoF::init() {
 	delete[] shapes;
 
 	_screen->setMouseCursor(0, 0, getShapePtr(0));
-	return 0;
+	return Common::kNoError;
 }
 
-int KyraEngine_HoF::go() {
+Common::Error KyraEngine_HoF::go() {
 	if (_gameToLoad == -1) {
 		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 			seq_showStarcraftLogo();
@@ -326,7 +326,7 @@ int KyraEngine_HoF::go() {
 			seq_playSequences(kSequenceFunters, kSequenceFrash);
 	}
 
-	return 0;
+	return Common::kNoError;
 }
 
 void KyraEngine_HoF::startup() {

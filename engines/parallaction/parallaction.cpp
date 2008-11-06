@@ -109,7 +109,7 @@ Parallaction::~Parallaction() {
 }
 
 
-int Parallaction::init() {
+Common::Error Parallaction::init() {
 
 	_engineFlags = 0;
 	_objectsNames = NULL;
@@ -145,7 +145,7 @@ int Parallaction::init() {
 
 	setupBalloonManager();
 
-	return 0;
+	return Common::kNoError;
 }
 
 void Parallaction::updateView() {

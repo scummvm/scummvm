@@ -362,8 +362,8 @@ public:
 	virtual ~ToucheEngine();
 
 	// Engine APIs
-	virtual int init();
-	virtual int go();
+	virtual Common::Error init();
+	virtual Common::Error go();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 
@@ -497,8 +497,8 @@ protected:
 
 	void saveGameStateData(Common::WriteStream *stream);
 	void loadGameStateData(Common::ReadStream *stream);
-	int saveGameState(int num, const char *description);
-	int loadGameState(int num);
+	Common::Error saveGameState(int num, const char *description);
+	Common::Error loadGameState(int num);
 	void readGameStateDescription(int num, char *description, int len);
 	void generateGameStateFileName(int num, char *dst, int len, bool prefixOnly = false) const;
 	int getGameStateFileSlot(const char *filename) const;

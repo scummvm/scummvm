@@ -488,8 +488,8 @@ class SagaEngine : public Engine {
 
 public:
 	// Engine APIs
-	virtual int init();
-	virtual int go();
+	virtual Common::Error init();
+	virtual Common::Error go();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 
@@ -652,7 +652,7 @@ public:
 	const Common::Rect &getDisplayClip() const { return _displayClip;}
 	int getDisplayWidth() const;
 	int getDisplayHeight() const;
-	int loadGameState(int slot);
+	Common::Error loadGameState(int slot);
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 	const GameDisplayInfo &getDisplayInfo();

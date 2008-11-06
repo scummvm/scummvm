@@ -821,21 +821,21 @@ ScummEngine_vCUPhe::~ScummEngine_vCUPhe() {
 	delete _cupPlayer;
 }
 
-int ScummEngine_vCUPhe::init() {
+Common::Error ScummEngine_vCUPhe::init() {
 	_system->beginGFXTransaction();
 		_system->initSize(CUP_Player::kDefaultVideoWidth, CUP_Player::kDefaultVideoHeight);
 		initCommonGFX(true);
 	_system->endGFXTransaction();
 
-	return 0;
+	return Common::kNoError;
 }
 
-int ScummEngine_vCUPhe::go() {
+Common::Error ScummEngine_vCUPhe::go() {
 	if (_cupPlayer->open(_filenamePattern.pattern)) {
 		_cupPlayer->play();
 		_cupPlayer->close();
 	}
-	return 0;
+	return Common::kNoError;
 }
 
 void ScummEngine_vCUPhe::parseEvents() {
@@ -907,7 +907,7 @@ ScummEngine_v8::~ScummEngine_v8() {
 #pragma mark --- Initialization ---
 #pragma mark -
 
-int ScummEngine::init() {
+Common::Error ScummEngine::init() {
 
 	// Add default file directories.
 	if (((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST)) && (_game.version <= 4)) {
@@ -1106,7 +1106,7 @@ int ScummEngine::init() {
 
 	syncSoundSettings();
 
-	return 0;
+	return Common::kNoError;
 }
 
 void ScummEngine::setupScumm() {
@@ -1712,7 +1712,7 @@ int ScummEngine::getTalkDelay() {
 #pragma mark --- Main loop ---
 #pragma mark -
 
-int ScummEngine::go() {
+Common::Error ScummEngine::go() {
 	_engineStartTime = _system->getMillis() / 1000;
 
 	// If requested, load a save game instead of running the boot script
@@ -1763,7 +1763,7 @@ int ScummEngine::go() {
 		}
 	}
 
-	return 0;
+	return Common::kNoError;
 }
 
 void ScummEngine::waitForTimer(int msec_delay) {

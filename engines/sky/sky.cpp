@@ -349,7 +349,7 @@ void SkyEngine::handleKey(void) {
 	_keyPressed.reset();
 }
 
-int SkyEngine::go() {
+Common::Error SkyEngine::go() {
 
 	_keyPressed.reset();
 
@@ -428,10 +428,10 @@ int SkyEngine::go() {
 	_skyMusic->stopMusic();
 	ConfMan.flushToDisk();
 	delay(1500);
-	return 0;
+	return Common::kNoError;
 }
 
-int SkyEngine::init() {
+Common::Error SkyEngine::init() {
 	_system->beginGFXTransaction();
 		initCommonGFX(false);
 		_system->initSize(320, 200);
@@ -549,7 +549,7 @@ int SkyEngine::init() {
 	_skyMusic->setVolume(ConfMan.getInt("music_volume") >> 1);
 
 	_debugger = new Debugger(_skyLogic, _skyMouse, _skyScreen, _skyCompact);
-	return 0;
+	return Common::kNoError;
 }
 
 void SkyEngine::initItemList() {

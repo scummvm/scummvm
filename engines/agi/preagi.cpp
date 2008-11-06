@@ -189,7 +189,7 @@ PreAgiEngine::~PreAgiEngine() {
 }
 
 
-int PreAgiEngine::go() {
+Common::Error PreAgiEngine::go() {
 	setflag(fSoundOn, true);	// enable sound
 
 /*
@@ -227,7 +227,7 @@ FIXME (Fingolfin asks): Why are Mickey, Winnie and Troll standalone classes
 		error("Unknown preagi engine");
 		break;
 	}
-	return 0;
+	return Common::kNoError;
 }
 
 } // End of namespace Agi

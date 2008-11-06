@@ -312,8 +312,8 @@ public:
 	IgorEngine(OSystem *system, const DetectedGameVersion *dgv);
 	virtual ~IgorEngine();
 
-	virtual int init();
-	virtual int go();
+	virtual Common::Error init();
+	virtual Common::Error go();
 
 	void handleOptionsMenu_paintSave();
 	bool handleOptionsMenu_handleKeyDownSave(int key);
@@ -427,8 +427,8 @@ protected:
 	void dialogueReplyToQuestion(int x, int y, int r, int g, int b, int reply = 0);
 
 	void saveOrLoadGameState(TypeSerializer &typeSerializer);
-	int loadGameState(int slot);
-	int saveGameState(int slot);
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot);
 	void generateGameStateFileName(int num, char *dst, int len) const;
 
 	MidiPlayer *_midiPlayer;

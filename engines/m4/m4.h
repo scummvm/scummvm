@@ -107,12 +107,14 @@ FORCEINLINE long FixedDiv(long a, long b) { return (long)(((float)a / (float)b) 
 
 class M4Engine : public Engine {
 private:
-	int goMADS();
-	int goM4();
+	Common::Error goMADS();
+	Common::Error goM4();
 
 protected:
-	int init();
-	int go();
+	// Engine APIs
+	virtual Common::Error init();
+	virtual Common::Error go();
+
 	void shutdown();
 	
 	MidiPlayer *_midi;

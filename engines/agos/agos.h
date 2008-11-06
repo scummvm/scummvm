@@ -164,8 +164,8 @@ class AGOSEngine : public Engine {
 	friend class MoviePlayer;
 
 	// Engine APIs
-	virtual int init();
-	virtual int go();
+	virtual Common::Error init();
+	virtual Common::Error go();
 	virtual GUI::Debugger *getDebugger();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();

@@ -140,7 +140,7 @@ SagaEngine::~SagaEngine() {
 	delete _resource;
 }
 
-int SagaEngine::init() {
+Common::Error SagaEngine::init() {
 	_musicVolume = ConfMan.getInt("music_volume");
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
 	_readingSpeed = getTalkspeed();
@@ -156,7 +156,7 @@ int SagaEngine::init() {
 	// Detect game and open resource files
 	if (!initGame()) {
 		GUIErrorMessage("Error loading game resources.");
-		return FAILURE;
+		return Common::kUnknownError;
 	}
 
 	// Initialize engine modules
@@ -197,7 +197,7 @@ int SagaEngine::init() {
 	_music->setAdlib(adlib);
 	_render = new Render(this, _system);
 	if (!_render->initialized()) {
-		return FAILURE;
+		return Common::kUnknownError;
 	}
 
 	// Initialize system specific sound
@@ -232,10 +232,10 @@ int SagaEngine::init() {
 	if (getGameType() == GType_ITE)
 		_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
 
-	return SUCCESS;
+	return Common::kNoError;
 }
 
-int SagaEngine::go() {
+Common::Error SagaEngine::go() {
 	int msec = 0;
 
 	_previousTicks = _system->getMillis();
@@ -310,7 +310,7 @@ int SagaEngine::go() {
 		_system->delayMillis(10);
 	}
 
-	return 0;
+	return Common::kNoError;
 }
 
 void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength) {

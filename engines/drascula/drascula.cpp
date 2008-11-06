@@ -104,7 +104,7 @@ DrasculaEngine::~DrasculaEngine() {
 	freeTexts(_textd1);
 }
 
-int DrasculaEngine::init() {
+Common::Error DrasculaEngine::init() {
 	// Initialize backend
 	_system->beginGFXTransaction();
 	initCommonGFX(false);
@@ -170,15 +170,15 @@ int DrasculaEngine::init() {
 	*textName = 0;
 
 	if (!loadDrasculaDat())
-		return 1;
+		return Common::kUnknownError;
 
 	setupRoomsTable();
 	loadArchives();
 
-	return 0;
+	return Common::kNoError;
 }
 
-int DrasculaEngine::go() {
+Common::Error DrasculaEngine::go() {
 	currentChapter = 1; // values from 1 to 6 will start each part of game
 	loadedDifferentChapter = 0;
 
@@ -274,7 +274,7 @@ int DrasculaEngine::go() {
 		currentChapter++;
 	}
 
-	return 0;
+	return Common::kNoError;
 }
 
 void DrasculaEngine::endChapter() {

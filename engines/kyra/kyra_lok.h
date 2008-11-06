@@ -144,8 +144,8 @@ public:
 	const uint8 * const*palTable2() { return &_specialPalettes[29]; }
 
 protected:
-	virtual int go();
-	virtual int init();
+	virtual Common::Error go();
+	virtual Common::Error init();
 
 public:
 	// sequences

@@ -92,7 +92,7 @@ void KyraEngine_v1::pauseEngineIntern(bool pause) {
 	_timer->pause(pause);
 }
 
-int KyraEngine_v1::init() {
+Common::Error KyraEngine_v1::init() {
 	registerDefaultSettings();
 
 	// Setup mixer
@@ -186,7 +186,7 @@ int KyraEngine_v1::init() {
 	// Prevent autosave on game startup
 	_lastAutosave = _system->getMillis();
 
-	return 0;
+	return Common::kNoError;
 }
 
 KyraEngine_v1::~KyraEngine_v1() {

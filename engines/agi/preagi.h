@@ -37,7 +37,7 @@ class PreAgiEngine : public AgiBase {
 	int _gameId;
 
 protected:
-	int go();
+	Common::Error go();
 	void initialize();
 
 public:

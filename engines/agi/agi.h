@@ -696,7 +696,7 @@ struct StringData {
 class AgiBase : public ::Engine {
 protected:
 	// Engine API
-	virtual int init();
+	virtual Common::Error init();
 	virtual bool hasFeature(EngineFeature f) const;
 
 	virtual void initialize() = 0;
@@ -745,7 +745,7 @@ class AgiEngine : public AgiBase {
 
 protected:
 	// Engine APIs
-	virtual int go();
+	virtual Common::Error go();
 	virtual void syncSoundSettings();
 
 	void initialize();

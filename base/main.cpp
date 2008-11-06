@@ -126,13 +126,21 @@ static const EnginePlugin *detectPlugin() {
 }
 
 // TODO: specify the possible return values here
-static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::String &edebuglevels) {
-	// Query  the game data path, for messages
-	Common::String path = ConfMan.hasKey("path") ? ConfMan.get("path") : ".";
-
-	// Create the game engine
+static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const Common::String &edebuglevels) {
+	// Determine the game data path, for validation and error messages
+	Common::FSNode dir(ConfMan.get("path"));
+	Common::Error err = Common::kNoError;
 	Engine *engine = 0;
-	Common::Error err = (*plugin)->createInstance(&system, &engine);
+
+	// Verify that the game path refers to an actual directory
+	if (!(dir.exists() && dir.isDirectory()))
+		err = Common::kInvalidPathError;
+	
+	// Create the game engine
+	if (err == Common::kNoError)
+		err = (*plugin)->createInstance(&system, &engine);
+
+	// Check for errors
 	if (!engine || err != Common::kNoError) {
 		// TODO: Show an error dialog or so?
 		// TODO: Also take 'err' into consideration...
@@ -154,9 +162,9 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 			plugin->getName(),
 			errMsg,
 			ConfMan.getActiveDomainName().c_str(),
-			path.c_str()
+			dir.getPath().c_str()
 			);
-		return 0;
+		return err;
 	}
 
 	// Set the window caption to the game name
@@ -172,20 +180,10 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 	}
 
 	//
-	// Setup varios paths in the SearchManager
+	// Setup various paths in the SearchManager
 	//
-	Common::FSNode dir;
 
 	// Add the game path to the directory search list
-	//
-	// FIXME: at this moment, game path handling is being discussed in the mailing list,
-	// while Common::File is being reworked under the hood. After commit 34444, which
-	// changed the implementation of Common::File (specifically removing usage of fopen
-	// and fOpenNoCase, which implicitly supported backslashes in file names), some games
-	// stopped working. Example of this are the HE games which use subdirectories: Kirben
-	// found this issue on lost-win-demo at first. Thus, in commit 34450, searching the
-	// game path was made recursive as a temporary fix/workaround.
-	dir = Common::FSNode(path);
 	SearchMan.addDirectory(dir.getPath(), dir, 0, 4);
 
 	// Add extrapath (if any) to the directory search list
@@ -209,10 +207,10 @@ static int runGame(const EnginePlugin *plugin, OSystem &system, const Common::St
 
 	// Init the engine (this might change the screen parameters)
 	// TODO: We should specify what return values
-	int result = engine->init();
+	Common::Error result = engine->init();
 
 	// Run the game engine if the initialization was successful.
-	if (result == 0) {
+	if (result == Common::kNoError) {
 		result = engine->go();
 	} else {
 		// TODO: Set an error flag, notify user about the problem
@@ -306,10 +304,10 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, plugin);
 
 			// Try to run the game
-			int result = runGame(plugin, system, specialDebug);
+			Common::Error result = runGame(plugin, system, specialDebug);
 
 			// Did an error occur ?
-			if (result != 0) {
+			if (result != Common::kNoError) {
 				// TODO: Show an informative error dialog if starting the selected game failed.
 			}
 

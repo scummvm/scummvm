@@ -26,6 +26,7 @@
 #define ENGINES_ENGINE_H
 
 #include "common/scummsys.h"
+#include "common/error.h"
 #include "common/fs.h"
 #include "common/str.h"
 
@@ -127,17 +128,17 @@ public:
 
 	/**
 	 * Init the engine.
-	 * @return 0 for success, else an error code.
+	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual int init() = 0;
+	virtual Common::Error init() = 0;
 
 	/**
 	 * Start the main engine loop.
 	 * The return value is not yet used, but could indicate whether the user
 	 * wants to return to the launch or to fully quit ScummVM.
-	 * @return 0 for success, else an error code.
+	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual int go() = 0;
+	virtual Common::Error go() = 0;
 
 	/**
 	 * Prepare an error string, which is printed by the error() function.
@@ -168,11 +169,9 @@ public:
 	/** 
 	 * Load a game state.
 	 * @param slot	the slot from which a savestate should be loaded
-	 * @return returns 0 on success, anything else indicates failure
-	 *
-	 * @todo define proper error values
+	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual int loadGameState(int slot);
+	virtual Common::Error loadGameState(int slot);
 
 	/**
 	 * Indicates whether a game state can be loaded.
@@ -183,11 +182,9 @@ public:
 	 * Save a game state.
 	 * @param slot	the slot into which the savestate should be stored
 	 * @param desc	a description for the savestate, entered by the user
-	 * @return returns 0 on success, anything else indicates failure
-	 *
-	 * @todo define proper error values
+	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual int saveGameState(int slot, const char *desc);
+	virtual Common::Error saveGameState(int slot, const char *desc);
 
 	/**
 	 * Indicates whether a game state can be saved.

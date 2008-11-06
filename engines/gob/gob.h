@@ -191,8 +191,8 @@ private:
 	uint32 _pauseStart;
 
 	// Engine APIs
-	virtual int init();
-	virtual int go();
+	virtual Common::Error init();
+	virtual Common::Error go();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void pauseEngineIntern(bool pause);
 

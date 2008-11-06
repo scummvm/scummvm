@@ -70,8 +70,8 @@ public:
 	static LureEngine &getReference();
 
 	// Engine APIs
-	virtual int init();
-	virtual int go();
+	virtual Common::Error init();
+	virtual Common::Error go();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 	virtual void pauseEngineIntern(bool pause);

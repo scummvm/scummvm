@@ -42,7 +42,7 @@ const char *Parallaction_br::_partNames[] = {
 	"PART4"
 };
 
-int Parallaction_br::init() {
+Common::Error Parallaction_br::init() {
 
 	_screenWidth = 640;
 	_screenHeight = 400;
@@ -89,7 +89,7 @@ int Parallaction_br::init() {
 
 	Parallaction::init();
 
-	return 0;
+	return Common::kNoError;
 }
 
 Parallaction_br::~Parallaction_br() {
@@ -102,7 +102,7 @@ void Parallaction_br::callFunction(uint index, void* parm) {
 	(this->*_callables[index])(parm);
 }
 
-int Parallaction_br::go() {
+Common::Error Parallaction_br::go() {
 
 	bool splash = true;
 
@@ -127,7 +127,7 @@ int Parallaction_br::go() {
 		cleanupGame();
 	}
 
-	return 0;
+	return Common::kNoError;
 }
 
 

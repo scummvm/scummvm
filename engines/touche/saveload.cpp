@@ -316,7 +316,7 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	debug(0, "Loaded state, current episode %d", _currentEpisodeNum);
 }
 
-int ToucheEngine::saveGameState(int num, const char *description) {
+Common::Error ToucheEngine::saveGameState(int num, const char *description) {
 	bool saveOk = false;
 	char gameStateFileName[64];
 	generateGameStateFileName(num, gameStateFileName, 63);
@@ -337,10 +337,10 @@ int ToucheEngine::saveGameState(int num, const char *description) {
 		}
 		delete f;
 	}
-	return saveOk;
+	return saveOk ? Common::kNoError : Common::kUnknownError;
 }
 
-int ToucheEngine::loadGameState(int num) {
+Common::Error ToucheEngine::loadGameState(int num) {
 	bool loadOk = false;
 	char gameStateFileName[64];
 	generateGameStateFileName(num, gameStateFileName, 63);
@@ -360,7 +360,7 @@ int ToucheEngine::loadGameState(int num) {
 		}
 		delete f;
 	}
-	return loadOk ? 0 : 1;
+	return loadOk ? Common::kNoError : Common::kUnknownError;
 }
 
 void ToucheEngine::readGameStateDescription(int num, char *description, int len) {

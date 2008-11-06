@@ -138,14 +138,14 @@ MadeEngine::~MadeEngine() {
 	delete _music;
 }
 
-int MadeEngine::init() {
+Common::Error MadeEngine::init() {
 	// Initialize backend
 	_system->beginGFXTransaction();
 	initCommonGFX(false);
 	_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
-	return 0;
+	return Common::kNoError;
 }
 
 int16 MadeEngine::getTicks() {
@@ -244,7 +244,7 @@ void MadeEngine::handleEvents() {
 
 }
 
-int MadeEngine::go() {
+Common::Error MadeEngine::go() {
 
 	for (int i = 0; i < ARRAYSIZE(_timers); i++)
 		_timers[i] = -1;
@@ -297,7 +297,7 @@ int MadeEngine::go() {
 	_script->runScript(_dat->getMainCodeObjectIndex());
 #endif
 
-	return 0;
+	return Common::kNoError;
 }
 
 } // End of namespace Made

@@ -244,14 +244,14 @@ bool KyraEngine_v1::saveFileLoadable(int slot) {
 	return false;
 }
 
-int KyraEngine_v1::loadGameState(int slot) {
+Common::Error KyraEngine_v1::loadGameState(int slot) {
 	if (!_isSaveAllowed)
-		return -1;
+		return Common::kUnknownError;	// FIXME
 	
 	const char *filename = getSavegameFilename(slot);
 	loadGame(filename);
 
-	return 0;
+	return Common::kNoError;
 }
 
 void KyraEngine_v1::checkAutosave() {

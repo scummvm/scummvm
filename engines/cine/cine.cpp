@@ -74,7 +74,7 @@ CineEngine::~CineEngine() {
 	Common::clearAllSpecialDebugLevels();
 }
 
-int CineEngine::init() {
+Common::Error CineEngine::init() {
 	// Initialize backend
 	_system->beginGFXTransaction();
 	initCommonGFX(false);
@@ -91,10 +91,10 @@ int CineEngine::init() {
 
 	initialize();
 
-	return 0;
+	return Common::kNoError;
 }
 
-int CineEngine::go() {
+Common::Error CineEngine::go() {
 	CursorMan.showMouse(true);
 	mainLoop(1);
 
@@ -102,7 +102,7 @@ int CineEngine::go() {
 	delete[] collisionPage;
 	delete g_sound;
 	
-	return 0;
+	return Common::kNoError;
 }
 
 int CineEngine::getTimerDelay() const {

@@ -331,14 +331,14 @@ void ToucheEngine::handleMenuAction(void *menu, int actionId) {
 		break;
 	case kActionPerformSaveLoad:
 		if (menuData->mode == kMenuLoadStateMode) {
-			if (loadGameState(_saveLoadCurrentSlot) == 0) {
+			if (loadGameState(_saveLoadCurrentSlot) == Common::kNoError) {
 				menuData->quit = true;
 			}
 		} else if (menuData->mode == kMenuSaveStateMode) {
 			_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 			const char *description = menuData->saveLoadDescriptionsTable[_saveLoadCurrentSlot];
 			if (strlen(description) > 0) {
-				if (saveGameState(_saveLoadCurrentSlot, description)) {
+				if (saveGameState(_saveLoadCurrentSlot, description) == Common::kNoError) {
 					menuData->quit = true;
 				}
 			}

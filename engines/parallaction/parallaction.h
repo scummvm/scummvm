@@ -228,7 +228,7 @@ public:
 	~Parallaction();
 
 	// Engine APIs
-	virtual int init();
+	virtual Common::Error init();
 	virtual bool hasFeature(EngineFeature f) const;
 
 	// info
@@ -363,8 +363,8 @@ public:
 	~Parallaction_ns();
 
 	// Engine APIs
-	virtual int init();
-	virtual int go();
+	virtual Common::Error init();
+	virtual Common::Error go();
 
 public:
 	virtual void 	parseLocation(const char *filename);
@@ -451,8 +451,8 @@ public:
 	Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction_ns(syst, gameDesc) { }
 	~Parallaction_br();
 
-	int init();
-	int go();
+	Common::Error init();
+	Common::Error go();
 
 public:
 	virtual void parseLocation(const char* name);

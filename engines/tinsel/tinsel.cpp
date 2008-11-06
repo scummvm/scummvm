@@ -658,7 +658,7 @@ TinselEngine::~TinselEngine() {
 	delete _scheduler;
 }
 
-int TinselEngine::init() {
+Common::Error TinselEngine::init() {
 	// Initialize backend
 	_system->beginGFXTransaction();
 		initCommonGFX(false);
@@ -707,7 +707,7 @@ int TinselEngine::init() {
 	// Actors, globals and inventory icons
 	LoadBasicChunks();
 
-	return 0;
+	return Common::kNoError;
 }
 
 Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
@@ -718,7 +718,7 @@ Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
 
 #define GAME_FRAME_DELAY (1000 / ONE_SECOND)
 
-int TinselEngine::go() {
+Common::Error TinselEngine::go() {
 	uint32 timerVal = 0;
 
 	// Continuous game processes
@@ -774,7 +774,7 @@ int TinselEngine::go() {
 	// Write configuration
 	WriteConfig();
 
-	return 0;
+	return Common::kNoError;
 }
 
 

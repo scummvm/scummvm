@@ -141,7 +141,7 @@ M4Engine::~M4Engine() {
 	delete _resourceManager;
 }
 
-int M4Engine::init() {
+Common::Error M4Engine::init() {
 	// Initialize backend
 	_system->beginGFXTransaction();
 	initCommonGFX(isM4());
@@ -197,7 +197,7 @@ int M4Engine::init() {
 	_random = new Common::RandomSource();
 	g_system->getEventManager()->registerRandomSource(*_random, "m4");
 
-	return 0;
+	return Common::kNoError;
 }
 
 void M4Engine::eventHandler() {
@@ -272,14 +272,14 @@ void M4Engine::loadMenu(MenuType menuType, bool loadSaveFromHotkey, bool calledF
 	_viewManager->moveToFront(view);
 }
 
-int M4Engine::go() {
+Common::Error M4Engine::go() {
 	if (isM4())
 		return goM4();
 	else
 		return goMADS();
 }
 
-int M4Engine::goMADS() {
+Common::Error M4Engine::goMADS() {
 	_palette->setMadsSystemPalette();
 
 	_mouse->init("cursor.ss", NULL);
@@ -351,10 +351,10 @@ int M4Engine::goMADS() {
 		g_system->delayMillis(10);
 	}
 
-	return 0;
+	return Common::kNoError;
 }
 
-int M4Engine::goM4() {
+Common::Error M4Engine::goM4() {
 
 	_script->open("m4.dat");
 
@@ -375,7 +375,7 @@ int M4Engine::goM4() {
 	}
 #endif
 
-	return 0;
+	return Common::kNoError;
 #endif
 
 	// Set up the inventory
@@ -520,7 +520,7 @@ int M4Engine::goM4() {
 		g_system->delayMillis(10);
 	}
 
-	return 0;
+	return Common::kNoError;
 }
 
 void M4Engine::dumpFile(const char* filename, bool uncompress) {

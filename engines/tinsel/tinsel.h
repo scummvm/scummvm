@@ -91,8 +91,9 @@ class TinselEngine : public Engine {
 
 protected:
 
-	int init();
-	int go();
+	// Engine APIs
+	virtual Common::Error init();
+	virtual Common::Error go();
 
 public:
 	TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc);

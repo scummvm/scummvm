@@ -202,7 +202,7 @@ KyraEngine_MR::~KyraEngine_MR() {
 	delete _album.rightPage.wsa;
 }
 
-int KyraEngine_MR::init() {
+Common::Error KyraEngine_MR::init() {
 	_screen = new Screen_MR(this, _system);
 	assert(_screen);
 	_screen->setResolution();
@@ -233,10 +233,10 @@ int KyraEngine_MR::init() {
 	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0), 768);
 	_screen->setScreenPalette(_screen->getPalette(0));
 
-	return 0;
+	return Common::kNoError;
 }
 
-int KyraEngine_MR::go() {
+Common::Error KyraEngine_MR::go() {
 	bool running = true;
 	preinit();
 	_screen->hideMouse();
@@ -324,7 +324,7 @@ int KyraEngine_MR::go() {
 	if (_showOutro)
 		playVQA("CREDITS");
 
-	return 0;
+	return Common::kNoError;
 }
 
 void KyraEngine_MR::initMainMenu() {

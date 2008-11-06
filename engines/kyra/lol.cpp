@@ -74,7 +74,7 @@ Screen *LoLEngine::screen() {
 	return _screen;
 }
 
-int LoLEngine::init() {
+Common::Error LoLEngine::init() {
 	_screen = new Screen_LoL(this, _system);
 	assert(_screen);
 	_screen->setResolution();
@@ -90,10 +90,10 @@ int LoLEngine::init() {
 	if (!_sound->init())
 		error("Couldn't init sound");
 
-	return 0;
+	return Common::kNoError;
 }
 
-int LoLEngine::go() {
+Common::Error LoLEngine::go() {
 	setupPrologueData(true);
 	showIntro();
 	_sound->playTrack(6);
@@ -102,7 +102,7 @@ int LoLEngine::go() {
 	_screen->fadeToBlack();
 	setupPrologueData(false);
 
-	return 0;
+	return Common::kNoError;
 }
 
 #pragma mark - Input

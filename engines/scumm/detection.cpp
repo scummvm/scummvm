@@ -794,18 +794,18 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// Fetch the list of files in the current directory
 	Common::FSList fslist;
 	Common::FSNode dir(ConfMan.get("path"));
-	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly)) {
+	if (!dir.isDirectory())
 		return Common::kInvalidPathError;
-	}
+	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly))
+		return Common::kNoGameDataFoundError;
 
 	// Invoke the detector, but fixed to the specified gameid.
 	Common::List<DetectorResult> results;
 	::detectGames(fslist, results, gameid);
 
 	// Unable to locate game data
-	if (results.empty()) {
+	if (results.empty())
 		return Common::kNoGameDataFoundError;
-	}
 
 	// No unique match found. If a platform override is present, try to
 	// narrow down the list a bit more.
@@ -831,9 +831,8 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	}
 
 	// Still no unique match found -> print a warning
-	if (results.size() > 1) {
+	if (results.size() > 1)
 		warning("Engine_SCUMM_create: No unique game candidate found, using first one");
-	}
 
 	// Simply use the first match
 	DetectorResult res(*(results.begin()));

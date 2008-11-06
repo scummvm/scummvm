@@ -78,8 +78,9 @@ class MadeEngine : public ::Engine {
 
 protected:
 
-	int init();
-	int go();
+	// Engine APIs
+	virtual Common::Error init();
+	virtual Common::Error go();
 
 public:
 	MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc);

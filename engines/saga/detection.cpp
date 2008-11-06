@@ -245,7 +245,7 @@ int SagaEngine::getDisplayHeight() const {
 	return di.logicalHeight;
 }
 
-int SagaEngine::loadGameState(int slot) {
+Common::Error SagaEngine::loadGameState(int slot) {
 	// Init the current chapter to 8 (character selection) for IHNM
 	if (getGameType() == GType_IHNM)
 		_scene->changeScene(-2, 0, kTransitionFade, 8);
@@ -262,7 +262,7 @@ int SagaEngine::loadGameState(int slot) {
 	load(calcSaveFileName((uint)slot));
 	syncSoundSettings();
 
-	return 0;	// TODO: return success/failure
+	return Common::kNoError;	// TODO: return success/failure
 }
 
 } // End of namespace Saga

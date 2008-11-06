@@ -48,7 +48,7 @@ LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc): En
 	Common::addSpecialDebugLevel(kLureDebugStrings, "strings", "Strings debugging");
 }
 
-int LureEngine::init() {
+Common::Error LureEngine::init() {
 	int_engine = this;
 	_initialised = false;
 
@@ -62,7 +62,7 @@ int LureEngine::init() {
 	VersionStructure version;
 	if (!f.open(SUPPORT_FILENAME)) {
 		GUIError("Could not locate Lure support file");
-		return 1;
+		return Common::kUnknownError;
 	}
 
 	f.seek(0xbf * 8);
@@ -71,12 +71,12 @@ int LureEngine::init() {
 
 	if (READ_LE_UINT16(&version.id) != 0xffff) {
 		GUIError("Error validating %s - file is invalid or out of date", SUPPORT_FILENAME);
-		return 1;
+		return Common::kUnknownError;
 	} else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR)) {
 		GUIError("Incorrect version of %s file - expected %d.%d but got %d.%d",
 			SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR,
 			version.vMajor, version.vMinor);
-		return 1;
+		return Common::kUnknownError;
 	}
 
 	_disk = new Disk();
@@ -92,7 +92,7 @@ int LureEngine::init() {
 
 	_gameToLoad = -1;
 	_initialised = true;
-	return 0;
+	return Common::kNoError;
 }
 
 LureEngine::~LureEngine() {
@@ -119,7 +119,7 @@ LureEngine &LureEngine::getReference() {
 	return *int_engine;
 }
 
-int LureEngine::go() {
+Common::Error LureEngine::go() {
 	Game *gameInstance = new Game();
 	
 	// If requested, load a savegame instead of showing the intro
@@ -135,7 +135,7 @@ int LureEngine::go() {
 			bool result = dialog->show();
 			delete dialog;
 			if (shouldQuit())
-				return 0;
+				return Common::kNoError;
 
 			if (!result)
 				error("Sorry - copy protection failed");
@@ -158,7 +158,7 @@ int LureEngine::go() {
 	}
 
 	delete gameInstance;
-	return 0;
+	return Common::kNoError;
 }
 
 void LureEngine::pauseEngineIntern(bool pause) {

@@ -155,7 +155,7 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 		delete[] _sceneAnimTable[i];
 }
 
-int KyraEngine_LoK::init() {
+Common::Error KyraEngine_LoK::init() {
 	_screen = new Screen_LoK(this, _system);
 	assert(_screen);
 	_screen->setResolution();
@@ -284,10 +284,10 @@ int KyraEngine_LoK::init() {
 
 	_lastMusicCommand = 0;
 
-	return 0;
+	return Common::kNoError;
 }
 
-int KyraEngine_LoK::go() {
+Common::Error KyraEngine_LoK::go() {
 	if (_res->getFileSize("6.FNT"))
 		_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
@@ -304,7 +304,7 @@ int KyraEngine_LoK::go() {
 			setGameFlag(0xEF);
 			seq_intro();
 			if (shouldQuit())
-				return 0;
+				return Common::kNoError;
 			if (_skipIntroFlag && _abortIntroFlag)
 				resetGameFlag(0xEF);
 		}
@@ -312,7 +312,7 @@ int KyraEngine_LoK::go() {
 		resetGameFlag(0xEF);
 		mainLoop();
 	}
-	return 0;
+	return Common::kNoError;
 }
 
 

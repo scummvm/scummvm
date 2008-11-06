@@ -312,9 +312,10 @@ bool QueenEngine::canLoadOrSave() const {
 	return !_input->cutawayRunning() && !(_resource->isDemo() || _resource->isInterview());
 }
 
-int QueenEngine::saveGameState(int slot, const char *desc) {
+Common::Error QueenEngine::saveGameState(int slot, const char *desc) {
 	debug(3, "Saving game to slot %d", slot);
 	char name[20];
+	Common::Error err = Common::kNoError;
 	makeGameStateName(slot, name);
 	Common::OutSaveFile *file = _saveFileMan->openForSaving(name);
 	if (file) {
@@ -345,18 +346,21 @@ int QueenEngine::saveGameState(int slot, const char *desc) {
 		// check for errors
 		if (file->ioFailed()) {
 			warning("Can't write file '%s'. (Disk full?)", name);
+			err = Common::kWritingFailed;
 		}
 		delete[] saveData;
 		delete file;
 	} else {
 		warning("Can't create file '%s', game not saved", name);
+		err = Common::kCreatingFileFailed;
 	}
 	
-	return 0;
+	return err;
 }
 
-int QueenEngine::loadGameState(int slot) {
+Common::Error QueenEngine::loadGameState(int slot) {
 	debug(3, "Loading game from slot %d", slot);
+	Common::Error err = Common::kNoError;
 	GameStateHeader header;
 	Common::InSaveFile *file = readGameStateHeader(slot, &header);
 	if (file && header.dataSize != 0) {
@@ -364,6 +368,7 @@ int QueenEngine::loadGameState(int slot) {
 		byte *p = saveData;
 		if (file->read(saveData, header.dataSize) != header.dataSize) {
 			warning("Error reading savegame file");
+			err = Common::kReadingFailed;
 		} else {
 			_bam->loadState(header.version, p);
 			_grid->loadState(header.version, p);
@@ -371,15 +376,18 @@ int QueenEngine::loadGameState(int slot) {
 			_sound->loadState(header.version, p);
 			if (header.dataSize != (uint32)(p - saveData)) {
 				warning("Corrupted savegame file");
+				err = Common::kReadingFailed;	// FIXME
 			} else {
 				_logic->setupRestoredGame();
 			}
 		}
 		delete[] saveData;
 		delete file;
+	} else {
+		err = Common::kReadingFailed;
 	}
 
-	return 0;	// TODO: return success/failure
+	return err;
 }
 
 Common::InSaveFile *QueenEngine::readGameStateHeader(int slot, GameStateHeader *gsh) {
@@ -436,7 +444,7 @@ GUI::Debugger *QueenEngine::getDebugger() {
 	return _debugger;
 }
 
-int QueenEngine::go() {
+Common::Error QueenEngine::go() {
 	_logic->start();
 	if (ConfMan.hasKey("save_slot") && canLoadOrSave()) {
 		loadGameState(ConfMan.getInt("save_slot"));
@@ -461,10 +469,10 @@ int QueenEngine::go() {
 			update(true);
 		}
 	}
-	return 0;
+	return Common::kNoError;
 }
 
-int QueenEngine::init() {
+Common::Error QueenEngine::init() {
 	_system->beginGFXTransaction();
 		initCommonGFX(false);
 		_system->initSize(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
@@ -496,7 +504,7 @@ int QueenEngine::init() {
 	registerDefaultSettings();
 	readOptionSettings();
 
-	return 0;
+	return Common::kNoError;
 }
 
 } // End of namespace Queen

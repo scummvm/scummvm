@@ -75,9 +75,9 @@ struct SaveInfoSection {
 
 #pragma mark -
 
-int ScummEngine::loadGameState(int slot) {
+Common::Error ScummEngine::loadGameState(int slot) {
 	requestLoad(slot);
-	return 0;
+	return Common::kNoError;
 }
 
 bool ScummEngine::canLoadGameStateCurrently() {
@@ -85,9 +85,9 @@ bool ScummEngine::canLoadGameStateCurrently() {
 	return true;
 }
 
-int ScummEngine::saveGameState(int slot, const char *desc) {
+Common::Error ScummEngine::saveGameState(int slot, const char *desc) {
 	requestSave(slot, desc);
-	return 0;
+	return Common::kNoError;
 }
 
 bool ScummEngine::canSaveGameStateCurrently() {

@@ -70,7 +70,7 @@ CruiseEngine::~CruiseEngine() {
 #endif
 }
 
-int CruiseEngine::init() {
+Common::Error CruiseEngine::init() {
 	// Initialize backend
 	_system->beginGFXTransaction();
 	initCommonGFX(false);
@@ -79,16 +79,16 @@ int CruiseEngine::init() {
 
 	initialize();
 
-	return 0;
+	return Common::kNoError;
 }
 
-int CruiseEngine::go() {
+Common::Error CruiseEngine::go() {
 	Cruise::changeCursor(Cruise::CURSOR_NORMAL);
 	CursorMan.showMouse(true);
 
 	Cruise::mainLoop();
 
-	return 0;
+	return Common::kNoError;
 }
 
 void CruiseEngine::initialize() {

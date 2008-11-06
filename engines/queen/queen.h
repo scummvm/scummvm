@@ -106,8 +106,8 @@ public:
 	void update(bool checkPlayerInput = false);
 
 	bool canLoadOrSave() const;
-	int saveGameState(int slot, const char *desc);
-	int loadGameState(int slot);
+	Common::Error saveGameState(int slot, const char *desc);
+	Common::Error loadGameState(int slot);
 	void makeGameStateName(int slot, char *buf) const;
 	int getGameStateSlot(const char *filename) const;
 	void findGameStateDescriptions(char descriptions[100][32]);
@@ -129,8 +129,8 @@ public:
 protected:
 
 	// Engine APIs
-	virtual int init();
-	virtual int go();
+	virtual Common::Error init();
+	virtual Common::Error go();
 	virtual GUI::Debugger *getDebugger();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();

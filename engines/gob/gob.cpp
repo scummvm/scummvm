@@ -110,10 +110,10 @@ GobEngine::~GobEngine() {
 	delete[] _startTot0;
 }
 
-int GobEngine::go() {
+Common::Error GobEngine::go() {
 	_init->initGame(0);
 
-	return 0;
+	return Common::kNoError;
 }
 
 const char *GobEngine::getLangDesc(int16 language) const {
@@ -177,10 +177,10 @@ bool GobEngine::hasAdlib() const {
 	return (_features & kFeaturesAdlib) != 0;
 }
 
-int GobEngine::init() {
+Common::Error GobEngine::init() {
 	if (!initGameParts()) {
 		GUIErrorMessage("GobEngine::init(): Unknown version of game engine");
-		return -1;
+		return Common::kUnknownError;
 	}
 
 	_video->setSize(is640());
@@ -259,7 +259,7 @@ int GobEngine::init() {
 	//        640x480.
 
 	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
-	return 0;
+	return Common::kNoError;
 }
 
 void GobEngine::pauseEngineIntern(bool pause) {

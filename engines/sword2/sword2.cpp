@@ -218,7 +218,7 @@ Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) c
 	Common::FSList fslist;
 	Common::FSNode dir(ConfMan.get("path"));
 	if (!dir.getChildren(fslist, Common::FSNode::kListAll)) {
-		return Common::kInvalidPathError;
+		return Common::kNoGameDataFoundError;
 	}
 
 	// Invoke the detector
@@ -349,7 +349,7 @@ void Sword2Engine::setupPersistentResources() {
 	_resman->openResource(CUR_PLAYER_ID);
 }
 
-int Sword2Engine::init() {
+Common::Error Sword2Engine::init() {
 	// Get some falling RAM and put it in your pocket, never let it slip
 	// away
 
@@ -378,7 +378,7 @@ int Sword2Engine::init() {
 	_resman = new ResourceManager(this);
 
 	if (!_resman->init())
-		return 1;
+		return Common::kUnknownError;
 
 	_logic = new Logic(this);
 	_fontRenderer = new FontRenderer(this);
@@ -426,7 +426,7 @@ int Sword2Engine::init() {
 		// will either have killed the music, or done a crossfade.
 
 		if (shouldQuit())
-			return 0;
+			return Common::kNoError;
 
 		if (result)
 			startGame();
@@ -435,10 +435,10 @@ int Sword2Engine::init() {
 
 	_screen->initialiseRenderCycle();
 
-	return 0;
+	return Common::kNoError;
 }
 
-int Sword2Engine::go() {
+Common::Error Sword2Engine::go() {
 	while (1) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
@@ -514,7 +514,7 @@ int Sword2Engine::go() {
 #endif
 	}
 
-	return 0;
+	return Common::kNoError;
 }
 
 void Sword2Engine::restartGame() {

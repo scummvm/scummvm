@@ -168,7 +168,7 @@ public:
 
 protected:
 	// Engine APIs
-	virtual int init();
+	virtual Common::Error init();
 	virtual ::GUI::Debugger *getDebugger();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void pauseEngineIntern(bool pause);
@@ -304,7 +304,7 @@ protected:
 
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, bool loadThumbnail, SaveHeader &header);
 
-	int loadGameState(int slot);
+	Common::Error loadGameState(int slot);
 	virtual void loadGame(const char *fileName) = 0;
 	virtual void saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 

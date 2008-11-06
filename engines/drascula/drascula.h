@@ -275,9 +275,9 @@ class DrasculaEngine : public ::Engine {
 	Common::KeyState _keyPressed;
 
 protected:
-	int init();
-	int go();
-//	void shutdown();
+	// Engine APIs
+	virtual Common::Error init();
+	virtual Common::Error go();
 
 public:
 	DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc);

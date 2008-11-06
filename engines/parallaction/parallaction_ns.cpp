@@ -143,7 +143,7 @@ void LocationName::bind(const char *s) {
 
 
 
-int Parallaction_ns::init() {
+Common::Error Parallaction_ns::init() {
 
 	_screenWidth = 320;
 	_screenHeight = 200;
@@ -193,7 +193,7 @@ int Parallaction_ns::init() {
 
 	Parallaction::init();
 
-	return 0;
+	return Common::kNoError;
 }
 
 Parallaction_ns::~Parallaction_ns() {
@@ -228,7 +228,7 @@ void Parallaction_ns::callFunction(uint index, void* parm) {
 }
 
 
-int Parallaction_ns::go() {
+Common::Error Parallaction_ns::go() {
 	_saveLoad->renameOldSavefiles();
 
 	_globalFlagsNames = _disk->loadTable("global");
@@ -239,7 +239,7 @@ int Parallaction_ns::go() {
 		runGame();
 	}
 
-	return 0;
+	return Common::kNoError;
 }
 
 void Parallaction_ns::switchBackground(const char* background, const char* mask) {

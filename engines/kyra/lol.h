@@ -47,8 +47,8 @@ private:
 	Screen_LoL *_screen;
 	TIMInterpreter *_tim;
 
-	int init();
-	int go();
+	Common::Error init();
+	Common::Error go();
 
 	// input
 	void updateInput();

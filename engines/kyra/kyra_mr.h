@@ -62,7 +62,7 @@ public:
 	int language() const { return _lang; }
 	bool heliumMode() const { return _configHelium; }
 
-	int go();
+	Common::Error go();
 
 	void playVQA(const char *name);
 
@@ -84,7 +84,7 @@ private:
 	Screen_MR *_screen;
 	SoundDigital *_soundDigital;
 
-	int init();
+	Common::Error init();
 
 	void preinit();
 	void startup();

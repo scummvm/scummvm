@@ -44,8 +44,10 @@ struct CRUISEGameDescription;
 class CruiseEngine:public Engine {
 
 protected:
-	int init();
-	int go();
+	// Engine APIs
+	virtual Common::Error init();
+	virtual Common::Error go();
+
 	void shutdown();
 
 	bool initGame();

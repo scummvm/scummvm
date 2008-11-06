@@ -779,7 +779,7 @@ AgiEngine::~AgiEngine() {
 	free(_predictiveDictText);
 }
 
-int AgiBase::init() {
+Common::Error AgiBase::init() {
 
 	// Initialize backend
 	_system->beginGFXTransaction();
@@ -791,10 +791,10 @@ int AgiBase::init() {
 
 	_gfx->gfxSetPalette();
 
-	return 0;
+	return Common::kNoError;
 }
 
-int AgiEngine::go() {
+Common::Error AgiEngine::go() {
 	CursorMan.showMouse(true);
 
 	report(" \nAGI engine %s is ready.\n", gScummVMVersion);
@@ -808,7 +808,7 @@ int AgiEngine::go() {
 
 	runGame();
 
-	return 0;
+	return Common::kNoError;
 }
 
 void AgiEngine::syncSoundSettings() {

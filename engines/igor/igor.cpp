@@ -88,14 +88,14 @@ IgorEngine::~IgorEngine() {
 	delete _midiPlayer;
 }
 
-int IgorEngine::init() {
+Common::Error IgorEngine::init() {
 	_system->beginGFXTransaction();
 		initCommonGFX(false);
 		_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	return 0;
+	return Common::kNoError;
 }
 
 void IgorEngine::restart() {
@@ -169,7 +169,7 @@ void IgorEngine::restart() {
 	_gameTicks = 0;
 }
 
-int IgorEngine::go() {
+Common::Error IgorEngine::go() {
 	restart();
 	setupDefaultPalette();
 	_currentPart = ConfMan.getInt("boot_param");
@@ -192,7 +192,7 @@ int IgorEngine::go() {
 	PART_MAIN();
 	_ovlFile.close();
 	_sndFile.close();
-	return 0;
+	return Common::kNoError;
 }
 
 void IgorEngine::readTableFile() {

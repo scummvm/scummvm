@@ -443,16 +443,16 @@ public:
 	virtual ~ScummEngine();
 
 	// Engine APIs
-	virtual int init();
-	virtual int go();
+	virtual Common::Error init();
+	virtual Common::Error go();
 	virtual void errorString(const char *buf_input, char *buf_output);
 	virtual GUI::Debugger *getDebugger();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 
-	virtual int loadGameState(int slot);
+	virtual Common::Error loadGameState(int slot);
 	virtual bool canLoadGameStateCurrently();
-	virtual int saveGameState(int slot, const char *desc);
+	virtual Common::Error saveGameState(int slot, const char *desc);
 	virtual bool canSaveGameStateCurrently();
 
 	virtual void pauseEngineIntern(bool pause);
