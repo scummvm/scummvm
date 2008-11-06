@@ -536,6 +536,15 @@ int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) 
 	return ret;
 }
 
+const Common::String &SaveLoadChooser::getResultString() const {
+	return _list->getSelectedString();
+}
+
+void SaveLoadChooser::setSaveMode(bool saveMode) {
+	_list->setEditable(saveMode);
+	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
+}
+
 void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	int selItem = _list->getSelected();
 
@@ -543,7 +552,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 	case GUI::kListItemActivatedCmd:
 	case GUI::kListItemDoubleClickedCmd:
 		if (selItem >= 0) {
-			if (!_list->getSelectedString().empty()) {
+			if (_list->isEditable() || !_list->getSelectedString().empty()) {
 				_list->endEditMode();
 				setResult(atoi(_saveList[selItem].save_slot().c_str()));
 				close();
@@ -556,6 +565,17 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		break;
 	case GUI::kListSelectionChangedCmd: {
 		updateSelection(true);
+
+		/*
+		if (_list->isEditable()) {
+			_list->startEditMode();
+		}
+		// Disable button if nothing is selected, or (in load mode) if an empty
+		// list item is selected. We allow choosing an empty item in save mode
+		// because we then just assign a default name.
+		_chooseButton->setEnabled(selItem >= 0 && (_list->isEditable() || !getResultString().empty()));
+		_chooseButton->draw();
+		*/
 	} break;
 	case kDelCmd:
 		if (selItem >= 0 && _delSupport) {

@@ -59,7 +59,7 @@ protected:
 	GUI::Dialog		*_aboutDialog;
 	GUI::Dialog		*_optionsDialog;
 	GUI::SaveLoadChooser	*_loadDialog;
-
+	GUI::SaveLoadChooser	*_saveDialog;
 };
 
 class ConfigDialog : public GUI::OptionsDialog {

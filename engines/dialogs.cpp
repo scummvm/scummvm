@@ -118,13 +118,15 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	_aboutDialog = new GUI::AboutDialog();
 	_optionsDialog = new ConfigDialog();
 	_loadDialog = new GUI::SaveLoadChooser("Load game:", "Load");
+	_saveDialog = new GUI::SaveLoadChooser("Save game:", "Save");
+	_saveDialog->setSaveMode(true);
 }
 
 MainMenuDialog::~MainMenuDialog() {
 	delete _aboutDialog;
 	delete _optionsDialog;
 	delete _loadDialog;
-	//delete _saveDialog;
+	delete _saveDialog;
 }
 
 void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -154,16 +156,26 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kSaveCmd:
 		/*
+		{
 		Common::String gameId = ConfMan.get("gameid");
 
 		const EnginePlugin *plugin = 0;
 		EngineMan.findGame(gameId, &plugin);
 
 		int slot = _saveDialog->runModal(plugin, ConfMan.getActiveDomainName());
-		Common::String desc = ... get desired description from _saveDialog ...
 
 		if (slot >= 0) {
-			_engine->saveGameState(slot, desc.c_str());
+			Common::String result(_saveDialog->getResultString());
+			char *desc;
+			if (result.empty()) {
+				// If the user was lazy and entered no save name, come up with a default name.
+				desc = new char[20];
+				sprintf(desc, "Save %d", slot + 1);
+			} else {
+				desc = (char*)result.c_str();
+			}
+
+			_engine->saveGameState(slot, desc);
 			close();
 		}
 
