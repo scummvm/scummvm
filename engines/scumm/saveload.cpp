@@ -75,9 +75,31 @@ struct SaveInfoSection {
 
 #pragma mark -
 
-void ScummEngine::requestSave(int slot, const char *name, bool temporary) {
+int ScummEngine::loadGameState(int slot) {
+	requestLoad(slot);
+	return 0;
+}
+
+bool ScummEngine::canLoadGameStateCurrently() {
+	// FIXME: For now always allow loading
+	return true;
+}
+
+int ScummEngine::saveGameState(int slot, const char *desc) {
+	requestSave(slot, desc);
+	return 0;
+}
+
+bool ScummEngine::canSaveGameStateCurrently() {
+	// FIXME: For now always allow saving
+	return true;
+	return 0;
+}
+
+
+void ScummEngine::requestSave(int slot, const char *name) {
 	_saveLoadSlot = slot;
-	_saveTemporaryState = temporary;
+	_saveTemporaryState = false;
 	_saveLoadFlag = 1;		// 1 for save
 	assert(name);
 	strncpy(_saveLoadName, name, sizeof(_saveLoadName));

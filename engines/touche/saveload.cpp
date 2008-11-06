@@ -316,7 +316,7 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	debug(0, "Loaded state, current episode %d", _currentEpisodeNum);
 }
 
-bool ToucheEngine::saveGameState(int num, const char *description) {
+int ToucheEngine::saveGameState(int num, const char *description) {
 	bool saveOk = false;
 	char gameStateFileName[64];
 	generateGameStateFileName(num, gameStateFileName, 63);

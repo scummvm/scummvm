@@ -265,7 +265,7 @@ bool Engine::canLoadGameStateCurrently() {
 	return false;
 }
 
-int Engine::saveGameState(int slot) {
+int Engine::saveGameState(int slot, const char *desc) {
 	// Do nothing by default
 	return 0;
 }

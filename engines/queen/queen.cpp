@@ -312,7 +312,7 @@ bool QueenEngine::canLoadOrSave() const {
 	return !_input->cutawayRunning() && !(_resource->isDemo() || _resource->isInterview());
 }
 
-void QueenEngine::saveGameState(int slot, const char *desc) {
+int QueenEngine::saveGameState(int slot, const char *desc) {
 	debug(3, "Saving game to slot %d", slot);
 	char name[20];
 	makeGameStateName(slot, name);
@@ -351,6 +351,8 @@ void QueenEngine::saveGameState(int slot, const char *desc) {
 	} else {
 		warning("Can't create file '%s', game not saved", name);
 	}
+	
+	return 0;
 }
 
 int QueenEngine::loadGameState(int slot) {

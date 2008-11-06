@@ -59,7 +59,7 @@ using GUI::WIDGET_ENABLED;
 typedef GUI::OptionsDialog GUI_OptionsDialog;
 typedef GUI::Dialog GUI_Dialog;
 
-GlobalDialog::GlobalDialog(String name) : GUI::Dialog(name) {}
+GlobalDialog::GlobalDialog(Common::String name) : GUI::Dialog(name) {}
 
 enum {
 	kSaveCmd = 'SAVE',
@@ -134,7 +134,7 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kLoadCmd:
 		{
-		String gameId = ConfMan.get("gameid");
+		Common::String gameId = ConfMan.get("gameid");
 
 		const EnginePlugin *plugin = 0;
 		EngineMan.findGame(gameId, &plugin);
@@ -154,15 +154,16 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kSaveCmd:
 		/*
-		String gameId = ConfMan.get("gameid");
+		Common::String gameId = ConfMan.get("gameid");
 
 		const EnginePlugin *plugin = 0;
 		EngineMan.findGame(gameId, &plugin);
 
 		int slot = _saveDialog->runModal(plugin, ConfMan.getActiveDomainName());
+		Common::String desc = ... get desired description from _saveDialog ...
 
 		if (slot >= 0) {
-			_engine->saveGameState(slot);
+			_engine->saveGameState(slot, desc.c_str());
 			close();
 		}
 

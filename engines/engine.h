@@ -167,7 +167,9 @@ public:
 
 	/** 
 	 * Load a game state.
+	 * @param slot	the slot from which a savestate should be loaded
 	 * @return returns 0 on success, anything else indicates failure
+	 *
 	 * @todo define proper error values
 	 */
 	virtual int loadGameState(int slot);
@@ -179,12 +181,13 @@ public:
 
 	/**
 	 * Save a game state.
+	 * @param slot	the slot into which the savestate should be stored
+	 * @param desc	a description for the savestate, entered by the user
 	 * @return returns 0 on success, anything else indicates failure
 	 *
 	 * @todo define proper error values
-	 * @todo actually we need to pass the user entered name to the engine
 	 */
-	virtual int saveGameState(int slot);
+	virtual int saveGameState(int slot, const char *desc);
 
 	/**
 	 * Indicates whether a game state can be saved.

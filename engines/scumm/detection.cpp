@@ -701,7 +701,10 @@ bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 bool ScummEngine::hasFeature(EngineFeature f) const {
-	return	(f == kSupportsRTL);
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 GameList ScummMetaEngine::getSupportedGames() const {

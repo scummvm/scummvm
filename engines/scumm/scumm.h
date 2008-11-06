@@ -449,6 +449,12 @@ public:
 	virtual GUI::Debugger *getDebugger();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
+
+	virtual int loadGameState(int slot);
+	virtual bool canLoadGameStateCurrently();
+	virtual int saveGameState(int slot, const char *desc);
+	virtual bool canSaveGameStateCurrently();
+
 	virtual void pauseEngineIntern(bool pause);
 
 protected:
@@ -628,7 +634,7 @@ public:
 	bool getSavegameName(int slot, Common::String &desc);
 	void listSavegames(bool *marks, int num);
 
-	void requestSave(int slot, const char *name, bool temporary = false);
+	void requestSave(int slot, const char *name);
 	void requestLoad(int slot);
 
 // thumbnail + info stuff

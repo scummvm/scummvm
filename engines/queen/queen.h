@@ -106,7 +106,7 @@ public:
 	void update(bool checkPlayerInput = false);
 
 	bool canLoadOrSave() const;
-	void saveGameState(int slot, const char *desc);
+	int saveGameState(int slot, const char *desc);
 	int loadGameState(int slot);
 	void makeGameStateName(int slot, char *buf) const;
 	int getGameStateSlot(const char *filename) const;

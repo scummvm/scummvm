@@ -37,9 +37,6 @@
 class GlobalDialog : public GUI::Dialog {
 public:
 	GlobalDialog(Common::String name);
-
-protected:
-	typedef Common::String String;
 };
 
 
