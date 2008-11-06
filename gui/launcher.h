@@ -114,7 +114,7 @@ public:
 	void setList(const StringList& list);
 	int runModal(const EnginePlugin *plugin, const String &target);
 
-	const Common::String &SaveLoadChooser::getResultString() const;
+	const Common::String& getResultString() const;
 	void setSaveMode(bool saveMode);
 
 	virtual void reflowLayout();
