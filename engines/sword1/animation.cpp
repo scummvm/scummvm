@@ -555,9 +555,10 @@ bool MoviePlayerMPEG::initOverlays(uint32 id) {
 						_logoOvls[fcnt][cnt] = _logoOvls[fcnt - 1][cnt];
 		}
 		uint8 *pal = ovlFile.fetchFile(12);
-		_introPal = (OverlayColor*)malloc(256 * sizeof(OverlayColor));
+		_introPal = (OverlayColor *)malloc(256 * sizeof(OverlayColor));
+		Graphics::PixelFormat format = _system->getOverlayFormat();
 		for (uint16 cnt = 0; cnt < 256; cnt++)
-			_introPal[cnt] = _system->RGBToColor(pal[cnt * 3 + 0], pal[cnt * 3 + 1], pal[cnt * 3 + 2]);
+			_introPal[cnt] = Graphics::RGBToColor(pal[cnt * 3 + 0], pal[cnt * 3 + 1], pal[cnt * 3 + 2], format);
 	}
 
 	return true;

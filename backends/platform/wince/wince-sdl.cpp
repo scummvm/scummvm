@@ -1973,7 +1973,7 @@ void OSystem_WINCE3::internDrawMouse() {
 				*bak++ = *(uint16 *)dst;
 				color = *src++;
 				if (color != 0xFF)	// 0xFF = transparent, don't draw
-					*(uint16 *)dst = RGBToColor(_currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
+					*(uint16 *)dst = SDL_MapRGB(_overlayscreen->format, _currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
 				dst += 2;
 				width--;
 			}

@@ -107,8 +107,6 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
-	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
-	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
 	virtual void grabPalette(byte *colors, uint start, uint num);
 	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<1555>(); }
 

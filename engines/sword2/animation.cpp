@@ -654,8 +654,9 @@ void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {
 
 	OverlayColor *dst = _overlay + textY * moviePitch + textX;
 
-	OverlayColor pen = _sys->RGBToColor(255, 255, 255);
-	OverlayColor border = _sys->RGBToColor(0, 0, 0);
+	Graphics::PixelFormat format = _sys->getOverlayFormat();
+	OverlayColor pen = Graphics::RGBToColor(255, 255, 255, format);
+	OverlayColor border = Graphics::RGBToColor(0, 0, 0, format);
 
 	// TODO: Use the AdvMame scalers for the text? Pre-scale it?
 
@@ -702,7 +703,8 @@ void AnimationState::clearFrame() {
 #ifdef BACKEND_8BIT
 	memset(_vm->_screen->getScreen(), 0, _movieWidth * _movieHeight);
 #else
-	OverlayColor black = _sys->RGBToColor(0, 0, 0);
+	Graphics::PixelFormat format = _sys->getOverlayFormat();
+	OverlayColor black = Graphics::RGBToColor(0, 0, 0, format);
 
 	for (int i = 0; i < _movieScale * _movieWidth * _movieScale * _movieHeight; i++)
 		_overlay[i] = black;

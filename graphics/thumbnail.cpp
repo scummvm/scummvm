@@ -42,12 +42,6 @@ struct ThumbnailHeader {
 
 #define ThumbnailHeaderSize (4+4+1+2+2+1)
 
-inline void colorToRGB(uint16 color, uint8 &r, uint8 &g, uint8 &b) {
-	r = (((color >> 11) & 0x1F) << 3);
-	g = (((color >> 5) & 0x3F) << 2);
-	b = ((color&0x1F) << 3);
-}
-
 bool loadHeader(Common::SeekableReadStream &in, ThumbnailHeader &header, bool outputWarnings) {
 	header.type = in.readUint32BE();
 	// We also accept the bad 'BMHT' header here, for the sake of compatibility
@@ -114,13 +108,14 @@ bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface &to) {
 	to.create(header.width, header.height, sizeof(OverlayColor));
 
 	OverlayColor *pixels = (OverlayColor *)to.pixels;
+	Graphics::PixelFormat format = g_system->getOverlayFormat();
 	for (int y = 0; y < to.h; ++y) {
 		for (int x = 0; x < to.w; ++x) {
 			uint8 r, g, b;
-			colorToRGB(in.readUint16BE(), r, g, b);
+			colorToRGB<ColorMasks<565> >(in.readUint16BE(), r, g, b);
 
 			// converting to current OSystem Color
-			*pixels++ = g_system->RGBToColor(r, g, b);
+			*pixels++ = Graphics::RGBToColor(r, g, b, format);
 		}
 	}
 

@@ -230,8 +230,7 @@ public:
 
 	void setPalette(const byte *colors, uint start, uint num);
 	void grabPalette(byte *colors, uint start, uint num);
-	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b) = 0;
-	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) = 0;
+	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<565>(); }
 
 	bool pollEvent(Common::Event &event);
 

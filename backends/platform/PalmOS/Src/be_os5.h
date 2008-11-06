@@ -181,8 +181,6 @@ public:
 	virtual void clearOverlay();
 	virtual void grabOverlay(OverlayColor *buf, int pitch);
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
-	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
-	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
 
 	void setWindowCaption(const char *caption);
 

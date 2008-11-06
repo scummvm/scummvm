@@ -71,8 +71,6 @@ public:
 	void clearOverlay();
 	void grabOverlay(OverlayColor *buf, int pitch);
 	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
-	OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
-	void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
 };
 
 #endif

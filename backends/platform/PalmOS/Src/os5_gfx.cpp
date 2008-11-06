@@ -77,8 +77,8 @@ void OSystem_PalmOS5::load_gfx_mode() {
 		__68K(PINSetInputTriggerState(pinInputTriggerDisabled));
 	}
 
-	gVars->indicator.on = RGBToColor(0,255,0);
-	gVars->indicator.off = RGBToColor(0,0,0);
+	gVars->indicator.on = Graphics::RGBToColor<ColorMasks<565> >(0,255,0);
+	gVars->indicator.off = Graphics::RGBToColor<ColorMasks<565> >(0,0,0);
 
 	_overlayH =  alloc_screen(_screenWidth, _screenHeight);
 	_overlayP = (OverlayColor *)(BmpGetBits(WinGetBitmap(_overlayH)));

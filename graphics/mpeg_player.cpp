@@ -389,10 +389,11 @@ void BaseAnimationState::buildLookup() {
 	}
 
 	// Set up entries 0-255 in rgb-to-pixel value tables.
+	Graphics::PixelFormat format = _sys->getOverlayFormat();
 	for (i = 0; i < 256; i++) {
-		r_2_pix_alloc[i + 256] = _sys->RGBToColor(i, 0, 0);
-		g_2_pix_alloc[i + 256] = _sys->RGBToColor(0, i, 0);
-		b_2_pix_alloc[i + 256] = _sys->RGBToColor(0, 0, i);
+		r_2_pix_alloc[i + 256] = Graphics::RGBToColor(i, 0, 0, format);
+		g_2_pix_alloc[i + 256] = Graphics::RGBToColor(0, i, 0, format);
+		b_2_pix_alloc[i + 256] = Graphics::RGBToColor(0, 0, i, format);
 	}
 
 	// Spread out the values we have to the rest of the array so that we do

@@ -136,9 +136,7 @@ public:
 									int x, int y, int w, int h);
 	virtual int16 getOverlayWidth();
 	virtual int16 getOverlayHeight();
-
-	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
-	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
+	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<565>(); }
 
 	virtual bool showMouse(bool visible);
 

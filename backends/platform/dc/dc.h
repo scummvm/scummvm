@@ -155,12 +155,7 @@ class OSystem_Dreamcast : public OSystem, public FilesystemFactory {
   void clearOverlay();
   void grabOverlay(int16 *buf, int pitch);
   void copyRectToOverlay(const int16 *buf, int pitch, int x, int y, int w, int h);
-  OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b) { return (0xf000|((r&0xf0)<<4)|(g&0xf0)|(b>>4); }
-  void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-    r = ((color>>4)&0xf0)|((color>>8)&0x0f);
-    g = (color&0xf0)|((color>>4)&0x0f);
-    b = ((color<<4)&0xf0)|(color&0x0f);
-  }
+  virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<4444>(); }
 
   // Mutex handling
   MutexRef createMutex();

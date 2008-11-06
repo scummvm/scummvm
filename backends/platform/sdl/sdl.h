@@ -182,11 +182,6 @@ public:
 	virtual int16 getOverlayHeight()  { return _overlayHeight; }
 	virtual int16 getOverlayWidth()   { return _overlayWidth; }
 
-	// Methods that convert RGB to/from colors suitable for the overlay.
-	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
-	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
-
-
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);

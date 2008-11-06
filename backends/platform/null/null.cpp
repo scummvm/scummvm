@@ -91,9 +91,7 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
-
-	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
-	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
+	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<565>(); }
 
 	virtual bool showMouse(bool visible);
 
@@ -257,12 +255,6 @@ int16 OSystem_NULL::getOverlayWidth() {
 	return getWidth();
 }
 
-OverlayColor OSystem_NULL::RGBToColor(uint8 r, uint8 g, uint8 b) {
-	return 0;
-}
-
-void OSystem_NULL::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-}
 
 bool OSystem_NULL::showMouse(bool visible) {
 	return true;

@@ -617,24 +617,6 @@ public:
 	 */
 	virtual int16 getOverlayWidth()   { return getWidth(); }
 
-	/**
-	* Convert the given RGB triplet into an OverlayColor. A OverlayColor can
-	 * be 8bit, 16bit or 32bit, depending on the target system. The default
-	 * implementation generates a 16 bit color value, in the 565 format
-	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
-	 * @see colorToRGB
-	 */
-	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
-
-	/**
-	 * Convert the given OverlayColor into a RGB triplet. An OverlayColor can
-	 * be 8bit, 16bit or 32bit, depending on the target system. The default
-	 * implementation takes a 16 bit color value and assumes it to be in 565 format
-	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
-	 * @see RGBToColor
-	 */
-	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
-
 	//@}
 
 

@@ -61,14 +61,6 @@ bool OSystem::setGraphicsMode(const char *name) {
 	return false;
 }
 
-OverlayColor OSystem::RGBToColor(uint8 r, uint8 g, uint8 b) {
-	return Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
-}
-
-void OSystem::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-	Graphics::colorToRGB<Graphics::ColorMasks<565> >(color, r, g, b);
-}
-
 void OSystem::displayMessageOnOSD(const char *msg) {
 	// Display the message for 1.5 seconds
 	GUI::TimedMessageDialog dialog(msg, 1500);

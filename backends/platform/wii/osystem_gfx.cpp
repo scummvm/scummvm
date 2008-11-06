@@ -197,7 +197,7 @@ int16 OSystem_Wii::getHeight() {
 void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 	const byte *p = colors;
 	for (uint i = 0; i < num; ++i) {
-		_palette[start + i] = RGBToColor(p[0], p[1], p[2]);
+		_palette[start + i] = Graphics::RGBToColor<ColorMasks<565> >(p[0], p[1], p[2]);
 		p += 4;
 	}
 }
@@ -206,7 +206,7 @@ void OSystem_Wii::grabPalette(byte *colors, uint start, uint num) {
 	byte *p = colors;
 	u8 r, g, b;
 	for (uint i = 0; i < num; ++i) {
-		colorToRGB(_palette[start + i], r, g, b);
+		Graphics::colorToRGB<ColorMasks<565> >(_palette[start + i], r, g, b);
 		p[0] = r;
 		p[1] = g;
 		p[2] = b;
@@ -218,7 +218,7 @@ void OSystem_Wii::grabPalette(byte *colors, uint start, uint num) {
 void OSystem_Wii::setCursorPalette(const byte *colors, uint start, uint num) {
 	const byte *p = colors;
 	for (uint i = 0; i < num; ++i) {
-		_cursorPalette[start + i] = RGBToColor(p[0], p[1], p[2]);
+		_cursorPalette[start + i] = Graphics::RGBToColor<ColorMasks<565> >(p[0], p[1], p[2]);
 		p += 4;
 	}
 
@@ -441,17 +441,6 @@ int16 OSystem_Wii::getOverlayWidth() {
 
 int16 OSystem_Wii::getOverlayHeight() {
 	return _overlayHeight;
-}
-
-OverlayColor OSystem_Wii::RGBToColor(uint8 r, uint8 g, uint8 b) {
-	return (((r >> 3) & 0x1f) << 11) | (((g >> 2) & 0x3f) << 5 ) |
-			((b >> 3) & 0x1f);
-}
-
-void OSystem_Wii::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-	r = ((color >> 11) & 0x1f) << 3;
-	g = ((color >> 5) & 0x3f) << 2;
-	b = (color & 0x1f) << 3;
 }
 
 bool OSystem_Wii::showMouse(bool visible) {

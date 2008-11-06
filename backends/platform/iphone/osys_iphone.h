@@ -143,6 +143,7 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
+	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<565>(); }
 
 	virtual bool showMouse(bool visible);
 

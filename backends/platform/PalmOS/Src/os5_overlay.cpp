@@ -74,13 +74,3 @@ void OSystem_PalmOS5::copyRectToOverlay(const OverlayColor *buf, int pitch, int 
 		buf += pitch;
 	} while (--h);
 }
-
-OverlayColor OSystem_PalmOS5::RGBToColor(uint8 r, uint8 g, uint8 b) {
-	return gfxMakeDisplayRGB(r, g, b);
-}
-
-void OSystem_PalmOS5::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-	r = ((color >> 8) & 0xF8);
-	g = ((color >> 3) & 0xFC);
-	b = ((color << 3) & 0xF8);
-}

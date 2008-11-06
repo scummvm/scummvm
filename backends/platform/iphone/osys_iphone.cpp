@@ -180,7 +180,7 @@ void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
 	const byte *b = colors;
 
 	for (uint i = start; i < start + num; ++i) {
-		_palette[i] = RGBToColor(b[0], b[1], b[2]);
+		_palette[i] = Graphics::RGBToColor<ColorMasks<565> >(b[0], b[1], b[2]);
 		b += 4;
 	}
 

@@ -1239,14 +1239,6 @@ void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 	SDL_UnlockSurface(_overlayscreen);
 }
 
-OverlayColor OSystem_SDL::RGBToColor(uint8 r, uint8 g, uint8 b) {
-	return SDL_MapRGB(_overlayscreen->format, r, g, b);
-}
-
-void OSystem_SDL::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-	SDL_GetRGB(color, _overlayscreen->format, &r, &g, &b);
-}
-
 
 #pragma mark -
 #pragma mark --- Mouse ---

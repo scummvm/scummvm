@@ -152,7 +152,7 @@ void OSystem_PalmBase::updateScreen() {
 
 void OSystem_PalmBase::clearScreen() {
 	WinSetDrawWindow(WinGetDisplayWindow());
-	WinSetBackColor(RGBToColor(0,0,0));
+	WinSetBackColor(Graphics::RGBToColor<ColorMasks<565> >(0,0,0));
 	WinEraseWindow();
 }
 

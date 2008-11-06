@@ -71,8 +71,8 @@ void OSystem_PalmZodiac::load_gfx_mode() {
 	SysSetOrientationTriggerState(sysOrientationTriggerDisabled);
 	PINSetInputTriggerState(pinInputTriggerDisabled);
 
-	gVars->indicator.on = RGBToColor(0,255,0);
-	gVars->indicator.off = RGBToColor(0,0,0);
+	gVars->indicator.on = Graphics::RGBToColor<ColorMasks<565> >(0,255,0);
+	gVars->indicator.off = Graphics::RGBToColor<ColorMasks<565> >(0,0,0);
 
 	_screenH = WinGetDisplayWindow();
 	_screenP = (byte *)BmpGetBits(WinGetBitmap(_screenH));

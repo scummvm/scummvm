@@ -65,13 +65,3 @@ void OSystem_PalmZodiac::copyRectToOverlay(const OverlayColor *buf, int pitch, i
 	};
 	e = TwGfxDrawBitmap(_overlayP, &pos, &bmp);
 }
-
-OverlayColor OSystem_PalmZodiac::RGBToColor(uint8 r, uint8 g, uint8 b) {
-	return TwGfxMakeDisplayRGB(r, g, b);
-}
-
-void OSystem_PalmZodiac::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-	r = ((color >> 8) & 0xF8);
-	g = ((color >> 3) & 0xFC);
-	b = ((color << 3) & 0xF8);
-}

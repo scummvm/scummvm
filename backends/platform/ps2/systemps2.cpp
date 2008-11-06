@@ -641,16 +641,6 @@ bool OSystem_PS2::pollEvent(Common::Event &event) {
 	return res;
 }
 
-OverlayColor OSystem_PS2::RGBToColor(uint8 r, uint8 g, uint8 b) {
-	return (r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10);
-}
-
-void OSystem_PS2::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-	r = (color & 0x1F) << 3;
-	g = ((color >> 5) & 0x1F) << 3;
-	b = ((color >> 10) & 0x1F) << 3;
-}
-
 int16 OSystem_PS2::getHeight(void) {
 	return _screen->getHeight();
 }

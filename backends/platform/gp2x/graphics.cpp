@@ -1160,14 +1160,6 @@ void OSystem_GP2X::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, 
 	SDL_UnlockSurface(_overlayscreen);
 }
 
-OverlayColor OSystem_GP2X::RGBToColor(uint8 r, uint8 g, uint8 b) {
-	return SDL_MapRGB(_overlayscreen->format, r, g, b);
-}
-
-void OSystem_GP2X::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-	SDL_GetRGB(color, _overlayscreen->format, &r, &g, &b);
-}
-
 
 #pragma mark -
 #pragma mark --- Mouse ---

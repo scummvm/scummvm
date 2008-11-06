@@ -353,16 +353,6 @@ int16 OSystem_PSP::getOverlayHeight() {
 	return _overlayHeight;
 }
 
-OverlayColor OSystem_PSP::RGBToColor(uint8 r, uint8 g, uint8 b) {
-	return (((r >> 3) & 0x1F) | (((g >> 3) & 0x1F) << 5) | (((b >> 3) & 0x1F) << 10 ) ) | 0x8000;
-}
-
-void OSystem_PSP::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-	r = ((color & 0x1F) << 3);
-	g = (((color >> 5) & 0x1F) << 3);
-	b = (((color >> 10) & 0x1F) << 3);
-}
-
 
 void OSystem_PSP::grabPalette(byte *colors, uint start, uint num) {
 	uint i;

@@ -163,11 +163,6 @@ public:
 	int16 getOverlayHeight()  { return _overlayHeight; }
 	int16 getOverlayWidth()   { return _overlayWidth; }
 
-	// Methods that convert RGB to/from colors suitable for the overlay.
-	OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
-	void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
-
-
 	const GraphicsMode *getSupportedGraphicsModes() const;
 	int getDefaultGraphicsMode() const;
 	bool setGraphicsMode(int mode);
