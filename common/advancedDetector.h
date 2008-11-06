@@ -210,11 +210,8 @@ public:
 	 * An (optional) generic fallback detect function which is invoked
 	 * if both the regular MD5 based detection as well as the file
 	 * based fallback failed to detect anything.
-	 *
-	 * @note The fslist parameter may be 0 -- in that case, it is assumed
-	 *       that the callback searchs the current directory.
 	 */
-	virtual const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const {
+	virtual const Common::ADGameDescription *fallbackDetect(const FSList &fslist) const {
 		return 0;
 	}
 };

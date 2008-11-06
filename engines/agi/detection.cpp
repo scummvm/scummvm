@@ -2127,7 +2127,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	
-	const Common::ADGameDescription *fallbackDetect(const Common::FSList *fslist) const;
+	const Common::ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 };
 
 bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -2203,7 +2203,7 @@ void AgiMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(filename.c_str());
 }
 
-const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSList *fslist) const {
+const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
 	typedef Common::HashMap<Common::String, int32> IntMap;
 	IntMap allFiles;
 	bool matchedUsingFilenames = false;
@@ -2212,23 +2212,10 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSL
 	WagFileParser wagFileParser;
 	Common::FSNode wagFileNode;
 	Common::String description;
-	Common::FSList fslistCurrentDir; // Only used if fslist == NULL
 
 	// // Set the defaults for gameid and extra
 	_gameid = "agi-fanmade";
 	_extra.clear();
-
-	// Use the current directory for searching if fslist == NULL
-	if (fslist == NULL) {
-		Common::String path = ConfMan.get("path");
-
-		if (path.empty())
-			path = ".";
-
-		Common::FSNode fsCurrentDir(path);
-		fsCurrentDir.getChildren(fslistCurrentDir, Common::FSNode::kListFilesOnly);
-		fslist = &fslistCurrentDir;
-	}
 
 	// Set the default values for the fallback descriptor's ADGameDescription part.
 	g_fallbackDesc.desc.language = Common::UNK_LANG;
@@ -2241,7 +2228,7 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSL
 	g_fallbackDesc.version = 0x2917;
 
 	// First grab all filenames and at the same time count the number of *.wag files
-	for (Common::FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory()) continue;
 		Common::String filename = file->getName();
 		filename.toLowercase();

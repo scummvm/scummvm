@@ -350,7 +350,7 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 
-	const Common::ADGameDescription *fallbackDetect(const Common::FSList *fslist) const;
+	const Common::ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 
 };
 
@@ -362,7 +362,7 @@ bool MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return gd != 0;
 }
 
-const Common::ADGameDescription *MadeMetaEngine::fallbackDetect(const Common::FSList *fslist) const {
+const Common::ADGameDescription *MadeMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
 	// Set the default values for the fallback descriptor's ADGameDescription part.
 	Made::g_fallbackDesc.desc.language = Common::UNK_LANG;
 	Made::g_fallbackDesc.desc.platform = Common::kPlatformPC;

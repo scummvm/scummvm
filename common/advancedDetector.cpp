@@ -205,7 +205,7 @@ GameList AdvancedMetaEngine::detectGames(const FSList &fslist) const {
 
 	// Use fallback detector if there were no matches by other means
 	if (matches.empty()) {
-		const Common::ADGameDescription *fallbackDesc = fallbackDetect(&fslist);
+		const Common::ADGameDescription *fallbackDesc = fallbackDetect(fslist);
 		if (fallbackDesc != 0) {
 			GameDescriptor desc(toGameDescriptor(*fallbackDesc, params.list));
 			updateGameDescriptor(desc, fallbackDesc, params);
@@ -268,7 +268,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 
 	if (agdDesc == 0) {
 		// Use fallback detector if there were no matches by other means
-		agdDesc = fallbackDetect(NULL);
+		agdDesc = fallbackDetect(files);
 		if (agdDesc != 0) {
 			// Seems we found a fallback match. But first perform a basic
 			// sanity check: the gameid must match.
