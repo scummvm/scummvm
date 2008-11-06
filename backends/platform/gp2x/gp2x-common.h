@@ -40,11 +40,6 @@ namespace Audio {
 	class MixerImpl;
 }
 
-namespace Common {
-	class SaveFileManager;
-	class TimerManager;
-}
-
 //#define DISABLE_SCALERS
 
 enum {

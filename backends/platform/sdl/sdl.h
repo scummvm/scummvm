@@ -41,11 +41,6 @@ namespace Audio {
 	class MixerImpl;
 }
 
-namespace Common {
-	class SaveFileManager;
-	class TimerManager;
-}
-
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 // Uncomment this to enable the 'on screen display' code.
 #define USE_OSD	1
