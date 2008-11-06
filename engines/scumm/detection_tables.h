@@ -210,7 +210,7 @@ static const GameSettings gameVariantsTable[] = {
 
 	{"loom", "EGA",      "ega", GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI, 0, UNK},
 	{"loom", "No Adlib", "ega", GID_LOOM, 3, 0, MDT_PCSPK,                        0, UNK},
-	{"loom", "PC-Engine",    0, GID_LOOM, 3, 0, MDT_NONE,                        GF_AUDIOTRACKS, Common::kPlatformPCEngine},
+	{"loom", "PC-Engine",    0, GID_LOOM, 3, 0, MDT_NONE,                         GF_AUDIOTRACKS, Common::kPlatformPCEngine},
 	{"loom", "FM-TOWNS",     0, GID_LOOM, 3, 0, MDT_TOWNS,                        GF_AUDIOTRACKS | GF_OLD256, Common::kPlatformFMTowns},
 	{"loom", "VGA",      "vga", GID_LOOM, 4, 0, MDT_NONE,                         GF_AUDIOTRACKS,             Common::kPlatformPC},
 

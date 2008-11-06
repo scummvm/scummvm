@@ -83,6 +83,9 @@ enum {
  * Note that some of them could be replaced by checks for the SCUMM version.
  */
 enum GameFeatures {
+	/** A demo, not a full blown game. */
+	GF_DEMO                = 1 << 0,
+
 	/** Games with the AKOS costume system (ScummEngine_v7 and subclasses, HE games). */
 	GF_NEW_COSTUMES        = 1 << 2,
 
@@ -114,7 +117,7 @@ enum GameFeatures {
 	GF_HE_LOCALIZED        = 1 << 13,
 
 	/**
-	 *  HE Games with more global scripts and different sprite handling
+	 *  HE games with more global scripts and different sprite handling
 	 *  i.e. read it as HE version 9.85. Used for HE98 only.
 	 */
 	GF_HE_985             = 1 << 14,
@@ -123,10 +126,7 @@ enum GameFeatures {
 	GF_16BIT_COLOR         = 1 << 15,
 
 	/** HE games which use sprites for subtitles */
-	GF_HE_NOSUBTITLES      = 1 << 16,
-
-	/** A demo, not a full blown game. */
-	GF_DEMO                = 1 << 17
+	GF_HE_NOSUBTITLES      = 1 << 16
 };
 
 /* SCUMM Debug Channels */

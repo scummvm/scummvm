@@ -136,11 +136,11 @@ public:
 
 	/**
 	 * Request a list of available savegames with a given DOS-style pattern,
-	 * also known as "glob" in the UNIX world. Refer to the Common::match()
+	 * also known as "glob" in the UNIX world. Refer to the Common::matchString()
 	 * function to learn about the precise pattern format.
 	 * @param pattern Pattern to match. Wildcards like * or ? are available.
 	 * @return list of strings for all present file names.
-	 * @see Common::match
+	 * @see Common::matchString()
 	 */
 	virtual Common::StringList listSavefiles(const char *pattern) = 0;
 };
