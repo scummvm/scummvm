@@ -88,6 +88,7 @@ public:
 	Common::SaveFileManager* getSaveFileMan() { return _saveFileMan; }
 
 	void playNote(int16 frequency, int32 length);
+	void waitForTimer(int msec_delay);
 
 private:
 	int _defaultColor;
