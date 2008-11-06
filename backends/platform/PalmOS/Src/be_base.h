@@ -199,9 +199,6 @@ public:
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
 
-	virtual OverlayColor ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b);
-	virtual void colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b);
-
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 	virtual void disableCursorPalette(bool disable);
 

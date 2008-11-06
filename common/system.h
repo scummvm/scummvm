@@ -623,7 +623,6 @@ public:
 	 * implementation generates a 16 bit color value, in the 565 format
 	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
 	 * @see colorToRGB
-	 * @see ARGBToColor
 	 */
 	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
 
@@ -633,31 +632,8 @@ public:
 	 * implementation takes a 16 bit color value and assumes it to be in 565 format
 	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
 	 * @see RGBToColor
-	 * @see colorToARGB
 	 */
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
-
-	/**
-	 * Convert the given ARGB quadruplet into an OverlayColor. A OverlayColor can
-	 * be 8bit, 16bit or 32bit, depending on the target system. The default
-	 * implementation generates a 16 bit color value, in the 565 format
-	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
-	 * @note The alpha component, ranges from 0 (transparent) to 255 (opaque).
-	 * @see colorToRGB
-	 * @see RGBToColor
-	 */
-	virtual OverlayColor ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b);
-
-	/**
-	 * Convert the given OverlayColor into an ARGB quadruplet. An OverlayColor can
-	 * be 8bit, 16bit or 32bit, depending on the target system. The default
-	 * implementation takes a 16 bit color value and assumes it to be in 565 format
-	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
-	 * @note The alpha component, ranges from 0 (transparent) to 255 (opaque).
-	 * @see ARGBToColor
-	 * @see colorToRGB
-	 */
-	virtual void colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b);
 
 	//@}
 

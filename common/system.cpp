@@ -69,15 +69,6 @@ void OSystem::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
 	Graphics::colorToRGB<Graphics::ColorMasks<565> >(color, r, g, b);
 }
 
-OverlayColor OSystem::ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
-	return RGBToColor(r, g, b);
-}
-
-void OSystem::colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) {
-	colorToRGB(color, r, g, b);
-	a = 255;
-}
-
 void OSystem::displayMessageOnOSD(const char *msg) {
 	// Display the message for 1.5 seconds
 	GUI::TimedMessageDialog dialog(msg, 1500);

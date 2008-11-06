@@ -363,22 +363,6 @@ void OSystem_PSP::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
 	b = (((color >> 10) & 0x1F) << 3);
 }
 
-OverlayColor OSystem_PSP::ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
-	OverlayColor color = RGBToColor(r, g, b);
-
-	if (a == 255)
-		color |= 0x8000;
-
-	return color;
-}
-
-void OSystem_PSP::colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) {
-	colorToRGB(color, r, g, b);
-	if (color & 0x8000)
-		a = 255;
-	else
-		a = 0;
-}
 
 void OSystem_PSP::grabPalette(byte *colors, uint start, uint num) {
 	uint i;

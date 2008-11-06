@@ -454,16 +454,6 @@ void OSystem_Wii::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
 	b = (color & 0x1f) << 3;
 }
 
-OverlayColor OSystem_Wii::ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
-	return RGBToColor(r, g, b);
-}
-
-void OSystem_Wii::colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g,
-								uint8 &b) {
-	a = 0xff;
-	colorToRGB(color, r, g, b);
-}
-
 bool OSystem_Wii::showMouse(bool visible) {
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
