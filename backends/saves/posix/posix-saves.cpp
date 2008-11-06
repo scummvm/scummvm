@@ -72,13 +72,13 @@ void POSIXSaveFileManager::checkPath(const Common::FSNode &dir) {
 		// to create the dir (ENOENT case).
 		switch (errno) {
 		case EACCES:
-			setError(SFM_DIR_ACCESS, "Search or write permission denied: "+path);
+			setError(Common::kWritePermissionDenied, "Search or write permission denied: "+path);
 			break;
 		case ELOOP:
-			setError(SFM_DIR_LOOP, "Too many symbolic links encountered while traversing the path: "+path);
+			setError(Common::kUnknownError, "Too many symbolic links encountered while traversing the path: "+path);
 			break;
 		case ENAMETOOLONG:
-			setError(SFM_DIR_NAMETOOLONG, "The path name is too long: "+path);
+			setError(Common::kUnknownError, "The path name is too long: "+path);
 			break;
 		case ENOENT:
 			if (mkdir(path.c_str(), 0755) != 0) {
@@ -89,37 +89,37 @@ void POSIXSaveFileManager::checkPath(const Common::FSNode &dir) {
 
 				switch (errno) {
 				case EACCES:
-					setError(SFM_DIR_ACCESS, "Search or write permission denied: "+path);
+					setError(Common::kWritePermissionDenied, "Search or write permission denied: "+path);
 					break;
 				case EMLINK:
-					setError(SFM_DIR_LINKMAX, "The link count of the parent directory would exceed {LINK_MAX}: "+path);
+					setError(Common::kUnknownError, "The link count of the parent directory would exceed {LINK_MAX}: "+path);
 					break;
 				case ELOOP:
-					setError(SFM_DIR_LOOP, "Too many symbolic links encountered while traversing the path: "+path);
+					setError(Common::kUnknownError, "Too many symbolic links encountered while traversing the path: "+path);
 					break;
 				case ENAMETOOLONG:
-					setError(SFM_DIR_NAMETOOLONG, "The path name is too long: "+path);
+					setError(Common::kUnknownError, "The path name is too long: "+path);
 					break;
 				case ENOENT:
-					setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+path);
+					setError(Common::kPathDoesNotExist, "A component of the path does not exist, or the path is an empty string: "+path);
 					break;
 				case ENOTDIR:
-					setError(SFM_DIR_NOTDIR, "A component of the path prefix is not a directory: "+path);
+					setError(Common::kPathDoesNotExist, "A component of the path prefix is not a directory: "+path);
 					break;
 				case EROFS:
-					setError(SFM_DIR_ROFS, "The parent directory resides on a read-only file system:"+path);
+					setError(Common::kWritePermissionDenied, "The parent directory resides on a read-only file system:"+path);
 					break;
 				}
 			}
 			break;
 		case ENOTDIR:
-			setError(SFM_DIR_NOTDIR, "A component of the path prefix is not a directory: "+path);
+			setError(Common::kPathDoesNotExist, "A component of the path prefix is not a directory: "+path);
 			break;
 		}
 	} else {
 		// So stat() succeeded. But is the path actually pointing to a directory?
 		if (!S_ISDIR(sb.st_mode)) {
-			setError(SFM_DIR_NOTDIR, "The given savepath is not a directory: "+path);
+			setError(Common::kPathDoesNotExist, "The given savepath is not a directory: "+path);
 		}
 	}
 }

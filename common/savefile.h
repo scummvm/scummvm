@@ -65,7 +65,7 @@ typedef WriteStream OutSaveFile;
 class SaveFileManager : NonCopyable {
 
 protected:
-	SFMError _error;
+	Error _error;
 	String _errorDesc;
 
 	/**
@@ -73,7 +73,7 @@ protected:
 	 * @param error Code identifying the last error.
 	 * @param errorDesc String describing the last error.
 	 */
-	virtual void setError(SFMError error, const String &errorDesc) { _error = error; _errorDesc = errorDesc; }
+	virtual void setError(Error error, const String &errorDesc) { _error = error; _errorDesc = errorDesc; }
 
 public:
 	virtual ~SaveFileManager() {}
@@ -81,14 +81,14 @@ public:
 	/**
 	 * Clears the last set error code and string.
 	 */
-	virtual void clearError() { _error = SFM_NO_ERROR; _errorDesc = ""; }
+	virtual void clearError() { _error = kNoError; _errorDesc.clear(); }
 
 	/**
-	 * Returns the last occurred error code. If none occurred, returns SFM_NO_ERROR.
+	 * Returns the last occurred error code. If none occurred, returns kNoError.
 	 *
-	 * @return A SFMError indicating the type of the last error.
+	 * @return A value indicating the type of the last error.
 	 */
-	virtual SFMError getError() { return _error; }
+	virtual Error getError() { return _error; }
 
 	/**
 	 * Returns the last occurred error description. If none occurred, returns 0.
