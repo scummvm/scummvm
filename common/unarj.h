@@ -32,10 +32,11 @@
 namespace Common {
 
 struct ArjHeader;
-class ArjDecoder;
 
 typedef HashMap<String, int, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjFilesMap;
 
+// TODO: Get rid of this class, by implementing an ArjArchive subclass of Common::Archive.
+// Then ArjFile can be substituted by a SearchSet full of ArjArchives plus SearchMan.
 class ArjFile : public SeekableReadStream, public NonCopyable {
 public:
 	ArjFile();
@@ -63,8 +64,6 @@ private:
 	StringMap _archMap;
 
 	SeekableReadStream *_uncompressed;
-
-	ArjDecoder *_decoder;
 };
 
 } // End of namespace Common

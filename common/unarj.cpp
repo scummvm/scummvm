@@ -87,13 +87,22 @@ struct ArjHeader {
 	uint32 headerCrc;
 };
 
+static int32 findHeader(SeekableReadStream &stream);
+static ArjHeader *readHeader(SeekableReadStream &stream);
+
 class ArjDecoder {
 public:
-	int32 findHeader(SeekableReadStream &stream);
-	ArjHeader *readHeader(SeekableReadStream &stream);
+	ArjDecoder(const ArjHeader *hdr) {
+		_compsize = hdr->compSize;
+	}
+	
+	~ArjDecoder() {
+		delete _compressed;
+		delete _outstream;
+	}
 
-	void decode();
-	void decode_f();
+	void decode(int32 origsize);
+	void decode_f(int32 origsize);
 
 	MemoryReadStream *_compressed;
 	MemoryWriteStream *_outstream;
@@ -102,7 +111,6 @@ public:
 	uint16 _bitbuf;
 	uint16 _bytebuf;
 	int32 _compsize;
-	int32 _origsize;
 	byte _subbitbuf;
 	int _bitcount;
 
@@ -181,7 +189,6 @@ static uint32 GetCRC(byte *data, int len) {
 }
 
 ArjFile::ArjFile() : _uncompressed(0) {
-	_decoder = new ArjDecoder;
 	InitCRC();
 	_fallBack = false;
 }
@@ -191,8 +198,6 @@ ArjFile::~ArjFile() {
 
 	for (uint i = 0; i < _headers.size(); i++)
 		delete _headers[i];
-	
-	delete _decoder;
 }
 
 void ArjFile::registerArchive(const String &filename) {
@@ -203,7 +208,7 @@ void ArjFile::registerArchive(const String &filename) {
 	if (!archiveFile.open(filename))
 		return;
 
-	first_hdr_pos = _decoder->findHeader(archiveFile);
+	first_hdr_pos = findHeader(archiveFile);
 
 	if (first_hdr_pos < 0) {
 		warning("ArjFile::registerArchive(): Could not find a valid header");
@@ -211,10 +216,10 @@ void ArjFile::registerArchive(const String &filename) {
 	}
 
 	archiveFile.seek(first_hdr_pos, SEEK_SET);
-	if (_decoder->readHeader(archiveFile) == NULL)
+	if (readHeader(archiveFile) == NULL)
 		return;
 
-	while ((header = _decoder->readHeader(archiveFile)) != NULL) {
+	while ((header = readHeader(archiveFile)) != NULL) {
 		_headers.push_back(header);
 
 		archiveFile.seek(header->compSize, SEEK_CUR);
@@ -230,7 +235,7 @@ void ArjFile::registerArchive(const String &filename) {
 // Source for findHeader and readHeader: arj_arcv.c
 //
 
-int32 ArjDecoder::findHeader(SeekableReadStream &stream) {
+int32 findHeader(SeekableReadStream &stream) {
 	long end_pos, tmp_pos;
 	int id;
 	byte header[HEADERSIZE_MAX];
@@ -269,7 +274,7 @@ int32 ArjDecoder::findHeader(SeekableReadStream &stream) {
 	return -1;
 }
 
-ArjHeader *ArjDecoder::readHeader(SeekableReadStream &stream) {
+ArjHeader *readHeader(SeekableReadStream &stream) {
 	ArjHeader header;
 	ArjHeader *head;
 	byte headData[HEADERSIZE_MAX];
@@ -354,38 +359,34 @@ bool ArjFile::open(const Common::String &filename) {
 		return false;
 
 	ArjHeader *hdr = _headers[_fileMap[filename]];
-
-	_decoder->_compsize = hdr->compSize;
-	_decoder->_origsize = hdr->origSize;
-
-	byte *uncompressedData = (byte *)malloc(_decoder->_origsize);
-	_decoder->_outstream = new MemoryWriteStream(uncompressedData, _decoder->_origsize);
+	byte *uncompressedData = (byte *)malloc(hdr->origSize);
 
 	File archiveFile;
 	archiveFile.open(_archMap[filename]);
 	archiveFile.seek(hdr->pos, SEEK_SET);
 
 	if (hdr->method == 0) { // store
-        archiveFile.read(uncompressedData, _decoder->	_origsize);
+        int32 len = archiveFile.read(uncompressedData, hdr->origSize);
+        assert(len == hdr->origSize);
 	} else {
-		byte *_compressedData = (byte *)malloc(_decoder->_compsize);
-		archiveFile.read(_compressedData, _decoder->_compsize);
+		ArjDecoder *decoder = new ArjDecoder(hdr);
 
-		_decoder->_compressed = new MemoryReadStream(_compressedData, _decoder->_compsize);
+		byte *compressedData = (byte *)malloc(hdr->compSize);
+		archiveFile.read(compressedData, hdr->compSize);
+
+		decoder->_compressed = new MemoryReadStream(compressedData, hdr->compSize, true);
+		decoder->_outstream = new MemoryWriteStream(uncompressedData, hdr->origSize);
 
 		if (hdr->method == 1 || hdr->method == 2 || hdr->method == 3)
-			_decoder->decode();
+			decoder->decode(hdr->origSize);
 		else if (hdr->method == 4)
-			_decoder->decode_f();
-
-		delete _decoder->_compressed;
-		free(_compressedData);
+			decoder->decode_f(hdr->origSize);
+		
+		delete decoder;
 	}
 
-	delete _decoder->_outstream;
-	_decoder->_outstream = NULL;
 
-	_uncompressed = new MemoryReadStream(uncompressedData, _decoder->_origsize, true);
+	_uncompressed = new MemoryReadStream(uncompressedData, hdr->origSize, true);
 	assert(_uncompressed);
 
 	return true;
@@ -680,7 +681,7 @@ void ArjDecoder::decode_start() {
 }
 
 // Decodes the entire file
-void ArjDecoder::decode() {
+void ArjDecoder::decode(int32 origsize) {
 	int16 i;
 	int16 r;
 	int16 c;
@@ -688,7 +689,7 @@ void ArjDecoder::decode() {
 	int32 count;
 
 	decode_start();
-	count = _origsize;
+	count = origsize;
 	r = 0;
 
 	while (count > 0) {
@@ -770,7 +771,7 @@ int16 ArjDecoder::decode_len() {
 }
 
 // Decodes the entire file, using method 4
-void ArjDecoder::decode_f() {
+void ArjDecoder::decode_f(int32 origsize) {
 	int16 i;
 	int16 j;
 	int16 c;
@@ -782,7 +783,7 @@ void ArjDecoder::decode_f() {
 	_getlen = _getbuf = 0;
 	r = 0;
 
-	while (ncount < (uint32)_origsize) {
+	while (ncount < (uint32)origsize) {
 		c = decode_len();
 		if (c == 0) {
 			ncount++;
