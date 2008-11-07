@@ -95,7 +95,7 @@ void PmvPlayer::play(const char *filename) {
 	// get it to work well?
 	_audioStream = Audio::makeAppendableAudioStream(soundFreq, Audio::Mixer::FLAG_UNSIGNED);
 
-	while (!_abort && !_fd->eos()) {
+	while (!_vm->shouldQuit() && !_abort && !_fd->eos()) {
 
 		int32 frameTime = _vm->_system->getMillis();
 
@@ -213,10 +213,6 @@ void PmvPlayer::handleEvents() {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				_abort = true;
-			break;
-		case Common::EVENT_QUIT:
-			_vm->_quit = true;
-			_abort = true;
 			break;
 		default:
 			break;

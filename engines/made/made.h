@@ -85,6 +85,9 @@ protected:
 public:
 	MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc);
 	virtual ~MadeEngine();
+
+	virtual bool hasFeature(EngineFeature f) const;
+
 	int getGameId() {
 		return _gameId;
 	}
@@ -104,8 +107,6 @@ public:
 	GameDatabase *_dat;
 	ScriptInterpreter *_script;
 	MusicPlayer *_music;
-
-	bool _quit;
 
 	uint16 _eventNum;
 	int _eventMouseX, _eventMouseY;

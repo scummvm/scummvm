@@ -348,11 +348,22 @@ public:
 		return "MADE Engine (C) Activision";
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 
 	const Common::ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 
 };
+
+bool MadeMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		false;
+}
+
+bool Made::MadeEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL);
+}
 
 bool MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const Made::MadeGameDescription *gd = (const Made::MadeGameDescription *)desc;

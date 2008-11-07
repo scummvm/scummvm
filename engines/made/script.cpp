@@ -191,7 +191,6 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 
 	uint32 opcodeSleepCounter = 0;
 
-	_vm->_quit = false;
 	_runningScriptObjectIndex = scriptObjectIndex;
 
 	_localStackPos = _stack.getStackPos();
@@ -199,7 +198,7 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 	_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 	_codeIp = _codeBase;
 
-	while (!_vm->_quit) {
+	while (!_vm->shouldQuit()) {
 
 		_vm->handleEvents();
 
@@ -427,14 +426,14 @@ void ScriptInterpreter::cmd_vsize() {
 }
 
 void ScriptInterpreter::cmd_exit() {
-	_vm->_quit = true;
+	_vm->quitGame();
 }
 
 void ScriptInterpreter::cmd_return() {
 
 	// Check if returning from main function
 	if (_localStackPos == kScriptStackSize) {
-		_vm->_quit = true;
+		_vm->quitGame();
 		return;
 	}
 

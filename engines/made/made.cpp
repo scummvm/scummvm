@@ -116,8 +116,6 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 		debug(1, "Music disabled.");
 	}
 	
-	_quit = false;
-
 	// Set default sound frequency
 	// Return to Zork sets it itself via a script funtion
 	if (getGameID() == GID_MANHOLE || getGameID() == GID_RODNEY) {
@@ -228,10 +226,6 @@ void MadeEngine::handleEvents() {
 			if (_eventKey == Common::KEYCODE_BACKSPACE)
 				_eventKey = 9;
 			_eventNum = 5;
-			break;
-
-		case Common::EVENT_QUIT:
-			_quit = true;
 			break;
 
 		default:
