@@ -82,50 +82,42 @@ public:
 
 #define MAX_ARCHIVE_ENTRIES			384
 
-class Archive : public Common::SeekableReadStream {
+class NSArchive : public Common::Archive {
 
-protected:
-	bool			_file;
-	uint32			_fileOffset;
-	uint32			_fileCursor;
-	uint32			_fileEndOffset;
-	Common::String	_archiveName;
+	Common::SeekableReadStream	*_stream;
+
 	char			_archiveDir[MAX_ARCHIVE_ENTRIES][32];
 	uint32			_archiveLenghts[MAX_ARCHIVE_ENTRIES];
 	uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
-	Common::File	_archive;
 	uint32			_numFiles;
 
-protected:
-	void resetArchivedFile();
+	uint32 			lookup(const char *name);
 
 public:
-	Archive();
+	NSArchive(Common::SeekableReadStream *stream, Common::Platform platform, uint32 features);
+	~NSArchive();
 
-	void open(const char* file);
-	void close();
-	Common::String name() const;
-	bool openArchivedFile(const char *name);
-	void closeArchivedFile();
-	int32 size() const;
-	int32 pos() const;
-	bool eos() const;
-	bool seek(int32 offs, int whence = SEEK_SET);
-	uint32 read(void *dataPtr, uint32 dataSize);
+	Common::SeekableReadStream *openFile(const Common::String &name);
+	bool hasFile(const Common::String &name);
+	int listMembers(Common::ArchiveMemberList &list);
+	Common::ArchiveMemberPtr getMember(const Common::String &name);
 };
 
 class Disk_ns : public Disk {
 
 protected:
-	Archive			_resArchive;
-	Archive			_locArchive;
-	char			_languageDir[3];
-	Parallaction	*_vm;
+	Parallaction		*_vm;
 
-protected:
-	void errorFileNotFound(const char *s);
+	NSArchive			*_resArchive;
+	NSArchive			*_locArchive;
+
+	Common::String		_resArchiveName;
+	Common::String		_language;
 	Common::SeekableReadStream *openFile(const char *filename);
 	Common::SeekableReadStream *tryOpenFile(const char *filename);
+	virtual Common::SeekableReadStream *tryOpenExternalFile(const char *filename);
+	virtual Common::SeekableReadStream *tryOpenArchivedFile(const char* name) { return 0; }
+	void errorFileNotFound(const char *filename);
 
 public:
 	Disk_ns(Parallaction *vm);
@@ -149,8 +141,7 @@ private:
 
 protected:
 	Gfx	 *_gfx;
-	Common::SeekableReadStream *tryOpenArchivedFile(const char* name);
-	Common::SeekableReadStream *openArchivedFile(const char* name);
+	virtual Common::SeekableReadStream *tryOpenArchivedFile(const char* name);
 
 public:
 	DosDisk_ns(Parallaction *vm);
@@ -180,7 +171,6 @@ protected:
 	void unpackFrame(byte *dst, byte *src, uint16 planeSize);
 	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height);
 	Common::SeekableReadStream *tryOpenArchivedFile(const char* name);
-	Common::SeekableReadStream *openArchivedFile(const char* name);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
 	void loadMask(BackgroundInfo& info, const char *name);
 	void loadPath(BackgroundInfo& info, const char *name);
