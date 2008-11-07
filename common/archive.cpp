@@ -299,17 +299,19 @@ void SearchSet::insert(const Node &node) {
 	_list.insert(it, node);
 }
 
-void SearchSet::add(const String& name, Archive *archive, int priority, bool autoFree) {
+void SearchSet::add(const String &name, Archive *archive, int priority, bool autoFree) {
 	if (find(name) == _list.end()) {
 		Node node(priority, name, archive, autoFree);
 		insert(node);
 	} else {
+		if (autoFree)
+			delete archive;
 		warning("SearchSet::add: archive '%s' already present", name.c_str());
 	}
 
 }
 
-void SearchSet::remove(const String& name) {
+void SearchSet::remove(const String &name) {
 	ArchiveList::iterator it = find(name);
 	if (it != _list.end()) {
 		if (it->_autoFree)
@@ -331,7 +333,7 @@ void SearchSet::clear() {
 	_list.clear();
 }
 
-void SearchSet::setPriority(const String& name, int priority) {
+void SearchSet::setPriority(const String &name, int priority) {
 	ArchiveList::iterator it = find(name);
 	if (it == _list.end()) {
 		warning("SearchSet::setPriority: archive '%s' is not present", name.c_str());
