@@ -433,7 +433,7 @@ void SearchManager::addDirectory(const String &name, const FSNode &dir, int prio
 	if (!dir.exists() || !dir.isDirectory())
 		return;
 
-	add(name, new FSDirectory(dir, depth), priority, true);
+	add(name, new FSDirectory(dir, depth), priority);
 }
 
 void SearchManager::clear() {
