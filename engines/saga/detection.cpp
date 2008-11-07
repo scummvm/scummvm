@@ -187,9 +187,10 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
+	int slotNum = 0;
 	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 2 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 2);
+		slotNum = atoi(file->c_str() + file->size() - 2);
 		
 		if (slotNum >= 0 && slotNum <= 99) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
@@ -199,8 +200,18 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 				in->read(saveDesc, SAVE_TITLE_SIZE);
 				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
 				delete in;
+			} else {
+				// handle gaps
+				*saveDesc = 0;
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
 			}
 		}
+	}
+
+	// Fill the rest of the list with empty slots
+	*saveDesc = 0;			
+	for (int i = slotNum + 1; i <= 99; i++) {
+		saveList.push_back(SaveStateDescriptor(i, saveDesc));
 	}
 
 	return saveList;
@@ -262,6 +273,11 @@ Common::Error SagaEngine::loadGameState(int slot) {
 	load(calcSaveFileName((uint)slot));
 	syncSoundSettings();
 
+	return Common::kNoError;	// TODO: return success/failure
+}
+
+Common::Error SagaEngine::saveGameState(int slot, const char *desc) {
+	save(calcSaveFileName((uint)slot), desc);
 	return Common::kNoError;	// TODO: return success/failure
 }
 

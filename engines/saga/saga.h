@@ -653,6 +653,7 @@ public:
 	int getDisplayWidth() const;
 	int getDisplayHeight() const;
 	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const char *desc);
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 	const GameDisplayInfo &getDisplayInfo();

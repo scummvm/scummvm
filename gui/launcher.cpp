@@ -565,7 +565,6 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 	case GUI::kListSelectionChangedCmd: {
 		updateSelection(true);
 
-		/*
 		if (_list->isEditable()) {
 			_list->startEditMode();
 		}
@@ -574,7 +573,6 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		// because we then just assign a default name.
 		_chooseButton->setEnabled(selItem >= 0 && (_list->isEditable() || !getResultString().empty()));
 		_chooseButton->draw();
-		*/
 	} break;
 	case kDelCmd:
 		if (selItem >= 0 && _delSupport) {
@@ -742,11 +740,7 @@ void SaveLoadChooser::updateSaveList() {
 
 	StringList saveNames;
 	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
-		Common::String description = x->save_slot();
-		description += ". ";
-		description += x->description();
-
-		saveNames.push_back(description);
+		saveNames.push_back(x->description());
 	}
 	_list->setList(saveNames);
 }
