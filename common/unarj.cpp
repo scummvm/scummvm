@@ -28,6 +28,7 @@
 // from http://arj.sourceforge.net/ , version 3.10.22 .
 
 #include "common/scummsys.h"
+#include "common/archive.h"
 #include "common/util.h"
 #include "common/unarj.h"
 
@@ -197,31 +198,30 @@ ArjFile::~ArjFile() {
 void ArjFile::registerArchive(const String &filename) {
 	int32 first_hdr_pos;
 	ArjHeader *header;
+	File archiveFile;
 
-	if (!_currArchive.open(filename))
+	if (!archiveFile.open(filename))
 		return;
 
-	first_hdr_pos = _decoder->findHeader(_currArchive);
+	first_hdr_pos = _decoder->findHeader(archiveFile);
 
 	if (first_hdr_pos < 0) {
 		warning("ArjFile::registerArchive(): Could not find a valid header");
 		return;
 	}
 
-	_currArchive.seek(first_hdr_pos, SEEK_SET);
-	if (_decoder->readHeader(_currArchive) == NULL)
+	archiveFile.seek(first_hdr_pos, SEEK_SET);
+	if (_decoder->readHeader(archiveFile) == NULL)
 		return;
 
-	while ((header = _decoder->readHeader(_currArchive)) != NULL) {
+	while ((header = _decoder->readHeader(archiveFile)) != NULL) {
 		_headers.push_back(header);
 
-		_currArchive.seek(header->compSize, SEEK_CUR);
+		archiveFile.seek(header->compSize, SEEK_CUR);
 
 		_fileMap[header->filename] = _headers.size() - 1;
 		_archMap[header->filename] = filename;
 	}
-
-	_currArchive.close();
 
 	debug(0, "ArjFile::registerArchive(%s): Located %d files", filename.c_str(), _headers.size());
 }
@@ -345,11 +345,9 @@ bool ArjFile::open(const Common::String &filename) {
 		error("Attempt to open another instance of archive");
 
 	if (_fallBack) {
-		_currArchive.open(filename);
-		if (_currArchive.isOpen()) {
-			_uncompressed = &_currArchive;
+		_uncompressed = SearchMan.openFile(filename);
+		if (_uncompressed)
 			return true;
-		}
 	}
 
 	if (!_fileMap.contains(filename))
@@ -363,16 +361,15 @@ bool ArjFile::open(const Common::String &filename) {
 	byte *uncompressedData = (byte *)malloc(_decoder->_origsize);
 	_decoder->_outstream = new MemoryWriteStream(uncompressedData, _decoder->_origsize);
 
-	_currArchive.open(_archMap[filename]);
-	_currArchive.seek(hdr->pos, SEEK_SET);
-
-printf("Arj archive method %d, file '%s'\n", hdr->method, filename.c_str());
+	File archiveFile;
+	archiveFile.open(_archMap[filename]);
+	archiveFile.seek(hdr->pos, SEEK_SET);
 
 	if (hdr->method == 0) { // store
-        _currArchive.read(uncompressedData, _decoder->	_origsize);
+        archiveFile.read(uncompressedData, _decoder->	_origsize);
 	} else {
 		byte *_compressedData = (byte *)malloc(_decoder->_compsize);
-		_currArchive.read(_compressedData, _decoder->_compsize);
+		archiveFile.read(_compressedData, _decoder->_compsize);
 
 		_decoder->_compressed = new MemoryReadStream(_compressedData, _decoder->_compsize);
 
@@ -385,7 +382,6 @@ printf("Arj archive method %d, file '%s'\n", hdr->method, filename.c_str());
 		free(_compressedData);
 	}
 
-	_currArchive.close();
 	delete _decoder->_outstream;
 	_decoder->_outstream = NULL;
 
@@ -396,15 +392,7 @@ printf("Arj archive method %d, file '%s'\n", hdr->method, filename.c_str());
 }
 
 void ArjFile::close() {
-	if (!_uncompressed)
-		return;
-
-	if (_fallBack) {
-		_currArchive.close();
-	} else {
-		delete _uncompressed;
-	}
-
+	delete _uncompressed;
 	_uncompressed = NULL;
 }
 

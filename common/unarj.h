@@ -58,7 +58,6 @@ public:
 private:
 	bool _fallBack;
 
-	File _currArchive;
 	Array<ArjHeader *> _headers;
 	ArjFilesMap _fileMap;
 	StringMap _archMap;
