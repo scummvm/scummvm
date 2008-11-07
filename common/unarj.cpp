@@ -179,10 +179,9 @@ static uint32 GetCRC(byte *data, int len) {
 	return CRC ^ 0xFFFFFFFF;
 }
 
-ArjFile::ArjFile() : _uncompressedData(NULL) {
+ArjFile::ArjFile() : _uncompressed(0) {
 	_decoder = new ArjDecoder;
 	InitCRC();
-	_isOpen = false;
 	_fallBack = false;
 }
 
@@ -342,15 +341,12 @@ ArjHeader *ArjDecoder::readHeader(SeekableReadStream &stream) {
 
 
 bool ArjFile::open(const Common::String &filename) {
-	if (_isOpen)
+	if (_uncompressed)
 		error("Attempt to open another instance of archive");
-
-	_isOpen = false;
 
 	if (_fallBack) {
 		_currArchive.open(filename);
 		if (_currArchive.isOpen()) {
-			_isOpen = true;
 			_uncompressed = &_currArchive;
 			return true;
 		}
@@ -359,19 +355,13 @@ bool ArjFile::open(const Common::String &filename) {
 	if (!_fileMap.contains(filename))
 		return false;
 
-	_isOpen = true;
-
 	ArjHeader *hdr = _headers[_fileMap[filename]];
 
 	_decoder->_compsize = hdr->compSize;
 	_decoder->_origsize = hdr->origSize;
 
-	// FIXME: This hotfix prevents Drascula from leaking memory.
-	// As far as sanity checks go this is not bad, but the engine should be fixed.
-	free(_uncompressedData);
-
-	_uncompressedData = (byte *)malloc(_decoder->_origsize);
-	_decoder->_outstream = new MemoryWriteStream(_uncompressedData, _decoder->_origsize);
+	byte *uncompressedData = (byte *)malloc(_decoder->_origsize);
+	_decoder->_outstream = new MemoryWriteStream(uncompressedData, _decoder->_origsize);
 
 	_currArchive.open(_archMap[filename]);
 	_currArchive.seek(hdr->pos, SEEK_SET);
@@ -379,7 +369,7 @@ bool ArjFile::open(const Common::String &filename) {
 printf("Arj archive method %d, file '%s'\n", hdr->method, filename.c_str());
 
 	if (hdr->method == 0) { // store
-        _currArchive.read(_uncompressedData, _decoder->	_origsize);
+        _currArchive.read(uncompressedData, _decoder->	_origsize);
 	} else {
 		byte *_compressedData = (byte *)malloc(_decoder->_compsize);
 		_currArchive.read(_compressedData, _decoder->_compsize);
@@ -399,47 +389,47 @@ printf("Arj archive method %d, file '%s'\n", hdr->method, filename.c_str());
 	delete _decoder->_outstream;
 	_decoder->_outstream = NULL;
 
-	_uncompressed = new MemoryReadStream(_uncompressedData, _decoder->_origsize);
+	_uncompressed = new MemoryReadStream(uncompressedData, _decoder->_origsize, true);
+	assert(_uncompressed);
 
 	return true;
 }
 
 void ArjFile::close() {
-	if (!_isOpen)
+	if (!_uncompressed)
 		return;
-
-	_isOpen = false;
 
 	if (_fallBack) {
 		_currArchive.close();
-		return;
 	} else {
 		delete _uncompressed;
 	}
 
 	_uncompressed = NULL;
-
-	free(_uncompressedData);
-	_uncompressedData = NULL;
 }
 
 uint32 ArjFile::read(void *dataPtr, uint32 dataSize) {
+	assert(_uncompressed);
 	return _uncompressed->read(dataPtr, dataSize);
 }
 
 bool ArjFile::eos() const {
+	assert(_uncompressed);
 	return _uncompressed->eos();
 }
 
 int32 ArjFile::pos() const {
+	assert(_uncompressed);
 	return _uncompressed->pos();
 }
 
 int32 ArjFile::size() const {
+	assert(_uncompressed);
 	return _uncompressed->size();
 }
 
 bool ArjFile::seek(int32 offset, int whence) {
+	assert(_uncompressed);
 	return _uncompressed->seek(offset, whence);
 }
 

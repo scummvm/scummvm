@@ -53,7 +53,7 @@ public:
 	int32 pos() const;
 	int32 size() const;
 	bool seek(int32 offset, int whence = SEEK_SET);
-	bool isOpen() { return _isOpen; }
+	bool isOpen() { return _uncompressed != 0; }
 
 private:
 	bool _fallBack;
@@ -63,11 +63,8 @@ private:
 	ArjFilesMap _fileMap;
 	StringMap _archMap;
 
-	byte *_uncompressedData;
 	SeekableReadStream *_uncompressed;
 
-	bool _isOpen;
-	
 	ArjDecoder *_decoder;
 };
 
