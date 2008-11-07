@@ -535,7 +535,7 @@ int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) 
 	return ret;
 }
 
-const Common::String& SaveLoadChooser::getResultString() const {
+const Common::String &SaveLoadChooser::getResultString() const {
 	return _list->getSelectedString();
 }
 
