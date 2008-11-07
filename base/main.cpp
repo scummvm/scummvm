@@ -338,6 +338,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	PluginManager::instance().unloadPlugins();
 	PluginManager::destroy();
 	Common::ConfigManager::destroy();
+	Common::SearchManager::destroy();
 	GUI::NewGui::destroy();
 
 	return 0;
