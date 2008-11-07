@@ -66,8 +66,6 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 	// FIXME
 	_vm = this;
 
-	Common::File::addDefaultDirectory(_gameDataDir);
-
 	Common::addSpecialDebugLevel(kDebugDialogue, "dialogue", "Dialogues debug level");
 	Common::addSpecialDebugLevel(kDebugParser, "parser", "Parser debug level");
 	Common::addSpecialDebugLevel(kDebugDisk, "disk", "Disk debug level");

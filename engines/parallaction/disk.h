@@ -77,47 +77,22 @@ public:
 	virtual void loadMask(const char *name, MaskBuffer &buffer) { }
 };
 
-
-
-
-#define MAX_ARCHIVE_ENTRIES			384
-
-class NSArchive : public Common::Archive {
-
-	Common::SeekableReadStream	*_stream;
-
-	char			_archiveDir[MAX_ARCHIVE_ENTRIES][32];
-	uint32			_archiveLenghts[MAX_ARCHIVE_ENTRIES];
-	uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
-	uint32			_numFiles;
-
-	uint32 			lookup(const char *name);
-
-public:
-	NSArchive(Common::SeekableReadStream *stream, Common::Platform platform, uint32 features);
-	~NSArchive();
-
-	Common::SeekableReadStream *openFile(const Common::String &name);
-	bool hasFile(const Common::String &name);
-	int listMembers(Common::ArchiveMemberList &list);
-	Common::ArchiveMemberPtr getMember(const Common::String &name);
-};
+class NSArchive;
 
 class Disk_ns : public Disk {
 
 protected:
 	Parallaction		*_vm;
 
-	NSArchive			*_resArchive;
-	NSArchive			*_locArchive;
+	Common::SearchSet	_sset;
 
 	Common::String		_resArchiveName;
 	Common::String		_language;
 	Common::SeekableReadStream *openFile(const char *filename);
-	Common::SeekableReadStream *tryOpenFile(const char *filename);
-	virtual Common::SeekableReadStream *tryOpenExternalFile(const char *filename);
-	virtual Common::SeekableReadStream *tryOpenArchivedFile(const char* name) { return 0; }
+	virtual Common::SeekableReadStream *tryOpenFile(const char *filename) { return 0; }
 	void errorFileNotFound(const char *filename);
+
+	void addArchive(const Common::String& name, int priority);
 
 public:
 	Disk_ns(Parallaction *vm);
@@ -141,11 +116,13 @@ private:
 
 protected:
 	Gfx	 *_gfx;
-	virtual Common::SeekableReadStream *tryOpenArchivedFile(const char* name);
+	virtual Common::SeekableReadStream *tryOpenFile(const char* name);
 
 public:
 	DosDisk_ns(Parallaction *vm);
 	virtual ~DosDisk_ns();
+
+	void init();
 
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);
@@ -170,7 +147,7 @@ protected:
 	void patchFrame(byte *dst, byte *dlta, uint16 bytesPerPlane, uint16 height);
 	void unpackFrame(byte *dst, byte *src, uint16 planeSize);
 	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height);
-	Common::SeekableReadStream *tryOpenArchivedFile(const char* name);
+	Common::SeekableReadStream *tryOpenFile(const char* name);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
 	void loadMask(BackgroundInfo& info, const char *name);
 	void loadPath(BackgroundInfo& info, const char *name);
@@ -179,6 +156,8 @@ protected:
 public:
 	AmigaDisk_ns(Parallaction *vm);
 	virtual ~AmigaDisk_ns();
+
+	void init();
 
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);

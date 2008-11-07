@@ -155,8 +155,9 @@ Common::Error Parallaction_ns::init() {
 			strcpy(_location._name, "fognedemo");
 		}
 		_disk = new AmigaDisk_ns(this);
-		_disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 	}
+
+	_disk->init();
 
 	if (getPlatform() == Common::kPlatformPC) {
 		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
@@ -394,16 +395,11 @@ void Parallaction_ns::changeCharacter(const char *name) {
 	// character for sanity before memory is freed
 	freeCharacter();
 
-	Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 	_char._ani->gfxobj = _gfx->loadAnim(_char.getFullName());
 	_char._ani->gfxobj->setFlags(kGfxObjCharacter);
 	_char._ani->gfxobj->clearFlags(kGfxObjNormal);
 
 	if (!_char.dummy()) {
-		if (getPlatform() == Common::kPlatformAmiga) {
-			_disk->selectArchive("disk0");
-		}
-
 		_char._head = _disk->loadHead(_char.getBaseName());
 		_char._talk = _disk->loadTalk(_char.getBaseName());
 		_char._objs = _disk->loadObjects(_char.getBaseName());
@@ -419,9 +415,6 @@ void Parallaction_ns::changeCharacter(const char *name) {
 		if (!(getFeatures() & GF_DEMO))
 			parseLocation("common");
 	}
-
-	if (!oldArchive.empty())
-		_disk->selectArchive(oldArchive);
 
 	strcpy(_characterName1, _char.getFullName());
 

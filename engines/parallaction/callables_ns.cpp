@@ -371,7 +371,6 @@ void Parallaction_ns::_c_testResult(void *parm) {
 	_gfx->freeLabels();
 	_gfx->updateScreen();
 
-	_disk->selectArchive("disk1");
 	parseLocation("common");
 
 	uint id[2];

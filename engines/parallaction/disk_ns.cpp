@@ -24,6 +24,7 @@
  */
 
 #include "graphics/iff.h"
+#include "common/config-manager.h"
 
 #include "parallaction/parallaction.h"
 
@@ -59,6 +60,30 @@ namespace Parallaction {
 
 #define NORMAL_ARCHIVE_DATA_OFS		0x4000
 #define SMALL_ARCHIVE_DATA_OFS		0x1966
+
+#define MAX_ARCHIVE_ENTRIES			384
+
+class NSArchive : public Common::Archive {
+
+	Common::SeekableReadStream	*_stream;
+
+	char			_archiveDir[MAX_ARCHIVE_ENTRIES][32];
+	uint32			_archiveLenghts[MAX_ARCHIVE_ENTRIES];
+	uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
+	uint32			_numFiles;
+
+	uint32 			lookup(const char *name);
+
+public:
+	NSArchive(Common::SeekableReadStream *stream, Common::Platform platform, uint32 features);
+	~NSArchive();
+
+	Common::SeekableReadStream *openFile(const Common::String &name);
+	bool hasFile(const Common::String &name);
+	int listMembers(Common::ArchiveMemberList &list);
+	Common::ArchiveMemberPtr getMember(const Common::String &name);
+};
+
 
 NSArchive::NSArchive(Common::SeekableReadStream *stream, Common::Platform platform, uint32 features) : _stream(stream) {
 	if (!_stream) {
@@ -143,16 +168,18 @@ Common::ArchiveMemberPtr NSArchive::getMember(const Common::String &name) {
 }
 
 
+#define HIGHEST_PRIORITY			9
+#define NORMAL_ARCHIVE_PRIORITY		5
+#define LOW_ARCHIVE_PRIORITY		2
+#define LOWEST_ARCHIVE_PRIORITY		1
 
-
-Disk_ns::Disk_ns(Parallaction *vm) : _vm(vm), _language("ur") {
-	_locArchive = 0;
-	_resArchive = 0;
+Disk_ns::Disk_ns(Parallaction *vm) : _vm(vm) {
+	Common::FSDirectory *baseDir = new Common::FSDirectory(ConfMan.get("path"));
+	_sset.add("basedir", baseDir, HIGHEST_PRIORITY);
 }
 
 Disk_ns::~Disk_ns() {
-	delete _resArchive;
-	delete _locArchive;
+	_sset.clear();
 }
 
 void Disk_ns::errorFileNotFound(const char *s) {
@@ -166,33 +193,31 @@ Common::SeekableReadStream *Disk_ns::openFile(const char *filename) {
 	return stream;
 }
 
-Common::SeekableReadStream *Disk_ns::tryOpenFile(const char *filename) {
-	Common::SeekableReadStream *stream = tryOpenExternalFile(filename);
-	if (stream)
-		return stream;
-	return tryOpenArchivedFile(filename);
-}
 
-Common::SeekableReadStream *Disk_ns::tryOpenExternalFile(const char *filename) {
-	assert(filename);
-	Common::File *stream = new Common::File;
-	if (!stream->open(filename)) {
-		delete stream;
-		stream = 0;
-	}
-	return stream;
+void Disk_ns::addArchive(const Common::String& name, int priority) {
+	Common::SeekableReadStream *stream = _sset.openFile(name);
+	if (!stream)
+		error("Disk_ns::addArchive() couldn't find archive '%s'", name.c_str());
+
+	debugC(1, kDebugDisk, "Disk_ns::addArchive(name = %s, priority = %i)", name.c_str(), priority);
+
+	NSArchive *arc = new NSArchive(stream, _vm->getPlatform(), _vm->getFeatures());
+	_sset.add(name, arc, priority);
 }
 
 Common::String Disk_ns::selectArchive(const Common::String& name) {
-	if (name.compareToIgnoreCase(_resArchiveName) == 0) {
-		return _resArchiveName;
+	Common::String oldName = _resArchiveName;
+
+	if (_sset.hasArchive(name)) {
+		return oldName;
 	}
 
-	debugC(1, kDebugDisk, "Disk_ns::selectArchive(%s)", name.c_str());
+	if (!_resArchiveName.empty()) {
+		_sset.remove(_resArchiveName);
+	}
+	_resArchiveName = name;
+	addArchive(name, LOW_ARCHIVE_PRIORITY);
 
-	Common::String oldName = _resArchiveName;
-	delete _resArchive;
-	_resArchive = new NSArchive(tryOpenExternalFile(name.c_str()), _vm->getPlatform(), _vm->getFeatures());
 	return oldName;
 }
 
@@ -200,19 +225,21 @@ void Disk_ns::setLanguage(uint16 language) {
 	debugC(1, kDebugDisk, "setLanguage(%i)", language);
 	assert(language < 4);
 
-	static const char *languages[] = { "it", "fr", "en", "ge" };
+	if (!_language.empty()) {
+		_sset.remove(_language);
+	}
 
-	if (_language.compareToIgnoreCase(languages[language]) == 0) {
+	static const char *languages[] = { "it", "fr", "en", "ge" };
+	_language = languages[language];
+
+	if (_sset.hasArchive(_language)) {
 		return;
 	}
 
-	_language = languages[language];
-	delete _locArchive;
-	_locArchive = new NSArchive(tryOpenExternalFile(_language.c_str()), _vm->getPlatform(), _vm->getFeatures());
+	addArchive(_language, LOWEST_ARCHIVE_PRIORITY);
 }
 
 #pragma mark -
-
 
 
 DosDisk_ns::DosDisk_ns(Parallaction* vm) : Disk_ns(vm) {
@@ -222,27 +249,21 @@ DosDisk_ns::DosDisk_ns(Parallaction* vm) : Disk_ns(vm) {
 DosDisk_ns::~DosDisk_ns() {
 }
 
+void DosDisk_ns::init() {
+	// setup permament archives
+	addArchive("disk1", NORMAL_ARCHIVE_PRIORITY);
+}
 
-Common::SeekableReadStream *DosDisk_ns::tryOpenArchivedFile(const char* name) {
-	debugC(3, kDebugDisk, "DosDisk_ns::openArchivedFile(%s)", name);
+Common::SeekableReadStream *DosDisk_ns::tryOpenFile(const char* name) {
+	debugC(3, kDebugDisk, "DosDisk_ns::tryOpenFile(%s)", name);
 
-	NSArchive *arc = 0;
-
-	Common::String filename(name);
-	if (filename.hasSuffix(".loc")) {
-		arc = _locArchive;
-	} else {
-		arc = _resArchive;
-	}
-
-	Common::SeekableReadStream *stream = arc->openFile(name);
-	if (stream) {
+	Common::SeekableReadStream *stream = _sset.openFile(name);
+	if (stream)
 		return stream;
-	}
 
 	char path[PATH_LEN];
 	sprintf(path, "%s.pp", name);
-	return arc->openFile(path);
+	return _sset.openFile(path);
 }
 
 
@@ -685,6 +706,16 @@ AmigaDisk_ns::~AmigaDisk_ns() {
 
 }
 
+void AmigaDisk_ns::init() {
+	// setup permament archives
+	if (_vm->getFeatures() & GF_DEMO) {
+		addArchive("disk0", NORMAL_ARCHIVE_PRIORITY);
+	} else {
+		addArchive("disk0", NORMAL_ARCHIVE_PRIORITY);
+		addArchive("disk1", NORMAL_ARCHIVE_PRIORITY);
+	}
+}
+
 #define NUM_PLANES		5
 
 /*
@@ -854,30 +885,21 @@ GfxObj* AmigaDisk_ns::loadStatic(const char* name) {
 	return new GfxObj(0, makeCnv(s, true), name);
 }
 
-Common::SeekableReadStream *AmigaDisk_ns::tryOpenArchivedFile(const char* name) {
-	debugC(3, kDebugDisk, "AmigaDisk_ns::openArchivedFile(%s)", name);
+Common::SeekableReadStream *AmigaDisk_ns::tryOpenFile(const char* name) {
+	debugC(3, kDebugDisk, "AmigaDisk_ns::tryOpenFile(%s)", name);
 
-	NSArchive *arc = 0;
-
-	Common::String filename(name);
-	if (filename.hasSuffix(".loc")) {
-		arc = _locArchive;
-	} else {
-		arc = _resArchive;
-	}
-
-	Common::SeekableReadStream *stream = arc->openFile(name);
+	Common::SeekableReadStream *stream = _sset.openFile(name);
 	if (stream)
 		return stream;
 
 	char path[PATH_LEN];
 	sprintf(path, "%s.pp", name);
-	stream = arc->openFile(path);
+	stream = _sset.openFile(path);
 	if (stream)
 		return new PowerPackerStream(*stream);
 
 	sprintf(path, "%s.dd", name);
-	stream = arc->openFile(path);
+	stream = _sset.openFile(path);
 	if (stream)
 		return new PowerPackerStream(*stream);
 

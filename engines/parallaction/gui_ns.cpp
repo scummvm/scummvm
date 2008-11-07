@@ -319,7 +319,6 @@ public:
 	}
 
 	virtual void enter() {
-		_vm->_disk->selectArchive("disk1");
 		_vm->setBackground("test", NULL, NULL);
 		_vm->_input->setMouseState(MOUSE_ENABLED_HIDE);
 
@@ -544,7 +543,6 @@ public:
 
 	virtual void enter() {
 		_vm->_soundMan->stopMusic();
-		_vm->_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 		_vm->showSlide("password");
 
 		_emptySlots.create(BLOCK_WIDTH * 8, BLOCK_HEIGHT, 1);
@@ -798,8 +796,6 @@ const char *EndPartInputState_NS::endMsg6[] = {"DELL' AVVENTURA", "DE L'AVENTURE
 const char *EndPartInputState_NS::endMsg7[] = {"ED ORA IL GRAN FINALE ", "ET MAINTENANT LE GRAND FINAL", "NOW THE GREAT FINAL", "UND YETZT DER GROSSE SCHLUSS!"};
 
 void Parallaction_ns::startGui() {
-	_disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
-
 	_menuHelper = new MenuInputHelper;
 	assert(_menuHelper);
 
