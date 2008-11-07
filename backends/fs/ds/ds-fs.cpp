@@ -38,6 +38,7 @@ namespace DS {
 
 ZipFile*	DSFileSystemNode::_zipFile = NULL;
 char		currentDir[128];
+bool		readPastEndOfFile = false;
 
 DSFileSystemNode::DSFileSystemNode() {
 	_displayName = "ds:/";
@@ -240,28 +241,54 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path) {
 	strcpy(disp, pathStr + lastSlash + 1);
 
 	char check[128];
-	int success;
+	int fileOrDir;
 
-	memset(check, 0, 128);
-	if (strlen(pathStr) > 3) {
+	if (!strcmp(pathStr, "mp:/")) {
+		// This is the root directory
+		_isDirectory = true;
+		_isValid = false;		// Old code returned false here, but I'm not sure why
+	} else if ((strlen(pathStr) > 4) && (!strncmp(pathStr, "mp:/", 4))) {
+		// Files which start with mp:/
+		
+		// Clear the filename to 128 bytes, because a libfat bug occationally tries to read in this area.
+		memset(check, 0, 128);
 		strcpy(check, pathStr + 3);
+
+		// Remove terminating slash - FileExists fails without this
 		if (check[strlen(check) - 1] == '/') {
 			check[strlen(check) - 1] = 0;
 		}
-		success = FAT_FileExists(check);
+		fileOrDir = FAT_FileExists(check);
+
+		_isDirectory = fileOrDir == FT_DIR;
+		_isValid = fileOrDir == FT_FILE;
 	} else {
-		success = FT_DIR;
+		// Files which don't start with mp:/ (like scummvm.ini in default implementation)
+
+		// Clear the filename to 128 bytes, because a libfat bug occationally tries to read in this area.
+		memset(check, 0, 128);
+		strcpy(check, pathStr);
+
+		// Remove terminating slash - FileExists fails on directories without this
+		if (check[strlen(check) - 1] == '/') {
+			check[strlen(check) - 1] = 0;
+		}
+		fileOrDir = FAT_FileExists(check);
+
+		_isDirectory = fileOrDir == FT_DIR;
+		_isValid = fileOrDir == FT_FILE;
+
 	}
-//	consolePrintf("Path: %s  (%d)\n", check, success);
+				
+
+//	consolePrintf("Path: %s \n", check);
 
 	_displayName = Common::String(disp);
 	_path = path;
-	_isValid = success == FT_FILE;
-	_isDirectory = success == FT_DIR;
 }
 
 GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path, bool isDirectory) {
-//	consolePrintf("'%s'",path.c_str());
+	//consolePrintf("'%s'",path.c_str());
 
 	char disp[128];
 	char* pathStr = (char *) path.c_str();
@@ -315,7 +342,7 @@ bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode, bo
 		pathTemp++;
 	}
 
-	consolePrintf("This dir: %s\n", path);
+	// consolePrintf("This dir: %s\n", path);
 	FAT_chdir(path);
 
 	int entryType = FAT_FindFirstFileLFN(fname);
@@ -326,7 +353,7 @@ bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode, bo
 		||   ((entryType == TYPE_FILE) && ((mode == Common::FSNode::kListFilesOnly) || (mode == Common::FSNode::kListAll))) ) {
 			GBAMPFileSystemNode* dsfsn;
 
-			consolePrintf("Fname: %s\n", fname);
+			//consolePrintf("Fname: %s\n", fname);
 
 			if (strcmp(fname, ".") && strcmp(fname, "..")) {
 
@@ -377,7 +404,13 @@ AbstractFSNode* GBAMPFileSystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *GBAMPFileSystemNode::openForReading() {
-	return StdioStream::makeFromPath(getPath().c_str(), false);
+//	consolePrintf("Opening: %s\n", getPath().c_str());
+
+	if (!strncmp(getPath().c_str(), "mp:/", 4)) {
+		return StdioStream::makeFromPath(getPath().c_str() + 3, false);
+	} else {
+		return StdioStream::makeFromPath(getPath().c_str(), false);
+	}
 }
 
 Common::WriteStream *GBAMPFileSystemNode::openForWriting() {
@@ -411,7 +444,7 @@ FILE* std_fopen(const char* name, const char* mode) {
 	}
 
 //	consolePrintf("Open file:");
-//	consolePrintf("'%s', [%s]", realName, mode);
+//	consolePrintf("'%s', [%s]", name, realName);
 
 	if (DS::isGBAMPAvailable()) {
 		FAT_chdir("/");
@@ -527,11 +560,14 @@ size_t std_fread(const void* ptr, size_t size, size_t numItems, FILE* handle) {
 //	consolePrintf("fread %d,%d %d ", size, numItems, ptr);
 
 	if (DS::isGBAMPAvailable()) {
+		readPastEndOfFile = false;
+
 		int bytes = FAT_fread((void *) ptr, size, numItems, (FAT_FILE *) handle);
-		if (!std_feof(handle)) {
+		if (!FAT_feof((FAT_FILE *) handle)) {
 			return numItems;
 		} else {
 //			consolePrintf("Read past end of file: %d read out of %d\n", bytes / size, numItems);
+			if (bytes != size * numItems) readPastEndOfFile = true;			
 			return bytes / size;
 		}
 		return numItems;
@@ -605,7 +641,7 @@ bool std_feof(FILE* handle) {
 //	consolePrintf("feof ");
 
 	if (DS::isGBAMPAvailable()) {
-		return FAT_feof((FAT_FILE *) handle);
+		return readPastEndOfFile && FAT_feof((FAT_FILE *) handle);
 	}
 
 	if (handle->sramFile) {
@@ -658,11 +694,13 @@ int std_fseek(FILE* handle, long int offset, int whence) {
 int std_ferror(FILE* handle) {
 	//FIXME: not implemented?
 //	consolePrintf("ferror ");
-	return 0;
+	
+	return readPastEndOfFile;
 }
 
 void std_clearerr(FILE* handle) {
 	//FIXME: not implemented?
+	readPastEndOfFile = false;
 //	consolePrintf("clearerr ");
 }
 
