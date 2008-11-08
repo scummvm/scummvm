@@ -159,6 +159,9 @@ public:
 	Location();
 	~Location();
 
+	AnimationPtr findAnimation(const char *name);
+	ZonePtr findZone(const char *name);
+
 	void cleanup(bool removeAll);
 };
 
@@ -325,15 +328,11 @@ public:
 	bool 		checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y);
 	bool 		checkZoneBox(ZonePtr z, uint32 type, uint x, uint y);
 	bool 		checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y);
-	ZonePtr		findZone(const char *name);
 	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
 	void		runZone(ZonePtr z);
-	void		freeZones(bool removeAll);
 	bool		pickupItem(ZonePtr z);
 	void 		updateDoor(ZonePtr z, bool close);
 	void 		showZone(ZonePtr z, bool visible);
-	AnimationPtr findAnimation(const char *name);
-	void		freeAnimations();
 	void		setBackground(const char *background, const char *mask, const char *path);
 	void		freeBackground();
 	void 		highlightInventoryItem(ItemPosition pos);

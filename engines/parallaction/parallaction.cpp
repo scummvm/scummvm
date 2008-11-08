@@ -189,9 +189,9 @@ void Parallaction::resumeJobs() {
 	return;
 }
 
-AnimationPtr Parallaction::findAnimation(const char *name) {
+AnimationPtr Location::findAnimation(const char *name) {
 
-	for (AnimationList::iterator it = _location._animations.begin(); it != _location._animations.end(); it++)
+	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++)
 		if (!scumm_stricmp((*it)->_name, name)) return *it;
 
 	return nullAnimationPtr;
@@ -808,12 +808,10 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 }
 
 
-ZonePtr Parallaction::findZone(const char *name) {
-
-	for (ZoneList::iterator it = _location._zones.begin(); it != _location._zones.end(); it++) {
+ZonePtr Location::findZone(const char *name) {
+	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); it++) {
 		if (!scumm_stricmp((*it)->_name, name)) return *it;
 	}
-
 	return findAnimation(name);
 }
 

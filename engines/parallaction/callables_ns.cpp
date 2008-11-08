@@ -188,21 +188,21 @@ void Parallaction_ns::_c_moveSarc(void *parm) {
 		_introSarcData2 = 0;
 		if (!_moveSarcZones[0]) {
 
-			_moveSarcZones[0] = findZone("sarc1");
-			_moveSarcZones[1] = findZone("sarc2");
-			_moveSarcZones[2] = findZone("sarc3");
-			_moveSarcZones[3] = findZone("sarc4");
-			_moveSarcZones[4] = findZone("sarc5");
+			_moveSarcZones[0] = _location.findZone("sarc1");
+			_moveSarcZones[1] = _location.findZone("sarc2");
+			_moveSarcZones[2] = _location.findZone("sarc3");
+			_moveSarcZones[3] = _location.findZone("sarc4");
+			_moveSarcZones[4] = _location.findZone("sarc5");
 
-			_moveSarcExaZones[0] = findZone("sarc1exa");
-			_moveSarcExaZones[1] = findZone("sarc2exa");
-			_moveSarcExaZones[2] = findZone("sarc3exa");
-			_moveSarcExaZones[3] = findZone("sarc4exa");
-			_moveSarcExaZones[4] = findZone("sarc5exa");
+			_moveSarcExaZones[0] = _location.findZone("sarc1exa");
+			_moveSarcExaZones[1] = _location.findZone("sarc2exa");
+			_moveSarcExaZones[2] = _location.findZone("sarc3exa");
+			_moveSarcExaZones[3] = _location.findZone("sarc4exa");
+			_moveSarcExaZones[4] = _location.findZone("sarc5exa");
 
 		}
 
-		a = findAnimation("sposta");
+		a = _location.findAnimation("sposta");
 
 		_moveSarcZone1 = *(ZonePtr*)parm;
 
@@ -239,7 +239,7 @@ void Parallaction_ns::_c_moveSarc(void *parm) {
 		_moveSarcZones[3]->getX() == 134 &&
 		_moveSarcZones[4]->getX() == 167) {
 
-		a = findAnimation("finito");
+		a = _location.findAnimation("finito");
 
 		a->_flags |= (kFlagsActive | kFlagsActing);
 		setLocationFlags(0x20);		// GROSS HACK: activates 'finito' flag in dinoit_museo.loc
@@ -403,7 +403,7 @@ void Parallaction_ns::_c_closeMusic(void*) {
 */
 
 void Parallaction_ns::_c_startIntro(void *parm) {
-	_rightHandAnim = findAnimation("righthand");
+	_rightHandAnim = _location.findAnimation("righthand");
 
 	if (getPlatform() == Common::kPlatformPC) {
 		_soundMan->setMusicFile("intro");

@@ -717,7 +717,7 @@ DECLARE_ZONE_PARSER(limits)  {
 
 	if (isalpha(_tokens[1][1])) {
 		ctxt.z->_flags |= kFlagsAnimLinked;
-		ctxt.z->_linkedAnim = _vm->findAnimation(_tokens[1]);
+		ctxt.z->_linkedAnim = _vm->_location.findAnimation(_tokens[1]);
 		ctxt.z->_linkedName = strdup(_tokens[1]);
 	} else {
 		ctxt.z->setBox(atoi(_tokens[1]), atoi(_tokens[2]), atoi(_tokens[3]), atoi(_tokens[4]));
@@ -912,7 +912,7 @@ DECLARE_ANIM_PARSER(endanimation)  {
 DECLARE_INSTRUCTION_PARSER(zone)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(zone) ");
 
-	ctxt.inst->_z = _vm->findZone(_tokens[1]);
+	ctxt.inst->_z = _vm->_location.findZone(_tokens[1]);
 	ctxt.inst->_index = _parser->_lookup;
 }
 
@@ -1029,7 +1029,7 @@ void ProgramParser_br::parseRValue(ScriptVar &v, const char *str) {
 
 	AnimationPtr a;
 	if (str[1] == '.') {
-		a = _vm->findAnimation(&str[2]);
+		a = _vm->_location.findAnimation(&str[2]);
 		if (!a) {
 			error("unknown animation '%s' in script", &str[2]);
 		}

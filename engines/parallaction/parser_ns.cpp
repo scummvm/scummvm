@@ -306,11 +306,11 @@ void ProgramParser_ns::parseInstruction() {
 
 	if (_tokens[0][1] == '.') {
 		_tokens[0][1] = '\0';
-		ctxt.a = _vm->findAnimation(&_tokens[0][2]);
+		ctxt.a = _vm->_location.findAnimation(&_tokens[0][2]);
 	} else
 	if (_tokens[1][1] == '.') {
 		_tokens[1][1] = '\0';
-		ctxt.a = _vm->findAnimation(&_tokens[1][2]);
+		ctxt.a = _vm->_location.findAnimation(&_tokens[1][2]);
 	} else
 		ctxt.a = _program->_anim;
 
@@ -369,7 +369,7 @@ DECLARE_INSTRUCTION_PARSER(animation)  {
 	if (!scumm_stricmp(_tokens[1], ctxt.a->_name)) {
 		ctxt.inst->_a = ctxt.a;
 	} else {
-		ctxt.inst->_a = _vm->findAnimation(_tokens[1]);
+		ctxt.inst->_a = _vm->_location.findAnimation(_tokens[1]);
 	}
 
 	ctxt.inst->_index = _parser->_lookup;
@@ -466,7 +466,7 @@ DECLARE_INSTRUCTION_PARSER(put)  {
 	if (!scumm_stricmp(_tokens[1], ctxt.a->_name)) {
 		ctxt.inst->_a = ctxt.a;
 	} else {
-		ctxt.inst->_a = _vm->findAnimation(_tokens[1]);
+		ctxt.inst->_a = _vm->_location.findAnimation(_tokens[1]);
 	}
 
 	parseRValue(ctxt.inst->_opA, _tokens[2]);
@@ -492,7 +492,7 @@ DECLARE_INSTRUCTION_PARSER(call)  {
 DECLARE_INSTRUCTION_PARSER(sound)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(sound) ");
 
-	ctxt.inst->_z = _vm->findZone(_tokens[1]);
+	ctxt.inst->_z = _vm->_location.findZone(_tokens[1]);
 	ctxt.inst->_index = _parser->_lookup;
 }
 
@@ -545,7 +545,7 @@ void ProgramParser_ns::parseRValue(ScriptVar &v, const char *str) {
 
 	AnimationPtr a;
 	if (str[1] == '.') {
-		a = _vm->findAnimation(&str[2]);
+		a = _vm->_location.findAnimation(&str[2]);
 	} else {
 		a = ctxt.a;
 	}
@@ -575,7 +575,7 @@ void ProgramParser_ns::parseLValue(ScriptVar &v, const char *str) {
 
 	AnimationPtr a;
 	if (str[1] == '.') {
-		a = _vm->findAnimation(&str[2]);
+		a = _vm->_location.findAnimation(&str[2]);
 	} else {
 		a = ctxt.a;
 	}
@@ -628,7 +628,7 @@ DECLARE_COMMAND_PARSER(zone)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->u._zone = _vm->findZone(_tokens[ctxt.nextToken]);
+	ctxt.cmd->u._zone = _vm->_location.findZone(_tokens[ctxt.nextToken]);
 	if (!ctxt.cmd->u._zone) {
 		saveCommandForward(_tokens[ctxt.nextToken], ctxt.cmd);
 	}
@@ -794,7 +794,7 @@ void LocationParser_ns::saveCommandForward(const char *name, CommandPtr cmd) {
 
 void LocationParser_ns::resolveCommandForwards() {
 	for (uint i = 0; i < _numForwardedCommands; i++) {
-		_forwardedCommands[i].cmd->u._zone = _vm->findZone(_forwardedCommands[i].name);
+		_forwardedCommands[i].cmd->u._zone = _vm->_location.findZone(_forwardedCommands[i].name);
 		if (_forwardedCommands[i].cmd->u._zone == 0) {
 			warning("Cannot find zone '%s' into current location script. This may be a bug in the original scripts.\n", _forwardedCommands[i].name);
 		}
@@ -1367,7 +1367,7 @@ DECLARE_ZONE_PARSER(flags)  {
 void LocationParser_ns::parseZone(ZoneList &list, char *name) {
 	debugC(5, kDebugParser, "parseZone(name: %s)", name);
 
-	if (_vm->findZone(name)) {
+	if (_vm->_location.findZone(name)) {
 		_script->skip("endzone");
 		return;
 	}
