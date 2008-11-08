@@ -124,48 +124,7 @@ public:
 
 };
 
-/*
-	this adapter can handle Surfaces containing multiple frames,
-	provided all these frames are the same width and height
-*/
-struct SurfaceToMultiFrames : public Frames {
 
-	uint _num;
-	uint _width, _height;
-	Graphics::Surface *_surf;
-
-	SurfaceToMultiFrames(uint num, uint w, uint h, Graphics::Surface *surf) : _num(num), _width(w), _height(h), _surf(surf) {
-
-	}
-
-	~SurfaceToMultiFrames() {
-		delete _surf;
-	}
-
-	uint16	getNum() {
-		return _num;
-	}
-	byte*	getData(uint16 index) {
-		assert(index < _num);
-		return (byte*)_surf->getBasePtr(0, _height * index);
-	}
-	void	getRect(uint16 index, Common::Rect &r) {
-		assert(index < _num);
-		r.left = 0;
-		r.top = 0;
-		r.setWidth(_width);
-		r.setHeight(_height);
-	}
-	uint	getRawSize(uint16 index) {
-		assert(index < _num);
-		return getSize(index);
-	}
-	uint	getSize(uint16 index) {
-		assert(index < _num);
-		return _width * _height;
-	}
-
-};
 
 struct MaskBuffer {
 	// handles a 2-bit depth buffer used for z-buffering
