@@ -202,6 +202,7 @@ Parallaction_ns::~Parallaction_ns() {
 
 	delete _locationParser;
 	delete _programParser;
+	freeLocation(true);
 
 	_location._animations.remove(_char._ani);
 
@@ -294,9 +295,8 @@ void Parallaction_ns::changeLocation(char *location) {
 	_input->setArrowCursor();
 
 	_gfx->showGfxObj(_char._ani->gfxobj, false);
-	_location._animations.remove(_char._ani);
 
-	freeLocation();
+	freeLocation(false);
 
 	LocationName locname;
 	locname.bind(location);
@@ -316,7 +316,6 @@ void Parallaction_ns::changeLocation(char *location) {
 		changeCharacter(locname.character());
 	}
 
-	_location._animations.push_front(_char._ani);
 	_gfx->showGfxObj(_char._ani->gfxobj, true);
 
 	strcpy(_saveData1, locname.location());
@@ -423,37 +422,39 @@ void Parallaction_ns::changeCharacter(const char *name) {
 	return;
 }
 
-void Parallaction_ns::cleanupGame() {
-	_inTestResult = false;
+void Parallaction_ns::freeLocation(bool removeAll) {
+	debugC(2, kDebugExec, "freeLocation");
 
+	_soundMan->stopSfx(0);
+	_soundMan->stopSfx(1);
+	_soundMan->stopSfx(2);
+	_soundMan->stopSfx(3);
+
+	_localFlagNames->clear();
+
+	_gfx->clearGfxObjects(kGfxObjNormal);
+
+	_location._animations.remove(_char._ani);
+	_location.cleanup(removeAll);
+	_location._animations.push_front(_char._ani);
+}
+
+void Parallaction_ns::cleanupGame() {
+	_soundMan->stopMusic();
+
+	_inTestResult = false;
 	_engineFlags &= ~kEngineTransformedDonna;
 
-	// this code saves main character animation from being removed from the following code
-	_location._animations.remove(_char._ani);
 	_numLocations = 0;
 	_globalFlags = 0;
-
 	memset(_localFlags, 0, sizeof(_localFlags));
 	memset(_locationNames, 0, sizeof(_locationNames));
 
-	// this flag tells freeZones to unconditionally remove *all* Zones
-	_vm->_quit = true;
+	freeLocation(true);
 
-	freeZones();
-	freeAnimations();
-
-	// this dangerous flag can now be cleared
-	_vm->_quit = false;
-
-	// main character animation is restored
-	_location._animations.push_front(_char._ani);
 	_score = 0;
-
-	_soundMan->stopMusic();
 	_introSarcData3 = 200;
 	_introSarcData2 = 1;
-
-	return;
 }
 
 } // namespace Parallaction

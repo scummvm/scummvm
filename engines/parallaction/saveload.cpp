@@ -134,15 +134,6 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 
 	f->readLine_OLD(s, 15);
 
-	// TODO (LIST): unify (and parametrize) calls to freeZones.
-	// We aren't calling freeAnimations because it is not needed, since
-	// kChangeLocation will trigger a complete deletion. Anyway, we still
-	// need to invoke freeZones here with _quit set, because the
-	// call in changeLocation preserve certain zones.
-	_vm->_quit = true;
-	_vm->freeZones();
-	_vm->_quit = false;
-
 	_vm->_numLocations = atoi(s);
 
 	uint16 _si;

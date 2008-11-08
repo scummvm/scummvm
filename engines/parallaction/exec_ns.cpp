@@ -278,7 +278,6 @@ DECLARE_COMMAND_OPCODE(drop){
 
 
 DECLARE_COMMAND_OPCODE(quit) {
-	_vm->_quit = true;
 	_vm->quitGame();
 }
 

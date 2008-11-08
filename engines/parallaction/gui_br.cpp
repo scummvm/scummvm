@@ -171,7 +171,6 @@ class MainMenuInputState_BR : public MenuInputState {
 	void performChoice(int selectedItem) {
 		switch (selectedItem) {
 		case kMenuQuit: {
-			_vm->_quit = true;
 			_vm->quitGame();
 			break;
 		}

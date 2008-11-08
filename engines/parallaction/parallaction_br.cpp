@@ -169,7 +169,7 @@ void Parallaction_br::runPendingZones() {
 	}
 }
 
-void Parallaction_br::freeLocation() {
+void Parallaction_br::freeLocation(bool removeAll) {
 
 	// free open location stuff
 	clearSubtitles();
@@ -178,24 +178,14 @@ void Parallaction_br::freeLocation() {
 	_gfx->freeLabels();
 	_subtitle[0] = _subtitle[1] = -1;
 
-	_location._programs.clear();
-
 	_location._animations.remove(_char._ani);
-
-	freeZones();
-	freeAnimations();
-
+	_location.cleanup(removeAll);
 	_location._animations.push_front(_char._ani);
-
-	free(_location._comment);
-	_location._comment = 0;
-	_location._commands.clear();
-	_location._aCommands.clear();
 
 }
 
 void Parallaction_br::cleanupGame() {
-	freeLocation();
+	freeLocation(true);
 
 //		freeCharacter();
 
@@ -241,7 +231,7 @@ void Parallaction_br::changeLocation(char *location) {
 		parseLocation("common.slf");
 	}
 
-	freeLocation();
+	freeLocation(false);
 	// load new location
 	parseLocation(location);
 	// kFlagsRemove is cleared because the character is visible by default.

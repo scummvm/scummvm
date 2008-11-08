@@ -150,6 +150,16 @@ struct Location {
 	int			_zeta1;
 	int			_zeta2;
 	CommandList		_escapeCommands;
+
+protected:
+	void freeAnimations();
+	void freeZones(bool removeAll);
+
+public:
+	Location();
+	~Location();
+
+	void cleanup(bool removeAll);
 };
 
 
@@ -277,11 +287,6 @@ public:
 	ZonePtr			_zoneTrap;
 	ZonePtr			_commentZone;
 
-	bool _quit;   /* The only reason this flag exists is for freeZones() to properly
-		       * delete all zones when necessary. THIS FLAG IS NOT THE ENGINE QUIT FLAG,
-		       * use _eventMan->shouldQuit() for that.
-		       */
-
 protected:
 	void	runGame();
 	void 	runGuiFrame();
@@ -295,7 +300,6 @@ protected:
 	void	updateView();
 	void 	drawAnimations();
 	void	freeCharacter();
-	void	freeLocation();
 	void	doLocationEnterTransition();
 	void	allocateLocationSlot(const char *name);
 	void	finalizeLocationParsing();
@@ -324,7 +328,7 @@ public:
 	ZonePtr		findZone(const char *name);
 	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
 	void		runZone(ZonePtr z);
-	void		freeZones();
+	void		freeZones(bool removeAll);
 	bool		pickupItem(ZonePtr z);
 	void 		updateDoor(ZonePtr z, bool close);
 	void 		showZone(ZonePtr z, bool visible);
@@ -390,6 +394,7 @@ private:
 	void	startCreditSequence();
 	void	startEndPartSequence();
 	void	loadProgram(AnimationPtr a, const char *filename);
+	void	freeLocation(bool removeAll);
 
 
 	//  callables data
@@ -489,7 +494,7 @@ private:
 	void	initResources();
 	void	initFonts();
 	void	freeFonts();
-	void	freeLocation();
+	void	freeLocation(bool removeAll);
 	void 	loadProgram(AnimationPtr a, const char *filename);
 	void 	startGui(bool showSplash);
 

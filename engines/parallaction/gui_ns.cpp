@@ -700,7 +700,6 @@ public:
 		}
 
 		if (_isDemo) {
-			_vm->_quit = true;
 			_vm->quitGame();
 			return 0;
 		}

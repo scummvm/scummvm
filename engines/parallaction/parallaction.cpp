@@ -92,7 +92,6 @@ Parallaction::~Parallaction() {
 	_gfx->clearGfxObjects(kGfxObjCharacter | kGfxObjNormal);
 	hideDialogueStuff();
 	delete _balloonMan;
-	freeLocation();
 
 	freeCharacter();
 	destroyInventory();
@@ -119,8 +118,6 @@ Common::Error Parallaction::init() {
 	_location._startFrame = 0;
 	_location._comment = NULL;
 	_location._endComment = NULL;
-
-	_quit = false;
 
 	_pathBuffer = 0;
 
@@ -200,12 +197,11 @@ AnimationPtr Parallaction::findAnimation(const char *name) {
 	return nullAnimationPtr;
 }
 
-void Parallaction::freeAnimations() {
-	for (AnimationList::iterator it = _location._animations.begin(); it != _location._animations.end(); it++) {
+void Location::freeAnimations() {
+	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
 		(*it)->_commands.clear();	// See comment for freeZones(), about circular references.
 	}
-	_location._animations.clear();
-	return;
+	_animations.clear();
 }
 
 
@@ -241,33 +237,36 @@ void Parallaction::allocateLocationSlot(const char *name) {
 }
 
 
+Location::Location() : _comment(0), _endComment(0) {
+	cleanup(true);
+}
 
-void Parallaction::freeLocation() {
-	debugC(2, kDebugExec, "freeLocation");
+Location::~Location() {
+	cleanup(true);
+}
 
-	_soundMan->stopSfx(0);
-	_soundMan->stopSfx(1);
-	_soundMan->stopSfx(2);
-	_soundMan->stopSfx(3);
+void Location::cleanup(bool removeAll) {
+	free(_comment); _comment = 0;
+	free(_endComment); _endComment = 0;
 
-	_localFlagNames->clear();
-
-	_location._walkPoints.clear();
-
-	_gfx->clearGfxObjects(kGfxObjNormal);
-
-	_location._programs.clear();
-	freeZones();
+	freeZones(removeAll);
 	freeAnimations();
 
-	free(_location._comment);
-	_location._comment = 0;
+	_programs.clear();
+	_commands.clear();
+	_aCommands.clear();
 
-	_location._commands.clear();
-	_location._aCommands.clear();
+	_hasSound = false;
 
-	return;
+	// NS specific
+	_walkPoints.clear();
+
+	// BRA specific
+	_zeta0 = _zeta1 = _zeta2 = 0;
+	_escapeCommands.clear();
 }
+
+
 
 void Parallaction::showSlide(const char *name, int x, int y) {
 	BackgroundInfo *info = new BackgroundInfo;
@@ -819,24 +818,24 @@ ZonePtr Parallaction::findZone(const char *name) {
 }
 
 
-void Parallaction::freeZones() {
-	debugC(2, kDebugExec, "freeZones: _vm->_quit = %i", _vm->_quit);
+void Location::freeZones(bool removeAll) {
+	debugC(2, kDebugExec, "freeZones: removeAll = %i", removeAll);
 
-	ZoneList::iterator it = _location._zones.begin();
+	ZoneList::iterator it = _zones.begin();
 
-	while ( it != _location._zones.end() ) {
+	while ( it != _zones.end() ) {
 
 		// NOTE : this condition has been relaxed compared to the original, to allow the engine
 		// to retain special - needed - zones that were lost across location switches.
 		ZonePtr z = *it;
-		if (((z->getY() == -1) || (z->getX() == -2)) && (_quit == 0)) {
+		if (((z->getY() == -1) || (z->getX() == -2)) && (!removeAll)) {
 			debugC(2, kDebugExec, "freeZones preserving zone '%s'", z->_name);
 			it++;
 		} else {
 			(*it)->_commands.clear();	// Since commands may reference zones, and both commands and zones are kept stored into
 										// SharedPtr's, we need to kill commands explicitly to destroy any potential circular
 										// reference.
-			it = _location._zones.erase(it);
+			it = _zones.erase(it);
 		}
 	}
 
