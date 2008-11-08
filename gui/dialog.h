@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef DIALOG_H
-#define DIALOG_H
+#ifndef GUI_DIALOG_H
+#define GUI_DIALOG_H
 
 #include "common/scummsys.h"
 #include "common/str.h"

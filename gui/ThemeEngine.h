@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef THEME_ENGINE_H
-#define THEME_ENGINE_H
+#ifndef GUI_THEME_ENGINE_H
+#define GUI_THEME_ENGINE_H
 
 #include "common/scummsys.h"
 #include "graphics/surface.h"
@@ -33,19 +33,27 @@
 #include "graphics/surface.h"
 #include "graphics/fontman.h"
 
-#include "gui/dialog.h"
-#include "gui/ThemeParser.h"
-#include "graphics/VectorRenderer.h"
-#include "gui/ThemeEval.h"
+//#include "gui/dialog.h"
+//#include "gui/ThemeParser.h"
+//#include "graphics/VectorRenderer.h"
+//#include "gui/ThemeEval.h"
+#include "gui/theme.h"
 
+namespace Graphics {
+struct DrawStep;
+class VectorRenderer;
+}
 
 namespace GUI {
 
 struct WidgetDrawData;
 struct DrawDataInfo;
 struct TextDrawData;
+class Dialog;
+class GuiObject;
 class ThemeEval;
 class ThemeItem;
+class ThemeParser;
 
 class ThemeEngine : public Theme {
 protected:
@@ -226,13 +234,13 @@ public:
 		}
 	}
 
-	const Graphics::Font *getFont(FontStyle font) const;
+	const Graphics::Font *getFont(FontStyle font = kFontStyleBold) const;
 
 	int getFontHeight(FontStyle font = kFontStyleBold) const;
 
-	int getStringWidth(const Common::String &str, FontStyle font) const;
+	int getStringWidth(const Common::String &str, FontStyle font = kFontStyleBold) const;
 
-	int getCharWidth(byte c, FontStyle font) const;
+	int getCharWidth(byte c, FontStyle font = kFontStyleBold) const;
 
 
 	/**
@@ -268,13 +276,11 @@ public:
 
 	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled);
 
-	void drawDialogBackground(const Common::Rect &r, DialogBackground type, WidgetStateInfo state);
+	void drawDialogBackground(const Common::Rect &r, DialogBackground type, WidgetStateInfo state = kStateEnabled);
 
-	void drawText(const Common::Rect &r, const Common::String &str,
-		WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font);
+	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, TextAlign align = kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold);
 
-	void drawChar(const Common::Rect &r, byte ch,
-		const Graphics::Font *font, WidgetStateInfo state);
+	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled);
 
 	/**
 	 *	Actual implementation of a Dirty Rect drawing routine.
@@ -326,7 +332,7 @@ public:
 	 *	@param drawDataId The representing DrawData name, as found on Theme Description XML files.
 	 *	@param step The actual DrawStep struct to be added.
 	 */
-	void addDrawStep(const Common::String &drawDataId, Graphics::DrawStep step);
+	void addDrawStep(const Common::String &drawDataId, const Graphics::DrawStep &step);
 
 	/**
 	 *	Interfacefor the ThemeParser class: Parsed DrawData sets are added via this function.
@@ -393,7 +399,7 @@ public:
 	void startBuffering() { _buffering = true; }
 
 	ThemeEval *getEvaluator() { return _themeEval; }
-	VectorRenderer *renderer() { return _vectorRenderer; }
+	Graphics::VectorRenderer *renderer() { return _vectorRenderer; }
 
 	bool supportsImages() const { return true; }
 	bool ownCursor() const { return _useCursor; }
@@ -440,12 +446,13 @@ public:
 	 */
 	bool isWidgetCached(DrawData type, const Common::Rect &r);
 
-protected:
+public:
 
 	const Common::String &getThemeName() const { return _themeName; }
 	const Common::String &getThemeFileName() const { return _themeFileName; }
 	int getGraphicsMode() const { return _graphicsMode; }
 
+protected:
 	/**
 	 *	Initializes the drawing screen surfaces, _screen and _backBuffer.
 	 *	If the surfaces already exist, they are cleared and re-initialized.
@@ -497,32 +504,17 @@ protected:
 	/**
 	 *	Frees the vector renderer.
 	 */
-	void freeRenderer() {
-		delete _vectorRenderer;
-		_vectorRenderer = 0;
-	}
+	void freeRenderer();
 
 	/**
 	 * Frees the Back buffer surface, only if it's available.
 	 */
-	void freeBackbuffer() {
-		if (_backBuffer != 0) {
-			_backBuffer->free();
-			delete _backBuffer;
-			_backBuffer = 0;
-		}
-	}
+	void freeBackbuffer();
 
 	/**
 	 * Frees the main screen drawing surface, only if it's available.
 	 */
-	void freeScreen() {
-		if (_screen != 0) {
-			_screen->free();
-			delete _screen;
-			_screen = 0;
-		}
-	}
+	void freeScreen();
 
 	TextData getTextData(DrawData ddId);
 
@@ -567,12 +559,14 @@ protected:
 	void debugWidgetPosition(const char *name, const Common::Rect &r);
 
 
+public:
 	/**
 	 *	Default values from GUI::Theme
 	 */
 	int getTabSpacing() const { return 0; }
 	int getTabPadding() const { return 3; }
 
+protected:
 	OSystem *_system; /** Global system object. */
 
 	/** Vector Renderer object, does the actual drawing on screen */

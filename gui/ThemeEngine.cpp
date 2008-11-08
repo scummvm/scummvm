@@ -361,6 +361,28 @@ void ThemeEngine::deinit() {
 	}
 }
 
+void ThemeEngine::freeRenderer() {
+	delete _vectorRenderer;
+	_vectorRenderer = 0;
+}
+
+void ThemeEngine::freeBackbuffer() {
+	if (_backBuffer != 0) {
+		_backBuffer->free();
+		delete _backBuffer;
+		_backBuffer = 0;
+	}
+}
+
+void ThemeEngine::freeScreen() {
+	if (_screen != 0) {
+		_screen->free();
+		delete _screen;
+		_screen = 0;
+	}
+}
+
+
 void ThemeEngine::unloadTheme() {
 	if (!_themeOk)
 		return;
@@ -499,7 +521,7 @@ void ThemeEngine::restoreBackground(Common::Rect r, bool special) {
 /**********************************************************
  *	Theme elements management
  *********************************************************/
-void ThemeEngine::addDrawStep(const Common::String &drawDataId, Graphics::DrawStep step) {
+void ThemeEngine::addDrawStep(const Common::String &drawDataId, const Graphics::DrawStep &step) {
 	DrawData id = getDrawDataId(drawDataId);
 
 	assert(_widgets[id] != 0);

@@ -30,7 +30,7 @@
 #include "common/keyboard.h"
 #include "graphics/surface.h"
 #include "gui/object.h"
-#include "gui/theme.h"
+#include "gui/ThemeEngine.h"
 
 namespace GUI {
 

@@ -31,6 +31,7 @@
 #include "common/xmlparser.h"
 
 #include "gui/ThemeEngine.h"
+#include "gui/ThemeEval.h"
 #include "gui/ThemeParser.h"
 #include "gui/newgui.h"
 #include "graphics/VectorRenderer.h"

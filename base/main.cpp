@@ -37,6 +37,7 @@
 #include "base/plugins.h"
 #include "base/version.h"
 
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"

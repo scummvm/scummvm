@@ -35,6 +35,8 @@
 #include "gui/ThemeParser.h"
 #include "gui/ThemeEval.h"
 
+#include "gui/widget.h"
+
 namespace GUI {
 
 ThemeEval::~ThemeEval() {
