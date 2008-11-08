@@ -43,104 +43,9 @@ namespace GUI {
 
 struct WidgetDrawData;
 struct DrawDataInfo;
+struct TextDrawData;
 class ThemeEval;
-
-struct TextDrawData {
-	const Graphics::Font *_fontPtr;
-
-	struct {
-		uint8 r, g, b;
-	} _color;
-};
-
-struct WidgetDrawData {
-	/** List of all the steps needed to draw this widget */
-	Common::List<Graphics::DrawStep> _steps;
-
-	int _textDataId;
-	GUI::Theme::TextAlign _textAlignH;
-	GUI::Theme::TextAlignVertical _textAlignV;
-
-	/** Extra space that the widget occupies when it's drawn.
-	    E.g. when taking into account rounded corners, drop shadows, etc
-		Used when restoring the widget background */
-	uint16 _backgroundOffset;
-
-	/** Sets whether the widget is cached beforehand. */
-	bool _cached;
-	bool _buffer;
-
-	/** Texture where the cached widget is stored. */
-	Graphics::Surface *_surfaceCache;
-
-	~WidgetDrawData() {
-		_steps.clear();
-
-		if (_surfaceCache) {
-			_surfaceCache->free();
-			delete _surfaceCache;
-		}
-	}
-};
-
-class ThemeItem {
-
-public:
-	ThemeItem(ThemeEngine *engine, const Common::Rect &area) :
-		_engine(engine), _area(area) {}
-	virtual ~ThemeItem() {}
-
-	virtual void drawSelf(bool doDraw, bool doRestore) = 0;
-
-protected:
-	ThemeEngine *_engine;
-	Common::Rect _area;
-};
-
-class ThemeItemDrawData : public ThemeItem {
-public:
-	ThemeItemDrawData(ThemeEngine *engine, const WidgetDrawData *data, const Common::Rect &area, uint32 dynData) :
-		ThemeItem(engine, area), _dynamicData(dynData), _data(data) {}
-
-	void drawSelf(bool draw, bool restore);
-
-protected:
-	uint32 _dynamicData;
-	const WidgetDrawData *_data;
-};
-
-class ThemeItemTextData : public ThemeItem {
-public:
-	ThemeItemTextData(ThemeEngine *engine, const TextDrawData *data, const Common::Rect &area, const Common::String &text,
-		GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV,
-		bool ellipsis, bool restoreBg, int deltaX) :
-		ThemeItem(engine, area), _data(data), _text(text), _alignH(alignH), _alignV(alignV),
-		_ellipsis(ellipsis), _restoreBg(restoreBg), _deltax(deltaX) {}
-
-	void drawSelf(bool draw, bool restore);
-
-protected:
-	const TextDrawData *_data;
-	Common::String _text;
-	GUI::Theme::TextAlign _alignH;
-	GUI::Theme::TextAlignVertical _alignV;
-	bool _ellipsis;
-	bool _restoreBg;
-	int _deltax;
-};
-
-class ThemeItemBitmap : public ThemeItem {
-public:
-	ThemeItemBitmap(ThemeEngine *engine, const Common::Rect &area, const Graphics::Surface *bitmap, bool alpha) :
-		ThemeItem(engine, area), _bitmap(bitmap), _alpha(alpha) {}
-
-	void drawSelf(bool draw, bool restore);
-
-protected:
-	const Graphics::Surface *_bitmap;
-	bool _alpha;
-};
-
+class ThemeItem;
 
 class ThemeEngine : public Theme {
 protected:
@@ -321,19 +226,13 @@ public:
 		}
 	}
 
-	const Graphics::Font *getFont(FontStyle font) const { return _texts[fontStyleToData(font)]->_fontPtr; }
+	const Graphics::Font *getFont(FontStyle font) const;
 
-	int getFontHeight(FontStyle font = kFontStyleBold) const {
-		return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getFontHeight() : 0;
-	}
+	int getFontHeight(FontStyle font = kFontStyleBold) const;
 
-	int getStringWidth(const Common::String &str, FontStyle font) const {
-		return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getStringWidth(str) : 0;
-	}
+	int getStringWidth(const Common::String &str, FontStyle font) const;
 
-	int getCharWidth(byte c, FontStyle font) const {
-		return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getCharWidth(c) : 0;
-	}
+	int getCharWidth(byte c, FontStyle font) const;
 
 
 	/**
@@ -625,9 +524,7 @@ protected:
 		}
 	}
 
-	TextData getTextData(DrawData ddId) {
-		return _widgets[ddId] ? (TextData)_widgets[ddId]->_textDataId : kTextDataNone;
-	}
+	TextData getTextData(DrawData ddId);
 
 	/**
 	 * Draws a cached widget directly on the screen. Currently deprecated.
@@ -720,10 +617,10 @@ protected:
 	Common::List<Common::Rect> _dirtyScreen;
 
 	/** Queue with all the drawing that must be done to the Back Buffer */
-	Common::List<ThemeItem*> _bufferQueue;
+	Common::List<ThemeItem *> _bufferQueue;
 
 	/** Queue with all the drawing that must be done to the screen */
-	Common::List<ThemeItem*> _screenQueue;
+	Common::List<ThemeItem *> _screenQueue;
 
 	bool _initOk; /** Class and renderer properly initialized */
 	bool _themeOk; /** Theme data successfully loaded. */
