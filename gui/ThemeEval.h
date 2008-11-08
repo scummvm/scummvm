@@ -75,7 +75,7 @@ public:
 		return def;
 	}
 	
-	void setVar(const String &name, int val) { _vars[name] = val; }
+	void setVar(const Common::String &name, int val) { _vars[name] = val; }
 	
 	bool hasVar(const Common::String &name) { return _vars.contains(name) || _builtin.contains(name); }
 	

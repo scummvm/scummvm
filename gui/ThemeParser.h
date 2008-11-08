@@ -40,12 +40,10 @@
 
 namespace GUI {
 
-using namespace Graphics;
-using namespace Common;
 class ThemeEngine;	
 
-class ThemeParser : public XMLParser {
-	typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const DrawStep &);
+class ThemeParser : public Common::XMLParser {
+	typedef void (Graphics::VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const Graphics::DrawStep &);
 
 public:
 	ThemeParser(GUI::ThemeEngine *parent);

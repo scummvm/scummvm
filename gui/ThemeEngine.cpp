@@ -673,7 +673,7 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 	assert(_parser);
 	_themeName.clear();
 
-	FSNode node(themeName);
+	Common::FSNode node(themeName);
 	if (!node.exists() || !node.isReadable())
 		return false;
 
