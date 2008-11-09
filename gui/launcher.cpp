@@ -714,9 +714,16 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 	}
 
 
-	// Disable these buttons if nothing is selected, or if an empty
-	// list item is selected.
-	_chooseButton->setEnabled(selItem >= 0 && ((!_list->getSelectedString().empty())) || (_list->isEditable() && !isWriteProtected));
+	if (_list->isEditable()) {
+		// Disable the save button if nothing is selected, or if the selected
+		// game is write protected
+		_chooseButton->setEnabled(selItem >= 0 && !isWriteProtected);
+	} else {
+		// Disable the load button if nothing is selected, or if an empty
+		// list item is selected.
+		_chooseButton->setEnabled(selItem >= 0 && !_list->getSelectedString().empty());
+	}
+
 	// Delete will always be disabled if the engine doesn't support it.
 	_deleteButton->setEnabled(isDeletable && (selItem >= 0) && (!_list->getSelectedString().empty()));
 
