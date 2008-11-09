@@ -167,7 +167,17 @@ public:
 
 		/**
 		 * Features meta infos for savestates (i.e. implements the
-		 * querySaveMetaInfos method properly)
+		 * querySaveMetaInfos method properly).
+		 *
+		 * Engines implementing meta infos always have to provide
+		 * the following entries in the save state descriptor queried
+		 * by querySaveMetaInfos:
+		 * - 'is_deletable', which indicates if a given save is
+		 *                   safe for deletion
+		 * - 'is_write_protected', which indicates if a given save
+		 *                         can be overwritten by the user.
+		 *                         (note: of course you do not have to
+		 *                         set this, since it defaults to 'false')
 		 */
 		kSavesSupportMetaInfo,
 
