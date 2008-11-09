@@ -748,6 +748,10 @@ void Sword2Engine::pauseEngine(bool pause) {
 	if (pause == _gamePaused)
 		return;
 
+	// We don't need to hide the cursor for outside pausing. Not as long
+	// as it replaces the cursor with the GUI cursor, at least.
+
+	_mouse->pauseEngine(pause);
 	pauseEngineIntern(pause);
 
 	if (pause) {
@@ -775,12 +779,10 @@ void Sword2Engine::pauseEngineIntern(bool pause) {
 
 	if (pause) {
 		_sound->pauseAllSound();
-		_mouse->pauseEngine(true);
 		_logic->pauseMovie(true);
 		_screen->pauseScreen(true);
 		_gamePaused = true;
 	} else {
-		_mouse->pauseEngine(false);
 		_logic->pauseMovie(false);
 		_screen->pauseScreen(false);
 		_sound->unpauseAllSound();
