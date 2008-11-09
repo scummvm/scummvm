@@ -747,8 +747,19 @@ void SaveLoadChooser::updateSaveList() {
 	_saveList = (*_plugin)->listSaves(_target.c_str());
 
 	int curSlot = 0;
+	int saveSlot = 0;
 	StringList saveNames;
 	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
+		// Handle gaps in the list of save games
+		saveSlot = atoi(x->save_slot().c_str());
+		while (curSlot < saveSlot) {
+			SaveStateDescriptor dummySave(curSlot, "");
+			_saveList.insert_at(curSlot, dummySave);
+			saveNames.push_back(dummySave.description());
+			++x;	// sync save list pointer
+			curSlot++;
+		}
+
 		saveNames.push_back(x->description());
 		curSlot++;
 	}
