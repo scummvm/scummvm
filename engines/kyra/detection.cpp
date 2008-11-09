@@ -1216,6 +1216,7 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 			SaveStateDescriptor desc(slot, header.description);
 
 			desc.setDeletableFlag(slot != 0);
+			desc.setWriteProtectedFlag(slot == 0 || slot >= 990);
 			desc.setThumbnail(header.thumbnail);
 
 			return desc;
