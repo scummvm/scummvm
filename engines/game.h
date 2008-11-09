@@ -151,10 +151,16 @@ public:
 	bool getBool(const Common::String &key) const;
 
 	/**
-	 * Sets the 'is_deletable' key, which indicates, if the
+	 * Sets the 'is_deletable' key, which indicates if the
 	 * given savestate is safe for deletion.
 	 */
 	void setDeletableFlag(bool state);
+
+	/**
+	 * Sets the 'is_write_protected' key, which indicates if the
+	 * given savestate can be overwritten or not
+	 */
+	void setWriteProtectedFlag(bool state);
 
 	/**
 	 * Return a thumbnail graphics surface representing the savestate visually.

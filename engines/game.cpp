@@ -115,6 +115,10 @@ void SaveStateDescriptor::setDeletableFlag(bool state) {
 	setVal("is_deletable", state ? "true" : "false");
 }
 
+void SaveStateDescriptor::setWriteProtectedFlag(bool state) {
+	setVal("is_write_protected", state ? "true" : "false");
+}
+
 void SaveStateDescriptor::setSaveDate(int year, int month, int day) {
 	char buffer[32];
 	snprintf(buffer, 32, "%.2d.%.2d.%.4d", day, month, year);

@@ -673,11 +673,13 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 	int selItem = _list->getSelected();
 
 	bool isDeletable = _delSupport;
+	bool isWriteProtected = false;
 
 	if (selItem >= 0 && !_list->getSelectedString().empty() && _metaInfoSupport) {
 		SaveStateDescriptor desc = (*_plugin)->querySaveMetaInfos(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
 
 		isDeletable = desc.getBool("is_deletable") && _delSupport;
+		isWriteProtected = desc.getBool("is_write_protected");
 
 		if (_thumbnailSupport) {
 			const Graphics::Surface *thumb = desc.getThumbnail();
@@ -720,7 +722,7 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 
 	// Disable these buttons if nothing is selected, or if an empty
 	// list item is selected.
-	_chooseButton->setEnabled(selItem >= 0 && (!_list->getSelectedString().empty()));
+	_chooseButton->setEnabled(selItem >= 0 && (!_list->getSelectedString().empty()) && !isWriteProtected);
 	// Delete will always be disabled if the engine doesn't support it.
 	_deleteButton->setEnabled(isDeletable && (selItem >= 0) && (!_list->getSelectedString().empty()));
 
