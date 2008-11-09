@@ -716,7 +716,7 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 
 	// Disable these buttons if nothing is selected, or if an empty
 	// list item is selected.
-	_chooseButton->setEnabled((selItem >= 0 && (!_list->getSelectedString().empty())) || (_list->isEditable() && !isWriteProtected));
+	_chooseButton->setEnabled(selItem >= 0 && ((!_list->getSelectedString().empty())) || (_list->isEditable() && !isWriteProtected));
 	// Delete will always be disabled if the engine doesn't support it.
 	_deleteButton->setEnabled(isDeletable && (selItem >= 0) && (!_list->getSelectedString().empty()));
 
