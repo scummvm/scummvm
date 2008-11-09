@@ -133,25 +133,25 @@ public:
 	 *
 	 * @see deinit
 	 */
-	virtual bool init() = 0;
+//	virtual bool init() = 0;
 
 	/**
 	 * Unloads all data used by the theme renderer.
 	 */
-	virtual void deinit() = 0;
+//	virtual void deinit() = 0;
 
 	/**
 	 * Updates the renderer to changes to resolution,
 	 * bit depth and other video related configuration.
 	 */
-	virtual void refresh() = 0;
+//	virtual void refresh() = 0;
 
 	/**
 	 * Checks if the theme supplies its own cursor.
 	 *
 	 * @return true if using an own cursor
 	 */
-	virtual bool ownCursor() const { return false; }
+//	virtual bool ownCursor() const { return false; }
 
 	/**
 	 * Enables the theme renderer for use.
@@ -171,7 +171,7 @@ public:
 	 * @see disable
 	 * @see init
 	 */
-	virtual void enable() = 0;
+//	virtual void enable() = 0;
 
 	/**
 	 * Disables the theme renderer.
@@ -186,7 +186,7 @@ public:
 	 * @see enable
 	 * @see uninit
 	 */
-	virtual void disable() = 0;
+//	virtual void disable() = 0;
 
 	/**
 	 * Tells the theme renderer that a new dialog is opened.
@@ -205,14 +205,14 @@ public:
 	 *
 	 * @see closeAllDialogs
 	 */
-	virtual void openDialog(bool topDialog, ShadingStyle shading = kShadingNone) = 0;
+//	virtual void openDialog(bool topDialog, ShadingStyle shading = kShadingNone) = 0;
 
 	/**
 	 * This indicates that all dialogs have been closed.
 	 *
 	 * @see openDialog
 	 */
-	virtual void closeAllDialogs() = 0;
+//	virtual void closeAllDialogs() = 0;
 
 	/**
 	 * Closes the topmost dialog, and redraws the screen
@@ -226,13 +226,13 @@ public:
 	 *          the dialog, we return false, which means we need to redraw
 	 *          the dialog stack from scratch.
 	 */
-	virtual void startBuffering() = 0;
-	virtual void finishBuffering() = 0;
+//	virtual void startBuffering() = 0;
+//	virtual void finishBuffering() = 0;
 
 	/**
 	 * Clear the complete GUI screen.
 	 */
-	virtual void clearAll() = 0;
+//	virtual void clearAll() = 0;
 
 	/**
 	 * Update the GUI screen aka overlay.
@@ -240,8 +240,9 @@ public:
 	 * This does NOT call OSystem::updateScreen,
 	 * it just copies all (changed) data to the overlay.
 	 */
-	virtual void updateScreen() = 0;
+//	virtual void updateScreen() = 0;
 
+/*
 	virtual const Graphics::Font *getFont(FontStyle font = kFontStyleBold) const = 0;
 	virtual int getFontHeight(FontStyle font = kFontStyleBold) const = 0;
 	virtual int getStringWidth(const Common::String &str, FontStyle font = kFontStyleBold) const = 0;
@@ -268,7 +269,7 @@ public:
 
 	virtual int getTabSpacing() const = 0;
 	virtual int getTabPadding() const = 0;
-
+*/
 	Graphics::TextAlignment convertAligment(TextAlign align) const {
 		switch (align) {
 		case kTextAlignLeft:
@@ -303,14 +304,14 @@ public:
 
 
 	bool isThemeLoadingRequired();
-	virtual ThemeEval *getEvaluator() = 0;
+//	virtual ThemeEval *getEvaluator() = 0;
 
 	static bool themeConfigUseable(const Common::FSNode &node, Common::String &themeName);
 	static bool themeConfigParseHeader(Common::String header, Common::String &themeName);
 
-	virtual const Common::String &getThemeFileName() const = 0;
-	virtual const Common::String &getThemeName() const = 0;
-	virtual int getGraphicsMode() const = 0;
+//	virtual const Common::String &getThemeFileName() const = 0;
+//	virtual const Common::String &getThemeName() const = 0;
+//	virtual int getGraphicsMode() const = 0;
 
 	/**
 	 * Checks if the theme renderer supports drawing of images.
@@ -334,11 +335,6 @@ public:
 	 * @see kThemeImages
 	 */
 	virtual const Graphics::Surface *getImageSurface(const kThemeImages n) const { return 0; }
-
-protected:
-	const Graphics::Font *loadFont(const Common::String &filename);
-	const Graphics::Font *loadFontFromArchive(const Common::String &filename);
-	Common::String genCacheFilename(const char *filename);
 
 public:
 	bool needThemeReload() { return ((_loadedThemeX != g_system->getOverlayWidth()) ||

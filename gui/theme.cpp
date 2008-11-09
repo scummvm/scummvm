@@ -27,13 +27,15 @@
 #include "common/archive.h"
 #include "common/unzip.h"
 
+#include "gui/ThemeEngine.h"
+
 namespace GUI {
 
 Theme::Theme() : _loadedThemeX(0), _loadedThemeY(0) {}
 
 Theme::~Theme() {}
 
-const Graphics::Font *Theme::loadFontFromArchive(const Common::String &filename) {
+const Graphics::Font *ThemeEngine::loadFontFromArchive(const Common::String &filename) {
 	Common::Archive *arch = 0;
 	const Graphics::NewFont *font = 0;
 
@@ -65,7 +67,7 @@ const Graphics::Font *Theme::loadFontFromArchive(const Common::String &filename)
 	return font;
 }
 
-const Graphics::Font *Theme::loadFont(const Common::String &filename) {
+const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
 	const Graphics::Font *font = 0;
 	Common::String cacheFilename = genCacheFilename(filename.c_str());
 	Common::File fontFile;
@@ -101,7 +103,7 @@ const Graphics::Font *Theme::loadFont(const Common::String &filename) {
 	return font;
 }
 
-Common::String Theme::genCacheFilename(const char *filename) {
+Common::String ThemeEngine::genCacheFilename(const char *filename) {
 	Common::String cacheName(filename);
 	for (int i = cacheName.size() - 1; i >= 0; --i) {
 		if (cacheName[i] == '.') {

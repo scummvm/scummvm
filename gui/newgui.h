@@ -79,7 +79,7 @@ public:
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 
 	bool loadNewTheme(Common::String file, ThemeEngine::GraphicsMode gfx = ThemeEngine::kGfxDisabled);
-	Theme *theme() { return _theme; }
+	ThemeEngine *theme() { return _theme; }
 	
 	ThemeEval *xmlEval() { return _theme->getEvaluator(); }
 
@@ -105,7 +105,7 @@ public:
 protected:
 	OSystem			*_system;
 
-	Theme		*_theme;
+	ThemeEngine		*_theme;
 
 //	bool		_needRedraw;
 	RedrawStatus _redrawStatus;
