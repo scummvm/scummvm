@@ -570,18 +570,12 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		}
 		close();
 		break;
-	case GUI::kListSelectionChangedCmd: {
+	case GUI::kListSelectionChangedCmd:
 		updateSelection(true);
 
-		if (_list->isEditable()) {
+		if (_list->isEditable())
 			_list->startEditMode();
-		}
-		// Disable button if nothing is selected, or (in load mode) if an empty
-		// list item is selected. We allow choosing an empty item in save mode
-		// because we then just assign a default name.
-		_chooseButton->setEnabled(selItem >= 0 && (_list->isEditable() || !getResultString().empty()));
-		_chooseButton->draw();
-	} break;
+		break;
 	case kDelCmd:
 		if (selItem >= 0 && _delSupport) {
 			MessageDialog alert("Do you really want to delete this savegame?", 
@@ -722,7 +716,7 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 
 	// Disable these buttons if nothing is selected, or if an empty
 	// list item is selected.
-	_chooseButton->setEnabled(selItem >= 0 && (!_list->getSelectedString().empty()) && !isWriteProtected);
+	_chooseButton->setEnabled((selItem >= 0 && (!_list->getSelectedString().empty())) || (_list->isEditable() && !isWriteProtected));
 	// Delete will always be disabled if the engine doesn't support it.
 	_deleteButton->setEnabled(isDeletable && (selItem >= 0) && (!_list->getSelectedString().empty()));
 
