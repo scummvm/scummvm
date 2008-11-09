@@ -392,5 +392,12 @@ uint8 KyraEngine_v1::getVolume(kVolumeEntry vol) {
 	return 2;
 }
 
+void KyraEngine_v1::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	if (_sound)
+		_sound->updateVolumeSettings();
+}
+
 } // End of namespace Kyra
 
