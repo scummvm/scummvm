@@ -451,7 +451,7 @@ Common::Error Sword2Engine::go() {
 
 #ifdef SWORD2_DEBUG
 		if (_stepOneCycle) {
-			pauseEngineIntern(true);
+			pauseEngine(true);
 			_stepOneCycle = false;
 		}
 #endif
@@ -465,9 +465,9 @@ Common::Error Sword2Engine::go() {
 				switch (ke->kbd.keycode) {
 				case Common::KEYCODE_p:
 					if (_gamePaused)
-						pauseEngineIntern(false);
+						pauseEngine(false);
 					else
-						pauseEngineIntern(true);
+						pauseEngine(true);
 					break;
 				case Common::KEYCODE_c:
 					if (!_logic->readVar(DEMO) && !_mouse->isChoosing()) {
@@ -480,7 +480,7 @@ Common::Error Sword2Engine::go() {
 				case Common::KEYCODE_SPACE:
 					if (_gamePaused) {
 						_stepOneCycle = true;
-						pauseEngineIntern(false);
+						pauseEngine(false);
 					}
 					break;
 				case Common::KEYCODE_s:
@@ -741,19 +741,13 @@ void Sword2Engine::sleepUntil(uint32 time) {
 	}
 }
 
-void Sword2Engine::pauseEngineIntern(bool pause) {
+void Sword2Engine::pauseEngine(bool pause) {
+	if (pause == _gamePaused)
+		return;
+
+	pauseEngineIntern(pause);
+
 	if (pause) {
-		// FIXME: We should never disallow pausing.
-
-		// Don't allow Pause while screen fading or while black
-		if (_screen->getFadeStatus() != RDFADE_NONE)
-			return;
-
-		_sound->pauseAllSound();
-		_mouse->pauseEngine(true);
-		_logic->pauseMovie(true);
-		_screen->pauseScreen(true);
-
 #ifdef SWORD2_DEBUG
 		// Don't dim it if we're single-stepping through frames
 		// dim the palette during the pause
@@ -763,21 +757,31 @@ void Sword2Engine::pauseEngineIntern(bool pause) {
 #else
 		_screen->dimPalette(true);
 #endif
+	} else {
+		_screen->dimPalette(false);
 
+		// If mouse is about or we're in a chooser menu
+		if (!_mouse->getMouseStatus() || _mouse->isChoosing())
+			_mouse->setMouse(NORMAL_MOUSE_ID);
+	}
+}
+
+void Sword2Engine::pauseEngineIntern(bool pause) {
+	if (pause == _gamePaused)
+		return;
+
+	if (pause) {
+		_sound->pauseAllSound();
+		_mouse->pauseEngine(true);
+		_logic->pauseMovie(true);
+		_screen->pauseScreen(true);
 		_gamePaused = true;
 	} else {
 		_mouse->pauseEngine(false);
 		_logic->pauseMovie(false);
 		_screen->pauseScreen(false);
 		_sound->unpauseAllSound();
-
-		_screen->dimPalette(false);
-
 		_gamePaused = false;
-
-		// If mouse is about or we're in a chooser menu
-		if (!_mouse->getMouseStatus() || _mouse->isChoosing())
-			_mouse->setMouse(NORMAL_MOUSE_ID);
 	}
 }
 

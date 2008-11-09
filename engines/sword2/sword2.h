@@ -135,6 +135,8 @@ public:
 	Sword2Engine(OSystem *syst);
 	~Sword2Engine();
 
+	void pauseEngine(bool pause);
+
 	int getFramesPerSecond();
 
 	void registerDefaultSettings();

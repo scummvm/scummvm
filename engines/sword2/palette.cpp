@@ -164,8 +164,11 @@ void Screen::setPalette(int16 startEntry, int16 noEntries, byte *colourTable, ui
 void Screen::dimPalette(bool dim) {
 	if (dim != _dimPalette) {
 		_dimPalette = dim;
-		setSystemPalette(_palette, 0, 256);
-		setNeedFullRedraw();
+		// If the palette is in the middle of fading, don't update it.
+		if (_fadeStatus != RDFADE_DOWN && _fadeStatus != RDFADE_UP) {
+			setSystemPalette(_palette, 0, 256);
+			setNeedFullRedraw();
+		}
 	}
 }
 
@@ -180,7 +183,7 @@ int32 Screen::fadeUp(float time) {
 
 	_fadeTotalTime = (int32)(time * 1000);
 	_fadeStatus = RDFADE_UP;
-	_fadeStartTime = _vm->_system->getMillis();
+	_fadeStartTime = getTick();
 
 	return RD_OK;
 }
@@ -196,7 +199,7 @@ int32 Screen::fadeDown(float time) {
 
 	_fadeTotalTime = (int32)(time * 1000);
 	_fadeStatus = RDFADE_DOWN;
-	_fadeStartTime = _vm->_system->getMillis();
+	_fadeStartTime = getTick();
 
 	return RD_OK;
 }
@@ -232,7 +235,7 @@ void Screen::fadeServer() {
 
 	// I don't know if this is necessary, but let's limit how often the
 	// palette is updated, just to be safe.
-	currentTime = _vm->_system->getMillis();
+	currentTime = getTick();
 	if (currentTime - previousTime <= 25)
 		return;
 

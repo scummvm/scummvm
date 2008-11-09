@@ -111,6 +111,10 @@ Screen::~Screen() {
 	free(_lightMask);
 }
 
+uint32 Screen::getTick() {
+	return _vm->getMillis() - _pauseTicks;
+}
+
 void Screen::pauseScreen(bool pause) {
 	if (pause) {
 		_pauseStartTick = _vm->_system->getMillis();
@@ -323,10 +327,10 @@ void Screen::buildDisplay() {
 		updateDisplay();
 
 		_frameCount++;
-		if (_vm->getMillis() > _cycleTime) {
+		if (getTick() > _cycleTime) {
 			_fps = _frameCount;
 			_frameCount = 0;
-			_cycleTime = _vm->getMillis() + 1000;
+			_cycleTime = getTick() + 1000;
 		}
 	} while (!endRenderCycle());
 
@@ -397,7 +401,7 @@ void Screen::displayMsg(byte *text, int time) {
 	waitForFade();
 
 	if (time > 0) {
-		uint32 targetTime = _vm->getMillis() + (time * 1000);
+		uint32 targetTime = _vm->_system->getMillis() + (time * 1000);
 		_vm->sleepUntil(targetTime);
 	} else {
 		while (!_vm->shouldQuit()) {
@@ -1038,9 +1042,7 @@ void Screen::rollCredits() {
 	bool abortCredits = false;
 
 	int scrollSteps = lineTop + CREDITS_FONT_HEIGHT;
-	uint32 musicStart = _vm->getMillis();
-
-	_pauseTicks = 0;
+	uint32 musicStart = getTick();
 
 	// Ideally the music should last just a tiny bit longer than the
 	// credits. Note that musicTimeRemaining() will return 0 if the music
