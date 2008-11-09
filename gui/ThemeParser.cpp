@@ -38,9 +38,6 @@
 
 namespace GUI {
 
-using namespace Graphics;
-using namespace Common;
-
 ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {	
 	
 	_drawFunctions["circle"]  = &Graphics::VectorRenderer::drawCallback_CIRCLE;
@@ -77,7 +74,7 @@ void ThemeParser::cleanup() {
 }
 
 Graphics::DrawStep *ThemeParser::defaultDrawStep() {
-	Graphics::DrawStep *step = new DrawStep;
+	Graphics::DrawStep *step = new Graphics::DrawStep;
 
 	step->fgColor.set = false;
 	step->bgColor.set = false;
@@ -110,9 +107,9 @@ Graphics::DrawStep *ThemeParser::newDrawStep() {
 	Graphics::DrawStep *step = 0 ; //new DrawStep;
 
 	if (_defaultStepLocal) {
-		step = new DrawStep(*_defaultStepLocal);
+		step = new Graphics::DrawStep(*_defaultStepLocal);
 	} else {
-		step = new DrawStep(*_defaultStepGlobal);
+		step = new Graphics::DrawStep(*_defaultStepGlobal);
 	}
 
 	return step;
@@ -126,7 +123,7 @@ bool ThemeParser::parserCallback_defaults(ParserNode *node) {
 		step = _defaultStepGlobal;
 	} else if (parentNode->name == "drawdata") {
 		if (_defaultStepLocal == 0)
-			_defaultStepLocal = new DrawStep(*_defaultStepLocal);
+			_defaultStepLocal = new Graphics::DrawStep(*_defaultStepLocal);
 
 		step = _defaultStepLocal;
 	} else {
@@ -385,19 +382,19 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		}
 
 		if (functionName == "triangle") {
-			drawstep->extraData = VectorRenderer::kTriangleUp;
+			drawstep->extraData = Graphics::VectorRenderer::kTriangleUp;
 
 			if (stepNode->values.contains("orientation")) {
 				val = stepNode->values["orientation"];
 
 				if ( val == "top")
-					drawstep->extraData = VectorRenderer::kTriangleUp;
+					drawstep->extraData = Graphics::VectorRenderer::kTriangleUp;
 				else if (val == "bottom")
-					drawstep->extraData = VectorRenderer::kTriangleDown;
+					drawstep->extraData = Graphics::VectorRenderer::kTriangleDown;
 				else if (val == "left")
-					drawstep->extraData = VectorRenderer::kTriangleLeft;
+					drawstep->extraData = Graphics::VectorRenderer::kTriangleLeft;
 				else if (val == "right")
-					drawstep->extraData = VectorRenderer::kTriangleRight;
+					drawstep->extraData = Graphics::VectorRenderer::kTriangleRight;
 				else
 					return parserError("'%s' is not a valid value for triangle orientation.", val.c_str());
 			}
@@ -470,13 +467,13 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 	if (stepNode->values.contains("fill")) {
 		val = stepNode->values["fill"];
 		if (val == "none")
-			drawstep->fillMode = VectorRenderer::kFillDisabled;
+			drawstep->fillMode = Graphics::VectorRenderer::kFillDisabled;
 		else if (val == "foreground")
-			drawstep->fillMode = VectorRenderer::kFillForeground;
+			drawstep->fillMode = Graphics::VectorRenderer::kFillForeground;
 		else if (val == "background")
-			drawstep->fillMode = VectorRenderer::kFillBackground;
+			drawstep->fillMode = Graphics::VectorRenderer::kFillBackground;
 		else if (val == "gradient")
-			drawstep->fillMode = VectorRenderer::kFillGradient;
+			drawstep->fillMode = Graphics::VectorRenderer::kFillGradient;
 		else
 			return parserError("'%s' is not a valid fill mode for a shape.", stepNode->values["fill"].c_str());
 	}
