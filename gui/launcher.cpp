@@ -573,8 +573,17 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 	case GUI::kListSelectionChangedCmd:
 		updateSelection(true);
 
-		if (_list->isEditable())
-			_list->startEditMode();
+		if (_list->isEditable()) {
+			if (!_metaInfoSupport) {
+				_list->startEditMode();
+			} else {
+				SaveStateDescriptor desc = (*_plugin)->querySaveMetaInfos(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
+				// Don't allow the user to change the description of write protected games
+				if (!desc.getBool("is_write_protected"))
+					_list->startEditMode();
+			}
+		}
+
 		break;
 	case kDelCmd:
 		if (selItem >= 0 && _delSupport) {
