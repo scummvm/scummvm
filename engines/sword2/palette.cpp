@@ -164,11 +164,8 @@ void Screen::setPalette(int16 startEntry, int16 noEntries, byte *colourTable, ui
 void Screen::dimPalette(bool dim) {
 	if (dim != _dimPalette) {
 		_dimPalette = dim;
-		// If the palette is in the middle of fading, don't update it.
-		if (_fadeStatus != RDFADE_DOWN && _fadeStatus != RDFADE_UP) {
-			setSystemPalette(_palette, 0, 256);
-			setNeedFullRedraw();
-		}
+		setSystemPalette(_palette, 0, 256);
+		setNeedFullRedraw();
 	}
 }
 
