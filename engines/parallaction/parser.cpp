@@ -42,23 +42,28 @@ Script::~Script() {
 
 char *Script::readLine(char *buf, size_t bufSize) {
 
-	uint16 _si;
-	char v2 = 0;
-	for ( _si = 0; _si<bufSize; _si++) {
+	uint16 i;
+	for (i = 0; i < bufSize; i++) {
 
-		v2 = _input->readSByte();
+		char c = _input->readSByte();
 
-		if (v2 == 0xA || v2 == 0xD || _input->eos()) break;
-		if (!_input->eos() && _si < bufSize) buf[_si] = v2;
+		if (_input->eos())
+			break;
+
+		if (c == 0xA || c == 0xD)
+			break;
+
+		if (i < bufSize)
+			buf[i] = c;
 	}
 
 	_line++;
 
-	if (_si == 0 && _input->eos())
+	if (i == 0 && _input->eos())
 		return 0;
 
-	buf[_si] = 0xA;
-	buf[_si+1] = '\0';
+	buf[i] = 0xA;
+	buf[i+1] = '\0';
 
 	return buf;
 

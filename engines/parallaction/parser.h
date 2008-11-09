@@ -433,6 +433,7 @@ class ReadStringStream : public Common::ReadStream {
 	char *_text;
 	uint32	_pos;
 	uint32	_size;
+	bool _eos;
 
 public:
 	ReadStringStream(const Common::String &text) {
@@ -440,6 +441,7 @@ public:
 		strcpy(_text, text.c_str());
 		_size = text.size();
 		_pos = 0;
+		_eos = false;
 	}
 
 	~ReadStringStream() {
@@ -449,6 +451,7 @@ public:
 	uint32 read(void *buffer, uint32 size) {
 		if (_pos + size > _size) {
 			size = _size - _pos;
+			_eos = true;
 		}
 		memcpy(buffer, _text + _pos, size);
 		_pos += size;
@@ -456,7 +459,7 @@ public:
 	}
 
 	bool eos() const {
-		return _pos == _size; // FIXME (eos definition change)
+		return _eos;
 	}
 
 };
