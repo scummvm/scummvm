@@ -318,7 +318,7 @@ public:
 	 *
 	 * @return true on support, else false
 	 */
-	virtual bool supportsImages() const { return false; }
+//	virtual bool supportsImages() const { return false; }
 
 	//! Special image ids for images used in the GUI
 	enum kThemeImages {
@@ -334,7 +334,7 @@ public:
 	 *
 	 * @see kThemeImages
 	 */
-	virtual const Graphics::Surface *getImageSurface(const kThemeImages n) const { return 0; }
+//	virtual const Graphics::Surface *getImageSurface(const kThemeImages n) const { return 0; }
 
 public:
 	bool needThemeReload() { return ((_loadedThemeX != g_system->getOverlayWidth()) ||

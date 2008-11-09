@@ -27,16 +27,11 @@
 #define GUI_THEME_ENGINE_H
 
 #include "common/scummsys.h"
-#include "graphics/surface.h"
 #include "common/system.h"
 
 #include "graphics/surface.h"
 #include "graphics/fontman.h"
 
-//#include "gui/dialog.h"
-//#include "gui/ThemeParser.h"
-//#include "graphics/VectorRenderer.h"
-//#include "gui/ThemeEval.h"
 #include "gui/theme.h"
 
 namespace Graphics {
@@ -395,14 +390,14 @@ public:
 	 *	Finishes buffering: widgets from then on will be drawn straight on the screen
 	 *	without drawing queues.
 	 */
-	void finishBuffering() { _buffering = false; }
-	void startBuffering() { _buffering = true; }
+	inline void finishBuffering() { _buffering = false; }
+	inline void startBuffering() { _buffering = true; }
 
-	ThemeEval *getEvaluator() { return _themeEval; }
-	Graphics::VectorRenderer *renderer() { return _vectorRenderer; }
+	inline ThemeEval *getEvaluator() { return _themeEval; }
+	inline Graphics::VectorRenderer *renderer() { return _vectorRenderer; }
 
-	bool supportsImages() const { return true; }
-	bool ownCursor() const { return _useCursor; }
+	inline bool supportsImages() const { return true; }
+	inline bool ownCursor() const { return _useCursor; }
 
 	Graphics::Surface *getBitmap(const Common::String &name) {
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;

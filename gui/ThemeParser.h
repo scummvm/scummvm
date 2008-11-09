@@ -38,7 +38,7 @@ class ThemeParser : public Common::XMLParser {
 	typedef void (Graphics::VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const Graphics::DrawStep &);
 
 public:
-	ThemeParser(GUI::ThemeEngine *parent);
+	ThemeParser(ThemeEngine *parent);
 	
 	virtual ~ThemeParser();
 	

@@ -75,28 +75,16 @@ void ThemeParser::cleanup() {
 
 Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 	Graphics::DrawStep *step = new Graphics::DrawStep;
-
-	step->fgColor.set = false;
-	step->bgColor.set = false;
-	step->gradColor1.set = false;
-	step->gradColor2.set = false;
+	
+	memset(step, 0, sizeof(Graphics::DrawStep));
 
 	step->xAlign = Graphics::DrawStep::kVectorAlignManual;
 	step->yAlign = Graphics::DrawStep::kVectorAlignManual;
-	step->x = 0;
-	step->y = 0;
-	step->w = 0;
-	step->h = 0;
-	
-	step->extraData = 0;
 	step->factor = 1;
 	step->autoWidth = true;
 	step->autoHeight = true;
 	step->fillMode = Graphics::VectorRenderer::kFillDisabled;
 	step->scale = (1 << 16);
-	step->shadow = 0;
-	step->bevel = 0;
-	step->stroke = 0;
 	step->radius = 0xFF;
 
 	return step;
@@ -144,10 +132,10 @@ bool ThemeParser::parserCallback_font(ParserNode *node) {
 	if (_palette.contains(node->values["color"]))
 		getPaletteColor(node->values["color"], red, green, blue);
 	else if (!parseIntegerKey(node->values["color"].c_str(), 3, &red, &green, &blue))
-		return parserError("Error when parsing color value for font definition.");
+		return parserError("Error parsing color value for font definition.");
 	
 	if (!_theme->addFont(node->values["id"], node->values["file"], red, green, blue))
-		return parserError("Error when loading Font in theme engine.");
+		return parserError("Error loading Font in theme engine.");
 		
 	return true;
 }
@@ -165,13 +153,13 @@ bool ThemeParser::parserCallback_cursor(ParserNode *node) {
 	int spotx, spoty, scale;
 	
 	if (!parseIntegerKey(node->values["hotspot"].c_str(), 2, &spotx, &spoty))
-		return parserError("Error when parsing cursor Hot Spot coordinates.");
+		return parserError("Error parsing cursor Hot Spot coordinates.");
 		
 	if (!parseIntegerKey(node->values["scale"].c_str(), 1, &scale))
-		return parserError("Error when parsing cursor scale.");
+		return parserError("Error parsing cursor scale.");
 		
 	if (!_theme->createCursor(node->values["file"], spotx, spoty, scale))
-		return parserError("Error when creating Bitmap Cursor.");
+		return parserError("Error creating Bitmap Cursor.");
 		
 	return true;
 }
@@ -183,7 +171,7 @@ bool ThemeParser::parserCallback_bitmap(ParserNode *node) {
 	}
 	
 	if (!_theme->addBitmap(node->values["filename"]))
-		return parserError("Error when loading Bitmap file '%s'", node->values["filename"].c_str());
+		return parserError("Error loading Bitmap file '%s'", node->values["filename"].c_str());
 		
 	return true;
 }
@@ -209,7 +197,7 @@ bool ThemeParser::parserCallback_text(ParserNode *node) {
 	else return parserError("Invalid value for text alignment.");
 	
 	if (!_theme->addTextData(getParentNode(node)->values["id"], node->values["font"], alignH, alignV))
-		return parserError("Error when adding Text Data for '%s'.", getParentNode(node)->values["id"].c_str());
+		return parserError("Error adding Text Data for '%s'.", getParentNode(node)->values["id"].c_str());
 
 	return true;
 }
@@ -242,7 +230,7 @@ bool ThemeParser::parserCallback_color(ParserNode *node) {
 
 	if (parseIntegerKey(node->values["rgb"].c_str(), 3, &red, &green, &blue) == false ||
 		red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255)
-		return parserError("Error when parsing RGB values for palette color '%s'", name.c_str());\
+		return parserError("Error parsing RGB values for palette color '%s'", name.c_str());\
 
 	_palette[name].r = red;
 	_palette[name].g = green;
@@ -288,7 +276,7 @@ bool ThemeParser::parserCallback_drawdata(ParserNode *node) {
 	}
 
 	if (_theme->addDrawData(node->values["id"], cached) == false)
-		return parserError("Error when adding Draw Data set: Invalid DrawData name.");
+		return parserError("Error adding Draw Data set: Invalid DrawData name.");
 
 	if (_defaultStepLocal) {
 		delete _defaultStepLocal;
@@ -315,7 +303,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 #define __PARSER_ASSIGN_INT(struct_name, key_name, force) \
 	if (stepNode->values.contains(key_name)) { \
 		if (!parseIntegerKey(stepNode->values[key_name].c_str(), 1, &x)) \
-			return parserError("Error when parsing key value for '%s'.", key_name); \
+			return parserError("Error parsing key value for '%s'.", key_name); \
 		\
 		drawstep->struct_name = x; \
 	} else if (force) { \
@@ -340,7 +328,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			blue = _palette[val].b; \
 		} else if (parseIntegerKey(val.c_str(), 3, &red, &green, &blue) == false || \
 			red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255) \
-			return parserError("Error when parsing color struct '%s'", val.c_str());\
+			return parserError("Error parsing color struct '%s'", val.c_str());\
 		\
 		drawstep->struct_name.r = red; \
 		drawstep->struct_name.g = green; \
@@ -515,7 +503,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 		
 		var = "Globals." + node->values["name"] + ".";
 		if (!parseCommonLayoutProps(node, var))
-			return parserError("Error when parsing Layout properties of '%s'.", var.c_str());
+			return parserError("Error parsing Layout properties of '%s'.", var.c_str());
 
 	} else {
 		var = node->values["name"];
@@ -593,7 +581,7 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 bool ThemeParser::parserCallback_import(ParserNode *node) {
 	
 	if (!_theme->getEvaluator()->addImportedLayout(node->values["layout"]))
-		return parserError("Error when importing external layout");
+		return parserError("Error importing external layout");
 	return true;
 }
 
@@ -607,7 +595,6 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 	
 	if (node->values["type"] == "vertical")
 		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutVertical, spacing, node->values["center"] == "true");
-		
 	else if (node->values["type"] == "horizontal")
 		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutHorizontal, spacing, node->values["center"] == "true");
 	else
