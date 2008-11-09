@@ -56,9 +56,7 @@ namespace Common {
 		lay->callback = (&kLocalParserName::parserCallback_##keyName);\
 		layout.top()->children[#keyName] = lay;\
 		layout.push(lay); \
-		_layoutList.push_back(lay);\
-		for (Common::List<XMLKeyLayout::XMLKeyProperty>::const_iterator p = globalProps.begin(); p != globalProps.end(); ++p){\
-			layout.top()->properties.push_back(*p);}
+		_layoutList.push_back(lay);
 		
 #define XML_KEY_RECURSIVE(keyName) {\
 			layout.top()->children[#keyName] = layout.top();\
@@ -72,11 +70,7 @@ namespace Common {
 		prop.required = req; \
 		layout.top()->properties.push_back(prop); }
 		
-#define XML_GLOBAL_PROP(propName, req) {\
-		prop.name = #propName; \
-		prop.required = req;\
-		globalProps.push_back(prop); }
-		
+
 	
 #define CUSTOM_XML_PARSER(parserName) \
 	protected: \
@@ -90,7 +84,6 @@ namespace Common {
 		Common::Stack<XMLKeyLayout*> layout; \
 		CustomXMLKeyLayout *lay = 0; \
 		XMLKeyLayout::XMLKeyProperty prop; \
-		Common::List<XMLKeyLayout::XMLKeyProperty> globalProps; \
 		_XMLkeys = new CustomXMLKeyLayout; \
 		layout.push(_XMLkeys);
 	
@@ -161,7 +154,9 @@ public:
 		virtual ~XMLKeyLayout() {
 			properties.clear();
 		}
-	} *_XMLkeys;
+	};
+	
+	XMLKeyLayout *_XMLkeys;
 
 	/** Struct representing a parsed node */
 	struct ParserNode {
