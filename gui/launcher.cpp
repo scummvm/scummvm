@@ -756,7 +756,7 @@ void SaveLoadChooser::updateSaveList() {
 			SaveStateDescriptor dummySave(curSlot, "");
 			_saveList.insert_at(curSlot, dummySave);
 			saveNames.push_back(dummySave.description());
-			++x;	// sync save list pointer
+			++x;	// sync the save list iterator
 			curSlot++;
 		}
 
