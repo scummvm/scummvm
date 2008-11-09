@@ -101,6 +101,7 @@ protected:
 	bool					_playTimeSupport;
 	String					_target;
 	SaveStateList			_saveList;
+	String					_resultString;
 
 	uint8 _fillR, _fillG, _fillB;
 

@@ -166,9 +166,7 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		int slot = _saveDialog->runModal(plugin, ConfMan.getActiveDomainName());
 
 		if (slot >= 0) {
-			// FIXME: at this point, the save list's selItem is -1!
-			//Common::String result(_saveDialog->getResultString());
-			Common::String result;
+			Common::String result(_saveDialog->getResultString());
 			if (result.empty()) {
 				// If the user was lazy and entered no save name, come up with a default name.
 				char buf[20];

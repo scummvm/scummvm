@@ -524,6 +524,7 @@ int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) 
 	_thumbnailSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSavesSupportThumbnail);
 	_saveDateSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSavesSupportCreationDate);
 	_playTimeSupport = _metaInfoSupport && (*_plugin)->hasFeature(MetaEngine::kSavesSupportPlayTime);
+	_resultString = "";
 	reflowLayout();
 	updateSaveList();
 
@@ -536,7 +537,7 @@ int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) 
 }
 
 const Common::String &SaveLoadChooser::getResultString() const {
-	return _list->getSelectedString();
+	return (_list->getSelected() > -1) ? _list->getSelectedString() : _resultString;
 }
 
 void SaveLoadChooser::setSaveMode(bool saveMode) {
@@ -553,13 +554,20 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		if (selItem >= 0) {
 			if (_list->isEditable() || !_list->getSelectedString().empty()) {
 				_list->endEditMode();
-				setResult(atoi(_saveList[selItem].save_slot().c_str()));
+				if (!_saveList.empty()) {
+					setResult(atoi(_saveList[selItem].save_slot().c_str()));
+					_resultString = _list->getSelectedString();
+				}
 				close();
 			}
 		}
 		break;
 	case kChooseCmd:
-		setResult(atoi(_saveList[selItem].save_slot().c_str()));
+		_list->endEditMode();
+		if (!_saveList.empty()) {
+			setResult(atoi(_saveList[selItem].save_slot().c_str()));
+			_resultString = _list->getSelectedString();
+		}
 		close();
 		break;
 	case GUI::kListSelectionChangedCmd: {
@@ -747,8 +755,11 @@ void SaveLoadChooser::updateSaveList() {
 
 	// Fill the rest of the save slots with empty saves
 	Common::String emptyDesc;
-	for (int i = curSlot + 1; i <= (*_plugin)->getMaximumSaveSlot(); i++)
+	for (int i = curSlot + 1; i <= (*_plugin)->getMaximumSaveSlot(); i++) {
 		saveNames.push_back(emptyDesc);
+		SaveStateDescriptor dummySave(i, "");
+		_saveList.push_back(dummySave);
+	}
 
 	_list->setList(saveNames);
 }
