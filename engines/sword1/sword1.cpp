@@ -99,6 +99,7 @@ public:
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 };
@@ -267,6 +268,8 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 
 	return saveList;
 }
+
+int SwordMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD1)
 	REGISTER_PLUGIN_DYNAMIC(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngine);

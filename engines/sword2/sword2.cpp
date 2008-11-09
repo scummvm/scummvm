@@ -85,6 +85,7 @@ public:
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
@@ -200,6 +201,8 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 
 	return saveList;
 }
+
+int Sword2MetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
 	char extension[6];
