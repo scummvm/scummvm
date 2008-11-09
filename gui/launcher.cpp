@@ -572,18 +572,6 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		break;
 	case GUI::kListSelectionChangedCmd:
 		updateSelection(true);
-
-		if (_list->isEditable()) {
-			if (!_metaInfoSupport) {
-				_list->startEditMode();
-			} else {
-				SaveStateDescriptor desc = (*_plugin)->querySaveMetaInfos(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
-				// Don't allow the user to change the description of write protected games
-				if (!desc.getBool("is_write_protected"))
-					_list->startEditMode();
-			}
-		}
-
 		break;
 	case kDelCmd:
 		if (selItem >= 0 && _delSupport) {
@@ -677,12 +665,17 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 
 	bool isDeletable = _delSupport;
 	bool isWriteProtected = false;
+	bool startEditMode = _list->isEditable();
 
 	if (selItem >= 0 && !_list->getSelectedString().empty() && _metaInfoSupport) {
 		SaveStateDescriptor desc = (*_plugin)->querySaveMetaInfos(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
 
 		isDeletable = desc.getBool("is_deletable") && _delSupport;
 		isWriteProtected = desc.getBool("is_write_protected");
+
+		// Don't allow the user to change the description of write protected games
+		if (isWriteProtected)
+			startEditMode = false;
 
 		if (_thumbnailSupport) {
 			const Graphics::Surface *thumb = desc.getThumbnail();
@@ -727,6 +720,9 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 		// Disable the save button if nothing is selected, or if the selected
 		// game is write protected
 		_chooseButton->setEnabled(selItem >= 0 && !isWriteProtected);
+
+		if (startEditMode)
+			_list->startEditMode();
 	} else {
 		// Disable the load button if nothing is selected, or if an empty
 		// list item is selected.
