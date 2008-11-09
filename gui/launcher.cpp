@@ -551,7 +551,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 	switch (cmd) {
 	case GUI::kListItemActivatedCmd:
 	case GUI::kListItemDoubleClickedCmd:
-		if (selItem >= 0) {
+		if (selItem >= 0 && _chooseButton->isEnabled()) {
 			if (_list->isEditable() || !_list->getSelectedString().empty()) {
 				_list->endEditMode();
 				if (!_saveList.empty()) {
