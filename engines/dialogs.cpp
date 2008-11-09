@@ -169,17 +169,15 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// FIXME: at this point, the save list's selItem is -1!
 			//Common::String result(_saveDialog->getResultString());
 			Common::String result;
-			const char *desc;
 			if (result.empty()) {
 				// If the user was lazy and entered no save name, come up with a default name.
 				char buf[20];
-				sprintf(buf, "Save %d", slot + 1);
-				desc = buf;
+				snprintf(buf, 20, "Save %d", slot + 1);
+				_engine->saveGameState(slot, buf);
 			} else {
-				desc = result.c_str();
+				_engine->saveGameState(slot, result.c_str());
 			}
 
-			_engine->saveGameState(slot, desc);
 			close();
 		}
 
