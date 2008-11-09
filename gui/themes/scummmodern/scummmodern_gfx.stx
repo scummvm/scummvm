@@ -1,3 +1,4 @@
+<?xml version = "1.0"?>
 <!-- ScummVM - Graphic Adventure Engine
  -
  - ScummVM is the legal property of its developers, whose names
@@ -22,7 +23,6 @@
  - $Id$
  -
  -->
-<?xml version = "1.0"?>
 <render_info>
 	<palette>
 		<color name = 'darkred'
@@ -95,14 +95,14 @@
 	<cursor file = 'cursor.bmp' hotspot = '0, 0' scale = '3'/>
 	<cursor resolution = '320xY, 256x240' file = 'cursor_small.bmp' hotspot = '0, 0' scale = '3'/>
 
-	<drawdata id = 'text_selection' cache = false>
+	<drawdata id = 'text_selection' cache = 'false'>
 		<drawstep	func = 'square'
 					fill = 'foreground'
 					fg_color = 'bgreen'
 		/>
 	</drawdata>
 
-	<drawdata id = 'mainmenu_bg' cache = false>
+	<drawdata id = 'mainmenu_bg' cache = 'false'>
 		<drawstep	func = 'fill'
 					fill = 'gradient'
 					gradient_start = '208, 112, 8'
@@ -110,7 +110,7 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'special_bg' cache = false>
+	<drawdata id = 'special_bg' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					radius = '4'
 					fill = 'gradient'
@@ -122,7 +122,7 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'separator' cache = false>
+	<drawdata id = 'separator' cache = 'false'>
 		<drawstep	func = 'square'
 					fill = 'foreground'
 					height = '1'
@@ -131,20 +131,20 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'scrollbar_base' cache = false>
+	<drawdata id = 'scrollbar_base' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = 1
-					radius = 6
+					stroke = '1'
+					radius = '6'
 					fill = 'background'
 					fg_color = '176, 164, 160'
 					bg_color = '240, 228, 160'
 		/>
 	</drawdata>
 
-	<drawdata id = 'scrollbar_handle_hover' cache = false>
+	<drawdata id = 'scrollbar_handle_hover' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = 1
-					radius = 6
+					stroke = '1'
+					radius = '6'
 					fill = 'gradient'
 					fg_color = 'blandyellow'
 					gradient_start = 'xtrabrightred'
@@ -152,10 +152,10 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'scrollbar_handle_idle' cache = false>
+	<drawdata id = 'scrollbar_handle_idle' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = 1
-					radius = 6
+					stroke = '1'
+					radius = '6'
 					fill = 'gradient'
 					fg_color = 'blandyellow'
 					gradient_start = 'brightred'
@@ -163,12 +163,12 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'scrollbar_button_idle' cache = false>
+	<drawdata id = 'scrollbar_button_idle' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					radius = '4'
 					fill = 'none'
 					fg_color = '176, 164, 160'
-					stroke = 1
+					stroke = '1'
 		/>
 		<drawstep	func = 'triangle'
 					fg_color = '0, 0, 0'
@@ -181,13 +181,13 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'scrollbar_button_hover' cache = false>
+	<drawdata id = 'scrollbar_button_hover' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					radius = '4'
 					fill = 'background'
 					fg_color = '120, 120, 120'
 					bg_color = '206, 121, 99'
-					stroke = 1
+					stroke = '1'
 		/>
 		<drawstep	func = 'triangle'
 					fg_color = '0, 0, 0'
@@ -200,7 +200,7 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'tab_active' cache = false>
+	<drawdata id = 'tab_active' cache = 'false'>
 		<text	font = 'text_default'
 				vertical_align = 'center'
 				horizontal_align = 'center'
@@ -211,11 +211,11 @@
 					fill = 'gradient'
 					gradient_end = 'xtrabrightred'
 					gradient_start = 'blandyellow'
-					shadow = 3
+					shadow = '3'
 		/>
 	</drawdata>
 
-	<drawdata id = 'tab_inactive' cache = false>
+	<drawdata id = 'tab_inactive' cache = 'false'>
 		<text	font = 'text_default'
 				vertical_align = 'center'
 				horizontal_align = 'center'
@@ -225,35 +225,35 @@
 					stroke = '0'
 					fill = 'foreground'
 					fg_color = '240, 205, 118'
-					shadow = 3
+					shadow = '3'
 		/>
 	</drawdata>
 
-	<drawdata id = 'tab_background' cache = false>
+	<drawdata id = 'tab_background' cache = 'false'>
 		<drawstep	func = 'tab'
 					radius = '6'
 					stroke = '0'
 					fill = 'foreground'
 					fg_color = '232, 180, 81'
-					shadow = 3
+					shadow = '3'
 		/>
 	</drawdata>
 
-	<drawdata id = 'widget_slider' cache = false>
+	<drawdata id = 'widget_slider' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = 0
-					radius = 4
+					stroke = '0'
+					radius = '4'
 					fill = 'foreground'
 					fg_color = 'blandyellow'
-					bevel = 1
+					bevel = '1'
 					bevel_color = 'shadowcolor'
 		/>
 	</drawdata>
 
-	<drawdata id = 'slider_full' cache = false>
+	<drawdata id = 'slider_full' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = 1
-					radius = 4
+					stroke = '1'
+					radius = '4'
 					fill = 'gradient'
 					fg_color = '123, 112, 56'
 					gradient_start = 'brightred'
@@ -261,10 +261,10 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'slider_hover' cache = false>
+	<drawdata id = 'slider_hover' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = 1
-					radius = 4
+					stroke = '1'
+					radius = '4'
 					fill = 'gradient'
 					fg_color = '123, 112, 56'
 					gradient_start = 'xtrabrightred'
@@ -272,10 +272,10 @@
 		/>
 	</drawdata>
 	
-	<drawdata id = 'slider_disabled' cache = false>
+	<drawdata id = 'slider_disabled' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = 1
-					radius = 4
+					stroke = '1'
+					radius = '4'
 					fill = 'gradient'
 					fg_color = '123, 112, 56'
 					gradient_start = 'xtrabrightred'
@@ -283,13 +283,13 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'popup_idle' cache = false>
+	<drawdata id = 'popup_idle' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = 0
-					radius = 4
+					stroke = '0'
+					radius = '4'
 					fill = 'foreground'
 					fg_color = '250, 237, 190'
-					shadow = 2
+					shadow = '2'
 		/>
 		<drawstep	func = 'triangle'
 					fg_color = '63, 60, 52'
@@ -307,14 +307,14 @@
 	</drawdata>
 
 
-	<drawdata id = 'popup_hover' cache = false>
+	<drawdata id = 'popup_hover' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = 0
-					radius = 4
+					stroke = '0'
+					radius = '4'
 					fill = 'gradient'
 					gradient_start = 'blandyellow'
 					gradient_end = '250, 237, 190'
-					shadow = 0
+					shadow = '0'
 		/>
 		<drawstep	func = 'triangle'
 					fg_color = '63, 60, 52'
@@ -331,114 +331,114 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'widget_textedit' cache = false>
+	<drawdata id = 'widget_textedit' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					fill = 'foreground'
-					radius = 4
+					radius = '4'
 					fg_color = 'blandyellow'
-					shadow = 0
-					bevel = 1
+					shadow = '0'
+					bevel = '1'
 					bevel_color = 'shadowcolor'
 		/>
 	</drawdata>
 	
-	<drawdata id = 'plain_bg' cache = false>
+	<drawdata id = 'plain_bg' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					radius = 6
-					stroke = 0
+					radius = '6'
+					stroke = '0'
 					gradient_start = 'blandyellow'
 					gradient_end = 'xtrabrightred'
 					fill = 'gradient'
-					shadow = 3
+					shadow = '3'
 		/>
 	</drawdata>
 
-	<drawdata id = 'caret' cache = false>
+	<drawdata id = 'caret' cache = 'false'>
 		<drawstep	func = 'square'
 					fill = 'foreground'
 					fg_color = 'black'
 		/>
 	</drawdata>
 
-	<drawdata id = 'default_bg' cache = false>
+	<drawdata id = 'default_bg' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					radius = 12
-					stroke = 0
+					radius = '12'
+					stroke = '0'
 					fg_color = 'xtrabrightred'
 					fill = 'foreground'
-					shadow = 3
+					shadow = '3'
 		/>
 	</drawdata>
 
-	<drawdata id = 'button_idle' cache = false>
+	<drawdata id = 'button_idle' cache = 'false'>
 		<text	font = 'text_button'
 				vertical_align = 'center'
 				horizontal_align = 'center'
 		/>
 		<drawstep	func = 'roundedsq'
 					radius = '3'
-					stroke = 1
+					stroke = '1'
 					fill = 'gradient'
-					shadow = 0
+					shadow = '0'
 					fg_color = 'shadowcolor'
 					gradient_start = 'brightred'
 					gradient_end = 'darkred'
-					bevel = 1
+					bevel = '1'
 		/>
 	</drawdata>
 
-	<drawdata id = 'button_hover' cache = false>
+	<drawdata id = 'button_hover' cache = 'false'>
 		<text	font = 'text_button_hover'
 				vertical_align = 'center'
 				horizontal_align = 'center'
 		/>
 		<drawstep	func = 'roundedsq'
 					radius = '3'
-					gradient_factor = 1
-					stroke = 1 
+					gradient_factor = '1'
+					stroke = '1' 
 					fill = 'gradient'
-					shadow = 0
+					shadow = '0'
 					fg_color = 'shadowcolor'
 					gradient_start = 'xtrabrightred'
 					gradient_end = 'darkred'
 					bevel_color = 'xtrabrightred'
-					bevel = 1
+					bevel = '1'
 		/>
 	</drawdata>
 
-	<drawdata id = 'button_disabled' cache = false>
+	<drawdata id = 'button_disabled' cache = 'false'>
 		<text	font = 'text_disabled'
 				vertical_align = 'center'
 				horizontal_align = 'center'
 		/>
 		<drawstep	func = 'roundedsq'
 					radius = '3'
-					stroke = 1
+					stroke = '1'
 					fill = 'gradient'
-					shadow = 0
+					shadow = '0'
 					fg_color = 'shadowcolor'
 					gradient_start = 'brightred'
 					gradient_end = 'darkred'
-					bevel = 1
+					bevel = '1'
 		/>
 	</drawdata>
 
-	<drawdata id = 'checkbox_disabled' cache = false>
+	<drawdata id = 'checkbox_disabled' cache = 'false'>
 		<text	font = 'text_disabled'
 				vertical_align = 'top'
 				horizontal_align = 'left'
 		/>
 		<drawstep	func = 'roundedsq'
 					fill = 'none'
-					radius = 4
+					radius = '4'
 					fg_color = 'black'
-					shadow = 0
-					bevel = 1
+					shadow = '0'
+					bevel = '1'
 					bevel_color = 'shadowcolor'
 		/>
 	</drawdata>
 
-	<drawdata id = 'checkbox_selected' cache = false>
+	<drawdata id = 'checkbox_selected' cache = 'false'>
 		<text	font = 'text_default'
 				vertical_align = 'top'
 				horizontal_align = 'left'
@@ -448,42 +448,42 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'checkbox_default' cache = false>
+	<drawdata id = 'checkbox_default' cache = 'false'>
 		<text	font = 'text_default'
 				vertical_align = 'top'
 				horizontal_align = 'left'
 		/>
 		<drawstep	func = 'roundedsq'
 					fill = 'foreground'
-					radius = 4
+					radius = '4'
 					fg_color = 'blandyellow'
-					shadow = 0
-					bevel = 1
+					shadow = '0'
+					bevel = '1'
 					bevel_color = 'shadowcolor'
 		/>
 	</drawdata>
 
-	<drawdata id = 'widget_default' cache = false>
+	<drawdata id = 'widget_default' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					radius = 8
-					stroke = 0
+					radius = '8'
+					stroke = '0'
 					gradient_start = 'blandyellow'
 					gradient_end = '251, 241, 206'
 					gradient_factor = '6'
 					fill = 'gradient'
-					shadow = 3
+					shadow = '3'
 		/>
 	</drawdata>
 	
-	<drawdata id = 'widget_small' cache = false>
+	<drawdata id = 'widget_small' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					radius = 8
-					stroke = 0
+					radius = '8'
+					stroke = '0'
 					gradient_start = 'blandyellow'
 					gradient_end = 'xtrabrightred'
 					gradient_factor = '6'
 					fill = 'gradient'
-					shadow = 3
+					shadow = '3'
 		/>
 	</drawdata>
 </render_info>
