@@ -476,7 +476,7 @@ void Parallaction_ns::_c_sketch(void *parm) {
 		newx = _rightHandPositions[2*index];
 	}
 
-	Graphics::drawLine(oldx, oldy, newx, newy, 0, zeroMask, &_gfx->_backgroundInfo);
+	Graphics::drawLine(oldx, oldy, newx, newy, 0, zeroMask, _gfx->_backgroundInfo);
 
 	_rightHandAnim->setX(newx);
 	_rightHandAnim->setY(newy - 20);
