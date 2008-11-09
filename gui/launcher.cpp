@@ -483,6 +483,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 
 	// Add choice list
 	_list = new GUI::ListWidget(this, "ScummSaveLoad.List");
+	_list->setNumberingMode(GUI::kListNumberingZero);
 	setSaveMode(false);
 	
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
@@ -542,7 +543,6 @@ const Common::String &SaveLoadChooser::getResultString() const {
 
 void SaveLoadChooser::setSaveMode(bool saveMode) {
 	_list->setEditable(saveMode);
-	_list->setNumberingMode(GUI::kListNumberingOne);
 }
 
 void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -752,12 +752,19 @@ void SaveLoadChooser::updateSaveList() {
 	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
 		// Handle gaps in the list of save games
 		saveSlot = atoi(x->save_slot().c_str());
-		while (curSlot < saveSlot) {
-			SaveStateDescriptor dummySave(curSlot, "");
-			_saveList.insert_at(curSlot, dummySave);
-			saveNames.push_back(dummySave.description());
-			++x;	// sync the save list iterator
-			curSlot++;
+		if (curSlot < saveSlot) {
+			while (curSlot < saveSlot) {
+				SaveStateDescriptor dummySave(curSlot, "");
+				_saveList.insert_at(curSlot, dummySave);
+				saveNames.push_back(dummySave.description());
+				curSlot++;
+			}
+
+			// Sync the save list iterator
+			for (x = _saveList.begin(); x != _saveList.end(); ++x) {
+				if (atoi(x->save_slot().c_str()) == saveSlot)
+					break;
+			}
 		}
 
 		saveNames.push_back(x->description());
