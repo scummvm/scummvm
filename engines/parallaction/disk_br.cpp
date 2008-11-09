@@ -618,7 +618,6 @@ Disk_br::Disk_br(Parallaction *vm) : _vm(vm), _baseDir(0) {
 }
 
 Disk_br::~Disk_br() {
-	delete _baseDir;
 	_sset.clear();
 }
 
