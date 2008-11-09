@@ -23,19 +23,10 @@
  *
  */
 
-#include "common/util.h"
-#include "common/system.h"
-#include "common/events.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-#include "common/xmlparser.h"
-#include "graphics/scaler.h"
-
-#include "gui/ThemeEngine.h"
-#include "gui/ThemeParser.h"
 #include "gui/ThemeEval.h"
-
 #include "gui/widget.h"
+
+#include "graphics/scaler.h"
 
 namespace GUI {
 

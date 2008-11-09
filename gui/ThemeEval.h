@@ -26,16 +26,11 @@
 #ifndef GUI_THEME_EVAL
 #define GUI_THEME_EVAL
 
-#include "common/util.h"
-#include "common/system.h"
-#include "common/events.h"
+#include "common/scummsys.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
-#include "common/xmlparser.h"
+#include "common/stack.h"
 
-#include "gui/ThemeEngine.h"
-#include "gui/ThemeParser.h"
-#include "gui/ThemeEval.h"
 #include "gui/ThemeLayout.h"
 
 namespace GUI {
@@ -43,7 +38,7 @@ namespace GUI {
 class ThemeEval {
 
 	typedef Common::HashMap<Common::String, int> VariablesMap;
-	typedef Common::HashMap<Common::String, ThemeLayout*> LayoutsMap;
+	typedef Common::HashMap<Common::String, ThemeLayout *> LayoutsMap;
 	
 public:
 	ThemeEval() {
@@ -105,7 +100,7 @@ private:
 	VariablesMap _builtin;
 	
 	LayoutsMap _layouts;
-	Common::Stack<ThemeLayout*> _curLayout;
+	Common::Stack<ThemeLayout *> _curLayout;
 	Common::String _curDialog;
 };
 

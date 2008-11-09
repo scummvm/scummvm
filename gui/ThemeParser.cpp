@@ -60,6 +60,13 @@ ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {
 	_theme = parent;
 }
 
+ThemeParser::~ThemeParser() {
+	delete _defaultStepGlobal;
+	delete _defaultStepLocal;
+	_palette.clear();
+	_drawFunctions.clear();
+}
+
 void ThemeParser::cleanup() {
 	delete _defaultStepGlobal;
 	delete _defaultStepLocal;

@@ -29,7 +29,6 @@
 #include "common/scummsys.h"
 #include "common/archive.h"
 #include "common/system.h"
-#include "common/xmlparser.h"
 #include "common/stream.h"
 #include "common/file.h"
 #include "common/fs.h"

@@ -27,16 +27,8 @@
 #define THEME_PARSER_H
 
 #include "common/scummsys.h"
-#include "graphics/surface.h"
 #include "common/system.h"
-
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-#include "common/stack.h"
 #include "common/xmlparser.h"
-
-#include "graphics/VectorRenderer.h"
-#include "gui/ThemeEngine.h"
 
 namespace GUI {
 
@@ -48,12 +40,7 @@ class ThemeParser : public Common::XMLParser {
 public:
 	ThemeParser(GUI::ThemeEngine *parent);
 	
-	virtual ~ThemeParser() {
-		delete _defaultStepGlobal;
-		delete _defaultStepLocal;
-		_palette.clear();
-		_drawFunctions.clear();
-	}
+	virtual ~ThemeParser();
 	
 	bool getPaletteColor(const Common::String &name, int &r, int &g, int &b) {
 		if (!_palette.contains(name))

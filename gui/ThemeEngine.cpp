@@ -24,26 +24,26 @@
  */
 
 #include "common/util.h"
-#include "graphics/surface.h"
-#include "graphics/colormasks.h"
 #include "common/system.h"
 #include "common/events.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/unzip.h"
+
+#include "graphics/surface.h"
+#include "graphics/colormasks.h"
 #include "graphics/imageman.h"
 #include "graphics/cursorman.h"
-#include "gui/launcher.h"
+#include "graphics/VectorRenderer.h"
 
+#include "gui/launcher.h"
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
-#include "graphics/VectorRenderer.h"
+#include "gui/ThemeParser.h"
 
 #define GUI_ENABLE_BUILTIN_THEME
 
 namespace GUI {
-
-using namespace Graphics;
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
@@ -456,12 +456,12 @@ void ThemeEngine::screenInit(bool backBuffer) {
 
 	if (backBuffer) {
 		freeBackbuffer();
-		_backBuffer = new Surface;
+		_backBuffer = new Graphics::Surface;
 		_backBuffer->create(width, height, sizeof(PixelType));
 	}
 
 	freeScreen();
-	_screen = new Surface;
+	_screen = new Graphics::Surface;
 	_screen->create(width, height, sizeof(PixelType));
 	_system->clearOverlay();
 }
@@ -481,7 +481,7 @@ void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 	}
 
 	freeRenderer();
-	_vectorRenderer = createRenderer(mode);
+	_vectorRenderer = Graphics::createRenderer(mode);
 	_vectorRenderer->setSurface(_screen);
 }
 
@@ -1152,7 +1152,7 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 		return true;
 
 	// Try to locate the specified file among all loaded bitmaps
-	const Surface *cursor = _bitmaps[filename];
+	const Graphics::Surface *cursor = _bitmaps[filename];
 	if (!cursor)
 		return false;
 
