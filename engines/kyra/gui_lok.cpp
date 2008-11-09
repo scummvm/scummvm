@@ -658,7 +658,7 @@ int GUI_LoK::loadGameMenu(Button *button) {
 	} else {
 		restorePalette();
 		if (_vm->_gameToLoad != -1)
-			_vm->loadGameState(_vm->_gameToLoad);
+			_vm->loadGameStateCheck(_vm->_gameToLoad);
 		_displayMenu = false;
 		_menuRestoreScreen = false;
 	}

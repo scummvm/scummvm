@@ -251,5 +251,17 @@ void KyraEngine_v1::checkAutosave() {
 	}
 }
 
+void KyraEngine_v1::loadGameStateCheck(int slot) {
+	if (loadGameState(slot) != Common::kNoError) {
+		const char *filename = getSavegameFilename(slot);
+		Common::String errorMessage = "Could not load savegame: '";
+		errorMessage += filename;
+		errorMessage += "'";
+
+		GUIErrorMessage(errorMessage);
+		error(errorMessage.c_str());
+	}
+}
+
 } // end of namespace Kyra
 

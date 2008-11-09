@@ -394,7 +394,7 @@ void KyraEngine_LoK::startup() {
 			saveGameState(0, "New game", 0);
 	} else {
 		_screen->setFont(Screen::FID_8_FNT);
-		loadGameState(_gameToLoad);
+		loadGameStateCheck(_gameToLoad);
 		_gameToLoad = -1;
 	}
 }
@@ -476,7 +476,7 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 					int saveLoadSlot = 9 - (event.kbd.keycode - '0') + 990;
 
 					if (event.kbd.flags == Common::KBD_CTRL)
-						loadGameState(saveLoadSlot);
+						loadGameStateCheck(saveLoadSlot);
 					else {
 						char savegameName[14];
 						sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');

@@ -785,7 +785,7 @@ int GUI_HoF::optionsButton(Button *button) {
 
 	if (!_loadedSave && _reloadTemporarySave) {
 		_vm->_unkSceneScreenFlag1 = true;
-		_vm->loadGameState(999);
+		_vm->loadGameStateCheck(999);
 		//_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(999));
 		_vm->_unkSceneScreenFlag1 = false;
 	}
@@ -1195,7 +1195,7 @@ int GUI_HoF::loadMenu(Button *caller) {
 	} else if (_vm->_gameToLoad >= 0) {
 		restorePage1(_vm->_screenBuffer);
 		restorePalette();
-		_vm->loadGameState(_vm->_gameToLoad);
+		_vm->loadGameStateCheck(_vm->_gameToLoad);
 		if (_vm->_gameToLoad == 0) {
 			_restartGame = true;
 			for (int i = 0; i < 23; ++i)

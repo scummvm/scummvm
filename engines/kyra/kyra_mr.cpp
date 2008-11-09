@@ -690,7 +690,7 @@ void KyraEngine_MR::startup() {
 	if (_gameToLoad == -1)
 		enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 	else
-		loadGameState(_gameToLoad);
+		loadGameStateCheck(_gameToLoad);
 
 	if (_menuDirectlyToLoad)
 		(*_mainButtonData[0].buttonCallback)(&_mainButtonData[0]);

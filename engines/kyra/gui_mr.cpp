@@ -1366,7 +1366,7 @@ int GUI_MR::optionsButton(Button *button) {
 
 	if (!_loadedSave && _reloadTemporarySave) {
 		_vm->_unkSceneScreenFlag1 = true;
-		_vm->loadGameState(999);
+		_vm->loadGameStateCheck(999);
 		//_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(999));
 		_vm->_unkSceneScreenFlag1 = false;
 	}
@@ -1408,7 +1408,7 @@ int GUI_MR::loadMenu(Button *caller) {
 		restorePage1(_vm->_screenBuffer);
 		restorePalette();
 		_vm->_menuDirectlyToLoad = false;
-		_vm->loadGameState(_vm->_gameToLoad);
+		_vm->loadGameStateCheck(_vm->_gameToLoad);
 		if (_vm->_gameToLoad == 0) {
 			_restartGame = true;
 			_vm->runStartupScript(1, 1);
@@ -1425,7 +1425,7 @@ int GUI_MR::loadSecondChance(Button *button) {
 
 	_vm->_gameToLoad = 999;
 	restorePage1(_vm->_screenBuffer);
-	_vm->loadGameState(_vm->_gameToLoad);
+	_vm->loadGameStateCheck(_vm->_gameToLoad);
 	_displayMenu = false;
 	_loadedSave = true;
 	return 0;

@@ -439,7 +439,7 @@ void KyraEngine_HoF::startup() {
 		enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 		saveGameState(0, "New Game", 0);
 	} else {
-		loadGameState(_gameToLoad);
+		loadGameStateCheck(_gameToLoad);
 	}
 
 	_screen->showMouse();
