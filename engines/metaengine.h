@@ -99,6 +99,20 @@ public:
 	}
 
 	/**
+	 * Return the maximum save slot that the engine supports.
+	 *
+	 * @note MetaEngines must indicate that this function has been implemented
+	 *       via the kSupportsListSaves feature flag.
+	 *
+	 * The default implementation limits the save slots to zero (0).
+	 *
+	 * @return			maximum save slot number supported
+	 */
+	virtual int getMaximumSaveSlot() const {
+		return 0;
+	}
+
+	/**
 	 * Remove the specified save state. 
 	 *
 	 * For most engines this just amounts to calling _saveFileMan->removeSaveFile().  
@@ -125,13 +139,6 @@ public:
 		return SaveStateDescriptor();
 	}
 
-	/**
-	 * Gets the maximum save slot that the engine supports
-	 */
-	virtual int getMaximumSaveSlot() const {
-		return 0;
-	}
-
 	/** @name MetaEngineFeature flags */
 	//@{
 	
@@ -142,7 +149,7 @@ public:
 	enum MetaEngineFeature {
 		/**
 		 * Listing all Save States for a given target is supported, i.e.,
-		 * the listSaves() method is implemented.
+		 * the listSaves() and getMaximumSaveSlot methods are implemented.
 		 * Used for --list-saves support, as well as the GMM load dialog.
 		 */
 		kSupportsListSaves,
