@@ -202,6 +202,8 @@ void Parallaction_br::cleanupGame() {
 void Parallaction_br::changeLocation(char *location) {
 	char *partStr = strrchr(location, '.');
 	if (partStr) {
+		cleanupGame();
+
 		int n = partStr - location;
 		strncpy(_location._name, location, n);
 		_location._name[n] = '\0';

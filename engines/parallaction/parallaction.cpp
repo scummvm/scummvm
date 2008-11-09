@@ -869,9 +869,6 @@ WalkFrames _char24WalkFrames = {
 	{  2,  2,  4,  4 }
 };
 
-const char Character::_prefixMini[] = "mini";
-const char Character::_suffixTras[] = "tras";
-const char Character::_empty[] = "\0";
 
 
 Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation) {
@@ -881,8 +878,6 @@ Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation) {
 
 	_direction = WALK_DOWN;
 	_step = 0;
-
-	_dummy = false;
 
 	_ani->setX(150);
 	_ani->setY(100);
@@ -965,6 +960,49 @@ void Character::free() {
 }
 
 
+void Character::setName(const char *name) {
+	_name.bind(name);
+}
+
+const char *Character::getName() const {
+	return _name.getName();
+}
+
+const char *Character::getBaseName() const {
+	return _name.getBaseName();
+}
+
+const char *Character::getFullName() const {
+	return _name.getFullName();
+}
+
+bool Character::dummy() const {
+	return _name.dummy();
+}
+
+void Character::updateDirection(const Common::Point& pos, const Common::Point& to) {
+
+	Common::Point dist(to.x - pos.x, to.y - pos.y);
+	WalkFrames *frames = (_ani->getFrameNum() == 20) ? &_char20WalkFrames : &_char24WalkFrames;
+
+	_step++;
+
+	if (dist.x == 0 && dist.y == 0) {
+		_ani->setF(frames->stillFrame[_direction]);
+		return;
+	}
+
+	if (dist.x < 0)
+		dist.x = -dist.x;
+	if (dist.y < 0)
+		dist.y = -dist.y;
+
+	_direction = (dist.x > dist.y) ? ((to.x > pos.x) ? WALK_LEFT : WALK_RIGHT) : ((to.y > pos.y) ? WALK_DOWN : WALK_UP);
+	_ani->setF(frames->firstWalkFrame[_direction] + (_step / frames->frameRepeat[_direction]) % frames->numWalkFrames[_direction]);
+}
+
+
+
 // Various ways of detecting character modes used to exist
 // inside the engine, so they have been unified in the two
 // following macros.
@@ -976,7 +1014,26 @@ void Character::free() {
 #define IS_MINI_CHARACTER(s) (((s)[0] == 'm'))
 #define IS_DUMMY_CHARACTER(s) (((s)[0] == 'D'))
 
-void Character::setName(const char *name) {
+const char CharacterName::_prefixMini[] = "mini";
+const char CharacterName::_suffixTras[] = "tras";
+const char CharacterName::_empty[] = "\0";
+
+void CharacterName::dummify() {
+	_dummy = true;
+	_baseName[0] = '\0';
+	_name[0] = '\0';
+	_fullName[0] = '\0';
+}
+
+CharacterName::CharacterName() {
+	dummify();
+}
+
+CharacterName::CharacterName(const char *name) {
+	bind(name);
+}
+
+void CharacterName::bind(const char *name) {
 	const char *begin = name;
 	const char *end = begin + strlen(name);
 
@@ -1011,21 +1068,22 @@ void Character::setName(const char *name) {
 	sprintf(_fullName, "%s%s%s", _prefix, _baseName, _suffix);
 }
 
-const char *Character::getName() const {
+const char *CharacterName::getName() const {
 	return _name;
 }
 
-const char *Character::getBaseName() const {
+const char *CharacterName::getBaseName() const {
 	return _baseName;
 }
 
-const char *Character::getFullName() const {
+const char *CharacterName::getFullName() const {
 	return _fullName;
 }
 
-bool Character::dummy() const {
+bool CharacterName::dummy() const {
 	return _dummy;
 }
+
 
 void Parallaction::beep() {
 	_soundMan->playSfx("beep", 3, false);
@@ -1035,31 +1093,6 @@ void Parallaction::scheduleLocationSwitch(const char *location) {
 	debugC(9, kDebugExec, "scheduleLocationSwitch(%s)\n", location);
 	strcpy(_location._name, location);
 	_engineFlags |= kEngineChangeLocation;
-}
-
-
-
-
-
-void Character::updateDirection(const Common::Point& pos, const Common::Point& to) {
-
-	Common::Point dist(to.x - pos.x, to.y - pos.y);
-	WalkFrames *frames = (_ani->getFrameNum() == 20) ? &_char20WalkFrames : &_char24WalkFrames;
-
-	_step++;
-
-	if (dist.x == 0 && dist.y == 0) {
-		_ani->setF(frames->stillFrame[_direction]);
-		return;
-	}
-
-	if (dist.x < 0)
-		dist.x = -dist.x;
-	if (dist.y < 0)
-		dist.y = -dist.y;
-
-	_direction = (dist.x > dist.y) ? ((to.x > pos.x) ? WALK_LEFT : WALK_RIGHT) : ((to.y > pos.y) ? WALK_DOWN : WALK_UP);
-	_ani->setF(frames->firstWalkFrame[_direction] + (_step / frames->frameRepeat[_direction]) % frames->numWalkFrames[_direction]);
 }
 
 

@@ -166,6 +166,26 @@ public:
 };
 
 
+class CharacterName {
+	const char *_prefix;
+	const char *_suffix;
+	bool _dummy;
+	char _name[30];
+	char _baseName[30];
+	char _fullName[30];
+	static const char _prefixMini[];
+	static const char _suffixTras[];
+	static const char _empty[];
+	void dummify();
+public:
+	CharacterName();
+	CharacterName(const char *name);
+	void bind(const char *name);
+	const char *getName() const;
+	const char *getBaseName() const;
+	const char *getFullName() const;
+	bool dummy() const;
+};
 
 
 struct Character {
@@ -190,17 +210,7 @@ struct Character {
 	void free();
 
 protected:
-	const char *_prefix;
-	const char *_suffix;
-
-	bool _dummy;
-
-	char _name[30];
-	char _baseName[30];
-	char _fullName[30];
-	static const char _prefixMini[];
-	static const char _suffixTras[];
-	static const char _empty[];
+	CharacterName	_name;
 
 	int16		_direction, _step;
 
@@ -408,6 +418,7 @@ private:
 	ZonePtr _moveSarcZones[5];
 	ZonePtr _moveSarcExaZones[5];
 	AnimationPtr _rightHandAnim;
+	bool _intro;
 	static const Callable _dosCallables[25];
 	static const Callable _amigaCallables[25];
 

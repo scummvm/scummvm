@@ -186,6 +186,7 @@ Common::Error Parallaction_ns::init() {
 
 	num_foglie = 0;
 
+	_intro = false;
 	_inTestResult = false;
 
 	_location._animations.push_front(_char._ani);
@@ -296,10 +297,21 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	_gfx->showGfxObj(_char._ani->gfxobj, false);
 
-	freeLocation(false);
-
 	LocationName locname;
 	locname.bind(location);
+
+	bool fullCleanup = false;
+	if (locname.hasCharacter()) {
+		CharacterName newName(locname.character());
+		fullCleanup = (strcmp(newName.getBaseName(), _char.getBaseName()));
+	}
+
+	if (fullCleanup) {
+		cleanupGame();
+	} else {
+		freeLocation(false);
+	}
+
 
 	if (locname.hasSlide()) {
 		showSlide(locname.slide());
@@ -346,7 +358,9 @@ void Parallaction_ns::changeLocation(char *location) {
 	if (_location._hasSound)
 		_soundMan->playSfx(_location._soundFile, 0, true);
 
-	_input->setMouseState(oldMouseState);
+	if (!_intro) {
+		_input->setMouseState(oldMouseState);
+	}
 
 	debugC(1, kDebugExec, "changeLocation() done");
 }

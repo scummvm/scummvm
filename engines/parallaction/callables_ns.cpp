@@ -411,10 +411,12 @@ void Parallaction_ns::_c_startIntro(void *parm) {
 	}
 
 	_input->setMouseState(MOUSE_DISABLED);
+	_intro = true;
 }
 
 void Parallaction_ns::_c_endIntro(void *parm) {
 	startCreditSequence();
+	_intro = false;
 }
 
 void Parallaction_ns::_c_moveSheet(void *parm) {
