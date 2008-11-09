@@ -682,6 +682,7 @@ DECLARE_COMMAND_PARSER(simple)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(simple) ");
 
 	createCommand(_parser->_lookup);
+	parseCommandFlags();
 	addCommand();
 }
 
