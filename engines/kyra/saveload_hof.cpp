@@ -35,14 +35,14 @@
 
 namespace Kyra {
 
-void KyraEngine_HoF::saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumb) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::saveGame('%s', '%s', %p)", fileName, saveName, (const void *)thumb);
+Common::Error KyraEngine_HoF::saveGameState(int slot, const char *saveName, const Graphics::Surface *thumb) {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::saveGame(%d, '%s', %p)", slot, saveName, (const void *)thumb);
+
+	const char *fileName = getSavegameFilename(slot);
 
 	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName, thumb);
-	if (!out) {
-		warning("Can't open file '%s', game not loadable", fileName);
-		return;
-	}
+	if (!out)
+		return _saveFileMan->getError();
 
 	_timer->saveDataToFile(*out);
 
@@ -118,23 +118,28 @@ void KyraEngine_HoF::saveGame(const char *fileName, const char *saveName, const 
 	out->finalize();
 
 	// check for errors
-	if (out->err())
+	if (out->err()) {
 		warning("Can't write file '%s'. (Disk full?)", fileName);
-	else
+		return Common::kUnknownError;
+	} else {
 		debugC(1, kDebugLevelMain, "Saved game '%s.'", saveName);
+	}
 
 	delete out;
+	return Common::kNoError;
 }
 
-void KyraEngine_HoF::loadGame(const char *fileName) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::loadGame('%s')", fileName);
+Common::Error KyraEngine_HoF::loadGameState(int slot) {
+	debugC(9, kDebugLevelMain, "KyraEngine_HoF::loadGame(%d)", slot);
+
+	const char *fileName = getSavegameFilename(slot);
 
 	SaveHeader header;
 	Common::InSaveFile *saveFile = openSaveForReading(fileName, header);
 	if (!saveFile) {
 		showMessageFromCCode(0x35, 0x84, 0);
 		snd_playSoundEffect(0x0D);
-		return;
+		return Common::kUnknownError;
 	}
 
 	if (header.originalSave)
@@ -279,10 +284,12 @@ void KyraEngine_HoF::loadGame(const char *fileName) {
 	_sceneExit3 = in.readUint16();
 	_sceneExit4 = in.readUint16();
 
-	if (saveFile->err() || saveFile->eos())
-		error("Load failed ('%s', '%s').", fileName, header.description.c_str());
-	else
+	if (saveFile->err() || saveFile->eos()) {
+		warning("Load failed ('%s', '%s').", fileName, header.description.c_str());
+		return Common::kUnknownError;
+	} else {
 		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", header.description.c_str());
+	}
 
 	if (loadedZTable != _characterShapeFile)
 		loadCharacterShapes(_characterShapeFile);
@@ -325,6 +332,8 @@ void KyraEngine_HoF::loadGame(const char *fileName) {
 	// We didn't explicitly set the walk speed, but it's saved as part of
 	// the _timers array, so we need to re-sync it with _configWalkspeed.
 	setWalkspeed(_configWalkspeed);
+
+	return Common::kNoError;
 }
 
 } // end of namespace Kyra

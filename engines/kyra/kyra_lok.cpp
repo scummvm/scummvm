@@ -391,10 +391,10 @@ void KyraEngine_LoK::startup() {
 			_gui->buttonMenuCallback(0);
 			_menuDirectlyToLoad = false;
 		} else
-			saveGame(getSavegameFilename(0), "New game", 0);
+			saveGameState(0, "New game", 0);
 	} else {
 		_screen->setFont(Screen::FID_8_FNT);
-		loadGame(getSavegameFilename(_gameToLoad));
+		loadGameState(_gameToLoad);
 		_gameToLoad = -1;
 	}
 }
@@ -473,14 +473,14 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
 						(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && isMainLoop) {
-					const char *saveLoadSlot = getSavegameFilename(9 - (event.kbd.keycode - '0') + 990);
+					int saveLoadSlot = 9 - (event.kbd.keycode - '0') + 990;
 
 					if (event.kbd.flags == Common::KBD_CTRL)
-						loadGame(saveLoadSlot);
+						loadGameState(saveLoadSlot);
 					else {
 						char savegameName[14];
 						sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');
-						saveGame(saveLoadSlot, savegameName, 0);
+						saveGameState(saveLoadSlot, savegameName, 0);
 					}
 				} else if (event.kbd.flags == Common::KBD_CTRL) {
 					if (event.kbd.keycode == 'd')

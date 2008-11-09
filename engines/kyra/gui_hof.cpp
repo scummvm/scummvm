@@ -785,8 +785,8 @@ int GUI_HoF::optionsButton(Button *button) {
 
 	if (!_loadedSave && _reloadTemporarySave) {
 		_vm->_unkSceneScreenFlag1 = true;
-		_vm->loadGame(_vm->getSavegameFilename(999));
-		_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(999));
+		_vm->loadGameState(999);
+		//_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(999));
 		_vm->_unkSceneScreenFlag1 = false;
 	}
 
@@ -1004,7 +1004,14 @@ int GUI_HoF::gameOptionsTalkie(Button *caller) {
 
 	if (_vm->_lang != lang) {
 		_reloadTemporarySave = true;
-		_vm->saveGame(_vm->getSavegameFilename(999), "Temporary Kyrandia 2 Savegame", 0);
+	
+		Graphics::Surface thumb;
+		createScreenThumbnail(thumb);
+		_vm->saveGameState(999, "Autosave", &thumb);
+		thumb.free();
+
+		_vm->_lastAutosave = _vm->_system->getMillis();
+
 		_vm->loadCCodeBuffer("C_CODE.XXX");
 		if (_vm->_flags.isTalkie)
 			_vm->loadOptionsBuffer("OPTIONS.XXX");
@@ -1188,7 +1195,7 @@ int GUI_HoF::loadMenu(Button *caller) {
 	} else if (_vm->_gameToLoad >= 0) {
 		restorePage1(_vm->_screenBuffer);
 		restorePalette();
-		_vm->loadGame(_vm->getSavegameFilename(_vm->_gameToLoad));
+		_vm->loadGameState(_vm->_gameToLoad);
 		if (_vm->_gameToLoad == 0) {
 			_restartGame = true;
 			for (int i = 0; i < 23; ++i)

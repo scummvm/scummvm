@@ -1366,8 +1366,8 @@ int GUI_MR::optionsButton(Button *button) {
 
 	if (!_loadedSave && _reloadTemporarySave) {
 		_vm->_unkSceneScreenFlag1 = true;
-		_vm->loadGame(_vm->getSavegameFilename(999));
-		_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(999));
+		_vm->loadGameState(999);
+		//_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(999));
 		_vm->_unkSceneScreenFlag1 = false;
 	}
 
@@ -1408,7 +1408,7 @@ int GUI_MR::loadMenu(Button *caller) {
 		restorePage1(_vm->_screenBuffer);
 		restorePalette();
 		_vm->_menuDirectlyToLoad = false;
-		_vm->loadGame(_vm->getSavegameFilename(_vm->_gameToLoad));
+		_vm->loadGameState(_vm->_gameToLoad);
 		if (_vm->_gameToLoad == 0) {
 			_restartGame = true;
 			_vm->runStartupScript(1, 1);
@@ -1425,7 +1425,7 @@ int GUI_MR::loadSecondChance(Button *button) {
 
 	_vm->_gameToLoad = 999;
 	restorePage1(_vm->_screenBuffer);
-	_vm->loadGame(_vm->getSavegameFilename(_vm->_gameToLoad));
+	_vm->loadGameState(_vm->_gameToLoad);
 	_displayMenu = false;
 	_loadedSave = true;
 	return 0;
@@ -1458,7 +1458,14 @@ int GUI_MR::gameOptions(Button *caller) {
 
 	if (_vm->_lang != lang) {
 		_reloadTemporarySave = true;
-		_vm->saveGame(_vm->getSavegameFilename(999), "Temporary Kyrandia 3 Savegame", 0);
+
+		Graphics::Surface thumb;
+		createScreenThumbnail(thumb);
+		_vm->saveGameState(999, "Autosave", &thumb);
+		thumb.free();
+
+		_vm->_lastAutosave = _vm->_system->getMillis();
+
 		if (!_vm->loadLanguageFile("ITEMS.", _vm->_itemFile))
 			error("Couldn't load ITEMS");
 		if (!_vm->loadLanguageFile("SCORE.", _vm->_scoreFile))

@@ -684,13 +684,13 @@ void KyraEngine_MR::startup() {
 	assert(_invWsa);
 	_invWsa->open("MOODOMTR.WSA", 1, 0);
 	_invWsaFrame = 6;
-	saveGame(getSavegameFilename(0), "New Game", 0);
+	saveGameState(0, "New Game", 0);
 	_soundDigital->beginFadeOut(_musicSoundChannel, 60);
 	delayWithTicks(60);
 	if (_gameToLoad == -1)
 		enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 	else
-		loadGame(getSavegameFilename(_gameToLoad));
+		loadGameState(_gameToLoad);
 
 	if (_menuDirectlyToLoad)
 		(*_mainButtonData[0].buttonCallback)(&_mainButtonData[0]);

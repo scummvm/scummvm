@@ -214,9 +214,8 @@ public:
 protected:
 	int32 _speechPlayTime;
 
-	void saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumbnail);
-	void loadGame(const char *fileName);
-
+	Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail);
+	Common::Error loadGameState(int slot);
 protected:
 	// input
 	void processInput();

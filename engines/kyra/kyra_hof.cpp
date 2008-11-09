@@ -437,9 +437,9 @@ void KyraEngine_HoF::startup() {
 	if (_gameToLoad == -1) {
 		snd_playWanderScoreViaMap(52, 1);
 		enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
-		saveGame(getSavegameFilename(0), "New Game", 0);
+		saveGameState(0, "New Game", 0);
 	} else {
-		loadGame(getSavegameFilename(_gameToLoad));
+		loadGameState(_gameToLoad);
 	}
 
 	_screen->showMouse();

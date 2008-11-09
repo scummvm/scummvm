@@ -417,10 +417,6 @@ protected:
 	int o2_setTimerCountdown(EMCState *script);
 	int o2_setVocHigh(EMCState *script);
 	int o2_getVocHigh(EMCState *script);
-
-	// save/load specific
-	virtual void saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumbnail) = 0;
-	virtual void loadGame(const char *fileName) = 0;
 };
 
 } // end of namespace Kyra

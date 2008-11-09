@@ -35,20 +35,21 @@
 #include "kyra/timer.h"
 
 namespace Kyra {
-void KyraEngine_LoK::loadGame(const char *fileName) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::loadGame('%s')", fileName);
+
+Common::Error KyraEngine_LoK::loadGameState(int slot) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::loadGame(%d)", slot);
+
+	const char *fileName = getSavegameFilename(slot);
 
 	SaveHeader header;
 	Common::InSaveFile *in = openSaveForReading(fileName, header);
-	if (!in) {
-		warning("Can't open file '%s', game not loadable", fileName);
-		return;
-	}
+	if (!in)
+		return _saveFileMan->getError();
 
 	if (header.originalSave) {
 		// no support for original savefile in Kyrandia 1 (yet)
 		delete in;
-		return;
+		return Common::kUnknownError;
 	}
 
 	snd_playSoundEffect(0x0A);
@@ -206,27 +207,32 @@ void KyraEngine_LoK::loadGame(const char *fileName) {
 	_mousePressFlag = false;
 	setMousePos(brandonX, brandonY);
 	
-	if (in->err() || in->eos())
-		error("Load failed ('%s', '%s').", fileName, header.description.c_str());
-	else
+	if (in->err() || in->eos()) {
+		warning("Load failed ('%s', '%s').", fileName, header.description.c_str());
+		return Common::kUnknownError;
+	} else {
 		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", header.description.c_str());
+	}
 
 	// We didn't explicitly set the walk speed, but it's saved as part of
 	// the _timers array, so we need to re-sync it with _configWalkspeed.
 	setWalkspeed(_configWalkspeed);
 
 	delete in;
+	return Common::kNoError;
 }
 
-void KyraEngine_LoK::saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumb) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::saveGame('%s', '%s', %p)", fileName, saveName, (const void *)thumb);
+Common::Error KyraEngine_LoK::saveGameState(int slot, const char *saveName, const Graphics::Surface *thumb) {
+	debugC(9, kDebugLevelMain, "KyraEngine_LoK::saveGame(%d, '%s', %p)", slot, saveName, (const void *)thumb);
+
+	const char *fileName = getSavegameFilename(slot);
 	
 	if (shouldQuit())
-		return;
+		return Common::kNoError;
 
 	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName, thumb);
 	if (!out)
-		return;
+		return _saveFileMan->getError();
 	
 	for (int i = 0; i < 11; i++) {
 		out->writeUint16BE(_characterList[i].sceneId);
@@ -289,12 +295,15 @@ void KyraEngine_LoK::saveGame(const char *fileName, const char *saveName, const 
 	out->finalize();
 
 	// check for errors
-	if (out->err())
+	if (out->err()) {
 		warning("Can't write file '%s'. (Disk full?)", fileName);
-	else
+		return Common::kUnknownError;
+	} else {
 		debugC(1, kDebugLevelMain, "Saved game '%s.'", saveName);
+	}
 
 	delete out;
+	return Common::kNoError;
 }
 } // end of namespace Kyra
 

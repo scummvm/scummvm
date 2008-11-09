@@ -244,19 +244,9 @@ bool KyraEngine_v1::saveFileLoadable(int slot) {
 	return false;
 }
 
-Common::Error KyraEngine_v1::loadGameState(int slot) {
-	if (!_isSaveAllowed)
-		return Common::kUnknownError;	// FIXME
-	
-	const char *filename = getSavegameFilename(slot);
-	loadGame(filename);
-
-	return Common::kNoError;
-}
-
 void KyraEngine_v1::checkAutosave() {
 	if (shouldPerformAutoSave(_lastAutosave)) {
-		saveGame(getSavegameFilename(999), "Autosave", 0);
+		saveGameState(999, "Autosave", 0);
 		_lastAutosave = _system->getMillis();
 	}
 }

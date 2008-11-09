@@ -658,7 +658,7 @@ int GUI_LoK::loadGameMenu(Button *button) {
 	} else {
 		restorePalette();
 		if (_vm->_gameToLoad != -1)
-			_vm->loadGame(_vm->getSavegameFilename(_vm->_gameToLoad));
+			_vm->loadGameState(_vm->_gameToLoad);
 		_displayMenu = false;
 		_menuRestoreScreen = false;
 	}
@@ -749,7 +749,7 @@ int GUI_LoK::saveGame(Button *button) {
 		if (_vm->_gameToLoad > 0) {
 			Graphics::Surface thumb;
 			createScreenThumbnail(thumb);
-			_vm->saveGame(_vm->getSavegameFilename(_vm->_gameToLoad), _savegameName, &thumb);
+			_vm->saveGameState(_vm->_gameToLoad, _savegameName, &thumb);
 			thumb.free();
 		}
 	}

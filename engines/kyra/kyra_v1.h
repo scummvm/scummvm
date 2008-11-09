@@ -306,9 +306,9 @@ protected:
 
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, bool loadThumbnail, SaveHeader &header);
 
-	Common::Error loadGameState(int slot);
-	virtual void loadGame(const char *fileName) = 0;
-	virtual void saveGame(const char *fileName, const char *saveName, const Graphics::Surface *thumbnail) = 0;
+	virtual Common::Error loadGameState(int slot) = 0;
+	Common::Error saveGameState(int slot, const char *saveName) { return saveGameState(slot, saveName, 0); }
+	virtual Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 
 	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header);
 	Common::WriteStream *openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const;

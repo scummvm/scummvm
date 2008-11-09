@@ -1083,7 +1083,8 @@ bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
 bool Kyra::KyraEngine_v1::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime);
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {

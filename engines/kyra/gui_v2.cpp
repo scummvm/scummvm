@@ -622,7 +622,7 @@ int GUI_v2::saveMenu(Button *caller) {
 
 	Graphics::Surface thumb;
 	createScreenThumbnail(thumb);
-	_vm->saveGame(_vm->getSavegameFilename(_saveSlot), _saveDescription, &thumb);
+	_vm->saveGameState(_saveSlot, _saveDescription, &thumb);
 	thumb.free();
 
 	_displayMenu = false;
