@@ -743,8 +743,7 @@ void Sword2Engine::sleepUntil(uint32 time) {
 
 void Sword2Engine::pauseEngineIntern(bool pause) {
 	if (pause) {
-		// FIXME: We should never disallow pausing, and we need to do
-		// something about pausing during credits, etc.
+		// FIXME: We should never disallow pausing.
 
 		// Don't allow Pause while screen fading or while black
 		if (_screen->getFadeStatus() != RDFADE_NONE)
@@ -753,6 +752,7 @@ void Sword2Engine::pauseEngineIntern(bool pause) {
 		_sound->pauseAllSound();
 		_mouse->pauseEngine(true);
 		_logic->pauseMovie(true);
+		_screen->pauseScreen(true);
 
 #ifdef SWORD2_DEBUG
 		// Don't dim it if we're single-stepping through frames
@@ -768,6 +768,7 @@ void Sword2Engine::pauseEngineIntern(bool pause) {
 	} else {
 		_mouse->pauseEngine(false);
 		_logic->pauseMovie(false);
+		_screen->pauseScreen(false);
 		_sound->unpauseAllSound();
 
 		_screen->dimPalette(false);

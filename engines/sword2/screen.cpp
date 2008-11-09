@@ -99,6 +99,9 @@ Screen::Screen(Sword2Engine *vm, int16 width, int16 height) {
 	_layer = 0;
 
 	_dimPalette = false;
+
+	_pauseTicks = 0;
+	_pauseStartTick = 0;
 }
 
 Screen::~Screen() {
@@ -106,6 +109,14 @@ Screen::~Screen() {
 	free(_dirtyGrid);
 	closeBackgroundLayer();
 	free(_lightMask);
+}
+
+void Screen::pauseScreen(bool pause) {
+	if (pause) {
+		_pauseStartTick = _vm->_system->getMillis();
+	} else {
+		_pauseTicks += (_vm->_system->getMillis() - _pauseStartTick);
+	}
 }
 
 /**
@@ -1029,6 +1040,8 @@ void Screen::rollCredits() {
 	int scrollSteps = lineTop + CREDITS_FONT_HEIGHT;
 	uint32 musicStart = _vm->getMillis();
 
+	_pauseTicks = 0;
+
 	// Ideally the music should last just a tiny bit longer than the
 	// credits. Note that musicTimeRemaining() will return 0 if the music
 	// is muted, so we need a sensible fallback for that case.
@@ -1104,7 +1117,7 @@ void Screen::rollCredits() {
 		if (abortCredits && getFadeStatus() == RDFADE_BLACK)
 			break;
 
-		_vm->sleepUntil(musicStart + (musicLength * scrollPos) / scrollSteps);
+		_vm->sleepUntil(musicStart + (musicLength * scrollPos) / scrollSteps + _pauseTicks);
 		scrollPos++;
 	}
 
