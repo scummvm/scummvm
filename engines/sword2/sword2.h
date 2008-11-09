@@ -122,16 +122,18 @@ private:
 
 	StartUp _startList[MAX_starts];
 
-public:
-	Sword2Engine(OSystem *syst);
-	~Sword2Engine();
-
+protected:
 	// Engine APIs
 	virtual Common::Error init();
 	virtual Common::Error go();
 	virtual GUI::Debugger *getDebugger();
 	virtual bool hasFeature(EngineFeature f) const;
+	virtual void syncSoundSettings();
 	virtual void pauseEngineIntern(bool pause);
+
+public:
+	Sword2Engine(OSystem *syst);
+	~Sword2Engine();
 
 	int getFramesPerSecond();
 

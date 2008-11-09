@@ -307,7 +307,9 @@ void Sword2Engine::registerDefaultSettings() {
 	ConfMan.registerDefault("reverse_stereo", false);
 }
 
-void Sword2Engine::readSettings() {
+void Sword2Engine::syncSoundSettings() {
+	// Sound settings. At the time of writing, not all of these can be set
+	// by the global options dialog, but it seems silly to split them up.
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
@@ -316,6 +318,10 @@ void Sword2Engine::readSettings() {
 	_sound->muteSpeech(ConfMan.getBool("speech_mute"));
 	_sound->muteFx(ConfMan.getBool("sfx_mute"));
 	_sound->setReverseStereo(ConfMan.getBool("reverse_stereo"));
+}
+
+void Sword2Engine::readSettings() {
+	syncSoundSettings();
 	_mouse->setObjectLabels(ConfMan.getBool("object_labels"));
 	_screen->setRenderLevel(ConfMan.getInt("gfx_details"));
 }
