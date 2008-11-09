@@ -2139,15 +2139,16 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// pause sfx during sequence
 	_vm->_sound->pauseFx();
 
-	MoviePlayer *player = makeMoviePlayer(_vm, filename);
+	_moviePlayer = makeMoviePlayer(_vm, filename);
 
-	if (player->load()) {
-		player->play(_sequenceTextList, _sequenceTextLines, _smackerLeadIn, _smackerLeadOut);
+	if (_moviePlayer->load()) {
+		_moviePlayer->play(_sequenceTextList, _sequenceTextLines, _smackerLeadIn, _smackerLeadOut);
 	}
 
 	_sequenceTextLines = 0;
 
-	delete player;
+	delete _moviePlayer;
+	_moviePlayer = NULL;
 
 	// unpause sound fx again, in case we're staying in same location
 	_vm->_sound->unpauseFx();

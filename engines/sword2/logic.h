@@ -77,6 +77,8 @@ private:
 
 	EventUnit _eventList[MAX_events];
 
+	MoviePlayer *_moviePlayer;
+
 	// Resource id of the wav to use as lead-in/lead-out from smacker
 	uint32 _smackerLeadIn;
 	uint32 _smackerLeadOut;
@@ -310,6 +312,8 @@ public:
 	void logicReplace(uint32 new_script);
 	void logicOne(uint32 new_script);
 	void resetKillList();
+
+	void pauseMovie(bool pause);
 };
 
 } // End of namespace Sword2

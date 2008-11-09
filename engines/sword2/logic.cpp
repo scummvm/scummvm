@@ -38,10 +38,10 @@
 namespace Sword2 {
 
 Logic::Logic(Sword2Engine *vm) :
-	_vm(vm), _kills(0), _currentRunList(0), _smackerLeadIn(0),
-	_smackerLeadOut(0), _sequenceTextLines(0), _speechTime(0), _animId(0),
-	_speechAnimType(0), _leftClickDelay(0), _rightClickDelay(0),
-	_officialTextNumber(0), _speechTextBlocNo(0) {
+	_vm(vm), _kills(0), _currentRunList(0), _moviePlayer(0),
+	_smackerLeadIn(0), _smackerLeadOut(0), _sequenceTextLines(0),
+	_speechTime(0), _animId(0), _speechAnimType(0), _leftClickDelay(0),
+	_rightClickDelay(0), _officialTextNumber(0), _speechTextBlocNo(0) {
 
 	_scriptVars = NULL;
 	memset(_eventList, 0, sizeof(_eventList));
@@ -272,6 +272,16 @@ void Logic::logicReplace(uint32 new_script) {
 
 void Logic::resetKillList() {
 	_kills = 0;
+}
+
+/**
+ * Pause or unpause the currently playing cutscene movie, if any.
+ * @param pause		true if pausing, false if unpausing
+ */
+
+void Logic::pauseMovie(bool pause) {
+	if (_moviePlayer)
+		_moviePlayer->pauseMovie(pause);
 }
 
 } // End of namespace Sword2
