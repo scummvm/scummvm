@@ -114,6 +114,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
 };
 
 bool AgosMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -190,6 +191,8 @@ SaveStateList AgosMetaEngine::listSaves(const char *target) const {
 
 	return saveList;
 }
+
+int AgosMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 #if PLUGIN_ENABLED_DYNAMIC(AGOS)
 	REGISTER_PLUGIN_DYNAMIC(AGOS, PLUGIN_TYPE_ENGINE, AgosMetaEngine);

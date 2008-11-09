@@ -343,6 +343,7 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;	
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
 };
 
 bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -367,6 +368,7 @@ SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
+int TinselMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 bool TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const Tinsel::TinselGameDescription *gd = (const Tinsel::TinselGameDescription *)desc;

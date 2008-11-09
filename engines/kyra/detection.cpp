@@ -1067,6 +1067,7 @@ public:
 	bool hasFeature(MetaEngineFeature f) const;
 	bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 	SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
@@ -1161,6 +1162,8 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 
 	return saveList;
 }
+
+int KyraMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
 	// Slot 0 can't be deleted, it's for restarting the game(s)

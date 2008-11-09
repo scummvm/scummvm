@@ -483,7 +483,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 
 	// Add choice list
 	_list = new GUI::ListWidget(this, "ScummSaveLoad.List");
-	_list->setNumberingMode(GUI::kListNumberingOff);
+	setSaveMode(false);
 	
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 
@@ -541,7 +541,7 @@ const Common::String &SaveLoadChooser::getResultString() const {
 
 void SaveLoadChooser::setSaveMode(bool saveMode) {
 	_list->setEditable(saveMode);
-	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
+	_list->setNumberingMode(GUI::kListNumberingOne);
 }
 
 void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -738,10 +738,18 @@ void SaveLoadChooser::close() {
 void SaveLoadChooser::updateSaveList() {
 	_saveList = (*_plugin)->listSaves(_target.c_str());
 
+	int curSlot = 0;
 	StringList saveNames;
 	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
 		saveNames.push_back(x->description());
+		curSlot++;
 	}
+
+	// Fill the rest of the save slots with empty saves
+	Common::String emptyDesc;
+	for (int i = curSlot + 1; i <= (*_plugin)->getMaximumSaveSlot(); i++)
+		saveNames.push_back(emptyDesc);
+
 	_list->setList(saveNames);
 }
 

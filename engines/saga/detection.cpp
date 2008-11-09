@@ -151,6 +151,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };
 
@@ -200,22 +201,14 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 				in->read(saveDesc, SAVE_TITLE_SIZE);
 				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
 				delete in;
-			} else {
-				// handle gaps
-				*saveDesc = 0;
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
 			}
 		}
 	}
 
-	// Fill the rest of the list with empty slots
-	*saveDesc = 0;			
-	for (int i = slotNum + 1; i <= 99; i++) {
-		saveList.push_back(SaveStateDescriptor(i, saveDesc));
-	}
-
 	return saveList;
 }
+
+int SagaMetaEngine::getMaximumSaveSlot() const { return 99; }
 
 void SagaMetaEngine::removeSaveState(const char *target, int slot) const {
 	char extension[6];

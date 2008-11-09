@@ -536,6 +536,7 @@ public:
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
 };
 
 bool CineMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -600,6 +601,8 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 
 	return saveList;
 }
+
+int CineMetaEngine::getMaximumSaveSlot() const { return 9; }
 
 #if PLUGIN_ENABLED_DYNAMIC(CINE)
 	REGISTER_PLUGIN_DYNAMIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);

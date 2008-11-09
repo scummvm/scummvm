@@ -2125,6 +2125,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	
 	const Common::ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
@@ -2192,6 +2193,8 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 
 	return saveList;
 }
+
+int AgiMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void AgiMetaEngine::removeSaveState(const char *target, int slot) const {
 	char extension[6];

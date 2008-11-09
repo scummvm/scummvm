@@ -125,6 +125,13 @@ public:
 		return SaveStateDescriptor();
 	}
 
+	/**
+	 * Gets the maximum save slot that the engine supports
+	 */
+	virtual int getMaximumSaveSlot() const {
+		return 0;
+	}
+
 	/** @name MetaEngineFeature flags */
 	//@{
 	

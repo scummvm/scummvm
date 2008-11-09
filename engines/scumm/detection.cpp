@@ -685,6 +685,7 @@ public:
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
@@ -960,6 +961,8 @@ const char *ScummMetaEngine::getCopyright() const {
 namespace Scumm {
 	extern bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion);
 }
+
+int ScummMetaEngine::getMaximumSaveSlot() const { return 99; }
 
 SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
