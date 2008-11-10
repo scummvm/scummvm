@@ -532,13 +532,4 @@ void SagaEngine::syncSoundSettings() {
 	_sound->setVolume();
 }
 
-bool SagaEngine::canLoadGameStateCurrently() { 
-	return !_scene->isInIntro();
-}
-
-bool SagaEngine::canSaveGameStateCurrently() { 
-	return !_scene->isInIntro() && 
-		   (_interface->getMode() == kPanelMain || _interface->getMode() == kPanelChapterSelection);
-}
-
 } // End of namespace Saga

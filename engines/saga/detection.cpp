@@ -229,7 +229,6 @@ SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int s
 	static char fileName[MAX_FILE_NAME];
 	sprintf(fileName, "%s.s%02d", target, slot);
 	char title[TITLESIZE];
-	Graphics::Surface *thumbnail;
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
 
@@ -268,7 +267,7 @@ SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int s
 		desc.setWriteProtectedFlag(false);
 
 		if (version >= 6) {
-			thumbnail = new Graphics::Surface();
+			Graphics::Surface *thumbnail = new Graphics::Surface();
 			assert(thumbnail);
 			if (!Graphics::loadThumbnail(*in, *thumbnail)) {
 				delete thumbnail;
@@ -354,6 +353,15 @@ Common::Error SagaEngine::loadGameState(int slot) {
 Common::Error SagaEngine::saveGameState(int slot, const char *desc) {
 	save(calcSaveFileName((uint)slot), desc);
 	return Common::kNoError;	// TODO: return success/failure
+}
+
+bool SagaEngine::canLoadGameStateCurrently() { 
+	return !_scene->isInIntro();
+}
+
+bool SagaEngine::canSaveGameStateCurrently() { 
+	return !_scene->isInIntro() && 
+		   (_interface->getMode() == kPanelMain || _interface->getMode() == kPanelChapterSelection);
 }
 
 } // End of namespace Saga

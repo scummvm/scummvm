@@ -470,7 +470,6 @@ struct SaveGameHeader {
 	uint32 size;
 	uint32 version;
 	char name[SAVE_TITLE_SIZE];
-	Graphics::Surface *thumbnail;
 };
 
 inline int objectTypeId(uint16 objectId) {
