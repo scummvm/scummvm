@@ -36,7 +36,7 @@
 #endif
 
 #include "gui/about.h"
-#include "gui/theme.h"
+
 #include "gui/newgui.h"
 #include "gui/ListWidget.h"
 #include "gui/ThemeEval.h"
@@ -214,7 +214,7 @@ static const ResString string_map_table_v345[] = {
 #pragma mark -
 
 ScummDialog::ScummDialog(String name) : GUI::Dialog(name) {
-	_backgroundType = GUI::Theme::kDialogBackgroundSpecial;
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
 }
 
 #pragma mark -
@@ -235,7 +235,7 @@ enum {
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine)
 	: Dialog("ScummSaveLoad"), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0), _vm(engine) {
 		
-	_backgroundType = GUI::Theme::kDialogBackgroundSpecial;
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
 
 	new StaticTextWidget(this, "ScummSaveLoad.Title", title);
 
@@ -637,7 +637,7 @@ HelpDialog::HelpDialog(const GameSettings &game)
 	_title = new StaticTextWidget(this, "ScummHelp.Title", "");
 
 	_page = 1;
-	_backgroundType = GUI::Theme::kDialogBackgroundDefault;
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundDefault;
 
 	_numPages = ScummHelp::numPages(_game.id);
 
@@ -851,7 +851,7 @@ ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, 
 
 void ValueDisplayDialog::drawDialog() {
 	const int labelWidth = _w - 8 - _percentBarWidth;
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), GUI::Theme::kDialogBackgroundDefault);
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), GUI::ThemeEngine::kDialogBackgroundDefault);
 	g_gui.theme()->drawText(Common::Rect(_x+4, _y+4, _x+labelWidth+4,
 				_y+g_gui.theme()->getFontHeight()+4), _label);
 	g_gui.theme()->drawSlider(Common::Rect(_x+4+labelWidth, _y+4, _x+_w-4, _y+_h-4),

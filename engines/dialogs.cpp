@@ -35,7 +35,7 @@
 #include "gui/newgui.h"
 #include "gui/launcher.h"
 #include "gui/ListWidget.h"
-#include "gui/theme.h"
+
 #include "gui/ThemeEval.h"
 
 #include "engines/dialogs.h"
@@ -76,14 +76,14 @@ enum {
 
 MainMenuDialog::MainMenuDialog(Engine *engine)
 	: GlobalDialog("GlobalMenu"), _engine(engine) {
-	_backgroundType = GUI::Theme::kDialogBackgroundSpecial;
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
 
 #ifndef DISABLE_FANCY_THEMES
 	_logo = 0;
 	if (g_gui.xmlEval()->getVar("Globals.ShowGlobalMenuLogo", 0) == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GUI::GraphicsWidget(this, "GlobalMenu.Logo");
 		_logo->useThemeTransparency(true);
-		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::Theme::kImageLogoSmall));
+		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageLogoSmall));
 	} else {
 		StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
 		title->setAlign(GUI::kTextAlignCenter);
@@ -217,7 +217,7 @@ void MainMenuDialog::reflowLayout() {
 		if (!_logo)
 			_logo = new GUI::GraphicsWidget(this, "GlobalMenu.Logo");
 		_logo->useThemeTransparency(true);
-		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::Theme::kImageLogoSmall));
+		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageLogoSmall));
 
 		GUI::StaticTextWidget *title = (StaticTextWidget *)findWidget("GlobalMenu.Title");
 		if (title) {

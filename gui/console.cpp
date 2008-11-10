@@ -170,7 +170,7 @@ void ConsoleDialog::close() {
 }
 
 void ConsoleDialog::drawDialog() {
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x + _w, _y + _h), Theme::kDialogBackgroundPlain/*_backgroundType*/);
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kDialogBackgroundPlain/*_backgroundType*/);
 	// FIXME: for the old theme the frame around the console vanishes
 	// when any action is processed if we enable this
 	// _drawingHints &= ~THEME_HINT_FIRST_DRAW;

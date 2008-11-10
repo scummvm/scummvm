@@ -218,29 +218,29 @@ void AboutDialog::drawDialog() {
 
 	for (int line = firstLine; line < lastLine; line++) {
 		const char *str = _lines[line].c_str();
-		Theme::TextAlign align = Theme::kTextAlignCenter;
-		Theme::WidgetStateInfo state = Theme::kStateEnabled;
+		ThemeEngine::TextAlign align = ThemeEngine::kTextAlignCenter;
+		ThemeEngine::WidgetStateInfo state = ThemeEngine::kStateEnabled;
 		while (str[0] == '\\') {
 			switch (str[1]) {
 			case 'C':
-				align = Theme::kTextAlignCenter;
+				align = ThemeEngine::kTextAlignCenter;
 				break;
 			case 'L':
-				align = Theme::kTextAlignLeft;
+				align = ThemeEngine::kTextAlignLeft;
 				break;
 			case 'R':
-				align = Theme::kTextAlignRight;
+				align = ThemeEngine::kTextAlignRight;
 				break;
 			case 'c':
 				switch (str[2]) {
 				case '0':
-					state = Theme::kStateEnabled;
+					state = ThemeEngine::kStateEnabled;
 					break;
 				case '1':
-					state = Theme::kStateHighlight;
+					state = ThemeEngine::kStateHighlight;
 					break;
 				case '2':
-					state = Theme::kStateDisabled;
+					state = ThemeEngine::kStateDisabled;
 					break;
 				case '3':
 					warning("Need state for color 3");
@@ -262,7 +262,7 @@ void AboutDialog::drawDialog() {
 			str += 2;
 		}
 		// Trim leading whitespaces if center mode is on
-		if (align == Theme::kTextAlignCenter)
+		if (align == ThemeEngine::kTextAlignCenter)
 			while (*str && *str == ' ')
 				str++;
 

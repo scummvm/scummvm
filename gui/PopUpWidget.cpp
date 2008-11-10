@@ -344,8 +344,8 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		// Draw a separator
 		g_gui.theme()->drawLineSeparator(Common::Rect(x, y, x+w, y+kLineHeight));
 	} else {
-		g_gui.theme()->drawText(Common::Rect(x+1, y+2, x+w, y+2+kLineHeight), name,	hilite ? Theme::kStateHighlight : Theme::kStateEnabled,
-								Theme::kTextAlignLeft, false, _leftPadding);
+		g_gui.theme()->drawText(Common::Rect(x+1, y+2, x+w, y+2+kLineHeight), name,	hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
+								ThemeEngine::kTextAlignLeft, false, _leftPadding);
 	}
 }
 
@@ -425,7 +425,7 @@ void PopUpWidget::drawWidget() {
 
 	// Draw the label, if any
 	if (_labelWidth > 0)
-		g_gui.theme()->drawText(Common::Rect(_x+2,_y+3,_x+2+_labelWidth, _y+3+g_gui.theme()->getFontHeight()), _label, _state, Theme::kTextAlignRight);
+		g_gui.theme()->drawText(Common::Rect(_x+2,_y+3,_x+2+_labelWidth, _y+3+g_gui.theme()->getFontHeight()), _label, _state, ThemeEngine::kTextAlignRight);
 
 	Common::String sel;
 	if (_selectedItem >= 0)

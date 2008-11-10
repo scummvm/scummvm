@@ -45,12 +45,12 @@ namespace GUI {
 Dialog::Dialog(int x, int y, int w, int h)
 	: GuiObject(x, y, w, h),
 	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false), 
-	_backgroundType(GUI::Theme::kDialogBackgroundDefault) {}
+	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {}
 
 Dialog::Dialog(const Common::String &name)
 	: GuiObject(name),
 	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false),
-	_backgroundType(GUI::Theme::kDialogBackgroundDefault) {
+	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 
 	// It may happen that we have 3x scaler in launcher (960xY) and then 640x480
 	// game will be forced to 1x. At this stage GUI will not be aware of

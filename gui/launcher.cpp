@@ -477,7 +477,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	: Dialog("ScummSaveLoad"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
 	_delSupport = _metaInfoSupport = _thumbnailSupport = _saveDateSupport = _playTimeSupport = false;
 
-	_backgroundType = Theme::kDialogBackgroundSpecial;
+	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
 	new StaticTextWidget(this, "ScummSaveLoad.Title", title);
 
@@ -794,7 +794,7 @@ void SaveLoadChooser::updateSaveList() {
 
 LauncherDialog::LauncherDialog()
 	: Dialog(0, 0, 320, 200) {
-	_backgroundType = GUI::Theme::kDialogBackgroundMain;
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundMain;
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
@@ -807,7 +807,7 @@ LauncherDialog::LauncherDialog()
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
-		_logo->setGfx(g_gui.theme()->getImageSurface(Theme::kImageLogo));
+		_logo->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageLogo));
 
 		new StaticTextWidget(this, "Launcher.Version", gScummVMVersionDate);
 	} else
@@ -1257,7 +1257,7 @@ void LauncherDialog::reflowLayout() {
 		if (!_logo)
 			_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
-		_logo->setGfx(g_gui.theme()->getImageSurface(Theme::kImageLogo));
+		_logo->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageLogo));
 	} else {
 		StaticTextWidget *ver = (StaticTextWidget*)findWidget("Launcher.Version");
 		if (ver) {

@@ -49,7 +49,7 @@ protected:
 	Widget  *_dragWidget;
 	bool	_visible;
 	
-	Theme::DialogBackground _backgroundType;
+	ThemeEngine::DialogBackground _backgroundType;
 
 private:
 	int		_result;

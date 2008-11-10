@@ -29,6 +29,7 @@
 #include "common/savefile.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 
 #include "gui/message.h"
 

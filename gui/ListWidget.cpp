@@ -360,7 +360,7 @@ void ListWidget::drawWidget() {
 	Common::String buffer;
 
 	// Draw a thin frame around the list.
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0, Theme::kWidgetBackgroundBorder);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0, ThemeEngine::kWidgetBackgroundBorder);
 	const int scrollbarW = (_scrollBar && _scrollBar->isVisible()) ? _scrollBarWidth : 0;
 
 	// Draw the list items
@@ -375,7 +375,7 @@ void ListWidget::drawWidget() {
 				inverted = true;
 			else
 				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, y - 1, _x + _w - 1, y + fontHeight - 1), 
-													0, Theme::kWidgetBackgroundBorderSmall);
+													0, ThemeEngine::kWidgetBackgroundBorderSmall);
 		}
 
 		Common::Rect r(getEditRect());
@@ -387,7 +387,7 @@ void ListWidget::drawWidget() {
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
 			g_gui.theme()->drawText(Common::Rect(_x, y, _x + r.left + _leftPadding, y + fontHeight - 2), 
-									buffer, _state, Theme::kTextAlignLeft, inverted, _leftPadding);
+									buffer, _state, ThemeEngine::kTextAlignLeft, inverted, _leftPadding);
 			pad = 0;
 		}
 
@@ -398,7 +398,7 @@ void ListWidget::drawWidget() {
 			adjustOffset();
 			width = _w - r.left - _hlRightPadding - _leftPadding - scrollbarW;
 			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight-2), 
-									buffer, _state, Theme::kTextAlignLeft, inverted, pad);
+									buffer, _state, ThemeEngine::kTextAlignLeft, inverted, pad);
 		} else {
 			int maxWidth = _textWidth[i];
 			buffer = _list[pos];
@@ -411,7 +411,7 @@ void ListWidget::drawWidget() {
 			if (width > maxWidth)
 				maxWidth = width;
 			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight-2), 
-									buffer, _state, Theme::kTextAlignLeft, inverted, pad);
+									buffer, _state, ThemeEngine::kTextAlignLeft, inverted, pad);
 		}
 
 		_textWidth[i] = width;

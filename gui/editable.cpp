@@ -47,7 +47,7 @@ void EditableWidget::init() {
 
 	_editScrollOffset = 0;
 
-	_font = Theme::kFontStyleBold;
+	_font = ThemeEngine::kFontStyleBold;
 }
 
 EditableWidget::~EditableWidget() {

@@ -40,110 +40,60 @@
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 #include "gui/ThemeParser.h"
+#include "gui/ThemeData.h"
 
 #define GUI_ENABLE_BUILTIN_THEME
 
 namespace GUI {
 
-struct TextDrawData {
-	const Graphics::Font *_fontPtr;
+/**********************************************************
+ *	ThemeEngine class
+ *********************************************************/
+ThemeEngine::ThemeEngine(Common::String fileName, GraphicsMode mode) :
+	_system(0), _vectorRenderer(0), _screen(0), _backBuffer(0),
+	_buffering(false), _bytesPerPixel(0),  _graphicsMode(kGfxDisabled),
+	_font(0), _initOk(false), _themeOk(false), _enabled(false), _cursor(0),
+	_loadedThemeX(0), _loadedThemeY(0) {
+		
+	_system = g_system;
+	_parser = new ThemeParser(this);
+	_themeEval = new GUI::ThemeEval();
 
-	struct {
-		uint8 r, g, b;
-	} _color;
-};
+	_useCursor = false;
 
-struct WidgetDrawData {
-	/** List of all the steps needed to draw this widget */
-	Common::List<Graphics::DrawStep> _steps;
-
-	int _textDataId;
-	GUI::Theme::TextAlign _textAlignH;
-	GUI::Theme::TextAlignVertical _textAlignV;
-
-	/** Extra space that the widget occupies when it's drawn.
-	    E.g. when taking into account rounded corners, drop shadows, etc
-		Used when restoring the widget background */
-	uint16 _backgroundOffset;
-
-	/** Sets whether the widget is cached beforehand. */
-	bool _cached;
-	bool _buffer;
-
-	/** Texture where the cached widget is stored. */
-	Graphics::Surface *_surfaceCache;
-
-	~WidgetDrawData() {
-		_steps.clear();
-
-		if (_surfaceCache) {
-			_surfaceCache->free();
-			delete _surfaceCache;
-		}
+	for (int i = 0; i < kDrawDataMAX; ++i) {
+		_widgets[i] = 0;
 	}
-};
 
-class ThemeItem {
+	for (int i = 0; i < kTextDataMAX; ++i) {
+		_texts[i] = 0;
+	}
 
-public:
-	ThemeItem(ThemeEngine *engine, const Common::Rect &area) :
-		_engine(engine), _area(area) {}
-	virtual ~ThemeItem() {}
+	_graphicsMode = mode;
+	_themeFileName = fileName;
+	_initOk = false;
+}
 
-	virtual void drawSelf(bool doDraw, bool doRestore) = 0;
+ThemeEngine::~ThemeEngine() {
+	freeRenderer();
+	freeScreen();
+	freeBackbuffer();
+	unloadTheme();
+	delete _parser;
+	delete _themeEval;
+	delete[] _cursor;
 
-protected:
-	ThemeEngine *_engine;
-	Common::Rect _area;
-};
-
-class ThemeItemDrawData : public ThemeItem {
-public:
-	ThemeItemDrawData(ThemeEngine *engine, const WidgetDrawData *data, const Common::Rect &area, uint32 dynData) :
-		ThemeItem(engine, area), _dynamicData(dynData), _data(data) {}
-
-	void drawSelf(bool draw, bool restore);
-
-protected:
-	uint32 _dynamicData;
-	const WidgetDrawData *_data;
-};
-
-class ThemeItemTextData : public ThemeItem {
-public:
-	ThemeItemTextData(ThemeEngine *engine, const TextDrawData *data, const Common::Rect &area, const Common::String &text,
-		GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV,
-		bool ellipsis, bool restoreBg, int deltaX) :
-		ThemeItem(engine, area), _data(data), _text(text), _alignH(alignH), _alignV(alignV),
-		_ellipsis(ellipsis), _restoreBg(restoreBg), _deltax(deltaX) {}
-
-	void drawSelf(bool draw, bool restore);
-
-protected:
-	const TextDrawData *_data;
-	Common::String _text;
-	GUI::Theme::TextAlign _alignH;
-	GUI::Theme::TextAlignVertical _alignV;
-	bool _ellipsis;
-	bool _restoreBg;
-	int _deltax;
-};
-
-class ThemeItemBitmap : public ThemeItem {
-public:
-	ThemeItemBitmap(ThemeEngine *engine, const Common::Rect &area, const Graphics::Surface *bitmap, bool alpha) :
-		ThemeItem(engine, area), _bitmap(bitmap), _alpha(alpha) {}
-
-	void drawSelf(bool draw, bool restore);
-
-protected:
-	const Graphics::Surface *_bitmap;
-	bool _alpha;
-};
+	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i)
+		ImageMan.unregisterSurface(i->_key);
+}
 
 
 
 
+
+/**********************************************************
+ *	Rendering mode management
+ *********************************************************/
 const ThemeEngine::Renderer ThemeEngine::_rendererModes[] = {
 	{ "Disabled GFX", "none", kGfxDisabled },
 	{ "Standard Renderer (16bpp)", "normal_16bpp", kGfxStandard16bit },
@@ -179,149 +129,8 @@ const char *ThemeEngine::findModeConfigName(GraphicsMode mode) {
 	return findModeConfigName(kGfxDisabled);
 }
 
-/**********************************************************
- *	ThemeItem functions for drawing queues.
- *********************************************************/
-void ThemeItemDrawData::drawSelf(bool draw, bool restore) {
-
-	Common::Rect extendedRect = _area;
-	extendedRect.grow(_engine->kDirtyRectangleThreshold + _data->_backgroundOffset);
-
-	if (restore)
-		_engine->restoreBackground(extendedRect);
-
-	if (draw) {
-		Common::List<Graphics::DrawStep>::const_iterator step;
-		for (step = _data->_steps.begin(); step != _data->_steps.end(); ++step)
-			_engine->renderer()->drawStep(_area, *step, _dynamicData);
-	}
-
-	_engine->addDirtyRect(extendedRect);
-}
-
-void ThemeItemTextData::drawSelf(bool draw, bool restore) {
-	if (_restoreBg || restore)
-		_engine->restoreBackground(_area);
-
-	if (draw) {
-		_engine->renderer()->setFgColor(_data->_color.r, _data->_color.g, _data->_color.b);
-		_engine->renderer()->drawString(_data->_fontPtr, _text, _area, _alignH, _alignV, _deltax, _ellipsis);
-	}
-
-	_engine->addDirtyRect(_area);
-}
-
-void ThemeItemBitmap::drawSelf(bool draw, bool restore) {
-	if (restore)
-		_engine->restoreBackground(_area);
-
-	if (draw) {
-		if (_alpha)
-			_engine->renderer()->blitAlphaBitmap(_bitmap, _area);
-		else
-			_engine->renderer()->blitSubSurface(_bitmap, _area);
-	}
-
-	_engine->addDirtyRect(_area);
-}
 
 
-
-/**********************************************************
- *	Data definitions for theme engine elements
- *********************************************************/
-const ThemeEngine::DrawDataInfo ThemeEngine::kDrawDataDefaults[] = {
-	{kDDMainDialogBackground, "mainmenu_bg", true, kDDNone},
-	{kDDSpecialColorBackground, "special_bg", true, kDDNone},
-	{kDDPlainColorBackground, "plain_bg", true, kDDNone},
-	{kDDDefaultBackground, "default_bg", true, kDDNone},
-	{kDDTextSelectionBackground, "text_selection", false, kDDNone},
-
-	{kDDWidgetBackgroundDefault, "widget_default", true, kDDNone},
-	{kDDWidgetBackgroundSmall, "widget_small", true, kDDNone},
-	{kDDWidgetBackgroundEditText, "widget_textedit", true, kDDNone},
-	{kDDWidgetBackgroundSlider, "widget_slider", true, kDDNone},
-
-	{kDDButtonIdle, "button_idle", true, kDDWidgetBackgroundSlider},
-	{kDDButtonHover, "button_hover", false, kDDButtonIdle},
-	{kDDButtonDisabled, "button_disabled", true, kDDNone},
-
-	{kDDSliderFull, "slider_full", false, kDDNone},
-	{kDDSliderHover, "slider_hover", false, kDDNone},
-	{kDDSliderDisabled, "slider_disabled", true, kDDNone},
-
-	{kDDCheckboxDefault, "checkbox_default", true, kDDNone},
-	{kDDCheckboxDisabled, "checkbox_disabled", true, kDDNone},
-	{kDDCheckboxSelected, "checkbox_selected", false, kDDCheckboxDefault},
-
-	{kDDTabActive, "tab_active", false, kDDTabInactive},
-	{kDDTabInactive, "tab_inactive", true, kDDNone},
-	{kDDTabBackground, "tab_background", true, kDDNone},
-
-	{kDDScrollbarBase, "scrollbar_base", true, kDDNone},
-
-	{kDDScrollbarButtonIdle, "scrollbar_button_idle", true, kDDNone},
-	{kDDScrollbarButtonHover, "scrollbar_button_hover", false, kDDScrollbarButtonIdle},
-
-	{kDDScrollbarHandleIdle, "scrollbar_handle_idle", false, kDDNone},
-	{kDDScrollbarHandleHover, "scrollbar_handle_hover", false, kDDScrollbarBase},
-
-	{kDDPopUpIdle, "popup_idle", true, kDDNone},
-	{kDDPopUpHover, "popup_hover", false, kDDPopUpIdle},
-
-	{kDDCaret, "caret", false, kDDNone},
-	{kDDSeparator, "separator", true, kDDNone},
-};
-
-const ThemeEngine::TextDataInfo ThemeEngine::kTextDataDefaults[] = {
-	{kTextDataDefault, "text_default"},
-	{kTextDataHover, "text_hover"},
-	{kTextDataDisabled, "text_disabled"},
-	{kTextDataInverted, "text_inverted"},
-	{kTextDataButton, "text_button"},
-	{kTextDataButtonHover, "text_button_hover"},
-	{kTextDataNormalFont, "text_normal"}
-};
-
-
-/**********************************************************
- *	ThemeEngine class
- *********************************************************/
-ThemeEngine::ThemeEngine(Common::String fileName, GraphicsMode mode) :
-	_system(0), _vectorRenderer(0), _screen(0), _backBuffer(0),
-	_buffering(false), _bytesPerPixel(0),  _graphicsMode(kGfxDisabled),
-	_font(0), _initOk(false), _themeOk(false), _enabled(false), _cursor(0) {
-	_system = g_system;
-	_parser = new ThemeParser(this);
-	_themeEval = new GUI::ThemeEval();
-
-	_useCursor = false;
-
-	for (int i = 0; i < kDrawDataMAX; ++i) {
-		_widgets[i] = 0;
-	}
-
-	for (int i = 0; i < kTextDataMAX; ++i) {
-		_texts[i] = 0;
-	}
-
-	_graphicsMode = mode;
-	_themeFileName = fileName;
-	_initOk = false;
-}
-
-ThemeEngine::~ThemeEngine() {
-	freeRenderer();
-	freeScreen();
-	freeBackbuffer();
-	unloadTheme();
-	delete _parser;
-	delete _themeEval;
-	delete[] _cursor;
-
-	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i)
-		ImageMan.unregisterSurface(i->_key);
-}
 
 
 /**********************************************************
@@ -515,6 +324,18 @@ void ThemeEngine::restoreBackground(Common::Rect r, bool special) {
 	_vectorRenderer->blitSurface(_backBuffer, r);
 }
 
+bool ThemeEngine::isThemeLoadingRequired() {
+	int x = g_system->getOverlayWidth(), y = g_system->getOverlayHeight();
+
+	if (_loadedThemeX == x && _loadedThemeY == y)
+		return false;
+
+	_loadedThemeX = x;
+	_loadedThemeY = y;
+
+	return true;
+}
+
 
 
 
@@ -677,8 +498,7 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 	if (!node.exists() || !node.isReadable())
 		return false;
 
-	// FIXME: Should this be initialized to something else than NULL?
-	Common::Archive *archive = NULL;
+	Common::Archive *archive = 0;
 
 	if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
 #ifdef USE_ZLIB
@@ -693,7 +513,9 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 
 #endif
 	} else if (node.isDirectory()) {
-		warning("Don't know how to open theme '%s'", themeName.c_str());
+
+// 		FIXME: This warning makes no sense whatsoever. Who added this?
+//		warning("Don't know how to open theme '%s'", themeName.c_str());
 		archive = new Common::FSDirectory(node);
 	}
 
@@ -701,8 +523,6 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 		return false;
 
 	Common::File themercFile;
-	// FIXME: Possibly dereferencing a NULL pointer here if the node's
-	// name doesn't have a ".zip" suffix and the node is not a directory.
 	themercFile.open("THEMERC", *archive);
 	if (!themercFile.isOpen()) {
 		delete archive;
@@ -1215,6 +1035,11 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	return true;
 }
 
+
+/**********************************************************
+ *	Legacy GUI::Theme support functions
+ *********************************************************/
+
 const Graphics::Font *ThemeEngine::getFont(FontStyle font) const {
 	return _texts[fontStyleToData(font)]->_fontPtr;
 }
@@ -1233,6 +1058,150 @@ int ThemeEngine::getCharWidth(byte c, FontStyle font) const {
 
 ThemeEngine::TextData ThemeEngine::getTextData(DrawData ddId) {
 	return _widgets[ddId] ? (TextData)_widgets[ddId]->_textDataId : kTextDataNone;
+}
+
+
+
+/**********************************************************
+ *	External data loading
+ *********************************************************/
+
+const Graphics::Font *ThemeEngine::loadFontFromArchive(const Common::String &filename) {
+	Common::Archive *arch = 0;
+	const Graphics::NewFont *font = 0;
+
+	if (getThemeFileName().hasSuffix(".zip")) {
+#ifdef USE_ZLIB
+		Common::ZipArchive *zip = new Common::ZipArchive(getThemeFileName());
+		if (!zip || !zip->isOpen())
+			return 0;
+
+		arch = zip;
+#else
+		return 0;
+#endif
+	} else {
+		Common::FSDirectory *dir = new Common::FSDirectory(getThemeFileName());
+		if (!dir || !dir->getFSNode().isDirectory())	
+			return 0;
+
+		arch = dir;
+	}
+
+	Common::SeekableReadStream *stream(arch->openFile(filename));
+	if (stream) {
+		font = Graphics::NewFont::loadFromCache(*stream);
+		delete stream;
+	}
+
+	delete arch;
+	return font;
+}
+
+const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
+	const Graphics::Font *font = 0;
+	Common::String cacheFilename = genCacheFilename(filename.c_str());
+	Common::File fontFile;
+
+	if (!cacheFilename.empty()) {
+		if (fontFile.open(cacheFilename))
+			font = Graphics::NewFont::loadFromCache(fontFile);
+
+		if (font)
+			return font;
+
+		if ((font = loadFontFromArchive(cacheFilename)))
+			return font;
+	}
+
+	// normal open
+	if (fontFile.open(filename)) {
+		font = Graphics::NewFont::loadFont(fontFile);
+	}
+
+	if (!font) {
+		font = loadFontFromArchive(filename);
+	}
+
+	if (font) {
+		if (!cacheFilename.empty()) {
+			if (!Graphics::NewFont::cacheFontData(*(const Graphics::NewFont*)font, cacheFilename)) {
+				warning("Couldn't create cache file for font '%s'", filename.c_str());
+			}
+		}
+	}
+
+	return font;
+}
+
+Common::String ThemeEngine::genCacheFilename(const char *filename) {
+	Common::String cacheName(filename);
+	for (int i = cacheName.size() - 1; i >= 0; --i) {
+		if (cacheName[i] == '.') {
+			while ((uint)i < cacheName.size() - 1) {
+				cacheName.deleteLastChar();
+			}
+
+			cacheName += "fcc";
+			return cacheName;
+		}
+	}
+
+	return "";
+}
+
+
+/**********************************************************
+ *	Static Theme XML functions
+ *********************************************************/
+
+bool ThemeEngine::themeConfigParseHeader(Common::String header, Common::String &themeName) {	
+	header.trim();
+
+	if (header.empty())
+		return false;
+
+	if (header[0] != '[' || header.lastChar() != ']')
+		return false;
+
+	header.deleteChar(0);
+	header.deleteLastChar();
+
+	Common::StringTokenizer tok(header, ":");
+
+	if (tok.nextToken() != SCUMMVM_THEME_VERSION_STR)
+		return false;
+
+	themeName = tok.nextToken();
+	Common::String author = tok.nextToken();
+
+	return tok.empty();
+}
+
+bool ThemeEngine::themeConfigUseable(const Common::FSNode &node, Common::String &themeName) {
+	Common::File stream;
+	bool foundHeader = false;
+
+	if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
+#ifdef USE_ZLIB
+		Common::ZipArchive zipArchive(node);
+		if (zipArchive.hasFile("THEMERC")) {
+			stream.open("THEMERC", zipArchive);
+		}
+#endif
+	} else if (node.isDirectory()) {			
+		Common::FSNode headerfile = node.getChild("THEMERC");
+		if (!headerfile.exists() || !headerfile.isReadable() || headerfile.isDirectory())
+			return false;
+		stream.open(headerfile);
+	}
+
+	if (stream.isOpen()) {
+		Common::String stxHeader = stream.readLine();
+		foundHeader = themeConfigParseHeader(stxHeader, themeName);
+	}
+
+	return foundHeader;
 }
 
 

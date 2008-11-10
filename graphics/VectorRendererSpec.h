@@ -68,8 +68,8 @@ public:
 		drawBevelSquareAlg(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
 	}
 	void drawString(const Graphics::Font *font, const Common::String &text, 
-					const Common::Rect &area, GUI::Theme::TextAlign alignH,
-					GUI::Theme::TextAlignVertical alignV, int deltax, bool elipsis);
+					const Common::Rect &area, GUI::ThemeEngine::TextAlign alignH,
+					GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool elipsis);
 
 	void setFgColor(uint8 r, uint8 g, uint8 b) { _fgColor = RGBToColor<PixelFormat>(r, g, b); }
 	void setBgColor(uint8 r, uint8 g, uint8 b) { _bgColor = RGBToColor<PixelFormat>(r, g, b); }
@@ -84,7 +84,7 @@ public:
     void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r);
     void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r);
 	
-    void applyScreenShading(GUI::Theme::ShadingStyle shadingStyle);
+    void applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle);
 
 protected:
 

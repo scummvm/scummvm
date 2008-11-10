@@ -55,7 +55,7 @@ void EditTextWidget::reflowLayout() {
 	_leftPadding = g_gui.xmlEval()->getVar("Globals.EditTextWidget.Padding.Left", 0);
 	_rightPadding = g_gui.xmlEval()->getVar("Globals.EditTextWidget.Padding.Right", 0);
 
-	_font = (Theme::FontStyle)g_gui.xmlEval()->getVar("EditTextWidget.Font", Theme::kFontStyleNormal);
+	_font = (ThemeEngine::FontStyle)g_gui.xmlEval()->getVar("EditTextWidget.Font", ThemeEngine::kFontStyleNormal);
 
 	EditableWidget::reflowLayout();
 }
@@ -82,11 +82,11 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 
 void EditTextWidget::drawWidget() {
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), 0, Theme::kWidgetBackgroundEditText);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), 0, ThemeEngine::kWidgetBackgroundEditText);
 
 	// Draw the text
 	adjustOffset();
-	g_gui.theme()->drawText(Common::Rect(_x+2+ _leftPadding,_y+2, _x+_leftPadding+getEditRect().width()+2, _y+_h-2), _editString, _state, Theme::kTextAlignLeft, false, -_editScrollOffset, false, _font);
+	g_gui.theme()->drawText(Common::Rect(_x+2+ _leftPadding,_y+2, _x+_leftPadding+getEditRect().width()+2, _y+_h-2), _editString, _state, ThemeEngine::kTextAlignLeft, false, -_editScrollOffset, false, _font);
 }
 
 Common::Rect EditTextWidget::getEditRect() const {

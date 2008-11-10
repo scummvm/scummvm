@@ -187,15 +187,15 @@ void ScrollBarWidget::drawWidget() {
 	if (_draggingPart != kNoPart)
 		_part = _draggingPart;
 
-	Theme::ScrollbarState state = Theme::kScrollbarStateNo;
+	ThemeEngine::ScrollbarState state = ThemeEngine::kScrollbarStateNo;
 	if (_numEntries <= _entriesPerPage) {
-		state = Theme::kScrollbarStateSinglePage;
+		state = ThemeEngine::kScrollbarStateSinglePage;
 	} else if (_part == kUpArrowPart) {
-		state = Theme::kScrollbarStateUp;
+		state = ThemeEngine::kScrollbarStateUp;
 	} else if (_part == kDownArrowPart) {
-		state = Theme::kScrollbarStateDown;
+		state = ThemeEngine::kScrollbarStateDown;
 	} else if (_part == kSliderPart) {
-		state = Theme::kScrollbarStateSlider;
+		state = ThemeEngine::kScrollbarStateSlider;
 	}
 
 	g_gui.theme()->drawScrollbar(Common::Rect(_x, _y, _x+_w, _y+_h), _sliderPos, _sliderHeight, state, _state);

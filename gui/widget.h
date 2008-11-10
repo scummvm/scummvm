@@ -94,7 +94,7 @@ protected:
 	Widget		*_next;
 	uint16		_id;
 	bool		_hasFocus;
-	Theme::WidgetStateInfo _state;
+	ThemeEngine::WidgetStateInfo _state;
 
 private:
 	uint16		_flags;

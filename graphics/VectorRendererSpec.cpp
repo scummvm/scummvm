@@ -354,7 +354,7 @@ blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) {
 
 template <typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
-applyScreenShading(GUI::Theme::ShadingStyle shadingStyle) {
+applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 	int pixels = _activeSurface->w * _activeSurface->h;
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(0, 0);
 	uint8 r, g, b;
@@ -365,7 +365,7 @@ applyScreenShading(GUI::Theme::ShadingStyle shadingStyle) {
 		(1 << PixelFormat::kRedShift) | 
 		(1 << PixelFormat::kBlueShift)) >> 1;
 	
-	if (shadingStyle == GUI::Theme::kShadingDim) {
+	if (shadingStyle == GUI::ThemeEngine::kShadingDim) {
 
 		int n = (pixels + 7) >> 3;
 		switch (pixels % 8) {
@@ -381,7 +381,7 @@ applyScreenShading(GUI::Theme::ShadingStyle shadingStyle) {
 				} while (--n > 0);
 		}
 
-	} else if (shadingStyle == GUI::Theme::kShadingLuminance) {
+	} else if (shadingStyle == GUI::ThemeEngine::kShadingLuminance) {
 		while (pixels--) {
 			colorToRGB<PixelFormat>(*ptr, r, g, b);
 			lum = (r >> 2) + (g >> 1) + (b >> 3);
@@ -449,16 +449,16 @@ colorFill(PixelType *first, PixelType *last, PixelType color) {
 template <typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, 
-			GUI::Theme::TextAlign alignH, GUI::Theme::TextAlignVertical alignV, int deltax, bool ellipsis) {
+			GUI::ThemeEngine::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool ellipsis) {
 
 	int offset = area.top;
 	
 	if (font->getFontHeight() < area.height()) {
 		switch (alignV) {
-			case GUI::Theme::kTextAlignVCenter:
+			case GUI::ThemeEngine::kTextAlignVCenter:
 				offset = area.top + ((area.height() - font->getFontHeight()) >> 1);
 				break;
-			case GUI::Theme::kTextAlignVBottom:
+			case GUI::ThemeEngine::kTextAlignVBottom:
 				offset = area.bottom - font->getFontHeight();
 				break;
 			default:

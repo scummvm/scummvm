@@ -34,13 +34,13 @@ namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h)
 	: GuiObject(x, y, w, h), _type(0), _boss(boss),
-	  _id(0), _flags(0), _hasFocus(false), _state(Theme::kStateEnabled) {
+	  _id(0), _flags(0), _hasFocus(false), _state(ThemeEngine::kStateEnabled) {
 	init();
 }
 
 Widget::Widget(GuiObject *boss, const Common::String &name)
 	: GuiObject(name), _type(0), _boss(boss),
-	  _id(0), _flags(0), _hasFocus(false), _state(Theme::kStateDisabled) {
+	  _id(0), _flags(0), _hasFocus(false), _state(ThemeEngine::kStateDisabled) {
 	init();
 }
 
@@ -74,11 +74,11 @@ void Widget::clearFlags(int flags) {
 
 void Widget::updateState(int oldFlags, int newFlags) {
 	if (newFlags & WIDGET_ENABLED) {
-		_state = Theme::kStateEnabled;
+		_state = ThemeEngine::kStateEnabled;
 		if (newFlags & WIDGET_HILITED)
-			_state = Theme::kStateHighlight;
+			_state = ThemeEngine::kStateHighlight;
 	} else {
-		_state = Theme::kStateDisabled;
+		_state = ThemeEngine::kStateDisabled;
 	}
 }
 
@@ -96,7 +96,7 @@ void Widget::draw() {
 
 	// Draw border
 	if (_flags & WIDGET_BORDER) {
-		gui->theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), 0, Theme::kWidgetBackgroundBorder);
+		gui->theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), 0, ThemeEngine::kWidgetBackgroundBorder);
 		_x += 4;
 		_y += 4;
 		_w -= 8;
@@ -386,7 +386,7 @@ ContainerWidget::ContainerWidget(GuiObject *boss, const Common::String &name) : 
 }
 
 void ContainerWidget::drawWidget() {
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0, Theme::kWidgetBackgroundBorder);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0, ThemeEngine::kWidgetBackgroundBorder);
 }
 
 } // End of namespace GUI

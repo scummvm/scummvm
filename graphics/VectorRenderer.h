@@ -507,8 +507,8 @@ public:
 	 * method.
 	 */
 	virtual void drawString(const Graphics::Font *font, const Common::String &text,
-	                        const Common::Rect &area, GUI::Theme::TextAlign alignH,
-	                        GUI::Theme::TextAlignVertical alignV, int deltax, bool useEllipsis) = 0;
+	                        const Common::Rect &area, GUI::ThemeEngine::TextAlign alignH,
+	                        GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool useEllipsis) = 0;
 
 	/**
 	 * Allows to temporarily enable/disable all shadows drawing.
@@ -549,7 +549,7 @@ public:
 	 * Applies a whole-screen shading effect, used before opening a new dialog.
 	 * Currently supports screen dimmings and luminance (b&w).
 	 */
-	virtual void applyScreenShading(GUI::Theme::ShadingStyle) = 0;
+	virtual void applyScreenShading(GUI::ThemeEngine::ShadingStyle) = 0;
 
 protected:
 	Surface *_activeSurface; /**< Pointer to the surface currently being drawn */

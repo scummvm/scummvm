@@ -177,23 +177,23 @@ bool ThemeParser::parserCallback_bitmap(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_text(ParserNode *node) {		
-	GUI::Theme::TextAlign alignH;
-	GUI::Theme::TextAlignVertical alignV;
+	GUI::ThemeEngine::TextAlign alignH;
+	GUI::ThemeEngine::TextAlignVertical alignV;
 		
 	if (node->values["horizontal_align"] == "left")
-		alignH = GUI::Theme::kTextAlignLeft;
+		alignH = GUI::ThemeEngine::kTextAlignLeft;
 	else if (node->values["horizontal_align"] == "right")
-		alignH = GUI::Theme::kTextAlignRight;
+		alignH = GUI::ThemeEngine::kTextAlignRight;
 	else if (node->values["horizontal_align"] == "center")
-		alignH = GUI::Theme::kTextAlignCenter;
+		alignH = GUI::ThemeEngine::kTextAlignCenter;
 	else return parserError("Invalid value for text alignment.");
 	
 	if (node->values["vertical_align"] == "top")
-		alignV = GUI::Theme::kTextAlignVTop;
+		alignV = GUI::ThemeEngine::kTextAlignVTop;
 	else if (node->values["vertical_align"] == "center")
-		alignV = GUI::Theme::kTextAlignVCenter;
+		alignV = GUI::ThemeEngine::kTextAlignVCenter;
 	else if (node->values["vertical_align"] == "bottom")
-		alignV = GUI::Theme::kTextAlignVBottom;
+		alignV = GUI::ThemeEngine::kTextAlignVBottom;
 	else return parserError("Invalid value for text alignment.");
 	
 	if (!_theme->addTextData(getParentNode(node)->values["id"], node->values["font"], alignH, alignV))

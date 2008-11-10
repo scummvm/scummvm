@@ -19,10 +19,10 @@ MODULE_OBJS := \
 	PopUpWidget.o \
 	ScrollBarWidget.o \
 	TabWidget.o \
-	theme.o \
 	themebrowser.o \
 	ThemeEngine.o \
 	ThemeEval.o \
+	ThemeData.o \
 	ThemeLayout.o \
 	ThemeParser.o \
 	widget.o

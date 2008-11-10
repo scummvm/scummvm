@@ -25,7 +25,8 @@
 #include "gui/themebrowser.h"
 #include "gui/ListWidget.h"
 #include "gui/widget.h"
-#include "gui/theme.h"
+#include "common/config-manager.h"
+
 #include "common/fs.h"
 
 #ifdef MACOSX
@@ -54,7 +55,7 @@ ThemeBrowser::ThemeBrowser() : Dialog("Browser") {
 	_fileList->setNumberingMode(kListNumberingOff);
 	_fileList->setEditable(false);
 
-	_backgroundType = GUI::Theme::kDialogBackgroundPlain;
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	// Buttons
 	new ButtonWidget(this, "Browser.Cancel", "Cancel", kCloseCmd, 0);
@@ -196,7 +197,7 @@ bool ThemeBrowser::isTheme(const Common::FSNode &node, Entry &out) {
 		return false;
 #endif
 		
-	if (!Theme::themeConfigUseable(node, out.name))
+	if (!ThemeEngine::themeConfigUseable(node, out.name))
 		return false;
 
 	return true;

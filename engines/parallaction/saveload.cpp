@@ -248,7 +248,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	: Dialog("ScummSaveLoad"), _list(0), _chooseButton(0), _gfxWidget(0) {
 
 //	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
-	_backgroundType = GUI::Theme::kDialogBackgroundSpecial;
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
 
 	new GUI::StaticTextWidget(this, "ScummSaveLoad.Title", title);
 

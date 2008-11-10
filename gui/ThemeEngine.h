@@ -28,11 +28,11 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
-
+#include "common/fs.h"
 #include "graphics/surface.h"
 #include "graphics/fontman.h"
 
-#include "gui/theme.h"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.3"
 
 namespace Graphics {
 struct DrawStep;
@@ -50,7 +50,7 @@ class ThemeEval;
 class ThemeItem;
 class ThemeParser;
 
-class ThemeEngine : public Theme {
+class ThemeEngine {
 protected:
 	typedef Common::HashMap<Common::String, Graphics::Surface*> ImagesMap;
 
@@ -137,8 +137,80 @@ protected:
 		const char *name;
 	} kTextDataDefaults[];
 
-
 public:
+	//! Defined the align of the text
+	enum TextAlign {
+		kTextAlignLeft,		//!< Text should be aligned to the left
+		kTextAlignCenter,	//!< Text should be centered
+		kTextAlignRight		//!< Text should be aligned to the right
+	};
+	
+	//! Vertical alignment of the text.
+	enum TextAlignVertical {
+		kTextAlignVBottom,
+		kTextAlignVCenter,
+		kTextAlignVTop
+	};
+
+	//! Widget background type
+	enum WidgetBackground {
+		kWidgetBackgroundNo,			//!< No background at all
+		kWidgetBackgroundPlain,			//!< Simple background, this may not include borders
+		kWidgetBackgroundBorder,		//!< Same as kWidgetBackgroundPlain just with a border
+		kWidgetBackgroundBorderSmall,	//!< Same as kWidgetBackgroundPlain just with a small border
+		kWidgetBackgroundEditText,		//!< Background used for edit text fields
+		kWidgetBackgroundSlider			//!< Background used for sliders
+	};
+	
+	//! Dialog background type
+	enum DialogBackground {
+		kDialogBackgroundMain,
+		kDialogBackgroundSpecial,
+		kDialogBackgroundPlain,
+		kDialogBackgroundDefault
+	};
+
+	//! State of the widget to be drawn
+	enum State {
+		kStateDisabled,		//!< Indicates that the widget is disabled, that does NOT include that it is invisible
+		kStateEnabled,		//!< Indicates that the widget is enabled
+		kStateHighlight		//!< Indicates that the widget is highlighted by the user
+	};
+
+	typedef State WidgetStateInfo;
+
+	enum ScrollbarState {
+		kScrollbarStateNo,
+		kScrollbarStateUp,
+		kScrollbarStateDown,
+		kScrollbarStateSlider,
+		kScrollbarStateSinglePage
+	};
+
+	//! Font style selector
+	enum FontStyle {
+		kFontStyleBold = 0,			//!< A bold font. This is also the default font.
+		kFontStyleNormal = 1,		//!< A normal font.
+		kFontStyleItalic = 2,		//!< Italic styled font.
+		kFontStyleFixedNormal = 3,	//!< Fixed size font.
+		kFontStyleFixedBold = 4,	//!< Fixed size bold font.
+		kFontStyleFixedItalic = 5,	//!< Fixed size italic font.
+		kFontStyleMax
+	};
+
+	//! Function used to process areas other than the current dialog
+	enum ShadingStyle {
+		kShadingNone,		//!< No special post processing
+		kShadingDim,		//!< Dimming unused areas
+		kShadingLuminance	//!< Converting colors to luminance for unused areas
+	};
+	
+	//! Special image ids for images used in the GUI
+	enum kThemeImages {
+		kImageLogo = 0,		//!< ScummVM Logo used in the launcher
+		kImageLogoSmall		//!< ScummVM logo used in the GMM
+	};
+	
 	/** Graphics mode enumeration.
 	 *	Each item represents a set of BPP and Renderer modes for a given
 	 * surface.
@@ -148,7 +220,7 @@ public:
 		kGfxStandard16bit,	/** 2BPP with the standard (aliased) renderer. */
 		kGfxAntialias16bit	/** 2BPP with the optimized AA renderer. */
 	};
-
+	
 	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
 	static const int kDirtyRectangleThreshold = 1;
 
@@ -441,8 +513,6 @@ public:
 	 */
 	bool isWidgetCached(DrawData type, const Common::Rect &r);
 
-public:
-
 	const Common::String &getThemeName() const { return _themeName; }
 	const Common::String &getThemeFileName() const { return _themeFileName; }
 	int getGraphicsMode() const { return _graphicsMode; }
@@ -549,19 +619,63 @@ protected:
 	void queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha);
 
 	/**
-	 *	DEBUG: Draws a white square around the given position and writes the given next to it.
+	 *	DEBUG: Draws a white square and writes some text next to it.
 	 */
 	void debugWidgetPosition(const char *name, const Common::Rect &r);
 
+public:
+	
+	/**
+	 *	LEGACY: Old GUI::Theme API
+	 */
+	
+	bool needThemeReload() { 
+		return ((_loadedThemeX != g_system->getOverlayWidth()) ||
+				(_loadedThemeY != g_system->getOverlayHeight())); 
+	}
 
 	const Graphics::Font *loadFont(const Common::String &filename);
 	const Graphics::Font *loadFontFromArchive(const Common::String &filename);
 	Common::String genCacheFilename(const char *filename);
+	
+	Graphics::TextAlignment convertAligment(TextAlign align) const {
+		switch (align) {
+		case kTextAlignLeft:
+			return Graphics::kTextAlignLeft;
+			break;
 
-public:
-	/**
-	 *	Default values from GUI::Theme
-	 */
+		case kTextAlignRight:
+			return Graphics::kTextAlignRight;
+			break;
+
+		default:
+			break;
+		};
+		return Graphics::kTextAlignCenter;
+	}
+
+	TextAlign convertAligment(Graphics::TextAlignment align) const {
+		switch (align) {
+		case Graphics::kTextAlignLeft:
+			return kTextAlignLeft;
+			break;
+
+		case Graphics::kTextAlignRight:
+			return kTextAlignRight;
+			break;
+
+		default:
+			break;
+		}
+		return kTextAlignCenter;
+	}
+
+
+	bool isThemeLoadingRequired();
+	
+	static bool themeConfigUseable(const Common::FSNode &node, Common::String &themeName);
+	static bool themeConfigParseHeader(Common::String header, Common::String &themeName);
+
 	int getTabSpacing() const { return 0; }
 	int getTabPadding() const { return 3; }
 
@@ -633,6 +747,7 @@ protected:
 	bool _needPaletteUpdates;
 	uint _cursorWidth, _cursorHeight;
 	byte _cursorPal[4*MAX_CURS_COLORS];
+	int _loadedThemeX, _loadedThemeY;
 };
 
 } // end of namespace GUI.
