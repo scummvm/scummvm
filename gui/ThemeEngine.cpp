@@ -27,6 +27,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/fs.h"
 #include "common/unzip.h"
 
