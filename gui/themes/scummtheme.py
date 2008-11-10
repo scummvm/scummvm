@@ -43,9 +43,10 @@ def parseSTX(theme_file, def_file):
 	
 	output = re.sub(comm, "", output)
 	output = re.sub(head, "", output)
-	output = output.replace("\t", " ").replace("  ", " ").replace("\"", "'").splitlines()
+	output = output.replace("\t", " ").replace("  ", " ").replace("\"", "'")
+	output = output.replace(" = ", "=").replace(", ", ",")
 		
-	for line in output:
+	for line in output.splitlines():
 		if line and not line.isspace():
 			def_file.write("\"" + line + "\"\n")
 
