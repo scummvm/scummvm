@@ -32,6 +32,7 @@
 #include "common/config-manager.h"
 #include "common/advancedDetector.h"
 #include "common/system.h"
+#include "graphics/thumbnail.h"
 
 #include "saga/animation.h"
 #include "saga/displayinfo.h"
@@ -153,13 +154,17 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 bool SagaMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate);
 }
 
 bool Saga::SagaEngine::hasFeature(EngineFeature f) const {
@@ -218,6 +223,83 @@ void SagaMetaEngine::removeSaveState(const char *target, int slot) const {
 	filename += extension;
 
 	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+}
+
+SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	static char fileName[MAX_FILE_NAME];
+	sprintf(fileName, "%s.s%02d", target, slot);
+	char title[TITLESIZE];
+	Graphics::Surface *thumbnail;
+
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
+
+	if (in) {
+		uint32 type = in->readUint32BE();
+		in->readUint32LE();		// size
+		uint32 version = in->readUint32LE();
+		char name[SAVE_TITLE_SIZE];
+		in->read(name, sizeof(name));
+
+		SaveStateDescriptor desc(slot, name);
+
+		// Some older saves were not written in an endian safe fashion.
+		// We try to detect this here by checking for extremly high version values.
+		// If found, we retry with the data swapped.
+		if (version > 0xFFFFFF) {
+			warning("This savegame is not endian safe, retrying with the data swapped");
+			version = SWAP_BYTES_32(version);
+		}
+
+		debug(2, "Save version: %x", version);
+
+		if (version < 4)
+			warning("This savegame is not endian-safe. There may be problems");
+
+		if (type != MKID_BE('SAGA')) {
+			error("SagaEngine::load wrong save game format");
+		}
+
+		if (version > 4) {
+			in->read(title, TITLESIZE);
+			debug(0, "Save is for: %s", title);
+		}
+
+		desc.setDeletableFlag(true);
+		desc.setWriteProtectedFlag(false);
+
+		if (version >= 6) {
+			thumbnail = new Graphics::Surface();
+			assert(thumbnail);
+			if (!Graphics::loadThumbnail(*in, *thumbnail)) {
+				delete thumbnail;
+				thumbnail = 0;
+			}
+
+			desc.setThumbnail(thumbnail);
+
+			uint32 saveDate = in->readUint32BE();
+			uint16 saveTime = in->readUint16BE();
+
+			int day = (saveDate >> 24) & 0xFF;
+			int month = (saveDate >> 16) & 0xFF;
+			int year = saveDate & 0xFFFF;
+
+			desc.setSaveDate(year, month, day);
+			
+			int hour = (saveTime >> 8) & 0xFF;
+			int minutes = saveTime & 0xFF;
+
+			desc.setSaveTime(hour, minutes);
+
+			// TODO: played time
+		}
+
+		delete in;
+
+		return desc;
+	}
+	
+	return SaveStateDescriptor();
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SAGA)

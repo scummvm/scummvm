@@ -73,6 +73,7 @@ using Common::MemoryReadStreamEndian;
 // preserve savegame backwards compatibility. We only check
 // for IHNM's save title during text input
 #define SAVE_TITLE_SIZE 28
+#define TITLESIZE 80
 #define IHNM_SAVE_TITLE_SIZE 22
 #define MAX_SAVES 96
 #define MAX_FILE_NAME 256
@@ -469,6 +470,7 @@ struct SaveGameHeader {
 	uint32 size;
 	uint32 version;
 	char name[SAVE_TITLE_SIZE];
+	Graphics::Surface *thumbnail;
 };
 
 inline int objectTypeId(uint16 objectId) {
