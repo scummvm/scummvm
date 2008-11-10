@@ -324,7 +324,7 @@ void TuckerEngine::handleMapSequence() {
 		copyMapRect(220, 0, 100, 180);
 	}
 	_fadePaletteCounter = 0;
-	int xPos, yPos, textNum = 0;
+	int xPos = 0, yPos = 0, textNum = 0;
 	do {
 		waitForTimer(2);
 		updateMouseState();

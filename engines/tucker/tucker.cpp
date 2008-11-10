@@ -1749,9 +1749,9 @@ bool TuckerEngine::isSpeechSoundPlaying() {
 }
 
 void TuckerEngine::redrawPanelItems() {
-	const uint8 *src;
-	uint8 *dst;
-	int sz;
+	const uint8 *src = 0;
+	uint8 *dst = 0;
+	int sz = 0;
 	if (_forceRedrawPanelItems != 0 || (_redrawPanelItemsCounter != 0 && _panelState == 0)) {
 		_forceRedrawPanelItems = 0;
 		if (_redrawPanelItemsCounter > 0) {
@@ -2069,7 +2069,7 @@ void TuckerEngine::updateCharacterAnimation() {
 			var8 = 999;
 		}
 	}
-	int num;
+	int num = 0;
 	if (var8 == 999 || (_characterFacingDirection != _characterPrevFacingDirection && _characterFacingDirection < 5)) {
 		_mirroredDrawing = 0;
 		if (_characterFacingDirection == 6) {

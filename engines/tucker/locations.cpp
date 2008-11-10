@@ -755,7 +755,7 @@ void TuckerEngine::execData3PostUpdate_locationNum9() {
 }
 
 void TuckerEngine::updateSprite_locationNum10() {
-	int state;
+	int state = 0;
 	const int r = getRandomNumber();
 	if (_flagsTable[99] == 1) {
 		state = -1;
@@ -913,7 +913,7 @@ void TuckerEngine::execData3PreUpdate_locationNum12() {
 }
 
 void TuckerEngine::updateSprite_locationNum13(int i) {
-	int state;
+	int state = 0;
 	if (_csDataHandled) {
 		if (_flagsTable[202] == 0) {
 			_flagsTable[202] = 1;
@@ -1103,7 +1103,7 @@ void TuckerEngine::execData3PreUpdate_locationNum15() {
 }
 
 void TuckerEngine::updateSprite_locationNum16_0(int i) {
-	int state;
+	int state = 0;
 	int r = getRandomNumber();
 	if (_flagsTable[210] > 0) {
 		state = -1;
@@ -1430,7 +1430,7 @@ void TuckerEngine::updateSprite_locationNum23_1(int i) {
 }
 
 void TuckerEngine::updateSprite_locationNum23_2(int i) {
-	int state;
+	int state = 0;
 	if (_flagsTable[210] == 0) {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 			_spritesTable[i].needUpdate = 1;
