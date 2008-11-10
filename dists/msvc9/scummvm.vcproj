@@ -1207,19 +1207,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\gui\theme.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\theme.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\gui\themebrowser.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\gui\themebrowser.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeData.h"
 				>
 			</File>
 			<File
@@ -1362,6 +1362,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\graphics\thumbnail.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\thumbnail.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\graphics\VectorRenderer.cpp"
 				>
 			</File>
@@ -1375,14 +1383,6 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\VectorRendererSpec.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\graphics\thumbnail.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\graphics\thumbnail.h"
 				>
 			</File>
 			<Filter
