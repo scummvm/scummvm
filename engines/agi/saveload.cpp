@@ -28,8 +28,10 @@
  * Multi-slots by Claudio Matsuoka <claudio@helllabs.org>
  */
 
+#include <time.h>	// for extended infos
 
 #include "common/file.h"
+#include "graphics/thumbnail.h"
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
@@ -37,13 +39,14 @@
 #include "agi/keyboard.h"
 #include "agi/menu.h"
 
-#define SAVEGAME_VERSION 3
+#define SAVEGAME_VERSION 4
 
 /*
  * Version 0 (Sarien): view table has 64 entries
  * Version 1 (Sarien): view table has 256 entries (needed in KQ3)
  * Version 2 (ScummVM): first ScummVM version
- * Version 3 (ScummVM): adding AGIPAL save/load support
+ * Version 3 (ScummVM): added AGIPAL save/load support
+ * Version 4 (ScummVM): added thumbnails and save creation date/time 
  */
 
 namespace Agi {
@@ -69,6 +72,22 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 
 	out->writeByte(SAVEGAME_VERSION);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save game version (%d)", SAVEGAME_VERSION);
+
+	// Thumbnail
+	Graphics::saveThumbnail(*out);
+
+	// Creation date/time
+	tm curTime;
+	_system->getTimeAndDate(curTime);
+
+	uint32 saveDate = (curTime.tm_mday & 0xFF) << 24 | ((curTime.tm_mon + 1) & 0xFF) << 16 | (curTime.tm_year + 1900) & 0xFFFF;
+	uint16 saveTime = (curTime.tm_hour & 0xFF) << 8 | (curTime.tm_min) & 0xFF;
+
+	out->writeUint32BE(saveDate);
+	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save date (%d)", saveDate);
+	out->writeUint16BE(saveTime);
+	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save time (%d)", saveTime);
+	// TODO: played time
 
 	out->writeByte(_game.state);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game state (%d)", _game.state);
@@ -250,8 +269,24 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 	debugC(6, kDebugLevelMain | kDebugLevelSavegame, "Description is: %s", description);
 
 	saveVersion = in->readByte();
-	if (saveVersion != SAVEGAME_VERSION)
+	if (saveVersion < 2)	// is the save game pre-ScummVM?
 		warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, SAVEGAME_VERSION);
+
+	if (saveVersion < 3)
+		warning("This save game contains no AGIPAL data, if the game is using the AGIPAL hack, it won't work correctly");
+
+	if (saveVersion >= 4) {
+		// We don't need the thumbnail here, so just read it and discard it
+		Graphics::Surface *thumbnail = new Graphics::Surface();
+		assert(thumbnail);
+		Graphics::loadThumbnail(*in, *thumbnail);
+		delete thumbnail;
+		thumbnail = 0;
+
+		in->readUint32BE();	// save date
+		in->readUint16BE(); // save time
+		// TODO: played time
+	}
 
 	_game.state = in->readByte();
 

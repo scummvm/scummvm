@@ -28,6 +28,7 @@
 #include "common/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "graphics/thumbnail.h"
 
 #include "agi/agi.h"
 #include "agi/preagi.h"
@@ -2127,7 +2128,8 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
-	
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+
 	const Common::ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 };
 
@@ -2135,11 +2137,17 @@ bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate);
 }
 
 bool AgiBase::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL);
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 
@@ -2197,13 +2205,67 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 int AgiMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void AgiMetaEngine::removeSaveState(const char *target, int slot) const {
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".%03d", slot);
+	char fileName[MAX_PATH];
+	sprintf(fileName, "%s.%03d", target, slot);
+	g_system->getSavefileManager()->removeSavefile(fileName);
+}
 
-	Common::String filename = target;
-	filename += extension;
+SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	const uint32 AGIflag = MKID_BE('AGI:');
+	char fileName[MAX_PATH];
+	sprintf(fileName, "%s.%03d", target, slot);
 
-	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
+
+	if (in) {
+		if (in->readUint32BE() != AGIflag) {
+			delete in;
+			return SaveStateDescriptor();
+		}
+
+		char name[32];
+		in->read(name, 31);
+
+		SaveStateDescriptor desc(slot, name);
+
+		desc.setDeletableFlag(true);
+		desc.setWriteProtectedFlag(false);
+
+		char saveVersion = in->readByte();
+		if (saveVersion >= 4) {
+			Graphics::Surface *thumbnail = new Graphics::Surface();
+			assert(thumbnail);
+			if (!Graphics::loadThumbnail(*in, *thumbnail)) {
+				delete thumbnail;
+				thumbnail = 0;
+			}
+
+			desc.setThumbnail(thumbnail);
+
+			uint32 saveDate = in->readUint32BE();
+			uint16 saveTime = in->readUint16BE();
+
+			int day = (saveDate >> 24) & 0xFF;
+			int month = (saveDate >> 16) & 0xFF;
+			int year = saveDate & 0xFFFF;
+
+			desc.setSaveDate(year, month, day);
+			
+			int hour = (saveTime >> 8) & 0xFF;
+			int minutes = saveTime & 0xFF;
+
+			desc.setSaveTime(hour, minutes);
+
+			// TODO: played time
+		}
+
+
+		delete in;
+
+		return desc;
+	}
+	
+	return SaveStateDescriptor();
 }
 
 const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
@@ -2375,3 +2437,29 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSL
 #else
 	REGISTER_PLUGIN_STATIC(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);
 #endif
+
+namespace Agi {
+
+Common::Error AgiBase::loadGameState(int slot) {
+	static char saveLoadSlot[12];
+	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), slot);
+	loadGame(saveLoadSlot);
+	return Common::kNoError;	// TODO: return success/failure
+}
+
+Common::Error AgiBase::saveGameState(int slot, const char *desc) {
+	static char saveLoadSlot[12];
+	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), slot);
+	saveGame(saveLoadSlot, desc);
+	return Common::kNoError;	// TODO: return success/failure
+}
+
+bool AgiBase::canLoadGameStateCurrently() { 
+	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork));
+}
+
+bool AgiBase::canSaveGameStateCurrently() { 
+	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork));
+}
+
+} // End of namespace Agi
