@@ -199,7 +199,6 @@ void TuckerEngine::openCompressedSoundFile() {
 			warning("Unhandled version %d for compressed sound file '%s'", version, compressedSoundFilesTable[i].filename);
 		}
 	}
-	 _fCompressedSound.readUint32LE();
 }
 
 void TuckerEngine::loadImage(uint8 *dst, int type) {
