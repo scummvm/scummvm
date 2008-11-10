@@ -106,3 +106,8 @@ ifdef ENABLE_TOUCHE
 DEFINES += -DENABLE_TOUCHE=$(ENABLE_TOUCHE)
 MODULES += engines/touche
 endif
+
+ifdef ENABLE_TUCKER
+DEFINES += -DENABLE_TUCKER=$(ENABLE_TUCKER)
+MODULES += engines/tucker
+endif
