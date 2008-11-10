@@ -66,10 +66,6 @@ static const GameSettings madeSettings[] = {
 
 MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
-	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-
 	const GameSettings *g;
 
 	const char *gameid = ConfMan.get("gameid").c_str();
@@ -110,12 +106,6 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_music->setNativeMT32(native_mt32);
 	//_music->setAdlib(adlib);
 
-	_musicVolume = ConfMan.getInt("music_volume");
-
-	if (!_musicVolume) {
-		debug(1, "Music disabled.");
-	}
-	
 	// Set default sound frequency
 	// Return to Zork sets it itself via a script funtion
 	if (getGameID() == GID_MANHOLE || getGameID() == GID_RODNEY) {
@@ -123,6 +113,8 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	} else {
 		_soundRate = 8000;
 	}
+
+	syncSoundSettings();
 
 }
 
@@ -144,6 +136,14 @@ Common::Error MadeEngine::init() {
 	_system->endGFXTransaction();
 
 	return Common::kNoError;
+}
+
+void MadeEngine::syncSoundSettings() {
+	_music->setVolume(ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 }
 
 int16 MadeEngine::getTicks() {

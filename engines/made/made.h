@@ -87,6 +87,7 @@ public:
 	virtual ~MadeEngine();
 
 	virtual bool hasFeature(EngineFeature f) const;
+	virtual void syncSoundSettings();
 
 	int getGameId() {
 		return _gameId;
@@ -115,8 +116,6 @@ public:
 	int _soundRate;
 	bool _autoStopSound;
 
-	int _musicVolume;
-	
 	// 2 = LGOP2, Manhole N&E
 	// 3 = Return to Zork
 	int _engineVersion;
