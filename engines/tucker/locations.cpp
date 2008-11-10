@@ -932,6 +932,7 @@ void TuckerEngine::updateSprite_locationNum13(int i) {
 		state = 6;
 	} else {
 		setCharacterAnimation(0, 0);
+		return;
 	}
 	_spritesTable[i].state = state;
 }
@@ -1123,20 +1124,21 @@ void TuckerEngine::updateSprite_locationNum16_0(int i) {
 		}
 	} else if (_csDataHandled) {
 		_spritesTable[0].needUpdate = 0;
-		if (r < 30000) {
-			state = 4;
-			_spritesTable[0].updateDelay = 5;
-		} else if (r < 31000) {
-			state = 4;
-			if (_xPosCurrent < 300) {
-				_miscSoundFxDelayCounter[0] = 2;
-				_soundsMapTable[0] = 9;
-			}
-		} else if (r < 32000) {
-			state = 5;
-		} else {
-			state = 6;
+		state = 4;
+		_spritesTable[0].updateDelay = 5;
+	} else if (r < 30000) {
+		state = 4;
+		_spritesTable[0].updateDelay = 5;
+	} else if (r < 31000) {
+		state = 4;
+		if (_xPosCurrent < 300) {
+			_miscSoundFxDelayCounter[0] = 2;
+			_soundsMapTable[0] = 9;
 		}
+	} else if (r < 32000) {
+		state = 5;
+	} else {
+		state = 6;
 	}
 	_spritesTable[i].state = state;
 }
@@ -1475,6 +1477,8 @@ void TuckerEngine::updateSprite_locationNum23_2(int i) {
 				state = (getRandomNumber() < 25000) ? 22 : 23;
 			}
 		}
+	} else {
+		state = 24;
 	}
 	_spritesTable[i].state = state;
 }

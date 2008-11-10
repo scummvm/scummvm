@@ -794,7 +794,8 @@ protected:
 	static int _objectKeysPosYTable[80];
 	static int _objectKeysLocationTable[80];
 	static int _mapSequenceFlagsLocationTable[70];
-	static const int _charWidthCharset2[58];
+	static const uint8 _charWidthCharset1[224];
+	static const uint8 _charWidthCharset2[58];
 };
 
 } // namespace Tucker

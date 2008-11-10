@@ -328,12 +328,8 @@ void TuckerEngine::mainLoop() {
 	strcpy(_fileToLoad, "csdata.c");
 	_csDataBuf = loadFile();
 	_csDataSize = _fileLoadSize;
-	strcpy(_fileToLoad, "nofiles.dta");
-	loadFile(_loadTempBuf);
-	if (_fileLoadSize > 1) {
-		_maxSaveGameSlot = _loadTempBuf[0];
-		_currentSaveGameSlot = _loadTempBuf[4];
-	}
+	_currentSaveGameSlot = _firstSaveGameSlot = 1;
+	_maxSaveGameSlot = _lastSaveGameSlot = 99;
 	loadBudSpr(0);
 	loadCursor();
 	setCursorNum(_cursorNum);
@@ -927,7 +923,7 @@ void TuckerEngine::fadeOutPalette(int colorsCount) {
 	}
 	_system->setPalette(pal, 0, colorsCount);
 	_system->updateScreen();
-	_system->delayMillis(20);
+	waitForTimer(1);
 }
 
 void TuckerEngine::fadeInPalette(int colorsCount) {
@@ -941,7 +937,7 @@ void TuckerEngine::fadeInPalette(int colorsCount) {
 	}
 	_system->setPalette(pal, 0, colorsCount);
 	_system->updateScreen();
-	_system->delayMillis(20);
+	waitForTimer(1);
 }
 
 void TuckerEngine::fadePaletteColor(int color, int step) {

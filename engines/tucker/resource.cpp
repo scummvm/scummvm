@@ -163,10 +163,12 @@ public:
 
 uint8 *TuckerEngine::loadFile(uint8 *p) {
 	_fileLoadSize = 0;
+	bool decode = false;
 	if (_useEnc) {
 		char *ext = strrchr(_fileToLoad, '.');
 		if (ext && strcmp(ext + 1, "c") == 0) {
 			strcpy(ext + 1, "enc");
+			decode = true;
 		}
 	}
 	Common::File f;
@@ -179,7 +181,7 @@ uint8 *TuckerEngine::loadFile(uint8 *p) {
 	}
 	if (p) {
 		f.read(p, sz);
-		if (_useEnc) {
+		if (decode) {
 			decodeData(p, sz);
 		}
 		_fileLoadSize = sz;
@@ -258,9 +260,7 @@ void TuckerEngine::loadCharset() {
 void TuckerEngine::loadCharset2() {
 	_charWidthTable[58] = 7;
 	_charWidthTable[32] = 15;
-	for (int i = 0; i < 58; ++i) {
-		_charWidthTable[65 + i] = _charWidthCharset2[i];
-	}
+	memcpy(_charWidthTable + 65, _charWidthCharset2, 58);
 	strcpy(_fileToLoad, "char2.pcx");
 	loadImage(_loadTempBuf, 0);
 	loadCharsetHelper(kCharSet2CharW, kCharSet2CharH, 16, 6);
@@ -278,11 +278,15 @@ void TuckerEngine::loadCharsetHelper(int charW, int charH, int xSize, int ySize)
 void TuckerEngine::loadCharSizeDta() {
 	strcpy(_fileToLoad, "charsize.dta");
 	loadFile(_loadTempBuf);
-	DataTokenizer t(_loadTempBuf, _fileLoadSize, true);
-	for (int i = 0; i < 256; ++i) {
-		_charWidthTable[i] = t.getNextInteger();
+	if (_fileLoadSize != 0) {
+		DataTokenizer t(_loadTempBuf, _fileLoadSize, true);
+		for (int i = 0; i < 256; ++i) {
+			_charWidthTable[i] = t.getNextInteger();
+		}
+		_charWidthTable[225] = 0;
+	} else {
+		memcpy(_charWidthTable + 32, _charWidthCharset1, 224);
 	}
-	_charWidthTable[225] = 0;
 }
 
 void TuckerEngine::loadPanel() {
