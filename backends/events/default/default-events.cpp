@@ -469,14 +469,22 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			break;
 
 		case Common::EVENT_RTL:
-			_shouldRTL = true;
+			if (ConfMan.getBool("confirm_exit")) {
+				if (g_engine)
+					g_engine->pauseEngine(true);
+				GUI::MessageDialog alert("Do you really want to return to the Launcher?", "Launcher", "Cancel");
+				result = _shouldRTL = (alert.runModal() == GUI::kMessageOK);
+				if (g_engine)
+					g_engine->pauseEngine(false);
+			} else
+				_shouldRTL = true;
 			break;
 
 		case Common::EVENT_QUIT:
 			if (ConfMan.getBool("confirm_exit")) {
 				if (g_engine)
 					g_engine->pauseEngine(true);
-				GUI::MessageDialog alert("Do you really want to quit?", "Yes", "No");
+				GUI::MessageDialog alert("Do you really want to quit?", "Quit", "Cancel");
 				result = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
 				if (g_engine)
 					g_engine->pauseEngine(false);
