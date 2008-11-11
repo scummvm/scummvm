@@ -35,7 +35,7 @@
 namespace Tucker {
 
 TuckerEngine::TuckerEngine(OSystem *system, Common::Language language)
-	: Engine(system) {
+	: Engine(system), _lang(language) {
 }
 
 TuckerEngine::~TuckerEngine() {
@@ -51,6 +51,10 @@ Common::Error TuckerEngine::init() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	return Common::kNoError;
+}
+
+bool TuckerEngine::hasFeature(EngineFeature f) const {
+	return (f == kSupportsRTL);
 }
 
 Common::Error TuckerEngine::go() {
@@ -469,30 +473,7 @@ void TuckerEngine::mainLoop() {
 			if (_backgroundSpriteCurrentAnimation > -1 && _backgroundSpriteCurrentFrame > 0) {
 				drawBackgroundSprites(0);
 			} else {
-				int offset;
-				SpriteFrame *chr = &_spriteFramesTable[_currentSpriteAnimationFrame];
-				if (_mirroredDrawing == 0) {
-					offset = (_yPosCurrent + _mainSpritesBaseOffset - 54 + chr->yOffset) * 640 + _xPosCurrent;
-					offset += chr->xOffset - 14;
-				} else {
-					offset = (_yPosCurrent + _mainSpritesBaseOffset - 54 + chr->yOffset) * 640 + _xPosCurrent;
-					offset -= chr->xSize + chr->xOffset - 14;
-				}
-				Graphics::decodeRLE_248(_locationBackgroundGfxBuf + offset, _spritesGfxBuf + chr->sourceOffset, chr->xSize, chr->ySize,
-					chr->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0);
-				if (_currentSpriteAnimationLength > 1) {
-					SpriteFrame *chr2 = &_spriteFramesTable[_currentSpriteAnimationFrame2];
-					if (_mirroredDrawing == 0) {
-						offset = (_yPosCurrent + _mainSpritesBaseOffset - 54 + chr2->yOffset) * 640 + _xPosCurrent;
-						offset += chr2->xOffset - 14;
-					} else {
-						offset = (_yPosCurrent + _mainSpritesBaseOffset - 54 + chr2->yOffset) * 640 + _xPosCurrent;
-						offset -= chr2->xSize + chr2->xOffset - 14;
-					}
-					Graphics::decodeRLE_248(_locationBackgroundGfxBuf + offset, _spritesGfxBuf + chr2->sourceOffset, chr2->xSize, chr2->ySize,
-						_spriteFramesTable[_currentSpriteAnimationFrame].yOffset, // _currentCharacter instead ?
-						_locationHeightTable[_locationNum], _mirroredDrawing != 0);
-				}
+				drawCurrentSprite();
 			}
 		}
 		if (_locationHeight == 140) {
@@ -571,6 +552,7 @@ void TuckerEngine::mainLoop() {
 	if (_flagsTable[100] != 1) {
 		handleCongratulationsSequence();
 	}
+	closeCompressedSoundFile();
 	freeBuffers();
 }
 
@@ -1700,6 +1682,33 @@ void TuckerEngine::drawBackgroundSprites(int flipX) {
 	}
 }
 
+void TuckerEngine::drawCurrentSprite() {
+	int offset;
+	SpriteFrame *chr = &_spriteFramesTable[_currentSpriteAnimationFrame];
+	if (_mirroredDrawing == 0) {
+		offset = (_yPosCurrent + _mainSpritesBaseOffset - 54 + chr->yOffset) * 640 + _xPosCurrent;
+		offset += chr->xOffset - 14;
+	} else {
+		offset = (_yPosCurrent + _mainSpritesBaseOffset - 54 + chr->yOffset) * 640 + _xPosCurrent;
+		offset -= chr->xSize + chr->xOffset - 14;
+	}
+	Graphics::decodeRLE_248(_locationBackgroundGfxBuf + offset, _spritesGfxBuf + chr->sourceOffset, chr->xSize, chr->ySize,
+		chr->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0);
+	if (_currentSpriteAnimationLength > 1) {
+		SpriteFrame *chr2 = &_spriteFramesTable[_currentSpriteAnimationFrame2];
+		if (_mirroredDrawing == 0) {
+			offset = (_yPosCurrent + _mainSpritesBaseOffset - 54 + chr2->yOffset) * 640 + _xPosCurrent;
+			offset += chr2->xOffset - 14;
+		} else {
+			offset = (_yPosCurrent + _mainSpritesBaseOffset - 54 + chr2->yOffset) * 640 + _xPosCurrent;
+			offset -= chr2->xSize + chr2->xOffset - 14;
+		}
+		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + offset, _spritesGfxBuf + chr2->sourceOffset, chr2->xSize, chr2->ySize,
+			_spriteFramesTable[_currentSpriteAnimationFrame].yOffset, // _currentCharacter instead ?
+			_locationHeightTable[_locationNum], _mirroredDrawing != 0);
+	}
+}
+
 void TuckerEngine::setVolumeSound(int index, int volume) {
 	if (volume < 0) {
 		volume = 0;
@@ -2808,7 +2817,7 @@ void TuckerEngine::drawString2(int x, int y, int num) {
 	int pos = getPositionForLine(num, _ptTextBuf);
 	while (_ptTextBuf[pos] != '\n') {
 		const uint8 chr = _ptTextBuf[pos];
-		Graphics::drawStringChar2(dst, chr, 640, 1, _charsetGfxBuf);
+		Graphics::drawStringChar(dst, chr, 640, 1, _charsetGfxBuf);
 		dst += _charWidthTable[chr];
 		++pos;
 	}

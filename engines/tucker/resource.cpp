@@ -203,6 +203,10 @@ void TuckerEngine::openCompressedSoundFile() {
 	}
 }
 
+void TuckerEngine::closeCompressedSoundFile() {
+	_fCompressedSound.close();
+}
+
 void TuckerEngine::loadImage(uint8 *dst, int type) {
 	int count = 0;
 	Common::File f;
@@ -254,7 +258,8 @@ void TuckerEngine::loadCursor() {
 void TuckerEngine::loadCharset() {
 	strcpy(_fileToLoad, "charset.pcx");
 	loadImage(_loadTempBuf, 0);
-	loadCharsetHelper(kCharSet1CharW, kCharSet1CharH, 32, 7);
+	Graphics::_charset = (_lang == Common::FR_FRA) ? &Graphics::_frCharset : &Graphics::_enCharset;
+	loadCharsetHelper();
 }
 
 void TuckerEngine::loadCharset2() {
@@ -263,10 +268,15 @@ void TuckerEngine::loadCharset2() {
 	memcpy(_charWidthTable + 65, _charWidthCharset2, 58);
 	strcpy(_fileToLoad, "char2.pcx");
 	loadImage(_loadTempBuf, 0);
-	loadCharsetHelper(kCharSet2CharW, kCharSet2CharH, 16, 6);
+	Graphics::_charset = &Graphics::_creditsCharset;
+	loadCharsetHelper();
 }
 
-void TuckerEngine::loadCharsetHelper(int charW, int charH, int xSize, int ySize) {
+void TuckerEngine::loadCharsetHelper() {
+	const int charW = Graphics::_charset->charW;
+	const int charH = Graphics::_charset->charH;
+	const int xSize = Graphics::_charset->xCount;
+	const int ySize = Graphics::_charset->yCount;
 	int offset = 0;
 	for (int y = 0; y < ySize; ++y) {
 		for (int x = 0; x < xSize; ++x) {

@@ -210,7 +210,7 @@ public:
 
 	virtual Common::Error init();
 	virtual Common::Error go();
-	virtual bool hasFeature(EngineFeature f) const { return false; }
+	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 
 protected:
@@ -261,6 +261,7 @@ protected:
 	void drawData3();
 	void execData3PreUpdate();
 	void drawBackgroundSprites(int flipX);
+	void drawCurrentSprite();
 	void setVolumeSound(int index, int volume);
 	void setVolumeMusic(int index, int volume);
 	void startSound(int offset, int index, int volume);
@@ -510,12 +511,13 @@ protected:
 	int handleSpecialObjectSelectionSequence();
 
 	void openCompressedSoundFile();
+	void closeCompressedSoundFile();
 	uint8 *loadFile(uint8 *p = 0);
 	void loadImage(uint8 *dst, int a);
 	void loadCursor();
 	void loadCharset();
 	void loadCharset2();
-	void loadCharsetHelper(int charW, int charH, int xSize, int ySize);
+	void loadCharsetHelper();
 	void loadCharSizeDta();
 	void loadPanel();
 	void loadBudSpr(int startOffset);
@@ -538,6 +540,7 @@ protected:
 
 
 	Common::RandomSource _rnd;
+	Common::Language _lang;
 
 	int _quitGame;
 	bool _fastMode;

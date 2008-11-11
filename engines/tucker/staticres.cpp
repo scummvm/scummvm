@@ -24,6 +24,7 @@
  */
 
 #include "tucker/tucker.h"
+#include "tucker/graphics.h"
 
 namespace Tucker {
 
@@ -232,5 +233,13 @@ const uint8 TuckerEngine::_charWidthCharset2[58] = {
 	0x13, 0x0F, 0x10, 0x10, 0x10, 0x0E, 0x11, 0x10, 0x0D, 0x0A, 0x11, 0x0D, 0x14, 0x13, 0x13, 0x11,
 	0x13, 0x12, 0x10, 0x11, 0x13, 0x14, 0x14, 0x10, 0x13, 0x10,
 };
+
+const Graphics::Charset Graphics::_enCharset = { 10, 8, 32, 3 };
+
+const Graphics::Charset Graphics::_frCharset = { 10, 10, 32, 7 };
+
+const Graphics::Charset Graphics::_creditsCharset = { 19, 10, 16, 7 };
+
+const Graphics::Charset *Graphics::_charset = 0;
 
 } // namespace Tucker

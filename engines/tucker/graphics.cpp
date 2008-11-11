@@ -223,36 +223,23 @@ void Graphics::copyTo640(uint8 *dst, const uint8 *src, int w, int srcPitch, int 
 }
 
 void Graphics::drawStringChar(uint8 *dst, uint8 chr, int pitch, uint8 chrColor, const uint8 *src) {
-	if (chr < 32 || chr - 32 >= kCharSet1CharsCount) {
+	if (chr < 32 || chr - 32 >= _charset->xCount * _charset->yCount) {
 		return;
 	}
-	int offset = (chr - 32) * kCharSet1CharSize;
-	for (int y = 0; y < kCharSet1CharH; ++y) {
-		for (int x = 0; x < kCharSet1CharW; ++x) {
+	int offset = (chr - 32) * _charset->charH * _charset->charW;
+	for (int y = 0; y < _charset->charH; ++y) {
+		for (int x = 0; x < _charset->charW; ++x) {
 			const int color = src[offset++];
 			if (color != 0) {
-				dst[x] = (color == 128) ? color : chrColor;
+				if (_charset == &_creditsCharset) {
+					dst[x] = color;
+				} else {
+					dst[x] = (color == 128) ? color : chrColor;
+				}
 			}
 		}
 		dst += pitch;
 	}
 }
-
-void Graphics::drawStringChar2(uint8 *dst, uint8 chr, int pitch, uint8 chrColor, const uint8 *src) {
-	if (chr < 32 || chr - 32 >= kCharSet2CharsCount) {
-		return;
-	}
-	int offset = (chr - 32) * kCharSet2CharSize;
-	for (int y = 0; y < kCharSet2CharH; ++y) {
-		for (int x = 0; x < kCharSet2CharW; ++x) {
-			const int color = src[offset++];
-			if (color != 0) {
-				dst[x] = color;
-			}
-		}
-		dst += pitch;
-	}
-}
-
 
 } // namespace Tucker
