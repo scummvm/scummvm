@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	object.o \
 	options.o \
 	PopUpWidget.o \
+	saveload.o \
 	ScrollBarWidget.o \
 	TabWidget.o \
 	themebrowser.o \

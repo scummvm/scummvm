@@ -35,8 +35,8 @@
 #include "gui/newgui.h"
 #include "gui/launcher.h"
 #include "gui/ListWidget.h"
-
 #include "gui/ThemeEval.h"
+#include "gui/saveload.h"
 
 #include "engines/dialogs.h"
 #include "engines/engine.h"

@@ -22,60 +22,60 @@
  * $Id$
  */
 
-#ifndef GUI_LAUNCHER_DIALOG_H
-#define GUI_LAUNCHER_DIALOG_H
+#ifndef GUI_SAVELOAD_DIALOG_H
+#define GUI_SAVELOAD_DIALOG_H
 
 #include "gui/dialog.h"
-#include "engines/game.h"
+//#include "engines/game.h"
+#include "engines/metaengine.h"
+//#include "common/str.h"
 
 namespace GUI {
 
-class BrowserDialog;
 class ListWidget;
 class GraphicsWidget;
-class SaveLoadChooser;
 
-Common::String addGameToConf(const GameDescriptor &result);
-
-class LauncherDialog : public Dialog {
+class SaveLoadChooser : public GUI::Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
-public:
-	LauncherDialog();
-	~LauncherDialog();
-
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-
-	virtual void handleKeyDown(Common::KeyState state);
-	virtual void handleKeyUp(Common::KeyState state);
-
 protected:
-	ListWidget		*_list;
-	ButtonWidget	*_addButton;
-	Widget			*_startButton;
-	Widget			*_loadButton;
-	Widget			*_editButton;
-	Widget			*_removeButton;
-#ifndef DISABLE_FANCY_THEMES
-	GraphicsWidget		*_logo;
-#endif
-	StringList		_domains;
-	BrowserDialog	*_browser;
-	SaveLoadChooser	*_loadDialog;
+	GUI::ListWidget		*_list;
+	GUI::ButtonWidget	*_chooseButton;
+	GUI::ButtonWidget	*_deleteButton;
+	GUI::GraphicsWidget	*_gfxWidget;
+	GUI::ContainerWidget	*_container;
+	GUI::StaticTextWidget	*_date;
+	GUI::StaticTextWidget	*_time;
+	GUI::StaticTextWidget	*_playtime;
+
+	const EnginePlugin		*_plugin;
+	bool					_delSupport;
+	bool					_metaInfoSupport;
+	bool					_thumbnailSupport;
+	bool					_saveDateSupport;
+	bool					_playTimeSupport;
+	String					_target;
+	SaveStateList			_saveList;
+	String					_resultString;
+
+	uint8 _fillR, _fillG, _fillB;
+
+	void updateSaveList();
+	void updateSelection(bool redraw);
+public:
+	SaveLoadChooser(const String &title, const String &buttonLabel);
+	~SaveLoadChooser();
+
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	void setList(const StringList& list);
+	int runModal(const EnginePlugin *plugin, const String &target);
+
+	const Common::String &getResultString() const;
+	void setSaveMode(bool saveMode);
 
 	virtual void reflowLayout();
 
-	void updateListing();
-	void updateButtons();
-
-	void open();
-	void close();
-	virtual void addGame();
-	void removeGame(int item);
-	void editGame(int item);
-	void loadGame(int item);
-	
-	void selectGame(const String &name);
+	virtual void close();
 };
 
 } // End of namespace GUI
