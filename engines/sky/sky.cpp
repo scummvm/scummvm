@@ -116,6 +116,7 @@ public:
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
 };
 
 const char *SkyMetaEngine::getName() const {
@@ -256,6 +257,8 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 
 	return saveList;
 }
+
+int SkyMetaEngine::getMaximumSaveSlot() const { return MAX_SAVE_GAMES; }
 
 #if PLUGIN_ENABLED_DYNAMIC(SKY)
 	REGISTER_PLUGIN_DYNAMIC(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngine);
