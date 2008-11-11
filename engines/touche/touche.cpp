@@ -3286,4 +3286,12 @@ void ToucheEngine::updatePalette() {
 	_system->setPalette(_paletteBuffer, 0, 256);
 }
 
+bool ToucheEngine::canLoadGameStateCurrently() { 
+	return (_flagsTable[618] == 0 && !_hideInventoryTexts);
+}
+
+bool ToucheEngine::canSaveGameStateCurrently() { 
+	return (_flagsTable[618] == 0 && !_hideInventoryTexts);
+}
+
 } // namespace Touche
