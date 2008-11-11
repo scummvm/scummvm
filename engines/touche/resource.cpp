@@ -71,7 +71,12 @@ void ToucheEngine::res_openDataFile() {
 	}
 	for (int i = 0; compressedSpeechFilesTable[i].filename; ++i) {
 		if (_fSpeech[0].open(compressedSpeechFilesTable[i].filename)) {
-			_compressedSpeechData = i;
+			int version = _fSpeech[0].readUint16LE();
+			if (version == kCurrentSpeechDataVersion) {
+				_compressedSpeechData = i;
+				return;
+			}
+			warning("Unhandled version %d for compressed sound file '%s'", version, compressedSpeechFilesTable[i].filename);
 			return;
 		}
 	}
