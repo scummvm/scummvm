@@ -533,8 +533,8 @@ void SagaEngine::syncSoundSettings() {
 }
 
 void SagaEngine::pauseEngineIntern(bool pause) {
-	bool isPaused = (_render->getFlags() & RF_RENDERPAUSE);
-	if (isPaused == pause)
+	bool engineIsPaused = (_render->getFlags() & RF_RENDERPAUSE);
+	if (engineIsPaused == pause)
 		return;
 
 	if (pause) {
