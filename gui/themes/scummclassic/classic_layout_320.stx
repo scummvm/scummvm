@@ -189,7 +189,7 @@
 						type = 'OptionsLabel'
 				/>
 				<widget name = 'subToggleButton'
-						width = 'Globals.Slider.Width'
+						width = '128'
 						height = 'Globals.Slider.Height'
 				/>
 			</layout>
@@ -452,42 +452,42 @@
 	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8' center = 'true'>
 			<widget name = 'Title'
-					width = '120'
+					width = '160'
 					height = 'Globals.Line.Height'
 			/>
 			<widget name = 'Version'
-					width = '120'
+					width = '160'
 					height = 'Globals.Line.Height'
-			/>
-			<widget name = 'Resume'
-					width = '70'
-					height = 'Globals.Button.Height'
 			/>
 			<space size = '4'/>
 			<widget name = 'Load'
-					width = '70'
+					width = '120'
 					height = 'Globals.Button.Height'
 			/>
 			<widget name = 'Save'
-					width = '70'
+					width = '120'
 					height = 'Globals.Button.Height'
 			/>
 			<space size = '4'/>
 			<widget name = 'Options'
-					width = '70'
+					width = '120'
 					height = 'Globals.Button.Height'
 			/>
 			<widget name = 'About'
-					width = '70'
+					width = '120'
 					height = 'Globals.Button.Height'
 			/>
 			<space size = '4'/>
+			<widget name = 'Resume'
+					width = '120'
+					height = 'Globals.Button.Height'
+			/>
 			<widget name = 'RTL'
-					width = '70'
+					width = '120'
 					height = 'Globals.Button.Height'
 			/>
 			<widget name = 'Quit'
-					width = '70'
+					width = '120'
 					height = 'Globals.Button.Height'
 			/>
 		</layout>
@@ -562,7 +562,7 @@
 						type = 'OptionsLabel'
 				/>
 				<widget name = 'subToggleButton'
-						width = '92'
+						width = '128'
 						height = 'Globals.Slider.Height'
 				/>
 			</layout>
