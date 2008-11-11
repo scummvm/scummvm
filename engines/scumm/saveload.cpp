@@ -81,8 +81,11 @@ Common::Error ScummEngine::loadGameState(int slot) {
 }
 
 bool ScummEngine::canLoadGameStateCurrently() {
-	// FIXME: For now always allow loading
-	return true;
+	// FIXME: For now always allow loading in V0-V3 games
+	// FIXME: Actually, we might wish to support loading in more places.
+	// As long as we are sure it won't cause any problems... Are we
+	// aware of *any* spots where loading is not supported?
+	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
 }
 
 Common::Error ScummEngine::saveGameState(int slot, const char *desc) {
@@ -91,9 +94,11 @@ Common::Error ScummEngine::saveGameState(int slot, const char *desc) {
 }
 
 bool ScummEngine::canSaveGameStateCurrently() {
-	// FIXME: For now always allow saving
-	return true;
-	return 0;
+	// FIXME: For now always allow loading in V0-V3 games
+	// TODO: Should we disallow saving in some more places,
+	// e.g. when a SAN movie is playing? Not sure whether the
+	// original EXE allowed this.
+	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
 }
 
 
