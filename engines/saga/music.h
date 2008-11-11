@@ -113,6 +113,7 @@ public:
 	bool hasAdlib()			{ return _adlib; }
 	void setPassThrough(bool b)	{ _player->setPassThrough(b); }
 	bool isPlaying(void);
+	bool hasDigitalMusic() { return _digitalMusic; }
 
 	void play(uint32 resourceId, MusicFlags flags = MUSIC_DEFAULT);
 	void pause(void);
@@ -138,6 +139,7 @@ private:
 	int _targetVolume;
 	int _currentVolume;
 	int _currentVolumePercent;
+	bool _digitalMusic;
 
 	ResourceContext *_digitalMusicContext;
 	MidiParser *xmidiParser;

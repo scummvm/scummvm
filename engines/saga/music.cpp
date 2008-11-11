@@ -366,6 +366,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver) : _vm(vm),
 	_songTable = 0;
 
 	_midiMusicData = NULL;
+	_digitalMusic = false;
 }
 
 Music::~Music() {
@@ -474,6 +475,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		stream = Audio::AudioStream::openStreamFile(trackName[i], 0, 10000 * 40 / 3, (flags == MUSIC_LOOP) ? 0 : 1);
 		if (stream) {
 			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
+			_digitalMusic = true;
 			return;
 		}
 	}
@@ -497,6 +499,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	if (audioStream) {
 		debug(2, "Playing digitized music");
 		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, audioStream);
+		_digitalMusic = true;
 		return;
 	}
 

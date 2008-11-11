@@ -42,7 +42,8 @@
 namespace Saga {
 
 const char *test_txt = "The quick brown fox jumped over the lazy dog. She sells sea shells down by the sea shore.";
-const char *pauseString = "PAWS GAME";
+const char *pauseStringITE = "PAWS GAME";
+const char *pauseStringIHNM = "Game Paused";
 
 Render::Render(SagaEngine *vm, OSystem *system) {
 	_vm = vm;
@@ -153,10 +154,17 @@ void Render::drawScene() {
 
 	// Display "paused game" message, if applicable
 	if (_flags & RF_RENDERPAUSE) {
-		textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(kKnownFontPause, pauseString, 0, kFontOutline)) / 2;
-		textPoint.y = 90;
+		if (_vm->getGameType() == GType_ITE) {
+			textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(kKnownFontPause, pauseStringITE, 0, kFontOutline)) / 2;
+			textPoint.y = 90;
 
-		_vm->_font->textDraw(kKnownFontPause, backBufferSurface, pauseString, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
+			_vm->_font->textDraw(kKnownFontPause, backBufferSurface, pauseStringITE, textPoint, _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
+		} else {
+			textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(kKnownFontPause, pauseStringIHNM, 0, kFontOutline)) / 2;
+			textPoint.y = 90;
+
+			_vm->_font->textDraw(kKnownFontPause, backBufferSurface, pauseStringIHNM, textPoint, _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
+		}
 	}
 
 	// Update user interface

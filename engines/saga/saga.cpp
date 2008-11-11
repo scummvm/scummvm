@@ -532,4 +532,22 @@ void SagaEngine::syncSoundSettings() {
 	_sound->setVolume();
 }
 
+void SagaEngine::pauseEngineIntern(bool pause) {
+	bool isPaused = (_render->getFlags() & RF_RENDERPAUSE);
+	if (isPaused == pause)
+		return;
+
+	if (pause) {
+		_render->setFlag(RF_RENDERPAUSE);
+		if (!_music->hasDigitalMusic())
+			_music->pause();
+	} else {
+		_render->clearFlag(RF_RENDERPAUSE);
+		if (!_music->hasDigitalMusic())
+			_music->resume();
+	}
+
+	_mixer->pauseAll(pause);
+}
+
 } // End of namespace Saga

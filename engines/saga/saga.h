@@ -493,6 +493,7 @@ public:
 	virtual Common::Error go();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
+	virtual void pauseEngineIntern(bool pause);
 
 public:
 	SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc);
