@@ -867,6 +867,12 @@
 				RelativePath="..\..\gui\PopUpWidget.h">
 			</File>
 			<File
+				RelativePath="..\..\gui\saveload.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\saveload.h">
+			</File>
+			<File
 				RelativePath="..\..\gui\ScrollBarWidget.cpp">
 			</File>
 			<File
