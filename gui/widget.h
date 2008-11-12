@@ -66,12 +66,6 @@ enum {
 	kCaretBlinkTime = 300
 };
 
-enum WidgetSize {
-	kDefaultWidgetSize,
-	kNormalWidgetSize,
-	kBigWidgetSize
-};
-
 /* Widget */
 class Widget : public GuiObject {
 	friend class Dialog;

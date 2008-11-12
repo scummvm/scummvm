@@ -29,7 +29,6 @@
 		<def var = 'Font.Height' value = '10' />
 		<def var = 'TabLabelWidth' value = '100' />
 
-		<def var = 'WidgetSize' value = 'kNormalWidgetSize' />
 		<def var = 'About.OuterBorder' value = '10'/>
 		<def var = 'PopUpWidget.labelSpacing' value = '6' />
 

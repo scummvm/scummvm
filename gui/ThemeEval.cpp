@@ -38,9 +38,6 @@ void ThemeEval::buildBuiltinVars() {
 	_builtin["kThumbnailWidth"] = kThumbnailWidth;
 	_builtin["kThumbnailHeight"] = kThumbnailHeight1;
 	_builtin["kThumbnailHeight2"] = kThumbnailHeight2;
-	
-	_builtin["kNormalWidgetSize"] = GUI::kNormalWidgetSize;
-	_builtin["kBigWidgetSize"] = GUI::kBigWidgetSize;
 }
 
 void ThemeEval::reset() {

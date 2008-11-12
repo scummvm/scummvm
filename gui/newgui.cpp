@@ -380,10 +380,6 @@ void NewGui::animateCursor() {
 	}
 }
 
-WidgetSize NewGui::getWidgetSize() {
-	return (WidgetSize)(g_gui.xmlEval()->getVar("Globals.WidgetSize"));
-}
-
 void NewGui::clearDragWidget() {
 	if (!_dialogStack.empty())
 		_dialogStack.top()->_dragWidget = 0;

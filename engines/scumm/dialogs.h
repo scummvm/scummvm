@@ -222,8 +222,6 @@ public:
 
 protected:
 	enum {
-		kPercentBarWidth = 50,
-		kBigPercentBarWidth = 75,
 		kDisplayDelay = 1500
 	};
 	Common::String _label;

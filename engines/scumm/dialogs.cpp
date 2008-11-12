@@ -864,11 +864,7 @@ void ValueDisplayDialog::reflowLayout() {
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	if (g_gui.getWidgetSize() == GUI::kBigWidgetSize) {
-		_percentBarWidth = kBigPercentBarWidth;
-	} else {
-		_percentBarWidth = kPercentBarWidth;
-	}
+	_percentBarWidth = screenW * 100 / 640;
 
 	int width = g_gui.getStringWidth(_label) + 16 + _percentBarWidth;
 	int height = g_gui.getFontHeight() + 4 * 2;
