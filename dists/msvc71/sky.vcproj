@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="7,10"
 	Name="sky"
 	ProjectGUID="{B5527758-2F51-4CCD-AAE1-B0E28654BD6A}"
 	Keyword="Win32Proj">
@@ -179,6 +179,9 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\sky\debug.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\sky\detection.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\sky\disk.cpp">

@@ -252,6 +252,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\sky\detection.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\sky\disk.cpp"
 			>
 		</File>
