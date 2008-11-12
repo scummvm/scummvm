@@ -49,21 +49,20 @@ int NewFont::getCharWidth(byte chr) const {
 }
 
 
-template <int bytesPerPixel>
-void drawCharIntern(byte *ptr, uint pitch, const bitmap_t *src, int h, int minX, int maxX, const uint32 color) {
+template <typename PixelType>
+void drawCharIntern(byte *ptr, uint pitch, const bitmap_t *src, int h, int minX, int maxX, const PixelType color) {
 	while (h-- > 0) {
-		const bitmap_t buffer = READ_UINT16(src);
+		bitmap_t buffer = READ_UINT16(src);
 		src++;
 
-		int x = minX;
-		uint mask = 0x8000 >> minX;
-		for (; x < maxX; x++, mask >>= 1) {
-			if ((buffer & mask) != 0) {
-				if (bytesPerPixel == 1)
-					ptr[x] = color;
-				else if (bytesPerPixel == 2)
-					((uint16 *)ptr)[x] = color;
-			}
+		buffer &= ~((1 << (16-maxX)) - 1);
+		buffer <<= minX;
+		PixelType *tmp = (PixelType *)ptr;
+		while (buffer != 0) {
+			if ((buffer & 0x8000) != 0)
+				*tmp = color;
+			tmp++;
+			buffer <<= 1;
 		}
 		
 		ptr += pitch;
@@ -73,7 +72,7 @@ void drawCharIntern(byte *ptr, uint pitch, const bitmap_t *src, int h, int minX,
 void NewFont::drawChar(Surface *dst, byte chr, const int tx, const int ty, const uint32 color) const {
 	assert(dst != 0);
 
-	assert(desc.bits != 0 && desc.maxwidth <= 17);
+	assert(desc.bits != 0 && desc.maxwidth <= 16);
 	assert(dst->bytesPerPixel == 1 || dst->bytesPerPixel == 2);
 
 	// If this character is not included in the font, use the default char.
@@ -107,9 +106,9 @@ void NewFont::drawChar(Surface *dst, byte chr, const int tx, const int ty, const
 	y -= MAX(0, ty + desc.ascent - bby - dst->h);
 
 	if (dst->bytesPerPixel == 1)
-		drawCharIntern<1>(ptr, dst->pitch, tmp, y, MAX(0, -(tx + bbx)), MIN(bbw, dst->w - tx - bbx), color);
+		drawCharIntern<byte>(ptr, dst->pitch, tmp, y, MAX(0, -(tx + bbx)), MIN(bbw, dst->w - tx - bbx), color);
 	else if (dst->bytesPerPixel == 2)
-		drawCharIntern<2>(ptr, dst->pitch, tmp, y, MAX(0, -(tx + bbx)), MIN(bbw, dst->w - tx - bbx), color);
+		drawCharIntern<uint16>(ptr, dst->pitch, tmp, y, MAX(0, -(tx + bbx)), MIN(bbw, dst->w - tx - bbx), color);
 }
 
 
