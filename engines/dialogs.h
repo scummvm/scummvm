@@ -27,12 +27,15 @@
 
 #include "common/str.h"
 #include "gui/dialog.h"
-#include "gui/launcher.h"
 #include "gui/options.h"
-#include "gui/widget.h"
 
-#include "engines/engine.h"
+class Engine;
 
+namespace GUI {
+	class ButtonWidget;
+	class GraphicsWidget;
+	class SaveLoadChooser;
+}
 
 class MainMenuDialog : public GUI::Dialog {
 public:
