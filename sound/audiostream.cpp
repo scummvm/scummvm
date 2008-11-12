@@ -133,19 +133,9 @@ public:
 	LinearMemoryStream(int rate, const byte *ptr, uint len, uint loopOffset, uint loopLen, bool autoFreeMemory)
 		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate), _playtime(calculatePlayTime(rate, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1))) {
 
-		// Verify the buffer sizes are sane
-		if (is16Bit && stereo) {
-			assert((len & 3) == 0 && (loopLen & 3) == 0);
-		} else if (is16Bit || stereo) {
-			assert((len & 1) == 0 && (loopLen & 1) == 0);
-		}
-
 		if (loopLen) {
 			_loopPtr = _ptr + loopOffset;
 			_loopEnd = _loopPtr + loopLen;
-		}
-		if (stereo)	{ // Stereo requires even sized data
-			assert(len % 2 == 0);
 		}
 
 		_origPtr = autoFreeMemory ? ptr : 0;
@@ -220,6 +210,13 @@ AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte f
 
 		loopOffset = loopStart;
 		loopLen = loopEnd - loopStart;
+	}
+
+	// Verify the buffer sizes are sane
+	if (is16Bit && isStereo) {
+		assert((len & 3) == 0 && (loopLen & 3) == 0);
+	} else if (is16Bit || isStereo) {
+		assert((len & 1) == 0 && (loopLen & 1) == 0);
 	}
 
 	if (isStereo) {
