@@ -491,11 +491,7 @@ void ListWidget::reflowLayout() {
 	_hlLeftPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.hlLeftPadding", 0);
 	_hlRightPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.hlRightPadding", 0);
 
-	if (g_gui.getWidgetSize() == kBigWidgetSize) {
-		_scrollBarWidth =  kBigScrollBarWidth;
-	} else {
-		_scrollBarWidth = kNormalScrollBarWidth;
-	}
+	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 
 	// HACK: Once we take padding into account, there are times where
 	// integer rounding leaves a big chunk of white space in the bottom

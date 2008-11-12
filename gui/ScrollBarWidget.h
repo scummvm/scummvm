@@ -30,12 +30,6 @@
 namespace GUI {
 
 enum {
-	kNormalScrollBarWidth	= 9,
-	kBigScrollBarWidth		= 15
-};
-
-
-enum {
 	kSetPositionCmd		= 'SETP'
 };
 

@@ -114,11 +114,7 @@ void ConsoleDialog::init() {
 	_h = _h * kConsoleLineHeight + 2;
 
 	// Set scrollbar dimensions
-	int scrollBarWidth;
-	if (g_gui.getWidgetSize() == kBigWidgetSize)
-		scrollBarWidth = kBigScrollBarWidth;
-	else
-		scrollBarWidth = kNormalScrollBarWidth;
+	int scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 	_scrollBar->resize(_w - scrollBarWidth - 1, 0, scrollBarWidth, _h);
 
 	_pageWidth = (_w - scrollBarWidth - 2 - _leftPadding - _topPadding - scrollBarWidth) / kConsoleCharWidth;

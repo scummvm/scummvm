@@ -69,6 +69,9 @@
 		<widget name = 'Console'
 				padding = '7, 5, 5, 5'
 		/>
+		<widget name = 'Scrollbar'
+				size = '9, 0'
+		/>
 		<widget name = 'TabWidget.Tab'
 				size = '45, 16'
 				padding = '0, 0, 2, 0'
