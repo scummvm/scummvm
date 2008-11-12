@@ -1350,6 +1350,7 @@ DECLARE_ZONE_PARSER(label)  {
 
 //			printf("label: %s", _tokens[1]);
 	ctxt.z->_label = _vm->_gfx->renderFloatingLabel(_vm->_labelFont, _tokens[1]);
+	ctxt.z->_flags &= ~kFlagsNoName;
 }
 
 

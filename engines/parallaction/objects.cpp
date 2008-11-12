@@ -158,8 +158,8 @@ Zone::Zone() {
 	_left = _top = _right = _bottom = 0;
 
 	_type = 0;
-	_flags = 0;
 
+	_flags = kFlagsNoName;
 	_label = 0;
 
 	// BRA specific
