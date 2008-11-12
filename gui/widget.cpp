@@ -163,7 +163,7 @@ bool Widget::isVisible() const {
 
 #pragma mark -
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, TextAlignment align)
+StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align)
 	: Widget(boss, x, y, w, h), _align(align) {
 	setFlags(WIDGET_ENABLED);
 	_type = kStaticTextWidget;
@@ -176,7 +176,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, 
 	_type = kStaticTextWidget;
 	_label = text;
 
-	_align = (Graphics::TextAlignment)g_gui.xmlEval()->getVar(name + ".Align", kTextAlignLeft);
+	_align = (Graphics::TextAlign)g_gui.xmlEval()->getVar(name + ".Align", Graphics::kTextAlignLeft);
 }
 
 void StaticTextWidget::setValue(int value) {
@@ -194,7 +194,7 @@ void StaticTextWidget::setLabel(const Common::String &label) {
 	//_boss->draw();
 }
 
-void StaticTextWidget::setAlign(TextAlignment align) {
+void StaticTextWidget::setAlign(Graphics::TextAlign align) {
 	_align = align;
 	// TODO: We should automatically redraw when the alignment is changed.
 	// See setLabel() for more insights.
@@ -202,13 +202,13 @@ void StaticTextWidget::setAlign(TextAlignment align) {
 
 
 void StaticTextWidget::drawWidget() {
-	g_gui.theme()->drawText(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, g_gui.theme()->convertAligment(_align));
+	g_gui.theme()->drawText(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, _align);
 }
 
 #pragma mark -
 
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, x, y, w, h, label, kTextAlignCenter), CommandSender(boss),
+	: StaticTextWidget(boss, x, y, w, h, label, Graphics::kTextAlignCenter), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;

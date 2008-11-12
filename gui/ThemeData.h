@@ -42,7 +42,7 @@ struct WidgetDrawData {
 	Common::List<Graphics::DrawStep> _steps;
 
 	int _textDataId;
-	GUI::ThemeEngine::TextAlign _textAlignH;
+	Graphics::TextAlign _textAlignH;
 	GUI::ThemeEngine::TextAlignVertical _textAlignV;
 
 	/** Extra space that the widget occupies when it's drawn.
@@ -96,7 +96,7 @@ protected:
 class ThemeItemTextData : public ThemeItem {
 public:
 	ThemeItemTextData(ThemeEngine *engine, const TextDrawData *data, const Common::Rect &area, const Common::String &text,
-		GUI::ThemeEngine::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV,
+		Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV,
 		bool ellipsis, bool restoreBg, int deltaX) :
 		ThemeItem(engine, area), _data(data), _text(text), _alignH(alignH), _alignV(alignV),
 		_ellipsis(ellipsis), _restoreBg(restoreBg), _deltax(deltaX) {}
@@ -106,7 +106,7 @@ public:
 protected:
 	const TextDrawData *_data;
 	Common::String _text;
-	GUI::ThemeEngine::TextAlign _alignH;
+	Graphics::TextAlign _alignH;
 	GUI::ThemeEngine::TextAlignVertical _alignV;
 	bool _ellipsis;
 	bool _restoreBg;

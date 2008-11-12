@@ -177,15 +177,15 @@ bool ThemeParser::parserCallback_bitmap(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_text(ParserNode *node) {		
-	GUI::ThemeEngine::TextAlign alignH;
+	Graphics::TextAlign alignH;
 	GUI::ThemeEngine::TextAlignVertical alignV;
 		
 	if (node->values["horizontal_align"] == "left")
-		alignH = GUI::ThemeEngine::kTextAlignLeft;
+		alignH = Graphics::kTextAlignLeft;
 	else if (node->values["horizontal_align"] == "right")
-		alignH = GUI::ThemeEngine::kTextAlignRight;
+		alignH = Graphics::kTextAlignRight;
 	else if (node->values["horizontal_align"] == "center")
-		alignH = GUI::ThemeEngine::kTextAlignCenter;
+		alignH = Graphics::kTextAlignCenter;
 	else return parserError("Invalid value for text alignment.");
 	
 	if (node->values["vertical_align"] == "top")

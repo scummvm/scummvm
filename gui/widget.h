@@ -145,18 +145,16 @@ protected:
 /* StaticTextWidget */
 class StaticTextWidget : public Widget {
 protected:
-	typedef Graphics::TextAlignment TextAlignment;
-
 	Common::String			_label;
-	TextAlignment			_align;
+	Graphics::TextAlign		_align;
 public:
-	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, TextAlignment align);
+	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align);
 	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text);
 	void setValue(int value);
 	void setLabel(const Common::String &label);
 	const Common::String &getLabel() const		{ return _label; }
-	void setAlign(TextAlignment align);
-	TextAlignment getAlign() const		{ return _align; }
+	void setAlign(Graphics::TextAlign align);
+	Graphics::TextAlign getAlign() const		{ return _align; }
 
 protected:
 	void drawWidget();

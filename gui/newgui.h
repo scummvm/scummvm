@@ -50,11 +50,6 @@ class ThemeEval;
 #define kLineHeight	(g_gui.getFontHeight() + 2)
 
 
-using Graphics::TextAlignment;
-using Graphics::kTextAlignCenter;
-using Graphics::kTextAlignLeft;
-using Graphics::kTextAlignRight;
-
 
 // Simple dialog stack class
 // Anybody nesting dialogs deeper than 4 is mad anyway
@@ -65,7 +60,6 @@ typedef Common::FixedStack<Dialog *> DialogStack;
  * GUI manager singleton.
  */
 class NewGui : public Common::Singleton<NewGui> {
-	typedef Common::String String;
 	friend class Dialog;
 	friend class Common::Singleton<SingletonBaseType>;
 	NewGui();

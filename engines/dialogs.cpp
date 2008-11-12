@@ -49,8 +49,6 @@
 using GUI::CommandSender;
 using GUI::StaticTextWidget;
 using GUI::kCloseCmd;
-using GUI::kTextAlignCenter;
-using GUI::kTextAlignLeft;
 using GUI::WIDGET_ENABLED;
 
 typedef GUI::OptionsDialog GUI_OptionsDialog;
@@ -80,15 +78,15 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageLogoSmall));
 	} else {
 		StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
-		title->setAlign(GUI::kTextAlignCenter);
+		title->setAlign(Graphics::kTextAlignCenter);
 	}
 #else
 	StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
-	title->setAlign(GUI::kTextAlignCenter);
+	title->setAlign(Graphics::kTextAlignCenter);
 #endif
 
 	StaticTextWidget *version = new StaticTextWidget(this, "GlobalMenu.Version", gScummVMVersionDate);
-	version->setAlign(GUI::kTextAlignCenter);
+	version->setAlign(Graphics::kTextAlignCenter);
 		
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", "Resume", kPlayCmd, 'P');
 
@@ -223,7 +221,7 @@ void MainMenuDialog::reflowLayout() {
 		GUI::StaticTextWidget *title = (StaticTextWidget *)findWidget("GlobalMenu.Title");
 		if (!title) {
 			title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
-			title->setAlign(GUI::kTextAlignCenter);
+			title->setAlign(Graphics::kTextAlignCenter);
 		}
 
 		if (_logo) {

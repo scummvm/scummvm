@@ -507,7 +507,7 @@ public:
 	 * method.
 	 */
 	virtual void drawString(const Graphics::Font *font, const Common::String &text,
-	                        const Common::Rect &area, GUI::ThemeEngine::TextAlign alignH,
+	                        const Common::Rect &area, Graphics::TextAlign alignH,
 	                        GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool useEllipsis) = 0;
 
 	/**

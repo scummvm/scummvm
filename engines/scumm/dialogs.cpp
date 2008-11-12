@@ -62,8 +62,8 @@
 using GUI::CommandSender;
 using GUI::StaticTextWidget;
 using GUI::kCloseCmd;
-using GUI::kTextAlignCenter;
-using GUI::kTextAlignLeft;
+using Graphics::kTextAlignCenter;
+using Graphics::kTextAlignLeft;
 using GUI::WIDGET_ENABLED;
 
 typedef GUI::OptionsDialog GUI_OptionsDialog;

@@ -350,7 +350,7 @@ void ThemeEngine::addDrawStep(const Common::String &drawDataId, const Graphics::
 	_widgets[id]->_steps.push_back(step);
 }
 
-bool ThemeEngine::addTextData(const Common::String &drawDataId, const Common::String &textDataId, TextAlign alignH, TextAlignVertical alignV) {
+bool ThemeEngine::addTextData(const Common::String &drawDataId, const Common::String &textDataId, Graphics::TextAlign alignH, TextAlignVertical alignV) {
 	DrawData id = getDrawDataId(drawDataId);
 	TextData textId = getTextDataId(textDataId);
 
@@ -601,7 +601,7 @@ void ThemeEngine::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic) 
 }
 
 void ThemeEngine::queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
-	bool ellipsis, TextAlign alignH, TextAlignVertical alignV, int deltax) {
+	bool ellipsis, Graphics::TextAlign alignH, TextAlignVertical alignV, int deltax) {
 
 	if (_texts[type] == 0)
 		return;
@@ -771,7 +771,7 @@ void ThemeEngine::drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo s
 		queueDD(kDDCaret, r);
 }
 
-void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state, TextAlign align) {
+void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state, Graphics::TextAlign align) {
 	if (!ready())
 		return;
 
@@ -842,7 +842,7 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, co
 	}
 }
 
-void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
+void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, Graphics::TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
 	if (!ready())
 		return;
 

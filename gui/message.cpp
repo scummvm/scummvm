@@ -78,7 +78,7 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	// Each line is represented by one static text item.
 	for (int i = 0; i < lineCount; i++) {
 		new StaticTextWidget(this, 10, 10 + i * kLineHeight, maxlineWidth, kLineHeight,
-								lines[i], kTextAlignCenter);
+								lines[i], Graphics::kTextAlignCenter);
 	}
 
 	if (defaultButton && altButton) {

@@ -449,7 +449,7 @@ colorFill(PixelType *first, PixelType *last, PixelType color) {
 template <typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area, 
-			GUI::ThemeEngine::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool ellipsis) {
+			Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool ellipsis) {
 
 	int offset = area.top;
 	
@@ -466,7 +466,7 @@ drawString(const Graphics::Font *font, const Common::String &text, const Common:
 		}
 	}
 	
-	font->drawString(_activeSurface, text, area.left, offset, area.width(), _fgColor, (Graphics::TextAlignment)alignH, deltax, ellipsis);
+	font->drawString(_activeSurface, text, area.left, offset, area.width(), _fgColor, alignH, deltax, ellipsis);
 }
 
 /** LINES **/

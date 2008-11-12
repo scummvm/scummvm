@@ -34,11 +34,11 @@ class SeekableReadStream;
 
 namespace Graphics {
 
-// Text alignment modes for drawString()
-enum TextAlignment {
-	kTextAlignLeft,
-	kTextAlignCenter,
-	kTextAlignRight
+/** Text alignment modes */
+enum TextAlign {
+	kTextAlignLeft,		//!< Text should be aligned to the left
+	kTextAlignCenter,	//!< Text should be centered
+	kTextAlignRight		//!< Text should be aligned to the right
 };
 
 /**
@@ -57,7 +57,7 @@ public:
 	virtual int getCharWidth(byte chr) const = 0;
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const = 0;
 
-	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlignment align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 
 	/**
 	 * Compute and return the width the string str has when rendered using this font.

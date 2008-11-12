@@ -68,7 +68,7 @@ public:
 		drawBevelSquareAlg(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
 	}
 	void drawString(const Graphics::Font *font, const Common::String &text, 
-					const Common::Rect &area, GUI::ThemeEngine::TextAlign alignH,
+					const Common::Rect &area, Graphics::TextAlign alignH,
 					GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool elipsis);
 
 	void setFgColor(uint8 r, uint8 g, uint8 b) { _fgColor = RGBToColor<PixelFormat>(r, g, b); }

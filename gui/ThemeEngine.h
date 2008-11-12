@@ -35,8 +35,8 @@
 #define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.3"
 
 namespace Graphics {
-struct DrawStep;
-class VectorRenderer;
+	struct DrawStep;
+	class VectorRenderer;
 }
 
 namespace GUI {
@@ -138,13 +138,6 @@ protected:
 	} kTextDataDefaults[];
 
 public:
-	//! Defined the align of the text
-	enum TextAlign {
-		kTextAlignLeft,		//!< Text should be aligned to the left
-		kTextAlignCenter,	//!< Text should be centered
-		kTextAlignRight		//!< Text should be aligned to the right
-	};
-	
 	//! Vertical alignment of the text.
 	enum TextAlignVertical {
 		kTextAlignVBottom,
@@ -336,7 +329,7 @@ public:
 		ScrollbarState, WidgetStateInfo state = kStateEnabled);
 
 	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel,
-		int deltax, WidgetStateInfo state = kStateEnabled, TextAlign align = kTextAlignLeft);
+		int deltax, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 
 	void drawCaret(const Common::Rect &r, bool erase,
 		WidgetStateInfo state = kStateEnabled);
@@ -345,7 +338,7 @@ public:
 
 	void drawDialogBackground(const Common::Rect &r, DialogBackground type, WidgetStateInfo state = kStateEnabled);
 
-	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, TextAlign align = kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold);
+	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold);
 
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled);
 
@@ -436,7 +429,7 @@ public:
 	 *	Adds a new TextStep from the ThemeParser. This will be deprecated/removed once the
 	 *	new Font API is in place.
 	 */
-	bool addTextData(const Common::String &drawDataId, const Common::String &textDataId, TextAlign alignH, TextAlignVertical alignV);
+	bool addTextData(const Common::String &drawDataId, const Common::String &textDataId, Graphics::TextAlign alignH, TextAlignVertical alignV);
 
 	/**
 	 *	Returns if the Theme is ready to draw stuff on screen.
@@ -615,7 +608,7 @@ protected:
 	 */
 	void queueDD(DrawData type,  const Common::Rect &r, uint32 dynamic = 0);
 	void queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
-		bool elipsis, TextAlign alignH = kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0);
+		bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0);
 	void queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha);
 
 	/**
@@ -638,39 +631,6 @@ public:
 	const Graphics::Font *loadFontFromArchive(const Common::String &filename);
 	Common::String genCacheFilename(const char *filename);
 	
-	Graphics::TextAlignment convertAligment(TextAlign align) const {
-		switch (align) {
-		case kTextAlignLeft:
-			return Graphics::kTextAlignLeft;
-			break;
-
-		case kTextAlignRight:
-			return Graphics::kTextAlignRight;
-			break;
-
-		default:
-			break;
-		};
-		return Graphics::kTextAlignCenter;
-	}
-
-	TextAlign convertAligment(Graphics::TextAlignment align) const {
-		switch (align) {
-		case Graphics::kTextAlignLeft:
-			return kTextAlignLeft;
-			break;
-
-		case Graphics::kTextAlignRight:
-			return kTextAlignRight;
-			break;
-
-		default:
-			break;
-		}
-		return kTextAlignCenter;
-	}
-
-
 	bool isThemeLoadingRequired();
 	
 	static bool themeConfigUseable(const Common::FSNode &node, Common::String &themeName);

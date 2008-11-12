@@ -56,9 +56,9 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 
-	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", kTextAlignCenter);
-	_time = new StaticTextWidget(this, 0, 0, 10, 10, "No time saved", kTextAlignCenter);
-	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", kTextAlignCenter);
+	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", Graphics::kTextAlignCenter);
+	_time = new StaticTextWidget(this, 0, 0, 10, 10, "No time saved", Graphics::kTextAlignCenter);
+	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", Graphics::kTextAlignCenter);
 
 	// Buttons
 	new GUI::ButtonWidget(this, "ScummSaveLoad.Cancel", "Cancel", kCloseCmd, 0);

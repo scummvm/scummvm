@@ -772,7 +772,7 @@ int Font::getStringWidth(const Common::String &str) const {
 	return space;
 }
 
-void Font::drawString(Surface *dst, const Common::String &s, int x, int y, int w, uint32 color, TextAlignment align, int deltax, bool useEllipsis) const {
+void Font::drawString(Surface *dst, const Common::String &s, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
 	assert(dst != 0);
 	const int leftX = x, rightX = x + w;
 	uint i;

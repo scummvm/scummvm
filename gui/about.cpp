@@ -218,18 +218,18 @@ void AboutDialog::drawDialog() {
 
 	for (int line = firstLine; line < lastLine; line++) {
 		const char *str = _lines[line].c_str();
-		ThemeEngine::TextAlign align = ThemeEngine::kTextAlignCenter;
+		Graphics::TextAlign align = Graphics::kTextAlignCenter;
 		ThemeEngine::WidgetStateInfo state = ThemeEngine::kStateEnabled;
 		while (str[0] == '\\') {
 			switch (str[1]) {
 			case 'C':
-				align = ThemeEngine::kTextAlignCenter;
+				align = Graphics::kTextAlignCenter;
 				break;
 			case 'L':
-				align = ThemeEngine::kTextAlignLeft;
+				align = Graphics::kTextAlignLeft;
 				break;
 			case 'R':
-				align = ThemeEngine::kTextAlignRight;
+				align = Graphics::kTextAlignRight;
 				break;
 			case 'c':
 				switch (str[2]) {
@@ -262,7 +262,7 @@ void AboutDialog::drawDialog() {
 			str += 2;
 		}
 		// Trim leading whitespaces if center mode is on
-		if (align == ThemeEngine::kTextAlignCenter)
+		if (align == Graphics::kTextAlignCenter)
 			while (*str && *str == ' ')
 				str++;
 
