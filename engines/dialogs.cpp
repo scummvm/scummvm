@@ -48,10 +48,6 @@
 
 using GUI::CommandSender;
 using GUI::StaticTextWidget;
-using GUI::kButtonWidth;
-using GUI::kButtonHeight;
-using GUI::kBigButtonWidth;
-using GUI::kBigButtonHeight;
 using GUI::kCloseCmd;
 using GUI::kTextAlignCenter;
 using GUI::kTextAlignLeft;
@@ -59,8 +55,6 @@ using GUI::WIDGET_ENABLED;
 
 typedef GUI::OptionsDialog GUI_OptionsDialog;
 typedef GUI::Dialog GUI_Dialog;
-
-GlobalDialog::GlobalDialog(Common::String name) : GUI::Dialog(name) {}
 
 enum {
 	kSaveCmd = 'SAVE',
@@ -75,7 +69,7 @@ enum {
 };
 
 MainMenuDialog::MainMenuDialog(Engine *engine)
-	: GlobalDialog("GlobalMenu"), _engine(engine) {
+	: GUI::Dialog("GlobalMenu"), _engine(engine) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
 
 #ifndef DISABLE_FANCY_THEMES
@@ -202,7 +196,7 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		}
 		break;
 	default:
-		GlobalDialog::handleCommand(sender, cmd, data);
+		GUI::Dialog::handleCommand(sender, cmd, data);
 	}
 }
 

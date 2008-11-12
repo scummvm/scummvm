@@ -34,13 +34,7 @@
 #include "engines/engine.h"
 
 
-class GlobalDialog : public GUI::Dialog {
-public:
-	GlobalDialog(Common::String name);
-};
-
-
-class MainMenuDialog : public GlobalDialog {
+class MainMenuDialog : public GUI::Dialog {
 public:
 	MainMenuDialog(Engine *engine);
 	~MainMenuDialog();

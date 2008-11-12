@@ -61,10 +61,6 @@
 
 using GUI::CommandSender;
 using GUI::StaticTextWidget;
-using GUI::kButtonWidth;
-using GUI::kButtonHeight;
-using GUI::kBigButtonWidth;
-using GUI::kBigButtonHeight;
 using GUI::kCloseCmd;
 using GUI::kTextAlignCenter;
 using GUI::kTextAlignLeft;
