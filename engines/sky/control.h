@@ -191,6 +191,12 @@ public:
 	uint16 quickXRestore(uint16 slot);
 	bool loadSaveAllowed(void);
 
+	uint16 _selectedGame;
+	uint16 saveGameToFile(void);
+
+	void loadDescriptions(Common::StringList &list);
+	void saveDescriptions(const Common::StringList &list);
+
 private:
 	int displayMessage(const char *altButton, const char *message, ...);
 
@@ -216,14 +222,10 @@ private:
 	void drawCross(uint16 x, uint16 y);
 
 	uint16 saveRestorePanel(bool allowSave);
-	void loadDescriptions(Common::StringList &list);
-	void saveDescriptions(const Common::StringList &list);
 	void setUpGameSprites(const Common::StringList &saveGameNames, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame);
 	void showSprites(dataFileHeader **nameSprites, bool allowSave);
 	void handleKeyPress(Common::KeyState kbd, Common::String &textBuf);
 
-	uint16 _selectedGame;
-	uint16 saveGameToFile(void);
 	uint32 prepareSaveData(uint8 *destBuf);
 
 	bool autoSaveExists(void);

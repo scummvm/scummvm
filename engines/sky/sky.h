@@ -82,6 +82,11 @@ public:
 	static bool isDemo(void);
 	static bool isCDVersion(void);
 
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const char *desc);
+	bool canLoadGameStateCurrently();
+	bool canSaveGameStateCurrently();
+
 	static void *fetchItem(uint32 num);
 	static void *_itemList[300];
 

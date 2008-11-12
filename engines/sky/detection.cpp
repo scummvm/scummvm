@@ -93,7 +93,9 @@ bool SkyMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Sky::SkyEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 GameList SkyMetaEngine::getSupportedGames() const {
@@ -223,3 +225,41 @@ int SkyMetaEngine::getMaximumSaveSlot() const { return MAX_SAVE_GAMES; }
 #else
 	REGISTER_PLUGIN_STATIC(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngine);
 #endif
+
+namespace Sky {
+Common::Error SkyEngine::loadGameState(int slot) {
+	uint16 result = _skyControl->quickXRestore(slot);
+	return (result == GAME_RESTORED) ? Common::kNoError : Common::kUnknownError;
+}
+
+Common::Error SkyEngine::saveGameState(int slot, const char *desc) {
+	if (slot == 0)
+		return Common::kWritePermissionDenied;	// we can't overwrite the auto save
+
+	// Set the save slot and save the game
+	_skyControl->_selectedGame = slot - 1;
+	if (_skyControl->saveGameToFile() != GAME_SAVED)
+		return Common::kWritePermissionDenied;
+
+	// Load current save game descriptions
+	Common::StringList saveGameTexts;
+	saveGameTexts.resize(MAX_SAVE_GAMES+1);
+	_skyControl->loadDescriptions(saveGameTexts);
+
+	// Update the save game description at the given slot
+	saveGameTexts[slot - 1] = desc;
+	// Save the updated descriptions
+	_skyControl->saveDescriptions(saveGameTexts);
+
+	return Common::kNoError;
+}
+
+bool SkyEngine::canLoadGameStateCurrently() { 
+	return _systemVars.pastIntro && _skyControl->loadSaveAllowed();
+}
+
+bool SkyEngine::canSaveGameStateCurrently() { 
+	return _systemVars.pastIntro && _skyControl->loadSaveAllowed();
+}
+
+} // End of namespace Sky
