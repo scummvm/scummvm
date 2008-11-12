@@ -44,6 +44,9 @@ public:
 	MessageDialog(const Common::String &message, const char *defaultButton = "OK", const char *altButton = 0);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
+protected:
+	ButtonWidget *addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey);
 };
 
 /**

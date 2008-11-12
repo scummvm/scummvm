@@ -72,19 +72,6 @@ enum WidgetSize {
 	kBigWidgetSize
 };
 
-enum {
-	kButtonWidth = 72,
-	kButtonHeight = 16,
-	kSliderWidth = 85,
-	kSliderHeight = 12,
-
-	kBigButtonWidth = 108,
-	kBigButtonHeight = 24,
-	kBigSliderWidth = 128,
-	kBigSliderHeight = 18
-};
-
-
 /* Widget */
 class Widget : public GuiObject {
 	friend class Dialog;

@@ -38,11 +38,11 @@
 		<def var = 'ScummSaveLoad.ExtInfo.Visible' value = '0'/>
 
 		<widget name = 'Button'
-				size = 'kButtonWidth, kButtonHeight'
+				size = '72, 16'
 		/>
 
 		<widget name = 'Slider'
-				size = 'kSliderWidth, kSliderHeight'
+				size = '85, 12'
 		/>
 
 		<widget name = 'OptionsLabel'

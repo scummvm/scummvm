@@ -344,18 +344,4 @@ void Dialog::removeWidget(Widget *del) {
 	}
 }
 
-ButtonWidget *Dialog::addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey) {
-	int w, h;
-
-	if (g_gui.getWidgetSize() == kBigWidgetSize) {
-		w = kBigButtonWidth;
-		h = kBigButtonHeight;
-	} else {
-		w = kButtonWidth;
-		h = kButtonHeight;
-	}
-
-	return new ButtonWidget(boss, x, y, w, h, label, cmd, hotkey);
-}
-
 } // End of namespace GUI

@@ -51,10 +51,10 @@
 		/>
 			
 		<widget name = 'Button'
-				size = 'kBigButtonWidth, kBigButtonHeight'
+				size = '108, 24'
 		/>
 		<widget name = 'Slider'
-				size = 'kBigSliderWidth, kBigSliderHeight'
+				size = '128, 18'
 		/>
 		
 		<widget name = 'PopUp'

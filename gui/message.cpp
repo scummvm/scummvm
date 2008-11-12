@@ -36,6 +36,16 @@ enum {
 	kCancelCmd = 'CNCL'
 };
 
+
+enum {
+	kButtonWidth = 72,	// FIXME: Get rid of this
+	kButtonHeight = 16,	// FIXME: Get rid of this
+
+	kBigButtonWidth = 108,	// FIXME: Get rid of this
+	kBigButtonHeight = 24	// FIXME: Get rid of this
+};
+
+
 // TODO: The default button should be visibly distinct from the alternate button
 
 MessageDialog::MessageDialog(const Common::String &message, const char *defaultButton, const char *altButton)
@@ -111,6 +121,21 @@ void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	} else {
 		Dialog::handleCommand(sender, cmd, data);
 	}
+}
+
+ButtonWidget *MessageDialog::addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey) {
+	// FIXME: Get rid of this method: Use theme stuff instead.
+	int w, h;
+
+	if (g_gui.getWidgetSize() == kBigWidgetSize) {
+		w = kBigButtonWidth;
+		h = kBigButtonHeight;
+	} else {
+		w = kButtonWidth;
+		h = kButtonHeight;
+	}
+
+	return new ButtonWidget(boss, x, y, w, h, label, cmd, hotkey);
 }
 
 TimedMessageDialog::TimedMessageDialog(const Common::String &message, uint32 duration)
