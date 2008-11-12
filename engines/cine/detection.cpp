@@ -31,6 +31,7 @@
 #include "common/system.h"
 
 #include "cine/cine.h"
+#include "cine/various.h"
 
 namespace Cine {
 
@@ -547,7 +548,9 @@ bool CineMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Cine::CineEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
@@ -609,3 +612,53 @@ int CineMetaEngine::getMaximumSaveSlot() const { return 9; }
 #else
 	REGISTER_PLUGIN_STATIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
 #endif
+
+namespace Cine {
+
+Common::Error CineEngine::loadGameState(int slot) {
+	char saveNameBuffer[256];
+	sprintf(saveNameBuffer, "%s.%1d", _targetName.c_str(), slot);
+	bool gameLoaded = makeLoad(saveNameBuffer);
+
+	return gameLoaded ? Common::kNoError : Common::kUnknownError;
+}
+
+Common::Error CineEngine::saveGameState(int slot, const char *desc) {
+	// Load savegame descriptions from index file
+	loadSaveDirectory();
+
+	// Set description for selected slot
+	strncpy(currentSaveName[slot], desc, 20);
+
+	// Update savegame descriptions
+	char indexFile[80];
+	snprintf(indexFile, 80, "%s.dir", _targetName.c_str());
+
+	Common::OutSaveFile *fHandle = g_saveFileMan->openForSaving(indexFile);
+	if (!fHandle) {
+		warning("Unable to open file %s for saving", indexFile);
+		return Common::kUnknownError;
+	}
+
+	fHandle->write(currentSaveName, 10 * 20);
+	delete fHandle;
+
+	// Save game
+	char saveFileName[256];
+	sprintf(saveFileName, "%s.%1d", _targetName.c_str(), slot);
+	makeSave(saveFileName);
+
+	checkDataDisk(-1);
+
+	return Common::kNoError;
+}
+
+bool CineEngine::canLoadGameStateCurrently() { 
+	return (!disableSystemMenu && !inMenu);
+}
+
+bool CineEngine::canSaveGameStateCurrently() { 
+	return (allowPlayerInput && !disableSystemMenu && !inMenu);
+}
+
+} // End of namespace Cine

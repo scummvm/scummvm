@@ -92,6 +92,10 @@ public:
 	void makeSystemMenu(void);
 	int modifyGameSpeed(int speedChange);
 	int getTimerDelay() const;
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const char *desc);
+	bool canLoadGameStateCurrently();
+	bool canSaveGameStateCurrently();
 
 	const CINEGameDescription *_gameDescription;
 	Common::File _partFileHandle;

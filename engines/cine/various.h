@@ -45,6 +45,8 @@ void makeActionMenu(void);
 extern bool disableSystemMenu;
 extern bool inMenu;
 
+extern CommandeType currentSaveName[10];
+
 struct SeqListElement {
 	int16 var4;
 	uint16 objIdx; ///< Is this really unsigned?

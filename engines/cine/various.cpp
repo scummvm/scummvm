@@ -115,7 +115,7 @@ uint16 yMoveKeyb = kKeybMoveCenterY;
 
 SelectedObjStruct currentSelectedObject;
 
-static CommandeType currentSaveName[10];
+CommandeType currentSaveName[10];
 int16 currentDisk;
 
 static const int16 choiceResultTable[] = { 1, 1, 1, 2, 1, 1, 1 };
