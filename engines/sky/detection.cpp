@@ -75,6 +75,7 @@ public:
 
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
+	virtual void removeSaveState(const char *target, int slot) const;
 };
 
 const char *SkyMetaEngine::getName() const {
@@ -88,7 +89,8 @@ const char *SkyMetaEngine::getCopyright() const {
 bool SkyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup);
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave);
 }
 
 bool Sky::SkyEngine::hasFeature(EngineFeature f) const {
@@ -219,6 +221,53 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 }
 
 int SkyMetaEngine::getMaximumSaveSlot() const { return MAX_SAVE_GAMES; }
+
+void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
+	if (slot == 0)	// do not delete the auto save
+		return;
+
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	char fName[20];
+	sprintf(fName,"SKY-VM.%03d", slot - 1);
+	g_system->getSavefileManager()->removeSavefile(fName);
+
+	// Load current save game descriptions
+	Common::StringList savenames;
+	savenames.resize(MAX_SAVE_GAMES+1);
+	Common::InSaveFile *inf;
+	inf = saveFileMan->openForLoading("SKY-VM.SAV");
+	if (inf != NULL) {
+		char *tmpBuf =  new char[MAX_SAVE_GAMES * MAX_TEXT_LEN];
+		char *tmpPtr = tmpBuf;
+		inf->read(tmpBuf, MAX_SAVE_GAMES * MAX_TEXT_LEN);
+		for (int i = 0; i < MAX_SAVE_GAMES; ++i) {
+			savenames[i] = tmpPtr;
+			tmpPtr += savenames[i].size() + 1;
+		}
+		delete inf;
+		delete[] tmpBuf;
+	}
+
+	// Update the save game description at the given slot
+	savenames[slot - 1] = "";
+
+	// Save the updated descriptions
+	Common::OutSaveFile *outf;
+
+	outf = saveFileMan->openForSaving("SKY-VM.SAV");
+	bool ioFailed = true;
+	if (outf) {
+		for (uint16 cnt = 0; cnt < MAX_SAVE_GAMES; cnt++) {
+			outf->write(savenames[cnt].c_str(), savenames[cnt].size() + 1);
+		}
+		outf->finalize();
+		if (!outf->ioFailed())
+			ioFailed = false;
+		delete outf;
+	}
+	if (ioFailed)
+		warning("Unable to store Savegame names to file SKY-VM.SAV. (%s)", saveFileMan->popErrorDesc().c_str());
+}
 
 #if PLUGIN_ENABLED_DYNAMIC(SKY)
 	REGISTER_PLUGIN_DYNAMIC(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngine);
