@@ -320,7 +320,7 @@ void ThemeEngine::calcBackgroundOffset(DrawData type) {
 	_widgets[type]->_backgroundOffset = maxShadow;
 }
 
-void ThemeEngine::restoreBackground(Common::Rect r, bool special) {
+void ThemeEngine::restoreBackground(Common::Rect r) {
 	r.clip(_screen->w, _screen->h); // AHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA... Oh god. :(
 	_vectorRenderer->blitSurface(_backBuffer, r);
 }
@@ -914,7 +914,7 @@ void ThemeEngine::updateScreen() {
 		}
 
 		_vectorRenderer->setSurface(_screen);
-		_vectorRenderer->blitSurface(_backBuffer, Common::Rect(0, 0, _screen->w, _screen->h));
+		memcpy(_screen->getBasePtr(0,0), _backBuffer->getBasePtr(0,0), _screen->pitch * _screen->h);
 		_bufferQueue.clear();
 	}
 
@@ -957,8 +957,7 @@ void ThemeEngine::openDialog(bool doBuffer, ShadingStyle style) {
 		addDirtyRect(Common::Rect(0, 0, _screen->w, _screen->h));
 	}
 
-	_vectorRenderer->setSurface(_backBuffer);
-	_vectorRenderer->blitSurface(_screen, Common::Rect(0, 0, _screen->w, _screen->h));
+	memcpy(_backBuffer->getBasePtr(0,0), _screen->getBasePtr(0,0), _screen->pitch * _screen->h);
 	_vectorRenderer->setSurface(_screen);
 }
 

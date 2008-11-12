@@ -493,9 +493,8 @@ public:
 	 *	The actual processing is done in the VectorRenderer.
 	 *
 	 *	@param r Area to restore.
-	 *	@param special Deprecated.
 	 */
-	void restoreBackground(Common::Rect r, bool special = false);
+	void restoreBackground(Common::Rect r);
 
 	/**
 	 *	Checks if a given DrawData set for a widget has been cached beforehand
