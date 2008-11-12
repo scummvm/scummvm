@@ -27,6 +27,7 @@
 #include "common/system.h"
 #include "gui/message.h"
 #include "gui/newgui.h"
+#include "gui/ThemeEval.h"
 #include "gui/widget.h"
 
 namespace GUI {
@@ -34,15 +35,6 @@ namespace GUI {
 enum {
 	kOkCmd = 'OK  ',
 	kCancelCmd = 'CNCL'
-};
-
-
-enum {
-	kButtonWidth = 72,	// FIXME: Get rid of this
-	kButtonHeight = 16,	// FIXME: Get rid of this
-
-	kBigButtonWidth = 108,	// FIXME: Get rid of this
-	kBigButtonHeight = 24	// FIXME: Get rid of this
 };
 
 
@@ -54,15 +46,8 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	int buttonWidth, buttonHeight;
-
-	if (g_gui.getWidgetSize() == kBigWidgetSize) {
-		buttonWidth = kBigButtonWidth;
-		buttonHeight = kBigButtonHeight;
-	} else {
-		buttonWidth = kButtonWidth;
-		buttonHeight = kButtonHeight;
-	}
+	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
+	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
 
 	// First, determine the size the dialog needs. For this we have to break
 	// down the string into lines, and taking the maximum of their widths.
@@ -124,16 +109,8 @@ void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 }
 
 ButtonWidget *MessageDialog::addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey) {
-	// FIXME: Get rid of this method: Use theme stuff instead.
-	int w, h;
-
-	if (g_gui.getWidgetSize() == kBigWidgetSize) {
-		w = kBigButtonWidth;
-		h = kBigButtonHeight;
-	} else {
-		w = kButtonWidth;
-		h = kButtonHeight;
-	}
+	int w = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
+	int h = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
 
 	return new ButtonWidget(boss, x, y, w, h, label, cmd, hotkey);
 }
