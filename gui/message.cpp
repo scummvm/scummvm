@@ -89,10 +89,10 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	}
 
 	if (defaultButton)
-		addButton(this, okButtonPos, _h - buttonHeight - 8, defaultButton, kOkCmd, Common::ASCII_RETURN);	// Confirm dialog
+		new ButtonWidget(this, okButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, defaultButton, kOkCmd, Common::ASCII_RETURN);	// Confirm dialog
 
 	if (altButton)
-		addButton(this, cancelButtonPos, _h - buttonHeight - 8, altButton, kCancelCmd, Common::ASCII_ESCAPE);	// Cancel dialog
+		new ButtonWidget(this, cancelButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, altButton, kCancelCmd, Common::ASCII_ESCAPE);	// Cancel dialog
 }
 
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -106,13 +106,6 @@ void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	} else {
 		Dialog::handleCommand(sender, cmd, data);
 	}
-}
-
-ButtonWidget *MessageDialog::addButton(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey) {
-	int w = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
-	int h = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
-
-	return new ButtonWidget(boss, x, y, w, h, label, cmd, hotkey);
 }
 
 TimedMessageDialog::TimedMessageDialog(const Common::String &message, uint32 duration)
