@@ -229,7 +229,7 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	char fName[20];
 	sprintf(fName,"SKY-VM.%03d", slot - 1);
-	g_system->getSavefileManager()->removeSavefile(fName);
+	saveFileMan->removeSavefile(fName);
 
 	// Load current save game descriptions
 	Common::StringList savenames;
