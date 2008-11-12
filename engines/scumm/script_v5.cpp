@@ -1257,17 +1257,18 @@ void ScummEngine_v5::o5_saveLoadGame() {
 			result = 2; // failed to save
 		break;
 	case 0xC0: // test if save exists
+		{
 		Common::InSaveFile *file;
 		bool avail_saves[100];
-		char filename[256];
 
 		listSavegames(avail_saves, ARRAYSIZE(avail_saves));
-		makeSavegameName(filename, slot, false);
-		if (avail_saves[slot] && (file = _saveFileMan->openForLoading(filename))) {
+		Common::String filename = makeSavegameName(slot, false);
+		if (avail_saves[slot] && (file = _saveFileMan->openForLoading(filename.c_str()))) {
 			result = 6; // save file exists
 			delete file;
 		} else
 			result = 7; // save file does not exist
+		}
 		break;
 	default:
 		error("o5_saveLoadGame: unknown subopcode %d", _opcode);
