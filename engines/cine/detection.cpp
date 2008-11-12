@@ -538,12 +538,14 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
+	virtual void removeSaveState(const char *target, int slot) const;
 };
 
 bool CineMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup);
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave);
 }
 
 bool Cine::CineEngine::hasFeature(EngineFeature f) const {
@@ -606,6 +608,48 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 }
 
 int CineMetaEngine::getMaximumSaveSlot() const { return 9; }
+
+void CineMetaEngine::removeSaveState(const char *target, int slot) const {
+	// Load savegame descriptions from index file
+	typedef char CommandeType[20];
+	CommandeType saveNames[10];
+
+	Common::InSaveFile *in;
+	char tmp[80];
+
+	snprintf(tmp, 80, "%s.dir", target);
+	in = g_system->getSavefileManager()->openForLoading(tmp);
+
+	if (!in)
+		return;
+
+	in->read(saveNames, 10 * 20);
+	delete in;
+
+	// Set description for selected slot
+	char slotName[20];
+	slotName[0] = 0;
+	strncpy(saveNames[slot], slotName, 20);
+
+	// Update savegame descriptions
+	char indexFile[80];
+	snprintf(indexFile, 80, "%s.dir", target);
+
+	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(indexFile);
+	if (!out) {
+		warning("Unable to open file %s for saving", indexFile);
+		return;
+	}
+
+	out->write(saveNames, 10 * 20);
+	delete out;
+
+	// Delete save file
+	char saveFileName[256];
+	sprintf(saveFileName, "%s.%1d", target, slot);
+
+	g_system->getSavefileManager()->removeSavefile(saveFileName);
+}
 
 #if PLUGIN_ENABLED_DYNAMIC(CINE)
 	REGISTER_PLUGIN_DYNAMIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
