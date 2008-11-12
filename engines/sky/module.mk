@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	compact.o \
 	control.o \
 	debug.o \
+	detection.o \
 	disk.o \
 	grid.o \
 	hufftext.o \
