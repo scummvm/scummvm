@@ -109,8 +109,68 @@ class STXBinaryFile:
 		
 		stxDom.unlink()
 		
-	def __parseDrawStep(self, drawstepDom):
-		pass
+	def __parseDrawStep(self, drawstepDom, localDefaults = {}):
+		
+		triangleOrientations = {"top" : 0x1, "bottom" : 0x2, "left" : 0x3, "right" : 0x4}
+		fillModes = {"none" : 0x0, "foreground" : 0x1, "background" : 0x2, "gradient" : 0x3}
+		vectorAlign = {"left" : 0x1, "right" : 0x2, "bottom" : 0x3, "top" : 0x4, "center" : 0x5}
+	   
+		functions = {
+			"void" : 0x0, "circle" : 0x1, "square" : 0x2, "roundedsq" : 0x3, "bevelsq" : 0x4, 
+	   		"line" : 0x5, "triangle" : 0x6, "fill" : 0x7, "tab" : 0x8, "bitmap" : 0x9, "cross" : 0xA
+		}
+		
+		parseAttribute = {
+			"stroke" 			: int,
+			"bevel" 			: int,
+			"shadow" 			: int,
+			"gradient_factor" 	: int,
+			
+			"fg_color"			: self.__parseColor,
+			"bg_color"			: self.__parseColor,
+			"gradient_start"	: self.__parseColor,
+			"gradient_end"		: self.__parseColor,
+			"bevel_color"		: self.__parseColor,
+			
+			"radius"			: lambda r: 0xFF if r == 'auto' else int(r),
+			"file"				: str,
+			"orientation"		: lambda o: triangleOrientations[o],
+			"fill"				: lambda f: fillModes[f],
+			"func"				: lambda f: functions[f],
+			
+			"width"				: lambda w: -1 if w == 'height' else 0 if w == 'auto' else int(w),
+			"height"			: lambda h: -1 if h == 'width' else 0 if h == 'auto' else int(h),
+			
+			"xpos"				: lambda pos: vectorAlign[pos] if pos in vectorAlign else int(pos),
+			"ypos"				: lambda pos: vectorAlign[pos] if pos in vectorAlign else int(pos),
+		}
+		
+		dstable = {}
+		
+		attributes = []
+		
+		if drawstepDom.tagName == "defaults":
+			isGlobal = drawstepDom.parentNode.tagName == "render_info"
+			
+			for attr in self.DRAWSTEP_FORMAT_DEF:
+				if drawstepDom.hasAttribute(attr):
+					self.debug("P: %s <= '%s'" % (attr, drawstepDom.getAttribute(attr)))
+					dstable[attr] = parseAttribute[attr](drawstepDom.getAttribute(attr))
+					
+				elif isGlobal:
+					dstable[attr] = 0x0
+		
+		else:
+			for attr in self.DRAWSTEP_FORMAT:
+				if drawstepDom.hasAttribute(attr):
+					self.debug("P: %s <= '%s'" % (attr, drawstepDom.getAttribute(attr)))
+					dstable[attr] = parseAttribute[attr](drawstepDom.getAttribute(attr))
+				elif attr in self.DRAWSTEP_FORMAT_DEF:
+					dstable[attr] = localDefaults[attr] if attr in localDefaults else self._globalDefaults[attr]
+				else:
+					dstable[attr] = 0x0
+		
+		return dstable
 		
 		
 	def __parseDrawStepToBin(self, stepDict, isDefault):
@@ -127,7 +187,7 @@ class STXBinaryFile:
 		
 		packLayout = ""
 		packData = []
-		attributes = DRAWSTEP_FORMAT_DEF if isDefault else DRAWSTEP_FORMAT
+		attributes = self.DRAWSTEP_FORMAT_DEF if isDefault else self.DRAWSTEP_FORMAT
 		
 		for attr in attributes:
 			layout = DRAWSTEP_BININFO[attr]
@@ -213,7 +273,18 @@ class STXBinaryFile:
 		self.debugBinary(rgb)
 		return rgb
 		
-	def __parseColors(self, paletteDom):
+	def __parseColor(self, color):
+		try:
+			color = self.__parseRGBToBin(color)
+		except self.InvalidRGBColor:
+			if color not in self._colors:
+				raise self.InvalidRGBColor
+			color = self._colors[color]
+			
+		return color
+		
+		
+	def __parsePalette(self, paletteDom):
 		self._colors = {}		
 		
 		for color in paletteDom.getElementsByTagName("color"):
@@ -239,22 +310,18 @@ class STXBinaryFile:
 		
 		for font in fontsDom.getElementsByTagName("font"):
 			ident = font.getAttribute("id")
-			
-			color = font.getAttribute("color")
-			try:
-				color = self.__parseRGBToBin(color)
-			except self.InvalidRGBColor:
-				if color not in self._colors:
-					raise self.InvalidRGBColor
-				color = self._colors[color]
-				
+			color = self.__parseColor(font.getAttribute("color"))
 			filename = font.getAttribute("file")
-#			if filename != "default" and not os.path.isfile(os.path.join(self._themeName, filename)):
-#				raise IOError
 			
 			resolution = self.__parseResolutionToBin(font.getAttribute("resolution"))
 			self.debug("FONT: %s @ %s" % (ident, filename))
 			self._fonts.append((ident, filename, color, resolution))
+			
+	def __parseDrawData(self, ddDom):
+		
+		for ds in ddDom.getElementsByTagName("drawstep"):
+			dstable = self.__parseDrawStep(ds)
+			print dstable
 		
 		
 	def __parseLayout(self, layoutDom):
@@ -268,9 +335,14 @@ class STXBinaryFile:
 		fontsDom = renderDom.getElementsByTagName("fonts")[0]
 		defaultsDom = renderDom.getElementsByTagName("defaults")[0]
 		
-		self.__parseColors(paletteDom)
+		self.__parsePalette(paletteDom)
 		self.__parseBitmaps(bitmapsDom)
 		self.__parseFonts(fontsDom)
+		
+		self._globalDefaults = self.__parseDrawStep(defaultsDom)
+		
+		for dd in renderDom.getElementsByTagName("drawdata"):
+			self.__parseDrawData(dd)
 
 
 if __name__ == '__main__':
