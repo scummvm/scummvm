@@ -41,6 +41,9 @@ void initLanguage(Common::Language lang);
 int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width, bool recheckValue = false);
 void makeCommandLine(void);
 void makeActionMenu(void);
+void drawString(const char *string, byte param);
+void waitPlayerInput(void);
+void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 
 extern bool disableSystemMenu;
 extern bool inMenu;
@@ -70,6 +73,11 @@ extern uint16 var2;
 extern uint16 var3;
 extern uint16 var4;
 extern uint16 var5;
+extern int16 commandVar1;
+extern int16 commandVar2;
+extern int16 commandVar3[4];
+
+extern char currentDatName[30];
 
 void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 

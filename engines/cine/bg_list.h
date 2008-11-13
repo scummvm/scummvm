@@ -28,7 +28,6 @@
 
 
 #include "common/scummsys.h"
-#include "common/savefile.h"
 #include "common/list.h"
 
 namespace Cine {
