@@ -33,7 +33,12 @@
 #ifndef FREEVERB_H
 #define FREEVERB_H
 
-#define undenormalise(sample) if (((*(unsigned int*)&sample) & 0x7f800000) == 0) sample = 0.0f
+// FIXME: Fix this really ugly hack
+inline float undenormalise(void *sample) {
+	if (((*(unsigned int*)sample) &  0x7f800000) == 0)
+		return 0.0f;
+	return *(float*)sample;
+}
 
 // Comb filter class declaration
 
@@ -64,10 +69,10 @@ inline float comb::process(float input) {
 	float output;
 
 	output = buffer[bufidx];
-	undenormalise(output);
+	undenormalise(&output);
 
 	filterstore = (output * damp2) + (filterstore * damp1);
-	undenormalise(filterstore);
+	undenormalise(&filterstore);
 
 	buffer[bufidx] = input + (filterstore * feedback);
 
@@ -102,7 +107,7 @@ inline float allpass::process(float input) {
 	float bufout;
 
 	bufout = buffer[bufidx];
-	undenormalise(bufout);
+	undenormalise(&bufout);
 
 	output = -input + bufout;
 	buffer[bufidx] = input + (bufout * feedback);
