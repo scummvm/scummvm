@@ -26,9 +26,7 @@
 #define GUI_SAVELOAD_DIALOG_H
 
 #include "gui/dialog.h"
-//#include "engines/game.h"
 #include "engines/metaengine.h"
-//#include "common/str.h"
 
 namespace GUI {
 
