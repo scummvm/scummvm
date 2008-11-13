@@ -208,7 +208,6 @@
 	#define PLUGIN_EXPORT __declspec(dllexport)
 
 	#if _WIN32_WCE < 300
-	#define CDECL __cdecl
 	#define SMALL_SCREEN_DEVICE
 	#endif
 
@@ -402,10 +401,6 @@
 //
 #ifndef FORCEINLINE
 #define FORCEINLINE inline
-#endif
-
-#ifndef CDECL
-#define	CDECL
 #endif
 
 #ifndef PLUGIN_EXPORT

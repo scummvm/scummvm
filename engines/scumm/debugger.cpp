@@ -41,7 +41,7 @@
 
 namespace Scumm {
 
-void CDECL debugC(int channel, const char *s, ...) {
+void debugC(int channel, const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 

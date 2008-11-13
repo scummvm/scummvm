@@ -306,21 +306,34 @@ uint32 getEnabledSpecialDebugLevels();
 
 
 #if defined(__GNUC__)
-void CDECL error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN;
+void error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN;
 #else
-void CDECL NORETURN error(const char *s, ...);
+void NORETURN error(const char *s, ...);
 #endif
 
-void CDECL warning(const char *s, ...) GCC_PRINTF(1, 2);
+#ifdef DISABLE_TEXT_CONSOLE
 
-void CDECL debug(int level, const char *s, ...) GCC_PRINTF(2, 3);
-void CDECL debug(const char *s, ...) GCC_PRINTF(1, 2);
-void CDECL debugN(int level, const char *s, ...) GCC_PRINTF(2, 3);
-void CDECL debugC(int level, uint32 engine_level, const char *s, ...) GCC_PRINTF(3, 4);
+inline void printf(const char *s, ...) {}
+
+inline void warning(const char *s, ...) {}
+
+inline void debug(int level, const char *s, ...) {}
+inline void debug(const char *s, ...) {}
+inline void debugN(int level, const char *s, ...) {}
+inline void debugC(int level, uint32 engine_level, const char *s, ...) {}
+
+#else
+
+void warning(const char *s, ...) GCC_PRINTF(1, 2);
+
+void debug(int level, const char *s, ...) GCC_PRINTF(2, 3);
+void debug(const char *s, ...) GCC_PRINTF(1, 2);
+void debugN(int level, const char *s, ...) GCC_PRINTF(2, 3);
+void debugC(int level, uint32 engine_level, const char *s, ...) GCC_PRINTF(3, 4);
+
+#endif
 
 extern int gDebugLevel;
-
-char *scumm_strrev(char *str);
 
 Common::String tag2string(uint32 tag);
 #define tag2str(x)	tag2string(x).c_str()

@@ -130,7 +130,7 @@ enum GameFeatures {
 };
 
 /* SCUMM Debug Channels */
-void CDECL debugC(int level, const char *s, ...);
+void debugC(int level, const char *s, ...);
 
 enum {
 	DEBUG_GENERAL	=	1 << 0,		// General debug

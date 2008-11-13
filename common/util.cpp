@@ -458,7 +458,7 @@ uint32 getEnabledSpecialDebugLevels() {
  */
 int gDebugLevel = -1;
 
-
+#ifndef DISABLE_TEXT_CONSOLE
 
 static void debugHelper(const char *in_buf, bool caret = true) {
 	char buf[STRINGBUFLEN];
@@ -490,7 +490,7 @@ static void debugHelper(const char *in_buf, bool caret = true) {
 	fflush(stdout);
 }
 
-void CDECL debug(int level, const char *s, ...) {
+void debug(int level, const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
@@ -504,7 +504,7 @@ void CDECL debug(int level, const char *s, ...) {
 	debugHelper(buf);
 }
 
-void CDECL debugN(int level, const char *s, ...) {
+void debugN(int level, const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
@@ -518,7 +518,7 @@ void CDECL debugN(int level, const char *s, ...) {
 	debugHelper(buf, false);
 }
 
-void CDECL debug(const char *s, ...) {
+void debug(const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
@@ -529,7 +529,7 @@ void CDECL debug(const char *s, ...) {
 	debugHelper(buf);
 }
 
-void CDECL debugC(int level, uint32 engine_level, const char *s, ...) {
+void debugC(int level, uint32 engine_level, const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
@@ -544,7 +544,33 @@ void CDECL debugC(int level, uint32 engine_level, const char *s, ...) {
 	debugHelper(buf);
 }
 
-void NORETURN CDECL error(const char *s, ...) {
+void warning(const char *s, ...) {
+	char buf[STRINGBUFLEN];
+	va_list va;
+
+	va_start(va, s);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
+	va_end(va);
+
+#if !defined (__SYMBIAN32__)
+	fprintf(stderr, "WARNING: %s!\n", buf);
+#endif
+
+#if defined( USE_WINDBG )
+	strcat(buf, "\n");
+#if defined( _WIN32_WCE )
+	TCHAR buf_unicode[1024];
+	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
+	OutputDebugString(buf_unicode);
+#else
+	OutputDebugString(buf);
+#endif
+#endif
+}
+
+#endif
+
+void NORETURN error(const char *s, ...) {
 	char buf_input[STRINGBUFLEN];
 	char buf_output[STRINGBUFLEN];
 	va_list va;
@@ -610,43 +636,6 @@ void NORETURN CDECL error(const char *s, ...) {
 		g_system->quit();
 
 	exit(1);
-}
-
-void CDECL warning(const char *s, ...) {
-	char buf[STRINGBUFLEN];
-	va_list va;
-
-	va_start(va, s);
-	vsnprintf(buf, STRINGBUFLEN, s, va);
-	va_end(va);
-
-#if !defined (__SYMBIAN32__)
-	fprintf(stderr, "WARNING: %s!\n", buf);
-#endif
-
-#if defined( USE_WINDBG )
-	strcat(buf, "\n");
-#if defined( _WIN32_WCE )
-	TCHAR buf_unicode[1024];
-	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
-	OutputDebugString(buf_unicode);
-#else
-	OutputDebugString(buf);
-#endif
-#endif
-}
-
-char *scumm_strrev(char *str) {
-	if (!str)
-		return str;
-	int len = strlen(str);
-	if (len < 2)
-		return str;
-	char *p1, *p2;
-	for (p1 = str, p2 = str + len - 1; p1 < p2; p1++, p2--) {
-		SWAP(*p1, *p2);
-	}
-	return str;
 }
 
 Common::String tag2string(uint32 tag) {
