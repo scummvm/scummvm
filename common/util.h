@@ -313,7 +313,7 @@ void NORETURN error(const char *s, ...);
 
 #ifdef DISABLE_TEXT_CONSOLE
 
-inline void printf(const char *s, ...) {}
+inline int printf(const char *s, ...) { return 0; }
 
 inline void warning(const char *s, ...) {}
 
