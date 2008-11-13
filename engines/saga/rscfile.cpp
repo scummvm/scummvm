@@ -461,6 +461,11 @@ bool Resource::createContexts() {
 				// as big endian
 				if (!_vm->isBigEndian())
 					voiceFileType = GAME_VOICEFILE | GAME_SWAPENDIAN;	// This file is big endian
+			} else if (Common::File::exists("ite voices.bin")) {		// MacBinary voice files
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
+				sprintf(_voicesFileName[0], "ite voices.bin");
+				voiceFileType = GAME_VOICEFILE | GAME_MACBINARY;
 			} else {
 				// No voice file found, don't add any file to the array
 				voicesFileInArray = true;
