@@ -44,8 +44,8 @@ class Script {
 	uint	_line;				// for debug messages
 
 	void clearTokens();
-	uint16 fillTokens(char* line);
-	char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ignoreQuotes = false);
+	char *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ignoreQuotes = false);
+	char *readLineIntern(char *buf, size_t bufSize);
 
 public:
 	Script(Common::ReadStream *, bool _disposeSource = false);

@@ -40,46 +40,85 @@ Script::~Script() {
 		delete _input;
 }
 
-char *Script::readLine(char *buf, size_t bufSize) {
-
+char *Script::readLineIntern(char *buf, size_t bufSize) {
 	uint16 i;
 	for (i = 0; i < bufSize; i++) {
-
 		char c = _input->readSByte();
-
 		if (_input->eos())
 			break;
-
-		if (c == 0xA || c == 0xD)
+		if (c == '\n' || c == '\r')
 			break;
+		if (c == '\t')
+			c = ' ';
 
-		if (i < bufSize)
-			buf[i] = c;
+		buf[i] = c;
 	}
-
 	_line++;
-
-	if (i == 0 && _input->eos())
+	if (i == bufSize) {
+		warning("overflow in readLineIntern (line %i)", _line);
+	}
+	if (i == 0 && _input->eos()) {
 		return 0;
-
-	buf[i] = 0xA;
-	buf[i+1] = '\0';
-
+	}
+	buf[i] = '\0';
 	return buf;
+}
 
+bool isCommentLine(char *text) {
+	return text[0] == '#';
+}
+
+bool isStartOfCommentBlock(char *text) {
+	return (text[0] == '[');
+}
+
+bool isEndOfCommentBlock(char *text) {
+	return (text[0] == ']');
+}
+
+char *Script::readLine(char *buf, size_t bufSize) {
+	bool inBlockComment = false;
+	bool ignoreLine = true;
+
+	char *line = 0;
+	do {
+		line = readLineIntern(buf, bufSize);
+		if (line == 0) {
+			return 0;
+		}
+
+		if (line[0] == '\0')
+			continue;
+
+		ignoreLine = false;
+
+		line = Common::ltrim(line);
+		if (isCommentLine(line)) {
+			// ignore this line
+			ignoreLine = true;
+		} else
+		if (isStartOfCommentBlock(line)) {
+			// mark this and the following lines as comment
+			inBlockComment = true;
+		} else
+		if (isEndOfCommentBlock(line)) {
+			// comment is finished, so stop ignoring
+			inBlockComment = false;
+			// the current line must be skipped, though,
+			// as it contains the end-of-comment marker
+			ignoreLine = true;
+		}
+
+	} while (inBlockComment || ignoreLine);
+
+	return line;
 }
 
 
 
 void Script::clearTokens() {
-
-	for (uint16 i = 0; i < MAX_TOKENS; i++)
-		_tokens[i][0] = '\0';
-
+	memset(_tokens, 0, sizeof(_tokens));
 	_numTokens = 0;
-
-	return;
-
 }
 
 void Script::skip(const char* endToken) {
@@ -111,21 +150,14 @@ char *Script::parseNextToken(char *s, char *tok, uint16 count, const char *brk, 
 			if (*s == '\0') {
 				*tok = '\0';
 				return s;
-			}
-
+			} else
 			if (strchr(brk, *s)) {
 				*tok = '\0';
 				return ++s;
-			}
-
+			} else
 			if (*s == '"') {
-				if (ignoreQuotes) {
-					*tok++ = *s++;
-					count--;
-				} else {
-					state = QUOTED;
-					s++;
-				}
+				state = QUOTED;
+				s++;
 			} else {
 				*tok++ = *s++;
 				count--;
@@ -136,14 +168,14 @@ char *Script::parseNextToken(char *s, char *tok, uint16 count, const char *brk, 
 			if (*s == '\0') {
 				*tok = '\0';
 				return s;
-			}
-			if (*s == '"' || *s == '\n' || *s == '\t') {
+			} else
+			if (*s == '"') {
 				*tok = '\0';
 				return ++s;
+			} else {
+				*tok++ = *s++;
+				count--;
 			}
-
-			*tok++ = *s++;
-			count--;
 			break;
 		}
 
@@ -158,71 +190,23 @@ char *Script::parseNextToken(char *s, char *tok, uint16 count, const char *brk, 
 
 }
 
-uint16 Script::fillTokens(char* line) {
-
-	uint16 i = 0;
-	while (strlen(line) > 0 && i < MAX_TOKENS) {
-		line = parseNextToken(line, _tokens[i], MAX_TOKEN_LEN, " \t\n");
-		line = Common::ltrim(line);
-		i++;
+uint16 Script::readLineToken(bool errorOnEOF) {
+	char buf[200];
+	char *line = readLine(buf, 200);
+	if (!line) {
+		if (errorOnEOF)
+			error("unexpected end of file while parsing");
+		else
+			return 0;
 	}
 
-	_numTokens = i;
-
-	return i;
-}
-
-bool isCommentLine(char *text) {
-	return text[0] == '#';
-}
-
-bool isStartOfCommentBlock(char *text) {
-	return (text[0] == '[');
-}
-
-bool isEndOfCommentBlock(char *text) {
-	return (text[0] == ']');
-}
-
-uint16 Script::readLineToken(bool errorOnEOF) {
-
 	clearTokens();
-
-	bool inBlockComment = false;
-
-	char buf[200];
-	char *line = NULL;
-	char *start;
-	do {
-		line = readLine(buf, 200);
-
-		if (line == NULL) {
-			if (errorOnEOF)
-				error("unexpected end of file while parsing");
-			else
-				return 0;
-		}
-		start = Common::ltrim(line);
-
-		if (isCommentLine(start)) {
-			// ignore this line
-			start[0] = '\0';
-		} else
-		if (isStartOfCommentBlock(start)) {
-			// mark this and the following lines as comment
-			inBlockComment = true;
-		} else
-		if (isEndOfCommentBlock(start)) {
-			// comment is finished, so stop ignoring
-			inBlockComment = false;
-			// the current line must be skipped, though,
-			// as it contains the end-of-comment marker
-			start[0] = '\0';
-		}
-
-	} while (inBlockComment || strlen(start) == 0);
-
-	return fillTokens(start);
+	while (strlen(line) > 0 && _numTokens < MAX_TOKENS) {
+		line = parseNextToken(line, _tokens[_numTokens], MAX_TOKEN_LEN, " ");
+		line = Common::ltrim(line);
+		_numTokens++;
+	}
+	return _numTokens;
 }
 
 
@@ -328,13 +312,11 @@ class CommentStatementDef : public StatementDef {
 	Common::String parseComment(Script &script) {
 		Common::String result;
 		char buf[401];
-
 		do {
-			script.readLine(buf, 400);
-			buf[strlen(buf)-1] = '\0';
-			if (!scumm_stricmp(buf, "endtext"))
+			char *line = script.readLine(buf, 400);
+			if (!scumm_stricmp(line, "endtext"))
 				break;
-			result += Common::String(buf) + "\n";
+			result += Common::String(line) + "\n";
 		} while (true);
 		result += "endtext\n";
 		return result;
@@ -408,8 +390,7 @@ void PreProcessor::preprocessScript(Script &script, StatementList &list) {
 	_numZones = 0;
 	Common::String text;
 	do {
-		script.readLineToken(false);
-		if (_numTokens == 0)
+		if (script.readLineToken(false) == 0)
 			break;
 
 		StatementDef *def = findDef(_tokens[0]);

@@ -943,21 +943,12 @@ void LocationParser_ns::resolveDialogueForwards(Dialogue *dialogue, uint numQues
 }
 
 char *LocationParser_ns::parseDialogueString() {
-
-	char vC8[200];
-	char *vD0 = NULL;
-	do {
-
-		vD0 = _script->readLine(vC8, 200);
-		if (vD0 == 0) return NULL;
-
-		vD0 = Common::ltrim(vD0);
-
-	} while (strlen(vD0) == 0);
-
-	vD0[strlen(vD0)-1] = '\0';	// deletes the trailing '0xA'
-								// this is critical for Gfx::displayWrappedString to work properly
-	return strdup(vD0);
+	char buf[200];
+	char *line = _script->readLine(buf, 200);
+	if (line == 0) {
+		return 0;
+	}
+	return strdup(line);
 }
 
 
@@ -1275,26 +1266,30 @@ void ProgramParser_ns::init() {
 //	comments are displayed into rectangles on the screen
 //
 char *LocationParser_ns::parseComment() {
-
-	char			_tmp_comment[1000] = "\0";
-	char *v194;
-
+	const int tempSize = 1000;
+	char temp[tempSize] = "\0";
+	int len = 0;
+	char buf[400];
 	do {
-		char v190[400];
-		v194 = _script->readLine(v190, 400);
-
-		v194[strlen(v194)-1] = '\0';
-		if (!scumm_stricmp(v194, "endtext"))
+		char *line = _script->readLine(buf, 400);
+		if (!scumm_stricmp(line, "endtext"))
 			break;
 
-		strcat(_tmp_comment, v194);
-		strcat(_tmp_comment, " ");
-	} while (true);
+		strncat(temp, line, tempSize - len - 1);
+		strcat(temp, " ");
+		len = len + strlen(line) + 1;
+	} while (len < tempSize);
 
-	v194 = strdup(_tmp_comment);
-	_tmp_comment[0] = '\0';
+	if (len == 0) {
+		return 0;
+	}
 
-	return v194;
+	if (len == tempSize) {
+		warning("overflow in LocationParser_ns::parseComment (line %i)", _script->getLine());
+	}
+
+	temp[len-1] = '\0';	// removes the last space pasted in the string
+	return strdup(temp);
 }
 
 DECLARE_ZONE_PARSER(null) {
