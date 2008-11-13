@@ -28,6 +28,8 @@
 
 #include "common/endian.h"
 
+#include "cine/saveload.h"
+
 namespace Cine {
 
 struct AnimHeaderStruct {
