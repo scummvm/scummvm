@@ -540,7 +540,7 @@ void SagaEngine::pauseEngineIntern(bool pause) {
 
 	if (pause) {
 		_render->setFlag(RF_RENDERPAUSE);
-		if (_music->isPlaying()) {
+		if (_music->isPlaying() && !_music->hasDigitalMusic()) {
 			_music->pause();
 			_musicWasPlaying = true;
 		} else {
