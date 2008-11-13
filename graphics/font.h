@@ -90,7 +90,7 @@ public:
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
 };
 
-typedef unsigned short bitmap_t; /* bitmap image unit size*/
+typedef uint16 bitmap_t; /* bitmap image unit size*/
 
 struct BBX {
 	int8 w;

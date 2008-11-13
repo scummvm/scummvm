@@ -51,11 +51,12 @@ int NewFont::getCharWidth(byte chr) const {
 
 template <typename PixelType>
 void drawCharIntern(byte *ptr, uint pitch, const bitmap_t *src, int h, int minX, int maxX, const PixelType color) {
+	const bitmap_t maxXMask = ~((1 << (16-maxX)) - 1);
 	while (h-- > 0) {
 		bitmap_t buffer = READ_UINT16(src);
 		src++;
 
-		buffer &= ~((1 << (16-maxX)) - 1);
+		buffer &= maxXMask;
 		buffer <<= minX;
 		PixelType *tmp = (PixelType *)ptr;
 		while (buffer != 0) {
