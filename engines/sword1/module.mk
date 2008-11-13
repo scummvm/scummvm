@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	control.o \
 	credits.o \
 	debug.o \
+	detection.o \
 	eventman.o \
 	logic.o \
 	memman.o \
