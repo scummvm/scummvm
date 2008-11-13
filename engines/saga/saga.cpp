@@ -147,6 +147,7 @@ Common::Error SagaEngine::init() {
 	_copyProtection = ConfMan.getBool("copy_protection");
 	_gf_wyrmkeep = false;
 	_gf_compressed_sounds = false;
+	_musicWasPlaying = false;
 
 	if (_readingSpeed > 3)
 		_readingSpeed = 0;
@@ -539,12 +540,17 @@ void SagaEngine::pauseEngineIntern(bool pause) {
 
 	if (pause) {
 		_render->setFlag(RF_RENDERPAUSE);
-		if (!_music->hasDigitalMusic())
+		if (_music->isPlaying()) {
 			_music->pause();
+			_musicWasPlaying = true;
+		} else {
+			_musicWasPlaying = false;
+		}
 	} else {
 		_render->clearFlag(RF_RENDERPAUSE);
-		if (!_music->hasDigitalMusic())
+		if (_musicWasPlaying) {
 			_music->resume();
+		}
 	}
 
 	_mixer->pauseAll(pause);

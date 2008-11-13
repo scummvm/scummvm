@@ -535,6 +535,7 @@ public:
 	bool _copyProtection;
 	bool _gf_wyrmkeep;
 	bool _gf_compressed_sounds;
+	bool _musicWasPlaying;
 
 	SndRes *_sndRes;
 	Sound *_sound;
