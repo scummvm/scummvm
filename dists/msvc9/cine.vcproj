@@ -268,6 +268,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\cine\saveload.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\cine\saveload.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\cine\script.h"
 			>
 		</File>

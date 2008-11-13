@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="7,10"
 	Name="cine"
 	ProjectGUID="{1CA4AC50-5426-433A-8B5E-FFE39568098E}"
 	Keyword="Win32Proj">
@@ -191,6 +191,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\cine\rel.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\cine\saveload.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\cine\saveload.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\cine\script.h">
