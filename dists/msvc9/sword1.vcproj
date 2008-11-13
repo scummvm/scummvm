@@ -204,6 +204,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\sword1\detection.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\sword1\eventman.cpp"
 			>
 		</File>
