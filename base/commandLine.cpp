@@ -38,6 +38,8 @@
 
 namespace Base {
 
+#ifndef DISABLE_COMMAND_LINE
+
 static const char USAGE_STRING[] =
 	"%s: %s\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
@@ -139,6 +141,9 @@ static void usage(const char *s, ...) {
 	exit(1);
 }
 
+#endif // DISABLE_COMMAND_LINE
+
+
 void registerDefaults() {
 
 	// Graphics
@@ -204,6 +209,8 @@ void registerDefaults() {
 //
 // Various macros used by the command line parser.
 //
+
+#ifndef DISABLE_COMMAND_LINE
 
 // Use this for options which have an *optional* value
 #define DO_OPTION_OPT(shortCmd, longCmd, defaultVal) \
@@ -513,8 +520,7 @@ unknownOption:
 		}
 	}
 
-
-	return Common::String::emptyString;
+	return Common::String();
 }
 
 /** List all supported game IDs, i.e. all games which any loaded plugin supports. */
@@ -677,7 +683,20 @@ static void runDetectorTest() {
 }
 #endif
 
+#else // DISABLE_COMMAND_LINE
+
+
+Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv) {
+	return Common::String();
+}
+
+
+#endif // DISABLE_COMMAND_LINE
+
+
 bool processSettings(Common::String &command, Common::StringMap &settings) {
+
+#ifndef DISABLE_COMMAND_LINE
 
 	// Handle commands passed via the command line (like --list-targets and
 	// --list-games). This must be done after the config file and the plugins
@@ -706,6 +725,8 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	}
 #endif
 
+#endif // DISABLE_COMMAND_LINE
+
 
 	// If a target was specified, check whether there is either a game
 	// domain (i.e. a target) matching this argument, or alternatively
@@ -731,7 +752,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 				ConfMan.set("id_came_from_command_line", "1");
 
 		} else {
+#ifndef DISABLE_COMMAND_LINE
 			usage("Unrecognized game target '%s'", command.c_str());
+#endif // DISABLE_COMMAND_LINE
 		}
 	}
 
