@@ -54,6 +54,8 @@ void MoviePlayer::playMovie(uint resIndex) {
 	uint32 subtitleSlot;
 	byte moviePalette[768];
 	
+	_vm->_isSaveAllowed = false;
+
 	memset(moviePalette, 0, sizeof(moviePalette));
 
 	_vm->_screen->finishTalkTextItems();
@@ -177,6 +179,8 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_arc->closeResource();
 	
 	debug(0, "playMovie() done");
+
+	_vm->_isSaveAllowed = true;
 
 }
 

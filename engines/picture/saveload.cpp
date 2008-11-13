@@ -32,6 +32,8 @@
 #include "base/plugins.h"
 #include "base/version.h"
 
+#include "graphics/thumbnail.h"
+
 #include "sound/mixer.h"
 
 #include "picture/picture.h"
@@ -46,14 +48,43 @@ namespace Picture {
 
 /* TODO:
 	- Saveload is working so far but only one slot is supported until the game menu is implemented
-	- Save with F6; Load with F9
+	- Save with F7; Load with F9
 	- Saving during an animation (AnimationPlayer) is not working correctly yet
 	- Maybe switch to SCUMM/Tinsel serialization approach?
 */
 
 #define SAVEGAME_VERSION 0 // 0 is dev version until in official SVN
 
-void PictureEngine::savegame(const char *filename) {
+PictureEngine::kReadSaveHeaderError PictureEngine::readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header) {
+
+	header.version = in->readUint32LE();
+	if (header.version != SAVEGAME_VERSION)
+		return kRSHEInvalidVersion;
+
+	byte descriptionLen = in->readByte();
+	header.description = "";
+	while (descriptionLen--)
+		header.description += (char)in->readByte();
+
+	if (loadThumbnail) {
+		header.thumbnail = new Graphics::Surface();
+		assert(header.thumbnail);
+		if (!Graphics::loadThumbnail(*in, *header.thumbnail)) {
+			delete header.thumbnail;
+			header.thumbnail = 0;
+		}
+	} else {
+		Graphics::skipThumbnailHeader(*in);
+	}
+
+	// Not used yet, reserved for future usage
+	header.gameID = in->readByte();
+	header.flags = in->readUint32LE();
+
+	return (in->ioFailed() ? kRSHEIoError : kRSHENoError);
+}
+
+void PictureEngine::savegame(const char *filename, const char *description) {
 
 	Common::OutSaveFile *out;
 	if (!(out = g_system->getSavefileManager()->openForSaving(filename))) {
@@ -62,6 +93,16 @@ void PictureEngine::savegame(const char *filename) {
 	}
 
 	out->writeUint32LE(SAVEGAME_VERSION);
+
+	byte descriptionLen = strlen(description);
+	out->writeByte(descriptionLen);
+	out->write(description, descriptionLen);
+	
+	Graphics::saveThumbnail(*out);
+
+	// Not used yet, reserved for future usage
+	out->writeByte(0);
+	out->writeUint32LE(0);
 
 	out->writeUint16LE(_cameraX);
 	out->writeUint16LE(_cameraY);
@@ -101,10 +142,14 @@ void PictureEngine::loadgame(const char *filename) {
 		warning("Can't open file '%s', game not loaded", filename);
 		return;
 	}
+
+	SaveHeader header;
+
+	kReadSaveHeaderError errorCode = readSaveHeader(in, false, header);
 	
-	uint32 version = in->readUint32LE();
-	if (version != SAVEGAME_VERSION) {
-		warning("Savegame '%s' too old, game not loaded (got v%d, need v%d)", filename, version, SAVEGAME_VERSION);
+	if (errorCode != kRSHENoError) {
+		warning("Error loading savegame '%s'", filename);
+		delete in;
 		return;
 	}
 	
@@ -145,6 +190,31 @@ void PictureEngine::loadgame(const char *filename) {
 	_newCameraX = _cameraX;
 	_newCameraY = _cameraY;
 
+}
+
+Common::Error PictureEngine::loadGameState(int slot) {
+	const char *fileName = getSavegameFilename(slot);
+	loadgame(fileName);
+}
+
+Common::Error PictureEngine::saveGameState(int slot, const char *description) {
+	const char *fileName = getSavegameFilename(slot);
+	savegame(fileName, description);
+}
+
+const char *PictureEngine::getSavegameFilename(int num) {
+	static Common::String filename;
+	filename = getSavegameFilename(_targetName, num);
+	return filename.c_str();
+}
+
+Common::String PictureEngine::getSavegameFilename(const Common::String &target, int num) {
+	assert(num >= 0 && num <= 999);
+
+	char extension[5];
+	sprintf(extension, "%03d", num);
+
+	return target + "." + extension;
 }
 
 } // End of namespace Picture

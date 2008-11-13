@@ -81,16 +81,28 @@ PictureEngine::~PictureEngine() {
 	delete _rnd;
 }
 
-int PictureEngine::init() {
+Common::Error PictureEngine::init() {
 	// Initialize backend
 	_system->beginGFXTransaction();
 	initCommonGFX(true);
 	_system->initSize(640, 400);
 	_system->endGFXTransaction();
-	return 0;
+	return Common::kNoError;
 }
 
-int PictureEngine::go() {
+void PictureEngine::syncSoundSettings() {
+	/*
+	_music->setVolume(ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	*/
+}
+
+Common::Error PictureEngine::go() {
+
+	_isSaveAllowed = true;
 
  	_quitGame = false;
 	_counter01 = 0;
@@ -142,16 +154,6 @@ int PictureEngine::go() {
 
 	_system->showMouse(true);
 
-//#define TEST_MOVIE
-#ifdef TEST_MOVIE
-	_screen->registerFont(0, 0x0D);
-	_screen->registerFont(1, 0x0E);
-	//_moviePlayer->playMovie(0x000012D8);
-	//_moviePlayer->playMovie(0x000012D7);
-	//_moviePlayer->playMovie(0x);
-	_moviePlayer->playMovie(0x000012E0);
-#endif
-
 //#define TEST_MENU
 #ifdef TEST_MENU
 	_screen->registerFont(0, 0x0D);
@@ -185,7 +187,7 @@ int PictureEngine::go() {
 	
 	delete _sound;
 
-	return 0;
+	return Common::kNoError;
 }
 
 void PictureEngine::loadScene(uint resIndex) {
@@ -261,7 +263,7 @@ void PictureEngine::updateInput() {
 			// FIXME: This is just for debugging
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_F7:
-				savegame("toltecs.001");
+				savegame("toltecs.001", "Quicksave");
 				break;
 			case Common::KEYCODE_F9:
 				loadgame("toltecs.001");

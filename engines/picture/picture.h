@@ -45,10 +45,6 @@
 
 namespace Picture {
 
-enum PictureGameFeatures {
-	GF_PACKED = (1 << 0)
-};
-
 struct PictureGameDescription;
 
 class AnimationPlayer;
@@ -67,13 +63,16 @@ class PictureEngine : public ::Engine {
 	Common::KeyState _keyPressed;
 
 protected:
-	int init();
-	int go();
+	Common::Error init();
+	Common::Error go();
 //	void shutdown();
 
 public:
 	PictureEngine(OSystem *syst, const PictureGameDescription *gameDesc);
 	virtual ~PictureEngine();
+
+	virtual bool hasFeature(EngineFeature f) const;
+	virtual void syncSoundSettings();
 
 	Common::RandomSource *_rnd;
 	const PictureGameDescription *_gameDescription;
@@ -101,10 +100,8 @@ public:
 	
 	int16 findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize);
 
-	void savegame(const char *filename);
-	void loadgame(const char *filename);
-
 public:
+
 	AnimationPlayer *_anim;
 	ArchiveReader *_arc;
 	Input *_input;
@@ -141,6 +138,37 @@ public:
 	byte _mouseButton;
 	int16 _mouseDisabled;
 	bool _leftButtonDown, _rightButtonDown;
+
+	/* Save/load */
+
+	enum kReadSaveHeaderError {
+		kRSHENoError = 0,
+		kRSHEInvalidType = 1,
+		kRSHEInvalidVersion = 2,
+		kRSHEIoError = 3
+	};
+
+	struct SaveHeader {
+		Common::String description;
+		uint32 version;
+		byte gameID;
+		uint32 flags;
+		Graphics::Surface *thumbnail;
+	};
+
+	bool _isSaveAllowed;
+
+	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
+	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const char *description);
+	void savegame(const char *filename, const char *description);
+	void loadgame(const char *filename);
+
+	const char *getSavegameFilename(int num);
+	static Common::String getSavegameFilename(const Common::String &target, int num);
+
+	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header);
 
 };
 
