@@ -42,6 +42,11 @@ DEFINES += -DENABLE_GOB=$(ENABLE_GOB)
 MODULES += engines/gob
 endif
 
+ifdef ENABLE_GROOVIE
+DEFINES += -DENABLE_GROOVIE=$(ENABLE_GROOVIE)
+MODULES += engines/groovie
+endif
+
 ifdef ENABLE_IGOR
 DEFINES += -DENABLE_IGOR=$(ENABLE_IGOR)
 MODULES += engines/igor
