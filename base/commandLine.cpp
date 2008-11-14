@@ -112,8 +112,10 @@ static const char HELP_STRING[] =
 	"  --copy-protection        Enable copy protection in SCUMM games, when\n"
 	"                           ScummVM disables it by default.\n"
 	"  --talkspeed=NUM          Set talk speed for games (default: 60)\n"
+#if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
+	"  --demo-mode              Start demo mode of Maniac Mansion or The 7th Guest\n"
+#endif
 #ifdef ENABLE_SCUMM
-	"  --demo-mode              Start demo mode of Maniac Mansion\n"
 	"  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
 	"                           (default: 100)\n"
 #endif
@@ -186,8 +188,10 @@ void registerDefaults() {
 	ConfMan.registerDefault("copy_protection", false);
 	ConfMan.registerDefault("talkspeed", 60);
 
-#ifdef ENABLE_SCUMM
+#if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
 	ConfMan.registerDefault("demo_mode", false);
+#endif
+#ifdef ENABLE_SCUMM
 	ConfMan.registerDefault("tempo", 0);
 #endif
 
@@ -486,7 +490,8 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 #ifdef ENABLE_SCUMM
 			DO_LONG_OPTION_INT("tempo")
 			END_OPTION
-
+#endif
+#if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
 			DO_LONG_OPTION_BOOL("demo-mode")
 			END_OPTION
 #endif
