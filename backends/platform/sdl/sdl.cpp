@@ -116,8 +116,9 @@ void OSystem_SDL::initBackend() {
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1);
 
-	_oldVideoMode.setup = false;
-	_videoMode.setup = false;
+	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
+	memset(&_videoMode, 0, sizeof(_videoMode));
+	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
 
 	_cksumValid = false;
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && !defined(DISABLE_SCALERS)
