@@ -80,7 +80,7 @@ public:
 	virtual void initBackend();
 
 	void beginGFXTransaction(void);
-	void endGFXTransaction(void);
+	TransactionError endGFXTransaction(void);
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
@@ -179,8 +179,8 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
-	virtual int16 getOverlayHeight()  { return _overlayHeight; }
-	virtual int16 getOverlayWidth()   { return _overlayWidth; }
+	virtual int16 getOverlayHeight()  { return _videoMode.overlayHeight; }
+	virtual int16 getOverlayWidth()   { return _videoMode.overlayWidth; }
 
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
@@ -226,16 +226,12 @@ protected:
 	// unseen game screen
 	SDL_Surface *_screen;
 
-	// TODO: We could get rid of the following two vars and just use _screen instead
-	int _screenWidth, _screenHeight;
-
 	// temporary screen (for scalers)
 	SDL_Surface *_tmpscreen;
 	SDL_Surface *_tmpscreen2;
 
 	// overlay
 	SDL_Surface *_overlayscreen;
-	int _overlayWidth, _overlayHeight;
 	bool _overlayVisible;
 	Graphics::PixelFormat _overlayFormat;
 
@@ -253,36 +249,39 @@ protected:
 
 	enum {
 		kTransactionNone = 0,
-		kTransactionCommit = 1,
-		kTransactionActive = 2
+		kTransactionActive = 1,
+		kTransactionRollback = 2
 	};
 
 	struct TransactionDetails {
-		int mode;
-		bool modeChanged;
-		int w;
-		int h;
 		bool sizeChanged;
-		bool fs;
-		bool fsChanged;
-		bool ar;
-		bool arChanged;
 		bool needHotswap;
 		bool needUpdatescreen;
-		bool needUnload;
-		bool needToggle;
 		bool normal1xScaler;
 	};
 	TransactionDetails _transactionDetails;
+
+	struct VideoState {
+		bool setup;
+
+		bool fullscreen;
+		bool aspectRatio;
+
+		int mode;
+		int scaleFactor;
+
+		int screenWidth, screenHeight;
+		int overlayWidth, overlayHeight;
+	};
+	VideoState _videoMode, _oldVideoMode;
+
+	void setGraphicsModeIntern();
 
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;
 	ScalerProc *_scalerProc;
 	int _scalerType;
-	int _scaleFactor;
-	int _mode;
 	int _transactionMode;
-	bool _fullscreen;
 
 	bool _screenIsLocked;
 	Graphics::Surface _framebuffer;
@@ -291,9 +290,6 @@ protected:
 	uint32 _modeFlags;
 	bool _modeChanged;
 	int _screenChangeCount;
-
-	/** True if aspect ratio correction is enabled. */
-	bool _adjustAspectRatio;
 
 	enum {
 		NUM_DIRTY_RECT = 100,
@@ -417,9 +413,9 @@ protected:
 
 	virtual void internUpdateScreen(); // overloaded by CE backend
 
-	virtual void loadGFXMode(); // overloaded by CE backend
+	virtual bool loadGFXMode(); // overloaded by CE backend
 	virtual void unloadGFXMode(); // overloaded by CE backend
-	virtual void hotswapGFXMode(); // overloaded by CE backend
+	virtual bool hotswapGFXMode(); // overloaded by CE backend
 
 	void setFullscreenMode(bool enable);
 	void setAspectRatioCorrection(bool enable);
@@ -427,8 +423,8 @@ protected:
 	virtual bool saveScreenshot(const char *filename); // overloaded by CE backend
 
 	int effectiveScreenHeight() const {
-		return (_adjustAspectRatio ? real2Aspect(_screenHeight) : _screenHeight)
-			* _scaleFactor;
+		return (_videoMode.aspectRatio ? real2Aspect(_videoMode.screenHeight) : _videoMode.screenHeight)
+			* _videoMode.scaleFactor;
 	}
 
 	void setupIcon();

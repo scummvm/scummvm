@@ -116,25 +116,28 @@ void OSystem_SDL::initBackend() {
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1);
 
+	_oldVideoMode.setup = false;
+	_videoMode.setup = false;
+
 	_cksumValid = false;
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && !defined(DISABLE_SCALERS)
-	_mode = GFX_DOUBLESIZE;
-	_scaleFactor = 2;
+	_videoMode.mode = GFX_DOUBLESIZE;
+	_videoMode.scaleFactor = 2;
+	_videoMode.aspectRatio = ConfMan.getBool("aspect_ratio");
 	_scalerProc = Normal2x;
-	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
 #else // for small screen platforms
-	_mode = GFX_NORMAL;
-	_scaleFactor = 1;
+	_videoMode.mode = GFX_NORMAL;
+	_videoMode.scaleFactor = 1;
+	_videoMode.aspectRatio = false;
 	_scalerProc = Normal1x;
-	_adjustAspectRatio = false;
 #endif
 	_scalerType = 0;
 	_modeFlags = 0;
 
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	_fullscreen = ConfMan.getBool("fullscreen");
+	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
 #else
-	_fullscreen = true;
+	_videoMode.fullscreen = true;
 #endif
 
 #if !defined(MACOSX) && !defined(__SYMBIAN32__)
@@ -192,8 +195,7 @@ OSystem_SDL::OSystem_SDL()
 #ifdef USE_OSD
 	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
 #endif
-	_hwscreen(0), _screen(0), _screenWidth(0), _screenHeight(0),
-	_tmpscreen(0), _overlayWidth(0), _overlayHeight(0),
+	_hwscreen(0), _screen(0), _tmpscreen(0),
 	_overlayVisible(false),
 	_overlayscreen(0), _tmpscreen2(0),
 	_samplesPerSec(0),
@@ -429,9 +431,9 @@ bool OSystem_SDL::getFeatureState(Feature f) {
 
 	switch (f) {
 	case kFeatureFullscreenMode:
-		return _fullscreen;
+		return _videoMode.fullscreen;
 	case kFeatureAspectRatioCorrection:
-		return _adjustAspectRatio;
+		return _videoMode.aspectRatio;
 	case kFeatureAutoComputeDirtyRects:
 		return _modeFlags & DF_WANT_RECT_OPTIM;
 	default:

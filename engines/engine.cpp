@@ -125,15 +125,62 @@ void initCommonGFX(bool defaultTo1XScaler) {
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 }
 
+void initGraphics(int width, int height, bool defaultTo1xScaler) {
+	g_system->beginGFXTransaction();
+
+		initCommonGFX(defaultTo1xScaler);
+		g_system->initSize(width, height);
+
+	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+
+	if (gfxError == OSystem::kTransactionSuccess)
+		return;
+
+	// Error out on size switch failure
+	if (gfxError & OSystem::kTransactionSizeChangeFailed) {
+		char buffer[16];
+		snprintf(buffer, 16, "%dx%d", width, height);
+
+		Common::String message = "Could not switch to resolution: '";
+		message += buffer;
+		message += "'.";
+
+		GUIErrorMessage(message);
+		error(message.c_str());
+	}
+
+	// Just show warnings then these occur:
+	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
+		Common::String message = "Could not switch to video mode: '";
+		message += ConfMan.get("gfx_mode");
+		message += "'.";
+
+		GUI::MessageDialog dialog(message);
+		dialog.runModal();		
+	}
+	
+	if (gfxError & OSystem::kTransactionAspectRatioFailed) {
+		GUI::MessageDialog dialog("Could not apply aspect ratio setting.");
+		dialog.runModal();
+	}
+
+	if (gfxError & OSystem::kTransactionFullscreenFailed) {
+		GUI::MessageDialog dialog("Could not apply fullscreen setting.");
+		dialog.runModal();
+	}
+}
+
 void GUIErrorMessage(const Common::String msg) {
 	g_system->setWindowCaption("Error");
 	g_system->beginGFXTransaction();
 		initCommonGFX(false);
 		g_system->initSize(320, 200);
-	g_system->endGFXTransaction();
-
-	GUI::MessageDialog dialog(msg);
-	dialog.runModal();
+	if (g_system->endGFXTransaction() == OSystem::kTransactionSuccess) {
+		GUI::MessageDialog dialog(msg);
+		dialog.runModal();
+	} else {
+		error(msg.c_str());
+	}
 }
 
 void Engine::checkCD() {

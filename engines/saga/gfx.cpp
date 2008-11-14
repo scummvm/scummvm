@@ -40,10 +40,7 @@ namespace Saga {
 #define RID_IHNM_HOURGLASS_CURSOR 11 // not in demo
 
 Gfx::Gfx(SagaEngine *vm, OSystem *system, int width, int height) : _vm(vm), _system(system) {
-	_system->beginGFXTransaction();
-		initCommonGFX(width > 320);
-		_system->initSize(width, height);
-	_system->endGFXTransaction();
+	initGraphics(width, height, width > 320);
 
 	debug(5, "Init screen %dx%d", width, height);
 	// Convert surface data to R surface data

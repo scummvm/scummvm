@@ -67,7 +67,8 @@ static bool launcherDialog(OSystem &system) {
 			system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
 		if (ConfMan.hasKey("fullscreen"))
 			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
-	system.endGFXTransaction();
+	if (system.endGFXTransaction() != OSystem::kTransactionSuccess)
+		error("Could not switch to graphics mode: 320x200 ('%s')", ConfMan.get("gfx_mode").c_str());
 
 	// When starting up launcher for the first time, the user might have specified
 	// a --gui-theme option, to allow that option to be working, we need to initialize

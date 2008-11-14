@@ -52,8 +52,6 @@ Screen::Screen(Sword2Engine *vm, int16 width, int16 height) {
 
 	_dirtyGrid = _buffer = NULL;
 
-	_vm->_system->initSize(width, height);
-
 	_screenWide = width;
 	_screenDeep = height;
 

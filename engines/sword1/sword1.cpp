@@ -78,10 +78,7 @@ SwordEngine::~SwordEngine() {
 
 Common::Error SwordEngine::init() {
 
-	_system->beginGFXTransaction();
-		initCommonGFX(true);
-		_system->initSize(640, 480);
-	_system->endGFXTransaction();
+	initGraphics(640, 480, true);
 
 	if ( 0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1mac") ||
 	     0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo") )

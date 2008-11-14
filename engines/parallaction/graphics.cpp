@@ -749,10 +749,7 @@ void Gfx::grabBackground(const Common::Rect& r, Graphics::Surface &dst) {
 Gfx::Gfx(Parallaction* vm) :
 	_vm(vm), _disk(vm->_disk) {
 
-	_vm->_system->beginGFXTransaction();
-		_vm->_system->initSize(_vm->_screenWidth, _vm->_screenHeight);
-		initCommonGFX(_vm->getGameType() == GType_BRA);
-	_vm->_system->endGFXTransaction();
+	initGraphics(_vm->_screenWidth, _vm->_screenHeight, _vm->getGameType() == GType_BRA);
 
 	setPalette(_palette);
 

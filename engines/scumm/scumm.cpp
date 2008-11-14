@@ -822,10 +822,7 @@ ScummEngine_vCUPhe::~ScummEngine_vCUPhe() {
 }
 
 Common::Error ScummEngine_vCUPhe::init() {
-	_system->beginGFXTransaction();
-		_system->initSize(CUP_Player::kDefaultVideoWidth, CUP_Player::kDefaultVideoHeight);
-		initCommonGFX(true);
-	_system->endGFXTransaction();
+	initGraphics(CUP_Player::kDefaultVideoWidth, CUP_Player::kDefaultVideoHeight, true);
 
 	return Common::kNoError;
 }
@@ -1069,23 +1066,16 @@ Common::Error ScummEngine::init() {
 	loadCJKFont();
 
 	// Initialize backend
-	_system->beginGFXTransaction();
-		bool defaultTo1XScaler = false;
-		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-			_system->initSize(Common::kHercW, Common::kHercH);
-			defaultTo1XScaler = true;
-		} else if (_useCJKMode) {
-			_system->initSize(_screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier);
-
-			// CJK FT and DIG use usual NUT fonts, not FM-TOWNS ROM, so
-			// there is no text surface for them. This takes that into account
-			defaultTo1XScaler = (_screenWidth * _textSurfaceMultiplier > 320);
-		} else {
-			_system->initSize(_screenWidth, _screenHeight);
-			defaultTo1XScaler = (_screenWidth > 320);
-		}
-		initCommonGFX(defaultTo1XScaler);
-	_system->endGFXTransaction();
+	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
+		initGraphics(Common::kHercW, Common::kHercH, true);
+	} else if (_useCJKMode) {
+		initGraphics(_screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier,
+					// CJK FT and DIG use usual NUT fonts, not FM-TOWNS ROM, so
+					// there is no text surface for them. This takes that into account
+					(_screenWidth * _textSurfaceMultiplier > 320));
+	} else {
+		initGraphics(_screenWidth, _screenHeight, _screenWidth > 320);
+	}
 
 	setupScumm();
 

@@ -782,10 +782,7 @@ AgiEngine::~AgiEngine() {
 Common::Error AgiBase::init() {
 
 	// Initialize backend
-	_system->beginGFXTransaction();
-	initCommonGFX(false);
-	_system->initSize(320, 200);
-	_system->endGFXTransaction();
+	initGraphics(320, 200, false);
 
 	initialize();
 

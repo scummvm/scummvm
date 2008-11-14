@@ -143,13 +143,10 @@ M4Engine::~M4Engine() {
 
 Common::Error M4Engine::init() {
 	// Initialize backend
-	_system->beginGFXTransaction();
-	initCommonGFX(isM4());
 	if (isM4())
-		_system->initSize(640, 480);
+		initGraphics(640, 480, true);
 	else
-		_system->initSize(320, 200);
-	_system->endGFXTransaction();
+		initGraphics(320, 200, false);
 
 	_screen = new M4Surface(true); // Special form for creating screen reference
 

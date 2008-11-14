@@ -540,10 +540,7 @@ Common::Error AGOSEngine::init() {
 		_screenHeight = 200;
 	}
 
-	_system->beginGFXTransaction();
-		initCommonGFX(getGameType() == GType_FF || getGameType() == GType_PP);
-		_system->initSize(_screenWidth, _screenHeight);
-	_system->endGFXTransaction();
+	initGraphics(_screenWidth, _screenHeight, getGameType() == GType_FF || getGameType() == GType_PP);
 
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));

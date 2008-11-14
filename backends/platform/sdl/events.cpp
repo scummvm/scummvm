@@ -77,9 +77,9 @@ void OSystem_SDL::fillMouseEvent(Common::Event &event, int x, int y) {
 
 	// Adjust for the screen scaling
 	if (!_overlayVisible) {
-		event.mouse.x /= _scaleFactor;
-		event.mouse.y /= _scaleFactor;
-		if (_adjustAspectRatio)
+		event.mouse.x /= _videoMode.scaleFactor;
+		event.mouse.y /= _videoMode.scaleFactor;
+		if (_videoMode.aspectRatio)
 			event.mouse.y = aspect2Real(event.mouse.y);
 	}
 }
@@ -196,10 +196,10 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 			if (b == Common::KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN
 			                  || ev.key.keysym.sym == SDLK_KP_ENTER)) {
 				beginGFXTransaction();
-				setFullscreenMode(!_fullscreen);
+					setFullscreenMode(!_videoMode.fullscreen);
 				endGFXTransaction();
 #ifdef USE_OSD
-				if (_fullscreen)
+				if (_videoMode.fullscreen)
 					displayMessageOnOSD("Fullscreen mode");
 				else
 					displayMessageOnOSD("Windowed mode");

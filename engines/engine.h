@@ -51,7 +51,18 @@ namespace GUI {
 void initCommonGFX(bool defaultTo1XScaler);
 
 /**
- * Initialized graphics and shows error message.
+ * Setup the backend's screen size and graphics mode.
+ *
+ * Shows an various warnings on certain backend graphics
+ * transaction failures (aspect switch, fullscreen switch, etc.).
+ *
+ * Errors out when backend is not able to switch to the specified
+ * mode.
+ */
+void initGraphics(int width, int height, bool defaultTo1xScaler);
+
+/**
+ * Initializes graphics and shows error message.
  */
 void GUIErrorMessage(const Common::String msg);
 

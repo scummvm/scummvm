@@ -106,10 +106,7 @@ DrasculaEngine::~DrasculaEngine() {
 
 Common::Error DrasculaEngine::init() {
 	// Initialize backend
-	_system->beginGFXTransaction();
-	initCommonGFX(false);
-	_system->initSize(320, 200);
-	_system->endGFXTransaction();
+	initGraphics(320, 200, false);
 
 	switch (getLanguage()) {
 	case Common::EN_ANY:

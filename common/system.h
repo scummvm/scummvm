@@ -393,12 +393,30 @@ public:
 	 */
 	virtual void beginGFXTransaction() {}
 
+	/**
+	 * This type is able to save the different errors which can happen while
+	 * changing GFX config values inside GFX transactions.
+	 *
+	 * endGFXTransaction returns a ORed combination of the '*Failed' values
+	 * if any problem occures, on success 0.
+	 *
+	 * @see endGFXTransaction
+	 */
+	enum TransactionError {
+		kTransactionSuccess = 0, 					/**< Everything fine (use EQUAL check for this one!) */
+		kTransactionAspectRatioFailed = (1 << 0),	/**< Failed switchting aspect ratio correction mode */
+		kTransactionFullscreenFailed = (1 << 1),	/**< Failed switchting fullscreen mode */
+		kTransactionModeSwitchFailed = (1 << 2),	/**< Failed switchting the GFX graphics mode (setGraphicsMode) */
+		kTransactionSizeChangeFailed = (1 << 3)		/**< Failed switchting the screen dimensions (initSize) */
+	};
 
 	/**
 	 * End (and thereby commit) the current GFX transaction.
 	 * @see beginGFXTransaction
+	 * @see kTransactionError
+	 * @return returns a ORed combination of TransactionError values or 0 on success
 	 */
-	virtual void endGFXTransaction() {}
+	virtual TransactionError endGFXTransaction() { return kTransactionSuccess; }
 
 
 	/**

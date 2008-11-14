@@ -82,10 +82,7 @@ ToucheEngine::~ToucheEngine() {
 }
 
 Common::Error ToucheEngine::init() {
-	_system->beginGFXTransaction();
-		initCommonGFX(true);
-		_system->initSize(kScreenWidth, kScreenHeight);
-	_system->endGFXTransaction();
+	initGraphics(kScreenWidth, kScreenHeight, true);
 
 	Graphics::setupFont(_language);
 

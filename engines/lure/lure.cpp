@@ -52,10 +52,7 @@ Common::Error LureEngine::init() {
 	int_engine = this;
 	_initialised = false;
 
-	_system->beginGFXTransaction();
-	initCommonGFX(false);
-	_system->initSize(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
-	_system->endGFXTransaction();
+	initGraphics(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT, false);
 
 	// Check the version of the lure.dat file
 	Common::File f;

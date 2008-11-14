@@ -238,10 +238,7 @@ Common::Error SkyEngine::go() {
 }
 
 Common::Error SkyEngine::init() {
-	_system->beginGFXTransaction();
-		initCommonGFX(false);
-		_system->initSize(320, 200);
-	_system->endGFXTransaction();
+	initGraphics(320, 200, false);
 
 	if (ConfMan.getBool("sfx_mute")) {
 		SkyEngine::_systemVars.systemFlags |= SF_FX_OFF;

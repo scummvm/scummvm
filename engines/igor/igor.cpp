@@ -89,10 +89,7 @@ IgorEngine::~IgorEngine() {
 }
 
 Common::Error IgorEngine::init() {
-	_system->beginGFXTransaction();
-		initCommonGFX(false);
-		_system->initSize(320, 200);
-	_system->endGFXTransaction();
+	initGraphics(320, 200, false);
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	return Common::kNoError;

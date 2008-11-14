@@ -76,10 +76,7 @@ CineEngine::~CineEngine() {
 
 Common::Error CineEngine::init() {
 	// Initialize backend
-	_system->beginGFXTransaction();
-	initCommonGFX(false);
-	_system->initSize(320, 200);
-	_system->endGFXTransaction();
+	initGraphics(320, 200, false);
 
 	if (g_cine->getPlatform() == Common::kPlatformPC) {
 		g_sound = new PCSound(_mixer, this);

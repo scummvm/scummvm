@@ -169,10 +169,7 @@ void Video::clearScreen() {
 }
 
 void Video::setSize(bool defaultTo1XScaler) {
-	_vm->_system->beginGFXTransaction();
-		_vm->_system->initSize(_vm->_width, _vm->_height);
-		initCommonGFX(defaultTo1XScaler);
-	_vm->_system->endGFXTransaction();
+	initGraphics(_vm->_width, _vm->_height, defaultTo1XScaler);
 }
 
 void Video::retrace(bool mouse) {

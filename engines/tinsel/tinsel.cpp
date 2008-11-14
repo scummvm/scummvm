@@ -660,10 +660,7 @@ TinselEngine::~TinselEngine() {
 
 Common::Error TinselEngine::init() {
 	// Initialize backend
-	_system->beginGFXTransaction();
-		initCommonGFX(false);
-		_system->initSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-	_system->endGFXTransaction();
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
 	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, 1);
 

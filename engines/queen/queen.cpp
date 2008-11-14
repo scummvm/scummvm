@@ -473,10 +473,7 @@ Common::Error QueenEngine::go() {
 }
 
 Common::Error QueenEngine::init() {
-	_system->beginGFXTransaction();
-		initCommonGFX(false);
-		_system->initSize(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-	_system->endGFXTransaction();
+	initGraphics(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, false);
 
 	_resource = new Resource();
 

@@ -66,10 +66,7 @@ GroovieEngine::~GroovieEngine() {
 
 Common::Error GroovieEngine::init() {
 	// Initialize the graphics
-	_system->beginGFXTransaction();
-	initCommonGFX(true);
-	_system->initSize(640, 480);
-	_system->endGFXTransaction();
+	initGraphics(640, 480, true);
 
 	// Create debugger. It requires GFX to be initialized
 	_debugger = new Debugger(this);

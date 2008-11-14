@@ -371,10 +371,8 @@ Common::Error Sword2Engine::init() {
 	_resman = NULL;
 	_memory = NULL;
 
-	_system->beginGFXTransaction();
-		initCommonGFX(true);
-		_screen = new Screen(this, 640, 480);
-	_system->endGFXTransaction();
+	initGraphics(640, 480, true);
+	_screen = new Screen(this, 640, 480);
 
 	// Create the debugger as early as possible (but not before the
 	// screen object!) so that errors can be displayed in it. In

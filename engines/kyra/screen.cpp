@@ -186,23 +186,25 @@ void Screen::setResolution() {
 	byte palette[4*256];
 	_system->grabPalette(palette, 0, 256);
 
+	int width = 320, height = 200;
+	bool defaultTo1xScaler = false;
+
 	if (_vm->gameFlags().useHiResOverlay) {
-		_system->beginGFXTransaction();
-			if (_debugEnabled)
-				_system->initSize(960, 400);
-			else
-				_system->initSize(640, 400);
-			initCommonGFX(true);
-		_system->endGFXTransaction();
+		defaultTo1xScaler = true;
+		height = 400;
+
+		if (_debugEnabled)
+			width = 960;
+		else
+			width = 640;
 	} else {
-		_system->beginGFXTransaction();
-			if (_debugEnabled)
-				_system->initSize(640, 200);
-			else
-				_system->initSize(320, 200);
-			initCommonGFX(false);
-		_system->endGFXTransaction();
+		if (_debugEnabled)
+			width = 640;
+		else
+			width = 320;
 	}
+
+	initGraphics(width, height, defaultTo1xScaler);
 
 	_system->setPalette(palette, 0, 256);
 }
