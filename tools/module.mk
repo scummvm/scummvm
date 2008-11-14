@@ -13,7 +13,8 @@ MODULE_DIRS += \
 
 TOOLS := \
 	tools/convbdf$(EXEEXT) \
-	tools/md5table$(EXEEXT)
+	tools/md5table$(EXEEXT) \
+	tools/make-scumm-fontdata$(EXEEXT)
 
 include $(srcdir)/tools/*/module.mk
 
@@ -36,6 +37,10 @@ tools/convbdf$(EXEEXT): $(srcdir)/tools/convbdf.c
 	$(CC) $(CFLAGS) -Wall -o $@ $<
 
 tools/md5table$(EXEEXT): $(srcdir)/tools/md5table.c
+	$(MKDIR) tools/$(DEPDIR)
+	$(CC) $(CFLAGS) -Wall -o $@ $<
+
+tools/make-scumm-fontdata$(EXEEXT): $(srcdir)/tools/make-scumm-fontdata.c
 	$(MKDIR) tools/$(DEPDIR)
 	$(CC) $(CFLAGS) -Wall -o $@ $<
 

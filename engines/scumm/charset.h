@@ -165,8 +165,12 @@ public:
 };
 
 class CharsetRendererV2 : public CharsetRendererV3 {
+protected:
+	bool _deleteFontPtr;
+
 public:
 	CharsetRendererV2(ScummEngine *vm, Common::Language language);
+	~CharsetRendererV2();
 
 	void setCurID(int32 id) {}
 	int getCharWidth(byte chr) { return 8; }
