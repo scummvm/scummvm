@@ -358,12 +358,20 @@ bool Resource::createContexts() {
 	int voicesFileIndex = 0;
 	bool digitalMusic = false;
 	bool soundFileInArray = false;
-	bool voicesFileInArray = false;
 	bool multipleVoices = false;
 	bool censoredVersion = false;
 	uint16 voiceFileType = GAME_VOICEFILE;
+	bool fileFound = false;
+	int maxFile = 0;
 
 	_vm->_voiceFilesExist = true;
+
+	struct SoundFileInfo {
+		char fileName[40];
+		bool isCompressed;
+	};
+
+	SoundFileInfo *curSoundfiles;
 
 	// If the Wyrmkeep credits file is found, set the Wyrmkeep version flag to true
 	if (Common::File::exists("graphics/credit3n.dlt")) {
@@ -375,172 +383,149 @@ bool Resource::createContexts() {
 		_contextsCount++;
 		if (_vm->getFilesDescriptions()[i].fileType == GAME_SOUNDFILE)
 			soundFileInArray = true;
-		if (_vm->getFilesDescriptions()[i].fileType == GAME_VOICEFILE)
-			voicesFileInArray = true;
 	}
 
+	//// Detect and add SFX files ////////////////////////////////////////////////
+	SoundFileInfo sfxFilesITE[] = {
+		{	"sounds.rsc",	false	},
+		{	"sounds.cmp",	true	},
+		{	"soundsd.rsc",	false	},
+		{	"soundsd.cmp",	true	}
+	};
+
+	SoundFileInfo sfxFilesIHNM[] = {
+		{	"sfx.res",	false	},
+		{	"sfx.cmp",	true	}
+	};
+
 	if (!soundFileInArray) {
-		if (_vm->getGameType() == GType_ITE) {
-			// If the sound file is not specified in the detector table, add it here
-			if (Common::File::exists("sounds.rsc")) {
+		// If the sound file is not specified in the detector table, add it here
+		fileFound = false;
+		curSoundfiles = _vm->getGameType() == GType_ITE ? sfxFilesITE : sfxFilesIHNM;
+		maxFile = _vm->getGameType() == GType_ITE ? 4 : 2;
+
+		for (i = 0; i < maxFile; i++) {
+			if (Common::File::exists(curSoundfiles[i].fileName)) {
 				_contextsCount++;
 				soundFileIndex = _contextsCount - 1;
-				sprintf(soundFileName, "sounds.rsc");
-			} else if (Common::File::exists("sounds.cmp")) {
-				_contextsCount++;
-				soundFileIndex = _contextsCount - 1;
-				sprintf(soundFileName, "sounds.cmp");
-				_vm->_gf_compressed_sounds = true;
-			} else if (Common::File::exists("soundsd.rsc")) {
-				_contextsCount++;
-				soundFileIndex = _contextsCount - 1;
-				sprintf(soundFileName, "soundsd.rsc");
-			} else if (Common::File::exists("soundsd.cmp")) {
-				_contextsCount++;
-				soundFileIndex = _contextsCount - 1;
-				sprintf(soundFileName, "soundsd.cmp");
-				_vm->_gf_compressed_sounds = true;
-			} else {
-				// No sound file found, don't add any file to the array
-				soundFileInArray = true;
+				sprintf(soundFileName, curSoundfiles[i].fileName);
+				_vm->_gf_compressed_sounds = curSoundfiles[i].isCompressed;
+				fileFound = true;
+				break;
+			}
+		}
+
+		if (!fileFound) {
+			// No sound file found, don't add any file to the array
+			soundFileInArray = true;
+			if (_vm->getGameType() == GType_ITE) {
 				// ITE floppy versions have both voices and sounds in voices.rsc
 				voiceFileType = GAME_SOUNDFILE | GAME_VOICEFILE;
-			}
-		} else {
-			// If the sound file is not specified in the detector table, add it here
-			if (Common::File::exists("sfx.res")) {
-				_contextsCount++;
-				soundFileIndex = _contextsCount - 1;
-				sprintf(soundFileName, "sfx.res");
-			} else if (Common::File::exists("sfx.cmp")) {
-				_contextsCount++;
-				soundFileIndex = _contextsCount - 1;
-				sprintf(soundFileName, "sfx.cmp");
-				_vm->_gf_compressed_sounds = true;
-			} else {
-				// No sound file found, don't add any file to the array
-				soundFileInArray = true;
 			}
 		}
 	}
 
-	if (!voicesFileInArray) {
-		if (_vm->getGameType() == GType_ITE) {
-			// If the voices file is not specified in the detector table, add it here
-			if (Common::File::exists("voices.rsc")) {
-				_contextsCount++;
-				voicesFileIndex = _contextsCount - 1;
-				sprintf(_voicesFileName[0], "voices.rsc");
-			} else if (Common::File::exists("voices.cmp")) {
-				_contextsCount++;
-				voicesFileIndex = _contextsCount - 1;
-				sprintf(_voicesFileName[0], "voices.cmp");
-				_vm->_gf_compressed_sounds = true;
-			} else if (Common::File::exists("voicesd.rsc")) {
-				_contextsCount++;
-				voicesFileIndex = _contextsCount - 1;
-				sprintf(_voicesFileName[0], "voicesd.rsc");
-			} else if (Common::File::exists("voicesd.cmp")) {
-				_contextsCount++;
-				voicesFileIndex = _contextsCount - 1;
-				sprintf(_voicesFileName[0], "voicesd.cmp");
-				_vm->_gf_compressed_sounds = true;
-			} else if (Common::File::exists("inherit the earth voices") ||
-					   Common::File::exists("inherit the earth voices.cmp")) {
-				_contextsCount++;
-				voicesFileIndex = _contextsCount - 1;
-				if (Common::File::exists("inherit the earth voices")) {
-					sprintf(_voicesFileName[0], "inherit the earth voices");
-				} else {
-					sprintf(_voicesFileName[0], "inherit the earth voices.cmp");
-					_vm->_gf_compressed_sounds = true;
-				}
+	//// Detect and add voice files /////////////////////////////////////////////
+	SoundFileInfo voiceFilesITE[] = {
+		{	"voices.rsc",					false	},
+		{	"voices.cmp",					true	},
+		{	"voicesd.rsc",					false	},
+		{	"voicesd.cmp",					true	},
+		{	"inherit the earth voices",		false	},
+		{	"inherit the earth voices.cmp",	true	},
+		{	"ite voices.bin",				false	}
+	};
 
+	SoundFileInfo voiceFilesIHNM[] = {
+		{	"voicess.res",					false	},
+		{	"voicess.cmp",					true	},
+		{	"voicesd.res",					false	},
+		{	"voicesd.cmp",					true	},
+	};
+
+	// Detect and add voice files
+	fileFound = false;
+	curSoundfiles = _vm->getGameType() == GType_ITE ? voiceFilesITE : voiceFilesIHNM;
+	maxFile = _vm->getGameType() == GType_ITE ? 4 : 2;
+
+	for (i = 0; i < maxFile; i++) {
+		if (Common::File::exists(curSoundfiles[i].fileName)) {
+			_contextsCount++;
+			voicesFileIndex = _contextsCount - 1;
+			sprintf(_voicesFileName[0], curSoundfiles[i].fileName);
+			_vm->_gf_compressed_sounds = curSoundfiles[i].isCompressed;
+			fileFound = true;
+
+			// Special cases
+			if (!stricmp(curSoundfiles[i].fileName, "inherit the earth voices") ||
+				!stricmp(curSoundfiles[i].fileName, "inherit the earth voices.cmp")) {
 				// The resources in the Wyrmkeep combined Windows/Mac/Linux CD version are little endian, but
 				// the voice file is big endian. If we got such a version with mixed files, mark this voice file
 				// as big endian
 				if (!_vm->isBigEndian())
 					voiceFileType = GAME_VOICEFILE | GAME_SWAPENDIAN;	// This file is big endian
-			} else if (Common::File::exists("ite voices.bin")) {		// MacBinary voice files
-				_contextsCount++;
-				voicesFileIndex = _contextsCount - 1;
-				sprintf(_voicesFileName[0], "ite voices.bin");
-				voiceFileType = GAME_VOICEFILE | GAME_MACBINARY;
-			} else {
-				// No voice file found, don't add any file to the array
-				voicesFileInArray = true;
-				warning("No voice file found, voices will be disabled");
-				_vm->_voicesEnabled = false;
-				_vm->_subtitlesEnabled = true;
-				_vm->_voiceFilesExist = false;
 			}
-		} else {
-			// If the voices file is not specified in the detector table, add it here
-			if (Common::File::exists("voicess.res") || Common::File::exists("voicess.cmp")) {
-				_contextsCount++;
-				voicesFileIndex = _contextsCount - 1;
+
+			if (!stricmp(curSoundfiles[i].fileName, "ite voices.bin")) {
+				voiceFileType = GAME_VOICEFILE | GAME_MACBINARY;
+			}
+
+			if (!stricmp(curSoundfiles[i].fileName, "voicess.res") ||
+				!stricmp(curSoundfiles[i].fileName, "voicess.cmp")) {
 				// IHNM has multiple voice files
 				multipleVoices = true;
-				// Note: it is assumed that the voices are always last in the list
+				// Note: it is assumed that the voice files are always last in the list
 				if (Common::File::exists("voices4.res") || Common::File::exists("voices4.cmp")) {
 					_contextsCount += 6;	// voices1-voices6
 				} else {
-					// The German and French versions of IHNM don't have Nimdok's chapter, therefore the voices file
-					// for that chapter is missing
+					// The German and French versions of IHNM don't have Nimdok's chapter,
+					// therefore the voices file for that chapter is missing
 					_contextsCount += 5;	// voices1-voices3, voices4-voices5
 					censoredVersion = true;
 				}
-				if (Common::File::exists("voicess.res")) {
-					sprintf(_voicesFileName[0], "voicess.res");
-				} else {
-					sprintf(_voicesFileName[0], "voicess.cmp");
-					_vm->_gf_compressed_sounds = true;
-				}
-			} else if (Common::File::exists("voicesd.res")) {
-				_contextsCount++;
-				voicesFileIndex = _contextsCount - 1;
-				sprintf(_voicesFileName[0], "voicesd.res");
-			} else if (Common::File::exists("voicesd.cmp")) {
-				_contextsCount++;
-				voicesFileIndex = _contextsCount - 1;
-				sprintf(_voicesFileName[0], "voicesd.cmp");
-				_vm->_gf_compressed_sounds = true;
-			} else {
-				// No voice file found, don't add any file to the array
-				voicesFileInArray = true;
-
-				if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
-					// The Macintosh version of IHNM has no voices.res, and it has all
-					// its voice files in subdirectories, so don't do anything here
-				} else {
-					warning("No voice file found, voices will be disabled");
-					_vm->_voicesEnabled = false;
-					_vm->_subtitlesEnabled = true;
-					_vm->_voiceFilesExist = false;
-				}
 			}
+
+			break;
 		}
 	}
 
-	if (_vm->getGameType() == GType_ITE) {
-		// Check for digital music in ITE
-		if (Common::File::exists("music.rsc")) {
-			_contextsCount++;
-			digitalMusic = true;
-			sprintf(musicFileName, "music.rsc");
-		} else if (Common::File::exists("music.cmp")) {
-			_contextsCount++;
-			digitalMusic = true;
-			sprintf(musicFileName, "music.cmp");
-		} else if (Common::File::exists("musicd.rsc")) {
-			_contextsCount++;
-			digitalMusic = true;
-			sprintf(musicFileName, "musicd.rsc");
-		} else if (Common::File::exists("musicd.cmp")) {
-			_contextsCount++;
-			digitalMusic = true;
-			sprintf(musicFileName, "musicd.cmp");
+	if (!fileFound) {
+		if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
+			// The Macintosh version of IHNM has no voices.res, and it has all
+			// its voice files in subdirectories, so don't do anything here
 		} else {
+			warning("No voice file found, voices will be disabled");
+			_vm->_voicesEnabled = false;
+			_vm->_subtitlesEnabled = true;
+			_vm->_voiceFilesExist = false;
+		}
+	}
+
+	//// Detect and add ITE music files /////////////////////////////////////////
+	// We don't set the compressed flag here
+	SoundFileInfo musicFilesITE[] = {
+		{	"music.rsc",	true	},
+		{	"music.cmp",	true	},
+		{	"musicd.rsc",	true	},
+		{	"musicd.cmp",	true	},
+	};
+
+	// Check for digital music in ITE
+	if (_vm->getGameType() == GType_ITE) {
+		fileFound = false;
+
+		for (i = 0; i < 4; i++) {
+			if (Common::File::exists(musicFilesITE[i].fileName)) {
+				_contextsCount++;
+				digitalMusic = true;
+				fileFound = true;
+				sprintf(musicFileName, musicFilesITE[i].fileName);
+				break;
+			}
+		}
+
+		if (!fileFound) {
+			// No sound file found, don't add any file to the array
 			digitalMusic = false;
 		}
 	}
@@ -559,12 +544,12 @@ bool Resource::createContexts() {
 		} else if (!soundFileInArray && i == soundFileIndex) {
 			context->fileName = soundFileName;
 			context->fileType = GAME_SOUNDFILE;
-		} else if (!voicesFileInArray && i == voicesFileIndex) {
+		} else if (_vm->_voiceFilesExist && i == voicesFileIndex) {
 			context->fileName = _voicesFileName[0];
 			// can be GAME_VOICEFILE or GAME_SOUNDFILE | GAME_VOICEFILE or GAME_VOICEFILE | GAME_SWAPENDIAN
 			context->fileType = voiceFileType;
 		} else {
-			if (!(!voicesFileInArray && multipleVoices && (i > voicesFileIndex))) {
+			if (!(_vm->_voiceFilesExist && multipleVoices && (i > voicesFileIndex))) {
 				context->fileName = _vm->getFilesDescriptions()[i].fileName;
 				context->fileType = _vm->getFilesDescriptions()[i].fileType;
 			} else {
