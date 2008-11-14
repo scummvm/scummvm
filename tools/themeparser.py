@@ -31,12 +31,18 @@ import os
 import xml.dom.minidom as DOM
 import struct
 
+
+def pbin(data):
+	return " ".join(["%0.2X" % ord(c) for c in data])
+
 class STXBinaryFile:
 	class InvalidRGBColor(Exception):
 		pass
 		
 	class InvalidResolution(Exception):
 		pass
+		
+	TRUTH_VALUES = {"" : 0, "true" : 1, "false" : 0, "True" : 1, "False" : 0}
 		
 	BLOCK_HEADERS = {
 		"palette" 	: 0x0100000A,
@@ -49,11 +55,10 @@ class STXBinaryFile:
 	
 	DRAWSTEP_FORMAT_DEF = [
 		"stroke", 		"shadow", 	
-		"bevel", 		"factor", 
+		"bevel", 		"gradient_factor", 
 		"fg_color", 	"bg_color",	
 		"fill",			"gradient_start", 
 		"gradient_end", "bevel_color", 
-		"gradient_factor", 
 	]
 	
 	DRAWSTEP_FORMAT = [
@@ -147,83 +152,107 @@ class STXBinaryFile:
 		
 		dstable = {}
 		
-		attributes = []
-		
 		if drawstepDom.tagName == "defaults":
 			isGlobal = drawstepDom.parentNode.tagName == "render_info"
 			
 			for attr in self.DRAWSTEP_FORMAT_DEF:
 				if drawstepDom.hasAttribute(attr):
-					self.debug("P: %s <= '%s'" % (attr, drawstepDom.getAttribute(attr)))
 					dstable[attr] = parseAttribute[attr](drawstepDom.getAttribute(attr))
 					
 				elif isGlobal:
-					dstable[attr] = 0x0
+					dstable[attr] = None
 		
 		else:
 			for attr in self.DRAWSTEP_FORMAT:
 				if drawstepDom.hasAttribute(attr):
-					self.debug("P: %s <= '%s'" % (attr, drawstepDom.getAttribute(attr)))
 					dstable[attr] = parseAttribute[attr](drawstepDom.getAttribute(attr))
 				elif attr in self.DRAWSTEP_FORMAT_DEF:
 					dstable[attr] = localDefaults[attr] if attr in localDefaults else self._globalDefaults[attr]
 				else:
-					dstable[attr] = 0x0
+					dstable[attr] = None
 		
 		return dstable
 		
 		
-	def __parseDrawStepToBin(self, stepDict, isDefault):
+	def __parseDrawStepToBin(self, stepDict):
+		"""
+			/BBBBiiiiBBBB4s4s4s4s4ss/ == 32 + 4 * 32 + 32 + 5 * 32 = 352 / 4 bits = 88 bytes + var string
+			function 		(byte)
+			fill 			(byte)
+			stroke			(byte)
+			gradient_factor	(byte)
+			width			(int32)
+			height			(int32)
+			xpos			(int32)
+			ypos			(int32)
+			radius			(byte)
+			bevel			(byte)
+			shadow			(byte)
+			orientation 	(byte)
+			fg_color		(4 byte)
+			bg_color		(4 byte)
+			gradient_start 	(4 byte)
+			gradient_end	(4 byte)
+			bevel_color		(4 byte)
+			file			(byte string, null terminated)
+		"""
+		
 		DRAWSTEP_BININFO = {
-			"stroke" : "B",		"shadow" 	: "B", 		"bevel" 	: "B", 
-			"factor" : "B", 	"fg_color" 	: "BBB", 	"bg_color" 	: "BBB",
-			"fill" 	 : "B", 	"func" 		: "B", 		"radius" 	: "i", 
+			"stroke" : "B",		"shadow" 	: "B", 		"bevel" 	: "B",
+			"fill" 	 : "B", 	"func" 		: "B", 		"radius" 	: "b", 
 			"width"  : "i", 	"height" 	: "i",		"xpos" 		: "i", 
-			"ypos" 	 : "i", 	"orientation" : "B", 	"file" 		: "B%ds",
+			"ypos" 	 : "i", 	"orientation" : "B", 	"file" 		: "%ds",
 			
-			"gradient_start" 	: "BBB",	"gradient_end" 		: "BBB", 
-			"bevel_color" 		: "BBB",	"gradient_factor" 	: "B", 
+			"fg_color" 			: "4s", 	"bg_color" 		: "4s",
+			"gradient_start" 	: "4s",		"gradient_end" 	: "4s", 
+			"bevel_color" 		: "4s",		"gradient_factor" : "B"
 		}
 		
 		packLayout = ""
 		packData = []
-		attributes = self.DRAWSTEP_FORMAT_DEF if isDefault else self.DRAWSTEP_FORMAT
 		
-		for attr in attributes:
+		for attr in self.DRAWSTEP_FORMAT:
 			layout = DRAWSTEP_BININFO[attr]
 			data = stepDict[attr]
 			
-			if layout == "B%ds":
-				packLayout += layout % (len(data) + 1)
-				packData.append(len(data))
-				packData.append(data)
-				
-			else:
-				packLayout += stepDict[attr]
-				
-				if isinstance(data, tuple):
-					for d in data:
-						packData.append(d)
-				else:
+			if layout == "%ds":
+				if data:
+					packLayout += layout % (len(data) + 1)
 					packData.append(data)
+				else:
+					packLayout +=  "B"
+					packData.append(0)
+			elif not data:
+				size = struct.calcsize(layout)
+				packLayout += "B" * size
+				
+				for d in xrange(size):
+					packData.append(0)
+			else:
+				packLayout += layout
+				packData.append(data)
+			
 					
 		stepBin = struct.pack(packLayout, *tuple(packData))
-		self.debugBinary(stepBin)
+#		self.debugBinary(stepBin)
 		return stepBin
 			
 		
 	def __parseResolutionToBin(self, resString):
 		"""
-			/b bII bII bII/
-			b => number of resolution sections
-			bII => exclude byte, X resolution, Y resolution
+			/i xxxbII xxxbII xxxbII/ == 32 bits + x * 32 bits
+			number of resolution sections (int32)
+			padding (byte)
+			exclude resolution (byte)
+			resolution X (int32)
+			resolution Y (int32)
 		"""
 		
 		if resString == "":
-			return struct.pack("bbII", 1, 0, 0, 0)
+			return struct.pack("ixxxbII", 1, 0, 0, 0)
 			
 		resolutions = resString.split(", ")
-		packFormat = "b" + "bII" * len(resolutions)
+		packFormat = "i" + "xxxbII" * len(resolutions)
 		packData = [len(resolutions)]
 			
 		for res in resolutions:
@@ -245,15 +274,16 @@ class STXBinaryFile:
 		
 		buff = struct.pack(packFormat, *tuple(packData))
 		self.debug("Pack format: %s => %s" % (packFormat, str(packData)))
-		self.debugBinary(buff)
+#		self.debugBinary(buff)
 		return buff
 		
 	def __parseRGBToBin(self, color):
 		"""
-			/BBB/
-			B => red color byte
-			B => green color byte
-			B => blue color byte
+			/xBBB/ == 32 bits
+			padding (byte)
+			red color (byte)
+			green color (byte)
+			blue color (byte)
 		"""
 		
 		try:
@@ -268,9 +298,9 @@ class STXBinaryFile:
 			if c < 0 or c > 255:
 				raise self.InvalidRGBColor
 				
-		rgb = struct.pack("BBB", *tuple(rgb))
+		rgb = struct.pack("xBBB", *tuple(rgb))
 		
-		self.debugBinary(rgb)
+#		self.debugBinary(rgb)
 		return rgb
 		
 	def __parseColor(self, color):
@@ -317,11 +347,59 @@ class STXBinaryFile:
 			self.debug("FONT: %s @ %s" % (ident, filename))
 			self._fonts.append((ident, filename, color, resolution))
 			
+	def __parseTextToBin(self, textDom):
+		return ""
+			
 	def __parseDrawData(self, ddDom):
+		"""
+			/IsIBBHss/
+				Section Header (uint32)
+				Resolution (byte array, word-aligned)
+				DrawData id hash (uint32)
+				Cached (byte)
+				has text section? (byte)
+				number of DD sections (uint16)
+				** text segment (byte array)
+				drawstep segments (byte array)
+		"""
+				
+		
+		localDefaults = ddDom.getElementsByTagName("defaults")
+		localDefaults = localDefaults[0] if localDefaults else {}
+		
+		stepList = []
 		
 		for ds in ddDom.getElementsByTagName("drawstep"):
-			dstable = self.__parseDrawStep(ds)
-			print dstable
+			dstable = self.__parseDrawStep(ds, localDefaults)
+			dsbinary = self.__parseDrawStepToBin(dstable)
+			
+			stepList.append(dsbinary)
+
+		stepByteArray = "".join(stepList)
+		
+		resolution = self.__parseResolutionToBin(ddDom.getAttribute("resolution"))
+		
+		text = ddDom.getElementsByTagName("text")
+		text = self.__parseTextToBin(text[0]) if text else ""
+		
+		id_hash = str.__hash__(str(ddDom.getAttribute("id")))
+		cached = self.TRUTH_VALUES[ddDom.getAttribute("cached")]
+			
+		ddBinary = struct.pack(
+			"I%dsiBBH%ds%ds" % (len(resolution), len(text), len(stepByteArray)),
+			
+			self.BLOCK_HEADERS['drawdata'], # Section Header (uint32)
+			resolution,						# Resolution (byte array, word-aligned)
+			id_hash,						# DrawData id hash (uint32)
+			cached,							# Cached (byte)
+			0x1 if text else 0x0,			# has text section? (byte)
+			len(stepList),					# number of DD sections (uint16)
+			text,							# ** text segment (byte array)
+			stepByteArray					# drawstep segments (byte array)
+		)
+		
+		self.debug("DRAW DATA %s (%X): \n" % (ddDom.getAttribute("id"), id_hash) + pbin(ddBinary) + "\n\n")
+		return ddBinary
 		
 		
 	def __parseLayout(self, layoutDom):
@@ -346,6 +424,6 @@ class STXBinaryFile:
 
 
 if __name__ == '__main__':
-	bin = STXBinaryFile('scummmodern', True, True)
+	bin = STXBinaryFile('../gui/themes/scummmodern', True, True)
 	bin.parse()
 	
