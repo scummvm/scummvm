@@ -44,7 +44,7 @@ class Script {
 	uint	_line;				// for debug messages
 
 	void clearTokens();
-	char *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ignoreQuotes = false);
+	char *parseNextToken(char *s, char *tok, uint16 count, const char *brk);
 	char *readLineIntern(char *buf, size_t bufSize);
 
 public:

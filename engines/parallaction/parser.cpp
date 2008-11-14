@@ -137,7 +137,7 @@ void Script::skip(const char* endToken) {
 //
 //	The routine returns the unparsed portion of the input string 's'.
 //
-char *Script::parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ignoreQuotes) {
+char *Script::parseNextToken(char *s, char *tok, uint16 count, const char *brk) {
 
 	enum STATES { NORMAL, QUOTED };
 
