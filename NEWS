@@ -17,6 +17,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Drascula
    - Fixed crash in German version when printing too long words.
 
+ Broken Sword 1
+   - Fixed crash in the Broken Sword 1 demo.
+   - Savegames no longer need to use consecutive save slots.
+
 0.12.0 (2008-08-31)
  New Games:
    - Added support for The Legend of Kyrandia: Book Two: Hand of Fate.
