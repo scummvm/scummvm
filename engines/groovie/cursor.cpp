@@ -31,7 +31,7 @@ namespace Groovie {
 // Cursor Manager
 
 CursorMan::CursorMan(OSystem *system) :
-	_syst(system), _lastTime(0), _cursor(NULL) {
+	_syst(system), _lastTime(0), _current(0), _cursor(NULL) {
 }
 
 CursorMan::~CursorMan() {
