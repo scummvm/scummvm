@@ -457,8 +457,8 @@ bool Resource::createContexts() {
 			fileFound = true;
 
 			// Special cases
-			if (!stricmp(curSoundfiles[i].fileName, "inherit the earth voices") ||
-				!stricmp(curSoundfiles[i].fileName, "inherit the earth voices.cmp")) {
+			if (!scumm_stricmp(curSoundfiles[i].fileName, "inherit the earth voices") ||
+				!scumm_stricmp(curSoundfiles[i].fileName, "inherit the earth voices.cmp")) {
 				// The resources in the Wyrmkeep combined Windows/Mac/Linux CD version are little endian, but
 				// the voice file is big endian. If we got such a version with mixed files, mark this voice file
 				// as big endian
@@ -466,12 +466,12 @@ bool Resource::createContexts() {
 					voiceFileType = GAME_VOICEFILE | GAME_SWAPENDIAN;	// This file is big endian
 			}
 
-			if (!stricmp(curSoundfiles[i].fileName, "ite voices.bin")) {
+			if (!scumm_stricmp(curSoundfiles[i].fileName, "ite voices.bin")) {
 				voiceFileType = GAME_VOICEFILE | GAME_MACBINARY;
 			}
 
-			if (!stricmp(curSoundfiles[i].fileName, "voicess.res") ||
-				!stricmp(curSoundfiles[i].fileName, "voicess.cmp")) {
+			if (!scumm_stricmp(curSoundfiles[i].fileName, "voicess.res") ||
+				!scumm_stricmp(curSoundfiles[i].fileName, "voicess.cmp")) {
 				// IHNM has multiple voice files
 				multipleVoices = true;
 				// Note: it is assumed that the voice files are always last in the list
