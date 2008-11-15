@@ -624,7 +624,12 @@ void ScummEngine::writeVar(uint var, int value) {
 		}
 
 		if (var == VAR_CHARINC) {
-			if (ConfMan.hasKey("talkspeed")) {
+			// Did the user override the talkspeed manually? Then use that.
+			// Otherwise, use the value specified by the game script.
+			// Note: To determine whether there was a user override, we only
+			// look at the target specific settings, assuming that any global
+			// value is likely to be bogus. See also bug #2251765.
+			if (ConfMan.hasKey("talkspeed", _targetName)) {
 				value = getTalkDelay();
 			} else {
 				// Save the new talkspeed value to ConfMan
