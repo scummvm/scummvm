@@ -44,7 +44,7 @@ namespace DS {
 
 DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
-	new ButtonWidget(this, 10, 170, 72, 16, "Close", GUI::kCloseCmd, 'C');
+	new GUI::ButtonWidget(this, 10, 170, 72, 16, "Close", GUI::kCloseCmd, 'C');
 	_tab = new GUI::TabWidget(this, 5, 5, 300, 230 - 20 - 40 - 10);
 
 	_tab->addTab("Controls");
@@ -54,29 +54,29 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 	_showCursorCheckbox = new GUI::CheckboxWidget(_tab, 150, 5, 130, 20, "Show mouse cursor", 0, 'T');
 	_snapToBorderCheckbox = new GUI::CheckboxWidget(_tab, 150, 20, 130, 20, "Snap to edges", 0, 'T');
 
-	new GUI::StaticTextWidget(_tab, 20, 35, 100, 15, "Touch X Offset", GUI::kTextAlignLeft);
+	new GUI::StaticTextWidget(_tab, 20, 35, 100, 15, "Touch X Offset", Graphics::kTextAlignLeft);
 	_touchX = new GUI::SliderWidget(_tab, 130, 35, 130, 12, 1);
 	_touchX->setMinValue(-8);
 	_touchX->setMaxValue(+8);
 	_touchX->setValue(0);
 	_touchX->setFlags(GUI::WIDGET_CLEARBG);
 
-	new GUI::StaticTextWidget(_tab, 20, 50, 100, 15, "Touch Y Offset", GUI::kTextAlignLeft);
+	new GUI::StaticTextWidget(_tab, 20, 50, 100, 15, "Touch Y Offset", Graphics::kTextAlignLeft);
 	_touchY = new GUI::SliderWidget(_tab, 130, 50, 130, 12, 2);
 	_touchY->setMinValue(-8);
 	_touchY->setMaxValue(+8);
 	_touchY->setValue(0);
 	_touchY->setFlags(GUI::WIDGET_CLEARBG);
 
-	new GUI::StaticTextWidget(_tab, 130 + 65 - 10, 65, 20, 15, "0", GUI::kTextAlignCenter);
-	new GUI::StaticTextWidget(_tab, 130 + 130 - 10, 65, 20, 15, "8", GUI::kTextAlignCenter);
-	new GUI::StaticTextWidget(_tab, 130 - 20, 65, 20, 15, "-8", GUI::kTextAlignCenter);
+	new GUI::StaticTextWidget(_tab, 130 + 65 - 10, 65, 20, 15, "0", Graphics::kTextAlignCenter);
+	new GUI::StaticTextWidget(_tab, 130 + 130 - 10, 65, 20, 15, "8", Graphics::kTextAlignCenter);
+	new GUI::StaticTextWidget(_tab, 130 - 20, 65, 20, 15, "-8", Graphics::kTextAlignCenter);
 
 
 	_touchPadStyle = new GUI::CheckboxWidget(_tab, 5, 80, 270, 20, "Use laptop trackpad-style cursor control", 0x20000001, 'T');
 	_screenTaps = new GUI::CheckboxWidget(_tab, 5, 95, 285, 20, "Tap for left click, double tap right click", 0x20000002, 'T');
 
-	_sensitivityLabel = new GUI::StaticTextWidget(_tab, 20, 110, 110, 15, "Sensitivity", GUI::kTextAlignLeft);
+	_sensitivityLabel = new GUI::StaticTextWidget(_tab, 20, 110, 110, 15, "Sensitivity", Graphics::kTextAlignLeft);
 	_sensitivity = new GUI::SliderWidget(_tab, 130, 110, 130, 12, 1);
 	_sensitivity->setMinValue(4);
 	_sensitivity->setMaxValue(16);
@@ -85,13 +85,13 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	_tab->addTab("Graphics");
 
-	new GUI::StaticTextWidget(_tab, 5, 70, 180, 15, "Initial top screen scale:", GUI::kTextAlignLeft);
+	new GUI::StaticTextWidget(_tab, 5, 70, 180, 15, "Initial top screen scale:", Graphics::kTextAlignLeft);
 
 	_100PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 85, 230, 20, "100%", 0x30000001, 'T');
 	_150PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 100, 230, 20, "150%", 0x30000002, 'T');
 	_200PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 115, 230, 20, "200%", 0x30000003, 'T');
 
-	new GUI::StaticTextWidget(_tab, 5, 5, 180, 15, "Main screen scaling:", GUI::kTextAlignLeft);
+	new GUI::StaticTextWidget(_tab, 5, 5, 180, 15, "Main screen scaling:", Graphics::kTextAlignLeft);
 
 	_hardScaler = new GUI::CheckboxWidget(_tab, 5, 20, 270, 20, "Hardware scale (fast, but low quality)", 0x10000001, 'T');
 	_cpuScaler = new GUI::CheckboxWidget(_tab, 5, 35, 270, 20, "Software scale (good quality, but slower)", 0x10000002, 'S');
@@ -112,7 +112,7 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 	}
 #endif
 
-//	new GUI::StaticTextWidget(this, 90, 10, 130, 15, "ScummVM DS Options", GUI::kTextAlignCenter);
+//	new GUI::StaticTextWidget(this, 90, 10, 130, 15, "ScummVM DS Options", Graphics::kTextAlignCenter);
 
 
 //#ifdef ALLOW_CPU_SCALER
