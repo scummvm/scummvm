@@ -3,6 +3,7 @@ MODULE := graphics
 MODULE_OBJS := \
 	cursorman.o \
 	dxa_player.o \
+	flic_player.o \
 	font.o \
 	fontman.o \
 	fonts/consolefont.o \
