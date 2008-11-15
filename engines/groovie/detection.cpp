@@ -150,7 +150,7 @@ static const Common::ADParams detectionParams = {
 	// Structure for autoupgrading obsolete targets
 	0,
 	// Name of single gameid (optional)
-	0,
+	"groovie",
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
