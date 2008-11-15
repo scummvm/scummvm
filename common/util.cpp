@@ -468,6 +468,7 @@ static void debugHelper(const char *in_buf, bool caret = true) {
 		g_engine->errorString(in_buf, buf, STRINGBUFLEN);
 	} else {
 		strncpy(buf, in_buf, STRINGBUFLEN);
+		buf[STRINGBUFLEN-1] = '\0';
 	}
 
 	if (caret)
@@ -586,6 +587,7 @@ void NORETURN error(const char *s, ...) {
 		g_engine->errorString(buf_input, buf_output, STRINGBUFLEN);
 	} else {
 		strncpy(buf_output, buf_input, STRINGBUFLEN);
+		buf_output[STRINGBUFLEN-1] = '\0';
 	}
 
 
