@@ -1192,11 +1192,11 @@ menu.
 Using savegames from original versions, isn't supported by all game engines. 
 Only the following games, can use savegames from their original versions.
 
-     Elvira 1
+    Elvira 1
           - Add 8 bytes (savegame name) to the start of the savegame file
           - Rename the savegame to 'elvira1.xxx'
 
-     Elvira 2
+    Elvira 2
           - Add 8 bytes (savegame name) to the start of the savegame file
           - Rename the savegame to 'elvira2-pc.xxx' (DOS version) or
             'elvira2.xxx' (Other versions)
@@ -1206,10 +1206,10 @@ Only the following games, can use savegames from their original versions.
           - Rename the savegame to 'waxworks-pc.xxx' (DOS version) or
             'waxworks.xxx' (Other versions)
 
-     Simon the Sorcerer 1
+    Simon the Sorcerer 1
           - Rename the savegame to 'simon1.xxx'
  
-    Simon the Sorcerer 1
+    Simon the Sorcerer 2
           - Rename the savegame to 'simon2.xxx'
  
     The Feeble Files
