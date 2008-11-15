@@ -253,6 +253,8 @@ bool Engine::shouldPerformAutoSave(int lastSaveTime) {
 
 void Engine::errorString(const char *buf1, char *buf2, int size) {
 	strncpy(buf2, buf1, size);
+	if (size > 0)
+		buf2[size-1] = '\0';
 }
 
 void Engine::pauseEngine(bool pause) {

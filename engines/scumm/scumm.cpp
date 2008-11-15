@@ -2343,7 +2343,9 @@ void ScummEngine::errorString(const char *buf1, char *buf2, int buf2Size) {
 		snprintf(buf2, buf2Size, "(%d:%d:0x%lX): %s", _roomResource,
 			vm.slot[_currentScript].number, (long)(_scriptPointer - _scriptOrgPointer), buf1);
 	} else {
-		strcpy(buf2, buf1);
+		strncpy(buf2, buf1, buf2Size);
+		if (buf2Size > 0)
+			buf2[buf2Size-1] = '\0';
 	}
 }
 
