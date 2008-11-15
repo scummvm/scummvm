@@ -1154,7 +1154,7 @@ TownsPC98_OpnOperator::TownsPC98_OpnOperator(const uint32 timerbase, const uint8
 	_rateTbl(rateTable), _rshiftTbl(shiftTable), _adTbl(attackDecayTable), _fTbl(frqTable),
 	_sinTbl(sineTable), _tLvlTbl(tlevelOut), _detnTbl(detuneTable), _tickLength(timerbase * 2),
 	_specifiedAttackRate(0), _specifiedDecayRate(0), _specifiedReleaseRate(0), _specifiedSustainRate(0),
-	_phase(0), _state(s_ready) {
+	_phase(0), _state(s_ready),	_playing(false), _timer(0), _keyScale1(0), _keyScale2(0), _currentLevel(1023) {
 
 	reset();
 }
@@ -2551,7 +2551,10 @@ bool TownsPC98_OpnChannelPCM::control_ff_endOfTrack(uint8 para) {
 }
 
 TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerbase) : 	_tlTable(0),
-	_tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _ready(0) {
+	_tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _ready(0), _reg(0), _rand(1), _outN(1),
+	_nTick(0), _evpUpdateCnt(0), _evpTimer(0x1f), _pReslt(0x1f), _attack(0), _cont(false), _evpUpdate(true),
+	_timer(0) {
+
 	memset(_channels, 0, sizeof(Channel) * 3);
 	
 	uint8 *reg[] = {
@@ -2995,7 +2998,7 @@ void TownsPC98_OpnCore::reset() {
 		_chanInternal[i].updateEnvelopeParameters = false;
 	}
 
-	writeReg(0, 27, 0x33);
+	writeReg(0, 0x27, 0x33);
 
 	if (_ssg)
 		_ssg->reset();
