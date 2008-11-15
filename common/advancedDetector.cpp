@@ -227,7 +227,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	const ADGameDescription *agdDesc = 0;
 	Common::Language language = Common::UNK_LANG;
 	Common::Platform platform = Common::kPlatformUnknown;
-	Common::String extra("");
+	Common::String extra;
 
 	if (ConfMan.hasKey("language"))
 		language = Common::parseLanguage(ConfMan.get("language"));
@@ -288,11 +288,15 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	return kNoError;
 }
 
-typedef HashMap<String, bool, IgnoreCase_Hash, IgnoreCase_EqualTo> StringSet;
-typedef HashMap<String, int32, IgnoreCase_Hash, IgnoreCase_EqualTo> IntMap;
+struct SizeMD5 {
+	int size;
+	char md5[32+1];
+};
+
+typedef HashMap<String, SizeMD5, IgnoreCase_Hash, IgnoreCase_EqualTo> SizeMD5Map;
 typedef HashMap<String, FSNode, IgnoreCase_Hash, IgnoreCase_EqualTo> FileMap;
 
-static void reportUnknown(const StringMap &filesMD5, const IntMap &filesSize) {
+static void reportUnknown(const SizeMD5Map &filesSizeMD5) {
 	// TODO: This message should be cleaned up / made more specific.
 	// For example, we should specify at least which engine triggered this.
 	//
@@ -302,8 +306,8 @@ static void reportUnknown(const StringMap &filesMD5, const IntMap &filesSize) {
 	printf("data to the ScummVM team along with name of the game you tried to add\n");
 	printf("and its version/language/etc.:\n");
 
-	for (StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
-		printf("  \"%s\", \"%s\", %d\n", file->_key.c_str(), file->_value.c_str(), filesSize[file->_key]);
+	for (SizeMD5Map::const_iterator file = filesSizeMD5.begin(); file != filesSizeMD5.end(); ++file)
+		printf("  \"%s\", \"%s\", %d\n", file->_key.c_str(), file->_value.md5, file->_value.size);
 
 	printf("\n");
 }
@@ -312,10 +316,7 @@ static ADGameDescList detectGameFilebased(const FileMap &allFiles, const Common:
 
 static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra) {
 	FileMap allFiles;
-
-	StringSet detectFiles;
-	StringMap filesMD5;
-	IntMap filesSize;
+	SizeMD5Map filesSizeMD5;
 
 	const ADGameFileDescription *fileDesc;
 	const ADGameDescription *g;
@@ -323,7 +324,7 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 
 	debug(3, "Starting detection");
 
-	// First we compose an efficient to query set of all files in  fslist.
+	// First we compose a hashmap of all files in fslist.
 	// Includes nifty stuff like removing trailing dots and ignoring case.
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory())
@@ -338,38 +339,32 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 		allFiles[tstr] = *file;	// Record the presence of this file
 	}
 
-	// Compute the set of files for which we need MD5s for. I.e. files which are
-	// included in some ADGameDescription *and* present in fslist.
+	// Check which files are included in some ADGameDescription *and* present
+	// in fslist. Compute MD5s and file sizes for these files.
 	for (descPtr = params.descs; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += params.descItemSize) {
 		g = (const ADGameDescription *)descPtr;
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
-			String tstr = fileDesc->fileName;
-			if (allFiles.contains(tstr))
-				detectFiles[tstr] = true;
+			String fname = fileDesc->fileName;
+			if (allFiles.contains(fname) && !filesSizeMD5.contains(fname)) {
+				debug(3, "+ %s", fname.c_str());
+
+				SizeMD5 tmp;
+				if (!md5_file_string(allFiles[fname], tmp.md5, params.md5Bytes))
+					tmp.md5[0] = 0;
+
+				debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5);
+
+				File testFile;
+				if (testFile.open(allFiles[fname]))
+					tmp.size = (int32)testFile.size();
+				else
+					tmp.size = -1;
+
+				filesSizeMD5[fname] = tmp;
+			}
 		}
 	}
-
-	// Get the information for all detection files, if they exist
-	for (StringSet::const_iterator file = detectFiles.begin(); file != detectFiles.end(); ++file) {
-		String fname = file->_key;
-
-		debug(3, "+ %s", fname.c_str());
-
-		char md5str[32+1];
-		if (!md5_file_string(allFiles[fname], md5str, params.md5Bytes))
-			continue;
-		filesMD5[fname] = md5str;
-
-		debug(3, "> %s: %s", fname.c_str(), md5str);
-
-		File testFile;
-		if (testFile.open(allFiles[fname])) {
-			filesSize[fname] = (int32)testFile.size();
-			testFile.close();
-		}
-	}
-
 
 	ADGameDescList matched;
 	int maxFilesMatched = 0;
@@ -394,18 +389,18 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			String tstr = fileDesc->fileName;
 
-			if (!filesMD5.contains(tstr)) {
+			if (!filesSizeMD5.contains(tstr)) {
 				fileMissing = true;
 				break;
 			}
 
-			if (fileDesc->md5 != NULL && fileDesc->md5 != filesMD5[tstr]) {
-				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesMD5[tstr].c_str());
+			if (fileDesc->md5 != NULL && 0 != strcmp(fileDesc->md5, filesSizeMD5[tstr].md5)) {
+				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesSizeMD5[tstr].md5);
 				fileMissing = true;
 				break;
 			}
 
-			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesSize[tstr]) {
+			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesSizeMD5[tstr].size) {
 				debug(3, "Size Mismatch. Skipping");
 				fileMissing = true;
 				break;
@@ -448,8 +443,8 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 
 	// We didn't find a match
 	if (matched.empty()) {
-		if (!filesMD5.empty())
-			reportUnknown(filesMD5, filesSize);
+		if (!filesSizeMD5.empty())
+			reportUnknown(filesSizeMD5);
 	
 		// Filename based fallback
 		if (params.fileBasedFallback != 0)
@@ -461,7 +456,7 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 
 /**
  * Check for each ADFileBasedFallback record whether all files listed
- * in it  are present. If multiple pass this test, we pick the one with
+ * in it are present. If multiple pass this test, we pick the one with
  * the maximal number of matching files. In case of a tie, the entry
  * coming first in the list is chosen.
  */
