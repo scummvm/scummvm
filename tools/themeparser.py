@@ -30,10 +30,11 @@ from __future__ import with_statement
 import os
 import xml.dom.minidom as DOM
 import struct
-
+from UserDict import UserDict
 
 def pbin(data):
-	return " ".join(["%0.2X" % ord(c) for c in data])
+	return str(map(lambda c: hex(ord(c)), data))
+#	return " ".join(["%0.2X" % ord(c) for c in data])
 
 class STXBinaryFile:
 	class InvalidRGBColor(Exception):
@@ -41,6 +42,14 @@ class STXBinaryFile:
 		
 	class InvalidResolution(Exception):
 		pass
+		
+	class DrawStepData:
+		def __init__(self, isDefault, packFormat, function):
+			self.isDefault = isDefault
+			self.packFormat = packFormat
+			self.parse = function
+		
+	BYTEORDER = '>' # big-endian format by default, platform independent
 		
 	TRUTH_VALUES = {"" : 0, "true" : 1, "false" : 0, "True" : 1, "False" : 0}
 		
@@ -53,23 +62,49 @@ class STXBinaryFile:
 		"drawdata"	: 0x0100000F
 	}
 	
-	DRAWSTEP_FORMAT_DEF = [
-		"stroke", 		"shadow", 	
-		"bevel", 		"gradient_factor", 
-		"fg_color", 	"bg_color",	
-		"fill",			"gradient_start", 
-		"gradient_end", "bevel_color", 
-	]
+	DS_triangleOrientations = {"top" : 0x1, "bottom" : 0x2, "left" : 0x3, "right" : 0x4}
+	DS_fillModes = {"none" : 0x0, "foreground" : 0x1, "background" : 0x2, "gradient" : 0x3}
+	DS_vectorAlign = {"left" : 0x1, "right" : 0x2, "bottom" : 0x3, "top" : 0x4, "center" : 0x5}
+   
+	DS_functions = {
+		"void" : 0x0, "circle" : 0x1, "square" : 0x2, "roundedsq" : 0x3, "bevelsq" : 0x4, 
+   		"line" : 0x5, "triangle" : 0x6, "fill" : 0x7, "tab" : 0x8, "bitmap" : 0x9, "cross" : 0xA
+	}
 	
-	DRAWSTEP_FORMAT = [
-		"func",		"radius", 	"width", 	"height", 
-		"xpos", 	"ypos", 	"file",		"orientation",
-	] + DRAWSTEP_FORMAT_DEF
+	DS_list = [
+		"func", "fill", "stroke", "gradient_factor",
+		"width", "height", "xpos", "ypos",
+		"radius", "bevel", "shadow", "orientation",
+		"fg_color", "bg_color", "gradient_start", "gradient_end", "bevel_color",
+		"file"		
+	]
 	
 	def __init__(self, themeName, autoLoad = True, verbose = False):
 		self._themeName = themeName
 		self._stxFiles = []
 		self._verbose = verbose
+		
+		self.DS_data = {
+		#	attribute name						isDefault	pack	parse function
+			"func"				: self.DrawStepData(False,	"B",	lambda f: self.DS_functions[f]),
+			"fill"				: self.DrawStepData(True, 	"B",	lambda f: self.DS_fillModes[f]),
+			"stroke" 			: self.DrawStepData(True,	"B",	int),
+			"gradient_factor" 	: self.DrawStepData(True, 	"B",	int),
+			"width"				: self.DrawStepData(False, 	"i", 	lambda w: -1 if w == 'height' else 0 if w == 'auto' else int(w)),
+			"height"			: self.DrawStepData(False, 	"i",	lambda h: -1 if h == 'width' else 0 if h == 'auto' else int(h)),
+			"xpos"				: self.DrawStepData(False,	"i",	lambda pos: self.DS_vectorAlign[pos] if pos in self.DS_vectorAlign else int(pos)),
+			"ypos"				: self.DrawStepData(False,	"i", 	lambda pos: self.DS_vectorAlign[pos] if pos in self.DS_vectorAlign else int(pos)),
+			"radius"			: self.DrawStepData(False,	"B",	lambda r: 0xFF if r == 'auto' else int(r)),
+			"bevel" 			: self.DrawStepData(True, 	"B", 	int),
+			"shadow" 			: self.DrawStepData(True, 	"B", 	int),
+			"orientation"		: self.DrawStepData(False,	"B", 	lambda o: self.DS_triangleOrientations[o]),
+			"fg_color"			: self.DrawStepData(True, 	"4s",	self.__parseColor),
+			"bg_color"			: self.DrawStepData(True, 	"4s",	self.__parseColor),
+			"gradient_start"	: self.DrawStepData(True, 	"4s",	self.__parseColor),
+			"gradient_end"		: self.DrawStepData(True, 	"4s",	self.__parseColor),
+			"bevel_color"		: self.DrawStepData(True, 	"4s",	self.__parseColor),
+			"file"				: self.DrawStepData(False,	"%ds",	str),
+		}
 		
 		if autoLoad:
 			if not os.path.isdir(themeName) or not os.path.isfile(os.path.join(themeName, "THEMERC")):
@@ -116,60 +151,26 @@ class STXBinaryFile:
 		
 	def __parseDrawStep(self, drawstepDom, localDefaults = {}):
 		
-		triangleOrientations = {"top" : 0x1, "bottom" : 0x2, "left" : 0x3, "right" : 0x4}
-		fillModes = {"none" : 0x0, "foreground" : 0x1, "background" : 0x2, "gradient" : 0x3}
-		vectorAlign = {"left" : 0x1, "right" : 0x2, "bottom" : 0x3, "top" : 0x4, "center" : 0x5}
-	   
-		functions = {
-			"void" : 0x0, "circle" : 0x1, "square" : 0x2, "roundedsq" : 0x3, "bevelsq" : 0x4, 
-	   		"line" : 0x5, "triangle" : 0x6, "fill" : 0x7, "tab" : 0x8, "bitmap" : 0x9, "cross" : 0xA
-		}
-		
-		parseAttribute = {
-			"stroke" 			: int,
-			"bevel" 			: int,
-			"shadow" 			: int,
-			"gradient_factor" 	: int,
-			
-			"fg_color"			: self.__parseColor,
-			"bg_color"			: self.__parseColor,
-			"gradient_start"	: self.__parseColor,
-			"gradient_end"		: self.__parseColor,
-			"bevel_color"		: self.__parseColor,
-			
-			"radius"			: lambda r: 0xFF if r == 'auto' else int(r),
-			"file"				: str,
-			"orientation"		: lambda o: triangleOrientations[o],
-			"fill"				: lambda f: fillModes[f],
-			"func"				: lambda f: functions[f],
-			
-			"width"				: lambda w: -1 if w == 'height' else 0 if w == 'auto' else int(w),
-			"height"			: lambda h: -1 if h == 'width' else 0 if h == 'auto' else int(h),
-			
-			"xpos"				: lambda pos: vectorAlign[pos] if pos in vectorAlign else int(pos),
-			"ypos"				: lambda pos: vectorAlign[pos] if pos in vectorAlign else int(pos),
-		}
-		
 		dstable = {}
 		
 		if drawstepDom.tagName == "defaults":
 			isGlobal = drawstepDom.parentNode.tagName == "render_info"
 			
-			for attr in self.DRAWSTEP_FORMAT_DEF:
-				if drawstepDom.hasAttribute(attr):
-					dstable[attr] = parseAttribute[attr](drawstepDom.getAttribute(attr))
+			for ds in self.DS_list:
+				if self.DS_data[ds].isDefault and drawstepDom.hasAttribute(ds):
+					dstable[ds] = self.DS_data[ds].parse(drawstepDom.getAttribute(ds))
 					
 				elif isGlobal:
-					dstable[attr] = None
+					dstable[ds] = None
 		
 		else:
-			for attr in self.DRAWSTEP_FORMAT:
-				if drawstepDom.hasAttribute(attr):
-					dstable[attr] = parseAttribute[attr](drawstepDom.getAttribute(attr))
-				elif attr in self.DRAWSTEP_FORMAT_DEF:
-					dstable[attr] = localDefaults[attr] if attr in localDefaults else self._globalDefaults[attr]
+			for ds in self.DS_data:
+				if drawstepDom.hasAttribute(ds):
+					dstable[ds] = self.DS_data[ds].parse(drawstepDom.getAttribute(ds))
+				elif self.DS_data[ds].isDefault:
+					dstable[ds] = localDefaults[ds] if ds in localDefaults else self._globalDefaults[ds]
 				else:
-					dstable[attr] = None
+					dstable[ds] = None
 		
 		return dstable
 		
@@ -197,23 +198,12 @@ class STXBinaryFile:
 			file			(byte string, null terminated)
 		"""
 		
-		DRAWSTEP_BININFO = {
-			"stroke" : "B",		"shadow" 	: "B", 		"bevel" 	: "B",
-			"fill" 	 : "B", 	"func" 		: "B", 		"radius" 	: "b", 
-			"width"  : "i", 	"height" 	: "i",		"xpos" 		: "i", 
-			"ypos" 	 : "i", 	"orientation" : "B", 	"file" 		: "%ds",
-			
-			"fg_color" 			: "4s", 	"bg_color" 		: "4s",
-			"gradient_start" 	: "4s",		"gradient_end" 	: "4s", 
-			"bevel_color" 		: "4s",		"gradient_factor" : "B"
-		}
-		
 		packLayout = ""
 		packData = []
 		
-		for attr in self.DRAWSTEP_FORMAT:
-			layout = DRAWSTEP_BININFO[attr]
-			data = stepDict[attr]
+		for ds in self.DS_list:
+			layout = self.DS_data[ds].packFormat
+			data = stepDict[ds]
 			
 			if layout == "%ds":
 				if data:
@@ -233,7 +223,7 @@ class STXBinaryFile:
 				packData.append(data)
 			
 					
-		stepBin = struct.pack(packLayout, *tuple(packData))
+		stepBin = struct.pack(self.BYTEORDER + packLayout, *tuple(packData))
 #		self.debugBinary(stepBin)
 		return stepBin
 			
@@ -249,7 +239,7 @@ class STXBinaryFile:
 		"""
 		
 		if resString == "":
-			return struct.pack("ixxxbII", 1, 0, 0, 0)
+			return struct.pack(self.BYTEORDER + "ixxxbII", 1, 0, 0, 0)
 			
 		resolutions = resString.split(", ")
 		packFormat = "i" + "xxxbII" * len(resolutions)
@@ -272,7 +262,7 @@ class STXBinaryFile:
 			packData.append(x)
 			packData.append(y)
 		
-		buff = struct.pack(packFormat, *tuple(packData))
+		buff = struct.pack(self.BYTEORDER + packFormat, *tuple(packData))
 		self.debug("Pack format: %s => %s" % (packFormat, str(packData)))
 #		self.debugBinary(buff)
 		return buff
@@ -298,7 +288,7 @@ class STXBinaryFile:
 			if c < 0 or c > 255:
 				raise self.InvalidRGBColor
 				
-		rgb = struct.pack("xBBB", *tuple(rgb))
+		rgb = struct.pack(self.BYTEORDER + "xBBB", *tuple(rgb))
 		
 #		self.debugBinary(rgb)
 		return rgb
@@ -385,7 +375,7 @@ class STXBinaryFile:
 		id_hash = str.__hash__(str(ddDom.getAttribute("id")))
 		cached = self.TRUTH_VALUES[ddDom.getAttribute("cached")]
 			
-		ddBinary = struct.pack(
+		ddBinary = struct.pack(self.BYTEORDER + \
 			"I%dsiBBH%ds%ds" % (len(resolution), len(text), len(stepByteArray)),
 			
 			self.BLOCK_HEADERS['drawdata'], # Section Header (uint32)
