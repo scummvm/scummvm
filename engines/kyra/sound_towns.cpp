@@ -2553,7 +2553,7 @@ bool TownsPC98_OpnChannelPCM::control_ff_endOfTrack(uint8 para) {
 TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerbase) : 	_tlTable(0),
 	_tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _ready(0), _reg(0), _rand(1), _outN(1),
 	_nTick(0), _evpUpdateCnt(0), _evpTimer(0x1f), _pReslt(0x1f), _attack(0), _cont(false), _evpUpdate(true),
-	_timer(0) {
+	_timer(0), _noiseGenerator(0) {
 
 	memset(_channels, 0, sizeof(Channel) * 3);
 	
@@ -2642,6 +2642,9 @@ void TownsPC98_OpnSquareSineSource::reset() {
 }
 
 void TownsPC98_OpnSquareSineSource::writeReg(uint8 address, uint8 value, bool force) {
+	if (!_ready)
+		return;
+
 	if (address > 10 || *_reg[address] == value) {
 		if ((address == 11 || address == 12 || address == 13) && value)
 			warning("TownsPC98_OpnSquareSineSource: unsupported reg address: %d", address);
@@ -3015,10 +3018,19 @@ void TownsPC98_OpnCore::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 	
 	uint8 h = regAddress & 0xf0;
 	uint8 l = (regAddress & 0x0f);
+
+	ChanInternal *c = 0;
+	TownsPC98_OpnOperator **co = 0;
+	TownsPC98_OpnOperator *o = 0;
 	
-	ChanInternal *c = &_chanInternal[(h < 0x30) ? ((value & 3) + ((value & 4) ? 3 : 0)) : ((l & 3) + 3 * part)];
-	TownsPC98_OpnOperator **co = c->opr;
-	TownsPC98_OpnOperator *o = (h < 0x30) ? 0 : c->opr[oprOrdr[(l - (l & 3)) >> 2]];
+	if (regAddress > 0x2F) {
+		c = &_chanInternal[(l & 3) + 3 * part];
+		co = c->opr;
+		o = c->opr[oprOrdr[(l - (l & 3)) >> 2]];
+	} else if (regAddress == 0x28) {
+		c = &_chanInternal[(value & 3) + ((value & 4) ? 3 : 0)];
+		co = c->opr;
+	}
 
 	switch (h) {
 		case 0x00:
@@ -3036,9 +3048,9 @@ void TownsPC98_OpnCore::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 				// Key on/off
 				for (int i = 0; i < 4; i++) {
 					if ((value >> (4 + i)) & 1)
-						co[i]->keyOn();
+						co[oprOrdr[i]]->keyOn();
 					else
-						co[i]->keyOff();
+						co[oprOrdr[i]]->keyOff();
 				}
 			} else if (l == 4) {
 				// Timer A
