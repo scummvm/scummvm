@@ -88,8 +88,7 @@ Script::Script(GroovieEngine *vm) :
 	_hotspotBottomAction = 0;
 	_hotspotRightAction = 0;
 	_hotspotLeftAction = 0;
-	_hotspotCursorOldX = 1000;
-	_hotspotCursorOldY = 1000;
+	_hotspotSlot = (uint16)-1;
 }
 
 Script::~Script() {
@@ -1202,9 +1201,12 @@ void Script::o_hotspot_slot() {
 			_font = new Font(_vm->_system);
 		}
 		_font->printstring(savename);
+
+		// Save the currently highlighted slot
+		_hotspotSlot = slot;
 	} else {
 		Common::Point mousepos = _vm->_system->getEventManager()->getMousePos();
-		if (_hotspotCursorOldX != mousepos.x || _hotspotCursorOldY != mousepos.y ) {
+		if (_hotspotSlot == slot) {
 			Common::Rect topbar(640, 80);
 
 			Graphics::Surface *gamescreen;
@@ -1213,8 +1215,9 @@ void Script::o_hotspot_slot() {
 			gamescreen->fillRect(topbar, 0);	
 
 			_vm->_system->unlockScreen();
-			_hotspotCursorOldX = mousepos.x;
-			_hotspotCursorOldY = mousepos.y;
+
+			// Removing the slot highlight
+			_hotspotSlot = (uint16)-1;
 		}
 	}
 }

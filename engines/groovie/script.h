@@ -93,8 +93,7 @@ private:
 	uint16 _hotspotBottomCursor;
 	uint16 _hotspotRightAction;
 	uint16 _hotspotLeftAction;
-	uint16 _hotspotCursorOldX;
-	uint16 _hotspotCursorOldY;
+	uint16 _hotspotSlot;
 
 	// Video
 	Font *_font;
