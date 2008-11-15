@@ -68,11 +68,10 @@ void FlicPlayer::redraw() {
 
 ChunkHeader FlicPlayer::readChunkHeader() {
 	ChunkHeader head;
+
 	head.size = _fileStream.readUint32LE();
 	head.type = _fileStream.readUint16LE();
-
-	/* XXX: You'll want to read the rest of the chunk here as well! */
-
+	
 	return head;
 }
 
