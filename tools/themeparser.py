@@ -32,6 +32,31 @@ import xml.dom.minidom as DOM
 import struct
 from UserDict import UserDict
 
+def printBinaryDump(buf):
+	LINE_WIDTH = 16
+	
+	def buildRepr(line):
+		out = ""
+		for c in line:
+			out += '.' if ord(c) < 0x20 or ord(c) > 0x7E else c
+		return out
+	
+	print "Binary dump of %d BYTES:\n" % len(buf)
+	for i in xrange(len(buf) // LINE_WIDTH):
+		bufLine = buf[LINE_WIDTH * i : LINE_WIDTH * (i + 1)]
+		
+		print "| %s | %s |" % (" ".join(["%0.2X" % ord(c) for c in bufLine]), buildRepr(bufLine))
+		
+	bufLine = buf[-(len(buf) % LINE_WIDTH):]
+	print "| %s%s | %s%s |" % (
+		" ".join(["%0.2X" % ord(c) for c in bufLine]), 
+		'   ' * (LINE_WIDTH - len(bufLine)), 
+		buildRepr(bufLine),
+		' ' * (LINE_WIDTH - len(bufLine))
+	)
+	
+	print ""
+
 def pbin(data):
 	return str(map(lambda c: hex(ord(c)), data))
 #	return " ".join(["%0.2X" % ord(c) for c in data])
@@ -41,6 +66,12 @@ class STXBinaryFile:
 		pass
 		
 	class InvalidResolution(Exception):
+		pass
+		
+	class InvalidFontIdentifier(Exception):
+		pass
+		
+	class InvalidBitmapName(Exception):
 		pass
 		
 	class DrawStepData:
@@ -54,12 +85,10 @@ class STXBinaryFile:
 	TRUTH_VALUES = {"" : 0, "true" : 1, "false" : 0, "True" : 1, "False" : 0}
 		
 	BLOCK_HEADERS = {
-		"palette" 	: 0x0100000A,
-		"bitmaps" 	: 0x0100000B,
-		"fonts"		: 0x0100000C,
-		"defaults"	: 0x0100000D,
-		"cursor"	: 0x0100000E,
-		"drawdata"	: 0x0100000F
+		"bitmaps" 	: 0x0100000A,
+		"fonts"		: 0x0100000B,
+		"cursor"	: 0x0100000C,
+		"drawdata"	: 0x0100000D
 	}
 	
 	DS_triangleOrientations = {"top" : 0x1, "bottom" : 0x2, "left" : 0x3, "right" : 0x4}
@@ -71,12 +100,19 @@ class STXBinaryFile:
    		"line" : 0x5, "triangle" : 0x6, "fill" : 0x7, "tab" : 0x8, "bitmap" : 0x9, "cross" : 0xA
 	}
 	
+	DS_fonts = {
+		"text_default" : 0x0, "text_hover" : 0x1, "text_disabled" : 0x2, 
+		"text_inverted" : 0x3, "text_button" : 0x4, "text_button_hover" : 0x5, "text_normal" : 0x6
+	}
+	
+	DS_text_alignV = {"bottom" : 0x0, "center" : 0x1, "top" : 0x2}
+	DS_text_alignH = {"left" : 0x0, "center" : 0x1, "right" : 0x2}
+	
 	DS_list = [
 		"func", "fill", "stroke", "gradient_factor",
 		"width", "height", "xpos", "ypos",
-		"radius", "bevel", "shadow", "orientation",
-		"fg_color", "bg_color", "gradient_start", "gradient_end", "bevel_color",
-		"file"		
+		"radius", "bevel", "shadow", "orientation", "file",
+		"fg_color", "bg_color", "gradient_start", "gradient_end", "bevel_color"
 	]
 	
 	def __init__(self, themeName, autoLoad = True, verbose = False):
@@ -94,16 +130,16 @@ class STXBinaryFile:
 			"height"			: self.DrawStepData(False, 	"i",	lambda h: -1 if h == 'width' else 0 if h == 'auto' else int(h)),
 			"xpos"				: self.DrawStepData(False,	"i",	lambda pos: self.DS_vectorAlign[pos] if pos in self.DS_vectorAlign else int(pos)),
 			"ypos"				: self.DrawStepData(False,	"i", 	lambda pos: self.DS_vectorAlign[pos] if pos in self.DS_vectorAlign else int(pos)),
-			"radius"			: self.DrawStepData(False,	"B",	lambda r: 0xFF if r == 'auto' else int(r)),
+			"radius"			: self.DrawStepData(False,	"i",	lambda r: 0xFF if r == 'auto' else int(r)),
 			"bevel" 			: self.DrawStepData(True, 	"B", 	int),
 			"shadow" 			: self.DrawStepData(True, 	"B", 	int),
 			"orientation"		: self.DrawStepData(False,	"B", 	lambda o: self.DS_triangleOrientations[o]),
+			"file"				: self.DrawStepData(False,	"B",	self.__getBitmap),
 			"fg_color"			: self.DrawStepData(True, 	"4s",	self.__parseColor),
 			"bg_color"			: self.DrawStepData(True, 	"4s",	self.__parseColor),
 			"gradient_start"	: self.DrawStepData(True, 	"4s",	self.__parseColor),
 			"gradient_end"		: self.DrawStepData(True, 	"4s",	self.__parseColor),
-			"bevel_color"		: self.DrawStepData(True, 	"4s",	self.__parseColor),
-			"file"				: self.DrawStepData(False,	"%ds",	str),
+			"bevel_color"		: self.DrawStepData(True, 	"4s",	self.__parseColor)
 		}
 		
 		if autoLoad:
@@ -149,6 +185,17 @@ class STXBinaryFile:
 		
 		stxDom.unlink()
 		
+	def __getBitmap(self, bmp):
+		bmp = str(bmp)
+		
+		if bmp == "":
+			return 0x0
+		
+		if bmp not in self._bitmaps:
+			raise self.InvalidBitmapName
+		
+		return self._bitmaps[bmp]
+		
 	def __parseDrawStep(self, drawstepDom, localDefaults = {}):
 		
 		dstable = {}
@@ -177,7 +224,7 @@ class STXBinaryFile:
 		
 	def __parseDrawStepToBin(self, stepDict):
 		"""
-			/BBBBiiiiBBBB4s4s4s4s4ss/ == 32 + 4 * 32 + 32 + 5 * 32 = 352 / 4 bits = 88 bytes + var string
+			/BBBBiiiiiBBB4s4s4s4s4sB/ == 
 			function 		(byte)
 			fill 			(byte)
 			stroke			(byte)
@@ -186,16 +233,16 @@ class STXBinaryFile:
 			height			(int32)
 			xpos			(int32)
 			ypos			(int32)
-			radius			(byte)
+			radius			(int32)
 			bevel			(byte)
 			shadow			(byte)
 			orientation 	(byte)
+			file			(byte)
 			fg_color		(4 byte)
 			bg_color		(4 byte)
 			gradient_start 	(4 byte)
 			gradient_end	(4 byte)
 			bevel_color		(4 byte)
-			file			(byte string, null terminated)
 		"""
 		
 		packLayout = ""
@@ -204,15 +251,8 @@ class STXBinaryFile:
 		for ds in self.DS_list:
 			layout = self.DS_data[ds].packFormat
 			data = stepDict[ds]
-			
-			if layout == "%ds":
-				if data:
-					packLayout += layout % (len(data) + 1)
-					packData.append(data)
-				else:
-					packLayout +=  "B"
-					packData.append(0)
-			elif not data:
+
+			if not data:
 				size = struct.calcsize(layout)
 				packLayout += "B" * size
 				
@@ -224,25 +264,23 @@ class STXBinaryFile:
 			
 					
 		stepBin = struct.pack(self.BYTEORDER + packLayout, *tuple(packData))
-#		self.debugBinary(stepBin)
 		return stepBin
 			
 		
 	def __parseResolutionToBin(self, resString):
 		"""
-			/i xxxbII xxxbII xxxbII/ == 32 bits + x * 32 bits
-			number of resolution sections (int32)
-			padding (byte)
+			/B bHH bHH bHH/ == 1 byte + x * 9 bytes
+			number of resolution sections (byte)
 			exclude resolution (byte)
-			resolution X (int32)
-			resolution Y (int32)
+			resolution X (half)
+			resolution Y (half)
 		"""
 		
 		if resString == "":
-			return struct.pack(self.BYTEORDER + "ixxxbII", 1, 0, 0, 0)
+			return struct.pack(self.BYTEORDER + "BbHH", 1, 0, 0, 0)
 			
 		resolutions = resString.split(", ")
-		packFormat = "i" + "xxxbII" * len(resolutions)
+		packFormat = "B" + "bHH" * len(resolutions)
 		packData = [len(resolutions)]
 			
 		for res in resolutions:
@@ -263,8 +301,6 @@ class STXBinaryFile:
 			packData.append(y)
 		
 		buff = struct.pack(self.BYTEORDER + packFormat, *tuple(packData))
-		self.debug("Pack format: %s => %s" % (packFormat, str(packData)))
-#		self.debugBinary(buff)
 		return buff
 		
 	def __parseRGBToBin(self, color):
@@ -316,29 +352,97 @@ class STXBinaryFile:
 			
 	
 	def __parseBitmaps(self, bitmapsDom):
-		self._bitmaps = []
+		self._bitmaps = {}
+		idCount = 0xA0
+		packLayout = ""
+		packData = []
 		
 		for bitmap in bitmapsDom.getElementsByTagName("bitmap"):
-			bmpName = bitmap.getAttribute("filename")
-			resolution = self.__parseResolutionToBin(bitmap.getAttribute("resolution"))
+			bmpName = str(bitmap.getAttribute("filename"))
+			self._bitmaps[bmpName] = idCount
 			
-			self._bitmaps.append((bmpName, resolution))
-			self.debug("BITMAP: %s" % bmpName)
+			packLayout += "B%ds" % (len(bmpName) + 1)
+			packData.append(idCount)
+			packData.append(bmpName)
+			idCount += 1
+			
+			
+		bitmapBinary = struct.pack(
+			self.BYTEORDER + "IB" + packLayout,
+			self.BLOCK_HEADERS['bitmaps'],
+			len(bitmapsDom.getElementsByTagName("bitmap")),
+			*tuple(packData)
+		)
+		
+		self.debug("BITMAPS:\n%s\n\n" % pbin(bitmapBinary))
+		return bitmapBinary
 			
 	def __parseFonts(self, fontsDom):
-		self._fonts = []
+		"""
+			/IB Bs4ss .../
+			section header (uint32)
+			number of font definitions (byte)
+			
+			id for font definition (byte)
+			resolution for font (byte array)
+			color for font (4 bytes)
+			font filename (byte array, null terminated)
+		"""
 		
+		packLayout = ""
+		packData = []
+
 		for font in fontsDom.getElementsByTagName("font"):
 			ident = font.getAttribute("id")
+			
+			if ident not in self.DS_fonts:
+				raise self.InvalidFontIdentifier
+			
 			color = self.__parseColor(font.getAttribute("color"))
-			filename = font.getAttribute("file")
+			filename = str(font.getAttribute("file"))
+			
+			if filename == 'default':
+				filename = ''
 			
 			resolution = self.__parseResolutionToBin(font.getAttribute("resolution"))
-			self.debug("FONT: %s @ %s" % (ident, filename))
-			self._fonts.append((ident, filename, color, resolution))
+			
+			packLayout += "B%ds4s%ds" % (len(resolution), len(filename) + 1)
+			packData.append(self.DS_fonts[ident])
+			packData.append(resolution)
+			packData.append(color)
+			packData.append(filename)			
+		
+		fontsBinary = struct.pack(self.BYTEORDER + \
+			"IB" + packLayout, 
+			self.BLOCK_HEADERS['fonts'], 
+			len(fontsDom.getElementsByTagName("font")),
+			*tuple(packData)
+		)
+			
+		
+		self.debug("FONTS DATA:\n%s\n\n" % pbin(fontsBinary))
+		return fontsBinary
 			
 	def __parseTextToBin(self, textDom):
-		return ""
+		"""
+			/BBBx/
+			font identifier (byte)
+			vertical alignment (byte)
+			horizontal alignment (byte)
+			padding until word (byte)
+		"""
+		
+		font = textDom.getAttribute("font")
+		if font not in self.DS_fonts:
+			raise self.InvalidFontIdentifier
+		
+		textBin = struct.pack(self.BYTEORDER + "BBBx",
+			self.DS_fonts[font],
+			self.DS_text_alignV[textDom.getAttribute("vertical_align")],
+			self.DS_text_alignH[textDom.getAttribute("horizontal_align")]
+		)
+		
+		return textBin
 			
 	def __parseDrawData(self, ddDom):
 		"""
@@ -349,7 +453,7 @@ class STXBinaryFile:
 				Cached (byte)
 				has text section? (byte)
 				number of DD sections (uint16)
-				** text segment (byte array)
+				** text segment (4 bytes)
 				drawstep segments (byte array)
 		"""
 				
@@ -372,11 +476,11 @@ class STXBinaryFile:
 		text = ddDom.getElementsByTagName("text")
 		text = self.__parseTextToBin(text[0]) if text else ""
 		
-		id_hash = str.__hash__(str(ddDom.getAttribute("id")))
+		id_hash = str.__hash__(str(ddDom.getAttribute("id"))) & 0xFFFFFFFF
 		cached = self.TRUTH_VALUES[ddDom.getAttribute("cached")]
 			
 		ddBinary = struct.pack(self.BYTEORDER + \
-			"I%dsiBBH%ds%ds" % (len(resolution), len(text), len(stepByteArray)),
+			"I%dsIBBH4s%ds" % (len(resolution), len(stepByteArray)),
 			
 			self.BLOCK_HEADERS['drawdata'], # Section Header (uint32)
 			resolution,						# Resolution (byte array, word-aligned)
@@ -391,6 +495,33 @@ class STXBinaryFile:
 		self.debug("DRAW DATA %s (%X): \n" % (ddDom.getAttribute("id"), id_hash) + pbin(ddBinary) + "\n\n")
 		return ddBinary
 		
+	def __parseCursor(self, cursorDom):
+		"""
+			/IsBBhh/
+			section header (uint32)
+			resolution string (byte array)
+			bitmap id (byte)
+			scale (byte)
+			hotspot X (half)
+			hotspot Y (half)
+		"""
+	
+		resolution = self.__parseResolutionToBin(cursorDom.getAttribute("resolution"))
+		scale = int(cursorDom.getAttribute("scale"))
+		hsX, hsY = cursorDom.getAttribute("hotspot").split(", ")
+	
+		cursorBin = struct.pack(self.BYTEORDER + "I%dsBBhh" % len(resolution),
+			self.BLOCK_HEADERS['cursor'],
+			resolution,
+			self.__getBitmap(cursorDom.getAttribute("file")),
+			scale,
+			int(hsX),
+			int(hsY)
+		)
+		
+		self.debug("CURSOR:\n%s\n\n" % pbin(cursorBin))
+		return cursorBin
+		
 		
 	def __parseLayout(self, layoutDom):
 		self.debug("GLOBAL SECTION: LAYOUT INFO.")
@@ -404,14 +535,25 @@ class STXBinaryFile:
 		defaultsDom = renderDom.getElementsByTagName("defaults")[0]
 		
 		self.__parsePalette(paletteDom)
-		self.__parseBitmaps(bitmapsDom)
-		self.__parseFonts(fontsDom)
+		
+		bitmapBIN 	= self.__parseBitmaps(bitmapsDom)
+		fontsBIN 	= self.__parseFonts(fontsDom)
+		cursorBIN 	= ""
+		drawdataBIN = ""
+		
+		for cur in renderDom.getElementsByTagName("cursor"):
+			cursorBIN += self.__parseCursor(cur)
 		
 		self._globalDefaults = self.__parseDrawStep(defaultsDom)
 		
 		for dd in renderDom.getElementsByTagName("drawdata"):
-			self.__parseDrawData(dd)
+			drawdataBIN += self.__parseDrawData(dd)
 
+
+		renderInfoBIN = bitmapBIN + fontsBIN + cursorBIN + drawdataBIN
+		printBinaryDump(renderInfoBIN)
+		
+		return renderInfoBIN
 
 if __name__ == '__main__':
 	bin = STXBinaryFile('../gui/themes/scummmodern', True, True)
