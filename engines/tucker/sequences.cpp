@@ -23,6 +23,11 @@
  *
  */
 
+#include "common/system.h"
+
+#include "sound/audiostream.h"
+#include "sound/wave.h"
+
 #include "tucker/tucker.h"
 #include "tucker/graphics.h"
 
@@ -475,6 +480,639 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 	}
 	loadLoc();
 	return 1;
+}
+
+AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, int num)
+	: _system(system), _mixer(mixer), _event(event), _seqNum(num), _currentSeqNum(0) {
+	_newSeq = false;
+	memset(_animationPalette, 0, sizeof(_animationPalette));
+	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
+	memset(_flicPlayer, 0, sizeof(_flicPlayer));
+	_soundsListSeqData = 0;
+	_soundsList1 = 0;
+	_soundsList1Count = 0;
+	_soundsList2 = 0;
+	_soundsList2Count = 0;
+	_musicVolume = 0;
+	_offscreenBuffer = (uint8 *)malloc(kScreenWidth * kScreenHeight);
+	_updateScreenWidth = 0;
+	_updateScreenPicture = 0;
+	_updateScreenOffset = 0;
+	_frameCounter = 0;
+	_frameTime = 1;
+	_lastFrameTime = 0;
+	_picBufPtr = _pic2BufPtr = 0;
+}
+
+AnimationSequencePlayer::~AnimationSequencePlayer() {
+	unloadAnimation();
+	free(_offscreenBuffer);
+}
+
+void AnimationSequencePlayer::mainLoop() {
+	do {
+		if (_seqNum != _currentSeqNum) {
+			unloadAnimation();
+			_currentSeqNum = _seqNum;
+			_newSeq = true;
+			_frameCounter = 0;
+			_lastFrameTime = _system->getMillis();
+		}
+		switch (_seqNum) {
+		case 17:
+			introSeq17_18();
+			break;
+		case 19:
+			introSeq19_20();
+			break;
+		case 3:
+			introSeq3_4();
+			break;
+		case 9:
+			introSeq9_10();
+			break;
+		case 21:
+			introSeq21_22();
+			break;
+		case 13:
+			introSeq13_14();
+			break;
+		case 15:
+			introSeq15_16();
+			break;
+		case 27:
+			introSeq27_28();
+			break;
+		}
+		_system->copyRectToScreen(_offscreenBuffer, 320, 0, 0, kScreenWidth, kScreenHeight);
+		_system->setPalette(_animationPalette, 0, 256);
+		_system->updateScreen();
+		syncTime();
+	} while (_seqNum != 1);
+}
+
+void AnimationSequencePlayer::syncTime() {
+	uint32 end = _lastFrameTime + kSequenceFrameTime * _frameTime;
+	do {
+		Common::Event ev;
+		while (_event->pollEvent(ev)) {
+			switch (ev.type) {
+			case Common::EVENT_KEYDOWN:
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					_seqNum = 1;
+				}
+				break;
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RTL:
+				_seqNum = 1;
+				break;
+			default:
+				break;
+			}
+		}
+	} while (_system->getMillis() <= end);
+	_lastFrameTime = _system->getMillis();
+}
+
+Audio::AudioStream *AnimationSequencePlayer::loadSoundFileAsStream(const char *name, AnimationSoundType type) {
+	Audio::AudioStream *stream = 0;
+	char fileName[64];
+	snprintf(fileName, sizeof(fileName), "audio/%s", name);
+	Common::File f;
+	if (f.open(fileName)) {
+		uint8 *sampleData = 0;
+		int size = 0, rate = 0;
+		uint8 flags = 0;
+		switch (type) {
+		case kAnimationSoundType8BitsRAW:
+		case kAnimationSoundType16BitsRAW:
+			size = f.size();
+			rate = 22050;
+			flags = Audio::Mixer::FLAG_UNSIGNED;
+			if (type == kAnimationSoundType16BitsRAW) {
+				flags = Audio::Mixer::FLAG_LITTLE_ENDIAN | Audio::Mixer::FLAG_16BITS;
+			}
+			break;
+		case kAnimationSoundTypeWAV:
+		case kAnimationSoundTypeLoopingWAV:
+			Audio::loadWAVFromStream(f, size, rate, flags);
+			if (type == kAnimationSoundTypeLoopingWAV) {
+				flags |= Audio::Mixer::FLAG_LOOP;
+			}
+			break;
+		}
+		if (size != 0) {
+			sampleData = (uint8 *)malloc(size);
+			if (sampleData) {
+				f.read(sampleData, size);
+				flags |= Audio::Mixer::FLAG_AUTOFREE;
+				stream = Audio::makeLinearInputStream(sampleData, size, rate, flags, 0, 0);
+			}
+		}
+	}
+	return stream;
+}
+
+void AnimationSequencePlayer::loadSounds(int type, int num) {
+	int index = 0;
+	switch (type) {
+	case 1:
+		switch (num) {
+		case 0:
+			index = 1;
+			_soundsList1Count = 14;
+			_soundsList1 = _soundFilesList1;
+			_soundsList2Count = 10;
+			_soundsList2 = _soundFilesList2;
+			_soundsListSeqData = _soundSeqData2;
+			break;
+		case 1:
+			index = 1;
+			_soundsList1Count = 14;
+			_soundsList1 = _soundFilesList3;
+			_soundsList2Count = 5;
+			_soundsList2 = _soundFilesList4;
+			_soundsListSeqData = _soundSeqData3;
+			break;
+		case 2:
+			index = 1;
+			_soundsList1Count = 14;
+			_soundsList1 = _soundFilesList5;
+			_soundsList2Count = 9;
+			_soundsList2 = _soundFilesList6;
+			_soundsListSeqData = _soundSeqData4;
+			break;
+		}
+		_musicVolume = 0;
+		break;
+	case 3:
+		switch (num) {
+		case 0:
+			index = 3;
+			_soundsList1Count = 13;
+			_soundsList1 = _soundFilesList7;
+			_soundsList2Count = 0;
+			_soundsListSeqData = _soundSeqData5;
+			break;
+		case 1:
+			index = 6;
+			_soundsList1Count = 14;
+			_soundsList1 = _soundFilesList8;
+			_soundsList2Count = 4;
+			_soundsList2 = _soundFilesList9;
+			_soundsListSeqData = _soundSeqData6;
+			break;
+		case 2:
+			index = 7;
+			_soundsList1Count = 13;
+			_soundsList1 = _soundFilesList10;
+			_soundsList2Count = 9;
+			_soundsList2 = _soundFilesList11;
+			_soundsListSeqData = _soundSeqData7;
+			break;
+		case 3:
+			index = 10;
+			_soundsList1Count = 11;
+			_soundsList1 = _soundFilesList12;
+			_soundsList2Count = 0;
+			_soundsListSeqData = _soundSeqData8;
+			break;
+		}
+		_musicVolume = 80;
+		break;
+	case 4:
+		switch (num) {
+		case 0:
+			index = 4;
+			_soundsList1Count = 6;
+			_soundsList1 = _soundFilesList13;
+			_soundsList2Count = 0;
+			_soundsListSeqData = _soundSeqData9;
+			break;
+		case 1:
+			index = 9;
+			_soundsList1Count = 10;
+			_soundsList1 = _soundFilesList14;
+			_soundsList2Count = 0;
+			_soundsListSeqData = _soundSeqData10;
+			break;
+		}
+		_musicVolume = 80;
+		break;
+	case 5:
+		index = 5;
+		_soundsList1Count = 0;
+		_soundsList2Count = 0;
+		_soundsListSeqData = _soundSeqData1;
+		_musicVolume = 100;
+		break;
+	case 9:
+		index = 8;
+		_soundsList1Count = 0;
+		_soundsList2Count = 0;
+		_soundsListSeqData = _soundSeqData1;
+		_musicVolume = 100;
+		break;
+	case 10:
+		index = 0;
+		_soundsList1Count = 4;
+		_soundsList1 = _soundFilesList15;
+		_soundsList2Count = 0;
+		_soundsListSeqData = _soundSeqData11;
+		_musicVolume = 100;
+		break;
+	default:
+		index = 0;
+		_soundsList1Count = 0;
+		_soundsList2Count = 0;
+		_soundsListSeqData = _soundSeqData1;
+		_musicVolume = 100;
+		break;
+	}
+	if (_musicVolume != 0) {
+		Audio::AudioStream *s;
+		if ((s = loadSoundFileAsStream(_musicFileNamesTable[index], (type == 5) ? kAnimationSoundType16BitsRAW : kAnimationSoundType8BitsRAW)) != 0) {
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, _musicVolume * Audio::Mixer::kMaxChannelVolume / 100);
+		}
+	}
+}
+
+void AnimationSequencePlayer::updateSounds() {
+	Audio::AudioStream *s = 0;
+	int index;
+	const int *p = _soundsListSeqData;
+	while (p[0] != -1 && p[0] <= _frameCounter) {
+		switch (p[2]) {
+		case 0:
+			if ((index = p[1]) < _soundsList1Count) {
+				if ((s = loadSoundFileAsStream(_soundsList1[index], kAnimationSoundTypeWAV)) != 0) {
+					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[index], s, -1, p[3] * Audio::Mixer::kMaxChannelVolume / 100);
+				}
+			}
+			break;
+		case 1:
+			if ((index = p[1]) < _soundsList1Count) {
+				if ((s = loadSoundFileAsStream(_soundsList1[index], kAnimationSoundTypeLoopingWAV)) != 0) {
+					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[index], s, -1, p[3] * Audio::Mixer::kMaxChannelVolume / 100);
+				}
+			}
+			break;
+		case 2:
+			if ((index = p[1]) < _soundsList1Count) {
+				_mixer->stopHandle(_soundsHandle[index]);
+			}
+			break;
+		case 3:
+			_mixer->stopHandle(_musicHandle);
+			break;
+		case 4:
+			_mixer->stopHandle(_musicHandle);
+			index = p[1];
+			if ((s = loadSoundFileAsStream(_musicFileNamesTable[index], kAnimationSoundType8BitsRAW)) != 0) {
+				_musicVolume = p[3];
+				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, _musicVolume * Audio::Mixer::kMaxChannelVolume / 100);
+			}
+			break;
+		case 5:
+			if ((index = p[1]) < _soundsList2Count) {
+				if ((s = loadSoundFileAsStream(_soundsList2[index], kAnimationSoundTypeWAV)) != 0) {
+					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, s, -1, p[3] * Audio::Mixer::kMaxChannelVolume / 100);
+				}
+			}
+			break;
+		case 6:
+			_mixer->stopHandle(_musicHandle);
+			index = p[1];
+			if ((s = loadSoundFileAsStream(_musicFileNamesTable[index], kAnimationSoundType16BitsRAW)) != 0) {
+				_musicVolume = p[3];
+				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, _musicVolume * Audio::Mixer::kMaxChannelVolume / 100);
+			}
+			break;
+		default:
+			warning("Unhandled sound opcode %d (%d,%d)", p[2], _frameCounter, p[0]);
+			break;
+		}
+		p += 4;
+	}
+	_soundsListSeqData = p;
+}
+
+void AnimationSequencePlayer::fadeInPalette() {
+	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
+	bool fadeColors = true;
+	for (int step = 0; step < 64; ++step) {
+		if (fadeColors) {
+			fadeColors = false;
+			for (int i = 0; i < 1024; ++i) {
+				if ((i & 3) != 3 && _paletteBuffer[i] < _animationPalette[i]) {
+					const int color = _paletteBuffer[i] + 4;
+					_paletteBuffer[i] = MIN<int>(color, _animationPalette[i]);
+					fadeColors = true;
+				}
+			}
+			_system->setPalette(_paletteBuffer, 0, 256);
+			_system->updateScreen();
+		}
+		_system->delayMillis(1000 / 60);
+	}
+}
+
+void AnimationSequencePlayer::fadeOutPalette() {
+	memcpy(_paletteBuffer, _animationPalette, 1024);
+	bool fadeColors = true;
+	for (int step = 0; step < 64; ++step) {
+		if (fadeColors) {
+			fadeColors = false;
+			for (int i = 0; i < 1024; ++i) {
+				if ((i & 3) != 3 && _paletteBuffer[i] > 0) {
+					const int color = _paletteBuffer[i] - 4;
+					_paletteBuffer[i] = MAX<int>(0, color);
+					fadeColors = true;
+				}
+			}
+			_system->setPalette(_paletteBuffer, 0, 256);
+			_system->updateScreen();
+		}
+		_system->delayMillis(1000 / 60);
+	}
+	_system->clearScreen();
+}
+
+void AnimationSequencePlayer::unloadAnimation() {
+	_mixer->stopAll();
+	for (int i = 0; i < ARRAYSIZE(_flicPlayer); ++i) {
+		delete _flicPlayer[i];
+		_flicPlayer[i] = 0;
+	}
+	free(_picBufPtr);
+	_picBufPtr = 0;
+	free(_pic2BufPtr);
+	_pic2BufPtr = 0;
+}
+
+uint8 *AnimationSequencePlayer::loadPicture(const char *fileName) {
+	uint8 *p = 0;
+	Common::File f;
+	if (f.open(fileName)) {
+		const int sz = f.size();
+		p = (uint8 *)malloc(sz);
+		if (p) {
+			f.read(p, sz);
+		}
+	}
+	return p;
+}
+
+void AnimationSequencePlayer::openAnimation(int index, const char *fileName) {
+	_flicPlayer[index] = new ::Graphics::FlicPlayer(fileName);
+	_flicPlayer[index]->decodeFrame();
+	if (index == 0) {
+		memcpy(_animationPalette, _flicPlayer[index]->getPalette(), 1024);
+		memcpy(_offscreenBuffer, _flicPlayer[index]->getOffscreen(), kScreenWidth * kScreenHeight);
+	}
+}
+
+void AnimationSequencePlayer::decodeNextAnimationFrame(int index) {
+	_flicPlayer[index]->decodeFrame();
+	memcpy(_offscreenBuffer, _flicPlayer[index]->getOffscreen(), kScreenWidth * kScreenHeight);
+	if (index == 0) {
+		if (_flicPlayer[index]->isPaletteDirty()) {
+			memcpy(_animationPalette, _flicPlayer[index]->getPalette(), 1024);
+		}
+	}
+	if (_seqNum != 19) {
+		++_frameCounter;
+	}
+}
+
+void AnimationSequencePlayer::introSeq17_18() {
+	if (_newSeq) {
+		loadSounds(9, 0);
+		openAnimation(0, "graphics/merit.flc");
+		_frameTime = 1;
+		_newSeq = false;
+	}
+	decodeNextAnimationFrame(0);
+	if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+		_seqNum = 19;
+	}
+	updateSounds();
+}
+
+void AnimationSequencePlayer::introSeq19_20() {
+	if (_newSeq) {
+		fadeOutPalette();
+		loadSounds(10, 1);
+		openAnimation(0, "graphics/budttle2.flc");
+		openAnimation(1, "graphics/machine.flc");
+		_frameTime = 1;
+		_newSeq = false;
+	}
+	if (_flicPlayer[0]->getCurFrame() >= 116) {
+		_flicPlayer[1]->decodeFrame();
+		if (_flicPlayer[1]->getCurFrame() == _flicPlayer[1]->getFrameCount()) {
+			_flicPlayer[1]->reset();
+		}
+	}
+	_flicPlayer[0]->decodeFrame();
+	const uint8 *t = _flicPlayer[1]->getOffscreen();
+	for (int i = 0; i < 64000; ++i) {
+		const uint8 color = _flicPlayer[0]->getOffscreen()[i];
+		_offscreenBuffer[i] = color ? color : t[i];
+	}
+	updateSounds();
+	if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+		_seqNum = 3;
+	}
+}
+
+void AnimationSequencePlayer::displayLoadingScreen() {
+	Common::File f;
+	if (f.open("graphics/loading.pic")) {
+		fadeOutPalette();
+		f.seek(32);
+		for (int i = 0; i < 1024; i += 4) {
+			f.read(_animationPalette + i, 3);
+		}
+		f.read(_offscreenBuffer, 64000);
+		_system->copyRectToScreen(_offscreenBuffer, 320, 0, 0, kScreenWidth, kScreenHeight);
+		fadeInPalette();
+	}
+}
+
+void AnimationSequencePlayer::initPicPart4() {
+	_updateScreenWidth = 320;
+	_updateScreenPicture = 1;
+	_updateScreenOffset = 0;
+}
+
+void AnimationSequencePlayer::drawPicPart4() {
+	static const uint8 offsetsTable[77] = {
+		1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4,
+		5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+		6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+		6, 6, 6, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3,
+		3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1
+	};
+	_updateScreenWidth = _updateScreenWidth - offsetsTable[_updateScreenOffset];
+	++_updateScreenOffset;
+	for (int y = 0; y < 200; ++y) {
+		memcpy(_offscreenBuffer + y * 320, _picBufPtr + 800 + y * 640 + _updateScreenWidth, 320);
+	}
+	if (_updateScreenWidth == 0) {
+		_updateScreenPicture = false;
+	}
+}
+
+void AnimationSequencePlayer::introSeq3_4() {
+	if (_newSeq) {
+		displayLoadingScreen();
+		loadSounds(1, 0);
+		_picBufPtr = loadPicture("graphics/house.pic");
+		openAnimation(0, "graphics/intro1.flc");
+		_system->copyRectToScreen(_offscreenBuffer, 320, 0, 0, kScreenWidth, kScreenHeight);
+		fadeInPalette();
+		_updateScreenPicture = false;
+		_frameTime = 2;
+		_newSeq = false;
+	}
+	if (!_updateScreenPicture) {
+		decodeNextAnimationFrame(0);
+		if (_flicPlayer[0]->getCurFrame() == 706) {
+			initPicPart4();
+		}
+		if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+			_seqNum = 9;
+		}
+	} else {
+		drawPicPart4();
+	}
+	updateSounds();
+}
+
+void AnimationSequencePlayer::drawPic2Part10() {
+	for (int y = 0; y < 16; ++y) {
+		for (int x = 0; x < 64; ++x) {
+			const uint8 color = _pic2BufPtr[y * 64 + x];
+			if (color != 0) {
+				_picBufPtr[89417 + y * 640 + x] = color;
+			}
+		}
+	}
+	for (int y = 0; y < 80; ++y) {
+		for (int x = 0; x < 48; ++x) {
+			const uint8 color = _pic2BufPtr[1024 + y * 48 + x];
+			if (color != 0) {
+				_picBufPtr[63939 + y * 640 + x] = color;
+			}
+		}
+	}
+	for (int y = 0; y < 32; ++y) {
+		for (int x = 0; x < 80; ++x) {
+			const uint8 color = _pic2BufPtr[7424 + y * 80 + x];
+			if (color != 0) {
+				_picBufPtr[33067 + y * 640 + x] = color;
+			}
+		}
+	}
+}
+
+void AnimationSequencePlayer::drawPic1Part10() {
+	for (int y = 0; y < 200; ++y) {
+		memcpy(_offscreenBuffer + y * 320, _picBufPtr + 800 + y * 640 + _updateScreenWidth, 320);
+	}
+	for (int i = 0; i < 64000; ++i) {
+		const uint8 color = _flicPlayer[0]->getOffscreen()[i];
+		if (color) {
+			_offscreenBuffer[i] = color;
+		}
+	}
+}
+
+void AnimationSequencePlayer::introSeq9_10() {
+	if (_newSeq) {
+		loadSounds(1, 1);
+		_pic2BufPtr = loadPicture("graphics/bits.pic");
+		_picBufPtr = loadPicture("graphics/lab.pic");
+		openAnimation(0, "graphics/intro2.flc");
+		_updateScreenWidth = 0;
+		_frameTime = 2;
+		_newSeq = false;
+	}
+	decodeNextAnimationFrame(0);
+	if (_flicPlayer[0]->getCurFrame() == 984) {
+		drawPic2Part10();
+	}
+	if (_flicPlayer[0]->getCurFrame() >= 264 && _flicPlayer[0]->getCurFrame() <= 295) {
+		drawPic1Part10();
+		_updateScreenWidth += 6;
+	} else if (_flicPlayer[0]->getCurFrame() >= 988 && _flicPlayer[0]->getCurFrame() <= 996) {
+		drawPic1Part10();
+		_updateScreenWidth -= 25;
+		if (_updateScreenWidth < 0) {
+			_updateScreenWidth = 0;
+		}
+	}
+	if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+		_seqNum = 21;
+	}
+	updateSounds();
+}
+
+void AnimationSequencePlayer::introSeq21_22() {
+	if (_newSeq) {
+		loadSounds(1, 2);
+		openAnimation(0, "graphics/intro3.flc");
+		_frameTime = 2;
+		_newSeq = false;
+	}
+	decodeNextAnimationFrame(0);
+	if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+		_seqNum = 1;
+	}
+	updateSounds();
+}
+
+void AnimationSequencePlayer::introSeq13_14() {
+	if (_newSeq) {
+		loadSounds(3, 1);
+		openAnimation(0, "graphics/allseg02.flc");
+		_frameTime = 2;
+		_newSeq = false;
+	}
+	decodeNextAnimationFrame(0);
+	if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+		_seqNum = 15;
+	}
+	updateSounds();
+}
+
+void AnimationSequencePlayer::introSeq15_16() {
+	if (_newSeq) {
+		loadSounds(3, 2);
+		openAnimation(0, "graphics/allseg03.flc");
+		_frameTime = 2;
+		_newSeq = false;
+	}
+	decodeNextAnimationFrame(0);
+	if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+		_seqNum = 27;
+	}
+	updateSounds();
+}
+
+void AnimationSequencePlayer::introSeq27_28() {
+	if (_newSeq) {
+		loadSounds(3, 3);
+		openAnimation(0, "graphics/allseg04.flc");
+		_frameTime = 2;
+		_newSeq = false;
+	}
+	decodeNextAnimationFrame(0);
+	if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+		_seqNum = 1;
+	}
+	updateSounds();
 }
 
 } // namespace Tucker

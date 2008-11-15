@@ -52,7 +52,6 @@ public:
 	static void copyTo640(uint8 *dst, const uint8 *src, int w, int srcPitch, int h);
 
 	static void drawStringChar(uint8 *dst, uint8 chr, int pitch, uint8 chrColor, const uint8 *src);
-	static void drawStringChar2(uint8 *dst, uint8 chr, int pitch, uint8 chrColor, const uint8 *src);
 
 	static const Charset _enCharset;
 	static const Charset _frCharset;

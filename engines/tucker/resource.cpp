@@ -173,6 +173,7 @@ uint8 *TuckerEngine::loadFile(uint8 *p) {
 	}
 	Common::File f;
 	if (!f.open(_fileToLoad)) {
+		warning("Unable to open '%s'", _fileToLoad);
 		return 0;
 	}
 	const int sz = f.size();
@@ -208,13 +209,13 @@ void TuckerEngine::closeCompressedSoundFile() {
 }
 
 void TuckerEngine::loadImage(uint8 *dst, int type) {
-	int count = 0;
 	Common::File f;
 	if (!f.open(_fileToLoad)) {
+		warning("Unable to open '%s'", _fileToLoad);
 		return;
 	}
 	f.seek(128, SEEK_SET);
-	int size = 0;
+	int size = 0, count = 0;
 	while (size < 64000) {
 		if (type == 2) {
 			++count;
@@ -765,46 +766,52 @@ void TuckerEngine::loadFx() {
 	t.findIndex(_locationNum);
 	t.findNextToken(kDataTokenDw);
 	_locationSoundsCount = t.getNextInteger();
-	_locationSoundsTable[0].offset = 0;
 	_currentFxSet = 0;
 	for (int i = 0; i < _locationSoundsCount; ++i) {
-		_locationSoundsTable[i].num = t.getNextInteger();
-		_locationSoundsTable[i].volume = t.getNextInteger();
-		_locationSoundsTable[i].type = t.getNextInteger();
-		if (_locationSoundsTable[i].type == 5) {
+		LocationSound *s = &_locationSoundsTable[i];
+		s->offset = 0;
+		s->num = t.getNextInteger();
+		s->volume = t.getNextInteger();
+		s->type = t.getNextInteger();
+		switch (s->type) {
+		case 5:
 			_currentFxSet = 1;
 			_currentFxIndex = i;
-			_currentFxVolume = _locationSoundsTable[i].volume;
+			_currentFxVolume = s->volume;
 			_currentFxDist = t.getNextInteger();
 			_currentFxScale = t.getNextInteger();
-		} else if (_locationSoundsTable[i].type == 6 || _locationSoundsTable[i].type == 7 || _locationSoundsTable[i].type == 8) {
-			_locationSoundsTable[i].startFxSpriteState = t.getNextInteger();
-			_locationSoundsTable[i].startFxSpriteNum = t.getNextInteger();
-			_locationSoundsTable[i].updateType = t.getNextInteger();
-			if (_locationSoundsTable[i].type == 7) {
-				_locationSoundsTable[i].flagNum = t.getNextInteger();
-				_locationSoundsTable[i].flagValueStartFx = t.getNextInteger();
-				_locationSoundsTable[i].stopFxSpriteState = t.getNextInteger();
-				_locationSoundsTable[i].stopFxSpriteNum = t.getNextInteger();
-				_locationSoundsTable[i].flagValueStopFx = t.getNextInteger();
+			break;
+		case 6:
+		case 7:
+		case 8:
+			s->startFxSpriteState = t.getNextInteger();
+			s->startFxSpriteNum = t.getNextInteger();
+			s->updateType = t.getNextInteger();
+			if (s->type == 7) {
+				s->flagNum = t.getNextInteger();
+				s->flagValueStartFx = t.getNextInteger();
+				s->stopFxSpriteState = t.getNextInteger();
+				s->stopFxSpriteNum = t.getNextInteger();
+				s->flagValueStopFx = t.getNextInteger();
 			}
+			break;
 		}
-		if (_locationSoundsTable[i].type == 8) {
-			_locationSoundsTable[i].type = 6;
+		if (s->type == 8) {
+			s->type = 6;
 		}
 	}
 	t.findNextToken(kDataTokenDw);
 	int count = t.getNextInteger();
-	_locationMusicsTable[0].offset = _locationSoundsTable[_locationSoundsCount].offset;
 	_locationMusicsCount = 0;
 	for (int i = 0; i < count; ++i) {
 		int flagNum = t.getNextInteger();
 		int flagValue = t.getNextInteger();
 		if (flagValue == _flagsTable[flagNum]) {
-			_locationMusicsTable[_locationMusicsCount].num = t.getNextInteger();
-			_locationMusicsTable[_locationMusicsCount].volume = t.getNextInteger();
-			_locationMusicsTable[_locationMusicsCount].flag = t.getNextInteger();
-			++_locationMusicsCount;
+			LocationMusic *m = &_locationMusicsTable[_locationMusicsCount++];
+			m->offset = 0;
+			m->num = t.getNextInteger();
+			m->volume = t.getNextInteger();
+			m->flag = t.getNextInteger();
 		} else {
 			for (int j = 0; j < 3; ++j) {
 				t.getNextInteger();

@@ -32,6 +32,8 @@
 #include "common/events.h"
 #include "common/stream.h"
 
+#include "graphics/flic_player.h"
+
 #include "sound/mixer.h"
 
 #include "engines/engine.h"
@@ -169,6 +171,8 @@ struct LocationMusic {
 };
 
 enum {
+	kScreenWidth = 320,
+	kScreenHeight = 200,
 	kFadePaletteStep = 5,
 	kStartupLocation = 1,
 	kDefaultCharSpeechSoundCounter = 1,
@@ -205,7 +209,7 @@ public:
 		kMaxCharacters = 8
 	};
 
-	TuckerEngine(OSystem *system, Common::Language language);
+	TuckerEngine(OSystem *system, Common::Language language, bool isDemo);
 	~TuckerEngine();
 
 	virtual Common::Error init();
@@ -541,8 +545,9 @@ protected:
 
 	Common::RandomSource _rnd;
 	Common::Language _lang;
+	bool _isDemo;
 
-	int _quitGame;
+	bool _quitGame;
 	bool _fastMode;
 	int _syncCounter;
 	uint32 _lastFrameTime;
@@ -555,8 +560,8 @@ protected:
 	int _currentPartNum;
 	int _locationNum;
 	int _nextLocationNum;
-	int _gamePaused;
-	int _gamePaused2;
+	bool _gamePaused;
+	bool _gamePaused2;
 	int _data4FlagDebug;
 	int _displayGameHints;
 	int _execData3Counter;
@@ -799,6 +804,111 @@ protected:
 	static int _mapSequenceFlagsLocationTable[70];
 	static const uint8 _charWidthCharset1[224];
 	static const uint8 _charWidthCharset2[58];
+};
+
+enum {
+	kFirstAnimationSequenceGame = 17,
+	kFirstAnimationSequenceDemo = 13
+};
+
+enum AnimationSoundType {
+	kAnimationSoundType8BitsRAW,
+	kAnimationSoundType16BitsRAW,
+	kAnimationSoundTypeWAV,
+	kAnimationSoundTypeLoopingWAV
+};
+
+class AnimationSequencePlayer {
+public:
+
+	enum {
+		kSequenceFrameTime = 55
+	};
+
+	AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, int num);
+	~AnimationSequencePlayer();
+
+	void mainLoop();
+
+private:
+
+	void syncTime();
+	void loadSounds(int type, int num);
+	Audio::AudioStream *loadSoundFileAsStream(const char *name, AnimationSoundType type);
+	void updateSounds();
+	void fadeInPalette();
+	void fadeOutPalette();
+	void unloadAnimation();
+	uint8 *loadPicture(const char *fileName);
+	void openAnimation(int index, const char *fileName);
+	void decodeNextAnimationFrame(int index);
+	void introSeq17_18();
+	void introSeq19_20();
+	void displayLoadingScreen();
+	void initPicPart4();
+	void drawPicPart4();
+	void introSeq3_4();
+	void drawPic2Part10();
+	void drawPic1Part10();
+	void introSeq9_10();
+	void introSeq21_22();
+	void introSeq13_14();
+	void introSeq15_16();
+	void introSeq27_28();
+
+	OSystem *_system;
+	Audio::Mixer *_mixer;
+	Common::EventManager *_event;
+
+	bool _newSeq;
+	int _seqNum, _currentSeqNum;
+	::Graphics::FlicPlayer *_flicPlayer[2];
+	uint8 _animationPalette[256 * 4], _paletteBuffer[256 * 4];
+	const int *_soundsListSeqData;
+	const char **_soundsList1;
+	int _soundsList1Count;
+	const char **_soundsList2;
+	int _soundsList2Count;
+	int _musicVolume;
+	uint8 *_offscreenBuffer;
+	int _updateScreenWidth;
+	int _updateScreenPicture;
+	int _updateScreenOffset;
+	int _frameCounter;
+	int _frameTime;
+	int _lastFrameTime;
+	uint8 *_picBufPtr, *_pic2BufPtr;
+	Audio::SoundHandle _soundsHandle[15];
+	Audio::SoundHandle _sfxHandle;
+	Audio::SoundHandle _musicHandle;
+
+	static const int _soundSeqData1[1];
+	static const int _soundSeqData2[233];
+	static const int _soundSeqData3[241];
+	static const int _soundSeqData4[193];
+	static const int _soundSeqData5[77];
+	static const int _soundSeqData6[101];
+	static const int _soundSeqData7[173];
+	static const int _soundSeqData8[45];
+	static const int _soundSeqData9[49];
+	static const int _soundSeqData10[97];
+	static const int _soundSeqData11[29];
+	static const char *_musicFileNamesTable[53];
+	static const char *_soundFilesList1[14];
+	static const char *_soundFilesList2[10];
+	static const char *_soundFilesList3[14];
+	static const char *_soundFilesList4[5];
+	static const char *_soundFilesList5[14];
+	static const char *_soundFilesList6[9];
+	static const char *_soundFilesList7[13];
+	static const char *_soundFilesList8[14];
+	static const char *_soundFilesList9[4];
+	static const char *_soundFilesList10[13];
+	static const char *_soundFilesList11[9];
+	static const char *_soundFilesList12[11];
+	static const char *_soundFilesList13[6];
+	static const char *_soundFilesList14[10];
+	static const char *_soundFilesList15[4];
 };
 
 } // namespace Tucker

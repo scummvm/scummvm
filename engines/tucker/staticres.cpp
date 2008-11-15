@@ -242,4 +242,374 @@ const Graphics::Charset Graphics::_creditsCharset = { 19, 10, 16, 7 };
 
 const Graphics::Charset *Graphics::_charset = 0;
 
+// timestamp, index, opcode, volume
+
+const int AnimationSequencePlayer::_soundSeqData1[1] = {
+	  -1,
+};
+
+const int AnimationSequencePlayer::_soundSeqData2[233] = {
+	  16,    3,    1,  100,   18,    5,    1,  100,   26,    9,    5,  100,   74,    9,    0,  100,
+	 118,   10,    0,  100,  139,    9,    0,  100,  140,   10,    2,  100,  144,    5,    2,  100,
+	 146,    3,    2,  100,  147,    9,    2,  100,  148,    2,    1,  100,  156,    0,    1,   50,
+	 158,    4,    5,  100,  188,    4,    5,  100,  212,    2,    2,  100,  223,    1,    0,  100,
+	 230,    1,    2,  100,  234,    1,    0,  100,  251,    1,    0,  100,  265,   11,    6,   80,
+	 293,    5,    1,   80,  295,   12,    6,   80,  343,   13,    6,  110,  373,   14,    6,   80,
+	 429,    5,    2,  100,  431,   15,    6,   80,  456,    2,    1,  100,  457,    1,    5,  100,
+	 463,    0,    5,  100,  482,    2,    2,  100,  483,    8,    1,  100,  494,    8,    5,  100,
+	 507,    7,    5,  100,  511,    7,    5,  100,  522,   13,    1,  100,  547,    6,    5,  100,
+	 548,   11,    0,  100,  556,   12,    0,  100,  557,    2,    5,  100,  599,    7,    1,  100,
+	 639,    7,    2,  100,  641,   12,    0,  100,  642,    7,    5,  100,  718,   14,    2,  100,
+	 719,    1,    2,  100,  720,    2,    2,  100,  721,    3,    2,  100,  722,    4,    2,  100,
+	 723,    5,    2,  100,  724,    6,    2,  100,  725,    7,    2,  100,  726,    8,    2,  100,
+	 727,    9,    2,  100,  728,   10,    2,  100,  729,   11,    2,  100,  730,   12,    2,  100,
+	 731,    0,    2,  100,  732,   13,    2,  100,   -1,
+};
+
+const int AnimationSequencePlayer::_soundSeqData3[241] = {
+	   2,    0,    3,  100,    3,    2,    0,  100,    3,    5,    1,   20,    6,   25,    6,   80,
+	  22,    1,    5,  100,   37,   29,    6,   80,   59,   30,    6,   80,   69,   26,    6,   80,
+	 124,   27,    6,   80,  163,   28,    6,   80,  197,   31,    6,   80,  224,   32,    6,   80,
+	 306,   33,    6,   80,  350,   34,    6,   80,  388,    8,    0,  100,  389,    6,    1,  100,
+	 390,    9,    1,  100,  395,   10,    0,  100,  398,    3,    0,  100,  408,    3,    0,  100,
+	 413,    4,    0,  100,  418,    3,    0,  100,  426,    6,    2,  100,  427,    9,    2,  100,
+	 430,   35,    6,   80,  472,   36,    6,   80,  514,    9,    1,  100,  515,    7,    0,  100,
+	 516,    6,    1,  100,  517,    4,    0,  100,  520,   11,    0,  100,  523,    3,    0,  100,
+	 531,    7,    2,  100,  532,    9,    2,  100,  533,    6,    2,  100,  534,    3,    0,  100,
+	 535,   37,    6,   80,  553,   38,    6,   80,  569,   39,    6,   80,  588,   40,    6,   80,
+	 662,   41,    6,   80,  777,   42,    6,   80,  978,    1,    0,  100, 1008,   12,    0,  100,
+	1011,    4,    5,  100, 1022,   52,    6,   80, 1039,    3,    5,  100, 1045,    3,    5,  100,
+	1051,    3,    5,  100, 1057,    3,    5,  100, 1063,    3,    5,  100, 1066,    3,    5,   40,
+	1074,   43,    6,   80, 1256,   44,    6,   80, 1322,   45,    6,   80, 1373,   46,    6,   80,
+	1419,   47,    6,   80, 1792,   13,    0,  100, 1793,    0,    5,  100, 1895,   51,    6,   80,
+	  -1,
+};
+
+const int AnimationSequencePlayer::_soundSeqData4[193] = {
+	   2,    0,    3,  100,    4,    3,    1,   40,    5,    7,    1,   20,    7,    3,    5,  100,
+	  62,    3,    2,  100,   63,   48,    6,   80,  198,    7,    2,  100,  202,    5,    1,  100,
+	 203,   16,    6,   80,  211,    1,    5,  100,  216,    0,    1,   40,  217,    5,    2,  100,
+	 218,    6,    1,  100,  224,    2,    5,  100,  229,   17,    6,   80,  273,    6,    2,  100,
+	 274,    4,    1,  100,  275,    4,    5,  100,  335,    1,    1,  100,  336,   13,    0,  100,
+	 339,   11,    0,  100,  358,    0,    5,  100,  364,   24,    4,  100,  397,    7,    5,  100,
+	 399,    6,    5,  100,  433,    5,    5,  100,  451,   13,    0,  100,  459,    1,    2,  100,
+	 508,    4,    2,  100,  509,    1,    1,  100,  521,   11,    0,  100,  530,    8,    0,  100,
+	 537,    9,    0,  100,  557,    8,    5,  100,  578,    5,    5,  100,  602,   13,    0,  100,
+	 609,    1,    2,  100,  626,   12,    0,  100,  628,   10,    0,  100,  670,    6,    5,  100,
+	 690,   10,    0,  100,  692,    3,    5,  100,  705,   11,    0,  100,  710,    2,    5,  100,
+	 714,    9,    0,  100,  720,    9,    2,  100,  721,    7,    5,  100,  725,    0,    5,  100,
+	  -1,
+};
+
+const int AnimationSequencePlayer::_soundSeqData5[77] = {
+	   3,    8,    0,  100,   43,   11,    0,  100,   68,    5,    1,  100,  100,    5,    2,  100,
+	 104,    6,    0,  100,  139,    7,    0,  100,  192,    3,    0,  100,  199,    4,    0,  100,
+	 207,    4,    0,  100,  208,    2,    0,  100,  254,    0,    0,  100,  260,    0,    0,  100,
+	 266,    0,    0,  100,  272,    0,    0,  100,  276,    0,    0,  100,  282,    1,    0,  100,
+	 303,   10,    0,  100,  319,   12,    0,  100,  355,    9,    0,  100,   -1,
+};
+
+const int AnimationSequencePlayer::_soundSeqData6[101] = {
+	   3,    0,    1,  100,   34,    0,    2,  100,   57,    0,    5,  100,   77,    0,    5,  100,
+	  84,    9,    0,  100,  100,    9,    0,  100,  140,    3,    5,  100,  157,    2,    5,  100,
+	 158,    1,    0,  100,  204,    1,    5,  100,  220,    2,    1,  100,  235,    7,    0,  100,
+	 236,    2,    2,  100,  248,   12,    0,  100,  251,   13,    0,  100,  265,   11,    0,  100,
+	 276,   11,    0,  100,  310,    5,    0,  100,  335,    6,    0,  100,  370,    4,    0,  100,
+	 373,    8,    0,  100,  378,    8,    0,  100,  434,   10,    0,  100,  453,    3,    0,  100,
+	 484,    3,    2,  100,   -1,
+};
+
+const int AnimationSequencePlayer::_soundSeqData7[173] = {
+	   3,    4,    5,  100,   10,    5,    5,  100,   22,    6,    5,  100,   32,    7,    5,  100,
+	  39,    6,    5,  100,   48,    7,    5,  100,   57,    6,    5,  100,   65,    3,    0,   50,
+	 102,    4,    0,   50,  151,    2,    5,   50,  205,    3,    5,  100,  218,    0,    5,  100,
+	 227,    0,    5,  100,  236,    0,    5,  100,  245,    0,    5,  100,  254,    0,    5,  100,
+	 263,    0,    5,  100,  272,    0,    5,  100,  291,    1,    1,   40,  309,    8,    5,  100,
+	 360,    8,    5,  100,  384,    2,    1,   60,  398,   10,    0,  100,  440,    2,    2,  100,
+	 441,    1,    2,  100,  452,   11,    0,  100,  466,    1,    5,  100,  470,    8,    0,  100,
+	 503,    6,    0,  100,  519,    7,    0,  100,  536,    8,    0,  100,  538,    4,    5,  100,
+	 549,    5,    5,  100,  558,    4,    5,  100,  568,    5,    5,  100,  578,    4,    5,  100,
+	 586,    5,    5,  100,  593,    4,    5,  100,  600,    5,    5,  100,  606,    4,    5,  100,
+	 613,    5,    5,  100,  620,    9,    0,  100,  630,   12,    0,  100,   -1,
+};
+
+const int AnimationSequencePlayer::_soundSeqData8[45] = {
+	  17,    2,    0,  100,   57,    8,    0,  100,   62,   10,    0,  100,   67,    9,    0,  100,
+	  74,    3,    1,  100,   87,    3,    2,  100,   85,    0,    0,  100,  138,    5,    0,  100,
+	 196,    7,    0,  100,  222,    6,    0,  100,  228,    1,    0,  100,   -1,
+};
+
+const int AnimationSequencePlayer::_soundSeqData9[49] = {
+	  20,    4,    0,  100,  132,    0,    0,  100,  145,    0,    2,  100,  171,    1,    0,  100,
+	 315,    2,    0,   50,  334,    3,    0,  100,  602,    5,    0,   50,  631,    5,    0,   50,
+	 660,    5,    0,   50,  767,    5,    0,   50,  795,    5,    0,   50,  824,    5,    0,   50,
+	  -1,
+};
+
+const int AnimationSequencePlayer::_soundSeqData10[97] = {
+	   4,    8,    1,  100,    5,    6,    0,  100,   47,    8,    2,  100,  125,    8,    1,  100,
+	 126,    6,    0,  100,  156,    8,    2,  100,  168,    2,    0,  100,  174,    2,    0,  100,
+	 180,    2,    0,  100,  186,    2,    0,  100,  192,    2,    0,  100,  267,    2,    0,  100,
+	 273,    2,    0,  100,  279,    2,    0,  100,  285,    2,    0,  100,  291,    2,    0,  100,
+	 297,    2,    0,  100,  302,    0,    0,  100,  417,    1,    0,  100,  472,    5,    0,  100,
+	 600,    5,    0,  100,  623,    3,    0,  100,  643,    9,    0,  100,  781,    4,    0,   80,
+	  -1,
+};
+
+const int AnimationSequencePlayer::_soundSeqData11[29] = {
+	   2,    0,    3,  100,    3,    0,    1,  100,   33,    0,    2,  100,   33,    1,    0,  100,
+	  53,    2,    1,  100,   78,    2,    2,  100,   80,    0,    4,  100,   -1,
+};
+
+const char *AnimationSequencePlayer::_musicFileNamesTable[53] = {
+	"DemoMenu.raw",
+	"IntroduB.raw",
+	"IntroduA.raw",
+	"DemoRolA.raw",
+	"DemoChA1.raw",
+	"icrmusic.raw",
+	"DemoRolC.raw",
+	"DemoRolC.raw",
+	"MeriLogo.raw",
+	"DemoChA2.raw",
+	"DemoRolC.raw",
+	"int1.raw",
+	"int2.raw",
+	"int3.raw",
+	"int4.raw",
+	"int5.raw",
+	"int6.raw",
+	"int7.raw",
+	"int8.raw",
+	"int9.raw",
+	"int10.raw",
+	"int11.raw",
+	"int12.raw",
+	"int13.raw",
+	"int14.raw",
+	"int15.raw",
+	"int16.raw",
+	"int17.raw",
+	"int18.raw",
+	"int19.raw",
+	"int20.raw",
+	"int21.raw",
+	"int22.raw",
+	"int23.raw",
+	"int24.raw",
+	"int25.raw",
+	"int26.raw",
+	"int27.raw",
+	"int28.raw",
+	"int29.raw",
+	"int30.raw",
+	"int31.raw",
+	"int32.raw",
+	"int33.raw",
+	"int34.raw",
+	"int35.raw",
+	"int36.raw",
+	"int37.raw",
+	"int38.raw",
+	"int39.raw",
+	"int40.raw",
+	"int41.raw",
+	"int42.raw"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList1[14] = {
+	"IntroduA.wav",
+	"FX35.wav",
+	"FX47.wav",
+	"FX50.wav",
+	"FX51.wav",
+	"FX52.wav",
+	"FX54.wav",
+	"FX58.wav",
+	"FX59.wav",
+	"FX53.wav",
+	"FX55.wav",
+	"FX68.wav",
+	"FX57.wav",
+	"FX36.wav"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList2[10] = {
+	"FX33.wav",
+	"FX34.wav",
+	"FX38.wav",
+	"FX39.wav",
+	"FX48.wav",
+	"FX49.wav",
+	"FX69.wav",
+	"FX32.wav",
+	"FX56.wav",
+	"FX117.wav"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList3[14] = {
+	"IntroduA.wav",
+	"FX37.wav",
+	"FX49.wav",
+	"FX72.wav",
+	"FX73.wav",
+	"FX74.wav",
+	"FX75.wav",
+	"FX76.wav",
+	"FX77.wav",
+	"FX78.wav",
+	"FX79.wav",
+	"FX80.wav",
+	"FX81.wav",
+	"FX83.wav"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList4[5] = {
+	"FX70.wav",
+	"FX33.wav",
+	"RDFX12.wav",
+	"FX86.wav",
+	"FX116.wav"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList5[14] = {
+	"IntroduA.wav",
+	"FX36.wav",
+	"FX46.wav",
+	"FX52.wav",
+	"FX59.wav",
+	"FX66.wav",
+	"FX67.wav",
+	"FX74.wav",
+	"RDFX26.wav",
+	"FX42.wav",
+	"FX43.wav",
+	"FX44.wav",
+	"FX45.wav",
+	"FX61.wav"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList6[9] = {
+	"FX40.wav",
+	"FX60.wav",
+	"FX62.wav",
+	"FX71.wav",
+	"FX63.wav",
+	"FX64.wav",
+	"FX68.wav",
+	"FX69.wav",
+	"RDFX12.wav"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList7[13] = {
+	"RDFX1.wav",
+	"RDFX2.wav",
+	"RDFX4.wav",
+	"RDFX5.wav",
+	"RDFX6.wav",
+	"RDFX7.wav",
+	"RDFX10.wav",
+	"RDFX11.wav",
+	"RDFX12.wav",
+	"RDFX19.wav",
+	"RDFX29.wav",
+	"RDFX32.wav",
+	"RDFX35.wav"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList8[14] = {
+	"RDFX8.wav",
+	"RDFX9.wav",
+	"RDFX13.wav",
+	"RDFX14.wav",
+	"RDFX33.wav",
+	"RDFX16.wav",
+	"RDFX18.wav",
+	"RDFX20.wav",
+	"RDFX38.wav",
+	"FX39.wav",
+	"RDFX28.wav",
+	"RDFX25.wav",
+	"RDFX26.wav",
+	"RDFX27.wav"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList9[4] = {
+	"RDFX31.wav",
+	"RDFX21.wav",
+	"RDFX15.wav",
+	"FX34.wav"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList10[13] = {
+	"FX96.wav",
+	"FX74.wav",
+	"FX75.wav",
+	"FX97.wav",
+	"FX98.wav",
+	"FX106.wav",
+	"FX107.wav",
+	"FX108.wav",
+	"FX109.wav",
+	"FX110.wav",
+	"FX93.wav",
+	"FX83.wav",
+	"FX111.wav"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList11[9] = {
+	"FX86.wav",
+	"FX101.wav",
+	"FX112.wav",
+	"FX104.wav",
+	"FX102.wav",
+	"FX103.wav",
+	"FX91.wav",
+	"FX92.wav",
+	"FX105.wav"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList12[11] = {
+	"RDFX3.wav",
+	"RDFX9.wav",
+	"RDFX17.wav",
+	"RDFX22.wav",
+	"RDFX23.wav",
+	"RDFX24.wav",
+	"RDFX30.wav",
+	"RDFX36.wav",
+	"RDFX1.wav",
+	"RDFX16.wav",
+	"RDFX37.wav"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList13[6] = {
+	"FX82.wav",
+	"FX80.wav",
+	"FX89.wav",
+	"FX90.wav",
+	"FX83.wav",
+	"FX84.wav"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList14[10] = {
+	"RDFX2.wav",
+	"FX85.wav",
+	"FX86.wav",
+	"FX87.wav",
+	"FX88.wav",
+	"FX99.wav",
+	"FX98.wav",
+	"FX97.wav",
+	"FX96.wav",
+	"FX100.wav"
+};
+
+const char *AnimationSequencePlayer::_soundFilesList15[4] = {
+	"rdfx22.wav",
+	"fx113.wav",
+	"fx114.wav",
+	"fx115.wav"
+};
+
 } // namespace Tucker

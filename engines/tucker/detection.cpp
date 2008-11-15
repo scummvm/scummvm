@@ -62,6 +62,14 @@ static const Common::ADGameDescription tuckerGameDescriptions[] = {
 		Common::kPlatformPC,
 		Common::ADGF_NO_FLAGS
 	},
+	{
+		"tucker",
+		"Demo",
+		AD_ENTRY1s("sample.bnk", "0c58636237f90238cbfd49d76b3e5c1a", 10780),
+		Common::EN_ANY,
+		Common::kPlatformPC,
+		Common::ADGF_DEMO
+	},
 	AD_TABLE_END_MARKER
 };
 
@@ -91,7 +99,7 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 		if (desc) {
-			*engine = new Tucker::TuckerEngine(syst, desc->language);
+			*engine = new Tucker::TuckerEngine(syst, desc->language, (desc->flags & Common::ADGF_DEMO) != 0);
 		}
 		return desc != 0;
 	}
