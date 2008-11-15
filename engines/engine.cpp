@@ -251,8 +251,8 @@ bool Engine::shouldPerformAutoSave(int lastSaveTime) {
 	return autosavePeriod != 0 && diff > autosavePeriod * 1000;
 }
 
-void Engine::errorString(const char *buf1, char *buf2) {
-	strcpy(buf2, buf1);
+void Engine::errorString(const char *buf1, char *buf2, int size) {
+	strncpy(buf2, buf1, size);
 }
 
 void Engine::pauseEngine(bool pause) {

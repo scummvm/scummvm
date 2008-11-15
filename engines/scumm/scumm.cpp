@@ -2338,9 +2338,9 @@ GUI::Debugger *ScummEngine::getDebugger() {
 	return _debugger;
 }
 
-void ScummEngine::errorString(const char *buf1, char *buf2) {
+void ScummEngine::errorString(const char *buf1, char *buf2, int buf2Size) {
 	if (_currentScript != 0xFF) {
-		sprintf(buf2, "(%d:%d:0x%lX): %s", _roomResource,
+		snprintf(buf2, buf2Size, "(%d:%d:0x%lX): %s", _roomResource,
 			vm.slot[_currentScript].number, (long)(_scriptPointer - _scriptOrgPointer), buf1);
 	} else {
 		strcpy(buf2, buf1);

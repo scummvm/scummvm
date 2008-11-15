@@ -445,7 +445,7 @@ public:
 	// Engine APIs
 	virtual Common::Error init();
 	virtual Common::Error go();
-	virtual void errorString(const char *buf_input, char *buf_output);
+	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size);
 	virtual GUI::Debugger *getDebugger();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();

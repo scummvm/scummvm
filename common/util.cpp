@@ -465,7 +465,7 @@ static void debugHelper(const char *in_buf, bool caret = true) {
 
 	// Next, give the active engine (if any) a chance to augment the message
 	if (g_engine) {
-		g_engine->errorString(in_buf, buf);
+		g_engine->errorString(in_buf, buf, STRINGBUFLEN);
 	} else {
 		strcpy(buf, in_buf);
 	}
@@ -583,7 +583,7 @@ void NORETURN error(const char *s, ...) {
 
 	// Next, give the active engine (if any) a chance to augment the message
 	if (g_engine) {
-		g_engine->errorString(buf_input, buf_output);
+		g_engine->errorString(buf_input, buf_output, STRINGBUFLEN);
 	} else {
 		strcpy(buf_output, buf_input);
 	}

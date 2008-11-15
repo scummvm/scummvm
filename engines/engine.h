@@ -154,7 +154,7 @@ public:
 	/**
 	 * Prepare an error string, which is printed by the error() function.
 	 */
-	virtual void errorString(const char *buf_input, char *buf_output);
+	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size);
 
 	/**
 	 * Return the engine's debugger instance, if any. Used by error() to
