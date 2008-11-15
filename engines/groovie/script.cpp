@@ -60,7 +60,7 @@ void debugScript(int level, bool nl, const char *s, ...) {
 
 Script::Script(GroovieEngine *vm) :
 	_code(NULL), _savedCode(NULL), _stacktop(0),
-	_debugger(NULL), _error(false), _vm(vm),
+	_debugger(NULL), _vm(vm),
 	_videoFile(NULL), _videoRef(0), _font(NULL) {
 	// Initialize the random source
 	_vm->_system->getEventManager()->registerRandomSource(_random, "GroovieScripts");
@@ -145,9 +145,6 @@ void Script::directGameLoad(int slot) {
 }
 
 void Script::step() {
-	// Reset the error status
-	_error = false;
-
 	// Prepare the base debug string
 	char debugstring[10];
 	sprintf(debugstring, "@0x%04X: ", _currentInstruction);
@@ -182,22 +179,8 @@ void Script::setKbdChar(uint8 c) {
 	_eventKbdChar = c;
 }
 
-bool Script::haveError() {
-	return _error;
-}
-
-void Script::error(const char *msg) {
-	// Prepend the debugging info to the error
-	Common::String msg2 = _debugString + msg;
-
-	// Print the error message
-	::error("ERROR: %s\n", msg2.c_str());
-
-	// Show it in the debugger
-	_debugger->attach(msg2.c_str());
-
-	// Set the error state
-	_error = true;
+Common::String &Script::getContext() {
+	return _debugString;
 }
 
 uint8 Script::readScript8bits() {
@@ -946,7 +929,7 @@ void Script::o_stopmidi() {
 
 void Script::o_endscript() {
 	debugScript(1, true, "END OF SCRIPT");
-	_error = true;
+	_vm->quitGame();
 }
 
 void Script::o_sethotspottop() {

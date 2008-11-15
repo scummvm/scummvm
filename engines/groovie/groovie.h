@@ -74,6 +74,8 @@ protected:
 	Common::Error init();
 	Common::Error go();
 
+	void errorString(const char *buf_input, char *buf_output, int buf_output_size);
+
 public:
 	bool hasFeature(EngineFeature f) const;
 

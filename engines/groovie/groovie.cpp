@@ -172,12 +172,6 @@ Common::Error GroovieEngine::go() {
 			_debugger->onFrame();
 		}
 
-		// If there's still a script error after debugging, end the execution
-		if (_script.haveError()) {
-			quitGame();
-			break;
-		}
-
 		// Handle input
 		Common::Event ev;
 		while (_eventMan->pollEvent(ev)) {
@@ -243,6 +237,11 @@ bool GroovieEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
 		(f == kSupportsLoadingDuringRuntime);
+}
+
+void GroovieEngine::errorString(const char *buf_input, char *buf_output, int buf_output_size) {
+	snprintf(buf_output, buf_output_size, "%s%s\n",
+		_script.getContext().c_str(), buf_input);
 }
 
 void GroovieEngine::syncSoundSettings() {

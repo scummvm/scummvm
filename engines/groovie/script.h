@@ -51,7 +51,7 @@ public:
 	void setMouseClick();
 	void setKbdChar(uint8 c);
 
-	bool haveError();
+	Common::String &getContext();
 
 private:
 	GroovieEngine *_vm;
@@ -104,8 +104,6 @@ private:
 	// Debugging
 	Debugger *_debugger;
 	Common::String _debugString;
-	void error(const char *msg);
-	bool _error;
 
 	// Helper functions
 	uint8 readScript8bits();
