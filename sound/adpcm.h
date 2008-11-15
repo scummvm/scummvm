@@ -42,7 +42,10 @@ class AudioStream;
 enum typesADPCM {
 	kADPCMOki,		// Dialogic/Oki ADPCM (aka VOX)
 	kADPCMMSIma,	// Microsoft IMA ADPCM
-	kADPCMMS		// Microsoft ADPCM
+	kADPCMMS,		// Microsoft ADPCM
+	kADPCMTinsel4,	// 4-bit ADPCM used by the Tinsel engine
+	kADPCMTinsel6,	// 6-bit ADPCM used by the Tinsel engine
+	kADPCMTinsel8	// 8-bit ADPCM used by the Tinsel engine
 };
 
 /**

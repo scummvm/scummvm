@@ -62,12 +62,18 @@ private:
 
 		// MS ADPCM
 		ADPCMChannelStatus ch[2];
+
+		// Tinsel
+		double predictor;
+		double K0, K1;
+		double d0, d1;
 	} _status;
 
 	int16 stepAdjust(byte);
 	int16 decodeOKI(byte);
 	int16 decodeMSIMA(byte);
 	int16 decodeMS(ADPCMChannelStatus *c, byte);
+	int16 decodeTinsel(int16, double);
 
 public:
 	ADPCMInputStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels = 2, uint32 blockAlign = 0);
@@ -78,6 +84,10 @@ public:
 	int readBufferMSIMA1(int16 *buffer, const int numSamples);
 	int readBufferMSIMA2(int16 *buffer, const int numSamples);
 	int readBufferMS(int channels, int16 *buffer, const int numSamples);
+	void readBufferTinselHeader();
+	int readBufferTinsel4(int channels, int16 *buffer, const int numSamples);
+	int readBufferTinsel6(int channels, int16 *buffer, const int numSamples);
+	int readBufferTinsel8(int channels, int16 *buffer, const int numSamples);
 
 	bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos); }
 	bool isStereo() const	{ return false; }
@@ -96,6 +106,7 @@ ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, bool disp
 
 	_status.last = 0;
 	_status.stepIndex = 0;
+	_status.d0 = _status.d1 = 0;
 	memset(_status.ch, 0, sizeof(_status.ch));
 	_endpos = stream->pos() + size;
 	_blockLen = 0;
@@ -105,6 +116,19 @@ ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, bool disp
 		error("ADPCMInputStream(): blockAlign isn't specifiled for MS IMA ADPCM");
 	if (type == kADPCMMS && blockAlign == 0)
 		error("ADPCMInputStream(): blockAlign isn't specifiled for MS ADPCM");
+	if (type == kADPCMTinsel4 && blockAlign == 0)
+		error("ADPCMInputStream(): blockAlign isn't specifiled for Tinsel 4-bit ADPCM");
+	if (type == kADPCMTinsel6 && blockAlign == 0)
+		error("ADPCMInputStream(): blockAlign isn't specifiled for Tinsel 6-bit ADPCM");
+	if (type == kADPCMTinsel8 && blockAlign == 0)
+		error("ADPCMInputStream(): blockAlign isn't specifiled for Tinsel 8-bit ADPCM");
+
+	if (type == kADPCMTinsel4 && channels != 1)
+		error("ADPCMInputStream(): Tinsel 4-bit ADPCM only supports mono");
+	if (type == kADPCMTinsel6 && channels != 1)
+		error("ADPCMInputStream(): Tinsel 6-bit ADPCM only supports mono");
+	if (type == kADPCMTinsel8 && channels != 1)
+		error("ADPCMInputStream(): Tinsel 8-bit ADPCM only supports mono");
 }
 
 ADPCMInputStream::~ADPCMInputStream() {
@@ -123,6 +147,12 @@ int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
 			return readBufferMSIMA2(buffer, numSamples);
 	case kADPCMMS:
 		return readBufferMS(_channels, buffer, numSamples);
+	case kADPCMTinsel4:
+		return readBufferTinsel4(_channels, buffer, numSamples);
+	case kADPCMTinsel6:
+		return readBufferTinsel6(_channels, buffer, numSamples);
+	case kADPCMTinsel8:
+		return readBufferTinsel8(_channels, buffer, numSamples);
 	default:
 		error("Unsupported ADPCM encoding");
 		break;
@@ -243,6 +273,115 @@ int ADPCMInputStream::readBufferMS(int channels, int16 *buffer, const int numSam
 	return samples;
 }
 
+static const double TinselFilterTable[4][2] = {
+	{0, 0 },
+	{0.9375, 0},
+	{1.796875, -0.8125},
+	{1.53125, -0.859375}
+};
+
+void ADPCMInputStream::readBufferTinselHeader() {
+	uint8 start = _stream->readByte();
+	uint8 filterVal = (start & 0xC0) >> 6;
+
+	if ((start & 0x20) != 0) {
+		//Lower 6 bit are negative
+
+		// Negate
+		start = ~(start | 0xC0) + 1;
+
+		_status.predictor = 1 << start;
+	} else {
+		// Lower 6 bit are positive
+
+		// Truncate
+		start &= 0x1F;
+
+		_status.predictor = ((double) 1.0) / (1 << start);
+	}
+
+	_status.K0 = TinselFilterTable[filterVal][0];
+	_status.K1 = TinselFilterTable[filterVal][1];
+}
+
+int ADPCMInputStream::readBufferTinsel4(int channels, int16 *buffer, const int numSamples) {
+	int samples;
+	uint16 data;
+	const double eVal = 1.142822265;
+
+	samples = 0;
+
+	assert(numSamples % 2 == 0);
+
+	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
+		if (_blockPos == _blockAlign) {
+			readBufferTinselHeader();
+			_blockPos = 0;
+		}
+
+		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2, _blockPos++) {
+
+			data = _stream->readByte();
+			buffer[samples] = TO_LE_16(decodeTinsel((data << 8) & 0xF000, eVal));
+			buffer[samples+1] = TO_LE_16(decodeTinsel((data << 12) & 0xF000, eVal));
+		}
+	}
+
+	return samples;
+}
+
+int ADPCMInputStream::readBufferTinsel6(int channels, int16 *buffer, const int numSamples) {
+	int samples;
+	uint16 data;
+	const double eVal = 1.032226562;
+
+	samples = 0;
+
+	assert(numSamples % 4 == 0);
+
+	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
+		if (_blockPos == _blockAlign) {
+			readBufferTinselHeader();
+			_blockPos = 0;
+		}
+
+		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 4, _blockPos += 3) {
+
+			data = _stream->readByte();
+			buffer[samples] = TO_LE_16(decodeTinsel((data << 8) & 0xFC00, eVal));
+			data = (data << 8) | (_stream->readByte());
+			buffer[samples+1] = TO_LE_16(decodeTinsel((data << 6) & 0xFC00, eVal));
+			data = (data << 8) | (_stream->readByte());
+			buffer[samples+2] = TO_LE_16(decodeTinsel((data << 4) & 0xFC00, eVal));
+			data = (data << 8);
+			buffer[samples+3] = TO_LE_16(decodeTinsel((data << 2) & 0xFC00, eVal));
+		}
+	}
+
+	return samples;
+}
+
+int ADPCMInputStream::readBufferTinsel8(int channels, int16 *buffer, const int numSamples) {
+	int samples;
+	byte data;
+	const double eVal = 1.007843258;
+
+	samples = 0;
+
+	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
+		if (_blockPos == _blockAlign) {
+			readBufferTinselHeader();
+			_blockPos = 0;
+		}
+
+		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples++, _blockPos++) {
+			data = _stream->readByte();
+			buffer[samples] = TO_LE_16(decodeTinsel(data << 8, eVal));
+		}
+	}
+
+	return samples;
+}
 
 static const int MSADPCMAdaptationTable[] = {
 	230, 230, 230, 230, 307, 409, 512, 614,
@@ -329,6 +468,19 @@ int16 ADPCMInputStream::decodeMSIMA(byte code) {
 	_status.stepIndex = CLIP<int32>(_status.stepIndex, 0, ARRAYSIZE(imaStepTable) - 1);
 
 	return samp;
+}
+
+int16 ADPCMInputStream::decodeTinsel(int16 code, double eVal) {
+	double sample;
+
+	sample = (double) code;
+	sample *= eVal * _status.predictor;
+	sample += (_status.d0 * _status.K0) + (_status.d1 * _status.K1);
+
+	_status.d1 = _status.d0;
+	_status.d0 = sample;
+
+	return (int16) CLIP(sample, -32768.0, 32767.0);
 }
 
 AudioStream *makeADPCMStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign) {
