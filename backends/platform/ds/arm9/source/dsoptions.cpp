@@ -44,7 +44,7 @@ namespace DS {
 
 DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
-	addButton(this, 10, 170, "Close", GUI::kCloseCmd, 'C');
+	new ButtonWidget(this, 10, 170, 72, 16, "Close", GUI::kCloseCmd, 'C');
 	_tab = new GUI::TabWidget(this, 5, 5, 300, 230 - 20 - 40 - 10);
 
 	_tab->addTab("Controls");
