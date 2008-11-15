@@ -62,6 +62,7 @@ DXAPlayer::DXAPlayer() {
 }
 
 DXAPlayer::~DXAPlayer() {
+	closeFile();
 }
 
 int DXAPlayer::getWidth() {
@@ -94,6 +95,7 @@ bool DXAPlayer::loadFile(const char *filename) {
 
 	Common::File *file = new Common::File();
 	if (!file->open(filename)) {
+		delete file;
 		return 0;
 	}
 
