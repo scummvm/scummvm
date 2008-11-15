@@ -174,6 +174,7 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const;
 	SaveStateList listSaves(const char *target) const;
+	int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
 };
 
@@ -239,6 +240,10 @@ SaveStateList GroovieMetaEngine::listSaves(const char *target) const {
 	}
 
 	return list;
+}
+
+int GroovieMetaEngine::getMaximumSaveSlot() const {
+	return 9;
 }
 
 void GroovieMetaEngine::removeSaveState(const char *target, int slot) const {
