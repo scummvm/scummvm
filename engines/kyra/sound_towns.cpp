@@ -1154,7 +1154,10 @@ TownsPC98_OpnOperator::TownsPC98_OpnOperator(const uint32 timerbase, const uint8
 	_rateTbl(rateTable), _rshiftTbl(shiftTable), _adTbl(attackDecayTable), _fTbl(frqTable),
 	_sinTbl(sineTable), _tLvlTbl(tlevelOut), _detnTbl(detuneTable), _tickLength(timerbase * 2),
 	_specifiedAttackRate(0), _specifiedDecayRate(0), _specifiedReleaseRate(0), _specifiedSustainRate(0),
-	_phase(0), _state(s_ready),	_playing(false), _timer(0), _keyScale1(0), _keyScale2(0), _currentLevel(1023) {
+	_phase(0), _state(s_ready),	_playing(false), _timer(0), _keyScale1(0), _keyScale2(0), _currentLevel(1023),
+	_tickCount(0) {
+
+	fs_a.rate = fs_a.shift = fs_d.rate = fs_d.shift = fs_s.rate = fs_s.shift = fs_r.rate = fs_r.shift = 0;
 
 	reset();
 }
@@ -2555,24 +2558,20 @@ TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerb
 	_nTick(0), _evpUpdateCnt(0), _evpTimer(0x1f), _pReslt(0x1f), _attack(0), _cont(false), _evpUpdate(true),
 	_timer(0), _noiseGenerator(0) {
 
-	memset(_channels, 0, sizeof(Channel) * 3);
-	
-	uint8 *reg[] = {
-		&_channels[0].frqL,
-		&_channels[0].frqH,
-		&_channels[1].frqL,
-		&_channels[1].frqH,
-		&_channels[2].frqL,
-		&_channels[2].frqH,
-		&_noiseGenerator,
-		&_chanEnable,
-		&_channels[0].vol,
-		&_channels[1].vol,
-		&_channels[2].vol,
-	};
+	memset(_channels, 0, sizeof(Channel) * 3);	
+	_reg = new uint8 *[11];
 
-	_reg = new uint8 *[ARRAYSIZE(reg)];
-	memcpy (_reg, reg, sizeof(uint8*) * ARRAYSIZE(reg));;
+	_reg[0] = &_channels[0].frqL;
+	_reg[1] = &_channels[0].frqH;
+	_reg[2] = &_channels[1].frqL;
+	_reg[3] = &_channels[1].frqH;
+	_reg[4] = &_channels[2].frqL;
+	_reg[5] = &_channels[2].frqH;
+	_reg[6] = &_noiseGenerator;
+	_reg[7] = &_chanEnable;
+	_reg[8] = &_channels[0].vol;
+	_reg[9] = &_channels[1].vol;
+	_reg[10] = &_channels[2].vol;	
 
 	reset();
 }
@@ -2645,7 +2644,7 @@ void TownsPC98_OpnSquareSineSource::writeReg(uint8 address, uint8 value, bool fo
 	if (!_ready)
 		return;
 
-	if (address > 10 || *_reg[address] == value) {
+	if (address > 10) {
 		if ((address == 11 || address == 12 || address == 13) && value)
 			warning("TownsPC98_OpnSquareSineSource: unsupported reg address: %d", address);
 		return;
@@ -2734,37 +2733,33 @@ TownsPC98_OpnPercussionSource::TownsPC98_OpnPercussionSource(const uint32 timerb
 	_tickLength(timerbase * 2), _timer(0), _ready(false) {
 	
 	memset(_rhChan, 0, sizeof(RhtChannel) * 6);
-	uint8 *reg[] = {
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		&_rhChan[0].startPosL,
-		&_rhChan[1].startPosL,
-		&_rhChan[2].startPosL,
-		&_rhChan[3].startPosL,
-		&_rhChan[4].startPosL,
-		&_rhChan[5].startPosL,
-		&_rhChan[0].startPosH,
-		&_rhChan[1].startPosH,
-		&_rhChan[2].startPosH,
-		&_rhChan[3].startPosH,
-		&_rhChan[4].startPosH,
-		&_rhChan[5].startPosH,
-		&_rhChan[0].endPosL,
-		&_rhChan[1].endPosL,
-		&_rhChan[2].endPosL,
-		&_rhChan[3].endPosL,
-		&_rhChan[4].endPosL,
-		&_rhChan[5].endPosL,
-		&_rhChan[0].endPosH,
-		&_rhChan[1].endPosH,
-		&_rhChan[2].endPosH,
-		&_rhChan[3].endPosH,
-		&_rhChan[4].endPosH,
-		&_rhChan[5].endPosH,
-	};
+	_reg = new uint8 *[40];
 
-	_reg = new uint8 *[ARRAYSIZE(reg)];
-	memcpy (_reg, reg, sizeof(uint8*) * ARRAYSIZE(reg));
+	_reg[0] = _reg[1] = _reg[2] = _reg[3] = _reg[4] = _reg[5] = _reg[6] = _reg[7] = _reg[8] = _reg[9] = _reg[10] = _reg[11] = _reg[12] = _reg[13] = _reg[14] = _reg[15] = 0;
+	_reg[16] = &_rhChan[0].startPosL;
+	_reg[17] = &_rhChan[1].startPosL;
+	_reg[18] = &_rhChan[2].startPosL;
+	_reg[19] = &_rhChan[3].startPosL;
+	_reg[20] = &_rhChan[4].startPosL;
+	_reg[21] = &_rhChan[5].startPosL;
+	_reg[22] = &_rhChan[0].startPosH;
+	_reg[23] = &_rhChan[1].startPosH;
+	_reg[24] = &_rhChan[2].startPosH;
+	_reg[25] = &_rhChan[3].startPosH;
+	_reg[26] = &_rhChan[4].startPosH;
+	_reg[27] = &_rhChan[5].startPosH;
+	_reg[28] = &_rhChan[0].endPosL;
+	_reg[29] = &_rhChan[1].endPosL;
+	_reg[30] = &_rhChan[2].endPosL;
+	_reg[31] = &_rhChan[3].endPosL;
+	_reg[32] = &_rhChan[4].endPosL;
+	_reg[33] = &_rhChan[5].endPosL;
+	_reg[34] = &_rhChan[0].endPosH;
+	_reg[35] = &_rhChan[1].endPosH;
+	_reg[36] = &_rhChan[2].endPosH;
+	_reg[37] = &_rhChan[3].endPosH;
+	_reg[38] = &_rhChan[4].endPosH;
+	_reg[39] = &_rhChan[5].endPosH;
 }
 
 void TownsPC98_OpnPercussionSource::init(const uint8 *instrData) {
