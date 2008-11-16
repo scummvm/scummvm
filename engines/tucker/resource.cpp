@@ -215,15 +215,8 @@ void TuckerEngine::loadImage(uint8 *dst, int type) {
 		return;
 	}
 	f.seek(128, SEEK_SET);
-	int size = 0, count = 0;
+	int size = 0;
 	while (size < 64000) {
-		if (type == 2) {
-			++count;
-			if (count > 500) {
-				count = 0;
-				isSpeechSoundPlaying();
-			}
-		}
 		int code = f.readByte();
 		if (code >= 0xC0) {
 			const int sz = code - 0xC0;
@@ -587,10 +580,10 @@ void TuckerEngine::loadData4() {
 	loadFile(_loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	t.findNextToken(kDataTokenDw);
-	_data4FlagDebug = t.getNextInteger();
-	_displayGameHints = t.getNextInteger();
+	_gameDebug = t.getNextInteger() != 0;
+	_displayGameHints = t.getNextInteger() != 0;
 	// forces game hints feature
-//	_displayGameHints = 1;
+//	_displayGameHints = true;
 	_locationObjectsCount = 0;
 	if (t.findIndex(_locationNum)) {
 		while (t.findNextToken(kDataTokenDw)) {
@@ -728,16 +721,20 @@ void TuckerEngine::loadCharPos() {
 }
 
 void TuckerEngine::loadSprA02_01() {
-	for (int i = 1; i < kSprA02TableSize; ++i) {
-		free(_sprA02Table[i]);
-		_sprA02Table[i] = 0;
-	}
+	unloadSprA02_01();
 	const int count = _sprA02LookupTable[_locationNum];
 	for (int i = 1; i < count + 1; ++i) {
 		sprintf(_fileToLoad, "sprites/a%02d_%02d.spr", _locationNum, i);
 		_sprA02Table[i] = loadFile();
 	}
 	_sprA02Table[0] = _sprA02Table[1];
+}
+
+void TuckerEngine::unloadSprA02_01() {
+	for (int i = 1; i < kSprA02TableSize; ++i) {
+		free(_sprA02Table[i]);
+		_sprA02Table[i] = 0;
+	}
 }
 
 void TuckerEngine::loadSprC02_01() {
@@ -756,6 +753,13 @@ void TuckerEngine::loadSprC02_01() {
 		memset(&_spritesTable[i], 0, sizeof(Sprite));
 		_spritesTable[i].state = -1;
 		_spritesTable[i].stateIndex = -1;
+	}
+}
+
+void TuckerEngine::unloadSprC02_01() {
+	for (int i = 1; i < kSprC02TableSize; ++i) {
+		free(_sprC02Table[i]);
+		_sprC02Table[i] = 0;
 	}
 }
 
@@ -888,6 +892,7 @@ void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, 
 		}
 	}
 	if (stream) {
+		_mixer->stopHandle(*handle);
 		_mixer->playInputStream(type, handle, stream, -1, volume * Audio::Mixer::kMaxChannelVolume / kMaxSoundVolume);
 	}
 }
@@ -951,7 +956,7 @@ void TuckerEngine::loadActionsTable() {
 			}
 		}
 		if (_conversationOptionsCount != 0) {
-			if (_mouseButtons != 0 && _nextTableToLoadIndex != -1) {
+			if (_leftMouseButtonPressed && _nextTableToLoadIndex != -1) {
 				_nextAction = _nextTableToLoadTable[_nextTableToLoadIndex];
 				_csDataLoaded = false;
 				 _conversationOptionsCount = 0;

@@ -71,7 +71,7 @@ ChunkHeader FlicPlayer::readChunkHeader() {
 
 	head.size = _fileStream.readUint32LE();
 	head.type = _fileStream.readUint16LE();
-	
+
 	return head;
 }
 
@@ -154,9 +154,9 @@ void FlicPlayer::decodeDeltaFLC(uint8 *data) {
 				data += rleCount * 2;
 				column += rleCount * 2;
 			} else if (rleCount < 0) {
-				uint16 dataWord = *(uint16 *)data; data += 2;
+				uint16 dataWord = READ_UINT16(data); data += 2;
 				for (int i = 0; i < -(int16)rleCount; ++i) {
-					WRITE_LE_UINT16(_offscreen + (currentLine * _flicInfo.width) + column + (i * 2), dataWord);
+					WRITE_UINT16(_offscreen + (currentLine * _flicInfo.width) + column + (i * 2), dataWord);
 				}
 				_dirtyRects.push_back(Common::Rect(column, currentLine, column + (-(int16)rleCount * 2), currentLine + 1));
 
@@ -237,8 +237,7 @@ void FlicPlayer::setPalette(uint8 *mem) {
 	if (0 == READ_LE_UINT16(mem)) { //special case
 		mem += 2;
 		for (int i = 0; i < 256; ++i) {
-			for (int j = 0; j < 3; ++j)
-				_palette[i * 4 + j] = (mem[i * 3 + j]);
+			memcpy(_palette + i * 4, mem + i * 3, 3);
 			_palette[i * 4 + 3] = 0;
 		}
 	} else {
@@ -249,8 +248,7 @@ void FlicPlayer::setPalette(uint8 *mem) {
 			uint8 change = *mem++;
 
 			for (int i = 0; i < change; ++i) {
-				for (int j = 0; j < 3; ++j)
-					_palette[(palPos + i) * 4 + j] = (mem[i * 3 + j]);
+				memcpy(_palette + (palPos + i) * 4, mem + i * 3, 3);
 				_palette[(palPos + i) * 4 + 3] = 0;
 			}
 

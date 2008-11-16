@@ -191,6 +191,15 @@ enum Verb {
 	kVerbUse   = 8
 };
 
+enum InputKey {
+	kInputKeyPause = 0,
+	kInputKeyEscape,
+	kInputKeyToggleInventory,
+	kInputKeyToggleTextSpeech,
+	kInputKeyHelp,
+	kInputKeyCount
+};
+
 class TuckerEngine: public Engine {
 public:
 
@@ -236,15 +245,12 @@ protected:
 	void updateCharPositionHelper();
 	void updateCharPosition();
 	void updateFlagsForCharPosition();
-	void backupPalette();
-	void restorePalette();
 	void fadeOutPalette(int colorsCount = 256);
 	void fadeInPalette(int colorsCount = 256);
 	void fadePaletteColor(int color, int step);
 	void setBlackPalette();
 	void setPaletteColor(int color, int r, int g, int b);
 	void updateCursor();
-	int getLastKeyCode();
 	void stopSounds();
 	void playSounds();
 	void updateCharactersPath();
@@ -274,8 +280,8 @@ protected:
 	void startMusic(int offset, int index, int volume);
 	void stopMusic(int index);
 	void startSpeechSound(int num, int volume);
+	void stopSpeechSound();
 	bool isSpeechSoundPlaying();
-	void isSoundFinished();
 	void redrawPanelItems();
 	void redrawPanelItemsHelper();
 	void drawSprite(int i);
@@ -537,7 +543,9 @@ protected:
 	void loadActionFile();
 	void loadCharPos();
 	void loadSprA02_01();
+	void unloadSprA02_01();
 	void loadSprC02_01();
+	void unloadSprC02_01();
 	void loadFx();
 	void loadSound(Audio::Mixer::SoundType type, int num, int volume, bool loop, Audio::SoundHandle *handle);
 	void loadActionsTable();
@@ -562,9 +570,10 @@ protected:
 	int _nextLocationNum;
 	bool _gamePaused;
 	bool _gamePaused2;
-	int _data4FlagDebug;
-	int _displayGameHints;
+	bool _gameDebug;
+	bool _displayGameHints;
 	int _execData3Counter;
+	bool _displaySpeechText;
 
 	uint8 _maxSaveGameSlot, _currentSaveGameSlot;
 	uint8 _firstSaveGameSlot, _lastSaveGameSlot;
@@ -602,7 +611,6 @@ protected:
 	int _mousePosX, _mousePosY;
 	int _prevMousePosX, _prevMousePosY;
 	int _mouseButtonsMask;
-	int _mouseButtons;
 	int _mouseButton2;
 	int _mouseClick;
 	int _mouseClickOnPanelSliders;
@@ -610,7 +618,7 @@ protected:
 	bool _leftMouseButtonPressed;
 	bool _rightMouseButtonPressed;
 	int _lastKeyPressed;
-	int _keyLastKeyCodePressed;
+	bool _inputKeys[kInputKeyCount];
 	int _cursorNum;
 	int _cursorType;
 	int _updateCursorFlag;
@@ -774,7 +782,6 @@ protected:
 	uint8 *_currentGfxBackground;
 	int _fadePaletteCounter;
 	uint8 _currentPalette[768];
-	uint8 _backupPalette[768];
 
 	int _updateLocationFadePaletteCounter;
 	int _updateLocationCounter;
@@ -876,7 +883,7 @@ private:
 	int _updateScreenOffset;
 	int _frameCounter;
 	int _frameTime;
-	int _lastFrameTime;
+	uint32 _lastFrameTime;
 	uint8 *_picBufPtr, *_pic2BufPtr;
 	Audio::SoundHandle _soundsHandle[15];
 	Audio::SoundHandle _sfxHandle;

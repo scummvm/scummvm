@@ -358,17 +358,18 @@ void TuckerEngine::execData3PreUpdate_locationNum3() {
 }
 
 void TuckerEngine::updateSprite_locationNum4(int i) {
-	int flag = -1;
+	int state = -1;
+	printf("_flagsTable[9] %d\n", _flagsTable[9]);
 	if (_flagsTable[9] == 2) {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-			flag = 1;
+			state = 1;
 			_spritesTable[i].needUpdate = 1;
 		} else {
-			flag = 2;
+			state = 2;
 			_spritesTable[i].needUpdate = 0;
 		}
 	}
-	_spritesTable[i].state = -1;
+	_spritesTable[i].state = state;
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum4() {

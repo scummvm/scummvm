@@ -76,7 +76,8 @@ void TuckerEngine::handleCreditsSequence() {
 		if (num < 6) {
 			Graphics::copyTo640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf, 320, 320, 200);
 		} else {
-			if (getLastKeyCode() > 0) {
+			if (_inputKeys[kInputKeyEscape]) {
+				_inputKeys[kInputKeyEscape] = false;
 				return;
 			}
 			Graphics::copyTo640(_locationBackgroundGfxBuf, imgBuf + imgNum * 64000, 320, 320, 200);
@@ -107,11 +108,9 @@ void TuckerEngine::handleCreditsSequence() {
 		}
 		for (int i = 0; i < _spritesCount; ++i) {
 			drawSprite(i);
-			isSpeechSoundPlaying();
 		}
 		copyToVGA(_locationBackgroundGfxBuf);
 		waitForTimer(3);
-		isSpeechSoundPlaying();
 		_timerCounter1 = 0;
 		counter4 = _timerCounter2 / 3;
 		if (counter4 == _creditsSequenceData1[num]) {
@@ -228,14 +227,8 @@ void TuckerEngine::handleNewPartSequence() {
 	_spritesTable[0].stateIndex = -1;
 	int currentLocation = _locationNum;
 	_locationNum = 98;
-	for (int i = 1; i < kSprA02TableSize; ++i) {
-		free(_sprA02Table[i]);
-		_sprA02Table[i] = 0;
-	}
-	for (int i = 1; i < kSprC02TableSize; ++i) {
-		free(_sprC02Table[i]);
-		_sprC02Table[i] = 0;
-	}
+	unloadSprA02_01();
+	unloadSprC02_01();
 	_sprC02Table[1] = loadFile();
 	startSpeechSound(9000, 60);
 	_fadePaletteCounter = 0;
@@ -249,10 +242,12 @@ void TuckerEngine::handleNewPartSequence() {
 		drawSprite(0);
 		copyToVGA(_locationBackgroundGfxBuf);
 		waitForTimer(3);
-		if (getLastKeyCode() > 0) {
-			stopSounds();
+		if (_inputKeys[kInputKeyEscape]) {
+			_inputKeys[kInputKeyEscape] = false;
+			break;
 		}
 	} while (isSpeechSoundPlaying());
+	stopSpeechSound();
 	do {
 		if (_fadePaletteCounter > 0) {
 			fadeInPalette();
@@ -268,7 +263,8 @@ void TuckerEngine::handleNewPartSequence() {
 }
 
 void TuckerEngine::handleMeanwhileSequence() {
-	backupPalette();
+	uint8 backupPalette[256 * 3];
+	memcpy(backupPalette, _currentPalette, 256 * 3);
 	switch (_partNum) {
 	case 1:
 		strcpy(_fileToLoad, "meanw01.pcx");
@@ -304,7 +300,7 @@ void TuckerEngine::handleMeanwhileSequence() {
 		copyToVGA(_locationBackgroundGfxBuf);
 		waitForTimer(3);
 	} while (_fadePaletteCounter > 0);
-	restorePalette();
+	memcpy(_currentPalette, backupPalette, 256 * 3);
 }
 
 void TuckerEngine::handleMapSequence() {
@@ -365,16 +361,16 @@ void TuckerEngine::handleMapSequence() {
 			if (!_noPositionChangeAfterMap) {
 				xPos = _xPosCurrent;
 				yPos = _yPosCurrent;
-			} else if (_locationNum == 3 ||_locationNum == 65) {
+			} else if (_locationNum == 3 || _locationNum == 65) {
 				xPos = 620;
 				yPos = 130;
-			} else if (_locationNum == 9 ||_locationNum == 66) {
+			} else if (_locationNum == 9 || _locationNum == 66) {
 				xPos = 344;
 				yPos = 120;
-			} else if (_locationNum == 16 ||_locationNum == 61) {
+			} else if (_locationNum == 16 || _locationNum == 61) {
 				xPos = 590;
 				yPos = 130;
-			} else if (_locationNum == 20 ||_locationNum == 68) {
+			} else if (_locationNum == 20 || _locationNum == 68) {
 				xPos = 20;
 				yPos = 130;
 			} else {
@@ -570,8 +566,9 @@ void AnimationSequencePlayer::syncTime() {
 				break;
 			}
 		}
-	} while (_system->getMillis() <= end);
-	_lastFrameTime = _system->getMillis();
+		_system->delayMillis(10);
+		_lastFrameTime = _system->getMillis();
+	} while (_lastFrameTime <= end);
 }
 
 Audio::AudioStream *AnimationSequencePlayer::loadSoundFileAsStream(const char *name, AnimationSoundType type) {
