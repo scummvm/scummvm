@@ -90,7 +90,7 @@ int32 LogicHE::dispatch(int op, int numArgs, int32 *args) {
 	}
 	strncat(str, "])", 256);
 
-	debug(0, str);
+	debug(0, "%s", str);
 #else
 	// Used for parallel trace utility
 	for (int i = 0; i < numArgs; i++)

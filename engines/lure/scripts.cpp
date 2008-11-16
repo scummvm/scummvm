@@ -1094,7 +1094,7 @@ uint16 Script::execute(uint16 startOffset) {
 					sprintf(debugInfo + strlen(debugInfo), " (%d)", stack[stack.size()-1]);
 				strcat(debugInfo, ")");
 
-				debugC(ERROR_DETAILED, kLureDebugScripts, debugInfo);
+				debugC(ERROR_DETAILED, kLureDebugScripts, "%s", debugInfo);
 			}
 
 			param1 = 0; param2 = 0; param3 = 0;
@@ -1164,7 +1164,7 @@ uint16 Script::execute(uint16 startOffset) {
 				break;
 			}
 
-			debugC(ERROR_DETAILED, kLureDebugScripts, debugInfo);
+			debugC(ERROR_DETAILED, kLureDebugScripts, "%s", debugInfo);
 		}
 	}
 

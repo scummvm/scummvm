@@ -834,7 +834,7 @@ bool DrasculaEngine::loadDrasculaDat() {
 	if (!in.isOpen()) {
 		Common::String errorMessage = "You're missing the 'drascula.dat' file. Get it from the ScummVM website";
 		GUIErrorMessage(errorMessage);
-		warning(errorMessage.c_str());
+		warning("%s", errorMessage.c_str());
 
 		return false;
 	}
@@ -848,7 +848,7 @@ bool DrasculaEngine::loadDrasculaDat() {
 	if (strcmp(buf, "DRASCULA")) {
 		Common::String errorMessage = "File 'drascula.dat' is corrupt. Get it from the ScummVM website";
 		GUIErrorMessage(errorMessage);
-		warning(errorMessage.c_str());
+		warning("%s", errorMessage.c_str());
 
 		return false;
 	}
@@ -858,7 +858,7 @@ bool DrasculaEngine::loadDrasculaDat() {
 	if (ver != DRASCULA_DAT_VER) {
 		snprintf(buf, 256, "File 'drascula.dat' is wrong version. Expected %d but got %d. Get it from the ScummVM website", DRASCULA_DAT_VER, ver);
 		GUIErrorMessage(buf);
-		warning(buf);
+		warning("%s", buf);
 
 		return false;
 	}

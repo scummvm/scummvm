@@ -53,9 +53,9 @@ void debugScript(int level, bool nl, const char *s, ...) {
 	va_end(va);
 
 	if (nl)
-		debug(level, buf);
+		debug(level, "%s", buf);
 	else
-		debugN(level, buf);
+		debugN(level, "%s", buf);
 }
 
 Script::Script(GroovieEngine *vm) :

@@ -54,7 +54,7 @@ void debugC(int channel, const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-	debug(buf);
+	debug("%s", buf);
 }
 
 ScummDebugger::ScummDebugger(ScummEngine *s)

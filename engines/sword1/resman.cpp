@@ -46,7 +46,7 @@ namespace Sword1 {
 
 		GUI::MessageDialog dialog(msg);
 		dialog.runModal();
-		error(msg);
+		error("%s", msg);
 }
 
 #define MAX_PATH_LEN 260

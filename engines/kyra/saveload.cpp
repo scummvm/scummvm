@@ -259,7 +259,7 @@ void KyraEngine_v1::loadGameStateCheck(int slot) {
 		errorMessage += "'";
 
 		GUIErrorMessage(errorMessage);
-		error(errorMessage.c_str());
+		error("%s", errorMessage.c_str());
 	}
 }
 

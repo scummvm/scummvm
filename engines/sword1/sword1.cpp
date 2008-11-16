@@ -323,10 +323,10 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 		if (missCnt == 1) {
 			sprintf(msg, errorMsgs[msgId],
 					_macCdFileList[missNum].name, (_macCdFileList[missNum].flags & FLAG_CD2) ? 2 : 1);
-			warning(msg);
+			warning("%s", msg);
 		} else {
 			char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
-			warning(msg);
+			warning("%s", msg);
 			for (int i = 0; i < ARRAYSIZE(_macCdFileList); i++)
 				if (!fileExists[i]) {
 					warning("\"%s\" (CD %d)", _macCdFileList[i].name, (_macCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
@@ -345,10 +345,10 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 		if (missCnt == 1) {
 			sprintf(msg, errorMsgs[msgId],
 					_pcCdFileList[missNum].name, (_pcCdFileList[missNum].flags & FLAG_CD2) ? 2 : 1);
-			warning(msg);
+			warning("%s", msg);
 		} else {
 			char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
-			warning(msg);
+			warning("%s", msg);
 			for (int i = 0; i < ARRAYSIZE(_pcCdFileList); i++)
 				if (!fileExists[i]) {
 					warning("\"%s\" (CD %d)", _pcCdFileList[i].name, (_pcCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
@@ -359,7 +359,7 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 	GUI::MessageDialog dialog(msg);
 	dialog.runModal();
 	if (type == TYPE_IMMED) // we can't start without this file, so error() out.
-		error(msg);
+		error("%s", msg);
 }
 
 void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or what...

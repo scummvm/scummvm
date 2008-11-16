@@ -408,7 +408,7 @@ bool Resource::createContexts() {
 			if (Common::File::exists(curSoundfiles[i].fileName)) {
 				_contextsCount++;
 				soundFileIndex = _contextsCount - 1;
-				sprintf(soundFileName, curSoundfiles[i].fileName);
+				strcpy(soundFileName, curSoundfiles[i].fileName);
 				_vm->_gf_compressed_sounds = curSoundfiles[i].isCompressed;
 				fileFound = true;
 				break;
@@ -452,7 +452,7 @@ bool Resource::createContexts() {
 		if (Common::File::exists(curSoundfiles[i].fileName)) {
 			_contextsCount++;
 			voicesFileIndex = _contextsCount - 1;
-			sprintf(_voicesFileName[0], curSoundfiles[i].fileName);
+			strcpy(_voicesFileName[0], curSoundfiles[i].fileName);
 			_vm->_gf_compressed_sounds = curSoundfiles[i].isCompressed;
 			fileFound = true;
 
@@ -519,7 +519,7 @@ bool Resource::createContexts() {
 				_contextsCount++;
 				digitalMusic = true;
 				fileFound = true;
-				sprintf(musicFileName, musicFilesITE[i].fileName);
+				strcpy(musicFileName, musicFilesITE[i].fileName);
 				break;
 			}
 		}

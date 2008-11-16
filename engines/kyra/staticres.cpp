@@ -167,7 +167,7 @@ bool StaticResource::loadStaticResourceFile() {
 	if (!foundWorkingKyraDat) {
 		Common::String errorMessage = "You're missing the '" + StaticResource::staticDataFilename() + "' file or it got corrupted, (re)get it from the ScummVM website";
 		GUIErrorMessage(errorMessage);
-		error(errorMessage.c_str());
+		error("%s", errorMessage.c_str());
 	}
 
 	return true;

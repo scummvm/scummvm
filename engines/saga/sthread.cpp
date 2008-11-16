@@ -232,7 +232,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 #define CASEOP(opName)	case opName:												\
 							if (operandChar == opName) {							\
 								operandName = #opName;								\
-								debug(2, operandName);								\
+								debug(2, "%s", operandName);						\
 							}
 
 		debug(8, "Executing thread offset: %u (%x) stack: %d", thread->_instructionOffset, operandChar, thread->pushedSize());

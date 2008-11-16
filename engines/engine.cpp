@@ -146,7 +146,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler) {
 		message += "'.";
 
 		GUIErrorMessage(message);
-		error(message.c_str());
+		error("%s", message.c_str());
 	}
 
 	// Just show warnings then these occur:
@@ -179,7 +179,7 @@ void GUIErrorMessage(const Common::String msg) {
 		GUI::MessageDialog dialog(msg);
 		dialog.runModal();
 	} else {
-		error(msg.c_str());
+		error("%s", msg.c_str());
 	}
 }
 
