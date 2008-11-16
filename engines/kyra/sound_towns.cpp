@@ -2644,7 +2644,7 @@ void TownsPC98_OpnSquareSineSource::writeReg(uint8 address, uint8 value, bool fo
 	if (!_ready)
 		return;
 
-	if (address > 10) {
+	if (address > 10 || *_reg[address] == value) {
 		if ((address == 11 || address == 12 || address == 13) && value)
 			warning("TownsPC98_OpnSquareSineSource: unsupported reg address: %d", address);
 		return;
