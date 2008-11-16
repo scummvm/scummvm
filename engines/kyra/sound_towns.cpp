@@ -3031,12 +3031,12 @@ void TownsPC98_OpnCore::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 		case 0x00:
 			// ssg
 			if (_ssg)
-				_ssg->writeReg(regAddress, value);
+				_ssg->writeReg(l, value);
 			break;
 		case 0x10:
 			// pcm rhythm channel
 			if (_prc)
-				_prc->writeReg(regAddress - 0x10, value);
+				_prc->writeReg(l, value);
 			break;
 		case 0x20:
 			if (l == 8) {
