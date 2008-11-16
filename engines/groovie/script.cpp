@@ -68,20 +68,20 @@ Script::Script(GroovieEngine *vm) :
 	// Prepare the variables
 	_bitflags = 0;
 	for (int i = 0; i < 0x400; i++) {
-		_variables[i] = 0;
+		setVariable(i, 0);
 	}
 
 	// Initialize the music type variable
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	if (midiDriver == MD_ADLIB) {
 		// MIDI through AdLib
-		_variables[0x100] = 0;
+		setVariable(0x100, 0);
 	} else 	if ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32")) {
 		// MT-32
-		_variables[0x100] = 2;
+		setVariable(0x100, 2);
 	} else {
 		// GM
-		_variables[0x100] = 1;
+		setVariable(0x100, 1);
 	}
 
 	_hotspotTopAction = 0;
@@ -97,6 +97,11 @@ Script::~Script() {
 
 	delete _font;
 	delete _videoFile;
+}
+
+void Script::setVariable(uint16 variablenum, byte value) {
+	_variables[variablenum] = value;
+	debugC(1, kGroovieDebugScriptvars | kGroovieDebugAll, "script variable[0x%03X] = %d (0x%04X)", variablenum, value, value);
 }
 
 void Script::setDebugger(Debugger *debugger) {
@@ -136,7 +141,7 @@ void Script::directGameLoad(int slot) {
 	// instruction to the one that actually loads the saved game specified
 	// in that variable. This will change in other versions of the game and
 	// in other games.
-	_variables[0x19] = slot;
+	setVariable(0x19, slot);
 	_currentInstruction = 0x287;
 
 	// TODO: We'll probably need to start by running the beginning of the
@@ -655,7 +660,7 @@ void Script::o_random() {
 
 	debugScript(1, true, "RANDOM: var[0x%04X] = rand(%d)", varnum, maxnum);
 
-	_variables[varnum] = _random.getRandomNumber(maxnum);
+	setVariable(varnum, _random.getRandomNumber(maxnum));
 }
 
 void Script::o_jmp() {
@@ -672,7 +677,7 @@ void Script::o_loadstring() {
 	
 	debugScript(1, false, "LOADSTRING var[0x%04X..] =", varnum);
 	do {
-		_variables[varnum++] = readScriptChar(true, true, true);
+		setVariable(varnum++, readScriptChar(true, true, true));
 		debugScript(1, false, " 0x%02X", _variables[varnum - 1]);
 	} while (!(_code[_currentInstruction - 1] & 0x80));
 	debugScript(1, true, "");
@@ -684,7 +689,7 @@ void Script::o_ret() {
 	debugScript(1, true, "RET %d", val);
 
 	// Set the return value
-	_variables[0x102] = val;
+	setVariable(0x102, val);
 
 	// Get the return address
 	if (_stacktop > 0) {
@@ -752,7 +757,7 @@ void Script::o_xor_obfuscate() {
 		_firstbit = ((val & 0x80) != 0);
 		val &= 0x4F;
 
-		_variables[varnum] ^= val;
+		setVariable(varnum, _variables[varnum] ^ val);
 		debugScript(1, false, "%c", _variables[varnum]);
 
 		varnum++;
@@ -794,8 +799,8 @@ void Script::o_swap() {
 	debugScript(1, true, "SWAP var[0x%04X] <-> var[0x%04X]", varnum1, varnum2);
 
 	uint8 tmp = _variables[varnum1];
-	_variables[varnum1] = _variables[varnum2];
-	_variables[varnum2] = tmp;
+	setVariable(varnum1, _variables[varnum2]);
+	setVariable(varnum2, tmp);
 }
 
 void Script::o_inc() {
@@ -803,7 +808,7 @@ void Script::o_inc() {
 	
 	debugScript(1, true, "INC var[0x%04X]", varnum);
 
-	_variables[varnum]++;
+	setVariable(varnum, _variables[varnum] + 1);
 }
 
 void Script::o_dec() {
@@ -811,7 +816,7 @@ void Script::o_dec() {
 	
 	debugScript(1, true, "DEC var[0x%04X]", varnum);
 
-	_variables[varnum]--;
+	setVariable(varnum, _variables[varnum] - 1);
 }
 
 void Script::o_strcmpnejmp_var() {			// 0x21
@@ -871,7 +876,7 @@ void Script::o_mov() {
 
 	debugScript(1, true, "MOV var[0x%04X] = var[0x%04X]", varnum1, varnum2);
 
-	_variables[varnum1] = _variables[varnum2];
+	setVariable(varnum1, _variables[varnum2]);
 }
 
 void Script::o_add() {
@@ -880,7 +885,7 @@ void Script::o_add() {
 	
 	debugScript(1, true, "ADD var[0x%04X] += var[0x%04X]", varnum1, varnum2);
 
-	_variables[varnum1] += _variables[varnum2];
+	setVariable(varnum1, _variables[varnum1] + _variables[varnum2]);
 }
 
 void Script::o_videofromstring1() {
@@ -1010,7 +1015,7 @@ void Script::o_loadstringvar() {
 	varnum = _variables[varnum] - 0x31;
 	debugScript(1, false, "LOADSTRINGVAR var[0x%04X..] =", varnum);
 	do {
-		_variables[varnum++] = readScriptChar(true, true, true);
+		setVariable(varnum++, readScriptChar(true, true, true));
 		debugScript(1, false, " 0x%02X", _variables[varnum - 1]);
 	} while (!(_code[_currentInstruction - 1] & 0x80));
 	debugScript(1, true, "");
@@ -1111,8 +1116,8 @@ void Script::o_obscureswap() {
 
 	// Swap the values
 	tmp = _variables[var1];
-	_variables[var1] = _variables[var2];
-	_variables[var2] = tmp;
+	setVariable(var1, _variables[var2]);
+	setVariable(var2, tmp);
 }
 
 void Script::o_printstring() {
@@ -1210,7 +1215,7 @@ void Script::o_checkvalidsaves() {
 
 	// Reset the array of valid saves
 	for (int i = 0; i < 10; i++) {
-		_variables[i] = 0;
+		setVariable(i, 0);
 	}
 
 	// Get the list of savefiles
@@ -1225,21 +1230,21 @@ void Script::o_checkvalidsaves() {
 		if (n >= 0 && n <= 9) {
 			// TODO: Check the contents of the file?
 			debugScript(2, true, "  Found valid savegame: %s", it->c_str());
-			_variables[n] = 1;
+			setVariable(n, 1);
 			count++;
 		}
 		it++;
 	}
 
 	// Save the number of valid saves
-	_variables[0x104] = count;
+	setVariable(0x104, count);
 	debugScript(1, true, "  Found %d valid savegames", count);
 }
 
 void Script::o_resetvars() {
 	debugScript(1, true, "RESETVARS");
 	for (int i = 0; i < 0x100; i++) {
-		_variables[i] = 0;
+		setVariable(i, 0);
 	}
 }
 
@@ -1249,7 +1254,7 @@ void Script::o_mod() {
 
 	debugScript(1, true, "MOD var[0x%04X] %%= %d", varnum, val);
 
-	_variables[varnum] %= val;
+	setVariable(varnum, _variables[varnum] % val);
 }
 
 void Script::o_loadscript() {
@@ -1303,7 +1308,7 @@ void Script::o_sub() {
 
 	debugScript(1, true, "SUB var[0x%04X] -= var[0x%04X]", varnum1, varnum2);
 
-	_variables[varnum1] -= _variables[varnum2];
+	setVariable(varnum1, _variables[varnum1] - _variables[varnum2]);
 }
 
 void Script::o_othello() {
@@ -1326,11 +1331,11 @@ void Script::o_othello() {
 	}
 
 	// Set the movement origin
-	_variables[0] = 6; // y
-	_variables[1] = 0; // x
+	setVariable(0, 6); // y
+	setVariable(1, 0); // x
 	// Set the movement destination
-	_variables[2] = 6;
-	_variables[3] = 1;
+	setVariable(2, 6);
+	setVariable(3, 1);
 }
 
 void Script::o_returnscript() {
@@ -1344,7 +1349,7 @@ void Script::o_returnscript() {
 	}
 
 	// Set the return value
-	_variables[0x102] = val;
+	setVariable(0x102, val);
 
 	// Restore the code
 	delete[] _code;
@@ -1403,7 +1408,7 @@ void Script::o_getcd() {
 		}
 	}
 
-	_variables[0x106] = cd;
+	setVariable(0x106, cd);
 }
 
 void Script::o_opcode4D() {

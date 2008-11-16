@@ -52,6 +52,8 @@ GroovieEngine::GroovieEngine(OSystem *syst, GroovieGameDescription *gd) :
 	Common::addSpecialDebugLevel(kGroovieDebugUnknown, "Unknown", "Report values of unknown data in files");
 	Common::addSpecialDebugLevel(kGroovieDebugHotspots, "Hotspots", "Show the hotspots");
 	Common::addSpecialDebugLevel(kGroovieDebugCursor, "Cursor", "Debug cursor decompression / switching");
+	Common::addSpecialDebugLevel(kGroovieDebugMIDI, "MIDI", "Debug MIDI / XMIDI files");
+	Common::addSpecialDebugLevel(kGroovieDebugScriptvars, "Scriptvars", "Print out any change to script variables");
 }
 
 GroovieEngine::~GroovieEngine() {

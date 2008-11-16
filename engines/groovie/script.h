@@ -43,6 +43,7 @@ public:
 	~Script();
 
 	void setDebugger(Debugger *debugger);
+	void setVariable(uint16 varnum, byte value);
 
 	bool loadScript(Common::String scriptfile);
 	void directGameLoad(int slot);

@@ -220,7 +220,8 @@ void VDXPlayer::getDelta(Common::ReadStream *in) {
 		}
 
 		// Apply the palette
-		if (!_flagSix && !_flagSeven) {
+		if (!_flagSeven) {
+		//if (!_flagSix && !_flagSeven) {
 			setPalette(_palBuf);
 		}
 	}
