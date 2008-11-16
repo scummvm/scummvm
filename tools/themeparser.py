@@ -30,7 +30,6 @@ from __future__ import with_statement
 import os
 import xml.dom.minidom as DOM
 import struct
-from UserDict import UserDict
 
 def printBinaryDump(buf):
 	LINE_WIDTH = 16
@@ -74,6 +73,9 @@ class STXBinaryFile:
 	class InvalidBitmapName(Exception):
 		pass
 		
+	class InvalidDialogOverlay(Exception):
+		pass
+		
 	class DrawStepData:
 		def __init__(self, isDefault, packFormat, function):
 			self.isDefault = isDefault
@@ -88,8 +90,13 @@ class STXBinaryFile:
 		"bitmaps" 	: 0x0100000A,
 		"fonts"		: 0x0100000B,
 		"cursor"	: 0x0100000C,
-		"drawdata"	: 0x0100000D
+		"drawdata"	: 0x0100000D,
+		
+		"globals"	: 0x0200000A,
+		"dialog"	: 0x0200000B,
 	}
+	
+	DIALOG_shading = {"none" : 0x0, "dim" : 0x1, "luminance" : 0x2}
 	
 	DS_triangleOrientations = {"top" : 0x1, "bottom" : 0x2, "left" : 0x3, "right" : 0x4}
 	DS_fillModes = {"none" : 0x0, "foreground" : 0x1, "background" : 0x2, "gradient" : 0x3}
@@ -348,7 +355,7 @@ class STXBinaryFile:
 			color_rgb = self.__parseRGBToBin(color.getAttribute('rgb'))
 			
 			self._colors[color_name] = color_rgb
-			self.debug("COLOR: %s" % (color_name))
+#			self.debug("COLOR: %s" % (color_name))
 			
 	
 	def __parseBitmaps(self, bitmapsDom):
@@ -374,7 +381,7 @@ class STXBinaryFile:
 			*tuple(packData)
 		)
 		
-		self.debug("BITMAPS:\n%s\n\n" % pbin(bitmapBinary))
+#		self.debug("BITMAPS:\n%s\n\n" % pbin(bitmapBinary))
 		return bitmapBinary
 			
 	def __parseFonts(self, fontsDom):
@@ -420,7 +427,7 @@ class STXBinaryFile:
 		)
 			
 		
-		self.debug("FONTS DATA:\n%s\n\n" % pbin(fontsBinary))
+#		self.debug("FONTS DATA:\n%s\n\n" % pbin(fontsBinary))
 		return fontsBinary
 			
 	def __parseTextToBin(self, textDom):
@@ -492,7 +499,7 @@ class STXBinaryFile:
 			stepByteArray					# drawstep segments (byte array)
 		)
 		
-		self.debug("DRAW DATA %s (%X): \n" % (ddDom.getAttribute("id"), id_hash) + pbin(ddBinary) + "\n\n")
+#		self.debug("DRAW DATA %s (%X): \n" % (ddDom.getAttribute("id"), id_hash) + pbin(ddBinary) + "\n\n")
 		return ddBinary
 		
 	def __parseCursor(self, cursorDom):
@@ -519,12 +526,64 @@ class STXBinaryFile:
 			int(hsY)
 		)
 		
-		self.debug("CURSOR:\n%s\n\n" % pbin(cursorBin))
+#		self.debug("CURSOR:\n%s\n\n" % pbin(cursorBin))
 		return cursorBin
 		
+	def __parseDialog(self, dialogDom):
+		
+		dialog_id = str(dialogDom.getAttribute("name"))
+		resolution = self.__parseResolutionToBin(dialogDom.getAttribute("resolution"))
+		
+		overlays = str(dialogDom.getAttribute("overlays"))
+		overlay_type = 0x0
+		overlay_parent = ""
+		
+		if overlays == "screen":
+			overlay_type = 0x1
+		elif overlays == "screen_center":
+			overlay_type = 0x2
+		else:
+			overlay_type = 0x3
+			overlay_parent = str(overlays)
+			
+		dialog_enabled = 0x1
+		if dialogDom.hasAttribute("enabled"):
+			dialog_enabled = self.TRUTH_VALUES[dialogDom.getAttribute("enabled")]
+			
+		dialog_shading = 0x0
+		if dialogDom.hasAttribute("shading"):
+			dialog_shading = self.DIALOG_shading[dialogDom.getAttribute("shading")]
+			
+		dialog_inset = 0
+		if dialogDom.hasAttribute("inset"):
+			dialog_inset = int(dialogDom.getAttribute("inset"))
+		
+		dialogBin = struct.pack(self.BYTEORDER + \
+			"I%ds%dsBBBB%ds" % (len(resolution), len(dialog_id) + 1, len(overlay_parent) + 1),
+			self.BLOCK_HEADERS['dialog'],
+			resolution,
+			dialog_id,
+			dialog_enabled,
+			dialog_shading,
+			dialog_inset,
+			overlay_type,
+			overlay_parent,
+		)
+		
+		return dialogBin
 		
 	def __parseLayout(self, layoutDom):
 		self.debug("GLOBAL SECTION: LAYOUT INFO.")
+		
+		dialogBIN = ""
+		
+		for dialog in layoutDom.getElementsByTagName("dialog"):
+			dialogBIN += self.__parseDialog(dialog)
+		
+		
+		printBinaryDump(dialogBIN)
+		
+		return dialogBIN
 		
 	def __parseRender(self, renderDom):
 		self.debug("GLOBAL SECTION: RENDER INFO.")
