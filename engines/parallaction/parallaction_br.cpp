@@ -85,6 +85,8 @@ Common::Error Parallaction_br::init() {
 	_subtitle[0] = -1;
 	_subtitle[1] = -1;
 
+	_countersNames = 0;
+
 	_saveLoad = new SaveLoad_br(this, _saveFileMan);
 
 	Parallaction::init();
