@@ -529,23 +529,37 @@ class STXBinaryFile:
 	def __parseRender(self, renderDom):
 		self.debug("GLOBAL SECTION: RENDER INFO.")
 		
-		paletteDom = renderDom.getElementsByTagName("palette")[0]
-		bitmapsDom = renderDom.getElementsByTagName("bitmaps")[0]
-		fontsDom = renderDom.getElementsByTagName("fonts")[0]
-		defaultsDom = renderDom.getElementsByTagName("defaults")[0]
-		
-		self.__parsePalette(paletteDom)
-		
-		bitmapBIN 	= self.__parseBitmaps(bitmapsDom)
-		fontsBIN 	= self.__parseFonts(fontsDom)
+		bitmapBIN = ""
+		fontsBIN = ""
 		cursorBIN 	= ""
 		drawdataBIN = ""
 		
+		# parse color palettes
+		paletteDom = renderDom.getElementsByTagName("palette")
+		if paletteDom:
+			self.__parsePalette(paletteDom[0])
+			
+		# parse bitmaps
+		bitmapsDom = renderDom.getElementsByTagName("bitmaps")
+		if bitmapsDom:
+			bitmapBIN = self.__parseBitmaps(bitmapsDom[0])
+			
+		# parse fonts
+		fontsDom = renderDom.getElementsByTagName("fonts")[0]
+		fontsBIN = self.__parseFonts(fontsDom)
+		
+		# parse defaults
+		defaultsDom = renderDom.getElementsByTagName("defaults")
+		if defaultsDom:
+			self._globalDefaults = self.__parseDrawStep(defaultsDom[0])
+		else:
+			self._globalDefaults = {}
+		
+		# parse cursors
 		for cur in renderDom.getElementsByTagName("cursor"):
 			cursorBIN += self.__parseCursor(cur)
-		
-		self._globalDefaults = self.__parseDrawStep(defaultsDom)
-		
+
+		# parse drawdata sets
 		for dd in renderDom.getElementsByTagName("drawdata"):
 			drawdataBIN += self.__parseDrawData(dd)
 
@@ -556,6 +570,6 @@ class STXBinaryFile:
 		return renderInfoBIN
 
 if __name__ == '__main__':
-	bin = STXBinaryFile('../gui/themes/scummmodern', True, True)
+	bin = STXBinaryFile('../gui/themes/scummclassic', True, True)
 	bin.parse()
 	
