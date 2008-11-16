@@ -2556,9 +2556,9 @@ bool TownsPC98_OpnChannelPCM::control_ff_endOfTrack(uint8 para) {
 TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerbase) : 	_tlTable(0),
 	_tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _ready(0), _reg(0), _rand(1), _outN(1),
 	_nTick(0), _evpUpdateCnt(0), _evpTimer(0x1f), _pReslt(0x1f), _attack(0), _cont(false), _evpUpdate(true),
-	_timer(0), _noiseGenerator(0) {
+	_timer(0), _noiseGenerator(0), _chanEnable(0) {
 
-	memset(_channels, 0, sizeof(Channel) * 3);	
+	memset(_channels, 0, sizeof(_channels));
 	_reg = new uint8 *[11];
 
 	_reg[0] = &_channels[0].frqL;
