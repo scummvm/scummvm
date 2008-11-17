@@ -62,12 +62,9 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			break;
 		case MKID_BE('SMRK'):
 			_inData = false;
-			if (available_size >= (size + 8)) {
-				int32 subSize = READ_BE_UINT32((byte *)_tbuffer + offset + 4);
-				if (subSize != 0)
-					error("SMRK has an invalid size : %d", subSize);
+			if (available_size >= (size + 8))
 				_markReached = true;
-			} else
+			else
 				return false;
 			break;
 		case MKID_BE('SHDR'):
