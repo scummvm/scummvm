@@ -320,7 +320,7 @@ int ADPCMInputStream::readBufferTinsel4(int channels, int16 *buffer, const int n
 		}
 
 		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2, _blockPos++) {
-
+			// Read 1 byte = 8 bits = two 4 bit blocks
 			data = _stream->readByte();
 			buffer[samples] = TO_LE_16(decodeTinsel((data << 8) & 0xF000, eVal));
 			buffer[samples+1] = TO_LE_16(decodeTinsel((data << 12) & 0xF000, eVal));
@@ -346,7 +346,7 @@ int ADPCMInputStream::readBufferTinsel6(int channels, int16 *buffer, const int n
 		}
 
 		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 4, _blockPos += 3) {
-
+			// Read 3 bytes = 24 bits = four 6 bit blocks
 			data = _stream->readByte();
 			buffer[samples] = TO_LE_16(decodeTinsel((data << 8) & 0xFC00, eVal));
 			data = (data << 8) | (_stream->readByte());
@@ -375,6 +375,7 @@ int ADPCMInputStream::readBufferTinsel8(int channels, int16 *buffer, const int n
 		}
 
 		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples++, _blockPos++) {
+			// Read 1 byte = 8 bits = one 8 bit block
 			data = _stream->readByte();
 			buffer[samples] = TO_LE_16(decodeTinsel(data << 8, eVal));
 		}
@@ -415,13 +416,13 @@ int16 ADPCMInputStream::stepAdjust(byte code) {
 }
 
 static const int16 okiStepSize[49] = {
-	  16,   17,   19,   21,   23,   25,   28,   31,
-	  34,   37,   41,   45,   50,   55,   60,   66,
-	  73,   80,   88,   97,  107,  118,  130,  143,
-	 157,  173,  190,  209,  230,  253,  279,  307,
-	 337,  371,  408,  449,  494,  544,  598,  658,
-	 724,  796,  876,  963, 1060, 1166, 1282, 1411,
-	1552
+	   16,   17,   19,   21,   23,   25,   28,   31,
+	   34,   37,   41,   45,   50,   55,   60,   66,
+	   73,   80,   88,   97,  107,  118,  130,  143,
+	  157,  173,  190,  209,  230,  253,  279,  307,
+	  337,  371,  408,  449,  494,  544,  598,  658,
+	  724,  796,  876,  963, 1060, 1166, 1282, 1411,
+	 1552
 };
 
 // Decode Linear to ADPCM
@@ -444,13 +445,13 @@ int16 ADPCMInputStream::decodeOKI(byte code) {
 
 
 static const uint16 imaStepTable[89] = {
-		7,	  8,	9,	 10,   11,	 12,   13,	 14,
-	   16,	 17,   19,	 21,   23,	 25,   28,	 31,
-	   34,	 37,   41,	 45,   50,	 55,   60,	 66,
-	   73,	 80,   88,	 97,  107,	118,  130,	143,
-	  157,	173,  190,	209,  230,	253,  279,	307,
-	  337,	371,  408,	449,  494,	544,  598,	658,
-	  724,	796,  876,	963, 1060, 1166, 1282, 1411,
+		7,    8,    9,   10,   11,   12,   13,   14,
+	   16,   17,   19,   21,   23,   25,   28,   31,
+	   34,   37,   41,   45,   50,   55,   60,   66,
+	   73,   80,   88,   97,  107,  118,  130,  143,
+	  157,  173,  190,  209,  230,  253,  279,  307,
+	  337,  371,  408,  449,  494,  544,  598,  658,
+	  724,  796,  876,  963, 1060, 1166, 1282, 1411,
 	 1552, 1707, 1878, 2066, 2272, 2499, 2749, 3024,
 	 3327, 3660, 4026, 4428, 4871, 5358, 5894, 6484,
 	 7132, 7845, 8630, 9493,10442,11487,12635,13899,
@@ -480,7 +481,7 @@ int16 ADPCMInputStream::decodeTinsel(int16 code, double eVal) {
 	_status.d1 = _status.d0;
 	_status.d0 = sample;
 
-	return (int16) CLIP(sample, -32768.0, 32767.0);
+	return (int16) CLIP<double>(sample, -32768.0, 32767.0);
 }
 
 AudioStream *makeADPCMStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign) {
