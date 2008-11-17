@@ -961,6 +961,14 @@
 				RelativePath="..\..\graphics\dxa_player.h">
 			</File>
 			<File
+				RelativePath="..\..\graphics\flic_player.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\flic_player.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\graphics\font.cpp">
 			</File>
 			<File
