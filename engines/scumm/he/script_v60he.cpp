@@ -1051,7 +1051,9 @@ void ScummEngine_v60he::o60_deleteFile() {
 
 	debug(1, "o60_deleteFile (\"%s\")", filename);
 
-	_saveFileMan->removeSavefile(filename);
+	if (!_saveFileMan->listSavefiles(filename).empty()) {
+		_saveFileMan->removeSavefile(filename);
+	}
 }
 
 void ScummEngine_v60he::o60_rename() {

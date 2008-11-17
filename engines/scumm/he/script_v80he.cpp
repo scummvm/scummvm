@@ -399,17 +399,19 @@ void ScummEngine_v80he::o80_createSound() {
 }
 
 void ScummEngine_v80he::o80_getFileSize() {
-	byte filename[256];
+	byte buffer[256];
 
-	copyScriptString(filename, sizeof(filename));
-	convertFilePath(filename);
+	copyScriptString(buffer, sizeof(buffer));
+	const char *filename = (char *)buffer + convertFilePath(buffer);
 
-	Common::SeekableReadStream *f = _saveFileMan->openForLoading((const char *)filename);
-	if (!f) {
+	Common::SeekableReadStream *f = 0;
+	if (!_saveFileMan->listSavefiles(filename).empty()) {
+		f = _saveFileMan->openForLoading((const char *)filename);
+	} else {
 		Common::File *file = new Common::File();
 		file->open((const char *)filename);
 		if (!file->isOpen())
-			delete f;
+			delete file;
 		else
 			f = file;
 	}

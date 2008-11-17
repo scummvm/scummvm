@@ -226,6 +226,9 @@ WindowsFilesystemNode::WindowsFilesystemNode(const Common::String &p, const bool
 AbstractFSNode *WindowsFilesystemNode::getChild(const Common::String &n) const {
 	assert(_isDirectory);
 
+	// Make sure the string contains no slashes
+	assert(!n.contains('/'));
+
 	Common::String newPath(_path);
 	if (_path.lastChar() != '\\')
 		newPath += '\\';

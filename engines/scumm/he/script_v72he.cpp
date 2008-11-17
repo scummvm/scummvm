@@ -1690,9 +1690,9 @@ void ScummEngine_v72he::o72_openFile() {
 	if (slot != -1) {
 		switch (mode) {
 		case 1:
-			// TODO / FIXME: Consider using listSavefiles to avoid unneccessary openForLoading calls
-			_hInFileTable[slot] = _saveFileMan->openForLoading(filename);
-			if (_hInFileTable[slot] == 0) {
+			if (!_saveFileMan->listSavefiles(filename).empty()) {
+				_hInFileTable[slot] = _saveFileMan->openForLoading(filename);
+			} else {
 				Common::File *f = new Common::File();
 				f->open(filename);
 				if (!f->isOpen())
@@ -1702,7 +1702,9 @@ void ScummEngine_v72he::o72_openFile() {
 			}
 			break;
 		case 2:
-			_hOutFileTable[slot] = _saveFileMan->openForSaving(filename);
+			if (!strchr(filename, '/')) {
+				_hOutFileTable[slot] = _saveFileMan->openForSaving(filename);
+			}
 			break;
 		default:
 			error("o72_openFile(): wrong open file mode %d", mode);
@@ -1824,7 +1826,9 @@ void ScummEngine_v72he::o72_deleteFile() {
 
 	debug(1, "o72_deleteFile(%s)", filename);
 
-	_saveFileMan->removeSavefile(filename);
+	if (!_saveFileMan->listSavefiles(filename).empty()) {
+		_saveFileMan->removeSavefile(filename);
+	}
 }
 
 void ScummEngine_v72he::o72_rename() {
@@ -2091,8 +2095,8 @@ void ScummEngine_v72he::o72_readINI() {
 			// We set SaveGamePath in order to detect where it used
 			// in convertFilePath and to avoid warning about invalid
 			// path in Macintosh verisons.
-			data = defineArray(0, kStringArray, 0, 0, 0, 1);
-			memcpy(data, (const char *)"*", 1);
+			data = defineArray(0, kStringArray, 0, 0, 0, 2);
+			memcpy(data, (const char *)"*\\", 2);
 		} else {
 			const char *entry = (ConfMan.get((char *)option).c_str());
 			int len = resStrLen((const byte *)entry);
