@@ -179,7 +179,8 @@ static int *VIB_TABLE;
 /* envelope output curve table */
 /* attack + decay + OFF */
 //static int ENV_CURVE[2*EG_ENT+1];
-static int ENV_CURVE[2 * 4096 + 1];   // to keep it static ...
+//static int ENV_CURVE[2 * 4096 + 1];   // to keep it static ...
+static int *ENV_CURVE;
 
 
 /* multiple table */
@@ -692,6 +693,9 @@ static int OPLOpenTable(void) {
 		SIN_TABLE[SIN_ENT * 3 + s] = (s / (SIN_ENT / 4)) & 1 ? &TL_TABLE[EG_ENT] : SIN_TABLE[SIN_ENT * 2 + s];
 	}
 
+
+	ENV_CURVE = (int *)malloc(sizeof(int) * (2*EG_ENT+1));
+
 	/* envelope counter -> envelope output table */
 	for (i=0; i < EG_ENT; i++) {
 		/* ATTACK curve */
@@ -724,6 +728,7 @@ static void OPLCloseTable(void) {
 	free(SIN_TABLE);
 	free(AMS_TABLE);
 	free(VIB_TABLE);
+	free(ENV_CURVE);
 }
 
 /* CSM Key Controll */
