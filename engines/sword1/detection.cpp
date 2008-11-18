@@ -24,12 +24,14 @@
  */
 
 #include "sword1/sword1.h"
+#include "sword1/control.h"
 
 #include "base/plugins.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/savefile.h"
+#include "graphics/thumbnail.h"
 
 #include "engines/metaengine.h"
 
@@ -81,6 +83,8 @@ public:
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
+	virtual void removeSaveState(const char *target, int slot) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 };
@@ -88,7 +92,11 @@ public:
 bool SwordMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup);
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate);
 }
 
 bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
@@ -184,76 +192,130 @@ Common::Error SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 
 SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::String pattern = target;
+	pattern += ".???";
 	SaveStateList saveList;
+	char saveName[40];
 
-	Common::String pattern = "SAVEGAME.???";
 	Common::StringList filenames = saveFileMan->listSavefiles(pattern.c_str());
-	sort(filenames.begin(), filenames.end());
-	Common::StringList::const_iterator file = filenames.begin();
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
-	Common::InSaveFile *in = saveFileMan->openForLoading("SAVEGAME.INF");
-
-	if (in) {
-		Common::Array<uint32> offsets;
-		uint8 stop = 0;
-		int slotsInFile = 0;
-
-		// Find the offset for each savegame name in the file.
-		while (stop != 255 && !in->eos()) {
-			offsets.push_back(in->pos());
-			slotsInFile++;
-			stop = 0;
-			while (stop != 10 && stop != 255 && !in->eos())
-				stop = in->readByte();
-		}
-
-		// Match the savegames to the save slot names.
-		while (file != filenames.end()) {
-			char saveDesc[32];
-
-			if (file->compareToIgnoreCase("SAVEGAME.INF") == 0) {
-				file++;
-				continue;
+	int slotNum = 0;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		slotNum = atoi(file->c_str() + file->size() - 3);
+		
+		if (slotNum >= 0 && slotNum <= 999) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				in->readUint32LE();	// header
+				in->read(saveName, 40);
+				saveList.push_back(SaveStateDescriptor(slotNum, saveName));
+				delete in;
 			}
-			
-			// Obtain the last 3 digits of the filename, since they correspond to the save slot
-			int slotNum = atoi(file->c_str() + file->size() - 3);
-
-			if (slotNum >= 0 && slotNum < slotsInFile) {
-				in->seek(offsets[slotNum]);
-
-				uint pos = 0;
-				do {
-					stop = in->readByte();
-					if (pos < sizeof(saveDesc) - 1) {
-						if (stop == 10 || stop == 255 || in->eos())
-							saveDesc[pos++] = '\0';
-						else if (stop >= 32)
-							saveDesc[pos++] = stop;
-					}
-				} while (stop != 10 && stop != 255 && !in->eos());
-			}
-
-			if (saveDesc[0] == 0)
-				strcpy(saveDesc, "Unnamed savegame");
-
-			// FIXME: The in-game dialog shows the first save slot as 1, not 0,
-			// but if we change the numbering here, the launcher won?t set
-			// "save_slot" correctly.
-			saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
-			file++;
 		}
 	}
-
-	delete in;
 
 	return saveList;
 }
 
 int SwordMetaEngine::getMaximumSaveSlot() const { return 999; }
 
+void SwordMetaEngine::removeSaveState(const char *target, int slot) const {
+	char extension[6];
+	snprintf(extension, sizeof(extension), ".%03d", slot);
+
+	Common::String filename = target;
+	filename += extension;
+
+	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+}
+
+SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	static char fileName[40];
+	sprintf(fileName, "%s.%03d", target, slot);
+	char name[40];
+
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
+
+	if (in) {
+		in->skip(4);		// header
+		in->read(name, sizeof(name));
+		in->skip(1);		// version
+
+		SaveStateDescriptor desc(slot, name);
+
+		desc.setDeletableFlag(true);
+		desc.setWriteProtectedFlag(false);
+
+		bool hasThumbnail = in->readByte();
+		if (hasThumbnail) {
+			Graphics::Surface *thumbnail = new Graphics::Surface();
+			assert(thumbnail);
+			if (!Graphics::loadThumbnail(*in, *thumbnail)) {
+				delete thumbnail;
+				thumbnail = 0;
+			}
+
+			desc.setThumbnail(thumbnail);
+		}
+
+		uint32 saveDate = in->readUint32BE();
+		uint16 saveTime = in->readUint16BE();
+
+		int day = (saveDate >> 24) & 0xFF;
+		int month = (saveDate >> 16) & 0xFF;
+		int year = saveDate & 0xFFFF;
+
+		desc.setSaveDate(year, month, day);
+			
+		int hour = (saveTime >> 8) & 0xFF;
+		int minutes = saveTime & 0xFF;
+
+		desc.setSaveTime(hour, minutes);
+
+		// TODO: played time
+
+		delete in;
+
+		return desc;
+	}
+	
+	return SaveStateDescriptor();
+}
+
 #if PLUGIN_ENABLED_DYNAMIC(SWORD1)
 	REGISTER_PLUGIN_DYNAMIC(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngine);
 #else
 	REGISTER_PLUGIN_STATIC(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngine);
 #endif
+
+namespace Sword1 {
+
+// FIXME: Loading a game through the GMM crashes the game
+#if 0
+Common::Error SwordEngine::loadGameState(int slot) {
+	_systemVars.forceRestart = false;
+	_systemVars.controlPanelMode = CP_NORMAL;
+	_control->restoreGameFromFile(slot);
+	reinitialize();
+	_control->doRestore();
+	return Common::kNoError;	// TODO: return success/failure
+}
+
+Common::Error SwordEngine::saveGameState(int slot, const char *desc) {
+	_control->setSaveDescription(slot, desc);
+	_control->saveGameToFile(slot);
+	return Common::kNoError;	// TODO: return success/failure
+}
+
+bool SwordEngine::canLoadGameStateCurrently() { 
+	return mouseIsActive();
+}
+
+bool SwordEngine::canSaveGameStateCurrently() { 
+	return mouseIsActive();
+}
+#endif
+
+} // End of namespace Sword1

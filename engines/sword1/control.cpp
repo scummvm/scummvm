@@ -23,6 +23,7 @@
  *
  */
 
+#include <time.h>	// for extended infos
 
 #include "common/file.h"
 #include "common/util.h"
@@ -31,6 +32,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
+#include "graphics/thumbnail.h"
 #include "gui/message.h"
 
 #include "sword1/control.h"
@@ -509,6 +511,8 @@ void Control::setupMainPanel(void) {
 }
 
 void Control::setupSaveRestorePanel(bool saving) {
+	readSavegameDescriptions();
+
 	FrameHeader *savePanel = _resMan->fetchFrame(_resMan->openFetchRes(SR_WINDOW), 0);
 	uint16 panelX = (640 - _resMan->getUint16(savePanel->width)) / 2;
 	uint16 panelY = (480 - _resMan->getUint16(savePanel->height)) / 2;
@@ -690,22 +694,20 @@ bool Control::keyAccepted(uint16 ascii) {
 
 void Control::handleSaveKey(Common::KeyState kbd) {
 	if (_selectedSavegame < 255) {
-		uint8 len = strlen((char*)_saveNames[_selectedSavegame]);
+		uint8 len = _saveNames[_selectedSavegame].size();
 		if ((kbd.keycode == Common::KEYCODE_BACKSPACE) && len)  // backspace
-			_saveNames[_selectedSavegame][len - 1] = '\0';
+			_saveNames[_selectedSavegame].deleteLastChar();
 		else if (keyAccepted(kbd.ascii) && (len < 31)) {
-			_saveNames[_selectedSavegame][len] = kbd.ascii;
-			_saveNames[_selectedSavegame][len + 1] = '\0';
+			_saveNames[_selectedSavegame].insertChar(kbd.ascii, len);
 		}
 		showSavegameNames();
 	}
 }
 
 bool Control::saveToFile(void) {
-	if ((_selectedSavegame == 255) || !strlen((char*)_saveNames[_selectedSavegame]))
+	if ((_selectedSavegame == 255) || _saveNames[_selectedSavegame].size() == 0)
 		return false; // no saveslot selected or no name entered
 	saveGameToFile(_selectedSavegame);
-	writeSavegameDescriptions();
 	return true;
 }
 
@@ -717,33 +719,40 @@ bool Control::restoreFromFile(void) {
 }
 
 void Control::readSavegameDescriptions(void) {
-	Common::InSaveFile *inf;
-	inf = _saveFileMan->openForLoading("SAVEGAME.INF");
-	_saveScrollPos = _saveFiles = 0;
+	char saveName[40];
+	Common::String pattern = ConfMan.get("gameid") + ".???";
+	Common::StringList filenames = _saveFileMan->listSavefiles(pattern.c_str());
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	int num = 0;
+	int slotNum = 0;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		slotNum = atoi(file->c_str() + file->size() - 3);
+		
+		while (num < slotNum) {
+			_saveNames.push_back("");
+			num++;
+		}
+
+		if (slotNum >= 0 && slotNum <= 999) {
+			num++;
+			Common::InSaveFile *in = _saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				in->readUint32LE();	// header
+				in->read(saveName, 40);
+				_saveNames.push_back(saveName);
+				delete in;
+			}
+		}
+	}
+
+	for (int i = _saveNames.size(); i < 1000; i++)
+		_saveNames.push_back("");
+
+	_saveScrollPos = 0;
 	_selectedSavegame = 255;
-	for (uint8 cnt = 0; cnt < 64; cnt++) {
-		memset(_saveNames[cnt], 0, sizeof(_saveNames[cnt]));
-	}
-	if (inf) {
-		uint8 curFileNum = 0;
-		uint8 ch;
-		do {
-			uint8 pos = 0;
-			do {
-				ch = inf->readByte();
-				if (pos < sizeof(_saveNames[curFileNum]) - 1) {
-					if ((ch == 10) || (ch == 255) || (inf->eos()))
-						_saveNames[curFileNum][pos++] = '\0';
-					else if (ch >= 32)
-						_saveNames[curFileNum][pos++] = ch;
-				}
-			} while ((ch != 10) && (ch != 255) && (!inf->eos()));
-			curFileNum++;
-		} while ((ch != 255) && (!inf->eos()));
-		_saveFiles = curFileNum;
-		_numSaves = _saveFiles;
-	}
-	delete inf;
+	_saveFiles = _numSaves = _saveNames.size();
 }
 
 int Control::displayMessage(const char *altButton, const char *message, ...) {
@@ -760,43 +769,59 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 	return result;
 }
 
-void Control::writeSavegameDescriptions(void) {
-	Common::OutSaveFile *outf;
-	outf = _saveFileMan->openForSaving("SAVEGAME.INF");
+bool Control::savegamesExist(void) {
+	Common::String pattern = ConfMan.get("gameid") + ".???";
+	Common::StringList saveNames = _saveFileMan->listSavefiles(pattern.c_str());
+	return saveNames.size() > 0;
+}
 
-	if (!outf) {
-		// Display an error message, and do nothing
-		displayMessage(0, "Can't create SAVEGAME.INF. (%s)", _saveFileMan->popErrorDesc().c_str());
+void Control::checkForOldSaveGames() {
+	Common::InSaveFile *inf = _saveFileMan->openForLoading("SAVEGAME.INF");
+
+	if (!inf) {
+		delete inf;
 		return;
 	}
 
-	// if the player accidently clicked the last slot and then deselected it again,
-	// we'd still have _saveFiles == 64, so get rid of the empty end.
-	while (strlen((char*)_saveNames[_saveFiles - 1]) == 0)
-		_saveFiles--;
-	for (uint8 cnt = 0; cnt < _saveFiles; cnt++) {
-		int len = strlen((char*)_saveNames[cnt]);
-		if (len > 0)
-			outf->write(_saveNames[cnt], len);
-		if (cnt < _saveFiles - 1)
-			outf->writeByte(10);
-		else
-			outf->writeByte(255);
-	}
-	outf->finalize();
-	if (outf->ioFailed())
-		displayMessage(0, "Can't write to SAVEGAME.INF. Device full? (%s)", _saveFileMan->popErrorDesc().c_str());
-	delete outf;
-}
+	GUI::MessageDialog dialog0(
+		"ScummVM found that you have old savefiles for Broken Sword 1 that should be converted.\n"
+		"The old save game format is no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
+		"Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n", "OK", "Cancel");
 
-bool Control::savegamesExist(void) {
-	bool retVal = false;
-	Common::InSaveFile *inf;
-	inf = _saveFileMan->openForLoading("SAVEGAME.INF");
-	if (inf)
-		retVal = true;
-	delete inf;
-	return retVal;
+	int choice = dialog0.runModal();
+	if (choice == GUI::kMessageCancel) {
+		// user pressed cancel
+		return;
+	}
+
+	// Convert every save slot we find in the index file to the new format
+	uint8 saveName[32];
+	uint8 slot = 0;
+	uint8 ch;
+
+	memset(saveName, 0, sizeof(saveName));
+
+	do {
+		uint8 pos = 0;
+		do {
+			ch = inf->readByte();
+			if (pos < sizeof(saveName) - 1) {
+				if ((ch == 10) || (ch == 255) || (inf->eos()))
+					saveName[pos++] = '\0';
+				else if (ch >= 32)
+					saveName[pos++] = ch;
+			}
+		} while ((ch != 10) && (ch != 255) && (!inf->eos()));
+
+		if (pos > 1)	// if the slot has a description
+			convertSaveGame(slot, (char*)saveName);
+		slot++;
+	} while ((ch != 255) && (!inf->eos()));
+
+	delete inf;	
+
+	// Delete index file
+	_saveFileMan->removeSavefile("SAVEGAME.INF");
 }
 
 void Control::showSavegameNames(void) {
@@ -805,7 +830,7 @@ void Control::showSavegameNames(void) {
 		uint8 textMode = TEXT_LEFT_ALIGN;
 		uint16 ycoord = _saveButtons[cnt].y + 2;
 		uint8 str[40];
-		sprintf((char*)str, "%d. %s", cnt + _saveScrollPos + 1, _saveNames[cnt + _saveScrollPos]);
+		sprintf((char*)str, "%d. %s", cnt + _saveScrollPos + 1, _saveNames[cnt + _saveScrollPos].c_str());
 		if (cnt + _saveScrollPos == _selectedSavegame) {
 			textMode |= TEXT_RED_FONT;
 			ycoord += 2;
@@ -821,10 +846,10 @@ void Control::saveNameSelect(uint8 id, bool saving) {
 	_buttons[id - BUTTON_SAVE_SELECT1]->setSelected(1);
 	uint8 num = (id - BUTTON_SAVE_SELECT1) + _saveScrollPos;
 	if (saving && (_selectedSavegame != 255)) // the player may have entered something, clear it again
-		strcpy((char*)_saveNames[_selectedSavegame], (char*)_oldName);
+		_saveNames[_selectedSavegame] = _oldName;
 	if (num < _saveFiles) {
 		_selectedSavegame = num;
-		strcpy((char*)_oldName, (char*)_saveNames[num]); // save for later
+		_oldName = _saveNames[num]; // save for later
 	} else {
 		if (!saving)
 			_buttons[id - BUTTON_SAVE_SELECT1]->setSelected(0); // no save in slot, deselect it
@@ -832,7 +857,7 @@ void Control::saveNameSelect(uint8 id, bool saving) {
 			if (_saveFiles <= num)
 				_saveFiles = num + 1;
 			_selectedSavegame = num;
-			_oldName[0] = '\0';
+			_oldName.clear();
 		}
 	}
 	if (_selectedSavegame < 255)
@@ -950,7 +975,7 @@ void Control::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
 void Control::saveGameToFile(uint8 slot) {
 	char fName[15];
 	uint16 cnt;
-	sprintf(fName, "SAVEGAME.%03d", slot);
+	sprintf(fName, "%s.%03d", ConfMan.get("gameid").c_str(), slot);
 	uint16 liveBuf[TOTAL_SECTIONS];
 	Common::OutSaveFile *outf;
 	outf = _saveFileMan->openForSaving(fName);
@@ -959,6 +984,31 @@ void Control::saveGameToFile(uint8 slot) {
 		displayMessage(0, "Unable to create file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 		return;
 	}
+
+	outf->writeUint32LE(SAVEGAME_HEADER);
+	outf->write(_saveNames[slot].c_str(), 40);
+	outf->writeByte(SAVEGAME_VERSION);
+
+	// FIXME: at this point, we can't save a thumbnail of the game screen, as the save menu is shown
+#if 0
+	outf->writeByte(HAS_THUMBNAIL);
+
+	// Thumbnail
+	Graphics::saveThumbnail(*outf);
+#else
+	outf->writeByte(NO_THUMBNAIL);
+#endif
+
+	// Date / time
+	tm curTime;
+	_system->getTimeAndDate(curTime);
+
+	uint32 saveDate = (curTime.tm_mday & 0xFF) << 24 | ((curTime.tm_mon + 1) & 0xFF) << 16 | (curTime.tm_year + 1900) & 0xFFFF;
+	uint16 saveTime = (curTime.tm_hour & 0xFF) << 8 | (curTime.tm_min) & 0xFF;
+
+	outf->writeUint32BE(saveDate);
+	outf->writeUint16BE(saveTime);
+	// TODO: played time
 
 	_objMan->saveLiveList(liveBuf);
 	for (cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
@@ -987,7 +1037,7 @@ void Control::saveGameToFile(uint8 slot) {
 bool Control::restoreGameFromFile(uint8 slot) {
 	char fName[15];
 	uint16 cnt;
-	sprintf(fName, "SAVEGAME.%03d", slot);
+	sprintf(fName, "%s.%03d", ConfMan.get("gameid").c_str(), slot);
 	Common::InSaveFile *inf;
 	inf = _saveFileMan->openForLoading(fName);
 	if (!inf) {
@@ -995,6 +1045,36 @@ bool Control::restoreGameFromFile(uint8 slot) {
 		displayMessage(0, "Can't open file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 		return false;
 	}
+
+	uint saveHeader = inf->readUint32LE();
+	if (saveHeader != SAVEGAME_HEADER) {
+		// Display an error message, and do nothing
+		displayMessage(0, "Save game '%s' is corrupt", fName);
+		return false;		
+	}
+
+	inf->skip(40);		// skip description
+	uint8 saveVersion = inf->readByte();
+
+	if (saveVersion != SAVEGAME_VERSION) {
+		warning("Different save game version");
+		return false;
+	}
+	
+	bool hasThumbnail = inf->readByte();
+
+	if (hasThumbnail) {
+		// We don't need the thumbnail here, so just read it and discard it
+		Graphics::Surface *thumbnail = new Graphics::Surface();
+		assert(thumbnail);
+		Graphics::loadThumbnail(*inf, *thumbnail);
+		delete thumbnail;
+		thumbnail = 0;
+	}
+
+	inf->readUint32BE();	// save date
+	inf->readUint16BE();	// save time
+	// TODO: played time
 
 	_restoreBuf = (uint8*)malloc(
 		TOTAL_SECTIONS * 2 +
@@ -1023,6 +1103,90 @@ bool Control::restoreGameFromFile(uint8 slot) {
 		return false;
 	}
 	delete inf;
+	return true;
+}
+
+bool Control::convertSaveGame(uint8 slot, char* desc) {
+	char oldFileName[15];
+	char newFileName[40];
+	sprintf(oldFileName, "SAVEGAME.%03d", slot);
+	sprintf(newFileName, "%s.%03d", ConfMan.get("gameid").c_str(), slot);
+	uint8 *saveData;
+	int dataSize;
+
+	// Check if the new file already exists
+	Common::InSaveFile *testSave = _saveFileMan->openForLoading(newFileName);
+
+	if (testSave) {
+		delete testSave;
+
+		char msg[200];
+		sprintf(msg, "Target new save game already exists!\n"
+					 "Would you like to keep the old save game (%s) or the new one (%s)?\n",
+					 oldFileName, newFileName);
+		GUI::MessageDialog dialog0(msg, "Keep the old one", "Keep the new one");
+
+		int choice = dialog0.runModal();
+		if (choice == GUI::kMessageCancel) {
+			// User chose to keep the new game, so delete the old one
+			_saveFileMan->removeSavefile(oldFileName);
+			return true;
+		}
+	}
+
+	Common::InSaveFile *oldSave = _saveFileMan->openForLoading(oldFileName);
+	if (!oldSave) {
+		// Display a warning message and do nothing
+		warning("Can't open file '%s'", oldFileName);
+		return false;
+	}
+
+	// Read data from old type of save game
+	dataSize = oldSave->size();
+	saveData = new uint8[dataSize];
+	oldSave->read(saveData, dataSize);
+	delete oldSave;
+
+	// Now write the save data to a new type of save game
+	Common::OutSaveFile *newSave;
+	newSave = _saveFileMan->openForSaving(newFileName);
+	if (!newSave) {
+		// Display a warning message and do nothing
+		warning("Unable to create file '%s'. (%s)", newFileName, _saveFileMan->popErrorDesc().c_str());
+		free(saveData);
+		saveData = NULL;
+		return false;
+	}	
+
+	newSave->writeUint32LE(SAVEGAME_HEADER);
+	newSave->write(desc, 40);
+	newSave->writeByte(SAVEGAME_VERSION);
+	newSave->writeByte(NO_THUMBNAIL);
+
+	// Date / time
+	tm curTime;
+	_system->getTimeAndDate(curTime);
+
+	uint32 saveDate = (curTime.tm_mday & 0xFF) << 24 | ((curTime.tm_mon + 1) & 0xFF) << 16 | (curTime.tm_year + 1900) & 0xFFFF;
+	uint16 saveTime = (curTime.tm_hour & 0xFF) << 8 | (curTime.tm_min) & 0xFF;
+
+	newSave->writeUint32BE(saveDate);
+	newSave->writeUint16BE(saveTime);
+	// TODO: played time
+
+	newSave->write(saveData, dataSize);
+
+	newSave->finalize();
+	if (newSave->ioFailed())
+		warning("Couldn't write to file '%s'. Device full?", newFileName);
+	delete newSave;
+
+	// Delete old save
+	_saveFileMan->removeSavefile(oldFileName);
+
+	// Cleanup
+	free(saveData);
+	saveData = NULL;
 	return true;
 }
 

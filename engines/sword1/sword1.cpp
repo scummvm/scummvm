@@ -484,7 +484,10 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 }
 
 Common::Error SwordEngine::go() {
+	_control->checkForOldSaveGames();
+
 	uint16 startPos = ConfMan.getInt("boot_param");
+	_control->readSavegameDescriptions();
 	if (startPos) {
 		_logic->startPositions(startPos);
 	} else {
@@ -658,6 +661,10 @@ void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
 			_system->delayMillis(10);
 
 	} while (_system->getMillis() < start + amount);
+}
+
+bool SwordEngine::mouseIsActive() {
+	return Logic::_scriptVars[MOUSE_STATUS] & 1;
 }
 
 } // End of namespace Sword1

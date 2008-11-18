@@ -79,12 +79,22 @@ public:
 	void reinitialize(void);
 
 	uint32 _features;
+
+	bool mouseIsActive();
+
 protected:
 	// Engine APIs
 	virtual Common::Error init();
 	virtual Common::Error go();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
+	// FIXME: Loading a game through the GMM crashes the game
+#if 0
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const char *desc);
+	bool canLoadGameStateCurrently();
+	bool canSaveGameStateCurrently();
+#endif
 
 private:
 	void delay(int32 amount);

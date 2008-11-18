@@ -43,6 +43,11 @@ class Mouse;
 class Music;
 class Sound;
 
+#define SAVEGAME_HEADER MKID_BE('BS_1')
+#define SAVEGAME_VERSION 1
+#define HAS_THUMBNAIL 1
+#define NO_THUMBNAIL 0
+
 #define MAX_BUTTONS 16
 
 #define CONTROL_NOTHING_DONE 0
@@ -87,13 +92,19 @@ public:
 	void doRestore(void);
 	void askForCd(void);
 	bool savegamesExist(void);
+	void readSavegameDescriptions(void);
+	void saveGameToFile(uint8 slot);
 	bool restoreGameFromFile(uint8 slot);
+	void checkForOldSaveGames();
+
+	void setSaveDescription(int slot, const char *desc) {
+		_saveNames[slot] = desc;
+	}
+
 private:
 	int displayMessage(const char *altButton, const char *message, ...);
 
-	void saveGameToFile(uint8 slot);
-	void readSavegameDescriptions(void);
-	void writeSavegameDescriptions(void);
+	bool convertSaveGame(uint8 slot, char* desc);
 	void showSavegameNames(void);
 	void deselectSaveslots(void);
 	uint8 *_restoreBuf;
@@ -101,8 +112,8 @@ private:
 	uint8 _numSaves;
 	uint8 _saveScrollPos;
 	uint8 _selectedSavegame;
-	uint8 _saveNames[64][32];
-	uint8 _oldName[32];
+	Common::StringList _saveNames;
+	Common::String _oldName;
 	uint8 _cursorTick;
 	bool _cursorVisible;
 
