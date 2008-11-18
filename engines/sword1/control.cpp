@@ -720,7 +720,7 @@ bool Control::restoreFromFile(void) {
 
 void Control::readSavegameDescriptions(void) {
 	char saveName[40];
-	Common::String pattern = ConfMan.get("gameid") + ".???";
+	Common::String pattern = "sword1.???";
 	Common::StringList filenames = _saveFileMan->listSavefiles(pattern.c_str());
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
@@ -770,7 +770,7 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 }
 
 bool Control::savegamesExist(void) {
-	Common::String pattern = ConfMan.get("gameid") + ".???";
+	Common::String pattern = "sword1.???";
 	Common::StringList saveNames = _saveFileMan->listSavefiles(pattern.c_str());
 	return saveNames.size() > 0;
 }
@@ -975,7 +975,7 @@ void Control::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
 void Control::saveGameToFile(uint8 slot) {
 	char fName[15];
 	uint16 cnt;
-	sprintf(fName, "%s.%03d", ConfMan.get("gameid").c_str(), slot);
+	sprintf(fName, "sword1.%03d", slot);
 	uint16 liveBuf[TOTAL_SECTIONS];
 	Common::OutSaveFile *outf;
 	outf = _saveFileMan->openForSaving(fName);
@@ -1037,7 +1037,7 @@ void Control::saveGameToFile(uint8 slot) {
 bool Control::restoreGameFromFile(uint8 slot) {
 	char fName[15];
 	uint16 cnt;
-	sprintf(fName, "%s.%03d", ConfMan.get("gameid").c_str(), slot);
+	sprintf(fName, "sword1.%03d", slot);
 	Common::InSaveFile *inf;
 	inf = _saveFileMan->openForLoading(fName);
 	if (!inf) {
@@ -1110,7 +1110,7 @@ bool Control::convertSaveGame(uint8 slot, char* desc) {
 	char oldFileName[15];
 	char newFileName[40];
 	sprintf(oldFileName, "SAVEGAME.%03d", slot);
-	sprintf(newFileName, "%s.%03d", ConfMan.get("gameid").c_str(), slot);
+	sprintf(newFileName, "sword1.%03d", slot);
 	uint8 *saveData;
 	int dataSize;
 

@@ -233,7 +233,7 @@ void SwordMetaEngine::removeSaveState(const char *target, int slot) const {
 
 SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	static char fileName[40];
-	sprintf(fileName, "%s.%03d", target, slot);
+	sprintf(fileName, "sword1.%03d", slot);
 	char name[40];
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
