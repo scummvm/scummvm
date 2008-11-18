@@ -92,7 +92,6 @@ protected:
 	Audio::Mixer *_snd;
 	OSystem *_system;
 	Common::Array<MovieText *> _movieTexts;
-	byte *_textSpriteBuf;
 	int _textX, _textY, _textWidth, _textHeight;
 	byte _black, _white;
 

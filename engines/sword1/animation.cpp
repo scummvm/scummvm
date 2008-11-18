@@ -36,6 +36,7 @@
 #include "common/str.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "graphics/surface.h"
 
 namespace Sword1 {
 
@@ -70,7 +71,6 @@ MoviePlayer::MoviePlayer(SwordEngine *vm, Screen *screen, Text *textMan, Audio::
 	: _vm(vm), _screen(screen), _textMan(textMan), _snd(snd), _system(system) {
 	_bgSoundStream = NULL;
 	_ticks = 0;
-	_textSpriteBuf = NULL;
 	_black = 1;
 	_white = 255;
 	_currentFrame = 0;
@@ -275,12 +275,9 @@ void MoviePlayer::play(void) {
 				_textHeight = frame->height;
 				_textX = 320 - _textWidth / 2;
 				_textY = 420 - _textHeight;
-				_textSpriteBuf = (byte *)calloc(_textHeight, _textWidth);
 			}
 			if (_currentFrame == _movieTexts[0]->_endFrame) {
 				_textMan->releaseText(2, false);
-				free(_textSpriteBuf);
-				_textSpriteBuf = NULL;
 				delete _movieTexts.remove_at(0);
 			}
 		}
@@ -309,11 +306,7 @@ void MoviePlayer::play(void) {
 	if (terminated)
 		_snd->stopHandle(_bgSoundHandle);
 
-	if (_textSpriteBuf) {
-		_textMan->releaseText(2, false);
-		free(_textSpriteBuf);
-		_textSpriteBuf = NULL;
-	}
+	_textMan->releaseText(2, false);
 
 	while (!_movieTexts.empty())
 		delete _movieTexts.remove_at(_movieTexts.size() - 1);
@@ -444,31 +437,26 @@ bool MoviePlayerDXA::decodeFrame(void) {
 }
 
 void MoviePlayerDXA::processFrame(void) {
+}
+
+void MoviePlayerDXA::updateScreen(void) {
+	_system->copyRectToScreen(_drawBuffer, _frameWidth, _frameX, _frameY, _frameWidth, _frameHeight);
+
 	// TODO: Handle the advanced cutscene packs. Do they really exist?
 
 	// We cannot draw the text to _drawBuffer, since that's one of the
-	// decoder's internal buffers. Instead, we copy part of _drawBuffer
-	// to the text sprite.
+	// decoder's internal buffers, and besides it may be much smaller than
+	// the screen, so it's possible that the subtitles don't fit on it.
+	// Instead, we get the frame buffer from the backend, after copying the
+	// frame to it, and draw on that.
 
-	if (_textSpriteBuf) {
-		memset(_textSpriteBuf, 0, _textWidth * _textHeight);
-
-		// FIXME: This is inefficient
-		int x, y;
-
-		for (y = _textY; y < _textY + _textHeight; y++) {
-			for (x = _textX; x < _textX + _textWidth; x++) {
-				if (x >= _frameX && x <= _frameX + _frameWidth && y >= _frameY && y <= _frameY + _frameHeight) {
-					_textSpriteBuf[(y - _textY) * _textWidth + x - _textX] = _drawBuffer[(y - _frameY) * _frameWidth + x - _frameX];
-				}
-			}
-		}
-
+	if (_textMan->giveSpriteData(2)) {
+		Graphics::Surface *frameBuffer = _system->lockScreen();
 		byte *src = (byte *)_textMan->giveSpriteData(2) + sizeof(FrameHeader);
-		byte *dst = _textSpriteBuf;
+		byte *dst = (byte *)frameBuffer->getBasePtr(_textX, _textY);
 
-		for (y = 0; y < _textHeight; y++) {
-			for (x = 0; x < _textWidth; x++) {
+		for (int y = 0; y < _textHeight; y++) {
+			for (int x = 0; x < _textWidth; x++) {
 				switch (src[x]) {
 				case BORDER_COL:
 					dst[x] = _black;
@@ -479,16 +467,12 @@ void MoviePlayerDXA::processFrame(void) {
 				}
 			}
 			src += _textWidth;
-			dst += _textWidth;
+			dst += frameBuffer->pitch;
 		}
-	}
-}
 
-void MoviePlayerDXA::updateScreen(void) {
-	_system->copyRectToScreen(_drawBuffer, _frameWidth, _frameX, _frameY, _frameWidth, _frameHeight);
-	if (_textSpriteBuf) {
-		_system->copyRectToScreen(_textSpriteBuf, _textWidth, _textX, _textY, _textWidth, _textHeight);
+		_system->unlockScreen();
 	}
+
 	_system->updateScreen();
 }
 
