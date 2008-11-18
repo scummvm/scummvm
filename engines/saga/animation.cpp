@@ -462,11 +462,7 @@ void Anim::link(int16 animId1, int16 animId2) {
 }
 
 void Anim::setCycles(uint16 animId, int cycles) {
-	AnimationData *anim;
-
-	anim = getAnimation(animId);
-
-	anim->cycles = cycles;
+	getAnimation(animId)->cycles = cycles;
 }
 
 int Anim::getCycles(uint16 animId) {
@@ -606,27 +602,15 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 }
 
 void Anim::stop(uint16 animId) {
-	AnimationData *anim;
-
-	anim = getAnimation(animId);
-
-	anim->state = ANIM_PAUSE;
+	getAnimation(animId)->state = ANIM_PAUSE;
 }
 
 void Anim::finish(uint16 animId) {
-	AnimationData *anim;
-
-	anim = getAnimation(animId);
-
-	anim->state = ANIM_STOPPING;
+	getAnimation(animId)->state = ANIM_STOPPING;
 }
 
 void Anim::resume(uint16 animId, int cycles) {
-	AnimationData *anim;
-
-	anim = getAnimation(animId);
-
-	anim->cycles += cycles;
+	getAnimation(animId)->cycles += cycles;
 	play(animId, 0, true);
 }
 
@@ -649,51 +633,27 @@ void Anim::reset() {
 }
 
 void Anim::setFlag(uint16 animId, uint16 flag) {
-	AnimationData *anim;
-
-	anim = getAnimation(animId);
-
-	anim->flags |= flag;
+	getAnimation(animId)->flags |= flag;
 }
 
 void Anim::clearFlag(uint16 animId, uint16 flag) {
-	AnimationData *anim;
-
-	anim = getAnimation(animId);
-
-	anim->flags &= ~flag;
+	getAnimation(animId)->flags &= ~flag;
 }
 
 void Anim::setFrameTime(uint16 animId, int time) {
-	AnimationData *anim;
-
-	anim = getAnimation(animId);
-
-	anim->frameTime = time;
+	getAnimation(animId)->frameTime = time;
 }
 
 int Anim::getFrameTime(uint16 animId) {
-	AnimationData *anim;
-
-	anim = getAnimation(animId);
-
-	return anim->frameTime;
+	return getAnimation(animId)->frameTime;
 }
 
 bool Anim::isPlaying(uint16 animId) {
-	AnimationData *anim;
-
-	anim = getAnimation(animId);
-
-	return (anim->state == ANIM_PLAYING);
+	return (getAnimation(animId)->state == ANIM_PLAYING);
 }
 
 int16 Anim::getCurrentFrame(uint16 animId) {
-	AnimationData *anim;
-
-	anim = getAnimation(animId);
-
-	return anim->currentFrame;
+	return getAnimation(animId)->currentFrame;
 }
 
 void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_t bufLength) {
