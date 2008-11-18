@@ -556,10 +556,9 @@ void FWRenderer::refreshPalette() {
 	assert(_activeLowPal);
 
 	for (i = 0; i < 16; i++) {
-		// This seems to match the output from DOSbox.
-		pal[i * 4 + 2] = ((_activeLowPal[i] & 0x00f) >> 0) * 32;
-		pal[i * 4 + 1] = ((_activeLowPal[i] & 0x0f0) >> 4) * 32;
-		pal[i * 4 + 0] = ((_activeLowPal[i] & 0xf00) >> 8) * 32;
+		pal[i * 4 + 2] = ((_activeLowPal[i] & 0x007) >> 0) * 32;
+		pal[i * 4 + 1] = ((_activeLowPal[i] & 0x070) >> 4) * 32;
+		pal[i * 4 + 0] = ((_activeLowPal[i] & 0x700) >> 8) * 32;
 		pal[i * 4 + 3] = 0;
 	}
 

@@ -155,9 +155,9 @@ void transformPaletteRange(byte *dstPal, byte *srcPal, int startColor, int stopC
 	assert(srcPal && dstPal);
 
 	for (int i = startColor; i <= stopColor; i++) {
-		dstPal[3 * i + 0] = CLIP(srcPal[3 * i + 0] + r * 32, 0, 255);
-		dstPal[3 * i + 1] = CLIP(srcPal[3 * i + 1] + g * 32, 0, 255);
-		dstPal[3 * i + 2] = CLIP(srcPal[3 * i + 2] + b * 32, 0, 255);
+		dstPal[3 * i + 0] = CLIP(srcPal[3 * i + 0] + r * 36, 0, 252);
+		dstPal[3 * i + 1] = CLIP(srcPal[3 * i + 1] + g * 36, 0, 252);
+		dstPal[3 * i + 2] = CLIP(srcPal[3 * i + 2] + b * 36, 0, 252);
 	}
 }
 
