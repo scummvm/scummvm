@@ -192,12 +192,10 @@ Common::Error SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 
 SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::String pattern = target;
-	pattern += ".???";
 	SaveStateList saveList;
 	char saveName[40];
 
-	Common::StringList filenames = saveFileMan->listSavefiles(pattern.c_str());
+	Common::StringList filenames = saveFileMan->listSavefiles("sword1.???");
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	int slotNum = 0;
@@ -222,18 +220,15 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 int SwordMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void SwordMetaEngine::removeSaveState(const char *target, int slot) const {
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".%03d", slot);
+	char fileName[12];
+	snprintf(fileName, 12, "sword1.%03d", slot);
 
-	Common::String filename = target;
-	filename += extension;
-
-	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	static char fileName[40];
-	sprintf(fileName, "sword1.%03d", slot);
+	char fileName[12];
+	snprintf(fileName, 12, "sword1.%03d", slot);
 	char name[40];
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
