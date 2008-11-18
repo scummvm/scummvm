@@ -103,7 +103,7 @@ public:
 	 *
 	 * @param	stream		a pointer to a SeekableReadStream, or 0
 	 * @param	name		a string describing the 'file' corresponding to stream
-	 * @return	true if stream was 0, false otherwise
+	 * @return	true if stream was non-zero, false otherwise
 	 */
 	virtual bool open(SeekableReadStream *stream, const Common::String &name);
 
