@@ -37,7 +37,7 @@ MusicPlayer::MusicPlayer(GroovieEngine *vm) :
 	// Create the driver
 	int driver = detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	_driver = createMidi(driver);
-	_driver->open();
+	this->open();
 
 	// Initialize the channel volumes
 	for (int i = 0; i < 0x10; i++) {
@@ -52,6 +52,10 @@ MusicPlayer::MusicPlayer(GroovieEngine *vm) :
 }
 
 MusicPlayer::~MusicPlayer() {
+	_driver->setTimerCallback(NULL, NULL);
+
+	Common::StackLock lock(_mutex);
+
 	// Unload the parser
 	unload();
 	delete _midiParser;
@@ -62,18 +66,25 @@ MusicPlayer::~MusicPlayer() {
 }
 
 void MusicPlayer::playSong(uint16 fileref) {
+	Common::StackLock lock(_mutex);
+
 	// Play the referenced file once
 	play(fileref, false);
 }
 
 void MusicPlayer::setBackgroundSong(uint16 fileref) {
+	Common::StackLock lock(_mutex);
+
 	_backgroundFileRef = fileref;
 }
 
 void MusicPlayer::setUserVolume(uint16 volume) {
+	Common::StackLock lock(_mutex);
+
 	// Save the new user volume
 	_userVolume = volume;
-	if (_userVolume > 0x100) _userVolume = 0x100;
+	if (_userVolume > 0x100)
+		_userVolume = 0x100;
 
 	// Apply it to all the channels
 	for (int i = 0; i < 0x10; i++) {
@@ -84,12 +95,15 @@ void MusicPlayer::setUserVolume(uint16 volume) {
 }
 
 void MusicPlayer::setGameVolume(uint16 volume, uint16 time) {
+	Common::StackLock lock(_mutex);
+
 	//TODO: Implement volume fading
 	debugC(5, kGroovieDebugMIDI | kGroovieDebugAll, "setting game volume: %d, %d\n", volume, time);
 
 	// Save the new game volume
 	_gameVolume = volume;
-	if (_gameVolume > 100) _gameVolume = 100;
+	if (_gameVolume > 100)
+		_gameVolume = 100;
 
 	// Apply it to all the channels
 	for (int i = 0; i < 0x10; i++) {
@@ -159,6 +173,15 @@ void MusicPlayer::unload() {
 }
 
 int MusicPlayer::open() {
+	// Don't ever call open without first setting the output driver!
+	if (!_driver)
+		return 255;
+
+	int ret = _driver->open();
+	if (ret)
+		return ret;
+
+	_driver->setTimerCallback(this, &onTimer);
 	return 0;
 }
 
@@ -190,6 +213,14 @@ void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 		_driver->metaEvent(type, data, length);
 		break;
 	}
+}
+
+void MusicPlayer::onTimer(void *refCon) {
+	MusicPlayer *music = (MusicPlayer *)refCon;
+	Common::StackLock lock(music->_mutex);
+
+	// TODO: We really only need to call this while music is playing.
+	music->_midiParser->onTimer();
 }
 
 void MusicPlayer::setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {

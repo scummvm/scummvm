@@ -30,6 +30,7 @@
 
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
+#include "common/mutex.h"
 
 namespace Groovie {
 
@@ -62,11 +63,14 @@ public:
 
 private:
 	GroovieEngine *_vm;
+	Common::Mutex _mutex;
 	byte *_data;
 	MidiParser *_midiParser;
 	MidiDriver *_driver;
 
 	uint16 _backgroundFileRef;
+
+	static void onTimer(void *data);
 
 	bool play(uint16 fileref, bool loop);
 	bool load(uint16 fileref);
