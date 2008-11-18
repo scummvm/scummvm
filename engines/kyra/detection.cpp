@@ -1170,35 +1170,8 @@ void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
 	if (slot == 0)
 		return;
 
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::String filename = Kyra::KyraEngine_v1::getSavegameFilename(target, slot);
-
-	saveFileMan->removeSavefile(filename.c_str());
-
-	Common::StringList filenames;
-	Common::String pattern = target;
-	pattern += ".???";
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
-
-	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
-
-		// Rename every slot greater than the deleted slot,
-		// Also do not rename quicksaves.
-		if (slotNum > slot && slotNum < 990) {
-			// FIXME: Our savefile renaming done here is inconsitent with what we do in 
-			// GUI_v2::deleteMenu. While here we rename every slot with a greater equal
-			// number of the deleted slot to deleted slot, deleted slot + 1 etc.,
-			// we only rename the following slots in GUI_v2::deleteMenu until a slot
-			// is missing.
-			saveFileMan->renameSavefile(file->c_str(), filename.c_str());
-
-			filename = Kyra::KyraEngine_v1::getSavegameFilename(target, ++slot);
-		}
-	}
-
+	g_system->getSavefileManager()->removeSavefile(filename.c_str());
 }
 
 SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
