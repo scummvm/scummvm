@@ -1,6 +1,7 @@
 MODULE := engines/groovie
 
 MODULE_OBJS := \
+	cell.o \
 	cursor.o \
 	debug.o \
 	detection.o \

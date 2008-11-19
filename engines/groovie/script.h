@@ -30,6 +30,7 @@
 #include "common/rect.h"
 
 #include "groovie/font.h"
+#include "groovie/cell.h"
 
 namespace Groovie {
 
@@ -193,7 +194,7 @@ private:
 	void o_loadscript();
 	void o_setvideoorigin();
 	void o_sub();
-	void o_othello();
+	void o_cellmove();
 	void o_returnscript();
 	void o_sethotspotright();
 	void o_sethotspotleft();

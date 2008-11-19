@@ -27,6 +27,7 @@
 #include "groovie/music.h"
 #include "groovie/script.h"
 #include "groovie/groovie.h"
+#include "groovie/cell.h"
 
 #include "common/config-manager.h"
 #include "common/endian.h"
@@ -1311,12 +1312,13 @@ void Script::o_sub() {
 	setVariable(varnum1, _variables[varnum1] - _variables[varnum2]);
 }
 
-void Script::o_othello() {
+void Script::o_cellmove() {
 	uint16 arg = readScript8bits();
 	byte *scriptBoard = &_variables[0x19];
 	byte board[7][7];
+	byte startX, startY, endX, endY;
 
-	debugScript(1, true, "OTHELLO var[0x%02X]", arg);
+	debugScript(1, true, "CELL MOVE var[0x%02X]", arg);
 
 	// Arguments used by the original implementation: (2, arg, scriptBoard)
 	for (int y = 0; y < 7; y++) {
@@ -1330,12 +1332,20 @@ void Script::o_othello() {
 		debugScript(1, false, "\n");
 	}
 
+	CellGame staufsMove((byte*) board);
+	startX = staufsMove.getStartX();
+	startY = staufsMove.getStartY();
+	endX = staufsMove.getEndX();
+	endY = staufsMove.getEndY();
+	
+	//printf("Moving from %d,%d to %d,%d\n", startX, startY, endX, endY);
+	
 	// Set the movement origin
-	setVariable(0, 6); // y
-	setVariable(1, 0); // x
+	setVariable(0, startY); // y
+	setVariable(1, startX); // x
 	// Set the movement destination
-	setVariable(2, 6);
-	setVariable(3, 1);
+	setVariable(2, endY);
+	setVariable(3, endX);
 }
 
 void Script::o_returnscript() {
@@ -1525,7 +1535,7 @@ Script::OpcodeFunc Script::_opcodes[NUM_OPCODES] = {
 	&Script::o_loadscript,
 	&Script::o_setvideoorigin, // 0x40
 	&Script::o_sub,
-	&Script::o_othello,
+	&Script::o_cellmove,
 	&Script::o_returnscript,
 	&Script::o_sethotspotright, // 0x44
 	&Script::o_sethotspotleft,
