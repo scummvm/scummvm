@@ -2,9 +2,9 @@
 ##################################################################################################################
 
 	@WorkingEngines = qw(
-		scumm agos sky queen gob saga drascula 
+		scumm agos sky queen gob groovie saga drascula 
 		kyra lure agi touche parallaction cine
-		cruise igor made m4 tinsel sword1 sword2
+		cruise igor made m4 tinsel tucker sword1 sword2
 	);
 
 	@TestingEngines = qw(

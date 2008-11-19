@@ -14,6 +14,7 @@ chdir("../../../");
 	"mmp/scummvm_cruise.mmp", 
 	"mmp/scummvm_drascula.mmp", 
 	"mmp/scummvm_gob.mmp", 
+	"mmp/scummvm_groovie.mmp", 
 	"mmp/scummvm_igor.mmp", 
 	"mmp/scummvm_kyra.mmp", 
 	"mmp/scummvm_lure.mmp", 
@@ -25,10 +26,10 @@ chdir("../../../");
 	"mmp/scummvm_scumm.mmp", 
 	"mmp/scummvm_sky.mmp", 
 	"mmp/scummvm_sword1.mmp", 
-	"mmp/scummvm_sword2.mmp", 
+	"mmp/scummvm_sword2.mmp",
 	"mmp/scummvm_touche.mmp", 
 	"mmp/scummvm_tinsel.mmp", 
-
+	"mmp/scummvm_tucker.mmp", 
 	# Target Platform Project Files
 	"S60/ScummVM_S60.mmp",  
 	"S60v3/ScummVM_S60v3.mmp", 
@@ -123,6 +124,8 @@ ParseModule("_igor",	"igor",		\@section_empty);
 ParseModule("_made",	"made",		\@section_empty);
 ParseModule("_m4",	"m4",		\@section_empty);
 ParseModule("_tinsel",	"tinsel",	\@section_empty);
+ParseModule("_groovie",	"groovie",	\@section_empty);
+ParseModule("_tucker",	"tucker",	\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P
