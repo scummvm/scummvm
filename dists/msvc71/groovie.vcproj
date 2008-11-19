@@ -112,6 +112,12 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\..\engines\groovie\cell.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\groovie\cell.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\groovie\cursor.cpp">
 		</File>
 		<File
