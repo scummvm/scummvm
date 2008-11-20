@@ -66,7 +66,6 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	int i;
 	uint8 tmpPal[1024];
 
-	_system->initSize(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_gameGrid = (uint8 *)malloc(GRID_X * GRID_Y * 2);
 	forceRefresh();
 
