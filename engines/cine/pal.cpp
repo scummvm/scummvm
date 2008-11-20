@@ -223,7 +223,7 @@ void Palette::saturatedAddColor(byte index, signed r, signed g, signed b) {
 }
 
 Palette& Palette::load9BitColors(uint16 *colors, uint colorCount) {
-	_colors.resize(colorCount);
+	setColorCount(colorCount);
 	for (uint i = 0; i < colorCount; i++) {
 		setComponent(i, R_INDEX, ((colors[i] >> 8) & 7) * COMPONENT_MUL);
 		setComponent(i, G_INDEX, ((colors[i] >> 4) & 7) * COMPONENT_MUL);
@@ -234,7 +234,7 @@ Palette& Palette::load9BitColors(uint16 *colors, uint colorCount) {
 }
 
 Palette& Palette::load24BitColors(byte *colors, uint colorCount) {
-	_colors.resize(colorCount);
+	setColorCount(colorCount);
 	for (uint i = 0; i < colorCount; i++) {
 		setComponent(i, R_INDEX, colors[i * 3 + 0]);
 		setComponent(i, G_INDEX, colors[i * 3 + 1]);
@@ -242,6 +242,10 @@ Palette& Palette::load24BitColors(byte *colors, uint colorCount) {
 		setComponent(i, A_INDEX, 0);
 	}
 	return *this;
+}
+
+void Palette::setColorCount(uint colorCount) {
+	_colors.resize(colorCount * COMPONENTS_PER_COLOR);
 }
 
 } // End of namespace Cine

@@ -80,6 +80,7 @@ private:
 	PackedColor getColor(byte colorIndex);
 	void setColor(byte colorIndex, PackedColor color);
 	void saturatedAddColor(byte index, signed r, signed g, signed b);
+	void setColorCount(uint colorCount);
 
 	Common::Array<byte> _colors;
 };
