@@ -398,9 +398,8 @@ bool ThemeEngine::addFont(const Common::String &fontId, const Common::String &fi
 }
 
 bool ThemeEngine::addBitmap(const Common::String &filename) {
-	if (_bitmaps.contains(filename)) {
+	if (_bitmaps.contains(filename))
 		ImageMan.unregisterSurface(filename);
-	}
 
 	ImageMan.registerSurface(filename, 0);
 	_bitmaps[filename] = ImageMan.getSurface(filename);
@@ -1070,9 +1069,11 @@ const Graphics::Font *ThemeEngine::loadFontFromArchive(const Common::String &fil
 	Common::Archive *arch = 0;
 	const Graphics::NewFont *font = 0;
 
-	if (getThemeFileName().hasSuffix(".zip")) {
+	Common::FSNode node(getThemeFileName());
+
+	if (node.getName().hasSuffix(".zip")) {
 #ifdef USE_ZLIB
-		Common::ZipArchive *zip = new Common::ZipArchive(getThemeFileName());
+		Common::ZipArchive *zip = new Common::ZipArchive(node);
 		if (!zip || !zip->isOpen())
 			return 0;
 
@@ -1081,7 +1082,7 @@ const Graphics::Font *ThemeEngine::loadFontFromArchive(const Common::String &fil
 		return 0;
 #endif
 	} else {
-		Common::FSDirectory *dir = new Common::FSDirectory(getThemeFileName());
+		Common::FSDirectory *dir = new Common::FSDirectory(node);
 		if (!dir || !dir->getFSNode().isDirectory())	
 			return 0;
 

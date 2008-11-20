@@ -47,10 +47,11 @@ ImageManager::~ImageManager() {
 
 bool ImageManager::addArchive(const Common::String &name) {
 	Common::Archive *arch = 0;
+	Common::FSNode node(name);
 
-	if (name.hasSuffix(".zip")) {
+	if (node.getName().hasSuffix(".zip")) {
 #ifdef USE_ZLIB
-		Common::ZipArchive *zip = new Common::ZipArchive(name);
+		Common::ZipArchive *zip = new Common::ZipArchive(node);
 		if (!zip || !zip->isOpen())
 			return false;
 
@@ -59,7 +60,7 @@ bool ImageManager::addArchive(const Common::String &name) {
 		return false;
 #endif
 	} else {
-		Common::FSDirectory *dir = new Common::FSDirectory(name);
+		Common::FSDirectory *dir = new Common::FSDirectory(node);
 		if (!dir || !dir->getFSNode().isDirectory())	
 			return false;
 
