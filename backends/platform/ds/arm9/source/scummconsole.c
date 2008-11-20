@@ -440,7 +440,7 @@ void printF(int w, float f)
 	*/
 }
 
-void consolePrintf(const char* s, ...)
+int consolePrintf(const char* s, ...)
 {
 	int w = 1, z = 0;
 
@@ -518,6 +518,8 @@ void consolePrintf(const char* s, ...)
 		s++;
 	}
 	va_end(argp);
+	
+	return 0;
 }
 
 void consolePutString(int x, int y, char* s)

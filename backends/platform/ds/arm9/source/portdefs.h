@@ -57,7 +57,7 @@ typedef signed int s32;
 #ifdef __cplusplus
 extern "C" {
 #endif
-void consolePrintf(const char* s, ...);
+int consolePrintf(const char* s, ...);
 #ifdef __cplusplus
 }
 #endif
