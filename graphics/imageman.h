@@ -44,7 +44,7 @@ public:
 	 * adds an .zip archive to the pool where the ImageManager searches
 	 * for image files
 	 *
-	 * @param name the name of the archive
+	 * @param name the name of the archive (has to be full path)
 	 * @return true on success and false on failure
 	 */
 	bool addArchive(const Common::String &name);
