@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "common/md5.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
@@ -1115,6 +1113,7 @@ bool IIgsSoundMgr::loadWaveFile(const Common::FSNode &wavePath, const IIgsExeInf
  * one of the strings in a list of strings. Can be used e.g. with find_if().
  */
 struct fsnodeNameEqualsIgnoreCase : public Common::UnaryFunction<const Common::FSNode&, bool> {
+// FIXME: This should be replaced; use SearchMan instead
 	fsnodeNameEqualsIgnoreCase(const Common::StringList &str) : _str(str) {}
 	fsnodeNameEqualsIgnoreCase(const Common::String str) { _str.push_back(str); }
 	bool operator()(const Common::FSNode &param) const {
