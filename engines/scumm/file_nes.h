@@ -45,8 +45,28 @@ public:
 	};
 
 	struct Resource;
+	struct ResourceGroup;
 	struct LFLEntry;
 	struct LFL;
+
+	enum ResType {
+		NES_UNKNOWN,
+		NES_GLOBDATA,
+		NES_ROOM,
+		NES_SCRIPT,
+		NES_SOUND,
+		NES_COSTUME,
+		NES_ROOMGFX,
+		NES_COSTUMEGFX,
+		NES_SPRPALS,
+		NES_SPRDESC,
+		NES_SPRLENS,
+		NES_SPROFFS,
+		NES_SPRDATA,
+		NES_CHARSET,
+		NES_PREPLIST
+	};
+
 
 private:
 	Common::MemoryReadStream *_stream;
@@ -55,7 +75,7 @@ private:
 
 	bool generateIndex();
 	bool generateResource(int res);
-	uint16 extractResource(Common::WriteStream *out, const Resource *res);
+	uint16 extractResource(Common::WriteStream *out, const Resource *res, ResType type);
 
 	byte fileReadByte();
 	uint16 fileReadUint16LE();
