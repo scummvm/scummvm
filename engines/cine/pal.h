@@ -46,6 +46,44 @@ uint16 transformColor(uint16 baseColor, int r, int g, int b);
 void transformPaletteRange(uint16 *srcPal, uint16 *dstPal, int startColor, int stopColor, int r, int g, int b);
 void transformPaletteRange(byte *srcPal, byte *dstPal, int startColor, int stopColor, int r, int g, int b);
 
+// This class might be used for handling Cine-engine's palettes in the future. WIP!
+// All colors are represented internally as 32-bit RGBA, but
+// 9-bit color palettes with 16 colors can be loaded and converted on-the-fly.
+// TODO: Add palette saving in the peculiar but used 9-bit color format.
+// TODO: Make use of this class.
+class Palette {
+public:
+	Palette& load24BitColors(byte *colors, uint colorCount = 256);
+	Palette& load9BitColors(uint16 *colors, uint colorCount = 16);
+	Palette& rotateRight(byte firstIndex, byte lastIndex);
+	Palette& saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b);
+	uint getColorCount() const;
+
+private:
+	static const byte
+		R_INDEX = 0,
+		G_INDEX = 1,
+		B_INDEX = 2,
+		A_INDEX = 3;
+
+	static const uint
+		COMPONENTS_PER_COLOR = 4,
+		BITS_PER_COMPONENT = 8,
+		COMPONENT_MASK = ((1 << BITS_PER_COMPONENT) - 1),
+		COMPONENT_MAX = COMPONENT_MASK,
+		COMPONENT_MUL = COMPONENT_MAX / 7;
+
+	typedef uint32 PackedColor;
+
+	byte& getComponent(byte colorIndex, byte componentIndex);
+	void setComponent(byte colorIndex, byte componentIndex, byte value);
+	PackedColor getColor(byte colorIndex);
+	void setColor(byte colorIndex, PackedColor color);
+	void saturatedAddColor(byte index, signed r, signed g, signed b);
+
+	Common::Array<byte> _colors;
+};
+
 } // End of namespace Cine
 
 #endif
