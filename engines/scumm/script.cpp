@@ -488,13 +488,12 @@ byte ScummEngine::fetchScriptByte() {
 }
 
 uint ScummEngine::fetchScriptWord() {
-	int a;
 	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
 		long oldoffs = _scriptPointer - _scriptOrgPointer;
 		getScriptBaseAddress();
 		_scriptPointer = _scriptOrgPointer + oldoffs;
 	}
-	a = READ_LE_UINT16(_scriptPointer);
+	uint a = READ_LE_UINT16(_scriptPointer);
 	_scriptPointer += 2;
 	return a;
 }
@@ -504,13 +503,12 @@ int ScummEngine::fetchScriptWordSigned() {
 }
 
 uint ScummEngine::fetchScriptDWord() {
-	int a;
 	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
-		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
+		long oldoffs = _scriptPointer - _scriptOrgPointer;
 		getScriptBaseAddress();
 		_scriptPointer = _scriptOrgPointer + oldoffs;
 	}
-	a = READ_LE_UINT32(_scriptPointer);
+	uint a = READ_LE_UINT32(_scriptPointer);
 	_scriptPointer += 4;
 	return a;
 }
@@ -718,17 +716,12 @@ void ScummEngine::setResult(int value) {
 
 void ScummEngine::push(int a) {
 	assert(_scummStackPos >= 0 && _scummStackPos < ARRAYSIZE(_vmStack));
-	debug(9, "push %d", a);
 	_vmStack[_scummStackPos++] = a;
 }
 
 int ScummEngine::pop() {
-	if (_scummStackPos < 1 || _scummStackPos > ARRAYSIZE(_vmStack)) {
-		error("No items on stack to pop() for %s (0x%X) at [%d-%d]", getOpcodeDesc(_opcode), _opcode, _roomResource, vm.slot[_currentScript].number);
-	}
-	--_scummStackPos;
-	debug(9, "pop %d", _vmStack[_scummStackPos]);
-	return _vmStack[_scummStackPos];
+	assert(_scummStackPos >= 1 && _scummStackPos <= ARRAYSIZE(_vmStack));
+	return _vmStack[--_scummStackPos];
 }
 
 void ScummEngine::stopObjectCode() {
