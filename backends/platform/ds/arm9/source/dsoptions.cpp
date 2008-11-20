@@ -33,13 +33,6 @@
 
 #define ALLOW_CPU_SCALER
 
-#ifdef DS_SCUMM_BUILD
-namespace Scumm {
-	extern Common::StringList generateSavegameList(Scumm::ScummEngine *scumm, bool saveMode);
-	extern Scumm::ScummEngine *g_scumm;
-}
-#endif
-
 namespace DS {
 
 DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
@@ -123,10 +116,6 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 
 
-
-#ifdef DS_SCUMM_BUILD
-	_delDialog = new Scumm::SaveLoadChooser("Delete game:", "Delete", false, Scumm::g_scumm);
-#endif
 
 	if (ConfMan.hasKey("snaptoborder", "ds")) {
 		_snapToBorderCheckbox->setState(ConfMan.getBool("snaptoborder", "ds"));
@@ -393,35 +382,6 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 		updateConfigManager();
 		close();
 	}
-	
-#ifdef DS_SCUMM_BUILD
-/*	if (cmd == 'dels') {
-		_delDialog->setList(Scumm::generateSavegameList(Scumm::g_scumm, false));
-		_delDialog->handleCommand(NULL, GUI::kListSelectionChangedCmd, 0);
-		
-		Common::Event event;
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.ascii = 0;
-		event.kbd.keycode = Common::KEYCODE_DOWN;
-		OSystem_DS::instance()->addEvent(event);
-
-		event.type = Common::EVENT_KEYUP;
-		OSystem_DS::instance()->addEvent(event);
-				
-		int idx = _delDialog->runModal();
-		
-		if (idx >= 0) {
-			char name[256];
-			Scumm::g_scumm->makeSavegameName(name, idx, false);
-			if (!DS::isGBAMPAvailable()) {
-				((DSSaveFileManager *) (OSystem_DS::instance()->getSavefileManager()))->deleteFile(name);
-			}
-		}
-		
-	}*/
-#endif
-	
-
 }
 
 void togglePause() {

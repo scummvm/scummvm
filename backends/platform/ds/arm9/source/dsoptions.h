@@ -71,10 +71,6 @@ protected:
 	GUI::CheckboxWidget* _touchPadStyle;
 	GUI::CheckboxWidget* _screenTaps;
 
-#ifdef DS_SCUMM_BUILD
-	Scumm::SaveLoadChooser* _delDialog;
-#endif
-
 	bool	_radioButtonMode;
 
 };
