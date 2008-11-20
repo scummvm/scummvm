@@ -57,22 +57,22 @@ enum {
 // TODO: Allow color change in the middle of a line...
 
 static const char *copyright_text[] = {
-"\\C""",
-"\\C""Copyright (C) 2001-2008 The ScummVM project",
-"\\C""http://www.scummvm.org",
-"\\C""",
-"\\C""ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
-"\\C""",
+"",
+"C0""Copyright (C) 2001-2008 The ScummVM project",
+"C0""http://www.scummvm.org",
+"",
+"C0""ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
+"",
 };
 
 static const char *gpl_text[] = {
-"\\C""",
-"\\C""This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.",
-"\\C""",
-"\\C""This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.",
-"\\C""",
-"\\C""You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.",
-"\\C""",
+"",
+"C0""This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.",
+"C0""",
+"C0""This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.",
+"",
+"C0""You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.",
+"",
 };
 
 #include "gui/credits.h"
@@ -109,11 +109,11 @@ AboutDialog::AboutDialog()
 	for (i = 0; i < 1; i++)
 		_lines.push_back("");
 
-	Common::String version("\\C\\c0""ScummVM ");
+	Common::String version("C0""ScummVM ");
 	version += gScummVMVersion;
 	_lines.push_back(version);
 
-	Common::String date("\\C\\c2""(built on ");
+	Common::String date("C2""(built on ");
 	date += gScummVMBuildDate;
 	date += ')';
 	_lines.push_back(date);
@@ -121,23 +121,23 @@ AboutDialog::AboutDialog()
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
 		addLine(copyright_text[i]);
 
-	addLine("\\C\\c1""Features compiled in:");
-	Common::String features("\\C");
+	addLine("C1""Features compiled in:");
+	Common::String features("C0");
 	features += gScummVMFeatures;
 	addLine(features.c_str());
 
 	_lines.push_back("");
 
-	addLine("\\C\\c1""Available engines:");
+	addLine("C1""Available engines:");
 	const EnginePlugin::List &plugins = EngineMan.getPlugins();
 	EnginePlugin::List::const_iterator iter = plugins.begin();
 	for (; iter != plugins.end(); ++iter) {
 	  Common::String str;
-	  str = "\\C";
+	  str = "C0";
 	  str += (**iter).getName();
 	  addLine(str.c_str());
 
-	  str = "\\C\\c2";
+	  str = "C2";
 	  str += (**iter)->getCopyright();
 	  addLine(str.c_str());
 
@@ -158,29 +158,12 @@ AboutDialog::AboutDialog()
 }
 
 void AboutDialog::addLine(const char *str) {
-	// Extract formatting instructions
-	Common::String format;
-	while (*str == '\\') {
-		format += *str++;
-		switch (*str) {
-		case 'C':
-		case 'L':
-		case 'R':
-			format += *str++;
-			break;
-		case 'c':
-			format += *str++;
-			format += *str++;
-			break;
-		default:
-			error("Unknown scroller opcode '%c'\n", *str);
-			break;
-		}
-	}
-
 	if (*str == 0) {
-		_lines.push_back(format);
+		_lines.push_back("");
 	} else {
+		Common::String format(str, 2);
+		str += 2;
+
 		Common::StringList wrappedLines;
 		g_gui.getFont().wordWrapText(str, _w - 2 * _xOff, wrappedLines);
 
@@ -220,8 +203,8 @@ void AboutDialog::drawDialog() {
 		const char *str = _lines[line].c_str();
 		Graphics::TextAlign align = Graphics::kTextAlignCenter;
 		ThemeEngine::WidgetStateInfo state = ThemeEngine::kStateEnabled;
-		while (str[0] == '\\') {
-			switch (str[1]) {
+		if (*str) {
+			switch (str[0]) {
 			case 'C':
 				align = Graphics::kTextAlignCenter;
 				break;
@@ -231,33 +214,30 @@ void AboutDialog::drawDialog() {
 			case 'R':
 				align = Graphics::kTextAlignRight;
 				break;
-			case 'c':
-				switch (str[2]) {
-				case '0':
-					state = ThemeEngine::kStateEnabled;
-					break;
-				case '1':
-					state = ThemeEngine::kStateHighlight;
-					break;
-				case '2':
-					state = ThemeEngine::kStateDisabled;
-					break;
-				case '3':
-					warning("Need state for color 3");
-					// color = g_gui._shadowcolor;
-					break;
-				case '4':
-					warning("Need state for color 4");
-					// color = g_gui._bgcolor;
-					break;
-				default:
-					error("Unknown color type '%c'", str[2]);
-				}
-				str++;
+			default:
+				error("Unknown scroller opcode '%c'", str[0]);
+				break;
+			}
+			switch (str[1]) {
+			case '0':
+				state = ThemeEngine::kStateEnabled;
+				break;
+			case '1':
+				state = ThemeEngine::kStateHighlight;
+				break;
+			case '2':
+				state = ThemeEngine::kStateDisabled;
+				break;
+			case '3':
+				warning("Need state for color 3");
+				// color = g_gui._shadowcolor;
+				break;
+			case '4':
+				warning("Need state for color 4");
+				// color = g_gui._bgcolor;
 				break;
 			default:
-				error("Unknown scroller opcode '%c'\n", str[1]);
-				break;
+				error("Unknown color type '%c'", str[1]);
 			}
 			str += 2;
 		}
@@ -266,7 +246,7 @@ void AboutDialog::drawDialog() {
 			while (*str && *str == ' ')
 				str++;
 
-		if (y > _y && y + g_gui.theme()->getFontHeight() < _y + _h)
+		if (*str && y > _y && y + g_gui.theme()->getFontHeight() < _y + _h)
 			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()), str, state, align, false, 0, false);
 		y += _lineHeight;
 	}

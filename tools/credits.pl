@@ -264,11 +264,11 @@ sub begin_section {
 		  # TODO: Would be nice to have a 'fat' or 'large' mode for
 		  # headlines...
 		  $title = html_entities_to_cpp($title);
-		  print '"\\\\C\\\\c1""'.$title.'",' . "\n";
-		  print '"\\\\C\\\\c0""",' . "\n";
+		  print '"C1""'.$title.'",' . "\n";
+		  print '"",' . "\n";
 		} else {
 		  $title = html_entities_to_cpp($title);
-		  print '"\\\\C\\\\c1""'.$title.'",' . "\n";
+		  print '"C1""'.$title.'",' . "\n";
 		}
 	} elsif ($mode eq "XML") {
 		print "  <row><entry namest='start' nameend='job'>";
@@ -310,7 +310,7 @@ sub end_section {
 	} elsif ($mode eq "RTF") {
 		# nothing
 	} elsif ($mode eq "CPP") {
-		print '"\\\\C\\\\c0""",' . "\n";
+		print '"",' . "\n";
 	} elsif ($mode eq "XML") {
 		print "  <row><entry namest='start' nameend='job'> </entry></row>\n\n";
 	} elsif ($mode eq "HTML") {
@@ -389,12 +389,12 @@ sub add_person {
 		$name = $nick if $name eq "";
 		$name = html_entities_to_cpp($name);
 
-		print '"\\\\C\\\\c0""'.$name.'",' . "\n";
+		print '"C0""'.$name.'",' . "\n";
 
 		# Print desc wrapped
 		if (length $desc > 0) {
 			$desc = html_entities_to_cpp($desc);
-			print '"\\\\C\\\\c2""'.$desc.'",' . "\n";
+			print '"C2""'.$desc.'",' . "\n";
 		}
 	} elsif ($mode eq "XML") {
 		$name = $nick if $name eq "";
@@ -433,7 +433,7 @@ sub add_paragraph {
 		print "\\\n";
 		print $text . "\\\n";
 	} elsif ($mode eq "CPP") {
-		my $line_start = '"\\\\C\\\\c0""';
+		my $line_start = '"C0""';
 		my $line_end = '",';
 		print $line_start . $text . $line_end . "\n";
 		print $line_start . $line_end . "\n";
