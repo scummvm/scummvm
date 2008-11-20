@@ -168,7 +168,7 @@ byte& Palette::getComponent(byte colorIndex, byte componentIndex) {
 
 void Palette::setComponent(byte colorIndex, byte componentIndex, byte value) {
 	getComponent(colorIndex, componentIndex) = value;
-};
+}
 
 Palette::PackedColor Palette::getColor(byte colorIndex) {
 	return (getComponent(colorIndex, R_INDEX) << (R_INDEX * BITS_PER_COMPONENT)) |
