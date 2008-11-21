@@ -115,9 +115,8 @@ FSDirectory::~FSDirectory() {
 void FSDirectory::setPrefix(const String &prefix) {
 	_prefix = prefix;
 
-	if (!_prefix.empty() && !_prefix.hasSuffix("/")) {
+	if (!_prefix.empty() && !_prefix.hasSuffix("/"))
 		_prefix += "/";
-	}
 }
 
 FSNode FSDirectory::getFSNode() const {
@@ -137,18 +136,16 @@ FSNode FSDirectory::lookupCache(NodeCache &cache, const String &name) {
 }
 
 bool FSDirectory::hasFile(const String &name) {
-	if (name.empty() || !_node.isDirectory()) {
+	if (name.empty() || !_node.isDirectory())
 		return false;
-	}
 
 	FSNode node = lookupCache(_fileCache, name);
 	return node.exists();
 }
 
 ArchiveMemberPtr FSDirectory::getMember(const String &name) {
-	if (name.empty() || !_node.isDirectory()) {
+	if (name.empty() || !_node.isDirectory())
 		return ArchiveMemberPtr();
-	}
 
 	FSNode node = lookupCache(_fileCache, name);
 
@@ -164,9 +161,8 @@ ArchiveMemberPtr FSDirectory::getMember(const String &name) {
 }
 
 SeekableReadStream *FSDirectory::openFile(const String &name) {
-	if (name.empty() || !_node.isDirectory()) {
+	if (name.empty() || !_node.isDirectory())
 		return 0;
-	}
 
 	FSNode node = lookupCache(_fileCache, name);
 
@@ -179,9 +175,8 @@ SeekableReadStream *FSDirectory::openFile(const String &name) {
 	}
 
 	SeekableReadStream *stream = node.openForReading();
-	if (!stream) {
+	if (!stream)
 		warning("FSDirectory::openFile: Can't create stream for file '%s'", name.c_str());
-	}
 
 	return stream;
 }
@@ -191,32 +186,30 @@ FSDirectory *FSDirectory::getSubDirectory(const String &name, int depth) {
 }
 
 FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &name, int depth) {
-	if (name.empty() || !_node.isDirectory()) {
+	if (name.empty() || !_node.isDirectory())
 		return 0;
-	}
 
 	FSNode node = lookupCache(_subDirCache, name);
 	return new FSDirectory(prefix, node, depth);
 }
 
 void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) {
-	if (depth <= 0) {
+	if (depth <= 0)
 		return;
-	}
 
 	FSList list;
 	node.getChildren(list, FSNode::kListAll, false);
 
 	FSList::iterator it = list.begin();
 	for ( ; it != list.end(); it++) {
-		String name = prefix + (*it).getName();
+		String name = prefix + it->getName();
 
 		// don't touch name as it might be used for warning messages
 		String lowercaseName = name;
 		lowercaseName.toLowercase();
 
 		// since the hashmap is case insensitive, we need to check for clashes when caching
-		if ((*it).isDirectory()) {
+		if (it->isDirectory()) {
 			if (_subDirCache.contains(lowercaseName)) {
 				warning("FSDirectory::cacheDirectory: name clash when building cache, ignoring sub-directory '%s'", name.c_str());
 			} else {
@@ -234,9 +227,9 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& 
 
 }
 
-void FSDirectory::ensureCached()
-{
-	if (_cached) return;
+void FSDirectory::ensureCached() {
+	if (_cached)
+		return;
 	cacheDirectoryRecursive(_node, _depth, _prefix);
 	_cached = true;
 }
@@ -254,8 +247,8 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 	int matches = 0;
 	NodeCache::iterator it = _fileCache.begin();
 	for ( ; it != _fileCache.end(); it++) {
-		if ((*it)._key.matchString(lowercasePattern)) {
-			list.push_back(ArchiveMemberPtr(new FSDirectoryMember((*it)._value)));
+		if (it->_key.matchString(lowercasePattern)) {
+			list.push_back(ArchiveMemberPtr(new FSDirectoryMember(it->_value)));
 			matches++;
 		}
 	}
@@ -273,9 +266,8 @@ int FSDirectory::listMembers(ArchiveMemberList &list) {
 SearchSet::ArchiveList::iterator SearchSet::find(const String &name) const {
 	ArchiveList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++) {
-		if ((*it)._name == name) {
+		if (it->_name == name)
 			break;
-		}
 	}
 	return it;
 }
@@ -288,9 +280,8 @@ SearchSet::ArchiveList::iterator SearchSet::find(const String &name) const {
 void SearchSet::insert(const Node &node) {
 	ArchiveList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++) {
-		if ((*it)._priority < node._priority) {
+		if (it->_priority < node._priority)
 			break;
-		}
 	}
 	_list.insert(it, node);
 }
@@ -336,9 +327,8 @@ void SearchSet::setPriority(const String &name, int priority) {
 		return;
 	}
 
-	if (priority == (*it)._priority) {
+	if (priority == it->_priority)
 		return;
-	}
 
 	Node node(*it);
 	_list.erase(it);
@@ -347,15 +337,13 @@ void SearchSet::setPriority(const String &name, int priority) {
 }
 
 bool SearchSet::hasFile(const String &name) {
-	if (name.empty()) {
+	if (name.empty())
 		return false;
-	}
 
 	ArchiveList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++) {
-		if ((*it)._arc->hasFile(name)) {
+		if (it->_arc->hasFile(name))
 			return true;
-		}
 	}
 
 	return false;
@@ -365,9 +353,8 @@ int SearchSet::listMatchingMembers(ArchiveMemberList &list, const String &patter
 	int matches = 0;
 
 	ArchiveList::iterator it = _list.begin();
-	for ( ; it != _list.end(); it++) {
-		matches += (*it)._arc->listMatchingMembers(list, pattern);
-	}
+	for ( ; it != _list.end(); it++)
+		matches += it->_arc->listMatchingMembers(list, pattern);
 
 	return matches;
 }
@@ -376,38 +363,33 @@ int SearchSet::listMembers(ArchiveMemberList &list) {
 	int matches = 0;
 
 	ArchiveList::iterator it = _list.begin();
-	for ( ; it != _list.end(); it++) {
-		matches += (*it)._arc->listMembers(list);
-	}
+	for ( ; it != _list.end(); it++)
+		matches += it->_arc->listMembers(list);
 
 	return matches;
 }
 
 ArchiveMemberPtr SearchSet::getMember(const String &name) {
-	if (name.empty()) {
+	if (name.empty())
 		return ArchiveMemberPtr();
-	}
 
 	ArchiveList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++) {
-		if ((*it)._arc->hasFile(name)) {
-			return (*it)._arc->getMember(name);
-		}
+		if (it->_arc->hasFile(name))
+			return it->_arc->getMember(name);
 	}
 
 	return ArchiveMemberPtr();
 }
 
 SeekableReadStream *SearchSet::openFile(const String &name) {
-	if (name.empty()) {
+	if (name.empty())
 		return 0;
-	}
 
 	ArchiveList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++) {
-		if ((*it)._arc->hasFile(name)) {
-			return (*it)._arc->openFile(name);
-		}
+		if (it->_arc->hasFile(name))
+			return it->_arc->openFile(name);
 	}
 
 	return 0;
