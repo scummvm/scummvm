@@ -4,7 +4,7 @@ engine-data README
 kyra.dat:
 The 'kyra.dat' file is created by extracting hardcoded data, like the
 roomtable, inventory names, various strings, tables for shapes and sequence
-scripts, from. Currently the tool which does this is NOT released.
+scripts, from.
 
 queen.tbl:
 'queen.tbl' contains a list of filenames, filesizes and offsets for the
