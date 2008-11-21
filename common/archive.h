@@ -165,6 +165,8 @@ class FSDirectory : public Archive {
 
 	// cache management
 	void cacheDirectoryRecursive(FSNode node, int depth, const String& prefix);
+	// fill cache if not already cached
+	void ensureCached();
 	bool _cached;
 	int	_depth;
 

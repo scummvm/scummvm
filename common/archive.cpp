@@ -127,10 +127,7 @@ FSNode FSDirectory::getFSNode() const {
 FSNode FSDirectory::lookupCache(NodeCache &cache, const String &name) {
 	// make caching as lazy as possible
 	if (!name.empty()) {
-		if (!_cached) {
-			cacheDirectoryRecursive(_node, _depth, _prefix);
-			_cached = true;
-		}
+		ensureCached();
 
 		if (cache.contains(name))
 			return cache[name];
@@ -237,15 +234,19 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& 
 
 }
 
+void FSDirectory::ensureCached()
+{
+	if (_cached) return;
+	cacheDirectoryRecursive(_node, _depth, _prefix);
+	_cached = true;
+}
+
 int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &pattern) {
 	if (!_node.isDirectory())
 		return 0;
 
 	// Cache dir data
-	if (!_cached) {
-		cacheDirectoryRecursive(_node, _depth, "");
-		_cached = true;
-	}
+	ensureCached();
 
 	String lowercasePattern(pattern);
 	lowercasePattern.toLowercase();
