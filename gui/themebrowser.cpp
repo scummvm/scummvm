@@ -143,9 +143,11 @@ void ThemeBrowser::addDir(ThList &list, const Common::FSNode &node) {
 	if (!node.exists() || !node.isReadable())
 		return;
 
+	// Scan this dir, all files and all subdirs in it for themes
 	Common::FSList fslist;
 	if (!node.getChildren(fslist, Common::FSNode::kListAll))
 		return;
+	fslist.push_back(node);	// Yup, also scan the dir itself
 
 	for (Common::FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
 		
@@ -162,26 +164,6 @@ void ThemeBrowser::addDir(ThList &list, const Common::FSNode &node) {
 
 			if (add)
 				list.push_back(th);	
-		}
-	}
-
-	if (node.lookupFile(fslist, "THEMERC", false, true, 1)) {
-		for (Common::FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
-			
-			Entry th;
-			if (isTheme(i->getParent(), th)) {
-				bool add = true;
-				
-				for (ThList::const_iterator p = list.begin(); p != list.end(); ++p) {
-					if (p->name == th.name || p->file == th.file) {
-						add = false;
-						break;
-					}
-				}
-
-				if (add)
-					list.push_back(th);
-			}
 		}
 	}
 }
