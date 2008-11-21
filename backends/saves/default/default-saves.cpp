@@ -31,6 +31,7 @@
 #include "common/savefile.h"
 #include "common/util.h"
 #include "common/fs.h"
+#include "common/archive.h"
 #include "common/config-manager.h"
 
 #include <errno.h>	// for removeSavefile()
@@ -59,13 +60,14 @@ Common::StringList DefaultSaveFileManager::listSavefiles(const char *pattern) {
 	if (getError() != Common::kNoError)
 		return Common::StringList();
 
-	Common::FSList savefiles;
+	Common::FSDirectory dir(savePath);
+	Common::ArchiveMemberList savefiles;
 	Common::StringList results;
 	Common::String search(pattern);
 
-	if (savePath.lookupFile(savefiles, search, false, true, 0)) {
-		for (Common::FSList::const_iterator file = savefiles.begin(); file != savefiles.end(); ++file) {
-			results.push_back(file->getName());
+	if (dir.listMatchingMembers(savefiles, search) > 0) {
+		for (Common::ArchiveMemberList::const_iterator file = savefiles.begin(); file != savefiles.end(); ++file) {
+			results.push_back((*file)->getName());
 		}
 	}
 
