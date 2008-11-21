@@ -135,44 +135,6 @@ bool FSNode::isWritable() const {
 	return _realNode->isWritable();
 }
 
-bool FSNode::lookupFile(FSList &results, const Common::String &p, bool hidden, bool exhaustive, int depth) const {
-	if (!isDirectory())
-		return false;
-
-	FSList children;
-	FSList subdirs;
-	Common::String pattern = p;
-
-	pattern.toUppercase();
-
-	// First match all files on this level
-	getChildren(children, FSNode::kListAll, hidden);
-	for (FSList::iterator entry = children.begin(); entry != children.end(); ++entry) {
-		if (entry->isDirectory()) {
-			if (depth != 0)
-				subdirs.push_back(*entry);
-		} else {
-			Common::String filename = entry->getName();
-			filename.toUppercase();
-			if (filename.matchString(pattern)) {
-				results.push_back(*entry);
-
-				if (!exhaustive)
-					return true;	// Abort on first match if no exhaustive search was requested
-			}
-		}
-	}
-
-	// Now scan all subdirs
-	for (FSList::iterator child = subdirs.begin(); child != subdirs.end(); ++child) {
-		child->lookupFile(results, pattern, hidden, exhaustive, depth - 1);
-		if (!exhaustive && !results.empty())
-			return true;	// Abort on first match if no exhaustive search was requested
-	}
-
-	return !results.empty();
-}
-
 Common::SeekableReadStream *FSNode::openForReading() const {
 	if (_realNode == 0)
 		return 0;

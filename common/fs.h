@@ -206,25 +206,6 @@ public:
 	virtual bool isWritable() const;
 
 	/**
-	 * Searches recursively for files matching the specified pattern inside this directory and
-	 * all its subdirectories. It is safe to call this method for non-directories, in this case
-	 * it will just return false.
-	 *
-	 * The files in each directory are scanned first. Other than that, a depth first search
-	 * is performed.
-	 *
-	 * @param results List to put the matches in.
-	 * @param pattern Pattern of the files to look for.
-	 * @param hidden Whether to search hidden files or not.
-	 * @param exhaustive Whether to continue searching after one match has been found.
-	 * @param depth How many levels to search through (-1 = search all subdirs, 0 = only the current one)
-	 *
-	 * @return true if matches could be found, false otherwise.
-	 */
-	virtual bool lookupFile(FSList &results, const Common::String &pattern, bool hidden, bool exhaustive, int depth = -1) const;
-	
-	
-	/**
 	 * Creates a SeekableReadStream instance corresponding to the file
 	 * referred by this node. This assumes that the node actually refers
 	 * to a readable file. If this is not the case, 0 is returned.
