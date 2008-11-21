@@ -550,14 +550,14 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 
 		if (_parser->loadStream((*i)->open()) == false) {
 			delete archive;
-			warning("Failed to load STX file '%s'", (*i)->getName().c_str());
+			warning("Failed to load STX file '%s'", (*i)->getDisplayName().c_str());
 			_parser->close();
 			return false;
 		}
 
 		if (_parser->parse() == false) {
 			delete archive;
-			warning("Failed to parse STX file '%s'", (*i)->getName().c_str());
+			warning("Failed to parse STX file '%s'", (*i)->getDisplayName().c_str());
 			_parser->close();
 			return false;
 		}

@@ -47,8 +47,9 @@ namespace Common {
 class ArchiveMember {
 public:
 	virtual ~ArchiveMember() { }
-	virtual String getName() const = 0;
 	virtual SeekableReadStream *open() = 0;
+	virtual String getName() const = 0;
+	virtual String getDisplayName() const { return getName(); }
 };
 
 typedef SharedPtr<ArchiveMember> ArchiveMemberPtr;

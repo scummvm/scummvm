@@ -76,14 +76,11 @@ public:
 	FSDirectoryMember(FSNode &node) : _node(node) {
 	}
 
-	/*
-		NOTE/FIXME: since I assume that the only use case for getName()
-		is for error messages, I am returning the full path of the node
-		here. This seems better than we did before, when matchPattern
-		and getAllNames used to work with StringList, and we used to
-		put the relative path of the file to the list instead.
-	*/
 	String getName() const {
+		return _node.getName();
+	}
+
+	String getDisplayName() const {
 		return _node.getPath();
 	}
 
@@ -91,8 +88,6 @@ public:
 		return _node.openForReading();
 	}
 };
-
-typedef SharedPtr<FSDirectoryMember> FSDirectoryMemberPtr;
 
 FSDirectory::FSDirectory(const FSNode &node, int depth)
   : _node(node), _cached(false), _depth(depth) {
@@ -259,7 +254,7 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 	NodeCache::iterator it = _fileCache.begin();
 	for ( ; it != _fileCache.end(); it++) {
 		if ((*it)._key.matchString(lowercasePattern)) {
-			list.push_back(FSDirectoryMemberPtr(new FSDirectoryMember((*it)._value)));
+			list.push_back(ArchiveMemberPtr(new FSDirectoryMember((*it)._value)));
 			matches++;
 		}
 	}

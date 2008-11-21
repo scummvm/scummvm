@@ -229,7 +229,7 @@ Common::Archive *ResLoaderPak::load(Common::SharedPtr<Common::ArchiveMember> mem
 	while (!stream.eos()) {
 		// The start offset of a file should never be in the filelist
 		if (startoffset < stream.pos() || startoffset > filesize) {
-			warning("PAK file '%s' is corrupted", memberFile->getName().c_str());
+			warning("PAK file '%s' is corrupted", memberFile->getDisplayName().c_str());
 			return false;
 		}
 
@@ -240,14 +240,14 @@ Common::Archive *ResLoaderPak::load(Common::SharedPtr<Common::ArchiveMember> mem
 			file += c;
 
 		if (stream.eos()) {
-			warning("PAK file '%s' is corrupted", memberFile->getName().c_str());
+			warning("PAK file '%s' is corrupted", memberFile->getDisplayName().c_str());
 			return false;
 		}
 
 		// Quit now if we encounter an empty string
 		if (file.empty()) {
 			if (firstFile) {
-				warning("PAK file '%s' is corrupted", memberFile->getName().c_str());
+				warning("PAK file '%s' is corrupted", memberFile->getDisplayName().c_str());
 				return false;
 			} else {
 				break;
