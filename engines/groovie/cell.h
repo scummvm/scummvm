@@ -27,6 +27,12 @@
 #define GROOVIE_CELL_H
 
 #include "common/file.h"
+#include "common/util.h"
+
+#define BOARDSIZE 7
+#define CELL_CLEAR 0
+#define CELL_BLUE 1
+#define CELL_GREEN 2
 
 namespace Groovie {
 
@@ -37,13 +43,21 @@ class CellGame {
 public:
 	CellGame(byte *board);
 	~CellGame();
+	int8 calcMove(byte *origboard, uint8 color, uint8 depth);
 	byte getStartX();
 	byte getStartY();
 	byte getEndX();
 	byte getEndY();
 
 private:
+	bool validMove(byte *board, uint8 color, int8 endX, int8 endY);
+	uint8 countBoard(byte* board, uint8 color);
 	byte *_board;
+
+	byte _startX;
+	byte _startY;
+	byte _endX;
+	byte _endY;
 };
 
 } // End of Groovie namespace
