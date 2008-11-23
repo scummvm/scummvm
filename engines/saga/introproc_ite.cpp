@@ -454,7 +454,7 @@ int Scene::ITEIntroCave1Proc(int param) {
 		{
 			3,		// cave voice 3
 			"Conoscevano il Segreto del Volo, il Segreto della "
-			"Felicit\224, ed altri segreti oltre ogni nostra "
+			"Felicit\205, ed altri segreti oltre ogni nostra "
 			"immaginazione."
 		} }
 	};
@@ -547,7 +547,7 @@ int Scene::ITEIntroCave2Proc(int param) {
 		},
 		{
 			5,		// cave voice 5
-			"Il pensiero, le emozioni, la parola e la manualit\224."
+			"Il pensiero, le emozioni, la parola e la manualit\205."
 
 		},
 		{
@@ -651,12 +651,12 @@ int Scene::ITEIntroCave3Proc(int param) {
 		{
 			8,		// cave voice 8
 			"Ci mostrarono le gioie che l'uso della mente "
-			"pu\242 dare. "
+			"pu\225 dare. "
 		},
 		{
 			9,		// cave voice 9
 			"Ci amarono, ed una volta pronti, ci avrebbero "
-			"sicuramente svelato il Segreto della Felicit\224."
+			"sicuramente svelato il Segreto della Felicit\205."
 
 		} }
 	};
@@ -760,12 +760,12 @@ int Scene::ITEIntroCave4Proc(int param) {
 		{ { // Italian fan translation
 			10,		// cave voice 10
 			"Ed ora che guardiamo il cielo, la terra e l'acqua "
-			"che abbiamo ereditato, pensiamo: Perch\233 partirono?"
+			"che abbiamo ereditato, pensiamo: Perch\202 partirono?"
 
 		},
 		{
 			11,		// cave voice 11
-			"Vivono ancora, nelle stelle? Nelle profondit\224 "
+			"Vivono ancora, nelle stelle? Nelle profondit\205 "
 			"dell'oceano? Nel vento?"
 		},
 		{

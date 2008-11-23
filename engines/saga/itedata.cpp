@@ -388,7 +388,7 @@ const char *ITEinterfaceTextStrings[][53] = {
 		"Chiudi", "Usa", "Dai", "Opzioni", "Test",
 		"Demo", "Aiuto", "Uscire", "Veloce", "Lento",
 		"On", "Off", "Continua il Gioco", "Carica", "Salva",
-		"Controlli", "Velocit\224 testo", "Musica", "Suoni", "Annulla",
+		"Controlli", "Velocit\205 testo", "Musica", "Suoni", "Annulla",
 		"Fine", "OK", "Med", "Click", "10%",
 		"20%", "30%", "40%", "50%", "60%",
 		"70%", "80%", "90%", "Max", "Terminare il Gioco?",
@@ -396,7 +396,7 @@ const char *ITEinterfaceTextStrings[][53] = {
 		"[Nuovo Salvataggio]",
 		"Non posso raccoglierlo.",
 		"Non ci vedo nulla di speciale.",
-		"Non c'\232 posto per aprirlo.",
+		"Non c'\212 posto per aprirlo.",
 		"Nessuna apertura da chiudere.",
 		"Non saprei come farlo.",
 		"Dialoghi",
@@ -511,7 +511,7 @@ const char *sakkaStr[][NUM_SAKKA] = {
 	},
 	{ "Hey, non si dovrebbero aiutare i candidati!",
 	"Ragazzi! Questo dovrebbe essere un test!",
-	"Forza ragazzi, non si pu\242!"
+	"Forza ragazzi, non si pu\225!"
 	}
 };
 
@@ -529,7 +529,7 @@ const char *whineStr[][NUM_WHINES] = {
 	"Hm, ich kann mich an keine Regel erinnern, die Tips verbietet."
 	},
 	{ "Ooo, suvvia Sakka!",
-	"Un indizio non guaster\224, no?",
+	"Un indizio non guaster\205, no?",
 	"Sigh...",
 	"Credo che questa faccenda ti abbia dato alla testa, Sakka!",
 	"Beh, non ricordo regole specifiche contro i suggerimenti."
@@ -547,7 +547,7 @@ const char *optionsStr[][4] = {
 	"\"Nein danke, ich m\224chte das alleine l\224sen.\"",
 	"Pssst... %s... falsche Stelle..."
 	},
-	{ "\"Far\242 questo puzzle pi\249 tardi.\"",
+	{ "\"Far\225 questo puzzle pi\227 tardi.\"",
 	"\"Si, grazie. Ne avrei bisogno.\"",
 	"\"No, grazie, voglio provare a risolverlo da solo.\"",
 	"Penso che la tessera %s sia nel posto sbagliato."
