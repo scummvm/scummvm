@@ -70,15 +70,11 @@ public:
 	bool ioFailed() const { return _myIoFailed || BaseScummFile::ioFailed(); }
 	void clearIOFailed() { _myIoFailed = false; BaseScummFile::clearIOFailed(); }
 
+	bool eos() const;
 	int32 pos() const;
 	int32 size() const;
 	bool seek(int32 offs, int whence = SEEK_SET);
-
-// Unused
-#if 0
-	bool eos() const;
 	uint32 read(void *dataPtr, uint32 dataSize);
-#endif
 };
 
 class ScummDiskImage : public BaseScummFile {
@@ -119,15 +115,11 @@ public:
 	bool openSubFile(const Common::String &filename);
 
 	void close();
+	bool eos() const { return _stream->eos(); }
 	int32 pos() const { return _stream->pos(); }
 	int32 size() const { return _stream->size(); }
 	bool seek(int32 offs, int whence = SEEK_SET) { return _stream->seek(offs, whence); }
-
-// Unused
-#if 0
-	bool eos() const { return _stream->eos(); }
 	uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
-#endif
 };
 
 } // End of namespace Scumm

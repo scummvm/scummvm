@@ -124,12 +124,10 @@ bool ScummFile::openSubFile(const Common::String &filename) {
 	return false;
 }
 
-// Unused
-#if 0
+
 bool ScummFile::eos() const {
 	return _subFileLen ? (pos() >= _subFileLen) : File::eos(); // FIXME
 }
-#endif
 
 int32 ScummFile::pos() const {
 	return File::pos() - _subFileStart;
@@ -159,8 +157,6 @@ bool ScummFile::seek(int32 offs, int whence) {
 	return File::seek(offs, whence);
 }
 
-// Unused
-#if 0
 uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 	uint32 realLen;
 
@@ -190,7 +186,6 @@ uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 
 	return realLen;
 }
-#endif
 
 #pragma mark -
 #pragma mark --- ScummDiskImage ---
