@@ -169,7 +169,7 @@ void restoreVRAM(int tileBase, int mapBase, u16* saveSpace) {
 }
 
 void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
-	int keyboardDataSize = 4736 * 2;
+ 	/* int keyboardDataSize = 4736 * 2; */
 
 	for (int r = 0; r < 32 * 32; r++) {
 //		*saveSpace++ = ((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase))[r];
@@ -263,7 +263,7 @@ void drawAutoComplete() {
 		int y = 12 + (r % 6) * 2;
 		int x = 0 + ((r / 6) * 16);
 
-		for (int p = 0; p < strlen(autoCompleteWord[r]); p++) {
+		for (int p = 0; p < (int)strlen(autoCompleteWord[r]); p++) {
 			char c = autoCompleteWord[r][p];
 			
 			int tile = c - 33 + (KEYBOARD_DATA_SIZE / 32);
@@ -317,7 +317,7 @@ void clearAutoComplete() {
 
 void typeCompletion(int current) {
 	Common::Event event;
-   	OSystem_DS* system = OSystem_DS::instance();
+   	/* OSystem_DS* system = OSystem_DS::instance(); */
 
 	strcat(autoCompleteBuffer, &autoCompleteWord[current][charactersEntered]);
 	strcat(autoCompleteBuffer, " ");
@@ -361,7 +361,7 @@ void updateTypeEvents()
 		event.type = Common::EVENT_KEYUP;
 		system->addEvent(event);
 
-		for (int r = 0; r < strlen(autoCompleteBuffer); r++)
+		for (int r = 0; r < (int)strlen(autoCompleteBuffer); r++)
 		{
 			autoCompleteBuffer[r] = autoCompleteBuffer[r + 1];
 		}

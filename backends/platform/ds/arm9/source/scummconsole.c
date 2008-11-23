@@ -498,7 +498,12 @@ int consolePrintf(const char* s, ...)
 				break;
 			case 'f':
 			case 'F':
-				printF(w,va_arg(argp, double));
+/* Need to undo our 'all doubles are floats' definition */
+#define TEMP_DEF double
+#undef double
+			        printF(w,va_arg(argp, double));
+#define double TEMP_DEF
+#undef TEMP_DEF
 				s++;
 				break;
 			case 's':
