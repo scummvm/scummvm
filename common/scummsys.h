@@ -46,7 +46,6 @@
 		#pragma once
 		#pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
 		#pragma	warning( disable : 4103 ) // turn off "alignement changed after including header" warning. We use pack-start.h file
-		#pragma warning( disable : 4125 ) // turn off "decimal digit terminates octal escape sequence" warning
 		#pragma warning( disable : 4244 ) // turn off "conversion type" warning
 		#pragma warning( disable : 4250 ) // turn off "inherits via dominance" warning
 		#pragma warning( disable : 4351 ) // turn off "new behavior ... will be default initialized" warning
