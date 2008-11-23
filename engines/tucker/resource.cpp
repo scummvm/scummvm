@@ -211,8 +211,24 @@ void TuckerEngine::closeCompressedSoundFile() {
 void TuckerEngine::loadImage(uint8 *dst, int type) {
 	Common::File f;
 	if (!f.open(_fileToLoad)) {
-		warning("Unable to open '%s'", _fileToLoad);
-		return;
+		// workaround for "paper-3.pcx" / "paper_3.pcx"
+		bool tryOpen = false;
+		for (char *p = _fileToLoad; *p; ++p) {
+			switch (*p) {
+			case '-':
+				*p = '_';
+				tryOpen = true;
+				break;
+			case '_':
+				*p = '-';
+				tryOpen = true;
+				break;
+			}
+		}
+		if (!tryOpen || !f.open(_fileToLoad)) {
+			warning("Unable to open '%s'", _fileToLoad);
+			return;
+		}
 	}
 	f.seek(128, SEEK_SET);
 	int size = 0;
@@ -432,7 +448,7 @@ void TuckerEngine::loadObj() {
 	if (_locationNum < 24) {
 		_partNum = 1;
 		_speechSoundBaseNum = 2639;
-	} else if (_locationNum < 41 || (_locationNum >= 69 && _locationNum < 73) || (_locationNum > 79 && _locationNum < 83)) {
+	} else if (_locationNum < 41 || (_locationNum > 69 && _locationNum < 73) || (_locationNum > 78 && _locationNum < 83)) {
 		_partNum = 2;
 		_speechSoundBaseNum = 2679;
 	} else {
@@ -442,16 +458,15 @@ void TuckerEngine::loadObj() {
 	if (_partNum == _currentPartNum) {
 		return;
 	}
+	debug(2, "loadObj() partNum %d locationNum %d", _partNum, _locationNum);
 	handleNewPartSequence();
 	_currentPartNum = _partNum;
-
 	sprintf(_fileToLoad, "objtxt%d.c", _partNum);
 	free(_objTxtBuf);
 	_objTxtBuf = loadFile();
 	sprintf(_fileToLoad, "pt%dtext.c", _partNum);
 	free(_ptTextBuf);
 	_ptTextBuf = loadFile();
-
 	loadData();
 	loadPanObj();
 }
@@ -682,40 +697,40 @@ void TuckerEngine::loadCharPos() {
 			charPos->name = t.getNextInteger();
 			charPos->description = t.getNextInteger();
 		}
-	}
-	int quitLoop = 0;
-	size_t count = 0;
-	while (quitLoop == 0) {
-		t.findNextToken(kDataTokenDw);
-		int num = 0;
-		while (num != 99) {
-			num = t.getNextInteger();
-			assert(count < ARRAYSIZE(_characterAnimationsTable));
-			_characterAnimationsTable[count] = num;
-			if (num < 0) {
-				quitLoop = 1;
-				break;
+		int quitLoop = 0;
+		size_t count = 0;
+		while (quitLoop == 0) {
+			t.findNextToken(kDataTokenDw);
+			int num = 0;
+			while (num != 99) {
+				num = t.getNextInteger();
+				assert(count < ARRAYSIZE(_characterAnimationsTable));
+				_characterAnimationsTable[count] = num;
+				if (num < 0) {
+					quitLoop = 1;
+					break;
+				}
+				++count;
 			}
-			++count;
 		}
-	}
-	quitLoop = 0;
-	count = 0;
-	while (quitLoop == 0) {
-		t.findNextToken(kDataTokenDw);
-		int num = 0;
-		while (num < 98) {
-			num = t.getNextInteger();
-			assert(count < ARRAYSIZE(_characterStateTable));
-			_characterStateTable[count] = num;
-			if (num == 98) {
-				--count;
+		quitLoop = 0;
+		count = 0;
+		while (quitLoop == 0) {
+			t.findNextToken(kDataTokenDw);
+			int num = 0;
+			while (num < 98) {
+				num = t.getNextInteger();
+				assert(count < ARRAYSIZE(_characterStateTable));
+				_characterStateTable[count] = num;
+				if (num == 98) {
+					--count;
+				}
+				if (num < 0) {
+					quitLoop = 1;
+					break;
+				}
+				++count;
 			}
-			if (num < 0) {
-				quitLoop = 1;
-				break;
-			}
-			++count;
 		}
 	}
 }
@@ -735,13 +750,11 @@ void TuckerEngine::unloadSprA02_01() {
 		free(_sprA02Table[i]);
 		_sprA02Table[i] = 0;
 	}
+	_sprA02Table[0] = 0;
 }
 
 void TuckerEngine::loadSprC02_01() {
-	for (int i = 1; i < kSprC02TableSize; ++i) {
-		free(_sprC02Table[i]);
-		_sprC02Table[i] = 0;
-	}
+	unloadSprC02_01();
 	const int count = _sprC02LookupTable[_locationNum];
 	for (int i = 1; i < count + 1; ++i) {
 		sprintf(_fileToLoad, "sprites/c%02d_%02d.spr", _locationNum, i);
@@ -761,6 +774,7 @@ void TuckerEngine::unloadSprC02_01() {
 		free(_sprC02Table[i]);
 		_sprC02Table[i] = 0;
 	}
+	_sprC02Table[0] = 0;
 }
 
 void TuckerEngine::loadFx() {
@@ -914,6 +928,7 @@ void TuckerEngine::loadActionsTable() {
 			_tableInstructionsPtr = _csDataBuf + t._pos + 1;
 			_csDataLoaded = true;
 			_csDataHandled = 1;
+			debug(2, "loadActionsTable() _nextAction %d", _nextAction);
 		}
 		if (_csDataTableFlag2 == 1 && _charSpeechSoundCounter > 0) {
 			break;

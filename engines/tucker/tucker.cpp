@@ -138,6 +138,7 @@ void TuckerEngine::restart() {
 	_gameHintsIndex = 0;
 	_gameHintsCounter = 0;
 	_gameHintsDisplayText = 0;
+	_gameHintsStringNum = 0;
 
 	memset(_sprA02Table, 0, sizeof(_sprA02Table));
 	memset(_sprC02Table, 0, sizeof(_sprC02Table));
@@ -161,9 +162,8 @@ void TuckerEngine::restart() {
 	_mousePosX = _mousePosY = 0;
 	_prevMousePosX = _prevMousePosY = 0;
 	_mouseButtonsMask = 0;
-	_mouseButton2 = 0;
 	_mouseClick = 0;
-	_mouseClickOnPanelSliders = 0;
+	_saveOrLoadGamePanel = 0;
 	_mouseIdleCounter = 0;
 	_leftMouseButtonPressed = _rightMouseButtonPressed = false;
 	_lastKeyPressed = 0;
@@ -339,8 +339,8 @@ void TuckerEngine::mainLoop() {
 	_csDataBuf = loadFile();
 	_csDataSize = _fileLoadSize;
 
-	_currentSaveGameSlot = _firstSaveGameSlot = 1;
-	_maxSaveGameSlot = _lastSaveGameSlot = 99;
+	_currentSaveLoadGameState = 1;
+
 	loadBudSpr(0);
 	loadCursor();
 	setCursorNum(_cursorNum);
@@ -478,7 +478,7 @@ void TuckerEngine::mainLoop() {
 		}
 		if (_skipCurrentCharacterDraw != 1) {
 			if (_backgroundSpriteCurrentAnimation > -1 && _backgroundSpriteCurrentFrame > 0) {
-				drawBackgroundSprites(0);
+				drawBackgroundSprites();
 			} else {
 				drawCurrentSprite();
 			}
@@ -496,13 +496,6 @@ void TuckerEngine::mainLoop() {
 		updateSoundsTypes3_4();
 		if (_currentFxSet != 0) {
 			setSoundVolumeDistance();
-		}
-		if (_gameDebug) {
-			drawStringInteger(_scrollOffset + _mousePosX, 0, 10, 3);
-			drawStringInteger(_scrollOffset + _mousePosY, 0, 20, 3);
-			drawStringInteger(_backgroundSpriteCurrentFrame, 0, 40, 3);
-			drawStringInteger(_backgroundSpriteCurrentAnimation, 0, 50, 3);
-			drawStringInteger(_mouseButton2, 0, 60, 3);
 		}
 		updateCharSpeechSound();
 		copyToVGA(_locationBackgroundGfxBuf + _scrollOffset);
@@ -549,7 +542,7 @@ void TuckerEngine::mainLoop() {
 		}
 		if (_inputKeys[kInputKeyToggleTextSpeech]) {
 			_inputKeys[kInputKeyToggleTextSpeech] = false;
-			if (_lang != Common::FR_FRA) {
+			if (_lang != Common::FR_FRA) { // only a few subtitles are translated to french
 				if (_displaySpeechText) {
 					_displaySpeechText = false;
 //					kDefaultCharSpeechSoundCounter = 1;
@@ -562,7 +555,7 @@ void TuckerEngine::mainLoop() {
 		if (_inputKeys[kInputKeyHelp]) {
 			_inputKeys[kInputKeyHelp] = false;
 			if (_displayGameHints && _gameHintsDisplayText == 1) {
-				_mouseButton2 = _gameHintsIndex + 1;
+				_gameHintsStringNum = _gameHintsIndex + 1;
 				_mouseIdleCounter = 1100;
 			}
 		}
@@ -580,26 +573,21 @@ void TuckerEngine::mainLoop() {
 	if (_flagsTable[100] == 1) {
 		handleCongratulationsSequence();
 	}
-
 	closeCompressedSoundFile();
 	unloadSprA02_01();
 	unloadSprC02_01();
 	freeBuffers();
 }
 
-void TuckerEngine::updateTimer() {
-	++_timerCounter1;
-	++_timerCounter2;
-}
-
 void TuckerEngine::waitForTimer(int ticksCount) {
 	uint32 end = _lastFrameTime + ticksCount * 1000 / 46;
 	do {
-		updateTimer();
+		++_timerCounter1;
 		parseEvents();
 		_system->delayMillis(10);
 		_lastFrameTime = _system->getMillis();
 	} while (!_fastMode && _lastFrameTime < end);
+	_timerCounter2 += ticksCount;
 	_timerCounter1 = 0;
 }
 
@@ -678,6 +666,7 @@ void TuckerEngine::setCursorType(int type) {
 }
 
 void TuckerEngine::setupNewLocation() {
+	debug(2, "setupNewLocation() current %d next %d", _locationNum, _nextLocationNum);
 	_locationNum = _nextLocationNum;
 	loadObj();
 	_switchPanelFlag = 0;
@@ -749,7 +738,7 @@ void TuckerEngine::updateMouseState() {
 		_leftMouseButtonPressed = (_mouseButtonsMask & 1) != 0;
 		if (_leftMouseButtonPressed) {
 			_mouseIdleCounter = 0;
-			_mouseButton2 = 0;
+			_gameHintsStringNum = 0;
 		}
 		_rightMouseButtonPressed = (_mouseButtonsMask & 2) != 0;
 		_mouseButtonsMask = 0;
@@ -757,7 +746,7 @@ void TuckerEngine::updateMouseState() {
 			++_mouseIdleCounter;
 		} else {
 			_mouseIdleCounter = 0;
-			_mouseButton2 = 0;
+			_gameHintsStringNum = 0;
 		}
 	}
 	if (_cursorType == 1) {
@@ -965,7 +954,6 @@ void TuckerEngine::fadePaletteColor(int color, int step) {
 		const int c = _currentPalette[color * 3 + i] + step * 4;
 		rgb[i] = MIN(c, 255);
 	}
-	rgb[3] = 255;
 	_system->setPalette(rgb, color, 1);
 }
 
@@ -973,15 +961,6 @@ void TuckerEngine::setBlackPalette() {
 	uint8 pal[256 * 4];
 	memset(pal, 0, sizeof(pal));
 	_system->setPalette(pal, 0, 256);
-}
-
-void TuckerEngine::setPaletteColor(int color, int r, int g, int b) {
-	uint8 rgb[4];
-	rgb[0] = r & 255;
-	rgb[1] = g & 255;
-	rgb[2] = b & 255;
-	rgb[3] = 255;
-	_system->setPalette(rgb, color, 1);
 }
 
 void TuckerEngine::updateCursor() {
@@ -1113,8 +1092,6 @@ void TuckerEngine::playSounds() {
 }
 
 void TuckerEngine::updateCharactersPath() {
-	int i = 0;
-	int flag = 0;
 	if (_panelLockedFlag == 0) {
 		return;
 	}
@@ -1130,21 +1107,18 @@ void TuckerEngine::updateCharactersPath() {
 	if (_characterFacingDirection == 5) {
 		_characterPrevFacingDirection = 5;
 	}
+	int flag = 0;
 	if (_yPosCurrent > _selectedObject.yPos) {
 		if (testLocationMask(_xPosCurrent, _yPosCurrent - 1) == 1) {
 			--_yPosCurrent;
 			_characterFacingDirection = 4;
 			flag = 1;
-		} else {
-			++i;
 		}
 	} else if (_yPosCurrent < _selectedObject.yPos) {
 		if (testLocationMask(_xPosCurrent, _yPosCurrent + 1) == 1) {
 			++_yPosCurrent;
 			_characterFacingDirection = 2;
 			flag = 1;
-		} else {
-			++i;
 		}
 	}
 	if (_xPosCurrent > _selectedObject.xPos) {
@@ -1153,8 +1127,6 @@ void TuckerEngine::updateCharactersPath() {
 			_characterFacingDirection = 3;
 			_characterBackFrontFacing = 0;
 			flag = 1;
-		} else {
-			++i;
 		}
 	} else if (_xPosCurrent < _selectedObject.xPos) {
 		if (testLocationMask(_xPosCurrent + 1, _yPosCurrent) == 1) {
@@ -1162,8 +1134,6 @@ void TuckerEngine::updateCharactersPath() {
 			_characterFacingDirection = 1;
 			_characterBackFrontFacing = 1;
 			flag = 1;
-		} else {
-			++i;
 		}
 	}
 	if (flag == 0) {
@@ -1180,7 +1150,7 @@ void TuckerEngine::updateCharactersPath() {
 		}
 	}
 	if (_locationNum == 25) {
-		if ((_backgroundSpriteCurrentAnimation == 3 || _characterBackFrontFacing != 0) && (_backgroundSpriteCurrentAnimation != 6 || _characterBackFrontFacing != 1)) {
+		if ((_backgroundSpriteCurrentAnimation != 3 || _characterBackFrontFacing != 0) && (_backgroundSpriteCurrentAnimation != 6 || _characterBackFrontFacing != 1)) {
 			_xPosCurrent = xPos;
 			_yPosCurrent = yPos;
 			return;
@@ -1293,25 +1263,25 @@ void TuckerEngine::saveOrLoad() {
 	if (!_leftMouseButtonPressed) {
 		_mouseClick = 0;
 	}
-	if (_firstSaveGameSlot > 0) {
-		drawSpeechText(_scrollOffset + 120, 170, _infoBarBuf, _mouseClickOnPanelSliders + 19, 102);
-		int len = getStringWidth(_mouseClickOnPanelSliders + 19, _infoBarBuf);
-		drawStringInteger(_firstSaveGameSlot, len / 2 + 128, 160, 2);
+	if (_currentSaveLoadGameState > 0) {
+		drawSpeechText(_scrollOffset + 120, 170, _infoBarBuf, _saveOrLoadGamePanel + 19, 102);
+		int len = getStringWidth(_saveOrLoadGamePanel + 19, _infoBarBuf);
+		drawStringInteger(_currentSaveLoadGameState, len / 2 + 128, 160, 2);
 	} else {
 		drawSpeechText(_scrollOffset + 120, 170, _infoBarBuf, 21, 102);
 	}
 	if (_leftMouseButtonPressed && _mouseClick == 0) {
 		_mouseClick = 1;
 		if (_mousePosX > 228 && _mousePosX < 240 && _mousePosY > 154 && _mousePosY < 170) {
-			if (_firstSaveGameSlot < _lastSaveGameSlot) {
-				++_firstSaveGameSlot;
+			if (_currentSaveLoadGameState < 99) {
+				++_currentSaveLoadGameState;
 				_forceRedrawPanelItems = 1;
 			}
 			return;
 		}
 		if (_mousePosX > 228 && _mousePosX < 240 && _mousePosY > 170 && _mousePosY < 188) {
-			if (_firstSaveGameSlot > 1) {
-				--_firstSaveGameSlot;
+			if (_currentSaveLoadGameState > 1) {
+				--_currentSaveLoadGameState;
 				_forceRedrawPanelItems = 1;
 			}
 			return;
@@ -1322,10 +1292,10 @@ void TuckerEngine::saveOrLoad() {
 			return;
 		}
 		if (_mousePosX > 260 && _mousePosX < 290 && _mousePosY > 152 && _mousePosY < 168) {
-			if (_mouseClickOnPanelSliders == 1) {
-				saveGame(_firstSaveGameSlot);
-			} else if (_firstSaveGameSlot > 0) {
-				loadGame(_firstSaveGameSlot);
+			if (_saveOrLoadGamePanel == 1) {
+				saveGame(_currentSaveLoadGameState);
+			} else if (_currentSaveLoadGameState > 0) {
+				loadGame(_currentSaveLoadGameState);
 			}
 			_forceRedrawPanelItems = 1;
 			_panelState = 0;
@@ -1348,26 +1318,13 @@ void TuckerEngine::handleMouseOnPanel() {
 			return;
 		}
 		if (_mousePosX < 96) {
-			_mouseClickOnPanelSliders = 0;
+			_saveOrLoadGamePanel = 0;
 			_forceRedrawPanelItems = 1;
 			_panelState = 3;
-			_firstSaveGameSlot = _currentSaveGameSlot;
-			_lastSaveGameSlot = _maxSaveGameSlot;
 		} else if (_mousePosX < 158) {
-			_mouseClickOnPanelSliders = 1;
+			_saveOrLoadGamePanel = 1;
 			_forceRedrawPanelItems = 1;
 			_panelState = 3;
-			if (_maxSaveGameSlot < 99) {
-				_firstSaveGameSlot = _maxSaveGameSlot + 1;
-				_lastSaveGameSlot = _firstSaveGameSlot;
-			} else {
-				_lastSaveGameSlot = 99;
-				if (_currentSaveGameSlot < 99) {
-					_firstSaveGameSlot = _currentSaveGameSlot + 1;
-				} else {
-					_firstSaveGameSlot = 1;
-				}
-			}
 		} else if (_mousePosX < 218) {
 			_forceRedrawPanelItems = 1;
 			_panelState = 0;
@@ -1698,7 +1655,7 @@ void TuckerEngine::execData3PreUpdate() {
 	}
 }
 
-void TuckerEngine::drawBackgroundSprites(int flipX) {
+void TuckerEngine::drawBackgroundSprites() {
 	if (_backgroundSpriteDataPtr && _backgroundSpriteCurrentFrame != 0 && _backgroundSpriteCurrentFrame <= _backgroundSpriteLastFrame) {
 		int frameOffset = READ_LE_UINT24(_backgroundSpriteDataPtr + _backgroundSpriteCurrentFrame * 4);
 		int srcW = READ_LE_UINT16(_backgroundSpriteDataPtr + frameOffset);
@@ -1716,7 +1673,7 @@ void TuckerEngine::drawBackgroundSprites(int flipX) {
 			srcX += 320;
 		}
 		int offset = _backgroundSprOffset + srcY * 640 + srcX;
-		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + offset, _backgroundSpriteDataPtr + frameOffset + 12, srcW, srcH, 0, _locationHeightTable[_locationNum], flipX);
+		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + offset, _backgroundSpriteDataPtr + frameOffset + 12, srcW, srcH, 0, _locationHeightTable[_locationNum], false);
 	}
 }
 
@@ -1917,7 +1874,7 @@ const uint8 *TuckerEngine::getStringBuf(int type) const {
 void TuckerEngine::drawInfoString() {
 	const uint8 *infoStrBuf = _infoBarBuf;
 	const uint8 *obj1StrBuf = getStringBuf(_actionObj1Type);
-	const uint8 *obj2StrBuf = 0;
+	const uint8 *obj2StrBuf = getStringBuf(_actionObj2Type);
 	int infoStringWidth = 0;
 	int object1NameWidth = 0;
 	int verbWidth = getStringWidth(_actionVerb + 1, infoStrBuf);
@@ -1932,36 +1889,37 @@ void TuckerEngine::drawInfoString() {
 	if (_actionRequiresTwoObjects) {
 		verbPreposition = (_actionVerb == 5) ? 12 : 11;
 		verbPrepositionWidth = getStringWidth(verbPreposition, infoStrBuf) + 4;
-		if ((_actionObj2Num > 0 || _actionObj2Type > 0) && verbPreposition > 0) {
-			infoStringWidth = 0;
-			verbWidth = 0;
-			object1NameWidth = 0;
+		if (_lang == Common::FR_FRA) {
+			if ((_actionObj2Num > 0 || _actionObj2Type > 0) && verbPreposition > 0) {
+				infoStringWidth = 0;
+				verbWidth = 0;
+				object1NameWidth = 0;
+			}
 		}
 		infoStringWidth += verbPrepositionWidth;
-		obj2StrBuf = getStringBuf(_actionObj2Type);
-		if (_actionObj2Num > 0 && 	_actionObj2Type > 0) {
+		if (_actionObj2Num > 0) {
 			infoStringWidth += getStringWidth(_actionObj2Num + 1, obj2StrBuf);
 		}
 	}
 	const int xPos = 159 - infoStringWidth / 2;
 	if (verbPreposition == 0 || (_actionObj2Num == 0 && _actionObj2Type == 0)) {
 		drawString(_itemsGfxBuf + xPos, _actionVerb + 1, infoStrBuf);
-		if (_actionObj1Num != 0 || _actionObj1Type != 0) {
-			drawString(_itemsGfxBuf + 4 + xPos + verbWidth, _actionObj1Num + 1, obj1StrBuf);
+		if (_actionObj1Num > 0 || _actionObj1Type > 0) {
+			drawString(_itemsGfxBuf + xPos + 4 + verbWidth, _actionObj1Num + 1, obj1StrBuf);
 		}
 	}
 	if (verbPreposition > 0) {
 		drawString(_itemsGfxBuf + xPos + 4 + verbWidth + object1NameWidth, verbPreposition, infoStrBuf);
-		if (_actionObj2Num != 0 || _actionObj2Type != 0) {
+		if (_actionObj2Num > 0 || _actionObj2Type > 0) {
 			drawString(_itemsGfxBuf + xPos + 4 + verbWidth + object1NameWidth + verbPrepositionWidth, _actionObj2Num + 1, obj2StrBuf);
 		}
 	}
 }
 
 void TuckerEngine::drawGameHintString() {
-	int len = getStringWidth(_mouseButton2 + 29, _infoBarBuf);
-	int x = 159 - len / 2;
-	drawString(_itemsGfxBuf + 326 + x, _mouseButton2 + 29, _infoBarBuf);
+	const int len = getStringWidth(_gameHintsStringNum + 29, _infoBarBuf);
+	const int x = 159 - len / 2;
+	drawString(_itemsGfxBuf + 326 + x, _gameHintsStringNum + 29, _infoBarBuf);
 }
 
 void TuckerEngine::updateCharacterAnimation() {
@@ -1996,7 +1954,7 @@ void TuckerEngine::updateCharacterAnimation() {
 				_backgroundSpriteCurrentFrame = _backgroundSpriteLastFrame = READ_LE_UINT16(_backgroundSpriteDataPtr);
 			} else {
 				--_backgroundSpriteCurrentFrame;
-				if (_backgroundSpriteCurrentFrame > 1) {
+				if (_backgroundSpriteCurrentFrame < 1) {
 					_backgroundSpriteCurrentAnimation = -1;
 					_backgroundSpriteCurrentFrame = 0;
 					_changeBackgroundSprite = 0;
@@ -2041,7 +1999,6 @@ void TuckerEngine::updateCharacterAnimation() {
 				_actionCharacterNum = 99;
 				setCursorType(2);
 				_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
-
 			}
 		}
 		if (_charSpeechSoundCounter == 0 || _actionCharacterNum != 99) {
@@ -2106,29 +2063,32 @@ void TuckerEngine::updateCharacterAnimation() {
 	if (_panelLockedFlag == 0 && _characterFacingDirection < 5 && _selectedObject.locationObject_locationNum == 0) {
 		_characterFacingDirection = 0;
 	}
-	if (_charSpeechSoundCounter > 0 && _characterFacingDirection == 6 && _actionCharacterNum == 99) {
+	if (_charSpeechSoundCounter > 0 && _characterFacingDirection != 6 && _actionCharacterNum == 99) {
 		_characterFacingDirection = 6;
 		frame = 999;
-	} else {
-		if (_characterFacingDirection == 6 && _charSpeechSoundCounter != 0 && _actionCharacterNum != 99) {
-			_characterFacingDirection = 0;
-			frame = 999;
-		}
+	} else if (_characterFacingDirection == 6 && (_charSpeechSoundCounter == 0 || _actionCharacterNum != 99)) {
+		_characterFacingDirection = 0;
+		frame = 999;
 	}
 	int num = 0;
 	if (frame == 999 || (_characterFacingDirection != _characterPrevFacingDirection && _characterFacingDirection < 5)) {
 		_mirroredDrawing = 0;
 		if (_characterFacingDirection == 6) {
 			if (_csDataHandled != 0) {
-				if (_selectedCharacterDirection == 1) {
+				switch (_selectedCharacterDirection) {
+				case 1:
 					num = 17;
-				} else if (_selectedCharacterDirection == 2) {
+					break;
+				case 2:
 					num = 16;
-				} else if (_selectedCharacterDirection == 4) {
+					break;
+				case 4:
 					num = 15;
-				} else {
+					break;
+				default:
 					num = 16;
 					_mirroredDrawing = 1;
+					break;
 				}
 			} else {
 				num = 15;
@@ -2140,15 +2100,20 @@ void TuckerEngine::updateCharacterAnimation() {
 		if (_characterFacingDirection == 0) {
 			if (_csDataHandled != 0) {
 				_mirroredDrawing = 0;
-				if (_selectedCharacterDirection == 1) {
+				switch (_selectedCharacterDirection) {
+				case 1:
 					num = 3;
-				} else if (_selectedCharacterDirection == 2) {
-					num = 1; // 2 ?
-				} else if (_selectedCharacterDirection == 3) {
+					break;
+				case 2:
+					num = 1;
+					break;
+				case 3:
 					num = 1;
 					_mirroredDrawing = 1;
-				} else {
+					break;
+				default:
 					num = 5;
+					break;
 				}
 			} else if (getRandomNumber() < 2000) {
 				num = 13;
@@ -2161,15 +2126,20 @@ void TuckerEngine::updateCharacterAnimation() {
 				num = (getRandomNumber() < 20000) ? 18 : 6;
 			}
 		} else {
-			if (_characterFacingDirection == 1) {
+			switch (_characterFacingDirection) {
+			case 1:
 				num = 0;
-			} else if (_characterFacingDirection == 2) {
+				break;
+			case 2:
 				num = 4;
-			} else if (_characterFacingDirection == 3) {
+				break;
+			case 3:
 				num = 0;
 				_mirroredDrawing = 1;
-			} else if (_characterFacingDirection == 4) {
+				break;
+			case 4:
 				num = 2;
+				break;
 			}
 		}
 		_currentSpriteAnimationLength = _spriteAnimationsTable[num].numParts;
@@ -2812,7 +2782,7 @@ void TuckerEngine::updateSprite(int i) {
 			_spritesTable[i].animationFrame = 1;
 		}
 		if (_spritesTable[i].state < 0 || !_sprC02Table[_spritesTable[i].state]) {
-			warning("Invalid state %d for sprite %d location %d", _spritesTable[i].state, i, _locationNum);
+//			warning("Invalid state %d for sprite %d location %d", _spritesTable[i].state, i, _locationNum);
 			return;
 		}
 		_spritesTable[i].animationData = _sprC02Table[_spritesTable[i].state];
@@ -2873,9 +2843,8 @@ void TuckerEngine::updateCharSpeechSound() {
 		return;
 	}
 	--_charSpeechSoundCounter;
-	int i = isSpeechSoundPlaying();
 	if (_charSpeechSoundCounter == 0) {
-		_charSpeechSoundCounter = i;
+		_charSpeechSoundCounter = isSpeechSoundPlaying() ? 1 : 0;
 		if (_charSpeechSoundCounter == 0) {
 			_characterSpriteAnimationFrameCounter = 0;
 		}
@@ -2968,7 +2937,7 @@ static int parseInt(const uint8 *buf, int offset, int len) {
 
 int TuckerEngine::parseTableInstruction() {
 	int spr;
-	debug(2, "parseTableInstruction instruction %c%c%c", _tableInstructionsPtr[0], _tableInstructionsPtr[1], _tableInstructionsPtr[2]);
+	debug(2, "parseTableInstruction() instruction %c%c%c", _tableInstructionsPtr[0], _tableInstructionsPtr[1], _tableInstructionsPtr[2]);
 	switch (_tableInstructionsPtr[0]) {
 	case 'p': // 12
 		if (_tableInstructionsPtr[1] == 'a') { // 0
@@ -3080,7 +3049,7 @@ int TuckerEngine::parseTableInstruction() {
 			_tableInstructionsPtr += 8;
 			return 0;
 		}
-		if (_tableInstructionsPtr[2] == 'e') { // 4
+		if (_tableInstructionsPtr[2] == 'c') { // 2
 			int i = parseInt(_tableInstructionsPtr, 4, 3);
 			setCharacterAnimation(i, spr);
 			_tableInstructionsPtr += 8;
@@ -3203,6 +3172,7 @@ int TuckerEngine::parseTableInstruction() {
 				int flag = parseInt(_tableInstructionsPtr, 0, 3);
 				int value = parseInt(_tableInstructionsPtr, 4, 2);
 				if (value == _flagsTable[flag]) {
+					assert(_conversationOptionsCount < 6);
 					_instructionsActionsTable[_conversationOptionsCount] = parseInt(_tableInstructionsPtr, 7, 3) - 1;
 					_nextTableToLoadTable[_conversationOptionsCount] = parseInt(_tableInstructionsPtr, 11, 3);
 					++_conversationOptionsCount;

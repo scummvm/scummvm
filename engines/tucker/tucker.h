@@ -233,7 +233,6 @@ protected:
 	void freeBuffers();
 	void restart();
 	void mainLoop();
-	void updateTimer();
 	void waitForTimer(int ticksCount);
 	void parseEvents();
 	void updateCursorPos(int x, int y);
@@ -249,7 +248,6 @@ protected:
 	void fadeInPalette(int colorsCount = 256);
 	void fadePaletteColor(int color, int step);
 	void setBlackPalette();
-	void setPaletteColor(int color, int r, int g, int b);
 	void updateCursor();
 	void stopSounds();
 	void playSounds();
@@ -270,7 +268,7 @@ protected:
 	void updateSoundsTypes3_4();
 	void drawData3();
 	void execData3PreUpdate();
-	void drawBackgroundSprites(int flipX);
+	void drawBackgroundSprites();
 	void drawCurrentSprite();
 	void setVolumeSound(int index, int volume);
 	void setVolumeMusic(int index, int volume);
@@ -574,13 +572,12 @@ protected:
 	bool _displayGameHints;
 	int _execData3Counter;
 	bool _displaySpeechText;
-
-	uint8 _maxSaveGameSlot, _currentSaveGameSlot;
-	uint8 _firstSaveGameSlot, _lastSaveGameSlot;
+	int _currentSaveLoadGameState;
 
 	int _gameHintsIndex;
 	int _gameHintsCounter;
 	int _gameHintsDisplayText;
+	int _gameHintsStringNum;
 
 	char _fileToLoad[40];
 	int _fileLoadSize;
@@ -611,9 +608,8 @@ protected:
 	int _mousePosX, _mousePosY;
 	int _prevMousePosX, _prevMousePosY;
 	int _mouseButtonsMask;
-	int _mouseButton2;
 	int _mouseClick;
-	int _mouseClickOnPanelSliders;
+	int _saveOrLoadGamePanel;
 	int _mouseIdleCounter;
 	bool _leftMouseButtonPressed;
 	bool _rightMouseButtonPressed;

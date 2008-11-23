@@ -359,7 +359,6 @@ void TuckerEngine::execData3PreUpdate_locationNum3() {
 
 void TuckerEngine::updateSprite_locationNum4(int i) {
 	int state = -1;
-	printf("_flagsTable[9] %d\n", _flagsTable[9]);
 	if (_flagsTable[9] == 2) {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 			state = 1;
@@ -415,7 +414,7 @@ void TuckerEngine::updateSprite_locationNum6_0(int i) {
 			state = 3;
 			_spritesTable[0].counter = 0;
 		} else if (_xPosCurrent < 370 && _flagsTable[26] == 4) {
-				state = 2;
+			state = 2;
 		} else if (_spritesTable[0].counter == 0) {
 			setCharacterAnimation(0, 0);
 			_updateSpriteFlag1 = 1;
@@ -456,7 +455,7 @@ void TuckerEngine::updateSprite_locationNum6_1(int i) {
 			state = 7;
 			_soundsMapTable[0] = 3;
 			_miscSoundFxDelayCounter[0] = 70;
-//			_miscSoundFxDelayCounter[-1] = 4;
+			_soundsMapTable[1] = 4;
 			_miscSoundFxDelayCounter[1] = 25;
 		}
 	}
@@ -525,31 +524,26 @@ void TuckerEngine::execData3PreUpdate_locationNum6Helper1() {
 		}
 	}
 	int x1, x2;
-	switch (_flagsTable[27]) {
-	case 0:
+	if (_flagsTable[27] == 0) {
 		x1 = 8;
 		x2 = 0;
-		break;
-	case 15:
+	} else if (_flagsTable[27] == 15) {
 		x1 = 1;
 		x2 = 0;
-		break;
-	case 8:
-		x1 = _flagsTable[27];
+	} else if (_flagsTable[27] < 8) {
+		x1 = 8 - _flagsTable[27];
 		x2 = _flagsTable[27];
-		break;
-	default:
+	} else {
 		x1 = 1;
 		x2 = 15 - _flagsTable[27];
-		break;
 	}
 	for (int i = 0; i < x1; ++i) {
 		execData3PreUpdate_locationNum6Helper2(_locationBackgroundGfxBuf + 13125 + i * 8, _data3GfxBuf + _dataTable[238].sourceOffset);
 		execData3PreUpdate_locationNum6Helper2(_locationBackgroundGfxBuf + 13245 - i * 8, _data3GfxBuf + _dataTable[238].sourceOffset);
 	}
 	for (int i = 0; i < x2; ++i) {
-		execData3PreUpdate_locationNum6Helper2(_locationBackgroundGfxBuf + 13125 + x1 * 8 + i * 2, _data3GfxBuf + _dataTable[238].sourceOffset);
-		execData3PreUpdate_locationNum6Helper2(_locationBackgroundGfxBuf + 13249 - x1 * 8 - i * 2, _data3GfxBuf + _dataTable[238].sourceOffset);
+		execData3PreUpdate_locationNum6Helper3(_locationBackgroundGfxBuf + 13125 + x1 * 8 + i * 4, _data3GfxBuf + _dataTable[238].sourceOffset);
+		execData3PreUpdate_locationNum6Helper3(_locationBackgroundGfxBuf + 13249 - x1 * 8 - i * 4, _data3GfxBuf + _dataTable[238].sourceOffset);
 	}
 }
 
@@ -1337,18 +1331,6 @@ void TuckerEngine::updateSprite_locationNum21() {
 	_spritesTable[0].gfxBackgroundOffset = 320;
 }
 
-void TuckerEngine::updateSprite_locationNum22() {
-	if (_flagsTable[207] == 1) {
-		_spritesTable[0].state = -1;
-	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 0) {
-		_spritesTable[0].needUpdate = 1;
-		_spritesTable[0].state = 2;
-	} else {
-		_spritesTable[0].needUpdate = 0;
-		_spritesTable[0].state = 1;
-	}
-}
-
 void TuckerEngine::execData3PreUpdate_locationNum21() {
 	if (_xPosCurrent > 460 && _flagsTable[58] == 0 && _nextAction == 0) {
 		_updateCharPositionNewType = 0;
@@ -1393,10 +1375,9 @@ void TuckerEngine::execData3PostUpdate_locationNum21() {
 
 void TuckerEngine::execData3PreUpdate_locationNum22() {
 	if (_flagsTable[53] > 1 && _flagsTable[53] != 4) {
-		if (_inventoryItemsState[5] > 0 && _inventoryItemsState[20] <= 0 && _inventoryItemsState[16] > 0 && _inventoryItemsState[27] > 0) {
+		if (_inventoryItemsState[5] > 0 && _inventoryItemsState[20] > 0 && _inventoryItemsState[16] > 0 && _inventoryItemsState[27] > 0) {
 			_flagsTable[53] = 3;
-		}
-		if (_inventoryItemsState[5] > 0 || _inventoryItemsState[20] > 0 || _inventoryItemsState[16] > 0 || _inventoryItemsState[27] > 0) {
+		} else if (_inventoryItemsState[5] > 0 || _inventoryItemsState[20] > 0 || _inventoryItemsState[16] > 0 || _inventoryItemsState[27] > 0) {
 			_flagsTable[53] = 5;
 		}
 	}
@@ -1404,6 +1385,18 @@ void TuckerEngine::execData3PreUpdate_locationNum22() {
 		_nextAction = 25;
 		_csDataLoaded = 0;
 		_flagsTable[210] = 2;
+	}
+}
+
+void TuckerEngine::updateSprite_locationNum22() {
+	if (_flagsTable[207] == 1) {
+		_spritesTable[0].state = -1;
+	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 0) {
+		_spritesTable[0].needUpdate = 1;
+		_spritesTable[0].state = 2;
+	} else {
+		_spritesTable[0].needUpdate = 0;
+		_spritesTable[0].state = 1;
 	}
 }
 
@@ -1781,10 +1774,14 @@ void TuckerEngine::execData3PreUpdate_locationNum29() {
 		if (_updateLocationFadePaletteCounter > 10) {
 			_updateLocationFadePaletteCounter = 0;
 		}
-		int d = _updateLocationFadePaletteCounter / 2;
+		const int d = _updateLocationFadePaletteCounter / 2;
+		uint8 scrollPal[5 * 4];
 		for (int i = 0; i < 5; ++i) {
-			setPaletteColor(118 + i, r[i] + d, g[i] + d, b[i] + d);
+			scrollPal[i * 4]     = r[i + d];
+			scrollPal[i * 4 + 1] = g[i + d];
+			scrollPal[i * 4 + 2] = b[i + d];
 		}
+		_system->setPalette(scrollPal, 118, 5);
 		if (_flagsTable[143] == 1) {
 			_locationObjectsTable[2].xPos = 999;
 			_locationObjectsTable[3].xPos = 187;
@@ -2187,7 +2184,7 @@ void TuckerEngine::updateSprite_locationNum48(int i) {
 
 void TuckerEngine::updateSprite_locationNum49(int i) {
 	if (_flagsTable[136] == 1 && _flagsTable[207] == 0) {
-		_flagsTable[207] = 2;
+		_flagsTable[136] = 2;
 	}
 	if (_flagsTable[185] == 0 && _yPosCurrent < 125) {
 		_flagsTable[185] = 1;
@@ -2683,12 +2680,12 @@ void TuckerEngine::updateSprite_locationNum63_0(int i) {
 
 void TuckerEngine::updateSprite_locationNum63_1(int i) {
 	int state = -1;
-	if (_flagsTable[132] == 2 && _flagsTable[133] == 1 && _flagsTable[136] > 0) {
-		state = -1;
-	} else if (getRandomNumber() > 30000) {
-		state = 5;
-	} else if (getRandomNumber() > 30000) {
-		state = 8;
+	if (_flagsTable[132] == 2 && _flagsTable[133] == 1 && _flagsTable[136] <= 0) {
+		if (getRandomNumber() > 30000) {
+			state = 5;
+		} else if (getRandomNumber() > 30000) {
+			state = 8;
+		}
 	}
 	_spritesTable[i].state = state;
 }
@@ -2696,7 +2693,7 @@ void TuckerEngine::updateSprite_locationNum63_1(int i) {
 void TuckerEngine::updateSprite_locationNum63_2(int i) {
 	++_spritesTable[i].counter;
 	int state = -1;
-	if (_flagsTable[132] == 2 && _flagsTable[133] == 1 && _flagsTable[136] > 0) {
+	if (_flagsTable[132] == 2 && _flagsTable[133] == 1 && _flagsTable[136] <= 0) {
 		if (_flagsTable[226] == 0) {
 			state = 9;
 			_spritesTable[i].updateDelay = 5;
@@ -2716,7 +2713,7 @@ void TuckerEngine::updateSprite_locationNum63_2(int i) {
 void TuckerEngine::updateSprite_locationNum63_3(int i) {
 	++_spritesTable[i].counter;
 	int state = -1;
-	if (_flagsTable[133] == 1 && _flagsTable[132] == 2 && _flagsTable[136] > 0) {
+	if (_flagsTable[132] == 2 && _flagsTable[133] == 1 && _flagsTable[136] <= 0) {
 		if (_spritesTable[i].counter > 80) {
 			state = 7;
 			_spritesTable[i].counter = 0;
@@ -2742,6 +2739,7 @@ void TuckerEngine::updateSprite_locationNum63_4(int i) {
 void TuckerEngine::execData3PreUpdate_locationNum63() {
 	_currentGfxBackgroundCounter = 20 - _flagsTable[132] * 10;
 	if (_flagsTable[132] != _execData3Counter) {
+		_mainLoopCounter1 = 0;
 		_execData3Counter = _flagsTable[132];
 	}
 	if (_flagsTable[133] == 0) {
@@ -2757,7 +2755,7 @@ void TuckerEngine::execData3PreUpdate_locationNum63() {
 			}
 		}
 	} else {
-		if (_flagsTable[132] == 0 || _flagsTable[132] == 2 || _flagsTable[136] > 0) {
+		if (_flagsTable[132] == 0 || (_flagsTable[132] == 2 && _flagsTable[136] > 0)) {
 			if (!isSoundPlaying(1)) {
 				_locationSoundsTable[1].type = 2;
 				startSound(_locationSoundsTable[1].offset, 1, _locationSoundsTable[1].volume);
@@ -2773,8 +2771,8 @@ void TuckerEngine::execData3PreUpdate_locationNum63() {
 				startSound(_locationSoundsTable[0].offset, 0, _locationSoundsTable[0].volume);
 			}
 		} else {
-			if (isSoundPlaying(1)) {
-				stopSound(1);
+			if (isSoundPlaying(0)) {
+				stopSound(0);
 			}
 		}
 		if (_flagsTable[132] == 2 && _flagsTable[136] == 0) {
@@ -2825,7 +2823,7 @@ void TuckerEngine::updateSprite_locationNum65(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum65() {
-	_flagsTable[137]= 0;
+	_flagsTable[137] = 0;
 }
 
 void TuckerEngine::updateSprite_locationNum66_0(int i) {
@@ -2887,7 +2885,8 @@ void TuckerEngine::updateSprite_locationNum66_4(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum66() {
-	_flagsTable[137]= 0;
+	// FIXME: shouldn't be executed after using the map
+	_flagsTable[137] = 0;
 	if (_xPosCurrent > 583 && _flagsTable[191] == 0 && _nextAction == 0 && _locationMaskType == 0) {
 		_panelLockedFlag = 0;
 		_csDataLoaded = 0;
@@ -3081,7 +3080,7 @@ void TuckerEngine::execData3PreUpdate_locationNum70Helper() {
 				chr = 96;
 				break;
 			default:
-				if (_lastKeyPressed >= Common::KEYCODE_a && _lastKeyPressed >= Common::KEYCODE_z) {
+				if (_lastKeyPressed >= Common::KEYCODE_a && _lastKeyPressed <= Common::KEYCODE_z) {
 					chr = 'A' + (_lastKeyPressed - Common::KEYCODE_a);
 				}
 				break;
@@ -3092,6 +3091,7 @@ void TuckerEngine::execData3PreUpdate_locationNum70Helper() {
 				++_updateLocation70StringLen;
 			}
 		}
+		_lastKeyPressed = 0;
 	}
 }
 
@@ -3115,7 +3115,7 @@ void TuckerEngine::updateSprite_locationNum71(int i) {
 
 void TuckerEngine::updateSprite_locationNum72(int i) {
 	int state;
-	if (_flagsTable[155] != 7 || _flagsTable[207] == 1) {
+	if (_flagsTable[155] == 7 || _flagsTable[207] == 1) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 		_spritesTable[i].needUpdate = 1;

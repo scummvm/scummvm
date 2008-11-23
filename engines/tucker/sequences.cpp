@@ -46,6 +46,7 @@ void TuckerEngine::handleCreditsSequence() {
 	loadCharset2();
 	stopSounds();
 	_locationNum = 74;
+	_flagsTable[236] = 74;
 	uint8 *imgBuf = (uint8 *)malloc(16 * 64000);
 	loadSprC02_01();
 	_spritesCount = _creditsSequenceData2[num];
@@ -76,10 +77,6 @@ void TuckerEngine::handleCreditsSequence() {
 		if (num < 6) {
 			Graphics::copyTo640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf, 320, 320, 200);
 		} else {
-			if (_inputKeys[kInputKeyEscape]) {
-				_inputKeys[kInputKeyEscape] = false;
-				return;
-			}
 			Graphics::copyTo640(_locationBackgroundGfxBuf, imgBuf + imgNum * 64000, 320, 320, 200);
 			drawString2(5, 48, counter2 * 6);
 			drawString2(5, 60, counter2 * 6 + 1);
@@ -150,7 +147,7 @@ void TuckerEngine::handleCreditsSequence() {
 			_spritesCount = _creditsSequenceData2[num];
 			++_flagsTable[236];
 		}
-	} while (isSpeechSoundPlaying());
+	} while (!_quitGame && isSpeechSoundPlaying());
 	free(imgBuf);
 	_locationNum = prevLocationNum;
 	do {
@@ -171,13 +168,12 @@ void TuckerEngine::handleCongratulationsSequence() {
 	loadImage(_loadTempBuf, 1);
 	Graphics::copyTo640(_locationBackgroundGfxBuf, _loadTempBuf, 320, 320, 200);
 	copyToVGA(_locationBackgroundGfxBuf);
-	while (_timerCounter2 < 450) {
+	while (!_quitGame && _timerCounter2 < 450) {
 		while (_fadePaletteCounter < 14) {
 			++_fadePaletteCounter;
 			fadeOutPalette();
 		}
 		waitForTimer(3);
-		updateTimer();
 	}
 }
 
@@ -326,7 +322,7 @@ void TuckerEngine::handleMapSequence() {
 	}
 	_fadePaletteCounter = 0;
 	int xPos = 0, yPos = 0, textNum = 0;
-	do {
+	while (!_quitGame) {
 		waitForTimer(2);
 		updateMouseState();
 		Graphics::copyTo640(_locationBackgroundGfxBuf + _scrollOffset, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
@@ -386,7 +382,10 @@ void TuckerEngine::handleMapSequence() {
 			fadeOutPalette();
 			++_fadePaletteCounter;
 		}
-	} while (!_leftMouseButtonPressed || textNum == 0);
+		if (_leftMouseButtonPressed && textNum != 0) {
+			break;
+		}
+	}
 	while (_fadePaletteCounter > 0) {
 		fadeInPalette();
 		copyToVGA(_locationBackgroundGfxBuf + _scrollOffset);
@@ -408,8 +407,8 @@ void TuckerEngine::handleMapSequence() {
 }
 
 void TuckerEngine::copyMapRect(int x, int y, int w, int h) {
-	const uint8 *src = _quadBackgroundGfxBuf + 89600 + y * 320 + x;
-	uint8 *dst = _loadTempBuf + y * 320 + x;
+	const uint8 *src = _loadTempBuf + y * 320 + x;
+	uint8 *dst = _quadBackgroundGfxBuf + 89600 + y * 320 + x;
 	for (int i = 0; i < h; ++i) {
 		memcpy(dst, src, w);
 		src += 320;
@@ -420,7 +419,7 @@ void TuckerEngine::copyMapRect(int x, int y, int w, int h) {
 int TuckerEngine::handleSpecialObjectSelectionSequence() {
 	if (_partNum == 1 && _selectedObjectNum == 6) {
 		strcpy(_fileToLoad, "news1.pcx");
-		_flagsTable[7] = 1;
+		_flagsTable[7] = 4;
 	} else if (_partNum == 3 && _selectedObjectNum == 45) {
 		strcpy(_fileToLoad, "profnote.pcx");
 	} else if (_partNum == 1 && _selectedObjectNum == 26) {
@@ -443,7 +442,7 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 	_mouseClick = 1;
 	loadImage(_quadBackgroundGfxBuf, 1);
 	_fadePaletteCounter = 0;
-	while (1) {
+	while (!_quitGame) {
 		waitForTimer(2);
 		updateMouseState();
 		Graphics::copyTo640(_locationBackgroundGfxBuf + _scrollOffset, _quadBackgroundGfxBuf, 320, 320, 200);
@@ -456,7 +455,7 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 		}
 		if (_partNum == 3 && _selectedObjectNum == 45) {
 			for (int i = 0; i < 13; ++i) {
-				const int offset = _dataTable[204 + i].yDest * 640 + _dataTable[i].xDest;
+				const int offset = _dataTable[204 + i].yDest * 640 + _dataTable[204 + i].xDest;
 				static const int itemsTable[] = { 15, 44, 25, 19, 21, 24, 12, 27, 20, 29, 35, 23, 3 };
 				if (_inventoryItemsState[itemsTable[i]] > 1) {
 					Graphics::decodeRLE(_locationBackgroundGfxBuf + _scrollOffset + offset, _data3GfxBuf + _dataTable[204 + i].sourceOffset, _dataTable[204 + i].xSize, _dataTable[204 + i].ySize);
