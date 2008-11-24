@@ -24,8 +24,8 @@
  */
 
 #include "groovie/debug.h"
-#include "groovie/script.h"
 #include "groovie/groovie.h"
+#include "groovie/script.h"
 
 namespace Groovie {
 

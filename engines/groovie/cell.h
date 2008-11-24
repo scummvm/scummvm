@@ -29,6 +29,8 @@
 #include "common/file.h"
 #include "common/util.h"
 
+#include "groovie/groovie.h"
+
 #define BOARDSIZE 7
 #define CELL_CLEAR 0
 #define CELL_BLUE 1
@@ -51,6 +53,7 @@ public:
 
 private:
 	bool validMove(byte *board, uint8 color, int8 endX, int8 endY);
+	void execMove(byte *board, uint8 color, int8 startX, int8 startY, int8 endX, int8 endY);
 	uint8 countBoard(byte* board, uint8 color);
 	byte *_board;
 

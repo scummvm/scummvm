@@ -50,7 +50,8 @@ enum kDebugLevels {
 	kGroovieDebugHotspots = 1 << 5,
 	kGroovieDebugCursor = 1 << 6,
 	kGroovieDebugMIDI = 1 << 7,
-	kGroovieDebugScriptvars = 1 << 8
+	kGroovieDebugScriptvars = 1 << 8,
+	kGroovieDebugCell = 1 << 9
 		// the current limitation is 32 debug levels (1 << 31 is the last one)
 };
 

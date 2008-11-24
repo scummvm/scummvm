@@ -54,6 +54,7 @@ GroovieEngine::GroovieEngine(OSystem *syst, GroovieGameDescription *gd) :
 	Common::addSpecialDebugLevel(kGroovieDebugCursor, "Cursor", "Debug cursor decompression / switching");
 	Common::addSpecialDebugLevel(kGroovieDebugMIDI, "MIDI", "Debug MIDI / XMIDI files");
 	Common::addSpecialDebugLevel(kGroovieDebugScriptvars, "Scriptvars", "Print out any change to script variables");
+	Common::addSpecialDebugLevel(kGroovieDebugCell, "Cell", "Debug the cell game (in the microscope)");
 }
 
 GroovieEngine::~GroovieEngine() {
