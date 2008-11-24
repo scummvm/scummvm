@@ -161,8 +161,10 @@ bool VDXPlayer::playFrameInternal() {
 	}
 
 	// Wait until the current frame can be shown
-	waitFrame();
-
+	
+	if (!(Common::getEnabledSpecialDebugLevels() & kGroovieDebugFast)) {
+		waitFrame();
+	}
 	// TODO: Move it to a better place
 	// Update the screen
 	if (currRes == 0x25) {
@@ -486,7 +488,9 @@ void VDXPlayer::chunkSound(Common::ReadStream *in) {
 
 	byte *data = new byte[60000];
 	int chunksize = in->read(data, 60000);
-	_audioStream->queueBuffer(data, chunksize);
+	if (!(Common::getEnabledSpecialDebugLevels() & kGroovieDebugFast)) {
+		_audioStream->queueBuffer(data, chunksize);
+	}
 }
 
 void VDXPlayer::fadeIn(uint8 *targetpal) {
