@@ -44,9 +44,20 @@ public:
 	// Volume
 	void setUserVolume(uint16 volume);
 	void setGameVolume(uint16 volume, uint16 time);
+
 private:
+	// User volume
 	uint16 _userVolume;
+
+	// Game volume
 	uint16 _gameVolume;
+	uint32 _fadingStartTime;
+	uint16 _fadingStartVolume;
+	uint16 _fadingEndVolume;
+	uint16 _fadingDuration;
+	void applyFading();
+
+	// Song volumes
 	byte _chanVolumes[0x10];
 	void updateChanVolume(byte channel);
 

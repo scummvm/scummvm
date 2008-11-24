@@ -30,7 +30,7 @@ namespace Groovie {
 
 MusicPlayer::MusicPlayer(GroovieEngine *vm) :
 	_vm(vm), _midiParser(NULL), _data(NULL), _driver(NULL),
-	_backgroundFileRef(0) {
+	_backgroundFileRef(0), _gameVolume(100) {
 	// Create the parser
 	_midiParser = MidiParser::createParser_XMIDI();
 
@@ -75,6 +75,7 @@ void MusicPlayer::playSong(uint16 fileref) {
 void MusicPlayer::setBackgroundSong(uint16 fileref) {
 	Common::StackLock lock(_mutex);
 
+	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Changing the background song: %04X", fileref);
 	_backgroundFileRef = fileref;
 }
 
@@ -97,15 +98,40 @@ void MusicPlayer::setUserVolume(uint16 volume) {
 void MusicPlayer::setGameVolume(uint16 volume, uint16 time) {
 	Common::StackLock lock(_mutex);
 
-	//TODO: Implement volume fading
-	debugC(5, kGroovieDebugMIDI | kGroovieDebugAll, "setting game volume: %d, %d\n", volume, time);
+	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Setting game volume from %d to %d in %dms", _gameVolume, volume, time);
+
+	// Save the start parameters of the fade
+	_fadingStartTime = _vm->_system->getMillis();
+	_fadingStartVolume = _gameVolume;
+	_fadingDuration = time;
 
 	// Save the new game volume
-	_gameVolume = volume;
-	if (_gameVolume > 100)
-		_gameVolume = 100;
+	_fadingEndVolume = volume;
+	if (_fadingEndVolume > 100)
+		_fadingEndVolume = 100;
+}
 
-	// Apply it to all the channels
+void MusicPlayer::applyFading() {
+	Common::StackLock lock(_mutex);
+
+	// Calculate the passed time
+	uint32 time = _vm->_system->getMillis() - _fadingStartTime;
+	if (time >= _fadingDuration) {
+		// If we were fading to 0, stop the playback and restore the volume
+		if (_fadingEndVolume == 0) {
+			unload();
+			_fadingEndVolume = 100;
+		}
+
+		// Set the end volume
+		_gameVolume = _fadingEndVolume;
+	} else {
+		// Calculate the interpolated volume for the current time
+		_gameVolume = (_fadingStartVolume * (_fadingDuration - time) +
+			_fadingEndVolume * time) / _fadingDuration;
+	}
+
+	// Apply the new volume to all the channels
 	for (int i = 0; i < 0x10; i++) {
 		updateChanVolume(i);
 	}
@@ -138,6 +164,8 @@ bool MusicPlayer::play(uint16 fileref, bool loop) {
 }
 
 bool MusicPlayer::load(uint16 fileref) {
+	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Starting the playback of song: %04X", fileref);
+
 	// Open the song resource
 	Common::SeekableReadStream *xmidiFile = _vm->_resMan->open(fileref);
 	if (!xmidiFile) {
@@ -158,12 +186,14 @@ bool MusicPlayer::load(uint16 fileref) {
 	}
 
 	// Activate the timer source
-	_driver->setTimerCallback(_midiParser, MidiParser::timerCallback);
+	_driver->setTimerCallback(this, &onTimer);
 
 	return true;
 }
 
 void MusicPlayer::unload() {
+	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Stopping the playback");
+
 	// Unload the parser
 	_midiParser->unloadMusic();
 
@@ -181,7 +211,6 @@ int MusicPlayer::open() {
 	if (ret)
 		return ret;
 
-	_driver->setTimerCallback(this, &onTimer);
 	return 0;
 }
 
@@ -205,6 +234,7 @@ void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F:
 		// End of Track, play the background song
+		debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: End of song");
 		if (_backgroundFileRef) {
 			play(_backgroundFileRef, true);
 		}
@@ -218,6 +248,12 @@ void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 void MusicPlayer::onTimer(void *refCon) {
 	MusicPlayer *music = (MusicPlayer *)refCon;
 	Common::StackLock lock(music->_mutex);
+
+	// Apply the game volume fading
+	if (music->_gameVolume != music->_fadingEndVolume) {
+		// Apply the next step of the fading
+		music->applyFading();
+	}
 
 	// TODO: We really only need to call this while music is playing.
 	music->_midiParser->onTimer();
