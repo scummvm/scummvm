@@ -263,7 +263,7 @@ void drawAutoComplete() {
 		int y = 12 + (r % 6) * 2;
 		int x = 0 + ((r / 6) * 16);
 
-		for (int p = 0; p < (int)strlen(autoCompleteWord[r]); p++) {
+		for (int p = 0; autoCompleteWord[r][p] != 0; p++) {
 			char c = autoCompleteWord[r][p];
 			
 			int tile = c - 33 + (KEYBOARD_DATA_SIZE / 32);
