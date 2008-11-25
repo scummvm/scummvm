@@ -33,7 +33,6 @@
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/savefile.h"
-#include "sound/audiocd.h"
 
 #define NUM_OPCODES 90
 
@@ -1424,16 +1423,16 @@ void Script::o_getcd() {
 	setVariable(0x106, cd);
 }
 
-void Script::o_opcode4D() {
-	// TODO: play alternative vie logo, then playcd
+void Script::o_playcd() {
 	uint8 val = readScript8bits();
 	
-	debugScript(1, true, "PLAYCD? %d", val);
+	debugScript(1, true, "PLAYCD %d", val);
 
 	if (val == 2) {
-		AudioCD.play(1, 1, 0, 0);
+		// TODO: Play the alternative logo
 	}
 
+	_vm->_musicPlayer->playCD(val);
 }
 
 void Script::o_hotspot_outrect() {
@@ -1549,7 +1548,7 @@ Script::OpcodeFunc Script::_opcodes[NUM_OPCODES] = {
 	&Script::o_nop16,
 	&Script::o_nop8,
 	&Script::o_getcd, // 0x4C
-	&Script::o_opcode4D,
+	&Script::o_playcd,
 	&Script::o_nop16,
 	&Script::o_nop16,
 	&Script::o_nop16, // 0x50

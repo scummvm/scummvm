@@ -199,7 +199,7 @@ private:
 	void o_sethotspotright();
 	void o_sethotspotleft();
 	void o_getcd();
-	void o_opcode4D();
+	void o_playcd();
 	void o_hotspot_outrect();
 	void o_stub56();
 	void o_stub59();

@@ -40,6 +40,7 @@ public:
 	~MusicPlayer();
 	void playSong(uint16 fileref);
 	void setBackgroundSong(uint16 fileref);
+	void playCD(uint8 track);
 
 	// Volume
 	void setUserVolume(uint16 volume);
@@ -80,6 +81,7 @@ private:
 	MidiDriver *_driver;
 
 	uint16 _backgroundFileRef;
+	uint8 _prevCDtrack;
 
 	static void onTimer(void *data);
 

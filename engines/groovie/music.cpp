@@ -26,11 +26,13 @@
 #include "groovie/music.h"
 #include "groovie/resource.h"
 
+#include "sound/audiocd.h"
+
 namespace Groovie {
 
 MusicPlayer::MusicPlayer(GroovieEngine *vm) :
 	_vm(vm), _midiParser(NULL), _data(NULL), _driver(NULL),
-	_backgroundFileRef(0), _gameVolume(100) {
+	_backgroundFileRef(0), _gameVolume(100), _prevCDtrack(0) {
 	// Create the parser
 	_midiParser = MidiParser::createParser_XMIDI();
 
@@ -77,6 +79,40 @@ void MusicPlayer::setBackgroundSong(uint16 fileref) {
 
 	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Changing the background song: %04X", fileref);
 	_backgroundFileRef = fileref;
+}
+
+void MusicPlayer::playCD(uint8 track) {
+	int startms = 0;
+
+	// Stop the MIDI playback
+	unload();
+
+	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Playing CD track %d", track);
+
+	if (track == 3) {
+		// This is the credits song, start at 23:20
+		startms = 1400000;
+		// TODO: If we want to play it directly from the CD, we should decrement
+		// the song number (it's track 2 on the 2nd CD)
+	} else if ((track == 98) && (_prevCDtrack == 3)) {
+		// Track 98 is used as a hack to stop the credits song
+		AudioCD.stop();
+		return;
+	}
+
+	// Save the playing track in order to be able to stop the credits song
+	_prevCDtrack = track;
+
+	// Wait until the CD stops playing the current song
+	AudioCD.updateCD();
+	while (AudioCD.isPlaying()) {
+		// Wait a bit and try again
+		_vm->_system->delayMillis(100);
+		AudioCD.updateCD();
+	}
+
+	// Play the track starting at the requested offset (1000ms = 75 frames)
+	AudioCD.play(track - 1, 1, startms * 75 / 1000, 0);
 }
 
 void MusicPlayer::setUserVolume(uint16 volume) {
