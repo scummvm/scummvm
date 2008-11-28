@@ -478,6 +478,7 @@ begin_credits("Credits");
 		  add_person("Max Horn", "Fingolfin", "");
 		  add_person("Travis Howell", "Kirben", "");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Codecs, iMUSE, Smush, etc.");
+		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Eugene Sandulenko", "sev", "FT INSANE, MM NES, MM C64, game detection, Herc/CGA");
 	  end_section();
 

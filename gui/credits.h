@@ -22,6 +22,7 @@ static const char *credits[] = {
 "C0""Travis Howell",
 "C0""Pawel Kolodziejski",
 "C2""Codecs, iMUSE, Smush, etc.",
+"C0""Gregory Montoir",
 "C0""Eugene Sandulenko",
 "C2""FT INSANE, MM NES, MM C64, game detection, Herc/CGA",
 "",
