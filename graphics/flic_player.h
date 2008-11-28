@@ -60,15 +60,18 @@ struct FrameTypeChunkHeader {
 
 class FlicPlayer {
 public:
-	FlicPlayer(const char *fileName);
+	FlicPlayer();
 	~FlicPlayer();
 
+	bool loadFile(const char *fileName);
+	void closeFile();
 	void decodeFrame();
 	int getWidth() const { return _flicInfo.width; }
 	int getHeight() const { return _flicInfo.height; }
 	bool hasFrames() const { return _flicInfo.numFrames > 0; }
 	int getCurFrame() const { return _currFrame; }
 	int getFrameCount() const { return _flicInfo.numFrames; }
+	bool isLastFrame() const { return _currFrame == _flicInfo.numFrames; }
 	uint32 getSpeed() const { return _flicInfo.speed; }
 	bool isPaletteDirty() const { return _paletteDirty; }
 	const uint8 *getPalette() { _paletteDirty = false; return _palette; }

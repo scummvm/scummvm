@@ -865,7 +865,7 @@ private:
 
 	bool _newSeq;
 	int _seqNum, _currentSeqNum;
-	::Graphics::FlicPlayer *_flicPlayer[2];
+	::Graphics::FlicPlayer _flicPlayer[2];
 	uint8 _animationPalette[256 * 4], _paletteBuffer[256 * 4];
 	const int *_soundsListSeqData;
 	const char **_soundsList1;

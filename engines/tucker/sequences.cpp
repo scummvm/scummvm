@@ -482,7 +482,6 @@ AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *
 	_newSeq = false;
 	memset(_animationPalette, 0, sizeof(_animationPalette));
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
-	memset(_flicPlayer, 0, sizeof(_flicPlayer));
 	_soundsListSeqData = 0;
 	_soundsList1 = 0;
 	_soundsList1Count = 0;
@@ -836,10 +835,6 @@ void AnimationSequencePlayer::fadeOutPalette() {
 
 void AnimationSequencePlayer::unloadAnimation() {
 	_mixer->stopAll();
-	for (int i = 0; i < ARRAYSIZE(_flicPlayer); ++i) {
-		delete _flicPlayer[i];
-		_flicPlayer[i] = 0;
-	}
 	free(_picBufPtr);
 	_picBufPtr = 0;
 	free(_pic2BufPtr);
@@ -860,20 +855,24 @@ uint8 *AnimationSequencePlayer::loadPicture(const char *fileName) {
 }
 
 void AnimationSequencePlayer::openAnimation(int index, const char *fileName) {
-	_flicPlayer[index] = new ::Graphics::FlicPlayer(fileName);
-	_flicPlayer[index]->decodeFrame();
+	if (!_flicPlayer[index].loadFile(fileName)) {
+		warning("Unable to open flc animation file '%s'", fileName);
+		_seqNum = 1;
+		return;
+	}
+	_flicPlayer[index].decodeFrame();
 	if (index == 0) {
-		memcpy(_animationPalette, _flicPlayer[index]->getPalette(), 1024);
-		memcpy(_offscreenBuffer, _flicPlayer[index]->getOffscreen(), kScreenWidth * kScreenHeight);
+		memcpy(_animationPalette, _flicPlayer[index].getPalette(), 1024);
+		memcpy(_offscreenBuffer, _flicPlayer[index].getOffscreen(), kScreenWidth * kScreenHeight);
 	}
 }
 
 void AnimationSequencePlayer::decodeNextAnimationFrame(int index) {
-	_flicPlayer[index]->decodeFrame();
-	memcpy(_offscreenBuffer, _flicPlayer[index]->getOffscreen(), kScreenWidth * kScreenHeight);
+	_flicPlayer[index].decodeFrame();
+	memcpy(_offscreenBuffer, _flicPlayer[index].getOffscreen(), kScreenWidth * kScreenHeight);
 	if (index == 0) {
-		if (_flicPlayer[index]->isPaletteDirty()) {
-			memcpy(_animationPalette, _flicPlayer[index]->getPalette(), 1024);
+		if (_flicPlayer[index].isPaletteDirty()) {
+			memcpy(_animationPalette, _flicPlayer[index].getPalette(), 1024);
 		}
 	}
 	if (_seqNum != 19) {
@@ -889,7 +888,7 @@ void AnimationSequencePlayer::introSeq17_18() {
 		_newSeq = false;
 	}
 	decodeNextAnimationFrame(0);
-	if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+	if (_flicPlayer[0].isLastFrame()) {
 		_seqNum = 19;
 	}
 	updateSounds();
@@ -904,20 +903,20 @@ void AnimationSequencePlayer::introSeq19_20() {
 		_frameTime = 1;
 		_newSeq = false;
 	}
-	if (_flicPlayer[0]->getCurFrame() >= 116) {
-		_flicPlayer[1]->decodeFrame();
-		if (_flicPlayer[1]->getCurFrame() == _flicPlayer[1]->getFrameCount()) {
-			_flicPlayer[1]->reset();
+	if (_flicPlayer[0].getCurFrame() >= 116) {
+		_flicPlayer[1].decodeFrame();
+		if (_flicPlayer[1].isLastFrame()) {
+			_flicPlayer[1].reset();
 		}
 	}
-	_flicPlayer[0]->decodeFrame();
-	const uint8 *t = _flicPlayer[1]->getOffscreen();
+	_flicPlayer[0].decodeFrame();
+	const uint8 *t = _flicPlayer[1].getOffscreen();
 	for (int i = 0; i < 64000; ++i) {
-		const uint8 color = _flicPlayer[0]->getOffscreen()[i];
+		const uint8 color = _flicPlayer[0].getOffscreen()[i];
 		_offscreenBuffer[i] = color ? color : t[i];
 	}
 	updateSounds();
-	if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+	if (_flicPlayer[0].isLastFrame()) {
 		_seqNum = 3;
 	}
 }
@@ -974,10 +973,10 @@ void AnimationSequencePlayer::introSeq3_4() {
 	}
 	if (!_updateScreenPicture) {
 		decodeNextAnimationFrame(0);
-		if (_flicPlayer[0]->getCurFrame() == 706) {
+		if (_flicPlayer[0].getCurFrame() == 706) {
 			initPicPart4();
 		}
-		if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+		if (_flicPlayer[0].isLastFrame()) {
 			_seqNum = 9;
 		}
 	} else {
@@ -1018,7 +1017,7 @@ void AnimationSequencePlayer::drawPic1Part10() {
 		memcpy(_offscreenBuffer + y * 320, _picBufPtr + 800 + y * 640 + _updateScreenWidth, 320);
 	}
 	for (int i = 0; i < 64000; ++i) {
-		const uint8 color = _flicPlayer[0]->getOffscreen()[i];
+		const uint8 color = _flicPlayer[0].getOffscreen()[i];
 		if (color) {
 			_offscreenBuffer[i] = color;
 		}
@@ -1036,20 +1035,20 @@ void AnimationSequencePlayer::introSeq9_10() {
 		_newSeq = false;
 	}
 	decodeNextAnimationFrame(0);
-	if (_flicPlayer[0]->getCurFrame() == 984) {
+	if (_flicPlayer[0].getCurFrame() == 984) {
 		drawPic2Part10();
 	}
-	if (_flicPlayer[0]->getCurFrame() >= 264 && _flicPlayer[0]->getCurFrame() <= 295) {
+	if (_flicPlayer[0].getCurFrame() >= 264 && _flicPlayer[0].getCurFrame() <= 295) {
 		drawPic1Part10();
 		_updateScreenWidth += 6;
-	} else if (_flicPlayer[0]->getCurFrame() >= 988 && _flicPlayer[0]->getCurFrame() <= 996) {
+	} else if (_flicPlayer[0].getCurFrame() >= 988 && _flicPlayer[0].getCurFrame() <= 996) {
 		drawPic1Part10();
 		_updateScreenWidth -= 25;
 		if (_updateScreenWidth < 0) {
 			_updateScreenWidth = 0;
 		}
 	}
-	if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+	if (_flicPlayer[0].isLastFrame()) {
 		_seqNum = 21;
 	}
 	updateSounds();
@@ -1063,7 +1062,7 @@ void AnimationSequencePlayer::introSeq21_22() {
 		_newSeq = false;
 	}
 	decodeNextAnimationFrame(0);
-	if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+	if (_flicPlayer[0].isLastFrame()) {
 		_seqNum = 1;
 	}
 	updateSounds();
@@ -1077,7 +1076,7 @@ void AnimationSequencePlayer::introSeq13_14() {
 		_newSeq = false;
 	}
 	decodeNextAnimationFrame(0);
-	if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+	if (_flicPlayer[0].isLastFrame()) {
 		_seqNum = 15;
 	}
 	updateSounds();
@@ -1091,7 +1090,7 @@ void AnimationSequencePlayer::introSeq15_16() {
 		_newSeq = false;
 	}
 	decodeNextAnimationFrame(0);
-	if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+	if (_flicPlayer[0].isLastFrame()) {
 		_seqNum = 27;
 	}
 	updateSounds();
@@ -1105,7 +1104,7 @@ void AnimationSequencePlayer::introSeq27_28() {
 		_newSeq = false;
 	}
 	decodeNextAnimationFrame(0);
-	if (_flicPlayer[0]->getCurFrame() == _flicPlayer[0]->getFrameCount()) {
+	if (_flicPlayer[0].isLastFrame()) {
 		_seqNum = 1;
 	}
 	updateSounds();

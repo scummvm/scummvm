@@ -27,12 +27,21 @@
 
 namespace Graphics {
 
-FlicPlayer::FlicPlayer(const char *fileName)
+FlicPlayer::FlicPlayer()
 	: _paletteDirty(false), _offscreen(0), _currFrame(0) {
-
 	memset(&_flicInfo, 0, sizeof(_flicInfo));
-	_fileStream.open(fileName);
-	assert(_fileStream.isOpen());
+}
+
+FlicPlayer::~FlicPlayer() {
+	closeFile();
+}
+
+bool FlicPlayer::loadFile(const char *fileName) {
+	closeFile();
+
+	if (!_fileStream.open(fileName)) {
+		return false;
+	}
 
 	_flicInfo.size = _fileStream.readUint32LE();
 	_flicInfo.type = _fileStream.readUint16LE();
@@ -56,10 +65,14 @@ FlicPlayer::FlicPlayer(const char *fileName)
 
 	// Seek to the first frame
 	_fileStream.seek(_flicInfo.offsetFrame1);
+	return true;
 }
 
-FlicPlayer::~FlicPlayer() {
+void FlicPlayer::closeFile() {
+	memset(&_flicInfo, 0, sizeof(_flicInfo));
+	_fileStream.close();
 	delete[] _offscreen;
+	_offscreen = 0;
 }
 
 void FlicPlayer::redraw() {
