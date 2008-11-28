@@ -32,6 +32,7 @@ FlicPlayer::FlicPlayer(const char *fileName)
 
 	memset(&_flicInfo, 0, sizeof(_flicInfo));
 	_fileStream.open(fileName);
+	assert(_fileStream.isOpen());
 
 	_flicInfo.size = _fileStream.readUint32LE();
 	_flicInfo.type = _fileStream.readUint16LE();
