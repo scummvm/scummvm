@@ -30,15 +30,22 @@
 
 namespace Tucker {
 
+enum CharsetType {
+	kCharsetTypeEnglish,
+	kCharsetTypeFrench,
+	kCharsetTypeCredits
+};
+
+struct Charset {
+	int charW;
+	int charH;
+	int xCount;
+	int yCount;
+};
+
 class Graphics {
 public:
 
-	struct Charset {
-		int charW;
-		int charH;
-		int xCount;
-		int yCount;
-	};
 
 	static int encodeRLE(const uint8 *src, uint8 *dst, int w, int h);
 	static int encodeRAW(const uint8 *src, uint8 *dst, int w, int h);
@@ -53,11 +60,10 @@ public:
 
 	static void drawStringChar(uint8 *dst, uint8 chr, int pitch, uint8 chrColor, const uint8 *src);
 
-	static const Charset _enCharset;
-	static const Charset _frCharset;
-	static const Charset _creditsCharset;
+	static void setCharset(CharsetType type);
 
-	static const Charset *_charset;
+	static Charset _charset;
+	static CharsetType _charsetType;
 };
 
 } // namespace Tucker

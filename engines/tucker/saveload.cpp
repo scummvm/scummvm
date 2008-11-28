@@ -33,13 +33,16 @@ enum {
 	kCurrentGameStateVersion = 1
 };
 
-void TuckerEngine::generateGameStateFileName(int num, char *dst, int len, bool prefixOnly) const {
+Common::String generateGameStateFileName(const char *target, int slot, bool prefixOnly) {
+	Common::String name(target);
 	if (prefixOnly) {
-		snprintf(dst, len, "%s.*", _targetName.c_str());
+		name += ".*";
 	} else {
-		snprintf(dst, len, "%s.%d", _targetName.c_str(), num);
+		char slotStr[16];
+		snprintf(slotStr, sizeof(slotStr), ".%d", slot);
+		name += slotStr;
 	}
-	dst[len] = 0;
+	return name;
 }
 
 static void saveOrLoadInt(Common::WriteStream &stream, int &i) {
@@ -74,19 +77,20 @@ void TuckerEngine::saveOrLoadGameStateData(S &s) {
 	saveOrLoadInt(s, _inventoryObjectsOffset);
 }
 
-void TuckerEngine::loadGame(int slot) {
-	char gameStateFileName[64];
-	generateGameStateFileName(slot, gameStateFileName, 63);
-	Common::InSaveFile *f = _saveFileMan->openForLoading(gameStateFileName);
+Common::Error TuckerEngine::loadGameState(int num) {
+	Common::Error ret = Common::kNoError;
+	Common::String gameStateFileName = generateGameStateFileName(_targetName.c_str(), num);
+	Common::InSaveFile *f = _saveFileMan->openForLoading(gameStateFileName.c_str());
 	if (f) {
 		uint16 version = f->readUint16LE();
 		if (version < kCurrentGameStateVersion) {
-			warning("Unsupported gamestate version %d (slot %d)", version, slot);
+			warning("Unsupported gamestate version %d (slot %d)", version, num);
 		} else {
 			f->skip(2);
 			saveOrLoadGameStateData(*f);
 			if (f->ioFailed()) {
-				warning("Can't read file '%s'", gameStateFileName);
+				warning("Can't read file '%s'", gameStateFileName.c_str());
+				ret = Common::kReadingFailed;
 			} else {
 				_nextLocationNum = _locationNum;
 				setBlackPalette();
@@ -95,22 +99,34 @@ void TuckerEngine::loadGame(int slot) {
 		}
 		delete f;
 	}
+	return ret;
 }
 
-void TuckerEngine::saveGame(int slot) {
-	char gameStateFileName[64];
-	generateGameStateFileName(slot, gameStateFileName, 63);
-	Common::OutSaveFile *f = _saveFileMan->openForSaving(gameStateFileName);
+Common::Error TuckerEngine::saveGameState(int num, const char *description) {
+	Common::Error ret = Common::kNoError;
+	Common::String gameStateFileName = generateGameStateFileName(_targetName.c_str(), num);
+	Common::OutSaveFile *f = _saveFileMan->openForSaving(gameStateFileName.c_str());
 	if (f) {
 		f->writeUint16LE(kCurrentGameStateVersion);
 		f->writeUint16LE(0);
 		saveOrLoadGameStateData(*f);
 		f->finalize();
 		if (f->ioFailed()) {
-			warning("Can't write file '%s'", gameStateFileName);
+			warning("Can't write file '%s'", gameStateFileName.c_str());
+			ret = Common::kWritingFailed;
 		}
 		delete f;
 	}
+	return ret;
+}
+
+
+bool TuckerEngine::canLoadGameStateCurrently() {
+	return !_player && _cursorType < 2;
+}
+
+bool TuckerEngine::canSaveGameStateCurrently() {
+	return !_player && _cursorType < 2;
 }
 
 } // namespace Tucker

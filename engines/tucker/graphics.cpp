@@ -223,15 +223,15 @@ void Graphics::copyTo640(uint8 *dst, const uint8 *src, int w, int srcPitch, int 
 }
 
 void Graphics::drawStringChar(uint8 *dst, uint8 chr, int pitch, uint8 chrColor, const uint8 *src) {
-	if (chr < 32 || chr - 32 >= _charset->xCount * _charset->yCount) {
+	if (chr < 32 || chr - 32 >= _charset.xCount * _charset.yCount) {
 		return;
 	}
-	int offset = (chr - 32) * _charset->charH * _charset->charW;
-	for (int y = 0; y < _charset->charH; ++y) {
-		for (int x = 0; x < _charset->charW; ++x) {
+	int offset = (chr - 32) * _charset.charH * _charset.charW;
+	for (int y = 0; y < _charset.charH; ++y) {
+		for (int x = 0; x < _charset.charW; ++x) {
 			const int color = src[offset++];
 			if (color != 0) {
-				if (_charset == &_creditsCharset) {
+				if (_charsetType == kCharsetTypeCredits) {
 					dst[x] = color;
 				} else {
 					dst[x] = (color == 128) ? color : chrColor;
@@ -241,5 +241,32 @@ void Graphics::drawStringChar(uint8 *dst, uint8 chr, int pitch, uint8 chrColor, 
 		dst += pitch;
 	}
 }
+
+void Graphics::setCharset(CharsetType type) {
+	switch (type) {
+	case kCharsetTypeEnglish:
+		_charset.charW = 10;
+		_charset.charH = 8;
+		_charset.xCount = 32;
+		_charset.yCount = 3;
+		break;
+	case kCharsetTypeFrench:
+		_charset.charW = 10;
+		_charset.charH = 10;
+		_charset.xCount = 32;
+		_charset.yCount = 7;
+		break;
+	case kCharsetTypeCredits:
+		_charset.charW = 19;
+		_charset.charH = 10;
+		_charset.xCount = 16;
+		_charset.yCount = 7;
+		break;
+	}
+}
+
+Charset Graphics::_charset;
+
+CharsetType Graphics::_charsetType;
 
 } // namespace Tucker

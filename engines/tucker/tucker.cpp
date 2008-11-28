@@ -43,22 +43,23 @@ TuckerEngine::~TuckerEngine() {
 
 Common::Error TuckerEngine::init() {
 	initGraphics(kScreenWidth, kScreenHeight, false);
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	syncSoundSettings();
 	return Common::kNoError;
 }
 
 bool TuckerEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL);
+	switch (f) {
+	case kSupportsRTL:
+	case kSupportsLoadingDuringRuntime:
+	case kSupportsSavingDuringRuntime:
+		return true;
+	default:
+		return false;
+	}
 }
 
 Common::Error TuckerEngine::go() {
-	const int firstSequence = _isDemo ? kFirstAnimationSequenceDemo : kFirstAnimationSequenceGame;
-	AnimationSequencePlayer *player = new AnimationSequencePlayer(_system, _mixer, _eventMan, firstSequence);
-	player->mainLoop();
-	delete player;
+	handleIntroSequence();
 	if (!_isDemo && !shouldQuit()) {
 		mainLoop();
 	}
@@ -66,7 +67,9 @@ Common::Error TuckerEngine::go() {
 }
 
 void TuckerEngine::syncSoundSettings() {
-	// TODO
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 }
 
 int TuckerEngine::getRandomNumber() {
@@ -1293,9 +1296,9 @@ void TuckerEngine::saveOrLoad() {
 		}
 		if (_mousePosX > 260 && _mousePosX < 290 && _mousePosY > 152 && _mousePosY < 168) {
 			if (_saveOrLoadGamePanel == 1) {
-				saveGame(_currentSaveLoadGameState);
+				saveGameState(_currentSaveLoadGameState, "");
 			} else if (_currentSaveLoadGameState > 0) {
-				loadGame(_currentSaveLoadGameState);
+				loadGameState(_currentSaveLoadGameState);
 			}
 			_forceRedrawPanelItems = 1;
 			_panelState = 0;
@@ -1897,7 +1900,7 @@ void TuckerEngine::drawInfoString() {
 			}
 		}
 		infoStringWidth += verbPrepositionWidth;
-		if (_actionObj2Num > 0) {
+		if (_actionObj2Num > 0 || _actionObj2Type > 0) {
 			infoStringWidth += getStringWidth(_actionObj2Num + 1, obj2StrBuf);
 		}
 	}

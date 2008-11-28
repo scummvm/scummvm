@@ -268,7 +268,7 @@ void TuckerEngine::loadCursor() {
 void TuckerEngine::loadCharset() {
 	strcpy(_fileToLoad, "charset.pcx");
 	loadImage(_loadTempBuf, 0);
-	Graphics::_charset = (_lang == Common::FR_FRA) ? &Graphics::_frCharset : &Graphics::_enCharset;
+	Graphics::setCharset((_lang == Common::FR_FRA) ? kCharsetTypeFrench : kCharsetTypeEnglish);
 	loadCharsetHelper();
 }
 
@@ -278,18 +278,16 @@ void TuckerEngine::loadCharset2() {
 	memcpy(_charWidthTable + 65, _charWidthCharset2, 58);
 	strcpy(_fileToLoad, "char2.pcx");
 	loadImage(_loadTempBuf, 0);
-	Graphics::_charset = &Graphics::_creditsCharset;
+	Graphics::setCharset(kCharsetTypeCredits);
 	loadCharsetHelper();
 }
 
 void TuckerEngine::loadCharsetHelper() {
-	const int charW = Graphics::_charset->charW;
-	const int charH = Graphics::_charset->charH;
-	const int xSize = Graphics::_charset->xCount;
-	const int ySize = Graphics::_charset->yCount;
+	const int charW = Graphics::_charset.charW;
+	const int charH = Graphics::_charset.charH;
 	int offset = 0;
-	for (int y = 0; y < ySize; ++y) {
-		for (int x = 0; x < xSize; ++x) {
+	for (int y = 0; y < Graphics::_charset.yCount; ++y) {
+		for (int x = 0; x < Graphics::_charset.xCount; ++x) {
 			offset += Graphics::encodeRAW(_loadTempBuf + (y * 320) * charH + x * charW, _charsetGfxBuf + offset, charW, charH);
 		}
 	}
@@ -907,7 +905,7 @@ void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, 
 	}
 	if (stream) {
 		_mixer->stopHandle(*handle);
-		_mixer->playInputStream(type, handle, stream, -1, volume * Audio::Mixer::kMaxChannelVolume / kMaxSoundVolume);
+		_mixer->playInputStream(type, handle, stream, -1, scaleMixerVolume(volume, kMaxSoundVolume));
 	}
 }
 

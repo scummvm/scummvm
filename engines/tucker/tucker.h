@@ -200,6 +200,14 @@ enum InputKey {
 	kInputKeyCount
 };
 
+inline int scaleMixerVolume(int volume, int max = 100) {
+	return volume * Audio::Mixer::kMaxChannelVolume / max;
+}
+
+Common::String generateGameStateFileName(const char *target, int slot, bool prefixOnly = false);
+
+class AnimationSequencePlayer;
+
 class TuckerEngine: public Engine {
 public:
 
@@ -505,11 +513,13 @@ protected:
 	void updateSprite_locationNum81_1(int i);
 	void updateSprite_locationNum82(int i);
 
-	void generateGameStateFileName(int num, char *dst, int len, bool prefixOnly = false) const;
 	template <class S> void saveOrLoadGameStateData(S &s);
-	void loadGame(int slot);
-	void saveGame(int slot);
+	virtual Common::Error loadGameState(int num);
+	virtual Common::Error saveGameState(int num, const char *description);
+	virtual bool canLoadGameStateCurrently();
+	virtual bool canSaveGameStateCurrently();
 
+	void handleIntroSequence();
 	void handleCreditsSequence();
 	void handleCongratulationsSequence();
 	void handleNewPartSequence();
@@ -552,6 +562,7 @@ protected:
 	Common::RandomSource _rnd;
 	Common::Language _lang;
 	bool _isDemo;
+	AnimationSequencePlayer *_player;
 
 	bool _quitGame;
 	bool _fastMode;

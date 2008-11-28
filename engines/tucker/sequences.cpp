@@ -33,6 +33,14 @@
 
 namespace Tucker {
 
+void TuckerEngine::handleIntroSequence() {
+	const int firstSequence = _isDemo ? kFirstAnimationSequenceDemo : kFirstAnimationSequenceGame;
+	_player = new AnimationSequencePlayer(_system, _mixer, _eventMan, firstSequence);
+	_player->mainLoop();
+	delete _player;
+	_player = 0;
+}
+
 void TuckerEngine::handleCreditsSequence() {
 	static const int _creditsSequenceData1[] = { 200, 350, 650, 850, 1150, 1450, 12000 };
 	static const int _creditsSequenceData2[] = { 1, 1, 5, 0, 6, 6, 0 };
@@ -727,7 +735,7 @@ void AnimationSequencePlayer::loadSounds(int type, int num) {
 	if (_musicVolume != 0) {
 		Audio::AudioStream *s;
 		if ((s = loadSoundFileAsStream(_musicFileNamesTable[index], (type == 5) ? kAnimationSoundType16BitsRAW : kAnimationSoundType8BitsRAW)) != 0) {
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, _musicVolume * Audio::Mixer::kMaxChannelVolume / 100);
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_musicVolume));
 		}
 	}
 }
@@ -741,14 +749,14 @@ void AnimationSequencePlayer::updateSounds() {
 		case 0:
 			if ((index = p[1]) < _soundsList1Count) {
 				if ((s = loadSoundFileAsStream(_soundsList1[index], kAnimationSoundTypeWAV)) != 0) {
-					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[index], s, -1, p[3] * Audio::Mixer::kMaxChannelVolume / 100);
+					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[index], s, -1, scaleMixerVolume(p[3]));
 				}
 			}
 			break;
 		case 1:
 			if ((index = p[1]) < _soundsList1Count) {
 				if ((s = loadSoundFileAsStream(_soundsList1[index], kAnimationSoundTypeLoopingWAV)) != 0) {
-					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[index], s, -1, p[3] * Audio::Mixer::kMaxChannelVolume / 100);
+					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[index], s, -1, scaleMixerVolume(p[3]));
 				}
 			}
 			break;
@@ -765,13 +773,13 @@ void AnimationSequencePlayer::updateSounds() {
 			index = p[1];
 			if ((s = loadSoundFileAsStream(_musicFileNamesTable[index], kAnimationSoundType8BitsRAW)) != 0) {
 				_musicVolume = p[3];
-				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, _musicVolume * Audio::Mixer::kMaxChannelVolume / 100);
+				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_musicVolume));
 			}
 			break;
 		case 5:
 			if ((index = p[1]) < _soundsList2Count) {
 				if ((s = loadSoundFileAsStream(_soundsList2[index], kAnimationSoundTypeWAV)) != 0) {
-					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, s, -1, p[3] * Audio::Mixer::kMaxChannelVolume / 100);
+					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, s, -1, scaleMixerVolume(p[3]));
 				}
 			}
 			break;
@@ -780,7 +788,7 @@ void AnimationSequencePlayer::updateSounds() {
 			index = p[1];
 			if ((s = loadSoundFileAsStream(_musicFileNamesTable[index], kAnimationSoundType16BitsRAW)) != 0) {
 				_musicVolume = p[3];
-				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, _musicVolume * Audio::Mixer::kMaxChannelVolume / 100);
+				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_musicVolume));
 			}
 			break;
 		default:

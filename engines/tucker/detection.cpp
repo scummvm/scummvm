@@ -97,11 +97,51 @@ public:
 		return "Bud Tucker in Double Trouble (C) Merit Studios";
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const {
+		switch (f) {
+		case kSupportsListSaves:
+		case kSupportsDeleteSave:
+			return true;
+		default:
+			return false;
+		}
+	}
+
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 		if (desc) {
 			*engine = new Tucker::TuckerEngine(syst, desc->language, (desc->flags & Common::ADGF_DEMO) != 0);
 		}
 		return desc != 0;
+	}
+
+	virtual SaveStateList listSaves(const char *target) const {
+		Common::String pattern = Tucker::generateGameStateFileName(target, 0, true);
+		Common::StringList filenames = g_system->getSavefileManager()->listSavefiles(pattern.c_str());
+		sort(filenames.begin(), filenames.end());
+		SaveStateList saveList;
+		for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+			int slot;
+			const char *ext = strrchr(file->c_str(), '.');
+			if (ext && (slot = atoi(ext + 1)) >= 0) {
+				Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(file->c_str());
+				if (in) {
+					char description[64];
+					snprintf(description, sizeof(description), "savegm.%02d", slot);
+					saveList.push_back(SaveStateDescriptor(slot, description));
+					delete in;
+				}
+			}
+		}
+		return saveList;
+	}
+
+	virtual int getMaximumSaveSlot() const {
+		return 99;
+	}
+
+	virtual void removeSaveState(const char *target, int slot) const {
+		Common::String filename = Tucker::generateGameStateFileName(target, slot);
+		g_system->getSavefileManager()->removeSavefile(filename.c_str());
 	}
 };
 

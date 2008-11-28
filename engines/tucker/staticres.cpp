@@ -234,14 +234,6 @@ const uint8 TuckerEngine::_charWidthCharset2[58] = {
 	0x13, 0x12, 0x10, 0x11, 0x13, 0x14, 0x14, 0x10, 0x13, 0x10,
 };
 
-const Graphics::Charset Graphics::_enCharset = { 10, 8, 32, 3 };
-
-const Graphics::Charset Graphics::_frCharset = { 10, 10, 32, 7 };
-
-const Graphics::Charset Graphics::_creditsCharset = { 19, 10, 16, 7 };
-
-const Graphics::Charset *Graphics::_charset = 0;
-
 // timestamp, index, opcode, volume
 
 const int AnimationSequencePlayer::_soundSeqData1[1] = {
