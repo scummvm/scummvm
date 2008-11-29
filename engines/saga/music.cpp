@@ -139,7 +139,9 @@ DigitalMusicInputStream::~DigitalMusicInputStream() {
 }
 
 void DigitalMusicInputStream::createCompressedStream() {
+#if defined(USE_MAD) || defined(USE_VORBIS) || defined(USE_FLAC)
 	uint numLoops = _looping ? 0 : 1;
+#endif
 	_memoryStream = _file->readStream(resourceData->size - 9);
 
 	switch (soundType) {

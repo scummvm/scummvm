@@ -925,8 +925,8 @@ uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 
 	CommonObjectOrderList::iterator drawOrderIterator;
 	CommonObjectDataPointer drawObject;
-	int frameNumber;
-	SpriteList *spriteList;
+	int frameNumber = 0;
+	SpriteList *spriteList = NULL;
 
 	createDrawOrderList();
 
@@ -1044,8 +1044,8 @@ void Actor::drawActors() {
 
 	CommonObjectOrderList::iterator drawOrderIterator;
 	CommonObjectDataPointer drawObject;
-	int frameNumber;
-	SpriteList *spriteList;
+	int frameNumber = 0;
+	SpriteList *spriteList = NULL;
 
 	Surface *backBuffer;
 

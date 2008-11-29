@@ -376,12 +376,12 @@ void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, ui
 			dataBit = (data & 0x8000) != 0; //check data
 			data <<= 1;
 
-			if (maskBit)
+			if (maskBit) {
 				if (dataBit)
 					*curPos = color;
 				else
 					*curPos = 240; //black edge
-
+			}
 			curPos++;
 		}
 		//advance a line

@@ -165,8 +165,8 @@ void AdLib::reset() {
 	for (int i = 0; i < 9; i++) {
 		writeOPL(0xA0 | i, 0);
 		writeOPL(0xB0 | i, 0);
-		writeOPL(0xE0 | _operators[i]    , 0);
-		writeOPL(0xE0 | _operators[i] + 3, 0);
+		writeOPL(0xE0 | _operators[i]     , 0);
+		writeOPL(0xE0 |(_operators[i] + 3), 0);
 	}
 
 	// Authorize the control of the waveformes

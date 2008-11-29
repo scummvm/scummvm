@@ -481,7 +481,7 @@ void AGOSEngine_Simon1::os1_getPathPosn() {
 			}
 			x_diff += y_diff /= 4;
 
-			if (x_diff < best_dist || x_diff == best_dist && prev_i == i) {
+			if ((x_diff < best_dist) || ((x_diff == best_dist) && (prev_i == i))) {
 				best_dist = x_diff;
 				best_i = maxPath + 1 - i;
 				best_j = j;

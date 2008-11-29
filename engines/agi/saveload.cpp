@@ -80,8 +80,8 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	tm curTime;
 	_system->getTimeAndDate(curTime);
 
-	uint32 saveDate = (curTime.tm_mday & 0xFF) << 24 | ((curTime.tm_mon + 1) & 0xFF) << 16 | (curTime.tm_year + 1900) & 0xFFFF;
-	uint16 saveTime = (curTime.tm_hour & 0xFF) << 8 | (curTime.tm_min) & 0xFF;
+	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	uint16 saveTime = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
 
 	out->writeUint32BE(saveDate);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save date (%d)", saveDate);

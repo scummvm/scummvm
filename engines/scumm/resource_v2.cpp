@@ -194,10 +194,11 @@ void ScummEngine_v2::readIndexFile() {
 			break;
 		case 0x132:
 			printf("C64 V1 game detected\n");
-			if (_game.id == GID_MANIAC)
+			if (_game.id == GID_MANIAC) {
 				assert(_game.version == 0);
-			else
+			} else {
 				assert(_game.version == 1);
+			}
 			readClassicIndexFile();
 			break;
 		case 0x032:

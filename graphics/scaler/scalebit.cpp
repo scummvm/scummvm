@@ -131,7 +131,7 @@ static void scale2x(void* void_dst, unsigned dst_slice, const void* void_src, un
 }
 
 /**
- * Apply the Scale32x effect on a bitmap.
+ * Apply the Scale3x effect on a bitmap.
  * The destination bitmap is filled with the scaled version of the source bitmap.
  * The source bitmap isn't modified.
  * The destination bitmap must be manually allocated before calling the function,

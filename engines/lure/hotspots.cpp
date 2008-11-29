@@ -728,7 +728,7 @@ void Hotspot::updateMovement2(CharacterMode value) {
 }
 
 void Hotspot::resetPosition() {
-	setPosition(x() & 0xf8 | 5, y());
+	setPosition((x() & 0xf8) | 5, y());
 	setDirection(direction());
 }
 

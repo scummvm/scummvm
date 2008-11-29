@@ -44,7 +44,7 @@ MidiDriver *MidiChannel_MPU401::device() {
 }
 
 void MidiChannel_MPU401::send(uint32 b) {
-	_owner->send(b & 0xFFFFFFF0 | (_channel & 0xF));
+	_owner->send((b & 0xFFFFFFF0) | (_channel & 0xF));
 }
 
 void MidiChannel_MPU401::noteOff(byte note) {

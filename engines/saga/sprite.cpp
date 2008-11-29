@@ -254,11 +254,11 @@ void Sprite::drawClip(Surface *ds, const Rect &clipRect, const Point &spritePoin
 }
 
 void Sprite::draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale) {
-	const byte *spriteBuffer;
-	int width;
-	int height;
-	int xAlign;
-	int yAlign;
+	const byte *spriteBuffer = NULL;
+	int width  = 0;
+	int height = 0;
+	int xAlign = 0;
+	int yAlign = 0;
 	Point spritePointer;
 
 	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
@@ -270,11 +270,13 @@ void Sprite::draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int
 }
 
 void Sprite::draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale) {
-	const byte *spriteBuffer;
-	int width;
-	int height;
-	int xAlign, spw;
-	int yAlign, sph;
+	const byte *spriteBuffer = NULL;
+	int width  = 0;
+	int height = 0;
+	int xAlign = 0;
+	int spw;
+	int yAlign = 0;
+	int sph;
 	Point spritePointer;
 
 	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
@@ -292,13 +294,13 @@ void Sprite::draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int
 }
 
 bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, const Point &testPoint) {
-	const byte *spriteBuffer;
+	const byte *spriteBuffer = NULL;
 	int i, j;
 	const byte *srcRowPointer;
-	int width;
-	int height;
-	int xAlign;
-	int yAlign;
+	int width  = 0;
+	int height = 0;
+	int xAlign = 0;
+	int yAlign = 0;
 	Point spritePointer;
 
 	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
@@ -319,17 +321,17 @@ bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &scre
 }
 
 void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth) {
-	const byte *spriteBuffer;
+	const byte *spriteBuffer = NULL;
 	int x, y;
 	byte *destRowPointer;
 	const byte *sourceRowPointer;
 	const byte *sourcePointer;
 	byte *destPointer;
 	byte *maskPointer;
-	int width;
-	int height;
-	int xAlign;
-	int yAlign;
+	int width  = NULL;
+	int height = 0;
+	int xAlign = 0;
+	int yAlign = 0;
 
 	ClipData clipData;
 

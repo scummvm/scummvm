@@ -644,8 +644,8 @@ void ScummEngine::saveInfos(Common::WriteStream* file) {
 	tm curTime;
 	_system->getTimeAndDate(curTime);
 
-	section.date = (curTime.tm_mday & 0xFF) << 24 | ((curTime.tm_mon + 1) & 0xFF) << 16 | (curTime.tm_year + 1900) & 0xFFFF;
-	section.time = (curTime.tm_hour & 0xFF) << 8 | (curTime.tm_min) & 0xFF;
+	section.date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	section.time = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
 
 	file->writeUint32BE(section.type);
 	file->writeUint32BE(section.version);

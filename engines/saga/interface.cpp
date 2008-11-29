@@ -1243,7 +1243,7 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 		_textInputPos = _textInputStringLength + 1;
 		break;
 	default:
-		if (keystate.ascii <= 255 && isalnum(keystate.ascii) || (keystate.ascii == ' ') ||
+		if (((keystate.ascii <= 255) && (isalnum(keystate.ascii))) || (keystate.ascii == ' ') ||
 		    (keystate.ascii == '-') || (keystate.ascii == '_')) {
 			if (_textInputStringLength < save_title_size - 1) {
 				ch[0] = keystate.ascii;

@@ -588,7 +588,7 @@ size_t std_fread(const void* ptr, size_t size, size_t numItems, FILE* handle) {
 		return bytes / size;
 	}
 
-	if ((size_t)(handle->pos + size * numItems) > handle->size) {
+	if ((int)(handle->pos + size * numItems) > handle->size) {
 		numItems = (handle->size - handle->pos) / size;
 		if (numItems < 0) numItems = 0;
 	}

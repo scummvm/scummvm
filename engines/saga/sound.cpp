@@ -92,7 +92,9 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 					buffer.size, buffer.frequency, flags, -1, volume);
 	} else {
 		Audio::AudioStream *stream = NULL;
+#if defined(USE_MAD) || defined(USE_VORBIS) || defined(USE_FLAC)
 		MemoryReadStream *tmp = NULL;
+#endif
 
 		switch (buffer.soundType) {
 #ifdef USE_MAD

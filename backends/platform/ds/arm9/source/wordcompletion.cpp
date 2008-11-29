@@ -70,7 +70,6 @@ void sortAutoCompleteWordList() {
 // Sends the current available words to the virtual keyboard code for display
 bool findWordCompletions(char* input)
 {
-	char testWord[32];
 	int min = 0;
 	int max = wordBufferPtrPos - 1;
 	char* word;
@@ -136,7 +135,7 @@ bool findWordCompletions(char* input)
 	bool match = true;
 
 
-	for (int r = 0; r < strlen(partialWord); r++) {
+	for (int r = 0; partialWord[r] != 0; r++) {
 		if (word[r] != partialWord[r]) {
 			match = false;
 			break;
@@ -155,7 +154,7 @@ bool findWordCompletions(char* input)
 
 	do {
 
-		for (int r = 0; r < strlen(partialWord); r++) {
+		for (int r = 0; partialWord[r] != 0; r++) {
 			if (word[r] != partialWord[r]) {
 				match = false;
 				break;

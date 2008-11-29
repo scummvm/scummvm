@@ -197,9 +197,9 @@ void AGOSEngine_Feeble::checkZonePtrs() {
 	uint count = ARRAYSIZE(_vgaBufferPointers);
 	VgaPointersEntry *vpe = _vgaBufferPointers;
 	do {
-		if (vpe->vgaFile1 < _blockEnd && vpe->vgaFile1End > _block ||
-			vpe->vgaFile2 < _blockEnd && vpe->vgaFile2End > _block ||
-			vpe->sfxFile < _blockEnd && vpe->sfxFileEnd > _block) {
+		if (((vpe->vgaFile1 < _blockEnd) && (vpe->vgaFile1End > _block)) ||
+			((vpe->vgaFile2 < _blockEnd) && (vpe->vgaFile2End > _block)) ||
+			((vpe->sfxFile < _blockEnd) && (vpe->sfxFileEnd > _block))) {
 			vpe->vgaFile1 = NULL;
 			vpe->vgaFile1End = NULL;
 			vpe->vgaFile2 = NULL;
@@ -218,8 +218,8 @@ void AGOSEngine::checkNoOverWrite() {
 
 	vpe = &_vgaBufferPointers[_noOverWrite];
 
-	if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
-		_vgaMemPtr <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
+	if (((_block <= vpe->vgaFile1) && (_blockEnd >= vpe->vgaFile1)) ||
+		((_vgaMemPtr <= vpe->vgaFile2) && (_blockEnd >= vpe->vgaFile2))) {
 		_rejectBlock = true;
 		_vgaMemPtr = vpe->vgaFile1 + 0x5000;
 	} else {
@@ -232,8 +232,8 @@ void AGOSEngine::checkAnims(uint a) {
 
 	vpe = &_vgaBufferPointers[a];
 
-	if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
-			_block <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
+	if (((_block <= vpe->vgaFile1) && (_blockEnd >= vpe->vgaFile1)) ||
+			((_block <= vpe->vgaFile2) && (_blockEnd >= vpe->vgaFile2))) {
 		_rejectBlock = true;
 		_vgaMemPtr = vpe->vgaFile1 + 0x5000;
 	} else {
@@ -245,8 +245,8 @@ void AGOSEngine::checkZonePtrs() {
 	uint count = ARRAYSIZE(_vgaBufferPointers);
 	VgaPointersEntry *vpe = _vgaBufferPointers;
 	do {
-		if (_block <= vpe->vgaFile1 && _blockEnd >= vpe->vgaFile1 ||
-			_block <= vpe->vgaFile2 && _blockEnd >= vpe->vgaFile2) {
+		if (((_block <= vpe->vgaFile1) && (_blockEnd >= vpe->vgaFile1)) ||
+			((_block <= vpe->vgaFile2) && (_blockEnd >= vpe->vgaFile2))) {
 			vpe->vgaFile1 = NULL;
 			vpe->vgaFile2 = NULL;
 		}

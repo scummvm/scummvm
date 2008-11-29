@@ -127,6 +127,12 @@ void DestroyScalers(){
  */
 void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
+        /* Spot the case when it can all be done in 1 hit */
+        if (((int)srcPitch == 2*width) && ((int)dstPitch == 2*width))
+        {
+            width *= height;
+            height = 1;
+        }
 	while (height--) {
 		memcpy(dstPtr, srcPtr, 2 * width);
 		srcPtr += srcPitch;
