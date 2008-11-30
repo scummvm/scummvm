@@ -35,7 +35,10 @@
 namespace Tucker {
 
 TuckerEngine::TuckerEngine(OSystem *system, Common::Language language, bool isDemo)
-	: Engine(system), _lang(language), _isDemo(isDemo) {
+	: Engine(system) {
+	_gameVer.lang = language;
+	_gameVer.isDemo = isDemo;
+	_gameVer.hasSubtitles = (language != Common::FR_FRA); // only a few subtitles are translated to french
 }
 
 TuckerEngine::~TuckerEngine() {
@@ -60,7 +63,7 @@ bool TuckerEngine::hasFeature(EngineFeature f) const {
 
 Common::Error TuckerEngine::go() {
 	handleIntroSequence();
-	if (!_isDemo && !shouldQuit()) {
+	if (!_gameVer.isDemo && !shouldQuit()) {
 		mainLoop();
 	}
 	return Common::kNoError;
@@ -135,7 +138,7 @@ void TuckerEngine::restart() {
 	_gamePaused = _gamePaused2 = false;
 	_gameDebug = false;
 	_displayGameHints = false;
-	_displaySpeechText = false;
+	_displaySpeechText = _gameVer.hasSubtitles ? ConfMan.getBool("subtitles") : false;
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
 	_gameHintsIndex = 0;
@@ -545,7 +548,7 @@ void TuckerEngine::mainLoop() {
 		}
 		if (_inputKeys[kInputKeyToggleTextSpeech]) {
 			_inputKeys[kInputKeyToggleTextSpeech] = false;
-			if (_lang != Common::FR_FRA) { // only a few subtitles are translated to french
+			if (_gameVer.hasSubtitles) {
 				if (_displaySpeechText) {
 					_displaySpeechText = false;
 //					kDefaultCharSpeechSoundCounter = 1;
@@ -553,6 +556,7 @@ void TuckerEngine::mainLoop() {
 					_displaySpeechText = true;
 //					kDefaultCharSpeechSoundCounter = 70;
 				}
+				ConfMan.setBool("subtitles", _displaySpeechText);
 			}
 		}
 		if (_inputKeys[kInputKeyHelp]) {
@@ -1892,7 +1896,7 @@ void TuckerEngine::drawInfoString() {
 	if (_actionRequiresTwoObjects) {
 		verbPreposition = (_actionVerb == 5) ? 12 : 11;
 		verbPrepositionWidth = getStringWidth(verbPreposition, infoStrBuf) + 4;
-		if (_lang == Common::FR_FRA) {
+		if (_gameVer.lang == Common::FR_FRA) {
 			if ((_actionObj2Num > 0 || _actionObj2Type > 0) && verbPreposition > 0) {
 				infoStringWidth = 0;
 				verbWidth = 0;
@@ -3708,15 +3712,15 @@ void TuckerEngine::drawSpeechText(int xStart, int y, const uint8 *dataPtr, int n
 	int x = (xStart - _scrollOffset) * 2;
 	int offset = (_scrollOffset + 320 - xStart) * 2;
 	if (_conversationOptionsCount > 0) {
-		x = 319;
+		x = 304;
 	} else {
 		if (x > offset) {
 			x = offset;
 		}
 		if (x > 180) {
-			x = 220;
+			x = 180;
 		} else if (x < 150) {
-			x = 220;
+			x = 150;
 		}
 	}
 	int count = 0;
@@ -3740,14 +3744,14 @@ void TuckerEngine::drawSpeechText(int xStart, int y, const uint8 *dataPtr, int n
 		int dstOffset = xStart - lines[i].w / 2;
 		if (dstOffset < _scrollOffset) {
 			dstOffset = _scrollOffset;
-		} else if (lines[i].w > _scrollOffset + 320) {
+		} else if (dstOffset > _scrollOffset + 320 - lines[i].w) {
 			dstOffset = _scrollOffset + 320 - lines[i].w;
 		}
 		uint8 *dst;
 		if (_conversationOptionsCount) {
 			dstOffset = xStart + _scrollOffset;
 			dst = (i * 10 + y) * 640 + _locationBackgroundGfxBuf + dstOffset;
-			_panelItemWidth = count; // ?
+			_panelItemWidth = count;
 		} else {
 			dst = (y - (count - i) * 10) * 640 + _locationBackgroundGfxBuf + dstOffset;
 		}

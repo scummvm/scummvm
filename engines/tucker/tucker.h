@@ -558,11 +558,13 @@ protected:
 	void loadSound(Audio::Mixer::SoundType type, int num, int volume, bool loop, Audio::SoundHandle *handle);
 	void loadActionsTable();
 
-
 	Common::RandomSource _rnd;
-	Common::Language _lang;
-	bool _isDemo;
 	AnimationSequencePlayer *_player;
+	struct {
+		Common::Language lang;
+		bool isDemo;
+		bool hasSubtitles;
+	} _gameVer;
 
 	bool _quitGame;
 	bool _fastMode;

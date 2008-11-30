@@ -34,7 +34,7 @@
 namespace Tucker {
 
 void TuckerEngine::handleIntroSequence() {
-	const int firstSequence = _isDemo ? kFirstAnimationSequenceDemo : kFirstAnimationSequenceGame;
+	const int firstSequence = _gameVer.isDemo ? kFirstAnimationSequenceDemo : kFirstAnimationSequenceGame;
 	_player = new AnimationSequencePlayer(_system, _mixer, _eventMan, firstSequence);
 	_player->mainLoop();
 	delete _player;
