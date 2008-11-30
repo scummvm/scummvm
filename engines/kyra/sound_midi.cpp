@@ -121,7 +121,7 @@ MidiOutput::MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool de
 	};
 
 	static const byte defaultPrograms[] = {
-		0x00, 0x44, 0x30, 0x5F, 0x4E, 0x29, 0x03, 0x6E, 0x7A, 0xFF
+		0x44, 0x30, 0x5F, 0x4E, 0x29, 0x03, 0x6E, 0x7A, 0xFF
 	};
 
 	static const byte sysEx1[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -149,7 +149,7 @@ MidiOutput::MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool de
 	for (int i = 1; i <= 9; ++i) {
 		sendIntern(0xE0, i, 0x00, 0x40);
 		if (defaultPrograms[i] != 0xFF)
-			sendIntern(0xC0, i, defaultPrograms[i], 0x00);
+			sendIntern(0xC0, i, defaultPrograms[i-1], 0x00);
 	}
 }
 
@@ -332,7 +332,7 @@ void MidiOutput::deinitSource(int source) {
 					sendIntern(0xB0, i, 0x40, 0);
 			} else if (cont.controller == 0x6E) {
 				if (cont.value >= 0x40) {
-					stopNotesOnChannel(/*_sources[source].channelMap[i]*/i);
+					stopNotesOnChannel(i);
 					unlockChannel(_sources[source].channelMap[i]);
 					_sources[source].channelMap[i] = i;
 				}
@@ -430,6 +430,8 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 		_sfx[i] = MidiParser::createParser_XMIDI();
 		assert(_sfx[i]);
 	}
+
+	updateVolumeSettings();
 }
 
 SoundMidiPC::~SoundMidiPC() {
@@ -464,6 +466,17 @@ void SoundMidiPC::hasNativeMT32(bool nativeMT32) {
 bool SoundMidiPC::init() {
 	_output = new MidiOutput(_vm->_system, _driver, _nativeMT32, !_useC55);
 	assert(_output);
+
+	_music->setMidiDriver(_output);
+	_music->setTempo(_output->getBaseTempo());
+	_music->setTimerRate(_output->getBaseTempo());
+
+	for (int i = 0; i < 3; ++i) {
+		_sfx[i]->setMidiDriver(_output);
+		_sfx[i]->setTempo(_output->getBaseTempo());
+		_sfx[i]->setTimerRate(_output->getBaseTempo());
+	}
+
 	_output->setTimerCallback(this, SoundMidiPC::onTimer);
 
 	/*loadSoundFile("INTRO");
@@ -489,6 +502,12 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	if (!_vm->resource()->exists(file.c_str()))
 		return;
 
+	// When loading a new file we stopp all notes
+	// still running on our own, just to prevent
+	// glitches
+	for (int i = 0; i < 16; ++i)
+		_output->stopNotesOnChannel(i);
+
 	if (_sfxFile != _musicFile)
 		delete[] _sfxFile;
 	delete[] _musicFile;
@@ -496,17 +515,13 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	_musicFile = _sfxFile = _vm->resource()->fileData(file.c_str(), &_musicFileSize);
 	_sfxFileSize = _musicFileSize;
 
+	_output->setSoundSource(0);
 	_music->loadMusic(_musicFile, _musicFileSize);
-	_music->setMidiDriver(_output);
-	_music->setTempo(_output->getBaseTempo());
-	_music->setTimerRate(_output->getBaseTempo());
 	_music->stopPlaying();
 
 	for (int i = 0; i < 3; ++i) {
+		_output->setSoundSource(i+1);
 		_sfx[i]->loadMusic(_musicFile, _musicFileSize);
-		_sfx[i]->setMidiDriver(_output);
-		_sfx[i]->setTempo(_output->getBaseTempo());
-		_sfx[i]->setTimerRate(_output->getBaseTempo());
 		_sfx[i]->stopPlaying();
 	}
 }
@@ -520,13 +535,9 @@ void SoundMidiPC::playTrack(uint8 track) {
 void SoundMidiPC::haltTrack() {
 	Common::StackLock lock(_mutex);
 
-	// Some handling we need to interrupt a track
-	// properly
-	for (int i = 0; i < 16; ++i)
-		_output->stopNotesOnChannel(i);
-	_output->deinitSource(0);
-
+	_output->setSoundSource(0);
 	_music->stopPlaying();
+	_output->deinitSource(0);
 }
 
 void SoundMidiPC::playSoundEffect(uint8 track) {
