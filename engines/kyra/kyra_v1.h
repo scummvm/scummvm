@@ -110,6 +110,7 @@ class KyraEngine_v1 : public Engine {
 friend class Debugger;
 friend class ::KyraMetaEngine;
 friend class GUI;
+friend class SoundMidiPC;		// For _eventMan
 public:
 	KyraEngine_v1(OSystem *system, const GameFlags &flags);
 	virtual ~KyraEngine_v1();

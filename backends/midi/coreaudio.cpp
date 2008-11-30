@@ -190,9 +190,9 @@ void MidiDriver_CORE::send(uint32 b) {
 }
 
 void MidiDriver_CORE::sysEx(const byte *msg, uint16 length) {
-	unsigned char buf[256];
+	unsigned char buf[266];
 
-	assert(length + 2 <= 256);
+	assert(length + 2 <= ARRAYSIZE(buf));
 	assert(_auGraph != NULL);
 
 	// Add SysEx frame

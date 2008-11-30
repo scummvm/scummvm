@@ -213,9 +213,9 @@ void MidiDriver_ALSA::send(uint32 b) {
 }
 
 void MidiDriver_ALSA::sysEx(const byte *msg, uint16 length) {
-	unsigned char buf[256];
+	unsigned char buf[266];
 
-	assert(length + 2 <= 256);
+	assert(length + 2 <= ARRAYSIZE(buf));
 
 	// Add SysEx frame
 	buf[0] = 0xF0;

@@ -91,7 +91,10 @@ void MidiDriver_STMIDI::send(uint32 b) {
 }
 
 void MidiDriver_STMIDI::sysEx (const byte *msg, uint16 length) {
-	if (length > 254) {
+	// FIXME: LordHoto doesn't know if this will still work
+	// when sending 264 byte sysEx data, as needed by KYRA,
+	// feel free to revert it to 254 again if needed.
+	if (length > 264) {
 		warning ("Cannot send SysEx block - data too large");
 		return;
 	}

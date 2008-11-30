@@ -42,7 +42,7 @@
 class MidiDriver_WIN : public MidiDriver_MPU401 {
 private:
 	MIDIHDR _streamHeader;
-	byte _streamBuffer[256];	// SysEx blocks should be no larger than 256 bytes
+	byte _streamBuffer[266];	// SysEx blocks should be no larger than 266 bytes
 	HANDLE _streamEvent;
 	HMIDIOUT _mo;
 	bool _isOpen;
@@ -106,7 +106,7 @@ void MidiDriver_WIN::sysEx(const byte *msg, uint16 length) {
 		return;
 	}
 
-	assert(length+2 <= 256);
+	assert(length+2 <= 266);
 
 	midiOutUnprepareHeader(_mo, &_streamHeader, sizeof(_streamHeader));
 

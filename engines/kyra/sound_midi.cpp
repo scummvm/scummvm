@@ -182,8 +182,16 @@ void MidiOutput::send(uint32 b) {
 		_channels[channel].program =
 		_sources[_curSource].channelProgram[channel] = param1;
 	} else if (event == 0xB0) {						// Controller change
+		for (int i = 0; i < 9; ++i) {
+			Controller &cont = _sources[_curSource].controllers[channel][i];
+			if (cont.controller == param1) {
+				cont.value = param2;
+				break;
+			}
+		}
+
 		if (param1 == 0x07) {
-			param1 = (param1 * _sources[_curSource].volume) >> 8;
+			param2 = (param2 * _sources[_curSource].volume) >> 8;
 		} else if (param1 == 0x6E) {	// Lock Channel
 			if (param2 >= 0x40) {	// Lock Channel
 				int chan = lockChannel();
@@ -206,15 +214,6 @@ void MidiOutput::send(uint32 b) {
 			// on track change, we simply ignore it.
 			return;
 		}
-
-		for (int i = 0; i < 9; ++i) {
-			Controller &cont = _sources[_curSource].controllers[channel][i];
-			if (cont.controller == param1) {
-				cont.value = param2;
-				break;
-			}
-		}
-
 	} else if (event == 0x90 || event == 0x80) {	// Note On/Off
 		if (!(_channels[channel].flags & kChannelLocked)) {
 			const bool remove = (event == 0x80) || (param2 == 0x00);
@@ -258,11 +257,7 @@ void MidiOutput::send(uint32 b) {
 }
 
 void MidiOutput::sendIntern(const byte event, const byte channel, byte param1, const byte param2) {
-	if (event == 0xE0) {
-		_channels[channel].pitchWheel = (param2 << 8) | param1;
-	} else if (event == 0xC0) {
-		_channels[channel].program = param1;
-
+	if (event == 0xC0) {
 		// MT32 -> GM conversion
 		if (!_isMT32 && _defaultMT32)
 			param1 = _mt32ToGm[param1];
@@ -330,8 +325,6 @@ void MidiOutput::setSourceVolume(int source, uint8 volume, bool apply) {
 			// Controller 0 in the state table should always be '7' aka
 			// volume control
 			byte realVol = (_channels[i].controllers[0].value * volume) >> 8;
-			_channels[i].controllers[0].value = realVol;
-
 			sendIntern(0xB0, i, 0x07, realVol);
 		}
 	}
@@ -509,10 +502,26 @@ bool SoundMidiPC::init() {
 
 	_output->setTimerCallback(this, SoundMidiPC::onTimer);
 
-	/*loadSoundFile("INTRO");
-	playTrack(0);
-	while (_music->isPlaying())
-		_vm->_system->delayMillis(10);*/
+	if (_nativeMT32) {
+		if (_vm->gameFlags().gameID == GI_KYRA1) {
+			loadSoundFile("INTRO");
+		} else if (_vm->gameFlags().gameID == GI_KYRA2) {
+			_vm->resource()->loadPakFile("AUDIO.PAK");
+			loadSoundFile("HOF_SYX");
+		}
+	
+		playTrack(0);
+
+		Common::Event event;
+		while (isPlaying() && !_vm->shouldQuit()) {
+			_vm->_system->updateScreen();
+			_vm->_eventMan->pollEvent(event);
+			_vm->_system->delayMillis(10);
+		}
+
+		if (_vm->gameFlags().gameID == GI_KYRA2)
+			_vm->resource()->unloadPakFile("AUDIO.PAK");
+	}
 
 	return true;
 }
@@ -594,8 +603,11 @@ void SoundMidiPC::loadSfxFile(Common::String file) {
 
 void SoundMidiPC::playTrack(uint8 track) {
 	Common::StackLock lock(_mutex);
-	_output->initSource(0);
+
 	_fadeMusicOut = false;
+	_output->setSourceVolume(0, _musicVolume, true);
+
+	_output->initSource(0);
 	_output->setSourceVolume(0, _musicVolume, true);
 	_music->setTrack(track);
 }
@@ -620,7 +632,7 @@ void SoundMidiPC::playSoundEffect(uint8 track) {
 		if (!_sfx[i]->isPlaying()) {
 			_output->initSource(i+1);
 			_sfx[i]->setTrack(track);
-			break;
+			return;
 		}
 	}
 }

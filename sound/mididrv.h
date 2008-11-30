@@ -216,7 +216,7 @@ public:
 	 * do NOT include the leading 0xF0 and the trailing 0xF7.
 	 *
 	 * Furthermore, the maximal supported length of a SysEx
-	 * is 254 bytes. Passing longer buffers can lead to
+	 * is 264 bytes. Passing longer buffers can lead to
 	 * undefined behavior (most likely, a crash).
 	 */
 	virtual void sysEx(const byte *msg, uint16 length) { }

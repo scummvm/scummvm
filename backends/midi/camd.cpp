@@ -115,9 +115,9 @@ void MidiDriver_CAMD::send(uint32 b) {
 }
 
 void MidiDriver_CAMD::sysEx(const byte *msg, uint16 length) {
-	unsigned char buf[256];
+	unsigned char buf[266];
 
-	assert(length + 2 <= 256);
+	assert(length + 2 <= ARRAYSIZE(buf));
 
 	// Add SysEx frame
 	buf[0] = 0xF0;

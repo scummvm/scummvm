@@ -112,7 +112,7 @@ void MidiDriver_Zodiac::send(uint32 b) {
 }
 
 void MidiDriver_Zodiac::sysEx(const byte *msg, uint16 length) {
-	unsigned char buf[256];
+	unsigned char buf[266];
 
 	buf[0] = 0xF0;
 	memcpy(buf + 1, msg, length);
