@@ -53,13 +53,13 @@ uint16 VDXPlayer::loadInternal() {
 	if ((gDebugLevel == 11) || (Common::getEnabledSpecialDebugLevels() & engine_level)) {
 		int8 i;
 		debugN(1, "Groovie::VDX: New VDX: bitflags are ");
-		for (i = 11; i >= 0; i--) {
+		for (i = 15; i >= 0; i--) {
 			debugN(1, "%d", _flags & (1 << i)? 1 : 0);
 			if (i % 4 == 0) {
 				debugN(1, " ");
 			}
 		}
-		debug(1, " ");
+		debug(1, " <- 0 ");
 	}
 	// Flags:
 	// - 1 Puzzle piece? Skip palette, don't redraw full screen, draw still to b/ack buffer
@@ -176,7 +176,12 @@ bool VDXPlayer::playFrameInternal() {
 
 	// Report the end of the video if we reached the end of the file or if we
 	// just wanted to play one frame.
-	return _file->eos() || _flagFirstFrame;
+	if (_file->eos() || _flagFirstFrame) {
+		_origX = _origY = 0;
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 static const uint16 vdxBlockMapLookup[] = {

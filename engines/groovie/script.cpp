@@ -456,10 +456,13 @@ bool Script::playvideofromref(uint16 fileref) {
 
 		// Debug bitflags
 		debugScript(1, false, "Play video 0x%04X (bitflags:", fileref);
-		for (int i = 10; i >= 0; i--) {
+		for (int i = 15; i >= 0; i--) {
 			debugScript(1, false, "%d", _bitflags & (1 << i)? 1 : 0);
+			if (i % 4 == 0) {
+				debugScript(1, false, " ");
+			}
 		}
-		debugScript(1, true, ")");
+		debugScript(1, true, " <- 0)");
 
 		// Close the previous video file
 		if (_videoFile) {
