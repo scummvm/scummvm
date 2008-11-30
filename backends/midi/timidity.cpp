@@ -487,7 +487,7 @@ void MidiDriver_TIMIDITY::send(uint32 b) {
 
 void MidiDriver_TIMIDITY::sysEx(const byte *msg, uint16 length) {
 	fprintf(stderr, "Timidity::sysEx\n");
-	unsigned char buf[1330];
+	unsigned char buf[266*4];
 	int position = 0;
 	const byte *chr = msg;
 

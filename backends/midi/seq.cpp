@@ -146,7 +146,7 @@ void MidiDriver_SEQ::send(uint32 b) {
 }
 
 void MidiDriver_SEQ::sysEx (const byte *msg, uint16 length) {
-	unsigned char buf [1330];
+	unsigned char buf [266*4];
 	int position = 0;
 	const byte *chr = msg;
 
