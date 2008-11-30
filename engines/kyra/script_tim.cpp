@@ -559,7 +559,11 @@ int TIMInterpreter::cmd_playVocFile(const uint16 *param) {
 
 int TIMInterpreter::cmd_loadSoundFile(const uint16 *param) {
 	const char *file = (const char *)(_currentTim->text + READ_LE_UINT16(_currentTim->text + (param[0]<<1)));
+
 	_vm->sound()->loadSoundFile(file);
+	if (_vm->gameFlags().gameID == GI_LOL)
+		_vm->sound()->loadSfxFile(file);
+
 	return 1;
 }
 

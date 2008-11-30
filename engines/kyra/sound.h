@@ -350,7 +350,6 @@ private:
 
 	// Midi file related
 	byte *_musicFile, *_sfxFile;
-	uint32 _musicFileSize, _sfxFileSize;
 
 	MidiParser *_music;
 	MidiParser *_sfx[3];

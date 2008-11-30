@@ -450,7 +450,6 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 	_output = 0;
 
 	_musicFile = _sfxFile = 0;
-	_musicFileSize = _sfxFileSize = 0;
 
 	_music = MidiParser::createParser_XMIDI();
 	assert(_music);
@@ -551,38 +550,44 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	for (int i = 0; i < 16; ++i)
 		_output->stopNotesOnChannel(i);
 
-	if (_sfxFile != _musicFile)
-		delete[] _sfxFile;
 	delete[] _musicFile;
-
-	_musicFile = _sfxFile = _vm->resource()->fileData(file.c_str(), &_musicFileSize);
-	_sfxFileSize = _musicFileSize;
+	uint32 fileSize = 0;
+	_musicFile = _vm->resource()->fileData(file.c_str(), &fileSize);
 
 	_output->setSoundSource(0);
-	_music->loadMusic(_musicFile, _musicFileSize);
+	_music->loadMusic(_musicFile, fileSize);
 	_music->stopPlaying();
 
-	for (int i = 0; i < 3; ++i) {
-		_output->setSoundSource(i+1);
-		_sfx[i]->loadMusic(_musicFile, _musicFileSize);
-		_sfx[i]->stopPlaying();
+	// Since KYRA1 uses the same file for SFX and Music
+	// we setup sfx to play from music file as well
+	if (_vm->gameFlags().gameID == GI_KYRA1) {
+		for (int i = 0; i < 3; ++i) {
+			_output->setSoundSource(i+1);
+			_sfx[i]->loadMusic(_musicFile, fileSize);
+			_sfx[i]->stopPlaying();
+		}
 	}
 }
 
 void SoundMidiPC::loadSfxFile(Common::String file) {
 	Common::StackLock lock(_mutex);
 
+	// Kyrandia 1 doesn't use a special sfx file
+	if (_vm->gameFlags().gameID == GI_KYRA1)
+		return;
+
 	file += _useC55 ? ".C55" : ".XMI";
 	if (!_vm->resource()->exists(file.c_str()))
 		return;
 
-	if (_sfxFile != _musicFile)
-		delete[] _sfxFile;
+	delete[] _sfxFile;
 
-	_sfxFile = _vm->resource()->fileData(file.c_str(), &_sfxFileSize);
+	uint32 fileSize = 0;
+	_sfxFile = _vm->resource()->fileData(file.c_str(), &fileSize);
+
 	for (int i = 0; i < 3; ++i) {
 		_output->setSoundSource(i+1);
-		_sfx[i]->loadMusic(_sfxFile, _sfxFileSize);
+		_sfx[i]->loadMusic(_sfxFile, fileSize);
 		_sfx[i]->stopPlaying();
 	}
 }
