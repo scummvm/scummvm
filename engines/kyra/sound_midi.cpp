@@ -602,6 +602,8 @@ void SoundMidiPC::loadSfxFile(Common::String file) {
 }
 
 void SoundMidiPC::playTrack(uint8 track) {
+	haltTrack();
+
 	Common::StackLock lock(_mutex);
 
 	_fadeMusicOut = false;

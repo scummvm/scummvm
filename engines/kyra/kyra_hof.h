@@ -301,6 +301,10 @@ protected:
 
 	static const int8 _dosTrackMap[];
 	static const int _dosTrackMapSize;
+	static const int8 _mt32SfxMap[];
+	static const int _mt32SfxMapSize;
+	static const int8 _gmSfxMap[];
+	static const int _gmSfxMapSize;
 
 	AudioDataStruct _soundData[3];
 protected:

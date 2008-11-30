@@ -1583,16 +1583,23 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 	}
 
 	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
-	if (vocIndex != -1)
+	if (vocIndex != -1) {
 		_sound->voicePlay(_ingameSoundList[vocIndex], true);
-	else if (_flags.platform == Common::kPlatformPC)
-		KyraEngine_v1::snd_playSoundEffect(track);
+	} else if (_flags.platform == Common::kPlatformPC) {
+		if (_sound->getSfxType() == Sound::kMidiMT32)
+			track = track < _mt32SfxMapSize ? _mt32SfxMap[track] - 1 : -1;
+		else if (_sound->getSfxType() == Sound::kMidiGM)
+			track = track < _gmSfxMapSize ? _gmSfxMap[track] - 1: -1;
+
+		if (track != -1)
+			KyraEngine_v1::snd_playSoundEffect(track);
 
 		// TODO ?? Maybe there is a way to let users select whether they want
 		// voc, midi or adl sfx (even though it makes no sense to choose anything but voc).
 		// The PC-98 version has support for non-pcm sound effects, but only for tracks 
 		// which also have voc files. The syntax would be:
 		// KyraEngine_v1::snd_playSoundEffect(vocIndex);
+	}
 }
 
 #pragma mark -
