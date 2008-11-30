@@ -64,6 +64,14 @@ static const Common::ADGameDescription tuckerGameDescriptions[] = {
 	},
 	{
 		"tucker",
+		"",
+		AD_ENTRY1s("infobrgr.txt", "4df9eb65722418d1a1723508115b146c", 552),
+		Common::GR_GRE,
+		Common::kPlatformPC,
+		Common::ADGF_NO_FLAGS
+	},
+	{
+		"tucker",
 		"Demo",
 		AD_ENTRY1s("sample.bnk", "0c58636237f90238cbfd49d76b3e5c1a", 10780),
 		Common::EN_ANY,

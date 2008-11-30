@@ -268,7 +268,15 @@ void TuckerEngine::loadCursor() {
 void TuckerEngine::loadCharset() {
 	strcpy(_fileToLoad, "charset.pcx");
 	loadImage(_loadTempBuf, 0);
-	Graphics::setCharset((_gameVer.lang == Common::FR_FRA) ? kCharsetTypeFrench : kCharsetTypeEnglish);
+	switch (_gameVer.lang) {
+	case Common::FR_FRA:
+	case Common::GR_GRE:
+		Graphics::setCharset(kCharsetTypeFrGr);
+		break;
+	default:
+		Graphics::setCharset(kCharsetTypeEn);
+		break;
+	}
 	loadCharsetHelper();
 }
 

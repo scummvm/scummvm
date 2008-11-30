@@ -31,8 +31,8 @@
 namespace Tucker {
 
 enum CharsetType {
-	kCharsetTypeEnglish,
-	kCharsetTypeFrench,
+	kCharsetTypeEn,
+	kCharsetTypeFrGr,
 	kCharsetTypeCredits
 };
 
