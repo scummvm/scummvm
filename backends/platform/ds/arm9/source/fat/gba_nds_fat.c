@@ -42,7 +42,7 @@
 //---------------------------------------------------------------
 // Appropriate placement of CF functions and data
 #ifdef NDS
- #define _VARS_IN_RAM 
+ #define _VARS_IN_RAM
 #else
  #define _VARS_IN_RAM __attribute__ ((section (".sbss")))
 #endif
@@ -74,7 +74,7 @@
 #ifdef __GNUC__
  #define __PACKED __attribute__ ((__packed__))
 #else
- #define __PACKED 
+ #define __PACKED
  #pragma pack(1)
 #endif
 
@@ -98,7 +98,7 @@ typedef struct
 	u32	numSectors;
 	union	// Different types of extended BIOS Parameter Block for FAT16 and FAT32
 	{
-		struct  
+		struct
 		{
 			// Ext BIOS Parameter Block for FAT16
 			u8	driveNumber;
@@ -110,7 +110,7 @@ typedef struct
 			// Bootcode
 			u8	bootCode[448];
 		}	__PACKED fat16;
-		struct  
+		struct
 		{
 			// FAT32 extended block
 			u32	sectorsPerFAT32;
@@ -158,7 +158,7 @@ typedef struct
 typedef struct
 {
 	u8 ordinal;	// Position within LFN
-	u16 char0;	
+	u16 char0;
 	u16 char1;
 	u16 char2;
 	u16 char3;
@@ -177,7 +177,7 @@ typedef struct
 	u16 char12;
 }	__PACKED DIR_ENT_LFN;
 
-const char lfn_offset_table[13]={0x01,0x03,0x05,0x07,0x09,0x0E,0x10,0x12,0x14,0x16,0x18,0x1C,0x1E}; 
+const char lfn_offset_table[13]={0x01,0x03,0x05,0x07,0x09,0x0E,0x10,0x12,0x14,0x16,0x18,0x1C,0x1E};
 
 // End of packed structs
 #ifdef __PACKED
@@ -190,7 +190,7 @@ const char lfn_offset_table[13]={0x01,0x03,0x05,0x07,0x09,0x0E,0x10,0x12,0x14,0x
 //-----------------------------------------------------------------
 // Global Variables
 
-// _VARS_IN_RAM variables are stored in the largest section of WRAM 
+// _VARS_IN_RAM variables are stored in the largest section of WRAM
 // available: IWRAM on NDS ARM7, EWRAM on NDS ARM9 and GBA
 
 // Files
@@ -305,7 +305,7 @@ u16 getRTCtoFileTime (void)
 u16 getRTCtoFileDate (void)
 {
 #ifdef NDS
-	return ( 
+	return (
 		( ((IPC->rtc_year + 20) & 0x7F) <<9) |
 		( (IPC->rtc_month & 0xF) << 5) |
 		(IPC->rtc_day & 0x1F) );
@@ -330,13 +330,13 @@ u32 FAT_NextCluster(u32 cluster)
 	u32 nextCluster = CLUSTER_FREE;
 	u32 sector;
 	int offset;
-	
-	switch (filesysType) 
+
+	switch (filesysType)
 	{
 		case FS_UNKNOWN:
 			nextCluster = CLUSTER_FREE;
 			break;
-			
+
 		case FS_FAT12:
 			sector = filesysFAT + (((cluster * 3) / 2) / BYTE_PER_READ);
 			offset = ((cluster * 3) / 2) % BYTE_PER_READ;
@@ -351,32 +351,32 @@ u32 FAT_NextCluster(u32 cluster)
 
 			nextCluster = ((u8*)fatBuffer)[offset];
 			offset++;
-			
+
 			if (offset >= BYTE_PER_READ) {
 				offset = 0;
 				fatBufferCurSector++;
 				disc_ReadSector(fatBufferCurSector, fatBuffer);
 			}
-			
+
 			nextCluster |= (((u8*)fatBuffer)[offset]) << 8;
-			
+
 			if (cluster & 0x01) {
 				nextCluster = nextCluster >> 4;
 			} else 	{
 				nextCluster &= 0x0FFF;
 			}
-			
+
 			if (nextCluster >= 0x0FF7)
 			{
 				nextCluster = CLUSTER_EOF;
 			}
 
 			break;
-			
+
 		case FS_FAT16:
 			sector = filesysFAT + ((cluster << 1) / BYTE_PER_READ);
 			offset = cluster % (BYTE_PER_READ >> 1);
-			
+
 			// If FAT buffer contains wrong sector
 			if (sector != fatBufferCurSector)
 			{
@@ -387,17 +387,17 @@ u32 FAT_NextCluster(u32 cluster)
 
 			// read the nextCluster value
 			nextCluster = ((u16*)fatBuffer)[offset];
-			
+
 			if (nextCluster >= 0xFFF7)
 			{
 				nextCluster = CLUSTER_EOF;
 			}
 			break;
-			
+
 		case FS_FAT32:
 			sector = filesysFAT + ((cluster << 2) / BYTE_PER_READ);
 			offset = cluster % (BYTE_PER_READ >> 2);
-			
+
 			// If FAT buffer contains wrong sector
 			if (sector != fatBufferCurSector)
 			{
@@ -408,18 +408,18 @@ u32 FAT_NextCluster(u32 cluster)
 
 			// read the nextCluster value
 			nextCluster = (((u32*)fatBuffer)[offset]) & 0x0FFFFFFF;
-			
+
 			if (nextCluster >= 0x0FFFFFF7)
 			{
 				nextCluster = CLUSTER_EOF;
 			}
 			break;
-			
+
 		default:
 			nextCluster = CLUSTER_FREE;
 			break;
 	}
-	
+
 	return nextCluster;
 }
 
@@ -437,13 +437,13 @@ bool FAT_WriteFatEntry (u32 cluster, u32 value)
 	{
 		return false;
 	}
-	
-	switch (filesysType) 
+
+	switch (filesysType)
 	{
 		case FS_UNKNOWN:
 			return false;
 			break;
-			
+
 		case FS_FAT12:
 			sector = filesysFAT + (((cluster * 3) / 2) / BYTE_PER_READ);
 			offset = ((cluster * 3) / 2) % BYTE_PER_READ;
@@ -465,32 +465,32 @@ bool FAT_WriteFatEntry (u32 cluster, u32 value)
 					offset = 0;
 					// write the buffer back to disc
 					disc_WriteSector(fatBufferCurSector, fatBuffer);
-					// read the next sector	
+					// read the next sector
 					fatBufferCurSector++;
 					disc_ReadSector(fatBufferCurSector, fatBuffer);
 				}
-				
+
 				((u8*)fatBuffer)[offset] =  (value & 0x0FF0) >> 4;
 
 			} else {
-			
+
 				((u8*)fatBuffer)[offset] = value & 0xFF;
-		
+
 				offset++;
 				if (offset >= BYTE_PER_READ) {
 					offset = 0;
 					// write the buffer back to disc
 					disc_WriteSector(fatBufferCurSector, fatBuffer);
-					// read the next sector	
+					// read the next sector
 					fatBufferCurSector++;
 					disc_ReadSector(fatBufferCurSector, fatBuffer);
 				}
-				
+
 				((u8*)fatBuffer)[offset] = (((u8*)fatBuffer)[offset] & 0xF0) | ((value >> 8) & 0x0F);
 			}
 
 			break;
-			
+
 		case FS_FAT16:
 			sector = filesysFAT + ((cluster << 1) / BYTE_PER_READ);
 			offset = cluster % (BYTE_PER_READ >> 1);
@@ -507,11 +507,11 @@ bool FAT_WriteFatEntry (u32 cluster, u32 value)
 			((u16*)fatBuffer)[offset] = (value & 0xFFFF);
 
 			break;
-			
+
 		case FS_FAT32:
 			sector = filesysFAT + ((cluster << 2) / BYTE_PER_READ);
 			offset = cluster % (BYTE_PER_READ >> 2);
-			
+
 			// If FAT buffer contains wrong sector
 			if (sector != fatBufferCurSector)
 			{
@@ -524,15 +524,15 @@ bool FAT_WriteFatEntry (u32 cluster, u32 value)
 			(((u32*)fatBuffer)[offset]) =  value;
 
 			break;
-			
+
 		default:
 			return false;
 			break;
 	}
-	
+
 	// write the buffer back to disc
 	disc_WriteSector(fatBufferCurSector, fatBuffer);
-			
+
 	return true;
 }
 #endif
@@ -540,8 +540,8 @@ bool FAT_WriteFatEntry (u32 cluster, u32 value)
 #ifdef CAN_WRITE_TO_DISC
 /*-----------------------------------------------------------------
 FAT_ReadWriteFatEntryBuffered
-Internal function - writes FAT information about a cluster to a 
- buffer that should then be flushed to disc using 
+Internal function - writes FAT information about a cluster to a
+ buffer that should then be flushed to disc using
  FAT_WriteFatEntryFlushBuffer()
  Call FAT_WriteFatEntry first so as not to ruin the disc.
  Also returns the entry being replaced
@@ -555,13 +555,13 @@ u32 FAT_ReadWriteFatEntryBuffered (u32 cluster, u32 value)
 	if ((cluster < 0x0002) || (cluster > fatLastCluster))
 		return CLUSTER_FREE;
 
-	
-	switch (filesysType) 
+
+	switch (filesysType)
 	{
 		case FS_UNKNOWN:
 			oldValue = CLUSTER_FREE;
 			break;
-			
+
 		case FS_FAT12:
 			sector = filesysFAT + (((cluster * 3) / 2) / BYTE_PER_READ);
 			offset = ((cluster * 3) / 2) % BYTE_PER_READ;
@@ -587,40 +587,40 @@ u32 FAT_ReadWriteFatEntryBuffered (u32 cluster, u32 value)
 					offset = 0;
 					// write the buffer back to disc
 					disc_WriteSector(fatBufferCurSector, fatBuffer);
-					// read the next sector	
+					// read the next sector
 					fatBufferCurSector++;
 					disc_ReadSector(fatBufferCurSector, fatBuffer);
 				}
-				
+
 				oldValue |= ((((u8*)fatBuffer)[offset]) << 4) & 0x0FF0;
 				((u8*)fatBuffer)[offset] =  (value & 0x0FF0) >> 4;
 
 			} else {
-			
+
 				oldValue = ((u8*)fatBuffer)[offset] & 0xFF;
 				((u8*)fatBuffer)[offset] = value & 0xFF;
-		
+
 				offset++;
 				if (offset >= BYTE_PER_READ) {
 					offset = 0;
 					// write the buffer back to disc
 					disc_WriteSector(fatBufferCurSector, fatBuffer);
-					// read the next sector	
+					// read the next sector
 					fatBufferCurSector++;
 					disc_ReadSector(fatBufferCurSector, fatBuffer);
 				}
-				
+
 				oldValue |= (((u8*)fatBuffer)[offset] & 0x0F) << 8;
 				((u8*)fatBuffer)[offset] = (((u8*)fatBuffer)[offset] & 0xF0) | ((value >> 8) & 0x0F);
 			}
 
-			if (oldValue >= 0x0FF7) 
+			if (oldValue >= 0x0FF7)
 			{
 				oldValue = CLUSTER_EOF;
 			}
 
 			break;
-			
+
 		case FS_FAT16:
 			sector = filesysFAT + ((cluster << 1) / BYTE_PER_READ);
 			offset = cluster % (BYTE_PER_READ >> 1);
@@ -634,23 +634,23 @@ u32 FAT_ReadWriteFatEntryBuffered (u32 cluster, u32 value)
 				// Load correct sector to buffer
 				fatBufferCurSector = sector;
 				disc_ReadSector(fatBufferCurSector, fatBuffer);
-			} 
+			}
 
 			// write the value to the FAT buffer
 			oldValue = ((u16*)fatBuffer)[offset];
 			((u16*)fatBuffer)[offset] = value;
 
-			if (oldValue >= 0xFFF7) 
+			if (oldValue >= 0xFFF7)
 			{
 				oldValue = CLUSTER_EOF;
 			}
 
 			break;
-			
+
 		case FS_FAT32:
 			sector = filesysFAT + ((cluster << 2) / BYTE_PER_READ);
 			offset = cluster % (BYTE_PER_READ >> 2);
-			
+
 			// If FAT buffer contains wrong sector
 			if (sector != fatBufferCurSector)
 			{
@@ -666,18 +666,18 @@ u32 FAT_ReadWriteFatEntryBuffered (u32 cluster, u32 value)
 			oldValue = ((u32*)fatBuffer)[offset];
 			((u32*)fatBuffer)[offset] =  value;
 
-			if (oldValue >= 0x0FFFFFF7) 
+			if (oldValue >= 0x0FFFFFF7)
 			{
 				oldValue = CLUSTER_EOF;
 			}
 
 			break;
-			
+
 		default:
 			oldValue = CLUSTER_FREE;
 			break;
 	}
-	
+
 	return oldValue;
 }
 #endif
@@ -727,7 +727,7 @@ u32 FAT_FirstFreeCluster(void)
 /*-----------------------------------------------------------------
 FAT_LinkFreeCluster
 Internal function - gets the first available free cluster, sets it
-to end of file, links the input cluster to it then returns the 
+to end of file, links the input cluster to it then returns the
 cluster number
 -----------------------------------------------------------------*/
 u32 FAT_LinkFreeCluster(u32 cluster)
@@ -746,7 +746,7 @@ u32 FAT_LinkFreeCluster(u32 cluster)
 	{
 		return curLink;	// Return the current link - don't allocate a new one
 	}
-	
+
 	// Get a free cluster
 	firstFree = FAT_FirstFreeCluster();
 
@@ -777,7 +777,7 @@ Internal function - frees any cluster used by a file
 bool FAT_ClearLinks (u32 cluster)
 {
 	u32 nextCluster;
-	
+
 	if ((cluster < 0x0002) || (cluster > fatLastCluster))
 		return false;
 
@@ -793,7 +793,7 @@ bool FAT_ClearLinks (u32 cluster)
 	while ((cluster != CLUSTER_EOF) && (cluster != CLUSTER_FREE))
 	{
 		cluster = FAT_ReadWriteFatEntryBuffered (cluster, CLUSTER_FREE);
-	} 
+	}
 
 	// Flush fat write buffer
 	FAT_WriteFatEntryFlushBuffer ();
@@ -814,7 +814,7 @@ bool FAT_InitFiles (void)
 	int i;
 	int bootSector;
 	BOOT_SEC* bootSec;
-	
+
 	if (!disc_Init())
 	{
 		return (false);
@@ -830,7 +830,7 @@ bool FAT_InitFiles (void)
 		return false;
 	}*/
 
-	
+
 
 	// Check if there is a FAT string, which indicates this is a boot sector
 	if ((globalBuffer[0x36] == 'F') && (globalBuffer[0x37] == 'A') && (globalBuffer[0x38] == 'T'))
@@ -848,9 +848,9 @@ bool FAT_InitFiles (void)
 		// First check for an active partition
 		for (i=0x1BE; (i < 0x1FE) && (globalBuffer[i] != 0x80); i+= 0x10);
 		// If it didn't find an active partition, search for any valid partition
-		if (i == 0x1FE) 
+		if (i == 0x1FE)
 			for (i=0x1BE; (i < 0x1FE) && (globalBuffer[i+0x04] == 0x00); i+= 0x10);
-		
+
 		// Go to first valid partition
 		if ( i != 0x1FE)	// Make sure it found a partition
 		{
@@ -865,7 +865,7 @@ bool FAT_InitFiles (void)
 	if (!disc_ReadSector (bootSector,  bootSec)) {
 		return false;
 	}
-	
+
 	// Store required information about the file system
 	if (bootSec->sectorsPerFAT != 0)
 	{
@@ -875,7 +875,7 @@ bool FAT_InitFiles (void)
 	{
 		filesysSecPerFAT = bootSec->extBlock.fat32.sectorsPerFAT32;
 	}
-	
+
 	if (bootSec->numSectorsSmall != 0)
 	{
 		filesysNumSec = bootSec->numSectorsSmall;
@@ -987,7 +987,7 @@ Return the file info structure of the next valid file entry
 u32 dirCluster: IN cluster of subdirectory table
 int entry: IN the desired file entry
 int origin IN: relative position of the entry
-DIR_ENT return OUT: desired dirEntry. First char will be FILE_FREE if 
+DIR_ENT return OUT: desired dirEntry. First char will be FILE_FREE if
 	the entry does not exist.
 -----------------------------------------------------------------*/
 DIR_ENT FAT_GetDirEntry ( u32 dirCluster, int entry, int origin)
@@ -1011,8 +1011,8 @@ DIR_ENT FAT_GetDirEntry ( u32 dirCluster, int entry, int origin)
 	{
 		return (dir);
 	}
-	
-	switch (origin) 
+
+	switch (origin)
 	{
 	case SEEK_SET:
 		wrkDirCluster = dirCluster;
@@ -1022,7 +1022,7 @@ DIR_ENT FAT_GetDirEntry ( u32 dirCluster, int entry, int origin)
 	case SEEK_CUR:	// Don't change anything
 		break;
 	case SEEK_END:	// Find entry signifying end of directory
-		// Subtraction will never reach 0, so it keeps going 
+		// Subtraction will never reach 0, so it keeps going
 		// until reaches end of directory
 		wrkDirCluster = dirCluster;
 		wrkDirSector = 0;
@@ -1055,7 +1055,7 @@ DIR_ENT FAT_GetDirEntry ( u32 dirCluster, int entry, int origin)
 				{
 					notFound = true;
 				}
-				firstSector = FAT_ClustToSect(wrkDirCluster);		
+				firstSector = FAT_ClustToSect(wrkDirCluster);
 			}
 			else if ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER) && (wrkDirSector == (filesysData - filesysRootDir)))
 			{
@@ -1082,7 +1082,7 @@ DIR_ENT FAT_GetDirEntry ( u32 dirCluster, int entry, int origin)
 					lfnName[0] = '\0';
 				}
 			}
-			if (entry == 0) 
+			if (entry == 0)
 			{
 				if (!lfnExists)
 				{
@@ -1128,7 +1128,7 @@ DIR_ENT FAT_GetDirEntry ( u32 dirCluster, int entry, int origin)
 			}
 		}
 	} while (!found && !notFound);
-	
+
 	// If no file is found, return FILE_FREE
 	if (notFound)
 	{
@@ -1141,7 +1141,7 @@ DIR_ENT FAT_GetDirEntry ( u32 dirCluster, int entry, int origin)
 
 /*-----------------------------------------------------------------
 FAT_GetLongFilename
-Get the long name of the last file or directory retrived with 
+Get the long name of the last file or directory retrived with
 	GetDirEntry. Also works for FindFirstFile and FindNextFile.
 	If a long name doesn't exist, it returns the short name
 	instead.
@@ -1156,14 +1156,14 @@ bool FAT_GetLongFilename (char* filename)
 
 	strncpy (filename, lfnName, MAX_FILENAME_LENGTH - 1);
 	filename[MAX_FILENAME_LENGTH - 1] = '\0';
-	
+
 	return true;
 }
 
 
 /*-----------------------------------------------------------------
 FAT_GetFilename
-Get the alias (short name) of the file or directory stored in 
+Get the alias (short name) of the file or directory stored in
 	dirEntry
 DIR_ENT dirEntry: IN a valid directory table entry
 char* alias OUT: will be filled with the alias (short filename),
@@ -1192,7 +1192,7 @@ bool FAT_GetFilename (DIR_ENT dirEntry, char* alias)
 			}
 		}
 		else
-		{		
+		{
 			// Copy the filename from the dirEntry to the string
 			for (i = 0; (i < 8) && (dirEntry.name[i] != ' '); i++)
 			{
@@ -1230,7 +1230,7 @@ bool FAT_GetAlias (char* alias)
 	}
 	// Read in the last accessed directory entry
 	disc_ReadSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
-	
+
 	return 	FAT_GetFilename (((DIR_ENT*)globalBuffer)[wrkDirOffset], alias);
 }
 
@@ -1244,7 +1244,7 @@ u32 FAT_GetFileSize (void)
 {
 	// Read in the last accessed directory entry
 	disc_ReadSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
-	
+
 	return 	((DIR_ENT*)globalBuffer)[wrkDirOffset].fileSize;
 }
 
@@ -1257,7 +1257,7 @@ u32 FAT_GetFileCluster (void)
 {
 	// Read in the last accessed directory entry
 	disc_ReadSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
-	
+
 	return 	(((DIR_ENT*)globalBuffer)[wrkDirOffset].startCluster) | (((DIR_ENT*)globalBuffer)[wrkDirOffset].startClusterHigh << 16);
 }
 
@@ -1270,7 +1270,7 @@ u8 FAT_GetFileAttributes (void)
 {
 	// Read in the last accessed directory entry
 	disc_ReadSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
-	
+
 	return 	((DIR_ENT*)globalBuffer)[wrkDirOffset].attrib;
 }
 
@@ -1294,7 +1294,7 @@ u8 FAT_SetFileAttributes (const char* filename, u8 attributes, u8 mask)
 	disc_ReadSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
 
 	((DIR_ENT*)globalBuffer)[wrkDirOffset].attrib = (((DIR_ENT*)globalBuffer)[wrkDirOffset].attrib & ~(mask & 0x27)) | (attributes & 0x27);	// 0x27 is he settable attributes
-	
+
 	disc_WriteSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
 
 	return 	((DIR_ENT*)globalBuffer)[wrkDirOffset].attrib;
@@ -1305,7 +1305,7 @@ u8 FAT_SetFileAttributes (const char* filename, u8 attributes, u8 mask)
 time_t FAT_FileTimeToCTime (u16 fileTime, u16 fileDate)
 {
 	struct tm timeInfo;
-	
+
 	timeInfo.tm_year = (fileDate >> 9) + 80;		// years since midnight January 1970
 	timeInfo.tm_mon = ((fileDate >> 5) & 0xf) - 1;	// Months since january
 	timeInfo.tm_mday = fileDate & 0x1f;				// Day of the month
@@ -1326,7 +1326,7 @@ time_t FAT_GetFileCreationTime (void)
 {
 	// Read in the last accessed directory entry
 	disc_ReadSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
-	
+
 	return 	FAT_FileTimeToCTime(((DIR_ENT*)globalBuffer)[wrkDirOffset].cTime, ((DIR_ENT*)globalBuffer)[wrkDirOffset].cDate);
 }
 
@@ -1339,7 +1339,7 @@ time_t FAT_GetFileLastWriteTime (void)
 {
 	// Read in the last accessed directory entry
 	disc_ReadSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
-	
+
 	return 	FAT_FileTimeToCTime(((DIR_ENT*)globalBuffer)[wrkDirOffset].mTime, ((DIR_ENT*)globalBuffer)[wrkDirOffset].mDate);
 }
 #endif
@@ -1371,11 +1371,11 @@ DIR_ENT FAT_DirEntFromPath (const char* path)
 	{
 		dirEntry.name[0] = FILE_FREE;
 		dirEntry.attrib = 0x00;
-		return;
+		return dirEntry;
 	}
 #endif
-	
-	if (path[pathPos] == '/') 
+
+	if (path[pathPos] == '/')
 	{
 		dirCluster = filesysRootDirClus;	// Start at root directory
 	}
@@ -1383,13 +1383,13 @@ DIR_ENT FAT_DirEntFromPath (const char* path)
 	{
 		dirCluster = curWorkDirCluster;	// Start at current working dir
 	}
-	
+
 	// Eat any slash /
 	while ((path[pathPos] == '/') && (path[pathPos] != '\0'))
 	{
 		pathPos++;
 	}
-	
+
 	// Search until can't continue
 	found = false;
 	notFound = false;
@@ -1437,7 +1437,7 @@ DIR_ENT FAT_DirEntFromPath (const char* path)
 				flagLFN = true;
 			}
 		}
-		
+
 		// Add end of string char
 		name[namePos] = '\0';
 
@@ -1497,7 +1497,7 @@ DIR_ENT FAT_DirEntFromPath (const char* path)
 				dirEntry = FAT_GetDirEntry (dirCluster, 1, SEEK_CUR);
 			}
 		}
-		
+
 		if (found && ((dirEntry.attrib & ATTRIB_DIR) == ATTRIB_DIR) && (path[pathPos] != '\0'))
 			// It has found a directory from within the path that needs to be followed
 		{
@@ -1505,7 +1505,7 @@ DIR_ENT FAT_DirEntFromPath (const char* path)
 			dirCluster = dirEntry.startCluster | (dirEntry.startClusterHigh << 16);
 		}
 	}
-	
+
 	if (notFound)
 	{
 		dirEntry.name[0] = FILE_FREE;
@@ -1534,11 +1534,11 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 	bool flagLFN, dotSeen;
 	char fileAlias[13] = {0};
 	int tailNum;
-	
+
 	unsigned char chkSum = 0;
-	
+
 	u32 oldWorkDirCluster;
-	
+
 	DIR_ENT* dirEntries = (DIR_ENT*)globalBuffer;
 	u32 dirCluster;
 	int secOffset;
@@ -1566,7 +1566,7 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 	{
 		curWorkDirCluster = filesysRootDirClus;
 	}
-	
+
 	pathPos = 0;
 	filePos = 0;
 	flagLFN = false;
@@ -1576,7 +1576,7 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 		if (path[pathPos + filePos] == '/')
 		{
 			filename[filePos] = '\0';
-			if (FAT_chdir(filename) == false) 
+			if (FAT_chdir(filename) == false)
 			{
 				curWorkDirCluster = oldWorkDirCluster;
 				return false; // Couldn't change directory
@@ -1587,17 +1587,17 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 		filename[filePos] = path[pathPos + filePos];
 		filePos++;
 	}
-	
+
 	// Skip over last slashes
 	while (path[pathPos] == '/')
 		pathPos++;
-	
+
 	// Check if the filename has a leading "."
 	// If so, it is an LFN
 	if (path[pathPos] == '.') {
 		flagLFN = true;
 	}
-	
+
 	// Copy name from path
 	filePos = 0;
 	dotSeen = false;
@@ -1622,12 +1622,12 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 			flagLFN = true;
 		}
 	}
-	
+
 	if (filePos == 0)	// No filename
 	{
 		return false;
 	}
-	
+
 	// Check if a long filename was specified
 	if (filePos > 12)
 	{
@@ -1638,7 +1638,7 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 	if (!flagLFN && (strrchr (filename, '.') != NULL) && (strlen(strrchr(filename, '.')) > 4)) {
 		flagLFN = true;
 	}
-	
+
 	lfnPos = (filePos - 1) / 13;
 
 	// Add end of string char
@@ -1646,8 +1646,8 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 	// Clear remaining chars
 	while (filePos < MAX_FILENAME_LENGTH)
 		filename[filePos++] = 0x01;	// Set for LFN compatibility
-	
-	
+
+
 	if (flagLFN)
 	{
 		// Generate short filename - always a 2 digit number for tail
@@ -1666,7 +1666,7 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 		// Pad Alias with underscores
 		while (aliasPos < 5)
 			fileAlias[aliasPos++] = '_';
-		
+
 		fileAlias[5] = '~';
 		fileAlias[8] = '.';
 		fileAlias[9] = ' ';
@@ -1692,14 +1692,14 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 		} else {
 			aliasPos = 9;
 		}
-		
+
 		// Pad Alias extension with spaces
 		while (aliasPos < 12)
 			fileAlias[aliasPos++] = ' ';
-		
+
 		fileAlias[12] = '\0';
-		
-		
+
+
 		// Get a valid tail number
 		tailNum = 0;
 		do {
@@ -1707,7 +1707,7 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 			fileAlias[6] = 0x30 + ((tailNum / 10) % 10);	// 10's digit
 			fileAlias[7] = 0x30 + (tailNum % 10);	// 1's digit
 		} while ((FAT_DirEntFromPath(fileAlias).name[0] != FILE_FREE) && (tailNum < 100));
-		
+
 		if (tailNum < 100)	// Found an alias not being used
 		{
 			// Calculate file checksum
@@ -1725,7 +1725,7 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 		{
 			return false;
 		}
-		
+
 		dirEntryLength = lfnPos + 2;
 	}
 	else	// Its not a long file name
@@ -1743,7 +1743,7 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 
 		dirEntryLength = 1;
 	}
-	
+
 	// Change dirEntry name to match alias
 	for (aliasPos = 0; ((fileAlias[aliasPos] != '.') && (fileAlias[aliasPos] != '\0') && (aliasPos < 8)); aliasPos++)
 	{
@@ -1775,12 +1775,12 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 	maxSectors = (dirCluster == FAT16_ROOT_DIR_CLUSTER ? (filesysData - filesysRootDir) : filesysSecPerClus);
 	firstSector = (dirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(dirCluster));
 	disc_ReadSector (firstSector + secOffset, dirEntries);
-	
+
 	dirEntryRemain = dirEntryLength;
 	tempDirCluster = dirCluster;
 	tempSecOffset = secOffset;
 	tempEntryOffset = entryOffset;
-		
+
 	// Search for a large enough space to fit in new directory entry
 	while ((dirEntries[entryOffset].name[0] != FILE_LAST) && (dirEntryRemain > 0))
 	{
@@ -1803,7 +1803,7 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 				{
 					dirCluster = FAT_NextCluster(dirCluster);
 				}
-				firstSector = FAT_ClustToSect(dirCluster);		
+				firstSector = FAT_ClustToSect(dirCluster);
 			}
 			else if ((dirCluster == FAT16_ROOT_DIR_CLUSTER) && (secOffset == (filesysData - filesysRootDir)))
 			{
@@ -1824,7 +1824,7 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 	}
 
 	// Modifying the last directory is a special case - have to erase following entries
-	if (dirEntries[entryOffset].name[0] == FILE_LAST) 
+	if (dirEntries[entryOffset].name[0] == FILE_LAST)
 	{
 		dirEndFlag = true;
 	}
@@ -1843,7 +1843,7 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 	}
 
 	// Add new directory entry
-	while (dirEntryRemain > 0)	
+	while (dirEntryRemain > 0)
 	{
 		// Move to next entry, first pass advances from last used entry
 		entryOffset++;
@@ -1868,7 +1868,7 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 				{
 					dirCluster = FAT_NextCluster(dirCluster);
 				}
-				firstSector = FAT_ClustToSect(dirCluster);		
+				firstSector = FAT_ClustToSect(dirCluster);
 			}
 			else if ((dirCluster == FAT16_ROOT_DIR_CLUSTER) && (secOffset == (filesysData - filesysRootDir)))
 			{
@@ -1900,7 +1900,7 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 			lfnEntry.flag = ATTRIB_LFN;
 			lfnEntry.reserved1 = 0;
 			lfnEntry.reserved2 = 0;
-			
+
 			*((DIR_ENT_LFN*)&dirEntries[entryOffset]) = lfnEntry;
 			lfnPos --;
 			lfnEntry.ordinal = 0;
@@ -1914,7 +1914,7 @@ bool FAT_AddDirEntry (const char* path, DIR_ENT newDirEntry)
 
 		dirEntryRemain--;
 	}
-	
+
 	// Write directory back to disk
 	disc_WriteSector (firstSector + secOffset, dirEntries);
 
@@ -1930,7 +1930,7 @@ FAT_FindNextFile
 Gets the name of the next directory entry
 	(can be a file or subdirectory)
 char* filename: OUT filename, must be at least 13 chars long
-FILE_TYPE return: OUT returns FT_NONE if failed, 
+FILE_TYPE return: OUT returns FT_NONE if failed,
 	FT_FILE if it found a file and FT_DIR if it found a directory
 -----------------------------------------------------------------*/
 FILE_TYPE FAT_FindNextFile(char* filename)
@@ -1963,7 +1963,7 @@ FAT_FindFirstFile
 Gets the name of the first directory entry and resets the count
 	(can be a file or subdirectory)
 char* filename: OUT filename, must be at least 13 chars long
-FILE_TYPE return: OUT returns FT_NONE if failed, 
+FILE_TYPE return: OUT returns FT_NONE if failed,
 	FT_FILE if it found a file and FT_DIR if it found a directory
 -----------------------------------------------------------------*/
 FILE_TYPE FAT_FindFirstFile(char* filename)
@@ -1971,7 +1971,7 @@ FILE_TYPE FAT_FindFirstFile(char* filename)
 	// Get the first directory entry
 	DIR_ENT file;
 	file = FAT_GetDirEntry (curWorkDirCluster, 1, SEEK_SET);
-	
+
 	if (file.name[0] == FILE_FREE)
 	{
 		return FT_NONE;	// Did not find a file
@@ -1996,7 +1996,7 @@ FAT_FindFirstFileLFN
 Gets the long file name of the first directory entry and resets
 	the count (can be a file or subdirectory)
 char* lfn: OUT long file name, must be at least 256 chars long
-FILE_TYPE return: OUT returns FT_NONE if failed, 
+FILE_TYPE return: OUT returns FT_NONE if failed,
 	FT_FILE if it found a file and FT_DIR if it found a directory
 -----------------------------------------------------------------*/
 FILE_TYPE FAT_FindFirstFileLFN(char* lfn)
@@ -2012,7 +2012,7 @@ FAT_FindNextFileLFN
 Gets the long file name of the next directory entry
 	(can be a file or subdirectory)
 char* lfn: OUT long file name, must be at least 256 chars long
-FILE_TYPE return: OUT returns FT_NONE if failed, 
+FILE_TYPE return: OUT returns FT_NONE if failed,
 	FT_FILE if it found a file and FT_DIR if it found a directory
 -----------------------------------------------------------------*/
 FILE_TYPE FAT_FindNextFileLFN(char* lfn)
@@ -2026,29 +2026,29 @@ FILE_TYPE FAT_FindNextFileLFN(char* lfn)
 
 /*-----------------------------------------------------------------
 FAT_FileExists
-Returns the type of file 
+Returns the type of file
 char* filename: IN filename of the file to look for
-FILE_TYPE return: OUT returns FT_NONE if there is now file with 
+FILE_TYPE return: OUT returns FT_NONE if there is now file with
 	that name, FT_FILE if it is a file and FT_DIR if it is a directory
 -----------------------------------------------------------------*/
 FILE_TYPE FAT_FileExists(const char* filename)
 {
-    DIR_ENT dirEntry; 
-    // Get the dirEntry for the path specified 
-    dirEntry = FAT_DirEntFromPath (filename); 
+    DIR_ENT dirEntry;
+    // Get the dirEntry for the path specified
+    dirEntry = FAT_DirEntFromPath (filename);
 
-    if (dirEntry.name[0] == FILE_FREE) 
-    { 
-        return FT_NONE; 
-    } 
-    else if (dirEntry.attrib & ATTRIB_DIR) 
-    { 
-        return FT_DIR; 
-    } 
-    else 
-    { 
-         return FT_FILE; 
-    } 
+    if (dirEntry.name[0] == FILE_FREE)
+    {
+        return FT_NONE;
+    }
+    else if (dirEntry.attrib & ATTRIB_DIR)
+    {
+        return FT_DIR;
+    }
+    else
+    {
+         return FT_FILE;
+    }
 }
 
 /*-----------------------------------------------------------------
@@ -2074,7 +2074,7 @@ u32 FAT_GetFileSystemTotalSize (void)
 /*-----------------------------------------------------------------
 FAT_chdir
 Changes the current working directory
-const char* path: IN null terminated string of directory separated by 
+const char* path: IN null terminated string of directory separated by
 	forward slashes, / is root
 bool return: OUT returns true if successful
 -----------------------------------------------------------------*/
@@ -2090,7 +2090,7 @@ bool FAT_chdir (const char* path)
 	{
 		return true;
 	}
-	
+
 	dir = FAT_DirEntFromPath (path);
 
 	if (((dir.attrib & ATTRIB_DIR) == ATTRIB_DIR) && (dir.name[0] != FILE_FREE))
@@ -2111,7 +2111,7 @@ bool FAT_chdir (const char* path)
 		return true;
 	}
 	else
-	{ 
+	{
 		// Couldn't change directory - wrong path specified
 		return false;
 	}
@@ -2120,12 +2120,12 @@ bool FAT_chdir (const char* path)
 /*-----------------------------------------------------------------
 FAT_fopen(filename, mode)
 Opens a file
-const char* path: IN null terminated string of filename and path 
+const char* path: IN null terminated string of filename and path
 	separated by forward slashes, / is root
 const char* mode: IN mode to open file in
 	Supported modes: "r", "r+", "w", "w+", "a", "a+", don't use
 	"b" or "t" in any mode, as all files are openned in binary mode
-FAT_FILE* return: OUT handle to open file, returns NULL if the file 
+FAT_FILE* return: OUT handle to open file, returns NULL if the file
 	couldn't be openned
 -----------------------------------------------------------------*/
 FAT_FILE* FAT_fopen(const char* path, const char* mode)
@@ -2149,10 +2149,10 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 	{
 		return NULL;
 	}
-		
+
 	// Get the dirEntry for the path specified
 	dirEntry = FAT_DirEntFromPath (path);
-	
+
 	// Check that it is not a directory
 	if (dirEntry.attrib & ATTRIB_DIR)
 	{
@@ -2174,7 +2174,7 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 
 	// Find a free file buffer
 	for (fileNum = 0; (fileNum < MAX_FILES_OPEN) && (openFiles[fileNum].inUse == true); fileNum++);
-	
+
 	if (fileNum == MAX_FILES_OPEN) // No free files
 	{
 		return NULL;
@@ -2191,7 +2191,7 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 		{
 			return NULL;
 		}
-		
+
 		file->read = true;
 #ifdef CAN_WRITE_TO_DISC
 		file->write = ( strchr(mode, '+') != NULL ); //(mode[1] == '+');
@@ -2199,13 +2199,13 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 		file->write = false;
 #endif
 		file->append = false;
-		
+
 		// Store information about position within the file, for use
 		// by FAT_fread, FAT_fseek, etc.
 		file->firstCluster = dirEntry.startCluster | (dirEntry.startClusterHigh << 16);
-	
+
 #ifdef CAN_WRITE_TO_DISC
-		// Check if file is openned for random. If it is, and currently has no cluster, one must be 
+		// Check if file is openned for random. If it is, and currently has no cluster, one must be
 		// assigned to it.
 		if (file->write && file->firstCluster == CLUSTER_FREE)
 		{
@@ -2223,7 +2223,7 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 			disc_WriteSector (file->dirEntSector, globalBuffer);
 		}
 #endif
-			
+
 		file->length = dirEntry.fileSize;
 		file->curPos = 0;
 		file->curClus = dirEntry.startCluster | (dirEntry.startClusterHigh << 16);
@@ -2234,7 +2234,7 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 		file->appByte = 0;
 		file->appClus = 0;
 		file->appSect = 0;
-	
+
 		disc_ReadSector( FAT_ClustToSect( file->curClus), file->readBuffer);
 		file->inUse = true;	// We're using this file now
 
@@ -2248,7 +2248,7 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 		{
 			dirEntry.attrib = ATTRIB_ARCH;
 			dirEntry.reserved = 0;
-			
+
 			// Time and date set to system time and date
 			dirEntry.cTime_ms = 0;
 			dirEntry.cTime = getRTCtoFileTime();
@@ -2257,12 +2257,12 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 			dirEntry.mTime = getRTCtoFileTime();
 			dirEntry.mDate = getRTCtoFileDate();
 		}
-		else	// Already a file entry 
+		else	// Already a file entry
 		{
 			// Free any clusters used
 			FAT_ClearLinks (dirEntry.startCluster | (dirEntry.startClusterHigh << 16));
 		}
-		
+
 		// Get a cluster to use
 		startCluster = FAT_LinkFreeCluster (CLUSTER_FREE);
 		if (startCluster == CLUSTER_FREE)	// Couldn't get a free cluster
@@ -2298,13 +2298,13 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 			((DIR_ENT*) globalBuffer)[file->dirEntOffset] = dirEntry;
 			disc_WriteSector (file->dirEntSector, globalBuffer);
 		}
-		
+
 
 		// Now that file is created, open it
 		file->read = ( strchr(mode, '+') != NULL ); //(mode[1] == '+');
 		file->write = true;
 		file->append = false;
-		
+
 		// Store information about position within the file, for use
 		// by FAT_fread, FAT_fseek, etc.
 		file->firstCluster = startCluster;
@@ -2318,7 +2318,7 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 		file->appByte = 0;
 		file->appClus = 0;
 		file->appSect = 0;
-		
+
 		// Empty file, so empty read buffer
 		memset (file->readBuffer, 0, BYTE_PER_READ);
 		file->inUse = true;	// We're using this file now
@@ -2332,7 +2332,7 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 		{
 			dirEntry.attrib = ATTRIB_ARCH;
 			dirEntry.reserved = 0;
-			
+
 			// Time and date set to system time and date
 			dirEntry.cTime_ms = 0;
 			dirEntry.cTime = getRTCtoFileTime();
@@ -2352,13 +2352,13 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 			}
 			dirEntry.startCluster = (startCluster & 0xFFFF);
 			dirEntry.startClusterHigh = ((startCluster >> 16) & 0xFFFF);
-			
+
 			if(!FAT_AddDirEntry (path, dirEntry))
 				return NULL;
-			
+
 			// Get the newly created dirEntry
 			dirEntry = FAT_DirEntFromPath (path);
-			
+
 			// Store append cluster
 			file->appClus = startCluster;
 
@@ -2377,7 +2377,7 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 				{
 					return NULL;
 				}
-				
+
 				// Store cluster position into the directory entry
 				dirEntry.startCluster = (file->firstCluster & 0xFFFF);
 				dirEntry.startClusterHigh = ((file->firstCluster >> 16) & 0xFFFF);
@@ -2387,7 +2387,7 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 
 				// Store append cluster
 				file->appClus = startCluster;
-		
+
 			} else {
 
 				// Follow cluster list until last one is found
@@ -2410,7 +2410,7 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 		file->read = ( strchr(mode, '+') != NULL );
 		file->write = false;
 		file->append = true;
-		
+
 		// Calculate the sector and byte of the current position,
 		// and store them
 		file->appSect = (dirEntry.fileSize % filesysBytePerClus) / BYTE_PER_READ;
@@ -2424,7 +2424,7 @@ FAT_FILE* FAT_fopen(const char* path, const char* mode)
 		file->curClus = file->appClus;
 		file->curSect = file->appSect;
 		file->curByte = file->appByte;
-		
+
 		// Read into buffer
 		disc_ReadSector( FAT_ClustToSect(file->curClus) + file->curSect, file->readBuffer);
 		file->inUse = true;	// We're using this file now
@@ -2464,7 +2464,7 @@ bool FAT_fclose (FAT_FILE* file)
 			disc_CacheFlush();
 		}
 #endif
-		file->inUse = false;		
+		file->inUse = false;
 		return true;
 	}
 	else
@@ -2515,14 +2515,14 @@ int FAT_fseek(FAT_FILE* file, s32 offset, int origin)
 	}
 
 	// Can't seek in append only mode
-	if (!file->read && !file->write)	
+	if (!file->read && !file->write)
 	{
 		return -1;
 	}
 
 	curPos = file->curPos;
 
-	switch (origin) 
+	switch (origin)
 	{
 	case SEEK_SET:
 		if (offset >= 0)
@@ -2537,13 +2537,13 @@ int FAT_fseek(FAT_FILE* file, s32 offset, int origin)
 		if (offset >= 0)
 		{
 			position = curPos + offset;
-		} 
+		}
 		else if ( (u32)(offset * -1) >= curPos )
 		{
 			// Tried to seek before start of file
 			position = 0;
 		}
-		else 
+		else
 		{
 			// Using u32 to maintain 32 bits of accuracy
 			position = curPos - (u32)(offset * -1);
@@ -2560,7 +2560,7 @@ int FAT_fseek(FAT_FILE* file, s32 offset, int origin)
 			// Tried to seek before start of file
 			position = 0;
 		}
-		else 
+		else
 		{
 			// Using u32 to maintain 32 bits of accuracy
 			position = file->length - (u32)(offset * -1);
@@ -2575,7 +2575,7 @@ int FAT_fseek(FAT_FILE* file, s32 offset, int origin)
 		// Tried to go past end of file
 		position = file->length;
 	}
-	
+
 	// Save position
 	file->curPos = position;
 
@@ -2608,14 +2608,14 @@ int FAT_fseek(FAT_FILE* file, s32 offset, int origin)
 		nextCluster = FAT_NextCluster (cluster);
 	}
 	// Check if ran out of clusters, and the file is being written to
-	if ((clusCount >= 0) && (file->write || file->append)) 
+	if ((clusCount >= 0) && (file->write || file->append))
 	{
 		// Set flag to allocate a new cluster
 		file->curSect = filesysSecPerClus;
 		file->curByte = 0;
 	}
 	file->curClus = cluster;
-	
+
 	// Reload sector buffer for new position in file, if it is a different sector
 	if ((curPos ^ position) >= BYTE_PER_READ)
 	{
@@ -2645,7 +2645,7 @@ u32 FAT_fread (void* buffer, u32 size, u32 count, FAT_FILE* file)
 	int curSect;
 	u32 curClus;
 	u32 tempNextCluster;
-	
+
 	int tempVar;
 
 	char* data = (char*)buffer;
@@ -2678,14 +2678,14 @@ u32 FAT_fread (void* buffer, u32 size, u32 count, FAT_FILE* file)
 	if (tempVar > remain)
 		tempVar = remain;
 
-	if ((tempVar < BYTE_PER_READ) && flagNoError) 
+	if ((tempVar < BYTE_PER_READ) && flagNoError)
 	{
 		memcpy(data, &(file->readBuffer[curByte]), tempVar);
 		remain -= tempVar;
 		data += tempVar;
 
 		curByte += tempVar;
-		if (curByte >= BYTE_PER_READ) 
+		if (curByte >= BYTE_PER_READ)
 		{
 			curByte = 0;
 			curSect++;
@@ -2694,7 +2694,7 @@ u32 FAT_fread (void* buffer, u32 size, u32 count, FAT_FILE* file)
 
 	// align to cluster
 	// tempVar is number of sectors to read
-	if (remain > (filesysSecPerClus - curSect) * BYTE_PER_READ) 
+	if (remain > (filesysSecPerClus - curSect) * BYTE_PER_READ)
 	{
 		tempVar = filesysSecPerClus - curSect;
 	} else {
@@ -2789,7 +2789,7 @@ u32 FAT_fread (void* buffer, u32 size, u32 count, FAT_FILE* file)
 FAT_fwrite(buffer, size, count, file)
 Writes size * count bytes into file from buffer, starting
 	from current position. It then sets the current position to the
-	byte after the last byte written. If the file was openned in 
+	byte after the last byte written. If the file was openned in
 	append mode it always writes to the end of the file.
 const void* buffer IN: Pointer to buffer containing data. Should be
 	at least as big as the number of bytes to be written.
@@ -2870,7 +2870,7 @@ u32 FAT_fwrite (const void* buffer, u32 size, u32 count, FAT_FILE* file)
 			disc_ReadSector( FAT_ClustToSect( curClus), writeBuffer);
 		}
 	}
-	
+
 	// Align to sector
 	tempVar = BYTE_PER_READ - curByte;
 	if (tempVar > remain)
@@ -2885,9 +2885,9 @@ u32 FAT_fwrite (const void* buffer, u32 size, u32 count, FAT_FILE* file)
 
 		// Write buffer back to disk
 		disc_WriteSector (curSect + FAT_ClustToSect(curClus), writeBuffer);
-		
+
 		// Move onto next sector
-		if (curByte >= BYTE_PER_READ) 
+		if (curByte >= BYTE_PER_READ)
 		{
 			curByte = 0;
 			curSect++;
@@ -2896,7 +2896,7 @@ u32 FAT_fwrite (const void* buffer, u32 size, u32 count, FAT_FILE* file)
 
 	// Align to cluster
 	// tempVar is number of sectors to write
-	if (remain > (filesysSecPerClus - curSect) * BYTE_PER_READ) 
+	if (remain > (filesysSecPerClus - curSect) * BYTE_PER_READ)
 	{
 		tempVar = filesysSecPerClus - curSect;
 	} else {
@@ -2964,7 +2964,7 @@ u32 FAT_fwrite (const void* buffer, u32 size, u32 count, FAT_FILE* file)
 		remain -= tempVar * BYTE_PER_READ;
 		curSect += tempVar;
 	}
-	
+
 	// Last remaining sector
 	// Check if sector wanted is different to the one started with
 	if ( (( (file->append ? file->appByte : file->curByte) + length) >= BYTE_PER_READ) && flagNoError)
@@ -2984,7 +2984,7 @@ u32 FAT_fwrite (const void* buffer, u32 size, u32 count, FAT_FILE* file)
 			disc_WriteSector( curSect + FAT_ClustToSect( curClus), writeBuffer);
 		}
 	}
-	
+
 	// Amount read is the originally requested amount minus stuff remaining
 	length = length - remain;
 
@@ -3041,14 +3041,14 @@ int FAT_remove (const char* path)
 	u32 oldWorkDirCluster;
 	char checkFilename[13];
 	FILE_TYPE checkFiletype;
-	
+
 	dirEntry = FAT_DirEntFromPath (path);
 
 	if (dirEntry.name[0] == FILE_FREE)
 	{
 		return -1;
 	}
-	
+
 	// Only delete directories if the directory is entry
 	if (dirEntry.attrib & ATTRIB_DIR)
 	{
@@ -3062,10 +3062,10 @@ int FAT_remove (const char* path)
 		{
 			checkFiletype = FAT_FindNextFile (checkFilename);
 		}
-		
+
 		// Change back to working directory
 		curWorkDirCluster = oldWorkDirCluster;
-		
+
 		// Check that the directory is empty
 		if (checkFiletype != FT_NONE)
 		{
@@ -3084,7 +3084,7 @@ int FAT_remove (const char* path)
 	disc_ReadSector ( (wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector , globalBuffer);
 	((DIR_ENT*)globalBuffer)[wrkDirOffset].name[0] = FILE_FREE;
 	disc_WriteSector ( (wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector , globalBuffer);
-		
+
 	// Flush any sectors in disc cache
 	disc_CacheFlush();
 
@@ -3095,7 +3095,7 @@ int FAT_remove (const char* path)
 #ifdef CAN_WRITE_TO_DISC
 /*-----------------------------------------------------------------
 FAT_mkdir (path)
-Makes a new directory, so long as no other directory or file has 
+Makes a new directory, so long as no other directory or file has
 	the same name.
 const char* path IN: Path and filename of directory to make
 int return OUT: zero if successful, non-zero if not
@@ -3123,7 +3123,7 @@ int FAT_mkdir (const char* path)
 	{
 		curWorkDirCluster = filesysRootDirClus;
 	}
-	
+
 	pathPos = 0;
 	filePos = 0;
 
@@ -3132,7 +3132,7 @@ int FAT_mkdir (const char* path)
 		if (path[pathPos + filePos] == '/')
 		{
 			pathname[filePos] = '\0';
-			if (FAT_chdir(pathname) == false) 
+			if (FAT_chdir(pathname) == false)
 			{
 				curWorkDirCluster = oldDirCluster;
 				return -1; // Couldn't change directory
@@ -3236,9 +3236,9 @@ FAT_fgets (char *tgtBuffer, int num, FAT_FILE* file)
 Gets a up to num bytes from file, stopping at the first
  newline.
 
-CAUTION: does not do strictly streaming. I.e. it's 
+CAUTION: does not do strictly streaming. I.e. it's
  reading more then needed bytes and seeking back.
- shouldn't matter for random access 
+ shouldn't matter for random access
 
 char *tgtBuffer OUT: buffer to write to
 int num IN: size of target buffer
@@ -3250,62 +3250,62 @@ bool return OUT: character if successful, EOF if not
 	* Added check for unix style text files
 	* Removed seek when no newline is found, since it isn't necessary
 -------------------------------------------------------------------*/
-char *FAT_fgets(char *tgtBuffer, int num, FAT_FILE* file) 
-{ 
+char *FAT_fgets(char *tgtBuffer, int num, FAT_FILE* file)
+{
 	u32 curPos;
 	u32 readLength;
 	char *returnChar;
-	
-	// invalid filehandle 
+
+	// invalid filehandle
 	if (file == NULL)
 	{
-		return NULL ; 
+		return NULL ;
 	}
-	
-	// end of file 
+
+	// end of file
 	if (FAT_feof(file)==true)
 	{
-		return NULL ; 
+		return NULL ;
 	}
-	
-	// save current position 
-	curPos = FAT_ftell(file); 
-	
-	// read the full buffer (max string chars is num-1 and one end of string \0 
-	readLength = FAT_fread(tgtBuffer,1,num-1,file) ; 
-	
-	// mark least possible end of string 
-	tgtBuffer[readLength] = '\0' ;    
-	
-	if (readLength==0) { 
-		// return error 
-		return NULL ; 
+
+	// save current position
+	curPos = FAT_ftell(file);
+
+	// read the full buffer (max string chars is num-1 and one end of string \0
+	readLength = FAT_fread(tgtBuffer,1,num-1,file) ;
+
+	// mark least possible end of string
+	tgtBuffer[readLength] = '\0' ;
+
+	if (readLength==0) {
+		// return error
+		return NULL ;
 	}
-	
-	// get position of first return '\r' 
-	returnChar = strchr(tgtBuffer,'\r'); 
-	
+
+	// get position of first return '\r'
+	returnChar = strchr(tgtBuffer,'\r');
+
 	// if no return is found, search for a newline
 	if (returnChar == NULL)
 	{
 		returnChar = strchr(tgtBuffer,'\n');
 	}
-	
-	// Mark the return, if existant, as end of line/string 
-	if (returnChar!=NULL) { 
-		*returnChar++ = 0 ; 
-		if (*returnChar=='\n') { // catch newline too when jumping over the end 
-			// return to location after \r\n (strlen+2) 
-			FAT_fseek(file,curPos+strlen(tgtBuffer)+2,SEEK_SET) ; 
-			return tgtBuffer ; 
-		} else { 
-			// return to location after \r (strlen+1) 
-			FAT_fseek(file,curPos+strlen(tgtBuffer)+1,SEEK_SET) ; 
-			return tgtBuffer ; 
+
+	// Mark the return, if existant, as end of line/string
+	if (returnChar!=NULL) {
+		*returnChar++ = 0 ;
+		if (*returnChar=='\n') { // catch newline too when jumping over the end
+			// return to location after \r\n (strlen+2)
+			FAT_fseek(file,curPos+strlen(tgtBuffer)+2,SEEK_SET) ;
+			return tgtBuffer ;
+		} else {
+			// return to location after \r (strlen+1)
+			FAT_fseek(file,curPos+strlen(tgtBuffer)+1,SEEK_SET) ;
+			return tgtBuffer ;
 		}
 	}
-	
-	return tgtBuffer ; 
+
+	return tgtBuffer ;
 }
 
 #ifdef CAN_WRITE_TO_DISC
@@ -3322,20 +3322,20 @@ bool return OUT: number of characters written if successful,
 	* Uses FAT_FILE instead of int
 	* writtenBytes is now u32 instead of int
 -------------------------------------------------------------------*/
-int FAT_fputs (const char *string, FAT_FILE* file) 
-{ 
+int FAT_fputs (const char *string, FAT_FILE* file)
+{
    u32 writtenBytes;
-	// save string except end of string '\0' 
-   writtenBytes = FAT_fwrite((void *)string, 1, strlen(string), file); 
+	// save string except end of string '\0'
+   writtenBytes = FAT_fwrite((void *)string, 1, strlen(string), file);
 
-   // check if we had an error 
-   if (writtenBytes != strlen(string)) 
-   { 
-      // return EOF error 
+   // check if we had an error
+   if (writtenBytes != strlen(string))
+   {
+      // return EOF error
       return EOF;
    }
 
-   // return the charcount written 
-   return writtenBytes ; 
+   // return the charcount written
+   return writtenBytes ;
 }
 #endif
