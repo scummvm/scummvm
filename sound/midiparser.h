@@ -283,9 +283,7 @@ protected:
 	bool   _smartJump;      //!< Support smart expiration of hanging notes when jumping
 	bool   _centerPitchWheelOnUnload;  //!< Center the pitch wheels when unloading a song
 
-	// FIXME: Was 32 here, Kyra tracks use 120(!!!) which seems wrong. this is a hacky
-	// workaround until situation is investigated.
-	byte * _tracks[120];     //!< Multi-track MIDI formats are supported, up to 120 tracks.
+	byte  *_tracks[120];    //!< Multi-track MIDI formats are supported, up to 120 tracks.
 	byte   _num_tracks;     //!< Count of total tracks for multi-track MIDI formats. 1 for single-track formats.
 	byte   _active_track;   //!< Keeps track of the currently active track, in multi-track formats.
 
@@ -365,6 +363,9 @@ public:
 	void setTimerRate(uint32 rate) { _timer_rate = rate; }
 	void setTempo(uint32 tempo);
 	void onTimer();
+
+	bool isPlaying() const { return (_position._play_pos != 0); }
+	void stopPlaying();
 
 	bool setTrack(int track);
 	bool jumpToTick(uint32 tick, bool fireEvents = false);

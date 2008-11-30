@@ -300,24 +300,20 @@ private:
 	static const int _kyra1SoundTriggers[];
 };
 
+class MidiOutput;
+
 /**
  * MIDI output device.
  *
  * This device supports both MT-32 MIDI, as used in
  * Kyrandia 1 and 2, and GM MIDI, as used in Kyrandia 2.
- *
- * Currently it does not initialize the MT-32 output properly,
- * so MT-32 output does sound a bit odd in some cases.
- *
- * TODO: this code needs some serious cleanup and rework
- * to support MT-32 and GM properly.
  */
-class SoundMidiPC : public MidiDriver, public Sound {
+class SoundMidiPC : public Sound {
 public:
 	SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *driver);
 	~SoundMidiPC();
 
-	kType getMusicType() const { return isMT32() ? kMidiMT32 : kMidiGM; }
+	kType getMusicType() const { return _nativeMT32 ? kMidiMT32 : kMidiGM; }
 
 	bool init();
 
@@ -333,37 +329,11 @@ public:
 
 	void beginFadeOut();
 
-	//MidiDriver interface implementation
-	int open();
-	void close();
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length);
-
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo(void) { return _driver ? _driver->getBaseTempo() : 0; }
-
-	//Channel allocation functions
-	MidiChannel *allocateChannel()		{ return 0; }
-	MidiChannel *getPercussionChannel()	{ return 0; }
-
-	void setPassThrough(bool b)	{ _passThrough = b; }
-
 	void hasNativeMT32(bool nativeMT32);
-	bool isMT32() const { return _nativeMT32; }
-
 private:
-	void internalLoadFile(Common::String file);
-	void updateChannelVolume(uint8 vol);
-
 	static void onTimer(void *data);
 
 	// Our channel handling
-	uint8 _virChannel[16];
-	uint8 _channelVolume[16];
-
-	MidiChannel *_channel[32];
-
-	// Music/Sfx volume
 	uint8 _musicVolume;
 	uint8 _sfxVolume;
 
@@ -371,25 +341,18 @@ private:
 	bool _fadeMusicOut;
 
 	// Midi file related
-	Common::SharedPtr<byte> _midiFile;
-	Common::String _currentTrack;
+	byte *_musicFile, *_sfxFile;
+	uint32 _musicFileSize, _sfxFileSize;
 
-	// Music related
-	MidiParser *_musicParser;
-
-	bool _isMusicPlaying;
-	bool _eventFromMusic;
-
-	// Sfx related
-	MidiParser *_sfxParser;
-
-	bool _isSfxPlaying;
+	MidiParser *_music;
+	MidiParser *_sfx[3];
 
 	// misc
 	bool _nativeMT32;
 	bool _useC55;
 	MidiDriver *_driver;
-	bool _passThrough;
+	MidiOutput *_output;
+
 	Common::Mutex _mutex;
 };
 

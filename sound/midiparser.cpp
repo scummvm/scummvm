@@ -209,8 +209,7 @@ void MidiParser::onTimer() {
 					jumpToTick(0);
 					parseNextEvent(_next_event);
 				} else {
-					allNotesOff();
-					resetTracking();
+					stopPlaying();
 					_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
 				}
 				return;
@@ -300,6 +299,17 @@ bool MidiParser::setTrack(int track) {
 	_position._play_pos = _tracks[track];
 	parseNextEvent(_next_event);
 	return true;
+}
+
+void MidiParser::stopPlaying() {
+	if (_smartJump)
+		hangAllActiveNotes();
+	else
+		allNotesOff();
+	resetTracking();
+
+	_active_track = _num_tracks+1;
+	memset(_active_notes, 0, sizeof(_active_notes));
 }
 
 void MidiParser::hangAllActiveNotes() {

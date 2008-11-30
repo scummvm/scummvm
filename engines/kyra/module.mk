@@ -53,6 +53,7 @@ MODULE_OBJS := \
 	sequences_mr.o \
 	sound_adlib.o \
 	sound_digital.o \
+	sound_midi.o \
 	sound_towns.o \
 	sound.o \
 	sound_lok.o \
