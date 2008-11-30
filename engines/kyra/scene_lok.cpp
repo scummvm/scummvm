@@ -48,6 +48,9 @@ void KyraEngine_LoK::enterNewScene(int sceneId, int facing, int unk1, int unk2, 
 	_abortWalkFlag = false;
 	_abortWalkFlag2 = false;
 
+	// TODO: Check how the original handled sfx still playing
+	_sound->stopAllSoundEffects();
+
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		int newSfxFile = -1;
 		if (_currentCharacter->sceneId == 7 && sceneId == 24)

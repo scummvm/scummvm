@@ -151,6 +151,11 @@ public:
 	virtual void playSoundEffect(uint8 track) = 0;
 
 	/**
+	 * Stop playback of all sfx tracks.
+	 */
+	virtual void stopAllSoundEffects() {}
+
+	/**
 	 * Checks if the sound driver plays any sound.
 	 *
 	 * @return true if playing, false otherwise
@@ -334,6 +339,7 @@ public:
 	bool isPlaying();
 
 	void playSoundEffect(uint8 track);
+	void stopAllSoundEffects();
 
 	void beginFadeOut();
 

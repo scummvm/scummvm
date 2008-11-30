@@ -81,6 +81,9 @@ void KyraEngine_HoF::enterNewScene(uint16 newScene, int facing, int unk1, int un
 		moveCharacter(facing, x, y);
 	}
 
+	// TODO: Check how the original handled sfx still playing
+	_sound->stopAllSoundEffects();
+
 	bool newSoundFile = false;
 	uint32 waitTime = 0;
 	if (_sceneList[newScene].sound != _lastMusicCommand) {

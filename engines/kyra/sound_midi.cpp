@@ -639,6 +639,16 @@ void SoundMidiPC::playSoundEffect(uint8 track) {
 	}
 }
 
+void SoundMidiPC::stopAllSoundEffects() {
+	Common::StackLock lock(_mutex);
+
+	for (int i = 0; i < 3; ++i) {
+		_output->setSoundSource(i+1);
+		_sfx[i]->stopPlaying();
+		_output->deinitSource(i+1);
+	}
+}
+
 void SoundMidiPC::beginFadeOut() {
 	Common::StackLock lock(_mutex);
 
