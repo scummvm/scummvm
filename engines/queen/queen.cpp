@@ -138,8 +138,7 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringList filenames;
 	char saveDesc[32];
-	Common::String pattern = target;
-	pattern += ".s??";
+	Common::String pattern("queen.s??");
 
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
@@ -407,7 +406,7 @@ Common::InSaveFile *QueenEngine::readGameStateHeader(int slot, GameStateHeader *
 
 void QueenEngine::makeGameStateName(int slot, char *buf) const {
 	if (slot == SLOT_LISTPREFIX) {
-		strcpy(buf, "queen.s*");
+		strcpy(buf, "queen.s??");
 	} else if (slot == SLOT_AUTOSAVE) {
 		strcpy(buf, "queen.asd");
 	} else {
