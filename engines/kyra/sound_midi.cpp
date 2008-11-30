@@ -27,18 +27,16 @@
 #include "kyra/resource.h"
 
 #include "common/system.h"
+#include "common/config-manager.h"
 
 namespace Kyra {
-
-struct Controller {
-	byte controller;
-	byte value;
-};
 
 class MidiOutput : public MidiDriver {
 public:
 	MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool defaultMT32);
 	~MidiOutput();
+
+	void setSourceVolume(int source, uint8 volume, bool apply=false);
 
 	void initSource(int source);
 	void deinitSource(int source);
@@ -70,6 +68,11 @@ private:
 	bool _isMT32;
 	bool _defaultMT32;
 
+	struct Controller {
+		byte controller;
+		byte value;
+	};
+
 	enum {
 		kChannelLocked = 0x80,
 		kChannelProtected = 0x40
@@ -92,6 +95,8 @@ private:
 	int _curSource;
 
 	struct SoundSource {
+		byte volume;
+
 		int8 channelMap[16];
 		byte channelProgram[16];
 		int16 channelPW[16];
@@ -151,6 +156,9 @@ MidiOutput::MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool de
 		if (defaultPrograms[i] != 0xFF)
 			sendIntern(0xC0, i, defaultPrograms[i-1], 0x00);
 	}
+
+	for (int i = 0; i < 4; ++i)
+		initSource(i);
 }
 
 
@@ -162,8 +170,8 @@ MidiOutput::~MidiOutput() {
 void MidiOutput::send(uint32 b) {
 	const byte event = b & 0xF0;
 	const byte channel = b & 0x0F;
-	const byte param1 = (b >>  8) & 0xFF;
-	const byte param2 = (b >> 16) & 0xFF;
+	byte param1 = (b >>  8) & 0xFF;
+	byte param2 = (b >> 16) & 0xFF;
 
 	if (event == 0xE0) {							// Pitch-Wheel
 		_channels[channel].pitchWheel = 
@@ -172,15 +180,9 @@ void MidiOutput::send(uint32 b) {
 		_channels[channel].program =
 		_sources[_curSource].channelProgram[channel] = param1;
 	} else if (event == 0xB0) {						// Controller change
-		for (int i = 0; i < 9; ++i) {
-			Controller &cont = _sources[_curSource].controllers[channel][i];
-			if (cont.controller == param1) {
-				cont.value = param2;
-				break;
-			}
-		}
-
-		if (param1 == 0x6E) {			// Lock Channel
+		if (param1 == 0x07) {
+			param1 = (param1 * _sources[_curSource].volume) >> 8;
+		} else if (param1 == 0x6E) {	// Lock Channel
 			if (param2 >= 0x40) {	// Lock Channel
 				int chan = lockChannel();
 				if (chan < 0)
@@ -202,6 +204,15 @@ void MidiOutput::send(uint32 b) {
 			// on track change, we simply ignore it.
 			return;
 		}
+
+		for (int i = 0; i < 9; ++i) {
+			Controller &cont = _sources[_curSource].controllers[channel][i];
+			if (cont.controller == param1) {
+				cont.value = param2;
+				break;
+			}
+		}
+
 	} else if (event == 0x90 || event == 0x80) {	// Note On/Off
 		if (!(_channels[channel].flags & kChannelLocked)) {
 			const bool remove = (event == 0x80) || (param2 == 0x00);
@@ -307,6 +318,21 @@ void MidiOutput::metaEvent(byte type, byte *data, uint16 length) {
 	}
 
 	_output->metaEvent(type, data, length);
+}
+
+void MidiOutput::setSourceVolume(int source, uint8 volume, bool apply) {
+	_sources[source].volume = volume;
+
+	if (apply) {
+		for (int i = 0; i < 16; ++i) {
+			// Controller 0 in the state table should always be '7' aka
+			// volume control
+			byte realVol = (_channels[i].controllers[0].value * volume) >> 8;
+			_channels[i].controllers[0].value = realVol;
+
+			sendIntern(0xB0, i, 0x07, realVol);
+		}
+	}
 }
 
 void MidiOutput::initSource(int source) {
@@ -431,7 +457,7 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 		assert(_sfx[i]);
 	}
 
-	updateVolumeSettings();
+	_musicVolume = _sfxVolume = 0;
 }
 
 SoundMidiPC::~SoundMidiPC() {
@@ -467,6 +493,8 @@ bool SoundMidiPC::init() {
 	_output = new MidiOutput(_vm->_system, _driver, _nativeMT32, !_useC55);
 	assert(_output);
 
+	updateVolumeSettings();
+
 	_music->setMidiDriver(_output);
 	_music->setTempo(_output->getBaseTempo());
 	_music->setTimerRate(_output->getBaseTempo());
@@ -488,7 +516,19 @@ bool SoundMidiPC::init() {
 }
 
 void SoundMidiPC::updateVolumeSettings() {
-	//XXX
+	Common::StackLock lock(_mutex);
+
+	if (!_output)
+		return;
+
+	uint8 newMusVol = CLIP(ConfMan.getInt("music_volume"), 0, 255);
+	_sfxVolume = CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
+
+	_output->setSourceVolume(0, newMusVol, newMusVol != _musicVolume);
+	_musicVolume = newMusVol;
+
+	for (int i = 1; i < 4; ++i)
+		_output->setSourceVolume(i, _sfxVolume, false);
 }
 
 void SoundMidiPC::loadSoundFile(uint file) {
@@ -529,6 +569,8 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 void SoundMidiPC::playTrack(uint8 track) {
 	Common::StackLock lock(_mutex);
 	_output->initSource(0);
+	_fadeMusicOut = false;
+	_output->setSourceVolume(0, _musicVolume, true);
 	_music->setTrack(track);
 }
 
@@ -538,6 +580,12 @@ void SoundMidiPC::haltTrack() {
 	_output->setSoundSource(0);
 	_music->stopPlaying();
 	_output->deinitSource(0);
+}
+
+bool SoundMidiPC::isPlaying() {
+	Common::StackLock lock(_mutex);
+
+	return _music->isPlaying();
 }
 
 void SoundMidiPC::playSoundEffect(uint8 track) {
@@ -552,14 +600,41 @@ void SoundMidiPC::playSoundEffect(uint8 track) {
 }
 
 void SoundMidiPC::beginFadeOut() {
-	//FIXME: implement properly
-	haltTrack();
+	Common::StackLock lock(_mutex);
+
+	_fadeMusicOut = true;
+	_fadeStartTime = _vm->_system->getMillis();
 }
 
 void SoundMidiPC::onTimer(void *data) {
 	SoundMidiPC *midi = (SoundMidiPC *)data;
 
 	Common::StackLock lock(midi->_mutex);
+
+	if (midi->_fadeMusicOut) {
+		static const uint32 musicFadeTime = 1 * 1000;
+
+		if (midi->_fadeStartTime + musicFadeTime > midi->_vm->_system->getMillis()) {
+			byte volume = (byte)((musicFadeTime - (midi->_vm->_system->getMillis() - midi->_fadeStartTime)) * midi->_musicVolume / musicFadeTime);
+			midi->_output->setSourceVolume(0, volume, true);
+		} else {
+			for (int i = 0; i < 16; ++i)
+				midi->_output->stopNotesOnChannel(i);
+			for (int i = 0; i < 4; ++i)
+				midi->_output->deinitSource(i);			
+
+			midi->_output->setSoundSource(0);
+			midi->_music->stopPlaying();
+
+			for (int i = 0; i < 3; ++i) {
+				midi->_output->setSoundSource(i+1);
+				midi->_sfx[i]->stopPlaying();
+			}
+
+			midi->_output->setSourceVolume(0, midi->_musicVolume, true);
+			midi->_fadeMusicOut = false;
+		}
+	}
 
 	midi->_output->setSoundSource(0);
 	midi->_music->onTimer();

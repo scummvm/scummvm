@@ -324,6 +324,7 @@ public:
 
 	void playTrack(uint8 track);
 	void haltTrack();
+	bool isPlaying();
 
 	void playSoundEffect(uint8 track);
 
