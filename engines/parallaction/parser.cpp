@@ -201,7 +201,7 @@ uint16 Script::readLineToken(bool errorOnEOF) {
 	}
 
 	clearTokens();
-	while (strlen(line) > 0 && _numTokens < MAX_TOKENS) {
+	while (*line && _numTokens < MAX_TOKENS) {
 		line = parseNextToken(line, _tokens[_numTokens], MAX_TOKEN_LEN, " ");
 		line = Common::ltrim(line);
 		_numTokens++;
