@@ -166,6 +166,13 @@ void KyraEngine_v1::snd_playTheme(int file, int track) {
 
 	_curSfxFile = _curMusicTheme = file;
 	_sound->loadSoundFile(_curMusicTheme);
+
+	// Kyrandia 2 uses a special file for
+	// MIDI sound effects, so we load
+	// this here
+	if (_flags.gameID == GI_KYRA2)
+		_sound->loadSfxFile("K2SFX");
+
 	if (track != -1)
 		_sound->playTrack(track);
 }

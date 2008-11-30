@@ -157,8 +157,10 @@ MidiOutput::MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool de
 			sendIntern(0xC0, i, defaultPrograms[i-1], 0x00);
 	}
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 4; ++i) {
+		_sources[i].volume = 0xFF;
 		initSource(i);
+	}
 }
 
 
@@ -458,6 +460,7 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 	}
 
 	_musicVolume = _sfxVolume = 0;
+	_fadeMusicOut = false;
 }
 
 SoundMidiPC::~SoundMidiPC() {
@@ -562,6 +565,24 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	for (int i = 0; i < 3; ++i) {
 		_output->setSoundSource(i+1);
 		_sfx[i]->loadMusic(_musicFile, _musicFileSize);
+		_sfx[i]->stopPlaying();
+	}
+}
+
+void SoundMidiPC::loadSfxFile(Common::String file) {
+	Common::StackLock lock(_mutex);
+
+	file += _useC55 ? ".C55" : ".XMI";
+	if (!_vm->resource()->exists(file.c_str()))
+		return;
+
+	if (_sfxFile != _musicFile)
+		delete[] _sfxFile;
+
+	_sfxFile = _vm->resource()->fileData(file.c_str(), &_sfxFileSize);
+	for (int i = 0; i < 3; ++i) {
+		_output->setSoundSource(i+1);
+		_sfx[i]->loadMusic(_sfxFile, _sfxFileSize);
 		_sfx[i]->stopPlaying();
 	}
 }

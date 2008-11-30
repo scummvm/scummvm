@@ -121,9 +121,15 @@ public:
 
 	/**
 	 * Load a sound file for playing music
-	 * and sound effects from.
+	 * (and somtimes sound effects) from.
 	 */
 	virtual void loadSoundFile(Common::String file) = 0;
+
+	/**
+	 * Load a sound file for playing sound
+	 * effects from.
+	 */
+	virtual void loadSfxFile(Common::String file) { }
 
 	/**
 	 * Plays the specified track.
@@ -321,6 +327,7 @@ public:
 
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String file);
+	void loadSfxFile(Common::String file);
 
 	void playTrack(uint8 track);
 	void haltTrack();
