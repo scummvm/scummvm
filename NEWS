@@ -15,6 +15,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  KYRA:
    - Added support for Auto-save feature.
+   - Added support for MIDI music.
 
  SCUMM:
    - Fixed a long-time bug which caused talkspeed and talkdelay to be mixed up.
