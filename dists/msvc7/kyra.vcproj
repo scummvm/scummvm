@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7,00"
 	Name="kyra"
 	ProjectGUID="{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}"
 	Keyword="Win32Proj">
@@ -339,6 +339,9 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\sound_lok.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\sound_midi.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\sound_towns.cpp">
