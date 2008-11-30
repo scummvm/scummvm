@@ -176,7 +176,8 @@ enum {
 	kFadePaletteStep = 5,
 	kStartupLocation = 1,
 	kDefaultCharSpeechSoundCounter = 1,
-	kMaxSoundVolume = 127
+	kMaxSoundVolume = 127,
+	kLastSaveSlot = 99
 };
 
 enum Verb {

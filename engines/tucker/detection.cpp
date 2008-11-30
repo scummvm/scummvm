@@ -125,26 +125,32 @@ public:
 	virtual SaveStateList listSaves(const char *target) const {
 		Common::String pattern = Tucker::generateGameStateFileName(target, 0, true);
 		Common::StringList filenames = g_system->getSavefileManager()->listSavefiles(pattern.c_str());
-		sort(filenames.begin(), filenames.end());
+		bool slotsTable[Tucker::kLastSaveSlot + 1];
+		memset(slotsTable, 0, sizeof(slotsTable));
 		SaveStateList saveList;
 		for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 			int slot;
 			const char *ext = strrchr(file->c_str(), '.');
-			if (ext && (slot = atoi(ext + 1)) >= 0) {
+			if (ext && (slot = atoi(ext + 1)) >= 0 && slot <= Tucker::kLastSaveSlot) {
 				Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(file->c_str());
 				if (in) {
-					char description[64];
-					snprintf(description, sizeof(description), "savegm.%02d", slot);
-					saveList.push_back(SaveStateDescriptor(slot, description));
+					slotsTable[slot] = true;
 					delete in;
 				}
+			}
+		}
+		for (int slot = 0; slot <= Tucker::kLastSaveSlot; ++slot) {
+			if (slotsTable[slot]) {
+				char description[64];
+				snprintf(description, sizeof(description), "savegm.%02d", slot);
+				saveList.push_back(SaveStateDescriptor(slot, description));
 			}
 		}
 		return saveList;
 	}
 
 	virtual int getMaximumSaveSlot() const {
-		return 99;
+		return Tucker::kLastSaveSlot;
 	}
 
 	virtual void removeSaveState(const char *target, int slot) const {
