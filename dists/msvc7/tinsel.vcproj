@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7,00"
 	Name="tinsel"
 	ProjectGUID="{22AA7760-2C91-11DD-BD0B-0800200C9A66}"
 	Keyword="Win32Proj">
@@ -125,6 +125,9 @@
 			RelativePath="..\..\engines\tinsel\bg.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\tinsel\bmv.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\tinsel\cliprect.cpp">
 		</File>
 		<File
@@ -153,6 +156,18 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\tinsel\detection.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\dialogs.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\dialogs.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\drives.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\drives.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\tinsel\dw.h">
@@ -200,13 +215,10 @@
 			RelativePath="..\..\engines\tinsel\heapmem.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\inventory.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\tinsel\inventory.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\tinsel\mareels.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\mareels.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\tinsel\move.cpp">
@@ -248,10 +260,16 @@
 			RelativePath="..\..\engines\tinsel\pdisplay.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\tinsel\pdisplay.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\tinsel\pid.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\tinsel\play.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\play.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\tinsel\polygons.cpp">
@@ -312,6 +330,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\tinsel\strres.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\sysvar.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\sysvar.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\tinsel\text.cpp">

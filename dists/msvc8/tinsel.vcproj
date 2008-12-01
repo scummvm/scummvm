@@ -195,6 +195,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\tinsel\bmv.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\tinsel\cliprect.cpp"
 			>
 		</File>
@@ -232,6 +236,22 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\tinsel\detection.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\dialogs.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\dialogs.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\drives.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\drives.h"
 			>
 		</File>
 		<File
@@ -295,15 +315,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\inventory.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\tinsel\inventory.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\tinsel\mareels.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\mareels.h"
 			>
 		</File>
 		<File
@@ -359,11 +375,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\tinsel\pdisplay.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\tinsel\pid.h"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\tinsel\play.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\play.h"
 			>
 		</File>
 		<File
@@ -444,6 +468,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\tinsel\strres.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\sysvar.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\tinsel\sysvar.h"
 			>
 		</File>
 		<File
