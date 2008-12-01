@@ -184,22 +184,23 @@ bool MoviePlayer::load(uint32 id) {
 	if (SwordEngine::_systemVars.showText) {
 		sprintf(fileName, "%s.txt", sequenceList[id]);
 		if (f.open(fileName)) {
-			char line[240];
+			Common::String line;
 			int lineNo = 0;
 			int lastEnd = -1;
 
 			_movieTexts.clear();
-			while (f.readLine_OLD(line, sizeof(line))) {
+			while (!f.eos() && !f.err()) {
+				line = f.readLine();
 				lineNo++;
-				if (line[0] == '#' || line[0] == 0) {
+				if (line.empty() || line[0] == '#') {
 					continue;
 				}
 
-				char *ptr = line;
+				const char *ptr = line.c_str();
 
 				// TODO: Better error handling
-				int startFrame = strtoul(ptr, &ptr, 10);
-				int endFrame = strtoul(ptr, &ptr, 10);
+				int startFrame = strtoul(ptr, (char **)&ptr, 10);
+				int endFrame = strtoul(ptr, (char **)&ptr, 10);
 
 				while (*ptr && isspace(*ptr))
 					ptr++;

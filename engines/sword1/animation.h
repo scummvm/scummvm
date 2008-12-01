@@ -66,7 +66,7 @@ public:
 	uint16 _startFrame;
 	uint16 _endFrame;
 	char *_text;
-	MovieText(int startFrame, int endFrame, char *text) {
+	MovieText(int startFrame, int endFrame, const char *text) {
 		_startFrame = startFrame;
 		_endFrame = endFrame;
 		_text = strdup(text);

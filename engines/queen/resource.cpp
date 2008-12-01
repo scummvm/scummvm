@@ -130,10 +130,12 @@ void Resource::loadTextFile(const char *filename, Common::StringList &stringList
 	ResourceEntry *re = resourceEntry(filename);
 	assert(re != NULL);
 	seekResourceFile(re->bundle, re->offset);
-	char buf[512];
 	Common::SeekableSubReadStream stream(&_resourceFile, re->offset, re->offset + re->size);
-	while (stream.readLine_OLD(buf, 512)) {
-		stringList.push_back(buf);
+	while (true) {
+		Common::String tmp = stream.readLine();
+		if (stream.eos() || stream.err())
+			break;
+		stringList.push_back(tmp);
 	}
 }
 
