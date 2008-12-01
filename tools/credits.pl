@@ -457,7 +457,6 @@ begin_credits("Credits");
   begin_section("ScummVM Team");
     begin_section("Project Leaders");
 	  begin_persons();
-		add_person("James Brown", "ender", "");
 		add_person("Max Horn", "Fingolfin", "");
 		add_person("Eugene Sandulenko", "sev", "");
 	  end_persons();
@@ -465,6 +464,7 @@ begin_credits("Credits");
 
     begin_section("Retired Project Leaders");
 	  begin_persons();
+		add_person("James Brown", "ender", "");
 		add_person("Vincent Hamm", "yaz0r", "ScummVM co-founder, Original Cruise/CinE author");
 		add_person("Ludvig Strigeus", "ludde", "Original ScummVM and SimonVM author");
 	  end_persons();
