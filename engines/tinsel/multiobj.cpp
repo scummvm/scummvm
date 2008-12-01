@@ -27,6 +27,7 @@
 #include "tinsel/multiobj.h"
 #include "tinsel/handle.h"
 #include "tinsel/object.h"
+#include "tinsel/tinsel.h"
 
 namespace Tinsel {
 
@@ -204,14 +205,17 @@ void MultiAdjustXY(OBJECT *pMultiObj, int deltaX, int deltaY) {
 	if (deltaX == 0 && deltaY == 0)
 		return;		// ignore no change
 
-	if (pMultiObj->flags & DMA_FLIPH) {
-		// image is flipped horizontally - flip the x direction
-		deltaX = -deltaX;
-	}
+	if (!TinselV2) {
+		// *** This may be wrong!!!
+		if (pMultiObj->flags & DMA_FLIPH) {
+			// image is flipped horizontally - flip the x direction
+			deltaX = -deltaX;
+		}
 
-	if (pMultiObj->flags & DMA_FLIPV) {
-		// image is flipped vertically - flip the y direction
-		deltaY = -deltaY;
+		if (pMultiObj->flags & DMA_FLIPV) {
+			// image is flipped vertically - flip the y direction
+			deltaY = -deltaY;
+		}
 	}
 
 	// for all the objects that make up this multi-part
@@ -528,6 +532,34 @@ int MultiLowest(OBJECT *pMulti) {
 
 	// return lowest point
 	return lowest - 1;
+}
+
+/**
+ * Returns TRUE if the object currently has an image.
+ * @param pMulti		Multi-part object
+ */
+
+bool MultiHasShape(POBJECT pMulti) {
+	return (pMulti->hShape != 0);
+}
+
+/**
+ * Bodge for text on movies. Makes sure it appears for it's lifetime.
+ * @param pMultiObj			Multi-part object to be adjusted
+ */
+
+void MultiForceRedraw(POBJECT pMultiObj) {
+	// validate object pointer
+	assert(pMultiObj >= objectList && pMultiObj <= objectList + NUM_OBJECTS - 1);
+
+	// for all the objects that make up this multi-part
+	do {
+		// signal a change in the object
+		pMultiObj->flags |= DMA_CHANGED;
+
+		// next obj in list
+		pMultiObj = pMultiObj->pSlave;
+	} while (pMultiObj != NULL);
 }
 
 } // end of namespace Tinsel

@@ -48,6 +48,23 @@ void LockScene(					// Called to make the current scene non-discardable
 void UnlockScene(				// Called to make the current scene discardable again
 	SCNHANDLE offset);			// handle and offset to data
 
+bool IsCdPlayHandle(SCNHANDLE offset);
+
+void TouchMem(SCNHANDLE offset);
+
+void SetCdPlaySceneDetails(			// Called at scene startup
+	int	sceneNum,
+	const char *fileName);
+
+void SetCdPlayHandle(				// Called at game startup
+	int	fileNum);
+
+void LoadExtraGraphData(
+	SCNHANDLE start,		// Handle of start of range
+	SCNHANDLE next);		// Handle of end of range + 1
+
+int CdNumber(SCNHANDLE offset);
+
 } // end of namespace Tinsel
 
 #endif	// TINSEL_HANDLE_H

@@ -26,11 +26,13 @@
 
 #include "tinsel/heapmem.h"
 #include "tinsel/timers.h"	// For DwGetCurrentTime
+#include "tinsel/tinsel.h"
 
 namespace Tinsel {
 
-// minimum memory required for MS-DOS version of game
-#define	MIN_MEM 2506752L
+// Specifies the total amount of memory required for DW1 demo, DW1, or DW2 respectively.
+// Currently this is set at 10Mb for all three - this could probably be reduced somewhat
+uint32 MemoryPoolSize[3] = {10 * 1024 * 1024, 10 * 1024 * 1024, 10 * 1024 * 1024};
 
 // list of all memory nodes
 MEM_NODE mnodeList[NUM_MNODES];
@@ -73,8 +75,10 @@ void MemoryInit(void) {
 	// null the last mnode
 	mnodeList[NUM_MNODES - 1].pNext = NULL;
 
-	// allocatea big chunk of memory
-	const uint32 size = 2*MIN_MEM+655360L;
+	// allocates a big chunk of memory
+	uint32 size = MemoryPoolSize[0];
+	if (TinselVersion == TINSEL_V1) size = MemoryPoolSize[1];
+	else if (TinselVersion == TINSEL_V2) size = MemoryPoolSize[2];
 	uint8 *mem = (uint8 *)malloc(size);
 	assert(mem);
 
@@ -274,8 +278,9 @@ MEM_NODE *MemoryAlloc(int flags, long size) {
 	bool bCompacted = true;	// set when heap has been compacted
 
 	// compact the heap if we are allocating fixed memory
-	if (flags & DWM_FIXED)
+	if (flags & DWM_FIXED) {
 		HeapCompact(MAX_INT, false);
+	}
 
 	while ((flags & DWM_NOALLOC) == 0 && bCompacted) {
 		// search the heap for a free block

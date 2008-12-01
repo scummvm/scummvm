@@ -38,7 +38,8 @@
 #include "tinsel/polygons.h"
 #include "tinsel/rince.h"
 #include "tinsel/scroll.h"
-#include "tinsel/tinlib.h"	// For stand()
+#include "tinsel/tinlib.h"	// For Stand()
+#include "tinsel/tinsel.h"
 
 namespace Tinsel {
 
@@ -48,21 +49,16 @@ namespace Tinsel {
 
 //----------------- EXTERNAL FUNCTIONS ---------------------
 
-// in BG.C
-extern int BackgroundWidth(void);
-extern int BackgroundHeight(void);
-
-
 // in POLYGONS.C
 // Deliberatley defined here, and not in polygons.h
-HPOLYGON InitExtraBlock(PMACTOR ca, PMACTOR ta);
+HPOLYGON InitExtraBlock(PMOVER ca, PMOVER ta);
 
 //----------------- LOCAL DEFINES --------------------
 
-#define XMDIST	4
-#define XHMDIST	2
-#define YMDIST	2
-#define YHMDIST	2
+#define XMDIST	(TinselV2 ? 6 : 4)
+#define XHMDIST	(TinselV2 ? 3 : 2)
+#define YMDIST	(TinselV2 ? 3 : 2)
+#define YHMDIST	(TinselV2 ? 3 : 2)
 
 #define XTHERE		1
 #define XRESTRICT	2
@@ -77,6 +73,7 @@ HPOLYGON InitExtraBlock(PMACTOR ca, PMACTOR ta);
 #define ALL_SORTED	1
 #define NOT_SORTED	0
 
+#define STEPS_MAX (TinselV2 ? 12 : 6)
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
@@ -86,6 +83,8 @@ static int BogusVar = 0;	// For slowing down walking, for testing
 #endif
 
 static int32 DefaultRefer = 0;
+static int lastLeadXdest = 0, lastLeadYdest = 0;
+
 static int hSlowVar = 0;	// used by MoveActor()
 
 
@@ -94,7 +93,7 @@ static int hSlowVar = 0;	// used by MoveActor()
 static void NewCoOrdinates(int fromx, int fromy, int *targetX, int *targetY,
 			int *newx, int *newy, int *s1, int *s2, HPOLYGON *hS2p,
 			bool bOver, bool bBodge,
-			PMACTOR pActor, PMACTOR *collisionActor = 0);
+			PMOVER pActor, PMOVER *collisionActor = 0);
 
 
 #if SLOW_RINCE_DOWN
@@ -126,7 +125,7 @@ static int ClickedOnPath(int clickX, int clickY, int *ptgtX, int *ptgtY) {
 	 Clicked within a path,
 	 go to where requested unless blocked.
 	 --------------------------------------*/
-	if (InPolygon(clickX, clickY, BLOCKING) == NOPOLY) {
+	if (InPolygon(clickX, clickY, BLOCK) == NOPOLY) {
 		// Not in a blocking polygon - go to where requested.
 		*ptgtX = clickX;
 		*ptgtY = clickY;
@@ -143,7 +142,7 @@ static int ClickedOnPath(int clickX, int clickY, int *ptgtX, int *ptgtY) {
 				i = SCREEN_HEIGHT;
 				break;
 			}
-			if (InPolygon(clickX, i, BLOCKING) == NOPOLY) {
+			if (InPolygon(clickX, i, BLOCK) == NOPOLY) {
 				*ptgtX = clickX;
 				*ptgtY = i;
 				break;
@@ -156,7 +155,7 @@ static int ClickedOnPath(int clickX, int clickY, int *ptgtX, int *ptgtY) {
 					i = -1;
 					break;
 				}
-				if (InPolygon(clickX, i, BLOCKING) == NOPOLY) {
+				if (InPolygon(clickX, i, BLOCK) == NOPOLY) {
 					*ptgtX = clickX;
 					*ptgtY = i;
 					break;
@@ -187,15 +186,15 @@ static int ClickedOnRefer(HPOLYGON hRefpoly, int clickX, int clickY, int *ptgtX,
 
 	switch (PolySubtype(hRefpoly)) {
 	case REF_POINT:				// Go to specified node
-		getPolyNode(hRefpoly, ptgtX, ptgtY);
+		GetPolyNode(hRefpoly, ptgtX, ptgtY);
 		assert(InPolygon(*ptgtX, *ptgtY, PATH) != NOPOLY); // POINT Referral to illegal point
 		break;
 
 	case REF_DOWN:				// Search downwards
-		end = BackgroundHeight();
+		end = BgHeight();
 		for (i = clickY+1; i < end; i++)
 			if (InPolygon(clickX, i, PATH) != NOPOLY
-					&& InPolygon(clickX, i, BLOCKING) == NOPOLY) {
+					&& InPolygon(clickX, i, BLOCK) == NOPOLY) {
 				*ptgtX = clickX;
 				*ptgtY = i;
 				break;
@@ -205,7 +204,7 @@ static int ClickedOnRefer(HPOLYGON hRefpoly, int clickX, int clickY, int *ptgtX,
 	case REF_UP:				// Search upwards
 		for (i = clickY-1; i >= 0; i--)
 			if (InPolygon(clickX, i, PATH) != NOPOLY
-					&& InPolygon(clickX, i, BLOCKING) == NOPOLY) {
+					&& InPolygon(clickX, i, BLOCK) == NOPOLY) {
 				*ptgtX = clickX;
 				*ptgtY = i;
 				break;
@@ -213,10 +212,10 @@ static int ClickedOnRefer(HPOLYGON hRefpoly, int clickX, int clickY, int *ptgtX,
 		break;
 
 	case REF_RIGHT:				// Search to the right
-		end = BackgroundWidth();
+		end = BgWidth();
 		for (i = clickX+1; i < end; i++)
 			if (InPolygon(i, clickY, PATH) != NOPOLY
-			&& InPolygon(i, clickY, BLOCKING) == NOPOLY) {
+			&& InPolygon(i, clickY, BLOCK) == NOPOLY) {
 				*ptgtX = i;
 				*ptgtY = clickY;
 				break;
@@ -226,7 +225,7 @@ static int ClickedOnRefer(HPOLYGON hRefpoly, int clickX, int clickY, int *ptgtX,
 	case REF_LEFT:				// Search to the left
 		for (i = clickX-1; i >= 0; i--)
 			if (InPolygon(i, clickY, PATH) != NOPOLY
-			&& InPolygon(i, clickY, BLOCKING) == NOPOLY) {
+			&& InPolygon(i, clickY, BLOCK) == NOPOLY) {
 				*ptgtX = i;
 				*ptgtY = clickY;
 				break;
@@ -265,7 +264,7 @@ static int ClickedOnNothing(int clickX, int clickY, int *ptgtX, int *ptgtY) {
 				return ClickedOnPath(clickX, i, ptgtX, ptgtY);
 			}
 		// Try searching down and up (offscreen).
-		end = BackgroundHeight();
+		end = BgHeight();
 		for (i = clickY+1; i < end; i++)
 			if (InPolygon(clickX, i, PATH) != NOPOLY) {
 				return ClickedOnPath(clickX, i, ptgtX, ptgtY);
@@ -284,7 +283,7 @@ static int ClickedOnNothing(int clickX, int clickY, int *ptgtX, int *ptgtY) {
 		break;
 
 	case REF_DOWN:
-		end = BackgroundHeight();
+		end = BgHeight();
 		for (i = clickY+1; i < end; i++)
 			if (InPolygon(clickX, i, PATH) != NOPOLY) {
 				return ClickedOnPath(clickX, i, ptgtX, ptgtY);
@@ -299,7 +298,7 @@ static int ClickedOnNothing(int clickX, int clickY, int *ptgtX, int *ptgtY) {
 		break;
 
 	case REF_RIGHT:
-		end = BackgroundWidth();
+		end = BgWidth();
 		for (i = clickX + 1; i < end; i++)
 			if (InPolygon(i, clickY, PATH) != NOPOLY) {
 				return ClickedOnPath(i, clickY, ptgtX, ptgtY);
@@ -339,18 +338,19 @@ static int WorkOutDestination(int clickX, int clickY, int *ptgtX, int *ptgtY) {
 /**
  * Work out which reel to adopt for a section of movement.
  */
-static DIRREEL GetDirectionReel(int fromx, int fromy, int tox, int toy, DIRREEL lastreel, HPOLYGON hPath) {
+DIRECTION GetDirection(int fromx, int fromy, int tox, int toy, DIRECTION lastreel,
+							  HPOLYGON hPath, YBIAS yBias) {
 	int	xchange = 0, ychange = 0;
 	enum {X_NONE, X_LEFT, X_RIGHT, X_NO} xdir;
 	enum {Y_NONE, Y_UP, Y_DOWN, Y_NO} ydir;
 
-	DIRREEL	reel = lastreel;	// Leave alone if can't decide
+	DIRECTION	reel = lastreel;	// Leave alone if can't decide
 
 	/*
 	 * Determine size and direction of X movement.
 	 * i.e. left, right, none or not allowed.
 	 */
-	if (getPolyReelType(hPath) == REEL_VERT)
+	if (hPath != NOPOLY && (GetPolyReelType(hPath) == REEL_VERT))
 		xdir = X_NO;
 	else if (tox == -1)
 		xdir = X_NONE;
@@ -369,7 +369,7 @@ static DIRREEL GetDirectionReel(int fromx, int fromy, int tox, int toy, DIRREEL 
 	 * Determine size and direction of Y movement.
 	 * i.e. up, down, none or not allowed.
 	 */
-	if (getPolyReelType(hPath) == REEL_HORIZ)
+	if (hPath != NOPOLY && (GetPolyReelType(hPath) == REEL_HORIZ))
 		ydir = Y_NO;
 	else if (toy == -1)
 		ydir = Y_NONE;
@@ -387,7 +387,15 @@ static DIRREEL GetDirectionReel(int fromx, int fromy, int tox, int toy, DIRREEL 
 	/*
 	 * Some adjustment to allow for different x and y pixell sizes.
 	 */
-	ychange += ychange;	// Double y distance to cover
+	switch (yBias) {
+	case YB_X2:
+		ychange += ychange;		// Double y distance to cover
+		break;
+
+	case YB_X1_5:
+		ychange += ychange / 2;	// Double y distance to cover
+		break;
+	}
 
 	/*
 	 * Determine which reel to use.
@@ -462,37 +470,60 @@ static DIRREEL GetDirectionReel(int fromx, int fromy, int tox, int toy, DIRREEL 
 /**
  * Haven't moved, look towards the cursor.
  */
-static void GotThereWithoutMoving(PMACTOR pActor) {
+static void GotThereWithoutMoving(PMOVER pActor) {
 	int	curX, curY;
-	DIRREEL	reel;
+	DIRECTION	reel;
 
-	if (!pActor->TagReelRunning) {
+	if (!pActor->bSpecReel) {
 		GetCursorXYNoWait(&curX, &curY, true);
 
-		reel = GetDirectionReel(pActor->objx, pActor->objy, curX, curY, pActor->dirn, pActor->hCpath);
+		reel = GetDirection(pActor->objX, pActor->objY, curX, curY, pActor->direction, pActor->hCpath);
 
-		if (reel != pActor->dirn)
-			SetMActorWalkReel(pActor, reel, pActor->scale, false);
+		if (reel != pActor->direction)
+			SetMoverWalkReel(pActor, reel, pActor->scale, false);
 	}
 }
 
 /**
  * Arrived at final destination.
  */
-static void GotThere(PMACTOR pActor) {
-	pActor->targetX = pActor->targetY = -1;		// 4/1/95
-	pActor->ItargetX = pActor->ItargetY = -1;
-	pActor->UtargetX = pActor->UtargetY = -1;
+static void GotThere(PMOVER pMover) {
+	pMover->targetX = pMover->targetY = -1;		// 4/1/95
+	pMover->ItargetX = pMover->ItargetY = -1;
+	pMover->UtargetX = pMover->UtargetY = -1;
 
 	// Perhaps we have'nt moved.
-	if (pActor->objx == (int)pActor->fromx && pActor->objy == (int)pActor->fromy)
-		GotThereWithoutMoving(pActor);
+	if (pMover->objX == (int)pMover->walkedFromX && pMover->objY == (int)pMover->walkedFromY) {
+		// Got there without moving
+		if (!TinselV2)
+			GotThereWithoutMoving(pMover);
+		else if (!pMover->bSpecReel) {
+			// No tag reel, look at cursor
+			int curX, curY;
+			DIRECTION direction;
 
-	ReTagActor(pActor->actorID);	// Tag allowed while stationary
+			GetCursorXY(&curX, &curY, true);
+			direction = GetDirection(pMover->objX, pMover->objY,
+						curX, curY,
+						pMover->direction,
+						pMover->hCpath,
+						YB_X2);
 
-	SetMActorStanding(pActor);
+			if (direction != pMover->direction)
+				SetMoverWalkReel(pMover, direction, pMover->scale, false);
+		}
+	}
 
-	pActor->bMoving = false;
+	if (!TinselV2)
+		ReTagActor(pMover->actorID);	// Tag allowed while stationary
+
+	SetMoverStanding(pMover);
+	pMover->bMoving = false;
+
+	if (TinselV2 && pMover->bIgPath && pMover->zOverride != -1
+			&&  InPolygon(pMover->objX, pMover->objY, PATH) == NOPOLY)
+		// New feature for end-of-scene walk-outs
+		SetMoverZ(pMover, pMover->objY, pMover->zOverride);
 }
 
 enum cgt { GT_NOTL, GT_NOTB, GT_NOT2, GT_OK, GT_MAY };
@@ -500,15 +531,15 @@ enum cgt { GT_NOTL, GT_NOTB, GT_NOT2, GT_OK, GT_MAY };
 /**
  * Can we get straight there?
  */
-static cgt CanGetThere(PMACTOR pActor, int tx, int ty) {
+static cgt CanGetThere(PMOVER pActor, int tx, int ty) {
 	int s1, s2;		// s2 not used here!
 	HPOLYGON hS2p;		// nor is s2p!
 	int nextx, nexty;
 
 	int targetX = tx;
 	int targetY = ty;		// Ultimate destination
-	int x = pActor->objx;
-	int y = pActor->objy;		// Present position
+	int x = pActor->objX;
+	int y = pActor->objY;		// Present position
 
 	while (targetX != -1 || targetY != -1) {
 		NewCoOrdinates(x, y, &targetX, &targetY, &nextx, &nexty,
@@ -536,7 +567,7 @@ static cgt CanGetThere(PMACTOR pActor, int tx, int ty) {
 /**
  * Set final destination.
  */
-static void SetMoverUltDest(PMACTOR pActor, int x, int y) {
+static void SetMoverUltDest(PMOVER pActor, int x, int y) {
 	pActor->UtargetX = x;
 	pActor->UtargetY = y;
 	pActor->hUpath = InPolygon(x, y, PATH);
@@ -554,89 +585,108 @@ static void SetMoverUltDest(PMACTOR pActor, int x, int y) {
  * Otherwise, head towards the pseudo-centre or end node of the first
  * en-route path.
  */
-static void SetMoverIntDest(PMACTOR pActor, int x, int y) {
+static void SetMoverIntDest(PMOVER pMover, int x, int y) {
 	HPOLYGON hIpath, hTpath;
 	int	node;
 
 	hTpath = InPolygon(x, y, PATH);		// Target path
 #ifdef DEBUG
-	if (!pActor->bIgPath)
+	if (!pMover->bIgPath)
 		assert(hTpath != NOPOLY); // SetMoverIntDest() - target not in path
 #endif
 
-	if (pActor->hCpath == hTpath || pActor->bIgPath
-		|| IsInPolygon(pActor->objx, pActor->objy, hTpath)) {
+	if (pMover->hCpath == hTpath || pMover->bIgPath
+		|| IsInPolygon(pMover->objX, pMover->objY, hTpath)) {
 		// In destination path - head straight for the target.
-		pActor->ItargetX = x;
-		pActor->ItargetY = y;
-		pActor->hIpath = hTpath;
-	} else if (IsAdjacentPath(pActor->hCpath, hTpath)) {
+		pMover->ItargetX = x;
+		pMover->ItargetY = y;
+		// make damn sure that Itarget is in hIpath
+		pMover->hIpath = !TinselV2 ? hTpath : InPolygon(x, y, PATH);
+	} else if (IsAdjacentPath(pMover->hCpath, hTpath)) {
 		// In path adjacent to target
 		if (PolySubtype(hTpath) != NODE) {
 			// Target path is normal - head for target.
 			// Added 26/01/95, innroom
-			if (CanGetThere(pActor, x, y) == GT_NOTL) {
-				NearestCorner(&x, &y, pActor->hCpath, hTpath);
+			if (CanGetThere(pMover, x, y) == GT_NOTL) {
+				NearestCorner(&x, &y, pMover->hCpath, hTpath);
 			}
-			pActor->ItargetX = x;
-			pActor->ItargetY = y;
+			pMover->ItargetX = x;
+			pMover->ItargetY = y;
+			if (TinselV2)
+				// make damn sure that Itarget is in hIpath
+				pMover->hIpath = InPolygon(x, y, PATH);
 		} else {
 			// Target path is node - head for end node.
-			node = NearestEndNode(hTpath, pActor->objx, pActor->objy);
-			getNpathNode(hTpath, node, &pActor->ItargetX, &pActor->ItargetY);
-
+			node = NearestEndNode(hTpath, pMover->objX, pMover->objY);
+			getNpathNode(hTpath, node, &pMover->ItargetX, &pMover->ItargetY);
+			if (TinselV2)
+				// make damn sure that Itarget is in hIpath
+				pMover->hIpath = InPolygon(pMover->ItargetX, pMover->ItargetY, PATH);
 		}
-		pActor->hIpath = hTpath;
+		if (!TinselV2)
+			pMover->hIpath = hTpath;
 	} else {
 		assert(hTpath != NOPOLY); // Error 701
-		hIpath = getPathOnTheWay(pActor->hCpath, hTpath);
+		hIpath = GetPathOnTheWay(pMover->hCpath, hTpath);
 
-		if (hIpath != NOPOLY) {
+		if (TinselV2 && (hIpath == NOPOLY)) {
+			pMover->hIpath = NOPOLY;
+		} else if (hIpath != NOPOLY) {
 			/* Head for an en-route path */
 			if (PolySubtype(hIpath) != NODE) {
 				/* En-route path is normal - head for pseudo centre. */
-				if (CanGetThere(pActor, x, y) == GT_OK) {
-					pActor->ItargetX = x;
-					pActor->ItargetY = y;
+				if (CanGetThere(pMover, x, y) == GT_OK) {
+					pMover->ItargetX = x;
+					pMover->ItargetY = y;
+					if (TinselV2)
+						// make damn sure that Itarget is in hIpath
+						pMover->hIpath = InPolygon(x, y, PATH);
 				} else {
-					pActor->ItargetX = PolyCentreX(hIpath);
-					pActor->ItargetY = PolyCentreY(hIpath);
+					pMover->ItargetX = PolyCentreX(hIpath);
+					pMover->ItargetY = PolyCentreY(hIpath);
+					if (TinselV2)
+						// make damn sure that Itarget is in hIpath
+						pMover->hIpath = InPolygon(pMover->ItargetX, pMover->ItargetY, PATH);
 				}
 			} else {
 				/* En-route path is node - head for end node. */
-				node = NearestEndNode(hIpath, pActor->objx, pActor->objy);
-				getNpathNode(hIpath, node, &pActor->ItargetX, &pActor->ItargetY);
+				node = NearestEndNode(hIpath, pMover->objX, pMover->objY);
+				getNpathNode(hIpath, node, &pMover->ItargetX, &pMover->ItargetY);
+				if (TinselV2)
+					// make damn sure that Itarget is in hIpath
+					pMover->hIpath = InPolygon(pMover->ItargetX, pMover->ItargetY, PATH);
 			}
-			pActor->hIpath = hIpath;
+			if (!TinselV2)
+				pMover->hIpath = hIpath;
 		}
 	}
 
-	pActor->InDifficulty = NO_PROB;
+	pMover->InDifficulty = NO_PROB;
 }
 
 /**
  * Set short-term destination and adopt the appropriate reel.
  */
-static void SetMoverDest(PMACTOR pActor, int x, int y) {
+static void SetMoverDest(PMOVER pActor, int x, int y) {
 	int	scale;
-	DIRREEL	reel;
+	DIRECTION	reel;
 
 	// Set the co-ordinates requested.
 	pActor->targetX = x;
 	pActor->targetY = y;
 	pActor->InDifficulty = NO_PROB;
 
-	reel = GetDirectionReel(pActor->objx, pActor->objy, x, y, pActor->dirn, pActor->hCpath);
-	scale = GetScale(pActor->hCpath, pActor->objy);
-	if (scale != pActor->scale || reel != pActor->dirn) {
-		SetMActorWalkReel(pActor, reel, scale, false);
+	reel = GetDirection(pActor->objX, pActor->objY, x, y, pActor->direction, pActor->hCpath);
+	scale = GetScale(pActor->hCpath, pActor->objY);
+	if (scale != pActor->scale || reel != pActor->direction) {
+		SetMoverWalkReel(pActor, reel, scale, false);
 	}
 }
 
 /**
  * SetNextDest
  */
-static void SetNextDest(PMACTOR pActor) {
+static void SetNextDest(PMOVER pMover) {
 	int	targetX, targetY;		// Ultimate destination
 	int	x, y;				// Present position
 	int	nextx, nexty;
@@ -653,7 +703,7 @@ static void SetNextDest(PMACTOR pActor) {
 
 	int	ss1, ss2;
 	HPOLYGON shS2p;
-	PMACTOR collisionActor;
+	PMOVER collisionActor;
 #if 1
 	int	sTargetX, sTargetY;
 #endif
@@ -661,30 +711,30 @@ static void SetNextDest(PMACTOR pActor) {
 	/*
 	 * Desired destination (Itarget) is already set
 	 */
-	x = pActor->objx;		// Current position
-	y = pActor->objy;
-	targetX = pActor->ItargetX;	// Desired position
-	targetY = pActor->ItargetY;
+	x = pMover->objX;		// Current position
+	y = pMover->objY;
+	targetX = pMover->ItargetX;	// Desired position
+	targetY = pMover->ItargetY;
 
 	/*
 	 * If we're where we're headed, end it all (the moving).
 	 */
 //	if (x == targetX && y == targetY)
 	if (ABS(x - targetX) < XMDIST && ABS(y - targetY) < YMDIST) {
-		if (targetX == pActor->UtargetX && targetY == pActor->UtargetY) {
+		if (targetX == pMover->UtargetX && targetY == pMover->UtargetY) {
 			// Desired position
-			GotThere(pActor);
+			GotThere(pMover);
 			return;
 		} else {
- 			assert(pActor->bIgPath || InPolygon(pActor->UtargetX, pActor->UtargetY, PATH) != NOPOLY); // Error 5001
-			SetMoverIntDest(pActor, pActor->UtargetX, pActor->UtargetY);
+ 			assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5001
+			SetMoverIntDest(pMover, pMover->UtargetX, pMover->UtargetY);
 		}
 	}
 
-	if (pActor->bNoPath || pActor->bIgPath) {
+	if (pMover->bNoPath || pMover->bIgPath) {
 		/* Can get there directly. */
-		SetMoverDest(pActor, targetX, targetY);
-		pActor->over = false;
+		SetMoverDest(pMover, targetX, targetY);
+		pMover->over = false;
 		return;
 	}
 
@@ -692,8 +742,8 @@ static void SetNextDest(PMACTOR pActor) {
 	| Some work to do here if we're in a follow nodes polygon - basically
 	| head for the next node.
 	----------------------------------------------------------------------*/
-	hNpoly = pActor->hFnpath;		// The node path we're in (if any)
-	switch (pActor->npstatus) {
+	hNpoly = pMover->hFnpath;		// The node path we're in (if any)
+	switch (pMover->npstatus) {
 	case NOT_IN:
 		break;
 
@@ -701,99 +751,99 @@ static void SetNextDest(PMACTOR pActor) {
 		znode = NearestEndNode(hNpoly, x, y);
 		/* Hang on, we're probably here already! */
 		if (znode) {
-			pActor->npstatus = GOING_DOWN;
-			pActor->line = znode-1;
+			pMover->npstatus = GOING_DOWN;
+			pMover->line = znode-1;
 			getNpathNode(hNpoly, znode - 1, &nx, &ny);
 		} else {
-			pActor->npstatus = GOING_UP;
-			pActor->line = znode;
+			pMover->npstatus = GOING_UP;
+			pMover->line = znode;
 			getNpathNode(hNpoly, 1, &nx, &ny);
 		}
-		SetMoverDest(pActor, nx, ny);
+		SetMoverDest(pMover, nx, ny);
 
 		// Test for pseudo-one-node npaths
 		if (numNodes(hNpoly) == 2 &&
-				ABS(pActor->objx - pActor->targetX) < XMDIST &&
-				ABS(pActor->objy - pActor->targetY) < YMDIST) {
+				ABS(pMover->objX - pMover->targetX) < XMDIST &&
+				ABS(pMover->objY - pMover->targetY) < YMDIST) {
 			// That's enough, we're leaving
-			pActor->npstatus = LEAVING;
+			pMover->npstatus = LEAVING;
 		} else {
 			// Normal situation
-			pActor->over = true;
+			pMover->over = true;
 			return;
 		}
 		// Fall through for LEAVING
 
 	case LEAVING:
- 		assert(pActor->bIgPath || InPolygon(pActor->UtargetX, pActor->UtargetY, PATH) != NOPOLY); // Error 5002
-		SetMoverIntDest(pActor, pActor->UtargetX, pActor->UtargetY);
-		targetX = pActor->ItargetX;	// Desired position
-		targetY = pActor->ItargetY;
+ 		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5002
+		SetMoverIntDest(pMover, pMover->UtargetX, pMover->UtargetY);
+		targetX = pMover->ItargetX;	// Desired position
+		targetY = pMover->ItargetY;
 		break;
 
 	case GOING_UP:
-		i = pActor->line;		// The line we're on
+		i = pMover->line;		// The line we're on
 
 		// Is this the final target line?
-		if (i+1 == pActor->Tline && hNpoly == pActor->hUpath) {
+		if (i+1 == pMover->Tline && hNpoly == pMover->hUpath) {
 			// The final leg of the journey
-			pActor->line = i+1;
-			SetMoverDest(pActor, pActor->UtargetX, pActor->UtargetY);
-			pActor->over = false;
+			pMover->line = i+1;
+			SetMoverDest(pMover, pMover->UtargetX, pMover->UtargetY);
+			pMover->over = false;
 			return;
 		} else {
 			// Go to the next node unless we're at the last one
 			i++;				// The node we're at
 			if (++i < numNodes(hNpoly)) {
 				getNpathNode(hNpoly, i, &nx, &ny);
-				SetMoverDest(pActor, nx, ny);
-				pActor->line = i-1;
-				if (ABS(pActor->UtargetX - pActor->targetX) < XMDIST &&
-				   ABS(pActor->UtargetY - pActor->targetY) < YMDIST)
-					pActor->over = false;
+				SetMoverDest(pMover, nx, ny);
+				pMover->line = i-1;
+				if (ABS(pMover->UtargetX - pMover->targetX) < XMDIST &&
+				   ABS(pMover->UtargetY - pMover->targetY) < YMDIST)
+					pMover->over = false;
 				else
-					pActor->over = true;
+					pMover->over = true;
 				return;
 			} else {
 				// Last node - we're off
-				pActor->npstatus = LEAVING;
-		 		assert(pActor->bIgPath || InPolygon(pActor->UtargetX, pActor->UtargetY, PATH) != NOPOLY); // Error 5003
-				SetMoverIntDest(pActor, pActor->UtargetX, pActor->UtargetY);
-				targetX = pActor->ItargetX;	// Desired position
-				targetY = pActor->ItargetY;
+				pMover->npstatus = LEAVING;
+		 		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5003
+				SetMoverIntDest(pMover, pMover->UtargetX, pMover->UtargetY);
+				targetX = pMover->ItargetX;	// Desired position
+				targetY = pMover->ItargetY;
 				break;
 			}
 		}
 
 	case GOING_DOWN:
-		i = pActor->line;		// The line we're on and the node we're at
+		i = pMover->line;		// The line we're on and the node we're at
 
 		// Is this the final target line?
-		if (i - 1 == pActor->Tline && hNpoly == pActor->hUpath) {
+		if (i - 1 == pMover->Tline && hNpoly == pMover->hUpath) {
 			// The final leg of the journey
-			SetMoverDest(pActor, pActor->UtargetX, pActor->UtargetY);
-			pActor->line = i-1;
-			pActor->over = false;
+			SetMoverDest(pMover, pMover->UtargetX, pMover->UtargetY);
+			pMover->line = i-1;
+			pMover->over = false;
 			return;
 		} else {
 			// Go to the next node unless we're at the last one
 			if (--i >= 0) {
 				getNpathNode(hNpoly, i, &nx, &ny);
-				SetMoverDest(pActor, nx, ny);
-				pActor->line--;		/* The next node to head for */
-				if (ABS(pActor->UtargetX - pActor->targetX) < XMDIST &&
-				   ABS(pActor->UtargetY - pActor->targetY) < YMDIST)
-					pActor->over = false;
+				SetMoverDest(pMover, nx, ny);
+				pMover->line--;		/* The next node to head for */
+				if (ABS(pMover->UtargetX - pMover->targetX) < XMDIST &&
+				   ABS(pMover->UtargetY - pMover->targetY) < YMDIST)
+					pMover->over = false;
 				else
-					pActor->over = true;
+					pMover->over = true;
 				return;
 			} else {
 				// Last node - we're off
-				pActor->npstatus = LEAVING;
-		 		assert(pActor->bIgPath || InPolygon(pActor->UtargetX, pActor->UtargetY, PATH) != NOPOLY); // Error 5004
-				SetMoverIntDest(pActor, pActor->UtargetX, pActor->UtargetY);
-				targetX = pActor->ItargetX;	// Desired position
-				targetY = pActor->ItargetY;
+				pMover->npstatus = LEAVING;
+		 		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5004
+				SetMoverIntDest(pMover, pMover->UtargetX, pMover->UtargetY);
+				targetX = pMover->ItargetX;	// Desired position
+				targetY = pMover->ItargetY;
 				break;
 			}
 		}
@@ -814,7 +864,7 @@ static void SetNextDest(PMACTOR pActor) {
 		sTargetY = targetY;
 #endif
 		NewCoOrdinates(x, y, &targetX, &targetY, &nextx, &nexty,
-					&s1, &s2, &hS2p, pActor->over, false, pActor, &collisionActor);
+					&s1, &s2, &hS2p, pMover->over, false, pMover, &collisionActor);
 
 		if (s1 != (XTHERE | YTHERE) && x == nextx && y == nexty) {
 			ss1 = s1;
@@ -829,7 +879,7 @@ static void SetNextDest(PMACTOR pActor) {
 			// nobbled by that last call to NewCoOrdinates()
 			// Re-instating them (can) leads to oscillation
 			NewCoOrdinates(x, y, &targetX, &targetY, &nextx, &nexty,
-						&s1, &s2, &hS2p, pActor->over, true, pActor, &collisionActor);
+						&s1, &s2, &hS2p, pMover->over, true, pMover, &collisionActor);
 
 			if (x == nextx && y == nexty) {
 				s1 = ss1;
@@ -840,8 +890,8 @@ static void SetNextDest(PMACTOR pActor) {
 
 		if (s1 == (XTHERE | YTHERE)) {
 			/* Can get there directly. */
-			SetMoverDest(pActor, nextx, nexty);
-			pActor->over = false;
+			SetMoverDest(pMover, nextx, nexty);
+			pMover->over = false;
 			break;
 		} else if ((s1 & STUCK) || s1 == (XRESTRICT + YRESTRICT)
 		     || s1 == (XTHERE | YRESTRICT) || s1 == (YTHERE | XRESTRICT)) {
@@ -851,61 +901,61 @@ static void SetNextDest(PMACTOR pActor) {
 			 something about it.				   |
 			 -------------------------------------------------*/
 			if (s2 & ENTERING_BLOCK) {
-				x = pActor->objx;	// Current position
-				y = pActor->objy;
+				x = pMover->objX;	// Current position
+				y = pMover->objY;
 				// Go to the nearest corner of the blocking polygon concerned
-				BlockingCorner(hS2p, &x, &y, pActor->ItargetX, pActor->ItargetY);
-				SetMoverDest(pActor, x, y);
-				pActor->over = false;
+				BlockingCorner(hS2p, &x, &y, pMover->ItargetX, pMover->ItargetY);
+				SetMoverDest(pMover, x, y);
+				pMover->over = false;
 			} else if (s2 & ENTERING_MBLOCK) {
-				if (InMActorBlock(pActor, pActor->UtargetX, pActor->UtargetY)) {
+				if (InMoverBlock(pMover, pMover->UtargetX, pMover->UtargetY)) {
 					// The best we're going to achieve
-					SetMoverUltDest(pActor, x, y);
-					SetMoverDest(pActor, x, y);
+					SetMoverUltDest(pMover, x, y);
+					SetMoverDest(pMover, x, y);
 				} else {
-					sx = pActor->objx;
-					sy = pActor->objy;
-//					pActor->objx = x;
-//					pActor->objy = y;
+					sx = pMover->objX;
+					sy = pMover->objY;
+//					pMover->objX = x;
+//					pMover->objY = y;
 
-					hEb = InitExtraBlock(pActor, collisionActor);
-					x = pActor->objx;
-					y = pActor->objy;
-					BlockingCorner(hEb, &x, &y, pActor->ItargetX, pActor->ItargetY);
+					hEb = InitExtraBlock(pMover, collisionActor);
+					x = pMover->objX;
+					y = pMover->objY;
+					BlockingCorner(hEb, &x, &y, pMover->ItargetX, pMover->ItargetY);
 
-					pActor->objx = sx;
-					pActor->objy = sy;
-					SetMoverDest(pActor, x, y);
-					pActor->over = false;
+					pMover->objX = sx;
+					pMover->objY = sy;
+					SetMoverDest(pMover, x, y);
+					pMover->over = false;
 				}
 			} else {
 				/*----------------------------------------
 				 Currently, this is as far as we can go. |
 				 Definitely room for improvement here!   |
 				 ----------------------------------------*/
-				hPath = InPolygon(pActor->ItargetX, pActor->ItargetY, PATH);
-				if (hPath != pActor->hIpath) {
-					if (IsInPolygon(pActor->ItargetX, pActor->ItargetY, pActor->hIpath))
-						hPath = pActor->hIpath;
+				hPath = InPolygon(pMover->ItargetX, pMover->ItargetY, PATH);
+				if (hPath != pMover->hIpath) {
+					if (IsInPolygon(pMover->ItargetX, pMover->ItargetY, pMover->hIpath))
+						hPath = pMover->hIpath;
 				}
-				assert(hPath == pActor->hIpath);
+				assert(hPath == pMover->hIpath);
 
-				if (pActor->InDifficulty == NO_PROB) {
+				if (pMover->InDifficulty == NO_PROB) {
 					x = PolyCentreX(hPath);
 					y = PolyCentreY(hPath);
-					SetMoverDest(pActor, x, y);
-					pActor->InDifficulty = TRY_CENTRE;
-					pActor->over = false;
-				} else if (pActor->InDifficulty == TRY_CENTRE) {
-					NearestCorner(&x, &y, pActor->hCpath, pActor->hIpath);
-					SetMoverDest(pActor, x, y);
-					pActor->InDifficulty = TRY_CORNER;
-					pActor->over = false;
-				} else if (pActor->InDifficulty == TRY_CORNER) {
-					NearestCorner(&x, &y, pActor->hCpath, pActor->hIpath);
-					SetMoverDest(pActor, x, y);
-					pActor->InDifficulty = TRY_NEXTCORNER;
-					pActor->over = false;
+					SetMoverDest(pMover, x, y);
+					pMover->InDifficulty = TRY_CENTRE;
+					pMover->over = false;
+				} else if (pMover->InDifficulty == TRY_CENTRE) {
+					NearestCorner(&x, &y, pMover->hCpath, pMover->hIpath);
+					SetMoverDest(pMover, x, y);
+					pMover->InDifficulty = TRY_CORNER;
+					pMover->over = false;
+				} else if (pMover->InDifficulty == TRY_CORNER) {
+					NearestCorner(&x, &y, pMover->hCpath, pMover->hIpath);
+					SetMoverDest(pMover, x, y);
+					pMover->InDifficulty = TRY_NEXTCORNER;
+					pMover->over = false;
 				}
 			}
 			break;
@@ -916,41 +966,43 @@ static void SetNextDest(PMACTOR pActor) {
 			 A restriction in a direction has been removed. |
 			 Use this as an intermediate destination.	 |
 			 -----------------------------------------------*/
-			SetMoverDest(pActor, nextx, nexty);
-			pActor->over = false;
+			SetMoverDest(pMover, nextx, nexty);
+			pMover->over = false;
 			break;
 		}
 
 		x = nextx;
 		y = nexty;
 
-		/*-------------------------
-		 Change of path polygon?  |
-		 -------------------------*/
-		hPath = InPolygon(x, y, PATH);
-		if (pActor->hCpath != hPath &&
-		   !IsInPolygon(x, y, pActor->hCpath) &&
-		   !IsAdjacentPath(pActor->hCpath, pActor->hIpath)) {
-			/*----------------------------------------------------------
-			 If just entering a follow nodes polygon, go to first node.|
-			 Else if just going to pass through, go to pseudo-centre.  |
-			 ----------------------------------------------------------*/
-			if (PolySubtype(hPath) == NODE && pActor->hFnpath != hPath && pActor->npstatus != LEAVING) {
-				int node = NearestEndNode(hPath, x, y);
-				getNpathNode(hPath, node, &nx, &ny);
-				SetMoverDest(pActor, nx, ny);
-				pActor->over = true;
-			} else if (!IsInPolygon(pActor->ItargetX, pActor->ItargetY, hPath) &&
-				!IsInPolygon(pActor->ItargetX, pActor->ItargetY, pActor->hCpath)) {
-				SetMoverDest(pActor, PolyCentreX(hPath), PolyCentreY(hPath));
-				pActor->over = true;
-			} else {
-				SetMoverDest(pActor, pActor->ItargetX, pActor->ItargetY);
+		if (!TinselV2) {
+			/*-------------------------
+			 Change of path polygon?  |
+			 -------------------------*/
+			hPath = InPolygon(x, y, PATH);
+			if (pMover->hCpath != hPath &&
+			   !IsInPolygon(x, y, pMover->hCpath) &&
+			   !IsAdjacentPath(pMover->hCpath, pMover->hIpath)) {
+				/*----------------------------------------------------------
+				 If just entering a follow nodes polygon, go to first node.|
+				 Else if just going to pass through, go to pseudo-centre.  |
+				 ----------------------------------------------------------*/
+				if (PolySubtype(hPath) == NODE && pMover->hFnpath != hPath && pMover->npstatus != LEAVING) {
+					int node = NearestEndNode(hPath, x, y);
+					getNpathNode(hPath, node, &nx, &ny);
+					SetMoverDest(pMover, nx, ny);
+					pMover->over = true;
+				} else if (!IsInPolygon(pMover->ItargetX, pMover->ItargetY, hPath) &&
+					!IsInPolygon(pMover->ItargetX, pMover->ItargetY, pMover->hCpath)) {
+					SetMoverDest(pMover, PolyCentreX(hPath), PolyCentreY(hPath));
+					pMover->over = true;
+				} else {
+					SetMoverDest(pMover, pMover->ItargetX, pMover->ItargetY);
+				}
+				break;
 			}
-			break;
-		}
 
-		lstatus = s1;
+			lstatus = s1;
+		}
 	}
 }
 
@@ -961,19 +1013,19 @@ static void SetNextDest(PMACTOR pActor) {
 static void NewCoOrdinates(int fromx, int fromy, int *targetX, int *targetY,
 				int *newx, int *newy, int *s1, int *s2,
 				HPOLYGON *hS2p, bool bOver, bool bBodge,
-				PMACTOR pActor, PMACTOR *collisionActor) {
+				PMOVER pMover, PMOVER *collisionActor) {
 	HPOLYGON hPoly;
 	int sidem, depthm;
 	int sidesteps, depthsteps;
-	PMACTOR	ma;
+	PMOVER	ma;
 
 	*s1 = *s2 = 0;
 
 	/*------------------------------------------------
 	 Don't overrun if this is the final destination. |
 	 ------------------------------------------------*/
-	if (*targetX == pActor->UtargetX && (*targetY == -1 || *targetY == pActor->UtargetY) ||
-			*targetY == pActor->UtargetY && (*targetX == -1 || *targetX == pActor->UtargetX))
+	if (*targetX == pMover->UtargetX && (*targetY == -1 || *targetY == pMover->UtargetY) ||
+			*targetY == pMover->UtargetY && (*targetX == -1 || *targetX == pMover->UtargetX))
 		bOver = false;
 
 	/*----------------------------------------------------
@@ -1087,7 +1139,7 @@ static void NewCoOrdinates(int fromx, int fromy, int *targetX, int *targetY,
 	 Must now check if it's in a legal spot.
 	 ------------------------------------------------------*/
 
-	if (!pActor->bNoPath && !pActor->bIgPath) {
+	if (!pMover->bNoPath && !pMover->bIgPath) {
 		/*------------------------------
 		 Must stay in a path polygon.
 		-------------------------------*/
@@ -1095,10 +1147,10 @@ static void NewCoOrdinates(int fromx, int fromy, int *targetX, int *targetY,
 		if (hPoly == NOPOLY) {
 			*s2 = LEAVING_PATH;	// Trying to leave the path polygons
 
-			if (*newx != fromx && InPolygon(*newx, fromy, PATH) != NOPOLY && InPolygon(*newx, fromy, BLOCKING) == NOPOLY) {
+			if (*newx != fromx && InPolygon(*newx, fromy, PATH) != NOPOLY && InPolygon(*newx, fromy, BLOCK) == NOPOLY) {
 				*newy = fromy;
 				*s1 |= YRESTRICT;
-			} else if (*newy != fromy && InPolygon(fromx, *newy, PATH) != NOPOLY && InPolygon(fromx, *newy, BLOCKING) == NOPOLY) {
+			} else if (*newy != fromy && InPolygon(fromx, *newy, PATH) != NOPOLY && InPolygon(fromx, *newy, BLOCK) == NOPOLY) {
 				*newx = fromx;
 				*s1 |= XRESTRICT;
 			} else {
@@ -1115,15 +1167,15 @@ static void NewCoOrdinates(int fromx, int fromy, int *targetX, int *targetY,
 		/*--------------------------------------
 		 Must stay out of blocking polygons.
 		 --------------------------------------*/
-		hPoly = InPolygon(*newx, *newy, BLOCKING);
+		hPoly = InPolygon(*newx, *newy, BLOCK);
 		if (hPoly != NOPOLY) {
 			*s2 = ENTERING_BLOCK;	// Trying to enter a blocking poly
 			*hS2p = hPoly;
 
-			if (*newx != fromx && InPolygon(*newx, fromy, BLOCKING) == NOPOLY && InPolygon(*newx, fromy, PATH) != NOPOLY) {
+			if (*newx != fromx && InPolygon(*newx, fromy, BLOCK) == NOPOLY && InPolygon(*newx, fromy, PATH) != NOPOLY) {
 				*newy = fromy;
 				*s1 |= YRESTRICT;
-			} else if (*newy != fromy && InPolygon(fromx, *newy, BLOCKING) == NOPOLY && InPolygon(fromx, *newy, PATH) != NOPOLY) {
+			} else if (*newy != fromy && InPolygon(fromx, *newy, BLOCK) == NOPOLY && InPolygon(fromx, *newy, PATH) != NOPOLY) {
 				*newx = fromx;
 				*s1 |= XRESTRICT;
 			} else {
@@ -1138,22 +1190,22 @@ static void NewCoOrdinates(int fromx, int fromy, int *targetX, int *targetY,
 		/*------------------------------------------------------
 		 Must stay out of moving actors' blocking polygons.
 		 ------------------------------------------------------*/
-		ma = InMActorBlock(pActor, *newx, *newy);
+		ma = InMoverBlock(pMover, *newx, *newy);
 		if (ma != NULL) {
 			// Ignore if already in it (it may have just appeared)
-			if (!InMActorBlock(pActor, pActor->objx, pActor->objy)) {
+			if (!InMoverBlock(pMover, pMover->objX, pMover->objY)) {
 				*s2 = ENTERING_MBLOCK;	// Trying to walk through an actor
 				
 				*hS2p = -1;
 				if (collisionActor)
 					*collisionActor = ma;
 
-				if (*newx != fromx && InMActorBlock(pActor, *newx, fromy) == NULL
-				    && InPolygon(*newx, fromy, BLOCKING) == NOPOLY && InPolygon(*newx, fromy, PATH) != NOPOLY) {
+				if (*newx != fromx && InMoverBlock(pMover, *newx, fromy) == NULL
+				    && InPolygon(*newx, fromy, BLOCK) == NOPOLY && InPolygon(*newx, fromy, PATH) != NOPOLY) {
 					*newy = fromy;
 					*s1 |= YRESTRICT;
-				} else if (*newy != fromy && InMActorBlock(pActor, fromx, *newy) == NULL
-				           && InPolygon(fromx, *newy, BLOCKING) == NOPOLY && InPolygon(fromx, *newy, PATH) != NOPOLY) {
+				} else if (*newy != fromy && InMoverBlock(pMover, fromx, *newy) == NULL
+				           && InPolygon(fromx, *newy, BLOCK) == NOPOLY && InPolygon(fromx, *newy, PATH) != NOPOLY) {
 					*newx = fromx;
 					*s1 |= XRESTRICT;
 				} else {
@@ -1172,7 +1224,7 @@ static void NewCoOrdinates(int fromx, int fromy, int *targetX, int *targetY,
 /**
  * SetOffWithinNodePath
  */
-static void SetOffWithinNodePath(PMACTOR pActor, HPOLYGON StartPath, HPOLYGON DestPath,
+static void SetOffWithinNodePath(PMOVER pMover, HPOLYGON StartPath, HPOLYGON DestPath,
 								 int targetX, int targetY) {
 	int endnode;
 	HPOLYGON hIpath;
@@ -1180,17 +1232,17 @@ static void SetOffWithinNodePath(PMACTOR pActor, HPOLYGON StartPath, HPOLYGON De
 	int	x, y;
 
 	if (StartPath == DestPath) {
-		if (pActor->line == pActor->Tline) {
-			SetMoverDest(pActor, pActor->UtargetX, pActor->UtargetY);
-			pActor->over = false;
-		} else if (pActor->line < pActor->Tline) {
-			getNpathNode(StartPath, pActor->line+1, &nx, &ny);
-			SetMoverDest(pActor, nx, ny);
-			pActor->npstatus = GOING_UP;
-		} else if (pActor->line > pActor->Tline) {
-			getNpathNode(StartPath, pActor->line, &nx, &ny);
-			SetMoverDest(pActor, nx, ny);
-			pActor->npstatus = GOING_DOWN;
+		if (pMover->line == pMover->Tline) {
+			SetMoverDest(pMover, pMover->UtargetX, pMover->UtargetY);
+			pMover->over = false;
+		} else if (pMover->line < pMover->Tline) {
+			getNpathNode(StartPath, pMover->line+1, &nx, &ny);
+			SetMoverDest(pMover, nx, ny);
+			pMover->npstatus = GOING_UP;
+		} else if (pMover->line > pMover->Tline) {
+			getNpathNode(StartPath, pMover->line, &nx, &ny);
+			SetMoverDest(pMover, nx, ny);
+			pMover->npstatus = GOING_DOWN;
 		}
 	} else {
 		/*
@@ -1198,7 +1250,7 @@ static void SetOffWithinNodePath(PMACTOR pActor, HPOLYGON StartPath, HPOLYGON De
 		 * which end of this path to head for.
 		 */
 		assert(DestPath != NOPOLY); // Error 702
-		if ((hIpath = getPathOnTheWay(StartPath, DestPath)) == NOPOLY) {
+		if ((hIpath = GetPathOnTheWay(StartPath, DestPath)) == NOPOLY) {
 			// This should never happen!
 			// It's the old code that didn't always work.
 			endnode = NearestEndNode(StartPath, targetX, targetY);
@@ -1213,20 +1265,31 @@ static void SetOffWithinNodePath(PMACTOR pActor, HPOLYGON StartPath, HPOLYGON De
 		}
 
 #if 1
-		if ((pActor->npstatus == LEAVING) &&
-			endnode == NearestEndNode(StartPath, pActor->objx, pActor->objy)) {
+		if ((pMover->npstatus == LEAVING) &&
+			endnode == NearestEndNode(StartPath, pMover->objX, pMover->objY)) {
 			// Leave it be
+
+			if (TinselV2) {
+				// Yeah, but we need a destination
+				// It's release night and there's this problem in the bar...
+				if (hIpath)	// must be, but...
+				{
+					// could go for its end node if it's an NPATH
+					// but we probably will when we hit it anyway!
+					SetMoverDest(pMover, PolyCentreX(hIpath), PolyCentreY(hIpath));
+				}
+			}
 		} else
 #endif
 		{
 			if (endnode) {
-				getNpathNode(StartPath, pActor->line+1, &nx, &ny);
-				SetMoverDest(pActor, nx, ny);
-				pActor->npstatus = GOING_UP;
+				getNpathNode(StartPath, pMover->line+1, &nx, &ny);
+				SetMoverDest(pMover, nx, ny);
+				pMover->npstatus = GOING_UP;
 			} else {
-				getNpathNode(StartPath, pActor->line, &nx, &ny);
-				SetMoverDest(pActor, nx, ny);
-				pActor->npstatus = GOING_DOWN;
+				getNpathNode(StartPath, pMover->line, &nx, &ny);
+				SetMoverDest(pMover, nx, ny);
+				pMover->npstatus = GOING_DOWN;
 			}
 		}
 	}
@@ -1235,52 +1298,79 @@ static void SetOffWithinNodePath(PMACTOR pActor, HPOLYGON StartPath, HPOLYGON De
 /**
  * Restore a movement, called from restoreMovement() in ACTORS.CPP
  */
-void SSetActorDest(PMACTOR pActor) {
+void SSetActorDest(PMOVER pActor) {
 	if (pActor->UtargetX != -1 && pActor->UtargetY != -1) {
-		stand(pActor->actorID, pActor->objx, pActor->objy, 0);
+		Stand(nullContext, pActor->actorID, pActor->objX, pActor->objY, 0);
 
 		if (pActor->UtargetX != -1 && pActor->UtargetY != -1) {
 			SetActorDest(pActor, pActor->UtargetX, pActor->UtargetY,
 					pActor->bIgPath, 0);
 		}
 	} else {
-		stand(pActor->actorID, pActor->objx, pActor->objy, 0);
+		Stand(nullContext, pActor->actorID, pActor->objX, pActor->objY, 0);
 	}
 }
 
 /**
  * Initiate a movement, called from WalkTo_Event()
  */
-void SetActorDest(PMACTOR pActor, int clickX, int clickY, bool igPath, SCNHANDLE film) {
+int SetActorDest(PMOVER pMover, int clickX, int clickY, bool igPath, SCNHANDLE hFilm) {
 	HPOLYGON StartPath, DestPath = 0;
 	int targetX, targetY;
 
-	if (pActor->actorID == LeadId())		// Now only for lead actor
-		UnTagActor(pActor->actorID);	// Tag not allowed while moving
-	pActor->ticket++;
-	pActor->stop = false;
-	pActor->over = false;
-	pActor->fromx = pActor->objx;
-	pActor->fromy = pActor->objy;
-	pActor->bMoving = true;
-	pActor->bIgPath = igPath;
+	if (TinselV2) {
+		// No need to synchronise if not moving!
+		// Hopefully will stop luggage flip in shades.
+		if (!MoverMoving(pMover))
+			pMover->stepCount = 0;
 
-	// Use the supplied reel or restore the normal actor.
-	if (film != 0)
-		AlterMActor(pActor, film, AR_WALKREEL);
-	else
-		AlterMActor(pActor, 0, AR_NORMAL);
+		// Fix interrupted-walking-to-wardrobe bug in mortuary
+		StopMover(pMover);
+	} else {
+		if (pMover->actorID == GetLeadId())		// Now only for lead actor
+			UnTagActor(pMover->actorID);	// Tag not allowed while moving
+	}
+
+	pMover->walkNumber++;
+	pMover->bStop = false;
+	pMover->over = false;
+	pMover->walkedFromX = pMover->objX;
+	pMover->walkedFromY = pMover->objY;
+	pMover->bMoving = true;
+	pMover->bIgPath = igPath;
+	pMover->zOverride = -1;
+	pMover->hRpath = NOPOLY;
+
+	if (!TinselV2) {
+		// Use the supplied reel or restore the normal actor.
+		if (hFilm != 0)
+			AlterMover(pMover, hFilm, AR_WALKREEL);
+		else
+			AlterMover(pMover, 0, AR_NORMAL);
+	}
 
 	if (igPath) {
 		targetX = clickX;
 		targetY = clickY;
+
+		if (pMover->actorID == GetLeadId()) {
+			lastLeadXdest = targetX;
+			lastLeadYdest = targetY;
+		}
 	} else {
-		if (WorkOutDestination(clickX, clickY, &targetX, &targetY) == ALL_SORTED) {
-			GotThere(pActor);
-			return;
+		int wodResult = WorkOutDestination(clickX, clickY, &targetX, &targetY);
+		
+		if (pMover->actorID == GetLeadId()) {
+			lastLeadXdest = targetX;
+			lastLeadYdest = targetY;
+		}
+
+		if (wodResult == ALL_SORTED) {
+			GotThere(pMover);
+			return 0;
 		}
 		assert(InPolygon(targetX, targetY, PATH) != NOPOLY); // illegal destination!
-		assert(InPolygon(targetX, targetY, BLOCKING) == NOPOLY); // illegal destination!
+		assert(InPolygon(targetX, targetY, BLOCK) == NOPOLY); // illegal destination!
 	}
 
 
@@ -1289,9 +1379,9 @@ void SetActorDest(PMACTOR pActor, int clickX, int clickY, bool igPath, SCNHANDLE
 	/*----------------------------------
 	| Don't move if it's not worth it.
 	----------------------------------*/
-	if (ABS(targetX - pActor->objx) < XMDIST && ABS(targetY - pActor->objy) < YMDIST) {
-		GotThere(pActor);
-		return;
+	if (ABS(targetX - pMover->objX) < XMDIST && ABS(targetY - pMover->objY) < YMDIST) {
+		GotThere(pMover);
+		return 0;
 	}
 
 	/*------------------------------------------------------
@@ -1302,41 +1392,57 @@ void SetActorDest(PMACTOR pActor, int clickX, int clickY, bool igPath, SCNHANDLE
 		DestPath = InPolygon(targetX, targetY, PATH);
 		if (PolySubtype(DestPath) == NODE) {
 			// Find the nearest point on a line, or nearest node
-			FindBestPoint(DestPath, &targetX, &targetY, &pActor->Tline);
+			FindBestPoint(DestPath, &targetX, &targetY, &pMover->Tline);
 		}
 	}
 
- 	assert(pActor->bIgPath || InPolygon(targetX, targetY, PATH) != NOPOLY); // Error 5005
-	SetMoverUltDest(pActor, targetX, targetY);
-	SetMoverIntDest(pActor, targetX, targetY);
+ 	assert(pMover->bIgPath || InPolygon(targetX, targetY, PATH) != NOPOLY); // Error 5005
+	SetMoverUltDest(pMover, targetX, targetY);
+	SetMoverIntDest(pMover, targetX, targetY);
+
+	if (TinselV2) {
+		// No movement for unconnected paths
+		if (pMover->hIpath == NOPOLY && !igPath) {
+			GotThere(pMover);
+			return 0;
+		}
+
+		// Use the supplied reel or restore the normal actor.
+		if (hFilm != 0)
+			AlterMover(pMover, hFilm, AR_WALKREEL);
+		else
+			AlterMover(pMover, 0, AR_NORMAL);
+	}
 
 	/*-------------------------------------------------------------------
 	| If in a follow nodes path, need to set off in the right direction! |
 	-------------------------------------------------------------------*/
-	if ((StartPath = pActor->hFnpath) != NOPOLY && !igPath) {
-		SetOffWithinNodePath(pActor, StartPath, DestPath, targetX, targetY);
+	if ((StartPath = pMover->hFnpath) != NOPOLY && !igPath) {
+		SetOffWithinNodePath(pMover, StartPath, DestPath, targetX, targetY);
 	} else {
 		// Set off!
-		SetNextDest(pActor);
+		SetNextDest(pMover);
 	}
+
+	return pMover->walkNumber;
 }
 
 /**
  * Change scale if appropriate.
  */
-static void CheckScale(PMACTOR pActor, HPOLYGON hPath, int ypos) {
+static void CheckScale(PMOVER pActor, HPOLYGON hPath, int ypos) {
 	int scale;
 
 	scale = GetScale(hPath, ypos);
 	if (scale != pActor->scale) {
-		SetMActorWalkReel(pActor, pActor->dirn, scale, false);
+		SetMoverWalkReel(pActor, pActor->direction, scale, false);
 	}
 }
 
 /**
  * Not going anywhere - Kick off again if not at final destination.
  */
-static void NotMoving(PMACTOR pActor, int x, int y) {
+static void NotMoving(PMOVER pActor, int x, int y) {
 	pActor->targetX = pActor->targetY = -1;
 
 //	if (x == pActor->UtargetX && y == pActor->UtargetY)
@@ -1357,19 +1463,21 @@ static void NotMoving(PMACTOR pActor, int x, int y) {
 /**
  * Does the necessary business when entering a different path polygon.
  */
-static void EnteringNewPath(PMACTOR pActor, HPOLYGON hPath, int x, int y) {
+static void EnteringNewPath(PMOVER pMover, HPOLYGON hPath, int x, int y) {
 	int	firstnode;	// First node to go to
 	int	lastnode;	// Last node to go to
 	HPOLYGON hIpath;
+	HPOLYGON hLpath;	// one we're leaving
 	int	nx, ny;
 	int	nxl, nyl;
 
-	pActor->hCpath = hPath;		// current path
+	hLpath = pMover->hCpath;
+	pMover->hCpath = hPath;		// current path
 
 	if (hPath == NOPOLY) {
 		// Not proved this ever happens, but just in case
-		pActor->hFnpath = NOPOLY;
-		pActor->npstatus = NOT_IN;
+		pMover->hFnpath = NOPOLY;
+		pMover->npstatus = NOT_IN;
 		return;
 	}
 
@@ -1381,12 +1489,12 @@ static void EnteringNewPath(PMACTOR pActor, HPOLYGON hPath, int x, int y) {
 
 		// If this is not the destination path,
 		// find which end nodfe we wish to leave via
-		if (hPath != pActor->hUpath) {
-			if (pActor->bIgPath) {
-				lastnode = NearestEndNode(hPath, pActor->UtargetX, pActor->UtargetY);
+		if (hPath != pMover->hUpath) {
+			if (pMover->bIgPath) {
+				lastnode = NearestEndNode(hPath, pMover->UtargetX, pMover->UtargetY);
 			} else {
-				assert(pActor->hUpath != NOPOLY); // Error 703
-				hIpath = getPathOnTheWay(hPath, pActor->hUpath);
+				assert(pMover->hUpath != NOPOLY); // Error 703
+				hIpath = GetPathOnTheWay(hPath, pMover->hUpath);
 				assert(hIpath != NOPOLY); // No path on the way
 
 				if (PolySubtype(hIpath) != NODE) {
@@ -1406,68 +1514,76 @@ static void EnteringNewPath(PMACTOR pActor, HPOLYGON hPath, int x, int y) {
 
 		// If leaving by same node as entering, don't bother.
 		if (lastnode == firstnode) {
-			pActor->hFnpath = NOPOLY;
-			pActor->npstatus = NOT_IN;
-	 		assert(pActor->bIgPath || InPolygon(pActor->UtargetX, pActor->UtargetY, PATH) != NOPOLY); // Error 5007
-			SetMoverIntDest(pActor, pActor->UtargetX, pActor->UtargetY);
-			SetNextDest(pActor);
+			pMover->hFnpath = NOPOLY;
+			pMover->npstatus = NOT_IN;
+	 		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5007
+			SetMoverIntDest(pMover, pMover->UtargetX, pMover->UtargetY);
+			SetNextDest(pMover);
 		} else {
 			// Head for first node
-			pActor->over = true;
-			pActor->npstatus = ENTERING;
-			pActor->hFnpath = hPath;
-			pActor->line = firstnode ? firstnode - 1 : firstnode;
-			if (pActor->line == pActor->Tline && hPath == pActor->hUpath) {
-		 		assert(pActor->bIgPath || InPolygon(pActor->UtargetX, pActor->UtargetY, PATH) != NOPOLY); // Error 5008
-				SetMoverIntDest(pActor, pActor->UtargetX, pActor->UtargetY);
-				SetMoverDest(pActor, pActor->UtargetX, pActor->UtargetY);
+			pMover->over = true;
+			pMover->npstatus = ENTERING;
+			pMover->hFnpath = hPath;
+			pMover->line = firstnode ? firstnode - 1 : firstnode;
+			if (pMover->line == pMover->Tline && hPath == pMover->hUpath) {
+		 		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5008
+				SetMoverIntDest(pMover, pMover->UtargetX, pMover->UtargetY);
+				SetMoverDest(pMover, pMover->UtargetX, pMover->UtargetY);
 			} else {
 				// This doesn't seem right
 				getNpathNode(hPath, firstnode, &nx, &ny);
-				if (ABS(pActor->objx - nx) < XMDIST
-						&& ABS(pActor->objy - ny) < YMDIST) {
-					pActor->npstatus = ENTERING;
-					pActor->hFnpath = hPath;
-					SetNextDest(pActor);
+				if (ABS(pMover->objX - nx) < XMDIST
+						&& ABS(pMover->objY - ny) < YMDIST) {
+					pMover->npstatus = ENTERING;
+					pMover->hFnpath = hPath;
+					SetNextDest(pMover);
 				} else {
 					getNpathNode(hPath, firstnode, &nx, &ny);
-					SetMoverDest(pActor, nx, ny);
+					SetMoverDest(pMover, nx, ny);
 				}
 			}
 		}
 		return;
 	} else {
-		pActor->hFnpath = NOPOLY;
-		pActor->npstatus = NOT_IN;
- 		assert(pActor->bIgPath || InPolygon(pActor->UtargetX, pActor->UtargetY, PATH) != NOPOLY); // Error 5009
-// Added 26/01/95
-		if (IsPolyCorner(hPath, pActor->ItargetX, pActor->ItargetY))
+		pMover->hFnpath = NOPOLY;
+		pMover->npstatus = NOT_IN;
+ 		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5009
+
+		// Added 26/01/95
+		if (IsPolyCorner(hPath, pMover->ItargetX, pMover->ItargetY))
 			return;
 
-		SetMoverIntDest(pActor, pActor->UtargetX, pActor->UtargetY);
-		SetNextDest(pActor);
+		// Added 23/10/96
+		if (TinselV2 && (pMover->hRpath == hPath))
+			return;
+
+		if (TinselV2)
+			pMover->hRpath = hLpath;
+		SetMoverIntDest(pMover, pMover->UtargetX, pMover->UtargetY);
+		SetNextDest(pMover);
 	}
 }
 
 /**
  * Move
  */
-void Move(PMACTOR pActor, int newx, int newy, HPOLYGON hPath) {
-	MultiSetAniXY(pActor->actorObj, newx, newy);
-	MAsetZPos(pActor, newy, getPolyZfactor(hPath));
-	if (StepAnimScript(&pActor->actorAnim) == ScriptFinished) {
+void Move(PMOVER pMover, int newx, int newy, HPOLYGON hPath) {
+	pMover->objX = newx;
+	pMover->objY = newy;
+
+	MultiSetAniXY(pMover->actorObj, newx, newy);
+	SetMoverZ(pMover, newy, GetPolyZfactor(hPath));
+	if (StepAnimScript(&pMover->actorAnim) == ScriptFinished) {
 		// The end of a scale-change reel
 		// Revert to normal walking reel
-		pActor->walkReel = false;
-		pActor->scount = 0;
-		SetMActorWalkReel(pActor, pActor->dirn, pActor->scale, true);
+		pMover->bWalkReel = false;
+		pMover->stepCount = 0;
+		SetMoverWalkReel(pMover, pMover->direction, pMover->scale, true);
 	}
-	pActor->objx = newx;
-	pActor->objy = newy;
 
 	// Synchronised walking reels
-	if (++pActor->scount >= 6)
-		pActor->scount = 0;
+	if (++pMover->stepCount >= STEPS_MAX)
+		pMover->stepCount = 0;
 }
 
 /**
@@ -1475,24 +1591,25 @@ void Move(PMACTOR pActor, int newx, int newy, HPOLYGON hPath) {
  *
  * Moves the actor as appropriate.
  */
-void MoveActor(PMACTOR pActor) {
+void MoveActor(PMOVER pMover) {
 	int newx, newy;
 	HPOLYGON hPath;
 	int status, s2;		// s2 not used here!
 	HPOLYGON hS2p;		// nor is s2p!
 	HPOLYGON hEb;
-	PMACTOR ma;
+	PMOVER ma;
 	int	sTargetX, sTargetY;
 	bool bNewPath = false;
 
 	// Only do anything if the actor needs to move!
-	if (pActor->targetX == -1 && pActor->targetY == -1)
+	if (pMover->targetX == -1 && pMover->targetY == -1)
 		return;
 
-	if (pActor->stop) {
-		GotThere(pActor);
-		pActor->stop = false;
-		SetMActorStanding(pActor);
+	if (pMover->bStop) {
+		GotThere(pMover);
+		pMover->bStop = false;
+		pMover->walkNumber++;
+		SetMoverStanding(pMover);
 		return;
 	}
 
@@ -1502,29 +1619,31 @@ void MoveActor(PMACTOR pActor) {
 /**/	BogusVar = 0;			//
 #endif
 
-	// During swalk()s, movement while hidden may be slowed down.
-	if (pActor->aHidden) {
-		if (++hSlowVar < pActor->SlowFactor)
-			return;
-		hSlowVar = 0;
+	if (!TinselV2) {
+		// During swalk()s, movement while hidden may be slowed down.
+		if (pMover->bHidden) {
+			if (++hSlowVar < pMover->SlowFactor)
+				return;
+			hSlowVar = 0;
+		}
 	}
 
 	// 'push' the target
-	sTargetX = pActor->targetX;
-	sTargetY = pActor->targetY;
+	sTargetX = pMover->targetX;
+	sTargetY = pMover->targetY;
 
-	NewCoOrdinates(pActor->objx, pActor->objy, &pActor->targetX, &pActor->targetY,
-			&newx, &newy, &status, &s2, &hS2p, pActor->over, false, pActor);
+	NewCoOrdinates(pMover->objX, pMover->objY, &pMover->targetX, &pMover->targetY,
+			&newx, &newy, &status, &s2, &hS2p, pMover->over, false, pMover);
 
-	if (newx == pActor->objx && newy == pActor->objy) {
+	if (newx == pMover->objX && newy == pMover->objY) {
 		// 'pop' the target
-		pActor->targetX = sTargetX;
-		pActor->targetY = sTargetY;
+		pMover->targetX = sTargetX;
+		pMover->targetY = sTargetY;
 
-		NewCoOrdinates(pActor->objx, pActor->objy, &pActor->targetX, &pActor->targetY, &newx, &newy,
-				&status, &s2, &hS2p, pActor->over, true, pActor);
-		if (newx == pActor->objx && newy == pActor->objy) {
-			NotMoving(pActor, newx, newy);
+		NewCoOrdinates(pMover->objX, pMover->objY, &pMover->targetX, &pMover->targetY, &newx, &newy,
+				&status, &s2, &hS2p, pMover->over, true, pMover);
+		if (newx == pMover->objX && newy == pMover->objY) {
+			NotMoving(pMover, newx, newy);
 			return;
 		}
 	}
@@ -1532,43 +1651,43 @@ void MoveActor(PMACTOR pActor) {
 	// Find out which path we're in now
 	hPath = InPolygon(newx, newy, PATH);
 	if (hPath == NOPOLY) {
-		if (pActor->bNoPath) {
-			Move(pActor, newx, newy, pActor->hCpath);
+		if (pMover->bNoPath) {
+			Move(pMover, newx, newy, pMover->hCpath);
 			return;
 		} else {
 			// May be marginally outside!
 			// OR bIgPath may be set.
-			hPath = pActor->hCpath;
+			hPath = pMover->hCpath;
 		}
-	} else if (pActor->bNoPath) {
-		pActor->bNoPath = false;
+	} else if (pMover->bNoPath) {
+		pMover->bNoPath = false;
 		bNewPath = true;
-	} else if (hPath != pActor->hCpath) {
-		if (IsInPolygon(newx, newy, pActor->hCpath))
-			hPath = pActor->hCpath;
+	} else if (hPath != pMover->hCpath) {
+		if (IsInPolygon(newx, newy, pMover->hCpath))
+			hPath = pMover->hCpath;
 	}
 
-	CheckScale(pActor, hPath, newy);
+	CheckScale(pMover, hPath, newy);
 
 	/*
 	* Must stay out of moving actors' blocking polygons.
 	*/
-	ma = InMActorBlock(pActor, newx, newy);
+	ma = InMoverBlock(pMover, newx, newy);
 	if (ma != NULL) {
 		// Stop if there's no chance of arriving
-		if (InMActorBlock(pActor, pActor->UtargetX, pActor->UtargetY)) {
-			GotThere(pActor);
+		if (InMoverBlock(pMover, pMover->UtargetX, pMover->UtargetY)) {
+			GotThere(pMover);
 			return;
 		}
 
-		if (InMActorBlock(pActor, pActor->objx, pActor->objy))
+		if (InMoverBlock(pMover, pMover->objX, pMover->objY))
 			;
 		else {
-			hEb = InitExtraBlock(pActor, ma);
-			newx = pActor->objx;
-			newy = pActor->objy;
-			BlockingCorner(hEb, &newx, &newy, pActor->ItargetX, pActor->ItargetY);
-			SetMoverDest(pActor, newx, newy);
+			hEb = InitExtraBlock(pMover, ma);
+			newx = pMover->objX;
+			newy = pMover->objY;
+			BlockingCorner(hEb, &newx, &newy, pMover->ItargetX, pMover->ItargetY);
+			SetMoverDest(pMover, newx, newy);
 			return;
 		}
 	}
@@ -1576,11 +1695,11 @@ void MoveActor(PMACTOR pActor) {
 	/*--------------------------------------
 	 This is where it actually gets moved.
 	 --------------------------------------*/
-	Move(pActor, newx, newy, hPath);
+	Move(pMover, newx, newy, hPath);
 
 	// Entering a new path polygon?
-	if (hPath != pActor->hCpath || bNewPath)
-		EnteringNewPath(pActor, hPath, newx, newy);
+	if (hPath != pMover->hCpath || bNewPath)
+		EnteringNewPath(pMover, hPath, newx, newy);
 }
 
 /**
@@ -1590,25 +1709,36 @@ void SetDefaultRefer(int32 defRefer) {
 	DefaultRefer = defRefer;
 }
 
+int GetLastLeadXdest(void) {
+	return lastLeadXdest;
+}
+
+int GetLastLeadYdest(void) {
+	return lastLeadYdest;
+}
+
+
+
+
 /**
  * DoMoveActor
  */
-void DoMoveActor(PMACTOR pActor) {
+void DoMoveActor(PMOVER pActor) {
 	int wasx, wasy;
 	int i;
 
 #define NUMBER 1
 
-	wasx = pActor->objx;
-	wasy = pActor->objy;
+	wasx = pActor->objX;
+	wasy = pActor->objY;
 
 	MoveActor(pActor);
 
 	if ((pActor->targetX != -1 || pActor->targetY != -1)
-	&&  (wasx == pActor->objx && wasy == pActor->objy)) 	{
+	&&  (wasx == pActor->objX && wasy == pActor->objY)) 	{
 		for (i=0; i < NUMBER; i++) {
 			MoveActor(pActor);
-			if (wasx != pActor->objx || wasy != pActor->objy)
+			if (wasx != pActor->objX || wasy != pActor->objY)
 				break;
 		}
 //		assert(i<NUMBER);

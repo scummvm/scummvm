@@ -28,16 +28,15 @@
 #define TINSEL_FADERS_H
 
 #include "tinsel/dw.h"	// for SCNHANDLE
+#include "tinsel/tinsel.h"
 
 namespace Tinsel {
 
-enum {
-	/**
-	 * Number of iterations in a fade out.
-	 * Must match which FadeOut() is in use.
-	 */
-	COUNTOUT_COUNT  = 6
-};
+/**
+ * Number of iterations in a fade out.
+ */
+// FIXME: There seems to be some confusion in Tinsel 2 whether this should be 9 or 6
+#define COUNTOUT_COUNT 6
 
 /*----------------------------------------------------------------------*\
 |*                      Fader Function Prototypes                       *|
@@ -47,8 +46,11 @@ enum {
 //				should not be faded. This parameter can be
 //				NULL - fade all palettes.
 
+void FadeOutMedium(SCNHANDLE noFadeTable[]);
 void FadeOutFast(SCNHANDLE noFadeTable[]);
+void FadeInMedium(SCNHANDLE noFadeTable[]);
 void FadeInFast(SCNHANDLE noFadeTable[]);
+void PokeInTagColour(void);
 
 } // end of namespace Tinsel
 

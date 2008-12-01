@@ -35,14 +35,25 @@ namespace Tinsel {
 
 // Polygon Types
 enum PTYPE {
-	TEST, PATH, EXIT, BLOCKING,
-	EFFECT, REFER, TAG, EX_TAG, EX_EXIT, EX_BLOCK
+	// Tinsel 2 Polygon type list
+	TEST,
+	BLOCK, EFFECT, PATH, REFER, TAG,
+	EX_BLOCK, EX_EFFECT, EX_PATH, EX_REFER, EX_TAG,
+	// Extra polygon types from Tinsel v1
+	EXIT, EX_EXIT
 };
 
 // subtype
 enum {
 	NORMAL = 0,
 	NODE   = 1       // For paths
+};
+
+// tagFlags
+enum {
+	POINTING = 0x01,
+	TAGWANTED = 0x02,
+	FOLLOWCURSOR = 0x04
 };
 
 // tagState
@@ -52,7 +63,7 @@ enum TSTATE {
 
 // pointState
 enum PSTATE {
-	NO_POINT, NOT_POINTING, POINTING
+	PS_NO_POINT, PS_NOT_POINTING, PS_POINTING
 };
 
 
@@ -60,7 +71,10 @@ enum {
 	NOPOLY = -1
 };
 
-
+struct POLY_VOLATILE {
+	bool bDead;
+	short xoff, yoff;	// Polygon offset
+};
 
 /*-------------------------------------------------------------------------*/
 
@@ -69,26 +83,36 @@ HPOLYGON InPolygon(int xt, int yt, PTYPE type);
 void BlockingCorner(HPOLYGON poly, int *x, int *y, int tarx, int tary);
 void FindBestPoint(HPOLYGON path, int *x, int *y, int *line);
 bool IsAdjacentPath(HPOLYGON path1, HPOLYGON path2);
-HPOLYGON getPathOnTheWay(HPOLYGON from, HPOLYGON to);
+HPOLYGON GetPathOnTheWay(HPOLYGON from, HPOLYGON to);
 int NearestEndNode(HPOLYGON path, int x, int y);
 int NearEndNode(HPOLYGON spath, HPOLYGON dpath);
 int NearestNodeWithin(HPOLYGON npath, int x, int y);
 void NearestCorner(int *x, int *y, HPOLYGON spath, HPOLYGON dpath);
 bool IsPolyCorner(HPOLYGON hPath, int x, int y);
 int GetScale(HPOLYGON path, int y);
+int GetBrightness(HPOLYGON hPath, int y);
 void getNpathNode(HPOLYGON npath, int node, int *px, int *py);
-void getPolyTagInfo(HPOLYGON p, SCNHANDLE *hTagText, int *tagx, int *tagy);
-SCNHANDLE getPolyFilm(HPOLYGON p);
-void getPolyNode(HPOLYGON p, int *px, int *py);
-SCNHANDLE getPolyScript(HPOLYGON p);
-REEL getPolyReelType(HPOLYGON p);
-int32 getPolyZfactor(HPOLYGON p);
+void GetTagTag(HPOLYGON p, SCNHANDLE *hTagText, int *tagx, int *tagy);
+SCNHANDLE GetPolyFilm(HPOLYGON p);
+void GetPolyNode(HPOLYGON hp, int *pNodeX, int *pNodeY);
+SCNHANDLE GetPolyScript(HPOLYGON p);
+REEL GetPolyReelType(HPOLYGON p);
+int32 GetPolyZfactor(HPOLYGON p);
 int numNodes(HPOLYGON pp);
 void RebootDeadTags(void);
+void DisableBlock(int block);
+void EnableBlock(int block);
+void DisableEffect(int effect);
+void EnableEffect(int effect);
+void DisablePath(int path);
+void EnablePath(int path);
+void DisableRefer(int refer);
+void EnableRefer(int refer);
 void DisableBlock(int blockno);
 void EnableBlock(int blockno);
-void DisableTag(int tagno);
-void EnableTag(int tagno);
+HPOLYGON GetTagHandle(int tagno);
+void DisableTag(CORO_PARAM, int tag);
+void EnableTag(CORO_PARAM, int tag);
 void DisableExit(int exitno);
 void EnableExit(int exitno);
 HPOLYGON FirstPathPoly(void);
@@ -99,6 +123,8 @@ void DropPolygons(void);
 
 void SaveDeadPolys(bool *sdp);
 void RestoreDeadPolys(bool *sdp);
+void SavePolygonStuff(POLY_VOLATILE *sps);
+void RestorePolygonStuff(POLY_VOLATILE *sps);
 
 /*-------------------------------------------------------------------------*/
 
@@ -110,13 +136,27 @@ int PolyCornerX(HPOLYGON hp, int n);	// ->cx[n]
 int PolyCornerY(HPOLYGON hp, int n);	// ->cy[n]
 PSTATE PolyPointState(HPOLYGON hp);	// ->pointState
 TSTATE PolyTagState(HPOLYGON hp);	// ->tagState
-SCNHANDLE PolyTagHandle(HPOLYGON hp);	// ->oTagHandle
 
 void SetPolyPointState(HPOLYGON hp, PSTATE ps);	// ->pointState
 void SetPolyTagState(HPOLYGON hp, TSTATE ts);	// ->tagState
 void SetPolyTagHandle(HPOLYGON hp, SCNHANDLE th);// ->oTagHandle
 
 void MaxPolygons(int maxPolys);
+
+int GetTagPolyId(HPOLYGON hp);
+void GetTagTag(HPOLYGON hp, SCNHANDLE *hTagText, int *tagX, int *tagY);
+void SetPolyPointedTo(HPOLYGON hp, bool bPointedTo);
+bool PolyIsPointedTo(HPOLYGON hp);
+void SetPolyTagWanted(HPOLYGON hp, bool bTagWanted, bool bCursor, SCNHANDLE hOverrideTag);
+bool PolyTagIsWanted(HPOLYGON hp);
+bool PolyTagFollowsCursor(HPOLYGON hp);
+SCNHANDLE GetPolyTagHandle(HPOLYGON hp);
+bool IsTagPolygon(int tagno);
+int GetTagPolyId(HPOLYGON hp);
+void GetPolyMidBottom(	HPOLYGON hp, int *pX, int *pY);
+int PathCount(void);
+void MovePolygon(PTYPE ptype, int id, int x, int y);
+void MovePolygonTo(PTYPE ptype, int id, int x, int y);
 
 /*-------------------------------------------------------------------------*/
 

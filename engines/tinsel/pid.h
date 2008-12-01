@@ -61,11 +61,19 @@ namespace Tinsel {
 
 #define	PID_MASTER_SCR	0x00C0			// tinsel master script process
 
-#define	PID_MACTOR	(0x00D0 | PID_DESTROY)	// moving actor process
+#define	PID_MOVER	(0x00D0 | PID_DESTROY)	// moving actor process
 
 #define	PID_REEL	(0x00E0 | PID_DESTROY)	// process for each film reel
 
 #define	PID_MIDI	(0x00F0 | PID_DESTROY)	// process to poll MIDI sound driver
+
+#define PID_BMV		0x0100				// Movie player process
+
+#define PID_BTN_CLICK 0x110				// process to handle mouse button clicks
+
+#define PID_PROCESS	(0x0110 | PID_DESTROY)	// Scene process base
+
+#define PID_GPROCESS	0x0120			// Global process base
 
 } // end of namespace Tinsel
 

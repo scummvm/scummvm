@@ -31,16 +31,20 @@
 #include "tinsel/dw.h"
 #include "tinsel/film.h"
 #include "tinsel/handle.h"
-#include "tinsel/inventory.h"
+#include "tinsel/dialogs.h"
+#include "tinsel/mareels.h"
 #include "tinsel/move.h"
 #include "tinsel/multiobj.h"	// multi-part object defintions etc.
 #include "tinsel/object.h"
 #include "tinsel/pcode.h"
 #include "tinsel/pid.h"
+#include "tinsel/play.h"
 #include "tinsel/polygons.h"
 #include "tinsel/rince.h"
 #include "tinsel/sched.h"
+#include "tinsel/sysvar.h"
 #include "tinsel/timers.h"
+#include "tinsel/tinsel.h"
 #include "tinsel/token.h"
 
 #include "common/util.h"
@@ -49,8 +53,65 @@ namespace Tinsel {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-static MACTOR Movers[MAX_MOVERS];
+static MOVER Movers[MAX_MOVERS];
 
+//----------------- FUNCTIONS ----------------------------
+
+/**
+ * Called from ActorPalette(), normally once just after the beginning of time.
+ */
+void StoreMoverPalette(PMOVER pMover, int startColour, int length) {
+	pMover->startColour = startColour;
+	pMover->paletteLength = length;
+}
+
+/**
+ * Called from the moving actor's main loop.
+ */
+static void CheckBrightness(PMOVER pMover) {
+	int brightness;
+
+	if (pMover->hCpath == NOPOLY || pMover->bHidden)
+		return;
+
+	brightness = GetBrightness(pMover->hCpath, pMover->objY);
+
+	if (brightness != pMover->brightness) {
+		// Do it all immediately on first appearance,
+		// otherwise do it iteratively
+
+		if (pMover->brightness == BOGUS_BRIGHTNESS)
+			pMover->brightness = brightness;	// all the way
+		else if (brightness > pMover->brightness)
+			pMover->brightness++;			// ramp up
+		else
+			pMover->brightness--;			// ramp down
+
+		DimPartPalette(BgPal(),
+				pMover->startColour,
+				pMover->paletteLength,
+				pMover->brightness);
+	}
+}
+
+/**
+ * Called from ActorBrightness() Glitter call.
+ * Typically called before the moving actor is created
+ * at the start of a scene to cover a walk-in Play().
+ */
+void MoverBrightness(PMOVER pMover, int brightness) {
+	// Note: Like with some of the Tinsel1 code, this routine original had a process yield
+	// if BgPal is NULL, and has been changed for ScummVM to a simple assert
+
+	// This is changed from a ProcessGiveWay in DW2 to an assert in ScummVM
+	assert(BgPal());
+
+	// Do it all immediately
+	DimPartPalette(BgPal(), pMover->startColour, pMover->paletteLength, brightness);
+
+	// The actor is probably hidden at this point,
+	pMover->brightness = brightness;
+}
 
 /**
  * RebootMovers
@@ -63,11 +124,11 @@ void RebootMovers(void) {
  * Given an actor number, return pointer to its moving actor structure,
  * if it is a moving actor.
  */
-PMACTOR GetMover(int ano) {
+PMOVER GetMover(int ano) {
 	int i;
 
 	// Slot 0 is reserved for lead actor
-	if (ano == LeadId() || ano == LEAD_ACTOR)
+	if (ano == GetLeadId() || ano == LEAD_ACTOR)
 		return &Movers[0];
 
 	for (i = 1; i < MAX_MOVERS; i++)
@@ -80,13 +141,13 @@ PMACTOR GetMover(int ano) {
 /**
  * Register an actor as being a moving one.
  */
-PMACTOR SetMover(int ano) {
+PMOVER RegisterMover(int ano) {
 	int i;
 
 	// Slot 0 is reserved for lead actor
-	if (ano == LeadId() || ano == LEAD_ACTOR) {
+	if (ano == GetLeadId() || ano == LEAD_ACTOR) {
 		Movers[0].actorToken = TOKEN_LEAD;
-		Movers[0].actorID = LeadId();
+		Movers[0].actorID = GetLeadId();
 		return &Movers[0];
 	}
 
@@ -114,10 +175,10 @@ PMACTOR SetMover(int ano) {
  *
  * At the time of writing, used by the effect process.
  */
-PMACTOR GetLiveMover(int index) {
+PMOVER GetLiveMover(int index) {
 	assert(index >= 0 && index < MAX_MOVERS); // out of range
 
-	if (Movers[index].MActorState == NORM_MACTOR)
+	if (Movers[index].bActive)
 		return &Movers[index];
 	else
 		return NULL;
@@ -126,33 +187,33 @@ PMACTOR GetLiveMover(int index) {
 bool IsMAinEffectPoly(int index) {
 	assert(index >= 0 && index < MAX_MOVERS); // out of range
 
-	return Movers[index].InEffect;
+	return Movers[index].bInEffect;
 }
 
-void SetMAinEffectPoly(int index, bool tf) {
+void SetMoverInEffect(int index, bool tf) {
 	assert(index >= 0 && index < MAX_MOVERS); // out of range
 
-	Movers[index].InEffect = tf;
+	Movers[index].bInEffect = tf;
 }
 
 /**
  * Remove a moving actor from the current scene.
  */
-void KillMActor(PMACTOR pActor) {
-	if (pActor->MActorState == NORM_MACTOR) {
-		pActor->MActorState = NO_MACTOR;
-		MultiDeleteObject(GetPlayfieldList(FIELD_WORLD), pActor->actorObj);
-		pActor->actorObj = NULL;
-		assert(g_scheduler->getCurrentProcess() != pActor->pProc);
-		g_scheduler->killProcess(pActor->pProc);
+void KillMover(PMOVER pMover) {
+	if (pMover->bActive) {
+		pMover->bActive = false;
+		MultiDeleteObject(GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
+		pMover->actorObj = NULL;
+		assert(g_scheduler->getCurrentProcess() != pMover->pProc);
+		g_scheduler->killProcess(pMover->pProc);
 	}
 }
 
 /**
  * getMActorState
  */
-MAS getMActorState(PMACTOR pActor) {
-	return pActor->MActorState;
+bool getMActorState(PMOVER pActor) {
+	return pActor->bActive;
 }
 
 /**
@@ -160,114 +221,237 @@ MAS getMActorState(PMACTOR pActor) {
  * MultiHideObject() is deliberately not used, as StepAnimScript() calls
  * cause the object to re-appear.
  */
-void hideMActor(PMACTOR pActor, int sf) {
-	assert(pActor); // Hiding null moving actor
+void HideMover(PMOVER pMover, int sf) {
+	assert(pMover); // Hiding null moving actor
 
-	pActor->aHidden = true;
-	pActor->SlowFactor = sf;
+	pMover->bHidden = true;
 
-	if (pActor->actorObj)
-		MultiSetZPosition(pActor->actorObj, -1);
+	if (!TinselV2) {
+		// sf is only passed in Tinsel v1
+		pMover->SlowFactor = sf;
+	} else { 
+		// Tinsel 2 specific code
+		if (IsTaggedActor(pMover->actorID)) {
+			// It may be pointed to
+			SetActorPointedTo(pMover->actorID, false);
+			SetActorTagWanted(pMover->actorID, false, false, 0);
+		}
+	}
+
+	if (pMover->actorObj)
+		MultiSetZPosition(pMover->actorObj, -1);
 }
 
 /**
- * getMActorHideState
+ * MoverHidden
  */
-bool getMActorHideState(PMACTOR pActor) {
-	if (pActor)
-		return pActor->aHidden;
+bool MoverHidden(PMOVER pMover) {
+	if (pMover)
+		return pMover->bHidden;
 	else
 		return false;
 }
 
 /**
- * unhideMActor
+ * To be or not to be? If it be, then it is.
  */
-void unhideMActor(PMACTOR pActor) {
-	assert(pActor); // unHiding null moving actor
+bool MoverIs(PMOVER pMover) {
+	if (TinselV2)
+		return pMover->actorObj ? true : false;
+	else
+		return getMActorState(pMover);
+}
 
-	pActor->aHidden = false;
+/**
+ * To be SWalk()ing or not to be SWalk()ing?
+ */
+bool MoverIsSWalking(PMOVER pMover) {
+	return (MoverMoving(pMover) && pMover->bIgPath);
+}
 
-	// Make visible on the screen
-	if (pActor->actorObj) {
-		// If no path, just use first path in the scene
-		if (pActor->hCpath != NOPOLY)
-			MAsetZPos(pActor, pActor->objy, getPolyZfactor(pActor->hCpath));
-		else
-			MAsetZPos(pActor, pActor->objy, getPolyZfactor(FirstPathPoly()));
+/**
+ * MoverMoving()
+ */
+bool MoverMoving(PMOVER pMover) {
+	if (!TinselV2)
+		return pMover->bMoving;
+
+	if (pMover->UtargetX == -1 && pMover->UtargetY == -1)
+		return false;
+	else
+		return true;
+}
+
+/**
+ * Return an actor's walk ticket.
+ */
+int GetWalkNumber(PMOVER pMover) {
+	return pMover->walkNumber;
+}
+
+/**
+ * GetMoverId
+ */
+int GetMoverId(PMOVER pMover) {
+	return pMover->actorID;
+}
+
+/**
+ * Sets the mover Z position
+ */
+void SetMoverZ(PMOVER pMover, int y, uint32 zFactor) {
+	if (!pMover->bHidden) {
+		if (MoverIsSWalking(pMover) && pMover->zOverride != -1) {
+			// Special for SWalk()
+			MultiSetZPosition(pMover->actorObj, (pMover->zOverride << ZSHIFT) + y);
+		} else {
+			// Normal case
+			MultiSetZPosition(pMover->actorObj, (zFactor << ZSHIFT) + y);
+		}
 	}
+}
+
+void SetMoverZoverride(PMOVER pMover, uint32 zFactor) {
+	pMover->zOverride = zFactor;
+}
+
+/**
+ * UnHideMover
+ */
+void UnHideMover(PMOVER pMover) {
+	assert(pMover); // unHiding null moving actor
+
+	if (!TinselV2 || pMover->bHidden) {
+		pMover->bHidden = false;
+
+		// Make visible on the screen
+		if (pMover->actorObj) {
+			// If no path, just use first path in the scene
+			if (pMover->hCpath != NOPOLY)
+				SetMoverZ(pMover, pMover->objY, GetPolyZfactor(pMover->hCpath));
+			else
+				SetMoverZ(pMover, pMover->objY, GetPolyZfactor(FirstPathPoly()));
+		}
+	}
+}
+
+/**
+ * Clear everything out at actor start-up time.
+ */
+static void InitMover(PMOVER pMover) {
+	pMover->bActive = false;
+	pMover->actorObj = NULL;
+	pMover->objX = pMover->objY = 0;
+
+	pMover->hRpath = NOPOLY;
+
+	pMover->targetX = pMover->targetY = -1;
+	pMover->ItargetX = pMover->ItargetY = -1;
+	pMover->hIpath = NOPOLY;
+	pMover->UtargetX = pMover->UtargetY = -1;
+	pMover->hUpath = NOPOLY;
+	pMover->hCpath = NOPOLY;
+
+	pMover->over = false;
+	pMover->InDifficulty = NO_PROB;
+
+	pMover->hFnpath = NOPOLY;
+	pMover->npstatus = NOT_IN;
+	pMover->line = 0;
+
+	pMover->Tline = 0;
+
+	if(pMover->direction != FORWARD || pMover->direction != AWAY
+	|| pMover->direction != LEFTREEL || pMover->direction != RIGHTREEL)
+		pMover->direction = FORWARD;
+
+	if(pMover->scale < 0 || pMover->scale > TOTAL_SCALES)
+		pMover->scale = 1;
+
+	pMover->brightness = BOGUS_BRIGHTNESS;	// Force initial setup
+
+	pMover->bNoPath = false;
+	pMover->bIgPath = false;
+	pMover->bHidden = false;	// 20/2/95
+	pMover->bStop = false;
+
+	pMover->walkNumber= 0;
+	pMover->stepCount = 0;
+
+	pMover->bWalkReel = false;
+	pMover->bSpecReel = false;
+	pMover->hLastFilm = 0;
+	pMover->hPushedFilm = 0;
+
+	pMover->bInEffect = false;
+
+	pMover->walkedFromX = pMover->walkedFromY = 0;
 }
 
 /**
  * Get it into our heads that there's nothing doing.
  * Called at the end of a scene.
  */
-void DropMActors(void) {
-	for (int i = 0; i < MAX_MOVERS; i++) {
-		Movers[i].MActorState = NO_MACTOR;
-		Movers[i].objx = 0;
-		Movers[i].objy = 0;
-		Movers[i].actorObj = NULL;	// No moving actor objects
-
-		Movers[i].hCpath = NOPOLY;	// No moving actor path
-	}
+void DropMovers(void) {
+	for (int i = 0; i < MAX_MOVERS; i++)
+		InitMover(&Movers[i]);
 }
 
 
 /**
  * Reposition a moving actor.
  */
-void MoveMActor(PMACTOR pActor, int x, int y) {
+void PositionMover(PMOVER pMover, int x, int y) {
 	int	z;
 	int	node;
 	HPOLYGON hPath;
 
-	assert(pActor); // Moving null moving actor
-	assert(pActor->actorObj);
+	assert(pMover); // Moving null moving actor
+	assert(pMover->actorObj);
 
-	pActor->objx = x;
-	pActor->objy = y;
-	MultiSetAniXY(pActor->actorObj, x, y);
+	pMover->objX = x;
+	pMover->objY = y;
+	MultiSetAniXY(pMover->actorObj, x, y);
 
 	hPath = InPolygon(x, y, PATH);
 	if (hPath != NOPOLY) {
-		pActor->hCpath = hPath;
+		pMover->hCpath = hPath;
 		if (PolySubtype(hPath) == NODE) {
 			node = NearestNodeWithin(hPath, x, y);
-			getNpathNode(hPath, node, &pActor->objx, &pActor->objy);
-			pActor->hFnpath = hPath;
-			pActor->line = node;
-			pActor->npstatus = GOING_UP;
+			getNpathNode(hPath, node, &pMover->objX, &pMover->objY);
+			pMover->hFnpath = hPath;
+			pMover->line = node;
+			pMover->npstatus = GOING_UP;
 		} else {
-			pActor->hFnpath = NOPOLY;
-			pActor->npstatus = NOT_IN;
+			pMover->hFnpath = NOPOLY;
+			pMover->npstatus = NOT_IN;
 		}
 
-		z = GetScale(hPath, pActor->objy);
-		pActor->scale = z;
-		SetMActorStanding(pActor);
+		z = GetScale(hPath, pMover->objY);
+		pMover->scale = z;
+		SetMoverStanding(pMover);
 	} else {
-		pActor->bNoPath = true;
+		pMover->bNoPath = true;
 
-		pActor->hFnpath = NOPOLY;	// Ain't in one
-		pActor->npstatus = NOT_IN;
+		pMover->hFnpath = NOPOLY;	// Ain't in one
+		pMover->npstatus = NOT_IN;
 
 		// Ensure legal reel and scale
-		if (pActor->dirn < 0 || pActor->dirn > 3)
-			pActor->dirn = FORWARD;
-		if (pActor->scale < 0 || pActor->scale > TOTAL_SCALES)
-			pActor->scale = 1;
+		if (pMover->direction < 0 || pMover->direction > 3)
+			pMover->direction = FORWARD;
+		if (pMover->scale < 0 || pMover->scale > TOTAL_SCALES)
+			pMover->scale = 1;
 	}
 }
 
 /**
  * Get position of a moving actor.
  */
-void GetMActorPosition(PMACTOR pActor, int *paniX, int *paniY) {
-	assert(pActor); // Getting null moving actor's position
+void GetMoverPosition(PMOVER pMover, int *paniX, int *paniY) {
+	assert(pMover); // Getting null moving actor's position
 
-	if (pActor->actorObj != NULL)
-		GetAniPosition(pActor->actorObj, paniX, paniY);
+	if (pMover->actorObj != NULL)
+		GetAniPosition(pMover->actorObj, paniX, paniY);
 	else {
 		*paniX = 0;
 		*paniY = 0;
@@ -277,43 +461,63 @@ void GetMActorPosition(PMACTOR pActor, int *paniX, int *paniY) {
 /**
  * Moving actor's mid-top position.
  */
-void GetMActorMidTopPosition(PMACTOR pActor, int *aniX, int *aniY) {
-	assert(pActor); // Getting null moving actor's mid-top position
-	assert(pActor->actorObj); // Getting null moving actor's mid-top position
+void GetMoverMidTop(PMOVER pMover, int *aniX, int *aniY) {
+	assert(pMover); // Getting null moving actor's mid-top position
+	assert(pMover->actorObj); // Getting null moving actor's mid-top position
 
-	*aniX = (MultiLeftmost(pActor->actorObj) + MultiRightmost(pActor->actorObj))/2;
-	*aniY = MultiHighest(pActor->actorObj);
+	*aniX = (MultiLeftmost(pMover->actorObj) + MultiRightmost(pMover->actorObj)) / 2;
+	*aniY = MultiHighest(pMover->actorObj);
 }
 
 /**
  * Moving actor's left-most co-ordinate.
  */
-int GetMActorLeft(PMACTOR pActor) {
-	assert(pActor); // Getting null moving actor's leftmost position
-	assert(pActor->actorObj); // Getting null moving actor's leftmost position
+int GetMoverLeft(PMOVER pMover) {
+	assert(pMover); // Getting null moving actor's leftmost position
+	assert(pMover->actorObj); // Getting null moving actor's leftmost position
 
-	return MultiLeftmost(pActor->actorObj);
+	return MultiLeftmost(pMover->actorObj);
 }
 
 /**
  * Moving actor's right-most co-ordinate.
  */
-int GetMActorRight(PMACTOR pActor) {
-	assert(pActor); // Getting null moving actor's rightmost position
-	assert(pActor->actorObj); // Getting null moving actor's rightmost position
+int GetMoverRight(PMOVER pMover) {
+	assert(pMover); // Getting null moving actor's rightmost position
+	assert(pMover->actorObj); // Getting null moving actor's rightmost position
 
-	return MultiRightmost(pActor->actorObj);
+	return MultiRightmost(pMover->actorObj);
+}
+
+/**
+ * Moving actor's top co-ordinate.
+ */
+int GetMoverTop(PMOVER pMover) {
+	assert(pMover); // Getting null moving actor's topmost position
+	assert(pMover->actorObj); // Getting null moving actor's topmost position
+
+	return MultiHighest(pMover->actorObj);
+}
+
+/**
+ * Moving actor's bottom co-ordinate.
+ */
+int GetMoverBottom(PMOVER pMover) {
+	assert(pMover); // Getting null moving actor's bottommost position
+	assert(pMover->actorObj); // Getting null moving actor's bottommost position
+
+	return MultiLowest(pMover->actorObj);
 }
 
 /**
  * See if moving actor is stood within a polygon.
  */
-bool MActorIsInPolygon(PMACTOR pActor, HPOLYGON hp) {
-	assert(pActor); // Checking if null moving actor is in polygon
-	assert(pActor->actorObj); // Checking if null moving actor is in polygon
+bool MoverIsInPolygon(PMOVER pMover, HPOLYGON hp) {
+	assert(pMover); // Checking if null moving actor is in polygon
+	assert(pMover->actorObj); // Checking if null moving actor is in polygon
 
 	int aniX, aniY;
-	GetAniPosition(pActor->actorObj, &aniX, &aniY);
+	GetAniPosition(pMover->actorObj, &aniX, &aniY);
 
 	return IsInPolygon(aniX, aniY, hp);
 }
@@ -321,157 +525,147 @@ bool MActorIsInPolygon(PMACTOR pActor, HPOLYGON hp) {
 /**
  * Change which reel is playing for a moving actor.
  */
-void AlterMActor(PMACTOR pActor, SCNHANDLE film, AR_FUNCTION fn) {
+void AlterMover(PMOVER pMover, SCNHANDLE film, AR_FUNCTION fn) {
 	const FILM *pfilm;
 
-	assert(pActor->actorObj); // Altering null moving actor's animation script
+	assert(pMover->actorObj); // Altering null moving actor's animation script
 
 	if (fn == AR_POPREEL) {
-		film = pActor->pushedfilm;	// Use the saved film
+		// Use the saved film
+		film = pMover->hPushedFilm;
 	}
 	if (fn == AR_PUSHREEL) {
 		// Save the one we're replacing
-		pActor->pushedfilm = (pActor->TagReelRunning) ? pActor->lastfilm : 0;
+		pMover->hPushedFilm = (pMover->bSpecReel) ? pMover->hLastFilm : 0;
 	}
 
 	if (film == 0) {
-		if (pActor->TagReelRunning) {
+		if (pMover->bSpecReel) {
 			// Revert to 'normal' actor
-			SetMActorWalkReel(pActor, pActor->dirn, pActor->scale, true);
-			pActor->TagReelRunning = false;
+			SetMoverWalkReel(pMover, pMover->direction, pMover->scale, true);
+			pMover->bSpecReel = false;
 		}
 	} else {
-		pActor->lastfilm = film;	// Remember this one
+		// Remember this one in case the actor talks
+		pMover->hLastFilm = film;
 
 		pfilm = (const FILM *)LockMem(film);
 		assert(pfilm != NULL);
 
-		InitStepAnimScript(&pActor->actorAnim, pActor->actorObj, FROM_LE_32(pfilm->reels[0].script), ONE_SECOND / FROM_LE_32(pfilm->frate));
-		pActor->scount = 0;
+		InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_LE_32(pfilm->reels[0].script), ONE_SECOND / FROM_LE_32(pfilm->frate));
+		if (!TinselV2)
+			pMover->stepCount = 0;
 
 		// If no path, just use first path in the scene
-		if (pActor->hCpath != NOPOLY)
-			MAsetZPos(pActor, pActor->objy, getPolyZfactor(pActor->hCpath));
+		if (pMover->hCpath != NOPOLY)
+			SetMoverZ(pMover, pMover->objY, GetPolyZfactor(pMover->hCpath));
 		else
-			MAsetZPos(pActor, pActor->objy, getPolyZfactor(FirstPathPoly()));
+			SetMoverZ(pMover, pMover->objY, GetPolyZfactor(FirstPathPoly()));
 
 		if (fn == AR_WALKREEL) {
-			pActor->TagReelRunning = false;
-			pActor->walkReel = true;
+			pMover->bSpecReel = false;
+			pMover->bWalkReel = true;
 		} else {
-			pActor->TagReelRunning = true;
-			pActor->walkReel = false;
+			pMover->bSpecReel = true;
+			pMover->bWalkReel = false;
 
 #ifdef DEBUG
-			assert(StepAnimScript(&pActor->actorAnim) != ScriptFinished); // Actor reel has finished!
+			assert(StepAnimScript(&pMover->actorAnim) != ScriptFinished); // Actor reel has finished!
 #else
-			StepAnimScript(&pActor->actorAnim);	// 04/01/95
+			StepAnimScript(&pMover->actorAnim);	// 04/01/95
 #endif
 		}
 			
 		// Hang on, we may not want him yet! 04/01/95
-		if (pActor->aHidden)
-			MultiSetZPosition(pActor->actorObj, -1);
+		if (pMover->bHidden)
+			MultiSetZPosition(pMover->actorObj, -1);
 	}
 }
 
 /**
  * Return the actor's direction.
  */
-DIRREEL GetMActorDirection(PMACTOR pActor) {
-	return pActor->dirn;
+DIRECTION GetMoverDirection(PMOVER pMover) {
+	return pMover->direction;
 }
 
 /**
  * Return the actor's scale.
  */
-int GetMActorScale(PMACTOR pActor) {
-	return pActor->scale;
+int GetMoverScale(PMOVER pMover) {
+	return pMover->scale;
 }
 
 /**
  * Point actor in specified derection
  */
-void SetMActorDirection(PMACTOR pActor, DIRREEL dirn) {
-	pActor->dirn = dirn;
-}
-
-/**
- * MAmoving
- */
-bool MAmoving(PMACTOR pActor) {
-	return pActor->bMoving;
-}
-
-/**
- * Return an actor's walk ticket.
- */
-int GetActorTicket(PMACTOR pActor) {
-	return pActor->ticket;
+void SetMoverDirection(PMOVER pMover, DIRECTION dirn) {
+	pMover->direction = dirn;
 }
 
 /**
  * Get actor to adopt its appropriate standing reel.
  */
-void SetMActorStanding(PMACTOR pActor) {
-	assert(pActor->actorObj);
-	AlterMActor(pActor, pActor->StandReels[pActor->scale-1][pActor->dirn], AR_NORMAL);
+void SetMoverStanding(PMOVER pMover) {
+	assert(pMover->actorObj);
+	AlterMover(pMover, pMover->standReels[pMover->scale - 1][pMover->direction], AR_NORMAL);
 }
 
 /**
  * Get actor to adopt its appropriate walking reel.
  */
-void SetMActorWalkReel(PMACTOR pActor, DIRREEL reel, int scale, bool force) {
+void SetMoverWalkReel(PMOVER pMover, DIRECTION reel, int scale, bool force) {
 	SCNHANDLE	whichReel;
 	const FILM *pfilm;
 
 	// Kill off any play that may be going on for this actor
 	// and restore the real actor
-	storeActorReel(pActor->actorID, NULL, 0, NULL, 0, 0, 0);
-	unhideMActor(pActor);
+	storeActorReel(pMover->actorID, NULL, 0, NULL, 0, 0, 0);
+	UnHideMover(pMover);
 
 	// Don't do it if using a special walk reel
-	if (pActor->walkReel)
+	if (pMover->bWalkReel)
 		return;
 
-	if (force || pActor->scale != scale || pActor->dirn != reel) {
+	if (force || pMover->scale != scale || pMover->direction != reel) {
 		assert(reel >= 0 && reel <= 3 && scale > 0 && scale <= TOTAL_SCALES); // out of range scale or reel
 
 		// If scale change and both are regular scales
 		// and there's a scaling reel in the right direction
-		if (pActor->scale != scale
-				&& scale <= NUM_MAINSCALES && pActor->scale <= NUM_MAINSCALES
-				&& (whichReel = ScalingReel(pActor->actorID, pActor->scale, scale, reel)) != 0) {
+		if (pMover->scale != scale
+				&& scale <= NUM_MAINSCALES && pMover->scale <= NUM_MAINSCALES
+				&& (whichReel = ScalingReel(pMover->actorID, pMover->scale, scale, reel)) != 0) {
 //			error("Cripes!");
 			;	// Use what is now in 'whichReel'
 		} else {
-			whichReel = pActor->WalkReels[scale-1][reel];
+			whichReel = pMover->walkReels[scale-1][reel];
 			assert(whichReel); // no reel
 		}
 
 		pfilm = (const FILM *)LockMem(whichReel);
 		assert(pfilm != NULL); // no film
 
-		InitStepAnimScript(&pActor->actorAnim, pActor->actorObj, FROM_LE_32(pfilm->reels[0].script), 1);
+		InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_LE_32(pfilm->reels[0].script), 1);
 
 		// Synchronised walking reels
-		SkipFrames(&pActor->actorAnim, pActor->scount);
+		assert(pMover->stepCount >= 0);
+		SkipFrames(&pMover->actorAnim, pMover->stepCount);
 
-		pActor->scale = scale;
-		pActor->dirn = reel;
+		pMover->scale = scale;
+		pMover->direction = reel;
 	}
 }
 
 /**
  * Sort some stuff out at actor start-up time.
  */
-static void InitialPathChecks(PMACTOR pActor, int xpos, int ypos) {
+static void InitialPathChecks(PMOVER pMover, int xpos, int ypos) {
 	HPOLYGON hPath;
 	int	node;
 	int	z;
 
-	pActor->objx = xpos;
-	pActor->objy = ypos;
+	pMover->objX = xpos;
+	pMover->objY = ypos;
 
 	/*--------------------------------------
 	| If Actor is in a follow nodes path,	|
@@ -480,87 +674,38 @@ static void InitialPathChecks(PMACTOR pActor, int xpos, int ypos) {
 	hPath = InPolygon(xpos, ypos, PATH);
 
 	if (hPath != NOPOLY) {
-		pActor->hCpath = hPath;
+		pMover->hCpath = hPath;
 		if (PolySubtype(hPath) == NODE) {
 			node = NearestNodeWithin(hPath, xpos, ypos);
-			getNpathNode(hPath, node, &pActor->objx, &pActor->objy);
-			pActor->hFnpath = hPath;
-			pActor->line = node;
-			pActor->npstatus = GOING_UP;
+			getNpathNode(hPath, node, &pMover->objX, &pMover->objY);
+			pMover->hFnpath = hPath;
+			pMover->line = node;
+			pMover->npstatus = GOING_UP;
 		}
 
-		z = GetScale(hPath, pActor->objy);
+		z = GetScale(hPath, pMover->objY);
 	} else {
-		pActor->bNoPath = true;
+		pMover->bNoPath = true;
 
-		z = GetScale(FirstPathPoly(), pActor->objy);
+		z = GetScale(FirstPathPoly(), pMover->objY);
 	}
-	SetMActorWalkReel(pActor, FORWARD, z, false);	
+	SetMoverWalkReel(pMover, FORWARD, z, false);	
 }
 
-/**
- * Clear everything out at actor start-up time.
- */
-static void InitMActor(PMACTOR pActor) {
-	
-	pActor->objx = pActor->objy = 0;
-	pActor->targetX = pActor->targetY = -1;
-	pActor->ItargetX = pActor->ItargetY = -1;
-	pActor->hIpath = NOPOLY;
-	pActor->UtargetX = pActor->UtargetY = -1;
-	pActor->hUpath = NOPOLY;
-	pActor->hCpath = NOPOLY;
-
-	pActor->over = false;
-	pActor->InDifficulty = NO_PROB;
-
-	pActor->hFnpath = NOPOLY;
-	pActor->npstatus = NOT_IN;
-	pActor->line = 0;
-
-	pActor->Tline = 0;
-
-	pActor->TagReelRunning = false;
-
-	if (pActor->dirn != FORWARD || pActor->dirn != AWAY
-			|| pActor->dirn != LEFTREEL || pActor->dirn != RIGHTREEL)
-		pActor->dirn = FORWARD;
-
-	if (pActor->scale < 0 || pActor->scale > TOTAL_SCALES)
-		pActor->scale = 1;
-
-	pActor->scount = 0;
-
-	pActor->fromx = pActor->fromy = 0;
-
-	pActor->bMoving = false;
-	pActor->bNoPath = false;
-	pActor->bIgPath = false;
-	pActor->walkReel = false;
-
-	pActor->actorObj = NULL;
-
-	pActor->lastfilm = 0;
-	pActor->pushedfilm = 0;
-
-	pActor->InEffect = false;
-	pActor->aHidden = false;	// 20/2/95
-}
-
-static void MActorProcessHelper(int X, int Y, int id, PMACTOR pActor) {
+static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
 	const FILM *pfilm;
 	const MULTI_INIT *pmi;
 	const FRAME *pFrame;
 	IMAGE *pim;
 
 
-	assert(BackPal()); // Can't start actor without a background palette
-	assert(pActor->WalkReels[0][FORWARD]); // Starting actor process without walk reels
+	assert(BgPal()); // Can't start actor without a background palette
+	assert(pMover->walkReels[0][FORWARD]); // Starting actor process without walk reels
 
-	InitMActor(pActor);
-	InitialPathChecks(pActor, X, Y);
+	InitMover(pMover);
+	InitialPathChecks(pMover, X, Y);
 
-	pfilm = (const FILM *)LockMem(pActor->WalkReels[0][FORWARD]);
+	pfilm = (const FILM *)LockMem(pMover->walkReels[0][FORWARD]);
 	pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(pfilm->reels[0].mobj));
 
 //---
@@ -568,55 +713,55 @@ static void MActorProcessHelper(int X, int Y, int id, PMACTOR pActor) {
 
 	// get pointer to image
 	pim = (IMAGE *)LockMem(READ_LE_UINT32(pFrame));	// handle to image
-	pim->hImgPal = TO_LE_32(BackPal());
+	pim->hImgPal = TO_LE_32(BgPal());
 //---
-	pActor->actorObj = MultiInitObject(pmi);
+	pMover->actorObj = MultiInitObject(pmi);
 
-/**/	assert(pActor->actorID == id);
-	pActor->actorID = id;
+/**/	assert(pMover->actorID == id);
+	pMover->actorID = id;
 
 	// add it to display list
-	MultiInsertObject(GetPlayfieldList(FIELD_WORLD), pActor->actorObj);
-	storeActorReel(id, NULL, 0, pActor->actorObj, 0, 0, 0);
+	MultiInsertObject(GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
+	storeActorReel(id, NULL, 0, pMover->actorObj, 0, 0, 0);
 
-	InitStepAnimScript(&pActor->actorAnim, pActor->actorObj, FROM_LE_32(pfilm->reels[0].script), ONE_SECOND / FROM_LE_32(pfilm->frate));
-	pActor->scount = 0;
+	InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_LE_32(pfilm->reels[0].script), ONE_SECOND / FROM_LE_32(pfilm->frate));
+	pMover->stepCount = 0;
 
-	MultiSetAniXY(pActor->actorObj, pActor->objx, pActor->objy);
+	MultiSetAniXY(pMover->actorObj, pMover->objX, pMover->objY);
 
 	// If no path, just use first path in the scene
-	if (pActor->hCpath != NOPOLY)
-		MAsetZPos(pActor, pActor->objy, getPolyZfactor(pActor->hCpath));
+	if (pMover->hCpath != NOPOLY)
+		SetMoverZ(pMover, pMover->objY, GetPolyZfactor(pMover->hCpath));
 	else
-		MAsetZPos(pActor, pActor->objy, getPolyZfactor(FirstPathPoly()));
+		SetMoverZ(pMover, pMover->objY, GetPolyZfactor(FirstPathPoly()));
 
 	// Make him the right size
-	SetMActorStanding(pActor);
+	SetMoverStanding(pMover);
 
 //**** if added 18/11/94, am
 	if (X != MAGICX && Y != MAGICY) {
-		hideMActor(pActor, 0);		// Allows a play to come in before this appears
-		pActor->aHidden = false;	// ...but don't stay hidden
+		HideMover(pMover, 0);		// Allows a play to come in before this appears
+		pMover->bHidden = false;	// ...but don't stay hidden
 	}
 
-	pActor->MActorState = NORM_MACTOR;
+	pMover->bActive = true;
 }
 
 /**
  * Moving actor process - 1 per moving actor in current scene.
  */
-void MActorProcess(CORO_PARAM, const void *param) {
+void T1MoverProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
-	PMACTOR pActor = *(PMACTOR *)param;
+	const PMOVER pActor = *(const PMOVER *)param;
 
 	CORO_BEGIN_CODE(_ctx);
 	
 	while (1) {
-		if (pActor->TagReelRunning) {
- 			if (!pActor->aHidden)
+		if (pActor->bSpecReel) {
+ 			if (!pActor->bHidden)
 #ifdef DEBUG
 			assert(StepAnimScript(&pActor->actorAnim) != ScriptFinished); // Actor reel has finished!
 #else
@@ -632,34 +777,118 @@ void MActorProcess(CORO_PARAM, const void *param) {
 	CORO_END_CODE;
 }
 
-void MActorProcessCreate(int X, int Y, int id, PMACTOR pActor) {
-	MActorProcessHelper(X, Y, id, pActor);
-	pActor->pProc = g_scheduler->createProcess(PID_MACTOR, MActorProcess, &pActor, sizeof(PMACTOR));
+/**
+ * Tinsel 2 Moving actor process
+ * - 1 per moving actor in current scene.
+ */
+void T2MoverProcess(CORO_PARAM, const void *param) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	// Get the co-ordinates - copied to process when it was created
+	const MAINIT *rpos = (const MAINIT *)param;
+	PMOVER pMover = rpos->pMover;
+	int i;
+	FILM *pFilm;
+	PMULTI_INIT pmi;
+
+	CORO_BEGIN_CODE(_ctx);
+
+	for (i = 0; i < TOTAL_SCALES; i++) {
+		if (pMover->walkReels[i][FORWARD])
+			break;
+	}
+	assert(i < TOTAL_SCALES);
+
+	InitMover(pMover);
+	InitialPathChecks(pMover, rpos->X, rpos->Y);
+
+	pFilm = (FILM *)LockMem(pMover->walkReels[i][FORWARD]);	// Any old reel
+	pmi = (PMULTI_INIT)LockMem(pFilm->reels[0].mobj);
+
+	// Poke in the background palette
+	PokeInPalette(pmi);
+
+	pMover->actorObj = MultiInitObject(pmi);
+	pMover->actorID = pMover->actorID;
+	pMover->bActive = true;
+
+	// add it to display list
+	MultiInsertObject( GetPlayfieldList(FIELD_WORLD), pMover->actorObj );
+
+	InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, pFilm->reels[0].script, ONE_SECOND/pFilm->frate);
+	pMover->stepCount = 0;
+
+	MultiSetAniXY(pMover->actorObj, pMover->objX, pMover->objY);
+
+	// If no path, just use first path in the scene
+	if (pMover->hCpath != NOPOLY)
+		SetMoverZ(pMover, pMover->objY, GetPolyZfactor(pMover->hCpath));
+	else
+		SetMoverZ(pMover, pMover->objY, GetPolyZfactor(FirstPathPoly()));
+
+	// Make him the right size
+	SetMoverStanding(pMover);
+
+	HideMover(pMover);		// Allows a play to come in before this appears
+	pMover->bHidden = false;	// ...but don't stay hidden
+
+	for (;;) {
+		if (pMover->bSpecReel) {
+			if (!pMover->bHidden)
+				StepAnimScript(&pMover->actorAnim);
+		} else
+			DoMoveActor(pMover);
+
+		CheckBrightness(pMover);
+
+		CORO_SLEEP(1);
+	}
+
+	CORO_END_CODE;
 }
 
+/**
+ * Creates a handling process for a moving actor
+ */
+void MoverProcessCreate(int X, int Y, int id, PMOVER pMover) {
+	if (TinselV2) {
+		static MAINIT iStruct;
+		iStruct.X = X;
+		iStruct.Y = Y;
+		iStruct.pMover = pMover;
+
+		g_scheduler->createProcess(PID_MOVER, T2MoverProcess, &iStruct, sizeof(MAINIT));
+	} else {
+		MoverProcessHelper(X, Y, id, pMover);
+		pMover->pProc = g_scheduler->createProcess(PID_MOVER, T1MoverProcess, &pMover, sizeof(PMOVER));
+	}
+}
 
 /**
  * Check for moving actor collision.
  */
-PMACTOR InMActorBlock(PMACTOR pActor, int x, int y) {
+PMOVER InMoverBlock(PMOVER pMover, int x, int y) {
 	int	caX;		// Calling actor's pos'n
 	int	caL, caR;	// Calling actor's left and right
 	int	taX, taY;	// Test actor's pos'n
 	int	taL, taR;	// Test actor's left and right
 
-	caX = pActor->objx;
-	if (pActor->hFnpath != NOPOLY || bNoBlocking)
+	caX = pMover->objX;
+	if (pMover->hFnpath != NOPOLY || GetNoBlocking())
 		return NULL;
 
-	caL = GetMActorLeft(pActor) + x - caX;
-	caR = GetMActorRight(pActor) + x - caX;
+	caL = GetMoverLeft(pMover) + x - caX;
+	caR = GetMoverRight(pMover) + x - caX;
 
 	for (int i = 0; i < MAX_MOVERS; i++) {
-		if (pActor == &Movers[i] || Movers[i].MActorState == NO_MACTOR)
+		if (pMover == &Movers[i] || 
+				(TinselV2 && (Movers[i].actorObj == NULL)) ||
+				(!TinselV2 && !Movers[i].bActive))
 			continue;
 
 		// At around the same height?
-		GetMActorPosition(&Movers[i], &taX, &taY);
+		GetMoverPosition(&Movers[i], &taX, &taY);
 		if (Movers[i].hFnpath != NOPOLY)
 			continue;
 
@@ -667,12 +896,12 @@ PMACTOR InMActorBlock(PMACTOR pActor, int x, int y) {
 			continue;
 
 		// To the left?
-		taL = GetMActorLeft(&Movers[i]);
+		taL = GetMoverLeft(&Movers[i]);
 		if (caR <= taL)
 			continue;
 
 		// To the right?
-		taR = GetMActorRight(&Movers[i]);
+		taR = GetMoverRight(&Movers[i]);
 		if (caL >= taR)
 			continue;
 
@@ -686,24 +915,54 @@ PMACTOR InMActorBlock(PMACTOR pActor, int x, int y) {
  */
 void SaveMovers(SAVED_MOVER *sMoverInfo) {
 	for (int i = 0; i < MAX_MOVERS; i++) {
-		sMoverInfo[i].MActorState= Movers[i].MActorState;
+		sMoverInfo[i].bActive = !TinselV2 ? Movers[i].bActive : Movers[i].actorObj != NULL;
 		sMoverInfo[i].actorID	= Movers[i].actorID;
-		sMoverInfo[i].objx	= Movers[i].objx;
-		sMoverInfo[i].objy	= Movers[i].objy;
-		sMoverInfo[i].lastfilm	= Movers[i].lastfilm;
+		sMoverInfo[i].objX	= Movers[i].objX;
+		sMoverInfo[i].objY	= Movers[i].objY;
+		sMoverInfo[i].hLastfilm	= Movers[i].hLastFilm;
 
-		memcpy(sMoverInfo[i].WalkReels, Movers[i].WalkReels, TOTAL_SCALES*4*sizeof(SCNHANDLE));
-		memcpy(sMoverInfo[i].StandReels, Movers[i].StandReels, TOTAL_SCALES*4*sizeof(SCNHANDLE));
-		memcpy(sMoverInfo[i].TalkReels, Movers[i].TalkReels, TOTAL_SCALES*4*sizeof(SCNHANDLE));
+		if (TinselV2) {
+			sMoverInfo[i].bHidden = Movers[i].bHidden;
+			sMoverInfo[i].brightness = Movers[i].brightness;
+			sMoverInfo[i].startColour = Movers[i].startColour;
+			sMoverInfo[i].paletteLength = Movers[i].paletteLength;
+		}
+
+		memcpy(sMoverInfo[i].walkReels, Movers[i].walkReels, TOTAL_SCALES * 4 * sizeof(SCNHANDLE));
+		memcpy(sMoverInfo[i].standReels, Movers[i].standReels, TOTAL_SCALES * 4 * sizeof(SCNHANDLE));
+		memcpy(sMoverInfo[i].talkReels, Movers[i].talkReels, TOTAL_SCALES * 4 * sizeof(SCNHANDLE));
 	}
 }
 
 void RestoreAuxScales(SAVED_MOVER *sMoverInfo) {
 	for (int i = 0; i < MAX_MOVERS; i++) {
-		memcpy(Movers[i].WalkReels, sMoverInfo[i].WalkReels, TOTAL_SCALES*4*sizeof(SCNHANDLE));
-		memcpy(Movers[i].StandReels, sMoverInfo[i].StandReels, TOTAL_SCALES*4*sizeof(SCNHANDLE));
-		memcpy(Movers[i].TalkReels, sMoverInfo[i].TalkReels, TOTAL_SCALES*4*sizeof(SCNHANDLE));
+		if (TinselV2)
+			Movers[i].actorID = sMoverInfo[i].actorID;
+
+		memcpy(Movers[i].walkReels, sMoverInfo[i].walkReels, TOTAL_SCALES * 4 * sizeof(SCNHANDLE));
+		memcpy(Movers[i].standReels, sMoverInfo[i].standReels, TOTAL_SCALES * 4 * sizeof(SCNHANDLE));
+		memcpy(Movers[i].talkReels, sMoverInfo[i].talkReels, TOTAL_SCALES * 4 * sizeof(SCNHANDLE));
 	}
+}
+
+
+PMOVER NextMover(PMOVER pMover) {
+	int next;
+
+	if (pMover == NULL)
+		next = 0;
+	else
+		next = pMover - Movers + 1;
+
+	if (Movers[next].actorID)
+		return &Movers[next];
+	else
+		return NULL;
+}
+
+void StopMover(PMOVER pMover) {
+	pMover->bStop = true;
+	DoMoveActor(pMover);
 }
 
 } // end of namespace Tinsel

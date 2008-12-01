@@ -37,7 +37,7 @@ enum {
 };
 
 extern int dclickSpeed;
-extern int volMidi;
+extern int volMusic;
 extern int volSound;
 extern int volVoice;
 extern int speedText;
@@ -50,10 +50,6 @@ void WriteConfig(void);
 void ReadConfig(void);
 
 extern bool isJapanMode();
-
-
-// Shouldn't really be here, but time is short...
-extern bool bNoBlocking;
 
 } // end of namespace Tinsel
 

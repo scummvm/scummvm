@@ -5,11 +5,14 @@ MODULE_OBJS = \
 	anim.o \
 	background.o \
 	bg.o \
+	bmv.o \
 	cliprect.o \
 	config.o \
 	cursor.o \
 	debugger.o \
 	detection.o \
+	dialogs.o \
+	drives.o \
 	effect.o \
 	events.o \
 	faders.o \
@@ -17,7 +20,6 @@ MODULE_OBJS = \
 	graphics.o \
 	handle.o \
 	heapmem.o \
-	inventory.o \
 	mareels.o \
 	move.o \
 	multiobj.o \
@@ -37,6 +39,7 @@ MODULE_OBJS = \
 	scroll.o \
 	sound.o \
 	strres.o \
+	sysvar.o \
 	text.o \
 	timers.o \
 	tinlib.o \

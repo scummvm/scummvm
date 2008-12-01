@@ -41,13 +41,14 @@
 #include "tinsel/polygons.h"
 #include "tinsel/rince.h"
 #include "tinsel/sched.h"
+#include "tinsel/tinsel.h"
 
 
 namespace Tinsel {
 
 struct EP_INIT {
 	HPOLYGON	hEpoly;
-	PMACTOR		pActor;
+	PMOVER		pMover;
 	int		index;
 };
 
@@ -61,24 +62,32 @@ static void EffectProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
-	EP_INIT *to = (EP_INIT *)param;		// get the stuff copied to process when it was created
+	const EP_INIT *to = (const EP_INIT *)param;		// get the stuff copied to process when it was created
 
 	CORO_BEGIN_CODE(_ctx);
 
 	int		x, y;		// Lead actor position
 
 	// Run effect poly enter script
-	effRunPolyTinselCode(to->hEpoly, ENTER, to->pActor->actorID);
+	if (TinselV2)
+		CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, to->hEpoly, WALKIN,
+			GetMoverId(to->pMover), false, 0));
+	else
+		effRunPolyTinselCode(to->hEpoly, WALKIN, to->pMover->actorID);
 
 	do {
 		CORO_SLEEP(1);
-		GetMActorPosition(to->pActor, &x, &y);
+		GetMoverPosition(to->pMover, &x, &y);
 	} while (InPolygon(x, y, EFFECT) == to->hEpoly);
 
 	// Run effect poly leave script
-	effRunPolyTinselCode(to->hEpoly, LEAVE, to->pActor->actorID);
+	if (TinselV2)
+		CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, to->hEpoly, WALKOUT,
+			GetMoverId(to->pMover), false, 0));
+	else
+		effRunPolyTinselCode(to->hEpoly, WALKOUT, to->pMover->actorID);
 
-	SetMAinEffectPoly(to->index, false);
+	SetMoverInEffect(to->index, false);
 
 	CORO_END_CODE;
 }
@@ -88,7 +97,7 @@ static void EffectProcess(CORO_PARAM, const void *param) {
  * it has just entered one. If it has, a process is started up to run
  * the polygon's Glitter code.
  */
-static void FettleEffectPolys(int x, int y, int index, PMACTOR pActor) {
+static void FettleEffectPolys(int x, int y, int index, PMOVER pActor) {
 	HPOLYGON	hPoly;
 	EP_INIT		epi;
 
@@ -97,10 +106,10 @@ static void FettleEffectPolys(int x, int y, int index, PMACTOR pActor) {
 		hPoly = InPolygon(x, y, EFFECT);
 		if (hPoly != NOPOLY) {
 			//Just entered effect polygon
-			SetMAinEffectPoly(index, true);
+			SetMoverInEffect(index, true);
 
 			epi.hEpoly = hPoly;
-			epi.pActor = pActor;
+			epi.pMover = pActor;
 			epi.index = index;
 			g_scheduler->createProcess(PID_TCODE, EffectProcess, &epi, sizeof(epi));
 		}
@@ -118,10 +127,10 @@ void EffectPolyProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 	while (1) {
 		for (int i = 0; i < MAX_MOVERS; i++) {
-			PMACTOR pActor = GetLiveMover(i);
+			PMOVER pActor = GetLiveMover(i);
 			if (pActor != NULL) {
 				int	x, y;
-				GetMActorPosition(pActor, &x, &y);
+				GetMoverPosition(pActor, &x, &y);
 				FettleEffectPolys(x, y, i, pActor);
 			}
 		}

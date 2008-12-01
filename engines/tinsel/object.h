@@ -51,21 +51,24 @@ enum {
 	DMA_ABS		= 0x0100,	//!< position of object is absolute
 	DMA_CHANGED	= 0x0200,	//!< object has changed in some way since the last frame
 	DMA_USERDEF	= 0x0400,	//!< user defined flags start here
+	DMA_GHOST	= 0x0080,
+
 
 	/** flags that effect an objects appearance */
 	DMA_HARDFLAGS	= (DMA_WNZ | DMA_CNZ | DMA_CONST | DMA_WA | DMA_FLIPH | DMA_FLIPV | DMA_TRANS)
 };
 
 /** structure for image */
+#include "common/pack-start.h"	// START STRUCT PACKING
 struct IMAGE {
 	short imgWidth;		//!< image width
-	short imgHeight;	//!< image height
+	unsigned short imgHeight;	//!< image height
 	short anioffX;		//!< image x animation offset
 	short anioffY;		//!< image y animation offset
 	SCNHANDLE hImgBits;	//!< image bitmap handle
 	SCNHANDLE hImgPal;	//!< image palette handle
-};
-
+} PACKED_STRUCT;
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 /** a multi-object animation frame is a list of multi-image handles */
 typedef uint32 FRAME;
@@ -93,6 +96,7 @@ struct OBJECT {
 	SCNHANDLE hMirror;	//!< objects previous animation frame
 	int oid;			//!< object identifier
 };
+typedef OBJECT *POBJECT;
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 

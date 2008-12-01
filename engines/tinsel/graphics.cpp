@@ -28,6 +28,7 @@
 #include "tinsel/handle.h"	// LockMem()
 #include "tinsel/object.h"
 #include "tinsel/palette.h"
+#include "tinsel/scene.h"
 #include "tinsel/tinsel.h"
 
 namespace Tinsel {
@@ -46,7 +47,6 @@ extern uint8 transPalette[MAX_COLOURS];
 /**
  * Straight rendering with transparency support
  */
-
 static void WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping) {
 	// Set up the offset between destination blocks
 	int rightClip = applyClipping ? pObj->rightClip : 0;
@@ -156,9 +156,90 @@ static void WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyCl
 }
 
 /**
+ * Tinsel 2 Straight rendering with transparency support
+ */
+static void t2WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping, bool horizFlipped) {
+	// Setup for correct clipping of object edges
+	int yClip = applyClipping ? pObj->topClip : 0;
+	if (applyClipping)
+		pObj->height -= pObj->botClip;
+	int numBytes;
+	int clipAmount;
+
+	for (int y = 0; y < pObj->height; ++y) {
+		// Get the position to start writing out from
+		uint8 *tempP = !horizFlipped ? destP :
+			destP + (pObj->width - pObj->leftClip - pObj->rightClip) - 1;
+		int leftClip = applyClipping ? pObj->leftClip : 0;
+		int rightClip = applyClipping ? pObj->rightClip : 0;
+		if (horizFlipped)
+			SWAP(leftClip, rightClip);
+
+		int x = 0;
+		while (x < pObj->width) {
+			// Get the next opcode
+			numBytes = *srcP++;
+			if (numBytes & 0x80) {
+				// Run length following
+				numBytes &= 0x7f;
+				clipAmount = MIN(numBytes, leftClip);
+				leftClip -= clipAmount;
+				x+= clipAmount;
+
+				int runLength = numBytes - clipAmount;
+				uint8 colour = *srcP++;
+
+				if ((yClip == 0) && (runLength > 0) && (colour != 0)) {
+					runLength = MIN(runLength, pObj->width - rightClip - x);
+
+					if (runLength > 0) {
+						// Non-transparent run length
+						colour += pObj->constant;
+						if (horizFlipped)
+							Common::set_to(tempP - runLength + 1, tempP + 1, colour);
+						else
+							Common::set_to(tempP, tempP + runLength, colour);
+					}
+				}
+
+				if (horizFlipped)
+					tempP -= runLength;
+				else
+					tempP += runLength;
+
+				x += numBytes - clipAmount;
+
+			} else {
+				// Dump a length of pixels
+				clipAmount = MIN(numBytes, leftClip);
+				leftClip -= clipAmount;
+				srcP += clipAmount;
+				int runLength = numBytes - clipAmount;
+				x += numBytes - runLength;
+
+				for (int xp = 0; xp < runLength; ++xp) {
+					if ((yClip > 0) || (x >= (pObj->width - rightClip)))
+						++srcP;
+					else if (horizFlipped)
+						*tempP-- = pObj->constant + *srcP++;
+					else
+						*tempP++ = pObj->constant + *srcP++;
+					++x;
+				}
+			}
+		}
+		assert(x == pObj->width);
+
+		if (yClip > 0)
+			--yClip;
+		else
+			destP += SCREEN_WIDTH;
+	}
+}
+
+/**
  * Fill the destination area with a constant colour
  */
-
 static void WrtConst(DRAWOBJECT *pObj, uint8 *destP, bool applyClipping) {
 	if (applyClipping) {
 		pObj->height -= pObj->topClip + pObj->botClip;
@@ -181,7 +262,6 @@ static void WrtConst(DRAWOBJECT *pObj, uint8 *destP, bool applyClipping) {
  * Translates the destination surface within the object's bounds using the transparency
  * lookup table from transpal.cpp (the contents of which have been moved into palette.cpp)
  */
-
 static void WrtTrans(DRAWOBJECT *pObj, uint8 *destP, bool applyClipping) {
 	if (applyClipping) {
 		pObj->height -= pObj->topClip + pObj->botClip;
@@ -204,165 +284,135 @@ static void WrtTrans(DRAWOBJECT *pObj, uint8 *destP, bool applyClipping) {
 	}		
 }
 
-
-#if 0
-// This commented out code is the untested original WrtNonZero/ClpWrtNonZero combo method
-// from the v1 source. It may be needed to be included later on to support v1 gfx files
-
 /**
- * Straight rendering with transparency support
- * Possibly only used in the Discworld Demo
+ * Copies an uncompressed block of data straight to the screen
  */
+static void WrtAll(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping) {
+	int objWidth = pObj->width;
 
-static void DemoWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping) {
-	// FIXME: If this method is used for the demo, it still needs to be made Endian safe
+	if (applyClipping) {
+		srcP += (pObj->topClip * pObj->width) + pObj->leftClip;
 
-	// Set up the offset between destination lines
-	pObj->lineoffset = SCREEN_WIDTH - pObj->width - (applyClipping ? pObj->leftClip - pObj->rightClip : 0);
+		pObj->height -= pObj->topClip + pObj->botClip;
+		pObj->width -= pObj->leftClip + pObj->rightClip;
 
-	// Top clipped line handling
-	while (applyClipping && (pObj->topClip > 0)) {
-		// Loop through discarding the data for the line
-		int width = pObj->width;
-		while (width > 0) {
-			int32 opcodeOrLen = (int32)READ_LE_UINT32(srcP);
-			srcP += sizeof(uint32);
-
-			if (opcodeOrLen >= 0) {
-				// Dump the data
-				srcP += ((opcodeOrLen + 3) / 4) * 4;
-				width -= opcodeOrLen;
-			} else {
-				// Dump the run-length opcode
-				width -= -opcodeOrLen;
-			}
-		}
-
-		--pObj->height;
-		--pObj->topClip;
+		if (pObj->width <= 0)
+			return;
 	}
 
-	// Loop for the required number of rows
-	while (pObj->height > 0) {
-
-		int width = pObj->width;
-		
-		// Handling for left edge clipping - this basically involves dumping data until we reach
-		// the part of the line to be displayed
-		int clipLeft = pObj->leftClip;
-		while (applyClipping && (clipLeft > 0)) {
-			int32 opcodeOrLen = (int32)READ_LE_UINT32(srcP);
-			srcP += sizeof(uint32);
-
-			if (opcodeOrLen >= 0) {
-				// Copy a specified number of bytes
-				// Make adjustments for past the clipping width
-				int remainder = 4 - (opcodeOrLen % 4);
-				srcP += MIN(clipLeft, opcodeOrLen);
-				opcodeOrLen -= MIN(clipLeft, opcodeOrLen);
-				clipLeft -= MIN(clipLeft, opcodeOrLen);
-				width -= opcodeOrLen;
-				
-
-				// Handle any right edge clipping (if run length covers entire width)
-				if (width < pObj->rightClip) {
-					remainder += (pObj->rightClip - width);
-					opcodeOrLen -= (pObj->rightClip - width);
-				}
-				
-				if (opcodeOrLen > 0) 
-					Common::copy(srcP, srcP + opcodeOrLen, destP);
-
-			} else {
-				// Output a run length number of bytes
-				// Get data for byte value and run length
-				opcodeOrLen = -opcodeOrLen;
-				int runLength = opcodeOrLen & 0xff;
-				uint8 colourVal = (opcodeOrLen >> 8) & 0xff;
-
-				// Make adjustments for past the clipping width
-				runLength -= MIN(clipLeft, runLength);
-				clipLeft -= MIN(clipLeft, runLength);
-				width -= runLength;
-
-				// Handle any right edge clipping (if run length covers entire width)
-				if (width < pObj->rightClip) 
-					runLength -= (pObj->rightClip - width);
-
-				if (runLength > 0) {
-					// Displayable part starts partway through the slice
-					if (colourVal != 0)
-						Common::set_to(destP, destP + runLength, colourVal);
-					destP += runLength;
-				}
-			}
-
-			if (width < pObj->rightClip)
-				width = 0;
-		}
-
-		// Handling for the visible part of the line
-		int endWidth = applyClipping ? pObj->rightClip : 0;
-		while (width > endWidth) {
-			int32 opcodeOrLen = (int32)READ_LE_UINT32(srcP);
-			srcP += sizeof(uint32);
-
-			if (opcodeOrLen >= 0) {
-				// Copy the specified number of bytes
-				int remainder = 4 - (opcodeOrLen % 4);
-
-				if (width < endWidth) {
-					// Shorten run length by right clipping
-					remainder += (pObj->rightClip - width);
-					opcodeOrLen -= (pObj->rightClip - width);
-				}
-
-				Common::copy(srcP, srcP + opcodeOrLen, destP);
-				srcP += opcodeOrLen + remainder;
-				destP += opcodeOrLen;
-				width -= opcodeOrLen;
-
-			} else {
-				// Handle a given run length
-				opcodeOrLen = -opcodeOrLen;
-				int runLength = opcodeOrLen & 0xff;
-				uint8 colourVal = (opcodeOrLen >> 8) & 0xff;
-
-				if (width < endWidth) 
-					// Shorten run length by right clipping
-					runLength -= (pObj->rightClip - width);
-
-				// Only set pixels if colourVal non-zero (0 signifies transparency)
-				if (colourVal != 0) 
-					// Fill out a run length of a specified colour
-					Common::set_to(destP, destP + runLength, colourVal);
-
-				destP += runLength;
-				width -= runLength;
-			}
-		}
-
-		// If right edge clipping is being applied, then width may still be non-zero - in
-		// that case all remaining line data until the end of the line must be ignored
-		while (width > 0) {
-			int32 opcodeOrLen = (int32)READ_LE_UINT32(srcP);
-			srcP += sizeof(uint32);
-
-			if (opcodeOrLen >= 0) {
-				// Dump the data
-				srcP += ((opcodeOrLen + 3) / 4) * 4;
-				width -= opcodeOrLen;
-			} else {
-				// Dump the run-length opcode
-				width -= -opcodeOrLen;
-			}
-		}
-
-		--pObj->height;
-		destP += pObj->lineoffset;
+	for (int y = 0; y < pObj->height; ++y) {
+		Common::copy(srcP, srcP + pObj->width, destP);
+		srcP += objWidth;
+		destP += SCREEN_WIDTH;
 	}
 }
-#endif
+
+/**
+ * Renders a packed data stream with a variable sized palette
+ */
+static void PackedWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP,
+							 bool applyClipping, bool horizFlipped, int packingType) {
+	uint8 numColours = 0;
+	uint8 *colourTable = NULL;
+	int topClip = 0;
+	int xOffset = 0;
+	int numBytes, colour;
+	int v;
+
+	if (applyClipping) {
+		pObj->height -= pObj->botClip;
+		topClip = pObj->topClip;
+	}
+
+	if (packingType == 3) {
+		// Variable colours
+		numColours = *srcP++;
+		colourTable = srcP;
+		srcP += numColours;
+	}
+
+	for (int y = 0; y < pObj->height; ++y) {
+		// Get the position to start writing out from
+		uint8 *tempP = !horizFlipped ? destP :
+			destP + (pObj->width - pObj->leftClip - pObj->rightClip) - 1;
+		int leftClip = applyClipping ? pObj->leftClip : 0;
+		int rightClip = applyClipping ? pObj->rightClip : 0;
+		if (horizFlipped)
+			SWAP(leftClip, rightClip);
+		bool eolFlag = false;
+
+		// Get offset for first pixels in next line
+		xOffset = *srcP++;
+
+		int x = 0;
+		while (x < pObj->width) {
+			// Get next run size and colour to use
+			for (;;) {
+				if (xOffset > 0) {
+					x += xOffset;
+
+					// Reduce offset amount by any remaining left clipping
+					v = MIN(xOffset, leftClip);
+					xOffset -= v;
+					leftClip -= v;
+
+					if (horizFlipped) tempP -= xOffset; else tempP += xOffset;
+					xOffset = 0;
+				}
+
+				v = *srcP++;
+				numBytes = v & 0xf;	// No. bytes 1-15
+				if (packingType == 3)
+					colour = colourTable[v >> 4];
+				else
+					colour = pObj->baseCol + (v >> 4);
+
+				if (numBytes != 0)
+					break;
+
+				numBytes = *srcP++;
+				if (numBytes >= 16)
+					break;
+
+				xOffset = numBytes + v;
+				if (xOffset == 0) {
+					// End of line encountered
+					eolFlag = true;
+					break;
+				}
+			}
+
+			if (eolFlag)
+				break;
+
+			// Apply clipping on byte sequence
+			v = MIN(numBytes, leftClip);
+			leftClip -= v;
+			numBytes -= v;
+			x += v;
+
+			while (numBytes-- > 0) {
+				if ((topClip == 0) && (x < (pObj->width - rightClip))) {
+					*tempP = colour;
+					if (horizFlipped) --tempP; else ++tempP;
+				}
+				++x;
+			}
+		}
+		assert(x <= pObj->width);
+
+		if (!eolFlag) {
+			// Assert that the next bytes signal a line end
+			assert((*srcP++ & 0xf) == 0);
+			assert(*srcP++ == 0);
+		}
+
+		if (topClip > 0)
+			--topClip;
+		else
+			destP += SCREEN_WIDTH;
+	}
+}
 
 //----------------- MAIN FUNCTIONS ---------------------
 
@@ -380,8 +430,10 @@ void ClearScreen() {
  * Updates the screen surface within the following rectangle
  */
 void UpdateScreenRect(const Common::Rect &pClip) {
-	byte *pDest = (byte *)_vm->screen().getBasePtr(pClip.left, pClip.top);
-	g_system->copyRectToScreen(pDest, _vm->screen().pitch, pClip.left, pClip.top, pClip.width(), pClip.height());
+	int yOffset = (g_system->getHeight() - SCREEN_HEIGHT) / 2;
+	byte *pSrc = (byte *)_vm->screen().getBasePtr(pClip.left, pClip.top);
+	g_system->copyRectToScreen(pSrc, _vm->screen().pitch, pClip.left, pClip.top + yOffset,
+		pClip.width(), pClip.height());
 	g_system->updateScreen(); 
 }
 
@@ -398,11 +450,17 @@ void DrawObject(DRAWOBJECT *pObj) {
 
 	// If writing constant data, don't bother locking the data pointer and reading src details
 	if ((pObj->flags & DMA_CONST) == 0) {
-		byte *p = (byte *)LockMem(pObj->hBits & 0xFF800000);
-		
-		srcPtr = p + (pObj->hBits & 0x7FFFFF);
-		pObj->charBase = (char *)p + READ_LE_UINT32(p + 0x10);
-		pObj->transOffset = READ_LE_UINT32(p + 0x14);
+		if (TinselV2) {
+			srcPtr  = (byte *)LockMem(pObj->hBits);
+			pObj->charBase = NULL;
+			pObj->transOffset = 0;
+		} else {
+			byte *p = (byte *)LockMem(pObj->hBits & HANDLEMASK);
+			
+			srcPtr = p + (pObj->hBits & OFFSETMASK);
+			pObj->charBase = (char *)p + READ_LE_UINT32(p + 0x10);
+			pObj->transOffset = READ_LE_UINT32(p + 0x14);
+		}
 	}
 
 	// Get destination starting point
@@ -410,30 +468,83 @@ void DrawObject(DRAWOBJECT *pObj) {
 	
 	// Handle various draw types
 	uint8 typeId = pObj->flags & 0xff;
-	switch (typeId) {
-	case 0x01:
-	case 0x08:
-	case 0x41:
-	case 0x48:
-		WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40);
-		break;
 
-	case 0x04:
-	case 0x44:
-		// ClpWrtConst with/without clipping
-		WrtConst(pObj,destPtr, typeId == 0x44);
-		break;
+	if (TinselV2) {
+		// Tinsel v2 decoders
+		// Initial switch statement for the different bit packing types
+		int packType = pObj->flags >> 14;
 
-	case 0x84:
-	case 0xC4:
-		// WrtTrans with/without clipping
-		WrtTrans(pObj, destPtr, typeId == 0xC4);
-		break;
+		if (packType == 0) {
+			// No colour packing
+			switch (typeId) {
+			case 0x01:
+			case 0x11:
+			case 0x41:
+			case 0x51:
+			case 0x81:
+			case 0xC1:
+				t2WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40, (typeId & 0x10) != 0);
+				break;
+			case 0x02:
+			case 0x42:
+				// This renderer called 'RlWrtAll', but is the same as t2WrtNonZero
+				t2WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40, false);
+				break;
+			case 0x04:
+			case 0x44:
+				// WrtConst with/without clipping
+				WrtConst(pObj, destPtr, typeId == 0x44);
+				break;
+			case 0x08:
+			case 0x48:
+				WrtAll(pObj, srcPtr, destPtr, typeId >= 0x40);
+				break;
+			case 0x84:
+			case 0xC4:
+				// WrtTrans with/without clipping
+				WrtTrans(pObj, destPtr, typeId == 0xC4);
+				break;
+			default:
+				error("Unknown drawing type %d", typeId);
+			}
+		} else {
+			// 1 = 16 from 240
+			// 2 = 16 from 224
+			// 3 = variable colour
+			if (packType == 1) pObj->baseCol = 0xF0;
+			else if (packType == 2) pObj->baseCol = 0xE0;
 
-	default:
-		// NoOp
-		error("Unknown drawing type %d", typeId);
-		break;
+			PackedWrtNonZero(pObj, srcPtr, destPtr, (pObj->flags & DMA_CLIP) != 0,
+				(pObj->flags & DMA_FLIPH), packType);
+		}
+
+	} else {
+		// Tinsel v1 decoders
+		switch (typeId) {
+		case 0x01:
+		case 0x08:
+		case 0x41:
+		case 0x48:
+			WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40);
+			break;
+
+		case 0x04:
+		case 0x44:
+			// WrtConst with/without clipping
+			WrtConst(pObj,destPtr, typeId == 0x44);
+			break;
+
+		case 0x84:
+		case 0xC4:
+			// WrtTrans with/without clipping
+			WrtTrans(pObj, destPtr, typeId == 0xC4);
+			break;
+
+		default:
+			// NoOp
+			error("Unknown drawing type %d", typeId);
+			break;
+		}
 	}
 }
 

@@ -27,7 +27,7 @@
 #ifndef TINSEL_PCODE_H     // prevent multiple includes
 #define TINSEL_PCODE_H
 
-#include "tinsel/events.h"	// for USER_EVENT
+#include "tinsel/events.h"	// for TINSEL_EVENT
 #include "tinsel/sched.h"	// for PROCESS
 
 namespace Tinsel {
@@ -45,8 +45,11 @@ enum {
 };
 
 enum GSORT {
-	GS_NONE, GS_ACTOR, GS_MASTER, GS_POLYGON, GS_INVENTORY, GS_SCENE
+	GS_NONE, GS_ACTOR, GS_MASTER, GS_POLYGON, GS_INVENTORY, GS_SCENE,
+	GS_PROCESS, GS_GPROCESS
 };
+
+enum RESCODE {RES_WAITING, RES_FINISHED, RES_CUTSHORT};
 
 struct INT_CONTEXT {
 
@@ -57,9 +60,9 @@ struct INT_CONTEXT {
 	// Previously parameters to Interpret()
 	SCNHANDLE	hCode;		//!< scene handle of the code to execute
 	byte		*code;		//!< pointer to the code to execute
-	USER_EVENT	event;		//!< causal event
-	HPOLYGON	hpoly;		//!< associated polygon (if any)
-	int			actorid;	//!< associated actor (if any)
+	TINSEL_EVENT	event;		//!< causal event
+	HPOLYGON	hPoly;		//!< associated polygon (if any)
+	int			idActor;	//!< associated actor (if any)
 	INV_OBJECT	*pinvo;		//!< associated inventory object
 
 	// Previously local variables in Interpret()
@@ -69,27 +72,32 @@ struct INT_CONTEXT {
 	int ip;				//!< instruction pointer
 	bool bHalt;			//!< set to exit interpeter
 	bool escOn;
-	int myescEvent;		//!< only initialised to prevent compiler warning!
+	int myEscape;		//!< only initialised to prevent compiler warning!
 
+	uint32 waitNumber1;		// The waiting numbert
+	uint32 waitNumber2;		// The wait for number
+	RESCODE resumeCode;
 	RESUME_STATE resumeState;
 
 	void syncWithSerializer(Serializer &s);
 };
-
+typedef INT_CONTEXT *PINT_CONTEXT;
 
 /*----------------------------------------------------------------------*\
 |*			Interpreter Function Prototypes			*|
 \*----------------------------------------------------------------------*/
 
-void Interpret(CORO_PARAM, INT_CONTEXT *ic);	// Interprets the PCODE instructions in the code array
+// Interprets the PCODE instructions in the code array
+void Interpret(CORO_PARAM, INT_CONTEXT *ic);
 
 INT_CONTEXT *InitInterpretContext(
 	GSORT		gsort,
 	SCNHANDLE	hCode,		// code to execute
-	USER_EVENT	event,		// causal event
+	TINSEL_EVENT	event,		// causal event
 	HPOLYGON	hpoly,		// associated polygon (if any)
 	int		actorid,	// associated actor (if any)
-	INV_OBJECT	*pinvo);		// associated inventory object
+	INV_OBJECT	*pinvo,
+	int myEscape = -1);		// associated inventory object
 
 INT_CONTEXT *RestoreInterpretContext(INT_CONTEXT *ric);
 
@@ -101,8 +109,12 @@ void SaveInterpretContexts(INT_CONTEXT *sICInfo);
 void RegisterGlobals(int num);
 void FreeGlobals(void);
 
+void AttachInterpret(INT_CONTEXT *pic, PROCESS *pProc);
 
-#define MAX_INTERPRET	(NUM_PROCESS - 20)
+void WaitInterpret(CORO_PARAM, PPROCESS pWaitProc, bool *result);
+
+#define NUM_INTERPRET	(NUM_PROCESS - 20)
+#define MAX_INTERPRET	(MAX_PROCESSES - 20)
 
 /*----------------------------------------------------------------------*\
 |*	Library Procedure and Function codes parameter enums		*|
@@ -136,10 +148,6 @@ void FreeGlobals(void);
 
 #define MIDI_DEF	0
 #define MIDI_LOOP	1
-
-#define TRANS_DEF	0
-#define TRANS_CUT	1
-#define TRANS_FADE	2
 
 #define FM_IN		0	//
 #define FM_OUT		1	// fademidi()

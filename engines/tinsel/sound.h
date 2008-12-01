@@ -37,6 +37,11 @@
 
 namespace Tinsel {
 
+enum STYPE {FX, VOICE};
+
+enum PlayPriority { PRIORITY_SCRIPT, PRIORITY_SPLAY1, PRIORITY_SPLAY2, PRIORITY_TALK };
+
+enum SampleFlags {PS_COMPLETE = 0x01, PS_SUSTAIN = 0x02};
 
 /*----------------------------------------------------------------------*\
 |*				Function Prototypes			*|
@@ -44,14 +49,39 @@ namespace Tinsel {
 
 class SoundManager {
 protected:
+	static const int kNumSFX = 3; // Number of SFX channels
+	enum {
+		kChannelTalk = 0,
+		kChannelTinsel1 = 0, // Always using this channel for DW1
+		kChannelSFX = 1
+	};
+	static const int kNumChannels = kChannelSFX + kNumSFX;
+
+	struct Channel {
+		// Sample handle
+		Audio::SoundHandle handle;
+
+		// Sample id
+		int sampleNum;
+		int subSample;
+
+		// Playing properties
+		bool looped;
+		int x, y;
+		int priority;
+
+		// Time properties
+		uint32 timeStarted;
+		uint32 timeDuration;
+		uint32 lastStart;
+	};
+
+	Channel _channels[kNumChannels];
 
 	//TinselEngine *_vm;	// TODO: Enable this once global _vm var is gone
 
-	/** Sample handle */
-	Audio::SoundHandle _handle;
-
 	/** Sample index buffer and number of entries */
-	int32 *_sampleIndex;
+	uint32 *_sampleIndex;
 
 	/** Number of entries in the sample index */
 	long _sampleIndexLen;
@@ -59,19 +89,29 @@ protected:
 	/** file stream for sample file */
 	Common::File _sampleStream;
 
+	bool offscreenChecks(int x, int &y);
+	int8 getPan(int x);
+
 public:
 
 	SoundManager(TinselEngine *vm);
 	~SoundManager();
 
 	bool playSample(int id, Audio::Mixer::SoundType type, Audio::SoundHandle *handle = 0);
-	void stopAllSamples(void);		// Stops any currently playing sample
+	bool playSample(int id, int sub, bool bLooped, int x, int y, int priority,
+			Audio::Mixer::SoundType type, Audio::SoundHandle *handle = 0);
+
+	void stopAllSamples(void);                // Stops any currently playing sample
+	void stopSpecSample(int id, int sub = 0); // Stops a specific sample
 	
+	void setSFXVolumes(uint8 volume);
+
 	bool sampleExists(int id);
-	bool sampleIsPlaying(void);
+	bool sampleIsPlaying(int id = -1);
 	
 	// TODO: Internal method, make this protected?
 	void openSampleFiles(void);
+	void closeSampleStream(void);
 };
 
 } // end of namespace Tinsel

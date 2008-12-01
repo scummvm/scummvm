@@ -28,6 +28,7 @@
 #include "tinsel/graphics.h"
 #include "tinsel/handle.h"	// LockMem definition
 #include "tinsel/palette.h"	// palette allocator structures etc.
+#include "tinsel/sysvar.h"
 #include "tinsel/tinsel.h"
 
 #include "common/system.h"
@@ -71,6 +72,17 @@ static VIDEO_DAC_Q *pDAChead;
 
 /** the translucent palette lookup table */
 uint8 transPalette[MAX_COLOURS];	// used in graphics.cpp
+
+uint8 ghostPalette[MAX_COLOURS];
+
+static int translucentIndex	= 228;
+
+static int talkIndex		= 233;
+
+static COLORREF talkColRef;
+
+static COLORREF tagColRef;
+
 
 #ifdef DEBUG
 // diagnostic palette counters
@@ -243,6 +255,10 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 			p->hPal = hNewPal;	// set hardware palette data
 			p->numColours = FROM_LE_32(pNewPal->numColours);	// set number of colours in palette
 
+			if (TinselV2)
+				// Copy all the colours
+				memcpy(p->palRGB, pNewPal->palRGB, pNewPal->numColours * sizeof(COLORREF));
+
 #ifdef DEBUG
 			// one more palette in use
 			if (++numPals > maxPals)
@@ -250,7 +266,10 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 #endif
 
 			// Q the change to the video DAC
-			UpdateDACqueueHandle(p->posInDAC, p->numColours, p->hPal);
+			if (TinselV2)
+				UpdateDACqueue(p->posInDAC, pNewPal->numColours, p->palRGB);
+			else
+				UpdateDACqueueHandle(p->posInDAC, p->numColours, p->hPal);
 
 			// move all palettes after this one down (if necessary)
 			for (pPrev = p, pNxtPal = pPrev + 1; pNxtPal < palAllocData + NUM_PALETTES; pNxtPal++) {
@@ -265,9 +284,14 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 						+ pPrev->numColours | PALETTE_MOVED;
 
 					// Q the palette change in position to the video DAC
-					UpdateDACqueueHandle(pNxtPal->posInDAC,
-						pNxtPal->numColours,
-						pNxtPal->hPal);
+					if (!TinselV2)
+						UpdateDACqueueHandle(pNxtPal->posInDAC,
+							pNxtPal->numColours,
+							pNxtPal->hPal);
+					else if (!pNxtPal->bFading)
+						UpdateDACqueue(pNxtPal->posInDAC,
+							pNxtPal->numColours,
+							pNxtPal->palRGB);
 
 					// update previous palette to current palette
 					pPrev = pNxtPal;
@@ -347,10 +371,22 @@ void SwapPalette(PALQ *pPalQ, SCNHANDLE hNewPal) {
 		// install new palette
 		pPalQ->hPal = hNewPal;
 
-		// Q the change to the video DAC
-		UpdateDACqueueHandle(pPalQ->posInDAC, FROM_LE_32(pNewPal->numColours), hNewPal);
+		if (TinselV2) {
+			pPalQ->numColours = pNewPal->numColours;
+
+			// Copy all the colours
+			memcpy(pPalQ->palRGB, pNewPal->palRGB, pNewPal->numColours * sizeof(COLORREF));
+			
+			if (!pPalQ->bFading)
+				// Q the change to the video DAC
+				UpdateDACqueue(pPalQ->posInDAC, FROM_LE_32(pNewPal->numColours), pPalQ->palRGB);
+		} else {
+			// Q the change to the video DAC
+			UpdateDACqueueHandle(pPalQ->posInDAC, FROM_LE_32(pNewPal->numColours), hNewPal);
+		}
 	} else {
 		// # colours are different - will have to update all following palette entries
+		assert(!TinselV2); // Fatal error for Tinsel 2
 
 		PALQ *pNxtPalQ;		// next palette queue position
 
@@ -411,6 +447,33 @@ void SetBgndColour(COLORREF colour) {
 }
 
 /**
+ * Note whether a palette is being faded.
+ * @param pPalQ			Palette queue position
+ * @param bFading		Whether it is fading
+ */
+void FadingPalette(PPALQ pPalQ, bool bFading) {
+	// validate palette Q pointer
+	assert(pPalQ >= palAllocData && pPalQ <= palAllocData + NUM_PALETTES - 1);
+
+	// validate that this is a change
+	assert(pPalQ->bFading != bFading);
+
+	pPalQ->bFading = bFading;
+}
+
+/**
+ * All fading processes have just been killed, so none of the
+ * palettes are fading.
+ */
+void NoFadingPalettes(void) {
+	PPALQ pPalQ;
+
+	for (pPalQ = palAllocData; pPalQ <= palAllocData + NUM_PALETTES - 1; pPalQ++) {
+		pPalQ->bFading = false;
+	}
+}
+
+/**
  * Builds the translucent palette from the current backgrounds palette.
  * @param hPalette			Handle to current background palette
  */
@@ -433,8 +496,134 @@ void CreateTranslucentPalette(SCNHANDLE hPalette) {
 
 		// map the Value field to one of the 4 colours reserved for the translucent palette
 		val /= 63;
-		transPalette[i + 1] = (uint8)((val == 0) ? 0 : val + COL_HILIGHT - 1);
+		transPalette[i + 1] = (uint8)((val == 0) ? 0 : val + 
+			(TinselV2 ? TranslucentColour() : COL_HILIGHT) - 1);
 	}
+}
+
+/**
+ * Creates the ghost palette
+ */
+void CreateGhostPalette(SCNHANDLE hPalette) {
+	// get a pointer to the palette
+	PALETTE *pPal = (PALETTE *)LockMem(hPalette);
+	int i;
+
+	// leave background colour alone
+	ghostPalette[0] = 0;
+
+	for (i = 0; i < pPal->numColours; i++) {
+		// get the RGB colour model values
+		uint8 red   = GetRValue(pPal->palRGB[i]);
+		uint8 green = GetGValue(pPal->palRGB[i]);
+		uint8 blue  = GetBValue(pPal->palRGB[i]);
+
+		// calculate the Value field of the HSV colour model
+		unsigned val = (red > green) ? red : green;
+		val = (val > blue) ? val : blue;
+
+		// map the Value field to one of the 4 colours reserved for the translucent palette
+		val /= 64;
+		assert(/*val >= 0 &&*/ val <= 3);
+		ghostPalette[i + 1] = (uint8)(val + SysVar(ISV_GHOST_BASE));
+	}
+}
+
+
+/**
+ * Returns an adjusted colour RGB
+ * @param colour		Colour to scale
+ */
+static COLORREF DimColour(COLORREF colour, int factor) {
+	uint32 red, green, blue;
+
+	if (factor == 10) {
+		// No change
+		return colour;
+	} else if (factor == 0) {
+		// No brightness
+		return 0;
+	} else {
+		// apply multiplier to RGB components
+		red   = GetRValue(colour) * factor / 10;
+		green = GetGValue(colour) * factor / 10;
+		blue  = GetBValue(colour) * factor / 10;
+
+		// return new colour
+		return RGB(red, green, blue);
+	}
+}
+
+/**
+ * DimPartPalette
+ */
+void DimPartPalette(SCNHANDLE hDimPal, int startColour, int length, int brightness) {
+	PALQ *pPalQ;
+	PALETTE *pDimPal;
+	int iColour;
+
+	pPalQ = FindPalette(hDimPal);
+	assert(pPalQ);
+
+	// get pointer to dim palette
+	pDimPal = (PALETTE *)LockMem(hDimPal);
+
+	// Adjust for the fact that palettes don't contain colour 0
+	startColour -= 1;
+
+	// Check some other things
+	if (startColour + length > pPalQ->numColours)
+		error("DimPartPalette(): colour overrun");
+
+	for (iColour = startColour ; iColour < startColour + length; iColour++) {
+		pPalQ->palRGB[iColour] = DimColour(pDimPal->palRGB[iColour], brightness);
+	}
+
+	if (!pPalQ->bFading) {
+		// Q the change to the video DAC
+		UpdateDACqueue(pPalQ->posInDAC + startColour, length, &pPalQ->palRGB[startColour]);
+	}
+}
+
+int TranslucentColour(void) {
+	return translucentIndex;
+}
+
+int HighlightColour(void) {
+	static COLORREF cRef;
+
+	cRef = (COLORREF)SysVar(SYS_HighlightRGB);
+	UpdateDACqueue(talkIndex, 1, &cRef);
+
+	return talkIndex;
+}
+
+int TalkColour(void) {
+	return TinselV2 ? talkIndex : TALKFONT_COL;
+}
+
+void SetTalkColourRef(COLORREF colRef) {
+	talkColRef = colRef;
+}
+
+COLORREF GetTalkColourRef(void) {
+	return talkColRef;
+}
+
+void SetTagColorRef(COLORREF colRef) {
+	tagColRef = colRef;
+}
+
+COLORREF GetTagColorRef(void) {
+	return tagColRef;
+}
+
+void SetTranslucencyOffset(int offset) {
+	translucentIndex = offset;
+}
+
+void SetTalkTextOffset(int offset) {
+	talkIndex = offset;
 }
 
 } // end of namespace Tinsel

@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -21,33 +21,17 @@
  * $URL$
  * $Id$
  *
- * Handles timers.
+ * Tag related methods
  */
 
-#ifndef TINSEL_TIMERS_H	// prevent multiple includes
-#define TINSEL_TIMERS_H
-
-#include "common/scummsys.h"
-#include "tinsel/dw.h"
+#ifndef TINSEL_PDISPLAY_H     // prevent multiple includes
+#define TINSEL_PDISPLAY_H
 
 namespace Tinsel {
 
-class Serializer;
-
-#define ONE_SECOND 24
-
-uint32 DwGetCurrentTime(void);
-
-void RebootTimers(void);
-
-void syncTimerInfo(Serializer &s);
-
-void FettleTimers(void);
-
-void StartTimer(int num, int sval, bool up, bool frame);
-
-int Timer(int num);
+void EnableTags(void);
+void DisableTags(void);
 
 } // end of namespace Tinsel
 
-#endif
+#endif		/* TINSEL_PDISPLAY_H */

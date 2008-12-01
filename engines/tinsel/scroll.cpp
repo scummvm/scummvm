@@ -33,16 +33,10 @@
 #include "tinsel/rince.h"
 #include "tinsel/scroll.h"
 #include "tinsel/sched.h"
+#include "tinsel/sysvar.h"
+#include "tinsel/tinsel.h"
 
 namespace Tinsel {
-
-//----------------- EXTERNAL FUNCTIONS ---------------------
-
-// in BG.C
-extern int BackgroundWidth(void);
-extern int BackgroundHeight(void);
-
-
 
 //----------------- LOCAL DEFINES --------------------
 
@@ -58,7 +52,7 @@ extern int BackgroundHeight(void);
 static int LeftScroll = 0, DownScroll = 0;	// Number of iterations outstanding
 
 static int scrollActor = 0;
-static PMACTOR psActor = 0;
+static PMOVER pScrollMover = 0;
 static int oldx = 0, oldy = 0;
 
 /** Boundaries and numbers of boundaries */
@@ -72,6 +66,14 @@ static SCROLLDATA sd = {
 			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}
 		},
 		0,
+		0,
+		// DW2 fields
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
 		0
 	};
 
@@ -81,7 +83,8 @@ static bool ScrollCursor = 0;	// If a TAG or EXIT polygon is clicked on,
 				// the cursor is kept over that polygon
 				// whilst scrolling
 
-static int scrollPixels = SCROLLPIXELS;
+static int scrollPixelsX = SCROLLPIXELS;
+static int scrollPixelsY = SCROLLPIXELS;
 
 
 /**
@@ -124,13 +127,6 @@ void SetNoScroll(int x1, int y1, int x2, int y2) {
 }
 
 /**
- * Does the obvious - called at the end of a scene.
- */
-void DropNoScrolls(void) {
-	sd.NumNoH = sd.NumNoV = 0;
-}
-
-/**
  * Called from scroll process when it thinks that a scroll is in order.
  * Checks for no-scroll boundaries and sets off a scroll if allowed.
  */
@@ -157,8 +153,13 @@ static void NeedScroll(int direction) {
 		}
 
 		if (LeftScroll <= 0) {
-			scrollPixels = SCROLLPIXELS;
-			LeftScroll = RLSCROLL;
+			if (TinselV2) {
+				scrollPixelsX = sd.xSpeed;
+				LeftScroll += sd.xDistance;
+			} else {
+				scrollPixelsX = SCROLLPIXELS;
+				LeftScroll = RLSCROLL;
+			}
 		}
 		break;
 
@@ -175,8 +176,13 @@ static void NeedScroll(int direction) {
 		}
 
 		if (LeftScroll >= 0) {
-			scrollPixels = SCROLLPIXELS;
-			LeftScroll = -RLSCROLL;
+			if (TinselV2) {
+				scrollPixelsX = sd.xSpeed;
+				LeftScroll -= sd.xDistance;
+			} else {
+				scrollPixelsX = SCROLLPIXELS;
+				LeftScroll = -RLSCROLL;
+			}
 		}
 		break;
 
@@ -194,8 +200,13 @@ static void NeedScroll(int direction) {
 			}
 
 		if (DownScroll <= 0) {
-			scrollPixels = SCROLLPIXELS;
-			DownScroll = UDSCROLL;
+			if (TinselV2) {
+				scrollPixelsY = sd.ySpeed;
+				DownScroll += sd.yDistance;
+			} else {
+				scrollPixelsY = SCROLLPIXELS;
+				DownScroll = UDSCROLL;
+			}
 		}
 		break;
 
@@ -212,8 +223,13 @@ static void NeedScroll(int direction) {
 		}
 
 		if (DownScroll >= 0) {
-			scrollPixels = SCROLLPIXELS;
-			DownScroll = -UDSCROLL;
+			if (TinselV2) {
+				scrollPixelsY = sd.ySpeed;
+				DownScroll -= sd.yDistance;
+			} else {
+				scrollPixelsY = SCROLLPIXELS;
+				DownScroll = -UDSCROLL;
+			}
 		}
 		break;
 	}
@@ -234,7 +250,7 @@ static void ScrollImage(void) {
 	 * Keeping cursor on a tag?
 	 */
 	if (ScrollCursor) {
-		GetCursorXY(&curX, &curY, true);
+		GetCursorXYNoWait(&curX, &curY, true);
 		if (InPolygon(curX, curY, TAG) != NOPOLY || InPolygon(curX, curY, EXIT) != NOPOLY) {
 			OldLoffset = Loffset;
 			OldToffset = Toffset;
@@ -246,49 +262,66 @@ static void ScrollImage(void) {
 	 * Horizontal scrolling
 	 */
 	if (LeftScroll > 0) {
-		LeftScroll -= scrollPixels;
+		LeftScroll -= scrollPixelsX;
 		if (LeftScroll < 0) {
 			Loffset += LeftScroll;
 			LeftScroll = 0;
 		}
-		Loffset += scrollPixels;		// Move right
+		Loffset += scrollPixelsX;		// Move right
 		if (Loffset > ImageW - SCREEN_WIDTH)
 			Loffset = ImageW - SCREEN_WIDTH;// Now at extreme right
+
+		/*** New feature to prop up rickety scroll boundaries ***/
+		if (TinselV2 && SysVar(SV_MaximumXoffset) &&  (Loffset > SysVar(SV_MaximumXoffset)))
+			Loffset = SysVar(SV_MaximumXoffset);
+
 	} else if (LeftScroll < 0) {
-		LeftScroll += scrollPixels;
+		LeftScroll += scrollPixelsX;
 		if (LeftScroll > 0) {
 			Loffset += LeftScroll;
 			LeftScroll = 0;
 		}
-		Loffset -= scrollPixels;	// Move left
+		Loffset -= scrollPixelsX;	// Move left
 		if (Loffset < 0)
 			Loffset = 0;		// Now at extreme left
+
+		/*** New feature to prop up rickety scroll boundaries ***/
+		if (TinselV2 && SysVar(SV_MinimumXoffset) &&  (Loffset < SysVar(SV_MinimumXoffset)))
+			Loffset = SysVar(SV_MinimumXoffset);
 	}
 
 	/*
 	 * Vertical scrolling
 	 */
 	if (DownScroll > 0) {
-		DownScroll -= scrollPixels;
+		DownScroll -= scrollPixelsY;
 		if (DownScroll < 0) {
 			Toffset += DownScroll;
 			DownScroll = 0;
 		}
-		Toffset += scrollPixels;		// Move down
+		Toffset += scrollPixelsY;		// Move down
 
 		if (Toffset > ImageH - SCREEN_HEIGHT)
 			Toffset = ImageH - SCREEN_HEIGHT;// Now at extreme bottom
 
+		/*** New feature to prop up rickety scroll boundaries ***/
+		if (TinselV2 && SysVar(SV_MaximumYoffset) &&  Toffset > SysVar(SV_MaximumYoffset))
+			Toffset = SysVar(SV_MaximumYoffset);
+
 	} else if (DownScroll < 0) {
-		DownScroll += scrollPixels;
+		DownScroll += scrollPixelsY;
 		if (DownScroll > 0) {
 			Toffset += DownScroll;
 			DownScroll = 0;
 		}
-		Toffset -= scrollPixels;		// Move up
+		Toffset -= scrollPixelsY;		// Move up
 
 		if (Toffset < 0)
 			Toffset = 0;			// Now at extreme top
+
+		/*** New feature to prop up rickety scroll boundaries ***/
+		if (TinselV2 && SysVar(SV_MinimumYoffset) &&  Toffset < SysVar(SV_MinimumYoffset))
+			Toffset = SysVar(SV_MinimumYoffset);
 	}
 
 	/*
@@ -312,8 +345,7 @@ static void MonitorScroll(void) {
 	/*
 	 * Only do it if the actor is there and is visible
 	 */
-	if (!psActor || getMActorHideState(psActor)
-			|| getMActorState(psActor) == NO_MACTOR)
+	if (!pScrollMover || MoverHidden(pScrollMover) || !MoverIs(pScrollMover))
 		return;
 
 	GetActorPos(scrollActor, &newx, &newy);
@@ -326,7 +358,7 @@ static void MonitorScroll(void) {
 	/*
 	 * Approaching right side or left side of the screen?
 	 */
-	if (newx > Loffset+SCREEN_WIDTH-RLDISTANCE && Loffset < ImageW-SCREEN_WIDTH) {
+	if (newx > Loffset+SCREEN_WIDTH - RLDISTANCE && Loffset < ImageW - SCREEN_WIDTH) {
 		if (newx > oldx)
 				NeedScroll(LEFT);
 	} else if (newx < Loffset + RLDISTANCE  &&  Loffset) {
@@ -337,16 +369,40 @@ static void MonitorScroll(void) {
 	/*
 	 * Approaching bottom or top of the screen?
 	 */
-	if (newy > Toffset+SCREEN_HEIGHT-UDDISTANCE && Toffset < ImageH-SCREEN_HEIGHT) {
+	if (newy > Toffset+SCREEN_HEIGHT-DDISTANCE && Toffset < ImageH-SCREEN_HEIGHT) {
 		if (newy > oldy)
 				NeedScroll(UP);
-	} else if (Toffset && newy < Toffset + UDDISTANCE + GetActorBottom(scrollActor) - GetActorTop(scrollActor)) {
+	} else if (Toffset && newy < Toffset + UDISTANCE + GetActorBottom(scrollActor) - GetActorTop(scrollActor)) {
 		if (newy < oldy)
 				NeedScroll(DOWN);
 	}
 
 	oldx = newx;
 	oldy = newy;
+}
+
+static void RestoreScrollDefaults(void) {
+	sd.xTrigger		= SysVar(SV_SCROLL_XTRIGGER);
+	sd.xDistance	= SysVar(SV_SCROLL_XDISTANCE);
+	sd.xSpeed		= SysVar(SV_SCROLL_XSPEED);
+	sd.yTriggerTop	= SysVar(SV_SCROLL_YTRIGGERTOP);
+	sd.yTriggerBottom= SysVar(SV_SCROLL_YTRIGGERBOT);
+	sd.yDistance	= SysVar(SV_SCROLL_YDISTANCE);
+	sd.ySpeed		= SysVar(SV_SCROLL_YSPEED);
+}
+
+/**
+ * Does the obvious - called at the end of a scene.
+ */
+void DropScroll(void) {
+	sd.NumNoH = sd.NumNoV = 0;
+	if (TinselV2) {
+		LeftScroll = DownScroll = 0;		// No iterations outstanding
+		oldx = oldy = 0;
+		scrollPixelsX = sd.xSpeed;
+		scrollPixelsY = sd.ySpeed;
+		RestoreScrollDefaults();
+	}
 }
 
 /**
@@ -359,21 +415,28 @@ void ScrollProcess(CORO_PARAM, const void *) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	ImageH = BackgroundHeight();		// Dimensions
-	ImageW = BackgroundWidth();		//  of this scene.
+	// In Tinsel v2, scenes may play movies, so the background may not always 
+	// already be initialised like it is in v1
+	while (!GetBgObject()) 
+		CORO_SLEEP(1);
+
+	ImageH = BgHeight();		// Dimensions
+	ImageW = BgWidth();		//  of this scene.
 
 	// Give up if there'll be no purpose in this process
 	if (ImageW == SCREEN_WIDTH  &&  ImageH == SCREEN_HEIGHT)
 		CORO_KILL_SELF();
 
-	LeftScroll = DownScroll = 0;		// No iterations outstanding
-	oldx = oldy = 0;
-	scrollPixels = SCROLLPIXELS;
+	if (!TinselV2) {
+		LeftScroll = DownScroll = 0;		// No iterations outstanding
+		oldx = oldy = 0;
+		scrollPixelsX = scrollPixelsY = SCROLLPIXELS;
+	}
 
 	if (!scrollActor)
-		scrollActor = LeadId();
+		scrollActor = GetLeadId();
 
-	psActor = GetMover(scrollActor);
+	pScrollMover = GetMover(scrollActor);
 
 	while (1) {
 		MonitorScroll();		// Set scroll requirement
@@ -395,17 +458,26 @@ void ScrollFocus(int ano) {
 		oldx = oldy = 0;
 		scrollActor = ano;
 
-		psActor = ano ? GetMover(scrollActor) : NULL;
+		pScrollMover = ano ? GetMover(scrollActor) : NULL;
 	}
 }
 
 /**
+ * Returns the actor which the camera is following
+ */
+int GetScrollFocus(void) {
+	return scrollActor;
+}
+
+
+/**
  * Scroll to abslote position.
  */
-void ScrollTo(int x, int y, int iter) {
+void ScrollTo(int x, int y, int xIter, int yIter) {
 	int Loffset, Toffset;		// for background offsets
 
-	scrollPixels = iter != 0 ? iter : SCROLLPIXELS;
+	scrollPixelsX = xIter != 0 ? xIter : (TinselV2 ? sd.xSpeed : SCROLLPIXELS);
+	scrollPixelsY = yIter != 0 ? yIter : (TinselV2 ? sd.ySpeed : SCROLLPIXELS);
 
 	PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);	// get background offsets
 
@@ -427,6 +499,37 @@ void GetNoScrollData(SCROLLDATA *ssd) {
 
 void RestoreNoScrollData(SCROLLDATA *ssd) {
 	memcpy(&sd, ssd, sizeof(SCROLLDATA));
+}
+
+/**
+ * SetScrollParameters
+ */
+void SetScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTriggerTop,
+		int yTriggerBottom, int yDistance, int ySpeed) {
+	if (xTrigger == 0 && xDistance == 0 && xSpeed == 0
+	 && yTriggerTop == 0 && yTriggerBottom && yDistance == 0 && ySpeed == 0) {
+		// Restore defaults
+		RestoreScrollDefaults();
+	} else {
+		if (xTrigger)
+			sd.xTrigger = xTrigger;
+		if (xDistance)
+			sd.xDistance = xDistance;
+		if (xSpeed)
+			sd.xSpeed = xSpeed;
+		if (yTriggerTop)
+			sd.yTriggerTop = yTriggerTop;
+		if (yTriggerBottom)
+			sd.yTriggerBottom = yTriggerBottom;
+		if (yDistance)
+			sd.yDistance = yDistance;
+		if (ySpeed)
+			sd.ySpeed = ySpeed;
+	}
+}
+
+bool IsScrolling(void) {
+	return (LeftScroll || DownScroll);
 }
 
 } // end of namespace Tinsel

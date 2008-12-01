@@ -28,13 +28,40 @@
 #define TINSEL_TINLIB_H
 
 #include "tinsel/dw.h"
+#include "tinsel/object.h"
+#include "tinsel/palette.h"
 
 namespace Tinsel {
 
+enum EXTREME {
+	EX_USEXY, EX_BOTTOM, EX_BOTTOMLEFT,
+	EX_BOTTOMRIGHT, EX_LEFT, EX_RIGHT,
+	EX_TOP, EX_TOPLEFT, EX_TOPRIGHT
+};
+
+enum WHICH_VER {VER_GLITTER, VER_COMPILE};
+#define VER_LEN 10
+
+// Support functions
+void TinGetVersion(WHICH_VER which, char *buffer, int length);
+
 // Library functions in TINLIB.C
 
-void control(int param);
-void stand(int actor, int x, int y, SCNHANDLE film);
+void ActorBrightness(int actor, int brightness);
+void ActorPalette(int actor, int startColour, int length);
+void Control(int param);
+void HookScene(SCNHANDLE scene, int entrance, int transition);
+void NewScene(CORO_PARAM, SCNHANDLE scene, int entrance, int transition);
+void Offset(EXTREME extreme, int x, int y);
+void RestoreScene(void);
+void ResumeLastGame(void);
+void SaveScene(CORO_PARAM);
+void Stand(CORO_PARAM, int actor, int x, int y, SCNHANDLE film);
+void SetTextPal(COLORREF col);
+
+void KeepOnScreen(OBJECT *pText, int *pTextX, int *pTextY);
+
+enum SPEECH_TYPE { IS_SAY, IS_SAYAT, IS_TALK, IS_TALKAT };
 
 } // end of namespace Tinsel
 

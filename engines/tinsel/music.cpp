@@ -31,12 +31,21 @@
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 #include "sound/audiocd.h"
+#include "sound/adpcm.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 
 #include "tinsel/config.h"
 #include "tinsel/sound.h"
 #include "tinsel/music.h"
+#include "tinsel/handle.h"
+#include "tinsel/sysvar.h"
+
+#define MUSIC_JUMP  (-1)
+#define MUSIC_END (-2)
+#define BLMAGIC (-3458)
+
+#define DIM_SPEED 8
 
 namespace Tinsel {
 
@@ -153,8 +162,8 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 	currentMidi = dwFileOffset;
 	currentLoop = bLoop;
 
-	if (volMidi != 0) {
-		SetMidiVolume(volMidi);
+	if (volMusic != 0) {
+		SetMidiVolume(volMusic);
 		// Support for compressed music from the music enhancement project
 		AudioCD.stop();
 
@@ -191,7 +200,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 
 		// open MIDI sequence file in binary mode
 		if (!midiStream.open(MIDI_FILE))
-			error("Cannot find file %s", MIDI_FILE);
+			error(CANNOT_FIND_FILE, MIDI_FILE);
 
 		// update index of last tune loaded
 		dwLastMidiIndex = dwMidiIndex;
@@ -206,22 +215,22 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 		assert(dwSeqLen > 0 && dwSeqLen <= midiBuffer.size);
 
 		// stop any currently playing tune
-		_vm->_music->stop();
+		_vm->_midiMusic->stop();
 
 		// read the sequence
 		if (midiStream.read(midiBuffer.pDat, dwSeqLen) != dwSeqLen)
-			error("File %s is corrupt", MIDI_FILE);
+			error(FILE_IS_CORRUPT, MIDI_FILE);
 
 		midiStream.close();
 
-		_vm->_music->playXMIDI(midiBuffer.pDat, dwSeqLen, bLoop);
+		_vm->_midiMusic->playXMIDI(midiBuffer.pDat, dwSeqLen, bLoop);
 
 		// Store the length
 		dwLastSeqLen = dwSeqLen;
 	} else {
 	  	// dwMidiIndex == dwLastMidiIndex
-		_vm->_music->stop();
-		_vm->_music->playXMIDI(midiBuffer.pDat, dwSeqLen, bLoop);
+		_vm->_midiMusic->stop();
+		_vm->_midiMusic->playXMIDI(midiBuffer.pDat, dwSeqLen, bLoop);
 	}
 
 	// allow another sequence to play
@@ -235,7 +244,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
  */
 bool MidiPlaying(void) {
 	if (AudioCD.isPlaying()) return true;
-	return _vm->_music->isPlaying();
+	return _vm->_midiMusic->isPlaying();
 }
 
 /**
@@ -246,7 +255,7 @@ bool StopMidi(void) {
 	currentLoop = false;
 
 	AudioCD.stop();
-	_vm->_music->stop();
+	_vm->_midiMusic->stop();
 	return true;
 }
 
@@ -255,7 +264,7 @@ bool StopMidi(void) {
  * Gets the volume of the MIDI music.
  */
 int GetMidiVolume() {
-	return volMidi;
+	return volMusic;
 }
 
 /**
@@ -265,24 +274,24 @@ int GetMidiVolume() {
 void SetMidiVolume(int vol)	{
 	assert(vol >= 0 && vol <= Audio::Mixer::kMaxChannelVolume);
 
-	if (vol == 0 && volMidi == 0) 	{
+	if (vol == 0 && volMusic == 0) 	{
 		// Nothing to do
-	} else if (vol == 0 && volMidi != 0) {
+	} else if (vol == 0 && volMusic != 0) {
 		// Stop current midi sequence
 		AudioCD.stop();
 		StopMidi();
-	} else if (vol != 0 && volMidi == 0) {
+	} else if (vol != 0 && volMusic == 0) {
 		// Perhaps restart last midi sequence
 		if (currentLoop) {
 			PlayMidiSequence(currentMidi, true);
-			_vm->_music->setVolume(vol);
+			_vm->_midiMusic->setVolume(vol);
 		}
-	} else if (vol != 0 && volMidi != 0) {
+	} else if (vol != 0 && volMusic != 0) {
 		// Alter current volume
-		_vm->_music->setVolume(vol);
+		_vm->_midiMusic->setVolume(vol);
 	}
 
-	volMidi = vol;
+	volMusic = vol;
 }
 
 /**
@@ -292,7 +301,7 @@ void OpenMidiFiles(void) {
 	Common::File midiStream;
 
 	// Demo version has no midi file
-	if (_vm->getFeatures() & GF_DEMO)
+	if ((_vm->getFeatures() & GF_DEMO) || (TinselVersion == TINSEL_V2))
 		return;
 
 	if (midiBuffer.pDat)
@@ -301,12 +310,12 @@ void OpenMidiFiles(void) {
 
 	// open MIDI sequence file in binary mode
 	if (!midiStream.open(MIDI_FILE))
-		error("Cannot find file %s", MIDI_FILE);
+		error(CANNOT_FIND_FILE, MIDI_FILE);
 
 	// gen length of the largest sequence
 	midiBuffer.size = midiStream.readUint32LE();
 	if (midiStream.ioFailed())
-		error("File %s is corrupt", MIDI_FILE);
+		error(FILE_IS_CORRUPT, MIDI_FILE);
 
 	if (midiBuffer.size) {
 		// allocate a buffer big enough for the largest MIDI sequence
@@ -327,14 +336,14 @@ void DeleteMidiBuffer() {
 	midiBuffer.pDat = NULL;
 }
 
-MusicPlayer::MusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false) {
+MidiMusicPlayer::MidiMusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false) {
 	memset(_channel, 0, sizeof(_channel));
 	_masterVolume = 0;
 	this->open();
 	_xmidiParser = MidiParser::createParser_XMIDI();
 }
 
-MusicPlayer::~MusicPlayer() {
+MidiMusicPlayer::~MidiMusicPlayer() {
 	_driver->setTimerCallback(NULL, NULL);
 	stop();
 	this->close();
@@ -342,7 +351,7 @@ MusicPlayer::~MusicPlayer() {
 	delete _xmidiParser;
 }
 
-void MusicPlayer::setVolume(int volume) {
+void MidiMusicPlayer::setVolume(int volume) {
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 
 	if (_masterVolume == volume)
@@ -359,7 +368,7 @@ void MusicPlayer::setVolume(int volume) {
 	}
 }
 
-int MusicPlayer::open() {
+int MidiMusicPlayer::open() {
 	// Don't ever call open without first setting the output driver!
 	if (!_driver)
 		return 255;
@@ -372,14 +381,14 @@ int MusicPlayer::open() {
 	return 0;
 }
 
-void MusicPlayer::close() {
+void MidiMusicPlayer::close() {
 	stop();
 	if (_driver)
 		_driver->close();
 	_driver = 0;
 }
 
-void MusicPlayer::send(uint32 b) {
+void MidiMusicPlayer::send(uint32 b) {
 	byte channel = (byte)(b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {
 		// Adjust volume changes by master volume
@@ -409,7 +418,7 @@ void MusicPlayer::send(uint32 b) {
 	}
 }
 
-void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
+void MidiMusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F:	// End of Track
 		if (_looping)
@@ -423,15 +432,15 @@ void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 	}
 }
 
-void MusicPlayer::onTimer(void *refCon) {
-	MusicPlayer *music = (MusicPlayer *)refCon;
+void MidiMusicPlayer::onTimer(void *refCon) {
+	MidiMusicPlayer *music = (MidiMusicPlayer *)refCon;
 	Common::StackLock lock(music->_mutex);
 
 	if (music->_isPlaying)
 		music->_parser->onTimer();
 }
 
-void MusicPlayer::playXMIDI(byte *midiData, uint32 size, bool loop) {
+void MidiMusicPlayer::playXMIDI(byte *midiData, uint32 size, bool loop) {
 	if (_isPlaying)
 		return;
 
@@ -463,7 +472,7 @@ void MusicPlayer::playXMIDI(byte *midiData, uint32 size, bool loop) {
 	}
 }
 
-void MusicPlayer::stop() {
+void MidiMusicPlayer::stop() {
 	Common::StackLock lock(_mutex);
 
 	_isPlaying = false;
@@ -473,14 +482,412 @@ void MusicPlayer::stop() {
 	}
 }
 
-void MusicPlayer::pause() {
+void MidiMusicPlayer::pause() {
 	setVolume(-1);
 	_isPlaying = false;
 }
 
-void MusicPlayer::resume() {
+void MidiMusicPlayer::resume() {
 	setVolume(GetMidiVolume());
 	_isPlaying = true;
+}
+
+PCMMusicPlayer::PCMMusicPlayer() {
+	_silenceSamples = 0;
+
+	_curChunk = 0;
+	_fileName = 0;
+	_state = S_IDLE;
+	_mState = S_IDLE;
+	_scriptNum = -1;
+	_scriptIndex = 0;
+	_forcePlay = false;
+
+	_volume = 255;
+	_dimmed = false;
+	_dimmedTinsel = false;
+	_dimIteration = 0;
+
+	_fadeOutVolume = 0;
+	_fadeOutIteration = 0;
+
+	_end = true;
+
+	_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType,
+			&_handle, this, -1, _volume, 0, false, true);
+}
+
+PCMMusicPlayer::~PCMMusicPlayer() {
+	_vm->_mixer->stopHandle(_handle);
+
+	delete[] _fileName;
+}
+
+void PCMMusicPlayer::startPlay(int id) {
+	if (!_fileName)
+		return;
+
+	debugC(DEBUG_DETAILED, kTinselDebugMusic, "Playing PCM music %s, index %d", _fileName, id);
+
+	Common::StackLock slock(_mutex);
+
+	stop();
+
+	_scriptNum = id;
+	_scriptIndex = 1;
+	_state = S_NEW;
+
+	play();
+}
+
+void PCMMusicPlayer::stopPlay() {
+	Common::StackLock slock(_mutex);
+
+	stop();
+}
+
+int PCMMusicPlayer::readBuffer(int16 *buffer, const int numSamples) {
+	Common::StackLock slock(_mutex);
+
+	if (!_curChunk && ((_state == S_IDLE) || (_state == S_STOP)))
+		return 0;
+
+	int samplesLeft = numSamples;
+
+	while (samplesLeft > 0) {
+		if (_silenceSamples > 0) {
+			int n = MIN(_silenceSamples, samplesLeft);
+
+			memset(buffer, 0, n);
+
+			buffer += n;
+			_silenceSamples -= n;
+			samplesLeft -= n;
+
+		} else if (_curChunk &&
+		          ((_state == S_MID) || (_state == S_NEXT) || (_state == S_NEW))) {
+			int n = _curChunk->readBuffer(buffer, samplesLeft);
+
+			buffer += n;
+			samplesLeft -= n;
+
+			if (_curChunk->endOfData()) {
+				_state = S_END1;
+
+				delete _curChunk;
+				_curChunk = 0;
+			}
+		} else {
+
+			if (!getNextChunk())
+				break;
+		}
+	}
+
+	return (numSamples - samplesLeft);
+}
+
+bool PCMMusicPlayer::isPlaying() const {
+	return ((_state != S_IDLE) && (_state != S_STOP));
+}
+
+bool PCMMusicPlayer::isDimmed() const {
+	return _dimmed;
+}
+
+void PCMMusicPlayer::getTunePlaying(void *voidPtr, int length) {
+	Common::StackLock lock(_mutex);
+
+	debugC(DEBUG_DETAILED, kTinselDebugMusic, "getTunePlaying");
+
+	assert(length == (3 * sizeof(int32)));
+
+	int32 *p = (int32 *) voidPtr;
+
+	_mState = _state;
+
+	p[0] = (int32) _mState;
+	p[1] = _scriptNum;
+	p[2] = _scriptIndex;
+}
+
+void PCMMusicPlayer::restoreThatTune(void *voidPtr) {
+	Common::StackLock lock(_mutex);
+
+	debugC(DEBUG_DETAILED, kTinselDebugMusic, "restoreThatTune");
+
+	int32 *p = (int32 *) voidPtr;
+
+	_mState = (State) p[0];
+	_scriptNum = p[1];
+	_scriptIndex = p[2];
+
+	if (_mState != S_IDLE)
+		_state = S_NEW;
+
+	delete _curChunk;
+	_curChunk = 0;
+
+	_end = false;
+}
+
+void PCMMusicPlayer::setMusicSceneDetails(SCNHANDLE hScript,
+		SCNHANDLE hSegment, const char *fileName) {
+
+	Common::StackLock lock(_mutex);
+
+	stop();
+
+	debugC(DEBUG_INTERMEDIATE, kTinselDebugMusic, "Setting music scene details: %s", fileName);
+
+	_hScript = hScript;
+	_hSegment = hSegment;
+	_fileName = new char[strlen(fileName) + 1];
+	strcpy(_fileName, fileName);
+
+	// Start scene with music not dimmed
+	_dimmed = false;
+	_dimmedTinsel = false;
+	_dimIteration = 0;
+	setVol(255);
+}
+
+void PCMMusicPlayer::setVolume(int volume) {
+	assert((volume >= 0) && (volume <= 100));
+
+	_dimmed = false;
+	setVol((volume * 255) / 100);
+}
+
+void PCMMusicPlayer::setVol(uint8 volume) {
+	_volume = volume;
+
+	_vm->_mixer->setChannelVolume(_handle, _volume);
+}
+
+bool PCMMusicPlayer::getMusicTinselDimmed() const {
+	return _dimmedTinsel;
+}
+
+void PCMMusicPlayer::dim(bool bTinselDim) {
+	if (_dimmed || (_volume == 0) ||
+			(_state == S_IDLE) || !_curChunk || (SysVar(SV_MUSICDIMFACTOR) == 0))
+		return;
+
+	_dimmed = true;
+	if (bTinselDim)
+		_dimmedTinsel = true;
+
+	_dimmedVolume = _volume - (_volume / SysVar(SV_MUSICDIMFACTOR));
+
+	// Iterate down, negative iteration
+	if (!_dimIteration)
+		_dimPosition = _volume;
+	_dimIteration = (_dimmedVolume - _volume)/DIM_SPEED;
+
+	debugC(DEBUG_DETAILED, kTinselDebugMusic, "Dimming music from %d to %d, steps %d", _dimPosition, _dimmedVolume, _dimIteration);
+
+	// And SFX
+	if (SysVar(SYS_SceneFxDimFactor))
+		_vm->_sound->setSFXVolumes(255 - 255/SysVar(SYS_SceneFxDimFactor));
+}
+
+void PCMMusicPlayer::unDim(bool bTinselUnDim) {
+	if (!_dimmed || (_dimmedTinsel && !bTinselUnDim))
+		return; // not dimmed
+
+	_dimmed = _dimmedTinsel = false;
+
+	if ((_volume == 0) || (_state == S_IDLE) || !_curChunk)
+		return;
+
+	// Iterate up, positive iteration
+	if (!_dimIteration)
+		_dimPosition = _dimmedVolume;
+	_dimIteration = (_volume - _dimmedVolume)/DIM_SPEED;
+
+	debugC(DEBUG_DETAILED, kTinselDebugMusic, "UnDimming music from %d to %d, steps %d", _dimPosition, _volume, _dimIteration);
+
+	// And SFX
+	_vm->_sound->setSFXVolumes(255);
+}
+
+void PCMMusicPlayer::dimIteration() {
+	if (_dimIteration != 0)
+	{
+		_dimPosition += _dimIteration;
+		if (_dimPosition >= _volume)
+		{
+			_dimPosition = _volume;
+			_dimIteration = 0;
+		}
+		else if (_dimPosition <= _dimmedVolume)
+		{
+			_dimPosition = _dimmedVolume;
+			_dimIteration = 0;
+		}
+
+		_vm->_mixer->setChannelVolume(_handle, _dimPosition);
+	}
+}
+
+void PCMMusicPlayer::startFadeOut(int ticks) {
+	if ((_volume == 0) || (_state == S_IDLE) || !_curChunk)
+		return;
+
+	debugC(DEBUG_INTERMEDIATE, kTinselDebugMusic, "Fading out music...");
+
+	if (_dimmed) {
+		// Start from dimmed volume and go from there
+		_dimmed = false;
+		_fadeOutVolume = _volume - _volume/SysVar(SV_MUSICDIMFACTOR);
+	} else
+		_fadeOutVolume = _volume;
+
+	assert(ticks != 0);
+	_fadeOutIteration = _fadeOutVolume / ticks;
+
+	fadeOutIteration();
+}
+
+void PCMMusicPlayer::fadeOutIteration() {
+	if ((_volume == 0) || (_state == S_IDLE) || !_curChunk)
+		return;
+
+	_fadeOutVolume = CLIP<int>(_fadeOutVolume -= _fadeOutIteration, 0, 255);
+
+	_vm->_mixer->setChannelVolume(_handle, _fadeOutVolume);
+}
+
+bool PCMMusicPlayer::getNextChunk() {
+	MusicSegment *musicSegments;
+	int32 *script, *scriptBuffer;
+	int id;
+	int snum;
+	uint32 sampleOffset, sampleLength, sampleCLength;
+	Common::File f;
+	byte *buffer;
+	Common::MemoryReadStream *sampleStream;
+
+	switch (_state) {
+	case S_NEW:
+	case S_NEXT:
+		_forcePlay = false;
+
+		script = scriptBuffer = (int32 *) LockMem(_hScript);
+
+		// Set parameters for this chunk of music
+		id = _scriptNum;
+		while(id--)
+			script = scriptBuffer + FROM_LE_32(*script);
+		snum = FROM_LE_32(script[_scriptIndex++]);
+
+		if (snum == MUSIC_JUMP || snum == MUSIC_END)
+		{
+			// Let usual code sort it out!
+			_scriptIndex--;    // Undo increment
+			_forcePlay = true; // Force a Play
+			_state = S_END1;   // 'Goto' S_END1
+			break;
+		}
+
+		musicSegments = (MusicSegment *) LockMem(_hSegment);
+
+		assert(FROM_LE_32(musicSegments[snum].numChannels) == 1);
+		assert(FROM_LE_32(musicSegments[snum].bitsPerSample) == 16);
+
+		sampleOffset = FROM_LE_32(musicSegments[snum].sampleOffset);
+		sampleLength = FROM_LE_32(musicSegments[snum].sampleLength);
+		sampleCLength = (((sampleLength + 63) & ~63)*33)/64;
+
+		if (!f.open(_fileName))
+			error(CANNOT_FIND_FILE, _fileName);
+
+		f.seek(sampleOffset);
+		if (f.ioFailed() || (uint32)f.pos() != sampleOffset)
+			error(FILE_IS_CORRUPT, _fileName);
+
+		buffer = (byte *) malloc(sampleCLength);
+		assert(buffer);
+
+		// read all of the sample
+		if (f.read(buffer, sampleCLength) != sampleCLength)
+			error(FILE_IS_CORRUPT, _fileName);
+
+		sampleStream = new Common::MemoryReadStream(buffer, sampleCLength, true);
+
+		delete _curChunk;
+		_curChunk = makeADPCMStream(sampleStream, true, sampleCLength,
+				Audio::kADPCMTinsel8, 22050, 1, 32);
+
+		_state = S_MID;
+		return true;
+
+	case S_END1:
+		script = scriptBuffer = (int32 *) LockMem(_hScript);
+
+		id = _scriptNum;
+		while(id--)
+			script = scriptBuffer + FROM_LE_32(*script);
+
+		switch (script[_scriptIndex]) {
+
+		case MUSIC_END:
+			_state = S_END2;
+			break;
+
+		case MUSIC_JUMP:
+			_scriptIndex = script[++_scriptIndex];
+			// Fall through
+		default:
+			if (_forcePlay)
+				_state = S_NEW;
+			else
+				_state = S_NEXT;
+			_forcePlay = false;
+			break;
+		}
+
+		return true;
+
+	case S_END2:
+		_silenceSamples = 11025; // Half a second of silence
+		return true;
+
+	case S_END3:
+		stop();
+		_state = S_IDLE;
+		return false;
+
+	case S_IDLE:
+		return false;
+
+	default:
+		break;
+	}
+
+	return true;
+}
+
+void PCMMusicPlayer::play() {
+	if (_curChunk)
+		return;
+	if (_scriptNum == -1)
+		return;
+
+	_end = false;
+
+	getNextChunk();
+}
+
+void PCMMusicPlayer::stop() {
+	delete _curChunk;
+	_curChunk = 0;
+	_scriptNum = -1;
+	_state = S_IDLE;
+	_mState = S_IDLE;
+
+	_end = true;
 }
 
 void CurrentMidiFacts(SCNHANDLE	*pMidi, bool *pLoop) {
@@ -495,9 +902,9 @@ void RestoreMidiFacts(SCNHANDLE	Midi, bool Loop) {
 	currentMidi = Midi;
 	currentLoop = Loop;
 
-	if (volMidi != 0 && Loop) {
+	if (volMusic != 0 && Loop) {
 		PlayMidiSequence(currentMidi, true);
-		SetMidiVolume(volMidi);
+		SetMidiVolume(volMusic);
 	}
 }
 
@@ -546,4 +953,4 @@ void dumpMusic() {
 }
 #endif
 
-} // End of namespace Made
+} // End of namespace Tinsel

@@ -40,17 +40,38 @@ int newestString;
 // buffer for resource strings
 static uint8 *textBuffer = 0;
 
-// language resource string filenames
-static const char *languageFiles[] = {
-	"english.txt",
-	"french.txt",
-	"german.txt",
-	"italian.txt",
-	"spanish.txt"
+static struct {
+	bool		bPresent;
+	const char	*szStem;
+	SCNHANDLE	hDescription;
+	SCNHANDLE	hFlagFilm;
+
+} languages[NUM_LANGUAGES] = {
+
+	{ false, "English",	0, 0 },
+	{ false, "French",	0, 0 },
+	{ false, "German",	0, 0 },
+	{ false, "Italian",	0, 0 },
+	{ false, "Spanish",	0, 0 },
+	{ false, "Hebrew",	0, 0 },
+	{ false, "Magyar",	0, 0 },
+	{ false, "Japanese",0, 0 },
+	{ false, "US",		0, 0 }
 };
+
 
 // Set if we're handling 2-byte characters.
 bool bMultiByte = false;
+
+LANGUAGE textLanguage, sampleLanguage = TXT_ENGLISH;
+
+//----------------- LOCAL DEFINES ----------------------------
+
+#define languageExtension	".txt"
+#define indexExtension		".idx"
+#define sampleExtension		".smp"
+
+//----------------- FUNCTIONS --------------------------------
 
 /**
  * Called to load a resource file for a different language
@@ -59,6 +80,9 @@ bool bMultiByte = false;
 void ChangeLanguage(LANGUAGE newLang) {
 	Common::File f;
 	uint32 textLen = 0;	// length of buffer
+	
+	textLanguage = newLang;
+	sampleLanguage = newLang;
 
 	if (textBuffer) {
 		// free the previous buffer
@@ -69,9 +93,9 @@ void ChangeLanguage(LANGUAGE newLang) {
 	// Try and open the specified language file. If it fails, and the language
 	// isn't English, try falling back on opening 'english.txt' - some foreign
 	// language versions reused it rather than their proper filename
-	if (!f.open(languageFiles[newLang])) {
-		if ((newLang == TXT_ENGLISH) || !f.open(languageFiles[TXT_ENGLISH]))
-			error("Cannot find file %s", languageFiles[newLang]);
+	if (!f.open(_vm->getTextFile(newLang))) {
+		if ((newLang == TXT_ENGLISH) || !f.open(_vm->getTextFile(TXT_ENGLISH)))
+			error(CANNOT_FIND_FILE, _vm->getTextFile(newLang));
 	}
 
 	// Check whether the file is compressed or not -  for compressed files the 
@@ -79,7 +103,7 @@ void ChangeLanguage(LANGUAGE newLang) {
 	// identifier
 	textLen = f.readUint32LE();
 	if (f.ioFailed())
-		error("File %s is corrupt", languageFiles[newLang]);
+		error(FILE_IS_CORRUPT, _vm->getTextFile(newLang));
 
 	if (textLen == CHUNK_STRING || textLen == CHUNK_MBSTRING) {
 		// the file is uncompressed
@@ -101,7 +125,7 @@ void ChangeLanguage(LANGUAGE newLang) {
 		// load data
 		if (f.read(textBuffer, textLen) != textLen)
 			// file must be corrupt if we get to here
-			error("File %s is corrupt", languageFiles[newLang]);
+			error(FILE_IS_CORRUPT, _vm->getTextFile(newLang));
 
 		// close the file
 		f.close();
@@ -111,19 +135,11 @@ void ChangeLanguage(LANGUAGE newLang) {
 }
 
 /**
- * Loads a string resource identified by id.
- * @param id			identifier of string to be loaded
- * @param pBuffer		points to buffer that receives the string
- * @param bufferMax		maximum number of chars to be copied to the buffer
+ * FindStringBase
  */
-int LoadStringRes(int id, char *pBuffer, int bufferMax) {
-#ifdef DEBUG
-	// For diagnostics
-	newestString = id;
-#endif
-
+static byte *FindStringBase(int id) {
 	// base of string resource table
-	uint8 *pText = textBuffer;
+	byte *pText = textBuffer;
 
 	// index into text resource file
 	uint32 index = 0;
@@ -134,20 +150,14 @@ int LoadStringRes(int id, char *pBuffer, int bufferMax) {
 	// number of strings to skip when in the correct chunk
 	int strSkip = id % STRINGS_PER_CHUNK;
 
-	// length of string
-	int len;
-
 	// skip to the correct chunk
 	while (chunkSkip-- != 0) {
 		// make sure chunk id is correct
 		assert(READ_LE_UINT32(pText + index) == CHUNK_STRING || READ_LE_UINT32(pText + index) == CHUNK_MBSTRING);
 
 		if (READ_LE_UINT32(pText + index + sizeof(uint32)) == 0) {
-			// TEMPORARY DIRTY BODGE
-			strcpy(pBuffer, "!! HIGH STRING !!");
-
 			// string does not exist
-			return 0;
+			return NULL;
 		}
 
 		// get index to next chunk
@@ -163,17 +173,114 @@ int LoadStringRes(int id, char *pBuffer, int bufferMax) {
 	// skip to the correct string
 	while (strSkip-- != 0) {
 		// skip to next string
-		pText += *pText + 1;
+
+		if (!TinselV2 || ((*pText & 0x80) == 0)) {
+			// Tinsel 1, or string of length < 128
+			pText += *pText + 1;
+		} else if (*pText == 0x80) {
+			// string of length 128 - 255
+			pText++;		// skip control byte
+			pText += *pText + 1;
+		} else if (*pText == 0x90) {
+			// string of length 256 - 511
+			pText++;		// skip control byte
+			pText += *pText + 1 + 256;
+		} else {	// multiple string
+			int subCount;
+
+			subCount = *pText & ~0x80;
+			pText++;		// skip control byte
+
+			// skip prior sub-strings
+			while (subCount--) {
+				// skip control byte, if there is one
+				if (*pText == 0x80) {
+					pText++;
+					pText += *pText + 1;
+				} else if (*pText == 0x90) {
+					pText++;
+					pText += *pText + 1 + 256;
+				} else
+					pText += *pText + 1;
+			}
+		}
 	}
 
-	// get length of string
-	len = *pText;
+	return pText;
+}
 
-	if (len) {
+
+/**
+ * Loads a string resource identified by id.
+ * @param id			identifier of string to be loaded
+ * @param pBuffer		points to buffer that receives the string
+ * @param bufferMax		maximum number of chars to be copied to the buffer
+ */
+int LoadStringResource(int id, int sub, char *pBuffer, int bufferMax) {
+	int len;	// length of string
+
+	byte *pText = FindStringBase(id);
+
+	if (pText == NULL) {
+		strcpy(pBuffer, "!! HIGH STRING !!");
+		return 0;
+	}
+
+	if (!TinselV2 || ((*pText & 0x80) == 0)) {
+		// get length of string
+		len = *pText;
+	} else if (*pText == 0x80) {
+		// string of length 128 - 255
+		pText++;		// skip control byte
+
+		// get length of string
+		len = *pText;
+	} else if (*pText == 0x90) {
+		// string of length 128 - 255
+		pText++;		// skip control byte
+
+		// get length of string
+		len = *pText + 256;
+	} else {
+		// multiple string
+		pText++;		// skip control byte
+
+		// skip prior sub-strings
+		while (sub--) {
+			// skip control byte, if there is one
+			if (*pText == 0x80) {
+				pText++;
+				pText += *pText + 1;
+			} else if (*pText == 0x90) {
+				pText++;
+				pText += *pText + 1 + 256;
+			} else
+				pText += *pText + 1;
+		}
+		// skip control byte, if there is one
+		if (*pText == 0x80) {
+			pText++;
+
+			// get length of string
+			len = *pText;
+		} else if (*pText == 0x90) {
+			pText++;
+
+			// get length of string
+			len = *pText + 256;
+		} else {
+			// get length of string
+			len = *pText;
+		}
+	}
+
+	if (len)
+	{
 		// the string exists
 
 		// copy the string to the buffer
-		if (len < bufferMax) {
+		if (len < bufferMax)
+		{
 			memcpy(pBuffer, pText + 1, len);
 
 			// null terminate
@@ -199,11 +306,124 @@ int LoadStringRes(int id, char *pBuffer, int bufferMax) {
 	return 0;
 }
 
+int LoadStringRes(int id, char *pBuffer, int bufferMax) {
+	return LoadStringResource(id, 0, pBuffer, bufferMax);
+}
+
+/**
+ * Loads a string resource identified by id
+ * @param id			identifier of string to be loaded
+ * @param sub			sub-string number
+ * @param pBuffer		points to buffer that receives the string
+ * @param bufferMax		maximum number of chars to be copied to the buffer
+ */
+int LoadSubString(int id, int sub, char *pBuffer, int bufferMax) {
+	return LoadStringResource(id, sub, pBuffer, bufferMax);
+}
+
+/**
+ * SubStringCount
+ * @param id			Identifier of string to be tested
+ */
+int SubStringCount(int id) {
+	byte *pText;
+
+	pText = FindStringBase(id);
+
+	if (pText == NULL)
+		return 0;
+
+	if ((*pText & 0x80) == 0 || *pText == 0x80 || *pText == 0x90) {
+		// string of length < 128 or string of length 128 - 255
+		// or of length 256 - 511
+		return 1;
+	} else
+		return (*pText & ~0x80);
+}
+
+
 void FreeTextBuffer() {
 	if (textBuffer) {
 		free(textBuffer);
 		textBuffer = NULL;
 	}
+}
+
+/**
+ * Called from TINLIB.C from DeclareLanguage().
+ */
+
+void LanguageFacts(int language, SCNHANDLE hDescription, SCNHANDLE hFlagFilm) {
+	assert(language >= 0 && language < NUM_LANGUAGES);
+
+	languages[language].hDescription = hDescription;
+	languages[language].hFlagFilm	 = hFlagFilm;
+}
+
+/**
+ * Gets the current subtitles language
+ */
+LANGUAGE TextLanguage(void) {
+	return textLanguage;
+}
+
+/**
+ * Gets the current voice language
+ */
+LANGUAGE SampleLanguage(void) {
+	return sampleLanguage;
+}
+
+int NumberOfLanguages(void) {
+	int i, count;
+
+	for (i = 0, count = 0; i < NUM_LANGUAGES; i++) {
+		if (languages[i].bPresent)
+			count++;
+	}
+	return count;
+}
+
+LANGUAGE NextLanguage(LANGUAGE thisOne) {
+	int i;
+
+	for (i = thisOne+1; i < NUM_LANGUAGES; i++) {
+		if (languages[i].bPresent) 
+			return (LANGUAGE)i;
+	}
+
+	for (i = 0; i < thisOne; i++) {
+		if (languages[i].bPresent) 
+			return (LANGUAGE)i;
+	}
+
+	// No others!
+	return thisOne;
+}
+
+LANGUAGE PrevLanguage(LANGUAGE thisOne) {
+	int i;
+
+	for (i = thisOne-1; i >= 0; i--) {
+		if (languages[i].bPresent) 
+			return (LANGUAGE)i;
+	}
+
+	for (i = NUM_LANGUAGES-1; i > thisOne; i--) {
+		if (languages[i].bPresent) 
+			return (LANGUAGE)i;
+	}
+
+	// No others!
+	return thisOne;
+}
+
+SCNHANDLE LanguageDesc(LANGUAGE thisOne) {
+	return languages[thisOne].hDescription;
+}
+
+SCNHANDLE LanguageFlag(LANGUAGE thisOne) {
+	return languages[thisOne].hFlagFilm;
 }
 
 } // end of namespace Tinsel

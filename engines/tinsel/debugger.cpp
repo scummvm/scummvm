@@ -25,7 +25,7 @@
 
 #include "tinsel/tinsel.h"
 #include "tinsel/debugger.h"
-#include "tinsel/inventory.h"
+#include "tinsel/dialogs.h"
 #include "tinsel/pcode.h"
 #include "tinsel/scene.h"
 #include "tinsel/sound.h"

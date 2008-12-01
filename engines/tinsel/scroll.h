@@ -30,8 +30,10 @@ namespace Tinsel {
 
 #define SCROLLPIXELS 8	// Number of pixels to scroll per iteration
 
-#define RLDISTANCE 50	// Distance from edge that triggers a scroll
-#define UDDISTANCE 20
+// Distance from edge that triggers a scroll
+#define RLDISTANCE (TinselV2 ? sd.xTrigger : 50)
+#define UDISTANCE (TinselV2 ? sd.yTriggerTop : 20)
+#define DDISTANCE (TinselV2 ? sd.yTriggerBottom : 20)
 
 // Number of iterations to make
 #define RLSCROLL 160	// 20*8 = 160 = half a screen
@@ -52,25 +54,38 @@ struct SCROLLDATA{
 	NOSCROLLB NoVScroll[MAX_VNOSCROLL];	// Vertical no-scroll boundaries
 	NOSCROLLB NoHScroll[MAX_HNOSCROLL];	// Horizontal no-scroll boundaries
 	unsigned NumNoV, NumNoH;		// Counts of no-scroll boundaries
+	// DW2 fields
+	int xTrigger;
+	int xDistance;
+	int xSpeed;
+	int yTriggerTop;
+	int yTriggerBottom;
+	int yDistance;
+	int ySpeed;
 };
-
 
 
 void DontScrollCursor(void);
 void DoScrollCursor(void);
 
 void SetNoScroll(int x1, int y1, int x2, int y2);
-void DropNoScrolls(void);
+void DropScroll(void);
 
 void ScrollProcess(CORO_PARAM, const void *);
 
 void ScrollFocus(int actor);
-void ScrollTo(int x, int y, int iter);
+int GetScrollFocus(void);
+void ScrollTo(int x, int y, int xIter, int yIter);
 
 void KillScroll(void);
 
 void GetNoScrollData(SCROLLDATA *ssd);
 void RestoreNoScrollData(SCROLLDATA *ssd);
+
+void SetScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTriggerTop,
+		int yTriggerBottom, int yDistance, int ySpeed);
+
+bool IsScrolling(void);
 
 } // end of namespace Tinsel
 

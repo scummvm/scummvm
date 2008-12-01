@@ -37,6 +37,9 @@ namespace Tinsel {
 // current background
 BACKGND *pCurBgnd = NULL;
 
+// FIXME: Not yet used
+static bool bEntireRedraw;
+
 /**
  * Called to initialise a background.
  * @param pBgnd			Pointer to data struct for current background
@@ -122,6 +125,27 @@ void PlayfieldGetPos(int which, int *pXpos, int *pYpos) {
 	// get current integer position
 	*pXpos = fracToInt(pPlayfield->fieldX);
 	*pYpos = fracToInt(pPlayfield->fieldY);
+}
+
+/**
+ * Returns the x position of the centre of the specified playfield
+ * @param which			Which playfield
+ */
+
+int PlayfieldGetCentreX(int which) {
+	PLAYFIELD *pPlayfield; // pointer to relavent playfield
+
+	// make sure there is a background
+	assert(pCurBgnd != NULL);
+
+	// make sure the playfield number is in range
+	assert(which >= 0 && which < pCurBgnd->numPlayfields);
+
+	// get playfield pointer
+	pPlayfield = pCurBgnd->fieldArray + which;
+
+	// get current integer position
+	return fracToInt(pPlayfield->fieldX) + SCREEN_WIDTH/2;
 }
 
 /**
@@ -228,5 +252,10 @@ void DrawBackgnd(void) {
 	// delete all the clipping rectangles
 	ResetClipRect();
 }
+
+void ForceEntireRedraw(void) {
+	bEntireRedraw = true;
+}
+
 
 } // end of namespace Tinsel

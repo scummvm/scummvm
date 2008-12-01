@@ -29,13 +29,12 @@
 #include "tinsel/cliprect.h"	// object clip rect defs
 #include "tinsel/graphics.h"	// low level interface
 #include "tinsel/handle.h"
+#include "tinsel/text.h"
+#include "tinsel/tinsel.h"
 
 #define	OID_EFFECTS	0x2000			// generic special effects object id
 
 namespace Tinsel {
-
-/** screen clipping rectangle */
-static const Common::Rect rcScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 // list of all objects
 OBJECT *objectList = 0;
@@ -194,6 +193,7 @@ void InsertObject(OBJECT *pObjList, OBJECT *pInsObj) {
  */
 void DelObject(OBJECT *pObjList, OBJECT *pDelObj) {
 	OBJECT *pPrev, *pObj;	// object list traversal pointers
+	const Common::Rect rcScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// validate object pointer
 	assert(pDelObj >= objectList && pDelObj <= objectList + NUM_OBJECTS - 1);
@@ -232,7 +232,9 @@ void DelObject(OBJECT *pObjList, OBJECT *pDelObj) {
 	}
 
 	// if we get to here - object has not been found on the list
-	error("DelObject(): formally 'assert(0)!'");
+	// This can be triggered in Act 3 in DW1 while talking to the guard,
+	// so this has been turned to a warning instead of an error
+	warning("DelObject(): formally 'assert(0)!'");
 }
 
 
@@ -313,7 +315,7 @@ void GetAniOffset(SCNHANDLE hImg, int flags, int *pAniX, int *pAniY) {
 			// we are flipped vertically
 
 			// set ani Y = -ani Y + height - 1
-			*pAniY = -*pAniY + FROM_LE_16(pImg->imgHeight) - 1;
+			*pAniY = -*pAniY + (FROM_LE_16(pImg->imgHeight) & ~C16_FLAG_MASK) - 1;
 		}
 	} else
 		// null image
@@ -365,21 +367,25 @@ OBJECT *InitObject(const OBJ_INIT *pInitTbl) {
 	// get pointer to image
 	if (pInitTbl->hObjImg) {
 		int aniX, aniY;		// objects animation offsets
-		PALQ *pPalQ;		// palette queue pointer
+		PALQ *pPalQ = NULL;	// palette queue pointer
 		const IMAGE *pImg = (const IMAGE *)LockMem(pInitTbl->hObjImg);	// handle to image
 
-		// allocate a palette for this object
-		pPalQ = AllocPalette(FROM_LE_32(pImg->hImgPal));
+		if (pImg->hImgPal) {
+			// allocate a palette for this object
+			pPalQ = AllocPalette(FROM_LE_32(pImg->hImgPal));
 
-		// make sure palette allocated
-		assert(pPalQ != NULL);
+			// make sure palette allocated
+			assert(pPalQ != NULL);
+		}
 
 		// assign palette to object
 		pObj->pPal = pPalQ;
 
 		// set objects size
 		pObj->width  = FROM_LE_16(pImg->imgWidth);
-		pObj->height = FROM_LE_16(pImg->imgHeight);
+		pObj->height = FROM_LE_16(pImg->imgHeight) & ~C16_FLAG_MASK;
+		pObj->flags &= ~C16_FLAG_MASK;
+		pObj->flags |= FROM_LE_16(pImg->imgHeight) & C16_FLAG_MASK;
 
 		// set objects bitmap definition
 		pObj->hBits = FROM_LE_32(pImg->hImgBits);
@@ -434,7 +440,9 @@ void AnimateObjectFlags(OBJECT *pAniObj, int newflags, SCNHANDLE hNewImg) {
 
 			// setup new shape
 			pAniObj->width  = FROM_LE_16(pNewImg->imgWidth);
-			pAniObj->height = FROM_LE_16(pNewImg->imgHeight);
+			pAniObj->height = FROM_LE_16(pNewImg->imgHeight) & ~C16_FLAG_MASK;
+			newflags &= ~C16_FLAG_MASK;
+			newflags |= pNewImg->imgHeight & C16_FLAG_MASK;
 
 			// set objects bitmap definition
 			pAniObj->hBits  = FROM_LE_32(pNewImg->hImgBits);

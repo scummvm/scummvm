@@ -47,10 +47,15 @@ byte *FindChunk(SCNHANDLE handle, uint32 chunk) {
 	uint32 *lptr = (uint32 *)bptr;
 	uint32 add;
 
-	// V1 chunk types can be found by substracting 2 from the
+	// Initial adjustmnet for Tinsel 1 chunk types
+	if ((TinselVersion != TINSEL_V2) && (chunk >= CHUNK_SCENE) &&
+		(chunk != CHUNK_MBSTRING))
+		--chunk;
+
+	// V0 chunk types can be found by substracting 2 from the
 	// chunk type. Note that CHUNK_STRING and CHUNK_BITMAP are
-	// the same in V1 and V2
-	if (_vm->getVersion() == TINSEL_V0 && 
+	// the same in V0 and V1
+	if (TinselVersion == TINSEL_V0 && 
 		chunk != CHUNK_STRING && chunk != CHUNK_BITMAP)
 		chunk -= 0x2L;
 
@@ -70,10 +75,10 @@ byte *FindChunk(SCNHANDLE handle, uint32 chunk) {
 /**
  * Get the actor id from a film (column 0)
  */
-int extractActor(SCNHANDLE film) {
-	const FILM *pfilm = (const FILM *)LockMem(film);
-	const FREEL *preel = &pfilm->reels[0];
-	const MULTI_INIT *pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(preel->mobj));
+int ExtractActor(SCNHANDLE hFilm) {
+	const FILM *pFilm = (const FILM *)LockMem(hFilm);
+	const FREEL *pReel = &pFilm->reels[0];
+	const MULTI_INIT *pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(pReel->mobj));
 	return (int)FROM_LE_32(pmi->mulID);
 }
 

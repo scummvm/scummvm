@@ -29,31 +29,11 @@
 #include "tinsel/multiobj.h"	// multi-part object defintions etc.
 #include "tinsel/object.h"
 #include "tinsel/sched.h"
+#include "tinsel/tinsel.h"
 
 #include "common/util.h"
 
 namespace Tinsel {
-
-/** Animation script commands */
-enum {
-	ANI_END			= 0,	//!< end of animation script
-	ANI_JUMP		= 1,	//!< animation script jump
-	ANI_HFLIP		= 2,	//!< flip animated object horizontally
-	ANI_VFLIP		= 3,	//!< flip animated object vertically
-	ANI_HVFLIP		= 4,	//!< flip animated object in both directions
-	ANI_ADJUSTX		= 5,	//!< adjust animated object x animation point
-	ANI_ADJUSTY		= 6,	//!< adjust animated object y animation point
-	ANI_ADJUSTXY	= 7,	//!< adjust animated object x & y animation points
-	ANI_NOSLEEP		= 8,	//!< do not sleep for this frame
-	ANI_CALL		= 9,	//!< call routine
-	ANI_HIDE		= 10	//!< hide animated object
-};
-
-/** animation script command possibilities */
-union ANI_SCRIPT {
-	int32 op;		//!< treat as an opcode or operand
-	uint32 hFrame;	//!< treat as a animation frame handle
-};
 
 /**
  * Advance to next frame routine.
@@ -64,6 +44,9 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 	const ANI_SCRIPT *pAni = (const ANI_SCRIPT *)LockMem(pAnim->hScript);
 
 	while (1) {	// repeat until a real image
+		debugC(DEBUG_DETAILED, kTinselDebugAnimations, 
+		"DoNextFrame %ph index=%d, op=%xh", (byte *)pAnim, pAnim->scriptIndex, 
+		FROM_LE_32(pAni[pAnim->scriptIndex].op));
 
 		switch ((int32)FROM_LE_32(pAni[pAnim->scriptIndex].op)) {
 		case ANI_END:	// end of animation script
@@ -104,7 +87,6 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 
 			// go fetch a real image
 			break;
-
 		case ANI_HVFLIP:	// flip animated object in both directions
 
 			// next opcode
@@ -230,6 +212,12 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 void InitStepAnimScript(ANIM *pAnim, OBJECT *pAniObj, SCNHANDLE hNewScript, int aniSpeed) {
 	OBJECT *pObj;			// multi-object list iterator
 
+	debugC(DEBUG_DETAILED, kTinselDebugAnimations, 
+		"InitStepAnimScript Object=(%d,%d,%xh) script=%xh aniSpeed=%d rec=%ph",
+		!pAniObj ? 0 : fracToInt(pAniObj->xPos),
+		!pAniObj ? 0 : fracToInt(pAniObj->yPos),
+		!pAniObj ? 0 : pAniObj->hImg, hNewScript, aniSpeed, (byte *)pAnim);
+
 	pAnim->aniDelta = 1;		// will animate on next call to NextAnimRate
 	pAnim->pObject = pAniObj;	// set object to animate
 	pAnim->hScript = hNewScript;	// set animation script
@@ -254,9 +242,13 @@ SCRIPTSTATE StepAnimScript(ANIM *pAnim) {
 		// re-init animation delta counter
 		pAnim->aniDelta = pAnim->aniRate;
 
-		// move to next frame
-		while ((state = DoNextFrame(pAnim)) == ScriptNoSleep)
-			;
+		if (TinselV2)
+			state = DoNextFrame(pAnim);
+		else {
+			// move to next frame
+			while ((state = DoNextFrame(pAnim)) == ScriptNoSleep)
+				;
+		}
 
 		return state;
 	}
@@ -274,7 +266,7 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 	// get a pointer to the script
 	const ANI_SCRIPT *pAni = (const ANI_SCRIPT *)LockMem(pAnim->hScript);
 
-	if (numFrames <= 0)
+	if (!TinselV2 && (numFrames <= 0))
 		// do nothing
 		return;
 
@@ -282,9 +274,10 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 
 		switch ((int32)FROM_LE_32(pAni[pAnim->scriptIndex].op)) {
 		case ANI_END:	// end of animation script
-			// going off the end is probably a error
-			error("SkipFrames(): formally 'assert(0)!'");
-			break;
+			// going off the end is probably a error, but only in Tinsel 1
+			if (!TinselV2)
+				error("SkipFrames(): formally 'assert(0)!'");
+			return;
 
 		case ANI_JUMP:	// do animation jump
 
@@ -293,6 +286,10 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 
 			// jump to new frame position
 			pAnim->scriptIndex += (int32)FROM_LE_32(pAni[pAnim->scriptIndex].op);
+
+			if (TinselV2)
+				// Done if skip to jump
+				return;
 			break;
 
 		case ANI_HFLIP:	// flip animated object horizontally
@@ -383,7 +380,10 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 		default:	// must be an actual animation frame handle
 
 			// one less frame
-			if (numFrames-- > 0) {
+			if (numFrames == 0)
+				return;
+
+			if (numFrames == -1 || numFrames-- > 0) {
 				// next opcode
 				pAnim->scriptIndex++;
 			} else {
@@ -400,5 +400,49 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 		}
 	}
 }
+
+/**
+ * About to jump or end
+ * @param pAnim			Animation data structure
+ */
+bool AboutToJumpOrEnd(PANIM pAnim) {
+	if (pAnim->aniDelta == 1) {
+		// get a pointer to the script
+		ANI_SCRIPT *pAni = (ANI_SCRIPT *)LockMem(pAnim->hScript);
+		int	zzz = pAnim->scriptIndex;
+
+		for (;;) {
+			// repeat until a real image
+			switch (FROM_LE_32(pAni[zzz].op)) {
+			case ANI_END:		// end of animation script
+			case ANI_JUMP:		// do animation jump
+				return true;
+
+			case ANI_HFLIP:		// flip animated object horizontally
+			case ANI_VFLIP:		// flip animated object vertically
+			case ANI_HVFLIP:	// flip animated object in both directions
+				zzz++;
+				break;
+
+			case ANI_ADJUSTX:	// adjust animated object x animation point
+			case ANI_ADJUSTY:	// adjust animated object y animation point
+				zzz += 2;
+				break;
+
+			case ANI_ADJUSTXY:	// adjust animated object x & y animation points
+				zzz += 3;
+				break;
+
+			case ANI_HIDE:		// hide animated object
+			default:		// must be an actual animation frame handle
+				return false;
+			}
+		}
+	}
+
+	return false;
+}
+
+
 
 } // end of namespace Tinsel

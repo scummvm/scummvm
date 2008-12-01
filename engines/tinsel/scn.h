@@ -30,6 +30,14 @@
 
 namespace Tinsel {
 
+#define	INDEX_FILENAME		"index"		// name of scene index file
+#define	INDEXFILE_LENGTH	12			// length of filenames in the MEMHANDLE structure
+
+#define	GLOBALS_FILENAME	"gdata"		// name of globals file
+#define HOPPER_FILENAME		"hopper"
+#define CD_ID_FILENAME		"volume"
+
+#define BMOVIE_EXTENSION	".bmv"
 
 // chunk identifier numbers
 
@@ -48,20 +56,42 @@ namespace Tinsel {
 #define	CHUNK_ENTRANCE			0x3334000BL	// not used!
 #define	CHUNK_POLYGONS			0x3334000CL	// not used!
 #define	CHUNK_ACTORS			0x3334000DL	// not used!
-#define	CHUNK_SCENE				0x3334000EL
-#define	CHUNK_TOTAL_ACTORS		0x3334000FL
-#define	CHUNK_TOTAL_GLOBALS		0x33340010L
-#define	CHUNK_TOTAL_OBJECTS		0x33340011L
-#define	CHUNK_OBJECTS			0x33340012L
-#define	CHUNK_MIDI				0x33340013L	// not used!
-#define	CHUNK_SAMPLE			0x33340014L	// not used!
-#define	CHUNK_TOTAL_POLY		0x33340015L
-#define	CHUNK_MBSTRING			0x33340022L	// Multi-byte characters
+
+#define CHUNK_PROCESSES			0x3334000EL // Tinsel 2 only
+
+// Following chunk Ids should be decremented by 1 for Tinsel 1
+#define	CHUNK_SCENE				0x3334000FL
+#define	CHUNK_TOTAL_ACTORS		0x33340010L
+#define	CHUNK_TOTAL_GLOBALS		0x33340011L
+#define	CHUNK_TOTAL_OBJECTS		0x33340012L
+#define	CHUNK_OBJECTS			0x33340013L
+#define	CHUNK_MIDI				0x33340014L	// not used!
+#define	CHUNK_SAMPLE			0x33340015L	// not used!
+#define	CHUNK_TOTAL_POLY		0x33340016L
+
+// Following chunks are Tinsel 2 only
+#define CHUNK_NUM_PROCESSES		0x33340017L	// Master scene only
+#define CHUNK_MASTER_SCRIPT		0x33340018L
+#define CHUNK_CDPLAY_FILENUM	0x33340019L
+#define CHUNK_CDPLAY_HANDLE		0x3334001AL
+#define CHUNK_CDPLAY_FILENAME	0x3334001BL
+#define CHUNK_MUSIC_FILENAME	0x3334001CL
+#define CHUNK_MUSIC_SCRIPT		0x3334001DL
+#define CHUNK_MUSIC_SEGMENT		0x3334001EL
+#define CHUNK_SCENE_HOPPER		0x3334001FL	// Hopper file only
+#define CHUNK_SCENE_HOPPER2		0x33340030L	// Hopper file only
+#define CHUNK_TIME_STAMPS		0x33340020L
+
+// This single chunk is common to all Tinsel versions
+#define	CHUNK_MBSTRING			0x33340022L
+
+// This is a base, subsequent numbers may also get used
+#define CHUNK_GRAB_NAME			0x33340100L
 
 #define	INDEX_FILENAME		"index"	// name of index file
 
 byte *FindChunk(SCNHANDLE handle, uint32 chunk);
-int extractActor(SCNHANDLE film);
+int ExtractActor(SCNHANDLE hFilm);
 
 } // end of namespace Tinsel
 

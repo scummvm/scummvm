@@ -24,6 +24,7 @@
  * Functions to set up moving actors' reels.
  */
 
+#include "tinsel/handle.h"
 #include "tinsel/pcode.h"	// For D_UP, D_DOWN
 #include "tinsel/rince.h"
 
@@ -34,7 +35,7 @@ namespace Tinsel {
 //----------------- LOCAL GLOBAL DATA --------------------
 
 enum {
-	NUM_INTERVALS = NUM_MAINSCALES - 1,
+	NUM_INTERVALS = REQ_MAIN_SCALES - 1,
 
 	// 2 for up and down, 3 allow enough entries for 3 fully subscribed moving actors' worth
 	MAX_SCRENTRIES = NUM_INTERVALS*2*3
@@ -52,35 +53,79 @@ static SCIdataStruct SCIdata[MAX_SCRENTRIES];
 static int scrEntries = 0;
 
 /**
+ * Sets an actor's walk reels
+ */
+
+void SetWalkReels(PMOVER pMover, int scale,
+		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa) {
+	assert(scale > 0 && scale <= TOTAL_SCALES);
+
+	pMover->walkReels[scale-1][LEFTREEL] = al;
+	pMover->walkReels[scale-1][RIGHTREEL] = ar;
+	pMover->walkReels[scale-1][FORWARD] = af;
+	pMover->walkReels[scale-1][AWAY] = aa;
+}
+
+
+/**
+ * Sets an actor's stand reels
+ */
+
+void SetStandReels(PMOVER pMover, int scale,
+		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa) {
+	assert(scale > 0 && scale <= TOTAL_SCALES);
+
+	pMover->standReels[scale-1][LEFTREEL] = al;
+	pMover->standReels[scale-1][RIGHTREEL] = ar;
+	pMover->standReels[scale-1][FORWARD] = af;
+	pMover->standReels[scale-1][AWAY] = aa;
+}
+
+
+/**
+ * Sets an actor's talk reels
+ */
+
+void SetTalkReels(PMOVER pMover, int scale,
+		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa) {
+	assert(scale > 0 && scale <= TOTAL_SCALES);
+
+	pMover->talkReels[scale-1][LEFTREEL] = al;
+	pMover->talkReels[scale-1][RIGHTREEL] = ar;
+	pMover->talkReels[scale-1][FORWARD] = af;
+	pMover->talkReels[scale-1][AWAY] = aa;
+}
+
+/**
  * Return handle to actor's talk reel at present scale and direction.
  */
-SCNHANDLE GetMactorTalkReel(PMACTOR pActor, TFTYPE dirn) {
+SCNHANDLE GetMoverTalkReel(PMOVER pActor, TFTYPE dirn) {
 	assert(1 <= pActor->scale && pActor->scale <= TOTAL_SCALES);
 	switch (dirn) {
 	case TF_NONE:
-		return pActor->TalkReels[pActor->scale-1][pActor->dirn];
+		return pActor->talkReels[pActor->scale-1][pActor->direction];
 
 	case TF_UP:
-		return pActor->TalkReels[pActor->scale-1][AWAY];
+		return pActor->talkReels[pActor->scale-1][AWAY];
 
 	case TF_DOWN:
-		return pActor->TalkReels[pActor->scale-1][FORWARD];
+		return pActor->talkReels[pActor->scale-1][FORWARD];
 
 	case TF_LEFT:
-		return pActor->TalkReels[pActor->scale-1][LEFTREEL];
+		return pActor->talkReels[pActor->scale-1][LEFTREEL];
 
 	case TF_RIGHT:
-		return pActor->TalkReels[pActor->scale-1][RIGHTREEL];
+		return pActor->talkReels[pActor->scale-1][RIGHTREEL];
 
 	default:
-		error("GetMactorTalkReel() - illegal direction!");
+		error("GetMoverTalkReel() - illegal direction!");
 	}
 }
 
 /**
  * scalingreels
  */
-void setscalingreels(int actor, int scale, int direction,
+void SetScalingReels(int actor, int scale, int direction,
 		SCNHANDLE left, SCNHANDLE right, SCNHANDLE forward, SCNHANDLE away) {
 	assert(scale >= 1 && scale <= NUM_MAINSCALES); // invalid scale
 	assert(!(scale == 1 && direction == D_UP) &&
@@ -101,7 +146,7 @@ void setscalingreels(int actor, int scale, int direction,
 /**
  * ScalingReel
  */
-SCNHANDLE ScalingReel(int ano, int scale1, int scale2, DIRREEL reel) {
+SCNHANDLE ScalingReel(int ano, int scale1, int scale2, DIRECTION reel) {
 	int d;	// Direction
 
 	// The smaller the number, the bigger the scale
@@ -127,6 +172,22 @@ SCNHANDLE ScalingReel(int ano, int scale1, int scale2, DIRREEL reel) {
 void RebootScalingReels(void) {
 	scrEntries = 0;
 	memset(SCIdata, 0, sizeof(SCIdata));
+}
+
+/**
+ * Discourage them from being ditched.
+ */
+void TouchMoverReels(void) {
+	PMOVER	pMover;
+	int	scale;
+
+	pMover = NextMover(NULL);
+
+	do {
+		for (scale = 0; scale < TOTAL_SCALES; scale++) {
+			TouchMem(pMover->walkReels[scale][LEFTREEL]);
+		}
+	} while ((pMover = NextMover(pMover)) != NULL);
 }
 
 } // end of namespace Tinsel

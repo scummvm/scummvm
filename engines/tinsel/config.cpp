@@ -24,6 +24,8 @@
  * This file contains configuration functionality
  */
 
+//#define USE_3FLAGS 1
+
 #include "tinsel/config.h"
 #include "tinsel/dw.h"
 #include "tinsel/sound.h"
@@ -39,7 +41,7 @@ namespace Tinsel {
 //----------------- GLOBAL GLOBAL DATA --------------------
 
 int dclickSpeed = DOUBLE_CLICK_TIME;
-int volMidi = Audio::Mixer::kMaxChannelVolume;
+int volMusic = Audio::Mixer::kMaxChannelVolume;
 int volSound = Audio::Mixer::kMaxChannelVolume;
 int volVoice = Audio::Mixer::kMaxChannelVolume;
 int speedText = DEFTEXTSPEED;
@@ -49,21 +51,18 @@ LANGUAGE g_language = TXT_ENGLISH;
 int bAmerica = 0;
 
 
-// Shouldn't really be here, but time is short...
-bool bNoBlocking;
 
 /**
  * Write settings to config manager and flush the config file to disk.
  */
 void WriteConfig(void) {
 	ConfMan.setInt("dclick_speed", dclickSpeed);
-	ConfMan.setInt("music_volume", volMidi);
+	ConfMan.setInt("music_volume", volMusic);
 	ConfMan.setInt("sfx_volume", volSound);
 	ConfMan.setInt("speech_volume", volVoice);
 	ConfMan.setInt("talkspeed", (speedText * 255) / 100);
 	ConfMan.setBool("subtitles", bSubtitles);
 	//ConfMan.setBool("swap_buttons", bSwapButtons ? 1 : 0);
-	//ConfigData.bAmerica = bAmerica;		// EN_USA / EN_GRB
 
 	// Store language for multilingual versions
 	if ((_vm->getFeatures() & GF_USE_3FLAGS) || (_vm->getFeatures() & GF_USE_4FLAGS) || (_vm->getFeatures() & GF_USE_5FLAGS)) {
@@ -92,16 +91,14 @@ void WriteConfig(void) {
 	ConfMan.flushToDisk();
 }
 
-/*---------------------------------------------------------------------*\
-|	ReadConfig()							|
-|-----------------------------------------------------------------------|
-|
-\*---------------------------------------------------------------------*/
+/**
+ * Read configuration settings from the config file into memory
+ */
 void ReadConfig(void) {
 	if (ConfMan.hasKey("dclick_speed"))
 		dclickSpeed = ConfMan.getInt("dclick_speed");
 
-	volMidi = ConfMan.getInt("music_volume");
+	volMusic = ConfMan.getInt("music_volume");
 	volSound = ConfMan.getInt("sfx_volume");
 	volVoice = ConfMan.getInt("speech_volume");
 

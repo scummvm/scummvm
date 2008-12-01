@@ -42,6 +42,7 @@ void SetTempCursor(SCNHANDLE pScript);
 void DwHideCursor(void);
 void UnHideCursor(void);
 void FreezeCursor(void);
+void DoFreezeCursor(bool bFreeze);
 void HideCursorTrails(void);
 void UnHideCursorTrails(void);
 void DelAuxCursor(void);
@@ -50,6 +51,8 @@ void DwInitCursor(SCNHANDLE bfilm);
 void DropCursor(void);
 void RestartCursor(void);
 void RebootCursor(void);
+void StartCursorFollowed(void);
+void EndCursorFollowed(void);
 
 } // end of namespace Tinsel
 

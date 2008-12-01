@@ -70,6 +70,7 @@ struct CoroBaseContext {
 
 typedef CoroBaseContext *CoroContext;
 
+extern CoroContext nullContext;
 
 /**
  * Wrapper class which holds a pointer to a pointer to a CoroBaseContext.
@@ -101,6 +102,7 @@ public:
 #define CORO_END_CONTEXT(x)    } *x = (CoroContextTag *)coroParam
 
 #define CORO_BEGIN_CODE(x) \
+		if (&coroParam == &nullContext) assert(!nullContext);\
 		if (!x) {coroParam = x = new CoroContextTag();}\
 		assert(coroParam);\
 		assert(coroParam->_sleep >= 0);\
@@ -109,17 +111,22 @@ public:
 		switch(coroParam->_line) { case 0:;
 
 #define CORO_END_CODE \
+			if (&coroParam == &nullContext) nullContext = NULL; \
 		}
 
-#define CORO_SLEEP(delay) \
-		do {\
+#define CORO_SLEEP(delay) do {\
 			coroParam->_line = __LINE__;\
 			coroParam->_sleep = delay;\
+			assert(&coroParam != &nullContext);\
 			return; case __LINE__:;\
 		} while (0)
 
+#define CORO_GIVE_WAY do { g_scheduler->giveWay(); CORO_SLEEP(1); } while (0)
+#define CORO_RESCHEDULE do { g_scheduler->reschedule(); CORO_SLEEP(1); } while (0)
+
 /** Stop the currently running coroutine */
-#define CORO_KILL_SELF()         do { coroParam->_sleep = -1; return; } while(0)
+#define CORO_KILL_SELF() \
+		do { if (&coroParam != &nullContext) { coroParam->_sleep = -1; } return; } while(0)
 
 /** Invoke another coroutine */
 #define CORO_INVOKE_ARGS(subCoro, ARGS)  \
@@ -130,7 +137,20 @@ public:
 				subCoro ARGS;\
 				if (!coroParam->_subctx) break;\
 				coroParam->_sleep = coroParam->_subctx->_sleep;\
+				assert(&coroParam != &nullContext);\
 				return; case __LINE__:;\
+			} while(1);\
+		} while (0)
+#define CORO_INVOKE_ARGS_V(subCoro, RESULT, ARGS)  \
+		do {\
+			coroParam->_line = __LINE__;\
+			coroParam->_subctx = 0;\
+			do {\
+				subCoro ARGS;\
+				if (!coroParam->_subctx) break;\
+				coroParam->_sleep = coroParam->_subctx->_sleep;\
+				assert(&coroParam != &nullContext);\
+				return RESULT; case __LINE__:;\
 			} while(1);\
 		} while (0)
 
@@ -140,6 +160,8 @@ public:
 			CORO_INVOKE_ARGS(subCoroutine,(CORO_SUBCTX,a0))
 #define CORO_INVOKE_2(subCoroutine, a0,a1) \
 			CORO_INVOKE_ARGS(subCoroutine,(CORO_SUBCTX,a0,a1))
+#define CORO_INVOKE_3(subCoroutine, a0,a1,a2) \
+			CORO_INVOKE_ARGS(subCoroutine,(CORO_SUBCTX,a0,a1,a2))
 
 
 } // end of namespace Tinsel

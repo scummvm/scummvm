@@ -59,9 +59,42 @@ void ChangeLanguage(LANGUAGE newLang);
 int LoadStringRes(int id, char *pBuffer, int bufferMax);
 
 /**
+ * Loads a string resource identified by id
+ * @param id			identifier of string to be loaded
+ * @param sub			sub-string number
+ * @param pBuffer		points to buffer that receives the string
+ * @param bufferMax		maximum number of chars to be copied to the buffer
+ */
+int LoadSubString(int id, int sub, char *pBuffer, int bufferMax);
+
+int SubStringCount(int id);	// identifier of string to be tested
+
+/**
  * Frees the text buffer allocated from ChangeLanguage()
  */
 void FreeTextBuffer();
+
+/**
+ * Called from TINLIB.C from DeclareLanguage().
+ */
+
+void LanguageFacts(int language, SCNHANDLE hDescription, SCNHANDLE hFlagFilm);
+
+/**
+ * Gets the current subtitles language
+ */
+LANGUAGE TextLanguage(void);
+
+/**
+ * Gets the current voice language
+ */
+LANGUAGE SampleLanguage(void);
+
+int NumberOfLanguages(void);
+LANGUAGE NextLanguage(LANGUAGE thisOne);
+LANGUAGE PrevLanguage(LANGUAGE thisOne);
+SCNHANDLE LanguageDesc(LANGUAGE thisOne);
+SCNHANDLE LanguageFlag(LANGUAGE thisOne);
 
 } // end of namespace Tinsel
 

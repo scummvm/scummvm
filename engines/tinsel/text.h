@@ -27,6 +27,7 @@
 #ifndef TINSEL_TEXT_H     // prevent multiple includes
 #define TINSEL_TEXT_H
 
+#include "tinsel/coroutine.h"
 #include "tinsel/object.h"	// object manager defines
 
 namespace Tinsel {
@@ -42,6 +43,10 @@ enum {
 /** maximum number of characters in a font */
 #define	MAX_FONT_CHARS	256
 
+#define C16_240		0x4000
+#define C16_224		0x8000
+#define C16_MAP		0xC000
+#define C16_FLAG_MASK	(C16_240 | C16_224 | C16_MAP)
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
@@ -80,14 +85,21 @@ struct TEXTOUT {
 |*			Text Function Prototypes			*|
 \*----------------------------------------------------------------------*/
 
-OBJECT *ObjectTextOut(		// output a string of text
-	OBJECT *pList,		// object list to add text to
-	char *szStr,		// string to output
-	int colour,		// colour for monochrome text
-	int xPos,		// x position of string
-	int yPos,		// y position of string
-	SCNHANDLE hFont,	// which font to use
-	int mode);		// mode flags for the string
+/**
+ * Main text outputting routine. If a object list is specified a
+ * multi-object is created for the whole text and a pointer to the head
+ * of the list is returned.
+ * @param pList			object list to add text to
+ * @param szStr			string to output
+ * @param colour		colour for monochrome text
+ * @param xPos			x position of string
+ * @param yPos			y position of string
+ * @param hFont			which font to use
+ * @param mode			mode flags for the string
+ * @param sleepTime		Sleep time between each character (if non-zero)
+ */
+OBJECT *ObjectTextOut(CORO_PARAM, OBJECT *pList, char *szStr, int colour, 
+					int xPos, int yPos, SCNHANDLE hFont, int mode, int sleepTime = 0);
 
 OBJECT *ObjectTextOutIndirect(	// output a string of text
 	TEXTOUT *pText);	// pointer to TextOut struct with all parameters

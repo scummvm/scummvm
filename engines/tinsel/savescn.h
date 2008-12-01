@@ -33,13 +33,16 @@
 #include "tinsel/dw.h"	// SCNHANDLE
 #include "tinsel/rince.h"	// SAVED_MOVER
 #include "tinsel/pcode.h"	// INT_CONTEXT
+#include "tinsel/play.h"
+#include "tinsel/polygons.h"
 #include "tinsel/scroll.h"	// SCROLLDATA
+#include "tinsel/sysvar.h"
 
 namespace Tinsel {
 
 enum {
 	SG_DESC_LEN	= 40,	// Max. saved game description length
-	MAX_SFILES	= 30,
+	MAX_SAVED_FILES	= 30,
 
 	// FIXME: Save file names in ScummVM can be longer than 8.3, overflowing the
 	// name field in savedFiles. Raising it to 256 as a preliminary fix.
@@ -66,6 +69,16 @@ struct SAVED_DATA {
 	bool		SavedLoop;			// } Midi
 	bool		SavedNoBlocking;
 	SCROLLDATA	SavedNoScrollData;
+
+	// Tinsel 2 fields
+	Z_POSITIONS	zPositions[NUM_ZPOSITIONS];
+	byte		savedActorZ[MAX_SAVED_ACTOR_Z];
+	POLY_VOLATILE	SavedPolygonStuff[MAX_POLY];
+	uint32		SavedTune[3];			// Music
+	bool		bTinselDim;
+	int			SavedScrollFocus;
+	int			SavedSystemVars[SV_TOPVALID];
+	SOUNDREELS	SavedSoundReels[MAX_SOUNDREELS];
 };
 
 
@@ -74,8 +87,10 @@ enum SRSTATE {
 	SR_DOSAVE, SR_DONESAVE,	SR_ABORTED
 };
 
-void PleaseRestoreScene(bool bFade);
-void PleaseSaveScene(CORO_PARAM);
+void TinselRestoreScene(bool bFade);
+void TinselSaveScene(CORO_PARAM);
+void DoRestoreScene(SAVED_DATA *sd, bool bFadeOut);
+void DoSaveScene(SAVED_DATA *sd);
 
 bool IsRestoringScene();
 
@@ -95,8 +110,8 @@ void ProcessSRQueue(void);
 void RequestSaveGame(char *name, char *desc, SAVED_DATA *sd, int *ssCount, SAVED_DATA *ssData);
 void RequestRestoreGame(int num, SAVED_DATA *sd, int *ssCount, SAVED_DATA *ssData);
 
-void InitialiseSs(void);
-void FreeSs(void);
+void InitialiseSaveScenes(void);
+void FreeSaveScenes(void);
 
 } // end of namespace Tinsel
 

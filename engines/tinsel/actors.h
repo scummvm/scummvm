@@ -29,24 +29,30 @@
 
 
 #include "tinsel/dw.h"		// for SCNHANDLE
-#include "tinsel/events.h"	// for USER_EVENT
+#include "tinsel/events.h"	// for TINSEL_EVENT
 #include "tinsel/palette.h"	// for COLORREF
 
 namespace Tinsel {
 
 struct FREEL;
 struct INT_CONTEXT;
-struct MACTOR;
+struct MOVER;
 struct OBJECT;
 
+#define ACTORTAG_KEY 0x1000000
+
+#define OTH_RELATEDACTOR	0x00000fff
+#define OTH_RELATIVE		0x00001000
+#define OTH_ABSOLUTE		0x00002000
 
 /*----------------------------------------------------------------------*/
 
 void RegisterActors(int num);
 void FreeActors(void);
-void setleadid(int rid);
-int LeadId(void);
-void StartActors(SCNHANDLE ah, int numActors, bool bRunScript);
+void SetLeadId(int rid);
+int GetLeadId(void);
+bool ActorIsGhost(int actor);
+void StartTaggedActors(SCNHANDLE ah, int numActors, bool bRunScript);
 void DropActors(void);		// No actor reels running
 void DisableActor(int actor);
 void EnableActor(int actor);
@@ -63,60 +69,110 @@ int GetActorLeft(int ano);
 int GetActorRight(int ano);
 int GetActorTop(int ano);
 int GetActorBottom(int ano);
-void HideActor(int ano);
+void ShowActor(CORO_PARAM, int ano);
+void HideActor(CORO_PARAM, int ano);
+bool ActorHidden(int ano);
 bool HideMovingActor(int id, int sf);
 void unHideMovingActor(int id);
 void restoreMovement(int id);
-void storeActorReel(int ano, const FREEL *reel, SCNHANDLE film, OBJECT *pobj, int reelnum, int x, int y);
+void storeActorReel(int ano, const FREEL *reel, SCNHANDLE hFilm, OBJECT *pobj, int reelnum, int x, int y);
 const FREEL *actorReel(int ano);
 SCNHANDLE actorFilm(int ano);
 
-void setActorPlayFilm(int ano, SCNHANDLE film);
-SCNHANDLE getActorPlayFilm(int ano);
-void setActorTalkFilm(int ano, SCNHANDLE film);
-SCNHANDLE getActorTalkFilm(int ano);
-void setActorTalking(int ano, bool tf);
-bool isActorTalking(int ano);
-void setActorLatestFilm(int ano, SCNHANDLE film);
-SCNHANDLE getActorLatestFilm(int ano);
+void SetActorPlayFilm(int ano, SCNHANDLE hFilm);
+SCNHANDLE GetActorPlayFilm(int ano);
+void SetActorTalkFilm(int ano, SCNHANDLE hFilm);
+SCNHANDLE GetActorTalkFilm(int ano);
+void SetActorTalking(int ano, bool tf);
+bool ActorIsTalking(int ano);
+void SetActorLatestFilm(int ano, SCNHANDLE hFilm);
+SCNHANDLE GetActorLatestFilm(int ano);
 
-void updateActorEsc(int ano, bool escOn, int escEv);
-bool actorEsc(int ano);
-int actorEev(int ano);
-void storeActorPos(int ano, int x, int y);
-void storeActorSteps(int ano, int steps);
-int getActorSteps(int ano);
-void storeActorZpos(int ano, int z);
+void UpdateActorEsc(int ano, bool escOn, int escEvent);
+void UpdateActorEsc(int ano, int escEvent);
+bool ActorEsc(int ano);
+int ActorEev(int ano);
+void StoreActorPos(int ano, int x, int y);
+void StoreActorSteps(int ano, int steps);
+int GetActorSteps(int ano);
+void StoreActorZpos(int ano, int z, int column = -1);
+int GetActorZpos(int ano, int column);
+void IncLoopCount(int ano);
+int GetLoopCount(int ano);
 SCNHANDLE GetActorTag(int ano);
 void FirstTaggedActor(void);
 int NextTaggedActor(void);
+int NextTaggedActor(int previous);
 int AsetZPos(OBJECT *pObj, int y, int32 zFactor);
-void MAsetZPos(MACTOR *pActor, int y, int32 zFactor);
-void actorEvent(int ano, USER_EVENT event, BUTEVENT be);
+void SetMoverZ(MOVER *pMover, int y, int32 zFactor);
+void ActorEvent(int ano, TINSEL_EVENT event, PLR_EVENT be);
 
 void storeActorAttr(int ano, int r1, int g1, int b1);
-COLORREF getActorTcol(int ano);
+COLORREF GetActorRGB(int ano);
+void SetActorRGB(int ano, COLORREF colour);
+void SetActorZfactor(int ano, uint32 zFactor);
+uint32 GetActorZfactor(int ano);
 
 void setactorson(void);
 
 void ActorsLife(int id, bool bAlive);
 
+void dwEndActor(int ano);
+
+void ActorEvent(CORO_PARAM, int ano, TINSEL_EVENT tEvent, bool bWait, int myEscape, bool *result = NULL);
+
+void GetActorTagPortion(int ano, unsigned *top, unsigned *bottom, unsigned *left, unsigned *right);
+SCNHANDLE GetActorTagHandle(int ano);
+void SetActorPointedTo(int actor, bool bPointedTo);
+bool ActorIsPointedTo(int actor);
+void SetActorTagWanted(int actor, bool bTagWanted, bool bCursor, SCNHANDLE hOverrideTag);
+bool ActorTagIsWanted(int actor);
+bool InHotSpot(int ano, int curX, int curY);
+int FrontTaggedActor(void);
+void GetActorTagPos(int actor, int *pTagX, int *pTagY, bool bAbsolute);
+bool IsTaggedActor(int actor);
+void StoreActorPresFilm(int ano, SCNHANDLE hFilm, int x, int y);
+SCNHANDLE GetActorPresFilm(int ano);
+int GetActorFilmNumber(int ano);
+void StoreActorReel(int actor, int column, OBJECT *pObj);
+void NotPlayingReel(int actor, int filmNumber, int column);
+bool ActorReelPlaying(int actor, int column);
+void SetActorPlayFilm(int ano, SCNHANDLE hFilm);
+SCNHANDLE GetActorPlayFilm(int ano);
+
 /*----------------------------------------------------------------------*/
 
 struct SAVED_ACTOR {
 	short		actorID;
-	short		z;
+	short		zFactor;
 	bool		bAlive;
+	bool		bHidden;
 	SCNHANDLE 	presFilm;	//!< the film that reel belongs to
 	short		presRnum;	//!< the present reel number
-	short		presX, presY;
+	short		presPlayX, presPlayY;
+};
+typedef SAVED_ACTOR *PSAVED_ACTOR;
+
+#define NUM_ZPOSITIONS	200	// Reasonable-sounding number
+
+struct Z_POSITIONS {
+	short	actor;
+	short	column;
+	int		z;
 };
 
 int SaveActors(SAVED_ACTOR *sActorInfo);
 
-	
 void RestoreActorProcess(int id, INT_CONTEXT *pic);
 
+int SaveActors(PSAVED_ACTOR sActorInfo);
+void RestoreActors(int numActors, PSAVED_ACTOR sActorInfo);
+
+void SaveZpositions(void *zpp);
+void RestoreZpositions(void *zpp);
+
+void SaveActorZ(byte *saveActorZ);
+void RestoreActorZ(byte *saveActorZ);
 
 /*----------------------------------------------------------------------*/
 

@@ -29,6 +29,7 @@
 
 #include "tinsel/anim.h"	// for ANIM
 #include "tinsel/scene.h"	// for TFTYPE
+#include "tinsel/tinsel.h"
 
 namespace Tinsel {
 
@@ -39,31 +40,30 @@ enum NPS {NOT_IN, GOING_UP, GOING_DOWN, LEAVING, ENTERING};
 
 enum IND {NO_PROB, TRY_CENTRE, TRY_CORNER, TRY_NEXTCORNER};
 
-enum MAS {NO_MACTOR, NORM_MACTOR};
+enum DIRECTION { LEFTREEL, RIGHTREEL, FORWARD, AWAY };
 
-enum DIRREEL{ LEFTREEL, RIGHTREEL, FORWARD, AWAY };
+#define NUM_MAINSCALES	(TinselV2 ? 10 : 5)
+#define NUM_AUXSCALES	5
+#define TOTAL_SCALES	(NUM_MAINSCALES + NUM_AUXSCALES)
+#define REQ_MAIN_SCALES		10
+#define REQ_TOTAL_SCALES	15
 
-enum {
-	NUM_MAINSCALES	= 5,
-	NUM_AUXSCALES	= 5,
-	TOTAL_SCALES	= NUM_MAINSCALES + NUM_AUXSCALES
-};
+#define BOGUS_BRIGHTNESS -1
 
-struct MACTOR {
+struct MOVER {
 
-	int     objx;           /* Co-ordinates object  */
-	int     objy;
+	int		objX, objY;           /* Co-ordinates object  */
 
 	int     targetX, targetY;
 	int     ItargetX, ItargetY;     /* Intermediate destination */
-	HPOLYGON hIpath;
 	int     UtargetX, UtargetY;     /* Ultimate destination */
-	HPOLYGON hUpath;
 
+	HPOLYGON hIpath;
+	HPOLYGON hUpath;
 	HPOLYGON hCpath;
 
 	bool over;
-	int	ticket;
+	int	walkNumber;
 
 	IND	InDifficulty;
 
@@ -74,128 +74,146 @@ struct MACTOR {
 
 	int     Tline;                   // NEW
 
-	bool	TagReelRunning;
-
+	// TODO: TagReelRunning may be the same as bSpecReel
+	bool		bSpecReel;
 
 	/* Used internally */
-	DIRREEL	dirn;		// Current reel
-	int	scale;		// Current scale
-	int	scount;		// Step count for walking reel synchronisation
+	DIRECTION	direction;		// Current reel
+	int			scale;		// Current scale
 
-    unsigned    fromx;
-    unsigned    fromy;
+	int			stepCount;		// Step count for walking reel synchronisation
+
+	int			walkedFromX, walkedFromY;
 
 	bool		bMoving;		// Set this to TRUE during a walk
 
 	bool		bNoPath;
 	bool		bIgPath;
-	bool		walkReel;
+	bool		bWalkReel;
 
 	OBJECT		*actorObj;	// Actor's object
 	ANIM		actorAnim;	// Actor's animation script
 
-	SCNHANDLE	lastfilm;	// } Used by AlterActor()
-	SCNHANDLE	pushedfilm;	// }
+	SCNHANDLE	hLastFilm;	// } Used by AlterMover()
+	SCNHANDLE	hPushedFilm;	// }
 
 	int			actorID;
 	int			actorToken;
 
-	SCNHANDLE	WalkReels[TOTAL_SCALES][4];
-	SCNHANDLE	StandReels[TOTAL_SCALES][4];
-	SCNHANDLE	TalkReels[TOTAL_SCALES][4];
+	SCNHANDLE	walkReels[REQ_TOTAL_SCALES][4];
+	SCNHANDLE	standReels[REQ_TOTAL_SCALES][4];
+	SCNHANDLE	talkReels[REQ_TOTAL_SCALES][4];
 
-	MAS			MActorState;
+	bool		bActive;
 
-	bool		aHidden;
 	int			SlowFactor;	// Slow down movement while hidden
 
-	bool		stop;
+	bool		bStop;
 
 	/* NOTE: If effect polys can overlap, this needs improving */
-	bool		InEffect;
+	bool		bInEffect;
 
 	PROCESS		*pProc;
+
+	// Discworld 2 specific fields
+	int32		zOverride;
+	bool		bHidden;
+	int			brightness;	// Current brightness
+	int			startColour;
+	int			paletteLength;
+	HPOLYGON	hRpath;		// Recent path
 };
-typedef MACTOR *PMACTOR;
+typedef MOVER *PMOVER;
+
+struct MAINIT {
+	int	X;
+	int	Y;
+	PMOVER	pMover;
+};
+typedef MAINIT *PMAINIT;
 
 //---------------------------------------------------------------------------
 
 
-void MActorProcessCreate(int X, int Y, int id, MACTOR *pActor);
+void MoverProcessCreate(int X, int Y, int id, PMOVER pMover);
 
 
 enum AR_FUNCTION { AR_NORMAL, AR_PUSHREEL, AR_POPREEL, AR_WALKREEL };
 
+void StoreMoverPalette(PMOVER pMover, int startColour, int length);
 
-MACTOR *GetMover(int ano);
-MACTOR *SetMover(int ano);
-void KillMActor(MACTOR *pActor);
-MACTOR *GetLiveMover(int index);
+void MoverBrightness(PMOVER pMover, int brightness);
 
-MAS getMActorState(MACTOR *psActor);
+MOVER *GetMover(int ano);
+MOVER *RegisterMover(int ano);
+void KillMover(PMOVER pMover);
+MOVER *GetLiveMover(int index);
 
-void hideMActor(MACTOR *pActor, int sf);
-bool getMActorHideState(MACTOR *pActor);
-void unhideMActor(MACTOR *pActor);
-void DropMActors(void);
-void MoveMActor(MACTOR *pActor, int x, int y);
+bool getMActorState(MOVER *psActor);
+int GetMoverId(PMOVER pMover);
+void SetMoverZ(PMOVER pMover, int y, uint32 zFactor);
+void SetMoverZoverride(PMOVER pMover, uint32 zFactor);
 
-void GetMActorPosition(MACTOR *pActor, int *aniX, int *aniY);
-void GetMActorMidTopPosition(MACTOR *pActor, int *aniX, int *aniY);
-int GetMActorLeft(MACTOR *pActor);
-int GetMActorRight(MACTOR *pActor);
+void HideMover(PMOVER pMover, int sf = 0);
+bool MoverHidden(PMOVER pMover);
+bool MoverIs(PMOVER pMover);
+bool MoverIsSWalking(PMOVER pMover);
+bool MoverMoving(PMOVER pMover);
+int GetWalkNumber(PMOVER pMover);
+void UnHideMover(PMOVER pMover);
+void DropMovers(void);
+void PositionMover(PMOVER pMover, int x, int y);
 
-bool MActorIsInPolygon(MACTOR *pActor, HPOLYGON hPoly);
-void AlterMActor(MACTOR *actor, SCNHANDLE film, AR_FUNCTION fn);
-DIRREEL GetMActorDirection(MACTOR *pActor);
-int GetMActorScale(MACTOR *pActor);
-void SetMActorDirection(MACTOR *pActor, DIRREEL dirn);
-void SetMActorStanding(MACTOR *actor);
-void SetMActorWalkReel(MACTOR *actor, DIRREEL reel, int scale, bool force);
+void GetMoverPosition(PMOVER pMover, int *aniX, int *aniY);
+void GetMoverMidTop(PMOVER pMover, int *aniX, int *aniY);
+int GetMoverLeft(PMOVER pMover);
+int GetMoverRight(PMOVER pMover);
+int GetMoverTop(PMOVER pMover);
+int GetMoverBottom(PMOVER pMover);
 
-MACTOR *InMActorBlock(MACTOR *pActor, int x, int y);
+bool MoverIsInPolygon(PMOVER pMover, HPOLYGON hPoly);
+void AlterMover(PMOVER pMover, SCNHANDLE film, AR_FUNCTION fn);
+DIRECTION GetMoverDirection(PMOVER pMover);
+int GetMoverScale(PMOVER pMover);
+void SetMoverDirection(PMOVER pMover, DIRECTION dirn);
+void SetMoverStanding(PMOVER pMover);
+void SetMoverWalkReel(PMOVER pMover, DIRECTION reel, int scale, bool force);
+
+PMOVER InMoverBlock(PMOVER pMover, int x, int y);
 
 void RebootMovers(void);
 
 bool IsMAinEffectPoly(int index);
-void SetMAinEffectPoly(int index, bool tf);
+void SetMoverInEffect(int index, bool tf);
 
-bool MAmoving(MACTOR *pActor);
-
-int GetActorTicket(MACTOR *pActor);
+void StopMover(PMOVER pMover);
 
 /*----------------------------------------------------------------------*/
 
 struct SAVED_MOVER {
 
-	MAS	MActorState;
-	int	actorID;
-	int     objx;
-	int     objy;
-	SCNHANDLE lastfilm;
+	int		actorID;
+	int		objX;
+	int		objY;
+	SCNHANDLE hLastfilm;
 
-	SCNHANDLE	WalkReels[TOTAL_SCALES][4];
-	SCNHANDLE	StandReels[TOTAL_SCALES][4];
-	SCNHANDLE	TalkReels[TOTAL_SCALES][4];
+	SCNHANDLE	walkReels[REQ_TOTAL_SCALES][4];
+	SCNHANDLE	standReels[REQ_TOTAL_SCALES][4];
+	SCNHANDLE	talkReels[REQ_TOTAL_SCALES][4];
 
+	bool	bActive;
+	bool	bHidden;
+	int		brightness;
+	int		startColour;
+	int		paletteLength;
 };
 
 void SaveMovers(SAVED_MOVER *sMoverInfo);
 void RestoreAuxScales(SAVED_MOVER *sMoverInfo);
 
+PMOVER NextMover(PMOVER pMover);
+
 /*----------------------------------------------------------------------*/
-
-/*
-* Dodgy bit...
-* These functions are now in MAREELS.C, but I can't be bothered to
-* create a new header file.
-*/
-SCNHANDLE GetMactorTalkReel(MACTOR *pAactor, TFTYPE dirn);
-
-void setscalingreels(int actor, int scale, int direction,
-		SCNHANDLE left, SCNHANDLE right, SCNHANDLE forward, SCNHANDLE away);
-SCNHANDLE ScalingReel(int ano, int scale1, int scale2, DIRREEL reel);
-void RebootScalingReels(void);
 
 enum {
 	MAGICX	= -101,

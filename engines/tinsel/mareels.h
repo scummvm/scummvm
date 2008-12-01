@@ -21,32 +21,35 @@
  * $URL$
  * $Id$
  *
- * Handles timers.
  */
 
-#ifndef TINSEL_TIMERS_H	// prevent multiple includes
-#define TINSEL_TIMERS_H
+#ifndef TINSEL_MAREELS_H	// prevent multiple includes
+#define TINSEL_MAREELS_H
 
-#include "common/scummsys.h"
-#include "tinsel/dw.h"
+#include "tinsel/dw.h"	// for SCNHANDLE
+#include "tinsel/rince.h"
 
 namespace Tinsel {
 
-class Serializer;
+void SetWalkReels(PMOVER pMover, int scale,
+		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa);
 
-#define ONE_SECOND 24
+void SetStandReels(PMOVER pMover, int scale,
+		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa);
 
-uint32 DwGetCurrentTime(void);
+void SetTalkReels(PMOVER pMover, int scale,
+		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa);
 
-void RebootTimers(void);
+SCNHANDLE GetMoverTalkReel(PMOVER pActor, TFTYPE dirn);
 
-void syncTimerInfo(Serializer &s);
+void SetScalingReels(int actor, int scale, int direction,
+		SCNHANDLE left, SCNHANDLE right, SCNHANDLE forward, SCNHANDLE away);
 
-void FettleTimers(void);
+SCNHANDLE ScalingReel(int ano, int scale1, int scale2, DIRECTION reel);
 
-void StartTimer(int num, int sval, bool up, bool frame);
+void RebootScalingReels(void);
 
-int Timer(int num);
+void TouchMoverReels(void);
 
 } // end of namespace Tinsel
 

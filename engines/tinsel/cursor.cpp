@@ -34,11 +34,14 @@
 #include "tinsel/film.h"
 #include "tinsel/graphics.h"
 #include "tinsel/handle.h"
-#include "tinsel/inventory.h"
+#include "tinsel/dialogs.h"
 #include "tinsel/multiobj.h"	// multi-part object defintions etc.
 #include "tinsel/object.h"
 #include "tinsel/pid.h"
+#include "tinsel/play.h"
 #include "tinsel/sched.h"
+#include "tinsel/sysvar.h"
+#include "tinsel/text.h"
 #include "tinsel/timers.h"		// For ONE_SECOND constant
 #include "tinsel/tinlib.h"		// resetidletime()
 #include "tinsel/tinsel.h"		// For engine access
@@ -54,20 +57,21 @@ namespace Tinsel {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-static OBJECT *McurObj = 0;		// Main cursor object
-static OBJECT *AcurObj = 0;		// Auxiliary cursor object
+static OBJECT *McurObj = NULL;		// Main cursor object
+static OBJECT *AcurObj = NULL;		// Auxiliary cursor object
 
 static ANIM McurAnim = {0,0,0,0,0};		// Main cursor animation structure
 static ANIM AcurAnim = {0,0,0,0,0};		// Auxiliary cursor animation structure
 
-static bool bHiddenCursor = false;	// Set when cursor is hidden
+static bool bHiddenCursor = false;		// Set when cursor is hidden
 static bool bTempNoTrailers = false;	// Set when cursor trails are hidden
+static bool bTempHide = false;			// Set when cursor is hidden
 
 static bool bFrozenCursor = false;	// Set when cursor position is frozen
 
 static frac_t IterationSize = 0;
 
-static SCNHANDLE CursorHandle = 0;	// Handle to cursor reel data
+static SCNHANDLE hCursorFilm = 0;	// Handle to cursor reel data
 
 static int numTrails = 0;
 static int nextTrail = 0;
@@ -76,8 +80,11 @@ static bool bWhoa = false;		// Set by DropCursor() at the end of a scene
 				// - causes cursor processes to do nothing
 				// Reset when main cursor has re-initialised
 
-static bool restart = false;		// When main cursor has been bWhoa-ed, it waits
-				// for this to be set to true.
+static uint16 restart = 0;	// When main cursor has been bWhoa-ed, it waits
+							// for this to be set to 0x8000.
+							// Main cursor sets all the bits after a re-start
+							// - each cursor trail examines it's own bit
+							// to trigger a trail restart.
 
 static short ACoX = 0, ACoY = 0;	// Auxillary cursor image's animation offsets
 
@@ -97,7 +104,7 @@ static int lastCursorX = 0, lastCursorY = 0;
 
 //----------------- FORWARD REFERENCES --------------------
 
-static void MoveCursor(void);
+static void DoCursorMove(void);
 
 /**
  * Initialise and insert a cursor trail object, set its Z-pos, and hide
@@ -117,9 +124,9 @@ static void InitCurTrailObj(int i, int x, int y) {
 	if (ntrailData[i].trailObj != NULL)
 		MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), ntrailData[i].trailObj);
 
-	pim = GetImageFromFilm(CursorHandle, i+1, &pfr, &pmi, &pfilm);// Get pointer to image
-	assert(BackPal()); // No background palette
-	pim->hImgPal = TO_LE_32(BackPal());
+	pim = GetImageFromFilm(hCursorFilm, i+1, &pfr, &pmi, &pfilm);// Get pointer to image
+	assert(BgPal()); // No background palette
+	pim->hImgPal = TO_LE_32(BgPal());
 
 	// Initialise and insert the object, set its Z-pos, and hide it
 	ntrailData[i].trailObj = MultiInitObject(pmi);
@@ -140,8 +147,8 @@ static bool GetDriverPosition(int *x, int *y) {
 	*x = ptMouse.x;
 	*y = ptMouse.y;
 
-	return(*x >= 0 && *x <= SCREEN_WIDTH-1 &&
-		*y >= 0 && *y <= SCREEN_HEIGHT-1);
+	return(*x >= 0 && *x <= SCREEN_WIDTH - 1 &&
+		*y >= 0 && *y <= SCREEN_HEIGHT - 1);
 }
 
 /**
@@ -154,7 +161,7 @@ void AdjustCursorXY(int deltaX, int deltaY) {
 		if (GetDriverPosition(&x, &y))
 			_vm->setMousePosition(Common::Point(x + deltaX, y + deltaY));
 	}
-	MoveCursor();
+	DoCursorMove();
 }
 
 /**
@@ -170,7 +177,7 @@ void SetCursorXY(int newx, int newy) {
 
 	if (GetDriverPosition(&x, &y))
 		_vm->setMousePosition(Common::Point(newx, newy));
-	MoveCursor();
+	DoCursorMove();
 }
 
 /**
@@ -181,7 +188,7 @@ void SetCursorScreenXY(int newx, int newy) {
 
 	if (GetDriverPosition(&x, &y))
 		_vm->setMousePosition(Common::Point(newx, newy));
-	MoveCursor();
+	DoCursorMove();
 }
 
 /**
@@ -229,7 +236,7 @@ void RestoreMainCursor(void) {
 	const FILM *pfilm;
 
 	if (McurObj != NULL) {
-		pfilm = (const FILM *)LockMem(CursorHandle);
+		pfilm = (const FILM *)LockMem(hCursorFilm);
 
 		InitStepAnimScript(&McurAnim, McurObj, FROM_LE_32(pfilm->reels->script), ONE_SECOND / FROM_LE_32(pfilm->frate));
 		StepAnimScript(&McurAnim);
@@ -279,6 +286,13 @@ void UnHideCursor(void) {
  */
 void FreezeCursor(void) {
 	bFrozenCursor = true;
+}
+
+/**
+ * Freeze the cursor, or not.
+ */
+void DoFreezeCursor(bool bFreeze) {
+	bFrozenCursor = bFreeze;
 }
 
 /**
@@ -365,11 +379,12 @@ void SetAuxCursor(SCNHANDLE hFilm) {
 	GetCursorXY(&x, &y, false);	// Note: also waits for cursor to appear
 
 	pim = GetImageFromFilm(hFilm, 0, &pfr, &pmi, &pfilm);// Get pointer to image
-	assert(BackPal()); // no background palette
-	pim->hImgPal = TO_LE_32(BackPal());			// Poke in the background palette
+	assert(BgPal()); // no background palette
+	pim->hImgPal = TO_LE_32(BgPal());			// Poke in the background palette
 
 	ACoX = (short)(FROM_LE_16(pim->imgWidth)/2 - ((int16) FROM_LE_16(pim->anioffX)));
-	ACoY = (short)(FROM_LE_16(pim->imgHeight)/2 - ((int16) FROM_LE_16(pim->anioffY)));
+	ACoY = (short)((FROM_LE_16(pim->imgHeight) & ~C16_FLAG_MASK)/2 -
+		((int16) FROM_LE_16(pim->anioffY)));
 
 	// Initialise and insert the auxillary cursor object
 	AcurObj = MultiInitObject(pmi);
@@ -387,7 +402,7 @@ void SetAuxCursor(SCNHANDLE hFilm) {
 /**
  * MoveCursor
  */
-static void MoveCursor(void) {
+static void DoCursorMove(void) {
 	int	startX, startY;
 	Common::Point ptMouse;
 	frac_t newX, newY;
@@ -459,22 +474,30 @@ static void MoveCursor(void) {
  * Initialise cursor object.
  */
 static void InitCurObj(void) {
-	const FILM *pfilm;
+	const FILM *pFilm;
 	const FREEL *pfr;
 	const MULTI_INIT *pmi;
 	IMAGE *pim;
 
-	pim = GetImageFromFilm(CursorHandle, 0, &pfr, &pmi, &pfilm);// Get pointer to image
-	assert(BackPal()); // no background palette
-	pim->hImgPal = TO_LE_32(BackPal());
-//---
+	if (TinselV2) {
+		pFilm = (const FILM *)LockMem(hCursorFilm);
+		pfr = (const FREEL *)&pFilm->reels[0];
+		pmi = (MULTI_INIT *)LockMem(pfr->mobj);
 
-	AcurObj = NULL;		// No auxillary cursor
+		PokeInPalette(pmi);
+	} else {
+		assert(BgPal()); // no background palette
+
+		pim = GetImageFromFilm(hCursorFilm, 0, &pfr, &pmi, &pFilm);// Get pointer to image
+		pim->hImgPal = TO_LE_32(BgPal());
+
+		AcurObj = NULL;		// No auxillary cursor
+	}
 
 	McurObj = MultiInitObject(pmi);
 	MultiInsertObject(GetPlayfieldList(FIELD_STATUS), McurObj);
 
-	InitStepAnimScript(&McurAnim, McurObj, FROM_LE_32(pfr->script), ONE_SECOND / FROM_LE_32(pfilm->frate));
+	InitStepAnimScript(&McurAnim, McurObj, FROM_LE_32(pfr->script), ONE_SECOND / FROM_LE_32(pFilm->frate));
 }
 
 /**
@@ -486,7 +509,7 @@ static void InitCurPos(void) {
 	lastCursorY = ptMouse.y;
 
 	MultiSetZPosition(McurObj, Z_CURSOR);
-	MoveCursor();
+	DoCursorMove();
 	MultiHideObject(McurObj);
 
  	IterationSize = ITERATION_BASE;
@@ -505,16 +528,16 @@ static void CursorStoppedCheck(CORO_PARAM) {
 	// If scene is closing down
 	if (bWhoa) {
 		// ...wait for next scene start-up
-		while (!restart)
+		while (restart != 0x8000)
 			CORO_SLEEP(1);
 
 		// Re-initialise
 		InitCurObj();
 		InitCurPos();
-		InventoryIconCursor();	// May be holding something
+		InventoryIconCursor(false);	// May be holding something
 
 		// Re-start the cursor trails
-		restart = false;		// set all bits
+		restart = (uint16)-1;		// set all bits
 		bWhoa = false;
 	}
 	CORO_END_CODE;
@@ -530,15 +553,15 @@ void CursorProcess(CORO_PARAM, const void *) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	while (!CursorHandle || !BackPal())
+	while (!hCursorFilm || !BgPal())
 		CORO_SLEEP(1);
 
 	InitCurObj();
 	InitCurPos();
-	InventoryIconCursor();		// May be holding something
+	InventoryIconCursor(false);		// May be holding something
 
 	bWhoa = false;
-	restart = false;
+	restart = 0;
 
 	while (1) {
 		// allow rescheduling
@@ -562,10 +585,10 @@ void CursorProcess(CORO_PARAM, const void *) {
 
 		// Move the cursor as appropriate
 		if (!bFrozenCursor)
-			MoveCursor();
+			DoCursorMove();
 
 		// If the cursor should be hidden...
-		if (bHiddenCursor) {
+		if (bHiddenCursor || bTempHide) {
 			// ...hide the cursor object(s)
 			MultiHideObject(McurObj);
 			if (AcurObj)
@@ -595,9 +618,9 @@ void CursorProcess(CORO_PARAM, const void *) {
 void DwInitCursor(SCNHANDLE bfilm) {
 	const FILM *pfilm;
 
-	CursorHandle = bfilm;
+	hCursorFilm = bfilm;
 
-	pfilm = (const FILM *)LockMem(CursorHandle);
+	pfilm = (const FILM *)LockMem(hCursorFilm);
 	numTrails = FROM_LE_32(pfilm->numreels) - 1;
 
 	assert(numTrails <= MAX_TRAILERS);
@@ -607,6 +630,15 @@ void DwInitCursor(SCNHANDLE bfilm) {
  * DropCursor is called when a scene is closing down.
  */
 void DropCursor(void) {
+	if (TinselV2) {
+		if (AcurObj)
+			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), AcurObj);
+		if (McurObj)
+			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), McurObj);
+
+		restart = 0;
+	}
+
 	AcurObj = NULL;		// No auxillary cursor
 	McurObj = NULL;		// No cursor object (imminently deleted elsewhere)
 	bHiddenCursor = false;	// Not hidden in next scene
@@ -625,7 +657,7 @@ void DropCursor(void) {
  * RestartCursor is called when a new scene is starting up.
  */
 void RestartCursor(void) {
-	restart = true;	// Get the main cursor to re-initialise
+	restart = 0x8000;	// Get the main cursor to re-initialise
 }
 
 /**
@@ -639,10 +671,22 @@ void RebootCursor(void) {
 
 	bHiddenCursor = bTempNoTrailers = bFrozenCursor = false;
 
-	CursorHandle = 0;
+	hCursorFilm = 0;
 
 	bWhoa = false;
-	restart = false;
+	restart = 0;
+}
+
+void StartCursorFollowed(void) {
+	DelAuxCursor();
+
+	if (!SysVar(SV_ENABLEPRINTCURSOR))
+		bTempHide = true;
+}
+
+void EndCursorFollowed(void) {
+	InventoryIconCursor(false);	// May be holding something
+	bTempHide = false;
 }
 
 } // end of namespace Tinsel

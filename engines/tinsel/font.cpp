@@ -22,11 +22,14 @@
  * $Id$
  */
 
+#include "tinsel/actors.h"
 #include "tinsel/dw.h"
 #include "tinsel/font.h"
 #include "tinsel/handle.h"
 #include "tinsel/object.h"
+#include "tinsel/sysvar.h"
 #include "tinsel/text.h"
+#include "tinsel/tinsel.h"
 
 namespace Tinsel {
 
@@ -35,48 +38,63 @@ namespace Tinsel {
 static char tBuffer[TBUFSZ];
 
 static SCNHANDLE hTagFont = 0, hTalkFont = 0;
+static SCNHANDLE hRegularTalkFont = 0, hRegularTagFont = 0;
 
 
 /**
  * Return address of tBuffer
  */
-char *tBufferAddr() {
+char *TextBufferAddr() {
 	return tBuffer;
 }
 
 /**
  * Return hTagFont handle.
  */
-SCNHANDLE hTagFontHandle() {
+SCNHANDLE GetTagFontHandle() {
 	return hTagFont;
 }
 
 /**
  * Return hTalkFont handle.
  */
-SCNHANDLE hTalkFontHandle() {
+SCNHANDLE GetTalkFontHandle() {
 	return hTalkFont;
 }
 
 /**
  * Called from dec_tagfont() Glitter function. Store the tag font handle.
  */
-void TagFontHandle(SCNHANDLE hf) {
-	hTagFont = hf;		// Store the font handle
+void SetTagFontHandle(SCNHANDLE hFont) {
+	hTagFont = hRegularTagFont = hFont;		// Store the font handle
 }
 
 /**
  * Called from dec_talkfont() Glitter function.
  * Store the talk font handle.
  */
-void TalkFontHandle(SCNHANDLE hf) {
-	hTalkFont = hf;		// Store the font handle
+void SetTalkFontHandle(SCNHANDLE hFont) {
+	hTalkFont = hRegularTalkFont = hFont;		// Store the font handle
 }
+
+void SetTempTagFontHandle(SCNHANDLE hFont) {
+	hTagFont = hFont;
+}
+
+void SetTempTalkFontHandle(SCNHANDLE hFont) {
+	hTalkFont = hFont;
+}
+
+void ResetFontHandles(void) {
+	hTagFont = hRegularTagFont;
+	hTalkFont = hRegularTalkFont;
+}
+
 
 /**
  * Poke the background palette into character 0's images.
  */
-void fettleFontPal(SCNHANDLE fontPal) {
+void FettleFontPal(SCNHANDLE fontPal) {
 	const FONT *pFont;
 	IMAGE *pImg;
 
@@ -86,11 +104,23 @@ void fettleFontPal(SCNHANDLE fontPal) {
 
 	pFont = (const FONT *)LockMem(hTagFont);
 	pImg = (IMAGE *)LockMem(FROM_LE_32(pFont->fontInit.hObjImg));	// get image for char 0
-	pImg->hImgPal = TO_LE_32(fontPal);
+	if (!TinselV2)
+		pImg->hImgPal = TO_LE_32(fontPal);
+	else
+		pImg->hImgPal = 0;
 
 	pFont = (const FONT *)LockMem(hTalkFont);
 	pImg = (IMAGE *)LockMem(FROM_LE_32(pFont->fontInit.hObjImg));	// get image for char 0
-	pImg->hImgPal = TO_LE_32(fontPal);
+	if (!TinselV2)
+		pImg->hImgPal = TO_LE_32(fontPal);
+	else
+		pImg->hImgPal = 0;
+
+	if (TinselV2 && SysVar(SV_TAGCOLOUR)) {
+		static COLORREF c = GetActorRGB(-1);
+		SetTagColorRef(c);
+		UpdateDACqueue(SysVar(SV_TAGCOLOUR), 1, &c);
+	}
 }
 
 } // End of namespace Tinsel

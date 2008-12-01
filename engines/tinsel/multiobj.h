@@ -28,6 +28,7 @@
 #define TINSEL_MULTIOBJ_H
 
 #include "tinsel/dw.h"
+#include "tinsel/object.h"
 
 namespace Tinsel {
 
@@ -45,7 +46,9 @@ struct MULTI_INIT {
 	int32 mulX;				//!< multi-objects initial x ani position
 	int32 mulY;				//!< multi-objects initial y ani position
 	int32 mulZ;				//!< multi-objects initial z position
+	uint32 otherFlags;		//!< multi-objects Tinsel 2 - other flags
 } PACKED_STRUCT;
+typedef MULTI_INIT *PMULTI_INIT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
@@ -118,6 +121,12 @@ int MultiHighest(		// Returns the highest point of a multi-part object
 
 int MultiLowest(		// Returns the lowest point of a multi-part object
 	OBJECT *pMulti);	// multi-part object
+
+bool MultiHasShape(		// Returns TRUE if the object currently has an image
+	POBJECT pMulti);	// multi-part object
+
+void MultiForceRedraw(
+	POBJECT pMultiObj);	// multi-part object to be forced
 
 } // end of namespace Tinsel
 

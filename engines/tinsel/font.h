@@ -31,17 +31,27 @@
 namespace Tinsel {
 
 // A temporary buffer for extracting text into is defined in font.c
-// Accessed using tBufferAddr(), this is how big it is:
+// Accessed using TextBufferAddr(), this is how big it is:
 #define TBUFSZ	512
 
 
-char *tBufferAddr(void);
-SCNHANDLE hTagFontHandle(void);
-SCNHANDLE hTalkFontHandle(void);
+char *TextBufferAddr(void);
 
-void TagFontHandle(SCNHANDLE hf);
-void TalkFontHandle(SCNHANDLE hf);
-void fettleFontPal(SCNHANDLE fontPal);
+SCNHANDLE GetTagFontHandle(void);
+
+SCNHANDLE GetTalkFontHandle(void);
+
+void SetTagFontHandle(SCNHANDLE hFont);
+
+void SetTalkFontHandle(SCNHANDLE hFont);
+
+void SetTempTagFontHandle(SCNHANDLE hFont);
+
+void SetTempTalkFontHandle(SCNHANDLE hFont);
+
+void ResetFontHandles(void);
+
+void FettleFontPal(SCNHANDLE fontPal);
 
 } // end of namespace Tinsel
 

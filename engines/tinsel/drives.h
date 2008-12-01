@@ -21,33 +21,43 @@
  * $URL$
  * $Id$
  *
- * Handles timers.
+ * CD/drive handling functions
  */
 
-#ifndef TINSEL_TIMERS_H	// prevent multiple includes
-#define TINSEL_TIMERS_H
+#ifndef TINSEL_DRIVES_H
+#define TINSEL_DRIVES_H
 
-#include "common/scummsys.h"
 #include "tinsel/dw.h"
+#include "tinsel/coroutine.h"
 
 namespace Tinsel {
 
-class Serializer;
+// flags2
+#define fCd1	0x00000001L
+#define fCd2	0x00000002L
+#define fCd3	0x00000004L
+#define fCd4	0x00000008L
+#define fCd5	0x00000010L
+#define fCd6	0x00000020L
+#define fCd7	0x00000040L
+#define fCd8	0x00000080L
 
-#define ONE_SECOND 24
+#define fAllCds	(fCd1|fCd2|fCd3|fCd4|fCd5|fCd6|fCd7|fCd8)
 
-uint32 DwGetCurrentTime(void);
+void DoCdChange(void);
 
-void RebootTimers(void);
+void CdCD(CORO_PARAM);
 
-void syncTimerInfo(Serializer &s);
+int GetCurrentCD(void);
 
-void FettleTimers(void);
+void SetCD(int flags);
 
-void StartTimer(int num, int sval, bool up, bool frame);
+int GetCD(int flags);
 
-int Timer(int num);
+void SetNextCD(int cdNumber);
+
+bool GotoCD(void);
 
 } // end of namespace Tinsel
 
-#endif
+#endif /* TINSEL_DRIVES_H */

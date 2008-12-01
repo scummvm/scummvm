@@ -29,55 +29,115 @@
 
 #include "tinsel/dw.h"
 #include "tinsel/coroutine.h"
+#include "common/rect.h"
 
 namespace Tinsel {
 
+/*
 enum BUTEVENT {
-	BE_NONE, BE_SLEFT, BE_DLEFT, BE_SRIGHT, BE_DRIGHT,
-	BE_LDSTART, BE_LDEND, BE_RDSTART, BE_RDEND,
-	BE_UNKNOWN
+	PLR_NOEVENT, PLR_SLEFT, PLR_DLEFT, PLR_SRIGHT, PLR_DRIGHT,
+	PLR_DRAG1_START, PLR_DRAG1_END, PLR_DRAG2_START, PLR_DRAG2_END,
+	PLR_UNKNOWN
 };
-
 
 enum KEYEVENT {
-	ESC_KEY, QUIT_KEY, SAVE_KEY, LOAD_KEY, OPTION_KEY,
-	PGUP_KEY, PGDN_KEY, HOME_KEY, END_KEY,
-	WALKTO_KEY, ACTION_KEY, LOOK_KEY,
+	PLR_ESCAPE, PLR_QUIT, PLR_SAVE, PLR_LOAD, PLR_MENU,
+	PLR_PGUP, PLR_PGDN, PLR_HOME, PLR_END,
+	PLR_WALKTO, PLR_ACTION, PLR_LOOK,
 	NOEVENT_KEY
-};
+};*/
+
+enum PLR_EVENT {
+	// action list
+	PLR_PROV_WALKTO = 0,	// Provisional WALKTO !
+	PLR_WALKTO = 1,
+	PLR_LOOK = 2,
+	PLR_ACTION = 3,
+	PLR_ESCAPE = 4,
+	PLR_MENU = 5,
+	PLR_QUIT = 6,
+	PLR_PGUP = 7,
+	PLR_PGDN = 8,
+	PLR_HOME = 9,
+	PLR_END = 10,
+	PLR_DRAG1_START = 11,
+	PLR_DRAG1_END = 12,
+	PLR_DRAG2_START = 13,
+	PLR_DRAG2_END = 14,
+	PLR_JUMP = 15,		// Call up scene hopper
+	PLR_NOEVENT = 16,
+	PLR_SAVE = 17,
+	PLR_LOAD = 18,
+
+	// Aliases used for DW1 actions
+	PLR_SLEFT = PLR_WALKTO,
+	PLR_DLEFT = PLR_ACTION,
+	PLR_SRIGHT = PLR_LOOK,
+	PLR_DRIGHT = PLR_NOEVENT,
+	PLR_UNKNOWN = PLR_NOEVENT
+} ;
+
 
 
 /**
  * Reasons for running Glitter code.
  * Do not re-order these as equivalent CONSTs are defined in the master
  * scene Glitter source file for testing against the event() library function.
+ *
+ * Note: DW2 renames ENTER & LEAVE to WALKIN & WALKOUT, and has a new LEAVE event
  */
-enum USER_EVENT {
-	POINTED, WALKTO, ACTION, LOOK,
-	ENTER, LEAVE, STARTUP, CONVERSE,
-	UNPOINT, PUTDOWN,
-	NOEVENT
+enum TINSEL_EVENT {
+	NOEVENT, STARTUP, CLOSEDOWN, POINTED, UNPOINT, WALKIN, WALKOUT,
+	PICKUP,	PUTDOWN, WALKTO, LOOK, ACTION, CONVERSE, SHOWEVENT,
+	HIDEEVENT, TALKING, ENDTALK, LEAVE_T2, RESTORE, PROV_WALKTO
 };
 
+enum TINSEL1_EVENT {
+	T1_POINTED, T1_WALKTO, T1_ACTION, T1_LOOK, T1_ENTER, T1_LEAVE, T1_STARTUP, T1_CONVERSE,
+	T1_UNPOINT, T1_PUTDOWN, T1_NOEVENT
+};
 
-void AllowDclick(CORO_PARAM, BUTEVENT be);
+const TINSEL1_EVENT TINSEL1_EVENT_MAP[] = {
+	T1_NOEVENT, T1_STARTUP, T1_NOEVENT, T1_POINTED, T1_UNPOINT, T1_ENTER, T1_LEAVE,
+	T1_NOEVENT, T1_PUTDOWN, T1_WALKTO, T1_LOOK, T1_ACTION, T1_CONVERSE, T1_NOEVENT,
+	T1_NOEVENT, T1_NOEVENT, T1_NOEVENT, T1_NOEVENT, T1_NOEVENT, T1_NOEVENT
+};
+
+void AllowDclick(CORO_PARAM, PLR_EVENT be);
 bool GetControl(int param);
+bool GetControl(void);
+bool ControlIsOn(void);
+void ControlOn(void);
+void ControlOff(void);
+void ControlStartOff(void);
 
-void RunPolyTinselCode(HPOLYGON hPoly, USER_EVENT event, BUTEVENT be, bool tc);
-void effRunPolyTinselCode(HPOLYGON hPoly, USER_EVENT event, int actor);
+void RunPolyTinselCode(HPOLYGON hPoly, TINSEL_EVENT event, PLR_EVENT be, bool tc);
+void effRunPolyTinselCode(HPOLYGON hPoly, TINSEL_EVENT event, int actor);
 
-void ProcessButEvent(BUTEVENT be);
-void ProcessKeyEvent(KEYEVENT ke);
+void ProcessButEvent(PLR_EVENT be);
+void ProcessKeyEvent(PLR_EVENT ke);
 
 
 int GetEscEvents(void);
 int GetLeftEvents(void);
+bool LeftEventChange(int myleftEvent);
+
 int getUserEvents(void);
 
 uint32 getUserEventTime(void);
 void resetUserEventTime(void);
 
 void ResetEcount(void);
+
+void PolygonEvent(CORO_PARAM, HPOLYGON hPoly, TINSEL_EVENT tEvent, int actor, bool bWait,
+				int myEscape, bool *result = NULL);
+
+
+void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds);
+
+void ProcessedProvisional(void);
+void ProvNotProcessed(void);
+bool GetProvNotProcessed();
 
 } // end of namespace Tinsel
 

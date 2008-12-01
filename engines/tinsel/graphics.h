@@ -37,12 +37,6 @@ namespace Tinsel {
 
 struct PALQ;
 
-
-#define	SCREEN_WIDTH	320			// PC screen dimensions
-#define	SCREEN_HEIGHT	200
-#define	SCRN_CENTRE_X	((SCREEN_WIDTH  - 1) / 2)	// screen centre x
-#define	SCRN_CENTRE_Y	((SCREEN_HEIGHT - 1) / 2)	// screen centre y
-
 /** draw object structure - only used when drawing objects */
 struct DRAWOBJECT {
 	char *charBase;		// character set base address
@@ -58,8 +52,9 @@ struct DRAWOBJECT {
 	int rightClip;		// amount to clip off object right
 	int topClip;		// amount to clip off object top
 	int botClip;		// amount to clip off object bottom
-	short xPos;		// x position of object
-	short yPos;		// y position of object
+	short xPos;			// x position of object
+	short yPos;			// y position of object
+	uint32 baseCol;		// For 4-bit stuff
 };
 
 

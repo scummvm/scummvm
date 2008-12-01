@@ -31,6 +31,8 @@
 #include "tinsel/music.h"
 #include "tinsel/strres.h"
 #include "tinsel/tinsel.h"
+#include "tinsel/sysvar.h"
+#include "tinsel/background.h"
 
 #include "common/endian.h"
 #include "common/file.h"
@@ -38,14 +40,20 @@
 
 #include "sound/mixer.h"
 #include "sound/audiocd.h"
+#include "sound/adpcm.h"
 
 namespace Tinsel {
+
+extern LANGUAGE sampleLanguage;
 
 //--------------------------- General data ----------------------------------
 
 SoundManager::SoundManager(TinselEngine *vm) :
 	//_vm(vm),	// TODO: Enable this once global _vm var is gone
 	_sampleIndex(0), _sampleIndexLen(0) {
+
+	for (int i = 0; i < kNumChannels; i++)
+		_channels[i].sampleNum = _channels[i].subSample = -1;
 }
 
 SoundManager::~SoundManager() {
@@ -67,24 +75,29 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 	if (!_vm->_mixer->isReady())
 		return false;
 
+	Channel &curChan = _channels[kChannelTinsel1];
+
 	// stop any currently playing sample
-	_vm->_mixer->stopHandle(_handle);
+	_vm->_mixer->stopHandle(curChan.handle);
 
 	// make sure id is in range
 	assert(id > 0 && id < _sampleIndexLen);
 
+	curChan.sampleNum = id;
+	curChan.subSample = 0;
+
 	// get file offset for this sample
-	int32 dwSampleIndex = _sampleIndex[id];
+	uint32 dwSampleIndex = _sampleIndex[id];
 	
 	// move to correct position in the sample file
 	_sampleStream.seek(dwSampleIndex);
-	if (_sampleStream.ioFailed() || _sampleStream.pos() != dwSampleIndex)
-		error("File %s is corrupt", SAMPLE_FILE);
+	if (_sampleStream.ioFailed() || (uint32)_sampleStream.pos() != dwSampleIndex)
+		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
 	// read the length of the sample
 	uint32 sampleLen = _sampleStream.readUint32LE();
 	if (_sampleStream.ioFailed())
-		error("File %s is corrupt", SAMPLE_FILE);
+		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
 	// allocate a buffer
 	void *sampleBuf = malloc(sampleLen);
@@ -92,7 +105,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 
 	// read all of the sample
 	if (_sampleStream.read(sampleBuf, sampleLen) != sampleLen)
-		error("File %s is corrupt", SAMPLE_FILE);
+		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
 	// FIXME: Should set this in a different place ;)
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volSound);
@@ -101,13 +114,209 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 
 
 	// play it
-	_vm->_mixer->playRaw(type, &_handle, sampleBuf, sampleLen, 22050,
+	_vm->_mixer->playRaw(type, &curChan.handle, sampleBuf, sampleLen, 22050,
 						 Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
 
 	if (handle)
-		*handle = _handle;
+		*handle = curChan.handle;
 
 	return true;
+}
+
+bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int priority,
+		Audio::Mixer::SoundType type, Audio::SoundHandle *handle) {
+
+	// Floppy version has no sample file
+	if (_vm->getFeatures() & GF_FLOPPY)
+		return false;
+
+	// no sample driver?
+	if (!_vm->_mixer->isReady())
+		return false;
+
+	Channel *curChan;
+
+	uint8 sndVol = 255;
+
+	// Sample on screen?
+	if (!offscreenChecks(x, y))
+		return false;
+
+	// If that sample is already playing, stop it
+	stopSpecSample(id, sub);
+
+	if (type == Audio::Mixer::kSpeechSoundType) {
+		curChan = &_channels[kChannelTalk];
+	} else if (type == Audio::Mixer::kSFXSoundType) {
+		uint32 oldestTime = g_system->getMillis();
+		int	oldestChan = kChannelSFX;
+
+		int chan;
+		for (chan = kChannelSFX; chan < kNumChannels; chan++) {
+			if (!_vm->_mixer->isSoundHandleActive(_channels[chan].handle))
+				break;
+
+			if ((_channels[chan].lastStart <  oldestTime) &&
+			    (_channels[chan].priority  <= priority)) {
+
+				oldestTime = _channels[chan].lastStart;
+				oldestChan = chan;
+			}
+		}
+
+		if (chan == kNumChannels) {
+			if (_channels[oldestChan].priority > priority) {
+				warning("playSample: No free channel");
+				return false;
+			}
+
+			chan = oldestChan;
+		}
+
+		if (_vm->_pcmMusic->isDimmed() && SysVar(SYS_SceneFxDimFactor))
+			sndVol = 255 - 255/SysVar(SYS_SceneFxDimFactor);
+
+		curChan = &_channels[chan];
+	} else {
+		warning("playSample: Unknown SoundType");
+		return false;
+	}
+
+	// stop any currently playing sample
+	_vm->_mixer->stopHandle(curChan->handle);
+
+	// make sure id is in range
+	assert(id > 0 && id < _sampleIndexLen);
+
+	// get file offset for this sample
+	uint32 dwSampleIndex = _sampleIndex[id];
+	
+	if (dwSampleIndex == 0) {
+		warning("Tinsel2 playSample, non-existant sample %d", id);
+		return false;
+	}
+
+	// move to correct position in the sample file
+	_sampleStream.seek(dwSampleIndex);
+	if (_sampleStream.ioFailed() || (uint32)_sampleStream.pos() != dwSampleIndex)
+		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+
+	// read the length of the sample
+	uint32 sampleLen = _sampleStream.readUint32LE();
+	if (_sampleStream.ioFailed())
+		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+
+	if (sampleLen & 0x80000000) {
+		// Has sub samples
+
+		int32 numSubs = sampleLen & ~0x80000000;
+
+		assert(sub >= 0 && sub < numSubs);
+
+		// Skipping
+		for (int32 i = 0; i < sub; i++) {
+			sampleLen = _sampleStream.readUint32LE();
+			_sampleStream.skip(sampleLen);
+			if (_sampleStream.ioFailed())
+				error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+		}
+		sampleLen = _sampleStream.readUint32LE();
+		if (_sampleStream.ioFailed())
+			error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+	}
+
+	debugC(DEBUG_DETAILED, kTinselDebugSound, "Playing sound %d.%d, %d bytes at %d (pan %d)", id, sub, sampleLen,
+			_sampleStream.pos(), getPan(x));
+
+	// allocate a buffer
+	byte *sampleBuf = (byte *) malloc(sampleLen);
+	assert(sampleBuf);
+
+	// read all of the sample
+	if (_sampleStream.read(sampleBuf, sampleLen) != sampleLen)
+		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+
+	Common::MemoryReadStream *sampleStream =
+		new Common::MemoryReadStream(sampleBuf, sampleLen, true);
+	Audio::AudioStream *_stream =
+		makeADPCMStream(sampleStream, true, sampleLen, Audio::kADPCMTinsel6, 22050, 1, 24);
+
+	// FIXME: Should set this in a different place ;)
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volSound);
+	//_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volVoice);
+
+	curChan->sampleNum = id;
+	curChan->subSample = sub;
+	curChan->looped = bLooped;
+	curChan->x = x;
+	curChan->y = y;
+	curChan->priority = priority;
+	curChan->lastStart = g_system->getMillis();
+	//                         /---Compression----\    Milis   BytesPerSecond
+	curChan->timeDuration = (((sampleLen * 64) / 25) * 1000) / (22050 * 2);
+
+	// Play it
+	_vm->_mixer->playInputStream(type, &curChan->handle, _stream);
+	_vm->_mixer->setChannelVolume(curChan->handle, sndVol);
+	_vm->_mixer->setChannelBalance(curChan->handle, getPan(x));
+
+	if (handle)
+		*handle = curChan->handle;
+
+	return true;
+}
+
+/**
+ * Returns FALSE if sample doesn't need playing
+ */
+bool SoundManager::offscreenChecks(int x, int &y)
+{
+	// No action if no x specification
+	if (x == -1)
+		return true;
+
+	// convert x to offset from screen centre
+	x -= PlayfieldGetCentreX(FIELD_WORLD);
+
+	if (x < -SCREEN_WIDTH || x > SCREEN_WIDTH) {
+		// A long way offscreen, ignore it
+		return false;
+	} else if (x < -SCREEN_WIDTH/2 || x > SCREEN_WIDTH/2) {
+		// Off-screen, attennuate it
+
+		y = (y > 0) ? (y / 2) : 50;
+
+		return true;
+	} else
+		return true;
+}
+
+int8 SoundManager::getPan(int x) {
+
+	if (x == -1)
+		return 0;
+
+	x -= PlayfieldGetCentreX(FIELD_WORLD);
+
+	if (x == 0)
+		return 0;
+
+	if (x < 0) {
+		if (x < (-SCREEN_WIDTH / 2))
+			return -127;
+ 
+		x = (-x * 127) / (SCREEN_WIDTH / 2);
+
+		return 0 - x;
+	}
+
+	if (x > (SCREEN_WIDTH / 2))
+		return 127;
+
+	x = (x * 127) / (SCREEN_WIDTH / 2);
+
+	return x;
 }
 
 /**
@@ -131,8 +340,16 @@ bool SoundManager::sampleExists(int id) {
 /**
  * Returns true if a sample is currently playing.
  */
-bool SoundManager::sampleIsPlaying(void) {
-	return _vm->_mixer->isSoundHandleActive(_handle);
+bool SoundManager::sampleIsPlaying(int id) {
+	if (!TinselV2)
+		return _vm->_mixer->isSoundHandleActive(_channels[kChannelTinsel1].handle);
+
+	for (int i = 0; i < kNumChannels; i++)
+		if (_channels[i].sampleNum == id)
+			if (_vm->_mixer->isSoundHandleActive(_channels[i].handle))
+				return true;
+
+	return false;
 }
 
 /**
@@ -140,7 +357,37 @@ bool SoundManager::sampleIsPlaying(void) {
  */
 void SoundManager::stopAllSamples(void) {
 	// stop currently playing sample
-	_vm->_mixer->stopHandle(_handle);
+
+	if (!TinselV2) {
+		_vm->_mixer->stopHandle(_channels[kChannelTinsel1].handle);
+		return;
+	}
+
+	for (int i = 0; i < kNumChannels; i++)
+		_vm->_mixer->stopHandle(_channels[i].handle);
+}
+
+void SoundManager::stopSpecSample(int id, int sub) {
+	debugC(DEBUG_DETAILED, kTinselDebugSound, "stopSpecSample(%d, %d)", id, sub);
+
+	if (!TinselV2) {
+		if (_channels[kChannelTinsel1].sampleNum == id)
+			_vm->_mixer->stopHandle(_channels[kChannelTinsel1].handle);
+		return;
+	}
+
+	for (int i = kChannelTalk; i < kNumChannels; i++) {
+		if ((_channels[i].sampleNum == id) && (_channels[i].subSample == sub))
+			_vm->_mixer->stopHandle(_channels[i].handle);
+	}
+}
+
+void SoundManager::setSFXVolumes(uint8 volume) {
+	if (!TinselV2)
+		return;
+
+	for (int i = kChannelSFX; i < kNumChannels; i++)
+		_vm->_mixer->setChannelVolume(_channels[i].handle, volume);
 }
 
 /**
@@ -158,7 +405,7 @@ void SoundManager::openSampleFiles(void) {
 		return;
 
 	// open sample index file in binary mode
-	if (f.open(SAMPLE_INDEX)) 	{
+	if (f.open(_vm->getSampleIndex(sampleLanguage))) 	{
 		// get length of index file
 		f.seek(0, SEEK_END);		// move to end of file
 		_sampleIndexLen = f.pos();	// get file pointer
@@ -166,7 +413,7 @@ void SoundManager::openSampleFiles(void) {
 
 		if (_sampleIndex == NULL) {
 			// allocate a buffer for the indices
-			_sampleIndex = (int32 *)malloc(_sampleIndexLen);
+			_sampleIndex = (uint32 *)malloc(_sampleIndexLen);
 
 			// make sure memory allocated
 			if (_sampleIndex == NULL) {
@@ -179,7 +426,7 @@ void SoundManager::openSampleFiles(void) {
 		// load data
 		if (f.read(_sampleIndex, _sampleIndexLen) != (uint32)_sampleIndexLen)
 			// file must be corrupt if we get to here
-			error("File %s is corrupt", SAMPLE_FILE);
+			error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
 #ifdef SCUMM_BIG_ENDIAN
 		// Convert all ids from LE to native format
@@ -194,18 +441,25 @@ void SoundManager::openSampleFiles(void) {
 		// convert file size to size in DWORDs
 		_sampleIndexLen /= sizeof(uint32);
 	} else
-		error("Cannot find file %s", SAMPLE_INDEX);
+		error(CANNOT_FIND_FILE, _vm->getSampleIndex(sampleLanguage));
 
 	// open sample file in binary mode
-	if (!_sampleStream.open(SAMPLE_FILE))
-		error("Cannot find file %s", SAMPLE_FILE);
+	if (!_sampleStream.open(_vm->getSampleFile(sampleLanguage)))
+		error(CANNOT_FIND_FILE, _vm->getSampleFile(sampleLanguage));
 
 /*
 	// gen length of the largest sample
 	sampleBuffer.size = _sampleStream.readUint32LE();
 	if (_sampleStream.ioFailed())
-		error("File %s is corrupt", SAMPLE_FILE);
+		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 */
+}
+
+void SoundManager::closeSampleStream(void) {
+	_sampleStream.close();
+	free(_sampleIndex);
+	_sampleIndex = 0;
+	_sampleIndexLen = 0;
 }
 
 } // end of namespace Tinsel

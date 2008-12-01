@@ -31,7 +31,6 @@
 #include "tinsel/tinsel.h"
 #include "tinsel/savescn.h"	// needed by TinselMetaEngine::listSaves
 
-
 namespace Tinsel {
 
 struct TinselGameDescription {
@@ -68,7 +67,7 @@ uint16 TinselEngine::getVersion() const {
 static const PlainGameDescriptor tinselGames[] = {
 	{"tinsel", "Tinsel engine game"},
 	{"dw", "Discworld"},
-	{"dw2", "Discworld 2: Mortality Bytes!"},
+	{"dw2", "Discworld 2: Missing Presumed ...!?"},
 	{0, 0}
 };
 
@@ -77,25 +76,15 @@ namespace Tinsel {
 
 static const TinselGameDescription gameDescriptions[] = {
 
-	// The DW1 demo was based on an older revision of the Tinsel engine
-	// than the one used in the released game. We call it Tinsel v0 as 
-	// opposed to v1 which was used in the full retail version of DW.
-
-	{	// Demo from http://www.adventure-treff.de/specials/dl_demos.php
-		{
-			"dw",
-			"Demo",
-			AD_ENTRY1s("dw.gra", "ce1b57761ba705221bcf70955b827b97", 441192),
-			//AD_ENTRY1s("dw.scn", "ccd72f02183d0e96b6e7d8df9492cda8", 23308),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			Common::ADGF_DEMO
-		},
-		GID_DW1,
-		0,
-		GF_DEMO,
-		TINSEL_V0,
-	},
+	// Note: The following is the (hopefully) definitive list of version details:
+	// TINSEL_V0: Used only by the Discworld 1 demo - this used a more primitive version
+	//   of the Tinsel engine and graphics compression, and isn't currently supported
+	// TINSEL_V1: There were two versions of the Discworld 1 game - the first used .GRA
+	//   files, and the second used .SCN files. The second also provided some fixes to
+	//   various script bugs and coding errors, but is still considered TINSEL_V1,
+	//   as both game versions work equally well with the newer code.
+	// TINSEL_V2: The Discworld 2 game used this updated version of the Tinsel 1 engine,
+	//   and as far as we know there aren't any variations of this engine.
 
 	{
 		{	// This version has *.gra files
@@ -109,49 +98,6 @@ static const TinselGameDescription gameDescriptions[] = {
 		GID_DW1,
 		0,
 		GF_FLOPPY,
-		TINSEL_V1,
-	},
-
-	{	// Multilingual floppy with *.gra files.
-		// Note: It contains no english subtitles.
-		// Reported on our forums.
-		{
-			"dw",
-			"Floppy",
-			{
-				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
-				{"french.txt", 0, NULL, -1},
-				{"german.txt", 0, NULL, -1},
-				{"italian.txt", 0, NULL, -1},
-				{"spanish.txt", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
-			},
-			Common::FR_FRA,
-			Common::kPlatformPC,
-			Common::ADGF_DROPLANGUAGE
-		},
-		GID_DW1,
-		0,
-		GF_FLOPPY | GF_USE_4FLAGS,
-		TINSEL_V1,
-	},
-
-	{	// English CD. This version has *.gra files
-		{
-			"dw",
-			"CD",
-			{
-				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
-				{"english.smp", 0, NULL, -1},
-				{NULL, 0, NULL, 0}
-			},
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		GID_DW1,
-		0,
-		GF_CD,
 		TINSEL_V1,
 	},
 
@@ -245,7 +191,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
-	{	// English CD with SCN files
+	{	// English CD v2
 		{
 			"dw",
 			"CD",
@@ -265,7 +211,7 @@ static const TinselGameDescription gameDescriptions[] = {
 	},
 
 #if 0
-	{	// English Saturn CD. Not (yet?) supported
+	{	// English Saturn CD
 		{
 			"dw",
 			"CD",
@@ -285,6 +231,25 @@ static const TinselGameDescription gameDescriptions[] = {
 	},
 #endif
 
+// Currently disabled since it isn't really supported
+#if 0
+	{	// Demo from http://www.adventure-treff.de/specials/dl_demos.php
+		{
+			"dw",
+			"Demo",
+			AD_ENTRY1s("dw.gra", "ce1b57761ba705221bcf70955b827b97", 441192),
+			//AD_ENTRY1s("dw.scn", "ccd72f02183d0e96b6e7d8df9492cda8", 23308),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_DEMO
+		},
+		GID_DW1,
+		0,
+		GF_DEMO,
+		TINSEL_V0,
+	},
+#endif
+
 	{	// German CD re-release "Neon Edition"
 		// Note: This release has ENGLISH.TXT (with german content) instead of GERMAN.TXT
 		{
@@ -301,6 +266,44 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
+	{	// Europen/Australian Discworld 2 release
+		{
+			"dw2",
+			"CD",
+			{
+				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
+				{"english1.smp", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_DW2,
+		0,
+		GF_CD | GF_SCNFILES,
+		TINSEL_V2,
+	},
+	
+	{	// German Discworld 2 re-release "Neon Edition"
+		{
+			"dw2",
+			"CD",
+			{
+				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
+				{"german1.smp", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_DW2,
+		0,
+		GF_CD | GF_SCNFILES,
+		TINSEL_V2,
+	},
+	
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 
@@ -334,25 +337,23 @@ public:
 	}
 
 	virtual const char *getCopyright() const {
-		// FIXME: Bad copyright string.
-		// Should be something like "Tinsel (C) Psygnosis" or so... ???
-		return "Tinsel Engine";
+		return "Tinsel (C) Psygnosis";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 
 	virtual bool hasFeature(MetaEngineFeature f) const;	
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
 };
 
 bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves);
+	return (f == kSupportsListSaves);
 }
 
 namespace Tinsel {
+
 extern int getList(Common::SaveFileManager *saveFileMan, const Common::String &target);
+
 }
 
 SaveStateList TinselMetaEngine::listSaves(const char *target) const {
@@ -367,8 +368,6 @@ SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 
 	return saveList;
 }
-
-int TinselMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 bool TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 	const Tinsel::TinselGameDescription *gd = (const Tinsel::TinselGameDescription *)desc;

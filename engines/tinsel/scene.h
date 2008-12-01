@@ -28,6 +28,7 @@
 #define	TINSEL_SCENE_H
 
 #include "tinsel/dw.h"
+#include "tinsel/events.h"
 
 namespace Tinsel {
 
@@ -39,13 +40,19 @@ enum {
 	MAX_ACTOR		= 32	//!< maximum number of actors in a scene
 };
 
+// ENTRANCE_STRUC bitflags
+enum ENTRANCE_FLAGS {
+	fCall = 0x00000001L,
+	fHook = 0x00000002L
+};
+
 /** reference direction */
 enum REFTYPE {
 	REF_DEFAULT, REF_UP, REF_DOWN, REF_LEFT, REF_RIGHT, REF_POINT
 };
 
 enum TFTYPE {
-	TF_NONE, TF_UP, TF_DOWN, TF_LEFT, TF_RIGHT, TF_BOGUS
+	TF_NONE, TF_UP, TF_DOWN, TF_LEFT, TF_RIGHT, TF_FILM
 };
 
 /** different actor masks */
@@ -67,6 +74,23 @@ enum SCALE {
 enum REEL {
 	REEL_DEFAULT, REEL_ALL, REEL_HORIZ, REEL_VERT
 };
+
+typedef enum { TRANS_DEF, TRANS_CUT, TRANS_FADE } TRANSITS;
+
+// amount to shift scene handles by
+#define	SCNHANDLE_SHIFT (TinselV2 ? 25 : 23)
+#define	OFFSETMASK (TinselV2 ? 0x01ffffffL : 0x007fffffL)
+#define HANDLEMASK (TinselV2 ? 0xFE000000L : 0xFF800000L)
+
+void DoHailScene(SCNHANDLE scene);
+
+void WrapScene(void);
+
+void StartNewScene(SCNHANDLE scene, int entry);
+
+void EndScene(void);
+
+void SendSceneTinselProcess(TINSEL_EVENT event);
 
 } // end of namespace Tinsel
 

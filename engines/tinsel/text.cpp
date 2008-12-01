@@ -105,9 +105,10 @@ int JustifyText(char *szStr, int xPos, const FONT *pFont, int mode) {
  * @param yPos			Y position of string
  * @param hFont			Which font to use
  * @param mode			Mode flags for the string
+ * @param sleepTime		Sleep time between each character (if non-zero)
  */
-OBJECT *ObjectTextOut(OBJECT *pList, char *szStr, int colour, int xPos, int yPos,
-		SCNHANDLE hFont, int mode) {
+OBJECT *ObjectTextOut(CORO_PARAM, OBJECT *pList, char *szStr, int colour, 
+					  int xPos, int yPos, SCNHANDLE hFont, int mode, int sleepTime) {
 	int xJustify;	// x position of text after justification
 	int yOffset;	// offset to next line of text
 	OBJECT *pFirst;	// head of multi-object text list
@@ -130,7 +131,7 @@ OBJECT *ObjectTextOut(OBJECT *pList, char *szStr, int colour, int xPos, int yPos
 	pImg = (const IMAGE *)LockMem(FROM_LE_32(pFont->fontDef[(int)'W']));
 
 	// get height of capital W for offset to next line
-	yOffset = FROM_LE_16(pImg->imgHeight);
+	yOffset = FROM_LE_16(pImg->imgHeight) & ~C16_FLAG_MASK;
 
 	while (*szStr) {
 		// x justify the text according to the mode flags
@@ -175,7 +176,7 @@ OBJECT *ObjectTextOut(OBJECT *pList, char *szStr, int colour, int xPos, int yPos
 				// fill in character object
 				pChar->hImg   = hImg;			// image def
 				pChar->width  = FROM_LE_16(pImg->imgWidth);		// width of chars bitmap
-				pChar->height = FROM_LE_16(pImg->imgHeight);	// height of chars bitmap
+				pChar->height = FROM_LE_16(pImg->imgHeight) & ~C16_FLAG_MASK;	// height of chars bitmap
 				pChar->hBits  = FROM_LE_32(pImg->hImgBits);		// bitmap
 
 				// check for absolute positioning

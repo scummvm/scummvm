@@ -27,10 +27,11 @@
 #ifndef TINSEL_BACKGND_H     // prevent multiple includes
 #define TINSEL_BACKGND_H
 
-#include "tinsel/dw.h"	// for SCNHANDLE
-#include "tinsel/palette.h"	// palette definitions
 #include "common/frac.h"
 #include "common/rect.h"
+#include "tinsel/coroutine.h"
+#include "tinsel/dw.h"	// for SCNHANDLE
+#include "tinsel/palette.h"	// palette definitions
 
 namespace Tinsel {
 
@@ -78,6 +79,8 @@ struct BACKGND {
 void InitBackground(		// called to initialise a background
 	BACKGND *pBgnd);	// pointer to data struct for current background
 
+void StartupBackground(CORO_PARAM, SCNHANDLE hFilm);
+
 void StopBgndScrolling(void);	// Stops all background playfields from scrolling
 
 void PlayfieldSetPos(		// Sets the xy position of the specified playfield in the current background
@@ -90,6 +93,9 @@ void PlayfieldGetPos(		// Returns the xy position of the specified playfield in 
 	int *pXpos,		// returns current x position
 	int *pYpos);		// returns current y position
 
+int PlayfieldGetCentreX( 	// Returns the xy position of the specified playfield in the current background
+	int which);		// which playfield
+
 OBJECT *GetPlayfieldList(	// Returns the display list for the specified playfield
 	int which);		// which playfield
 
@@ -100,7 +106,15 @@ void DrawBackgnd(void);		// Draws all playfields for the current background
 
 void RedrawBackgnd(void);	// Completely redraws all the playfield object lists for the current background
 
-SCNHANDLE BackPal(void);
+OBJECT *GetBgObject();
+
+SCNHANDLE BgPal(void);
+
+void ForceEntireRedraw(void);
+
+int BgWidth(void);
+
+int BgHeight(void);
 
 } // end of namespace Tinsel
 
