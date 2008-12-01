@@ -199,8 +199,8 @@ bool MoviePlayer::load(uint32 id) {
 				const char *ptr = line.c_str();
 
 				// TODO: Better error handling
-				int startFrame = strtoul(ptr, (char **)&ptr, 10);
-				int endFrame = strtoul(ptr, (char **)&ptr, 10);
+				int startFrame = strtoul(ptr, const_cast<char **>(&ptr), 10);
+				int endFrame = strtoul(ptr, const_cast<char **>(&ptr), 10);
 
 				while (*ptr && isspace(*ptr))
 					ptr++;
