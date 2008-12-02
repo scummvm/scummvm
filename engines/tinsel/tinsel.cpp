@@ -219,6 +219,7 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 			continue;
 
 		case Common::KEYCODE_ESCAPE:
+#if 0
 			if (!TinselV2) {
 				// WORKAROUND: For Discworld 1, check if any of the starting logo screens are 
 				// active, and if so manually skip to the title screen, allowing them to be bypassed
@@ -241,6 +242,13 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 				// Running Discworld 2, so process the key normally
 				ProcessKeyEvent(PLR_ESCAPE);
 			}
+#else
+	// The above workaround is used to skip the title screens in DW1, but it can throw assertions
+	// in certain versions of the game, e.g. the multilingual version with English speech and several
+	// subtitles (French, German, Italian, Spanish)
+	// FIXME: Add that workaround again, once we make sure it works properly in all versions of the game
+	ProcessKeyEvent(PLR_ESCAPE);
+#endif
 			continue;
 
 #ifdef SLOW_RINCE_DOWN
