@@ -43,6 +43,8 @@ private:
 	typesADPCM _type;
 	uint32 _blockAlign;
 	uint32 _blockPos;
+	uint8 _chunkPos;
+	uint16 _chunkData;
 	int _blockLen;
 	int _rate;
 
@@ -111,6 +113,8 @@ ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, bool disp
 	_endpos = stream->pos() + size;
 	_blockLen = 0;
 	_blockPos = _blockAlign; // To make sure first header is read
+	_chunkPos = 0;
+	_chunkData = 0;
 
 	if (type == kADPCMMSIma && blockAlign == 0)
 		error("ADPCMInputStream(): blockAlign isn't specifiled for MS IMA ADPCM");
@@ -332,30 +336,43 @@ int ADPCMInputStream::readBufferTinsel4(int channels, int16 *buffer, const int n
 
 int ADPCMInputStream::readBufferTinsel6(int channels, int16 *buffer, const int numSamples) {
 	int samples;
-	uint16 data;
 	const double eVal = 1.032226562;
 
 	samples = 0;
-
-	assert(numSamples % 4 == 0);
 
 	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
 		if (_blockPos == _blockAlign) {
 			readBufferTinselHeader();
 			_blockPos = 0;
+			_chunkPos = 0;
 		}
 
-		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 4, _blockPos += 3) {
-			// Read 3 bytes = 24 bits = four 6 bit blocks
-			data = _stream->readByte();
-			buffer[samples] = TO_LE_16(decodeTinsel((data << 8) & 0xFC00, eVal));
-			data = (data << 8) | (_stream->readByte());
-			buffer[samples+1] = TO_LE_16(decodeTinsel((data << 6) & 0xFC00, eVal));
-			data = (data << 8) | (_stream->readByte());
-			buffer[samples+2] = TO_LE_16(decodeTinsel((data << 4) & 0xFC00, eVal));
-			data = (data << 8);
-			buffer[samples+3] = TO_LE_16(decodeTinsel((data << 2) & 0xFC00, eVal));
+		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples++, _chunkPos = (_chunkPos + 1) % 4) {
+
+			switch (_chunkPos) {
+			case 0:
+				_chunkData = _stream->readByte();
+				buffer[samples] = TO_LE_16(decodeTinsel((_chunkData << 8) & 0xFC00, eVal));
+				break;
+			case 1:
+				_chunkData = (_chunkData << 8) | (_stream->readByte());
+				buffer[samples] = TO_LE_16(decodeTinsel((_chunkData << 6) & 0xFC00, eVal));
+				_blockPos++;
+				break;
+			case 2:
+				_chunkData = (_chunkData << 8) | (_stream->readByte());
+				buffer[samples] = TO_LE_16(decodeTinsel((_chunkData << 4) & 0xFC00, eVal));
+				_blockPos++;
+				break;
+			case 3:
+				_chunkData = (_chunkData << 8);
+				buffer[samples] = TO_LE_16(decodeTinsel((_chunkData << 2) & 0xFC00, eVal));
+				_blockPos++;
+				break;
+			}
+			
 		}
+
 	}
 
 	return samples;
