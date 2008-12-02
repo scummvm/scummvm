@@ -286,6 +286,25 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V2,
 	},
 	
+	{	// French version of Discworld 2
+		{
+			"dw2",
+			"CD",
+			{
+				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
+				{"french1.smp", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_DW2,
+		0,
+		GF_CD | GF_SCNFILES,
+		TINSEL_V2,
+	},
+
 	{	// German Discworld 2 re-release "Neon Edition"
 		{
 			"dw2",
