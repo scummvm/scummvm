@@ -751,7 +751,7 @@ void LoadBasicChunks(void) {
 	INV_OBJECT *io = (INV_OBJECT *)cptr;
 	for (int i = 0; i < numObjects; i++, io++) {
 		io->id        = FROM_LE_32(io->id);
-		io->hFilm     = FROM_LE_32(io->hFilm);
+		io->hIconFilm = FROM_LE_32(io->hIconFilm);
 		io->hScript   = FROM_LE_32(io->hScript);
 		io->attribute = FROM_LE_32(io->attribute);
 	}
