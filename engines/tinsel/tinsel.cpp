@@ -804,15 +804,15 @@ const char *TinselEngine::_sampleIndices[][3] = {
 	{ "english.idx", "english1.idx", "english2.idx" },
 	{ "french.idx", "french1.idx", "french2.idx" },
 	{ "german.idx", "german1.idx", "german2.idx" },
-	{ "italian.idx", "italian1.idx", "italian2.idx" },
-	{ "spanish.idx", "spanish1.idx", "spanish2.idx" },
+	{ "english.idx", "english1.idx", "english2.idx" }, // Italian
+	{ "english.idx", "english1.idx", "english2.idx" } // Spanish
 };
 const char *TinselEngine::_sampleFiles[][3] = {
 	{ "english.smp", "english1.smp", "english2.smp" },
 	{ "french.smp", "french1.smp", "french2.smp" },
 	{ "german.smp", "german1.smp", "german2.smp" },
-	{ "italian.smp", "italian1.smp", "italian2.smp" },
-	{ "spanish.smp", "spanish1.smp", "spanish2.smp" },
+	{ "english.smp", "english1.smp", "english2.smp" }, // Italian
+	{ "english.smp", "english1.smp", "english2.smp" } // Spanish,
 };
 const char *TinselEngine::_textFiles[][3] = {
 	{ "english.txt", "english1.txt", "english2.txt" },

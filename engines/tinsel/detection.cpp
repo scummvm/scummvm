@@ -285,7 +285,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		GF_CD | GF_SCNFILES,
 		TINSEL_V2,
 	},
-	
+
 	{	// French version of Discworld 2
 		{
 			"dw2",
@@ -323,7 +323,46 @@ static const TinselGameDescription gameDescriptions[] = {
 		GF_CD | GF_SCNFILES,
 		TINSEL_V2,
 	},
-	
+
+	{	// Italian/Spanish Discworld 2
+		{
+			"dw2",
+			"CD",
+			{
+				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
+				{"english1.smp", 0, NULL, -1},
+				{"italian1.txt", 0, "d443249f8b55489b5888c227b9096f4e", 246495},
+				{NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_DW2,
+		0,
+		GF_CD | GF_SCNFILES,
+		TINSEL_V2,
+	},
+	{
+		{
+			"dw2",
+			"CD",
+			{
+				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
+				{"english1.smp", 0, NULL, -1},
+				{"spanish1.txt", 0, "bc6e147c5f542db228ac577357e4d897", 230323},
+				{NULL, 0, NULL, 0}
+			},
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_DW2,
+		0,
+		GF_CD | GF_SCNFILES,
+		TINSEL_V2,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 
