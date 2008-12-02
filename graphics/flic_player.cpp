@@ -64,6 +64,7 @@ bool FlicPlayer::loadFile(const char *fileName) {
 	memset(_palette, 0, sizeof(_palette));
 
 	// Seek to the first frame
+	_currFrame = 0;
 	_fileStream.seek(_flicInfo.offsetFrame1);
 	return true;
 }
