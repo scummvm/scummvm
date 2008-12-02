@@ -140,6 +140,9 @@ protected:
 	// Engine APIs
 	virtual Common::Error init();
 	virtual Common::Error go();
+	virtual bool hasFeature(EngineFeature f) const;
+	Common::Error loadGameState(int slot);
+	bool canLoadGameStateCurrently();
 	virtual void syncSoundSettings();
 
 public:

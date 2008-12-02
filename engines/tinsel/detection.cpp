@@ -27,6 +27,7 @@
 
 #include "common/advancedDetector.h"
 #include "common/file.h"
+#include "common/savefile.h"
 
 #include "tinsel/tinsel.h"
 #include "tinsel/savescn.h"	// needed by TinselMetaEngine::listSaves
@@ -344,19 +345,31 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;	
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
+	virtual void removeSaveState(const char *target, int slot) const;
 };
 
 bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return (f == kSupportsListSaves);
+	return 
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDeleteSave);
+}
+
+bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsLoadingDuringRuntime);
 }
 
 namespace Tinsel {
 
 extern int getList(Common::SaveFileManager *saveFileMan, const Common::String &target);
+extern void setNeedLoad();
+extern bool MoviePlaying(void);
 
 }
 
 SaveStateList TinselMetaEngine::listSaves(const char *target) const {
+	Tinsel::setNeedLoad();
 	int numStates = Tinsel::getList(g_system->getSavefileManager(), target);
 
 	SaveStateList saveList;
@@ -377,8 +390,30 @@ bool TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const Comm
 	return gd != 0;
 }
 
+int TinselMetaEngine::getMaximumSaveSlot() const { return 99; }
+
+void TinselMetaEngine::removeSaveState(const char *target, int slot) const {
+	Tinsel::setNeedLoad();
+	Tinsel::getList(g_system->getSavefileManager(), target);
+
+	g_system->getSavefileManager()->removeSavefile(Tinsel::ListEntry(slot, Tinsel::LE_NAME));
+	Tinsel::setNeedLoad();
+	Tinsel::getList(g_system->getSavefileManager(), target);
+}
+
 #if PLUGIN_ENABLED_DYNAMIC(TINSEL)
 	REGISTER_PLUGIN_DYNAMIC(TINSEL, PLUGIN_TYPE_ENGINE, TinselMetaEngine);
 #else
 	REGISTER_PLUGIN_STATIC(TINSEL, PLUGIN_TYPE_ENGINE, TinselMetaEngine);
 #endif
+
+namespace Tinsel {
+
+Common::Error TinselEngine::loadGameState(int slot) {
+	RestoreGame(slot);
+	return Common::kNoError;	// TODO: return success/failure
+}
+
+bool TinselEngine::canLoadGameStateCurrently() { return !MoviePlaying(); }
+
+} // End of namespace Tinsel

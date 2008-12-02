@@ -118,6 +118,8 @@ static char *SaveSceneSsData = 0;	// points to 'SAVED_DATA ssdata[MAX_NEST]'
 
 //------------- SAVE/LOAD SUPPORT METHODS ----------------
 
+void setNeedLoad() { NeedLoad = true; }
+
 static void syncTime(Serializer &s, struct tm &t) {
 	s.syncAsUint16LE(t.tm_year);
 	s.syncAsByte(t.tm_mon);
