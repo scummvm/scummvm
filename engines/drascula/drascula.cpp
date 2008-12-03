@@ -66,6 +66,8 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 		_system->openCD(cd_num);
 
 	_lang = kEnglish;
+
+	_keyBufferHead = _keyBufferTail = 0;
 }
 
 DrasculaEngine::~DrasculaEngine() {
@@ -702,8 +704,27 @@ bool DrasculaEngine::verify2() {
 
 Common::KeyCode DrasculaEngine::getScan() {
 	updateEvents();
+	if (_keyBufferHead == _keyBufferTail) return Common::KEYCODE_INVALID;
 
-	return _keyPressed.keycode;
+	Common::KeyCode key = _keyBuffer[_keyBufferTail].keycode;
+	_keyBufferTail = (_keyBufferTail + 1) % KEYBUFSIZE;
+
+	return key;
+}
+
+void DrasculaEngine::addKeyToBuffer(Common::KeyState& key) {
+	if ((_keyBufferHead + 1) % KEYBUFSIZE == _keyBufferTail) {
+		warning("key buffer overflow");
+		return;
+	}
+
+	_keyBuffer[_keyBufferHead] = key;
+	_keyBufferHead = (_keyBufferHead + 1) % KEYBUFSIZE;
+}
+
+void DrasculaEngine::flushKeyBuffer() {
+	updateEvents();
+	_keyBufferHead = _keyBufferTail = 0;
 }
 
 void DrasculaEngine::updateEvents() {
@@ -719,10 +740,9 @@ void DrasculaEngine::updateEvents() {
 #endif
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			_keyPressed = event.kbd;
+			addKeyToBuffer(event.kbd);
 			break;
 		case Common::EVENT_KEYUP:
-			_keyPressed.keycode = Common::KEYCODE_INVALID;
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			mouseX = event.mouse.x;

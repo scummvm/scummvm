@@ -268,12 +268,12 @@ struct CharInfo {
 #define COMPLETE_PAL	256
 #define HALF_PAL		128
 
+#define KEYBUFSIZE		16
+
 static const int interf_x[] ={ 1, 65, 129, 193, 1, 65, 129 };
 static const int interf_y[] ={ 51, 51, 51, 51, 83, 83, 83 };
 
 class DrasculaEngine : public ::Engine {
-	Common::KeyState _keyPressed;
-
 protected:
 	// Engine APIs
 	virtual Common::Error init();
@@ -426,6 +426,10 @@ public:
 	int leftMouseButton;
 	int rightMouseButton;
 
+	Common::KeyState _keyBuffer[KEYBUFSIZE];
+	int _keyBufferHead;
+	int _keyBufferTail;
+
 	bool loadDrasculaDat();
 
 	bool runCurrentChapter();
@@ -448,6 +452,8 @@ public:
 	bool verify1();
 	bool verify2();
 	Common::KeyCode getScan();
+	void addKeyToBuffer(Common::KeyState& key);
+	void flushKeyBuffer();
 	void selectVerb(int);
 	void updateVolume(Audio::Mixer::SoundType soundType, int prevVolume);
 	void volumeControls();
