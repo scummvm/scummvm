@@ -110,41 +110,36 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	Common::InSaveFile *f = getInSaveFile(slot);
 	if (!f) return;
 
-	char s[200];
-	char n[16];
-	char l[16];
+	Common::String s, character, location;
 
-	f->readLine_OLD(s, 199);
+	// scrap the line with the savefile name
+	f->readLine();
 
-	f->readLine_OLD(n, 15);
+	character = f->readLine();
+	location = f->readLine();
 
-	f->readLine_OLD(l, 15);
+	s = f->readLine();
+	_vm->_location._startPosition.x = atoi(s.c_str());
 
-	f->readLine_OLD(s, 15);
-	_vm->_location._startPosition.x = atoi(s);
+	s = f->readLine();
+	_vm->_location._startPosition.y = atoi(s.c_str());
 
-	f->readLine_OLD(s, 15);
-	_vm->_location._startPosition.y = atoi(s);
+	s = f->readLine();
+	_score = atoi(s.c_str());
 
-	f->readLine_OLD(s, 15);
-	_score = atoi(s);
+	s = f->readLine();
+	_globalFlags = atoi(s.c_str());
 
-	f->readLine_OLD(s, 15);
-	_globalFlags = atoi(s);
-
-	f->readLine_OLD(s, 15);
-
-	_vm->_numLocations = atoi(s);
+	s = f->readLine();
+	_vm->_numLocations = atoi(s.c_str());
 
 	uint16 _si;
 	for (_si = 0; _si < _vm->_numLocations; _si++) {
-		f->readLine_OLD(s, 20);
-		s[strlen(s)] = '\0';
+		s = f->readLine();
+		strcpy(_vm->_locationNames[_si], s.c_str());
 
-		strcpy(_vm->_locationNames[_si], s);
-
-		f->readLine_OLD(s, 15);
-		_vm->_localFlags[_si] = atoi(s);
+		s = f->readLine();
+		_vm->_localFlags[_si] = atoi(s.c_str());
 	}
 
 	_vm->cleanInventory(false);
@@ -152,11 +147,11 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	uint32 value;
 
 	for (_si = 0; _si < 30; _si++) {
-		f->readLine_OLD(s, 15);
-		value = atoi(s);
+		s = f->readLine();
+		value = atoi(s.c_str());
 
-		f->readLine_OLD(s, 15);
-		name = atoi(s);
+		s = f->readLine();
+		name = atoi(s.c_str());
 
 		_vm->addInventoryItem(name, value);
 	}
@@ -168,7 +163,7 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	strcpy(_vm->_characterName1, "null");
 
 	char tmp[PATH_LEN];
-	sprintf(tmp, "%s.%s" , l, n);
+	sprintf(tmp, "%s.%s" , location.c_str(), character.c_str());
 	_vm->scheduleLocationSwitch(tmp);
 
 	return;
@@ -334,23 +329,24 @@ void SaveLoadChooser::reflowLayout() {
 }
 
 int SaveLoad_ns::buildSaveFileList(Common::StringList& l) {
+	Common::String pattern = _saveFilePrefix + ".???";
+	Common::StringList filenames = _saveFileMan->listSavefiles(pattern.c_str());
 
-	char buf[200];
+	Common::String s;
 
 	int count = 0;
 
 	for (int i = 0; i < NUM_SAVESLOTS; i++) {
-		buf[0] = '\0';
+		s.clear();
 
 		Common::InSaveFile *f = getInSaveFile(i);
 		if (f) {
-			f->readLine_OLD(buf, 199);
-			delete f;
-
+			s = f->readLine();
 			count++;
 		}
 
-		l.push_back(buf);
+		delete f;
+		l.push_back(s);
 	}
 
 	return count;
@@ -417,24 +413,22 @@ bool SaveLoad_ns::saveGame() {
 
 
 void SaveLoad_ns::setPartComplete(const char *part) {
-	char buf[30];
+	Common::String s;
 	bool alreadyPresent = false;
-
-	memset(buf, 0, sizeof(buf));
 
 	Common::InSaveFile *inFile = getInSaveFile(SPECIAL_SAVESLOT);
 	if (inFile) {
-		inFile->readLine_OLD(buf, 29);
+		s = inFile->readLine();
 		delete inFile;
 
-		if (strstr(buf, part)) {
+		if (s.contains(part)) {
 			alreadyPresent = true;
 		}
 	}
 
 	if (!alreadyPresent) {
 		Common::OutSaveFile *outFile = getOutSaveFile(SPECIAL_SAVESLOT);
-		outFile->writeString(buf);
+		outFile->writeString(s);
 		outFile->writeString(part);
 		outFile->finalize();
 		delete outFile;
@@ -446,14 +440,13 @@ void SaveLoad_ns::setPartComplete(const char *part) {
 void SaveLoad_ns::getGamePartProgress(bool *complete, int size) {
 	assert(complete && size >= 3);
 
-	char buf[30];
 	Common::InSaveFile *inFile = getInSaveFile(SPECIAL_SAVESLOT);
-	inFile->readLine_OLD(buf, 29);
+	Common::String s = inFile->readLine();
 	delete inFile;
 
-	complete[0] = strstr(buf, "dino");
-	complete[1] = strstr(buf, "donna");
-	complete[2] = strstr(buf, "dough");
+	complete[0] = s.contains("dino");
+	complete[1] = s.contains("donna");
+	complete[2] = s.contains("dough");
 }
 
 void SaveLoad_ns::renameOldSavefiles() {
