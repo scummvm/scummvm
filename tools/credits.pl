@@ -544,6 +544,12 @@ begin_credits("Credits");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
 
+	  begin_section("Groovie");
+		  add_person("Henry Bush", "spookypeanut", "");
+		  add_person("Scott Thomas", "ST", "");
+		  add_person("Jordi Vilalta Prat", "jvprat", "");
+	  end_section();
+
 	  begin_section("Kyra");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "VQA Player");
 		  add_person("Oystein Eftevaag", "vinterstum", "");
