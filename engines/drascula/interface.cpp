@@ -148,7 +148,6 @@ void DrasculaEngine::clearMenu() {
 void DrasculaEngine::enterName() {
 	Common::KeyCode key;
 	flushKeyBuffer();
-	int counter = 0;
 	int v = 0, h = 0;
 	char select2[23];
 	strcpy(select2, "                      ");
