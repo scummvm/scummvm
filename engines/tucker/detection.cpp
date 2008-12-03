@@ -27,6 +27,7 @@
 #include "common/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/fs.h"
 
 #include "base/plugins.h"
 
@@ -70,14 +71,6 @@ static const Common::ADGameDescription tuckerGameDescriptions[] = {
 		Common::kPlatformPC,
 		Common::ADGF_NO_FLAGS
 	},
-	{
-		"tucker",
-		"Demo",
-		AD_ENTRY1s("sample.bnk", "0c58636237f90238cbfd49d76b3e5c1a", 10780),
-		Common::EN_ANY,
-		Common::kPlatformPC,
-		Common::ADGF_DEMO
-	},
 	AD_TABLE_END_MARKER
 };
 
@@ -90,6 +83,15 @@ static const Common::ADParams detectionParams = {
 	"tucker",
 	0,
 	0
+};
+
+static const Common::ADGameDescription tuckerDemoGameDescription = {
+	"tucker",
+	"Demo",
+	AD_ENTRY1(0, 0),
+	Common::EN_ANY,
+	Common::kPlatformPC,
+	Common::ADGF_DEMO
 };
 
 class TuckerMetaEngine : public Common::AdvancedMetaEngine {
@@ -120,6 +122,20 @@ public:
 			*engine = new Tucker::TuckerEngine(syst, desc->language, (desc->flags & Common::ADGF_DEMO) != 0);
 		}
 		return desc != 0;
+	}
+
+	virtual const Common::ADGameDescription *fallbackDetect(const Common::FSList &fslist) const {
+		for (Common::FSList::const_iterator d = fslist.begin(); d != fslist.end(); ++d) {
+			Common::FSList audiofslist;
+			if (d->isDirectory() && d->getName().compareToIgnoreCase("audio") && d->getChildren(audiofslist, Common::FSNode::kListFilesOnly)) {
+				for (Common::FSList::const_iterator f = audiofslist.begin(); f != audiofslist.end(); ++f) {
+					if (!f->isDirectory() && f->getName().compareToIgnoreCase("demorolc.raw")) {
+						return &tuckerDemoGameDescription;
+					}
+				}
+			}
+		}
+		return 0;
 	}
 
 	virtual SaveStateList listSaves(const char *target) const {

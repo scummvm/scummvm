@@ -813,7 +813,6 @@ protected:
 	static const uint8 _sprC02LookupTable[100];
 	static const uint8 _sprC02LookupTable2[100];
 	static const int _staticData3Table[1600];
-	static const int _instructionIdTable[20];
 	static int _locationHeightTable[80];
 	static int _objectKeysPosXTable[80];
 	static int _objectKeysPosYTable[80];
