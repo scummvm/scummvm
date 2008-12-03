@@ -800,26 +800,40 @@ static const GameSettings tinselSettings[] = {
 	{NULL, NULL, 0, 0, NULL}
 };
 
+// For the languages, refer to the LANGUAGE enum in dw.h
+
 const char *TinselEngine::_sampleIndices[][3] = {
-	{ "english.idx", "english1.idx", "english2.idx" },
-	{ "french.idx", "french1.idx", "french2.idx" },
-	{ "german.idx", "german1.idx", "german2.idx" },
-	{ "english.idx", "english1.idx", "english2.idx" }, // Italian
-	{ "english.idx", "english1.idx", "english2.idx" } // Spanish
+	{ "english.idx", "english1.idx", "english2.idx" },	// English
+	{ "french.idx", "french1.idx", "french2.idx" },		// French
+	{ "german.idx", "german1.idx", "german2.idx" },		// German
+	{ "english.idx", "english1.idx", "english2.idx" },	// Italian
+	{ "english.idx", "english1.idx", "english2.idx" },	// Spanish
+	{ "english.idx", "english1.idx", "english2.idx" },	// Hebrew (FIXME: not sure if this is correct)
+	{ "english.idx", "english1.idx", "english2.idx" },	// Hungarian (FIXME: not sure if this is correct)
+	{ "english.idx", "english1.idx", "english2.idx" },	// Japanese (FIXME: not sure if this is correct)
+	{ "us.idx", "us1.idx", "us2.idx" }					// US English
 };
 const char *TinselEngine::_sampleFiles[][3] = {
-	{ "english.smp", "english1.smp", "english2.smp" },
-	{ "french.smp", "french1.smp", "french2.smp" },
-	{ "german.smp", "german1.smp", "german2.smp" },
-	{ "english.smp", "english1.smp", "english2.smp" }, // Italian
-	{ "english.smp", "english1.smp", "english2.smp" } // Spanish,
+	{ "english.smp", "english1.smp", "english2.smp" },	// English
+	{ "french.smp", "french1.smp", "french2.smp" },		// French
+	{ "german.smp", "german1.smp", "german2.smp" },		// German
+	{ "english.smp", "english1.smp", "english2.smp" },	// Italian
+	{ "english.smp", "english1.smp", "english2.smp" },	// Spanish
+	{ "english.smp", "english1.smp", "english2.smp" },	// Hebrew (FIXME: not sure if this is correct)
+	{ "english.smp", "english1.smp", "english2.smp" },	// Hungarian (FIXME: not sure if this is correct)
+	{ "english.smp", "english1.smp", "english2.smp" },	// Japanese (FIXME: not sure if this is correct)
+	{ "us.smp", "us1.smp", "us2.smp" },					// US English
 };
 const char *TinselEngine::_textFiles[][3] = {
-	{ "english.txt", "english1.txt", "english2.txt" },
-	{ "french.txt", "french1.txt", "french2.txt" },
-	{ "german.txt", "german1.txt", "german2.txt" },
-	{ "italian.txt", "italian1.txt", "italian2.txt" },
-	{ "spanish.txt", "spanish1.txt", "spanish2.txt" }
+	{ "english.txt", "english1.txt", "english2.txt" },	// English
+	{ "french.txt", "french1.txt", "french2.txt" },		// French
+	{ "german.txt", "german1.txt", "german2.txt" },		// German
+	{ "italian.txt", "italian1.txt", "italian2.txt" },	// Italian
+	{ "spanish.txt", "spanish1.txt", "spanish2.txt" },	// Spanish
+	{ "english.txt", "english1.txt", "english2.txt" },	// Hebrew (FIXME: not sure if this is correct)
+	{ "english.txt", "english1.txt", "english2.txt" },	// Hungarian (FIXME: not sure if this is correct)
+	{ "english.txt", "english1.txt", "english2.txt" },	// Japanese (FIXME: not sure if this is correct)
+	{ "us.txt", "us1.txt", "us2.txt" }					// US English
 };
 
 
@@ -1246,7 +1260,7 @@ const char *TinselEngine::getSampleIndex(LANGUAGE lang) {
 	if (TinselV2) {
 		cd = GetCurrentCD();
 		assert((cd == 1) || (cd == 2));
-		assert(((unsigned int) lang) < 5);
+		assert(((unsigned int) lang) < NUM_LANGUAGES);
 	} else {
 		cd = 0;
 		lang = TXT_ENGLISH;
@@ -1261,7 +1275,7 @@ const char *TinselEngine::getSampleFile(LANGUAGE lang) {
 	if (TinselV2) {
 		cd = GetCurrentCD();
 		assert((cd == 1) || (cd == 2));
-		assert(((unsigned int) lang) < 5);
+		assert(((unsigned int) lang) < NUM_LANGUAGES);
 	} else {
 		cd = 0;
 		lang = TXT_ENGLISH;
@@ -1271,7 +1285,7 @@ const char *TinselEngine::getSampleFile(LANGUAGE lang) {
 }
 
 const char *TinselEngine::getTextFile(LANGUAGE lang) {
-	assert(((unsigned int) lang) < 5);
+	assert(((unsigned int) lang) < NUM_LANGUAGES);
 
 	int cd;
 

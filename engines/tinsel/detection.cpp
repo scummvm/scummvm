@@ -87,8 +87,8 @@ static const TinselGameDescription gameDescriptions[] = {
 	// TINSEL_V2: The Discworld 2 game used this updated version of the Tinsel 1 engine,
 	//   and as far as we know there aren't any variations of this engine.
 
-	{
-		{	// This version has *.gra files
+	{	// Floppy V1 version, with *.gra files
+		{
 			"dw",
 			"Floppy",
 			AD_ENTRY1s("dw.gra", "c8808ccd988d603dd35dff42013ae7fd", 781656),
@@ -99,6 +99,24 @@ static const TinselGameDescription gameDescriptions[] = {
 		GID_DW1,
 		0,
 		GF_FLOPPY,
+		TINSEL_V1,
+	},
+
+	{	// CD V1 version, with *.gra files (same as the floppy one, with english.smp)
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
+				{"english.smp", 0, NULL, -1},
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_DW1,
+		0,
+		GF_CD,
 		TINSEL_V1,
 	},
 
@@ -267,13 +285,32 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
-	{	// Europen/Australian Discworld 2 release
+	{	// European/Australian Discworld 2 release
 		{
 			"dw2",
 			"CD",
 			{
 				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
 				{"english1.smp", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_DW2,
+		0,
+		GF_CD | GF_SCNFILES,
+		TINSEL_V2,
+	},
+
+	{	// US Discworld 2 release
+		{
+			"dw2",
+			"CD",
+			{
+				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
+				{"us1.smp", 0, NULL, -1},
 				{NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
