@@ -51,6 +51,7 @@ bool DrasculaEngine::saveLoadScreen() {
 	}
 	for (n = 0; n < NUM_SAVES; n++) {
 		strncpy(names[n], sav->readLine().c_str(), 23);
+		names[n][22] = '\0';	// make sure the savegame name is 0-terminated
 	}
 	delete sav;
 
