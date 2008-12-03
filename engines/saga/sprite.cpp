@@ -328,7 +328,7 @@ void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteL
 	const byte *sourcePointer;
 	byte *destPointer;
 	byte *maskPointer;
-	int width  = NULL;
+	int width  = 0;
 	int height = 0;
 	int xAlign = 0;
 	int yAlign = 0;
