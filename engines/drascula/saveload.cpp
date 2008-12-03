@@ -49,14 +49,8 @@ bool DrasculaEngine::saveLoadScreen() {
 			error("Can't open %s file", fileEpa);
 		}
 	}
-	int l;
 	for (n = 0; n < NUM_SAVES; n++) {
-		sav->readLine_NEW(names[n], 23);
-		// readLine_NEW also returns the newline character (\n),
-		// so we need to clear it here
-		l = strlen(names[n]);
-		if (l > 0 && names[n][l - 1] == '\n')
-			names[n][l - 1] = '\0';
+		strncpy(names[n], sav->readLine().c_str(), 23);
 	}
 	delete sav;
 
