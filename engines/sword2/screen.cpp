@@ -932,7 +932,32 @@ void Screen::rollCredits() {
 
 	while (1) {
 		char buffer[80];
-		char *line = f.readLine_OLD(buffer, sizeof(buffer));
+		char *line = f.readLine_NEW(buffer, sizeof(buffer));
+
+		if (line) {
+			// Replace invalid character codes prevent the 'dud'
+			// symbol from showing up in the credits.
+
+			for (byte *ptr = (byte *)line; *ptr; ptr++) {
+				switch (*ptr) {
+				case 9:
+					// The German credits contain these.
+					// Convert them to spaces.
+					*ptr = 32;
+					break;
+				case 10:
+					// LF is treated as end of line.
+					*ptr = 0;
+					break;
+				case 170:
+					// The Spanish credits contain these.
+					// Convert them to periods.
+					*ptr = '.';
+				default:
+					break;
+				}
+			}
+		}
 
 		if (!line || *line == 0) {
 			if (!hasCenterMark) {
@@ -948,21 +973,6 @@ void Screen::rollCredits() {
 				break;
 
 			continue;
-		}
-
-		// Replace invalid character codes to avoid the credits to show
-		// the 'dud' symbol.
-
-		for (byte *ptr = (byte *)line; *ptr; ptr++) {
-			// The German credits contains character code 9. We
-			// replace them with spaces.
-			if (*ptr == 9)
-				*ptr = 32;
-
-			// The Spanish credits contains character code 170. We
-			// replace them with dots.
-			if (*ptr == 170)
-				*ptr = '.';
 		}
 
 		char *center_mark = strchr(line, '^');
