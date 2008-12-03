@@ -234,10 +234,10 @@ void OPLBuildTables(int ENV_BITS_PARAM, int EG_ENT_PARAM) {
 	EG_AED = EG_DST;
 	//EG_STEP = (96.0/EG_ENT);
 
-	for (i = 0; i < (int)(sizeof(KSL_TABLE_SEED) / sizeof(double)); i++)
+	for (i = 0; i < ARRAYSIZE(KSL_TABLE_SEED); i++)
 		KSL_TABLE[i] = SC_KSL(KSL_TABLE_SEED[i]);
 
-	for (i = 0; i < (int)(sizeof(SL_TABLE_SEED) / sizeof(uint)); i++)
+	for (i = 0; i < ARRAYSIZE(SL_TABLE_SEED); i++)
 		SL_TABLE[i] = SC_SL(SL_TABLE_SEED[i]);
 }
 
@@ -245,15 +245,6 @@ void OPLBuildTables(int ENV_BITS_PARAM, int EG_ENT_PARAM) {
 #undef SC_SL
 
 /* --------------------- subroutines  --------------------- */
-
-inline int Limit(int val, int max, int min) {
-	if ( val > max )
-		val = max;
-	else if ( val < min )
-		val = min;
-
-	return val;
-}
 
 /* status set and IRQ handling */
 inline void OPL_STATUS_SET(FM_OPL *OPL, int flag) {
@@ -1027,7 +1018,7 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
 		if(rythm)
 			OPL_CALC_RH(OPL, S_CH);
 		/* limit check */
-		data = Limit(outd[0], OPL_MAXOUT, OPL_MINOUT);
+		data = CLIP(outd[0], OPL_MINOUT, OPL_MAXOUT);
 		/* store to sound buffer */
 		buf[i] = data >> OPL_OUTSB;
 	}
