@@ -368,11 +368,6 @@ public:
 	virtual bool skip(uint32 offset) { return seek(offset, SEEK_CUR); }
 
 	/**
-	 * DEPRECATED: Do not use this method! Instead use readLine_NEW() or readline().
-	 */
-	virtual char *readLine_OLD(char *buf, size_t bufSize);
-
-	/**
 	 * Reads at most one less than the number of characters specified
 	 * by bufSize from the and stores them in the string buf. Reading
 	 * stops when the end of a line is reached (CR, CR/LF or LF), and
