@@ -834,6 +834,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 	close = false;
 	if (lastFrame == -1) {
 		close = true;
+	} else if (lastFrame == -2) {
 	} else if (lastFrame == -3) {
 
 		_vm->_mult->_objects[startFrame].pAnimData->animation = -startFrame - 1;
@@ -878,7 +879,8 @@ void Inter_v4::o4_playVmdOrMusic() {
 	}
 
 	if (startFrame == -2) {
-		startFrame = lastFrame = 0;
+		startFrame = 0;
+		lastFrame = -1;
 		close = false;
 	}
 

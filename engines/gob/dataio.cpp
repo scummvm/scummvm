@@ -312,8 +312,10 @@ int16 DataIO::seekChunk(int16 handle, int32 pos, int16 from) {
 	_isCurrentSlot[index] = false;
 	if (from == SEEK_SET)
 		_chunkPos[index] = pos;
-	else
+	else if (from == SEEK_CUR)
 		_chunkPos[index] += pos;
+	else if (from == SEEK_END)
+		_chunkPos[index] = _chunkSize[index] - pos;
 
 	return _chunkPos[index];
 }

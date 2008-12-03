@@ -880,8 +880,10 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	uint16 handle = _stream->readUint16LE();
 	_version = _stream->readUint16LE();
 
+	// 0x4 (4)
+
 	// Version checking
-	if ((headerLength != 814) || (handle != 0) || (_version != 1)) {
+	if (headerLength != 814) {
 		warning("VMD Version incorrect (%d, %d, %d)", headerLength, handle, _version);
 		unload();
 		return false;
@@ -889,31 +891,62 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 
 	_framesCount = _stream->readUint16LE();
 
+	// 0x6 (6)
+
 	_x = _stream->readSint16LE();
 	_y = _stream->readSint16LE();
 	_width = _stream->readSint16LE();
 	_height = _stream->readSint16LE();
+
+	// 0xE (14)
+
 	if ((_width != 0) && (_height != 0)) {
 		_hasVideo = true;
 		_features |= kFeaturesVideo;
 	} else
 		_hasVideo = false;
 
+	if (_width > 320) {
+		if (!(_version & 4)) {
+			_version |= 4;
+			handle = 0;
+		}
+	}
+
+	if (handle == 0) {
+		// _field_463 = 1;
+	} else if (handle == 1) {
+		// _field_463 = 0;
+	} else if (handle == 2) {
+		// _field_463 = 2;
+	} else {
+		warning("VMD Version incorrect (%d, %d, %d)", headerLength, handle, _version);
+		unload();
+		return false;
+	}
+
 	_flags = _stream->readUint16LE();
 	_partsPerFrame = _stream->readUint16LE();
 	_firstFramePos = _stream->readUint32LE();
 	_stream->skip(4); // Unknown
 
+	// 0x1A (26)
+
 	_stream->read((byte *) _palette, 768);
+
+	// 0x31A (794)
 
 	_frameDataSize = _stream->readUint32LE();
 	_vidBufferSize = _stream->readUint32LE();
 
+	// 0x322 (802)
+
 	if (_hasVideo) {
-		if ((_frameDataSize == 0) || (_frameDataSize > 1048576))
+		_vidBufferSize = _frameDataSize = 312200;
+/*		if ((_frameDataSize == 0) || (_frameDataSize > 1048576))
 			_frameDataSize = _width * _height + 500;
 		if ((_vidBufferSize == 0) || (_vidBufferSize > 1048576))
-			_vidBufferSize = _frameDataSize;
+			_vidBufferSize = _frameDataSize;*/
 
 		_frameData = new byte[_frameDataSize];
 		assert(_frameData);
@@ -928,6 +961,8 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	_soundSlicesCount = _stream->readSint16LE();
 	_soundFlags = _stream->readUint16LE();
 	_hasSound = (_soundFreq != 0);
+
+	// 0x32A (810)
 
 	if (_hasSound) {
 		_features |= kFeaturesSound;
@@ -956,6 +991,8 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 
 	_frameInfoOffset = _stream->readUint32LE();
 
+	int numExtraData = 0;
+
 	_stream->seek(_frameInfoOffset);
 	_frames = new Frame[_framesCount];
 	for (uint16 i = 0; i < _framesCount; i++) {
@@ -964,6 +1001,8 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 		_frames[i].offset = _stream->readUint32LE();
 	}
 	for (uint16 i = 0; i < _framesCount; i++) {
+		bool separator = false;
+
 		for (uint16 j = 0; j < _partsPerFrame; j++) {
 
 			_frames[i].parts[j].type = (PartType) _stream->readByte();
@@ -984,11 +1023,57 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 				_stream->skip(1); // Unknown
 				_frames[i].parts[j].flags = _stream->readByte();
 
+			} else if (_frames[i].parts[j].type == kPartTypeExtraData) {
+				if (!separator)
+					numExtraData++;
+				_stream->skip(10);
+			} else if (_frames[i].parts[j].type == kPartTypeSeparator) {
+				separator = true;
+				_stream->skip(10);
 			} else {
 				// Unknow type
 				_stream->skip(10);
 			}
 
+		}
+	}
+
+	if (numExtraData == 0)
+		return true;
+
+	_extraData.reserve(numExtraData);
+
+	numExtraData = 0;
+
+	uint32 ssize = _stream->size();
+	for (uint16 i = 0; i < _framesCount; i++) {
+		_stream->seek(_frames[i].offset);
+
+		for (uint16 j = 0; j < _partsPerFrame; j++) {
+			if (_frames[i].parts[j].type == kPartTypeSeparator)
+				break;
+
+			if (_frames[i].parts[j].type == kPartTypeExtraData) {
+				ExtraData data;
+
+				data.offset = _stream->pos() + 20;
+				data.size = _frames[i].parts[j].size;
+				data.realSize = _stream->readUint32LE();
+				_stream->read(data.name, 16);
+				data.name[15] = '\0';
+
+				_stream->skip(_frames[i].parts[j].size - 20);
+
+				if ((((uint32) data.realSize) >= ssize) || (data.name[0] == 0))
+					continue;
+					
+				warning("ExtraData %d: %d.%d, %d, %d, %d, %s", _extraData.size(), i, j,
+						data.offset, data.size, data.realSize, data.name);
+
+				_extraData.push_back(data);
+
+			} else
+				_stream->skip(_frames[i].parts[j].size);
 		}
 	}
 
@@ -1057,14 +1142,15 @@ CoktelVideo::State Vmd::nextFrame() {
 void Vmd::clear(bool del) {
 	Imd::clear(del);
 
-	if (del) {
+	if (del)
 		delete[] _frames;
-	}
 
 	_hasVideo = true;
 
 	_partsPerFrame = 0;
 	_frames = 0;
+
+	_extraData.clear();
 
 	_soundBytesPerSample = 1;
 	_soundStereo = 0;
@@ -1294,9 +1380,46 @@ uint32 Vmd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
 			imdVidMemBak += sW;
 			imdVidMem = imdVidMemBak;
 		}
-	} else {
-		warning("Unkown frame rendering method %d (0x%X)", type, type);
-		return 0;
+	} else if (type == 0x42) { // Whole quarter-wide block
+		for (int i = 0; i < height; i++) {
+			imdVidMemBak = imdVidMem;
+
+			for (int j = 0; j < width; j += 4, imdVidMem += 4, srcPtr++)
+				memset(imdVidMem, *srcPtr, 4);
+
+			imdVidMemBak += sW;
+			imdVidMem = imdVidMemBak;
+		}
+	} else if ((type & 0xF) == 2) { // Whole half-high block
+		for (; height > 1; height -= 2, imdVidMem += sW + sW, srcPtr += width) {
+			memcpy(imdVidMem, srcPtr, width);
+			memcpy(imdVidMem + sW, srcPtr, width);
+		}
+		if (height == -1)
+			memcpy(imdVidMem, srcPtr, width);
+	} else { // Sparse half-high block
+		imdVidMemBak = imdVidMem;
+		for (int i = 0; i < height; i += 2) {
+			pixWritten = 0;
+			while (pixWritten < width) {
+				pixCount = *srcPtr++;
+				if (pixCount & 0x80) { // Data
+					pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
+					memcpy(imdVidMem, srcPtr, pixCount);
+					memcpy(imdVidMem + sW, srcPtr, pixCount);
+
+					pixWritten += pixCount;
+					imdVidMem += pixCount;
+					srcPtr += pixCount;
+				} else { // "Hole"
+					pixCount = (pixCount + 1) % 256;
+					pixWritten += pixCount;
+					imdVidMem += pixCount;
+				}
+			}
+			imdVidMemBak += sW + sW;
+			imdVidMem = imdVidMemBak;
+		}
 	}
 
 	return 1;
@@ -1387,7 +1510,7 @@ bool Vmd::getAnchor(int16 frame, uint16 partType,
 	for (i = 0; i < _partsPerFrame; i++) {
 		byte type = _stream->readByte();
 
-		if ((type == 0) || (type == partType))
+		if ((type == kPartTypeSeparator) || (type == partType))
 			break;
 
 		_stream->skip(15);
@@ -1408,6 +1531,47 @@ bool Vmd::getAnchor(int16 frame, uint16 partType,
 
 	_stream->seek(pos);
 	return true;
+}
+
+bool Vmd::hasExtraData(const char *fileName) const {
+	for (uint i = 0; i < _extraData.size(); i++)
+		if (!scumm_stricmp(_extraData[i].name, fileName))
+			return true;
+
+	return false;
+}
+
+Common::MemoryReadStream *Vmd::getExtraData(const char *fileName) {
+	uint i = 0;
+
+	for (i = 0; i < _extraData.size(); i++)
+		if (!scumm_stricmp(_extraData[i].name, fileName))
+			break;
+
+	if (i >= _extraData.size())
+		return 0;
+
+	if ((_extraData[i].size - 20) != _extraData[i].realSize) {
+		warning("Vmd::getExtraData(): Sizes for \"%s\" differ! (%d, %d)",
+				fileName, (_extraData[i].size - 20), _extraData[i].realSize);
+		return 0;
+	}
+
+	byte *data = (byte *) malloc(_extraData[i].realSize);
+
+	_stream->seek(_extraData[i].offset);
+	if (_stream->ioFailed() || (((uint32) _stream->pos()) != _extraData[i].offset)) {
+		warning("Vmd::getExtraData(): Can't seek to offset %d to get extra data file \"%s\"",
+				_extraData[i].offset, fileName);
+		return 0;
+	}
+
+	_stream->read(data, _extraData[i].realSize);
+
+	Common::MemoryReadStream *stream =
+		new Common::MemoryReadStream(data, _extraData[i].realSize, true);
+
+	return stream;
 }
 
 } // End of namespace Gob

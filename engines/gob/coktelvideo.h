@@ -27,6 +27,7 @@
 #define GOB_COKTELVIDEO_H
 
 #include "common/stream.h"
+#include "common/array.h"
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
 
@@ -119,6 +120,11 @@ public:
 	virtual bool getAnchor(int16 frame, uint16 partType,
 			int16 &x, int16 &y, int16 &width, int16 &height) = 0;
 
+	/** Returns whether that extra data file exists */
+	virtual bool hasExtraData(const char *fileName) const = 0;
+	/** Returns an extra data file */
+	virtual Common::MemoryReadStream *getExtraData(const char *fileName) = 0;
+
 	/** Load a video out of a stream. */
 	virtual bool load(Common::SeekableReadStream &stream) = 0;
 	/** Unload the currently loaded video. */
@@ -200,6 +206,9 @@ public:
 
 	bool getAnchor(int16 frame, uint16 partType,
 			int16 &x, int16 &y, int16 &width, int16 &height) { return false; }
+
+	bool hasExtraData(const char *fileName) const { return false; }
+	Common::MemoryReadStream *getExtraData(const char *fileName) { return 0; }
 
 	void setFrameRate(int16 frameRate);
 
@@ -295,6 +304,9 @@ public:
 	bool getAnchor(int16 frame, uint16 partType,
 			int16 &x, int16 &y, int16 &width, int16 &height);
 
+	bool hasExtraData(const char *fileName) const;
+	Common::MemoryReadStream *getExtraData(const char *fileName);
+
 	bool load(Common::SeekableReadStream &stream);
 	void unload();
 
@@ -306,9 +318,17 @@ public:
 
 protected:
 	enum PartType {
+		kPartTypeSeparator = 0,
 		kPartTypeAudio = 1,
-		kPartTypeVideo = 2
+		kPartTypeVideo = 2,
+		kPartTypeExtraData = 3
 	};
+	struct ExtraData {
+		char name[16];
+		uint32 offset;
+		uint32 size;
+		uint32 realSize;
+	} PACKED_STRUCT;
 	struct Part {
 		PartType type;
 		uint32 size;
@@ -333,6 +353,8 @@ protected:
 	uint32 _frameInfoOffset;
 	uint16 _partsPerFrame;
 	Frame *_frames;
+
+	Common::Array<ExtraData> _extraData;
 
 	byte _soundBytesPerSample;
 	byte _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)

@@ -80,6 +80,9 @@ public:
 	int16 getDefaultX(int slot = -1) const;
 	int16 getDefaultY(int slot = -1) const;
 
+	bool hasExtraData(const char *fileName, int slot = -1) const;
+	Common::MemoryReadStream *getExtraData(const char *fileName, int slot = -1);
+
 	void writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 			int16 varFrames, int16 varWidth, int16 varHeight);
 
@@ -103,6 +106,9 @@ private:
 
 			int16 getDefaultX() const;
 			int16 getDefaultY() const;
+
+			bool hasExtraData(const char *fileName) const;
+			Common::MemoryReadStream *getExtraData(const char *fileName);
 
 			CoktelVideo::State nextFrame();
 
@@ -129,6 +135,7 @@ private:
 	bool findFile(char *fileName, Type &which);
 
 	const Video *getVideoBySlot(int slot = -1) const;
+	Video *getVideoBySlot(int slot = -1);
 
 	int getNextFreeSlot();
 

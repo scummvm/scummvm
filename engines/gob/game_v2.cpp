@@ -106,6 +106,9 @@ void Game_v2::playTot(int16 skipPlay) {
 				break;
 
 			totSize = loadTotFile(_curTotFile);
+
+			_vm->_vidPlayer->primaryClose();
+
 			if (_totFileData == 0) {
 				_vm->_draw->blitCursor();
 				_vm->_inter->_terminate = 2;
@@ -269,7 +272,6 @@ void Game_v2::playTot(int16 skipPlay) {
 				}
 			}
 
-			_vm->_vidPlayer->primaryClose();
 			if (_totToLoad[0] == 0)
 				break;
 

@@ -124,6 +124,20 @@ int16 VideoPlayer::Video::getDefaultY() const {
 	return _defaultY;
 }
 
+bool VideoPlayer::Video::hasExtraData(const char *fileName) const {
+	if (!_video)
+		return false;
+
+	return _video->hasExtraData(fileName);
+}
+
+Common::MemoryReadStream *VideoPlayer::Video::getExtraData(const char *fileName) {
+	if (!_video)
+		return 0;
+
+	return _video->getExtraData(fileName);
+}
+
 CoktelVideo::State VideoPlayer::Video::nextFrame() {
 	if (_video)
 		_state = _video->nextFrame();
@@ -445,6 +459,16 @@ const VideoPlayer::Video *VideoPlayer::getVideoBySlot(int slot) const {
 	return 0;
 }
 
+VideoPlayer::Video *VideoPlayer::getVideoBySlot(int slot) {
+	if (slot < 0) {
+		if (_primaryVideo->isOpen())
+			return _primaryVideo;
+	} else if (((uint) slot) < _videoSlots.size() && _videoSlots[slot])
+		return _videoSlots[slot];
+
+	return 0;
+}
+
 uint16 VideoPlayer::getFlags(int slot) const {
 	const Video *video = getVideoBySlot(slot);
 
@@ -504,6 +528,24 @@ int16 VideoPlayer::getDefaultY(int slot) const {
 
 	if (video)
 		return video->getDefaultY();
+
+	return 0;
+}
+
+bool VideoPlayer::hasExtraData(const char *fileName, int slot) const {
+	const Video *video = getVideoBySlot(slot);
+
+	if (video)
+		return video->hasExtraData(fileName);
+
+	return false;
+}
+
+Common::MemoryReadStream *VideoPlayer::getExtraData(const char *fileName, int slot) {
+	Video *video = getVideoBySlot(slot);
+
+	if (video)
+		return video->getExtraData(fileName);
 
 	return 0;
 }

@@ -34,6 +34,7 @@
 #include "gob/parse.h"
 #include "gob/draw.h"
 #include "gob/mult.h"
+#include "gob/videoplayer.h"
 #include "gob/sound/sound.h"
 
 namespace Gob {
@@ -394,8 +395,19 @@ int32 Game::loadTotFile(const char *path) {
 		_vm->_dataIO->closeData(handle);
 		size = _vm->_dataIO->getDataSize(path);
 		_totFileData = _vm->_dataIO->getData(path);
-	} else
-		_totFileData = 0;
+	} else {
+		Common::MemoryReadStream *videoExtraData = _vm->_vidPlayer->getExtraData(path);
+
+		if (videoExtraData) {
+			warning("Found \"%s\" in video file", path);
+
+			size = videoExtraData->size();
+			_totFileData = new byte[size];
+			videoExtraData->read(_totFileData, size);
+			delete videoExtraData;
+		} else
+			_totFileData = 0;
+	}
 
 	return size;
 }
