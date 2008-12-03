@@ -247,14 +247,14 @@ void TextviewView::scriptDone() {
 }
 
 void TextviewView::processLines() {
-	_script->readLine_OLD(_currentLine, 79);
-	if (_script->eos())
+	_script->readLine_NEW(_currentLine, 79);
+	if (_script->eos() || _script->err())
 		error("Attempted to read past end of response file");
 
-	while (!_script->eos()) {
+	while (!_script->eos() && !_script->err()) {
 		// Commented out line, so go loop for another
 		if (_currentLine[0] == '#') {
-			_script->readLine_OLD(_currentLine, 79);
+			_script->readLine_NEW(_currentLine, 79);
 			continue;
 		}
 
@@ -267,7 +267,7 @@ void TextviewView::processLines() {
 				if (!cEnd)
 					error("Unterminated command '%s' in response file", _currentLine);
 
-				*cEnd = '\0';
+				*(cEnd + 1)= '\0';
 				processCommand();
 
 				// Copy rest of line (if any) to start of buffer
@@ -286,7 +286,7 @@ void TextviewView::processLines() {
 			break;
 		}
 
-		_script->readLine_OLD(_currentLine, 79);
+		_script->readLine_NEW(_currentLine, 79);
 	}
 }
 
@@ -597,14 +597,14 @@ void AnimviewView::scriptDone() {
 }
 
 void AnimviewView::processLines() {
-	_script->readLine_OLD(_currentLine, 79);
-	if (_script->eos()) {
+	_script->readLine_NEW(_currentLine, 79);
+	if (_script->eos() || _script->err()) {
 		// end of script, end animation
 		scriptDone();
 		return;
 	}
 
-	while (!_script->eos()) {
+	while (!_script->eos() && !_script->err()) {
 		// Process the line
 		char *cStart = strchr(_currentLine, '-');
 		if (cStart) {
@@ -638,7 +638,7 @@ void AnimviewView::processLines() {
 			break;
 		}
 
-		_script->readLine_OLD(_currentLine, 79);
+		_script->readLine_NEW(_currentLine, 79);
 	}
 }
 
