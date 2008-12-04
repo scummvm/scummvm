@@ -135,8 +135,10 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 }
 
 void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
-	if (_renderFlags & RENDERFLAG_NOINVALIDATE)
+	if (_renderFlags & RENDERFLAG_NOINVALIDATE) {
+		_vm->_video->dirtyRectsAll();
 		return;
+	}
 
 	if (left > right)
 		SWAP(left, right);
@@ -262,6 +264,8 @@ void Draw::blitInvalidated() {
 		    _invalidatedLefts[i], _invalidatedTops[i],
 		    _invalidatedRights[i], _invalidatedBottoms[i],
 		    _invalidatedLefts[i], _invalidatedTops[i], 0);
+		_vm->_video->dirtyRectsAdd(_invalidatedLefts[i], _invalidatedTops[i],
+				_invalidatedRights[i], _invalidatedBottoms[i]);
 	}
 	_vm->_video->_doRangeClamp = true;
 
@@ -285,6 +289,21 @@ void Draw::clearPalette() {
 		_vm->_util->clearPalette();
 		_paletteCleared = true;
 	}
+}
+
+void Draw::dirtiedRect(int16 surface,
+		int16 left, int16 top, int16 right, int16 bottom) {
+
+	dirtiedRect(_spritesArray[surface], left, top, right, bottom);
+}
+
+void Draw::dirtiedRect(SurfaceDesc::Ptr surface,
+		int16 left, int16 top, int16 right, int16 bottom) {
+
+	if (surface == _backSurface)
+		invalidateRect(left, top, right, bottom);
+	else if (surface == _frontSurface)
+		_vm->_video->dirtyRectsAdd(left, top, right, bottom);
 }
 
 void Draw::initSpriteSurf(int16 index, int16 width, int16 height,
@@ -432,14 +451,16 @@ void Draw::forceBlit(bool backwards) {
 	if (_spritesArray[21] != _backSurface)
 		return;
 
-	if (backwards)
-		_vm->_video->drawSprite(_frontSurface, _backSurface, 0, 0,
-				_frontSurface->getWidth() - 1, _frontSurface->getHeight() - 1,
-				0, 0, 0);
-	else
+	if (!backwards) {
 		_vm->_video->drawSprite(_backSurface, _frontSurface, 0, 0,
 				_backSurface->getWidth() - 1, _backSurface->getHeight() - 1,
 				0, 0, 0);
+		_vm->_video->dirtyRectsAll();
+	} else
+		_vm->_video->drawSprite(_frontSurface, _backSurface, 0, 0,
+				_frontSurface->getWidth() - 1, _frontSurface->getHeight() - 1,
+				0, 0, 0);
+
 }
 
 const int16 Draw::_wobbleTable[360] = {
@@ -513,6 +534,7 @@ void Draw::wobble(SurfaceDesc *surfDesc) {
 					0, y, _vm->_width - 1, y, offsets[y], y, 0);
 
 		_vm->_palAnim->fadeStep(0);
+		_vm->_video->dirtyRectsAll();
 		_vm->_video->waitRetrace();
 	}
 
@@ -522,6 +544,7 @@ void Draw::wobble(SurfaceDesc *surfDesc) {
 	_applyPal = false;
 	_invalidatedCount = 0;
 	_noInvalidated = true;
+	_vm->_video->dirtyRectsAll();
 
 	delete[] offsets;
 }

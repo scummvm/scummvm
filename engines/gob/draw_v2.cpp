@@ -57,6 +57,8 @@ void Draw_v2::initScreen() {
 
 	_spritesArray[20] = _frontSurface;
 	_spritesArray[21] = _backSurface;
+
+	_vm->_video->dirtyRectsAll();
 }
 
 void Draw_v2::closeScreen() {
@@ -715,20 +717,15 @@ void Draw_v2::spriteOperation(int16 operation) {
 				_spriteTop + _spriteBottom - 1,
 				_destSpriteX, _destSpriteY, _transparency);
 
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			               _destSpriteX + _spriteRight - 1,
-			               _destSpriteY + _spriteBottom - 1);
-		}
+		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
+				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 		break;
 
 	case DRAW_PUTPIXEL:
 		_vm->_video->putPixel(_destSpriteX, _destSpriteY, _frontColor,
 		                      _spritesArray[_destSurface]);
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			               _destSpriteX, _destSpriteY);
-		}
+
+		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _destSpriteX, _destSpriteY);
 		break;
 
 	case DRAW_FILLRECT:
@@ -736,11 +733,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 				_destSpriteY, _destSpriteX + _spriteRight - 1,
 				_destSpriteY + _spriteBottom - 1, _backColor);
 
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			               _destSpriteX + _spriteRight - 1,
-			               _destSpriteY + _spriteBottom - 1);
-		}
+		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
+				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 		break;
 
 	case DRAW_DRAWLINE:
@@ -748,21 +742,15 @@ void Draw_v2::spriteOperation(int16 operation) {
 		    _destSpriteX, _destSpriteY,
 		    _spriteRight, _spriteBottom, _frontColor);
 
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			               _spriteRight, _spriteBottom);
-		}
+		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
 		break;
 
 	case DRAW_INVALIDATE:
 		_vm->_video->drawCircle(_spritesArray[_destSurface], _destSpriteX,
 				_destSpriteY, _spriteRight, _frontColor);
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX - _spriteRight,
-			               _destSpriteY - _spriteBottom,
-			               _destSpriteX + _spriteRight,
-			               _destSpriteY + _spriteBottom);
-		}
+
+		dirtiedRect(_destSurface, _destSpriteX - _spriteRight, _destSpriteY - _spriteBottom,
+				_destSpriteX + _spriteRight, _destSpriteY + _spriteBottom);
 		break;
 
 	case DRAW_LOADSPRITE:
@@ -773,11 +761,9 @@ void Draw_v2::spriteOperation(int16 operation) {
 			_vm->_video->drawPackedSprite(dataBuf,
 					_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
 					_transparency, _spritesArray[_destSurface]);
-			if (_destSurface == 21) {
-				invalidateRect(_destSpriteX, _destSpriteY,
-				               _destSpriteX + _spriteRight - 1,
-				               _destSpriteY + _spriteBottom - 1);
-			}
+
+			dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
+					_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 			delete[] dataBuf;
 			break;
 		}
@@ -800,11 +786,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 		    _destSpriteX, _destSpriteY,
 		    _transparency, _spritesArray[_destSurface]);
 
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			               _destSpriteX + _spriteRight - 1,
-			               _destSpriteY + _spriteBottom - 1);
-		}
+		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
+				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 		break;
 
 	case DRAW_PRINTTEXT:
@@ -863,11 +846,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 			}
 		}
 
-		if (_destSurface == 21) {
-			invalidateRect(left, _destSpriteY,
-			               _destSpriteX - 1,
-			               _destSpriteY + _fonts[_fontIndex]->itemHeight - 1);
-		}
+		dirtiedRect(_destSurface, left, _destSpriteY,
+				_destSpriteX - 1, _destSpriteY + _fonts[_fontIndex]->itemHeight - 1);
 		break;
 
 	case DRAW_DRAWBAR:
@@ -904,10 +884,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 					_destSpriteX, _destSpriteY,
 					_spriteRight, _destSpriteY, _frontColor);
 		}
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			               _spriteRight, _spriteBottom);
-		}
+
+		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
 		break;
 
 	case DRAW_CLEARRECT:
@@ -917,10 +895,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 			    _spriteRight, _spriteBottom,
 			    _backColor);
 		}
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			               _spriteRight, _spriteBottom);
-		}
+
+		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
 		break;
 
 	case DRAW_FILLRECTABS:
@@ -928,10 +904,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		    _destSpriteX, _destSpriteY,
 		    _spriteRight, _spriteBottom, _backColor);
 
-		if (_destSurface == 21) {
-			invalidateRect(_destSpriteX, _destSpriteY,
-			               _spriteRight, _spriteBottom);
-		}
+		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
 		break;
 	}
 

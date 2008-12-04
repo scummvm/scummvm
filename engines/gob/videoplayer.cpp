@@ -583,6 +583,7 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 			_vm->_draw->forceBlit();
 		_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
 		_vm->_draw->_noInvalidated = true;
+		_vm->_video->dirtyRectsAll();
 	}
 
 	if ((state.flags & CoktelVideo::kStatePalette) && (palCmd > 1)) {
@@ -601,7 +602,8 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 	if (_backSurf) {
 		_vm->_draw->invalidateRect(state.left, state.top, state.right, state.bottom);
 		_vm->_draw->blitInvalidated();
-	}
+	} else
+		_vm->_video->dirtyRectsAdd(state.left, state.top, state.right, state.bottom);
 	_vm->_video->retrace();
 
 

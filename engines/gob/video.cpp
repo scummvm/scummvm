@@ -103,6 +103,8 @@ Video::Video(GobEngine *vm) : _vm(vm) {
 
 	_curSparse = 0;
 	_lastSparse = 0xFFFFFFFF;
+
+	_dirtyAll = false;
 }
 
 char Video::initDriver(int16 vidMode) {
@@ -182,8 +184,8 @@ void Video::retrace(bool mouse) {
 		int screenWidth = MIN<int>(_surfWidth - _scrollOffsetX, _vm->_width);
 		int screenHeight = MIN<int>(_surfHeight - _splitHeight2 - _scrollOffsetY, _vm->_height);
 
-		g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() + screenOffset,
-				_surfWidth, screenX, screenY, screenWidth, screenHeight);
+		dirtyRectsApply(_scrollOffsetX, _scrollOffsetY, screenWidth, screenHeight,
+				screenX, screenY);
 
 		if (_splitSurf) {
 
@@ -204,13 +206,13 @@ void Video::retrace(bool mouse) {
 			screenWidth = MIN<int>(_surfWidth, _vm->_width);
 			screenHeight = _splitHeight2;
 
-			g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() + screenOffset,
-					_surfWidth, screenX, screenY, screenWidth, screenHeight);
-
+			dirtyRectsApply(0, _splitStart, screenWidth, screenHeight, screenX, screenY);
 		}
 
+		dirtyRectsClear();
 		g_system->updateScreen();
 	}
+
 }
 
 void Video::waitRetrace(bool mouse) {
@@ -479,6 +481,53 @@ void Video::setPalette(Color *palette) {
 
 	_vm->_global->_setAllPalette = setAllPalBak;
 	_vm->_global->_pPaletteDesc->vgaPal = palBak;
+}
+
+void Video::dirtyRectsClear() {
+	_dirtyRects.clear();
+	_dirtyAll = false;
+}
+
+void Video::dirtyRectsAll() {
+	_dirtyRects.clear();
+	_dirtyAll = true;
+}
+
+void Video::dirtyRectsAdd(int16 left, int16 top, int16 right, int16 bottom) {
+	if (_dirtyAll)
+		return;
+
+	_dirtyRects.push_back(Common::Rect(left, top, right + 1, bottom + 1));
+}
+
+void Video::dirtyRectsApply(int left, int top, int width, int height, int x, int y) {
+	byte *vidMem = _vm->_global->_primarySurfDesc->getVidMem();
+
+	if (_dirtyAll) {
+		g_system->copyRectToScreen(vidMem + top * _surfWidth + left,
+				_surfWidth, x, y, width, height);
+		return;
+	}
+
+	int right = left + width;
+	int bottom = top + height;
+
+	Common::List<Common::Rect>::const_iterator it;
+	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+		int l = MAX<int>(left, it->left);
+		int t = MAX<int>(top, it->top);
+		int r = MIN<int>(right, it->right);
+		int b = MIN<int>(bottom, it->bottom);
+		int w = r - l;
+		int h = b - t;
+
+		if ((w <= 0) || (h <= 0))
+			continue;
+
+		byte *v = vidMem + t * _surfWidth + l;
+
+		g_system->copyRectToScreen(v, _surfWidth, x + (l - left), y + (t - top), w, h);
+	}
 }
 
 } // End of namespace Gob

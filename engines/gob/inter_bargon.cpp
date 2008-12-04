@@ -745,10 +745,12 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 	_vm->_video->drawPackedSprite("2ille4.ims", surface);
 	_vm->_video->drawSprite(surface, _vm->_draw->_frontSurface, 0, 0, 319, 199, 320, 0, 0);
 	_vm->_util->setScrollOffset(320, 0);
+	_vm->_video->dirtyRectsAll();
 	_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
 	_vm->_util->longDelay(1000);
 	for (i = 320; i >= 0; i--) {
 		_vm->_util->setScrollOffset(i, 0);
+		_vm->_video->dirtyRectsAll();
 		if ((_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, 0) == 0x11B) ||
 				_vm->shouldQuit()) {
 			_vm->_palAnim->fade(0, -2, 0);
@@ -760,8 +762,10 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 			break;
 		}
 	}
-	if (!_vm->shouldQuit())
+	if (!_vm->shouldQuit()) {
 		_vm->_util->setScrollOffset(0, 0);
+		_vm->_video->dirtyRectsAll();
+	}
 	surface = 0;
 	if (VAR(57) == ((uint32) -1))
 		return;

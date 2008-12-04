@@ -305,12 +305,14 @@ void Game::evaluateScroll(int16 x, int16 y) {
 		off = MIN(_vm->_draw->_cursorWidth, _vm->_draw->_scrollOffsetX);
 		off = MAX(off / 2, 1);
 		_vm->_draw->_scrollOffsetX -= off;
+		_vm->_video->dirtyRectsAll();
 	} else if ((y == 0) && (_vm->_draw->_scrollOffsetY > 0)) {
 		uint16 off;
 
 		off = MIN(_vm->_draw->_cursorHeight, _vm->_draw->_scrollOffsetY);
 		off = MAX(off / 2, 1);
 		_vm->_draw->_scrollOffsetY -= off;
+		_vm->_video->dirtyRectsAll();
 	}
 
 	int16 cursorRight = x + _vm->_draw->_cursorWidth;
@@ -327,6 +329,7 @@ void Game::evaluateScroll(int16 x, int16 y) {
 		off = MAX(off / 2, 1);
 
 		_vm->_draw->_scrollOffsetX += off;
+		_vm->_video->dirtyRectsAll();
 
 		_vm->_util->setMousePos(_vm->_width - _vm->_draw->_cursorWidth, y);
 	} else if ((cursorBottom >= (_vm->_height - _vm->_video->_splitHeight2)) &&
@@ -338,6 +341,7 @@ void Game::evaluateScroll(int16 x, int16 y) {
 		off = MAX(off / 2, 1);
 
 		_vm->_draw->_scrollOffsetY += off;
+		_vm->_video->dirtyRectsAll();
 
 		_vm->_util->setMousePos(x, _vm->_height - _vm->_video->_splitHeight2 -
 				_vm->_draw->_cursorHeight);

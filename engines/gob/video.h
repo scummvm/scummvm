@@ -26,6 +26,9 @@
 #ifndef GOB_VIDEO_H
 #define GOB_VIDEO_H
 
+#include "common/list.h"
+#include "common/rect.h"
+
 #include "gob/gob.h"
 
 namespace Gob {
@@ -158,6 +161,11 @@ public:
 	void setFullPalette(PalDesc *palDesc);
 	void setPalette(Color *palette);
 
+	void dirtyRectsClear();
+	void dirtyRectsAll();
+	void dirtyRectsAdd(int16 left, int16 top, int16 right, int16 bottom);
+	void dirtyRectsApply(int left, int top, int width, int height, int x, int y);
+
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth,
 			int16 srcHeight, int16 x, int16 y, int16 transp,
 			SurfaceDesc *destDesc) = 0;
@@ -167,6 +175,9 @@ public:
 
 protected:
 	class VideoDriver *_videoDriver;
+
+	bool _dirtyAll;
+	Common::List<Common::Rect> _dirtyRects;
 
 	int _curSparse;
 	uint32 _lastSparse;

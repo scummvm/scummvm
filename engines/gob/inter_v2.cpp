@@ -1499,6 +1499,7 @@ void Inter_v2::o2_scroll() {
 		_vm->_draw->_scrollOffsetX = curX;
 		_vm->_draw->_scrollOffsetY = curY;
 		_vm->_util->setScrollOffset();
+		_vm->_video->dirtyRectsAll();
 	}
 }
 
@@ -1522,6 +1523,7 @@ void Inter_v2::o2_setScrollOffset() {
 
 		_vm->_draw->_scrollOffsetX = CLIP<int16>(offsetX, 0, screenW);
 		_vm->_draw->_scrollOffsetY = CLIP<int16>(offsetY, 0, screenH);
+		_vm->_video->dirtyRectsAll();
 	}
 
 	_vm->_util->setScrollOffset();

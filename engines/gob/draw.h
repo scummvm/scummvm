@@ -137,6 +137,9 @@ public:
 	void setPalette();
 	void clearPalette();
 
+	void dirtiedRect(int16 surface, int16 left, int16 top, int16 right, int16 bottom);
+	void dirtiedRect(SurfaceDesc::Ptr surface, int16 left, int16 top, int16 right, int16 bottom);
+
 	void initSpriteSurf(int16 index, int16 width, int16 height, int16 flags);
 	void freeSprite(int16 index) {
 		assert(index < SPRITES_COUNT);
