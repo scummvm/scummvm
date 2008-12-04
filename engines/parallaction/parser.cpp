@@ -40,9 +40,16 @@ Script::~Script() {
 		delete _input;
 }
 
+/*
+ * readLineIntern read a text line and prepares it for
+ * parsing, by stripping the leading whitespace and
+ * changing tabs to spaces. It will stop on a CR or LF,
+ * and return an empty string (length = 0) when a line
+ * has no printable text in it.
+ */
 char *Script::readLineIntern(char *buf, size_t bufSize) {
-	uint16 i;
-	for (i = 0; i < bufSize; i++) {
+	uint i = 0;
+	for ( ; i < bufSize; ) {
 		char c = _input->readSByte();
 		if (_input->eos())
 			break;
@@ -51,7 +58,10 @@ char *Script::readLineIntern(char *buf, size_t bufSize) {
 		if (c == '\t')
 			c = ' ';
 
-		buf[i] = c;
+		if ((c != ' ') || (i > 0)) {
+			buf[i] = c;
+			i++;
+		}
 	}
 	_line++;
 	if (i == bufSize) {
