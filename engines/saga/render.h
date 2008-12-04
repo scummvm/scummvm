@@ -33,21 +33,22 @@
 namespace Saga {
 
 enum RENDER_FLAGS {
-#ifdef SAGA_DEBUG
-	RF_SHOW_FPS = (1 << 0),
-	RF_PALETTE_TEST = (1 << 1),
-	RF_TEXT_TEST = (1 << 2),
-	RF_OBJECTMAP_TEST = (1 << 3),
-#endif
-	RF_RENDERPAUSE = (1 << 4),
-	RF_GAMEPAUSE = (1 << 5),
-#ifdef SAGA_DEBUG
-	RF_ACTOR_PATH_TEST = (1 << 6),
-#endif
-	RF_MAP = (1 << 7),
-	RF_DISABLE_ACTORS = (1 << 8),
-	RF_DEMO_SUBST = (1 << 9)
+	RF_RENDERPAUSE      = (1 << 0),
+	RF_MAP              = (1 << 1),
+	RF_DISABLE_ACTORS   = (1 << 2),
+	RF_DEMO_SUBST       = (1 << 3)
 };
+
+// Extra render flags used for debugging
+#ifdef SAGA_DEBUG
+enum RENDER_DEBUG_FLAGS {
+	RF_SHOW_FPS         = (1 << 4),
+	RF_PALETTE_TEST     = (1 << 5),
+	RF_TEXT_TEST        = (1 << 6),
+	RF_OBJECTMAP_TEST   = (1 << 7),
+	RF_ACTOR_PATH_TEST  = (1 << 8)
+};
+#endif
 
 class Render {
 public:

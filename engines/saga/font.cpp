@@ -33,7 +33,7 @@
 
 namespace Saga {
 
-Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
+Font::Font(SagaEngine *vm) : _vm(vm) {
 	int i;
 
 	// Load font module resource context
@@ -47,7 +47,6 @@ Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		loadFont(_vm->getFontDescription(i)->fontResourceId);
 	}
 
-	_initialized = true;
 	_fontMapping = 0;
 }
 

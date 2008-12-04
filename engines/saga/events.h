@@ -180,7 +180,6 @@ class Events {
 
  private:
 	SagaEngine *_vm;
-	bool _initialized;
 
 	EventList _eventList;
 };

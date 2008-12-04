@@ -200,7 +200,6 @@ class Font {
 	static const int _charMap[128];
 	SagaEngine *_vm;
 
-	bool _initialized;
 	int _fontMapping;
 
 	int _loadedFonts;

@@ -43,9 +43,8 @@
 
 namespace Saga {
 
-Events::Events(SagaEngine *vm) : _vm(vm), _initialized(false) {
+Events::Events(SagaEngine *vm) : _vm(vm) {
 	debug(8, "Initializing event subsystem...");
-	_initialized = true;
 }
 
 Events::~Events(void) {
