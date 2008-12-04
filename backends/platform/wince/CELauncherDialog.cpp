@@ -34,6 +34,7 @@
 #include "gui/widget.h"
 #include "gui/browser.h"
 #include "gui/message.h"
+#include "gui/ThemeEval.h"
 
 #include "common/config-manager.h"
 
