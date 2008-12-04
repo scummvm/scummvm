@@ -1261,6 +1261,11 @@ const char *TinselEngine::getSampleIndex(LANGUAGE lang) {
 		cd = GetCurrentCD();
 		assert((cd == 1) || (cd == 2));
 		assert(((unsigned int) lang) < NUM_LANGUAGES);
+
+		if (lang == TXT_ENGLISH)
+			if (_vm->getLanguage() == Common::EN_USA)
+				lang = TXT_US;
+
 	} else {
 		cd = 0;
 		lang = TXT_ENGLISH;
@@ -1276,6 +1281,11 @@ const char *TinselEngine::getSampleFile(LANGUAGE lang) {
 		cd = GetCurrentCD();
 		assert((cd == 1) || (cd == 2));
 		assert(((unsigned int) lang) < NUM_LANGUAGES);
+
+		if (lang == TXT_ENGLISH)
+			if (_vm->getLanguage() == Common::EN_USA)
+				lang = TXT_US;
+
 	} else {
 		cd = 0;
 		lang = TXT_ENGLISH;
@@ -1292,6 +1302,11 @@ const char *TinselEngine::getTextFile(LANGUAGE lang) {
 	if (TinselV2) {
 		cd = GetCurrentCD();
 		assert((cd == 1) || (cd == 2));
+
+		if (lang == TXT_ENGLISH)
+			if (_vm->getLanguage() == Common::EN_USA)
+				lang = TXT_US;
+
 	} else
 		cd = 0;
 
