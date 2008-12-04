@@ -131,9 +131,9 @@ public:
 	static bool isOzone();
 
 protected:
-	void loadGFXMode();
+	bool loadGFXMode();
 	void unloadGFXMode();
-	void hotswapGFXMode();
+	bool hotswapGFXMode();
 	bool saveScreenshot(const char *filename);
 
 

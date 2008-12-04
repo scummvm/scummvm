@@ -1342,7 +1342,7 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 
 }
 
-void OSystem_WINCE3::loadGFXMode() {
+bool OSystem_WINCE3::loadGFXMode() {
 	int displayWidth;
 	int displayHeight;
 	unsigned int flags = SDL_FULLSCREEN | SDL_SWSURFACE;
@@ -1385,6 +1385,8 @@ void OSystem_WINCE3::loadGFXMode() {
 	if (_hwscreen == NULL) {
 		warning("SDL_SetVideoMode says we can't switch to that mode (%s)", SDL_GetError());
 		quit();
+	} else {
+		return false;		
 	}
 
 	// see what orientation sdl finally accepted
@@ -1449,6 +1451,8 @@ void OSystem_WINCE3::loadGFXMode() {
 	_km.y_max = _screenHeight * _scaleFactorXm / _scaleFactorXd - 1;
 	_km.delay_time = 25;
 	_km.last_time = 0;
+	
+	return true;	
 }
 
 void OSystem_WINCE3::unloadGFXMode() {
@@ -1468,9 +1472,9 @@ void OSystem_WINCE3::unloadGFXMode() {
 	}
 }
 
-void OSystem_WINCE3::hotswapGFXMode() {
+bool OSystem_WINCE3::hotswapGFXMode() {
 	if (!_screen)
-		return;
+		return false;
 
 	// Keep around the old _screen & _tmpscreen so we can restore the screen data
 	// after the mode switch. (also for the overlay)
@@ -1491,7 +1495,14 @@ void OSystem_WINCE3::hotswapGFXMode() {
 	}
 
 	// Setup the new GFX mode
-	loadGFXMode();
+	if (!loadGFXMode()) {
+		unloadGFXMode();
+
+		_screen = old_screen;
+		_overlayscreen = old_overlayscreen;
+
+		return false;
+	}
 
 	// reset palette
 	SDL_SetColors(_screen, _currentPalette, 0, 256);
@@ -1516,6 +1527,8 @@ void OSystem_WINCE3::hotswapGFXMode() {
 
 	// Make sure that a Common::EVENT_SCREEN_CHANGED gets sent later -> FIXME this crashes when no game has been loaded.
 //	_modeChanged = true;
+
+	return true;
 }
 
 void OSystem_WINCE3::internUpdateScreen() {
