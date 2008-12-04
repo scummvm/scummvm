@@ -73,7 +73,6 @@ bool Render::initialized() {
 
 void Render::drawScene() {
 	Surface *backBufferSurface;
-	char txtBuffer[20];
 	Point mousePoint;
 	Point textPoint;
 
@@ -101,15 +100,21 @@ void Render::drawScene() {
 					_vm->_actor->drawActors();
 			}
 
+#ifdef SAGA_DEBUG
 			if (getFlags() & RF_OBJECTMAP_TEST) {
 				if (_vm->_scene->_objectMap)
 					_vm->_scene->_objectMap->draw(backBufferSurface, mousePoint, kITEColorBrightWhite, kITEColorBlack);
 				if (_vm->_scene->_actionMap)
 					_vm->_scene->_actionMap->draw(backBufferSurface, mousePoint, kITEColorRed, kITEColorBlack);
 			}
+#endif
+
+#ifdef ACTOR_DEBUG
 			if (getFlags() & RF_ACTOR_PATH_TEST) {
 				_vm->_actor->drawPathTest();
 			}
+#endif
+
 		}
 	}
 
@@ -143,14 +148,17 @@ void Render::drawScene() {
 	// Handle user input
 	_vm->processInput();
 
+#ifdef SAGA_DEBUG
 	// Display rendering information
 	if (_flags & RF_SHOW_FPS) {
+		char txtBuffer[20];
 		sprintf(txtBuffer, "%d", _fps);
 		textPoint.x = backBufferSurface->w - _vm->_font->getStringWidth(kKnownFontSmall, txtBuffer, 0, kFontOutline);
 		textPoint.y = 2;
 
 		_vm->_font->textDraw(kKnownFontSmall, backBufferSurface, txtBuffer, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
 	}
+#endif
 
 	// Display "paused game" message, if applicable
 	if (_flags & RF_RENDERPAUSE) {
@@ -170,6 +178,7 @@ void Render::drawScene() {
 	// Update user interface
 	_vm->_interface->update(mousePoint, UPDATE_MOUSEMOVE);
 
+#ifdef SAGA_DEBUG
 	// Display text formatting test, if applicable
 	if (_flags & RF_TEXT_TEST) {
 		Rect rect(mousePoint.x, mousePoint.y, mousePoint.x + 100, mousePoint.y + 50);
@@ -181,6 +190,7 @@ void Render::drawScene() {
 	if (_flags & RF_PALETTE_TEST) {
 		backBufferSurface->drawPalette();
 	}
+#endif
 
 	_system->copyRectToScreen((byte *)backBufferSurface->pixels, backBufferSurface->w, 0, 0,
 							  backBufferSurface->w, backBufferSurface->h);

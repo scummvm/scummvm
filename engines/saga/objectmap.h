@@ -76,7 +76,9 @@ public:
 		return objectIndexToId(kGameObjectStepZone, _index);
 	}
 	bool getSpecialPoint(Point &specialPoint) const;
+#ifdef SAGA_DEBUG
 	void draw(SagaEngine *vm, Surface *ds, int color);
+#endif
 	bool hitTest(const Point &testPoint);
 
 private:
@@ -104,7 +106,9 @@ public:
 	void load(const byte *resourcePointer, size_t resourceLength);
 	void freeMem(void);
 
+#ifdef SAGA_DEBUG
 	void draw(Surface *drawSurface, const Point& testPoint, int color, int color2);
+#endif
 	int hitTest(const Point& testPoint);
 	HitZone *getHitZone(int16 index) {
 		if ((index < 0) || (index >= _hitZoneListCount)) {

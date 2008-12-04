@@ -589,8 +589,8 @@ void Actor::removePathPoints() {
 	_pathNodeListIndex = j - 1;
 }
 
-void Actor::drawPathTest() {
 #ifdef ACTOR_DEBUG
+void Actor::drawPathTest() {
 	int i;
 	Surface *surface;
 	surface = _vm->_gfx->getBackBuffer();
@@ -601,7 +601,7 @@ void Actor::drawPathTest() {
 	for (i = 0; i < _debugPointsCount; i++) {
 		*((byte *)surface->pixels + (_debugPoints[i].point.y * surface->pitch) + _debugPoints[i].point.x) = _debugPoints[i].color;
 	}
-#endif
 }
+#endif
 
 } // End of namespace Saga

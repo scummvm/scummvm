@@ -141,6 +141,7 @@ bool HitZone::hitTest(const Point &testPoint) {
 	return false;
 }
 
+#ifdef SAGA_DEBUG
 void HitZone::draw(SagaEngine *vm, Surface *ds, int color) {
 	int i, pointsCount, j;
 	Location location;
@@ -186,7 +187,7 @@ void HitZone::draw(SagaEngine *vm, Surface *ds, int color) {
 		ds->drawFrame(specialPoint1, specialPoint2, color);
 	}
 }
-
+#endif
 
 // Loads an object map resource ( objects ( clickareas ( points ) ) )
 void ObjectMap::load(const byte *resourcePointer, size_t resourceLength) {
@@ -235,7 +236,7 @@ void ObjectMap::freeMem() {
 }
 
 
-
+#ifdef SAGA_DEBUG
 void ObjectMap::draw(Surface *ds, const Point& testPoint, int color, int color2) {
 	int i;
 	int hitZoneIndex;
@@ -264,6 +265,7 @@ void ObjectMap::draw(Surface *ds, const Point& testPoint, int color, int color2)
 		_vm->_font->textDraw(kKnownFontSmall, ds, txtBuf, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
 	}
 }
+#endif
 
 int ObjectMap::hitTest(const Point& testPoint) {
 	int i;

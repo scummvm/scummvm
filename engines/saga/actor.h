@@ -604,7 +604,9 @@ public:
 
 	void drawSpeech();
 
+#ifdef ACTOR_DEBUG
 	void drawPathTest();
+#endif
 
 	uint16 hitTest(const Point &testPoint, bool skipProtagonist);
 	void takeExit(uint16 actorId, const HitZone *hitZone);

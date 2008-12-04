@@ -77,6 +77,8 @@ int SagaEngine::processInput() {
 				}
 				break;
 #endif
+
+#ifdef SAGA_DEBUG
 			case Common::KEYCODE_F1:
 				_render->toggleFlag(RF_SHOW_FPS);
 				_actor->_handleActionDiv = (_actor->_handleActionDiv == 15) ? 50 : 15;
@@ -90,10 +92,13 @@ int SagaEngine::processInput() {
 			case Common::KEYCODE_F4:
 				_render->toggleFlag(RF_OBJECTMAP_TEST);
 				break;
+#endif
 			case Common::KEYCODE_F5:
 				if (_interface->getSaveReminderState() > 0)
 					_interface->setMode(kPanelOption);
 				break;
+
+#ifdef SAGA_DEBUG
 			case Common::KEYCODE_F6:
 				_render->toggleFlag(RF_ACTOR_PATH_TEST);
 				break;
@@ -102,6 +107,8 @@ int SagaEngine::processInput() {
 				break;
 			case Common::KEYCODE_F8:
 				break;
+#endif
+
 			case Common::KEYCODE_F9:
 				_interface->keyBoss();
 				break;

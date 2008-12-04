@@ -65,6 +65,7 @@ struct StringList;
 using Common::MemoryReadStream;
 using Common::MemoryReadStreamEndian;
 
+//#define SAGA_DEBUG 1		// define for test functions
 #define SAGA_IMAGE_DATA_OFFSET 776
 #define SAGA_IMAGE_HEADER_LEN  8
 
