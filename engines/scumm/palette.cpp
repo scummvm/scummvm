@@ -373,7 +373,7 @@ void ScummEngine::stopCycle(int i) {
 }
 
 /**
- * Cycle the colors in the given palette in the intervael [cycleStart, cycleEnd]
+ * Cycle the colors in the given palette in the interval [cycleStart, cycleEnd]
  * either one step forward or backward.
  */
 static void doCyclePalette(byte *palette, int cycleStart, int cycleEnd, int size, bool forward) {
