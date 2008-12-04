@@ -273,11 +273,6 @@ Common::Error MadeEngine::go() {
 		error ("Unknown MADE game");
 	}
 
-	// FIXME: This should make things a little faster until proper dirty rectangles
-	//        are implemented.
-	// NOTE: Disabled again since it causes major graphics errors.
-	//_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
-
 	_autoStopSound = false;
 	_eventNum = _eventKey = _eventMouseX = _eventMouseY = 0;
 	

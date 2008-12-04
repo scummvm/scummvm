@@ -70,8 +70,6 @@ bool Screen::init() {
 	_disableScreen = false;
 	_debugEnabled = false;
 
-	_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, false);
-
 	memset(_sjisOverlayPtrs, 0, sizeof(_sjisOverlayPtrs));
 	_useOverlays = false;
 	_useSJIS = false;
