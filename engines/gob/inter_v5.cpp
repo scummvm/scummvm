@@ -234,7 +234,7 @@ void Inter_v5::setupOpcodes() {
 		{NULL, ""},
 		{NULL, ""},
 		/* 80 */
-		OPCODE(o4_initScreen),
+		OPCODE(o5_initScreen),
 		OPCODE(o2_scroll),
 		OPCODE(o2_setScrollOffset),
 		OPCODE(o4_playVmdOrMusic),
@@ -676,6 +676,107 @@ void Inter_v5::o5_deleteFile() {
 	evalExpr(0);
 
 	warning("Dynasty Stub: deleteFile \"%s\"", _vm->_global->_inter_resStr);
+}
+
+void Inter_v5::o5_initScreen() {
+	int16 offY;
+	int16 videoMode;
+	int16 width, height;
+
+	offY = load16();
+
+	videoMode = offY & 0xFF;
+	offY = (offY >> 8) & 0xFF;
+
+	width = _vm->_parse->parseValExpr();
+	height = _vm->_parse->parseValExpr();
+
+	warning("initScreen: %d, %d, %d, %d", width, height, offY, videoMode);
+
+	_vm->_video->clearScreen();
+
+	if (videoMode == 0x13) {
+
+		if (width == -1)
+			width = 320;
+		if (height == -1)
+			height = 200;
+
+		_vm->_width = 320;
+		_vm->_height = 200;
+
+		_vm->_video->setSize(false);
+
+	} else if (_vm->_global->_videoMode == 0x13) {
+		width = _vm->_width = 640;
+		height = _vm->_height = 480;
+
+		_vm->_video->setSize(true);
+	}
+
+	_vm->_global->_fakeVideoMode = videoMode;
+
+	// Some versions require this
+	if (videoMode == 0xD)
+		videoMode = _vm->_mode;
+
+	if ((videoMode == _vm->_global->_videoMode) && (width == -1))
+		return;
+
+	if (width > 0)
+		_vm->_video->_surfWidth = width;
+	if (height > 0)
+		_vm->_video->_surfHeight = height;
+
+	_vm->_video->_screenDeltaX = 0;
+	if (_vm->_video->_surfWidth < _vm->_width)
+		_vm->_video->_screenDeltaX = (_vm->_width - _vm->_video->_surfWidth) / 2;
+
+	_vm->_global->_mouseMinX = _vm->_video->_screenDeltaX;
+	_vm->_global->_mouseMaxX = _vm->_video->_screenDeltaX + _vm->_video->_surfWidth - 1;
+
+	_vm->_video->_splitStart = _vm->_video->_surfHeight - offY;
+
+	_vm->_video->_splitHeight1 = MIN<int16>(_vm->_height, _vm->_video->_surfHeight);
+	_vm->_video->_splitHeight2 = offY;
+
+	if ((_vm->_video->_surfHeight + offY) < _vm->_height)
+		_vm->_video->_screenDeltaY = (_vm->_height - (_vm->_video->_surfHeight + offY)) / 2;
+	else
+		_vm->_video->_screenDeltaY = 0;
+
+	_vm->_global->_mouseMaxY = (_vm->_video->_surfHeight + _vm->_video->_screenDeltaY) - offY - 1;
+	_vm->_global->_mouseMinY = _vm->_video->_screenDeltaY;
+
+	_vm->_draw->closeScreen();
+	_vm->_util->clearPalette();
+	memset(_vm->_global->_redPalette, 0, 256);
+	memset(_vm->_global->_greenPalette, 0, 256);
+	memset(_vm->_global->_bluePalette, 0, 256);
+
+	_vm->_video->_splitSurf = 0;
+	_vm->_draw->_spritesArray[24] = 0;
+	_vm->_draw->_spritesArray[25] = 0;
+
+	_vm->_global->_videoMode = videoMode;
+	_vm->_video->initPrimary(videoMode);
+	WRITE_VAR(15, _vm->_global->_fakeVideoMode);
+
+	_vm->_global->_setAllPalette = true;
+
+	_vm->_util->setMousePos(_vm->_global->_inter_mouseX,
+			_vm->_global->_inter_mouseY);
+	_vm->_util->clearPalette();
+
+	_vm->_draw->initScreen();
+
+	_vm->_util->setScrollOffset();
+
+	if (offY > 0) {
+		_vm->_draw->_spritesArray[24] = new SurfaceDesc(videoMode, _vm->_width, offY);
+		_vm->_draw->_spritesArray[25] = new SurfaceDesc(videoMode, _vm->_width, offY);
+		_vm->_video->_splitSurf = _vm->_draw->_spritesArray[25];
+	}
 }
 
 bool Inter_v5::o5_istrlen(OpFuncParams &params) {

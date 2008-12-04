@@ -566,6 +566,7 @@ protected:
 	byte _byte_8AA14;
 
 	void o5_deleteFile();
+	void o5_initScreen();
 
 	bool o5_istrlen(OpFuncParams &params);
 

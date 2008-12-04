@@ -1067,9 +1067,6 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 				if ((((uint32) data.realSize) >= ssize) || (data.name[0] == 0))
 					continue;
 					
-				warning("ExtraData %d: %d.%d, %d, %d, %d, %s", _extraData.size(), i, j,
-						data.offset, data.size, data.realSize, data.name);
-
 				_extraData.push_back(data);
 
 			} else
