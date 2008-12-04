@@ -93,7 +93,12 @@ void Render::drawScene() {
 	mousePoint = _vm->mousePos();
 
 	if (!(_flags & (RF_DEMO_SUBST | RF_MAP) || curMode == kPanelPlacard)) {
-		if (_vm->_interface->getFadeMode() != kFadeOut) {
+		// Do not redraw the whole scene and the actors if the scene is fading out or
+		// if an overlay is drawn above it (e.g. the options menu)
+		if (_vm->_interface->getFadeMode() != kFadeOut &&
+			(curMode != kPanelOption && curMode != kPanelQuit &&
+			 curMode != kPanelLoad && curMode != kPanelSave &&
+			 curMode != kPanelProtect)) {
 			// Display scene background
 			if (!(_flags & RF_DISABLE_ACTORS) || _vm->getGameType() == GType_ITE)
 				_vm->_scene->draw();
@@ -169,17 +174,12 @@ void Render::drawScene() {
 
 	// Display "paused game" message, if applicable
 	if (_flags & RF_RENDERPAUSE) {
-		if (_vm->getGameType() == GType_ITE) {
-			textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(kKnownFontPause, pauseStringITE, 0, kFontOutline)) / 2;
-			textPoint.y = 90;
+		const char *pauseString = (_vm->getGameType() == GType_ITE) ? pauseStringITE : pauseStringIHNM;
+		textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(kKnownFontPause, pauseString, 0, kFontOutline)) / 2;
+		textPoint.y = 90;
 
-			_vm->_font->textDraw(kKnownFontPause, backBufferSurface, pauseStringITE, textPoint, _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
-		} else {
-			textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(kKnownFontPause, pauseStringIHNM, 0, kFontOutline)) / 2;
-			textPoint.y = 90;
-
-			_vm->_font->textDraw(kKnownFontPause, backBufferSurface, pauseStringIHNM, textPoint, _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
-		}
+		_vm->_font->textDraw(kKnownFontPause, backBufferSurface, pauseString, textPoint, 
+							_vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
 	}
 
 	// Update user interface
