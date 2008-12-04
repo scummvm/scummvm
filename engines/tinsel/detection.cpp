@@ -294,7 +294,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"english1.smp", 0, NULL, -1},
 				{NULL, 0, NULL, 0}
 			},
-			Common::EN_ANY,
+			Common::EN_GRB,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
@@ -313,7 +313,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"us1.smp", 0, NULL, -1},
 				{NULL, 0, NULL, 0}
 			},
-			Common::EN_ANY,
+			Common::EN_USA,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
