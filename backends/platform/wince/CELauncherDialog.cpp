@@ -48,16 +48,18 @@ public:
 
 		// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
 		// needs fixing, or remove it!
-		addButton(this,(_w - kButtonWidth) / 2, 45, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
+		const int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
+		const int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
+		new ButtonWidget(this, (_w - buttonWidth) / 2, 45, buttonWidth, buttonHeight, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
 
 		Common::String videoDriver("Using SDL driver ");
 		SDL_VideoDriverName(tempo, sizeof(tempo));
 		videoDriver += tempo;
-		new StaticTextWidget(this, 0, 10, _w, kLineHeight, videoDriver, kTextAlignCenter);
+		new StaticTextWidget(this, 0, 10, _w, kLineHeight, videoDriver, Graphics::kTextAlignCenter);
 		Common::String displayInfos("Display ");
 		sprintf(tempo, "%dx%d (real %dx%d)", GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), OSystem_WINCE3::getScreenWidth(), OSystem_WINCE3::getScreenHeight());
 		displayInfos += tempo;
-		new StaticTextWidget(this, 0, 20, _w, kLineHeight, displayInfos, kTextAlignCenter);
+		new StaticTextWidget(this, 0, 20, _w, kLineHeight, displayInfos, Graphics::kTextAlignCenter);
 	}
 };
 
