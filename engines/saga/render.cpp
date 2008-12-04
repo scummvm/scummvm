@@ -50,8 +50,10 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 	_system = system;
 	_initialized = false;
 
+#ifdef SAGA_DEBUG
 	// Initialize FPS timer callback
 	_vm->_timer->installTimerProc(&fpsTimerCallback, 1000000, this);
+#endif
 
 	_backGroundSurface.create(_vm->getDisplayWidth(), _vm->getDisplayHeight(), 1);
 
@@ -61,7 +63,10 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 }
 
 Render::~Render(void) {
+#ifdef SAGA_DEBUG
 	_vm->_timer->removeTimerProc(&fpsTimerCallback);
+#endif
+
 	_backGroundSurface.free();
 
 	_initialized = false;
@@ -75,17 +80,19 @@ void Render::drawScene() {
 	Surface *backBufferSurface;
 	Point mousePoint;
 	Point textPoint;
-
+	int curMode = _vm->_interface->getMode();
 	assert(_initialized);
 
+#ifdef SAGA_DEBUG
 	_renderedFrameCount++;
+#endif
 
 	backBufferSurface = _vm->_gfx->getBackBuffer();
 
 	// Get mouse coordinates
 	mousePoint = _vm->mousePos();
 
-	if (!(_flags & (RF_DEMO_SUBST | RF_MAP) || _vm->_interface->getMode() == kPanelPlacard)) {
+	if (!(_flags & (RF_DEMO_SUBST | RF_MAP) || curMode == kPanelPlacard)) {
 		if (_vm->_interface->getFadeMode() != kFadeOut) {
 			// Display scene background
 			if (!(_flags & RF_DISABLE_ACTORS) || _vm->getGameType() == GType_ITE)
@@ -121,24 +128,24 @@ void Render::drawScene() {
 	if (_flags & RF_MAP)
 		_vm->_interface->mapPanelDrawCrossHair();
 
-	if ((_vm->_interface->getMode() == kPanelOption) ||
-		(_vm->_interface->getMode() == kPanelQuit) ||
-		(_vm->_interface->getMode() == kPanelLoad) ||
-		(_vm->_interface->getMode() == kPanelSave)) {
+	if ((curMode == kPanelOption) ||
+		(curMode == kPanelQuit) ||
+		(curMode == kPanelLoad) ||
+		(curMode == kPanelSave)) {
 		_vm->_interface->drawOption();
 
-		if (_vm->_interface->getMode() == kPanelQuit) {
+		if (curMode == kPanelQuit) {
 			_vm->_interface->drawQuit();
 		}
-		if (_vm->_interface->getMode() == kPanelLoad) {
+		if (curMode == kPanelLoad) {
 			_vm->_interface->drawLoad();
 		}
-		if (_vm->_interface->getMode() == kPanelSave) {
+		if (curMode == kPanelSave) {
 			_vm->_interface->drawSave();
 		}
 	}
 
-	if (_vm->_interface->getMode() == kPanelProtect) {
+	if (curMode == kPanelProtect) {
 		_vm->_interface->drawProtect();
 	}
 
@@ -198,6 +205,7 @@ void Render::drawScene() {
 	_system->updateScreen();
 }
 
+#ifdef SAGA_DEBUG
 void Render::fpsTimerCallback(void *refCon) {
 	((Render *)refCon)->fpsTimer();
 }
@@ -206,5 +214,6 @@ void Render::fpsTimer(void) {
 	_fps = _renderedFrameCount;
 	_renderedFrameCount = 0;
 }
+#endif
 
 } // End of namespace Saga

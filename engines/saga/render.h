@@ -77,8 +77,12 @@ public:
 	}
 
 private:
+#ifdef SAGA_DEBUG
 	static void fpsTimerCallback(void *refCon);
 	void fpsTimer(void);
+	unsigned int _fps;
+	unsigned int _renderedFrameCount;
+#endif
 
 	SagaEngine *_vm;
 	OSystem *_system;
@@ -87,8 +91,6 @@ private:
 	// Module data
 	Surface _backGroundSurface;
 
-	unsigned int _fps;
-	unsigned int _renderedFrameCount;
 	uint32 _flags;
 };
 
