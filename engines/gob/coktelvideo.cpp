@@ -66,6 +66,8 @@ bool Imd::load(Common::SeekableReadStream &stream) {
 
 	// IMDs always have video
 	_features |= kFeaturesVideo;
+	// IMDs always have palettes
+	_features |= kFeaturesPalette;
 
 	// Palette
 	_stream->read((byte *) _palette, 768);
@@ -879,6 +881,9 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	uint16 headerLength = _stream->readUint16LE();
 	uint16 handle = _stream->readUint16LE();
 	_version = _stream->readUint16LE();
+
+	if (!(_version & 2))
+		_features |= kFeaturesPalette;
 
 	// 0x4 (4)
 

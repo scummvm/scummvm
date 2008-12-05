@@ -633,6 +633,9 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 }
 
 void VideoPlayer::copyPalette(CoktelVideo &video, int16 palStart, int16 palEnd) {
+	if (!(video.getFeatures() & CoktelVideo::kFeaturesPalette))
+		return;
+
 	if (palStart < 0)
 		palStart = 0;
 	if (palEnd < 0)
