@@ -70,6 +70,8 @@ public:
 	Parse_v2(GobEngine *vm);
 	virtual ~Parse_v2() {}
 
+	virtual int16 sub_12063(int16 arg_0, byte arg_2, uint32 arg_3, uint16 arg_7, uint16 arg_9);
+
 	virtual int16 parseVarIndex(uint16 *arg_0 = 0, uint16 *arg_4 = 0);
 	virtual int16 parseValExpr(byte stopToken = 99);
 	virtual int16 parseExpr(byte stopToken, byte *resultPtr);
