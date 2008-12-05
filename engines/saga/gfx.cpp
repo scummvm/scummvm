@@ -59,6 +59,7 @@ Gfx::~Gfx() {
 	_backBuffer.free();
 }
 
+#ifdef SAGA_DEBUG
 void Surface::drawPalette() {
 	int x;
 	int y;
@@ -78,6 +79,7 @@ void Surface::drawPalette() {
 		}
 	}
 }
+#endif
 
 // * Copies a rectangle from a raw 8 bit pixel buffer to the specified surface.
 // - The surface must match the logical dimensions of the buffer exactly.
