@@ -1451,12 +1451,8 @@ void ObjectEvent(CORO_PARAM, int objId, TINSEL_EVENT event, bool bWait, int myEs
 
 	if (bWait)
 		CORO_INVOKE_2(WaitInterpret, _ctx->pProc, result);
-	else
-		// FIXME: Essential to ensure created ObjectProcess coroutine has a chance to start
-		// up, for the scene restore when returning from looking at the AshkEnte instructions
-		// to work. Really need to trace operation of original to see at what point the scene
-		// save is done, and when control was first yielded to the ObjectProcess coroutine
-		CORO_SLEEP(1);
+	else if (result)
+		*result = false;
 
 	CORO_END_CODE;
 }
