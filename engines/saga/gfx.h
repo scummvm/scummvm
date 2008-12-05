@@ -157,7 +157,6 @@ public:
 	void setCursor(CursorType cursorType = kCursorNormal);
 
 private:
-	int _init;
 	Surface _backBuffer;
 	byte _currentPal[PAL_ENTRIES * 4];
 	OSystem *_system;

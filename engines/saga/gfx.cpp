@@ -46,9 +46,6 @@ Gfx::Gfx(SagaEngine *vm, OSystem *system, int width, int height) : _vm(vm), _sys
 	// Convert surface data to R surface data
 	_backBuffer.create(width, height, 1);
 
-	// Set module data
-	_init = 1;
-
 	// Start with the cursor shown. It will be hidden before the intro, if
 	// there is an intro. (With boot params, there may not be.)
 	setCursor(kCursorNormal);
