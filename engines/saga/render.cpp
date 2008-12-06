@@ -115,9 +115,9 @@ void Render::drawScene() {
 #ifdef SAGA_DEBUG
 			if (getFlags() & RF_OBJECTMAP_TEST) {
 				if (_vm->_scene->_objectMap)
-					_vm->_scene->_objectMap->draw(backBufferSurface, mousePoint, kITEColorBrightWhite, kITEColorBlack);
+					_vm->_scene->_objectMap->draw(mousePoint, kITEColorBrightWhite, kITEColorBlack);
 				if (_vm->_scene->_actionMap)
-					_vm->_scene->_actionMap->draw(backBufferSurface, mousePoint, kITEColorRed, kITEColorBlack);
+					_vm->_scene->_actionMap->draw(mousePoint, kITEColorRed, kITEColorBlack);
 			}
 #endif
 
@@ -168,7 +168,7 @@ void Render::drawScene() {
 		textPoint.x = backBufferSurface->w - _vm->_font->getStringWidth(kKnownFontSmall, txtBuffer, 0, kFontOutline);
 		textPoint.y = 2;
 
-		_vm->_font->textDraw(kKnownFontSmall, backBufferSurface, txtBuffer, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
+		_vm->_font->textDraw(kKnownFontSmall, txtBuffer, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
 	}
 #endif
 

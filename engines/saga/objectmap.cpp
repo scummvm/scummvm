@@ -149,6 +149,8 @@ void HitZone::draw(SagaEngine *vm, int color) {
 	Point *points;
 	Point specialPoint1;
 	Point specialPoint2;
+	Surface *backBuffer = vm->_gfx->getBackBuffer();
+
 	for (i = 0; i < _clickAreasCount; i++) {
 		clickArea = &_clickAreas[i];
 		pointsCount = clickArea->pointsCount;
@@ -166,11 +168,11 @@ void HitZone::draw(SagaEngine *vm, int color) {
 
 		if (pointsCount == 2) {
 			// 2 points represent a box
-			ds->drawFrame(points[0], points[1], color);
+			backBuffer->drawFrame(points[0], points[1], color);
 		} else {
 			if (pointsCount > 2) {
 				// Otherwise draw a polyline
-				ds->drawPolyLine(points, pointsCount, color);
+				backBuffer->drawPolyLine(points, pointsCount, color);
 			}
 		}
 		if (vm->_scene->getFlags() & kSceneFlagISO) {
@@ -184,7 +186,7 @@ void HitZone::draw(SagaEngine *vm, int color) {
 		specialPoint1.y--;
 		specialPoint2.x++;
 		specialPoint2.y++;
-		ds->drawFrame(specialPoint1, specialPoint2, color);
+		backBuffer->drawFrame(specialPoint1, specialPoint2, color);
 	}
 }
 #endif
