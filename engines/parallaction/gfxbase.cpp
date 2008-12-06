@@ -174,7 +174,12 @@ void Gfx::drawGfxObject(GfxObj *obj, Graphics::Surface &surf, bool scene) {
 	byte *data;
 
 	obj->getRect(obj->frame, rect);
-	rect.translate(obj->x, obj->y);
+
+	int x = obj->x;
+	if (_overlayMode) {
+		x += _scrollPos;
+	}
+	rect.translate(x, obj->y);
 	data = obj->getData(obj->frame);
 
 	if (obj->getSize(obj->frame) == obj->getRawSize(obj->frame)) {

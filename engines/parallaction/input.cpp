@@ -325,7 +325,7 @@ bool Input::translateGameInput() {
 
 void Input::enterInventoryMode() {
 	Common::Point mousePos;
-	getAbsoluteCursorPos(mousePos);
+	getCursorPos(mousePos);
 	bool hitCharacter = _vm->hitZone(kZoneYou, mousePos.x, mousePos.y);
 
 	if (hitCharacter) {
@@ -349,7 +349,7 @@ void Input::enterInventoryMode() {
 void Input::exitInventoryMode() {
 	// right up hides inventory
 	Common::Point mousePos;
-	getAbsoluteCursorPos(mousePos);
+	getCursorPos(mousePos);
 
 	int pos = _vm->getHoverInventoryItem(mousePos.x, mousePos.y);
 	_vm->highlightInventoryItem(-1);			// disable
@@ -390,7 +390,7 @@ bool Input::updateInventoryInput() {
 	}
 
 	Common::Point mousePos;
-	getAbsoluteCursorPos(mousePos);
+	getCursorPos(mousePos);
 
 	int16 _si = _vm->getHoverInventoryItem(mousePos.x, mousePos.y);
 	if (_si != _transCurrentHoverItem) {

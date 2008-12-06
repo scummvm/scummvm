@@ -393,7 +393,6 @@ void Gfx::beginFrame() {
 	}
 
 	_varAnimRenderMode = getRenderMode("anim_render_mode");
-	_varMiscRenderMode = getRenderMode("misc_render_mode");
 }
 
 int32 Gfx::getRenderMode(const char *type) {
@@ -410,6 +409,9 @@ int32 Gfx::getRenderMode(const char *type) {
 
 void Gfx::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
 	if (_doubleBuffering) {
+		if (_overlayMode)
+			x += _scrollPos;
+
 		byte *dst = (byte*)_backBuffer.getBasePtr(x, y);
 		for (int i = 0; i < h; i++) {
 			memcpy(dst, buf, w);
@@ -464,6 +466,10 @@ void Gfx::setScrollPos(int scrollX) {
 }
 
 void Gfx::updateScreen() {
+
+	// the scene is calculated in game coordinates, so no translation
+	// is needed
+	_overlayMode = false;
 
 	if (!_skipBackground) {
 		// background may not cover the whole screen, so adjust bulk update size
@@ -527,8 +533,9 @@ void Gfx::updateScreen() {
 
 	unlockScreen();
 
-	_varRenderMode = _varMiscRenderMode;
-
+	// the following items are handled in screen coordinates, so they need translation before
+	// being drawn
+	_overlayMode = true;
 	drawInventory();
 	drawItems();
 	drawBalloons();
@@ -660,7 +667,7 @@ void Gfx::updateFloatingLabel() {
 		FloatingLabelTraits traits_NS = {
 			Common::Point(16 - r.width()/2, 34),
 			Common::Point(8 - r.width()/2, 21),
-			0, 0, _backgroundInfo->width - r.width(), 190
+			0, 0, _vm->_screenWidth - r.width(), 190
 		};
 		traits = &traits_NS;
 	} else {
@@ -668,13 +675,13 @@ void Gfx::updateFloatingLabel() {
 		FloatingLabelTraits traits_BR = {
 			Common::Point(34 - r.width()/2, 70),
 			Common::Point(16 - r.width()/2, 37),
-			0, 0, _backgroundInfo->width - r.width(), 390
+			0, 0, _vm->_screenWidth - r.width(), 390
 		};
 		traits = &traits_BR;
 	}
 
 	Common::Point	cursor;
-	_vm->_input->getAbsoluteCursorPos(cursor);
+	_vm->_input->getCursorPos(cursor);
 	Common::Point offset = (_vm->_input->_activeItem._id) ? traits->_offsetWithItem : traits->_offsetWithoutItem;
 
 	_labels[_floatingLabel]->x = CLIP(cursor.x + offset.x, traits->_minX, traits->_maxX);
@@ -816,7 +823,6 @@ Gfx::Gfx(Parallaction* vm) :
 	_varBackgroundMode = 1;
 
 	registerVar("anim_render_mode", 1);
-	registerVar("misc_render_mode", 1);
 
 	registerVar("draw_path_zones", 0);
 

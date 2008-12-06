@@ -573,7 +573,6 @@ protected:
 	// frame data stored in programmable variables
 	int32				_varBackgroundMode;	// 1 = normal, 2 = only mask
 	int32				_varAnimRenderMode;	// 1 = normal, 2 = flat
-	int32				_varMiscRenderMode;	// 1 = normal, 2 = flat
 	int32				_varRenderMode;
 	int32				_varDrawPathZones;	// 0 = don't draw, 1 = draw
 	Graphics::Surface 	_bitmapMask;
@@ -590,6 +589,9 @@ protected:
 
 	int					_scrollPos;
 	int					_minScroll, _maxScroll;
+
+	// overlay mode enables drawing of graphics with automatic screen-to-game coordinate translation
+	bool				_overlayMode;
 
 public:
 
