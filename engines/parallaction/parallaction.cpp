@@ -168,10 +168,10 @@ void Parallaction::updateView() {
 		int max = _vm->_screenWidth - SCROLL_BAND_WIDTH;
 
 		if (foot.x < min) {
-			scrollX = CLIP(scrollX - (min - foot.x), 0, scrollX);
+			scrollX -= (min - foot.x);
 		} else
 		if (foot.x > max) {
-			scrollX = CLIP(scrollX + (foot.x - max), scrollX, _vm->_gfx->_backgroundInfo->width - _vm->_screenWidth);
+			scrollX += (foot.x - max);
 		}
 
 		_gfx->setScrollPos(scrollX);
