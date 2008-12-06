@@ -89,6 +89,7 @@ Input::~Input() {
 // caller code, i.e. adding condition checks.
 //
 void Input::readInput() {
+	bool updateMousePos = false;
 
 	Common::Event e;
 
@@ -97,6 +98,7 @@ void Input::readInput() {
 
 	Common::EventManager *eventMan = _vm->_system->getEventManager();
 	while (eventMan->pollEvent(e)) {
+		updateMousePos = true;
 
 		switch (e.type) {
 		case Common::EVENT_KEYDOWN:
@@ -105,30 +107,24 @@ void Input::readInput() {
 
 			if (e.kbd.flags == Common::KBD_CTRL && e.kbd.keycode == 'd')
 				_vm->_debugger->attach();
+
+			updateMousePos = false;
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
 			_mouseButtons = kMouseLeftDown;
-			_mousePos = e.mouse;
 			break;
 
 		case Common::EVENT_LBUTTONUP:
 			_mouseButtons = kMouseLeftUp;
-			_mousePos = e.mouse;
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
 			_mouseButtons = kMouseRightDown;
-			_mousePos = e.mouse;
 			break;
 
 		case Common::EVENT_RBUTTONUP:
 			_mouseButtons = kMouseRightUp;
-			_mousePos = e.mouse;
-			break;
-
-		case Common::EVENT_MOUSEMOVE:
-			_mousePos = e.mouse;
 			break;
 
 		case Common::EVENT_RTL:
@@ -140,6 +136,10 @@ void Input::readInput() {
 
 		}
 
+	}
+
+	if (updateMousePos) {
+		setCursorPos(e.mouse);
 	}
 
 	if (_vm->_debugger->isAttached())
@@ -282,12 +282,13 @@ bool Input::translateGameInput() {
 		return true;
 	}
 
+	Common::Point mousePos;
+	getAbsoluteCursorPos(mousePos);
 	// test if mouse is hovering on an interactive zone for the currently selected inventory item
-	ZonePtr z = _vm->hitZone(_activeItem._id, _mousePos.x, _mousePos.y);
-	Common::Point dest(_mousePos);
+	ZonePtr z = _vm->hitZone(_activeItem._id, mousePos.x, mousePos.y);
 
 	if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((!z) || ((z->_type & 0xFFFF) != kZoneCommand))) {
-		walkTo(dest);
+		walkTo(mousePos);
 		return true;
 	}
 
@@ -307,10 +308,10 @@ bool Input::translateGameInput() {
 			_delayedActionZone = z;
 			_hasDelayedAction = true;
 			if (z->_moveTo.y != 0) {
-				dest = z->_moveTo;
+				mousePos = z->_moveTo;
 			}
 
-			walkTo(dest);
+			walkTo(mousePos);
 		}
 
 		_vm->beep();
@@ -323,7 +324,9 @@ bool Input::translateGameInput() {
 
 
 void Input::enterInventoryMode() {
-	bool hitCharacter = _vm->hitZone(kZoneYou, _mousePos.x, _mousePos.y);
+	Common::Point mousePos;
+	getAbsoluteCursorPos(mousePos);
+	bool hitCharacter = _vm->hitZone(kZoneYou, mousePos.x, mousePos.y);
 
 	if (hitCharacter) {
 		if (_activeItem._id != 0) {
@@ -345,8 +348,10 @@ void Input::enterInventoryMode() {
 
 void Input::exitInventoryMode() {
 	// right up hides inventory
+	Common::Point mousePos;
+	getAbsoluteCursorPos(mousePos);
 
-	int pos = _vm->getHoverInventoryItem(_mousePos.x, _mousePos.y);
+	int pos = _vm->getHoverInventoryItem(mousePos.x, mousePos.y);
 	_vm->highlightInventoryItem(-1);			// disable
 
 	if ((_engineFlags & kEngineDragging)) {
@@ -384,7 +389,10 @@ bool Input::updateInventoryInput() {
 		return true;
 	}
 
-	int16 _si = _vm->getHoverInventoryItem(_mousePos.x, _mousePos.y);
+	Common::Point mousePos;
+	getAbsoluteCursorPos(mousePos);
+
+	int16 _si = _vm->getHoverInventoryItem(mousePos.x, mousePos.y);
 	if (_si != _transCurrentHoverItem) {
 		_transCurrentHoverItem = _si;
 		_vm->highlightInventoryItem(_si);						// enable
@@ -416,6 +424,11 @@ MouseTriState Input::getMouseState() {
 
 bool Input::isMouseEnabled() {
 	return (_mouseState == MOUSE_ENABLED_SHOW) || (_mouseState == MOUSE_ENABLED_HIDE);
+}
+
+void Input::getAbsoluteCursorPos(Common::Point& p) const {
+	p = _mousePos;
+	p.x += _vm->_gfx->getScrollPos();
 }
 
 

@@ -143,10 +143,38 @@ Common::Error Parallaction::init() {
 	return Common::kNoError;
 }
 
+bool canScroll() {
+	return (_vm->_gfx->_backgroundInfo->width > _vm->_screenWidth);
+}
+
 void Parallaction::updateView() {
 
 	if ((_engineFlags & kEnginePauseJobs) && (_input->_inputMode != Input::kInputModeInventory)) {
 		return;
+	}
+
+	#define SCROLL_BAND_WIDTH		120
+
+	if (canScroll()) {
+		int scrollX = _gfx->getScrollPos();
+
+		Common::Point foot;
+		_char.getFoot(foot);
+
+		foot.x -= scrollX;
+		//foot.y -= ...
+
+		int min = SCROLL_BAND_WIDTH;
+		int max = _vm->_screenWidth - SCROLL_BAND_WIDTH;
+
+		if (foot.x < min) {
+			scrollX = CLIP(scrollX - (min - foot.x), 0, scrollX);
+		} else
+		if (foot.x > max) {
+			scrollX = CLIP(scrollX + (foot.x - max), scrollX, _vm->_gfx->_backgroundInfo->width - _vm->_screenWidth);
+		}
+
+		_gfx->setScrollPos(scrollX);
 	}
 
 	_gfx->animatePalette();

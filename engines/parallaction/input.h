@@ -98,8 +98,14 @@ public:
 	Input(Parallaction *vm);
 	virtual ~Input();
 
-	void			getCursorPos(Common::Point& p) {
+	void getAbsoluteCursorPos(Common::Point& p) const;
+
+	void getCursorPos(Common::Point& p) const {
 		p = _mousePos;
+	}
+
+	void setCursorPos(const Common::Point& p) {
+		_mousePos = p;
 	}
 
 	int				_inputMode;

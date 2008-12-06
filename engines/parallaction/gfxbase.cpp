@@ -173,10 +173,8 @@ void Gfx::drawGfxObject(GfxObj *obj, Graphics::Surface &surf, bool scene) {
 	Common::Rect rect;
 	byte *data;
 
-	uint scrollX = (scene) ? -_varScrollX : 0;
-
 	obj->getRect(obj->frame, rect);
-	rect.translate(obj->x + scrollX, obj->y);
+	rect.translate(obj->x, obj->y);
 	data = obj->getData(obj->frame);
 
 	if (obj->getSize(obj->frame) == obj->getRawSize(obj->frame)) {

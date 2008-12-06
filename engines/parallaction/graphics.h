@@ -572,13 +572,24 @@ protected:
 
 	// frame data stored in programmable variables
 	int32				_varBackgroundMode;	// 1 = normal, 2 = only mask
-	int32				_varScrollX;
 	int32				_varAnimRenderMode;	// 1 = normal, 2 = flat
 	int32				_varMiscRenderMode;	// 1 = normal, 2 = flat
 	int32				_varRenderMode;
 	int32				_varDrawPathZones;	// 0 = don't draw, 1 = draw
 	Graphics::Surface 	_bitmapMask;
 	int32 				getRenderMode(const char *type);
+
+	Graphics::Surface	*lockScreen();
+	void				unlockScreen();
+	void 				updateScreenIntern();
+
+	bool				_doubleBuffering;
+	int					_gameType;
+	Graphics::Surface	_backBuffer;
+	void 				copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+
+	int					_scrollPos;
+	int					_minScroll, _maxScroll;
 
 public:
 
@@ -604,6 +615,9 @@ public:
 	void drawBalloons();
 
 	void copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surface &dst);
+
+	int getScrollPos();
+	void setScrollPos(int scrollX);
 
 	// low level text and patches
 	void drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);

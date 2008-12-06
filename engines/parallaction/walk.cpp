@@ -549,13 +549,19 @@ void PathWalker_BR::walk() {
 	_step++;
 	_step %= 8;
 
+
+	int maxX = _vm->_gfx->_backgroundInfo->width;
+	int minX = 0;
+	int maxY = _vm->_gfx->_backgroundInfo->height;
+	int minY = 0;
+
 	int walkFrame = _step;
 	_dirFrame = 0;
 	Common::Point newpos(_startFoot), delta;
 
 	Common::Point p(*_ch->_walkPath.begin());
 
-	if (_startFoot.y < p.y && _startFoot.y < 400 && IS_PATH_CLEAR(_startFoot.x, yStep + _startFoot.y)) {
+	if (_startFoot.y < p.y && _startFoot.y < maxY && IS_PATH_CLEAR(_startFoot.x, yStep + _startFoot.y)) {
 		if (yStep + _startFoot.y <= p.y) {
 			_fieldC = 1;
 			delta.y = yStep;
@@ -566,7 +572,7 @@ void PathWalker_BR::walk() {
 		}
 		_dirFrame = 9;
 	} else
-	if (_startFoot.y > p.y && _startFoot.y > 0 && IS_PATH_CLEAR(_startFoot.x, _startFoot.y - yStep)) {
+	if (_startFoot.y > p.y && _startFoot.y > minY && IS_PATH_CLEAR(_startFoot.x, _startFoot.y - yStep)) {
 		if (_startFoot.y - yStep >= p.y) {
 			_fieldC = 1;
 			delta.y = yStep;
@@ -578,7 +584,7 @@ void PathWalker_BR::walk() {
 		_dirFrame = 0;
 	}
 
-	if (_startFoot.x < p.x && _startFoot.x < 640 && IS_PATH_CLEAR(_startFoot.x + xStep, _startFoot.y)) {
+	if (_startFoot.x < p.x && _startFoot.x < maxX && IS_PATH_CLEAR(_startFoot.x + xStep, _startFoot.y)) {
 		if (_startFoot.x + xStep <= p.x) {
 			_fieldC = 1;
 			delta.x = xStep;
@@ -591,7 +597,7 @@ void PathWalker_BR::walk() {
 			_dirFrame = 18;	// right
 		}
 	} else
-	if (_startFoot.x > p.x && _startFoot.x > 0 && IS_PATH_CLEAR(_startFoot.x - xStep, _startFoot.y)) {
+	if (_startFoot.x > p.x && _startFoot.x > minX && IS_PATH_CLEAR(_startFoot.x - xStep, _startFoot.y)) {
 		if (_startFoot.x - xStep >= p.x) {
 			_fieldC = 1;
 			delta.x = xStep;

@@ -328,7 +328,7 @@ void Gfx::drawInventory() {
 	_vm->_inventoryRenderer->getRect(r);
 	byte *data = _vm->_inventoryRenderer->getData();
 
-	_vm->_system->copyRectToScreen(data, r.width(), r.left, r.top, r.width(), r.height());
+	copyRectToScreen(data, r.width(), r.left, r.top, r.width(), r.height());
 }
 
 void Gfx::drawItems() {
@@ -336,11 +336,11 @@ void Gfx::drawItems() {
 		return;
 	}
 
-	Graphics::Surface *surf = _vm->_system->lockScreen();
+	Graphics::Surface *surf = lockScreen();
 	for (uint i = 0; i < _numItems; i++) {
 		drawGfxObject(_items[i].data, *surf, false);
 	}
-	_vm->_system->unlockScreen();
+	unlockScreen();
 }
 
 void Gfx::drawBalloons() {
@@ -348,15 +348,11 @@ void Gfx::drawBalloons() {
 		return;
 	}
 
-	Graphics::Surface *surf = _vm->_system->lockScreen();
+	Graphics::Surface *surf = lockScreen();
 	for (uint i = 0; i < _balloons.size(); i++) {
 		drawGfxObject(_balloons[i], *surf, false);
 	}
-	_vm->_system->unlockScreen();
-}
-
-void Gfx::clearScreen() {
-	_vm->_system->clearScreen();
+	unlockScreen();
 }
 
 void Gfx::beginFrame() {
@@ -390,16 +386,10 @@ void Gfx::beginFrame() {
 	}
 
 	_varDrawPathZones = getVar("draw_path_zones");
-	if (_varDrawPathZones == 1 && _vm->getGameType() != GType_BRA) {
+	if (_varDrawPathZones == 1 && _gameType != GType_BRA) {
 		setVar("draw_path_zones", 0);
 		_varDrawPathZones = 0;
 		warning("Path zones are supported only in Big Red Adventure");
-	}
-
-	if (_skipBackground || (_vm->_screenWidth >= _backgroundInfo->width)) {
-		_varScrollX = 0;
-	} else {
-		_varScrollX = getVar("scroll_x");
 	}
 
 	_varAnimRenderMode = getRenderMode("anim_render_mode");
@@ -418,31 +408,85 @@ int32 Gfx::getRenderMode(const char *type) {
 
 }
 
+void Gfx::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+	if (_doubleBuffering) {
+		byte *dst = (byte*)_backBuffer.getBasePtr(x, y);
+		for (int i = 0; i < h; i++) {
+			memcpy(dst, buf, w);
+			buf += pitch;
+			dst += _backBuffer.pitch;
+		}
+	} else {
+		_vm->_system->copyRectToScreen(buf, pitch, x, y, w, h);
+	}
+}
+
+void Gfx::clearScreen() {
+	if (_doubleBuffering) {
+		if (_backBuffer.pixels) {
+			Common::Rect r(_backBuffer.w, _backBuffer.h);
+			_backBuffer.fillRect(r, 0);
+		}
+	} else {
+		_vm->_system->clearScreen();
+	}
+}
+
+Graphics::Surface *Gfx::lockScreen() {
+	if (_doubleBuffering) {
+		return &_backBuffer;
+	}
+	return _vm->_system->lockScreen();
+}
+
+void Gfx::unlockScreen() {
+	if (_doubleBuffering) {
+		return;
+	}
+	_vm->_system->unlockScreen();
+}
+
+void Gfx::updateScreenIntern() {
+	if (_doubleBuffering) {
+		byte *data = (byte*)_backBuffer.getBasePtr(_scrollPos, 0);
+		_vm->_system->copyRectToScreen(data, _backBuffer.pitch, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
+	}
+
+	_vm->_system->updateScreen();
+}
+
+int Gfx::getScrollPos() {
+	return _scrollPos;
+}
+
+void Gfx::setScrollPos(int scrollX) {
+	_scrollPos = CLIP(scrollX, _minScroll, _maxScroll);
+}
 
 void Gfx::updateScreen() {
 
 	if (!_skipBackground) {
 		// background may not cover the whole screen, so adjust bulk update size
-		uint w = MIN(_vm->_screenWidth, (int32)_backgroundInfo->width);
-		uint h = MIN(_vm->_screenHeight, (int32)_backgroundInfo->height);
+		uint w = _backgroundInfo->width;
+		uint h = _backgroundInfo->height;
 
 		byte *backgroundData = 0;
 		uint16 backgroundPitch = 0;
 		switch (_varBackgroundMode) {
 		case 1:
-			backgroundData = (byte*)_backgroundInfo->bg.getBasePtr(_varScrollX, 0);
+			backgroundData = (byte*)_backgroundInfo->bg.getBasePtr(0, 0);
 			backgroundPitch = _backgroundInfo->bg.pitch;
 			break;
 		case 2:
-			backgroundData = (byte*)_bitmapMask.getBasePtr(_varScrollX, 0);
+			backgroundData = (byte*)_bitmapMask.getBasePtr(0, 0);
 			backgroundPitch = _bitmapMask.pitch;
 			break;
 		}
-		_vm->_system->copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo->x, _backgroundInfo->y, w, h);
+		copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo->x, _backgroundInfo->y, w, h);
 	}
 
 	if (_varDrawPathZones == 1) {
-		Graphics::Surface *surf = _vm->_system->lockScreen();
+		Graphics::Surface *surf = lockScreen();
 		ZoneList::iterator b = _vm->_location._zones.begin();
 		ZoneList::iterator e = _vm->_location._zones.end();
 		for (; b != e; b++) {
@@ -451,13 +495,13 @@ void Gfx::updateScreen() {
 				surf->frameRect(Common::Rect(z->getX(), z->getY(), z->getX() + z->width(), z->getY() + z->height()), 2);
 			}
 		}
-		_vm->_system->unlockScreen();
+		unlockScreen();
 	}
 
 	_varRenderMode = _varAnimRenderMode;
 
 	// TODO: transform objects coordinates to be drawn with scrolling
-	Graphics::Surface *surf = _vm->_system->lockScreen();
+	Graphics::Surface *surf = lockScreen();
 	drawGfxObjects(*surf);
 
 	if (_halfbrite) {
@@ -481,7 +525,7 @@ void Gfx::updateScreen() {
 		}
 	}
 
-	_vm->_system->unlockScreen();
+	unlockScreen();
 
 	_varRenderMode = _varMiscRenderMode;
 
@@ -490,8 +534,7 @@ void Gfx::updateScreen() {
 	drawBalloons();
 	drawLabels();
 
-	_vm->_system->updateScreen();
-	return;
+	updateScreenIntern();
 }
 
 
@@ -613,11 +656,11 @@ void Gfx::updateFloatingLabel() {
 	Common::Rect r;
 	_labels[_floatingLabel]->getRect(0, r);
 
-	if (_vm->getGameType() == GType_Nippon) {
+	if (_gameType == GType_Nippon) {
 		FloatingLabelTraits traits_NS = {
 			Common::Point(16 - r.width()/2, 34),
 			Common::Point(8 - r.width()/2, 21),
-			0, 0, _vm->_screenWidth - r.width(), 190
+			0, 0, _backgroundInfo->width - r.width(), 190
 		};
 		traits = &traits_NS;
 	} else {
@@ -625,13 +668,13 @@ void Gfx::updateFloatingLabel() {
 		FloatingLabelTraits traits_BR = {
 			Common::Point(34 - r.width()/2, 70),
 			Common::Point(16 - r.width()/2, 37),
-			0, 0, _vm->_screenWidth - r.width(), 390
+			0, 0, _backgroundInfo->width - r.width(), 390
 		};
 		traits = &traits_BR;
 	}
 
 	Common::Point	cursor;
-	_vm->_input->getCursorPos(cursor);
+	_vm->_input->getAbsoluteCursorPos(cursor);
 	Common::Point offset = (_vm->_input->_activeItem._id) ? traits->_offsetWithItem : traits->_offsetWithoutItem;
 
 	_labels[_floatingLabel]->x = CLIP(cursor.x + offset.x, traits->_minX, traits->_maxX);
@@ -684,7 +727,7 @@ void Gfx::showLabel(uint id, int16 x, int16 y) {
 	_labels[id]->getRect(0, r);
 
 	if (x == CENTER_LABEL_HORIZONTAL) {
-		x = CLIP<int16>((_vm->_screenWidth - r.width()) / 2, 0, _vm->_screenWidth/2);
+		x = CLIP<int16>((_backgroundInfo->width - r.width()) / 2, 0, _backgroundInfo->width/2);
 	}
 
 	if (y == CENTER_LABEL_VERTICAL) {
@@ -715,13 +758,11 @@ void Gfx::drawLabels() {
 
 	updateFloatingLabel();
 
-	Graphics::Surface* surf = _vm->_system->lockScreen();
-
+	Graphics::Surface* surf = lockScreen();
 	for (uint i = 0; i < _labels.size(); i++) {
 		drawGfxObject(_labels[i], *surf, false);
 	}
-
-	_vm->_system->unlockScreen();
+	unlockScreen();
 }
 
 
@@ -747,9 +788,12 @@ void Gfx::grabBackground(const Common::Rect& r, Graphics::Surface &dst) {
 
 
 Gfx::Gfx(Parallaction* vm) :
-	_vm(vm), _disk(vm->_disk) {
+	_vm(vm), _disk(vm->_disk), _scrollPos(0), _minScroll(0), _maxScroll(0) {
 
-	initGraphics(_vm->_screenWidth, _vm->_screenHeight, _vm->getGameType() == GType_BRA);
+	_gameType = _vm->getGameType();
+	_doubleBuffering = _gameType != GType_Nippon;
+
+	initGraphics(_vm->_screenWidth, _vm->_screenHeight, _gameType == GType_BRA);
 
 	setPalette(_palette);
 
@@ -771,15 +815,12 @@ Gfx::Gfx(Parallaction* vm) :
 	registerVar("background_mode", 1);
 	_varBackgroundMode = 1;
 
-	registerVar("scroll_x", 0);
-	_varScrollX = 0;
-
 	registerVar("anim_render_mode", 1);
 	registerVar("misc_render_mode", 1);
 
 	registerVar("draw_path_zones", 0);
 
-	if ((_vm->getGameType() == GType_BRA) && (_vm->getPlatform() == Common::kPlatformPC)) {
+	if ((_gameType == GType_BRA) && (_vm->getPlatform() == Common::kPlatformPC)) {
 	// this loads the backup palette needed by the PC version of BRA (see setBackground()).
 		BackgroundInfo	paletteInfo;
 		_disk->loadSlide(paletteInfo, "pointer");
@@ -870,6 +911,18 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 			_backgroundInfo->ranges[i]._flags = 0;	// disable palette cycling for slides
 		setPalette(_backgroundInfo->palette);
 	}
+
+	if (_gameType == GType_BRA) {
+		int width = CLIP(info->width, _vm->_screenWidth, info->width);
+		int height = CLIP(info->height, _vm->_screenHeight, info->height);
+
+		if (width != _backBuffer.w || height != _backBuffer.h) {
+			_backBuffer.create(width, height, 1);
+		}
+	}
+
+	_minScroll = 0;
+	_maxScroll = _backgroundInfo->width - _vm->_screenWidth;
 }
 
 } // namespace Parallaction
