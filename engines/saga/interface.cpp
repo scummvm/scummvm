@@ -1013,7 +1013,6 @@ void Interface::drawOption() {
 }
 
 void Interface::drawQuit() {
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	Rect rect;
 	int i;
 	PanelButton *panelButton;
@@ -1022,7 +1021,7 @@ void Interface::drawQuit() {
 	if (_vm->getGameType() == GType_ITE)
 		drawButtonBox(rect, kButton, false);
 	else
-		backBuffer->blit(rect, _quitPanel.image);
+		_vm->_gfx->getBackBuffer()->blit(rect, _quitPanel.image);
 
 	for (i = 0; i < _quitPanel.buttonsCount; i++) {
 		panelButton = &_quitPanel.buttons[i];
@@ -1078,7 +1077,6 @@ void Interface::setQuit(PanelButton *panelButton) {
 }
 
 void Interface::drawLoad() {
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	Rect rect;
 	int i;
 	PanelButton *panelButton;
@@ -1087,7 +1085,7 @@ void Interface::drawLoad() {
 	if (_vm->getGameType() == GType_ITE)
 		drawButtonBox(rect, kButton, false);
 	else
-		backBuffer->blit(rect, _loadPanel.image);
+		_vm->_gfx->getBackBuffer()->blit(rect, _loadPanel.image);
 
 	for (i = 0; i < _loadPanel.buttonsCount; i++) {
 		panelButton = &_loadPanel.buttons[i];
@@ -1300,7 +1298,6 @@ void Interface::drawTextInput(InterfacePanel *panel, PanelButton *panelButton) {
 }
 
 void Interface::drawSave() {
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	Rect rect;
 	int i;
 	PanelButton *panelButton;
@@ -1309,7 +1306,7 @@ void Interface::drawSave() {
 	if (_vm->getGameType() == GType_ITE)
 		drawButtonBox(rect, kButton, false);
 	else
-		backBuffer->blit(rect, _savePanel.image);
+		_vm->_gfx->getBackBuffer()->blit(rect, _savePanel.image);
 
 	for (i = 0; i < _savePanel.buttonsCount; i++) {
 		panelButton = &_savePanel.buttons[i];
@@ -1325,7 +1322,6 @@ void Interface::drawSave() {
 }
 
 void Interface::drawProtect() {
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	Rect rect;
 	int i;
 	PanelButton *panelButton;
