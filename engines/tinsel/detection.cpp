@@ -250,8 +250,6 @@ static const TinselGameDescription gameDescriptions[] = {
 	},
 #endif
 
-// Currently disabled since it isn't really supported
-#if 0
 	{	// Demo from http://www.adventure-treff.de/specials/dl_demos.php
 		{
 			"dw",
@@ -267,7 +265,6 @@ static const TinselGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		TINSEL_V0,
 	},
-#endif
 
 	{	// German CD re-release "Neon Edition"
 		// Note: This release has ENGLISH.TXT (with german content) instead of GERMAN.TXT

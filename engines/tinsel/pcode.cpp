@@ -403,7 +403,11 @@ void SaveInterpretContexts(INT_CONTEXT *sICInfo) {
  */
 static int32 Fetch(byte opcode, byte *code, int &ip) {
 	int32 tmp;
-	if (opcode & OPSIZE8) {
+	if (TinselV0) {
+		// Fetch a 32 bit value.
+		tmp = (int32)READ_LE_UINT32(code + ip);
+		ip += 4;
+	} else if (opcode & OPSIZE8) {
 		// Fetch and sign extend a 8 bit value to 32 bits.
 		tmp = *(int8 *)(code + ip);
 		ip += 1;
@@ -427,7 +431,13 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 		int tmp, tmp2;
 		int ip = ic->ip;
 		byte opcode = ic->code[ip++];
-		debug(7, "  Opcode %d (-> %d)", opcode, opcode & OPMASK);
+		if (TinselV0) {
+			ip += 3;	// DW1 demo opcodes are 4 bytes long
+			if ((opcode & OPMASK) > OP_IMM)
+				opcode += 3;
+		}
+
+		debug(7, "ip=%d  Opcode %d (-> %d)", ic->ip, opcode, opcode & OPMASK);
 		switch (opcode & OPMASK) {
 		case OP_HALT:			// end of program
 
@@ -483,6 +493,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 		case OP_CALL:				// procedure call
 
 			tmp = Fetch(opcode, ic->code, ip);
+			if (TinselV0) tmp *= 4;
 			//assert(0 <= tmp && tmp < codeSize);	// TODO: Verify jumps are not out of bounds
 			ic->stack[ic->sp + 1] = 0;	// static link
 			ic->stack[ic->sp + 2] = ic->bp;	// dynamic link
@@ -516,7 +527,8 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 			tmp2 = CallLibraryRoutine(coroParam, tmp, &ic->stack[ic->sp], ic, &ic->resumeState);
 			if (coroParam)
 				return;
-			ic->sp += tmp2;
+			if (!TinselV0)
+				ic->sp += tmp2;
 			LockCode(ic);
 			if (TinselV2 && (ic->resumeState == RES_1))
 				ic->resumeState = RES_NOT;
@@ -531,7 +543,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 
 		case OP_ALLOC:			// allocate storage on stack
 
-			ic->sp += Fetch(opcode, ic->code, ip);
+			ic->sp += (int32)Fetch(opcode, ic->code, ip);
 			break;
 
 		case OP_JUMP:	// unconditional jump

@@ -119,6 +119,7 @@ typedef bool (*KEYFPTR)(const Common::KeyState &);
 #define GAME_FRAME_DELAY (1000 / ONE_SECOND)
 
 #define TinselVersion (_vm->getVersion())
+#define TinselV0 (TinselVersion == TINSEL_V0)
 #define TinselV2 (TinselVersion == TINSEL_V2)
 
 class TinselEngine : public Engine {
