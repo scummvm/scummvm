@@ -120,6 +120,7 @@ typedef bool (*KEYFPTR)(const Common::KeyState &);
 
 #define TinselVersion (_vm->getVersion())
 #define TinselV0 (TinselVersion == TINSEL_V0)
+#define TinselV1 (TinselVersion == TINSEL_V1)
 #define TinselV2 (TinselVersion == TINSEL_V2)
 
 class TinselEngine : public Engine {

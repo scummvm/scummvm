@@ -405,8 +405,7 @@ static int32 Fetch(byte opcode, byte *code, int &ip) {
 	int32 tmp;
 	if (TinselV0) {
 		// Fetch a 32 bit value.
-		tmp = (int32)READ_LE_UINT32(code + ip);
-		ip += 4;
+		tmp = (int32)READ_LE_UINT32(code + ip++ * 4);
 	} else if (opcode & OPSIZE8) {
 		// Fetch and sign extend a 8 bit value to 32 bits.
 		tmp = *(int8 *)(code + ip);
@@ -430,12 +429,9 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 	do {
 		int tmp, tmp2;
 		int ip = ic->ip;
-		byte opcode = ic->code[ip++];
-		if (TinselV0) {
-			ip += 3;	// DW1 demo opcodes are 4 bytes long
-			if ((opcode & OPMASK) > OP_IMM)
-				opcode += 3;
-		}
+		byte opcode = ic->code[ip++ * (TinselV0 ? 4 : 1)];
+		if (TinselV0 && ((opcode & OPMASK) > OP_IMM))
+			opcode += 3;
 
 		debug(7, "ip=%d  Opcode %d (-> %d)", ic->ip, opcode, opcode & OPMASK);
 		switch (opcode & OPMASK) {
@@ -493,7 +489,6 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 		case OP_CALL:				// procedure call
 
 			tmp = Fetch(opcode, ic->code, ip);
-			if (TinselV0) tmp *= 4;
 			//assert(0 <= tmp && tmp < codeSize);	// TODO: Verify jumps are not out of bounds
 			ic->stack[ic->sp + 1] = 0;	// static link
 			ic->stack[ic->sp + 2] = ic->bp;	// dynamic link
