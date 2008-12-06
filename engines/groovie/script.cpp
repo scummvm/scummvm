@@ -331,11 +331,23 @@ void Script::loadgame(uint slot) {
 }
 
 void Script::savegame(uint slot) {
+	char save[15];
+	char newchar;
 	Common::String filename = ConfMan.getActiveDomainName() + ".00" + ('0' + slot);
 	Common::OutSaveFile *file = _vm->_system->getSavefileManager()->openForSaving(filename.c_str());
 
 	// Saving the variables. It is endian safe because they're byte variables
 	file->write(_variables, 0x400);
+	for (int i = 0; i < 15; i++) {
+		newchar = _variables[i] + 0x30;
+		if ((newchar < 0x30 || newchar > 0x39) && (newchar < 0x41 || newchar > 0x7A)) {
+			save[i] = '\0';	
+			break;
+		} else {
+			save[i] = newchar;
+		}
+	}
+	_saveNames[slot] = save;
 
 	delete file;
 }
@@ -1166,37 +1178,20 @@ void Script::o_hotspot_slot() {
 	if (hotspot(rect, address, cursor)) {
 		char savename[15];
 
-		Common::String filename = ConfMan.getActiveDomainName() + ".00" + ('0' + slot);
-		Common::StringList files = _vm->_system->getSavefileManager()->listSavefiles(filename.c_str());
-		if (!files.empty()) {
-			Common::InSaveFile *file = _vm->_system->getSavefileManager()->openForLoading(filename.c_str());
-			if (file) {
-				uint8 i;
-				char temp;
-
-				for (i = 0; i < 15; i++) {
-					file->read(&temp, 1);
-					savename[i] = temp + 0x30;
-				} 
-
-				delete file;
-			} else {
-				strcpy(savename, "ERROR");
-			}
-		} else {
-			strcpy(savename, "E M P T Y");
+		if (_hotspotSlot == slot) {
+			return;
 		}
 
 		// Load the font if required
 		if (!_font) {
 			_font = new Font(_vm->_system);
 		}
+		strcpy(savename, _saveNames[slot].c_str());
 		_font->printstring(savename);
 
 		// Save the currently highlighted slot
 		_hotspotSlot = slot;
 	} else {
-		Common::Point mousepos = _vm->_system->getEventManager()->getMousePos();
 		if (_hotspotSlot == slot) {
 			Common::Rect topbar(640, 80);
 
@@ -1237,6 +1232,31 @@ void Script::o_checkvalidsaves() {
 			count++;
 		}
 		it++;
+	}
+
+	for (int slots = 0; slots < 10; slots++) {
+		char savename[15];
+		Common::String filename = ConfMan.getActiveDomainName() + ".00" + ('0' + slots);
+		Common::StringList files = _vm->_system->getSavefileManager()->listSavefiles(filename.c_str());
+		if (!files.empty()) {
+			Common::InSaveFile *file = _vm->_system->getSavefileManager()->openForLoading(filename.c_str());
+			if (file) {
+				uint8 i;
+				char temp;
+
+				for (i = 0; i < 15; i++) {
+					file->read(&temp, 1);
+					savename[i] = temp + 0x30;
+				} 
+
+				delete file;
+			} else {
+				strcpy(savename, "ERROR");
+			}
+		} else {
+			strcpy(savename, "E M P T Y");
+		}
+		_saveNames[slots] = savename;
 	}
 
 	// Save the number of valid saves

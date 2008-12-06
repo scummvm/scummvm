@@ -66,6 +66,9 @@ private:
 	Common::String _scriptFile;
 	Common::String _savedScriptFile;
 
+	// Save names
+	Common::String _saveNames[10];
+
 	// Code
 	byte *_code;
 	uint16 _currentInstruction;
