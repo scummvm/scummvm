@@ -45,6 +45,75 @@ extern uint8 transPalette[MAX_COLOURS];
 //----------------- SUPPORT FUNCTIONS ---------------------
 
 /**
+ * Straight rendering of uncompressed data
+ */
+static void t0WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping) {
+	int yClip = 0;
+
+	if (applyClipping) {
+		// Adjust the height down to skip any bottom clipping
+		pObj->height -= pObj->botClip;
+		yClip = pObj->topClip;
+	}
+
+	// Vertical loop
+	for (int y = 0; y < pObj->height; ++y) {
+		// Get the start of the next line output
+		uint8 *tempDest = destP;
+
+		int leftClip = applyClipping ? pObj->leftClip : 0;
+		int rightClip = applyClipping ? pObj->rightClip : 0;
+		
+		// Horizontal loop
+		for (int x = 0; x < pObj->width; ) {
+			uint32 numBytes = READ_UINT32(srcP);
+			srcP += sizeof(uint32);
+			bool repeatFlag = (numBytes & 0x80000000L) != 0;
+			numBytes &= 0x7fffffff;
+
+			uint clipAmount = MIN((int)numBytes & 0xff, leftClip);
+			leftClip -= clipAmount;
+			x += clipAmount;
+
+			if (repeatFlag) {
+				// Repeat of a given colour
+				uint8 colour = (numBytes >> 8) & 0xff;
+				int runLength = (numBytes & 0xff) - clipAmount;
+
+				int rptLength = MAX(MIN(runLength, pObj->width - rightClip - x), 0);
+				if (yClip == 0) {
+					if (colour != 0)
+						memset(tempDest, colour, rptLength);
+					tempDest += rptLength;
+				}
+
+				x += runLength;
+			} else {
+				// Copy a specified sequence length of pixels
+				srcP += clipAmount;
+				
+				int runLength = numBytes - clipAmount;
+				int rptLength = MAX(MIN(runLength, pObj->width - rightClip - x), 0);
+				if (yClip == 0) {
+					memmove(tempDest, srcP, rptLength);
+					tempDest += rptLength;
+				}
+
+				int overflow = (numBytes % 4) == 0 ? 0 : 4 - (numBytes % 4);
+				x += runLength;
+				srcP += runLength + overflow;
+			}
+		}
+
+		// Move to next line
+		if (yClip > 0)
+			--yClip;
+		else
+			destP += SCREEN_WIDTH;
+	}
+}
+
+/**
  * Straight rendering with transparency support
  */
 static void WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping) {
@@ -518,7 +587,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 				(pObj->flags & DMA_FLIPH), packType);
 		}
 
-	} else {
+	} else if (TinselV1) {
 		// Tinsel v1 decoders
 		switch (typeId) {
 		case 0x01:
@@ -541,9 +610,21 @@ void DrawObject(DRAWOBJECT *pObj) {
 			break;
 
 		default:
-			// NoOp
 			error("Unknown drawing type %d", typeId);
+		}
+	} else {
+		// Tinsel v0 decoders
+		switch (typeId) {
+		case 0x01:
+		case 0x41:
+			t0WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40);
 			break;
+		case 0x08:
+		case 0x48:
+			WrtAll(pObj, srcPtr, destPtr, typeId >= 0x40);
+			break;
+		default:
+			error("Unknown drawing type %d", typeId);
 		}
 	}
 }
