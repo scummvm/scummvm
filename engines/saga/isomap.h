@@ -162,7 +162,7 @@ public:
 	void loadMetaTiles(const byte * resourcePointer, size_t resourceLength);
 	void loadMulti(const byte * resourcePointer, size_t resourceLength);
 	void freeMem();
-	void draw(Surface *ds);
+	void draw();
 	void drawSprite(SpriteList &spriteList, int spriteNumber, const Location &location, const Point &screenPosition, int scale);
 	void adjustScroll(bool jump);
 	void tileCoordsToScreenPoint(const Location &location, Point &position) {

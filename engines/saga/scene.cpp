@@ -1146,7 +1146,7 @@ void Scene::processSceneResources() {
 void Scene::draw() {
 	if (_sceneDescription.flags & kSceneFlagISO) {
 		_vm->_isoMap->adjustScroll(false);
-		_vm->_isoMap->draw(_vm->_gfx->getBackBuffer());
+		_vm->_isoMap->draw();
 	} else {
 		Rect rect;
 		_vm->_render->getBackGroundSurface()->getRect(rect);
