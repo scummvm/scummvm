@@ -1145,29 +1145,18 @@ void Scene::processSceneResources() {
 }
 
 void Scene::draw() {
-	Surface *backBuffer;
-	Surface *backGroundSurface;
-	Rect rect;
-
-	backBuffer = _vm->_gfx->getBackBuffer();
-
-	backGroundSurface = _vm->_render->getBackGroundSurface();
-
 	if (_sceneDescription.flags & kSceneFlagISO) {
 		_vm->_isoMap->adjustScroll(false);
-		_vm->_isoMap->draw(backBuffer);
+		_vm->_isoMap->draw(_vm->_gfx->getBackBuffer());
 	} else {
-		backGroundSurface->getRect(rect);
-		if (_sceneClip.bottom < rect.bottom) {
-			rect.bottom = getHeight();
-		}
-		backBuffer->blit(rect, (const byte *)backGroundSurface->pixels);
+		Rect rect;
+		_vm->_render->getBackGroundSurface()->getRect(rect);
+		rect.bottom = (_sceneClip.bottom < rect.bottom) ? getHeight() : rect.bottom;
+		_vm->_gfx->getBackBuffer()->blit(rect, (const byte *)_vm->_render->getBackGroundSurface()->pixels);
 	}
 }
 
 void Scene::endScene() {
-	Surface *backBuffer;
-	Surface *backGroundSurface;
 	Rect rect;
 	size_t i;
 
@@ -1187,16 +1176,14 @@ void Scene::endScene() {
 	_vm->_script->_skipSpeeches = false;
 
 	// Copy current screen to render buffer so inset rooms will get proper background
-	backGroundSurface = _vm->_render->getBackGroundSurface();
 	if (!(_sceneDescription.flags & kSceneFlagISO) && !_vm->_scene->isInIntro()) {
 		BGInfo bgInfo;
 
 		_vm->_scene->getBGInfo(bgInfo);
-		backGroundSurface->blit(bgInfo.bounds, bgInfo.buffer);
+		_vm->_render->getBackGroundSurface()->blit(bgInfo.bounds, bgInfo.buffer);
 	} else {
-		backBuffer = _vm->_gfx->getBackBuffer();
-		backBuffer->getRect(rect);
-		backGroundSurface->blit(rect, (const byte *)backBuffer->pixels);
+		_vm->_gfx->getBackBuffer()->getRect(rect);
+		_vm->_render->getBackGroundSurface()->blit(rect, (const byte *)_vm->_gfx->getBackBuffer()->pixels);
 	}
 
 	// Free scene background
@@ -1235,7 +1222,6 @@ void Scene::endScene() {
 	_textList.clear();
 
 	_sceneLoaded = false;
-
 }
 
 void Scene::restoreScene() {

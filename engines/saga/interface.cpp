@@ -787,14 +787,10 @@ void Interface::drawVerbPanel(Surface *backBuffer, PanelButton* panelButton) {
 }
 
 void Interface::draw() {
-	Surface *backBuffer;
-	int i;
-
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	Point leftPortraitPoint;
 	Point rightPortraitPoint;
 	Rect rect;
-
-	backBuffer = _vm->_gfx->getBackBuffer();
 
 	if (_vm->_scene->isInIntro() || _fadeMode == kFadeOut)
 		return;
@@ -806,7 +802,7 @@ void Interface::draw() {
 		_mainPanel.getRect(rect);
 		backBuffer->blit(rect, _mainPanel.image);
 
-		for (i = 0; i < kVerbTypeIdsMax; i++) {
+		for (int i = 0; i < kVerbTypeIdsMax; i++) {
 			if (_verbTypeToPanelButton[i] != NULL) {
 				drawVerbPanel(backBuffer, _verbTypeToPanelButton[i]);
 			}
@@ -934,10 +930,8 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 
 void Interface::drawOption() {
 	const char *text;
-	Surface *backBuffer;
-	int i;
 	int fontHeight;
-	uint j, idx;
+	uint idx;
 	int fgColor;
 	int bgColor;
 	Rect rect;
@@ -947,13 +941,12 @@ void Interface::drawOption() {
 	Point point;
 	Point sliderPoint;
 	int spritenum = 0;
-
-	backBuffer = _vm->_gfx->getBackBuffer();
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	_optionPanel.getRect(rect);
 	backBuffer->blit(rect, _optionPanel.image);
 
-	for (i = 0; i < _optionPanel.buttonsCount; i++) {
+	for (int i = 0; i < _optionPanel.buttonsCount; i++) {
 		panelButton = &_optionPanel.buttons[i];
 
 		if (panelButton->type == kPanelButtonOption) {
@@ -992,7 +985,7 @@ void Interface::drawOption() {
 	rect.top++;
 	rect2 = rect;
 	fontHeight = _vm->_font->getHeight(kKnownFontSmall);
-	for (j = 0; j < _vm->getDisplayInfo().optionSaveFileVisible; j++) {
+	for (uint j = 0; j < _vm->getDisplayInfo().optionSaveFileVisible; j++) {
 		if (_vm->getGameType() == GType_ITE)
 			bgColor = kITEColorDarkGrey0C;
 		else
@@ -1020,12 +1013,10 @@ void Interface::drawOption() {
 }
 
 void Interface::drawQuit() {
-	Surface *backBuffer;
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	Rect rect;
 	int i;
 	PanelButton *panelButton;
-
-	backBuffer = _vm->_gfx->getBackBuffer();
 
 	_quitPanel.getRect(rect);
 	if (_vm->getGameType() == GType_ITE)
@@ -1087,12 +1078,10 @@ void Interface::setQuit(PanelButton *panelButton) {
 }
 
 void Interface::drawLoad() {
-	Surface *backBuffer;
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	Rect rect;
 	int i;
 	PanelButton *panelButton;
-
-	backBuffer = _vm->_gfx->getBackBuffer();
 
 	_loadPanel.getRect(rect);
 	if (_vm->getGameType() == GType_ITE)
@@ -1310,12 +1299,10 @@ void Interface::drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *p
 }
 
 void Interface::drawSave() {
-	Surface *backBuffer;
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	Rect rect;
 	int i;
 	PanelButton *panelButton;
-
-	backBuffer = _vm->_gfx->getBackBuffer();
 
 	_savePanel.getRect(rect);
 	if (_vm->getGameType() == GType_ITE)
@@ -1337,12 +1324,10 @@ void Interface::drawSave() {
 }
 
 void Interface::drawProtect() {
-	Surface *backBuffer;
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	Rect rect;
 	int i;
 	PanelButton *panelButton;
-
-	backBuffer = _vm->_gfx->getBackBuffer();
 
 	_protectPanel.getRect(rect);
 	drawButtonBox(backBuffer, rect, kButton, false);
@@ -1878,7 +1863,7 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 }
 
 void Interface::drawStatusBar() {
-	Surface *backBuffer;
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	Rect rect;
 	Point textPoint;
 	int stringWidth;
@@ -1894,8 +1879,6 @@ void Interface::drawStatusBar() {
 	// Don't draw the status bar while fading out
 	if (_fadeMode == kFadeOut)
 		return;
-
-	backBuffer = _vm->_gfx->getBackBuffer();
 
 	// Erase background of status bar
 	rect.left = _vm->getDisplayInfo().statusXOffset;
@@ -2722,7 +2705,6 @@ void Interface::mapPanelShow() {
 	int i;
 	byte *resource;
 	size_t resourceLength, imageLength;
-	Surface *backBuffer;
 	Rect rect;
 	byte *image;
 	int imageWidth, imageHeight;
@@ -2730,8 +2712,6 @@ void Interface::mapPanelShow() {
 	PalEntry cPal[PAL_ENTRIES];
 
 	_vm->_gfx->showCursor(false);
-
-	backBuffer = _vm->_gfx->getBackBuffer();
 
 	rect.left = rect.top = 0;
 
@@ -2763,7 +2743,7 @@ void Interface::mapPanelShow() {
 	rect.setWidth(imageWidth);
 	rect.setHeight(imageHeight);
 
-	backBuffer->blit(rect, image);
+	_vm->_gfx->getBackBuffer()->blit(rect, image);
 
 	// Evil Evil
 	for (i = 0; i < 6 ; i++) {
@@ -2806,16 +2786,13 @@ void Interface::mapPanelClean() {
 }
 
 void Interface::mapPanelDrawCrossHair() {
-	Surface *backBuffer;
-
-	backBuffer = _vm->_gfx->getBackBuffer();
 	_mapPanelCrossHairState = !_mapPanelCrossHairState;
 
 	Point mapPosition = _vm->_isoMap->getMapPosition();
 	Rect screen(_vm->getDisplayWidth(), _vm->_scene->getHeight());
 
 	if (screen.contains(mapPosition)) {
-		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_mainSprites,
+		_vm->_sprite->draw(_vm->_gfx->getBackBuffer(), _vm->getDisplayClip(), _vm->_sprite->_mainSprites,
 						   _mapPanelCrossHairState? RID_ITE_SPR_CROSSHAIR : RID_ITE_SPR_CROSSHAIR + 1,
 						   mapPosition, 256);
 	}
@@ -2835,7 +2812,6 @@ void Interface::keyBoss() {
 	int i;
 	byte *resource;
 	size_t resourceLength, imageLength;
-	Surface *backBuffer;
 	Rect rect;
 	byte *image;
 	int imageWidth, imageHeight;
@@ -2843,8 +2819,6 @@ void Interface::keyBoss() {
 	PalEntry cPal[PAL_ENTRIES];
 
 	_vm->_gfx->showCursor(false);
-
-	backBuffer = _vm->_gfx->getBackBuffer();
 
 	rect.left = rect.top = 0;
 
@@ -2873,7 +2847,7 @@ void Interface::keyBoss() {
 		cPal[i].blue = 128;
 	}
 
-	backBuffer->blit(rect, image);
+	_vm->_gfx->getBackBuffer()->blit(rect, image);
 
 	_vm->_gfx->setPalette(cPal);
 

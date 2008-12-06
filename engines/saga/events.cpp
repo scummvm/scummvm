@@ -123,7 +123,6 @@ int Events::handleContinuous(Event *event) {
 	double event_pc = 0.0; // Event completion percentage
 	int event_done = 0;
 
-	Surface *backGroundSurface;
 	BGInfo bgInfo;
 	Rect rect;
 	if (event->duration != 0) {
@@ -166,12 +165,11 @@ int Events::handleContinuous(Event *event) {
 	case kTransitionEvent:
 		switch (event->op) {
 		case kEventDissolve:
-			backGroundSurface = _vm->_render->getBackGroundSurface();
 			_vm->_scene->getBGInfo(bgInfo);
 			rect.left = rect.top = 0;
 			rect.right = bgInfo.bounds.width();
 			rect.bottom = bgInfo.bounds.height();
-			backGroundSurface->transitionDissolve(bgInfo.buffer, rect, 0, event_pc);
+			_vm->_render->getBackGroundSurface()->transitionDissolve(bgInfo.buffer, rect, 0, event_pc);
 			break;
 		case kEventDissolveBGMask:
 			// we dissolve it centered.
@@ -180,14 +178,13 @@ int Events::handleContinuous(Event *event) {
 			byte *maskBuffer;
 			size_t len;
 
-			backGroundSurface = _vm->_render->getBackGroundSurface();
 			_vm->_scene->getBGMaskInfo(w, h, maskBuffer, len);
 			rect.left = (_vm->getDisplayWidth() - w) / 2;
 			rect.top = (_vm->getDisplayHeight() - h) / 2;
 			rect.setWidth(w);
 			rect.setHeight(h);
 
-			backGroundSurface->transitionDissolve( maskBuffer, rect, 1, event_pc);
+			_vm->_render->getBackGroundSurface()->transitionDissolve( maskBuffer, rect, 1, event_pc);
 			break;
 		default:
 			break;
@@ -272,7 +269,6 @@ int Events::handleImmediate(Event *event) {
 }
 
 int Events::handleOneShot(Event *event) {
-	Surface *backBuffer;
 	ScriptThread *sthread;
 	Rect rect;
 
@@ -312,13 +308,10 @@ int Events::handleOneShot(Event *event) {
 		break;
 	case kBgEvent:
 		{
-			Surface *backGroundSurface;
+			Surface *backGroundSurface = _vm->_render->getBackGroundSurface();
 			BGInfo bgInfo;
 
 			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
-
-				backBuffer = _vm->_gfx->getBackBuffer();
-				backGroundSurface = _vm->_render->getBackGroundSurface();
 				_vm->_scene->getBGInfo(bgInfo);
 
 				backGroundSurface->blit(bgInfo.bounds, bgInfo.buffer);
@@ -378,10 +371,9 @@ int Events::handleOneShot(Event *event) {
 
 		const PalEntry *palette = (const PalEntry *)_vm->getImagePal(resourceData, resourceDataLength);
 
-		Surface *bgSurface = _vm->_render->getBackGroundSurface();
 		const Rect profileRect(width, height);
 
-		bgSurface->blit(profileRect, buf);
+		_vm->_render->getBackGroundSurface()->blit(profileRect, buf);
 		_vm->_frameCount++;
 
 		_vm->_gfx->setPalette(palette);
@@ -421,14 +413,9 @@ int Events::handleOneShot(Event *event) {
 		switch (event->op) {
 		case kEventDraw:
 			{
-				Surface *backGroundSurface;
 				BGInfo bgInfo;
-
-				backBuffer = _vm->_gfx->getBackBuffer();
-				backGroundSurface = _vm->_render->getBackGroundSurface();
 				_vm->_scene->getBGInfo(bgInfo);
-				backGroundSurface->blit(bgInfo.bounds, bgInfo.buffer);
-
+				_vm->_render->getBackGroundSurface()->blit(bgInfo.bounds, bgInfo.buffer);
 				_vm->_scene->draw();
 			}
 			break;

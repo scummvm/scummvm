@@ -203,12 +203,11 @@ void Puzzle::showPieces(void) {
 
 void Puzzle::drawCurrentPiece() {
 	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	int frameNumber;
 	SpriteList *spriteList;
 	_vm->_actor->getSpriteParams(puzzle, frameNumber, spriteList);
 
-	_vm->_sprite->draw(backBuffer, _vm->_scene->getSceneClip(), *spriteList, _puzzlePiece,
+	_vm->_sprite->draw(_vm->_gfx->getBackBuffer(), _vm->_scene->getSceneClip(), *spriteList, _puzzlePiece,
 			   Point(_pieceInfo[_puzzlePiece].curX, _pieceInfo[_puzzlePiece].curY), 256);
 }
 

@@ -1046,10 +1046,7 @@ void Actor::drawActors() {
 	CommonObjectDataPointer drawObject;
 	int frameNumber = 0;
 	SpriteList *spriteList = NULL;
-
-	Surface *backBuffer;
-
-	backBuffer = _vm->_gfx->getBackBuffer();
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	createDrawOrderList();
 
@@ -1076,17 +1073,12 @@ void Actor::drawSpeech(void) {
 		|| (!_vm->_subtitlesEnabled && (_vm->getGameType() == GType_IHNM)))
 		return;
 
-	int i;
 	Point textPoint;
 	ActorData *actor;
 	int width, height;
-	int stringLength;
-	Surface *backBuffer;
-	char *outputString;
-
-	backBuffer = _vm->_gfx->getBackBuffer();
-	stringLength = strlen(_activeSpeech.strings[0]);
-	outputString = (char*)calloc(stringLength + 1, 1);
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
+	int stringLength = strlen(_activeSpeech.strings[0]);
+	char *outputString = (char*)calloc(stringLength + 1, 1);
 
 	if (_activeSpeech.speechFlags & kSpeakSlow)
 		strncpy(outputString, _activeSpeech.strings[0], _activeSpeech.slowModeCharIndex + 1);
@@ -1097,7 +1089,7 @@ void Actor::drawSpeech(void) {
 		height = _vm->_font->getHeight(kKnownFontScript);
 		width = _vm->_font->getStringWidth(kKnownFontScript, _activeSpeech.strings[0], 0, kFontNormal);
 
-		for (i = 0; i < _activeSpeech.actorsCount; i++) {
+		for (int i = 0; i < _activeSpeech.actorsCount; i++) {
 			actor = getActor(_activeSpeech.actorIds[i]);
 			calcScreenPosition(actor);
 

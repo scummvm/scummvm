@@ -1452,11 +1452,9 @@ void Script::sfGetActorY(SCRIPTFUNC_PARAMS) {
 
 // Script function #62 (0x3E)
 void Script::sfEraseDelta(SCRIPTFUNC_PARAMS) {
-	Surface *backGroundSurface = _vm->_render->getBackGroundSurface();
 	BGInfo backGroundInfo;
-
 	_vm->_scene->getBGInfo(backGroundInfo);
-	backGroundSurface->blit(backGroundInfo.bounds, backGroundInfo.buffer);
+	_vm->_render->getBackGroundSurface()->blit(backGroundInfo.bounds, backGroundInfo.buffer);
 }
 
 // Script function #63 (0x3F)

@@ -169,7 +169,6 @@ bool Scene::checkKey() {
 
 bool Scene::playTitle(int title, int time, int mode) {
 	bool interrupted = false;
-	Surface *backBufferSurface;
 	int startTime = _vm->_system->getMillis();
 	int frameTime = 0;
 	int curTime;
@@ -179,8 +178,7 @@ bool Scene::playTitle(int title, int time, int mode) {
 	bool playParameter = true;
 	static PalEntry cur_pal[PAL_ENTRIES];
 	static PalEntry pal_cut[PAL_ENTRIES];
-
-	backBufferSurface = _vm->_render->getBackGroundSurface();
+	Surface *backBufferSurface = _vm->_render->getBackGroundSurface();
 
 	// Load the cutaway
 

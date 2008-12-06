@@ -348,9 +348,8 @@ void Anim::showCutawayBg(int bg) {
 
 	const byte *palPointer = _vm->getImagePal(resourceData, resourceDataLength);
 	memcpy(pal, palPointer, sizeof(pal));
-	Surface *bgSurface = _vm->_render->getBackGroundSurface();
 	const Rect rect(width, height);
-	bgSurface->blit(rect, buf);
+	_vm->_render->getBackGroundSurface()->blit(rect, buf);
 	_vm->_frameCount++;
 
 	if (_cutAwayFade) {
@@ -474,8 +473,6 @@ int Anim::getCycles(uint16 animId) {
 
 void Anim::play(uint16 animId, int vectorTime, bool playing) {
 	Event event;
-	Surface *backGroundSurface;
-
 	byte *displayBuffer;
 
 	uint16 frame;
@@ -508,9 +505,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 	}
 
 	anim = getAnimation(animId);
-
-	backGroundSurface = _vm->_render->getBackGroundSurface();
-	displayBuffer = (byte*)backGroundSurface->pixels;
+	displayBuffer = (byte*)_vm->_render->getBackGroundSurface()->pixels;
 
 	if (playing) {
 		anim->state = ANIM_PLAYING;
