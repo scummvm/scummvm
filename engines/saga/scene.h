@@ -345,7 +345,7 @@ class Scene {
 			_vm->_framesEsc = 1;
 	}
 
-	void drawTextList(Surface *ds);
+	void drawTextList();
 
 	int getHeight(bool speech = false) const {
 		if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8 && !speech)

@@ -755,7 +755,7 @@ void Interface::loadScenePortraits(int resourceId) {
 	_vm->_sprite->loadList(resourceId, _scenePortraits);
 }
 
-void Interface::drawVerbPanel(Surface *backBuffer, PanelButton* panelButton) {
+void Interface::drawVerbPanel(PanelButton* panelButton) {
 	PanelButton * rightButtonVerbPanelButton;
 	PanelButton * currentVerbPanelButton;
 	KnownColor textColor;
@@ -781,13 +781,12 @@ void Interface::drawVerbPanel(Surface *backBuffer, PanelButton* panelButton) {
 	point.x = _mainPanel.x + panelButton->xOffset;
 	point.y = _mainPanel.y + panelButton->yOffset;
 
-	_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _mainPanel.sprites, spriteNumber, point, 256);
+	_vm->_sprite->draw(_vm->getDisplayClip(), _mainPanel.sprites, spriteNumber, point, 256);
 
-	drawVerbPanelText(backBuffer, panelButton, textColor, kKnownColorVerbTextShadow);
+	drawVerbPanelText(panelButton, textColor, kKnownColorVerbTextShadow);
 }
 
 void Interface::draw() {
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	Point leftPortraitPoint;
 	Point rightPortraitPoint;
 	Rect rect;
@@ -800,17 +799,17 @@ void Interface::draw() {
 	if (_panelMode == kPanelMain || _panelMode == kPanelMap ||
 		(_panelMode == kPanelNull && _vm->getGameId() == GID_IHNM_DEMO)) {
 		_mainPanel.getRect(rect);
-		backBuffer->blit(rect, _mainPanel.image);
+		_vm->_gfx->getBackBuffer()->blit(rect, _mainPanel.image);
 
 		for (int i = 0; i < kVerbTypeIdsMax; i++) {
 			if (_verbTypeToPanelButton[i] != NULL) {
-				drawVerbPanel(backBuffer, _verbTypeToPanelButton[i]);
+				drawVerbPanel(_verbTypeToPanelButton[i]);
 			}
 		}
 	} else if (_panelMode == kPanelConverse) {
 		_conversePanel.getRect(rect);
-		backBuffer->blit(rect, _conversePanel.image);
-		converseDisplayTextLines(backBuffer);
+		_vm->_gfx->getBackBuffer()->blit(rect, _conversePanel.image);
+		converseDisplayTextLines();
 	}
 
 	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
@@ -818,7 +817,7 @@ void Interface::draw() {
 		(_panelMode == kPanelNull && _vm->getGameId() == GID_IHNM_DEMO)) {
 		leftPortraitPoint.x = _mainPanel.x + _vm->getDisplayInfo().leftPortraitXOffset;
 		leftPortraitPoint.y = _mainPanel.y + _vm->getDisplayInfo().leftPortraitYOffset;
-		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _defPortraits, _leftPortrait, leftPortraitPoint, 256);
+		_vm->_sprite->draw(_vm->getDisplayClip(), _defPortraits, _leftPortrait, leftPortraitPoint, 256);
 	}
 
 	if (!_inMainMode && _vm->getDisplayInfo().rightPortraitXOffset >= 0) { //FIXME: should we change !_inMainMode to _panelMode == kPanelConverse ?
@@ -833,10 +832,10 @@ void Interface::draw() {
 		if (_rightPortrait >= _scenePortraits.spriteCount)
 			_rightPortrait = 0;
 
-		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _scenePortraits, _rightPortrait, rightPortraitPoint, 256);
+		_vm->_sprite->draw(_vm->getDisplayClip(), _scenePortraits, _rightPortrait, rightPortraitPoint, 256);
 	}
 
-	drawInventory(backBuffer);
+	drawInventory();
 }
 
 void Interface::calcOptionSaveSlider() {
@@ -879,7 +878,7 @@ void Interface::calcOptionSaveSlider() {
 	_optionSaveRectBottom.right--;
 }
 
-void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
+void Interface::drawPanelText(InterfacePanel *panel, PanelButton *panelButton) {
 	const char *text;
 	int textWidth;
 	Rect rect;
@@ -925,7 +924,8 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 	textPoint.x = rect.left;
 	textPoint.y = rect.top + 1;
 
-	_vm->_font->textDraw(textFont, ds, text, textPoint, _vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(textShadowKnownColor), kFontShadow);
+	_vm->_font->textDraw(textFont, text, textPoint, 
+						_vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(textShadowKnownColor), kFontShadow);
 }
 
 void Interface::drawOption() {
@@ -951,14 +951,14 @@ void Interface::drawOption() {
 
 		if (panelButton->type == kPanelButtonOption) {
 			if (_vm->getGameType() == GType_ITE) {
-				drawPanelButtonText(backBuffer, &_optionPanel, panelButton);
+				drawPanelButtonText(&_optionPanel, panelButton);
 			} else {
-				drawPanelButtonText(backBuffer, &_optionPanel, panelButton, spritenum);
+				drawPanelButtonText(&_optionPanel, panelButton, spritenum);
 				spritenum += 2; // 2 sprites per button (lit and unlit)
 			}
 		}
 		if (panelButton->type == kPanelButtonOptionText) {
-			drawPanelText(backBuffer, &_optionPanel, panelButton);
+			drawPanelText(&_optionPanel, panelButton);
 		}
 	}
 
@@ -968,12 +968,12 @@ void Interface::drawOption() {
 	}
 
 	if (_vm->getGameType() == GType_ITE) {
-		drawButtonBox(backBuffer, _optionSaveRectSlider, kSlider, _optionSaveFileSlider->state > 0);
+		drawButtonBox(_optionSaveRectSlider, kSlider, _optionSaveFileSlider->state > 0);
 	} else {
 		panelButton = &_optionPanel.buttons[0];
 		sliderPoint.x = _optionPanel.x + panelButton->xOffset;
 		sliderPoint.y = _optionSaveRectSlider.top;
-		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _optionPanel.sprites, 0 + _optionSaveFileSlider->state, sliderPoint, 256);
+		_vm->_sprite->draw(_vm->getDisplayClip(), _optionPanel.sprites, 0 + _optionSaveFileSlider->state, sliderPoint, 256);
 
 	}
 
@@ -1004,9 +1004,9 @@ void Interface::drawOption() {
 			textPoint.x = rect.left + 1;
 			textPoint.y = rect2.top;
 			if (_vm->getGameType() == GType_ITE)
-				_vm->_font->textDraw(kKnownFontSmall, backBuffer, text, textPoint, fgColor, 0, kFontNormal);
+				_vm->_font->textDraw(kKnownFontSmall, text, textPoint, fgColor, 0, kFontNormal);
 			else
-				_vm->_font->textDraw(kKnownFontVerb, backBuffer, text, textPoint, fgColor, 0, kFontNormal);
+				_vm->_font->textDraw(kKnownFontVerb, text, textPoint, fgColor, 0, kFontNormal);
 		}
 	}
 
@@ -1020,17 +1020,17 @@ void Interface::drawQuit() {
 
 	_quitPanel.getRect(rect);
 	if (_vm->getGameType() == GType_ITE)
-		drawButtonBox(backBuffer, rect, kButton, false);
+		drawButtonBox(rect, kButton, false);
 	else
 		backBuffer->blit(rect, _quitPanel.image);
 
 	for (i = 0; i < _quitPanel.buttonsCount; i++) {
 		panelButton = &_quitPanel.buttons[i];
 		if (panelButton->type == kPanelButtonQuit) {
-			drawPanelButtonText(backBuffer, &_quitPanel, panelButton);
+			drawPanelButtonText(&_quitPanel, panelButton);
 		}
 		if (panelButton->type == kPanelButtonQuitText) {
-			drawPanelText(backBuffer, &_quitPanel, panelButton);
+			drawPanelText(&_quitPanel, panelButton);
 		}
 	}
 }
@@ -1085,17 +1085,17 @@ void Interface::drawLoad() {
 
 	_loadPanel.getRect(rect);
 	if (_vm->getGameType() == GType_ITE)
-		drawButtonBox(backBuffer, rect, kButton, false);
+		drawButtonBox(rect, kButton, false);
 	else
 		backBuffer->blit(rect, _loadPanel.image);
 
 	for (i = 0; i < _loadPanel.buttonsCount; i++) {
 		panelButton = &_loadPanel.buttons[i];
 		if (panelButton->type == kPanelButtonLoad) {
-			drawPanelButtonText(backBuffer, &_loadPanel, panelButton);
+			drawPanelButtonText(&_loadPanel, panelButton);
 		}
 		if (panelButton->type == kPanelButtonLoadText) {
-			drawPanelText(backBuffer, &_loadPanel, panelButton);
+			drawPanelText(&_loadPanel, panelButton);
 		}
 	}
 }
@@ -1262,16 +1262,17 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 	return true;
 }
 
-void Interface::drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
+void Interface::drawTextInput(InterfacePanel *panel, PanelButton *panelButton) {
 	Point textPoint;
 	Rect rect;
 	char ch[2];
 	int fgColor;
 	uint i;
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	ch[1] = 0;
 	panel->calcPanelButtonRect(panelButton, rect);
-	drawButtonBox(ds, rect, kEdit, _textInput);
+	drawButtonBox(rect, kEdit, _textInput);
 	rect.left += 4;
 	rect.top += 4;
 	rect.setHeight(_vm->_font->getHeight(kKnownFontSmall));
@@ -1281,20 +1282,20 @@ void Interface::drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *p
 		rect.setWidth(_vm->_font->getStringWidth(kKnownFontSmall, ch, 0, kFontNormal));
 		if ((i == _textInputPos) && _textInput) {
 			fgColor = _vm->KnownColor2ColorId(kKnownColorBlack);
-			ds->fillRect(rect, _vm->KnownColor2ColorId(kKnownColorWhite));
+			backBuffer->fillRect(rect, _vm->KnownColor2ColorId(kKnownColorWhite));
 		} else {
 			fgColor = _vm->KnownColor2ColorId(kKnownColorWhite);
 		}
 		textPoint.x = rect.left;
 		textPoint.y = rect.top + 1;
 
-		_vm->_font->textDraw(kKnownFontSmall, ds, ch, textPoint, fgColor, 0, kFontNormal);
+		_vm->_font->textDraw(kKnownFontSmall, ch, textPoint, fgColor, 0, kFontNormal);
 		rect.left += rect.width();
 	}
 	if (_textInput && (_textInputPos >= i)) {
 		ch[0] = ' ';
 		rect.setWidth(_vm->_font->getStringWidth(kKnownFontSmall, ch, 0, kFontNormal));
-		ds->fillRect(rect, _vm->KnownColor2ColorId(kKnownColorWhite));
+		backBuffer->fillRect(rect, _vm->KnownColor2ColorId(kKnownColorWhite));
 	}
 }
 
@@ -1306,21 +1307,21 @@ void Interface::drawSave() {
 
 	_savePanel.getRect(rect);
 	if (_vm->getGameType() == GType_ITE)
-		drawButtonBox(backBuffer, rect, kButton, false);
+		drawButtonBox(rect, kButton, false);
 	else
 		backBuffer->blit(rect, _savePanel.image);
 
 	for (i = 0; i < _savePanel.buttonsCount; i++) {
 		panelButton = &_savePanel.buttons[i];
 		if (panelButton->type == kPanelButtonSave) {
-			drawPanelButtonText(backBuffer, &_savePanel, panelButton);
+			drawPanelButtonText(&_savePanel, panelButton);
 		}
 		if (panelButton->type == kPanelButtonSaveText) {
-			drawPanelText(backBuffer, &_savePanel, panelButton);
+			drawPanelText(&_savePanel, panelButton);
 		}
 	}
 
-	drawTextInput(backBuffer, &_savePanel, _saveEdit);
+	drawTextInput(&_savePanel, _saveEdit);
 }
 
 void Interface::drawProtect() {
@@ -1330,15 +1331,15 @@ void Interface::drawProtect() {
 	PanelButton *panelButton;
 
 	_protectPanel.getRect(rect);
-	drawButtonBox(backBuffer, rect, kButton, false);
+	drawButtonBox(rect, kButton, false);
 
 	for (i = 0; i < _protectPanel.buttonsCount; i++) {
 		panelButton = &_protectPanel.buttons[i];
 		if (panelButton->type == kPanelButtonProtectText) {
-			drawPanelText(backBuffer, &_protectPanel, panelButton);
+			drawPanelText(&_protectPanel, panelButton);
 		}
 	}
-	drawTextInput(backBuffer, &_protectPanel, _protectEdit);
+	drawTextInput(&_protectPanel, _protectEdit);
 }
 
 void Interface::handleSaveUpdate(const Point& mousePoint) {
@@ -1863,7 +1864,6 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 }
 
 void Interface::drawStatusBar() {
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	Rect rect;
 	Point textPoint;
 	int stringWidth;
@@ -1886,7 +1886,7 @@ void Interface::drawStatusBar() {
 	rect.right = rect.left + _vm->getDisplayWidth();
 	rect.bottom = rect.top + _vm->getDisplayInfo().statusHeight;
 
-	backBuffer->drawRect(rect, _vm->getDisplayInfo().statusBGColor - offset);
+	_vm->_gfx->getBackBuffer()->drawRect(rect, _vm->getDisplayInfo().statusBGColor - offset);
 
 	stringWidth = _vm->_font->getStringWidth(kKnownFontSmall, _statusText, 0, kFontNormal);
 
@@ -1898,9 +1898,9 @@ void Interface::drawStatusBar() {
 	textPoint.x = _vm->getDisplayInfo().statusXOffset + (_vm->getDisplayInfo().statusWidth - stringWidth) / 2;
 	textPoint.y = _vm->getDisplayInfo().statusYOffset + _vm->getDisplayInfo().statusTextY;
 	if (_vm->getGameType() == GType_ITE)
-		_vm->_font->textDraw(kKnownFontSmall, backBuffer, _statusText, textPoint, color, 0, kFontNormal);
+		_vm->_font->textDraw(kKnownFontSmall, _statusText, textPoint, color, 0, kFontNormal);
 	else
-		_vm->_font->textDraw(kKnownFontVerb, backBuffer, _statusText, textPoint, color, 0, kFontNormal);
+		_vm->_font->textDraw(kKnownFontVerb, _statusText, textPoint, color, 0, kFontNormal);
 
 	if (_saveReminderState > 0) {
 		rect.left = _vm->getDisplayInfo().saveReminderXOffset;
@@ -1908,7 +1908,7 @@ void Interface::drawStatusBar() {
 
 		rect.right = rect.left + _vm->getDisplayInfo().saveReminderWidth;
 		rect.bottom = rect.top + _vm->getDisplayInfo().saveReminderHeight;
-		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_saveReminderSprites,
+		_vm->_sprite->draw(_vm->getDisplayClip(), _vm->_sprite->_saveReminderSprites,
 			_vm->getDisplayInfo().saveReminderFirstSpriteNumber + _saveReminderState - 1,
 			rect, 256);
 
@@ -2094,23 +2094,23 @@ int Interface::inventoryItemPosition(int objectId) {
 	return -1;
 }
 
-void Interface::drawInventory(Surface *backBuffer) {
+void Interface::drawInventory() {
 	if (!isInMainMode())
 		return;
 
-	int i;
 	Rect rect;
-	int ci;
+	int ci = _inventoryStart;
 	ObjectData *obj;
-	ci = _inventoryStart;
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
+
 	if (_inventoryStart != 0) {
-		drawPanelButtonArrow(backBuffer, &_mainPanel, _inventoryUpButton);
+		drawPanelButtonArrow(&_mainPanel, _inventoryUpButton);
 	}
 	if (_inventoryStart != _inventoryEnd) {
-		drawPanelButtonArrow(backBuffer, &_mainPanel, _inventoryDownButton);
+		drawPanelButtonArrow(&_mainPanel, _inventoryDownButton);
 	}
 
-	for (i = 0; i < _mainPanel.buttonsCount; i++) {
+	for (int i = 0; i < _mainPanel.buttonsCount; i++) {
 		if (_mainPanel.buttons[i].type != kPanelButtonInventory) {
 			continue;
 		}
@@ -2123,7 +2123,7 @@ void Interface::drawInventory(Surface *backBuffer) {
 
 		if (ci < _inventoryCount) {
 			obj = _vm->_actor->getObj(_inventory[ci]);
-			_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_inventorySprites, obj->_spriteListResourceId, rect, 256);
+			_vm->_sprite->draw(_vm->getDisplayClip(), _vm->_sprite->_inventorySprites, obj->_spriteListResourceId, rect, 256);
 		}
 
 		ci++;
@@ -2140,12 +2140,13 @@ void Interface::setVerbState(int verb, int state) {
 	draw();
 }
 
-void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bool down) {
+void Interface::drawButtonBox(const Rect& rect, ButtonKind kind, bool down) {
 	byte cornerColor;
 	byte frameColor;
 	byte fillColor;
 	byte solidColor;
 	byte odl, our, idl, iur;
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	switch (kind ) {
 		case kSlider:
@@ -2193,14 +2194,14 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 	int xe = rect.right - 1;
 	int ye = rect.bottom - 1;
 
-	((byte *)ds->getBasePtr(x, y))[0] = cornerColor;
-	((byte *)ds->getBasePtr(x, ye))[0] = cornerColor;
-	((byte *)ds->getBasePtr(xe, y))[0] = cornerColor;
-	((byte *)ds->getBasePtr(xe, ye))[0] = cornerColor;
-	ds->hLine(x + 1, y, x + w - 2, frameColor);
-	ds->hLine(x + 1, ye, x + w - 2, frameColor);
-	ds->vLine(x, y + 1, y + h - 2, frameColor);
-	ds->vLine(xe, y + 1, y + h - 2, frameColor);
+	((byte *)backBuffer->getBasePtr(x, y))[0] = cornerColor;
+	((byte *)backBuffer->getBasePtr(x, ye))[0] = cornerColor;
+	((byte *)backBuffer->getBasePtr(xe, y))[0] = cornerColor;
+	((byte *)backBuffer->getBasePtr(xe, ye))[0] = cornerColor;
+	backBuffer->hLine(x + 1, y, x + w - 2, frameColor);
+	backBuffer->hLine(x + 1, ye, x + w - 2, frameColor);
+	backBuffer->vLine(x, y + 1, y + h - 2, frameColor);
+	backBuffer->vLine(xe, y + 1, y + h - 2, frameColor);
 
 	x++;
 	y++;
@@ -2208,10 +2209,10 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 	ye--;
 	w -= 2;
 	h -= 2;
-	ds->vLine(x, y, y + h - 1, odl);
-	ds->hLine(x, ye, x + w - 1, odl);
-	ds->vLine(xe, y, y + h - 2, our);
-	ds->hLine(x + 1, y, x + 1 + w - 2, our);
+	backBuffer->vLine(x, y, y + h - 1, odl);
+	backBuffer->hLine(x, ye, x + w - 1, odl);
+	backBuffer->vLine(xe, y, y + h - 2, our);
+	backBuffer->hLine(x + 1, y, x + 1 + w - 2, our);
 
 	x++;
 	y++;
@@ -2219,23 +2220,23 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 	ye--;
 	w -= 2;
 	h -= 2;
-	((byte *)ds->getBasePtr(x, y))[0] = fillColor;
-	((byte *)ds->getBasePtr(xe, ye))[0] = fillColor;
-	ds->vLine(x, y + 1, y + 1 + h - 2, idl);
-	ds->hLine(x + 1, ye, x + 1 + w - 2, idl);
-	ds->vLine(xe, y, y + h - 2, iur);
-	ds->hLine(x + 1, y, x + 1 + w - 2, iur);
+	((byte *)backBuffer->getBasePtr(x, y))[0] = fillColor;
+	((byte *)backBuffer->getBasePtr(xe, ye))[0] = fillColor;
+	backBuffer->vLine(x, y + 1, y + 1 + h - 2, idl);
+	backBuffer->hLine(x + 1, ye, x + 1 + w - 2, idl);
+	backBuffer->vLine(xe, y, y + h - 2, iur);
+	backBuffer->hLine(x + 1, y, x + 1 + w - 2, iur);
 
 	x++; y++;
 	w -= 2; h -= 2;
 
 	Common::Rect fill(x, y, x + w, y + h);
-	ds->fillRect(fill, solidColor);
+	backBuffer->fillRect(fill, solidColor);
 }
 
 static const int readingSpeeds[] = { kTextClick, kTextSlow, kTextMid, kTextFast };
 
-void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton, int spritenum) {
+void Interface::drawPanelButtonText(InterfacePanel *panel, PanelButton *panelButton, int spritenum) {
 	const char *text;
 	int textId;
 	int textWidth;
@@ -2314,41 +2315,41 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 
 	panel->calcPanelButtonRect(panelButton, rect);
 	if (_vm->getGameType() == GType_ITE) {
-		drawButtonBox(ds, rect, kButton, panelButton->state > 0);
+		drawButtonBox(rect, kButton, panelButton->state > 0);
 	} else {
 		litButton = panelButton->state > 0;
 
 		if (panel == &_optionPanel) {
 			texturePoint.x = _optionPanel.x + panelButton->xOffset - 1;
 			texturePoint.y = _optionPanel.y + panelButton->yOffset - 1;
-			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _optionPanel.sprites, spritenum + 2 + litButton, texturePoint, 256);
+			_vm->_sprite->draw(_vm->getDisplayClip(), _optionPanel.sprites, spritenum + 2 + litButton, texturePoint, 256);
 		} else if (panel == &_quitPanel) {
 			texturePoint.x = _quitPanel.x + panelButton->xOffset - 3;
 			texturePoint.y = _quitPanel.y + panelButton->yOffset - 3;
-			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _quitPanel.sprites, litButton, texturePoint, 256);
+			_vm->_sprite->draw(_vm->getDisplayClip(), _quitPanel.sprites, litButton, texturePoint, 256);
 		} else if (panel == &_savePanel) {
 			texturePoint.x = _savePanel.x + panelButton->xOffset - 3;
 			texturePoint.y = _savePanel.y + panelButton->yOffset - 3;
-			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _savePanel.sprites, litButton, texturePoint, 256);
+			_vm->_sprite->draw(_vm->getDisplayClip(), _savePanel.sprites, litButton, texturePoint, 256);
 			// Input text box sprite
 			texturePoint.x = _savePanel.x + _saveEdit->xOffset - 2;
 			texturePoint.y = _savePanel.y + _saveEdit->yOffset - 2;
-			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _savePanel.sprites, 2, texturePoint, 256);
+			_vm->_sprite->draw(_vm->getDisplayClip(), _savePanel.sprites, 2, texturePoint, 256);
 		} else if (panel == &_loadPanel) {
 			texturePoint.x = _loadPanel.x + panelButton->xOffset - 3;
 			texturePoint.y = _loadPanel.y + panelButton->yOffset - 3;
-			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _loadPanel.sprites, litButton, texturePoint, 256);
+			_vm->_sprite->draw(_vm->getDisplayClip(), _loadPanel.sprites, litButton, texturePoint, 256);
 		} else {
 			// revert to default behavior
-			drawButtonBox(ds, rect, kButton, panelButton->state > 0);
+			drawButtonBox(rect, kButton, panelButton->state > 0);
 		}
 	}
 
-	_vm->_font->textDraw(textFont, ds, text, point,
+	_vm->_font->textDraw(textFont, text, point,
 		_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(textShadowKnownColor), kFontShadow);
 }
 
-void Interface::drawPanelButtonArrow(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
+void Interface::drawPanelButtonArrow(InterfacePanel *panel, PanelButton *panelButton) {
 	Point point;
 	int spriteNumber;
 
@@ -2366,12 +2367,12 @@ void Interface::drawPanelButtonArrow(Surface *ds, InterfacePanel *panel, PanelBu
 	point.y = panel->y + panelButton->yOffset;
 
 	if (_vm->getGameType() == GType_ITE)
-		_vm->_sprite->draw(ds, _vm->getDisplayClip(), _vm->_sprite->_mainSprites, spriteNumber, point, 256);
+		_vm->_sprite->draw(_vm->getDisplayClip(), _vm->_sprite->_mainSprites, spriteNumber, point, 256);
 	else
-		_vm->_sprite->draw(ds, _vm->getDisplayClip(), _vm->_sprite->_arrowSprites, spriteNumber, point, 256);
+		_vm->_sprite->draw(_vm->getDisplayClip(), _vm->_sprite->_arrowSprites, spriteNumber, point, 256);
 }
 
-void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, KnownColor textKnownColor, KnownColor textShadowKnownColor) {
+void Interface::drawVerbPanelText(PanelButton *panelButton, KnownColor textKnownColor, KnownColor textShadowKnownColor) {
 	const char *text;
 	int textWidth;
 	Point point;
@@ -2396,7 +2397,9 @@ void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, KnownCo
 		point.y = _mainPanel.y + panelButton->yOffset + 12;
 	}
 
-	_vm->_font->textDraw(kKnownFontVerb, ds, text, point, _vm->KnownColor2ColorId(textKnownColor),_vm->KnownColor2ColorId(textShadowKnownColor), (textShadowKnownColor != kKnownColorTransparent) ? kFontShadow : kFontNormal);
+	_vm->_font->textDraw(kKnownFontVerb, text, point, 
+						_vm->KnownColor2ColorId(textKnownColor), _vm->KnownColor2ColorId(textShadowKnownColor), 
+						(textShadowKnownColor != kKnownColorTransparent) ? kFontShadow : kFontNormal);
 }
 
 
@@ -2508,7 +2511,7 @@ void Interface::converseSetTextLines(int row) {
 	}
 }
 
-void Interface::converseDisplayTextLines(Surface *ds) {
+void Interface::converseDisplayTextLines() {
 	int relPos;
 	byte foregnd;
 	byte backgnd;
@@ -2520,6 +2523,7 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 	};
 	Rect rect(8, _vm->getDisplayInfo().converseTextLines * _vm->getDisplayInfo().converseTextHeight);
 	Point textPoint;
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	assert(_conversePanel.buttonsCount >= 6);
 
@@ -2536,9 +2540,9 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 		_conversePanel.y + _conversePanel.buttons[0].yOffset);
 
 	if (_vm->getGameType() == GType_ITE)
-		ds->drawRect(rect, kITEColorDarkGrey);	//fill bullet place
+		backBuffer->drawRect(rect, kITEColorDarkGrey);	//fill bullet place
 	else
-		ds->drawRect(rect, _vm->KnownColor2ColorId(kKnownColorBlack));	//fill bullet place
+		backBuffer->drawRect(rect, _vm->KnownColor2ColorId(kKnownColorBlack));	//fill bullet place
 
 	for (int i = 0; i < _vm->getDisplayInfo().converseTextLines; i++) {
 		relPos = _converseStartPos + i;
@@ -2567,7 +2571,7 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 
 		_conversePanel.calcPanelButtonRect(&_conversePanel.buttons[i], rect);
 		rect.left += 8;
-		ds->drawRect(rect, backgnd);
+		backBuffer->drawRect(rect, backgnd);
 
 		str = _converseText[relPos].text;
 
@@ -2576,24 +2580,24 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 			textPoint.y = rect.top;
 
 			if (_vm->getGameType() == GType_ITE)
-				_vm->_font->textDraw(kKnownFontSmall, ds, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
+				_vm->_font->textDraw(kKnownFontSmall, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
 			else
-				_vm->_font->textDraw(kKnownFontVerb, ds, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
+				_vm->_font->textDraw(kKnownFontVerb, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
 		}
 		textPoint.x = rect.left + 1;
 		textPoint.y = rect.top;
 		if (_vm->getGameType() == GType_ITE)
-			_vm->_font->textDraw(kKnownFontSmall, ds, str, textPoint, foregnd, kITEColorBlack, kFontShadow);
+			_vm->_font->textDraw(kKnownFontSmall, str, textPoint, foregnd, kITEColorBlack, kFontShadow);
 		else
-			_vm->_font->textDraw(kKnownFontVerb, ds, str, textPoint, foregnd, _vm->KnownColor2ColorId(kKnownColorBlack), kFontShadow);
+			_vm->_font->textDraw(kKnownFontVerb, str, textPoint, foregnd, _vm->KnownColor2ColorId(kKnownColorBlack), kFontShadow);
 	}
 
 	if (_converseStartPos != 0) {
-		drawPanelButtonArrow(ds, &_conversePanel, _converseUpButton);
+		drawPanelButtonArrow(&_conversePanel, _converseUpButton);
 	}
 
 	if (_converseStartPos != _converseEndPos) {
-		drawPanelButtonArrow(ds, &_conversePanel, _converseDownButton);
+		drawPanelButtonArrow(&_conversePanel, _converseDownButton);
 	}
 }
 
@@ -2792,7 +2796,7 @@ void Interface::mapPanelDrawCrossHair() {
 	Rect screen(_vm->getDisplayWidth(), _vm->_scene->getHeight());
 
 	if (screen.contains(mapPosition)) {
-		_vm->_sprite->draw(_vm->_gfx->getBackBuffer(), _vm->getDisplayClip(), _vm->_sprite->_mainSprites,
+		_vm->_sprite->draw(_vm->getDisplayClip(), _vm->_sprite->_mainSprites,
 						   _mapPanelCrossHairState? RID_ITE_SPR_CROSSHAIR : RID_ITE_SPR_CROSSHAIR + 1,
 						   mapPosition, 256);
 	}

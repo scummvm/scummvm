@@ -74,15 +74,15 @@ public:
 	~Sprite(void);
 
 	// draw scaled sprite using background scene mask
-	void drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth);
+	void drawOccluded(const Rect &clipRect, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth);
 
 	// draw scaled sprite using background scene mask
-	void draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale);
+	void draw(const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale);
 
 	// main function
-	void drawClip(Surface *ds, const Rect &clipRect, const Point &spritePointer, int width, int height, const byte *spriteBuffer);
+	void drawClip(const Rect &clipRect, const Point &spritePointer, int width, int height, const byte *spriteBuffer);
 
-	void draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale);
+	void draw(const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale);
 
 	void loadList(int resourceId, SpriteList &spriteList); // load or append spriteList
 	bool hitTest(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, const Point &testPoint);

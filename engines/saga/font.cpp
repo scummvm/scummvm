@@ -278,7 +278,7 @@ int Font::getStringWidth(FontId fontId, const char *text, size_t count, FontEffe
 }
 
 
-void Font::draw(FontId fontId, Surface *ds, const char *text, size_t count, const Common::Point &point,
+void Font::draw(FontId fontId, const char *text, size_t count, const Common::Point &point,
 			   int color, int effectColor, FontEffectFlags flags) {
 	FontData *font;
 	Point offsetPoint(point);
@@ -288,19 +288,19 @@ void Font::draw(FontId fontId, Surface *ds, const char *text, size_t count, cons
 	if (flags & kFontOutline) {
 		offsetPoint.x--;
 		offsetPoint.y--;
-		outFont(font->outline, ds, text, count, offsetPoint, effectColor, flags);
-		outFont(font->normal, ds, text, count, point, color, flags);
+		outFont(font->outline, text, count, offsetPoint, effectColor, flags);
+		outFont(font->normal, text, count, point, color, flags);
 	} else if (flags & kFontShadow) {
 		offsetPoint.x--;
 		offsetPoint.y++;
-		outFont(font->normal, ds, text, count, offsetPoint, effectColor, flags);
-		outFont(font->normal, ds, text, count, point, color, flags);
+		outFont(font->normal, text, count, offsetPoint, effectColor, flags);
+		outFont(font->normal, text, count, point, color, flags);
 	} else { // FONT_NORMAL
-		outFont(font->normal, ds, text, count, point, color, flags);
+		outFont(font->normal, text, count, point, color, flags);
 	}
 }
 
-void Font::outFont(const FontStyle &drawFont, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags) {
+void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags) {
 	const byte *textPointer;
 	byte *c_dataPointer;
 	int c_code;
@@ -310,6 +310,7 @@ void Font::outFont(const FontStyle &drawFont, Surface *ds, const char *text, siz
 	byte *outputPointer;
 	byte *outputPointer_min;
 	byte *outputPointer_max;
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	int row;
 	int rowLimit;
@@ -319,7 +320,7 @@ void Font::outFont(const FontStyle &drawFont, Surface *ds, const char *text, siz
 	int c_bit;
 	int ct;
 
-	if ((point.x > ds->w) || (point.y > ds->h)) {
+	if ((point.x > backBuffer->w) || (point.y > backBuffer->h)) {
 		// Output string can't be visible
 		return;
 	}
@@ -372,7 +373,7 @@ void Font::outFont(const FontStyle &drawFont, Surface *ds, const char *text, siz
 
 		// Get length of character in bytes
 		c_byte_len = ((drawFont.fontCharEntry[c_code].width - 1) / 8) + 1;
-		rowLimit = (ds->h < (textPoint.y + drawFont.header.charHeight)) ? ds->h : textPoint.y + drawFont.header.charHeight;
+		rowLimit = (backBuffer->h < (textPoint.y + drawFont.header.charHeight)) ? backBuffer->h : textPoint.y + drawFont.header.charHeight;
 		charRow = 0;
 
 		for (row = textPoint.y; row < rowLimit; row++, charRow++) {
@@ -381,9 +382,9 @@ void Font::outFont(const FontStyle &drawFont, Surface *ds, const char *text, siz
 				continue;
 			}
 
-			outputPointer = (byte *)ds->pixels + (ds->pitch * row) + textPoint.x;
-			outputPointer_min = (byte *)ds->pixels + (ds->pitch * row) + (textPoint.x > 0 ? textPoint.x : 0);
-			outputPointer_max = outputPointer + (ds->pitch - textPoint.x);
+			outputPointer = (byte *)backBuffer->pixels + (backBuffer->pitch * row) + textPoint.x;
+			outputPointer_min = (byte *)backBuffer->pixels + (backBuffer->pitch * row) + (textPoint.x > 0 ? textPoint.x : 0);
+			outputPointer_max = outputPointer + (backBuffer->pitch - textPoint.x);
 
 			// If character starts off the screen, jump to next character
 			if (outputPointer < outputPointer_min) {
@@ -409,17 +410,18 @@ void Font::outFont(const FontStyle &drawFont, Surface *ds, const char *text, siz
 }
 
 
-void Font::textDraw(FontId fontId, Surface *ds, const char *text, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) {
+void Font::textDraw(FontId fontId, const char *text, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) {
 	int textWidth;
 	int textLength;
 	int fitWidth;
 	Common::Point textPoint(point);
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	textLength = strlen(text);
 
 	if (!(flags & kFontCentered)) {
 		// Text is not centered; No formatting required
-		draw(fontId, ds, text, textLength, point, color, effectColor, flags);
+		draw(fontId, text, textLength, point, color, effectColor, flags);
 		return;
 	}
 
@@ -429,8 +431,8 @@ void Font::textDraw(FontId fontId, Surface *ds, const char *text, const Common::
 		textPoint.x = TEXT_CENTERLIMIT;
 	}
 
-	if (textPoint.x > ds->w - TEXT_CENTERLIMIT) {
-		textPoint.x = ds->w - TEXT_CENTERLIMIT;
+	if (textPoint.x > backBuffer->w - TEXT_CENTERLIMIT) {
+		textPoint.x = backBuffer->w - TEXT_CENTERLIMIT;
 	}
 
 	if (textPoint.x < (TEXT_MARGIN * 2)) {
@@ -440,12 +442,12 @@ void Font::textDraw(FontId fontId, Surface *ds, const char *text, const Common::
 
 	textWidth = getStringWidth(fontId, text, textLength, flags);
 
-	if (textPoint.x < (ds->w / 2)) {
+	if (textPoint.x < (backBuffer->w / 2)) {
 		// Fit to right side
 		fitWidth = (textPoint.x - TEXT_MARGIN) * 2;
 	} else {
 		// Fit to left side
-		fitWidth = ((ds->w - TEXT_MARGIN) - textPoint.x) * 2;
+		fitWidth = ((backBuffer->w - TEXT_MARGIN) - textPoint.x) * 2;
 	}
 
 	if (fitWidth < textWidth) {
@@ -454,7 +456,7 @@ void Font::textDraw(FontId fontId, Surface *ds, const char *text, const Common::
 	}
 	// Entire string fits, draw it
 	textPoint.x = textPoint.x - (textWidth / 2);
-	draw(fontId, ds, text, textLength, textPoint, color, effectColor, flags);
+	draw(fontId, text, textLength, textPoint, color, effectColor, flags);
 }
 
 int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags) {
@@ -541,7 +543,7 @@ int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags 
 	}
 }
 
-void Font::textDrawRect(FontId fontId, Surface *ds, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
+void Font::textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
 	int textWidth;
 	int textLength;
 	int fitWidth;
@@ -570,7 +572,7 @@ void Font::textDrawRect(FontId fontId, Surface *ds, const char *text, const Comm
 	if (fitWidth >= textWidth) {
 		// Entire string fits, draw it
 		textPoint.x -= (textWidth / 2);
-		draw(fontId, ds, text, textLength, textPoint, color, effectColor, flags);
+		draw(fontId, text, textLength, textPoint, color, effectColor, flags);
 		return;
 	}
 
@@ -607,7 +609,7 @@ void Font::textDrawRect(FontId fontId, Surface *ds, const char *text, const Comm
 			// Wrap what we've got and restart
 			textPoint2.x = textPoint.x - (w_total / 2);
 			textPoint2.y = textPoint.y;
-			draw(fontId, ds, startPointer, len_total, textPoint2, color, effectColor, flags);
+			draw(fontId, startPointer, len_total, textPoint2, color, effectColor, flags);
 			textPoint.y += h + TEXT_LINESPACING;
 			if (textPoint.y >= rect.bottom) {
 				return;
@@ -642,7 +644,7 @@ void Font::textDrawRect(FontId fontId, Surface *ds, const char *text, const Comm
 				// Since word hit NULL but fit, we are done
 				textPoint2.x = textPoint.x - (w_total / 2);
 				textPoint2.y = textPoint.y;
-				draw(fontId, ds, startPointer, len_total, textPoint2, color,
+				draw(fontId, startPointer, len_total, textPoint2, color,
 					effectColor, flags);
 				return;
 			}

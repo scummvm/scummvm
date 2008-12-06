@@ -233,7 +233,7 @@ void Scene::getResourceTypes(SAGAResourceTypes *&types, int &typesCount) {
 	}
 }
 
-void Scene::drawTextList(Surface *ds) {
+void Scene::drawTextList() {
 	TextListEntry *entry;
 
 	for (TextList::iterator textIterator = _textList.begin(); textIterator != _textList.end(); ++textIterator) {
@@ -241,9 +241,9 @@ void Scene::drawTextList(Surface *ds) {
 		if (entry->display) {
 
 			if (entry->useRect) {
-				_vm->_font->textDrawRect(entry->font, ds, entry->text, entry->rect, _vm->KnownColor2ColorId(entry->knownColor), _vm->KnownColor2ColorId(entry->effectKnownColor), entry->flags);
+				_vm->_font->textDrawRect(entry->font, entry->text, entry->rect, _vm->KnownColor2ColorId(entry->knownColor), _vm->KnownColor2ColorId(entry->effectKnownColor), entry->flags);
 			} else {
-				_vm->_font->textDraw(entry->font, ds, entry->text, entry->point, _vm->KnownColor2ColorId(entry->knownColor), _vm->KnownColor2ColorId(entry->effectKnownColor), entry->flags);
+				_vm->_font->textDraw(entry->font, entry->text, entry->point, _vm->KnownColor2ColorId(entry->knownColor), _vm->KnownColor2ColorId(entry->effectKnownColor), entry->flags);
 			}
 		}
 	}
@@ -455,7 +455,6 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 	if (_vm->getFeatures() & GF_SCENE_SUBSTITUTES) {
 		for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++) {
 			if (sceneSubstitutes[i].sceneId == sceneNumber) {
-				Surface *backBuffer = _vm->_gfx->getBackBuffer();
 				Surface bbmBuffer;
 				byte *pal, *colors;
 				Common::File file;
@@ -469,7 +468,7 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 					colors = pal;
 					rect.setWidth(bbmBuffer.w);
 					rect.setHeight(bbmBuffer.h);
-					backBuffer->blit(rect, (const byte*)bbmBuffer.pixels);
+					_vm->_gfx->getBackBuffer()->blit(rect, (const byte*)bbmBuffer.pixels);
 					for (int j = 0; j < PAL_ENTRIES; j++) {
 						cPal[j].red = *pal++;
 						cPal[j].green = *pal++;
@@ -481,9 +480,9 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 				}
 
 				_vm->_interface->setStatusText("Click or Press Return to continue. Press Q to quit.", 96);
-				_vm->_font->textDrawRect(kKnownFontMedium, backBuffer, sceneSubstitutes[i].title,
+				_vm->_font->textDrawRect(kKnownFontMedium, sceneSubstitutes[i].title,
 					 Common::Rect(0, 7, _vm->getDisplayWidth(), 27), _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
-				_vm->_font->textDrawRect(kKnownFontMedium, backBuffer, sceneSubstitutes[i].message,
+				_vm->_font->textDrawRect(kKnownFontMedium, sceneSubstitutes[i].message,
 					 Common::Rect(24, getHeight() - 33, _vm->getDisplayWidth() - 11,
 								  getHeight()), _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
 				return;

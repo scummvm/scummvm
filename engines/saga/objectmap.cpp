@@ -142,7 +142,7 @@ bool HitZone::hitTest(const Point &testPoint) {
 }
 
 #ifdef SAGA_DEBUG
-void HitZone::draw(SagaEngine *vm, Surface *ds, int color) {
+void HitZone::draw(SagaEngine *vm, int color) {
 	int i, pointsCount, j;
 	Location location;
 	HitZone::ClickArea *clickArea;
@@ -237,7 +237,7 @@ void ObjectMap::freeMem() {
 
 
 #ifdef SAGA_DEBUG
-void ObjectMap::draw(Surface *ds, const Point& testPoint, int color, int color2) {
+void ObjectMap::draw(const Point& testPoint, int color, int color2) {
 	int i;
 	int hitZoneIndex;
 	char txtBuf[32];
@@ -255,14 +255,14 @@ void ObjectMap::draw(Surface *ds, const Point& testPoint, int color, int color2)
 	hitZoneIndex = hitTest(pickPoint);
 
 	for (i = 0; i < _hitZoneListCount; i++) {
-		_hitZoneList[i]->draw(_vm, ds, (hitZoneIndex == i) ? color2 : color);
+		_hitZoneList[i]->draw(_vm, (hitZoneIndex == i) ? color2 : color);
 	}
 
 	if (hitZoneIndex != -1) {
 		snprintf(txtBuf, sizeof(txtBuf), "hitZone %d", hitZoneIndex);
 		textPoint.x = 2;
 		textPoint.y = 2;
-		_vm->_font->textDraw(kKnownFontSmall, ds, txtBuf, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
+		_vm->_font->textDraw(kKnownFontSmall, txtBuf, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
 	}
 }
 #endif

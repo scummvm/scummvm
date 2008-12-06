@@ -377,10 +377,9 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 }
 
 void IsoMap::draw(Surface *ds) {
-
 	_tileClip = _vm->_scene->getSceneClip();
 	ds->drawRect(_tileClip, 0);
-	drawTiles(ds, NULL);
+	drawTiles(NULL);
 }
 
 void IsoMap::setMapPosition(int x, int y) {
@@ -388,7 +387,7 @@ void IsoMap::setMapPosition(int x, int y) {
 	_mapPosition.y = y;
 }
 
-void IsoMap::drawSprite(Surface *ds, SpriteList &spriteList, int spriteNumber, const Location &location, const Point &screenPosition, int scale) {
+void IsoMap::drawSprite(SpriteList &spriteList, int spriteNumber, const Location &location, const Point &screenPosition, int scale) {
 	int width;
 	int height;
 	int xAlign;
@@ -407,12 +406,12 @@ void IsoMap::drawSprite(Surface *ds, SpriteList &spriteList, int spriteNumber, c
 	_tileClip.top = CLIP<int>(spritePointer.y, 0, _vm->_scene->getHeight());
 	_tileClip.bottom = CLIP<int>(spritePointer.y + height, 0, _vm->_scene->getHeight());
 
-	_vm->_sprite->drawClip(ds, clip, spritePointer, width, height, spriteBuffer);
-	drawTiles(ds, &location);
+	_vm->_sprite->drawClip(clip, spritePointer, width, height, spriteBuffer);
+	drawTiles(&location);
 }
 
 
-void IsoMap::drawTiles(Surface *ds, const Location *location) {
+void IsoMap::drawTiles(const Location *location) {
 	Point view1;
 	Point fineScroll;
 	Point tileScroll;
@@ -480,9 +479,9 @@ void IsoMap::drawTiles(Surface *ds, const Location *location) {
 				rLocation.u() = location->u() - (u2 << 7);
 				rLocation.v() = location->v() - (v2 << 7);
 				rLocation.z = location->z;
-				drawSpriteMetaTile(ds, metaTileIndex, metaTileX, rLocation, u2 << 3, v2 << 3);
+				drawSpriteMetaTile(metaTileIndex, metaTileX, rLocation, u2 << 3, v2 << 3);
 			} else {
-				drawMetaTile(ds, metaTileIndex, metaTileX, u2 << 3, v2 << 3);
+				drawMetaTile(metaTileIndex, metaTileX, u2 << 3, v2 << 3);
 			}
 		}
 
@@ -524,9 +523,9 @@ void IsoMap::drawTiles(Surface *ds, const Location *location) {
 				rLocation.u() = location->u() - (u2 << 7);
 				rLocation.v() = location->v() - (v2 << 7);
 				rLocation.z = location->z;
-				drawSpriteMetaTile(ds, metaTileIndex, metaTileX, rLocation, u2 << 3, v2 << 3);
+				drawSpriteMetaTile(metaTileIndex, metaTileX, rLocation, u2 << 3, v2 << 3);
 			} else {
-				drawMetaTile(ds, metaTileIndex, metaTileX, u2 << 3, v2 << 3);
+				drawMetaTile(metaTileIndex, metaTileX, u2 << 3, v2 << 3);
 			}
 		}
 		metaTileY.y += 64;
@@ -534,7 +533,7 @@ void IsoMap::drawTiles(Surface *ds, const Location *location) {
 
 }
 
-void IsoMap::drawSpriteMetaTile(Surface *ds, uint16 metaTileIndex, const Point &point, Location &location, int16 absU, int16 absV) {
+void IsoMap::drawSpriteMetaTile(uint16 metaTileIndex, const Point &point, Location &location, int16 absU, int16 absV) {
 	MetaTileData * metaTile;
 	uint16 high;
 	int16 platformIndex;
@@ -556,12 +555,12 @@ void IsoMap::drawSpriteMetaTile(Surface *ds, uint16 metaTileIndex, const Point &
 		platformIndex = metaTile->stack[high];
 
 		if (platformIndex >= 0) {
-			drawSpritePlatform( ds, platformIndex, platformPoint, location, absU, absV, high );
+			drawSpritePlatform(platformIndex, platformPoint, location, absU, absV, high);
 		}
 	}
 }
 
-void IsoMap::drawMetaTile(Surface *ds, uint16 metaTileIndex, const Point &point, int16 absU, int16 absV) {
+void IsoMap::drawMetaTile(uint16 metaTileIndex, const Point &point, int16 absU, int16 absV) {
 	MetaTileData * metaTile;
 	uint16 high;
 	int16 platformIndex;
@@ -583,12 +582,12 @@ void IsoMap::drawMetaTile(Surface *ds, uint16 metaTileIndex, const Point &point,
 		platformIndex = metaTile->stack[high];
 
 		if (platformIndex >= 0) {
-			drawPlatform( ds, platformIndex, platformPoint, absU, absV, high );
+			drawPlatform(platformIndex, platformPoint, absU, absV, high);
 		}
 	}
 }
 
-void IsoMap::drawSpritePlatform(Surface *ds, uint16 platformIndex, const Point &point, const Location &location, int16 absU, int16 absV, int16 absH) {
+void IsoMap::drawSpritePlatform(uint16 platformIndex, const Point &point, const Location &location, int16 absU, int16 absV, int16 absH) {
 	TilePlatformData *tilePlatform;
 	int16 u, v;
 	Point s;
@@ -636,14 +635,14 @@ void IsoMap::drawSpritePlatform(Surface *ds, uint16 platformIndex, const Point &
 						tileIndex = findMulti(tileIndex, absU + u, absV + v, absH);
 					}
 
-					drawTile(ds, tileIndex, s, &copyLocation);
+					drawTile(tileIndex, s, &copyLocation);
 				}
 			}
 		}
 	}
 }
 
-void IsoMap::drawPlatform(Surface *ds, uint16 platformIndex, const Point &point, int16 absU, int16 absV, int16 absH) {
+void IsoMap::drawPlatform(uint16 platformIndex, const Point &point, int16 absU, int16 absV, int16 absH) {
 	TilePlatformData *tilePlatform;
 	int16 u, v;
 	Point s;
@@ -688,7 +687,7 @@ void IsoMap::drawPlatform(Surface *ds, uint16 platformIndex, const Point &point,
 						tileIndex = findMulti(tileIndex, absU + u, absV + v, absH);
 					}
 
-					drawTile(ds, tileIndex, s, NULL);
+					drawTile(tileIndex, s, NULL);
 				}
 			}
 		}
@@ -699,7 +698,7 @@ void IsoMap::drawPlatform(Surface *ds, uint16 platformIndex, const Point &point,
 #define THRESH8			8
 #define THRESH16		16
 
-void IsoMap::drawTile(Surface *ds, uint16 tileIndex, const Point &point, const Location *location) {
+void IsoMap::drawTile(uint16 tileIndex, const Point &point, const Location *location) {
 	const byte *tilePointer;
 	const byte *readPointer;
 	byte *drawPointer;
@@ -709,7 +708,7 @@ void IsoMap::drawTile(Surface *ds, uint16 tileIndex, const Point &point, const L
 	int row, col, count, lowBound;
 	int bgRunCount;
 	int fgRunCount;
-
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	if (tileIndex >= _tilesCount) {
 		error("IsoMap::drawTile wrong tileIndex");
@@ -833,7 +832,7 @@ void IsoMap::drawTile(Surface *ds, uint16 tileIndex, const Point &point, const L
 	for (row = drawPoint.y; row < lowBound; row++) {
 		widthCount = 0;
 		if (row >= _tileClip.top) {
-			drawPointer = (byte *)ds->pixels + drawPoint.x + (row * ds->pitch);
+			drawPointer = (byte *)backBuffer->pixels + drawPoint.x + (row * backBuffer->pitch);
 			col = drawPoint.x;
 			for (;;) {
 				bgRunCount = *readPointer++;
@@ -853,8 +852,8 @@ void IsoMap::drawTile(Surface *ds, uint16 tileIndex, const Point &point, const L
 					col++;
 				}
 				while ((col < _tileClip.right) && (count < fgRunCount)) {
-					assert((byte *)ds->pixels <= (byte *)(drawPointer + count));
-					assert((byte *)((byte *)ds->pixels + (_vm->getDisplayWidth() *
+					assert((byte *)backBuffer->pixels <= (byte *)(drawPointer + count));
+					assert((byte *)((byte *)backBuffer->pixels + (_vm->getDisplayWidth() *
 								 _vm->getDisplayHeight())) > (byte *)(drawPointer + count));
 					drawPointer[count] = readPointer[count];
 					count++;

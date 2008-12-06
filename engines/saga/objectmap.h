@@ -77,7 +77,7 @@ public:
 	}
 	bool getSpecialPoint(Point &specialPoint) const;
 #ifdef SAGA_DEBUG
-	void draw(SagaEngine *vm, Surface *ds, int color);
+	void draw(SagaEngine *vm, int color);
 #endif
 	bool hitTest(const Point &testPoint);
 

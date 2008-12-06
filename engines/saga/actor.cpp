@@ -1046,7 +1046,6 @@ void Actor::drawActors() {
 	CommonObjectDataPointer drawObject;
 	int frameNumber = 0;
 	SpriteList *spriteList = NULL;
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	createDrawOrderList();
 
@@ -1058,9 +1057,9 @@ void Actor::drawActors() {
 		}
 
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
-			_vm->_isoMap->drawSprite(backBuffer, *spriteList, frameNumber, drawObject->_location, drawObject->_screenPosition, drawObject->_screenScale);
+			_vm->_isoMap->drawSprite(*spriteList, frameNumber, drawObject->_location, drawObject->_screenPosition, drawObject->_screenScale);
 		} else {
-			_vm->_sprite->drawOccluded(backBuffer, _vm->_scene->getSceneClip(),*spriteList, frameNumber, drawObject->_screenPosition, drawObject->_screenScale, drawObject->_screenDepth);
+			_vm->_sprite->drawOccluded(_vm->_scene->getSceneClip(),*spriteList, frameNumber, drawObject->_screenPosition, drawObject->_screenScale, drawObject->_screenDepth);
 		}
 	}
 
@@ -1076,7 +1075,6 @@ void Actor::drawSpeech(void) {
 	Point textPoint;
 	ActorData *actor;
 	int width, height;
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	int stringLength = strlen(_activeSpeech.strings[0]);
 	char *outputString = (char*)calloc(stringLength + 1, 1);
 
@@ -1100,11 +1098,11 @@ void Actor::drawSpeech(void) {
 			else if (_vm->getGameType() == GType_IHNM)
 				textPoint.y = 10; // CLIP(actor->_screenPosition.y - 160, 10, _vm->_scene->getHeight(true) - 10 - height);
 
-			_vm->_font->textDraw(kKnownFontScript, backBuffer, outputString, textPoint,
+			_vm->_font->textDraw(kKnownFontScript, outputString, textPoint,
 				_activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], _activeSpeech.getFontFlags(i));
 		}
 	} else {
-		_vm->_font->textDrawRect(kKnownFontScript, backBuffer, outputString, _activeSpeech.drawRect, _activeSpeech.speechColor[0],
+		_vm->_font->textDrawRect(kKnownFontScript, outputString, _activeSpeech.drawRect, _activeSpeech.speechColor[0],
 			_activeSpeech.outlineColor[0], _activeSpeech.getFontFlags(0));
 	}
 

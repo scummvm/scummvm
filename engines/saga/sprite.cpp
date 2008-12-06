@@ -211,15 +211,16 @@ void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, int spriteNumber, int
 	}
 }
 
-void Sprite::drawClip(Surface *ds, const Rect &clipRect, const Point &spritePointer, int width, int height, const byte *spriteBuffer) {
+void Sprite::drawClip(const Rect &clipRect, const Point &spritePointer, int width, int height, const byte *spriteBuffer) {
 	int clipWidth;
 	int clipHeight;
 
 	int i, j, jo, io;
 	byte *bufRowPointer;
 	const byte *srcRowPointer;
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
-	bufRowPointer = (byte *)ds->pixels + ds->pitch * spritePointer.y;
+	bufRowPointer = (byte *)backBuffer->pixels + backBuffer->pitch * spritePointer.y;
 	srcRowPointer = spriteBuffer;
 
 	clipWidth = CLIP(width, 0, clipRect.right - spritePointer.x);
@@ -232,14 +233,14 @@ void Sprite::drawClip(Surface *ds, const Rect &clipRect, const Point &spritePoin
 	}
 	if (spritePointer.y < clipRect.top) {
 		io = clipRect.top - spritePointer.y;
-		bufRowPointer += ds->pitch * io;
+		bufRowPointer += backBuffer->pitch * io;
 		srcRowPointer += width * io;
 	}
 
 	for (i = io; i < clipHeight; i++) {
 		for (j = jo; j < clipWidth; j++) {
-			assert((byte *)ds->pixels <= (byte *)(bufRowPointer + j + spritePointer.x));
-			assert(((byte *)ds->pixels + (_vm->getDisplayWidth() *
+			assert((byte *)backBuffer->pixels <= (byte *)(bufRowPointer + j + spritePointer.x));
+			assert(((byte *)backBuffer->pixels + (_vm->getDisplayWidth() *
 				 _vm->getDisplayHeight())) > (byte *)(bufRowPointer + j + spritePointer.x));
 			assert((const byte *)spriteBuffer <= (const byte *)(srcRowPointer + j));
 			assert(((const byte *)spriteBuffer + (width * height)) > (const byte *)(srcRowPointer + j));
@@ -248,12 +249,12 @@ void Sprite::drawClip(Surface *ds, const Rect &clipRect, const Point &spritePoin
 				*(bufRowPointer + j + spritePointer.x) = *(srcRowPointer + j);
 			}
 		}
-		bufRowPointer += ds->pitch;
+		bufRowPointer += backBuffer->pitch;
 		srcRowPointer += width;
 	}
 }
 
-void Sprite::draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale) {
+void Sprite::draw(const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale) {
 	const byte *spriteBuffer = NULL;
 	int width  = 0;
 	int height = 0;
@@ -266,10 +267,10 @@ void Sprite::draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int
 	spritePointer.x = screenCoord.x + xAlign;
 	spritePointer.y = screenCoord.y + yAlign;
 
-	drawClip(ds, clipRect, spritePointer, width, height, spriteBuffer);
+	drawClip(clipRect, spritePointer, width, height, spriteBuffer);
 }
 
-void Sprite::draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale) {
+void Sprite::draw(const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale) {
 	const byte *spriteBuffer = NULL;
 	int width  = 0;
 	int height = 0;
@@ -290,7 +291,7 @@ void Sprite::draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int
 	}
 	spritePointer.x = screenRect.left + xAlign + spw;
 	spritePointer.y = screenRect.top + yAlign + sph;
-	drawClip(ds, clipRect, spritePointer, width, height, spriteBuffer);
+	drawClip(clipRect, spritePointer, width, height, spriteBuffer);
 }
 
 bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, const Point &testPoint) {
@@ -320,7 +321,7 @@ bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &scre
 	return *srcRowPointer != 0;
 }
 
-void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth) {
+void Sprite::drawOccluded(const Rect &clipRect, SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth) {
 	const byte *spriteBuffer = NULL;
 	int x, y;
 	byte *destRowPointer;
@@ -332,6 +333,7 @@ void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteL
 	int height = 0;
 	int xAlign = 0;
 	int yAlign = 0;
+	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	ClipData clipData;
 
@@ -344,7 +346,7 @@ void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteL
 	int maskZ;
 
 	if (!_vm->_scene->isBGMaskPresent()) {
-		draw(ds, clipRect, spriteList, spriteNumber, screenCoord, scale);
+		draw(clipRect, spriteList, spriteNumber, screenCoord, scale);
 		return;
 	}
 
@@ -369,7 +371,7 @@ void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteL
 	// Finally, draw the occluded sprite
 
 	sourceRowPointer = spriteBuffer + clipData.drawSource.x + (clipData.drawSource.y * width);
-	destRowPointer = (byte *)ds->pixels + clipData.drawDest.x + (clipData.drawDest.y * ds->pitch);
+	destRowPointer = (byte *)backBuffer->pixels + clipData.drawDest.x + (clipData.drawDest.y * backBuffer->pitch);
 	maskRowPointer = maskBuffer + clipData.drawDest.x + (clipData.drawDest.y * maskWidth);
 
 	for (y = 0; y < clipData.drawHeight; y++) {
@@ -387,7 +389,7 @@ void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteL
 			destPointer++;
 			maskPointer++;
 		}
-		destRowPointer += ds->pitch;
+		destRowPointer += backBuffer->pitch;
 		maskRowPointer += maskWidth;
 		sourceRowPointer += width;
 	}

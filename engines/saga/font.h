@@ -136,11 +136,11 @@ class Font {
 	int getHeight(KnownFont font, const char *text, int width, FontEffectFlags flags) {
 		return getHeight(knownFont2FontIdx(font), text, width, flags);
 	}
-	void textDraw(KnownFont font, Surface *ds, const char *string, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) {
-		textDraw(knownFont2FontIdx(font), ds, string, point, color, effectColor, flags);
+	void textDraw(KnownFont font, const char *string, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) {
+		textDraw(knownFont2FontIdx(font), string, point, color, effectColor, flags);
 	}
-	void textDrawRect(KnownFont font, Surface *ds, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
-		textDrawRect(knownFont2FontIdx(font), ds, text, rect, color, effectColor, flags);
+	void textDrawRect(KnownFont font, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
+		textDrawRect(knownFont2FontIdx(font), text, rect, color, effectColor, flags);
 	}
 	void setFontMapping(int mapping) {
 		_fontMapping = mapping;
@@ -162,13 +162,13 @@ class Font {
 
 	 int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags);
 	 int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags);
-	 void textDrawRect(FontId fontId, Surface *ds, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags);
-	 void textDraw(FontId fontId, Surface *ds, const char *string, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
+	 void textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags);
+	 void textDraw(FontId fontId, const char *string, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
 
 	 void loadFont(uint32 fontResourceId);
 	 void createOutline(FontData *font);
-	 void draw(FontId fontId, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
-	 void outFont(const FontStyle &drawFont, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags);
+	 void draw(FontId fontId, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
+	 void outFont(const FontStyle &drawFont, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags);
 
 	 FontData *getFont(FontId fontId) {
 		 validate(fontId);

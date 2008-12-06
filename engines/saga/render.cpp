@@ -155,7 +155,7 @@ void Render::drawScene() {
 	}
 
 	// Draw queued text strings
-	_vm->_scene->drawTextList(backBufferSurface);
+	_vm->_scene->drawTextList();
 
 	// Handle user input
 	_vm->processInput();
@@ -178,7 +178,7 @@ void Render::drawScene() {
 		textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(kKnownFontPause, pauseString, 0, kFontOutline)) / 2;
 		textPoint.y = 90;
 
-		_vm->_font->textDraw(kKnownFontPause, backBufferSurface, pauseString, textPoint, 
+		_vm->_font->textDraw(kKnownFontPause, pauseString, textPoint, 
 							_vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
 	}
 
@@ -189,7 +189,7 @@ void Render::drawScene() {
 	// Display text formatting test, if applicable
 	if (_flags & RF_TEXT_TEST) {
 		Rect rect(mousePoint.x, mousePoint.y, mousePoint.x + 100, mousePoint.y + 50);
-		_vm->_font->textDrawRect(kKnownFontMedium, backBufferSurface, test_txt, rect,
+		_vm->_font->textDrawRect(kKnownFontMedium, test_txt, rect,
 				kITEColorBrightWhite, kITEColorBlack, (FontEffectFlags)(kFontOutline | kFontCentered));
 	}
 
