@@ -468,7 +468,7 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 					colors = pal;
 					rect.setWidth(bbmBuffer.w);
 					rect.setHeight(bbmBuffer.h);
-					_vm->_gfx->getBackBuffer()->blit(rect, (const byte*)bbmBuffer.pixels);
+					_vm->_gfx->drawRegion(rect, (const byte*)bbmBuffer.pixels);
 					for (int j = 0; j < PAL_ENTRIES; j++) {
 						cPal[j].red = *pal++;
 						cPal[j].green = *pal++;
@@ -1151,7 +1151,7 @@ void Scene::draw() {
 		Rect rect;
 		_vm->_render->getBackGroundSurface()->getRect(rect);
 		rect.bottom = (_sceneClip.bottom < rect.bottom) ? getHeight() : rect.bottom;
-		_vm->_gfx->getBackBuffer()->blit(rect, (const byte *)_vm->_render->getBackGroundSurface()->pixels);
+		_vm->_gfx->drawRegion(rect, (const byte *)_vm->_render->getBackGroundSurface()->pixels);
 	}
 }
 
@@ -1181,8 +1181,8 @@ void Scene::endScene() {
 		_vm->_scene->getBGInfo(bgInfo);
 		_vm->_render->getBackGroundSurface()->blit(bgInfo.bounds, bgInfo.buffer);
 	} else {
-		_vm->_gfx->getBackBuffer()->getRect(rect);
-		_vm->_render->getBackGroundSurface()->blit(rect, (const byte *)_vm->_gfx->getBackBuffer()->pixels);
+		_vm->_gfx->getBackBufferRect(rect);
+		_vm->_render->getBackGroundSurface()->blit(rect, (const byte *)_vm->_gfx->getBackBufferPixels());
 	}
 
 	// Free scene background

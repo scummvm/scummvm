@@ -138,9 +138,6 @@ public:
 
 	Gfx(SagaEngine *vm, OSystem *system, int width, int height);
 	~Gfx();
-	Surface *getBackBuffer() {
-		return &_backBuffer;
-	}
 
 	void initPalette();
 	void setPalette(const PalEntry *pal, bool full = false);
@@ -153,6 +150,77 @@ public:
 	void palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 numColors, double percent);
 	void showCursor(bool state);
 	void setCursor(CursorType cursorType = kCursorNormal);
+
+	// Back buffer access methods. These all take care of adding the necessary dirty rectangles
+	// APART FROM setPixelColor() and getBackBufferPixels()
+
+	// This method adds a dirty rectangle automatically
+	void drawFrame(const Common::Point &p1, const Common::Point &p2, int color);
+
+	// This method adds a dirty rectangle automatically
+	void drawRect(const Common::Rect &destRect, int color);
+
+	// This method adds a dirty rectangle automatically
+	void fillRect(const Common::Rect &destRect, uint32 color);
+
+	// This method adds a dirty rectangle automatically
+	void drawRegion(const Common::Rect &destRect, const byte *sourceBuffer);
+
+	// Used for testing
+	void drawPalette() {
+		_backBuffer.drawPalette();
+	}
+
+	// WARNING: This method does not add a dirty rectangle automatically.
+	// Whenever it gets called, the corresponding caller must take care
+	// to add the corresponding dirty rectangle itself
+	void hLine(int x, int y, int x2, uint32 color) {
+		_backBuffer.hLine(x, y, x2, color);
+	}
+
+	// WARNING: This method does not add a dirty rectangle automatically.
+	// Whenever it gets called, the corresponding caller must take care
+	// to add the corresponding dirty rectangle itself
+	void vLine(int x, int y, int y2, uint32 color) {
+		_backBuffer.vLine(x, y, y2, color);
+	}
+
+	// WARNING: This method does not add a dirty rectangle automatically.
+	// Whenever it gets called, the corresponding caller must take care
+	// to add the corresponding dirty rectangle itself
+	void setPixelColor(int x, int y, byte color) {
+		((byte *)_backBuffer.getBasePtr(x, y))[0] = color;
+	}
+
+	// WARNING: This method does not add a dirty rectangle automatically.
+	// Whenever it gets called, the corresponding caller must take care
+	// to add the corresponding dirty rectangle itself
+	void drawPolyLine(Common::Point *points, int count, int color) {
+		_backBuffer.drawPolyLine(points, count, color);
+	}
+
+	// WARNING: This method allows direct modification of the back buffer
+	// Whenever it gets called, the corresponding caller must take care
+	// to add the corresponding dirty rectangle itself
+	byte *getBackBufferPixels() {
+		return (byte *)_backBuffer.pixels;
+	}
+
+	uint16 getBackBufferWidth() {
+		return _backBuffer.w;
+	}
+
+	uint16 getBackBufferHeight() {
+		return _backBuffer.h;
+	}
+
+	uint16 getBackBufferPitch() {
+		return _backBuffer.pitch;
+	}
+
+	void getBackBufferRect(Common::Rect &rect) {
+		_backBuffer.getRect(rect);
+	}
 
 private:
 	Surface _backBuffer;

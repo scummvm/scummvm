@@ -310,7 +310,6 @@ void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, co
 	byte *outputPointer;
 	byte *outputPointer_min;
 	byte *outputPointer_max;
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	int row;
 	int rowLimit;
@@ -320,7 +319,7 @@ void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, co
 	int c_bit;
 	int ct;
 
-	if ((point.x > backBuffer->w) || (point.y > backBuffer->h)) {
+	if ((point.x > _vm->_gfx->getBackBufferWidth()) || (point.y > _vm->_gfx->getBackBufferHeight())) {
 		// Output string can't be visible
 		return;
 	}
@@ -373,7 +372,7 @@ void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, co
 
 		// Get length of character in bytes
 		c_byte_len = ((drawFont.fontCharEntry[c_code].width - 1) / 8) + 1;
-		rowLimit = (backBuffer->h < (textPoint.y + drawFont.header.charHeight)) ? backBuffer->h : textPoint.y + drawFont.header.charHeight;
+		rowLimit = (_vm->_gfx->getBackBufferHeight() < (textPoint.y + drawFont.header.charHeight)) ? _vm->_gfx->getBackBufferHeight() : textPoint.y + drawFont.header.charHeight;
 		charRow = 0;
 
 		for (row = textPoint.y; row < rowLimit; row++, charRow++) {
@@ -382,9 +381,9 @@ void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, co
 				continue;
 			}
 
-			outputPointer = (byte *)backBuffer->pixels + (backBuffer->pitch * row) + textPoint.x;
-			outputPointer_min = (byte *)backBuffer->pixels + (backBuffer->pitch * row) + (textPoint.x > 0 ? textPoint.x : 0);
-			outputPointer_max = outputPointer + (backBuffer->pitch - textPoint.x);
+			outputPointer = _vm->_gfx->getBackBufferPixels() + (_vm->_gfx->getBackBufferPitch() * row) + textPoint.x;
+			outputPointer_min = _vm->_gfx->getBackBufferPixels() + (_vm->_gfx->getBackBufferPitch() * row) + (textPoint.x > 0 ? textPoint.x : 0);
+			outputPointer_max = outputPointer + (_vm->_gfx->getBackBufferPitch() - textPoint.x);
 
 			// If character starts off the screen, jump to next character
 			if (outputPointer < outputPointer_min) {
@@ -415,7 +414,6 @@ void Font::textDraw(FontId fontId, const char *text, const Common::Point &point,
 	int textLength;
 	int fitWidth;
 	Common::Point textPoint(point);
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	textLength = strlen(text);
 
@@ -431,8 +429,8 @@ void Font::textDraw(FontId fontId, const char *text, const Common::Point &point,
 		textPoint.x = TEXT_CENTERLIMIT;
 	}
 
-	if (textPoint.x > backBuffer->w - TEXT_CENTERLIMIT) {
-		textPoint.x = backBuffer->w - TEXT_CENTERLIMIT;
+	if (textPoint.x > _vm->_gfx->getBackBufferWidth() - TEXT_CENTERLIMIT) {
+		textPoint.x = _vm->_gfx->getBackBufferWidth() - TEXT_CENTERLIMIT;
 	}
 
 	if (textPoint.x < (TEXT_MARGIN * 2)) {
@@ -442,12 +440,12 @@ void Font::textDraw(FontId fontId, const char *text, const Common::Point &point,
 
 	textWidth = getStringWidth(fontId, text, textLength, flags);
 
-	if (textPoint.x < (backBuffer->w / 2)) {
+	if (textPoint.x < (_vm->_gfx->getBackBufferWidth() / 2)) {
 		// Fit to right side
 		fitWidth = (textPoint.x - TEXT_MARGIN) * 2;
 	} else {
 		// Fit to left side
-		fitWidth = ((backBuffer->w - TEXT_MARGIN) - textPoint.x) * 2;
+		fitWidth = ((_vm->_gfx->getBackBufferWidth() - TEXT_MARGIN) - textPoint.x) * 2;
 	}
 
 	if (fitWidth < textWidth) {

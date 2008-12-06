@@ -29,6 +29,8 @@
 #define SAGA_RENDER_H
 
 #include "saga/sprite.h"
+#include "saga/gfx.h"
+#include "common/list.h"
 
 namespace Saga {
 
@@ -77,6 +79,24 @@ public:
 		return &_backGroundSurface;
 	}
 
+	void addDirtyRect(Common::Rect rect) {
+		_dirtyRects.push_back(rect);
+	}
+
+	void clearDirtyRects() {
+		_dirtyRects.clear();
+	}
+
+	void setFullRefresh(bool flag) {
+		_fullRefresh = flag;
+	}
+
+	bool isFullRefresh() {
+		return _fullRefresh;
+	}
+
+	void drawDirtyRects();
+
 private:
 #ifdef SAGA_DEBUG
 	static void fpsTimerCallback(void *refCon);
@@ -88,6 +108,8 @@ private:
 	SagaEngine *_vm;
 	OSystem *_system;
 	bool _initialized;
+	Common::List<Common::Rect> _dirtyRects;
+	bool _fullRefresh;
 
 	// Module data
 	Surface _backGroundSurface;

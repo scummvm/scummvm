@@ -522,7 +522,7 @@ int Events::handleOneShot(Event *event) {
 			rect.bottom = event->param3;
 			rect.left = event->param4;
 			rect.right = event->param5;
-			((Surface *)event->data)->drawRect(rect, event->param);
+			_vm->_gfx->drawRect(rect, event->param);
 			break;
 		case kEventSetFlag:
 			_vm->_render->setFlag(event->param);

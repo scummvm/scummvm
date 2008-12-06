@@ -378,7 +378,7 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 
 void IsoMap::draw() {
 	_tileClip = _vm->_scene->getSceneClip();
-	_vm->_gfx->getBackBuffer()->drawRect(_tileClip, 0);
+	_vm->_gfx->drawRegion(_tileClip, 0);
 	drawTiles(NULL);
 }
 
@@ -708,7 +708,6 @@ void IsoMap::drawTile(uint16 tileIndex, const Point &point, const Location *loca
 	int row, col, count, lowBound;
 	int bgRunCount;
 	int fgRunCount;
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	if (tileIndex >= _tilesCount) {
 		error("IsoMap::drawTile wrong tileIndex");
@@ -832,7 +831,7 @@ void IsoMap::drawTile(uint16 tileIndex, const Point &point, const Location *loca
 	for (row = drawPoint.y; row < lowBound; row++) {
 		widthCount = 0;
 		if (row >= _tileClip.top) {
-			drawPointer = (byte *)backBuffer->pixels + drawPoint.x + (row * backBuffer->pitch);
+			drawPointer = _vm->_gfx->getBackBufferPixels() + drawPoint.x + (row * _vm->_gfx->getBackBufferPitch());
 			col = drawPoint.x;
 			for (;;) {
 				bgRunCount = *readPointer++;
@@ -852,8 +851,8 @@ void IsoMap::drawTile(uint16 tileIndex, const Point &point, const Location *loca
 					col++;
 				}
 				while ((col < _tileClip.right) && (count < fgRunCount)) {
-					assert((byte *)backBuffer->pixels <= (byte *)(drawPointer + count));
-					assert((byte *)((byte *)backBuffer->pixels + (_vm->getDisplayWidth() *
+					assert(_vm->_gfx->getBackBufferPixels() <= (byte *)(drawPointer + count));
+					assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayWidth() *
 								 _vm->getDisplayHeight())) > (byte *)(drawPointer + count));
 					drawPointer[count] = readPointer[count];
 					count++;

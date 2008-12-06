@@ -1171,7 +1171,6 @@ void Script::sfSimulSpeech2(SCRIPTFUNC_PARAMS) {
 // Param1: string rid
 void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	int stringId = thread->pop();
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	static PalEntry cur_pal[PAL_ENTRIES];
 	PalEntry *pal;
 	Event event;
@@ -1216,7 +1215,6 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.type = kEvTOneshot;
 	event.code = kGraphicsEvent;
 	event.op = kEventFillRect;
-	event.data = backBuffer;
 	event.param = 138;
 	event.param2 = 0;
 	event.param3 = _vm->_scene->getHeight();

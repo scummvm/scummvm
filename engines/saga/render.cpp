@@ -77,17 +77,17 @@ bool Render::initialized() {
 }
 
 void Render::drawScene() {
-	Surface *backBufferSurface;
 	Point mousePoint;
 	Point textPoint;
 	int curMode = _vm->_interface->getMode();
 	assert(_initialized);
 
+	// TODO: Remove this
+	_fullRefresh = true;
+
 #ifdef SAGA_DEBUG
 	_renderedFrameCount++;
 #endif
-
-	backBufferSurface = _vm->_gfx->getBackBuffer();
 
 	// Get mouse coordinates
 	mousePoint = _vm->mousePos();
@@ -165,7 +165,7 @@ void Render::drawScene() {
 	if (_flags & RF_SHOW_FPS) {
 		char txtBuffer[20];
 		sprintf(txtBuffer, "%d", _fps);
-		textPoint.x = backBufferSurface->w - _vm->_font->getStringWidth(kKnownFontSmall, txtBuffer, 0, kFontOutline);
+		textPoint.x = _vm->_gfx->getBackBufferWidth() - _vm->_font->getStringWidth(kKnownFontSmall, txtBuffer, 0, kFontOutline);
 		textPoint.y = 2;
 
 		_vm->_font->textDraw(kKnownFontSmall, txtBuffer, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
@@ -175,7 +175,7 @@ void Render::drawScene() {
 	// Display "paused game" message, if applicable
 	if (_flags & RF_RENDERPAUSE) {
 		const char *pauseString = (_vm->getGameType() == GType_ITE) ? pauseStringITE : pauseStringIHNM;
-		textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(kKnownFontPause, pauseString, 0, kFontOutline)) / 2;
+		textPoint.x = (_vm->_gfx->getBackBufferWidth() - _vm->_font->getStringWidth(kKnownFontPause, pauseString, 0, kFontOutline)) / 2;
 		textPoint.y = 90;
 
 		_vm->_font->textDraw(kKnownFontPause, pauseString, textPoint, 
@@ -195,14 +195,30 @@ void Render::drawScene() {
 
 	// Display palette test, if applicable
 	if (_flags & RF_PALETTE_TEST) {
-		backBufferSurface->drawPalette();
+		_vm->_gfx->drawPalette();
 	}
 #endif
 
-	_system->copyRectToScreen((byte *)backBufferSurface->pixels, backBufferSurface->w, 0, 0,
-							  backBufferSurface->w, backBufferSurface->h);
+	drawDirtyRects();
 
 	_system->updateScreen();
+}
+
+void Render::drawDirtyRects() {
+	if (_fullRefresh) {
+		_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _vm->_gfx->getBackBufferWidth(), 0, 0,
+								  _vm->_gfx->getBackBufferWidth(), _vm->_gfx->getBackBufferHeight());
+	} else {
+
+		// TODO: check if dirty rectangles are intersecting or contained within each other
+
+ 	 	Common::List<Common::Rect>::const_iterator it;
+ 	 	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+			g_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), it->width(), it->left, it->top, it->width(), it->height());
+		}
+	}
+
+	_dirtyRects.clear();
 }
 
 #ifdef SAGA_DEBUG

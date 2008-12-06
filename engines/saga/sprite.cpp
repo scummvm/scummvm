@@ -218,9 +218,8 @@ void Sprite::drawClip(const Rect &clipRect, const Point &spritePointer, int widt
 	int i, j, jo, io;
 	byte *bufRowPointer;
 	const byte *srcRowPointer;
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
-	bufRowPointer = (byte *)backBuffer->pixels + backBuffer->pitch * spritePointer.y;
+	bufRowPointer = _vm->_gfx->getBackBufferPixels() + _vm->_gfx->getBackBufferPitch() * spritePointer.y;
 	srcRowPointer = spriteBuffer;
 
 	clipWidth = CLIP(width, 0, clipRect.right - spritePointer.x);
@@ -233,14 +232,14 @@ void Sprite::drawClip(const Rect &clipRect, const Point &spritePointer, int widt
 	}
 	if (spritePointer.y < clipRect.top) {
 		io = clipRect.top - spritePointer.y;
-		bufRowPointer += backBuffer->pitch * io;
+		bufRowPointer += _vm->_gfx->getBackBufferPitch() * io;
 		srcRowPointer += width * io;
 	}
 
 	for (i = io; i < clipHeight; i++) {
 		for (j = jo; j < clipWidth; j++) {
-			assert((byte *)backBuffer->pixels <= (byte *)(bufRowPointer + j + spritePointer.x));
-			assert(((byte *)backBuffer->pixels + (_vm->getDisplayWidth() *
+			assert(_vm->_gfx->getBackBufferPixels() <= (byte *)(bufRowPointer + j + spritePointer.x));
+			assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayWidth() *
 				 _vm->getDisplayHeight())) > (byte *)(bufRowPointer + j + spritePointer.x));
 			assert((const byte *)spriteBuffer <= (const byte *)(srcRowPointer + j));
 			assert(((const byte *)spriteBuffer + (width * height)) > (const byte *)(srcRowPointer + j));
@@ -249,7 +248,7 @@ void Sprite::drawClip(const Rect &clipRect, const Point &spritePointer, int widt
 				*(bufRowPointer + j + spritePointer.x) = *(srcRowPointer + j);
 			}
 		}
-		bufRowPointer += backBuffer->pitch;
+		bufRowPointer += _vm->_gfx->getBackBufferPitch();
 		srcRowPointer += width;
 	}
 }
@@ -333,7 +332,6 @@ void Sprite::drawOccluded(const Rect &clipRect, SpriteList &spriteList, int spri
 	int height = 0;
 	int xAlign = 0;
 	int yAlign = 0;
-	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 
 	ClipData clipData;
 
@@ -371,7 +369,7 @@ void Sprite::drawOccluded(const Rect &clipRect, SpriteList &spriteList, int spri
 	// Finally, draw the occluded sprite
 
 	sourceRowPointer = spriteBuffer + clipData.drawSource.x + (clipData.drawSource.y * width);
-	destRowPointer = (byte *)backBuffer->pixels + clipData.drawDest.x + (clipData.drawDest.y * backBuffer->pitch);
+	destRowPointer = _vm->_gfx->getBackBufferPixels() + clipData.drawDest.x + (clipData.drawDest.y * _vm->_gfx->getBackBufferPitch());
 	maskRowPointer = maskBuffer + clipData.drawDest.x + (clipData.drawDest.y * maskWidth);
 
 	for (y = 0; y < clipData.drawHeight; y++) {
@@ -389,7 +387,7 @@ void Sprite::drawOccluded(const Rect &clipRect, SpriteList &spriteList, int spri
 			destPointer++;
 			maskPointer++;
 		}
-		destRowPointer += backBuffer->pitch;
+		destRowPointer += _vm->_gfx->getBackBufferPitch();
 		maskRowPointer += maskWidth;
 		sourceRowPointer += width;
 	}

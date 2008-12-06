@@ -30,6 +30,7 @@
 #include "saga/interface.h"
 #include "saga/rscfile.h"
 #include "saga/scene.h"
+#include "saga/render.h"
 
 #include "common/system.h"
 #include "graphics/cursorman.h"
@@ -559,6 +560,30 @@ bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_po
 	}
 
 	return inside_flag;
+}
+
+// This method adds a dirty rectangle automatically
+void Gfx::drawFrame(const Common::Point &p1, const Common::Point &p2, int color) {
+	_backBuffer.drawFrame(p1, p2, color);
+	_vm->_render->addDirtyRect(Common::Rect(p1.x, p1.y, p2.x, p2.y));
+}
+
+// This method adds a dirty rectangle automatically
+void Gfx::drawRect(const Common::Rect &destRect, int color) {
+	_backBuffer.drawRect(destRect, color);
+	_vm->_render->addDirtyRect(destRect);
+}
+
+// This method adds a dirty rectangle automatically
+void Gfx::fillRect(const Common::Rect &destRect, uint32 color) {
+	_backBuffer.fillRect(destRect, color);
+	_vm->_render->addDirtyRect(destRect);
+}
+
+// This method adds a dirty rectangle automatically
+void Gfx::drawRegion(const Common::Rect &destRect, const byte *sourceBuffer) {
+	_backBuffer.blit(destRect, sourceBuffer);
+	_vm->_render->addDirtyRect(destRect);
 }
 
 } // End of namespace Saga
