@@ -2186,11 +2186,14 @@ void Interface::drawButtonBox(const Rect& rect, ButtonKind kind, bool down) {
 	int xe = rect.right - 1;
 	int ye = rect.bottom - 1;
 
-	_vm->_gfx->drawRect(Common::Rect(x, y, x + w, y + h), frameColor);
 	_vm->_gfx->setPixelColor(x, y, cornerColor);
 	_vm->_gfx->setPixelColor(x, ye, cornerColor);
 	_vm->_gfx->setPixelColor(xe, y, cornerColor);
 	_vm->_gfx->setPixelColor(xe, ye, cornerColor);
+ 	_vm->_gfx->hLine(x + 1, y, x + w - 2, frameColor);
+ 	_vm->_gfx->hLine(x + 1, ye, x + w - 2, frameColor);
+ 	_vm->_gfx->vLine(x, y + 1, y + h - 2, frameColor);
+ 	_vm->_gfx->vLine(xe, y + 1, y + h - 2, frameColor);
 
 	x++;
 	y++;
@@ -2198,7 +2201,6 @@ void Interface::drawButtonBox(const Rect& rect, ButtonKind kind, bool down) {
 	ye--;
 	w -= 2;
 	h -= 2;
-	// drawRect() above added a dirty rectangle automatically for these
 	_vm->_gfx->vLine(x, y, y + h - 1, odl);
 	_vm->_gfx->hLine(x, ye, x + w - 1, odl);
 	_vm->_gfx->vLine(xe, y, y + h - 2, our);
@@ -2210,7 +2212,6 @@ void Interface::drawButtonBox(const Rect& rect, ButtonKind kind, bool down) {
 	ye--;
 	w -= 2;
 	h -= 2;
-	// drawRect() above added a dirty rectangle automatically for these
 	_vm->_gfx->setPixelColor(x, y, fillColor);
 	_vm->_gfx->setPixelColor(xe, ye, fillColor);
 	_vm->_gfx->vLine(x, y + 1, y + 1 + h - 2, idl);
@@ -2223,6 +2224,7 @@ void Interface::drawButtonBox(const Rect& rect, ButtonKind kind, bool down) {
 
 	Common::Rect fill(x, y, x + w, y + h);
 	_vm->_gfx->fillRect(fill, solidColor);
+	_vm->_render->addDirtyRect(rect);
 }
 
 static const int readingSpeeds[] = { kTextClick, kTextSlow, kTextMid, kTextFast };

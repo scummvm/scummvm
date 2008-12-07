@@ -565,7 +565,7 @@ bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_po
 // This method adds a dirty rectangle automatically
 void Gfx::drawFrame(const Common::Point &p1, const Common::Point &p2, int color) {
 	_backBuffer.drawFrame(p1, p2, color);
-	_vm->_render->addDirtyRect(Common::Rect(p1.x, p1.y, p2.x, p2.y));
+	_vm->_render->addDirtyRect(Common::Rect(p1.x, p1.y, p2.x + 1, p2.y + 1));
 }
 
 // This method adds a dirty rectangle automatically

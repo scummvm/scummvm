@@ -92,6 +92,8 @@ void Render::drawScene() {
 	// Get mouse coordinates
 	mousePoint = _vm->mousePos();
 
+	restoreChangedRects();
+
 	if (!(_flags & (RF_DEMO_SUBST | RF_MAP) || curMode == kPanelPlacard)) {
 		// Do not redraw the whole scene and the actors if the scene is fading out or
 		// if an overlay is drawn above it (e.g. the options menu)
@@ -100,8 +102,10 @@ void Render::drawScene() {
 			 curMode != kPanelLoad && curMode != kPanelSave &&
 			 curMode != kPanelProtect)) {
 			// Display scene background
-			if (!(_flags & RF_DISABLE_ACTORS) || _vm->getGameType() == GType_ITE)
-				_vm->_scene->draw();
+			if (_fullRefresh) {
+				if (!(_flags & RF_DISABLE_ACTORS) || _vm->getGameType() == GType_ITE)
+					_vm->_scene->draw();
+			}
 
 			if (_vm->_puzzle->isActive()) {
 				_vm->_puzzle->movePiece(mousePoint);
@@ -202,6 +206,8 @@ void Render::drawScene() {
 	drawDirtyRects();
 
 	_system->updateScreen();
+
+	_fullRefresh = false;
 }
 
 void Render::addDirtyRect(Common::Rect rect) {
@@ -215,6 +221,16 @@ void Render::addDirtyRect(Common::Rect rect) {
 	_dirtyRects.push_back(rect);
 }
 
+void Render::restoreChangedRects() {
+	if (!_fullRefresh) {
+ 	 	Common::List<Common::Rect>::const_iterator it;
+ 	 	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+			g_system->copyRectToScreen((byte *)_backGroundSurface.pixels, _backGroundSurface.w, it->left, it->top, it->width(), it->height());
+		}
+	}
+	_dirtyRects.clear();
+}
+
 void Render::drawDirtyRects() {
 	if (_fullRefresh) {
 		_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _vm->_gfx->getBackBufferWidth(), 0, 0,
@@ -222,11 +238,9 @@ void Render::drawDirtyRects() {
 	} else {
  	 	Common::List<Common::Rect>::const_iterator it;
  	 	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
-			g_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), it->width(), it->left, it->top, it->width(), it->height());
+			g_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _backGroundSurface.w, it->left, it->top, it->width(), it->height());
 		}
 	}
-
-	_dirtyRects.clear();
 }
 
 #ifdef SAGA_DEBUG

@@ -30,6 +30,7 @@
 #include "saga/rscfile.h"
 
 #include "saga/font.h"
+#include "saga/render.h"
 
 namespace Saga {
 
@@ -304,15 +305,15 @@ void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, co
 	const byte *textPointer;
 	byte *c_dataPointer;
 	int c_code;
-	int charRow;
+	int charRow = 0;
 	Point textPoint(point);
 
 	byte *outputPointer;
 	byte *outputPointer_min;
 	byte *outputPointer_max;
 
-	int row;
-	int rowLimit;
+	int row = 0;
+	int rowLimit = 0;
 
 	int c_byte_len;
 	int c_byte;
@@ -406,6 +407,10 @@ void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, co
 		// Advance tracking position
 		textPoint.x += drawFont.fontCharEntry[c_code].tracking;
 	} // end per-character processing
+
+	rowLimit = (_vm->_gfx->getBackBufferHeight() < (textPoint.y + drawFont.header.charHeight)) ? _vm->_gfx->getBackBufferHeight() : textPoint.y + drawFont.header.charHeight;
+	// TODO: for now we add a dirty rect that ends at the right of the screen
+	_vm->_render->addDirtyRect(Common::Rect(textPoint.x, textPoint.y, _vm->_gfx->getBackBufferWidth(), rowLimit));
 }
 
 

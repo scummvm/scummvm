@@ -589,6 +589,9 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	Event *q_event;
 	static PalEntry current_pal[PAL_ENTRIES];
 
+	// Since we are loading a new scene, do a full refresh
+	_vm->_render->setFullRefresh(true);
+
 	if (loadSceneParams->transitionType == kTransitionFade)
 		_vm->_interface->setFadeMode(kFadeOut);
 
@@ -1185,6 +1188,7 @@ void Scene::endScene() {
 	} else {
 		_vm->_gfx->getBackBufferRect(rect);
 		_vm->_render->getBackGroundSurface()->blit(rect, (const byte *)_vm->_gfx->getBackBufferPixels());
+		_vm->_render->addDirtyRect(rect);
 	}
 
 	// Free scene background

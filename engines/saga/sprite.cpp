@@ -33,6 +33,7 @@
 #include "saga/font.h"
 
 #include "saga/sprite.h"
+#include "saga/render.h"
 
 namespace Saga {
 
@@ -251,6 +252,8 @@ void Sprite::drawClip(const Rect &clipRect, const Point &spritePointer, int widt
 		bufRowPointer += _vm->_gfx->getBackBufferPitch();
 		srcRowPointer += width;
 	}
+
+	_vm->_render->addDirtyRect(Common::Rect(spritePointer.x, spritePointer.y, spritePointer.x + clipWidth, spritePointer.y + clipHeight));
 }
 
 void Sprite::draw(const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale) {
@@ -391,6 +394,9 @@ void Sprite::drawOccluded(const Rect &clipRect, SpriteList &spriteList, int spri
 		maskRowPointer += maskWidth;
 		sourceRowPointer += width;
 	}
+
+	_vm->_render->addDirtyRect(Common::Rect(clipData.destPoint.x, clipData.destPoint.y, 
+								clipData.destPoint.x + clipData.drawWidth, clipData.destPoint.y + clipData.drawHeight));
 }
 
 void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t outLength) {

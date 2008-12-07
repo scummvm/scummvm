@@ -94,6 +94,7 @@ public:
 	}
 
 	void drawDirtyRects();
+	void restoreChangedRects();
 
 private:
 #ifdef SAGA_DEBUG
