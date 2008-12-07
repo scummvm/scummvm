@@ -26,10 +26,10 @@
 #include <common/sys.h>
 #include <common/file.h>
 
-#include <lua.h>
-#include <lundump.h>
-#include <lopcodes.h>
-#include <lzio.h>
+#include <engine/lua/lua.h>
+#include <engine/lua/lundump.h>
+#include <engine/lua/lopcodes.h>
+#include <engine/lua/lzio.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,33 +45,14 @@
 
 #include <engine/localize.h>
 #include <engine/resource.h>
-#include <engine/backend/driver.h>
+#include <engine/backend/platform/driver.h>
 
-//hack below: shutup linker
+// hacks below for shutup linker
 int g_flags = 0;
-ResourceLoader *g_resourceloader = 0;
-Driver *g_driver = 0;
+ResourceLoader *g_resourceloader = NULL;
+Driver *g_driver = NULL;
+enDebugLevels debugLevel = DEBUG_NONE;
 Common::File *ResourceLoader::openNewStream(const char *filename) const { return NULL; }
-
-// Provide debug.cpp functions which don't call SDL_Quit.
-void warning(const char *fmt, ...) {
-  fprintf(stderr, "WARNING: ");
-  va_list va;
-  va_start(va, fmt);
-  vfprintf(stderr, fmt, va);
-  va_end(va);
-  fprintf(stderr, "\n");
-}
-
-void error(const char *fmt, ...) {
-  fprintf(stderr, "ERROR: ");
-  va_list va;
-  va_start(va, fmt);
-  vfprintf(stderr, fmt, va);
-  va_end(va);
-  fprintf(stderr, "\n");
-  exit(1);
-}
 
 static bool translateStrings = false;
 
@@ -102,8 +83,8 @@ std::string localname(TProtoFunc *tf, int n) {
 
 class Expression {
 public:
-  Expression(Byte *p) : pos(p) { }
-  Byte *pos;			// Position just after the expression
+  Expression(byte *p) : pos(p) { }
+  byte *pos;			// Position just after the expression
 				// is pushed onto the stack
   virtual void print(std::ostream &os) const = 0;
   virtual int precedence() const { return 100; }
@@ -117,21 +98,21 @@ inline std::ostream& operator <<(std::ostream &os, const Expression &e) {
 
 class NumberExpr : public Expression {
 public:
-  NumberExpr(Byte *p, float val) : Expression(p), value(val) { }
+  NumberExpr(byte *p, float val) : Expression(p), value(val) { }
   float value;
   void print(std::ostream &os) const { os << value; }
 };
 
 class VarExpr : public Expression {
 public:
-  VarExpr(Byte *p, std::string varname) : Expression(p), name(varname) { }
+  VarExpr(byte *p, std::string varname) : Expression(p), name(varname) { }
   std::string name;
   void print(std::ostream &os) const { os << name; }
 };
 
 class StringExpr : public Expression {
 public:
-  StringExpr(Byte *p, TaggedString *txt) : Expression(p), text(txt) { }
+  StringExpr(byte *p, TaggedString *txt) : Expression(p), text(txt) { }
   TaggedString *text;
   bool validIdentifier() const {
     if (text->u.s.len == 0)
@@ -174,7 +155,7 @@ public:
 
 class FuncExpr : public Expression {
 public:
-  FuncExpr(Byte *p, TProtoFunc *tf0, std::string is) :
+  FuncExpr(byte *p, TProtoFunc *tf0, std::string is) :
     Expression(p), indent_str(is), tf(tf0), upvals(NULL), num_upvals(0) { }
   std::string indent_str;
   TProtoFunc *tf;
@@ -202,7 +183,7 @@ public:
 
 class IndexExpr : public Expression {
 public:
-  IndexExpr(Byte *p, Expression *tbl, Expression *i)
+  IndexExpr(byte *p, Expression *tbl, Expression *i)
     : Expression(p), table(tbl), index(i) { }
   Expression *table, *index;
   void print(std::ostream &os) const {
@@ -221,7 +202,7 @@ public:
 
 class SelfExpr : public IndexExpr {
 public:
-  SelfExpr(Byte *p, Expression *tbl, StringExpr *i) : IndexExpr(p, tbl, i) { }
+  SelfExpr(byte *p, Expression *tbl, StringExpr *i) : IndexExpr(p, tbl, i) { }
   void print(std::ostream &os) const {
     StringExpr *field = static_cast<StringExpr *>(index);
     os << *table << ":" << field->text->str;
@@ -230,7 +211,7 @@ public:
 
 class FuncCallExpr : public Expression {
 public:
-  FuncCallExpr(Byte *p) : Expression(p) { }
+  FuncCallExpr(byte *p) : Expression(p) { }
   int num_args;
   Expression **args;
   Expression *func;
@@ -258,7 +239,7 @@ public:
 
 class ArrayExpr : public Expression {
 public:
-  ArrayExpr(Byte *p) : Expression(p) { }
+  ArrayExpr(byte *p) : Expression(p) { }
   typedef std::pair<Expression *, Expression *> mapping;
   typedef std::list<mapping> mapping_list;
   mapping_list mappings;
@@ -292,7 +273,7 @@ public:
 
 class BinaryExpr : public Expression {
 public:
-  BinaryExpr(Byte *ps, Expression *l, Expression *r, int p, bool ra,
+  BinaryExpr(byte *ps, Expression *l, Expression *r, int p, bool ra,
 	     std::string o) :
     Expression(ps), left(l), right(r), prec(p), right_assoc(ra), op(o) { }
   Expression *left, *right;
@@ -318,7 +299,7 @@ public:
 
 class UnaryExpr : public Expression {
 public:
-  UnaryExpr(Byte *ps, Expression *a, int p, std::string o) :
+  UnaryExpr(byte *ps, Expression *a, int p, std::string o) :
     Expression(ps), arg(a), prec(p), op(o) { }
   Expression *arg;
   int prec;
@@ -338,27 +319,27 @@ typedef std::stack<Expression *> ExprStack;
 
 class Decompiler {
 public:
-  void decompileRange(Byte *start, Byte *end);
+  void decompileRange(byte *start, byte *end);
 
   std::ostream *os;
   ExprStack *stk;
   TProtoFunc *tf;
   std::string indent_str;
-  Byte *break_pos;
+  byte *break_pos;
   Expression **upvals; int num_upvals;
-  std::multiset<Byte *> *local_var_defs;
+  std::multiset<byte *> *local_var_defs;
 
 private:
-  void do_multi_assign(Byte *&start);
-  void do_binary_op(Byte *pos, int prec, bool right_assoc, std::string op);
-  void do_unary_op(Byte *pos, int prec, std::string op);
-  static bool is_expr_opc(Byte opc);
-  void get_else_part(Byte *start, Byte *&if_part_end,
-		     bool &has_else, Byte *&else_part_end);
+  void do_multi_assign(byte *&start);
+  void do_binary_op(byte *pos, int prec, bool right_assoc, std::string op);
+  void do_unary_op(byte *pos, int prec, std::string op);
+  static bool is_expr_opc(byte opc);
+  void get_else_part(byte *start, byte *&if_part_end,
+		     bool &has_else, byte *&else_part_end);
 };
 
 // Scan for a series of assignments
-void Decompiler::do_multi_assign(Byte *&start) {
+void Decompiler::do_multi_assign(byte *&start) {
   std::queue<Expression *> results;
   ExprStack values;
 
@@ -475,14 +456,14 @@ void Decompiler::do_multi_assign(Byte *&start) {
   *os << std::endl;
 }
 
-void Decompiler::do_binary_op(Byte *pos, int prec, bool right_assoc,
+void Decompiler::do_binary_op(byte *pos, int prec, bool right_assoc,
 			      std::string op) {
   Expression *right = stk->top(); stk->pop();
   Expression *left = stk->top(); stk->pop();
   stk->push(new BinaryExpr(pos, left, right, prec, right_assoc, op));
 }
 
-void Decompiler::do_unary_op(Byte *pos, int prec, std::string op) {
+void Decompiler::do_unary_op(byte *pos, int prec, std::string op) {
   Expression *arg = stk->top(); stk->pop();
   stk->push(new UnaryExpr(pos, arg, prec, op));
 }
@@ -558,7 +539,7 @@ int instr_lens[] = {
   1, 1				// POP0,1
 };
 
-bool Decompiler::is_expr_opc(Byte opc) {
+bool Decompiler::is_expr_opc(byte opc) {
   if (opc >= PUSHNIL && opc <= CREATEARRAYW)
     return true;
   if (opc == SETLIST0)
@@ -573,13 +554,13 @@ bool Decompiler::is_expr_opc(Byte opc) {
 }
 
 // Check for JMP or JMPW at end of "if" part
-void Decompiler::get_else_part(Byte *start, Byte *&if_part_end,
-			       bool &has_else, Byte *&else_part_end) {
-  Byte *last_instr = NULL;
+void Decompiler::get_else_part(byte *start, byte *&if_part_end,
+			       bool &has_else, byte *&else_part_end) {
+  byte *last_instr = NULL;
   has_else = false;
   else_part_end = NULL;
 
-  for (Byte *instr_scan = start; instr_scan < if_part_end;
+  for (byte *instr_scan = start; instr_scan < if_part_end;
        instr_scan += instr_lens[*instr_scan])
     last_instr = instr_scan;
   if (last_instr != NULL &&
@@ -592,14 +573,14 @@ void Decompiler::get_else_part(Byte *start, Byte *&if_part_end,
   }
 }
 
-void Decompiler::decompileRange(Byte *start, Byte *end) {
+void Decompiler::decompileRange(byte *start, byte *end) {
   // First, scan for IFFUPJMP, which is used for repeat/until, so
   // we can recognize the start of such loops.  We only keep the
   // last value to match each address, which represents the outermost
   // repeat/until loop starting at that point.
-  std::map<Byte *, Byte *> rev_iffupjmp_map;
+  std::map<byte *, byte *> rev_iffupjmp_map;
 
-  for (Byte *scan = start; end == NULL || scan < end;
+  for (byte *scan = start; end == NULL || scan < end;
        scan += instr_lens[*scan]) {
     if (*scan == IFFUPJMP)
       rev_iffupjmp_map[scan + 2 - scan[1]] = scan;
@@ -658,7 +639,7 @@ void Decompiler::decompileRange(Byte *start, Byte *end) {
       continue;
     }
 
-    Byte opc = *start++;
+    byte opc = *start++;
     int aux;
 
     switch (opc) {
@@ -1034,14 +1015,14 @@ void Decompiler::decompileRange(Byte *start, Byte *end) {
       start += 2;
     jmp:
       {
-	Byte *dest = start + aux;
+	byte *dest = start + aux;
 	if (dest == break_pos) {
 	  *os << indent_str << "break\n";
 	  break;
 	}
 
 	// otherwise, must be the start of a while statement
-	Byte *while_cond_end;
+	byte *while_cond_end;
 	for (while_cond_end = dest; end == NULL || while_cond_end < end;
 	     while_cond_end += instr_lens[*while_cond_end])
 	  if (*while_cond_end == IFTUPJMP || *while_cond_end == IFTUPJMPW)
@@ -1080,7 +1061,7 @@ void Decompiler::decompileRange(Byte *start, Byte *end) {
     iffjmp:
       {
 	// Output an if/end, if/else/end, if/elseif/else/end, ... statement
-	Byte *if_part_end = start + aux;
+	byte *if_part_end = start + aux;
 	Decompiler indented_dc = *this;
 	indented_dc.indent_str += std::string(4, ' ');
 
@@ -1090,7 +1071,7 @@ void Decompiler::decompileRange(Byte *start, Byte *end) {
 	*os << " then\n";
 
 	bool has_else;
-	Byte *else_part_end;
+	byte *else_part_end;
 	get_else_part(start, if_part_end, has_else, else_part_end);
 
 	// Output the if part
@@ -1101,7 +1082,7 @@ void Decompiler::decompileRange(Byte *start, Byte *end) {
 	if (has_else) {
 	  // Check whether the entire else part is a single
 	  // if or if/else statement
-	  Byte *instr_scan = start;
+	  byte *instr_scan = start;
 	  while (is_expr_opc(*instr_scan) &&
 		 (end == NULL || instr_scan < else_part_end))
 	    instr_scan += instr_lens[*instr_scan];
@@ -1109,7 +1090,7 @@ void Decompiler::decompileRange(Byte *start, Byte *end) {
 	      (*instr_scan == IFFJMP || *instr_scan == IFFJMPW)) {
 	    // OK, first line will be if, check if it will go all
 	    // the way through
-	    Byte *new_start, *new_if_part_end, *new_else_part_end;
+	    byte *new_start, *new_if_part_end, *new_else_part_end;
 	    bool new_has_else;
 	    if (*instr_scan == IFFJMP) {
 	      aux = instr_scan[1];
@@ -1258,10 +1239,10 @@ void Decompiler::decompileRange(Byte *start, Byte *end) {
 // Decompile the body of a function.
 void decompile(std::ostream &os, TProtoFunc *tf, std::string indent_str,
 	       Expression **upvals, int num_upvals) {
-  Byte *instr = tf->code + 2;
+  byte *instr = tf->code + 2;
   ExprStack s;
   std::ostringstream first_time;
-  std::multiset<Byte *> loc_vars;
+  std::multiset<byte *> loc_vars;
 
   // First, do a preliminary pass to see where local variables are defined
   Decompiler dc;
@@ -1309,20 +1290,25 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
   char *filename = argv[filename_pos];
-  FILE *f = fopen(filename, "rb");
-  if (f == NULL) {
-    perror(filename);
+  Common::File f;
+  f.open(filename);
+  if (!f.isOpen()) {
     exit(1);
   }
 
   lua_open();
   ZIO z;
-  luaZ_Fopen(&z, f, filename);
+  int size = f.size();
+  char *buff = new char[size];
+  f.read(buff, size);
+
+  luaZ_mopen(&z, buff, size, "(buffer)");
   TProtoFunc *tf = luaU_undump1(&z);
-  fclose(f);
+  f.close();
 
   decompile(std::cout, tf, "", NULL, 0);
 
+  delete[] buff;
   lua_close();
   return 0;
 }

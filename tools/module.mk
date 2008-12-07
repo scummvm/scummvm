@@ -46,7 +46,8 @@ tools/delua$(EXEEXT): $(srcdir)/tools/delua.cpp
 	engine/lua/llex.o engine/lua/lmathlib.o engine/lua/lmem.o engine/lua/lobject.o \
 	engine/lua/lparser.o engine/lua/lrestore.o engine/lua/lsave.o engine/lua/lstate.o \
 	engine/lua/lstring.o engine/lua/lstrlib.o engine/lua/ltable.o engine/lua/ltask.o \
-	engine/lua/ltm.o engine/lua/lundump.o engine/lua/lvm.o engine/lua/lzio.o -o $@ $<
+	engine/lua/ltm.o engine/lua/lundump.o engine/lua/lvm.o engine/lua/lzio.o \
+	-Lcommon -lcommon $(LIBS) -o $@ $<
 
 tools/mat2ppm$(EXEEXT): $(srcdir)/tools/mat2ppm.cpp
 	$(MKDIR) tools/$(DEPDIR)
