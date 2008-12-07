@@ -94,6 +94,7 @@ void TuckerEngine::execData3PreUpdate_locationNum1Helper2() {
 			yPos = 0;
 		}
 		_locationBackgroundGfxBuf[yPos * 640 + xPos] = 100;
+		addDirtyRect(xPos, yPos, 1, 1);
 	}
 }
 
@@ -194,6 +195,7 @@ void TuckerEngine::execData3PreUpdate_locationNum2() {
 				for (int j = 0; j < 2; ++j) {
 					const int offset = (_updateLocationYPosTable2[i] + j) * 640 + _updateLocationXPosTable2[i];
 					_locationBackgroundGfxBuf[offset] = 142 + j * 2;
+					addDirtyRect(offset % 640, offset / 640, 1, 1);
 				}
 				_updateLocationYPosTable2[i] += 2;
 				if (_updateLocationYPosTable2[i] > _updateLocationYMaxTable[i]) {
@@ -538,40 +540,42 @@ void TuckerEngine::execData3PreUpdate_locationNum6Helper1() {
 		x2 = 15 - _flagsTable[27];
 	}
 	for (int i = 0; i < x1; ++i) {
-		execData3PreUpdate_locationNum6Helper2(_locationBackgroundGfxBuf + 13125 + i * 8, _data3GfxBuf + _dataTable[238].sourceOffset);
-		execData3PreUpdate_locationNum6Helper2(_locationBackgroundGfxBuf + 13245 - i * 8, _data3GfxBuf + _dataTable[238].sourceOffset);
+		execData3PreUpdate_locationNum6Helper2(13125 + i * 8, _data3GfxBuf + _dataTable[238].sourceOffset);
+		execData3PreUpdate_locationNum6Helper2(13245 - i * 8, _data3GfxBuf + _dataTable[238].sourceOffset);
 	}
 	for (int i = 0; i < x2; ++i) {
-		execData3PreUpdate_locationNum6Helper3(_locationBackgroundGfxBuf + 13125 + x1 * 8 + i * 4, _data3GfxBuf + _dataTable[238].sourceOffset);
-		execData3PreUpdate_locationNum6Helper3(_locationBackgroundGfxBuf + 13249 - x1 * 8 - i * 4, _data3GfxBuf + _dataTable[238].sourceOffset);
+		execData3PreUpdate_locationNum6Helper3(13125 + x1 * 8 + i * 4, _data3GfxBuf + _dataTable[238].sourceOffset);
+		execData3PreUpdate_locationNum6Helper3(13249 - x1 * 8 - i * 4, _data3GfxBuf + _dataTable[238].sourceOffset);
 	}
 }
 
-void TuckerEngine::execData3PreUpdate_locationNum6Helper2(uint8 *dst, const uint8 *src) {
+void TuckerEngine::execData3PreUpdate_locationNum6Helper2(int dstOffset, const uint8 *src) {
 	for (int j = 0; j < 46; ++j) {
-		memcpy(dst + j * 640, src + j * 8, 8);
+		memcpy(_locationBackgroundGfxBuf + dstOffset + j * 640, src + j * 8, 8);
 	}
 	for (int j = 46; j < 51; ++j) {
 		for (int i = 0; i < 8; ++i) {
-			const int offset = j * 640 + i;
-			uint8 color = dst[offset];
+			const int offset = dstOffset + j * 640 + i;
+			uint8 color = _locationBackgroundGfxBuf[offset];
 			if (color < 224) {
-				dst[offset] = src[j * 8 + i];
+				_locationBackgroundGfxBuf[offset] = src[j * 8 + i];
 			}
 		}
 	}
+	addDirtyRect(dstOffset % 640, dstOffset / 640, 8, 51);
 }
 
-void TuckerEngine::execData3PreUpdate_locationNum6Helper3(uint8 *dst, const uint8 *src) {
+void TuckerEngine::execData3PreUpdate_locationNum6Helper3(int dstOffset, const uint8 *src) {
 	for (int j = 0; j < 51; ++j) {
 		for (int i = 0; i < 4; ++i) {
-			const int offset = j * 640 + i;
-			uint8 color = dst[offset];
+			const int offset = dstOffset + j * 640 + i;
+			uint8 color = _locationBackgroundGfxBuf[offset];
 			if (color < 224) {
-				dst[offset] = src[j * 8 + i * 2];
+				_locationBackgroundGfxBuf[offset] = src[j * 8 + i * 2];
 			}
 		}
 	}
+	addDirtyRect(dstOffset % 640, dstOffset / 640, 4, 51);
 }
 
 void TuckerEngine::updateSprite_locationNum7_0(int i) {
@@ -645,16 +649,17 @@ void TuckerEngine::execData3PostUpdate_locationNum8() {
 	}
 	if (_updateLocationYPosTable2[0] > 0) {
 		const int offset = _updateLocationYPosTable2[0] * 640 + _updateLocationXPosTable2[0];
-		_locationBackgroundGfxBuf[offset]         = 142;
-		_locationBackgroundGfxBuf[offset + 0x27F] = 143;
-		_locationBackgroundGfxBuf[offset + 0x280] = 143;
-		_locationBackgroundGfxBuf[offset + 0x281] = 144;
-		_locationBackgroundGfxBuf[offset + 0x4FF] = 144;
-		_locationBackgroundGfxBuf[offset + 0x500] = 144;
-		_locationBackgroundGfxBuf[offset + 0x501] = 145;
-		_locationBackgroundGfxBuf[offset + 0x77F] = 147;
-		_locationBackgroundGfxBuf[offset + 0x780] = 143;
-		_locationBackgroundGfxBuf[offset + 0x781] = 147;
+		_locationBackgroundGfxBuf[offset]               = 142;
+		_locationBackgroundGfxBuf[offset + 640     - 1] = 143;
+		_locationBackgroundGfxBuf[offset + 640]         = 143;
+		_locationBackgroundGfxBuf[offset + 640     + 1] = 144;
+		_locationBackgroundGfxBuf[offset + 640 * 2 - 1] = 144;
+		_locationBackgroundGfxBuf[offset + 640 * 2]     = 144;
+		_locationBackgroundGfxBuf[offset + 640 * 2 + 1] = 145;
+		_locationBackgroundGfxBuf[offset + 640 * 3 - 1] = 147;
+		_locationBackgroundGfxBuf[offset + 640 * 3]     = 143;
+		_locationBackgroundGfxBuf[offset + 640 * 3 + 1] = 147;
+		addDirtyRect(_updateLocationXPosTable2[0] - 1, _updateLocationYPosTable2[0], 3, 4);
 		_updateLocationYPosTable2[0] += 2;
 		if (_updateLocationYPosTable2[0] > 120) {
 			_updateLocationYPosTable2[0] = 0;
@@ -1005,6 +1010,7 @@ void TuckerEngine::execData3PreUpdate_locationNum14() {
 			const int h = _dataTable[num].ySize;
 			const int dstOffset = (_updateLocationYPosTable2[i] / 16 - h / 2) * 640 + (_updateLocationXPosTable2[i] - w / 2);
 			Graphics::decodeRLE_248(_locationBackgroundGfxBuf + dstOffset, _data3GfxBuf + _dataTable[num].sourceOffset, w, h, 0, 0, false);
+			addDirtyRect(dstOffset % 640, dstOffset / 640, w, h);
 		}
 	}
 }
@@ -3020,16 +3026,16 @@ void TuckerEngine::execData3PreUpdate_locationNum70() {
 	setCursorType(2);
 	int pos = getPositionForLine(22, _infoBarBuf);
 	int offset = (_flagsTable[143] == 0) ? 57688 : 46168;
-	drawStringAlt(_locationBackgroundGfxBuf + offset, color, &_infoBarBuf[pos]);
+	drawStringAlt(offset, color, &_infoBarBuf[pos]);
 	Graphics::drawStringChar(_locationBackgroundGfxBuf + offset + 5760, 62, 640, color, _charsetGfxBuf);
 	if (_flagsTable[143] != 0) {
 		pos = getPositionForLine(_flagsTable[143] * 2 + 23, _infoBarBuf);
-		drawStringAlt(_locationBackgroundGfxBuf + offset + 11520, color, &_infoBarBuf[pos]);
+		drawStringAlt(offset + 11520, color, &_infoBarBuf[pos]);
 		pos = getPositionForLine(_flagsTable[143] * 2 + 24, _infoBarBuf);
-		drawStringAlt(_locationBackgroundGfxBuf + offset + 17280, color, &_infoBarBuf[pos]);
+		drawStringAlt(offset + 17280, color, &_infoBarBuf[pos]);
 	}
 	execData3PreUpdate_locationNum70Helper();
-	drawStringAlt(_locationBackgroundGfxBuf + offset + 5768, color, _updateLocation70String, _updateLocation70StringLen);
+	drawStringAlt(offset + 5768, color, _updateLocation70String, _updateLocation70StringLen);
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum70Helper() {

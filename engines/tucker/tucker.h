@@ -173,6 +173,7 @@ struct LocationMusic {
 enum {
 	kScreenWidth = 320,
 	kScreenHeight = 200,
+	kScreenPitch = 640,
 	kFadePaletteStep = 5,
 	kStartupLocation = 1,
 	kDefaultCharSpeechSoundCounter = 1,
@@ -224,7 +225,8 @@ public:
 		kSprC02TableSize = 40,
 		kDataTableSize = 500,
 		kSpeechHistoryTableSize = 5,
-		kMaxCharacters = 8
+		kMaxCharacters = 8,
+		kMaxDirtyRects = 16
 	};
 
 	TuckerEngine(OSystem *system, Common::Language language, bool isDemo);
@@ -305,15 +307,14 @@ protected:
 	void updateSprites();
 	void updateSprite(int i);
 	void drawStringInteger(int num, int x, int y, int digits);
-	void drawStringAlt(uint8 *dst, int color, const uint8 *str, int strLen = -1);
-	void drawString(uint8 *dst, int num, const uint8 *str);
-	void drawString2(int x, int y, int num);
+	void drawStringAlt(int offset, int color, const uint8 *str, int strLen = -1);
+	void drawItemString(int offset, int num, const uint8 *str);
+	void drawCreditsString(int x, int y, int num);
 	void updateCharSpeechSound();
 	void updateItemsGfxColors(int bit0, int bit7);
 	int testLocationMask(int x, int y);
 	int getStringWidth(int num, const uint8 *ptr);
 	int getPositionForLine(int num, const uint8 *ptr);
-	void copyToVGA(const uint8 *src);
 	void findActionKey(int count);
 	int parseTableInstruction();
 	void moveUpInventoryObjects();
@@ -331,7 +332,10 @@ protected:
 	void playSpeechForAction(int i);
 	void drawSpeechText(int xStart, int y, const uint8 *dataPtr, int num, int color);
 	int splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int &lineCharsCount, int &lineWidth);
-	void drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, uint8 *dst, uint8 color);
+	void drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, int dstOffset, uint8 color);
+	void redrawScreen(int offset);
+	void redrawScreenRect(const Common::Rect &clip, const Common::Rect &dirty);
+	void addDirtyRect(int x, int y, int w, int h);
 
 	void execData3PreUpdate_locationNum1();
 	void execData3PreUpdate_locationNum1Helper1();
@@ -354,8 +358,8 @@ protected:
 	void updateSprite_locationNum6_2(int i);
 	void execData3PreUpdate_locationNum6();
 	void execData3PreUpdate_locationNum6Helper1();
-	void execData3PreUpdate_locationNum6Helper2(uint8 *dst, const uint8 *src);
-	void execData3PreUpdate_locationNum6Helper3(uint8 *dst, const uint8 *src);
+	void execData3PreUpdate_locationNum6Helper2(int dstOffset, const uint8 *src);
+	void execData3PreUpdate_locationNum6Helper3(int dstOffset, const uint8 *src);
 	void updateSprite_locationNum7_0(int i);
 	void updateSprite_locationNum7_1(int i);
 	void updateSprite_locationNum8_0(int i);
@@ -792,6 +796,9 @@ protected:
 	uint8 *_currentGfxBackground;
 	int _fadePaletteCounter;
 	uint8 _currentPalette[768];
+	int _fullRedrawCounter;
+	int _dirtyRectsPrevCount, _dirtyRectsCount;
+	Common::Rect _dirtyRectsTable[2][kMaxDirtyRects];
 
 	int _updateLocationFadePaletteCounter;
 	int _updateLocationCounter;

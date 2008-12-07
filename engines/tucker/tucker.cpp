@@ -303,6 +303,8 @@ void TuckerEngine::restart() {
 	_currentGfxBackground = 0;
 	_fadePaletteCounter = 0;
 	memset(&_currentPalette, 0, sizeof(_currentPalette));
+	_fullRedrawCounter = 0;
+	_dirtyRectsPrevCount = _dirtyRectsCount = 0;
 
 	_updateLocationFadePaletteCounter = 0;
 	_updateLocationCounter = 10;
@@ -480,8 +482,12 @@ void TuckerEngine::mainLoop() {
 		if (_syncCounter != 0) {
 			continue;
 		}
-		Graphics::copyTo640(_locationBackgroundGfxBuf + _scrollOffset, _currentGfxBackground + _scrollOffset, 320 - _scrollOffset, 320, _locationHeight);
-		Graphics::copyTo640(_locationBackgroundGfxBuf + 320, _currentGfxBackground + 44800, _scrollOffset, 320, _locationHeight);
+		if (_scrollOffset < 320) {
+			Graphics::copyTo640(_locationBackgroundGfxBuf + _scrollOffset, _currentGfxBackground + _scrollOffset, 320 - _scrollOffset, 320, _locationHeight);
+		}
+		if (_scrollOffset > 0) {
+			Graphics::copyTo640(_locationBackgroundGfxBuf + 320, _currentGfxBackground + 44800, _scrollOffset, 320, _locationHeight);
+		}
 		drawData3();
 		execData3PreUpdate();
 		for (int i = 0; i < _spritesCount; ++i) {
@@ -511,7 +517,7 @@ void TuckerEngine::mainLoop() {
 			setSoundVolumeDistance();
 		}
 		updateCharSpeechSound();
-		copyToVGA(_locationBackgroundGfxBuf + _scrollOffset);
+		redrawScreen(_scrollOffset);
 		startCharacterSounds();
 		for (int num = 0; num < 2; ++num) {
 			if (_miscSoundFxDelayCounter[num] > 0) {
@@ -1384,7 +1390,7 @@ void TuckerEngine::switchPanelType() {
 
 void TuckerEngine::redrawPanelOverBackground() {
 	const uint8 *src = _itemsGfxBuf;
-	uint8 *dst = _locationBackgroundGfxBuf + 89600 + _scrollOffset;
+	uint8 *dst = _locationBackgroundGfxBuf + 640 * 140 + _scrollOffset;
 	for (int y = 0; y < 10; ++y) {
 		memcpy(dst, src, 320);
 		src += 320;
@@ -1411,6 +1417,7 @@ void TuckerEngine::redrawPanelOverBackground() {
 	if (_conversationOptionsCount > 0) {
 		drawConversationTexts();
 	}
+	addDirtyRect(0, 140, 320, 60);
 }
 
 void TuckerEngine::drawConversationTexts() {
@@ -1435,6 +1442,7 @@ void TuckerEngine::drawConversationTexts() {
 }
 
 void TuckerEngine::updateScreenScrolling() {
+	int scrollPrevOffset = _scrollOffset;
 	if (_locationWidthTable[_locationNum] != 2) {
 		_scrollOffset = 0;
 	} else if (_validInstructionId == 1) {
@@ -1454,6 +1462,9 @@ void TuckerEngine::updateScreenScrolling() {
 		if (_scrollOffset > 320) {
 			_scrollOffset = 320;
 		}
+	}
+	if (scrollPrevOffset != _scrollOffset) {
+		_fullRedrawCounter = 2;
 	}
 }
 
@@ -1523,9 +1534,10 @@ void TuckerEngine::updateSoundsTypes3_4() {
 void TuckerEngine::drawData3() {
 	for (int i = 0; i < _locationAnimationsCount; ++i) {
 		int num = _locationAnimationsTable[i].graphicNum;
-		const int offset = _dataTable[num].yDest * 640 + _dataTable[num].xDest;
+		const Data *d = &_dataTable[num];
 		if (_locationAnimationsTable[i].drawFlag != 0) {
-			Graphics::decodeRLE(_locationBackgroundGfxBuf + offset, _data3GfxBuf + _dataTable[num].sourceOffset, _dataTable[num].xSize, _dataTable[num].ySize);
+			Graphics::decodeRLE(_locationBackgroundGfxBuf + d->yDest * 640 + d->xDest, _data3GfxBuf + d->sourceOffset, d->xSize, d->ySize);
+			addDirtyRect(d->xDest, d->yDest, d->xSize, d->ySize);
 		}
 	}
 }
@@ -1688,6 +1700,7 @@ void TuckerEngine::drawBackgroundSprites() {
 		}
 		int offset = _backgroundSprOffset + srcY * 640 + srcX;
 		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + offset, _backgroundSpriteDataPtr + frameOffset + 12, srcW, srcH, 0, _locationHeightTable[_locationNum], false);
+		addDirtyRect(offset % 640, offset / 640, srcW, srcH);
 	}
 }
 
@@ -1701,6 +1714,7 @@ void TuckerEngine::drawCurrentSprite() {
 	}
 	Graphics::decodeRLE_248(_locationBackgroundGfxBuf + offset, _spritesGfxBuf + chr->sourceOffset, chr->xSize, chr->ySize,
 		chr->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0);
+	addDirtyRect(offset % 640, offset / 640, chr->xSize, chr->ySize);
 	if (_currentSpriteAnimationLength > 1) {
 		SpriteFrame *chr2 = &_spriteFramesTable[_currentSpriteAnimationFrame2];
 		offset = (_yPosCurrent + _mainSpritesBaseOffset - 54 + chr2->yOffset) * 640 + _xPosCurrent;
@@ -1711,6 +1725,7 @@ void TuckerEngine::drawCurrentSprite() {
 		}
 		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + offset, _spritesGfxBuf + chr2->sourceOffset, chr2->xSize, chr2->ySize,
 			chr2->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0);
+		addDirtyRect(offset % 640, offset / 640, chr2->xSize, chr2->ySize);
 	}
 }
 
@@ -1853,6 +1868,7 @@ void TuckerEngine::drawSprite(int num) {
 			Graphics::decodeRLE_248(dstPtr, srcPtr, srcW, srcH, 0, s->yMaxBackground, s->flipX != 0);
 			break;
 		}
+		addDirtyRect(dstOffset % 640, dstOffset / 640 + srcY, srcW, srcH);
 	}
 }
 
@@ -1863,7 +1879,7 @@ void TuckerEngine::clearItemsGfx() {
 void TuckerEngine::drawPausedInfoBar() {
 	int len = getStringWidth(36, _infoBarBuf);
 	int x = 159 - len / 2;
-	drawString(_itemsGfxBuf + 326 + x, 36, _infoBarBuf);
+	drawItemString(326 + x, 36, _infoBarBuf);
 }
 
 const uint8 *TuckerEngine::getStringBuf(int type) const {
@@ -1917,15 +1933,15 @@ void TuckerEngine::drawInfoString() {
 	}
 	const int xPos = 159 - infoStringWidth / 2;
 	if (verbPreposition == 0 || (_actionObj2Num == 0 && _actionObj2Type == 0)) {
-		drawString(_itemsGfxBuf + xPos, _actionVerb + 1, infoStrBuf);
+		drawItemString(xPos, _actionVerb + 1, infoStrBuf);
 		if (_actionObj1Num > 0 || _actionObj1Type > 0) {
-			drawString(_itemsGfxBuf + xPos + 4 + verbWidth, _actionObj1Num + 1, obj1StrBuf);
+			drawItemString(xPos + 4 + verbWidth, _actionObj1Num + 1, obj1StrBuf);
 		}
 	}
 	if (verbPreposition > 0) {
-		drawString(_itemsGfxBuf + xPos + 4 + verbWidth + object1NameWidth, verbPreposition, infoStrBuf);
+		drawItemString(xPos + 4 + verbWidth + object1NameWidth, verbPreposition, infoStrBuf);
 		if (_actionObj2Num > 0 || _actionObj2Type > 0) {
-			drawString(_itemsGfxBuf + xPos + 4 + verbWidth + object1NameWidth + verbPrepositionWidth, _actionObj2Num + 1, obj2StrBuf);
+			drawItemString(xPos + 4 + verbWidth + object1NameWidth + verbPrepositionWidth, _actionObj2Num + 1, obj2StrBuf);
 		}
 	}
 }
@@ -1933,7 +1949,7 @@ void TuckerEngine::drawInfoString() {
 void TuckerEngine::drawGameHintString() {
 	const int len = getStringWidth(_gameHintsStringNum + 29, _infoBarBuf);
 	const int x = 159 - len / 2;
-	drawString(_itemsGfxBuf + 326 + x, _gameHintsStringNum + 29, _infoBarBuf);
+	drawItemString(326 + x, _gameHintsStringNum + 29, _infoBarBuf);
 }
 
 void TuckerEngine::updateCharacterAnimation() {
@@ -2314,7 +2330,7 @@ void TuckerEngine::handleMap() {
 			}
 			for (int i = 0; i < 14; ++i) {
 				fadeInPalette();
-				copyToVGA(_locationBackgroundGfxBuf + _scrollOffset);
+				redrawScreen(_scrollOffset);
 				_fadePaletteCounter = 34;
 			}
 			_nextLocationNum = _selectedObject.locationObject_locationNum;
@@ -2819,29 +2835,32 @@ void TuckerEngine::drawStringInteger(int num, int x, int y, int digits) {
 		Graphics::drawStringChar(_locationBackgroundGfxBuf + offset, numStr[i], 640, 102, _charsetGfxBuf);
 		offset += 8;
 	}
+	addDirtyRect(x, y, Graphics::_charset.charW * 3, Graphics::_charset.charH);
 }
 
-void TuckerEngine::drawStringAlt(uint8 *dst, int color, const uint8 *str, int strLen) {
+void TuckerEngine::drawStringAlt(int offset, int color, const uint8 *str, int strLen) {
+	int startOffset = offset;
 	int pos = 0;
 	while (pos != strLen && str[pos] != '\n') {
 		const uint8 chr = str[pos];
-		Graphics::drawStringChar(dst, chr, 640, color, _charsetGfxBuf);
-		dst += _charWidthTable[chr];
+		Graphics::drawStringChar(_locationBackgroundGfxBuf + offset, chr, 640, color, _charsetGfxBuf);
+		offset += _charWidthTable[chr];
 		++pos;
 	}
+	addDirtyRect(startOffset % 640, startOffset / 640, (offset - startOffset) % 640, Graphics::_charset.charH);
 }
 
-void TuckerEngine::drawString(uint8 *dst, int num, const uint8 *str) {
+void TuckerEngine::drawItemString(int offset, int num, const uint8 *str) {
 	int count = getPositionForLine(num, str);
 	while (str[count] != '\n') {
 		const uint8 chr = str[count];
-		Graphics::drawStringChar(dst, chr, 320, 1, _charsetGfxBuf);
-		dst += _charWidthTable[chr];
+		Graphics::drawStringChar(_itemsGfxBuf + offset, chr, 320, 1, _charsetGfxBuf);
+		offset += _charWidthTable[chr];
 		++count;
 	}
 }
 
-void TuckerEngine::drawString2(int x, int y, int num) {
+void TuckerEngine::drawCreditsString(int x, int y, int num) {
 	uint8 *dst = _locationBackgroundGfxBuf + y * 640 + x;
 	int pos = getPositionForLine(num, _ptTextBuf);
 	while (_ptTextBuf[pos] != '\n') {
@@ -2923,11 +2942,6 @@ int TuckerEngine::getPositionForLine(int num, const uint8 *ptr) {
 		++i;
 	}
 	return i;
-}
-
-void TuckerEngine::copyToVGA(const uint8 *src) {
-	_system->copyRectToScreen(src, 640, 0, 0, 320, 200);
-	_system->updateScreen();
 }
 
 void TuckerEngine::findActionKey(int count) {
@@ -3754,15 +3768,14 @@ void TuckerEngine::drawSpeechText(int xStart, int y, const uint8 *dataPtr, int n
 		} else if (dstOffset > _scrollOffset + 320 - lines[i].w) {
 			dstOffset = _scrollOffset + 320 - lines[i].w;
 		}
-		uint8 *dst;
-		if (_conversationOptionsCount) {
+		if (_conversationOptionsCount != 0) {
 			dstOffset = xStart + _scrollOffset;
-			dst = (i * 10 + y) * 640 + _locationBackgroundGfxBuf + dstOffset;
+			dstOffset += (i * 10 + y) * 640;
 			_panelItemWidth = count;
 		} else {
-			dst = (y - (count - i) * 10) * 640 + _locationBackgroundGfxBuf + dstOffset;
+			dstOffset += (y - (count - i) * 10) * 640;
 		}
-		drawSpeechTextLine(dataPtr, lines[i].offset, lines[i].count, dst, color);
+		drawSpeechTextLine(dataPtr, lines[i].offset, lines[i].count, dstOffset, color);
 	}
 }
 
@@ -3789,12 +3802,59 @@ int TuckerEngine::splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int
 	return ret;
 }
 
-void TuckerEngine::drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, uint8 *dst, uint8 color) {
+void TuckerEngine::drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, int dstOffset, uint8 color) {
+	int startOffset = dstOffset;
 	while (count > 0 && dataPtr[pos] != '\n') {
-		Graphics::drawStringChar(dst, dataPtr[pos], 640, color, _charsetGfxBuf);
-		dst += _charWidthTable[dataPtr[pos]];
+		Graphics::drawStringChar(_locationBackgroundGfxBuf + dstOffset, dataPtr[pos], 640, color, _charsetGfxBuf);
+		dstOffset += _charWidthTable[dataPtr[pos]];
 		++pos;
 		--count;
+	}
+	addDirtyRect(startOffset % 640, startOffset / 640, (dstOffset - startOffset) % 640, Graphics::_charset.charH);
+}
+
+void TuckerEngine::redrawScreen(int offset) {
+	debug(3, "redrawScreen() _fullRedrawCounter %d offset %d _dirtyRectsCount %d", _fullRedrawCounter, offset, _dirtyRectsCount);
+	assert(offset <= kScreenWidth);
+	if (_fullRedrawCounter > 0) {
+		--_fullRedrawCounter;
+		_system->copyRectToScreen(_locationBackgroundGfxBuf + offset, kScreenPitch, 0, 0, kScreenWidth, kScreenHeight);
+	} else {
+		const int xClip = offset % kScreenPitch;
+		const int yClip = offset / kScreenPitch;
+		Common::Rect clipRect(xClip, yClip, xClip + kScreenWidth, yClip + kScreenHeight);
+		for (int i = 0; i < _dirtyRectsPrevCount; ++i) {
+			redrawScreenRect(clipRect, _dirtyRectsTable[1][i]);
+		}
+		for (int i = 0; i < _dirtyRectsCount; ++i) {
+			redrawScreenRect(clipRect, _dirtyRectsTable[0][i]);
+		}
+		_dirtyRectsPrevCount = _dirtyRectsCount;
+		for (int i = 0; i < _dirtyRectsCount; ++i) {
+			_dirtyRectsTable[1][i] = _dirtyRectsTable[0][i];
+		}
+	}
+	_dirtyRectsCount = 0;
+	_system->updateScreen();
+}
+
+void TuckerEngine::redrawScreenRect(const Common::Rect &clip, const Common::Rect &dirty) {
+	if (dirty.intersects(clip)) {
+		Common::Rect r(dirty);
+		r.clip(clip);
+		const uint8 *src = _locationBackgroundGfxBuf + r.top * 640 + r.left;
+		r.translate(-clip.left, -clip.top);
+		_system->copyRectToScreen(src, 640, r.left, r.top, r.right - r.left, r.bottom - r.top);
+	}
+}
+
+void TuckerEngine::addDirtyRect(int x, int y, int w, int h) {
+	if (_dirtyRectsCount >= kMaxDirtyRects) {
+		_fullRedrawCounter = 2;
+		_dirtyRectsCount = 0;
+	} else {
+		_dirtyRectsTable[0][_dirtyRectsCount] = Common::Rect(x, y, x + w, y + h);
+		++_dirtyRectsCount;
 	}
 }
 

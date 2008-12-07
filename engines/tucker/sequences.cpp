@@ -86,12 +86,12 @@ void TuckerEngine::handleCreditsSequence() {
 			Graphics::copyTo640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf, 320, 320, 200);
 		} else {
 			Graphics::copyTo640(_locationBackgroundGfxBuf, imgBuf + imgNum * 64000, 320, 320, 200);
-			drawString2(5, 48, counter2 * 6);
-			drawString2(5, 60, counter2 * 6 + 1);
-			drawString2(5, 80, counter2 * 6 + 2);
-			drawString2(5, 92, counter2 * 6 + 3);
-			drawString2(5, 140, counter2 * 6 + 4);
-			drawString2(5, 116, counter2 * 6 + 5);
+			drawCreditsString(5, 48, counter2 * 6);
+			drawCreditsString(5, 60, counter2 * 6 + 1);
+			drawCreditsString(5, 80, counter2 * 6 + 2);
+			drawCreditsString(5, 92, counter2 * 6 + 3);
+			drawCreditsString(5, 140, counter2 * 6 + 4);
+			drawCreditsString(5, 116, counter2 * 6 + 5);
 			++counter1;
 			if (counter1 < 20) {
 				fadePaletteColor(191, kFadePaletteStep);
@@ -106,6 +106,7 @@ void TuckerEngine::handleCreditsSequence() {
 				counter2 = 0;
 			}
 		}
+		_fullRedrawCounter = 2;
 		++counter3;
 		if (counter3 == 2) {
 			counter3 = 0;
@@ -114,7 +115,7 @@ void TuckerEngine::handleCreditsSequence() {
 		for (int i = 0; i < _spritesCount; ++i) {
 			drawSprite(i);
 		}
-		copyToVGA(_locationBackgroundGfxBuf);
+		redrawScreen(0);
 		waitForTimer(3);
 		_timerCounter1 = 0;
 		counter4 = _timerCounter2 / 3;
@@ -163,7 +164,7 @@ void TuckerEngine::handleCreditsSequence() {
 			fadeInPalette();
 			--_fadePaletteCounter;
 		}
-		copyToVGA(_locationBackgroundGfxBuf);
+		redrawScreen(0);
 		waitForTimer(2);
 	} while (_fadePaletteCounter > 0);
 }
@@ -175,7 +176,8 @@ void TuckerEngine::handleCongratulationsSequence() {
 	strcpy(_fileToLoad, "congrat.pcx");
 	loadImage(_loadTempBuf, 1);
 	Graphics::copyTo640(_locationBackgroundGfxBuf, _loadTempBuf, 320, 320, 200);
-	copyToVGA(_locationBackgroundGfxBuf);
+	_fullRedrawCounter = 2;
+	redrawScreen(0);
 	while (!_quitGame && _timerCounter2 < 450) {
 		while (_fadePaletteCounter < 14) {
 			++_fadePaletteCounter;
@@ -242,9 +244,10 @@ void TuckerEngine::handleNewPartSequence() {
 			++_fadePaletteCounter;
 		}
 		Graphics::copyTo640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf, 320, 320, 200);
+		_fullRedrawCounter = 2;
 		updateSprites();
 		drawSprite(0);
-		copyToVGA(_locationBackgroundGfxBuf);
+		redrawScreen(0);
 		waitForTimer(3);
 		if (_inputKeys[kInputKeyEscape]) {
 			_inputKeys[kInputKeyEscape] = false;
@@ -258,9 +261,10 @@ void TuckerEngine::handleNewPartSequence() {
 			--_fadePaletteCounter;
 		}
 		Graphics::copyTo640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf, 320, 320, 200);
+		_fullRedrawCounter = 2;
 		updateSprites();
 		drawSprite(0);
-		copyToVGA(_locationBackgroundGfxBuf);
+		redrawScreen(0);
 		waitForTimer(3);
 	} while (_fadePaletteCounter > 0);
 	_locationNum = currentLocation;
@@ -291,7 +295,8 @@ void TuckerEngine::handleMeanwhileSequence() {
 			++_fadePaletteCounter;
 		}
 		Graphics::copyTo640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
-		copyToVGA(_locationBackgroundGfxBuf);
+		_fullRedrawCounter = 2;
+		redrawScreen(0);
 		waitForTimer(3);
 		++i;
 	}
@@ -301,7 +306,8 @@ void TuckerEngine::handleMeanwhileSequence() {
 			--_fadePaletteCounter;
 		}
 		Graphics::copyTo640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
-		copyToVGA(_locationBackgroundGfxBuf);
+		_fullRedrawCounter = 2;
+		redrawScreen(0);
 		waitForTimer(3);
 	} while (_fadePaletteCounter > 0);
 	memcpy(_currentPalette, backupPalette, 256 * 3);
@@ -334,6 +340,7 @@ void TuckerEngine::handleMapSequence() {
 		waitForTimer(2);
 		updateMouseState();
 		Graphics::copyTo640(_locationBackgroundGfxBuf + _scrollOffset, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
+		_fullRedrawCounter = 2;
 		if (_flagsTable[7] > 0 && _mousePosX > 30 && _mousePosX < 86 && _mousePosY > 36 && _mousePosY < 86) {
 			textNum = 13;
 			_nextLocationNum = (_partNum == 1) ? 3 : 65;
@@ -385,7 +392,7 @@ void TuckerEngine::handleMapSequence() {
 		if (textNum > 0) {
 			drawSpeechText(_scrollOffset + _mousePosX + 8, _mousePosY - 10, _infoBarBuf, textNum, 96);
 		}
-		copyToVGA(_locationBackgroundGfxBuf + _scrollOffset);
+		redrawScreen(_scrollOffset);
 		if (_fadePaletteCounter < 14) {
 			fadeOutPalette();
 			++_fadePaletteCounter;
@@ -396,7 +403,7 @@ void TuckerEngine::handleMapSequence() {
 	}
 	while (_fadePaletteCounter > 0) {
 		fadeInPalette();
-		copyToVGA(_locationBackgroundGfxBuf + _scrollOffset);
+		redrawScreen(_scrollOffset);
 		--_fadePaletteCounter;
 	}
 	_mouseClick = 1;
@@ -444,7 +451,7 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 	}
 	while (_fadePaletteCounter > 0) {
 		fadeInPalette();
-		copyToVGA(_locationBackgroundGfxBuf + _scrollOffset);
+		redrawScreen(_scrollOffset);
 		--_fadePaletteCounter;
 	}
 	_mouseClick = 1;
@@ -454,6 +461,7 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 		waitForTimer(2);
 		updateMouseState();
 		Graphics::copyTo640(_locationBackgroundGfxBuf + _scrollOffset, _quadBackgroundGfxBuf, 320, 320, 200);
+		_fullRedrawCounter = 2;
 		if (_fadePaletteCounter < 14) {
 			fadeOutPalette();
 			++_fadePaletteCounter;
@@ -470,11 +478,11 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 				}
 			}
 		}
-		copyToVGA(_locationBackgroundGfxBuf + _scrollOffset);
+		redrawScreen(_scrollOffset);
 		if (_leftMouseButtonPressed && _mouseClick != 1) {
 			while (_fadePaletteCounter > 0) {
 				fadeInPalette();
-				copyToVGA(_locationBackgroundGfxBuf + _scrollOffset);
+				redrawScreen(_scrollOffset);
 				--_fadePaletteCounter;
 			}
 			_mouseClick = 1;

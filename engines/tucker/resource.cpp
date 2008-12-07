@@ -445,6 +445,7 @@ void TuckerEngine::loadLoc() {
 		copyLocBitmap(0, 0);
 		Graphics::copyFrom640(_locationBackgroundGfxBuf + 320, _quadBackgroundGfxBuf + 134400, 320, 140);
 	}
+	_fullRedrawCounter = 2;
 }
 
 void TuckerEngine::loadObj() {
