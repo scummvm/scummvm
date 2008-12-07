@@ -13,7 +13,7 @@ Contributors:
    Torbjorn Andersson    - Various code fixes
    Ori Avtalion          - Lipsync, LAF support
    Marcus Comstedt       - Dreamcast port
-   Andrea Corna          - Improved font support
+   Andrea Corna          - Improved font support, patch extractor
    Jonathan Gray         - Various code fixes
    Vincent Hamm          - Various engine code
    Travis Howell         - Various code fixes, Windows daily builds

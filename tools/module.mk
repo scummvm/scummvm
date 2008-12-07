@@ -17,7 +17,8 @@ TOOLS := \
 	tools/int2flt$(EXEEXT) \
 	tools/set2fig$(EXEEXT) \
 	tools/unlab$(EXEEXT) \
-	tools/vima$(EXEEXT)
+	tools/vima$(EXEEXT) \
+	tools/patch_ex/patch_ex$(EXEEXT)
 
 # below not added as it depends for ppm, bpm library
 #	tools/mat2ppm$(EXEEXT)
@@ -32,6 +33,8 @@ tools: $(TOOLS)
 
 clean-tools:
 	-$(RM) $(TOOLS)
+	-$(RM) tools/patch_ex/*.o
+	-$(RM) -r tools/patch_ex/.deps
 
 #
 # Build rules for the tools
@@ -76,5 +79,9 @@ tools/unlab$(EXEEXT): $(srcdir)/tools/unlab.cpp
 tools/vima$(EXEEXT): $(srcdir)/tools/vima.cpp
 	$(MKDIR) tools/$(DEPDIR)
 	$(CXX) $(CFLAGS) -Wall -o $@ $<
+
+tools/patch_ex/patch_ex$(EXEEXT): $(srcdir)/tools/patch_ex/patch_ex.o $(srcdir)/tools/patch_ex/mszipd.o $(srcdir)/tools/patch_ex/cabd.o
+	$(MKDIR) tools/patch_ex/$(DEPDIR)
+	$(CXX) $(CFLAGS) tools/patch_ex/mszipd.o tools/patch_ex/cabd.o -Wall -o $@ $<
 
 .PHONY: clean-tools tools
