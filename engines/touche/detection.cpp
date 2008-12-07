@@ -159,73 +159,47 @@ bool Touche::ToucheEngine::hasFeature(EngineFeature f) const {
 }
 
 bool ToucheMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
-	const Common::ADGameDescription *gd = desc;
-	if (gd) {
-		*engine = new Touche::ToucheEngine(syst, gd->language);
+	if (desc) {
+		*engine = new Touche::ToucheEngine(syst, desc->language);
 	}
-	return gd != 0;
+	return desc != 0;
 }
 
 SaveStateList ToucheMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringList filenames;
-	char saveDesc[Touche::kGameStateDescriptionLen];
-	Common::String pattern = target;
-	pattern += ".?";
-
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
-
+	Common::String pattern = Touche::generateGameStateFileName(target, 0, true);
+	Common::StringList filenames = g_system->getSavefileManager()->listSavefiles(pattern.c_str());
+	bool slotsTable[Touche::kMaxSaveStates];
+	memset(slotsTable, 0, sizeof(slotsTable));
 	SaveStateList saveList;
 	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last digit of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 1);
-	
-		if (slotNum >= 0 && slotNum <= 9) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+		int slot = Touche::getGameStateFileSlot(file->c_str());
+		if (slot >= 0 && slot < Touche::kMaxSaveStates) {
+			slotsTable[slot] = true;
+		}
+	}
+	for (int slot = 0; slot < Touche::kMaxSaveStates; ++slot) {
+		if (slotsTable[slot]) {
+			Common::String file = Touche::generateGameStateFileName(target, slot);
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(file.c_str());
 			if (in) {
-				in->readUint16LE();
-				in->readUint16LE();
-				in->read(saveDesc, Touche::kGameStateDescriptionLen);
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
+				char description[64] = { 0 };
+				Touche::readGameStateDescription(in, description, sizeof(description));
+				if (description[0]) {
+					saveList.push_back(SaveStateDescriptor(slot, description));
+				}
 				delete in;
 			}
 		}
 	}
-	
-	pattern += "?";
-
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
-
-	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 2 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 2);
-	
-		if (slotNum >= 10 && slotNum <= 99) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
-			if (in) {
-				in->readUint16LE();
-				in->readUint16LE();
-				in->read(saveDesc, Touche::kGameStateDescriptionLen);
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
-				delete in;
-			}
-		}
-	}
-
 	return saveList;
 }
 
-int ToucheMetaEngine::getMaximumSaveSlot() const { return 99; }
+int ToucheMetaEngine::getMaximumSaveSlot() const {
+	return Touche::kMaxSaveStates - 1;
+}
 
 void ToucheMetaEngine::removeSaveState(const char *target, int slot) const {
-	char extension[5];
-	snprintf(extension, sizeof(extension), ".%d", slot);
-
-	Common::String filename = target;
-	filename += extension;
-
+	Common::String filename = Touche::generateGameStateFileName(target, slot);
 	g_system->getSavefileManager()->removeSavefile(filename.c_str());
 }
 

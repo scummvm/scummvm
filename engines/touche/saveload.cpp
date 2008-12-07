@@ -31,6 +31,11 @@
 
 namespace Touche {
 
+enum {
+	kGameStateDescriptionLen = 32,
+	kCurrentGameStateVersion = 6
+};
+
 static void saveOrLoad(Common::WriteStream &stream, uint16 &i) {
 	stream.writeUint16LE(i);
 }
@@ -318,9 +323,8 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 
 Common::Error ToucheEngine::saveGameState(int num, const char *description) {
 	bool saveOk = false;
-	char gameStateFileName[64];
-	generateGameStateFileName(num, gameStateFileName, 63);
-	Common::OutSaveFile *f = _saveFileMan->openForSaving(gameStateFileName);
+	Common::String gameStateFileName = generateGameStateFileName(_targetName.c_str(), num);
+	Common::OutSaveFile *f = _saveFileMan->openForSaving(gameStateFileName.c_str());
 	if (f) {
 		f->writeUint16LE(kCurrentGameStateVersion);
 		f->writeUint16LE(0);
@@ -333,7 +337,7 @@ Common::Error ToucheEngine::saveGameState(int num, const char *description) {
 		if (!f->ioFailed()) {
 			saveOk = true;
 		} else {
-			warning("Can't write file '%s'", gameStateFileName);
+			warning("Can't write file '%s'", gameStateFileName.c_str());
 		}
 		delete f;
 	}
@@ -342,9 +346,8 @@ Common::Error ToucheEngine::saveGameState(int num, const char *description) {
 
 Common::Error ToucheEngine::loadGameState(int num) {
 	bool loadOk = false;
-	char gameStateFileName[64];
-	generateGameStateFileName(num, gameStateFileName, 63);
-	Common::InSaveFile *f = _saveFileMan->openForLoading(gameStateFileName);
+	Common::String gameStateFileName = generateGameStateFileName(_targetName.c_str(), num);
+	Common::InSaveFile *f = _saveFileMan->openForLoading(gameStateFileName.c_str());
 	if (f) {
 		uint16 version = f->readUint16LE();
 		if (version < kCurrentGameStateVersion) {
@@ -355,7 +358,7 @@ Common::Error ToucheEngine::loadGameState(int num) {
 			if (!f->ioFailed()) {
 				loadOk = true;
 			} else {
-				warning("Can't read file '%s'", gameStateFileName);
+				warning("Can't read file '%s'", gameStateFileName.c_str());
 			}
 		}
 		delete f;
@@ -363,31 +366,30 @@ Common::Error ToucheEngine::loadGameState(int num) {
 	return loadOk ? Common::kNoError : Common::kUnknownError;
 }
 
-void ToucheEngine::readGameStateDescription(int num, char *description, int len) {
-	char gameStateFileName[64];
-	generateGameStateFileName(num, gameStateFileName, 63);
-	Common::InSaveFile *f = _saveFileMan->openForLoading(gameStateFileName);
-	if (f) {
-		uint16 version = f->readUint16LE();
-		if (version >= kCurrentGameStateVersion) {
-			f->readUint16LE();
-			f->read(description, MIN<int>(len, kGameStateDescriptionLen));
-			description[len] = 0;
-		}
-		delete f;
-	}
-}
-
-void ToucheEngine::generateGameStateFileName(int num, char *dst, int len, bool prefixOnly) const {
-	if (prefixOnly) {
-		snprintf(dst, len, "%s.*", _targetName.c_str());
+void readGameStateDescription(Common::ReadStream *f, char *description, int len) {
+	uint16 version = f->readUint16LE();
+	if (version >= kCurrentGameStateVersion) {
+		f->readUint16LE();
+		f->read(description, MIN<int>(len, kGameStateDescriptionLen));
+		description[len] = 0;
 	} else {
-		snprintf(dst, len, "%s.%d", _targetName.c_str(), num);
+		description[0] = 0;
 	}
-	dst[len] = 0;
 }
 
-int ToucheEngine::getGameStateFileSlot(const char *filename) const {
+Common::String generateGameStateFileName(const char *target, int slot, bool prefixOnly) {
+	Common::String name(target);
+	if (prefixOnly) {
+		name += ".*";
+	} else {
+		char slotStr[16];
+		snprintf(slotStr, sizeof(slotStr), ".%d", slot);
+		name += slotStr;
+	}
+	return name;
+}
+
+int getGameStateFileSlot(const char *filename) {
 	int i = -1;
 	const char *slot = strrchr(filename, '.');
 	if (slot) {
