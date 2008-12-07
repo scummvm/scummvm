@@ -550,7 +550,11 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	Common::StackLock lock(_mutex);
 
 	file += _useC55 ? ".C55" : ".XMI";
+	file.toUppercase();
 	if (!_vm->resource()->exists(file.c_str()))
+		return;
+
+	if (_mFileName == file)
 		return;
 
 	// When loading a new file we stopp all notes
@@ -562,6 +566,7 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	delete[] _musicFile;
 	uint32 fileSize = 0;
 	_musicFile = _vm->resource()->fileData(file.c_str(), &fileSize);
+	_mFileName = file;
 
 	_output->setSoundSource(0);
 	_music->loadMusic(_musicFile, fileSize);
@@ -586,13 +591,18 @@ void SoundMidiPC::loadSfxFile(Common::String file) {
 		return;
 
 	file += _useC55 ? ".C55" : ".XMI";
+	file.toUppercase();
 	if (!_vm->resource()->exists(file.c_str()))
+		return;
+
+	if (_sFileName == file)
 		return;
 
 	delete[] _sfxFile;
 
 	uint32 fileSize = 0;
 	_sfxFile = _vm->resource()->fileData(file.c_str(), &fileSize);
+	_sFileName = file;
 
 	for (int i = 0; i < 3; ++i) {
 		_output->setSoundSource(i+1);

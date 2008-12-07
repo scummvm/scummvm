@@ -355,6 +355,7 @@ private:
 	bool _fadeMusicOut;
 
 	// Midi file related
+	Common::String _mFileName, _sFileName;
 	byte *_musicFile, *_sfxFile;
 
 	MidiParser *_music;
