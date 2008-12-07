@@ -551,10 +551,11 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 
 	file += _useC55 ? ".C55" : ".XMI";
 	file.toUppercase();
-	if (!_vm->resource()->exists(file.c_str()))
-		return;
 
 	if (_mFileName == file)
+		return;
+
+	if (!_vm->resource()->exists(file.c_str()))
 		return;
 
 	// When loading a new file we stopp all notes
@@ -592,10 +593,11 @@ void SoundMidiPC::loadSfxFile(Common::String file) {
 
 	file += _useC55 ? ".C55" : ".XMI";
 	file.toUppercase();
-	if (!_vm->resource()->exists(file.c_str()))
-		return;
 
 	if (_sFileName == file)
+		return;
+
+	if (!_vm->resource()->exists(file.c_str()))
 		return;
 
 	delete[] _sfxFile;
