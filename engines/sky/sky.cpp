@@ -93,8 +93,6 @@ SkyEngine::~SkyEngine() {
 	delete _skyDisk;
 	delete _skyControl;
 	delete _skyCompact;
-	if (_skyIntro)
-		delete _skyIntro;
 
 	for (int i = 0; i < 300; i++)
 		if (_itemList[i])
@@ -169,8 +167,10 @@ Common::Error SkyEngine::go() {
 	if (result != GAME_RESTORED) {
 		bool introSkipped = false;
 		if (_systemVars.gameVersion > 267) { // don't do intro for floppydemos
-			_skyIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
-			introSkipped = !_skyIntro->doIntro(_floppyIntro);
+			Intro *skyIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
+			bool floppyIntro = ConfMan.getBool("alt_intro");
+			introSkipped = !skyIntro->doIntro(floppyIntro);
+			delete skyIntro;
 		}
 
 		if (!shouldQuit()) {
@@ -249,7 +249,6 @@ Common::Error SkyEngine::init() {
 	 _mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	 _mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	 _mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	_floppyIntro = ConfMan.getBool("alt_intro");
 
 	_skyDisk = new Disk();
 	_skySound = new Sound(_mixer, _skyDisk, Audio::Mixer::kMaxChannelVolume);
@@ -287,7 +286,6 @@ Common::Error SkyEngine::init() {
 	_systemVars.systemFlags |= SF_PLAY_VOCS;
 	_systemVars.gameSpeed = 50;
 
-	_skyIntro = 0;
 	_skyCompact = new SkyCompact();
 	_skyText = new Text(_skyDisk, _skyCompact);
 	_skyMouse = new Mouse(_system, _skyDisk, _skyCompact);

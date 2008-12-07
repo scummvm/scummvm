@@ -53,14 +53,12 @@ class Mouse;
 class Screen;
 class Control;
 class MusicBase;
-class Intro;
 class Debugger;
 class SkyCompact;
 
 class SkyEngine : public Engine {
 protected:
 	Common::KeyState _keyPressed;
-	bool _floppyIntro;
 
 	Sound *_skySound;
 	Disk *_skyDisk;
@@ -73,7 +71,6 @@ protected:
 	Debugger *_debugger;
 
 	MusicBase *_skyMusic;
-	Intro *_skyIntro;
 
 public:
 	SkyEngine(OSystem *syst);

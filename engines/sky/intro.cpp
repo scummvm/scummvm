@@ -640,12 +640,11 @@ Intro::Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *t
 }
 
 Intro::~Intro(void) {
-	if (_textBuf)
-		free(_textBuf);
-	if (_saveBuf)
-		free(_saveBuf);
-	if (_bgBuf)
-		free(_bgBuf);
+	if (_skyScreen->sequenceRunning())
+		_skyScreen->stopSequence();
+	free(_textBuf);
+	free(_saveBuf);
+	free(_bgBuf);
 }
 
 bool Intro::doIntro(bool floppyIntro) {
