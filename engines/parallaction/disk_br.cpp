@@ -143,12 +143,11 @@ void DosDisk_br::setLanguage(uint16 language) {
 DosDisk_br::DosDisk_br(Parallaction* vm) : Disk_br(vm) {
 }
 
-
 void DosDisk_br::init() {
 	// TODO: clarify whether the engine or OSystem should add the base game directory to the search manager.
 	// Right now, I am keeping an internal search set to do the job.
 	_baseDir = new Common::FSDirectory(ConfMan.get("path"));
-	_sset.add("base", _baseDir, 5, false);
+	_sset.add("base", _baseDir, 5, true);
 }
 
 

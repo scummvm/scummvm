@@ -372,7 +372,7 @@ public:
 class Parallaction_ns : public Parallaction {
 
 public:
-	Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc) { }
+	Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc);
 	~Parallaction_ns();
 
 	// Engine APIs
@@ -463,7 +463,7 @@ private:
 class Parallaction_br : public Parallaction_ns {
 
 public:
-	Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction_ns(syst, gameDesc) { }
+	Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc);
 	~Parallaction_br();
 
 	Common::Error init();

@@ -141,7 +141,9 @@ void LocationName::bind(const char *s) {
 	strcpy(_buf, s);		// kept as reference
 }
 
-
+Parallaction_ns::Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc), 
+	_locationParser(0), _programParser(0) { 
+}
 
 Common::Error Parallaction_ns::init() {
 

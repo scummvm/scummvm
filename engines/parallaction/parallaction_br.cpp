@@ -42,6 +42,10 @@ const char *Parallaction_br::_partNames[] = {
 	"PART4"
 };
 
+Parallaction_br::Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction_ns(syst, gameDesc), 
+	_locationParser(0), _programParser(0) { 
+}
+
 Common::Error Parallaction_br::init() {
 
 	_screenWidth = 640;
@@ -96,6 +100,9 @@ Common::Error Parallaction_br::init() {
 
 Parallaction_br::~Parallaction_br() {
 	freeFonts();
+	
+	delete _locationParser;
+	delete _programParser;
 }
 
 void Parallaction_br::callFunction(uint index, void* parm) {

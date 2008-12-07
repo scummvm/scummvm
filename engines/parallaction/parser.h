@@ -69,7 +69,7 @@ class Parser {
 
 public:
 	Parser() { reset(); }
-	~Parser() {}
+	~Parser() { reset(); }
 
 	uint	_lookup;
 
@@ -216,7 +216,8 @@ protected:
 	}
 
 public:
-	LocationParser_ns(Parallaction_ns *vm) : _vm(vm) {
+	LocationParser_ns(Parallaction_ns *vm) : _vm(vm), _commandsNames(0), _locationStmt(0), 
+		_locationZoneStmt(0), _locationAnimStmt(0) {
 	}
 
 	virtual void init();
@@ -307,14 +308,14 @@ protected:
 	void 			parseGetData(ZonePtr z);
 
 public:
-	LocationParser_br(Parallaction_br *vm) : LocationParser_ns((Parallaction_ns*)vm), _vm(vm) {
+	LocationParser_br(Parallaction_br *vm) : LocationParser_ns((Parallaction_ns*)vm), _vm(vm),
+		_audioCommandsNames(0) {
 	}
 
 	virtual void init();
 
 	virtual ~LocationParser_br() {
-		delete _commandsNames;
-		delete _locationStmt;
+		delete _audioCommandsNames;
 	}
 
 	void parse(Script *script);
@@ -374,7 +375,7 @@ protected:
 	}
 
 public:
-	ProgramParser_ns(Parallaction_ns *vm) : _vm(vm) {
+	ProgramParser_ns(Parallaction_ns *vm) : _vm(vm), _parser(0), _instructionNames(0) {
 	}
 
 	virtual void init();
@@ -411,12 +412,6 @@ public:
 	}
 
 	virtual void init();
-
-	virtual ~ProgramParser_br() {
-		delete _instructionNames;
-		delete _parser;
-
-	}
 
 };
 

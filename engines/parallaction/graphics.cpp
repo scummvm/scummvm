@@ -839,6 +839,8 @@ Gfx::Gfx(Parallaction* vm) :
 
 Gfx::~Gfx() {
 
+	_backBuffer.free();
+
 	delete _backgroundInfo;
 
 	freeLabels();

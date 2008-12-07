@@ -180,7 +180,7 @@ void InventoryRenderer::showInventory() {
 	uint16 lines = getNumLines();
 
 	Common::Point p;
-	_vm->_input->getCursorPos(p);
+	_vm->_input->getAbsoluteCursorPos(p);
 
 	_pos.x = CLIP((int)(p.x - (_props->_width / 2)), 0, (int)(_vm->_screenWidth - _props->_width));
 	_pos.y = CLIP((int)(p.y - 2 - (lines * _props->_itemHeight)), 0, (int)(_vm->_screenHeight - lines * _props->_itemHeight));
