@@ -182,8 +182,8 @@ SaveStateList ToucheMetaEngine::listSaves(const char *target) const {
 			Common::String file = Touche::generateGameStateFileName(target, slot);
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(file.c_str());
 			if (in) {
-				char description[64] = { 0 };
-				Touche::readGameStateDescription(in, description, sizeof(description));
+				char description[64];
+				Touche::readGameStateDescription(in, description, sizeof(description) - 1);
 				if (description[0]) {
 					saveList.push_back(SaveStateDescriptor(slot, description));
 				}
