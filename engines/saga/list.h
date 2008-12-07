@@ -89,6 +89,7 @@ public:
 		return pushBack(element);
 	}
 
+#if 0
 	iterator reorderUp(iterator pos, CompareFunction compareFunction) {
 		iterator i(pos);
 		int res;
@@ -123,6 +124,7 @@ public:
 		}
 		return pos;
 	}
+#endif
 
 	iterator eraseAndPrev(iterator pos) {
 		assert(pos != Common_List::end());
