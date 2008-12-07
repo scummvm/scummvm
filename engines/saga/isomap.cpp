@@ -378,7 +378,7 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 
 void IsoMap::draw() {
 	_tileClip = _vm->_scene->getSceneClip();
-	_vm->_gfx->drawRegion(_tileClip, 0);
+	_vm->_gfx->drawRect(_tileClip, 0);
 	drawTiles(NULL);
 }
 
