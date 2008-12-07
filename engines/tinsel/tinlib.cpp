@@ -180,7 +180,7 @@ enum MASTER_LIB_CODES {
 const MASTER_LIB_CODES DW1DEMO_CODES[] = {
 	ACTORREF, ACTORXPOS, ACTORYPOS, ADDTOPIC, ADDINV1, ADDINV2, AUXSCALE, BACKGROUND,
 	CAMERA, CONTROL, CONVERSATION, CONVTOPIC, HIGHEST_LIBCODE, CURSORXPOS, CURSORYPOS,
-	DECCONVW, DECCURSOR, DECFLAGS, DECINVW, DECINV1, DECINV2, DECLEAD, DELICON,
+	DECCONVW, DECCURSOR, DECTAGFONT, DECINVW, DECINV1, DECINV2, DECLEAD, DELICON,
 	DELINV, EVENT, HIGHEST_LIBCODE, HELDOBJECT, HIDEACTOR, ININVENTORY, HIGHEST_LIBCODE,
 	INVENTORY, HIGHEST_LIBCODE, KILLACTOR, KILLBLOCK, KILLTAG, SCREENXPOS,
 	HIGHEST_LIBCODE, MOVECURSOR, NEWSCENE, NOSCROLL, OBJECTHELD, OFFSET, HIGHEST_LIBCODE,
@@ -987,6 +987,8 @@ static void DecScale(int actor, int scale,
  */
 static void DecTagFont(SCNHANDLE hf) {
 	SetTagFontHandle(hf);		// Store the font handle
+	if (TinselV0)
+		SetTalkFontHandle(hf);	// Also re-use for talk text
 }
 
 /**
@@ -2371,6 +2373,9 @@ static int RandomFn(int n1, int n2, int norpt) {
 	int i = 0;
 	uint32 value;
 
+	// In DW1 demo, upper/lower limit can be reversed
+	if (n2 < n1) SWAP(n1, n2);
+
 	do {
 		value = n1 + _vm->getRandomNumber(n2 - n1);
 	} while ((lastValue == value) && (norpt == RAND_NORPT) && (++i <= 10));
@@ -3719,7 +3724,7 @@ static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
 
 	for (;;) {
 		_ctx->startEvent = getUserEvents();
-		if (!TinselV2) {
+		if (TinselV1) {
 			// Store cursor position
 			while (!GetCursorXYNoWait(&_ctx->startX, &_ctx->startY, false))
 				CORO_SLEEP(1);
@@ -3729,7 +3734,7 @@ static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
 			CORO_SLEEP(1);
 
 			// Not necessary to monitor escape as it's an event anyway
-			if (!TinselV2) {
+			if (TinselV1) {
 				int curX, curY;
 				GetCursorXY(&curX, &curY, false);	// Store cursor position
 				if (curX != _ctx->startX || curY != _ctx->startY)

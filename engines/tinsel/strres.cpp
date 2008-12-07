@@ -170,6 +170,10 @@ static byte *FindStringBase(int id) {
 	// pointer to strings
 	pText = pText + index;
 
+	// For Tinsel 0 Ids, reduce the skip amount by 1
+	if (TinselV0 && (strSkip != 0))
+		--strSkip;
+
 	// skip to the correct string
 	while (strSkip-- != 0) {
 		// skip to next string

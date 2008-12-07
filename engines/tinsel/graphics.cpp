@@ -623,6 +623,10 @@ void DrawObject(DRAWOBJECT *pObj) {
 		case 0x48:
 			WrtAll(pObj, srcPtr, destPtr, typeId >= 0x40);
 			break;
+		case 0x84:
+		case 0xC4:
+			WrtTrans(pObj, destPtr, (typeId & 0x40) != 0);
+			break;
 		default:
 			error("Unknown drawing type %d", typeId);
 		}

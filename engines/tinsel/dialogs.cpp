@@ -3887,6 +3887,10 @@ void SetMenuGlobals(CONFINIT *ci) {
 void OpenMenu(CONFTYPE menuType) {
 	int curX, curY;
 
+	// In the DW 1 demo, don't allow any menu to be opened
+	if (TinselV0)
+		return;
+
 	if (InventoryState != IDLE_INV)
 		return;
 
@@ -5523,7 +5527,18 @@ void RegisterIcons(void *cptr, int num) {
 	numObjects = num;
 	invObjects = (INV_OBJECT *) cptr;
 
-	if (TinselV2) {
+	if (TinselV0) {
+		// In Tinsel 0, the INV_OBJECT structure doesn't have an attributes field, so we
+		// need to 'unpack' the source structures into the standard Tinsel v1/v2 format
+		invObjects = (INV_OBJECT *)MemoryAlloc(DWM_FIXED, numObjects * sizeof(INV_OBJECT));
+		byte *srcP = (byte *)cptr;
+		INV_OBJECT *destP = (INV_OBJECT *)invObjects;
+
+		for (int i = 0; i < num; ++i, ++destP, srcP += 12) {
+			memmove(destP, srcP, 12);
+			destP->attribute = 0;
+		}
+	} else if (TinselV2) {
 		if (invFilms == NULL)
 			// First time - allocate memory
 			invFilms = (SCNHANDLE *)MemoryAlloc(DWM_FIXED | DWM_ZEROINIT, numObjects * sizeof(SCNHANDLE));

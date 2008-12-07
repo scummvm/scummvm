@@ -250,8 +250,7 @@ void StartupBackground(CORO_PARAM, SCNHANDLE hFilm) {
 
 	pim = GetImageFromFilm(hFilm, 0, NULL, NULL, &pfilm);
 
-	if (!TinselV0)
-		SetBackPal(FROM_LE_32(pim->hImgPal));
+	SetBackPal(FROM_LE_32(pim->hImgPal));
 
 	// Extract the film speed
 	BGspeed = ONE_SECOND / FROM_LE_32(pfilm->frate);

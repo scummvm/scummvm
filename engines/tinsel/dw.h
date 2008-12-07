@@ -57,14 +57,8 @@ typedef int HPOLYGON;
 // the maximum value a integer number can have
 #define	MAX_INT	(~MIN_INT)
 
-// TODO: v1->v2 scene files
-#ifdef FILE_SPLIT
-// each scene is split into 2 files
-#define	INV_OBJ_SCNHANDLE	(2 << SCNHANDLE_SHIFT)	// inventory object handle (if there are inventory objects)
-#else
-#define	INV_OBJ_SCNHANDLE	(1 << SCNHANDLE_SHIFT)	// inventory object handle (if there are inventory objects)
-#endif
-
+// inventory object handle (if there are inventory objects)
+#define	INV_OBJ_SCNHANDLE (TinselV0 ? (2 << SCNHANDLE_SHIFT) : (1 << SCNHANDLE_SHIFT))
 
 #define FIELD_WORLD	0
 #define FIELD_STATUS	1
