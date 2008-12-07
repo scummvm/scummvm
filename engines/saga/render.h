@@ -79,9 +79,7 @@ public:
 		return &_backGroundSurface;
 	}
 
-	void addDirtyRect(Common::Rect rect) {
-		_dirtyRects.push_back(rect);
-	}
+	void addDirtyRect(Common::Rect rect);
 
 	void clearDirtyRects() {
 		_dirtyRects.clear();

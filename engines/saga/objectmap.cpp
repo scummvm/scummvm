@@ -171,6 +171,8 @@ void HitZone::draw(SagaEngine *vm, int color) {
 		} else {
 			if (pointsCount > 2) {
 				// Otherwise draw a polyline
+				// Do a full refresh so that the polyline can be shown
+				vm->_render->setFullRefresh(true);
 				vm->_gfx->drawPolyLine(points, pointsCount, color);
 			}
 		}

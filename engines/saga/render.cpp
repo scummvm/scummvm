@@ -204,14 +204,22 @@ void Render::drawScene() {
 	_system->updateScreen();
 }
 
+void Render::addDirtyRect(Common::Rect rect) {
+	// Check if the new rectangle is contained within another in the list
+ 	Common::List<Common::Rect>::const_iterator it;
+ 	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+		if (it->contains(rect))
+			return;
+	}
+
+	_dirtyRects.push_back(rect);
+}
+
 void Render::drawDirtyRects() {
 	if (_fullRefresh) {
 		_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _vm->_gfx->getBackBufferWidth(), 0, 0,
 								  _vm->_gfx->getBackBufferWidth(), _vm->_gfx->getBackBufferHeight());
 	} else {
-
-		// TODO: check if dirty rectangles are intersecting or contained within each other
-
  	 	Common::List<Common::Rect>::const_iterator it;
  	 	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 			g_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), it->width(), it->left, it->top, it->width(), it->height());
