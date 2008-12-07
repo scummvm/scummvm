@@ -168,6 +168,8 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 
 	free(sceneLUTPointer);
 
+#ifdef SAGA_DEBUG
+
 #define DUMP_SCENES_LEVEL 10
 
 	if (DUMP_SCENES_LEVEL <= gDebugLevel) {
@@ -197,7 +199,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 			free(_resourceList);
 		}
 	}
-
+#endif
 
 	debug(3, "LUT has %d entries.", _sceneCount);
 
@@ -1265,7 +1267,6 @@ void Scene::cmdActionMapInfo() {
 void Scene::cmdObjectMapInfo() {
 	_objectMap->cmdInfo();
 }
-
 
 void Scene::loadSceneEntryList(const byte* resourcePointer, size_t resourceLength) {
 	int i;
