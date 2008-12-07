@@ -351,6 +351,8 @@ int Events::handleOneShot(Event *event) {
 				}
 			}
 			_vm->_render->clearFlag(RF_DISABLE_ACTORS);
+
+			_vm->_render->setFullRefresh(true);
 		}
 		break;
 	case kPsychicProfileBgEvent:
@@ -381,6 +383,8 @@ int Events::handleOneShot(Event *event) {
 		free(buf);
 		free(resourceData);
 
+		_vm->_render->setFullRefresh(true);
+
 		// Draw the scene. It won't be drawn by Render::drawScene(), as a placard is up
 		_vm->_scene->draw();
 		}
@@ -388,12 +392,14 @@ int Events::handleOneShot(Event *event) {
 	case kAnimEvent:
 		switch (event->op) {
 		case kEventPlay:
+			_vm->_render->setFullRefresh(true);
 			_vm->_anim->play(event->param, event->time, true);
 			break;
 		case kEventStop:
 			_vm->_anim->stop(event->param);
 			break;
 		case kEventFrame:
+			_vm->_render->setFullRefresh(true);
 			_vm->_anim->play(event->param, event->time, false);
 			break;
 		case kEventSetFlag:
