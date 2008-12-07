@@ -201,6 +201,10 @@ Zone::~Zone() {
 	case kZoneMerge:
 		delete u.merge;
 		break;
+		
+	case kZonePath:
+		delete u.path;
+		break;
 
 	default:
 		break;

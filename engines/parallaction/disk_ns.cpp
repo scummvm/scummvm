@@ -283,7 +283,7 @@ Cnv* DosDisk_ns::loadExternalCnv(const char *filename) {
 	uint16 height = stream->readByte();
 	uint32 decsize = numFrames * width * height;
 
-	byte *data = (byte*)malloc(decsize);
+	byte *data = new byte[decsize];
 	stream->read(data, decsize);
 	delete stream;
 
@@ -299,7 +299,7 @@ Frames* DosDisk_ns::loadCnv(const char *filename) {
 	uint16 width = stream->readByte();
 	uint16 height = stream->readByte();
 	uint32 decsize = numFrames * width * height;
-	byte *data = (byte*)malloc(decsize);
+	byte *data = new byte[decsize];
 
 	Graphics::PackBitsReadStream decoder(*stream);
 	decoder.read(data, decsize);
@@ -836,7 +836,8 @@ Cnv* AmigaDisk_ns::makeCnv(Common::SeekableReadStream *stream, bool disposeStrea
 	stream->read(buf, rawsize);
 
 	uint32 decsize = numFrames * width * height;
-	byte *data = (byte*)calloc(decsize, 1);
+	byte *data = new byte[decsize];
+	memset(data, 0, decsize);
 
 	unpackBitmap(data, buf, numFrames, bytesPerPlane, height);
 
