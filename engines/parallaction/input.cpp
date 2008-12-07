@@ -515,6 +515,7 @@ void Input::setInventoryCursor(ItemName name) {
 		// FIXME: destination offseting is not clear
 		_vm->_inventoryRenderer->drawItem(name, dst + _mouseComboProps_BR._yOffset * _mouseComboProps_BR._width + _mouseComboProps_BR._xOffset, _mouseComboProps_BR._width);
 		_vm->_system->setMouseCursor(dst, _mouseComboProps_BR._width, _mouseComboProps_BR._height, 0, 0, 0);
+		break;
 	}
 
 	default:
