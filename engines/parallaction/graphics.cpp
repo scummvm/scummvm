@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -919,8 +920,8 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 	}
 
 	if (_gameType == GType_BRA) {
-		int width = CLIP(info->width, _vm->_screenWidth, info->width);
-		int height = CLIP(info->height, _vm->_screenHeight, info->height);
+		int width = CLIP(info->width, (int)_vm->_screenWidth, info->width);
+		int height = CLIP(info->height, (int)_vm->_screenHeight, info->height);
 
 		if (width != _backBuffer.w || height != _backBuffer.h) {
 			_backBuffer.create(width, height, 1);
