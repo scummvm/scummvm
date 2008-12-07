@@ -94,7 +94,6 @@ protected:
 	uint8 _palette[256 * 4];
 	FlicHeader _flicInfo;
 	uint16 _currFrame;
-	uint32 _lastFrameTime;
 	Common::List<Common::Rect> _dirtyRects;
 };
 

@@ -62,6 +62,7 @@ bool FlicPlayer::loadFile(const char *fileName) {
 
 	_offscreen = new uint8[_flicInfo.width * _flicInfo.height];
 	memset(_palette, 0, sizeof(_palette));
+	_paletteDirty = false;
 
 	// Seek to the first frame
 	_currFrame = 0;
@@ -105,19 +106,18 @@ FrameTypeChunkHeader FlicPlayer::readFrameTypeChunkHeader(ChunkHeader chunkHead)
 
 void FlicPlayer::decodeByteRun(uint8 *data) {
 	uint8 *ptr = (uint8 *)_offscreen;
-	while((ptr - _offscreen) < (_flicInfo.width * _flicInfo.height)) {
-		uint8 chunks = *data++;
+	while ((ptr - _offscreen) < (_flicInfo.width * _flicInfo.height)) {
+		int chunks = *data++;
 		while (chunks--) {
-			int8 count = *data++;
+			int count = (int8)*data++;
 			if (count > 0) {
 				memset(ptr, *data++, count);
-				ptr += count;
 			} else {
-				uint8 copyBytes = -count;
-				memcpy(ptr, data, copyBytes);
-				ptr += copyBytes;
-				data += copyBytes;
+				count = -count;
+				memcpy(ptr, data, count);
+				data += count;
 			}
+			ptr += count;
 		}
 	}
 
@@ -148,7 +148,7 @@ void FlicPlayer::decodeDeltaFLC(uint8 *data) {
 			case OP_UNDEFINED:
 				break;
 			case OP_LASTPIXEL:
-				*(uint8 *)(_offscreen + (currentLine * _flicInfo.width) + (_flicInfo.width - 1)) = (opcode & 0xFF);
+				_offscreen[currentLine * _flicInfo.width + _flicInfo.width - 1] = (opcode & 0xFF);
 				_dirtyRects.push_back(Common::Rect(_flicInfo.width - 1, currentLine, _flicInfo.width, currentLine + 1));
 				break;
 			case OP_LINESKIPCOUNT:
@@ -162,23 +162,22 @@ void FlicPlayer::decodeDeltaFLC(uint8 *data) {
 		// Now interpret the RLE data
 		while (packetCount--) {
 			column += *data++;
-			int8 rleCount = (int8)*data++;
+			int rleCount = (int8)*data++;
 			if (rleCount > 0) {
-				memcpy((void *)(_offscreen + (currentLine * _flicInfo.width) + column), data, rleCount * 2);
-				_dirtyRects.push_back(Common::Rect(column, currentLine, column + (rleCount * 2), currentLine + 1));
+				memcpy(_offscreen + (currentLine * _flicInfo.width) + column, data, rleCount * 2);
 				data += rleCount * 2;
-				column += rleCount * 2;
+				_dirtyRects.push_back(Common::Rect(column, currentLine, column + rleCount * 2, currentLine + 1));
 			} else if (rleCount < 0) {
+				rleCount = -rleCount;
 				uint16 dataWord = READ_UINT16(data); data += 2;
-				for (int i = 0; i < -(int16)rleCount; ++i) {
-					WRITE_UINT16(_offscreen + (currentLine * _flicInfo.width) + column + (i * 2), dataWord);
+				for (int i = 0; i < rleCount; ++i) {
+					WRITE_UINT16(_offscreen + currentLine * _flicInfo.width + column + i * 2, dataWord);
 				}
-				_dirtyRects.push_back(Common::Rect(column, currentLine, column + (-(int16)rleCount * 2), currentLine + 1));
-
-				column += (-(int16)rleCount) * 2;
+				_dirtyRects.push_back(Common::Rect(column, currentLine, column + rleCount * 2, currentLine + 1));
 			} else { // End of cutscene ?
 				return;
 			}
+			column += rleCount * 2;
 		}
 
 		currentLine++;
@@ -243,6 +242,7 @@ void FlicPlayer::decodeFrame() {
 }
 
 void FlicPlayer::reset() {
+	_currFrame = 0;
 	_fileStream.seek(_flicInfo.offsetFrame1);
 }
 
