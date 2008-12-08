@@ -882,7 +882,7 @@ void IsoMap::drawTile(uint16 tileIndex, const Point &point, const Location *loca
 	int rectX = MAX<int>(drawPoint.x, 0);
 	int rectY = MAX<int>(drawPoint.y, 0);
 	int rectX2 = MIN<int>(drawPoint.x + SAGA_ISOTILE_WIDTH, _tileClip.right);
-	int rectY2 = MIN<int>(drawPoint.y + height, _tileClip.bottom);
+	int rectY2 = lowBound;
 	_vm->_render->addDirtyRect(Common::Rect(rectX, rectY, rectX2, rectY2));
 }
 

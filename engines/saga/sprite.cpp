@@ -253,7 +253,7 @@ void Sprite::drawClip(const Rect &clipRect, const Point &spritePointer, int widt
 		srcRowPointer += width;
 	}
 
-	_vm->_render->addDirtyRect(Common::Rect(spritePointer.x, spritePointer.y, spritePointer.x + clipWidth, spritePointer.y + clipHeight));
+	_vm->_render->addDirtyRect(clipRect);
 }
 
 void Sprite::draw(const Rect &clipRect, SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale) {
@@ -395,8 +395,7 @@ void Sprite::drawOccluded(const Rect &clipRect, SpriteList &spriteList, int spri
 		sourceRowPointer += width;
 	}
 
-	_vm->_render->addDirtyRect(Common::Rect(clipData.destPoint.x, clipData.destPoint.y, 
-								clipData.destPoint.x + clipData.drawWidth, clipData.destPoint.y + clipData.drawHeight));
+	_vm->_render->addDirtyRect(clipRect);
 }
 
 void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t outLength) {

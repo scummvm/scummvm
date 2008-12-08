@@ -207,8 +207,8 @@ void Render::addDirtyRect(Common::Rect rect) {
 	// Clip rectangle
 	int x1 = MAX<int>(rect.left, 0);
 	int y1 = MAX<int>(rect.top, 0);
-	int x2 = MIN<int>(rect.width(), _backGroundSurface.w);
-	int y2 = MIN<int>(rect.height(), _backGroundSurface.h);
+	int x2 = MIN<int>(rect.right, _backGroundSurface.w);
+	int y2 = MIN<int>(rect.bottom, _backGroundSurface.h);
 	if (x2 > x1 && y2 > y1) {
 		Common::Rect rectClipped(x1, y1, x2, y2);
 		// Check if the new rectangle is contained within another in the list
@@ -216,8 +216,11 @@ void Render::addDirtyRect(Common::Rect rect) {
  		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 			if (it->contains(rectClipped))
 				return;
+			if (rectClipped.contains(*it)) {
+				_dirtyRects.erase(it);
+				break;	// we need to break now, as the list is changed
+			}
 		}
-
 		_dirtyRects.push_back(rectClipped);
 	}
 }
@@ -226,6 +229,7 @@ void Render::restoreChangedRects() {
 	if (!_fullRefresh) {
  	 	Common::List<Common::Rect>::const_iterator it;
  	 	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+			//_backGroundSurface.frameRect(*it, 1);		// DEBUG
 			g_system->copyRectToScreen((byte *)_backGroundSurface.pixels, _backGroundSurface.w, it->left, it->top, it->width(), it->height());
 		}
 	}
@@ -236,6 +240,7 @@ void Render::drawDirtyRects() {
 	if (!_fullRefresh) {
  	 	Common::List<Common::Rect>::const_iterator it;
  	 	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+			//_backGroundSurface.frameRect(*it, 2);		// DEBUG
 			g_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _backGroundSurface.w, it->left, it->top, it->width(), it->height());
 		}
 	} else {
