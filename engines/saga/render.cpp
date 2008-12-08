@@ -95,17 +95,10 @@ void Render::drawScene() {
 	restoreChangedRects();
 
 	if (!(_flags & (RF_DEMO_SUBST | RF_MAP) || curMode == kPanelPlacard)) {
-		// Do not redraw the whole scene and the actors if the scene is fading out or
-		// if an overlay is drawn above it (e.g. the options menu)
-		if (_vm->_interface->getFadeMode() != kFadeOut &&
-			(curMode != kPanelOption && curMode != kPanelQuit &&
-			 curMode != kPanelLoad && curMode != kPanelSave &&
-			 curMode != kPanelProtect)) {
+		if (_vm->_interface->getFadeMode() != kFadeOut) {
 			// Display scene background
-			if (_fullRefresh) {
-				if (!(_flags & RF_DISABLE_ACTORS) || _vm->getGameType() == GType_ITE)
-					_vm->_scene->draw();
-			}
+			if (!(_flags & RF_DISABLE_ACTORS) || _vm->getGameType() == GType_ITE)
+				_vm->_scene->draw();
 
 			if (_vm->_puzzle->isActive()) {
 				_vm->_puzzle->movePiece(mousePoint);
@@ -211,14 +204,22 @@ void Render::drawScene() {
 }
 
 void Render::addDirtyRect(Common::Rect rect) {
-	// Check if the new rectangle is contained within another in the list
- 	Common::List<Common::Rect>::const_iterator it;
- 	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
-		if (it->contains(rect))
-			return;
-	}
+	// Clip rectangle
+	int x1 = MAX<int>(rect.left, 0);
+	int y1 = MAX<int>(rect.top, 0);
+	int x2 = MIN<int>(rect.width(), _backGroundSurface.w);
+	int y2 = MIN<int>(rect.height(), _backGroundSurface.h);
+	if (x2 > x1 && y2 > y1) {
+		Common::Rect rectClipped(x1, y1, x2, y2);
+		// Check if the new rectangle is contained within another in the list
+ 		Common::List<Common::Rect>::const_iterator it;
+ 		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+			if (it->contains(rectClipped))
+				return;
+		}
 
-	_dirtyRects.push_back(rect);
+		_dirtyRects.push_back(rectClipped);
+	}
 }
 
 void Render::restoreChangedRects() {
@@ -232,14 +233,14 @@ void Render::restoreChangedRects() {
 }
 
 void Render::drawDirtyRects() {
-	if (_fullRefresh) {
-		_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _vm->_gfx->getBackBufferWidth(), 0, 0,
-								  _vm->_gfx->getBackBufferWidth(), _vm->_gfx->getBackBufferHeight());
-	} else {
+	if (!_fullRefresh) {
  	 	Common::List<Common::Rect>::const_iterator it;
  	 	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 			g_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _backGroundSurface.w, it->left, it->top, it->width(), it->height());
 		}
+	} else {
+		_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _vm->_gfx->getBackBufferWidth(), 0, 0,
+								  _vm->_gfx->getBackBufferWidth(), _vm->_gfx->getBackBufferHeight());
 	}
 }
 
