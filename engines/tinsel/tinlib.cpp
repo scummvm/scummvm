@@ -3010,7 +3010,7 @@ static void Subtitles(int onoff) {
  * Special walk.
  * Walk into or out of a legal path.
  */
-static void Swalk(CORO_PARAM, int actor, int x1, int y1, int x2, int y2, SCNHANDLE film, int zOverride, bool escOn, int myEscape) {
+static void Swalk(CORO_PARAM, int actor, int x1, int y1, int x2, int y2, SCNHANDLE film, int32 zOverride, bool escOn, int myEscape) {
 	CORO_BEGIN_CONTEXT;
 		bool	bTookControl;			// Set if this function takes control
 	CORO_END_CONTEXT(_ctx);
