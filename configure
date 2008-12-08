@@ -585,7 +585,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, x11, morphos, dc, gp2x, iphone, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, iphone, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
@@ -1717,13 +1717,6 @@ case $_backend in
 		LDFLAGS="$LDFLAGS -static"
 		CXXFLAGS="$CXXFLAGS -march=armv4t"
 		MODULES="$MODULES backends/platform/gp2x"
-		;;
-	x11)
-		INCLUDES="$INCLUDES -I/usr/X11R6/include"
-		LIBS="$LIBS -lpthread -lXext -lX11"
-		LDFLAGS="$LDFLAGS -L/usr/X11R6/lib -L/usr/local/lib"
-		DEFINES="$DEFINES -DX11_BACKEND"
-		MODULES="$MODULES backends/platform/x11"
 		;;
 	iphone)
 		OBJCFLAGS="$OBJCFLAGS --std=c99"

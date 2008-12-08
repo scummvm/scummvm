@@ -251,12 +251,6 @@
 	#define scumm_strnicmp strncasecmp
 
 	#ifndef CONFIG_H
-		#ifdef X11_BACKEND
-
-		// You need to set this manually if necessary
-	//	#define SCUMM_LITTLE_ENDIAN
-
-		#else
 		/* need this for the SDL_BYTEORDER define */
 		#include <SDL_byteorder.h>
 
@@ -266,7 +260,6 @@
 		#define SCUMM_BIG_ENDIAN
 		#else
 		#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
-		#endif
 		#endif
 	#endif
 
