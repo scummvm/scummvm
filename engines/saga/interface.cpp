@@ -379,6 +379,7 @@ int Interface::activate() {
 		}
 		_vm->_gfx->showCursor(true);
 		draw();
+		_vm->_render->setFullRefresh(true);
 	}
 
 	return SUCCESS;

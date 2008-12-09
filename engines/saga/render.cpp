@@ -230,7 +230,8 @@ void Render::restoreChangedRects() {
  	 	Common::List<Common::Rect>::const_iterator it;
  	 	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 			//_backGroundSurface.frameRect(*it, 1);		// DEBUG
-			g_system->copyRectToScreen((byte *)_backGroundSurface.pixels, _backGroundSurface.w, it->left, it->top, it->width(), it->height());
+			if (it->bottom <= _vm->_scene->getHeight())
+				g_system->copyRectToScreen((byte *)_backGroundSurface.pixels, _backGroundSurface.w, it->left, it->top, it->width(), it->height());
 		}
 	}
 	_dirtyRects.clear();
