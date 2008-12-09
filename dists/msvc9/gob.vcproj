@@ -348,6 +348,18 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\indeo3.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\indeo3.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\indeo3data.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\init.cpp"
 			>
 		</File>

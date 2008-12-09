@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7,00"
 	Name="gob"
 	ProjectGUID="{976D947A-A45F-4437-991E-412F695C64C7}"
 	Keyword="Win32Proj">
@@ -237,6 +237,15 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\goblin_v4.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\indeo3.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\indeo3.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\indeo3data.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\init.cpp">
