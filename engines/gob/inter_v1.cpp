@@ -1517,7 +1517,7 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 
 	case 61:
 		if (_vm->_global->_fakeVideoMode < 0x13) {
-			*_vm->_global->_inter_execPtr += 4;
+			_vm->_global->_inter_execPtr += 4;
 			return false;
 		}
 		break;

@@ -172,7 +172,7 @@ public:
 	SaveLoad(GobEngine *vm, const char *targetName);
 	virtual ~SaveLoad();
 
-	virtual SaveMode getSaveMode(const char *fileName) = 0;
+	virtual SaveMode getSaveMode(const char *fileName);
 
 	int32 getSize(const char *fileName);
 	bool load(const char *fileName, int16 dataVar, int32 size, int32 offset);
@@ -202,11 +202,11 @@ protected:
 
 	char *_targetName;
 
-	virtual int getSaveType(const char *fileName) = 0;
+	virtual int getSaveType(const char *fileName);
 
-	virtual int32 getSizeVersioned(int type) = 0;
-	virtual bool loadVersioned(int type, int16 dataVar, int32 size, int32 offset) = 0;
-	virtual bool saveVersioned(int type, int16 dataVar, int32 size, int32 offset) = 0;
+	virtual int32 getSizeVersioned(int type);
+	virtual bool loadVersioned(int type, int16 dataVar, int32 size, int32 offset);
+	virtual bool saveVersioned(int type, int16 dataVar, int32 size, int32 offset);
 };
 
 class SaveLoad_v2 : public SaveLoad {

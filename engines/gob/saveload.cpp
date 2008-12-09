@@ -870,4 +870,10 @@ bool SaveLoad::saveDataEndian(Common::WriteStream &out,
 	return retVal;
 }
 
+SaveLoad::SaveMode SaveLoad::getSaveMode(const char *fileName) { return kSaveModeNone; }
+int SaveLoad::getSaveType(const char *fileName) { return -1; }
+int32 SaveLoad::getSizeVersioned(int type) { return -1; }
+bool SaveLoad::loadVersioned(int type, int16 dataVar, int32 size, int32 offset) { return false; }
+bool SaveLoad::saveVersioned(int type, int16 dataVar, int32 size, int32 offset) { return false; }
+
 } // End of namespace Gob

@@ -208,7 +208,7 @@ void Inter_v6::setupOpcodes() {
 		{NULL, ""},
 		{NULL, ""},
 		/* 80 */
-		OPCODE(o4_initScreen),
+		OPCODE(o5_initScreen),
 		OPCODE(o2_scroll),
 		OPCODE(o2_setScrollOffset),
 		OPCODE(o4_playVmdOrMusic),
