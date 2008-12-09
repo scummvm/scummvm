@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/bomp.h"
@@ -145,14 +144,14 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 		ss = &vm.slot[_currentScript];
 		if (ss->where == WIO_INVENTORY) {
 			if (ss->number < _numInventory && _inventory[ss->number] == obj) {
-				warning("Odd setOwnerOf case #1: Please report to Fingolfin where you encountered this");
+				error("Odd setOwnerOf case #1: Please report to Fingolfin where you encountered this");
 				putOwner(obj, 0);
 				runInventoryScript(arg);
 				stopObjectCode();
 				return;
 			}
 			if (ss->number == obj)
-				warning("Odd setOwnerOf case #2: Please report to Fingolfin where you encountered this");
+				error("Odd setOwnerOf case #2: Please report to Fingolfin where you encountered this");
 		}
 	}
 
