@@ -837,28 +837,10 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	uint color;
 	int code = (_game.heversion >= 80) ? 127 : 64;
 
-	bool cmi_pos_hack = false;
+	// drawString is not used in SCUMM v7 and v8
+	assert(_game.version < 7);
 
 	convertMessageToString(msg, buf, sizeof(buf));
-
-	if (_game.version >= 7) {
-		// I recently disabled charset mask related code for V7+ games, thinking
-		// that it should never be needed there. Well, I missed on case: In this
-		// method, it could potentially still be used. Now the question is:
-		// Does this actually ever happen? Basically, drawString is called from
-		// two spots: First off, from drawVerb, which I *think* is not used for
-		// V7+ games (but I am not 100% sure), and secondly from printString().
-		// The latter is much harder to predict. Maybe in some obscure place it
-		// is used after all?
-		//
-		// Hence I am adding this error message, hoping that either somebody
-		// triggers it (at which point I can investigate), or, if nobody ever
-		// triggers it, we can assume that it's safe to keep this error even
-		// after the release.
-		//
-		// TODO/FIXME: Remove or update this hack before the next release!
-		error("drawString(%d, '%s') -- please inform Fingolfin about this crash!", a, buf);
-	}
 
 	_charset->_top = _string[a].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[a].xpos;
@@ -999,19 +981,10 @@ void ScummEngine::drawString(int a, const byte *msg) {
 					c = 0x20; //not in S-JIS
 				} else {
 					c += buf[i++] * 256;
-					if (_game.id == GID_CMI) {
-						cmi_pos_hack = true;
-						_charset->_top += 6;
-					}
 				}
 			}
-			_charset->printChar(c, (_game.version < 7));
+			_charset->printChar(c, true);
 			_charset->_blitAlso = false;
-
-			if (cmi_pos_hack) {
-				cmi_pos_hack = false;
-				_charset->_top -= 6;
-			}
 		}
 	}
 

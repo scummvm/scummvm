@@ -2157,7 +2157,7 @@ void ScummEngine::restart() {
 // TODO: Check this function - we should probably be reinitting a lot more stuff, and I suspect
 //	 this leaks memory like a sieve
 
-// Fingolfing seez: An alternate way to implement restarting would be to create
+// Fingolfin seez: An alternate way to implement restarting would be to create
 // a save state right after startup ... to this end we could introduce a SaveFile
 // subclass which is implemented using a memory buffer (i.e. no actual file is
 // created). Then to restart we just have to load that pseudo save state.

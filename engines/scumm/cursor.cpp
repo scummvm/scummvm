@@ -22,7 +22,6 @@
  *
  */
 
-
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/cursorman.h"
@@ -322,12 +321,9 @@ void ScummEngine_v6::useBompCursor(const byte *im, int width, int height) {
 }
 
 void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
-	// Cursor image in both Looms are based on images from charset.
-	if (_game.id != GID_LOOM) {
-		// FIXME: Actually: is this opcode ever called by a non-Loom game?
-		// Which V3-V5 game besides Loom makes use of custom cursors, ever?
-		error("V3--V5 SO_CURSOR_IMAGE(%d,%d) called - tell Fingolfin where you saw this!", index, chr);
-	}
+	// Cursor image in both Loom versions are based on images from charset.
+	// This function is *only* supported for Loom!
+	assert(_game.id == GID_LOOM);
 
 	assert(index >= 0 && index < 4);
 
@@ -367,11 +363,8 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 
 void ScummEngine_v5::redefineBuiltinCursorHotspot(int index, int x, int y) {
 	// Cursor image in both Looms are based on images from charset.
-	if (_game.id != GID_LOOM) {
-		// FIXME: Actually: is this opcode ever called by a non-Loom game?
-		// Which V3-V5 game besides Loom makes use of custom cursors, ever?
-		error("V3--V5 SO_CURSOR_HOTSPOT(%d,%d,%d) called - tell Fingolfin where you saw this!", index, x, y);
-	}
+	// This function is *only* supported for Loom!
+	assert(_game.id == GID_LOOM);
 
 	assert(index >= 0 && index < 4);
 

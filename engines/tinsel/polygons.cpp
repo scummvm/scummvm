@@ -769,8 +769,10 @@ static HPOLYGON PathOnTheWay(HPOLYGON from, HPOLYGON to) {
 }
 
 /**
- * Indirect method of calling PathOnTheWay(), to put the burden of
- * recursion onto the main stack.
+ * Indirect method of calling PathOnTheWay().
+ * Used to be implemented using coroutines, to put the burden of
+ * recursion onto the main stack. Since our "fake" coroutines use the
+ * same stack for everything anyway, we can do without the coroutines.
  */
 HPOLYGON GetPathOnTheWay(HPOLYGON hFrom, HPOLYGON hTo) {
 	CHECK_HP(hFrom, "Out of range polygon handle (6)");
@@ -794,7 +796,6 @@ HPOLYGON GetPathOnTheWay(HPOLYGON hFrom, HPOLYGON hTo) {
 /**
  * Given a node path, work out which end node is nearest the given point.
  */
-
 int NearestEndNode(HPOLYGON hPath, int x, int y) {
 	const POLYGON *pp;
 
@@ -825,7 +826,6 @@ int NearestEndNode(HPOLYGON hPath, int x, int y) {
  * nodes is nearest together.
  * Return which node in the start path is part of the closest pair.
  */
-
 int NearEndNode(HPOLYGON hSpath, HPOLYGON hDpath) {
 	const POLYGON *pSpath, *pDpath;
 
