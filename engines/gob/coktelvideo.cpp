@@ -27,6 +27,7 @@
 #include "common/system.h"
 
 #include "gob/coktelvideo.h"
+#include "gob/indeo3.h"
 
 namespace Gob {
 
@@ -71,6 +72,7 @@ bool Imd::load(Common::SeekableReadStream &stream) {
 
 	// Palette
 	_stream->read((byte *) _palette, 768);
+	notifyChangedPalette();
 
 	// Standard coordinates
 	if (_version >= 3) {
@@ -194,6 +196,11 @@ void Imd::setFrameRate(int16 frameRate) {
 
 	_frameRate = frameRate;
 	_frameLength = 1000 / _frameRate;
+}
+
+void Imd::setPalette(const byte *palette) {
+	memcpy(_palette, palette, 768);
+	notifyChangedPalette();
 }
 
 void Imd::setXY(int16 x, int16 y) {
@@ -434,6 +441,7 @@ void Imd::clear(bool del) {
 
 	_frameDataSize = _vidBufferSize = 0;
 	_frameData = _vidBuffer = 0;
+	_frameDataLen = 0;
 
 	memset(_palette, 0, 768);
 
@@ -578,7 +586,10 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 		if (cmd == 0xFFF4) {
 			_stream->seek(2, SEEK_CUR);
 			state.flags |= kStatePalette;
+
 			_stream->read(_palette, 768);
+			notifyChangedPalette();
+
 			cmd = _stream->readUint16LE();
 		}
 
@@ -601,6 +612,7 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 			state.flags |= 1;
 			cmd = _stream->readUint32LE();
 			_stream->read(_frameData, cmd + 2);
+			_frameDataLen = cmd + 2;
 
 			if (_vidMemWidth <= state.right) {
 				state.left = 0;
@@ -622,6 +634,7 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 		} else if (cmd != 0) {
 
 			_stream->read(_frameData, cmd + 2);
+			_frameDataLen = cmd + 2;
 
 			state.flags |= renderFrame(state.left, state.top, state.right, state.bottom);
 			state.flags |= _frameData[0];
@@ -668,6 +681,7 @@ uint32 Imd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
 		int index = *dataPtr++;
 		// 16 entries with each 3 bytes (RGB)
 		memcpy(_palette + index * 3, dataPtr, MIN((255 - index) * 3, 48));
+		notifyChangedPalette();
 
 		retVal = kStatePalette;
 		dataPtr += 48;
@@ -884,6 +898,8 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 
 	if (!(_version & 2))
 		_features |= kFeaturesPalette;
+	else
+		_features |= kFeaturesFullColor;
 
 	// 0x4 (4)
 
@@ -908,6 +924,7 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	if ((_width != 0) && (_height != 0)) {
 		_hasVideo = true;
 		_features |= kFeaturesVideo;
+		_codecIndeo3 = new Indeo3(_width, _height);
 	} else
 		_hasVideo = false;
 
@@ -938,6 +955,7 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	// 0x1A (26)
 
 	_stream->read((byte *) _palette, 768);
+	notifyChangedPalette();
 
 	// 0x31A (794)
 
@@ -956,6 +974,7 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 		_frameData = new byte[_frameDataSize];
 		assert(_frameData);
 		memset(_frameData, 0, _frameDataSize);
+
 		_vidBuffer = new byte[_vidBufferSize];
 		assert(_vidBuffer);
 		memset(_vidBuffer, 0, _vidBufferSize);
@@ -1011,7 +1030,7 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 		for (uint16 j = 0; j < _partsPerFrame; j++) {
 
 			_frames[i].parts[j].type = (PartType) _stream->readByte();
-			_stream->skip(1); // Unknown
+			_frames[i].parts[j].field_1 = _stream->readByte();
 			_frames[i].parts[j].size = _stream->readUint32LE();
 
 			if (_frames[i].parts[j].type == kPartTypeAudio) {
@@ -1025,7 +1044,7 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 				_frames[i].parts[j].top = _stream->readUint16LE();
 				_frames[i].parts[j].right = _stream->readUint16LE();
 				_frames[i].parts[j].bottom = _stream->readUint16LE();
-				_stream->skip(1); // Unknown
+				_frames[i].parts[j].field_E = _stream->readByte();
 				_frames[i].parts[j].flags = _stream->readByte();
 
 			} else if (_frames[i].parts[j].type == kPartTypeExtraData) {
@@ -1042,6 +1061,8 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 
 		}
 	}
+
+	_stream->seek(_firstFramePos);
 
 	if (numExtraData == 0)
 		return true;
@@ -1079,6 +1100,7 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 		}
 	}
 
+	_stream->seek(_firstFramePos);
 	return true;
 }
 
@@ -1144,10 +1166,14 @@ CoktelVideo::State Vmd::nextFrame() {
 void Vmd::clear(bool del) {
 	Imd::clear(del);
 
-	if (del)
+	if (del) {
+		delete _codecIndeo3;
 		delete[] _frames;
+	}
 
 	_hasVideo = true;
+
+	_codecIndeo3 = 0;
 
 	_partsPerFrame = 0;
 	_frames = 0;
@@ -1229,6 +1255,8 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 				uint8 count = _stream->readByte();
 
 				_stream->read(_palette + index * 3, (count + 1) * 3);
+				notifyChangedPalette();
+
 				_stream->skip((255 - count) * 3);
 
 				state.flags |= kStatePalette;
@@ -1237,13 +1265,15 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 			}
 
 			_stream->read(_frameData, size);
+			_frameDataLen = size;
 
-			if (renderFrame(part.left, part.top, part.right, part.bottom)) {
+			int16 l = part.left, t = part.top, r = part.right, b = part.bottom;
+			if (renderFrame(l, t, r, b)) {
 				// Rendering succeeded, merging areas
-				state.left = MIN(state.left, part.left);
-				state.top = MIN(state.top, part.top);
-				state.right = MAX(state.right, part.right);
-				state.bottom = MAX(state.bottom, part.bottom);
+				state.left   = MIN(state.left,   l);
+				state.top    = MIN(state.top,    t);
+				state.right  = MAX(state.right,  r);
+				state.bottom = MAX(state.bottom, b);
 			}
 
 		} else if (part.type == 4) {
@@ -1300,28 +1330,50 @@ void Vmd::deRLE(byte *&srcPtr, byte *&destPtr, int16 len) {
 	}
 }
 
-uint32 Vmd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
+uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 	if (!_frameData || !_vidMem || (_width <= 0) || (_height <= 0))
 		return 0;
 
 	int16 width = right - left + 1;
 	int16 height = bottom - top + 1;
 	int16 sW = _vidMemWidth;
+	uint32 dataLen = _frameDataLen;
 	byte *dataPtr = _frameData;
 	byte *imdVidMem = _vidMem + sW * top + left;
 	byte *srcPtr;
-	uint8 type = *dataPtr++;
+	uint8 type;
 
-	srcPtr = dataPtr;
+	if ((width < 0) || (height < 0))
+		return 1;
 
-	if (type & 0x80) { // Frame data is compressed
+	if (Indeo3::isIndeo3(dataPtr, dataLen)) {
+		if (!_codecIndeo3)
+			return 0;
+
+		if (!_codecIndeo3->decompressFrame(dataPtr, dataLen, _vidBuffer, width, height))
+			return 0;
+
+		type = 2;
 		srcPtr = _vidBuffer;
-		type &= 0x7F;
-		if ((type == 2) && (width == sW)) {
-			deLZ77(imdVidMem, dataPtr);
-			return 1;
-		} else
-			deLZ77(srcPtr, dataPtr);
+		width = _width;
+		height = _height;
+		right = left + width - 1;
+		bottom = top + height - 1;
+
+	} else {
+		type = *dataPtr++;
+		srcPtr = dataPtr;
+
+		if (type & 0x80) { // Frame data is compressed
+			srcPtr = _vidBuffer;
+			type &= 0x7F;
+			if ((type == 2) && (width == sW)) {
+				deLZ77(imdVidMem, dataPtr);
+				return 1;
+			} else
+				deLZ77(srcPtr, dataPtr);
+		}
+
 	}
 
 	uint16 pixCount, pixWritten;
@@ -1574,6 +1626,11 @@ Common::MemoryReadStream *Vmd::getExtraData(const char *fileName) {
 		new Common::MemoryReadStream(data, _extraData[i].realSize, true);
 
 	return stream;
+}
+
+void Vmd::notifyChangedPalette() {
+	if (_codecIndeo3)
+		_codecIndeo3->setPalette(_palette);
 }
 
 } // End of namespace Gob

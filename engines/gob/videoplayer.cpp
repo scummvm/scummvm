@@ -301,6 +301,9 @@ void VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 	if (fade)
 		_vm->_palAnim->fade(0, -2, 0);
 
+	if (video.getFeatures() & CoktelVideo::kFeaturesFullColor)
+		video.setPalette((byte *) _vm->_global->_pPaletteDesc->vgaPal);
+
 	while (startFrame <= lastFrame) {
 		if (doPlay(startFrame, breakKey, palCmd, palStart, palEnd, palFrame, endFrame))
 			break;
@@ -359,6 +362,8 @@ int VideoPlayer::slotOpen(const char *videoFile, Type which) {
 		delete video;
 		return -1;
 	}
+
+	assert((video->getVideo()->getFeatures() & CoktelVideo::kFeaturesFullColor) == 0);
 
 	video->getVideo()->setVideoMemory();
 	video->getVideo()->enableSound(*_vm->_mixer);

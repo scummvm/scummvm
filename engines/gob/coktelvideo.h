@@ -33,6 +33,8 @@
 
 namespace Gob {
 
+class Indeo3;
+
 /** Common interface for handling Coktel Vision videos and derivated formats. */
 class CoktelVideo {
 public:
@@ -51,7 +53,9 @@ public:
 		/** Has a frame positions table. */
 		kFeaturesFramesPos = 0x200,
 		/** Has video. */
-		kFeaturesVideo = 0x400
+		kFeaturesVideo = 0x400,
+		/** Is a full color (non-paletted) video. */
+		kFeaturesFullColor = 0x4000
 	};
 
 	enum StateFlags {
@@ -133,6 +137,8 @@ public:
 	/** Set the frame rate. */
 	virtual void setFrameRate(int16 frameRate) = 0;
 
+	virtual void setPalette(const byte *palette) = 0;
+
 	/** Set the coordinations where to draw the video. */
 	virtual void setXY(int16 x, int16 y) = 0;
 	/** Use a specific memory block as video memory. */
@@ -179,6 +185,9 @@ public:
 	virtual void copyCurrentFrame(byte *dest,
 			uint16 left, uint16 top, uint16 width, uint16 height,
 			uint16 x, uint16 y, uint16 pitch, int16 transp = -1) = 0;
+
+protected:
+	virtual void notifyChangedPalette() {}
 };
 
 /** Coktel Vision's IMD files.
@@ -211,6 +220,8 @@ public:
 	Common::MemoryReadStream *getExtraData(const char *fileName) { return 0; }
 
 	void setFrameRate(int16 frameRate);
+
+	void setPalette(const byte *palette);
 
 	bool load(Common::SeekableReadStream &stream);
 	void unload();
@@ -256,6 +267,7 @@ protected:
 
 	uint32 _frameDataSize, _vidBufferSize;
 	byte *_frameData, *_vidBuffer;
+	uint32 _frameDataLen;
 
 	byte _palette[768];
 
@@ -331,6 +343,8 @@ protected:
 	} PACKED_STRUCT;
 	struct Part {
 		PartType type;
+		byte field_1;
+		byte field_E;
 		uint32 size;
 		int16 left;
 		int16 top;
@@ -359,10 +373,12 @@ protected:
 	byte _soundBytesPerSample;
 	byte _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
 
+	Indeo3 *_codecIndeo3;
+
 	void clear(bool del = true);
 
 	State processFrame(uint16 frame);
-	uint32 renderFrame(int16 left, int16 top, int16 right, int16 bottom);
+	uint32 renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom);
 
 	void deRLE(byte *&srcPtr, byte *&destPtr, int16 len);
 
@@ -372,6 +388,8 @@ protected:
 	void filledSoundSlice(uint32 size);
 	void filledSoundSlices(uint32 size, uint32 mask);
 	void deDPCM(byte *soundBuf, byte *dataBuf, int16 &init, uint32 n);
+
+	void notifyChangedPalette();
 };
 
 } // End of namespace Gob
