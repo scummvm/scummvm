@@ -82,7 +82,10 @@ void Render::drawScene() {
 	int curMode = _vm->_interface->getMode();
 	assert(_initialized);
 
-	// TODO: Remove this
+	// TODO: Remove this to use dirty rectangles
+	// 2 known glitches exist:
+	// - When a placard is up, the text is not shown correctly
+	// - Sprite::drawClip() can draw sprites incorrectly in isometric scenes in ITE
 	_fullRefresh = true;
 
 #ifdef SAGA_DEBUG
@@ -221,7 +224,8 @@ void Render::addDirtyRect(Common::Rect rect) {
 				break;	// we need to break now, as the list is changed
 			}
 		}
-		_dirtyRects.push_back(rectClipped);
+		if (_vm->_interface->getFadeMode() != kFadeOut)
+			_dirtyRects.push_back(rectClipped);
 	}
 }
 

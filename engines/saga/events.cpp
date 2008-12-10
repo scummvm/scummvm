@@ -383,8 +383,6 @@ int Events::handleOneShot(Event *event) {
 		free(buf);
 		free(resourceData);
 
-		_vm->_render->setFullRefresh(true);
-
 		// Draw the scene. It won't be drawn by Render::drawScene(), as a placard is up
 		_vm->_scene->draw();
 		}

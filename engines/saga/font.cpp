@@ -409,8 +409,7 @@ void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, co
 	} // end per-character processing
 
 	rowLimit = (_vm->_gfx->getBackBufferHeight() < (textPoint.y + drawFont.header.charHeight)) ? _vm->_gfx->getBackBufferHeight() : textPoint.y + drawFont.header.charHeight;
-	// TODO: for now we add a dirty rect that ends at the right of the screen
-	_vm->_render->addDirtyRect(Common::Rect(textPoint.x, textPoint.y, _vm->_gfx->getBackBufferWidth(), rowLimit));
+	_vm->_render->addDirtyRect(Common::Rect(point.x, point.y, textPoint.x, rowLimit));
 }
 
 
