@@ -36,7 +36,7 @@ public:
 	MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool defaultMT32);
 	~MidiOutput();
 
-	void setSourceVolume(int source, uint8 volume, bool apply=false);
+	void setSourceVolume(int source, int volume, bool apply=false);
 
 	void initSource(int source);
 	void deinitSource(int source);
@@ -95,7 +95,7 @@ private:
 	int _curSource;
 
 	struct SoundSource {
-		byte volume;
+		int volume;
 
 		int8 channelMap[16];
 		byte channelProgram[16];
@@ -158,7 +158,7 @@ MidiOutput::MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool de
 	}
 
 	for (int i = 0; i < 4; ++i) {
-		_sources[i].volume = 0xFF;
+		_sources[i].volume = 256;
 		initSource(i);
 	}
 }
@@ -317,7 +317,7 @@ void MidiOutput::metaEvent(byte type, byte *data, uint16 length) {
 	_output->metaEvent(type, data, length);
 }
 
-void MidiOutput::setSourceVolume(int source, uint8 volume, bool apply) {
+void MidiOutput::setSourceVolume(int source, int volume, bool apply) {
 	_sources[source].volume = volume;
 
 	if (apply) {
@@ -532,7 +532,7 @@ void SoundMidiPC::updateVolumeSettings() {
 	if (!_output)
 		return;
 
-	uint8 newMusVol = ConfMan.getInt("music_volume");
+	int newMusVol = ConfMan.getInt("music_volume");
 	_sfxVolume = ConfMan.getInt("sfx_volume");
 
 	_output->setSourceVolume(0, newMusVol, newMusVol != _musicVolume);
@@ -677,7 +677,7 @@ void SoundMidiPC::onTimer(void *data) {
 		static const uint32 musicFadeTime = 1 * 1000;
 
 		if (midi->_fadeStartTime + musicFadeTime > midi->_vm->_system->getMillis()) {
-			byte volume = (byte)((musicFadeTime - (midi->_vm->_system->getMillis() - midi->_fadeStartTime)) * midi->_musicVolume / musicFadeTime);
+			int volume = (byte)((musicFadeTime - (midi->_vm->_system->getMillis() - midi->_fadeStartTime)) * midi->_musicVolume / musicFadeTime);
 			midi->_output->setSourceVolume(0, volume, true);
 		} else {
 			for (int i = 0; i < 16; ++i)

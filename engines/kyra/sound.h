@@ -348,8 +348,7 @@ private:
 	static void onTimer(void *data);
 
 	// Our channel handling
-	uint8 _musicVolume;
-	uint8 _sfxVolume;
+	int _musicVolume, _sfxVolume;
 
 	uint32 _fadeStartTime;
 	bool _fadeMusicOut;
