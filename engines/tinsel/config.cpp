@@ -98,9 +98,14 @@ void ReadConfig(void) {
 	if (ConfMan.hasKey("dclick_speed"))
 		dclickSpeed = ConfMan.getInt("dclick_speed");
 
-	volMusic = ConfMan.getInt("music_volume");
-	volSound = ConfMan.getInt("sfx_volume");
-	volVoice = ConfMan.getInt("speech_volume");
+	// HACK/FIXME:
+	// We need to clip the volumes from [0, 256] to [0, 255]
+	// here, since for example Tinsel's internal options dialog
+	// and also the midi playback code rely on the volumes to be
+	// in [0, 255]
+	volMusic = CLIP(ConfMan.getInt("music_volume"), 0, 255);
+	volSound = CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
+	volVoice = CLIP(ConfMan.getInt("speech_volume"), 0, 255);
 
 	if (ConfMan.hasKey("talkspeed"))
 		speedText = (ConfMan.getInt("talkspeed") * 100) / 255;
