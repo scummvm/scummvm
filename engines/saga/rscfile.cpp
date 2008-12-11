@@ -446,7 +446,7 @@ bool Resource::createContexts() {
 	// Detect and add voice files
 	fileFound = false;
 	curSoundfiles = _vm->getGameType() == GType_ITE ? voiceFilesITE : voiceFilesIHNM;
-	maxFile = _vm->getGameType() == GType_ITE ? 4 : 2;
+	maxFile = _vm->getGameType() == GType_ITE ? 7 : 4;
 
 	for (i = 0; i < maxFile; i++) {
 		if (Common::File::exists(curSoundfiles[i].fileName)) {
