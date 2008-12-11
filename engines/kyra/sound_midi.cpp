@@ -532,8 +532,8 @@ void SoundMidiPC::updateVolumeSettings() {
 	if (!_output)
 		return;
 
-	uint8 newMusVol = CLIP(ConfMan.getInt("music_volume"), 0, 255);
-	_sfxVolume = CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
+	uint8 newMusVol = ConfMan.getInt("music_volume");
+	_sfxVolume = ConfMan.getInt("sfx_volume");
 
 	_output->setSourceVolume(0, newMusVol, newMusVol != _musicVolume);
 	_musicVolume = newMusVol;
