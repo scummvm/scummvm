@@ -1,3 +1,3 @@
 ?package(residual):needs="x11" section="Games/Adventure" \
   title="Residual" command="/usr/games/residual" \
-  icon="/usr/share/icons/residual.xpm"
+  icon="/usr/share/pixmaps/residual.xpm"
