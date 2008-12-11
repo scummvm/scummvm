@@ -29,14 +29,6 @@
  * And there's still a bit of tidying and commenting to do yet.
  */
 
-// This needs to be enabled to allow the subtitle selection
-// menu to be working in some versions. For example see
-// bug #2412503 "DW1: Subtitle menu not working (Multi-language version)".
-//
-// TODO: Think of removing this define alltogether and remove all checks
-// for it.
-#define USE_3FLAGS 1
-
 #include "tinsel/actors.h"
 #include "tinsel/anim.h"
 #include "tinsel/background.h"
@@ -1700,7 +1692,6 @@ void Select(int i, bool force) {
 
 		break;
 
-#if defined(USE_3FLAGS) || defined(USE_4FLAGS) || defined(USE_5FLAGS)
 	case FRGROUP:
 		iconArray[HL2] = RectangleObject(BgPal(), COL_HILIGHT, cd.box[i].w+6, cd.box[i].h+6);
 		MultiInsertObject(GetPlayfieldList(FIELD_STATUS), iconArray[HL2]);
@@ -1710,7 +1701,7 @@ void Select(int i, bool force) {
 		MultiSetZPosition(iconArray[HL2], Z_INV_BRECT+1);
 
 		break;
-#endif
+
 	default:
 		break;
 	}
@@ -2824,7 +2815,6 @@ void AddBox(int *pi, int i) {
 
 		break;
 
-#if defined(USE_3FLAGS) || defined(USE_4FLAGS) || defined(USE_5FLAGS)
 	case FRGROUP:
 		assert(flagFilm != 0); // Language flags not declared!
 
@@ -2839,7 +2829,7 @@ void AddBox(int *pi, int i) {
 		*pi += 1;
 
 		break;
-#endif
+
 	case FLIP:
 		pFilm = (const FILM *)LockMem(hWinParts);
 
@@ -4209,7 +4199,6 @@ void InventoryProcess(CORO_PARAM, const void *) {
 					KillInventory();
 					bRestart = true;
 					break;
-	#if defined(USE_3FLAGS) || defined(USE_4FLAGS) || defined(USE_5FLAGS)
 				case CLANG:
 					if (!LanguageChange())
 						KillInventory();
@@ -4217,7 +4206,6 @@ void InventoryProcess(CORO_PARAM, const void *) {
 				case RLANG:
 					KillInventory();
 					break;
-	#endif
 				case HOPPER2:
 					KillInventory();
 					OpenMenu(HOPPER_MENU2);
@@ -4946,7 +4934,6 @@ void MenuAction(int i, bool dbl) {
 			}
 			break;
 
-#if defined(USE_3FLAGS) || defined(USE_4FLAGS) || defined(USE_5FLAGS)
 		case FRGROUP:
 			if (dbl) {
 				Select(i, false);
@@ -4955,7 +4942,6 @@ void MenuAction(int i, bool dbl) {
 				Select(i, false);
 			}
 			break;
-#endif
 
 		case AAGBUT:
 		case ARSGBUT:
