@@ -35,46 +35,58 @@
 
 namespace Gob {
 
-// A simple octree for quickly finding the best matching palette entry
-class PalOctree {
+class PaletteLUT {
 public:
-	PalOctree(const byte *palette, byte depth);
-	~PalOctree();
-
-	byte findNearest(byte c1, byte c2, byte c3) const;
-	byte findNearest(byte c1, byte c2, byte c3, byte &nc1, byte &nc2, byte &nc3) const;
-
-private:
-	struct Node {
-		byte index;
-		byte comp[3];
-		struct Node *children[8];
-
-		Node(byte i, byte c1, byte c2, byte c3) : index(i) {
-			memset(children, 0, 8 * sizeof(struct Node *));
-			comp[0] = c1;
-			comp[1] = c2;
-			comp[2] = c3;
-		}
-		~Node() {
-			for (int i = 0; i < 8; i++)
-				delete children[i];
-		}
+	enum PaletteFormat {
+		kPaletteRGB,
+		kPaletteYUV
 	};
 
-	Node *_root;
-	byte _depth;
+	inline static void YUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) {
+		r = CLIP<int>(y + ((1357 * (v - 128)) >> 10), 0, 255);
+		g = CLIP<int>(y - (( 691 * (v - 128)) >> 10) - ((333 * (u - 128)) >> 10), 0, 255);
+		b = CLIP<int>(y + ((1715 * (u - 128)) >> 10), 0, 255);
+	}
+	inline static void RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v) {
+		y = CLIP<int>( ((r * 306) >> 10) + ((g * 601) >> 10) + ((b * 117) >> 10)      , 0, 255);
+		u = CLIP<int>(-((r * 172) >> 10) - ((g * 340) >> 10) + ((b * 512) >> 10) + 128, 0, 255);
+		v = CLIP<int>( ((r * 512) >> 10) - ((g * 429) >> 10) - ((b *  83) >> 10) + 128, 0, 255);
+	}
 
-	void build(const byte *palette);
+	PaletteLUT(byte depth, PaletteFormat format);
+	~PaletteLUT();
+
+	void setPalette(const byte *palette, PaletteFormat format, byte depth);
+
+	void buildNext();
+
+	byte findNearest(byte c1, byte c2, byte c3);
+	byte findNearest(byte c1, byte c2, byte c3, byte &nC1, byte &nC2, byte &nC3);
+
+private:
+	byte _depth1, _depth2;
+	byte _shift;
+
+	int _dim1, _dim2, _dim3;
+
+	PaletteFormat _format;
+	byte _lutPal[768];
+	byte _realPal[768];
+
+	int _got;
+	byte *_gots;
+	byte *_lut;
+
+	void build(int d1);
+	inline int getIndex(byte c1, byte c2, byte c3) const;
+	inline void plotEntry(int x, int y, int z, byte e, byte *filled, int &free);
 };
 
 // The Sierra-2-4A ("Filter Light") dithering algorithm
 class SierraLite {
 public:
-	SierraLite(int16 width, int16 height);
+	SierraLite(int16 width, int16 height, PaletteLUT *palLUT);
 	~SierraLite();
-
-	void setPalTree(const PalOctree *palTree);
 
 	void newFrame();
 	void nextLine();
@@ -83,7 +95,7 @@ public:
 protected:
 	int16 _width, _height;
 
-	const PalOctree *_palTree;
+	PaletteLUT *_palLUT;
 
 	int32 *_errorBuf;
 	int32 *_errors[2];
@@ -93,34 +105,18 @@ protected:
 	inline void addErrors(uint32 x, int32 eC1, int32 eC2, int32 eC3);
 };
 
-// Ordered ditherer with a 8x8 mask
-class Ordered8x8 {
-public:
-	inline static byte dither(byte c1, byte c2, byte c3, const PalOctree *palTree, uint32 x, uint32 y) {
-		c1 = CLIP<int>(c1 + map[x % 8][y % 8], 0, 255);
-		c2 = CLIP<int>(c2 + map[x % 8][y % 8], 0, 255);
-		c3 = CLIP<int>(c3 + map[x % 8][y % 8], 0, 255);
-		return palTree->findNearest(c1, c2, c3);
-	}
-
-private:
-	static const int map[8][8];
-};
-
 class Indeo3 {
 public:
 	enum DitherAlgorithm {
 		kDitherNone = 0,
-		kDitherSierraLite,
-		kDitherOrdered8x8
+		kDitherSierraLite
 	};
 
-	Indeo3(int16 width, int16 height);
+	Indeo3(int16 width, int16 height, PaletteLUT *palLUT);
 	~Indeo3();
 
 	static bool isIndeo3(byte *data, uint32 dataLen);
 
-	void setPalette(const byte *palette);
 	void setDither(DitherAlgorithm dither);
 
 	bool decompressFrame(byte *inData, uint32 dataLen,
@@ -152,7 +148,7 @@ private:
 	byte *_ModPred;
 	uint16 *_corrector_type;
 
-	PalOctree *_palTree;
+	PaletteLUT *_palLUT;
 
 	DitherAlgorithm _dither;
 	SierraLite *_ditherSL;
@@ -180,9 +176,6 @@ private:
 
 	void blitLine(BlitState &s);
 	void blitLineDither(BlitState &s);
-
-	inline void YUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b);
-	inline void RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v);
 };
 
 } // End of namespace Gob

@@ -33,6 +33,7 @@
 
 namespace Gob {
 
+class PaletteLUT;
 class Indeo3;
 
 /** Common interface for handling Coktel Vision videos and derivated formats. */
@@ -137,8 +138,6 @@ public:
 	/** Set the frame rate. */
 	virtual void setFrameRate(int16 frameRate) = 0;
 
-	virtual void setPalette(const byte *palette) = 0;
-
 	/** Set the coordinations where to draw the video. */
 	virtual void setXY(int16 x, int16 y) = 0;
 	/** Use a specific memory block as video memory. */
@@ -185,9 +184,6 @@ public:
 	virtual void copyCurrentFrame(byte *dest,
 			uint16 left, uint16 top, uint16 width, uint16 height,
 			uint16 x, uint16 y, uint16 pitch, int16 transp = -1) = 0;
-
-protected:
-	virtual void notifyChangedPalette() {}
 };
 
 /** Coktel Vision's IMD files.
@@ -220,8 +216,6 @@ public:
 	Common::MemoryReadStream *getExtraData(const char *fileName) { return 0; }
 
 	void setFrameRate(int16 frameRate);
-
-	void setPalette(const byte *palette);
 
 	bool load(Common::SeekableReadStream &stream);
 	void unload();
@@ -310,7 +304,7 @@ protected:
 
 class Vmd : public Imd {
 public:
-	Vmd();
+	Vmd(PaletteLUT *palLUT = 0);
 	~Vmd();
 
 	bool getAnchor(int16 frame, uint16 partType,
@@ -373,6 +367,7 @@ protected:
 	byte _soundBytesPerSample;
 	byte _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
 
+	PaletteLUT *_palLUT;
 	Indeo3 *_codecIndeo3;
 
 	void clear(bool del = true);
@@ -388,8 +383,6 @@ protected:
 	void filledSoundSlice(uint32 size);
 	void filledSoundSlices(uint32 size, uint32 mask);
 	void deDPCM(byte *soundBuf, byte *dataBuf, int16 &init, uint32 n);
-
-	void notifyChangedPalette();
 };
 
 } // End of namespace Gob

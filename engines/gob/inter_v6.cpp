@@ -32,6 +32,7 @@
 #include "gob/game.h"
 #include "gob/parse.h"
 #include "gob/draw.h"
+#include "gob/indeo3.h"
 
 namespace Gob {
 
@@ -394,7 +395,7 @@ void Inter_v6::setupOpcodes() {
 		{NULL, ""},
 		OPCODE(o2_printText),
 		OPCODE(o1_loadTot),
-		OPCODE(o1_palLoad),
+		OPCODE(o6_palLoad),
 		/* 14 */
 		OPCODE(o1_keyFunc),
 		OPCODE(o1_capturePush),
@@ -582,6 +583,8 @@ void Inter_v6::executeDrawOpcode(byte i) {
 }
 
 bool Inter_v6::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
+	_vm->_video->_palLUT->buildNext();
+
 	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%X.0x%X] (%s) - %s, %d, %d",
 			i, j, i, j, getOpcodeFuncDesc(i, j), _vm->_game->_curTotFile,
 			(uint) (_vm->_global->_inter_execPtr - _vm->_game->_totFileData),
@@ -790,6 +793,13 @@ bool Inter_v6::o6_evaluateStore(OpFuncParams &params) {
 		}
 	}
 
+	return false;
+}
+
+bool Inter_v6::o6_palLoad(OpFuncParams &params) {
+	o1_palLoad(params);
+	_vm->_video->_palLUT->setPalette((const byte *) _vm->_global->_pPaletteDesc->vgaPal,
+			PaletteLUT::kPaletteRGB, 6);
 	return false;
 }
 

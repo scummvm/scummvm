@@ -32,6 +32,7 @@
 #include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/draw.h"
+#include "gob/indeo3.h"
 
 #include "gob/driver_vga.h"
 
@@ -105,6 +106,8 @@ Video::Video(GobEngine *vm) : _vm(vm) {
 	_lastSparse = 0xFFFFFFFF;
 
 	_dirtyAll = false;
+
+	_palLUT = new PaletteLUT(6, PaletteLUT::kPaletteYUV);
 }
 
 char Video::initDriver(int16 vidMode) {

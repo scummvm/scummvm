@@ -40,90 +40,127 @@
 
 namespace Gob {
 
-const int Ordered8x8::map[8][8] = {
-	{0, 15, 3, 18, 1, 15, 4, 19},
-	{10, 5, 13, 8, 11, 6, 14, 9},
-	{2, 17, 1, 16, 3, 18, 2, 17},
-	{12, 7, 11, 6, 13, 8, 12, 7},
-	{0, 15, 4, 19, 0, 15, 4, 19},
-	{10, 5, 14, 9, 10, 5, 14, 9},
-	{3, 18, 2, 16, 3, 17, 1, 16},
-	{13, 8, 11, 7, 12, 7, 11, 6}
-};
-
-PalOctree::PalOctree(const byte *palette, byte depth) : _depth(depth) {
+#define SQR(x) ((x) * (x))
+PaletteLUT::PaletteLUT(byte depth, PaletteFormat format) {
 	assert((depth > 1) && (depth < 9));
 
-	build(palette);
+	_depth1 = depth;
+	_depth2 = 2 * _depth1;
+	_shift = 8 - _depth1;
+
+	_dim1 = (1 << _depth1);
+	_dim2 = _dim1 * _dim1;
+	_dim3 = _dim1 * _dim1 * _dim1;
+
+	_format = format;
+
+	_got = _dim1;
+	_lut = new byte[_dim3];
+	_gots = new byte[_dim1];
+
+	memset(_lutPal, 0, 768);
+	memset(_realPal, 0, 768);
+	memset(_gots, 1, _dim1);
 }
 
-PalOctree::~PalOctree() {
-	delete _root;
+void PaletteLUT::setPalette(const byte *palette, PaletteFormat format, byte depth) {
+	assert((depth > 1) && (depth < 9));
+
+	warning("Building new palette LUT");
+
+	int shift = 8 - depth;
+
+	if ((_format == kPaletteRGB) && (format == kPaletteYUV)) {
+		byte *newPal = _realPal;
+		const byte *oldPal = palette;
+		for (int i = 0; i < 256; i++, newPal += 3, oldPal += 3)
+			YUV2RGB(oldPal[0] << shift, oldPal[1] << shift, oldPal[2] << shift,
+					newPal[0], newPal[1], newPal[2]);
+	} else if ((_format == kPaletteYUV) && (format == kPaletteRGB)) {
+		byte *newPal = _realPal;
+		const byte *oldPal = palette;
+		for (int i = 0; i < 256; i++, newPal += 3, oldPal += 3)
+			RGB2YUV(oldPal[0] << shift, oldPal[1] << shift, oldPal[2] << shift,
+					newPal[0], newPal[1], newPal[2]);
+	} else
+		memcpy(_realPal, palette, 768);
+
+	byte *newPal = _lutPal, *oldPal = _realPal;
+	for (int i = 0; i < 768; i++)
+		*newPal++ = (*oldPal++) >> _shift;
+
+	_got = 0;
+	memset(_gots, 0, _dim1);
 }
 
-void PalOctree::build(const byte *palette) {
-	_root = new Node(0, 0, 0, 0);
+PaletteLUT::~PaletteLUT() {
+	delete[] _lut;
+	delete[] _gots;
+}
 
-	for (int i = 0; i < 256; i++, palette += 3) {
-		byte c1, c2, c3;
-		byte oC1, oC2, oC3;
+void PaletteLUT::buildNext() {
+	if (_got >= _dim1)
+		return;
 
-		oC1 = c1 = palette[0];
-		oC2 = c2 = palette[1];
-		oC3 = c3 = palette[2];
+	build(_got++);
+}
 
-		Node *node = _root;
-		for (int j = 0; j < _depth; j++) {
-			// Generating an index out of the upper-most bits
-			int n = 4 * (c1 >> 7) + 2 * (c2 >> 7) + (c3 >> 7);
+void PaletteLUT::build(int d1) {
+	byte *lut = _lut + d1 * _dim2;
 
-			if (!node->children[n]) {
-				// Found a free place
-				node->children[n] = new Node(i, oC1, oC2, oC3);
-				break;
+	warning("LUT %d/%d", d1, _dim1 - 1);
+
+	for (int j = 0; j < _dim1; j++) {
+		for (int k = 0; k < _dim1; k++) {
+			const byte *p = _lutPal;
+			uint32 d = 0xFFFFFFFF;
+			byte n = 0;
+
+			for (int c = 0; c < 256; c++, p += 3) {
+				uint32 di = SQR(d1 - p[0]) + SQR(j - p[1]) + SQR(k - p[2]);
+				if (di < d) {
+					d = di;
+					n = c;
+					if (d == 0)
+						break;
+				}
 			}
 
-			node = node->children[n];
-			c1 <<= 1;
-			c2 <<= 1;
-			c3 <<= 1;
+			*lut++ = n;
 		}
 	}
+
+	_gots[d1] = 1;
 }
 
-byte PalOctree::findNearest(byte c1, byte c2, byte c3) const {
-	byte n1, n2, n3;
-
-	return findNearest(c1, c2, c3, n1, n2, n3);
+inline int PaletteLUT::getIndex(byte c1, byte c2, byte c3) const {
+	return ((c1 >> _shift) << _depth2) | ((c2 >> _shift) << _depth1) | (c3 >> _shift);
 }
 
-byte PalOctree::findNearest(byte c1, byte c2, byte c3, byte &nc1, byte &nc2, byte &nc3) const {
-	Node *node = _root;
-
-	int n = 4 * (c1 >> 7) + 2 * (c2 >> 7) + (c3 >> 7);
-	while (node->children[n]) {
-		node = node->children[n];
-
-		c1 <<= 1;
-		c2 <<= 1;
-		c3 <<= 1;
-
-		n = 4 * (c1 >> 7) + 2 * (c2 >> 7) + (c3 >> 7);
-	}
-
-	nc1 = node->comp[0];
-	nc2 = node->comp[1];
-	nc3 = node->comp[2];
-	return node->index;
+byte PaletteLUT::findNearest(byte c1, byte c2, byte c3) {
+	return _lut[getIndex(c1, c2, c3)];
 }
 
-SierraLite::SierraLite(int16 width, int16 height) {
+byte PaletteLUT::findNearest(byte c1, byte c2, byte c3, byte &nC1, byte &nC2, byte &nC3) {
+	if (!_gots[c1 >> _shift])
+		build(c1 >> _shift);
+
+	int palIndex = _lut[getIndex(c1, c2, c3)];
+	int i = palIndex * 3;
+
+	nC1 = _realPal[i + 0];
+	nC2 = _realPal[i + 1];
+	nC3 = _realPal[i + 2];
+
+	return palIndex;
+}
+
+SierraLite::SierraLite(int16 width, int16 height, PaletteLUT *palLUT) {
 	assert((width > 0) && (height > 0));
 
 	_width = width;
 	_height = height;
-
-	_palTree = 0;
+	_palLUT = palLUT;
 
 	_errorBuf = new int32[3 * (2 * (_width + 2*1))];
 	memset(_errorBuf, 0, (3 * (2 * (_width + 2*1))) * sizeof(int32));
@@ -135,10 +172,6 @@ SierraLite::SierraLite(int16 width, int16 height) {
 
 SierraLite::~SierraLite() {
 	delete[] _errorBuf;
-}
-
-void SierraLite::setPalTree(const PalOctree *palTree) {
-	_palTree = palTree;
 }
 
 void SierraLite::newFrame() {
@@ -155,7 +188,7 @@ void SierraLite::nextLine() {
 }
 
 byte SierraLite::dither(byte c1, byte c2, byte c3, uint32 x) {
-	assert(_palTree);
+	assert(_palLUT);
 
 	int32 eC1, eC2, eC3;
 
@@ -168,8 +201,9 @@ byte SierraLite::dither(byte c1, byte c2, byte c3, uint32 x) {
 
 	// Find color
 	byte newC1, newC2, newC3;
-	byte newPixel = _palTree->findNearest(c1, c2, c3, newC1, newC2, newC3);
+	byte newPixel = _palLUT->findNearest(c1, c2, c3, newC1, newC2, newC3);
 
+	// Calculate new error
 	eC1 = c1 - newC1;
 	eC2 = c2 - newC2;
 	eC3 = c3 - newC3;
@@ -209,13 +243,12 @@ inline void SierraLite::addErrors(uint32 x, int32 eC1, int32 eC2, int32 eC3) {
 	errNext[x2 + 2] += eC3;
 }
 
-Indeo3::Indeo3(int16 width, int16 height) {
+Indeo3::Indeo3(int16 width, int16 height, PaletteLUT *palLUT) {
 	assert((width > 0) && (height > 0));
 
 	_width = width;
 	_height = height;
-
-	_palTree = 0;
+	_palLUT = palLUT;
 
 	_ditherSL = 0;
 	setDither(kDitherSierraLite);
@@ -228,20 +261,7 @@ Indeo3::~Indeo3() {
 	delete[] _iv_frame[0].the_buf;
 	delete[] _ModPred;
 	delete[] _corrector_type;
-	delete _palTree;
 	delete _ditherSL;
-}
-
-inline void Indeo3::YUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) {
-	r = CLIP<int>(y + ((1357 * (v - 128)) >> 10), 0, 255);
-	g = CLIP<int>(y - (( 691 * (v - 128)) >> 10) - ((333 * (u - 128)) >> 10), 0, 255);
-	b = CLIP<int>(y + ((1715 * (u - 128)) >> 10), 0, 255);
-}
-
-inline void Indeo3::RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v) {
-	y = CLIP<int>( ((r * 306) >> 10) + ((g * 601) >> 10) + ((b * 117) >> 10)      , 0, 255);
-	u = CLIP<int>(-((r * 172) >> 10) - ((g * 340) >> 10) + ((b * 512) >> 10) + 128, 0, 255);
-	v = CLIP<int>( ((r * 512) >> 10) - ((g * 429) >> 10) - ((b *  83) >> 10) + 128, 0, 255);
 }
 
 bool Indeo3::isIndeo3(byte *data, uint32 dataLen) {
@@ -270,22 +290,6 @@ bool Indeo3::isIndeo3(byte *data, uint32 dataLen) {
 	return true;
 }
 
-void Indeo3::setPalette(const byte *palette) {
-	delete _palTree;
-
-	byte paletteYUV[768];
-
-	const byte *rgb = palette;
-	byte *yuv = paletteYUV;
-	for (int i = 0; i < 256; i++, rgb += 3, yuv += 3)
-		RGB2YUV(rgb[0] << 2, rgb[1] << 2, rgb[2] << 2, yuv[0], yuv[1], yuv[2]);
-
-	_palTree = new PalOctree(paletteYUV, 6);
-
-	if (_ditherSL)
-		_ditherSL->setPalTree(_palTree);
-}
-
 void Indeo3::setDither(DitherAlgorithm dither) {
 	delete _ditherSL;
 	_ditherSL = 0;
@@ -294,8 +298,7 @@ void Indeo3::setDither(DitherAlgorithm dither) {
 
 	switch(dither) {
 	case kDitherSierraLite:
-		_ditherSL = new SierraLite(_width, _height);
-		_ditherSL->setPalTree(_palTree);
+		_ditherSL = new SierraLite(_width, _height, _palLUT);
 		break;
 
 	default:
@@ -389,7 +392,7 @@ bool Indeo3::decompressFrame(byte *inData, uint32 dataLen,
 		return false;
 
 	assert(outData);
-	assert(_palTree);
+	assert(_palLUT);
 
 	uint32 frameDataLen = READ_LE_UINT32(inData + 12);
 
@@ -507,7 +510,7 @@ void Indeo3::blitLine(BlitState &s) {
 		byte dataV = lineV[s.curX >> 2];
 
 		for (int n = 0; n < s.scaleWYOut; n++)
-			*s.bufOut++ = _palTree->findNearest(dataY, dataU, dataV);
+			*s.bufOut++ = _palLUT->findNearest(dataY, dataU, dataV);
 	}
 
 	byte *lineDest = s.bufOut - s.lineWidthOut;

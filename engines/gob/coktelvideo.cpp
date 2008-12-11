@@ -72,7 +72,6 @@ bool Imd::load(Common::SeekableReadStream &stream) {
 
 	// Palette
 	_stream->read((byte *) _palette, 768);
-	notifyChangedPalette();
 
 	// Standard coordinates
 	if (_version >= 3) {
@@ -196,11 +195,6 @@ void Imd::setFrameRate(int16 frameRate) {
 
 	_frameRate = frameRate;
 	_frameLength = 1000 / _frameRate;
-}
-
-void Imd::setPalette(const byte *palette) {
-	memcpy(_palette, palette, 768);
-	notifyChangedPalette();
 }
 
 void Imd::setXY(int16 x, int16 y) {
@@ -588,8 +582,6 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 			state.flags |= kStatePalette;
 
 			_stream->read(_palette, 768);
-			notifyChangedPalette();
-
 			cmd = _stream->readUint16LE();
 		}
 
@@ -681,7 +673,6 @@ uint32 Imd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
 		int index = *dataPtr++;
 		// 16 entries with each 3 bytes (RGB)
 		memcpy(_palette + index * 3, dataPtr, MIN((255 - index) * 3, 48));
-		notifyChangedPalette();
 
 		retVal = kStatePalette;
 		dataPtr += 48;
@@ -879,7 +870,7 @@ const uint16 Vmd::_tableDPCM[128] = {
 	0x0F00, 0x1000, 0x1400, 0x1800, 0x1C00, 0x2000, 0x3000, 0x4000
 };
 
-Vmd::Vmd() {
+Vmd::Vmd(PaletteLUT *palLUT) : _palLUT(palLUT) {
 	clear(false);
 }
 
@@ -924,7 +915,8 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	if ((_width != 0) && (_height != 0)) {
 		_hasVideo = true;
 		_features |= kFeaturesVideo;
-		_codecIndeo3 = new Indeo3(_width, _height);
+		if (_features & kFeaturesFullColor)
+			_codecIndeo3 = new Indeo3(_width, _height, _palLUT);
 	} else
 		_hasVideo = false;
 
@@ -955,7 +947,6 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	// 0x1A (26)
 
 	_stream->read((byte *) _palette, 768);
-	notifyChangedPalette();
 
 	// 0x31A (794)
 
@@ -1255,8 +1246,6 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 				uint8 count = _stream->readByte();
 
 				_stream->read(_palette + index * 3, (count + 1) * 3);
-				notifyChangedPalette();
-
 				_stream->skip((255 - count) * 3);
 
 				state.flags |= kStatePalette;
@@ -1626,11 +1615,6 @@ Common::MemoryReadStream *Vmd::getExtraData(const char *fileName) {
 		new Common::MemoryReadStream(data, _extraData[i].realSize, true);
 
 	return stream;
-}
-
-void Vmd::notifyChangedPalette() {
-	if (_codecIndeo3)
-		_codecIndeo3->setPalette(_palette);
 }
 
 } // End of namespace Gob

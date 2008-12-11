@@ -624,6 +624,7 @@ protected:
 
 	bool o6_loadCursor(OpFuncParams &params);
 	bool o6_evaluateStore(OpFuncParams &params);
+	bool o6_palLoad(OpFuncParams &params);
 };
 
 } // End of namespace Gob

@@ -62,7 +62,7 @@ bool VideoPlayer::Video::open(const char *fileName, Type which) {
 	if (which == kVideoTypeIMD) {
 		_video = new Imd();
 	} else if (which == kVideoTypeVMD) {
-		_video = new Vmd();
+		_video = new Vmd(_vm->_video->_palLUT);
 	} else {
 		warning("Couldn't open video \"%s\": Invalid video Type", fileName);
 		close();
@@ -300,9 +300,6 @@ void VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 
 	if (fade)
 		_vm->_palAnim->fade(0, -2, 0);
-
-	if (video.getFeatures() & CoktelVideo::kFeaturesFullColor)
-		video.setPalette((byte *) _vm->_global->_pPaletteDesc->vgaPal);
 
 	while (startFrame <= lastFrame) {
 		if (doPlay(startFrame, breakKey, palCmd, palStart, palEnd, palFrame, endFrame))
