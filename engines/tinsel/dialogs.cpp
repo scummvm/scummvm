@@ -29,7 +29,13 @@
  * And there's still a bit of tidying and commenting to do yet.
  */
 
-//#define USE_3FLAGS 1
+// This needs to be enabled to allow the subtitle selection
+// menu to be working in some versions. For example see
+// bug #2412503 "DW1: Subtitle menu not working (Multi-language version)".
+//
+// TODO: Think of removing this define alltogether and remove all checks
+// for it.
+#define USE_3FLAGS 1
 
 #include "tinsel/actors.h"
 #include "tinsel/anim.h"
