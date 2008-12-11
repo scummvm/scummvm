@@ -216,6 +216,14 @@ public:
 
 	Video_v6(GobEngine *vm);
 	virtual ~Video_v6() {}
+
+private:
+	void drawPacked(const byte *sprBuf, int16 x, int16 y, SurfaceDesc *surfDesc);
+	void drawYUVData(const byte *srcData, SurfaceDesc *destDesc,
+			int16 width, int16 height, int16 x, int16 y);
+	void drawYUV(SurfaceDesc *destDesc, int16 x, int16 y,
+			int16 dataWidth, int16 dataHeight, int16 width, int16 height,
+			const byte *dataY, const byte *dataU, const byte *dataV);
 };
 
 class VideoDriver {

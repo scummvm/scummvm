@@ -1877,8 +1877,15 @@ bool Inter_v1::o1_loadSpriteContent(OpFuncParams &params) {
 }
 
 bool Inter_v1::o1_copySprite(OpFuncParams &params) {
-	_vm->_draw->_sourceSurface = load16();
-	_vm->_draw->_destSurface = load16();
+	if (_vm->_global->_inter_execPtr[1] == 0)
+		_vm->_draw->_sourceSurface = load16();
+	else
+		_vm->_draw->_sourceSurface = _vm->_parse->parseValExpr();
+
+	if (_vm->_global->_inter_execPtr[1] == 0)
+		_vm->_draw->_destSurface = load16();
+	else
+		_vm->_draw->_destSurface = _vm->_parse->parseValExpr();
 
 	_vm->_draw->_spriteLeft = _vm->_parse->parseValExpr();
 	_vm->_draw->_spriteTop = _vm->_parse->parseValExpr();

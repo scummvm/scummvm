@@ -116,6 +116,7 @@ public:
 	byte *_totFileData;
 
 	int16 _extHandle;
+	int16 _lomHandle;
 
 	char _totToLoad[20];
 

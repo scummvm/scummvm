@@ -83,10 +83,10 @@ private:
 };
 
 // The Sierra-2-4A ("Filter Light") dithering algorithm
-class SierraLite {
+class SierraLight {
 public:
-	SierraLite(int16 width, int16 height, PaletteLUT *palLUT);
-	~SierraLite();
+	SierraLight(int16 width, int16 height, PaletteLUT *palLUT);
+	~SierraLight();
 
 	void newFrame();
 	void nextLine();
@@ -109,7 +109,7 @@ class Indeo3 {
 public:
 	enum DitherAlgorithm {
 		kDitherNone = 0,
-		kDitherSierraLite
+		kDitherSierraLight
 	};
 
 	Indeo3(int16 width, int16 height, PaletteLUT *palLUT);
@@ -151,7 +151,7 @@ private:
 	PaletteLUT *_palLUT;
 
 	DitherAlgorithm _dither;
-	SierraLite *_ditherSL;
+	SierraLight *_ditherSL;
 
 	struct BlitState {
 		uint32 curX, curY;

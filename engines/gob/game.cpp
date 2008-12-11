@@ -45,6 +45,7 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_totResourceTable = 0;
 	_imFileData = 0;
 	_extHandle = 0;
+	_lomHandle = -1;
 	_collisionAreas = 0;
 	_shouldPushColls = 0;
 
@@ -393,12 +394,33 @@ int32 Game::loadTotFile(const char *path) {
 	int16 handle;
 	int32 size;
 
+	_lomHandle = -1;
+
 	size = -1;
 	handle = _vm->_dataIO->openData(path);
 	if (handle >= 0) {
-		_vm->_dataIO->closeData(handle);
-		size = _vm->_dataIO->getDataSize(path);
-		_totFileData = _vm->_dataIO->getData(path);
+
+		if (!scumm_stricmp(path + strlen(path) - 3, "LOM")) {
+			warning("Urban Stub: loadTotFile %s", path);
+
+			_lomHandle = handle;
+
+			DataStream *stream = _vm->_dataIO->openAsStream(handle);
+
+			stream->seek(48);
+			size = stream->readUint32LE();
+			stream->seek(0);
+
+			_totFileData = new byte[size];
+			stream->read(_totFileData, size);
+
+			delete stream;
+		} else {
+			_vm->_dataIO->closeData(handle);
+			size = _vm->_dataIO->getDataSize(path);
+			_totFileData = _vm->_dataIO->getData(path);
+		}
+
 	} else {
 		Common::MemoryReadStream *videoExtraData = _vm->_vidPlayer->getExtraData(path);
 

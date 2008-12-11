@@ -27,6 +27,7 @@
 
 #include "gob/gob.h"
 #include "gob/video.h"
+#include "gob/indeo3.h"
 
 namespace Gob {
 
@@ -40,30 +41,103 @@ char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 
 	_vm->validateVideoMode(destDesc->_vidMode);
 
-	if (sprBuf[0] != 1)
-		return 0;
-
-	if (sprBuf[1] != 3)
-		return 0;
-
-	sprBuf += 2;
-
-	srcWidth = READ_LE_UINT16(sprBuf);
-	sprBuf += 2;
-	srcHeight = READ_LE_UINT16(sprBuf);
-	sprBuf += 2;
-
-	if (sprBuf[0] == 0) {
-		SurfaceDesc sourceDesc(0x13, srcWidth, srcHeight, sprBuf + 3);
-		Video::drawSprite(&sourceDesc, destDesc, 0, 0, srcWidth - 1,
-		    srcHeight - 1, x, y, transp);
+	if ((sprBuf[0] == 1) && (sprBuf[1] == 3)) {
+		drawPacked(sprBuf, x, y, destDesc);
 		return 1;
-	} else {
-		warning("Urban Stub: spriteUncompressor()");
-		return 0;
 	}
 
+	warning("Urban Stub: spriteUncompressor(), sprBuf[0,1] = %d,%d",
+			sprBuf[0], sprBuf[1]);
 	return 1;
 }
+
+void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, SurfaceDesc *surfDesc) {
+	const byte *data = sprBuf + 2;
+
+	int16 width = READ_LE_UINT16(data);
+	int16 height = READ_LE_UINT16(data + 2);
+	data += 4;
+
+	const byte *srcData = data;
+	byte *uncBuf = 0;
+
+	if (*data++ != 0) {
+		uint32 size = READ_LE_UINT32(data);
+
+		uncBuf = new byte[size];
+
+		//sub_4F020(data, buf);
+		warning("Urban Stub: drawPacked: sub_4F020(data, uncBuf)");
+
+		srcData = uncBuf;
+	}
+
+	drawYUVData(srcData, surfDesc, width, height, x, y);
+
+	delete[] uncBuf;
+}
+
+void Video_v6::drawYUVData(const byte *srcData, SurfaceDesc *destDesc,
+		int16 width, int16 height, int16 x, int16 y) {
+
+	int16 dataWidth = width;
+	int16 dataHeight = height;
+
+	if (dataWidth & 0xF)
+		dataWidth = (dataWidth & 0xFFF0) + 16;
+	if (dataHeight & 0xF)
+		dataHeight = (dataHeight & 0xFFF0) + 16;
+
+	const byte *dataY = srcData;
+	const byte *dataU = dataY +  (dataWidth * dataHeight);
+	const byte *dataV = dataU + ((dataWidth * dataHeight) >> 4);
+
+/*
+	if (destDesc->field_14 == 1) {
+		SurfaceDesc *tmpSurf = _vid_initSurfDesc(2, width, height, 0);
+
+		sub_46126(tmpSurf, 0, 0, dataWidth, dataHeight, width, height, dataY, dataU, dataV);
+
+		_vid_drawSprite(tmpSurf, destDesc, 0, 0, width - 1, height - 1, x, y, 0);
+
+		_vid_freeSurfDesc(tmpSurf);
+
+		return;
+	}
+*/
+
+	drawYUV(destDesc, x, y, dataWidth, dataHeight, width, height, dataY, dataU, dataV);
+
+}
+
+void Video_v6::drawYUV(SurfaceDesc *destDesc, int16 x, int16 y,
+		int16 dataWidth, int16 dataHeight, int16 width, int16 height,
+		const byte *dataY, const byte *dataU, const byte *dataV) {
+
+	byte *vidMem = destDesc->getVidMem() + y * width + x;
+
+	width = MIN(width, destDesc->getWidth());
+	height = MIN(height, destDesc->getHeight());
+
+	SierraLight *dither = new SierraLight(width, height, _palLUT);
+
+	for (int i = 0; i < height; i++) {
+		byte *dest = vidMem;
+		const byte *srcY = dataY +  i       *  dataWidth;
+		const byte *srcU = dataU + (i >> 2) * (dataWidth >> 2);
+		const byte *srcV = dataV + (i >> 2) * (dataWidth >> 2);
+
+		for (int j = 0; j < (width >> 2); j++, srcU++, srcV++) {
+			for (int n = 0; n < 4; n++, dest++, srcY++) {
+				byte dY = *srcY << 1, dU = *srcU << 1, dV = *srcV << 1;
+
+				*dest = dither->dither(dY, dU, dV, j * 4 + n);
+			}
+		}
+
+		dither->nextLine();
+		vidMem += width;
+	}
+}	
 
 } // End of namespace Gob

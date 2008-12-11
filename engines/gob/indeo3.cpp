@@ -108,7 +108,7 @@ void PaletteLUT::buildNext() {
 void PaletteLUT::build(int d1) {
 	byte *lut = _lut + d1 * _dim2;
 
-	warning("LUT %d/%d", d1, _dim1 - 1);
+//	warning("LUT %d/%d", d1, _dim1 - 1);
 
 	for (int j = 0; j < _dim1; j++) {
 		for (int k = 0; k < _dim1; k++) {
@@ -155,7 +155,7 @@ byte PaletteLUT::findNearest(byte c1, byte c2, byte c3, byte &nC1, byte &nC2, by
 	return palIndex;
 }
 
-SierraLite::SierraLite(int16 width, int16 height, PaletteLUT *palLUT) {
+SierraLight::SierraLight(int16 width, int16 height, PaletteLUT *palLUT) {
 	assert((width > 0) && (height > 0));
 
 	_width = width;
@@ -170,24 +170,24 @@ SierraLite::SierraLite(int16 width, int16 height, PaletteLUT *palLUT) {
 	_errors[1] = _errors[0] + 3 * (_width + 2*1);
 }
 
-SierraLite::~SierraLite() {
+SierraLight::~SierraLight() {
 	delete[] _errorBuf;
 }
 
-void SierraLite::newFrame() {
+void SierraLight::newFrame() {
 	_curLine = 0;
 	memset(_errors[0], 0, 3 * _width * sizeof(int32));
 	memset(_errors[1], 0, 3 * _width * sizeof(int32));
 }
 
-void SierraLite::nextLine() {
+void SierraLight::nextLine() {
 	// Clear the finished line, it will become the last line in the buffer
 	memset(_errors[_curLine], 0, 3 * _width * sizeof(int32));
 
 	_curLine = (_curLine + 1) % 2;
 }
 
-byte SierraLite::dither(byte c1, byte c2, byte c3, uint32 x) {
+byte SierraLight::dither(byte c1, byte c2, byte c3, uint32 x) {
 	assert(_palLUT);
 
 	int32 eC1, eC2, eC3;
@@ -214,7 +214,7 @@ byte SierraLite::dither(byte c1, byte c2, byte c3, uint32 x) {
 	return newPixel;
 }
 
-inline void SierraLite::getErrors(uint32 x, int32 &eC1, int32 &eC2, int32 &eC3) {
+inline void SierraLight::getErrors(uint32 x, int32 &eC1, int32 &eC2, int32 &eC3) {
 	int32 *errCur = _errors[_curLine];
 
 	x *= 3;
@@ -223,7 +223,7 @@ inline void SierraLite::getErrors(uint32 x, int32 &eC1, int32 &eC2, int32 &eC3) 
 	eC3 = errCur[x + 2] >> 2;
 }
 
-inline void SierraLite::addErrors(uint32 x, int32 eC1, int32 eC2, int32 eC3) {
+inline void SierraLight::addErrors(uint32 x, int32 eC1, int32 eC2, int32 eC3) {
 	int32 *errCur  = _errors[_curLine];
 	int32 *errNext = _errors[(_curLine + 1) % 2];
 
@@ -251,7 +251,7 @@ Indeo3::Indeo3(int16 width, int16 height, PaletteLUT *palLUT) {
 	_palLUT = palLUT;
 
 	_ditherSL = 0;
-	setDither(kDitherSierraLite);
+	setDither(kDitherSierraLight);
 
 	buildModPred();
 	allocFrames();
@@ -297,8 +297,8 @@ void Indeo3::setDither(DitherAlgorithm dither) {
 	_dither = dither;
 
 	switch(dither) {
-	case kDitherSierraLite:
-		_ditherSL = new SierraLite(_width, _height, _palLUT);
+	case kDitherSierraLight:
+		_ditherSL = new SierraLight(_width, _height, _palLUT);
 		break;
 
 	default:

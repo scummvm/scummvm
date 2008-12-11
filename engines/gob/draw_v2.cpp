@@ -755,18 +755,29 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 	case DRAW_LOADSPRITE:
 		id = _spriteLeft;
-		if (id >= 30000) {
-			dataBuf =
-				_vm->_game->loadExtData(id, &_spriteRight, &_spriteBottom);
+
+		if ((id >= 30000) || (_vm->_game->_lomHandle >= 0)) {
+			dataBuf = 0;
+
+			if (_vm->_game->_lomHandle >= 0)
+				warning("Urban Stub: LOADSPRITE %d, LOM", id);
+			else
+				dataBuf = _vm->_game->loadExtData(id, &_spriteRight, &_spriteBottom);
+
+			if (!dataBuf)
+				break;
+
 			_vm->_video->drawPackedSprite(dataBuf,
 					_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
 					_transparency, _spritesArray[_destSurface]);
 
 			dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 					_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
+
 			delete[] dataBuf;
 			break;
 		}
+
 		// Load from .TOT resources
 		itemPtr = &_vm->_game->_totResourceTable->items[id];
 		offset = itemPtr->offset;
