@@ -376,7 +376,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		resourceData = context->getResourceData(resourceId);
 
 		// Read compressed sfx header
-		readS.seek(1);	// Skip compression identifier byte
+		readS.readByte();	// Skip compression identifier byte
 		buffer.frequency = readS.readUint16LE();
 		buffer.originalSize = readS.readUint32LE();
 		buffer.sampleBits = readS.readByte();
