@@ -83,7 +83,7 @@ struct SAVED_DATA {
 
 
 enum SRSTATE {
-	SR_IDLE, SR_DORESTORE, SR_DONERESTORE,
+	SR_IDLE, SR_DORESTORE, SR_DORESTORE_GMM, SR_DONERESTORE,
 	SR_DOSAVE, SR_DONESAVE,	SR_ABORTED
 };
 
@@ -103,13 +103,13 @@ char *ListEntry(int i, letype which);
 int getList(void);
 void setNeedLoad(void);
 
-void RestoreGame(int num);
+void RestoreGame(int num, bool fromGMM = false);
 void SaveGame(char *name, char *desc);
 
 void ProcessSRQueue(void);
 
 void RequestSaveGame(char *name, char *desc, SAVED_DATA *sd, int *ssCount, SAVED_DATA *ssData);
-void RequestRestoreGame(int num, SAVED_DATA *sd, int *ssCount, SAVED_DATA *ssData);
+void RequestRestoreGame(int num, SAVED_DATA *sd, int *ssCount, SAVED_DATA *ssData, bool fromGMM);
 
 void InitialiseSaveScenes(void);
 void FreeSaveScenes(void);

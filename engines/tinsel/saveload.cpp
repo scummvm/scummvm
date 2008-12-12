@@ -429,11 +429,15 @@ static void DoSync(Serializer &s) {
 /**
  * DoRestore
  */
-static bool DoRestore(void) {
+static bool DoRestore(bool fromGMM) {
 	Common::InSaveFile *f;
 	uint32 id;
 
-	f = _vm->getSaveFileMan()->openForLoading(savedFiles[RestoreGameNumber].name);
+	if (!fromGMM)
+		f = _vm->getSaveFileMan()->openForLoading(savedFiles[RestoreGameNumber].name);
+	else
+		f = _vm->getSaveFileMan()->openForLoading(_vm->getSavegameFilename(RestoreGameNumber).c_str());
+		
 	if (f == NULL) {
 		return false;
 	}
@@ -515,7 +519,8 @@ save_failure:
 void ProcessSRQueue(void) {
 	switch (SRstate) {
 	case SR_DORESTORE:
-		if (DoRestore()) {
+	case SR_DORESTORE_GMM:
+		if (DoRestore(SRstate == SR_DORESTORE_GMM)) {
 			DoRestoreScene(srsd, false);
 		}
 		SRstate = SR_IDLE;
@@ -542,7 +547,7 @@ void RequestSaveGame(char *name, char *desc, SAVED_DATA *sd, int *pSsCount, SAVE
 	SRstate = SR_DOSAVE;
 }
 
-void RequestRestoreGame(int num, SAVED_DATA *sd, int *pSsCount, SAVED_DATA *pSsData) {
+void RequestRestoreGame(int num, SAVED_DATA *sd, int *pSsCount, SAVED_DATA *pSsData, bool fromGMM) {
 	if (TinselV2) {
 		if (num == -1)
 			return;
@@ -558,7 +563,7 @@ void RequestRestoreGame(int num, SAVED_DATA *sd, int *pSsCount, SAVED_DATA *pSsD
 	SaveSceneSsCount = pSsCount;
 	SaveSceneSsData = (char *)pSsData;
 	srsd = sd;
-	SRstate = SR_DORESTORE;
+	SRstate = (!fromGMM) ? SR_DORESTORE : SR_DORESTORE_GMM;
 }
 
 /**

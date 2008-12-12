@@ -689,4 +689,8 @@ void EndCursorFollowed(void) {
 	bTempHide = false;
 }
 
+bool isCursorShown() {
+	return !(bTempHide || bHiddenCursor);
+}
+
 } // end of namespace Tinsel

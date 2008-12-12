@@ -995,8 +995,7 @@ Common::Error TinselEngine::go() {
 	// Load game from specified slot, if any
 	// FIXME: Not working correctly right now
 	if (ConfMan.hasKey("save_slot")) {
-		getList();
-		RestoreGame(ConfMan.getInt("save_slot"));
+		RestoreGame(ConfMan.getInt("save_slot"), true);
 	}
 #endif
 

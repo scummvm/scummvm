@@ -36,6 +36,7 @@ void SetCursorXY(int x, int y);
 void SetCursorScreenXY(int newx, int newy);
 void GetCursorXY(int *x, int *y, bool absolute);
 bool GetCursorXYNoWait(int *x, int *y, bool absolute);
+bool isCursorShown();
 
 void RestoreMainCursor(void);
 void SetTempCursor(SCNHANDLE pScript);

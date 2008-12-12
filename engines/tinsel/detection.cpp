@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 
+#include "tinsel/cursor.h"
 #include "tinsel/tinsel.h"
 #include "tinsel/savescn.h"	// needed by TinselMetaEngine::listSaves
 
@@ -453,22 +454,36 @@ bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {
 }
 
 namespace Tinsel {
-
 extern int getList(Common::SaveFileManager *saveFileMan, const Common::String &target);
-extern void setNeedLoad();
-extern bool MoviePlaying(void);
-
+extern bool MoviePlaying();
 }
 
 SaveStateList TinselMetaEngine::listSaves(const char *target) const {
-	Tinsel::setNeedLoad();
-	int numStates = Tinsel::getList(g_system->getSavefileManager(), target);
+	Common::String pattern = target;
+	pattern = pattern + ".???";
+	Common::StringList files = g_system->getSavefileManager()->listSavefiles(pattern.c_str());
+	sort(files.begin(), files.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
-	for (int i = 0; i < numStates; i++) {
-		SaveStateDescriptor sd(i, Tinsel::ListEntry(i, Tinsel::LE_DESC));
-		// TODO: Also add savedFiles[i].dateTime to the SaveStateDescriptor
-		saveList.push_back(sd);
+	int slotNum = 0;
+	for (Common::StringList::const_iterator file = files.begin(); file != files.end(); ++file) {
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		slotNum = atoi(file->c_str() + file->size() - 2);
+
+		const Common::String &fname = *file;
+		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fname.c_str());
+		if (in) {
+			in->readUint32LE();		// skip id
+			in->readUint32LE();		// skip size
+			in->readUint32LE();		// skip version
+			char saveDesc[Tinsel::SG_DESC_LEN];
+			in->read(saveDesc, sizeof(saveDesc));
+
+			saveDesc[Tinsel::SG_DESC_LEN - 1] = 0;
+
+			saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
+			delete in;
+		}
 	}
 
 	return saveList;
@@ -502,10 +517,27 @@ void TinselMetaEngine::removeSaveState(const char *target, int slot) const {
 namespace Tinsel {
 
 Common::Error TinselEngine::loadGameState(int slot) {
-	RestoreGame(slot);
+	RestoreGame(slot, true);
 	return Common::kNoError;	// TODO: return success/failure
 }
 
+#if 0
+Common::Error TinselEngine::saveGameState(int slot, const char *desc) {
+	Common::String saveName = _vm->getSavegameFilename((int16)(slot + 1));
+	char saveDesc[SG_DESC_LEN];
+	strncpy(saveDesc, desc, SG_DESC_LEN);
+	// Make sure that saveDesc is 0-terminated
+	saveDesc[SG_DESC_LEN - 1] = '\0';
+	SaveGame((char *)saveName.c_str(), saveDesc);
+	ProcessSRQueue();			// This shouldn't be needed, but for some reason it is...
+	return Common::kNoError;	// TODO: return success/failure
+}
+#endif
+
 bool TinselEngine::canLoadGameStateCurrently() { return !MoviePlaying(); }
+
+#if 0
+bool TinselEngine::canSaveGameStateCurrently() { return isCursorShown(); }
+#endif
 
 } // End of namespace Tinsel

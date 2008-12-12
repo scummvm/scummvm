@@ -144,7 +144,13 @@ protected:
 	virtual Common::Error go();
 	virtual bool hasFeature(EngineFeature f) const;
 	Common::Error loadGameState(int slot);
+#if 0
+	Common::Error saveGameState(int slot, const char *desc);
+#endif
 	bool canLoadGameStateCurrently();
+#if 0
+	bool canSaveGameStateCurrently();
+#endif
 	virtual void syncSoundSettings();
 
 public:
