@@ -215,6 +215,8 @@ public:
 	bool hasExtraData(const char *fileName) const { return false; }
 	Common::MemoryReadStream *getExtraData(const char *fileName) { return 0; }
 
+	void notifyPaused(uint32 duration) { }
+
 	void setFrameRate(int16 frameRate);
 
 	bool load(Common::SeekableReadStream &stream);
@@ -233,8 +235,6 @@ public:
 
 	State nextFrame();
 	void waitEndFrame();
-
-	void notifyPaused(uint32 duration);
 
 	void copyCurrentFrame(byte *dest,
 			uint16 left, uint16 top, uint16 width, uint16 height,
@@ -272,7 +272,6 @@ protected:
 	bool _hasSound;
 	bool _soundEnabled;
 	uint8 _soundStage; // (0: no sound, 1: loaded, 2: playing)
-	uint32 _soundStartTime;
 	uint32 _skipFrames;
 
 	uint16 _soundFlags;

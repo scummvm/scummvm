@@ -330,7 +330,7 @@ void Imd::waitEndFrame() {
 
 		if (_skipFrames == 0) {
 			int32 waitTime = (int16) (((_curFrame * _soundSliceLength) -
-				((g_system->getMillis() - _soundStartTime) << 16)) >> 16);
+				(_audioStream->getTotalPlayTime() << 16)) >> 16);
 
 			if (waitTime < 0) {
 				_skipFrames = -waitTime / (_soundSliceLength >> 16);
@@ -342,11 +342,6 @@ void Imd::waitEndFrame() {
 			_skipFrames--;
 	} else
 		g_system->delayMillis(_frameLength);
-}
-
-void Imd::notifyPaused(uint32 duration) {
-	if (_soundStage == 2)
-		_soundStartTime += duration;
 }
 
 void Imd::copyCurrentFrame(byte *dest,
@@ -444,7 +439,6 @@ void Imd::clear(bool del) {
 	_hasSound = false;
 	_soundEnabled = false;
 	_soundStage = 0;
-	_soundStartTime = 0;
 	_skipFrames = 0;
 
 	_soundFlags = 0;
@@ -638,7 +632,6 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 
 	if (startSound && _soundEnabled) {
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_audioHandle, _audioStream);
-		_soundStartTime = g_system->getMillis();
 		_skipFrames = 0;
 		_soundStage = 2;
 	}
@@ -1276,7 +1269,6 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 
 	if (startSound && _soundEnabled) {
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_audioHandle, _audioStream);
-		_soundStartTime = g_system->getMillis();
 		_skipFrames = 0;
 		_soundStage = 2;
 	}
