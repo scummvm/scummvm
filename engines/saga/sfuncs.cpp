@@ -1453,6 +1453,7 @@ void Script::sfEraseDelta(SCRIPTFUNC_PARAMS) {
 	BGInfo backGroundInfo;
 	_vm->_scene->getBGInfo(backGroundInfo);
 	_vm->_render->getBackGroundSurface()->blit(backGroundInfo.bounds, backGroundInfo.buffer);
+	_vm->_render->addDirtyRect(backGroundInfo.bounds);
 }
 
 // Script function #63 (0x3F)

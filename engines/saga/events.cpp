@@ -170,6 +170,7 @@ int Events::handleContinuous(Event *event) {
 			rect.right = bgInfo.bounds.width();
 			rect.bottom = bgInfo.bounds.height();
 			_vm->_render->getBackGroundSurface()->transitionDissolve(bgInfo.buffer, rect, 0, event_pc);
+			_vm->_render->setFullRefresh(true);
 			break;
 		case kEventDissolveBGMask:
 			// we dissolve it centered.
@@ -185,6 +186,7 @@ int Events::handleContinuous(Event *event) {
 			rect.setHeight(h);
 
 			_vm->_render->getBackGroundSurface()->transitionDissolve( maskBuffer, rect, 1, event_pc);
+			_vm->_render->setFullRefresh(true);
 			break;
 		default:
 			break;
@@ -351,8 +353,6 @@ int Events::handleOneShot(Event *event) {
 				}
 			}
 			_vm->_render->clearFlag(RF_DISABLE_ACTORS);
-
-			_vm->_render->setFullRefresh(true);
 		}
 		break;
 	case kPsychicProfileBgEvent:
@@ -376,6 +376,7 @@ int Events::handleOneShot(Event *event) {
 		const Rect profileRect(width, height);
 
 		_vm->_render->getBackGroundSurface()->blit(profileRect, buf);
+		_vm->_render->addDirtyRect(profileRect);
 		_vm->_frameCount++;
 
 		_vm->_gfx->setPalette(palette);
@@ -390,14 +391,12 @@ int Events::handleOneShot(Event *event) {
 	case kAnimEvent:
 		switch (event->op) {
 		case kEventPlay:
-			_vm->_render->setFullRefresh(true);
 			_vm->_anim->play(event->param, event->time, true);
 			break;
 		case kEventStop:
 			_vm->_anim->stop(event->param);
 			break;
 		case kEventFrame:
-			_vm->_render->setFullRefresh(true);
 			_vm->_anim->play(event->param, event->time, false);
 			break;
 		case kEventSetFlag:
@@ -420,6 +419,7 @@ int Events::handleOneShot(Event *event) {
 				BGInfo bgInfo;
 				_vm->_scene->getBGInfo(bgInfo);
 				_vm->_render->getBackGroundSurface()->blit(bgInfo.bounds, bgInfo.buffer);
+				_vm->_render->addDirtyRect(bgInfo.bounds);
 				_vm->_scene->draw();
 			}
 			break;

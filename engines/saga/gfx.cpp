@@ -586,4 +586,10 @@ void Gfx::drawRegion(const Common::Rect &destRect, const byte *sourceBuffer) {
 	_vm->_render->addDirtyRect(destRect);
 }
 
+// This method does not add a dirty rectangle automatically
+void Gfx::drawBgRegion(const Common::Rect &destRect, const byte *sourceBuffer) {
+	_backBuffer.blit(destRect, sourceBuffer);
+}
+
+
 } // End of namespace Saga

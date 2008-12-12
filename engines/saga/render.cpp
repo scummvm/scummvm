@@ -83,9 +83,7 @@ void Render::drawScene() {
 	assert(_initialized);
 
 	// TODO: Remove this to use dirty rectangles
-	// 2 known glitches exist:
-	// - When a placard is up, the text is not shown correctly
-	// - Sprite::drawClip() can draw sprites incorrectly in isometric scenes in ITE
+	// Still quite buggy
 	_fullRefresh = true;
 
 #ifdef SAGA_DEBUG
@@ -95,7 +93,10 @@ void Render::drawScene() {
 	// Get mouse coordinates
 	mousePoint = _vm->mousePos();
 
-	restoreChangedRects();
+	if (!_fullRefresh)
+		restoreChangedRects();
+	else
+		_dirtyRects.clear();
 
 	if (!(_flags & (RF_DEMO_SUBST | RF_MAP) || curMode == kPanelPlacard)) {
 		if (_vm->_interface->getFadeMode() != kFadeOut) {
@@ -126,8 +127,9 @@ void Render::drawScene() {
 				_vm->_actor->drawPathTest();
 			}
 #endif
-
 		}
+	} else {
+		_fullRefresh = true;
 	}
 
 	if (_flags & RF_MAP)
@@ -207,6 +209,9 @@ void Render::drawScene() {
 }
 
 void Render::addDirtyRect(Common::Rect rect) {
+	if (_fullRefresh)
+		return;
+
 	// Clip rectangle
 	int x1 = MAX<int>(rect.left, 0);
 	int y1 = MAX<int>(rect.top, 0);
@@ -234,8 +239,8 @@ void Render::restoreChangedRects() {
  	 	Common::List<Common::Rect>::const_iterator it;
  	 	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 			//_backGroundSurface.frameRect(*it, 1);		// DEBUG
-			if (it->bottom <= _vm->_scene->getHeight())
-				g_system->copyRectToScreen((byte *)_backGroundSurface.pixels, _backGroundSurface.w, it->left, it->top, it->width(), it->height());
+			if (_vm->_interface->getFadeMode() != kFadeOut)
+				g_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _backGroundSurface.w, it->left, it->top, it->width(), it->height());
 		}
 	}
 	_dirtyRects.clear();
@@ -246,12 +251,15 @@ void Render::drawDirtyRects() {
  	 	Common::List<Common::Rect>::const_iterator it;
  	 	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 			//_backGroundSurface.frameRect(*it, 2);		// DEBUG
-			g_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _backGroundSurface.w, it->left, it->top, it->width(), it->height());
+			if (_vm->_interface->getFadeMode() != kFadeOut)
+				g_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _backGroundSurface.w, it->left, it->top, it->width(), it->height());
 		}
 	} else {
 		_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _vm->_gfx->getBackBufferWidth(), 0, 0,
 								  _vm->_gfx->getBackBufferWidth(), _vm->_gfx->getBackBufferHeight());
 	}
+
+	_dirtyRects.clear();
 }
 
 #ifdef SAGA_DEBUG

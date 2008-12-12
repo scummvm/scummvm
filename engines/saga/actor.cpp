@@ -1059,7 +1059,7 @@ void Actor::drawActors() {
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
 			_vm->_isoMap->drawSprite(*spriteList, frameNumber, drawObject->_location, drawObject->_screenPosition, drawObject->_screenScale);
 		} else {
-			_vm->_sprite->drawOccluded(_vm->_scene->getSceneClip(),*spriteList, frameNumber, drawObject->_screenPosition, drawObject->_screenScale, drawObject->_screenDepth);
+			_vm->_sprite->drawOccluded(*spriteList, frameNumber, drawObject->_screenPosition, drawObject->_screenScale, drawObject->_screenDepth);
 		}
 	}
 

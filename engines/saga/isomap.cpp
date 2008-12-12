@@ -395,7 +395,6 @@ void IsoMap::drawSprite(SpriteList &spriteList, int spriteNumber, const Location
 	int yAlign;
 	const byte *spriteBuffer;
 	Point spritePointer;
-	Rect clip(_vm->_scene->getSceneClip());
 
 	_vm->_sprite->getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
 
@@ -407,7 +406,7 @@ void IsoMap::drawSprite(SpriteList &spriteList, int spriteNumber, const Location
 	_tileClip.top = CLIP<int>(spritePointer.y, 0, _vm->_scene->getHeight());
 	_tileClip.bottom = CLIP<int>(spritePointer.y + height, 0, _vm->_scene->getHeight());
 
-	_vm->_sprite->drawClip(clip, spritePointer, width, height, spriteBuffer);
+	_vm->_sprite->drawClip(spritePointer, width, height, spriteBuffer);
 	drawTiles(&location);
 }
 

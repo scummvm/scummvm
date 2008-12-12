@@ -166,6 +166,9 @@ public:
 	// This method adds a dirty rectangle automatically
 	void drawRegion(const Common::Rect &destRect, const byte *sourceBuffer);
 
+	// This method does not add a dirty rectangle automatically
+	void drawBgRegion(const Common::Rect &destRect, const byte *sourceBuffer);
+
 	// Used for testing
 	void drawPalette() {
 		_backBuffer.drawPalette();

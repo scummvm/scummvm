@@ -195,7 +195,7 @@ void Puzzle::showPieces(void) {
 		int num = _piecePriority[j];
 
 		if (_puzzlePiece != num) {
-			_vm->_sprite->draw(_vm->getDisplayClip(), *spriteList, num, Point(_pieceInfo[num].curX, _pieceInfo[num].curY), 256);
+			_vm->_sprite->draw(*spriteList, num, Point(_pieceInfo[num].curX, _pieceInfo[num].curY), 256);
 		}
 	}
 }
@@ -206,7 +206,7 @@ void Puzzle::drawCurrentPiece() {
 	SpriteList *spriteList;
 	_vm->_actor->getSpriteParams(puzzle, frameNumber, spriteList);
 
-	_vm->_sprite->draw(_vm->_scene->getSceneClip(), *spriteList, _puzzlePiece,
+	_vm->_sprite->draw(*spriteList, _puzzlePiece,
 			   Point(_pieceInfo[_puzzlePiece].curX, _pieceInfo[_puzzlePiece].curY), 256);
 }
 

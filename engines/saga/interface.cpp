@@ -503,6 +503,7 @@ void Interface::setMode(int mode) {
 	}
 
 	draw();
+	_vm->_render->setFullRefresh(true);
 }
 
 bool Interface::processAscii(Common::KeyState keystate) {
@@ -782,7 +783,7 @@ void Interface::drawVerbPanel(PanelButton* panelButton) {
 	point.x = _mainPanel.x + panelButton->xOffset;
 	point.y = _mainPanel.y + panelButton->yOffset;
 
-	_vm->_sprite->draw(_vm->getDisplayClip(), _mainPanel.sprites, spriteNumber, point, 256);
+	_vm->_sprite->draw(_mainPanel.sprites, spriteNumber, point, 256);
 
 	drawVerbPanelText(panelButton, textColor, kKnownColorVerbTextShadow);
 }
@@ -818,7 +819,7 @@ void Interface::draw() {
 		(_panelMode == kPanelNull && _vm->getGameId() == GID_IHNM_DEMO)) {
 		leftPortraitPoint.x = _mainPanel.x + _vm->getDisplayInfo().leftPortraitXOffset;
 		leftPortraitPoint.y = _mainPanel.y + _vm->getDisplayInfo().leftPortraitYOffset;
-		_vm->_sprite->draw(_vm->getDisplayClip(), _defPortraits, _leftPortrait, leftPortraitPoint, 256);
+		_vm->_sprite->draw(_defPortraits, _leftPortrait, leftPortraitPoint, 256);
 	}
 
 	if (!_inMainMode && _vm->getDisplayInfo().rightPortraitXOffset >= 0) { //FIXME: should we change !_inMainMode to _panelMode == kPanelConverse ?
@@ -833,7 +834,7 @@ void Interface::draw() {
 		if (_rightPortrait >= _scenePortraits.spriteCount)
 			_rightPortrait = 0;
 
-		_vm->_sprite->draw(_vm->getDisplayClip(), _scenePortraits, _rightPortrait, rightPortraitPoint, 256);
+		_vm->_sprite->draw(_scenePortraits, _rightPortrait, rightPortraitPoint, 256);
 	}
 
 	drawInventory();
@@ -973,7 +974,7 @@ void Interface::drawOption() {
 		panelButton = &_optionPanel.buttons[0];
 		sliderPoint.x = _optionPanel.x + panelButton->xOffset;
 		sliderPoint.y = _optionSaveRectSlider.top;
-		_vm->_sprite->draw(_vm->getDisplayClip(), _optionPanel.sprites, 0 + _optionSaveFileSlider->state, sliderPoint, 256);
+		_vm->_sprite->draw(_optionPanel.sprites, 0 + _optionSaveFileSlider->state, sliderPoint, 256);
 
 	}
 
@@ -1903,7 +1904,7 @@ void Interface::drawStatusBar() {
 
 		rect.right = rect.left + _vm->getDisplayInfo().saveReminderWidth;
 		rect.bottom = rect.top + _vm->getDisplayInfo().saveReminderHeight;
-		_vm->_sprite->draw(_vm->getDisplayClip(), _vm->_sprite->_saveReminderSprites,
+		_vm->_sprite->draw(_vm->_sprite->_saveReminderSprites,
 			_vm->getDisplayInfo().saveReminderFirstSpriteNumber + _saveReminderState - 1,
 			rect, 256);
 
@@ -2117,7 +2118,7 @@ void Interface::drawInventory() {
 
 		if (ci < _inventoryCount) {
 			obj = _vm->_actor->getObj(_inventory[ci]);
-			_vm->_sprite->draw(_vm->getDisplayClip(), _vm->_sprite->_inventorySprites, obj->_spriteListResourceId, rect, 256);
+			_vm->_sprite->draw(_vm->_sprite->_inventorySprites, obj->_spriteListResourceId, rect, 256);
 		}
 
 		ci++;
@@ -2316,23 +2317,23 @@ void Interface::drawPanelButtonText(InterfacePanel *panel, PanelButton *panelBut
 		if (panel == &_optionPanel) {
 			texturePoint.x = _optionPanel.x + panelButton->xOffset - 1;
 			texturePoint.y = _optionPanel.y + panelButton->yOffset - 1;
-			_vm->_sprite->draw(_vm->getDisplayClip(), _optionPanel.sprites, spritenum + 2 + litButton, texturePoint, 256);
+			_vm->_sprite->draw(_optionPanel.sprites, spritenum + 2 + litButton, texturePoint, 256);
 		} else if (panel == &_quitPanel) {
 			texturePoint.x = _quitPanel.x + panelButton->xOffset - 3;
 			texturePoint.y = _quitPanel.y + panelButton->yOffset - 3;
-			_vm->_sprite->draw(_vm->getDisplayClip(), _quitPanel.sprites, litButton, texturePoint, 256);
+			_vm->_sprite->draw(_quitPanel.sprites, litButton, texturePoint, 256);
 		} else if (panel == &_savePanel) {
 			texturePoint.x = _savePanel.x + panelButton->xOffset - 3;
 			texturePoint.y = _savePanel.y + panelButton->yOffset - 3;
-			_vm->_sprite->draw(_vm->getDisplayClip(), _savePanel.sprites, litButton, texturePoint, 256);
+			_vm->_sprite->draw(_savePanel.sprites, litButton, texturePoint, 256);
 			// Input text box sprite
 			texturePoint.x = _savePanel.x + _saveEdit->xOffset - 2;
 			texturePoint.y = _savePanel.y + _saveEdit->yOffset - 2;
-			_vm->_sprite->draw(_vm->getDisplayClip(), _savePanel.sprites, 2, texturePoint, 256);
+			_vm->_sprite->draw(_savePanel.sprites, 2, texturePoint, 256);
 		} else if (panel == &_loadPanel) {
 			texturePoint.x = _loadPanel.x + panelButton->xOffset - 3;
 			texturePoint.y = _loadPanel.y + panelButton->yOffset - 3;
-			_vm->_sprite->draw(_vm->getDisplayClip(), _loadPanel.sprites, litButton, texturePoint, 256);
+			_vm->_sprite->draw(_loadPanel.sprites, litButton, texturePoint, 256);
 		} else {
 			// revert to default behavior
 			drawButtonBox(rect, kButton, panelButton->state > 0);
@@ -2361,9 +2362,9 @@ void Interface::drawPanelButtonArrow(InterfacePanel *panel, PanelButton *panelBu
 	point.y = panel->y + panelButton->yOffset;
 
 	if (_vm->getGameType() == GType_ITE)
-		_vm->_sprite->draw(_vm->getDisplayClip(), _vm->_sprite->_mainSprites, spriteNumber, point, 256);
+		_vm->_sprite->draw(_vm->_sprite->_mainSprites, spriteNumber, point, 256);
 	else
-		_vm->_sprite->draw(_vm->getDisplayClip(), _vm->_sprite->_arrowSprites, spriteNumber, point, 256);
+		_vm->_sprite->draw(_vm->_sprite->_arrowSprites, spriteNumber, point, 256);
 }
 
 void Interface::drawVerbPanelText(PanelButton *panelButton, KnownColor textKnownColor, KnownColor textShadowKnownColor) {
@@ -2789,7 +2790,7 @@ void Interface::mapPanelDrawCrossHair() {
 	Rect screen(_vm->getDisplayWidth(), _vm->_scene->getHeight());
 
 	if (screen.contains(mapPosition)) {
-		_vm->_sprite->draw(_vm->getDisplayClip(), _vm->_sprite->_mainSprites,
+		_vm->_sprite->draw(_vm->_sprite->_mainSprites,
 						   _mapPanelCrossHairState? RID_ITE_SPR_CROSSHAIR : RID_ITE_SPR_CROSSHAIR + 1,
 						   mapPosition, 256);
 	}

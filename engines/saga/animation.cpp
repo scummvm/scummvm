@@ -350,6 +350,7 @@ void Anim::showCutawayBg(int bg) {
 	memcpy(pal, palPointer, sizeof(pal));
 	const Rect rect(width, height);
 	_vm->_render->getBackGroundSurface()->blit(rect, buf);
+	_vm->_render->setFullRefresh(true);
 	_vm->_frameCount++;
 
 	if (_cutAwayFade) {
@@ -540,6 +541,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 		// FIXME: if start > 0, then this works incorrectly
 		decodeFrame(anim, anim->frameOffsets[frame], displayBuffer, _vm->getDisplayWidth() * _vm->getDisplayHeight());
+		_vm->_render->addDirtyRect(Common::Rect(0, 0, _vm->getDisplayWidth(), _vm->getDisplayHeight()));
 		_vm->_frameCount++;
 		anim->currentFrame++;
 		if (anim->completed != 65535) {
