@@ -149,7 +149,6 @@ public:
 	bool endOfData() const			{ return _ptr >= _end; }
 
 	int getRate() const				{ return _rate; }
-	int32 getTotalPlayTime() const	{ return _playtime; }
 };
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
@@ -262,10 +261,6 @@ protected:
 	const int _rate;
 	byte *_pos;
 
-	// Playing time in milliseconds and rest samples
-	int _playTime;
-	int _playSamp;
-
 	inline bool eosIntern() const { return _bufferQueue.empty(); };
 public:
 	BaseAppendableMemoryStream(int rate);
@@ -277,8 +272,6 @@ public:
 	int getRate() const			{ return _rate; }
 
 	void finish()				{ _finalized = true; }
-
-	int32 getTotalPlayTime() const { return _playTime; }
 
 	void queueBuffer(byte *data, uint32 size);
 };
@@ -297,7 +290,7 @@ public:
 };
 
 BaseAppendableMemoryStream::BaseAppendableMemoryStream(int rate)
- : _finalized(false), _rate(rate), _pos(0), _playTime(0), _playSamp(0) {
+ : _finalized(false), _rate(rate), _pos(0) {
 
 }
 
@@ -335,14 +328,7 @@ int AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 
 		} while (--len);
 	}
 
-	int written = numSamples - samples;
-
-	_playSamp += (stereo ? (written / 2) : written);
-
-	_playTime += _playSamp / (_rate / 1000);
-	_playSamp %= (_rate / 1000);
-
-	return written;
+	return numSamples - samples;
 }
 
 void BaseAppendableMemoryStream::queueBuffer(byte *data, uint32 size) {

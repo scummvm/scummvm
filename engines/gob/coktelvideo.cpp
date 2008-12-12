@@ -330,7 +330,7 @@ void Imd::waitEndFrame() {
 
 		if (_skipFrames == 0) {
 			int32 waitTime = (int16) (((_curFrame * _soundSliceLength) -
-				(_audioStream->getTotalPlayTime() << 16)) >> 16);
+				(_mixer->getSoundElapsedTime(_audioHandle) << 16)) >> 16);
 
 			if (waitTime < 0) {
 				_skipFrames = -waitTime / (_soundSliceLength >> 16);

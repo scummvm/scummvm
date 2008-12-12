@@ -1243,7 +1243,7 @@ int32 MovieAudioLag(void) {
 
 	// Calculate lag
 	int32 playLength = (movieTick - startTick - 1) * ((((uint32) 1000) << 10) / 24);
-	return (playLength - (audioStream->getTotalPlayTime() << 10)) >> 10;
+	return (playLength - (((int32) _vm->_mixer->getSoundElapsedTime(audioHandle)) << 10)) >> 10;
 }
 
 uint32 NextMovieTime(void) {
