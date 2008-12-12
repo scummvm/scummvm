@@ -146,7 +146,7 @@ void Video_v6::drawYUV(SurfaceDesc *destDesc, int16 x, int16 y,
 			for (int n = 0; n < 4; n++, dest++, srcY++) {
 				byte dY = *srcY << 1, dU = *srcU << 1, dV = *srcV << 1;
 
-				*dest = dither->dither(dY, dU, dV, j * 4 + n);
+				*dest = (dY == 0) ? 0 : dither->dither(dY, dU, dV, j * 4 + n);
 			}
 		}
 
