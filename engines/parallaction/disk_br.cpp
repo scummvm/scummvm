@@ -53,7 +53,7 @@ struct Sprites : public Frames {
 	uint16		_num;
 	Sprite*		_sprites;
 
-	Sprites(uint num) {
+	Sprites(uint num) : _num(0), _sprites(0) {
 		_num = num;
 		_sprites = new Sprite[_num];
 	}
