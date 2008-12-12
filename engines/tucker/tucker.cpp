@@ -335,14 +335,7 @@ void TuckerEngine::mainLoop() {
 	loadCharSizeDta();
 	loadCharset();
 	loadPanel();
-	switch (_gameVer.lang) {
-	case Common::GR_GRE:
-		strcpy(_fileToLoad, "infobrgr.txt");
-		break;
-	default:
-		strcpy(_fileToLoad, "infobar.txt");
-		break;
-	}
+	strcpy(_fileToLoad, "infobar.txt");
 	loadFile(_infoBarBuf);
 	strcpy(_fileToLoad, "data5.c");
 	_data5Buf = loadFile();

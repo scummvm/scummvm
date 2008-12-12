@@ -162,6 +162,25 @@ public:
 };
 
 uint8 *TuckerEngine::loadFile(uint8 *p) {
+	if (_gameVer.lang == Common::DE_DEU) {
+		if (strcmp(_fileToLoad, "bgtext.c") == 0) {
+			strcpy(_fileToLoad, "bgtextgr.c");
+		} else if (strcmp(_fileToLoad, "charname.c") == 0) {
+			strcpy(_fileToLoad, "charnmgr.c");
+		} else if (strcmp(_fileToLoad, "data5.c") == 0) {
+			strcpy(_fileToLoad, "data5gr.c");
+		} else if (strcmp(_fileToLoad, "infobar.txt") == 0) {
+			strcpy(_fileToLoad, "infobrgr.txt");
+		} else if (strcmp(_fileToLoad, "charsize.dta") == 0) {
+			strcpy(_fileToLoad, "charszgr.dta");
+		} else if (strncmp(_fileToLoad, "objtxt", 6) == 0) {
+			const int num = _fileToLoad[6];
+			snprintf(_fileToLoad, sizeof(_fileToLoad), "objtx%dgr.c", num);
+		} else if (strncmp(_fileToLoad, "pt", 2) == 0) {
+			const int num = _fileToLoad[2];
+			snprintf(_fileToLoad, sizeof(_fileToLoad), "pt%dtxtgr.c", num);
+		}
+	}
 	_fileLoadSize = 0;
 	bool decode = false;
 	if (_useEnc) {
@@ -270,7 +289,7 @@ void TuckerEngine::loadCharset() {
 	loadImage(_loadTempBuf, 0);
 	switch (_gameVer.lang) {
 	case Common::FR_FRA:
-	case Common::GR_GRE:
+	case Common::DE_DEU:
 		Graphics::setCharset(kCharsetTypeFrGr);
 		break;
 	default:
@@ -507,12 +526,13 @@ void TuckerEngine::loadData() {
 			}
 			const int x = t.getNextInteger();
 			const int y = t.getNextInteger();
-			_dataTable[_dataCount].sourceOffset = y * 320 + x;
-			_dataTable[_dataCount].xSize = t.getNextInteger();
-			_dataTable[_dataCount].ySize = t.getNextInteger();
-			_dataTable[_dataCount].xDest = t.getNextInteger();
-			_dataTable[_dataCount].yDest = t.getNextInteger();
-			_dataTable[_dataCount].index = count;
+			Data *d = &_dataTable[_dataCount];
+			d->sourceOffset = y * 320 + x;
+			d->xSize = t.getNextInteger();
+			d->ySize = t.getNextInteger();
+			d->xDest = t.getNextInteger();
+			d->yDest = t.getNextInteger();
+			d->index = count;
 		}
 		if (flag < 2) {
 			++objNum;
