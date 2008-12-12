@@ -79,21 +79,33 @@ void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y,
 		(item - fontDesc->startItem) * (fontDesc->itemSize & 0xFF);
 	dst = dest->getVidMem() + x + dest->getWidth() * y;
 
+	int nWidth = fontDesc->itemWidth;
+
+	if (nWidth & 7)
+		nWidth = (nWidth & 0xF8) + 8;
+
+	nWidth >>= 3;
+
 	for (int i = 0; i < fontDesc->itemHeight; i++) {
-		data = READ_BE_UINT16(src);
-		src += 2;
-		if (fontDesc->itemWidth <= 8)
-			src--;
+		int width = fontDesc->itemWidth;
 
-		for (int j = 0; j < fontDesc->itemWidth; j++) {
-			if (data & 0x8000)
-				*dst = color2;
-			else if (color1 == 0)
-				*dst = transp;
+		for (int k = 0; k < nWidth; k++) {
+	
+			data = *src++;
+			for (int j = 0; j < MIN(8, width); j++) {
+				if (data & 0x80)
+					*dst = color2;
+				else if (color1 == 0)
+					*dst = transp;
 
-			dst++;
-			data <<= 1;
+				dst++;
+				data <<= 1;
+			}
+
+			width -= 8;
+
 		}
+
 		dst += dest->getWidth() - fontDesc->itemWidth;
 	}
 }

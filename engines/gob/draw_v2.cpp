@@ -792,11 +792,6 @@ void Draw_v2::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_PRINTTEXT:
-		if (_vm->getGameType() == kGameTypeUrban) {
-			warning("Urban Stub: Print text \"%s\"", _textToPrint);
-			break;
-		}
-
 		len = strlen(_textToPrint);
 		left = _destSpriteX;
 

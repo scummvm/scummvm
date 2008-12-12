@@ -69,8 +69,8 @@ public:
 		byte *dataPtr;
 		int8 itemWidth;
 		int8 itemHeight;
-		int8 startItem;
-		int8 endItem;
+		uint8 startItem;
+		uint8 endItem;
 		int8 itemSize;
 		int8 bitWidth;
 		byte *extraData;
