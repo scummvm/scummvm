@@ -77,12 +77,12 @@ public:
 	void drawOccluded(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth);
 
 	// draw scaled sprite using background scene mask
-	void draw(SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale);
+	void draw(SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale, bool clipToScene = false);
 
 	// main function
-	void drawClip(const Point &spritePointer, int width, int height, const byte *spriteBuffer);
+	void drawClip(const Point &spritePointer, int width, int height, const byte *spriteBuffer, bool clipToScene = false);
 
-	void draw(SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale);
+	void draw(SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale, bool clipToScene = false);
 
 	void loadList(int resourceId, SpriteList &spriteList); // load or append spriteList
 	bool hitTest(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, const Point &testPoint);

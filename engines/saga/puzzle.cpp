@@ -207,7 +207,7 @@ void Puzzle::drawCurrentPiece() {
 	_vm->_actor->getSpriteParams(puzzle, frameNumber, spriteList);
 
 	_vm->_sprite->draw(*spriteList, _puzzlePiece,
-			   Point(_pieceInfo[_puzzlePiece].curX, _pieceInfo[_puzzlePiece].curY), 256);
+			   Point(_pieceInfo[_puzzlePiece].curX, _pieceInfo[_puzzlePiece].curY), 256, true);
 }
 
 void Puzzle::movePiece(Point mousePt) {

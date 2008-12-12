@@ -406,7 +406,7 @@ void IsoMap::drawSprite(SpriteList &spriteList, int spriteNumber, const Location
 	_tileClip.top = CLIP<int>(spritePointer.y, 0, _vm->_scene->getHeight());
 	_tileClip.bottom = CLIP<int>(spritePointer.y + height, 0, _vm->_scene->getHeight());
 
-	_vm->_sprite->drawClip(spritePointer, width, height, spriteBuffer);
+	_vm->_sprite->drawClip(spritePointer, width, height, spriteBuffer, true);
 	drawTiles(&location);
 }
 

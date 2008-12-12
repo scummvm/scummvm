@@ -212,10 +212,10 @@ void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, int spriteNumber, int
 	}
 }
 
-void Sprite::drawClip(const Point &spritePointer, int width, int height, const byte *spriteBuffer) {
+void Sprite::drawClip(const Point &spritePointer, int width, int height, const byte *spriteBuffer, bool clipToScene) {
 	int clipWidth;
 	int clipHeight;
-	Common::Rect clipRect(_vm->getDisplayClip());
+	Common::Rect clipRect = clipToScene ? _vm->_scene->getSceneClip() : _vm->getDisplayClip();
 
 	int i, j, jo, io;
 	byte *bufRowPointer;
@@ -263,7 +263,7 @@ void Sprite::drawClip(const Point &spritePointer, int width, int height, const b
 		_vm->_render->addDirtyRect(Common::Rect(x1, y1, x2, y2));
 }
 
-void Sprite::draw(SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale) {
+void Sprite::draw(SpriteList &spriteList, int32 spriteNumber, const Point &screenCoord, int scale, bool clipToScene) {
 	const byte *spriteBuffer = NULL;
 	int width  = 0;
 	int height = 0;
@@ -276,10 +276,10 @@ void Sprite::draw(SpriteList &spriteList, int32 spriteNumber, const Point &scree
 	spritePointer.x = screenCoord.x + xAlign;
 	spritePointer.y = screenCoord.y + yAlign;
 
-	drawClip(spritePointer, width, height, spriteBuffer);
+	drawClip(spritePointer, width, height, spriteBuffer, clipToScene);
 }
 
-void Sprite::draw(SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale) {
+void Sprite::draw(SpriteList &spriteList, int32 spriteNumber, const Rect &screenRect, int scale, bool clipToScene) {
 	const byte *spriteBuffer = NULL;
 	int width  = 0;
 	int height = 0;
@@ -300,7 +300,7 @@ void Sprite::draw(SpriteList &spriteList, int32 spriteNumber, const Rect &screen
 	}
 	spritePointer.x = screenRect.left + xAlign + spw;
 	spritePointer.y = screenRect.top + yAlign + sph;
-	drawClip(spritePointer, width, height, spriteBuffer);
+	drawClip(spritePointer, width, height, spriteBuffer, clipToScene);
 }
 
 bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, const Point &testPoint) {
@@ -370,7 +370,7 @@ void Sprite::drawOccluded(SpriteList &spriteList, int spriteNumber, const Point 
 	clipData.sourceRect.right = width;
 	clipData.sourceRect.bottom = height;
 
-	clipData.destRect = _vm->getDisplayClip();
+	clipData.destRect = _vm->_scene->getSceneClip();
 
 	if (!clipData.calcClip()) {
 		return;
