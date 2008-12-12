@@ -48,38 +48,6 @@ public:
 		uint16 funcSub;
 	} PACKED_STRUCT;
 
-#define szGame_TotResItem (4 + 2 + 2 + 2)
-	struct TotResItem {
-		int32 offset;	// if > 0, then offset from end of resource table.
-						// If < 0, then -offset-1 is index in .IM file table
-		int16 size;
-		int16 width;
-		int16 height;
-	} PACKED_STRUCT;
-
-#define szGame_TotResTable (2 + 1)
-	struct TotResTable {
-		int16 itemsCount;
-		byte unknown;
-		TotResItem *items;
-		byte *dataPtr;
-	} PACKED_STRUCT;
-
-#define szGame_ExtItem (4 + 2 + 2 + 2)
-	struct ExtItem {
-		int32 offset;		// offset from the table end
-		uint16 size;
-		int16 width;		// width & 0x7FFF: width, width & 0x8000: pack flag
-		int16 height;		// not zero
-	} PACKED_STRUCT;
-
-#define szGame_ExtTable (2 + 1)
-	struct ExtTable {
-		int16 itemsCount;
-		byte unknown;
-		ExtItem *items;
-	} PACKED_STRUCT;
-
 #define szGame_TotTextItem (2 + 2)
 	struct TotTextItem {
 		int16 offset;
@@ -102,7 +70,6 @@ public:
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-	TotResTable *_totResourceTable;
 	Collision *_collisionAreas;
 	Collision *_collStack[5];
 
@@ -131,7 +98,7 @@ public:
 	virtual ~Game();
 
 	byte *loadExtData(int16 dataId, int16 *pResWidth, int16 *pResHeight, uint32 *dataSize = 0);
-	byte *loadTotResource(int16 id, int16 *dataSize = 0);
+	byte *loadTotResource(int16 id, int16 *dataSize = 0, int16 *width = 0, int16 *height = 0);
 
 	void capturePush(int16 left, int16 top, int16 width, int16 height);
 	void capturePop(char doDraw);
@@ -166,6 +133,42 @@ public:
 	virtual void prepareStart(void) = 0;
 
 protected:
+#include "common/pack-start.h"	// START STRUCT PACKING
+
+#define szGame_TotResItem (4 + 2 + 2 + 2)
+	struct TotResItem {
+		int32 offset;	// if > 0, then offset from end of resource table.
+						// If < 0, then -offset-1 is index in .IM file table
+		int16 size;
+		int16 width;
+		int16 height;
+	} PACKED_STRUCT;
+
+#define szGame_TotResTable (2 + 1)
+	struct TotResTable {
+		int16 itemsCount;
+		byte unknown;
+		TotResItem *items;
+		byte *dataPtr;
+	} PACKED_STRUCT;
+
+#define szGame_ExtItem (4 + 2 + 2 + 2)
+	struct ExtItem {
+		int32 offset;		// offset from the table end
+		uint16 size;
+		int16 width;		// width & 0x7FFF: width, width & 0x8000: pack flag
+		int16 height;		// not zero
+	} PACKED_STRUCT;
+
+#define szGame_ExtTable (2 + 1)
+	struct ExtTable {
+		int16 itemsCount;
+		byte unknown;
+		ExtItem *items;
+	} PACKED_STRUCT;
+
+#include "common/pack-end.h"	// END STRUCT PACKING
+
 	int16 _lastCollKey;
 	int16 _lastCollAreaIndex;
 	int16 _lastCollId;
@@ -178,6 +181,7 @@ protected:
 
 	char _tempStr[256];
 
+	TotResTable *_totResourceTable;
 	ExtTable *_extTable;
 	char _curImaFile[18];
 

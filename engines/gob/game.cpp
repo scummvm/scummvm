@@ -103,6 +103,16 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 }
 
 Game::~Game() {
+	delete[] _vm->_game->_totFileData;
+	if (_vm->_game->_totTextData) {
+		if (_vm->_game->_totTextData->items)
+			delete[] _vm->_game->_totTextData->items;
+		delete _vm->_game->_totTextData;
+	}
+	if (_vm->_game->_totResourceTable) {
+		delete[] _vm->_game->_totResourceTable->items;
+		delete _vm->_game->_totResourceTable;
+	}
 }
 
 byte *Game::loadExtData(int16 itemId, int16 *pResWidth,
@@ -268,14 +278,27 @@ void Game::capturePop(char doDraw) {
 	_vm->_draw->freeSprite(30 + _captureCount);
 }
 
-byte *Game::loadTotResource(int16 id, int16 *dataSize) {
+byte *Game::loadTotResource(int16 id,
+		int16 *dataSize, int16 *width, int16 *height) {
+
 	TotResItem *itemPtr;
 	int32 offset;
 
+	if (id >= _vm->_game->_totResourceTable->itemsCount) {
+		warning("Trying to load non-existent TOT resource (%s, %d/%d)",
+				_curTotFile, id, _totResourceTable->itemsCount - 1);
+		return 0;
+	}
+
 	itemPtr = &_totResourceTable->items[id];
 	offset = itemPtr->offset;
+
 	if (dataSize)
 		*dataSize = itemPtr->size;
+	if (width)
+		*width = itemPtr->width;
+	if (height)
+		*height = itemPtr->height;
 
 	if (offset < 0) {
 		offset = (-offset - 1) * 4;

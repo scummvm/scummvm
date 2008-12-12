@@ -49,11 +49,13 @@ void Draw_v2::initScreen() {
 	_backSurface = _spritesArray[21];
 	_vm->_video->clearSurf(_backSurface);
 
-	initSpriteSurf(23, 32, 16, 2);
-	_cursorSpritesBack = _spritesArray[23];
-	_cursorSprites = _cursorSpritesBack;
-	_scummvmCursor =
-		_vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, SCUMMVM_CURSOR);
+	if (!_spritesArray[23]) {
+		initSpriteSurf(23, 32, 16, 2);
+		_cursorSpritesBack = _spritesArray[23];
+		_cursorSprites = _cursorSpritesBack;
+		_scummvmCursor =
+			_vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, SCUMMVM_CURSOR);
+	}
 
 	_spritesArray[20] = _frontSurface;
 	_spritesArray[21] = _backSurface;
@@ -62,10 +64,10 @@ void Draw_v2::initScreen() {
 }
 
 void Draw_v2::closeScreen() {
-	freeSprite(23);
-	_cursorSprites = 0;
-	_cursorSpritesBack = 0;
-	_scummvmCursor = 0;
+	//freeSprite(23);
+	//_cursorSprites = 0;
+	//_cursorSpritesBack = 0;
+	//_scummvmCursor = 0;
 	freeSprite(21);
 }
 
@@ -609,8 +611,6 @@ void Draw_v2::printTotText(int16 id) {
 void Draw_v2::spriteOperation(int16 operation) {
 	uint16 id;
 	byte *dataBuf;
-	Game::TotResItem *itemPtr;
-	int32 offset;
 	int16 len;
 	int16 x, y;
 	SurfaceDesc *sourceSurf, *destSurf;
@@ -756,6 +756,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 	case DRAW_LOADSPRITE:
 		id = _spriteLeft;
 
+		warning("Loadsprite %d to %d", id, _destSurface);
 		if ((id >= 30000) || (_vm->_game->_lomHandle >= 0)) {
 			dataBuf = 0;
 
@@ -779,19 +780,9 @@ void Draw_v2::spriteOperation(int16 operation) {
 		}
 
 		// Load from .TOT resources
-		itemPtr = &_vm->_game->_totResourceTable->items[id];
-		offset = itemPtr->offset;
-		if (offset >= 0) {
-			dataBuf = _vm->_game->_totResourceTable->dataPtr +
-					szGame_TotResTable + szGame_TotResItem *
-					_vm->_game->_totResourceTable->itemsCount + offset;
-		} else {
-			dataBuf = _vm->_game->_imFileData +
-					(int32) READ_LE_UINT32(&((int32 *) _vm->_game->_imFileData)[-offset - 1]);
-		}
+		if (!(dataBuf = _vm->_game->loadTotResource(id, 0, &_spriteRight, &_spriteBottom)))
+			break;
 
-		_spriteRight = itemPtr->width;
-		_spriteBottom = itemPtr->height;
 		_vm->_video->drawPackedSprite(dataBuf,
 		    _spriteRight, _spriteBottom,
 		    _destSpriteX, _destSpriteY,
@@ -802,6 +793,11 @@ void Draw_v2::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_PRINTTEXT:
+		if (_vm->getGameType() == kGameTypeUrban) {
+			warning("Urban Stub: Print text \"%s\"", _textToPrint);
+			break;
+		}
+
 		len = strlen(_textToPrint);
 		left = _destSpriteX;
 

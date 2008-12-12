@@ -89,7 +89,6 @@ void Init::initGame(const char *totName) {
 
 	_vm->_game->_totTextData = 0;
 	_vm->_game->_totFileData = 0;
-	_vm->_game->_totResourceTable = 0;
 	_palDesc = new Video::PalDesc;
 
 	_vm->validateVideoMode(_vm->_global->_videoMode);
@@ -208,16 +207,6 @@ void Init::initGame(const char *totName) {
 		_vm->_sound->cdStop();
 		_vm->_sound->cdUnloadLIC();
 
-		delete[] _vm->_game->_totFileData;
-		if (_vm->_game->_totTextData) {
-			if (_vm->_game->_totTextData->items)
-				delete[] _vm->_game->_totTextData->items;
-			delete _vm->_game->_totTextData;
-		}
-		if (_vm->_game->_totResourceTable) {
-			delete[] _vm->_game->_totResourceTable->items;
-			delete _vm->_game->_totResourceTable;
-		}
 	}
 
 	for (int i = 0; i < 4; i++) {

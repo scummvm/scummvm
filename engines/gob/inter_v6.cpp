@@ -650,10 +650,8 @@ const char *Inter_v6::getOpcodeGoblinDesc(int i) {
 }
 
 bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
-	Game::TotResItem *itemPtr;
 	int16 width, height;
 	byte *dataBuf;
-	int32 offset;
 	int16 id;
 	int8 index;
 
@@ -686,20 +684,7 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 		if ((index * _vm->_draw->_cursorWidth) >= _vm->_draw->_cursorSprites->getWidth())
 			return false;
 
-		itemPtr = &_vm->_game->_totResourceTable->items[id];
-		offset = itemPtr->offset;
-
-		if (offset < 0) {
-			offset = (-offset - 1) * 4;
-			dataBuf = _vm->_game->_imFileData +
-				(int32) READ_LE_UINT32(_vm->_game->_imFileData + offset);
-		} else
-			dataBuf = _vm->_game->_totResourceTable->dataPtr + szGame_TotResTable +
-				szGame_TotResItem * _vm->_game->_totResourceTable->itemsCount +
-				offset;
-
-		width = itemPtr->width;
-		height = itemPtr->height;
+		dataBuf = _vm->_game->loadTotResource(id, 0, &width, &height);
 
 		_vm->_video->fillRect(_vm->_draw->_cursorSprites,
 				index * _vm->_draw->_cursorWidth, 0,

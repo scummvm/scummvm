@@ -324,8 +324,6 @@ void Draw_v1::printTotText(int16 id) {
 void Draw_v1::spriteOperation(int16 operation) {
 	uint16 id;
 	byte *dataBuf;
-	Game::TotResItem *itemPtr;
-	int32 offset;
 	int16 len;
 	int16 x, y;
 	int16 perLine;
@@ -409,25 +407,11 @@ void Draw_v1::spriteOperation(int16 operation) {
 					_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 			delete[] dataBuf;
 			break;
-		} else if (id >= _vm->_game->_totResourceTable->itemsCount) {
-			warning("Trying to load non-existent sprite (id = %d, count = %d)", id,
-					_vm->_game->_totResourceTable->itemsCount);
-			break;
-		}
-		// Load from .TOT resources
-		itemPtr = &_vm->_game->_totResourceTable->items[id];
-		offset = itemPtr->offset;
-		if (offset >= 0) {
-			dataBuf = _vm->_game->_totResourceTable->dataPtr +
-			    szGame_TotResTable + szGame_TotResItem *
-			    _vm->_game->_totResourceTable->itemsCount + offset;
-		} else {
-			dataBuf = _vm->_game->_imFileData +
-					(int32) READ_LE_UINT32(&((int32 *) _vm->_game->_imFileData)[-offset - 1]);
 		}
 
-		_spriteRight = itemPtr->width;
-		_spriteBottom = itemPtr->height;
+		if (!(dataBuf = _vm->_game->loadTotResource(id, 0, &_spriteRight, &_spriteBottom)))
+			break;
+
 		_vm->_video->drawPackedSprite(dataBuf,
 		    _spriteRight, _spriteBottom,
 		    _destSpriteX, _destSpriteY,

@@ -58,10 +58,12 @@ void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, SurfaceDesc *sur
 	int16 height = READ_LE_UINT16(data + 2);
 	data += 4;
 
+	warning("drawPacked: %d, %d, %d, %d", x, y, width, height);
+
 	const byte *srcData = data;
 	byte *uncBuf = 0;
 
-	if (*data++ != 0) {
+	if (*srcData++ != 0) {
 		uint32 size = READ_LE_UINT32(data);
 
 		uncBuf = new byte[size];
@@ -87,6 +89,8 @@ void Video_v6::drawYUVData(const byte *srcData, SurfaceDesc *destDesc,
 		dataWidth = (dataWidth & 0xFFF0) + 16;
 	if (dataHeight & 0xF)
 		dataHeight = (dataHeight & 0xFFF0) + 16;
+
+	warning("drawYUVData: %d, %d, %d, %d, %d, %d", x, y, width, height, dataWidth, dataHeight);
 
 	const byte *dataY = srcData;
 	const byte *dataU = dataY +  (dataWidth * dataHeight);
@@ -114,10 +118,15 @@ void Video_v6::drawYUV(SurfaceDesc *destDesc, int16 x, int16 y,
 		int16 dataWidth, int16 dataHeight, int16 width, int16 height,
 		const byte *dataY, const byte *dataU, const byte *dataV) {
 
-	byte *vidMem = destDesc->getVidMem() + y * width + x;
+	warning("drawYUV: %dx%d->%d+%d (%dx%d) (%dx%d)", width, height, x, y, dataWidth, dataHeight,
+			destDesc->getWidth(), destDesc->getHeight());
 
-	width = MIN(width, destDesc->getWidth());
-	height = MIN(height, destDesc->getHeight());
+	byte *vidMem = destDesc->getVidMem() + y * destDesc->getWidth() + x;
+
+	if ((x + width - 1) >= destDesc->getWidth())
+		width = destDesc->getWidth() - x;
+	if ((y + height - 1) >= destDesc->getHeight())
+		height = destDesc->getHeight() - y;
 
 	SierraLight *dither = new SierraLight(width, height, _palLUT);
 
@@ -136,7 +145,7 @@ void Video_v6::drawYUV(SurfaceDesc *destDesc, int16 x, int16 y,
 		}
 
 		dither->nextLine();
-		vidMem += width;
+		vidMem += destDesc->getWidth();
 	}
 }	
 
