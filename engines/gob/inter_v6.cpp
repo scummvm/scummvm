@@ -43,6 +43,8 @@ const int Inter_v6::_goblinFuncLookUp[][2] = {
 };
 
 Inter_v6::Inter_v6(GobEngine *vm) : Inter_v5(vm) {
+	_gotFirstPalette = false;
+
 	setupOpcodes();
 }
 
@@ -783,8 +785,12 @@ bool Inter_v6::o6_evaluateStore(OpFuncParams &params) {
 
 bool Inter_v6::o6_palLoad(OpFuncParams &params) {
 	o1_palLoad(params);
-	_vm->_video->_palLUT->setPalette((const byte *) _vm->_global->_pPaletteDesc->vgaPal,
-			PaletteLUT::kPaletteRGB, 6);
+
+	if (_gotFirstPalette)
+		_vm->_video->_palLUT->setPalette((const byte *) _vm->_global->_pPaletteDesc->vgaPal,
+				PaletteLUT::kPaletteRGB, 6);
+
+	_gotFirstPalette = true;
 	return false;
 }
 

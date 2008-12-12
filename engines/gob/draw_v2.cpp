@@ -756,7 +756,6 @@ void Draw_v2::spriteOperation(int16 operation) {
 	case DRAW_LOADSPRITE:
 		id = _spriteLeft;
 
-		warning("Loadsprite %d to %d", id, _destSurface);
 		if ((id >= 30000) || (_vm->_game->_lomHandle >= 0)) {
 			dataBuf = 0;
 

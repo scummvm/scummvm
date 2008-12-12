@@ -1858,6 +1858,7 @@ bool Inter_v1::o1_loadSpriteContent(OpFuncParams &params) {
 	_vm->_draw->_transparency = load16();
 	_vm->_draw->_destSpriteX = 0;
 	_vm->_draw->_destSpriteY = 0;
+
 	_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 	return false;
 }

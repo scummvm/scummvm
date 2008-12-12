@@ -174,6 +174,8 @@ public:
 			int16 srcHeight, int16 x, int16 y, int16 transp,
 			SurfaceDesc *destDesc) = 0;
 
+	virtual void init() { }
+
 	Video(class GobEngine *vm);
 	virtual ~Video() {}
 
@@ -189,6 +191,9 @@ protected:
 	GobEngine *_vm;
 
 	char initDriver(int16 vidMode);
+
+	void initOSD();
+	void drawOSDText(const char *text);
 };
 
 class Video_v1 : public Video {
@@ -214,10 +219,14 @@ public:
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 			int16 x, int16 y, int16 transp, SurfaceDesc *destDesc);
 
+	virtual void init();
+
 	Video_v6(GobEngine *vm);
 	virtual ~Video_v6() {}
 
 private:
+	static const byte _ditherPalette[768];
+
 	void drawPacked(const byte *sprBuf, int16 x, int16 y, SurfaceDesc *surfDesc);
 	void drawYUVData(const byte *srcData, SurfaceDesc *destDesc,
 			int16 width, int16 height, int16 x, int16 y);

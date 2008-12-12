@@ -25,6 +25,8 @@
 
 #include "common/endian.h"
 #include "graphics/cursorman.h"
+#include "graphics/fontman.h"
+#include "graphics/surface.h"
 
 #include "gob/gob.h"
 #include "gob/video.h"
@@ -531,6 +533,38 @@ void Video::dirtyRectsApply(int left, int top, int width, int height, int x, int
 
 		g_system->copyRectToScreen(v, _surfWidth, x + (l - left), y + (t - top), w, h);
 	}
+}
+
+void Video::initOSD() {
+	const byte palOSD[] = {
+		0, 0, 0, 0,
+		0, 0, 171, 0,
+		0, 171, 0, 0,
+		0, 171, 171, 0,
+		171, 0, 0, 0
+	};
+
+  g_system->setPalette(palOSD, 0, 5);
+}
+
+void Video::drawOSDText(const char *text) {
+	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kOSDFont));
+	uint32 color = 0x2;
+	Graphics::Surface surf;
+
+	surf.w = g_system->getWidth();
+	surf.h = font.getFontHeight();
+	surf.pitch = surf.w;
+	surf.bytesPerPixel = 1;
+	surf.pixels = calloc(surf.w, surf.h);
+
+	font.drawString(&surf, text, 0, 0, surf.w, color, Graphics::kTextAlignCenter);
+
+	int y = g_system->getHeight() / 2 - font.getFontHeight() / 2;
+	g_system->copyRectToScreen((byte *)surf.pixels, surf.pitch, 0, y, surf.w, surf.h);
+	g_system->updateScreen();
+
+	free(surf.pixels);
 }
 
 } // End of namespace Gob

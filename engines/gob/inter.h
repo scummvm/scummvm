@@ -614,6 +614,8 @@ protected:
 	const OpcodeGoblinEntryV6 *_opcodesGoblinV6;
 	static const int _goblinFuncLookUp[][2];
 
+	bool _gotFirstPalette;
+
 	virtual void setupOpcodes();
 	virtual void executeDrawOpcode(byte i);
 	virtual bool executeFuncOpcode(byte i, byte j, OpFuncParams &params);
