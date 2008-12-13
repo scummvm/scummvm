@@ -611,7 +611,7 @@ void AGOSEngine_Elvira1::oe1_pcName() {
 	Item *i = getNextItemPtr();
 
 	// TODO: Change first letter to upper case.
-	showMessageFormat("%s\n", (const byte *)getStringPtrByID(i->itemName)); // Difference
+	showMessageFormat("%s", (const byte *)getStringPtrByID(i->itemName)); // Difference
 }
 
 void AGOSEngine_Elvira1::oe1_isCalled() {
