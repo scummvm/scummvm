@@ -1233,7 +1233,7 @@ protected:
 
 	int countSaveGames();
 
-	char *genSaveName(int slot);
+	virtual char *genSaveName(int slot);
 };
 
 class AGOSEngine_Elvira1 : public AGOSEngine {
@@ -1404,7 +1404,7 @@ protected:
 	virtual void userGame(bool load);
 	virtual int userGameGetKey(bool *b, char *buf, uint maxChar);
 
-	char *genSaveName(int slot);
+	virtual char *genSaveName(int slot);
 };
 
 class AGOSEngine_Waxworks : public AGOSEngine_Elvira2 {
@@ -1462,7 +1462,7 @@ protected:
 
 	virtual bool confirmOverWrite(WindowBlock *window);
 
-	char *genSaveName(int slot);
+	virtual char *genSaveName(int slot);
 };
 
 class AGOSEngine_Simon1 : public AGOSEngine_Waxworks {
@@ -1531,7 +1531,7 @@ protected:
 
 	virtual void vcStopAnimation(uint16 zone, uint16 sprite);
 
-	char *genSaveName(int slot);
+	virtual char *genSaveName(int slot);
 };
 
 class AGOSEngine_Simon2 : public AGOSEngine_Simon1 {
@@ -1575,7 +1575,7 @@ protected:
 
 	virtual void playSpeech(uint16 speech_id, uint16 vga_sprite_id);
 
-	char *genSaveName(int slot);
+	virtual char *genSaveName(int slot);
 };
 
 class AGOSEngine_Feeble : public AGOSEngine_Simon2 {
@@ -1700,7 +1700,7 @@ protected:
 	virtual void checkAnims(uint a);
 	virtual void checkZonePtrs();
 
-	char *genSaveName(int slot);
+	virtual char *genSaveName(int slot);
 };
 
 class AGOSEngine_PuzzlePack : public AGOSEngine_Feeble {
@@ -1747,7 +1747,7 @@ protected:
 
 	void loadMouseImage();
 
-	char *genSaveName(int slot);
+	virtual char *genSaveName(int slot);
 };
 
 } // End of namespace AGOS
