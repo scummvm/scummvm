@@ -165,7 +165,7 @@ void Gfx::sortAnimations() {
 }
 
 
-void Gfx::drawGfxObject(GfxObj *obj, Graphics::Surface &surf, bool scene) {
+void Gfx::drawGfxObject(GfxObj *obj, Graphics::Surface &surf) {
 	if (!obj->isVisible()) {
 		return;
 	}
@@ -200,7 +200,7 @@ void Gfx::drawGfxObjects(Graphics::Surface &surf) {
 	GfxObjList::iterator e = _gfxobjList.end();
 
 	for (; b != e; b++) {
-		drawGfxObject(*b, surf, true);
+		drawGfxObject(*b, surf);
 	}
 }
 

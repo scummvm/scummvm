@@ -518,7 +518,6 @@ public:
 	int setItem(GfxObj* obj, uint16 x, uint16 y, byte transparentColor = 0);
 	void setItemFrame(uint item, uint16 f);
 	void hideDialogueStuff();
-	void freeBalloons();
 	void freeItems();
 
 	// background surface
@@ -536,6 +535,7 @@ public:
 	void animatePalette();
 
 	// amiga specific
+	void applyHalfbriteEffect_NS(Graphics::Surface &surf);
 	void setHalfbriteMode(bool enable);
 	void setProjectorPos(int x, int y);
 	void setProjectorProgram(int16 *data);
@@ -557,9 +557,6 @@ public:
 
 public:
 	Palette				_palette;
-
-	uint				_screenX;		// scrolling position
-	uint				_screenY;
 
 	byte				*_unpackedBitmap;
 
@@ -596,14 +593,9 @@ protected:
 
 	// overlay mode enables drawing of graphics with automatic screen-to-game coordinate translation
 	bool				_overlayMode;
+	void				drawOverlay(Graphics::Surface &surf);
 
 public:
-
-	struct Item {
-		GfxObj *data;
-	} _items[14];
-
-	uint	_numItems;
 
 	#define MAX_NUM_LABELS	20
 	#define NO_FLOATING_LABEL	1000
@@ -611,14 +603,13 @@ public:
 	typedef Common::Array<GfxObj*> GfxObjArray;
 	GfxObjArray	_labels;
 	GfxObjArray _balloons;
+	GfxObjArray	_items;
 
 	uint _floatingLabel;
 
 	void drawInventory();
 	void updateFloatingLabel();
-	void drawLabels();
-	void drawItems();
-	void drawBalloons();
+	void drawList(Graphics::Surface &surface, GfxObjArray &list);
 
 	void copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surface &dst);
 
@@ -628,7 +619,7 @@ public:
 	// low level text and patches
 	void drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
 
-	void drawGfxObject(GfxObj *obj, Graphics::Surface &surf, bool scene);
+	void drawGfxObject(GfxObj *obj, Graphics::Surface &surf);
     void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
 	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
 

@@ -332,28 +332,14 @@ void Gfx::drawInventory() {
 	copyRectToScreen(data, r.width(), r.left, r.top, r.width(), r.height());
 }
 
-void Gfx::drawItems() {
-	if (_numItems == 0) {
+void Gfx::drawList(Graphics::Surface &surface, GfxObjArray &list) {
+	if (list.size() == 0) {
 		return;
 	}
 
-	Graphics::Surface *surf = lockScreen();
-	for (uint i = 0; i < _numItems; i++) {
-		drawGfxObject(_items[i].data, *surf, false);
+	for (uint i = 0; i < list.size(); i++) {
+		drawGfxObject(list[i], surface);
 	}
-	unlockScreen();
-}
-
-void Gfx::drawBalloons() {
-	if (_balloons.size() == 0) {
-		return;
-	}
-
-	Graphics::Surface *surf = lockScreen();
-	for (uint i = 0; i < _balloons.size(); i++) {
-		drawGfxObject(_balloons[i], *surf, false);
-	}
-	unlockScreen();
 }
 
 void Gfx::beginFrame() {
@@ -507,45 +493,57 @@ void Gfx::updateScreen() {
 
 	_varRenderMode = _varAnimRenderMode;
 
-	// TODO: transform objects coordinates to be drawn with scrolling
 	Graphics::Surface *surf = lockScreen();
-	drawGfxObjects(*surf);
+		// draws animations frames and screen items
+		drawGfxObjects(*surf);
 
-	if (_halfbrite) {
-		// FIXME: the implementation of halfbrite is now largely sub-optimal in that a full screen
-		// rewrite is needed to apply the effect. Also, we are manipulating the frame buffer. Is it a good idea?
-		byte *buf = (byte*)surf->pixels;
-		for (int i = 0; i < surf->w*surf->h; i++) {
-			*buf++ |= 0x20;
-		}
-		if (_nextProjectorPos) {
-			int16 x = *_nextProjectorPos++;
-			int16 y = *_nextProjectorPos++;
-			if (x == -1 && y == -1) {
-				_nextProjectorPos = 0;
-			} else {
-				setProjectorPos(x, y);
-			}
-		}
-		if (_hbCircleRadius > 0) {
-			drawCircle(_hbCirclePos.x, _hbCirclePos.y, _hbCircleRadius, 0, &halfbritePixel, surf->pixels);
-		}
-	}
+		// special effects
+		applyHalfbriteEffect_NS(*surf);
 
+		// draws inventory, labels and dialogue items
+		drawOverlay(*surf);
 	unlockScreen();
-
-	// the following items are handled in screen coordinates, so they need translation before
-	// being drawn
-	_overlayMode = true;
-	drawInventory();
-	drawItems();
-	drawBalloons();
-	drawLabels();
 
 	updateScreenIntern();
 }
 
+void Gfx::applyHalfbriteEffect_NS(Graphics::Surface &surf) {
+	if (!_halfbrite) {
+		return;
+	}
 
+	byte *buf = (byte*)surf.pixels;
+	for (int i = 0; i < surf.w*surf.h; i++) {
+		*buf++ |= 0x20;
+	}
+
+	if (_nextProjectorPos) {
+		int16 x = *_nextProjectorPos++;
+		int16 y = *_nextProjectorPos++;
+		if (x == -1 && y == -1) {
+			_nextProjectorPos = 0;
+		} else {
+			setProjectorPos(x, y);
+		}
+	}
+	if (_hbCircleRadius > 0) {
+		drawCircle(_hbCirclePos.x, _hbCirclePos.y, _hbCircleRadius, 0, &halfbritePixel, surf.pixels);
+	}
+}
+
+void Gfx::drawOverlay(Graphics::Surface &surf) {
+	// the following items are handled in screen coordinates, so they need translation before
+	// being drawn
+	_overlayMode = true;
+
+	drawInventory();
+
+	updateFloatingLabel();
+
+	drawList(surf, _items);
+	drawList(surf, _balloons);
+	drawList(surf, _labels);
+}
 
 //
 //	graphic primitives
@@ -759,20 +757,6 @@ void Gfx::freeLabels() {
 	_floatingLabel = NO_FLOATING_LABEL;
 }
 
-void Gfx::drawLabels() {
-	if (_labels.size() == 0) {
-		return;
-	}
-
-	updateFloatingLabel();
-
-	Graphics::Surface* surf = lockScreen();
-	for (uint i = 0; i < _labels.size(); i++) {
-		drawGfxObject(_labels[i], *surf, false);
-	}
-	unlockScreen();
-}
-
 
 
 void Gfx::copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surface &dst) {
@@ -805,11 +789,7 @@ Gfx::Gfx(Parallaction* vm) :
 
 	setPalette(_palette);
 
-	_numItems = 0;
 	_floatingLabel = NO_FLOATING_LABEL;
-
-	_screenX = 0;
-	_screenY = 0;
 
 	_backgroundInfo = 0;
 
@@ -853,23 +833,23 @@ Gfx::~Gfx() {
 
 
 int Gfx::setItem(GfxObj* frames, uint16 x, uint16 y, byte transparentColor) {
-	int id = _numItems;
+	int id = _items.size();
 
-	_items[id].data = frames;
-	_items[id].data->x = x;
-	_items[id].data->y = y;
-	_items[id].data->layer = LAYER_FOREGROUND;
-	_items[id].data->transparentKey = transparentColor;
+	frames->x = x;
+	frames->y = y;
+	frames->transparentKey = transparentColor;
+	frames->layer = LAYER_FOREGROUND;
+	frames->setFlags(kGfxObjVisible);
 
-	_numItems++;
+	_items.insert_at(id, frames);
+
+	setItemFrame(id, 0);
 
 	return id;
 }
 
 void Gfx::setItemFrame(uint item, uint16 f) {
-	assert(item < _numItems);
-	_items[item].data->frame = f;
-	_items[item].data->setFlags(kGfxObjVisible);
+	_items[item]->frame = f;
 }
 
 
@@ -894,7 +874,7 @@ void Gfx::destroyBalloons() {
 }
 
 void Gfx::freeItems() {
-	_numItems = 0;
+	_items.clear();
 }
 
 void Gfx::setBackground(uint type, BackgroundInfo *info) {

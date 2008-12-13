@@ -572,7 +572,6 @@ void Parallaction::enterCommentMode(ZonePtr z) {
 
 	// TODO: move this balloons stuff into DialogueManager and BalloonManager
 	if (getGameType() == GType_Nippon) {
-		int id;
 		if (data->_filename) {
 			if (data->_cnv == 0) {
 				data->_cnv = _disk->loadStatic(data->_filename);
@@ -582,20 +581,16 @@ void Parallaction::enterCommentMode(ZonePtr z) {
 			_balloonMan->setSingleBalloon(data->_description.c_str(), 0, 90, 0, BalloonManager::kNormalColor);
 			Common::Rect r;
 			data->_cnv->getRect(0, r);
-			id = _gfx->setItem(data->_cnv, 140, (_screenHeight - r.height())/2);
-			_gfx->setItemFrame(id, 0);
-			id = _gfx->setItem(_char._head, 100, 152);
-			_gfx->setItemFrame(id, 0);
+			_gfx->setItem(data->_cnv, 140, (_screenHeight - r.height())/2);
+			_gfx->setItem(_char._head, 100, 152);
 		} else {
 			_balloonMan->setSingleBalloon(data->_description.c_str(), 140, 10, 0, BalloonManager::kNormalColor);
-			id = _gfx->setItem(_char._talk, 190, 80);
-			_gfx->setItemFrame(id, 0);
+			_gfx->setItem(_char._talk, 190, 80);
 		}
 	} else
 	if (getGameType() == GType_BRA) {
 		_balloonMan->setSingleBalloon(data->_description.c_str(), 0, 0, 1, BalloonManager::kNormalColor);
-		int id = _gfx->setItem(_char._talk, 10, 80);
-		_gfx->setItemFrame(id, 0);
+		_gfx->setItem(_char._talk, 10, 80);
 	}
 
 	_input->_inputMode = Input::kInputModeComment;

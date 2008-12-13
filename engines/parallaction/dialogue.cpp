@@ -82,6 +82,7 @@ class DialogueManager {
 	bool			isNpc;
 	GfxObj			*_questioner;
 	GfxObj			*_answerer;
+	int				_faceId;
 
 	Question		*_q;
 
@@ -194,23 +195,23 @@ bool DialogueManager::displayAnswers() {
 		displayAnswer(i);
 	}
 
+	int mood = 0;
+
 	if (_askPassword) {
 		resetPassword();
-//		_vm->_balloonMan->setDialogueBalloon(_q->_answers[0]->_text, 1, 3);
-		int id = _vm->_gfx->setItem(_answerer, _ballonPos._answerChar.x, _ballonPos._answerChar.y);
-		_vm->_gfx->setItemFrame(id, 0);
 	} else
 	if (_numVisAnswers == 1) {
-		int id = _vm->_gfx->setItem(_answerer, _ballonPos._answerChar.x, _ballonPos._answerChar.y);
-		_vm->_gfx->setItemFrame(id, _q->_answers[0]->_mood & 0xF);
+		mood = _q->_answers[0]->_mood & 0xF;
 		_vm->_balloonMan->setBalloonText(0, _q->_answers[_visAnswers[0]]->_text.c_str(), BalloonManager::kNormalColor);
 	} else
 	if (_numVisAnswers > 1) {
-		int id = _vm->_gfx->setItem(_answerer, _ballonPos._answerChar.x, _ballonPos._answerChar.y);
-		_vm->_gfx->setItemFrame(id, _q->_answers[_visAnswers[0]]->_mood & 0xF);
+		mood = _q->_answers[_visAnswers[0]]->_mood & 0xF;
 		_oldSelection = -1;
 		_selection = 0;
 	}
+
+	_faceId = _vm->_gfx->setItem(_answerer, _ballonPos._answerChar.x, _ballonPos._answerChar.y);
+	_vm->_gfx->setItemFrame(_faceId, mood);
 
 	return _numVisAnswers > 0;
 }
@@ -219,8 +220,8 @@ bool DialogueManager::displayQuestion() {
 	if (!_q->_text.compareToIgnoreCase("NULL")) return false;
 
 	_vm->_balloonMan->setSingleBalloon(_q->_text.c_str(), _ballonPos._questionBalloon.x, _ballonPos._questionBalloon.y, _q->_mood & 0x10, BalloonManager::kNormalColor);
-	int id = _vm->_gfx->setItem(_questioner, _ballonPos._questionChar.x, _ballonPos._questionChar.y);
-	_vm->_gfx->setItemFrame(id, _q->_mood & 0xF);
+	_faceId = _vm->_gfx->setItem(_questioner, _ballonPos._questionChar.x, _ballonPos._questionChar.y);
+	_vm->_gfx->setItemFrame(_faceId, _q->_mood & 0xF);
 
 	return true;
 }
@@ -291,7 +292,7 @@ int16 DialogueManager::selectAnswerN() {
 
 		if (_selection != -1) {
 			_vm->_balloonMan->setBalloonText(_selection, _q->_answers[_visAnswers[_selection]]->_text.c_str(), BalloonManager::kSelectedColor);
-			_vm->_gfx->setItemFrame(0, _q->_answers[_visAnswers[_selection]]->_mood & 0xF);
+			_vm->_gfx->setItemFrame(_faceId, _q->_answers[_visAnswers[_selection]]->_mood & 0xF);
 		}
 	}
 

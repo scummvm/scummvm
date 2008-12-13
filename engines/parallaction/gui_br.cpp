@@ -234,8 +234,7 @@ public:
 		// TODO: keep track of and destroy menu item frames/surfaces
 		for (i = 0; i < _availItems; i++) {
 			_lines[i] = new GfxObj(0, renderMenuItem(_menuStrings[i]), "MenuItem");
-			uint id = _vm->_gfx->setItem(_lines[i], MENUITEMS_X, MENUITEMS_Y + MENUITEM_HEIGHT * i, 0xFF);
-			_vm->_gfx->setItemFrame(id, 0);
+			_vm->_gfx->setItem(_lines[i], MENUITEMS_X, MENUITEMS_Y + MENUITEM_HEIGHT * i, 0xFF);
 		}
 		_selection = -1;
 		_vm->_input->setArrowCursor();
