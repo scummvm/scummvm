@@ -422,9 +422,8 @@ void AGOSEngine::hitarea_stuff_helper_2() {
 }
 
 void AGOSEngine::permitInput() {
-	if (!_mortalFlag)
+	if (_mortalFlag)
 		return;
-
 
 	_mortalFlag = true;
 	justifyOutPut(0);
