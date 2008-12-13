@@ -287,7 +287,7 @@ bool MidiParser::setTrack(int track) {
 		return false;
 	// We allow restarting the track via setTrack when
 	// it isn't playing anymore. This allows us to reuse
-	// a MidiParser when a track has been played and will
+	// a MidiParser when a track has finished and will
 	// be restarted via setTrack by the client again.
 	// This isn't exactly how setTrack behaved before though,
 	// the old MidiParser code did not allow setTrack to be
@@ -296,7 +296,7 @@ bool MidiParser::setTrack(int track) {
 	// TODO: Check if any engine has problem with this
 	// handling, if so we need to find a better way to handle
 	// track restarts. (KYRA relies on this working)
-	else if (track == _active_track && !isPlaying())
+	else if (track == _active_track && isPlaying())
 		return true;
 
 	if (_smartJump)
