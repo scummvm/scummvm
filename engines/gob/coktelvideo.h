@@ -353,7 +353,7 @@ protected:
 		~Frame() { delete[] parts; }
 	} PACKED_STRUCT;
 
-	static const uint16 _tableDPCM[128];
+	static const uint16 _tableADPCM[128];
 
 	bool _hasVideo;
 
@@ -381,7 +381,7 @@ protected:
 	void soundSlice16bit(uint32 size, int16 &init);
 	void filledSoundSlice(uint32 size);
 	void filledSoundSlices(uint32 size, uint32 mask);
-	void deDPCM(byte *soundBuf, byte *dataBuf, int16 &init, uint32 n);
+	void deADPCM(byte *soundBuf, byte *dataBuf, int16 &init, uint32 n);
 };
 
 } // End of namespace Gob

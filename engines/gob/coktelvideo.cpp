@@ -847,7 +847,7 @@ void Imd::deLZ77(byte *dest, byte *src) {
 	}
 }
 
-const uint16 Vmd::_tableDPCM[128] = {
+const uint16 Vmd::_tableADPCM[128] = {
 	0x0000, 0x0008, 0x0010, 0x0020, 0x0030, 0x0040, 0x0050, 0x0060, 0x0070, 0x0080,
 	0x0090, 0x00A0, 0x00B0, 0x00C0, 0x00D0, 0x00E0, 0x00F0, 0x0100, 0x0110, 0x0120,
 	0x0130, 0x0140, 0x0150, 0x0160, 0x0170, 0x0180, 0x0190, 0x01A0, 0x01B0, 0x01C0,
@@ -1484,7 +1484,7 @@ void Vmd::soundSlice16bit(uint32 size, int16 &init) {
 	byte *soundBuf = new byte[size * 2];
 
 	_stream->read(dataBuf, size);
-	deDPCM(soundBuf, dataBuf, init, size);
+	deADPCM(soundBuf, dataBuf, init, size);
 	_audioStream->queueBuffer(soundBuf, size * 2);
 
 	delete[] dataBuf;
@@ -1495,7 +1495,7 @@ void Vmd::filledSoundSlice(uint32 size) {
 		soundSlice8bit(size);
 	} else if (_soundBytesPerSample == 2) {
 		int16 init = _stream->readSint16LE();
-		soundSlice16bit(size - 1, init);
+		soundSlice16bit(size - 2, init);
 	}
 }
 
@@ -1506,7 +1506,7 @@ void Vmd::filledSoundSlices(uint32 size, uint32 mask) {
 		if (mask & 1)
 			emptySoundSlice(_soundSliceSize * _soundBytesPerSample);
 		else
-			filledSoundSlice(_soundSliceSize);
+			filledSoundSlice(_soundSliceSize + 1);
 
 		mask >>= 1;
 	}
@@ -1514,15 +1514,15 @@ void Vmd::filledSoundSlices(uint32 size, uint32 mask) {
 		filledSoundSlice((_soundSlicesCount - 32) * _soundSliceSize);
 }
 
-void Vmd::deDPCM(byte *soundBuf, byte *dataBuf, int16 &init, uint32 n) {
+void Vmd::deADPCM(byte *soundBuf, byte *dataBuf, int16 &init, uint32 n) {
 	int16 *out = (int16 *) soundBuf;
 
 	int32 s = init;
 	for (uint32 i = 0; i < n; i++) {
 		if (dataBuf[i] & 0x80)
-			s -= _tableDPCM[dataBuf[i] & 0x7F];
+			s -= _tableADPCM[dataBuf[i] & 0x7F];
 		else
-			s += _tableDPCM[dataBuf[i]];
+			s += _tableADPCM[dataBuf[i]];
 
 		s = CLIP<int32>(s, -32768, 32767);
 		*out++ = TO_BE_16(s);
