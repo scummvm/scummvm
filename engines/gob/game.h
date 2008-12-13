@@ -46,6 +46,7 @@ public:
 		uint16 funcEnter;
 		uint16 funcLeave;
 		uint16 funcSub;
+		byte *totFileData;
 	} PACKED_STRUCT;
 
 #define szGame_TotTextItem (2 + 2)
@@ -131,6 +132,9 @@ public:
 			int16 *pResId, int16 *pResIndex) = 0;
 
 	virtual void prepareStart(void) = 0;
+
+	virtual void pushCollisions(char all) = 0;
+	virtual void popCollisions(void) = 0;
 
 protected:
 #include "common/pack-start.h"	// START STRUCT PACKING
@@ -224,8 +228,6 @@ protected:
 	void collAreaSub(int16 index, int8 enter);
 	int16 openLocTextFile(char *locTextFile, int language);
 
-	virtual void pushCollisions(char all) = 0;
-	virtual void popCollisions(void) = 0;
 	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex) = 0;
 };
 
@@ -248,12 +250,13 @@ public:
 
 	virtual void prepareStart(void);
 
+	virtual void pushCollisions(char all);
+	virtual void popCollisions(void);
+
 	Game_v1(GobEngine *vm);
 	virtual ~Game_v1() {}
 
 protected:
-	virtual void pushCollisions(char all);
-	virtual void popCollisions(void);
 	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex);
 };
 
@@ -276,6 +279,9 @@ public:
 
 	virtual void prepareStart(void);
 
+	virtual void pushCollisions(char all);
+	virtual void popCollisions(void);
+
 	Game_v2(GobEngine *vm);
 	virtual ~Game_v2() {}
 
@@ -288,9 +294,19 @@ protected:
 
 	CollLast _collLasts[5];
 
-	virtual void pushCollisions(char all);
-	virtual void popCollisions(void);
 	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex);
+};
+
+class Game_v6 : public Game_v2 {
+public:
+	virtual int16 addNewCollision(int16 id, uint16 left, uint16 top,
+			uint16 right, uint16 bottom, int16 flags, int16 key,
+			uint16 funcEnter, uint16 funcLeave);
+
+	virtual void pushCollisions(char all);
+
+	Game_v6(GobEngine *vm);
+	virtual ~Game_v6() {}
 };
 
 } // End of namespace Gob

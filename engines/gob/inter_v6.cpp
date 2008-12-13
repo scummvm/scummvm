@@ -405,7 +405,7 @@ void Inter_v6::setupOpcodes() {
 		OPCODE(o2_animPalInit),
 		/* 18 */
 		OPCODE(o2_addCollision),
-		OPCODE(o2_freeCollision),
+		OPCODE(o6_freeCollision),
 		OPCODE(o3_getTotTextItemPart),
 		{NULL, ""},
 		/* 1C */
@@ -791,6 +791,42 @@ bool Inter_v6::o6_palLoad(OpFuncParams &params) {
 				PaletteLUT::kPaletteRGB, 6);
 
 	_gotFirstPalette = true;
+	return false;
+}
+
+bool Inter_v6::o6_freeCollision(OpFuncParams &params) {
+	int16 id;
+
+	id = _vm->_parse->parseValExpr();
+
+	switch (id + 5) {
+	case 0:
+		_vm->_game->pushCollisions(1);
+		break;
+	case 1:
+		_vm->_game->popCollisions();
+		break;
+	case 2:
+		_vm->_game->pushCollisions(2);
+		break;
+	case 3:
+		for (int i = 0; i < 150; i++) {
+			if (((_vm->_game->_collisionAreas[i].id & 0xF000) == 0xD000) ||
+					((_vm->_game->_collisionAreas[i].id & 0xF000) == 0x4000))
+				_vm->_game->_collisionAreas[i].left = 0xFFFF;
+		}
+		break;
+	case 4:
+		for (int i = 0; i < 150; i++) {
+			if ((_vm->_game->_collisionAreas[i].id & 0xF000) == 0xE000)
+				_vm->_game->_collisionAreas[i].left = 0xFFFF;
+		}
+		break;
+	default:
+		_vm->_game->freeCollision(0xE000 + id);
+		break;
+	}
+
 	return false;
 }
 

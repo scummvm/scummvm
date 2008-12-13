@@ -407,7 +407,7 @@ bool GobEngine::initGameParts() {
 			_parse = new Parse_v2(this);
 			_mult = new Mult_v2(this);
 			_draw = new Draw_v2(this);
-			_game = new Game_v2(this);
+			_game = new Game_v6(this);
 			_map = new Map_v4(this);
 			_goblin = new Goblin_v4(this);
 			_scenery = new Scenery_v2(this);
