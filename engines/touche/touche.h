@@ -340,6 +340,12 @@ void readGameStateDescription(Common::ReadStream *f, char *description, int len)
 Common::String generateGameStateFileName(const char *target, int slot, bool prefixOnly = false);
 int getGameStateFileSlot(const char *filename);
 
+enum GameState {
+	kGameStateGameLoop,
+	kGameStateOptionsDialog,
+	kGameStateQuitDialog
+};
+
 class MidiPlayer;
 
 class ToucheEngine: public Engine {
@@ -638,7 +644,7 @@ protected:
 	bool _inp_rightMouseButtonPressed;
 	int _disabledInputCounter;
 	bool _hideInventoryTexts;
-
+	GameState _gameState;
 	bool _displayQuitDialog;
 	int _saveLoadCurrentPage;
 	int _saveLoadCurrentSlot;

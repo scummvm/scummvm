@@ -114,6 +114,7 @@ Common::Error ToucheEngine::go() {
 void ToucheEngine::restart() {
 	_midiPlayer->stop();
 
+	_gameState = kGameStateGameLoop;
 	_displayQuitDialog = false;
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));
@@ -237,7 +238,7 @@ void ToucheEngine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 }
-	
+
 void ToucheEngine::mainLoop() {
 	restart();
 
@@ -301,8 +302,9 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 			_flagsTable[600] = event.kbd.keycode;
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				if (_displayQuitDialog) {
-					if (displayQuitDialog())
+					if (displayQuitDialog()) {
 						quitGame();
+					}
 				}
 			} else if (event.kbd.keycode == Common::KEYCODE_F5) {
 				if (_flagsTable[618] == 0 && !_hideInventoryTexts) {
@@ -3283,12 +3285,12 @@ void ToucheEngine::updatePalette() {
 	_system->setPalette(_paletteBuffer, 0, 256);
 }
 
-bool ToucheEngine::canLoadGameStateCurrently() { 
-	return (_flagsTable[618] == 0 && !_hideInventoryTexts);
+bool ToucheEngine::canLoadGameStateCurrently() {
+	return _gameState == kGameStateGameLoop && _flagsTable[618] == 0 && !_hideInventoryTexts;
 }
 
-bool ToucheEngine::canSaveGameStateCurrently() { 
-	return (_flagsTable[618] == 0 && !_hideInventoryTexts);
+bool ToucheEngine::canSaveGameStateCurrently() {
+	return _gameState == kGameStateGameLoop && _flagsTable[618] == 0 && !_hideInventoryTexts;
 }
 
 } // namespace Touche
