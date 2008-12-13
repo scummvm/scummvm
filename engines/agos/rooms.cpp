@@ -241,7 +241,7 @@ void AGOSEngine::moveDirn(Item *i, uint x) {
 
 	d = getDoorOf(p, x);
 	if (d) {
-		const byte *name = getStringPtrByID(d->itemName);
+		const byte *name = getStringPtrByID(d->itemName, true);
 		if (d->state == 1)
 			showMessageFormat("%s is closed.\n", name);
 		else

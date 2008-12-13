@@ -657,7 +657,7 @@ protected:
 	Item *actor();
 
 	void showMessageFormat(const char *s, ...);
-	const byte *getStringPtrByID(uint16 stringId);
+	const byte *getStringPtrByID(uint16 stringId, bool upperCase = false);
 	const byte *getLocalStringByID(uint16 stringId);
 	uint getNextStringID();
 

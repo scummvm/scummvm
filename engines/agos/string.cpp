@@ -32,7 +32,7 @@ using Common::File;
 
 namespace AGOS {
 
-const byte *AGOSEngine::getStringPtrByID(uint16 stringId) {
+const byte *AGOSEngine::getStringPtrByID(uint16 stringId, bool upperCase) {
 	const byte *string_ptr;
 	byte *dst;
 
@@ -46,6 +46,12 @@ const byte *AGOSEngine::getStringPtrByID(uint16 stringId) {
 
 	dst = _stringReturnBuffer[_freeStringSlot];
 	strcpy((char *)dst, (const char *)string_ptr);
+
+	if (upperCase && *dst) {
+		if (islower(*dst))
+			*dst = toupper(*dst);
+	}
+
 	return dst;
 }
 

@@ -468,7 +468,7 @@ void AGOSEngine_Elvira2::oe2_bNotZero() {
 	// 156: is bit set
 	uint bit = getVarWrapper();
 
-	// WORKAROUND: For a script glitch in some versions
+	// WORKAROUND: Enable copy protection again, in cracked version.
 	if (getGameType() == GType_SIMON1 && _subroutine == 2962 && bit == 63) {
 		bit = 50;
 	}

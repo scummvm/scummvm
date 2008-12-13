@@ -592,7 +592,7 @@ void AGOSEngine_Elvira1::oe1_doClass() {
 }
 
 void AGOSEngine_Elvira1::oe1_pObj() {
-	// 112: print object
+	// 112: print object name
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 	getVarOrWord();
 
@@ -601,17 +601,15 @@ void AGOSEngine_Elvira1::oe1_pObj() {
 }
 
 void AGOSEngine_Elvira1::oe1_pName() {
-	// 114:
+	// 114: print item name
 	Item *i = getNextItemPtr();
 	showMessageFormat("%s", (const char *)getStringPtrByID(i->itemName));
 }
 
 void AGOSEngine_Elvira1::oe1_pcName() {
-	// 115:
+	// 115: print item case (and change first letter to upper case)
 	Item *i = getNextItemPtr();
-
-	// TODO: Change first letter to upper case.
-	showMessageFormat("%s", (const byte *)getStringPtrByID(i->itemName)); // Difference
+	showMessageFormat("%s", (const byte *)getStringPtrByID(i->itemName, true));
 }
 
 void AGOSEngine_Elvira1::oe1_isCalled() {
