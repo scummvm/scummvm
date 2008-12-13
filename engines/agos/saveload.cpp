@@ -74,32 +74,60 @@ int AGOSEngine::countSaveGames() {
 	return i;
 }
 
-char *AGOSEngine::genSaveName(int slot) {
+char *AGOSEngine_PuzzlePack::genSaveName(int slot) {
 	static char buf[20];
 
-	if (getGameId() == GID_DIMP) {
+	if (getGameId() == GID_DIMP)
 		sprintf(buf, "dimp.sav");
-	} else if (getGameType() == GType_PP) {
+	else
 		sprintf(buf, "swampy.sav");
-	} else if (getGameType() == GType_FF) {
-		sprintf(buf, "feeble.%.3d", slot);
-	} else if (getGameType() == GType_SIMON2) {
-		sprintf(buf, "simon2.%.3d", slot);
-	} else if (getGameType() == GType_SIMON1) {
-		sprintf(buf, "simon1.%.3d", slot);
-	} else if (getGameType() == GType_WW) {
-		if (getPlatform() == Common::kPlatformPC)
-			sprintf(buf, "waxworks-pc.%.3d", slot);
-		else
-			sprintf(buf, "waxworks.%.3d", slot);
-	} else if (getGameType() == GType_ELVIRA2) {
-		if (getPlatform() == Common::kPlatformPC)
-			sprintf(buf, "elvira2-pc.%.3d", slot);
-		else
-			sprintf(buf, "elvira2.%.3d", slot);
-	} else if (getGameType() == GType_ELVIRA1) {
-		sprintf(buf, "elvira1.%.3d", slot);
-	}
+
+	return buf;
+}
+
+char *AGOSEngine_Feeble::genSaveName(int slot) {
+	static char buf[20];
+	sprintf(buf, "feeble.%.3d", slot);
+	return buf;
+}
+
+char *AGOSEngine_Simon2::genSaveName(int slot) {
+	static char buf[20];
+	sprintf(buf, "simon2.%.3d", slot);
+	return buf;
+}
+
+char *AGOSEngine_Simon1::genSaveName(int slot) {
+	static char buf[20];
+	sprintf(buf, "simon1.%.3d", slot);
+	return buf;
+}
+
+char *AGOSEngine_Waxworks::genSaveName(int slot) {
+	static char buf[20];
+
+	if (getPlatform() == Common::kPlatformPC)
+		sprintf(buf, "waxworks-pc.%.3d", slot);
+	else
+		sprintf(buf, "waxworks.%.3d", slot);
+
+	return buf;
+}
+
+char *AGOSEngine_Elvira2::genSaveName(int slot) {
+	static char buf[20];
+
+	if (getPlatform() == Common::kPlatformPC)
+		sprintf(buf, "elvira2-pc.%.3d", slot);
+	else
+		sprintf(buf, "elvira2.%.3d", slot);
+
+	return buf;
+}
+
+char *AGOSEngine::genSaveName(int slot) {
+	static char buf[20];
+	sprintf(buf, "elvira1.%.3d", slot);
 	return buf;
 }
 
@@ -170,54 +198,58 @@ void AGOSEngine::quickLoadOrSave() {
 	_saveLoadType = 0;
 }
 
-bool AGOSEngine::confirmOverWrite(WindowBlock *window) {
-	if (getGameType() == GType_WW) {
-		Subroutine *sub = getSubroutineByID(80);
-		if (sub != NULL)
-			startSubroutineEx(sub);
+bool AGOSEngine_Waxworks::confirmOverWrite(WindowBlock *window) {
+	Subroutine *sub = getSubroutineByID(80);
+	if (sub != NULL)
+		startSubroutineEx(sub);
 
-		if (_variableArray[253] == 0)
-			return true;
-	} else if (getGameType() == GType_ELVIRA2) {
-		// Original verison never confirmed
+	if (_variableArray[253] == 0)
 		return true;
-	} else if (getGameType() == GType_ELVIRA1) {
-		const char *message1, *message2, *message3;
 
-		switch (_language) {
-		case Common::FR_FRA:
-			message1 = "\rFichier d/j; existant.\r\r";
-			message2 = "  Ecrire pardessus ?\r\r";
-			message3 = "     Oui      Non";
-			break;
-		case Common::DE_DEU:
-			message1 = "\rDatei existiert bereits.\r\r";
-			message2 = "     berschreiben ?\r\r";
-			message3 = "     Ja        Nein";
-			break;
-		default:
-			message1 = "\r File already exists.\r\r";
-			message2 = "    Overwrite it ?\r\r";
-			message3 = "     Yes       No";
-			break;
-		}
+	return false;
+}
 
-		printScroll();
-		window->textColumn = 0;
-		window->textRow = 0;
-		window->textColumnOffset = 0;
-		window->textLength = 0;		// Difference
+bool AGOSEngine_Elvira2::confirmOverWrite(WindowBlock *window) {
+	// Original verison never confirmed
+	return true;
+}
 
-		for (; *message1; message1++)
-			windowPutChar(window, *message1);
-		for (; *message2; message2++)
-			windowPutChar(window, *message2);
-		for (; *message3; message3++)
-			windowPutChar(window, *message3);
+bool AGOSEngine::confirmOverWrite(WindowBlock *window) {
+	const char *message1, *message2, *message3;
 
-		if (confirmYesOrNo(120, 78) == 0x7FFF)
-			return true;
+	switch (_language) {
+	case Common::FR_FRA:
+		message1 = "\rFichier d/j; existant.\r\r";
+		message2 = "  Ecrire pardessus ?\r\r";
+		message3 = "     Oui      Non";
+		break;
+	case Common::DE_DEU:
+		message1 = "\rDatei existiert bereits.\r\r";
+		message2 = "     berschreiben ?\r\r";
+		message3 = "     Ja        Nein";
+		break;
+	default:
+		message1 = "\r File already exists.\r\r";
+		message2 = "    Overwrite it ?\r\r";
+		message3 = "     Yes       No";
+		break;
 	}
+
+	printScroll();
+	window->textColumn = 0;
+	window->textRow = 0;
+	window->textColumnOffset = 0;
+	window->textLength = 0;		// Difference
+
+	for (; *message1; message1++)
+		windowPutChar(window, *message1);
+	for (; *message2; message2++)
+		windowPutChar(window, *message2);
+	for (; *message3; message3++)
+		windowPutChar(window, *message3);
+
+	if (confirmYesOrNo(120, 78) == 0x7FFF)
+		return true;
 
 	return false;
 }

@@ -38,25 +38,28 @@ using Common::File;
 
 namespace AGOS {
 
+uint16 AGOSEngine_Feeble::to16Wrapper(uint value) {
+	return TO_LE_16(value);
+}
+
 uint16 AGOSEngine::to16Wrapper(uint value) {
-	if (getGameType() == GType_FF || getGameType() == GType_PP)
-		return TO_LE_16(value);
-	else
-		return TO_BE_16(value);
+	return TO_BE_16(value);
+}
+
+uint16 AGOSEngine_Feeble::readUint16Wrapper(const void *src) {
+	return READ_LE_UINT16(src);
 }
 
 uint16 AGOSEngine::readUint16Wrapper(const void *src) {
-	if (getGameType() == GType_FF || getGameType() == GType_PP)
-		return READ_LE_UINT16(src);
-	else
-		return READ_BE_UINT16(src);
+	return READ_BE_UINT16(src);
+}
+
+uint32 AGOSEngine_Feeble::readUint32Wrapper(const void *src) {
+	return READ_LE_UINT32(src);
 }
 
 uint32 AGOSEngine::readUint32Wrapper(const void *src) {
-	if (getGameType() == GType_FF || getGameType() == GType_PP)
-		return READ_LE_UINT32(src);
-	else
-		return READ_BE_UINT32(src);
+	return READ_BE_UINT32(src);
 }
 
 void AGOSEngine::decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize) {

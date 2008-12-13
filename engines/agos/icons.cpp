@@ -921,23 +921,29 @@ void AGOSEngine::drawArrow(uint16 x, uint16 y, int8 dir) {
 	_system->unlockScreen();
 }
 
-void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
+void AGOSEngine_Simon1::removeArrows(WindowBlock *window, uint num) {
 	if (getGameType() == GType_SIMON1) {
 		restoreBlock(200, 320, 146, 304);
-	} else if (getGameType() == GType_WW) {
-		setBitFlag(22, false);
-		setWindowImageEx(6, 103);
-	} else if (getGameType() == GType_ELVIRA2) {
-		setBitFlag(21, false);
-		setWindowImageEx(6, 106);
-	} else if (getGameType() == GType_ELVIRA1) {
-		if (num != 2) {
-			uint y = window->height * 4 + window->y - 19;
-			uint x = window->width + window->x;
-			restoreBlock(y + 38, x + 16, y, x);
-		} else {
-			colorBlock(window, 240, 151, 16, 38);
-		}
+	}
+}
+
+void AGOSEngine_Waxworks::removeArrows(WindowBlock *window, uint num) {
+	setBitFlag(22, false);
+	setWindowImageEx(6, 103);
+}
+
+void AGOSEngine_Elvira2::removeArrows(WindowBlock *window, uint num) {
+	setBitFlag(21, false);
+	setWindowImageEx(6, 106);
+}
+
+void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
+	if (num != 2) {
+		uint y = window->height * 4 + window->y - 19;
+		uint x = window->width + window->x;
+		restoreBlock(y + 38, x + 16, y, x);
+	} else {
+		colorBlock(window, 240, 151, 16, 38);
 	}
 }
 

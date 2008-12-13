@@ -53,28 +53,28 @@ void AGOSEngine::allocItemHeap() {
 	_itemHeap.clear();
 }
 
+bool AGOSEngine_Elvira2::hasIcon(Item *item) {
+	SubObject *child = (SubObject *)findChildOfType(item, kObjectType);
+	return (child && (child->objectFlags & kOFIcon) != 0);
+}
+
 bool AGOSEngine::hasIcon(Item *item) {
-	if (getGameType() == GType_ELVIRA1) {
-		return (getUserFlag(item, 7) != 0);
-	} else {
-		SubObject *child = (SubObject *)findChildOfType(item, kObjectType);
-		return (child && (child->objectFlags & kOFIcon) != 0);
-	}
+	return (getUserFlag(item, 7) != 0);
+}
+
+uint AGOSEngine_Elvira2::itemGetIconNumber(Item *item) {
+	SubObject *child = (SubObject *)findChildOfType(item, kObjectType);
+	uint offs;
+
+	if (child == NULL || !(child->objectFlags & kOFIcon))
+		return 0;
+
+	offs = getOffsetOfChild2Param(child, 0x10);
+	return child->objectFlagValue[offs];
 }
 
 uint AGOSEngine::itemGetIconNumber(Item *item) {
-	if (getGameType() == GType_ELVIRA1) {
-		return getUserFlag(item, 7);
-	} else {
-		SubObject *child = (SubObject *)findChildOfType(item, kObjectType);
-		uint offs;
-
-		if (child == NULL || !(child->objectFlags & kOFIcon))
-			return 0;
-
-		offs = getOffsetOfChild2Param(child, 0x10);
-		return child->objectFlagValue[offs];
-	}
+	return getUserFlag(item, 7);
 }
 
 void AGOSEngine::setItemState(Item *item, int value) {

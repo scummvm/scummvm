@@ -572,9 +572,9 @@ public:
 	virtual ~AGOSEngine();
 
 protected:
-	uint16 to16Wrapper(uint value);
-	uint16 readUint16Wrapper(const void *src);
-	uint32 readUint32Wrapper(const void *src);
+	virtual uint16 to16Wrapper(uint value);
+	virtual uint16 readUint16Wrapper(const void *src);
+	virtual uint32 readUint32Wrapper(const void *src);
 
 	int allocGamePcVars(Common::SeekableReadStream *in);
 	void createPlayer();
@@ -722,14 +722,14 @@ protected:
 	Item *getExitOf_e1(Item *item, uint16 d);
 	virtual void moveDirn(Item *i, uint x);
 
-	int canPlace(Item *x, Item *y);
+	virtual int canPlace(Item *x, Item *y);
 	int contains(Item *a, Item *b);
 	int sizeContents(Item *x);
-	int sizeOfRec(Item *o, int d);
+	virtual int sizeOfRec(Item *o, int d);
 	int sizeRec(Item *x, int d);
 	int weighUp(Item *x);
 	int weightRec(Item *x, int d);
-	int weightOf(Item *x);
+	virtual int weightOf(Item *x);
 	void xPlace(Item *x, Item *y);
 
 	void drawMenuStrip(uint windowNum, uint menuNum);
@@ -789,17 +789,17 @@ protected:
 	void displayBoxStars();
 	void invertBox(HitArea * ha, byte a, byte b, byte c, byte d);
 
-	void initMouse();
+	virtual void initMouse();
 	virtual void handleMouseMoved();
 	virtual void drawMousePointer();
 
 	void drawArrow(uint16 x, uint16 y, int8 dir);
 	virtual void addArrows(WindowBlock *window, uint8 num);
-	void removeArrows(WindowBlock *window, uint num);
+	virtual void removeArrows(WindowBlock *window, uint num);
 
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
-	bool hasIcon(Item *item);
-	uint itemGetIconNumber(Item *item);
+	virtual bool hasIcon(Item *item);
+	virtual uint itemGetIconNumber(Item *item);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
 	virtual void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
@@ -1171,7 +1171,7 @@ protected:
 	void displayScreen();
 
 	void dumpVideoScript(const byte *src, bool one_opcode_only);
-	void dumpVgaFile(const byte *vga);
+	virtual void dumpVgaFile(const byte *vga);
 	void dumpVgaScript(const byte *ptr, uint res, uint sprite_id);
 	void dumpVgaScriptAlways(const byte *ptr, uint res, uint sprite_id);
 	void dumpVgaBitmaps(const byte *vga, byte *vga1, int res);
@@ -1224,7 +1224,7 @@ protected:
 
 	virtual void vcStopAnimation(uint16 zone, uint16 sprite);
 
-	bool confirmOverWrite(WindowBlock *window);
+	virtual bool confirmOverWrite(WindowBlock *window);
 	int16 matchSaveGame(const char *name, uint16 max);
 	void disableFileBoxes();
 	virtual void userGame(bool load);
@@ -1381,12 +1381,18 @@ protected:
 	virtual bool loadGame(const char *filename, bool restartMode = false);
 	virtual bool saveGame(uint slot, const char *caption);
 
-	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
-
 	virtual void addArrows(WindowBlock *window, uint8 num);
+	virtual void removeArrows(WindowBlock *window, uint num);
+
+	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
+	virtual bool hasIcon(Item *item);
+	virtual uint itemGetIconNumber(Item *item);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
 	virtual void moveDirn(Item *i, uint x);
+	virtual int canPlace(Item *x, Item *y);
+	virtual int sizeOfRec(Item *o, int d);
+	virtual int weightOf(Item *x);
 
 	int changeExitStates(SubSuperRoom *sr, int n, int d, uint16 s);
 	uint16 getExitState(Item *item, uint16 x, uint16 d);
@@ -1394,8 +1400,11 @@ protected:
 	void setSRExit(Item *i, int n, int d, uint16 s);
 
 	virtual void listSaveGames(char *dst);
+	virtual bool confirmOverWrite(WindowBlock *window);
 	virtual void userGame(bool load);
 	virtual int userGameGetKey(bool *b, char *buf, uint maxChar);
+
+	char *genSaveName(int slot);
 };
 
 class AGOSEngine_Waxworks : public AGOSEngine_Elvira2 {
@@ -1443,11 +1452,17 @@ protected:
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
 
 	virtual void addArrows(WindowBlock *window, uint8 num);
+	virtual void removeArrows(WindowBlock *window, uint num);
+
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
 	virtual bool loadTablesIntoMem(uint16 subr_id);
 
 	virtual void moveDirn(Item *i, uint x);
+
+	virtual bool confirmOverWrite(WindowBlock *window);
+
+	char *genSaveName(int slot);
 };
 
 class AGOSEngine_Simon1 : public AGOSEngine_Waxworks {
@@ -1492,13 +1507,18 @@ protected:
 	void drawMaskedImage(VC10_state *state);
 	void draw32ColorImage(VC10_state *state);
 
+	virtual void dumpVgaFile(const byte *vga);
+
 	virtual void clearName();
 
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
 
+	virtual void initMouse();
 	virtual void handleMouseMoved();
 
 	virtual void addArrows(WindowBlock *window, uint8 num);
+	virtual void removeArrows(WindowBlock *window, uint num);
+
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
 	virtual void playSpeech(uint16 speech_id, uint16 vga_sprite_id);
@@ -1510,6 +1530,8 @@ protected:
 	virtual void playMusic(uint16 music, uint16 track);
 
 	virtual void vcStopAnimation(uint16 zone, uint16 sprite);
+
+	char *genSaveName(int slot);
 };
 
 class AGOSEngine_Simon2 : public AGOSEngine_Simon1 {
@@ -1552,6 +1574,8 @@ protected:
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
 
 	virtual void playSpeech(uint16 speech_id, uint16 vga_sprite_id);
+
+	char *genSaveName(int slot);
 };
 
 class AGOSEngine_Feeble : public AGOSEngine_Simon2 {
@@ -1608,10 +1632,15 @@ protected:
 
 	const OpcodeEntryFeeble *_opcodesFeeble;
 
+	virtual uint16 to16Wrapper(uint value);
+	virtual uint16 readUint16Wrapper(const void *src);
+	virtual uint32 readUint32Wrapper(const void *src);
+
 	virtual void drawImage(VC10_state *state);
 	void scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY);
 
 	void drawMousePart(int image, byte x, byte y);
+	virtual void initMouse();
 	virtual void drawMousePointer();
 
 	virtual void animateSprites();
@@ -1636,6 +1665,8 @@ protected:
 	virtual void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
 
 	virtual void colorWindow(WindowBlock *window);
+
+	virtual void dumpVgaFile(const byte *vga);
 
 	virtual void doOutput(const byte *src, uint len);
 
@@ -1668,6 +1699,8 @@ protected:
 	virtual void checkNoOverWrite();
 	virtual void checkAnims(uint a);
 	virtual void checkZonePtrs();
+
+	char *genSaveName(int slot);
 };
 
 class AGOSEngine_PuzzlePack : public AGOSEngine_Feeble {
@@ -1706,12 +1739,15 @@ protected:
 
 	const OpcodeEntryPuzzlePack *_opcodesPuzzlePack;
 
+	virtual void initMouse();
 	virtual void handleMouseMoved();
 	virtual void drawMousePointer();
 
 	virtual void resetVerbs();
 
 	void loadMouseImage();
+
+	char *genSaveName(int slot);
 };
 
 } // End of namespace AGOS

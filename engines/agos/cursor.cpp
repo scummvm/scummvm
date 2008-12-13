@@ -571,43 +571,47 @@ void AGOSEngine::mouseOn() {
 	_lockWord &= ~1;
 }
 
-void AGOSEngine::initMouse() {
-	if (getGameType() == GType_PP) {
-		_maxCursorWidth = 75;
-		_maxCursorHeight = 97;
-		_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
-	} else if (getGameType() == GType_FF) {
-		_maxCursorWidth = 40;
-		_maxCursorHeight = 40;
-		_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
-	} else if (getGameType() == GType_SIMON1) {
-		_maxCursorWidth = 16;
-		_maxCursorHeight = 16;
-		_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
-		memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
+void AGOSEngine_PuzzlePack::initMouse() {
+	_maxCursorWidth = 75;
+	_maxCursorHeight = 97;
+	_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
+}
 
-		uint8 color = 225;
-		if (getPlatform() == Common::kPlatformAmiga)
-			color = (getFeatures() & GF_32COLOR) ? 17 : 241;
+void AGOSEngine_Feeble::initMouse() {
+	_maxCursorWidth = 40;
+	_maxCursorHeight = 40;
+	_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
+}
 
-		const uint16 *src = _common_mouseInfo;
-		for (int i = 0; i < 16; i++) {
-			for (int j = 0; j < 16; j++) {
-				if (src[0] & (1 << (15 - (j % 16)))) {
-					if (src[1] & (1 << (15 - (j % 16)))) {
-						_mouseData[16 * i + j] = color;
-					} else {
-						_mouseData[16 * i + j] = 0;
-					}
+void AGOSEngine_Simon1::initMouse() {
+	_maxCursorWidth = 16;
+	_maxCursorHeight = 16;
+	_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
+	memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
+
+	uint8 color = 225;
+	if (getPlatform() == Common::kPlatformAmiga)
+		color = (getFeatures() & GF_32COLOR) ? 17 : 241;
+
+	const uint16 *src = _common_mouseInfo;
+	for (int i = 0; i < 16; i++) {
+		for (int j = 0; j < 16; j++) {
+			if (src[0] & (1 << (15 - (j % 16)))) {
+				if (src[1] & (1 << (15 - (j % 16)))) {
+					_mouseData[16 * i + j] = color;
+				} else {
+					_mouseData[16 * i + j] = 0;
 				}
 			}
-			src += 2;
 		}
-	} else {
-		_maxCursorWidth = 16;
-		_maxCursorHeight = 16;
-		_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
+		src += 2;
 	}
+}
+
+void AGOSEngine::initMouse() {
+	_maxCursorWidth = 16;
+	_maxCursorHeight = 16;
+	_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
 }
 
 void AGOSEngine_PuzzlePack::loadMouseImage() {
