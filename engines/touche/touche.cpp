@@ -527,7 +527,7 @@ void ToucheEngine::sortKeyChars() {
 					SWAP(_sortedKeyCharsTable[j], _sortedKeyCharsTable[j + 1]);
 					hasSwapped = true;
 				}
-			} else if (key1->num != 0) {
+			} else if (key2->num != 0) {
 				SWAP(_sortedKeyCharsTable[j], _sortedKeyCharsTable[j + 1]);
 				hasSwapped = true;
 			}
