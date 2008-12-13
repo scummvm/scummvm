@@ -399,8 +399,6 @@ public:
 	void release();
 };
 
-typedef Common::List<GfxObj*> GfxObjList;
-
 #define LAYER_FOREGROUND   3
 
 /*
@@ -481,6 +479,9 @@ public:
 
 typedef Common::HashMap<Common::String, int32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VarMap;
 
+typedef Common::Array<GfxObj*> GfxObjArray;
+
+
 class Gfx {
 
 protected:
@@ -490,14 +491,13 @@ public:
 	Disk *_disk;
 	VarMap _vars;
 
-	GfxObjList _gfxobjList;
+	GfxObjArray _sceneObjects;
 	GfxObj* loadAnim(const char *name);
 	GfxObj* loadGet(const char *name);
 	GfxObj* loadDoor(const char *name);
-	void drawGfxObjects(Graphics::Surface &surf);
 	void showGfxObj(GfxObj* obj, bool visible);
 	void clearGfxObjects(uint filter);
-	void sortAnimations();
+	void sortScene();
 
 
 	// labels
@@ -573,7 +573,6 @@ protected:
 
 	// frame data stored in programmable variables
 	int32				_varBackgroundMode;	// 1 = normal, 2 = only mask
-	int32				_varAnimRenderMode;	// 1 = normal, 2 = flat
 	int32				_varRenderMode;
 	int32				_varDrawPathZones;	// 0 = don't draw, 1 = draw
 	Graphics::Surface 	_bitmapMask;
@@ -600,7 +599,6 @@ public:
 	#define MAX_NUM_LABELS	20
 	#define NO_FLOATING_LABEL	1000
 
-	typedef Common::Array<GfxObj*> GfxObjArray;
 	GfxObjArray	_labels;
 	GfxObjArray _balloons;
 	GfxObjArray	_items;

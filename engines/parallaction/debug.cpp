@@ -191,8 +191,8 @@ bool Debugger::Cmd_GfxObjects(int argc, const char **argv) {
 				"| name               |  x  |  y  |  z  | layer |  f  |  type  |  visi  |\n"
 				"+--------------------+-----+-----+-----+-------+-----+--------+--------+\n");
 
-	GfxObjList::iterator b = _vm->_gfx->_gfxobjList.begin();
-	GfxObjList::iterator e = _vm->_gfx->_gfxobjList.end();
+	GfxObjArray::iterator b = _vm->_gfx->_sceneObjects.begin();
+	GfxObjArray::iterator e = _vm->_gfx->_sceneObjects.end();
 
 	for ( ; b != e; b++) {
 		GfxObj *obj = *b;

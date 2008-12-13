@@ -378,8 +378,6 @@ void Gfx::beginFrame() {
 		_varDrawPathZones = 0;
 		warning("Path zones are supported only in Big Red Adventure");
 	}
-
-	_varAnimRenderMode = getRenderMode("anim_render_mode");
 }
 
 int32 Gfx::getRenderMode(const char *type) {
@@ -491,11 +489,10 @@ void Gfx::updateScreen() {
 		unlockScreen();
 	}
 
-	_varRenderMode = _varAnimRenderMode;
-
+	sortScene();
 	Graphics::Surface *surf = lockScreen();
-		// draws animations frames and screen items
-		drawGfxObjects(*surf);
+		// draws animations frames and other game items
+		drawList(*surf, _sceneObjects);
 
 		// special effects
 		applyHalfbriteEffect_NS(*surf);
@@ -802,8 +799,6 @@ Gfx::Gfx(Parallaction* vm) :
 
 	registerVar("background_mode", 1);
 	_varBackgroundMode = 1;
-
-	registerVar("anim_render_mode", 1);
 
 	registerVar("draw_path_zones", 0);
 
