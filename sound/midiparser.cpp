@@ -285,7 +285,7 @@ void MidiParser::resetTracking() {
 bool MidiParser::setTrack(int track) {
 	if (track < 0 || track >= _num_tracks)
 		return false;
-	else if (track == _active_track)
+	else if (track == _active_track && _position._play_pos)
 		return true;
 
 	if (_smartJump)
@@ -307,9 +307,6 @@ void MidiParser::stopPlaying() {
 	else
 		allNotesOff();
 	resetTracking();
-
-	_active_track = _num_tracks+1;
-	memset(_active_notes, 0, sizeof(_active_notes));
 }
 
 void MidiParser::hangAllActiveNotes() {
