@@ -1280,6 +1280,10 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 		_soundStage = 0;
 	}
 
+	// If these are still 0x7FFF, no video data has been processed
+	if ((state.left == 0x7FFF) || (state.top == 0x7FFF))
+		state.left = state.top = state.right = state.bottom = 0;
+
 	_lastFrameTime = g_system->getMillis();
 	return state;
 }
