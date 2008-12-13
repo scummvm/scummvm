@@ -5526,6 +5526,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		// Common to both DW1 & DW2
 		pp -= 1;			// 2 parameters
 		WaitTime(coroParam, pp[0], pp[1], pic->escOn, pic->myEscape);
+		if (!coroParam && (pic->hCode == 0x3007540) && (pic->resumeState == RES_2))
+			// FIXME: This is a hack to return control to the user after using the prunes in
+			// the DW1 Demo, since I can't figure out how it's legitimately done
+			Control(CONTROL_ON);
+
 		return -2;
 
 	case WALK:
