@@ -127,9 +127,9 @@ public:
 	virtual const Common::ADGameDescription *fallbackDetect(const Common::FSList &fslist) const {
 		for (Common::FSList::const_iterator d = fslist.begin(); d != fslist.end(); ++d) {
 			Common::FSList audiofslist;
-			if (d->isDirectory() && d->getName().compareToIgnoreCase("audio") && d->getChildren(audiofslist, Common::FSNode::kListFilesOnly)) {
+			if (d->isDirectory() && d->getName().equalsIgnoreCase("audio") && d->getChildren(audiofslist, Common::FSNode::kListFilesOnly)) {
 				for (Common::FSList::const_iterator f = audiofslist.begin(); f != audiofslist.end(); ++f) {
-					if (!f->isDirectory() && f->getName().compareToIgnoreCase("demorolc.raw")) {
+					if (!f->isDirectory() && f->getName().equalsIgnoreCase("demorolc.raw")) {
 						return &tuckerDemoGameDescription;
 					}
 				}
