@@ -211,6 +211,8 @@ void Poly::nextPoly() {
 	// Note: Originally I used a Serialiser, but dropped because for now we want
 	// the endian to remain as it is. It may be cleaner to later on switch to using
 	// it, and removing all endian conversions from the code that uses POLY's
+	const byte *pRecord = _pData;
+
 	int typeVal = nextLong(_pData);
 	if ((typeVal == 5) && TinselV2) ++typeVal;
 	type = (POLY_TYPE)typeVal;
@@ -218,7 +220,7 @@ void Poly::nextPoly() {
 	for (int i = 0; i < 4; ++i) x[i] = nextLong(_pData);
 	for (int i = 0; i < 4; ++i) y[i] = nextLong(_pData);
 	
-	if (TinselVersion == TINSEL_V2) {
+	if (TinselV2) {
 		xoff = nextLong(_pData);
 		yoff = nextLong(_pData);
 		id = nextLong(_pData);
@@ -232,7 +234,7 @@ void Poly::nextPoly() {
 	nodey = nextLong(_pData);
 	hFilm = nextLong(_pData);
 
-	if (TinselVersion != TINSEL_V2) {
+	if (!TinselV2) {
 		reftype = nextLong(_pData);
 		id = nextLong(_pData);
 	}
@@ -240,7 +242,7 @@ void Poly::nextPoly() {
 	scale1 = nextLong(_pData);
 	scale2 = nextLong(_pData);
 
-	if (TinselVersion == TINSEL_V2) {
+	if (TinselV2) {
 		level1 = nextLong(_pData);
 		level2 = nextLong(_pData);
 		bright1 = nextLong(_pData);
@@ -253,6 +255,11 @@ void Poly::nextPoly() {
 	pnodelistx = nextLong(_pData);
 	pnodelisty = nextLong(_pData);
 	plinelist = nextLong(_pData);
+
+	if (TinselV0)
+		// Skip to the last 4 bytes of the record for the hScript value
+		_pData = pRecord + 0x62C;
+
 	hScript = nextLong(_pData);
 }
 
