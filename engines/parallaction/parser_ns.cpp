@@ -901,7 +901,7 @@ Answer *LocationParser_ns::parseAnswer() {
 
 	_script->readLineToken(true);
 	answer->_mood = atoi(_tokens[0]);
-	answer->_following._name = parseDialogueString();
+	answer->_followingName = parseDialogueString();
 
 	_script->readLineToken(true);
 	if (!scumm_stricmp(_tokens[0], "commands")) {
@@ -928,27 +928,26 @@ void LocationParser_ns::resolveDialogueForwards(Dialogue *dialogue, uint numQues
 			Answer *answer = question->_answers[j];
 			if (answer == 0) continue;
 
-			int16 index = forwards.lookup(answer->_following._name);
-			free(answer->_following._name);
-			answer->_following._name = 0;
+			int16 index = forwards.lookup(answer->_followingName.c_str());
+			answer->_followingName.clear();
 
 			if (index == Table::notFound)
-				answer->_following._question = 0;
+				answer->_followingQuestion = 0;
 			else
-				answer->_following._question = dialogue->_questions[index - 1];
+				answer->_followingQuestion = dialogue->_questions[index - 1];
 
 		}
 	}
 
 }
 
-char *LocationParser_ns::parseDialogueString() {
-	char buf[200];
-	char *line = _script->readLine(buf, 200);
+Common::String LocationParser_ns::parseDialogueString() {
+	char buf[400];
+	char *line = _script->readLine(buf, 400);
 	if (line == 0) {
 		return 0;
 	}
-	return strdup(line);
+	return Common::String(line);
 }
 
 
@@ -1265,31 +1264,25 @@ void ProgramParser_ns::init() {
 //	a comment can appear both at location and Zone levels
 //	comments are displayed into rectangles on the screen
 //
-char *LocationParser_ns::parseComment() {
-	const int tempSize = 1000;
-	char temp[tempSize] = "\0";
-	int len = 0;
+Common::String LocationParser_ns::parseComment() {
+	Common::String comment;
 	char buf[400];
 	do {
 		char *line = _script->readLine(buf, 400);
 		if (!scumm_stricmp(line, "endtext"))
 			break;
 
-		strncat(temp, line, tempSize - len - 1);
-		strcat(temp, " ");
-		len = len + strlen(line) + 1;
-	} while (len < tempSize);
+		if (comment.size() > 0)
+			comment += " ";
 
-	if (len == 0) {
+		comment += line;
+	} while (true);
+
+	if (comment.size() == 0) {
 		return 0;
 	}
 
-	if (len == tempSize) {
-		warning("overflow in LocationParser_ns::parseComment (line %i)", _script->getLine());
-	}
-
-	temp[len-1] = '\0';	// removes the last space pasted in the string
-	return strdup(temp);
+	return comment;
 }
 
 DECLARE_ZONE_PARSER(null) {

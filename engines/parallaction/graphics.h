@@ -141,6 +141,8 @@ public:
 	}
 
 	void create(uint16 width, uint16 height) {
+		free();
+
 		w = width;
 		internalWidth = w >> 2;
 		h = height;
@@ -221,6 +223,8 @@ public:
 	}
 
 	void create(uint16 width, uint16 height) {
+		free();
+
 		w = width;
 		internalWidth = w >> 3;
 		h = height;
@@ -467,10 +471,10 @@ public:
 	virtual ~BalloonManager() { }
 
 	virtual void freeBalloons() = 0;
-	virtual int setLocationBalloon(char *text, bool endGame) = 0;
-	virtual int setDialogueBalloon(char *text, uint16 winding, TextColor textColor) = 0;
-	virtual int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, TextColor textColor) = 0;
-	virtual void setBalloonText(uint id, char *text, TextColor textColor) = 0;
+	virtual int setLocationBalloon(const char *text, bool endGame) = 0;
+	virtual int setDialogueBalloon(const char *text, uint16 winding, TextColor textColor) = 0;
+	virtual int setSingleBalloon(const char *text, uint16 x, uint16 y, uint16 winding, TextColor textColor) = 0;
+	virtual void setBalloonText(uint id, const char *text, TextColor textColor) = 0;
 	virtual int hitTestDialogueBalloon(int x, int y) = 0;
 };
 

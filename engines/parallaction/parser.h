@@ -185,8 +185,8 @@ protected:
 	virtual void parseHearData(ZonePtr z);
 	virtual void parseSpeakData(ZonePtr z);
 
-	char		*parseComment();
-	char		*parseDialogueString();
+	Common::String	parseComment();
+	Common::String	parseDialogueString();
 	Dialogue	*parseDialogue();
 	void		resolveDialogueForwards(Dialogue *dialogue, uint numQuestions, Table &forwards);
 	Answer		*parseAnswer();
@@ -216,7 +216,7 @@ protected:
 	}
 
 public:
-	LocationParser_ns(Parallaction_ns *vm) : _vm(vm), _commandsNames(0), _locationStmt(0), 
+	LocationParser_ns(Parallaction_ns *vm) : _vm(vm), _commandsNames(0), _locationStmt(0),
 		_locationZoneStmt(0), _locationAnimStmt(0) {
 	}
 
@@ -261,9 +261,8 @@ public:
 class LocationParser_br : public LocationParser_ns {
 
 protected:
-	Table		*_audioCommandsNames;
-
 	Parallaction_br*	_vm;
+	Table		*_audioCommandsNames;
 
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(location);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(zone);
@@ -327,9 +326,8 @@ public:
 class ProgramParser_ns {
 
 protected:
-	Parser	*_parser;
 	Parallaction_ns *_vm;
-
+	Parser	*_parser;
 
 	Script	*_script;
 	ProgramPtr	_program;

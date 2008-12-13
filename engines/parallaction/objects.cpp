@@ -173,7 +173,7 @@ Zone::~Zone() {
 	switch (_type & 0xFFFF) {
 	case kZoneExamine:
 		free(u.examine->_filename);
-		free(u.examine->_description);
+		u.examine->_description.clear();
 		delete u.examine->_cnv;
 		delete u.examine;
 		break;
@@ -201,7 +201,7 @@ Zone::~Zone() {
 	case kZoneMerge:
 		delete u.merge;
 		break;
-		
+
 	case kZonePath:
 		delete u.path;
 		break;
@@ -240,19 +240,13 @@ Dialogue::~Dialogue() {
 }
 
 Answer::Answer() {
-	_text = NULL;
 	_mood = 0;
-	_following._question =  NULL;
+	_followingQuestion =  NULL;
 	_noFlags = 0;
 	_yesFlags = 0;
 }
 
-Answer::~Answer() {
-	free(_text);
-}
-
 Question::Question() {
-	_text = NULL;
 	_mood = 0;
 
 	for (uint32 i = 0; i < NUM_ANSWERS; i++)
@@ -261,12 +255,9 @@ Question::Question() {
 }
 
 Question::~Question() {
-
 	for (uint32 i = 0; i < NUM_ANSWERS; i++) {
 		delete _answers[i];
 	}
-
-	free(_text);
 }
 
 Instruction::Instruction() {

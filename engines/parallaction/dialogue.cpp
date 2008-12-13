@@ -173,11 +173,11 @@ bool DialogueManager::displayAnswer(uint16 i) {
 	// display suitable answers
 	if (((a->_yesFlags & flags) == a->_yesFlags) && ((a->_noFlags & ~flags) == a->_noFlags)) {
 
-		int id = _vm->_balloonMan->setDialogueBalloon(a->_text, 1, BalloonManager::kUnselectedColor);
+		int id = _vm->_balloonMan->setDialogueBalloon(a->_text.c_str(), 1, BalloonManager::kUnselectedColor);
 		assert(id >= 0);
 		_visAnswers[id] = i;
 
-		_askPassword = (strstr(a->_text, "%P") != NULL);
+		_askPassword = a->_text.contains("%P");
 		_numVisAnswers++;
 
 		return true;
@@ -203,7 +203,7 @@ bool DialogueManager::displayAnswers() {
 	if (_numVisAnswers == 1) {
 		int id = _vm->_gfx->setItem(_answerer, _ballonPos._answerChar.x, _ballonPos._answerChar.y);
 		_vm->_gfx->setItemFrame(id, _q->_answers[0]->_mood & 0xF);
-		_vm->_balloonMan->setBalloonText(0, _q->_answers[_visAnswers[0]]->_text, BalloonManager::kNormalColor);
+		_vm->_balloonMan->setBalloonText(0, _q->_answers[_visAnswers[0]]->_text.c_str(), BalloonManager::kNormalColor);
 	} else
 	if (_numVisAnswers > 1) {
 		int id = _vm->_gfx->setItem(_answerer, _ballonPos._answerChar.x, _ballonPos._answerChar.y);
@@ -216,9 +216,9 @@ bool DialogueManager::displayAnswers() {
 }
 
 bool DialogueManager::displayQuestion() {
-	if (!scumm_stricmp(_q->_text, "NULL")) return false;
+	if (!_q->_text.compareToIgnoreCase("NULL")) return false;
 
-	_vm->_balloonMan->setSingleBalloon(_q->_text, _ballonPos._questionBalloon.x, _ballonPos._questionBalloon.y, _q->_mood & 0x10, BalloonManager::kNormalColor);
+	_vm->_balloonMan->setSingleBalloon(_q->_text.c_str(), _ballonPos._questionBalloon.x, _ballonPos._questionBalloon.y, _q->_mood & 0x10, BalloonManager::kNormalColor);
 	int id = _vm->_gfx->setItem(_questioner, _ballonPos._questionChar.x, _ballonPos._questionChar.y);
 	_vm->_gfx->setItemFrame(id, _q->_mood & 0xF);
 
@@ -256,7 +256,7 @@ int16 DialogueManager::askPassword() {
 	}
 
 	if (_passwordChanged) {
-		_vm->_balloonMan->setBalloonText(0, _q->_answers[0]->_text, BalloonManager::kNormalColor);
+		_vm->_balloonMan->setBalloonText(0, _q->_answers[0]->_text.c_str(), BalloonManager::kNormalColor);
 		_passwordChanged = false;
 	}
 
@@ -286,11 +286,11 @@ int16 DialogueManager::selectAnswerN() {
 
 	if (_selection != _oldSelection) {
 		if (_oldSelection != -1) {
-			_vm->_balloonMan->setBalloonText(_oldSelection, _q->_answers[_visAnswers[_oldSelection]]->_text, BalloonManager::kUnselectedColor);
+			_vm->_balloonMan->setBalloonText(_oldSelection, _q->_answers[_visAnswers[_oldSelection]]->_text.c_str(), BalloonManager::kUnselectedColor);
 		}
 
 		if (_selection != -1) {
-			_vm->_balloonMan->setBalloonText(_selection, _q->_answers[_visAnswers[_selection]]->_text, BalloonManager::kSelectedColor);
+			_vm->_balloonMan->setBalloonText(_selection, _q->_answers[_visAnswers[_selection]]->_text.c_str(), BalloonManager::kSelectedColor);
 			_vm->_gfx->setItemFrame(0, _q->_answers[_visAnswers[_selection]]->_mood & 0xF);
 		}
 	}
@@ -323,7 +323,7 @@ void DialogueManager::nextAnswer() {
 		return;
 	}
 
-	if (!scumm_stricmp(_q->_answers[0]->_text, "NULL")) {
+	if (!_q->_answers[0]->_text.compareToIgnoreCase("NULL")) {
 		_answerId = 0;
 		_state = NEXT_QUESTION;
 		return;
@@ -354,7 +354,7 @@ void DialogueManager::runAnswer() {
 void DialogueManager::nextQuestion() {
 	debugC(9, kDebugDialogue, "nextQuestion\n");
 
-	_q = _q->_answers[_answerId]->_following._question;
+	_q = _q->_answers[_answerId]->_followingQuestion;
 	if (_q == 0) {
 		_state = DIALOGUE_OVER;
 	} else {

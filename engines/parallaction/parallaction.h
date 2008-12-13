@@ -131,8 +131,8 @@ struct Location {
 
 	CommandList		_aCommands;
 	CommandList		_commands;
-	char	   *_comment;
-	char	   *_endComment;
+	Common::String	_comment;
+	Common::String	_endComment;
 
 	ZoneList		_zones;
 	AnimationList	_animations;
@@ -316,7 +316,7 @@ protected:
 	void	doLocationEnterTransition();
 	void	allocateLocationSlot(const char *name);
 	void	finalizeLocationParsing();
-	void	showLocationComment(const char *text, bool end);
+	void	showLocationComment(const Common::String &text, bool end);
 	void 	setupBalloonManager();
 
 public:

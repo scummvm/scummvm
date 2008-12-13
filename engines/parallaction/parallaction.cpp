@@ -116,8 +116,6 @@ Common::Error Parallaction::init() {
 	_location._startPosition.x = -1000;
 	_location._startPosition.y = -1000;
 	_location._startFrame = 0;
-	_location._comment = NULL;
-	_location._endComment = NULL;
 
 	_pathBuffer = 0;
 
@@ -265,7 +263,7 @@ void Parallaction::allocateLocationSlot(const char *name) {
 }
 
 
-Location::Location() : _comment(0), _endComment(0) {
+Location::Location() {
 	cleanup(true);
 }
 
@@ -274,8 +272,8 @@ Location::~Location() {
 }
 
 void Location::cleanup(bool removeAll) {
-	free(_comment); _comment = 0;
-	free(_endComment); _endComment = 0;
+	_comment.clear();
+	_endComment.clear();
 
 	freeZones(removeAll);
 	freeAnimations();
@@ -324,8 +322,8 @@ void Parallaction::setBackground(const char* name, const char* mask, const char*
 	return;
 }
 
-void Parallaction::showLocationComment(const char *text, bool end) {
-	_balloonMan->setLocationBalloon(const_cast<char*>(text), end);
+void Parallaction::showLocationComment(const Common::String &text, bool end) {
+	_balloonMan->setLocationBalloon(text.c_str(), end);
 }
 
 
@@ -400,7 +398,7 @@ void Parallaction::runGame() {
 void Parallaction::doLocationEnterTransition() {
 	debugC(2, kDebugExec, "doLocationEnterTransition");
 
-	if (!_location._comment) {
+	if (_location._comment.empty()) {
 		return;
 	}
 
@@ -568,7 +566,7 @@ void Parallaction::enterCommentMode(ZonePtr z) {
 
 	ExamineData *data = _commentZone->u.examine;
 
-	if (!data->_description) {
+	if (data->_description.empty()) {
 		return;
 	}
 
@@ -581,7 +579,7 @@ void Parallaction::enterCommentMode(ZonePtr z) {
 			}
 
 			_gfx->setHalfbriteMode(true);
-			_balloonMan->setSingleBalloon(data->_description, 0, 90, 0, BalloonManager::kNormalColor);
+			_balloonMan->setSingleBalloon(data->_description.c_str(), 0, 90, 0, BalloonManager::kNormalColor);
 			Common::Rect r;
 			data->_cnv->getRect(0, r);
 			id = _gfx->setItem(data->_cnv, 140, (_screenHeight - r.height())/2);
@@ -589,13 +587,13 @@ void Parallaction::enterCommentMode(ZonePtr z) {
 			id = _gfx->setItem(_char._head, 100, 152);
 			_gfx->setItemFrame(id, 0);
 		} else {
-			_balloonMan->setSingleBalloon(data->_description, 140, 10, 0, BalloonManager::kNormalColor);
+			_balloonMan->setSingleBalloon(data->_description.c_str(), 140, 10, 0, BalloonManager::kNormalColor);
 			id = _gfx->setItem(_char._talk, 190, 80);
 			_gfx->setItemFrame(id, 0);
 		}
 	} else
 	if (getGameType() == GType_BRA) {
-		_balloonMan->setSingleBalloon(data->_description, 0, 0, 1, BalloonManager::kNormalColor);
+		_balloonMan->setSingleBalloon(data->_description.c_str(), 0, 0, 1, BalloonManager::kNormalColor);
 		int id = _gfx->setItem(_char._talk, 10, 80);
 		_gfx->setItemFrame(id, 0);
 	}

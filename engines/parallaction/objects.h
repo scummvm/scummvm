@@ -162,22 +162,20 @@ typedef Common::List<CommandPtr> CommandList;
 #define NUM_ANSWERS			5
 
 struct Answer {
-	char*		_text;
+	Common::String	_text;
 	uint16		_mood;
-	union {
-		Question*	_question;
-		char*		_name;
-	} _following;
+	Question*	_followingQuestion;
+	Common::String _followingName;
+
 	CommandList	_commands;
 	uint32		_noFlags;
 	uint32		_yesFlags;
 
 	Answer();
-	~Answer();
 };
 
 struct Question {
-	char*		_text;
+	Common::String	_text;
 	uint16		_mood;
 	Answer*		_answers[NUM_ANSWERS];
 
@@ -215,11 +213,10 @@ struct SpeakData {
 };
 struct ExamineData {
 	GfxObj	*_cnv;
-	char*		_description;
+	Common::String	_description;
 	char*		_filename;
 
 	ExamineData() {
-		_description = NULL;
 		_filename = NULL;
 		_cnv = NULL;
 	}
