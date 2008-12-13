@@ -3307,7 +3307,8 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_TALK))
 				GetActorMidTop(_ctx->actor, &_ctx->x, &_ctx->y);
 
-			SetTextPal(GetActorRGB(_ctx->actor));
+			if (!TinselV0)
+				SetTextPal(GetActorRGB(_ctx->actor));
 			if (TinselV2)
 				LoadSubString(hText, _ctx->sub, TextBufferAddr(), TBUFSZ);
 			else {
