@@ -308,6 +308,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\game_v6.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\global.cpp"
 			>
 		</File>
