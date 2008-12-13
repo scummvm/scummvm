@@ -1925,6 +1925,8 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 			warning("File \"%s\" not found", _vm->_global->_inter_resStr);
 	} else if (mode == SaveLoad::kSaveModeSave)
 		size = _vm->_saveLoad->getSize(_vm->_global->_inter_resStr);
+	else if (mode == SaveLoad::kSaveModeExists)
+		size = 23;
 
 	if (size == -1)
 		handle = -1;

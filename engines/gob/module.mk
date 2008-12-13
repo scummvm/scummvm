@@ -48,6 +48,7 @@ MODULE_OBJS := \
 	saveload_v2.o \
 	saveload_v3.o \
 	saveload_v4.o \
+	saveload_v6.o \
 	scenery.o \
 	scenery_v1.o \
 	scenery_v2.o \

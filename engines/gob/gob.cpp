@@ -411,7 +411,7 @@ bool GobEngine::initGameParts() {
 			_map = new Map_v4(this);
 			_goblin = new Goblin_v4(this);
 			_scenery = new Scenery_v2(this);
-			_saveLoad = new SaveLoad(this, _targetName.c_str());
+			_saveLoad = new SaveLoad_v6(this, _targetName.c_str());
 			break;
 
 		default:

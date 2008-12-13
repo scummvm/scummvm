@@ -166,6 +166,7 @@ public:
 	enum SaveMode {
 		kSaveModeNone,
 		kSaveModeIgnore,
+		kSaveModeExists,
 		kSaveModeSave
 	};
 
@@ -407,6 +408,28 @@ protected:
 	bool saveGameScreenProps(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
 
 	void assertInited();
+};
+
+class SaveLoad_v6 : public SaveLoad {
+public:
+	enum SaveType {
+		kSaveNone
+	};
+
+	SaveLoad_v6(GobEngine *vm, const char *targetName);
+	virtual ~SaveLoad_v6();
+
+	virtual SaveMode getSaveMode(const char *fileName);
+
+protected:
+	struct SaveFile {
+		const char *sourceName;
+		char *destName;
+		SaveMode mode;
+		SaveType type;
+	};
+
+	static SaveFile _saveFiles[];
 };
 
 } // End of namespace Gob
