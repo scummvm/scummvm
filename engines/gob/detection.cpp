@@ -1945,6 +1945,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro"
 	},
+	{ // Supplied by gamin in the forums
+		{
+			"urban",
+			"",
+			AD_ENTRY1s("intro.stk", "b991ed1d31c793e560edefdb349882ef", 1276408),
+			FR_FRA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeUrban,
+		kFeatures640,
+		"intro"
+	},
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, NULL }
 };
 
@@ -2078,21 +2091,35 @@ static const GOBGameDescription fallbackDescs[] = {
 		kGameTypeLostInTime,
 		kFeaturesCD,
 		"intro"
+	},
+	{
+		{
+			"urban",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeUrban,
+		kFeaturesCD,
+		"intro"
 	}
 };
 
 static const ADFileBasedFallback fileBased[] = {
-	{ &fallbackDescs[0], { "intro.stk", "disk1.stk", "disk2.stk", "disk3.stk", "disk4.stk", 0 } },
-	{ &fallbackDescs[1], { "intro.stk", "gob.lic", 0 } },
-	{ &fallbackDescs[2], { "intro.stk", 0 } },
-	{ &fallbackDescs[2], { "intro.stk", "disk2.stk", "disk3.stk", 0 } },
-	{ &fallbackDescs[3], { "intro.stk", "gobnew.lic", 0 } },
-	{ &fallbackDescs[4], { "intro.stk", "scaa.imd", "scba.imd", "scbf.imd", 0 } },
-	{ &fallbackDescs[5], { "intro.stk", "imd.itk", 0 } },
-	{ &fallbackDescs[6], { "intro.stk", "mus_gob3.lic", 0 } },
-	{ &fallbackDescs[7], { "intro.stk", "woodruff.itk", 0 } },
-	{ &fallbackDescs[8], { "intro.stk", "commun1.itk", 0 } },
-	{ &fallbackDescs[9], { "intro.stk", "commun1.itk", "lost.lic", 0 } },
+	{ &fallbackDescs[ 0], { "intro.stk", "disk1.stk", "disk2.stk", "disk3.stk", "disk4.stk", 0 } },
+	{ &fallbackDescs[ 1], { "intro.stk", "gob.lic", 0 } },
+	{ &fallbackDescs[ 2], { "intro.stk", 0 } },
+	{ &fallbackDescs[ 2], { "intro.stk", "disk2.stk", "disk3.stk", 0 } },
+	{ &fallbackDescs[ 3], { "intro.stk", "gobnew.lic", 0 } },
+	{ &fallbackDescs[ 4], { "intro.stk", "scaa.imd", "scba.imd", "scbf.imd", 0 } },
+	{ &fallbackDescs[ 5], { "intro.stk", "imd.itk", 0 } },
+	{ &fallbackDescs[ 6], { "intro.stk", "mus_gob3.lic", 0 } },
+	{ &fallbackDescs[ 7], { "intro.stk", "woodruff.itk", 0 } },
+	{ &fallbackDescs[ 8], { "intro.stk", "commun1.itk", 0 } },
+	{ &fallbackDescs[ 9], { "intro.stk", "commun1.itk", "lost.lic", 0 } },
+	{ &fallbackDescs[10], { "intro.stk", "cd1.itk", "objet1.itk", 0 } },
 	{ 0, { 0 } }
 };
 
