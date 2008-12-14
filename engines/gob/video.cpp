@@ -120,6 +120,10 @@ char Video::initDriver(int16 vidMode) {
 	return 1;
 }
 
+Video::~Video() {
+	delete _palLUT;
+}
+
 void Video::freeDriver() {
 	delete _videoDriver;
 }

@@ -134,6 +134,11 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_scrollOffsetY = 0;
 }
 
+Draw::~Draw() {
+	for (int i = 0; i < 8; i++)
+		delete _fonts[i];
+}
+
 void Draw::invalidateRect(int16 left, int16 top, int16 right, int16 bottom) {
 	if (_renderFlags & RENDERFLAG_NOINVALIDATE) {
 		_vm->_video->dirtyRectsAll();

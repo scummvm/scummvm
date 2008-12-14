@@ -2170,8 +2170,7 @@ bool Inter_v1::o1_loadFont(OpFuncParams &params) {
 	evalExpr(0);
 	index = load16();
 
-	if (_vm->_draw->_fonts[index])
-		_vm->_util->freeFont(_vm->_draw->_fonts[index]);
+	delete _vm->_draw->_fonts[index];
 
 	_vm->_draw->animateCursor(4);
 	if (_vm->_game->_extHandle >= 0)
@@ -2189,9 +2188,7 @@ bool Inter_v1::o1_freeFont(OpFuncParams &params) {
 	int16 index;
 
 	index = load16();
-	if (_vm->_draw->_fonts[index])
-		_vm->_util->freeFont(_vm->_draw->_fonts[index]);
-
+	delete _vm->_draw->_fonts[index];
 	_vm->_draw->_fonts[index] = 0;
 	return false;
 }

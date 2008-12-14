@@ -27,6 +27,7 @@
 
 #include "gob/gob.h"
 #include "gob/video.h"
+#include "gob/util.h"
 #include "gob/indeo3.h"
 
 namespace Gob {
@@ -40,10 +41,11 @@ void Video_v6::init() {
 	initOSD();
 
 	char text[30];
-	for (int i = 0; i < 64; i++) {
+	for (int i = 0; (i < 64) && !_vm->shouldQuit(); i++) {
 		sprintf(text, "Building palette table: %02d/63", i);
 		drawOSDText(text);
 		_palLUT->buildNext();
+		_vm->_util->processInput();
 	}
 }
 
@@ -153,6 +155,8 @@ void Video_v6::drawYUV(SurfaceDesc *destDesc, int16 x, int16 y,
 		dither->nextLine();
 		vidMem += destDesc->getWidth();
 	}
+
+	delete dither;
 }	
 
 const byte Video_v6::_ditherPalette[768] = {

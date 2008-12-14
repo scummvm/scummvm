@@ -378,11 +378,6 @@ Video::FontDesc *Util::loadFont(const char *path) {
 	return fontDesc;
 }
 
-void Util::freeFont(Video::FontDesc *fontDesc) {
-	delete[] (fontDesc->dataPtr - 4);
-	delete fontDesc;
-}
-
 void Util::insertStr(const char *str1, char *str2, int16 pos) {
 	int len1 = strlen(str1);
 	int len2 = strlen(str2);

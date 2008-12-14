@@ -75,7 +75,11 @@ public:
 		int8 bitWidth;
 		byte *extraData;
 		FontDesc() : dataPtr(0), itemWidth(0), itemHeight(0), startItem(0),
-			               endItem(0), itemSize(0), bitWidth(0) {}
+		             endItem(0), itemSize(0), bitWidth(0) {}
+		~FontDesc() {
+			if (dataPtr)
+				delete[] (dataPtr - 4);
+		}
 	};
 
 #define GDR_VERSION	4
@@ -177,7 +181,7 @@ public:
 	virtual void init() { }
 
 	Video(class GobEngine *vm);
-	virtual ~Video() {}
+	virtual ~Video();
 
 protected:
 	class VideoDriver *_videoDriver;

@@ -168,7 +168,7 @@ public:
 	virtual void spriteOperation(int16 operation) = 0;
 
 	Draw(GobEngine *vm);
-	virtual ~Draw() {}
+	virtual ~Draw();
 
 protected:
 	GobEngine *_vm;

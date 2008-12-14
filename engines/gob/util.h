@@ -77,7 +77,6 @@ public:
 	void setScrollOffset(int16 x = -1, int16 y = -1);
 
 	Video::FontDesc *loadFont(const char *path);
-	void freeFont(Video::FontDesc *fontDesc);
 
 	static void insertStr(const char *str1, char *str2, int16 pos);
 	static void cutFromStr(char *str, int16 from, int16 cutlen);

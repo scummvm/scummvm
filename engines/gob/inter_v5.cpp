@@ -852,7 +852,7 @@ void Inter_v5::o5_getSystemCDSpeed(OpGobParams &params) {
 		_vm->_draw->drawString("100 %", 402, 89, 112, 144, 0, _vm->_draw->_backSurface, font);
 		_vm->_draw->forceBlit();
 
-		_vm->_util->freeFont(font);
+		delete font;
 	}
 }
 
@@ -866,7 +866,7 @@ void Inter_v5::o5_getSystemRAM(OpGobParams &params) {
 		_vm->_draw->drawString("100 %", 402, 168, 112, 144, 0, _vm->_draw->_backSurface, font);
 		_vm->_draw->forceBlit();
 
-		_vm->_util->freeFont(font);
+		delete font;
 	}
 }
 
@@ -880,7 +880,7 @@ void Inter_v5::o5_getSystemCPUSpeed(OpGobParams &params) {
 		_vm->_draw->drawString("100 %", 402, 248, 112, 144, 0, _vm->_draw->_backSurface, font);
 		_vm->_draw->forceBlit();
 
-		_vm->_util->freeFont(font);
+		delete font;
 	}
 }
 
@@ -894,7 +894,7 @@ void Inter_v5::o5_getSystemDrawSpeed(OpGobParams &params) {
 		_vm->_draw->drawString("100 %", 402, 326, 112, 144, 0, _vm->_draw->_backSurface, font);
 		_vm->_draw->forceBlit();
 
-		_vm->_util->freeFont(font);
+		delete font;
 	}
 }
 
@@ -908,7 +908,7 @@ void Inter_v5::o5_totalSystemSpecs(OpGobParams &params) {
 		_vm->_draw->drawString("100 %", 402, 405, 112, 144, 0, _vm->_draw->_backSurface, font);
 		_vm->_draw->forceBlit();
 
-		_vm->_util->freeFont(font);
+		delete font;
 	}
 }
 

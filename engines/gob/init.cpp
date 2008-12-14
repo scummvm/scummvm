@@ -209,11 +209,6 @@ void Init::initGame(const char *totName) {
 
 	}
 
-	for (int i = 0; i < 4; i++) {
-		if (_vm->_draw->_fonts[i] != 0)
-			_vm->_util->freeFont(_vm->_draw->_fonts[i]);
-	}
-
 	delete _palDesc;
 	_vm->_dataIO->closeDataFile();
 	_vm->_video->initPrimary(-1);
