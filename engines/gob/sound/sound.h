@@ -121,6 +121,7 @@ public:
 
 
 	// Background Atmosphere
+	void bgPlay(const char *file);
 	void bgPlay(const char *base, int count);
 	void bgStop();
 

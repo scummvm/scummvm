@@ -93,6 +93,9 @@ void Game_v6::pushCollisions(char all) {
 			size++;
 	}
 
+	if (_collStackSize >= 5)
+		error("Game_v6::pushCollisions: _collStackSize == %d", _collStackSize);
+
 	destPtr = new Collision[size];
 	_collStack[_collStackSize] = destPtr;
 

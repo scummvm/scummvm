@@ -624,6 +624,8 @@ protected:
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
 	virtual const char *getOpcodeGoblinDesc(int i);
 
+	void o6_playVmdOrMusic();
+
 	bool o6_loadCursor(OpFuncParams &params);
 	bool o6_evaluateStore(OpFuncParams &params);
 	bool o6_palLoad(OpFuncParams &params);

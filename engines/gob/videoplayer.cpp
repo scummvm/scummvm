@@ -271,7 +271,7 @@ bool VideoPlayer::primaryOpen(const char *videoFile, int16 x, int16 y,
 
 void VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 		uint16 palCmd, int16 palStart, int16 palEnd,
-		int16 palFrame, int16 endFrame, bool fade, int16 reverseTo) {
+		int16 palFrame, int16 endFrame, bool fade, int16 reverseTo, bool forceSeek) {
 
 	if (!_primaryVideo->isOpen())
 		return;
@@ -290,7 +290,7 @@ void VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 	palCmd &= 0x3F;
 
 	if (video.getCurrentFrame() != startFrame) {
-		if (video.getFeatures() & CoktelVideo::kFeaturesSound)
+		if (!forceSeek && (video.getFeatures() & CoktelVideo::kFeaturesSound))
 			startFrame = video.getCurrentFrame();
 		else
 			video.seekFrame(startFrame);

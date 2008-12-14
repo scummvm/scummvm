@@ -32,6 +32,8 @@
 #include "gob/game.h"
 #include "gob/parse.h"
 #include "gob/draw.h"
+#include "gob/sound/sound.h"
+#include "gob/videoplayer.h"
 #include "gob/indeo3.h"
 
 namespace Gob {
@@ -214,7 +216,7 @@ void Inter_v6::setupOpcodes() {
 		OPCODE(o5_initScreen),
 		OPCODE(o2_scroll),
 		OPCODE(o2_setScrollOffset),
-		OPCODE(o4_playVmdOrMusic),
+		OPCODE(o6_playVmdOrMusic),
 		/* 84 */
 		OPCODE(o2_getImdInfo),
 		OPCODE(o2_openItk),
@@ -649,6 +651,75 @@ const char *Inter_v6::getOpcodeGoblinDesc(int i) {
 		if (_goblinFuncLookUp[j][0] == i)
 			return _opcodesGoblinV6[_goblinFuncLookUp[j][1]].desc;
 	return "";
+}
+
+void Inter_v6::o6_playVmdOrMusic() {
+	char fileName[128];
+	int16 x, y;
+	int16 startFrame;
+	int16 lastFrame;
+	int16 breakKey;
+	int16 flags;
+	int16 palStart;
+	int16 palEnd;
+	uint16 palCmd;
+	bool close;
+
+	evalExpr(0);
+	strncpy0(fileName, _vm->_global->_inter_resStr, 127);
+
+	x = _vm->_parse->parseValExpr();
+	y = _vm->_parse->parseValExpr();
+	startFrame = _vm->_parse->parseValExpr();
+	lastFrame = _vm->_parse->parseValExpr();
+	breakKey = _vm->_parse->parseValExpr();
+	flags = _vm->_parse->parseValExpr();
+	palStart = _vm->_parse->parseValExpr();
+	palEnd = _vm->_parse->parseValExpr();
+	palCmd = 1 << (flags & 0x3F);
+
+	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
+			"paletteCmd %d (%d - %d), flags %X", fileName, x, y, startFrame, lastFrame,
+			palCmd, palStart, palEnd, flags);
+
+	close = false;
+	if (lastFrame == -1) {
+		close = true;
+	} else if (lastFrame == -5) {
+		warning("Urban Stub: Stopping background music \"%s\"", fileName);
+		return;
+	} else if (lastFrame == -9) {
+		warning("Urban Stub: Starting background music \"%s\"", fileName);
+		return;
+	} else if (lastFrame == -10) {
+		_vm->_vidPlayer->primaryClose();
+		warning("Urban Stub: Video/Music command -10 (close video?)");
+		return;
+	} else if (lastFrame < 0) {
+		warning("Unknown Video/Music command: %d, %s", lastFrame, fileName);
+		return;
+	}
+
+	if (startFrame == -2) {
+		startFrame = 0;
+		lastFrame = -1;
+		close = false;
+	}
+
+	if ((fileName[0] != 0) && !_vm->_vidPlayer->primaryOpen(fileName, x, y, flags)) {
+		WRITE_VAR(11, (uint32) -1);
+		return;
+	}
+
+	if (startFrame >= 0) {
+		_vm->_game->_preventScroll = true;
+		_vm->_vidPlayer->primaryPlay(startFrame, lastFrame, breakKey,
+				palCmd, palStart, palEnd, 0, -1, false, -1, true);
+		_vm->_game->_preventScroll = false;
+	}
+
+	if (close)
+		_vm->_vidPlayer->primaryClose();
 }
 
 bool Inter_v6::o6_loadCursor(OpFuncParams &params) {

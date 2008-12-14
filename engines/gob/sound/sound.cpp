@@ -520,6 +520,25 @@ void Sound::cdTest(int trySubst, const char *label) {
 	_cdrom->testCD(trySubst, label);
 }
 
+void Sound::bgPlay(const char *file) {
+	if (!_bgatmos)
+		return;
+
+	debugC(1, kDebugSound, "BackgroundAtmosphere: Playing \"%s\"", file);
+
+	_bgatmos->stop();
+	_bgatmos->queueClear();
+
+	SoundDesc *sndDesc = new SoundDesc;
+	if (!sampleLoad(sndDesc, file)) {
+		delete sndDesc;
+		return;
+	}
+
+	_bgatmos->queueSample(*sndDesc);
+	_bgatmos->play();
+}
+
 void Sound::bgPlay(const char *base, int count) {
 	if (!_bgatmos)
 		return;
@@ -539,6 +558,8 @@ void Sound::bgPlay(const char *base, int count) {
 		sndDesc = new SoundDesc;
 		if (sampleLoad(sndDesc, fileName))
 			_bgatmos->queueSample(*sndDesc);
+		else
+			delete sndDesc;
 	}
 
 	_bgatmos->play();

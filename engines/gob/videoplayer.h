@@ -58,7 +58,7 @@ public:
 	void primaryPlay(int16 startFrame = -1, int16 lastFrame = -1, int16 breakKey = 27,
 			uint16 palCmd = 8, int16 palStart = 0, int16 palEnd = 255,
 			int16 palFrame = -1, int16 endFrame = -1, bool fade = false,
-			int16 reverseTo = -1);
+			int16 reverseTo = -1, bool forceSeek = false);
 	void primaryClose();
 
 	int slotOpen(const char *videoFile, Type which = kVideoTypeTry);
