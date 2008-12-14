@@ -141,6 +141,10 @@ static byte *FindStringBase(int id) {
 	// base of string resource table
 	byte *pText = textBuffer;
 
+	// For Tinsel 0, Ids are decremented by 1
+	if (TinselV0)
+		--id;
+
 	// index into text resource file
 	uint32 index = 0;
 
@@ -169,10 +173,6 @@ static byte *FindStringBase(int id) {
 
 	// pointer to strings
 	pText = pText + index;
-
-	// For Tinsel 0 Ids, reduce the skip amount by 1
-	if (TinselV0 && (strSkip != 0))
-		--strSkip;
 
 	// skip to the correct string
 	while (strSkip-- != 0) {
