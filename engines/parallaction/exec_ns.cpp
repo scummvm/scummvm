@@ -438,7 +438,7 @@ void CommandExec::runSuspended() {
 	}
 }
 
-CommandExec_ns::CommandExec_ns(Parallaction_ns* vm) : _vm(vm) {
+CommandExec_ns::CommandExec_ns(Parallaction_ns* vm) : CommandExec(vm), _vm(vm) {
 
 }
 

@@ -44,6 +44,8 @@ class Parallaction_br;
 
 class CommandExec {
 protected:
+	Parallaction *_vm;
+
 	struct ParallactionStruct1 {
 		CommandPtr cmd;
 		ZonePtr	z;
@@ -69,7 +71,7 @@ public:
 	virtual void run(CommandList &list, ZonePtr z = nullZonePtr);
 	void runSuspended();
 
-	CommandExec() {
+	CommandExec(Parallaction *vm) : _vm(vm) {
 		_suspendedCtxt.valid = false;
 	}
 	virtual ~CommandExec() {

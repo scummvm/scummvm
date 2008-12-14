@@ -73,8 +73,9 @@ int32 Gfx::getVar(const Common::String &name) {
 #define	LABEL_TRANSPARENT_COLOR 0xFF
 
 void halfbritePixel(int x, int y, int color, void *data) {
-	byte *buffer = (byte*)data;
-	buffer[x + y * _vm->_screenWidth] &= ~0x20;
+	Graphics::Surface *surf = (Graphics::Surface *)data;
+	byte *pixel = (byte*)surf->getBasePtr(x, y);
+	*pixel &= ~0x20;
 }
 
 void drawCircleLine(int xCenter, int yCenter, int x, int y, int color, void (*plotProc)(int, int, int, void *), void *data){
@@ -524,7 +525,7 @@ void Gfx::applyHalfbriteEffect_NS(Graphics::Surface &surf) {
 		}
 	}
 	if (_hbCircleRadius > 0) {
-		drawCircle(_hbCirclePos.x, _hbCirclePos.y, _hbCircleRadius, 0, &halfbritePixel, surf.pixels);
+		drawCircle(_hbCirclePos.x, _hbCirclePos.y, _hbCircleRadius, 0, &halfbritePixel, &surf);
 	}
 }
 

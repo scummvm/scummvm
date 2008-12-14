@@ -152,6 +152,7 @@ protected:
 	void loadMask(BackgroundInfo& info, const char *name);
 	void loadPath(BackgroundInfo& info, const char *name);
 	void loadBackground(BackgroundInfo& info, const char *name);
+	void buildMask(byte* buf);
 
 public:
 	AmigaDisk_ns(Parallaction *vm);

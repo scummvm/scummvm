@@ -267,8 +267,8 @@ void Parallaction_br::parseLocation(const char *filename) {
 	delete script;
 
 	// this loads animation scripts
-	AnimationList::iterator it = _vm->_location._animations.begin();
-	for ( ; it != _vm->_location._animations.end(); it++) {
+	AnimationList::iterator it = _location._animations.begin();
+	for ( ; it != _location._animations.end(); it++) {
 		if ((*it)->_scriptName) {
 			loadProgram(*it, (*it)->_scriptName);
 		}
@@ -289,7 +289,7 @@ void Parallaction_br::loadProgram(AnimationPtr a, const char *filename) {
 
 	delete script;
 
-	_vm->_location._programs.push_back(program);
+	_location._programs.push_back(program);
 
 	debugC(1, kDebugParser, "loadProgram() done");
 

@@ -356,7 +356,7 @@ void Parallaction_ns::loadProgram(AnimationPtr a, const char *filename) {
 
 	delete script;
 
-	_vm->_location._programs.push_back(program);
+	_location._programs.push_back(program);
 
 	debugC(1, kDebugParser, "loadProgram() done");
 

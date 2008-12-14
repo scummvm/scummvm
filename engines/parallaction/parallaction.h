@@ -519,7 +519,6 @@ private:
 	void _c_password(void*);
 };
 
-// FIXME: remove global
 extern Parallaction *_vm;
 
 

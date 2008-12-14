@@ -42,9 +42,7 @@
 
 namespace Parallaction {
 
-// FIXME: remove this
 Parallaction *_vm = NULL;
-
 // public stuff
 
 char		_saveData1[30] = { '\0' };
@@ -61,11 +59,7 @@ uint32		_globalFlags = 0;
 Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc) :
 	Engine(syst), _gameDescription(gameDesc), _char(this) {
 
-	// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
-	// needs fixing, or remove it!
-	// FIXME
 	_vm = this;
-
 	Common::addSpecialDebugLevel(kDebugDialogue, "dialogue", "Dialogues debug level");
 	Common::addSpecialDebugLevel(kDebugParser, "parser", "Parser debug level");
 	Common::addSpecialDebugLevel(kDebugDisk, "disk", "Disk debug level");
@@ -161,7 +155,7 @@ void Parallaction::updateView() {
 		//foot.y -= ...
 
 		int min = SCROLL_BAND_WIDTH;
-		int max = _vm->_screenWidth - SCROLL_BAND_WIDTH;
+		int max = _screenWidth - SCROLL_BAND_WIDTH;
 
 		if (foot.x < min) {
 			scrollX -= (min - foot.x);
@@ -175,7 +169,7 @@ void Parallaction::updateView() {
 
 	_gfx->animatePalette();
 	_gfx->updateScreen();
-	_vm->_system->delayMillis(30);
+	_system->delayMillis(30);
 }
 
 
@@ -296,8 +290,8 @@ void Parallaction::showSlide(const char *name, int x, int y) {
 	BackgroundInfo *info = new BackgroundInfo;
 	_disk->loadSlide(*info, name);
 
-	info->x = (x == CENTER_LABEL_HORIZONTAL) ? ((_vm->_screenWidth - info->width) >> 1) : x;
-	info->y = (y == CENTER_LABEL_VERTICAL) ? ((_vm->_screenHeight - info->height) >> 1) : y;
+	info->x = (x == CENTER_LABEL_HORIZONTAL) ? ((_screenWidth - info->width) >> 1) : x;
+	info->y = (y == CENTER_LABEL_VERTICAL) ? ((_screenHeight - info->height) >> 1) : y;
 
 	_gfx->setBackground(kBackgroundSlide, info);
 }
@@ -411,7 +405,7 @@ void Parallaction::doLocationEnterTransition() {
 		pal.fadeTo(_gfx->_palette, 4);
 		_gfx->setPalette(pal);
 		_gfx->updateScreen();
-		_vm->_system->delayMillis(20);
+		_system->delayMillis(20);
 	}
 
 	_gfx->setPalette(_gfx->_palette);

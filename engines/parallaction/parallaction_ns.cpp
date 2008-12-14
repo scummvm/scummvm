@@ -141,8 +141,8 @@ void LocationName::bind(const char *s) {
 	strcpy(_buf, s);		// kept as reference
 }
 
-Parallaction_ns::Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc), 
-	_locationParser(0), _programParser(0) { 
+Parallaction_ns::Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc),
+	_locationParser(0), _programParser(0) {
 }
 
 Common::Error Parallaction_ns::init() {
@@ -260,7 +260,7 @@ void Parallaction_ns::switchBackground(const char* background, const char* mask)
 			v2 += 4;
 		}
 
-		_vm->_system->delayMillis(20);
+		_system->delayMillis(20);
 		_gfx->setPalette(pal);
 		_gfx->updateScreen();
 	}
@@ -375,15 +375,15 @@ void Parallaction_ns::parseLocation(const char *filename) {
 
 	// TODO: the following two lines are specific to Nippon Safes
 	// and should be moved into something like 'initializeParsing()'
-	_vm->_location._hasSound = false;
+	_location._hasSound = false;
 
 	_locationParser->parse(script);
 
 	delete script;
 
 	// this loads animation scripts
-	AnimationList::iterator it = _vm->_location._animations.begin();
-	for ( ; it != _vm->_location._animations.end(); it++) {
+	AnimationList::iterator it = _location._animations.begin();
+	for ( ; it != _location._animations.end(); it++) {
 		if ((*it)->_scriptName) {
 			loadProgram(*it, (*it)->_scriptName);
 		}

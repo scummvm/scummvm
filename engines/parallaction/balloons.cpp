@@ -261,9 +261,10 @@ class BalloonManager_ns : public BalloonManager {
 	Balloon *getBalloon(uint id);
 
 	Gfx *_gfx;
+	Font *_font;
 
 public:
-	BalloonManager_ns(Gfx *gfx);
+	BalloonManager_ns(Gfx *gfx, Font *font);
 	~BalloonManager_ns();
 
 	void freeBalloons();
@@ -276,7 +277,7 @@ public:
 
 int16 BalloonManager_ns::_dialogueBalloonX[5] = { 80, 120, 150, 150, 150 };
 
-BalloonManager_ns::BalloonManager_ns(Gfx *gfx) : _numBalloons(0), _gfx(gfx) {
+BalloonManager_ns::BalloonManager_ns(Gfx *gfx, Font *font) : _numBalloons(0), _gfx(gfx), _font(font) {
 	_textColors[kSelectedColor] = 0;
 	_textColors[kUnselectedColor] = 3;
 	_textColors[kNormalColor] = 0;
@@ -331,7 +332,7 @@ int BalloonManager_ns::setSingleBalloon(const char *text, uint16 x, uint16 y, ui
 
 	int16 w, h;
 
-	StringExtent_NS	se(_vm->_dialogueFont);
+	StringExtent_NS	se(_font);
 	se.calc(text, MAX_BALLOON_WIDTH);
 	w = se.width() + 14;
 	h = se.height() + 20;
@@ -339,7 +340,7 @@ int BalloonManager_ns::setSingleBalloon(const char *text, uint16 x, uint16 y, ui
 	int id = createBalloon(w+5, h, winding, 1);
 	Balloon *balloon = &_intBalloons[id];
 
-	StringWriter_NS sw(_vm->_dialogueFont);
+	StringWriter_NS sw(_font);
 	sw.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
 
 	// TODO: extract some text to make a name for obj
@@ -355,7 +356,7 @@ int BalloonManager_ns::setDialogueBalloon(const char *text, uint16 winding, Text
 
 	int16 w, h;
 
-	StringExtent_NS	se(_vm->_dialogueFont);
+	StringExtent_NS	se(_font);
 	se.calc(text, MAX_BALLOON_WIDTH);
 	w = se.width() + 14;
 	h = se.height() + 20;
@@ -364,7 +365,7 @@ int BalloonManager_ns::setDialogueBalloon(const char *text, uint16 winding, Text
 	int id = createBalloon(w+5, h, winding, 1);
 	Balloon *balloon = &_intBalloons[id];
 
-	StringWriter_NS sw(_vm->_dialogueFont);
+	StringWriter_NS sw(_font);
 	sw.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
 
 	// TODO: extract some text to make a name for obj
@@ -385,7 +386,7 @@ void BalloonManager_ns::setBalloonText(uint id, const char *text, TextColor text
 	Balloon *balloon = getBalloon(id);
 	balloon->surface->fillRect(balloon->innerBox, 1);
 
-	StringWriter_NS sw(_vm->_dialogueFont);
+	StringWriter_NS sw(_font);
 	sw.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
 }
 
@@ -394,14 +395,14 @@ int BalloonManager_ns::setLocationBalloon(const char *text, bool endGame) {
 
 	int16 w, h;
 
-	StringExtent_NS	se(_vm->_dialogueFont);
+	StringExtent_NS	se(_font);
 	se.calc(text, MAX_BALLOON_WIDTH);
 	w = se.width() + 14;
 	h = se.height() + 20;
 
 	int id = createBalloon(w+(endGame ? 5 : 10), h+5, -1, BALLOON_TRANSPARENT_COLOR_NS);
 	Balloon *balloon = &_intBalloons[id];
-	StringWriter_NS sw(_vm->_dialogueFont);
+	StringWriter_NS sw(_font);
 	sw.write(text, MAX_BALLOON_WIDTH, _textColors[kNormalColor], balloon->surface);
 
 	// TODO: extract some text to make a name for obj
@@ -548,6 +549,7 @@ class BalloonManager_br : public BalloonManager {
 
 	Disk *_disk;
 	Gfx *_gfx;
+	Font *_font;
 
 	Frames *_leftBalloon;
 	Frames *_rightBalloon;
@@ -561,7 +563,7 @@ class BalloonManager_br : public BalloonManager {
 	StringWriter_BR	_writer;
 
 public:
-	BalloonManager_br(Disk *disk, Gfx *gfx);
+	BalloonManager_br(Disk *disk, Gfx *gfx, Font *font);
 	~BalloonManager_br();
 
 	void freeBalloons();
@@ -669,7 +671,7 @@ int BalloonManager_br::setDialogueBalloon(const char *text, uint16 winding, Text
 void BalloonManager_br::setBalloonText(uint id, const char *text, TextColor textColor) {
 	Balloon *balloon = getBalloon(id);
 
-	StringWriter_BR sw(_vm->_dialogueFont);
+	StringWriter_BR sw(_font);
 	sw.write(text, 216, _textColors[textColor], balloon->surface);
 }
 
@@ -693,7 +695,7 @@ int BalloonManager_br::createBalloon(int16 w, int16 h, uint16 borderThickness) {
 }
 
 int BalloonManager_br::setLocationBalloon(const char *text, bool endGame) {
-	StringExtent_BR se(_vm->_dialogueFont);
+	StringExtent_BR se(_font);
 
 	se.calc(text, 240);
 
@@ -742,8 +744,8 @@ void BalloonManager_br::cacheAnims() {
 
 
 
-BalloonManager_br::BalloonManager_br(Disk *disk, Gfx *gfx) : _numBalloons(0), _disk(disk), _gfx(gfx),
-	_leftBalloon(0), _rightBalloon(0), _writer(_vm->_dialogueFont) {
+BalloonManager_br::BalloonManager_br(Disk *disk, Gfx *gfx, Font *font) : _numBalloons(0), _disk(disk), _gfx(gfx), _font(font),
+	_leftBalloon(0), _rightBalloon(0), _writer(_font) {
 
 	_textColors[kSelectedColor] = 12;
 	_textColors[kUnselectedColor] = 0;
@@ -756,11 +758,11 @@ BalloonManager_br::~BalloonManager_br() {
 }
 
 void Parallaction::setupBalloonManager() {
-	if (_vm->getGameType() == GType_Nippon) {
-		_balloonMan = new BalloonManager_ns(_vm->_gfx);
+	if (getGameType() == GType_Nippon) {
+		_balloonMan = new BalloonManager_ns(_gfx, _dialogueFont);
 	} else
-	if (_vm->getGameType() == GType_BRA) {
-		_balloonMan = new BalloonManager_br(_vm->_disk, _vm->_gfx);
+	if (getGameType() == GType_BRA) {
+		_balloonMan = new BalloonManager_br(_disk, _gfx, _dialogueFont);
 	} else {
 		error("Unknown game type");
 	}
