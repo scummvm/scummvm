@@ -311,7 +311,7 @@ void Game_v6::setCollisions(byte arg_0) {
 		int16 top    = _vm->_parse->parseValExpr();
 		int16 width  = _vm->_parse->parseValExpr();
 		int16 height = _vm->_parse->parseValExpr();
-		uint16 flags;
+		uint16 flags = 0;
 
 		if ((collArea->id & 0xF000) == 0xA000)
 			flags = _vm->_parse->parseValExpr();
