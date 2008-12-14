@@ -80,7 +80,7 @@ static const TinselGameDescription gameDescriptions[] = {
 
 	// Note: The following is the (hopefully) definitive list of version details:
 	// TINSEL_V0: Used only by the Discworld 1 demo - this used a more primitive version
-	//   of the Tinsel engine and graphics compression, and isn't currently supported
+	//   of the Tinsel engine and graphics compression
 	// TINSEL_V1: There were two versions of the Discworld 1 game - the first used .GRA
 	//   files, and the second used .SCN files. The second also provided some fixes to
 	//   various script bugs and coding errors, but is still considered TINSEL_V1,
