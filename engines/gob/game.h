@@ -121,7 +121,7 @@ public:
 	virtual void clearCollisions(void) = 0;
 	virtual int16 addNewCollision(int16 id, uint16 left, uint16 top,
 			uint16 right, uint16 bottom, int16 flags, int16 key,
-			uint16 funcEnter, uint16 funcLeave) = 0;
+			uint16 funcEnter, uint16 funcLeave, uint16 funcSub = 0) = 0;
 	virtual void collisionsBlock(void) = 0;
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
 			InputDesc *inpDesc, int16 *collResId, int16 *collIndex) = 0;
@@ -216,7 +216,7 @@ protected:
 
 	GobEngine *_vm;
 
-	int16 adjustKey(int16 key);
+	virtual int16 adjustKey(int16 key);
 
 	byte *loadLocTexts(int32 *dataSize = 0);
 	int32 loadTotFile(const char *path);
@@ -239,7 +239,7 @@ public:
 	virtual void clearCollisions(void);
 	virtual int16 addNewCollision(int16 id, uint16 left, uint16 top,
 			uint16 right, uint16 bottom, int16 flags, int16 key,
-			uint16 funcEnter, uint16 funcLeave);
+			uint16 funcEnter, uint16 funcLeave, uint16 funcSub = 0);
 	virtual void collisionsBlock(void);
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
 			InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
@@ -268,7 +268,7 @@ public:
 	virtual void clearCollisions(void);
 	virtual int16 addNewCollision(int16 id, uint16 left, uint16 top,
 			uint16 right, uint16 bottom, int16 flags, int16 key,
-			uint16 funcEnter, uint16 funcLeave);
+			uint16 funcEnter, uint16 funcLeave, uint16 funcSub = 0);
 	virtual void collisionsBlock(void);
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
 			InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
@@ -302,12 +302,13 @@ class Game_v6 : public Game_v2 {
 public:
 	virtual int16 addNewCollision(int16 id, uint16 left, uint16 top,
 			uint16 right, uint16 bottom, int16 flags, int16 key,
-			uint16 funcEnter, uint16 funcLeave);
+			uint16 funcEnter, uint16 funcLeave, uint16 funcSub = 0);
 
 	virtual void pushCollisions(char all);
 
 	virtual int16 checkCollisions(byte handleMouse, int16 deltaTime,
 			int16 *pResId, int16 *pResIndex);
+	virtual void collisionsBlock(void);
 
 	Game_v6(GobEngine *vm);
 	virtual ~Game_v6() {}
@@ -317,6 +318,8 @@ protected:
 
 	virtual void setCollisions(byte arg_0 = 1);
 	virtual void collSub(uint16 offset);
+
+	virtual int16 adjustKey(int16 key);
 
 	void sub_1BA78();
 };

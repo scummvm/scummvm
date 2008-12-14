@@ -107,16 +107,16 @@ void Game_v2::playTot(int16 skipPlay) {
 
 			totSize = loadTotFile(_curTotFile);
 
-			_vm->_vidPlayer->primaryClose();
+			if (skipPlay == -2) {
+				_vm->_vidPlayer->primaryClose();
+				skipPlay = 0;
+			}
 
 			if (_totFileData == 0) {
 				_vm->_draw->blitCursor();
 				_vm->_inter->_terminate = 2;
 				break;
 			}
-
-			if (skipPlay == -2)
-				skipPlay = 0;
 
 			strcpy(_curImaFile, _curTotFile);
 			strcpy(_curExtFile, _curTotFile);
@@ -267,7 +267,8 @@ void Game_v2::playTot(int16 skipPlay) {
 				for (int i = 0; i < Sound::kSoundsCount; i++) {
 					SoundDesc *sound = _vm->_sound->sampleGetBySlot(i);
 
-					if (sound && (sound->getType() == SOUND_SND))
+					if (sound &&
+					   ((sound->getType() == SOUND_SND) || (sound->getType() == SOUND_WAV)))
 						_vm->_sound->sampleFree(sound);
 				}
 			}
@@ -309,7 +310,7 @@ void Game_v2::clearCollisions() {
 
 int16 Game_v2::addNewCollision(int16 id, uint16 left, uint16 top,
 		uint16 right, uint16 bottom, int16 flags, int16 key,
-		uint16 funcEnter, uint16 funcLeave) {
+		uint16 funcEnter, uint16 funcLeave, uint16 funcSub) {
 	Collision *ptr;
 
 	debugC(5, kDebugCollisions, "addNewCollision");
@@ -334,7 +335,7 @@ int16 Game_v2::addNewCollision(int16 id, uint16 left, uint16 top,
 		ptr->key = key;
 		ptr->funcEnter = funcEnter;
 		ptr->funcLeave = funcLeave;
-		ptr->funcSub = 0;
+		ptr->funcSub = funcSub;
 		ptr->totFileData = 0;
 
 		return i;
@@ -619,7 +620,6 @@ void Game_v2::collisionsBlock(void) {
 	int16 descIndex;
 	int16 timeVal;
 	int16 offsetIP;
-	int16 collId;
 	char *str;
 	int16 i;
 	int16 counter;
@@ -717,16 +717,15 @@ void Game_v2::collisionsBlock(void) {
 				READ_LE_UINT16(_vm->_global->_inter_execPtr);
 			key = curCmd + 0xA000;
 
-			collId = addNewCollision(curCmd + 0x8000, left, top,
+			addNewCollision(curCmd + 0x8000, left, top,
 					left + width - 1, top + height - 1,
 					cmd + cmdHigh, key, startIP - _totFileData,
-					_vm->_global->_inter_execPtr - _totFileData);
+					_vm->_global->_inter_execPtr - _totFileData, offsetIP);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr +=
 				READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
-			_collisionAreas[collId].funcSub = offsetIP;
 			break;
 
 		case 1:
@@ -742,16 +741,15 @@ void Game_v2::collisionsBlock(void) {
 			if (key == 0)
 				key = curCmd + 0xA000;
 
-			collId = addNewCollision(curCmd + 0x8000, left, top,
+			addNewCollision(curCmd + 0x8000, left, top,
 					left + width - 1, top + height - 1,
 					(flags << 4) + cmd + cmdHigh, key, startIP - _totFileData,
-					_vm->_global->_inter_execPtr - _totFileData);
+					_vm->_global->_inter_execPtr - _totFileData, offsetIP);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr +=
 				READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
-			_collisionAreas[collId].funcSub = offsetIP;
 			break;
 
 		case 3:
@@ -843,16 +841,15 @@ void Game_v2::collisionsBlock(void) {
 			array[curCmd] = _vm->_inter->load16();
 			flags = _vm->_inter->load16();
 
-			collId = addNewCollision(curCmd + 0x8000, left, top,
+			addNewCollision(curCmd + 0x8000, left, top,
 					left + width - 1, top + height - 1,
 					(flags << 4) + cmdHigh + 2, key, 0,
-					_vm->_global->_inter_execPtr - _totFileData);
+					_vm->_global->_inter_execPtr - _totFileData, offsetIP);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr +=
 				READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
-			_collisionAreas[collId].funcSub = offsetIP;
 			break;
 
 		case 21:
@@ -860,16 +857,15 @@ void Game_v2::collisionsBlock(void) {
 			array[curCmd] = _vm->_inter->load16();
 			flags = _vm->_inter->load16() & 3;
 
-			collId = addNewCollision(curCmd + 0x8000, left, top,
+			addNewCollision(curCmd + 0x8000, left, top,
 					left + width - 1, top + height - 1,
 					(flags << 4) + cmdHigh + 2, key,
-					_vm->_global->_inter_execPtr - _totFileData, 0);
+					_vm->_global->_inter_execPtr - _totFileData, 0, offsetIP);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr +=
 				READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
-			_collisionAreas[collId].funcSub = offsetIP;
 			break;
 		}
 	}

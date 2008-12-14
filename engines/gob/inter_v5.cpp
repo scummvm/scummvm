@@ -717,8 +717,8 @@ void Inter_v5::o5_initScreen() {
 	_vm->_global->_fakeVideoMode = videoMode;
 
 	// Some versions require this
-	if (videoMode == 0xD)
-		videoMode = _vm->_mode;
+	if (videoMode == 0x18)
+		_vm->_global->_fakeVideoMode = 0x37;
 
 	if ((videoMode == _vm->_global->_videoMode) && (width == -1))
 		return;

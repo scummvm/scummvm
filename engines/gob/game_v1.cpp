@@ -251,7 +251,7 @@ void Game_v1::clearCollisions() {
 
 int16 Game_v1::addNewCollision(int16 id, uint16 left, uint16 top,
 		uint16 right, uint16 bottom, int16 flags, int16 key,
-		uint16 funcEnter, uint16 funcLeave) {
+		uint16 funcEnter, uint16 funcLeave, uint16 funcSub) {
 	Collision *ptr;
 
 	debugC(5, kDebugCollisions, "addNewCollision");
@@ -276,6 +276,7 @@ int16 Game_v1::addNewCollision(int16 id, uint16 left, uint16 top,
 		ptr->key = key;
 		ptr->funcEnter = funcEnter;
 		ptr->funcLeave = funcLeave;
+		ptr->funcSub = funcSub;
 		ptr->totFileData = 0;
 
 		return i;

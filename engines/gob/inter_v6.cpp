@@ -691,8 +691,6 @@ void Inter_v6::o6_playVmdOrMusic() {
 	} else if (lastFrame == -9) {
 		probe16bitMusic(fileName);
 
-		warning("==> %s", fileName);
-
 		_vm->_sound->bgStop();
 		_vm->_sound->bgPlay(fileName, SOUND_WAV);
 		return;
