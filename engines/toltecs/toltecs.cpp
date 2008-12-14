@@ -398,14 +398,12 @@ void ToltecsEngine::scrollCameraRight(int16 delta) {
 void ToltecsEngine::updateCamera() {
 
 	if (_cameraX != _newCameraX) {
-		//dirtyFullRefresh = -1;
 		_cameraX = _newCameraX;
 		_screen->_fullRefresh = true;
 		_screen->finishTalkTextItems();
 	}
 
 	if (_cameraY != _newCameraY) {
-		//dirtyFullRefresh = -1;
 		_cameraY = _newCameraY;
 		_screen->_fullRefresh = true;
 		_screen->finishTalkTextItems();
