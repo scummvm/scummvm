@@ -61,7 +61,7 @@ public:
 	DXAPlayer();
 	virtual ~DXAPlayer();
 
-	Common::SeekableReadStream *_fd;
+	Common::SeekableReadStream *_fileStream;
 
 	/**
 	 * Returns the width of the video

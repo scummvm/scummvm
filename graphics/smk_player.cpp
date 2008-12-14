@@ -154,7 +154,7 @@ int SmallHuffmanTree::decodeTree(int length) {
 	int r2 = decodeTree(length + 1);
 
 	return r1+r2+1;
-};
+}
 
 uint16 SmallHuffmanTree::getCode(BitStream &bs) {
 	uint16 *p = &_tree[0];
@@ -235,7 +235,7 @@ BigHuffmanTree::BigHuffmanTree(BitStream &bs)
 
 	delete _loBytes;
 	delete _hiBytes;
-};
+}
 
 void BigHuffmanTree::reset() {
 	_tree[_last[0]] = _tree[_last[1]] = _tree[_last[2]] = 0;
@@ -312,7 +312,7 @@ uint32 BigHuffmanTree::getCode(BitStream &bs) {
 }
 
 SMKPlayer::SMKPlayer()
-	: _currentSMKFrame(0) {
+	: _currentSMKFrame(0),_fileStream(0) {
 }
 
 SMKPlayer::~SMKPlayer() {
@@ -322,49 +322,53 @@ SMKPlayer::~SMKPlayer() {
 bool SMKPlayer::loadFile(const char *fileName) {
 	closeFile();
 
-	if (!_fileStream.open(fileName)) {
+	Common::File *file = new Common::File();
+	if (!file->open(fileName)) {
+		delete file;
 		return false;
 	}
 
+	_fileStream = file;
+
 	// Seek to the first frame
 	_currentSMKFrame = 0;
-	_header.signature = _fileStream.readUint32BE();
+	_header.signature = _fileStream->readUint32BE();
 
 	assert(_header.signature == MKID_BE('SMK2') || _header.signature == MKID_BE('SMK4'));
 
-	_header.width = _fileStream.readUint32LE();
-	_header.height = _fileStream.readUint32LE();
-	_header.frames = _fileStream.readUint32LE();
+	_header.width = _fileStream->readUint32LE();
+	_header.height = _fileStream->readUint32LE();
+	_header.frames = _fileStream->readUint32LE();
 	_framesCount = _header.frames;
-	_header.frameRate = (int32)_fileStream.readUint32LE();
-	_header.flags = _fileStream.readUint32LE();
+	_header.frameRate = (int32)_fileStream->readUint32LE();
+	_header.flags = _fileStream->readUint32LE();
 
 	unsigned int i;
 	for (i = 0; i < 7; ++i)
-		_header.audioSize[i] = _fileStream.readUint32LE();
+		_header.audioSize[i] = _fileStream->readUint32LE();
 
-	_header.treesSize = _fileStream.readUint32LE();
-	_header.mMapSize = _fileStream.readUint32LE();
-	_header.mClrSize = _fileStream.readUint32LE();
-	_header.fullSize = _fileStream.readUint32LE();
-	_header.typeSize = _fileStream.readUint32LE();
+	_header.treesSize = _fileStream->readUint32LE();
+	_header.mMapSize = _fileStream->readUint32LE();
+	_header.mClrSize = _fileStream->readUint32LE();
+	_header.fullSize = _fileStream->readUint32LE();
+	_header.typeSize = _fileStream->readUint32LE();
 
 	for (i = 0; i < 7; ++i)
-		_header.audioRate[i] = _fileStream.readUint32LE();
+		_header.audioRate[i] = _fileStream->readUint32LE();
 
-	_header.dummy = _fileStream.readUint32LE();
+	_header.dummy = _fileStream->readUint32LE();
 
 	_frameSizes = (uint32 *)malloc(_header.frames * sizeof(uint32));
 	for (i = 0; i < _header.frames; ++i)
-		_frameSizes[i] = _fileStream.readUint32LE();
+		_frameSizes[i] = _fileStream->readUint32LE();
 
 	_frameTypes = (uint32 *)malloc(_header.frames * sizeof(uint32));
 	for (i = 0; i < _header.frames; ++i)
-		_frameTypes[i] = _fileStream.readByte();
+		_frameTypes[i] = _fileStream->readByte();
 
 	Common::Array<byte> huffmanTrees;
 	huffmanTrees.resize(_header.treesSize + 2);
-	_fileStream.read(&huffmanTrees[0], _header.treesSize);
+	_fileStream->read(&huffmanTrees[0], _header.treesSize);
 
 	BitStream bs(&huffmanTrees[0], _header.treesSize + 2);
 
@@ -380,18 +384,20 @@ bool SMKPlayer::loadFile(const char *fileName) {
 }
 
 void SMKPlayer::closeFile() {
-	if (_fileStream.isOpen()) {
-		delete _MMapTree;
-		delete _MClrTree;
-		delete _FullTree;
-		delete _TypeTree;
+	if (!_fileStream)
+		return;
 
-		free(_frameSizes);
-		free(_frameTypes);
-		free(_image);
-		free(_palette);
-	}
-	_fileStream.close();
+	delete _MMapTree;
+	delete _MClrTree;
+	delete _FullTree;
+	delete _TypeTree;
+
+	free(_frameSizes);
+	free(_frameTypes);
+	free(_image);
+	free(_palette);
+
+	_fileStream = 0;
 }
 
 void SMKPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
@@ -411,7 +417,7 @@ void SMKPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 bool SMKPlayer::decodeNextFrame() {
 	uint i;
 
-	uint32 startPos = _fileStream.pos();
+	uint32 startPos = _fileStream->pos();
 
 	_paletteDidChange = false;
 	if (_frameTypes[_currentSMKFrame] & 1) {
@@ -426,20 +432,20 @@ bool SMKPlayer::decodeNextFrame() {
 		if (!(_frameTypes[_currentSMKFrame] & (2 << i)))
 			continue;
 
-		uint32 len = _fileStream.readUint32LE();
-		//uint32 unpackedLen = _fileStream.readUint32LE();
-		_fileStream.skip(len - 4);
+		uint32 len = _fileStream->readUint32LE();
+		//uint32 unpackedLen = _fileStream->readUint32LE();
+		_fileStream->skip(len - 4);
 	}
 
 	uint32 frameSize = _frameSizes[_currentSMKFrame] & ~3;
 
-	if (_fileStream.pos() - startPos > frameSize)
+	if (_fileStream->pos() - startPos > frameSize)
 		exit(1);
 
-	uint32 frameDataSize = frameSize - (_fileStream.pos() - startPos);
+	uint32 frameDataSize = frameSize - (_fileStream->pos() - startPos);
 
 	_frameData = (byte *)malloc(frameDataSize + 2);
-	_fileStream.read(_frameData, frameDataSize);
+	_fileStream->read(_frameData, frameDataSize);
 
 	BitStream bs(_frameData, frameDataSize + 2);
 
@@ -590,7 +596,7 @@ bool SMKPlayer::decodeNextFrame() {
 		}
 	}
 
-	_fileStream.seek(startPos + frameSize);
+	_fileStream->seek(startPos + frameSize);
 
 	free(_frameData);
 
@@ -598,11 +604,11 @@ bool SMKPlayer::decodeNextFrame() {
 }
 
 void SMKPlayer::unpackPalette() {
-	uint startPos = _fileStream.pos();
-	uint32 len = 4 * _fileStream.readByte();
+	uint startPos = _fileStream->pos();
+	uint32 len = 4 * _fileStream->readByte();
 
 	byte *chunk = (byte *)malloc(len);
-	_fileStream.read(&chunk[0], len);
+	_fileStream->read(&chunk[0], len);
 	byte *p = &chunk[0];
 
 	byte oldPalette[3*256];
@@ -642,7 +648,7 @@ void SMKPlayer::unpackPalette() {
 		}
 	}
 
-	_fileStream.seek(startPos + len);
+	_fileStream->seek(startPos + len);
 
 	free(chunk);
 }

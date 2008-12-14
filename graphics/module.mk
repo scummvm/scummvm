@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	primitives.o \
 	scaler.o \
 	scaler/thumbnail_intern.o \
+	smk_player.o \
 	surface.o \
 	thumbnail.o \
 	VectorRenderer.o \

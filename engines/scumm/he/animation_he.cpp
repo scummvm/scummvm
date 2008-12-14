@@ -33,59 +33,41 @@
 namespace Scumm {
 
 MoviePlayer::MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer)
-	: DXAPlayer(), _vm(vm), _mixer(mixer) {
+	: SMKPlayer(), _vm(vm), _mixer(mixer) {
 
 	_flags = 0;
 	_wizResNum = 0;
 }
 
 int MoviePlayer::getImageNum() {
-	if (!_fd)
+	if (!_fileStream)
 		return 0;
 	return _wizResNum;
 }
 
 int MoviePlayer::load(const char *filename, int flags, int image) {
-	char videoName[100];
-
-	if (_fd) {
+	if (_fileStream) {
 		closeFile();
 	}
 
-	int baseLen = strlen(filename) - 4;
-	memset(baseName, 0, sizeof(baseName));
-	memcpy(baseName, filename, baseLen);
-
-	// Change file extension to dxa
-	sprintf(videoName, "%s.dxa", baseName);
-
-	if (!loadFile(videoName)) {
-		warning("Failed to load video file %s", videoName);
+	if (!loadFile(filename)) {
+		warning("Failed to load video file %s", filename);
 		return -1;
 	}
-	debug(1, "Playing video %s", videoName);
-
-	// Skip sound tag
-	_fd->readUint32BE();
+	debug(1, "Playing video %s", filename);
 
 	if (flags & 2) {
-		_vm->_wiz->createWizEmptyImage(image, 0, 0, _width, _height);
+		_vm->_wiz->createWizEmptyImage(image, 0, 0, getWidth(), getHeight());
 	}
 
 	_flags = flags;
 	_wizResNum = image;
 
-	_bgSoundStream = Audio::AudioStream::openStreamFile(baseName);
-	if (_bgSoundStream != NULL) {
-		_mixer->stopHandle(_bgSound);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
-	}
-
 	return 0;
 }
 
 void MoviePlayer::handleNextFrame() {
-	if (_fd == false) {
+	if (_fileStream == false) {
 		return;
 	}
 
@@ -102,16 +84,15 @@ void MoviePlayer::handleNextFrame() {
 	} else if (_flags & 1) {
 		copyFrameToBuffer(pvs->getBackPixels(0, 0), 0, 0, _vm->_screenWidth);
 
-		Common::Rect imageRect(_width, _height);
+		Common::Rect imageRect(getWidth(), getHeight());
 		_vm->restoreBackgroundHE(imageRect);
 	} else {
 		copyFrameToBuffer(pvs->getPixels(0, 0), 0, 0, _vm->_screenWidth);
 
-		_vm->markRectAsDirty(kMainVirtScreen, 0, 0, _width, _height);
+		_vm->markRectAsDirty(kMainVirtScreen, 0, 0, getWidth(), getHeight());
 	}
 
-	_frameNum++;
-	if (_frameNum == _framesCount) {
+	if (getCurFrame() == _framesCount) {
 		closeFile();
 	}
 }

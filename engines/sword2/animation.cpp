@@ -547,7 +547,7 @@ bool MoviePlayerDXA::load() {
 
 	if (loadFile(filename)) {
 		// The Broken Sword games always use external audio tracks.
-		if (_fd->readUint32BE() != MKID_BE('NULL'))
+		if (_fileStream->readUint32BE() != MKID_BE('NULL'))
 			return false;
 
 		_frameBuffer = _vm->_screen->getScreen();

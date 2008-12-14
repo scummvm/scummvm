@@ -35,7 +35,7 @@
 namespace Graphics {
 
 DXAPlayer::DXAPlayer() {
-	_fd = 0;
+	_fileStream = 0;
 
 	_frameBuffer1 = 0;
 	_frameBuffer2 = 0;
@@ -66,25 +66,25 @@ DXAPlayer::~DXAPlayer() {
 }
 
 int DXAPlayer::getWidth() {
-	if (!_fd)
+	if (!_fileStream)
 		return 0;
 	return _width;
 }
 
 int DXAPlayer::getHeight() {
-	if (!_fd)
+	if (!_fileStream)
 		return 0;
 	return _height;
 }
 
 int DXAPlayer::getCurFrame() {
-	if (!_fd)
+	if (!_fileStream)
 		return -1;
 	return _frameNum;
 }
 
 int DXAPlayer::getFrameCount() {
-	if (!_fd)
+	if (!_fileStream)
 		return 0;
 	return _framesCount;
 }
@@ -99,14 +99,14 @@ bool DXAPlayer::loadFile(const char *filename) {
 		return 0;
 	}
 
-	_fd = file;
+	_fileStream = file;
 
-	tag = _fd->readUint32BE();
+	tag = _fileStream->readUint32BE();
 	assert(tag == MKID_BE('DEXA'));
 
-	uint8 flags = _fd->readByte();
-	_framesCount = _fd->readUint16BE();
-	frameRate = _fd->readUint32BE();
+	uint8 flags = _fileStream->readByte();
+	_framesCount = _fileStream->readUint16BE();
+	frameRate = _fileStream->readUint32BE();
 
 	if (frameRate > 0)
 		_framesPerSec = 1000 / frameRate;
@@ -120,8 +120,8 @@ bool DXAPlayer::loadFile(const char *filename) {
 	else
 		_frameTicks = frameRate;
 
-	_width = _fd->readUint16BE();
-	_height = _fd->readUint16BE();
+	_width = _fileStream->readUint16BE();
+	_height = _fileStream->readUint16BE();
 
 	if (flags & 0x80) {
 		_scaleMode = S_INTERLACED;
@@ -156,20 +156,20 @@ bool DXAPlayer::loadFile(const char *filename) {
 		uint32 size;
 
 		do {
-			tag = _fd->readUint32BE();
+			tag = _fileStream->readUint32BE();
 			if (tag != 0) {
-				size = _fd->readUint32BE();
+				size = _fileStream->readUint32BE();
 			}
 			switch (tag) {
 				case 0: // No more tags
 					break;
 				case MKID_BE('MAXD'):
 					assert(size == 4);
-					_decompBufferSize = _fd->readUint32BE();
+					_decompBufferSize = _fileStream->readUint32BE();
 					break;
 				default: // Unknown tag - skip it.
 					while (size > 0) {
-						byte dummy = _fd->readByte();
+						byte dummy = _fileStream->readByte();
 						size--;
 					}
 					break;
@@ -184,10 +184,10 @@ bool DXAPlayer::loadFile(const char *filename) {
 }
 
 void DXAPlayer::closeFile() {
-	if (!_fd)
+	if (!_fileStream)
 		return;
 
-	delete _fd;
+	delete _fileStream;
 
 	free(_frameBuffer1);
 	free(_frameBuffer2);
@@ -195,7 +195,7 @@ void DXAPlayer::closeFile() {
 	free(_inBuffer);
 	free(_decompBuffer);
 
-	_fd = 0;
+	_fileStream = 0;
 	_inBuffer = 0;
 	_decompBuffer = 0;
 }
@@ -513,18 +513,18 @@ void DXAPlayer::decode13(int size) {
 void DXAPlayer::decodeNextFrame() {
 	uint32 tag;
 
-	tag = _fd->readUint32BE();
+	tag = _fileStream->readUint32BE();
 	if (tag == MKID_BE('CMAP')) {
 		byte rgb[768];
 
-		_fd->read(rgb, ARRAYSIZE(rgb));
+		_fileStream->read(rgb, ARRAYSIZE(rgb));
 		setPalette(rgb);
 	}
 
-	tag = _fd->readUint32BE();
+	tag = _fileStream->readUint32BE();
 	if (tag == MKID_BE('FRAM')) {
-		byte type = _fd->readByte();
-		uint32 size = _fd->readUint32BE();
+		byte type = _fileStream->readByte();
+		uint32 size = _fileStream->readUint32BE();
 		if ((_inBuffer == NULL) || (_inBufferSize < size)) {
 			free(_inBuffer);
 			_inBuffer = (byte *)malloc(size);
@@ -533,7 +533,7 @@ void DXAPlayer::decodeNextFrame() {
 			_inBufferSize = size;
 		}
 
-		_fd->read(_inBuffer, size);
+		_fileStream->read(_inBuffer, size);
 
 		switch (type) {
 		case 2:

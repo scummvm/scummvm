@@ -50,7 +50,9 @@ class BigHuffmanTree;
 class SMKPlayer {
 public:
 	SMKPlayer();
-	~SMKPlayer();
+	virtual ~SMKPlayer();
+
+	Common::SeekableReadStream *_fileStream;
 
 	/**
 	 * Returns the width of the video
@@ -68,7 +70,7 @@ public:
 	 * Returns the current frame number of the video
 	 * @return the current frame number of the video
 	 */
-	uint32 getCurrentFrame() { return _currentSMKFrame; }
+	uint32 getCurFrame() { return _currentSMKFrame; }
 
 	/**
 	 * Returns the amount of frames in the video
@@ -124,7 +126,6 @@ protected:
 private:
 	void unpackPalette();
 
-	Common::File _fileStream;
 	uint32 _currentSMKFrame;
 
 	struct {

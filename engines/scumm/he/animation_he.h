@@ -28,7 +28,7 @@
 
 #include "common/file.h"
 
-#include "graphics/dxa_player.h"
+#include "graphics/smk_player.h"
 
 #include "sound/mixer.h"
 
@@ -36,7 +36,7 @@ namespace Scumm {
 
 class ScummEngine_v90he;
 
-class MoviePlayer : public Graphics::DXAPlayer {
+class MoviePlayer : public Graphics::SMKPlayer {
 	ScummEngine_v90he *_vm;
 
 	Audio::Mixer *_mixer;

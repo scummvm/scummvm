@@ -106,14 +106,14 @@ bool MoviePlayer::load(const char *filename) {
 
 void MoviePlayer::playOmniTV() {
 	// Load OmniTV video
-	if (_fd) {
+	if (_fileStream) {
 		_vm->setBitFlag(42, false);
 		_omniTV = true;
 		startSound();
 	} else {
 		if (_omniTVFile) {
 			// Restore state
-			_fd = _omniTVFile;
+			_fileStream = _omniTVFile;
 			_mixer->pauseHandle(_omniTVSound, false);
 
 			_vm->setBitFlag(42, false);
@@ -175,14 +175,14 @@ void MoviePlayer::startSound() {
 	byte *buffer;
 	uint32 offset, size, tag;
 
-	tag = _fd->readUint32BE();
+	tag = _fileStream->readUint32BE();
 	if (tag == MKID_BE('WAVE')) {
-		size = _fd->readUint32BE();
+		size = _fileStream->readUint32BE();
 
 		if (_sequenceNum) {
 			Common::File in;
 
-			_fd->seek(size, SEEK_CUR);
+			_fileStream->seek(size, SEEK_CUR);
 
 			in.open((const char *)"audio.wav");
 			if (!in.isOpen()) {
@@ -199,7 +199,7 @@ void MoviePlayer::startSound() {
 			in.close();
 		} else {
 			buffer = (byte *)malloc(size);
-			_fd->read(buffer, size);
+			_fileStream->read(buffer, size);
 		}
 
 		Common::MemoryReadStream stream(buffer, size);
@@ -226,10 +226,10 @@ void MoviePlayer::nextFrame() {
 
 	if (_vm->getBitFlag(42)) {
 		// Save state
-		 _omniTVFile = _fd;
+		 _omniTVFile = _fileStream;
 		_mixer->pauseHandle(_omniTVSound, true);
 
-		_fd = 0;
+		_fileStream = 0;
 		_omniTV = false;
 		return;
 	}
