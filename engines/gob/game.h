@@ -223,10 +223,11 @@ protected:
 	void loadExtTable(void);
 	void loadImFile(void);
 
-	void setCollisions(void);
-	void collSub(uint16 offset);
 	void collAreaSub(int16 index, int8 enter);
 	int16 openLocTextFile(char *locTextFile, int language);
+
+	virtual void setCollisions(byte arg_0 = 1);
+	virtual void collSub(uint16 offset);
 
 	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex) = 0;
 };
@@ -305,8 +306,19 @@ public:
 
 	virtual void pushCollisions(char all);
 
+	virtual int16 checkCollisions(byte handleMouse, int16 deltaTime,
+			int16 *pResId, int16 *pResIndex);
+
 	Game_v6(GobEngine *vm);
 	virtual ~Game_v6() {}
+
+protected:
+	uint32 _dword_63E44;
+
+	virtual void setCollisions(byte arg_0 = 1);
+	virtual void collSub(uint16 offset);
+
+	void sub_1BA78();
 };
 
 } // End of namespace Gob

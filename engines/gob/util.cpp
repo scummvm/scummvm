@@ -267,12 +267,13 @@ void Util::waitMouseRelease(char drawMouse) {
 	int16 mouseX;
 	int16 mouseY;
 
-	do {
-		_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, drawMouse);
+	_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, drawMouse);
+	while (buttons != 0) {
 		if (drawMouse != 0)
 			_vm->_draw->animateCursor(2);
 		delay(10);
-	} while (buttons != 0);
+		_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, drawMouse);
+	}
 }
 
 void Util::forceMouseUp(bool onlyWhenSynced) {

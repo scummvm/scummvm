@@ -765,7 +765,7 @@ byte *Game::loadLocTexts(int32 *dataSize) {
 	return 0;
 }
 
-void Game::setCollisions(void) {
+void Game::setCollisions(byte arg_0) {
 	byte *savedIP;
 	uint16 left;
 	uint16 top;

@@ -335,6 +335,7 @@ int16 Game_v2::addNewCollision(int16 id, uint16 left, uint16 top,
 		ptr->funcEnter = funcEnter;
 		ptr->funcLeave = funcLeave;
 		ptr->funcSub = 0;
+		ptr->totFileData = 0;
 
 		return i;
 	}
