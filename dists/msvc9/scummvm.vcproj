@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="scummvm"
 	ProjectGUID="{8434CB15-D08F-427D-9E6D-581AE5B28440}"
 	RootNamespace="scummvm"
@@ -1367,6 +1367,14 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\scaler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\smk_player.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\smk_player.h"
 				>
 			</File>
 			<File

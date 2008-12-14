@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7,00"
 	Name="scummvm"
 	ProjectGUID="{8434CB15-D08F-427D-9E6D-581AE5B28440}"
 	Keyword="Win32Proj">
@@ -947,12 +947,10 @@
 				RelativePath="..\..\graphics\dxa_player.h">
 			</File>
 			<File
-				RelativePath="..\..\graphics\flic_player.cpp"
-				>
+				RelativePath="..\..\graphics\flic_player.cpp">
 			</File>
 			<File
-				RelativePath="..\..\graphics\flic_player.h"
-				>
+				RelativePath="..\..\graphics\flic_player.h">
 			</File>
 			<File
 				RelativePath="..\..\graphics\font.cpp">
@@ -1001,6 +999,12 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\scaler.h">
+			</File>
+			<File
+				RelativePath="..\..\graphics\smk_player.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\smk_player.h">
 			</File>
 			<File
 				RelativePath="..\..\graphics\surface.cpp">
