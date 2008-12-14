@@ -598,6 +598,10 @@ begin_credits("Credits");
 		  add_person("Gregory Montoir", "cyx", "");
 	  end_section();
 
+	  begin_section("Tucker");
+		  add_person("Gregory Montoir", "cyx", "");
+	  end_section();
+
     end_section();
 
 
