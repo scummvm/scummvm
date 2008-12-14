@@ -771,7 +771,7 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 		return;
 
 	for (i = 0; i < 4; i++)
-		_vm->_sound->sampleLoad(&samples[i], sndFiles[i]);
+		_vm->_sound->sampleLoad(&samples[i], SOUND_SND, sndFiles[i]);
 	_vm->_sound->blasterPlayComposition(comp, 0, samples, 4);
 	_vm->_sound->blasterWaitEndPlay(true, false);
 	_vm->_palAnim->fade(0, 0, 0);
@@ -790,7 +790,7 @@ void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 	static const char *palFiles[] = {"2ou2.clt", "2ou3.clt", "2ou4.clt", "2ou5.clt"};
 
 	for (int i = 0; i < 2; i++)
-		_vm->_sound->sampleLoad(&samples[i], sndFiles[i]);
+		_vm->_sound->sampleLoad(&samples[i], SOUND_SND, sndFiles[i]);
 	for (int i = 0; i < 4; i++)
 		palettes[i] = _vm->_dataIO->getData(palFiles[i]);
 	palBak = _vm->_global->_pPaletteDesc->vgaPal;

@@ -50,6 +50,8 @@ Sound::Sound(GobEngine *vm) : _vm(vm) {
 		_cdrom = new CDROM;
 	if (_vm->getGameType() == kGameTypeWoodruff)
 		_bgatmos = new BackgroundAtmosphere(*_vm->_mixer);
+	if (_vm->getGameType() == kGameTypeUrban)
+		_bgatmos = new BackgroundAtmosphere(*_vm->_mixer);
 }
 
 Sound::~Sound() {
@@ -91,7 +93,7 @@ int Sound::sampleGetNextFreeSlot() const {
 	return -1;
 }
 
-bool Sound::sampleLoad(SoundDesc *sndDesc, const char *fileName, bool tryExist) {
+bool Sound::sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName, bool tryExist) {
 	if (!sndDesc)
 		return false;
 
@@ -113,9 +115,7 @@ bool Sound::sampleLoad(SoundDesc *sndDesc, const char *fileName, bool tryExist) 
 		return false;
 
 	size = _vm->_dataIO->getDataSize(fileName);
-	sndDesc->load(SOUND_SND, SOUND_FILE, data, size);
-
-	return true;
+	return sndDesc->load(type, SOUND_FILE, data, size);
 }
 
 void Sound::sampleFree(SoundDesc *sndDesc, bool noteAdlib, int index) {
@@ -520,7 +520,7 @@ void Sound::cdTest(int trySubst, const char *label) {
 	_cdrom->testCD(trySubst, label);
 }
 
-void Sound::bgPlay(const char *file) {
+void Sound::bgPlay(const char *file, SoundType type) {
 	if (!_bgatmos)
 		return;
 
@@ -530,7 +530,7 @@ void Sound::bgPlay(const char *file) {
 	_bgatmos->queueClear();
 
 	SoundDesc *sndDesc = new SoundDesc;
-	if (!sampleLoad(sndDesc, file)) {
+	if (!sampleLoad(sndDesc, type, file)) {
 		delete sndDesc;
 		return;
 	}
@@ -539,7 +539,7 @@ void Sound::bgPlay(const char *file) {
 	_bgatmos->play();
 }
 
-void Sound::bgPlay(const char *base, int count) {
+void Sound::bgPlay(const char *base, const char *ext, SoundType type, int count) {
 	if (!_bgatmos)
 		return;
 
@@ -553,10 +553,10 @@ void Sound::bgPlay(const char *base, int count) {
 	SoundDesc *sndDesc;
 
 	for (int i = 1; i <= count; i++) {
-		snprintf(fileName, length, "%s%02d.SND", base, i);
+		snprintf(fileName, length, "%s%02d.%s", base, i, ext);
 
 		sndDesc = new SoundDesc;
-		if (sampleLoad(sndDesc, fileName))
+		if (sampleLoad(sndDesc, type, fileName))
 			_bgatmos->queueSample(*sndDesc);
 		else
 			delete sndDesc;

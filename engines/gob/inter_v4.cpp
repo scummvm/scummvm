@@ -871,7 +871,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 	} else if (lastFrame == -9) {
 		_vm->_sound->bgStop();
 		_vm->_sound->bgSetPlayMode(BackgroundAtmosphere::kPlayModeRandom);
-		_vm->_sound->bgPlay(fileName, palStart);
+		_vm->_sound->bgPlay(fileName, "SND", SOUND_SND, palStart);
 		return;
 	} else if (lastFrame < 0) {
 		warning("Unknown Video/Music command: %d, %s", lastFrame, fileName);

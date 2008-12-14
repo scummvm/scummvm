@@ -686,10 +686,11 @@ void Inter_v6::o6_playVmdOrMusic() {
 	if (lastFrame == -1) {
 		close = true;
 	} else if (lastFrame == -5) {
-		warning("Urban Stub: Stopping background music \"%s\"", fileName);
+		_vm->_sound->bgStop();
 		return;
 	} else if (lastFrame == -9) {
-		warning("Urban Stub: Starting background music \"%s\"", fileName);
+		_vm->_sound->bgStop();
+		_vm->_sound->bgPlay(fileName, SOUND_WAV);
 		return;
 	} else if (lastFrame == -10) {
 		_vm->_vidPlayer->primaryClose();

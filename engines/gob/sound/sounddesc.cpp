@@ -24,6 +24,9 @@
  */
 
 #include "common/util.h"
+#include "common/stream.h"
+#include "sound/mixer.h"
+#include "sound/wave.h"
 
 #include "gob/sound/sounddesc.h"
 
@@ -57,7 +60,7 @@ void SoundDesc::set(SoundType type, SoundSource src,
 	_size = dSize;
 }
 
-void SoundDesc::load(SoundType type, SoundSource src,
+bool SoundDesc::load(SoundType type, SoundSource src,
 		byte *data, uint32 dSize) {
 
 	free();
@@ -65,12 +68,14 @@ void SoundDesc::load(SoundType type, SoundSource src,
 	_source = src;
 	switch (type) {
 	case SOUND_ADL:
-		loadADL(data, dSize);
-		break;
+		return loadADL(data, dSize);
 	case SOUND_SND:
-		loadSND(data, dSize);
-		break;
+		return loadSND(data, dSize);
+	case SOUND_WAV:
+		return loadWAV(data, dSize);
 	}
+
+	return false;
 }
 
 void SoundDesc::free() {
@@ -81,7 +86,7 @@ void SoundDesc::free() {
 }
 
 void SoundDesc::convToSigned() {
-	if ((_type == SOUND_SND) && _data && _dataPtr)
+	if (((_type == SOUND_SND) || (_type == SOUND_WAV)) && _data && _dataPtr)
 		for (uint32 i = 0; i < _size; i++)
 			_dataPtr[i] ^= 0x80;
 }
@@ -95,7 +100,7 @@ uint32 SoundDesc::calcLength(int16 repCount, int16 frequency, bool fade) {
 	return ((_size * repCount - fadeSize) * 1000) / frequency;
 }
 
-void SoundDesc::loadSND(byte *data, uint32 dSize) {
+bool SoundDesc::loadSND(byte *data, uint32 dSize) {
 	assert(dSize > 6);
 
 	_type = SOUND_SND;
@@ -105,12 +110,47 @@ void SoundDesc::loadSND(byte *data, uint32 dSize) {
 	_flag = data[0] ? (data[0] & 0x7F) : 8;
 	data[0] = 0;
 	_size = MIN(READ_BE_UINT32(data), dSize - 6);
+
+	return true;
 }
 
-void SoundDesc::loadADL(byte *data, uint32 dSize) {
+bool SoundDesc::loadWAV(byte *data, uint32 dSize) {
+	Common::MemoryReadStream stream(data, dSize);
+
+	int wavSize, wavRate;
+	byte wavFlags;
+	uint16 wavtype;
+
+	if (!Audio::loadWAVFromStream(stream, wavSize, wavRate, wavFlags, &wavtype, 0))
+		return false;
+
+	if (wavFlags & Audio::Mixer::FLAG_16BITS) {
+		warning("TODO: SoundDesc::loadWAV() - 16bit");
+		return false;
+	}
+
+	if (wavFlags & Audio::Mixer::FLAG_STEREO) {
+		warning("TODO: SoundDesc::loadWAV() - stereo");
+		return false;
+	}
+
+	_data = data;
+	_dataPtr = data + stream.pos();
+	_size = wavSize;
+	_frequency = wavRate;
+
+	if (wavFlags & Audio::Mixer::FLAG_UNSIGNED)
+		convToSigned();
+
+	return true;
+}
+
+bool SoundDesc::loadADL(byte *data, uint32 dSize) {
 	_type = SOUND_ADL;
 	_data = _dataPtr = data;
 	_size = dSize;
+
+	return true;
 }
 
 } // End of namespace Gob

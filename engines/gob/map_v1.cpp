@@ -159,7 +159,7 @@ void Map_v1::loadSounds(Common::SeekableReadStream &data) {
 		strcpy(sndNames[i], buf);
 	}
 
-	_vm->_sound->sampleLoad(&_vm->_goblin->_soundData[14], "diamant1.snd");
+	_vm->_sound->sampleLoad(&_vm->_goblin->_soundData[14], SOUND_SND, "diamant1.snd");
 
 	for (int i = 0; i < count; i++) {
 		handle = _vm->_dataIO->openData(sndNames[i]);
@@ -167,7 +167,7 @@ void Map_v1::loadSounds(Common::SeekableReadStream &data) {
 			continue;
 
 		_vm->_dataIO->closeData(handle);
-		_vm->_sound->sampleLoad(&_vm->_goblin->_soundData[i], sndNames[i]);
+		_vm->_sound->sampleLoad(&_vm->_goblin->_soundData[i], SOUND_SND, sndNames[i]);
 	}
 }
 

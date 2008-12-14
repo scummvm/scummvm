@@ -50,7 +50,7 @@ public:
 	const SoundDesc *sampleGetBySlot(int slot) const;
 	int sampleGetNextFreeSlot() const;
 
-	bool sampleLoad(SoundDesc *sndDesc, const char *fileName, bool tryExist = true);
+	bool sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName, bool tryExist = true);
 	void sampleFree(SoundDesc *sndDesc, bool noteAdlib = false, int index = -1);
 
 
@@ -121,8 +121,8 @@ public:
 
 
 	// Background Atmosphere
-	void bgPlay(const char *file);
-	void bgPlay(const char *base, int count);
+	void bgPlay(const char *file, SoundType type);
+	void bgPlay(const char *base, const char *ext, SoundType type, int count);
 	void bgStop();
 
 	void bgSetPlayMode(BackgroundAtmosphere::PlayMode mode);
