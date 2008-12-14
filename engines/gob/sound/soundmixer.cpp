@@ -62,7 +62,7 @@ inline int16 SoundMixer::getData(int offset) {
 	if (!_16bit)
 		return (int16) _data8[offset];
 	else
-		return (int16) _data16[offset];
+		return (int16) FROM_LE_16(_data16[offset]);
 }
 
 bool SoundMixer::isPlaying() const {
