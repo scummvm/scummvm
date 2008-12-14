@@ -124,7 +124,6 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 		}
 	
 		// Play new sound in empty channel
-
 		int freeChannel = -1;
 		for (int i = 0; i < 4; i++) {
 			if (channels[i].type == 0) {
