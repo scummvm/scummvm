@@ -689,6 +689,10 @@ void Inter_v6::o6_playVmdOrMusic() {
 		_vm->_sound->bgStop();
 		return;
 	} else if (lastFrame == -9) {
+		probe16bitMusic(fileName);
+
+		warning("==> %s", fileName);
+
 		_vm->_sound->bgStop();
 		_vm->_sound->bgPlay(fileName, SOUND_WAV);
 		return;
@@ -900,6 +904,26 @@ bool Inter_v6::o6_freeCollision(OpFuncParams &params) {
 	}
 
 	return false;
+}
+
+void Inter_v6::probe16bitMusic(char *fileName) {
+	int len = strlen(fileName);
+
+	if (len < 4)
+		return;
+
+	if (scumm_stricmp(fileName + len - 4, ".WA8"))
+		return;
+
+	fileName[len - 1] = 'V';
+
+	int16 handle;
+	if ((handle = _vm->_dataIO->openData(fileName)) >= 0) {
+		_vm->_dataIO->closeData(handle);
+		return;
+	}
+
+	fileName[len - 1] = '8';
 }
 
 } // End of namespace Gob

@@ -61,8 +61,12 @@ protected:
 	Audio::SoundHandle _handle;
 	Common::Mutex _mutex;
 
+	bool _16bit;
+	int _shift;
+
 	bool _end;
-	int8 *_data;
+	int8 *_data8;
+	int16 *_data16;
 	uint32 _length;
 	uint32 _rate;
 	int32 _freq;
@@ -88,6 +92,9 @@ protected:
 			int16 frequency, int16 fadeLength);
 	virtual void checkEndSample();
 	virtual void endFade();
+
+private:
+	inline int16 getData(int offset);
 };
 
 } // End of namespace Gob

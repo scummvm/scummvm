@@ -48,6 +48,7 @@ public:
 	int16 _frequency;
 	int16 _flag;
 	int16 _id;
+	byte _mixerFlags;
 
 	byte *getData() { return _dataPtr; }
 

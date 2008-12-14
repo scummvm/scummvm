@@ -43,6 +43,7 @@ SoundDesc::SoundDesc() {
 	_frequency = 0;
 	_flag = 0;
 	_id = 0;
+	_mixerFlags = 0;
 }
 
 SoundDesc::~SoundDesc() {
@@ -86,9 +87,19 @@ void SoundDesc::free() {
 }
 
 void SoundDesc::convToSigned() {
-	if (((_type == SOUND_SND) || (_type == SOUND_WAV)) && _data && _dataPtr)
+	if ((_type != SOUND_SND) && (_type != SOUND_WAV))
+		return;
+	if (!_data || !_dataPtr)
+		return;
+
+	if (_mixerFlags & Audio::Mixer::FLAG_16BITS) {
+		uint16 *data = (uint16 *) _dataPtr;
+		for (uint32 i = 0; i < _size; i++)
+			data[i] ^= 0x8000;
+	} else
 		for (uint32 i = 0; i < _size; i++)
 			_dataPtr[i] ^= 0x80;
+
 }
 
 int16 SoundDesc::calcFadeOutLength(int16 frequency) {
@@ -125,8 +136,8 @@ bool SoundDesc::loadWAV(byte *data, uint32 dSize) {
 		return false;
 
 	if (wavFlags & Audio::Mixer::FLAG_16BITS) {
-		warning("TODO: SoundDesc::loadWAV() - 16bit");
-		return false;
+		_mixerFlags |= Audio::Mixer::FLAG_16BITS;
+		wavSize >>= 1;
 	}
 
 	if (wavFlags & Audio::Mixer::FLAG_STEREO) {

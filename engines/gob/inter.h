@@ -630,6 +630,8 @@ protected:
 	bool o6_evaluateStore(OpFuncParams &params);
 	bool o6_palLoad(OpFuncParams &params);
 	bool o6_freeCollision(OpFuncParams &params);
+
+	void probe16bitMusic(char *fileName);
 };
 
 } // End of namespace Gob
