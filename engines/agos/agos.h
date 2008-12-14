@@ -127,11 +127,11 @@ struct AnimTable {
 };
 
 enum SIMONGameType {
-	GType_ELVIRA1 = 0,
-	GType_ELVIRA2 = 1,
-	GType_WW = 2,
-	GType_SIMON1 = 3,
-	GType_SIMON2 = 4,
+	GType_ELVIRA1 = 1,
+	GType_ELVIRA2 = 2,
+	GType_WW = 3,
+	GType_SIMON1 = 4,
+	GType_SIMON2 = 5,
 	GType_FF = 6,
 	GType_PP = 7
 };
