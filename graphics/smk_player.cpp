@@ -387,6 +387,8 @@ void SMKPlayer::closeFile() {
 	if (!_fileStream)
 		return;
 
+	delete _fileStream;
+
 	delete _MMapTree;
 	delete _MClrTree;
 	delete _FullTree;
