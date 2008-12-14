@@ -235,9 +235,7 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 	if (AudioCD.isPlaying())
 		return;
 
-	if (getGameId() == GID_SIMON1ACORN) {
-		// TODO: Add support for Desktop Tracker format
-	} else if (getPlatform() == Common::kPlatformAmiga) {
+	if (getPlatform() == Common::kPlatformAmiga) {
 		playModule(music);
 	} else if (getFeatures() & GF_TALKIE) {
 		char buf[4];
@@ -262,6 +260,8 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 
 		_midi.startTrack(0);
 		_midi.startTrack(track);
+	} else if (getPlatform() == Common::kPlatformAcorn) {
+		// TODO: Add support for Desktop Tracker format in Acorn disk version
 	} else {
 		char filename[15];
 		File f;

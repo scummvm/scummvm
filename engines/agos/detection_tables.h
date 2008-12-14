@@ -762,7 +762,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1ACORN,
+		GID_SIMON1,
 		GF_OLD_BUNDLE
 	},
 
@@ -786,7 +786,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1TALKIE,
+		GID_SIMON1,
 		GF_TALKIE
 	},
 
@@ -810,7 +810,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1TALKIE,
+		GID_SIMON1,
 		GF_TALKIE
 	},
 
@@ -833,7 +833,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1AMIGA,
+		GID_SIMON1,
 		GF_32COLOR | GF_CRUNCHED | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
@@ -856,7 +856,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1AMIGA,
+		GID_SIMON1,
 		GF_32COLOR | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
@@ -879,7 +879,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1AMIGA,
+		GID_SIMON1,
 		GF_CRUNCHED | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
@@ -902,7 +902,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1AMIGA,
+		GID_SIMON1,
 		GF_CRUNCHED | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
@@ -925,7 +925,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1AMIGA,
+		GID_SIMON1,
 		GF_CRUNCHED | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
@@ -1248,7 +1248,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1TALKIE,
+		GID_SIMON1,
 		GF_TALKIE
 	},
 
@@ -1272,7 +1272,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1TALKIE,
+		GID_SIMON1,
 		GF_TALKIE
 	},
 
@@ -1296,7 +1296,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1TALKIE,
+		GID_SIMON1,
 		GF_TALKIE
 	},
 
@@ -1320,7 +1320,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1TALKIE,
+		GID_SIMON1,
 		GF_TALKIE
 	},
 
@@ -1344,7 +1344,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1TALKIE,
+		GID_SIMON1,
 		GF_TALKIE
 	},
 
@@ -1368,7 +1368,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1TALKIE,
+		GID_SIMON1,
 		GF_TALKIE
 	},
 
@@ -1392,7 +1392,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1TALKIE,
+		GID_SIMON1,
 		GF_TALKIE
 	},
 
@@ -1416,7 +1416,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1TALKIE,
+		GID_SIMON1,
 		GF_TALKIE
 	},
 
@@ -1441,7 +1441,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1TALKIE,
+		GID_SIMON1,
 		GF_TALKIE
 	},
 
@@ -1465,7 +1465,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1TALKIE,
+		GID_SIMON1,
 		GF_TALKIE
 	},
 
@@ -1489,7 +1489,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1TALKIE,
+		GID_SIMON1,
 		GF_TALKIE
 	},
 
@@ -1513,7 +1513,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON1,
-		GID_SIMON1TALKIE,
+		GID_SIMON1,
 		GF_TALKIE
 	},
 
@@ -1537,7 +1537,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2DOS,
+		GID_SIMON2,
 		0
 	},
 
@@ -1561,7 +1561,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2DOS,
+		GID_SIMON2,
 		0
 	},
 
@@ -1585,7 +1585,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2DOS,
+		GID_SIMON2,
 		0
 	},
 
@@ -1609,7 +1609,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2DOS,
+		GID_SIMON2,
 		0
 	},
 
@@ -1633,7 +1633,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
@@ -1657,7 +1657,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
@@ -1681,7 +1681,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
@@ -1705,7 +1705,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
@@ -1729,7 +1729,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
@@ -1753,7 +1753,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
@@ -1777,7 +1777,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
@@ -1801,7 +1801,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
@@ -1826,7 +1826,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
@@ -1850,7 +1850,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
@@ -1874,7 +1874,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
@@ -1898,7 +1898,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
@@ -1922,7 +1922,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
@@ -1946,7 +1946,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
@@ -1970,7 +1970,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		},
 
 		GType_SIMON2,
-		GID_SIMON2TALKIE,
+		GID_SIMON2,
 		GF_TALKIE
 	},
 
