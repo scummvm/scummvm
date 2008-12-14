@@ -503,13 +503,29 @@ bool SoundMidiPC::init() {
 	_output->setTimerCallback(this, SoundMidiPC::onTimer);
 
 	if (_nativeMT32) {
+		const char *midiFile = 0;
+		const char *pakFile = 0;
 		if (_vm->gameFlags().gameID == GI_KYRA1) {
-			loadSoundFile("INTRO");
+			midiFile = "INTRO";
 		} else if (_vm->gameFlags().gameID == GI_KYRA2) {
-			_vm->resource()->loadPakFile("AUDIO.PAK");
-			loadSoundFile("HOF_SYX");
+			midiFile = "HOF_SYX";
+			pakFile = "AUDIO.PAK";
+		} else if (_vm->gameFlags().gameID == GI_LOL) {
+			midiFile = "LOREINTR";
+
+			if (_vm->gameFlags().isTalkie)
+				pakFile = "ENG/STARTUP.PAK";
+			else
+				pakFile = "STARTUP.PAK";
 		}
 	
+		if (!midiFile)
+			return true;
+
+		if (pakFile)
+			_vm->resource()->loadPakFile(pakFile);
+
+		loadSoundFile(midiFile);
 		playTrack(0);
 
 		Common::Event event;
@@ -519,8 +535,8 @@ bool SoundMidiPC::init() {
 			_vm->_system->delayMillis(10);
 		}
 
-		if (_vm->gameFlags().gameID == GI_KYRA2)
-			_vm->resource()->unloadPakFile("AUDIO.PAK");
+		if (pakFile)
+			_vm->resource()->unloadPakFile(pakFile);
 	}
 
 	return true;
