@@ -42,8 +42,8 @@ const char *Parallaction_br::_partNames[] = {
 	"PART4"
 };
 
-Parallaction_br::Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction_ns(syst, gameDesc), 
-	_locationParser(0), _programParser(0) { 
+Parallaction_br::Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction_ns(syst, gameDesc),
+	_locationParser(0), _programParser(0) {
 }
 
 Common::Error Parallaction_br::init() {
@@ -100,7 +100,7 @@ Common::Error Parallaction_br::init() {
 
 Parallaction_br::~Parallaction_br() {
 	freeFonts();
-	
+
 	delete _locationParser;
 	delete _programParser;
 }
@@ -182,7 +182,6 @@ void Parallaction_br::freeLocation(bool removeAll) {
 
 	// free open location stuff
 	clearSubtitles();
-	freeBackground();
 	_gfx->clearGfxObjects(kGfxObjNormal);
 	_gfx->freeLabels();
 	_subtitle[0] = _subtitle[1] = -1;

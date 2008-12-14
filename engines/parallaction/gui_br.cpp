@@ -57,7 +57,6 @@ public:
 		}
 
 		if (_fadeSteps == 0) {
-			_vm->freeBackground();
 			return _helper->getState(_nextState);
 		}
 

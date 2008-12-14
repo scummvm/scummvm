@@ -1244,8 +1244,6 @@ void LocationParser_br::parse(Script *script) {
 	LocationParser_ns::parse(script2);
 
 	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.info);
-	_vm->_pathBuffer = &ctxt.info->path;
-
 
 	ZoneList::iterator it = _vm->_location._zones.begin();
 	for ( ; it != _vm->_location._zones.end(); it++) {

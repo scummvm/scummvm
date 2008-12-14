@@ -29,7 +29,7 @@ namespace Parallaction {
 
 
 
-#define IS_PATH_CLEAR(x,y) _vm->_pathBuffer->getValue((x), (y))
+#define IS_PATH_CLEAR(x,y) _vm->_gfx->_backgroundInfo->path.getValue((x), (y))
 
 inline byte PathBuffer::getValue(uint16 x, uint16 y) {
 	byte m = data[(x >> 3) + y * internalWidth];
@@ -56,15 +56,18 @@ void PathBuilder_NS::correctPathPoint(Common::Point &to) {
 
 	if (IS_PATH_CLEAR(to.x, to.y)) return;
 
+	int maxX = _vm->_gfx->_backgroundInfo->path.w;
+	int maxY = _vm->_gfx->_backgroundInfo->path.h;
+
 	int16 right = to.x;
 	int16 left = to.x;
 	do {
 		right++;
-	} while (!IS_PATH_CLEAR(right, to.y) && (right < _vm->_pathBuffer->w));
+	} while (!IS_PATH_CLEAR(right, to.y) && (right < maxX));
 	do {
 		left--;
 	} while (!IS_PATH_CLEAR(left, to.y) && (left > 0));
-	right = (right == _vm->_pathBuffer->w) ? 1000 : right - to.x;
+	right = (right == maxX) ? 1000 : right - to.x;
 	left = (left == 0) ? 1000 : to.x - left;
 
 
@@ -75,9 +78,9 @@ void PathBuilder_NS::correctPathPoint(Common::Point &to) {
 	} while (!IS_PATH_CLEAR(to.x, top) && (top > 0));
 	do {
 		bottom++;
-	} while (!IS_PATH_CLEAR(to.x, bottom) && (bottom < _vm->_pathBuffer->h));
+	} while (!IS_PATH_CLEAR(to.x, bottom) && (bottom < maxY));
 	top = (top == 0) ? 1000 : to.y - top;
-	bottom = (bottom == _vm->_pathBuffer->h) ? 1000 : bottom - to.y;
+	bottom = (bottom == maxY) ? 1000 : bottom - to.y;
 
 
 	int16 closeX = (right >= left) ? left : right;
@@ -247,7 +250,7 @@ uint16 PathBuilder_NS::walkFunc1(const Common::Point &to, Common::Point& node) {
 
 void PathWalker_NS::clipMove(Common::Point& pos, const Common::Point& to) {
 
-	if ((pos.x < to.x) && (pos.x < _vm->_pathBuffer->w) && IS_PATH_CLEAR(pos.x + 2, pos.y)) {
+	if ((pos.x < to.x) && (pos.x < _vm->_gfx->_backgroundInfo->path.w) && IS_PATH_CLEAR(pos.x + 2, pos.y)) {
 		pos.x = (pos.x + 2 < to.x) ? pos.x + 2 : to.x;
 	}
 
@@ -255,7 +258,7 @@ void PathWalker_NS::clipMove(Common::Point& pos, const Common::Point& to) {
 		pos.x = (pos.x - 2 > to.x) ? pos.x - 2 : to.x;
 	}
 
-	if ((pos.y < to.y) && (pos.y < _vm->_pathBuffer->h) && IS_PATH_CLEAR(pos.x, pos.y + 2)) {
+	if ((pos.y < to.y) && (pos.y < _vm->_gfx->_backgroundInfo->path.h) && IS_PATH_CLEAR(pos.x, pos.y + 2)) {
 		pos.y = (pos.y + 2 <= to.y) ? pos.y + 2 : to.y;
 	}
 

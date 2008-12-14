@@ -51,7 +51,6 @@ public:
 	virtual MenuInputState* run() {
 		uint32 curTime = _vm->_system->getMillis();
 		if (curTime - _startTime > _timeOut) {
-			_vm->freeBackground();
 			return _helper->getState(_nextState);
 		}
 		return this;

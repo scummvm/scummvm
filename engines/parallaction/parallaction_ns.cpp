@@ -323,7 +323,6 @@ void Parallaction_ns::changeLocation(char *location) {
 
 		_input->waitForButtonEvent(kMouseLeftUp);
 		_gfx->freeLabels();
-		freeBackground();
 	}
 
 	if (locname.hasCharacter()) {

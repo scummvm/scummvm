@@ -282,7 +282,6 @@ public:
 	Table				*_localFlagNames;
 	CommandExec			*_cmdExec;
 	ProgramExec			*_programExec;
-	PathBuffer			*_pathBuffer;
 	Inventory 			*_inventory;
 	BalloonManager 		*_balloonMan;
 	DialogueManager		*_dialogueMan;
@@ -344,7 +343,6 @@ public:
 	void 		updateDoor(ZonePtr z, bool close);
 	void 		showZone(ZonePtr z, bool visible);
 	void		setBackground(const char *background, const char *mask, const char *path);
-	void		freeBackground();
 	void 		highlightInventoryItem(ItemPosition pos);
 	int16 		getHoverInventoryItem(int16 x, int16 y);
 	int 		addInventoryItem(ItemName item);

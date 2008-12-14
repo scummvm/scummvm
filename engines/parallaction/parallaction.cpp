@@ -117,8 +117,6 @@ Common::Error Parallaction::init() {
 	_location._startPosition.y = -1000;
 	_location._startFrame = 0;
 
-	_pathBuffer = 0;
-
 	_screenSize = _screenWidth * _screenHeight;
 
 	strcpy(_characterName1, "null");
@@ -305,21 +303,10 @@ void Parallaction::showSlide(const char *name, int x, int y) {
 }
 
 
-void Parallaction::freeBackground() {
-
-	_pathBuffer = 0;
-
-}
-
 void Parallaction::setBackground(const char* name, const char* mask, const char* path) {
-
 	BackgroundInfo *info = new BackgroundInfo;
 	_disk->loadScenery(*info, name, mask, path);
-
 	_gfx->setBackground(kBackgroundLocation, info);
-	_pathBuffer = &info->path;
-
-	return;
 }
 
 void Parallaction::showLocationComment(const Common::String &text, bool end) {

@@ -517,7 +517,6 @@ public:
 	// other items
 	int setItem(GfxObj* obj, uint16 x, uint16 y, byte transparentColor = 0);
 	void setItemFrame(uint item, uint16 f);
-	void hideDialogueStuff();
 	void freeItems();
 
 	// background surface
@@ -527,7 +526,6 @@ public:
 	void grabBackground(const Common::Rect& r, Graphics::Surface &dst);
 	void fillBackground(const Common::Rect& r, byte color);
 	void invertBackground(const Common::Rect& r);
-	void freeBackground();
 
 	// palette
 	void setPalette(Palette palette);
