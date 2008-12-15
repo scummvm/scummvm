@@ -31,11 +31,7 @@
 #define GRAPHICS_SMK_PLAYER_H
 
 #include "common/scummsys.h"
-#include "common/file.h"
-
-namespace Common {
-	class File;
-}
+#include "common/stream.h"
 
 class OSystem;
 
@@ -43,16 +39,13 @@ namespace Graphics {
 
 class BigHuffmanTree;
 
-/*
+/**
  * Implementation of a Smacker v2/v4 video decoder
  */
-
 class SMKPlayer {
 public:
 	SMKPlayer();
 	virtual ~SMKPlayer();
-
-	Common::SeekableReadStream *_fileStream;
 
 	/**
 	 * Returns the width of the video
@@ -122,6 +115,8 @@ protected:
 	byte *palette() { return _palette; }
 
 	uint16 _framesCount;
+
+	Common::SeekableReadStream *_fileStream;
 
 private:
 	void unpackPalette();

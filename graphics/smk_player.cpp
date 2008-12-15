@@ -28,7 +28,7 @@
 // http://svn.ffmpeg.org/ffmpeg/trunk/libavcodec/smacker.c?revision=15884&view=markup
 
 #include "graphics/smk_player.h"
-#include "common/file.h"
+#include "common/archive.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "common/array.h"
@@ -312,7 +312,7 @@ uint32 BigHuffmanTree::getCode(BitStream &bs) {
 }
 
 SMKPlayer::SMKPlayer()
-	: _currentSMKFrame(0),_fileStream(0) {
+	: _currentSMKFrame(0), _fileStream(0) {
 }
 
 SMKPlayer::~SMKPlayer() {
@@ -352,13 +352,9 @@ int32 SMKPlayer::getFrameRate() {
 bool SMKPlayer::loadFile(const char *fileName) {
 	closeFile();
 
-	Common::File *file = new Common::File();
-	if (!file->open(fileName)) {
-		delete file;
+	_fileStream = SearchMan.openFile(fileName);
+	if (!_fileStream)
 		return false;
-	}
-
-	_fileStream = file;
 
 	// Seek to the first frame
 	_currentSMKFrame = 0;
