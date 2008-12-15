@@ -61,8 +61,6 @@ public:
 	DXAPlayer();
 	virtual ~DXAPlayer();
 
-	Common::SeekableReadStream *_fileStream;
-
 	/**
 	 * Returns the width of the video
 	 * @return the width of the video
@@ -91,7 +89,7 @@ public:
 	 * Load a DXA encoded video file
 	 * @param filename	the filename to load
 	 */
-	bool loadFile(const char *filename);
+	bool loadFile(const char *fileName);
 
 	/**
 	 * Close a DXA encoded video file
@@ -123,6 +121,8 @@ protected:
 	void decodeZlib(byte *data, int size, int totalSize);
 	void decode12(int size);
 	void decode13(int size);
+
+	Common::SeekableReadStream *_fileStream;
 };
 
 } // End of namespace Graphics

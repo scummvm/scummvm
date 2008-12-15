@@ -24,7 +24,7 @@
  */
 
 #include "common/endian.h"
-#include "common/file.h"
+#include "common/archive.h"
 #include "graphics/dxa_player.h"
 #include "common/util.h"
 
@@ -89,17 +89,13 @@ int DXAPlayer::getFrameCount() {
 	return _framesCount;
 }
 
-bool DXAPlayer::loadFile(const char *filename) {
+bool DXAPlayer::loadFile(const char *fileName) {
 	uint32 tag;
 	int32 frameRate;
 
-	Common::File *file = new Common::File();
-	if (!file->open(filename)) {
-		delete file;
-		return 0;
-	}
-
-	_fileStream = file;
+	_fileStream = SearchMan.openFile(fileName);
+	if (!_fileStream)
+		return false;
 
 	tag = _fileStream->readUint32BE();
 	assert(tag == MKID_BE('DEXA'));
