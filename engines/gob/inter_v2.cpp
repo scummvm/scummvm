@@ -500,7 +500,7 @@ void Inter_v2::setupOpcodes() {
 		/* 24 */
 		OPCODE(o1_putPixel),
 		OPCODE(o2_goblinFunc),
-		OPCODE(o2_createSprite),
+		OPCODE(o1_createSprite),
 		OPCODE(o1_freeSprite),
 		/* 28 */
 		{NULL, ""},
@@ -1849,23 +1849,6 @@ bool Inter_v2::o2_goblinFunc(OpFuncParams &params) {
 
 	if (cmd != 101)
 		executeGoblinOpcode(cmd, gobParams);
-	return false;
-}
-
-bool Inter_v2::o2_createSprite(OpFuncParams &params) {
-	int16 index;
-	int16 width, height;
-	int16 flag;
-
-	index = load16();
-	width = load16();
-	height = load16();
-
-	_vm->_draw->adjustCoords(0, &width, &height);
-
-	flag = load16();
-	_vm->_draw->initSpriteSurf(index, width, height, flag);
-
 	return false;
 }
 

@@ -388,7 +388,6 @@ protected:
 	bool o2_addCollision(OpFuncParams &params);
 	bool o2_freeCollision(OpFuncParams &params);
 	bool o2_goblinFunc(OpFuncParams &params);
-	bool o2_createSprite(OpFuncParams &params);
 	bool o2_stopSound(OpFuncParams &params);
 	bool o2_loadSound(OpFuncParams &params);
 	bool o2_getFreeMem(OpFuncParams &params);

@@ -1821,9 +1821,15 @@ bool Inter_v1::o1_createSprite(OpFuncParams &params) {
 	int16 width, height;
 	int16 flag;
 
-	index = load16();
-	width = load16();
-	height = load16();
+	if (_vm->_global->_inter_execPtr[1] == 0) {
+		index = load16();
+		width = load16();
+		height = load16();
+	} else {
+		index = _vm->_parse->parseValExpr();
+		width = _vm->_parse->parseValExpr();
+		height = _vm->_parse->parseValExpr();
+	}
 
 	flag = load16();
 	_vm->_draw->initSpriteSurf(index, width, height, flag ? 2 : 0);
