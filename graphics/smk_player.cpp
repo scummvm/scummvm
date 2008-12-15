@@ -334,6 +334,13 @@ bool SMKPlayer::loadFile(const char *fileName) {
 	_currentSMKFrame = 0;
 	_header.signature = _fileStream->readUint32BE();
 
+	// No BINK support available
+	if (_header.signature == MKID_BE('BIKi')) {
+		delete _fileStream;
+		_fileStream = 0;
+		return false;
+	}
+
 	assert(_header.signature == MKID_BE('SMK2') || _header.signature == MKID_BE('SMK4'));
 
 	_header.width = _fileStream->readUint32LE();
