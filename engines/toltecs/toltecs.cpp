@@ -102,7 +102,6 @@ Common::Error ToltecsEngine::go() {
 
 	_isSaveAllowed = true;
 
- 	_quitGame = false;
 	_counter01 = 0;
 	_counter02 = 0;
 	_movieSceneFlag = false;
@@ -248,6 +247,7 @@ void ToltecsEngine::updateScreen() {
 	_system->updateScreen();
 
 	updateCamera();
+
 }
 
 void ToltecsEngine::updateInput() {
@@ -272,8 +272,7 @@ void ToltecsEngine::updateInput() {
 
 			break;
 		case Common::EVENT_QUIT:
-			// FIXME: Find a nicer way to quit
-			_system->quit();
+			quitGame();
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
@@ -338,6 +337,7 @@ void ToltecsEngine::setGuiHeight(int16 guiHeight) {
 	if (guiHeight != _guiHeight) {
 		_guiHeight = guiHeight;
 		_cameraHeight = 400 - _guiHeight;
+		_screen->_guiRefresh = true;
 		debug(0, "ToltecsEngine::setGuiHeight() _guiHeight = %d; _cameraHeight = %d", _guiHeight, _cameraHeight);
 		// TODO: clearScreen();
 	}

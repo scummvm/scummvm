@@ -134,7 +134,7 @@ bool ToltecsMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Toltecs::ToltecsEngine::hasFeature(EngineFeature f) const {
 	return
-//		(f == kSupportsRTL) ||
+		(f == kSupportsRTL) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

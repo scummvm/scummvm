@@ -96,7 +96,7 @@ void ScriptInterpreter::runScript(uint slotIndex) {
 
 	_code = getSlotData(_regs.reg4);
 
-	while (1) {
+	while (!_vm->shouldQuit()) {
 
 		if (_vm->_movieSceneFlag)
 			_vm->_mouseButton = 0;
@@ -124,7 +124,7 @@ void ScriptInterpreter::runScript(uint slotIndex) {
 		// Call updateScreen roughly every 10ms else the mouse cursor will be jerky
 		if (_vm->_system->getMillis() % 10 == 0)
 			_vm->_system->updateScreen();
-		
+
 	}
 
 }
@@ -451,7 +451,7 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 
 		_vm->_screen->updateShakeScreen();
 
-		if (_vm->_quitGame)
+		if (_vm->shouldQuit())
 			return;
 
 		if (!_vm->_movieSceneFlag)

@@ -193,11 +193,13 @@ void ToltecsEngine::loadgame(const char *filename) {
 Common::Error ToltecsEngine::loadGameState(int slot) {
 	const char *fileName = getSavegameFilename(slot);
 	loadgame(fileName);
+	return Common::kNoError;
 }
 
 Common::Error ToltecsEngine::saveGameState(int slot, const char *description) {
 	const char *fileName = getSavegameFilename(slot);
 	savegame(fileName, description);
+	return Common::kNoError;
 }
 
 const char *ToltecsEngine::getSavegameFilename(int num) {
