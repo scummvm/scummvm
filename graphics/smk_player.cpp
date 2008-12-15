@@ -319,6 +319,36 @@ SMKPlayer::~SMKPlayer() {
 	closeFile();
 }
 
+int SMKPlayer::getWidth() {
+	if (!_fileStream)
+		return 0;
+	return _header.width;
+}
+
+int SMKPlayer::getHeight() {
+	if (!_fileStream)
+		return 0;
+	return (_header.flags ? 2 : 1) * _header.height;
+}
+
+int32 SMKPlayer::getCurFrame() {
+	if (!_fileStream)
+		return -1;
+	return _currentSMKFrame;
+}
+
+int32 SMKPlayer::getFrameCount() {
+	if (!_fileStream)
+		return 0;
+	return _framesCount;
+}
+
+int32 SMKPlayer::getFrameRate() {
+	if (!_fileStream)
+		return 0;
+	return _header.frameRate;
+}
+
 bool SMKPlayer::loadFile(const char *fileName) {
 	closeFile();
 

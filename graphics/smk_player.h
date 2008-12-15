@@ -58,31 +58,31 @@ public:
 	 * Returns the width of the video
 	 * @return the width of the video
 	 */
-	uint getWidth() { return _header.width; }
+	int getWidth();
 
 	/**
 	 * Returns the height of the video
 	 * @return the height of the video
 	 */
-	uint getHeight() { return (_header.flags ? 2 : 1) * _header.height; }
+	int getHeight();
 
 	/**
 	 * Returns the current frame number of the video
 	 * @return the current frame number of the video
 	 */
-	uint32 getCurFrame() { return _currentSMKFrame; }
+	int32 getCurFrame();
 
 	/**
 	 * Returns the amount of frames in the video
 	 * @return the amount of frames in the video
 	 */
-	uint32 getFrameCount() { return _framesCount; }
+	int32 getFrameCount();
 
 	/**
 	 * Returns the frame rate of the video
 	 * @return the frame rate of the video
 	 */
-	int32 getFrameRate() { return _header.frameRate; }
+	int32 getFrameRate();
 
 	/**
 	 * Load an SMK encoded video file
