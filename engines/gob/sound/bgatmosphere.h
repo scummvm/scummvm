@@ -52,6 +52,7 @@ public:
 	void queueSample(SoundDesc &sndDesc);
 	void queueClear();
 
+	void setShadable(bool shadable);
 	void shade();
 	void unshade();
 
@@ -61,6 +62,7 @@ private:
 	Common::Array<SoundDesc *> _queue;
 	int _queuePos;
 	bool _shaded;
+	bool _shadable;
 
 	Common::Mutex _mutex;
 

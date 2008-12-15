@@ -36,6 +36,7 @@ BackgroundAtmosphere::BackgroundAtmosphere(Audio::Mixer &mixer) :
 	_playMode = kPlayModeLinear;
 	_queuePos = -1;
 	_shaded = false;
+	_shadable = true;
 
 	g_system->getEventManager()->registerRandomSource(_rnd, "gobBA");
 }
@@ -115,12 +116,26 @@ void BackgroundAtmosphere::getNextQueuePos() {
 	}
 }
 
+void BackgroundAtmosphere::setShadable(bool shadable) {
+	if (!shadable) {
+		unshade();
+		_shadable = false;
+	} else
+		_shadable = true;
+}
+
 void BackgroundAtmosphere::shade() {
+	if (!_shadable)
+		return;
+
 	_shaded = true;
 	_fadeVol = 32768;
 }
 
 void BackgroundAtmosphere::unshade() {
+	if (!_shadable)
+		return;
+
 	_shaded = false;
 	_fadeVol = 65536;
 }
