@@ -477,8 +477,6 @@ public:
 };
 
 
-typedef Common::HashMap<Common::String, int32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VarMap;
-
 typedef Common::Array<GfxObj*> GfxObjArray;
 
 
@@ -489,7 +487,6 @@ protected:
 
 public:
 	Disk *_disk;
-	VarMap _vars;
 
 	GfxObjArray _sceneObjects;
 	GfxObj* loadAnim(const char *name);
@@ -544,12 +541,6 @@ public:
 	Gfx(Parallaction* vm);
 	virtual ~Gfx();
 
-	void beginFrame();
-
-	void registerVar(const Common::String &name, int32 initialValue);
-	void setVar(const Common::String &name, int32 value);
-	int32 getVar(const Common::String &name);
-
 	void clearScreen();
 	void updateScreen();
 
@@ -561,8 +552,6 @@ public:
 protected:
 	bool				_halfbrite;
 
-	bool 				_skipBackground;
-
 	Common::Point		_hbCirclePos;
 	int				_hbCircleRadius;
 
@@ -570,10 +559,6 @@ protected:
 	Palette				_backupPal;
 
 	// frame data stored in programmable variables
-	int32				_varBackgroundMode;	// 1 = normal, 2 = only mask
-	int32				_varRenderMode;
-	int32				_varDrawPathZones;	// 0 = don't draw, 1 = draw
-	Graphics::Surface 	_bitmapMask;
 	int32 				getRenderMode(const char *type);
 
 	Graphics::Surface	*lockScreen();

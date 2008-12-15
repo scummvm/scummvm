@@ -45,7 +45,6 @@ Debugger::Debugger(Parallaction *vm)
 	DCmd_Register("localflags",	WRAP_METHOD(Debugger, Cmd_LocalFlags));
 	DCmd_Register("locations",	WRAP_METHOD(Debugger, Cmd_Locations));
 	DCmd_Register("gfxobjects",	WRAP_METHOD(Debugger, Cmd_GfxObjects));
-	DCmd_Register("set", 		WRAP_METHOD(Debugger, Cmd_Set));
 	DCmd_Register("programs", 	WRAP_METHOD(Debugger, Cmd_Programs));
 
 }
@@ -200,17 +199,6 @@ bool Debugger::Cmd_GfxObjects(int argc, const char **argv) {
 	}
 
 	DebugPrintf("+--------------------+-----+-----+-----+-------+-----+--------+--------+\n");
-
-	return true;
-}
-
-bool Debugger::Cmd_Set(int argc, const char** argv) {
-
-	if (argc < 3) {
-		DebugPrintf("set <var name> <value>\n");
-	} else {
-		_vm->_gfx->setVar(Common::String(argv[1]), atoi(argv[2]));
-	}
 
 	return true;
 }

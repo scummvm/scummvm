@@ -308,24 +308,39 @@ void Parallaction::showLocationComment(const Common::String &text, bool end) {
 }
 
 
-void Parallaction::processInput(int event) {
-
-	switch (event) {
-	case kEvSaveGame:
-		_input->stopHovering();
-		_saveLoad->saveGame();
-		_input->setArrowCursor();
-		break;
-
-	case kEvLoadGame:
-		_input->stopHovering();
-		_saveLoad->loadGame();
-		_input->setArrowCursor();
-		break;
-
+void Parallaction::runGameFrame(int event) {
+	if (_input->_inputMode != Input::kInputModeGame) {
+		return;
 	}
 
-	return;
+	if (event != kEvNone) {
+		_input->stopHovering();
+		if (event == kEvSaveGame) {
+			_saveLoad->saveGame();
+		} else
+		if (event == kEvLoadGame) {
+			_saveLoad->loadGame();
+		}
+		_input->setArrowCursor();
+	}
+
+	runPendingZones();
+
+	if (shouldQuit())
+		return;
+
+	if (_engineFlags & kEngineChangeLocation) {
+		changeLocation(_location._name);
+	}
+
+	_programExec->runScripts(_location._programs.begin(), _location._programs.end());
+	_char._ani->setZ(_char._ani->height() + _char._ani->getFrameY());
+	if (_char._ani->gfxobj) {
+		_char._ani->gfxobj->z = _char._ani->getZ();
+	}
+	_char._walker->walk();
+	drawAnimations();
+
 }
 
 void Parallaction::runGame() {
@@ -337,30 +352,10 @@ void Parallaction::runGame() {
 	runGuiFrame();
 	runDialogueFrame();
 	runCommentFrame();
+	runGameFrame(event);
 
-	if (_input->_inputMode == Input::kInputModeGame) {
-		processInput(event);
-		runPendingZones();
-
-		if (shouldQuit())
-			return;
-
-		if (_engineFlags & kEngineChangeLocation) {
-			changeLocation(_location._name);
-		}
-	}
-
-	_gfx->beginFrame();
-
-	if (_input->_inputMode == Input::kInputModeGame) {
-		_programExec->runScripts(_location._programs.begin(), _location._programs.end());
-		_char._ani->setZ(_char._ani->height() + _char._ani->getFrameY());
-		if (_char._ani->gfxobj) {
-			_char._ani->gfxobj->z = _char._ani->getZ();
-		}
-		_char._walker->walk();
-		drawAnimations();
-	}
+	if (shouldQuit())
+		return;
 
 	// change this to endFrame?
 	updateView();

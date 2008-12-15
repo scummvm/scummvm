@@ -123,6 +123,7 @@ class Input;
 class DialogueManager;
 class MenuInputHelper;
 
+
 struct Location {
 
 	Common::Point	_startPosition;
@@ -301,6 +302,7 @@ public:
 
 protected:
 	void	runGame();
+	void 	runGameFrame(int event);
 	void 	runGuiFrame();
 	void 	cleanupGui();
 	void 	runDialogueFrame();
@@ -308,7 +310,6 @@ protected:
 	void 	runCommentFrame();
 	void 	enterCommentMode(ZonePtr z);
 	void 	exitCommentMode();
-	void	processInput(int event);
 	void	updateView();
 	void 	drawAnimations();
 	void	freeCharacter();
@@ -493,6 +494,7 @@ public:
 	ZonePtr		_activeZone2;
 	int32		_counters[32];
 	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
+
 
 private:
 	LocationParser_br		*_locationParser;

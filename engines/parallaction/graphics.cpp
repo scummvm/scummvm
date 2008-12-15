@@ -40,36 +40,6 @@ namespace Parallaction {
 #define MAXIMUM_UNPACKED_BITMAP_SIZE	641*401
 
 
-void Gfx::registerVar(const Common::String &name, int32 initialValue) {
-	if (_vars.contains(name)) {
-		warning("Variable '%s' already registered, ignoring initial value.\n", name.c_str());
-	} else {
-		_vars.setVal(name, initialValue);
-	}
-}
-
-void Gfx::setVar(const Common::String &name, int32 value) {
-	if (!_vars.contains(name)) {
-		warning("Variable '%s' doesn't exist, skipping assignment.\n", name.c_str());
-	} else {
-		_vars.setVal(name, value);
-	}
-}
-
-int32 Gfx::getVar(const Common::String &name) {
-	int32 v = 0;
-
-	if (!_vars.contains(name)) {
-		warning("Variable '%s' doesn't exist, returning default value.\n", name.c_str());
-	} else {
-		v = _vars.getVal(name);
-	}
-
-	return v;
-}
-
-
-
 #define	LABEL_TRANSPARENT_COLOR 0xFF
 
 void halfbritePixel(int x, int y, int color, void *data) {
@@ -343,56 +313,6 @@ void Gfx::drawList(Graphics::Surface &surface, GfxObjArray &list) {
 	}
 }
 
-void Gfx::beginFrame() {
-	_skipBackground = (_backgroundInfo->bg.pixels == 0);	// don't render frame if background is missing
-
-	if (!_skipBackground) {
-		int32 oldBackgroundMode = _varBackgroundMode;
-		_varBackgroundMode = getVar("background_mode");
-		if (oldBackgroundMode != _varBackgroundMode) {
-			switch (_varBackgroundMode) {
-			case 1:
-				_bitmapMask.free();
-				break;
-			case 2:
-				_bitmapMask.create(_backgroundInfo->width, _backgroundInfo->height, 1);
-				byte *data = (byte*)_bitmapMask.pixels;
-				for (uint y = 0; y < _bitmapMask.h; y++) {
-					for (uint x = 0; x < _bitmapMask.w; x++) {
-						*data++ = _backgroundInfo->mask.getValue(x, y);
-					}
-				}
-#if 0
-				Common::DumpFile dump;
-				dump.open("maskdump.bin");
-				dump.write(_bitmapMask.pixels, _bitmapMask.w * _bitmapMask.h);
-				dump.close();
-#endif
-				break;
-			}
-		}
-	}
-
-	_varDrawPathZones = getVar("draw_path_zones");
-	if (_varDrawPathZones == 1 && _gameType != GType_BRA) {
-		setVar("draw_path_zones", 0);
-		_varDrawPathZones = 0;
-		warning("Path zones are supported only in Big Red Adventure");
-	}
-}
-
-int32 Gfx::getRenderMode(const char *type) {
-
-	int32 mode = getVar(type);
-	if (mode < 0 || mode > 2) {
-		warning("new value for '%s' is wrong: resetting default", type);
-		setVar(type, 1);
-		mode = 1;
-	}
-	return mode;
-
-}
-
 void Gfx::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
 	if (_doubleBuffering) {
 		if (_overlayMode)
@@ -457,26 +377,17 @@ void Gfx::updateScreen() {
 	// is needed
 	_overlayMode = false;
 
-	if (!_skipBackground) {
+	bool skipBackground = (_backgroundInfo->bg.pixels == 0);	// don't render frame if background is missing
+
+	if (!skipBackground) {
 		// background may not cover the whole screen, so adjust bulk update size
 		uint w = _backgroundInfo->width;
 		uint h = _backgroundInfo->height;
-
-		byte *backgroundData = 0;
-		uint16 backgroundPitch = 0;
-		switch (_varBackgroundMode) {
-		case 1:
-			backgroundData = (byte*)_backgroundInfo->bg.getBasePtr(0, 0);
-			backgroundPitch = _backgroundInfo->bg.pitch;
-			break;
-		case 2:
-			backgroundData = (byte*)_bitmapMask.getBasePtr(0, 0);
-			backgroundPitch = _bitmapMask.pitch;
-			break;
-		}
+		byte *backgroundData = (byte*)_backgroundInfo->bg.getBasePtr(0, 0);
+		uint16 backgroundPitch = _backgroundInfo->bg.pitch;
 		copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo->x, _backgroundInfo->y, w, h);
 	}
-
+/*
 	if (_varDrawPathZones == 1) {
 		Graphics::Surface *surf = lockScreen();
 		ZoneList::iterator b = _vm->_location._zones.begin();
@@ -489,7 +400,7 @@ void Gfx::updateScreen() {
 		}
 		unlockScreen();
 	}
-
+*/
 	sortScene();
 	Graphics::Surface *surf = lockScreen();
 		// draws animations frames and other game items
@@ -797,11 +708,6 @@ Gfx::Gfx(Parallaction* vm) :
 
 	_unpackedBitmap = new byte[MAXIMUM_UNPACKED_BITMAP_SIZE];
 	assert(_unpackedBitmap);
-
-	registerVar("background_mode", 1);
-	_varBackgroundMode = 1;
-
-	registerVar("draw_path_zones", 0);
 
 	if ((_gameType == GType_BRA) && (_vm->getPlatform() == Common::kPlatformPC)) {
 	// this loads the backup palette needed by the PC version of BRA (see setBackground()).
