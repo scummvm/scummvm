@@ -430,6 +430,8 @@ int ScummEngine_v60he::convertFilePath(byte *dst) {
 			if (dst[r - 1] == '/')
 				break;
 		}
+	} else if (dst[0] == 'u' && dst[1] == 's') { // Save Game Path (Moonbase Commander)
+		r = 5;
 	}
 
 	debug(1, "convertFilePath: converted filePath is %s", dst + r);

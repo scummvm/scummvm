@@ -959,4 +959,16 @@ int LogicHEsoccer::op_1021(int32 *args) {
 	return 1;
 }
 
+/***********************
+ * Moonbase Commander
+ *
+ */
+
+int LogicHEmoonbase::versionID() {
+	if (_vm->_game.features & GF_DEMO)
+		return -100;
+	else
+		return 100;
+}
+
 } // End of namespace Scumm

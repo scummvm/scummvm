@@ -1503,6 +1503,10 @@ void ScummEngine_v90he::resetScumm() {
 			_logicHE = new LogicHEsoccer(this);
 			break;
 
+		case GID_MOONBASE:
+			_logicHE = new LogicHEmoonbase(this);
+			break;
+
 		default:
 			_logicHE = new LogicHE(this);
 			break;

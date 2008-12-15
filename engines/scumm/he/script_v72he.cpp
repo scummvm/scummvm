@@ -1676,6 +1676,11 @@ void ScummEngine_v72he::o72_openFile() {
 	copyScriptString(buffer, sizeof(buffer));
 	debug(1, "Original filename %s", buffer);
 
+	// HACK: INI filename seems to get reset, corruption elsewhere?
+	if (_game.id == GID_MOONBASE && buffer[0] == 0) {
+		strcpy((char *)buffer, "moonbase.ini");
+	}
+
 	const char *filename = (char *)buffer + convertFilePath(buffer);
 	debug(1, "Final filename to %s", filename);
 

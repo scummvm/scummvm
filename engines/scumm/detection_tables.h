@@ -107,6 +107,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "jungle", "Let's Explore the Jungle with Buzzy" },
 	{ "lost", "Pajama Sam's Lost & Found" },
 	{ "maze", "Freddi Fish and Luther's Maze Madness" },
+	{ "moonbase", "Moonbase Commander" },
 	{ "mustard", "SPY Fox in Hold the Mustard" },
 	{ "pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside" },
 	{ "pajama2", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening" },
@@ -347,16 +348,19 @@ static const GameSettings gameVariantsTable[] = {
 	// Restructured the Scumm engine
 	{"pjgames", 0, 0, GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, UNK},
 
-	// Uses bink in external files for logos
-	{"Baseball2003", 0, 0, GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
-	{"basketball", 0, 0, GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY| GF_16BIT_COLOR, UNK},
-	{"Soccer2004", 0, 0, GID_SOCCER, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
-
 	// Uses smacker in external files, for testing only
 	{"arttime", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
 	{"readtime", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
-	{"football2002", 0, 0, GID_FOOTBALL, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
 
+	// Uses bink in external files for logos
+	{"Baseball2003", 0, 0, GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
+	{"basketball", 0, 0, GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY| GF_16BIT_COLOR, UNK},
+	{"football2002", 0, 0, GID_FOOTBALL, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
+	{"Soccer2004", 0, 0, GID_SOCCER, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
+
+	// U32 code required, for testing only
+	{"moonbase", 0, 0, GID_MOONBASE, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
+	{"moonbase", "Demo", 0, GID_MOONBASE, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR | GF_DEMO, UNK},
 
 	// The following are meant to be generic HE game variants and as such do
 	// not specify a game ID. Make sure that these are last in the table, else
@@ -639,6 +643,9 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "maze", "Doolhof", kGenHEPC, Common::NL_NLD, UNK, 0 },
 	{ "maze", "Doolhof", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "maze", "Maze Madness", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
+	{ "moonbase", "moonbase", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "moonbase", "moondemo", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "mustard", "mustard", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "mustard", "Mustard", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },

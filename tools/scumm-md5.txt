@@ -591,6 +591,10 @@ jungle	Let's Explore the Jungle with Buzzy
 	659942b9a6b519f123a13cca3c333a13	-1	en	Mac	-	-	-	Joachim Eberhard
 	8801fb4a1200b347f7a38523339526dd	-1	en	Windows	-	-	-	Kirben
 
+moonbase	Moonbase Commander
+	cf400d20769fb70eb21766582f4924f7	-1	en	Windows	-	-	-	Kirben
+	ef71a322b6530ac45b1a070f7c0795f7	-1	en	Windows	Demo	Demo	-	Kirben
+
 pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 	672dec94b82f7f0877ebb5b5cf7f4bc1	-1	us	All	-	-	-	khalek
 	1d7a2e1ddcade791e2de0cfceac86725	-1	fr	All	-	-	-	gist974, ThierryFR

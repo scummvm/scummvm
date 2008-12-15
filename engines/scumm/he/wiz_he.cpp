@@ -526,7 +526,7 @@ void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int 
 }
 
 void Wiz::copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor) {
-	// RAW 16 bits in 555 format
+	// TODO: RAW 16 bits in 555 format
 
 	// HACK: Skip every second bit for now
 	Common::Rect r1, r2;
@@ -1237,6 +1237,12 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 		break;
 	case 2:
 		copyRaw16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, transColor);
+		break;
+	case 4:
+		// TODO: Unknown image type
+		break;
+	case 5:
+		// TODO: 16bit color compressed image
 		break;
 	default:
 		error("drawWizImage: Unhandled wiz compression type %d", comp);
@@ -2105,7 +2111,15 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 			ret = isWizPixelNonTransparent(wizd, x, y, w, h);
 			break;
 		case 2:
-			// Used baseball2003
+			// TODO: 16bit color uncompressed image type
+			debug(0, "isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
+			break;
+		case 4:
+			// TODO: Unknown image type
+			debug(0, "isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
+			break;
+		case 5:
+			// TODO: 16bit color compressed image type
 			debug(0, "isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
 			break;
 		default:
@@ -2117,7 +2131,7 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 }
 
 uint8 Wiz::getWizPixelColor(int resNum, int state, int x, int y, int flags) {
-	uint8 color;
+	uint8 color = 0;
 	uint8 *data = _vm->getResourceAddress(rtImage, resNum);
 	assert(data);
 	uint8 *wizh = _vm->findWrappedBlock(MKID_BE('WIZH'), data, state, 0);
@@ -2137,6 +2151,18 @@ uint8 Wiz::getWizPixelColor(int resNum, int state, int x, int y, int flags) {
 		break;
 	case 1:
 		color = getWizPixelColor(wizd, x, y, w, h, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
+		break;
+	case 2:
+		// TODO: 16bit color uncompressed image type
+		debug(0, "getWizPixelColor: Unhandled wiz compression type %d", c);
+		break;
+	case 4:
+		// TODO: Unknown image type
+		debug(0, "getWizPixelColor: Unhandled wiz compression type %d", c);
+		break;
+	case 5:
+		// TODO: 16bit color compressed image type
+		debug(0, "getWizPixelColor: Unhandled wiz compression type %d", c);
 		break;
 	default:
 		error("getWizPixelColor: Unhandled wiz compression type %d", c);

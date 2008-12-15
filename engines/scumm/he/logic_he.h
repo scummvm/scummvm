@@ -135,6 +135,13 @@ private:
 	int op_1021(int32 *args);
 };
 
+class LogicHEmoonbase : public LogicHE {
+public:
+	LogicHEmoonbase(ScummEngine_v90he *vm) : LogicHE(vm) {}
+
+	int versionID();
+};
+
 } // End of namespace Scumm
 
 #endif
