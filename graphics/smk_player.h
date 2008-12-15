@@ -154,7 +154,7 @@ private:
 	bool _paletteDidChange;
 	byte *_palette;
 	// Possible runs of blocks
-	int getBlockRun(int index) { return (index <= 58) ? index + 1 : (2 ^ (59 - index)) * 128; }
+	uint getBlockRun(int index) { return (index <= 58) ? index + 1 : 128 << (index - 59); }
 };
 
 } // End of namespace Graphics

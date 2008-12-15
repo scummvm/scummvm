@@ -489,17 +489,6 @@ bool SMKPlayer::decodeNextFrame() {
 	_FullTree->reset();
 	_TypeTree->reset();
 
-	static const uint blockRuns[64] = {
-		 1,    2,    3,    4,    5,    6,    7,    8,
-		 9,   10,   11,   12,   13,   14,   15,   16,
-		17,   18,   19,   20,   21,   22,   23,   24,
-		25,   26,   27,   28,   29,   30,   31,   32,
-		33,   34,   35,   36,   37,   38,   39,   40,
-		41,   42,   43,   44,   45,   46,   47,   48,
-		49,   50,   51,   52,   53,   54,   55,   56,
-		57,   58,   59,  128,  256,  512, 1024, 2048
-	};
-
 	uint bw = _header.width / 4;
 	uint bh = _header.height / 4;
 	uint stride = _header.width;
@@ -514,9 +503,7 @@ bool SMKPlayer::decodeNextFrame() {
 
 	while (block < blocks) {
 		type = _TypeTree->getCode(bs);
-
-		run = blockRuns[(type >> 2) & 0x3f];
-		//run = getBlockRun((type >> 2) & 0x3f);
+		run = getBlockRun((type >> 2) & 0x3f);
 
 		switch (type & 3) {
 		case SMK_BLOCK_MONO:
@@ -655,11 +642,11 @@ void SMKPlayer::unpackPalette() {
 	byte b0;
 	while (sz < 256) {
 		b0 = *p++;
-		if (b0 & 0x80) {
-			sz += (b0 & 0x7f) + 1;
+		if (b0 & 0x80) {               // if top bit is 1 (0x80 = 10000000)
+			sz += (b0 & 0x7f) + 1;     // get lower 7 bits + 1 (0x7f = 01111111)
 			pal += 3 * ((b0 & 0x7f) + 1);
-		} else if (b0 & 0x40) {
-			byte c = (b0 & 0x3f) + 1;
+		} else if (b0 & 0x40) {        // if top 2 bits are 01 (0x40 = 01000000)
+			byte c = (b0 & 0x3f) + 1;  // get lower 6 bits + 1 (0x3f = 00111111)
 			uint s = 3 * *p++;
 			sz += c;
 
@@ -669,14 +656,16 @@ void SMKPlayer::unpackPalette() {
 				*pal++ = oldPalette[s + 2];
 				s += 3;
 			}
-		} else {
+		} else {                       // top 2 bits are 00
 			sz++;
+			// get the lower 6 bits for each component (0x3f = 00111111)
 			byte b = b0 & 0x3f;
 			byte g = (*p++) & 0x3f;
 			byte r = (*p++) & 0x3f;
 
 			assert(g < 0xc0 && b < 0xc0);
 
+			// upscale to full 8-bit color values by multiplying by 4
 			*pal++ = b * 4;
 			*pal++ = g * 4;
 			*pal++ = r * 4;
