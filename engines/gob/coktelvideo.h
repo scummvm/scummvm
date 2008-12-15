@@ -323,10 +323,6 @@ public:
 
 	State nextFrame();
 
-	virtual void copyCurrentFrame(byte *dest,
-			uint16 left, uint16 top, uint16 width, uint16 height,
-			uint16 x, uint16 y, uint16 pitch, int16 transp = -1);
-
 protected:
 	enum PartType {
 		kPartTypeSeparator = 0,
@@ -372,7 +368,9 @@ protected:
 	byte _soundBytesPerSample;
 	byte _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
 
+	bool _externalCodec;
 	byte _bytesPerPixel;
+	byte *_vidMemBuffer;
 
 	PaletteLUT *_palLUT;
 	Indeo3 *_codecIndeo3;
@@ -383,6 +381,10 @@ protected:
 	uint32 renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom);
 
 	void deRLE(byte *&srcPtr, byte *&destPtr, int16 len);
+
+	void blit(byte *dest, byte *src, int16 width, int16 height);
+	void blit16(byte *dest, uint16 *src, int16 width, int16 height);
+	void blit24(byte *dest, byte *src, int16 width, int16 height);
 
 	void emptySoundSlice(uint32 size);
 	void soundSlice8bit(uint32 size);

@@ -928,8 +928,10 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 
 	_bytesPerPixel = handle + 1;
 
-	if (_bytesPerPixel > 1)
+	if (_bytesPerPixel > 1) {
 		_features |= kFeaturesFullColor;
+		_features &= ~kFeaturesPalette;
+	}
 
 	_flags = _stream->readUint16LE();
 	_partsPerFrame = _stream->readUint16LE();
@@ -945,8 +947,12 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	_frameDataSize = _stream->readUint32LE();
 	_vidBufferSize = _stream->readUint32LE();
 
-	if (_bytesPerPixel > 1)
+	if ((_version & 2) && !(_version & 8)) {
+		_externalCodec = true;
 		_frameDataSize = _vidBufferSize = 0;
+	} else
+		_externalCodec = false;
+
 	// 0x322 (802)
 
 	if (_hasVideo) {
@@ -962,6 +968,11 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 		_vidBuffer = new byte[_vidBufferSize];
 		assert(_vidBuffer);
 		memset(_vidBuffer, 0, _vidBufferSize);
+
+		if ((_bytesPerPixel > 1) && !_externalCodec) {
+			_vidMemBuffer = new byte[_bytesPerPixel * (_width * _height + 1000)];
+			memset(_vidMemBuffer, 0, _bytesPerPixel * (_width * _height + 1000));
+		}
 	}
 
 	_soundFreq = _stream->readSint16LE();
@@ -1141,6 +1152,13 @@ void Vmd::seekFrame(int32 frame, int16 whence, bool restart) {
 		// Nothing to do
 		return;
 
+	// Restart sound
+	if (_hasSound && (frame == 0) && (_soundStage == 0) && !_audioStream) {
+		_soundStage = 1;
+		_audioStream = Audio::makeAppendableAudioStream(_soundFreq,
+				(_soundBytesPerSample == 2) ? Audio::Mixer::FLAG_16BITS : 0);
+	}
+
 	// Seek
 	_stream->seek(_frames[frame].offset);
 	_curFrame = frame;
@@ -1160,6 +1178,7 @@ void Vmd::clear(bool del) {
 	if (del) {
 		delete _codecIndeo3;
 		delete[] _frames;
+		delete[] _vidMemBuffer;
 	}
 
 	_hasVideo = true;
@@ -1174,7 +1193,9 @@ void Vmd::clear(bool del) {
 	_soundBytesPerSample = 1;
 	_soundStereo = 0;
 
+	_externalCodec = false;
 	_bytesPerPixel = 1;
+	_vidMemBuffer = 0;
 }
 
 CoktelVideo::State Vmd::processFrame(uint16 frame) {
@@ -1340,6 +1361,8 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 	if ((width < 0) || (height < 0))
 		return 1;
 
+	byte *dest = imdVidMem;
+
 	if (Indeo3::isIndeo3(dataPtr, dataLen)) {
 		if (!_codecIndeo3)
 			return 0;
@@ -1355,14 +1378,26 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 		bottom = top + height - 1;
 
 	} else {
+
+		if (_externalCodec) {
+			warning("Unknown external codec");
+			return 0;
+		}
+
 		type = *dataPtr++;
 		srcPtr = dataPtr;
+
+		if (_bytesPerPixel > 1) {
+			dest = _vidMemBuffer;
+			sW = _width;
+		}
 
 		if (type & 0x80) { // Frame data is compressed
 			srcPtr = _vidBuffer;
 			type &= 0x7F;
 			if ((type == 2) && (width == sW)) {
-				deLZ77(imdVidMem, dataPtr);
+				deLZ77(dest, dataPtr);
+				blit(imdVidMem, dest, width, height);
 				return 1;
 			} else
 				deLZ77(srcPtr, dataPtr);
@@ -1371,39 +1406,39 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 	}
 
 	uint16 pixCount, pixWritten;
-	byte *imdVidMemBak;
+	byte *destBak;
 
 	if (type == 1) { // Sparse block
-		imdVidMemBak = imdVidMem;
+		destBak = dest;
 		for (int i = 0; i < height; i++) {
 			pixWritten = 0;
 			while (pixWritten < width) {
 				pixCount = *srcPtr++;
 				if (pixCount & 0x80) { // Data
 					pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
-					memcpy(imdVidMem, srcPtr, pixCount);
+					memcpy(dest, srcPtr, pixCount);
 
 					pixWritten += pixCount;
-					imdVidMem += pixCount;
+					dest += pixCount;
 					srcPtr += pixCount;
 				} else { // "Hole"
 					pixCount = (pixCount + 1) % 256;
 					pixWritten += pixCount;
-					imdVidMem += pixCount;
+					dest += pixCount;
 				}
 			}
-			imdVidMemBak += sW;
-			imdVidMem = imdVidMemBak;
+			destBak += sW;
+			dest = destBak;
 		}
 	} else if (type == 2) { // Whole block
 		for (int i = 0; i < height; i++) {
-			memcpy(imdVidMem, srcPtr, width);
+			memcpy(dest, srcPtr, width);
 			srcPtr += width;
-			imdVidMem += sW;
+			dest += sW;
 		}
 	} else if (type == 3) { // RLE block
 		for (int i = 0; i < height; i++) {
-			imdVidMemBak = imdVidMem;
+			destBak = dest;
 
 			pixWritten = 0;
 			while (pixWritten < width) {
@@ -1412,68 +1447,122 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 					pixCount = (pixCount & 0x7F) + 1;
 
 					if (*srcPtr != 0xFF) { // Normal copy
-						memcpy(imdVidMem, srcPtr, pixCount);
-						imdVidMem += pixCount;
+						memcpy(dest, srcPtr, pixCount);
+						dest += pixCount;
 						srcPtr += pixCount;
 					} else
-						deRLE(srcPtr, imdVidMem, pixCount);
+						deRLE(srcPtr, dest, pixCount);
 
 					pixWritten += pixCount;
 				} else { // "Hole"
-					imdVidMem += pixCount + 1;
+					dest += pixCount + 1;
 					pixWritten += pixCount + 1;
 				}
 
 			}
-			imdVidMemBak += sW;
-			imdVidMem = imdVidMemBak;
+			destBak += sW;
+			dest = destBak;
 		}
 	} else if (type == 0x42) { // Whole quarter-wide block
 		for (int i = 0; i < height; i++) {
-			imdVidMemBak = imdVidMem;
+			destBak = dest;
 
-			for (int j = 0; j < width; j += 4, imdVidMem += 4, srcPtr++)
-				memset(imdVidMem, *srcPtr, 4);
+			for (int j = 0; j < width; j += 4, dest += 4, srcPtr++)
+				memset(dest, *srcPtr, 4);
 
-			imdVidMemBak += sW;
-			imdVidMem = imdVidMemBak;
+			destBak += sW;
+			dest = destBak;
 		}
 	} else if ((type & 0xF) == 2) { // Whole half-high block
-		for (; height > 1; height -= 2, imdVidMem += sW + sW, srcPtr += width) {
-			memcpy(imdVidMem, srcPtr, width);
-			memcpy(imdVidMem + sW, srcPtr, width);
+		for (; height > 1; height -= 2, dest += sW + sW, srcPtr += width) {
+			memcpy(dest, srcPtr, width);
+			memcpy(dest + sW, srcPtr, width);
 		}
 		if (height == -1)
-			memcpy(imdVidMem, srcPtr, width);
+			memcpy(dest, srcPtr, width);
 	} else { // Sparse half-high block
-		imdVidMemBak = imdVidMem;
+		destBak = dest;
 		for (int i = 0; i < height; i += 2) {
 			pixWritten = 0;
 			while (pixWritten < width) {
 				pixCount = *srcPtr++;
 				if (pixCount & 0x80) { // Data
 					pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
-					memcpy(imdVidMem, srcPtr, pixCount);
-					memcpy(imdVidMem + sW, srcPtr, pixCount);
+					memcpy(dest, srcPtr, pixCount);
+					memcpy(dest + sW, srcPtr, pixCount);
 
 					pixWritten += pixCount;
-					imdVidMem += pixCount;
+					dest += pixCount;
 					srcPtr += pixCount;
 				} else { // "Hole"
 					pixCount = (pixCount + 1) % 256;
 					pixWritten += pixCount;
-					imdVidMem += pixCount;
+					dest += pixCount;
 				}
 			}
-			imdVidMemBak += sW + sW;
-			imdVidMem = imdVidMemBak;
+			destBak += sW + sW;
+			dest = destBak;
 		}
 	}
+
+	blit(imdVidMem, dest, width, height);
 
 	return 1;
 }
 
+void Vmd::blit(byte *dest, byte *src, int16 width, int16 height) {
+	if ((_bytesPerPixel == 1) || _externalCodec)
+		return;
+
+	if (_bytesPerPixel == 2)
+		blit16(dest, (uint16 *) src, width, height);
+	else if (_bytesPerPixel == 3)
+		blit24(dest, src, width, height);
+}
+
+void Vmd::blit16(byte *dest, uint16 *src, int16 width, int16 height) {
+	int16 vWidth = _width >> 1;
+
+	assert(_palLUT);
+
+	SierraLight *dither = new SierraLight(width, height, _palLUT);
+
+	for (int i = 0; i < height; i++) {
+		byte *d = dest;
+		uint16 *s = src;
+
+		for (int j = 0; j < width; j++, s++) {
+			byte r = ((*s & 0x7C00) >> 10) << 1;
+			byte g = ((*s & 0x03E0) >>  5) << 1;
+			byte b = ((*s & 0x001F) >>  0) << 1;
+			byte dY, dU, dV;
+
+			PaletteLUT::RGB2YUV(r << 2, g << 2, b << 2, dY, dU, dV);
+
+			byte p = dither->dither(dY, dU, dV, j);
+
+			if ((dY == 0) || ((r == 0) && (g == 0) && (b == 0)))
+				*d++ = 0;
+			else
+				*d++ = p;
+		}
+
+		dither->nextLine();
+		dest += _vidMemWidth;
+		src += vWidth;
+	}
+
+	delete dither;
+}
+
+void Vmd::blit24(byte *dest, byte *sc, int16 width, int16 height) {
+	warning("TODO: blit24");
+}
+
 void Vmd::emptySoundSlice(uint32 size) {
+	if (!_audioStream)
+		return;
+
 	byte *soundBuf = new byte[size];
 	assert(soundBuf);
 
@@ -1483,6 +1572,9 @@ void Vmd::emptySoundSlice(uint32 size) {
 }
 
 void Vmd::soundSlice8bit(uint32 size) {
+	if (!_audioStream)
+		return;
+
 	byte *soundBuf = new byte[size];
 	assert(soundBuf);
 
@@ -1493,6 +1585,9 @@ void Vmd::soundSlice8bit(uint32 size) {
 }
 
 void Vmd::soundSlice16bit(uint32 size, int16 &init) {
+	if (!_audioStream)
+		return;
+
 	byte *dataBuf = new byte[size];
 	byte *soundBuf = new byte[size * 2];
 
@@ -1620,57 +1715,6 @@ Common::MemoryReadStream *Vmd::getExtraData(const char *fileName) {
 		new Common::MemoryReadStream(data, _extraData[i].realSize, true);
 
 	return stream;
-}
-
-void Vmd::copyCurrentFrame(byte *dest,
-		uint16 left, uint16 top, uint16 width, uint16 height,
-		uint16 x, uint16 y, uint16 pitch, int16 transp) {
-
-	if (_bytesPerPixel != 2)
-		Imd::copyCurrentFrame(dest, left, top, width, height, x, y, pitch, transp);
-
-	if (!_vidMem)
-		return;
-
-	int16 vWidth = _width >> 1;
-
-	if (((left + width) > vWidth) || ((top + height) > _height))
-		return;
-
-	assert(_palLUT);
-
-	SierraLight *dither = new SierraLight(width, height, _palLUT);
-
-	uint16 *vidMem = (uint16 *) _vidMem;
-	dest += pitch * y;
-	vidMem += vWidth * top;
-
-	for (int i = 0; i < height; i++) {
-		byte *d = dest + x;
-		uint16 *s = vidMem + left;
-
-		for (int j = 0; j < width; j++, s++) {
-			byte r = ((*s & 0x7C00) >> 10) << 1;
-			byte g = ((*s & 0x03E0) >>  5) << 1;
-			byte b = ((*s & 0x001F) >>  0) << 1;
-			byte dY, dU, dV;
-
-			PaletteLUT::RGB2YUV(r << 2, g << 2, b << 2, dY, dU, dV);
-
-			byte p = dither->dither(dY, dU, dV, j);
-
-			if ((dY == 0) || ((r == 0) && (g == 0) && (b == 0)))
-				*d++ = 0;
-			else
-				*d++ = p;
-		}
-
-		dither->nextLine();
-		dest += pitch;
-		vidMem += vWidth;
-	}
-
-	delete dither;
 }
 
 } // End of namespace Gob
