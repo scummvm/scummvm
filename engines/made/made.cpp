@@ -179,6 +179,11 @@ void MadeEngine::freeTimer(int16 timerNum) {
 		_timers[timerNum - 1] = -1;
 }
 
+void MadeEngine::resetAllTimers() {
+	for (int i = 0; i < ARRAYSIZE(_timers); i++)
+		_timers[i] = -1;
+}
+
 Common::String MadeEngine::getSavegameFilename(int16 saveNum) {
 	char filename[256];
 	snprintf(filename, 256, "%s.%03d", getTargetName().c_str(), saveNum);
@@ -237,8 +242,7 @@ void MadeEngine::handleEvents() {
 
 Common::Error MadeEngine::go() {
 
-	for (int i = 0; i < ARRAYSIZE(_timers); i++)
-		_timers[i] = -1;
+	resetAllTimers();
 
 	if (getGameID() == GID_RTZ) {
 		_engineVersion = 3;

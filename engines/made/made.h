@@ -127,6 +127,7 @@ public:
 	void resetTimer(int16 timerNum);
 	int16 allocTimer();
 	void freeTimer(int16 timerNum);
+	void resetAllTimers();
 
 	const Common::String getTargetName() { return _targetName; }
 	Common::String getSavegameFilename(int16 saveNum);

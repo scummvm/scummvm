@@ -116,6 +116,8 @@ public:
 	void open(const char *filename);
 	void openFromRed(const char *redFilename, const char *filename);
 
+	void reload();
+
 	Object *getObject(int16 index) const {
 		if (index >= 1)
 			return _objects[index - 1];
@@ -150,7 +152,10 @@ protected:
 	byte *_gameState;
 	uint32 _gameStateSize;
 	int16 _mainCodeObjectIndex;
+	bool _isRedSource;
+	Common::String _filename, _redFilename;
 	virtual void load(Common::SeekableReadStream &sourceS) = 0;
+	virtual void reloadFromStream(Common::SeekableReadStream &sourceS) = 0;
 };
 
 class GameDatabaseV2 : public GameDatabase {
@@ -165,6 +170,7 @@ public:
 protected:
 	char *_gameText;
 	void load(Common::SeekableReadStream &sourceS);
+	void reloadFromStream(Common::SeekableReadStream &sourceS);
 };
 
 class GameDatabaseV3 : public GameDatabase {
@@ -177,7 +183,9 @@ public:
 	int16 loadgame(const char *filename, int16 version);
 protected:
 	char *_gameText;
+	uint32 _gameStateOffs;
 	void load(Common::SeekableReadStream &sourceS);
+	void reloadFromStream(Common::SeekableReadStream &sourceS);
 };
 
 } // End of namespace Made

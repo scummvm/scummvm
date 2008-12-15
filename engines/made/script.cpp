@@ -554,8 +554,10 @@ void ScriptInterpreter::cmd_vectorp() {
 }
 
 void ScriptInterpreter::cmd_restart() {
-	// TODO: Used in RTZ
-	warning("Unimplemented command: cmd_restart");
+	_vm->_dat->reload();
+	_vm->_screen->clearChannels();
+	_vm->resetAllTimers();
+	_stack.setTop(0);
 }
 
 void ScriptInterpreter::cmd_rand() {

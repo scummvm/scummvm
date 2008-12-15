@@ -254,6 +254,9 @@ GameDatabase::~GameDatabase() {
 
 void GameDatabase::open(const char *filename) {
 	debug(1, "GameDatabase::open() Loading from %s", filename);
+	_isRedSource = false;
+	_filename = filename;
+	_redFilename = "";
 	Common::File fd;
 	if (!fd.open(filename))
 		error("GameDatabase::open() Could not open %s", filename);
@@ -263,11 +266,29 @@ void GameDatabase::open(const char *filename) {
 
 void GameDatabase::openFromRed(const char *redFilename, const char *filename) {
 	debug(1, "GameDatabase::openFromRed() Loading from %s->%s", redFilename, filename);
+	_isRedSource = true;
+	_filename = filename;
+	_redFilename = redFilename;
 	Common::MemoryReadStream *fileS = RedReader::loadFromRed(redFilename, filename);
 	if (!fileS)
 		error("GameDatabase::openFromRed() Could not load %s from %s", filename, redFilename);
 	load(*fileS);
 	delete fileS;
+}
+
+void GameDatabase::reload() {
+	if (!_isRedSource) {
+		Common::File fd;
+		if (!fd.open(_filename.c_str()))
+			error("GameDatabase::reload() Could not open %s", _filename.c_str());
+		reloadFromStream(fd);
+	} else {
+		Common::MemoryReadStream *fileS = RedReader::loadFromRed(_redFilename.c_str(), _filename.c_str());
+		if (!fileS)
+			error("GameDatabase::openFromRed() Could not load %s from %s", _filename.c_str(), _redFilename.c_str());
+		reloadFromStream(*fileS);
+		delete fileS;
+	}
 }
 
 int16 GameDatabase::getVar(int16 index) {
@@ -391,6 +412,10 @@ void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
 	
 }
 
+void GameDatabaseV2::reloadFromStream(Common::SeekableReadStream &sourceS) {
+	// Not used in version 2 games
+}
+
 bool GameDatabaseV2::getSavegameDescription(const char *filename, Common::String &description) {
 	// Not used in version 2 games
 	return false;
@@ -509,16 +534,16 @@ void GameDatabaseV3::load(Common::SeekableReadStream &sourceS) {
 
 	uint32 objectIndexOffs = sourceS.readUint32LE();
 	uint16 objectCount = sourceS.readUint16LE();
-	uint32 gameStateOffs = sourceS.readUint32LE();
+	_gameStateOffs = sourceS.readUint32LE();
 	_gameStateSize = sourceS.readUint32LE();
 	uint32 objectsOffs = sourceS.readUint32LE();
 	uint32 objectsSize = sourceS.readUint32LE();
 	_mainCodeObjectIndex = sourceS.readUint16LE();
 
-	debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d\n", objectIndexOffs, objectCount, gameStateOffs, _gameStateSize, objectsOffs, objectsSize);
+	debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d\n", objectIndexOffs, objectCount, _gameStateOffs, _gameStateSize, objectsOffs, objectsSize);
 
 	_gameState = new byte[_gameStateSize];
-	sourceS.seek(gameStateOffs);
+	sourceS.seek(_gameStateOffs);
 	sourceS.read(_gameState, _gameStateSize);
 
 	Common::Array<uint32> objectOffsets;
@@ -542,6 +567,11 @@ void GameDatabaseV3::load(Common::SeekableReadStream &sourceS) {
 		_objects.push_back(obj);
 	}
 
+}
+
+void GameDatabaseV3::reloadFromStream(Common::SeekableReadStream &sourceS) {
+	sourceS.seek(_gameStateOffs);
+	sourceS.read(_gameState, _gameStateSize);
 }
 
 bool GameDatabaseV3::getSavegameDescription(const char *filename, Common::String &description) {
