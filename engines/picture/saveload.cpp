@@ -195,11 +195,13 @@ void PictureEngine::loadgame(const char *filename) {
 Common::Error PictureEngine::loadGameState(int slot) {
 	const char *fileName = getSavegameFilename(slot);
 	loadgame(fileName);
+	return Common::kNoError;
 }
 
 Common::Error PictureEngine::saveGameState(int slot, const char *description) {
 	const char *fileName = getSavegameFilename(slot);
 	savegame(fileName, description);
+	return Common::kNoError;
 }
 
 const char *PictureEngine::getSavegameFilename(int num) {

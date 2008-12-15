@@ -136,7 +136,7 @@ bool PictureMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Picture::PictureEngine::hasFeature(EngineFeature f) const {
 	return
-//		(f == kSupportsRTL) ||
+		(f == kSupportsRTL) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

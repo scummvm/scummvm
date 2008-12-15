@@ -127,7 +127,6 @@ void Screen::loadMouseCursor(uint resIndex) {
 			*mouseCursorP++ = pixel;
 		}
 	}
-	//CursorMan.replaceCursor((const byte*)mouseCursor, 16, 16, 0, 0, 0);
 	// FIXME: Where's the cursor hotspot? Using 8, 8 seems good enough for now.
 	CursorMan.replaceCursor((const byte*)mouseCursor, 16, 16, 8, 8, 0);
 }
@@ -542,7 +541,7 @@ void Screen::drawGuiTextMulti(byte *textData) {
 			wrapState.sourceString += 4;
 		} else if (*wrapState.sourceString == 0x0B) {
 			// Inc text position
-			y += wrapState.sourceString[1]; // CHECKME: Maybe these are signed?
+			y += wrapState.sourceString[1];
 			x += wrapState.sourceString[2];
 			wrapState.sourceString += 3;
 		} else {

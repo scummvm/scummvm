@@ -256,15 +256,18 @@ bool MoviePlayer::handleInput() {
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				return false;
 			break;
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+			return false;
 		case Common::EVENT_QUIT:
-			g_system->quit();
+			_vm->quitGame();
 			return false;
 			break;
 		default:
 			break;
 		}
 	}
-	return true;
+	return !_vm->shouldQuit();
 }
 
 } // End of namespace Picture

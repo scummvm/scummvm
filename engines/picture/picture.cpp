@@ -104,7 +104,6 @@ Common::Error PictureEngine::go() {
 
 	_isSaveAllowed = true;
 
- 	_quitGame = false;
 	_counter01 = 0;
 	_counter02 = 0;
 	_movieSceneFlag = false;
@@ -250,6 +249,7 @@ void PictureEngine::updateScreen() {
 	_system->updateScreen();
 
 	updateCamera();
+
 }
 
 void PictureEngine::updateInput() {
@@ -274,8 +274,7 @@ void PictureEngine::updateInput() {
 
 			break;
 		case Common::EVENT_QUIT:
-			// FIXME: Find a nicer way to quit
-			_system->quit();
+			quitGame();
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
@@ -340,6 +339,7 @@ void PictureEngine::setGuiHeight(int16 guiHeight) {
 	if (guiHeight != _guiHeight) {
 		_guiHeight = guiHeight;
 		_cameraHeight = 400 - _guiHeight;
+		_screen->_guiRefresh = true;
 		debug(0, "PictureEngine::setGuiHeight() _guiHeight = %d; _cameraHeight = %d", _guiHeight, _cameraHeight);
 		// TODO: clearScreen();
 	}

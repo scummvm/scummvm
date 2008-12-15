@@ -117,7 +117,6 @@ public:
 	uint _sceneResIndex;
 	int16 _sceneWidth, _sceneHeight;
 
-	bool _quitGame;
 	int _counter01, _counter02;
 	bool _movieSceneFlag;
 	byte _flag01;
