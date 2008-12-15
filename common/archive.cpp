@@ -263,8 +263,8 @@ int FSDirectory::listMembers(ArchiveMemberList &list) {
 
 
 
-SearchSet::ArchiveList::iterator SearchSet::find(const String &name) const {
-	ArchiveList::iterator it = _list.begin();
+SearchSet::ArchiveNodeList::iterator SearchSet::find(const String &name) const {
+	ArchiveNodeList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++) {
 		if (it->_name == name)
 			break;
@@ -278,7 +278,7 @@ SearchSet::ArchiveList::iterator SearchSet::find(const String &name) const {
 	order prevails.
 */
 void SearchSet::insert(const Node &node) {
-	ArchiveList::iterator it = _list.begin();
+	ArchiveNodeList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++) {
 		if (it->_priority < node._priority)
 			break;
@@ -299,7 +299,7 @@ void SearchSet::add(const String &name, Archive *archive, int priority, bool aut
 }
 
 void SearchSet::remove(const String &name) {
-	ArchiveList::iterator it = find(name);
+	ArchiveNodeList::iterator it = find(name);
 	if (it != _list.end()) {
 		if (it->_autoFree)
 			delete it->_arc;
@@ -312,7 +312,7 @@ bool SearchSet::hasArchive(const String &name) const {
 }
 
 void SearchSet::clear() {
-	for (ArchiveList::iterator i = _list.begin(); i != _list.end(); ++i) {
+	for (ArchiveNodeList::iterator i = _list.begin(); i != _list.end(); ++i) {
 		if (i->_autoFree)
 			delete i->_arc;
 	}
@@ -321,7 +321,7 @@ void SearchSet::clear() {
 }
 
 void SearchSet::setPriority(const String &name, int priority) {
-	ArchiveList::iterator it = find(name);
+	ArchiveNodeList::iterator it = find(name);
 	if (it == _list.end()) {
 		warning("SearchSet::setPriority: archive '%s' is not present", name.c_str());
 		return;
@@ -340,7 +340,7 @@ bool SearchSet::hasFile(const String &name) {
 	if (name.empty())
 		return false;
 
-	ArchiveList::iterator it = _list.begin();
+	ArchiveNodeList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++) {
 		if (it->_arc->hasFile(name))
 			return true;
@@ -352,7 +352,7 @@ bool SearchSet::hasFile(const String &name) {
 int SearchSet::listMatchingMembers(ArchiveMemberList &list, const String &pattern) {
 	int matches = 0;
 
-	ArchiveList::iterator it = _list.begin();
+	ArchiveNodeList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++)
 		matches += it->_arc->listMatchingMembers(list, pattern);
 
@@ -362,7 +362,7 @@ int SearchSet::listMatchingMembers(ArchiveMemberList &list, const String &patter
 int SearchSet::listMembers(ArchiveMemberList &list) {
 	int matches = 0;
 
-	ArchiveList::iterator it = _list.begin();
+	ArchiveNodeList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++)
 		matches += it->_arc->listMembers(list);
 
@@ -373,7 +373,7 @@ ArchiveMemberPtr SearchSet::getMember(const String &name) {
 	if (name.empty())
 		return ArchiveMemberPtr();
 
-	ArchiveList::iterator it = _list.begin();
+	ArchiveNodeList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++) {
 		if (it->_arc->hasFile(name))
 			return it->_arc->getMember(name);
@@ -386,7 +386,7 @@ SeekableReadStream *SearchSet::openFile(const String &name) {
 	if (name.empty())
 		return 0;
 
-	ArchiveList::iterator it = _list.begin();
+	ArchiveNodeList::iterator it = _list.begin();
 	for ( ; it != _list.end(); it++) {
 		if (it->_arc->hasFile(name))
 			return it->_arc->openFile(name);

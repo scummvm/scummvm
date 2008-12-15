@@ -248,10 +248,10 @@ class SearchSet : public Archive {
 			: _priority(priority), _name(name), _arc(arc), _autoFree(autoFree) {
 		}
 	};
-	typedef List<Node> ArchiveList;
-	ArchiveList _list;
+	typedef List<Node> ArchiveNodeList;
+	ArchiveNodeList _list;
 
-	ArchiveList::iterator find(const String &name) const;
+	ArchiveNodeList::iterator find(const String &name) const;
 
 	// Add an archive keeping the list sorted by ascending priorities.
 	void insert(const Node& node);
