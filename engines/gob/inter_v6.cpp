@@ -133,7 +133,7 @@ void Inter_v6::setupOpcodes() {
 		{NULL, ""},
 		{NULL, ""},
 		/* 40 */
-		OPCODE(o2_totSub),
+		OPCODE(o6_totSub),
 		OPCODE(o2_switchTotSub),
 		OPCODE(o2_copyVars),
 		OPCODE(o2_pasteVars),
@@ -651,6 +651,33 @@ const char *Inter_v6::getOpcodeGoblinDesc(int i) {
 		if (_goblinFuncLookUp[j][0] == i)
 			return _opcodesGoblinV6[_goblinFuncLookUp[j][1]].desc;
 	return "";
+}
+
+void Inter_v6::o6_totSub() {
+	char totFile[14];
+	byte length;
+	int flags;
+	int i;
+
+	length = *_vm->_global->_inter_execPtr++;
+	if ((length & 0x7F) > 13)
+		error("Length in o2_totSub is greater than 13 (%d)", length);
+
+	if (length & 0x80) {
+		evalExpr(0);
+		strcpy(totFile, _vm->_global->_inter_resStr);
+	} else {
+		for (i = 0; i < length; i++)
+			totFile[i] = (char) *_vm->_global->_inter_execPtr++;
+		totFile[i] = 0;
+	}
+
+	flags = *_vm->_global->_inter_execPtr++;
+
+	if (flags & 0x40)
+		warning("Urban Stub: o6_totSub(), flags & 0x40");
+
+	_vm->_game->totSub(flags, totFile);
 }
 
 void Inter_v6::o6_playVmdOrMusic() {

@@ -85,8 +85,14 @@ void Parse::skipExpr(char stopToken) {
 	while (1) {
 		operation = *_vm->_global->_inter_execPtr++;
 
-		if ((operation >= 16) && (operation <= 29)) {
+		if ((operation >= 14) && (operation <= 29)) {
 			switch (operation) {
+			case 14:
+				_vm->_global->_inter_execPtr += 4;
+				if (*_vm->_global->_inter_execPtr == 97)
+					_vm->_global->_inter_execPtr++;
+				break;
+
 			case 17:
 			case 18:
 			case 20:
@@ -115,6 +121,9 @@ void Parse::skipExpr(char stopToken) {
 					skipExpr(12);
 				}
 				break;
+
+			case 15:
+				_vm->_global->_inter_execPtr += 2;
 
 			case 16:
 			case 26:

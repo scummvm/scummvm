@@ -111,8 +111,9 @@ public:
 	int16 checkKeys(int16 *pMousex = 0, int16 *pMouseY = 0,
 			int16 *pButtons = 0, char handleMouse = 0);
 	void start(void);
-	void totSub(int8 flags, const char *newTotFile);
-	void switchTotSub(int16 index, int16 skipPlay);
+
+	virtual void totSub(int8 flags, const char *newTotFile);
+	virtual void switchTotSub(int16 index, int16 skipPlay);
 
 	void freeCollision(int16 id);
 
@@ -300,6 +301,8 @@ protected:
 
 class Game_v6 : public Game_v2 {
 public:
+	virtual void totSub(int8 flags, const char *newTotFile);
+
 	virtual int16 addNewCollision(int16 id, uint16 left, uint16 top,
 			uint16 right, uint16 bottom, int16 flags, int16 key,
 			uint16 funcEnter, uint16 funcLeave, uint16 funcSub = 0);

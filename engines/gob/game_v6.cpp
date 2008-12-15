@@ -39,6 +39,82 @@ Game_v6::Game_v6(GobEngine *vm) : Game_v2(vm) {
 	_dword_63E44 = 0;
 }
 
+// flagbits: 5 = freeInterVariables, 6 = skipPlay
+void Game_v6::totSub(int8 flags, const char *newTotFile) {
+	int8 curBackupPos;
+
+	if ((flags == 16) || (flags == 17))
+		warning("Urban Stub: Game_v6::totSub(), flags == %d", flags);
+
+	if (_backupedCount >= 5)
+		return;
+
+	_cursorHotspotXArray[_backupedCount] = _vm->_draw->_cursorHotspotXVar;
+	_cursorHotspotYArray[_backupedCount] = _vm->_draw->_cursorHotspotYVar;
+	_totTextDataArray[_backupedCount] = _totTextData;
+	_totFileDataArray[_backupedCount] = _totFileData;
+	_totResourceTableArray[_backupedCount] = _totResourceTable;
+	_extTableArray[_backupedCount] = _extTable;
+	_extHandleArray[_backupedCount] = _extHandle;
+	_imFileDataArray[_backupedCount] = _imFileData;
+	_variablesArray[_backupedCount] = _vm->_inter->_variables;
+	strcpy(_curTotFileArray[_backupedCount], _curTotFile);
+
+	curBackupPos = _curBackupPos;
+	_backupedCount++;
+	_curBackupPos = _backupedCount;
+
+	_totTextData = 0;
+	_totFileData = 0;
+	_totResourceTable = 0;
+
+	if (flags & 0x80)
+		warning("Urban Stub: Game_v6::totSub(), flags & 0x80");
+
+	if (flags & 5)
+		_vm->_inter->_variables = 0;
+
+	strncpy0(_curTotFile, newTotFile, 9);
+	strcat(_curTotFile, ".TOT");
+
+	if (_vm->_inter->_terminate != 0)
+		return;
+
+	pushCollisions(0);
+
+	if (flags & 6)
+		playTot(-1);
+	else
+		playTot(0);
+
+	if (_vm->_inter->_terminate < 2)
+		_vm->_inter->_terminate = 0;
+
+	clearCollisions();
+	popCollisions();
+
+	if ((flags & 5) && _vm->_inter->_variables) {
+		_vm->_inter->delocateVars();
+	}
+
+	_backupedCount--;
+	_curBackupPos = curBackupPos;
+
+	_vm->_draw->_cursorHotspotXVar = _cursorHotspotXArray[_backupedCount];
+	_vm->_draw->_cursorHotspotYVar = _cursorHotspotYArray[_backupedCount];
+	_totTextData = _totTextDataArray[_backupedCount];
+	_totFileData = _totFileDataArray[_backupedCount];
+	_totResourceTable = _totResourceTableArray[_backupedCount];
+	_extTable = _extTableArray[_backupedCount];
+	_extHandle = _extHandleArray[_backupedCount];
+	_imFileData = _imFileDataArray[_backupedCount];
+	_vm->_inter->_variables = _variablesArray[_backupedCount];
+	strcpy(_curTotFile, _curTotFileArray[_backupedCount]);
+	strcpy(_curExtFile, _curTotFile);
+	_curExtFile[strlen(_curExtFile) - 4] = '\0';
+	strcat(_curExtFile, ".EXT");
+}
+
 int16 Game_v6::addNewCollision(int16 id, uint16 left, uint16 top,
 		uint16 right, uint16 bottom, int16 flags, int16 key,
 		uint16 funcEnter, uint16 funcLeave, uint16 funcSub) {
