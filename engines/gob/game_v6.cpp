@@ -1059,6 +1059,70 @@ int16 Game_v6::adjustKey(int16 key) {
 	return key & 0xFF;
 }
 
+int16 Game_v6::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
+	Collision *ptr;
+	int16 i;
+
+	if (resId != 0)
+		*resId = 0;
+
+	*resIndex = 0;
+
+	ptr = _collisionAreas;
+	for (i = 0; ptr->left != 0xFFFF; ptr++, i++) {
+		if (ptr->id & 0x4000)
+			continue;
+
+		if (all) {
+			if ((ptr->flags & 0xF) > 1)
+				continue;
+
+			if ((ptr->flags & 0xF00) != 0)
+				continue;
+
+			if ((_vm->_global->_inter_mouseX < ptr->left) ||
+			    (_vm->_global->_inter_mouseX > ptr->right) ||
+			    (_vm->_global->_inter_mouseY < ptr->top) ||
+			    (_vm->_global->_inter_mouseY > ptr->bottom))
+				continue;
+
+			if (resId != 0)
+				*resId = ptr->id;
+
+			*resIndex = i;
+			return ptr->key;
+		} else {
+			if ((ptr->flags & 0xF00) != 0)
+				continue;
+
+			if ((ptr->flags & 0xF) < 1)
+				continue;
+
+			if ((((ptr->flags & 0x70) >> 4) != (_mouseButtons - 1)) &&
+					(((ptr->flags & 0x70) >> 4) != 2))
+				continue;
+
+			if ((_vm->_global->_inter_mouseX < ptr->left) ||
+			    (_vm->_global->_inter_mouseX > ptr->right) ||
+			    (_vm->_global->_inter_mouseY < ptr->top) ||
+			    (_vm->_global->_inter_mouseY > ptr->bottom))
+				continue;
+
+			if (resId != 0)
+				*resId = ptr->id;
+			*resIndex = i;
+			if (((ptr->flags & 0xF) == 1) || ((ptr->flags & 0xF) == 2))
+				return ptr->key;
+			return 0;
+		}
+	}
+
+	if ((_mouseButtons != 1) && (all == 0))
+		return 0x11B;
+
+	return 0;
+}
+
 void Game_v6::sub_1BA78() {
 	int16 lastCollAreaIndex = _lastCollAreaIndex;
 	int16 lastCollId = _lastCollId;

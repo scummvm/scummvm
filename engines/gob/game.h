@@ -324,6 +324,8 @@ protected:
 
 	virtual int16 adjustKey(int16 key);
 
+	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex);
+
 	void sub_1BA78();
 };
 
