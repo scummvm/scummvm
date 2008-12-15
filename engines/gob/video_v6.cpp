@@ -107,20 +107,6 @@ void Video_v6::drawYUVData(const byte *srcData, SurfaceDesc *destDesc,
 	const byte *dataU = dataY +  (dataWidth * dataHeight);
 	const byte *dataV = dataU + ((dataWidth * dataHeight) >> 4);
 
-/*
-	if (destDesc->field_14 == 1) {
-		SurfaceDesc *tmpSurf = _vid_initSurfDesc(2, width, height, 0);
-
-		sub_46126(tmpSurf, 0, 0, dataWidth, dataHeight, width, height, dataY, dataU, dataV);
-
-		_vid_drawSprite(tmpSurf, destDesc, 0, 0, width - 1, height - 1, x, y, 0);
-
-		_vid_freeSurfDesc(tmpSurf);
-
-		return;
-	}
-*/
-
 	drawYUV(destDesc, x, y, dataWidth, dataHeight, width, height, dataY, dataU, dataV);
 
 }

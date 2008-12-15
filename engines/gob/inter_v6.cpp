@@ -753,51 +753,64 @@ void Inter_v6::o6_playVmdOrMusic() {
 }
 
 bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
-	int16 width, height;
-	byte *dataBuf;
-	int16 id;
-	int8 index;
+	int16 id = load16();
 
-	id = load16();
+	if ((id == -1) || (id == -2)) {
+		char file[10];
 
-	if (id == -1) {
-		byte str[10];
+		if (id == -1) {
+			for (int i = 0; i < 9; i++)
+				file[i] = *_vm->_global->_inter_execPtr++;
+		} else
+			strncpy(file, GET_VAR_STR(load16()), 10);
 
-		for (int i = 0; i < 9; i++)
-			str[i] = *_vm->_global->_inter_execPtr++;
+		file[9] = '\0';
 
-		str[9] = '\0';
+		uint16 start = load16();
+		int8 index = (int8) *_vm->_global->_inter_execPtr++;
 
-		uint16 var1 = load16();
-		int8 var2 = *_vm->_global->_inter_execPtr++;
+		int vmdSlot = _vm->_vidPlayer->slotOpen(file);
 
-		warning("Urban Stub: loadCursor %d: \"%s\", %d, %d", id, str, var1, var2);
-
-	} else if (id == -2) {
-
-		uint16 var1 = load16();
-		uint16 var2 = load16();
-		int8 var3 = *_vm->_global->_inter_execPtr++;
-
-		warning("Urban Stub: loadCursor %d: %d, %d, %d", id, var1, var2, var3);
-
-	} else {
-		index = (int8) *_vm->_global->_inter_execPtr++;
-
-		if ((index * _vm->_draw->_cursorWidth) >= _vm->_draw->_cursorSprites->getWidth())
+		if (vmdSlot == -1) {
+			warning("Can't open video \"%s\" as cursor", file);
 			return false;
+		}
 
-		dataBuf = _vm->_game->loadTotResource(id, 0, &width, &height);
+		int16 framesCount = _vm->_vidPlayer->getFramesCount(vmdSlot);
 
-		_vm->_video->fillRect(_vm->_draw->_cursorSprites,
-				index * _vm->_draw->_cursorWidth, 0,
-				index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
-				_vm->_draw->_cursorHeight - 1, 0);
+		for (int i = 0; i < framesCount; i++) {
+			_vm->_vidPlayer->slotPlay(vmdSlot);
+			_vm->_vidPlayer->slotCopyFrame(vmdSlot, _vm->_draw->_cursorSprites->getVidMem(),
+					0, 0, _vm->_draw->_cursorWidth, _vm->_draw->_cursorWidth,
+					(start + i) * _vm->_draw->_cursorWidth, 0,
+					_vm->_draw->_cursorSprites->getWidth());
+		}
 
-		_vm->_video->drawPackedSprite(dataBuf, width, height,
-				index * _vm->_draw->_cursorWidth, 0, 0, _vm->_draw->_cursorSprites);
-		_vm->_draw->_cursorAnimLow[index] = 0;
+		_vm->_vidPlayer->slotClose(vmdSlot);
+
+		_vm->_draw->_cursorAnimLow[index] = start;
+		_vm->_draw->_cursorAnimHigh[index] = framesCount + start - 1;
+		_vm->_draw->_cursorAnimDelays[index] = 10;
+
+		return false;
 	}
+
+	int8 index = (int8) *_vm->_global->_inter_execPtr++;
+
+	if ((index * _vm->_draw->_cursorWidth) >= _vm->_draw->_cursorSprites->getWidth())
+		return false;
+
+	int16 width, height;
+	byte *dataBuf = _vm->_game->loadTotResource(id, 0, &width, &height);
+
+	_vm->_video->fillRect(_vm->_draw->_cursorSprites,
+			index * _vm->_draw->_cursorWidth, 0,
+			index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
+			_vm->_draw->_cursorHeight - 1, 0);
+
+	_vm->_video->drawPackedSprite(dataBuf, width, height,
+			index * _vm->_draw->_cursorWidth, 0, 0, _vm->_draw->_cursorSprites);
+	_vm->_draw->_cursorAnimLow[index] = 0;
 
 	return false;
 }

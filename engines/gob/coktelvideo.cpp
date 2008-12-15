@@ -920,17 +920,16 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	if (handle == 0) {
-		// _field_463 = 1;
-	} else if (handle == 1) {
-		// _field_463 = 0;
-	} else if (handle == 2) {
-		// _field_463 = 2;
-	} else {
+	if (handle > 2) {
 		warning("VMD Version incorrect (%d, %d, %d)", headerLength, handle, _version);
 		unload();
 		return false;
 	}
+
+	_bytesPerPixel = handle + 1;
+
+	if (_bytesPerPixel > 1)
+		_features |= kFeaturesFullColor;
 
 	_flags = _stream->readUint16LE();
 	_partsPerFrame = _stream->readUint16LE();
@@ -946,14 +945,15 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	_frameDataSize = _stream->readUint32LE();
 	_vidBufferSize = _stream->readUint32LE();
 
+	if (_bytesPerPixel > 1)
+		_frameDataSize = _vidBufferSize = 0;
 	// 0x322 (802)
 
 	if (_hasVideo) {
-		_vidBufferSize = _frameDataSize = 312200;
-/*		if ((_frameDataSize == 0) || (_frameDataSize > 1048576))
-			_frameDataSize = _width * _height + 500;
+		if ((_frameDataSize == 0) || (_frameDataSize > 1048576))
+			_frameDataSize = _width * _height + 1000;
 		if ((_vidBufferSize == 0) || (_vidBufferSize > 1048576))
-			_vidBufferSize = _frameDataSize;*/
+			_vidBufferSize = _frameDataSize;
 
 		_frameData = new byte[_frameDataSize];
 		assert(_frameData);
@@ -1092,6 +1092,13 @@ void Vmd::unload() {
 	clear();
 }
 
+int16 Vmd::getWidth() const {
+	if (_bytesPerPixel == 2)
+		return _width >> 1;
+
+	return _width;
+}
+
 void Vmd::setXY(int16 x, int16 y) {
 
 	for (int i = 0; i < _framesCount; i++) {
@@ -1166,6 +1173,8 @@ void Vmd::clear(bool del) {
 
 	_soundBytesPerSample = 1;
 	_soundStereo = 0;
+
+	_bytesPerPixel = 1;
 }
 
 CoktelVideo::State Vmd::processFrame(uint16 frame) {
@@ -1611,6 +1620,57 @@ Common::MemoryReadStream *Vmd::getExtraData(const char *fileName) {
 		new Common::MemoryReadStream(data, _extraData[i].realSize, true);
 
 	return stream;
+}
+
+void Vmd::copyCurrentFrame(byte *dest,
+		uint16 left, uint16 top, uint16 width, uint16 height,
+		uint16 x, uint16 y, uint16 pitch, int16 transp) {
+
+	if (_bytesPerPixel != 2)
+		Imd::copyCurrentFrame(dest, left, top, width, height, x, y, pitch, transp);
+
+	if (!_vidMem)
+		return;
+
+	int16 vWidth = _width >> 1;
+
+	if (((left + width) > vWidth) || ((top + height) > _height))
+		return;
+
+	assert(_palLUT);
+
+	SierraLight *dither = new SierraLight(width, height, _palLUT);
+
+	uint16 *vidMem = (uint16 *) _vidMem;
+	dest += pitch * y;
+	vidMem += vWidth * top;
+
+	for (int i = 0; i < height; i++) {
+		byte *d = dest + x;
+		uint16 *s = vidMem + left;
+
+		for (int j = 0; j < width; j++, s++) {
+			byte r = ((*s & 0x7C00) >> 10) << 1;
+			byte g = ((*s & 0x03E0) >>  5) << 1;
+			byte b = ((*s & 0x001F) >>  0) << 1;
+			byte dY, dU, dV;
+
+			PaletteLUT::RGB2YUV(r << 2, g << 2, b << 2, dY, dU, dV);
+
+			byte p = dither->dither(dY, dU, dV, j);
+
+			if ((dY == 0) || ((r == 0) && (g == 0) && (b == 0)))
+				*d++ = 0;
+			else
+				*d++ = p;
+		}
+
+		dither->nextLine();
+		dest += pitch;
+		vidMem += vWidth;
+	}
+
+	delete dither;
 }
 
 } // End of namespace Gob

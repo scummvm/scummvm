@@ -315,11 +315,17 @@ public:
 	bool load(Common::SeekableReadStream &stream);
 	void unload();
 
+	int16 getWidth() const;
+
 	void setXY(int16 x, int16 y);
 
 	void seekFrame(int32 frame, int16 whence = SEEK_SET, bool restart = false);
 
 	State nextFrame();
+
+	virtual void copyCurrentFrame(byte *dest,
+			uint16 left, uint16 top, uint16 width, uint16 height,
+			uint16 x, uint16 y, uint16 pitch, int16 transp = -1);
 
 protected:
 	enum PartType {
@@ -365,6 +371,8 @@ protected:
 
 	byte _soundBytesPerSample;
 	byte _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
+
+	byte _bytesPerPixel;
 
 	PaletteLUT *_palLUT;
 	Indeo3 *_codecIndeo3;

@@ -360,8 +360,6 @@ int VideoPlayer::slotOpen(const char *videoFile, Type which) {
 		return -1;
 	}
 
-	assert((video->getVideo()->getFeatures() & CoktelVideo::kFeaturesFullColor) == 0);
-
 	video->getVideo()->setVideoMemory();
 	video->getVideo()->enableSound(*_vm->_mixer);
 
