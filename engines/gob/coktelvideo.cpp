@@ -1388,7 +1388,8 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 		srcPtr = dataPtr;
 
 		if (_bytesPerPixel > 1) {
-			dest = _vidMemBuffer;
+			dest = _vidMemBuffer + _width * (top - _y) + (left - _x);
+			imdVidMem = _vidMem + _vidMemWidth * top + (left / _bytesPerPixel);
 			sW = _width;
 		}
 
@@ -1505,6 +1506,7 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 		}
 	}
 
+	dest = _vidMemBuffer + _width * (top - _y) + (left - _x);
 	blit(imdVidMem, dest, width, height);
 
 	return 1;
