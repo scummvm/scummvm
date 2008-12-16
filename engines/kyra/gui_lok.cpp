@@ -191,6 +191,7 @@ int KyraEngine_LoK::buttonAmuletCallback(Button *caller) {
 GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI(vm), _vm(vm), _screen(screen) {
 	_lastScreenUpdate = 0;
 	_menu = 0;
+	_pressFlag = false;
 	initStaticResource();
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::scrollUp);
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::scrollDown);
@@ -213,6 +214,12 @@ void GUI_LoK::createScreenThumbnail(Graphics::Surface &dst) {
 }
 
 int GUI_LoK::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) {
+	if ((inputFlag & 0xFF) == 199)
+		_pressFlag = true;
+	else if ((inputFlag & 0xFF) == 200)
+		_pressFlag = false;
+
+	int returnValue = 0;
 	while (list) {
 		if (list->flags & 8) {
 			list = list->nextButton;
@@ -220,51 +227,47 @@ int GUI_LoK::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) 
 		}
 
 		if (mouseWheel && list->mouseWheel == mouseWheel && list->buttonCallback) {
-			if ((*list->buttonCallback.get())(list)) {
+			if ((*list->buttonCallback.get())(list))
 				break;
-			}
 		}
 
 		int x = list->x;
 		int y = list->y;
 		assert(_screen->getScreenDim(list->dimTableIndex) != 0);
-		if (x < 0) {
+
+		if (x < 0)
 			x += _screen->getScreenDim(list->dimTableIndex)->w << 3;
-		}
 		x += _screen->getScreenDim(list->dimTableIndex)->sx << 3;
 
-		if (y < 0) {
+		if (y < 0)
 			y += _screen->getScreenDim(list->dimTableIndex)->h;
-		}
 		y += _screen->getScreenDim(list->dimTableIndex)->sy;
 
-		Common::Point mouse = _vm->getMousePos();
-		if (mouse.x >= x && mouse.y >= y && x + list->width >= mouse.x && y + list->height >= mouse.y) {
+		if (_vm->_mouseX >= x && _vm->_mouseY >= y && x + list->width >= _vm->_mouseX && y + list->height >= _vm->_mouseY) {
 			int processMouseClick = 0;
 			if (list->flags & 0x400) {
-				if (_vm->_mousePressFlag) {
+				if ((inputFlag & 0xFF) == 199 || _pressFlag) {
 					if (!(list->flags2 & 1)) {
 						list->flags2 |= 1;
 						list->flags2 |= 4;
 						processButton(list);
 						_screen->updateScreen();
+						inputFlag = 0;
 					}
-				} else {
+				} else if ((inputFlag & 0xFF) == 200) {
 					if (list->flags2 & 1) {
 						list->flags2 &= 0xFFFE;
 						processButton(list);
 						processMouseClick = 1;
+						inputFlag = 0;
 					}
 				}
-			} else if (_vm->_mousePressFlag) {
-				processMouseClick = 1;
 			}
 
 			if (processMouseClick) {
 				if (list->buttonCallback) {
-					if ((*list->buttonCallback.get())(list)) {
+					if ((*list->buttonCallback.get())(list))
 						break;
-					}
 				}
 			}
 		} else {
@@ -272,18 +275,21 @@ int GUI_LoK::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) 
 				list->flags2 &= 0xFFFE;
 				processButton(list);
 			}
+			
 			if (list->flags2 & 4) {
 				list->flags2 &= 0xFFFB;
 				processButton(list);
 				_screen->updateScreen();
 			}
-			list = list->nextButton;
-			continue;
 		}
 
 		list = list->nextButton;
 	}
-	return 0;
+
+	if (!returnValue)
+		returnValue = inputFlag & 0xFF;
+
+	return returnValue;
 }
 
 void GUI_LoK::processButton(Button *button) {
@@ -460,7 +466,6 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 
 	_menuRestoreScreen = true;
 	_keyPressed.reset();
-	_vm->_mousePressFlag = false;
 
 	_toplevelMenu = 0;
 	if (_vm->_menuDirectlyToLoad) {
@@ -474,9 +479,7 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 	}
 
 	while (_displayMenu && !_vm->shouldQuit()) {
-		Common::Point mouse = _vm->getMousePos();
-		processHighlights(_menu[_toplevelMenu], mouse.x, mouse.y);
-		processButtonList(_menuButtonList, 0, 0);
+		processHighlights(_menu[_toplevelMenu], _vm->_mouseX, _vm->_mouseY);
 		getInput();
 	}
 
@@ -495,32 +498,8 @@ void GUI_LoK::getInput() {
 	Common::Event event;
 	uint32 now = _vm->_system->getMillis();
 
-	_mouseWheel = 0;
-	while (_vm->_eventMan->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_LBUTTONDOWN:
-			_vm->_mousePressFlag = true;
-			break;
-		case Common::EVENT_LBUTTONUP:
-			_vm->_mousePressFlag = false;
-			break;
-		case Common::EVENT_MOUSEMOVE:
-			_vm->_system->updateScreen();
-			_lastScreenUpdate = now;
-			break;
-		case Common::EVENT_WHEELUP:
-			_mouseWheel = -1;
-			break;
-		case Common::EVENT_WHEELDOWN:
-			_mouseWheel = 1;
-			break;
-		case Common::EVENT_KEYDOWN:
-			_keyPressed = event.kbd;
-			break;
-		default:
-			break;
-		}
-	}
+	_vm->checkInput(_menuButtonList);
+	_vm->removeInputTop();
 
 	if (now - _lastScreenUpdate > 50) {
 		_vm->_system->updateScreen();
@@ -594,10 +573,8 @@ int GUI_LoK::saveGameMenu(Button *button) {
 	_cancelSubMenu = false;
 
 	while (_displaySubMenu && !_vm->shouldQuit()) {
+		processHighlights(_menu[2], _vm->_mouseX, _vm->_mouseY);
 		getInput();
-		Common::Point mouse = _vm->getMousePos();
-		processHighlights(_menu[2], mouse.x, mouse.y);
-		processButtonList(_menuButtonList, 0, _mouseWheel);
 	}
 
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
@@ -643,10 +620,8 @@ int GUI_LoK::loadGameMenu(Button *button) {
 	_vm->_gameToLoad = -1;
 
 	while (_displaySubMenu && !_vm->shouldQuit()) {
+		processHighlights(_menu[2], _vm->_mouseX, _vm->_mouseY);
 		getInput();
-		Common::Point mouse = _vm->getMousePos();
-		processHighlights(_menu[2], mouse.x, mouse.y);
-		processButtonList(_menuButtonList, 0, _mouseWheel);
 	}
 
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
@@ -731,11 +706,9 @@ int GUI_LoK::saveGame(Button *button) {
 	redrawTextfield();
 
 	while (_displaySubMenu && !_vm->shouldQuit()) {
-		getInput();
+		checkTextfieldInput();
 		updateSavegameString();
-		Common::Point mouse = _vm->getMousePos();
-		processHighlights(_menu[3], mouse.x, mouse.y);
-		processButtonList(_menuButtonList, 0, 0);
+		processHighlights(_menu[3], _vm->_mouseX, _vm->_mouseY);
 	}
 
 	if (_cancelSubMenu) {
@@ -811,10 +784,8 @@ bool GUI_LoK::quitConfirm(const char *str) {
 	_cancelSubMenu = true;
 
 	while (_displaySubMenu && !_vm->shouldQuit()) {
+		processHighlights(_menu[1], _vm->_mouseX, _vm->_mouseY);
 		getInput();
-		Common::Point mouse = _vm->getMousePos();
-		processHighlights(_menu[1], mouse.x, mouse.y);
-		processButtonList(_menuButtonList, 0, 0);
 	}
 
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
@@ -877,10 +848,8 @@ int GUI_LoK::gameControlsMenu(Button *button) {
 	_cancelSubMenu = false;
 
 	while (_displaySubMenu && !_vm->shouldQuit()) {
+		processHighlights(_menu[5], _vm->_mouseX, _vm->_mouseY);
 		getInput();
-		Common::Point mouse = _vm->getMousePos();
-		processHighlights(_menu[5], mouse.x, mouse.y);
-		processButtonList(_menuButtonList, 0, 0);
 	}
 
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);

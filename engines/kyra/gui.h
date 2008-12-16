@@ -194,6 +194,10 @@ protected:
 	Common::Array<int> _saveSlots;
 	void updateSaveList();
 	int getNextSavegameSlot();
+
+	uint32 _lastScreenUpdate;
+	Common::KeyState _keyPressed;
+	void checkTextfieldInput();
 };
 
 class Movie;

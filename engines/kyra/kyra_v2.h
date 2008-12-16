@@ -78,7 +78,6 @@ public:
 	virtual void pauseEngineIntern(bool pause);
 
 	virtual Screen_v2 *screen_v2() const = 0;
-	virtual GUI *gui_v2() const = 0;
 
 	void delay(uint32 time, bool update = false, bool isMainLoop = false);
 
@@ -102,27 +101,6 @@ protected:
 
 	// Input
 	virtual int inputSceneChange(int x, int y, int unk1, int unk2) = 0;
-
-	void updateInput();
-	int checkInput(Button *buttonList, bool mainLoop = false);
-	void removeInputTop();
-
-	int _mouseX, _mouseY;
-
-	struct Event {
-		Common::Event event;
-		bool causedSkip;
-
-		Event() : event(), causedSkip(false) {}
-		Event(Common::Event e) : event(e), causedSkip(false) {}
-		Event(Common::Event e, bool skip) : event(e), causedSkip(skip) {}
-
-		operator Common::Event() const { return event; }
-	};
-	Common::List<Event> _eventList;
-
-	virtual bool skipFlag() const;
-	virtual void resetSkipFlag(bool removeEvent = true);
 
 	// Animator
 	struct AnimObj {

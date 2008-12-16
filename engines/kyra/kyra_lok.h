@@ -119,6 +119,7 @@ public:
 
 	Screen *screen() { return _screen; }
 	Animator_LoK *animator() { return _animator; }
+	GUI *gui() const { return _gui; }
 	virtual Movie *createWSAMovie();
 
 	uint8 **shapes() { return _shapes; }
@@ -198,7 +199,8 @@ public:
 	void delayUntil(uint32 timestamp, bool updateGameTimers = false, bool update = false, bool isMainLoop = false);
 	void delay(uint32 millis, bool update = false, bool isMainLoop = false);
 	void delayWithTicks(int ticks);
-	void waitForEvent();
+
+	bool skipFlag() const;
 
 	// TODO
 	void registerDefaultSettings();
@@ -218,16 +220,12 @@ protected:
 	Common::Error loadGameState(int slot);
 protected:
 	// input
-	void processInput();
+	void processInput(int xpos, int ypos);
 	int processInputHelper(int xpos, int ypos);
 	int clickEventHandler(int xpos, int ypos);
 	void clickEventHandler2();
 	void updateMousePointer(bool forceUpdate = false);
 	bool hasClickedOnExit(int xpos, int ypos);
-
-	bool _skipFlag;
-	bool skipFlag() const { return _skipFlag; }
-	void resetSkipFlag(bool removeEvent = true) { _skipFlag = false; }
 
 	// scene
 	// -> init
@@ -389,16 +387,14 @@ protected:
 	int buttonInventoryCallback(Button *caller);
 	int buttonAmuletCallback(Button *caller);
 
+	bool _seqPlayerFlag;
 	bool _skipIntroFlag;
 	bool _abortIntroFlag;
+
 	bool _menuDirectlyToLoad;
-	bool _abortWalkFlag;
-	bool _abortWalkFlag2;
-	bool _mousePressFlag;
 	uint8 *_itemBkgBackUp[2];
 	uint8 *_shapes[373];
 	int8 _itemInHand;
-	bool _handleInput;
 	bool _changedScene;
 	int _unkScreenVar1, _unkScreenVar2, _unkScreenVar3;
 	int _beadStateVar;

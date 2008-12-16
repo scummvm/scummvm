@@ -117,6 +117,8 @@ private:
 
 	Menu *_menu;
 
+	bool _pressFlag;
+
 	void setGUILabels();
 
 	void setupSavegames(Menu &menu, int num);
@@ -159,15 +161,11 @@ private:
 	KyraEngine_LoK *_vm;
 	Screen_LoK *_screen;
 
-	uint32 _lastScreenUpdate;
-
 	bool _menuRestoreScreen;
 	uint8 _toplevelMenu;
 	int _savegameOffset;
 	char _savegameName[35];
 	const char *_specialSavegameString;
-	Common::KeyState _keyPressed;
-	int8 _mouseWheel;
 
 	Button::Callback _scrollUpFunctor;
 	Button::Callback _scrollDownFunctor;

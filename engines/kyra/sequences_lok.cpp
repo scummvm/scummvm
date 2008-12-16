@@ -107,8 +107,9 @@ void KyraEngine_LoK::seq_intro() {
 	if ((in = _saveFileMan->openForLoading(getSavegameFilename(0)))) {
 		delete in;
 		_skipIntroFlag = true;
-	} else
+	} else {
 		_skipIntroFlag = false;
+	}
 
 	_seq->setCopyViewOffs(true);
 	_screen->setFont(Screen::FID_8_FNT);
@@ -163,7 +164,7 @@ void KyraEngine_LoK::seq_introLogos() {
 	_screen->updateScreen();
 	_screen->fadeFromBlack();
 
-	if (_seq->playSequence(_seq_WestwoodLogo, _skipFlag) || shouldQuit()) {
+	if (_seq->playSequence(_seq_WestwoodLogo, skipFlag()) || shouldQuit()) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
@@ -175,7 +176,7 @@ void KyraEngine_LoK::seq_introLogos() {
 		_screen->setScreenPalette(_screen->_currentPalette);
 	}
 
-	if ((_seq->playSequence(_seq_KyrandiaLogo, _skipFlag) && !seq_skipSequence()) || shouldQuit()) {
+	if ((_seq->playSequence(_seq_KyrandiaLogo, skipFlag()) && !seq_skipSequence()) || shouldQuit()) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
@@ -274,7 +275,7 @@ void KyraEngine_LoK::seq_introStory() {
 	}
 
 	_screen->updateScreen();
-	//debugC(0, kDebugLevelMain, "skipFlag %i, %i", _skipFlag, _tickLength);
+	//debugC(0, kDebugLevelMain, "skipFlag %i, %i", skipFlag(), _tickLength);
 	delay(360 * _tickLength);
 }
 

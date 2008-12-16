@@ -44,7 +44,7 @@ int KyraEngine_LoK::o1_magicInMouseItem(EMCState *script) {
 }
 
 int KyraEngine_LoK::o1_characterSays(EMCState *script) {
-	_skipFlag = false;
+	resetSkipFlag();
 	if (_flags.isTalkie) {
 		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_characterSays(%p) (%d, '%s', %d, %d)", (const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3));
 		characterSays(stackPos(0), stackPosString(1), stackPos(2), stackPos(3));
@@ -330,11 +330,11 @@ int KyraEngine_LoK::o1_delaySecs(EMCState *script) {
 		}
 	} else {
 		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_delaySecs(%p) (%d)", (const void *)script, stackPos(0));
-		if (stackPos(0) >= 0 && !_skipFlag)
+		if (stackPos(0) >= 0 && !skipFlag())
 			delay(stackPos(0)*1000, true);
 	}
 
-	_skipFlag = false;
+	resetSkipFlag();
 	return 0;
 }
 
@@ -470,7 +470,7 @@ int KyraEngine_LoK::o1_displayWSAFrame(EMCState *script) {
 	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
-		if (_skipFlag)
+		if (skipFlag())
 			break;
 
 		if (continueTime - _system->getMillis() >= 10)
@@ -607,12 +607,12 @@ int KyraEngine_LoK::o1_customPrintTalkString(EMCState *script) {
 			snd_playVoiceFile(stackPos(0));
 		}
 
-		_skipFlag = false;
+		resetSkipFlag();
 		if (textEnabled())
 			_text->printTalkTextMessage(stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF, 0, 2);
 	} else {
 		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_customPrintTalkString(%p) ('%s', %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF);
-		_skipFlag = false;
+		resetSkipFlag();
 		_text->printTalkTextMessage(stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF, 0, 2);
 	}
 	_screen->updateScreen();
@@ -699,7 +699,7 @@ int KyraEngine_LoK::o1_displayWSAFrameOnHidPage(EMCState *script) {
 	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
-		if (_skipFlag)
+		if (skipFlag())
 			break;
 
 		if (continueTime - _system->getMillis() >= 10)
@@ -787,7 +787,7 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 				while (_system->getMillis() < continueTime) {
 					_sprites->updateSceneAnims();
 					_animator->updateAllObjectShapes();
-					if (_skipFlag)
+					if (skipFlag())
 						break;
 
 					if (continueTime - _system->getMillis() >= 10)
@@ -805,7 +805,7 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 				while (_system->getMillis() < continueTime) {
 					_sprites->updateSceneAnims();
 					_animator->updateAllObjectShapes();
-					if (_skipFlag)
+					if (skipFlag())
 						break;
 
 					if (continueTime - _system->getMillis() >= 10)
@@ -815,7 +815,7 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 			}
 		}
 
-		if (_skipFlag)
+		if (skipFlag())
 			break;
 		else
 			++curTime;
@@ -927,7 +927,17 @@ int KyraEngine_LoK::o1_placeCharacterInOtherScene(EMCState *script) {
 
 int KyraEngine_LoK::o1_getKey(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_getKey(%p) ()", (const void *)script);
-	waitForEvent();
+
+	// TODO: Check this implementation
+
+	while (true) {
+		delay(10);
+
+		if (skipFlag())
+			break;
+	}
+
+	resetSkipFlag();
 	return 0;
 }
 
@@ -1338,26 +1348,25 @@ int KyraEngine_LoK::o1_setCharacterCurrentFrame(EMCState *script) {
 
 int KyraEngine_LoK::o1_waitForConfirmationMouseClick(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_waitForConfirmationMouseClick(%p) ()", (const void *)script);
-	// if (mouseEnabled) {
-	while (!_mousePressFlag) {
+
+	while (true) {
 		updateMousePointer();
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
+
+		updateInput();
+		
+		int input = checkInput(_buttonList, false) & 0xFF;
+		removeInputTop();
+		if (input == 200)
+			break;
+
 		delay(10);
 	}
 
-	while (_mousePressFlag) {
-		updateMousePointer();
-		_sprites->updateSceneAnims();
-		_animator->updateAllObjectShapes();
-		delay(10);
-	}
-	// }
-	_gui->processButtonList(_buttonList, 0, 0);
-	_skipFlag = false;
-	Common::Point mouse = getMousePos();
-	script->regs[1] = mouse.x;
-	script->regs[2] = mouse.y;
+	script->regs[1] = _mouseX;
+	script->regs[2] = _mouseY;
+
 	return 0;
 }
 

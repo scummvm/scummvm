@@ -335,6 +335,54 @@ int GUI::getNextSavegameSlot() {
 	return 0;
 }
 
+void GUI::checkTextfieldInput() {
+	Common::Event event;
+
+	uint32 now = _vm->_system->getMillis();
+
+	bool running = true;
+	int keys = 0;
+	while (_vm->_eventMan->pollEvent(event) && running) {
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
+				_vm->quitGame();
+			else
+				_keyPressed = event.kbd; 
+			running = false;
+			break;
+
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP: {
+			Common::Point pos = _vm->getMousePos();
+			_vm->_mouseX = pos.x;
+			_vm->_mouseY = pos.y;
+			keys = event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800);
+			running = false;
+			} break;
+
+		case Common::EVENT_MOUSEMOVE: {
+			Common::Point pos = _vm->getMousePos();
+			_vm->_mouseX = pos.x;
+			_vm->_mouseY = pos.y;
+			_screen->updateScreen();
+			_lastScreenUpdate = now;
+			} break;
+
+		default:
+			break;
+		}
+	}
+
+	if (now - _lastScreenUpdate > 50) {
+		_vm->_system->updateScreen();
+		_lastScreenUpdate = now;
+	}
+
+	processButtonList(_menuButtonList, keys | 0x8000, 0);
+	_vm->_system->delayMillis(3);
+}
+
 #pragma mark -
 
 MainMenu::MainMenu(KyraEngine_v1 *vm) : _vm(vm), _screen(0) {

@@ -36,6 +36,7 @@ GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
 	_backUpButtonList = _unknownButtonList = 0;
 	_buttonListChanged = false;
 	_lastScreenUpdate = 0;
+	_flagsModifier = 0;
 
 	_currentMenu = 0;
 	_isDeathMenu = false;
@@ -142,8 +143,6 @@ void GUI_v2::processButton(Button *button) {
 }
 
 int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWheel) {
-	static uint16 flagsModifier = 0;
-
 	if (!buttonList)
 		return inputFlag & 0x7FFF;
 
@@ -179,10 +178,10 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 
 		flags |= temp;
 
-		flagsModifier &= ~((temp & 0x4400) >> 1);
-		flagsModifier |= (temp & 0x1100) * 2;
-		flags |= flagsModifier;
-		flags |= (flagsModifier << 2) ^ 0x8800;
+		_flagsModifier &= ~((temp & 0x4400) >> 1);
+		_flagsModifier |= (temp & 0x1100) * 2;
+		flags |= _flagsModifier;
+		flags |= (_flagsModifier << 2) ^ 0x8800;
 	}
 
 	buttonList = _backUpButtonList;
@@ -750,8 +749,8 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 	_keyPressed.reset();
 	_cancelNameInput = _finishNameInput = false;
 	while (running && !_vm->shouldQuit()) {
-		processHighlights(_savenameMenu, _vm->_mouseX, _vm->_mouseY);
 		checkTextfieldInput();
+		processHighlights(_savenameMenu, _vm->_mouseX, _vm->_mouseY);
 		if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER || _finishNameInput) {
 			if (checkSavegameDescription(buffer, curPos)) {
 				buffer[curPos] = 0;
@@ -821,54 +820,6 @@ int GUI_v2::getCharWidth(uint8 c) {
 	_screen->_charWidth = 0;
 	_screen->setFont(old);
 	return width;
-}
-
-void GUI_v2::checkTextfieldInput() {
-	Common::Event event;
-
-	uint32 now = _vm->_system->getMillis();
-
-	bool running = true;
-	int keys = 0;
-	while (_vm->_eventMan->pollEvent(event) && running) {
-		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
-				_vm->quitGame();
-			else
-				_keyPressed = event.kbd; 
-			running = false;
-			break;
-
-		case Common::EVENT_LBUTTONDOWN:
-		case Common::EVENT_LBUTTONUP: {
-			Common::Point pos = _vm->getMousePos();
-			_vm->_mouseX = pos.x;
-			_vm->_mouseY = pos.y;
-			keys = event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800);
-			running = false;
-			} break;
-
-		case Common::EVENT_MOUSEMOVE: {
-			Common::Point pos = _vm->getMousePos();
-			_vm->_mouseX = pos.x;
-			_vm->_mouseY = pos.y;
-			_screen->updateScreen();
-			_lastScreenUpdate = now;
-			} break;
-
-		default:
-			break;
-		}
-	}
-
-	if (now - _lastScreenUpdate > 50) {
-		_vm->_system->updateScreen();
-		_lastScreenUpdate = now;
-	}
-
-	processButtonList(_menuButtonList, keys | 0x8000, 0);
-	_vm->_system->delayMillis(3);
 }
 
 void GUI_v2::drawTextfieldBlock(int x, int y, uint8 c) {

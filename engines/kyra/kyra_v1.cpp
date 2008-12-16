@@ -222,6 +222,148 @@ void KyraEngine_v1::setMousePos(int x, int y) {
 	_system->warpMouse(x, y);
 }
 
+int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::checkInput(%p, %d)", (const void*)buttonList, mainLoop);
+	if (mainLoop)
+		_isSaveAllowed = true;
+
+	updateInput();
+
+	_isSaveAllowed = false;
+
+	int keys = 0;
+	int8 mouseWheel = 0;
+
+	while (_eventList.size()) {
+		Common::Event event = *_eventList.begin();
+		bool breakLoop = false;
+
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
+					(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && mainLoop) {
+				int saveLoadSlot = 9 - (event.kbd.keycode - '0') + 990;
+
+				if (event.kbd.flags == Common::KBD_CTRL) {
+					loadGameStateCheck(saveLoadSlot);
+					_eventList.clear();
+					breakLoop = true;
+				} else {
+					char savegameName[14];
+					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');
+					saveGameState(saveLoadSlot, savegameName, 0);
+				}
+			} else if (event.kbd.flags == Common::KBD_CTRL) {
+				if (event.kbd.keycode == 'd')
+					_debugger->attach();
+				else if (event.kbd.keycode == 'q')
+					quitGame();
+			}
+			break;
+
+		case Common::EVENT_MOUSEMOVE: {
+			Common::Point pos = getMousePos();
+			_mouseX = pos.x;
+			_mouseY = pos.y;
+			} break;
+
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP: {
+			Common::Point pos = getMousePos();
+			_mouseX = pos.x;
+			_mouseY = pos.y;
+			keys = (event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800));
+			breakLoop = true;
+			} break;
+
+		case Common::EVENT_WHEELUP:
+			mouseWheel = -1;
+			break;
+
+		case Common::EVENT_WHEELDOWN:
+			mouseWheel = 1;
+			break;
+
+		default:
+			break;
+		}
+
+		if (_debugger->isAttached())
+			_debugger->onFrame();
+
+		if (breakLoop)
+			break;
+
+		_eventList.erase(_eventList.begin());
+	}
+
+	GUI *guiInstance = gui();
+	if (guiInstance)
+		return guiInstance->processButtonList(buttonList, keys | 0x8000, mouseWheel);
+	else
+		return keys;
+}
+
+void KyraEngine_v1::updateInput() {
+	Common::Event event;
+
+	while (_eventMan->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == '.' || event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				_eventList.push_back(Event(event, true));
+			else if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
+				quitGame();
+			else
+				_eventList.push_back(event);
+			break;
+
+		case Common::EVENT_LBUTTONDOWN:
+			_eventList.push_back(Event(event, true));
+			break;
+
+		case Common::EVENT_MOUSEMOVE:
+			screen()->updateScreen();
+			// fall through
+
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_WHEELUP:
+		case Common::EVENT_WHEELDOWN:
+			_eventList.push_back(event);
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+void KyraEngine_v1::removeInputTop() {
+	if (!_eventList.empty())
+		_eventList.erase(_eventList.begin());
+}
+
+bool KyraEngine_v1::skipFlag() const {
+	for (Common::List<Event>::const_iterator i = _eventList.begin(); i != _eventList.end(); ++i) {
+		if (i->causedSkip)
+			return true;
+	}
+	return false;
+}
+
+void KyraEngine_v1::resetSkipFlag(bool removeEvent) {
+	for (Common::List<Event>::iterator i = _eventList.begin(); i != _eventList.end(); ++i) {
+		if (i->causedSkip) {
+			if (removeEvent)
+				_eventList.erase(i);
+			else
+				i->causedSkip = false;
+			return;
+		}
+	}
+}
+
+
 int KyraEngine_v1::setGameFlag(int flag) {
 	_flagsTable[flag >> 3] |= (1 << (flag & 7));
 	return 1;

@@ -105,6 +105,9 @@ class TextDisplayer;
 class StaticResource;
 class TimerManager;
 class Debugger;
+class GUI;
+
+struct Button;
 
 class KyraEngine_v1 : public Engine {
 friend class Debugger;
@@ -115,7 +118,6 @@ public:
 	KyraEngine_v1(OSystem *system, const GameFlags &flags);
 	virtual ~KyraEngine_v1();
 
-
 	uint8 game() const { return _flags.gameID; }
 	const GameFlags &gameFlags() const { return _flags; }
 
@@ -123,6 +125,7 @@ public:
 	Resource *resource() { return _res; }
 	virtual Screen *screen() = 0;
 	virtual TextDisplayer *text() { return _text; }
+	virtual GUI *gui() const { return 0; }
 	Sound *sound() { return _sound; }
 	StaticResource *staticres() { return _staticres; }
 	TimerManager *timer() { return _timer; }
@@ -185,6 +188,25 @@ protected:
 	EMCInterpreter *_emc;
 	Debugger *_debugger;
 
+	// input
+	void updateInput();
+	int checkInput(Button *buttonList, bool mainLoop = false);
+	void removeInputTop();
+
+	int _mouseX, _mouseY;
+
+	struct Event {
+		Common::Event event;
+		bool causedSkip;
+
+		Event() : event(), causedSkip(false) {}
+		Event(Common::Event e) : event(e), causedSkip(false) {}
+		Event(Common::Event e, bool skip) : event(e), causedSkip(skip) {}
+
+		operator Common::Event() const { return event; }
+	};
+	Common::List<Event> _eventList;
+
 	// config specific
 	virtual void registerDefaultSettings();
 	virtual void readSettings();
@@ -197,8 +219,8 @@ protected:
 	uint8 _configVoice;
 
 	// game speed
-	virtual bool skipFlag() const = 0;
-	virtual void resetSkipFlag(bool removeEvent = true) = 0;
+	virtual bool skipFlag() const;
+	virtual void resetSkipFlag(bool removeEvent = true);
 
 	uint16 _tickLength;
 	uint16 _gameSpeed;

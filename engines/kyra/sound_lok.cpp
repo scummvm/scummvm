@@ -82,7 +82,7 @@ void KyraEngine_LoK::snd_playVoiceFile(int id) {
 
 void KyraEngine_LoK::snd_voiceWaitForFinish(bool ingame) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_LoK::snd_voiceWaitForFinish(%d)", ingame);
-	while (_sound->voiceIsPlaying() && !_skipFlag) {
+	while (_sound->voiceIsPlaying() && !skipFlag()) {
 		if (ingame)
 			delay(10, true);
 		else

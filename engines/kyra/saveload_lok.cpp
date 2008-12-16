@@ -202,9 +202,6 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 	_screen->_disableScreen = false;
 	_screen->updateScreen();
 
-	_abortWalkFlag = true;
-	_abortWalkFlag2 = false;
-	_mousePressFlag = false;
 	setMousePos(brandonX, brandonY);
 	
 	if (in->err() || in->eos()) {

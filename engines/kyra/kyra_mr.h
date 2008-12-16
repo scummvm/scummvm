@@ -57,7 +57,7 @@ public:
 
 	Screen *screen() { return _screen; }
 	Screen_v2 *screen_v2() const { return _screen; }
-	GUI_v2 *gui_v2() const { return _gui; }
+	GUI *gui() const { return _gui; }
 	SoundDigital *soundDigital() { return _soundDigital; }
 	int language() const { return _lang; }
 	bool heliumMode() const { return _configHelium; }

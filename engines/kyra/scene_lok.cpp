@@ -44,9 +44,6 @@ void KyraEngine_LoK::enterNewScene(int sceneId, int facing, int unk1, int unk2, 
 	debugC(9, kDebugLevelMain, "KyraEngine_LoK::enterNewScene(%d, %d, %d, %d, %d)", sceneId, facing, unk1, unk2, brandonAlive);
 	int unkVar1 = 1;
 	_screen->hideMouse();
-	_handleInput = false;
-	_abortWalkFlag = false;
-	_abortWalkFlag2 = false;
 
 	// TODO: Check how the original handled sfx still playing
 	_sound->stopAllSoundEffects();
@@ -923,18 +920,8 @@ int KyraEngine_LoK::processSceneChange(int *table, int unk1, int frameReset) {
 	bool running = true;
 	int returnValue = 0;
 	uint32 nextFrame = 0;
-	_abortWalkFlag = false;
-	_mousePressFlag = false;
 
 	while (running) {
-		if (_abortWalkFlag) {
-			*table = 8;
-			_currentCharacter->currentAnimFrame = 7;
-			_animator->animRefreshNPC(0);
-			_animator->updateAllObjectShapes();
-			processInput();
-			return 0;
-		}
 		bool forceContinue = false;
 		switch (*table) {
 		case 0: case 1: case 2:
@@ -955,13 +942,12 @@ int KyraEngine_LoK::processSceneChange(int *table, int unk1, int frameReset) {
 		}
 
 		returnValue = changeScene(_currentCharacter->facing);
-		if (returnValue) {
+		if (returnValue)
 			running = false;
-			_abortWalkFlag = false;
-		}
 
 		if (unk1) {
-			if (_mousePressFlag) {
+			if (skipFlag()) {
+				resetSkipFlag(false);
 				running = false;
 				_sceneChangeState = 1;
 			}

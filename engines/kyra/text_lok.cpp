@@ -114,22 +114,11 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 		uint32 nextTime = loopStart + _tickLength;
 
 		while (_system->getMillis() < nextTime) {
-			while (_eventMan->pollEvent(event)) {
-				switch (event.type) {
-				case Common::EVENT_KEYDOWN:
-					if (event.kbd.keycode == '.')
-						_skipFlag = true;
-					break;
-				case Common::EVENT_RTL:
-				case Common::EVENT_QUIT:
-					runLoop = false;
-					break;
-				case Common::EVENT_LBUTTONDOWN:
-					runLoop = false;
-					break;
-				default:
-					break;
-				}
+			updateInput();
+
+			if (skipFlag()) {
+				runLoop = false;
+				break;
 			}
 
 			if (nextTime - _system->getMillis() >= 10) {
@@ -137,13 +126,12 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 				_system->updateScreen();
 			}
 		}
-
-		if (_skipFlag)
-			runLoop = false;
 	}
 
-	if (_skipFlag)
+	if (skipFlag()) {
+		resetSkipFlag();
 		snd_stopVoice();
+	}
 
 	_timer->enable(14);
 	_timer->enable(15);

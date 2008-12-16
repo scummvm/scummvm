@@ -121,6 +121,7 @@ protected:
 	bool _buttonListChanged;
 	Button *_backUpButtonList;
 	Button *_unknownButtonList;
+	uint16 _flagsModifier;
 
 protected:
 	virtual void setupPalette() {}
@@ -212,8 +213,6 @@ protected:
 
 	// savename menu
 	bool _finishNameInput, _cancelNameInput;
-	Common::KeyState _keyPressed;
-	uint32 _lastScreenUpdate;
 
 	const char *nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8 c2, uint8 c3, int bufferSize);
 	int finishSavename(Button *caller);
@@ -221,7 +220,6 @@ protected:
 
 	bool checkSavegameDescription(const char *buffer, int size);
 	int getCharWidth(uint8 c);
-	void checkTextfieldInput();
 	void drawTextfieldBlock(int x, int y, uint8 c);
 
 	// choice menu
