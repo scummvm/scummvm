@@ -88,6 +88,40 @@ static const TinselGameDescription gameDescriptions[] = {
 	// TINSEL_V2: The Discworld 2 game used this updated version of the Tinsel 1 engine,
 	//   and as far as we know there aren't any variations of this engine.
 
+	{	// Floppy Demo V0 from http://www.adventure-treff.de/specials/dl_demos.php
+		{
+			"dw",
+			"Floppy Demo",
+			AD_ENTRY1s("dw.gra", "ce1b57761ba705221bcf70955b827b97", 441192),
+			//AD_ENTRY1s("dw.scn", "ccd72f02183d0e96b6e7d8df9492cda8", 23308),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_DEMO
+		},
+		GID_DW1,
+		0,
+		GF_DEMO,
+		TINSEL_V0,
+	},
+
+	{	// CD Demo V1 version, with *.gra files
+		{
+			"dw",
+			"CD Demo",
+			{
+				{"dw.gra", 0, "ef5a2518c9e205f786f5a4526396e661", 781676},
+				{"english.smp", 0, NULL, -1},
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_DEMO
+		},
+		GID_DW1,
+		0,
+		GF_CD,
+		TINSEL_V1,
+	},
+
 	{	// Floppy V1 version, with *.gra files
 		{
 			"dw",
@@ -250,22 +284,6 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 #endif
-
-	{	// Demo from http://www.adventure-treff.de/specials/dl_demos.php
-		{
-			"dw",
-			"Demo",
-			AD_ENTRY1s("dw.gra", "ce1b57761ba705221bcf70955b827b97", 441192),
-			//AD_ENTRY1s("dw.scn", "ccd72f02183d0e96b6e7d8df9492cda8", 23308),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			Common::ADGF_DEMO
-		},
-		GID_DW1,
-		0,
-		GF_DEMO,
-		TINSEL_V0,
-	},
 
 	{	// German CD re-release "Neon Edition"
 		// Note: This release has ENGLISH.TXT (with german content) instead of GERMAN.TXT
