@@ -24,8 +24,8 @@
  */
 
 // Based on http://wiki.multimedia.cx/index.php?title=Smacker
-// and the FFmpeg Smacker decoder (libavcodec/smacker.c), revision 15884
-// http://svn.ffmpeg.org/ffmpeg/trunk/libavcodec/smacker.c?revision=15884&view=markup
+// and the FFmpeg Smacker decoder (libavcodec/smacker.c), revision 16143
+// http://svn.ffmpeg.org/ffmpeg/trunk/libavcodec/smacker.c?revision=16143&view=markup
 
 #include "graphics/smk_player.h"
 #include "common/archive.h"
@@ -577,8 +577,11 @@ bool SMKPlayer::decodeNextFrame() {
 						break;
 					case 2:
 						for(i = 0; i < 2; i++) {
-							p1 = _FullTree->getCode(bs);
+							// We first get p2 and then p1
+							// Check thread "[PATCH] Smacker video decoder bug fix"
+							// http://article.gmane.org/gmane.comp.video.ffmpeg.devel/78768
 							p2 = _FullTree->getCode(bs);
+							p1 = _FullTree->getCode(bs);
 							for (j = 0; j < doubleY; ++j) {
 								out[0] = p1 & 0xff;
 								out[1] = p1 >> 8;
