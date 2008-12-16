@@ -161,13 +161,17 @@ void OptionsDialog::open() {
 			_renderModePopUp->setSelected(sel);
 		}
 
-#ifndef SMALL_SCREEN_DEVICE
+#ifdef SMALL_SCREEN_DEVICE
+		_fullscreenCheckbox->setState(true);
+		_fullscreenCheckbox->setEnabled(false);
+		_aspectCheckbox->setEnabled(false);
+#else // !SMALL_SCREEN_DEVICE
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
 		// Aspect ratio setting
 		_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
-#endif
+#endif // SMALL_SCREEN_DEVICE
 	}
 
 	// Audio options
@@ -533,12 +537,6 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 	// Aspect ratio checkbox
 	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", "Aspect ratio correction", 0, 0);
 
-#ifdef SMALL_SCREEN_DEVICE
-	_fullscreenCheckbox->setState(true);
-	_fullscreenCheckbox->setEnabled(false);
-	_aspectCheckbox->setEnabled(false);
-#endif
-
 	_enableGraphicSettings = true;
 }
 
@@ -723,7 +721,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 #endif
 
 #ifdef SMALL_SCREEN_DEVICE
-	new ButtonWidget(tab, "GlobalOptions.KeysButton", "Keys", kChooseKeyMappingCmd, 0);
+	new ButtonWidget(tab, "GlobalOptions_Paths.KeysButton", "Keys", kChooseKeyMappingCmd, 0);
 #endif
 
 	tab->addTab("Misc");
