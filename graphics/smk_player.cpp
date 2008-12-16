@@ -138,7 +138,7 @@ private:
 
 int SmallHuffmanTree::decodeTree(int length) {
 	if (!_bs.getBit()) { // Leaf
-		uint16 v = _bs.getBits8();	// was uint32
+		uint16 v = _bs.getBits8();
 
 		_tree.push_back(v);
 		return 1;
@@ -340,7 +340,7 @@ int32 SMKPlayer::getCurFrame() {
 int32 SMKPlayer::getFrameCount() {
 	if (!_fileStream)
 		return 0;
-	return _framesCount;
+	return _header.frames;
 }
 
 int32 SMKPlayer::getFrameRate() {
@@ -372,7 +372,6 @@ bool SMKPlayer::loadFile(const char *fileName) {
 	_header.width = _fileStream->readUint32LE();
 	_header.height = _fileStream->readUint32LE();
 	_header.frames = _fileStream->readUint32LE();
-	_framesCount = _header.frames;
 	_header.frameRate = (int32)_fileStream->readUint32LE();
 	_header.flags = _fileStream->readUint32LE();
 
@@ -395,7 +394,7 @@ bool SMKPlayer::loadFile(const char *fileName) {
 	for (i = 0; i < _header.frames; ++i)
 		_frameSizes[i] = _fileStream->readUint32LE();
 
-	_frameTypes = (uint32 *)malloc(_header.frames * sizeof(uint32));
+	_frameTypes = (byte *)malloc(_header.frames);
 	for (i = 0; i < _header.frames; ++i)
 		_frameTypes[i] = _fileStream->readByte();
 
@@ -455,10 +454,11 @@ bool SMKPlayer::decodeNextFrame() {
 
 	uint32 startPos = _fileStream->pos();
 
-	_paletteDidChange = false;
+	// Check if we got a frame with palette data, and
+	// call back the virtual setPalette function to set
+	// the current palette
 	if (_frameTypes[_currentSMKFrame] & 1) {
 		unpackPalette();
-		_paletteDidChange = true;
 		setPalette(_palette);
 	}
 
@@ -511,7 +511,7 @@ bool SMKPlayer::decodeNextFrame() {
 			while (run-- && block < blocks) {
 				clr = _MClrTree->getCode(bs);
 				map = _MMapTree->getCode(bs);
-				out = getCurSMKImage() + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
+				out = _image + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
 				hi = clr >> 8;
 				lo = clr & 0xff;
 				for (i = 0; i < 4; i++) {
@@ -544,7 +544,7 @@ bool SMKPlayer::decodeNextFrame() {
 			}
 
 			while (run-- && block < blocks) {
-				out = getCurSMKImage() + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
+				out = _image + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
 				switch (mode) {
 					case 0:
 						for (i = 0; i < 4; ++i) {
@@ -578,7 +578,7 @@ bool SMKPlayer::decodeNextFrame() {
 					case 2:
 						for(i = 0; i < 2; i++) {
 							// We first get p2 and then p1
-							// Check thread "[PATCH] Smacker video decoder bug fix"
+							// Check ffmpeg thread "[PATCH] Smacker video decoder bug fix"
 							// http://article.gmane.org/gmane.comp.video.ffmpeg.devel/78768
 							p2 = _FullTree->getCode(bs);
 							p1 = _FullTree->getCode(bs);
@@ -610,7 +610,7 @@ bool SMKPlayer::decodeNextFrame() {
 			uint32 col;
 			mode = type >> 8;
 			while (run-- && block < blocks) {
-				out = getCurSMKImage() + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
+				out = _image + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
 				col = mode * 0x01010101;
 				for (i = 0; i < 4 * doubleY; ++i) {
 					out[0] = out[1] = out[2] = out[3] = col;

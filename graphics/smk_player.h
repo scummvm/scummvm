@@ -110,12 +110,6 @@ protected:
 	 */
 	bool decodeNextFrame();
 
-	byte *getCurSMKImage() { return _image; }
-	bool paletteDidChange() { return _paletteDidChange; }
-	byte *palette() { return _palette; }
-
-	uint16 _framesCount;
-
 	Common::SeekableReadStream *_fileStream;
 
 private:
@@ -141,7 +135,12 @@ private:
 	} _header;
 
 	uint32 *_frameSizes;
-	uint32 *_frameTypes;
+	// The FrameTypes section of a Smacker file contains an array of bytes, where
+	// the 8 bits of each byte describe the contents of the corresponding frame.
+	// The highest 7 bits correspond to audio frames (bit 7 is track 6, bit 6 track 5
+	// and so on), so there can be up to 7 different audio tracks. When the lowest bit
+	// (bit 0) is set, it denotes a frame that contains a palette record
+	byte *_frameTypes;
 
 	BigHuffmanTree *_MMapTree;
 	BigHuffmanTree *_MClrTree;
@@ -151,7 +150,6 @@ private:
 	byte *_frameData;
 
 	byte *_image;
-	bool _paletteDidChange;
 	byte *_palette;
 	// Possible runs of blocks
 	uint getBlockRun(int index) { return (index <= 58) ? index + 1 : 128 << (index - 59); }

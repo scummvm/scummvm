@@ -92,7 +92,7 @@ void MoviePlayer::handleNextFrame() {
 		_vm->markRectAsDirty(kMainVirtScreen, 0, 0, getWidth(), getHeight());
 	}
 
-	if (getCurFrame() == _framesCount) {
+	if (getCurFrame() == getFrameCount()) {
 		closeFile();
 	}
 }
