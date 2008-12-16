@@ -38,7 +38,7 @@
 
 namespace Gob {
 
-const char *VideoPlayer::_extensions[] = { "IMD", "VMD" };
+const char *VideoPlayer::_extensions[] = { "IMD", "VMD", "RMD" };
 
 VideoPlayer::Video::Video(GobEngine *vm) : _vm(vm), _fileName(0), _stream(0), _video(0) {
 }
@@ -62,6 +62,8 @@ bool VideoPlayer::Video::open(const char *fileName, Type which) {
 	if (which == kVideoTypeIMD) {
 		_video = new Imd();
 	} else if (which == kVideoTypeVMD) {
+		_video = new Vmd(_vm->_video->_palLUT);
+	} else if (which == kVideoTypeRMD) {
 		_video = new Vmd(_vm->_video->_palLUT);
 	} else {
 		warning("Couldn't open video \"%s\": Invalid video Type", fileName);

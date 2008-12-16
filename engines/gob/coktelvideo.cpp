@@ -1213,7 +1213,7 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 	if (!_vidMem)
 		setVideoMemory();
 
-	for (uint16 i = 0; i < _partsPerFrame; i++) {
+	for (uint16 i = 0; (i < _partsPerFrame) && (frame < _framesCount); i++) {
 		Part &part = _frames[frame].parts[i];
 
 		if (part.type == kPartTypeAudio) {

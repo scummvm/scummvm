@@ -48,7 +48,8 @@ public:
 	enum Type {
 		kVideoTypeTry = -1,
 		kVideoTypeIMD = 0,
-		kVideoTypeVMD = 1
+		kVideoTypeVMD = 1,
+		kVideoTypeRMD = 2
 	};
 
 	VideoPlayer(GobEngine *vm);
