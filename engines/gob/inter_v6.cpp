@@ -716,6 +716,9 @@ void Inter_v6::o6_playVmdOrMusic() {
 		_vm->_sound->bgStop();
 		return;
 	} else if (lastFrame == -9) {
+		if (!strchr(fileName, '.'))
+			strcat(fileName, ".WA8");
+
 		probe16bitMusic(fileName);
 
 		_vm->_sound->bgStop();
