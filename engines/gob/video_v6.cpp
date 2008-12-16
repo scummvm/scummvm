@@ -66,6 +66,72 @@ char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	return 1;
 }
 
+void Video_v6::fillRect(SurfaceDesc *dest,
+		int16 left, int16 top, int16 right, int16 bottom, int16 color) {
+
+	if (!(color & 0xFF00)) {
+		Video::fillRect(dest, left, top, right, bottom, color);
+		return;
+	}
+
+	if (!(color & 0x0100)) {
+		Video::fillRect(dest, left, top, right, bottom, color);
+		return;
+	}
+
+	if (_doRangeClamp) {
+		if (left > right)
+			SWAP(left, right);
+		if (top > bottom)
+			SWAP(top, bottom);
+
+		if ((left >= dest->getWidth()) || (right < 0) ||
+		    (top >= dest->getHeight()) || (bottom < 0))
+			return;
+
+		left = CLIP(left, (int16) 0, (int16) (dest->getWidth() - 1));
+		top = CLIP(top, (int16) 0, (int16) (dest->getHeight() - 1));
+		right = CLIP(right, (int16) 0, (int16) (dest->getWidth() - 1));
+		bottom = CLIP(bottom, (int16) 0, (int16) (dest->getHeight() - 1));
+	}
+
+	byte strength = 16 - (((uint16) color) >> 12);
+	shadeRect(dest, left, top, right, bottom, color, strength);
+}
+
+void Video_v6::shadeRect(SurfaceDesc *dest,
+		int16 left, int16 top, int16 right, int16 bottom, byte color, byte strength) {
+
+	int width  = right  - left + 1;
+	int height = bottom - top  + 1;
+	int dWidth = dest->getWidth();
+	byte *vidMem = dest->getVidMem() + dWidth * top + left;
+	byte sY, sU, sV;
+
+	_palLUT->getEntry(color, sY, sU, sV);
+
+	SierraLight *dither = new SierraLight(width, height, _palLUT);
+
+	for (int i = 0; i < height; i++) {
+		byte *d = vidMem;
+
+		for (int j = 0; j < width; j++) {
+			byte dY, dU, dV;
+			byte dC = *d;
+
+			_palLUT->getEntry(dC, dY, dU, dV);
+
+			dY = CLIP<int>(sY + (dY >> 2), 0, 255);
+			*d++ = dither->dither(dY, sU, sV, j);
+		}
+
+		dither->nextLine();
+		vidMem += dWidth;
+	}
+
+	delete dither;
+}
+
 void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, SurfaceDesc *surfDesc) {
 	const byte *data = sprBuf + 2;
 

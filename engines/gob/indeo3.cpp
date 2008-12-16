@@ -137,6 +137,12 @@ inline int PaletteLUT::getIndex(byte c1, byte c2, byte c3) const {
 	return ((c1 >> _shift) << _depth2) | ((c2 >> _shift) << _depth1) | (c3 >> _shift);
 }
 
+void PaletteLUT::getEntry(byte index, byte &c1, byte &c2, byte &c3) const {
+	c1 = _realPal[index * 3 + 0];
+	c2 = _realPal[index * 3 + 1];
+	c3 = _realPal[index * 3 + 2];
+}
+
 byte PaletteLUT::findNearest(byte c1, byte c2, byte c3) {
 	return _lut[getIndex(c1, c2, c3)];
 }

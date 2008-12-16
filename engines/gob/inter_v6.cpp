@@ -439,7 +439,7 @@ void Inter_v6::setupOpcodes() {
 		OPCODE(o1_returnTo),
 		OPCODE(o1_loadSpriteContent),
 		OPCODE(o1_copySprite),
-		OPCODE(o1_fillRect),
+		OPCODE(o6_fillRect),
 		/* 34 */
 		OPCODE(o1_drawLine),
 		OPCODE(o1_strToLong),
@@ -944,6 +944,45 @@ bool Inter_v6::o6_freeCollision(OpFuncParams &params) {
 		break;
 	}
 
+	return false;
+}
+
+bool Inter_v6::o6_fillRect(OpFuncParams &params) {
+	int16 destSurf;
+
+	_vm->_draw->_destSurface = destSurf = load16();
+
+	_vm->_draw->_destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();
+	_vm->_draw->_spriteRight = _vm->_parse->parseValExpr();
+	_vm->_draw->_spriteBottom = _vm->_parse->parseValExpr();
+
+	evalExpr(0);
+
+	_vm->_draw->_backColor = _vm->_global->_inter_resVal & 0xFFFF;
+	uint16 word_63E64 = _vm->_global->_inter_resVal >> 16;
+
+	if (word_63E64 != 0)
+		warning("Urban Stub: o6_fillRect(), word_63E64 = %d", word_63E64);
+
+	if (_vm->_draw->_spriteRight < 0) {
+		_vm->_draw->_destSpriteX += _vm->_draw->_spriteRight - 1;
+		_vm->_draw->_spriteRight = -_vm->_draw->_spriteRight + 2;
+	}
+	if (_vm->_draw->_spriteBottom < 0) {
+		_vm->_draw->_destSpriteY += _vm->_draw->_spriteBottom - 1;
+		_vm->_draw->_spriteBottom = -_vm->_draw->_spriteBottom + 2;
+	}
+
+	if (destSurf & 0x80) {
+		warning("Urban Stub: o6_fillRect(), destSurf & 0x80");
+		return false;
+	}
+
+	if (!_vm->_draw->_spritesArray[(destSurf > 100) ? (destSurf - 80) : destSurf])
+		return false;
+
+	_vm->_draw->spriteOperation(DRAW_FILLRECT);
 	return false;
 }
 

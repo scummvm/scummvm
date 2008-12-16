@@ -60,6 +60,7 @@ public:
 
 	void buildNext();
 
+	void getEntry(byte index, byte &c1, byte &c2, byte &c3) const;
 	byte findNearest(byte c1, byte c2, byte c3);
 	byte findNearest(byte c1, byte c2, byte c3, byte &nC1, byte &nC2, byte &nC3);
 

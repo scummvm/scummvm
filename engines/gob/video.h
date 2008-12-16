@@ -137,7 +137,7 @@ public:
 	void sparseRetrace(int max);
 
 	void putPixel(int16 x, int16 y, int16 color, SurfaceDesc *dest);
-	void fillRect(SurfaceDesc *dest, int16 left, int16 top,
+	virtual void fillRect(SurfaceDesc *dest, int16 left, int16 top,
 			int16 right, int16 bottom, int16 color);
 	void drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1,
 				  int16 color);
@@ -223,6 +223,9 @@ public:
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 			int16 x, int16 y, int16 transp, SurfaceDesc *destDesc);
 
+	virtual void fillRect(SurfaceDesc *dest, int16 left, int16 top,
+			int16 right, int16 bottom, int16 color);
+
 	virtual void init();
 
 	Video_v6(GobEngine *vm);
@@ -230,6 +233,9 @@ public:
 
 private:
 	static const byte _ditherPalette[768];
+
+	void shadeRect(SurfaceDesc *dest,
+			int16 left, int16 top, int16 right, int16 bottom, byte color, byte strength);
 
 	void drawPacked(const byte *sprBuf, int16 x, int16 y, SurfaceDesc *surfDesc);
 	void drawYUVData(const byte *srcData, SurfaceDesc *destDesc,
