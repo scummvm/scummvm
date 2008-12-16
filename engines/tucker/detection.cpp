@@ -71,6 +71,14 @@ static const Common::ADGameDescription tuckerGameDescriptions[] = {
 		Common::kPlatformPC,
 		Common::ADGF_NO_FLAGS
 	},
+	{
+		"tucker",
+		"",
+		AD_ENTRY1s("infobar.txt", "5f85285bbc23ce57cbc164021ee1f23c", 525),
+		Common::PL_POL,
+		Common::kPlatformPC,
+		Common::ADGF_NO_FLAGS
+	},
 	AD_TABLE_END_MARKER
 };
 

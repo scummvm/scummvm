@@ -288,12 +288,11 @@ void TuckerEngine::loadCharset() {
 	strcpy(_fileToLoad, "charset.pcx");
 	loadImage(_loadTempBuf, 0);
 	switch (_gameLang) {
-	case Common::FR_FRA:
-	case Common::DE_DEU:
-		Graphics::setCharset(kCharsetTypeFrGr);
+	case Common::EN_ANY:
+		Graphics::setCharset(kCharsetTypeEng);
 		break;
 	default:
-		Graphics::setCharset(kCharsetTypeEn);
+		Graphics::setCharset(kCharsetTypeDefault);
 		break;
 	}
 	loadCharsetHelper();

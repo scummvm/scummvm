@@ -244,17 +244,17 @@ void Graphics::drawStringChar(uint8 *dst, uint8 chr, int pitch, uint8 chrColor, 
 
 void Graphics::setCharset(CharsetType type) {
 	switch (type) {
-	case kCharsetTypeEn:
-		_charset.charW = 10;
-		_charset.charH = 8;
-		_charset.xCount = 32;
-		_charset.yCount = 3;
-		break;
-	case kCharsetTypeFrGr:
+	case kCharsetTypeDefault:
 		_charset.charW = 10;
 		_charset.charH = 10;
 		_charset.xCount = 32;
 		_charset.yCount = 7;
+		break;
+	case kCharsetTypeEng:
+		_charset.charW = 10;
+		_charset.charH = 8;
+		_charset.xCount = 32;
+		_charset.yCount = 3;
 		break;
 	case kCharsetTypeCredits:
 		_charset.charW = 19;
