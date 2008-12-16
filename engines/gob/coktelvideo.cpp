@@ -1522,6 +1522,7 @@ void Vmd::blit(byte *dest, byte *src, int16 width, int16 height) {
 
 void Vmd::blit16(byte *dest, uint16 *src, int16 width, int16 height) {
 	int16 vWidth = _width >> 1;
+	width >>= 1;
 
 	assert(_palLUT);
 

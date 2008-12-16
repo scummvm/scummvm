@@ -247,10 +247,25 @@ bool VideoPlayer::primaryOpen(const char *videoFile, int16 x, int16 y,
 		}
 
 		if (!(flags & kFlagNoVideo)) {
-			_backSurf = ((flags & kFlagFrontSurface) == 0);
-			SurfaceDesc::Ptr surf = _vm->_draw->_spritesArray[_backSurf ? 21 : 20];
+			SurfaceDesc::Ptr surf;
+
+			if (flags & kFlagOtherSurface) {
+				_backSurf = false;
+
+				surf = _vm->_video->initSurfDesc(_vm->_global->_videoMode,
+						_primaryVideo->getVideo()->getWidth(),
+						_primaryVideo->getVideo()->getHeight(), 0);
+				_vm->_draw->_spritesArray[x] = surf;
+
+				x = 0;
+			} else {
+				_backSurf = ((flags & kFlagFrontSurface) == 0);
+				surf = _vm->_draw->_spritesArray[_backSurf ? 21 : 20];
+			}
+
 			_primaryVideo->getVideo()->setVideoMemory(surf->getVidMem(),
 					surf->getWidth(), surf->getHeight());
+
 		} else
 			_primaryVideo->getVideo()->setVideoMemory();
 

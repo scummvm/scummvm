@@ -41,7 +41,8 @@ public:
 		kFlagNone = 0,
 		kFlagUseBackSurfaceContent = 0x40,
 		kFlagFrontSurface = 0x80,
-		kFlagNoVideo = 0x100
+		kFlagNoVideo = 0x100,
+		kFlagOtherSurface = 0x800
 	};
 
 	enum Type {
