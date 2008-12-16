@@ -73,6 +73,9 @@ public:
 
 	/**
 	 * Returns the frame rate of the video
+	 * If > 0, fps are 1000 / FrameRate
+	 * If < 0, fps are 100000 / (-FrameRate)
+	 * If 0, fps are 10
 	 * @return the frame rate of the video
 	 */
 	int32 getFrameRate();
@@ -117,6 +120,15 @@ private:
 
 	uint32 _currentSMKFrame;
 
+	struct AudioInfo {
+		bool isCompressed;
+		bool hasAudio;
+		bool is16Bits;
+		bool isStereo;
+		bool hasV2Compression;
+		uint32 sampleRate;
+	};
+
 	struct {
 		uint32 signature;
 		uint32 width;
@@ -130,7 +142,7 @@ private:
 		uint32 mClrSize;
 		uint32 fullSize;
 		uint32 typeSize;
-		uint32 audioRate[7];
+		AudioInfo audioInfo[7];
 		uint32 dummy;
 	} _header;
 
@@ -151,6 +163,7 @@ private:
 
 	byte *_image;
 	byte *_palette;
+
 	// Possible runs of blocks
 	uint getBlockRun(int index) { return (index <= 58) ? index + 1 : 128 << (index - 59); }
 };

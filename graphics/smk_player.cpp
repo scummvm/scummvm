@@ -373,9 +373,20 @@ bool SMKPlayer::loadFile(const char *fileName) {
 	_header.height = _fileStream->readUint32LE();
 	_header.frames = _fileStream->readUint32LE();
 	_header.frameRate = (int32)_fileStream->readUint32LE();
+	// Flags are determined by which bit is set, which can be one of the following:
+	// 0 - set to 1 if file contains a ring frame.
+	// 1 - set to 1 if file is Y-interlaced
+	// 2 - set to 1 if file is Y-doubled
+	// If bits 1 or 2 are set, the frame should be scaled to twice its height
+    // before it is displayed.
 	_header.flags = _fileStream->readUint32LE();
 
-	unsigned int i;
+	// TODO: should we do any extra processing for Smacker files with ring frames?
+
+	// TODO: should we do any extra processing for Y-doubled videos? Are they the
+	// same as Y-interlaced videos?
+
+	uint32 i;
 	for (i = 0; i < 7; ++i)
 		_header.audioSize[i] = _fileStream->readUint32LE();
 
@@ -385,8 +396,26 @@ bool SMKPlayer::loadFile(const char *fileName) {
 	_header.fullSize = _fileStream->readUint32LE();
 	_header.typeSize = _fileStream->readUint32LE();
 
-	for (i = 0; i < 7; ++i)
-		_header.audioRate[i] = _fileStream->readUint32LE();
+	uint32 audioInfo;
+	for (i = 0; i < 7; ++i) {
+		// AudioRate - Frequency and format information for each sound track, up to 7 audio tracks.
+		// The 32 constituent bits have the following meaning:
+		// * bit 31 - data is compressed
+		// * bit 30 - indicates that audio data is present for this track
+		// * bit 29 - 1 = 16-bit audio; 0 = 8-bit audio
+		// * bit 28 - 1 = stereo audio; 0 = mono audio
+		// * bits 27-26 - if both set to zero - use v2 sound decompression
+		// * bits 25-24 - unused
+		// * bits 23-0 - audio sample rate 
+		audioInfo = _fileStream->readUint32LE();
+		_header.audioInfo[i].isCompressed = audioInfo & 0x80000000;
+		_header.audioInfo[i].hasAudio = audioInfo & 0x40000000;
+		_header.audioInfo[i].is16Bits = audioInfo & 0x20000000;
+		_header.audioInfo[i].isStereo = audioInfo & 0x10000000;
+		_header.audioInfo[i].hasV2Compression = !(audioInfo & 0x8000000) &&
+												!(audioInfo & 0x4000000);
+		_header.audioInfo[i].sampleRate = audioInfo & 0xFFFFFF;
+	}
 
 	_header.dummy = _fileStream->readUint32LE();
 
@@ -436,7 +465,7 @@ void SMKPlayer::closeFile() {
 }
 
 void SMKPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
-	uint h = _header.height;
+	uint h = (_header.flags ? 2 : 1) * _header.height;
 	uint w = _header.width;
 
 	byte *src = _image;
@@ -462,13 +491,15 @@ bool SMKPlayer::decodeNextFrame() {
 		setPalette(_palette);
 	}
 
-	// TODO: Audio support
-	// Skip audio tracks for now
+	// Load audio tracks
 	for (i = 0; i < 7; ++i) {
 		if (!(_frameTypes[_currentSMKFrame] & (2 << i)))
 			continue;
 
 		uint32 len = _fileStream->readUint32LE();
+
+		// TODO: Audio support
+
 		//uint32 unpackedLen = _fileStream->readUint32LE();
 		_fileStream->skip(len - 4);
 	}
