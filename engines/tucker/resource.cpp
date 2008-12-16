@@ -162,7 +162,7 @@ public:
 };
 
 uint8 *TuckerEngine::loadFile(uint8 *p) {
-	if (_gameVer.lang == Common::DE_DEU) {
+	if (_gameLang == Common::DE_DEU) {
 		if (strcmp(_fileToLoad, "bgtext.c") == 0) {
 			strcpy(_fileToLoad, "bgtextgr.c");
 		} else if (strcmp(_fileToLoad, "charname.c") == 0) {
@@ -183,7 +183,7 @@ uint8 *TuckerEngine::loadFile(uint8 *p) {
 	}
 	_fileLoadSize = 0;
 	bool decode = false;
-	if (_useEnc) {
+	if (_gameFlags & kGameFlagEncodedData) {
 		char *ext = strrchr(_fileToLoad, '.');
 		if (ext && strcmp(ext + 1, "c") == 0) {
 			strcpy(ext + 1, "enc");
@@ -287,7 +287,7 @@ void TuckerEngine::loadCursor() {
 void TuckerEngine::loadCharset() {
 	strcpy(_fileToLoad, "charset.pcx");
 	loadImage(_loadTempBuf, 0);
-	switch (_gameVer.lang) {
+	switch (_gameLang) {
 	case Common::FR_FRA:
 	case Common::DE_DEU:
 		Graphics::setCharset(kCharsetTypeFrGr);

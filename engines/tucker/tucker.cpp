@@ -36,9 +36,19 @@ namespace Tucker {
 
 TuckerEngine::TuckerEngine(OSystem *system, Common::Language language, bool isDemo)
 	: Engine(system) {
-	_gameVer.lang = language;
-	_gameVer.isDemo = isDemo;
-	_gameVer.hasSubtitles = (language != Common::FR_FRA); // only a few subtitles are translated to french
+	_gameLang = language;
+	_gameFlags = 0;
+	if (isDemo) {
+		_gameFlags |= kGameFlagDemo;
+	}
+	switch (language) {
+	case Common::FR_FRA:
+		_gameFlags |= kGameFlagNoSubtitles;
+		break;
+	default:
+		_gameFlags |= kGameFlagEncodedData;
+		break;
+	}
 }
 
 TuckerEngine::~TuckerEngine() {
@@ -63,7 +73,7 @@ bool TuckerEngine::hasFeature(EngineFeature f) const {
 
 Common::Error TuckerEngine::go() {
 	handleIntroSequence();
-	if (!_gameVer.isDemo && !shouldQuit()) {
+	if ((_gameFlags & kGameFlagDemo) == 0 && !shouldQuit()) {
 		mainLoop();
 	}
 	return Common::kNoError;
@@ -138,7 +148,7 @@ void TuckerEngine::restart() {
 	_gamePaused = _gamePaused2 = false;
 	_gameDebug = false;
 	_displayGameHints = false;
-	_displaySpeechText = _gameVer.hasSubtitles ? ConfMan.getBool("subtitles") : false;
+	_displaySpeechText = (_gameFlags & kGameFlagNoSubtitles) == 0 ? ConfMan.getBool("subtitles") : false;
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
 	_gameHintsIndex = 0;
@@ -331,7 +341,6 @@ void TuckerEngine::mainLoop() {
 	restart();
 
 	openCompressedSoundFile();
-	_useEnc = Common::File::exists("data5.enc");
 	loadCharSizeDta();
 	loadCharset();
 	loadPanel();
@@ -554,7 +563,7 @@ void TuckerEngine::mainLoop() {
 		}
 		if (_inputKeys[kInputKeyToggleTextSpeech]) {
 			_inputKeys[kInputKeyToggleTextSpeech] = false;
-			if (_gameVer.hasSubtitles) {
+			if ((_gameFlags & kGameFlagNoSubtitles) == 0) {
 				if (_displaySpeechText) {
 					_displaySpeechText = false;
 //					kDefaultCharSpeechSoundCounter = 1;
@@ -1912,7 +1921,7 @@ void TuckerEngine::drawInfoString() {
 	if (_actionRequiresTwoObjects) {
 		verbPreposition = (_actionVerb == 5) ? 12 : 11;
 		verbPrepositionWidth = getStringWidth(verbPreposition, infoStrBuf) + 4;
-		if (_gameVer.lang == Common::FR_FRA) {
+		if (_gameLang == Common::FR_FRA) {
 			if ((_actionObj2Num > 0 || _actionObj2Type > 0) && verbPreposition > 0) {
 				infoStringWidth = 0;
 				verbWidth = 0;

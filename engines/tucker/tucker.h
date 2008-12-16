@@ -202,6 +202,12 @@ enum InputKey {
 	kInputKeyCount
 };
 
+enum GameFlag {
+	kGameFlagDemo = 1 << 0,
+	kGameFlagEncodedData = 1 << 1,
+	kGameFlagNoSubtitles = 1 << 2
+};
+
 inline int scaleMixerVolume(int volume, int max = 100) {
 	return volume * Audio::Mixer::kMaxChannelVolume / max;
 }
@@ -565,11 +571,8 @@ protected:
 
 	Common::RandomSource _rnd;
 	AnimationSequencePlayer *_player;
-	struct {
-		Common::Language lang;
-		bool isDemo;
-		bool hasSubtitles;
-	} _gameVer;
+	Common::Language _gameLang;
+	int _gameFlags;
 
 	bool _quitGame;
 	bool _fastMode;
@@ -599,7 +602,6 @@ protected:
 
 	char _fileToLoad[40];
 	int _fileLoadSize;
-	bool _useEnc;
 	int _compressedSoundType;
 	Common::File _fCompressedSound;
 	uint8 *_loadTempBuf;
