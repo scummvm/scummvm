@@ -1281,6 +1281,10 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 
 			int16 l = part.left, t = part.top, r = part.right, b = part.bottom;
 			if (renderFrame(l, t, r, b)) {
+				if (!_externalCodec) {
+					l /= _bytesPerPixel;
+					r /= _bytesPerPixel;
+				}
 				// Rendering succeeded, merging areas
 				state.left   = MIN(state.left,   l);
 				state.top    = MIN(state.top,    t);
