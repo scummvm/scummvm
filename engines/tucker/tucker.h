@@ -235,8 +235,8 @@ public:
 		kMaxDirtyRects = 16
 	};
 
-	TuckerEngine(OSystem *system, Common::Language language, bool isDemo);
-	~TuckerEngine();
+	TuckerEngine(OSystem *system, Common::Language language, uint32 flags);
+	virtual ~TuckerEngine();
 
 	virtual Common::Error init();
 	virtual Common::Error go();
@@ -572,7 +572,7 @@ protected:
 	Common::RandomSource _rnd;
 	AnimationSequencePlayer *_player;
 	Common::Language _gameLang;
-	int _gameFlags;
+	uint32 _gameFlags;
 
 	bool _quitGame;
 	bool _fastMode;

@@ -34,21 +34,8 @@
 
 namespace Tucker {
 
-TuckerEngine::TuckerEngine(OSystem *system, Common::Language language, bool isDemo)
-	: Engine(system) {
-	_gameLang = language;
-	_gameFlags = 0;
-	if (isDemo) {
-		_gameFlags |= kGameFlagDemo;
-	}
-	switch (language) {
-	case Common::FR_FRA:
-		_gameFlags |= kGameFlagNoSubtitles;
-		break;
-	default:
-		_gameFlags |= kGameFlagEncodedData;
-		break;
-	}
+TuckerEngine::TuckerEngine(OSystem *system, Common::Language language, uint32 flags)
+	: Engine(system), _gameLang(language), _gameFlags(flags) {
 }
 
 TuckerEngine::~TuckerEngine() {

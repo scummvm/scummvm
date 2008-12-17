@@ -45,7 +45,7 @@ static const Common::ADGameDescription tuckerGameDescriptions[] = {
 		AD_ENTRY1s("infobar.txt", "f1e42a95972643462b9c3c2ea79d6683", 543),
 		Common::FR_FRA,
 		Common::kPlatformPC,
-		Common::ADGF_NO_FLAGS
+		Tucker::kGameFlagNoSubtitles
 	},
 	{
 		"tucker",
@@ -53,7 +53,7 @@ static const Common::ADGameDescription tuckerGameDescriptions[] = {
 		AD_ENTRY1s("infobar.txt", "9c1ddeafc5283b90d1a284bd0924831c", 462),
 		Common::EN_ANY,
 		Common::kPlatformPC,
-		Common::ADGF_NO_FLAGS
+		Tucker::kGameFlagEncodedData
 	},
 	{
 		"tucker",
@@ -61,7 +61,7 @@ static const Common::ADGameDescription tuckerGameDescriptions[] = {
 		AD_ENTRY1s("infobar.txt", "1b3ea79d8528ea3c7df83dd0ed345e37", 525),
 		Common::ES_ESP,
 		Common::kPlatformPC,
-		Common::ADGF_NO_FLAGS
+		Tucker::kGameFlagEncodedData,
 	},
 	{
 		"tucker",
@@ -69,7 +69,7 @@ static const Common::ADGameDescription tuckerGameDescriptions[] = {
 		AD_ENTRY1s("infobrgr.txt", "4df9eb65722418d1a1723508115b146c", 552),
 		Common::DE_DEU,
 		Common::kPlatformPC,
-		Common::ADGF_NO_FLAGS
+		Tucker::kGameFlagEncodedData
 	},
 	{
 		"tucker",
@@ -77,7 +77,7 @@ static const Common::ADGameDescription tuckerGameDescriptions[] = {
 		AD_ENTRY1s("infobar.txt", "5f85285bbc23ce57cbc164021ee1f23c", 525),
 		Common::PL_POL,
 		Common::kPlatformPC,
-		Common::ADGF_NO_FLAGS
+		0,
 	},
 	{
 		"tucker",
@@ -85,7 +85,7 @@ static const Common::ADGameDescription tuckerGameDescriptions[] = {
 		AD_ENTRY1s("infobar.txt", "e548994877ff31ca304f6352ce022a8e", 497),
 		Common::CZ_CZE,
 		Common::kPlatformPC,
-		Common::ADGF_NO_FLAGS
+		Tucker::kGameFlagEncodedData
 	},
 	AD_TABLE_END_MARKER
 };
@@ -107,7 +107,7 @@ static const Common::ADGameDescription tuckerDemoGameDescription = {
 	AD_ENTRY1(0, 0),
 	Common::EN_ANY,
 	Common::kPlatformPC,
-	Common::ADGF_DEMO
+	Common::ADGF_DEMO | Tucker::kGameFlagDemo
 };
 
 class TuckerMetaEngine : public Common::AdvancedMetaEngine {
@@ -135,7 +135,7 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
 		if (desc) {
-			*engine = new Tucker::TuckerEngine(syst, desc->language, (desc->flags & Common::ADGF_DEMO) != 0);
+			*engine = new Tucker::TuckerEngine(syst, desc->language, desc->flags);
 		}
 		return desc != 0;
 	}
