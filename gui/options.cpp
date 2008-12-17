@@ -720,10 +720,6 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 #endif
 #endif
 
-#ifdef SMALL_SCREEN_DEVICE
-	new ButtonWidget(tab, "GlobalOptions_Paths.KeysButton", "Keys", kChooseKeyMappingCmd, 0);
-#endif
-
 	tab->addTab("Misc");
 
 	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", "Theme:", kChooseThemeCmd, 0);
@@ -742,6 +738,10 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	for (int i = 0; savePeriodLabels[i]; i++) {
 		_autosavePeriodPopUp->appendEntry(savePeriodLabels[i], savePeriodValues[i]);
 	}
+
+#ifdef SMALL_SCREEN_DEVICE
+	new ButtonWidget(tab, "GlobalOptions_Misc.KeysButton", "Keys", kChooseKeyMappingCmd, 0);
+#endif
 
 	// TODO: joystick setting
 

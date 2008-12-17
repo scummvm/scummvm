@@ -39,17 +39,17 @@ enum {
 };
 
 KeysDialog::KeysDialog(const Common::String &title)
-	: GUI::Dialog("keysdialog") {
+	: GUI::Dialog("KeysDialog") {
 
-	new ButtonWidget(this, "keysdialog_map", "Map", kMapCmd, 0);
-	new ButtonWidget(this, "keysdialog_ok", "OK", kOKCmd, 0);
-	new ButtonWidget(this, "keysdialog_cancel", "Cancel", kCloseCmd, 0);
+	new ButtonWidget(this, "KeysDialog.Map", "Map", kMapCmd, 0);
+	new ButtonWidget(this, "KeysDialog.Ok", "OK", kOKCmd, 0);
+	new ButtonWidget(this, "KeysDialog.Cancel", "Cancel", kCloseCmd, 0);
 
-	_actionsList = new ListWidget(this, "keysdialog_list");
+	_actionsList = new ListWidget(this, "KeysDialog.List");
 	_actionsList->setNumberingMode(kListNumberingZero);
 
-	_actionTitle = new StaticTextWidget(this, "keysdialog_action", title);
-	_keyMapping = new StaticTextWidget(this, "keysdialog_mapping", "Select an action and click 'Map'");
+	_actionTitle = new StaticTextWidget(this, "KeysDialog.Action", title);
+	_keyMapping = new StaticTextWidget(this, "KeysDialog.Mapping", "Select an action and click 'Map'");
 
 	_actionTitle->setFlags(WIDGET_CLEARBG);
 	_keyMapping->setFlags(WIDGET_CLEARBG);
