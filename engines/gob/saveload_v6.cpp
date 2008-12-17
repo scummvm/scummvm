@@ -31,7 +31,8 @@
 namespace Gob {
 
 SaveLoad_v6::SaveFile SaveLoad_v6::_saveFiles[] = {
-	{"mdo.def", 0, kSaveModeExists, kSaveNone}
+	{"mdo.def", 0, kSaveModeExists, kSaveNone},
+	{"NO_CD.TXT", 0, kSaveModeExists, kSaveNone}
 };
 
 SaveLoad_v6::SaveLoad_v6(GobEngine *vm, const char *targetName) :

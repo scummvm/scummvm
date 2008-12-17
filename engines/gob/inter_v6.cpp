@@ -219,7 +219,7 @@ void Inter_v6::setupOpcodes() {
 		OPCODE(o6_playVmdOrMusic),
 		/* 84 */
 		OPCODE(o2_getImdInfo),
-		OPCODE(o2_openItk),
+		OPCODE(o6_openItk),
 		OPCODE(o2_closeItk),
 		OPCODE(o2_setImdFrontSurf),
 		/* 88 */
@@ -753,6 +753,27 @@ void Inter_v6::o6_playVmdOrMusic() {
 
 	if (close)
 		_vm->_vidPlayer->primaryClose();
+}
+
+void Inter_v6::o6_openItk() {
+	char fileName[32];
+
+	evalExpr(0);
+	strncpy0(fileName, _vm->_global->_inter_resStr, 27);
+	if (!strchr(fileName, '.'))
+		strcat(fileName, ".ITK");
+
+	_vm->_dataIO->openDataFile(fileName, true);
+
+	// WORKAROUND: The CD number detection in Urban Runner is quite daft
+	// (it checks CD1.ITK - CD4.ITK and the first that's found determines
+	// the CD number), while its NO_CD modus wants everything in CD1.ITK.
+	// So we just open the other ITKs, too.
+	if (!scumm_stricmp(fileName, "cd1.itk")) {
+		_vm->_dataIO->openDataFile("CD2.ITK", true);
+		_vm->_dataIO->openDataFile("CD3.ITK", true);
+		_vm->_dataIO->openDataFile("CD4.ITK", true);
+	}
 }
 
 bool Inter_v6::o6_loadCursor(OpFuncParams &params) {

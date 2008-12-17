@@ -625,6 +625,7 @@ protected:
 
 	void o6_totSub();
 	void o6_playVmdOrMusic();
+	void o6_openItk();
 
 	bool o6_loadCursor(OpFuncParams &params);
 	bool o6_evaluateStore(OpFuncParams &params);
