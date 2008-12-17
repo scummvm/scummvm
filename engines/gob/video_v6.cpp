@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/savefile.h"
 
 #include "gob/gob.h"
 #include "gob/video.h"
@@ -35,12 +36,74 @@ namespace Gob {
 Video_v6::Video_v6(GobEngine *vm) : Video_v2(vm) {
 }
 
-void Video_v6::init() {
-	_palLUT->setPalette(_ditherPalette, PaletteLUT::kPaletteYUV, 8);
-
+void Video_v6::init(const char *target) {
 	initOSD();
 
+	if (loadPalLUT(target))
+		return;
+
+	buildPalLUT();
+
+	savePalLUT(target);
+}
+
+bool Video_v6::loadPalLUT(const char *target) {
+	if (target[0] == '\0')
+		return false;
+
+	char *pltSave = new char[strlen(target) + 5];
+
+	strcpy(pltSave, target);
+	strcat(pltSave, ".plt");
+
+	Common::InSaveFile *saveFile;
+
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	if (!(saveFile = saveMan->openForLoading(pltSave))) {
+		delete[] pltSave;
+		return false;
+	}
+
+	drawOSDText("Loading palette table");
+
+	bool loaded = _palLUT->load(*saveFile);
+
+	delete[] pltSave;
+	delete saveFile;
+
+	return loaded;
+}
+
+bool Video_v6::savePalLUT(const char *target) {
+	if (target[0] == '\0')
+		return false;
+
+	char *pltSave = new char[strlen(target) + 5];
+
+	strcpy(pltSave, target);
+	strcat(pltSave, ".plt");
+
+	Common::OutSaveFile *saveFile;
+
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	if (!(saveFile = saveMan->openForSaving(pltSave))) {
+		delete[] pltSave;
+		return false;
+	}
+
+	drawOSDText("Saving palette table");
+
+	_palLUT->save(*saveFile);
+
+	delete[] pltSave;
+	delete saveFile;
+}
+
+void Video_v6::buildPalLUT() {
 	char text[30];
+
+	_palLUT->setPalette(_ditherPalette, PaletteLUT::kPaletteYUV, 8);
+
 	for (int i = 0; (i < 64) && !_vm->shouldQuit(); i++) {
 		sprintf(text, "Building palette table: %02d/63", i);
 		drawOSDText(text);

@@ -33,6 +33,8 @@
 #ifndef GOB_INDEO3_H
 #define GOB_INDEO3_H
 
+#include "common/stream.h"
+
 namespace Gob {
 
 class PaletteLUT {
@@ -64,17 +66,20 @@ public:
 	byte findNearest(byte c1, byte c2, byte c3);
 	byte findNearest(byte c1, byte c2, byte c3, byte &nC1, byte &nC2, byte &nC3);
 
+	bool save(Common::WriteStream &stream);
+	bool load(Common::SeekableReadStream &stream);
+
 private:
 	byte _depth1, _depth2;
 	byte _shift;
 
-	int _dim1, _dim2, _dim3;
+	uint32 _dim1, _dim2, _dim3;
 
 	PaletteFormat _format;
 	byte _lutPal[768];
 	byte _realPal[768];
 
-	int _got;
+	uint32 _got;
 	byte *_gots;
 	byte *_lut;
 

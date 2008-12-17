@@ -31,7 +31,6 @@
 
 #include "common/system.h"
 #include "common/endian.h"
-#include "common/stream.h"
 #include "common/frac.h"
 #include "common/file.h"
 
@@ -44,19 +43,24 @@ namespace Gob {
 PaletteLUT::PaletteLUT(byte depth, PaletteFormat format) {
 	assert((depth > 1) && (depth < 9));
 
+	// For adjusting depth
 	_depth1 = depth;
 	_depth2 = 2 * _depth1;
 	_shift = 8 - _depth1;
 
+	// The table's dimensions
 	_dim1 = (1 << _depth1);
 	_dim2 = _dim1 * _dim1;
 	_dim3 = _dim1 * _dim1 * _dim1;
 
 	_format = format;
 
+	// What's already built
 	_got = _dim1;
-	_lut = new byte[_dim3];
 	_gots = new byte[_dim1];
+
+	// The lookup table
+	_lut = new byte[_dim3];
 
 	memset(_lutPal, 0, 768);
 	memset(_realPal, 0, 768);
@@ -70,6 +74,7 @@ void PaletteLUT::setPalette(const byte *palette, PaletteFormat format, byte dept
 
 	int shift = 8 - depth;
 
+	// Checking for the table's and the palette's pixel format
 	if ((_format == kPaletteRGB) && (format == kPaletteYUV)) {
 		byte *newPal = _realPal;
 		const byte *oldPal = palette;
@@ -85,10 +90,12 @@ void PaletteLUT::setPalette(const byte *palette, PaletteFormat format, byte dept
 	} else
 		memcpy(_realPal, palette, 768);
 
+	// Using the specified depth for the lookup
 	byte *newPal = _lutPal, *oldPal = _realPal;
 	for (int i = 0; i < 768; i++)
 		*newPal++ = (*oldPal++) >> _shift;
 
+	// Everything has to be rebuilt
 	_got = 0;
 	memset(_gots, 0, _dim1);
 }
@@ -105,17 +112,20 @@ void PaletteLUT::buildNext() {
 	build(_got++);
 }
 
+// Building one "slice"
 void PaletteLUT::build(int d1) {
+	// First dimension
 	byte *lut = _lut + d1 * _dim2;
 
-//	warning("LUT %d/%d", d1, _dim1 - 1);
-
-	for (int j = 0; j < _dim1; j++) {
-		for (int k = 0; k < _dim1; k++) {
+	// Second dimension
+	for (uint32 j = 0; j < _dim1; j++) {
+		// Third dimension
+		for (uint32 k = 0; k < _dim1; k++) {
 			const byte *p = _lutPal;
 			uint32 d = 0xFFFFFFFF;
 			byte n = 0;
 
+			// Going over every palette entry, searching for the closest
 			for (int c = 0; c < 256; c++, p += 3) {
 				uint32 di = SQR(d1 - p[0]) + SQR(j - p[1]) + SQR(k - p[2]);
 				if (di < d) {
@@ -130,6 +140,7 @@ void PaletteLUT::build(int d1) {
 		}
 	}
 
+	// Got this slice now
 	_gots[d1] = 1;
 }
 
@@ -148,6 +159,7 @@ byte PaletteLUT::findNearest(byte c1, byte c2, byte c3) {
 }
 
 byte PaletteLUT::findNearest(byte c1, byte c2, byte c3, byte &nC1, byte &nC2, byte &nC3) {
+	// If we don't have the required "slice" yet, build it
 	if (!_gots[c1 >> _shift])
 		build(c1 >> _shift);
 
@@ -161,6 +173,52 @@ byte PaletteLUT::findNearest(byte c1, byte c2, byte c3, byte &nC1, byte &nC2, by
 	return palIndex;
 }
 
+bool PaletteLUT::save(Common::WriteStream &stream) {
+	// The table has to be completely built before we can save
+	while (_got < _dim1)
+		buildNext();
+
+	stream.writeByte(_depth1);
+	if (stream.write(_realPal, 768) != 768)
+		return false;
+	if (stream.write(_lutPal, 768) != 768)
+		return false;
+	if (stream.write(_lut, _dim3) != _dim3)
+		return false;
+	if (!stream.flush())
+		return false;
+
+	if (stream.err())
+		return false;
+
+	return true;
+}
+
+bool PaletteLUT::load(Common::SeekableReadStream &stream) {
+	//             _realPal + _lutPal + _lut  + _depth1
+	int32 needSize =  768   +   768   + _dim3 +    1;
+
+	if ((stream.size() - stream.pos()) < needSize)
+		return false;
+
+	byte depth1 = stream.readByte();
+
+	if (depth1 != _depth1)
+		return false;
+
+	if (stream.read(_realPal, 768) != 768)
+		return false;
+	if (stream.read(_lutPal, 768) != 768)
+		return false;
+	if (stream.read(_lut, _dim3) != _dim3)
+		return false;
+
+	_got = _dim1;
+	memset(_gots, 1, _dim1);
+
+	return true;
+}
+
 SierraLight::SierraLight(int16 width, int16 height, PaletteLUT *palLUT) {
 	assert((width > 0) && (height > 0));
 
@@ -168,6 +226,7 @@ SierraLight::SierraLight(int16 width, int16 height, PaletteLUT *palLUT) {
 	_height = height;
 	_palLUT = palLUT;
 
+	// Big buffer for the errors of the current and next line
 	_errorBuf = new int32[3 * (2 * (_width + 2*1))];
 	memset(_errorBuf, 0, (3 * (2 * (_width + 2*1))) * sizeof(int32));
 

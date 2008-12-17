@@ -178,7 +178,7 @@ public:
 			int16 srcHeight, int16 x, int16 y, int16 transp,
 			SurfaceDesc *destDesc) = 0;
 
-	virtual void init() { }
+	virtual void init(const char *target = "") { }
 
 	Video(class GobEngine *vm);
 	virtual ~Video();
@@ -226,13 +226,17 @@ public:
 	virtual void fillRect(SurfaceDesc *dest, int16 left, int16 top,
 			int16 right, int16 bottom, int16 color);
 
-	virtual void init();
+	virtual void init(const char *target = "");
 
 	Video_v6(GobEngine *vm);
 	virtual ~Video_v6() {}
 
 private:
 	static const byte _ditherPalette[768];
+
+	bool loadPalLUT(const char *target);
+	bool savePalLUT(const char *target);
+	void buildPalLUT();
 
 	void shadeRect(SurfaceDesc *dest,
 			int16 left, int16 top, int16 right, int16 bottom, byte color, byte strength);

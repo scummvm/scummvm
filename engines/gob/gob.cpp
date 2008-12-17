@@ -184,7 +184,7 @@ Common::Error GobEngine::init() {
 	}
 
 	_video->setSize(is640());
-	_video->init();
+	_video->init(_targetName.c_str());
 
 	// On some systems it's not safe to run CD audio games from the CD.
 	if (isCD())
