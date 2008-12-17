@@ -97,6 +97,8 @@ bool Video_v6::savePalLUT(const char *target) {
 
 	delete[] pltSave;
 	delete saveFile;
+
+	return true;
 }
 
 void Video_v6::buildPalLUT() {
