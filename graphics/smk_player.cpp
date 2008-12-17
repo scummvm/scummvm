@@ -33,6 +33,8 @@
 #include "common/util.h"
 #include "common/array.h"
 #include "common/endian.h"
+#include "sound/mixer.h"
+#include "sound/audiostream.h"
 
 namespace Graphics {
 
@@ -311,8 +313,8 @@ uint32 BigHuffmanTree::getCode(BitStream &bs) {
 	return v;
 }
 
-SMKPlayer::SMKPlayer()
-	: _currentSMKFrame(0), _fileStream(0) {
+SMKPlayer::SMKPlayer(Audio::Mixer *mixer)
+	: _currentSMKFrame(0), _fileStream(0), _audioStarted(false), _audioStream(0), _mixer(mixer) {
 }
 
 SMKPlayer::~SMKPlayer() {
@@ -415,6 +417,18 @@ bool SMKPlayer::loadFile(const char *fileName) {
 		_header.audioInfo[i].hasV2Compression = !(audioInfo & 0x8000000) &&
 												!(audioInfo & 0x4000000);
 		_header.audioInfo[i].sampleRate = audioInfo & 0xFFFFFF;
+
+		if (_header.audioInfo[i].hasAudio && i == 0) {
+			byte flags = Audio::Mixer::FLAG_UNSIGNED;
+
+			if (_header.audioInfo[i].is16Bits)
+				flags = flags | Audio::Mixer::FLAG_16BITS;
+
+			if (_header.audioInfo[i].isStereo)
+				flags = flags | Audio::Mixer::FLAG_STEREO;
+
+			_audioStream = Audio::makeAppendableAudioStream(_header.audioInfo[i].sampleRate, flags);
+		}
 	}
 
 	_header.dummy = _fileStream->readUint32LE();
@@ -449,6 +463,17 @@ void SMKPlayer::closeFile() {
 	if (!_fileStream)
 		return;
 
+	if (_audioStarted) {
+		_audioStream->finish();
+		_mixer->stopHandle(_audioHandle);
+		_audioStarted = false;
+	}
+
+	if (_audioStream) {
+		delete _audioStream;
+		_audioStream = 0;
+	}
+
 	delete _fileStream;
 
 	delete _MMapTree;
@@ -480,6 +505,8 @@ void SMKPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 
 bool SMKPlayer::decodeNextFrame() {
 	uint i;
+	uint32 chunkSize = 0;
+	uint32 dataSizeUnpacked = 0;
 
 	uint32 startPos = _fileStream->pos();
 
@@ -496,12 +523,45 @@ bool SMKPlayer::decodeNextFrame() {
 		if (!(_frameTypes[_currentSMKFrame] & (2 << i)))
 			continue;
 
-		uint32 len = _fileStream->readUint32LE();
+		chunkSize = _fileStream->readUint32LE();
+		chunkSize -= 4;    // subtract the first 4 bytes (chunk size)
 
-		// TODO: Audio support
+		if (_header.audioInfo[i].isCompressed) {
+			dataSizeUnpacked = _fileStream->readUint32LE();
+			chunkSize -= 4;    // subtract the next 4 bytes (unpacked data size)
+		} else {
+			dataSizeUnpacked = 0;
+		}
 
-		//uint32 unpackedLen = _fileStream->readUint32LE();
-		_fileStream->skip(len - 4);
+		// TODO: sound support is deactivated for now, till queueCompressedBuffer() is finished
+		if (false) {
+		//if (_header.audioInfo[i].hasAudio && chunkSize > 0 && i == 0) {
+			// If it's track 0, play the audio data
+			byte *soundBuffer = new byte[chunkSize];
+			
+			_fileStream->read(soundBuffer, chunkSize);
+
+			if (_header.audioInfo[i].isCompressed) {
+				// Compressed audio (Huffman DPCM encoded)
+				queueCompressedBuffer(soundBuffer, chunkSize, dataSizeUnpacked, i);
+				delete soundBuffer;
+			} else {
+				// Uncompressed audio (PCM)
+				_audioStream->queueBuffer(soundBuffer, chunkSize);
+				// The sound buffer will be deleted by AppendableAudioStream
+			}
+
+			if (!_audioStarted) {
+				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioHandle, _audioStream);
+				_audioStarted = true;
+			}
+		} else {
+			// Ignore the rest of the audio tracks, if they exist
+			// TODO: Are there any Smacker videos with more than one audio stream?
+			// If yes, we should play the rest of the audio streams as well
+			if (chunkSize > 0)
+				_fileStream->skip(chunkSize);
+		}
 	}
 
 	uint32 frameSize = _frameSizes[_currentSMKFrame] & ~3;
@@ -658,6 +718,39 @@ bool SMKPlayer::decodeNextFrame() {
 	free(_frameData);
 
 	return ++_currentSMKFrame < _header.frames;
+}
+
+void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize, int unpackedSize, int streamNum) {
+	BitStream audioBS(buffer, bufferSize);
+	bool dataPresent = audioBS.getBit();
+	bool isStereo, is16Bits;
+	int numBytes = 1;
+	SmallHuffmanTree *audioTrees[4];
+	int16 bases[2];
+	int k;
+
+	if (!dataPresent)
+		return;
+
+	isStereo = audioBS.getBit();
+	assert(isStereo == _header.audioInfo[streamNum].isStereo);
+	is16Bits = audioBS.getBit();
+	assert(is16Bits == _header.audioInfo[streamNum].is16Bits);
+
+	if (isStereo) numBytes *= 2;
+	if (is16Bits) numBytes *= 2;
+
+	for (k = 0; k < numBytes; k++)
+		audioTrees[k] = new SmallHuffmanTree(audioBS);
+
+	// Right channel
+	bases[0] = (!is16Bits) ? audioBS.getBits8() : (audioBS.getBits8() << 8) || audioBS.getBits8();
+
+	// Left channel, if the sample is stereo
+	if (isStereo)
+		bases[1] = (!is16Bits) ? audioBS.getBits8() : (audioBS.getBits8() << 8) || audioBS.getBits8();
+	
+	// TODO: Finish the rest of this
 }
 
 void SMKPlayer::unpackPalette() {

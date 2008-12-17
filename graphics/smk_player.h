@@ -32,6 +32,8 @@
 
 #include "common/scummsys.h"
 #include "common/stream.h"
+#include "sound/mixer.h"
+#include "sound/audiostream.h"
 
 class OSystem;
 
@@ -44,7 +46,7 @@ class BigHuffmanTree;
  */
 class SMKPlayer {
 public:
-	SMKPlayer();
+	SMKPlayer(Audio::Mixer *mixer);
 	virtual ~SMKPlayer();
 
 	/**
@@ -115,10 +117,13 @@ protected:
 
 	Common::SeekableReadStream *_fileStream;
 
+	byte *_image;
+
 private:
 	void unpackPalette();
-
-	uint32 _currentSMKFrame;
+	// Possible runs of blocks
+	uint getBlockRun(int index) { return (index <= 58) ? index + 1 : 128 << (index - 59); }
+	void queueCompressedBuffer(byte *buffer, int bufferSize, int unpackedSize, int streamNum);
 
 	struct AudioInfo {
 		bool isCompressed;
@@ -153,19 +158,20 @@ private:
 	// and so on), so there can be up to 7 different audio tracks. When the lowest bit
 	// (bit 0) is set, it denotes a frame that contains a palette record
 	byte *_frameTypes;
+	byte *_frameData;
+	byte *_palette;
+
+	Audio::Mixer *_mixer;
+	bool _audioStarted;
+	Audio::AppendableAudioStream *_audioStream;
+	Audio::SoundHandle _audioHandle;
+
+	uint32 _currentSMKFrame;
 
 	BigHuffmanTree *_MMapTree;
 	BigHuffmanTree *_MClrTree;
 	BigHuffmanTree *_FullTree;
 	BigHuffmanTree *_TypeTree;
-
-	byte *_frameData;
-
-	byte *_image;
-	byte *_palette;
-
-	// Possible runs of blocks
-	uint getBlockRun(int index) { return (index <= 58) ? index + 1 : 128 << (index - 59); }
 };
 
 } // End of namespace Graphics
