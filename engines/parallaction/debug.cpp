@@ -150,13 +150,15 @@ bool Debugger::Cmd_Zones(int argc, const char **argv) {
 
 	ZoneList::iterator b = _vm->_location._zones.begin();
 	ZoneList::iterator e = _vm->_location._zones.end();
+	Common::Rect r;
 
 	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n"
 				"| name               | l | t | r | b |  type  |  flag  |\n"
 				"+--------------------+---+---+---+---+--------+--------+\n");
 	for ( ; b != e; b++) {
 		ZonePtr z = *b;
-		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", z->_name, z->getX(), z->getY(), z->getX() + z->width(), z->getY() + z->height(), z->_type, z->_flags );
+		z->getRect(r);
+		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", z->_name, r.left, r.top, r.right, r.bottom, z->_type, z->_flags );
 	}
 	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n");
 

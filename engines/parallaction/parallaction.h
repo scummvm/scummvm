@@ -164,6 +164,8 @@ public:
 	ZonePtr findZone(const char *name);
 
 	void cleanup(bool removeAll);
+
+	int getScale(int z) const;
 };
 
 

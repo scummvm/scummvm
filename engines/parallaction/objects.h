@@ -288,11 +288,13 @@ struct TypeData {
 #define ZONENAME_LENGTH 32
 
 struct Zone {
+private:
+	int16			_right;
+	int16			_bottom;
+
 protected:
 	int16			_left;
 	int16			_top;
-	int16			_right;
-	int16			_bottom;
 
 public:
 	char			_name[ZONENAME_LENGTH];
@@ -314,21 +316,19 @@ public:
 	virtual ~Zone();
 
 	void translate(int16 x, int16 y);
-	virtual uint16 width() const;
-	virtual uint16 height() const;
 
-	void setBox(int16 left, int16 top, int16 right, int16 bottom) {
+	bool hitRect(int x, int y) const;
+
+	void setRect(int16 left, int16 top, int16 right, int16 bottom) {
 		setX(left);
 		setY(top);
 		_right = right;
 		_bottom = bottom;
 	}
 
-	void getBox(Common::Rect& r) {
-		r.left = getX();
-		r.right = getX() + width();
-		r.top = getY();
-		r.bottom = getY() + height();
+	void getRect(Common::Rect& r) {
+		r.left = _left;	r.right = _right;
+		r.top = _top; r.bottom = _bottom;
 	}
 
 
@@ -504,15 +504,15 @@ public:
 
 	Animation();
 	virtual ~Animation();
-	virtual uint16 width() const;
-	virtual uint16 height() const;
 	uint16 getFrameNum() const;
-	byte* getFrameData(uint32 index) const;
+	byte* getFrameData() const;
 
 	void validateScriptVars();
 
-	int16 getFrameX() const;
-	int16 getFrameY() const;
+	void resetZ();
+	bool hitFrameRect(int x, int y) const;
+	void getFrameRect(Common::Rect &r) const;
+	int16 getBottom() const;
 
 	// getters/setters used by scripts
 	int16 getX() 			{ return _left; }

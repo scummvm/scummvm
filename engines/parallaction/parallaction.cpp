@@ -284,6 +284,16 @@ void Location::cleanup(bool removeAll) {
 	_escapeCommands.clear();
 }
 
+int Location::getScale(int z) const {
+	int scale = 100;
+	if (z <= _zeta0) {
+		scale = _zeta2;
+		if (z >= _zeta1) {
+			scale += ((z - _zeta1) * (100 - _zeta2)) / (_zeta0 - _zeta1);
+		}
+	}
+	return scale;
+}
 
 
 void Parallaction::showSlide(const char *name, int x, int y) {
@@ -334,10 +344,10 @@ void Parallaction::runGameFrame(int event) {
 	}
 
 	_programExec->runScripts(_location._programs.begin(), _location._programs.end());
-	_char._ani->setZ(_char._ani->height() + _char._ani->getFrameY());
-	if (_char._ani->gfxobj) {
-		_char._ani->gfxobj->z = _char._ani->getZ();
-	}
+	_char._ani->resetZ();
+//	if (_char._ani->gfxobj) {
+//		_char._ani->gfxobj->z = _char._ani->getZ();
+//	}
 	_char._walker->walk();
 	drawAnimations();
 
@@ -446,12 +456,12 @@ void Parallaction::drawAnimations() {
 
 		if ((anim->_flags & kFlagsActive) && ((anim->_flags & kFlagsRemove) == 0))   {
 
-			if (anim->_flags & kFlagsNoMasked)
+			if (anim->_flags & kFlagsNoMasked) {
 				layer = LAYER_FOREGROUND;
-			else {
+			} else {
 				if (getGameType() == GType_Nippon) {
 					// Layer in NS depends on where the animation is on the screen, for each animation.
-					layer = _gfx->_backgroundInfo->getLayer(anim->getFrameY() + anim->height());
+					layer = _gfx->_backgroundInfo->getLayer(anim->getBottom());
 				} else {
 					// Layer in BRA is calculated from Z value. For characters it is the same as NS,
 					// but other animations can have Z set from scripts independently from their
@@ -460,15 +470,10 @@ void Parallaction::drawAnimations() {
 				}
 			}
 
+			scale = 100;
 			if (getGameType() == GType_BRA) {
 				if (anim->_flags & (kFlagsScaled | kFlagsCharacter)) {
-					if (anim->getZ() <= _location._zeta0) {
-						if (anim->getZ() >= _location._zeta1) {
-							scale = ((anim->getZ() - _location._zeta1) * (100 - _location._zeta2)) / (_location._zeta0 - _location._zeta1) + _location._zeta2;
-						} else {
-							scale = _location._zeta2;
-						}
-					}
+					scale = _location.getScale(anim->getZ());
 				}
 			}
 
@@ -701,14 +706,7 @@ bool Parallaction::checkZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 
 	debugC(5, kDebugExec, "checkZoneBox for %s (type = %x, x = %i, y = %i)", z->_name, type, x, y);
 
-	Common::Rect r;
-	z->getBox(r);
-	r.right++;		// adjust border because Common::Rect doesn't include bottom-right edge
-	r.bottom++;
-
-	r.grow(-1);		// allows some tolerance for mouse click
-
-	if (!r.contains(x, y)) {
+	if (!z->hitRect(x, y)) {
 
 		// check for special zones (items defined in common.loc)
 		if (checkSpecialZoneBox(z, type, x, y))
@@ -716,13 +714,7 @@ bool Parallaction::checkZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 
 		if (z->getX() != -1)
 			return false;
-		if ((int)x < _char._ani->getFrameX())
-			return false;
-		if ((int)x > (_char._ani->getFrameX() + _char._ani->width()))
-			return false;
-		if ((int)y < _char._ani->getFrameY())
-			return false;
-		if ((int)y > (_char._ani->getFrameY() + _char._ani->height()))
+		if (!_char._ani->hitFrameRect(x, y))
 			return false;
 	}
 
@@ -747,10 +739,7 @@ bool Parallaction::checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y) {
 
 	debugC(5, kDebugExec, "checkLinkedAnimBox for %s (type = %x, x = %i, y = %i)", z->_name, type, x, y);
 
-	AnimationPtr anim = z->_linkedAnim;
-	Common::Rect r(anim->getFrameX(), anim->getFrameY(), anim->getFrameX() + anim->width() + 1, anim->getFrameY() + anim->height() + 1);
-
-	if (!r.contains(x, y)) {
+	if (!z->_linkedAnim->hitFrameRect(x, y)) {
 		return false;
 	}
 
@@ -780,25 +769,22 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 	}
 
 
-	int16 _a, _b, _c, _d, _e, _f;
+	int16 _a, _b, _c, _d;
+	bool _ef;
 	for (AnimationList::iterator ait = _location._animations.begin(); ait != _location._animations.end(); ait++) {
 
 		AnimationPtr a = *ait;
 
 		_a = (a->_flags & kFlagsActive) ? 1 : 0;															   // _a: active Animation
-		_e = ((_si >= a->getFrameX() + a->width()) || (_si <= a->getFrameX())) ? 0 : 1;		// _e: horizontal range
-		_f = ((_di >= a->getFrameY() + a->height()) || (_di <= a->getFrameY())) ? 0 : 1;		// _f: vertical range
+		_ef = a->hitFrameRect(_si, _di);
 
 		_b = ((type != 0) || (a->_type == kZoneYou)) ? 0 : 1;										 // _b: (no type specified) AND (Animation is not the character)
 		_c = (a->_type & 0xFFFF0000) ? 0 : 1;															// _c: Animation is not an object
 		_d = ((a->_type & 0xFFFF0000) != type) ? 0 : 1;													// _d: Animation is an object of the same type
 
-		if ((_a != 0 && _e != 0 && _f != 0) && ((_b != 0 && _c != 0) || (a->_type == type) || (_d != 0))) {
-
+		if ((_a != 0 && _ef) && ((_b != 0 && _c != 0) || (a->_type == type) || (_d != 0))) {
 			return a;
-
 		}
-
 	}
 
 	return nullZonePtr;

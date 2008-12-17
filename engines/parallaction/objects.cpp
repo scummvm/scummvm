@@ -57,32 +57,36 @@ Animation::~Animation() {
 	gfxobj->release();
 }
 
-uint16 Animation::width() const {
-	if (!gfxobj) return 0;
-	Common::Rect r;
+void Animation::getFrameRect(Common::Rect &r) const {
+	r.setWidth(0); r.setHeight(0);
+	if (!gfxobj) {
+		return;
+	}
 	gfxobj->getRect(_frame, r);
-	return r.width();
+	r.translate(_left, _top);
 }
 
-uint16 Animation::height() const {
-	if (!gfxobj) return 0;
+bool Animation::hitFrameRect(int x, int y) const {
+	if (!gfxobj) {
+		return false;
+	}
 	Common::Rect r;
-	gfxobj->getRect(_frame, r);
-	return r.height();
+	getFrameRect(r);
+	return r.contains(x, y);
 }
 
-int16 Animation::getFrameX() const {
-	if (!gfxobj) return _left;
-	Common::Rect r;
-	gfxobj->getRect(_frame, r);
-	return r.left + _left;
+int16 Animation::getBottom() const {
+	int bottom = _top;
+	if (gfxobj) {
+		Common::Rect r;
+		getFrameRect(r);
+		bottom = r.bottom;
+	}
+	return bottom;
 }
 
-int16 Animation::getFrameY() const {
-	if (!gfxobj) return _top;
-	Common::Rect r;
-	gfxobj->getRect(_frame, r);
-	return r.top + _top;
+void Animation::resetZ() {
+	setZ(getBottom());
 }
 
 uint16 Animation::getFrameNum() const {
@@ -90,9 +94,9 @@ uint16 Animation::getFrameNum() const {
 	return gfxobj->getNum();
 }
 
-byte* Animation::getFrameData(uint32 index) const {
+byte* Animation::getFrameData() const {
 	if (!gfxobj) return NULL;
-	return gfxobj->getData(index);
+	return gfxobj->getData(_frame);
 }
 
 void Animation::validateScriptVars() {
@@ -221,12 +225,13 @@ void Zone::translate(int16 x, int16 y) {
 	_bottom += y;
 }
 
-uint16 Zone::width() const {
-	return _right - _left;
-}
-
-uint16 Zone::height() const {
-	return _bottom - _top;
+bool Zone::hitRect(int x, int y) const {
+	// The scripts of Nippon Safes are full of invalid rectangles, used to
+	// provide 'special' features.
+	if (_right < _left || _bottom < _top) {
+		return false;
+	}
+	return Common::Rect(_left, _top, _right, _bottom).contains(x, y);
 }
 
 Dialogue::Dialogue() {

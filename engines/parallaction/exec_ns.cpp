@@ -123,10 +123,13 @@ DECLARE_INSTRUCTION_OPCODE(set) {
 
 DECLARE_INSTRUCTION_OPCODE(put) {
 	InstructionPtr inst = *_ctxt.inst;
+	Common::Rect r;
+	inst->_a->getFrameRect(r);
+
 	Graphics::Surface v18;
-	v18.w = inst->_a->width();
-	v18.h = inst->_a->height();
-	v18.pixels = inst->_a->getFrameData(inst->_a->getF());
+	v18.w = r.width();
+	v18.h = r.height();
+	v18.pixels = inst->_a->getFrameData();
 
 	int16 x = inst->_opA.getValue();
 	int16 y = inst->_opB.getValue();
@@ -332,7 +335,7 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 		AnimationPtr a = (*it)->_anim;
 
 		if (a->_flags & kFlagsCharacter)
-			a->setZ(a->getFrameY() + a->height());
+			a->resetZ();
 
 		if ((a->_flags & kFlagsActing) == 0)
 			continue;
@@ -340,7 +343,7 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 		runScript(*it, a);
 
 		if (a->_flags & kFlagsCharacter)
-			a->setZ(a->getFrameY() + a->height());
+			a->resetZ();
 	}
 
 	_modCounter++;

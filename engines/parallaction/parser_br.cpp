@@ -720,7 +720,7 @@ DECLARE_ZONE_PARSER(limits)  {
 		ctxt.z->_linkedAnim = _vm->_location.findAnimation(_tokens[1]);
 		ctxt.z->_linkedName = strdup(_tokens[1]);
 	} else {
-		ctxt.z->setBox(atoi(_tokens[1]), atoi(_tokens[2]), atoi(_tokens[3]), atoi(_tokens[4]));
+		ctxt.z->setRect(atoi(_tokens[1]), atoi(_tokens[2]), atoi(_tokens[3]), atoi(_tokens[4]));
 	}
 }
 

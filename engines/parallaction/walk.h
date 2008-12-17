@@ -51,7 +51,6 @@ public:
 
 class PathBuilder_NS : public PathBuilder {
 
-	PointList	*_list;
 	PointList	_subPath;
 
 	void correctPathPoint(Common::Point &to);

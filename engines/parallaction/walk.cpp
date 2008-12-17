@@ -360,7 +360,7 @@ void PathWalker_NS::walk() {
 
 
 
-PathBuilder_NS::PathBuilder_NS(Character *ch) : PathBuilder(ch), _list(0) {
+PathBuilder_NS::PathBuilder_NS(Character *ch) : PathBuilder(ch) {
 }
 
 
@@ -515,25 +515,6 @@ void PathWalker_BR::walk() {
 	}
 #endif
 
-	GfxObj *obj = _ch->_ani->gfxobj;
-
-	Common::Rect rect;
-	obj->getRect(_ch->_ani->getF(), rect);
-
-	uint scale;
-	if (rect.bottom > _vm->_location._zeta0) {
-		scale = 100;
-	} else
-	if (rect.bottom < _vm->_location._zeta1) {
-		scale = _vm->_location._zeta2;
-	} else {
-		scale = _vm->_location._zeta2 + ((rect.bottom - _vm->_location._zeta1) * (100 - _vm->_location._zeta2)) / (_vm->_location._zeta0 - _vm->_location._zeta1);
-	}
-	int xStep = (scale * 16) / 100 + 1;
-	int yStep = (scale * 10) / 100 + 1;
-
-	debugC(9, kDebugWalk, "calculated step: (%i, %i)\n", xStep, yStep);
-
 	if (_fieldC == 0) {
 		_ch->_walkPath.erase(_ch->_walkPath.begin());
 
@@ -548,10 +529,15 @@ void PathWalker_BR::walk() {
 
 	_ch->getFoot(_startFoot);
 
+	uint scale = _vm->_location.getScale(_startFoot.y);
+	int xStep = (scale * 16) / 100 + 1;
+	int yStep = (scale * 10) / 100 + 1;
+
+	debugC(9, kDebugWalk, "calculated step: (%i, %i)\n", xStep, yStep);
+
 	_fieldC = 0;
 	_step++;
 	_step %= 8;
-
 
 	int maxX = _vm->_gfx->_backgroundInfo->width;
 	int minX = 0;
