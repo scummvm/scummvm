@@ -27,12 +27,13 @@
 
 #include "gob/gob.h"
 #include "gob/saveload.h"
+#include "gob/game.h"
 
 namespace Gob {
 
 SaveLoad_v6::SaveFile SaveLoad_v6::_saveFiles[] = {
 	{"mdo.def", 0, kSaveModeExists, kSaveNone},
-	{"NO_CD.TXT", 0, kSaveModeExists, kSaveNone}
+	{"NO_CD.TXT", 0, kSaveModeExists, kSaveNoCD}
 };
 
 SaveLoad_v6::SaveLoad_v6(GobEngine *vm, const char *targetName) :
@@ -45,11 +46,21 @@ SaveLoad_v6::~SaveLoad_v6() {
 SaveLoad::SaveMode SaveLoad_v6::getSaveMode(const char *fileName) {
 	fileName = stripPath(fileName);
 
-	for (int i = 0; i < ARRAYSIZE(_saveFiles); i++)
+	int i;
+	for (i = 0; i < ARRAYSIZE(_saveFiles); i++)
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
-			return _saveFiles[i].mode;
+			break;
 
-	return kSaveModeNone;
+	if (i >= ARRAYSIZE(_saveFiles))
+		return kSaveModeNone;
+
+	if (_saveFiles[i].type != kSaveNoCD)
+		return _saveFiles[i].mode;
+
+	if (_vm->_game->_noCd)
+		return kSaveModeExists;
+	else
+		return kSaveModeNone;
 }
 
 } // End of namespace Gob

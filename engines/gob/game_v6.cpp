@@ -25,6 +25,7 @@
 
 #include "common/endian.h"
 #include "common/stream.h"
+#include "common/file.h"
 
 #include "gob/gob.h"
 #include "gob/game.h"
@@ -152,6 +153,17 @@ int16 Game_v6::addNewCollision(int16 id, uint16 left, uint16 top,
 	}
 	error("Game_v6::addNewCollision(): Collision array full!\n");
 	return 0;
+}
+
+void Game_v6::prepareStart(void) {
+	_noCd = false;
+
+	if (Common::File::exists("cd1.itk") && Common::File::exists("cd2.itk") &&
+	    Common::File::exists("cd3.itk") && Common::File::exists("cd4.itk")) {
+		_noCd = true;
+	}	
+
+	Game_v2::prepareStart();
 }
 
 void Game_v6::pushCollisions(char all) {

@@ -95,6 +95,8 @@ public:
 	bool _preventScroll;
 	bool _scrollHandleMouse;
 
+	bool _noCd;
+
 	Game(GobEngine *vm);
 	virtual ~Game();
 
@@ -306,6 +308,8 @@ public:
 	virtual int16 addNewCollision(int16 id, uint16 left, uint16 top,
 			uint16 right, uint16 bottom, int16 flags, int16 key,
 			uint16 funcEnter, uint16 funcLeave, uint16 funcSub = 0);
+
+	virtual void prepareStart(void);
 
 	virtual void pushCollisions(char all);
 

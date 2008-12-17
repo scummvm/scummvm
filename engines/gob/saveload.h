@@ -413,7 +413,8 @@ protected:
 class SaveLoad_v6 : public SaveLoad {
 public:
 	enum SaveType {
-		kSaveNone
+		kSaveNone,
+		kSaveNoCD
 	};
 
 	SaveLoad_v6(GobEngine *vm, const char *targetName);
