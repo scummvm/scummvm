@@ -472,8 +472,10 @@ static void PackedWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP,
 
 		if (!eolFlag) {
 			// Assert that the next bytes signal a line end
-			assert((*srcP++ & 0xf) == 0);
-			assert(*srcP++ == 0);
+			uint8 d = *srcP++;
+			assert((d & 0xf) == 0);
+			d = *srcP++;
+			assert(d == 0);
 		}
 
 		if (topClip > 0)
