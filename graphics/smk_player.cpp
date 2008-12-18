@@ -713,56 +713,71 @@ bool SMKPlayer::decodeNextFrame() {
 	return ++_currentSMKFrame < _header.frames;
 }
 
-void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize, int unpackedSize, int streamNum) {
+void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize,
+		int unpackedSize, int streamNum) {
+
 	BitStream audioBS(buffer, bufferSize);
 	bool dataPresent = audioBS.getBit();
-	bool isStereo, is16Bits;
-	int numBytes = 1;
-	SmallHuffmanTree *audioTrees[4];
-	int16 bases[2];
-	int k;
-	byte *unpackedBuffer = new byte[unpackedSize];
-	int curPos = 0;
-	byte *curPointer = unpackedBuffer;
-	uint16 cur;
 
 	if (!dataPresent)
 		return;
 
-	// FIXME: The audio doesn't sound right yet
-
-	isStereo = audioBS.getBit();
+	bool isStereo = audioBS.getBit();
 	assert(isStereo == _header.audioInfo[streamNum].isStereo);
-	is16Bits = audioBS.getBit();
+	bool is16Bits = audioBS.getBit();
 	assert(is16Bits == _header.audioInfo[streamNum].is16Bits);
 
-	if (isStereo) numBytes *= 2;
-	if (is16Bits) numBytes *= 2;
+	int numBytes = 1 * (isStereo ? 2 : 1) * (is16Bits ? 2 : 1);
 
-	for (k = 0; k < numBytes; k++)
+	byte *unpackedBuffer = new byte[unpackedSize + numBytes];
+	byte *curPointer = unpackedBuffer;
+	uint16 curPos = 0;
+
+	SmallHuffmanTree *audioTrees[4];
+	for (int k = 0; k < numBytes; k++)
 		audioTrees[k] = new SmallHuffmanTree(audioBS);
 
 	// Base values, stored as big endian
 
+	int32 bases[2];
+
 	if (isStereo)
-		bases[1] = (!is16Bits) ? audioBS.getBits8() : (audioBS.getBits8() << 8) || audioBS.getBits8();  // Right channel
+		bases[1] = (!is16Bits) ?   audioBS.getBits8() :
+		                         ((audioBS.getBits8() << 8) || audioBS.getBits8());
 
-	bases[0] = (!is16Bits) ? audioBS.getBits8() : (audioBS.getBits8() << 8) || audioBS.getBits8();      // Left channel
+	bases[0] = (!is16Bits) ?   audioBS.getBits8() :
+													 ((audioBS.getBits8() << 8) || audioBS.getBits8());
 
-	// Next follow the deltas, which are added to the corresponding base values and are stored as little endian
+
+	// The bases are the first samples, too
+	for (int i = 0; i < (isStereo ? 2 : 1); i++, curPointer += (is16Bits ? 2 : 1)) {
+		if (is16Bits)
+			WRITE_BE_UINT16(curPointer, bases[i]);
+		else
+			*curPointer = (bases[i] & 0xFF) ^ 0x80;
+	}
+
+	// Next follow the deltas, which are added to the corresponding base values and
+	// are stored as little endian
 	// We store the unpacked bytes in big endian format
 
 	while (curPos < unpackedSize) {
 		// If the sample is stereo, the data is stored for the left and right channel, respectively
 		// (the exact opposite to the base values)
 		if (!is16Bits) {
-			for (k = 0; k < (isStereo ? 2 : 1); k++) {
-				*curPointer++ = (byte)(bases[k] + audioTrees[k]->getCode(audioBS));
+			for (int k = 0; k < (isStereo ? 2 : 1); k++) {
+				int8 v = (int8) ((int16) audioTrees[k]->getCode(audioBS));
+
+				bases[k] += v;
+
+				byte data = CLIP<int>(bases[k], 0, 255);
+
+				*curPointer++ = data ^ 0x80;
 				curPos++;
 			}
 		} else {
-			for (k = 0; k < (isStereo ? 2 : 1); k++) {
-				cur = bases[k];
+			for (int k = 0; k < (isStereo ? 2 : 1); k++) {
+				uint16 cur = bases[k];
 				// adding takes care of possible overflows
 				cur += audioTrees[k * 2]->getCode(audioBS);             // low byte
 				cur += (audioTrees[k * 2 + 1]->getCode(audioBS) << 8);  // high byte
@@ -775,10 +790,10 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize, int unpacked
 		}
 	}
 
-	for (k = 0; k < numBytes; k++)
+	for (int k = 0; k < numBytes; k++)
 		delete audioTrees[k];
 
-	_audioStream->queueBuffer(unpackedBuffer, unpackedSize);
+	_audioStream->queueBuffer(unpackedBuffer, unpackedSize + numBytes);
 	// unpackedBuffer will be deleted by AppendableAudioStream
 }
 
