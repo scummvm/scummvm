@@ -744,18 +744,17 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize, int unpacked
 
 	// Base values, stored as big endian
 
-	// Right channel
-	bases[0] = (!is16Bits) ? audioBS.getBits8() : (audioBS.getBits8() << 8) || audioBS.getBits8();
-
-	// Left channel, if the sample is stereo
 	if (isStereo)
-		bases[1] = (!is16Bits) ? audioBS.getBits8() : (audioBS.getBits8() << 8) || audioBS.getBits8();
-	
+		bases[1] = (!is16Bits) ? audioBS.getBits8() : (audioBS.getBits8() << 8) || audioBS.getBits8();  // Right channel
+
+	bases[0] = (!is16Bits) ? audioBS.getBits8() : (audioBS.getBits8() << 8) || audioBS.getBits8();      // Left channel
+
 	// Next follow the deltas, which are added to the corresponding base values and are stored as little endian
 	// We store the unpacked bytes in big endian format
 
 	while (curPos < unpackedSize) {
-		// If the sample is stereo, we get first the data for the left and then for the right channel
+		// If the sample is stereo, the data is stored for the left and right channel, respectively
+		// (the exact opposite to the base values)
 		if (!is16Bits) {
 			for (k = 0; k < (isStereo ? 2 : 1); k++) {
 				*curPointer++ = (byte)(bases[k] + audioTrees[k]->getCode(audioBS));
