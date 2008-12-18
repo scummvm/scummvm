@@ -63,6 +63,8 @@ Screen::~Screen() {
 	}
 
 	delete[] _dirtyRects;
+
+	CursorMan.popAllCursors();
 }
 
 bool Screen::init() {
