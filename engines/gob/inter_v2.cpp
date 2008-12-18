@@ -1199,7 +1199,7 @@ void Inter_v2::o2_pushVars() {
 			_varSizesStack[_varStackPos] = _vm->_global->_inter_animDataSize * 4;
 
 		} else {
-			if (!evalExpr(&varOff) == 20)
+			if (evalExpr(&varOff) != 20)
 				_vm->_global->_inter_resVal = 0;
 
 			memcpy(_varStack + _varStackPos, &_vm->_global->_inter_resVal, 4);
