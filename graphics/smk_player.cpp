@@ -419,7 +419,7 @@ bool SMKPlayer::loadFile(const char *fileName) {
 		_header.audioInfo[i].sampleRate = audioInfo & 0xFFFFFF;
 
 		if (_header.audioInfo[i].hasAudio && i == 0) {
-			byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LITTLE_ENDIAN;
+			byte flags = 0;
 
 			if (_header.audioInfo[i].is16Bits)
 				flags = flags | Audio::Mixer::FLAG_16BITS;
@@ -463,19 +463,11 @@ void SMKPlayer::closeFile() {
 	if (!_fileStream)
 		return;
 
-	if (_audioStarted) {
-		_audioStream->finish();
+	if (_audioStarted && _audioStream) {
 		_mixer->stopHandle(_audioHandle);
+		_audioStream = 0;
 		_audioStarted = false;
 	}
-
-	// FIXME
-	/*
-	if (_audioStream) {
-		delete _audioStream;
-		_audioStream = 0;
-	}
-	*/
 
 	delete _fileStream;
 
@@ -536,9 +528,7 @@ bool SMKPlayer::decodeNextFrame() {
 			dataSizeUnpacked = 0;
 		}
 
-		// TODO: sound support is deactivated for now, till queueCompressedBuffer() is finished
-		if (false) {
-		//if (_header.audioInfo[i].hasAudio && chunkSize > 0 && i == 0) {
+		if (_header.audioInfo[i].hasAudio && chunkSize > 0 && i == 0) {
 			// If it's track 0, play the audio data
 			byte *soundBuffer = new byte[chunkSize];
 			
@@ -555,7 +545,7 @@ bool SMKPlayer::decodeNextFrame() {
 			}
 
 			if (!_audioStarted) {
-				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioHandle, _audioStream);
+				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioHandle, _audioStream, -1, 255);
 				_audioStarted = true;
 			}
 		} else {
@@ -734,10 +724,12 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize, int unpacked
 	byte *unpackedBuffer = new byte[unpackedSize];
 	int curPos = 0;
 	byte *curPointer = unpackedBuffer;
-	uint16 lo, hi, cur;
+	uint16 cur;
 
 	if (!dataPresent)
 		return;
+
+	// FIXME: The audio doesn't sound right yet
 
 	isStereo = audioBS.getBit();
 	assert(isStereo == _header.audioInfo[streamNum].isStereo);
@@ -750,6 +742,8 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize, int unpacked
 	for (k = 0; k < numBytes; k++)
 		audioTrees[k] = new SmallHuffmanTree(audioBS);
 
+	// Base values, stored as big endian
+
 	// Right channel
 	bases[0] = (!is16Bits) ? audioBS.getBits8() : (audioBS.getBits8() << 8) || audioBS.getBits8();
 
@@ -757,6 +751,9 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize, int unpacked
 	if (isStereo)
 		bases[1] = (!is16Bits) ? audioBS.getBits8() : (audioBS.getBits8() << 8) || audioBS.getBits8();
 	
+	// Next follow the deltas, which are added to the corresponding base values and are stored as little endian
+	// We store the unpacked bytes in big endian format
+
 	while (curPos < unpackedSize) {
 		// If the sample is stereo, we get first the data for the left and then for the right channel
 		if (!is16Bits) {
@@ -765,27 +762,22 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize, int unpacked
 				curPos++;
 			}
 		} else {
-			if (isStereo) {
-				// Left channel
-				lo = (bases[1] & 0xFF) + audioTrees[3]->getCode(audioBS);
-				hi = (bases[1] & 0xFF00) + (audioTrees[2]->getCode(audioBS) << 8);
-				cur = hi + lo;	// adding takes care of possible overflows
-				*curPointer++ = cur & 0xFF;    // low
+			for (k = 0; k < (isStereo ? 2 : 1); k++) {
+				cur = bases[k];
+				// adding takes care of possible overflows
+				cur += audioTrees[k * 2]->getCode(audioBS);             // low byte
+				cur += (audioTrees[k * 2 + 1]->getCode(audioBS) << 8);  // high byte
+				*curPointer++ = (cur >> 8) & 0xFF;  // high byte
 				curPos++;
-				*curPointer++ = (cur >> 8) & 0xFF;  // high
+				*curPointer++ = cur & 0xFF;         // low byte
 				curPos++;
 			}
 
-			// Right channel
-			lo = (bases[0] & 0xFF) + audioTrees[1]->getCode(audioBS);
-			hi = (bases[0] & 0xFF00) + (audioTrees[0]->getCode(audioBS) << 8);
-			cur = hi + lo;	// adding takes care of possible overflows
-			*curPointer++ = cur & 0xFF;    // low
-			curPos++;
-			*curPointer++ = (cur >> 8) & 0xFF;  // high
-			curPos++;
 		}
 	}
+
+	for (k = 0; k < numBytes; k++)
+		delete audioTrees[k];
 
 	_audioStream->queueBuffer(unpackedBuffer, unpackedSize);
 	// unpackedBuffer will be deleted by AppendableAudioStream
