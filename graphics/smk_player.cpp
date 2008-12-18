@@ -772,7 +772,7 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize, int unpacked
 				cur = hi + lo;	// adding takes care of possible overflows
 				*curPointer++ = cur & 0xFF;    // low
 				curPos++;
-				*curPointer++ = cur & 0xFF00;  // high
+				*curPointer++ = (cur >> 8) & 0xFF;  // high
 				curPos++;
 			}
 
@@ -782,7 +782,7 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize, int unpacked
 			cur = hi + lo;	// adding takes care of possible overflows
 			*curPointer++ = cur & 0xFF;    // low
 			curPos++;
-			*curPointer++ = cur & 0xFF00;  // high
+			*curPointer++ = (cur >> 8) & 0xFF;  // high
 			curPos++;
 		}
 	}
