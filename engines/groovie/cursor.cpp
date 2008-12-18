@@ -26,6 +26,13 @@
 #include "groovie/cursor.h"
 #include "groovie/groovie.h"
 
+#include "graphics/cursorman.h"
+
+// HACK: Since CursorMan is the name of the global
+// cursor manager we just undefine it here
+#define GlobCursorMan (::Graphics::CursorManager::instance())
+#undef CursorMan
+
 namespace Groovie {
 
 // Cursor Manager
@@ -39,6 +46,8 @@ CursorMan::~CursorMan() {
 	for (uint cursor = 0; cursor < _cursors.size(); cursor++) {
 		delete _cursors[cursor];
 	}
+
+	GlobCursorMan.popAllCursors();
 }
 
 uint8 CursorMan::getStyle() {
@@ -104,13 +113,13 @@ Cursor_t7g::Cursor_t7g(OSystem *system, uint8 *img, uint8 *pal) :
 
 void Cursor_t7g::enable() {
 	// Apply the palette
-	_syst->setCursorPalette(_pal, 0, 32);
+	GlobCursorMan.replaceCursorPalette(_pal, 0, 32);
 }
 
 void Cursor_t7g::showFrame(uint16 frame) {
 	// Set the mouse cursor
 	int offset = _width * _height * frame;
-	_syst->setMouseCursor((const byte *)_img + offset, _width, _height, _width >> 1, _height >> 1, 0);
+	GlobCursorMan.replaceCursor((const byte *)_img + offset, _width, _height, _width >> 1, _height >> 1, 0);
 }
 
 
