@@ -112,7 +112,7 @@ bool SaveLoad_v6::loadVersioned(int type, int16 dataVar, int32 size, int32 offse
 		break;
 
 	default:
-		return -1;
+		return false;
 	}
 
 	return false;
@@ -130,7 +130,7 @@ bool SaveLoad_v6::saveVersioned(int type, int16 dataVar, int32 size, int32 offse
 		break;
 
 	default:
-		return -1;
+		return false;
 	}
 
 	return false;
