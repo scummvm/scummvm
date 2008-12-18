@@ -55,9 +55,9 @@ Inter::Inter(GobEngine *vm) : _vm(vm) {
 	_soundEndTimeKey = 0;
 	_soundStopVal = 0;
 
-	memset(_pasteBuf, 0, 300);
-	memset(_pasteSizeBuf, 0, 300);
-	_pastePos = 0;
+	memset(_varStack, 0, 300);
+	memset(_varSizesStack, 0, 300);
+	_varStackPos = 0;
 
 	_noBusyWait = false;
 

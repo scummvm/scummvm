@@ -44,6 +44,10 @@ Variables::~Variables() {
 	delete[] _sizes;
 }
 
+uint32 Variables::getSize() const {
+	return _size;
+}
+
 void Variables::clear() {
 	memset(_vars, 0, _size);
 

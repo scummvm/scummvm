@@ -204,8 +204,8 @@ void Inter_Bargon::setupOpcodes() {
 		/* 40 */
 		OPCODE(o2_totSub),
 		OPCODE(o2_switchTotSub),
-		OPCODE(o2_copyVars),
-		OPCODE(o2_pasteVars),
+		OPCODE(o2_pushVars),
+		OPCODE(o2_popVars),
 		/* 44 */
 		{NULL, ""},
 		{NULL, ""},

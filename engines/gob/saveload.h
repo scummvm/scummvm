@@ -414,6 +414,7 @@ class SaveLoad_v6 : public SaveLoad {
 public:
 	enum SaveType {
 		kSaveNone,
+		kSaveGame,
 		kSaveNoCD
 	};
 
@@ -431,6 +432,32 @@ protected:
 	};
 
 	static SaveFile _saveFiles[];
+
+	int32 _varSize;
+
+	StagedSave *_save;
+
+	byte _indexBuffer[2900];
+	bool _hasIndex;
+
+	virtual int getSaveType(const char *fileName);
+
+	virtual int32 getSizeVersioned(int type);
+	virtual bool loadVersioned(int type, int16 dataVar, int32 size, int32 offset);
+	virtual bool saveVersioned(int type, int16 dataVar, int32 size, int32 offset);
+
+	int getSlot(int32 offset) const;
+	int getSlotRemainder(int32 offset) const;
+
+	int32 getSizeGame(SaveFile &saveFile);
+
+	bool loadGame(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
+
+	bool saveGame(SaveFile &saveFile, int16 dataVar, int32 size, int32 offset);
+
+	void assertInited();
+
+	void refreshIndex();
 };
 
 } // End of namespace Gob

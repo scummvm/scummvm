@@ -39,6 +39,8 @@ public:
 	Variables(uint32 size);
 	virtual ~Variables();
 
+	uint32 getSize() const;
+
 	void writeVar8(uint32 var, uint8 value);
 	void writeVar16(uint32 var, uint16 value);
 	void writeVar32(uint32 var, uint32 value);
