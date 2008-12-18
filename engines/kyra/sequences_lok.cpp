@@ -1045,8 +1045,10 @@ void KyraEngine_LoK::seq_playEnding() {
 	memset(_screen->getPalette(2), 0, sizeof(uint8)*768);
 	_screen->setScreenPalette(_screen->getPalette(2));
 
+	_seqPlayerFlag = true;
 	_seq->playSequence(_seq_Reunion, false);
 	_screen->fadeToBlack();
+	_seqPlayerFlag = false;
 
 	_screen->showMouse();
 	seq_playCredits();

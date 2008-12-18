@@ -468,9 +468,6 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 
 	uint32 start = _system->getMillis();
 	do {
-				/*} else if (event.kbd.keycode == '.') {
-				} else if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					_abortIntroFlag = true;*/
 		if (update) {
 			_sprites->updateSceneAnims();
 			_animator->updateAllObjectShapes();
@@ -499,7 +496,7 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 		}
 
 		if (skipFlag())
-			_sound->voiceStop();
+			snd_stopVoice();
 	} while (!skipFlag() && _system->getMillis() < start + amount && !shouldQuit());
 }
 
