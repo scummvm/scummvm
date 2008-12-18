@@ -69,23 +69,26 @@ public:
 
 	void initBackend();
 
-	// Overloaded from SDL_Common (toolbar handling)
+	// Overloaded from SDL backend (toolbar handling)
 	bool pollEvent(Common::Event &event);
-	// Overloaded from SDL_Common (toolbar handling)
+	// Overloaded from SDL backend (toolbar handling)
 	void drawMouse();
-	// Overloaded from SDL_Common (mouse and new scaler handling)
+	// Overloaded from SDL backend (mouse and new scaler handling)
 	void fillMouseEvent(Common::Event &event, int x, int y);
-	// Overloaded from SDL_Common (new scaler handling)
+	// Overloaded from SDL backend (new scaler handling)
 	void addDirtyRect(int x, int y, int w, int h, bool mouseRect = false);
-	// Overloaded from SDL_Common (new scaler handling)
+	// Overloaded from SDL backend (new scaler handling)
 	void warpMouse(int x, int y);
-	// Overloaded from SDL_Commmon
+	// Overloaded from SDL backend
 	void quit();
-	// Overloaded from SDL_Commmon (master volume and sample rate subtleties)
+	// Overloaded from SDL backend (master volume and sample rate subtleties)
 	void setupMixer();
 	// Overloaded from OSystem
 	//void engineInit();
 	void getTimeAndDate(struct tm &t) const;
+	virtual Common::SeekableReadStream *openConfigFileForReading();
+	virtual Common::WriteStream *openConfigFileForWriting();
+
 
 	// Overloaded from SDL_Common (FIXME)
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale); // overloaded by CE backend

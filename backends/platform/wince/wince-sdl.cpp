@@ -82,7 +82,7 @@ using namespace CEGUI;
 #define NAME_ITEM_OPTIONS		"Options"
 #define NAME_ITEM_SKIP			"Skip"
 #define NAME_ITEM_SOUND			"Sound"
-#define NAME_ITEM_ORIENTATION		"Orientation"
+#define NAME_ITEM_ORIENTATION	"Orientation"
 #define NAME_ITEM_BINDKEYS		"Bindkeys"
 
 // stdin/err redirection
@@ -126,6 +126,7 @@ static const OSystem::GraphicsMode s_supportedGraphicsModesHigh[] = {
 	{0, 0, 0}
 };
 
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
 
 // ********************************************************************************************
 
@@ -354,7 +355,7 @@ int dynamic_modules_main(HINSTANCE hInst, HINSTANCE hPrev, LPWSTR szCmdLine, int
 	argv = (char **) alloca((argc+1)*(sizeof *argv));
 	ParseCommandLine(cmdline, argv);
 
-	/* fix gdb-emulator combo */
+	// fix gdb-emulator combo
 	while (argc > 1 && !strstr(argv[0], ".exe")) {
 		OutputDebugString(TEXT("SDL: gdb argv[0] fixup\n"));
 		*(argv[1]-1) = ' ';
@@ -452,6 +453,24 @@ void OSystem_WINCE3::initScreenInfos() {
 
 bool OSystem_WINCE3::isOzone() {
 	return _isOzone;
+}
+
+static Common::String getDefaultConfigFileName() {
+	char configFile[MAXPATHLEN];
+	strcpy(configFile, getcwd(NULL, MAX_PATH));
+	strcat(configFile, "\\");
+	strcat(configFile, DEFAULT_CONFIG_FILE);
+	return configFile;	
+}
+
+Common::SeekableReadStream *OSystem_WINCE3::openConfigFileForReading() {
+	Common::FSNode file(getDefaultConfigFileName());
+	return file.openForReading();
+}
+
+Common::WriteStream *OSystem_WINCE3::openConfigFileForWriting() {
+	Common::FSNode file(getDefaultConfigFileName());
+	return file.openForWriting();
 }
 
 // ********************************************************************************************
