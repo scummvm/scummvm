@@ -1349,6 +1349,7 @@ int KyraEngine_LoK::o1_setCharacterCurrentFrame(EMCState *script) {
 int KyraEngine_LoK::o1_waitForConfirmationMouseClick(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_waitForConfirmationMouseClick(%p) ()", (const void *)script);
 
+	_eventList.clear();
 	while (true) {
 		updateMousePointer();
 		_sprites->updateSceneAnims();
