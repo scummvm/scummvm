@@ -26,6 +26,7 @@
 #include "groovie/music.h"
 #include "groovie/resource.h"
 
+#include "common/config-manager.h"
 #include "sound/audiocd.h"
 
 namespace Groovie {
@@ -41,9 +42,30 @@ MusicPlayer::MusicPlayer(GroovieEngine *vm) :
 	_driver = createMidi(driver);
 	this->open();
 
-	// Initialize the channel volumes
+	// Initialize the channel volumes and banks
 	for (int i = 0; i < 0x10; i++) {
 		_chanVolumes[i] = 0x7F;
+		_chanBanks[i] = 0;
+	}
+
+	// Load the Global Timbre Library
+	if (driver == MD_ADLIB) {
+		// MIDI through AdLib
+		_musicType = MD_ADLIB;
+		loadTimbres("fat.ad");
+
+		// Setup the percussion channel
+		for (unsigned int i = 0; i < _timbres.size(); i++) {
+			if (_timbres[i].bank == 0x7F)
+				setTimbreAD(9, _timbres[i]);
+		}
+	} else if ((driver == MD_MT32) || ConfMan.getBool("native_mt32")) {
+		// MT-32
+		_musicType = MD_MT32;
+		loadTimbres("fat.mt");
+	} else {
+		// GM
+		_musicType = 0;
 	}
 
 	// Set the parser's driver
@@ -65,6 +87,9 @@ MusicPlayer::~MusicPlayer() {
 	// Unload the MIDI Driver
 	_driver->close();
 	delete _driver;
+
+	// Unload the timbres
+	clearTimbres();
 }
 
 void MusicPlayer::playSong(uint16 fileref) {
@@ -127,8 +152,6 @@ void MusicPlayer::setUserVolume(uint16 volume) {
 	for (int i = 0; i < 0x10; i++) {
 		updateChanVolume(i);
 	}
-	//FIXME: AdlibPercussionChannel::controlChange() is empty
-	//(can't set the volume for the percusion channel)
 }
 
 void MusicPlayer::setGameVolume(uint16 volume, uint16 time) {
@@ -205,7 +228,7 @@ bool MusicPlayer::load(uint16 fileref) {
 	// Open the song resource
 	Common::SeekableReadStream *xmidiFile = _vm->_resMan->open(fileref);
 	if (!xmidiFile) {
-		error("Groovie::Music: Couldn't resource 0x%04X", fileref);
+		error("Groovie::Music: Couldn't find resource 0x%04X", fileref);
 		return false;
 	}
 
@@ -253,7 +276,44 @@ int MusicPlayer::open() {
 void MusicPlayer::close() {}
 
 void MusicPlayer::send(uint32 b) {
-	if ((b & 0xFFF0) == 0x07B0) { // Volume change
+	if ((b & 0xFFF0) == 0x72B0) { // XMIDI Patch Bank Select 114
+		// From AIL2's documentation: XMIDI Patch Bank Select controller (114)
+		// selects a bank to be used when searching the next patches
+		byte chan = b & 0xF;
+		byte bank = (b >> 16) & 0xFF;
+
+		debugC(5, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Selecting bank %X for channel %X", bank, chan);
+		_chanBanks[chan] = bank;
+		return;
+	} else if ((b & 0xF0) == 0xC0) { // Program change
+		// We intercept the program change when using AdLib or MT32 drivers,
+		// since we have custom timbres for them.  The command is sent
+		// unchanged to GM drivers.
+		if (_musicType != 0) {
+			byte chan = b & 0xF;
+			byte patch = (b >> 8) & 0xFF;
+
+			debugC(5, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Setting custom patch %X from bank %X to channel %X", patch, _chanBanks[chan], chan);
+
+			// Try to find the requested patch from the previously
+			// specified bank
+			int numTimbres = _timbres.size();
+			for (int i = 0; i < numTimbres; i++) {
+				if ((_timbres[i].bank == _chanBanks[chan]) &&
+					(_timbres[i].patch == patch)) {
+					if (_musicType == MD_ADLIB) {
+						setTimbreAD(chan, _timbres[i]);
+					} else if (_musicType == MD_MT32) {
+						setTimbreMT(chan, _timbres[i]);
+					}
+					return;
+				}
+			}
+
+			// If we got here we couldn't find the patch, and the
+			// received message will be sent unchanged.
+		}
+	} else if ((b & 0xFFF0) == 0x07B0) { // Volume change
 		// Save the specific channel volume
 		byte chan = b & 0xF;
 		_chanVolumes[chan] = (b >> 16) & 0x7F;
@@ -309,6 +369,141 @@ MidiChannel *MusicPlayer::allocateChannel() {
 
 MidiChannel *MusicPlayer::getPercussionChannel() {
 	return _driver->getPercussionChannel();
+}
+
+void MusicPlayer::loadTimbres(const Common::String &filename) {
+	// Load the Global Timbre Library format as documented in AIL2
+	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Loading the GTL file %s", filename.c_str());
+
+	// Does it exist?
+	if (!Common::File::exists(filename)) {
+		error("Groovie::Music: %s not found", filename.c_str());
+		return;
+	}
+
+	// Open the GTL
+	Common::File *gtl = new Common::File();
+	if (!gtl->open(filename.c_str())) {
+		delete gtl;
+		error("Groovie::Music: Couldn't open %s", filename.c_str());
+		return;
+	}
+
+	// Clear the old timbres before loading the new ones
+	clearTimbres();
+
+	// Get the list of timbres
+	while (true) {
+		Timbre t;
+		t.patch = gtl->readByte();
+		t.bank = gtl->readByte();
+		if ((t.patch == 0xFF) && (t.bank == 0xFF)) {
+			// End of list
+			break;
+		}
+		// We temporarily use the size field to store the offset
+		t.size = gtl->readUint32LE();
+
+		// Add it to the list
+		_timbres.push_back(t);
+	}
+
+	// Read the timbres
+	for (unsigned int i = 0; i < _timbres.size(); i++) {
+		// Seek to the start of the timbre
+		gtl->seek(_timbres[i].size);
+
+		// Read the size
+		_timbres[i].size = gtl->readUint16LE() - 2;
+
+		// Allocate memory for the timbre data
+		_timbres[i].data = new byte[_timbres[i].size];
+
+		// Read the timbre data
+		gtl->read(_timbres[i].data, _timbres[i].size);
+		debugC(5, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Loaded patch %x in bank %x with size %d",
+			_timbres[i].patch, _timbres[i].bank, _timbres[i].size);
+	}
+
+	// Close the file
+	delete gtl;
+}
+
+void MusicPlayer::clearTimbres() {
+	// Delete the allocated data
+	int num = _timbres.size();
+	for (int i = 0; i < num; i++) {
+		delete[] _timbres[i].data;
+	}
+
+	// Erase the array entries
+	_timbres.clear();
+}
+
+void MusicPlayer::setTimbreAD(byte channel, const Timbre &timbre) {
+	// Verify the timbre size
+	if (timbre.size != 12) {
+		error("Groovie::Music: Invalid size for an AdLib timbre: %d", timbre.size);
+	}
+
+	// Prepare the AdLib Instrument array from the GTL entry
+	byte data[13];
+	data[2] = timbre.data[1];        // mod_characteristic
+	data[3] = timbre.data[2] ^ 0x3F; // mod_scalingOutputLevel
+	data[4] = ~timbre.data[3];       // mod_attackDecay
+	data[5] = ~timbre.data[4];       // mod_sustainRelease
+	data[6] = timbre.data[5];        // mod_waveformSelect
+	data[7] = timbre.data[7];        // car_characteristic
+	data[8] = timbre.data[8] ^ 0x3F; // car_scalingOutputLevel
+	data[9] = ~timbre.data[9];       // car_attackDecay
+	data[10] = ~timbre.data[10];     // car_sustainRelease
+	data[11] = timbre.data[11];      // car_waveformSelect
+	data[12] = timbre.data[6];       // feedback
+
+	// Send the instrument to the driver
+	if (timbre.bank == 0x7F) {
+		// This is a Percussion instrument, this will always be set on the same note
+		data[0] = timbre.patch;
+
+		// From AIL2's documentation: If the instrument is to be played in MIDI
+		// channel 10, num specifies its desired absolute MIDI note number.
+		data[1] = timbre.data[0];
+
+		_driver->getPercussionChannel()->sysEx_customInstrument('ADLP', data);
+	} else {
+		// Some tweaks for non-percussion instruments
+		byte mult1 = timbre.data[1] & 0xF;
+		if (mult1 < 4)
+			mult1 = 1 << mult1;
+		data[2] = (timbre.data[1] & 0xF0) + (mult1 & 0xF);
+		byte mult2 = timbre.data[7] & 0xF;
+		if (mult2 < 4)
+			mult2 = 1 << mult2;
+		data[7] = (timbre.data[7] & 0xF0) + (mult2 & 0xF);
+		// TODO: Fix CHARACTERISTIC: 0xF0: pitch_vib, amp_vib, sustain_sound, env_scaling  0xF: freq_mult
+		// TODO: Fix KSL_TL: 0xC: key_scale_lvl  0x3F: out_lvl
+
+		// From AIL2's documentation: num specifies the number of semitones
+		// by which to transpose notes played with the instrument.
+		if (timbre.data[0] != 0)
+			warning("Groovie::Music: AdLib instrument's transposing not supported");
+
+		_driver->sysEx_customInstrument(channel, 'ADL ', data + 2);
+	}
+}
+
+void MusicPlayer::setTimbreMT(byte channel, const Timbre &timbre) {
+	// Verify the timbre size
+	if (timbre.size != 0xF6) {
+		error("Groovie::Music: Invalid size for an MT-32 timbre: %d", timbre.size);
+	}
+
+	// Show the timbre name as extra debug information
+	Common::String name((char*)timbre.data, 10);
+	debugC(5, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Using MT32 timbre: %s", name.c_str());
+
+	// TODO: Support MT-32 custom instruments
+	warning("Groovie::Music: Setting MT32 custom instruments isn't supported yet");
 }
 
 } // End of Groovie namespace

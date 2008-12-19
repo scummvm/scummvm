@@ -62,6 +62,24 @@ private:
 	byte _chanVolumes[0x10];
 	void updateChanVolume(byte channel);
 
+	// Channel banks
+	byte _chanBanks[0x10];
+
+	// Timbres
+	class Timbre {
+	public:
+		Timbre() : data(NULL) {}
+		byte patch;
+		byte bank;
+		uint32 size;
+		byte *data;
+	};
+	Common::Array<Timbre> _timbres;
+	void loadTimbres(const Common::String &filename);
+	void clearTimbres();
+	void setTimbreAD(byte channel, const Timbre &timbre);
+	void setTimbreMT(byte channel, const Timbre &timbre);
+
 public:
 	// MidiDriver interface
 	int open();
@@ -79,6 +97,7 @@ private:
 	byte *_data;
 	MidiParser *_midiParser;
 	MidiDriver *_driver;
+	uint8 _musicType;
 
 	uint16 _backgroundFileRef;
 	uint8 _prevCDtrack;
