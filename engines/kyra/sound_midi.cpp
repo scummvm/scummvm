@@ -515,8 +515,10 @@ bool SoundMidiPC::init() {
 
 			if (_vm->gameFlags().isTalkie)
 				pakFile = "ENG/STARTUP.PAK";
+			else if (_vm->gameFlags().useInstallerPackage)
+				pakFile = "INTROVOC.CMP";
 			else
-				pakFile = "STARTUP.PAK";
+				pakFile = "INTROVOC.PAK";
 		}
 	
 		if (!midiFile)

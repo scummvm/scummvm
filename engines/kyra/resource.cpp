@@ -91,6 +91,11 @@ bool Resource::reset() {
 	} else if (_vm->game() == GI_LOL) {
 		if (_vm->gameFlags().useInstallerPackage)
 			_files.add("installer", loadInstallerArchive("WESTWOOD", "%d", 0), 2, false);
+		
+		// mouse pointer, fonts, etc. required for initializing
+		loadPakFile("general.pak");
+		if (_vm->gameFlags().isTalkie)
+			loadPakFile("startup.pak");
 
 		return true;
 	}
