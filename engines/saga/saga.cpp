@@ -141,10 +141,10 @@ SagaEngine::~SagaEngine() {
 }
 
 Common::Error SagaEngine::init() {
-	_musicVolume = ConfMan.getInt("music_volume");
-	_subtitlesEnabled = ConfMan.getBool("subtitles");
+	_musicVolume = ConfMan.hasKey("music_volume") ? ConfMan.getInt("music_volume") : 255;
+	_subtitlesEnabled = ConfMan.hasKey("subtitles") ? ConfMan.getBool("subtitles") : true;
 	_readingSpeed = getTalkspeed();
-	_copyProtection = ConfMan.getBool("copy_protection");
+	_copyProtection = ConfMan.hasKey("copy_protection") ? ConfMan.getBool("copy_protection") : false;
 	_gf_wyrmkeep = false;
 	_gf_compressed_sounds = false;
 	_musicWasPlaying = false;
@@ -217,7 +217,7 @@ Common::Error SagaEngine::init() {
 				_voicesEnabled = true;
 				ConfMan.setBool("voices", true);
 			} else {
-				_voicesEnabled = ConfMan.getBool("voices");
+				_voicesEnabled = ConfMan.hasKey("voices") ? ConfMan.getBool("voices") : true;
 			}
 		} else {
 			_voicesEnabled = true;
@@ -518,17 +518,17 @@ void SagaEngine::setTalkspeed(int talkspeed) {
 }
 
 int SagaEngine::getTalkspeed() {
-	return (ConfMan.getInt("talkspeed") * 3 + 255 / 2) / 255;
+	return ((ConfMan.hasKey("talkspeed") ? ConfMan.getInt("talkspeed") : 255) * 3 + 255 / 2) / 255;
 }
 
 void SagaEngine::syncSoundSettings() {
-	_subtitlesEnabled = ConfMan.getBool("subtitles");
+	_subtitlesEnabled = ConfMan.hasKey("subtitles") ? ConfMan.getBool("subtitles") : true;
 	_readingSpeed = getTalkspeed();
 
 	if (_readingSpeed > 3)
 		_readingSpeed = 0;
 
-	_musicVolume = ConfMan.getInt("music_volume");
+	_musicVolume = ConfMan.hasKey("music_volume") ? ConfMan.getInt("music_volume") : 255;
 	_music->setVolume(_musicVolume, 1);
 	_sound->setVolume();
 }

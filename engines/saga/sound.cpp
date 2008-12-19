@@ -206,8 +206,8 @@ void Sound::stopAll() {
 }
 
 void Sound::setVolume() {
-	_vm->_soundVolume = ConfMan.getInt("sound_volume");
-	_vm->_speechVolume = ConfMan.getInt("speech_volume");
+	_vm->_soundVolume = ConfMan.hasKey("sound_volume") ? ConfMan.getInt("sound_volume") : 255;
+	_vm->_speechVolume = ConfMan.hasKey("speech_volume") ? ConfMan.getInt("speech_volume") : 255;
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _vm->_soundVolume);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _vm->_speechVolume);
 }
