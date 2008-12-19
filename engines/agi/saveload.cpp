@@ -567,6 +567,21 @@ int AgiEngine::selectSlot() {
 	for (;;) {
 		int sbPos = 0;
 
+		// Use the extreme scrollbar positions only if the extreme
+		// slots are in sight. (We have to calculate this even if we
+		// don't redraw the save slots, because it's also used for
+		// clicking in the scrollbar.
+
+		if (_firstSlot == 0)
+			sbPos = 1;
+		else if (_firstSlot == NUM_SLOTS - NUM_VISIBLE_SLOTS)
+			sbPos = NUM_VISIBLE_SLOTS - 2;
+		else {
+			sbPos = 2 + (_firstSlot * (NUM_VISIBLE_SLOTS - 4)) / (NUM_SLOTS - NUM_VISIBLE_SLOTS - 1);
+			if (sbPos >= NUM_VISIBLE_SLOTS - 3)
+				sbPos = NUM_VISIBLE_SLOTS - 3;
+		}
+
 		if (oldFirstSlot != _firstSlot || oldActive != active) {
 			char dstr[64];
 			for (i = 0; i < NUM_VISIBLE_SLOTS; i++) {
@@ -579,19 +594,6 @@ int AgiEngine::selectSlot() {
 			char upArrow[] = "^";
 			char downArrow[] = "v";
 			char scrollBar[] = " ";
-
-			// Use the extreme scrollbar positions only if the
-			// extreme slots are in sight.
-
-			if (_firstSlot == 0)
-				sbPos = 1;
-			else if (_firstSlot == NUM_SLOTS - NUM_VISIBLE_SLOTS)
-				sbPos = NUM_VISIBLE_SLOTS - 2;
-			else {
-				sbPos = 2 + (_firstSlot * (NUM_VISIBLE_SLOTS - 4)) / (NUM_SLOTS - NUM_VISIBLE_SLOTS - 1);
-				if (sbPos >= NUM_VISIBLE_SLOTS - 3)
-					sbPos = NUM_VISIBLE_SLOTS - 3;
-			}
 
 			for (i = 1; i < NUM_VISIBLE_SLOTS - 1; i++)
 				printText(scrollBar, 35, hm + 1, vm + 4 + i, 1, MSG_BOX_COLOUR, 7, true);
