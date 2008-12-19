@@ -485,6 +485,7 @@ bool SMKPlayer::loadFile(const char *fileName) {
 	_TypeTree = new BigHuffmanTree(bs);
 
 	_image = (byte *)malloc(2 * _header.width * _header.height);
+	memset(_image, 0, 2 * _header.width * _header.height);
 	_palette = (byte *)malloc(3 * 256);
 	memset(_palette, 0, 3 * 256);
 
