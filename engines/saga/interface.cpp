@@ -1637,7 +1637,7 @@ void Interface::setOption(PanelButton *panelButton) {
 	case kTextSound:
 		_vm->_soundVolume = _vm->_soundVolume + 25;
 		if (_vm->_soundVolume > 255) _vm->_soundVolume = 0;
-		ConfMan.setInt("sound_volume", _vm->_soundVolume);
+		ConfMan.setInt("sfx_volume", _vm->_soundVolume);
 		_vm->_sound->setVolume();
 		break;
 	case kTextVoices:
