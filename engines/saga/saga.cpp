@@ -142,12 +142,8 @@ SagaEngine::~SagaEngine() {
 
 Common::Error SagaEngine::init() {
 	// Assign default values to the config manager, in case settings are missing
-	ConfMan.registerDefault("music_volume", "255");
-	ConfMan.registerDefault("sfx_volume", "255");
-	ConfMan.registerDefault("speech_volume", "255");
 	ConfMan.registerDefault("talkspeed", "255");
 	ConfMan.registerDefault("subtitles", "true");
-	ConfMan.registerDefault("copy_protection", "false");
 
 	_musicVolume = ConfMan.getInt("music_volume");
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
