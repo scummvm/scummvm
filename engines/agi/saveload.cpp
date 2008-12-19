@@ -564,7 +564,7 @@ int AgiEngine::selectSlot() {
 	int oldFirstSlot = _firstSlot + 1;
 	int oldActive = active + 1;
 
-	for (;;) {
+	while (!shouldQuit()) {
 		int sbPos = 0;
 
 		// Use the extreme scrollbar positions only if the extreme
@@ -738,7 +738,6 @@ int AgiEngine::saveGameDialog() {
 	w = (40 - 2 * hm) - 1;
 
 	sprintf(fileName, "%s", getSavegameFilename(slot));
-
 
 	do {
 		drawWindow(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
