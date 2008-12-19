@@ -364,7 +364,7 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 	AllowSyntheticEvents on(this);
 
 	debugC(4, kDebugLevelText, "waiting...");
-	for (;;) {
+	while (!shouldQuit()) {
 		for (i = 0; b[i]; i++)
 			_gfx->drawCurrentStyleButton(bx[i], by[i], b[i], i == active, false, i == 0);
 
