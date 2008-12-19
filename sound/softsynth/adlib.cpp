@@ -143,13 +143,14 @@ protected:
 	void init(MidiDriver_ADLIB *owner, byte channel);
 
 public:
+	~AdlibPercussionChannel();
+
 	void noteOff(byte note);
 	void noteOn(byte note, byte velocity);
 	void programChange(byte program) { }
 	void pitchBend(int16 bend) { }
 
 	// Control Change messages
-	void controlChange(byte control, byte value) { }
 	void modulationWheel(byte value) { }
 	void pitchBendFactor(byte value) { }
 	void detune(byte value) { }
@@ -157,7 +158,11 @@ public:
 	void sustain(bool value) { }
 
 	// SysEx messages
-	void sysEx_customInstrument(uint32 type, const byte *instr) { }
+	void sysEx_customInstrument(uint32 type, const byte *instr);
+
+private:
+	byte _notes[256];
+	AdlibInstrument *_customInstruments[256];
 };
 
 struct Struct10 {
@@ -775,10 +780,20 @@ void AdlibPart::sysEx_customInstrument(uint32 type, const byte *instr) {
 
 // MidiChannel method implementations for percussion
 
+AdlibPercussionChannel::~AdlibPercussionChannel() {
+	for (int i = 0; i < ARRAYSIZE(_customInstruments); ++i) {
+		delete _customInstruments[i];
+	}
+}
+
 void AdlibPercussionChannel::init(MidiDriver_ADLIB *owner, byte channel) {
 	AdlibPart::init(owner, channel);
 	_pri_eff = 0;
 	_vol_eff = 127;
+
+	// Initialize the custom instruments data
+	memset(_notes, 0, sizeof(_notes));
+	memset(_customInstruments, 0, sizeof(_customInstruments));
 }
 
 void AdlibPercussionChannel::noteOff(byte note) {
@@ -797,12 +812,51 @@ void AdlibPercussionChannel::noteOff(byte note) {
 }
 
 void AdlibPercussionChannel::noteOn(byte note, byte velocity) {
-	byte key = gm_percussion_lookup[note];
-	if (key == 0xFF) {
-		debug(2, "No FM map for GM percussion key %d", (int) note);
+	AdlibInstrument *inst = NULL;
+
+	// The custom instruments have priority over the default mapping
+	inst = _customInstruments[note];
+	if (inst)
+		note = _notes[note];
+
+	if (!inst) {
+		// Use the default GM to FM mapping as a fallback as a fallback
+		byte key = gm_percussion_lookup[note];
+		if (key != 0xFF)
+			inst = (AdlibInstrument *)&gm_percussion_to_fm[key];
+	}
+
+	if (!inst) {
+		debug(2, "No instrument FM definition for GM percussion key %d", (int)note);
 		return;
 	}
-	_owner->part_key_on(this, (AdlibInstrument *) &gm_percussion_to_fm[key], note, velocity);
+
+	_owner->part_key_on(this, inst, note, velocity);
+}
+
+void AdlibPercussionChannel::sysEx_customInstrument(uint32 type, const byte *instr) {
+	if (type == 'ADLP') {
+		byte note = instr[0];
+		_notes[note] = instr[1];
+
+		// Allocate memory for the new instruments
+		if (!_customInstruments[note]) {
+			_customInstruments[note] = new AdlibInstrument;
+		}
+
+		// Save the new instrument data
+		_customInstruments[note]->mod_characteristic     = instr[2];
+		_customInstruments[note]->mod_scalingOutputLevel = instr[3];
+		_customInstruments[note]->mod_attackDecay        = instr[4];
+		_customInstruments[note]->mod_sustainRelease     = instr[5];
+		_customInstruments[note]->mod_waveformSelect     = instr[6];
+		_customInstruments[note]->car_characteristic     = instr[7];
+		_customInstruments[note]->car_scalingOutputLevel = instr[8];
+		_customInstruments[note]->car_attackDecay        = instr[9];
+		_customInstruments[note]->car_sustainRelease     = instr[10];
+		_customInstruments[note]->car_waveformSelect     = instr[11];
+		_customInstruments[note]->feedback               = instr[12];
+	}
 }
 
 // MidiDriver method implementations
