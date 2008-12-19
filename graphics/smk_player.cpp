@@ -799,28 +799,18 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 		if (!is16Bits) {
 
 			for (int k = 0; k < (isStereo ? 2 : 1); k++) {
-				int8 v = (int8) ((int16) audioTrees[k]->getCode(audioBS));
-
-				bases[k] += v;
-
-				byte data = CLIP<int>(bases[k], 0, 255);
-
-				*curPointer++ = data ^ 0x80;
+				bases[k] += (int8) ((int16) audioTrees[k]->getCode(audioBS));
+				*curPointer++ = CLIP<int>(bases[k], 0, 255) ^ 0x80;
 				curPos++;
 			}
 
 		} else {
 
 			for (int k = 0; k < (isStereo ? 2 : 1); k++) {
-				int16 v = (int16) (audioTrees[k * 2]->getCode(audioBS) |
-				                  (audioTrees[k * 2 + 1]->getCode(audioBS) << 8));
+				bases[k] += (int16) (audioTrees[k * 2]->getCode(audioBS) |
+				                    (audioTrees[k * 2 + 1]->getCode(audioBS) << 8));
 
-				bases[k] += v;
-
-				int16 data = CLIP<int32>(bases[k], -32768, 32767);
-
-				WRITE_BE_UINT16(curPointer, data);
-
+				WRITE_BE_UINT16(curPointer, CLIP<int32>(bases[k], -32768, 32767));
 				curPointer += 2;
 				curPos += 2;
 			}
