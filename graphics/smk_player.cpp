@@ -351,6 +351,38 @@ int32 SMKPlayer::getFrameRate() {
 	return _header.frameRate;
 }
 
+int32 SMKPlayer::getFrameDelay() {
+	if (!_fileStream)
+		return 0;
+
+	if (_header.frameRate > 0)
+		return _header.frameRate * 100;
+	if (_header.frameRate < 0)
+		return -_header.frameRate;
+
+	return 10000;
+}
+
+int32 SMKPlayer::getAudioLag() {
+	if (!_fileStream || !_audioStream)
+		return 0;
+
+	int32 frameDelay = getFrameDelay();
+	int32 videoTime = _currentSMKFrame * frameDelay;
+	int32 audioTime = (((int32) _mixer->getSoundElapsedTime(_audioHandle)) * 100);
+
+	return videoTime - audioTime;
+}
+
+uint32 SMKPlayer::getFrameWaitTime() {
+	int32 waitTime = (getFrameDelay() + getAudioLag()) / 100;
+
+	if (waitTime < 0)
+		return 0;
+
+	return waitTime;
+}
+
 bool SMKPlayer::loadFile(const char *fileName) {
 	closeFile();
 

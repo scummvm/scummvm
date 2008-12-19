@@ -83,6 +83,26 @@ public:
 	int32 getFrameRate();
 
 	/**
+	 * Returns the time to wait for each frame in 1/100 ms
+	 * @return the time to wait for each frame in 1/100 ms
+	 */
+	int32 getFrameDelay();
+
+	/**
+	 * Returns the current A/V lag in 1/100 ms
+	 * If > 0, audio lags behind
+	 * If < 0, video lags behind
+	 * @return the current A/V lag in 1/100 ms
+	 */
+	int32 getAudioLag();
+
+	/**
+	 * Returns the time to wait until the next frame in ms, minding any lag
+	 * @return the time to wait until the next frame in ms
+	 */
+	uint32 getFrameWaitTime();
+
+	/**
 	 * Load an SMK encoded video file
 	 * @param filename	the filename to load
 	 */
