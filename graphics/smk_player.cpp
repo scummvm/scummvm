@@ -775,10 +775,10 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize,
 
 	if (isStereo)
 		bases[1] = (!is16Bits) ?   audioBS.getBits8() :
-		                         ((audioBS.getBits8() << 8) || audioBS.getBits8());
+		               ((int16) (((audioBS.getBits8() << 8) | audioBS.getBits8())));
 
 	bases[0] = (!is16Bits) ?   audioBS.getBits8() :
-													 ((audioBS.getBits8() << 8) || audioBS.getBits8());
+	               ((int16) (((audioBS.getBits8() << 8) | audioBS.getBits8())));
 
 
 	// The bases are the first samples, too
@@ -797,6 +797,7 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize,
 		// If the sample is stereo, the data is stored for the left and right channel, respectively
 		// (the exact opposite to the base values)
 		if (!is16Bits) {
+
 			for (int k = 0; k < (isStereo ? 2 : 1); k++) {
 				int8 v = (int8) ((int16) audioTrees[k]->getCode(audioBS));
 
@@ -807,19 +808,24 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize,
 				*curPointer++ = data ^ 0x80;
 				curPos++;
 			}
-		} else {
-			for (int k = 0; k < (isStereo ? 2 : 1); k++) {
-				uint16 cur = bases[k];
-				// adding takes care of possible overflows
-				cur += audioTrees[k * 2]->getCode(audioBS);             // low byte
-				cur += (audioTrees[k * 2 + 1]->getCode(audioBS) << 8);  // high byte
-				*curPointer++ = (cur >> 8) & 0xFF;  // high byte
-				curPos++;
-				*curPointer++ = cur & 0xFF;         // low byte
-				curPos++;
-			}
 
+		} else {
+
+			for (int k = 0; k < (isStereo ? 2 : 1); k++) {
+				int16 v = (int16) (audioTrees[k * 2]->getCode(audioBS) |
+				                  (audioTrees[k * 2 + 1]->getCode(audioBS) << 8));
+
+				bases[k] += v;
+
+				int16 data = CLIP<int32>(bases[k], -32768, 32767);
+
+				WRITE_BE_UINT16(curPointer, data);
+
+				curPointer += 2;
+				curPos += 2;
+			}
 		}
+
 	}
 
 	for (int k = 0; k < numBytes; k++)
