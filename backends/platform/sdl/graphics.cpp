@@ -170,6 +170,9 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 			if (_transactionDetails.needUpdatescreen)
 				internUpdateScreen();
 		}
+	} else if (_transactionDetails.needUpdatescreen) {
+		setGraphicsModeIntern();
+		internUpdateScreen();
 	}
 
 	_transactionMode = kTransactionNone;
