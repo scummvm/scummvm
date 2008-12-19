@@ -569,7 +569,7 @@ bool SMKPlayer::decodeNextFrame() {
 			if (_header.audioInfo[i].isCompressed) {
 				// Compressed audio (Huffman DPCM encoded)
 				queueCompressedBuffer(soundBuffer, chunkSize, dataSizeUnpacked, i);
-				delete soundBuffer;
+				delete[] soundBuffer;
 			} else {
 				// Uncompressed audio (PCM)
 				_audioStream->queueBuffer(soundBuffer, chunkSize);
@@ -745,8 +745,8 @@ bool SMKPlayer::decodeNextFrame() {
 	return ++_currentSMKFrame < _header.frames;
 }
 
-void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize,
-		int unpackedSize, int streamNum) {
+void SMKPlayer::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
+		uint32 unpackedSize, int streamNum) {
 
 	BitStream audioBS(buffer, bufferSize);
 	bool dataPresent = audioBS.getBit();
@@ -763,7 +763,7 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, int bufferSize,
 
 	byte *unpackedBuffer = new byte[unpackedSize + numBytes];
 	byte *curPointer = unpackedBuffer;
-	uint16 curPos = 0;
+	uint32 curPos = 0;
 
 	SmallHuffmanTree *audioTrees[4];
 	for (int k = 0; k < numBytes; k++)

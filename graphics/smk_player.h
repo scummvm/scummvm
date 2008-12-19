@@ -143,7 +143,7 @@ private:
 	void unpackPalette();
 	// Possible runs of blocks
 	uint getBlockRun(int index) { return (index <= 58) ? index + 1 : 128 << (index - 59); }
-	void queueCompressedBuffer(byte *buffer, int bufferSize, int unpackedSize, int streamNum);
+	void queueCompressedBuffer(byte *buffer, uint32 bufferSize, uint32 unpackedSize, int streamNum);
 
 	struct AudioInfo {
 		bool isCompressed;
