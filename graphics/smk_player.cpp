@@ -762,7 +762,7 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 
 	int numBytes = 1 * (isStereo ? 2 : 1) * (is16Bits ? 2 : 1);
 
-	byte *unpackedBuffer = new byte[unpackedSize + numBytes];
+	byte *unpackedBuffer = new byte[unpackedSize];
 	byte *curPointer = unpackedBuffer;
 	uint32 curPos = 0;
 
@@ -783,7 +783,7 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 
 
 	// The bases are the first samples, too
-	for (int i = 0; i < (isStereo ? 2 : 1); i++, curPointer += (is16Bits ? 2 : 1)) {
+	for (int i = 0; i < (isStereo ? 2 : 1); i++, curPointer += (is16Bits ? 2 : 1), curPos += (is16Bits ? 2 : 1)) {
 		if (is16Bits)
 			WRITE_BE_UINT16(curPointer, bases[i]);
 		else
@@ -822,7 +822,7 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 	for (int k = 0; k < numBytes; k++)
 		delete audioTrees[k];
 
-	_audioStream->queueBuffer(unpackedBuffer, unpackedSize + numBytes);
+	_audioStream->queueBuffer(unpackedBuffer, unpackedSize);
 	// unpackedBuffer will be deleted by AppendableAudioStream
 }
 
