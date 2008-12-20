@@ -404,10 +404,10 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
  * Restore game
  * @param num			num
  */
-void RestoreGame(int num, bool fromGMM) {
+void RestoreGame(int num) {
 	KillInventory();
 
-	RequestRestoreGame(num, &sgData, &savedSceneCount, ssData, fromGMM);
+	RequestRestoreGame(num, &sgData, &savedSceneCount, ssData);
 
 	// Actual restoring is performed by ProcessSRQueue
 }

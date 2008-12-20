@@ -535,7 +535,45 @@ void TinselMetaEngine::removeSaveState(const char *target, int slot) const {
 namespace Tinsel {
 
 Common::Error TinselEngine::loadGameState(int slot) {
-	RestoreGame(slot, true);
+	// FIXME: Hopefully this is only used when loading games via
+	// the launcher, since we do a hacky savegame slot to savelist
+	// entry mapping here.
+	//
+	// You might wonder why is needed and here is the answer:
+	// The save/load dialog of the GMM operates with the physical
+	// savegame slots, while Tinsel internally uses entry numbers in
+	// a savelist (which is sorted latest to first). Now to allow
+	// proper loading of (especially Discworld2) saves we need to
+	// get a savelist entry number instead of the physical slot.
+	//
+	// There are different possible solutions:
+	//
+	// One way to fix this would be to pass the filename instead of
+	// the savelist entry number to RestoreGame, though it could make
+	// problems how DW2 handles CD switches. Normally DW2 would pass
+	// '-2' as slot when it changes CDs.
+	//
+	// Another way would be to convert all of Tinsel to use physical
+	// slot numbers instead of savelist entry numbers for loading.
+	// This would also allow '-2' as slot for CD changes without
+	// any major hackery.
+	
+	int listSlot = -1;
+	const int numStates = Tinsel::getList();
+	for (int i = 0; i < numStates; ++i) {
+		const char *fileName = Tinsel::ListEntry(i, Tinsel::LE_NAME);
+		const int saveSlot = atoi(fileName + strlen(fileName) - 2);
+
+		if (saveSlot == slot) {
+			listSlot = i;
+			break;
+		}
+	}
+
+	if (listSlot == -1)
+		return Common::kUnknownError;	// TODO: proper error code
+
+	RestoreGame(listSlot);
 	return Common::kNoError;	// TODO: return success/failure
 }
 

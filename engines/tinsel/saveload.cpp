@@ -96,7 +96,7 @@ struct SaveGameHeader {
 
 enum {
 	DW1_SAVEGAME_ID = 0x44575399,	// = 'DWSc' = "DiscWorld 1 ScummVM"
-	DW2_SAVEGAME_ID = 0x44573253,	// = 'DW2S' = "DiscWOrld 2 ScummVM"
+	DW2_SAVEGAME_ID = 0x44573253,	// = 'DW2S' = "DiscWorld 2 ScummVM"
 	SAVEGAME_HEADER_SIZE = 4 + 4 + 4 + SG_DESC_LEN + 7
 };
 
@@ -429,15 +429,9 @@ static void DoSync(Serializer &s) {
 /**
  * DoRestore
  */
-static bool DoRestore(bool fromGMM) {
-	Common::InSaveFile *f;
-	uint32 id;
+static bool DoRestore() {
+	Common::InSaveFile *f =  _vm->getSaveFileMan()->openForLoading(savedFiles[RestoreGameNumber].name);
 
-	if (!fromGMM)
-		f = _vm->getSaveFileMan()->openForLoading(savedFiles[RestoreGameNumber].name);
-	else
-		f = _vm->getSaveFileMan()->openForLoading(_vm->getSavegameFilename(RestoreGameNumber).c_str());
-		
 	if (f == NULL) {
 		return false;
 	}
@@ -451,7 +445,7 @@ static bool DoRestore(bool fromGMM) {
 
 	DoSync(s);
 
-	id = f->readSint32LE();
+	uint32 id = f->readSint32LE();
 	if (id != (uint32)0xFEEDFACE)
 		error("Incompatible saved game");
 
@@ -519,8 +513,7 @@ save_failure:
 void ProcessSRQueue(void) {
 	switch (SRstate) {
 	case SR_DORESTORE:
-	case SR_DORESTORE_GMM:
-		if (DoRestore(SRstate == SR_DORESTORE_GMM)) {
+		if (DoRestore()) {
 			DoRestoreScene(srsd, false);
 		}
 		SRstate = SR_IDLE;
@@ -547,7 +540,7 @@ void RequestSaveGame(char *name, char *desc, SAVED_DATA *sd, int *pSsCount, SAVE
 	SRstate = SR_DOSAVE;
 }
 
-void RequestRestoreGame(int num, SAVED_DATA *sd, int *pSsCount, SAVED_DATA *pSsData, bool fromGMM) {
+void RequestRestoreGame(int num, SAVED_DATA *sd, int *pSsCount, SAVED_DATA *pSsData) {
 	if (TinselV2) {
 		if (num == -1)
 			return;
@@ -563,7 +556,7 @@ void RequestRestoreGame(int num, SAVED_DATA *sd, int *pSsCount, SAVED_DATA *pSsD
 	SaveSceneSsCount = pSsCount;
 	SaveSceneSsData = (char *)pSsData;
 	srsd = sd;
-	SRstate = (!fromGMM) ? SR_DORESTORE : SR_DORESTORE_GMM;
+	SRstate = SR_DORESTORE;
 }
 
 /**
