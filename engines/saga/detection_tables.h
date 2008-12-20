@@ -401,7 +401,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"Multi-OS CD Version",
 			{
-	{"ite.rsc",						GAME_RESOURCEFILE,					"a6433e34b97b15e64fe8214651012db9", -1},
+	{"ite.rsc",						GAME_RESOURCEFILE,					"a6433e34b97b15e64fe8214651012db9", 8927165},
 	{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84", -1},
 	{ NULL, 0, NULL, 0}
 			},
@@ -432,6 +432,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"Multi-OS CD Version",
 			{
+	// TODO: add size for ite.rsc
 	{"ite.rsc",						GAME_RESOURCEFILE,					"a6433e34b97b15e64fe8214651012db9", -1},
 	{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84", -1},
 	{ NULL, 0, NULL, 0}
@@ -458,7 +459,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"Windows/Linux/DOS CD Version",
 			{
-	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", 8928678},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
 	{ NULL, 0, NULL, 0}
 			},
@@ -484,7 +485,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"Windows/Linux/DOS CD Version",
 			{
-	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", 8929952},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
 	{ NULL, 0, NULL, 0}
 			},
@@ -592,7 +593,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"Floppy",
 			{
-	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", 8903828},
 	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
 	{ NULL, 0, NULL, 0}
 			},
@@ -618,7 +619,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"Floppy",
 			{
-	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", 8905102},
 	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
 	{ NULL, 0, NULL, 0}
 			},
