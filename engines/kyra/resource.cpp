@@ -65,80 +65,81 @@ bool Resource::reset() {
 		// We only need kyra.dat for the demo.
 		if (_vm->gameFlags().isDemo)
 			return true;
+
+		if (_vm->gameFlags().isTalkie) {
+			// List of files in the talkie version, which can never be unload.
+			static const char *list[] = {
+				"ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "FINALE.PAK", "INTRO1.PAK", "INTRO2.PAK",
+				"INTRO3.PAK", "INTRO4.PAK", "MISC.PAK",	"SND.PAK", "STARTUP.PAK", "XMI.PAK",
+				"CAVE.APK", "DRAGON1.APK", "DRAGON2.APK", "LAGOON.APK"
+			};
+
+			for (uint i = 0; i < ARRAYSIZE(list); ++i) {
+				Common::ArchiveMemberPtr file = _files.getMember(list[i]);
+				if (!file)
+					error("Couldn't find PAK file '%s'", list[i]);
+
+				Common::Archive *archive = loadArchive(list[i], file);
+				if (archive)
+					_protectedFiles.add(list[i], archive, 0, false);
+				else
+					error("Couldn't load PAK file '%s'", list[i]);
+			}
+		} else {
+			Common::ArchiveMemberList files;
+
+			_files.listMatchingMembers(files, "*.PAK");
+			_files.listMatchingMembers(files, "*.APK");
+
+			for (Common::ArchiveMemberList::const_iterator i = files.begin(); i != files.end(); ++i) {
+				Common::String name = (*i)->getName();
+				name.toUppercase();
+
+				// No PAK file
+				if (name == "TWMUSIC.PAK")
+					continue;
+
+				// We need to only load the script archive for the language the user specified
+				if (name == ((_vm->gameFlags().lang == Common::EN_ANY) ? "JMC.PAK" : "EMC.PAK"))
+					continue;
+
+				Common::Archive *archive = loadArchive(name, *i);
+				if (archive)
+					_files.add(name, archive, 0, false);
+				else
+					error("Couldn't load PAK file '%s'", name.c_str());
+			}
+		}
 	} else if (_vm->game() == GI_KYRA2) {
 		if (_vm->gameFlags().useInstallerPackage)
 			_files.add("installer", loadInstallerArchive("WESTWOOD", "%03d", 6), 2, false);
 
-		// mouse pointer, fonts, etc. required for initializing
+		// mouse pointer, fonts, etc. required for initialization
 		if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie) {
 			loadPakFile("GENERAL.PAK");
 		} else {
 			loadPakFile("INTROGEN.PAK");
 			loadPakFile("OTHER.PAK");
 		}
-
-		return true;
 	} else if (_vm->game() == GI_KYRA3) {
 		if (_vm->gameFlags().useInstallerPackage) {
 			if (!loadPakFile("WESTWOOD.001"))
-				error("couldn't load file: 'WESTWOOD.001'");
+				error("Couldn't load file: 'WESTWOOD.001'");
 		}
 
 		if (!loadFileList("FILEDATA.FDT"))
-			error("couldn't load file: 'FILEDATA.FDT'");
-
-		return true;
+			error("Couldn't load file: 'FILEDATA.FDT'");
 	} else if (_vm->game() == GI_LOL) {
 		if (_vm->gameFlags().useInstallerPackage)
 			_files.add("installer", loadInstallerArchive("WESTWOOD", "%d", 0), 2, false);
 		
 		// mouse pointer, fonts, etc. required for initializing
-		loadPakFile("general.pak");
+		loadPakFile("GENERAL.PAK");
 		if (_vm->gameFlags().isTalkie)
-			loadPakFile("startup.pak");
-
-		return true;
-	}
-
-	Common::FSList fslist;
-	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly))
-		error("can't list files inside game path '%s'", dir.getPath().c_str());
-
-	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().isTalkie) {
-		static const char *list[] = {
-			"ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "FINALE.PAK", "INTRO1.PAK", "INTRO2.PAK",
-			"INTRO3.PAK", "INTRO4.PAK", "MISC.PAK",	"SND.PAK", "STARTUP.PAK", "XMI.PAK",
-			"CAVE.APK", "DRAGON1.APK", "DRAGON2.APK", "LAGOON.APK"
-		};
-
-		for (uint i = 0; i < ARRAYSIZE(list); ++i) {
-			Common::ArchiveMemberPtr file = _files.getMember(list[i]);
-			if (!file)
-				error("Couldn't find PAK file '%s'", list[i]);
-
-			Common::Archive *archive = loadArchive(list[i], file);
-			if (archive)
-				_protectedFiles.add(list[i], archive, 0, false);
-			else
-				error("Couldn't load PAK file '%s'", list[i]);
-		}
+			loadPakFile("STARTUP.PAK");
 	} else {
-		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			Common::String filename = file->getName();
-			filename.toUppercase();
-
-			// No real PAK file!
-			if (filename == "TWMUSIC.PAK")
-				continue;
-
-			if (filename == ((_vm->gameFlags().lang == Common::EN_ANY) ? "JMC.PAK" : "EMC.PAK"))
-				continue;
-
-			if (filename.hasSuffix(".PAK") || filename.hasSuffix(".APK")) {
-				if (!loadPakFile(file->getName()))
-					error("couldn't open pakfile '%s'", file->getName().c_str());
-			}
-		}
+		error("Unknown game id: %d", _vm->game());
+		return false;
 	}
 
 	return true;
@@ -146,7 +147,6 @@ bool Resource::reset() {
 
 bool Resource::loadPakFile(Common::String filename) {
 	filename.toUppercase();
-
 
 	Common::ArchiveMemberPtr file = _files.getMember(filename);
 	if (!file)
