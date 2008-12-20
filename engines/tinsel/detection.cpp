@@ -486,8 +486,8 @@ SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 	int slotNum = 0;
 	for (Common::StringList::const_iterator file = files.begin(); file != files.end(); ++file) {
-		// Obtain the last 2 digits of the filename, since they correspond to the save slot
-		slotNum = atoi(file->c_str() + file->size() - 2);
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		slotNum = atoi(file->c_str() + file->size() - 3);
 
 		const Common::String &fname = *file;
 		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fname.c_str());
@@ -563,7 +563,7 @@ Common::Error TinselEngine::loadGameState(int slot) {
 	const int numStates = Tinsel::getList();
 	for (int i = 0; i < numStates; ++i) {
 		const char *fileName = Tinsel::ListEntry(i, Tinsel::LE_NAME);
-		const int saveSlot = atoi(fileName + strlen(fileName) - 2);
+		const int saveSlot = atoi(fileName + strlen(fileName) - 3);
 
 		if (saveSlot == slot) {
 			listSlot = i;
