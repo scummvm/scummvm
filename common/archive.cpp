@@ -234,6 +234,57 @@ void FSDirectory::ensureCached() {
 	_cached = true;
 }
 
+bool matchPath(const char *str, const char *pat) {
+	assert(str);
+	assert(pat);
+
+	const char *p = 0;
+	const char *q = 0;
+
+	for (;;) {
+		if (*str == '/') {
+			p = 0;
+			q = 0;
+		}
+
+		switch (*pat) {
+		case '*':
+			// Record pattern / string possition for backtracking
+			p = ++pat;
+			q = str;
+			// If pattern ended with * -> match
+			if (!*pat)
+				return true;
+			break;
+
+		default:
+			if (*pat != *str) {
+				if (p) {
+					// No match, oops -> try to backtrack
+					pat = p;
+					str = ++q;
+					if (!*str)
+						return !*pat;
+					break;
+				}
+				else
+					return false;
+			}
+			if (!*str)
+				return !*pat;
+			pat++;
+			str++;
+			break;
+
+		case '?':
+			if (!*str || *str == '/')
+				return !*pat;
+			pat++;
+			str++;
+		}
+	}
+}
+
 int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &pattern) {
 	if (!_node.isDirectory())
 		return 0;
@@ -247,7 +298,7 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 	int matches = 0;
 	NodeCache::iterator it = _fileCache.begin();
 	for ( ; it != _fileCache.end(); it++) {
-		if (it->_key.matchString(lowercasePattern)) {
+		if (matchPath(it->_key.c_str(), lowercasePattern.c_str())) {
 			list.push_back(ArchiveMemberPtr(new FSDirectoryMember(it->_value)));
 			matches++;
 		}
@@ -256,7 +307,19 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 }
 
 int FSDirectory::listMembers(ArchiveMemberList &list) {
-	return listMatchingMembers(list, "*");
+	if (!_node.isDirectory())
+		return 0;
+
+	// Cache dir data
+	ensureCached();
+
+	int files = 0;
+	for (NodeCache::iterator it = _fileCache.begin(); it != _fileCache.end(); ++it) {
+		list.push_back(ArchiveMemberPtr(new FSDirectoryMember(it->_value)));
+		++files;
+	}
+
+	return files;
 }
 
 
