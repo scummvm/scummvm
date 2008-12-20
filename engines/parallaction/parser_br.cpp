@@ -788,13 +788,7 @@ void LocationParser_br::parseGetData(ZonePtr z) {
 
 		if (!scumm_stricmp(_tokens[0], "mask")) {
 			if (ctxt.info->hasMask) {
-				Common::Rect rect;
-				data->gfxobj->getRect(0, rect);
-				data->_mask[0].create(rect.width(), rect.height());
-				_vm->_disk->loadMask(_tokens[1], data->_mask[0]);
-				data->_mask[1].create(rect.width(), rect.height());
-				data->_mask[1].bltCopy(0, 0, ctxt.info->mask, data->gfxobj->x, data->gfxobj->y, data->_mask->w, data->_mask->h);
-				data->hasMask = true;
+				_vm->_gfx->loadGfxObjMask(_tokens[1], data->gfxobj);
 			} else {
 				warning("Mask for zone '%s' ignored, since background doesn't have one", z->_name);
 			}

@@ -32,7 +32,10 @@
 
 namespace Parallaction {
 
-GfxObj::GfxObj(uint objType, Frames *frames, const char* name) : _frames(frames), _keep(true), x(0), y(0), z(0), _flags(kGfxObjNormal), type(objType), frame(0), layer(3), scale(100)  {
+GfxObj::GfxObj(uint objType, Frames *frames, const char* name) :
+	_frames(frames), _keep(true), x(0), y(0), z(0), _flags(kGfxObjNormal),
+	type(objType), frame(0), layer(3), scale(100), _hasMask(false)  {
+
 	if (name) {
 		_name = strdup(name);
 	} else {
@@ -43,6 +46,7 @@ GfxObj::GfxObj(uint objType, Frames *frames, const char* name) : _frames(frames)
 GfxObj::~GfxObj() {
 	delete _frames;
 	free(_name);
+	_mask.free();
 }
 
 void GfxObj::release() {
@@ -136,6 +140,14 @@ void Gfx::clearGfxObjects(uint filter) {
 
 }
 
+void Gfx::loadGfxObjMask(const char *name, GfxObj *obj) {
+	Common::Rect rect;
+	obj->getRect(0, rect);
+	obj->_mask.create(rect.width(), rect.height());
+	_vm->_disk->loadMask(_tokens[1], obj->_mask);
+	obj->_hasMask = true;
+}
+
 void Gfx::showGfxObj(GfxObj* obj, bool visible) {
 	if (!obj) {
 		return;
@@ -145,6 +157,14 @@ void Gfx::showGfxObj(GfxObj* obj, bool visible) {
 		obj->setFlags(kGfxObjVisible);
 	} else {
 		obj->clearFlags(kGfxObjVisible);
+	}
+
+	if (obj->_hasMask && _backgroundInfo->hasMask) {
+		if (visible) {
+			_backgroundInfo->mask.bltOr(obj->x, obj->y, obj->_mask, 0, 0, obj->_mask.w, obj->_mask.h);
+		} else {
+			_backgroundInfo->mask.bltCopy(obj->x, obj->y, _backgroundInfo->maskBackup, obj->x, obj->y, obj->_mask.w, obj->_mask.h);
+		}
 	}
 }
 

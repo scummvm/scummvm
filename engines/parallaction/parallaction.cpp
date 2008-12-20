@@ -521,15 +521,6 @@ void Parallaction::showZone(ZonePtr z, bool visible) {
 
 	if ((z->_type & 0xFFFF) == kZoneGet) {
 		_gfx->showGfxObj(z->u.get->gfxobj, visible);
-
-		GetData *data = z->u.get;
-		if (data->hasMask && _gfx->_backgroundInfo->hasMask) {
-			if (visible) {
-				_gfx->_backgroundInfo->mask.bltOr(data->gfxobj->x, data->gfxobj->y, data->_mask[0], 0, 0, data->_mask->w, data->_mask->h);
-			} else {
-				_gfx->_backgroundInfo->mask.bltCopy(data->gfxobj->x, data->gfxobj->y, data->_mask[1], 0, 0, data->_mask->w, data->_mask->h);
-			}
-		}
 	}
 }
 

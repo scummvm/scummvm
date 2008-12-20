@@ -140,6 +140,15 @@ public:
 	MaskBuffer() : w(0), internalWidth(0), h(0), size(0), data(0), bigEndian(true) {
 	}
 
+	void clone(const MaskBuffer &buf) {
+		if (!buf.data)
+			return;
+
+		create(buf.w, buf.h);
+		bigEndian = buf.bigEndian;
+		memcpy(data, buf.data, size);
+	}
+
 	void create(uint16 width, uint16 height) {
 		free();
 
@@ -378,6 +387,10 @@ public:
 	uint transparentKey;
 	uint scale;
 
+	MaskBuffer		_mask;
+	bool			_hasMask;
+
+
 	GfxObj(uint type, Frames *frames, const char *name = NULL);
 	virtual ~GfxObj();
 
@@ -413,6 +426,7 @@ struct BackgroundInfo {
 
 	Graphics::Surface	bg;
 	MaskBuffer			mask;
+	MaskBuffer			maskBackup;
 	PathBuffer			path;
 
 	Palette				palette;
@@ -442,6 +456,7 @@ struct BackgroundInfo {
 	~BackgroundInfo() {
 		bg.free();
 		mask.free();
+		maskBackup.free();
 		path.free();
 		x = 0;
 		y = 0;
@@ -607,6 +622,8 @@ public:
 	void bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
 	void bltMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
 	void bltNoMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, byte transparentColor);
+
+	void loadGfxObjMask(const char *name, GfxObj *obj);
 };
 
 

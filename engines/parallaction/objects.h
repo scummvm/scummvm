@@ -193,13 +193,10 @@ struct Dialogue {
 struct GetData {
 	uint32			_icon;
 	GfxObj			*gfxobj;
-	MaskBuffer		_mask[2];
-	bool			hasMask;
 
 	GetData() {
 		_icon = 0;
 		gfxobj = NULL;
-		hasMask = false;
 	}
 };
 struct SpeakData {

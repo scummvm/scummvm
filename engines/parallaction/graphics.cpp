@@ -803,6 +803,10 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 		setPalette(_backgroundInfo->palette);
 	}
 
+	if (_backgroundInfo->hasMask) {
+		_backgroundInfo->maskBackup.clone(_backgroundInfo->mask);
+	}
+
 	if (_gameType == GType_BRA) {
 		int width = CLIP(info->width, (int)_vm->_screenWidth, info->width);
 		int height = CLIP(info->height, (int)_vm->_screenHeight, info->height);
