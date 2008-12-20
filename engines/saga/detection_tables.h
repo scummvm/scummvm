@@ -182,6 +182,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 
 	// ITE Demos //////////////////////////////////////////////////////////////////////////////////////////////
 
+#if 0
 	// Note: This version is NOT supported yet
 	// Based on a very early version of the engine
 
@@ -213,7 +214,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITEDISK_GameSound,
 		NULL,
 	},
-
+#endif
 
 	// Inherit the earth - MAC Demo version
 	{
@@ -651,7 +652,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"Demo",
 			{
 	{"music.res",		GAME_MUSICFILE_FM,	"0439083e3dfdc51b486071d45872ae52", -1},
-	{"scream.res",		GAME_RESOURCEFILE,	"46bbdc65d164ba7e89836a0935eec8e6", -1},
+	{"scream.res",		GAME_RESOURCEFILE,	"46bbdc65d164ba7e89836a0935eec8e6", 16687179},
 	{"scripts.res",		GAME_SCRIPTFILE,	"9626bda8978094ff9b29198bc1ed5f9a", -1},
 	{"sfx.res",			GAME_SOUNDFILE,		"1c610d543f32ec8b525e3f652536f269", -1},
 	{ NULL, 0, NULL, 0}
@@ -680,7 +681,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", -1},
 	{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", -1},
-	{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6", -1},
+	{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6", 79211140},
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
 	//{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
@@ -716,7 +717,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", -1},
 	{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", -1},
-	{"scream.res",	GAME_RESOURCEFILE,					"c92370d400e6f2a3fc411c3729d09224", -1},
+	{"scream.res",	GAME_RESOURCEFILE,					"c92370d400e6f2a3fc411c3729d09224", 78517884},
 	{"scripts.res",	GAME_SCRIPTFILE,					"32aa01a89937520fe0ea513950117292", -1},
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
@@ -746,7 +747,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", -1},
 	{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", -1},
-	{"scream.res",	GAME_RESOURCEFILE,					"c92370d400e6f2a3fc411c3729d09224", -1},
+	{"scream.res",	GAME_RESOURCEFILE,					"c92370d400e6f2a3fc411c3729d09224", 78560025},
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
 	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
@@ -758,36 +759,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		},
 		GType_IHNM,
 		GID_IHNM_CD_ES,
-		0,
-		IHNM_DEFAULT_SCENE,
-		&IHNM_Resources,
-		ARRAYSIZE(IHNMCD_GameFonts),
-		IHNMCD_GameFonts,
-		&IHNM_GameSound,
-		&IHNM_GameSound,
-		NULL,
-	},
-
-	// I Have No Mouth And I Must Scream - Ru CD version
-	{
-		{
-			"ihnm",
-			"",
-			{
-	{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", -1},
-	{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", -1},
-	{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6", -1},
-	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
-	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
-	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
-	{ NULL, 0, NULL, 0}
-			},
-			Common::RU_RUS,
-			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
-		},
-		GType_IHNM,
-		GID_IHNM_CD_RU,
 		0,
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,
@@ -837,7 +808,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", -1},
 	{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", -1},
-	{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6", -1},
+	{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6", 79211498},
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
 	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
