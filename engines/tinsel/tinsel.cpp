@@ -991,13 +991,9 @@ Common::Error TinselEngine::go() {
 
 	//dumpMusic();	// dumps all of the game's music in external XMIDI files
 
-#if 0
 	// Load game from specified slot, if any
-	// FIXME: Not working correctly right now
-	if (ConfMan.hasKey("save_slot")) {
-		RestoreGame(ConfMan.getInt("save_slot"), true);
-	}
-#endif
+	if (ConfMan.hasKey("save_slot"))
+		loadGameState(ConfMan.getInt("save_slot"));
 
 	// Foreground loop
 
