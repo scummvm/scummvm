@@ -160,7 +160,7 @@ void SegmentMap::adjustPathPoint(int16 &x, int16 &y) {
 		return;
 
 	uint32 minDistance = 0xFFFFFFFF, distance;
-	int16 adjustedX, adjustedY, x2, y2;
+	int16 adjustedX = 0, adjustedY = 0, x2, y2;
 	
 	for (int16 rectIndex = 0; rectIndex < (int16)_pathRects.size(); rectIndex++) {
 

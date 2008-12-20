@@ -105,7 +105,7 @@ public:
 		_scalerStatus = 0;
 	}
 	SpriteReaderStatus readPacket(PixelPacket &packet) {
-		SpriteReaderStatus status;
+		SpriteReaderStatus status = kSrsPixelsLeft;
 		if (_scalerStatus == 0) {
 			_xerror = _sprite->xdelta;
 			_yerror -= 100;

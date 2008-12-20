@@ -295,7 +295,7 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	}
 
 	GuiTextWrapState wrapState;
-	int16 len;
+	int16 len = 0;
 	wrapState.width = 0;
 	wrapState.destString = wrapState.textBuffer;
 	wrapState.len1 = 0;
@@ -312,7 +312,7 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	}
 
 	if (_verbLineCount != 1) {
-		int16 charWidth;
+		int16 charWidth = 0;
 		if (*wrapState.sourceString < 0xF0) {
 			while (*wrapState.sourceString > 0x20 && *wrapState.sourceString < 0xF0 && len > 0) {
 				byte ch = *wrapState.sourceString--;

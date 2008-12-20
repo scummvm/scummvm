@@ -159,7 +159,7 @@ void Palette::buildColorTransTable(byte limit, char deltaValue, byte mask) {
 
 	// TODO
 
-	byte r, g, b;
+	byte r = 0, g = 0, b = 0;
 	
 	mask &= 7;
 	

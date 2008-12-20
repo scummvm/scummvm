@@ -435,7 +435,7 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 	{
 		debug(0, "o2_setGameVar(%d, %d)", arg16(3), arg16(5));
 		VarType varType = getGameVarType(arg16(3));
-		int16 value;
+		int16 value = 0;
 		if (varType == vtByte)
 			value = arg8(5);
 		else if (varType == vtWord)
