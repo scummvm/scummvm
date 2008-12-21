@@ -255,6 +255,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\saga\introproc_fta2.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\saga\introproc_ihnm.cpp"
 			>
 		</File>

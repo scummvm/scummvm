@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7,00"
 	Name="saga"
 	ProjectGUID="{676DB4C5-9A3E-4EE1-8483-EBB79DC0700E}"
 	Keyword="Win32Proj">
@@ -168,6 +168,9 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\interface.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\saga\introproc_fta2.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\introproc_ihnm.cpp">
