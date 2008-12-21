@@ -995,8 +995,14 @@ Common::Error TinselEngine::go() {
 	//
 	// TODO: We might want to think about taking care of possible errors
 	// when loading the save state.
-	if (ConfMan.hasKey("save_slot"))
+	//
+	// TODO: This works fine when loading saves, which require a CD change
+	// in DW2. For every other save it'll fail though.
+#if 0
+	if (ConfMan.hasKey("save_slot")) {
 		loadGameState(ConfMan.getInt("save_slot"));
+	}
+#endif
 
 	// Foreground loop
 
