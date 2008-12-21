@@ -174,11 +174,11 @@ uint8 *TuckerEngine::loadFile(uint8 *p) {
 		} else if (strcmp(_fileToLoad, "charsize.dta") == 0) {
 			strcpy(_fileToLoad, "charszgr.dta");
 		} else if (strncmp(_fileToLoad, "objtxt", 6) == 0) {
-			const int num = _fileToLoad[6];
-			snprintf(_fileToLoad, sizeof(_fileToLoad), "objtx%dgr.c", num);
+			const char num = _fileToLoad[6];
+			snprintf(_fileToLoad, sizeof(_fileToLoad), "objtx%cgr.c", num);
 		} else if (strncmp(_fileToLoad, "pt", 2) == 0) {
-			const int num = _fileToLoad[2];
-			snprintf(_fileToLoad, sizeof(_fileToLoad), "pt%dtxtgr.c", num);
+			const char num = _fileToLoad[2];
+			snprintf(_fileToLoad, sizeof(_fileToLoad), "pt%ctxtgr.c", num);
 		}
 	}
 	_fileLoadSize = 0;
