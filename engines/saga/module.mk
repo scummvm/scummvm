@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	interface.o \
 	introproc_ihnm.o \
 	introproc_ite.o \
+	introproc_fta2.o \
 	isomap.o \
 	itedata.o \
 	music.o \

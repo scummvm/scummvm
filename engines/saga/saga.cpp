@@ -176,18 +176,22 @@ Common::Error SagaEngine::init() {
 	// TODO: implement differences for SAGA2
 	if (!isSaga2()) {
 		_sndRes = new SndRes(this);
-		_events = new Events(this);
+	}
+
+	_events = new Events(this);
+
+	if (!isSaga2()) {
 		_font = new Font(this);
 		_sprite = new Sprite(this);
 		_anim = new Anim(this);
-		_script = new Script(this);
-		_interface = new Interface(this); // requires script module
 	}
-	
+
+	_script = new Script(this);
+	_interface = new Interface(this); // requires script module
 	_scene = new Scene(this);
+	_actor = new Actor(this);
 
 	if (!isSaga2()) {
-		_actor = new Actor(this);
 		_palanim = new PalAnim(this);
 		if (getGameId() == GID_ITE) {
 			_isoMap = new IsoMap(this);
@@ -225,12 +229,16 @@ Common::Error SagaEngine::init() {
 	// Initialize system specific sound
 	_sound = new Sound(this, _mixer);
 	
-	_interface->converseInit();
-	_script->setVerb(_script->getVerbType(kVerbWalkTo));
+	if (!isSaga2()) {
+		_interface->converseInit();
+		_script->setVerb(_script->getVerbType(kVerbWalkTo));
+	}
 
 	_music->setVolume(_musicVolume, 1);
 
-	_gfx->initPalette();
+	if (!isSaga2()) {
+		_gfx->initPalette();
+	}
 
 	if (_voiceFilesExist) {
 		if (getGameId() == GID_IHNM) {

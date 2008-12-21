@@ -85,6 +85,11 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 		error("Script::Script() resource context not found");
 	}
 
+	// Do nothing for SAGA2 games for now
+	if (_vm->isSaga2()) {
+		return;
+	}
+
 	debug(3, "Loading module LUT from resource %i", _vm->getResourceDescription()->moduleLUTResourceId);
 	_vm->_resource->loadResource(resourceContext, _vm->getResourceDescription()->moduleLUTResourceId, resourcePointer, resourceLength);
 

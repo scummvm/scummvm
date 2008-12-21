@@ -1029,6 +1029,11 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 }
 
 void Actor::drawActors() {
+	// Do nothing for SAGA2 games for now
+	if (_vm->isSaga2()) {
+		return;
+	}
+
 	if (_vm->_anim->hasCutaway()) {
 		drawSpeech();
 		return;

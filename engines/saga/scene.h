@@ -408,9 +408,10 @@ class Scene {
 	TextList _textList;
 
  private:
+	int ITEStartProc();
 	int IHNMStartProc();
 	int IHNMCreditsProc();
-	int ITEStartProc();
+	int FTA2StartProc();
 
 	void IHNMLoadCutaways();
 	bool checkKey();

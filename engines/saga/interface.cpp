@@ -161,6 +161,11 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		_verbTypeToPanelButton[i] = NULL;
 	}
 
+	// Do nothing for SAGA2 games for now
+	if (_vm->isSaga2()) {
+		return;
+	}
+
 	for (i = 0; i < _mainPanel.buttonsCount; i++) {
 		if (_mainPanel.buttons[i].type == kPanelButtonVerb) {
 			_verbTypeToPanelButton[_mainPanel.buttons[i].id] = &_mainPanel.buttons[i];

@@ -140,6 +140,13 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 	uint32 resourceId;
 	int i;
 
+	// Do nothing for SAGA2 games for now
+	if (_vm->isSaga2()) {
+		_inGame = false;
+		_sceneLoaded = false;
+		return;
+	}
+
 	// Load scene module resource context
 	_sceneContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (_sceneContext == NULL) {
@@ -220,6 +227,11 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 }
 
 Scene::~Scene() {
+	// Do nothing for SAGA2 games for now
+	if (_vm->isSaga2()) {
+		return;
+	}
+
 	delete _actionMap;
 	delete _objectMap;
 	free(_sceneLUT);
@@ -276,6 +288,12 @@ void Scene::startScene() {
 		break;
 	case GID_IHNM:
 		IHNMStartProc();
+		break;
+	case GID_DINO:
+		// TODO
+		break;
+	case GID_FTA2:
+		FTA2StartProc();
 		break;
 	default:
 		error("Scene::start(): Error: Can't start game... gametype not supported");
@@ -1146,6 +1164,11 @@ void Scene::processSceneResources() {
 }
 
 void Scene::draw() {
+	// Do nothing for SAGA2 games for now
+	if (_vm->isSaga2()) {
+		return;
+	}
+
 	if (_sceneDescription.flags & kSceneFlagISO) {
 		_vm->_isoMap->adjustScroll(false);
 		_vm->_isoMap->draw();
