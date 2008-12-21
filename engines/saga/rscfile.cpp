@@ -74,7 +74,7 @@ Resource::~Resource() {
 	clearContexts();
 }
 
-bool Resource::loadSagaContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize) {
+bool Resource::loadResContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize) {
 	size_t i;
 	bool result;
 	byte tableInfo[RSC_TABLEINFO_SIZE];
@@ -254,9 +254,15 @@ bool Resource::loadMacContext(ResourceContext *context) {
 	}
 	free(macResTypes);
 
-	if ((!notSagaContext) && (!loadSagaContext(context, MAC_BINARY_HEADER_SIZE, macDataSize))) {
+	if ((!notSagaContext) && (!loadResContext(context, MAC_BINARY_HEADER_SIZE, macDataSize))) {
 		return false;
 	}
+
+	return true;
+}
+
+bool Resource::loadHResContext(ResourceContext *context, uint32 contextSize) {
+	// Stub for now
 
 	return true;
 }
@@ -286,18 +292,26 @@ bool Resource::loadContext(ResourceContext *context) {
 	isMacBinary = (context->fileType & GAME_MACBINARY) > 0;
 	context->fileType &= ~GAME_MACBINARY;
 
-	if (isMacBinary) {
-		if (!loadMacContext(context)) {
-			return false;
+	if (!isMacBinary) {
+		if (!_vm->isSaga2()) {
+			// ITE, IHNM
+			if (!loadResContext(context, 0, context->file->size())) {
+				return false;
+			}
+		} else {
+			// DINO, FTA2
+			if (!loadHResContext(context, context->file->size())) {
+				return false;
+			}
 		}
 	} else {
-		if (!loadSagaContext(context, 0, context->file->size())) {
+		if (!loadMacContext(context)) {
 			return false;
 		}
 	}
 
 	//process internal patch files
-	if (GAME_PATCHFILE & context->fileType) {
+	if (context->fileType & GAME_PATCHFILE) {
 		subjectResourceType = ~GAME_PATCHFILE & context->fileType;
 		subjectContext = getContext((GameFileTypes)subjectResourceType);
 		if (subjectContext == NULL) {

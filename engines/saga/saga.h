@@ -96,7 +96,9 @@ enum ERRORCODE {
 
 enum GameIds {
 	GID_ITE = 0,
-	GID_IHNM = 1
+	GID_IHNM = 1,
+	GID_DINO = 2,
+	GID_FTA2 = 3
 };
 
 enum GameFileTypes {
@@ -594,6 +596,7 @@ public:
 
 	bool isBigEndian() const;
 	bool isMacResources() const;
+	bool isSaga2() const { return getGameId() == GID_DINO || getGameId() == GID_FTA2; }
 	const GameResourceDescription *getResourceDescription();
 	const GameSoundInfo *getVoiceInfo() const;
 	const GameSoundInfo *getSfxInfo() const;
@@ -614,8 +617,6 @@ public:
 	const Common::ADGameFileDescription *getFilesDescriptions() const;
 
 	const Common::Rect &getDisplayClip() const { return _displayClip;}
-	int getDisplayWidth() const;
-	int getDisplayHeight() const;
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const char *desc);
 	bool canLoadGameStateCurrently();

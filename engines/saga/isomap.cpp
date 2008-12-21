@@ -295,7 +295,7 @@ void IsoMap::adjustScroll(bool jump) {
 	}
 	playerPoint.y -= 28;
 
-	playerPoint.x += _viewScroll.x - _vm->getDisplayWidth()/2;
+	playerPoint.x += _viewScroll.x - _vm->getDisplayInfo().logicalWidth/2;
 	playerPoint.y += _viewScroll.y - _vm->_scene->getHeight()/2;
 
 	minScrollPos.x = playerPoint.x - SAGA_SCROLL_LIMIT_X1;
@@ -401,8 +401,8 @@ void IsoMap::drawSprite(SpriteList &spriteList, int spriteNumber, const Location
 	spritePointer.x = screenPosition.x + xAlign;
 	spritePointer.y = screenPosition.y + yAlign;
 
-	_tileClip.left = CLIP<int>(spritePointer.x, 0, _vm->getDisplayWidth());
-	_tileClip.right = CLIP<int>(spritePointer.x + width, 0, _vm->getDisplayWidth());
+	_tileClip.left = CLIP<int>(spritePointer.x, 0, _vm->getDisplayInfo().logicalWidth);
+	_tileClip.right = CLIP<int>(spritePointer.x + width, 0, _vm->getDisplayInfo().logicalWidth);
 	_tileClip.top = CLIP<int>(spritePointer.y, 0, _vm->_scene->getHeight());
 	_tileClip.bottom = CLIP<int>(spritePointer.y + height, 0, _vm->_scene->getHeight());
 
@@ -441,7 +441,7 @@ void IsoMap::drawTiles(const Location *location) {
 	metaTileY.x = (u0 - v0) * 128 - (view1.x * 16 + fineScroll.x);
 	metaTileY.y = (view1.y * 16 - fineScroll.y) - (u0 + v0) * 64;
 
-	workAreaWidth = _vm->getDisplayWidth() + 128;
+	workAreaWidth = _vm->getDisplayInfo().logicalWidth + 128;
 	workAreaHeight = _vm->_scene->getHeight() + 128 + 80;
 
 	for (u1 = u0, v1 = v0; metaTileY.y < workAreaHeight; u1--, v1-- ) {
@@ -852,8 +852,8 @@ void IsoMap::drawTile(uint16 tileIndex, const Point &point, const Location *loca
 				}
 				while ((col < _tileClip.right) && (count < fgRunCount)) {
 					assert(_vm->_gfx->getBackBufferPixels() <= (byte *)(drawPointer + count));
-					assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayWidth() *
-								 _vm->getDisplayHeight())) > (byte *)(drawPointer + count));
+					assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayInfo().logicalWidth *
+								 _vm->getDisplayInfo().logicalHeight)) > (byte *)(drawPointer + count));
 					drawPointer[count] = readPointer[count];
 					count++;
 					col++;

@@ -834,6 +834,41 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&MAC_GameSound,
 		NULL,
 	},
+
+	// Dinotopia Section //////////////////////////////////////////////////////////////////////////////////////
+
+	// TODO
+
+	// Faery Tale Adventure II: Halls of the Dead Section /////////////////////////////////////////////////////
+
+	// Faery Tale Adventure II: Halls of the Dead - English CD version
+	{
+		{
+			"fta2",
+			"",
+			{
+	// TODO: this is still quite incomplete
+	{"fta.hrs",	GAME_RESOURCEFILE,						"c34a5ee5f1a14a87712a35c4a209a033", 213376},
+	{"scripts.hrs",	GAME_SCRIPTFILE,					"95f33928f6c4f02ee04d2ec5c3314c30", 1041948},
+	{"ftasound.hrs", GAME_SOUNDFILE,					"ce930cb38922e6a03461f55d51b4e165", 12403350},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_FTA2,
+		0,
+		// TODO: fill out the data below
+		-1,		// default scene
+		NULL,	// game resources
+		0,		// number of fonts
+		NULL,	// font array
+		NULL,	// voice info
+		NULL,	// SFX info
+		NULL,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0, NULL, 0, NULL, NULL, NULL, NULL }
 };
 

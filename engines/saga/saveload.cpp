@@ -331,7 +331,8 @@ void SagaEngine::load(const char *fileName) {
 	int volume = _music->getVolume();
 	_music->setVolume(0);
 
-	_isoMap->setMapPosition(mapx, mapy);
+	if (getGameId() == GID_ITE)
+		_isoMap->setMapPosition(mapx, mapy);
 
 	// Protagonist swapping
 	if (getGameId() == GID_IHNM) {

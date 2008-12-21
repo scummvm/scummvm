@@ -118,18 +118,26 @@ SagaEngine::~SagaEngine() {
 		}
 	}
 
-	delete _puzzle;
-	delete _sndRes;
-	delete _events;
-	delete _font;
-	delete _sprite;
-	delete _anim;
-	delete _script;
-	delete _interface;
-	delete _actor;
-	delete _palanim;
+	if (!isSaga2()) {
+		if (getGameId() == GID_ITE)
+			delete _puzzle;
+		delete _sndRes;
+		delete _events;
+		delete _font;
+		delete _sprite;
+		delete _anim;
+		delete _script;
+		delete _interface;
+		delete _actor;
+		delete _palanim;
+	}
+
 	delete _scene;
-	delete _isoMap;
+
+	if (getGameId() == GID_ITE) {
+		delete _isoMap;
+	}
+
 	delete _render;
 	delete _music;
 	delete _sound;
@@ -165,25 +173,34 @@ Common::Error SagaEngine::init() {
 	}
 
 	// Initialize engine modules
-	_sndRes = new SndRes(this);
-	_events = new Events(this);
-	_font = new Font(this);
-	_sprite = new Sprite(this);
-	_anim = new Anim(this);
-	_script = new Script(this);
-	_interface = new Interface(this); // requires script module
+	// TODO: implement differences for SAGA2
+	if (!isSaga2()) {
+		_sndRes = new SndRes(this);
+		_events = new Events(this);
+		_font = new Font(this);
+		_sprite = new Sprite(this);
+		_anim = new Anim(this);
+		_script = new Script(this);
+		_interface = new Interface(this); // requires script module
+	}
+	
 	_scene = new Scene(this);
-	_actor = new Actor(this);
-	_palanim = new PalAnim(this);
-	_isoMap = new IsoMap(this);
-	_puzzle = new Puzzle(this);
+
+	if (!isSaga2()) {
+		_actor = new Actor(this);
+		_palanim = new PalAnim(this);
+		if (getGameId() == GID_ITE) {
+			_isoMap = new IsoMap(this);
+			_puzzle = new Puzzle(this);
+		}
+	}
 
 	// System initialization
 
 	_previousTicks = _system->getMillis();
 
 	// Initialize graphics
-	_gfx = new Gfx(this, _system, getDisplayWidth(), getDisplayHeight());
+	_gfx = new Gfx(this, _system, getDisplayInfo().logicalWidth, getDisplayInfo().logicalHeight);
 
 	// Graphics driver should be initialized before console
 	_console = new Console(this);
@@ -296,7 +313,7 @@ Common::Error SagaEngine::go() {
 			}
 
 			// Since Puzzle and forced text are actorless, we do them here
-			if (_puzzle->isActive() || _actor->isForcedTextShown()) {
+			if ((getGameId() == GID_ITE && _puzzle->isActive()) || _actor->isForcedTextShown()) {
 				_actor->handleSpeech(msec);
 			} else if (!_scene->isInIntro()) {
 				if (_interface->getMode() == kPanelMain ||

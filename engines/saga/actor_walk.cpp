@@ -101,7 +101,7 @@ bool Actor::validFollowerLocation(const Location &location) {
 	Point point;
 	location.toScreenPointXY(point);
 
-	if ((point.x < 5) || (point.x >= _vm->getDisplayWidth() - 5) ||
+	if ((point.x < 5) || (point.x >= _vm->getDisplayInfo().logicalWidth - 5) ||
 		(point.y < 0) || (point.y > _vm->_scene->getHeight())) {
 		return false;
 	}
@@ -856,7 +856,7 @@ bool Actor::followProtagonist(ActorData *actor) {
 					newLocation.y += _vm->_rnd.getRandomNumber(prefer1.y - 1) - prefer1.y / 2;
 				}
 
-				newLocation.x = CLIP<int>(newLocation.x, -31 * 4, (_vm->getDisplayWidth() + 31) * 4);
+				newLocation.x = CLIP<int>(newLocation.x, -31 * 4, (_vm->getDisplayInfo().logicalWidth + 31) * 4);
 
 				return actorWalkTo(actor->_id, newLocation);
 			}

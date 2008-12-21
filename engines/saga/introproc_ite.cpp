@@ -114,7 +114,7 @@ Event *Scene::ITEQueueDialogue(Event *q_event, int n_dialogues, const IntroDialo
 	textEntry.effectKnownColor = kKnownColorTransparent;
 	textEntry.useRect = true;
 	textEntry.rect.left = 0;
-	textEntry.rect.right = _vm->getDisplayWidth();
+	textEntry.rect.right = _vm->getDisplayInfo().logicalWidth;
 	if (_vm->getLanguage() == Common::DE_DEU) {
 		textEntry.rect.top = INTRO_DE_CAPTION_Y;
 	} else if (_vm->getLanguage() == Common::IT_ITA) {
@@ -122,7 +122,7 @@ Event *Scene::ITEQueueDialogue(Event *q_event, int n_dialogues, const IntroDialo
 	} else {
 		textEntry.rect.top = INTRO_CAPTION_Y;
 	}
-	textEntry.rect.bottom = _vm->getDisplayHeight();
+	textEntry.rect.bottom = _vm->getDisplayInfo().logicalHeight;
 	textEntry.font = kKnownFontMedium;
 	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
 

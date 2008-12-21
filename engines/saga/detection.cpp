@@ -105,12 +105,16 @@ static const PlainGameDescriptor sagaGames[] = {
 	{"saga", "SAGA Engine game"},
 	{"ite", "Inherit the Earth: Quest for the Orb"},
 	{"ihnm", "I Have No Mouth and I Must Scream"},
+	{"dino", "Dinotopia"},
+	{"fta2", "Faery Tale Adventure II: Halls of the Dead"},
 	{0, 0}
 };
 
 static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
 	{"ite", "saga", Common::kPlatformUnknown},
 	{"ihnm", "saga", Common::kPlatformUnknown},
+	{"dino", "saga", Common::kPlatformUnknown},
+	{"fta2", "saga", Common::kPlatformUnknown},
 	{0, 0, Common::kPlatformUnknown}
 };
 
@@ -315,17 +319,19 @@ bool SagaEngine::initGame() {
 }
 
 const GameDisplayInfo &SagaEngine::getDisplayInfo() {
-	return _gameDescription->gameId == GID_ITE ? ITE_DisplayInfo : IHNM_DisplayInfo;
-}
-
-int SagaEngine::getDisplayWidth() const {
-	const GameDisplayInfo &di = _gameDescription->gameId == GID_ITE ? ITE_DisplayInfo : IHNM_DisplayInfo;
-	return di.logicalWidth;
-}
-
-int SagaEngine::getDisplayHeight() const {
-	const GameDisplayInfo &di = _gameDescription->gameId == GID_ITE ? ITE_DisplayInfo : IHNM_DisplayInfo;
-	return di.logicalHeight;
+	switch (_gameDescription->gameId) {
+		case GID_ITE:
+			return ITE_DisplayInfo;
+		case GID_IHNM:
+			return IHNM_DisplayInfo;
+		case GID_DINO:
+			return IHNM_DisplayInfo;	// TODO
+		case GID_FTA2:
+			return FTA2_DisplayInfo;
+		default:
+			error("getDisplayInfo: Unknown game ID");
+			return IHNM_DisplayInfo;	// unreachable
+	}
 }
 
 Common::Error SagaEngine::loadGameState(int slot) {

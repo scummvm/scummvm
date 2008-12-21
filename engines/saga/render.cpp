@@ -55,7 +55,7 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 	_vm->_timer->installTimerProc(&fpsTimerCallback, 1000000, this);
 #endif
 
-	_backGroundSurface.create(_vm->getDisplayWidth(), _vm->getDisplayHeight(), 1);
+	_backGroundSurface.create(_vm->getDisplayInfo().logicalWidth, _vm->getDisplayInfo().logicalHeight, 1);
 
 	_flags = 0;
 
@@ -104,7 +104,7 @@ void Render::drawScene() {
 			if (!(_flags & RF_DISABLE_ACTORS) || _vm->getGameId() == GID_ITE)
 				_vm->_scene->draw();
 
-			if (_vm->_puzzle->isActive()) {
+			if (_vm->getGameId() == GID_ITE && _vm->_puzzle->isActive()) {
 				_vm->_puzzle->movePiece(mousePoint);
 				_vm->_actor->drawSpeech();
 			} else {

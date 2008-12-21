@@ -110,14 +110,14 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_lastTickMsec = 0;
 
 	_yCellCount = _vm->_scene->getHeight();
-	_xCellCount = _vm->getDisplayWidth();
+	_xCellCount = _vm->getDisplayInfo().logicalWidth;
 
 	_pathCell = (int8 *)malloc(_yCellCount * _xCellCount * sizeof(*_pathCell));
 
 	_pathRect.left = 0;
-	_pathRect.right = _vm->getDisplayWidth();
+	_pathRect.right = _vm->getDisplayInfo().logicalWidth;
 	_pathRect.top = _vm->getDisplayInfo().pathStartY;
-	_pathRect.bottom = _vm->_scene->getHeight();
+	_pathRect.bottom = _vm->getDisplayInfo().logicalHeight;
 
 	// Get actor resource file context
 	_actorContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
@@ -820,13 +820,13 @@ void Actor::handleSpeech(int msec) {
 			height = _vm->_font->getHeight(kKnownFontScript, _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
 
 			if (_vm->getGameId() == GID_IHNM) {
-				if (height > _vm->_scene->getHeight(true) / 2 && width < _vm->getDisplayWidth() - 20) {
-					width = _vm->getDisplayWidth() - 20;
+				if (height > _vm->_scene->getHeight(true) / 2 && width < _vm->getDisplayInfo().logicalWidth - 20) {
+					width = _vm->getDisplayInfo().logicalWidth - 20;
 					height = _vm->_font->getHeight(kKnownFontScript, _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
 				}
 			} else if (_vm->getGameId() == GID_ITE) {
-				if (height > 40 && width < _vm->getDisplayWidth() - 100) {
-					width = _vm->getDisplayWidth() - 100;
+				if (height > 40 && width < _vm->getDisplayInfo().logicalWidth - 100) {
+					width = _vm->getDisplayInfo().logicalWidth - 100;
 					height = _vm->_font->getHeight(kKnownFontScript, _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
 				}
 			}
@@ -837,8 +837,8 @@ void Actor::handleSpeech(int msec) {
 				actor = getActor(_activeSpeech.actorIds[0]);
 				_activeSpeech.speechBox.setHeight(height);
 
-				if (_activeSpeech.speechBox.right > _vm->getDisplayWidth() - 10) {
-					_activeSpeech.drawRect.left = _vm->getDisplayWidth() - 10 - width;
+				if (_activeSpeech.speechBox.right > _vm->getDisplayInfo().logicalWidth - 10) {
+					_activeSpeech.drawRect.left = _vm->getDisplayInfo().logicalWidth - 10 - width;
 				} else {
 					_activeSpeech.drawRect.left = _activeSpeech.speechBox.left;
 				}
@@ -891,7 +891,7 @@ bool Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 	}
 
 	result = commonObjectData->_screenPosition.x > -64 &&
-			commonObjectData->_screenPosition.x < _vm->getDisplayWidth() + 64 &&
+			commonObjectData->_screenPosition.x < _vm->getDisplayInfo().logicalWidth + 64 &&
 			commonObjectData->_screenPosition.y > -64 &&
 			commonObjectData->_screenPosition.y < _vm->_scene->getHeight() + 64;
 
@@ -1091,7 +1091,7 @@ void Actor::drawSpeech(void) {
 			actor = getActor(_activeSpeech.actorIds[i]);
 			calcScreenPosition(actor);
 
-			textPoint.x = CLIP(actor->_screenPosition.x - width / 2, 10, _vm->getDisplayWidth() - 10 - width);
+			textPoint.x = CLIP(actor->_screenPosition.x - width / 2, 10, _vm->getDisplayInfo().logicalWidth - 10 - width);
 
 			if (_vm->getGameId() == GID_ITE)
 				textPoint.y = CLIP(actor->_screenPosition.y - 58, 10, _vm->_scene->getHeight(true) - 10 - height);
@@ -1130,7 +1130,7 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
 
-	dist = MIN(actor->_screenPosition.x - 10, _vm->getDisplayWidth() - 10 - actor->_screenPosition.x);
+	dist = MIN(actor->_screenPosition.x - 10, _vm->getDisplayInfo().logicalWidth - 10 - actor->_screenPosition.x);
 
 	if (_vm->getGameId() == GID_ITE)
 		dist = CLIP<int16>(dist, 60, 150);
@@ -1144,9 +1144,9 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 		_activeSpeech.speechBox.right += 10 - _activeSpeech.speechBox.left;
 		_activeSpeech.speechBox.left = 10;
 	}
-	if (_activeSpeech.speechBox.right > _vm->getDisplayWidth() - 10) {
-		_activeSpeech.speechBox.left -= _activeSpeech.speechBox.right - _vm->getDisplayWidth() - 10;
-		_activeSpeech.speechBox.right = _vm->getDisplayWidth() - 10;
+	if (_activeSpeech.speechBox.right > _vm->getDisplayInfo().logicalWidth - 10) {
+		_activeSpeech.speechBox.left -= _activeSpeech.speechBox.right - _vm->getDisplayInfo().logicalWidth - 10;
+		_activeSpeech.speechBox.right = _vm->getDisplayInfo().logicalWidth - 10;
 	}
 
 	// HACK for the compact disk in Ellen's chapter

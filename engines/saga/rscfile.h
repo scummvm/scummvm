@@ -156,7 +156,8 @@ private:
 
 	bool loadContext(ResourceContext *context);
 	bool loadMacContext(ResourceContext *context);
-	bool loadSagaContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize);
+	bool loadResContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize);
+	bool loadHResContext(ResourceContext *context, uint32 contextSize);
 
 public:
 	MetaResource _metaResource;

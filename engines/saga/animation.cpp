@@ -540,8 +540,8 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		frame = anim->currentFrame;
 
 		// FIXME: if start > 0, then this works incorrectly
-		decodeFrame(anim, anim->frameOffsets[frame], displayBuffer, _vm->getDisplayWidth() * _vm->getDisplayHeight());
-		_vm->_render->addDirtyRect(Common::Rect(0, 0, _vm->getDisplayWidth(), _vm->getDisplayHeight()));
+		decodeFrame(anim, anim->frameOffsets[frame], displayBuffer, _vm->getDisplayInfo().logicalWidth * _vm->getDisplayInfo().logicalHeight);
+		_vm->_render->addDirtyRect(Common::Rect(0, 0, _vm->getDisplayInfo().logicalWidth, _vm->getDisplayInfo().logicalHeight));
 		_vm->_frameCount++;
 		anim->currentFrame++;
 		if (anim->completed != 65535) {

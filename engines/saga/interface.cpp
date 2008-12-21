@@ -1879,7 +1879,7 @@ void Interface::drawStatusBar() {
 	// Erase background of status bar
 	rect.left = _vm->getDisplayInfo().statusXOffset;
 	rect.top = _vm->getDisplayInfo().statusYOffset;
-	rect.right = rect.left + _vm->getDisplayWidth();
+	rect.right = rect.left + _vm->getDisplayInfo().logicalWidth;
 	rect.bottom = rect.top + _vm->getDisplayInfo().statusHeight;
 
 	_vm->_gfx->drawRect(rect, _vm->getDisplayInfo().statusBGColor - offset);
@@ -2787,7 +2787,7 @@ void Interface::mapPanelDrawCrossHair() {
 	_mapPanelCrossHairState = !_mapPanelCrossHairState;
 
 	Point mapPosition = _vm->_isoMap->getMapPosition();
-	Rect screen(_vm->getDisplayWidth(), _vm->_scene->getHeight());
+	Rect screen(_vm->getDisplayInfo().logicalWidth, _vm->_scene->getHeight());
 
 	if (screen.contains(mapPosition)) {
 		_vm->_sprite->draw(_vm->_sprite->_mainSprites,

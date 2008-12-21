@@ -59,7 +59,7 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 	if (_vm->getGameId() == GID_ITE) {
 		_fxTable = ITE_SfxTable;
 		_fxTableLen = ITE_SFXCOUNT;
-	} else {
+	} else if (_vm->getGameId() == GID_IHNM) {
 		ResourceContext *resourceContext;
 
 		resourceContext = _vm->_resource->getContext(GAME_SOUNDFILE);
@@ -93,6 +93,10 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 
 		_fxTable = 0;
 		_fxTableLen = 0;
+	} else if (_vm->getGameId() == GID_DINO) {
+		// TODO
+	} else if (_vm->getGameId() == GID_FTA2) {
+		// TODO
 	}
 }
 
