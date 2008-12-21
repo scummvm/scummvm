@@ -27,8 +27,8 @@
 // and the FFmpeg Smacker decoder (libavcodec/smacker.c), revision 16143
 // http://svn.ffmpeg.org/ffmpeg/trunk/libavcodec/smacker.c?revision=16143&view=markup
 
-#ifndef GRAPHICS_SMK_PLAYER_H
-#define GRAPHICS_SMK_PLAYER_H
+#ifndef GRAPHICS_VIDEO_SMK_PLAYER_H
+#define GRAPHICS_VIDEO_SMK_PLAYER_H
 
 #include "common/scummsys.h"
 #include "common/stream.h"

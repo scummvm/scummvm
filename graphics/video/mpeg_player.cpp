@@ -23,7 +23,7 @@
  *
  */
 
-#include "graphics/mpeg_player.h"
+#include "graphics/video/mpeg_player.h"
 #include "common/file.h"
 #include "common/system.h"
 #include "common/util.h"

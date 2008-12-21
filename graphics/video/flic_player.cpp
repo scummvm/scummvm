@@ -23,7 +23,7 @@
  *
  */
 
-#include "flic_player.h"
+#include "graphics/video/flic_player.h"
 
 namespace Graphics {
 

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GRAPHICS_FLICPLAYER_H
-#define GRAPHICS_FLICPLAYER_H
+#ifndef GRAPHICS_VIDEO_FLICPLAYER_H
+#define GRAPHICS_VIDEO_FLICPLAYER_H
 
 #include "common/endian.h"
 #include "common/list.h"

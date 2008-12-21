@@ -25,7 +25,7 @@
 
 #include "common/endian.h"
 #include "common/archive.h"
-#include "graphics/dxa_player.h"
+#include "graphics/video/dxa_player.h"
 #include "common/util.h"
 
 #ifdef USE_ZLIB

@@ -32,7 +32,7 @@
 #include "common/events.h"
 #include "common/stream.h"
 
-#include "graphics/flic_player.h"
+#include "graphics/video/flic_player.h"
 
 #include "sound/mixer.h"
 
