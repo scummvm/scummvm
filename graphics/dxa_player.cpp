@@ -88,6 +88,19 @@ int DXAPlayer::getFrameCount() {
 	return _framesCount;
 }
 
+int DXAPlayer::getFrameRate() {
+	if (!_fileStream)
+		return 0;
+	return _framesPerSec;
+}
+
+int32 DXAPlayer::getFrameDelay() {
+	if (!_fileStream)
+		return 0;
+
+	return _frameTicks;
+}
+
 bool DXAPlayer::loadFile(const char *fileName) {
 	uint32 tag;
 	int32 frameRate;

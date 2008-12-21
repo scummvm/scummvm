@@ -312,7 +312,7 @@ void MoviePlayerDXA::startSound() {
 }
 
 void MoviePlayerDXA::nextFrame() {
-	if (_vm->_mixer->isSoundHandleActive(_bgSound) && (_vm->_mixer->getSoundElapsedTime(_bgSound) * _framesPerSec) / 1000 < _frameNum) {
+	if (_vm->_mixer->isSoundHandleActive(_bgSound) && (_vm->_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < _frameNum) {
 		copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
 		return;
 	}
@@ -353,15 +353,15 @@ bool MoviePlayerDXA::processFrame() {
 	copyFrameToBuffer((byte *)screen->pixels, (_vm->_screenWidth - _width) / 2, (_vm->_screenHeight - _height) / 2, _vm->_screenWidth);
 	_vm->_system->unlockScreen();
 
-	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * _framesPerSec) / 1000 < _frameNum + 1) ||
-		_frameSkipped > _framesPerSec) {
-		if (_frameSkipped > _framesPerSec) {
+	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < _frameNum + 1) ||
+		_frameSkipped > getFrameRate()) {
+		if (_frameSkipped > getFrameRate()) {
 			warning("force frame %i redraw", _frameNum);
 			_frameSkipped = 0;
 		}
 
 		if (_bgSoundStream && _mixer->isSoundHandleActive(_bgSound)) {
-			while (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * _framesPerSec) / 1000 < _frameNum) {
+			while (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < _frameNum) {
 				_vm->_system->delayMillis(10);
 			}
 			// In case the background sound ends prematurely, update
@@ -369,7 +369,7 @@ bool MoviePlayerDXA::processFrame() {
 			// sync case for the subsequent frames.
 			_ticks = _vm->_system->getMillis();
 		} else {
-			_ticks += _frameTicks;
+			_ticks += getFrameDelay();
 			while (_vm->_system->getMillis() < _ticks)
 				_vm->_system->delayMillis(10);
 		}
@@ -463,7 +463,7 @@ bool MoviePlayerSMK::processFrame() {
 	copyFrameToBuffer((byte *)screen->pixels, (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, _vm->_screenWidth);
 	_vm->_system->unlockScreen();
 
-	if (!getAudioLag() || getAudioLag() > 0 || _frameSkipped > getFrameRate()) {
+	if (!getAudioLag() || getFrameWaitTime() || _frameSkipped > getFrameRate()) {
 		if (_frameSkipped > getFrameRate()) {
 			warning("force frame %i redraw", getCurFrame());
 			_frameSkipped = 0;

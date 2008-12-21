@@ -85,6 +85,18 @@ public:
 	int getFrameCount();
 
 	/**
+	 * Returns the frame rate of the video
+	 * @return the frame rate of the video
+	 */
+	int32 getFrameRate();
+
+	/**
+	 * Returns the time to wait for each frame in 1/100 ms
+	 * @return the time to wait for each frame in 1/100 ms
+	 */
+	int32 getFrameDelay();
+
+	/**
 	 * Load a DXA encoded video file
 	 * @param filename	the filename to load
 	 */

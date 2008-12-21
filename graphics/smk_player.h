@@ -75,9 +75,6 @@ public:
 
 	/**
 	 * Returns the frame rate of the video
-	 * If > 0, fps are 1000 / FrameRate
-	 * If < 0, fps are 100000 / (-FrameRate)
-	 * If 0, fps are 10
 	 * @return the frame rate of the video
 	 */
 	int32 getFrameRate();

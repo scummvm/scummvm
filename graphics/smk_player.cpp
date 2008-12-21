@@ -348,7 +348,13 @@ int32 SMKPlayer::getFrameCount() {
 int32 SMKPlayer::getFrameRate() {
 	if (!_fileStream)
 		return 0;
-	return _header.frameRate;
+
+	if (_header.frameRate > 0)
+		return 1000 / _header.frameRate;
+	else if (_header.frameRate < 0)
+		return 100000 / (-_header.frameRate);
+	else
+		return 10;
 }
 
 int32 SMKPlayer::getFrameDelay() {
