@@ -199,7 +199,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 	// Surrounding scene
 	out->writeSint32LE(_scene->getOutsetSceneNumber());
-	if (getGameType() != GType_ITE) {
+	if (getGameId() == GID_IHNM) {
 		out->writeSint32LE(_scene->currentChapterNumber());
 		// Protagonist
 		out->writeSint32LE(_scene->currentProtag());
@@ -210,7 +210,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 	// Inset scene
 	out->writeSint32LE(_scene->currentSceneNumber());
 
-	if (getGameType() != GType_ITE) {
+	if (getGameId() == GID_IHNM) {
 		out->writeUint32LE(_globalFlags);
 		for (int i = 0; i < ARRAYSIZE(_ethicsPoints); i++)
 			out->writeSint16LE(_ethicsPoints[i]);
@@ -288,7 +288,7 @@ void SagaEngine::load(const char *fileName) {
 
 	// Surrounding scene
 	sceneNumber = in->readSint32LE();
-	if (getGameType() != GType_ITE) {
+	if (getGameId() == GID_IHNM) {
 		int currentChapter = _scene->currentChapterNumber();
 		_scene->setChapterNumber(in->readSint32LE());
 		_scene->setProtag(in->readSint32LE());
@@ -299,7 +299,7 @@ void SagaEngine::load(const char *fileName) {
 		_music->stop();
 		if (_scene->currentChapterNumber() == 8)
 			_interface->setMode(kPanelChapterSelection);
-		if (getGameId() != GID_IHNM_DEMO) {
+		if (!(getFeatures() & GF_IHNM_DEMO)) {
 			_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);
 		} else {
 			_music->play(3, MUSIC_LOOP);
@@ -309,7 +309,7 @@ void SagaEngine::load(const char *fileName) {
 	// Inset scene
 	insetSceneNumber = in->readSint32LE();
 
-	if (getGameType() != GType_ITE) {
+	if (getGameId() == GID_IHNM) {
 		_globalFlags = in->readUint32LE();
 		for (int i = 0; i < ARRAYSIZE(_ethicsPoints); i++)
 			_ethicsPoints[i] = in->readSint16LE();
@@ -334,7 +334,7 @@ void SagaEngine::load(const char *fileName) {
 	_isoMap->setMapPosition(mapx, mapy);
 
 	// Protagonist swapping
-	if (getGameType() != GType_ITE) {
+	if (getGameId() == GID_IHNM) {
 		if (_scene->currentProtag() != 0 && _scene->currentChapterNumber() != 6) {
 			ActorData *actor1 = _actor->getFirstActor();
 			ActorData *actor2;

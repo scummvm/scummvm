@@ -193,7 +193,7 @@ Event *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 		game = kITEWyrmKeep;
 	} else if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		game = kITEMac;
-	} else if (_vm->getGameId() == GID_ITE_CD_G) {
+	} else if (_vm->getFeatures() & GF_EXTRA_ITE_CREDITS) {
 		game = kITEPCCD;
 	} else {
 		game = kITEPC;

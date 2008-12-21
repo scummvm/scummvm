@@ -51,7 +51,7 @@ int Scene::IHNMStartProc() {
 
 	IHNMLoadCutaways();
 
-	if (_vm->getGameId() != GID_IHNM_DEMO) {
+	if (!(_vm->getFeatures() & GF_IHNM_DEMO)) {
 		int logoLength = -168;
 
 		if (_vm->getLanguage() == Common::DE_DEU || _vm->getLanguage() == Common::ES_ESP)
@@ -102,7 +102,7 @@ int Scene::IHNMCreditsProc() {
 
 	_vm->_music->play(0, MUSIC_NORMAL);
 
-	if (_vm->getGameId() != GID_IHNM_DEMO) {
+	if (!(_vm->getFeatures() & GF_IHNM_DEMO)) {
 		// Display the credits for 400 frames
 		playTitle(4, -400, true);
 	} else {
@@ -127,7 +127,7 @@ void Scene::IHNMLoadCutaways() {
 		error("Scene::IHNMStartProc() resource context not found");
 	}
 
-	if (_vm->getGameId() != GID_IHNM_DEMO)
+	if (!(_vm->getFeatures() & GF_IHNM_DEMO))
 		_vm->_resource->loadResource(resourceContext, RID_IHNM_INTRO_CUTAWAYS, resourcePointer, resourceLength);
 	else
 		_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_INTRO_CUTAWAYS, resourcePointer, resourceLength);

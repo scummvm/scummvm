@@ -56,7 +56,7 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 
 	setVoiceBank(0);
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		_fxTable = ITE_SfxTable;
 		_fxTableLen = ITE_SFXCOUNT;
 	} else {
@@ -70,7 +70,7 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 		byte *resourcePointer;
 		size_t resourceLength;
 
-		if (_vm->getGameId() == GID_IHNM_DEMO) {
+		if (_vm->getFeatures() & GF_IHNM_DEMO) {
 			_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_SFX_LUT,
 									 resourcePointer, resourceLength);
 		} else {
@@ -97,7 +97,7 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 }
 
 SndRes::~SndRes() {
-	if (_vm->getGameType() == GType_IHNM) {
+	if (_vm->getGameId() == GID_IHNM) {
 		free(_fxTable);
 		free(_fxTableIDs);
 	}
@@ -109,7 +109,7 @@ void SndRes::setVoiceBank(int serial) {
 
 	// If we got the Macintosh version of IHNM, just set the voice bank
 	// so that we know which voices* subfolder to look for later
-	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
+	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 		_voiceSerial = serial;
 		// Set a dummy voice context
 		_voiceContext = new ResourceContext();
@@ -155,7 +155,7 @@ void SndRes::playVoice(uint32 resourceId) {
 	if (!(_vm->_voiceFilesExist))
 		return;
 
-	if (_vm->getGameType() == GType_IHNM && !(_vm->_voicesEnabled))
+	if (_vm->getGameId() == GID_IHNM && !(_vm->_voicesEnabled))
 		return;
 
 	debug(4, "SndRes::playVoice %i", resourceId);
@@ -185,7 +185,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		return false;
 	}
 
-	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
+	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 		char soundFileName[40];
 		int dirIndex = resourceId / 64;
 	
@@ -221,7 +221,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		soundInfo = _vm->getSfxInfo();
 	}
 
-	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources() && (context->fileType & GAME_VOICEFILE) != 0) {
+	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources() && (context->fileType & GAME_VOICEFILE) != 0) {
 		// No sound patch data for the voice files in the Mac version of IHNM
 	} else {
 		context->table[resourceId].fillSoundPatch(soundInfo);
@@ -247,11 +247,11 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		bool uncompressedSound = false;
 		// If patch data exists for sound resource 4 (used in ITE intro), don't treat this sound as compressed
 		// Patch data for this resource is in file p2_a.iaf or p2_a.voc
-		if (_vm->getGameType() == GType_ITE && resourceId == 4 && context->table[resourceId].patchData != NULL)
+		if (_vm->getGameId() == GID_ITE && resourceId == 4 && context->table[resourceId].patchData != NULL)
 			uncompressedSound = true;
 
 		// FIXME: Currently, the SFX.RES file in IHNM cannot be compressed
-		if (_vm->getGameType() == GType_IHNM && (context->fileType & GAME_SOUNDFILE))
+		if (_vm->getGameId() == GID_IHNM && (context->fileType & GAME_SOUNDFILE))
 			uncompressedSound = true;
 
 		if ((_vm->getFeatures() & GF_COMPRESSED_SOUNDS) && !uncompressedSound) {
@@ -396,7 +396,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	}
 
 
-	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
+	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 		delete file;
 	}
 

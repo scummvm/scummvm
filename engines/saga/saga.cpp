@@ -216,7 +216,7 @@ Common::Error SagaEngine::init() {
 	_gfx->initPalette();
 
 	if (_voiceFilesExist) {
-		if (getGameType() == GType_IHNM) {
+		if (getGameId() == GID_IHNM) {
 			if (!ConfMan.hasKey("voices")) {
 				_voicesEnabled = true;
 				ConfMan.setBool("voices", true);
@@ -234,7 +234,7 @@ Common::Error SagaEngine::init() {
 	//        well for 320x200 but it's unclear how well it will work for
 	//        640x480.
 
-	if (getGameType() == GType_ITE)
+	if (getGameId() == GID_ITE)
 		_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
 
 	return Common::kNoError;
@@ -248,19 +248,19 @@ Common::Error SagaEngine::go() {
 	if (ConfMan.hasKey("start_scene")) {
 		_scene->changeScene(ConfMan.getInt("start_scene"), 0, kTransitionNoFade);
 	} else if (ConfMan.hasKey("boot_param")) {
-		if (getGameType() == GType_ITE)
+		if (getGameId() == GID_ITE)
 			_interface->addToInventory(_actor->objIndexToId(0));	// Magic hat
 		_scene->changeScene(ConfMan.getInt("boot_param"), 0, kTransitionNoFade);
 	} else if (ConfMan.hasKey("save_slot")) {
 		// Init the current chapter to 8 (character selection) for IHNM
-		if (getGameType() == GType_IHNM)
+		if (getGameId() == GID_IHNM)
 			_scene->changeScene(-2, 0, kTransitionFade, 8);
 
 		// First scene sets up palette
 		_scene->changeScene(getStartSceneNumber(), 0, kTransitionNoFade);
 		_events->handleEvents(0); // Process immediate events
 
-		if (getGameType() != GType_IHNM)
+		if (getGameId() == GID_ITE)
 			_interface->setMode(kPanelMain);
 		else
 			_interface->setMode(kPanelChapterSelection);
@@ -374,13 +374,13 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 	const HitZone *hitZone;
 
 	// Disable the object names in IHNM when the chapter is 8
-	if (getGameType() == GType_IHNM && _scene->currentChapterNumber() == 8)
+	if (getGameId() == GID_IHNM && _scene->currentChapterNumber() == 8)
 		return "";
 
 	switch (objectTypeId(objectId)) {
 	case kGameObjectObject:
 		obj = _actor->getObj(objectId);
-		if (getGameType() == GType_ITE)
+		if (getGameId() == GID_ITE)
 			return _script->_mainStrings.getString(obj->_nameIndex);
 		return _actor->_objectsStrings.getString(obj->_nameIndex);
 	case kGameObjectActor:
@@ -452,7 +452,7 @@ void SagaEngine::getExcuseInfo(int verb, const char *&textString, int &soundReso
 ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 	ColorId colorId = kITEColorTransBlack;
 
-	if (getGameType() == GType_ITE) {
+	if (getGameId() == GID_ITE) {
 		switch (knownColor) {
 		case(kKnownColorTransparent):
 			colorId = kITEColorTransBlack;
@@ -482,10 +482,10 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 		default:
 			error("SagaEngine::KnownColor2ColorId unknown color %i", knownColor);
 		}
-	} else if (getGameType() == GType_IHNM) {
+	} else if (getGameId() == GID_IHNM) {
 		// The default colors in the Spanish version of IHNM are shifted by one
 		// Fixes bug #1848016 - "IHNM: Wrong Subtitles Color (Spanish)"
-		int offset = (getGameId() == GID_IHNM_CD_ES) ? 1 : 0;
+		int offset = (getLanguage() == Common::ES_ESP) ? 1 : 0;
 
 		switch (knownColor) {
 		case(kKnownColorTransparent):

@@ -233,7 +233,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 	const PathDirectionData *samplePathDirection;
 	Point nextPoint;
 	int directionCount;
-	int16 compressX = (_vm->getGameType() == GType_ITE) ? 2 : 1;
+	int16 compressX = (_vm->getGameId() == GID_ITE) ? 2 : 1;
 
 	_pathDirectionListCount = 0;
 	pointCounter = 0;

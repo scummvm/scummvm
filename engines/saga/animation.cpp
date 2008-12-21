@@ -320,7 +320,7 @@ void Anim::clearCutaway(void) {
 		_vm->_interface->restoreMode();
 		_vm->_gfx->showCursor(true);
 
-		if (_vm->getGameId() == GID_IHNM_DEMO) {
+		if (_vm->getFeatures() & GF_IHNM_DEMO) {
 			// Enable the save reminder state after each cutaway for the IHNM demo
 			_vm->_interface->setSaveReminderState(true);
 		}

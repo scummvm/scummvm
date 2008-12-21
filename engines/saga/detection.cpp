@@ -45,7 +45,6 @@ namespace Saga {
 struct SAGAGameDescription {
 	Common::ADGameDescription desc;
 
-	int gameType;
 	int gameId;
 	uint32 features;
 	int startSceneNumber;
@@ -79,7 +78,6 @@ const GameFontDescription *SagaEngine::getFontDescription(int index) {
 int SagaEngine::getFontsCount() const { return _gameDescription->fontsCount; }
 
 int SagaEngine::getGameId() const { return _gameDescription->gameId; }
-int SagaEngine::getGameType() const { return _gameDescription->gameType; }
 
 uint32 SagaEngine::getFeatures() const {
 	uint32 result = _gameDescription->features;
@@ -317,29 +315,29 @@ bool SagaEngine::initGame() {
 }
 
 const GameDisplayInfo &SagaEngine::getDisplayInfo() {
-	return _gameDescription->gameType == GType_ITE ? ITE_DisplayInfo : IHNM_DisplayInfo;
+	return _gameDescription->gameId == GID_ITE ? ITE_DisplayInfo : IHNM_DisplayInfo;
 }
 
 int SagaEngine::getDisplayWidth() const {
-	const GameDisplayInfo &di = _gameDescription->gameType == GType_ITE ? ITE_DisplayInfo : IHNM_DisplayInfo;
+	const GameDisplayInfo &di = _gameDescription->gameId == GID_ITE ? ITE_DisplayInfo : IHNM_DisplayInfo;
 	return di.logicalWidth;
 }
 
 int SagaEngine::getDisplayHeight() const {
-	const GameDisplayInfo &di = _gameDescription->gameType == GType_ITE ? ITE_DisplayInfo : IHNM_DisplayInfo;
+	const GameDisplayInfo &di = _gameDescription->gameId == GID_ITE ? ITE_DisplayInfo : IHNM_DisplayInfo;
 	return di.logicalHeight;
 }
 
 Common::Error SagaEngine::loadGameState(int slot) {
 	// Init the current chapter to 8 (character selection) for IHNM
-	if (getGameType() == GType_IHNM)
+	if (getGameId() == GID_IHNM)
 		_scene->changeScene(-2, 0, kTransitionFade, 8);
 
 	// First scene sets up palette
 	_scene->changeScene(getStartSceneNumber(), 0, kTransitionNoFade);
 	_events->handleEvents(0); // Process immediate events
 
-	if (getGameType() != GType_IHNM)
+	if (getGameId() == GID_ITE)
 		_interface->setMode(kPanelMain);
 	else
 		_interface->setMode(kPanelChapterSelection);

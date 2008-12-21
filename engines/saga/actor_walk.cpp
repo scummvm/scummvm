@@ -207,7 +207,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 			if (actor->_flags & kProtagonist) {
 				actor->_finalTarget = actor->_location;
 				_centerActor = _protagonist = actor;
-			} else if (_vm->getGameType() == GType_ITE &&
+			} else if (_vm->getGameId() == GID_ITE &&
 					   _vm->_scene->currentSceneResourceId() == ITE_SCENE_OVERMAP) {
 				continue;
 			}
@@ -247,7 +247,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 		//
 		// After stepping on an action zone, Rif is trying to exit.
 		// Shift Rif's entry position to a non action zone area.
-		if (_vm->getGameType() == GType_ITE) {
+		if (_vm->getGameId() == GID_ITE) {
 			if ((_vm->_scene->currentSceneNumber() >= 53) && (_vm->_scene->currentSceneNumber() <= 66))
 				_protagonist->_location.y += 10;
 		}
@@ -341,7 +341,7 @@ void Actor::handleActions(int msec, bool setup) {
 		if (!actor->_inScene)
 			continue;
 
-		if ((_vm->getGameType() == GType_ITE) && (i == ACTOR_DRAGON_INDEX)) {
+		if ((_vm->getGameId() == GID_ITE) && (i == ACTOR_DRAGON_INDEX)) {
 			moveDragon(actor);
 			continue;
 		}
@@ -455,7 +455,7 @@ void Actor::handleActions(int msec, bool setup) {
 					}
 
 					actor->_partialTarget.fromScreenPoint(actor->_walkStepsPoints[actor->_walkStepIndex++]);
-					if (_vm->getGameType() == GType_ITE) {
+					if (_vm->getGameId() == GID_ITE) {
 						if (actor->_partialTarget.x > 224 * 2 * ACTOR_LMULT) {
 							actor->_partialTarget.x -= 256 * 2 * ACTOR_LMULT;
 						}
@@ -474,7 +474,7 @@ void Actor::handleActions(int msec, bool setup) {
 					}
 				}
 
-				if (_vm->getGameType() == GType_ITE)
+				if (_vm->getGameId() == GID_ITE)
 					speed = (ACTOR_LMULT * 2 * actor->_screenScale + 63) / 256;
 				else
 					speed = (ACTOR_SPEED * actor->_screenScale + 128) >> 8;
@@ -482,7 +482,7 @@ void Actor::handleActions(int msec, bool setup) {
 				if (speed < 1)
 					speed = 1;
 
-				if (_vm->getGameType() == GType_IHNM)
+				if (_vm->getGameId() == GID_IHNM)
 					speed = speed / 2;
 
 				if ((actor->_actionDirection == kDirUp) || (actor->_actionDirection == kDirDown)) {
@@ -539,7 +539,7 @@ void Actor::handleActions(int msec, bool setup) {
 				actor->cycleWrap(frameRange->frameCount);
 				actor->_frameNumber = frameRange->frameIndex + actor->_actionCycle;
 			} else {
-				if (_vm->getGameType() == GType_ITE) {
+				if (_vm->getGameId() == GID_ITE) {
 					actor->_location.x += directionLUT[actor->_actionDirection][0] * 2;
 					actor->_location.y += directionLUT[actor->_actionDirection][1] * 2;
 				} else {
@@ -696,7 +696,7 @@ void Actor::handleActions(int msec, bool setup) {
 			// to the left, which makes him exit the screen when the graffiti is examined.
 			// We effectively change the left side of the hitzone here so that it starts from
 			// pixel 301 onwards. The same workaround is applied in Script::whichObject
-			if (_vm->getGameType() == GType_IHNM) {
+			if (_vm->getGameId() == GID_IHNM) {
 				if (_vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() == 22)
 					if (hitPoint.x <= 300)
 						hitZone = NULL;
@@ -710,7 +710,7 @@ void Actor::handleActions(int msec, bool setup) {
 				// (room 51) for hitzone 24577 (the door with the copy protection) to avoid the glitch. This glitch
 				// happens because the copy protection is supposed to kick in at this point, but it's bypassed
 				// (with permission from Wyrmkeep Entertainment)
-				if (hitZone && !(_vm->getGameType() == GType_ITE && _vm->_scene->currentSceneNumber() == 51 && hitZone->getHitZoneId() == 24577)) {
+				if (hitZone && !(_vm->getGameId() == GID_ITE && _vm->_scene->currentSceneNumber() == 51 && hitZone->getHitZoneId() == 24577)) {
 					stepZoneAction(actor, hitZone, false, false);
 				}
 			}
@@ -891,7 +891,7 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 
-		if ((_vm->getGameType() == GType_ITE) && (actor->_index == ACTOR_DRAGON_INDEX)) {
+		if ((_vm->getGameId() == GID_ITE) && (actor->_index == ACTOR_DRAGON_INDEX)) {
 			return false;
 		}
 
@@ -938,10 +938,10 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 
 			if (
 				((actor->_currentAction >= kActionWalkToPoint && actor->_currentAction <= kActionWalkDir) ||
-				(_vm->getGameType() == GType_ITE && actor == _protagonist)) &&
+				(_vm->getGameId() == GID_ITE && actor == _protagonist)) &&
 				!_vm->_scene->canWalk(pointFrom)) {
 
-				int max = _vm->getGameType() == GType_ITE ? 8 : 4;
+				int max = _vm->getGameId() == GID_ITE ? 8 : 4;
 
 				for (i = 1; i < max; i++) {
 					pointAdd = pointFrom;
@@ -956,7 +956,7 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 						pointFrom = pointAdd;
 						break;
 					}
-					if (_vm->getGameType() == GType_ITE) {
+					if (_vm->getGameId() == GID_ITE) {
 						pointAdd = pointFrom;
 						pointAdd.x += i;
 						if (_vm->_scene->canWalk(pointAdd)) {
@@ -1087,7 +1087,7 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 	actor = getActor(actorId);
 	actor->_actorFlags &= ~kActorBackwards;
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 
 		if (actor->_location.distance(actor->_finalTarget) > 8 && (actor->_flags & kProtagonist) && recurse && !(actor->_actorFlags & kActorNoCollide)) {
 			actor->_actorFlags |= kActorNoCollide;
@@ -1107,7 +1107,7 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 	if (actor == _protagonist) {
 		_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
 		if (_vm->_script->_pendingVerb == _vm->_script->getVerbType(kVerbWalkTo)) {
-			if (_vm->getGameType() == GType_ITE)
+			if (_vm->getGameId() == GID_ITE)
 				actor->_location.toScreenPointUV(testPoint); // it's wrong calculation, but it is used in ITE
 			else
 				actor->_location.toScreenPointXY(testPoint);

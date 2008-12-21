@@ -226,7 +226,7 @@ Scene::~Scene() {
 }
 
 void Scene::getResourceTypes(SAGAResourceTypes *&types, int &typesCount) {
-	if (_vm->getGameType() == GType_IHNM) {
+	if (_vm->getGameId() == GID_IHNM) {
 		typesCount = ARRAYSIZE(IHNMSceneResourceTypes);
 		types = IHNMSceneResourceTypes;
 	} else {
@@ -270,11 +270,11 @@ void Scene::startScene() {
 	event.op = kEventHide;
 	_vm->_events->queue(&event);
 
-	switch (_vm->getGameType()) {
-	case GType_ITE:
+	switch (_vm->getGameId()) {
+	case GID_ITE:
 		ITEStartProc();
 		break;
-	case GType_IHNM:
+	case GID_IHNM:
 		IHNMStartProc();
 		break;
 	default:
@@ -305,11 +305,11 @@ void Scene::creditsScene() {
 	// Hide cursor during credits
 	_vm->_gfx->showCursor(false);
 
-	switch (_vm->getGameType()) {
-	case GType_ITE:
+	switch (_vm->getGameId()) {
+	case GID_ITE:
 		// Not called by ITE
 		break;
-	case GType_IHNM:
+	case GID_IHNM:
 		IHNMCreditsProc();
 		break;
 	default:
@@ -601,7 +601,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	_chapterPointsChanged = false;
 
-	if ((_vm->getGameType() == GType_IHNM) && (loadSceneParams->chapter != NO_CHAPTER_CHANGE)) {
+	if ((_vm->getGameId() == GID_IHNM) && (loadSceneParams->chapter != NO_CHAPTER_CHANGE)) {
 		if (loadSceneParams->loadFlag != kLoadBySceneNumber) {
 			error("loadScene wrong usage");
 		}
@@ -622,7 +622,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		_vm->_interface->activate();
 
 		if (loadSceneParams->chapter == 8 || loadSceneParams->chapter == -1) {
-			if (_vm->getGameId() != GID_IHNM_DEMO)
+			if (!(_vm->getFeatures() & GF_IHNM_DEMO))
 				_vm->_interface->setMode(kPanelChapterSelection);
 			else
 				_vm->_interface->setMode(kPanelNull);
@@ -646,7 +646,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	_loadDescription = true;
 
-	if (_vm->getGameType() == GType_IHNM) {
+	if (_vm->getGameId() == GID_IHNM) {
 		if (loadSceneParams->loadFlag == kLoadBySceneNumber) // When will we get rid of it?
 			if (loadSceneParams->sceneDescriptor <= 0)
 				loadSceneParams->sceneDescriptor = _vm->_resource->_metaResource.sceneIndex;
@@ -813,14 +813,14 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	}
 
 	if (loadSceneParams->sceneProc == NULL) {
-		if (!_inGame && _vm->getGameType() == GType_ITE) {
+		if (!_inGame && _vm->getGameId() == GID_ITE) {
 			_inGame = true;
 			_vm->_interface->setMode(kPanelMain);
 		}
 
 		_vm->_sound->stopAll();
 
-		if (_vm->getGameType() == GType_ITE) {
+		if (_vm->getGameId() == GID_ITE) {
 			if (_sceneDescription.musicResourceId >= 0) {
 				event.type = kEvTOneshot;
 				event.code = kMusicEvent;
@@ -997,7 +997,7 @@ void Scene::processSceneResources() {
 		case SAGA_ACTOR:
 			//for (a = actorsInScene; a; a = a->nextInScene)
 			//	if (a->obj.figID == glist->file_id)
-			//		if (_vm->getGameType() == GType_ITE ||
+			//		if (_vm->getGameId() == GID_ITE ||
 			//			((a->obj.flags & ACTORF_FINAL_FACE) & 0xff))
 			//			a->sprites = (xSpriteSet *)glist->offset;
 			warning("STUB: unimplemeted handler of SAGA_ACTOR resource");
@@ -1119,7 +1119,7 @@ void Scene::processSceneResources() {
 			_vm->_palanim->loadPalAnim(resourceData, resourceDataLength);
 			break;
 		case SAGA_FACES:
-			if (_vm->getGameType() == GType_ITE)
+			if (_vm->getGameId() == GID_ITE)
 				_vm->_interface->loadScenePortraits(_resourceList[i].resourceId);
 			break;
 		case SAGA_PALETTE:
@@ -1323,7 +1323,7 @@ void Scene::clearPlacard() {
 	event.duration = 0;
 	q_event = _vm->_events->chain(q_event, &event);
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		event.type = kEvTOneshot;
 		event.code = kTextEvent;
 		event.op = kEventRemove;
@@ -1340,7 +1340,7 @@ void Scene::clearPlacard() {
 	event.duration = 0;
 	q_event = _vm->_events->chain(q_event, &event);
 
-	if (_vm->getGameType() == GType_IHNM) {
+	if (_vm->getGameId() == GID_IHNM) {
 		// set mode to main
 		event.type = kEvTImmediate;
 		event.code = kInterfaceEvent;
@@ -1492,7 +1492,7 @@ void Scene::showPsychicProfile(const char *text) {
 }
 
 void Scene::clearPsychicProfile() {
-	if (_vm->_interface->getMode() == kPanelPlacard || _vm->getGameId() == GID_IHNM_DEMO) {
+	if (_vm->_interface->getMode() == kPanelPlacard || _vm->getFeatures() & GF_IHNM_DEMO) {
 		_vm->_render->setFlag(RF_DISABLE_ACTORS);
 		_vm->_scene->clearPlacard();
 		_vm->_interface->activate();

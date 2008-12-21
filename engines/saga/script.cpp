@@ -289,7 +289,7 @@ void Script::showVerb(int statusColor) {
 		return;
 	}
 
-	if (_vm->getGameType() == GType_ITE)
+	if (_vm->getGameId() == GID_ITE)
 		verbName = _mainStrings.getString(_leftButtonVerb - 1);
 	else
 		verbName = _mainStrings.getString(_leftButtonVerb + 1);
@@ -329,7 +329,7 @@ void Script::showVerb(int statusColor) {
 }
 
 int Script::getVerbType(VerbTypes verbType) {
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		switch (verbType) {
 		case kVerbNone:
 			return kVerbITENone;
@@ -456,7 +456,7 @@ void Script::doVerb() {
 			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 		}
 		// IHNM never sets scriptModuleNumber to 0
-		if (_vm->getGameType() == GType_IHNM)
+		if (_vm->getGameId() == GID_IHNM)
 			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 	} else {
 		if (_pendingVerb == getVerbType(kVerbUse)) {
@@ -488,7 +488,7 @@ void Script::doVerb() {
 					scriptModuleNumber = 0;
 				}
 				// IHNM never sets scriptModuleNumber to 0
-				if (_vm->getGameType() == GType_IHNM)
+				if (_vm->getGameId() == GID_IHNM)
 					scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 			}
 		}
@@ -503,7 +503,7 @@ void Script::doVerb() {
 	// choosing "[Cut out Edna's heart]", which works correctly. To disable this action, if the knife is used on Edna, we
 	// change the action here to "use knife with the knife", which yields a better reply ("I'd just dull my knife").
 	// Fixes bug #1826871 - "IHNM: Edna's got two hearts but loves to be on the hook"
-	if (_vm->getGameType() == GType_IHNM && _pendingObject[0] == 16385 && _pendingObject[1] == 8197 && _pendingVerb == 4)
+	if (_vm->getGameId() == GID_IHNM && _pendingObject[0] == 16385 && _pendingObject[1] == 8197 && _pendingVerb == 4)
 		_pendingObject[1] = 16385;
 
 	// WORKAROUND for a bug in the original game scripts of IHNM. Gorrister's heart is not supposed to have a
@@ -511,7 +511,7 @@ void Script::doVerb() {
 	// reply is given to the player ("It's too narrow for me to pass", said when Gorrister tries to pick up the
 	// heart without a rope). Therefore, for object number 16397 (Gorrister's heart), when the active verb is
 	// "Use", set it to "Push", which gives a more appropriate reply ("What good will that do me?")
-	if (_vm->getGameType() == GType_IHNM && _pendingObject[0] == 16397 && _pendingVerb == 4)
+	if (_vm->getGameId() == GID_IHNM && _pendingObject[0] == 16397 && _pendingVerb == 4)
 		_pendingVerb = 8;
 
 	if (scriptEntrypointNumber > 0) {
@@ -530,11 +530,11 @@ void Script::doVerb() {
 
 	} else {
 		// Show excuse text in ITE CD Versions
-		if (_vm->getGameType() == GType_ITE) {
+		if (_vm->getGameId() == GID_ITE) {
 			_vm->getExcuseInfo(_pendingVerb, excuseText, excuseSampleResourceId);
 			if (excuseText) {
 				// In Floppy versions we don't have excuse texts
-				if (!(_vm->getFeatures() & GF_CD_FX))
+				if (_vm->getFeatures() & GF_ITE_FLOPPY)
 					excuseSampleResourceId = -1;
 
 				_vm->_actor->actorSpeech(ID_PROTAG, &excuseText, 1, excuseSampleResourceId, 0);
@@ -660,14 +660,14 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 	}
 
 	if (hitZone != NULL) {
-		if (_vm->getGameType() == GType_ITE) {
+		if (_vm->getGameId() == GID_ITE) {
 			if (hitZone->getFlags() & kHitZoneNoWalk) {
 				_vm->_actor->actorFaceTowardsPoint(ID_PROTAG, pickLocation);
 				doVerb();
 				return;
 			}
 		} else {
-			if (_vm->getGameType() == GType_IHNM) {
+			if (_vm->getGameId() == GID_IHNM) {
 				if ((hitZone->getFlags() & kHitZoneNoWalk) && (_pendingVerb != getVerbType(kVerbWalkTo))) {
 					doVerb();
 					return;
@@ -693,7 +693,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 		}
 	}
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		if ((_pendingVerb == getVerbType(kVerbWalkTo)) ||
 			(_pendingVerb == getVerbType(kVerbPickUp)) ||
 			(_pendingVerb == getVerbType(kVerbOpen)) ||
@@ -716,7 +716,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 		}
 	}
 
-	if (_vm->getGameType() == GType_IHNM) {
+	if (_vm->getGameId() == GID_IHNM) {
 
 		if ((_pendingVerb == getVerbType(kVerbWalkTo)) ||
 			(_pendingVerb == getVerbType(kVerbPickUp)) ||
@@ -809,14 +809,14 @@ void Script::whichObject(const Point& mousePoint) {
 				} else {
 					actor = _vm->_actor->getActor(newObjectId);
 					objectId = newObjectId;
-					if (_vm->getGameType() == GType_ITE)
+					if (_vm->getGameId() == GID_ITE)
 						objectFlags = kObjUseWith;
 					// Note: for IHNM, the default right button action is "Look at" for actors,
 					// but "Talk to" makes much more sense
 					newRightButtonVerb = getVerbType(kVerbTalkTo);
 					// Slight hack because of the above change: the jukebox in Gorrister's chapter
 					// is an actor, so change the right button action to "Look at"
-					if (_vm->getGameType() == GType_IHNM && objectId == 8199)
+					if (_vm->getGameId() == GID_IHNM && objectId == 8199)
 						newRightButtonVerb = getVerbType(kVerbLookAt);
 
 					if ((_currentVerb == getVerbType(kVerbPickUp)) ||
@@ -824,7 +824,7 @@ void Script::whichObject(const Point& mousePoint) {
 						(_currentVerb == getVerbType(kVerbClose)) ||
 						((_currentVerb == getVerbType(kVerbGive)) && !_firstObjectSet) ||
 						((_currentVerb == getVerbType(kVerbUse)) && !(actor->_flags & kFollower))) {
-							if (_vm->getGameType() == GType_ITE) {
+							if (_vm->getGameId() == GID_ITE) {
 								objectId = ID_NOTHING;
 								newObjectId = ID_NOTHING;
 							}
@@ -850,7 +850,7 @@ void Script::whichObject(const Point& mousePoint) {
 				// to the left, which makes him exit the screen when the graffiti is examined.
 				// We effectively change the left side of the hitzone here so that it starts from
 				// pixel 301 onwards. The same workaround is applied in Actor::handleActions
-				if (_vm->getGameType() == GType_IHNM) {
+				if (_vm->getGameId() == GID_IHNM) {
 					if (_vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() == 22)
 						if (hitZoneIndex == 8 && pickPoint.x <= 300)
 							hitZoneIndex = -1;
@@ -868,14 +868,14 @@ void Script::whichObject(const Point& mousePoint) {
 					// hitzone contains (object ID 24578 - "The key") to the ID of the key
 					// object itself (object ID 16402 - "Edna's key"), as the user can keep
 					// hovering the cursor to both items, but can only pick up one
-					if (_vm->getGameType() == GType_IHNM) {
+					if (_vm->getGameId() == GID_IHNM) {
 						if (_vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() == 24) {
 							if (objectId == 24578)
 								objectId = 16402;
 						}
 					}
 
-					if (_vm->getGameType() == GType_ITE) {
+					if (_vm->getGameId() == GID_ITE) {
 
 						if (newRightButtonVerb == getVerbType(kVerbWalkOnly)) {
 							if (_firstObjectSet) {

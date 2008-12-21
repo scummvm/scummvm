@@ -338,7 +338,7 @@ int Events::handleOneShot(Event *event) {
 				if (event->param == kEvPSetPalette) {
 					PalEntry *palPointer;
 
-					if (_vm->getGameType() == GType_IHNM) {
+					if (_vm->getGameId() == GID_IHNM) {
 						if (_vm->_spiritualBarometer > 255)
 							_vm->_gfx->setPaletteColor(kIHNMColorPortrait, 0xff, 0xff, 0xff);
 						else
@@ -507,12 +507,14 @@ int Events::handleOneShot(Event *event) {
 			break;
 		case kEventSetNormalCursor:
 			// in ITE and IHNM demo there is just one cursor
-			if (_vm->getGameType() == GType_IHNM && _vm->getGameId() != GID_IHNM_DEMO)
+			// ITE never makes this call
+			if (!(_vm->getFeatures() & GF_IHNM_DEMO))
 				_vm->_gfx->setCursor(kCursorNormal);
 			break;
 		case kEventSetBusyCursor:
 			// in ITE and IHNM demo there is just one cursor
-			if (_vm->getGameType() == GType_IHNM && _vm->getGameId() != GID_IHNM_DEMO)
+			// ITE never makes this call
+			if (!(_vm->getFeatures() & GF_IHNM_DEMO))
 				_vm->_gfx->setCursor(kCursorBusy);
 			break;
 		default:

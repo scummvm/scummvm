@@ -192,7 +192,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	free(resource);
 
 	// Quit panel
-	if (_vm->getGameType() == GType_IHNM) {
+	if (_vm->getGameId() == GID_IHNM) {
 		_quitPanel.buttons = _vm->getDisplayInfo().quitPanelButtons;
 		_quitPanel.buttonsCount = _vm->getDisplayInfo().quitPanelButtonsCount;
 
@@ -203,7 +203,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	}
 
 	// Save panel
-	if (_vm->getGameType() == GType_IHNM) {
+	if (_vm->getGameId() == GID_IHNM) {
 		_savePanel.buttons = _vm->getDisplayInfo().savePanelButtons;
 		_savePanel.buttonsCount = _vm->getDisplayInfo().savePanelButtonsCount;
 
@@ -214,7 +214,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	}
 
 	// Load panel
-	if (_vm->getGameType() == GType_IHNM) {
+	if (_vm->getGameId() == GID_IHNM) {
 		_loadPanel.buttons = _vm->getDisplayInfo().loadPanelButtons;
 		_loadPanel.buttonsCount = _vm->getDisplayInfo().loadPanelButtonsCount;
 
@@ -235,7 +235,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	// Quit panel sprites
 	_vm->_sprite->loadList(_vm->getResourceDescription()->warningPanelSpritesResourceId, _quitPanel.sprites);
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		_vm->_sprite->loadList(_vm->getResourceDescription()->defaultPortraitsResourceId, _defPortraits);
 	}
 
@@ -362,7 +362,7 @@ void Interface::updateSaveReminder() {
 		_saveReminderState = _saveReminderState % _vm->getDisplayInfo().saveReminderNumSprites + 1;
 		drawStatusBar();
 		_vm->_timer->removeTimerProc(&saveReminderCallback);
-		_vm->_timer->installTimerProc(&saveReminderCallback, ((_vm->getGameType() == GType_ITE) ? TIMETOBLINK_ITE : TIMETOBLINK_IHNM), this);
+		_vm->_timer->installTimerProc(&saveReminderCallback, ((_vm->getGameId() == GID_ITE) ? TIMETOBLINK_ITE : TIMETOBLINK_IHNM), this);
 	}
 }
 
@@ -374,7 +374,7 @@ int Interface::activate() {
 		unlockMode();
 		if (_panelMode == kPanelMain || _panelMode == kPanelChapterSelection) {
 			_saveReminderState = 1;
-		} else if (_panelMode == kPanelNull && _vm->getGameId() == GID_IHNM_DEMO) {
+		} else if (_panelMode == kPanelNull && _vm->getFeatures() & GF_IHNM_DEMO) {
 			_saveReminderState = 1;
 		}
 		_vm->_gfx->showCursor(true);
@@ -425,7 +425,7 @@ void Interface::setMode(int mode) {
 	} else if (mode == kPanelChapterSelection) {
 		_saveReminderState = 1;
 	} else if (mode == kPanelNull) {
-		if (_vm->getGameId() == GID_IHNM_DEMO) {
+		if (_vm->getFeatures() & GF_IHNM_DEMO) {
 			_inMainMode = true;
 			_saveReminderState = 1;
 		}
@@ -487,7 +487,7 @@ void Interface::setMode(int mode) {
 		_vm->_render->setFlag(RF_DEMO_SUBST);
 		break;
 	case kPanelProtect:
-		if (_vm->getGameType() == GType_ITE) {
+		if (_vm->getGameId() == GID_ITE) {
 			// This is used as the copy protection panel in ITE
 			_protectPanel.currentButton = NULL;
 			_textInputMaxWidth = _protectEdit->width - 10;
@@ -672,7 +672,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		case '7':
 		case '8':
 		case '9':
-			if (_vm->getGameType() == GType_IHNM)
+			if (_vm->getGameId() == GID_IHNM)
 				converseSetPos(ascii);
 			break;
 		}
@@ -695,7 +695,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		keyBossExit();
 		break;
 	case kPanelProtect:
-		if (_vm->getGameType() == GType_ITE) {
+		if (_vm->getGameId() == GID_ITE) {
 			if (_textInput && processTextInput(keystate)) {
 				return true;
 			}
@@ -715,9 +715,9 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		}
 		break;
 	case kPanelPlacard:
-		if (_vm->getGameType() == GType_IHNM) {
+		if (_vm->getGameId() == GID_IHNM) {
 			// Any keypress here returns the user back to the game
-			if (_vm->getGameId() != GID_IHNM_DEMO) {
+			if (!(_vm->getFeatures() & GF_IHNM_DEMO)) {
 				_vm->_scene->clearPsychicProfile();
 			} else {
 				setMode(kPanelConverse);
@@ -733,11 +733,11 @@ bool Interface::processAscii(Common::KeyState keystate) {
 void Interface::setStatusText(const char *text, int statusColor) {
 
 	// Disable the status text in IHNM when the chapter is 8
-	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8)
+	if (_vm->getGameId() == GID_IHNM && !(_vm->getFeatures() & GF_IHNM_DEMO) && _vm->_scene->currentChapterNumber() == 8)
 		return;
 
 	// Disable the status text in the introduction of the IHNM demo
-	if (_vm->getGameId() == GID_IHNM_DEMO && _vm->_scene->currentSceneNumber() == 0)
+	if (_vm->getFeatures() & GF_IHNM_DEMO && _vm->_scene->currentSceneNumber() == 0)
 		return;
 
 	assert(text != NULL);
@@ -799,7 +799,7 @@ void Interface::draw() {
 	drawStatusBar();
 
 	if (_panelMode == kPanelMain || _panelMode == kPanelMap ||
-		(_panelMode == kPanelNull && _vm->getGameId() == GID_IHNM_DEMO)) {
+		(_panelMode == kPanelNull && _vm->getFeatures() & GF_IHNM_DEMO)) {
 		_mainPanel.getRect(rect);
 		_vm->_gfx->drawRegion(rect, _mainPanel.image);
 
@@ -816,7 +816,7 @@ void Interface::draw() {
 
 	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
 		_lockedMode == kPanelMain || _lockedMode == kPanelConverse ||
-		(_panelMode == kPanelNull && _vm->getGameId() == GID_IHNM_DEMO)) {
+		(_panelMode == kPanelNull && _vm->getFeatures() & GF_IHNM_DEMO)) {
 		leftPortraitPoint.x = _mainPanel.x + _vm->getDisplayInfo().leftPortraitXOffset;
 		leftPortraitPoint.y = _mainPanel.y + _vm->getDisplayInfo().leftPortraitYOffset;
 		_vm->_sprite->draw(_defPortraits, _leftPortrait, leftPortraitPoint, 256);
@@ -851,7 +851,7 @@ void Interface::calcOptionSaveSlider() {
 		totalFiles = visibleFiles;
 	}
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		// ITE's save file list slider has a dynamically computed height, depending on
 		// the number of save games
 		sliderHeight = visibleFiles * height / totalFiles;
@@ -889,12 +889,12 @@ void Interface::drawPanelText(InterfacePanel *panel, PanelButton *panelButton) {
 	KnownFont textFont = kKnownFontMedium;
 
 	// Button differs for CD version
-	if (panelButton->id == kTextReadingSpeed && _vm->getFeatures() & GF_CD_FX)
+	if (panelButton->id == kTextReadingSpeed && _vm->getGameId() == GID_ITE && !(_vm->getFeatures() & GF_ITE_FLOPPY))
 		return;
-	if (panelButton->id == kTextShowDialog && !(_vm->getFeatures() & GF_CD_FX))
+	if (panelButton->id == kTextShowDialog && _vm->getFeatures() & GF_ITE_FLOPPY)
 		return;
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		text = _vm->getTextString(panelButton->id);
 		textFont = kKnownFontMedium;
 		textShadowKnownColor = kKnownColorVerbTextShadow;
@@ -916,7 +916,7 @@ void Interface::drawPanelText(InterfacePanel *panel, PanelButton *panelButton) {
 
 	panel->calcPanelButtonRect(panelButton, rect);
 	if (panelButton->xOffset < 0) {
-		if (_vm->getGameType() == GType_ITE)
+		if (_vm->getGameId() == GID_ITE)
 			textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
 		else
 			textWidth = _vm->_font->getStringWidth(kKnownFontVerb, text, 0, kFontNormal);
@@ -951,7 +951,7 @@ void Interface::drawOption() {
 		panelButton = &_optionPanel.buttons[i];
 
 		if (panelButton->type == kPanelButtonOption) {
-			if (_vm->getGameType() == GType_ITE) {
+			if (_vm->getGameId() == GID_ITE) {
 				drawPanelButtonText(&_optionPanel, panelButton);
 			} else {
 				drawPanelButtonText(&_optionPanel, panelButton, spritenum);
@@ -964,11 +964,11 @@ void Interface::drawOption() {
 	}
 
 	if (_optionSaveRectTop.height() > 0) {
-		if (_vm->getGameType() == GType_ITE)
+		if (_vm->getGameId() == GID_ITE)
 			_vm->_gfx->drawRect(_optionSaveRectTop, kITEColorDarkGrey);
 	}
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		drawButtonBox(_optionSaveRectSlider, kSlider, _optionSaveFileSlider->state > 0);
 	} else {
 		panelButton = &_optionPanel.buttons[0];
@@ -987,7 +987,7 @@ void Interface::drawOption() {
 	rect2 = rect;
 	fontHeight = _vm->_font->getHeight(kKnownFontSmall);
 	for (uint j = 0; j < _vm->getDisplayInfo().optionSaveFileVisible; j++) {
-		if (_vm->getGameType() == GType_ITE)
+		if (_vm->getGameId() == GID_ITE)
 			bgColor = kITEColorDarkGrey0C;
 		else
 			bgColor = _vm->KnownColor2ColorId(kKnownColorBlack);
@@ -1004,7 +1004,7 @@ void Interface::drawOption() {
 			text = _vm->getSaveFile(idx)->name;
 			textPoint.x = rect.left + 1;
 			textPoint.y = rect2.top;
-			if (_vm->getGameType() == GType_ITE)
+			if (_vm->getGameId() == GID_ITE)
 				_vm->_font->textDraw(kKnownFontSmall, text, textPoint, fgColor, 0, kFontNormal);
 			else
 				_vm->_font->textDraw(kKnownFontVerb, text, textPoint, fgColor, 0, kFontNormal);
@@ -1019,7 +1019,7 @@ void Interface::drawQuit() {
 	PanelButton *panelButton;
 
 	_quitPanel.getRect(rect);
-	if (_vm->getGameType() == GType_ITE)
+	if (_vm->getGameId() == GID_ITE)
 		drawButtonBox(rect, kButton, false);
 	else
 		_vm->_gfx->drawRegion(rect, _quitPanel.image);
@@ -1069,7 +1069,7 @@ void Interface::setQuit(PanelButton *panelButton) {
 			setMode(kPanelOption);
 			break;
 		case kTextQuit:
-			if (_vm->getGameId() == GID_IHNM_DEMO)
+			if (_vm->getFeatures() & GF_IHNM_DEMO)
 				_vm->_scene->creditsScene();	// display sales info for IHNM demo
 			else
 				_vm->quitGame();
@@ -1083,7 +1083,7 @@ void Interface::drawLoad() {
 	PanelButton *panelButton;
 
 	_loadPanel.getRect(rect);
-	if (_vm->getGameType() == GType_ITE)
+	if (_vm->getGameId() == GID_ITE)
 		drawButtonBox(rect, kButton, false);
 	else
 		_vm->_gfx->drawRegion(rect, _loadPanel.image);
@@ -1130,7 +1130,7 @@ void Interface::setLoad(PanelButton *panelButton) {
 	_loadPanel.currentButton = NULL;
 	switch (panelButton->id) {
 		case kTextOK:
-			if (_vm->getGameType() == GType_ITE) {
+			if (_vm->getGameId() == GID_ITE) {
 				setMode(kPanelMain);
 			} else {
 				if (_vm->getSaveFilesCount() > 0) {
@@ -1189,7 +1189,7 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 	ch[1] = 0;
 	// IHNM has a smaller save title size than ITE. We only limit the save title size during text input
 	// in IHNM, to preserve backwards compatibility with older save games
-	uint save_title_size = _vm->getGameType() == GType_ITE ? SAVE_TITLE_SIZE : IHNM_SAVE_TITLE_SIZE;
+	uint save_title_size = _vm->getGameId() == GID_ITE ? SAVE_TITLE_SIZE : IHNM_SAVE_TITLE_SIZE;
 
 	switch (keystate.keycode) {
 	case Common::KEYCODE_RETURN:
@@ -1303,7 +1303,7 @@ void Interface::drawSave() {
 	PanelButton *panelButton;
 
 	_savePanel.getRect(rect);
-	if (_vm->getGameType() == GType_ITE)
+	if (_vm->getGameId() == GID_ITE)
 		drawButtonBox(rect, kButton, false);
 	else
 		_vm->_gfx->drawRegion(rect, _savePanel.image);
@@ -1578,7 +1578,7 @@ void Interface::setOption(PanelButton *panelButton) {
 	switch (panelButton->id) {
 	case kTextContinuePlaying:
 		ConfMan.flushToDisk();
-		if (_vm->getGameType() == GType_ITE) {
+		if (_vm->getGameId() == GID_ITE) {
 			setMode(kPanelMain);
 		} else {
 			if (_vm->_scene->currentChapterNumber() == 8) {
@@ -1594,7 +1594,7 @@ void Interface::setOption(PanelButton *panelButton) {
 		setMode(kPanelQuit);
 		break;
 	case kTextLoad:
-		if (_vm->getGameType() == GType_ITE) {
+		if (_vm->getGameId() == GID_ITE) {
 			if (_vm->getSaveFilesCount() > 0) {
 				if (_vm->isSaveListFull() || (_optionSaveFileTitleNumber > 0)) {
 					debug(1, "Loading save game %d", _vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
@@ -1620,7 +1620,7 @@ void Interface::setOption(PanelButton *panelButton) {
 		setMode(kPanelSave);
 		break;
 	case kTextReadingSpeed:
-		if (_vm->getFeatures() & GF_CD_FX) {
+		if (_vm->getGameId() == GID_ITE && !(_vm->getFeatures() & GF_ITE_FLOPPY)) {
 			_vm->_subtitlesEnabled = !_vm->_subtitlesEnabled;
 			ConfMan.setBool("subtitles", _vm->_subtitlesEnabled);
 		} else {
@@ -1677,7 +1677,7 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		// When opening the psychic profile, or the options screen in the non-interactive part of the IHNM demo,
 		// the interface is locked (_active is false)
 		// Don't return in those cases, so that mouse actions can be processed
-		if (_vm->getGameType() == GType_ITE) {
+		if (_vm->getGameId() == GID_ITE) {
 			return;
 		} else {
 			if (_panelMode == kPanelPlacard && (updateFlag & UPDATE_MOUSECLICK)) {
@@ -1836,10 +1836,10 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		break;
 
 	case kPanelPlacard:
-		if (_vm->getGameType() == GType_IHNM) {
+		if (_vm->getGameId() == GID_IHNM) {
 			// Any mouse click here returns the user back to the game
 			if (updateFlag & UPDATE_MOUSECLICK) {
-				if (_vm->getGameId() != GID_IHNM_DEMO) {
+				if (!(_vm->getFeatures() & GF_IHNM_DEMO)) {
 					_vm->_scene->clearPsychicProfile();
 				} else {
 					setMode(kPanelConverse);
@@ -1866,10 +1866,10 @@ void Interface::drawStatusBar() {
 	int color;
 	// The default colors in the Spanish version of IHNM are shifted by one
 	// Fixes bug #1848016 - "IHNM: Wrong Subtitles Color (Spanish)"
-	int offset = (_vm->getGameId() == GID_IHNM_CD_ES) ? 1 : 0;
+	int offset = (_vm->getLanguage() == Common::ES_ESP) ? 1 : 0;
 
 	// Disable the status text in IHNM when the chapter is 8
-	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8)
+	if (_vm->getGameId() == GID_IHNM && _vm->_scene->currentChapterNumber() == 8)
 		return;
 
 	// Don't draw the status bar while fading out
@@ -1893,7 +1893,7 @@ void Interface::drawStatusBar() {
 
 	textPoint.x = _vm->getDisplayInfo().statusXOffset + (_vm->getDisplayInfo().statusWidth - stringWidth) / 2;
 	textPoint.y = _vm->getDisplayInfo().statusYOffset + _vm->getDisplayInfo().statusTextY;
-	if (_vm->getGameType() == GType_ITE)
+	if (_vm->getGameId() == GID_ITE)
 		_vm->_font->textDraw(kKnownFontSmall, _statusText, textPoint, color, 0, kFontNormal);
 	else
 		_vm->_font->textDraw(kKnownFontVerb, _statusText, textPoint, color, 0, kFontNormal);
@@ -2111,7 +2111,7 @@ void Interface::drawInventory() {
 		}
 		_mainPanel.calcPanelButtonRect(&_mainPanel.buttons[i], rect);
 
-		if (_vm->getGameType() == GType_ITE)
+		if (_vm->getGameId() == GID_ITE)
 			_vm->_gfx->drawRect(rect, kITEColorDarkGrey);
 		else
 			_vm->_gfx->drawRect(rect, _vm->KnownColor2ColorId(kKnownColorBlack));
@@ -2154,7 +2154,7 @@ void Interface::drawButtonBox(const Rect& rect, ButtonKind kind, bool down) {
 			solidColor = down ? kITEColorLightBlue94 : kITEColorLightBlue96;
 			break;
 		case kEdit:
-			if (_vm->getGameType() == GType_ITE) {
+			if (_vm->getGameId() == GID_ITE) {
 				cornerColor = frameColor = fillColor = kITEColorLightBlue96;
 				our = kITEColorDarkBlue8a;
 				odl = kITEColorLightBlue94;
@@ -2247,7 +2247,7 @@ void Interface::drawPanelButtonText(InterfacePanel *panel, PanelButton *panelBut
 	textId = panelButton->id;
 	switch (panelButton->id) {
 	case kTextReadingSpeed:
-		if (_vm->getFeatures() & GF_CD_FX) {
+		if (_vm->getGameId() == GID_ITE && !(_vm->getFeatures() & GF_ITE_FLOPPY)) {
 			if (_vm->_subtitlesEnabled)
 				textId = kTextOn;
 			else
@@ -2277,7 +2277,7 @@ void Interface::drawPanelButtonText(InterfacePanel *panel, PanelButton *panelBut
 			textId = kTextAudio;
 		break;
 	}
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		text = _vm->getTextString(textId);
 		textFont = kKnownFontMedium;
 		textShadowKnownColor = kKnownColorVerbTextShadow;
@@ -2309,7 +2309,7 @@ void Interface::drawPanelButtonText(InterfacePanel *panel, PanelButton *panelBut
 	}
 
 	panel->calcPanelButtonRect(panelButton, rect);
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		drawButtonBox(rect, kButton, panelButton->state > 0);
 	} else {
 		litButton = panelButton->state > 0;
@@ -2361,7 +2361,7 @@ void Interface::drawPanelButtonArrow(InterfacePanel *panel, PanelButton *panelBu
 	point.x = panel->x + panelButton->xOffset;
 	point.y = panel->y + panelButton->yOffset;
 
-	if (_vm->getGameType() == GType_ITE)
+	if (_vm->getGameId() == GID_ITE)
 		_vm->_sprite->draw(_vm->_sprite->_mainSprites, spriteNumber, point, 256);
 	else
 		_vm->_sprite->draw(_vm->_sprite->_arrowSprites, spriteNumber, point, 256);
@@ -2373,7 +2373,7 @@ void Interface::drawVerbPanelText(PanelButton *panelButton, KnownColor textKnown
 	Point point;
 	int textId;
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		textId = verbTypeToTextStringsIdLUT[0][panelButton->id];
 		text = _vm->getTextString(textId);
 	} else {
@@ -2384,7 +2384,7 @@ void Interface::drawVerbPanelText(PanelButton *panelButton, KnownColor textKnown
 
 	textWidth = _vm->_font->getStringWidth(kKnownFontVerb, text, 0, kFontNormal);
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		point.x = _mainPanel.x + panelButton->xOffset + 1 + (panelButton->width - 1 - textWidth) / 2;
 		point.y = _mainPanel.y + panelButton->yOffset + 1;
 	} else {
@@ -2440,7 +2440,7 @@ bool Interface::converseAddText(const char *text, int strId, int replyId, byte r
 		for (i = len; i >= 0; i--) {
 			c = _converseWorkString[i];
 
-			if (_vm->getGameType() == GType_ITE) {
+			if (_vm->getGameId() == GID_ITE) {
 				if ((c == ' ' || c == '\0') && (_vm->_font->getStringWidth(kKnownFontSmall, _converseWorkString, i, kFontNormal) <= _vm->getDisplayInfo().converseMaxTextWidth))
 					break;
 			} else {
@@ -2521,7 +2521,7 @@ void Interface::converseDisplayTextLines() {
 
 	assert(_conversePanel.buttonsCount >= 6);
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		bulletForegnd = kITEColorGreen;
 		bulletBackgnd = kITEColorBlack;
 	} else {
@@ -2533,7 +2533,7 @@ void Interface::converseDisplayTextLines() {
 	rect.moveTo(_conversePanel.x + _conversePanel.buttons[0].xOffset,
 		_conversePanel.y + _conversePanel.buttons[0].yOffset);
 
-	if (_vm->getGameType() == GType_ITE)
+	if (_vm->getGameId() == GID_ITE)
 		_vm->_gfx->drawRect(rect, kITEColorDarkGrey);	//fill bullet place
 	else
 		_vm->_gfx->drawRect(rect, _vm->KnownColor2ColorId(kKnownColorBlack));	//fill bullet place
@@ -2546,7 +2546,7 @@ void Interface::converseDisplayTextLines() {
 		}
 
 		if (_conversePos >= 0 && _converseText[_conversePos].stringNum == _converseText[relPos].stringNum) {
-			if (_vm->getGameType() == GType_ITE) {
+			if (_vm->getGameId() == GID_ITE) {
 				foregnd = kITEColorBrightWhite;
 				backgnd = (!_vm->leftMouseButtonPressed()) ? kITEColorDarkGrey : kITEColorGrey;
 			} else {
@@ -2554,7 +2554,7 @@ void Interface::converseDisplayTextLines() {
 				backgnd = _vm->KnownColor2ColorId(kKnownColorVerbTextActive);
 			}
 		} else {
-			if (_vm->getGameType() == GType_ITE) {
+			if (_vm->getGameId() == GID_ITE) {
 				foregnd = kITEColorBlue;
 				backgnd = kITEColorDarkGrey;
 			} else {
@@ -2573,14 +2573,14 @@ void Interface::converseDisplayTextLines() {
 			textPoint.x = rect.left - 6;
 			textPoint.y = rect.top;
 
-			if (_vm->getGameType() == GType_ITE)
+			if (_vm->getGameId() == GID_ITE)
 				_vm->_font->textDraw(kKnownFontSmall, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
 			else
 				_vm->_font->textDraw(kKnownFontVerb, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
 		}
 		textPoint.x = rect.left + 1;
 		textPoint.y = rect.top;
-		if (_vm->getGameType() == GType_ITE)
+		if (_vm->getGameId() == GID_ITE)
 			_vm->_font->textDraw(kKnownFontSmall, str, textPoint, foregnd, kITEColorBlack, kFontShadow);
 		else
 			_vm->_font->textDraw(kKnownFontVerb, str, textPoint, foregnd, _vm->KnownColor2ColorId(kKnownColorBlack), kFontShadow);
@@ -2797,7 +2797,7 @@ void Interface::mapPanelDrawCrossHair() {
 }
 
 void Interface::keyBoss() {
-	if (_vm->getGameType() != GType_IHNM)
+	if (_vm->getGameId() == GID_ITE)
 		return;
 
 	if (_bossMode != -1 || _fadeMode != kNoFade)

@@ -330,7 +330,7 @@ bool Resource::loadContext(ResourceContext *context) {
 					// ITE uses several patch files which are loaded and then not needed
 					// anymore (as they're in memory), so close them here. IHNM uses only
 					// 1 patch file, which is reused, so don't close it
-					if (_vm->getGameType() == GType_ITE)
+					if (_vm->getGameId() == GID_ITE)
 						resourceData->patchData->_patchFile->close();
 				} else {
 					delete resourceData->patchData;
@@ -401,8 +401,8 @@ bool Resource::createContexts() {
 	if (!soundFileInArray) {
 		// If the sound file is not specified in the detector table, add it here
 		fileFound = false;
-		curSoundfiles = _vm->getGameType() == GType_ITE ? sfxFilesITE : sfxFilesIHNM;
-		maxFile = _vm->getGameType() == GType_ITE ? 4 : 2;
+		curSoundfiles = _vm->getGameId() == GID_ITE ? sfxFilesITE : sfxFilesIHNM;
+		maxFile = _vm->getGameId() == GID_ITE ? 4 : 2;
 
 		for (i = 0; i < maxFile; i++) {
 			if (Common::File::exists(curSoundfiles[i].fileName)) {
@@ -418,7 +418,7 @@ bool Resource::createContexts() {
 		if (!fileFound) {
 			// No sound file found, don't add any file to the array
 			soundFileInArray = true;
-			if (_vm->getGameType() == GType_ITE) {
+			if (_vm->getGameId() == GID_ITE) {
 				// ITE floppy versions have both voices and sounds in voices.rsc
 				voiceFileType = GAME_SOUNDFILE | GAME_VOICEFILE;
 			}
@@ -445,8 +445,8 @@ bool Resource::createContexts() {
 
 	// Detect and add voice files
 	fileFound = false;
-	curSoundfiles = _vm->getGameType() == GType_ITE ? voiceFilesITE : voiceFilesIHNM;
-	maxFile = _vm->getGameType() == GType_ITE ? 7 : 4;
+	curSoundfiles = _vm->getGameId() == GID_ITE ? voiceFilesITE : voiceFilesIHNM;
+	maxFile = _vm->getGameId() == GID_ITE ? 7 : 4;
 
 	for (i = 0; i < maxFile; i++) {
 		if (Common::File::exists(curSoundfiles[i].fileName)) {
@@ -490,7 +490,7 @@ bool Resource::createContexts() {
 	}
 
 	if (!fileFound) {
-		if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
+		if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 			// The Macintosh version of IHNM has no voices.res, and it has all
 			// its voice files in subdirectories, so don't do anything here
 		} else {
@@ -511,7 +511,7 @@ bool Resource::createContexts() {
 	};
 
 	// Check for digital music in ITE
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		fileFound = false;
 
 		for (i = 0; i < 4; i++) {
@@ -538,7 +538,7 @@ bool Resource::createContexts() {
 		context->serial = 0;
 
 		// For ITE, add the digital music file and sfx file information here
-		if (_vm->getGameType() == GType_ITE && digitalMusic && i == _contextsCount - 1) {
+		if (_vm->getGameId() == GID_ITE && digitalMusic && i == _contextsCount - 1) {
 			context->fileName = musicFileName;
 			context->fileType = GAME_MUSICFILE;
 		} else if (!soundFileInArray && i == soundFileIndex) {
@@ -602,7 +602,7 @@ void Resource::clearContexts() {
 
 uint32 Resource::convertResourceId(uint32 resourceId) {
 
-	if (_vm->getGameType() == GType_ITE && _vm->isMacResources()) {
+	if (_vm->getGameId() == GID_ITE && _vm->isMacResources()) {
 		if (resourceId > 1537) {
 			return resourceId - 2;
 		} else {
@@ -640,7 +640,7 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&r
 	// ITE uses several patch files which are loaded and then not needed
 	// anymore (as they're in memory), so close them here. IHNM uses only
 	// 1 patch file, which is reused, so don't close it
-	if (resourceData->patchData != NULL && _vm->getGameType() == GType_ITE)
+	if (resourceData->patchData != NULL && _vm->getGameId() == GID_ITE)
 		file->close();
 }
 
@@ -649,7 +649,7 @@ static int metaResourceTableDemo[] = { 0, 0, 0, 0, 0, 0, 0, 285, 0 };
 
 void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	if (chapter < 0)
-		chapter = (_vm->getGameId() != GID_IHNM_DEMO) ? 8 : 7;
+		chapter = (!(_vm->getFeatures() & GF_IHNM_DEMO)) ? 8 : 7;
 
 	_vm->_script->_globalVoiceLUT.freeMem();
 
@@ -672,7 +672,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	byte *resourcePointer;
 	size_t resourceLength;
 
-	if (_vm->getGameId() != GID_IHNM_DEMO) {
+	if (!(_vm->getFeatures() & GF_IHNM_DEMO)) {
 		_vm->_resource->loadResource(resourceContext, metaResourceTable[chapter],
 									 resourcePointer, resourceLength);
 	} else {

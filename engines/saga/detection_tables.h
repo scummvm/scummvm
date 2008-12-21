@@ -203,9 +203,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		GType_ITE,
-		GID_ITE_DEMO_G, // Game id
-		0, // features
+		GID_ITE, // Game id
+		GF_OLD_ITE_DOS, // features
 		ITE_DEFAULT_SCENE, // Starting scene number
 		&ITEDemo_Resources,
 		ARRAYSIZE(ITEDEMO_GameFonts),
@@ -230,9 +229,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 			Common::ADGF_DEMO
 		},
-		GType_ITE,
-		GID_ITE_MACDEMO2,
-		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES,
+		GID_ITE,
+		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_SCENE_SUBSTITUTES | GF_MONO_MUSIC,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -258,9 +256,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 			Common::ADGF_DEMO
 		},
-		GType_ITE,
-		GID_ITE_MACDEMO1,
-		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX | GF_NON_INTERACTIVE,
+		GID_ITE,
+		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_NON_INTERACTIVE,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -286,9 +283,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformWindows,
 			Common::ADGF_DEMO
 		},
-		GType_ITE,
-		GID_ITE_WINDEMO3,
-		GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES,
+		GID_ITE,
+		GF_WYRMKEEP | GF_SCENE_SUBSTITUTES,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -314,9 +310,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformWindows,
 			Common::ADGF_DEMO
 		},
-		GType_ITE,
-		GID_ITE_WINDEMO1,
-		GF_WYRMKEEP | GF_CD_FX | GF_NON_INTERACTIVE,
+		GID_ITE,
+		GF_WYRMKEEP | GF_NON_INTERACTIVE,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -349,9 +344,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_ITE,
-		GID_ITE_MACCD_G,
-		GF_BIG_ENDIAN_DATA | GF_CD_FX,
+		GID_ITE,
+		GF_BIG_ENDIAN_DATA,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -375,9 +369,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_ITE,
-		GID_ITE_MACCD,
-		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX,
+		GID_ITE,
+		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -409,9 +402,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformUnknown,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_ITE,
-		GID_ITE_MULTICD,
-		GF_WYRMKEEP | GF_CD_FX,
+		GID_ITE,
+		GF_WYRMKEEP,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
@@ -441,9 +433,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformUnknown,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_ITE,
-		GID_ITE_MULTICD,
-		GF_WYRMKEEP | GF_CD_FX,
+		GID_ITE,
+		GF_WYRMKEEP,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
@@ -467,9 +458,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_ITE,
-		GID_ITE_CD,
-		GF_CD_FX,
+		GID_ITE,
+		GF_EXTRA_ITE_CREDITS,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
@@ -493,9 +483,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_ITE,
-		GID_ITE_CD,
-		GF_CD_FX,
+		GID_ITE,
+		0,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
@@ -519,9 +508,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_ITE,
-		GID_ITE_CD_G,
-		GF_CD_FX,
+		GID_ITE,
+		0,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
@@ -546,9 +534,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_ITE,
-		GID_ITE_CD_DE,
-		GF_CD_FX,
+		GID_ITE,
+		0,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
@@ -575,9 +562,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_ITE,
-		GID_ITE_DISK_DE,
-		0,
+		GID_ITE,
+		GF_ITE_FLOPPY,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
@@ -601,9 +587,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_ITE,
-		GID_ITE_DISK_G,
-		0,
+		GID_ITE,
+		GF_ITE_FLOPPY,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
@@ -627,9 +612,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_ITE,
-		GID_ITE_DISK_G,
-		0,
+		GID_ITE,
+		GF_ITE_FLOPPY,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
@@ -662,9 +646,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		GType_IHNM,
-		GID_IHNM_DEMO,
-		0,
+		GID_IHNM,
+		GF_IHNM_DEMO,
 		IHNMDEMO_DEFAULT_SCENE,
 		&IHNMDEMO_Resources,
 		ARRAYSIZE(IHNMDEMO_GameFonts),
@@ -696,8 +679,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_IHNM,
-		GID_IHNM_CD,
+		GID_IHNM,
 		0,
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,
@@ -728,8 +710,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_IHNM,
-		GID_IHNM_CD_DE,
+		GID_IHNM,
 		0,
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,
@@ -758,8 +739,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_IHNM,
-		GID_IHNM_CD_ES,
+		GID_IHNM,
 		0,
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,
@@ -789,8 +769,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_IHNM,
-		GID_IHNM_CD_FR,
+		GID_IHNM,
 		0,
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,
@@ -819,8 +798,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_IHNM,
-		GID_IHNM_CD_ITA,
+		GID_IHNM,
 		0,
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,
@@ -846,8 +824,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
-		GType_IHNM,
-		GID_IHNM_CD_MAC,
+		GID_IHNM,
 		0, // GF_BIG_ENDIAN_DATA
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,
@@ -857,7 +834,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&MAC_GameSound,
 		NULL,
 	},
-	{ AD_TABLE_END_MARKER, 0, 0, 0, 0, NULL, 0, NULL, NULL, NULL, NULL }
+	{ AD_TABLE_END_MARKER, 0, 0, 0, NULL, 0, NULL, NULL, NULL, NULL }
 };
 
 } // End of namespace Saga

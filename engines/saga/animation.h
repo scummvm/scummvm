@@ -179,7 +179,7 @@ private:
 	}
 
 	bool isLongData() const {
-		if ((_vm->getGameType() == GType_ITE) && (_vm->getPlatform() != Common::kPlatformMacintosh)) {
+		if ((_vm->getGameId() == GID_ITE) && (_vm->getPlatform() != Common::kPlatformMacintosh)) {
 			return false;
 		}
 		return true;

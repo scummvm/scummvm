@@ -243,7 +243,7 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfQueueMusic),
 		OPCODE(sfDisableAbortSpeeches)
 	};
-	if (_vm->getGameType() == GType_IHNM)
+	if (_vm->getGameId() == GID_IHNM)
 		_scriptFunctionsList = IHNMscriptFunctionsList;
 	else
 		_scriptFunctionsList = ITEscriptFunctionsList;
@@ -282,7 +282,7 @@ void Script::sfTakeObject(SCRIPTFUNC_PARAMS) {
 		// Fixes bugs #2057200 - "IHNM: Invisible inventory objects", 
 		// #1861126 - "IHNM: Crash when Gorrister cuts sheet in the mooring ring"
 		// and some incorrect objects in the IHNM demo
-		if (_vm->getGameType() == GType_IHNM)
+		if (_vm->getGameId() == GID_IHNM)
 			obj->_spriteListResourceId = obj->_index;
 
 		_vm->_interface->addToInventory(objectId);
@@ -324,7 +324,7 @@ void Script::sfMainMode(SCRIPTFUNC_PARAMS) {
 	// by an incorrect stored mode
 	_vm->_interface->rememberMode();
 
-	if (_vm->getGameType() == GType_ITE)
+	if (_vm->getGameId() == GID_ITE)
 		setPointerVerb();
 
 	// The early Windows and Mac demos of ITE were non-interactive. In those demos,
@@ -393,7 +393,7 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 				return;
 			}
 			moduleNumber = 0;
-			if (_vm->getGameType() == GType_IHNM)
+			if (_vm->getGameId() == GID_IHNM)
 				moduleNumber = _vm->_scene->getScriptModuleNumber();
 			break;
 		case kGameObjectActor:
@@ -407,7 +407,7 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 			} else {
 				moduleNumber = _vm->_scene->getScriptModuleNumber();
 			}
-			if (_vm->getGameType() == GType_IHNM)
+			if (_vm->getGameId() == GID_IHNM)
 				moduleNumber = _vm->_scene->getScriptModuleNumber();
 			break;
 		case kGameObjectHitZone:
@@ -550,16 +550,16 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	int16 sceneNumber = thread->pop();
 	int16 entrance = thread->pop();
 
-	if (_vm->getGameType() == GType_IHNM) {
+	if (_vm->getGameId() == GID_IHNM) {
 		_vm->_gfx->setCursor(kCursorBusy);
 	}
 
-	if (_vm->getGameType() == GType_ITE && sceneNumber < 0) {
+	if (_vm->getGameId() == GID_ITE && sceneNumber < 0) {
 		_vm->quitGame();
 		return;
 	}
 
-	if (_vm->getGameType() == GType_IHNM && sceneNumber == 0) {
+	if (_vm->getGameId() == GID_IHNM && sceneNumber == 0) {
 		_vm->_scene->creditsScene();
 		return;
 	}
@@ -572,7 +572,7 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	}
 
 	// changeScene calls loadScene which calls setVerb. setVerb resets all pending objects and object flags
-	if (sceneNumber == -1 && _vm->getGameType() == GType_IHNM) {
+	if (sceneNumber == -1 && _vm->getGameId() == GID_IHNM) {
 		// Return back to the character selection screen in IHNM
 		_vm->_scene->changeScene(154, entrance, kTransitionFade, 8);
 	} else {
@@ -590,7 +590,7 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	_currentObject[0] = _currentObject[1] = ID_NOTHING;
 	showVerb();	// calls setStatusText("")
 
-	if (_vm->getGameType() == GType_IHNM) {
+	if (_vm->getGameId() == GID_IHNM) {
 		// There are some cutaways which are not removed by game scripts, like the cutaway
 		// after the intro of IHNM or the cutaway at the end of Ellen's part in the IHNM demo.
 		// Clear any remaining cutaways here
@@ -607,7 +607,7 @@ void Script::sfSetObjImage(SCRIPTFUNC_PARAMS) {
 	uint16 spriteId = thread->pop();
 	ObjectData *obj = _vm->_actor->getObj(objectId);
 
-	if (_vm->getGameType() == GType_IHNM)
+	if (_vm->getGameId() == GID_IHNM)
 		obj->_spriteListResourceId = spriteId;
 	else
 		obj->_spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
@@ -631,7 +631,7 @@ void Script::sfGetObjImage(SCRIPTFUNC_PARAMS) {
 	uint16 objectId = thread->pop();
 	ObjectData *obj = _vm->_actor->getObj(objectId);
 
-	if (_vm->getGameType() == GType_IHNM)
+	if (_vm->getGameId() == GID_IHNM)
 		thread->_returnValue = obj->_spriteListResourceId;
 	else
 		thread->_returnValue = obj->_spriteListResourceId - OBJ_SPRITE_BASE;
@@ -825,11 +825,11 @@ void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
 	// Change the scene number of the compact disk so that it's not shown. It will be shown
 	// once Ellen says that there's something different (i.e. after speaking with AM)
 	// See Actor::actorSpeech for the other part of this hack
-	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 3 &&
+	if (_vm->getGameId() == GID_IHNM && _vm->_scene->currentChapterNumber() == 3 &&
 		_vm->_scene->currentSceneNumber() == 59 && obj->_id == 16385)
 			obj->_sceneNumber = -1;
 
-	if (_vm->getGameType() == GType_IHNM) {
+	if (_vm->getGameId() == GID_IHNM) {
 		// Don't update _spriteListResourceId if spriteId is 0 and the object is not the
 		// psychic profile. If spriteId == 0, the object's sprite is incorrectly reset.
 		// This occurs in the IHNM demo and with some incorrect scripts in the retail version
@@ -865,13 +865,13 @@ void Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
 		actor1->_flags &= ~kProtagonist;
 		actor2->_flags |= kProtagonist;
 		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor2;
-		if (_vm->getGameType() == GType_IHNM)
+		if (_vm->getGameId() == GID_IHNM)
 			_vm->_scene->setProtag(actorId2);
 	} else if (actor2->_flags & kProtagonist) {
 		actor2->_flags &= ~kProtagonist;
 		actor1->_flags |= kProtagonist;
 		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor1;
-		if (_vm->getGameType() == GType_IHNM)
+		if (_vm->getGameId() == GID_IHNM)
 			_vm->_scene->setProtag(actorId1);
 	}
 }
@@ -897,7 +897,7 @@ void Script::sfSimulSpeech(SCRIPTFUNC_PARAMS) {
 		actorsIds[i] = thread->pop();
 
 	if (thread->_voiceLUT->voices) {
-		if (_vm->getGameType() == GType_IHNM && stringId >= 338) {
+		if (_vm->getGameId() == GID_IHNM && stringId >= 338) {
 			sampleResourceId = -1;
 		} else {
 			sampleResourceId = thread->_voiceLUT->voices[stringId];
@@ -964,7 +964,7 @@ void Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
 		actor->_actorFlags |= kActorRandom;
 	}
 	if (flags & kCycleReverse) {
-		if (_vm->getGameType() == GType_IHNM &&
+		if (_vm->getGameId() == GID_IHNM &&
 			_vm->_scene->currentChapterNumber() == 2 && _vm->_scene->currentSceneNumber() == 41) {
 			// WORKAROUND: Prevent Benny from walking backwards after talking to the child via the monitor. This
 			// occurs in the original as well, and is fixed by not setting the kActorBackwards flag at this point
@@ -1458,7 +1458,7 @@ void Script::sfEraseDelta(SCRIPTFUNC_PARAMS) {
 
 // Script function #63 (0x3F)
 void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		int16 param = thread->pop() + 9;
 
 		if (param >= 9 && param <= 34) {
@@ -1568,7 +1568,7 @@ void Script::sfPlaySound(SCRIPTFUNC_PARAMS) {
 
 	if (param >= 0 && param < _vm->_sndRes->_fxTableLen) {
 		res = _vm->_sndRes->_fxTable[param].res;
-		if (_vm->getFeatures() & GF_CD_FX)
+		if (_vm->getGameId() == GID_ITE && !(_vm->getFeatures() & GF_ITE_FLOPPY))
 			res -= 14;
 		_vm->_sndRes->playSound(res, _vm->_sndRes->_fxTable[param].vol, false);
 	} else {
@@ -1583,7 +1583,7 @@ void Script::sfPlayLoopedSound(SCRIPTFUNC_PARAMS) {
 
 	if (param >= 0 && param < _vm->_sndRes->_fxTableLen) {
 		res = _vm->_sndRes->_fxTable[param].res;
-		if (_vm->getFeatures() & GF_CD_FX)
+		if (_vm->getGameId() == GID_ITE && !(_vm->getFeatures() & GF_ITE_FLOPPY))
 			res -= 14;
 
 		_vm->_sndRes->playSound(res, _vm->_sndRes->_fxTable[param].vol, true);
@@ -1647,7 +1647,7 @@ void Script::finishDialog(int strID, int replyID, int flags, int bitOffset) {
 	if (_conversingThread) {
 		_vm->_interface->setMode(kPanelNull);
 
-		if (_vm->getGameType() == GType_IHNM) {
+		if (_vm->getGameId() == GID_IHNM) {
 			str = _conversingThread->_strings->getString(strID);
 			if (*str != '[') {
 				int sampleResourceId = -1;

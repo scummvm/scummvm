@@ -94,52 +94,9 @@ enum ERRORCODE {
 	SUCCESS = 0
 };
 
-enum SAGAGameType {
-	GType_ITE = 0,
-	GType_IHNM = 1
-};
-
 enum GameIds {
-	// Dreamers Guild
-	GID_ITE_DEMO_G = 0,
-	GID_ITE_DISK_G,
-	GID_ITE_DISK_G2,
-	GID_ITE_CD_G,
-	GID_ITE_CD_G2,
-	GID_ITE_MACCD_G,
-
-	// Wyrmkeep
-	GID_ITE_CD,       // data for Win rerelease is same as in old DOS
-	GID_ITE_WINCD,    // but it has a bunch of patch files
-	GID_ITE_MACCD,
-	GID_ITE_LINCD,
-	GID_ITE_MULTICD,  // Wyrmkeep combined Windows/Mac/Linux version
-	GID_ITE_WINDEMO1, // older Wyrmkeep windows demo
-	GID_ITE_MACDEMO1, // older Wyrmkeep mac demo
-	GID_ITE_LINDEMO,
-	GID_ITE_WINDEMO2,
-	GID_ITE_WINDEMO3,
-	GID_ITE_MACDEMO2,
-
-	// German
-	GID_ITE_DISK_DE,
-	GID_ITE_DISK_DE2,
-	GID_ITE_AMIGACD_DE, // TODO
-	GID_ITE_OLDMAC_DE,  // TODO
-	GID_ITE_AMIGA_FL_DE,// TODO
-	GID_ITE_CD_DE,      // reported by mld. Bestsellergamers cover disk
-	GID_ITE_CD_DE2,
-	GID_ITE_AMIGA_AGA_DEMO, // TODO
-	GID_ITE_AMIGA_ECS_DEMO, // TODO
-
-	GID_IHNM_DEMO,
-	GID_IHNM_CD,
-	GID_IHNM_CD_DE,   // reported by mld. German retail
-	GID_IHNM_CD_ES,
-	GID_IHNM_CD_RU,
-	GID_IHNM_CD_FR,
-	GID_IHNM_CD_ITA,
-	GID_IHNM_CD_MAC
+	GID_ITE = 0,
+	GID_IHNM = 1
 };
 
 enum GameFileTypes {
@@ -159,10 +116,14 @@ enum GameFileTypes {
 enum GameFeatures {
 	GF_BIG_ENDIAN_DATA   = 1 << 0,
 	GF_WYRMKEEP          = 1 << 1,
-	GF_CD_FX             = 1 << 2,
+	GF_ITE_FLOPPY        = 1 << 2,
 	GF_SCENE_SUBSTITUTES = 1 << 3,
 	GF_COMPRESSED_SOUNDS = 1 << 4,
-	GF_NON_INTERACTIVE   = 1 << 5
+	GF_NON_INTERACTIVE   = 1 << 5,
+	GF_OLD_ITE_DOS       = 1 << 6,
+	GF_MONO_MUSIC		 = 1 << 7,
+	GF_EXTRA_ITE_CREDITS = 1 << 8,
+	GF_IHNM_DEMO         = 1 << 9
 };
 
 enum VerbTypeIds {
@@ -604,7 +565,7 @@ public:
 	}
 
 	inline int ticksToMSec(int tick) {
-		if (getGameType() == GType_ITE)
+		if (getGameId() == GID_ITE)
 			return tick * 1000 / kScriptTimeTicksPerSecond;
 		else
 			return tick * 1000 / kScriptTimeTicksPerSecondIHNM;
@@ -642,7 +603,6 @@ public:
 	int getFontsCount() const;
 
 	int getGameId() const;
-	int getGameType() const;
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;

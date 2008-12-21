@@ -341,7 +341,7 @@ void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, co
 			// versions of IHNM, so it has been changed to apply for ITE only.
 			// It doesn't make any difference for the English version of IHNM.
 			// Fixes bug #1796045: "IHNM: Spanish font wrong".
-			if (!(flags & kFontDontmap) && _vm->getGameType() == GType_ITE) {
+			if (!(flags & kFontDontmap) && _vm->getGameId() == GID_ITE) {
 				c_code = translateChar(c_code);
 			}
 		} else if (_fontMapping == 1) {
@@ -659,7 +659,7 @@ Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 	FontId fontId = kSmallFont;
 
 	// The demo version of IHNM has 3 font types (like ITE), not 6 (like the full version of IHNM)
-	if (_vm->getGameType() == GType_ITE || _vm->getGameId() == GID_IHNM_DEMO) {
+	if (_vm->getGameId() == GID_ITE || _vm->getFeatures() & GF_IHNM_DEMO) {
 		switch (font) {
 		case (kKnownFontSmall):
 			fontId = kSmallFont;
@@ -681,7 +681,7 @@ Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 			fontId = _vm->_font->valid(kBigFont) ? kBigFont : kMediumFont;
 			break;
 		}
-	} else if (_vm->getGameType() == GType_IHNM && _vm->getGameId() != GID_IHNM_DEMO) {
+	} else if (_vm->getGameId() == GID_IHNM && !(_vm->getFeatures() & GF_IHNM_DEMO)) {
 		switch (font) {
 		case (kKnownFontSmall):
 			fontId = kSmallFont;

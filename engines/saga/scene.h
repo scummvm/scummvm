@@ -348,7 +348,7 @@ class Scene {
 	void drawTextList();
 
 	int getHeight(bool speech = false) const {
-		if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8 && !speech)
+		if (_vm->getGameId() == GID_IHNM && _vm->_scene->currentChapterNumber() == 8 && !speech)
 			return _vm->getDisplayInfo().logicalHeight;
 		else
 			return _vm->getDisplayInfo().sceneHeight;
@@ -360,7 +360,7 @@ class Scene {
 	void showIHNMDemoSpecialScreen();
 
 	bool isNonInteractiveIHNMDemoPart() {
-		return _vm->getGameId() == GID_IHNM_DEMO && (_sceneNumber >= 144 && _sceneNumber <= 149);
+		return _vm->getFeatures() & GF_IHNM_DEMO && (_sceneNumber >= 144 && _sceneNumber <= 149);
 	}
 
  private:

@@ -61,7 +61,7 @@ ScriptThread *Script::createThread(uint16 scriptModuleNumber, uint16 scriptEntry
 
 	newThread->_strings = &_modules[scriptModuleNumber].strings;
 
-	if (_vm->getGameType() == GType_IHNM)
+	if (_vm->getGameId() == GID_IHNM)
 		newThread->_voiceLUT = &_globalVoiceLUT;
 	else
 		newThread->_voiceLUT = &_modules[scriptModuleNumber].voiceLUT;
@@ -123,7 +123,7 @@ void Script::executeThreads(uint msec) {
 			if (thread->_flags & kTFlagFinished)
 				setPointerVerb();
 
-			if (_vm->getGameType() == GType_IHNM) {
+			if (_vm->getGameId() == GID_IHNM) {
 				thread->_flags &= ~kTFlagFinished;
 				thread->_flags |= kTFlagAborted;
 				++threadIterator;
@@ -190,7 +190,7 @@ void Script::abortAllThreads(void) {
 }
 
 void Script::completeThread(void) {
-	int limit = (_vm->getGameType() == GType_IHNM) ? 100 : 40;
+	int limit = (_vm->getGameId() == GID_IHNM) ? 100 : 40;
 
 	for (int i = 0; i < limit && !_threadList.empty(); i++)
 		executeThreads(0);
@@ -343,7 +343,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 		CASEOP(opCcallV)
 			argumentsCount = scriptS.readByte();
 			functionNumber = scriptS.readUint16LE();
-			if (functionNumber >= ((_vm->getGameType() == GType_IHNM) ?
+			if (functionNumber >= ((_vm->getGameId() == GID_IHNM) ?
 								   IHNM_SCRIPT_FUNCTION_MAX : ITE_SCRIPT_FUNCTION_MAX)) {
 				error("Script::runThread() Invalid script function number (%d)", functionNumber);
 			}
@@ -653,7 +653,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				}
 				// now data contains last string index
 
-				if (_vm->getGameId() == GID_ITE_DISK_G) { // special ITE dos
+				if (_vm->getFeatures() & GF_OLD_ITE_DOS) { // special ITE dos
 					if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) &&
 						(iparam1 >= 288) && (iparam1 <= (RID_SCENE1_VOICE_END - RID_SCENE1_VOICE_START + 288))) {
 						sampleResourceId = RID_SCENE1_VOICE_START + iparam1 - 288;
@@ -667,7 +667,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				if (sampleResourceId < 0 || sampleResourceId > 4000)
 					sampleResourceId = -1;
 
-				if (_vm->getGameType() == GType_ITE && !sampleResourceId)
+				if (_vm->getGameId() == GID_ITE && !sampleResourceId)
 					sampleResourceId = -1;
 
 				_vm->_actor->actorSpeech(actorId, strings, stringsCount, sampleResourceId, speechFlags);

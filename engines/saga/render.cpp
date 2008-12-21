@@ -101,7 +101,7 @@ void Render::drawScene() {
 	if (!(_flags & (RF_DEMO_SUBST | RF_MAP) || curMode == kPanelPlacard)) {
 		if (_vm->_interface->getFadeMode() != kFadeOut) {
 			// Display scene background
-			if (!(_flags & RF_DISABLE_ACTORS) || _vm->getGameType() == GType_ITE)
+			if (!(_flags & RF_DISABLE_ACTORS) || _vm->getGameId() == GID_ITE)
 				_vm->_scene->draw();
 
 			if (_vm->_puzzle->isActive()) {
@@ -176,7 +176,7 @@ void Render::drawScene() {
 
 	// Display "paused game" message, if applicable
 	if (_flags & RF_RENDERPAUSE) {
-		const char *pauseString = (_vm->getGameType() == GType_ITE) ? pauseStringITE : pauseStringIHNM;
+		const char *pauseString = (_vm->getGameId() == GID_ITE) ? pauseStringITE : pauseStringIHNM;
 		textPoint.x = (_vm->_gfx->getBackBufferWidth() - _vm->_font->getStringWidth(kKnownFontPause, pauseString, 0, kFontOutline)) / 2;
 		textPoint.y = 90;
 

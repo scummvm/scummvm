@@ -164,7 +164,7 @@ void Surface::transitionDissolve(const byte *sourceBuffer, const Common::Rect &s
 }
 
 void Gfx::initPalette() {
-	if (_vm->getGameType() != GType_IHNM)
+	if (_vm->getGameId() == GID_ITE)
 		return;
 
 	ResourceContext *resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
@@ -196,7 +196,7 @@ void Gfx::setPalette(const PalEntry *pal, bool full) {
 	byte *ppal;
 	int from, numcolors;
 
-	if (_vm->getGameType() != GType_IHNM || full) {
+	if (_vm->getGameId() == GID_ITE || full) {
 		from = 0;
 		numcolors = PAL_ENTRIES;
 	} else {
@@ -212,7 +212,7 @@ void Gfx::setPalette(const PalEntry *pal, bool full) {
 	}
 
 	// Color 0 should always be black in IHNM
-	if (_vm->getGameType() == GType_IHNM)
+	if (_vm->getGameId() == GID_IHNM)
 		memset(&_currentPal[0 * 4], 0, 4);
 
 	// Make 256th color black. See bug #1256368
@@ -270,7 +270,7 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 
 	double fpercent;
 
-	if (_vm->getGameType() != GType_IHNM) {
+	if (_vm->getGameId() == GID_ITE) {
 		from = 0;
 		numcolors = PAL_ENTRIES;
 	} else {
@@ -321,7 +321,7 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 	}
 
 	// Color 0 should always be black in IHNM
-	if (_vm->getGameType() == GType_IHNM)
+	if (_vm->getGameId() == GID_IHNM)
 		memset(&_currentPal[0 * 4], 0, 4);
 
 	// Make 256th color black. See bug #1256368
@@ -339,7 +339,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 	PalEntry *palE;
 	int from, numcolors;
 
-	if (_vm->getGameType() != GType_IHNM) {
+	if (_vm->getGameId() == GID_ITE) {
 		from = 0;
 		numcolors = PAL_ENTRIES;
 	} else {
@@ -388,7 +388,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 	}
 
 	// Color 0 should always be black in IHNM
-	if (_vm->getGameType() == GType_IHNM)
+	if (_vm->getGameId() == GID_IHNM)
 		memset(&_currentPal[0 * 4], 0, 4);
 
 	// Make 256th color black. See bug #1256368
@@ -473,7 +473,7 @@ void Gfx::showCursor(bool state) {
 }
 
 void Gfx::setCursor(CursorType cursorType) {
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		// Set up the mouse cursor
 		const byte A = kITEColorLightGrey;
 		const byte B = kITEColorWhite;
@@ -494,7 +494,7 @@ void Gfx::setCursor(CursorType cursorType) {
 
 		switch (cursorType) {
 		case kCursorBusy:
-			if (_vm->getGameId() != GID_IHNM_DEMO)
+			if (!(_vm->getFeatures() & GF_IHNM_DEMO))
 				resourceId = RID_IHNM_HOURGLASS_CURSOR;
 			else
 				resourceId = (uint32)-1;

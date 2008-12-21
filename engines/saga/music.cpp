@@ -76,7 +76,7 @@ public:
 	bool endOfData() const	{ return eosIntern(); }
 	bool isStereo() const	{
 		// The digital music in the ITE Mac demo version is not stereo
-		return _vm->getGameId() == GID_ITE_MACDEMO2 ? false : true;
+		return _vm->getFeatures() & GF_MONO_MUSIC ? false : true;
 	}
 	int getRate() const	{ return 11025; }
 };
@@ -453,7 +453,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	
 	int realTrackNumber;
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		if (flags == MUSIC_DEFAULT) {
 			if (resourceId == 13 || resourceId == 19) {
 				flags = MUSIC_NORMAL;
@@ -482,13 +482,13 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		}
 	}
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		if (resourceId >= 9 && resourceId <= 34) {
 			if (_digitalMusicContext != NULL) {
 				//TODO: check resource size
 				loopStart = 0;
 				// fix ITE sunstatm/sunspot score
-				if ((_vm->getGameType() == GType_ITE) && (resourceId == MUSIC_SUNSPOT)) {
+				if ((_vm->getGameId() == GID_ITE) && (resourceId == MUSIC_SUNSPOT)) {
 					loopStart = 4 * 18727;
 				}
 
@@ -511,12 +511,12 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	// Load MIDI/XMI resource data
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		context = _vm->_resource->getContext(GAME_MUSICFILE_GM);
 		if (context == NULL) {
 			context = _vm->_resource->getContext(GAME_RESOURCEFILE);
 		}
-	} else if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
+	} else if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 		// The music of the Mac version of IHNM is loaded from its
 		// associated external file later on
 	} else {
@@ -545,7 +545,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		// Note that the IHNM demo has only got one music file
 		// (music.rsc). It is assumed that it contains FM music
 
-		if (hasAdlib() || _vm->getGameId() == GID_IHNM_DEMO) {
+		if (hasAdlib() || _vm->getFeatures() & GF_IHNM_DEMO) {
 			context = _vm->_resource->getContext(GAME_MUSICFILE_FM);
 		} else {
 			context = _vm->_resource->getContext(GAME_MUSICFILE_GM);
@@ -554,7 +554,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	_player->setGM(true);
 
-	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
+	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 		// Load the external music file for Mac IHNM
 		Common::File musicFile;
 		char musicFileName[40];
@@ -577,7 +577,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	}
 
 	if (xmidiParser->loadMusic(resourceData, resourceSize)) {
-		if (_vm->getGameType() == GType_ITE)
+		if (_vm->getGameId() == GID_ITE)
 			_player->setGM(false);
 
 		parser = xmidiParser;

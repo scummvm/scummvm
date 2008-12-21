@@ -58,24 +58,26 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 		memoryError("Sprite::Sprite");
 	}
 
-	if (_vm->getGameType() == GType_ITE) {
+	if (_vm->getGameId() == GID_ITE) {
 		loadList(_vm->getResourceDescription()->mainSpritesResourceId, _mainSprites);
 		_arrowSprites = _saveReminderSprites = _inventorySprites = _mainSprites;
-	} else {
-		if (_vm->getGameId() == GID_IHNM_DEMO) {
+	} else if (_vm->getGameId() == GID_IHNM) {
+		if (_vm->getFeatures() & GF_IHNM_DEMO) {
 			loadList(RID_IHNMDEMO_ARROW_SPRITES, _arrowSprites);
 			loadList(RID_IHNMDEMO_SAVEREMINDER_SPRITES, _saveReminderSprites);
 		} else {
 			loadList(RID_IHNM_ARROW_SPRITES, _arrowSprites);
 			loadList(RID_IHNM_SAVEREMINDER_SPRITES, _saveReminderSprites);
 		}
+	} else {
+		error("Sprite: unknown game type");
 	}
 }
 
 Sprite::~Sprite(void) {
 	debug(8, "Shutting down sprite subsystem...");
 	_mainSprites.freeMem();
-	if (_vm->getGameType() == GType_IHNM) {
+	if (_vm->getGameId() == GID_IHNM) {
 		_inventorySprites.freeMem();
 		_arrowSprites.freeMem();
 		_saveReminderSprites.freeMem();
@@ -118,7 +120,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 	spriteList.spriteCount = newSpriteCount;
 
-	bool bigHeader = _vm->getGameType() != GType_ITE || _vm->isMacResources();
+	bool bigHeader = _vm->getGameId() == GID_IHNM || _vm->isMacResources();
 
 	for (i = oldSpriteCount; i < spriteList.spriteCount; i++) {
 		spriteInfo = &spriteList.infoList[i];
@@ -169,7 +171,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		// assume are perverse. To simplify things, flip them now. Not
 		// at drawing time.
 
-		if (_vm->getGameType() == GType_IHNM) {
+		if (_vm->getGameId() == GID_IHNM) {
 			byte *src = _decodeBuf + spriteInfo->width * (spriteInfo->height - 1);
 			byte *dst = spriteInfo->decodedBuffer;
 
