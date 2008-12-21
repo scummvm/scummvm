@@ -98,9 +98,6 @@ MadsPack::~MadsPack() {
 
 //--------------------------------------------------------------------------
 
-const char *FabInputExceededError = "FabDecompressor - Passed end of input buffer during decompression";
-const char *FabOutputExceededError = "FabDecompressor - Decompressed data exceeded specified size";
-
 void FabDecompressor::decompress(const byte *srcData, int srcSize, byte *destData, int destSize) {
 	byte copyLen, copyOfsShift, copyOfsMask, copyLenMask;
 	unsigned long copyOfs;
@@ -151,16 +148,16 @@ void FabDecompressor::decompress(const byte *srcData, int srcSize, byte *destDat
 			}
 			while (copyLen-- > 0) {
 				if (destP - destData == destSize)
-					error(FabOutputExceededError);
+					error("FabDecompressor - Decompressed data exceeded specified size");
 
 				*destP = destP[(signed int)copyOfs];
 				destP++;
 			}
 		} else {
 			if (_srcP - srcData == srcSize)
-				error(FabInputExceededError);
+				error("FabDecompressor - Passed end of input buffer during decompression");
 			if (destP - destData == destSize)
-				error(FabOutputExceededError);
+				error("FabDecompressor - Decompressed data exceeded specified size");
 
 			*destP++ = *_srcP++;
 		}
@@ -174,7 +171,7 @@ int FabDecompressor::getBit() {
 	_bitsLeft--;
 	if (_bitsLeft == 0) {
 		if (_srcP - _srcData == _srcSize)
-			error(FabInputExceededError);
+			error("FabDecompressor - Passed end of input buffer during decompression");
 
 		_bitBuffer = (READ_LE_UINT16(_srcP) << 1) | (_bitBuffer & 1);
 		_srcP += 2;
