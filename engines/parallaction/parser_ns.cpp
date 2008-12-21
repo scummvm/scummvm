@@ -862,12 +862,16 @@ Question *LocationParser_ns::parseQuestion() {
 	return question;
 }
 
-Answer *LocationParser_ns::parseAnswer() {
+void LocationParser_ns::parseAnswerVariants(Answer *answer) {
+	if (!_tokens[1][0]) {
+		return;
+	}
 
-	Answer *answer = new Answer;
-	assert(answer);
+	if (!scumm_stricmp(_tokens[1], "counter")) {
+		// TODO: parse the counter and the condition. This is done creating a new
+		// Command and usng the command parser for CMD_TEST in the original.
 
-	if (_tokens[1][0]) {
+	} else {
 
 		Table* flagNames;
 		uint16 token;
@@ -896,6 +900,14 @@ Answer *LocationParser_ns::parseAnswer() {
 		} while (!scumm_stricmp(_tokens[token++], "|"));
 
 	}
+}
+
+Answer *LocationParser_ns::parseAnswer() {
+
+	Answer *answer = new Answer;
+	assert(answer);
+
+	parseAnswerVariants(answer);
 
 	answer->_text = parseDialogueString();
 
