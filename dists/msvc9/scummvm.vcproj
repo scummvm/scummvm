@@ -1290,22 +1290,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\graphics\dxa_player.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\graphics\dxa_player.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\graphics\flic_player.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\graphics\flic_player.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\graphics\font.cpp"
 				>
 			</File>
@@ -1346,14 +1330,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\graphics\mpeg_player.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\graphics\mpeg_player.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\graphics\primitives.cpp"
 				>
 			</File>
@@ -1367,14 +1343,6 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\scaler.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\graphics\smk_player.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\graphics\smk_player.h"
 				>
 			</File>
 			<File
@@ -1530,6 +1498,42 @@
 				</File>
 				<File
 					RelativePath="..\..\graphics\fonts\scummfont.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="video"
+				>
+				<File
+					RelativePath="..\..\graphics\video\dxa_player.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\graphics\video\dxa_player.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\graphics\video\flic_player.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\graphics\video\flic_player.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\graphics\video\mpeg_player.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\graphics\video\mpeg_player.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\graphics\video\smk_player.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\graphics\video\smk_player.h"
 					>
 				</File>
 			</Filter>
