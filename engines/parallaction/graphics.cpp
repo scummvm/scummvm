@@ -775,6 +775,11 @@ void Gfx::destroyBalloons() {
 	_balloons.clear();
 }
 
+void Gfx::freeDialogueObjects() {
+	freeItems();
+	_vm->_balloonMan->freeBalloons();
+}
+
 void Gfx::freeItems() {
 	_items.clear();
 }

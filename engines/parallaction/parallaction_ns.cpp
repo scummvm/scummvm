@@ -202,13 +202,13 @@ Common::Error Parallaction_ns::init() {
 
 Parallaction_ns::~Parallaction_ns() {
 	freeFonts();
+	freeCharacter();
 
 	delete _locationParser;
 	delete _programParser;
 	freeLocation(true);
 
 	_location._animations.remove(_char._ani);
-
 }
 
 
@@ -405,18 +405,14 @@ void Parallaction_ns::changeCharacter(const char *name) {
 		return;
 	}
 
-	// freeCharacter takes responsibility for checking
-	// character for sanity before memory is freed
 	freeCharacter();
 
-	_char._ani->gfxobj = _gfx->loadAnim(_char.getFullName());
-	_char._ani->gfxobj->setFlags(kGfxObjCharacter);
-	_char._ani->gfxobj->clearFlags(kGfxObjNormal);
+	_char._ani->gfxobj = _gfx->loadCharacterAnim(_char.getFullName());
 
 	if (!_char.dummy()) {
 		_char._head = _disk->loadHead(_char.getBaseName());
 		_char._talk = _disk->loadTalk(_char.getBaseName());
-		_char._objs = _disk->loadObjects(_char.getBaseName());
+		_objects = _disk->loadObjects(_char.getBaseName());
 		_objectsNames = _disk->loadTable(_char.getBaseName());
 
 		_soundMan->playCharacterMusic(_char.getBaseName());
@@ -437,6 +433,23 @@ void Parallaction_ns::changeCharacter(const char *name) {
 	return;
 }
 
+void Parallaction_ns::freeCharacter() {
+	_gfx->freeCharacterObjects();
+
+	delete _char._talk;
+	delete _char._head;
+	delete _char._ani->gfxobj;
+	delete _objects;
+	delete _objectsNames;
+
+	_char._talk = 0;
+	_char._head = 0;
+	_char._ani->gfxobj = 0;
+
+	_objects = 0;
+	_objectsNames = 0;
+}
+
 void Parallaction_ns::freeLocation(bool removeAll) {
 	debugC(2, kDebugExec, "freeLocation");
 
@@ -447,7 +460,7 @@ void Parallaction_ns::freeLocation(bool removeAll) {
 
 	_localFlagNames->clear();
 
-	_gfx->clearGfxObjects(kGfxObjNormal);
+	_gfx->freeLocationObjects();
 
 	_location._animations.remove(_char._ani);
 	_location.cleanup(removeAll);

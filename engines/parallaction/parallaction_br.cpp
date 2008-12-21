@@ -100,6 +100,7 @@ Common::Error Parallaction_br::init() {
 
 Parallaction_br::~Parallaction_br() {
 	freeFonts();
+	freeCharacter();
 
 	delete _locationParser;
 	delete _programParser;
@@ -178,13 +179,23 @@ void Parallaction_br::runPendingZones() {
 	}
 }
 
+void Parallaction_br::freeCharacter() {
+	_gfx->freeCharacterObjects();
+
+	delete _char._talk;
+	delete _char._ani->gfxobj;
+
+	_char._talk = 0;
+	_char._ani->gfxobj = 0;
+}
+
 void Parallaction_br::freeLocation(bool removeAll) {
 
 	// free open location stuff
 	clearSubtitles();
-	_gfx->clearGfxObjects(kGfxObjNormal);
-	_gfx->freeLabels();
 	_subtitle[0] = _subtitle[1] = -1;
+
+	_gfx->freeLocationObjects();
 
 	_location._animations.remove(_char._ani);
 	_location.cleanup(removeAll);
@@ -195,7 +206,7 @@ void Parallaction_br::freeLocation(bool removeAll) {
 void Parallaction_br::cleanupGame() {
 	freeLocation(true);
 
-//		freeCharacter();
+	freeCharacter();
 
 	delete _globalFlagsNames;
 	delete _objectsNames;
@@ -233,9 +244,9 @@ void Parallaction_br::changeLocation(char *location) {
 
 		// TODO: maybe handle this into Disk
 		if (getPlatform() == Common::kPlatformPC) {
-			_char._objs = _disk->loadObjects("icone.ico");
+			_objects = _disk->loadObjects("icone.ico");
 		} else {
-			_char._objs = _disk->loadObjects("icons.ico");
+			_objects = _disk->loadObjects("icons.ico");
 		}
 
 		parseLocation("common.slf");
@@ -299,15 +310,16 @@ void Parallaction_br::loadProgram(AnimationPtr a, const char *filename) {
 
 
 void Parallaction_br::changeCharacter(const char *name) {
+
 	const char *charName = _char.getName();
 
 	if (scumm_stricmp(charName, name)) {
+		freeCharacter();
+
 		debugC(1, kDebugExec, "changeCharacter(%s)", name);
 
 		_char.setName(name);
-		_char._ani->gfxobj = _gfx->loadAnim(name);
-		_char._ani->gfxobj->setFlags(kGfxObjCharacter);
-		_char._ani->gfxobj->clearFlags(kGfxObjNormal);
+		_char._ani->gfxobj = _gfx->loadCharacterAnim(name);
 		_char._talk = _disk->loadTalk(name);
 	}
 

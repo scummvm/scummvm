@@ -216,7 +216,7 @@ void InventoryRenderer::drawItem(ItemPosition pos, ItemName name) {
 }
 
 void InventoryRenderer::drawItem(ItemName name, byte *buffer, uint pitch) {
-	byte* s = _vm->_char._objs->getData(name);
+	byte* s = _vm->_objects->getData(name);
 	byte* d = buffer;
 	for (uint i = 0; i < _props->_itemHeight; i++) {
 		memcpy(d, s, _props->_itemWidth);

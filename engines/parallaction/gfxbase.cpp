@@ -103,6 +103,12 @@ GfxObj* Gfx::loadAnim(const char *name) {
 	return obj;
 }
 
+GfxObj* Gfx::loadCharacterAnim(const char *name) {
+	GfxObj *obj = loadAnim(name);
+	obj->setFlags(kGfxObjCharacter);
+	obj->clearFlags(kGfxObjNormal);
+	return obj;
+}
 
 GfxObj* Gfx::loadGet(const char *name) {
 	GfxObj *obj = _disk->loadStatic(name);
@@ -139,6 +145,18 @@ void Gfx::clearGfxObjects(uint filter) {
 	}
 
 }
+
+void Gfx::freeLocationObjects() {
+	freeDialogueObjects();
+	clearGfxObjects(kGfxObjNormal);
+	freeLabels();
+}
+
+void Gfx::freeCharacterObjects() {
+	freeDialogueObjects();
+	clearGfxObjects(kGfxObjCharacter);
+}
+
 
 void Gfx::loadGfxObjMask(const char *name, GfxObj *obj) {
 	Common::Rect rect;

@@ -83,11 +83,10 @@ Parallaction::~Parallaction() {
 	delete _programExec;
 	delete _saveLoad;
 
-	_gfx->clearGfxObjects(kGfxObjCharacter | kGfxObjNormal);
-	hideDialogueStuff();
+	_gfx->freeCharacterObjects();
+	_gfx->freeLocationObjects();
 	delete _balloonMan;
 
-	freeCharacter();
 	destroyInventory();
 
 	cleanupGui();
@@ -110,6 +109,7 @@ Common::Error Parallaction::init() {
 	_location._startPosition.x = -1000;
 	_location._startPosition.y = -1000;
 	_location._startFrame = 0;
+	_objects = 0;
 
 	_screenSize = _screenWidth * _screenHeight;
 
@@ -172,25 +172,6 @@ void Parallaction::updateView() {
 	_system->delayMillis(30);
 }
 
-
-void Parallaction::hideDialogueStuff() {
-	_gfx->freeItems();
-	_balloonMan->freeBalloons();
-}
-
-
-void Parallaction::freeCharacter() {
-	debugC(1, kDebugExec, "freeCharacter()");
-
-	delete _objectsNames;
-	_objectsNames = 0;
-
-	_gfx->clearGfxObjects(kGfxObjCharacter);
-
-	_char.free();
-
-	return;
-}
 
 
 void Parallaction::pauseJobs() {
@@ -571,7 +552,7 @@ void Parallaction::enterCommentMode(ZonePtr z) {
 void Parallaction::exitCommentMode() {
 	_input->_inputMode = Input::kInputModeGame;
 
-	hideDialogueStuff();
+	_gfx->freeDialogueObjects();
 	_gfx->setHalfbriteMode(false);
 
 	_cmdExec->run(_commentZone->_commands, _commentZone);
@@ -848,7 +829,6 @@ WalkFrames _char24WalkFrames = {
 Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation) {
 	_talk = NULL;
 	_head = NULL;
-	_objs = NULL;
 
 	_direction = WALK_DOWN;
 	_step = 0;
@@ -877,8 +857,6 @@ Character::~Character() {
 
 	delete _walker;
 	_walker = 0;
-
-	free();
 }
 
 void Character::getFoot(Common::Point &foot) {
@@ -916,21 +894,6 @@ void Character::scheduleWalk(int16 x, int16 y) {
 	dumpPath(_walkPath, _name);
 #endif
 	_engineFlags |= kEngineWalking;
-}
-
-void Character::free() {
-
-	delete _talk;
-	delete _head;
-	delete _objs;
-	delete _ani->gfxobj;
-
-	_talk = NULL;
-	_head = NULL;
-	_objs = NULL;
-	_ani->gfxobj = NULL;
-
-	return;
 }
 
 

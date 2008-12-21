@@ -309,7 +309,7 @@ void DialogueManager::runQuestion() {
 	debugC(9, kDebugDialogue, "runQuestion\n");
 
 	if (_mouseButtons == kMouseLeftUp) {
-		_vm->hideDialogueStuff();
+		_vm->_gfx->freeDialogueObjects();
 		_state = NEXT_ANSWER;
 	}
 
@@ -347,7 +347,7 @@ void DialogueManager::runAnswer() {
 
 	if (_answerId != -1) {
 		_cmdList = &_q->_answers[_answerId]->_commands;
-		_vm->hideDialogueStuff();
+		_vm->_gfx->freeDialogueObjects();
 		_state = NEXT_QUESTION;
 	}
 }

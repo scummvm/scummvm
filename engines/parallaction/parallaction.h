@@ -198,7 +198,6 @@ struct Character {
 	AnimationPtr	_ani;
 	GfxObj			*_head;
 	GfxObj			*_talk;
-	GfxObj			*_objs;
 	PathBuilder		*_builder;
 	PathWalker		*_walker;
 	PointList		_walkPath;
@@ -209,8 +208,6 @@ struct Character {
 	void getFoot(Common::Point &foot);
 	void setFoot(const Common::Point &foot);
 	void scheduleWalk(int16 x, int16 y);
-
-	void free();
 
 protected:
 	CharacterName	_name;
@@ -281,6 +278,7 @@ public:
 	// game utilities
 	Table				*_globalFlagsNames;
 	Table				*_objectsNames;
+	GfxObj				*_objects;
 	Table				*_callableNames;
 	Table				*_localFlagNames;
 	CommandExec			*_cmdExec;
@@ -314,7 +312,6 @@ protected:
 	void 	exitCommentMode();
 	void	updateView();
 	void 	drawAnimations();
-	void	freeCharacter();
 	void	doLocationEnterTransition();
 	void	allocateLocationSlot(const char *name);
 	void	finalizeLocationParsing();
@@ -325,7 +322,6 @@ public:
 	void	beep();
 	void	pauseJobs();
 	void	resumeJobs();
-	void 	hideDialogueStuff();
 	uint 	getInternLanguage();
 	void 	setInternLanguage(uint id);
 	void 	enterDialogueMode(ZonePtr z);
@@ -388,7 +384,6 @@ public:
 	virtual void 	runPendingZones();
 	virtual void 	cleanupGame();
 
-
 	void 	switchBackground(const char* background, const char* mask);
 
 private:
@@ -405,6 +400,7 @@ private:
 	void	startEndPartSequence();
 	void	loadProgram(AnimationPtr a, const char *filename);
 	void	freeLocation(bool removeAll);
+	void 	freeCharacter();
 
 
 	//  callables data
@@ -478,7 +474,6 @@ public:
 	virtual void runPendingZones();
 	virtual void cleanupGame();
 
-
 	void setupSubtitles(char *s, char *s2, int y);
 	void clearSubtitles();
 
@@ -509,6 +504,7 @@ private:
 	void	freeLocation(bool removeAll);
 	void 	loadProgram(AnimationPtr a, const char *filename);
 	void 	startGui(bool showSplash);
+	void 	freeCharacter();
 
 	typedef void (Parallaction_br::*Callable)(void*);
 	const Callable *_callables;

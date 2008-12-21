@@ -160,7 +160,7 @@ class MainMenuInputState_BR : public MenuInputState {
 
 	void cleanup() {
 		_vm->_system->showMouse(false);
-		_vm->hideDialogueStuff();
+		_vm->_gfx->freeDialogueObjects();
 
 		for (int i = 0; i < _availItems; i++) {
 			delete _lines[i];

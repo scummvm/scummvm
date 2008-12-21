@@ -190,6 +190,7 @@ protected:
 	Dialogue	*parseDialogue();
 	void		resolveDialogueForwards(Dialogue *dialogue, uint numQuestions, Table &forwards);
 	Answer		*parseAnswer();
+	void 		parseAnswerVariants(Answer *answer);
 	Question	*parseQuestion();
 
 	void		parseZone(ZoneList &list, char *name);

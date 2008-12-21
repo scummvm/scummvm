@@ -507,6 +507,9 @@ public:
 	GfxObj* loadAnim(const char *name);
 	GfxObj* loadGet(const char *name);
 	GfxObj* loadDoor(const char *name);
+	GfxObj* loadCharacterAnim(const char *name);
+	void freeCharacterObjects();
+	void freeLocationObjects();
 	void showGfxObj(GfxObj* obj, bool visible);
 	void clearGfxObjects(uint filter);
 	void sortScene();
@@ -525,6 +528,8 @@ public:
 	// dialogue balloons
 	GfxObj* registerBalloon(Frames *frames, const char *text);
 	void destroyBalloons();
+
+	void freeDialogueObjects();
 
 	// other items
 	int setItem(GfxObj* obj, uint16 x, uint16 y, byte transparentColor = 0);
