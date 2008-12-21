@@ -76,13 +76,13 @@ public:
 	 * Returns the current frame number of the video
 	 * @return the current frame number of the video
 	 */
-	int getCurFrame();
+	int32 getCurFrame();
 
 	/**
 	 * Returns the amount of frames in the video
 	 * @return the amount of frames in the video
 	 */
-	int getFrameCount();
+	int32 getFrameCount();
 
 	/**
 	 * Returns the frame rate of the video

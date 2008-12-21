@@ -76,13 +76,13 @@ int DXAPlayer::getHeight() {
 	return _height;
 }
 
-int DXAPlayer::getCurFrame() {
+int32 DXAPlayer::getCurFrame() {
 	if (!_fileStream)
 		return -1;
 	return _frameNum;
 }
 
-int DXAPlayer::getFrameCount() {
+int32 DXAPlayer::getFrameCount() {
 	if (!_fileStream)
 		return 0;
 	return _framesCount;
@@ -142,20 +142,20 @@ bool DXAPlayer::loadFile(const char *fileName) {
 		_curHeight = _height;
 	}
 
-	debug(2, "flags 0x0%x framesCount %d width %d height %d rate %d ticks %d", flags, _framesCount, _width, _height, _framesPerSec, _frameTicks);
+	debug(2, "flags 0x0%x framesCount %d width %d height %d rate %d ticks %d", flags, getFrameCount(), getWidth(), getHeight(), getFrameRate(), getFrameDelay());
 
 	_frameSize = _width * _height;
 	_decompBufferSize = _frameSize;
 	_frameBuffer1 = (uint8 *)malloc(_frameSize);
 	_frameBuffer2 = (uint8 *)malloc(_frameSize);
 	if (!_frameBuffer1 || !_frameBuffer2)
-		error("DXAPlayer: Error allocating frame buffers (size %d)", _frameSize);
+		error("DXAPlayer: Error allocating frame buffers (size %u)", _frameSize);
 
 	_scaledBuffer = 0;
 	if (_scaleMode != S_NONE) {
 		_scaledBuffer = (uint8 *)malloc(_frameSize);
 		if (!_scaledBuffer)
-			error("Error allocating scale buffer (size %d)", _frameSize);
+			error("Error allocating scale buffer (size %u)", _frameSize);
 	}
 
 #ifdef DXA_EXPERIMENT_MAXD
@@ -236,7 +236,7 @@ void DXAPlayer::decode12(int size) {
 	if (_decompBuffer == NULL) {
 		_decompBuffer = (byte *)malloc(_decompBufferSize);
 		if (_decompBuffer == NULL)
-			error("Error allocating decomp buffer (size %d)", _decompBufferSize);
+			error("Error allocating decomp buffer (size %u)", _decompBufferSize);
 	}
 	/* decompress the input data */
 	decodeZlib(_decompBuffer, size, _decompBufferSize);
@@ -337,7 +337,7 @@ void DXAPlayer::decode13(int size) {
 	if (_decompBuffer == NULL) {
 		_decompBuffer = (byte *)malloc(_decompBufferSize);
 		if (_decompBuffer == NULL)
-			error("Error allocating decomp buffer (size %d)", _decompBufferSize);
+			error("Error allocating decomp buffer (size %u)", _decompBufferSize);
 	}
 
 	/* decompress the input data */
@@ -536,7 +536,7 @@ void DXAPlayer::decodeNextFrame() {
 			free(_inBuffer);
 			_inBuffer = (byte *)malloc(size);
 			if (_inBuffer == NULL)
-				error("Error allocating input buffer (size %d)", size);
+				error("Error allocating input buffer (size %u)", size);
 			_inBufferSize = size;
 		}
 
