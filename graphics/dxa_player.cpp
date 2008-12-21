@@ -88,7 +88,7 @@ int DXAPlayer::getFrameCount() {
 	return _framesCount;
 }
 
-int DXAPlayer::getFrameRate() {
+int32 DXAPlayer::getFrameRate() {
 	if (!_fileStream)
 		return 0;
 	return _framesPerSec;
