@@ -744,7 +744,7 @@ void AGOSEngine_Simon2::setupGame() {
 
 	_numMusic = 93;
 	_numSFX = 222;
-	_numSpeech = 3632;
+	_numSpeech = 11997;
 
 	AGOSEngine::setupGame();
 }
@@ -770,7 +770,7 @@ void AGOSEngine_Simon1::setupGame() {
 
 	_numMusic = 34;
 	_numSFX = 127;
-	_numSpeech = 1996;
+	_numSpeech = 3623;
 
 	AGOSEngine::setupGame();
 }
