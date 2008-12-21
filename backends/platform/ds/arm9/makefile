@@ -196,6 +196,7 @@ ifdef USE_MAD
 	DEFINES += -DUSE_MAD
 endif
 
+DEFINES += -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DREDUCE_MEMORY_USAGE
 
 LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -Wl,--wrap,time -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections
 
@@ -248,7 +249,6 @@ endif
 
 DATA_OBJS := $(portdir)/data/icons.o $(portdir)/data/keyboard.o $(portdir)/data/keyboard_pal.o $(portdir)/data/default_font.o $(portdir)/data/8x8font_tga.o
 
-
 COMPRESSOR_OBJS := 
 #$(portdir)/source/compressor/lz.o
 
@@ -274,7 +274,7 @@ LIBCARTRESET_OBJS :=
 #$(portdir)/source/libcartreset/cartreset.o
 
 # Files in this list will be optimisied for speed, otherwise they will be optimised for space
-OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp mixer.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp
+OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp
 #OPTLIST :=
 
 # Compiler options for files which should be optimised for speed
