@@ -562,12 +562,29 @@ void AGOSEngine_Feeble::off_mouseOff() {
 void AGOSEngine_Feeble::off_loadVideo() {
 	// 182: load video file
 	const byte *filename = getStringPtrByID(getNextStringID());
-	_moviePlay->load((const char *)filename);
+
+	_moviePlayer = makeMoviePlayer(this, (const char *)filename);
+
+	assert(_moviePlayer);
+	_moviePlayer->load();
 }
 
 void AGOSEngine_Feeble::off_playVideo() {
 	// 183: play video
-	_moviePlay->play();
+	if (getBitFlag(40)) {
+		// Omni TV controls
+		if (_moviePlayer) {
+			_moviePlayer->play();
+		} else {
+			_variableArray[254] = 6747;
+		}
+	} else {
+		assert(_moviePlayer);
+		_moviePlayer->play();
+
+		delete _moviePlayer;
+		_moviePlayer = NULL;
+	}
 }
 
 void AGOSEngine_Feeble::off_centreScroll() {

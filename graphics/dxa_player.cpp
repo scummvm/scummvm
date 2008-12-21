@@ -55,7 +55,6 @@ DXAPlayer::DXAPlayer() {
 	_framesCount = 0;
 	_frameNum = 0;
 	_framesPerSec = 0;
-	_frameSkipped = 0;
 	_frameTicks = 0;
 
 	_scaleMode = S_NONE;
@@ -174,7 +173,6 @@ bool DXAPlayer::loadFile(const char *fileName) {
 	}
 #endif
 	_frameNum = 0;
-	_frameSkipped = 0;
 
 	return true;
 }
@@ -577,6 +575,8 @@ void DXAPlayer::decodeNextFrame() {
 		_drawBuffer = _frameBuffer1;
 		break;
 	}
+
+	_frameNum++;
 }
 
 } // End of namespace Graphics

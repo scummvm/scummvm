@@ -459,7 +459,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_vgaTickCounter = 0;
 
-	_moviePlay = 0;
+	_moviePlayer = 0;
 	_sound = 0;
 
 	_effectsPaused = false;
@@ -605,8 +605,6 @@ Common::Error AGOSEngine::init() {
 
 	_debugger = new Debugger(this);
 	_sound = new Sound(this, gss, _mixer);
-
-	_moviePlay = new MoviePlayer(this, _mixer);
 
 	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1) {
 		_musicPaused = true;
@@ -920,7 +918,7 @@ AGOSEngine::~AGOSEngine() {
 	delete[] _windowList;
 
 	delete _debugger;
-	delete _moviePlay;
+	delete _moviePlayer;
 	delete _sound;
 }
 
@@ -1007,8 +1005,14 @@ Common::Error AGOSEngine::go() {
 
 	if ((getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformMacintosh) &&
 		getGameType() == GType_FF) {
-		_moviePlay->load((const char *)"epic.dxa");
-		_moviePlay->play();
+		_moviePlayer = makeMoviePlayer(this, (const char *)"epic.dxa");
+		assert(_moviePlayer);
+
+		_moviePlayer->load();
+		_moviePlayer->play();
+
+		delete _moviePlayer;
+		_moviePlayer = NULL;
 	}
 
 	runSubroutine101();
@@ -1068,7 +1072,7 @@ void AGOSEngine::shutdown() {
 	delete[] _windowList;
 
 	delete _debugger;
-	delete _moviePlay;
+	delete _moviePlayer;
 	delete _sound;
 
 	_system->shouldQuit();

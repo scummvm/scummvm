@@ -53,7 +53,6 @@ protected:
 	uint32 _framesPerSec;
 	uint16 _frameNum;
 	uint32 _frameSize;
-	uint16 _frameSkipped;
 	uint32 _frameTicks;
 	ScaleMode _scaleMode;
 

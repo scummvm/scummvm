@@ -162,6 +162,8 @@ class Debugger;
 class AGOSEngine : public Engine {
 	friend class Debugger;
 	friend class MoviePlayer;
+	friend class MoviePlayerDXA;
+	friend class MoviePlayerSMK;
 
 	// Engine APIs
 	virtual Common::Error init();
@@ -535,7 +537,7 @@ protected:
 
 	int _vgaTickCounter;
 
-	MoviePlayer *_moviePlay;
+	MoviePlayer *_moviePlayer;
 	Audio::SoundHandle _modHandle;
 
 	Sound *_sound;

@@ -580,8 +580,15 @@ void AGOSEngine_Feeble::timer_proc1() {
 			}
 		}
 
-		if (getGameType() == GType_FF) {
-			_moviePlay->nextFrame();
+		if (getGameType() == GType_FF && _moviePlayer) {
+			// Controls Omni TV videos
+			if (getBitFlag(42)) {
+				_moviePlayer->stopVideo();
+				delete _moviePlayer;
+				_moviePlayer = NULL;
+			} else {
+				_moviePlayer->nextFrame();
+			}
 		}
 
 		animateSprites();
