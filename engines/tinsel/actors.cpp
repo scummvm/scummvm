@@ -173,6 +173,7 @@ void RegisterActors(int num) {
 
 		// FIXME: For now, we always allocate MAX_SAVED_ALIVES blocks,
 		//   as this makes the save/load code simpler
+		// size of ACTORINFO is 148, so this allocates 512 * 148 = 75776 bytes, about 74KB
 		actorInfo = (ACTORINFO *)calloc(MAX_SAVED_ALIVES, sizeof(ACTORINFO));
 		if (TinselV2)
 			zFactors = (uint8 *)malloc(MAX_SAVED_ALIVES);

@@ -31,8 +31,10 @@
 namespace Tinsel {
 
 // Specifies the total amount of memory required for DW1 demo, DW1, or DW2 respectively.
-// Currently this is set at 10Mb for all three - this could probably be reduced somewhat
-uint32 MemoryPoolSize[3] = {10 * 1024 * 1024, 10 * 1024 * 1024, 10 * 1024 * 1024};
+// Currently this is set at 5MB for the DW1 demo and DW1 and 10MB for DW2
+// This could probably be reduced somewhat
+// If the memory is not enough, the engine throws an "Out of memory" error in handle.cpp inside LockMem()
+uint32 MemoryPoolSize[3] = {5 * 1024 * 1024, 5 * 1024 * 1024, 10 * 1024 * 1024};
 
 // list of all memory nodes
 MEM_NODE mnodeList[NUM_MNODES];
