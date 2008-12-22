@@ -25,18 +25,47 @@
  -->
 <render_info>
 	<palette>
+		<!-- Main background colors -->
+		<color name = 'darkorange'
+				rgb = '210, 114, 10'
+		/>
+		<color name = 'brightorange'
+				rgb = '239, 196, 24'
+		/>
+
+		<!-- Idle button/slider -->
 		<color name = 'darkred'
 				rgb = '169, 42, 12'
 		/>
 		<color name = 'brightred'
 				rgb = '203, 126, 107'
 		/>
+
+		<!-- Disabled button/slider -->
+		<color name = 'darkeneddarkred'
+				rgb = '120, 28, 0'
+		/>
+		<color name = 'darkenedbrightred'
+				rgb = '144, 84, 72'
+		/>
+
+		<!-- Highlighted button/slider -->
+		<color name = 'brightpink'
+				rgb = '255, 210, 200'
+		/>
+		<color name = 'darkpink'
+				rgb = '200, 70, 50'
+		/>
+
+		<!-- Dialog background -->
 		<color name = 'xtrabrightred'
 				rgb = '251, 241, 206'
 		/>
 		<color name = 'blandyellow'
 				rgb = '246, 224, 139'
 		/>
+
+		<!-- Others -->
 		<color name = 'bgreen'
 				rgb = '100, 162, 8'
 		/>
@@ -48,6 +77,15 @@
 		/>
 		<color name = 'shadowcolor'
 				rgb = '63, 60, 17'
+		/>
+		<color name = 'darkgray'
+				rgb = '176, 168, 144'
+		/>
+		<color name = 'lightgray'
+				rgb = '210, 200, 170'
+		/>
+		<color name = 'paleyellow'
+				rgb = '247, 228, 166'
 		/>
 	</palette>
 
@@ -70,11 +108,11 @@
 		/>
 		<font	id = 'text_disabled'
 				file = 'default'
-				color = '128, 128, 128'
+				color = '192, 192, 192'
 		/>
 		<font	id = 'text_inverted'
 				file = 'default'
-				color = '0, 0, 0'
+				color = 'black'
 		/>
 		<font	id = 'text_button'
 				file = 'default'
@@ -82,7 +120,7 @@
 		/>
 		<font	id = 'text_button_hover'
 				file = 'default'
-				color = 'blandyellow'
+				color = '255, 214, 84'
 		/>
 		<font	id = 'text_normal'
 				file = 'helvr12-l1.bdf'
@@ -90,11 +128,12 @@
 		/>
 	</fonts>
 
-	<defaults fill = 'gradient' fg_color = 'white' bevel_color = '237, 169, 72'/>
+	<!-- <defaults fill = 'gradient' fg_color = 'white'/> -->
 
 	<cursor file = 'cursor.bmp' hotspot = '0, 0' scale = '3'/>
 	<cursor resolution = '320xY, 256x240' file = 'cursor_small.bmp' hotspot = '0, 0' scale = '3'/>
 
+	<!-- Selection (text or list items) -->
 	<drawdata id = 'text_selection' cache = 'false'>
 		<drawstep	func = 'square'
 					fill = 'foreground'
@@ -102,26 +141,29 @@
 		/>
 	</drawdata>
 
+	<!-- Main background -->
 	<drawdata id = 'mainmenu_bg' cache = 'false'>
 		<drawstep	func = 'fill'
 					fill = 'gradient'
-					gradient_start = '208, 112, 8'
-					gradient_end = '232, 192, 16'
+					gradient_start = 'darkorange'
+					gradient_end = 'brightorange'
 		/>
 	</drawdata>
 
+	<!-- Load screen -->
 	<drawdata id = 'special_bg' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					radius = '4'
 					fill = 'gradient'
 					stroke = '0'
-					gradient_start = '208, 112, 8'
-					gradient_end = '232, 192, 16'
+					gradient_start = 'darkorange'
+					gradient_end = 'brightorange'
 					shadow = '3'
 					gradient_factor = '3'
 		/>
 	</drawdata>
 
+	<!-- Separator in popup lists -->
 	<drawdata id = 'separator' cache = 'false'>
 		<drawstep	func = 'square'
 					fill = 'foreground'
@@ -131,31 +173,33 @@
 		/>
 	</drawdata>
 
+	<!-- Background of the scrollbar -->
 	<drawdata id = 'scrollbar_base' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					stroke = '1'
-					radius = '6'
+					radius = '10'
 					fill = 'background'
-					fg_color = '176, 164, 160'
-					bg_color = '240, 228, 160'
+					fg_color = 'darkgray'
+					bg_color = 'paleyellow'
 		/>
 	</drawdata>
 
+	<!-- Handle of the scrollbar -->
 	<drawdata id = 'scrollbar_handle_hover' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					stroke = '1'
-					radius = '6'
+					radius = '10'
 					fill = 'gradient'
 					fg_color = 'blandyellow'
-					gradient_start = 'xtrabrightred'
-					gradient_end = 'darkred'
+					gradient_start = 'brightpink'
+					gradient_end = 'darkpink'
 		/>
 	</drawdata>
 
 	<drawdata id = 'scrollbar_handle_idle' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					stroke = '1'
-					radius = '6'
+					radius = '10'
 					fill = 'gradient'
 					fg_color = 'blandyellow'
 					gradient_start = 'brightred'
@@ -163,15 +207,16 @@
 		/>
 	</drawdata>
 
+	<!-- Buttons at the top and bottom of the scrollbar -->
 	<drawdata id = 'scrollbar_button_idle' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					radius = '4'
+					radius = '10'
 					fill = 'none'
-					fg_color = '176, 164, 160'
+					fg_color = 'darkgray'
 					stroke = '1'
 		/>
 		<drawstep	func = 'triangle'
-					fg_color = '0, 0, 0'
+					fg_color = 'shadowcolor'
 					fill = 'foreground'
 					width = 'auto'
 					height = 'auto'
@@ -183,14 +228,17 @@
 
 	<drawdata id = 'scrollbar_button_hover' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					radius = '4'
-					fill = 'background'
-					fg_color = '120, 120, 120'
-					bg_color = '206, 121, 99'
+					radius = '10'
+					fill = 'gradient'
+					gradient_start = 'brightpink'
+					gradient_end = 'darkpink'
 					stroke = '1'
+					fg_color = 'darkred'
+					bevel = '1'
+					bevel_color = 'brightred'
 		/>
 		<drawstep	func = 'triangle'
-					fg_color = '0, 0, 0'
+					fg_color = 'shadowcolor'
 					fill = 'foreground'
 					width = 'auto'
 					height = 'auto'
@@ -200,21 +248,23 @@
 		/>
 	</drawdata>
 
+	<!-- Active tab in the tabs list -->
 	<drawdata id = 'tab_active' cache = 'false'>
 		<text	font = 'text_default'
 				vertical_align = 'center'
 				horizontal_align = 'center'
 		/>
+		<!-- Custom color to match the tab content's gradient: -->
 		<drawstep	func = 'tab'
 					radius = '4'
 					stroke = '0'
-					fill = 'gradient'
-					gradient_end = 'xtrabrightred'
-					gradient_start = 'blandyellow'
+					fill = 'background'
+					bg_color = '248, 228, 152'
 					shadow = '3'
 		/>
 	</drawdata>
 
+	<!-- Inactive tab in the tabs list -->
 	<drawdata id = 'tab_inactive' cache = 'false'>
 		<text	font = 'text_default'
 				vertical_align = 'center'
@@ -223,33 +273,36 @@
 		<drawstep	func = 'tab'
 					radius = '4'
 					stroke = '0'
-					fill = 'foreground'
-					fg_color = '240, 205, 118'
+					fill = 'background'
+					bg_color = '239, 202, 109'
 					shadow = '3'
 		/>
 	</drawdata>
 
+	<!-- Background of the tabs list -->
 	<drawdata id = 'tab_background' cache = 'false'>
 		<drawstep	func = 'tab'
 					radius = '6'
 					stroke = '0'
 					fill = 'foreground'
-					fg_color = '232, 180, 81'
+					fg_color = '232, 180, 80'
 					shadow = '3'
 		/>
 	</drawdata>
 
+	<!-- Background of the slider widget -->
 	<drawdata id = 'widget_slider' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					stroke = '0'
 					radius = '4'
 					fill = 'foreground'
-					fg_color = 'blandyellow'
+					fg_color = 'paleyellow'
 					bevel = '1'
 					bevel_color = 'shadowcolor'
 		/>
 	</drawdata>
 
+	<!-- Full part of the slider widget -->
 	<drawdata id = 'slider_full' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					stroke = '1'
@@ -261,39 +314,43 @@
 		/>
 	</drawdata>
 
+	<!-- Hovered full part of the slider widget -->
 	<drawdata id = 'slider_hover' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					stroke = '1'
 					radius = '4'
 					fill = 'gradient'
 					fg_color = '123, 112, 56'
-					gradient_start = 'xtrabrightred'
-					gradient_end = 'darkred'
+					gradient_start = 'brightpink'
+					gradient_end = 'darkpink'
 		/>
 	</drawdata>
-	
+
+	<!-- Disabled slider widget -->
 	<drawdata id = 'slider_disabled' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					stroke = '1'
 					radius = '4'
 					fill = 'gradient'
 					fg_color = '123, 112, 56'
-					gradient_start = 'xtrabrightred'
-					gradient_end = 'darkred'
+					gradient_start = 'darkenedbrightred'
+					gradient_end = 'darkeneddarkred'
 		/>
 	</drawdata>
 
+	<!-- Idle popup -->
 	<drawdata id = 'popup_idle' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = '0'
 					radius = '4'
-					fill = 'foreground'
-					fg_color = '250, 237, 190'
+					stroke = '1'
+					fg_color = 'lightgray'
+					fill = 'background'
+					bg_color = 'xtrabrightred'
 					shadow = '2'
 		/>
 		<drawstep	func = 'triangle'
-					fg_color = '63, 60, 52'
-					fill = 'foreground'
+					bg_color = 'shadowcolor'
+					fill = 'background'
 					width = 'height'
 					height = 'auto'
 					xpos = 'right'
@@ -306,16 +363,16 @@
 		/>
 	</drawdata>
 
+	<!-- Disabled popup -->
 	<drawdata id = 'popup_disabled' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = '0'
 					radius = '4'
 					fill = 'foreground'
-					fg_color = '250, 237, 190'
+					fg_color = 'darkgray'
 					shadow = '2'
 		/>
 		<drawstep	func = 'triangle'
-					fg_color = '63, 60, 52'
+					fg_color = 'shadowcolor'
 					fill = 'foreground'
 					width = 'height'
 					height = 'auto'
@@ -323,23 +380,25 @@
 					ypos = 'center'
 					orientation = 'bottom'
 		/>
-		<text	font = 'text_default'
+		<text	font = 'text_disabled'
 				vertical_align = 'center'
 				horizontal_align = 'left'
 		/>
 	</drawdata>
 
+	<!-- Hovered popup -->
 	<drawdata id = 'popup_hover' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					stroke = '0'
+					stroke = '1'
+					fg_color = 'lightgray'
 					radius = '4'
 					fill = 'gradient'
 					gradient_start = 'blandyellow'
-					gradient_end = '250, 237, 190'
+					gradient_end = 'xtrabrightred'
 					shadow = '0'
 		/>
 		<drawstep	func = 'triangle'
-					fg_color = '63, 60, 52'
+					fg_color = 'shadowcolor'
 					fill = 'foreground'
 					width = 'height'
 					height = 'auto'
@@ -353,17 +412,19 @@
 		/>
 	</drawdata>
 
+	<!-- Background of the textedit widget -->
 	<drawdata id = 'widget_textedit' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					fill = 'foreground'
 					radius = '4'
-					fg_color = 'blandyellow'
+					fg_color = 'paleyellow'
 					shadow = '0'
 					bevel = '1'
 					bevel_color = 'shadowcolor'
 		/>
 	</drawdata>
-	
+
+	<!-- Background of the chooser dialogs (file chooser, theme browser, ...) -->
 	<drawdata id = 'plain_bg' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					radius = '6'
@@ -375,6 +436,7 @@
 		/>
 	</drawdata>
 
+	<!-- Cursor in the text edit widget -->
 	<drawdata id = 'caret' cache = 'false'>
 		<drawstep	func = 'square'
 					fill = 'foreground'
@@ -382,23 +444,27 @@
 		/>
 	</drawdata>
 
+	<!-- Tab contents and game picker background -->
 	<drawdata id = 'default_bg' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					radius = '12'
+					radius = '6'
 					stroke = '0'
-					fg_color = 'xtrabrightred'
-					fill = 'foreground'
+					fill = 'gradient'
+					gradient_start = 'blandyellow'
+					gradient_end = 'xtrabrightred'
+					gradient_factor = '4'
 					shadow = '3'
 		/>
 	</drawdata>
 
+	<!-- Idle button -->
 	<drawdata id = 'button_idle' cache = 'false'>
 		<text	font = 'text_button'
 				vertical_align = 'center'
 				horizontal_align = 'center'
 		/>
 		<drawstep	func = 'roundedsq'
-					radius = '3'
+					radius = '4'
 					stroke = '1'
 					fill = 'gradient'
 					shadow = '0'
@@ -406,45 +472,49 @@
 					gradient_start = 'brightred'
 					gradient_end = 'darkred'
 					bevel = '1'
+					bevel_color = '237, 169, 72'
 		/>
 	</drawdata>
 
+	<!-- Hovered button -->
 	<drawdata id = 'button_hover' cache = 'false'>
 		<text	font = 'text_button_hover'
 				vertical_align = 'center'
 				horizontal_align = 'center'
 		/>
 		<drawstep	func = 'roundedsq'
-					radius = '3'
-					gradient_factor = '1'
-					stroke = '1' 
+					radius = '4'
+					stroke = '1'
 					fill = 'gradient'
 					shadow = '0'
 					fg_color = 'shadowcolor'
-					gradient_start = 'xtrabrightred'
-					gradient_end = 'darkred'
-					bevel_color = 'xtrabrightred'
+					gradient_start = 'brightpink'
+					gradient_end = 'darkpink'
 					bevel = '1'
+					bevel_color = 'xtrabrightred'
 		/>
 	</drawdata>
 
+	<!-- Disabled button -->
 	<drawdata id = 'button_disabled' cache = 'false'>
 		<text	font = 'text_disabled'
 				vertical_align = 'center'
 				horizontal_align = 'center'
 		/>
 		<drawstep	func = 'roundedsq'
-					radius = '3'
+					radius = '4'
 					stroke = '1'
 					fill = 'gradient'
 					shadow = '0'
 					fg_color = 'shadowcolor'
-					gradient_start = 'brightred'
-					gradient_end = 'darkred'
+					gradient_start = 'darkenedbrightred'
+					gradient_end = 'darkeneddarkred'
 					bevel = '1'
+					bevel_color = 'darkgray'
 		/>
 	</drawdata>
 
+	<!-- Disabled checkbox -->
 	<drawdata id = 'checkbox_disabled' cache = 'false'>
 		<text	font = 'text_disabled'
 				vertical_align = 'top'
@@ -460,6 +530,7 @@
 		/>
 	</drawdata>
 
+	<!-- Selected checkbox -->
 	<drawdata id = 'checkbox_selected' cache = 'false'>
 		<text	font = 'text_default'
 				vertical_align = 'top'
@@ -470,6 +541,7 @@
 		/>
 	</drawdata>
 
+	<!-- Idle checkbox -->
 	<drawdata id = 'checkbox_default' cache = 'false'>
 		<text	font = 'text_default'
 				vertical_align = 'top'
@@ -478,28 +550,33 @@
 		<drawstep	func = 'roundedsq'
 					fill = 'foreground'
 					radius = '4'
-					fg_color = 'blandyellow'
+					fg_color = 'paleyellow'
 					shadow = '0'
 					bevel = '1'
 					bevel_color = 'shadowcolor'
 		/>
 	</drawdata>
 
+	<!-- Background of the list widget (the games list and the list in the choosers) -->
+	<!-- TODO: Have separate options for the games list (with gradient background) and the list in the choosers (without gradient) -->
 	<drawdata id = 'widget_default' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					radius = '8'
-					stroke = '0'
+					radius = '6'
+					stroke = '1'
+					fg_color = 'lightgray'
 					gradient_start = 'blandyellow'
-					gradient_end = '251, 241, 206'
+					gradient_end = 'xtrabrightred'
 					gradient_factor = '6'
 					fill = 'gradient'
+					bg_color = 'xtrabrightred'
 					shadow = '3'
 		/>
 	</drawdata>
-	
+
+	<!-- Where is it used? -->
 	<drawdata id = 'widget_small' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					radius = '8'
+					radius = '6'
 					stroke = '0'
 					gradient_start = 'blandyellow'
 					gradient_end = 'xtrabrightred'
