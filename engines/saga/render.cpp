@@ -55,7 +55,7 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 	_vm->_timer->installTimerProc(&fpsTimerCallback, 1000000, this);
 #endif
 
-	_backGroundSurface.create(_vm->getDisplayInfo().logicalWidth, _vm->getDisplayInfo().logicalHeight, 1);
+	_backGroundSurface.create(_vm->getDisplayInfo().width, _vm->getDisplayInfo().height, 1);
 
 	_flags = 0;
 

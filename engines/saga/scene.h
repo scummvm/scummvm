@@ -358,7 +358,7 @@ class Scene {
 
 	int getHeight(bool speech = false) const {
 		if (_vm->getGameId() == GID_IHNM && _vm->_scene->currentChapterNumber() == 8 && !speech)
-			return _vm->getDisplayInfo().logicalHeight;
+			return _vm->getDisplayInfo().height;
 		else
 			return _vm->getDisplayInfo().sceneHeight;
 	}

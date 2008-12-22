@@ -243,8 +243,8 @@ void Sprite::drawClip(const Point &spritePointer, int width, int height, const b
 	for (i = io; i < clipHeight; i++) {
 		for (j = jo; j < clipWidth; j++) {
 			assert(_vm->_gfx->getBackBufferPixels() <= (byte *)(bufRowPointer + j + spritePointer.x));
-			assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayInfo().logicalWidth *
-				 _vm->getDisplayInfo().logicalHeight)) > (byte *)(bufRowPointer + j + spritePointer.x));
+			assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayInfo().width *
+				 _vm->getDisplayInfo().height)) > (byte *)(bufRowPointer + j + spritePointer.x));
 			assert((const byte *)spriteBuffer <= (const byte *)(srcRowPointer + j));
 			assert(((const byte *)spriteBuffer + (width * height)) > (const byte *)(srcRowPointer + j));
 

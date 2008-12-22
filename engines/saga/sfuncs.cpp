@@ -1219,7 +1219,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.param2 = 0;
 	event.param3 = _vm->_scene->getHeight();
 	event.param4 = 0;
-	event.param5 = _vm->getDisplayInfo().logicalWidth;
+	event.param5 = _vm->getDisplayInfo().width;
 	q_event = _vm->_events->chain(q_event, &event);
 
 	// Put the text in the center of the viewport, assuming it will fit on
@@ -1232,7 +1232,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 
 	textEntry.knownColor = kKnownColorBrightWhite;
 	textEntry.effectKnownColor = kKnownColorBlack;
-	textEntry.point.x = _vm->getDisplayInfo().logicalWidth / 2;
+	textEntry.point.x = _vm->getDisplayInfo().width / 2;
 	textEntry.point.y = (_vm->_scene->getHeight() - _vm->_font->getHeight(kKnownFontMedium)) / 2;
 	textEntry.font = kKnownFontMedium;
 	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);

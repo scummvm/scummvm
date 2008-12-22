@@ -501,9 +501,9 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 
 				_vm->_interface->setStatusText("Click or Press Return to continue. Press Q to quit.", 96);
 				_vm->_font->textDrawRect(kKnownFontMedium, sceneSubstitutes[i].title,
-					 Common::Rect(0, 7, _vm->getDisplayInfo().logicalWidth, 27), _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
+					 Common::Rect(0, 7, _vm->getDisplayInfo().width, 27), _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
 				_vm->_font->textDrawRect(kKnownFontMedium, sceneSubstitutes[i].message,
-					 Common::Rect(24, getHeight() - 33, _vm->getDisplayInfo().logicalWidth - 11,
+					 Common::Rect(24, getHeight() - 33, _vm->getDisplayInfo().width - 11,
 								  getHeight()), _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
 				return;
 			}
@@ -538,8 +538,8 @@ void Scene::getBGInfo(BGInfo &bgInfo) {
 	bgInfo.bounds.left = 0;
 	bgInfo.bounds.top = 0;
 
-	if (_bg.w < _vm->getDisplayInfo().logicalWidth) {
-		bgInfo.bounds.left = (_vm->getDisplayInfo().logicalWidth - _bg.w) / 2;
+	if (_bg.w < _vm->getDisplayInfo().width) {
+		bgInfo.bounds.left = (_vm->getDisplayInfo().width - _bg.w) / 2;
 	}
 
 	if (_bg.h < getHeight()) {
@@ -571,7 +571,7 @@ bool Scene::offscreenPath(Point &testPoint) {
 		return false;
 	}
 
-	point.x = CLIP<int>(testPoint.x, 0, _vm->getDisplayInfo().logicalWidth - 1);
+	point.x = CLIP<int>(testPoint.x, 0, _vm->getDisplayInfo().width - 1);
 	point.y = CLIP<int>(testPoint.y, 0, _bgMask.h - 1);
 	if (point == testPoint) {
 		return false;
@@ -737,13 +737,13 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 		_sceneClip.left = 0;
 		_sceneClip.top = 0;
-		_sceneClip.right = _vm->getDisplayInfo().logicalWidth;
+		_sceneClip.right = _vm->getDisplayInfo().width;
 		_sceneClip.bottom = getHeight();
 	} else {
 		BGInfo backGroundInfo;
 		getBGInfo(backGroundInfo);
 		_sceneClip = backGroundInfo.bounds;
-		if (!(_bg.w < _vm->getDisplayInfo().logicalWidth || _bg.h < getHeight()))
+		if (!(_bg.w < _vm->getDisplayInfo().width || _bg.h < getHeight()))
 			_outsetSceneNumber = _sceneNumber;
 	}
 
@@ -1057,7 +1057,7 @@ void Scene::processSceneResources() {
 
 			// At least in ITE the mask needs to be clipped.
 
-			_bgMask.w = MIN(_bgMask.w, _vm->getDisplayInfo().logicalWidth);
+			_bgMask.w = MIN(_bgMask.w, _vm->getDisplayInfo().width);
 			_bgMask.h = MIN(_bgMask.h, getHeight());
 
 			debug(4, "BACKGROUND MASK width=%d height=%d length=%d", _bgMask.w, _bgMask.h, (int)_bgMask.buf_len);

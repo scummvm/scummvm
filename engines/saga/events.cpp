@@ -180,8 +180,8 @@ int Events::handleContinuous(Event *event) {
 			size_t len;
 
 			_vm->_scene->getBGMaskInfo(w, h, maskBuffer, len);
-			rect.left = (_vm->getDisplayInfo().logicalWidth - w) / 2;
-			rect.top = (_vm->getDisplayInfo().logicalHeight - h) / 2;
+			rect.left = (_vm->getDisplayInfo().width - w) / 2;
+			rect.top = (_vm->getDisplayInfo().height - h) / 2;
 			rect.setWidth(w);
 			rect.setHeight(h);
 
@@ -319,7 +319,7 @@ int Events::handleOneShot(Event *event) {
 				backGroundSurface->blit(bgInfo.bounds, bgInfo.buffer);
 
 				// If it is inset scene then draw black border
-				if (bgInfo.bounds.width() < _vm->getDisplayInfo().logicalWidth || bgInfo.bounds.height() < _vm->_scene->getHeight()) {
+				if (bgInfo.bounds.width() < _vm->getDisplayInfo().width || bgInfo.bounds.height() < _vm->_scene->getHeight()) {
 					Common::Rect rect1(2, bgInfo.bounds.height() + 4);
 					Common::Rect rect2(bgInfo.bounds.width() + 4, 2);
 					Common::Rect rect3(2, bgInfo.bounds.height() + 4);

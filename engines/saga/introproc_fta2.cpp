@@ -101,9 +101,9 @@ void MoviePlayerSMK::playVideo() {
 bool MoviePlayerSMK::processFrame() {
 	Graphics::Surface *screen = _vm->_system->lockScreen();
 	copyFrameToBuffer((byte *)screen->pixels, 
-						(_vm->getDisplayInfo().logicalWidth - getWidth()) / 2, 
-						(_vm->getDisplayInfo().logicalHeight - getHeight()) / 2,
-						_vm->getDisplayInfo().logicalWidth);
+						(_vm->getDisplayInfo().width - getWidth()) / 2, 
+						(_vm->getDisplayInfo().height - getHeight()) / 2,
+						_vm->getDisplayInfo().width);
 	_vm->_system->unlockScreen();
 
 	if (!getAudioLag() || getFrameWaitTime() || _frameSkipped > getFrameRate()) {

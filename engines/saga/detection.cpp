@@ -312,8 +312,8 @@ SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int s
 namespace Saga {
 
 bool SagaEngine::initGame() {
-	_displayClip.right = getDisplayInfo().logicalWidth;
-	_displayClip.bottom = getDisplayInfo().logicalHeight;
+	_displayClip.right = getDisplayInfo().width;
+	_displayClip.bottom = getDisplayInfo().height;
 
 	return _resource->createContexts();
 }

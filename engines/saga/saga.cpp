@@ -215,7 +215,7 @@ Common::Error SagaEngine::init() {
 	_previousTicks = _system->getMillis();
 
 	// Initialize graphics
-	_gfx = new Gfx(this, _system, getDisplayInfo().logicalWidth, getDisplayInfo().logicalHeight);
+	_gfx = new Gfx(this, _system, getDisplayInfo().width, getDisplayInfo().height);
 
 	// Graphics driver should be initialized before console
 	_console = new Console(this);

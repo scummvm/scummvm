@@ -45,8 +45,8 @@ struct PanelButton {
 };
 
 struct GameDisplayInfo {
-	int logicalWidth;
-	int logicalHeight;
+	int width;
+	int height;
 
 	int pathStartY;
 	int sceneHeight;
