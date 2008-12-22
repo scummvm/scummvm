@@ -193,7 +193,7 @@ int Scene::FTA2EndProc(FTA2Endings whichEnding) {
 
 	_vm->_gfx->showCursor(false);
 
-	// Play introduction
+	// Play ending
 	if (smkPlayer->load(videoName)) {
 		debug(0, "Playing video %s", videoName);
 		smkPlayer->playVideo();
