@@ -62,6 +62,15 @@ enum SceneFlags {
 	kSceneFlagShowCursor = 2
 };
 
+// FTA2 possible endings
+enum FTA2Endings {
+	kFta2BadEndingLaw = 0,
+	kFta2BadEndingChaos = 1,
+	kFta2GoodEnding1 = 2,
+	kFta2GoodEnding2 = 3,
+	kFta2BadEndingDeath = 4
+};
+
 struct BGInfo {
 	Rect bounds;
 	byte *buffer;
@@ -412,6 +421,7 @@ class Scene {
 	int IHNMStartProc();
 	int IHNMCreditsProc();
 	int FTA2StartProc();
+	int FTA2EndProc(FTA2Endings whichEnding);
 
 	void IHNMLoadCutaways();
 	bool checkKey();
