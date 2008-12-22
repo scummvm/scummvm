@@ -78,6 +78,7 @@ const ThemeEngine::DrawDataInfo ThemeEngine::kDrawDataDefaults[] = {
 
 	{kDDPopUpIdle, 					"popup_idle", 	true, 	kDDNone},
 	{kDDPopUpHover, 				"popup_hover", 	false, 	kDDPopUpIdle},
+	{kDDPopUpDisabled, 				"popup_disabled", 	true, 	kDDNone},
 
 	{kDDCaret, 						"caret", 		false, 	kDDNone},
 	{kDDSeparator, 					"separator", 	true, 	kDDNone},

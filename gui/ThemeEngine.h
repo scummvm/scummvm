@@ -101,6 +101,7 @@ protected:
 
 		kDDPopUpIdle,
 		kDDPopUpHover,
+		kDDPopUpDisabled,
 
 		kDDCaret,
 		kDDSeparator,

@@ -774,7 +774,14 @@ void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &s
 	if (!ready())
 		return;
 
-	DrawData dd = (state == kStateHighlight) ? kDDPopUpHover : kDDPopUpIdle;
+	DrawData dd = kDDPopUpIdle;
+
+	if (state == kStateEnabled)
+		dd = kDDPopUpIdle;
+	else if (state == kStateHighlight)
+		dd = kDDPopUpHover;
+	else if (state == kStateDisabled)
+		dd = kDDPopUpDisabled;
 
 	queueDD(dd, r);
 

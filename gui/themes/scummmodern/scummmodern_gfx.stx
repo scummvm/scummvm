@@ -306,6 +306,28 @@
 		/>
 	</drawdata>
 
+	<drawdata id = 'popup_disabled' cache = 'false'>
+		<drawstep	func = 'roundedsq'
+					stroke = '0'
+					radius = '4'
+					fill = 'foreground'
+					fg_color = '250, 237, 190'
+					shadow = '2'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = '63, 60, 52'
+					fill = 'foreground'
+					width = 'height'
+					height = 'auto'
+					xpos = 'right'
+					ypos = 'center'
+					orientation = 'bottom'
+		/>
+		<text	font = 'text_default'
+				vertical_align = 'center'
+				horizontal_align = 'left'
+		/>
+	</drawdata>
 
 	<drawdata id = 'popup_hover' cache = 'false'>
 		<drawstep	func = 'roundedsq'
