@@ -781,14 +781,14 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 
 		ptr_fill += pitch * real_radius;
 		while (short_h--) {
-			colorFill(ptr_fill, ptr_fill + Base::_strokeWidth - 1, color);
-			colorFill(ptr_fill + w - Base::_strokeWidth + 2, ptr_fill + w, color);
+			colorFill(ptr_fill, ptr_fill + Base::_strokeWidth, color);
+			colorFill(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color);
 			ptr_fill += pitch;
 		}
 		
 		if (baseLeft) {
 			sw = 0;
-			ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + h);
+			ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + h + 1);
 			while (sw++ < Base::_strokeWidth) {
 				colorFill(ptr_fill - baseLeft, ptr_fill, color);
 				ptr_fill += pitch;
@@ -797,7 +797,7 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 		
 		if (baseRight) {
 			sw = 0;
-			ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w, y1 + h);
+			ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w, y1 + h + 1);
 			while (sw++ < Base::_strokeWidth) {
 				colorFill(ptr_fill, ptr_fill + baseRight, color);
 				ptr_fill += pitch;
