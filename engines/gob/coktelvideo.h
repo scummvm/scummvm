@@ -370,6 +370,7 @@ protected:
 
 	bool _externalCodec;
 	byte _bytesPerPixel;
+	byte _scaleExternalX;
 	byte *_vidMemBuffer;
 
 	PaletteLUT *_palLUT;

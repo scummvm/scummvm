@@ -934,6 +934,11 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	}
 
 	_flags = _stream->readUint16LE();
+
+	_scaleExternalX = 1;
+	if (!_externalCodec && !(_flags & 0x1000))
+		_scaleExternalX = _bytesPerPixel;
+
 	_partsPerFrame = _stream->readUint16LE();
 	_firstFramePos = _stream->readUint32LE();
 	_stream->skip(4); // Unknown
@@ -1112,6 +1117,8 @@ int16 Vmd::getWidth() const {
 
 void Vmd::setXY(int16 x, int16 y) {
 
+	x *= _scaleExternalX;
+
 	for (int i = 0; i < _framesCount; i++) {
 		for (int j = 0; j < _partsPerFrame; j++) {
 
@@ -1195,6 +1202,7 @@ void Vmd::clear(bool del) {
 
 	_externalCodec = false;
 	_bytesPerPixel = 1;
+	_scaleExternalX = 1;
 	_vidMemBuffer = 0;
 }
 
