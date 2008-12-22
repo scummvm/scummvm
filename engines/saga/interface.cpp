@@ -654,7 +654,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		switch (ascii) {
 		case 'x':
 			setMode(kPanelMain);
-			if (_vm->_puzzle->isActive())
+			if (_vm->getGameId() == GID_ITE && _vm->_puzzle->isActive())
 				_vm->_puzzle->exitPuzzle();
 			break;
 
@@ -1743,7 +1743,7 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 				converseChangePos(1);
 			}
 
-			if (_vm->_puzzle->isActive()) {
+			if (_vm->getGameId() == GID_ITE && _vm->_puzzle->isActive()) {
 				_vm->_puzzle->handleClick(mousePoint);
 			}
 		}
@@ -2624,7 +2624,7 @@ void Interface::converseSetPos(int key) {
 
 	_vm->_script->finishDialog(ct->strId, ct->replyId, ct->replyFlags, ct->replyBit);
 
-	if (_vm->_puzzle->isActive())
+	if (_vm->getGameId() == GID_ITE && _vm->_puzzle->isActive())
 		_vm->_puzzle->handleReply(ct->replyId);
 
 	_conversePos = -1;
