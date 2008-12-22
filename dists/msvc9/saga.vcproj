@@ -328,11 +328,23 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\rscfile.cpp"
+			RelativePath="..\..\engines\saga\resource.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\rscfile.h"
+			RelativePath="..\..\engines\saga\resource.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\saga\resource_hrs.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\saga\resource_res.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\saga\resource_rsc.cpp"
 			>
 		</File>
 		<File
