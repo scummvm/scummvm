@@ -25,8 +25,8 @@
 
 // RSC Resource file management header file
 
-#ifndef SAGA_RSCFILE_H
-#define SAGA_RSCFILE_H
+#ifndef SAGA_RESOURCE_H
+#define SAGA_RESOURCE_H
 
 #include "common/file.h"
 
@@ -134,9 +134,9 @@ public:
 	bool createContexts();
 	void clearContexts();
 	void loadResource(ResourceContext *context, uint32 resourceId, byte*&resourceBuffer, size_t &resourceSize);
-	uint32 convertResourceId(uint32 resourceId);
 
-	void loadGlobalResources(int chapter, int actorsEntrance);
+	virtual uint32 convertResourceId(uint32 resourceId) = 0;
+	virtual void loadGlobalResources(int chapter, int actorsEntrance) = 0;
 
 	ResourceContext *getContext(uint16 fileType, int serial = 0) {
 		int i;
@@ -148,19 +148,68 @@ public:
 		return NULL;
 	}
 
-private:
+protected:
 	SagaEngine *_vm;
 	ResourceContext *_contexts;
 	int _contextsCount;
 	char _voicesFileName[8][256];
 
 	bool loadContext(ResourceContext *context);
-	bool loadMacContext(ResourceContext *context);
-	bool loadResContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize);
-	bool loadHResContext(ResourceContext *context, uint32 contextSize);
-
+	virtual bool loadMacContext(ResourceContext *context) = 0;
+	virtual bool loadResContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize) = 0;
+	bool loadResContext_v1(ResourceContext *context, uint32 contextOffset, uint32 contextSize);
 public:
+	virtual MetaResource* getMetaResource() = 0;
+};
+
+// ITE
+class Resource_RSC : public Resource {
+public:
+	Resource_RSC(SagaEngine *vm) : Resource(vm) {}
+	virtual uint32 convertResourceId(uint32 resourceId);
+	virtual void loadGlobalResources(int chapter, int actorsEntrance) {}
+	virtual MetaResource* getMetaResource() {
+		MetaResource *dummy = 0;
+		return dummy;
+	}
+private:
+	virtual bool loadMacContext(ResourceContext *context);
+	virtual bool loadResContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize) {
+		return loadResContext_v1(context, contextOffset, contextSize);
+	}
+};
+
+// IHNM
+class Resource_RES : public Resource {
+public:
+	Resource_RES(SagaEngine *vm) : Resource(vm) {}
+	virtual uint32 convertResourceId(uint32 resourceId) { return resourceId; }
+	virtual void loadGlobalResources(int chapter, int actorsEntrance);
+	virtual MetaResource* getMetaResource() { return &_metaResource; };
+private:
+	virtual bool loadMacContext(ResourceContext *context) { return false; }
+	virtual bool loadResContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize) {
+		return loadResContext_v1(context, contextOffset, contextSize);
+	}
 	MetaResource _metaResource;
+};
+
+// DINO, FTA2
+class Resource_HRS : public Resource {
+public:
+	Resource_HRS(SagaEngine *vm) : Resource(vm) {}
+	virtual uint32 convertResourceId(uint32 resourceId) { return resourceId; }
+	virtual void loadGlobalResources(int chapter, int actorsEntrance) {}
+	virtual MetaResource* getMetaResource() {
+		MetaResource *dummy = 0;
+		return dummy;
+	}
+private:
+	virtual bool loadMacContext(ResourceContext *context) { return false; }
+	virtual bool loadResContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize) {
+		return loadResContext_v2(context, contextOffset, contextSize);
+	}
+	bool loadResContext_v2(ResourceContext *context, uint32 contextOffset, uint32 contextSize);
 };
 
 } // End of namespace Saga

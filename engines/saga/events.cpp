@@ -35,7 +35,7 @@
 #include "saga/palanim.h"
 #include "saga/render.h"
 #include "saga/sndres.h"
-#include "saga/rscfile.h"
+#include "saga/resource.h"
 #include "saga/music.h"
 #include "saga/actor.h"
 

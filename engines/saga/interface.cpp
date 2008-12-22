@@ -42,7 +42,7 @@
 #include "saga/script.h"
 #include "saga/sound.h"
 #include "saga/sprite.h"
-#include "saga/rscfile.h"
+#include "saga/resource.h"
 
 #include "saga/interface.h"
 

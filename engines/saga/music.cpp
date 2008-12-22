@@ -27,7 +27,7 @@
 
 #include "saga/saga.h"
 
-#include "saga/rscfile.h"
+#include "saga/resource.h"
 #include "saga/music.h"
 
 #include "sound/audiostream.h"

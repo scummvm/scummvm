@@ -37,7 +37,7 @@
 #include "saga/animation.h"
 #include "saga/displayinfo.h"
 #include "saga/events.h"
-#include "saga/rscfile.h"
+#include "saga/resource.h"
 #include "saga/interface.h"
 #include "saga/scene.h"
 

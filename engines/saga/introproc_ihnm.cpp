@@ -32,7 +32,7 @@
 #include "saga/events.h"
 #include "saga/interface.h"
 #include "saga/render.h"
-#include "saga/rscfile.h"
+#include "saga/resource.h"
 #include "saga/sndres.h"
 #include "saga/music.h"
 

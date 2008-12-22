@@ -36,7 +36,7 @@
 #include "saga/music.h"
 
 #include "saga/scene.h"
-#include "saga/rscfile.h"
+#include "saga/resource.h"
 
 namespace Saga {
 

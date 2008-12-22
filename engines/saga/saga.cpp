@@ -34,7 +34,7 @@
 
 #include "saga/saga.h"
 
-#include "saga/rscfile.h"
+#include "saga/resource.h"
 #include "saga/gfx.h"
 #include "saga/render.h"
 #include "saga/actor.h"
@@ -164,7 +164,18 @@ Common::Error SagaEngine::init() {
 	if (_readingSpeed > 3)
 		_readingSpeed = 0;
 
-	_resource = new Resource(this);
+	switch(getGameId()) {
+		case GID_ITE:
+			_resource = new Resource_RSC(this);
+			break;
+		case GID_IHNM:
+			_resource = new Resource_RES(this);
+			break;
+		case GID_DINO:
+		case GID_FTA2:
+			_resource = new Resource_HRS(this);
+			break;
+	}
 
 	// Detect game and open resource files
 	if (!initGame()) {

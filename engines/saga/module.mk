@@ -24,7 +24,10 @@ MODULE_OBJS := \
 	palanim.o \
 	puzzle.o \
 	render.o \
-	rscfile.o \
+	resource.o \
+	resource_hrs.o \
+	resource_res.o \
+	resource_rsc.o \
 	saga.o \
 	saveload.o \
 	scene.o \

@@ -37,7 +37,7 @@
 #include "saga/actor.h"
 #include "saga/objectmap.h"
 #include "saga/isomap.h"
-#include "saga/rscfile.h"
+#include "saga/resource.h"
 
 namespace Saga {
 

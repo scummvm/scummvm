@@ -31,7 +31,7 @@
 #include "saga/events.h"
 #include "saga/isomap.h"
 #include "saga/objectmap.h"
-#include "saga/rscfile.h"
+#include "saga/resource.h"
 #include "saga/script.h"
 #include "saga/sndres.h"
 #include "saga/sound.h"

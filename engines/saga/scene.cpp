@@ -42,7 +42,7 @@
 
 #include "saga/scene.h"
 #include "saga/actor.h"
-#include "saga/rscfile.h"
+#include "saga/resource.h"
 
 #include "graphics/iff.h"
 #include "common/util.h"
@@ -667,7 +667,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	if (_vm->getGameId() == GID_IHNM) {
 		if (loadSceneParams->loadFlag == kLoadBySceneNumber) // When will we get rid of it?
 			if (loadSceneParams->sceneDescriptor <= 0)
-				loadSceneParams->sceneDescriptor = _vm->_resource->_metaResource.sceneIndex;
+				loadSceneParams->sceneDescriptor = _vm->_resource->getMetaResource()->sceneIndex;
 	}
 
 	switch (loadSceneParams->loadFlag) {
