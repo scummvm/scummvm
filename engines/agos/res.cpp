@@ -725,18 +725,8 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type) {
 			} else if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
 				if (getPlatform() == Common::kPlatformAtariST)
 					sprintf(filename, "%.2d%d.out", id, type);
-				else if (id == 20)
-					sprintf(filename, "D%d.out", type);
-				else if (id == 26)
-					sprintf(filename, "J%d.out", type);
-				else if (id == 27)
-					sprintf(filename, "K%d.out", type);
-				else if (id == 33)
-					sprintf(filename, "Q%d.out", type);
-				else if (id == 34)
-					sprintf(filename, "R%d.out", type);
 				else
-					sprintf(filename, "%.1d%d.out", id, type);
+					sprintf(filename, "%c%d.out", 48 + id, type);
 			} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
 				sprintf(filename, "%.2d%d.pkd", id, type);
 			} else {
