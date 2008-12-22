@@ -42,6 +42,7 @@ ChooserDialog::ChooserDialog(const String &title, String dialogId)
 	// Add choice list
 	_list = new ListWidget(this, dialogId + ".List");
 	_list->setNumberingMode(kListNumberingOff);
+	_list->setEditable(false);
 
 	// Buttons
 	new ButtonWidget(this, dialogId + ".Cancel", "Cancel", kCloseCmd, 0);
@@ -57,6 +58,7 @@ void ChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	int item = _list->getSelected();
 	switch (cmd) {
 	case kChooseCmd:
+	case kListItemActivatedCmd:
 	case kListItemDoubleClickedCmd:
 		_list->endEditMode();
 		setResult(item);
