@@ -70,7 +70,7 @@ private:
  * To achieve that the object implements an internal reference counting.
  * Thus you should try to avoid using the plain pointer after assigning
  * it to a SharedPtr object for the first time. If you still use the
- * plain pointer be sure you do not delete it on your own. You may also 
+ * plain pointer be sure you do not delete it on your own. You may also
  * not use the plain pointer to create a new SharedPtr object, since that
  * would result in a double deletion of the pointer sooner or later.
  *
@@ -95,7 +95,7 @@ private:
  *
  * The class has implicit upcast support, so if you got a class B derived
  * from class A, you can assign a pointer to B without any problems to a
- * SharedPtr object with template parameter A. The very same applies to 
+ * SharedPtr object with template parameter A. The very same applies to
  * assignment of a SharedPtr<B> object to a SharedPtr<A> object.
  *
  * There are also operators != and == to compare two SharedPtr objects

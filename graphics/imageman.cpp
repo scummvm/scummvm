@@ -61,7 +61,7 @@ bool ImageManager::addArchive(const Common::String &name) {
 #endif
 	} else {
 		Common::FSDirectory *dir = new Common::FSDirectory(node);
-		if (!dir || !dir->getFSNode().isDirectory())	
+		if (!dir || !dir->getFSNode().isDirectory())
 			return false;
 
 		arch = dir;

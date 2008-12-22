@@ -135,7 +135,7 @@ public:
 	 * setOutputRate() has been called).
 	 */
 	void setReady(bool ready);
-	
+
 	/**
 	 * Set the output sample rate.
 	 *

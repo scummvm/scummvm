@@ -161,7 +161,7 @@ public:
 		case SEEK_CUR:
 			newPos = _pos + offset;
 		}
-		
+
 		assert(newPos >= 0);
 
 		if ((uint32)newPos < _pos) {
@@ -189,7 +189,7 @@ public:
 		while (!err() && offset > 0) {
 			offset -= read(tmpBuf, MIN((int32)sizeof(tmpBuf), offset));
 		}
-		
+
 		_eos = false;
 		return true;	// FIXME: STREAM REWRITE
 	}
@@ -242,7 +242,7 @@ public:
 		                 Z_DEFLATED,
 		                 MAX_WBITS + 16,
 		                 8,
-                         Z_DEFAULT_STRATEGY);
+				 Z_DEFAULT_STRATEGY);
 		assert(_zlibErr == Z_OK);
 
 		_stream.next_out = _buf;

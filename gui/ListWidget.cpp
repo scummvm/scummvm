@@ -374,7 +374,7 @@ void ListWidget::drawWidget() {
 			if (_hasFocus)
 				inverted = true;
 			else
-				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, y - 1, _x + _w - 1, y + fontHeight - 1), 
+				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, y - 1, _x + _w - 1, y + fontHeight - 1),
 													0, ThemeEngine::kWidgetBackgroundBorderSmall);
 		}
 
@@ -386,7 +386,7 @@ void ListWidget::drawWidget() {
 			char temp[10];
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
-			g_gui.theme()->drawText(Common::Rect(_x, y, _x + r.left + _leftPadding, y + fontHeight - 2), 
+			g_gui.theme()->drawText(Common::Rect(_x, y, _x + r.left + _leftPadding, y + fontHeight - 2),
 									buffer, _state, Graphics::kTextAlignLeft, inverted, _leftPadding);
 			pad = 0;
 		}
@@ -397,7 +397,7 @@ void ListWidget::drawWidget() {
 			buffer = _editString;
 			adjustOffset();
 			width = _w - r.left - _hlRightPadding - _leftPadding - scrollbarW;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight-2), 
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight-2),
 									buffer, _state, Graphics::kTextAlignLeft, inverted, pad);
 		} else {
 			int maxWidth = _textWidth[i];
@@ -410,7 +410,7 @@ void ListWidget::drawWidget() {
 				width = _w - r.left - _hlRightPadding - scrollbarW;
 			if (width > maxWidth)
 				maxWidth = width;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight-2), 
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight-2),
 									buffer, _state, Graphics::kTextAlignLeft, inverted, pad);
 		}
 
@@ -499,12 +499,12 @@ void ListWidget::reflowLayout() {
 	// We do a rough rounding on the decimal places of Entries Per Page,
 	// to add another entry even if it goes a tad over the padding.
 	_entriesPerPage = ((_h - _topPadding - _bottomPadding) << 16) / kLineHeight;
-	
+
 	if ((uint)(_entriesPerPage & 0xFFFF) >= 0xF000)
 		_entriesPerPage += (1 << 16);
 
 	_entriesPerPage >>= 16;
-	
+
 	assert(_entriesPerPage > 0);
 
 	delete[] _textWidth;

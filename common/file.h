@@ -86,7 +86,7 @@ public:
 
 	/**
 	 * Try to open the file corresponding to the give node. Will check whether the
-	 * node actually refers to an existing file (and not a directory), and handle 
+	 * node actually refers to an existing file (and not a directory), and handle
 	 * those cases gracefully.
 	 * @note Must not be called if this file already is open (i.e. if isOpen returns true).
 	 *

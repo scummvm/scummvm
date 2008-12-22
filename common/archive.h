@@ -275,13 +275,13 @@ public:
 	bool hasArchive(const String &name) const;
 
 	/**
-     * Empties the searchable set.
-     */
+	 * Empties the searchable set.
+	 */
 	virtual void clear();
 
 	/**
-     * Change the order of searches.
-     */
+	 * Change the order of searches.
+	 */
 	void setPriority(const String& name, int priority);
 
 	virtual bool hasFile(const String &name);

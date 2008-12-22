@@ -65,7 +65,7 @@ void drawCharIntern(byte *ptr, uint pitch, const bitmap_t *src, int h, int minX,
 			tmp++;
 			buffer <<= 1;
 		}
-		
+
 		ptr += pitch;
 	}
 }

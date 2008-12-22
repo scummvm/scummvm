@@ -74,7 +74,7 @@ protected:
 	void removeGame(int item);
 	void editGame(int item);
 	void loadGame(int item);
-	
+
 	void selectGame(const String &name);
 };
 

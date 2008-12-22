@@ -403,7 +403,7 @@ public:
 	 * @see endGFXTransaction
 	 */
 	enum TransactionError {
-		kTransactionSuccess = 0, 					/**< Everything fine (use EQUAL check for this one!) */
+		kTransactionSuccess = 0,					/**< Everything fine (use EQUAL check for this one!) */
 		kTransactionAspectRatioFailed = (1 << 0),	/**< Failed switchting aspect ratio correction mode */
 		kTransactionFullscreenFailed = (1 << 1),	/**< Failed switchting fullscreen mode */
 		kTransactionModeSwitchFailed = (1 << 2),	/**< Failed switchting the GFX graphics mode (setGraphicsMode) */

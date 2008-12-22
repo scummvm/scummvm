@@ -37,17 +37,17 @@ namespace GUI {
 
 void ThemeLayout::importLayout(ThemeLayout *layout) {
 	assert(layout->getLayoutType() == kLayoutMain);
-	
+
 	if (layout->_children.size() == 0)
 		return;
-	
+
 	layout = layout->_children[0];
-	
+
 	if (getLayoutType() == layout->getLayoutType()) {
 		for (uint i = 0; i < layout->_children.size(); ++i)
-			_children.push_back(layout->_children[i]->makeClone()); 
+			_children.push_back(layout->_children[i]->makeClone());
 	} else {
-		_children.push_back(layout->makeClone()); 
+		_children.push_back(layout->makeClone());
 	}
 }
 
@@ -56,14 +56,14 @@ bool ThemeLayout::getWidgetData(const Common::String &name, int16 &x, int16 &y, 
 		if (_children[i]->getWidgetData(name, x, y, w, h))
 			return true;
 	}
-	
+
 	return false;
 }
 
 int16 ThemeLayout::getParentW() {
 	ThemeLayout *p = _parent;
 	int width = 0;
-	
+
 	while (p && p->getLayoutType() != kLayoutMain) {
 		width += p->_paddingRight + p->_paddingLeft;
 		if (p->getLayoutType() == kLayoutHorizontal) {
@@ -72,14 +72,14 @@ int16 ThemeLayout::getParentW() {
 		}
 		p = p->_parent;
 	}
-	
+
 	return p->getWidth() - width;
 }
 
 int16 ThemeLayout::getParentH() {
 	ThemeLayout *p = _parent;
 	int height = 0;
-	
+
 	while (p && p->getLayoutType() != kLayoutMain) {
 		height += p->_paddingBottom + p->_paddingTop;
 		if (p->getLayoutType() == kLayoutVertical) {
@@ -88,7 +88,7 @@ int16 ThemeLayout::getParentH() {
 		}
 		p = p->_parent;
 	}
-	
+
 	return p->getHeight() - height;
 }
 
@@ -99,28 +99,28 @@ bool ThemeLayoutWidget::getWidgetData(const Common::String &name, int16 &x, int1
 		w = _w; h = _h;
 		return true;
 	}
-	
+
 	return false;
 }
 
 void ThemeLayoutMain::reflowLayout() {
 	assert(_children.size() <= 1);
-	
+
 	if (_children.size()) {
 		_children[0]->resetLayout();
 		_children[0]->setWidth(_w);
 		_children[0]->setHeight(_h);
 		_children[0]->reflowLayout();
-		
+
 		if (_w == -1)
 			_w = _children[0]->getWidth();
-			
+
 		if (_h == -1)
 			_h = _children[0]->getHeight();
-		
+
 		if (_y == -1)
 			_y = (g_system->getOverlayHeight() >> 1) - (_h >> 1);
-		
+
 		if (_x == -1)
 			_x = (g_system->getOverlayWidth() >> 1) - (_w >> 1);
 	}
@@ -130,41 +130,41 @@ void ThemeLayoutVertical::reflowLayout() {
 	int curX, curY;
 	int resize[8];
 	int rescount = 0;
-	
+
 	curX = _paddingLeft;
 	curY = _paddingTop;
 	_h = _paddingTop + _paddingBottom;
-	
+
 	for (uint i = 0; i < _children.size(); ++i) {
-	
+
 		_children[i]->resetLayout();
 		_children[i]->reflowLayout();
 
 		if (_children[i]->getWidth() == -1)
 			_children[i]->setWidth((_w == -1 ? getParentW() : _w) - _paddingLeft - _paddingRight);
-			
+
 		if (_children[i]->getHeight() == -1) {
 			resize[rescount++] = i;
 			_children[i]->setHeight(0);
 		}
-			
+
 		_children[i]->setY(curY);
-		
+
 		if (_centered && _children[i]->getWidth() < _w && _w != -1) {
 			_children[i]->setX((_w >> 1) - (_children[i]->getWidth() >> 1));
 		} else
 			_children[i]->setX(curX);
 
-		curY += _children[i]->getHeight() + _spacing;	
+		curY += _children[i]->getHeight() + _spacing;
 		_w = MAX(_w, (int16)(_children[i]->getWidth() + _paddingLeft + _paddingRight));
 		_h += _children[i]->getHeight() + _spacing;
 	}
-	
+
 	_h -= _spacing;
-	
+
 	if (rescount) {
 		int newh = (getParentH() - _h - _paddingBottom) / rescount;
-		
+
 		for (int i = 0; i < rescount; ++i) {
 			_children[resize[i]]->setHeight(newh);
 			_h += newh;
@@ -182,12 +182,12 @@ void ThemeLayoutHorizontal::reflowLayout() {
 	curX = _paddingLeft;
 	curY = _paddingTop;
 	_w = _paddingLeft + _paddingRight;
-		
+
 	for (uint i = 0; i < _children.size(); ++i) {
-	
+
 		_children[i]->resetLayout();
 		_children[i]->reflowLayout();
-	
+
 		if (_children[i]->getHeight() == -1)
 			_children[i]->setHeight((_h == -1 ? getParentH() : _h) - _paddingTop - _paddingBottom);
 
@@ -195,24 +195,24 @@ void ThemeLayoutHorizontal::reflowLayout() {
 			resize[rescount++] = i;
 			_children[i]->setWidth(0);
 		}
-			
+
 		_children[i]->setX(curX);
-		
+
 		if (_centered && _children[i]->getHeight() < _h && _h != -1)
 			_children[i]->setY((_h >> 1) - (_children[i]->getHeight() >> 1));
 		else
 			_children[i]->setY(curY);
-			
+
 		curX += (_children[i]->getWidth() + _spacing);
 		_w += _children[i]->getWidth() + _spacing;
 		_h = MAX(_h, (int16)(_children[i]->getHeight() + _paddingTop + _paddingBottom));
 	}
-	
+
 	_w -= _spacing;
-	
+
 	if (rescount) {
 		int neww = (getParentW() - _w - _paddingRight) / rescount;
-		
+
 		for (int i = 0; i < rescount; ++i) {
 			_children[resize[i]]->setWidth(neww);
 			_w += neww;

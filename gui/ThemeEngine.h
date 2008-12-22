@@ -114,10 +114,10 @@ protected:
 	 * @see kDrawDataDefaults[] for implementation.
 	 */
 	static const struct DrawDataInfo {
-		DrawData id; 		/** The actual ID of the DrawData item. */
-		const char *name; 	/** The name of the DrawData item as it appears in the Theme Description files */
-		bool buffer; 		/** Sets whether this item is buffered on the backbuffer or drawn directly to the screen. */
-		DrawData parent; 	/** Parent DrawData item, for items that overlay. E.g. kButtonIdle -> kButtonHover */
+		DrawData id;		/** The actual ID of the DrawData item. */
+		const char *name;	/** The name of the DrawData item as it appears in the Theme Description files */
+		bool buffer;		/** Sets whether this item is buffered on the backbuffer or drawn directly to the screen. */
+		DrawData parent;	/** Parent DrawData item, for items that overlay. E.g. kButtonIdle -> kButtonHover */
 	} kDrawDataDefaults[];
 
 
@@ -155,7 +155,7 @@ public:
 		kWidgetBackgroundEditText,		//!< Background used for edit text fields
 		kWidgetBackgroundSlider			//!< Background used for sliders
 	};
-	
+
 	//! Dialog background type
 	enum DialogBackground {
 		kDialogBackgroundMain,
@@ -198,13 +198,13 @@ public:
 		kShadingDim,		//!< Dimming unused areas
 		kShadingLuminance	//!< Converting colors to luminance for unused areas
 	};
-	
+
 	//! Special image ids for images used in the GUI
 	enum kThemeImages {
 		kImageLogo = 0,		//!< ScummVM Logo used in the launcher
 		kImageLogoSmall		//!< ScummVM logo used in the GMM
 	};
-	
+
 	/** Graphics mode enumeration.
 	 *	Each item represents a set of BPP and Renderer modes for a given
 	 * surface.
@@ -214,7 +214,7 @@ public:
 		kGfxStandard16bit,	/** 2BPP with the standard (aliased) renderer. */
 		kGfxAntialias16bit	/** 2BPP with the optimized AA renderer. */
 	};
-	
+
 	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
 	static const int kDirtyRectangleThreshold = 1;
 
@@ -276,7 +276,7 @@ public:
 	void closeAllDialogs() {}
 
 	/** Drawing area has been removed: it was too hackish. A workaround is on the works.
-	 	TODO: finish the workaround for the credits dialog
+		TODO: finish the workaround for the credits dialog
 		TODO: remove this from the original GUI::Theme API */
 	void resetDrawArea() {}
 
@@ -345,7 +345,7 @@ public:
 
 	/**
 	 *	Actual implementation of a Dirty Rect drawing routine.
-	 * 	Dirty rectangles are queued on a list and are later merged/calculated
+	 *	Dirty rectangles are queued on a list and are later merged/calculated
 	 *	before the actual drawing.
 	 *
 	 *	@param r Area of the dirty rect.
@@ -412,7 +412,7 @@ public:
 	 *	filename.
 	 *
 	 *	@param fontName Identifier name for the font.
-	 * 	@param file Name of the font file.
+	 *	@param file Name of the font file.
 	 *	@param r, g, b Color of the font.
 	 */
 	bool addFont(const Common::String &fontName, const Common::String &file, int r, int g, int b);
@@ -420,7 +420,7 @@ public:
 
 	/**
 	 *	Interface for the ThemeParser class: Loads a bitmap file to use on the GUI.
-	 * 	The filename is also used as its identifier.
+	 *	The filename is also used as its identifier.
 	 *
 	 *	@param filename Name of the bitmap file.
 	 */
@@ -483,7 +483,7 @@ public:
 	 *	bitmap and sets it as the active cursor.
 	 *
 	 *	@param filename File name of the bitmap to load.
-	 * 	@param hotspotX X Coordinate of the bitmap which does the cursor click.
+	 *	@param hotspotX X Coordinate of the bitmap which does the cursor click.
 	 *	@param hotspotY	Y Coordinate of the bitmap which does the cursor click.
 	 *	@param scale	Scale at which the bitmap is supposed to be used.
 	 */
@@ -617,22 +617,22 @@ protected:
 	void debugWidgetPosition(const char *name, const Common::Rect &r);
 
 public:
-	
+
 	/**
 	 *	LEGACY: Old GUI::Theme API
 	 */
-	
-	bool needThemeReload() { 
+
+	bool needThemeReload() {
 		return ((_loadedThemeX != g_system->getOverlayWidth()) ||
-				(_loadedThemeY != g_system->getOverlayHeight())); 
+				(_loadedThemeY != g_system->getOverlayHeight()));
 	}
 
 	const Graphics::Font *loadFont(const Common::String &filename);
 	const Graphics::Font *loadFontFromArchive(const Common::String &filename);
 	Common::String genCacheFilename(const char *filename);
-	
+
 	bool isThemeLoadingRequired();
-	
+
 	static bool themeConfigUseable(const Common::FSNode &node, Common::String &themeName);
 	static bool themeConfigParseHeader(Common::String header, Common::String &themeName);
 

@@ -125,7 +125,7 @@ public:
 		#endif
 		#if PLUGIN_ENABLED_STATIC(MADE)
 		LINK_PLUGIN(MADE)
-		#endif		
+		#endif
 		#if PLUGIN_ENABLED_STATIC(PARALLACTION)
 		LINK_PLUGIN(PARALLACTION)
 		#endif

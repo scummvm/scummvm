@@ -38,8 +38,8 @@
 
 namespace GUI {
 
-ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {	
-	
+ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {
+
 	_drawFunctions["circle"]  = &Graphics::VectorRenderer::drawCallback_CIRCLE;
 	_drawFunctions["square"]  = &Graphics::VectorRenderer::drawCallback_SQUARE;
 	_drawFunctions["roundedsq"]  = &Graphics::VectorRenderer::drawCallback_ROUNDSQ;
@@ -75,7 +75,7 @@ void ThemeParser::cleanup() {
 
 Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 	Graphics::DrawStep *step = new Graphics::DrawStep;
-	
+
 	memset(step, 0, sizeof(Graphics::DrawStep));
 
 	step->xAlign = Graphics::DrawStep::kVectorAlignManual;
@@ -121,9 +121,9 @@ bool ThemeParser::parserCallback_defaults(ParserNode *node) {
 	return parseDrawStep(node, step, false);
 }
 
-bool ThemeParser::parserCallback_font(ParserNode *node) {		
+bool ThemeParser::parserCallback_font(ParserNode *node) {
 	int red, green, blue;
-	
+
 	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
@@ -133,15 +133,15 @@ bool ThemeParser::parserCallback_font(ParserNode *node) {
 		getPaletteColor(node->values["color"], red, green, blue);
 	else if (!parseIntegerKey(node->values["color"].c_str(), 3, &red, &green, &blue))
 		return parserError("Error parsing color value for font definition.");
-	
+
 	if (!_theme->addFont(node->values["id"], node->values["file"], red, green, blue))
 		return parserError("Error loading Font in theme engine.");
-		
+
 	return true;
 }
 
-bool ThemeParser::parserCallback_fonts(ParserNode *node) {		
-	return true;	
+bool ThemeParser::parserCallback_fonts(ParserNode *node) {
+	return true;
 }
 
 bool ThemeParser::parserCallback_cursor(ParserNode *node) {
@@ -149,18 +149,18 @@ bool ThemeParser::parserCallback_cursor(ParserNode *node) {
 		node->ignore = true;
 		return true;
 	}
-	
+
 	int spotx, spoty, scale;
-	
+
 	if (!parseIntegerKey(node->values["hotspot"].c_str(), 2, &spotx, &spoty))
 		return parserError("Error parsing cursor Hot Spot coordinates.");
-		
+
 	if (!parseIntegerKey(node->values["scale"].c_str(), 1, &scale))
 		return parserError("Error parsing cursor scale.");
-		
+
 	if (!_theme->createCursor(node->values["file"], spotx, spoty, scale))
 		return parserError("Error creating Bitmap Cursor.");
-		
+
 	return true;
 }
 
@@ -169,17 +169,17 @@ bool ThemeParser::parserCallback_bitmap(ParserNode *node) {
 		node->ignore = true;
 		return true;
 	}
-	
+
 	if (!_theme->addBitmap(node->values["filename"]))
 		return parserError("Error loading Bitmap file '%s'", node->values["filename"].c_str());
-		
+
 	return true;
 }
 
-bool ThemeParser::parserCallback_text(ParserNode *node) {		
+bool ThemeParser::parserCallback_text(ParserNode *node) {
 	Graphics::TextAlign alignH;
 	GUI::ThemeEngine::TextAlignVertical alignV;
-		
+
 	if (node->values["horizontal_align"] == "left")
 		alignH = Graphics::kTextAlignLeft;
 	else if (node->values["horizontal_align"] == "right")
@@ -187,7 +187,7 @@ bool ThemeParser::parserCallback_text(ParserNode *node) {
 	else if (node->values["horizontal_align"] == "center")
 		alignH = Graphics::kTextAlignCenter;
 	else return parserError("Invalid value for text alignment.");
-	
+
 	if (node->values["vertical_align"] == "top")
 		alignV = GUI::ThemeEngine::kTextAlignVTop;
 	else if (node->values["vertical_align"] == "center")
@@ -195,7 +195,7 @@ bool ThemeParser::parserCallback_text(ParserNode *node) {
 	else if (node->values["vertical_align"] == "bottom")
 		alignV = GUI::ThemeEngine::kTextAlignVBottom;
 	else return parserError("Invalid value for text alignment.");
-	
+
 	if (!_theme->addTextData(getParentNode(node)->values["id"], node->values["font"], alignH, alignV))
 		return parserError("Error adding Text Data for '%s'.", getParentNode(node)->values["id"].c_str());
 
@@ -205,14 +205,14 @@ bool ThemeParser::parserCallback_text(ParserNode *node) {
 bool ThemeParser::parserCallback_render_info(ParserNode *node) {
 	if (resolutionCheck(node->values["resolution"]) == false)
 		node->ignore = true;
-		
+
 	return true;
 }
 
 bool ThemeParser::parserCallback_layout_info(ParserNode *node) {
 	if (resolutionCheck(node->values["resolution"]) == false)
 		node->ignore = true;
-		
+
 	return true;
 }
 
@@ -243,7 +243,7 @@ bool ThemeParser::parserCallback_color(ParserNode *node) {
 bool ThemeParser::parserCallback_drawstep(ParserNode *node) {
 	Graphics::DrawStep *drawstep = newDrawStep();
 
-	Common::String functionName = node->values["func"]; 
+	Common::String functionName = node->values["func"];
 
 	if (_drawFunctions.contains(functionName) == false)
 		return parserError("%s is not a valid drawing function name", functionName.c_str());
@@ -261,14 +261,14 @@ bool ThemeParser::parserCallback_drawstep(ParserNode *node) {
 
 bool ThemeParser::parserCallback_drawdata(ParserNode *node) {
 	bool cached = false;
-	
+
 	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
 	}
 
 	if (node->values.contains("cache")) {
-		if (node->values["cache"] == "true") 
+		if (node->values["cache"] == "true")
 			cached = true;
 		else if (node->values["cache"] == "false")
 			cached = false;
@@ -350,13 +350,13 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 	if (functionSpecific) {
 		assert(stepNode->values.contains("func"));
 		Common::String functionName = stepNode->values["func"];
-		
+
 		if (functionName == "bitmap") {
 			if (!stepNode->values.contains("file"))
 				return parserError("Need to specify a filename for Bitmap blitting.");
-				
+
 			drawstep->blitSrc = _theme->getBitmap(stepNode->values["file"]);
-				
+
 			if (!drawstep->blitSrc)
 				return parserError("The given filename hasn't been loaded into the GUI.");
 		}
@@ -391,20 +391,20 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		if (stepNode->values.contains("size")) {
 			warning("The <size> keyword has been deprecated. Use <width> and <height> instead");
 		}
-		
+
 		if (stepNode->values.contains("width") && stepNode->values["width"] != "auto") {
 			drawstep->autoWidth = false;
-			
+
 			val = stepNode->values["width"];
 			if (parseIntegerKey(val.c_str(), 1, &x))
 				drawstep->w = x;
 			else if (val == "height")
 				drawstep->w = -1;
 			else return parserError("Invalid value for vector width.");
-			
+
 			if (stepNode->values.contains("xpos")) {
 				val = stepNode->values["xpos"];
-				
+
 				if (parseIntegerKey(val.c_str(), 1, &x))
 					drawstep->x = x;
 				else if (val == "center")
@@ -413,16 +413,16 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 					drawstep->xAlign = Graphics::DrawStep::kVectorAlignLeft;
 				else if (val == "right")
 					drawstep->xAlign = Graphics::DrawStep::kVectorAlignRight;
-				else 
+				else
 					return parserError("Invalid value for X Position");
 			} else {
 				return parserError("When width is not set to 'auto', a <xpos> tag must be included.");
 			}
 		}
-		
+
 		if (stepNode->values.contains("height") && stepNode->values["height"] != "auto") {
 			drawstep->autoHeight = false;
-			
+
 			val = stepNode->values["height"];
 			if (parseIntegerKey(val.c_str(), 1, &x))
 				drawstep->h = x;
@@ -432,7 +432,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 
 			if (stepNode->values.contains("ypos")) {
 				val = stepNode->values["ypos"];
-				
+
 				if (parseIntegerKey(val.c_str(), 1, &x))
 					drawstep->y = x;
 				else if (val == "center")
@@ -441,13 +441,13 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 					drawstep->yAlign = Graphics::DrawStep::kVectorAlignTop;
 				else if (val == "bottom")
 					drawstep->yAlign = Graphics::DrawStep::kVectorAlignBottom;
-				else 
+				else
 					return parserError("Invalid value for Y Position");
 			} else {
 				return parserError("When height is not set to 'auto', a <ypos> tag must be included.");
 			}
 		}
-		
+
 		if (drawstep->h == -1 && drawstep->w == -1)
 			return parserError("Cross-reference in Vector Size: Height is set to width and width is set to height.");
 	}
@@ -477,30 +477,30 @@ bool ThemeParser::parserCallback_def(ParserNode *node) {
 		node->ignore = true;
 		return true;
 	}
-	
+
 	Common::String var = "Globals." + node->values["var"];
 	int value;
-	
+
 	if (_theme->getEvaluator()->hasVar(node->values["value"]) == true)
 		value = _theme->getEvaluator()->getVar(node->values["value"]);
-	
+
 	else if (!parseIntegerKey(node->values["value"].c_str(), 1, &value))
 		return parserError("Invalid definition for '%s'.", var.c_str());
-		
+
 	_theme->getEvaluator()->setVar(var, value);
-	return true;	
+	return true;
 }
 
 bool ThemeParser::parserCallback_widget(ParserNode *node) {
 	Common::String var;
-	
+
 	if (getParentNode(node)->name == "globals") {
-		
+
 		if (resolutionCheck(node->values["resolution"]) == false) {
 			node->ignore = true;
 			return true;
 		}
-		
+
 		var = "Globals." + node->values["name"] + ".";
 		if (!parseCommonLayoutProps(node, var))
 			return parserError("Error parsing Layout properties of '%s'.", var.c_str());
@@ -517,24 +517,24 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 			else if (node->values["enabled"] != "true")
 				return parserError("Invalid value for Widget enabling (expecting true/false)");
 		}
-		
+
 		if (node->values.contains("width")) {
 			if (_theme->getEvaluator()->hasVar(node->values["width"]) == true)
 				width = _theme->getEvaluator()->getVar(node->values["width"]);
-				
+
 			else if (!parseIntegerKey(node->values["width"].c_str(), 1, &width))
 				return parserError("Corrupted width value in key for %s", var.c_str());
 		}
-		
+
 		if (node->values.contains("height")) {
 			if (_theme->getEvaluator()->hasVar(node->values["height"]) == true)
 				height = _theme->getEvaluator()->getVar(node->values["height"]);
-				
+
 			else if (!parseIntegerKey(node->values["height"].c_str(), 1, &height))
 				return parserError("Corrupted height value in key for %s", var.c_str());
 		}
-		
-		_theme->getEvaluator()->addWidget(var, width, height, node->values["type"], enabled);	
+
+		_theme->getEvaluator()->addWidget(var, width, height, node->values["type"], enabled);
 	}
 
 	return true;
@@ -544,26 +544,26 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 	Common::String var = "Dialog." + node->values["name"];
 	bool enabled = true;
 	int inset = 0;
-	
+
 	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
 	}
-	
+
 	if (node->values.contains("enabled")) {
 		if (node->values["enabled"] == "false")
 			enabled = false;
 		else if (node->values["enabled"] != "true")
 			return parserError("Invalid value for Dialog enabling (expecting true/false)");
 	}
-	
+
 	if (node->values.contains("inset")) {
 		if (!parseIntegerKey(node->values["inset"].c_str(), 1, &inset))
 			return false;
 	}
-	
+
 	_theme->getEvaluator()->addDialog(var, node->values["overlays"], enabled, inset);
-	
+
 	if (node->values.contains("shading")) {
 		int shading = 0;
 		if (node->values["shading"] == "dim")
@@ -571,15 +571,15 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 		else if (node->values["shading"] == "luminance")
 			shading = 2;
 		else return parserError("Invalid value for Dialog background shading.");
-		
+
 		_theme->getEvaluator()->setVar(var + ".Shading", shading);
 	}
-		
+
 	return true;
 }
 
 bool ThemeParser::parserCallback_import(ParserNode *node) {
-	
+
 	if (!_theme->getEvaluator()->addImportedLayout(node->values["layout"]))
 		return parserError("Error importing external layout");
 	return true;
@@ -587,12 +587,12 @@ bool ThemeParser::parserCallback_import(ParserNode *node) {
 
 bool ThemeParser::parserCallback_layout(ParserNode *node) {
 	int spacing = -1;
-	
+
 	if (node->values.contains("spacing")) {
 		if (!parseIntegerKey(node->values["spacing"].c_str(), 1, &spacing))
 			return false;
 	}
-	
+
 	if (node->values["type"] == "vertical")
 		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutVertical, spacing, node->values["center"] == "true");
 	else if (node->values["type"] == "horizontal")
@@ -603,27 +603,27 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 
 	if (node->values.contains("padding")) {
 		int paddingL, paddingR, paddingT, paddingB;
-		
+
 		if (!parseIntegerKey(node->values["padding"].c_str(), 4, &paddingL, &paddingR, &paddingT, &paddingB))
 			return false;
-		
+
 		_theme->getEvaluator()->addPadding(paddingL, paddingR, paddingT, paddingB);
 	}
-	
+
 	return true;
 }
 
 bool ThemeParser::parserCallback_space(ParserNode *node) {
 	int size = -1;
-	
+
 	if (node->values.contains("size")) {
 		if (_theme->getEvaluator()->hasVar(node->values["size"]))
 			size = _theme->getEvaluator()->getVar(node->values["size"]);
-			
+
 		else if (!parseIntegerKey(node->values["size"].c_str(), 1, &size))
 			return parserError("Invalid value for Spacing size.");
 	}
-			
+
 	_theme->getEvaluator()->addSpace(size);
 	return true;
 }
@@ -633,151 +633,151 @@ bool ThemeParser::closedKeyCallback(ParserNode *node) {
 		_theme->getEvaluator()->closeLayout();
 	else if (node->name == "dialog")
 		_theme->getEvaluator()->closeDialog();
-		
+
 	return true;
 }
 
 bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String &var) {
 	if (node->values.contains("size")) {
 		int width, height;
-		
+
 		if (!parseIntegerKey(node->values["size"].c_str(), 2, &width, &height)) {
 			Common::StringTokenizer tokenizer(node->values["size"], " ,");
 			Common::String wtoken, htoken;
 			char *parseEnd;
-			
+
 			wtoken = tokenizer.nextToken();
-			
+
 			if (_theme->getEvaluator()->hasVar(wtoken)) {
 				width = _theme->getEvaluator()->getVar(wtoken);
 			} else {
 				width = strtol(wtoken.c_str(), &parseEnd, 10);
-				
+
 				if (*parseEnd != 0 && !(*parseEnd == '%' && *(parseEnd + 1) == 0))
 					return false;
-				
+
 				if (wtoken.lastChar() == '%')
 					width = g_system->getOverlayWidth() * width / 100;
 			}
-			
+
 			htoken = tokenizer.nextToken();
-			
+
 			if (_theme->getEvaluator()->hasVar(htoken)) {
 				height = _theme->getEvaluator()->getVar(htoken);
 			} else {
 				height = strtol(htoken.c_str(), &parseEnd, 10);
-				
+
 				if (*parseEnd != 0 && !(*parseEnd == '%' && *(parseEnd + 1) == 0))
 					return false;
-				
+
 				if (htoken.lastChar() == '%')
 					height = g_system->getOverlayHeight() * height / 100;
 			}
-			
+
 			if (!tokenizer.empty())
 				return false;
 		}
-			
-		
+
+
 		_theme->getEvaluator()->setVar(var + "Width", width);
 		_theme->getEvaluator()->setVar(var + "Height", height);
 	}
-	
+
 	if (node->values.contains("pos")) {
 		int x, y;
-		
+
 		if (!parseIntegerKey(node->values["pos"].c_str(), 2, &x, &y)) {
 			Common::StringTokenizer tokenizer(node->values["pos"], " ,");
 			Common::String xpos, ypos;
 			char *parseEnd;
-			
+
 			xpos = tokenizer.nextToken();
-			
+
 			if (xpos == "center") {
 				if (!_theme->getEvaluator()->hasVar(var + "Width"))
 					return false;
-					
+
 				x = (g_system->getOverlayWidth() / 2) - (_theme->getEvaluator()->getVar(var + "Width") / 2);
-				
+
 			} else if (_theme->getEvaluator()->hasVar(xpos)) {
 				x = _theme->getEvaluator()->getVar(xpos);
 			} else {
 				x = strtol(xpos.c_str(), &parseEnd, 10);
-				
+
 				if (*parseEnd != 0 && !(*parseEnd == 'r' && *(parseEnd + 1) == 0))
 					return false;
-				
+
 				if (xpos.lastChar() == 'r')
 					x = g_system->getOverlayWidth() - x;
-			}	
-			
+			}
+
 			ypos = tokenizer.nextToken();
-			
+
 			if (ypos == "center") {
 				if (!_theme->getEvaluator()->hasVar(var + "Height"))
 					return false;
-					
+
 				y = (g_system->getOverlayHeight() / 2) - (_theme->getEvaluator()->getVar(var + "Height") / 2);
-				
+
 			} else if (_theme->getEvaluator()->hasVar(ypos)) {
 				y = _theme->getEvaluator()->getVar(ypos);
 			} else {
 				y = strtol(ypos.c_str(), &parseEnd, 10);
-				
+
 				if (*parseEnd != 0 && !(*parseEnd == 'b' && *(parseEnd + 1) == 0))
 					return false;
-				
+
 				if (ypos.lastChar() == 'b')
 					y = g_system->getOverlayHeight() - y;
 			}
-			
+
 			if (!tokenizer.empty())
 				return false;
 		}
-		
+
 		_theme->getEvaluator()->setVar(var + "X", x);
 		_theme->getEvaluator()->setVar(var + "Y", y);
 	}
-	
+
 	if (node->values.contains("padding")) {
 		int paddingL, paddingR, paddingT, paddingB;
-		
+
 		if (!parseIntegerKey(node->values["padding"].c_str(), 4, &paddingL, &paddingR, &paddingT, &paddingB))
 			return false;
-		
+
 		_theme->getEvaluator()->setVar(var + "Padding.Left", paddingL);
 		_theme->getEvaluator()->setVar(var + "Padding.Right", paddingR);
 		_theme->getEvaluator()->setVar(var + "Padding.Top", paddingT);
 		_theme->getEvaluator()->setVar(var + "Padding.Bottom", paddingB);
 	}
-	
+
 	return true;
 }
 
 bool ThemeParser::resolutionCheck(const Common::String &resolution) {
 	if (resolution.empty())
 		return true;
-		
+
 	Common::StringTokenizer globTokenizer(resolution, ", ");
 	Common::String cur, w, h;
 	bool definedRes = false;
-	
+
 	while (!globTokenizer.empty()) {
 		bool ignore = false;
 		cur = globTokenizer.nextToken();
-		
+
 		if (cur[0] == '-') {
 			ignore = true;
 			cur.deleteChar(0);
 		} else {
 			definedRes = true;
 		}
-		
+
 		Common::StringTokenizer resTokenizer(cur, "x");
 		w = resTokenizer.nextToken();
 		h = resTokenizer.nextToken();
 
-		if ((w == "X" || atoi(w.c_str()) == g_system->getOverlayWidth()) && 
+		if ((w == "X" || atoi(w.c_str()) == g_system->getOverlayWidth()) &&
 			(h == "Y" || atoi(h.c_str()) == g_system->getOverlayHeight()))
 			return !ignore;
 	}

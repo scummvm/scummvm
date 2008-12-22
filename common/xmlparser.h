@@ -39,7 +39,7 @@
 
 
 namespace Common {
-	
+
 /*
 	XMLParser.cpp/h -- Generic XML Parser
 	=====================================
@@ -49,14 +49,14 @@ namespace Common {
 */
 
 #define MAX_XML_DEPTH 8
-			
+
 #define XML_KEY(keyName) {\
 		lay = new CustomXMLKeyLayout;\
 		lay->callback = (&kLocalParserName::parserCallback_##keyName);\
 		layout.top()->children[#keyName] = lay;\
 		layout.push(lay); \
 		_layoutList.push_back(lay);
-		
+
 #define XML_KEY_RECURSIVE(keyName) {\
 			layout.top()->children[#keyName] = layout.top();\
 			layout.push(layout.top());\
@@ -68,9 +68,9 @@ namespace Common {
 		prop.name = #propName; \
 		prop.required = req; \
 		layout.top()->properties.push_back(prop); }
-		
 
-	
+
+
 #define CUSTOM_XML_PARSER(parserName) \
 	protected: \
 	typedef parserName kLocalParserName; \
@@ -85,7 +85,7 @@ namespace Common {
 		XMLKeyLayout::XMLKeyProperty prop; \
 		_XMLkeys = new CustomXMLKeyLayout; \
 		layout.push(_XMLkeys);
-	
+
 #define PARSER_END() layout.clear(); }
 
 /**
@@ -132,29 +132,29 @@ public:
 
 		kParserError
 	};
-	
+
 	struct XMLKeyLayout;
 	struct ParserNode;
-	
+
 	typedef Common::HashMap<Common::String, XMLParser::XMLKeyLayout*, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ChildMap;
-	
+
 	/** nested struct representing the layout of the XML file */
 	struct XMLKeyLayout {
 		struct XMLKeyProperty {
 			Common::String name;
 			bool required;
 		};
-		
+
 		Common::List<XMLKeyProperty> properties;
 		ChildMap children;
-		
+
 		virtual bool doCallback(XMLParser *parent, ParserNode *node) = 0;
-		
+
 		virtual ~XMLKeyLayout() {
 			properties.clear();
 		}
 	};
-	
+
 	XMLKeyLayout *_XMLkeys;
 
 	/** Struct representing a parsed node */
@@ -166,12 +166,12 @@ public:
 		int depth;
 		XMLKeyLayout *layout;
 	};
-	
+
 	ObjectPool<ParserNode, MAX_XML_DEPTH> _nodePool;
 
 	ParserNode *allocNode() {
 		return new (_nodePool) ParserNode;
-	} 
+	}
 
 	void freeNode(ParserNode *node) {
 		_nodePool.deleteChunk(node);
@@ -192,12 +192,12 @@ public:
 		_fileName = filename;
 		return true;
 	}
-	
+
 	bool loadFile(const FSNode &node) {
 		_stream = node.openForReading();
 		if (!_stream)
 			return false;
-		
+
 		_fileName = node.getName();
 		return true;
 	}
@@ -218,13 +218,13 @@ public:
 		_fileName = "Memory Stream";
 		return true;
 	}
-	
+
 	bool loadStream(Common::SeekableReadStream *stream) {
 		_stream = stream;
 		_fileName = "File Stream";
 		return true;
 	}
-	
+
 	void close() {
 		delete _stream;
 		_stream = 0;
@@ -255,7 +255,7 @@ public:
 	}
 
 protected:
-	
+
 	/**
 	 * The buildLayout function builds the layout for the parser to use
 	 * based on a series of helper macros. This function is automatically
@@ -264,10 +264,10 @@ protected:
 	 * See the documentation regarding XML layouts.
 	 */
 	virtual void buildLayout() = 0;
-	
+
 	/**
 	 * The keycallback function is automatically overloaded on custom parsers
-	 * when using the CUSTOM_XML_PARSER() macro. 
+	 * when using the CUSTOM_XML_PARSER() macro.
 	 *
 	 * Its job is to call the corresponding Callback function for the given node.
 	 * A function for each key type must be declared separately. See the custom
@@ -301,7 +301,7 @@ protected:
 	virtual bool closedKeyCallback(ParserNode *node) {
 		return true;
 	}
-	
+
 	/**
 	 * Called when a node is closed. Manages its cleanup and calls the
 	 * closing callback function if needed.
@@ -354,10 +354,10 @@ protected:
 				_char = '<';
 				return false;
 			}
-			
+
 			if (_stream->readByte() != '-' || _stream->readByte() != '-')
 				return parserError("Malformed comment syntax.");
-				
+
 			_char = _stream->readByte();
 			bool dash = false;
 
@@ -367,13 +367,13 @@ protected:
 						_char = _stream->readByte();
 						return true;
 					}
-						
+
 					dash = !dash;
 				}
-						
+
 				_char = _stream->readByte();
 			}
-			
+
 			return parserError("Comment has no closure.");
 		}
 
@@ -448,12 +448,12 @@ protected:
 		va_end(args);
 		return (*key == 0);
 	}
-	
+
 	bool parseXMLHeader(ParserNode *node);
 
 	/**
 	 * Overload if your parser needs to support parsing the same file
-	 * several times, so you can clean up the internal state of the 
+	 * several times, so you can clean up the internal state of the
 	 * parser before each parse.
 	 */
 	virtual void cleanup() {}

@@ -109,7 +109,7 @@ void ConsoleDialog::init() {
 	// Calculate the real width/height (rounded to char/line multiples)
 	_w = (uint16)(_widthPercent * screenW);
 	_h = (uint16)((_heightPercent * screenH - 2) / kConsoleLineHeight);
-	
+
 	_w = _w - _w / 20;
 	_h = _h * kConsoleLineHeight + 2;
 
@@ -142,7 +142,7 @@ void ConsoleDialog::open() {
 	// Calculate the real width/height (rounded to char/line multiples)
 	uint16 w = (uint16)(_widthPercent * screenW);
 	uint16 h = (uint16)((_heightPercent * screenH - 2) / kConsoleLineHeight);
-	
+
 	h = h * kConsoleLineHeight + 2;
 	w = w - w / 20;
 
@@ -202,7 +202,7 @@ void ConsoleDialog::drawLine(int line, bool restoreBg) {
 		g_gui.theme()->drawChar(Common::Rect(x, y, x+kConsoleCharWidth, y+kConsoleLineHeight), c, _font);
 		x += kConsoleCharWidth;
 	}
-	
+
 	g_gui.theme()->updateScreen();
 }
 

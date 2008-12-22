@@ -95,7 +95,7 @@ public:
 	ArjDecoder(const ArjHeader *hdr) {
 		_compsize = hdr->compSize;
 	}
-	
+
 	~ArjDecoder() {
 		delete _compressed;
 		delete _outstream;
@@ -117,7 +117,7 @@ public:
 	void init_getbits();
 	void fillbuf(int n);
 	uint16 getbits(int n);
-	
+
 
 	void make_table(int nchar, byte *bitlen, int tablebits, uint16 *table, int tablesize);
 	void read_pt_len(int nn, int nbit, int i_special);
@@ -332,8 +332,8 @@ ArjHeader *readHeader(SeekableReadStream &stream) {
 
 	strncpy(header.comment, (const char *)&headData[header.firstHdrSize + strlen(header.filename) + 1], ARJ_COMMENT_MAX);
 
-    // Process extended headers, if any
-    uint16 extHeaderSize;
+	// Process extended headers, if any
+	uint16 extHeaderSize;
 	while ((extHeaderSize = stream.readUint16LE()) != 0)
 		stream.seek((long)(extHeaderSize + 4), SEEK_CUR);
 
@@ -366,8 +366,8 @@ bool ArjFile::open(const Common::String &filename) {
 	archiveFile.seek(hdr->pos, SEEK_SET);
 
 	if (hdr->method == 0) { // store
-        int32 len = archiveFile.read(uncompressedData, hdr->origSize);
-        assert(len == hdr->origSize);
+		int32 len = archiveFile.read(uncompressedData, hdr->origSize);
+		assert(len == hdr->origSize);
 	} else {
 		ArjDecoder *decoder = new ArjDecoder(hdr);
 
@@ -381,7 +381,7 @@ bool ArjFile::open(const Common::String &filename) {
 			decoder->decode(hdr->origSize);
 		else if (hdr->method == 4)
 			decoder->decode_f(hdr->origSize);
-		
+
 		delete decoder;
 	}
 
@@ -434,7 +434,7 @@ void ArjDecoder::init_getbits() {
 }
 
 //
-// Source for fillbuf, getbits: decode.c 
+// Source for fillbuf, getbits: decode.c
 //
 
 void ArjDecoder::fillbuf(int n) {
@@ -734,7 +734,7 @@ int16 ArjDecoder::decode_ptr() {
 	int16 pwr;
 
 	plus = 0;
-	pwr = 1 << 9; 
+	pwr = 1 << 9;
 	for (width = 9; width < 13; width++) {
 		c = getbits(1);
 		if (c == 0)

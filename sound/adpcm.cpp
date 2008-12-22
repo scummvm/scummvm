@@ -370,7 +370,7 @@ int ADPCMInputStream::readBufferTinsel6(int channels, int16 *buffer, const int n
 				_blockPos++;
 				break;
 			}
-			
+
 		}
 
 	}

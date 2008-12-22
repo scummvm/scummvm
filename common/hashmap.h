@@ -78,15 +78,15 @@ public:
 	enum {
 		HASHMAP_PERTURB_SHIFT = 5,
 		HASHMAP_MIN_CAPACITY = 16,
-		
-		// The quotient of the next two constants controls how much the 
+
+		// The quotient of the next two constants controls how much the
 		// internal storage of the hashmap may fill up before being
 		// increased automatically.
 		// Note: the quotient of these two must be between and different
 		// from 0 and 1.
 		HASHMAP_LOADFACTOR_NUMERATOR = 2,
 		HASHMAP_LOADFACTOR_DENOMINATOR = 3,
-		
+
 		HASHMAP_MEMORYPOOL_SIZE = HASHMAP_MIN_CAPACITY * HASHMAP_LOADFACTOR_NUMERATOR / HASHMAP_LOADFACTOR_DENOMINATOR
 	};
 
@@ -95,7 +95,7 @@ public:
 
 	Node *allocNode(const Key &key) {
 		return new (_nodePool) Node(key);
-	} 
+	}
 
 	void freeNode(Node *node) {
 		_nodePool.deleteChunk(node);
@@ -283,7 +283,7 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() :
  * to heap buffers for the internal storage.
  */
 template<class Key, class Val, class HashFunc, class EqualFunc>
-HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t &map) : 
+HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t &map) :
 	_defaultVal()  {
 	assign(map);
 }

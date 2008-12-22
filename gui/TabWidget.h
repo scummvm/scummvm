@@ -85,7 +85,7 @@ public:
 	 * Widgets are always added to the active tab.
 	 */
 	void setActiveTab(int tabID);
-	
+
 	void setTabTitle(int tabID, const String &title) {
 		assert(0 <= tabID && tabID < (int)_tabs.size());
 		_tabs[tabID].title = title;

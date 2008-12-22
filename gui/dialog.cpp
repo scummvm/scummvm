@@ -44,7 +44,7 @@ namespace GUI {
 
 Dialog::Dialog(int x, int y, int w, int h)
 	: GuiObject(x, y, w, h),
-	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false), 
+	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false),
 	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {}
 
 Dialog::Dialog(const Common::String &name)
@@ -144,7 +144,7 @@ void Dialog::drawDialog() {
 	// Draw all children
 	Widget *w = _firstWidget;
 	while (w) {
-		//if (w->_debugVisible) 
+		//if (w->_debugVisible)
 		w->draw();
 		w = w->_next;
 	}

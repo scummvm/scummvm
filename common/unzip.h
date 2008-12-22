@@ -42,7 +42,7 @@ public:
 	ZipArchive(const FSNode &node);
 	ZipArchive(SeekableReadStream *stream);
 	~ZipArchive();
-	
+
 	bool isOpen() const;
 
 	virtual bool hasFile(const String &name);

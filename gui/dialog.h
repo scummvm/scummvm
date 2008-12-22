@@ -48,7 +48,7 @@ protected:
 	Widget  *_focusedWidget;
 	Widget  *_dragWidget;
 	bool	_visible;
-	
+
 	ThemeEngine::DialogBackground _backgroundType;
 
 private:

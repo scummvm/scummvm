@@ -34,57 +34,57 @@
 #include "gui/ThemeLayout.h"
 
 namespace GUI {
-	
+
 class ThemeEval {
 
 	typedef Common::HashMap<Common::String, int> VariablesMap;
 	typedef Common::HashMap<Common::String, ThemeLayout *> LayoutsMap;
-	
+
 public:
 	ThemeEval() {
 		buildBuiltinVars();
 	}
-	
+
 	~ThemeEval();
-	
+
 	void buildBuiltinVars();
-	
+
 	int getVar(const Common::String &s) {
 		if (_vars.contains(s))
 			return _vars[s];
-			
+
 		if (_builtin.contains(s))
 			return _builtin[s];
 
 		error("CRITICAL: Missing variable: '%s'", s.c_str());
-		return -13375; //EVAL_UNDEF_VAR 
+		return -13375; //EVAL_UNDEF_VAR
 	}
-	
+
 	int getVar(const Common::String &s, int def) {
 		if (_vars.contains(s))
 			return _vars[s];
-			
+
 		if (_builtin.contains(s))
 			return _builtin[s];
 
 		return def;
 	}
-	
+
 	void setVar(const Common::String &name, int val) { _vars[name] = val; }
-	
+
 	bool hasVar(const Common::String &name) { return _vars.contains(name) || _builtin.contains(name); }
-	
+
 	void addDialog(const Common::String &name, const Common::String &overlays, bool enabled = true, int inset = 0);
 	void addLayout(ThemeLayout::LayoutType type, int spacing, bool center = false);
 	void addWidget(const Common::String &name, int w, int h, const Common::String &type, bool enabled = true);
 	bool addImportedLayout(const Common::String &name);
 	void addSpace(int size);
-	
+
 	void addPadding(int16 l, int16 r, int16 t, int16 b) { _curLayout.top()->setPadding(l, r, t, b); }
-	
+
 	void closeLayout() { _curLayout.pop(); }
 	void closeDialog() { _curLayout.pop()->reflowLayout(); _curDialog.clear(); }
-	
+
 	bool getWidgetData(const Common::String &widget, int16 &x, int16 &y, uint16 &w, uint16 &h);
 
 #ifdef LAYOUT_DEBUG_DIALOG
@@ -92,13 +92,13 @@ public:
 		_layouts[LAYOUT_DEBUG_DIALOG]->debugDraw(screen, font);
 	}
 #endif
-	
+
 	void reset();
-	
+
 private:
 	VariablesMap _vars;
 	VariablesMap _builtin;
-	
+
 	LayoutsMap _layouts;
 	Common::Stack<ThemeLayout *> _curLayout;
 	Common::String _curDialog;

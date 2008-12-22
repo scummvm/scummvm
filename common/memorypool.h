@@ -36,7 +36,7 @@ class MemoryPool {
 protected:
 	MemoryPool(const MemoryPool&);
 	MemoryPool& operator=(const MemoryPool&);
-	
+
 	struct Page {
 		void *start;
 		size_t numChunks;
@@ -55,11 +55,11 @@ public:
 	MemoryPool(size_t chunkSize);
 	~MemoryPool();
 
-	void 	*allocChunk();
-	void 	freeChunk(void *ptr);
+	void	*allocChunk();
+	void	freeChunk(void *ptr);
 
 	void	freeUnusedPages();
-	
+
 	size_t	getChunkSize() const { return _chunkSize; }
 };
 

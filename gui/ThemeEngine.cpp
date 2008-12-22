@@ -55,7 +55,7 @@ ThemeEngine::ThemeEngine(Common::String fileName, GraphicsMode mode) :
 	_buffering(false), _bytesPerPixel(0),  _graphicsMode(kGfxDisabled),
 	_font(0), _initOk(false), _themeOk(false), _enabled(false), _cursor(0),
 	_loadedThemeX(0), _loadedThemeY(0) {
-		
+
 	_system = g_system;
 	_parser = new ThemeParser(this);
 	_themeEval = new GUI::ThemeEval();
@@ -514,7 +514,7 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 #endif
 	} else if (node.isDirectory()) {
 
-// 		FIXME: This warning makes no sense whatsoever. Who added this?
+//		FIXME: This warning makes no sense whatsoever. Who added this?
 //		warning("Don't know how to open theme '%s'", themeName.c_str());
 		archive = new Common::FSDirectory(node);
 	}
@@ -1090,7 +1090,7 @@ const Graphics::Font *ThemeEngine::loadFontFromArchive(const Common::String &fil
 #endif
 	} else {
 		Common::FSDirectory *dir = new Common::FSDirectory(node);
-		if (!dir || !dir->getFSNode().isDirectory())	
+		if (!dir || !dir->getFSNode().isDirectory())
 			return 0;
 
 		arch = dir;
@@ -1163,7 +1163,7 @@ Common::String ThemeEngine::genCacheFilename(const char *filename) {
  *	Static Theme XML functions
  *********************************************************/
 
-bool ThemeEngine::themeConfigParseHeader(Common::String header, Common::String &themeName) {	
+bool ThemeEngine::themeConfigParseHeader(Common::String header, Common::String &themeName) {
 	header.trim();
 
 	if (header.empty())
@@ -1197,7 +1197,7 @@ bool ThemeEngine::themeConfigUseable(const Common::FSNode &node, Common::String 
 			stream.open("THEMERC", zipArchive);
 		}
 #endif
-	} else if (node.isDirectory()) {			
+	} else if (node.isDirectory()) {
 		Common::FSNode headerfile = node.getChild("THEMERC");
 		if (!headerfile.exists() || !headerfile.isReadable() || headerfile.isDirectory())
 			return false;

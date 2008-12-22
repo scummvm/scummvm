@@ -150,11 +150,11 @@ void ThemeBrowser::addDir(ThList &list, const Common::FSNode &node) {
 	fslist.push_back(node);	// Yup, also scan the dir itself
 
 	for (Common::FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
-		
+
 		Entry th;
 		if (isTheme(*i, th)) {
 			bool add = true;
-			
+
 			for (ThList::const_iterator p = list.begin(); p != list.end(); ++p) {
 				if (p->name == th.name || p->file == th.file) {
 					add = false;
@@ -163,14 +163,14 @@ void ThemeBrowser::addDir(ThList &list, const Common::FSNode &node) {
 			}
 
 			if (add)
-				list.push_back(th);	
+				list.push_back(th);
 		}
 	}
 }
 
 bool ThemeBrowser::isTheme(const Common::FSNode &node, Entry &out) {
-	out.file = node.getPath();	
-	
+	out.file = node.getPath();
+
 #ifdef USE_ZLIB
 	if (!out.file.hasSuffix(".zip") && !node.isDirectory())
 		return false;
@@ -178,7 +178,7 @@ bool ThemeBrowser::isTheme(const Common::FSNode &node, Entry &out) {
 	if (!node.isDirectory())
 		return false;
 #endif
-		
+
 	if (!ThemeEngine::themeConfigUseable(node, out.name))
 		return false;
 

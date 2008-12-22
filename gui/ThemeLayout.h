@@ -158,7 +158,7 @@ protected:
 class ThemeLayoutVertical : public ThemeLayout {
 public:
 	ThemeLayoutVertical(ThemeLayout *p, int spacing, bool center) :
-	 	ThemeLayout(p, "") {
+		ThemeLayout(p, "") {
 		_spacing = spacing;
 		_centered = center;
 	}

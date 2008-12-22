@@ -72,7 +72,7 @@ NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
 	Common::String themefile(ConfMan.get("gui_theme"));
 	if (themefile.compareToIgnoreCase("default") == 0)
 		themefile = "builtin";
-		
+
 	ConfMan.registerDefault("gui_renderer", ThemeEngine::findModeConfigName(ThemeEngine::_defaultRendererMode));
 	ThemeEngine::GraphicsMode gfxMode = (ThemeEngine::GraphicsMode)ThemeEngine::findMode(ConfMan.get("gui_renderer"));
 
@@ -87,9 +87,9 @@ NewGui::~NewGui() {
 bool NewGui::loadNewTheme(Common::String filename, ThemeEngine::GraphicsMode gfx) {
 	if (_theme && filename == _theme->getThemeFileName() && gfx == _theme->getGraphicsMode())
 		return true;
-	
+
 	Common::String oldTheme = (_theme != 0) ? _theme->getThemeFileName() : "";
-	
+
 	if (gfx == ThemeEngine::kGfxDisabled)
 		gfx = ThemeEngine::_defaultRendererMode;
 
@@ -122,7 +122,7 @@ void NewGui::redraw() {
 
 	if (_redrawStatus == kRedrawDisabled)
 		return;
-		
+
 	if (_dialogStack.empty())
 		return;
 
@@ -134,7 +134,7 @@ void NewGui::redraw() {
 			_theme->openDialog(true);
 
 			for (i = 0; i < _dialogStack.size() - 1; i++) {
-				_dialogStack[i]->drawDialog();	
+				_dialogStack[i]->drawDialog();
 			}
 
 			_theme->finishBuffering();
@@ -195,13 +195,13 @@ void NewGui::runLoop() {
 			animateCursor();
 //		_theme->updateScreen();
 //		_system->updateScreen();
-		
+
 		if (lastRedraw + waitTime < _system->getMillis()) {
 			_theme->updateScreen();
 			_system->updateScreen();
 			lastRedraw = _system->getMillis();
 		}
-	
+
 		Common::Event event;
 
 		while (eventMan->pollEvent(event)) {
@@ -224,7 +224,7 @@ void NewGui::runLoop() {
 				_redrawStatus = kRedrawFull;
 				redraw();
 			}
-			
+
 			if (lastRedraw + waitTime < _system->getMillis()) {
 				_theme->updateScreen();
 				_system->updateScreen();
@@ -314,10 +314,10 @@ void NewGui::restoreState() {
 	_stateIsSaved = false;
 }
 
-void NewGui::openDialog(Dialog *dialog) {	
+void NewGui::openDialog(Dialog *dialog) {
 	_dialogStack.push(dialog);
 	_redrawStatus = kRedrawOpenDialog;
-	
+
 	// We reflow the dialog just before opening it. If the screen changed
 	// since the last time we looked, also refresh the loaded theme,
 	// and reflow all other open dialogs, too.

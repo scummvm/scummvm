@@ -122,7 +122,7 @@ struct Event {
 	 * screen area as defined by the most recent call to initSize().
 	 */
 	Common::Point mouse;
-	
+
 	Event() : type(EVENT_INVALID), synthetic(false) {}
 };
 

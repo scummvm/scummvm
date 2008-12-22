@@ -45,7 +45,7 @@ Out copy(In first, In last, Out dst) {
  * Copies data from the range [first, last) to [dst - (last - first), dst).
  * It requires the range [dst - (last - first), dst) to be valid.
  * It also requires dst not to be in the range [first, last).
- * 
+ *
  * Unlike copy copy_backward copies the data from the end to the beginning.
  */
 template<class In, class Out>

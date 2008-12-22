@@ -36,21 +36,21 @@ using namespace Graphics;
 
 bool XMLParser::parserError(const char *errorString, ...) {
 	_state = kParserError;
-	
+
 	const int startPosition = _stream->pos();
 	int currentPosition = startPosition;
 	int lineCount = 1;
 	char c = 0;
-	
+
 	_stream->seek(0, SEEK_SET);
-	
+
 	while (currentPosition--) {
 		c = _stream->readByte();
-		
+
 		if (c == '\n' || c == '\r')
 			lineCount++;
 	}
-	
+
 	assert(_stream->pos() == startPosition);
 	currentPosition = startPosition;
 
@@ -75,9 +75,9 @@ bool XMLParser::parserError(const char *errorString, ...) {
 		if (c == '>')
 			keyClosing = currentPosition;
 	}
-	
+
 	fprintf(stderr, "\n  File <%s>, line %d:\n", _fileName.c_str(), lineCount);
-	
+
 	currentPosition = (keyClosing - keyOpening);
 	_stream->seek(keyOpening, SEEK_SET);
 
@@ -98,16 +98,16 @@ bool XMLParser::parserError(const char *errorString, ...) {
 
 bool XMLParser::parseXMLHeader(ParserNode *node) {
 	assert(node->header);
-	
+
 	if (_activeKey.size() != 1)
 		return parserError("XML Header is expected in the global scope.");
-		
+
 	if (!node->values.contains("version"))
 		return parserError("Missing XML version in XML header.");
-		
+
 	if (node->values["version"] != "1.0")
 		return parserError("Unsupported XML version.");
-		
+
 	return true;
 }
 
@@ -116,30 +116,30 @@ bool XMLParser::parseActiveKey(bool closed) {
 	assert(_activeKey.empty() == false);
 
 	ParserNode *key = _activeKey.top();
-	
+
 	if (key->name == "xml" && key->header == true) {
 		assert(closed);
 		return parseXMLHeader(key) && closeKey();
 	}
-	
+
 	XMLKeyLayout *layout = (_activeKey.size() == 1) ? _XMLkeys : getParentNode(key)->layout;
-	
+
 	if (layout->children.contains(key->name)) {
 		key->layout = layout->children[key->name];
-	
+
 		Common::StringMap localMap = key->values;
 		int keyCount = localMap.size();
-	
+
 		for (Common::List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
 			if (i->required && !localMap.contains(i->name))
 				return parserError("Missing required property '%s' inside key '%s'", i->name.c_str(), key->name.c_str());
 			else if (localMap.contains(i->name))
 				keyCount--;
 		}
-	
+
 		if (keyCount > 0)
 			return parserError("Unhandled property inside key '%s'.", key->name.c_str());
-			
+
 	} else {
 		return parserError("Unexpected key in the active scope ('%s').", key->name.c_str());
 	}
@@ -157,10 +157,10 @@ bool XMLParser::parseActiveKey(bool closed) {
 		// We set it manually in that case.
 		if (_state != kParserError)
 			parserError("Unhandled exception when parsing '%s' key.", key->name.c_str());
-			
+
 		return false;
 	}
-	
+
 	if (closed)
 		return closeKey();
 
@@ -201,17 +201,17 @@ bool XMLParser::parseKeyValue(Common::String keyName) {
 bool XMLParser::closeKey() {
 	bool ignore = false;
 	bool result = true;
-	
+
 	for (int i = _activeKey.size() - 1; i >= 0; --i) {
 		if (_activeKey[i]->ignore)
 			ignore = true;
 	}
-	
+
 	if (ignore == false)
 		result = closedKeyCallback(_activeKey.top());
-		
+
 	freeNode(_activeKey.pop());
-	
+
 	return result;
 }
 
@@ -219,7 +219,7 @@ bool XMLParser::parse() {
 
 	if (_stream == 0)
 		return parserError("XML stream not ready for reading.");
-		
+
 	if (_XMLkeys == 0)
 		buildLayout();
 
@@ -236,7 +236,7 @@ bool XMLParser::parse() {
 	_activeKey.clear();
 
 	_char = _stream->readByte();
-	
+
 	while (_char && _state != kParserError) {
 		if (skipSpaces())
 			continue;
@@ -262,7 +262,7 @@ bool XMLParser::parse() {
 						parserError("Expecting XML header.");
 						break;
 					}
-					
+
 					_char = _stream->readByte();
 					activeHeader = true;
 				} else if (_char == '/') {
@@ -303,7 +303,7 @@ bool XMLParser::parse() {
 			case kParserNeedPropertyName:
 				if (activeClosure) {
 					if (!closeKey()) {
-						parserError("Missing data when closing key '%s'.", _activeKey.top()->name.c_str()); 
+						parserError("Missing data when closing key '%s'.", _activeKey.top()->name.c_str());
 						break;
 					}
 
@@ -311,13 +311,13 @@ bool XMLParser::parse() {
 
 					if (_char != '>')
 						parserError("Invalid syntax in key closure.");
-					else 
+					else
 						_state = kParserNeedKey;
 
 					_char = _stream->readByte();
 					break;
 				}
-				
+
 				selfClosure = false;
 
 				if (_char == '/' || (_char == '?' && activeHeader)) {
@@ -332,33 +332,33 @@ bool XMLParser::parse() {
 						_char = _stream->readByte();
 						_state = kParserNeedKey;
 					}
-					
+
 					activeHeader = false;
 					break;
 				}
-				
+
 				if (selfClosure)
 					parserError("Expecting key closure after '/' symbol.");
-				else if (!parseToken()) 
+				else if (!parseToken())
 					parserError("Error when parsing key value.");
-				else 
+				else
 					_state = kParserNeedPropertyOperator;
 
 				break;
 
 			case kParserNeedPropertyOperator:
-				if (_char != '=') 
+				if (_char != '=')
 					parserError("Syntax error after key name.");
-				else  
+				else
 					_state = kParserNeedPropertyValue;
 
 				_char = _stream->readByte();
 				break;
 
 			case kParserNeedPropertyValue:
-				if (!parseKeyValue(_token)) 
+				if (!parseKeyValue(_token))
 					parserError("Invalid key value.");
-				else 
+				else
 					_state = kParserNeedPropertyName;
 
 				break;

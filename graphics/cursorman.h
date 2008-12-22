@@ -81,7 +81,7 @@ public:
 
 	/**
 	 * Pop all of the cursors and cursor palettes from their respective stacks.
-	 * The purpose is to ensure that all unecessary cursors are removed from the 
+	 * The purpose is to ensure that all unecessary cursors are removed from the
 	 * stack when returning to the launcher from an engine.
 	 *
 	 */

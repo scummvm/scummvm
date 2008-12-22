@@ -194,7 +194,7 @@ public:
 
 /**
  * Abstract base class for Plugin factories. Subclasses of this
- * are responsible for creating plugin objects, e.g. by loading 
+ * are responsible for creating plugin objects, e.g. by loading
  * loadable modules from storage media; by creating "fake" plugins
  * from static code; or whatever other means.
  */
@@ -226,7 +226,7 @@ public:
 	 * Return a list of Plugin objects loaded via createPlugin from disk.
 	 * For this, a list of directories is searched for plugin objects:
 	 * The current dir and its "plugins" subdirectory (if present), a list
-	 * of custom search dirs (see addCustomDirectories) and finally the 
+	 * of custom search dirs (see addCustomDirectories) and finally the
 	 * directory specified via the "pluginspath" config variable (if any).
 	 *
 	 * @return a list of Plugin instances
@@ -258,7 +258,7 @@ protected:
 	 * plugins by getPlugins().
 	 *
 	 * @param dirs	the reference to the list of directories to be used when
-	 * 		searching for plugins.
+	 *		searching for plugins.
 	 */
 	virtual void addCustomDirectories(Common::FSList &dirs) const;
 };

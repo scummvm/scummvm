@@ -81,7 +81,7 @@ protected:
 	void setMIDISettingsState(bool enabled);
 	void setVolumeSettingsState(bool enabled);
 	void setSubtitleSettingsState(bool enabled);
-	
+
 	TabWidget *_tabWidget;
 	int _graphicsTabId;
 

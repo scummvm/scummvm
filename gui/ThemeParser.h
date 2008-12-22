@@ -32,30 +32,30 @@
 
 namespace GUI {
 
-class ThemeEngine;	
+class ThemeEngine;
 
 class ThemeParser : public Common::XMLParser {
 	typedef void (Graphics::VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const Graphics::DrawStep &);
 
 public:
 	ThemeParser(ThemeEngine *parent);
-	
+
 	virtual ~ThemeParser();
-	
+
 	bool getPaletteColor(const Common::String &name, int &r, int &g, int &b) {
 		if (!_palette.contains(name))
 			return false;
-			
+
 		r = _palette[name].r;
 		g = _palette[name].g;
 		b = _palette[name].b;
-		
+
 		return true;
 	}
 
 protected:
 	ThemeEngine *_theme;
-	
+
 	CUSTOM_XML_PARSER(ThemeParser) {
 		XML_KEY(render_info)
 			XML_PROP(resolution, false)
@@ -74,14 +74,14 @@ protected:
 					XML_PROP(resolution, false)
 				KEY_END()
 			KEY_END()
-			
+
 			XML_KEY(bitmaps)
 				XML_KEY(bitmap)
 					XML_PROP(filename, true)
 					XML_PROP(resolution, false)
 				KEY_END()
 			KEY_END()
-			
+
 			XML_KEY(cursor)
 				XML_PROP(file, true)
 				XML_PROP(hotspot, true)
@@ -162,7 +162,7 @@ protected:
 					XML_PROP(value, true)
 					XML_PROP(resolution, false)
 				KEY_END()
-				
+
 				XML_KEY(widget)
 					XML_PROP(name, true)
 					XML_PROP(size, false)
@@ -171,7 +171,7 @@ protected:
 					XML_PROP(resolution, false)
 				KEY_END()
 			KEY_END()
-			
+
 			XML_KEY(dialog)
 				XML_PROP(name, true)
 				XML_PROP(overlays, true)
@@ -184,11 +184,11 @@ protected:
 					XML_PROP(center, false)
 					XML_PROP(padding, false)
 					XML_PROP(spacing, false)
-					
+
 					XML_KEY(import)
 						XML_PROP(layout, true)
 					KEY_END()
-					
+
 					XML_KEY(widget)
 						XML_PROP(name, true)
 						XML_PROP(width, false)
@@ -196,18 +196,18 @@ protected:
 						XML_PROP(type, false)
 						XML_PROP(enabled, false)
 					KEY_END()
-					
+
 					XML_KEY(space)
 						XML_PROP(size, false)
 					KEY_END()
-					
+
 					XML_KEY_RECURSIVE(layout)
 				KEY_END()
 			KEY_END()
-		KEY_END() 
-		
+		KEY_END()
+
 	} PARSER_END();
-	
+
 	/** Render info callbacks */
 	bool parserCallback_render_info(ParserNode *node);
 	bool parserCallback_defaults(ParserNode *node);
@@ -221,8 +221,8 @@ protected:
 	bool parserCallback_bitmaps(ParserNode *node) { return true; }
 	bool parserCallback_bitmap(ParserNode *node);
 	bool parserCallback_cursor(ParserNode *node);
-	
-	
+
+
 	/** Layout info callbacks */
 	bool parserCallback_layout_info(ParserNode *node);
 	bool parserCallback_globals(ParserNode *node) { return true; }
@@ -232,11 +232,11 @@ protected:
 	bool parserCallback_layout(ParserNode *node);
 	bool parserCallback_space(ParserNode *node);
 	bool parserCallback_import(ParserNode *node);
-	
+
 	bool closedKeyCallback(ParserNode *node);
-	
+
 	bool resolutionCheck(const Common::String &resolution);
-	
+
 	void cleanup();
 
 	Graphics::DrawStep *newDrawStep();

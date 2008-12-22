@@ -58,12 +58,12 @@ void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step, ui
 
 	if (step.fgColor.set)
 		setFgColor(step.fgColor.r, step.fgColor.g, step.fgColor.b);
-		
+
 	if (step.bevelColor.set)
 		setBevelColor(step.bevelColor.r, step.bevelColor.g, step.bevelColor.b);
 
 	if (step.gradColor1.set && step.gradColor2.set)
-		setGradientColors(step.gradColor1.r, step.gradColor1.g, step.gradColor1.b, 
+		setGradientColors(step.gradColor1.r, step.gradColor1.g, step.gradColor1.b,
 						  step.gradColor2.r, step.gradColor2.g, step.gradColor2.b);
 
 	setShadowOffset(_disableShadows ? 0 : step.shadow);
@@ -71,7 +71,7 @@ void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step, ui
 	setGradientFactor(step.factor);
 	setStrokeWidth(step.stroke);
 	setFillMode((FillMode)step.fillMode);
-	
+
 	_dynamicData = extra;
 
 	(this->*(step.drawingCall))(area, step);
@@ -94,25 +94,25 @@ int VectorRenderer::stepGetRadius(const DrawStep &step, const Common::Rect &area
 void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &area, uint16 &in_x, uint16 &in_y, uint16 &in_w, uint16 &in_h) {
 	if (!step.autoWidth) {
 		in_w = step.w == -1 ? area.height() : step.w;
-		
+
 		switch(step.xAlign) {
 			case Graphics::DrawStep::kVectorAlignManual:
 				if (step.x >= 0) in_x = area.left + step.x;
 				else in_x = area.left + area.width() + step.x; // value relative to the opposite corner.
 				break;
-				
+
 			case Graphics::DrawStep::kVectorAlignCenter:
-				in_x = area.left + (area.width() / 2) - (in_w / 2); 
+				in_x = area.left + (area.width() / 2) - (in_w / 2);
 				break;
-				
+
 			case Graphics::DrawStep::kVectorAlignLeft:
 				in_x = area.left;
 				break;
-				
+
 			case Graphics::DrawStep::kVectorAlignRight:
 				in_x = area.left + area.width() - in_w;
 				break;
-				
+
 			default:
 				error("Vertical alignment in horizontal data.");
 		}
@@ -120,28 +120,28 @@ void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &
 		in_x = area.left;
 		in_w = area.width();
 	}
-	
+
 	if (!step.autoHeight) {
 		in_h = step.h == -1 ? area.width() : step.h;
-		
+
 		switch(step.yAlign) {
 			case Graphics::DrawStep::kVectorAlignManual:
 				if (step.y >= 0) in_y = area.top + step.y;
 				else in_y = area.top + area.height() + step.y; // relative
 				break;
-				
+
 			case Graphics::DrawStep::kVectorAlignCenter:
-				in_y = area.top + (area.height() / 2) - (in_h / 2); 
+				in_y = area.top + (area.height() / 2) - (in_h / 2);
 				break;
-				
+
 			case Graphics::DrawStep::kVectorAlignTop:
 				in_y = area.top;
 				break;
-				
+
 			case Graphics::DrawStep::kVectorAlignBottom:
 				in_y = area.top + area.height() - in_h;
 				break;
-				
+
 			default:
 				error("Horizontal alignment in vertical data.");
 		}

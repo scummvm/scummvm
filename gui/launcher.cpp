@@ -256,7 +256,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
 	}
-	
+
 	// Activate the first tab
 	tab->setActiveTab(0);
 	_tabWidget = tab;
@@ -815,7 +815,7 @@ void LauncherDialog::loadGame(int item) {
 	target.toLowercase();
 
 	if (plugin) {
-		if ((*plugin)->hasFeature(MetaEngine::kSupportsListSaves) && 
+		if ((*plugin)->hasFeature(MetaEngine::kSupportsListSaves) &&
 			(*plugin)->hasFeature(MetaEngine::kSupportsLoadingDuringStartup)) {
 			int slot = _loadDialog->runModal(plugin, target);
 			if (slot >= 0) {

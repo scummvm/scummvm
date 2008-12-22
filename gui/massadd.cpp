@@ -76,7 +76,7 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 
 	_gameProgressText = new StaticTextWidget(this, "MassAdd.GameProgressText",
 											 "... progress ...");
-											
+
 	_dirProgressText->setAlign(Graphics::kTextAlignCenter);
 	_gameProgressText->setAlign(Graphics::kTextAlignCenter);
 
@@ -186,7 +186,7 @@ void MassAddDialog::handleTickle() {
 					assert(dom);
 
 					if ((*dom)["gameid"] == result["gameid"] &&
-					    (*dom)["platform"] == result["platform"] && 
+					    (*dom)["platform"] == result["platform"] &&
 					    (*dom)["language"] == result["language"]) {
 						duplicate = true;
 						break;

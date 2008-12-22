@@ -104,13 +104,13 @@ public:
 
 	/** Construct a new string containing exactly len characters read from address str. */
 	String(const char *str, uint32 len);
-	
+
 	/** Construct a new string containing the characters between beginP (including) and endP (excluding). */
 	String(const char *beginP, const char *endP);
-	
+
 	/** Construct a copy of the given string. */
 	String(const String &str);
-	
+
 	/** Construct a string consisting of the given character. */
 	explicit String(char c);
 
@@ -186,7 +186,7 @@ public:
 
 	/** Remove the last character from the string. */
 	void deleteLastChar();
-	
+
 	/** Remove the character at position p from the string. */
 	void deleteChar(uint32 p);
 
@@ -204,7 +204,7 @@ public:
 
 	/** Convert all characters in the string to uppercase. */
 	void toUppercase();
-	
+
 	/**
 	 * Removes trailing and leading whitespaces. Uses isspace() to decide
 	 * what is whitespace and what not.

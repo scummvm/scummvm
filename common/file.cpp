@@ -69,7 +69,7 @@ bool File::open(const String &filename, Archive &archive) {
 		debug(3, "Opening hashed: %s.", filename.c_str());
 		stream = archive.openFile(filename + ".");
 	}
-	
+
 	return open(stream, filename);
 }
 
@@ -110,7 +110,7 @@ bool File::exists(const String &filename) {
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
 		return true;
 	}
-	
+
 	return false;
 }
 

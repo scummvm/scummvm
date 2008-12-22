@@ -445,7 +445,7 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 	if (matched.empty()) {
 		if (!filesSizeMD5.empty())
 			reportUnknown(filesSizeMD5);
-	
+
 		// Filename based fallback
 		if (params.fileBasedFallback != 0)
 			matched = detectGameFilebased(allFiles, params);
@@ -484,11 +484,11 @@ static ADGameDescList detectGameFilebased(const FileMap &allFiles, const Common:
 
 		if (!fileMissing) {
 			debug(4, "Matched: %s", agdesc->gameid);
-	
+
 			if (numMatchedFiles > maxNumMatchedFiles) {
 				matchedDesc = agdesc;
 				maxNumMatchedFiles = numMatchedFiles;
-	
+
 				debug(4, "and overriden");
 			}
 		}

@@ -74,7 +74,7 @@ void updateHashCollisionStats(int collisions, int lookups, int arrsize, int nele
 	g_capacity += arrsize;
 	g_size += nele;
 	g_totalHashmaps++;
-	
+
 	if (3*nele <= 2*8)
 		g_stats[0]++;
 	if (3*nele <= 2*16)
@@ -83,7 +83,7 @@ void updateHashCollisionStats(int collisions, int lookups, int arrsize, int nele
 		g_stats[2]++;
 	if (3*nele <= 2*64)
 		g_stats[3]++;
-	
+
 	g_max_capacity = MAX(g_max_capacity, arrsize);
 	g_max_size = MAX(g_max_size, nele);
 
@@ -95,9 +95,9 @@ void updateHashCollisionStats(int collisions, int lookups, int arrsize, int nele
 		g_size / g_totalHashmaps, g_max_size,
 		g_capacity / g_totalHashmaps, g_max_capacity);
 	fprintf(stdout, "  %d less than %d; %d less than %d; %d less than %d; %d less than %d\n",
-			g_stats[0], 2*8/3, 
-			g_stats[1],2*16/3, 
-			g_stats[2],2*32/3, 
+			g_stats[0], 2*8/3,
+			g_stats[1],2*16/3,
+			g_stats[2],2*32/3,
 			g_stats[3],2*64/3);
 
 	// TODO:

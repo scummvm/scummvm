@@ -68,7 +68,7 @@ void ConfigManager::loadDefaultConfigFile() {
 	// ... load it, if available ...
 	if (stream)
 		loadFromStream(*stream);
-	
+
 	// ... and close it again.
 	delete stream;
 
@@ -142,7 +142,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 			_domainSaveOrder.push_back(domain);
 		} else {
 			// This line should be a line with a 'key=value' pair, or an empty one.
-			
+
 			// Skip leading whitespaces
 			const char *t = line.c_str();
 			while (isspace(*t))
@@ -165,7 +165,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 			// Extract the key/value pair
 			String key(t, p);
 			String value(p + 1);
-			
+
 			// Trim of spaces
 			key.trim();
 			value.trim();
@@ -202,7 +202,7 @@ void ConfigManager::flushToDisk() {
 			delete dump;
 			return;
 		}
-		
+
 		stream = dump;
 	}
 

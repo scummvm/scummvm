@@ -70,7 +70,7 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern)
  *  by FSDirectory. It is right now a light wrapper or FSNode.
  */
 class FSDirectoryMember : public ArchiveMember {
-	FSNode 	_node;
+	FSNode	_node;
 
 public:
 	FSDirectoryMember(FSNode &node) : _node(node) {

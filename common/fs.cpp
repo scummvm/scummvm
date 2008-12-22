@@ -32,14 +32,14 @@ namespace Common {
 FSNode::FSNode() {
 }
 
-FSNode::FSNode(AbstractFSNode *realNode) 
+FSNode::FSNode(AbstractFSNode *realNode)
 	: _realNode(realNode) {
 }
 
 FSNode::FSNode(const Common::String &p) {
 	FilesystemFactory *factory = g_system->getFilesystemFactory();
 	AbstractFSNode *tmp = 0;
-	
+
 	if (p.empty() || p == ".")
 		tmp = factory->makeCurrentDirectoryFileNode();
 	else

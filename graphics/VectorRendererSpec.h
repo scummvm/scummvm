@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #ifndef VECTOR_RENDERER_SPEC_H
 #define VECTOR_RENDERER_SPEC_H
 
@@ -44,7 +44,7 @@ namespace Graphics {
  *
  * @param PixelFormat Defines the type of the PixelFormat struct which contains all
  *        the actual information of the pixels being used, as declared in "graphics/colormasks.h"
- *                    
+ *
  * TODO: Expand documentation.
  *
  * @see VectorRenderer
@@ -57,7 +57,7 @@ public:
 	VectorRendererSpec() {
 		_bitmapAlphaColor = RGBToColor<PixelFormat>(255, 0, 255);
 	}
-	
+
 	void drawLine(int x1, int y1, int x2, int y2);
 	void drawCircle(int x, int y, int r);
 	void drawSquare(int x, int y, int w, int h);
@@ -67,24 +67,24 @@ public:
 	void drawBeveledSquare(int x, int y, int w, int h, int bevel) {
 		drawBevelSquareAlg(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
 	}
-	void drawString(const Graphics::Font *font, const Common::String &text, 
+	void drawString(const Graphics::Font *font, const Common::String &text,
 					const Common::Rect &area, Graphics::TextAlign alignH,
 					GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool elipsis);
 
 	void setFgColor(uint8 r, uint8 g, uint8 b) { _fgColor = RGBToColor<PixelFormat>(r, g, b); }
 	void setBgColor(uint8 r, uint8 g, uint8 b) { _bgColor = RGBToColor<PixelFormat>(r, g, b); }
 	void setBevelColor(uint8 r, uint8 g, uint8 b) { _bevelColor = RGBToColor<PixelFormat>(r, g, b); }
-    void setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2);
+	void setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2);
 
-    void copyFrame(OSystem *sys, const Common::Rect &r);
-    void copyWholeFrame(OSystem *sys) { copyFrame(sys, Common::Rect(0, 0, _activeSurface->w, _activeSurface->h)); }
-    
-    void fillSurface();
-    void blitSurface(const Graphics::Surface *source, const Common::Rect &r);
-    void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r);
-    void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r);
-	
-    void applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle);
+	void copyFrame(OSystem *sys, const Common::Rect &r);
+	void copyWholeFrame(OSystem *sys) { copyFrame(sys, Common::Rect(0, 0, _activeSurface->w, _activeSurface->h)); }
+
+	void fillSurface();
+	void blitSurface(const Graphics::Surface *source, const Common::Rect &r);
+	void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r);
+	void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r);
+
+	void applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle);
 
 protected:
 
@@ -117,7 +117,7 @@ protected:
 	/**
 	 * Blends a single pixel on the surface in the given pixel pointer, using supplied color
 	 * and Alpha intensity.
-	 * 
+	 *
 	 * This is implemented to prevent blendPixel() to calculate the surface pointer on each call.
 	 * Optimized drawing algorithms should call this function when possible.
 	 *
@@ -126,7 +126,7 @@ protected:
 	 * @param color Color of the pixel
 	 * @param alpha Alpha intensity of the pixel (0-255)
 	 */
-    inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha);
+	inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha);
 
 	/**
 	 * PRIMITIVE DRAWING ALGORITHMS
@@ -139,33 +139,33 @@ protected:
 	 * @see VectorRendererAA::drawLineAlg
 	 * @see VectorRendererAA::drawCircleAlg
 	 */
-	virtual void drawLineAlg(int x1, int y1, int x2, int y2, 
+	virtual void drawLineAlg(int x1, int y1, int x2, int y2,
 	    int dx, int dy, PixelType color);
-	    
-	virtual void drawCircleAlg(int x, int y, int r, 
+
+	virtual void drawCircleAlg(int x, int y, int r,
 	    PixelType color, FillMode fill_m);
-	    
-	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, 
+
+	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h,
 	    PixelType color, FillMode fill_m);
-	    
-	virtual void drawSquareAlg(int x, int y, int w, int h, 
+
+	virtual void drawSquareAlg(int x, int y, int w, int h,
 	    PixelType color, FillMode fill_m);
-	    
-	virtual void drawTriangleVertAlg(int x, int y, int w, int h, 
+
+	virtual void drawTriangleVertAlg(int x, int y, int w, int h,
 	    bool inverted, PixelType color, FillMode fill_m);
-	    
-	virtual void drawTriangleFast(int x, int y, int size, 
+
+	virtual void drawTriangleFast(int x, int y, int size,
 	    bool inverted, PixelType color, FillMode fill_m);
-	    
-	virtual void drawBevelSquareAlg(int x, int y, int w, int h, 
+
+	virtual void drawBevelSquareAlg(int x, int y, int w, int h,
 	    int bevel, PixelType top_color, PixelType bottom_color, bool fill);
-	    
-	virtual void drawTabAlg(int x, int y, int w, int h, int r, 
-	    PixelType color, VectorRenderer::FillMode fill_m, 
+
+	virtual void drawTabAlg(int x, int y, int w, int h, int r,
+	    PixelType color, VectorRenderer::FillMode fill_m,
 	    int baseLeft = 0, int baseRight = 0);
-	    
-	virtual void drawBevelTabAlg(int x, int y, int w, int h, 
-	    int bevel, PixelType topColor, PixelType bottomColor, 
+
+	virtual void drawBevelTabAlg(int x, int y, int w, int h,
+	    int bevel, PixelType topColor, PixelType bottomColor,
 	    int baseLeft = 0, int baseRight = 0);
 
 	/**
@@ -191,7 +191,7 @@ protected:
 	 * @param max Maximum amount of the progress.
 	 * @return Composite color of the gradient at the given "progress" amount.
 	 */
-    inline PixelType calcGradient(uint32 pos, uint32 max);
+	inline PixelType calcGradient(uint32 pos, uint32 max);
 
 	/**
 	 * Fills several pixels in a row with a given color and the specified alpha blending.
@@ -216,15 +216,15 @@ protected:
 	 * for portable platforms with platform-specific assembly code.
 	 *
 	 * This fill operation is extensively used throughout the renderer, so this
-	 * counts as one of the main bottlenecks. Please replace it with assembly 
+	 * counts as one of the main bottlenecks. Please replace it with assembly
 	 * when possible!
 	 *
 	 * @param first Pointer to the first pixel to fill.
 	 * @param last Pointer to the last pixel to fill.
 	 * @param color Color of the pixel
 	 */
-    inline void colorFill(PixelType *first, PixelType *last, PixelType color);
-	
+	inline void colorFill(PixelType *first, PixelType *last, PixelType color);
+
 #ifndef DISABLE_FANCY_THEMES
 	void areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset);
 #endif
@@ -234,7 +234,7 @@ protected:
 
 	PixelType _gradientStart; /**< Start color for the fill gradient */
 	PixelType _gradientEnd; /**< End color for the fill gradient */
-	
+
 	PixelType _bevelColor;
 	PixelType _bitmapAlphaColor;
 };
@@ -247,7 +247,7 @@ protected:
  * This templated class inherits all the functionality of the VectorRendererSpec
  * class but uses better looking yet slightly slower AA algorithms for drawing
  * most primitives. May be used in faster platforms.
- *                    
+ *
  * TODO: Expand documentation.
  *
  * @see VectorRenderer
@@ -287,14 +287,14 @@ protected:
 	 * @see VectorRenderer::drawRoundedAlg()
 	 */
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m);
-	
+
 	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int blur) {
 		Base::drawRoundedSquareShadow(x, y, r, w, h, blur);
-//		VectorRenderer::applyConvolutionMatrix(VectorRenderer::kConvolutionHardBlur, 
+//		VectorRenderer::applyConvolutionMatrix(VectorRenderer::kConvolutionHardBlur,
 //            Common::Rect(x, y, x + w + blur * 2, y + h + blur * 2));
 	}
 };
 #endif
-     
+
 }
 #endif

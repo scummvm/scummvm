@@ -214,7 +214,7 @@ void MixerImpl::mixCallback(byte *samples, uint len) {
 	assert(samples);
 
 	Common::StackLock lock(_mutex);
-	
+
 	int16 *buf = (int16 *)samples;
 	len >>= 2;
 

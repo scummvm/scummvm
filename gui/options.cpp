@@ -648,7 +648,7 @@ void OptionsDialog::reflowLayout() {
 	Dialog::reflowLayout();
 
 	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
-	
+
 	if (_graphicsTabId != -1 && _tabWidget)
 		_tabWidget->setTabTitle(_graphicsTabId, g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
 
@@ -724,15 +724,15 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", "Theme:", kChooseThemeCmd, 0);
 	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
-	
+
 
 	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
-	
+
 	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.Renderer", "GUI Renderer:", labelWidth);
-	
+
 	for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
 		_rendererPopUp->appendEntry(GUI::ThemeEngine::_rendererModes[i].name, GUI::ThemeEngine::_rendererModes[i].mode);
-	
+
 	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriod", "Autosave:", labelWidth);
 
 	for (int i = 0; savePeriodLabels[i]; i++) {
@@ -809,7 +809,7 @@ void GlobalOptionsDialog::open() {
 		if (value == savePeriodValues[i])
 			_autosavePeriodPopUp->setSelected(i);
 	}
-	
+
 	ThemeEngine::GraphicsMode mode = ThemeEngine::findMode(ConfMan.get("gui_renderer"));
 	if (mode == ThemeEngine::kGfxDisabled)
 		mode = ThemeEngine::_defaultRendererMode;
@@ -843,7 +843,7 @@ void GlobalOptionsDialog::close() {
 #endif
 
 		ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
-		
+
 		GUI::ThemeEngine::GraphicsMode selected = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
 		const char *cfg = GUI::ThemeEngine::findModeConfigName(selected);
 		if (!ConfMan.get("gui_renderer").equalsIgnoreCase(cfg)) {

@@ -37,7 +37,7 @@ namespace Common {
  * Thin wrapper around zlib's uncompress() function. This wrapper makes
  * it possible to uncompress data in engines without being forced to link
  * them against zlib, thus simplifying the build system.
- * 
+ *
  * @return true on success (i.e. Z_OK), false otherwise
  */
 bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen);

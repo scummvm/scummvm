@@ -39,10 +39,10 @@
 namespace Graphics {
 
 enum SmkBlockTypes {
-    SMK_BLOCK_MONO = 0,
-    SMK_BLOCK_FULL = 1,
-    SMK_BLOCK_SKIP = 2,
-    SMK_BLOCK_FILL = 3
+	SMK_BLOCK_MONO = 0,
+	SMK_BLOCK_FULL = 1,
+	SMK_BLOCK_SKIP = 2,
+	SMK_BLOCK_FILL = 3
 };
 
 /*
@@ -446,7 +446,7 @@ bool SMKPlayer::loadFile(const char *fileName) {
 		// * bit 28 - 1 = stereo audio; 0 = mono audio
 		// * bits 27-26 - if both set to zero - use v2 sound decompression
 		// * bits 25-24 - unused
-		// * bits 23-0 - audio sample rate 
+		// * bits 23-0 - audio sample rate
 		audioInfo = _fileStream->readUint32LE();
 		_header.audioInfo[i].isCompressed = audioInfo & 0x80000000;
 		_header.audioInfo[i].hasAudio = audioInfo & 0x40000000;
@@ -570,7 +570,7 @@ bool SMKPlayer::decodeNextFrame() {
 		if (_header.audioInfo[i].hasAudio && chunkSize > 0 && i == 0) {
 			// If it's track 0, play the audio data
 			byte *soundBuffer = new byte[chunkSize];
-			
+
 			_fileStream->read(soundBuffer, chunkSize);
 
 			if (_header.audioInfo[i].isCompressed) {

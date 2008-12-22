@@ -28,7 +28,7 @@
 
 #include "common/memorypool.h"
 
-#if !defined(__SYMBIAN32__) 
+#if !defined(__SYMBIAN32__)
 #include <new>
 #endif
 
@@ -559,12 +559,12 @@ Common::String lastPathComponent(const Common::String &path, const char sep) {
 	// Path consisted of only slashes -> return empty string
 	if (last == str)
 		return Common::String();
-	
+
 	// Now scan the whole component
 	const char *first = last - 1;
 	while (first >= str && *first != sep)
 		--first;
-	
+
 	if (*first == sep)
 		first++;
 
@@ -584,15 +584,15 @@ Common::String normalizePath(const Common::String &path, const char sep) {
 		while (*cur == sep)
 			++cur;
 	}
-	
+
 	// Scan till the end of the String
 	while (*cur != 0) {
 		const char *start = cur;
-		
+
 		// Scan till the next path separator resp. the end of the string
 		while (*cur != sep && *cur != 0)
 			cur++;
-		
+
 		const Common::String component(start, cur);
 
 		// Skip empty components and dot components, add all others

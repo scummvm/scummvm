@@ -257,7 +257,7 @@ bool md5_file(const FSNode &file, uint8 digest[16], uint32 length) {
 		warning("md5_file: using a directory FSNode");
 		return false;
 	}
-	
+
 	ReadStream *stream = file.openForReading();
 	if (!stream) {
 		warning("md5_file: failed to open '%s'", file.getPath().c_str());

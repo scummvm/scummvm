@@ -75,7 +75,7 @@ bool checkThumbnailHeader(Common::SeekableReadStream &in) {
 	ThumbnailHeader header;
 
 	bool hasHeader = loadHeader(in, header, false);
-	
+
 	in.seek(position, SEEK_SET);
 
 	return hasHeader;

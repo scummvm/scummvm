@@ -53,7 +53,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	_list = new GUI::ListWidget(this, "ScummSaveLoad.List");
 	_list->setNumberingMode(GUI::kListNumberingZero);
 	setSaveMode(false);
-	
+
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 
 	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", Graphics::kTextAlignCenter);
@@ -143,7 +143,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		break;
 	case kDelCmd:
 		if (selItem >= 0 && _delSupport) {
-			MessageDialog alert("Do you really want to delete this savegame?", 
+			MessageDialog alert("Do you really want to delete this savegame?",
 								"Delete", "Cancel");
 			if (alert.runModal() == GUI::kMessageOK) {
 				(*_plugin)->removeSaveState(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
@@ -167,11 +167,11 @@ void SaveLoadChooser::reflowLayout() {
 	if (g_gui.xmlEval()->getVar("Globals.ScummSaveLoad.ExtInfo.Visible") == 1 && _thumbnailSupport) {
 		int16 x, y;
 		uint16 w, h;
-		
+
 		if (!g_gui.xmlEval()->getWidgetData("ScummSaveLoad.Thumbnail", x, y, w, h))
 			error("Error when loading position data for Save/Load Thumbnails.");
-			
-		int thumbW = kThumbnailWidth;	
+
+		int thumbW = kThumbnailWidth;
 		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
 		int thumbX = x + (w >> 1) - (thumbW >> 1);
 		int thumbY = y + kLineHeight;
@@ -183,7 +183,7 @@ void SaveLoadChooser::reflowLayout() {
 			textLines++;
 
 		_container->resize(x, y, w, h - (kLineHeight * textLines));
-		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH); 
+		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH);
 
 		int height = thumbY + thumbH + kLineHeight;
 

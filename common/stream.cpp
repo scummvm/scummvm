@@ -85,7 +85,7 @@ bool MemoryReadStream::seek(int32 offs, int whence) {
 	assert(_pos <= _size);
 
 	// Reset end-of-stream flag on a successful seek
-	_eos = false;	
+	_eos = false;
 	return true;	// FIXME: STREAM REWRITE
 }
 
@@ -101,7 +101,7 @@ char *SeekableReadStream::readLine_NEW(char *buf, size_t bufSize) {
 	char c = 0;
 
 	// If end-of-file occurs before any characters are read, return NULL
-	// and the buffer contents remain unchanged. 
+	// and the buffer contents remain unchanged.
 	if (eos() || err()) {
 		return 0;
 	}
@@ -147,7 +147,7 @@ char *SeekableReadStream::readLine_NEW(char *buf, size_t bufSize) {
 			// Treat CR & CR/LF as plain LF
 			c = LF;
 		}
-		
+
 		*p++ = c;
 		len++;
 	}
@@ -166,7 +166,7 @@ String SeekableReadStream::readLine() {
 			break;
 		line += buf;
 	}
-	
+
 	if (line.lastChar() == '\n')
 		line.deleteLastChar();
 
@@ -256,7 +256,7 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 			dataPtr = (byte *)dataPtr + bufBytesLeft;
 			dataSize -= bufBytesLeft;
 		}
-			
+
 		// At this point the buffer is empty. Now if the read request
 		// exceeds the buffer size, just satisfy it directly.
 		if (dataSize > _bufSize)
@@ -299,7 +299,7 @@ bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 		_pos = _bufSize;
 		_parentStream->seek(offset, whence);
 	}
-	
+
 	return true;	// FIXME: STREAM REWRITE
 }
 

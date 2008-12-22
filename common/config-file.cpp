@@ -135,7 +135,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			assert(isValidName(section.name));
 		} else {
 			// This line should be a line with a 'key=value' pair, or an empty one.
-			
+
 			// Skip leading whitespaces
 			const char *t = line.c_str();
 			while (isspace(*t))
@@ -158,7 +158,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			// Extract the key/value pair
 			kv.key = String(t, p);
 			kv.value = String(p + 1);
-			
+
 			// Trim of spaces
 			kv.key.trim();
 			kv.value.trim();

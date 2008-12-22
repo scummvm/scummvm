@@ -58,7 +58,7 @@ public:
 	bool saveMapping();
 	unsigned int getMapping(ActionType action);
 	void setMapping(ActionType action, unsigned int keyCode);
-    Key& getKeyAction(ActionType action);
+	Key& getKeyAction(ActionType action);
 
 	// Action domain
 	virtual Common::String domain() = 0;

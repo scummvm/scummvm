@@ -41,57 +41,57 @@ namespace GUI {
  *	Data definitions for theme engine elements
  *********************************************************/
 const ThemeEngine::DrawDataInfo ThemeEngine::kDrawDataDefaults[] = {
-	{kDDMainDialogBackground, 		"mainmenu_bg", 		true, 	kDDNone},
-	{kDDSpecialColorBackground, 	"special_bg", 		true, 	kDDNone},
-	{kDDPlainColorBackground, 		"plain_bg", 		true, 	kDDNone},
-	{kDDDefaultBackground, 			"default_bg", 		true, 	kDDNone},
-	{kDDTextSelectionBackground,	"text_selection", 	false, 	kDDNone},
+	{kDDMainDialogBackground,		"mainmenu_bg",		true,	kDDNone},
+	{kDDSpecialColorBackground,		"special_bg",		true,	kDDNone},
+	{kDDPlainColorBackground,		"plain_bg",			true,	kDDNone},
+	{kDDDefaultBackground,			"default_bg",		true,	kDDNone},
+	{kDDTextSelectionBackground,	"text_selection",	false,	kDDNone},
 
-	{kDDWidgetBackgroundDefault,	"widget_default", 	true, 	kDDNone},
-	{kDDWidgetBackgroundSmall, 		"widget_small", 	true, 	kDDNone},
-	{kDDWidgetBackgroundEditText, 	"widget_textedit", 	true, 	kDDNone},
-	{kDDWidgetBackgroundSlider, 	"widget_slider", 	true, 	kDDNone},
+	{kDDWidgetBackgroundDefault,	"widget_default",	true,	kDDNone},
+	{kDDWidgetBackgroundSmall,		"widget_small",		true,	kDDNone},
+	{kDDWidgetBackgroundEditText,	"widget_textedit",	true,	kDDNone},
+	{kDDWidgetBackgroundSlider,		"widget_slider",	true,	kDDNone},
 
-	{kDDButtonIdle, 				"button_idle", 		true, 	kDDWidgetBackgroundSlider},
-	{kDDButtonHover, 				"button_hover", 	false, 	kDDButtonIdle},
-	{kDDButtonDisabled, 			"button_disabled", 	true, 	kDDNone},
+	{kDDButtonIdle,					"button_idle",		true,	kDDWidgetBackgroundSlider},
+	{kDDButtonHover,				"button_hover",	false,	kDDButtonIdle},
+	{kDDButtonDisabled,				"button_disabled",	true,	kDDNone},
 
-	{kDDSliderFull, 				"slider_full", 		false, 	kDDNone},
-	{kDDSliderHover, 				"slider_hover", 	false, 	kDDNone},
-	{kDDSliderDisabled, 			"slider_disabled", 	true, 	kDDNone},
+	{kDDSliderFull,					"slider_full",		false,	kDDNone},
+	{kDDSliderHover,				"slider_hover",		false,	kDDNone},
+	{kDDSliderDisabled,				"slider_disabled",	true,	kDDNone},
 
-	{kDDCheckboxDefault, 			"checkbox_default", 		true, 	kDDNone},
-	{kDDCheckboxDisabled, 			"checkbox_disabled",		true, 	kDDNone},
-	{kDDCheckboxSelected, 			"checkbox_selected",		false, 	kDDCheckboxDefault},
+	{kDDCheckboxDefault,			"checkbox_default",			true,	kDDNone},
+	{kDDCheckboxDisabled,			"checkbox_disabled",		true,	kDDNone},
+	{kDDCheckboxSelected,			"checkbox_selected",		false,	kDDCheckboxDefault},
 
-	{kDDTabActive, 					"tab_active", 				false, 	kDDTabInactive},
-	{kDDTabInactive, 				"tab_inactive", 			true, 	kDDNone},
-	{kDDTabBackground, 				"tab_background", 			true, 	kDDNone},
+	{kDDTabActive,					"tab_active",				false,	kDDTabInactive},
+	{kDDTabInactive,				"tab_inactive",				true,	kDDNone},
+	{kDDTabBackground,				"tab_background",			true,	kDDNone},
 
-	{kDDScrollbarBase, 				"scrollbar_base", 			true, 	kDDNone},
+	{kDDScrollbarBase,				"scrollbar_base",			true,	kDDNone},
 
-	{kDDScrollbarButtonIdle, 		"scrollbar_button_idle", 	true, 	kDDNone},
-	{kDDScrollbarButtonHover, 		"scrollbar_button_hover", 	false, 	kDDScrollbarButtonIdle},
+	{kDDScrollbarButtonIdle,		"scrollbar_button_idle",	true,	kDDNone},
+	{kDDScrollbarButtonHover,		"scrollbar_button_hover",	false,	kDDScrollbarButtonIdle},
 
-	{kDDScrollbarHandleIdle, 		"scrollbar_handle_idle", 	false, 	kDDNone},
-	{kDDScrollbarHandleHover, 		"scrollbar_handle_hover", 	false, 	kDDScrollbarBase},
+	{kDDScrollbarHandleIdle,		"scrollbar_handle_idle",	false,	kDDNone},
+	{kDDScrollbarHandleHover,		"scrollbar_handle_hover",	false,	kDDScrollbarBase},
 
-	{kDDPopUpIdle, 					"popup_idle", 	true, 	kDDNone},
-	{kDDPopUpHover, 				"popup_hover", 	false, 	kDDPopUpIdle},
-	{kDDPopUpDisabled, 				"popup_disabled", 	true, 	kDDNone},
+	{kDDPopUpIdle,					"popup_idle",	true,	kDDNone},
+	{kDDPopUpHover,					"popup_hover",	false,	kDDPopUpIdle},
+	{kDDPopUpDisabled,				"popup_disabled",	true,	kDDNone},
 
-	{kDDCaret, 						"caret", 		false, 	kDDNone},
-	{kDDSeparator, 					"separator", 	true, 	kDDNone},
+	{kDDCaret,						"caret",		false,	kDDNone},
+	{kDDSeparator,					"separator",	true,	kDDNone},
 };
 
 const ThemeEngine::TextDataInfo ThemeEngine::kTextDataDefaults[] = {
-	{kTextDataDefault, 		"text_default"},
-	{kTextDataHover, 		"text_hover"},
-	{kTextDataDisabled, 	"text_disabled"},
-	{kTextDataInverted, 	"text_inverted"},
-	{kTextDataButton, 		"text_button"},
-	{kTextDataButtonHover, 	"text_button_hover"},
-	{kTextDataNormalFont, 	"text_normal"}
+	{kTextDataDefault,		"text_default"},
+	{kTextDataHover,		"text_hover"},
+	{kTextDataDisabled,		"text_disabled"},
+	{kTextDataInverted,		"text_inverted"},
+	{kTextDataButton,		"text_button"},
+	{kTextDataButtonHover,	"text_button_hover"},
+	{kTextDataNormalFont,	"text_normal"}
 };
 
 

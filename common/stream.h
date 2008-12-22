@@ -206,7 +206,7 @@ public:
 	 * Read a signed byte from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by
-	 * calling err() and eos() ). 
+	 * calling err() and eos() ).
 	 */
 	int8 readSByte() {
 		int8 b = 0;
