@@ -130,7 +130,7 @@ struct MetaResource {
 class Resource {
 public:
 	Resource(SagaEngine *vm);
-	~Resource();
+	virtual ~Resource();
 	bool createContexts();
 	void clearContexts();
 	void loadResource(ResourceContext *context, uint32 resourceId, byte*&resourceBuffer, size_t &resourceSize);
