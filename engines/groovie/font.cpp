@@ -120,7 +120,7 @@ uint8 Font::printletter(char letter, uint16 xoffset) {
 	byte *data = new byte[width * height];
 	_sphinxfnt->read(data, width * height);
 	_syst->copyRectToScreen(data, width, xoffset, 16, width, height);
-	delete data;
+	delete[] data;
 	
 	return width;
 }
