@@ -131,7 +131,7 @@ void GraphicsMan::fadeOut() {
 
 void GraphicsMan::applyFading(int step) {
 	// Calculate the fade factor for the given step
-	int factorR, factorG, factorB;
+	int factorR = 0, factorG = 0, factorB = 0;
 	if (_fading == 1) {
 		// Fading in
 		factorR = (step << 2);
