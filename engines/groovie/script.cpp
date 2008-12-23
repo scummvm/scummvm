@@ -652,6 +652,10 @@ void Script::o_inputloopend() {
 		// Exit the input loop
 		_inputLoopAddress = 0;
 		_vm->_system->showMouse(false);
+
+		// Force immediate hiding of the mouse cursor (required when the next
+		// video just contains audio)
+		_vm->_graphicsMan->change();
 	}
 
 	// Nothing to do
