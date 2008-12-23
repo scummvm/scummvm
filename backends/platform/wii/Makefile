@@ -59,7 +59,6 @@ LD      = $(PREFIX)gcc
 AR      = $(PREFIX)ar cru
 RANLIB  = $(PREFIX)ranlib
 STRIP   = $(PREFIX)strip -g
-OBJCOPY = $(PREFIX)objcopy
 MKDIR   = mkdir -p
 RM      = rm -f
 CP      = cp -f
@@ -125,7 +124,6 @@ CXXFLAGS += -DUSE_MT32EMU
 endif
 
 OBJS := backends/platform/wii/main.o \
-		backends/platform/wii/gecko_console.o \
 		backends/platform/wii/gx_supp.o \
 		backends/platform/wii/osystem.o \
 		backends/platform/wii/osystem_gfx.o \
@@ -139,7 +137,7 @@ include $(srcdir)/Makefile.common
 all: $(TARGET).dol
 
 $(TARGET).dol: $(TARGET).elf
-	$(OBJCOPY) -O binary $< $@
+	$(DEVKITPPC)/bin/elf2dol $< $@
 
 $(TARGET).elf: $(OBJS)
 	$(LD) $^ $(LDFLAGS) $(LIBS) -o $@
@@ -154,7 +152,7 @@ distclean: distclean-wii
 distclean-wii:
 	@-$(RM) dist
 
-upload:
+upload: $(TARGET).dol
 ifeq ($(GAMECUBE),1)
 	$(DEVKITPPC)/bin/geckoupload $(TARGET).dol
 else
@@ -177,5 +175,7 @@ endif
 	$(CP) $(srcdir)/NEWS dist/scummvm/
 	$(CP) $(srcdir)/README dist/scummvm/
 	$(CP) $(DIST_FILES_THEMES) dist/scummvm/
+ifneq ($(DIST_FILES_ENGINEDATA),)
 	$(CP) $(DIST_FILES_ENGINEDATA) dist/scummvm/
+endif
 

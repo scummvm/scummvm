@@ -19,17 +19,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include <fat.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <errno.h>
 #include <unistd.h>
 
+#include <fat.h>
+
 #include "osystem.h"
 
 #ifdef DEBUG_WII
 #include <debug.h>
-#include <gecko_console.h>
 #endif
 
 #ifdef __cplusplus
@@ -55,11 +55,15 @@ int main(int argc, char *argv[]) {
 	AUDIO_Init(NULL);
 
 #ifdef DEBUG_WII
-	gecko_console_init(0);
+	CON_EnableGecko(1, false);
 	//DEBUG_Init(GDBSTUB_DEVICE_USB, 1);
 #endif
 
-	printf("startup\n");
+	printf("startup as ");
+	if (argc > 0)
+		printf("'%s'\n", argv[0]);
+	else
+		printf("<unknown>\n");
 
 	SYS_SetResetCallback(reset_cb);
 #ifndef GAMECUBE
@@ -69,15 +73,23 @@ int main(int argc, char *argv[]) {
 	if (!fatInitDefault()) {
 		printf("fatInitDefault failed\n");
 	} else {
+#ifdef LIBFAT_READAHEAD_CACHE
+		fatSetReadAheadDefault(8, 128);
+#else
+		printf("read ahead cache not available\n");
+#endif
 		// set the default path if libfat couldnt set it
 		// this allows loading over tcp/usbgecko
-		char buf[MAXPATHLEN];
+		char cwd[MAXPATHLEN];
 
-		getcwd(buf, MAXPATHLEN);
-		if (!strcmp(buf, "fat:/"))
-			chdir("/apps/scummvm");
+		if (getcwd(cwd, MAXPATHLEN)) {
+			size_t len = strlen(cwd);
 
-		fatEnableReadAhead(PI_DEFAULT, 32, 128);
+			if (len > 2 && (cwd[len - 1] == ':' || cwd[len - 2] == ':')) {
+				printf("chdir to default\n");
+				chdir("/apps/scummvm");
+			}
+		}
 	}
 
 	g_system = new OSystem_Wii();
@@ -88,10 +100,7 @@ int main(int argc, char *argv[]) {
 
 	printf("shutdown\n");
 
-	if (!fatUnmount(PI_DEFAULT)) {
-		printf("fatUnmount failed\n");
-		fatUnsafeUnmount(PI_DEFAULT);
-	}
+	fatUnmountDefault();
 
 	if (power_btn_pressed) {
 		printf("shutting down\n");
