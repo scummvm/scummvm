@@ -92,6 +92,10 @@ void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palet
 		vfx07(surface, palette, newPalette, colorCount);
 		break;
 
+	case 8:
+		vfx08(surface, palette, newPalette, colorCount);
+		break;
+
 	case 9:		// "Checkerboard" effect
 		vfx09(surface, palette, newPalette, colorCount);
 		break;
@@ -126,6 +130,18 @@ void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palet
 
 	case 17:	// Palette fadeout/fadein
 		vfx17(surface, palette, newPalette, colorCount);
+		break;
+
+	case 18:
+		vfx18(surface, palette, newPalette, colorCount);
+		break;
+
+	case 19:
+		vfx19(surface, palette, newPalette, colorCount);
+		break;
+
+	case 20:
+		vfx20(surface, palette, newPalette, colorCount);
 		break;
 
 	default:
@@ -327,6 +343,12 @@ void ScreenEffects::vfx07(Graphics::Surface *surface, byte *palette, byte *newPa
  	setPalette(palette);
 }
 
+void ScreenEffects::vfx08(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	// TODO
+	warning("Unimplemented visual effect: 8");
+	vfx00(surface, palette, newPalette, colorCount);
+}
+
 // "Checkerboard" effect
 void ScreenEffects::vfx09(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int i = 0; i < 8; i++) {
@@ -448,5 +470,22 @@ void ScreenEffects::vfx17(Graphics::Surface *surface, byte *palette, byte *newPa
 
 }
 
+void ScreenEffects::vfx18(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	// TODO
+	warning("Unimplemented visual effect: 18");
+	vfx00(surface, palette, newPalette, colorCount);
+}
+
+void ScreenEffects::vfx19(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	// TODO
+	warning("Unimplemented visual effect: 19");
+	vfx00(surface, palette, newPalette, colorCount);
+}
+
+void ScreenEffects::vfx20(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	// TODO
+	warning("Unimplemented visual effect: 20");
+	vfx00(surface, palette, newPalette, colorCount);
+}
 
 } // End of namespace Made
