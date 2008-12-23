@@ -106,7 +106,7 @@ Common::Error GroovieEngine::init() {
 		if (ConfMan.hasKey("demo_mode") && ConfMan.getBool("demo_mode")) {
 			filename = Common::String("demo.grv");
 		}
-	} else if (_gameDescription->version == kGroovieV2 && filename == "disk.1") {
+	} else if (_gameDescription->version == kGroovieV2) {
 		// Open the disk index
 		Common::File disk;
 		if (!disk.open(filename)) {

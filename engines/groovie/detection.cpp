@@ -88,10 +88,10 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{
 		{
 			"11h", "Demo",
-			AD_ENTRY1s("demo.grv", "5faec559b9abf18cf143751b420208dc", 15991),
+			AD_ENTRY1s("disk.1", "aacb32ce07e0df2894bd83a3dee40c12", 70),
 			Common::EN_ANY, Common::kPlatformPC, Common::ADGF_DEMO
 		},
-		kGroovieV2, 0
+		kGroovieV2, 1
 	},
 
 	// The Making of The 11th Hour DOS English
