@@ -129,12 +129,16 @@ void MusicPlayer::playCD(uint8 track) {
 	_prevCDtrack = track;
 
 	// Wait until the CD stops playing the current song
+	// It was in the original interpreter, but it introduces a big delay
+	// in the middle of the introduction, so it's disabled right now
+	/*
 	AudioCD.updateCD();
 	while (AudioCD.isPlaying()) {
 		// Wait a bit and try again
 		_vm->_system->delayMillis(100);
 		AudioCD.updateCD();
 	}
+	*/
 
 	// Play the track starting at the requested offset (1000ms = 75 frames)
 	AudioCD.play(track - 1, 1, startms * 75 / 1000, 0);
