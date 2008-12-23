@@ -51,9 +51,9 @@ struct PPINIT {
 	int16	z;			// normally 0, set if from restore
 	int16	speed;		// Film speed
 	int16 	actorid;	// Set if called from an actor code block
-	bool	splay;		// Set if called from splay()
-	bool	bTop;		// Set if called from topplay()
-	bool	bRestore;
+	uint8	splay;		// Set if called from splay()
+	uint8	bTop;		// Set if called from topplay()
+	uint8	bRestore;
 	int16	sf;			// SlowFactor - only used for moving actors
 	int16	column;		// Column number, first column = 0
 
