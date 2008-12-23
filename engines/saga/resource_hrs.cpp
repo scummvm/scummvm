@@ -36,11 +36,36 @@
 #include "saga/sndres.h"
 
 #include "common/advancedDetector.h"
+#include "common/endian.h"
 
 namespace Saga {
 
-bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextOffset, uint32 contextSize) {
-	// STUB
+bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSize) {
+	ResourceData *resourceData = new ResourceData();
+	uint32 firstGroupOffset;
+	const int resDataSize = 4 + 4 + 4;
+
+	context->file->seek(0, SEEK_SET);
+	
+	// Read head element (origin)
+	resourceData->id = context->file->readUint32BE();
+	resourceData->offset = context->file->readUint32LE();
+	resourceData->size = context->file->readUint32LE();
+
+	// Check if the file is valid
+	if (resourceData->id != MKID_BE('HRES')) {	// header
+		free(resourceData);
+		return false;
+	}
+
+	// Read first group offset
+	context->file->seek(resourceData->offset - 4, SEEK_SET);
+	firstGroupOffset = context->file->readUint32LE();
+
+	// Allocate buffers for root/base node, groups and data
+	// TODO
+
+	free(resourceData);
 	return true;
 }
 

@@ -57,8 +57,12 @@ struct PatchData {
 };
 
 struct ResourceData {
+	uint32 id;		// SAGA2
 	size_t offset;
 	size_t size;
+
+	bool isExternal() { return ((offset & (1L<<31)) != 0L); }	// SAGA2
+
 	PatchData *patchData;
 	void fillSoundPatch(const GameSoundInfo *&soundInfo) {
 		if (patchData != NULL) {
@@ -75,11 +79,13 @@ struct ResourceContext {
 	const char *fileName;
 	uint16 fileType;
 	Common::File *file;
-	int serial;
+	int serial;			// IHNM speech files
 
 	bool isBigEndian;
 	ResourceData *table;
 	size_t count;
+	uint32 firstGroupOffset;	// SAGA2
+	ResourceData *groups;		// SAGA2
 
 	Common::File *getFile(ResourceData *resourceData) const {
 		if (resourceData->patchData != NULL) {
@@ -189,7 +195,7 @@ public:
 private:
 	virtual bool loadMacContext(ResourceContext *context) { return false; }
 	virtual bool loadResContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize) {
-		return loadResContext_v1(context, contextOffset, contextSize);
+		return loadResContext_v1(context, 0, contextSize);
 	}
 	MetaResource _metaResource;
 };
@@ -207,9 +213,9 @@ public:
 private:
 	virtual bool loadMacContext(ResourceContext *context) { return false; }
 	virtual bool loadResContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize) {
-		return loadResContext_v2(context, contextOffset, contextSize);
+		return loadResContext_v2(context, contextSize);
 	}
-	bool loadResContext_v2(ResourceContext *context, uint32 contextOffset, uint32 contextSize);
+	bool loadResContext_v2(ResourceContext *context, uint32 contextSize);
 };
 
 } // End of namespace Saga
