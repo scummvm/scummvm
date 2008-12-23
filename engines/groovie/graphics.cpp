@@ -47,26 +47,21 @@ void GraphicsMan::update() {
 		uint32 time = _vm->_system->getMillis() - _fadeStartTime;
 
 		// Scale the time
-		int step = time / 4;
+		int step = (time * 15 << 3) / 1000;
 		if (step > 256) {
 			step = 256;
 		}
 
-		if (_fading == 1) {
-			// Apply the fade in
-			applyFading(step);
-		} else if (_fading == 2) {
-			// Apply the fade out
-			applyFading(256 - step);
-
-			// Clear the buffer when ending the fade out
-			if (step == 256)
-				_foreground.fillRect(Common::Rect::Rect(640, 320), 0);
-		}
+		// Apply the current fading
+		applyFading(step);
 
 		// Check for the end
 		if (step == 256) {
 			_fading = 0;
+
+			// Clear the buffer when ending the fade out
+			if (_fading == 2)
+				_foreground.fillRect(Common::Rect::Rect(640, 320), 0);
 		}
 	}
 
@@ -96,7 +91,6 @@ void GraphicsMan::mergeFgAndBg() {
 	}
 }
 
-
 void GraphicsMan::updateScreen(Graphics::Surface *source) {
 	_vm->_system->copyRectToScreen((byte *)source->getBasePtr(0, 0), 640, 0, 80, 640, 320);
 	change();
@@ -117,11 +111,11 @@ void GraphicsMan::fadeIn(byte *pal) {
 		_paletteFull[(i * 4) + 2] = pal[(i * 3) + 2];
 	}
 
-	// Apply a black palette right now
-	applyFading(0);
-
 	// Set the current fading
 	_fading = 1;
+
+	// Apply a black palette right now
+	applyFading(0);
 }
 
 void GraphicsMan::fadeOut() {
@@ -137,18 +131,30 @@ void GraphicsMan::fadeOut() {
 
 void GraphicsMan::applyFading(int step) {
 	// Calculate the fade factor for the given step
-	int factorR = 256 - (256 - step) * 1;
-	int factorGB = 256 - (256 - step) * 2;
-
-	if (factorR <= 0) factorR = 0;
-	if (factorGB <= 0) factorGB = 0;
+	int factorR, factorG, factorB;
+	if (_fading == 1) {
+		// Fading in
+		factorR = (step << 2);
+		factorG = (step << 1);
+		factorB = step;
+		if (factorR > 256) factorR = 256;
+		if (factorG > 256) factorG = 256;
+		if (factorB > 256) factorB = 256;
+	} else if (_fading == 2) {
+		// Fading out
+		factorR = 256 - step;
+		factorG = 256 - (step << 1);
+		if (factorR < 0) factorR = 0;
+		if (factorG < 0) factorG = 0;
+		factorB = factorG;
+	}
 
 	// Calculate the new palette
 	byte newpal[256 * 4];
 	for (int i = 0; i < 256; i++) {
 		newpal[(i * 4) + 0] = (_paletteFull[(i * 4) + 0] * factorR) / 256;
-		newpal[(i * 4) + 1] = (_paletteFull[(i * 4) + 1] * factorGB) / 256;
-		newpal[(i * 4) + 2] = (_paletteFull[(i * 4) + 2] * factorGB) / 256;
+		newpal[(i * 4) + 1] = (_paletteFull[(i * 4) + 1] * factorG) / 256;
+		newpal[(i * 4) + 2] = (_paletteFull[(i * 4) + 2] * factorB) / 256;
 	}
 
 	// Set the screen palette
