@@ -59,10 +59,6 @@ class HitZone;
 #define ACTOR_COLLISION_HEIGHT       8
 
 #define ACTOR_DIRECTIONS_COUNT	4	// for ActorFrameSequence
-#define ACTOR_DIRECTION_RIGHT	0
-#define ACTOR_DIRECTION_LEFT	1
-#define ACTOR_DIRECTION_BACK	2
-#define ACTOR_DIRECTION_FORWARD	3
 
 #define ACTOR_SPEECH_STRING_MAX 16	// speech const
 #define ACTOR_SPEECH_ACTORS_MAX 8
@@ -77,6 +73,13 @@ class HitZone;
 #define PATH_NODE_EMPTY -1
 
 #define ACTOR_INHM_SIZE 228
+
+enum ActorDirections {
+	kDirectionRight = 0,
+	kDirectionLeft = 1,
+	kDirectionUp = 2,
+	kDirectionDown = 3
+};
 
 enum ActorActions {
 	kActionWait = 0,
@@ -131,15 +134,15 @@ enum ActorFrameTypes {
 };
 
 // Lookup table to convert 8 cardinal directions to 4
-static const int actorDirectectionsLUT[8] = {
-	ACTOR_DIRECTION_BACK,	// kDirUp
-	ACTOR_DIRECTION_RIGHT,	// kDirUpRight
-	ACTOR_DIRECTION_RIGHT,	// kDirRight
-	ACTOR_DIRECTION_RIGHT,	// kDirDownRight
-	ACTOR_DIRECTION_FORWARD,// kDirDown
-	ACTOR_DIRECTION_LEFT,	// kDirDownLeft
-	ACTOR_DIRECTION_LEFT,	// kDirLeft
-	ACTOR_DIRECTION_LEFT,	// kDirUpLeft
+static const int actorDirectionsLUT[8] = {
+	kDirectionUp,       // kDirUp
+	kDirectionRight,    // kDirUpRight
+	kDirectionRight,    // kDirRight
+	kDirectionRight,    // kDirDownRight
+	kDirectionDown,     // kDirDown
+	kDirectionLeft,     // kDirDownLeft
+	kDirectionLeft,     // kDirLeft
+	kDirectionLeft      // kDirUpLeft
 };
 
 enum ActorFlagsEx {

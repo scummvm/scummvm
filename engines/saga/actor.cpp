@@ -685,7 +685,7 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 		}
 
 
-		fourDirection = actorDirectectionsLUT[actor->_facingDirection];
+		fourDirection = actorDirectionsLUT[actor->_facingDirection];
 		return &actor->_frames[frameType].directions[fourDirection];
 	}
 
@@ -700,7 +700,7 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 			return &def;
 		}
 		frameType = CLIP(frameType, 0, actor->_framesCount - 1);
-		fourDirection = actorDirectectionsLUT[actor->_facingDirection];
+		fourDirection = actorDirectionsLUT[actor->_facingDirection];
 		return &actor->_frames[frameType].directions[fourDirection];
 	}
 	return NULL;
