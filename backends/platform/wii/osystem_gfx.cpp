@@ -49,7 +49,7 @@ void OSystem_Wii::initGfx() {
 
 #ifndef GAMECUBE
 	if (CONF_GetAspectRatio() && _fullscreen)
-		_overlayHeight = 360;
+		_overlayHeight = 400;
 #endif
 
 	_overlaySize = _overlayWidth * _overlayHeight * 2;
