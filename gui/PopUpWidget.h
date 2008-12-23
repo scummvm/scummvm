@@ -68,6 +68,7 @@ public:
 	void changeLabelWidth(uint newWidth) { _labelWidth = newWidth; }
 
 	void handleMouseDown(int x, int y, int button, int clickCount);
+	void handleMouseWheel(int x, int y, int direction);
 
 	void appendEntry(const String &entry, uint32 tag = (uint32)-1);
 	void clearEntries();

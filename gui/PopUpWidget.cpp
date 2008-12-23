@@ -379,6 +379,23 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	}
 }
 
+void PopUpWidget::handleMouseWheel(int x, int y, int direction) {
+	int newSelection = _selectedItem + direction;
+
+	// Skip separator entries
+	while ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
+		_entries[newSelection].name.equals("")) {
+		newSelection += direction;
+	}
+
+	// Just update the selected item when we're in range
+	if ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
+		(newSelection != _selectedItem)) {
+		_selectedItem = newSelection;
+		draw();
+	}
+}
+
 void PopUpWidget::reflowLayout() {
 	_leftPadding = g_gui.xmlEval()->getVar("Globals.PopUpWidget.Padding.Left", 0);
 	_rightPadding = g_gui.xmlEval()->getVar("Globals.PopUpWidget.Padding.Right", 0);
