@@ -25,11 +25,13 @@
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/stdiostream.h"
 
+#include <sys/iosupport.h>
 #include <sys/dir.h>
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#include <gctypes.h>
 
 /**
  * Implementation of the ScummVM file system API based on Wii.
@@ -41,6 +43,9 @@ protected:
 	Common::String _displayName;
 	Common::String _path;
 	bool _isDirectory, _isReadable, _isWritable;
+
+	virtual void initRootNode();
+	virtual bool getDevopChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 
 public:
 	/**
@@ -70,43 +75,67 @@ public:
 
 	virtual Common::SeekableReadStream *openForReading();
 	virtual Common::WriteStream *openForWriting();
-
-private:
-	virtual void setFlags();
 };
 
-void WiiFilesystemNode::setFlags() {
-	struct stat st;
+// gets all registered devoptab devices
+bool WiiFilesystemNode::getDevopChildren(AbstractFSList &list, ListMode mode, bool hidden) const {
+	u8 i;
+	const devoptab_t* dt;
 
-	_isDirectory = false;
-	_isReadable = false;
-	_isWritable = false;
+	if (mode == Common::FSNode::kListFilesOnly)
+		return true;
 
-	if (!stat(_path.c_str(), &st)) {
-		_isDirectory = S_ISDIR(st.st_mode);
-		_isReadable = (st.st_mode & S_IRUSR) > 0;
-		_isWritable = (st.st_mode & S_IWUSR) > 0;
+	// skip in, out and err
+	for (i = 3; i < STD_MAX; ++i) {
+		dt = devoptab_list[i];
+
+		if (!dt || !dt->name || !dt->open_r || !dt->diropen_r)
+			continue;
+	
+		list.push_back(new WiiFilesystemNode(Common::String(dt->name) + ":/", true));
 	}
+
+	return true;
 }
 
+void WiiFilesystemNode::initRootNode() {
+	_path.clear();
+	_displayName = "<devices>";
+
+	_isDirectory = true;
+	_isReadable = false;
+	_isWritable = false;
+}
 
 WiiFilesystemNode::WiiFilesystemNode() {
-	// The root dir.
-	_path = "fat:/";
-	_displayName = _path;
-
-	setFlags();
+	initRootNode();
 }
 
 WiiFilesystemNode::WiiFilesystemNode(const Common::String &p, bool verify) {
-	assert(p.size() > 0);
+	if (p.empty()) {
+		initRootNode();
+		return;
+	}
 
 	_path = p;
 
-	_displayName = lastPathComponent(_path, '/');
+	if (_path.hasSuffix(":/"))
+		_displayName = _path;
+	else
+		_displayName = lastPathComponent(_path, '/');
 
-	if (verify)
-		setFlags();
+	if (verify) {
+		_isDirectory = false;
+		_isReadable = false;
+		_isWritable = false;
+
+		struct stat st;
+		if (!stat(_path.c_str(), &st)) {
+			_isDirectory = S_ISDIR(st.st_mode);
+			_isReadable = (st.st_mode & S_IRUSR) > 0;
+			_isWritable = (st.st_mode & S_IWUSR) > 0;
+		}
+	}
 }
 
 bool WiiFilesystemNode::exists() const {
@@ -119,14 +148,17 @@ AbstractFSNode *WiiFilesystemNode::getChild(const Common::String &n) const {
 
 	Common::String newPath(_path);
 	if (newPath.lastChar() != '/')
-			newPath += '/';
+		newPath += '/';
 	newPath += n;
 
 	return new WiiFilesystemNode(newPath, true);
 }
 
-bool WiiFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
+bool WiiFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
+
+	if (_path.empty())
+		return getDevopChildren(list, mode, hidden);
 
 	DIR_ITER* dp = diropen (_path.c_str());
 
@@ -142,7 +174,7 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 
 		Common::String newPath(_path);
 		if (newPath.lastChar() != '/')
-				newPath += '/';
+			newPath += '/';
 		newPath += filename;
 
 		bool isDir = S_ISDIR(st.st_mode);
@@ -154,7 +186,7 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 		if (isDir)
 			newPath += '/';
 
-		myList.push_back(new WiiFilesystemNode(newPath, true));
+		list.push_back(new WiiFilesystemNode(newPath, true));
 	}
 
 	dirclose(dp);
@@ -163,8 +195,8 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 }
 
 AbstractFSNode *WiiFilesystemNode::getParent() const {
-	if (_path == "/")
-		return 0;
+	if (_path.empty())
+		return NULL;
 
 	const char *start = _path.c_str();
 	const char *end = lastPathComponent(_path, '/');
