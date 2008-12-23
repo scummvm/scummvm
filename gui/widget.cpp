@@ -309,16 +309,34 @@ void SliderWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	_isDragging = false;
 }
 
+void SliderWidget::handleMouseWheel(int x, int y, int direction) {
+	if (isEnabled() && !_isDragging) {
+		// Increment or decrement one position
+		int newValue = posToValue(valueToPos(_value) - 1 * direction);
+
+		if (newValue < _valueMin)
+			newValue = _valueMin;
+		else if (newValue > _valueMax)
+			newValue = _valueMax;
+
+		if (newValue != _value) {
+			_value = newValue;
+			draw();
+			sendCommand(_cmd, _value);	// FIXME - hack to allow for "live update" in sound dialog
+		}
+	}
+}
+
 void SliderWidget::drawWidget() {
-	g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x+_w, _y+_h), valueToPos(_value), _state);
+	g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x + _w, _y + _h), valueToPos(_value) + 1, _state);
 }
 
 int SliderWidget::valueToPos(int value) {
-	return (_w * (value - _valueMin) / (_valueMax - _valueMin));
+	return ((_w - 1) * (value - _valueMin + 1) / (_valueMax - _valueMin));
 }
 
 int SliderWidget::posToValue(int pos) {
-	return (pos) * (_valueMax - _valueMin) / _w + _valueMin;
+	return (pos) * (_valueMax - _valueMin) / (_w - 1) + _valueMin;
 }
 
 #pragma mark -

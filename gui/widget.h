@@ -229,6 +229,7 @@ public:
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
+	void handleMouseWheel(int x, int y, int direction);
 
 protected:
 	void drawWidget();
