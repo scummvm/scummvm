@@ -43,7 +43,7 @@ namespace Saga {
 bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSize) {
 	ResourceData *resourceData = new ResourceData();
 	uint32 firstGroupOffset;
-	const int resDataSize = 4 + 4 + 4;
+	//const int resDataSize = 4 + 4 + 4;
 
 	context->file->seek(0, SEEK_SET);
 	
