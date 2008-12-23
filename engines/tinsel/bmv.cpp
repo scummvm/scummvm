@@ -692,7 +692,7 @@ static int FollowingPacket(int thisPacket, bool bReallyImportant) {
 			if (nextReadSlot*SLOT_SIZE >= thisPacket && thisPacket+3 >= nextReadSlot*SLOT_SIZE)
 				return thisPacket + 3;
 		}
-		length = *(int32 *)(bigBuffer + thisPacket + 1);
+		length = (int32)READ_LE_UINT32(bigBuffer + thisPacket + 1);
 		length &= 0x00ffffff;
 		return thisPacket + length + 4;
 	}
@@ -962,7 +962,7 @@ static bool DoBMVFrame(void) {
 		return true;
 
 	default:
-		length = *(int *)(data + 1);
+		length = (int32)READ_LE_UINT32(data + 1);
 		length &= 0x00ffffff;
 
 		graphOffset = nextUseOffset + 4;	// Skip command byte and length
@@ -998,7 +998,7 @@ static bool DoBMVFrame(void) {
 		}
 
 		if (*data & CD_XSCR) {
-			xscr = *(signed short *)(bigBuffer + graphOffset);
+			xscr = (int16)READ_LE_UINT16(bigBuffer + graphOffset);
 			graphOffset += sz_XSCR_pkt;	// Skip scroll offset
 			length -= sz_XSCR_pkt;
 		} else if (*data & BIT0)
