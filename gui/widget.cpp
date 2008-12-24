@@ -328,7 +328,11 @@ void SliderWidget::handleMouseWheel(int x, int y, int direction) {
 }
 
 void SliderWidget::drawWidget() {
-	g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x + _w, _y + _h), valueToPos(_value) + 1, _state);
+	g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x + _w, _y + _h), valueToBarWidth(_value), _state);
+}
+
+int SliderWidget::valueToBarWidth(int value) {
+	return (_w * (value - _valueMin) / (_valueMax - _valueMin));
 }
 
 int SliderWidget::valueToPos(int value) {

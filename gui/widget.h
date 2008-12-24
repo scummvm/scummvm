@@ -236,6 +236,7 @@ protected:
 
 	int valueToPos(int value);
 	int posToValue(int pos);
+	int valueToBarWidth(int value);
 };
 
 /* GraphicsWidget */
