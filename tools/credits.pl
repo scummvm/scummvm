@@ -473,7 +473,6 @@ begin_credits("Credits");
     begin_section("Engine Teams");
 	  begin_section("SCUMM");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person("James Brown", "ender", "");
 		  add_person("Jonathan Gray", "khalek", "");
 		  add_person("Max Horn", "Fingolfin", "");
 		  add_person("Travis Howell", "Kirben", "");

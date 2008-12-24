@@ -16,7 +16,6 @@ static const char *credits[] = {
 "C1""Engine Teams",
 "C1""SCUMM",
 "C0""Torbj\366rn Andersson",
-"C0""James Brown",
 "C0""Jonathan Gray",
 "C0""Max Horn",
 "C0""Travis Howell",
