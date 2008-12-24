@@ -123,6 +123,14 @@ bool Script::loadScript(Common::String filename) {
 	scriptfile.read(_code, 0x10000);
 	scriptfile.close();
 
+	// Patch the loaded code for known script bugs
+	if (filename.equals("dr.grv")) {
+		// WORKAROUND for the cake puzzle glitch (bug #2458322): Lowering the
+		// piece on the first column and second row updates the wrong script
+		// variable
+		_code[0x03C2] = 0x38;
+	}
+
 	// Initialize the script
 	_currentInstruction = 0;
 
