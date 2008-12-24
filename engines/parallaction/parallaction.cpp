@@ -145,8 +145,9 @@ void Parallaction::updateView() {
 
 	#define SCROLL_BAND_WIDTH		120
 
+	int scrollX = 0;
 	if (canScroll()) {
-		int scrollX = _gfx->getScrollPos();
+		scrollX = _gfx->getScrollPos();
 
 		Common::Point foot;
 		_char.getFoot(foot);
@@ -163,9 +164,8 @@ void Parallaction::updateView() {
 		if (foot.x > max) {
 			scrollX += (foot.x - max);
 		}
-
-		_gfx->setScrollPos(scrollX);
 	}
+	_gfx->setScrollPos(scrollX);
 
 	_gfx->animatePalette();
 	_gfx->updateScreen();

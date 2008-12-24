@@ -817,7 +817,7 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 	}
 
 	_minScroll = 0;
-	_maxScroll = _backgroundInfo->width - _vm->_screenWidth;
+	_maxScroll = MAX(0, _backgroundInfo->width - _vm->_screenWidth);
 }
 
 } // namespace Parallaction
