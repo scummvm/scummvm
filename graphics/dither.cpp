@@ -238,7 +238,7 @@ void SierraLight::nextLine() {
 
 byte SierraLight::dither(byte c1, byte c2, byte c3, uint32 x) {
 	assert(_palLUT);
-	assert(x < _width);
+	assert(x < (uint32)_width);
 
 	int32 eC1, eC2, eC3;
 
