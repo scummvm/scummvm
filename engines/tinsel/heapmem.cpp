@@ -284,6 +284,10 @@ MEM_NODE *MemoryAlloc(int flags, long size) {
 		HeapCompact(MAX_INT, false);
 	}
 
+#ifdef SCUMM_NEED_ALIGNMENT
+	size = (size + 3) & ~3;
+#endif
+
 	while ((flags & DWM_NOALLOC) == 0 && bCompacted) {
 		// search the heap for a free block
 
