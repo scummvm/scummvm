@@ -177,7 +177,7 @@ void Video_v6::shadeRect(SurfaceDesc *dest,
 	_palLUT->getEntry(color, sY, sU, sV);
 
 	Graphics::SierraLight *dither =
-		new Graphics::SierraLight(width, height, _palLUT);
+		new Graphics::SierraLight(width, _palLUT);
 
 	for (int i = 0; i < height; i++) {
 		byte *d = vidMem;
@@ -256,7 +256,7 @@ void Video_v6::drawYUV(SurfaceDesc *destDesc, int16 x, int16 y,
 		height = destDesc->getHeight() - y;
 
 	Graphics::SierraLight *dither =
-		new Graphics::SierraLight(width, height, _palLUT);
+		new Graphics::SierraLight(width, _palLUT);
 
 	for (int i = 0; i < height; i++) {
 		byte *dest = vidMem;

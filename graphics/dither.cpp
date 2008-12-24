@@ -204,11 +204,10 @@ bool PaletteLUT::load(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-SierraLight::SierraLight(int16 width, int16 height, PaletteLUT *palLUT) {
-	assert((width > 0) && (height > 0));
+SierraLight::SierraLight(int16 width, PaletteLUT *palLUT) {
+	assert(width > 0);
 
 	_width = width;
-	_height = height;
 	_palLUT = palLUT;
 
 	// Big buffer for the errors of the current and next line
@@ -239,6 +238,7 @@ void SierraLight::nextLine() {
 
 byte SierraLight::dither(byte c1, byte c2, byte c3, uint32 x) {
 	assert(_palLUT);
+	assert(x < _width);
 
 	int32 eC1, eC2, eC3;
 

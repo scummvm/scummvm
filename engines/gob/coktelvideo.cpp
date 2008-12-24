@@ -1542,7 +1542,7 @@ void Vmd::blit16(byte *dest, uint16 *src, int16 width, int16 height) {
 	assert(_palLUT);
 
 	Graphics::SierraLight *dither =
-		new Graphics::SierraLight(width, height, _palLUT);
+		new Graphics::SierraLight(width, _palLUT);
 
 	for (int i = 0; i < height; i++) {
 		byte *d = dest;

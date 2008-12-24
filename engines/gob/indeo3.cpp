@@ -95,7 +95,7 @@ void Indeo3::setDither(DitherAlgorithm dither) {
 
 	switch(dither) {
 	case kDitherSierraLight:
-		_ditherSL = new Graphics::SierraLight(_width, _height, _palLUT);
+		_ditherSL = new Graphics::SierraLight(_width, _palLUT);
 		break;
 
 	default:
