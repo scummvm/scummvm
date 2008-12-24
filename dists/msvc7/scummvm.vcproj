@@ -941,6 +941,12 @@
 				RelativePath="..\..\graphics\cursorman.h">
 			</File>
 			<File
+				RelativePath="..\..\graphics\dither.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\dither.h">
+			</File>
+			<File
 				RelativePath="..\..\graphics\font.cpp">
 			</File>
 			<File
