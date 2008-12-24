@@ -104,7 +104,7 @@ void Render::drawScene() {
 			if (!(_flags & RF_DISABLE_ACTORS) || _vm->getGameId() == GID_ITE)
 				_vm->_scene->draw();
 
-			if (_vm->getGameId() == GID_ITE && _vm->_puzzle->isActive()) {
+			if (_vm->_scene->isITEPuzzleScene()) {
 				_vm->_puzzle->movePiece(mousePoint);
 				_vm->_actor->drawSpeech();
 			} else {

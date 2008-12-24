@@ -32,6 +32,7 @@
 #include "saga/list.h"
 #include "saga/actor.h"
 #include "saga/interface.h"
+#include "saga/puzzle.h"
 
 namespace Saga {
 
@@ -348,10 +349,7 @@ class Scene {
 	void setChapterPointsChanged(bool cp) { _chapterPointsChanged = cp; }
 
 	void cutawaySkip() {
-		if (_vm->_scene->isInIntro())
-			_vm->_framesEsc = 2;
-		else
-			_vm->_framesEsc = 1;
+		_vm->_framesEsc = _vm->_scene->isInIntro() ? 2 : 1;
 	}
 
 	void drawTextList();
@@ -370,6 +368,10 @@ class Scene {
 
 	bool isNonInteractiveIHNMDemoPart() {
 		return _vm->getFeatures() & GF_IHNM_DEMO && (_sceneNumber >= 144 && _sceneNumber <= 149);
+	}
+
+	bool isITEPuzzleScene() {
+		return _vm->getGameId() == GID_ITE && _vm->_puzzle->isActive();
 	}
 
  private:

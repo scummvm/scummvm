@@ -654,7 +654,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		switch (ascii) {
 		case 'x':
 			setMode(kPanelMain);
-			if (_vm->getGameId() == GID_ITE && _vm->_puzzle->isActive())
+			if (_vm->_scene->isITEPuzzleScene())
 				_vm->_puzzle->exitPuzzle();
 			break;
 
@@ -670,15 +670,12 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		case '2':
 		case '3':
 		case '4':
-			converseSetPos(ascii);
-			break;
 		case '5':
 		case '6':
 		case '7':
 		case '8':
 		case '9':
-			if (_vm->getGameId() == GID_IHNM)
-				converseSetPos(ascii);
+			converseSetPos(ascii);
 			break;
 		}
 		break;
@@ -736,14 +733,12 @@ bool Interface::processAscii(Common::KeyState keystate) {
 }
 
 void Interface::setStatusText(const char *text, int statusColor) {
-
-	// Disable the status text in IHNM when the chapter is 8
-	if (_vm->getGameId() == GID_IHNM && !(_vm->getFeatures() & GF_IHNM_DEMO) && _vm->_scene->currentChapterNumber() == 8)
-		return;
-
-	// Disable the status text in the introduction of the IHNM demo
-	if (_vm->getFeatures() & GF_IHNM_DEMO && _vm->_scene->currentSceneNumber() == 0)
-		return;
+	if (_vm->getGameId() == GID_IHNM) {
+		// Don't show the status text for the IHNM chapter selection screens (chapter 8), or
+		// scene 0 (IHNM demo introduction)
+		if (_vm->_scene->currentChapterNumber() == 8 || _vm->_scene->currentSceneNumber() == 0)
+			return;
+	}
 
 	assert(text != NULL);
 	assert(strlen(text) < STATUS_TEXT_LEN);
@@ -1743,7 +1738,7 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 				converseChangePos(1);
 			}
 
-			if (_vm->getGameId() == GID_ITE && _vm->_puzzle->isActive()) {
+			if (_vm->_scene->isITEPuzzleScene()) {
 				_vm->_puzzle->handleClick(mousePoint);
 			}
 		}
@@ -2624,7 +2619,7 @@ void Interface::converseSetPos(int key) {
 
 	_vm->_script->finishDialog(ct->strId, ct->replyId, ct->replyFlags, ct->replyBit);
 
-	if (_vm->getGameId() == GID_ITE && _vm->_puzzle->isActive())
+	if (_vm->_scene->isITEPuzzleScene())
 		_vm->_puzzle->handleReply(ct->replyId);
 
 	_conversePos = -1;
