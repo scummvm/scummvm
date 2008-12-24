@@ -310,9 +310,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 	}
 
 	_input->waitForButtonEvent(kMouseLeftUp);
-	_balloonMan->freeBalloons();
-
-	return;
+	_gfx->freeDialogueObjects();
 }
 
 void Parallaction_ns::_c_frankenstein(void *parm) {

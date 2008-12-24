@@ -768,20 +768,15 @@ GfxObj* Gfx::registerBalloon(Frames *frames, const char *text) {
 	return obj;
 }
 
-void Gfx::destroyBalloons() {
+void Gfx::freeDialogueObjects() {
+	_items.clear();
+
+	_vm->_balloonMan->reset();
+
 	for (uint i = 0; i < _balloons.size(); i++) {
 		delete _balloons[i];
 	}
 	_balloons.clear();
-}
-
-void Gfx::freeDialogueObjects() {
-	freeItems();
-	_vm->_balloonMan->freeBalloons();
-}
-
-void Gfx::freeItems() {
-	_items.clear();
 }
 
 void Gfx::setBackground(uint type, BackgroundInfo *info) {

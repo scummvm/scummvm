@@ -267,7 +267,7 @@ public:
 	BalloonManager_ns(Gfx *gfx, Font *font);
 	~BalloonManager_ns();
 
-	void freeBalloons();
+	void reset();
 	int setLocationBalloon(const char *text, bool endGame);
 	int setDialogueBalloon(const char *text, uint16 winding, TextColor textColor);
 	int setSingleBalloon(const char *text, uint16 x, uint16 y, uint16 winding, TextColor textColor);
@@ -429,14 +429,11 @@ int BalloonManager_ns::hitTestDialogueBalloon(int x, int y) {
 	return -1;
 }
 
-void BalloonManager_ns::freeBalloons() {
-	_gfx->destroyBalloons();
-
+void BalloonManager_ns::reset() {
 	for (uint i = 0; i < _numBalloons; i++) {
 		_intBalloons[i].obj = 0;
-		_intBalloons[i].surface = 0;	// no need to delete surface, since it is done by destroyBalloons
+		_intBalloons[i].surface = 0;	// no need to delete surface, since it is done by Gfx
 	}
-
 	_numBalloons = 0;
 }
 
@@ -566,7 +563,7 @@ public:
 	BalloonManager_br(Disk *disk, Gfx *gfx, Font *font);
 	~BalloonManager_br();
 
-	void freeBalloons();
+	void reset();
 	int setLocationBalloon(const char *text, bool endGame);
 	int setDialogueBalloon(const char *text, uint16 winding, TextColor textColor);
 	int setSingleBalloon(const char *text, uint16 x, uint16 y, uint16 winding, TextColor textColor);
@@ -724,12 +721,10 @@ int BalloonManager_br::hitTestDialogueBalloon(int x, int y) {
 	return -1;
 }
 
-void BalloonManager_br::freeBalloons() {
-	_gfx->destroyBalloons();
-
+void BalloonManager_br::reset() {
 	for (uint i = 0; i < _numBalloons; i++) {
 		_intBalloons[i].obj = 0;
-		_intBalloons[i].surface = 0;	// no need to delete surface, since it is done by destroyBalloons
+		_intBalloons[i].surface = 0;	// no need to delete surface, since it is done by Gfx
 	}
 
 	_numBalloons = 0;

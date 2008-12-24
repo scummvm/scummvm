@@ -483,7 +483,7 @@ public:
 
 	virtual ~BalloonManager() { }
 
-	virtual void freeBalloons() = 0;
+	virtual void reset() = 0;
 	virtual int setLocationBalloon(const char *text, bool endGame) = 0;
 	virtual int setDialogueBalloon(const char *text, uint16 winding, TextColor textColor) = 0;
 	virtual int setSingleBalloon(const char *text, uint16 x, uint16 y, uint16 winding, TextColor textColor) = 0;
@@ -525,16 +525,11 @@ public:
 	void hideLabel(uint id);
 	void freeLabels();
 
-	// dialogue balloons
+	// dialogue handling
 	GfxObj* registerBalloon(Frames *frames, const char *text);
-	void destroyBalloons();
-
-	void freeDialogueObjects();
-
-	// other items
 	int setItem(GfxObj* obj, uint16 x, uint16 y, byte transparentColor = 0);
 	void setItemFrame(uint item, uint16 f);
-	void freeItems();
+	void freeDialogueObjects();
 
 	// background surface
 	BackgroundInfo	*_backgroundInfo;

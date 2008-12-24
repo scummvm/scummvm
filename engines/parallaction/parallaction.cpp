@@ -384,7 +384,7 @@ void Parallaction::doLocationEnterTransition() {
 	_gfx->updateScreen();
 
 	_input->waitForButtonEvent(kMouseLeftUp);
-	_balloonMan->freeBalloons();
+	_gfx->freeDialogueObjects();
 
 	// fades maximum intensity palette towards approximation of main palette
 	for (uint16 _si = 0; _si<6; _si++) {
