@@ -71,8 +71,10 @@ private:
 
 	// Code
 	byte *_code;
+	uint16 _codeSize;
 	uint16 _currentInstruction;
 	byte *_savedCode;
+	uint16 _savedCodeSize;
 	uint16 _savedInstruction;
 
 	// Variables
@@ -111,6 +113,7 @@ private:
 	Common::String _debugString;
 
 	// Helper functions
+	uint8 getCodeByte(uint16 address);
 	uint8 readScript8bits();
 	uint16 readScript16bits();
 	uint32 readScript32bits();

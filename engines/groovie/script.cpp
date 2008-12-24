@@ -119,8 +119,11 @@ bool Script::loadScript(Common::String filename) {
 	_scriptFile = filename;
 
 	// Load the code
-	_code = new byte[0x10000];
-	scriptfile.read(_code, 0x10000);
+	_codeSize = scriptfile.size();
+	_code = new byte[_codeSize];
+	if (!_code)
+		return false;
+	scriptfile.read(_code, _codeSize);
 	scriptfile.close();
 
 	// Patch the loaded code for known script bugs
@@ -128,6 +131,7 @@ bool Script::loadScript(Common::String filename) {
 		// WORKAROUND for the cake puzzle glitch (bug #2458322): Lowering the
 		// piece on the first column and second row updates the wrong script
 		// variable
+		assert(_codeSize == 5546);
 		_code[0x03C2] = 0x38;
 	}
 
@@ -196,8 +200,15 @@ Common::String &Script::getContext() {
 	return _debugString;
 }
 
+uint8 Script::getCodeByte(uint16 address) {
+	if (address >= _codeSize)
+		error("Trying to read a script byte at address 0x%04X, while the "
+			"script is just 0x%04X bytes long", address, _codeSize);
+	return _code[address];
+}
+
 uint8 Script::readScript8bits() {
-	uint8 data = _code[_currentInstruction];
+	uint8 data = getCodeByte(_currentInstruction);
 	_currentInstruction++;
 	return data;
 }
@@ -208,15 +219,11 @@ uint8 Script::readScriptVar() {
 }
 
 uint16 Script::readScript16bits() {
-	uint16 data = READ_LE_UINT16(_code + _currentInstruction);
-	_currentInstruction += 2;
-	return data;
+	return readScript8bits() | (readScript8bits() << 8);
 }
 
 uint32 Script::readScript32bits() {
-	uint32 data = READ_LE_UINT32(_code + _currentInstruction);
-	_currentInstruction += 4;
-	return data;
+	return readScript16bits() | (readScript16bits() << 16);
 }
 
 uint16 Script::readScript8or16bits() {
@@ -706,7 +713,7 @@ void Script::o_loadstring() {
 	do {
 		setVariable(varnum++, readScriptChar(true, true, true));
 		debugScript(1, false, " 0x%02X", _variables[varnum - 1]);
-	} while (!(_code[_currentInstruction - 1] & 0x80));
+	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
 	debugScript(1, true, "");
 }
 
@@ -763,8 +770,7 @@ void Script::o_strcmpnejmp() {			// 0x1A
 		}
 		varnum++;
 		debugScript(1, false, " 0x%02X", val);
-
-	} while (!(_code[_currentInstruction - 1] & 0x80));
+	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
 
 	uint16 address = readScript16bits();
 	if (!result) {
@@ -858,7 +864,7 @@ void Script::o_strcmpnejmp_var() {			// 0x21
 		if (_variables[data++] != readScriptChar(true, true, true)) {
 			stringsmatch = 0;
 		}	
-	} while (!(_code[_currentInstruction - 1] & 0x80));
+	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
 
 	uint16 offset = readScript16bits();
 	if (!stringsmatch) {
@@ -885,8 +891,7 @@ void Script::o_strcmpeqjmp() {			// 0x23
 		}
 		varnum++;
 		debugScript(1, false, " 0x%02X", val);
-
-	} while (!(_code[_currentInstruction - 1] & 0x80));
+	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
 
 	uint16 address = readScript16bits();
 	if (result) {
@@ -1044,7 +1049,7 @@ void Script::o_loadstringvar() {
 	do {
 		setVariable(varnum++, readScriptChar(true, true, true));
 		debugScript(1, false, " 0x%02X", _variables[varnum - 1]);
-	} while (!(_code[_currentInstruction - 1] & 0x80));
+	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
 	debugScript(1, true, "");
 }
 
@@ -1062,7 +1067,7 @@ void Script::o_chargreatjmp() {
 		}
 		varnum++;
 		debugScript(1, false, " 0x%02X", val);
-	} while (!(_code[_currentInstruction - 1] & 0x80));
+	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
 
 	uint16 address = readScript16bits();
 	if (result) {
@@ -1092,7 +1097,7 @@ void Script::o_charlessjmp() {
 		}
 		varnum++;
 		debugScript(1, false, " 0x%02X", val);
-	} while (!(_code[_currentInstruction - 1] & 0x80));
+	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
 
 	uint16 address = readScript16bits();
 	if (result) {
@@ -1164,7 +1169,7 @@ void Script::o_printstring() {
 
 		stringstorage[counter] = newchar;
 		counter++;
-	} while (!(_code[_currentInstruction - 1] & 0x80));
+	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
 
 	stringstorage[counter] = 0;
 
@@ -1308,6 +1313,7 @@ void Script::o_loadscript() {
 
 	// Save the current code
 	_savedCode = _code;
+	_savedCodeSize = _codeSize;
 	_savedInstruction = _currentInstruction;
 
 	// Save the filename of the current script
@@ -1315,7 +1321,7 @@ void Script::o_loadscript() {
 
 	// Load the sub-script
 	if (!loadScript(filename)) {
-		error("Couldn't load sub-script");
+		error("Couldn't load sub-script %s", filename.c_str());
 	}
 
 	// Save the current stack top
@@ -1401,6 +1407,7 @@ void Script::o_returnscript() {
 	// Restore the code
 	delete[] _code;
 	_code = _savedCode;
+	_codeSize = _savedCodeSize;
 	_savedCode = NULL;
 	_currentInstruction = _savedInstruction;
 
