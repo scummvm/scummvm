@@ -28,12 +28,13 @@
 
 #include "common/stream.h"
 #include "common/array.h"
+#include "graphics/dither.h"
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
 
 namespace Gob {
 
-class PaletteLUT;
+class Graphics::PaletteLUT;
 class Indeo3;
 
 /** Common interface for handling Coktel Vision videos and derivated formats. */
@@ -303,7 +304,7 @@ protected:
 
 class Vmd : public Imd {
 public:
-	Vmd(PaletteLUT *palLUT = 0);
+	Vmd(Graphics::PaletteLUT *palLUT = 0);
 	~Vmd();
 
 	bool getAnchor(int16 frame, uint16 partType,
@@ -373,7 +374,7 @@ protected:
 	byte _scaleExternalX;
 	byte *_vidMemBuffer;
 
-	PaletteLUT *_palLUT;
+	Graphics::PaletteLUT *_palLUT;
 	Indeo3 *_codecIndeo3;
 
 	void clear(bool del = true);

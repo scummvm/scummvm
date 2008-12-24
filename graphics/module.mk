@@ -2,6 +2,7 @@ MODULE := graphics
 
 MODULE_OBJS := \
 	cursorman.o \
+	dither.o \
 	font.o \
 	fontman.o \
 	fonts/consolefont.o \

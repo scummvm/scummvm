@@ -31,9 +31,13 @@
 
 #include "gob/gob.h"
 
+namespace Graphics {
+	class PaletteLUT;
+}
+
 namespace Gob {
 
-class PaletteLUT;
+class Graphics::PaletteLUT;
 
 // Some Surfaces are simultaneous in Draw::spritesArray and discrete
 // variables, so it's a references counting class that cleans
@@ -122,7 +126,7 @@ public:
 	int16 _screenDeltaX;
 	int16 _screenDeltaY;
 
-	PaletteLUT *_palLUT;
+	Graphics::PaletteLUT *_palLUT;
 
 	void freeDriver();
 	void initPrimary(int16 mode);

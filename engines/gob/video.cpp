@@ -27,6 +27,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
+#include "graphics/dither.h"
 
 #include "gob/gob.h"
 #include "gob/video.h"
@@ -109,7 +110,7 @@ Video::Video(GobEngine *vm) : _vm(vm) {
 
 	_dirtyAll = false;
 
-	_palLUT = new PaletteLUT(6, PaletteLUT::kPaletteYUV);
+	_palLUT = new Graphics::PaletteLUT(6, Graphics::PaletteLUT::kPaletteYUV);
 }
 
 char Video::initDriver(int16 vidMode) {

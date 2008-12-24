@@ -25,6 +25,7 @@
 
 #include "common/endian.h"
 #include "common/file.h"
+#include "graphics/dither.h"
 
 #include "gob/gob.h"
 #include "gob/inter.h"
@@ -926,7 +927,7 @@ bool Inter_v6::o6_palLoad(OpFuncParams &params) {
 
 	if (_gotFirstPalette)
 		_vm->_video->_palLUT->setPalette((const byte *) _vm->_global->_pPaletteDesc->vgaPal,
-				PaletteLUT::kPaletteRGB, 6);
+				Graphics::PaletteLUT::kPaletteRGB, 6);
 
 	_gotFirstPalette = true;
 	return false;

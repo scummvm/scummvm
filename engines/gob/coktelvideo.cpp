@@ -25,6 +25,7 @@
 
 #include "common/endian.h"
 #include "common/system.h"
+#include "graphics/dither.h"
 
 #include "gob/coktelvideo.h"
 #include "gob/indeo3.h"
@@ -863,7 +864,7 @@ const uint16 Vmd::_tableADPCM[128] = {
 	0x0F00, 0x1000, 0x1400, 0x1800, 0x1C00, 0x2000, 0x3000, 0x4000
 };
 
-Vmd::Vmd(PaletteLUT *palLUT) : _palLUT(palLUT) {
+Vmd::Vmd(Graphics::PaletteLUT *palLUT) : _palLUT(palLUT) {
 	clear(false);
 }
 
@@ -1540,7 +1541,8 @@ void Vmd::blit16(byte *dest, uint16 *src, int16 width, int16 height) {
 
 	assert(_palLUT);
 
-	SierraLight *dither = new SierraLight(width, height, _palLUT);
+	Graphics::SierraLight *dither =
+		new Graphics::SierraLight(width, height, _palLUT);
 
 	for (int i = 0; i < height; i++) {
 		byte *d = dest;
@@ -1552,7 +1554,7 @@ void Vmd::blit16(byte *dest, uint16 *src, int16 width, int16 height) {
 			byte b = ((*s & 0x001F) >>  0) << 1;
 			byte dY, dU, dV;
 
-			PaletteLUT::RGB2YUV(r << 2, g << 2, b << 2, dY, dU, dV);
+			Graphics::PaletteLUT::RGB2YUV(r << 2, g << 2, b << 2, dY, dU, dV);
 
 			byte p = dither->dither(dY, dU, dV, j);
 

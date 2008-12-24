@@ -25,6 +25,7 @@
 
 #include "common/endian.h"
 #include "common/savefile.h"
+#include "graphics/dither.h"
 
 #include "gob/gob.h"
 #include "gob/video.h"
@@ -104,7 +105,7 @@ bool Video_v6::savePalLUT(const char *target) {
 void Video_v6::buildPalLUT() {
 	char text[30];
 
-	_palLUT->setPalette(_ditherPalette, PaletteLUT::kPaletteYUV, 8);
+	_palLUT->setPalette(_ditherPalette, Graphics::PaletteLUT::kPaletteYUV, 8);
 
 	for (int i = 0; (i < 64) && !_vm->shouldQuit(); i++) {
 		sprintf(text, "Building palette table: %02d/63", i);
@@ -175,7 +176,8 @@ void Video_v6::shadeRect(SurfaceDesc *dest,
 
 	_palLUT->getEntry(color, sY, sU, sV);
 
-	SierraLight *dither = new SierraLight(width, height, _palLUT);
+	Graphics::SierraLight *dither =
+		new Graphics::SierraLight(width, height, _palLUT);
 
 	for (int i = 0; i < height; i++) {
 		byte *d = vidMem;
@@ -253,7 +255,8 @@ void Video_v6::drawYUV(SurfaceDesc *destDesc, int16 x, int16 y,
 	if ((y + height - 1) >= destDesc->getHeight())
 		height = destDesc->getHeight() - y;
 
-	SierraLight *dither = new SierraLight(width, height, _palLUT);
+	Graphics::SierraLight *dither =
+		new Graphics::SierraLight(width, height, _palLUT);
 
 	for (int i = 0; i < height; i++) {
 		byte *dest = vidMem;
