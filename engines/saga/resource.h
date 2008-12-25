@@ -84,9 +84,7 @@ struct ResourceContext {
 	bool isBigEndian;
 	ResourceData *table;
 	size_t count;
-	uint32 firstGroupOffset;	// SAGA2
-	ResourceData *base;			// SAGA2
-	ResourceData *groups;		// SAGA2
+	ResourceData *categories;		// SAGA2
 
 	Common::File *getFile(ResourceData *resourceData) const {
 		if (resourceData->patchData != NULL) {
@@ -107,6 +105,16 @@ struct ResourceContext {
 			error("ResourceContext::getResourceData() wrong resourceId %d", resourceId);
 		}
 		return &table[resourceId];
+	}
+
+	// SAGA 2
+	int32 getEntryNum(uint32 id) {
+		for (int32 i = 0; i < (int32)count; i++) {
+			if (table[i].id == id) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 };
@@ -146,8 +154,7 @@ public:
 	virtual void loadGlobalResources(int chapter, int actorsEntrance) = 0;
 
 	ResourceContext *getContext(uint16 fileType, int serial = 0) {
-		int i;
-		for (i = 0; i < _contextsCount; i++) {
+		for (int i = 0; i < _contextsCount; i++) {
 			if ((_contexts[i].fileType & fileType) && _contexts[i].serial == serial) {
 				return &_contexts[i];
 			}

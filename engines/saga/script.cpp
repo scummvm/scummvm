@@ -85,14 +85,29 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 		error("Script::Script() resource context not found");
 	}
 
+	uint32 scriptResourceId = 0;
+	
+	if (!_vm->isSaga2()) {
+		scriptResourceId = _vm->getResourceDescription()->moduleLUTResourceId;
+		debug(3, "Loading module LUT from resource %i", scriptResourceId);
+		_vm->_resource->loadResource(resourceContext, scriptResourceId, resourcePointer, resourceLength);
+	} else {
+		uint32 saga2DataSegId = MKID_BE('__DA');
+		int32 scr = _scriptContext->getEntryNum(saga2DataSegId);
+		if (scr < 0)
+			error("Unable to locate the script's data segment");
+		scriptResourceId = (uint32)scr;
+		debug(3, "Loading module LUT from resource %i", scriptResourceId);
+		_vm->_resource->loadResource(_scriptContext, scriptResourceId, resourcePointer, resourceLength);
+
+		//uint32 saga2ExportSegId = MKID_BE('_EXP');
+		// TODO: SAGA2 script export segment
+	}
+
 	// Do nothing for SAGA2 games for now
 	if (_vm->isSaga2()) {
 		return;
 	}
-
-	debug(3, "Loading module LUT from resource %i", _vm->getResourceDescription()->moduleLUTResourceId);
-	_vm->_resource->loadResource(resourceContext, _vm->getResourceDescription()->moduleLUTResourceId, resourcePointer, resourceLength);
-
 
 	// Create logical script LUT from resource
 	if (resourceLength % S_LUT_ENTRYLEN_ITECD == 0) {

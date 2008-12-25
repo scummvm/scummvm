@@ -42,10 +42,12 @@ namespace Saga {
 
 bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSize) {
 	ResourceData *origin = new ResourceData();
-	uint32 firstGroupOffset;
-	uint32 size;
+	uint32 firstEntryOffset;
+	uint32 tableSize;
 	int i, count;
+	const uint32 resourceSize = 4 + 4 + 4;	// id, size, offset
 
+	debug(3, "Context %s", context->fileName);
 	context->file->seek(0, SEEK_SET);
 	
 	// Read head element (origin)
@@ -59,39 +61,41 @@ bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSiz
 		return false;
 	}
 
-	// Read first group offset
+	// Read offset of first entry
 	context->file->seek(origin->offset - sizeof(uint32), SEEK_SET);
-	firstGroupOffset = context->file->readUint32LE();
+	firstEntryOffset = context->file->readUint32LE();
 
-	// Allocate buffers for root/base node, groups and data
-	context->base = (ResourceData *) calloc(origin->size / sizeof(*context->base), sizeof(*context->base));
-	size = origin->offset - firstGroupOffset - sizeof(uint32);
-	context->groups = (ResourceData *) calloc(size / sizeof(*context->groups), sizeof(*context->groups));
+	// Allocate buffers for table, categories and data
+	context->categories = (ResourceData *) calloc(origin->size / resourceSize, sizeof(*context->categories));
+	tableSize = origin->offset - firstEntryOffset - sizeof(uint32);
+	context->table = (ResourceData *) calloc(tableSize / resourceSize, sizeof(*context->table));
 
-	if (context->base == NULL || context->groups == NULL) {
+	if (context->categories == NULL || context->table == NULL) {
 		free(origin);
 		return false;
 	}
 
-	// Read base
-	count = origin->size / sizeof(*context->base);
+	// Read categories
+	count = origin->size / resourceSize;
 	for (i = 0; i < count; i++) {
-		context->base[i].id = context->file->readUint32LE();
-		context->base[i].offset = context->file->readUint32LE();
-		context->base[i].size = context->file->readUint32LE();
+		context->categories[i].id = context->file->readUint32BE();
+		context->categories[i].offset = context->file->readUint32LE();
+		context->categories[i].size = context->file->readUint32LE();
+		debug(3, "Category entry: id %u, offset %u, size %u", context->categories[i].id, context->categories[i].offset, context->categories[i].size);
 	}
 
-	context->file->seek(firstGroupOffset, SEEK_SET);
+	context->file->seek(firstEntryOffset, SEEK_SET);
 
-	// Read groups
-	count = size / sizeof(*context->groups);
+	// Read table entries
+	count = tableSize / resourceSize;
 	for (i = 0; i < count; i++) {
-		context->groups[i].id = context->file->readUint32LE();
-		context->groups[i].offset = context->file->readUint32LE();
-		context->groups[i].size = context->file->readUint32LE();
+		context->table[i].id = context->file->readUint32BE();
+		context->table[i].offset = context->file->readUint32LE();
+		context->table[i].size = context->file->readUint32LE();
+		debug(3, "Table entry: id %u, offset %u, size %u", context->table[i].id, context->table[i].offset, context->table[i].size);
 	}
 
-	context->count = origin->size / sizeof(*origin);
+	context->count = tableSize / resourceSize;
 
 	free(origin);
 	return true;
