@@ -91,6 +91,7 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
 	_currHeadShape = 0;
 	_speechPlayTime = 0;
+	_seqPlayerFlag = false;
 
 	memset(&_itemBkgBackUp, 0, sizeof(_itemBkgBackUp));
 }
