@@ -40,6 +40,13 @@
 
 namespace Saga {
 
+void readElement(Common::File *file, Saga::ResourceData *element) {
+	element->id = file->readUint32BE();
+	element->offset = file->readUint32LE();
+	element->size = file->readUint32LE();
+	debug(3, "Entry: id %u, offset %u, size %u", element->id, element->offset, element->size);
+}
+
 bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSize) {
 	ResourceData *origin = new ResourceData();
 	uint32 firstEntryOffset;
@@ -47,13 +54,10 @@ bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSiz
 	int i, count;
 	const uint32 resourceSize = 4 + 4 + 4;	// id, size, offset
 
-	debug(3, "Context %s", context->fileName);
+	debug(3, "Context %s =====", context->fileName);
 	context->file->seek(0, SEEK_SET);
 	
-	// Read head element (origin)
-	origin->id = context->file->readUint32BE();		// this is BE on purpose
-	origin->offset = context->file->readUint32LE();
-	origin->size = context->file->readUint32LE();
+	readElement(context->file, origin);
 
 	// Check if the file is valid
 	if (origin->id != MKID_BE('HRES')) {	// header
@@ -77,22 +81,18 @@ bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSiz
 
 	// Read categories
 	count = origin->size / resourceSize;
+	debug(3, "Categories: %d =====", count);
 	for (i = 0; i < count; i++) {
-		context->categories[i].id = context->file->readUint32BE();
-		context->categories[i].offset = context->file->readUint32LE();
-		context->categories[i].size = context->file->readUint32LE();
-		debug(3, "Category entry: id %u, offset %u, size %u", context->categories[i].id, context->categories[i].offset, context->categories[i].size);
+		readElement(context->file, &context->categories[i]);
 	}
 
 	context->file->seek(firstEntryOffset, SEEK_SET);
 
 	// Read table entries
 	count = tableSize / resourceSize;
+	debug(3, "Entries: %d =====", count);
 	for (i = 0; i < count; i++) {
-		context->table[i].id = context->file->readUint32BE();
-		context->table[i].offset = context->file->readUint32LE();
-		context->table[i].size = context->file->readUint32LE();
-		debug(3, "Table entry: id %u, offset %u, size %u", context->table[i].id, context->table[i].offset, context->table[i].size);
+		readElement(context->file, &context->table[i]);
 	}
 
 	context->count = tableSize / resourceSize;
