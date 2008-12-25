@@ -37,8 +37,6 @@ namespace Graphics {
 
 namespace Gob {
 
-class Graphics::PaletteLUT;
-
 // Some Surfaces are simultaneous in Draw::spritesArray and discrete
 // variables, so it's a references counting class that cleans
 // up its own mess

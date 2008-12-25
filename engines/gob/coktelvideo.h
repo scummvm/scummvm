@@ -34,7 +34,6 @@
 
 namespace Gob {
 
-class Graphics::PaletteLUT;
 class Indeo3;
 
 /** Common interface for handling Coktel Vision videos and derivated formats. */
