@@ -64,7 +64,7 @@ bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSiz
 	firstGroupOffset = context->file->readUint32LE();
 
 	// Allocate buffers for root/base node, groups and data
-	context->base = (ResourceData *) calloc(origin->size, sizeof(*context->base));
+	context->base = (ResourceData *) calloc(origin->size / sizeof(*context->base), sizeof(*context->base));
 	size = origin->offset - firstGroupOffset - sizeof(uint32);
 	context->groups = (ResourceData *) calloc(size / sizeof(*context->groups), sizeof(*context->groups));
 
