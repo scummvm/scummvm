@@ -118,33 +118,32 @@ SagaEngine::~SagaEngine() {
 		}
 	}
 
-	if (!isSaga2()) {
-		if (getGameId() == GID_ITE)
-			delete _puzzle;
-		delete _sndRes;
-		delete _events;
-		delete _font;
-		delete _sprite;
-		delete _anim;
-		delete _script;
-		delete _interface;
-		delete _actor;
-		delete _palanim;
-	}
-
-	delete _scene;
-
 	if (getGameId() == GID_ITE) {
 		delete _isoMap;
+		delete _puzzle;
 	}
 
+	delete _sndRes;
+	delete _events;
+
+	if (!isSaga2()) {
+		delete _font;
+		delete _sprite;
+	}
+
+	delete _anim;
+	delete _script;
+	if (!isSaga2())
+		delete _interface;
+	delete _actor;
+	delete _palanim;
+	delete _scene;
 	delete _render;
 	delete _music;
 	delete _sound;
 	delete _driver;
 	delete _gfx;
 	delete _console;
-
 	delete _resource;
 }
 
@@ -185,29 +184,24 @@ Common::Error SagaEngine::init() {
 
 	// Initialize engine modules
 	// TODO: implement differences for SAGA2
-	if (!isSaga2()) {
-		_sndRes = new SndRes(this);
-	}
-
+	_sndRes = new SndRes(this);
 	_events = new Events(this);
 
 	if (!isSaga2()) {
 		_font = new Font(this);
 		_sprite = new Sprite(this);
-		_anim = new Anim(this);
 	}
 
+	_anim = new Anim(this);
 	_script = new Script(this);
 	_interface = new Interface(this); // requires script module
 	_scene = new Scene(this);
 	_actor = new Actor(this);
+	_palanim = new PalAnim(this);
 
-	if (!isSaga2()) {
-		_palanim = new PalAnim(this);
-		if (getGameId() == GID_ITE) {
-			_isoMap = new IsoMap(this);
-			_puzzle = new Puzzle(this);
-		}
+	if (getGameId() == GID_ITE) {
+		_isoMap = new IsoMap(this);
+		_puzzle = new Puzzle(this);
 	}
 
 	// System initialization

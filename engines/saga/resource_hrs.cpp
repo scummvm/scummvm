@@ -41,31 +41,59 @@
 namespace Saga {
 
 bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSize) {
-	ResourceData *resourceData = new ResourceData();
+	ResourceData *origin = new ResourceData();
 	uint32 firstGroupOffset;
-	//const int resDataSize = 4 + 4 + 4;
+	uint32 size;
+	int i, count;
 
 	context->file->seek(0, SEEK_SET);
 	
 	// Read head element (origin)
-	resourceData->id = context->file->readUint32BE();
-	resourceData->offset = context->file->readUint32LE();
-	resourceData->size = context->file->readUint32LE();
+	origin->id = context->file->readUint32BE();		// this is BE on purpose
+	origin->offset = context->file->readUint32LE();
+	origin->size = context->file->readUint32LE();
 
 	// Check if the file is valid
-	if (resourceData->id != MKID_BE('HRES')) {	// header
-		free(resourceData);
+	if (origin->id != MKID_BE('HRES')) {	// header
+		free(origin);
 		return false;
 	}
 
 	// Read first group offset
-	context->file->seek(resourceData->offset - 4, SEEK_SET);
+	context->file->seek(origin->offset - sizeof(uint32), SEEK_SET);
 	firstGroupOffset = context->file->readUint32LE();
 
 	// Allocate buffers for root/base node, groups and data
-	// TODO
+	context->base = (ResourceData *) calloc(origin->size, sizeof(*context->base));
+	size = origin->offset - firstGroupOffset - sizeof(uint32);
+	context->groups = (ResourceData *) calloc(size / sizeof(*context->groups), sizeof(*context->groups));
 
-	free(resourceData);
+	if (context->base == NULL || context->groups == NULL) {
+		free(origin);
+		return false;
+	}
+
+	// Read base
+	count = origin->size / sizeof(*context->base);
+	for (i = 0; i < count; i++) {
+		context->base[i].id = context->file->readUint32LE();
+		context->base[i].offset = context->file->readUint32LE();
+		context->base[i].size = context->file->readUint32LE();
+	}
+
+	context->file->seek(firstGroupOffset, SEEK_SET);
+
+	// Read groups
+	count = size / sizeof(*context->groups);
+	for (i = 0; i < count; i++) {
+		context->groups[i].id = context->file->readUint32LE();
+		context->groups[i].offset = context->file->readUint32LE();
+		context->groups[i].size = context->file->readUint32LE();
+	}
+
+	context->count = origin->size / sizeof(*origin);
+
+	free(origin);
 	return true;
 }
 

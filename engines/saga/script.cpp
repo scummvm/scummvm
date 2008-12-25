@@ -158,7 +158,8 @@ Script::~Script() {
 	_globalVoiceLUT.freeMem();
 
 	freeModules();
-	free(_modules);
+	if (!_vm->isSaga2())	// TODO: remove this once the script module is working for SAGA2
+		free(_modules);
 
 	free(_commonBuffer);
 }

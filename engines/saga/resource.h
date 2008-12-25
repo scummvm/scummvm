@@ -85,6 +85,7 @@ struct ResourceContext {
 	ResourceData *table;
 	size_t count;
 	uint32 firstGroupOffset;	// SAGA2
+	ResourceData *base;			// SAGA2
 	ResourceData *groups;		// SAGA2
 
 	Common::File *getFile(ResourceData *resourceData) const {

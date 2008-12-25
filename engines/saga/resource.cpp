@@ -483,6 +483,10 @@ void Resource::clearContexts() {
 				delete context->table[j].patchData;
 			}
 		}
+		if (_vm->isSaga2()) {
+			free(context->base);
+			free(context->groups);
+		}
 		free(context->table);
 	}
 	free(_contexts);
