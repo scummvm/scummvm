@@ -327,7 +327,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_disableAbortSpeeches = false;
 
 	// set save game reminder alarm
-	_vm->_timer->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
+	_vm->getTimerManager()->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
 }
 
 Interface::~Interface(void) {
@@ -360,8 +360,8 @@ void Interface::updateSaveReminder() {
 	if (_active && _panelMode == kPanelMain) {
 		_saveReminderState = _saveReminderState % _vm->getDisplayInfo().saveReminderNumSprites + 1;
 		drawStatusBar();
-		_vm->_timer->removeTimerProc(&saveReminderCallback);
-		_vm->_timer->installTimerProc(&saveReminderCallback, ((_vm->getGameId() == GID_ITE) ? TIMETOBLINK_ITE : TIMETOBLINK_IHNM), this);
+		_vm->getTimerManager()->removeTimerProc(&saveReminderCallback);
+		_vm->getTimerManager()->installTimerProc(&saveReminderCallback, ((_vm->getGameId() == GID_ITE) ? TIMETOBLINK_ITE : TIMETOBLINK_IHNM), this);
 	}
 }
 
@@ -1393,8 +1393,8 @@ void Interface::setSave(PanelButton *panelButton) {
 				fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
 				_vm->save(fileName, _textInputString);
 			}
-			_vm->_timer->removeTimerProc(&saveReminderCallback);
-			_vm->_timer->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
+			_vm->getTimerManager()->removeTimerProc(&saveReminderCallback);
+			_vm->getTimerManager()->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
 			setSaveReminderState(1);
 
 			_textInput = false;

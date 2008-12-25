@@ -71,9 +71,9 @@ class Engine {
 public:
 	OSystem *_system;
 	Audio::Mixer *_mixer;
-	Common::TimerManager * _timer;
 
 protected:
+	Common::TimerManager *_timer;
 	Common::EventManager *_eventMan;
 	Common::SaveFileManager *_saveFileMan;
 	
@@ -250,10 +250,9 @@ public:
 	 */
 	void openMainMenuDialog();
 
-
-	Common::TimerManager *getTimerManager() { return _timer; }
-	Common::EventManager *getEventManager() { return _eventMan; }
-	Common::SaveFileManager *getSaveFileManager() { return _saveFileMan; }
+	inline Common::TimerManager *getTimerManager() { return _timer; }
+	inline Common::EventManager *getEventManager() { return _eventMan; }
+	inline Common::SaveFileManager *getSaveFileManager() { return _saveFileMan; }
 
 public:
 

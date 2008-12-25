@@ -60,14 +60,14 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, int fps)
 		memset(_track[l], 0, sizeof(Track));
 		_track[l]->trackId = l;
 	}
-	_vm->_timer->installTimerProc(timer_handler, 1000000 / _callbackFps, this);
+	_vm->getTimerManager()->installTimerProc(timer_handler, 1000000 / _callbackFps, this);
 
 	_audioNames = NULL;
 	_numAudioNames = 0;
 }
 
 IMuseDigital::~IMuseDigital() {
-	_vm->_timer->removeTimerProc(timer_handler);
+	_vm->getTimerManager()->removeTimerProc(timer_handler);
 	stopAllSounds();
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		delete _track[l];

@@ -372,7 +372,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver) : _vm(vm),
 }
 
 Music::~Music() {
-	_vm->_timer->removeTimerProc(&musicVolumeGaugeCallback);
+	_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
 	_mixer->stopHandle(_musicHandle);
 	delete _player;
 	xmidiParser->setMidiDriver(NULL);
@@ -406,7 +406,7 @@ void Music::musicVolumeGauge() {
 	_player->setVolume(volume);
 
 	if (_currentVolumePercent == 100) {
-		_vm->_timer->removeTimerProc(&musicVolumeGaugeCallback);
+		_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
 		_currentVolume = _targetVolume;
 	}
 }
@@ -421,12 +421,12 @@ void Music::setVolume(int volume, int time) {
 	if (time == 1) {
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 		_player->setVolume(volume);
-		_vm->_timer->removeTimerProc(&musicVolumeGaugeCallback);
+		_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
 		_currentVolume = volume;
 		return;
 	}
 
-	_vm->_timer->installTimerProc(&musicVolumeGaugeCallback, time * 100L, this);
+	_vm->getTimerManager()->installTimerProc(&musicVolumeGaugeCallback, time * 100L, this);
 }
 
 bool Music::isPlaying() {

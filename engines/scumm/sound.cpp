@@ -1054,12 +1054,12 @@ void Sound::startCDTimer() {
 	// it too high, and there will be a nasty "hiccup" just as Chaos
 	// appears.
 
-	_vm->_timer->removeTimerProc(&cd_timer_handler);
-	_vm->_timer->installTimerProc(&cd_timer_handler, 100700, _vm);
+	_vm->getTimerManager()->removeTimerProc(&cd_timer_handler);
+	_vm->getTimerManager()->installTimerProc(&cd_timer_handler, 100700, _vm);
 }
 
 void Sound::stopCDTimer() {
-	_vm->_timer->removeTimerProc(&cd_timer_handler);
+	_vm->getTimerManager()->removeTimerProc(&cd_timer_handler);
 }
 
 void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {

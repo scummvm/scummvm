@@ -52,7 +52,7 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 
 #ifdef SAGA_DEBUG
 	// Initialize FPS timer callback
-	_vm->_timer->installTimerProc(&fpsTimerCallback, 1000000, this);
+	_vm->getTimerManager()->installTimerProc(&fpsTimerCallback, 1000000, this);
 #endif
 
 	_backGroundSurface.create(_vm->getDisplayInfo().width, _vm->getDisplayInfo().height, 1);
@@ -64,7 +64,7 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 
 Render::~Render(void) {
 #ifdef SAGA_DEBUG
-	_vm->_timer->removeTimerProc(&fpsTimerCallback);
+	_vm->getTimerManager()->removeTimerProc(&fpsTimerCallback);
 #endif
 
 	_backGroundSurface.free();
