@@ -44,7 +44,7 @@ void readElement(Common::File *file, Saga::ResourceData *element) {
 	element->id = file->readUint32BE();
 	element->offset = file->readUint32LE();
 	element->size = file->readUint32LE();
-	debug(3, "Entry: id %u, offset %u, size %u", element->id, element->offset, element->size);
+	debug(3, "Entry: id %u, offset %u, size %u", element->id, (uint)element->offset, (uint)element->size);
 }
 
 bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSize) {
