@@ -26,11 +26,12 @@
 
 #include "common/endian.h"
 #include "common/events.h"
+#include "common/config-manager.h"
+#include "common/system.h"	// for g_system->getEventManager()
 
 #include "cine/cine.h"
 #include "cine/various.h"
 
-#include "common/config-manager.h"
 
 namespace Cine {
 

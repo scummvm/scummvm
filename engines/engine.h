@@ -250,6 +250,11 @@ public:
 	 */
 	void openMainMenuDialog();
 
+
+	Common::TimerManager *getTimerManager() { return _timer; }
+	Common::EventManager *getEventManager() { return _eventMan; }
+	Common::SaveFileManager *getSaveFileManager() { return _saveFileMan; }
+
 public:
 
 	/** On some systems, check if the game appears to be run from CD. */

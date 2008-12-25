@@ -24,6 +24,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/system.h"
 
 #include "sky/control.h"
 #include "sky/debug.h"

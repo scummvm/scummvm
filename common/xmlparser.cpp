@@ -23,16 +23,46 @@
  *
  */
 
-#include "common/util.h"
-#include "common/system.h"
-#include "common/events.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
 #include "common/xmlparser.h"
+#include "common/util.h"
+#include "common/archive.h"
 
 namespace Common {
 
-using namespace Graphics;
+bool XMLParser::loadFile(const Common::String &filename) {
+	_stream = SearchMan.openFile(filename);
+	if (!_stream)
+		return false;
+
+	_fileName = filename;
+	return true;
+}
+
+bool XMLParser::loadFile(const FSNode &node) {
+	_stream = node.openForReading();
+	if (!_stream)
+		return false;
+
+	_fileName = node.getName();
+	return true;
+}
+
+bool XMLParser::loadBuffer(const byte *buffer, uint32 size, bool disposable) {
+	_stream = new MemoryReadStream(buffer, size, disposable);
+	_fileName = "Memory Stream";
+	return true;
+}
+
+bool XMLParser::loadStream(Common::SeekableReadStream *stream) {
+	_stream = stream;
+	_fileName = "File Stream";
+	return true;
+}
+
+void XMLParser::close() {
+	delete _stream;
+	_stream = 0;
+}
 
 bool XMLParser::parserError(const char *errorString, ...) {
 	_state = kParserError;

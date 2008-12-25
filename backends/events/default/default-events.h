@@ -28,6 +28,9 @@
 
 #include "common/events.h"
 #include "common/savefile.h"
+#include "common/mutex.h"
+
+class OSystem;
 
 /*
 At some point we will remove pollEvent from OSystem and change

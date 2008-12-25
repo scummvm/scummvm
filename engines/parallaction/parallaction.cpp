@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/util.h"
+#include "common/system.h"
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"

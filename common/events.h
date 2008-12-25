@@ -29,7 +29,6 @@
 #include "common/keyboard.h"
 #include "common/queue.h"
 #include "common/rect.h"
-#include "common/system.h"
 #include "common/noncopyable.h"
 
 namespace Common {

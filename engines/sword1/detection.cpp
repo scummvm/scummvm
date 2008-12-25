@@ -31,6 +31,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/savefile.h"
+#include "common/system.h"
 #include "graphics/thumbnail.h"
 
 #include "engines/metaengine.h"

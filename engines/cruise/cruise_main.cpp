@@ -23,9 +23,9 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/events.h"
+#include "common/system.h"	// for g_system->getEventManager()
 
 #include "cruise/cruise_main.h"
 #include "cruise/cell.h"

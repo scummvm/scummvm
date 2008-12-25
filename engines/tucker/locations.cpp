@@ -25,6 +25,7 @@
 
 #include "tucker/tucker.h"
 #include "tucker/graphics.h"
+#include "common/system.h"
 
 namespace Tucker {
 

@@ -39,6 +39,7 @@
 #include "saga/scene.h"
 
 #include "common/events.h"
+#include "common/system.h"
 
 namespace Saga {
 

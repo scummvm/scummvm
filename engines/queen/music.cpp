@@ -84,7 +84,7 @@ MidiMusic::MidiMusic(QueenEngine *vm)
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(_driver->getBaseTempo());
 
-	vm->_system->getEventManager()->registerRandomSource(_rnd, "queenMusic");
+	vm->getEventManager()->registerRandomSource(_rnd, "queenMusic");
 }
 
 MidiMusic::~MidiMusic() {

@@ -28,6 +28,7 @@
 
 #include "common/util.h"
 #include "common/events.h"
+#include "common/system.h"
 
 #include "sword1/sound.h"
 #include "sword1/resman.h"

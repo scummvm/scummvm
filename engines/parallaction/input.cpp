@@ -24,6 +24,7 @@
  */
 
 #include "common/events.h"
+#include "common/system.h"
 
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"

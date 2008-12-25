@@ -27,11 +27,7 @@
 #define XML_PARSER_H
 
 #include "common/scummsys.h"
-#include "common/archive.h"
-#include "common/system.h"
 #include "common/stream.h"
-#include "common/file.h"
-#include "common/fs.h"
 
 #include "common/hashmap.h"
 #include "common/hash-str.h"
@@ -39,6 +35,8 @@
 
 
 namespace Common {
+
+class FSNode;
 
 /*
 	XMLParser.cpp/h -- Generic XML Parser
@@ -184,23 +182,9 @@ public:
 	 *
 	 * @param filename Name of the file to load.
 	 */
-	bool loadFile(const Common::String &filename) {
-		_stream = SearchMan.openFile(filename);
-		if (!_stream)
-			return false;
+	bool loadFile(const Common::String &filename);
 
-		_fileName = filename;
-		return true;
-	}
-
-	bool loadFile(const FSNode &node) {
-		_stream = node.openForReading();
-		if (!_stream)
-			return false;
-
-		_fileName = node.getName();
-		return true;
-	}
+	bool loadFile(const FSNode &node);
 
 	/**
 	 * Loads a memory buffer into the parser.
@@ -213,22 +197,11 @@ public:
 	 *                   i.e. if it can be freed safely after it's
 	 *                   no longer needed by the parser.
 	 */
-	bool loadBuffer(const byte *buffer, uint32 size, bool disposable = false) {
-		_stream = new MemoryReadStream(buffer, size, disposable);
-		_fileName = "Memory Stream";
-		return true;
-	}
+	bool loadBuffer(const byte *buffer, uint32 size, bool disposable = false);
 
-	bool loadStream(Common::SeekableReadStream *stream) {
-		_stream = stream;
-		_fileName = "File Stream";
-		return true;
-	}
+	bool loadStream(Common::SeekableReadStream *stream);
 
-	void close() {
-		delete _stream;
-		_stream = 0;
-	}
+	void close();
 
 	/**
 	 * The actual parsing function.

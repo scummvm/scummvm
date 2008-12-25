@@ -27,6 +27,7 @@
 #include "common/endian.h"
 #include "common/rect.h"
 #include "common/events.h"
+#include "common/system.h"
 
 #include "sky/autoroute.h"
 #include "sky/compact.h"
