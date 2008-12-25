@@ -83,8 +83,6 @@ void Widget::updateState(int oldFlags, int newFlags) {
 }
 
 void Widget::draw() {
-	NewGui *gui = &g_gui;
-
 	if (!isVisible() || !_boss->isVisible())
 		return;
 
@@ -96,7 +94,7 @@ void Widget::draw() {
 
 	// Draw border
 	if (_flags & WIDGET_BORDER) {
-		gui->theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), 0, ThemeEngine::kWidgetBackgroundBorder);
+		g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), 0, ThemeEngine::kWidgetBackgroundBorder);
 		_x += 4;
 		_y += 4;
 		_w -= 8;

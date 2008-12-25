@@ -34,21 +34,9 @@
 
 #include "common/config-manager.h"
 
-DECLARE_SINGLETON(GUI::NewGui);
+DECLARE_SINGLETON(GUI::GuiManager);
 
 namespace GUI {
-
-/*
- * TODO list
- * - add more widgets: edit field, popup, radio buttons, ...
- *
- * Other ideas:
- * - allow multi line (l/c/r aligned) text via StaticTextWidget ?
- * - add "close" widget to all dialogs (with a flag to turn it off) ?
- * - make dialogs "moveable" ?
- * - come up with a new look & feel / theme for the GUI
- * - ...
- */
 
 enum {
 	kDoubleClickDelay = 500, // milliseconds
@@ -56,7 +44,7 @@ enum {
 };
 
 // Constructor
-NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
+GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled),
 	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 	_theme = 0;
 	_useStdCursor = false;
@@ -80,11 +68,11 @@ NewGui::NewGui() : _redrawStatus(kRedrawDisabled),
 	_themeChange = false;
 }
 
-NewGui::~NewGui() {
+GuiManager::~GuiManager() {
 	delete _theme;
 }
 
-bool NewGui::loadNewTheme(Common::String filename, ThemeEngine::GraphicsMode gfx) {
+bool GuiManager::loadNewTheme(Common::String filename, ThemeEngine::GraphicsMode gfx) {
 	if (_theme && filename == _theme->getThemeFileName() && gfx == _theme->getGraphicsMode())
 		return true;
 
@@ -117,7 +105,7 @@ bool NewGui::loadNewTheme(Common::String filename, ThemeEngine::GraphicsMode gfx
 	return true;
 }
 
-void NewGui::redraw() {
+void GuiManager::redraw() {
 	int i;
 
 	if (_redrawStatus == kRedrawDisabled)
@@ -154,13 +142,13 @@ void NewGui::redraw() {
 	_redrawStatus = kRedrawDisabled;
 }
 
-Dialog *NewGui::getTopDialog() const {
+Dialog *GuiManager::getTopDialog() const {
 	if (_dialogStack.empty())
 		return 0;
 	return _dialogStack.top();
 }
 
-void NewGui::runLoop() {
+void GuiManager::runLoop() {
 	Dialog *activeDialog = getTopDialog();
 	bool didSaveState = false;
 	int button;
@@ -294,7 +282,7 @@ void NewGui::runLoop() {
 
 #pragma mark -
 
-void NewGui::saveState() {
+void GuiManager::saveState() {
 	// Backup old cursor
 	_lastClick.x = _lastClick.y = 0;
 	_lastClick.time = 0;
@@ -303,7 +291,7 @@ void NewGui::saveState() {
 	_stateIsSaved = true;
 }
 
-void NewGui::restoreState() {
+void GuiManager::restoreState() {
 	if (_useStdCursor) {
 		CursorMan.popCursor();
 		CursorMan.popCursorPalette();
@@ -314,7 +302,7 @@ void NewGui::restoreState() {
 	_stateIsSaved = false;
 }
 
-void NewGui::openDialog(Dialog *dialog) {
+void GuiManager::openDialog(Dialog *dialog) {
 	_dialogStack.push(dialog);
 	_redrawStatus = kRedrawOpenDialog;
 
@@ -336,7 +324,7 @@ void NewGui::openDialog(Dialog *dialog) {
 	}
 }
 
-void NewGui::closeTopDialog() {
+void GuiManager::closeTopDialog() {
 	// Don't do anything if no dialog is open
 	if (_dialogStack.empty())
 		return;
@@ -346,7 +334,7 @@ void NewGui::closeTopDialog() {
 	_redrawStatus = kRedrawCloseDialog;
 }
 
-void NewGui::setupCursor() {
+void GuiManager::setupCursor() {
 	const byte palette[] = {
 		255, 255, 255, 0,
 		255, 255, 255, 0,
@@ -363,7 +351,7 @@ void NewGui::setupCursor() {
 // SCUMM games, but the code no longer resembles what we have in cursor.cpp
 // very much. We could plug in a different cursor here if we like to.
 
-void NewGui::animateCursor() {
+void GuiManager::animateCursor() {
 	int time = _system->getMillis();
 	if (time > _cursorAnimateTimer + kCursorAnimateDelay) {
 		for (int i = 0; i < 15; i++) {
@@ -380,12 +368,12 @@ void NewGui::animateCursor() {
 	}
 }
 
-void NewGui::clearDragWidget() {
+void GuiManager::clearDragWidget() {
 	if (!_dialogStack.empty())
 		_dialogStack.top()->_dragWidget = 0;
 }
 
-void NewGui::screenChange() {
+void GuiManager::screenChange() {
 	_lastScreenChangeID = _system->getScreenChangeID();
 
 	// reinit the whole theme

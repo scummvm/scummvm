@@ -74,7 +74,7 @@ static bool launcherDialog(OSystem &system) {
 	// a --gui-theme option, to allow that option to be working, we need to initialize
 	// GUI here.
 	// FIXME: Find a nicer way to allow --gui-theme to be working
-	GUI::NewGui::instance();
+	GUI::GuiManager::instance();
 
 	// Discard any command line options. Those that affect the graphics
 	// mode and the others (like bootparam etc.) should not
@@ -341,7 +341,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	PluginManager::destroy();
 	Common::ConfigManager::destroy();
 	Common::SearchManager::destroy();
-	GUI::NewGui::destroy();
+	GUI::GuiManager::destroy();
 
 	return 0;
 }

@@ -22,8 +22,6 @@
  * $Id$
  */
 
-
-
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"

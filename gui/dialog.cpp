@@ -131,7 +131,7 @@ void Dialog::draw() {
 	// Update: called on tab drawing, mainly...
 	// we can pass this as open a new dialog or something
 //	g_gui._needRedraw = true;
-	g_gui._redrawStatus = GUI::NewGui::kRedrawTopDialog;
+	g_gui._redrawStatus = GUI::GuiManager::kRedrawTopDialog;
 }
 
 void Dialog::drawDialog() {

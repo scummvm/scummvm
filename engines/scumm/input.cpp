@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/system.h"
@@ -471,7 +469,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
 
-		scummMenuDialog();		// Display NewGui
+		scummMenuDialog();		// Display GUI
 
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);

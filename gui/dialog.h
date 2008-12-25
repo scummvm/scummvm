@@ -33,7 +33,7 @@
 
 namespace GUI {
 
-class NewGui;
+class GuiManager;
 class PopUpWidget;
 
 // Some "common" commands sent to handleCommand()
@@ -42,7 +42,7 @@ enum {
 };
 
 class Dialog : public GuiObject {
-	friend class NewGui;
+	friend class GuiManager;
 protected:
 	Widget	*_mouseWidget;
 	Widget  *_focusedWidget;

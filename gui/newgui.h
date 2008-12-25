@@ -43,7 +43,7 @@ class Dialog;
 class Eval;
 class ThemeEval;
 
-#define g_gui	(GUI::NewGui::instance())
+#define g_gui	(GUI::GuiManager::instance())
 
 
 // Height of a single text line
@@ -59,11 +59,11 @@ typedef Common::FixedStack<Dialog *> DialogStack;
 /**
  * GUI manager singleton.
  */
-class NewGui : public Common::Singleton<NewGui> {
+class GuiManager : public Common::Singleton<GuiManager> {
 	friend class Dialog;
 	friend class Common::Singleton<SingletonBaseType>;
-	NewGui();
-	~NewGui();
+	GuiManager();
+	~GuiManager();
 public:
 
 	// Main entry for the GUI: this will start an event loop that keeps running
