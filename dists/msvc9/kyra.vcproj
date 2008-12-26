@@ -552,6 +552,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\util.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\util.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\vqa.cpp"
 			>
 		</File>
