@@ -426,6 +426,8 @@ template <typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 colorFill(PixelType *first, PixelType *last, PixelType color) {
 	register int count = (last - first);
+	if (!count)
+		return;
 	register int n = (count + 7) >> 3;
 	switch (count % 8) {
 	case 0: do {

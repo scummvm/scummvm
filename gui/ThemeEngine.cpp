@@ -706,14 +706,7 @@ void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo s
 
 	drawWidgetBackground(r, 0, kWidgetBackgroundSlider, kStateEnabled);
 
-	// TODO/FIXME: This seems to prevent displaying of
-	// slider widgets in low ranges. When disabling it
-	// the slider is shown, but it creates gfx glitches
-	// in modern theme. Modern theme uses "roundedsq"
-	// as drawing function, thus the real bug should be
-	// in VectorRenderer::drawRoundedSquare.
-	if (width > r.width() * 5 / 100)
-		queueDD(dd, r2);
+	queueDD(dd, r2);
 }
 
 void ThemeEngine::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState, WidgetStateInfo state) {
