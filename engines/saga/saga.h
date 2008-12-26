@@ -205,14 +205,15 @@ enum GameSoundTypes {
 };
 
 enum TextStringIds {
-	kTextWalkTo,
-	kTextLookAt,
 	kTextPickUp,
+	kTextLookAt,
+	kTextWalkTo,
 	kTextTalkTo,
 	kTextOpen,
 	kTextClose,
-	kTextUse,
 	kTextGive,
+	kTextUse,
+
 	kTextOptions,
 	kTextTest,
 	kTextDemo,

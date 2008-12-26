@@ -52,25 +52,9 @@
 
 namespace Saga {
 
-static int verbTypeToTextStringsIdLUT[2][kVerbTypeIdsMax] = {
-	{-1,
-	kTextPickUp,
-	kTextLookAt,
-	kTextWalkTo,
-	kTextTalkTo,
-	kTextOpen,
-	kTextClose,
-	kTextGive,
-	kTextUse},
-	{-1,
-	kVerbIHNMWalk,
-	kVerbIHNMLookAt,
-	kVerbIHNMTake,
-	kVerbIHNMUse,
-	kVerbIHNMTalkTo,
-	kVerbIHNMSwallow,
-	kVerbIHNMGive,
-	kVerbIHNMPush}
+static int verbToTextIdITE[] = {
+	kTextWalkTo,	kTextLookAt,	kTextPickUp,	kTextTalkTo,
+	kTextOpen,		kTextClose,		kTextUse,		kTextGive
 };
 
 // This maps the internally used string ITE IDs to the LUT strings loaded in IHNM
@@ -2368,10 +2352,10 @@ void Interface::drawVerbPanelText(PanelButton *panelButton, KnownColor textKnown
 	int textId;
 
 	if (_vm->getGameId() == GID_ITE) {
-		textId = verbTypeToTextStringsIdLUT[0][panelButton->id];
+		textId = verbToTextIdITE[panelButton->id - 1];
 		text = _vm->getTextString(textId);
 	} else {
-		textId = verbTypeToTextStringsIdLUT[1][panelButton->id];
+		textId = panelButton->id;
 		text = _vm->_script->_mainStrings.getString(textId + 1);
 		textShadowKnownColor = kKnownColorTransparent;
 	}
