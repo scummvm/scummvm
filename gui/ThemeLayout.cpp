@@ -68,7 +68,7 @@ int16 ThemeLayout::getParentW() {
 	int width = 0;
 
 	while (p && p->getLayoutType() != kLayoutMain) {
-		width += p->_paddingRight + p->_paddingLeft;
+		width += p->_padding.right + p->_padding.left;
 		if (p->getLayoutType() == kLayoutHorizontal) {
 			for (uint i = 0; i < p->_children.size(); ++i)
 				width += p->_children[i]->getWidth() + p->_spacing;
@@ -84,7 +84,7 @@ int16 ThemeLayout::getParentH() {
 	int height = 0;
 
 	while (p && p->getLayoutType() != kLayoutMain) {
-		height += p->_paddingBottom + p->_paddingTop;
+		height += p->_padding.bottom + p->_padding.top;
 		if (p->getLayoutType() == kLayoutVertical) {
 			for (uint i = 0; i < p->_children.size(); ++i)
 				height += p->_children[i]->getHeight() + p->_spacing;
@@ -143,14 +143,14 @@ void ThemeLayoutMain::reflowLayout() {
 	}
 }
 
-void ThemeLayoutVertical::reflowLayout() {
+void ThemeLayoutStacked::reflowLayoutV() {
 	int curX, curY;
 	int resize[8];
 	int rescount = 0;
 
-	curX = _paddingLeft;
-	curY = _paddingTop;
-	_h = _paddingTop + _paddingBottom;
+	curX = _padding.left;
+	curY = _padding.top;
+	_h = _padding.top + _padding.bottom;
 
 	for (uint i = 0; i < _children.size(); ++i) {
 
@@ -158,7 +158,7 @@ void ThemeLayoutVertical::reflowLayout() {
 		_children[i]->reflowLayout();
 
 		if (_children[i]->getWidth() == -1)
-			_children[i]->setWidth((_w == -1 ? getParentW() : _w) - _paddingLeft - _paddingRight);
+			_children[i]->setWidth((_w == -1 ? getParentW() : _w) - _padding.left - _padding.right);
 
 		if (_children[i]->getHeight() == -1) {
 			resize[rescount++] = i;
@@ -173,14 +173,14 @@ void ThemeLayoutVertical::reflowLayout() {
 			_children[i]->setX(curX);
 
 		curY += _children[i]->getHeight() + _spacing;
-		_w = MAX(_w, (int16)(_children[i]->getWidth() + _paddingLeft + _paddingRight));
+		_w = MAX(_w, (int16)(_children[i]->getWidth() + _padding.left + _padding.right));
 		_h += _children[i]->getHeight() + _spacing;
 	}
 
 	_h -= _spacing;
 
 	if (rescount) {
-		int newh = (getParentH() - _h - _paddingBottom) / rescount;
+		int newh = (getParentH() - _h - _padding.bottom) / rescount;
 
 		for (int i = 0; i < rescount; ++i) {
 			_children[resize[i]]->setHeight(newh);
@@ -191,14 +191,14 @@ void ThemeLayoutVertical::reflowLayout() {
 	}
 }
 
-void ThemeLayoutHorizontal::reflowLayout() {
+void ThemeLayoutStacked::reflowLayoutH() {
 	int curX, curY;
 	int resize[8];
 	int rescount = 0;
 
-	curX = _paddingLeft;
-	curY = _paddingTop;
-	_w = _paddingLeft + _paddingRight;
+	curX = _padding.left;
+	curY = _padding.top;
+	_w = _padding.left + _padding.right;
 
 	for (uint i = 0; i < _children.size(); ++i) {
 
@@ -206,7 +206,7 @@ void ThemeLayoutHorizontal::reflowLayout() {
 		_children[i]->reflowLayout();
 
 		if (_children[i]->getHeight() == -1)
-			_children[i]->setHeight((_h == -1 ? getParentH() : _h) - _paddingTop - _paddingBottom);
+			_children[i]->setHeight((_h == -1 ? getParentH() : _h) - _padding.top - _padding.bottom);
 
 		if (_children[i]->getWidth() == -1) {
 			resize[rescount++] = i;
@@ -222,13 +222,13 @@ void ThemeLayoutHorizontal::reflowLayout() {
 
 		curX += (_children[i]->getWidth() + _spacing);
 		_w += _children[i]->getWidth() + _spacing;
-		_h = MAX(_h, (int16)(_children[i]->getHeight() + _paddingTop + _paddingBottom));
+		_h = MAX(_h, (int16)(_children[i]->getHeight() + _padding.top + _padding.bottom));
 	}
 
 	_w -= _spacing;
 
 	if (rescount) {
-		int neww = (getParentW() - _w - _paddingRight) / rescount;
+		int neww = (getParentW() - _w - _padding.right) / rescount;
 
 		for (int i = 0; i < rescount; ++i) {
 			_children[resize[i]]->setWidth(neww);
@@ -239,5 +239,4 @@ void ThemeLayoutHorizontal::reflowLayout() {
 	}
 }
 
-
-}
+} // End of namespace GUI

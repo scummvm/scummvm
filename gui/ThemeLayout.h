@@ -26,6 +26,8 @@
 #ifndef THEME_LAYOUT_H
 #define THEME_LAYOUT_H
 
+#include "common/rect.h"
+
 #ifdef LAYOUT_DEBUG_DIALOG
 namespace Graphics {
 	class Font;
@@ -37,8 +39,7 @@ namespace GUI {
 
 class ThemeLayout {
 	friend class ThemeLayoutMain;
-	friend class ThemeLayoutVertical;
-	friend class ThemeLayoutHorizontal;
+	friend class ThemeLayoutStacked;
 	friend class ThemeLayoutSpacing;
 	friend class ThemeLayoutWidget;
 public:
@@ -51,7 +52,6 @@ public:
 
 	ThemeLayout(ThemeLayout *p) :
 		_parent(p), _x(0), _y(0), _w(-1), _h(-1),
-		_paddingLeft(0), _paddingRight(0), _paddingTop(0), _paddingBottom(0),
 		_centered(false), _defaultW(-1), _defaultH(-1) { }
 
 	virtual ~ThemeLayout() {
@@ -66,10 +66,10 @@ public:
 	void addChild(ThemeLayout *child) { _children.push_back(child); }
 
 	void setPadding(int8 left, int8 right, int8 top, int8 bottom) {
-		_paddingLeft = left;
-		_paddingRight = right;
-		_paddingTop = top;
-		_paddingBottom = bottom;
+		_padding.left = left;
+		_padding.right = right;
+		_padding.top = top;
+		_padding.bottom = bottom;
 	}
 
 	void setSpacing(int8 spacing) {
@@ -122,7 +122,7 @@ public:
 protected:
 	ThemeLayout *_parent;
 	int16 _x, _y, _w, _h;
-	int8 _paddingLeft, _paddingRight, _paddingTop, _paddingBottom;
+	Common::Rect _padding;
 	int8 _spacing;
 	Common::Array<ThemeLayout *> _children;
 	bool _centered;
@@ -157,23 +157,35 @@ protected:
 	int16 _defaultY;
 };
 
-class ThemeLayoutVertical : public ThemeLayout {
+class ThemeLayoutStacked : public ThemeLayout {
 public:
-	ThemeLayoutVertical(ThemeLayout *p, int spacing, bool center) :
-		ThemeLayout(p) {
+	ThemeLayoutStacked(ThemeLayout *p, LayoutType type, int spacing, bool center) :
+		ThemeLayout(p), _type(type) {
+		assert((type == kLayoutVertical) || (type == kLayoutHorizontal));
 		_spacing = spacing;
 		_centered = center;
 	}
 
-	void reflowLayout();
-#ifdef LAYOUT_DEBUG_DIALOG
-	const char *getName() const { return "Vertical Layout"; }
-#endif
-	LayoutType getLayoutType() { return kLayoutVertical; }
+	void reflowLayout() {
+		if (_type == kLayoutVertical)
+			reflowLayoutV();
+		else
+			reflowLayoutH();
+	}
+	void reflowLayoutH();
+	void reflowLayoutV();
 
+#ifdef LAYOUT_DEBUG_DIALOG
+	const char *getName() const {
+		return (_type == kLayoutVertical)
+			? "Vertical Layout" : "Horizontal Layout";
+	}
+#endif
+
+	LayoutType getLayoutType() { return _type; }
 
 	ThemeLayout *makeClone(ThemeLayout *newParent) {
-		ThemeLayoutVertical *n = new ThemeLayoutVertical(*this);
+		ThemeLayoutStacked *n = new ThemeLayoutStacked(*this);
 		n->_parent = newParent;
 
 		for (uint i = 0; i < n->_children.size(); ++i)
@@ -181,31 +193,9 @@ public:
 
 		return n;
 	}
-};
 
-class ThemeLayoutHorizontal : public ThemeLayout {
-public:
-	ThemeLayoutHorizontal(ThemeLayout *p, int spacing, bool center) :
-		ThemeLayout(p) {
-		_spacing = spacing;
-		_centered = center;
-	}
-
-	void reflowLayout();
-#ifdef LAYOUT_DEBUG_DIALOG
-	const char *getName() const { return "Horizontal Layout"; }
-#endif
-	LayoutType getLayoutType() { return kLayoutHorizontal; }
-
-	ThemeLayout *makeClone(ThemeLayout *newParent) {
-		ThemeLayoutHorizontal *n = new ThemeLayoutHorizontal(*this);
-		n->_parent = newParent;
-
-		for (uint i = 0; i < n->_children.size(); ++ i)
-			n->_children[i] = n->_children[i]->makeClone(n);
-
-		return n;
-	}
+protected:
+	const LayoutType _type;
 };
 
 class ThemeLayoutWidget : public ThemeLayout {

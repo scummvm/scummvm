@@ -127,10 +127,7 @@ void ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, bool center
 	if (spacing == -1)
 		spacing = getVar("Globals.Layout.Spacing", 4);
 
-	if (type == ThemeLayout::kLayoutVertical)
-		layout = new ThemeLayoutVertical(_curLayout.top(), spacing, center);
-	else if (type == ThemeLayout::kLayoutHorizontal)
-		layout = new ThemeLayoutHorizontal(_curLayout.top(), spacing, center);
+	layout = new ThemeLayoutStacked(_curLayout.top(), type, spacing, center);
 
 	assert(layout);
 
