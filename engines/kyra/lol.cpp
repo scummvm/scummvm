@@ -61,6 +61,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	
 	_chargenWSA = 0;
 	_lastUsedStringBuffer = 0;
+	_landsFile = 0;
 }
 
 LoLEngine::~LoLEngine() {
@@ -68,6 +69,7 @@ LoLEngine::~LoLEngine() {
 
 	for (uint i = 0; i < ARRAYSIZE(_shapes); ++i)
 		delete[] _shapes[i];
+	delete[] _landsFile;
 
 	delete _screen;
 	delete _tim;
