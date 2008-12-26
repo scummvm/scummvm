@@ -99,12 +99,12 @@ byte* Animation::getFrameData() const {
 	return gfxobj->getData(_frame);
 }
 
-void Animation::validateScriptVars() {
-	// this is used to clip values of _frame, _left and _top
-	// which can be screwed up by buggy scripts.
-
-	_frame = CLIP(_frame, (int16)0, (int16)(getFrameNum() - 1));
+void Animation::setF(int16 value) {
+	int16 min = MIN(0, getFrameNum() - 1);
+	int16 max = MAX(0, getFrameNum() - 1);
+	_frame = CLIP(value, min, max);
 }
+
 
 #define NUM_LOCALS	10
 char	_localNames[NUM_LOCALS][10];

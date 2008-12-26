@@ -504,8 +504,6 @@ public:
 	uint16 getFrameNum() const;
 	byte* getFrameData() const;
 
-	void validateScriptVars();
-
 	void resetZ();
 	bool hitFrameRect(int x, int y) const;
 	void getFrameRect(Common::Rect &r) const;
@@ -522,7 +520,7 @@ public:
 	void  setZ(int16 value) { _z = value; }
 
 	int16 getF() 			{ return _frame; }
-	void  setF(int16 value) { _frame = value; }
+	void  setF(int16 value);
 };
 
 class Table {
