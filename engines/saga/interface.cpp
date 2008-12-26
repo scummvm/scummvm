@@ -52,7 +52,7 @@
 
 namespace Saga {
 
-static int verbToTextIdITE[] = {
+static const int verbToTextIdITE[] = {
 	kTextWalkTo,	kTextLookAt,	kTextPickUp,	kTextTalkTo,
 	kTextOpen,		kTextClose,		kTextUse,		kTextGive
 };
@@ -61,7 +61,7 @@ static int verbToTextIdITE[] = {
 // i.e. id 12 (quit game button) maps to string 14 (Quit game)
 // The comments are what the actual IHNM string is
 // For the text string IDs, refer to saga.h, enum TextStringIds
-static int IHNMTextStringIdsLUT[56] = {
+static const int IHNMTextStringIdsLUT[56] = {
 	-1,	// (Empty)
 	-1,	// (Empty)
 	4,	// Take
