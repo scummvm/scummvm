@@ -952,7 +952,7 @@ static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common
 					if (dst) {
 						*dst++ = ((runCountDiff - 1) << 2) | 0;
 						memcpy(dst, diffBuffer, runCountDiff);
-						dst += runCountDiff + 1;
+						dst += runCountDiff;
 					}
 					dataSize += runCountDiff + 1;
 					runCountDiff = 0;
