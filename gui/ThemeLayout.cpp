@@ -161,6 +161,7 @@ void ThemeLayoutStacked::reflowLayoutV() {
 			_children[i]->setWidth((_w == -1 ? getParentW() : _w) - _padding.left - _padding.right);
 
 		if (_children[i]->getHeight() == -1) {
+			assert(rescount < ARRAYSIZE(resize));
 			resize[rescount++] = i;
 			_children[i]->setHeight(0);
 		}
@@ -209,6 +210,7 @@ void ThemeLayoutStacked::reflowLayoutH() {
 			_children[i]->setHeight((_h == -1 ? getParentH() : _h) - _padding.top - _padding.bottom);
 
 		if (_children[i]->getWidth() == -1) {
+			assert(rescount < ARRAYSIZE(resize));
 			resize[rescount++] = i;
 			_children[i]->setWidth(0);
 		}
