@@ -48,9 +48,9 @@ void ThemeLayout::importLayout(ThemeLayout *layout) {
 
 	if (getLayoutType() == layout->getLayoutType()) {
 		for (uint i = 0; i < layout->_children.size(); ++i)
-			_children.push_back(layout->_children[i]->makeClone());
+			_children.push_back(layout->_children[i]->makeClone(this));
 	} else {
-		_children.push_back(layout->makeClone());
+		_children.push_back(layout->makeClone(this));
 	}
 }
 

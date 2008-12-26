@@ -40,6 +40,7 @@ class ThemeLayout {
 	friend class ThemeLayoutVertical;
 	friend class ThemeLayoutHorizontal;
 	friend class ThemeLayoutSpacing;
+	friend class ThemeLayoutWidget;
 public:
 	enum LayoutType {
 		kLayoutMain,
@@ -98,7 +99,7 @@ protected:
 
 	virtual LayoutType getLayoutType() = 0;
 
-	virtual ThemeLayout *makeClone() = 0;
+	virtual ThemeLayout *makeClone(ThemeLayout *newParent) = 0;
 
 public:
 	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
@@ -149,7 +150,7 @@ public:
 #endif
 	LayoutType getLayoutType() { return kLayoutMain; }
 
-	ThemeLayout *makeClone() { assert(!"Do not copy Main Layouts!"); return 0; }
+	ThemeLayout *makeClone(ThemeLayout *newParent) { assert(!"Do not copy Main Layouts!"); return 0; }
 
 protected:
 	int16 _defaultX;
@@ -171,11 +172,12 @@ public:
 	LayoutType getLayoutType() { return kLayoutVertical; }
 
 
-	ThemeLayout *makeClone() {
+	ThemeLayout *makeClone(ThemeLayout *newParent) {
 		ThemeLayoutVertical *n = new ThemeLayoutVertical(*this);
+		n->_parent = newParent;
 
 		for (uint i = 0; i < n->_children.size(); ++i)
-			n->_children[i] = n->_children[i]->makeClone();
+			n->_children[i] = n->_children[i]->makeClone(n);
 
 		return n;
 	}
@@ -195,11 +197,12 @@ public:
 #endif
 	LayoutType getLayoutType() { return kLayoutHorizontal; }
 
-	ThemeLayout *makeClone() {
+	ThemeLayout *makeClone(ThemeLayout *newParent) {
 		ThemeLayoutHorizontal *n = new ThemeLayoutHorizontal(*this);
+		n->_parent = newParent;
 
 		for (uint i = 0; i < n->_children.size(); ++ i)
-			n->_children[i] = n->_children[i]->makeClone();
+			n->_children[i] = n->_children[i]->makeClone(n);
 
 		return n;
 	}
@@ -219,7 +222,11 @@ public:
 #endif
 	LayoutType getLayoutType() { return kLayoutWidget; }
 
-	ThemeLayout *makeClone() { return new ThemeLayoutWidget(*this); }
+	ThemeLayout *makeClone(ThemeLayout *newParent) {
+		ThemeLayout *n = new ThemeLayoutWidget(*this);
+		n->_parent = newParent;
+		return n;
+	}
 
 protected:
 	Common::String _name;
@@ -244,7 +251,11 @@ public:
 	const char *getName() const { return "SPACE"; }
 #endif
 
-	ThemeLayout *makeClone() { return new ThemeLayoutSpacing(*this); }
+	ThemeLayout *makeClone(ThemeLayout *newParent) {
+		ThemeLayout *n = new ThemeLayoutSpacing(*this);
+		n->_parent = newParent;
+		return n;
+	}
 };
 
 }
