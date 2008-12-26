@@ -50,28 +50,6 @@ private:
 	Common::Error init();
 	Common::Error go();
 
-	// input
-	void updateInput();
-	int checkInput(Button *buttonList = 0, bool mainLoop = false);
-	void removeInputTop();
-
-	int _mouseX, _mouseY;
-
-	struct Event {
-		Common::Event event;
-		bool causedSkip;
-
-		Event() : event(), causedSkip(false) {}
-		Event(Common::Event e) : event(e), causedSkip(false) {}
-		Event(Common::Event e, bool skip) : event(e), causedSkip(skip) {}
-
-		operator Common::Event() const { return event; }
-	};
-	Common::List<Event> _eventList;
-
-	virtual bool skipFlag() const;
-	virtual void resetSkipFlag(bool removeEvent = true);
-
 	// intro
 	void setupPrologueData(bool load);
 

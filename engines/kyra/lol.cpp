@@ -105,138 +105,6 @@ Common::Error LoLEngine::go() {
 	return Common::kNoError;
 }
 
-#pragma mark - Input
-
-int LoLEngine::checkInput(Button *buttonList, bool mainLoop) {
-	debugC(9, kDebugLevelMain, "LoLEngine::checkInput(%p, %d)", (const void*)buttonList, mainLoop);
-	updateInput();
-
-	int keys = 0;
-	int8 mouseWheel = 0;
-
-	while (_eventList.size()) {
-		Common::Event event = *_eventList.begin();
-		bool breakLoop = false;
-
-		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			/*if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
-					(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && mainLoop) {
-				const char *saveLoadSlot = getSavegameFilename(9 - (event.kbd.keycode - '0') + 990);
-
-				if (event.kbd.flags == Common::KBD_CTRL) {
-					loadGame(saveLoadSlot);
-					_eventList.clear();
-					breakLoop = true;
-				} else {
-					char savegameName[14];
-					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');
-					saveGame(saveLoadSlot, savegameName);
-				}
-			} else if (event.kbd.flags == Common::KBD_CTRL) {
-				if (event.kbd.keycode == 'd')
-					_debugger->attach();
-			}*/
-			break;
-
-		case Common::EVENT_MOUSEMOVE: {
-			Common::Point pos = getMousePos();
-			_mouseX = pos.x;
-			_mouseY = pos.y;
-			} break;
-
-		case Common::EVENT_LBUTTONDOWN:
-		case Common::EVENT_LBUTTONUP: {
-			Common::Point pos = getMousePos();
-			_mouseX = pos.x;
-			_mouseY = pos.y;
-			keys = (event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800));
-			breakLoop = true;
-			} break;
-
-		case Common::EVENT_WHEELUP:
-			mouseWheel = -1;
-			break;
-
-		case Common::EVENT_WHEELDOWN:
-			mouseWheel = 1;
-			break;
-
-		default:
-			break;
-		}
-
-		//if (_debugger->isAttached())
-		//	_debugger->onFrame();
-
-		if (breakLoop)
-			break;
-
-		_eventList.erase(_eventList.begin());
-	}
-
-	return /*gui_v2()->processButtonList(buttonList, keys | 0x8000, mouseWheel)*/keys;
-}
-
-void LoLEngine::updateInput() {
-	Common::Event event;
-
-	while (_eventMan->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == '.' || event.kbd.keycode == Common::KEYCODE_ESCAPE)
-				_eventList.push_back(Event(event, true));
-			else if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
-				quitGame();
-			else
-				_eventList.push_back(event);
-			break;
-
-		case Common::EVENT_LBUTTONDOWN:
-			_eventList.push_back(Event(event, true));
-			break;
-
-		case Common::EVENT_MOUSEMOVE:
-			_screen->updateScreen();
-			// fall through
-
-		case Common::EVENT_LBUTTONUP:
-		case Common::EVENT_WHEELUP:
-		case Common::EVENT_WHEELDOWN:
-			_eventList.push_back(event);
-			break;
-
-		default:
-			break;
-		}
-	}
-}
-
-void LoLEngine::removeInputTop() {
-	if (!_eventList.empty())
-		_eventList.erase(_eventList.begin());
-}
-
-bool LoLEngine::skipFlag() const {
-	for (Common::List<Event>::const_iterator i = _eventList.begin(); i != _eventList.end(); ++i) {
-		if (i->causedSkip)
-			return true;
-	}
-	return false;
-}
-
-void LoLEngine::resetSkipFlag(bool removeEvent) {
-	for (Common::List<Event>::iterator i = _eventList.begin(); i != _eventList.end(); ++i) {
-		if (i->causedSkip) {
-			if (removeEvent)
-				_eventList.erase(i);
-			else
-				i->causedSkip = false;
-			return;
-		}
-	}
-}
-
 #pragma mark - Intro
 
 void LoLEngine::setupPrologueData(bool load) {
@@ -686,7 +554,7 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 }
 
 int LoLEngine::getCharSelection() {
-	int inputFlag = checkInput() & 0xCF;
+	int inputFlag = checkInput(0, false) & 0xCF;
 	removeInputTop();
 
 	if (inputFlag == 200) {
@@ -701,7 +569,7 @@ int LoLEngine::getCharSelection() {
 }
 
 int LoLEngine::selectionCharAccept() {
-	int inputFlag = checkInput() & 0xCF;
+	int inputFlag = checkInput(0, false) & 0xCF;
 	removeInputTop();
 	
 	if (inputFlag == 200) {

@@ -290,7 +290,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
 			break;
 		}
 
-		if (_debugger->isAttached())
+		if (_debugger && _debugger->isAttached())
 			_debugger->onFrame();
 
 		if (breakLoop)
