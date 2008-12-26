@@ -337,10 +337,10 @@ void KyraEngine_MR::initMainMenu() {
 
 	_menu = new MainMenu(this);
 	MainMenu::StaticData data = {
-		{ _mainMenuStrings[_lang*4+0], _mainMenuStrings[_lang*4+1], _mainMenuStrings[_lang*4+2], _mainMenuStrings[_lang*4+3] },
-		{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF, 0x00, 0x01, 0x02, 0x03 },
+		{ _mainMenuStrings[_lang*4+0], _mainMenuStrings[_lang*4+1], _mainMenuStrings[_lang*4+2], _mainMenuStrings[_lang*4+3], 0 },
+		{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF },
 		{ 0x16, 0x19, 0x1A, 0x16 },
-		0x80, 0xFF
+		Screen::FID_8_FNT, 240
 	};
 
 	if (_flags.lang == Common::ES_ESP) {

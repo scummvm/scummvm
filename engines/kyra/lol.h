@@ -50,6 +50,13 @@ private:
 	Common::Error init();
 	Common::Error go();
 
+	// initialization
+	void preInit();
+
+	void initializeCursors();
+
+	int mainMenu();
+
 	// intro
 	void setupPrologueData(bool load);
 
@@ -118,7 +125,18 @@ private:
 	// translation
 	int _lang;
 
+	uint8 *_landsFile;
+
+	int _lastUsedStringBuffer;
+	char _stringBuffer[5][512];	// TODO: The original used a size of 512, it looks a bit large.
+								// Maybe we can someday reduce the size.
+	const char *getLangString(uint16 id);
+	uint8 *getTableEntry(uint8 *buffer, uint16 id);
+
 	static const char * const _languageExt[];
+
+	// graphics
+	uint8 *_shapes[138];
 	
 	// unneeded
 	void setWalkspeed(uint8) {}

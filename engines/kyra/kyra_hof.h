@@ -551,8 +551,6 @@ protected:
 	uint8 *getTableEntry(uint8 *buffer, int id);
 	char *getTableString(int id, uint8 *buffer, int decode);
 	const char *getChapterString(int id);
-	int decodeString1(const char *src, char *dst);
-	void decodeString2(const char *src, char *dst);
 
 	void changeFileExtension(char *buffer);
 

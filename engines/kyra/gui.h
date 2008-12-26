@@ -27,6 +27,7 @@
 #define KYRA_GUI_H
 
 #include "kyra/kyra_v1.h"
+#include "kyra/screen.h"
 
 #include "common/ptr.h"
 #include "common/array.h"
@@ -217,11 +218,13 @@ public:
 	};
 
 	struct StaticData {
-		const char *strings[4];
+		const char *strings[5];
 
-		uint8 menuTable[11];
+		uint8 menuTable[7];
 		uint8 colorTable[4];
-		uint8 colorNormal, colorFlash;
+
+		Screen::FontId font;
+		uint8 altColor;
 	};
 
 	void init(StaticData data, Animation anim);

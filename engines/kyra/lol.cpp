@@ -27,6 +27,7 @@
 #include "kyra/screen_lol.h"
 #include "kyra/resource.h"
 #include "kyra/sound.h"
+#include "kyra/util.h"
 
 #include "common/endian.h"
 
@@ -55,12 +56,18 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 		_lang = 0;
 		break;
 	}
+
+	memset(_shapes, 0, sizeof(_shapes));
 	
 	_chargenWSA = 0;
+	_lastUsedStringBuffer = 0;
 }
 
 LoLEngine::~LoLEngine() {
 	setupPrologueData(false);
+
+	for (uint i = 0; i < ARRAYSIZE(_shapes); ++i)
+		delete[] _shapes[i];
 
 	delete _screen;
 	delete _tim;
@@ -94,20 +101,206 @@ Common::Error LoLEngine::init() {
 }
 
 Common::Error LoLEngine::go() {
-	setupPrologueData(true);
-	showIntro();
-	_sound->playTrack(6);
-	/*int character = */chooseCharacter();
-	_sound->playTrack(1);
-	_screen->fadeToBlack();
-	setupPrologueData(false);
+	bool hasSave = saveFileLoadable(0);
+
+	if (!hasSave) {
+		setupPrologueData(true);
+		showIntro();
+		setupPrologueData(false);
+	}
+
+	preInit();
+
+	int processSelection = -1;
+	while (!shouldQuit() && processSelection == -1) {
+		_screen->loadBitmap("TITLE.CPS", 2, 2, _screen->getPalette(0));
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->fadePalette(_screen->getPalette(0), 0x1E);
+
+		int selection = mainMenu();
+
+		switch (selection) {
+		case 0:		// New game
+			processSelection = 0;
+			break;
+
+		case 1:		// Show intro
+			setupPrologueData(true);
+			_screen->hideMouse();
+			showIntro();
+			_screen->showMouse();
+			setupPrologueData(false);
+			break;
+
+		case 2:		// "Lore of the Lands"
+			break;
+
+		case 3:		// Load game
+			// For now fall through
+			//processSelection = 3;
+			//break;
+
+		case 4:		// Quit game
+		default:
+			quitGame();
+			break;
+		}
+	}
+
+	if (processSelection == -1)
+		return Common::kNoError;
+
+	if (processSelection == 0) {
+		// Unlike the original, we add a nice fade to black
+		memset(_screen->getPalette(0), 0, 768);
+		_screen->fadePalette(_screen->getPalette(0), 0x54);
+
+		setupPrologueData(true);
+		_sound->loadSoundFile("LOREINTR");
+		_sound->playTrack(6);
+		/*int character = */chooseCharacter();
+		_sound->playTrack(1);
+		_screen->fadeToBlack();
+		setupPrologueData(false);
+	} else if (processSelection == 3) {
+		//XXX
+	}
 
 	return Common::kNoError;
+}
+
+#pragma mark - Initialization
+
+void LoLEngine::preInit() {
+	debugC(9, kDebugLevelMain, "LoLEngine::preInit()");
+
+	_res->loadFileList("FILEDATA.FDT");
+	_screen->loadFont(Screen::FID_9_FNT, "FONT9P.FNT");
+	_screen->loadFont(Screen::FID_6_FNT, "FONT6P.FNT");
+
+	uint8 *pal = _screen->getPalette(0);
+	memset(pal, 0, 768);
+	_screen->setScreenPalette(pal);
+
+	/*if (_sound->getMusicType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiMT32) {
+		_sound->loadSoundFile("LOLSYSEX");
+		_sound->playTrack(0);
+
+		while (_sound->isPlaying() && !shouldQuit())
+			delay(10);
+	}*/
+
+	if (shouldQuit())
+		return;
+
+	_eventList.clear();
+
+	//loadTalkFile(0);
+	
+	char filename[32];
+	snprintf(filename, sizeof(filename), "LANDS.%s", _languageExt[_lang]);	
+	_landsFile = _res->fileData(filename, 0);
+
+	initializeCursors();
+
+	/*_screen->setFont(Screen::FID_6_FNT);
+	_screen->fprintString("V CD1.02 D", 260, 301, 0x67, 0x00, 0x04);*/
+	_screen->setFont(Screen::FID_9_FNT);
+}
+
+void LoLEngine::initializeCursors() {
+	debugC(9, kDebugLevelMain, "LoLEngine::initializeCursors()");
+
+	_screen->loadBitmap("ITEMICN.SHP", 3, 3, 0);
+	_shapes[0] = _screen->makeShapeCopy(_screen->getCPagePtr(3), 0);
+	_screen->setMouseCursor(0, 0, _shapes[0]);
+}
+
+
+int LoLEngine::mainMenu() {
+	debugC(9, kDebugLevelMain, "LoLEngine::mainMenu()");
+
+	bool hasSave = saveFileLoadable(0);
+
+	MainMenu::StaticData data = {
+		{ 0, 0, 0, 0, 0 }, 
+		{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0x3D, 0x9F },
+		{ 0x2C, 0x19, 0x48, 0x2C },
+		Screen::FID_9_FNT, 1
+	};
+
+	if (hasSave)
+		++data.menuTable[3];
+
+	static const uint16 mainMenuStrings[2][5] = {
+		{ 0x4248, 0x4249, 0x42DD, 0x424A, 0x0000 },
+		{ 0x4248, 0x4249, 0x42DD, 0x4001, 0x424A }
+	};
+
+	for (int i = 0; i < 5; ++i) {
+		if (hasSave)
+			data.strings[i] = getLangString(mainMenuStrings[1][i]);		
+		else
+			data.strings[i] = getLangString(mainMenuStrings[0][i]);		
+	}
+
+	MainMenu *menu = new MainMenu(this);
+	assert(menu);
+	menu->init(data, MainMenu::Animation());
+
+	int selection = menu->handle(hasSave ? 12 : 6);
+	delete menu;
+
+	if (!hasSave && selection == 3)
+		selection = 4;
+
+	return selection;
+}
+
+#pragma mark - Localization
+
+const char *LoLEngine::getLangString(uint16 id) {
+	debugC(9, kDebugLevelMain, "LoLEngine::getLangString(0x%.04X)", id);
+
+	if (id == 0xFFFF)
+		return 0;
+
+	uint16 realId = id & 0x3FFF;
+	uint8 *buffer = 0;
+
+	if (id & 0x4000)
+		buffer = _landsFile;
+	else
+		buffer = 0;	// TODO
+
+	if (!buffer)
+		return 0;
+
+	const char *string = (const char *)getTableEntry(buffer, realId);
+
+	char *srcBuffer = _stringBuffer[_lastUsedStringBuffer];
+	Util::decodeString1(string, srcBuffer);
+	Util::decodeString2(srcBuffer, srcBuffer);
+
+	++_lastUsedStringBuffer;
+	_lastUsedStringBuffer %= ARRAYSIZE(_stringBuffer);
+
+	return srcBuffer;
+}
+
+uint8 *LoLEngine::getTableEntry(uint8 *buffer, uint16 id) {
+	debugC(9, kDebugLevelMain, "LoLEngine::getTableEntry(%p, %d)", (const void *)buffer, id);
+	if (!buffer)
+		return 0;
+
+	return buffer + READ_LE_UINT16(buffer + (id<<1));
 }
 
 #pragma mark - Intro
 
 void LoLEngine::setupPrologueData(bool load) {
+	debugC(9, kDebugLevelMain, "LoLEngine::setupPrologueData(%d)", load);
+
 	static const char * const fileList[] = {
 		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK", "INTRO1.PAK",
 		"INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "INTRO5.PAK",
@@ -132,6 +325,9 @@ void LoLEngine::setupPrologueData(bool load) {
 			_res->unloadPakFile(filename);
 		}
 	}
+
+	_screen->clearPage(0);
+	_screen->clearPage(3);
 	
 	if (load) {
 		_chargenWSA = new WSAMovie_v2(this, _screen);
@@ -189,7 +385,6 @@ void LoLEngine::showIntro() {
 	_screen->showMouse();
 	_sound->voiceStop();
 	
-	// HACK: Remove all input events
 	_eventList.clear();
 	
 	_tim->unload(intro);

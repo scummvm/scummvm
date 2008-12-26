@@ -67,6 +67,7 @@ MODULE_OBJS := \
 	timer_lok.o \
 	timer_hof.o \
 	timer_mr.o \
+	util.o \
 	vqa.o \
 	wsamovie.o
 

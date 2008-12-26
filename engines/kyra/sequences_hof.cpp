@@ -2853,10 +2853,10 @@ void KyraEngine_HoF::seq_init() {
 		} while (getShapePtr(numShp));
 	} else {	
 		MainMenu::StaticData data = {
-			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98] },
-			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xd7, 0xd6, 0x00, 0x01, 0x02, 0x03 },
+			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98], 0 },
+			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xd7, 0xd6 },
 			{ 0xd8, 0xda, 0xd9, 0xd8 },
-			0xd7, 0xd6
+			Screen::FID_8_FNT, 240
 		};
 		_menu = new MainMenu(this);
 		_menu->init(data, MainMenu::Animation());

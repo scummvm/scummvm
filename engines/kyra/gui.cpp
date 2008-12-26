@@ -441,10 +441,11 @@ int MainMenu::handle(int dim) {
 	memset(colorMap, 0, sizeof(colorMap));
 	_screen->setTextColorMap(colorMap);
 
-	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
+	Screen::FontId oldFont = _screen->setFont(_static.font);
 	int charWidthBackUp = _screen->_charWidth;
 
-	_screen->_charWidth = -2;
+	if (_vm->game() != GI_LOL)
+		_screen->_charWidth = -2;
 	_screen->setScreenDim(dim);
 
 	while (!_screen->isMouseVisible())
@@ -473,7 +474,7 @@ int MainMenu::handle(int dim) {
 	int fh = _screen->getFontHeight();
 	int textPos = ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3;
 
-	Common::Rect menuRect(x + 16, y + 4, x + width - 16, y + 4 + fh * 4);
+	Common::Rect menuRect(x + 16, y + 4, x + width - 16, y + 4 + fh * _static.menuTable[3]);
 
 	while (!_vm->shouldQuit()) {
 		updateAnimation();
@@ -484,18 +485,18 @@ int MainMenu::handle(int dim) {
 			int item = (mouse.y - menuRect.top) / fh;
 
 			if (item != selected) {
-				printString(_static.strings[selected], textPos, menuRect.top + selected * fh, _static.colorNormal, 0, 5);
-				printString(_static.strings[item], textPos, menuRect.top + item * fh, _static.colorFlash, 0, 5);
+				printString(_static.strings[selected], textPos, menuRect.top + selected * fh, _static.menuTable[5], 0, 5);
+				printString(_static.strings[item], textPos, menuRect.top + item * fh, _static.menuTable[6], 0, 5);
 
 				selected = item;
 			}
 
 			if (mousePressed) {
 				for (int i = 0; i < 3; i++) {
-					printString(_static.strings[selected], textPos, menuRect.top + selected * fh, _static.colorNormal, 0, 5);
+					printString(_static.strings[selected], textPos, menuRect.top + selected * fh, _static.menuTable[5], 0, 5);
 					_screen->updateScreen();
 					_system->delayMillis(50);
-					printString(_static.strings[selected], textPos, menuRect.top + selected * fh, _static.colorFlash, 0, 5);
+					printString(_static.strings[selected], textPos, menuRect.top + selected * fh, _static.menuTable[6], 0, 5);
 					_screen->updateScreen();
 					_system->delayMillis(50);
 				}
@@ -562,8 +563,8 @@ void MainMenu::printString(const char *format, int x, int y, int col1, int col2,
 		x -= _screen->getTextWidth(string);
 
 	if (flags & 4) {
-		_screen->printText(string, x - 1, y, 240, col2);
-		_screen->printText(string, x, y + 1, 240, col2);
+		_screen->printText(string, x - 1, y, _static.altColor, col2);
+		_screen->printText(string, x, y + 1, _static.altColor, col2);
 	}
 
 	if (flags & 8) {
