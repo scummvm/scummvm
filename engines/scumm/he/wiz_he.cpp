@@ -1566,7 +1566,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 	int sourceImage = 0;
 	if (params->processFlags & kWPFMaskImg) {
 		sourceImage = params->sourceImage;
-		debug(0, "displayWizComplexImage() unhandled flag 0x80000");
+		debug(0, "displayWizComplexImage() unhandled flag kWPFMaskImg");
 	}
 	int palette = 0;
 	if (params->processFlags & kWPFPaletteNum) {
