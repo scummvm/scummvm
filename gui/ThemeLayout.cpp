@@ -22,16 +22,19 @@
  * $Id$
  *
  */
+
 #include "common/util.h"
 #include "common/system.h"
 #include "common/events.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
 #include "common/xmlparser.h"
-#include "graphics/scaler.h"
 
 #include "gui/ThemeEval.h"
 #include "gui/ThemeLayout.h"
+
+#ifdef LAYOUT_DEBUG_DIALOG
+#include "graphics/font.h"
+#include "graphics/surface.h"
+#endif
 
 namespace GUI {
 
@@ -91,6 +94,20 @@ int16 ThemeLayout::getParentH() {
 
 	return p->getHeight() - height;
 }
+
+#ifdef LAYOUT_DEBUG_DIALOG
+void ThemeLayout::debugDraw(Graphics::Surface *screen, const Graphics::Font *font) {
+	uint16 color = 0xFFFF;
+	font->drawString(screen, getName(), _x, _y, _w, color, Graphics::kTextAlignRight, 0, true);
+	screen->hLine(_x, _y, _x + _w, color);
+	screen->hLine(_x, _y + _h, _x + _w , color);
+	screen->vLine(_x, _y, _y + _h, color);
+	screen->vLine(_x + _w, _y, _y + _h, color);
+
+	for (uint i = 0; i < _children.size(); ++i)
+		_children[i]->debugDraw(screen, font);
+}
+#endif
 
 
 bool ThemeLayoutWidget::getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {

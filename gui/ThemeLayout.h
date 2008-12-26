@@ -26,10 +26,20 @@
 #ifndef THEME_LAYOUT_H
 #define THEME_LAYOUT_H
 
+#ifdef LAYOUT_DEBUG_DIALOG
+namespace Graphics {
+	class Font;
+	class Surface;
+}
+#endif
+
 namespace GUI {
 
 class ThemeLayout {
-
+	friend class ThemeLayoutMain;
+	friend class ThemeLayoutVertical;
+	friend class ThemeLayoutHorizontal;
+	friend class ThemeLayoutSpacing;
 public:
 	enum LayoutType {
 		kLayoutMain,
@@ -38,8 +48,8 @@ public:
 		kLayoutWidget
 	};
 
-	ThemeLayout(ThemeLayout *p, const Common::String &name) :
-		_parent(p), _name(name), _x(0), _y(0), _w(-1), _h(-1),
+	ThemeLayout(ThemeLayout *p) :
+		_parent(p), _x(0), _y(0), _w(-1), _h(-1),
 		_paddingLeft(0), _paddingRight(0), _paddingTop(0), _paddingBottom(0),
 		_centered(false), _defaultW(-1), _defaultH(-1) { }
 
@@ -65,12 +75,9 @@ public:
 		_spacing = spacing;
 	}
 
-	int16 getParentX() { return _parent ? _parent->_x : 0; }
-	int16 getParentY() { return _parent ? _parent->_y : 0; }
+protected:
 	int16 getParentW();
 	int16 getParentH();
-	int16 getX() { return _x; }
-	int16 getY() { return _y; }
 	int16 getWidth() { return _w; }
 	int16 getHeight() { return _h; }
 
@@ -89,23 +96,11 @@ public:
 	void setWidth(int16 width) { _w = width; }
 	void setHeight(int16 height) { _h = height; }
 
-#ifdef LAYOUT_DEBUG_DIALOG
-	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font) {
-		uint16 color = 0xFFFF;
-		font->drawString(screen, getName(), _x, _y, _w, color, Graphics::kTextAlignRight, 0, true);
-		screen->hLine(_x, _y, _x + _w, color);
-		screen->hLine(_x, _y + _h, _x + _w , color);
-		screen->vLine(_x, _y, _y + _h, color);
-		screen->vLine(_x + _w, _y, _y + _h, color);
-
-		for (uint i = 0; i < _children.size(); ++i)
-			_children[i]->debugDraw(screen, font);
-	}
-#endif
-
 	virtual LayoutType getLayoutType() = 0;
-	virtual const char *getName() { return _name.c_str(); }
 
+	virtual ThemeLayout *makeClone() = 0;
+
+public:
 	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
 
 	virtual bool getDialogData(int16 &x, int16 &y, uint16 &w, uint16 &h) {
@@ -115,23 +110,27 @@ public:
 		return true;
 	}
 
-	virtual ThemeLayout *makeClone() = 0;
 	void importLayout(ThemeLayout *layout);
+
+#ifdef LAYOUT_DEBUG_DIALOG
+	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font);
+
+	virtual const char *getName() const = 0;
+#endif
 
 protected:
 	ThemeLayout *_parent;
-	Common::String _name;
 	int16 _x, _y, _w, _h;
 	int8 _paddingLeft, _paddingRight, _paddingTop, _paddingBottom;
 	int8 _spacing;
-	Common::Array<ThemeLayout*> _children;
+	Common::Array<ThemeLayout *> _children;
 	bool _centered;
 	int16 _defaultW, _defaultH;
 };
 
 class ThemeLayoutMain : public ThemeLayout {
 public:
-	ThemeLayoutMain(int16 x, int16 y, int16 w, int16 h) : ThemeLayout(0, "") {
+	ThemeLayoutMain(int16 x, int16 y, int16 w, int16 h) : ThemeLayout(0) {
 		_w = _defaultW = w;
 		_h = _defaultH = h;
 		_x = _defaultX = x;
@@ -145,7 +144,9 @@ public:
 		_y = _defaultY;
 	}
 
-	const char *getName() { return "Global Layout"; }
+#ifdef LAYOUT_DEBUG_DIALOG
+	const char *getName() const { return "Global Layout"; }
+#endif
 	LayoutType getLayoutType() { return kLayoutMain; }
 
 	ThemeLayout *makeClone() { assert(!"Do not copy Main Layouts!"); return 0; }
@@ -158,13 +159,15 @@ protected:
 class ThemeLayoutVertical : public ThemeLayout {
 public:
 	ThemeLayoutVertical(ThemeLayout *p, int spacing, bool center) :
-		ThemeLayout(p, "") {
+		ThemeLayout(p) {
 		_spacing = spacing;
 		_centered = center;
 	}
 
 	void reflowLayout();
-	const char *getName() { return "Vertical Layout"; }
+#ifdef LAYOUT_DEBUG_DIALOG
+	const char *getName() const { return "Vertical Layout"; }
+#endif
 	LayoutType getLayoutType() { return kLayoutVertical; }
 
 
@@ -181,13 +184,15 @@ public:
 class ThemeLayoutHorizontal : public ThemeLayout {
 public:
 	ThemeLayoutHorizontal(ThemeLayout *p, int spacing, bool center) :
-		ThemeLayout(p, "") {
+		ThemeLayout(p) {
 		_spacing = spacing;
 		_centered = center;
 	}
 
 	void reflowLayout();
-	const char *getName() { return "Horizontal Layout"; }
+#ifdef LAYOUT_DEBUG_DIALOG
+	const char *getName() const { return "Horizontal Layout"; }
+#endif
 	LayoutType getLayoutType() { return kLayoutHorizontal; }
 
 	ThemeLayout *makeClone() {
@@ -202,21 +207,27 @@ public:
 
 class ThemeLayoutWidget : public ThemeLayout {
 public:
-	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h) : ThemeLayout(p, name) {
+	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h) : ThemeLayout(p), _name(name) {
 		_w = _defaultW = w;
 		_h = _defaultH = h;
 	}
 
 	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
 	void reflowLayout() {}
+#ifdef LAYOUT_DEBUG_DIALOG
+	virtual const char *getName() const { return _name.c_str(); }
+#endif
 	LayoutType getLayoutType() { return kLayoutWidget; }
 
 	ThemeLayout *makeClone() { return new ThemeLayoutWidget(*this); }
+
+protected:
+	Common::String _name;
 };
 
 class ThemeLayoutSpacing : public ThemeLayout {
 public:
-	ThemeLayoutSpacing(ThemeLayout *p, int size) : ThemeLayout(p, "") {
+	ThemeLayoutSpacing(ThemeLayout *p, int size) : ThemeLayout(p) {
 		if (p->getLayoutType() == kLayoutHorizontal) {
 			_w = _defaultW = size;
 			_h = _defaultH = 1;
@@ -229,7 +240,9 @@ public:
 	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) { return false; }
 	void reflowLayout() {}
 	LayoutType getLayoutType() { return kLayoutWidget; }
-	const char *getName() { return "SPACE"; }
+#ifdef LAYOUT_DEBUG_DIALOG
+	const char *getName() const { return "SPACE"; }
+#endif
 
 	ThemeLayout *makeClone() { return new ThemeLayoutSpacing(*this); }
 };
