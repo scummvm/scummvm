@@ -1611,7 +1611,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 	if (params->processFlags & kWPFDstResNum) {
 		dstResNum = params->dstResNum;
 	}
-	if (params->processFlags & kWPFRemapPalette) {
+	if (_vm->_game.heversion >= 99 && params->processFlags & kWPFRemapPalette) {
 		remapWizImagePal(params);
 		flags |= kWIFRemapPalette;
 	}
