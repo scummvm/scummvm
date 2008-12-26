@@ -71,7 +71,7 @@ int16 ThemeLayout::getParentW() {
 		width += p->_paddingRight + p->_paddingLeft;
 		if (p->getLayoutType() == kLayoutHorizontal) {
 			for (uint i = 0; i < p->_children.size(); ++i)
-				width += p->_children[i]->getHeight() + p->_spacing;
+				width += p->_children[i]->getWidth() + p->_spacing;
 		}
 		p = p->_parent;
 	}
