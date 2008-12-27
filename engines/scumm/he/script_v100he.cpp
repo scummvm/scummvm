@@ -669,6 +669,28 @@ void ScummEngine_v100he::o100_arrayOps() {
 			copyArray(array, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end, array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
 		}
 		break;
+	case 132:
+		// TODO: Used by Moonbase Commander
+		fetchScriptWord();
+		fetchScriptWord();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		dim1end = pop();
+		dim1start = pop();
+		dim2end = pop();
+		dim2start = pop();
+		id = readVar(array);
+		if (id == 0) {
+			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
+		}
+		break;
 	case 133:
 		b = pop();
 		c = pop();

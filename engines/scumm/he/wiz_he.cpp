@@ -2275,6 +2275,7 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 			break;
 		case 4:
 			// TODO: Unknown image type
+			ret = 1;
 			debug(0, "isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
 			break;
 		case 5:

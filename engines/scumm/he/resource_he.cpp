@@ -1666,6 +1666,10 @@ int ScummEngine_v72he::getSoundResourceSize(int id) {
 }
 
 void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
+	// HACK: Unsupported sound format
+	if (_game.id == GID_MOONBASE)
+		return;
+
 	byte *snd1Ptr, *snd2Ptr;
 	byte *sbng1Ptr, *sbng2Ptr;
 	byte *sdat1Ptr, *sdat2Ptr;
