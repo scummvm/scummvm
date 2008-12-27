@@ -105,7 +105,7 @@ bool Video_v6::savePalLUT(const char *target) {
 void Video_v6::buildPalLUT() {
 	char text[30];
 
-	_palLUT->setPalette(_ditherPalette, Graphics::PaletteLUT::kPaletteYUV, 8);
+	_palLUT->setPalette(_ditherPalette, Graphics::PaletteLUT::kPaletteYUV, 8, 0);
 
 	for (int i = 0; (i < 64) && !_vm->shouldQuit(); i++) {
 		sprintf(text, "Building palette table: %02d/63", i);

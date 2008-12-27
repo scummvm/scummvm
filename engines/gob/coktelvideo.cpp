@@ -1549,12 +1549,13 @@ void Vmd::blit16(byte *dest, uint16 *src, int16 width, int16 height) {
 		uint16 *s = src;
 
 		for (int j = 0; j < width; j++, s++) {
-			byte r = ((*s & 0x7C00) >> 10) << 1;
-			byte g = ((*s & 0x03E0) >>  5) << 1;
-			byte b = ((*s & 0x001F) >>  0) << 1;
+			uint16 data = READ_LE_UINT16(s);
+			byte r = ((data & 0x7C00) >> 10);
+			byte g = ((data & 0x03E0) >>  5);
+			byte b = ((data & 0x001F) >>  0);
 			byte dY, dU, dV;
 
-			Graphics::PaletteLUT::RGB2YUV(r << 2, g << 2, b << 2, dY, dU, dV);
+			Graphics::PaletteLUT::RGB2YUV(r << 3, g << 3, b << 3, dY, dU, dV);
 
 			byte p = dither->dither(dY, dU, dV, j);
 
