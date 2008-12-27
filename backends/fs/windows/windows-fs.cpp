@@ -24,6 +24,9 @@
 
 #ifdef WIN32
 
+#if defined(ARRAYSIZE)
+#undef ARRAYSIZE
+#endif
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...
 #undef ARRAYSIZE
