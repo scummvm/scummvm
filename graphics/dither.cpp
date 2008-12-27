@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#include "common/endian.h"
 #include "graphics/dither.h"
 
 namespace Graphics {
@@ -163,6 +164,8 @@ bool PaletteLUT::save(Common::WriteStream &stream) {
 	while (_got < _dim1)
 		buildNext();
 
+	stream.writeUint32BE(MKID_BE('PLUT')); // Magic
+	stream.writeUint32BE(0);               // Version
 	stream.writeByte(_depth1);
 	if (stream.write(_realPal, 768) != 768)
 		return false;
@@ -180,10 +183,18 @@ bool PaletteLUT::save(Common::WriteStream &stream) {
 }
 
 bool PaletteLUT::load(Common::SeekableReadStream &stream) {
-	//             _realPal + _lutPal + _lut  + _depth1
-	int32 needSize =  768   +   768   + _dim3 +    1;
+	//             _realPal + _lutPal + _lut  + _depth1 + magic + version
+	int32 needSize =  768   +   768   + _dim3 +    1    +   4   +    4;
 
 	if ((stream.size() - stream.pos()) < needSize)
+		return false;
+
+	// Magic
+	if (stream.readUint32BE() != MKID_BE('PLUT'))
+		return false;
+
+	// Version
+	if (stream.readUint32BE() != 0)
 		return false;
 
 	byte depth1 = stream.readByte();
