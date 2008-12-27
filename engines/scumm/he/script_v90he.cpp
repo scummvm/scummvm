@@ -1688,7 +1688,10 @@ void ScummEngine_v90he::o90_videoOps() {
 		break;
 	case 8:
 		memset(_videoParams.filename, 0, sizeof(_videoParams.filename));
+		_videoParams.status = 0;
+		_videoParams.flags = 0;
 		_videoParams.unk2 = pop();
+		_videoParams.wizResNum = 0;
 		break;
 	case 14:
 		_videoParams.wizResNum = pop();

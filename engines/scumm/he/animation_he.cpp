@@ -89,7 +89,8 @@ void MoviePlayer::handleNextFrame() {
 	} else {
 		copyFrameToBuffer(pvs->getPixels(0, 0), 0, 0, _vm->_screenWidth);
 
-		_vm->markRectAsDirty(kMainVirtScreen, 0, 0, getWidth(), getHeight());
+		Common::Rect imageRect(getWidth(), getHeight());
+		_vm->markRectAsDirty(kMainVirtScreen, imageRect);
 	}
 
 	if (getCurFrame() == getFrameCount()) {
