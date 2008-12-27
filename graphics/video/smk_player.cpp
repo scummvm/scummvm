@@ -569,9 +569,11 @@ bool SMKPlayer::decodeNextFrame() {
 
 		if (_header.audioInfo[i].hasAudio && chunkSize > 0 && i == 0) {
 			// If it's track 0, play the audio data
-			byte *soundBuffer = new byte[chunkSize];
+			byte *soundBuffer = new byte[chunkSize + 2];
 
 			_fileStream->read(soundBuffer, chunkSize);
+			soundBuffer[chunkSize] = 0;
+			soundBuffer[chunkSize + 1] = 0;
 
 			if (_header.audioInfo[i].isCompressed) {
 				// Compressed audio (Huffman DPCM encoded)
