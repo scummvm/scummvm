@@ -2285,7 +2285,7 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 			break;
 		}
 	}
-	return 1;
+	return ret;
 }
 
 uint8 Wiz::getWizPixelColor(int resNum, int state, int x, int y, int flags) {
