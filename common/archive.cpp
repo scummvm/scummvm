@@ -55,7 +55,7 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern)
 	lowercasePattern.toLowercase();
 
 	ArchiveMemberList::iterator it = allNames.begin();
-	for ( ; it != allNames.end(); it++) {
+	for ( ; it != allNames.end(); ++it) {
 		if ((*it)->getName().matchString(lowercasePattern)) {
 			list.push_back(*it);
 			matches++;
@@ -201,7 +201,7 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& 
 	node.getChildren(list, FSNode::kListAll, false);
 
 	FSList::iterator it = list.begin();
-	for ( ; it != list.end(); it++) {
+	for ( ; it != list.end(); ++it) {
 		String name = prefix + it->getName();
 
 		// don't touch name as it might be used for warning messages
@@ -297,7 +297,7 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 
 	int matches = 0;
 	NodeCache::iterator it = _fileCache.begin();
-	for ( ; it != _fileCache.end(); it++) {
+	for ( ; it != _fileCache.end(); ++it) {
 		if (matchPath(it->_key.c_str(), lowercasePattern.c_str())) {
 			list.push_back(ArchiveMemberPtr(new FSDirectoryMember(it->_value)));
 			matches++;
@@ -328,7 +328,7 @@ int FSDirectory::listMembers(ArchiveMemberList &list) {
 
 SearchSet::ArchiveNodeList::iterator SearchSet::find(const String &name) const {
 	ArchiveNodeList::iterator it = _list.begin();
-	for ( ; it != _list.end(); it++) {
+	for ( ; it != _list.end(); ++it) {
 		if (it->_name == name)
 			break;
 	}
@@ -342,7 +342,7 @@ SearchSet::ArchiveNodeList::iterator SearchSet::find(const String &name) const {
 */
 void SearchSet::insert(const Node &node) {
 	ArchiveNodeList::iterator it = _list.begin();
-	for ( ; it != _list.end(); it++) {
+	for ( ; it != _list.end(); ++it) {
 		if (it->_priority < node._priority)
 			break;
 	}
@@ -360,6 +360,19 @@ void SearchSet::add(const String &name, Archive *archive, int priority, bool aut
 	}
 
 }
+
+void SearchSet::addDirectory(const String &name, const String &directory, int priority, int depth) {
+	FSNode dir(directory);
+	addDirectory(name, dir, priority, depth);
+}
+
+void SearchSet::addDirectory(const String &name, const FSNode &dir, int priority, int depth) {
+	if (!dir.exists() || !dir.isDirectory())
+		return;
+
+	add(name, new FSDirectory(dir, depth), priority);
+}
+
 
 void SearchSet::remove(const String &name) {
 	ArchiveNodeList::iterator it = find(name);
@@ -404,7 +417,7 @@ bool SearchSet::hasFile(const String &name) {
 		return false;
 
 	ArchiveNodeList::iterator it = _list.begin();
-	for ( ; it != _list.end(); it++) {
+	for ( ; it != _list.end(); ++it) {
 		if (it->_arc->hasFile(name))
 			return true;
 	}
@@ -416,7 +429,7 @@ int SearchSet::listMatchingMembers(ArchiveMemberList &list, const String &patter
 	int matches = 0;
 
 	ArchiveNodeList::iterator it = _list.begin();
-	for ( ; it != _list.end(); it++)
+	for ( ; it != _list.end(); ++it)
 		matches += it->_arc->listMatchingMembers(list, pattern);
 
 	return matches;
@@ -426,7 +439,7 @@ int SearchSet::listMembers(ArchiveMemberList &list) {
 	int matches = 0;
 
 	ArchiveNodeList::iterator it = _list.begin();
-	for ( ; it != _list.end(); it++)
+	for ( ; it != _list.end(); ++it)
 		matches += it->_arc->listMembers(list);
 
 	return matches;
@@ -437,7 +450,7 @@ ArchiveMemberPtr SearchSet::getMember(const String &name) {
 		return ArchiveMemberPtr();
 
 	ArchiveNodeList::iterator it = _list.begin();
-	for ( ; it != _list.end(); it++) {
+	for ( ; it != _list.end(); ++it) {
 		if (it->_arc->hasFile(name))
 			return it->_arc->getMember(name);
 	}
@@ -450,7 +463,7 @@ SeekableReadStream *SearchSet::openFile(const String &name) {
 		return 0;
 
 	ArchiveNodeList::iterator it = _list.begin();
-	for ( ; it != _list.end(); it++) {
+	for ( ; it != _list.end(); ++it) {
 		if (it->_arc->hasFile(name))
 			return it->_arc->openFile(name);
 	}
@@ -463,18 +476,6 @@ DECLARE_SINGLETON(SearchManager);
 
 SearchManager::SearchManager() {
 	clear();	// Force a reset
-}
-
-void SearchManager::addDirectory(const String &name, const String &directory, int priority, int depth) {
-	FSNode dir(directory);
-	addDirectory(name, dir, priority, depth);
-}
-
-void SearchManager::addDirectory(const String &name, const FSNode &dir, int priority, int depth) {
-	if (!dir.exists() || !dir.isDirectory())
-		return;
-
-	add(name, new FSDirectory(dir, depth), priority);
 }
 
 void SearchManager::clear() {

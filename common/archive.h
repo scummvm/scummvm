@@ -265,6 +265,16 @@ public:
 	void add(const String& name, Archive *arch, int priority = 0, bool autoFree = true);
 
 	/**
+	 * Create and add a FSDirectory by name
+	 */
+	void addDirectory(const String &name, const String &directory, int priority = 0, int depth = 1);
+
+	/**
+	 * Create and add a FSDirectory by FSNode
+	 */
+	void addDirectory(const String &name, const FSNode &directory, int priority = 0, int depth = 1);
+
+	/**
 	 * Remove an archive from the searchable set.
 	 */
 	void remove(const String& name);
@@ -300,16 +310,6 @@ public:
 
 class SearchManager : public Singleton<SearchManager>, public SearchSet {
 public:
-
-	/**
-	 * Create and add a FSDirectory by name
-	 */
-	void addDirectory(const String &name, const String &directory, int priority = 0, int depth = 1);
-
-	/**
-	 * Create and add a FSDirectory by FSNode
-	 */
-	void addDirectory(const String &name, const FSNode &directory, int priority = 0, int depth = 1);
 
 	/**
 	 * Resets the search manager to the default list of search paths (system
