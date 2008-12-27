@@ -482,8 +482,10 @@ bool SMKPlayer::loadFile(const char *fileName) {
 	Common::Array<byte> huffmanTrees;
 	huffmanTrees.resize(_header.treesSize + 2);
 	_fileStream->read(&huffmanTrees[0], _header.treesSize);
+	huffmanTrees[_header.treesSize] = 0;
+	huffmanTrees[_header.treesSize + 1] = 0;
 
-	BitStream bs(&huffmanTrees[0], _header.treesSize + 2);
+	BitStream bs(&huffmanTrees[0], _header.treesSize);
 
 	_MMapTree = new BigHuffmanTree(bs);
 	_MClrTree = new BigHuffmanTree(bs);
@@ -607,8 +609,10 @@ bool SMKPlayer::decodeNextFrame() {
 
 	_frameData = (byte *)malloc(frameDataSize + 2);
 	_fileStream->read(_frameData, frameDataSize);
+	_frameData[frameDataSize] = 0;
+	_frameData[frameDataSize + 1] = 0;
 
-	BitStream bs(_frameData, frameDataSize + 2);
+	BitStream bs(_frameData, frameDataSize);
 
 	_MMapTree->reset();
 	_MClrTree->reset();
@@ -757,7 +761,7 @@ bool SMKPlayer::decodeNextFrame() {
 void SMKPlayer::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 		uint32 unpackedSize, int streamNum) {
 
-	BitStream audioBS(buffer, bufferSize + 2);
+	BitStream audioBS(buffer, bufferSize);
 	bool dataPresent = audioBS.getBit();
 
 	if (!dataPresent)
