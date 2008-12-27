@@ -26,6 +26,7 @@
 #include "graphics/imageman.h"
 #include "graphics/surface.h"
 
+#include "common/fs.h"
 #include "common/unzip.h"
 
 DECLARE_SINGLETON(Graphics::ImageManager);

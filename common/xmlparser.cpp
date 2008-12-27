@@ -26,6 +26,7 @@
 #include "common/xmlparser.h"
 #include "common/util.h"
 #include "common/archive.h"
+#include "common/fs.h"
 
 namespace Common {
 

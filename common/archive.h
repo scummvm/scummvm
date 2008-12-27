@@ -23,18 +23,21 @@
  *
  */
 
-#ifndef COMMON_ARCHIVES_H
-#define COMMON_ARCHIVES_H
+#ifndef COMMON_ARCHIVE_H
+#define COMMON_ARCHIVE_H
 
-#include "common/fs.h"
+//#include "common/fs.h"
 #include "common/str.h"
 #include "common/hash-str.h"
 #include "common/list.h"
 #include "common/ptr.h"
 #include "common/singleton.h"
-#include "common/stream.h"
 
 namespace Common {
+
+class FSNode;
+class SeekableReadStream;
+
 
 /**
  * ArchiveMember is an abstract interface to represent elements inside
@@ -118,116 +121,6 @@ public:
 	 * @return the newly created input stream
 	 */
 	virtual SeekableReadStream *openFile(const String &name) = 0;
-};
-
-
-/**
- * FSDirectory models a directory tree from the filesystem and allows users
- * to access it through the Archive interface. Searching is case-insensitive,
- * since the intended goal is supporting retrieval of game data.
- *
- * FSDirectory can represent a single directory, or a tree with specified depth,
- * depending on the value passed to the 'depth' parameter in the constructors.
- * Filenames are cached with their relative path, with elements separated by
- * backslashes, e.g.:
- *
- * c:\my\data\file.ext
- *
- * would be cached as 'data/file.ext' if FSDirectory was created on 'c:/my' with
- * depth > 1. If depth was 1, then the 'data' subdirectory would have been
- * ignored, instead.
- * Again, only BACKSLASHES are used as separators independently from the
- * underlying file system.
- *
- * Relative paths can be specified when calling matching functions like openFile(),
- * hasFile(), listMatchingMembers() and listMembers(). Please see the function
- * specific comments for more information.
- *
- * Client code can customize cache by using the constructors with the 'prefix'
- * parameter. In this case, the prefix is prepended to each entry in the cache,
- * and effectively treated as a 'virtual' parent subdirectory. FSDirectory adds
- * a trailing backslash to prefix if needed. Following on with the previous example
- * and using 'your' as prefix, the cache entry would have been 'your/data/file.ext'.
- *
- */
-class FSDirectory : public Archive {
-	FSNode	_node;
-
-	// Caches are case insensitive, clashes are dealt with when creating
-	// Key is stored in lowercase.
-	typedef HashMap<String, FSNode, IgnoreCase_Hash, IgnoreCase_EqualTo> NodeCache;
-	NodeCache	_fileCache, _subDirCache;
-	Common::String	_prefix;	// string that is prepended to each cache item key
-	void setPrefix(const String &prefix);
-
-	// look for a match
-	FSNode lookupCache(NodeCache &cache, const String &name);
-
-	// cache management
-	void cacheDirectoryRecursive(FSNode node, int depth, const String& prefix);
-	// fill cache if not already cached
-	void ensureCached();
-	bool _cached;
-	int	_depth;
-
-public:
-	/**
-	 * Create a FSDirectory representing a tree with the specified depth. Will result in an
-	 * unbound FSDirectory if name is not found on the filesystem or if the node is not a
-	 * valid directory.
-	 */
-	FSDirectory(const String &name, int depth = 1);
-	FSDirectory(const FSNode &node, int depth = 1);
-
-	/**
-	 * Create a FSDirectory representing a tree with the specified depth. The parameter
-	 * prefix is prepended to the keys in the cache. See class comment.
-	 */
-	FSDirectory(const String &prefix, const String &name, int depth = 1);
-	FSDirectory(const String &prefix, const FSNode &node, int depth = 1);
-
-	virtual ~FSDirectory();
-
-	/**
-	 * This return the underlying FSNode of the FSDirectory.
-	 */
-	FSNode getFSNode() const;
-
-	/**
-	 * Create a new FSDirectory pointing to a sub directory of the instance. See class comment
-	 * for an explanation of the prefix parameter.
-	 * @return a new FSDirectory instance
-	 */
-	FSDirectory *getSubDirectory(const String &name, int depth = 1);
-	FSDirectory *getSubDirectory(const String &prefix, const String &name, int depth = 1);
-
-	/**
-	 * Checks for existence in the cache. A full match of relative path and filename is needed
-	 * for success.
-	 */
-	virtual bool hasFile(const String &name);
-
-	/**
-	 * Returns a list of matching file names. Pattern can use GLOB wildcards.
-	 */
-	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
-
-	/**
-	 * Returns a list of all the files in the cache.
-	 */
-	virtual int listMembers(ArchiveMemberList &list);
-
-	/**
-	 * Get a ArchiveMember representation of the specified file. A full match of relative
-	 * path and filename is needed for success.
-	 */
-	virtual ArchiveMemberPtr getMember(const String &name);
-
-	/**
-	 * Open the specified file. A full match of relative path and filename is needed
-	 * for success.
-	 */
-	virtual SeekableReadStream *openFile(const String &name);
 };
 
 

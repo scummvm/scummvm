@@ -65,30 +65,6 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern)
 	return matches;
 }
 
-/**
- *  FSDirectoryMemeber is the implementation of ArchiveMember used by
- *  by FSDirectory. It is right now a light wrapper or FSNode.
- */
-class FSDirectoryMember : public ArchiveMember {
-	FSNode	_node;
-
-public:
-	FSDirectoryMember(FSNode &node) : _node(node) {
-	}
-
-	String getName() const {
-		return _node.getName();
-	}
-
-	String getDisplayName() const {
-		return _node.getPath();
-	}
-
-	SeekableReadStream *open() {
-		return _node.openForReading();
-	}
-};
-
 FSDirectory::FSDirectory(const FSNode &node, int depth)
   : _node(node), _cached(false), _depth(depth) {
 }
@@ -157,7 +133,7 @@ ArchiveMemberPtr FSDirectory::getMember(const String &name) {
 		return ArchiveMemberPtr();
 	}
 
-	return ArchiveMemberPtr(new FSDirectoryMember(node));
+	return ArchiveMemberPtr(new FSNode(node));
 }
 
 SeekableReadStream *FSDirectory::openFile(const String &name) {
@@ -299,7 +275,7 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 	NodeCache::iterator it = _fileCache.begin();
 	for ( ; it != _fileCache.end(); ++it) {
 		if (matchPath(it->_key.c_str(), lowercasePattern.c_str())) {
-			list.push_back(ArchiveMemberPtr(new FSDirectoryMember(it->_value)));
+			list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
 			matches++;
 		}
 	}
@@ -315,7 +291,7 @@ int FSDirectory::listMembers(ArchiveMemberList &list) {
 
 	int files = 0;
 	for (NodeCache::iterator it = _fileCache.begin(); it != _fileCache.end(); ++it) {
-		list.push_back(ArchiveMemberPtr(new FSDirectoryMember(it->_value)));
+		list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
 		++files;
 	}
 
