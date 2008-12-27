@@ -71,8 +71,9 @@ public:
 	 *  @param palette The palette, plain 256 * 3 color components.
 	 *  @param format The format the palette is in.
 	 *  @param depth The number of significant bits in each color component.
+	 *  @param transp An index that's seen as transparent and therefore ignored.
 	 */
-	void setPalette(const byte *palette, PaletteFormat format, byte depth);
+	void setPalette(const byte *palette, PaletteFormat format, byte depth, int transp = -1);
 
 	/** Build the next slice.
 	 *
@@ -111,6 +112,8 @@ public:
 	bool load(Common::SeekableReadStream &stream);
 
 private:
+	static const uint32 kVersion = 1;
+
 	byte _depth1; //!< The table's depth for one dimension.
 	byte _depth2; //!< The table's depth for two dimensions.
 	byte _shift;  //!< Amount to shift to adjust for the table's depth.
@@ -118,6 +121,8 @@ private:
 	uint32 _dim1; //!< The table's entry offset for one dimension.
 	uint32 _dim2; //!< The table's entry offset for two dimensions.
 	uint32 _dim3; //!< The table's entry offset for three dimensions.
+
+	int _transp;  //!< The transparent palette index.
 
 	PaletteFormat _format; //!< The table's palette format.
 	byte _lutPal[768];     //!< The palette used for looking up a color.

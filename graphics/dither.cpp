@@ -54,8 +54,12 @@ PaletteLUT::PaletteLUT(byte depth, PaletteFormat format) {
 	memset(_gots, 1, _dim1);
 }
 
-void PaletteLUT::setPalette(const byte *palette, PaletteFormat format, byte depth) {
+void PaletteLUT::setPalette(const byte *palette, PaletteFormat format,
+		byte depth, int transp) {
+
 	assert((depth > 1) && (depth < 9));
+
+	_transp = transp;
 
 	int shift = 8 - depth;
 
@@ -113,6 +117,10 @@ void PaletteLUT::build(int d1) {
 
 			// Going over every palette entry, searching for the closest
 			for (int c = 0; c < 256; c++, p += 3) {
+				// Ignore the transparent color
+				if (c == _transp)
+					continue;
+
 				uint32 di = SQR(d1 - p[0]) + SQR(j - p[1]) + SQR(k - p[2]);
 				if (di < d) {
 					d = di;
@@ -165,7 +173,7 @@ bool PaletteLUT::save(Common::WriteStream &stream) {
 		buildNext();
 
 	stream.writeUint32BE(MKID_BE('PLUT')); // Magic
-	stream.writeUint32BE(0);               // Version
+	stream.writeUint32BE(kVersion);
 	stream.writeByte(_depth1);
 	if (stream.write(_realPal, 768) != 768)
 		return false;
@@ -193,8 +201,7 @@ bool PaletteLUT::load(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKID_BE('PLUT'))
 		return false;
 
-	// Version
-	if (stream.readUint32BE() != 0)
+	if (stream.readUint32BE() != kVersion)
 		return false;
 
 	byte depth1 = stream.readByte();
