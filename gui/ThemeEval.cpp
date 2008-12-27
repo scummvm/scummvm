@@ -63,9 +63,6 @@ bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, 
 	if (!_layouts.contains(dialogName))
 		return false;
 
-	if (widgetName.empty())
-		return _layouts[dialogName]->getDialogData(x, y, w, h);
-
 	return _layouts[dialogName]->getWidgetData(widgetName, x, y, w, h);
 }
 

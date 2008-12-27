@@ -77,8 +77,6 @@ public:
 	}
 
 protected:
-	int16 getParentW();
-	int16 getParentH();
 	int16 getWidth() { return _w; }
 	int16 getHeight() { return _h; }
 
@@ -103,13 +101,6 @@ protected:
 
 public:
 	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
-
-	virtual bool getDialogData(int16 &x, int16 &y, uint16 &w, uint16 &h) {
-		assert(getLayoutType() == kLayoutMain);
-		x = _x; y = _y;
-		w = _w; h = _h;
-		return true;
-	}
 
 	void importLayout(ThemeLayout *layout);
 
@@ -148,11 +139,11 @@ public:
 #ifdef LAYOUT_DEBUG_DIALOG
 	const char *getName() const { return "Global Layout"; }
 #endif
-	LayoutType getLayoutType() { return kLayoutMain; }
-
-	ThemeLayout *makeClone(ThemeLayout *newParent) { assert(!"Do not copy Main Layouts!"); return 0; }
 
 protected:
+	LayoutType getLayoutType() { return kLayoutMain; }
+	ThemeLayout *makeClone(ThemeLayout *newParent) { assert(!"Do not copy Main Layouts!"); return 0; }
+
 	int16 _defaultX;
 	int16 _defaultY;
 };
@@ -182,6 +173,10 @@ public:
 	}
 #endif
 
+protected:
+	int16 getParentW();
+	int16 getParentH();
+
 	LayoutType getLayoutType() { return _type; }
 
 	ThemeLayout *makeClone(ThemeLayout *newParent) {
@@ -194,7 +189,6 @@ public:
 		return n;
 	}
 
-protected:
 	const LayoutType _type;
 };
 
@@ -207,9 +201,12 @@ public:
 
 	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
 	void reflowLayout() {}
+
 #ifdef LAYOUT_DEBUG_DIALOG
 	virtual const char *getName() const { return _name.c_str(); }
 #endif
+
+protected:
 	LayoutType getLayoutType() { return kLayoutWidget; }
 
 	ThemeLayout *makeClone(ThemeLayout *newParent) {
@@ -218,7 +215,6 @@ public:
 		return n;
 	}
 
-protected:
 	Common::String _name;
 };
 
@@ -236,10 +232,12 @@ public:
 
 	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) { return false; }
 	void reflowLayout() {}
-	LayoutType getLayoutType() { return kLayoutWidget; }
 #ifdef LAYOUT_DEBUG_DIALOG
 	const char *getName() const { return "SPACE"; }
 #endif
+
+protected:
+	LayoutType getLayoutType() { return kLayoutWidget; }
 
 	ThemeLayout *makeClone(ThemeLayout *newParent) {
 		ThemeLayout *n = new ThemeLayoutSpacing(*this);

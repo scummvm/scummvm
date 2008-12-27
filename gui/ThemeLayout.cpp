@@ -55,6 +55,13 @@ void ThemeLayout::importLayout(ThemeLayout *layout) {
 }
 
 bool ThemeLayout::getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {
+	if (name.empty()) {
+		assert(getLayoutType() == kLayoutMain);
+		x = _x; y = _y;
+		w = _w; h = _h;
+		return true;
+	}
+
 	for (uint i = 0; i < _children.size(); ++i) {
 		if (_children[i]->getWidgetData(name, x, y, w, h))
 			return true;
@@ -63,7 +70,7 @@ bool ThemeLayout::getWidgetData(const Common::String &name, int16 &x, int16 &y, 
 	return false;
 }
 
-int16 ThemeLayout::getParentW() {
+int16 ThemeLayoutStacked::getParentW() {
 	ThemeLayout *p = _parent;
 	int width = 0;
 
@@ -73,13 +80,16 @@ int16 ThemeLayout::getParentW() {
 			for (uint i = 0; i < p->_children.size(); ++i)
 				width += p->_children[i]->getWidth() + p->_spacing;
 		}
+		// FIXME: Do we really want to assume that any layout type different
+		// from kLayoutHorizontal corresponds to width 0 ?
 		p = p->_parent;
 	}
 
+	assert(p && p->getLayoutType() == kLayoutMain);
 	return p->getWidth() - width;
 }
 
-int16 ThemeLayout::getParentH() {
+int16 ThemeLayoutStacked::getParentH() {
 	ThemeLayout *p = _parent;
 	int height = 0;
 
@@ -89,9 +99,12 @@ int16 ThemeLayout::getParentH() {
 			for (uint i = 0; i < p->_children.size(); ++i)
 				height += p->_children[i]->getHeight() + p->_spacing;
 		}
+		// FIXME: Do we really want to assume that any layout type different
+		// from kLayoutVertical corresponds to height 0 ?
 		p = p->_parent;
 	}
 
+	assert(p && p->getLayoutType() == kLayoutMain);
 	return p->getHeight() - height;
 }
 
@@ -168,6 +181,7 @@ void ThemeLayoutStacked::reflowLayoutV() {
 
 		_children[i]->setY(curY);
 
+		// Center child if it this has been requested *and* the space permits it.
 		if (_centered && _children[i]->getWidth() < _w && _w != -1) {
 			_children[i]->setX((_w >> 1) - (_children[i]->getWidth() >> 1));
 		} else
@@ -217,6 +231,7 @@ void ThemeLayoutStacked::reflowLayoutH() {
 
 		_children[i]->setX(curX);
 
+		// Center child if it this has been requested *and* the space permits it.
 		if (_centered && _children[i]->getHeight() < _h && _h != -1)
 			_children[i]->setY((_h >> 1) - (_children[i]->getHeight() >> 1));
 		else
