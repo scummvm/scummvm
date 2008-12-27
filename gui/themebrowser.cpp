@@ -92,7 +92,7 @@ void ThemeBrowser::updateListing() {
 	_themes.clear();
 
 	// classic is always built-in
-	Entry th;
+	ThemeDescriptor th;
 	th.name = "ScummVM Classic Theme (Builtin Version)";
 	th.file = "builtin";
 	_themes.push_back(th);
@@ -128,7 +128,7 @@ void ThemeBrowser::updateListing() {
 	// Populate the ListWidget
 	Common::StringList list;
 
-	for (ThList::const_iterator i = _themes.begin(); i != _themes.end(); ++i)
+	for (ThemeDescList::const_iterator i = _themes.begin(); i != _themes.end(); ++i)
 		list.push_back(i->name);
 
 	_fileList->setList(list);
@@ -139,7 +139,7 @@ void ThemeBrowser::updateListing() {
 }
 
 
-void ThemeBrowser::addDir(ThList &list, const Common::FSNode &node) {
+void ThemeBrowser::addDir(ThemeDescList &list, const Common::FSNode &node) {
 	if (!node.exists() || !node.isReadable())
 		return;
 
@@ -151,11 +151,11 @@ void ThemeBrowser::addDir(ThList &list, const Common::FSNode &node) {
 
 	for (Common::FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
 
-		Entry th;
+		ThemeDescriptor th;
 		if (isTheme(*i, th)) {
 			bool add = true;
 
-			for (ThList::const_iterator p = list.begin(); p != list.end(); ++p) {
+			for (ThemeDescList::const_iterator p = list.begin(); p != list.end(); ++p) {
 				if (p->name == th.name || p->file == th.file) {
 					add = false;
 					break;
@@ -168,7 +168,7 @@ void ThemeBrowser::addDir(ThList &list, const Common::FSNode &node) {
 	}
 }
 
-bool ThemeBrowser::isTheme(const Common::FSNode &node, Entry &out) {
+bool ThemeBrowser::isTheme(const Common::FSNode &node, ThemeDescriptor &out) {
 	out.file = node.getPath();
 
 #ifdef USE_ZLIB

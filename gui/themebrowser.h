@@ -42,22 +42,22 @@ public:
 	void open();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
-	const Common::String &selected() const { return _select; }
+	const Common::String &getSelected() const { return _select; }
 private:
-	struct Entry {
+	struct ThemeDescriptor {
 		Common::String name;
 		Common::String file;
 	};
 
 	ListWidget *_fileList;
 	Common::String _select;
-	typedef Common::Array<Entry> ThList;
-	ThList _themes;
+	typedef Common::Array<ThemeDescriptor> ThemeDescList;
+	ThemeDescList _themes;
 
 	void updateListing();
 
-	void addDir(ThList &list, const Common::FSNode &node);
-	bool isTheme(const Common::FSNode &node, Entry &out);
+	void addDir(ThemeDescList &list, const Common::FSNode &node);
+	bool isTheme(const Common::FSNode &node, ThemeDescriptor &out);
 };
 
 } // end of namespace GUI
