@@ -1625,17 +1625,17 @@ static PPOLYGON CommonInits(PTYPE polyType, int pno, const Poly &pp, bool bResta
 	p->pIndex = pno;
 
 	for (i = 0; i < 4; i++) {		// Polygon definition
-		p->cx[i] = (short)pp.x[i];
-		p->cy[i] = (short)pp.y[i];
+		p->cx[i] = (short)FROM_LE_32(pp.x[i]);
+		p->cy[i] = (short)FROM_LE_32(pp.y[i]);
 	}
 
 	if (!bRestart) {
 		hp = PolygonIndex(p);
-		volatileStuff[hp].xoff = (short)pp.xoff;
-		volatileStuff[hp].yoff = (short)pp.yoff;
+		volatileStuff[hp].xoff = (short)FROM_LE_32(pp.xoff);
+		volatileStuff[hp].yoff = (short)FROM_LE_32(pp.yoff);
 	}
 
-	p->polyID = pp.id;				// Identifier
+	p->polyID = FROM_LE_32(pp.id);			// Identifier
 
 	FiddlyBit(p);
 
