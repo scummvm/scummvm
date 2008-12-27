@@ -203,13 +203,15 @@ public:
 	static void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch);
 	static void copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags = 0, const uint8 *palPtr = NULL, const uint8 *xmapPtr = NULL);
 	static void copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int maskT, int maskP);
+	static void copy16BitWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags = 0, const uint8 *palPtr = NULL, const uint8 *xmapPtr = NULL);
 	static void copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor);
 	static void copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor);
 	template<int type> static void decompressWizImage(uint8 *dst, int dstPitch, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr = NULL, const uint8 *xmapPtr = NULL);
+	template<int type> static void decompress16BitWizImage(uint8 *dst, int dstPitch, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr = NULL, const uint8 *xmapPtr = NULL);
 	template<int type> static void decompressRawWizImage(uint8 *dst, int dstPitch, const uint8 *src, int srcPitch, int w, int h, int transColor, const uint8 *palPtr = NULL);
-	int isWizPixelNonTransparent(const uint8 *data, int x, int y, int w, int h);
-	uint8 getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 color);
-	uint8 getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 color);
+	int isWizPixelNonTransparent(const uint8 *data, int x, int y, int w, int h, uint bitdepth);
+	uint8 getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint bitDepth, uint8 color);
+	uint8 getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint bitDepth, uint8 color);
 	void computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect& rCapt);
 	void computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect& rCapt);
 
