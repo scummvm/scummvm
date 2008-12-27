@@ -342,22 +342,22 @@ void SaveLoadChooser::reflowLayout() {
 
 		_playtime->resize(thumbX, height, kThumbnailWidth, kLineHeight);
 
-		_container->clearFlags(GUI::WIDGET_INVISIBLE);
-		_gfxWidget->clearFlags(GUI::WIDGET_INVISIBLE);
-		_date->clearFlags(GUI::WIDGET_INVISIBLE);
-		_time->clearFlags(GUI::WIDGET_INVISIBLE);
-		_playtime->clearFlags(GUI::WIDGET_INVISIBLE);
+		_container->setVisible(true);
+		_gfxWidget->setVisible(true);
+		_date->setVisible(true);
+		_time->setVisible(true);
+		_playtime->setVisible(true);
 
 		_fillR = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
 		_fillG = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
 		_fillB = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillB");
 		updateInfos(false);
 	} else {
-		_container->setFlags(GUI::WIDGET_INVISIBLE);
-		_gfxWidget->setFlags(GUI::WIDGET_INVISIBLE);
-		_date->setFlags(GUI::WIDGET_INVISIBLE);
-		_time->setFlags(GUI::WIDGET_INVISIBLE);
-		_playtime->setFlags(GUI::WIDGET_INVISIBLE);
+		_container->setVisible(false);
+		_gfxWidget->setVisible(false);
+		_date->setVisible(false);
+		_time->setVisible(false);
+		_playtime->setVisible(false);
 	}
 
 	Dialog::reflowLayout();

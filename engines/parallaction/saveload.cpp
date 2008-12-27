@@ -319,11 +319,11 @@ void SaveLoadChooser::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 }
 
 void SaveLoadChooser::reflowLayout() {
-	_container->setFlags(GUI::WIDGET_INVISIBLE);
-	_gfxWidget->setFlags(GUI::WIDGET_INVISIBLE);
-	_date->setFlags(GUI::WIDGET_INVISIBLE);
-	_time->setFlags(GUI::WIDGET_INVISIBLE);
-	_playtime->setFlags(GUI::WIDGET_INVISIBLE);
+	_container->setVisible(false);
+	_gfxWidget->setVisible(false);
+	_date->setVisible(false);
+	_time->setVisible(false);
+	_playtime->setVisible(false);
 
 	Dialog::reflowLayout();
 }

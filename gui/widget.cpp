@@ -145,11 +145,25 @@ Widget *Widget::findWidgetInChain(Widget *w, const char *name) {
 	return 0;
 }
 
+void Widget::setEnabled(bool e) {
+	if (e)
+		setFlags(WIDGET_ENABLED);
+	else
+		clearFlags(WIDGET_ENABLED);
+}
+
 bool Widget::isEnabled() const {
 	if (g_gui.xmlEval()->getVar("Dialog." + _name + ".Enabled", 1) == 0) {
 		return false;
 	}
 	return ((_flags & WIDGET_ENABLED) != 0);
+}
+
+void Widget::setVisible(bool e) {
+	if (e)
+		clearFlags(WIDGET_INVISIBLE);
+	else
+		setFlags(WIDGET_INVISIBLE);
 }
 
 bool Widget::isVisible() const {

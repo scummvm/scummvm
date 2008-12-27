@@ -122,8 +122,10 @@ public:
 	void clearFlags(int flags);
 	int getFlags() const		{ return _flags; }
 
-	void setEnabled(bool e)		{ if (e) setFlags(WIDGET_ENABLED); else clearFlags(WIDGET_ENABLED); }
+	void setEnabled(bool e);
 	bool isEnabled() const;
+
+	void setVisible(bool e);
 	bool isVisible() const;
 
 protected:

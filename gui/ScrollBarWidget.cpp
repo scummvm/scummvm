@@ -175,11 +175,11 @@ void ScrollBarWidget::recalc() {
 			UP_DOWN_BOX_HEIGHT + (_h - 2 * UP_DOWN_BOX_HEIGHT - _sliderHeight) * _currentPos / (_numEntries - _entriesPerPage);
 		if (_sliderPos < 0)
 			_sliderPos = 0;
-		clearFlags(WIDGET_INVISIBLE);
+		setVisible(true);
 	} else {
 		_sliderHeight = _h - 2 * UP_DOWN_BOX_HEIGHT;
 		_sliderPos = UP_DOWN_BOX_HEIGHT;
-		setFlags(WIDGET_INVISIBLE);
+		setVisible(false);
 	}
 }
 

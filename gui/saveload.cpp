@@ -197,32 +197,24 @@ void SaveLoadChooser::reflowLayout() {
 		if (_playTimeSupport)
 			_playtime->resize(thumbX, height, kThumbnailWidth, kLineHeight);
 
-		_container->clearFlags(GUI::WIDGET_INVISIBLE);
-		_gfxWidget->clearFlags(GUI::WIDGET_INVISIBLE);
+		_container->setVisible(true);
+		_gfxWidget->setVisible(true);
 
-		if (_saveDateSupport) {
-			_date->clearFlags(GUI::WIDGET_INVISIBLE);
-			_time->clearFlags(GUI::WIDGET_INVISIBLE);
-		} else {
-			_date->setFlags(GUI::WIDGET_INVISIBLE);
-			_time->setFlags(GUI::WIDGET_INVISIBLE);
-		}
+		_date->setVisible(_saveDateSupport);
+		_time->setVisible(_saveDateSupport);
 
-		if (_playTimeSupport)
-			_playtime->clearFlags(GUI::WIDGET_INVISIBLE);
-		else
-			_playtime->setFlags(GUI::WIDGET_INVISIBLE);
+		_playtime->setVisible(_playTimeSupport);
 
 		_fillR = 0;
 		_fillG = 0;
 		_fillB = 0;
 		updateSelection(false);
 	} else {
-		_container->setFlags(GUI::WIDGET_INVISIBLE);
-		_gfxWidget->setFlags(GUI::WIDGET_INVISIBLE);
-		_date->setFlags(GUI::WIDGET_INVISIBLE);
-		_time->setFlags(GUI::WIDGET_INVISIBLE);
-		_playtime->setFlags(GUI::WIDGET_INVISIBLE);
+		_container->setVisible(false);
+		_gfxWidget->setVisible(false);
+		_date->setVisible(false);
+		_time->setVisible(false);
+		_playtime->setVisible(false);
 	}
 
 	Dialog::reflowLayout();
