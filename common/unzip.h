@@ -38,9 +38,23 @@ class ZipArchive : public Archive {
 	void *_zipFile;
 
 public:
+	/**
+	 * Open the .zip archive with the given file name.
+	 */
 	ZipArchive(const String &name);
+
+	/**
+	 * Open the .zip archive to which the given FSNode refers to.
+	 */
 	ZipArchive(const FSNode &node);
+
+	/**
+	 * Open a .zip file from a stream. This takes ownership of the stream,
+	 * in particular, it is closed when the ZipArchive is deleted.
+	 */
 	ZipArchive(SeekableReadStream *stream);
+
+
 	~ZipArchive();
 
 	bool isOpen() const;
