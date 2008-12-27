@@ -755,7 +755,7 @@ bool SMKPlayer::decodeNextFrame() {
 void SMKPlayer::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 		uint32 unpackedSize, int streamNum) {
 
-	BitStream audioBS(buffer, bufferSize);
+	BitStream audioBS(buffer, bufferSize + 2);
 	bool dataPresent = audioBS.getBit();
 
 	if (!dataPresent)
