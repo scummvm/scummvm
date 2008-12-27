@@ -25,14 +25,14 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "common/util.h"
-#include "engines/engine.h"
-#include "graphics/cursorman.h"
+#include "common/config-manager.h"
+
 #include "gui/newgui.h"
 #include "gui/dialog.h"
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 
-#include "common/config-manager.h"
+#include "graphics/cursorman.h"
 
 DECLARE_SINGLETON(GUI::GuiManager);
 
@@ -258,8 +258,6 @@ void GuiManager::runLoop() {
 				activeDialog->handleMouseWheel(mouse.x, mouse.y, 1);
 				break;
 			case Common::EVENT_QUIT:
-				if (!g_engine)
-					_system->quit();
 				return;
 			case Common::EVENT_SCREEN_CHANGED:
 				screenChange();
