@@ -25,10 +25,8 @@
 
 #if defined(WIN32)
 #include <windows.h>
-#if defined(ARRAYSIZE)
 // winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
 #undef ARRAYSIZE
-#endif
 #endif
 
 #include "backends/platform/sdl/sdl.h"
