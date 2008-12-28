@@ -2118,6 +2118,9 @@ void OSystem_WINCE3::blitCursor() {
 void OSystem_WINCE3::showOverlay() {
 	assert (_transactionMode == kTransactionNone);
 
+	if (_overlayVisible)
+		return;
+
 	undrawMouse();
 	_overlayVisible = true;
 	update_scalers();
@@ -2127,8 +2130,10 @@ void OSystem_WINCE3::showOverlay() {
 void OSystem_WINCE3::hideOverlay() {
 	assert (_transactionMode == kTransactionNone);
 
-	undrawMouse();
+	if (!_overlayVisible)
+		return;
 
+	undrawMouse();
 	_overlayVisible = false;
 	clearOverlay();
 	_forceFull = true;
