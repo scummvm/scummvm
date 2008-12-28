@@ -296,11 +296,6 @@ void SaveLoad_v6::refreshIndex() {
 	}
 
 	WRITE_LE_UINT32(_indexBuffer + 160, max + 1);
-
-	Common::OutSaveFile *out = saveMan->openForSaving("Foobar");
-	out->write(_indexBuffer, 2900);
-	out->flush();
-	delete out;
 }
 
 } // End of namespace Gob
