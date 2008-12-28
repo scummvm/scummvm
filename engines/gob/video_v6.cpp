@@ -172,9 +172,13 @@ void Video_v6::shadeRect(SurfaceDesc *dest,
 	int height = bottom - top  + 1;
 	int dWidth = dest->getWidth();
 	byte *vidMem = dest->getVidMem() + dWidth * top + left;
-	byte sY, sU, sV;
 
+	byte sY, sU, sV;
 	_palLUT->getEntry(color, sY, sU, sV);
+
+	int shadeY = sY * (16 - strength);
+	int shadeU = sU * (16 - strength);
+	int shadeV = sV * (16 - strength);
 
 	Graphics::SierraLight *dither =
 		new Graphics::SierraLight(width, _palLUT);
@@ -188,8 +192,11 @@ void Video_v6::shadeRect(SurfaceDesc *dest,
 
 			_palLUT->getEntry(dC, dY, dU, dV);
 
-			dY = CLIP<int>(sY + (dY >> 2), 0, 255);
-			*d++ = dither->dither(dY, sU, sV, j);
+			dY = CLIP<int>((shadeY + strength * dY) >> 4, 0, 255);
+			dU = CLIP<int>((shadeU + strength * dU) >> 4, 0, 255);
+			dV = CLIP<int>((shadeV + strength * dV) >> 4, 0, 255);
+
+			*d++ = dither->dither(dY, dU, dV, j);
 		}
 
 		dither->nextLine();
