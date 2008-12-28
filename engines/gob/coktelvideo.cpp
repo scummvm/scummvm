@@ -962,16 +962,20 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 		_blitMode = 0;
 	else if (_bytesPerPixel == 1)
 		_blitMode = 0;
-	else if (_bytesPerPixel == 2) {
-		_blitMode = 1;
-		_preScaleX = 2;
-		_postScaleX = 1;
-		_bytesPerPixel = 2;
-	} else if (_bytesPerPixel == 3) {
-		_blitMode = 2;
-		_preScaleX = 1;
-		_postScaleX = 2;
-		_bytesPerPixel = 2;
+	else if ((_bytesPerPixel == 2) || (_bytesPerPixel == 3)) {
+		int n = (_flags & 0x80) ? 2 : 3;
+
+		_blitMode = n - 1;
+
+		if (_bytesPerPixel == 2) {
+			_preScaleX = n;
+			_postScaleX = 1;
+		} else if (_bytesPerPixel == 3) {
+			_preScaleX = 1;
+			_postScaleX = n;
+		}
+
+		_bytesPerPixel = n;
 	}
 
 	_scaleExternalX = 1;
@@ -1129,10 +1133,7 @@ void Vmd::unload() {
 }
 
 int16 Vmd::getWidth() const {
-	if (_blitMode == 1)
-		return _width >> 1;
-
-	return _width;
+	return preScaleX(_width);
 }
 
 void Vmd::setXY(int16 x, int16 y) {
@@ -1547,11 +1548,11 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 	return 1;
 }
 
-inline int32 Vmd::preScaleX(int32 x) {
+inline int32 Vmd::preScaleX(int32 x) const {
 	return x / _preScaleX;
 }
 
-inline int32 Vmd::postScaleX(int32 x) {
+inline int32 Vmd::postScaleX(int32 x) const {
 	return x * _postScaleX;
 }
 
@@ -1559,14 +1560,13 @@ void Vmd::blit(byte *dest, byte *src, int16 width, int16 height) {
 	if (_blitMode == 0)
 		return;
 
-	if ((_blitMode == 1) || (_blitMode == 2))
-		blit16(dest, (uint16 *) src, width, height);
+	if (_blitMode == 1)
+		blit16(dest, src, preScaleX(_width), preScaleX(width), height);
+	else if (_blitMode == 2)
+		blit24(dest, src, preScaleX(_width), preScaleX(width), height);
 }
 
-void Vmd::blit16(byte *dest, uint16 *src, int16 width, int16 height) {
-	int16 vWidth = preScaleX(_width);
-	width = preScaleX(width);
-
+void Vmd::blit16(byte *dest, byte *src, int16 srcPitch, int16 width, int16 height) {
 	assert(_palLUT);
 
 	Graphics::SierraLight *dither =
@@ -1574,9 +1574,9 @@ void Vmd::blit16(byte *dest, uint16 *src, int16 width, int16 height) {
 
 	for (int i = 0; i < height; i++) {
 		byte *d = dest;
-		uint16 *s = src;
+		byte *s = src;
 
-		for (int j = 0; j < width; j++, s++) {
+		for (int j = 0; j < width; j++, s += 2) {
 			uint16 data = READ_LE_UINT16(s);
 			byte r = ((data & 0x7C00) >> 10);
 			byte g = ((data & 0x03E0) >>  5);
@@ -1595,7 +1595,41 @@ void Vmd::blit16(byte *dest, uint16 *src, int16 width, int16 height) {
 
 		dither->nextLine();
 		dest += _vidMemWidth;
-		src += vWidth;
+		src += 2 * srcPitch;
+	}
+
+	delete dither;
+}
+
+void Vmd::blit24(byte *dest, byte *src, int16 srcPitch, int16 width, int16 height) {
+	assert(_palLUT);
+
+	Graphics::SierraLight *dither =
+		new Graphics::SierraLight(width, _palLUT);
+
+	for (int i = 0; i < height; i++) {
+		byte *d = dest;
+		byte *s = src;
+
+		for (int j = 0; j < width; j++, s += 3) {
+			byte r = s[2];
+			byte g = s[1];
+			byte b = s[0];
+			byte dY, dU, dV;
+
+			Graphics::PaletteLUT::RGB2YUV(r, g, b, dY, dU, dV);
+
+			byte p = dither->dither(dY, dU, dV, j);
+
+			if ((dY == 0) || ((r == 0) && (g == 0) && (b == 0)))
+				*d++ = 0;
+			else
+				*d++ = p;
+		}
+
+		dither->nextLine();
+		dest += _vidMemWidth;
+		src += 3 * srcPitch;
 	}
 
 	delete dither;

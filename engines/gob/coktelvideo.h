@@ -386,11 +386,12 @@ protected:
 
 	void deRLE(byte *&srcPtr, byte *&destPtr, int16 len);
 
-	inline int32 preScaleX(int32 x);
-	inline int32 postScaleX(int32 x);
+	inline int32 preScaleX(int32 x) const;
+	inline int32 postScaleX(int32 x) const;
 
 	void blit(byte *dest, byte *src, int16 width, int16 height);
-	void blit16(byte *dest, uint16 *src, int16 width, int16 height);
+	void blit16(byte *dest, byte *src, int16 srcPitch, int16 width, int16 height);
+	void blit24(byte *dest, byte *src, int16 srcPitch, int16 width, int16 height);
 
 	void emptySoundSlice(uint32 size);
 	void soundSlice8bit(uint32 size);
