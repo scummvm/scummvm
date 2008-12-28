@@ -150,8 +150,8 @@ EXT_C FILE *wce_fopen(const char* fname, const char* fmode) {
 		return NULL;
 	if (fname[0] != '\\' && fname[0] != '/') {
 		getcwd(fullname, MAX_PATH);
-		strncat(fullname, "\\", MAX_PATH-strlen(fullname)-1);
-		strncat(fullname, fname, MAX_PATH-strlen(fullname)-strlen(fname));
+		strcat(fullname, "\\");
+		strcat(fullname, fname);
 		return fopen(fullname, fmode);
 	} else
 		return fopen(fname, fmode);
@@ -168,7 +168,15 @@ int remove(const char* path) {
 /* check out file access permissions */
 int _access(const char *path, int mode) {
 	TCHAR fname[MAX_PATH];
-	MultiByteToWideChar(CP_ACP, 0, path, -1, fname, sizeof(fname)/sizeof(TCHAR));
+	char fullname[MAX_PATH+1];
+
+	if (path[0] != '\\' && path[0] != '/') {
+		getcwd(fullname, MAX_PATH);
+		strcat(fullname, "\\");
+		strcat(fullname, path);
+		MultiByteToWideChar(CP_ACP, 0, fullname, -1, fname, sizeof(fname)/sizeof(TCHAR));
+	} else
+		MultiByteToWideChar(CP_ACP, 0, path, -1, fname, sizeof(fname)/sizeof(TCHAR));
 
 	WIN32_FIND_DATA ffd;
 	HANDLE h = FindFirstFile(fname, &ffd);
