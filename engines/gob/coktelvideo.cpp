@@ -936,10 +936,6 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 
 	_flags = _stream->readUint16LE();
 
-	_scaleExternalX = 1;
-	if (!_externalCodec && !(_flags & 0x1000))
-		_scaleExternalX = _bytesPerPixel;
-
 	_partsPerFrame = _stream->readUint16LE();
 	_firstFramePos = _stream->readUint32LE();
 	_stream->skip(4); // Unknown
@@ -959,6 +955,29 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	} else
 		_externalCodec = false;
 
+	_preScaleX = 1;
+	_postScaleX = 1;
+
+	if (_externalCodec)
+		_blitMode = 0;
+	else if (_bytesPerPixel == 1)
+		_blitMode = 0;
+	else if (_bytesPerPixel == 2) {
+		_blitMode = 1;
+		_preScaleX = 2;
+		_postScaleX = 1;
+		_bytesPerPixel = 2;
+	} else if (_bytesPerPixel == 3) {
+		_blitMode = 2;
+		_preScaleX = 1;
+		_postScaleX = 2;
+		_bytesPerPixel = 2;
+	}
+
+	_scaleExternalX = 1;
+	if (!_externalCodec && !(_flags & 0x1000))
+			_scaleExternalX = _bytesPerPixel;
+
 	// 0x322 (802)
 
 	if (_hasVideo) {
@@ -975,7 +994,7 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 		assert(_vidBuffer);
 		memset(_vidBuffer, 0, _vidBufferSize);
 
-		if ((_bytesPerPixel > 1) && !_externalCodec) {
+		if (_blitMode > 0) {
 			_vidMemBuffer = new byte[_bytesPerPixel * (_width * _height + 1000)];
 			memset(_vidMemBuffer, 0, _bytesPerPixel * (_width * _height + 1000));
 		}
@@ -1110,7 +1129,7 @@ void Vmd::unload() {
 }
 
 int16 Vmd::getWidth() const {
-	if (_bytesPerPixel == 2)
+	if (_blitMode == 1)
 		return _width >> 1;
 
 	return _width;
@@ -1202,7 +1221,10 @@ void Vmd::clear(bool del) {
 	_soundStereo = 0;
 
 	_externalCodec = false;
+	_blitMode = 0;
 	_bytesPerPixel = 1;
+	_preScaleX = 1;
+	_postScaleX = 1;
 	_scaleExternalX = 1;
 	_vidMemBuffer = 0;
 }
@@ -1291,8 +1313,8 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 			int16 l = part.left, t = part.top, r = part.right, b = part.bottom;
 			if (renderFrame(l, t, r, b)) {
 				if (!_externalCodec) {
-					l /= _bytesPerPixel;
-					r /= _bytesPerPixel;
+					l = preScaleX(l);
+					r = preScaleX(r);
 				}
 				// Rendering succeeded, merging areas
 				state.left   = MIN(state.left,   l);
@@ -1400,16 +1422,16 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 		type = *dataPtr++;
 		srcPtr = dataPtr;
 
-		if (_bytesPerPixel > 1) {
-			dest = _vidMemBuffer + _width * (top - _y) + (left - _x);
-			imdVidMem = _vidMem + _vidMemWidth * top + (left / _bytesPerPixel);
-			sW = _width;
+		if (_blitMode > 0) {
+			dest = _vidMemBuffer + postScaleX(_width) * (top - _y) + postScaleX((left - _x));
+			imdVidMem = _vidMem + _vidMemWidth * top + preScaleX(left);
+			sW = postScaleX(_width);
 		}
 
 		if (type & 0x80) { // Frame data is compressed
 			srcPtr = _vidBuffer;
 			type &= 0x7F;
-			if ((type == 2) && (width == sW)) {
+			if ((type == 2) && (postScaleX(width) == sW)) {
 				deLZ77(dest, dataPtr);
 				blit(imdVidMem, dest, width, height);
 				return 1;
@@ -1426,10 +1448,10 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 		destBak = dest;
 		for (int i = 0; i < height; i++) {
 			pixWritten = 0;
-			while (pixWritten < width) {
+			while (pixWritten < postScaleX(width)) {
 				pixCount = *srcPtr++;
 				if (pixCount & 0x80) { // Data
-					pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
+					pixCount = MIN((pixCount & 0x7F) + 1, postScaleX(width) - pixWritten);
 					memcpy(dest, srcPtr, pixCount);
 
 					pixWritten += pixCount;
@@ -1446,8 +1468,8 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 		}
 	} else if (type == 2) { // Whole block
 		for (int i = 0; i < height; i++) {
-			memcpy(dest, srcPtr, width);
-			srcPtr += width;
+			memcpy(dest, srcPtr, postScaleX(width));
+			srcPtr += postScaleX(width);
 			dest += sW;
 		}
 	} else if (type == 3) { // RLE block
@@ -1519,25 +1541,31 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 		}
 	}
 
-	dest = _vidMemBuffer + _width * (top - _y) + (left - _x);
+	dest = _vidMemBuffer + postScaleX(_width) * (top - _y) + postScaleX(left - _x);
 	blit(imdVidMem, dest, width, height);
 
 	return 1;
 }
 
+inline int32 Vmd::preScaleX(int32 x) {
+	return x / _preScaleX;
+}
+
+inline int32 Vmd::postScaleX(int32 x) {
+	return x * _postScaleX;
+}
+
 void Vmd::blit(byte *dest, byte *src, int16 width, int16 height) {
-	if ((_bytesPerPixel == 1) || _externalCodec)
+	if (_blitMode == 0)
 		return;
 
-	if (_bytesPerPixel == 2)
+	if ((_blitMode == 1) || (_blitMode == 2))
 		blit16(dest, (uint16 *) src, width, height);
-	else if (_bytesPerPixel == 3)
-		blit24(dest, src, width, height);
 }
 
 void Vmd::blit16(byte *dest, uint16 *src, int16 width, int16 height) {
-	int16 vWidth = _width >> 1;
-	width >>= 1;
+	int16 vWidth = preScaleX(_width);
+	width = preScaleX(width);
 
 	assert(_palLUT);
 
@@ -1571,10 +1599,6 @@ void Vmd::blit16(byte *dest, uint16 *src, int16 width, int16 height) {
 	}
 
 	delete dither;
-}
-
-void Vmd::blit24(byte *dest, byte *sc, int16 width, int16 height) {
-	warning("TODO: blit24");
 }
 
 void Vmd::emptySoundSlice(uint32 size) {

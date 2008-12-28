@@ -369,7 +369,10 @@ protected:
 	byte _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
 
 	bool _externalCodec;
+	byte _blitMode;
 	byte _bytesPerPixel;
+	byte _preScaleX;
+	byte _postScaleX;
 	byte _scaleExternalX;
 	byte *_vidMemBuffer;
 
@@ -383,9 +386,11 @@ protected:
 
 	void deRLE(byte *&srcPtr, byte *&destPtr, int16 len);
 
+	inline int32 preScaleX(int32 x);
+	inline int32 postScaleX(int32 x);
+
 	void blit(byte *dest, byte *src, int16 width, int16 height);
 	void blit16(byte *dest, uint16 *src, int16 width, int16 height);
-	void blit24(byte *dest, byte *src, int16 width, int16 height);
 
 	void emptySoundSlice(uint32 size);
 	void soundSlice8bit(uint32 size);
