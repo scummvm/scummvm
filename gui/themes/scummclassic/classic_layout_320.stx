@@ -479,45 +479,45 @@
 	</dialog>
 	
 	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
-		<layout type = 'vertical' padding = '8, 8, 8, 8' center = 'true'>
+		<layout type = 'vertical' padding = '8, 8, 4, 6' center = 'true'>
 			<widget name = 'Title'
 					width = '160'
-					height = 'Globals.Line.Height'
+					height = '4'
 			/>
 			<widget name = 'Version'
 					width = '160'
-					height = 'Globals.Line.Height'
+					height = '4'
 			/>
-			<space size = '4'/>
+			<space size = '1'/>
 			<widget name = 'Load'
 					width = '120'
-					height = 'Globals.Button.Height'
+					height = '12'
 			/>
 			<widget name = 'Save'
 					width = '120'
-					height = 'Globals.Button.Height'
+					height = '12'
 			/>
-			<space size = '4'/>
+			<space size = '1'/>
 			<widget name = 'Options'
 					width = '120'
-					height = 'Globals.Button.Height'
+					height = '12'
 			/>
 			<widget name = 'About'
 					width = '120'
-					height = 'Globals.Button.Height'
+					height = '12'
 			/>
-			<space size = '4'/>
+			<space size = '1'/>
 			<widget name = 'Resume'
 					width = '120'
-					height = 'Globals.Button.Height'
+					height = '12'
 			/>
 			<widget name = 'RTL'
 					width = '120'
-					height = 'Globals.Button.Height'
+					height = '12'
 			/>
 			<widget name = 'Quit'
 					width = '120'
-					height = 'Globals.Button.Height'
+					height = '12'
 			/>
 		</layout>
 	</dialog>
@@ -525,28 +525,35 @@
 	<dialog name = 'ScummMain' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<widget name = 'Resume'
-					type = 'Button'
+					width = 'Globals.Button.Width'
+					height = '14'
 			/>
-			<space size = '4'/>
+			<space size = '2'/>
 			<widget name = 'Load'
-					type = 'Button'
+					width = 'Globals.Button.Width'
+					height = '14'
 			/>
 			<widget name = 'Save'
-					type = 'Button'
+					width = 'Globals.Button.Width'
+					height = '14'
 			/>
-			<space size = '4'/>
+			<space size = '2'/>
 			<widget name = 'Options'
-					type = 'Button'
+					width = 'Globals.Button.Width'
+					height = '14'
 			/>
 			<widget name = 'Help'
-					type = 'Button'
+					width = 'Globals.Button.Width'
+					height = '14'
 			/>
 			<widget name = 'About'
-					type = 'Button'
+					width = 'Globals.Button.Width'
+					height = '14'
 			/>
-			<space size = '4'/>
+			<space size = '2'/>
 			<widget name = 'Quit'
-					type = 'Button'
+					width = 'Globals.Button.Width'
+					height = '14'
 			/>
 		</layout>
 	</dialog>
