@@ -50,7 +50,6 @@ SaveLoad_v6::SaveLoad_v6(GobEngine *vm, const char *targetName) :
 	sprintf(_saveFiles[0].destName, "%s.s00", targetName);
 
 	_varSize = 0;
-	_hasIndex = false;
 }
 
 SaveLoad_v6::~SaveLoad_v6() {
@@ -145,8 +144,7 @@ int SaveLoad_v6::getSlotRemainder(int32 offset) const {
 }
 
 int32 SaveLoad_v6::getSizeGame(SaveFile &saveFile) {
-	if (!_hasIndex)
-		return -1;
+	refreshIndex();
 
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::InSaveFile *in;
@@ -175,11 +173,6 @@ bool SaveLoad_v6::loadGame(SaveFile &saveFile,
 
 		if ((offset + size) > 2900) {
 			warning("Wrong index size (%d, %d)", size, offset);
-			return false;
-		}
-
-		if (!_hasIndex) {
-			warning("No index written yet");
 			return false;
 		}
 
@@ -234,7 +227,6 @@ bool SaveLoad_v6::saveGame(SaveFile &saveFile,
 		}
 
 		_vm->_inter->_variables->copyTo(dataVar, _indexBuffer + offset, 0, size);
-		_hasIndex = true;
 
 	} else {
 		int slot = getSlot(offset);
@@ -245,11 +237,6 @@ bool SaveLoad_v6::saveGame(SaveFile &saveFile,
 		if ((slot >= 60) || (slotRem != 0)) {
 			warning("Invalid saving procedure (%d, %d, %d, %d, %d)",
 					dataVar, size, offset, slot, slotRem);
-			return false;
-		}
-
-		if (!_hasIndex) {
-			warning("No index written yet");
 			return false;
 		}
 
@@ -295,7 +282,9 @@ void SaveLoad_v6::refreshIndex() {
 			memset(names, 0, 40);
 	}
 
-	WRITE_LE_UINT32(_indexBuffer + 160, max + 1);
+	memset(_indexBuffer + 40, 0xFF, 40);          // Joker
+	_indexBuffer[159] = 0x03;                     // # of joker unused
+	WRITE_LE_UINT32(_indexBuffer + 160, max + 1); // # of saves
 }
 
 } // End of namespace Gob

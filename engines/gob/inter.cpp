@@ -184,6 +184,25 @@ void Inter::storeKey(int16 key) {
 		_vm->_util->clearKeyBuf();
 }
 
+void Inter::writeVar(uint32 offset, uint16 type, uint32 value) {
+	switch (type) {
+	case 16:
+	case 18:
+		WRITE_VARO_UINT8(offset, value);
+		break;
+
+	case 17:
+	case 24:
+	case 27:
+		WRITE_VARO_UINT16(offset, value);
+		break;
+
+	default:
+		WRITE_VAR_OFFSET(offset, value);
+		break;
+	}
+}
+
 void Inter::funcBlock(int16 retFlag) {
 	OpFuncParams params;
 	byte cmd;

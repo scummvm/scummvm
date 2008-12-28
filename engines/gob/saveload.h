@@ -438,7 +438,6 @@ protected:
 	StagedSave *_save;
 
 	byte _indexBuffer[2900];
-	bool _hasIndex;
 
 	virtual int getSaveType(const char *fileName);
 

@@ -782,19 +782,20 @@ void Inter_v5::o5_initScreen() {
 bool Inter_v5::o5_istrlen(OpFuncParams &params) {
 	int16 strVar1, strVar2;
 	int16 len;
+	uint16 type;
 
 	if (*_vm->_global->_inter_execPtr == 0x80) {
 		_vm->_global->_inter_execPtr++;
 
 		strVar1 = _vm->_parse->parseVarIndex();
-		strVar2 = _vm->_parse->parseVarIndex();
+		strVar2 = _vm->_parse->parseVarIndex(0, &type);
 
 		len = _vm->_draw->stringLength(GET_VARO_STR(strVar1), READ_VARO_UINT16(strVar2));
 
 	} else {
 
 		strVar1 = _vm->_parse->parseVarIndex();
-		strVar2 = _vm->_parse->parseVarIndex();
+		strVar2 = _vm->_parse->parseVarIndex(0, &type);
 
 		if (_vm->_global->_language == 10) {
 			// Extra handling for Japanese strings
@@ -807,7 +808,8 @@ bool Inter_v5::o5_istrlen(OpFuncParams &params) {
 			len = strlen(GET_VARO_STR(strVar1));
 	}
 
-	WRITE_VAR_OFFSET(strVar2, len);
+	writeVar(strVar2, type, (int32) len);
+
 	return false;
 }
 

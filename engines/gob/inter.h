@@ -59,6 +59,8 @@ public:
 	void storeMouse();
 	void storeKey(int16 key);
 
+	void writeVar(uint32 offset, uint16 type, uint32 value);
+
 	void funcBlock(int16 retFlag);
 	void callSub(int16 retFlag);
 
