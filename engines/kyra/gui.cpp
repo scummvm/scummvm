@@ -476,6 +476,12 @@ int MainMenu::handle(int dim) {
 
 	Common::Rect menuRect(x + 16, y + 4, x + width - 16, y + 4 + fh * _static.menuTable[3]);
 
+	Common::Event evt;
+	while(_system->getEventManager()->pollEvent(evt)) {
+		if (evt.type != Common::EVENT_LBUTTONUP && evt.type != Common::EVENT_LBUTTONDOWN)
+			break;
+	}
+
 	while (!_vm->shouldQuit()) {
 		updateAnimation();
 		bool mousePressed = getInput();

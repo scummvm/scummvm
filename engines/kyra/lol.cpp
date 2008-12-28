@@ -111,6 +111,7 @@ Common::Error LoLEngine::go() {
 		setupPrologueData(false);
 	}
 
+	setupPrologueData(true);
 	preInit();
 
 	int processSelection = -1;
@@ -120,6 +121,7 @@ Common::Error LoLEngine::go() {
 		_screen->fadePalette(_screen->getPalette(0), 0x1E);
 
 		int selection = mainMenu();
+		_screen->clearPage(0);
 
 		switch (selection) {
 		case 0:		// New game
@@ -127,11 +129,10 @@ Common::Error LoLEngine::go() {
 			break;
 
 		case 1:		// Show intro
-			setupPrologueData(true);
 			_screen->hideMouse();
 			showIntro();
 			_screen->showMouse();
-			setupPrologueData(false);
+			
 			break;
 
 		case 2:		// "Lore of the Lands"
@@ -157,16 +158,16 @@ Common::Error LoLEngine::go() {
 		memset(_screen->getPalette(0), 0, 768);
 		_screen->fadePalette(_screen->getPalette(0), 0x54);
 
-		setupPrologueData(true);
 		_sound->loadSoundFile("LOREINTR");
 		_sound->playTrack(6);
 		/*int character = */chooseCharacter();
 		_sound->playTrack(1);
 		_screen->fadeToBlack();
-		setupPrologueData(false);
 	} else if (processSelection == 3) {
 		//XXX
 	}
+
+	setupPrologueData(false);
 
 	return Common::kNoError;
 }
@@ -218,7 +219,6 @@ void LoLEngine::initializeCursors() {
 	_screen->setMouseCursor(0, 0, _shapes[0]);
 }
 
-
 int LoLEngine::mainMenu() {
 	debugC(9, kDebugLevelMain, "LoLEngine::mainMenu()");
 
@@ -234,24 +234,31 @@ int LoLEngine::mainMenu() {
 	if (hasSave)
 		++data.menuTable[3];
 
-	static const uint16 mainMenuStrings[2][5] = {
+	static const uint16 mainMenuStrings[4][5] = {
 		{ 0x4248, 0x4249, 0x42DD, 0x424A, 0x0000 },
-		{ 0x4248, 0x4249, 0x42DD, 0x4001, 0x424A }
+		{ 0x4248, 0x4249, 0x42DD, 0x4001, 0x424A },
+		{ 0x4248, 0x4249, 0x424A, 0x0000, 0x0000 },
+		{ 0x4248, 0x4249, 0x4001, 0x424A, 0x0000 }
 	};
+
+	int tableOffs = _flags.isTalkie ? 0 : 2;
 
 	for (int i = 0; i < 5; ++i) {
 		if (hasSave)
-			data.strings[i] = getLangString(mainMenuStrings[1][i]);		
+			data.strings[i] = getLangString(mainMenuStrings[1 + tableOffs][i]);		
 		else
-			data.strings[i] = getLangString(mainMenuStrings[0][i]);		
+			data.strings[i] = getLangString(mainMenuStrings[tableOffs][i]);		
 	}
 
 	MainMenu *menu = new MainMenu(this);
 	assert(menu);
 	menu->init(data, MainMenu::Animation());
 
-	int selection = menu->handle(hasSave ? 12 : 6);
+	int selection = menu->handle(_flags.isTalkie ? (hasSave ? 12 : 6) :(hasSave ? 6 : 13));
 	delete menu;
+
+	if (!_flags.isTalkie && selection >= 2)
+		selection++;
 
 	if (!hasSave && selection == 3)
 		selection = 4;
@@ -303,14 +310,28 @@ uint8 *LoLEngine::getTableEntry(uint8 *buffer, uint16 id) {
 void LoLEngine::setupPrologueData(bool load) {
 	debugC(9, kDebugLevelMain, "LoLEngine::setupPrologueData(%d)", load);
 
-	static const char * const fileList[] = {
+	_res->unloadAllPakFiles();
+
+	static const char * const fileListCD[] = {
 		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK", "INTRO1.PAK",
 		"INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "INTRO5.PAK",
-		"INTRO6.PAK", "INTRO7.PAK", "INTRO8.PAK", "INTRO9.PAK"
+		"INTRO6.PAK", "INTRO7.PAK", "INTRO8.PAK", "INTRO9.PAK", 0
 	};
 
+	static const char * const fileListFloppyExtracted[] = {
+		"general.pak", "intro.pak", "introvoc.pak", 0
+	};
+
+	static const char * const fileListFloppy[] = {
+		"general.pak", "intro.pak", "introvoc.cmp", 0
+	};
+
+	const char * const *fileList = _flags.isTalkie ? fileListCD : 
+		(_flags.useInstallerPackage ? fileListFloppy : fileListFloppyExtracted);
+		
+
 	char filename[32];
-	for (uint i = 0; i < ARRAYSIZE(fileList); ++i) {
+	for (uint i = 0; fileList[i]; ++i) {
 		filename[0] = '\0';
 
 		if (_flags.isTalkie) {
@@ -332,6 +353,11 @@ void LoLEngine::setupPrologueData(bool load) {
 	_screen->clearPage(3);
 	
 	if (load) {
+		if (_flags.isTalkie) {
+			_res->loadPakFile("startup.pak");
+			_res->loadPakFile("general.pak");
+		}
+
 		_chargenWSA = new WSAMovie_v2(this, _screen);
 		assert(_chargenWSA);
 
