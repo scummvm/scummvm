@@ -349,14 +349,16 @@
 
 	<dialog name='KeysDialog' overlays='Dialog.GlobalOptions' shading='dim'> 
 		<layout type='vertical' padding='8,8,8,8' center='true'> 
-			<widget name='List'/> 
 			<widget name='Action' 
 					height='Globals.Line.Height' 
 			/> 
+			<widget name='List'/> 
+			<space size='Globals.Line.Height'/>
 			<widget name='Mapping' 
 					height='Globals.Line.Height' 
 			/> 
-			<layout type='horizontal' padding='0,0,16,0'> 
+			<space size='Globals.Line.Height'/>
+			<layout type='horizontal'> 
 				<widget name='Map' 
 						type='Button' 
 				/> 
@@ -368,9 +370,9 @@
 						type='Button' 
 				/> 
 			</layout> 
-		</layout> 
-	</dialog> 
-	
+		</layout>
+	</dialog>
+
 	<dialog name = 'GameOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '16'>
 			<widget name = 'TabWidget'/>
