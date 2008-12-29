@@ -431,8 +431,8 @@ arttime	Blue's Art Time Activities
 	d00ffc8c32d17e575fd985d435d2eb88	-1	en	All	-	Demo	-	Kirben
 
 BluesBirthday	Blue's Birthday Adventure
-	99128b6a5bdd9831d9682fb8b5cbf8d4	-1	en	All	-	-	-	knifethrower
-	1ff5997c78fbd0a841a75ef15a05d9d5	-1	en	Windows	-	-	-	Mathew
+	99128b6a5bdd9831d9682fb8b5cbf8d4	-1	en	All	-	Yellow	-	knifethrower
+	1ff5997c78fbd0a841a75ef15a05d9d5	-1	en	Windows	-	Red	-	Mathew
 
 	2d4acbdcfd8e374c9da8c2e7303a5cd0	-1	en	All	-	Demo	-	Kirben
 	dbf4d59d70b826733f379f998354d350	-1	en	All	-	Demo	-	Kirben
@@ -440,6 +440,10 @@ BluesBirthday	Blue's Birthday Adventure
 
 readtime	Blue's Reading Time Activities
 	95818b178d473c989ac753574e8892aa	-1	en	All	-	Demo	-	Kirben
+
+BluesTreasureHunt	Blue's Treasure Hunt
+	822807c3cd3b43a925cab2767ca6b453	-1	en	All	-	Disc 1	-	Kirben
+	82e5e24720cb85a2b662bea6b625cad9	-1	en	Windows	-	Disc 2	-	Kirben
 
 fbear	Fatty Bear's Birthday Surprise
 	13d2a86a7290813a1c386490447d72db	-1	en	3DO	HE 61	-	-	George Kormendi

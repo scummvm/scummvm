@@ -466,7 +466,16 @@ void ScummEngine_v80he::o80_readConfigFile() {
 	copyScriptString(option, sizeof(option));
 	copyScriptString(section, sizeof(section));
 	copyScriptString(filename, sizeof(filename));
+
 	r = convertFilePath(filename);
+
+	if (_game.id == GID_TREASUREHUNT) {
+		// WORKAROUND: Remove invalid characters
+		if (!strcmp((char *)section, "Blue'sTreasureHunt-Disc1"))
+			memcpy(section, "BluesTreasureHunt-Disc1\0", 24);
+		else if (!strcmp((char *)section, "Blue'sTreasureHunt-Disc2"))
+			memcpy(section, "BluesTreasureHunt-Disc2\0", 24);
+	}	
 
 	Common::ConfigFile ConfFile;
 	if (!strcmp((char *)filename + r, "map.ini"))
@@ -527,6 +536,14 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 	}
 
 	r = convertFilePath(filename);
+
+	if (_game.id == GID_TREASUREHUNT) {
+		// WORKAROUND: Remove invalid characters
+		if (!strcmp((char *)section, "Blue'sTreasureHunt-Disc1"))
+			memcpy(section, "BluesTreasureHunt-Disc1\0", 24);
+		else if (!strcmp((char *)section, "Blue'sTreasureHunt-Disc2"))
+			memcpy(section, "BluesTreasureHunt-Disc2\0", 24);
+	}	
 
 	Common::ConfigFile ConfFile;
 	ConfFile.loadFromSaveFile((const char *)filename + r);

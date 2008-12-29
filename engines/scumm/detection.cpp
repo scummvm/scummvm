@@ -99,7 +99,13 @@ Common::String ScummEngine::generateFilename(const int room) const {
 				switch (disk) {
 				case 2:
 					id = 'b';
-					snprintf(buf, sizeof(buf), "%s.(b)", _filenamePattern.pattern);
+					// Special cases for Blue's games, which share common (b) files
+					if (_game.id == GID_BIRTHDAY)
+						strcpy(buf, "Blue'sBirthday.(b)");
+					else if (_game.id == GID_TREASUREHUNT)
+						strcpy(buf, "Blue'sTreasureHunt.(b)");
+					else
+						snprintf(buf, sizeof(buf), "%s.(b)", _filenamePattern.pattern);
 					break;
 				case 1:
 					id = 'a';

@@ -1515,15 +1515,27 @@ void ScummEngine_v90he::resetScumm() {
 }
 
 void ScummEngine_v99he::resetScumm() {
+	byte *data;
+	Common::String ininame = _targetName + ".ini";
+	int len;
+
 	ScummEngine_v90he::resetScumm();
 
 	_hePalettes = (uint8 *)malloc((_numPalettes + 1) * 1024);
 	memset(_hePalettes, 0, (_numPalettes + 1) * 1024);
 
 	// Array 129 is set to base name
-	int len = strlen(_filenamePattern.pattern);
-	byte *data = defineArray(129, kStringArray, 0, 0, 0, len);
+	len = strlen(_filenamePattern.pattern);
+	data = defineArray(129, kStringArray, 0, 0, 0, len);
 	memcpy(data, _filenamePattern.pattern, len);
+
+	// Array 132 is set to game path
+	data = defineArray(132, kStringArray, 0, 0, 0, 0);
+
+	// Array 137 is set to Windows directory, plus INI file
+	len = strlen(ininame.c_str());
+	data = defineArray(137, kStringArray, 0, 0, 0, len);
+	memcpy(data, ininame.c_str(), len);
 }
 
 void ScummEngine_v100he::resetScumm() {

@@ -92,6 +92,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "Blues123Time", "Blue's 123 Time Activities" },
 	{ "BluesABCTime", "Blue's ABC Time Activities" },
 	{ "BluesBirthday", "Blue's Birthday Adventure" },
+	{ "BluesTreasureHunt", "Blue's Treasure Hunt" },
 	{ "catalog", "Humongous Interactive Catalog" },
 	{ "chase", "SPY Fox in Cheese Chase" },
 	{ "dog", "Putt-Putt and Pep's Dog on a Stick" },
@@ -316,7 +317,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"puttrace", "HE 99",   0, GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY, UNK},
 
 	{"bluesabctime", "", 0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY, UNK},
-	{"BluesBirthday", 0, 0, GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY, UNK},
+	{"BluesBirthday", 0, 0, GID_BIRTHDAY, 6, 98, MDT_NONE, GF_USE_KEY, UNK},
 	{"soccer", "", 0, GID_SOCCER, 6, 98, MDT_NONE, GF_USE_KEY, UNK},
 
 	// Global scripts increased to 2048
@@ -351,6 +352,7 @@ static const GameSettings gameVariantsTable[] = {
 	// Uses smacker in external files, for testing only
 	{"arttime", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
 	{"readtime", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
+	{"BluesTreasureHunt", 0, 0, GID_TREASUREHUNT, 6, 99, MDT_NONE, GF_USE_KEY, UNK},
 
 	// Uses bink in external files for logos
 	{"Baseball2003", 0, 0, GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
@@ -535,6 +537,11 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "BluesBirthday", "BluesBirthdayDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "BluesBirthday", "bda-slideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 	{ "BluesBirthday", "BluesBirthdaySlideshow.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
+
+	{ "BluesTreasureHunt", "Blue'sTreasureHunt-Disc1", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "BluesTreasureHunt", "Blue'sTreasureHunt-Disc1", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "BluesTreasureHunt", "Blue'sTreasureHunt-Disc2", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "BluesTreasureHunt", "Blue'sTreasureHunt-Disc2", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "catalog", "catalog", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "catalog", "catalog2", kGenHEPC, UNK_LANG, UNK, 0 },
