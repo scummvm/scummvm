@@ -495,7 +495,6 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 }
 
 void GUI_LoK::getInput() {
-	Common::Event event;
 	uint32 now = _vm->_system->getMillis();
 
 	_vm->checkInput(_menuButtonList);
