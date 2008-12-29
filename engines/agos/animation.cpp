@@ -508,7 +508,7 @@ MoviePlayer *makeMoviePlayer(AGOSEngine *vm, const char *name) {
 		// bug in a German Windows 2CD version.
 		char shortName[20];
 		memset(shortName, 0, sizeof(shortName));
-		memcpy(shortName, filename, 6);
+		memcpy(shortName, baseName, 6);
 
 		sprintf(filename, "%s~1.dxa", shortName);
 		if (Common::File::exists(filename)) {
