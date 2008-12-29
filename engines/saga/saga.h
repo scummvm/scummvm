@@ -200,7 +200,8 @@ enum GameSoundTypes {
 	kSoundMP3 = 5,
 	kSoundOGG = 6,
 	kSoundFLAC = 7,
-	kSoundAIFF = 8
+	kSoundAIFF = 8,
+	kSoundShorten = 9
 };
 
 enum TextStringIds {
@@ -299,7 +300,6 @@ struct GamePatchDescription {
 	const char *fileName;
 	uint16 fileType;
 	uint32 resourceId;
-	const GameSoundInfo *soundInfo;
 };
 
 struct SAGAGameDescription;

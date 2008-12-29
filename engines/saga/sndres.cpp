@@ -38,6 +38,7 @@
 #include "sound/wave.h"
 #include "sound/adpcm.h"
 #include "sound/aiff.h"
+//#include "sound/shorten.h"
 #include "sound/audiostream.h"
 
 namespace Saga {
@@ -225,15 +226,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		soundInfo = _vm->getSfxInfo();
 	}
 
-	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources() && (context->fileType & GAME_VOICEFILE) != 0) {
-		// No sound patch data for the voice files in the Mac version of IHNM
-	} else {
-		context->table[resourceId].fillSoundPatch(soundInfo);
-	}
-
-
-	resourceType = soundInfo->resourceType;
-
 	if (soundResourceLength >= 8) {
 		byte header[8];
 
@@ -246,6 +238,10 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			resourceType = kSoundWAV;
 		} else if (!memcmp(header, "FORM", 4) != 0) {
 			resourceType = kSoundAIFF;
+		} else if (!memcmp(header, "ajkg", 4) != 0) {
+			resourceType = kSoundShorten;
+		} else {
+			resourceType = soundInfo->resourceType;
 		}
 
 		bool uncompressedSound = false;
@@ -372,6 +368,24 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			}
 			result = true;
 		}
+		break;
+	case kSoundShorten:
+		/*
+		if (Audio::loadShortenFromStream(readS, size, rate, flags)) {
+			buffer.frequency = rate;
+			buffer.sampleBits = 16;
+			buffer.stereo = ((flags & Audio::Mixer::FLAG_STEREO) != 0);
+			buffer.isSigned = false;
+			buffer.size = size;
+			if (onlyHeader) {
+				buffer.buffer = NULL;
+			} else {
+				buffer.buffer = (byte *)malloc(size);
+				readS.read(buffer.buffer, size);
+			}
+			result = true;
+		}
+		*/
 		break;
 	case kSoundMP3:
 	case kSoundOGG:

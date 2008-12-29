@@ -60,19 +60,9 @@ struct ResourceData {
 	uint32 id;		// SAGA2
 	size_t offset;
 	size_t size;
+	PatchData *patchData;
 
 	bool isExternal() { return ((offset & (1L<<31)) != 0L); }	// SAGA2
-
-	PatchData *patchData;
-	void fillSoundPatch(const GameSoundInfo *&soundInfo) {
-		if (patchData != NULL) {
-			if (patchData->_patchDescription != NULL) {
-				if (patchData->_patchDescription->soundInfo != NULL) {
-					soundInfo = patchData->_patchDescription->soundInfo;
-				}
-			}
-		}
-	}
 };
 
 struct ResourceContext {
