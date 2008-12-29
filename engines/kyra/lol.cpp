@@ -30,6 +30,7 @@
 #include "kyra/util.h"
 
 #include "common/endian.h"
+#include "base/version.h"
 
 namespace Kyra {
 
@@ -103,9 +104,7 @@ Common::Error LoLEngine::init() {
 }
 
 Common::Error LoLEngine::go() {
-	bool hasSave = saveFileLoadable(0);
-
-	if (!hasSave) {
+	if (!saveFileLoadable(0)) {
 		setupPrologueData(true);
 		showIntro();
 		setupPrologueData(false);
@@ -117,10 +116,22 @@ Common::Error LoLEngine::go() {
 	while (!shouldQuit() && processSelection == -1) {
 		_screen->loadBitmap("TITLE.CPS", 2, 2, _screen->getPalette(0));
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+
+		_screen->setFont(Screen::FID_6_FNT);
+		// Original version: (260|193) "V CD1.02 D"
+		_screen->fprintString("SVM %s", 255, 193, 0x67, 0x00, 0x04, gScummVMVersion);
+		_screen->setFont(Screen::FID_9_FNT);
+
 		_screen->fadePalette(_screen->getPalette(0), 0x1E);
+		_screen->updateScreen();
 
 		_eventList.clear();
 		int selection = mainMenu();
+		_screen->hideMouse();
+
+		// Unlike the original, we add a nice fade to black
+		memset(_screen->getPalette(0), 0, 768);
+		_screen->fadePalette(_screen->getPalette(0), 0x54);
 
 		switch (selection) {
 		case 0:		// New game
@@ -128,13 +139,8 @@ Common::Error LoLEngine::go() {
 			break;
 
 		case 1:		// Show intro
-			memset(_screen->getPalette(0), 0, 768);
-			_screen->fadePalette(_screen->getPalette(0), 0x54);
-
 			setupPrologueData(true);
-			_screen->hideMouse();
 			showIntro();
-			_screen->showMouse();
 			setupPrologueData(true);
 			break;
 
@@ -149,6 +155,7 @@ Common::Error LoLEngine::go() {
 		case 4:		// Quit game
 		default:
 			quitGame();
+			updateInput();
 			break;
 		}
 	}
@@ -157,12 +164,6 @@ Common::Error LoLEngine::go() {
 		return Common::kNoError;
 
 	if (processSelection == 0) {
-		// Unlike the original, we add a nice fade to black
-		memset(_screen->getPalette(0), 0, 768);
-		_screen->fadePalette(_screen->getPalette(0), 0x54);
-
-		_screen->clearPage(0);
-
 		setupPrologueData(true);
 		_sound->loadSoundFile("LOREINTR");
 		_sound->playTrack(6);
@@ -193,8 +194,8 @@ void LoLEngine::preInit() {
 	_screen->setScreenPalette(pal);
 
 	// TODO: We need to check if the SYSEX events of intro and ingame differ.
-	// If they really need to setup the proper ingame sysex when starting
-	// the game. But the place to do it would not be here in our code!
+	// If they differ, we really need to setup the proper ingame SYSEX when starting
+	// the game. But the proper place to do it would not be in this function.
 	/*if (_sound->getMusicType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiMT32) {
 		_sound->loadSoundFile("LOLSYSEX");
 		_sound->playTrack(0);
@@ -212,13 +213,10 @@ void LoLEngine::preInit() {
 	
 	char filename[32];
 	snprintf(filename, sizeof(filename), "LANDS.%s", _languageExt[_lang]);	
+	_res->exists(filename, true);
 	_landsFile = _res->fileData(filename, 0);
 
 	initializeCursors();
-
-	/*_screen->setFont(Screen::FID_6_FNT);
-	_screen->fprintString("V CD1.02 D", 260, 301, 0x67, 0x00, 0x04);*/
-	_screen->setFont(Screen::FID_9_FNT);
 }
 
 void LoLEngine::initializeCursors() {

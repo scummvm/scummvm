@@ -39,6 +39,7 @@ public:
 	void setScreenDim(int dim);
 	const ScreenDim *getScreenDim(int dim);
 
+	void fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...);
 	void fprintStringIntro(const char *format, int x, int y, uint8 c1, uint8 c2, uint8 c3, uint16 flags, ...);
 private:
 	LoLEngine *_vm;

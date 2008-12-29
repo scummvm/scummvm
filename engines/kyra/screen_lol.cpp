@@ -43,13 +43,43 @@ const ScreenDim *Screen_LoL::getScreenDim(int dim) {
 	return &_screenDimTable[dim];
 }
 
+void Screen_LoL::fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...) {
+	debugC(9, kDebugLevelScreen, "Screen_LoL::fprintString('%s', %d, %d, %d, %d, %d, ...)", format, x, y, col1, col2, flags);
+	if (!format)
+		return;
+
+	char string[240];
+	va_list vaList;
+	va_start(vaList, flags);
+	vsnprintf(string, sizeof(string), format, vaList);
+	va_end(vaList);
+
+	if (flags & 1)
+		x -= getTextWidth(string) >> 1;
+
+	if (flags & 2)
+		x -= getTextWidth(string);
+
+	if (flags & 4) {
+		printText(string, x - 1, y, 1, col2);
+		printText(string, x, y + 1, 1, col2);
+	}
+
+	if (flags & 8) {
+		printText(string, x - 1, y, 227, col2);
+		printText(string, x, y + 1, 227, col2);
+	}
+
+	printText(string, x, y, col1, col2);
+}
+
 void Screen_LoL::fprintStringIntro(const char *format, int x, int y, uint8 c1, uint8 c2, uint8 c3, uint16 flags, ...) {
 	debugC(9, kDebugLevelScreen, "Screen_LoL::fprintStringIntro('%s', %d, %d, %d, %d, %d, %d, ...)", format, x, y, c1, c2, c3, flags);
 	char buffer[400];
 
 	va_list args;
 	va_start(args, flags);
-	vsprintf(buffer, format, args);	
+	vsnprintf(buffer, sizeof(buffer), format, args);	
 	va_end(args);
 	
 	if ((flags & 0x0F00) == 0x100)

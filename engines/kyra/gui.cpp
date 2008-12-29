@@ -448,9 +448,6 @@ int MainMenu::handle(int dim) {
 		_screen->_charWidth = -2;
 	_screen->setScreenDim(dim);
 
-	while (!_screen->isMouseVisible())
-		_screen->showMouse();
-
 	int backUpX = _screen->_curDim->sx;
 	int backUpY = _screen->_curDim->sy;
 	int backUpWidth = _screen->_curDim->w;
@@ -469,7 +466,8 @@ int MainMenu::handle(int dim) {
 
 	draw(selected);
 
-	_screen->showMouse();
+	while (!_screen->isMouseVisible())
+		_screen->showMouse();
 
 	int fh = _screen->getFontHeight();
 	int textPos = ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3;
