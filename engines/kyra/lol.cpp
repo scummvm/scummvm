@@ -138,7 +138,7 @@ Common::Error LoLEngine::go() {
 			setupPrologueData(true);
 			break;
 
-		case 2:		// "Lore of the Lands"
+		case 2:		// "Lore of the Lands" (only CD version)
 			break;
 
 		case 3:		// Load game
@@ -192,6 +192,9 @@ void LoLEngine::preInit() {
 	memset(pal, 0, 768);
 	_screen->setScreenPalette(pal);
 
+	// TODO: We need to check if the SYSEX events of intro and ingame differ.
+	// If they really need to setup the proper ingame sysex when starting
+	// the game. But the place to do it would not be here in our code!
 	/*if (_sound->getMusicType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiMT32) {
 		_sound->loadSoundFile("LOLSYSEX");
 		_sound->playTrack(0);
@@ -261,7 +264,7 @@ int LoLEngine::mainMenu() {
 	assert(menu);
 	menu->init(data, MainMenu::Animation());
 
-	int selection = menu->handle(_flags.isTalkie ? (hasSave ? 12 : 6) :(hasSave ? 6 : 13));
+	int selection = menu->handle(_flags.isTalkie ? (hasSave ? 12 : 6) : (hasSave ? 6 : 13));
 	delete menu;
 
 	if (!_flags.isTalkie && selection >= 2)
