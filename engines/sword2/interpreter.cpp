@@ -27,6 +27,7 @@
 
 
 #include "common/util.h"
+#include "common/stack.h"
 
 #include "sword2/sword2.h"
 #include "sword2/header.h"
@@ -204,16 +205,6 @@ void Logic::setupOpcodes() {
 	_opcodes = opcodes;
 }
 
-#define push(value) \
-do { \
-	assert(stackPtr < ARRAYSIZE(stack)); \
-	stack[stackPtr++] = (value); \
-} while (false)
-
-#define push_ptr(ptr) push(_vm->_memory->encodePtr(ptr))
-
-#define pop() (assert(stackPtr < ARRAYSIZE(stack)), stack[--stackPtr])
-
 int Logic::runResScript(uint32 scriptRes, uint32 offset) {
 	byte *scriptAddr;
 	int result;
@@ -256,8 +247,8 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 	// I don't know whether or not this is relevant to the working of the
 	// BS2 engine.
 
-	int32 stack[STACK_SIZE];
-	int32 stackPtr = 0;
+	Common::FixedStack<int32, STACK_SIZE> stack;
+	int32 opcodeParams[STACK_SIZE];
 
 	uint32 offset = READ_LE_UINT32(offsetPtr);
 
@@ -434,19 +425,19 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 		case CP_PUSH_INT32:
 			// Push a long word value on to the stack
 			Read32ip(parameter);
-			push(parameter);
+			stack.push(parameter);
 			debug(9, "CP_PUSH_INT32: %d", parameter);
 			break;
 		case CP_PUSH_LOCAL_VAR32:
 			// Push the contents of a local variable
 			Read16ip(parameter);
-			push(READ_LE_UINT32(localVars + parameter));
+			stack.push(READ_LE_UINT32(localVars + parameter));
 			debug(9, "CP_PUSH_LOCAL_VAR32: localVars[%d] => %d", parameter / 4, READ_LE_UINT32(localVars + parameter));
 			break;
 		case CP_PUSH_GLOBAL_VAR32:
 			// Push a global variable
 			Read16ip(parameter);
-			push(readVar(parameter));
+			stack.push(readVar(parameter));
 			debug(9, "CP_PUSH_GLOBAL_VAR32: scriptVars[%d] => %d", parameter, readVar(parameter));
 			break;
 		case CP_PUSH_LOCAL_ADDR:
@@ -460,7 +451,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			// CP_PUSH_DEREFERENCED_STRUCTURE opcode.
 
 			Read16ip(parameter);
-			push_ptr(localVars + parameter);
+			stack.push(_vm->_memory->encodePtr(localVars + parameter));
 			debug(9, "CP_PUSH_LOCAL_ADDR: &localVars[%d] => %p", parameter / 4, localVars + parameter);
 			break;
 		case CP_PUSH_STRING:
@@ -470,7 +461,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 
 			// ip now points to the string
 			ptr = code + ip;
-			push_ptr(ptr);
+			stack.push(_vm->_memory->encodePtr(ptr));
 			debug(9, "CP_PUSH_STRING: \"%s\"", ptr);
 			ip += (parameter + 1);
 			break;
@@ -478,20 +469,20 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			// Push the address of a dereferenced structure
 			Read32ip(parameter);
 			ptr = objectData + 4 + ResHeader::size() + ObjectHub::size() + parameter;
-			push_ptr(ptr);
+			stack.push(_vm->_memory->encodePtr(ptr));
 			debug(9, "CP_PUSH_DEREFERENCED_STRUCTURE: %d => %p", parameter, ptr);
 			break;
 		case CP_POP_LOCAL_VAR32:
 			// Pop a value into a local word variable
 			Read16ip(parameter);
-			value = pop();
+			value = stack.pop();
 			WRITE_LE_UINT32(localVars + parameter, value);
 			debug(9, "CP_POP_LOCAL_VAR32: localVars[%d] = %d", parameter / 4, value);
 			break;
 		case CP_POP_GLOBAL_VAR32:
 			// Pop a global variable
 			Read16ip(parameter);
-			value = pop();
+			value = stack.pop();
 
 			// WORKAROUND for bug #1214168: The not-at-all dreaded
 			// mop bug.
@@ -529,27 +520,27 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			break;
 		case CP_ADDNPOP_LOCAL_VAR32:
 			Read16ip(parameter);
-			value = READ_LE_UINT32(localVars + parameter) + pop();
+			value = READ_LE_UINT32(localVars + parameter) + stack.pop();
 			WRITE_LE_UINT32(localVars + parameter, value);
 			debug(9, "CP_ADDNPOP_LOCAL_VAR32: localVars[%d] => %d", parameter / 4, value);
 			break;
 		case CP_SUBNPOP_LOCAL_VAR32:
 			Read16ip(parameter);
-			value = READ_LE_UINT32(localVars + parameter) - pop();
+			value = READ_LE_UINT32(localVars + parameter) - stack.pop();
 			WRITE_LE_UINT32(localVars + parameter, value);
 			debug(9, "CP_SUBNPOP_LOCAL_VAR32: localVars[%d] => %d", parameter / 4, value);
 			break;
 		case CP_ADDNPOP_GLOBAL_VAR32:
 			// Add and pop a global variable
 			Read16ip(parameter);
-			value = readVar(parameter) + pop();
+			value = readVar(parameter) + stack.pop();
 			writeVar(parameter, value);
 			debug(9, "CP_ADDNPOP_GLOBAL_VAR32: scriptVars[%d] => %d", parameter, value);
 			break;
 		case CP_SUBNPOP_GLOBAL_VAR32:
 			// Sub and pop a global variable
 			Read16ip(parameter);
-			value = readVar(parameter) - pop();
+			value = readVar(parameter) - stack.pop();
 			writeVar(parameter, value);
 			debug(9, "CP_SUBNPOP_GLOBAL_VAR32: scriptVars[%d] => %d", parameter, value);
 			break;
@@ -559,7 +550,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 		case CP_SKIPONTRUE:
 			// Skip if the value on the stack is true
 			Read32ipLeaveip(parameter);
-			value = pop();
+			value = stack.pop();
 			if (!value) {
 				ip += 4;
 				debug(9, "CP_SKIPONTRUE: %d (IS FALSE (NOT SKIPPED))", parameter);
@@ -571,7 +562,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 		case CP_SKIPONFALSE:
 			// Skip if the value on the stack is false
 			Read32ipLeaveip(parameter);
-			value = pop();
+			value = stack.pop();
 			if (value) {
 				ip += 4;
 				debug(9, "CP_SKIPONFALSE: %d (IS TRUE (NOT SKIPPED))", parameter);
@@ -588,7 +579,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			break;
 		case CP_SWITCH:
 			// switch
-			value = pop();
+			value = stack.pop();
 			Read32ip(caseCount);
 
 			// Search the cases
@@ -623,9 +614,10 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			// amount to adjust stack by (no of parameters)
 			Read8ip(value);
 			debug(9, "CP_CALL_MCODE: '%s', %d", _opcodes[parameter].desc, value);
-			stackPtr -= value;
-			assert(stackPtr >= 0);
-			retVal = (this->*_opcodes[parameter].proc)(&stack[stackPtr]);
+			while (--value >= 0) {
+				opcodeParams[value] = stack.pop();
+			}
+			retVal = (this->*_opcodes[parameter].proc)(opcodeParams);
 
 			switch (retVal & 7) {
 			case IR_STOP:
@@ -676,75 +668,75 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 		// Operators
 
 		case OP_ISEQUAL:
-			b = pop();
-			a = pop();
-			push(a == b);
+			b = stack.pop();
+			a = stack.pop();
+			stack.push(a == b);
 			debug(9, "OP_ISEQUAL: RESULT = %d", a == b);
 			break;
 		case OP_NOTEQUAL:
-			b = pop();
-			a = pop();
-			push(a != b);
+			b = stack.pop();
+			a = stack.pop();
+			stack.push(a != b);
 			debug(9, "OP_NOTEQUAL: RESULT = %d", a != b);
 			break;
 		case OP_GTTHAN:
-			b = pop();
-			a = pop();
-			push(a > b);
+			b = stack.pop();
+			a = stack.pop();
+			stack.push(a > b);
 			debug(9, "OP_GTTHAN: RESULT = %d", a > b);
 			break;
 		case OP_LSTHAN:
-			b = pop();
-			a = pop();
-			push(a < b);
+			b = stack.pop();
+			a = stack.pop();
+			stack.push(a < b);
 			debug(9, "OP_LSTHAN: RESULT = %d", a < b);
 			break;
 		case OP_GTTHANE:
-			b = pop();
-			a = pop();
-			push(a >= b);
+			b = stack.pop();
+			a = stack.pop();
+			stack.push(a >= b);
 			debug(9, "OP_GTTHANE: RESULT = %d", a >= b);
 			break;
 		case OP_LSTHANE:
-			b = pop();
-			a = pop();
-			push(a <= b);
+			b = stack.pop();
+			a = stack.pop();
+			stack.push(a <= b);
 			debug(9, "OP_LSTHANE: RESULT = %d", a <= b);
 			break;
 		case OP_PLUS:
-			b = pop();
-			a = pop();
-			push(a + b);
+			b = stack.pop();
+			a = stack.pop();
+			stack.push(a + b);
 			debug(9, "OP_PLUS: RESULT = %d", a + b);
 			break;
 		case OP_MINUS:
-			b = pop();
-			a = pop();
-			push(a - b);
+			b = stack.pop();
+			a = stack.pop();
+			stack.push(a - b);
 			debug(9, "OP_MINUS: RESULT = %d", a - b);
 			break;
 		case OP_TIMES:
-			b = pop();
-			a = pop();
-			push(a * b);
+			b = stack.pop();
+			a = stack.pop();
+			stack.push(a * b);
 			debug(9, "OP_TIMES: RESULT = %d", a * b);
 			break;
 		case OP_DIVIDE:
-			b = pop();
-			a = pop();
-			push(a / b);
+			b = stack.pop();
+			a = stack.pop();
+			stack.push(a / b);
 			debug(9, "OP_DIVIDE: RESULT = %d", a / b);
 			break;
 		case OP_ANDAND:
-			b = pop();
-			a = pop();
-			push(a && b);
+			b = stack.pop();
+			a = stack.pop();
+			stack.push(a && b);
 			debug(9, "OP_ANDAND: RESULT = %d", a && b);
 			break;
 		case OP_OROR:
-			b = pop();
-			a = pop();
-			push(a || b);
+			b = stack.pop();
+			a = stack.pop();
+			stack.push(a || b);
 			debug(9, "OP_OROR: RESULT = %d", a || b);
 			break;
 
