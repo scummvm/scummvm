@@ -163,11 +163,13 @@ Common::Error LoLEngine::go() {
 
 		_screen->clearPage(0);
 
+		setupPrologueData(true);
 		_sound->loadSoundFile("LOREINTR");
 		_sound->playTrack(6);
 		/*int character = */chooseCharacter();
 		_sound->playTrack(1);
 		_screen->fadeToBlack();
+		setupPrologueData(true);
 	} else if (processSelection == 3) {
 		//XXX
 	}
