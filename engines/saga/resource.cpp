@@ -216,7 +216,7 @@ bool Resource::createContexts() {
 		bool isCompressed;
 	};
 
-	SoundFileInfo *curSoundfiles;
+	SoundFileInfo *curSoundfiles = 0;
 
 	// If the Wyrmkeep credits file is found, set the Wyrmkeep version flag to true
 	if (Common::File::exists("graphics/credit3n.dlt")) {
