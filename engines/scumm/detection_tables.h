@@ -498,6 +498,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "airport", "The AirPort", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "arttime", "arttime", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "arttime", "Blues-ArtTime", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "arttime", "artdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "arttime", "Blues-ArtTime Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
@@ -774,6 +775,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttzoo", "Zoo Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "readtime", "Blue's Reading Time", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "readtime", "Blues-ReadingTime", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "readtime", "readDemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "readtime", "Blues-ReadingTime Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 

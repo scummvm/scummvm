@@ -427,7 +427,7 @@ BluesABCTime	Blue's ABC Time Activities
 	356fb5f680b68251333016175935d126	4133436	All	All	HE CUP	Preview	-	sev
 
 arttime	Blue's Art Time Activities
-	6269b8fbf51a353e5b501e4ad98cdc67	-1	en	Windows	-	-	-	killiandor
+	6269b8fbf51a353e5b501e4ad98cdc67	-1	en	All	-	-	-	killiandor
 	d00ffc8c32d17e575fd985d435d2eb88	-1	en	All	-	Demo	-	Kirben
 
 BluesBirthday	Blue's Birthday Adventure
@@ -439,6 +439,7 @@ BluesBirthday	Blue's Birthday Adventure
 	fa30c4a7a806629626269b6dcab59a15	7819264	All	All	HE CUP	Preview	-	sev
 
 readtime	Blue's Reading Time Activities
+	e5c112140ad6574997de033a8e2a2964	-1	en	All	-	-	-	Kirben
 	95818b178d473c989ac753574e8892aa	-1	en	All	-	Demo	-	Kirben
 
 BluesTreasureHunt	Blue's Treasure Hunt
