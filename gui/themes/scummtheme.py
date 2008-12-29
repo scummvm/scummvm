@@ -9,12 +9,12 @@ THEME_FILE_EXTENSIONS = ('.stx', '.bmp', '.fcc')
 
 def buildTheme(themeName):
 	if not os.path.isdir(themeName) or not os.path.isfile(os.path.join(themeName, "THEMERC")):
-		print "Invalid theme name: " + themeName
+		print ("Invalid theme name: " + themeName)
 		return
 	
 	zf = zipfile.ZipFile(themeName + ".zip", 'w')
 	
-	print "Building '" + themeName + "' theme:"
+	print ("Building '" + themeName + "' theme:")
 	os.chdir(themeName)
 		
 	zf.write('THEMERC', './THEMERC')
@@ -22,7 +22,7 @@ def buildTheme(themeName):
 	for filename in os.listdir('.'):
 		if os.path.isfile(filename) and not filename[0] == '.' and filename.endswith(THEME_FILE_EXTENSIONS):
 			zf.write(filename, './' + filename)
-			print "    Adding file: " + filename
+			print ("    Adding file: " + filename)
 			
 	os.chdir('../')
 	
@@ -54,7 +54,7 @@ def buildDefTheme(themeName):
 	def_file = open("default.inc", "w")
 	
 	if not os.path.isdir(themeName):
-		print "Cannot open default theme dir."
+		print ("Cannot open default theme dir.")
 		
 	def_file.write(""" "<?xml version = '1.0'?>"\n""")
 		
@@ -68,16 +68,16 @@ def buildDefTheme(themeName):
 	def_file.close()
 	
 def printUsage():
-	print "==============================="
-	print "ScummVM Theme Generation Script"
-	print "==============================="
-	print "Usage:"
-	print "scummtheme.py makeall"
-	print "    Builds all the available themes.\n"
-	print "scummtheme.py make [themename]"
-	print "    Builds the theme called 'themename'.\n"
-	print "scummtheme.py default [themename]"
-	print "    Creates a 'default.inc' file to embed the given theme in the source code.\n"
+	print ("===============================")
+	print ("ScummVM Theme Generation Script")
+	print ("===============================")
+	print ("Usage:")
+	print ("scummtheme.py makeall")
+	print ("    Builds all the available themes.\n")
+	print ("scummtheme.py make [themename]")
+	print ("    Builds the theme called 'themename'.\n")
+	print ("scummtheme.py default [themename]")
+	print ("    Creates a 'default.inc' file to embed the given theme in the source code.\n")
 
 def main():
 		
