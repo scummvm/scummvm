@@ -264,6 +264,7 @@ int LoLEngine::mainMenu() {
 
 	int selection = menu->handle(_flags.isTalkie ? (hasSave ? 12 : 6) : (hasSave ? 6 : 13));
 	delete menu;
+	_screen->setScreenDim(0);
 
 	if (!_flags.isTalkie && selection >= 2)
 		selection++;
