@@ -133,6 +133,26 @@ bool Script::loadScript(Common::String filename) {
 		// variable
 		assert(_codeSize == 5546);
 		_code[0x03C2] = 0x38;
+	} else if (filename.equals("maze.grv")) {
+		// GRAPHICS ENHANCEMENT - Leave a skeleton in the maze.
+		// Replaces one normal T intersection with the unused(?) 
+		// skeleton T intersection graphics.
+		assert(_codeSize == 3652);
+
+		// Terminating T branch
+		_code[0x0769] = 0x46;
+		_code[0x0774] = 0x3E;
+		_code[0x077A] = 0x42;
+		
+		// T with branch on right
+		_code[0x08E2] = 0x43;
+		_code[0x08D7] = 0x44;
+		_code[0x08E8] = 0x45;
+
+		// T with branch on left
+		_code[0x0795] = 0x41;
+		_code[0x078A] = 0x40;
+		_code[0x079B] = 0x3F;
 	}
 
 	// Initialize the script
