@@ -73,6 +73,20 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT7G, 0
 	},
 
+	// The 7th Guest DOS Russian (Akella)
+	{ 
+		{
+			"t7g", "",
+			{
+				{ "script.grv", 0, "d1b8033b40aa67c076039881eccce90d", 16659},
+				{ "intro.gjd", 0, NULL, 31711554},
+				{ NULL, 0, NULL, 0}
+			},
+			Common::RU_RUS, Common::kPlatformPC, Common::ADGF_NO_FLAGS
+		},
+		kGroovieT7G, 0
+	},
+
 #ifdef GROOVIE_EXPERIMENTAL
 	// The 11th Hour DOS English
 	{ 
