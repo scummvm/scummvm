@@ -31,36 +31,24 @@ import os
 import xml.dom.minidom as DOM
 import struct
 
-def printBinaryDump(buf):
-	LINE_WIDTH = 16
-	
-	def buildRepr(line):
-		out = ""
-		for c in line:
-			out += '.' if ord(c) < 0x20 or ord(c) > 0x7E else c
-		return out
-	
-	print "Binary dump of %d BYTES:\n" % len(buf)
-	for i in xrange(len(buf) // LINE_WIDTH):
-		bufLine = buf[LINE_WIDTH * i : LINE_WIDTH * (i + 1)]
-		
-		print "| %s | %s |" % (" ".join(["%0.2X" % ord(c) for c in bufLine]), buildRepr(bufLine))
-		
-	bufLine = buf[-(len(buf) % LINE_WIDTH):]
-	print "| %s%s | %s%s |" % (
-		" ".join(["%0.2X" % ord(c) for c in bufLine]), 
-		'   ' * (LINE_WIDTH - len(bufLine)), 
-		buildRepr(bufLine),
-		' ' * (LINE_WIDTH - len(bufLine))
-	)
-	
-	print ""
+FILTER=''.join([(len(repr(chr(x)))==3) and chr(x) or '.' for x in range(256)])
+
+# adapted from Activestate Snippet Cookbook
+def printBinaryDump(src, length=16):
+    N=0; result=''
+    while src:
+       s,src = src[:length],src[length:]
+       hexa = ' '.join(["%02X"%ord(x) for x in s])
+       s = s.translate(FILTER)
+       result += "%04X   %-*s   %s\n" % (N, length*3, hexa, s)
+       N+=length
+    print (result)
 
 def pbin(data):
 	return str(map(lambda c: hex(ord(c)), data))
 #	return " ".join(["%0.2X" % ord(c) for c in data])
 
-class STXBinaryFile:
+class STXBinaryFile(object):
 	class InvalidRGBColor(Exception):
 		pass
 		
@@ -76,7 +64,7 @@ class STXBinaryFile:
 	class InvalidDialogOverlay(Exception):
 		pass
 		
-	class DrawStepData:
+	class DrawStepData(object):
 		def __init__(self, isDefault, packFormat, function):
 			self.isDefault = isDefault
 			self.packFormat = packFormat
@@ -159,11 +147,11 @@ class STXBinaryFile:
 					self._stxFiles.append(filename)
 					
 	def debug(self, text):
-		if self._verbose: print text
+		if self._verbose: print (text)
 		
 	def debugBinary(self, data):
 		if self._verbose:
-			print "BINARY OUTPUT (%d bytes):" % len(data), " ".join(["%0.2X" % ord(c) for c in data])
+			print ("BINARY OUTPUT (%d bytes): %s" % (len(data), " ".join(["%0.2X" % ord(c) for c in data])))
 			
 	def addSTXFile(self, filename):
 		if not os.path.isfile(filename):
@@ -197,7 +185,6 @@ class STXBinaryFile:
 		
 		if bmp == "":
 			return 0x0
-		
 		if bmp not in self._bitmaps:
 			raise self.InvalidBitmapName
 		
@@ -263,7 +250,7 @@ class STXBinaryFile:
 				size = struct.calcsize(layout)
 				packLayout += "B" * size
 				
-				for d in xrange(size):
+				for d in range(size):
 					packData.append(0)
 			else:
 				packLayout += layout
