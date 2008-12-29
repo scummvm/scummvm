@@ -1452,7 +1452,7 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 			while (pixWritten < postScaleX(width)) {
 				pixCount = *srcPtr++;
 				if (pixCount & 0x80) { // Data
-					pixCount = MIN((pixCount & 0x7F) + 1, postScaleX(width) - pixWritten);
+					pixCount = MIN<int>((pixCount & 0x7F) + 1, postScaleX(width) - pixWritten);
 					memcpy(dest, srcPtr, pixCount);
 
 					pixWritten += pixCount;
