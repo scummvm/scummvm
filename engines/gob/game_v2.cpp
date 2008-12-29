@@ -1147,8 +1147,8 @@ int16 Game_v2::multiEdit(int16 time, int16 index, int16 *pCurPos,
 	int16 key;
 	int16 found = -1;
 	int16 i;
-	byte *fontExtraBak;
-	int16 needAdjust;
+	byte *fontExtraBak = 0;
+	int16 needAdjust = 0;
 
 	descInd = 0;
 	for (i = 0; i < 150; i++) {
@@ -1357,8 +1357,8 @@ int16 Game_v2::inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 	uint32 pos;
 	int16 flag;
 	int16 savedKey;
-	byte *fontExtraBak;
-	int16 needAdjust;
+	byte *fontExtraBak = 0;
+	int16 needAdjust = 0;
 
 	if ((_handleMouse != 0) &&
 	    ((_vm->_global->_useMouse != 0) || (_forceHandleMouse != 0)))
