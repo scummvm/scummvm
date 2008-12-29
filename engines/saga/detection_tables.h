@@ -112,14 +112,14 @@ static const GameFontDescription IHNMDEMO_GameFonts[]   = { {2}, {3}, {4} };
 // Font 6 is kIHNMFont8, font 8 is kIHNMMainFont
 static const GameFontDescription IHNMCD_GameFonts[]     = { {2}, {3}, {4}, {5}, {6}, {7}, {8} };
 
-//                                                         sampleBits, isBigEndian, isSigned
-static const GameSoundInfo ITEPC_GameSound       = { kSoundPCM,    16,  false,     true };
-static const GameSoundInfo ITEWINDEMO1_GameSound = { kSoundPCM,     8,  false,    false };
-static const GameSoundInfo ITEMACCD_G_GameSound  = { kSoundMacPCM,  8,  false,    false };
-static const GameSoundInfo ITEDISK_GameSound     = { kSoundVOC,    -1,  false,     true };
-static const GameSoundInfo ITEDEMO_GameVoice     = { kSoundVOX,    16,  false,     true };
-static const GameSoundInfo IHNM_GameSound        = { kSoundWAV,    -1,  false,     true };
-static const GameSoundInfo MAC_GameSound         = { kSoundPCM,    16,   true,     true };
+//                                                         sampleBits,  isSigned
+static const GameSoundInfo ITEPC_GameSound       = { kSoundPCM,    16,  true  };
+static const GameSoundInfo ITEWINDEMO1_GameSound = { kSoundPCM,     8,  false };
+static const GameSoundInfo ITEMACCD_G_GameSound  = { kSoundMacPCM,  8,  false };
+static const GameSoundInfo ITEDISK_GameSound     = { kSoundVOC,    -1,  true  };
+static const GameSoundInfo ITEDEMO_GameVoice     = { kSoundVOX,    16,  true  };
+static const GameSoundInfo IHNM_GameSound        = { kSoundWAV,    -1,  true  };
+static const GameSoundInfo MAC_GameSound         = { kSoundPCM,    16,  true  };
 
 // Patch files. Files not found will be ignored
 static const GamePatchDescription ITEPatch_Files[] = {
@@ -230,7 +230,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::ADGF_DEMO
 		},
 		GID_ITE,
-		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_SCENE_SUBSTITUTES | GF_MONO_MUSIC,
+		GF_WYRMKEEP | GF_SCENE_SUBSTITUTES | GF_MONO_MUSIC,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -257,7 +257,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::ADGF_DEMO
 		},
 		GID_ITE,
-		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_NON_INTERACTIVE,
+		GF_WYRMKEEP | GF_NON_INTERACTIVE,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -345,7 +345,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GID_ITE,
-		GF_BIG_ENDIAN_DATA,
+		0,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -370,7 +370,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GID_ITE,
-		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP,
+		GF_WYRMKEEP,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -825,7 +825,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GID_IHNM,
-		0, // GF_BIG_ENDIAN_DATA
+		0,
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMCD_GameFonts),

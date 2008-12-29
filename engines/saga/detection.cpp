@@ -56,7 +56,7 @@ struct SAGAGameDescription {
 	const GamePatchDescription *patchDescriptions;
 };
 
-bool SagaEngine::isBigEndian() const { return (_gameDescription->features & GF_BIG_ENDIAN_DATA) != 0; }
+bool SagaEngine::isBigEndian() const { return isMacResources() && getGameId() == GID_ITE; }
 bool SagaEngine::isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
 const GameResourceDescription *SagaEngine::getResourceDescription() { return _gameDescription->resourceDescription; }
 const GameSoundInfo *SagaEngine::getVoiceInfo() const { return _gameDescription->voiceInfo; }
@@ -65,7 +65,6 @@ const GameSoundInfo *SagaEngine::getMusicInfo() const {
 	static GameSoundInfo musicInfo;
 	musicInfo.resourceType = kSoundPCM;
 	musicInfo.sampleBits = 16;
-	musicInfo.isBigEndian = false;
 	musicInfo.isSigned = true;
 
 	return &musicInfo;

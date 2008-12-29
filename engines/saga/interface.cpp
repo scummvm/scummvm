@@ -166,13 +166,19 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	free(resource);
 
 	// Option panel
-	_optionPanel.buttons = _vm->getDisplayInfo().optionPanelButtons;
-	_optionPanel.buttonsCount = _vm->getDisplayInfo().optionPanelButtonsCount;
+	if (!(_vm->getFeatures() & GF_NON_INTERACTIVE)) {
+		_optionPanel.buttons = _vm->getDisplayInfo().optionPanelButtons;
+		_optionPanel.buttonsCount = _vm->getDisplayInfo().optionPanelButtonsCount;
 
-	_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->optionPanelResourceId, resource, resourceLength);
-	_vm->decodeBGImage(resource, resourceLength, &_optionPanel.image,
-		&_optionPanel.imageLength, &_optionPanel.imageWidth, &_optionPanel.imageHeight);
-	free(resource);
+		_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->optionPanelResourceId, resource, resourceLength);
+		_vm->decodeBGImage(resource, resourceLength, &_optionPanel.image,
+			&_optionPanel.imageLength, &_optionPanel.imageWidth, &_optionPanel.imageHeight);
+		free(resource);
+	} else {
+		_optionPanel.buttons = NULL;
+		_optionPanel.buttonsCount = 0;
+		_optionPanel.sprites.spriteCount = 0;
+	}
 
 	// Quit panel
 	if (_vm->getGameId() == GID_IHNM) {

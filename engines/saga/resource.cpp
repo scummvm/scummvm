@@ -433,7 +433,7 @@ bool Resource::createContexts() {
 		} else if (!soundFileInArray && i == soundFileIndex) {
 			context->fileName = soundFileName;
 			context->fileType = GAME_SOUNDFILE;
-		} else if (_vm->_voiceFilesExist && i == voicesFileIndex) {
+		} else if (_vm->_voiceFilesExist && i == voicesFileIndex && !(_vm->getGameId() == GID_IHNM && _vm->isMacResources())) {
 			context->fileName = _voicesFileName[0];
 			// can be GAME_VOICEFILE or GAME_SOUNDFILE | GAME_VOICEFILE or GAME_VOICEFILE | GAME_SWAPENDIAN
 			context->fileType = voiceFileType;

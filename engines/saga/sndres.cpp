@@ -270,7 +270,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 	}
 
-	buffer.isBigEndian = soundInfo->isBigEndian;
+	buffer.isBigEndian = _vm->isMacResources();
 	buffer.soundType = resourceType;
 	buffer.originalSize = 0;
 

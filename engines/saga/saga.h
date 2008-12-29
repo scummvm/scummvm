@@ -116,16 +116,15 @@ enum GameFileTypes {
 };
 
 enum GameFeatures {
-	GF_BIG_ENDIAN_DATA   = 1 << 0,
-	GF_WYRMKEEP          = 1 << 1,
-	GF_ITE_FLOPPY        = 1 << 2,
-	GF_SCENE_SUBSTITUTES = 1 << 3,
-	GF_COMPRESSED_SOUNDS = 1 << 4,
-	GF_NON_INTERACTIVE   = 1 << 5,
-	GF_OLD_ITE_DOS       = 1 << 6,
-	GF_MONO_MUSIC		 = 1 << 7,
-	GF_EXTRA_ITE_CREDITS = 1 << 8,
-	GF_IHNM_DEMO         = 1 << 9
+	GF_WYRMKEEP          = 1 << 0,
+	GF_ITE_FLOPPY        = 1 << 1,
+	GF_SCENE_SUBSTITUTES = 1 << 2,
+	GF_COMPRESSED_SOUNDS = 1 << 3,
+	GF_NON_INTERACTIVE   = 1 << 4,
+	GF_OLD_ITE_DOS       = 1 << 5,
+	GF_MONO_MUSIC		 = 1 << 6,
+	GF_EXTRA_ITE_CREDITS = 1 << 7,
+	GF_IHNM_DEMO         = 1 << 8
 };
 
 enum VerbTypeIds {
@@ -293,7 +292,6 @@ struct GameDisplayInfo;
 struct GameSoundInfo {
 	GameSoundTypes resourceType;
 	int sampleBits;
-	bool isBigEndian;
 	bool isSigned;
 };
 
