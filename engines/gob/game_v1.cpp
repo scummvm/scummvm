@@ -1088,7 +1088,7 @@ void Game_v1::collisionsBlock(void) {
 }
 
 int16 Game_v1::multiEdit(int16 time, int16 index, int16 *pCurPos,
-		InputDesc * inpDesc, int16 *collResId, int16 *collIndex) {
+		InputDesc * inpDesc, int16 *collResId, int16 *collIndex, bool mono) {
 	Collision *collArea;
 	int16 descInd;
 	int16 key;
@@ -1250,7 +1250,7 @@ int16 Game_v1::multiEdit(int16 time, int16 index, int16 *pCurPos,
 
 int16 Game_v1::inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 		int16 backColor, int16 frontColor, char *str, int16 fontIndex,
-		char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex) {
+		char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex, bool mono) {
 	int16 handleMouse;
 	uint32 editSize;
 	Video::FontDesc *pFont;

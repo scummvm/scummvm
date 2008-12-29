@@ -127,10 +127,12 @@ public:
 			uint16 funcEnter, uint16 funcLeave, uint16 funcSub = 0) = 0;
 	virtual void collisionsBlock(void) = 0;
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
-			InputDesc *inpDesc, int16 *collResId, int16 *collIndex) = 0;
+			InputDesc *inpDesc, int16 *collResId,
+			int16 *collIndex, bool mono = true) = 0;
 	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
-			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex) = 0;
+			char inpType, int16 *pTotTime, int16 *collResId,
+			int16 *collIndex, bool mono = true) = 0;
 	virtual int16 checkCollisions(byte handleMouse, int16 deltaTime,
 			int16 *pResId, int16 *pResIndex) = 0;
 
@@ -245,10 +247,12 @@ public:
 			uint16 funcEnter, uint16 funcLeave, uint16 funcSub = 0);
 	virtual void collisionsBlock(void);
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
-			InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
+			InputDesc *inpDesc, int16 *collResId,
+			int16 *collIndex, bool mono = true);
 	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
-			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex);
+			char inpType, int16 *pTotTime, int16 *collResId,
+			int16 *collIndex, bool mono = true);
 	virtual int16 checkCollisions(byte handleMouse, int16 deltaTime,
 			int16 *pResId, int16 *pResIndex);
 
@@ -274,10 +278,12 @@ public:
 			uint16 funcEnter, uint16 funcLeave, uint16 funcSub = 0);
 	virtual void collisionsBlock(void);
 	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
-			InputDesc *inpDesc, int16 *collResId, int16 *collIndex);
+			InputDesc *inpDesc, int16 *collResId,
+			int16 *collIndex, bool mono = true);
 	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
-			char inpType, int16 *pTotTime, int16 *collResId, int16 *collIndex);
+			char inpType, int16 *pTotTime, int16 *collResId,
+			int16 *collIndex, bool mono = true);
 	virtual int16 checkCollisions(byte handleMouse, int16 deltaTime,
 			int16 *pResId, int16 *pResIndex);
 

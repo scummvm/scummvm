@@ -667,7 +667,7 @@ void Game_v6::collisionsBlock(void) {
 	do {
 		if (var_1C != 0) {
 			key = multiEdit(deltaTime, index, &curEditIndex, descArray,
-					&activeCollResId, &activeCollIndex);
+					&activeCollResId, &activeCollIndex, false);
 
 			WRITE_VAR(55, curEditIndex);
 			if (key == 0x1C0D) {
