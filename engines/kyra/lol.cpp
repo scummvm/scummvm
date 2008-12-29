@@ -111,7 +111,6 @@ Common::Error LoLEngine::go() {
 		setupPrologueData(false);
 	}
 
-	setupPrologueData(true);
 	preInit();
 
 	int processSelection = -1;
@@ -120,8 +119,8 @@ Common::Error LoLEngine::go() {
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->fadePalette(_screen->getPalette(0), 0x1E);
 
+		_eventList.clear();
 		int selection = mainMenu();
-		_screen->clearPage(0);
 
 		switch (selection) {
 		case 0:		// New game
@@ -129,10 +128,14 @@ Common::Error LoLEngine::go() {
 			break;
 
 		case 1:		// Show intro
+			memset(_screen->getPalette(0), 0, 768);
+			_screen->fadePalette(_screen->getPalette(0), 0x54);
+
+			setupPrologueData(true);
 			_screen->hideMouse();
 			showIntro();
 			_screen->showMouse();
-			
+			setupPrologueData(true);
 			break;
 
 		case 2:		// "Lore of the Lands"
@@ -158,6 +161,8 @@ Common::Error LoLEngine::go() {
 		memset(_screen->getPalette(0), 0, 768);
 		_screen->fadePalette(_screen->getPalette(0), 0x54);
 
+		_screen->clearPage(0);
+
 		_sound->loadSoundFile("LOREINTR");
 		_sound->playTrack(6);
 		/*int character = */chooseCharacter();
@@ -167,8 +172,6 @@ Common::Error LoLEngine::go() {
 		//XXX
 	}
 
-	setupPrologueData(false);
-
 	return Common::kNoError;
 }
 
@@ -177,7 +180,9 @@ Common::Error LoLEngine::go() {
 void LoLEngine::preInit() {
 	debugC(9, kDebugLevelMain, "LoLEngine::preInit()");
 
-	_res->loadFileList("FILEDATA.FDT");
+	if (!_res->loadFileList("FILEDATA.FDT"))
+		error("Couldn't load file list: 'FILEDATA.FDT'");
+
 	_screen->loadFont(Screen::FID_9_FNT, "FONT9P.FNT");
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6P.FNT");
 
@@ -310,8 +315,6 @@ uint8 *LoLEngine::getTableEntry(uint8 *buffer, uint16 id) {
 void LoLEngine::setupPrologueData(bool load) {
 	debugC(9, kDebugLevelMain, "LoLEngine::setupPrologueData(%d)", load);
 
-	_res->unloadAllPakFiles();
-
 	static const char * const fileListCD[] = {
 		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK", "INTRO1.PAK",
 		"INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "INTRO5.PAK",
@@ -319,11 +322,11 @@ void LoLEngine::setupPrologueData(bool load) {
 	};
 
 	static const char * const fileListFloppyExtracted[] = {
-		"general.pak", "intro.pak", "introvoc.pak", 0
+		"INTRO.PAK", "INTROVOC.PAK", 0
 	};
 
 	static const char * const fileListFloppy[] = {
-		"general.pak", "intro.pak", "introvoc.cmp", 0
+		"INTRO.PAK", "INTROVOC.CMP", 0
 	};
 
 	const char * const *fileList = _flags.isTalkie ? fileListCD : 
@@ -353,11 +356,6 @@ void LoLEngine::setupPrologueData(bool load) {
 	_screen->clearPage(3);
 	
 	if (load) {
-		if (_flags.isTalkie) {
-			_res->loadPakFile("startup.pak");
-			_res->loadPakFile("general.pak");
-		}
-
 		_chargenWSA = new WSAMovie_v2(this, _screen);
 		assert(_chargenWSA);
 

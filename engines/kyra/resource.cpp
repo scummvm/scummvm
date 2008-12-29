@@ -68,23 +68,13 @@ bool Resource::reset() {
 
 		if (_vm->gameFlags().isTalkie) {
 			// List of files in the talkie version, which can never be unload.
-			static const char *list[] = {
+			static const char * const list[] = {
 				"ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "FINALE.PAK", "INTRO1.PAK", "INTRO2.PAK",
 				"INTRO3.PAK", "INTRO4.PAK", "MISC.PAK",	"SND.PAK", "STARTUP.PAK", "XMI.PAK",
-				"CAVE.APK", "DRAGON1.APK", "DRAGON2.APK", "LAGOON.APK"
+				"CAVE.APK", "DRAGON1.APK", "DRAGON2.APK", "LAGOON.APK", 0
 			};
 
-			for (uint i = 0; i < ARRAYSIZE(list); ++i) {
-				Common::ArchiveMemberPtr file = _files.getMember(list[i]);
-				if (!file)
-					error("Couldn't find PAK file '%s'", list[i]);
-
-				Common::Archive *archive = loadArchive(list[i], file);
-				if (archive)
-					_protectedFiles.add(list[i], archive, 0, false);
-				else
-					error("Couldn't load PAK file '%s'", list[i]);
-			}
+			loadProtectedFiles(list);
 		} else {
 			Common::ArchiveMemberList files;
 
@@ -132,11 +122,14 @@ bool Resource::reset() {
 	} else if (_vm->game() == GI_LOL) {
 		if (_vm->gameFlags().useInstallerPackage)
 			_files.add("installer", loadInstallerArchive("WESTWOOD", "%d", 0), 2, false);
-		
-		// mouse pointer, fonts, etc. required for initializing
-		loadPakFile("GENERAL.PAK");
-		if (_vm->gameFlags().isTalkie)
-			loadPakFile("STARTUP.PAK");
+
+		if (!_vm->gameFlags().isTalkie) {
+			static const char * const list[] = {
+				"GENERAL.PAK", "STARTUP.PAK", 0
+			};
+
+			loadProtectedFiles(list);
+		}
 	} else {
 		error("Unknown game id: %d", _vm->game());
 		return false;
@@ -216,6 +209,22 @@ bool Resource::loadFileList(const char * const *filelist, uint32 numFiles) {
 			error("couldn't load file '%s'", filelist[numFiles]);
 			return false;
 		}
+	}
+
+	return true;
+}
+
+bool Resource::loadProtectedFiles(const char * const * list) {
+	for (uint i = 0; list[i]; ++i) {
+		Common::ArchiveMemberPtr file = _files.getMember(list[i]);
+		if (!file)
+			error("Couldn't find PAK file '%s'", list[i]);
+
+		Common::Archive *archive = loadArchive(list[i], file);
+		if (archive)
+			_protectedFiles.add(list[i], archive, 0, false);
+		else
+			error("Couldn't load PAK file '%s'", list[i]);
 	}
 
 	return true;

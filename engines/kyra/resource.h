@@ -88,6 +88,8 @@ protected:
 	Common::Archive *loadArchive(const Common::String &name, Common::SharedPtr<Common::ArchiveMember> member);
 	Common::Archive *loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset);
 
+	bool loadProtectedFiles(const char * const * list);
+
 	void initializeLoaders();
 
 	typedef Common::List<Common::SharedPtr<ResArchiveLoader> > LoaderList;
