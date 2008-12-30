@@ -162,7 +162,7 @@ void Gfx::loadGfxObjMask(const char *name, GfxObj *obj) {
 	Common::Rect rect;
 	obj->getRect(0, rect);
 	obj->_mask.create(rect.width(), rect.height());
-	_vm->_disk->loadMask(_tokens[1], obj->_mask);
+	_vm->_disk->loadMask(name, obj->_mask);
 	obj->_hasMask = true;
 }
 
