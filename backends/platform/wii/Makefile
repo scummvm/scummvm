@@ -63,6 +63,7 @@ RANLIB  = $(PREFIX)ranlib
 STRIP   = $(PREFIX)strip -g
 MKDIR   = mkdir -p
 RM      = rm -f
+RM_REC  = rm -rf
 CP      = cp -f
 
 ifeq ($(GAMECUBE),1)
@@ -147,12 +148,12 @@ $(TARGET).elf: $(OBJS)
 clean: clean-wii
 
 clean-wii:
-	@-$(RM) $(TARGET).elf $(TARGET).elf.map $(TARGET).dol
+	@$(RM) $(TARGET).elf $(TARGET).elf.map $(TARGET).dol
 
 distclean: distclean-wii
 
 distclean-wii:
-	@-$(RM) dist
+	@$(RM_REC) dist
 
 upload: $(TARGET).dol
 ifeq ($(GAMECUBE),1)
