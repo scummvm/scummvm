@@ -165,6 +165,9 @@ Common::Error GroovieEngine::go() {
 	
 	checkCD();
 
+	// Game timer counter
+	uint16 tmr = 0;
+
 	// Initialize the CD
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
@@ -217,9 +220,17 @@ Common::Error GroovieEngine::go() {
 		}
 
 		if (_waitingForInput) {
-			// Still waiting for input, just update the mouse and wait a bit more
+			// Still waiting for input, just update the mouse, game timer and then wait a bit more
 			_cursorMan->animate();
 			_system->updateScreen();
+			tmr++;
+			// Wait a little bit between increments.  While mouse is moving, this triggers 
+			// only negligably slower.
+			if (tmr > 4) {
+				_script.timerTick();
+				tmr = 0;
+			}
+
 			_system->delayMillis(50);
 		} else if (_graphicsMan->isFading()) {
 			// We're waiting for a fading to end, let the CPU rest

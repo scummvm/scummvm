@@ -108,6 +108,10 @@ void Script::setDebugger(Debugger *debugger) {
 	_debugger = debugger;
 }
 
+void Script::timerTick() {
+	setVariable(0x103, _variables[0x103] + 1);
+}
+
 bool Script::loadScript(Common::String filename) {
 	// Try to open the script file
 	Common::File scriptfile;

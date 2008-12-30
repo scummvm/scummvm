@@ -46,6 +46,8 @@ public:
 	void setDebugger(Debugger *debugger);
 	void setVariable(uint16 varnum, byte value);
 
+	void timerTick();
+
 	bool loadScript(Common::String scriptfile);
 	void directGameLoad(int slot);
 	void step();
