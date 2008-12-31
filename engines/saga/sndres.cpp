@@ -38,7 +38,7 @@
 #include "sound/wave.h"
 #include "sound/adpcm.h"
 #include "sound/aiff.h"
-//#include "sound/shorten.h"
+#include "sound/shorten.h"
 #include "sound/audiostream.h"
 
 namespace Saga {
@@ -370,12 +370,11 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		}
 		break;
 	case kSoundShorten:
-		/*
 		if (Audio::loadShortenFromStream(readS, size, rate, flags)) {
 			buffer.frequency = rate;
-			buffer.sampleBits = 16;
-			buffer.stereo = ((flags & Audio::Mixer::FLAG_STEREO) != 0);
-			buffer.isSigned = false;
+			buffer.sampleBits = (flags & Audio::Mixer::FLAG_16BITS) ? 16 : 8;
+			buffer.stereo = flags & Audio::Mixer::FLAG_STEREO;
+			buffer.isSigned = !(flags & Audio::Mixer::FLAG_UNSIGNED);
 			buffer.size = size;
 			if (onlyHeader) {
 				buffer.buffer = NULL;
@@ -385,7 +384,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			}
 			result = true;
 		}
-		*/
 		break;
 	case kSoundMP3:
 	case kSoundOGG:

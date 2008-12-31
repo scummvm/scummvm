@@ -625,6 +625,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\sound\shorten.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\shorten.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\sound\voc.cpp"
 				>
 			</File>

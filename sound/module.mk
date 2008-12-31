@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	mpu401.o \
 	musicplugin.o \
 	null.o \
+	shorten.o \
 	voc.o \
 	vorbis.o \
 	wave.o \
