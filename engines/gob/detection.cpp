@@ -373,9 +373,26 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"gob2",
 			"",
-			AD_ENTRY1("intro.stk", "a13ecb4f6d8fd881ebbcc02e45cb5475"),
+			AD_ENTRY1s("intro.stk", "a13ecb4f6d8fd881ebbcc02e45cb5475", 837275),
 			FR_FRA,
 			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		"intro"
+	},
+	{ // Supplied by koalet in bug report #2478585
+		{
+			"gob2",
+			"",
+			{
+				{"intro.stk", 0, "a13ecb4f6d8fd881ebbcc02e45cb5475", 837275},
+				{"musmac1.mid", 0, "7f96f491448c7a001b32df89cf8d2af2", 1658},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformMacintosh,
 			Common::ADGF_NO_FLAGS
 		},
 		kGameTypeGob2,
