@@ -120,7 +120,7 @@ protected:
 		DrawData parent;	//!< Parent DrawData item, for items that overlay. E.g. kButtonIdle -> kButtonHover
 	}
 	
-	static const kDrawDataDefaults[];
+	static kDrawDataDefaults[];
 
 
 	enum TextData {

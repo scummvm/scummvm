@@ -40,7 +40,7 @@ namespace GUI {
 /**********************************************************
  *	Data definitions for theme engine elements
  *********************************************************/
-const ThemeEngine::DrawDataInfo ThemeEngine::kDrawDataDefaults[] = {
+ThemeEngine::DrawDataInfo ThemeEngine::kDrawDataDefaults[] = {
 	{kDDMainDialogBackground,		"mainmenu_bg",		true,	kDDNone},
 	{kDDSpecialColorBackground,		"special_bg",		true,	kDDNone},
 	{kDDPlainColorBackground,		"plain_bg",			true,	kDDNone},
