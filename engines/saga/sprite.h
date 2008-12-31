@@ -49,9 +49,6 @@ struct SpriteList {
 	SpriteInfo *infoList;
 
 	void freeMem() {
-		if (!spriteListResourceId)
-			return;
-
 		for (int i = 0; i < spriteCount; i++) {
 			free(infoList[i].decodedBuffer);
 		}

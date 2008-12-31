@@ -215,14 +215,16 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 
 	// Main panel sprites
 	_vm->_sprite->loadList(_vm->getResourceDescription()->mainPanelSpritesResourceId, _mainPanel.sprites);
-	// Option panel sprites
-	_vm->_sprite->loadList(_vm->getResourceDescription()->optionPanelSpritesResourceId, _optionPanel.sprites);
-	// Save panel sprites
-	_vm->_sprite->loadList(_vm->getResourceDescription()->warningPanelSpritesResourceId, _savePanel.sprites);
-	// Load panel sprites
-	_vm->_sprite->loadList(_vm->getResourceDescription()->warningPanelSpritesResourceId, _loadPanel.sprites);
-	// Quit panel sprites
-	_vm->_sprite->loadList(_vm->getResourceDescription()->warningPanelSpritesResourceId, _quitPanel.sprites);
+	if (!(_vm->getFeatures() & GF_NON_INTERACTIVE)) {
+		// Option panel sprites
+		_vm->_sprite->loadList(_vm->getResourceDescription()->optionPanelSpritesResourceId, _optionPanel.sprites);
+		// Save panel sprites
+		_vm->_sprite->loadList(_vm->getResourceDescription()->warningPanelSpritesResourceId, _savePanel.sprites);
+		// Load panel sprites
+		_vm->_sprite->loadList(_vm->getResourceDescription()->warningPanelSpritesResourceId, _loadPanel.sprites);
+		// Quit panel sprites
+		_vm->_sprite->loadList(_vm->getResourceDescription()->warningPanelSpritesResourceId, _quitPanel.sprites);
+	}
 
 	if (_vm->getGameId() == GID_ITE) {
 		_vm->_sprite->loadList(_vm->getResourceDescription()->defaultPortraitsResourceId, _defPortraits);
