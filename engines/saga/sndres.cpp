@@ -183,7 +183,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	int size;
 	byte flags;
 	size_t voxSize;
-	const GameSoundInfo *soundInfo;
+	const GameSoundInfo *soundInfo = 0;
 	Common::File* file;
 
 	if (resourceId == (uint32)-1) {
@@ -240,7 +240,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			resourceType = kSoundAIFF;
 		} else if (!memcmp(header, "ajkg", 4) != 0) {
 			resourceType = kSoundShorten;
-		} else {
+		} else if (soundInfo) {
 			resourceType = soundInfo->resourceType;
 		}
 
@@ -269,43 +269,32 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	buffer.isBigEndian = _vm->isMacResources();
 	buffer.soundType = resourceType;
 	buffer.originalSize = 0;
+	buffer.stereo = false;
 
 	switch (resourceType) {
 	case kSoundPCM:
-		buffer.frequency = 22050;
-		buffer.isSigned = soundInfo->isSigned;
-		buffer.sampleBits = soundInfo->sampleBits;
-		buffer.size = soundResourceLength;
-		buffer.stereo = false;
-		if (onlyHeader) {
-			buffer.buffer = NULL;
-		} else {
-			buffer.buffer = (byte *) malloc(soundResourceLength);
-			readS.read(buffer.buffer, soundResourceLength);
-		}
-		result = true;
-		break;
 	case kSoundMacPCM:
+		{
+		int soundOffset = (resourceType == kSoundMacPCM) ? 36 : 0;
 		buffer.frequency = 22050;
 		buffer.isSigned = soundInfo->isSigned;
 		buffer.sampleBits = soundInfo->sampleBits;
-		buffer.size = soundResourceLength - 36;
-		buffer.stereo = false;
+		buffer.size = soundResourceLength - soundOffset;
 		if (onlyHeader) {
 			buffer.buffer = NULL;
 		} else {
-			buffer.buffer = (byte *)malloc(buffer.size);
-
-			readS.seek(readS.pos() + 36);
+			buffer.buffer = (byte *) malloc(buffer.size);
+			if (soundOffset > 0)
+				readS.seek(soundOffset, SEEK_CUR);
 			readS.read(buffer.buffer, buffer.size);
 		}
 		result = true;
+		}
 		break;
 	case kSoundVOX:
 		buffer.frequency = 22050;
 		buffer.isSigned = soundInfo->isSigned;
 		buffer.sampleBits = soundInfo->sampleBits;
-		buffer.stereo = false;
 		buffer.size = soundResourceLength * 4;
 		if (onlyHeader) {
 			buffer.buffer = NULL;
@@ -325,7 +314,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		if (data) {
 			buffer.frequency = rate;
 			buffer.sampleBits = 8;
-			buffer.stereo = false;
 			buffer.isSigned = false;
 			buffer.size = size;
 			if (onlyHeader) {
@@ -340,9 +328,9 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	case kSoundWAV:
 		if (Audio::loadWAVFromStream(readS, size, rate, flags)) {
 			buffer.frequency = rate;
-			buffer.sampleBits = 16;
-			buffer.stereo = ((flags & Audio::Mixer::FLAG_STEREO) != 0);
-			buffer.isSigned = true;
+			buffer.sampleBits = (flags & Audio::Mixer::FLAG_16BITS) ? 16 : 8;
+			buffer.stereo = flags & Audio::Mixer::FLAG_STEREO;
+			buffer.isSigned = !(flags & Audio::Mixer::FLAG_UNSIGNED);
 			buffer.size = size;
 			if (onlyHeader) {
 				buffer.buffer = NULL;
@@ -356,8 +344,8 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	case kSoundAIFF:
 		if (Audio::loadAIFFFromStream(readS, size, rate, flags)) {
 			buffer.frequency = rate;
-			buffer.sampleBits = 16;
-			buffer.stereo = ((flags & Audio::Mixer::FLAG_STEREO) != 0);
+			buffer.sampleBits = (flags & Audio::Mixer::FLAG_16BITS) ? 16 : 8;
+			buffer.stereo = flags & Audio::Mixer::FLAG_STEREO;
 			buffer.isSigned = true;
 			buffer.size = size;
 			if (onlyHeader) {
