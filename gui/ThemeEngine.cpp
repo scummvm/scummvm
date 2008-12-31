@@ -76,9 +76,7 @@ ThemeEngine::ThemeEngine(Common::String fileName, GraphicsMode mode) :
 }
 
 ThemeEngine::~ThemeEngine() {
-	freeRenderer();
-	freeScreen();
-	freeBackbuffer();
+	deinit();
 	unloadTheme();
 	delete _parser;
 	delete _themeEval;
@@ -86,6 +84,8 @@ ThemeEngine::~ThemeEngine() {
 
 	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i)
 		ImageMan.unregisterSurface(i->_key);
+
+	ImageMan.removeArchive(_themeFileName);
 }
 
 
@@ -139,13 +139,14 @@ const char *ThemeEngine::findModeConfigName(GraphicsMode mode) {
  *********************************************************/
 bool ThemeEngine::init() {
 	// reset everything and reload the graphics
+	if (_initOk)
+		_system->hideOverlay();
 	deinit();
 	setGraphicsMode(_graphicsMode);
 
 	if (_screen->pixels && _backBuffer->pixels) {
 		_initOk = true;
 		clearAll();
-		resetDrawArea();
 	}
 
 	if (_screen->w >= 400 && _screen->h >= 300) {
@@ -162,36 +163,20 @@ bool ThemeEngine::init() {
 }
 
 void ThemeEngine::deinit() {
-	if (_initOk) {
-		_system->hideOverlay();
-		freeRenderer();
-		freeScreen();
-		freeBackbuffer();
-		_initOk = false;
-	}
-}
-
-void ThemeEngine::freeRenderer() {
 	delete _vectorRenderer;
 	_vectorRenderer = 0;
-}
-
-void ThemeEngine::freeBackbuffer() {
-	if (_backBuffer != 0) {
-		_backBuffer->free();
-		delete _backBuffer;
-		_backBuffer = 0;
-	}
-}
-
-void ThemeEngine::freeScreen() {
 	if (_screen != 0) {
 		_screen->free();
 		delete _screen;
 		_screen = 0;
 	}
+	if (_backBuffer != 0) {
+		_backBuffer->free();
+		delete _backBuffer;
+		_backBuffer = 0;
+	}
+	_initOk = false;
 }
-
 
 void ThemeEngine::unloadTheme() {
 	if (!_themeOk)
@@ -238,7 +223,6 @@ void ThemeEngine::refresh() {
 
 void ThemeEngine::enable() {
 	init();
-	resetDrawArea();
 
 	if (_useCursor)
 		setUpCursor();
@@ -265,13 +249,18 @@ void ThemeEngine::screenInit(bool backBuffer) {
 	uint32 height = _system->getOverlayHeight();
 
 	if (backBuffer) {
-		freeBackbuffer();
-		_backBuffer = new Graphics::Surface;
+		if (_backBuffer)
+			_backBuffer->free();
+		else
+			_backBuffer = new Graphics::Surface;
 		_backBuffer->create(width, height, sizeof(PixelType));
 	}
 
-	freeScreen();
-	_screen = new Graphics::Surface;
+
+	if (_screen)
+		_screen->free();
+	else
+		_screen = new Graphics::Surface;
 	_screen->create(width, height, sizeof(PixelType));
 	_system->clearOverlay();
 }
@@ -290,7 +279,7 @@ void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 		error("Invalid graphics mode");
 	}
 
-	freeRenderer();
+	delete _vectorRenderer;
 	_vectorRenderer = Graphics::createRenderer(mode);
 	_vectorRenderer->setSurface(_screen);
 }
@@ -513,9 +502,6 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 
 #endif
 	} else if (node.isDirectory()) {
-
-//		FIXME: This warning makes no sense whatsoever. Who added this?
-//		warning("Don't know how to open theme '%s'", themeName.c_str());
 		archive = new Common::FSDirectory(node);
 	}
 
@@ -1073,7 +1059,7 @@ ThemeEngine::TextData ThemeEngine::getTextData(DrawData ddId) {
 
 const Graphics::Font *ThemeEngine::loadFontFromArchive(const Common::String &filename) {
 	Common::Archive *arch = 0;
-	const Graphics::NewFont *font = 0;
+	const Graphics::Font *font = 0;
 
 	Common::FSNode node(getThemeFileName());
 

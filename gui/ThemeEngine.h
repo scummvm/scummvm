@@ -113,12 +113,14 @@ protected:
 	 * Default values for each DrawData item.
 	 * @see kDrawDataDefaults[] for implementation.
 	 */
-	static const struct DrawDataInfo {
-		DrawData id;		/** The actual ID of the DrawData item. */
-		const char *name;	/** The name of the DrawData item as it appears in the Theme Description files */
-		bool buffer;		/** Sets whether this item is buffered on the backbuffer or drawn directly to the screen. */
-		DrawData parent;	/** Parent DrawData item, for items that overlay. E.g. kButtonIdle -> kButtonHover */
-	} kDrawDataDefaults[];
+	struct DrawDataInfo {
+		DrawData id;		//!< The actual ID of the DrawData item.
+		const char *name;	//!< The name of the DrawData item as it appears in the Theme Description files
+		bool buffer;		//!< Sets whether this item is buffered on the backbuffer or drawn directly to the screen.
+		DrawData parent;	//!< Parent DrawData item, for items that overlay. E.g. kButtonIdle -> kButtonHover
+	}
+	
+	static const kDrawDataDefaults[];
 
 
 	enum TextData {
@@ -205,14 +207,15 @@ public:
 		kImageLogoSmall		//!< ScummVM logo used in the GMM
 	};
 
-	/** Graphics mode enumeration.
-	 *	Each item represents a set of BPP and Renderer modes for a given
+	/**
+	 * Graphics mode enumeration.
+	 * Each item represents a set of BPP and Renderer modes for a given
 	 * surface.
 	 */
 	enum GraphicsMode {
-		kGfxDisabled = 0,	/** No GFX */
-		kGfxStandard16bit,	/** 2BPP with the standard (aliased) renderer. */
-		kGfxAntialias16bit	/** 2BPP with the optimized AA renderer. */
+		kGfxDisabled = 0,	//!< No GFX
+		kGfxStandard16bit,	//!< 2BPP with the standard (aliased) renderer.
+		kGfxAntialias16bit	//!< 2BPP with the optimized AA renderer.
 	};
 
 	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
@@ -238,13 +241,6 @@ public:
 	/** Default destructor */
 	~ThemeEngine();
 
-	/**
-	 *	VIRTUAL METHODS
-	 *	This is the implementation of the GUI::Theme API to allow
-	 *	the ThemeEngine class to be plugged in as any other GUI
-	 *	theme. In fact, the renderer works like any other GUI theme,
-	 *	but supports extensive customization of the drawn widgets.
-	 */
 	bool init();
 	void deinit();
 	void clearAll();
@@ -271,28 +267,15 @@ public:
 	 */
 	void updateScreen();
 
-	/** Since the rendering pipeline changes, closing all dialogs causes no effect
-		TODO: remove this from the original GUI::Theme API */
-	void closeAllDialogs() {}
-
-	/** Drawing area has been removed: it was too hackish. A workaround is on the works.
-		TODO: finish the workaround for the credits dialog
-		TODO: remove this from the original GUI::Theme API */
-	void resetDrawArea() {}
-
 
 	/**
 	 *	FONT MANAGEMENT METHODS
 	 */
 
 	TextData fontStyleToData(FontStyle font) const {
-		switch (font) {
-			case kFontStyleNormal:
-				return kTextDataNormalFont;
-
-			default:
-				return kTextDataDefault;
-		}
+		if (font == kFontStyleNormal)
+			return kTextDataNormalFont;
+		return kTextDataDefault;
 	}
 
 	const Graphics::Font *getFont(FontStyle font = kFontStyleBold) const;
@@ -544,35 +527,12 @@ protected:
 	void unloadTheme();
 
 	/**
-	 * Not implemented yet.
-	 * TODO: reload themes, reload the renderer, recheck everything
-	 */
-	void screenChange() {
-		error("Screen Changes are not supported yet. Fix this!");
-	}
-
-	/**
 	 *	Actual Dirty Screen handling function.
 	 *	Handles all the dirty squares in the list, merges and optimizes
 	 *	them when possible and draws them to the screen.
 	 *	Called from updateScreen()
 	 */
 	void renderDirtyScreen();
-
-	/**
-	 *	Frees the vector renderer.
-	 */
-	void freeRenderer();
-
-	/**
-	 * Frees the Back buffer surface, only if it's available.
-	 */
-	void freeBackbuffer();
-
-	/**
-	 * Frees the main screen drawing surface, only if it's available.
-	 */
-	void freeScreen();
 
 	TextData getTextData(DrawData ddId);
 
@@ -671,8 +631,10 @@ protected:
 	Common::String _fontName;
 	const Graphics::Font *_font;
 
-	/** Array of all the DrawData elements than can be drawn to the screen.
-		Must be full so the renderer can work. */
+	/**
+	 * Array of all the DrawData elements than can be drawn to the screen.
+	 * Must be full so the renderer can work.
+	 */
 	WidgetDrawData *_widgets[kDrawDataMAX];
 
 	/** Array of all the text fonts that can be drawn. */
@@ -689,11 +651,11 @@ protected:
 	/** Queue with all the drawing that must be done to the screen */
 	Common::List<ThemeItem *> _screenQueue;
 
-	bool _initOk; /** Class and renderer properly initialized */
-	bool _themeOk; /** Theme data successfully loaded. */
-	bool _enabled; /** Whether the Theme is currently shown on the overlay */
+	bool _initOk; //!< Class and renderer properly initialized
+	bool _themeOk; //!< Theme data successfully loaded.
+	bool _enabled; //!< Whether the Theme is currently shown on the overlay
 
-	Common::String _themeName; /** Name of the currently loaded theme */
+	Common::String _themeName; //!< Name of the currently loaded theme
 	Common::String _themeFileName;
 
 	/** Custom Cursor Management */
@@ -702,7 +664,9 @@ protected:
 	bool _useCursor;
 	int _cursorHotspotX, _cursorHotspotY;
 	int _cursorTargetScale;
-	enum { MAX_CURS_COLORS = 255 };
+	enum {
+		MAX_CURS_COLORS = 255
+	};
 	byte *_cursor;
 	bool _needPaletteUpdates;
 	uint _cursorWidth, _cursorHeight;
