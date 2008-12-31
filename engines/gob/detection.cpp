@@ -1022,6 +1022,23 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro"
 	},
+	{ // Supplied by koalet in bug report #2479034
+		{
+			"lostintime",
+			"",
+			{
+				{"intro.stk", 0, "af98bcdc70e1f1c1635577fd726fe7f1", 3937310},
+				{"musmac1.mid", 0, "ae7229bb09c6abe4e60a2768b24bc890", 9398},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformMacintosh,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdlib,
+		"intro"
+	},
 	{
 		{
 			"lostintime",
@@ -2141,6 +2158,19 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
+			kPlatformMacintosh,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdlib,
+		"intro"
+	},
+	{
+		{
+			"lostintime",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
@@ -2175,8 +2205,9 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[ 7], { "intro.stk", "mus_gob3.lic", 0 } },
 	{ &fallbackDescs[ 8], { "intro.stk", "woodruff.itk", 0 } },
 	{ &fallbackDescs[ 9], { "intro.stk", "commun1.itk", 0 } },
-	{ &fallbackDescs[10], { "intro.stk", "commun1.itk", "lost.lic", 0 } },
-	{ &fallbackDescs[11], { "intro.stk", "cd1.itk", "objet1.itk", 0 } },
+	{ &fallbackDescs[10], { "intro.stk", "commun1.itk", "musmac1.mid", 0 } },
+	{ &fallbackDescs[11], { "intro.stk", "commun1.itk", "lost.lic", 0 } },
+	{ &fallbackDescs[12], { "intro.stk", "cd1.itk", "objet1.itk", 0 } },
 	{ 0, { 0 } }
 };
 
