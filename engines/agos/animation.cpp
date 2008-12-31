@@ -39,6 +39,8 @@
 #include "sound/audiostream.h"
 #include "sound/wave.h"
 
+#include "gui/message.h"
+
 namespace AGOS {
 
 MoviePlayer::MoviePlayer(AGOSEngine *vm)
@@ -532,6 +534,12 @@ MoviePlayer *makeMoviePlayer(AGOSEngine *vm, const char *name) {
 	if (Common::File::exists(filename)) {
 		return new MoviePlayerSMK(vm, baseName);
 	}
+
+	char buf[60];
+
+	sprintf(buf, "Cutscene file '%s' not found", baseName);
+	GUI::MessageDialog dialog(buf, "OK");
+	dialog.runModal();
 
 	return NULL;
 }
