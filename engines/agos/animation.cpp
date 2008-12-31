@@ -537,7 +537,7 @@ MoviePlayer *makeMoviePlayer(AGOSEngine *vm, const char *name) {
 
 	char buf[60];
 
-	sprintf(buf, "Cutscene file '%s' not found", baseName);
+	sprintf(buf, "Cutscene file '%s' not found!", baseName);
 	GUI::MessageDialog dialog(buf, "OK");
 	dialog.runModal();
 
