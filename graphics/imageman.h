@@ -41,28 +41,29 @@ public:
 	~ImageManager();
 
 	/**
-	 * adds an .zip archive to the pool where the ImageManager searches
-	 * for image files
+	 * Adds a directory or .zip archive to the list of places where
+	 * the ImageManager searches for image files.
 	 *
-	 * @param name the name of the archive (has to be full path)
+	 * @param name an FSNode pointing to the archive
 	 * @return true on success and false on failure
 	 */
 	bool addArchive(const Common::String &name);
 
 	/**
-	 * deletes an .zip archive from the pool where the Image Manager searches
-	 * for image files
+	 * Removes a directory or .zip archive from the the list of places where
+	 * the ImageManager searches for image files.
 	 *
 	 * @param name the name of the archive
 	 */
 	void removeArchive(const Common::String &name);
 
 	/**
-	 * registers a surface to the ImageManager.
-	 * surf->free(), also delete surf, will be called when the ImageManager will
-	 * be destroyed or if ImageManager::unregisterSurface is called.
-	 * if the parameter 'surf' is 0 the Manger will try to load an image with
-	 * the filename 'name'
+	 * Registers a surface with the ImageManager.
+	 * The ImageManager takes over ownership of the surface, in particular
+	 * when the surface gets unregistered, Surface::free() is invoked and
+	 * the surface gets deleted by the ImageManager.
+	 * If the parameter 'surf' is 0 the ImageManager tries to load an image with
+	 * the filename 'name'.
 	 *
 	 * @param name the name of the new handle
 	 * @param surf the surface which should be associated to the given name
@@ -71,8 +72,9 @@ public:
 	bool registerSurface(const Common::String &name, Surface *surf);
 
 	/**
-	 * unregisters a surface, after this the returned surface from
-	 * getSurface should NOT be used anymore
+	 * Unregisters and delete a surface which was previously registered
+	 * with the ImageManager. After unregistering a surface, it must NOT
+	 * be used anymore.
 	 *
 	 * @param name the handle
 	 * @return true on success, false on failure
@@ -80,9 +82,9 @@ public:
 	bool unregisterSurface(const Common::String &name);
 
 	/**
-	 * gets a surface registered to a handle
+	 * Gets a surface registered to a certain name.
 	 *
-	 * @param name the name of the handle
+	 * @param name the name of the surface
 	 * @return returns an pointer to an Surface object or 0 on failure
 	 */
 	Surface *getSurface(const Common::String &name);
