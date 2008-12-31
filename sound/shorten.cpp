@@ -393,8 +393,9 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 
 
 				// Do the wrap
-				for (i = -wrap; i < 0; i++)
-					buffer[curChannel][i] = buffer[curChannel][i + blockSize];
+				// FIXME: removed for now, as this corrupts the heap
+				//for (int32 k = -wrap; k < 0; k++)
+				//	buffer[curChannel][k] = buffer[curChannel][k + blockSize];
 
 				// Fix bitshift
 				if (bitShift > 0) {
