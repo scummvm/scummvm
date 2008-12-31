@@ -135,10 +135,12 @@ protected:
 		kTextDataMAX
 	};
 
-	static const struct TextDataInfo {
+	struct TextDataInfo {
 		TextData id;
 		const char *name;
-	} kTextDataDefaults[];
+	};
+	
+	static const TextDataInfo kTextDataDefaults[];
 
 public:
 	//! Vertical alignment of the text.
@@ -268,9 +270,8 @@ public:
 	void updateScreen();
 
 
-	/**
-	 *	FONT MANAGEMENT METHODS
-	 */
+	/** @name FONT MANAGEMENT METHODS */
+	//@{
 
 	TextData fontStyleToData(FontStyle font) const {
 		if (font == kFontStyleNormal)
@@ -286,10 +287,12 @@ public:
 
 	int getCharWidth(byte c, FontStyle font = kFontStyleBold) const;
 
+	//@}
 
-	/**
-	 *	WIDGET DRAWING METHODS
-	 */
+
+	/** @name WIDGET DRAWING METHODS */
+	//@{
+
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints,
 		WidgetBackground background = kWidgetBackgroundPlain, WidgetStateInfo state = kStateEnabled);
 
@@ -325,6 +328,10 @@ public:
 	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold);
 
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled);
+
+	//@}
+
+
 
 	/**
 	 *	Actual implementation of a Dirty Rect drawing routine.
@@ -657,6 +664,7 @@ protected:
 
 	Common::String _themeName; //!< Name of the currently loaded theme
 	Common::String _themeFileName;
+	Common::Archive *_themeArchive;
 
 	/** Custom Cursor Management */
 	void setUpCursor();

@@ -33,7 +33,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
-#include "graphics/imageman.h"
+#include "graphics/imagedec.h"
 #include "graphics/cursorman.h"
 #include "graphics/VectorRenderer.h"
 
@@ -72,6 +72,7 @@ ThemeEngine::ThemeEngine(Common::String fileName, GraphicsMode mode) :
 
 	_graphicsMode = mode;
 	_themeFileName = fileName;
+	_themeArchive = 0;
 	_initOk = false;
 }
 
@@ -81,14 +82,7 @@ ThemeEngine::~ThemeEngine() {
 	delete _parser;
 	delete _themeEval;
 	delete[] _cursor;
-
-	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i)
-		ImageMan.unregisterSurface(i->_key);
-
-	ImageMan.removeArchive(_themeFileName);
 }
-
-
 
 
 
@@ -192,10 +186,18 @@ void ThemeEngine::unloadTheme() {
 		_texts[i] = 0;
 	}
 
-	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i)
-		ImageMan.unregisterSurface(i->_key);
-
-	ImageMan.removeArchive(_themeFileName);
+	// Release all graphics surfaces
+	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
+		Graphics::Surface *surf = i->_value;
+		if (surf) {
+			surf->free();
+			delete surf;
+		}
+	}
+	_bitmaps.clear();
+	
+	delete _themeArchive;
+	_themeArchive = 0;
 
 	_themeEval->reset();
 	_themeOk = false;
@@ -387,13 +389,27 @@ bool ThemeEngine::addFont(const Common::String &fontId, const Common::String &fi
 }
 
 bool ThemeEngine::addBitmap(const Common::String &filename) {
-	if (_bitmaps.contains(filename))
-		ImageMan.unregisterSurface(filename);
+	// Release any existing surface with that name.
+	Graphics::Surface *surf = _bitmaps[filename];
+	if (surf) {
+		surf->free();
+		delete surf;
+	}
+	
+	// Now try to load the bitmap via the ImageDecoder class.
+	surf = Graphics::ImageDecoder::loadFile(filename);
+	if (!surf && _themeArchive) {
+		Common::SeekableReadStream *stream = _themeArchive->openFile(filename);
+		if (stream) {
+			surf = Graphics::ImageDecoder::loadFile(*stream);
+			delete stream;
+		}
+	}
 
-	ImageMan.registerSurface(filename, 0);
-	_bitmaps[filename] = ImageMan.getSurface(filename);
-
-	return _bitmaps[filename] != 0;
+	// Store the surface into our hashmap (attention, may store NULL entries!)
+	_bitmaps[filename] = surf;
+	
+	return surf != 0;
 }
 
 bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
@@ -423,7 +439,7 @@ bool ThemeEngine::loadTheme(const Common::String &fileName) {
 
 	bool tryAgain = false;
 	if (fileName != "builtin") {
-		ImageMan.addArchive(fileName);
+		// Load the archive containing image and XML data
 		if (!loadThemeXML(fileName)) {
 			warning("Could not parse custom theme '%s'. Falling back to default theme", fileName.c_str());
 			tryAgain = true;	// Fall back to default builtin theme
@@ -530,11 +546,14 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 		return false;
 	}
 
+	_themeArchive = archive;
+
 	// Loop over all STX files
 	for (Common::ArchiveMemberList::iterator i = members.begin(); i != members.end(); ++i) {
 		assert((*i)->getName().hasSuffix(".stx"));
 
 		if (_parser->loadStream((*i)->open()) == false) {
+			_themeArchive = 0;
 			delete archive;
 			warning("Failed to load STX file '%s'", (*i)->getDisplayName().c_str());
 			_parser->close();
@@ -542,6 +561,7 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 		}
 
 		if (_parser->parse() == false) {
+			_themeArchive = 0;
 			delete archive;
 			warning("Failed to parse STX file '%s'", (*i)->getDisplayName().c_str());
 			_parser->close();
@@ -551,7 +571,6 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 		_parser->close();
 	}
 
-	delete archive;
 	assert(!_themeName.empty());
 	return true;
 }
