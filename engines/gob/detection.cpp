@@ -2029,6 +2029,19 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{
 		{
+			"gob2mac",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformMacintosh,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		"intro"
+	},
+	{
+		{
 			"gob2cd",
 			"unknown",
 			AD_ENTRY1(0, 0),
@@ -2138,14 +2151,15 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[ 1], { "intro.stk", "gob.lic", 0 } },
 	{ &fallbackDescs[ 2], { "intro.stk", 0 } },
 	{ &fallbackDescs[ 2], { "intro.stk", "disk2.stk", "disk3.stk", 0 } },
-	{ &fallbackDescs[ 3], { "intro.stk", "gobnew.lic", 0 } },
-	{ &fallbackDescs[ 4], { "intro.stk", "scaa.imd", "scba.imd", "scbf.imd", 0 } },
-	{ &fallbackDescs[ 5], { "intro.stk", "imd.itk", 0 } },
-	{ &fallbackDescs[ 6], { "intro.stk", "mus_gob3.lic", 0 } },
-	{ &fallbackDescs[ 7], { "intro.stk", "woodruff.itk", 0 } },
-	{ &fallbackDescs[ 8], { "intro.stk", "commun1.itk", 0 } },
-	{ &fallbackDescs[ 9], { "intro.stk", "commun1.itk", "lost.lic", 0 } },
-	{ &fallbackDescs[10], { "intro.stk", "cd1.itk", "objet1.itk", 0 } },
+	{ &fallbackDescs[ 3], { "intro.stk", "disk2.stk", "disk3.stk", "musmac1.mid", 0 } },
+	{ &fallbackDescs[ 4], { "intro.stk", "gobnew.lic", 0 } },
+	{ &fallbackDescs[ 5], { "intro.stk", "scaa.imd", "scba.imd", "scbf.imd", 0 } },
+	{ &fallbackDescs[ 6], { "intro.stk", "imd.itk", 0 } },
+	{ &fallbackDescs[ 7], { "intro.stk", "mus_gob3.lic", 0 } },
+	{ &fallbackDescs[ 8], { "intro.stk", "woodruff.itk", 0 } },
+	{ &fallbackDescs[ 9], { "intro.stk", "commun1.itk", 0 } },
+	{ &fallbackDescs[10], { "intro.stk", "commun1.itk", "lost.lic", 0 } },
+	{ &fallbackDescs[11], { "intro.stk", "cd1.itk", "objet1.itk", 0 } },
 	{ 0, { 0 } }
 };
 
