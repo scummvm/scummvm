@@ -118,9 +118,9 @@ protected:
 		const char *name;	//!< The name of the DrawData item as it appears in the Theme Description files
 		bool buffer;		//!< Sets whether this item is buffered on the backbuffer or drawn directly to the screen.
 		DrawData parent;	//!< Parent DrawData item, for items that overlay. E.g. kButtonIdle -> kButtonHover
-	}
+	};
 	
-	static kDrawDataDefaults[];
+	static const DrawDataInfo kDrawDataDefaults[];
 
 
 	enum TextData {
