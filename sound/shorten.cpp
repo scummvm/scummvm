@@ -327,6 +327,9 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 						channelOffset = (channelOffset >> (bitShift - 1)) >> 1;
 				}
 
+				// FIXME: The original code in this bit tries to modify memory outside of the array (negative indices)
+				// in cases kCmdDiff1, kCmdDiff2 and kCmdDiff3
+				// I've removed those invalid writes, since they happen all the time (even when curChannel is 0)
 				switch (cmd) {
 					case kCmdZero:
 						for (i = 0; i < blockSize; i++)
@@ -373,6 +376,9 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 						for (i = 0; i < blockSize; i++) {
 							int32 sum = lpcqOffset;
 							for (j = 0; j < lpcNum; j++) {
+								// FIXME: The original code did an invalid memory access here
+								// (if i and j are 0, the array index requested is -1)
+								// I've removed those invalid writes, since they happen all the time (even when curChannel is 0)
 								if (i - j - 1 < 0)	// ignore invalid table/memory access
 									continue;
 								sum += lpc[j] * buffer[curChannel][i - j - 1];
@@ -429,6 +435,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 						for (i = 0; i < blockSize; i++) {
 							for (j = 0; j < channels; j++) {
 								int16 val = (int16)(MIN<int32>(buffer[j][i], limit) & 0xFFFF);
+								// values are written in LE
 								*pBuf++ = (byte) (val & 0xFF);
 								*pBuf++ = (byte) ((val >> 8) & 0xFF);
 							}
