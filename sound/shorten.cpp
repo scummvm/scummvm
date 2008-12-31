@@ -26,6 +26,8 @@
 // Based on etree's Shorten tool, version 3.6.1
 // http://etree.org/shnutils/shorten/
 
+// FIXME: This doesn't work yet correctly
+
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/stream.h"
@@ -335,15 +337,21 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 							buffer[curChannel][i] = gReader->getSRice(energy) + channelOffset;
 						break;
 					case kCmdDiff1:
-						for (i = 0; i < blockSize; i++)
+						gReader->getSRice(energy);	// i = 0 (to fix invalid table/memory access)
+						for (i = 1; i < blockSize; i++)
 							buffer[curChannel][i] = gReader->getSRice(energy) + buffer[curChannel][i - 1];
 						break;
 					case kCmdDiff2:
-						for (i = 0; i < blockSize; i++)
+						gReader->getSRice(energy);	// i = 0 (to fix invalid table/memory access)
+						gReader->getSRice(energy);	// i = 1 (to fix invalid table/memory access)
+						for (i = 2; i < blockSize; i++)
 							buffer[curChannel][i] = gReader->getSRice(energy) + 2 * buffer[curChannel][i - 1] - buffer[curChannel][i - 2];
 						break;
 					case kCmdDiff3:
-						for (i = 0; i < blockSize; i++)
+						gReader->getSRice(energy);	// i = 0 (to fix invalid table/memory access)
+						gReader->getSRice(energy);	// i = 1 (to fix invalid table/memory access)
+						gReader->getSRice(energy);	// i = 2 (to fix invalid table/memory access)
+						for (i = 3; i < blockSize; i++)
 							buffer[curChannel][i] = gReader->getSRice(energy) + 3 * (buffer[curChannel][i - 1] - buffer[curChannel][i - 2]) + buffer[curChannel][i - 3];
 						break;
 					case kCmdQLPC:
@@ -364,8 +372,11 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 
 						for (i = 0; i < blockSize; i++) {
 							int32 sum = lpcqOffset;
-							for (j = 0; j < lpcNum; j++)
+							for (j = 0; j < lpcNum; j++) {
+								if (i - j - 1 < 0)	// ignore invalid table/memory access
+									continue;
 								sum += lpc[j] * buffer[curChannel][i - j - 1];
+							}
 							buffer[curChannel][i] = gReader->getSRice(energy) + (sum >> 5);
 						}
 
@@ -393,7 +404,8 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 
 
 				// Do the wrap
-				// FIXME: removed for now, as this corrupts the heap
+				// FIXME: removed for now, as this corrupts the heap, because it
+				// accesses negative array indices
 				//for (int32 k = -wrap; k < 0; k++)
 				//	buffer[curChannel][k] = buffer[curChannel][k + blockSize];
 
