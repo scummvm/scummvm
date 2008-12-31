@@ -56,7 +56,7 @@ enum kShortenTypes {
 	kTypeAIFF = 12,		// AIFF
 	kTypeEOF = 13,
 	kTypeGenericULaw = 128,
-	kTypeGenericALaw = 129,
+	kTypeGenericALaw = 129
 };
 
 enum kShortenCommands {
