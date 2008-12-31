@@ -379,7 +379,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 								// FIXME: The original code did an invalid memory access here
 								// (if i and j are 0, the array index requested is -1)
 								// I've removed those invalid writes, since they happen all the time (even when curChannel is 0)
-								if (i - j - 1 < 0)	// ignore invalid table/memory access
+								if (i <= j)	// ignore invalid table/memory access
 									continue;
 								sum += lpc[j] * buffer[curChannel][i - j - 1];
 							}
