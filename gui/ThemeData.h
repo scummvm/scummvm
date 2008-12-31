@@ -26,6 +26,7 @@
 #ifndef GUI_THEME_DATA_H
 #define GUI_THEME_DATA_H
 
+#include "gui/ThemeEngine.h"
 
 namespace GUI {
 

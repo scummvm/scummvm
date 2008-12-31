@@ -23,17 +23,9 @@
  *
  */
 
-#include "common/util.h"
-#include "common/system.h"
-
-#include "graphics/surface.h"
-#include "graphics/colormasks.h"
-#include "graphics/imageman.h"
-#include "graphics/cursorman.h"
-#include "graphics/VectorRenderer.h"
-
-#include "gui/ThemeEngine.h"
 #include "gui/ThemeData.h"
+
+#include "graphics/VectorRenderer.h"
 
 namespace GUI {
 
