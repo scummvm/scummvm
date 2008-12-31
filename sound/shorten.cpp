@@ -432,7 +432,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 				}
 				break;
 			case kCmdBlockSize:
-				blockSize = gReader->getUint32(log((double) blockSize / M_LN2));
+				blockSize = gReader->getUint32((uint32)log((double) blockSize / M_LN2));
 				break;
 			case kCmdBitShift:
 				bitShift = gReader->getURice(2);
