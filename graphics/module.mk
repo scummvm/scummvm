@@ -11,7 +11,6 @@ MODULE_OBJS := \
 	fonts/scummfont.o \
 	iff.o \
 	imagedec.o \
-	imageman.o \
 	primitives.o \
 	scaler.o \
 	scaler/thumbnail_intern.o \

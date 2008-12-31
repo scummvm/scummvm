@@ -220,12 +220,6 @@
 	<File name="..\..\graphics\imagedec.h" open="0" top="0" tabpos="0">
 		<Cursor position="1186" topLine="16" />
 	</File>
-	<File name="..\..\graphics\imageman.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="1217" topLine="0" />
-	</File>
-	<File name="..\..\graphics\imageman.h" open="0" top="0" tabpos="0">
-		<Cursor position="1186" topLine="16" />
-	</File>
 	<File name="..\..\graphics\mpeg_player.cpp" open="1" top="0" tabpos="2">
 		<Cursor position="1136" topLine="9" />
 	</File>

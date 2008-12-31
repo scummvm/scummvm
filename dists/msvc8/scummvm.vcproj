@@ -1333,14 +1333,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\graphics\imageman.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\graphics\imageman.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\graphics\primitives.cpp"
 				>
 			</File>

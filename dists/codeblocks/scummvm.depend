@@ -599,19 +599,6 @@
 	"common/stream.h"
 	"graphics/surface.h"
 
-1173402496 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\imageman.cpp
-	"graphics/imagedec.h"
-	"graphics/imageman.h"
-	"graphics/surface.h"
-
-1173402496 c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\imageman.h
-	"common/stdafx.h"
-	"common/scummsys.h"
-	"common/singleton.h"
-	"common/str.h"
-	"common/list.h"
-	"common/unzip.h"
-
 1173402496 source:c:\documents and settings\usoquotidiano\desktop\scummvm\graphics\primitives.cpp
 	"common/stdafx.h"
 	"common/util.h"
