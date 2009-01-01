@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-	$Id: keys.c,v 1.13 2006/01/12 09:10:47 wntrmute Exp $
+	$Id$
 
 	key input code -- provides slightly higher level input forming
 

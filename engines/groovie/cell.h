@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/groovie/script.h $
- * $Id: script.h 35095 2008-11-16 19:20:30Z spookypeanut $
+ * $URL$
+ * $Id$
  *
  */
 
