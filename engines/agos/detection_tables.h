@@ -929,6 +929,29 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_CRUNCHED | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
+	// Simon the Sorcerer 1 - Italian Amiga AGA Floppy
+	{
+		{
+			"simon1",
+			"AGA Floppy",
+
+			{
+	{ "gameamiga",		GAME_BASEFILE,	"55dc304e7d3f8ad518af3b7f69da02b6", -1},
+	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed", -1},
+	{ "stripped.txt",	GAME_STRFILE,	"c649fcc0439766810e5097ee7e81d4c8", -1},
+	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
+			Common::kPlatformAmiga,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_CRUNCHED | GF_OLD_BUNDLE | GF_PLANAR
+	},
+
 	// Simon the Sorcerer 1 - English Amiga CD32
 	{
 		{
