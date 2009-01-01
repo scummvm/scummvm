@@ -47,7 +47,6 @@ struct Surface {
 	Surface() : w(0), h(0), pitch(0), pixels(0), bytesPerPixel(0) {}
 
 	inline const void *getBasePtr(int x, int y) const {
-		// SumthinWicked says: I was getting a typecast error here from GCC/UIQ: might need an #ifdef __SYMBIAN32__
 		return static_cast<const void *>(static_cast<byte *>(pixels) + y * pitch + x * bytesPerPixel);
 	}
 
