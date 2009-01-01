@@ -36,7 +36,7 @@ namespace Groovie {
 
 class MusicPlayer : public MidiDriver {
 public:
-	MusicPlayer(GroovieEngine *vm);
+	MusicPlayer(GroovieEngine *vm, const Common::String &gtlName);
 	~MusicPlayer();
 	void playSong(uint16 fileref);
 	void setBackgroundSong(uint16 fileref);

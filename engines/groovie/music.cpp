@@ -31,7 +31,7 @@
 
 namespace Groovie {
 
-MusicPlayer::MusicPlayer(GroovieEngine *vm) :
+MusicPlayer::MusicPlayer(GroovieEngine *vm, const Common::String &gtlName) :
 	_vm(vm), _midiParser(NULL), _data(NULL), _driver(NULL),
 	_backgroundFileRef(0), _gameVolume(100), _prevCDtrack(0) {
 	// Create the parser
@@ -52,7 +52,7 @@ MusicPlayer::MusicPlayer(GroovieEngine *vm) :
 	if (driver == MD_ADLIB) {
 		// MIDI through AdLib
 		_musicType = MD_ADLIB;
-		loadTimbres("fat.ad");
+		loadTimbres(gtlName + ".ad");
 
 		// Setup the percussion channel
 		for (unsigned int i = 0; i < _timbres.size(); i++) {
@@ -62,7 +62,7 @@ MusicPlayer::MusicPlayer(GroovieEngine *vm) :
 	} else if ((driver == MD_MT32) || ConfMan.getBool("native_mt32")) {
 		// MT-32
 		_musicType = MD_MT32;
-		loadTimbres("fat.mt");
+		loadTimbres(gtlName + ".mt");
 	} else {
 		// GM
 		_musicType = 0;

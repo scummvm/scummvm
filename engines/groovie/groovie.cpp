@@ -94,7 +94,7 @@ Common::Error GroovieEngine::init() {
 	}
 
 	// Create the music player
-	_musicPlayer = new MusicPlayer(this);
+	_musicPlayer = new MusicPlayer(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");
 
 	// Load volume levels
 	syncSoundSettings();
