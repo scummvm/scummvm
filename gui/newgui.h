@@ -82,10 +82,20 @@ public:
 	int getStringWidth(const Common::String &str, ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return _theme->getStringWidth(str, style); }
 	int getCharWidth(byte c, ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return _theme->getCharWidth(c, style); }
 
+	// FIXME: clearDragWidget is apparently there for the sake of PopUpWidget::handleMouseDown.
+	// This seems to be an ugly hack. At the very least, it should be thoroughly documented.
+	// Better would be to replace it with a proper solution.
 	void clearDragWidget();
 
-	void screenChange();
+	/**
+	 * Tell the GuiManager to check whether the screen resolution has changed.
+	 * If that is the case, the GuiManager will reload/refresh the active theme.
+	 *
+	 * @return true if the a screen change indeed occurred, false otherwise
+	 */
+	bool checkScreenChange();
 
+protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
 		kRedrawOpenDialog,
@@ -94,7 +104,8 @@ public:
 		kRedrawFull
 	};
 
-protected:
+
+
 	OSystem			*_system;
 
 	ThemeEngine		*_theme;
@@ -136,6 +147,8 @@ protected:
 	void animateCursor();
 
 	Dialog *getTopDialog() const;
+
+	void screenChange();
 };
 
 } // End of namespace GUI

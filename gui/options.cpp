@@ -849,7 +849,7 @@ void GlobalOptionsDialog::close() {
 		if (!ConfMan.get("gui_renderer").equalsIgnoreCase(cfg)) {
 			// FIXME: Actually, any changes (including the theme change) should
 			// only become active *after* the options dialog has closed.
-			g_gui.loadNewTheme(g_gui.theme()->getThemeFileName(), selected);
+			g_gui.loadNewTheme(g_gui.theme()->getThemeId(), selected);
 			ConfMan.set("gui_renderer", cfg, _domain);
 		}
 	}

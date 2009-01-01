@@ -64,7 +64,14 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled),
 	ConfMan.registerDefault("gui_renderer", ThemeEngine::findModeConfigName(ThemeEngine::_defaultRendererMode));
 	ThemeEngine::GraphicsMode gfxMode = (ThemeEngine::GraphicsMode)ThemeEngine::findMode(ConfMan.get("gui_renderer"));
 
-	loadNewTheme(themefile, gfxMode);
+	// Try to load the theme
+	if (!loadNewTheme(themefile, gfxMode)) {
+		// Loading the theme failed, try to load the built-in theme
+		if (!loadNewTheme("builtin", gfxMode)) {
+			// Loading the built-in theme failed as well. Bail out
+			error("Failed to load any GUI theme, aborting");
+		}
+	}
 	_themeChange = false;
 }
 
@@ -73,33 +80,40 @@ GuiManager::~GuiManager() {
 }
 
 bool GuiManager::loadNewTheme(Common::String filename, ThemeEngine::GraphicsMode gfx) {
-	if (_theme && filename == _theme->getThemeFileName() && gfx == _theme->getGraphicsMode())
+	// If we are asked to reload the currently active theme, just do nothing
+	// FIXME: Actually, why? It might be desirable at times to force a theme reload...
+	if (_theme && filename == _theme->getThemeId() && gfx == _theme->getGraphicsMode())
 		return true;
 
-	Common::String oldTheme = (_theme != 0) ? _theme->getThemeFileName() : "";
+	ThemeEngine *newTheme = 0;
 
 	if (gfx == ThemeEngine::kGfxDisabled)
 		gfx = ThemeEngine::_defaultRendererMode;
 
+	// Try to load the new theme
+	newTheme = new ThemeEngine(filename, gfx);
+	assert(newTheme);
+
+	if (!newTheme->init())
+		return false;
+
+	//
+	// Disable and delete the old theme
+	//
 	if (_theme)
 		_theme->disable();
+	delete _theme;
 
 	if (_useStdCursor) {
 		CursorMan.popCursorPalette();
 		CursorMan.popCursor();
 	}
 
-	delete _theme;
-	_theme = new ThemeEngine(filename, gfx);
-
-	if (!_theme)
-		return (!oldTheme.empty() ? loadNewTheme(oldTheme) : false);
-
-	_theme->init();
-
-	if (!oldTheme.empty())
-		screenChange();
-
+	//
+	// Enable the new theme
+	//
+	_theme = newTheme;
+	screenChange();
 	_themeChange = true;
 
 	return true;
@@ -191,8 +205,14 @@ void GuiManager::runLoop() {
 		}
 
 		Common::Event event;
-
 		while (eventMan->pollEvent(event)) {
+
+			// The top dialog can change during the event loop. In that case, flush all the
+			// dialog-related events since they were probably generated while the old dialog
+			// was still visible, and therefore note intended for the new one.
+			//
+			// This hopefully fixes strange behaviour/crashes with pop-up widgets. (Most easy
+			// to trigger in 3x mode or when running ScummVM under Valgrind.)
 			if (activeDialog != getTopDialog() && event.type != Common::EVENT_SCREEN_CHANGED)
 				continue;
 
@@ -307,19 +327,8 @@ void GuiManager::openDialog(Dialog *dialog) {
 	// We reflow the dialog just before opening it. If the screen changed
 	// since the last time we looked, also refresh the loaded theme,
 	// and reflow all other open dialogs, too.
-	int tmpScreenChangeID = _system->getScreenChangeID();
-	if (_lastScreenChangeID != tmpScreenChangeID) {
-		_lastScreenChangeID = tmpScreenChangeID;
-
-		// reinit the whole theme
-		_theme->refresh();
-		// refresh all dialogs
-		for (int i = 0; i < _dialogStack.size(); ++i) {
-			_dialogStack[i]->reflowLayout();
-		}
-	} else {
+	if (!checkScreenChange())
 		dialog->reflowLayout();
-	}
 }
 
 void GuiManager::closeTopDialog() {
@@ -369,6 +378,15 @@ void GuiManager::animateCursor() {
 void GuiManager::clearDragWidget() {
 	if (!_dialogStack.empty())
 		_dialogStack.top()->_dragWidget = 0;
+}
+
+bool GuiManager::checkScreenChange() {
+	int tmpScreenChangeID = _system->getScreenChangeID();
+	if (_lastScreenChangeID != tmpScreenChangeID) {
+		GuiManager::screenChange();
+		return true;
+	}
+	return false;
 }
 
 void GuiManager::screenChange() {

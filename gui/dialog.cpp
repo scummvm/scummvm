@@ -59,10 +59,7 @@ Dialog::Dialog(const Common::String &name)
 	//
 	// Fixes bug #1590596: "HE: When 3x graphics are choosen, F5 crashes game"
 	// and bug #1595627: "SCUMM: F5 crashes game (640x480)"
-	if (g_gui.theme()->needThemeReload()) {
-		debug(2, "Theme forced to reload");
-		g_gui.screenChange();
-	}
+	g_gui.checkScreenChange();
 }
 
 int Dialog::runModal() {

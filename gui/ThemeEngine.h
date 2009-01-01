@@ -57,9 +57,6 @@ protected:
 	friend class GUI::Dialog;
 	friend class GUI::GuiObject;
 
-	/** Sets whether backcaching is enabled */
-	static const bool kEnableBackCaching = true;
-
 	/**
 	 *	DrawData sets enumeration.
 	 *	Each DD set corresponds to the actual looks
@@ -244,7 +241,6 @@ public:
 	~ThemeEngine();
 
 	bool init();
-	void deinit();
 	void clearAll();
 
 	void refresh();
@@ -343,7 +339,7 @@ public:
 	 *	@param special Deprecated.
 	 */
 	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false) {
-		r.clip(_screen->w, _screen->h);
+		r.clip(_screen.w, _screen.h);
 		_dirtyScreen.push_back(r);
 		return true;
 	}
@@ -422,6 +418,7 @@ public:
 	 */
 	bool addTextData(const Common::String &drawDataId, const Common::String &textDataId, Graphics::TextAlign alignH, TextAlignVertical alignV);
 
+protected:
 	/**
 	 *	Returns if the Theme is ready to draw stuff on screen.
 	 *	Must be called instead of just checking _initOk, because
@@ -433,7 +430,7 @@ public:
 	}
 
 	/** Load the them from the file with the specified name. */
-	bool loadTheme(const Common::String &fileName);
+	void loadTheme(const Common::String &themeid);
 
 	/**
 	 *	Changes the active graphics mode of the GUI; may be used to either
@@ -441,7 +438,7 @@ public:
 	 */
 	void setGraphicsMode(GraphicsMode mode);
 
-
+public:
 	/**
 	 *	Finishes buffering: widgets from then on will be drawn straight on the screen
 	 *	without drawing queues.
@@ -497,7 +494,7 @@ public:
 	bool isWidgetCached(DrawData type, const Common::Rect &r);
 
 	const Common::String &getThemeName() const { return _themeName; }
-	const Common::String &getThemeFileName() const { return _themeFileName; }
+	const Common::String &getThemeId() const { return _themeId; }
 	int getGraphicsMode() const { return _graphicsMode; }
 
 protected:
@@ -513,12 +510,11 @@ protected:
 
 	/**
 	 *	Loads the given theme into the ThemeEngine.
-	 *	Note that ThemeName is an identifier, not a filename.
 	 *
-	 *	@param ThemeName Theme identifier.
+	 *	@param themeId Theme identifier.
 	 *	@returns true if the theme was successfully loaded.
 	 */
-	bool loadThemeXML(const Common::String &themeName);
+	bool loadThemeXML(const Common::String &themeId);
 
 	/**
 	 *	Loads the default theme file (the embedded XML file found
@@ -532,6 +528,10 @@ protected:
 	 *	be loaded.
 	 */
 	void unloadTheme();
+
+	const Graphics::Font *loadFont(const Common::String &filename);
+	const Graphics::Font *loadFontFromArchive(const Common::String &filename);
+	Common::String genCacheFilename(const char *filename);
 
 	/**
 	 *	Actual Dirty Screen handling function.
@@ -586,25 +586,17 @@ protected:
 public:
 
 	/**
-	 *	LEGACY: Old GUI::Theme API
+	 * @name LEGACY: Old GUI::Theme API
 	 */
-
-	bool needThemeReload() {
-		return ((_loadedThemeX != g_system->getOverlayWidth()) ||
-				(_loadedThemeY != g_system->getOverlayHeight()));
-	}
-
-	const Graphics::Font *loadFont(const Common::String &filename);
-	const Graphics::Font *loadFontFromArchive(const Common::String &filename);
-	Common::String genCacheFilename(const char *filename);
-
-	bool isThemeLoadingRequired();
+	//@{
 
 	static bool themeConfigUseable(const Common::FSNode &node, Common::String &themeName);
 	static bool themeConfigParseHeader(Common::String header, Common::String &themeName);
 
 	int getTabSpacing() const { return 0; }
 	int getTabPadding() const { return 3; }
+
+	//@}
 
 protected:
 	OSystem *_system; /** Global system object. */
@@ -619,10 +611,10 @@ protected:
 	GUI::ThemeEval *_themeEval;
 
 	/** Main screen surface. This is blitted straight into the overlay. */
-	Graphics::Surface *_screen;
+	Graphics::Surface _screen;
 
 	/** Backbuffer surface. Stores previous states of the screen to blit back */
-	Graphics::Surface *_backBuffer;
+	Graphics::Surface _backBuffer;
 
 	/** Sets whether the current drawing is being buffered (stored for later
 		processing) or drawn directly to the screen. */
@@ -663,11 +655,8 @@ protected:
 	bool _enabled; //!< Whether the Theme is currently shown on the overlay
 
 	Common::String _themeName; //!< Name of the currently loaded theme
-	Common::String _themeFileName;
+	Common::String _themeId;
 	Common::Archive *_themeArchive;
-
-	/** Custom Cursor Management */
-	void setUpCursor();
 
 	bool _useCursor;
 	int _cursorHotspotX, _cursorHotspotY;
@@ -679,7 +668,6 @@ protected:
 	bool _needPaletteUpdates;
 	uint _cursorWidth, _cursorHeight;
 	byte _cursorPal[4*MAX_CURS_COLORS];
-	int _loadedThemeX, _loadedThemeY;
 };
 
 } // end of namespace GUI.

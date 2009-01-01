@@ -51,10 +51,9 @@ namespace GUI {
  *	ThemeEngine class
  *********************************************************/
 ThemeEngine::ThemeEngine(Common::String fileName, GraphicsMode mode) :
-	_system(0), _vectorRenderer(0), _screen(0), _backBuffer(0),
+	_system(0), _vectorRenderer(0),
 	_buffering(false), _bytesPerPixel(0),  _graphicsMode(kGfxDisabled),
-	_font(0), _initOk(false), _themeOk(false), _enabled(false), _cursor(0),
-	_loadedThemeX(0), _loadedThemeY(0) {
+	_font(0), _initOk(false), _themeOk(false), _enabled(false), _cursor(0) {
 
 	_system = g_system;
 	_parser = new ThemeParser(this);
@@ -71,13 +70,17 @@ ThemeEngine::ThemeEngine(Common::String fileName, GraphicsMode mode) :
 	}
 
 	_graphicsMode = mode;
-	_themeFileName = fileName;
+	_themeId = fileName;
 	_themeArchive = 0;
 	_initOk = false;
 }
 
 ThemeEngine::~ThemeEngine() {
-	deinit();
+	delete _vectorRenderer;
+	_vectorRenderer = 0;
+	_screen.free();
+	_backBuffer.free();
+
 	unloadTheme();
 	delete _parser;
 	delete _themeEval;
@@ -133,82 +136,31 @@ const char *ThemeEngine::findModeConfigName(GraphicsMode mode) {
  *********************************************************/
 bool ThemeEngine::init() {
 	// reset everything and reload the graphics
-	if (_initOk)
-		_system->hideOverlay();
-	deinit();
+	_initOk = false;
 	setGraphicsMode(_graphicsMode);
 
-	if (_screen->pixels && _backBuffer->pixels) {
+	if (_screen.pixels && _backBuffer.pixels) {
 		_initOk = true;
-		clearAll();
 	}
 
-	if (_screen->w >= 400 && _screen->h >= 300) {
+	// TODO: Instead of hard coding the font here, it should be possible
+	// to specify the fonts to be used for each resolution in the theme XML.
+	if (_screen.w >= 400 && _screen.h >= 300) {
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	} else {
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	}
 
-	if (isThemeLoadingRequired() || !_themeOk) {
-		loadTheme(_themeFileName);
-	}
+	loadTheme(_themeId);
 
-	return true;
-}
-
-void ThemeEngine::deinit() {
-	delete _vectorRenderer;
-	_vectorRenderer = 0;
-	if (_screen != 0) {
-		_screen->free();
-		delete _screen;
-		_screen = 0;
-	}
-	if (_backBuffer != 0) {
-		_backBuffer->free();
-		delete _backBuffer;
-		_backBuffer = 0;
-	}
-	_initOk = false;
-}
-
-void ThemeEngine::unloadTheme() {
-	if (!_themeOk)
-		return;
-
-	for (int i = 0; i < kDrawDataMAX; ++i) {
-		delete _widgets[i];
-		_widgets[i] = 0;
-	}
-
-	for (int i = 0; i < kTextDataMAX; ++i) {
-		delete _texts[i];
-		_texts[i] = 0;
-	}
-
-	// Release all graphics surfaces
-	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
-		Graphics::Surface *surf = i->_value;
-		if (surf) {
-			surf->free();
-			delete surf;
-		}
-	}
-	_bitmaps.clear();
-
-	delete _themeArchive;
-	_themeArchive = 0;
-
-	_themeEval->reset();
-	_themeOk = false;
+	return ready();
 }
 
 void ThemeEngine::clearAll() {
-	if (!_initOk)
-		return;
-
-	_system->clearOverlay();
-	_system->grabOverlay((OverlayColor *)_screen->pixels, _screen->w);
+	if (_initOk) {
+		_system->clearOverlay();
+		_system->grabOverlay((OverlayColor *)_screen.pixels, _screen.w);
+	}
 }
 
 void ThemeEngine::refresh() {
@@ -226,8 +178,11 @@ void ThemeEngine::refresh() {
 void ThemeEngine::enable() {
 	init();
 
-	if (_useCursor)
-		setUpCursor();
+	if (_useCursor) {
+		CursorMan.pushCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
+		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
+		CursorMan.showMouse(true);
+	}
 
 	_system->showOverlay();
 	clearAll();
@@ -245,28 +200,6 @@ void ThemeEngine::disable() {
 	_enabled = false;
 }
 
-template<typename PixelType>
-void ThemeEngine::screenInit(bool backBuffer) {
-	uint32 width = _system->getOverlayWidth();
-	uint32 height = _system->getOverlayHeight();
-
-	if (backBuffer) {
-		if (_backBuffer)
-			_backBuffer->free();
-		else
-			_backBuffer = new Graphics::Surface;
-		_backBuffer->create(width, height, sizeof(PixelType));
-	}
-
-
-	if (_screen)
-		_screen->free();
-	else
-		_screen = new Graphics::Surface;
-	_screen->create(width, height, sizeof(PixelType));
-	_system->clearOverlay();
-}
-
 void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 	switch (mode) {
 	case kGfxStandard16bit:
@@ -274,16 +207,24 @@ void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 	case kGfxAntialias16bit:
 #endif
 		_bytesPerPixel = sizeof(uint16);
-		screenInit<uint16>(kEnableBackCaching);
 		break;
 
 	default:
 		error("Invalid graphics mode");
 	}
 
+	uint32 width = _system->getOverlayWidth();
+	uint32 height = _system->getOverlayHeight();
+
+	_backBuffer.free();
+	_backBuffer.create(width, height, _bytesPerPixel);
+
+	_screen.free();
+	_screen.create(width, height, _bytesPerPixel);
+
 	delete _vectorRenderer;
 	_vectorRenderer = Graphics::createRenderer(mode);
-	_vectorRenderer->setSurface(_screen);
+	_vectorRenderer->setSurface(&_screen);
 }
 
 bool ThemeEngine::isWidgetCached(DrawData type, const Common::Rect &r) {
@@ -293,7 +234,7 @@ bool ThemeEngine::isWidgetCached(DrawData type, const Common::Rect &r) {
 }
 
 void ThemeEngine::drawCached(DrawData type, const Common::Rect &r) {
-	assert(_widgets[type]->_surfaceCache->bytesPerPixel == _screen->bytesPerPixel);
+	assert(_widgets[type]->_surfaceCache->bytesPerPixel == _screen.bytesPerPixel);
 	_vectorRenderer->blitSurface(_widgets[type]->_surfaceCache, r);
 }
 
@@ -312,22 +253,9 @@ void ThemeEngine::calcBackgroundOffset(DrawData type) {
 }
 
 void ThemeEngine::restoreBackground(Common::Rect r) {
-	r.clip(_screen->w, _screen->h); // AHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA... Oh god. :(
-	_vectorRenderer->blitSurface(_backBuffer, r);
+	r.clip(_screen.w, _screen.h); // AHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA... Oh god. :(
+	_vectorRenderer->blitSurface(&_backBuffer, r);
 }
-
-bool ThemeEngine::isThemeLoadingRequired() {
-	int x = g_system->getOverlayWidth(), y = g_system->getOverlayHeight();
-
-	if (_loadedThemeX == x && _loadedThemeY == y)
-		return false;
-
-	_loadedThemeX = x;
-	_loadedThemeY = y;
-
-	return true;
-}
-
 
 
 
@@ -434,21 +362,19 @@ bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
 /**********************************************************
  *	Theme XML loading
  *********************************************************/
-bool ThemeEngine::loadTheme(const Common::String &fileName) {
+void ThemeEngine::loadTheme(const Common::String &themeid) {
 	unloadTheme();
 
-	bool tryAgain = false;
-	if (fileName != "builtin") {
+	if (themeid == "builtin") {
+		_themeOk = loadDefaultXML();
+	} else {
 		// Load the archive containing image and XML data
-		if (!loadThemeXML(fileName)) {
-			warning("Could not parse custom theme '%s'. Falling back to default theme", fileName.c_str());
-			tryAgain = true;	// Fall back to default builtin theme
-		}
+		_themeOk = loadThemeXML(themeid);
 	}
-
-	if (fileName == "builtin" || tryAgain) {
-		if (!loadDefaultXML()) // if we can't load the embedded theme, this is a complete failure
-			error("Could not load default embedded theme");
+	
+	if (!_themeOk) {
+		warning("Failed to load theme '%s'", themeid.c_str());
+		return;
 	}
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
@@ -461,9 +387,37 @@ bool ThemeEngine::loadTheme(const Common::String &fileName) {
 			if (_widgets[i]->_cached) {}
 		}
 	}
+}
 
-	_themeOk = true;
-	return true;
+void ThemeEngine::unloadTheme() {
+	if (!_themeOk)
+		return;
+
+	for (int i = 0; i < kDrawDataMAX; ++i) {
+		delete _widgets[i];
+		_widgets[i] = 0;
+	}
+
+	for (int i = 0; i < kTextDataMAX; ++i) {
+		delete _texts[i];
+		_texts[i] = 0;
+	}
+
+	// Release all graphics surfaces
+	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
+		Graphics::Surface *surf = i->_value;
+		if (surf) {
+			surf->free();
+			delete surf;
+		}
+	}
+	_bitmaps.clear();
+
+	delete _themeArchive;
+	_themeArchive = 0;
+
+	_themeEval->reset();
+	_themeOk = false;
 }
 
 bool ThemeEngine::loadDefaultXML() {
@@ -483,7 +437,7 @@ bool ThemeEngine::loadDefaultXML() {
 		return false;
 
 	_themeName = "ScummVM Classic Theme (Builtin Version)";
-	_themeFileName = "builtin";
+	_themeId = "builtin";
 
 	result = _parser->parse();
 	_parser->close();
@@ -535,7 +489,7 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
 	Common::String stxHeader = themercFile.readLine();
 	if (!themeConfigParseHeader(stxHeader, _themeName) || _themeName.empty()) {
 		delete archive;
-		warning("Corrupted 'THEMERC' file in theme '%s'", _themeFileName.c_str());
+		warning("Corrupted 'THEMERC' file in theme '%s'", _themeId.c_str());
 		return false;
 	}
 
@@ -585,7 +539,7 @@ void ThemeEngine::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic) 
 		return;
 
 	Common::Rect area = r;
-	area.clip(_screen->w, _screen->h);
+	area.clip(_screen.w, _screen.h);
 
 	ThemeItemDrawData *q = new ThemeItemDrawData(this, _widgets[type], area, dynamic);
 
@@ -611,7 +565,7 @@ void ThemeEngine::queueDDText(TextData type, const Common::Rect &r, const Common
 		return;
 
 	Common::Rect area = r;
-	area.clip(_screen->w, _screen->h);
+	area.clip(_screen.w, _screen.h);
 
 	ThemeItemTextData *q = new ThemeItemTextData(this, _texts[type], area, text, alignH, alignV, ellipsis, restoreBg, deltax);
 
@@ -626,7 +580,7 @@ void ThemeEngine::queueDDText(TextData type, const Common::Rect &r, const Common
 void ThemeEngine::queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha) {
 
 	Common::Rect area = r;
-	area.clip(_screen->w, _screen->h);
+	area.clip(_screen.w, _screen.h);
 
 	ThemeItemBitmap *q = new ThemeItemBitmap(this, area, bitmap, alpha);
 
@@ -891,22 +845,22 @@ void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font 
 		return;
 
 	Common::Rect charArea = r;
-	charArea.clip(_screen->w, _screen->h);
+	charArea.clip(_screen.w, _screen.h);
 
 	Graphics::PixelFormat format = _system->getOverlayFormat();
 	uint32 color = Graphics::RGBToColor(_texts[kTextDataDefault]->_color.r, _texts[kTextDataDefault]->_color.g, _texts[kTextDataDefault]->_color.b, format);
 
 	restoreBackground(charArea);
-	font->drawChar(_screen, ch, charArea.left, charArea.top, color);
+	font->drawChar(&_screen, ch, charArea.left, charArea.top, color);
 	addDirtyRect(charArea);
 }
 
 void ThemeEngine::debugWidgetPosition(const char *name, const Common::Rect &r) {
-	_font->drawString(_screen, name, r.left, r.top, r.width(), 0xFFFF, Graphics::kTextAlignRight, 0, true);
-	_screen->hLine(r.left, r.top, r.right, 0xFFFF);
-	_screen->hLine(r.left, r.bottom, r.right, 0xFFFF);
-	_screen->vLine(r.left, r.top, r.bottom, 0xFFFF);
-	_screen->vLine(r.right, r.top, r.bottom, 0xFFFF);
+	_font->drawString(&_screen, name, r.left, r.top, r.width(), 0xFFFF, Graphics::kTextAlignRight, 0, true);
+	_screen.hLine(r.left, r.top, r.right, 0xFFFF);
+	_screen.hLine(r.left, r.bottom, r.right, 0xFFFF);
+	_screen.vLine(r.left, r.top, r.bottom, 0xFFFF);
+	_screen.vLine(r.right, r.top, r.bottom, 0xFFFF);
 }
 
 
@@ -916,15 +870,15 @@ void ThemeEngine::debugWidgetPosition(const char *name, const Common::Rect &r) {
  *********************************************************/
 void ThemeEngine::updateScreen() {
 	if (!_bufferQueue.empty()) {
-		_vectorRenderer->setSurface(_backBuffer);
+		_vectorRenderer->setSurface(&_backBuffer);
 
 		for (Common::List<ThemeItem*>::iterator q = _bufferQueue.begin(); q != _bufferQueue.end(); ++q) {
 			(*q)->drawSelf(true, false);
 			delete *q;
 		}
 
-		_vectorRenderer->setSurface(_screen);
-		memcpy(_screen->getBasePtr(0,0), _backBuffer->getBasePtr(0,0), _screen->pitch * _screen->h);
+		_vectorRenderer->setSurface(&_screen);
+		memcpy(_screen.getBasePtr(0,0), _backBuffer.getBasePtr(0,0), _screen.pitch * _screen.h);
 		_bufferQueue.clear();
 	}
 
@@ -964,17 +918,11 @@ void ThemeEngine::openDialog(bool doBuffer, ShadingStyle style) {
 
 	if (style != kShadingNone) {
 		_vectorRenderer->applyScreenShading(style);
-		addDirtyRect(Common::Rect(0, 0, _screen->w, _screen->h));
+		addDirtyRect(Common::Rect(0, 0, _screen.w, _screen.h));
 	}
 
-	memcpy(_backBuffer->getBasePtr(0,0), _screen->getBasePtr(0,0), _screen->pitch * _screen->h);
-	_vectorRenderer->setSurface(_screen);
-}
-
-void ThemeEngine::setUpCursor() {
-	CursorMan.pushCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
-	CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
-	CursorMan.showMouse(true);
+	memcpy(_backBuffer.getBasePtr(0,0), _screen.getBasePtr(0,0), _screen.pitch * _screen.h);
+	_vectorRenderer->setSurface(&_screen);
 }
 
 bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale) {
@@ -1077,36 +1025,16 @@ ThemeEngine::TextData ThemeEngine::getTextData(DrawData ddId) {
  *********************************************************/
 
 const Graphics::Font *ThemeEngine::loadFontFromArchive(const Common::String &filename) {
-	Common::Archive *arch = 0;
+	Common::SeekableReadStream *stream = 0;
 	const Graphics::Font *font = 0;
 
-	Common::FSNode node(getThemeFileName());
-
-	if (node.getName().hasSuffix(".zip")) {
-#ifdef USE_ZLIB
-		Common::ZipArchive *zip = new Common::ZipArchive(node);
-		if (!zip || !zip->isOpen())
-			return 0;
-
-		arch = zip;
-#else
-		return 0;
-#endif
-	} else {
-		Common::FSDirectory *dir = new Common::FSDirectory(node);
-		if (!dir || !dir->getFSNode().isDirectory())
-			return 0;
-
-		arch = dir;
-	}
-
-	Common::SeekableReadStream *stream(arch->openFile(filename));
+	if (_themeArchive)
+		stream = _themeArchive->openFile(filename);
 	if (stream) {
 		font = Graphics::NewFont::loadFromCache(*stream);
 		delete stream;
 	}
 
-	delete arch;
 	return font;
 }
 
