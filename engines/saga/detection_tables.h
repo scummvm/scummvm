@@ -118,7 +118,6 @@ static const GameFontDescription IHNMCD_GameFonts[]     = { {2}, {3}, {4}, {5}, 
 //                                                         sampleBits,  isSigned
 static const GameSoundInfo ITE_GameSound         = { kSoundPCM,    16,  true  };
 static const GameSoundInfo ITEWINDEMO1_GameSound = { kSoundPCM,     8,  false };
-static const GameSoundInfo ITEMACCD_G_GameSound  = { kSoundMacPCM,  8,  false };
 static const GameSoundInfo ITEDEMO_GameVoice     = { kSoundVOX,    16,  true  };
 
 // Patch files. Files not found will be ignored
@@ -350,8 +349,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITEMACCD_G_GameSound,
-		&ITEMACCD_G_GameSound,
+		&ITE_GameSound,
+		&ITE_GameSound,
 		NULL,
 	},
 
