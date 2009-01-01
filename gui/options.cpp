@@ -847,6 +847,8 @@ void GlobalOptionsDialog::close() {
 		GUI::ThemeEngine::GraphicsMode selected = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
 		const char *cfg = GUI::ThemeEngine::findModeConfigName(selected);
 		if (!ConfMan.get("gui_renderer").equalsIgnoreCase(cfg)) {
+			// FIXME: Actually, any changes (including the theme change) should
+			// only become active *after* the options dialog has closed.
 			g_gui.loadNewTheme(g_gui.theme()->getThemeFileName(), selected);
 			ConfMan.set("gui_renderer", cfg, _domain);
 		}
@@ -930,12 +932,13 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		ThemeBrowser browser;
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			const Common::String &theme = browser.getSelected();
-			if (!theme.equalsIgnoreCase(g_gui.theme()->getThemeFileName()))
-				if (g_gui.loadNewTheme(theme)) {
-					_curTheme->setLabel(g_gui.theme()->getThemeName());
-					ConfMan.set("gui_theme", theme);
-				}
+			Common::String theme = browser.getSelected();
+			// FIXME: Actually, any changes (including the theme change) should
+			// only become active *after* the options dialog has closed.
+			if (g_gui.loadNewTheme(theme)) {
+				_curTheme->setLabel(g_gui.theme()->getThemeName());
+				ConfMan.set("gui_theme", theme);
+			}
 			draw();
 		}
 		break;
