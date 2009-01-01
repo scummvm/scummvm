@@ -209,10 +209,10 @@ void GuiManager::runLoop() {
 
 			// The top dialog can change during the event loop. In that case, flush all the
 			// dialog-related events since they were probably generated while the old dialog
-			// was still visible, and therefore note intended for the new one.
+			// was still visible, and therefore not intended for the new one.
 			//
-			// This hopefully fixes strange behaviour/crashes with pop-up widgets. (Most easy
-			// to trigger in 3x mode or when running ScummVM under Valgrind.)
+			// This hopefully fixes strange behaviour/crashes with pop-up widgets. (Most easily
+			// triggered in 3x mode or when running ScummVM under Valgrind.)
 			if (activeDialog != getTopDialog() && event.type != Common::EVENT_SCREEN_CHANGED)
 				continue;
 
