@@ -791,7 +791,7 @@ void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &s
 
 	if (!sel.empty()) {
 		Common::Rect text(r.left, r.top, r.right - 16, r.bottom);
-		queueDDText(getTextData(dd), text, sel, false, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV, deltax);
+		queueDDText(getTextData(dd), text, sel, true, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV, deltax);
 	}
 }
 
