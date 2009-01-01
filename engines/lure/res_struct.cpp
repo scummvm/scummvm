@@ -785,7 +785,7 @@ void SequenceDelayList::add(uint16 delay, uint16 seqOffset, bool canClear) {
 void SequenceDelayList::tick() {
 	SequenceDelayList::iterator i;
 
-	debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List check start at time %d", 
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List check start at time %d",
 		g_system->getMillis());
 
 	for (i = begin(); i != end(); i++) {
@@ -1221,7 +1221,7 @@ void BarmanLists::loadFromStream(Common::ReadStream *stream) {
 	reset();
 	for (int index = 0; index < numEntries; ++index) {
 		int16 value = stream->readUint16LE();
-		_barList[index].currentCustomer = ((value < 1) || (value > NUM_SERVE_CUSTOMERS)) ? NULL : 
+		_barList[index].currentCustomer = ((value < 1) || (value > NUM_SERVE_CUSTOMERS)) ? NULL :
 			&_barList[index].customers[value - 1];
 
 		for (int ctr = 0; ctr < NUM_SERVE_CUSTOMERS; ++ctr) {

@@ -777,7 +777,7 @@ bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &
 				tmp_f[ii].index = file->readUint16BE();
 				tmp_f[ii].delay = file->readUint16BE();
 			}
-			
+
 			tmp_n[i].wsaControl = (const FrameControl*) tmp_f;
 			size += (num_c * sizeof(FrameControl));
 
@@ -807,7 +807,7 @@ bool StaticResource::loadShapeAnimData_v1(const char *filename, void *&ptr, int 
 	if (!file)
 		return false;
 
-	size = file->readByte(); 
+	size = file->readByte();
 	ItemAnimData_v1 *loadTo = new ItemAnimData_v1[size];
 	assert(loadTo);
 
@@ -1251,7 +1251,7 @@ void KyraEngine_HoF::initStaticResource() {
 
 	_sequencePakList = _staticres->loadStrings(k2SeqplayPakFiles, _sequencePakListSize);
 	_ingamePakList = _staticres->loadStrings(k2IngamePakFiles, _ingamePakListSize);
-	_sequenceStrings = _staticres->loadStrings(k2SeqplayStrings, _sequenceStringsSize);	
+	_sequenceStrings = _staticres->loadStrings(k2SeqplayStrings, _sequenceStringsSize);
 	_ingameSoundList = _staticres->loadStrings(k2IngameSfxFiles, _ingameSoundListSize);
 	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(k2IngameSfxIndex, _ingameSoundIndexSize);
 	_musicFileListIntro = _staticres->loadStrings(k2SeqplayIntroTracks, _musicFileListIntroSize);
@@ -1395,9 +1395,9 @@ void KyraEngine_MR::initStaticResource() {
 	int tmp = 0;
 	_mainMenuStrings = _staticres->loadStrings(k3MainMenuStrings, _mainMenuStringsSize);
 	_soundList = _staticres->loadStrings(k3MusicFiles, _soundListSize);
-	_scoreTable = _staticres->loadRawData(k3ScoreTable, _scoreTableSize);	
+	_scoreTable = _staticres->loadRawData(k3ScoreTable, _scoreTableSize);
 	_sfxFileList = _staticres->loadStrings(k3SfxFiles, _sfxFileListSize);
-	_sfxFileMap = _staticres->loadRawData(k3SfxMap, _sfxFileMapSize);	
+	_sfxFileMap = _staticres->loadRawData(k3SfxMap, _sfxFileMapSize);
 	_itemAnimData = _staticres->loadShapeAnimData_v2(k3ItemAnimData, tmp);
 	_itemMagicTable = _staticres->loadRawData(k3ItemMagicTable, tmp);
 	_itemStringMap = _staticres->loadRawData(k3ItemStringMap, _itemStringMapSize);
@@ -1499,13 +1499,13 @@ void GUI_LoK::initStaticResource() {
 	_menu[0].item[2].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::gameControlsMenu);
 	_menu[0].item[3].callback = quitPlayingFunctor;
 	_menu[0].item[4].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::resumeGame);
-	
+
 	GUI_V1_MENU(_menu[1], -1, -1, 0x140, 0x38, 248, 249, 250, 0, 254,-1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V1_MENU_ITEM(_menu[1].item[0], 1, 0, 0, 0, 0x18, 0, 0x1E, 0x48, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[1].item[1], 1, 0, 0, 0, 0xD8, 0, 0x1E, 0x48, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[1].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::quitConfirmYes);
 	_menu[1].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::quitConfirmNo);
-	
+
 	GUI_V1_MENU(_menu[2], -1, -1, 0x120, 0xA0, 248, 249, 250, 0, 251, -1, 8, 0, 6, 132, 22, 132, 124);
 	GUI_V1_MENU_ITEM(_menu[2].item[0], 1, 0, 0, 0, -1, 255, 0x27, 0x100, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[2].item[1], 1, 0, 0, 0, -1, 255, 0x38, 0x100, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
@@ -1514,13 +1514,13 @@ void GUI_LoK::initStaticResource() {
 	GUI_V1_MENU_ITEM(_menu[2].item[4], 1, 0, 0, 0, -1, 255, 0x6B, 0x100, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[2].item[5], 1, 0, 0, 0, 0xB8, 0, 0x86, 0x58, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[2].item[5].callback = cancelSubMenuFunctor;
-	
+
 	GUI_V1_MENU(_menu[3], -1, -1, 288, 67, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V1_MENU_ITEM(_menu[3].item[0], 1, 0, 0, 0, 24, 0, 44, 85, 15, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[3].item[1], 1, 0, 0, 0, 179, 0, 44, 85, 15, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[3].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::savegameConfirm);
 	_menu[3].item[1].callback = cancelSubMenuFunctor;
-	
+
 	GUI_V1_MENU(_menu[4], -1, -1, 0xD0, 0x4C, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V1_MENU_ITEM(_menu[4].item[0], 1, 0, 0, 0, -1, -1, 0x1E, 0xB4, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[4].item[1], 1, 0, 0, 0, -1, -1, 0x2F, 0xB4, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
@@ -1917,7 +1917,7 @@ void GUI_HoF::initStaticData() {
 		_choiceMenu.item[i].enabled = false;
 	for (int i = 0; i < 7; ++i)
 		_choiceMenu.item[i].itemId = menuStr[3 * 8 + i + 1];
-	
+
 	GUI_V2_MENU(_loadMenu, -1, -1, 0x120, 0xA0, 0xF8, 0xF9, 0xFA, menuStr[4 * 8], 0xFB, -1, 8, 0, 6, 0x84, 0x16, 0x84, 0x7C);
 	GUI_V2_MENU_ITEM(_loadMenu.item[0], 1, 0x29, -1, 0x27, 0x100, 0xF, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	GUI_V2_MENU_ITEM(_loadMenu.item[1], 1, 0x2A, -1, 0x38, 0x100, 0xF, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
@@ -2103,7 +2103,7 @@ const char *KyraEngine_MR::_languageExtension[] = {
 	"TRF",
 	"TRG"/*,
 	"TRI",		Italian and Spanish were never included, the supported fan translations are using
-	"TRS"		English/French extensions thus overwriting these languages */		
+	"TRS"		English/French extensions thus overwriting these languages */
 };
 
 const int KyraEngine_MR::_languageExtensionSize = ARRAYSIZE(KyraEngine_MR::_languageExtension);

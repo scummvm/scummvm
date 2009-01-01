@@ -7,7 +7,7 @@
 class DeltaTest : public CxxTest::TestSuite
 {
     double _pi, _delta;
-    
+
 public:
     void setUp()
     {

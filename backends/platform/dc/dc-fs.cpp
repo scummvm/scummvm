@@ -90,7 +90,7 @@ AbstractFSNode *RoninCDFileNode::makeFileNodePath(const Common::String &path) {
 		return new RoninCDFileNode(path);
 	} else if ((fd = open(path.c_str(), O_DIR|O_RDONLY)) >= 0) {
 		close(fd);
-		return new RoninCDDirectoryNode(path);		
+		return new RoninCDDirectoryNode(path);
 	} else {
 		return NULL;
 	}

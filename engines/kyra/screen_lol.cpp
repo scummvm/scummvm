@@ -79,9 +79,9 @@ void Screen_LoL::fprintStringIntro(const char *format, int x, int y, uint8 c1, u
 
 	va_list args;
 	va_start(args, flags);
-	vsnprintf(buffer, sizeof(buffer), format, args);	
+	vsnprintf(buffer, sizeof(buffer), format, args);
 	va_end(args);
-	
+
 	if ((flags & 0x0F00) == 0x100)
 		x -= getTextWidth(buffer) >> 1;
 	if ((flags & 0x0F00) == 0x200)

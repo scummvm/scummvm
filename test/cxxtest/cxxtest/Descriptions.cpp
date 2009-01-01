@@ -8,7 +8,7 @@ namespace CxxTest
     TestDescription::~TestDescription() {}
     SuiteDescription::~SuiteDescription() {}
     WorldDescription::~WorldDescription() {}
-    
+
     //
     // Convert total tests to string
     //

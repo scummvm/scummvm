@@ -65,11 +65,11 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_needEventRestPeriod(false), _mouseClickAndDragEnabled(false), _touchpadModeEnabled(false),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false),
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1)
-	
+
 {
 	_queuedInputEvent.type = (Common::EventType)0;
 	_lastDrawnMouseRect = Common::Rect(0, 0, 0, 0);
-	
+
 	_fsFactory = new POSIXFilesystemFactory();
 }
 
@@ -693,7 +693,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 
 			case kInputMouseUp:
 			if (!handleEvent_mouseUp(event, x, y))
-				return false;			
+				return false;
 				break;
 
 			case kInputMouseDragged:
@@ -714,7 +714,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 				break;
 
 			case kInputOrientationChanged:
-				handleEvent_orientationChanged((int)xUnit);	
+				handleEvent_orientationChanged((int)xUnit);
 				return false;
 				break;
 
@@ -762,12 +762,12 @@ bool OSystem_IPHONE::handleEvent_mouseDown(Common::Event &event, int x, int y) {
 	} else {
 		_lastMouseDown = getMillis();
 	}
-	return false;	
+	return false;
 }
 
 bool OSystem_IPHONE::handleEvent_mouseUp(Common::Event &event, int x, int y) {
 	//printf("Mouse up at (%u, %u)\n", x, y);
-	
+
 	if (_secondaryTapped) {
 		_secondaryTapped = false;
 		if (!handleEvent_secondMouseUp(event, x, y))
@@ -791,7 +791,7 @@ bool OSystem_IPHONE::handleEvent_mouseUp(Common::Event &event, int x, int y) {
 		} else
 			return false;
 	}
-	
+
 	return true;
 }
 
@@ -850,14 +850,14 @@ bool OSystem_IPHONE::handleEvent_secondMouseUp(Common::Event &event, int x, int 
 		event.mouse.x = _mouseX;
 		event.mouse.y = _mouseY;
 	}
-	
-	return true;	
+
+	return true;
 }
 
 bool OSystem_IPHONE::handleEvent_mouseDragged(Common::Event &event, int x, int y) {
 	if (_lastDragPosX == x && _lastDragPosY == y)
 		return false;
-		
+
 	_lastDragPosX = x;
 	_lastDragPosY = y;
 
@@ -927,13 +927,13 @@ bool OSystem_IPHONE::handleEvent_mouseDragged(Common::Event &event, int x, int y
 		int mouseNewPosY;
 		if (_touchpadModeEnabled ) {
 			int deltaX = _lastPadX - x;
-			int deltaY = _lastPadY - y;	
+			int deltaY = _lastPadY - y;
 			_lastPadX = x;
 			_lastPadY = y;
-			
+
 			mouseNewPosX = (int)(_mouseX - deltaX / 0.5f);
 			mouseNewPosY = (int)(_mouseY - deltaY / 0.5f);
-			
+
 			if (mouseNewPosX < 0)
 				mouseNewPosX = 0;
 			else if (mouseNewPosX > _screenWidth)
@@ -943,18 +943,18 @@ bool OSystem_IPHONE::handleEvent_mouseDragged(Common::Event &event, int x, int y
 				mouseNewPosY = 0;
 			else if (mouseNewPosY > _screenHeight)
 				mouseNewPosY = _screenHeight;
-				
+
 		} else {
 			mouseNewPosX = x;
 			mouseNewPosY = y;
 		}
-		
+
 		event.type = Common::EVENT_MOUSEMOVE;
 		event.mouse.x = mouseNewPosX;
 		event.mouse.y = mouseNewPosY;
 		warpMouse(mouseNewPosX, mouseNewPosY);
 	}
-	
+
 	return true;
 }
 
@@ -986,7 +986,7 @@ void  OSystem_IPHONE::handleEvent_orientationChanged(int orientation) {
 
 		dirtyFullScreen();
 		updateScreen();
-	}	
+	}
 }
 
 void  OSystem_IPHONE::handleEvent_keyPressed(Common::Event &event, int keyPressed) {
@@ -1047,9 +1047,9 @@ void  OSystem_IPHONE::handleEvent_keyPressed(Common::Event &event, int keyPresse
 	event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
 	event.kbd.keycode = _queuedInputEvent.kbd.keycode = (Common::KeyCode)keyPressed;
 	event.kbd.ascii = _queuedInputEvent.kbd.ascii = ascii;
-	_needEventRestPeriod = true;	
+	_needEventRestPeriod = true;
 }
-	
+
 bool OSystem_IPHONE::handleEvent_swipe(Common::Event &event, int direction) {
 	Common::KeyCode keycode = Common::KEYCODE_INVALID;
 	switch (_screenOrientation) {
@@ -1115,7 +1115,7 @@ bool OSystem_IPHONE::handleEvent_swipe(Common::Event &event, int direction) {
 	_queuedInputEvent.type = Common::EVENT_KEYUP;
 	event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
 	_needEventRestPeriod = true;
-	
+
 	return true;
 }
 
@@ -1126,14 +1126,14 @@ void OSystem_IPHONE::suspendLoop() {
 	uint32 startTime = getMillis();
 
 	stopSoundsystem();
-	
+
 	while (!done) {
 		if (iPhone_fetchEvent(&eventType, &xUnit, &yUnit))
 			if ((InputEvent)eventType == kInputApplicationResumed)
 				done = true;
 		usleep(100000);
 	}
-	
+
 	startSoundsystem();
 
 	_timeSuspended += getMillis() - startTime;
@@ -1238,7 +1238,7 @@ void OSystem_IPHONE::startSoundsystem() {
 	for (int i = 0; i < AUDIO_BUFFERS; i++) {
 		if (AudioQueueAllocateBuffer(s_AudioQueue.queue, bufferBytes, &s_AudioQueue.buffers[i])) {
 			printf("Error allocating AudioQueue buffer!\n");
-			_mixer->setReady(false);		
+			_mixer->setReady(false);
 			return;
 		}
 
@@ -1248,10 +1248,10 @@ void OSystem_IPHONE::startSoundsystem() {
 	AudioQueueSetParameter(s_AudioQueue.queue, kAudioQueueParam_Volume, 1.0);
 	if (AudioQueueStart(s_AudioQueue.queue, NULL)) {
 		printf("Error starting the AudioQueue!\n");
-		_mixer->setReady(false);		
+		_mixer->setReady(false);
 		return;
 	}
-	
+
 	_mixer->setOutputRate(AUDIO_SAMPLE_RATE);
 	_mixer->setReady(true);
 }

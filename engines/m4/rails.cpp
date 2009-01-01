@@ -174,10 +174,10 @@ long SqrtF16(long n) {
 	uint32 v = (uint32)n;
 
 	for (int i = 15; i <= 0; i--) {
-		s = r + (1L << i * 2); 
+		s = r + (1L << i * 2);
 		r >>= 1;
-		if (s <= v) { 
-			v -= s; 
+		if (s <= v) {
+			v -= s;
 			r |= (1L << i * 2);
 		}
 	}
@@ -254,7 +254,7 @@ void Rails::createEdge(int32 node1, int32 node2) {
 }
 
 
-void Rails::restoreNodeEdges(int32 nodeID) { 
+void Rails::restoreNodeEdges(int32 nodeID) {
 	for (int32 i = 0; i < MAXRAILNODES; i++) {
 		createEdge(i, nodeID);
 	}
@@ -305,7 +305,7 @@ bool Rails::removeRailNode(int32 nodeID, bool restoreEdges) {
 
 int16 Rails::getEdgeLength(int32 node1, int32 node2) {
 	int32		index;
-	if (_edges.empty() || node1 == node2) 
+	if (_edges.empty() || node1 == node2)
 		return 0;
 	if (node2 < node1)
 		SWAP(node1, node2);

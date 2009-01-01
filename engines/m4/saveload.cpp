@@ -38,7 +38,7 @@ SaveLoad::SaveLoad(M4Engine *vm) : _vm(vm) {
 	// For Orion Burger, check the existance of a 'saves.dir' file to determine whether to
 	// act exactly like the original. Otherwise, we'll use the ScummVM standard, where we'll
 	// keep all the data for a savegame in a single file
-	
+
 	Common::File file;
 	_emulateOriginal = file.exists(orionSavesList);
 }
@@ -100,7 +100,7 @@ SaveGameList *SaveLoad::getSaves() {
 			} else {
 				// Skip over byte offset
 				assert(saveFile->readUint32LE() < 0x100);
-				
+
 				// Read in savegame name
 				saveFile->read(&saveName[0], MAX_SAVEGAME_NAME);
 				result->push_back(Common::String(saveName));
@@ -133,7 +133,7 @@ M4Surface *SaveLoad::getThumbnail(int slotNumber) {
 		// Open up savegame for access via savefile manager
 		saveFile = _vm->saveManager()->openForLoading(generateSaveName(slotNumber));
 	}
-	if (!saveFile) 
+	if (!saveFile)
 		return NULL;
 
 	dataOffset = saveFile->readUint32LE();

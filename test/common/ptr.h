@@ -43,7 +43,7 @@ class PtrTestSuite : public CxxTest::TestSuite
 	void test_deleter() {
 		Deleter<int> myDeleter;
 		myDeleter.test = new bool(false);
-		
+
 		{
 			Common::SharedPtr<int> p(new int(1), myDeleter);
 		}
@@ -55,7 +55,7 @@ class PtrTestSuite : public CxxTest::TestSuite
 	void test_compare() {
 		Common::SharedPtr<int> p1(new int(1));
 		Common::SharedPtr<int> p2;
-		
+
 		TS_ASSERT(p1);
 		TS_ASSERT(!p2);
 

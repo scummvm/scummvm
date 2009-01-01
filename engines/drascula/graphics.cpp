@@ -224,7 +224,7 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 			}	// if
 		}	// for
 
-		copyRect(letterX, letterY, screenX, screenY, 
+		copyRect(letterX, letterY, screenX, screenY,
 				 CHAR_WIDTH, CHAR_HEIGHT, tableSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH;
@@ -276,7 +276,7 @@ void DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 			}	// if
 		}	// for
 
-		copyRect(letterX, letterY, screenX, screenY, 
+		copyRect(letterX, letterY, screenX, screenY,
 				 CHAR_WIDTH_OPC, CHAR_HEIGHT_OPC, backSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH_OPC;
@@ -516,7 +516,7 @@ int DrasculaEngine::playFrameSSN() {
 			free(BufferSSN);
 			waitFrameSSN();
 			if (FrameSSN)
-				mixVideo(VGA, screenSurface);			
+				mixVideo(VGA, screenSurface);
 			else
 				memcpy(VGA, screenSurface, 64000);
 			_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);

@@ -31,7 +31,7 @@
 #include "m4/sprite.h"
 
 namespace M4 {
-	
+
 // Sequence chunks
 #define CHUNK_SCEN MKID_BE('SCEN')
 #define CHUNK_MACH MKID_BE('MACH')

@@ -93,7 +93,7 @@ void ScriptFunctions::setupExternalsTable() {
 	External(sfLoadMouseCursor);
 	External(sfSetSpriteGround);
 	External(sfLoadResText);
-	
+
 	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_RODNEY) {
 		External(sfAddScreenMask);
 		External(sfSetSpriteMask);
@@ -113,7 +113,7 @@ void ScriptFunctions::setupExternalsTable() {
 		External(sfGetCdTime);
 		External(sfPlayCdSegment);
 	}
-	
+
 	if (_vm->getGameID() == GID_RTZ) {
 		External(sfPrintf);
 		External(sfClearMono);
@@ -236,7 +236,7 @@ int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 		_vm->_autoStopSound = (argv[0] == 1);
 	}
 	if (soundNum > 0) {
-		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, 
+		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
 			_vm->_res->getSound(soundNum)->getAudioStream(_vm->_soundRate, false));
 	}
 	return 0;
@@ -833,18 +833,18 @@ int16 ScriptFunctions::sfGetMenuCount(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfSaveGame(int16 argc, int16 *argv) {
-	
+
 	int16 saveNum = argv[2];
 	int16 descObjectIndex = argv[1];
 	int16 version = argv[0];
-	
+
 	if (saveNum > 999)
 		return 6;
 
 	const char *description = _vm->_dat->getObjectString(descObjectIndex);
 	Common::String filename = _vm->getSavegameFilename(saveNum);
 	return _vm->_dat->savegame(filename.c_str(), description, version);
-	
+
 }
 
 int16 ScriptFunctions::sfLoadGame(int16 argc, int16 *argv) {
@@ -857,11 +857,11 @@ int16 ScriptFunctions::sfLoadGame(int16 argc, int16 *argv) {
 
 	Common::String filename = _vm->getSavegameFilename(saveNum);
 	return _vm->_dat->loadgame(filename.c_str(), version);
-	
+
 }
 
 int16 ScriptFunctions::sfGetGameDescription(int16 argc, int16 *argv) {
-	
+
 	int16 descObjectIndex = argv[2];
 	int16 saveNum = argv[1];
 	/*int16 version = argv[0];*/

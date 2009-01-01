@@ -411,7 +411,7 @@ void KyraEngine_v1::registerDefaultSettings() {
 void KyraEngine_v1::readSettings() {
 	_configWalkspeed = ConfMan.getInt("walkspeed");
 	_configMusic = 0;
-	
+
 	if (!ConfMan.getBool("music_mute")) {
 		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 			_configMusic = ConfMan.getBool("cdaudio") ? 2 : 1;
@@ -501,7 +501,7 @@ void KyraEngine_v1::setVolume(kVolumeEntry vol, uint8 value) {
 	case kVolumeSfx:
 		ConfMan.setInt("sfx_volume", convertValueToMixer(value));
 		break;
-	
+
 	case kVolumeSpeech:
 		ConfMan.setInt("speech_volume", convertValueToMixer(value));
 		break;
@@ -524,7 +524,7 @@ uint8 KyraEngine_v1::getVolume(kVolumeEntry vol) {
 	case kVolumeSfx:
 		return convertValueFromMixer(ConfMan.getInt("sfx_volume"));
 		break;
-	
+
 	case kVolumeSpeech:
 		if (speechEnabled())
 			return convertValueFromMixer(ConfMan.getInt("speech_volume"));

@@ -134,7 +134,7 @@ int loadOverlay(const char *scriptName) {
 
 	// Skip pointers
 	s.skip(60);
-	
+
 	ovlData->arrayProc = NULL;
 	ovlData->ptr1 = NULL;
 	ovlData->arrayObject = NULL;
@@ -221,7 +221,7 @@ int loadOverlay(const char *scriptName) {
 		if (!ovlData->arrayNameRelocGlob) {
 			return (-2);
 		}
-		
+
 		s.read(ovlData->arrayNameRelocGlob, ovlData->nameExportSize);
 	}
 
@@ -341,7 +341,7 @@ int loadOverlay(const char *scriptName) {
 			ovlData->ptr1[i].var18 = s.readUint16BE();
 			ovlData->ptr1[i].var1A = s.readUint16BE();
 		}
-		
+
 		tempPtr = (ovlData3Struct *) ovlData->ptr1;
 
 		for (i = 0; i < ovlData->numRel; i++) {
@@ -400,7 +400,7 @@ int loadOverlay(const char *scriptName) {
 			ovlData->arrayObject[i]._numStates = s.readUint16BE();
 			ovlData->arrayObject[i]._varTableIdx = s.readUint16BE();
 			ovlData->arrayObject[i]._firstStateIdx = s.readUint16BE();
-			ovlData->arrayObject[i]._stateTableIdx = s.readUint16BE();	
+			ovlData->arrayObject[i]._stateTableIdx = s.readUint16BE();
 		}
 
 		// allocate states for object with multiple states

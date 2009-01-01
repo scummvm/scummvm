@@ -566,7 +566,7 @@ Codec47Decoder::~Codec47Decoder() {
 bool Codec47Decoder::decode(byte *dst, const byte *src) {
 	if ((_tableBig == NULL) || (_tableSmall == NULL) || (_deltaBuf == NULL))
 		return false;
-  
+
 	_offset1 = _deltaBufs[1] - _curBuf;
 	_offset2 = _deltaBufs[0] - _curBuf;
 

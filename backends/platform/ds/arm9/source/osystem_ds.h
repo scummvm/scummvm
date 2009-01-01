@@ -19,8 +19,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
- 
- 
+
+
 #ifndef _OSYSTEM_DS_H_
 #define _OSYSTEM_DS_H_
 #include "common/system.h"
@@ -33,13 +33,13 @@
 #include "sound/mixer_intern.h"
 #include "graphics/surface.h"
 
-class DSAudioMixer : public Audio::MixerImpl {	
+class DSAudioMixer : public Audio::MixerImpl {
 
 public:
 	DSAudioMixer(OSystem* system) : Audio::MixerImpl(system) { }
 };
 
-class DSTimerManager : public DefaultTimerManager {	
+class DSTimerManager : public DefaultTimerManager {
 };
 
 
@@ -48,10 +48,10 @@ protected:
 
 	int eventNum;
 	int lastPenFrame;
-	
+
 	Common::Event eventQueue[96];
 	int queuePos;
-	
+
 #ifdef GBA_SRAM_SAVE
 	DSSaveFileManager saveManager;
 #endif
@@ -75,7 +75,7 @@ protected:
 	byte _cursorKey;
 	int _cursorScale;
 
-	
+
 	Graphics::Surface* createTempFrameBuffer();
 	bool _disableCursorPalette;
 
@@ -114,7 +114,7 @@ public:
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
 	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<1555>(); }
-	
+
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
@@ -146,21 +146,21 @@ public:
 	virtual void displayMessageOnOSD(const char *msg);
 
 	virtual Common::SaveFileManager *getSavefileManager();
-	
+
 	void addEvent(Common::Event& e);
 	bool isEventQueueEmpty() { return queuePos == 0; }
-	
+
 	virtual bool grabRawScreen(Graphics::Surface* surf);
-	
+
 	virtual void setFocusRectangle(const Common::Rect& rect);
-	
+
 	virtual void clearFocusRectangle();
-	
+
 	virtual void initBackend();
-	
+
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
-	
+
 	virtual Audio::Mixer* getMixer() { return _mixer; }
 	Audio::MixerImpl* getMixerImpl() { return _mixer; }
 

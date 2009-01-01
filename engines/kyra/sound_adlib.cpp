@@ -2311,7 +2311,7 @@ void SoundAdlibPC::play(uint8 track) {
 		++pauseCount;
 		_vm->pauseEngine(false);
 	}
-	
+
 	while ((_driver->callback(16, 0) & 8)) {
 		// We call the system delay and not the game delay to avoid concurrency issues.
 		_vm->_system->delayMillis(10);

@@ -211,7 +211,7 @@ static void BGotherProcess(CORO_PARAM, const void *param) {
 
 	while (StepAnimScript(&_ctx->anim) != ScriptFinished)
 		CORO_SLEEP(1);
-	
+
 	CORO_END_CODE;
 }
 

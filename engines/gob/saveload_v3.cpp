@@ -308,7 +308,7 @@ bool SaveLoad_v3::loadGame(SaveFile &saveFile,
 		saveFile.slot = getSlot(offset);
 		int slotRem = getSlotRemainder(offset);
 
-		debugC(2, kDebugSaveLoad, "Loading from slot %d", saveFile.slot); 
+		debugC(2, kDebugSaveLoad, "Loading from slot %d", saveFile.slot);
 
 		SaveLoad::setCurrentSlot(saveFile.destName, saveFile.slot);
 
@@ -569,7 +569,7 @@ bool SaveLoad_v3::saveScreenshot(SaveFile &saveFile,
 			if (!_screenshot.savePalette(_vm->_global->_pPaletteDesc->vgaPal))
 				return false;
 
-		
+
 		byte *buffer = new byte[_screenshotSize];
 
 		if (!_screenshot.toBuffer(buffer, _screenshotSize, palette)) {

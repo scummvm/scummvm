@@ -41,7 +41,7 @@ enum RESUME_STATE {
 };
 
 enum {
-	PCODE_STACK_SIZE	= 128	//!< interpeters stack size 
+	PCODE_STACK_SIZE	= 128	//!< interpeters stack size
 };
 
 enum GSORT {
@@ -128,7 +128,7 @@ void WaitInterpret(CORO_PARAM, PPROCESS pWaitProc, bool *result);
 #define CONV_BOTTOM	1	// conversation() parameter
 #define CONV_END	2	//
 
-#define CONTROL_OFF	0	// control() 
+#define CONTROL_OFF	0	// control()
 #define CONTROL_ON	1	// 	parameter
 #define CONTROL_OFFV	2	//
 #define CONTROL_OFFV2	3	//

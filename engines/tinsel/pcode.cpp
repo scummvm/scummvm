@@ -160,7 +160,7 @@ static void FreeWaitCheck(PINT_CONTEXT pic, bool bVoluntary) {
 				(icList + i)->waitNumber2 = 0;
 				break;
 			}
-		}	
+		}
 	}
 
 	// Is someone waiting for this?
@@ -249,7 +249,7 @@ void FreeMasterInterpretContext(void) {
  * @param actorId		Associated actor (if any)
  * @param pinvo			Associated inventory object
  */
-INT_CONTEXT *InitInterpretContext(GSORT gsort, SCNHANDLE hCode,	TINSEL_EVENT event, 
+INT_CONTEXT *InitInterpretContext(GSORT gsort, SCNHANDLE hCode,	TINSEL_EVENT event,
 		HPOLYGON hpoly, int actorid, INV_OBJECT *pinvo, int myEscape) {
 	INT_CONTEXT *ic;
 
@@ -326,7 +326,7 @@ void RegisterGlobals(int num) {
 	if (TinselV2) {
 		// read initial values
 		CdCD(nullContext);
-		
+
 		Common::File f;
 		if (!f.open(GLOBALS_FILENAME))
 			error(CANNOT_FIND_FILE, GLOBALS_FILENAME);
@@ -340,7 +340,7 @@ void RegisterGlobals(int num) {
 
 		if (f.ioFailed())
 			error(FILE_IS_CORRUPT, GLOBALS_FILENAME);
-		
+
 		f.close();
 	}
 }
@@ -514,7 +514,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 			// same spot (i.e. here).
 			//
 			// The reasons we do it this way, instead of turning Interpret into
-			// a 'proper' coroutine are (1) we avoid implementation problems 
+			// a 'proper' coroutine are (1) we avoid implementation problems
 			// (CORO_INVOKE involves adding 'case' statements, but Interpret
 			// already has a huge switch/case, so that would not work out of the
 			// box), (2) we incurr less overhead, (3) it's easier to debug,

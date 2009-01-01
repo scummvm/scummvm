@@ -58,7 +58,7 @@ public:
 	BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, bool bigEndian = false);
 	virtual ~BaseSound();
 	void close();
-	
+
 	void playSound(uint sound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol = 0) {
 		playSound(sound, sound, type, handle, flags, vol);
 	}
@@ -563,7 +563,7 @@ void Sound::readSfxFile(const char *filename) {
 
 void Sound::loadSfxTable(File *gameFile, uint32 base) {
 	stopAll();
-	
+
 	if (_effects)
 		_effects->close();
 

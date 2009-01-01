@@ -59,7 +59,7 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 			workChunkSize /= 4;
 
 		type = (*source++) & 0x0F;
-		
+
 		workSample = prevSample;
 
 		switch (type) {

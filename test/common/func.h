@@ -47,7 +47,7 @@ class FuncTestSuite : public CxxTest::TestSuite
 			myFoos[i] = new Foo;
 
 		int counter = 0;
-	
+
 		Common::for_each(myFoos, myFoos+4, Common::bind2nd(Common::mem_fun(&Foo::fooAdd), counter));
 		TS_ASSERT_EQUALS(counter, 4);
 

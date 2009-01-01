@@ -3,16 +3,16 @@
 
 #include <cxxtest/GlobalFixture.h>
 
-namespace CxxTest 
+namespace CxxTest
 {
     bool GlobalFixture::setUpWorld() { return true; }
     bool GlobalFixture::tearDownWorld() { return true; }
     bool GlobalFixture::setUp() { return true; }
     bool GlobalFixture::tearDown() { return true; }
-        
+
     GlobalFixture::GlobalFixture() { attach( _list ); }
     GlobalFixture::~GlobalFixture() { detach( _list ); }
-        
+
     GlobalFixture *GlobalFixture::firstGlobalFixture() { return (GlobalFixture *)_list.head(); }
     GlobalFixture *GlobalFixture::lastGlobalFixture() { return (GlobalFixture *)_list.tail(); }
     GlobalFixture *GlobalFixture::nextGlobalFixture() { return (GlobalFixture *)next(); }

@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
- 
+
 #ifndef _GBAMPSAVE_H_
 #define _GBAMPSAVE_H_
 
@@ -38,19 +38,19 @@ class GBAMPSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
 public:
 	GBAMPSaveFile(char* name, bool saveOrLoad);
 	virtual ~GBAMPSaveFile();
-		
+
 	virtual uint32 read(void *buf, uint32 size);
 	virtual uint32 write(const void *buf, uint32 size);
-	
+
 	virtual bool eos() const;
 	virtual bool skip(uint32 bytes);
 
 	virtual int32 pos() const;
 	virtual int32 size() const;
 	virtual bool seek(int32 pos, int whence);
-	
+
 	void flushSaveBuffer();
-	
+
 	virtual bool isOpen() const {
 		return handle != 0;
 	}
@@ -61,17 +61,17 @@ class GBAMPSaveFileManager : public Common::SaveFileManager {
 public:
 	GBAMPSaveFileManager();
 	~GBAMPSaveFileManager();
-	
+
 //	static GBAMPSaveFileManager* instance() { return instancePtr; }
 
 	GBAMPSaveFile *openSavefile(const char *filename, bool saveOrLoad);
-	
+
 	virtual Common::OutSaveFile* openForSaving(const char* filename) { return openSavefile(filename, true); }
 	virtual Common::InSaveFile* openForLoading(const char* filename) { return openSavefile(filename, false); }
-	
+
 	virtual bool removeSavefile(const char *filename) { return false; } // TODO: Implement this
 	virtual Common::StringList listSavefiles(const char *pattern);
-	
+
 	void deleteFile(char* name);
 	void listFiles();
 

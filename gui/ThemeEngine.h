@@ -119,7 +119,7 @@ protected:
 		bool buffer;		//!< Sets whether this item is buffered on the backbuffer or drawn directly to the screen.
 		DrawData parent;	//!< Parent DrawData item, for items that overlay. E.g. kButtonIdle -> kButtonHover
 	};
-	
+
 	static const DrawDataInfo kDrawDataDefaults[];
 
 
@@ -139,7 +139,7 @@ protected:
 		TextData id;
 		const char *name;
 	};
-	
+
 	static const TextDataInfo kTextDataDefaults[];
 
 public:

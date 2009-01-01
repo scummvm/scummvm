@@ -473,7 +473,7 @@ bool DrasculaEngine::runCurrentChapter() {
 
 		if (menuScreen == 0 && takeObject == 1)
 			checkObjects();
-		
+
 #ifdef _WIN32_WCE
 		if (rightMouseButton)
 			if (menuScreen) {
@@ -502,7 +502,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		// Do not show the inventory screen in chapter 5, if the right mouse button is clicked
 		// while the plug (object 16) is held
 		// Fixes bug #2059621 - "DRASCULA: Plug bug"
-		if (rightMouseButton == 1 && menuScreen == 0 && 
+		if (rightMouseButton == 1 && menuScreen == 0 &&
 			!(currentChapter == 5 && pickedObject == 16)) {
 #endif
 			delay(100);
@@ -578,7 +578,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		} else if (currentChapter == 6 && key == Common::KEYCODE_0 && roomNumber == 61) {
 			loadPic("alcbar.alg", bgSurface, 255);
 		}
-		
+
 		if (leftMouseButton != 0 || rightMouseButton != 0 || key != 0)
 			if (currentChapter != 3)
 				framesWithoutAction = 0;
@@ -799,7 +799,7 @@ void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int w
 
 	for (n = 0; n < newHeight; n++) {
 		for (m = 0; m < newWidth; m++) {
-			copyRect((int)pixelX, (int)pixelY, xx2 + m, yy2 + n, 
+			copyRect((int)pixelX, (int)pixelY, xx2 + m, yy2 + n,
 					 1, 1, dir_inicio, dir_fin);
 
 			pixelX += totalX;
@@ -874,7 +874,7 @@ bool DrasculaEngine::loadDrasculaDat() {
 	}
 
 	ver = in.readByte();
-	
+
 	if (ver != DRASCULA_DAT_VER) {
 		snprintf(buf, 256, "File 'drascula.dat' is wrong version. Expected %d but got %d. Get it from the ScummVM website", DRASCULA_DAT_VER, ver);
 		GUIErrorMessage(buf);

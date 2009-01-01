@@ -249,7 +249,7 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path) {
 		_isValid = false;		// Old code returned false here, but I'm not sure why
 	} else if ((strlen(pathStr) > 4) && (!strncmp(pathStr, "mp:/", 4))) {
 		// Files which start with mp:/
-		
+
 		// Clear the filename to 128 bytes, because a libfat bug occationally tries to read in this area.
 		memset(check, 0, 128);
 		strcpy(check, pathStr + 3);
@@ -279,7 +279,7 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path) {
 		_isValid = fileOrDir == FT_FILE;
 
 	}
-				
+
 
 //	consolePrintf("Path: %s \n", check);
 
@@ -567,7 +567,7 @@ size_t std_fread(const void* ptr, size_t size, size_t numItems, FILE* handle) {
 			return numItems;
 		} else {
 //			consolePrintf("Read past end of file: %d read out of %d\n", bytes / size, numItems);
-			if ((size_t)bytes != size * numItems) readPastEndOfFile = true;			
+			if ((size_t)bytes != size * numItems) readPastEndOfFile = true;
 			return bytes / size;
 		}
 		return numItems;
@@ -694,7 +694,7 @@ int std_fseek(FILE* handle, long int offset, int whence) {
 int std_ferror(FILE* handle) {
 	//FIXME: not implemented?
 //	consolePrintf("ferror ");
-	
+
 	return readPastEndOfFile;
 }
 

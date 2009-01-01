@@ -58,8 +58,8 @@ char *TextDisplayer_MR::preprocessString(const char *str) {
 			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
 			p += count + offs;
 			// No update of textWidth here
-		} 
-		
+		}
+
 		if (textWidth > (2*maxTextWidth)) {
 			count = getCharLength(p, textWidth/3);
 			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
@@ -68,13 +68,13 @@ char *TextDisplayer_MR::preprocessString(const char *str) {
 		}
 
 		count = getCharLength(p, textWidth/2);
-		offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));	
+		offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
 		p += count + offs;
 		textWidth = _screen->getTextWidth(p);
 
 		if (textWidth > maxTextWidth) {
 			count = getCharLength(p, textWidth/2);
-			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));	
+			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
 		}
 	}
 
@@ -250,7 +250,7 @@ void KyraEngine_MR::objectChatInit(const char *str, int object, int vocHigh, int
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::objectChatInit('%s', %d, %d, %d)", str, object, vocHigh, vocLow);
 	str = _text->preprocessString(str);
 	int lineNum = _text->buildMessageSubstrings(str);
-	
+
 	int xPos = 0, yPos = 0;
 
 	if (!object) {
@@ -508,7 +508,7 @@ void KyraEngine_MR::albumChat(const char *str, int vocHigh, int vocLow) {
 
 	_talkObjectList[1].x = 190;
 	_talkObjectList[1].y = 188;
-	
+
 	_chatVocHigh = _chatVocLow = -1;
 	_albumChatActive = true;
 	albumChatInit(str, 1, vocHigh, vocLow);
@@ -543,7 +543,7 @@ void KyraEngine_MR::albumChatInit(const char *str, int object, int vocHigh, int 
 
 	str = _text->preprocessString(str);
 	int lineNum = _text->buildMessageSubstrings(str);
-	
+
 	int xPos = 0, yPos = 0;
 
 	if (!object) {
@@ -670,7 +670,7 @@ void KyraEngine_MR::updateDlgBuffer() {
 	snprintf(dlgFile, 16, "CH%.02d-S%.02d.", _currentChapter, _mainCharacter.dlgIndex);
 	appendLanguage(dlgFile, _lang, 16);
 	snprintf(cnvFile, 16, "CH%.02d-S%.02d.CNV", _currentChapter, _mainCharacter.dlgIndex);
-	
+
 	delete _cnvFile;
 	delete _dlgBuffer;
 
@@ -750,7 +750,7 @@ void KyraEngine_MR::processDialog(int vocHighIndex, int vocHighBase, int funcNum
 	while (running) {
 		uint16 cmd = _cnvFile->readUint16LE();
 		int object = cmd - 12;
-		
+
 		if (cmd == 10) {
 			break;
 		} else if (cmd == 4) {
@@ -901,12 +901,12 @@ void KyraEngine_MR::randomSceneChat() {
 
 void KyraEngine_MR::runDialog(int dlgIndex, int funcNum) {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::runDialog(%d, %d)", dlgIndex, funcNum);
-	
+
 	switch (_currentChapter-2) {
 	case 0:
 		dlgIndex -= 34;
 		break;
-	
+
 	case 1:
 		dlgIndex -= 54;
 		break;

@@ -912,7 +912,7 @@ void Interface::drawPanelText(InterfacePanel *panel, PanelButton *panelButton) {
 	textPoint.x = rect.left;
 	textPoint.y = rect.top + 1;
 
-	_vm->_font->textDraw(textFont, text, textPoint, 
+	_vm->_font->textDraw(textFont, text, textPoint,
 						_vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(textShadowKnownColor), kFontShadow);
 }
 
@@ -1642,7 +1642,7 @@ void Interface::setOption(PanelButton *panelButton) {
 			_vm->_subtitlesEnabled = true;								// Set it to "Text"
 			_vm->_voicesEnabled = false;
 		}
-		
+
 		_vm->_speechVolume = _vm->_speechVolume + 25;
 		if (_vm->_speechVolume > 255) _vm->_speechVolume = 0;
 		ConfMan.setInt("speech_volume", _vm->_speechVolume);
@@ -2378,8 +2378,8 @@ void Interface::drawVerbPanelText(PanelButton *panelButton, KnownColor textKnown
 		point.y = _mainPanel.y + panelButton->yOffset + 12;
 	}
 
-	_vm->_font->textDraw(kKnownFontVerb, text, point, 
-						_vm->KnownColor2ColorId(textKnownColor), _vm->KnownColor2ColorId(textShadowKnownColor), 
+	_vm->_font->textDraw(kKnownFontVerb, text, point,
+						_vm->KnownColor2ColorId(textKnownColor), _vm->KnownColor2ColorId(textShadowKnownColor),
 						(textShadowKnownColor != kKnownColorTransparent) ? kFontShadow : kFontNormal);
 }
 

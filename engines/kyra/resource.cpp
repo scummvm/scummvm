@@ -184,7 +184,7 @@ bool Resource::loadFileList(const Common::String &filedata) {
 
 		if (filename.hasSuffix(".PAK")) {
 			if (!exists(filename.c_str()) && _vm->gameFlags().isDemo) {
-				// the demo version supplied with Kyra3 does not 
+				// the demo version supplied with Kyra3 does not
 				// contain all pak files listed in filedata.fdt
 				// so we don't do anything here if they are non
 				// existant.

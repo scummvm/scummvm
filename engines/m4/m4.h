@@ -116,7 +116,7 @@ protected:
 	virtual Common::Error go();
 
 	void shutdown();
-	
+
 	MidiPlayer *_midi;
 
 public:

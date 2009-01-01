@@ -47,7 +47,7 @@ Kernel::Kernel(M4Engine *vm) : _vm(vm) {
 	previousRoom = 0;
 	trigger = 0;
 	triggerMode = KT_DAEMON;
-	
+
 	_globalDaemonFn = NULL;
 	_globalParserFn = NULL;
 
@@ -88,17 +88,17 @@ bool Kernel::handleTrigger(int32 triggerNum) {
 	bool result = false;
 
 	int room = (triggerNum >> 16) & 0xFFF;
-	
+
 	printf("room = %d; currentRoom = %d\n", room, currentRoom); fflush(stdout);
-	
+
 	if (room != currentRoom) {
 		printf("Kernel::handleTrigger() Trigger from another room\n");
 		return false;
 	}
-	
+
 	trigger = triggerNum & 0xFFFF;
 	KernelTriggerType mode = (KernelTriggerType)(triggerNum >> 28);
-	
+
 	switch (mode) {
 
 	case KT_PREPARSE:

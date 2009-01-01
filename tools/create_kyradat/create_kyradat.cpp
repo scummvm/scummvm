@@ -91,7 +91,7 @@ const ExtractType extractTypeTable[] = {
 	{ k2TypeShpDataV1, extractHofShapeAnimDataV1, createFilename },
 	{ k2TypeShpDataV2, extractHofShapeAnimDataV2, createFilename },
 	{ k2TypeSoundList, extractStringsWoSuffix, createFilename },
-	{ k2TypeLangSoundList, extractStringsWoSuffix, createLangFilename },	
+	{ k2TypeLangSoundList, extractStringsWoSuffix, createLangFilename },
 	{ k2TypeSfxList, extractPaddedStrings, createFilename },
 	{ k3TypeRaw16to8, extractRaw16to8, createFilename },
 	{ k3TypeShpData, extractMrShapeAnimData, createFilename },
@@ -239,7 +239,7 @@ const ExtractFilename extractFilenames[] = {
 	{ k2IngameCDA, kTypeRawData, "I_TRACKS.CDA" },
 	{ k2IngameTalkObjIndex, kTypeRawData, "I_TALKOBJECTS.MAP" },
 	{ k2IngameTimJpStrings, kTypeStringList, "I_TIMJPSTR.TXT" },
-	{ k2IngameItemAnimData, k2TypeShpDataV2, "I_INVANIM.SHP" },	
+	{ k2IngameItemAnimData, k2TypeShpDataV2, "I_INVANIM.SHP" },
 	{ k2IngameTlkDemoStrings, kTypeLanguageList, "I_TLKDEMO.TXT" },
 
 
@@ -295,7 +295,7 @@ bool getFilename(char *dstFilename, const Game *g, const int id) {
 void createFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename) {
 	strcpy(dstFilename, filename);
 
-	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };	
+	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };
 	strcat(dstFilename, gidExtensions[gid]);
 
 	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
@@ -318,7 +318,7 @@ void createLangFilename(char *dstFilename, const int gid, const int lang, const 
 		}
 	}
 
-	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };	
+	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };
 	strcat(dstFilename, gidExtensions[gid]);
 
 	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
@@ -633,7 +633,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 				uint16 relOffs = (uint16) (output - buffer);
 				WRITE_BE_UINT16(hdout, relOffs);
 				hdout++;
-				
+
 				WRITE_BE_UINT16(output, READ_LE_UINT16(ptr)); // flags
 				ptr += 2;
 				output += 2;
@@ -683,9 +683,9 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 						extractHofSeqData_isControl(ctrStart, ctrSize)) {
 						controlOffs = (uint16) (output - buffer);
 						*output++ = ctrSize >> 2;
-												
+
 						for (int cc = 0; cc < ctrSize; cc += 2)
-							WRITE_BE_UINT16(output + cc, READ_LE_UINT16(ctrStart + cc)); // frame control					
+							WRITE_BE_UINT16(output + cc, READ_LE_UINT16(ctrStart + cc)); // frame control
 						output += ctrSize;
 					}
 				}
@@ -708,7 +708,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 				ptr += 2;
 				output += 2;
 
-				// endFrame				
+				// endFrame
 				WRITE_BE_UINT16(output, (ctrSize && ((ctrSize >> 2)  < READ_LE_UINT16(ptr))) ? (ctrSize >> 2) : READ_LE_UINT16(ptr));
 				ptr += 2;
 				output += 2;
@@ -717,7 +717,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 				WRITE_BE_UINT16(output, READ_LE_UINT16(ptr));
 				ptr += 2;
 				output += 2;
-				
+
 				ptr += 4;
 
 				for (int w = 0; w < 2; w++) { //x, y
@@ -744,7 +744,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 					memset(output, 0, 4);
 					output += 4;
 				}
-				
+
 				if (g->special == k2TownsFile1E)
 					ptr += 2;
 
@@ -891,7 +891,7 @@ bool extractHofShapeAnimDataV1(PAKFile &out, const Game *g, const byte *data, co
 		src += 4;
 		dst += 2;
 		outsize += 4;
-		
+
 		for (int j = 0; j < 20; j++) {
 			WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
 			src += 2;
@@ -923,12 +923,12 @@ bool extractHofShapeAnimDataV2(PAKFile &out, const Game *g, const byte *data, co
 		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
 		src += 2;
 		dst += 2;
-		
+
 		uint8 numFrames = *src;
 		*dst++ = numFrames;
 		src += 6;
 		outsize += 3;
-		
+
 		for (int i = 0; i < (numFrames << 1); i++) {
 			WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
 			src += 2;
@@ -1030,12 +1030,12 @@ bool extractMrShapeAnimData(PAKFile &out, const Game *g, const byte *data, const
 		WRITE_BE_UINT16(dst, READ_LE_UINT16(src1));
 		src1 += 2;
 		dst += 2;
-		
+
 		uint8 numFrames = *src1;
 		*dst++ = numFrames;
 		src1 += 10;
 		outsize += 3;
-		
+
 		for (int i = 0; i < (numFrames << 1); i++) {
 			WRITE_BE_UINT16(dst, READ_LE_UINT16(src2));
 			src2 += 2;

@@ -7,9 +7,9 @@ class ReadLineStreamTestSuite : public CxxTest::TestSuite {
 	void test_readline(void) {
 		byte contents[] = { 'a', 'b', '\n', '\n', 'c', '\n' };
 		Common::MemoryReadStream ms(contents, sizeof(contents));
-		
+
 		char buffer[100];
-		
+
 		TS_ASSERT(0 != ms.readLine_NEW(buffer, sizeof(buffer)));
 		TS_ASSERT(0 == strcmp(buffer, "ab\n"));
 
@@ -29,9 +29,9 @@ class ReadLineStreamTestSuite : public CxxTest::TestSuite {
 	void test_readline2(void) {
 		byte contents[] = { 'a', 'b', '\n', '\n', 'c' };
 		Common::MemoryReadStream ms(contents, sizeof(contents));
-		
+
 		char buffer[100];
-		
+
 		TS_ASSERT(0 != ms.readLine_NEW(buffer, sizeof(buffer)));
 		TS_ASSERT(0 == strcmp(buffer, "ab\n"));
 

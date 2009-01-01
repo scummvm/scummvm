@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -21,7 +21,7 @@
  * $URL$
  * $Id$
  *
- */	
+ */
 
 #include "common/scummsys.h"
 #include "backends/fs/symbian/symbianstream.h"
@@ -48,7 +48,7 @@ TSymbianFileEntry*	CreateSymbianFileEntry(const char* name, const char* mode) {
 	fileEntry->_inputPos = KErrNotFound;
 	fileEntry->_lastError = 0;
 	fileEntry->_eofReached = EFalse;
-	
+
 	if (fileEntry != NULL) {
 		TInt modeLen = strlen(mode);
 
@@ -102,9 +102,9 @@ size_t ReadData(const void* ptr, size_t size, size_t numItems, TSymbianFileEntry
 	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(handle));
 	TUint32 totsize = size*numItems;
 	TPtr8 pointer ( (unsigned char*) ptr, totsize);
-	
+
 	// Nothing cached and we want to load at least KInputBufferLength bytes
-	if (totsize >= KInputBufferLength) {	
+	if (totsize >= KInputBufferLength) {
 		TUint32 totLength = 0;
 		if (entry->_inputPos != KErrNotFound) {
 			TPtr8 cacheBuffer( (unsigned char*) entry->_inputBuffer+entry->_inputPos, entry->_inputBufferLen - entry->_inputPos, KInputBufferLength);
@@ -113,19 +113,19 @@ size_t ReadData(const void* ptr, size_t size, size_t numItems, TSymbianFileEntry
 			totLength+=pointer.Length();
 			pointer.Set(totLength+(unsigned char*) ptr, 0, totsize-totLength);
 		}
-		
+
 		entry->_lastError = entry->_fileHandle.Read(pointer);
-		
+
 		totLength+=pointer.Length();
-		
+
 		pointer.Set((unsigned char*) ptr, totLength, totsize);
-		
+
 	} else {
-		// Nothing in buffer	
+		// Nothing in buffer
 		if (entry->_inputPos == KErrNotFound) {
 			TPtr8 cacheBuffer( (unsigned char*) entry->_inputBuffer, KInputBufferLength);
-			entry->_lastError = entry->_fileHandle.Read(cacheBuffer);			
-			
+			entry->_lastError = entry->_fileHandle.Read(cacheBuffer);
+
 			if (cacheBuffer.Length() >= totsize) {
 				pointer.Copy(cacheBuffer.Left(totsize));
 				entry->_inputPos = totsize;
@@ -134,19 +134,19 @@ size_t ReadData(const void* ptr, size_t size, size_t numItems, TSymbianFileEntry
 				pointer.Copy(cacheBuffer);
 				entry->_inputPos = KErrNotFound;
 			}
-			
+
 		} else {
 			TPtr8 cacheBuffer( (unsigned char*) entry->_inputBuffer, entry->_inputBufferLen, KInputBufferLength);
-			
+
 			if (entry->_inputPos+totsize < entry->_inputBufferLen) {
 				pointer.Copy(cacheBuffer.Mid(entry->_inputPos, totsize));
 				entry->_inputPos+=totsize;
 			} else {
-				
+
 				pointer.Copy(cacheBuffer.Mid(entry->_inputPos, entry->_inputBufferLen-entry->_inputPos));
 				cacheBuffer.SetLength(0);
 				entry->_lastError = entry->_fileHandle.Read(cacheBuffer);
-				
+
 				if (cacheBuffer.Length() >= totsize-pointer.Length()) {
 					TUint32 restSize = totsize-pointer.Length();
 					pointer.Append(cacheBuffer.Left(restSize));
@@ -158,8 +158,8 @@ size_t ReadData(const void* ptr, size_t size, size_t numItems, TSymbianFileEntry
 				}
 			}
 		}
-	}	
-	
+	}
+
 	if((numItems * size) != pointer.Length() && entry->_lastError == KErrNone) {
 		entry->_eofReached = ETrue;
 	}
@@ -234,11 +234,11 @@ bool SymbianStdioStream::seek(int32 offs, int whence) {
 		break;
 
 	}
-	
+
 	entry->_inputPos = KErrNotFound;
 	entry->_eofReached = EFalse;
 	entry->_fileHandle.Seek(seekMode, pos);
-	
+
 	return true;	// FIXME: Probably should return a value based on what _fileHandle.Seek returns
 }
 
@@ -256,7 +256,7 @@ uint32 SymbianStdioStream::write(const void *ptr, uint32 len) {
 	if (((TSymbianFileEntry*)(_handle))->_lastError == KErrNone) {
 		return len;
 	}
-	
+
 	return 0;
 }
 

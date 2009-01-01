@@ -91,7 +91,7 @@ public:
 	void checkHotspotAtMousePosMads(int x, int y);
 	void showHotSpots();
 	void showCodes();
-	int getCurrentScene() { return _currentScene; } 
+	int getCurrentScene() { return _currentScene; }
 	SceneResources getSceneResources() { return _sceneResources; }
 	M4Surface *getBackgroundSurface() const { return _backgroundSurface; }
 	byte *getInverseColorTable() const { return _inverseColorTable; }

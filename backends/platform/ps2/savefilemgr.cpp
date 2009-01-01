@@ -193,7 +193,7 @@ Ps2SaveFileManager::Ps2SaveFileManager(OSystem_PS2 *system, Gs2dScreen *screen) 
 
 	saveThread.initial_priority = thisThread.current_priority + 1;
 	saveThread.stack_size = 8 * 1024;
-	_autoSaveStack = malloc(saveThread.stack_size);	
+	_autoSaveStack = malloc(saveThread.stack_size);
 	saveThread.stack  = _autoSaveStack;
 	saveThread.func   = (void *)runSaveThread;
 	saveThread.gp_reg = &_gp;
@@ -409,7 +409,7 @@ Common::StringList Ps2SaveFileManager::listSavefiles(const char *regex) {
 			_mcNeedsUpdate = true;
 
 		mcTable *mcEntries = (mcTable*)memalign(64, sizeof(mcTable) * MAX_MC_ENTRIES);
-    
+
 		char temp[256], mcSearchStr[256], *dir, *ext;
 		strcpy(temp, regex);
 		dir = strdup(strtok(temp, "."));
@@ -451,7 +451,7 @@ bool Ps2SaveFileManager::removeSavefile(const char *filename) {
 
 	char dir[64], name[64], fullPath[128];
 
-	splitPath(filename, dir, name);	
+	splitPath(filename, dir, name);
 	sprintf(fullPath, "/ScummVM-%s/%s", dir, name);
 
 	int res = _mc->remove(fullPath);

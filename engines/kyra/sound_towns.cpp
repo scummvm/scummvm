@@ -1174,7 +1174,7 @@ void TownsPC98_OpnOperator::keyOn() {
 void TownsPC98_OpnOperator::keyOff() {
 	if (!_playing)
 		return;
-	
+
 	_playing = false;
 	if (_state != s_ready)
 		_state = s_releasing;
@@ -1361,7 +1361,7 @@ public:
 	virtual void fadeStep();
 	void reset();
 
-	const uint8 _idFlag;	
+	const uint8 _idFlag;
 
 protected:
 	void setupVibrato();
@@ -1623,7 +1623,7 @@ protected:
 private:
 	void nextTick(int32 *buffer, uint32 bufferSize);
 	void generateOutput(int32 &leftSample, int32 &rightSample, int32 *del, int32 *feed);
-	
+
 	struct ChanInternal {
 		uint16 frqTemp;
 		bool enableLeft;
@@ -1637,7 +1637,7 @@ private:
 	TownsPC98_OpnSquareSineSource *_ssg;
 	TownsPC98_OpnPercussionSource *_prc;
 	ChanInternal *_chanInternal;
-		
+
 	uint8 *_oprRates;
 	uint8 *_oprRateshift;
 	uint8 *_oprAttackDecay;
@@ -1653,7 +1653,7 @@ private:
 	struct OpnTimer {
 		bool enabled;
 		uint16 value;
-		
+
 		int32 smpTillCb;
 		uint32 smpTillCbRem;
 		int32 smpPerCb;
@@ -1699,7 +1699,7 @@ public:
 
 	void timerCallbackB();
 	void timerCallbackA();
-	
+
 	bool looping() { return _looping == _updateChannelsFlag ? true : false; }
 	bool musicPlaying() { return _musicPlaying; }
 
@@ -1751,7 +1751,7 @@ protected:
 	uint16 _sfxOffsets[2];
 
 	static const uint8 _drvTables[];
-	
+
 	bool _ready;
 };
 
@@ -1897,7 +1897,7 @@ void TownsPC98_OpnChannel::processEvents() {
 
 void TownsPC98_OpnChannel::processFrequency() {
 	if (_flags & CHS_RECALCFREQ) {
-		
+
 		_frequency = (((const uint16*)_drv->_opnFreqTable)[_frqBlockMSB & 0x0f] + _frqLSB) | (((_frqBlockMSB & 0x70) >> 1) << 8);
 
 		_drv->writeReg(_part, _regOffset + 0xa4, (_frequency >> 8));
@@ -1970,7 +1970,7 @@ void TownsPC98_OpnChannel::reset() {
 	_ticksLeft = 1;
 
 	_flags = (_flags & ~CHS_EOT) | CHS_ALLOFF;
-	
+
 	_totalLevel = 0;
 	_algorithm = 0;
 	_flags = CHS_EOT;
@@ -1986,7 +1986,7 @@ void TownsPC98_OpnChannel::reset() {
 	_ssgTargetLvl = 0;
 	_ssgStep = 0;
 	_ssgTicksLeft = 0;
-	
+
 	_vbrInitDelayHi = 0;
 	_vbrInitDelayLo = 0;
 	_vbrModInitVal = 0;
@@ -2101,7 +2101,7 @@ bool TownsPC98_OpnChannel::control_f8_toggleVibrato(uint8 para) {
 		uint8 skipChannels = para / 36;
 		uint8 entry = para % 36;
 		TownsPC98_OpnDriver::TownsPC98_OpnChannel *t = &chan[skipChannels];
-		
+
 		t->unnamedEntries[entry] = *_dataPtr++;*/
 	}
 	return true;
@@ -2571,7 +2571,7 @@ TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerb
 	_reg[7] = &_chanEnable;
 	_reg[8] = &_channels[0].vol;
 	_reg[9] = &_channels[1].vol;
-	_reg[10] = &_channels[2].vol;	
+	_reg[10] = &_channels[2].vol;
 
 	reset();
 }
@@ -2731,7 +2731,7 @@ void TownsPC98_OpnSquareSineSource::updatesRegs() {
 
 TownsPC98_OpnPercussionSource::TownsPC98_OpnPercussionSource(const uint32 timerbase) :
 	_tickLength(timerbase * 2), _timer(0), _ready(false) {
-	
+
 	memset(_rhChan, 0, sizeof(RhtChannel) * 6);
 	_reg = new uint8 *[40];
 
@@ -2908,7 +2908,7 @@ void TownsPC98_OpnPercussionSource::advanceInput(RhtChannel *ins) {
 		60, 66, 73, 80, 88, 97, 107, 118, 130, 143, 157, 173, 190, 209, 230, 253, 279, 307, 337,
 		371, 408, 449, 494, 544, 598, 658, 724, 796, 876, 963, 1060, 1166, 1282, 1411, 1552
 	};
-	
+
 	uint8 cur = (int8) *ins->pos++;
 
 	for (int i = 0; i < 2; i++) {
@@ -2928,7 +2928,7 @@ TownsPC98_OpnCore::TownsPC98_OpnCore(Audio::Mixer *mixer, OpnType type) :
 	_regProtectionFlag(false), _ready(false) {
 
 	memset(&_timers[0], 0, sizeof(OpnTimer));
-	memset(&_timers[1], 0, sizeof(OpnTimer));	
+	memset(&_timers[1], 0, sizeof(OpnTimer));
 	_timers[0].cb = &TownsPC98_OpnCore::timerCallbackA;
 	_timers[1].cb = &TownsPC98_OpnCore::timerCallbackB;
 	_timerbase = (uint32)(_baserate * 1000000.0f);
@@ -2956,7 +2956,7 @@ bool TownsPC98_OpnCore::init() {
 	}
 
 	generateTables();
-	
+
 	TownsPC98_OpnOperator **opr = new TownsPC98_OpnOperator*[_numChan << 2];
 	for (int i = 0; i < (_numChan << 2); i++)
 		opr[i] = new TownsPC98_OpnOperator(_timerbase, _oprRates, _oprRateshift, _oprAttackDecay, _oprFrq, _oprSinTbl, _oprLevelOut, _oprDetune);
@@ -2985,7 +2985,7 @@ bool TownsPC98_OpnCore::init() {
 	return true;
 }
 
-void TownsPC98_OpnCore::reset() {	
+void TownsPC98_OpnCore::reset() {
 	for (int i = 0; i < _numChan; i++) {
 		for (int ii = 0; ii < 4; ii++)
 			_chanInternal[i].opr[ii]->reset();
@@ -3010,14 +3010,14 @@ void TownsPC98_OpnCore::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 		return;
 
 	static const uint8 oprOrdr[] = { 0, 2, 1, 3 };
-	
+
 	uint8 h = regAddress & 0xf0;
 	uint8 l = (regAddress & 0x0f);
 
 	ChanInternal *c = 0;
 	TownsPC98_OpnOperator **co = 0;
 	TownsPC98_OpnOperator *o = 0;
-	
+
 	if (regAddress > 0x2F) {
 		c = &_chanInternal[(l & 3) + 3 * part];
 		co = c->opr;
@@ -3052,7 +3052,7 @@ void TownsPC98_OpnCore::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 				_timers[0].value = (_timers[0].value & 0xff00) | value;
 			} else if (l == 5) {
 				// Timer A
-				_timers[0].value = (_timers[0].value & 0xff) | (value << 8);				
+				_timers[0].value = (_timers[0].value & 0xff) | (value << 8);
 			} else if (l == 6) {
 				// Timer B
 				_timers[1].value = value & 0xff;
@@ -3071,12 +3071,12 @@ void TownsPC98_OpnCore::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 				if (value & 10) {
 					_timers[0].smpTillCb = _timers[0].smpPerCb;
 					_timers[0].smpTillCbRem = _timers[0].smpTillCbRem;
-				}		
+				}
 
 				if (value & 20) {
 					_timers[1].smpTillCb = _timers[1].smpPerCb;
 					_timers[1].smpTillCbRem = _timers[1].smpTillCbRem;
-				} 
+				}
 			} else if (l == 2) {
 				// LFO
 				warning("TownsPC98_OpnDriver: TRYING TO USE LFO (NOT SUPPORTED)");
@@ -3316,12 +3316,12 @@ void TownsPC98_OpnCore::nextTick(int32 *buffer, uint32 bufferSize) {
 		for (uint32 ii = 0; ii < bufferSize ; ii++) {
 			int32 phbuf1, phbuf2, output;
 			phbuf1 = phbuf2 = output = 0;
-			
+
 			int32 *leftSample = &buffer[ii * 2];
 			int32 *rightSample = &buffer[ii * 2 + 1];
 			int32 *del = &_chanInternal[i].feedbuf[2];
 			int32 *feed = _chanInternal[i].feedbuf;
-			
+
 			switch (_chanInternal[i].algorithm) {
 			case 0:
 				o[0]->generateOutput(0, feed, phbuf1);
@@ -3393,19 +3393,19 @@ void TownsPC98_OpnCore::nextTick(int32 *buffer, uint32 bufferSize) {
 }
 
 TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) : TownsPC98_OpnCore(mixer, type),
-	_channels(0), _ssgChannels(0), _sfxChannels(0), _rhythmChannel(0),	
-	_trackPtr(0), _sfxData(0), _sfxOffs(0), _ssgPatches(0),	
+	_channels(0), _ssgChannels(0), _sfxChannels(0), _rhythmChannel(0),
+	_trackPtr(0), _sfxData(0), _sfxOffs(0), _ssgPatches(0),
 
 	_opnCarrier(_drvTables + 76), _opnFreqTable(_drvTables + 108), _opnFreqTableSSG(_drvTables + 132),
 	_opnFxCmdLen(_drvTables + 36), _opnLvlPresets(_drvTables + (type == OD_TOWNS ? 52 : 84)),
-	
+
 	_updateChannelsFlag(type == OD_TYPE26 ? 0x07 : 0x3F), _finishedChannelsFlag(0),
 	_updateSSGFlag(type == OD_TOWNS ? 0x00 : 0x07), _finishedSSGFlag(0),
 	_updateRhythmFlag(type == OD_TYPE86 ? 0x01 : 0x00), _finishedRhythmFlag(0),
 	_updateSfxFlag(type == OD_TOWNS ? 0x00 : 0x06), _finishedSfxFlag(0),
-	
+
 	_musicTickCounter(0),
-	
+
 	_musicPlaying(false), _sfxPlaying(false), _fading(false), _looping(0), _ready(false) {
 }
 
@@ -3526,7 +3526,7 @@ void TownsPC98_OpnDriver::loadMusicData(uint8 *data, bool loadPaused) {
 	_patches = src_a + 4;
 	_finishedChannelsFlag = _finishedSSGFlag = _finishedRhythmFlag = 0;
 
-	_musicPlaying = (loadPaused ? false : true);	
+	_musicPlaying = (loadPaused ? false : true);
 
 	unlock();
 }
@@ -3596,7 +3596,7 @@ void TownsPC98_OpnDriver::fadeStep() {
 		if (_updateChannelsFlag & _channels[j]->_idFlag)
 			_channels[j]->fadeStep();
 	}
-		
+
 	for (int j = 0; j < _numSSG; j++) {
 		if (_updateSSGFlag & _ssgChannels[j]->_idFlag)
 			_ssgChannels[j]->fadeStep();
@@ -3637,7 +3637,7 @@ void TownsPC98_OpnDriver::timerCallbackB() {
 				_ssgChannels[i]->processFrequency();
 			}
 		}
-		
+
 		if (_hasPercussion)
 			if (_updateRhythmFlag & _rhythmChannel->_idFlag)
 				_rhythmChannel->processEvents();
@@ -4139,7 +4139,7 @@ bool SoundTownsPC98_v2::init() {
 	if (_musicEnabled &&
 		(res->exists("track1.mp3") || res->exists("track1.ogg") || res->exists("track1.flac") || res->exists("track1.fla")))
 			_musicEnabled = 2;
-	
+
 	return _driver->init();
 }
 

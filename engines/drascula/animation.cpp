@@ -152,7 +152,7 @@ void DrasculaEngine::animation_1_1() {
 			copyBackground(0, 0, 320 - l, 0, l, 200, drawSurface3, screenSurface);
 			copyBackground(l, 0, 0, 0, 320 - l, 200, bgSurface, screenSurface);
 
-			copyRect(interf_x[l2], interf_y[l2], 156 - l, 45, 63, 31, 
+			copyRect(interf_x[l2], interf_y[l2], 156 - l, 45, 63, 31,
 					 drawSurface2, screenSurface);
 			updateScreen();
 			p++;

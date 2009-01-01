@@ -139,7 +139,7 @@ bool ImuseChannel::handleMap(byte *data) {
 		default:
 			error("Unknown iMUS subChunk found : %s, %d", tag2str(subType), subSize);
 		}
-		
+
 		data += subSize;
 		size -= subSize;
 	}

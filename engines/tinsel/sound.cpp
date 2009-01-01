@@ -88,7 +88,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 
 	// get file offset for this sample
 	uint32 dwSampleIndex = _sampleIndex[id];
-	
+
 	// move to correct position in the sample file
 	_sampleStream.seek(dwSampleIndex);
 	if (_sampleStream.ioFailed() || (uint32)_sampleStream.pos() != dwSampleIndex)
@@ -190,7 +190,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 
 	// get file offset for this sample
 	uint32 dwSampleIndex = _sampleIndex[id];
-	
+
 	if (dwSampleIndex == 0) {
 		warning("Tinsel2 playSample, non-existant sample %d", id);
 		return false;
@@ -305,7 +305,7 @@ int8 SoundManager::getPan(int x) {
 	if (x < 0) {
 		if (x < (-SCREEN_WIDTH / 2))
 			return -127;
- 
+
 		x = (-x * 127) / (SCREEN_WIDTH / 2);
 
 		return 0 - x;

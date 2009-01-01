@@ -93,7 +93,7 @@ protected:
 	byte *convertHMPtoSMF(byte *data, uint32 inSize, uint32 &outSize);
 };
 
-} // End of namespace M4 
+} // End of namespace M4
 
 #endif
- 
+

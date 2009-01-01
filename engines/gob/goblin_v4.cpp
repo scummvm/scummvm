@@ -615,19 +615,19 @@ int16 Goblin_v4::sub_20430(int16 state, uint16 dir) {
 	case Map::kDirN:
 		cx = 2;
 		break;
-	
+
 	case Map::kDirNE:
 		cx = 3;
 		break;
-	
+
 	case Map::kDirW:
 		cx = 0;
 		break;
-	
+
 	case Map::kDirE:
 		cx = 4;
 		break;
-	
+
 	case Map::kDirSW:
 		cx = 7;
 		break;

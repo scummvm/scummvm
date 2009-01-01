@@ -93,40 +93,40 @@ uint32 GBAMPSaveFile::write(const void *buf, uint32 size) {
 
 		memcpy(buffer + bufferPos, buf, size);
 		bufferPos += size;
-		
+
 		saveSize += size;
 
 
 /*		int pos = 0;
-		
+
 		int rest = SAVE_BUFFER_SIZE - bufferPos;
 		memcpy(buffer + bufferPos, buf, rest);
 		bufferPos = 512;
 		pos += rest;
-		flushSaveBuffer();		
+		flushSaveBuffer();
 		size -= rest;
 //		consolePrintf("First section: %d\n", rest);
-		
+
 		while (size >= 512) {
 			DS::std_fwrite(((char *) (buf)) + pos, 1, 512, handle);
 			size -= 512;
 			pos += 512;
 //			consolePrintf("Full chunk, %d left ", size);
 		}
-		
+
 		bufferPos = 0;
 		memcpy(buffer + bufferPos, ((char *) (buf)) + pos, size);
 		bufferPos += size;
 //		consolePrintf("%d left in buffer ", bufferPos);*/
-		
+
 	} else {
-	
+
 		memcpy(buffer + bufferPos, buf, size);
 		bufferPos += size;
-		
+
 		saveSize += size;
 	}
-	
+
 //	if ((size > 100) || (size <= 0)) consolePrintf("Write %d bytes\n", size);
 	return size;
 }
@@ -146,24 +146,24 @@ GBAMPSaveFileManager::~GBAMPSaveFileManager() {
 
 GBAMPSaveFile* GBAMPSaveFileManager::openSavefile(char const* name, bool saveOrLoad) {
 	char fileSpec[128];
-	
+
 	strcpy(fileSpec, getSavePath());
-	
+
 	if (fileSpec[strlen(fileSpec) - 1] == '/') {
 		sprintf(fileSpec, "%s%s", getSavePath(), name);
 	} else {
 		sprintf(fileSpec, "%s/%s", getSavePath(), name);
 	}
-	
+
 //	consolePrintf("Opening the file: %s\n", fileSpec);
 	GBAMPSaveFile* sf = new GBAMPSaveFile(fileSpec, saveOrLoad);
 	if (sf->isOpen()) {
 //		consolePrintf("Ok");
-		return sf;	
+		return sf;
 	} else {
 //		consolePrintf("Fail");
 		delete sf;
-		return NULL;	
+		return NULL;
 	}
 }
 
@@ -189,11 +189,11 @@ const char *GBAMPSaveFileManager::getSavePath() const {
 	return dir;
 }
 
-Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) { 
+Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) {
 
 	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
 	char name[256];
-	
+
 	{
 		char dir[128];
 		strcpy(dir, getSavePath());
@@ -218,13 +218,13 @@ Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) {
 
 //	consolePrintf("Save path: '%s', pattern: '%s'\n", getSavePath(), pattern);
 
-	
+
 	int fileType = FAT_FindFirstFileLFN(name);
 
 	Common::StringList list;
 
 	do {
-	
+
 		if (fileType == TYPE_FILE) {
 
 			FAT_GetLongFilename(name);
@@ -232,18 +232,18 @@ Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) {
 			for (int r = 0; name[r] != 0; r++) {
 				name[r] = tolower(name[r]);
 			}
-			
-			
+
+
 			if (Common::matchString(name, pattern)) {
 				list.push_back(name);
 			}
 		}
 
 	} while ((fileType = FAT_FindNextFileLFN(name)));
-	
+
 	FAT_chdir("/");
 
 	return list;
-}	
+}
 
 

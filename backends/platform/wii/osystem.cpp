@@ -93,7 +93,7 @@ OSystem_Wii::~OSystem_Wii() {
 
 void OSystem_Wii::initBackend() {
 	_startup_time = gettime();
-	
+
 	char buf[MAXPATHLEN];
 	if (!getcwd(buf, MAXPATHLEN))
 		strcpy(buf, "/");

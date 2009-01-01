@@ -63,7 +63,7 @@ protected:
 	Common::Array<const ExternalFunc*> _externalFuncs;
 	Common::Array<const char *> _externalFuncNames;
 	GenericResource *_musicRes;
-	
+
 	int16 sfSystemCall(int16 argc, int16 *argv);
 	int16 sfInitGraf(int16 argc, int16 *argv);
 	int16 sfRestoreGraf(int16 argc, int16 *argv);

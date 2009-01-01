@@ -45,7 +45,7 @@ namespace Tinsel {
 		} \
 		_bytesSynced += SIZE; \
 	}
-	
+
 
 // TODO: Write comment for this
 // TODO: Inspired by the SCUMM engine -- move to common/ code and use in more engines?
@@ -58,9 +58,9 @@ public:
 
 	bool isSaving() { return (_saveStream != 0); }
 	bool isLoading() { return (_loadStream != 0); }
-	
+
 	uint bytesSynced() const { return _bytesSynced; }
-	
+
 	void syncBytes(byte *buf, uint16 size) {
 		if (_loadStream)
 			_loadStream->read(buf, size);
@@ -90,7 +90,7 @@ protected:
 
 #undef SYNC_AS
 
-// TODO: Make a subclass "VersionedSerializer", which makes it easy to support 
+// TODO: Make a subclass "VersionedSerializer", which makes it easy to support
 //       multiple versions of a savegame format (again inspired by SCUMM).
 /*
 class VersionedSerializer : public Serializer {

@@ -329,7 +329,7 @@ void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
 	Common::Rect screenRect(320, 200);
 	boxRect.clip(screenRect);
 
-	// Draw the filled rectangle	
+	// Draw the filled rectangle
 	byte *dest = _backBuffer + boxRect.top * 320 + boxRect.left;
 	for (int i = 0; i < boxRect.height(); i++) {
 		memset(dest + i * 320, color, boxRect.width());
@@ -1092,7 +1092,7 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		}
 
 		_messageLen += messageTable[it->objIdx].size();
-		drawMessage(messageTable[it->objIdx].c_str(), it->x, it->y, it->width, it->color);		
+		drawMessage(messageTable[it->objIdx].c_str(), it->x, it->y, it->width, it->color);
 		if (it->color >= 0) { // This test isn't in Future Wars's implementation
 			waitForPlayerClick = 1;
 		}

@@ -65,7 +65,7 @@ void GUI_v2::processButton(Button *button) {
 		}
 		return;
 	}
-	
+
 	int entry = button->flags2 & 5;
 
 	byte val1 = 0, val2 = 0, val3 = 0;
@@ -365,7 +365,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 				if ((*buttonList->buttonCallback.get())(buttonList))
 					break;
 			}
-			
+
 			if (buttonList->flags & 0x20)
 				break;
 		}
@@ -544,7 +544,7 @@ int GUI_v2::toggleWalkspeed(Button *caller) {
 
 int GUI_v2::toggleText(Button *caller) {
 	updateMenuButton(caller);
-	
+
 	if (_vm->textEnabled()) {
 		if (_vm->speechEnabled())
 			_vm->_configVoice = 1;
@@ -636,7 +636,7 @@ int GUI_v2::clickSaveSlot(Button *caller) {
 	int index = caller->index - _menuButtons[0].index;
 	assert(index >= 0 && index <= 6);
 	MenuItem &item = _saveMenu.item[index];
-	
+
 	if (item.saveSlot >= 0) {
 		if (_isDeleteMenu) {
 			_slotToDelete = item.saveSlot;
@@ -701,7 +701,7 @@ int GUI_v2::deleteMenu(Button *caller) {
 			processHighlights(_saveMenu, _vm->_mouseX, _vm->_mouseY);
 			getInput();
 		}
-		
+
 		if (_slotToDelete < 1) {
 			restorePage1(_vm->_screenBuffer);
 			backUpPage1(_vm->_screenBuffer);
@@ -729,7 +729,7 @@ int GUI_v2::deleteMenu(Button *caller) {
 		Common::String oldName = _vm->getSavegameFilename(*i);
 		Common::String newName = _vm->getSavegameFilename(*i-1);
 		_vm->_saveFileMan->renameSavefile(oldName.c_str(), newName.c_str());
-	}	
+	}
 	_saveMenu.menuNameId = _vm->gameFlags().isTalkie ? 9 : 17;
 	return 0;
 }

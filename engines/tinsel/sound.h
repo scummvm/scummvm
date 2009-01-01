@@ -103,12 +103,12 @@ public:
 
 	void stopAllSamples(void);                // Stops any currently playing sample
 	void stopSpecSample(int id, int sub = 0); // Stops a specific sample
-	
+
 	void setSFXVolumes(uint8 volume);
 
 	bool sampleExists(int id);
 	bool sampleIsPlaying(int id = -1);
-	
+
 	// TODO: Internal method, make this protected?
 	void openSampleFiles(void);
 	void closeSampleStream(void);

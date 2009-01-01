@@ -258,7 +258,7 @@ void HotSpotList::loadHotSpots(Common::SeekableReadStream* hotspotStream, int ho
 			strLength = hotspotStream->readUint32LE();	// prepLength
 			hotspotStream->read(buffer, strLength);		// prep
 			str_upper(buffer);
-			
+
 			if (strlen(buffer) > 0 && strcmp(buffer, "--") != 0 && strcmp(buffer, "ON") != 0)
 				currentHotSpot->setPrep(buffer);
 			else

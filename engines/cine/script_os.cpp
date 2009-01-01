@@ -459,7 +459,7 @@ int FWScript::o2_modifySeqListElement() {
 	byte e = getNextByte();
 	debugC(5, kCineDebugScript, "Line: %d: o2_modifySeqListElement(%d,%d,%d,%d,%d)", _line, a, b, c, d, e);
 
-	modifySeqListElement(a, 0, b, c, d, e);	
+	modifySeqListElement(a, 0, b, c, d, e);
 	return 0;
 }
 

@@ -51,7 +51,7 @@ class Animation {
         void start();
         bool updateAnim();
         void stop();
-        
+
     private:
 		bool _playing;
 		M4Engine *_vm;

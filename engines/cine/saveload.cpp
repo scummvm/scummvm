@@ -103,7 +103,7 @@ enum CineSaveGameFormat detectSaveGameFormat(Common::SeekableReadStream &fHandle
 			overlayEntrySize,
 			bgIncrustEntrySize
 		};
-		
+
 		uint animEntrySize = animEntrySizeChoices[i];
 		// Jump over the animDataTable entries and the screen parameters
 		int32 newPos = animDataTableStart + animEntrySize * animEntriesCount + sizeofScreenParams;
@@ -128,7 +128,7 @@ enum CineSaveGameFormat detectSaveGameFormat(Common::SeekableReadStream &fHandle
 			}
 			fHandle.seek(newPos);
 		}
-		
+
 		// If we could walk the chain successfully and
 		// got exactly to the end of file then we've got a match.
 		if (chainWalkSuccess && fHandle.pos() == fHandle.size()) {
@@ -145,7 +145,7 @@ enum CineSaveGameFormat detectSaveGameFormat(Common::SeekableReadStream &fHandle
 		assert(animEntrySize == oldAnimEntrySize || animEntrySize == newAnimEntrySize);
 		if (animEntrySize == oldAnimEntrySize) {
 			result = ANIMSIZE_23;
-		} else { // animEntrySize == newAnimEntrySize		
+		} else { // animEntrySize == newAnimEntrySize
 			// Check data and mask pointers in all of the animDataTable entries
 			// to see whether we've got the version with the broken data and mask pointers or not.
 			// In the broken format all data and mask pointers were always zero.
@@ -484,7 +484,7 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 		return false;
 	} else if (hdr.version > CURRENT_OS_SAVE_VER) {
 		warning("loadTempSaveOS: Detected newer format version. Not loading savegame");
-		return false;		
+		return false;
 	} else if ((int)hdr.version < (int)CURRENT_OS_SAVE_VER) {
 		warning("loadTempSaveOS: Detected older format version. Trying to load nonetheless. Things may break");
 	} else { // hdr.id == TEMP_OS_FORMAT_ID && hdr.version == CURRENT_OS_SAVE_VER
@@ -499,7 +499,7 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 
 	// Ok, so we've got a correct header for a temporary Operation Stealth savegame.
 	// Let's start loading the plain savegame data then.
-	currentDisk = in.readUint16BE();	
+	currentDisk = in.readUint16BE();
 	in.read(currentPartName, 13);
 	in.read(currentPrcName, 13);
 	in.read(currentRelName, 13);
@@ -509,7 +509,7 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	for (uint i = 0; i < 8; i++) {
 		in.read(bgNames[i], 13);
 	}
-	
+
 	in.read(currentCtName, 13);
 
 	// Moved the loading of current procedure, relation,
@@ -571,7 +571,7 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	// TODO: Use the loaded value (Is music playing? (Uint16BE, Boolean)).
 	in.readUint16BE();
 
-	renderer->_cmdY      = in.readUint16BE();	
+	renderer->_cmdY      = in.readUint16BE();
 	in.readUint16BE(); // Some unknown variable that seems to always be zero
 	allowPlayerInput     = in.readUint16BE();
 	playerCommand        = in.readUint16BE();
@@ -583,7 +583,7 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	var2                 = in.readUint16BE();
 	commandVar2          = in.readUint16BE();
 	renderer->_messageBg = in.readUint16BE();
-	
+
 	// TODO: Use the loaded value (adBgVar1 (Uint16BE)).
 	in.readUint16BE();
 
@@ -625,7 +625,7 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	// TODO: Palette handling?
 
 	if (in.pos() == in.size()) {
-		debug(3, "loadTempSaveOS: Loaded the whole savefile.");		
+		debug(3, "loadTempSaveOS: Loaded the whole savefile.");
 	} else {
 		warning("loadTempSaveOS: Loaded the savefile but didn't exhaust it completely. Something was left over");
 	}
@@ -784,7 +784,7 @@ bool CineEngine::makeLoad(char *saveName) {
 		// 0x2315 + (255 * 30) + (2 * 6) + (206 + 206 + 20 + 20) * 512 = ~242kB
 		//
 		// I think it extremely unlikely that there would be over 512 global scripts, object scripts,
-		// overlays and background incrusts so 256kB seems like quite a safe upper limit.		
+		// overlays and background incrusts so 256kB seems like quite a safe upper limit.
 		// NOTE: If the savegame format is changed then this value might have to be re-evaluated!
 		// Hopefully devices with more limited memory can also cope with this memory allocation.
 		saveSize = 256 * 1024;
@@ -815,7 +815,7 @@ bool CineEngine::makeLoad(char *saveName) {
 	if (load) {
 		// Reset the engine's state
 		resetEngine();
-		
+
 		if (saveGameFormat == TEMP_OS_FORMAT) {
 			// Load the temporary Operation Stealth savegame format
 			result = loadTempSaveOS(*in);
@@ -882,7 +882,7 @@ void CineEngine::makeSaveFW(Common::OutSaveFile &out) {
 void CineEngine::makeSaveOS(Common::OutSaveFile &out) {
 	int i;
 
-	// Make a temporary Operation Stealth savegame format chunk header and save it.	
+	// Make a temporary Operation Stealth savegame format chunk header and save it.
 	ChunkHeader header;
 	header.id = TEMP_OS_FORMAT_ID;
 	header.version = CURRENT_OS_SAVE_VER;
@@ -918,7 +918,7 @@ void CineEngine::makeSaveOS(Common::OutSaveFile &out) {
 	// 0x2934: Is music playing? (Uint16BE, Boolean).
 	out.writeUint16BE(0);
 
-	out.writeUint16BE(renderer->_cmdY);	
+	out.writeUint16BE(renderer->_cmdY);
 	out.writeUint16BE(0); // Some unknown variable that seems to always be zero
 	out.writeUint16BE(allowPlayerInput);
 	out.writeUint16BE(playerCommand);
@@ -930,7 +930,7 @@ void CineEngine::makeSaveOS(Common::OutSaveFile &out) {
 	out.writeUint16BE(var2);
 	out.writeUint16BE(commandVar2);
 	out.writeUint16BE(renderer->_messageBg);
-	
+
 	// FIXME: Save proper value for this variable, currently writing zero.
 	// An unknown variable at 0x295E: adBgVar1 (Uint16BE).
 	out.writeUint16BE(0);

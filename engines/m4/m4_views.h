@@ -60,7 +60,7 @@ private:
 	int _selectedIndex;
 	M4Engine *_vm;
 public:
-	GUIInventory(View *owner, M4Engine *vm, const Common::Rect &bounds, 
+	GUIInventory(View *owner, M4Engine *vm, const Common::Rect &bounds,
 				 int horizCells, int vertCells, int cellWidth, int cellHeight, int tag);
 
 	void onRefresh();
@@ -71,14 +71,14 @@ public:
 	int getInsideIndex(int x, int y);
 	int getSelectedIndex() { return _selectedIndex; }
 	const char *getSelectedObjectName();
-	void clearSelected() { 
+	void clearSelected() {
 		_selectedIndex = -1;
 		setHighlight(-1);
 	}
 	const Common::Point &getCellPosition(int index);
 	void setHighlight(int index);
 	bool needLeftButton() { return _scrollPosition != 0; }
-	bool needRightButton() { 
+	bool needRightButton() {
 		return (uint)(_inventoryItems.size() - _scrollPosition) > (uint)(_cellCount.x * _cellCount.y);
 	}
 	void setScrollPosition(int value);

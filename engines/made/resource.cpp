@@ -57,7 +57,7 @@ PictureResource::~PictureResource() {
 void PictureResource::load(byte *source, int size) {
 
 	Common::MemoryReadStream *sourceS = new Common::MemoryReadStream(source, size);
-	
+
 	_hasPalette = (sourceS->readByte() != 0);
 	byte cmdFlags = sourceS->readByte();
 	byte pixelFlags = sourceS->readByte();
@@ -109,7 +109,7 @@ void AnimationResource::load(byte *source, int size) {
 	sourceS->readUint32LE();
 	sourceS->readUint32LE();
 	sourceS->readUint16LE();
-	
+
 	_flags = sourceS->readUint16LE();
 	_width = sourceS->readUint16LE();
 	_height = sourceS->readUint16LE();
@@ -137,7 +137,7 @@ void AnimationResource::load(byte *source, int size) {
 		uint16 maskOffs = sourceS->readUint16LE();
 		sourceS->readUint16LE();
 		uint16 lineSize = sourceS->readUint16LE();
-		
+
 		Graphics::Surface *frame = new Graphics::Surface();
 		frame->create(frameWidth, frameHeight, 1);
 
@@ -148,7 +148,7 @@ void AnimationResource::load(byte *source, int size) {
 	}
 
 	delete sourceS;
-	
+
 }
 
 /* SoundResource */
@@ -165,16 +165,16 @@ void SoundResource::load(byte *source, int size) {
 
 	uint16 chunkCount = READ_LE_UINT16(source + 8);
 	uint16 chunkSize = READ_LE_UINT16(source + 12);
-	
+
 	_soundSize = chunkCount * chunkSize;
 	_soundData = new byte[_soundSize];
 
-	decompressSound(source + 14, _soundData, chunkSize, chunkCount);	
+	decompressSound(source + 14, _soundData, chunkSize, chunkCount);
 }
 
 Audio::AudioStream *SoundResource::getAudioStream(int soundRate, bool loop) {
 	byte flags = Audio::Mixer::FLAG_UNSIGNED;
-	if (loop) 
+	if (loop)
 		flags |= Audio::Mixer::FLAG_LOOP;
 
 	return Audio::makeLinearInputStream(_soundData, _soundSize, soundRate, flags, 0, 0);

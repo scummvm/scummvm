@@ -460,7 +460,7 @@ static Common::String getDefaultConfigFileName() {
 	strcpy(configFile, getcwd(NULL, MAX_PATH));
 	strcat(configFile, "\\");
 	strcat(configFile, DEFAULT_CONFIG_FILE);
-	return configFile;	
+	return configFile;
 }
 
 Common::SeekableReadStream *OSystem_WINCE3::openConfigFileForReading() {
@@ -1377,7 +1377,7 @@ bool OSystem_WINCE3::loadGFXMode() {
 	if (_hwscreen == NULL) {
 		warning("SDL_SetVideoMode says we can't switch to that mode (%s)", SDL_GetError());
 		quit();
-	} 
+	}
 
 	// see what orientation sdl finally accepted
 	if (_hwscreen->flags & SDL_PORTRTVIDEO)
@@ -1441,8 +1441,8 @@ bool OSystem_WINCE3::loadGFXMode() {
 	_km.y_max = _videoMode.screenHeight * _scaleFactorXm / _scaleFactorXd - 1;
 	_km.delay_time = 25;
 	_km.last_time = 0;
-	
-	return true;	
+
+	return true;
 }
 
 void OSystem_WINCE3::unloadGFXMode() {

@@ -80,7 +80,7 @@ static Common::String fixVolCnfFileName(const uint8 *src, uint len) {
 		// so that's why we have to convert them first. There's no trailing zero in them
 		// either and they're always of the full length 11 with padding spaces. Extension
 		// can be always found at offset 8 onwards.
-		// 
+		//
 		// Examples of filename mappings:
 		// "AEROPORTMSG" -> "AEROPORT.MSG"
 		// "MITRAILLHP " -> "MITRAILL.HP" (Notice the trailing space after the extension)
@@ -160,7 +160,7 @@ void CineEngine::readVolCnf() {
 	// US Amiga release. It uses a compressed 'vol.cnf' file but still uses
 	// file names of length 13. So we try to deduce the file name length from
 	// the data in the 'vol.cnf' file.
-	int fileNameLength; 
+	int fileNameLength;
 	if (fileNameLenMod11 != fileNameLenMod13) {
 		// All file name blocks' sizes were divisible by either 11 or 13, but not with both.
 		fileNameLength = (fileNameLenMod11 ? 11 : 13);

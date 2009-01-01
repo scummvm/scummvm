@@ -3,7 +3,7 @@
 
 #include <cxxtest/Flags.h>
 
-namespace CxxTest 
+namespace CxxTest
 {
     struct List;
     class Link;
@@ -29,7 +29,7 @@ namespace CxxTest
     };
 
     class Link
-    {       
+    {
     public:
         Link();
         virtual ~Link();
@@ -39,7 +39,7 @@ namespace CxxTest
 
         Link *justNext();
         Link *justPrev();
-        
+
         Link *next();
         Link *prev();
         const Link *next() const;

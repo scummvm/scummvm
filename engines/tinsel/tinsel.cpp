@@ -161,7 +161,7 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 		keypresses.erase(keypresses.begin());
 		const Common::Point mousePos = _vm->getMousePosition();
 
-		// Switch for special keys 
+		// Switch for special keys
 		switch (evt.kbd.keycode) {
 		// Drag action
 		case Common::KEYCODE_LALT:
@@ -196,7 +196,7 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 		if (evt.type == Common::EVENT_KEYUP)
 			continue;
 
-		if (_vm->_keyHandler != NULL) 
+		if (_vm->_keyHandler != NULL)
 			// Keyboard is hooked, so pass it on to that handler first
 			if (!_vm->_keyHandler(evt.kbd))
 				continue;
@@ -221,11 +221,11 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 		case Common::KEYCODE_ESCAPE:
 #if 0
 			if (!TinselV2) {
-				// WORKAROUND: For Discworld 1, check if any of the starting logo screens are 
+				// WORKAROUND: For Discworld 1, check if any of the starting logo screens are
 				// active, and if so manually skip to the title screen, allowing them to be bypassed
 				int sceneOffset = (_vm->getFeatures() & GF_SCNFILES) ? 1 : 0;
 				int sceneNumber = (GetSceneHandle() >> SCNHANDLE_SHIFT) - sceneOffset;
-				if ((g_language == TXT_GERMAN) && 
+				if ((g_language == TXT_GERMAN) &&
 					((sceneNumber >= 25 && sceneNumber <= 27) || (sceneNumber == 17))) {
 					// Skip to title screen
 					// It seems the German CD version uses scenes 25,26,27,17 for the intro,
@@ -386,7 +386,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 			} else {
 				// Initial mouse down - either for a single click, or potentially
 				// the start of a double-click action
-				
+
 				if (TinselV2) {
 					PlayerEvent(PLR_DRAG1_START, mousePos);
 
@@ -412,7 +412,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 			if (_ctx->lastLWasDouble == false) {
 				_ctx->lastLeftClick = DwGetCurrentTime();
 
-				// If player control is enabled, start a process which, if it times out, 
+				// If player control is enabled, start a process which, if it times out,
 				// will activate a single button click
 				if (TinselV2 && ControlIsOn()) {
 					clickPos = mousePos;
@@ -630,7 +630,7 @@ static void RestoredProcess(CORO_PARAM, const void *param) {
 
 	_ctx->pic = RestoreInterpretContext(_ctx->pic);
 	_ctx->bConverse = TinselV2 && (_ctx->pic->event == CONVERSE);
-	
+
 	CORO_INVOKE_1(Interpret, _ctx->pic);
 
 	// Restore control after CallScene() from a conversation icon
@@ -690,7 +690,7 @@ bool ChangeScene(bool bReset) {
 		} else if (--CountOut == 0) {
 			if (!TinselV2)
 				ClearScreen();
-			
+
 			StartNewScene(NextScene.scene, NextScene.entry);
 			NextScene.scene = 0;
 
@@ -745,7 +745,7 @@ void LoadBasicChunks(void) {
 	numObjects = (cptr != NULL) ? READ_LE_UINT32(cptr) : 0;
 
 	cptr = FindChunk(INV_OBJ_SCNHANDLE, CHUNK_OBJECTS);
-	
+
 #ifdef SCUMM_BIG_ENDIAN
 	//convert to native endianness
 	INV_OBJECT *io = (INV_OBJECT *)cptr;
@@ -756,7 +756,7 @@ void LoadBasicChunks(void) {
 		io->attribute = FROM_LE_32(io->attribute);
 	}
 #endif
-	
+
 	RegisterIcons(cptr, numObjects);
 
 	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_POLY);
@@ -837,7 +837,7 @@ const char *TinselEngine::_textFiles[][3] = {
 };
 
 
-TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) : 
+TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc) {
 	_vm = this;
 
@@ -861,7 +861,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
 		_system->openCD(cd_num);
-		
+
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 	//bool adlib = (midiDriver == MD_ADLIB);
@@ -876,7 +876,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	//_midiMusic->setAdlib(adlib);
 
 	_musicVolume = ConfMan.getInt("music_volume");
-	
+
 	_sound = new SoundManager(this);
 
 	_mousePos.x = 0;
@@ -922,7 +922,7 @@ Common::Error TinselEngine::init() {
 	g_system->getEventManager()->registerRandomSource(_random, "tinsel");
 
 	_console = new Console();
-	
+
 	_scheduler = new Scheduler();
 
 	InitSysVars();
@@ -1067,7 +1067,7 @@ void TinselEngine::NextGameCycle(void) {
 
 	if (MoviePlaying())
 		CopyMovieToScreen();
-	else 
+	else
 		// redraw background
 		DrawBackgnd();
 
@@ -1078,8 +1078,8 @@ void TinselEngine::NextGameCycle(void) {
 
 bool TinselEngine::pollEvent() {
 	Common::Event event;
-	
-	if (!g_system->getEventManager()->pollEvent(event)) 
+
+	if (!g_system->getEventManager()->pollEvent(event))
 		return false;
 
 	// Handle the various kind of events
@@ -1094,7 +1094,7 @@ bool TinselEngine::pollEvent() {
 
 	case Common::EVENT_MOUSEMOVE:
 		{
-			// This fragment takes care of Tinsel 2 when it's been compiled with 
+			// This fragment takes care of Tinsel 2 when it's been compiled with
 			// blank areas at the top and bottom of thes creen
 			int ySize = (g_system->getHeight() - _vm->screen().h) / 2;
 			if ((event.mouse.y >= ySize) && (event.mouse.y < (g_system->getHeight() - ySize)))
@@ -1106,7 +1106,7 @@ bool TinselEngine::pollEvent() {
 	case Common::EVENT_KEYUP:
 		ProcessKeyEvent(event);
 		break;
-			
+
 	default:
 		break;
 	}
@@ -1176,8 +1176,8 @@ void TinselEngine::RestartDrivers(void) {
 	_scheduler->reset();
 
 	// init the event handlers
-	pMouseProcess = _scheduler->createProcess(PID_MOUSE, MouseProcess, NULL, 0);	
-	pKeyboardProcess = _scheduler->createProcess(PID_KEYBOARD, KeyboardProcess, NULL, 0);	
+	pMouseProcess = _scheduler->createProcess(PID_MOUSE, MouseProcess, NULL, 0);
+	pKeyboardProcess = _scheduler->createProcess(PID_KEYBOARD, KeyboardProcess, NULL, 0);
 
 	// open MIDI files
 	OpenMidiFiles();
@@ -1254,7 +1254,7 @@ void TinselEngine::ProcessKeyEvent(const Common::Event &event) {
 		return;
 	}
 
-	// All other keypresses add to the queue for processing in KeyboardProcess 
+	// All other keypresses add to the queue for processing in KeyboardProcess
 	keypresses.push_back(event);
 }
 

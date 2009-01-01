@@ -80,7 +80,7 @@ LANGUAGE textLanguage, sampleLanguage = TXT_ENGLISH;
 void ChangeLanguage(LANGUAGE newLang) {
 	Common::File f;
 	uint32 textLen = 0;	// length of buffer
-	
+
 	textLanguage = newLang;
 	sampleLanguage = newLang;
 
@@ -98,8 +98,8 @@ void ChangeLanguage(LANGUAGE newLang) {
 			error(CANNOT_FIND_FILE, _vm->getTextFile(newLang));
 	}
 
-	// Check whether the file is compressed or not -  for compressed files the 
-	// first long is the filelength and for uncompressed files it is the chunk 
+	// Check whether the file is compressed or not -  for compressed files the
+	// first long is the filelength and for uncompressed files it is the chunk
 	// identifier
 	textLen = f.readUint32LE();
 	if (f.ioFailed())
@@ -392,12 +392,12 @@ LANGUAGE NextLanguage(LANGUAGE thisOne) {
 	int i;
 
 	for (i = thisOne+1; i < NUM_LANGUAGES; i++) {
-		if (languages[i].bPresent) 
+		if (languages[i].bPresent)
 			return (LANGUAGE)i;
 	}
 
 	for (i = 0; i < thisOne; i++) {
-		if (languages[i].bPresent) 
+		if (languages[i].bPresent)
 			return (LANGUAGE)i;
 	}
 
@@ -409,12 +409,12 @@ LANGUAGE PrevLanguage(LANGUAGE thisOne) {
 	int i;
 
 	for (i = thisOne-1; i >= 0; i--) {
-		if (languages[i].bPresent) 
+		if (languages[i].bPresent)
 			return (LANGUAGE)i;
 	}
 
 	for (i = NUM_LANGUAGES-1; i > thisOne; i--) {
-		if (languages[i].bPresent) 
+		if (languages[i].bPresent)
 			return (LANGUAGE)i;
 	}
 

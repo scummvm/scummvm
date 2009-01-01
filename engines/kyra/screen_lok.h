@@ -40,7 +40,7 @@ public:
 	bool init();
 
 	int getRectSize(int w, int h);
-	
+
 	void setScreenDim(int dim);
 	const ScreenDim *getScreenDim(int dim);
 

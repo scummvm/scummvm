@@ -291,7 +291,7 @@ void OSystem_Wii::updateScreen() {
 
 	if (_mouseVisible) {
 		msx = _mouseX - _mouseHotspotX;
-		msy = _mouseY - _mouseHotspotY; 
+		msy = _mouseY - _mouseHotspotY;
 		mox = 0;
 		moy = 0;
 		mpx = _mouseWidth;

@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
- 
+
 #include "dsoptions.h"
 #include "dsmain.h"
 #include "gui/dialog.h"
@@ -98,7 +98,7 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 	_tab->setActiveTab(0);
 
 	_radioButtonMode = false;
-	
+
 #ifdef DS_SCUMM_BUILD
 	if (!DS::isGBAMPAvailable()) {
 //		addButton(this, 100, 140, "Delete Save", 'dels', 'D');
@@ -112,7 +112,7 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 //	_cpuScaler = new GUI::CheckboxWidget(this, 160, 115, 90, 20, "CPU scaler", 0, 'T');
 //#endif
 
-	
+
 
 
 
@@ -145,13 +145,13 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 		_unscaledCheckbox->setState(false);
 	}
 
-	
+
 	if (ConfMan.hasKey("topscreenzoom", "ds")) {
 
-		_100PercentCheckbox->setState(false);		
-		_150PercentCheckbox->setState(false);		
-		_200PercentCheckbox->setState(false);		
-		
+		_100PercentCheckbox->setState(false);
+		_150PercentCheckbox->setState(false);
+		_200PercentCheckbox->setState(false);
+
 		switch (ConfMan.getInt("topscreenzoom", "ds"))
 		{
 			case 100: {
@@ -237,7 +237,7 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 	if (!_cpuScaler->getState() && !_unscaledCheckbox->getState()) {
 		_hardScaler->setState(true);
 	}
-		
+
 	_radioButtonMode = true;
 }
 
@@ -293,17 +293,17 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 			_cpuScaler->setState(false);
 			_hardScaler->setState(false);
 			_unscaledCheckbox->setState(false);
-		
+
 			if ((sender == _cpuScaler) && (cmd == 0x10000002))
 			{
 				_cpuScaler->setState(true);
 			}
-		
+
 			if ((sender == _hardScaler) && (cmd == 0x10000001))
 			{
 				_hardScaler->setState(true);
 			}
-	
+
 			if ((sender == _unscaledCheckbox) && (cmd == 0x10000003))
 			{
 				_unscaledCheckbox->setState(true);
@@ -392,11 +392,11 @@ void togglePause() {
 		OSystem_DS* system = OSystem_DS::instance();
 
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_p;		
+		event.kbd.keycode = Common::KEYCODE_p;
 		event.kbd.ascii = 'p';
 		event.kbd.flags = 0;
 		system->addEvent(event);
-	
+
 		event.type = Common::EVENT_KEYUP;
 		system->addEvent(event);
 	}
@@ -407,12 +407,12 @@ void showOptionsDialog() {
 	togglePause();
 
 	DS::displayMode16Bit();
-	
+
 
 	DSOptionsDialog* d = new DSOptionsDialog();
 	d->runModal();
 	delete d;
-	
+
 	DS::displayMode8Bit();
 
 	togglePause();
@@ -487,7 +487,7 @@ void setOptions() {
 	} else {
 		DS::setCpuScalerEnable(false);
 	}
-#endif	
+#endif
 
 	if (ConfMan.hasKey("screentaps", "ds")) {
 		DS::setTapScreenClicksEnable(ConfMan.getBool("screentaps", "ds"));
@@ -497,7 +497,7 @@ void setOptions() {
 
 	if (ConfMan.hasKey("touchpad", "ds")) {
 		bool enable = ConfMan.getBool("touchpad", "ds");
-		
+
 		DS::setTrackPadStyleEnable(enable);
 
 		if ((enable) and (firstLoad)) {
@@ -509,7 +509,7 @@ void setOptions() {
 		if (enable) {
 			DS::setTapScreenClicksEnable(true);
 		}
-			
+
 	} else {
 		DS::setTrackPadStyleEnable(false);
 	}

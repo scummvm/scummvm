@@ -110,14 +110,14 @@ public:
 	long *getVarPtr(int index);
 	long *getParentVarPtr(int index);
 	long *getDataPtr(int index);
-	
+
 	void setActive(bool active) { _active = active; }
 	bool isActive() const { return _active; }
 
 	bool isTerminated() const { return _terminated; }
 
 	void draw(M4Surface *surface, const Common::Rect &clipRect, Common::Rect &updateRect);
-	
+
 	bool s1_end(Instruction &instruction);
 	bool s1_clearVars(Instruction &instruction);
 	bool s1_set(Instruction &instruction);
@@ -185,9 +185,9 @@ protected:
 	EndOfSequenceRequestItem _endOfSequenceRequest;
 
 	int32 _indexReg;
-	
+
 	M4Sprite *_curFrame;
-	
+
 	int32 _sequenceHash;
 
 	int32 _returnHashes[8]; //FIXME: Use constant instead of 8
@@ -305,7 +305,7 @@ public:
 
 	/* Misc */
 	void setDepthTable(int16 *depthTable);
-	
+
 	long *getGlobalPtr(int index);
 	long getGlobal(int index);
 	void setGlobal(int index, long value);
@@ -316,9 +316,9 @@ public:
 	void setBackgroundSurface(M4Surface *backgroundSurface);
 	// Sets the view which is used for drawing
 	void setSurfaceView(View *view);
-	
+
 	RGB8 *getMainPalette() const;
-	
+
 	void setInverseColorTable(byte *inverseColorTable) { _inverseColorTable = inverseColorTable; }
 	byte *getInverseColorTable() const { return _inverseColorTable; }
 
@@ -331,7 +331,7 @@ protected:
 	int32 _machineId;
 
 	long *_globals;
-	
+
 	Common::Array<Sequence*> _endOfSequenceRequestList;
 
 	int32 _indexReg;

@@ -31,7 +31,7 @@
 
 namespace M4 {
 
-GUIInventory::GUIInventory(View *owner, M4Engine *vm, const Common::Rect &bounds, int horizCells, 
+GUIInventory::GUIInventory(View *owner, M4Engine *vm, const Common::Rect &bounds, int horizCells,
 		   int vertCells, int cellWidth, int cellHeight, int tag): GUIRect(owner, bounds, tag) {
 
     _vm = vm;
@@ -60,7 +60,7 @@ void GUIInventory::onRefresh() {
 		//kernel_trigger_dispatch(kernel_trigger_create(TRIG_INV_CLICK));
 
 		_scrollable = false;
-		
+
 		// Get to the starting inventory position for display
 		ItemsIterator i = _inventoryItems.begin();
 		int index = _scrollPosition;
@@ -70,7 +70,7 @@ void GUIInventory::onRefresh() {
 		for (index = 0; (i != _inventoryItems.end()) && (index < _cellCount.x * _cellCount.y); ++index, ++i) {
 			GUIInventoryItem *item = (*i).get();
 			const Common::Point cellPos = getCellPosition(index);
-/*			Common::Rect cellBounds(_bounds.left + cellPos.x + xOffset, 
+/*			Common::Rect cellBounds(_bounds.left + cellPos.x + xOffset,
 				_bounds.top + cellPos.y + yOffset,
 				_bounds.left + cellPos.x + xOffset + _cellSize.x,
 				_bounds.top + cellPos.y + _cellSize.y);*/
@@ -83,9 +83,9 @@ void GUIInventory::onRefresh() {
 
 			item->icon->copyTo(_parent, iconPt.x, iconPt.y, 0);
 
-			if (_highlightedIndex == index) 
+			if (_highlightedIndex == index)
 				_parent->frameRect(Common::Rect(iconPt.x - 2, iconPt.y - 2,
-				iconPt.x + item->icon->width() + 2, iconPt.y + item->icon->height() + 2), 
+				iconPt.x + item->icon->width() + 2, iconPt.y + item->icon->height() + 2),
 				_vm->_palette->LIGHT_GRAY);
 		}
 	}
@@ -203,13 +203,13 @@ void GUIInventory::setHighlight(int index) {
 	_highlightedIndex = index;
 }
 
-void GUIInventory::setScrollPosition(int value) { 
+void GUIInventory::setScrollPosition(int value) {
 	if (value < 0)
 		return;
 	else if (value >= (int)_inventoryItems.size() - (_cellCount.x * _cellCount.y))
 		return;
 
-	_scrollPosition = value; 
+	_scrollPosition = value;
 }
 
 //--------------------------------------------------------------------------
@@ -218,8 +218,8 @@ const char *INTERFACE_SERIES = "999intr";
 
 #define SPR(x) _sprites->getFrame(x)
 
-GameInterfaceView::GameInterfaceView(M4Engine *vm): 
-		View(vm, Common::Rect(0, vm->_screen->height() - INTERFACE_HEIGHT, 
+GameInterfaceView::GameInterfaceView(M4Engine *vm):
+		View(vm, Common::Rect(0, vm->_screen->height() - INTERFACE_HEIGHT,
 				vm->_screen->width(), vm->_screen->height())),
 		_statusText(GUITextField(this, Common::Rect(200, 1, 450, 21))),
 		_inventory(GUIInventory(this, vm, Common::Rect(188, 22, 539, 97), 9, 1, 39, 75, 3)) {
@@ -249,7 +249,7 @@ GameInterfaceView::GameInterfaceView(M4Engine *vm):
 
 	_buttons.push_back(ButtonList::value_type(new GUIButton(this, Common::Rect(580, 10, 620, 69), 3, SPR(69), SPR(70), SPR(71))));  // abduction
 	_buttons.push_back(ButtonList::value_type(new GUIButton(this, Common::Rect(582, 70, 619, 105), 4, SPR(76), SPR(77), SPR(78)))); // menu
-	
+
 	_buttons.push_back(ButtonList::value_type(new GUIButton(this, Common::Rect(168, 22, 188, 97), 5, SPR(60), SPR(61), SPR(62))));   // Scroll left
 	_buttons.push_back(ButtonList::value_type(new GUIButton(this, Common::Rect(539, 22, 559, 97), 6, SPR(64), SPR(65), SPR(66))));   // Scroll right
 }
@@ -272,7 +272,7 @@ bool GameInterfaceView::onEvent(M4EventType eventType, int param, int x, int y, 
 	static bool selectionFlag = false;
 	if (eventType == MEVENT_LEFT_RELEASE)
 		selectionFlag = false;
-	
+
 	captureEvents = isInside(x, y);
 	if (!captureEvents)
 		return false;
@@ -284,7 +284,7 @@ bool GameInterfaceView::onEvent(M4EventType eventType, int param, int x, int y, 
 	_statusText.onEvent(eventType, param, localX, localY, currentItem);
 	_inventory.onEvent(eventType, param, localX, localY, currentItem);
 
-	if (_vm->_mouse->getCursorNum() != CURSOR_LOOK && 
+	if (_vm->_mouse->getCursorNum() != CURSOR_LOOK &&
 		_vm->_mouse->getCursorNum() != CURSOR_TAKE &&
 		_vm->_mouse->getCursorNum() != CURSOR_USE &&
 		_vm->_interfaceView->_inventory.getSelectedIndex() == -1) {
@@ -329,13 +329,13 @@ bool GameInterfaceView::onEvent(M4EventType eventType, int param, int x, int y, 
 
 	return true;
 }
-		
+
 void GameInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	clear();
 
 	_statusText.onRefresh();
 	_inventory.onRefresh();
-	for (ButtonsIterator i = _buttons.begin(); i != _buttons.end(); ++i) 
+	for (ButtonsIterator i = _buttons.begin(); i != _buttons.end(); ++i)
 		((*i).get())->onRefresh();
 
 	View::onRefresh(rects, destSurface);

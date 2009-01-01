@@ -146,7 +146,7 @@ Common::Error KyraEngine_HoF::loadGameState(int slot) {
 		warning("Trying to load savegame from original interpreter, while this is possible, it is not officially supported");
 
 	bool setFlag1EE = (queryGameFlag(0x1EE) != 0);
-	
+
 	_deathHandler = -1;
 	if (!_unkSceneScreenFlag1) {
 		_sound->beginFadeOut();
@@ -203,7 +203,7 @@ Common::Error KyraEngine_HoF::loadGameState(int slot) {
 		for (int i = 0; i < 31; ++i)
 			_newSceneDlgState[i] = in.readUint16();
 	}
-		
+
 	_cauldronUseCount = in.readSint16();
 
 	if (header.originalSave)
@@ -312,7 +312,7 @@ Common::Error KyraEngine_HoF::loadGameState(int slot) {
 	_mainCharX = _mainCharacter.x2 = _mainCharacter.x1;
 	_mainCharY = _mainCharacter.y2 = _mainCharacter.y1;
 	_mainCharacter.facing = 4;
-	
+
 	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 	setHandItem(_itemInHand);
 

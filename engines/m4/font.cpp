@@ -55,7 +55,7 @@ void Font::setFont(const char *filename) {
 
 void Font::setFontM4(const char *filename) {
 	Common::SeekableReadStream *fontFile = _vm->res()->openFile(filename);
-	
+
 	if (fontFile->readUint32LE() != MKID_BE('FONT')) {
 		printf("Font::Font: FONT tag expected\n");
 		return;
@@ -64,7 +64,7 @@ void Font::setFontM4(const char *filename) {
 	_maxHeight = fontFile->readByte();
 	_maxWidth = fontFile->readByte();
 	uint32 fontSize = fontFile->readUint32LE();
-	
+
 	//printf("Font::Font: _maxWidth = %d, _maxHeight = %d, fontSize = %d\n", _maxWidth, _maxHeight, fontSize);
 
 	if (fontFile->readUint32LE() != MKID_BE('WIDT')) {
@@ -137,8 +137,8 @@ Font::~Font() {
 void Font::setColor(uint8 color) {
 	if (_sysFont)
 		_fontColors[1] = color;
-	else 
-		_fontColors[3] = color;		
+	else
+		_fontColors[3] = color;
 }
 
 void Font::setColors(uint8 alt1, uint8 alt2, uint8 foreground) {
@@ -166,7 +166,7 @@ int32 Font::write(M4Surface *surface, const char *text, int x, int y, int width,
 
 	x++;
 	y++;
-	
+
 	int skipY = 0;
 	if (y < 0) {
 		skipY = -y;
@@ -194,7 +194,7 @@ int32 Font::write(M4Surface *surface, const char *text, int x, int y, int width,
 
 		unsigned char theChar = (*text++) & 0x7F;
 		int charWidth = _charWidths[theChar];
-		
+
 		if (charWidth > 0) {
 
 			if (xPos + charWidth >= width)
@@ -244,7 +244,7 @@ int32 Font::write(M4Surface *surface, const char *text, int x, int y, int width,
 		}
 
 		xPos += charWidth + spaceWidth;
-		
+
 	}
 
 	surface->freeData();

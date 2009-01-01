@@ -1195,7 +1195,7 @@ static void NewCoOrdinates(int fromx, int fromy, int *targetX, int *targetY,
 			// Ignore if already in it (it may have just appeared)
 			if (!InMoverBlock(pMover, pMover->objX, pMover->objY)) {
 				*s2 = ENTERING_MBLOCK;	// Trying to walk through an actor
-				
+
 				*hS2p = -1;
 				if (collisionActor)
 					*collisionActor = ma;
@@ -1359,7 +1359,7 @@ int SetActorDest(PMOVER pMover, int clickX, int clickY, bool igPath, SCNHANDLE h
 		}
 	} else {
 		int wodResult = WorkOutDestination(clickX, clickY, &targetX, &targetY);
-		
+
 		if (pMover->actorID == GetLeadId()) {
 			lastLeadXdest = targetX;
 			lastLeadYdest = targetY;

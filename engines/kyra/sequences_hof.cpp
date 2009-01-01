@@ -309,7 +309,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 			_eventList.clear();
 
 			if (_menuChoice == 2) {
-				seqNum = kSequenceTitle;				
+				seqNum = kSequenceTitle;
 				_menuChoice = 0;
 			}
 		}
@@ -319,7 +319,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 		_eventList.clear();
 		_screen->fadeToBlack();
 	}
-	
+
 	if (!_menuChoice)
 		delay(1200);
 
@@ -1798,7 +1798,7 @@ int KyraEngine_HoF::seq_demoDig(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 int KyraEngine_HoF::seq_lolDemoScene1(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	uint8 *tmpPal = _screen->getPalette(2);
-	
+
 	if (!(_seqFrameCounter % 100)) {
 		if (_seqFrameCounter == 0) {
 			_sound->haltTrack();
@@ -1808,12 +1808,12 @@ int KyraEngine_HoF::seq_lolDemoScene1(WSAMovie_v2 *wsaObj, int x, int y, int frm
 		for (int i = 3; i < 0x300; i++) {
 			tmpPal[i] = ((int)tmpPal[i] * 120) / 64;
 			if (tmpPal[i] > 0x3f)
-				tmpPal[i] = 0x3f;			
+				tmpPal[i] = 0x3f;
 		}
 		seq_playTalkText(_rnd.getRandomBit());
 		_screen->setScreenPalette(tmpPal);
 		_screen->updateScreen();
-		delay(8);		
+		delay(8);
 	} else {
 		_screen->setScreenPalette(_screen->getPalette(0));
 		_screen->updateScreen();
@@ -1853,7 +1853,7 @@ int KyraEngine_HoF::seq_lolDemoScene3(WSAMovie_v2 *wsaObj, int x, int y, int frm
 		seq_playTalkText(6);
 	else if (frm == 26)
 		seq_playTalkText(7);
-	
+
 	_seqFrameCounter++;
 	return frm;
 }
@@ -1887,7 +1887,7 @@ int KyraEngine_HoF::seq_lolDemoScene4(WSAMovie_v2 *wsaObj, int x, int y, int frm
 		default:
 			break;
 	}
-	
+
 	_seqFrameCounter++;
 	return frm;
 }
@@ -1929,7 +1929,7 @@ int KyraEngine_HoF::seq_lolDemoText5(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 }
 
 int KyraEngine_HoF::seq_lolDemoScene6(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	while (_seqScrollTextCounter < 0x122) {		
+	while (_seqScrollTextCounter < 0x122) {
 		_seqEndTime = _system->getMillis() + 6 * _tickLength;
 		if (!_seqFrameCounter) {
 			_screen->loadBitmap("adtext.cps", 4, 4, 0);
@@ -1947,17 +1947,17 @@ int KyraEngine_HoF::seq_lolDemoScene6(WSAMovie_v2 *wsaObj, int x, int y, int frm
 			for (int i = 3; i < 0x300; i++) {
 				tmpPal[i] = ((int)tmpPal[i] * 120) / 64;
 				if (tmpPal[i] > 0x3f)
-					tmpPal[i] = 0x3f;			
+					tmpPal[i] = 0x3f;
 			}
 			seq_playTalkText(_rnd.getRandomBit());
 			_screen->setScreenPalette(tmpPal);
 			_screen->updateScreen();
 			delay(8);
 		}
-		
+
 		if (_seqFrameCounter == 40 || _seqFrameCounter == 80 || _seqFrameCounter == 150 || _seqFrameCounter == 300)
 			seq_playTalkText(3);
-		
+
 		_screen->copyPage(12, 2);
 		seq_scrollPage(70, 130);
 		_screen->copyPage(2, 0);
@@ -2767,7 +2767,7 @@ void KyraEngine_HoF::seq_scrollPage(int bottom, int top) {
 	if (dstH > 0) {
 		if (_demoAnimData) {
 			for (int i = 0; i < 4; i++) {
-				const ItemAnimData_v1 *def = &_demoAnimData[i];			
+				const ItemAnimData_v1 *def = &_demoAnimData[i];
 				ActiveItemAnim *a = &_activeItemAnim[i];
 
 				_screen->fillRect(12, def->y - 8, 28, def->y + 8, 0, 4);
@@ -2830,7 +2830,7 @@ void KyraEngine_HoF::seq_init() {
 	_res->unloadAllPakFiles();
 	_res->loadPakFile(StaticResource::staticDataFilename());
 	_res->loadFileList(_sequencePakList, _sequencePakListSize);
-	
+
 	if (_flags.platform == Common::kPlatformPC98)
 		_sound->loadSoundFile("sound.dat");
 
@@ -2851,7 +2851,7 @@ void KyraEngine_HoF::seq_init() {
 			numShp++;
 			addShapeToPool(_screen->getPtrToShape(_animShapeFiledata, numShp), numShp);
 		} while (getShapePtr(numShp));
-	} else {	
+	} else {
 		MainMenu::StaticData data = {
 			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98], 0 },
 			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xd7, 0xd6 },

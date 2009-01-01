@@ -322,7 +322,7 @@ protected:
 
 	void drawShapePlotType0(uint8 *dst, uint8 cmd);
 	void drawShapePlotType1(uint8 *dst, uint8 cmd);
-	void drawShapePlotType3_7(uint8 *dst, uint8 cmd);	
+	void drawShapePlotType3_7(uint8 *dst, uint8 cmd);
 	void drawShapePlotType4(uint8 *dst, uint8 cmd);
 	void drawShapePlotType5(uint8 *dst, uint8 cmd);
 	void drawShapePlotType6(uint8 *dst, uint8 cmd);
@@ -331,7 +331,7 @@ protected:
 	void drawShapePlotType11_15(uint8 *dst, uint8 cmd);
 	void drawShapePlotType12(uint8 *dst, uint8 cmd);
 	void drawShapePlotType13(uint8 *dst, uint8 cmd);
-	void drawShapePlotType14(uint8 *dst, uint8 cmd);		
+	void drawShapePlotType14(uint8 *dst, uint8 cmd);
 
 	typedef int (Screen::*DsMarginSkipFunc)(uint8 *&dst, const uint8 *&src, int &cnt);
 	typedef void (Screen::*DsLineFunc)(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);

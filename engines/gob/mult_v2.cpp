@@ -517,7 +517,7 @@ void Mult_v2::playMultInit() {
 			}
 
 		delete[] _objects;
-	
+
 		_vm->_util->setFrameRate(_multData->frameRate);
 		_animTop = 0;
 		_animLeft = 0;
@@ -762,7 +762,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 			_vm->_vidPlayer->slotClose(animObj.videoSlot - 1);
 			animObj.videoSlot = 0;
 		}
-		
+
 		break;
 
 	case 6:

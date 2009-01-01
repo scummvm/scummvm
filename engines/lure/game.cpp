@@ -138,12 +138,12 @@ void Game::execute() {
 
 	screen.empty();
 	screen.setPaletteEmpty();
-	
+
 	bool _loadSavegame = false;
-	
+
 	if (engine.gameToLoad() != -1)
 		_loadSavegame = engine.loadGame(engine.gameToLoad());
-	
+
 	if (!_loadSavegame) {
 		// Flag for starting game
 		setState(GS_RESTART);

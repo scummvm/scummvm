@@ -138,7 +138,7 @@ void AGOSEngine::vc22_setPaletteNew() {
 			palptr[3] = 0;
 
 			palptr += 4;
-		}; 
+		};
 	}
 
 	_paletteFlag = 2;

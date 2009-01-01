@@ -139,7 +139,7 @@ bool Script::loadScript(Common::String filename) {
 		_code[0x03C2] = 0x38;
 	} else if (filename.equals("maze.grv")) {
 		// GRAPHICS ENHANCEMENT - Leave a skeleton in the maze.
-		// Replaces one normal T intersection with the unused(?) 
+		// Replaces one normal T intersection with the unused(?)
 		// skeleton T intersection graphics.
 		assert(_codeSize == 3652);
 
@@ -147,7 +147,7 @@ bool Script::loadScript(Common::String filename) {
 		_code[0x0769] = 0x46;
 		_code[0x0774] = 0x3E;
 		_code[0x077A] = 0x42;
-		
+
 		// T with branch on right
 		_code[0x08E2] = 0x43;
 		_code[0x08D7] = 0x44;
@@ -380,7 +380,7 @@ void Script::savegame(uint slot) {
 	for (int i = 0; i < 15; i++) {
 		newchar = _variables[i] + 0x30;
 		if ((newchar < 0x30 || newchar > 0x39) && (newchar < 0x41 || newchar > 0x7A)) {
-			save[i] = '\0';	
+			save[i] = '\0';
 			break;
 		} else {
 			save[i] = newchar;
@@ -478,7 +478,7 @@ void Script::o_videofromref() {			// 0x09
 			debugScript(1, true, "Use external file if available");
 		}
 		break;
-		
+
 	case 0x400D:	// floating objects in music room
 	case 0x5060:	// a sound from gamwav?
 	case 0x5098: 	// a sound from gamwav?
@@ -723,7 +723,7 @@ void Script::o_random() {
 
 void Script::o_jmp() {
 	uint16 address = readScript16bits();
-	
+
 	debugScript(1, true, "JMP @0x%04X", address);
 
 	// Set the current address
@@ -732,7 +732,7 @@ void Script::o_jmp() {
 
 void Script::o_loadstring() {
 	uint16 varnum = readScript8or16bits();
-	
+
 	debugScript(1, false, "LOADSTRING var[0x%04X..] =", varnum);
 	do {
 		setVariable(varnum++, readScriptChar(true, true, true));
@@ -743,7 +743,7 @@ void Script::o_loadstring() {
 
 void Script::o_ret() {
 	uint8 val = readScript8bits();
-	
+
 	debugScript(1, true, "RET %d", val);
 
 	// Set the return value
@@ -760,7 +760,7 @@ void Script::o_ret() {
 
 void Script::o_call() {
 	uint16 address = readScript16bits();
-	
+
 	debugScript(1, true, "CALL @0x%04X", address);
 
 	// Save return address in the call stack
@@ -773,7 +773,7 @@ void Script::o_call() {
 
 void Script::o_sleep() {
 	uint16 time = readScript16bits();
-	
+
 	debugScript(1, true, "SLEEP 0x%04X", time);
 
 	_vm->_system->delayMillis(time * 3);
@@ -852,7 +852,7 @@ void Script::o_vdxtransition() {		// 0x1C
 void Script::o_swap() {
 	uint16 varnum1 = readScript8or16bits();
 	uint16 varnum2 = readScript16bits();
-	
+
 	debugScript(1, true, "SWAP var[0x%04X] <-> var[0x%04X]", varnum1, varnum2);
 
 	uint8 tmp = _variables[varnum1];
@@ -862,7 +862,7 @@ void Script::o_swap() {
 
 void Script::o_inc() {
 	uint16 varnum = readScript8or16bits();
-	
+
 	debugScript(1, true, "INC var[0x%04X]", varnum);
 
 	setVariable(varnum, _variables[varnum] + 1);
@@ -870,7 +870,7 @@ void Script::o_inc() {
 
 void Script::o_dec() {
 	uint16 varnum = readScript8or16bits();
-	
+
 	debugScript(1, true, "DEC var[0x%04X]", varnum);
 
 	setVariable(varnum, _variables[varnum] - 1);
@@ -878,7 +878,7 @@ void Script::o_dec() {
 
 void Script::o_strcmpnejmp_var() {			// 0x21
 	uint16 data = readScriptVar();
-	
+
 	if (data > 9) {
 		data -= 7;
 	}
@@ -887,7 +887,7 @@ void Script::o_strcmpnejmp_var() {			// 0x21
 	do {
 		if (_variables[data++] != readScriptChar(true, true, true)) {
 			stringsmatch = 0;
-		}	
+		}
 	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
 
 	uint16 offset = readScript16bits();
@@ -905,7 +905,7 @@ void Script::o_strcmpeqjmp() {			// 0x23
 	uint16 varnum = readScript8or16bits();
 	uint8 val;
 	uint8 result = 1;
-	
+
 	debugScript(1, false, "STRCMP-EQJMP: var[0x%04X..],", varnum);
 	do {
 		val = readScriptChar(true, true, true);
@@ -938,7 +938,7 @@ void Script::o_mov() {
 void Script::o_add() {
 	uint16 varnum1 = readScript8or16bits();
 	uint16 varnum2 = readScript16bits();
-	
+
 	debugScript(1, true, "ADD var[0x%04X] += var[0x%04X]", varnum1, varnum2);
 
 	setVariable(varnum1, _variables[varnum1] + _variables[varnum2]);
@@ -996,7 +996,7 @@ void Script::o_endscript() {
 void Script::o_sethotspottop() {
 	uint16 address = readScript16bits();
 	uint8 cursor = readScript8bits();
-	
+
 	debugScript(5, true, "SETHOTSPOTTOP @0x%04X cursor=%d", address, cursor);
 
 	_hotspotTopAction = address;
@@ -1006,7 +1006,7 @@ void Script::o_sethotspottop() {
 void Script::o_sethotspotbottom() {
 	uint16 address = readScript16bits();
 	uint8 cursor = readScript8bits();
-	
+
 	debugScript(5, true, "SETHOTSPOTBOTTOM @0x%04X cursor=%d", address, cursor);
 
 	_hotspotBottomAction = address;
@@ -1016,7 +1016,7 @@ void Script::o_sethotspotbottom() {
 void Script::o_loadgame() {
 	uint16 varnum = readScript8or16bits();
 	uint8 slot = _variables[varnum];
-	
+
 	debugScript(1, true, "LOADGAME var[0x%04X] -> slot=%d (TODO)", varnum, slot);
 
 	loadgame(slot);
@@ -1026,7 +1026,7 @@ void Script::o_loadgame() {
 void Script::o_savegame() {
 	uint16 varnum = readScript8or16bits();
 	uint8 slot = _variables[varnum];
-	
+
 	debugScript(1, true, "SAVEGAME var[0x%04X] -> slot=%d (TODO)", varnum, slot);
 
 	savegame(slot);
@@ -1034,7 +1034,7 @@ void Script::o_savegame() {
 
 void Script::o_hotspotbottom_4() {	//0x30
 	uint16 address = readScript16bits();
-	
+
 	debugScript(5, true, "HOTSPOT-BOTTOM @0x%04X", address);
 
 	// Mark the 80 pixels under the game area
@@ -1045,7 +1045,7 @@ void Script::o_hotspotbottom_4() {	//0x30
 void Script::o_midivolume() {
 	uint16 arg1 = readScript16bits();
 	uint16 arg2 = readScript16bits();
-	
+
 	debugScript(1, true, "MIDI volume: %d %d", arg1, arg2);
 	_vm->_musicPlayer->setGameVolume(arg1, arg2);
 }
@@ -1054,7 +1054,7 @@ void Script::o_jne() {
 	int16 varnum1 = readScript8or16bits();
 	uint16 varnum2 = readScript16bits();
 	uint16 address = readScript16bits();
-	
+
 	debugScript(1, false, "JNE: var[var[0x%04X] - 0x31] != var[0x%04X] @0x%04X", varnum1, varnum2, address);
 
 	if (_variables[_variables[varnum1] - 0x31] != _variables[varnum2]) {
@@ -1067,7 +1067,7 @@ void Script::o_jne() {
 
 void Script::o_loadstringvar() {
 	uint16 varnum = readScript8or16bits();
-	
+
 	varnum = _variables[varnum] - 0x31;
 	debugScript(1, false, "LOADSTRINGVAR var[0x%04X..] =", varnum);
 	do {
@@ -1239,7 +1239,7 @@ void Script::o_hotspot_slot() {
 			Graphics::Surface *gamescreen;
 			gamescreen = _vm->_system->lockScreen();
 
-			gamescreen->fillRect(topbar, 0);	
+			gamescreen->fillRect(topbar, 0);
 
 			_vm->_system->unlockScreen();
 
@@ -1288,7 +1288,7 @@ void Script::o_checkvalidsaves() {
 				for (i = 0; i < 15; i++) {
 					file->read(&temp, 1);
 					savename[i] = temp + 0x30;
-				} 
+				}
 
 				delete file;
 			} else {
@@ -1359,7 +1359,7 @@ void Script::o_setvideoorigin() {
 	// Read the two offset arguments
 	int16 origX = readScript16bits();
 	int16 origY = readScript16bits();
-	
+
 	// Set bitflag 7
 	_bitflags |= 1 << 7;
 
@@ -1403,8 +1403,8 @@ void Script::o_cellmove() {
 	startY = staufsMove.getStartY();
 	endX = staufsMove.getEndX();
 	endY = staufsMove.getEndY();
-	
-	
+
+
 	// Set the movement origin
 	setVariable(0, startY); // y
 	setVariable(1, startX); // x
@@ -1491,7 +1491,7 @@ void Script::o_getcd() {
 
 void Script::o_playcd() {
 	uint8 val = readScript8bits();
-	
+
 	debugScript(1, true, "PLAYCD %d", val);
 
 	if (val == 2) {
@@ -1507,7 +1507,7 @@ void Script::o_hotspot_outrect() {
 	uint16 right = readScript16bits();
 	uint16 bottom = readScript16bits();
 	uint16 address = readScript16bits();
-	
+
 	debugScript(1, true, "HOTSPOT-OUTRECT(%d,%d,%d,%d) @0x%04X (TODO)", left, top, right, bottom, address);
 
 	// Test if the current mouse position is outside the specified rectangle
@@ -1525,20 +1525,20 @@ void Script::o_stub56() {
 	uint32 val1 = readScript32bits();
 	uint8 val2 = readScript8bits();
 	uint8 val3 = readScript8bits();
-	
+
 	debugScript(1, true, "STUB56: 0x%08X 0x%02X 0x%02X", val1, val2, val3);
 }
 
 void Script::o_stub59() {
 	uint16 val1 = readScript8or16bits();
 	uint8 val2 = readScript8bits();
-	
+
 	debugScript(1, true, "STUB59: 0x%04X 0x%02X", val1, val2);
 }
 
 Script::OpcodeFunc Script::_opcodes[NUM_OPCODES] = {
 	&Script::o_nop, // 0x00
-	&Script::o_nop,	
+	&Script::o_nop,
 	&Script::o_playsong,
 	&Script::o_bf9on,
 	&Script::o_palfadeout, // 0x04

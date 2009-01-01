@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #ifndef KYRA_LOL_H
 #define KYRA_LOL_H
 
@@ -41,7 +41,7 @@ class LoLEngine : public KyraEngine_v1 {
 public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
 	~LoLEngine();
-	
+
 	Screen *screen();
 private:
 	Screen_LoL *_screen;
@@ -61,13 +61,13 @@ private:
 	void setupPrologueData(bool load);
 
 	void showIntro();
-	
+
 	struct CharacterPrev {
 		const char *name;
 		int x, y;
 		int attrib[3];
 	};
-	
+
 	static const CharacterPrev _charPreviews[];
 
 	WSAMovie_v2 *_chargenWSA;
@@ -81,29 +81,29 @@ private:
 	void updateSelectionAnims();
 	int selectionCharInfo(int character);
 	void selectionCharInfoIntro(char *file);
-	
+
 	int getCharSelection();
 	int selectionCharAccept();
-	
+
 	int _charSelection;
 	int _charSelectionInfoResult;
-	
+
 	uint32 _selectionAnimTimers[4];
 	uint8 _selectionAnimFrames[4];
 	static const uint8 _selectionAnimIndexTable[];
-	
+
 	static const uint16 _selectionPosTable[];
 
 	static const uint8 _selectionChar1IdxTable[];
 	static const uint8 _selectionChar2IdxTable[];
 	static const uint8 _selectionChar3IdxTable[];
 	static const uint8 _selectionChar4IdxTable[];
-	
+
 	static const uint8 _reminderChar1IdxTable[];
 	static const uint8 _reminderChar2IdxTable[];
 	static const uint8 _reminderChar3IdxTable[];
 	static const uint8 _reminderChar4IdxTable[];
-	
+
 	static const uint8 _charInfoFrameTable[];
 
 	// timer
@@ -121,7 +121,7 @@ private:
 	int tlol_setupPaletteFadeEx(const TIM *tim, const uint16 *param);
 	int tlol_processWsaFrame(const TIM *tim, const uint16 *param);
 	int tlol_displayText(const TIM *tim, const uint16 *param);
-	
+
 	// translation
 	int _lang;
 
@@ -137,7 +137,7 @@ private:
 
 	// graphics
 	uint8 *_shapes[138];
-	
+
 	// unneeded
 	void setWalkspeed(uint8) {}
 	void setHandItem(uint16) {}

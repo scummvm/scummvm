@@ -57,7 +57,7 @@ void loadMsg(char *pMsgName) {
 		// buffer (e.g. message indexes 58-254 in BATEAU.MSG in PROCS08 in Operation Stealth).
 		if (messageDataPos < sourceSize) {
 			messageTable.push_back((const char *)(dataPtr + messageDataPos));
-		} else {			
+		} else {
 			if (messageLen > 0) { // Only warn about overflowing non-empty strings
 				warning("loadMsg(%s): message (%d. / %d) is overflowing the input buffer. Replacing it with an empty string", pMsgName, i + 1, count);
 			} else {

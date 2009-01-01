@@ -52,7 +52,7 @@ typedef struct _kbd_rawkey {
 #define PS2KBD_READMODE_RAW    2
 
 /* Notes on read mode */
-/* In normal readmode (default) read multiples of 1 character off the keyboard file. These are 
+/* In normal readmode (default) read multiples of 1 character off the keyboard file. These are
    processed by the keymaps so that you get back ASCII data */
 /* In raw readmode must read multiples of 2. First byte indicates state (i.e. Up or Down)
    Second byte is the USB key code for that key. This table is presented in the USB HID Usage Tables manaual

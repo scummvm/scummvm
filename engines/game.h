@@ -80,7 +80,7 @@ public:
 	const Common::String &description() const { return getVal("description"); }
 	Common::Language language() const { return contains("language") ? Common::parseLanguage(getVal("language")) : Common::UNK_LANG; }
 	Common::Platform platform() const { return contains("platform") ? Common::parsePlatform(getVal("platform")) : Common::kPlatformUnknown; }
-	
+
 	const Common::String &preferredtarget() const {
 		return contains("preferredtarget") ? getVal("preferredtarget") : getVal("gameid");
 	}
@@ -169,7 +169,7 @@ public:
 	 * ratio of the game. If another ratio is required, contact the core team.
 	 */
 	const Graphics::Surface *getThumbnail() const { return _thumbnail.get(); }
-	
+
 	/**
 	 * Set a thumbnail graphics surface representing the savestate visually.
 	 * Ownership of the surface is transferred to the SaveStateDescriptor.

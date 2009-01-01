@@ -46,7 +46,7 @@
  * Version 1 (Sarien): view table has 256 entries (needed in KQ3)
  * Version 2 (ScummVM): first ScummVM version
  * Version 3 (ScummVM): added AGIPAL save/load support
- * Version 4 (ScummVM): added thumbnails and save creation date/time 
+ * Version 4 (ScummVM): added thumbnails and save creation date/time
  */
 
 namespace Agi {

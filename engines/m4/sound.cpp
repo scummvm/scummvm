@@ -80,7 +80,7 @@ void Sound::playSound(const char *soundName, int volume, bool loop, int channel)
 		} else {
 			warning("Attempted to play a sound on a channel that isn't free");
 			return;
-		}			
+		}
 	}
 
 	int bufferSize = soundStream->size();
@@ -124,7 +124,7 @@ void Sound::stopSound(int channel) {
 		} else {
 			warning("Attempted to stop a sound on a channel that is already free");
 			return;
-		}			
+		}
 	}
 
 	for (int i = 0; i < SOUND_HANDLES; i++) {
@@ -215,7 +215,7 @@ void Sound::loadDSRFile(const char *fileName) {
 		printf("\n");
 		*/
 	}
-	
+
 	_vm->res()->toss(fileName);
 
 	_dsrFileLoaded = true;
@@ -264,11 +264,11 @@ void Sound::playDSRSound(int soundIndex, int volume, bool loop) {
 	fileStream->read(compData, _dsrFile.dsrEntries[soundIndex]->compSize);
 	_vm->res()->toss(_dsrFile.fileName);
 
-	fab.decompress(compData, _dsrFile.dsrEntries[soundIndex]->compSize, 
+	fab.decompress(compData, _dsrFile.dsrEntries[soundIndex]->compSize,
 				   buffer, _dsrFile.dsrEntries[soundIndex]->uncompSize);
 
 	// Play sound
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &handle->handle, buffer, 
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &handle->handle, buffer,
 					_dsrFile.dsrEntries[soundIndex]->uncompSize,
 					_dsrFile.dsrEntries[soundIndex]->frequency, flags, -1, volume);
 

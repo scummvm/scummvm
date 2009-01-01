@@ -313,7 +313,7 @@ uint32 StagedSave::getSize() const {
 		else
 			size += _stages[i].size;
 	}
-	
+
 	return size;
 }
 

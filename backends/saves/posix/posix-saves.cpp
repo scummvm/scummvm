@@ -53,7 +53,7 @@ POSIXSaveFileManager::POSIXSaveFileManager() {
 	}
 }
 /*
-POSIXSaveFileManager::POSIXSaveFileManager(const Common::String &defaultSavepath) 
+POSIXSaveFileManager::POSIXSaveFileManager(const Common::String &defaultSavepath)
 	: DefaultSaveFileManager(defaultSavepath) {
 }
 */

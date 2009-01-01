@@ -50,7 +50,7 @@ int8 CellGame::calcMove(byte *origboard, uint8 color, uint8 depth) {
 	if (0 == depth) {
 		return 0;
 	}
-	
+
 	for (i = 0; BOARDSIZE > i; i++) {						// For every square on the board
 		for (j = 0; BOARDSIZE > j; j++) {					//
 			if (color == *(origboard + i + (BOARDSIZE * j))) {		// If the square is the desired colour
@@ -62,7 +62,7 @@ int8 CellGame::calcMove(byte *origboard, uint8 color, uint8 depth) {
 								int8 nextlevel;
 								debugC(5, kGroovieDebugCell | kGroovieDebugAll, "Depth: %d: Valid move %d, %d-> %d, %d", depth, i, j, i+di, j+dj);
 								execMove (newboard, color, i, j, i+di, j+dj);
-								
+
 								nextlevel = calcMove (newboard, oppColor, depth - 1);
 								debugC(5, kGroovieDebugCell | kGroovieDebugAll, "Depth: %d: Next level down returned %d", depth, nextlevel);
 								currDiff = countBoard(newboard, color) - origBoardCount - nextlevel;
@@ -84,7 +84,7 @@ int8 CellGame::calcMove(byte *origboard, uint8 color, uint8 depth) {
 			}
 		}
 	}
-	
+
 	_startX = bestStartX;
 	_startY = bestStartY;
 	_endX = bestEndX;
@@ -161,7 +161,7 @@ byte CellGame::getStartY() {
 byte CellGame::getEndX() {
 	if (_endX > BOARDSIZE) {
 		warning ("CellGame::getEndX: not calculated yet!");
-		return 1;	
+		return 1;
 	} else {
 		return _endX;
 	}

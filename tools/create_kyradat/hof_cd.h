@@ -54,7 +54,7 @@ const Game kyra2TalkieGames[] = {
 	{ kKyra2, FR_FRA, k2CDFile2F, "e20d0d2e500f01e399ec588247a7e213", kyra2File2CDF},
 	{ kKyra2, DE_DEU, k2CDFile2G, "e20d0d2e500f01e399ec588247a7e213", kyra2File2CDG},
 
-	// Italian Fan Translation (using same offsets as English) 
+	// Italian Fan Translation (using same offsets as English)
 	{ kKyra2, IT_ITA, k2CDFile1I, "130795aa8f2333250c895dae9028b9bb", kyra2File1CDI},
 
 	GAME_DUMMY_ENTRY

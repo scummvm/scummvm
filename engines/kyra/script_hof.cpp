@@ -279,7 +279,7 @@ int KyraEngine_HoF::o2_wsaOpen(EMCState *script) {
 
 int KyraEngine_HoF::o2_displayWsaSequentialFrames(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_displayWsaSequentialFrames(%p) (%d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6));
-	
+
 	uint16 frameDelay = stackPos(2) * _tickLength;
 	uint16 currentFrame = stackPos(3);
 	uint16 lastFrame = stackPos(4);
@@ -289,10 +289,10 @@ int KyraEngine_HoF::o2_displayWsaSequentialFrames(EMCState *script) {
 	_wsaSlots[index]->setX(stackPos(0));
 	_wsaSlots[index]->setY(stackPos(1));
 	_wsaSlots[index]->setDrawPage(0);
-	
+
 	_screen->hideMouse();
 
-	while (currentFrame <= lastFrame) {	
+	while (currentFrame <= lastFrame) {
 		uint32 endTime = _system->getMillis() + frameDelay;
 		_wsaSlots[index]->displayFrame(currentFrame++, copyParam, 0, 0);
 		if (!skipFlag()) {
@@ -309,7 +309,7 @@ int KyraEngine_HoF::o2_displayWsaSequentialFrames(EMCState *script) {
 
 int KyraEngine_HoF::o2_displayWsaSequence(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_displayWsaSequence(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	
+
 	const int frameDelay = stackPos(2) * _tickLength;
 	const int index = stackPos(3);
 	const bool doUpdate = (stackPos(4) != 0);
@@ -318,13 +318,13 @@ int KyraEngine_HoF::o2_displayWsaSequence(EMCState *script) {
 	_wsaSlots[index]->setX(stackPos(0));
 	_wsaSlots[index]->setY(stackPos(1));
 	_wsaSlots[index]->setDrawPage(0);
-	
+
 	_screen->hideMouse();
 
 	int currentFrame = 0;
 	const int lastFrame = _wsaSlots[index]->frames();
 
-	while (currentFrame <= lastFrame) {	
+	while (currentFrame <= lastFrame) {
 		uint32 endTime = _system->getMillis() + frameDelay;
 		_wsaSlots[index]->displayFrame(currentFrame++, copyParam, 0, 0);
 		if (!skipFlag()) {
@@ -740,7 +740,7 @@ int KyraEngine_HoF::o2_setCauldronState(EMCState *script) {
 int KyraEngine_HoF::o2_showItemString(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_showItemString(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	const int item = stackPos(0);
-	
+
 	int string = 0;
 	if (stackPos(1) == 1) {
 		if (_lang == 1)
@@ -798,7 +798,7 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 	_res->loadFileToBuf(filename, _screen->getPalette(0), 768);
 
 	_screen->fadeToBlack(0x14);
-	
+
 	sprintf(filename, "LETTER%.1d.%s", letter, _languageExtension[_lang]);
 	uint8 *letterBuffer = _res->fileData(filename, 0);
 	if (!letterBuffer) {
@@ -1142,11 +1142,11 @@ int KyraEngine_HoF::o2_mushroomEffect(EMCState *script) {
 	memcpy(_screen->getPalette(2), _screen->_currentPalette, 768);
 
 	for (int i = 1; i < 768; i += 3)
-		_screen->_currentPalette[i] = 0;	
+		_screen->_currentPalette[i] = 0;
 	snd_playSoundEffect(106);
 	_screen->fadePalette(_screen->_currentPalette, 90, &_updateFunctor);
 	memcpy(_screen->_currentPalette, _screen->getPalette(2), 768);
-	
+
 	for (int i = 0; i < 768; i += 3) {
 		_screen->_currentPalette[i] = _screen->_currentPalette[i + 1] = 0;
 		_screen->_currentPalette[i + 2] += (((int8)_screen->_currentPalette[i + 2]) >> 1);
@@ -1155,9 +1155,9 @@ int KyraEngine_HoF::o2_mushroomEffect(EMCState *script) {
 	}
 	snd_playSoundEffect(106);
 	_screen->fadePalette(_screen->_currentPalette, 90, &_updateFunctor);
-	
+
 	memcpy(_screen->_currentPalette, _screen->getPalette(2), 768);
-	_screen->fadePalette(_screen->_currentPalette, 30, &_updateFunctor);	
+	_screen->fadePalette(_screen->_currentPalette, 30, &_updateFunctor);
 
 	return 0;
 }
@@ -1232,7 +1232,7 @@ int KyraEngine_HoF::o2_setupSceneAnimation(EMCState *script) {
 		obj->shapePtr = _sceneShapeTable[anim.shapeIndex];
 	else
 		obj->shapePtr = 0;
-	
+
 	if (anim.flags & 0x40) {
 		obj->shapeIndex3 = anim.shapeIndex;
 		obj->animNum = index;
@@ -1267,10 +1267,10 @@ int KyraEngine_HoF::o2_stopSceneAnimation(EMCState *script) {
 		refreshAnimObjectsIfNeed();
 	obj.enabled = 0;
 	_animList = deleteAnimListEntry(_animList, &_animObjects[1+index]);
-	
+
 	if (_sceneAnimMovie[index]->opened())
 		_sceneAnimMovie[index]->close();
-	
+
 	return 0;
 }
 
@@ -1425,7 +1425,7 @@ int KyraEngine_HoF::o2_demoFinale(EMCState *script) {
 
 	_sound->beginFadeOut();
 	_screen->fadeToBlack();
-	
+
 	_runFlag = 0;
 	return 0;
 }

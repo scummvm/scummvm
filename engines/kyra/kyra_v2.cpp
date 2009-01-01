@@ -40,7 +40,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 
 	_itemList = 0;
 	_itemListSize = 0;
-	
+
 	_characterShapeFile = -1;
 
 	_updateCharPosNextUpdate = 0;

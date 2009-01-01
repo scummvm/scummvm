@@ -76,12 +76,12 @@ protected:
 	Common::TimerManager *_timer;
 	Common::EventManager *_eventMan;
 	Common::SaveFileManager *_saveFileMan;
-	
+
 	GUI::Dialog *_mainMenuDialog;
 	virtual int runDialog(GUI::Dialog &dialog);
 
 	const Common::String _targetName; // target name for saves
-	
+
 	const Common::FSNode _gameDataDir;	// FIXME: Get rid of this
 
 private:
@@ -108,8 +108,8 @@ public:
 		 * the result of the Engine::shouldQuit() method appropriately).
 		 */
 		kSupportsRTL,
-		
-		/** 
+
+		/**
 		 * Loading savestates during runtime is supported, that is, this engine
 		 * implements loadGameState() and canLoadGameStateCurrently().
 		 * If this feature is supported, then the corresponding MetaEngine *must*
@@ -117,7 +117,7 @@ public:
 		 */
 		kSupportsLoadingDuringRuntime,
 
-		/** 
+		/**
 		 * Loading savestates during runtime is supported, that is, this engine
 		 * implements saveGameState() and canSaveGameStateCurrently().
 		 * If this feature is supported, then the corresponding MetaEngine *must*
@@ -166,7 +166,7 @@ public:
 	 * Determine whether the engine supports the specified feature.
 	 */
 	virtual bool hasFeature(EngineFeature f) const { return false; }
-	
+
 //	virtual EnginePlugin *getMetaEnginePlugin() const;
 
 	/**
@@ -177,7 +177,7 @@ public:
 	 */
 	virtual void syncSoundSettings();
 
-	/** 
+	/**
 	 * Load a game state.
 	 * @param slot	the slot from which a savestate should be loaded
 	 * @return returns kNoError on success, else an error code.

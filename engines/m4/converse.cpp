@@ -39,7 +39,7 @@ namespace M4 {
 #define CONV_ENTRIES_HEIGHT 20
 #define CONV_MAX_SHOWN_ENTRIES 5
 
-#define CONVERSATION_ENTRY_HIGHLIGHTED 22 
+#define CONVERSATION_ENTRY_HIGHLIGHTED 22
 #define	CONVERSATION_ENTRY_NORMAL 3
 
 // Conversation chunks
@@ -75,7 +75,7 @@ namespace M4 {
 #define CHUNK_WPRL MKID_BE('WPRL')		// weighted preply chunk
 
 
-ConversationView::ConversationView(M4Engine *vm): View(vm, Common::Rect(0, 
+ConversationView::ConversationView(M4Engine *vm): View(vm, Common::Rect(0,
 		vm->_screen->height() - INTERFACE_HEIGHT, vm->_screen->width(), vm->_screen->height())) {
 
 	_screenType = VIEWID_CONVERSATION;
@@ -110,7 +110,7 @@ void ConversationView::setNode(int32 nodeIndex) {
 				continue;
 
 			if ((int)_activeItems.size() > CONV_MAX_SHOWN_ENTRIES) {
-				warning("TODO: scrolling. Max shown entries are %i, skipping entry %i", 
+				warning("TODO: scrolling. Max shown entries are %i, skipping entry %i",
 						CONV_MAX_SHOWN_ENTRIES, i);
 			}
 
@@ -124,7 +124,7 @@ void ConversationView::setNode(int32 nodeIndex) {
 			}
 
 			// Figure out the longest string to determine where option highlighting ends
-			int tempX = _vm->_font->getWidth(node->entries[i]->text, 0) + 
+			int tempX = _vm->_font->getWidth(node->entries[i]->text, 0) +
 				CONV_ENTRIES_X_OFFSET + 10;
 			_xEnd = MAX(_xEnd, tempX);
 		}
@@ -134,7 +134,7 @@ void ConversationView::setNode(int32 nodeIndex) {
 
 		// Fallthrough
 		if (node->fallthroughMinEntries >= 0 && node->fallthroughOffset >= 0) {
-			//printf("Current node falls through node at offset %i when entries are less or equal than %i\n", 
+			//printf("Current node falls through node at offset %i when entries are less or equal than %i\n",
 			//		node->fallthroughOffset, node->fallthroughMinEntries);
 			if (_activeItems.size() <= (uint32)node->fallthroughMinEntries) {
 				const EntryInfo *entryInfo = _vm->_converse->getEntryInfo(node->fallthroughOffset);
@@ -166,7 +166,7 @@ void ConversationView::onRefresh(RectList *rects, M4Surface *destSurface) {
 			_vm->_font->setColor((_highlightedIndex == i) ? CONVERSATION_ENTRY_HIGHLIGHTED :
 				CONVERSATION_ENTRY_NORMAL);
 
-			_vm->_font->writeString(this, _activeItems[i]->text, CONV_ENTRIES_X_OFFSET, 
+			_vm->_font->writeString(this, _activeItems[i]->text, CONV_ENTRIES_X_OFFSET,
 				CONV_ENTRIES_Y_OFFSET + CONV_ENTRIES_HEIGHT * i, 0, 0);
 		}
 	}
@@ -178,7 +178,7 @@ bool ConversationView::onEvent(M4EventType eventType, int param, int x, int y, b
 	//	return false;
 	if (!_entriesShown)
 		return false;
-	if (eventType == KEVENT_KEY) 
+	if (eventType == KEVENT_KEY)
 		return false;
 
 	int localY = y - _coords.top;
@@ -267,7 +267,7 @@ void ConversationView::playNextReply() {
 
 		if (currentEntry->isConditional) {
 			if (!_vm->_converse->evaluateCondition(
-				_vm->_converse->getValue(currentEntry->condition.offset), 
+				_vm->_converse->getValue(currentEntry->condition.offset),
 				currentEntry->condition.op, currentEntry->condition.val))
 				continue;	// don't play this reply
 		}
@@ -313,7 +313,7 @@ void ConversationView::playNextReply() {
 
 	// If we reached here, there are no more replies, so perform the active entry's actions
 
-	//printf("Current selection does %i actions\n", _activeItems[entryIndex]->actions.size()); 
+	//printf("Current selection does %i actions\n", _activeItems[entryIndex]->actions.size());
 	for (uint32 i = 0; i < _activeItems[_highlightedIndex]->actions.size(); i++) {
 		if (!_vm->_converse->performAction(_activeItems[_highlightedIndex]->actions[i]))
 			break;
@@ -327,7 +327,7 @@ void ConversationView::playNextReply() {
 
 	// Check if the conversation has been ended
 	if (_currentNodeIndex == -1) {
-		_conversationState = kNoConversation;	
+		_conversationState = kNoConversation;
 	}
 }
 
@@ -350,7 +350,7 @@ void Converse::startConversation(const char *convName, bool showConverseBox, Con
 	if (showConverseBox) {
 		_vm->_conversationView->show();
 		_vm->_mouse->lockCursor(CURSOR_ARROW);
-		
+
 		if (_interfaceWasVisible)
 			_vm->_interfaceView->hide();
 
@@ -397,7 +397,7 @@ void Converse::loadConversation(const char *convName) {
 	if (header != HEAD_CONV) {
 		warning("Unexpected conversation file external header");
 		return;
-	} 
+	}
 	size = convS->readUint32LE();	// is this used at all?
 	if (debugFlag) printf("Conv chunk size (external header): %i\n", size);
 
@@ -486,7 +486,7 @@ void Converse::loadConversation(const char *convName) {
 					curEntry->autoSelect = false;
 				}
 				_convNodes[curNode]->entries.push_back(curEntry);
-				setEntryInfo(curEntry->offset, curEntry->entryType, 
+				setEntryInfo(curEntry->offset, curEntry->entryType,
 							 curNode, _convNodes[curNode]->entries.size() - 1);
 				replyEntry = NULL;
 				break;
@@ -542,7 +542,7 @@ void Converse::loadConversation(const char *convName) {
 				}
 
 				curEntry->entries.push_back(replyEntry);
-				setEntryInfo(replyEntry->offset, replyEntry->entryType, 
+				setEntryInfo(replyEntry->offset, replyEntry->entryType,
 							 curNode, _convNodes[curNode]->entries.size() - 1);
 				// Seek to chunk data (i.e. TEXT/MESG tag, which is usually right
 				// after this chunk but it can be further on in conditional reply chunks
@@ -566,9 +566,9 @@ void Converse::loadConversation(const char *convName) {
 				}
 
 				if (replyEntry == NULL) {
-					parentEntry = curEntry; 
+					parentEntry = curEntry;
 				} else if (replyEntry != NULL && replyEntry->entryType != kWeightedReply) {
-					parentEntry = replyEntry; 
+					parentEntry = replyEntry;
 				} else if (replyEntry != NULL && replyEntry->entryType == kWeightedReply) {
 					parentEntry = replyEntry->entries[currentWeightedEntry];
 					currentWeightedEntry++;
@@ -636,7 +636,7 @@ void Converse::loadConversation(const char *convName) {
 			case CHUNK_DSTR:	// Destroy entry
 			case CHUNK_EXIT:	// Exit conversation
 				curAction = new EntryAction();
-				
+
 				// Conditional part
 				if (chunk == CHUNK_CCGO || chunk == CHUNK_CHDE || chunk == CHUNK_CUHD ||
 					chunk == CHUNK_CDST || chunk == CHUNK_CEGO) {
@@ -885,9 +885,9 @@ void Converse::loadConversationMads(const char *convName) {
 			curEntry->id = convS->readUint16LE();
 			curEntry->offset = convS->readUint16LE();
 			curEntry->size = convS->readUint16LE();
-			
+
 			_convNodes[i]->entries.push_back(curEntry);
-			//printf("Node %i, entry %i, id %i, offset %i, size %i, text: %s\n", 
+			//printf("Node %i, entry %i, id %i, offset %i, size %i, text: %s\n",
 			//		i, j, curEntry->id, curEntry->offset, curEntry->size, curEntry->text);
 		}
 	}
@@ -1026,7 +1026,7 @@ void Converse::readConvEntryActions(Common::SubReadStream *convS, ConvEntry *cur
 
 			if (hasText1 == 1) {
 				messageIndex = convS->readUint16LE();
-				printf("Message 1 index: %i, text:\n", messageIndex);	
+				printf("Message 1 index: %i, text:\n", messageIndex);
 				for (uint32 i = 0; i < _madsMessageList[messageIndex]->messageStrings.size(); i++) {
 					printf("%s\n", _madsMessageList[messageIndex]->messageStrings[i]);
 				}
@@ -1035,7 +1035,7 @@ void Converse::readConvEntryActions(Common::SubReadStream *convS, ConvEntry *cur
 			if (hasText2 == 1) {
 				messageIndex = convS->readUint16LE();
 				if (hasText1 == 0) {
-					printf("Message 2 index: %i, text:\n", messageIndex);	
+					printf("Message 2 index: %i, text:\n", messageIndex);
 					for (uint32 i = 0; i < _madsMessageList[messageIndex]->messageStrings.size(); i++) {
 						printf("%s\n", _madsMessageList[messageIndex]->messageStrings[i]);
 					}
@@ -1048,7 +1048,7 @@ void Converse::readConvEntryActions(Common::SubReadStream *convS, ConvEntry *cur
 			for (int k = 0; k < 4; k++)
 				convS->readByte();
 			messageIndex = convS->readUint16LE();
-			printf("Message index: %i, text:\n", messageIndex);	
+			printf("Message index: %i, text:\n", messageIndex);
 			for (uint32 i = 0; i < _madsMessageList[messageIndex]->messageStrings.size(); i++) {
 				printf("%s\n", _madsMessageList[messageIndex]->messageStrings[i]);
 			}
@@ -1107,7 +1107,7 @@ void Converse::setEntryInfo(int32 offset, EntryType type, int32 nodeIndex, int32
 	//printf("Set entry info: offset %i, type %i, node %i, entry %i\n", offset, type, nodeIndex, entryIndex);
 }
 
-const EntryInfo* Converse::getEntryInfo(int32 offset) { 
+const EntryInfo* Converse::getEntryInfo(int32 offset) {
 	char hashOffset[10];
 	sprintf(hashOffset, "%i", offset);
 	OffsetHashMap::const_iterator entry = _offsetMap.find(hashOffset);
@@ -1161,13 +1161,13 @@ bool Converse::evaluateCondition(int32 leftVal, int32 op, int32 rightVal) {
 
 bool Converse::performAction(EntryAction *action) {
 	if (action->isConditional) {
-		if (!evaluateCondition(getValue(action->condition.offset), 
+		if (!evaluateCondition(getValue(action->condition.offset),
 										action->condition.op, action->condition.val))
 							return true;	// don't perform this action
 	}
 
 	if (action->actionType == kAssignValue) {
-		//printf("Assigning variable at offset %i to value %i\n", 
+		//printf("Assigning variable at offset %i to value %i\n",
 		//		action->targetOffset, action->value);
 		setValue(action->targetOffset, action->value);
 		return true;		// nothing else to do in an assignment action

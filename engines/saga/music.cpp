@@ -442,7 +442,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	uint32 loopStart;
 
 	debug(2, "Music::play %d, %d", resourceId, flags);
-	
+
 	if (isPlaying() && _trackNumber == resourceId) {
 		return;
 	}
@@ -450,7 +450,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	_trackNumber = resourceId;
 	_player->stopMusic();
 	_mixer->stopHandle(_musicHandle);
-	
+
 	int realTrackNumber;
 
 	if (_vm->getGameId() == GID_ITE) {

@@ -48,7 +48,7 @@ typedef void (*TextviewCallback)(M4Engine *vm);
 class TextviewView: public View {
 private:
 	bool _animating;
-	
+
 	char _resourceName[80];
 	Common::SeekableReadStream *_script;
 	uint16 _spareScreens[10];

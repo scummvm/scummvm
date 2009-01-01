@@ -277,7 +277,7 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 				} else if (pAni[_ctx->frameNumber].op == ANI_ADJUSTXY) {
 					_ctx->frameNumber += 3;
 				} else {
-					// ANI_STOP, ANI_HIDE, ANI_HFLIP, 
+					// ANI_STOP, ANI_HIDE, ANI_HFLIP,
 					// ANI_VFLIP, ANI_HVFLIP, default
 					_ctx->frameNumber++;
 				}
@@ -388,7 +388,7 @@ static void ResSoundReel(CORO_PARAM, const void *) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_ARGS(SoundReel, (CORO_SUBCTX, soundReels[i].hFilm, soundReels[i].column, 
+	CORO_INVOKE_ARGS(SoundReel, (CORO_SUBCTX, soundReels[i].hFilm, soundReels[i].column,
 		-1, 0, soundReels[i].actorCol));
 
 	CORO_KILL_SELF();
@@ -422,11 +422,11 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 	CORO_BEGIN_CONTEXT;
 		OBJECT	*pPlayObj;	// Object
 		ANIM	thisAnim;	// Animation structure
-	
+
 		bool	mActor;		// Gets set if this is a moving actor
 		bool	lifeNoMatter;
 		bool	replaced;
-	
+
 		const FREEL *pfreel;	// The 'column' to play
 		int		stepCount;
 		int		frameCount;
@@ -658,13 +658,13 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 /**
  * - Don't bother if this reel is already playing for this actor.
  * - If explicit co-ordinates, use these, If embedded co-ordinates,
- * leave alone, otherwise use actor's current position.		
- * - Moving actors get hidden during this play, other actors get	
- * replaced by this play.					
+ * leave alone, otherwise use actor's current position.
+ * - Moving actors get hidden during this play, other actors get
+ * replaced by this play.
  * - Column 0 of a film gets its appropriate Z-position, slave columns
- * get slightly bigger Z-positions, in column order.		
+ * get slightly bigger Z-positions, in column order.
  * - Play proceeds until the script finishes, another reel starts up for
- * this actor, or the actor gets killed.				
+ * this actor, or the actor gets killed.
  * - If called from an splay(), moving actor's co-ordinates are updated
  * after the play, any walk still in progress will go on from there.
  * @param x				Co-ordinates from the play(), set to (-1, -1) if none
@@ -854,7 +854,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 	 */
 	InitStepAnimScript(&_ctx->thisAnim, _ctx->pPlayObj, _ctx->pFreel->script, speed);
 
-	if (bRestore || (ActorEsc(_ctx->reelActor) == true && 
+	if (bRestore || (ActorEsc(_ctx->reelActor) == true &&
 				ActorEev(_ctx->reelActor) != GetEscEvents())) {
 		// From restore, step to jump or end
 		SkipFrames(&_ctx->thisAnim, -1);
@@ -938,7 +938,7 @@ static void PlayProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 
 	if (TinselV2)
-		CORO_INVOKE_ARGS(t2PlayReel, (CORO_SUBCTX, ppi->x, ppi->y, ppi->bRestore, ppi->speed, 
+		CORO_INVOKE_ARGS(t2PlayReel, (CORO_SUBCTX, ppi->x, ppi->y, ppi->bRestore, ppi->speed,
 			ppi->hFilm, ppi->column, ppi->myescEvent, ppi->bTop));
 	else
 		CORO_INVOKE_1(t1PlayReel, ppi);
@@ -968,7 +968,7 @@ void NewestFilm(SCNHANDLE film, const FREEL *reel) {
  * NOTE: The processes are started in reverse order so that the first
  *   column's process kicks in first.
  */
-void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact, bool escOn, 
+void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact, bool escOn,
 			  int myescEvent, bool bTop) {
 	assert(hFilm != 0); // Trying to play NULL film
 	const FILM *pFilm;
@@ -1027,7 +1027,7 @@ void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int myescEvent, bool bT
  * Start up a play process for each slave column in a film.
  * Play the first column directly from the parent process.
  */
-void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact, 
+void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact,
 			   bool escOn, int myescEvent, bool bTop) {
 	CORO_BEGIN_CONTEXT;
 		PPINIT ppi;
@@ -1039,7 +1039,7 @@ void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool spla
 
 	assert(hFilm != 0); // Trying to play NULL film
 	const FILM *pFilm;
-	
+
 	pFilm = (const FILM *)LockMem(hFilm);
 
 	// Now allowed empty films!
@@ -1059,7 +1059,7 @@ void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool spla
 	_ctx->ppi.escOn = escOn;
 	_ctx->ppi.myescEvent = myescEvent;
 
-	// Start display process for each secondary reel in the film in Tinsel 1, 
+	// Start display process for each secondary reel in the film in Tinsel 1,
 	// or all of them in Tinsel 2
 	for (int i = FROM_LE_32(pFilm->numreels) - 1; i >= (TinselV2 ? 0 : 1); i--) {
 		NewestFilm(hFilm, &pFilm->reels[i]);

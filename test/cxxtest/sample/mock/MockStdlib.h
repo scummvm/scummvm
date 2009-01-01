@@ -7,7 +7,7 @@ class MockStdlib :
 {
 public:
     unsigned lastSeed;
-    
+
     void srand( unsigned seed )
     {
         lastSeed = seed;

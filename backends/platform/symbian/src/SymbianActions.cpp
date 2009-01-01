@@ -178,7 +178,7 @@ void SymbianActions::initInstanceGame() {
 	// Skip text
 	if (!is_cine && !is_parallaction)
 		_action_enabled[ACTION_SKIP_TEXT] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || 
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob ||
 		is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula)
 		_key_action[ACTION_SKIP_TEXT].setKey(Common::KEYCODE_ESCAPE, Common::KEYCODE_ESCAPE); // Escape key
 	else {

@@ -598,7 +598,7 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 	if (_isMusic)
 		setVolume(ConfMan.getInt("music_volume"));
 	else
-		setVolume(ConfMan.getInt("sfx_volume"));		
+		setVolume(ConfMan.getInt("sfx_volume"));
 
 	_passThrough = false;
 

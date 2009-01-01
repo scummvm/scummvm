@@ -259,7 +259,7 @@ bool HeapCompact(long size, bool bDiscard) {
 				}
 			}
 		}
-		
+
 		if (pOldest)
 			// discard the oldest block
 			MemoryDiscard(pOldest);

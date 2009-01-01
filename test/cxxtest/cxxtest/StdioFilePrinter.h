@@ -11,7 +11,7 @@
 #include <cxxtest/ErrorFormatter.h>
 #include <stdio.h>
 
-namespace CxxTest 
+namespace CxxTest
 {
     class StdioFilePrinter : public ErrorFormatter
     {
@@ -25,9 +25,9 @@ namespace CxxTest
         {
             Adapter( const Adapter & );
             Adapter &operator=( const Adapter & );
-            
+
             FILE *_o;
-            
+
         public:
             Adapter( FILE *o ) : _o(o) {}
             void flush() { fflush( _o ); }

@@ -404,7 +404,7 @@ void Sprite::drawOccluded(SpriteList &spriteList, int spriteNumber, const Point 
 		sourceRowPointer += width;
 	}
 
-	_vm->_render->addDirtyRect(Common::Rect(clipData.drawSource.x, clipData.drawSource.y, 
+	_vm->_render->addDirtyRect(Common::Rect(clipData.drawSource.x, clipData.drawSource.y,
 								clipData.drawSource.x + width, clipData.drawSource.y + height));
 }
 

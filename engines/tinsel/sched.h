@@ -49,7 +49,7 @@ struct PROCESS {
 	PROCESS *pPrevious;	//!< pointer to previous process in active or free list
 
 	CoroContext state;		//!< the state of the coroutine
-	CORO_ADDR  coroAddr;	//!< the entry point of the coroutine 
+	CORO_ADDR  coroAddr;	//!< the entry point of the coroutine
 
 	int sleepTime;		//!< number of scheduler cycles to sleep
 	int pid;		//!< process ID
@@ -66,18 +66,18 @@ class Scheduler {
 public:
 	/** Pointer to a function of the form "void function(PPROCESS)" */
 	typedef void (*VFPTRPP)(PROCESS *);
-	
+
 private:
-	
+
 	/** list of all processes */
 	PROCESS *processList;
-	
+
 	/** active process list - also saves scheduler state */
 	PROCESS *active;
-	
+
 	/** pointer to free process list */
 	PROCESS *pFreeProcesses;
-	
+
 	/** the currently active process */
 	PROCESS *pCurrent;
 
@@ -88,7 +88,7 @@ private:
 
 	void CheckStack();
 #endif
-	
+
 	/**
 	 * Called from killProcess() to enable other resources
 	 * a process may be allocated to be released.
@@ -102,11 +102,11 @@ public:
 	~Scheduler();
 
 	void reset();
-	
+
 	#ifdef	DEBUG
 	void printStats();
 	#endif
-	
+
 	void schedule();
 	void rescheduleAll();
 	void reschedule(PPROCESS pReSchedProc = NULL);
@@ -114,12 +114,12 @@ public:
 
 	PROCESS *createProcess(int pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam);
 	void killProcess(PROCESS *pKillProc);
-	
+
 	PROCESS *getCurrentProcess();
 	int getCurrentPID() const;
 	int killMatchingProcess(int pidKill, int pidMask = -1);
-	
-	
+
+
 	void setResourceCallback(VFPTRPP pFunc);
 
 };
@@ -131,7 +131,7 @@ extern Scheduler *g_scheduler;	// FIXME: Temporary global var, to be used until 
 void SceneProcesses(uint32 numProcess, SCNHANDLE hProcess);
 void CallSceneProcess(uint32 procID);
 void KillSceneProcess(uint32 procID);
-void SceneProcessEvent(CORO_PARAM, uint32 procID, TINSEL_EVENT event, bool bWait, 
+void SceneProcessEvent(CORO_PARAM, uint32 procID, TINSEL_EVENT event, bool bWait,
 					   int myEscape, bool *result = NULL);
 void RestoreSceneProcess(INT_CONTEXT *pic);
 

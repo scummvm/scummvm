@@ -43,7 +43,7 @@ public:
 	int read(int fd, void *buf, int size);
 	int write(int fd, const void *buf, int size);
 	int mkDir(const char *name);
-	int getDir(const char *name, unsigned int mode, int max, void *dest);    
+	int getDir(const char *name, unsigned int mode, int max, void *dest);
 	int getInfo(int *type, int *free, int *format);
 	int remove(const char *name);
 

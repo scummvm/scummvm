@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
- 
+
 #ifndef _DSMAIN_H
 #define _DSMAIN_H
 
@@ -93,7 +93,7 @@ int 	getMillis();													// Return the current runtime in milliseconds
 void 	doTimerCallback();												// Call callback function if required
 
 // Sound
-void 	doSoundCallback();												
+void 	doSoundCallback();
 void 	startSound(int freq, int buffer);	// Start sound hardware
 // Call function if sound buffers need more data
 void 	playSound(const void* data, u32 length, bool loop, bool adpcm = false, int rate = 22050);		// Start a sound

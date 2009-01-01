@@ -626,7 +626,7 @@ protected:
 	void loadResource(Serializer *ser, int type, int index);
 
 	Common::String makeSavegameName(int slot, bool temporary) const {
-		return makeSavegameName(_targetName, slot, temporary);		
+		return makeSavegameName(_targetName, slot, temporary);
 	}
 
 	int getKeyState(int key);

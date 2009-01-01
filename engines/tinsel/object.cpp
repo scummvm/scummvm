@@ -252,7 +252,7 @@ void SortObjectList(OBJECT *pObjList) {
 	// set head of list dummy OBJ Z Y values to lowest possible
 	head.yPos = intToFrac(MIN_INT16);
 	head.zPos = MIN_INT;
-	
+
 	for (pPrev = &head, pObj = head.pNext; pObj != NULL; pPrev = pObj, pObj = pObj->pNext) {
 		// check Z order
 		if (pObj->zPos < pPrev->zPos) {

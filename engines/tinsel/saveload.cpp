@@ -157,7 +157,7 @@ static bool syncSaveGameHeader(Serializer &s, SaveGameHeader &hdr) {
 }
 
 static void syncSavedMover(Serializer &s, SAVED_MOVER &sm) {
-	SCNHANDLE *pList[3] = { (SCNHANDLE *)&sm.walkReels, 
+	SCNHANDLE *pList[3] = { (SCNHANDLE *)&sm.walkReels,
 		(SCNHANDLE *)&sm.standReels, (SCNHANDLE *)&sm.talkReels };
 
 	s.syncAsUint32LE(sm.bActive);
@@ -165,7 +165,7 @@ static void syncSavedMover(Serializer &s, SAVED_MOVER &sm) {
 	s.syncAsSint32LE(sm.objX);
 	s.syncAsSint32LE(sm.objY);
 	s.syncAsUint32LE(sm.hLastfilm);
-	
+
 	for (int pIndex = 0; pIndex < 3; ++pIndex) {
 		SCNHANDLE *p = pList[pIndex];
 		for (int i = 0; i < TOTAL_SCALES * 4; ++i)
@@ -281,7 +281,7 @@ static char *NewName(void) {
 	static char result[FNAMELEN];
 	int	i;
 	int	ano = 1;	// Allocated number
-	
+
 	while (1) {
 		Common::String fname = _vm->getSavegameFilename(ano);
 		strcpy(result, fname.c_str());
@@ -343,7 +343,7 @@ int getList(Common::SaveFileManager *saveFileMan, const Common::String &target) 
 			if (difftime(mktime(&hdr.dateTime), mktime(&savedFiles[i].dateTime)) > 0) {
 				Common::copy_backward(&savedFiles[i], &savedFiles[numSfiles], &savedFiles[numSfiles + 1]);
 				break;
-			} 
+			}
 		}
 #endif
 
@@ -366,7 +366,7 @@ int getList(void) {
 	// TODO/FIXME: Just always reload this data? Be careful about slow downs!!!
 	if (!NeedLoad)
 		return numSfiles;
- 
+
 	return getList(_vm->getSaveFileMan(), _vm->getTargetName());
 }
 
@@ -478,7 +478,7 @@ static void DoSave(void) {
 		return;
 
 	Serializer s(0, f);
-	
+
 	// Write out a savegame header
 	SaveGameHeader hdr;
 	hdr.id = SAVEGAME_ID;

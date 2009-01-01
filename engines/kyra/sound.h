@@ -222,7 +222,7 @@ protected:
 	enum {
 		kNumChannelHandles = 4
 	};
-	
+
 	struct SoundChannel {
 		Common::String file;
 		Audio::SoundHandle channelHandle;
@@ -438,7 +438,7 @@ public:
 	virtual kType getMusicType() const { return kPC98; }
 
 	bool init();
-	
+
 	void process() {}
 	void loadSoundFile(uint file) {}
 	void loadSoundFile(Common::String) {}
@@ -484,7 +484,7 @@ protected:
 
 	uint8 *_musicTrackData;
 	uint8 *_sfxTrackData;
-	TownsPC98_OpnDriver *_driver;	
+	TownsPC98_OpnDriver *_driver;
 };
 
 class MixedSoundDriver : public Sound {

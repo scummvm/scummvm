@@ -91,10 +91,10 @@ public:
 
 	TIM *load(const char *filename, const Common::Array<const TIMOpcode*> *opcodes);
 	void unload(TIM *&tim) const;
-	
+
 	void setLangData(const char *filename);
 	void clearLangData() { delete[] _langData; _langData = 0; }
-	
+
 	const char *getCTableEntry(uint idx) const;
 
 	void resetFinishedFlag() { _finished = false; }
@@ -104,7 +104,7 @@ public:
 	void stopCurFunc() { if (_currentTim) cmd_stopCurFunc(0); }
 
 	void refreshTimersAfterPause(uint32 elapsedTime);
-	
+
 	void displayText(uint16 textId, int16 flags);
 	void setupTextPalette(uint index, int fadePalette);
 
@@ -118,15 +118,15 @@ private:
 	int _currentFunc;
 
 	bool _finished;
-	
+
 	Common::String _vocFiles[120];
-	
+
 	Animation _animations[TIM::kWSASlots];
-	
+
 	Animation *initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags);
-	
+
 	char _audioFilename[32];
-	
+
 	uint8 *_langData;
 	char *getTableEntry(uint idx);
 	bool _textDisplayed;

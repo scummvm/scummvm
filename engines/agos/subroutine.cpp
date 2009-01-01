@@ -541,7 +541,7 @@ int AGOSEngine::startSubroutine(Subroutine *sub) {
 		error("Recursion error");
 
 	// WORKAROUND: If the game is saved, right after Simon is thrown in the dungeon of Sordid's Fortress of Doom,
-	// the saved game fails to load correctly. When loading the saved game, the sequence of Simon waking is started, 
+	// the saved game fails to load correctly. When loading the saved game, the sequence of Simon waking is started,
 	// before the scene is actually reloaded, due to a script bug. We manually add the extra script code from DOS CD
 	// release, which fixed this particular script bug.
 	if (getGameType() == GType_SIMON2 && !(getFeatures() & GF_TALKIE) && sub->id == 12101) {

@@ -140,7 +140,7 @@ AbstractFSNode *SymbianFilesystemNode::getChild(const Common::String &n) const {
 	if (_path.lastChar() != '\\')
 		newPath += '\\';
 
-	newPath += n;	
+	newPath += n;
 
 	return new SymbianFilesystemNode(newPath);
 }
@@ -196,7 +196,7 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 
 		if (_path.lastChar() != '\\')
 			fname.Append('\\');
-		
+
 		if (static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession().GetDir(fname, KEntryAttNormal|KEntryAttDir, 0, dirPtr) == KErrNone) {
 			CleanupStack::PushL(dirPtr);
 			TInt cnt=dirPtr->Count();
@@ -219,7 +219,7 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 				if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) ||
 					(mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
 					continue;
-			
+
 				myList.push_back(new SymbianFilesystemNode(entry));
 			}
 			CleanupStack::PopAndDestroy(dirPtr);

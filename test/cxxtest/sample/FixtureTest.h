@@ -19,7 +19,7 @@ public:
     {
         _buffer = new char[1024];
     }
-    
+
     void tearDown()
     {
         delete[] _buffer;

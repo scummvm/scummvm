@@ -88,7 +88,7 @@ void SoundBlaster::playComposition(int16 *composition, int16 freqVal,
 		SoundDesc *sndDescs, int8 sndCount) {
 
 	_compositionSamples = sndDescs;
-	_compositionSampleCount = sndCount; 
+	_compositionSampleCount = sndCount;
 
 	int i = -1;
 	do {

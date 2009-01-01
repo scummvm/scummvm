@@ -526,7 +526,7 @@ int Win32ResExtractor::do_resources_recurs(WinLibrary *fi, WinResource *base,
 		else
 			return 0;
 	}
-	
+
 	/* process each resource listed */
 	for (c = 0 ; c < rescnt ; c++) {
 		/* (over)write the corresponding WinResource holder with the current */

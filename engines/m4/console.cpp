@@ -170,9 +170,9 @@ bool Console::cmdDumpFile(int argc, const char **argv) {
 
 bool Console::cmdShowSprite(int argc, const char **argv) {
 	View *view = _vm->_viewManager->getView(VIEWID_SCENE);
-	if (view == NULL) 
+	if (view == NULL)
 		DebugPrintf("The scene view isn't currently active\n");
-	else if (argc < 2) 
+	else if (argc < 2)
 		DebugPrintf("Usage: %s resource_name\n", argv[0]);
 	else {
 		char resourceName[20];
@@ -188,7 +188,7 @@ bool Console::cmdShowSprite(int argc, const char **argv) {
 
 		RGBList *palData = new RGBList(asset->getColorCount(), asset->getPalette(), true);
 		_vm->_palette->addRange(palData);
-		
+
 		// Get the scene background surface
 		M4Surface *bg = _vm->_scene->getBackgroundSurface();
 

@@ -128,7 +128,7 @@ void FindMovingObjects(OBJECT *pObjList, Common::Point *pWin, Common::Rect *pCli
 		if ((pObj->flags & DMA_CHANGED) ||	// object changed
 			HasPalMoved(pObj->pPal)) {	// or palette moved
 			// object has changed in some way
-			
+
 			Common::Rect rcClip;	// objects clipped bounding rectangle
 			Common::Rect rcObj;	// objects bounding rectangle
 
@@ -152,7 +152,7 @@ void FindMovingObjects(OBJECT *pObjList, Common::Point *pWin, Common::Rect *pCli
 			rcObj.right  = rcObj.left + pObj->width;
 			rcObj.bottom = rcObj.top  + pObj->height;
 
-			// calc intersection of object with clipping rect			
+			// calc intersection of object with clipping rect
 			if (IntersectRectangle(rcClip, rcObj, *pClip)) {
 				// current position is within clipping rect
 				AddClipRect(rcClip);

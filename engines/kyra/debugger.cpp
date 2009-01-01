@@ -449,8 +449,8 @@ bool Debugger_HoF::cmd_passcodes(int argc, const char **argv) {
 			DebugPrintf("value must be either 1 (on) or 0 (off)\n");
 			return true;
 		}
-		
-		_vm->_dbgPass = val;		
+
+		_vm->_dbgPass = val;
 	} else {
 		DebugPrintf("Syntax: pass_codes <0/1>\n");
 	}

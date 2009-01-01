@@ -91,7 +91,7 @@ void KyraEngine_HoF::enterNewScene(uint16 newScene, int facing, int unk1, int un
 		waitTime = _system->getMillis() + 1000;
 		_sound->beginFadeOut();
 	}
-	
+
 	_chatAltFlag = false;
 
 	if (!unk3) {
@@ -255,7 +255,7 @@ void KyraEngine_HoF::enterNewSceneUnk2(int unk1) {
 			updateCharacterAnim(0);
 			refreshAnimObjectsIfNeed();
 		}
-	} else if (_mainCharX != -1 && _mainCharY != -1) {		
+	} else if (_mainCharX != -1 && _mainCharY != -1) {
 		if (_characterFrameTable[_mainCharacter.facing] == 25)
 			_mainCharacter.facing = 5;
 		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];

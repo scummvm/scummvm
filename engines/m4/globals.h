@@ -109,7 +109,7 @@ public:
 	// TODO: Move to some palette/fading class
 	int fadeUpDuration, firstFadeColorIndex;
 	int	minPalEntry, maxPalEntry;
-	
+
 	bool paused;
 	//machine* myWalker;
 	bool repeatedlyCallDeamon;
@@ -120,7 +120,7 @@ public:
 
 	int32 trigger;
 	KernelTriggerType triggerMode;
-	
+
 	int32 createTrigger(int32 triggerNum);
 	bool sendTrigger(int32 triggerNum);
 	bool handleTrigger(int32 triggerNum);
@@ -128,7 +128,7 @@ public:
 	void loadGlobalScriptFunctions();
 	void loadSectionScriptFunctions();
 	void loadRoomScriptFunctions();
-	
+
 	void globalDaemon();
 	void globalParser();
 
@@ -190,10 +190,10 @@ public:
 	// Variables
 	Common::Point position;				// Player's current position
 	int facing;							// Facing direction
-	
+
 	char verb[PLAYER_FIELD_LENGTH];		// Action strings
-	char noun[PLAYER_FIELD_LENGTH];  
-	char prep[PLAYER_FIELD_LENGTH];  
+	char noun[PLAYER_FIELD_LENGTH];
+	char prep[PLAYER_FIELD_LENGTH];
 	char object[PLAYER_FIELD_LENGTH];
 	Common::String assetName, shadowName;
 	int walkerType, shadowType;

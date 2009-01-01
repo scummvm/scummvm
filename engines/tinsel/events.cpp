@@ -310,7 +310,7 @@ static void ProcessUserEvent(TINSEL_EVENT uEvent, const Common::Point &coOrds, P
 		GetCursorXY(&aniX, &aniY, true);
 
 		// There could be a poly involved which has no tag.
-		if ((hPoly = InPolygon(aniX, aniY, TAG)) != NOPOLY || 
+		if ((hPoly = InPolygon(aniX, aniY, TAG)) != NOPOLY ||
 			(!TinselV2 && ((hPoly = InPolygon(aniX, aniY, EXIT)) != NOPOLY))) {
 			if (TinselV2 && (uEvent != PROV_WALKTO))
 				PolygonEvent(nullContext, hPoly, uEvent, 0, false, 0);
@@ -391,7 +391,7 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 		"PLR_MENU", "PLR_QUIT", "PLR_PGUP", "PLR_PGDN", "PLR_HOME", "PLR_END",
 		"PLR_DRAG1_START", "PLR_DRAG1_END", "PLR_DRAG2_START", "PLR_DRAG2_END",
 		"PLR_JUMP", "PLR_NOEVENT"};
-	debugC(DEBUG_BASIC, kTinselDebugActions, "%s - (%d,%d)", 
+	debugC(DEBUG_BASIC, kTinselDebugActions, "%s - (%d,%d)",
 		actionList[pEvent], coOrds.x, coOrds.y);
 	static uint32 lastRealAction = 0;
 
@@ -602,7 +602,7 @@ void PolyTinselProcess(CORO_PARAM, const void *param) {
 /**
  * Run the Polygon process with the given event
  */
-void PolygonEvent(CORO_PARAM, HPOLYGON hPoly, TINSEL_EVENT tEvent, int actor, bool bWait, 
+void PolygonEvent(CORO_PARAM, HPOLYGON hPoly, TINSEL_EVENT tEvent, int actor, bool bWait,
 				  int myEscape, bool *result) {
 	CORO_BEGIN_CONTEXT;
 		PTP_INIT to;

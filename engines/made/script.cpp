@@ -179,7 +179,7 @@ ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
 
 	_functions = new ScriptFunctions(_vm);
 	_functions->setupExternalsTable();
-	
+
 #undef COMMAND
 }
 
@@ -574,20 +574,20 @@ void ScriptInterpreter::cmd_send() {
 	debug(4, "\nENTER: stackPtr = %d; _localStackPos = %d", _stack.getStackPos(), _localStackPos);
 
 	byte argc = readByte();
-	
+
 	debug(4, "argc = %d", argc);
-	
+
 	_stack.push(argc);
 	_stack.push(_codeIp - _codeBase);
 	_stack.push(_runningScriptObjectIndex);
 	_stack.push(kScriptStackLimit - _localStackPos);
  	_localStackPos = _stack.getStackPos();
- 	
+
  	int16 propertyId = _stack.peek(_localStackPos + argc + 2);
 	int16 objectIndex = _stack.peek(_localStackPos + argc + 4);
 
 	debug(4, "objectIndex = %d (%04X); propertyId = %d(%04X)", objectIndex, objectIndex, propertyId, propertyId);
-		
+
 	if (objectIndex != 0) {
 		objectIndex = _vm->_dat->getObject(objectIndex)->getClass();
 	} else {
@@ -625,9 +625,9 @@ void ScriptInterpreter::cmd_extend() {
 
 	int16 result = _functions->callFunction(func, argc, argv);
 	debug(2, "result = %04X (%d)", result, result);
-	
+
 	_stack.free(argc);
-	
+
 	_stack.setTop(result);
 
 }
@@ -685,7 +685,7 @@ void ScriptInterpreter::dumpScript(int16 objectIndex, int *opcodeStats, int *ext
 
 	Object *obj = _vm->_dat->getObject(objectIndex);
 	byte *code = obj->getData(), *codeStart = code, *codeEnd = code + obj->getSize();
-	
+
 	while (code < codeEnd) {
 		byte opcode = *code++;
 		if (opcode >= 1 && opcode <= _commandsMax) {

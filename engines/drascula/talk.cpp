@@ -75,7 +75,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 			copyBackground();
 			updateRefresh_pre();
 		}
-		
+
 		if (talkerType == kIgorDch) {
 			placeIgor();
 			placeDrascula();
@@ -119,7 +119,7 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 		}
 	} while	(!isTalkFinished());
 
-	if ((talkerType == kIgorFront && currentChapter == 6) || 
+	if ((talkerType == kIgorFront && currentChapter == 6) ||
 		 talkerType == kIgorDoor || talkerType == kIgorSeated || talkerType == kIgorWig) {
 		updateRoom();
 	}
@@ -776,7 +776,7 @@ void DrasculaEngine::talk_htel(int index) {
 			copyBackground(x_talk[face], 1, 45, 24, 92, 108, frontSurface, screenSurface);
 		else
 			copyBackground(x_talk[face], 1, 45, 24, 92, 108, backSurface, screenSurface);
-		
+
 		if (!_subtitlesDisabled)
 			centerText(said, 90, 50);
 
@@ -912,7 +912,7 @@ void DrasculaEngine::talk_generic(const char* said, const char* filename, int* f
 
 		copyBackground();
 		updateRefresh_pre();
-		copyBackground(faces[face], coords[0], coords[1], coords[2], 
+		copyBackground(faces[face], coords[0], coords[1], coords[2],
 						coords[3], coords[4], surface, screenSurface);
 		moveCharacters();
 		updateRefresh();

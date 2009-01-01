@@ -64,7 +64,7 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 			in->seek(0, SEEK_SET);
 			in->read(descriptionBuffer, descriptionSize[i]);
 			descriptionBuffer[descriptionSize[i]] = 0;
-			
+
 			type = in->readUint32BE();
 			header.version = in->readUint16LE();
 			if (type == MKID_BE('MBL3') && header.version == 100) {

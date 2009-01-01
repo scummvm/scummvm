@@ -86,7 +86,7 @@ private:
 // TODO: the original game capitalizes all inventory object names
 // internally, which we do as well, but perhaps we could make sure
 // that all object names are parsed with the same case and avoid
-// case-insensitive string comparing through scumm_stricmp, using 
+// case-insensitive string comparing through scumm_stricmp, using
 // the normal strcmp method instead
 class Inventory {
 public:

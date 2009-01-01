@@ -82,11 +82,11 @@ public:
 	byte getCount1();
 	byte getCount2();
 	byte *getData();
-	
+
 	bool isConstant() {
 		return false;
 	}
-	
+
 };
 
 class ObjectV3 : public Object {
@@ -100,11 +100,11 @@ public:
 	byte getCount1();
 	byte getCount2();
 	byte *getData();
-	
+
 	bool isConstant() {
 		return !(getFlags() & 1);
 	}
-	
+
 };
 
 class GameDatabase {

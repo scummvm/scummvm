@@ -1060,7 +1060,7 @@ void DrasculaEngine::updateRefresh() {
 	// Check generic updaters
 	for (int i = 0; i < _roomUpdatesSize; i++) {
 		if (_roomUpdates[i].roomNum == roomNumber) {
-			if (_roomUpdates[i].flag < 0 || 
+			if (_roomUpdates[i].flag < 0 ||
 				flags[_roomUpdates[i].flag] == _roomUpdates[i].flagValue) {
 				if (_roomUpdates[i].type == 0) {
 					copyBackground(_roomUpdates[i].sourceX, _roomUpdates[i].sourceY,
@@ -1174,7 +1174,7 @@ void DrasculaEngine::update_2() {
 		h = 22;
 	}
 
-	copyRect(batX[actorFrames[kFrameBat]], batY[actorFrames[kFrameBat]], 
+	copyRect(batX[actorFrames[kFrameBat]], batY[actorFrames[kFrameBat]],
 			 239, 19, w, h, drawSurface3, screenSurface);
 	difference = getTime() - savedTime;
 	if (difference >= 6) {
@@ -1214,7 +1214,7 @@ void DrasculaEngine::update_9_pre() {
 	int blindY[] = {51, 51, 51, 51, 51, 51, 51, 127, 127};
 	int difference;
 
-	copyRect(blindX[actorFrames[kFrameBlind]], blindY[actorFrames[kFrameBlind]], 
+	copyRect(blindX[actorFrames[kFrameBlind]], blindY[actorFrames[kFrameBlind]],
 			 122, 57, 41, 72, drawSurface3, screenSurface);
 	if (flags[9] == 0) {
 		difference = getTime() - savedTime;
@@ -1299,7 +1299,7 @@ void DrasculaEngine::update_18_pre() {
 
 	if (flags[21] == 0) {
 		copyBackground(1, 69, 120, 58, 56, 61, drawSurface3, screenSurface);
-		copyBackground(snore_x[actorFrames[kFrameSnore]], 
+		copyBackground(snore_x[actorFrames[kFrameSnore]],
 					  snore_y[actorFrames[kFrameSnore]],
 					  124, 59, 40, 37, drawSurface3, screenSurface);
 	} else
@@ -1877,7 +1877,7 @@ bool DrasculaEngine::exitRoom(int l) {
 	int roomNum = 0;
 
 	// Player can't exit the inn in chapter 1
-	if (currentChapter == 1 && objectNum[l] == 104) {		
+	if (currentChapter == 1 && objectNum[l] == 104) {
 		return false;
 	}
 
@@ -1887,7 +1887,7 @@ bool DrasculaEngine::exitRoom(int l) {
 	}
 
 	updateDoor(l);
-	if (isDoor[l] != 0 && 
+	if (isDoor[l] != 0 &&
 		((currentChapter != 3 && currentChapter != 5) || visible[l] == 1)) {
 
 		hideCursor();
@@ -1918,7 +1918,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			if (objectNum[l] == 173) {
 				animation_35_2();
 				return true;
-			} 
+			}
 			if (objectNum[l] == 146 && flags[39] == 1) {
 				flags[5] = 1;
 				flags[11] = 1;
@@ -1966,7 +1966,7 @@ void DrasculaEngine::updateDoor(int doorNum) {
 		return;
 
 	for (int i = 0; i < ARRAYSIZE(doors); i++) {
-		if (doors[i].chapter == currentChapter && 
+		if (doors[i].chapter == currentChapter &&
 			objectNum[doorNum] == doors[i].doorNum) {
 			isDoor[doorNum] = flags[doors[i].flag];
 			return;

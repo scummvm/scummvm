@@ -44,8 +44,8 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 	const ANI_SCRIPT *pAni = (const ANI_SCRIPT *)LockMem(pAnim->hScript);
 
 	while (1) {	// repeat until a real image
-		debugC(DEBUG_DETAILED, kTinselDebugAnimations, 
-		"DoNextFrame %ph index=%d, op=%xh", (byte *)pAnim, pAnim->scriptIndex, 
+		debugC(DEBUG_DETAILED, kTinselDebugAnimations,
+		"DoNextFrame %ph index=%d, op=%xh", (byte *)pAnim, pAnim->scriptIndex,
 		FROM_LE_32(pAni[pAnim->scriptIndex].op));
 
 		switch ((int32)FROM_LE_32(pAni[pAnim->scriptIndex].op)) {
@@ -212,7 +212,7 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 void InitStepAnimScript(ANIM *pAnim, OBJECT *pAniObj, SCNHANDLE hNewScript, int aniSpeed) {
 	OBJECT *pObj;			// multi-object list iterator
 
-	debugC(DEBUG_DETAILED, kTinselDebugAnimations, 
+	debugC(DEBUG_DETAILED, kTinselDebugAnimations,
 		"InitStepAnimScript Object=(%d,%d,%xh) script=%xh aniSpeed=%d rec=%ph",
 		!pAniObj ? 0 : fracToInt(pAniObj->xPos),
 		!pAniObj ? 0 : fracToInt(pAniObj->yPos),

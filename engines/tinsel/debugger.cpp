@@ -46,7 +46,7 @@ extern SCNHANDLE GetSceneHandle(void);
 
 //----------------- SUPPORT FUNCTIONS ---------------------
 
-//static 
+//static
 int strToInt(const char *s) {
 	if (!*s)
 		// No string at all

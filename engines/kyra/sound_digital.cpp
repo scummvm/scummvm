@@ -56,7 +56,7 @@ private:
 	int32 _fadeSamples;
 	int32 _fadeCount;
 	int _fading;
-	
+
 	bool _endOfData;
 };
 
@@ -69,13 +69,13 @@ void KyraAudioStream::beginFadeOut(uint32 millis) {
 
 int KyraAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samplesRead = _impl->readBuffer(buffer, numSamples);
-	
+
 	if (_fading) {
 		int samplesProcessed = 0;
 		for (; samplesProcessed < samplesRead; ++samplesProcessed) {
 			// To help avoid overflows for long fade times, we divide both
 			// _fadeSamples and _fadeCount when calculating the new sample.
-	
+
 			int32 div = _fadeSamples / 256;
 			if (_fading) {
 				*buffer = (*buffer * (_fadeCount / 256)) / div;
@@ -429,7 +429,7 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 	if (volume > 255)
 		volume = 255;
 	volume = (volume * Audio::Mixer::kMaxChannelVolume) / 255;
-	
+
 	if (type == Audio::Mixer::kSpeechSoundType && _vm->heliumMode())
 		use->stream->setRate(32765);
 

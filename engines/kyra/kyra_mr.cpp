@@ -209,7 +209,7 @@ Common::Error KyraEngine_MR::init() {
 
 	KyraEngine_v1::init();
 	initStaticResource();
-	
+
 	_debugger = new Debugger_v2(this);
 	assert(_debugger);
 
@@ -229,7 +229,7 @@ Common::Error KyraEngine_MR::init() {
 	_screen->setFont(Screen::FID_6_FNT);
 	_screen->setAnimBlockPtr(3500);
 	_screen->setScreenDim(0);
-	
+
 	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0), 768);
 	_screen->setScreenPalette(_screen->getPalette(0));
 
@@ -545,7 +545,7 @@ void KyraEngine_MR::playStudioSFX(const char *str) {
 
 void KyraEngine_MR::preinit() {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::preinit()");
-	
+
 	_itemBuffer1 = new int8[72];
 	_itemBuffer2 = new int8[144];
 	initMouseShapes();
@@ -583,7 +583,7 @@ void KyraEngine_MR::startup() {
 
 	_screen->setFont(Screen::FID_6_FNT);
 
-	_stringBuffer = new char[500];	
+	_stringBuffer = new char[500];
 	//XXX
 	musicUpdate(0);
 	//XXX
@@ -676,7 +676,7 @@ void KyraEngine_MR::startup() {
 	assert(_sceneList);
 	memset(_sceneList, 0, sizeof(SceneDesc)*98);
 	_sceneListSize = 98;
-	
+
 	musicUpdate(0);
 	runStartupScript(1, 0);
 	_res->exists("MOODOMTR.WSA", true);
@@ -1014,7 +1014,7 @@ void KyraEngine_MR::runLoop() {
 		}
 
 		checkAutosave();
-		
+
 		if (_system->getMillis() >= _nextIdleAnim)
 			showIdleAnim();
 
@@ -1054,7 +1054,7 @@ void KyraEngine_MR::handleInput(int x, int y) {
 	}
 
 	setNextIdleAnimTimer();
-	
+
 	int skip = 0;
 
 	if (checkCharCollision(x, y) && _unk3 >= -1 && runSceneScript2()) {
@@ -1381,7 +1381,7 @@ char *KyraEngine_MR::appendLanguage(char *buf, int lang, int bufSize) {
 int KyraEngine_MR::loadLanguageFile(const char *file, uint8 *&buffer) {
 	debugC(9, kDebugLevelMain, "KyraEngine_MR::loadLanguageFile('%s', %p)", file, (const void*)buffer);
 
-	delete[] buffer; 
+	delete[] buffer;
 	buffer = 0;
 
 	uint32 size = 0;
@@ -1487,7 +1487,7 @@ void KyraEngine_MR::scoreIncrease(int count, const char *str) {
 			drawScore(0, 215, 191);
 		_screen->updateScreen();
 		delay(20, true);
-		
+
 		snd_playSoundEffect(0x0E, 0xC8);
 		drawOld = 0;
 	}
@@ -1498,7 +1498,7 @@ void KyraEngine_MR::scoreIncrease(int count, const char *str) {
 #pragma mark -
 
 void KyraEngine_MR::changeChapter(int newChapter, int sceneId, int malcolmShapes, int facing) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::changeChapter(%d, %d, %d, %d)", newChapter, sceneId, malcolmShapes, facing);	
+	debugC(9, kDebugLevelMain, "KyraEngine_MR::changeChapter(%d, %d, %d, %d)", newChapter, sceneId, malcolmShapes, facing);
 	resetItemList();
 
 	_currentChapter = newChapter;

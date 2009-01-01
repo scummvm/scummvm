@@ -63,7 +63,7 @@ static void t0WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 
 		int leftClip = applyClipping ? pObj->leftClip : 0;
 		int rightClip = applyClipping ? pObj->rightClip : 0;
-		
+
 		// Horizontal loop
 		for (int x = 0; x < pObj->width; ) {
 			uint32 numBytes = READ_UINT32(srcP);
@@ -91,7 +91,7 @@ static void t0WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 			} else {
 				// Copy a specified sequence length of pixels
 				srcP += clipAmount;
-				
+
 				int runLength = numBytes - clipAmount;
 				int rptLength = MAX(MIN(runLength, pObj->width - rightClip - x), 0);
 				if (yClip == 0) {
@@ -209,7 +209,7 @@ static void WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyCl
 
 			tempDest += boxBounds.right - boxBounds.left + 1;
 			width -= 3 - boxBounds.left + 1;
-			
+
 			// None of the remaining horizontal blocks should be left clipped
 			boxBounds.left = 0;
 		}
@@ -340,7 +340,7 @@ static void WrtTrans(DRAWOBJECT *pObj, uint8 *destP, bool applyClipping) {
 			return;
 	}
 
-	// Set up the offset between destination lines 
+	// Set up the offset between destination lines
 	int lineOffset = SCREEN_WIDTH - pObj->width;
 
 	// Loop through any remaining lines
@@ -350,7 +350,7 @@ static void WrtTrans(DRAWOBJECT *pObj, uint8 *destP, bool applyClipping) {
 
 		--pObj->height;
 		destP += lineOffset;
-	}		
+	}
 }
 
 /**
@@ -494,7 +494,7 @@ void ClearScreen() {
 	void *pDest = _vm->screen().getBasePtr(0, 0);
 	memset(pDest, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
 	g_system->clearScreen();
-	g_system->updateScreen(); 
+	g_system->updateScreen();
 }
 
 /**
@@ -505,7 +505,7 @@ void UpdateScreenRect(const Common::Rect &pClip) {
 	byte *pSrc = (byte *)_vm->screen().getBasePtr(pClip.left, pClip.top);
 	g_system->copyRectToScreen(pSrc, _vm->screen().pitch, pClip.left, pClip.top + yOffset,
 		pClip.width(), pClip.height());
-	g_system->updateScreen(); 
+	g_system->updateScreen();
 }
 
 /**
@@ -515,7 +515,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 	uint8 *srcPtr = NULL;
 	uint8 *destPtr;
 
-	if ((pObj->width <= 0) || (pObj->height <= 0)) 
+	if ((pObj->width <= 0) || (pObj->height <= 0))
 		// Empty image, so return immediately
 		return;
 
@@ -527,7 +527,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 			pObj->transOffset = 0;
 		} else {
 			byte *p = (byte *)LockMem(pObj->hBits & HANDLEMASK);
-			
+
 			srcPtr = p + (pObj->hBits & OFFSETMASK);
 			pObj->charBase = (char *)p + READ_LE_UINT32(p + 0x10);
 			pObj->transOffset = READ_LE_UINT32(p + 0x14);
@@ -536,7 +536,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 
 	// Get destination starting point
 	destPtr = (byte *)_vm->screen().getBasePtr(pObj->xPos, pObj->yPos);
-	
+
 	// Handle various draw types
 	uint8 typeId = pObj->flags & 0xff;
 

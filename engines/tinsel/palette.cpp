@@ -376,7 +376,7 @@ void SwapPalette(PALQ *pPalQ, SCNHANDLE hNewPal) {
 
 			// Copy all the colours
 			memcpy(pPalQ->palRGB, pNewPal->palRGB, pNewPal->numColours * sizeof(COLORREF));
-			
+
 			if (!pPalQ->bFading)
 				// Q the change to the video DAC
 				UpdateDACqueue(pPalQ->posInDAC, FROM_LE_32(pNewPal->numColours), pPalQ->palRGB);
@@ -496,7 +496,7 @@ void CreateTranslucentPalette(SCNHANDLE hPalette) {
 
 		// map the Value field to one of the 4 colours reserved for the translucent palette
 		val /= 63;
-		transPalette[i + 1] = (uint8)((val == 0) ? 0 : val + 
+		transPalette[i + 1] = (uint8)((val == 0) ? 0 : val +
 			(TinselV2 ? TranslucentColour() : COL_HILIGHT) - 1);
 	}
 }

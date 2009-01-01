@@ -284,7 +284,7 @@ long *Sequence::getDataPtr(int index) {
 void Sequence::draw(M4Surface *surface, const Common::Rect &clipRect, Common::Rect &updateRect) {
 
 	SpriteInfo info;
-	
+
 	info.sprite = _curFrame;
 	info.hotX = _curFrame->xOffset;
 	info.hotY = _curFrame->yOffset;
@@ -297,19 +297,19 @@ void Sequence::draw(M4Surface *surface, const Common::Rect &clipRect, Common::Re
 	info.scaleX = _vars[kSeqVarWidth] < 0 ? -scaler : scaler;
 	info.scaleY = scaler;
 	surface->drawSprite(_vars[kSeqVarX] >> 16, _vars[kSeqVarY] >> 16, info, clipRect);
-		
+
 }
 
 bool Sequence::s1_end(Instruction &instruction) {
 	//printf("Sequence::s1_end()\n");
-	
+
 	_terminated = true;
 	return false;
 }
 
 bool Sequence::s1_clearVars(Instruction &instruction) {
 	//printf("Sequence::s1_clearVars()\n");
-	
+
 	clearVars();
 	_vars[kSeqVarMachineID] = _machine->getId();
 	return true;
@@ -317,7 +317,7 @@ bool Sequence::s1_clearVars(Instruction &instruction) {
 
 bool Sequence::s1_set(Instruction &instruction) {
 	//printf("Sequence::s1_set()\n");
-	
+
 	*instruction.argp[0] = instruction.getValue();
 	return true;
 }
@@ -337,7 +337,7 @@ bool Sequence::s1_compare(Instruction &instruction) {
 
 bool Sequence::s1_add(Instruction &instruction) {
 	//printf("Sequence::s1_add()\n");
-	
+
 	*instruction.argp[0] += instruction.getValue();
 	return true;
 }
@@ -429,28 +429,28 @@ bool Sequence::s1_cos(Instruction &instruction) {
 
 bool Sequence::s1_abs(Instruction &instruction) {
 	//printf("Sequence::s1_abs()\n");
-	
+
 	*instruction.argp[0] = ABS(instruction.argv[1]);
 	return true;
 }
 
 bool Sequence::s1_min(Instruction &instruction) {
 	//printf("Sequence::s1_min()\n");
-	
+
 	*instruction.argp[0] = MIN(instruction.argv[1], instruction.argv[2]);
 	return true;
 }
 
 bool Sequence::s1_max(Instruction &instruction) {
 	//printf("Sequence::s1_max()\n");
-	
+
 	*instruction.argp[0] = MAX(instruction.argv[1], instruction.argv[2]);
 	return true;
 }
 
 bool Sequence::s1_mod(Instruction &instruction) {
 	//printf("Sequence::s1_mod()\n");
-	
+
 	*instruction.argp[0] = instruction.argv[0] % instruction.getValue();
 	return true;
 }
@@ -521,7 +521,7 @@ bool Sequence::s1_crunch(Instruction &instruction) {
 	}
 
 	// TODO: Update if walking etc.
-	
+
 	return false;
 }
 
@@ -564,7 +564,7 @@ bool Sequence::s1_branch(Instruction &instruction) {
 
 bool Sequence::s1_setFrame(Instruction &instruction) {
 	//printf("Sequence::s1_setFrame()\n");
-	
+
 	int32 frameIndex;
 	if (instruction.argc == 3) {
 		frameIndex = _vm->imath_ranged_rand(instruction.argv[1] >> 16, instruction.argv[2] >> 16);
@@ -573,10 +573,10 @@ bool Sequence::s1_setFrame(Instruction &instruction) {
 	} else {
 		frameIndex = (instruction.argv[0] & 0xFF0000) >> 16;
 	}
-	
+
 	//printf("Sequence::s1_setFrame() spriteHash = %d\n", (uint32)instruction.argv[0] >> 24);
 	//printf("Sequence::s1_setFrame() frameIndex = %d\n", frameIndex);
-	
+
 	SpriteAsset *spriteAsset = _ws->assets()->getSprite((uint32)instruction.argv[0] >> 24);
 	_curFrame = spriteAsset->getFrame(frameIndex);
 
@@ -603,7 +603,7 @@ bool Sequence::s1_pop(Instruction &instruction) {
 
 bool Sequence::s1_jumpSub(Instruction &instruction) {
 	//printf("Sequence::s1_jumpSub()\n");
-	
+
 	_returnHashes[_returnStackIndex] = _sequenceHash;
 	_returnOffsets[_returnStackIndex] = _code->pos();
 	_returnStackIndex++;
@@ -715,7 +715,7 @@ bool Sequence::s1_closeStream(Instruction &instruction) {
 bool Sequence::streamOpen() {
 
 	_streamSpriteAsset = new SpriteAsset(_vm, _stream, _stream->size(), "stream", true);
-	
+
 	_vars[kSeqVarSpriteFrameNumber] = -0x10000;
 	_vars[kSeqVarSpriteFrameCount] = _streamSpriteAsset->getCount() << 16;
 	_vars[kSeqVarSpriteFrameRate] = _streamSpriteAsset->getFrameRate() << 16;

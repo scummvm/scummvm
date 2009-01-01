@@ -199,7 +199,7 @@ void TimerManager::setNextRun(uint8 id, uint32 nextRun) {
 
 	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end()) {
-		timer->nextRun = nextRun;	
+		timer->nextRun = nextRun;
 		return;
 	}
 

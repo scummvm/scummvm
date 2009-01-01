@@ -101,7 +101,7 @@ void Actor::unloadWalkers() {
 }
 
 void Actor::setWalkerPalette() {
-	_vm->_palette->setPalette(_walkerSprites[kFacingSouthEast]->getPalette(), 0, 
+	_vm->_palette->setPalette(_walkerSprites[kFacingSouthEast]->getPalette(), 0,
 							  _walkerSprites[kFacingSouthEast]->getColorCount());
 }
 
@@ -157,7 +157,7 @@ void Inventory::removeFromBackpack(uint32 objectIndex) {
 	_vm->_interfaceView->inventoryRemove(_inventory[objectIndex]->name);
 }
 
-bool Inventory::isInCurrentScene(char* name) { 
+bool Inventory::isInCurrentScene(char* name) {
 	return (getScene(name) == _vm->_scene->getCurrentScene());
 }
 
@@ -195,8 +195,8 @@ void Inventory::clear() {
 	for (uint i = 0; i < _inventory.size(); i++) {
 		delete _inventory[i]->name;
 		delete _inventory[i];
-		_inventory.remove_at(i);		
+		_inventory.remove_at(i);
 	}
 }
-	
+
 } // End of namespace M4

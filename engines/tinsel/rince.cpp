@@ -229,7 +229,7 @@ void HideMover(PMOVER pMover, int sf) {
 	if (!TinselV2) {
 		// sf is only passed in Tinsel v1
 		pMover->SlowFactor = sf;
-	} else { 
+	} else {
 		// Tinsel 2 specific code
 		if (IsTaggedActor(pMover->actorID)) {
 			// It may be pointed to
@@ -575,7 +575,7 @@ void AlterMover(PMOVER pMover, SCNHANDLE film, AR_FUNCTION fn) {
 			StepAnimScript(&pMover->actorAnim);	// 04/01/95
 #endif
 		}
-			
+
 		// Hang on, we may not want him yet! 04/01/95
 		if (pMover->bHidden)
 			MultiSetZPosition(pMover->actorObj, -1);
@@ -689,7 +689,7 @@ static void InitialPathChecks(PMOVER pMover, int xpos, int ypos) {
 
 		z = GetScale(FirstPathPoly(), pMover->objY);
 	}
-	SetMoverWalkReel(pMover, FORWARD, z, false);	
+	SetMoverWalkReel(pMover, FORWARD, z, false);
 }
 
 static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
@@ -758,7 +758,7 @@ void T1MoverProcess(CORO_PARAM, const void *param) {
 	const PMOVER pActor = *(const PMOVER *)param;
 
 	CORO_BEGIN_CODE(_ctx);
-	
+
 	while (1) {
 		if (pActor->bSpecReel) {
  			if (!pActor->bHidden)
@@ -882,7 +882,7 @@ PMOVER InMoverBlock(PMOVER pMover, int x, int y) {
 	caR = GetMoverRight(pMover) + x - caX;
 
 	for (int i = 0; i < MAX_MOVERS; i++) {
-		if (pMover == &Movers[i] || 
+		if (pMover == &Movers[i] ||
 				(TinselV2 && (Movers[i].actorObj == NULL)) ||
 				(!TinselV2 && !Movers[i].bActive))
 			continue;

@@ -19,7 +19,7 @@ namespace CxxTest
     public:
         TestListener() {}
         virtual ~TestListener() {}
-        
+
         virtual void enterWorld( const WorldDescription & /*desc*/ ) {}
         virtual void enterSuite( const SuiteDescription & /*desc*/ ) {}
         virtual void enterTest( const TestDescription & /*desc*/ ) {}

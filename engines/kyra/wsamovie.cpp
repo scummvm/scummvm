@@ -503,7 +503,7 @@ void WSAMovie_v2::displayFrame(int frameNum, ...) {
 		const uint8 *unkPtr1 = va_arg(args, const uint8*);
 		const uint8 *unkPtr2 = va_arg(args, const uint8*);
 		va_end(args);
-		
+
 		_screen->copyWsaRect(_x, _y, _width, _height, 0, plotFunc, _offscreenBuffer, unk1, unkPtr1, unkPtr2);
 
 		_screen->_curPage = pageBackUp;

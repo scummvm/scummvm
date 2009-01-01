@@ -124,7 +124,7 @@ Common::SeekableReadStream *FileSystem::loadFile(const char *resourceName, bool 
 		else
 			// Creates a SeekableSubReadStream, which will read the data in from disk as the
 			// caller reads in data
-			result = new Common::SeekableSubReadStream(hagEntry->hagFile, hfe->offset, 
+			result = new Common::SeekableSubReadStream(hagEntry->hagFile, hfe->offset,
 				hfe->offset + hfe->size);
 
 	} else {
@@ -193,7 +193,7 @@ Common::SeekableReadStream *ResourceManager::get(const char *resourceName, bool 
 	newRes->name[63] = '\0';
 	newRes->flags = 0;
 	newRes->stream = loadResource(resourceName, preloadFlag);
-	
+
 	_resources.push_back(ResourceList::value_type(newRes));
 	return newRes->stream;
 }
@@ -231,7 +231,7 @@ void ResourceManager::dump() {
 	ResourceIterator i;
 	for (i = _resources.begin(); i != _resources.end(); ++i) {
 		Resource *r = (*i).get();
-	
+
 		if (!(r->flags & kResourcePurge)) {
 			_vm->_events->getConsole()->DebugPrintf(
 				"Resource #%i, name: %s, handle pointer: %p, size: %d, flags: %02X\n",
@@ -272,7 +272,7 @@ ResourceType MADSResourceManager::getResourceType(const char *resourceName) {
 	} else if (!strncmp(resourceName, "SPCHC", 5)) {
 		// SPEECH resource
 		return RESTYPE_SPEECH;
-	} 
+	}
 
 	// Check for a known extension
 	const char *extPos = strchr(resourceName, '.');
@@ -313,7 +313,7 @@ Common::SeekableReadStream *MADSResourceManager::loadResource(const char *resour
 	uint32 offset = 0, size = 0;
 
 	// If the first character is a '@' then look for an external file
-	
+
 	if (*resourceName == '@') {
 		++resourceName;
 
@@ -354,7 +354,7 @@ Common::SeekableReadStream *MADSResourceManager::loadResource(const char *resour
 	}
 
 	if (resIndex == numEntries)
-		error("Invalid resource '%s' specified", resourceName);	
+		error("Invalid resource '%s' specified", resourceName);
 
 	// Get the resource, either loading it in it's entirely or getting a stream reference
 
@@ -426,7 +426,7 @@ Common::SeekableReadStream *M4ResourceManager::loadResource(const char *resource
 	} else {
 		error("M4ResourceManager::loadResource() No FileSystem attached");
 	}
-	return result;	
+	return result;
 }
 
 bool M4ResourceManager::resourceExists(const char *resourceName) {

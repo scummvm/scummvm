@@ -683,11 +683,11 @@ public:
 	virtual const char *getName() const;
 	virtual const char *getCopyright() const;
 
-	virtual bool hasFeature(MetaEngineFeature f) const;	
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const Common::FSList &fslist) const;
-	
+
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
 	virtual SaveStateList listSaves(const char *target) const;
@@ -984,7 +984,7 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 2 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 2);
-		
+
 		if (slotNum >= 0 && slotNum <= 99) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
@@ -1016,7 +1016,7 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 
 	// TODO: Cleanup
 	Graphics::Surface *thumbnail = ScummEngine::loadThumbnailFromSlot(target, slot);
-	
+
 	SaveStateDescriptor desc(slot, saveDesc);
 	desc.setDeletableFlag(true);
 	desc.setThumbnail(thumbnail);
@@ -1029,7 +1029,7 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 		int year = infos.date & 0xFFFF;
 
 		desc.setSaveDate(year, month, day);
-		
+
 		int hour = (infos.time >> 8) & 0xFF;
 		int minutes = infos.time & 0xFF;
 

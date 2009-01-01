@@ -124,7 +124,7 @@ const int enhancedAudioSCNVersion[] = {
 	 0,  0,  0,  0,  0,  0,  0,  0,  2,  2,
 	 2,  2,  2,  2,  2,  2,  2,  2,  2,  2,
 	 0,  0,  0,  0,  0,  0,  0,  0, 52,  4,
-	 0,  0,  0,  0	
+	 0,  0,  0,  0
 };
 
 int GetTrackNumber(SCNHANDLE hMidi) {
@@ -918,8 +918,8 @@ void dumpMusic() {
 	int outFileSize = 0;
 	char buffer[20000];
 
-	int total = (_vm->getFeatures() & GF_SCNFILES) ? 
-				ARRAYSIZE(midiOffsetsSCNVersion) : 
+	int total = (_vm->getFeatures() & GF_SCNFILES) ?
+				ARRAYSIZE(midiOffsetsSCNVersion) :
 				ARRAYSIZE(midiOffsetsGRAVersion);
 
 	for (int i = 0; i < total; i++) {

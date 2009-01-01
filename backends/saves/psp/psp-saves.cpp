@@ -39,7 +39,7 @@ PSPSaveFileManager::PSPSaveFileManager() {
 	ConfMan.registerDefault("savepath", PSP_DEFAULT_SAVE_PATH);
 }
 /*
-PSPSaveFileManager::PSPSaveFileManager(const Common::String &defaultSavepath) 
+PSPSaveFileManager::PSPSaveFileManager(const Common::String &defaultSavepath)
 	: DefaultSaveFileManager(defaultSavepath) {
 }
 */

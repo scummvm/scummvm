@@ -172,7 +172,7 @@ void SetCursorXY(int newx, int newy) {
 	int	Loffset, Toffset;	// Screen offset
 
 	PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
-	newx -= Loffset; 
+	newx -= Loffset;
 	newy -= Toffset;
 
 	if (GetDriverPosition(&x, &y))
@@ -210,7 +210,7 @@ bool GetCursorXYNoWait(int *x, int *y, bool absolute) {
 		*x += Loffset;
 		*y += Toffset;
 	}
-	
+
 	return true;
 }
 
@@ -443,7 +443,7 @@ static void DoCursorMove(void) {
 
 	// get new mouse driver position - could have been modified
 	ptMouse = _vm->getMousePosition();
-	
+
 	if (lastCursorX != ptMouse.x || lastCursorY != ptMouse.y) {
 		resetUserEventTime();
 

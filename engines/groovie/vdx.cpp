@@ -65,7 +65,7 @@ uint16 VDXPlayer::loadInternal() {
 	// - 1 Puzzle piece? Skip palette, don't redraw full screen, draw still to b/ack buffer
 	// - 2 Transparent colour is 0xFF
 	// - 5 Skip still chunks
-	// - 7 
+	// - 7
 	// - 8 Just show the first frame
 	// - 9 Start a palette fade in
 	_flagZero = 		((_flags & (1 << 0)) != 0);
@@ -161,7 +161,7 @@ bool VDXPlayer::playFrameInternal() {
 	}
 
 	// Wait until the current frame can be shown
-	
+
 	if (!(Common::getEnabledSpecialDebugLevels() & kGroovieDebugFast)) {
 		waitFrame();
 	}

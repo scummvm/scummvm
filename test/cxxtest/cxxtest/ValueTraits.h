@@ -4,7 +4,7 @@
 //
 // ValueTraits are used by CxxTest to convert arbitrary
 // values used in TS_ASSERT_EQUALS() to a string representation.
-// 
+//
 // This header file contains value traits for builtin integral types.
 // To declare value traits for new types you should instantiate the class
 // ValueTraits<YourClass>.
@@ -18,7 +18,7 @@
 #   define CXXTEST_TEMPLATE_INSTANTIATION template<>
 #endif // _CXXTEST_OLD_TEMPLATE_SYNTAX
 
-namespace CxxTest 
+namespace CxxTest
 {
     //
     // This is how we use the value traits
@@ -75,11 +75,11 @@ namespace CxxTest
     {
         enum { MAX_BYTES = 8 };
         char _asString[sizeof("{ ") + sizeof("XX ") * MAX_BYTES + sizeof("... }")];
-        
+
     public:
         ValueTraits( const T &t ) { bytesToString( (const unsigned char *)&t, sizeof(T), MAX_BYTES, _asString ); }
         const char *asString( void ) const { return _asString; }
-    };    
+    };
 
     //
     // traits( T t )
@@ -112,7 +112,7 @@ namespace CxxTest
 #   else // !_CXXTEST_NO_COPY_CONST
 #       define CXXTEST_COPY_CONST_TRAITS(CXXTEST_CLASS) CXXTEST_COPY_TRAITS(CXXTEST_CLASS, const CXXTEST_CLASS)
 #   endif // _CXXTEST_NO_COPY_CONST
-    
+
     //
     // Avoid compiler warnings about unsigned types always >= 0
     //
@@ -149,7 +149,7 @@ namespace CxxTest
             *s++ = '-';
             n = abs(n);
         }
-    
+
         N digit = 1;
         while ( digit <= (n / base) )
             digit *= base;
@@ -167,7 +167,7 @@ namespace CxxTest
     // All the specific ValueTraits follow.
     // You can #define CXXTEST_USER_VALUE_TRAITS if you don't want them
     //
-    
+
 #ifndef CXXTEST_USER_VALUE_TRAITS
     //
     // ValueTraits: const char * const &
@@ -178,7 +178,7 @@ namespace CxxTest
     {
         ValueTraits &operator=( const ValueTraits & );
         const char *_asString;
-        
+
     public:
         ValueTraits( const char * const &value ) : _asString( value ) {}
         ValueTraits( const ValueTraits &other ) : _asString( other._asString ) {}
@@ -190,12 +190,12 @@ namespace CxxTest
 
     //
     // ValueTraits: bool
-    //    
+    //
     CXXTEST_TEMPLATE_INSTANTIATION
     class ValueTraits<const bool>
     {
         bool _value;
-        
+
     public:
         ValueTraits( const bool value ) : _value( value ) {}
         const char *asString( void ) const { return _value ? "true" : "false"; }
@@ -249,7 +249,7 @@ namespace CxxTest
     };
 
     CXXTEST_COPY_CONST_TRAITS( signed long int );
-    
+
     //
     // ValueTraits: unsigned long
     //
@@ -264,17 +264,17 @@ namespace CxxTest
     };
 
     CXXTEST_COPY_CONST_TRAITS( unsigned long int );
-    
+
     //
     // All decimals are the same as the long version
     //
-    
+
     CXXTEST_COPY_TRAITS( const signed int, const signed long int );
     CXXTEST_COPY_TRAITS( const unsigned int, const unsigned long int );
     CXXTEST_COPY_TRAITS( const signed short int, const signed long int );
     CXXTEST_COPY_TRAITS( const unsigned short int, const unsigned long int );
     CXXTEST_COPY_TRAITS( const unsigned char, const unsigned long int );
-    
+
     CXXTEST_COPY_CONST_TRAITS( signed int );
     CXXTEST_COPY_CONST_TRAITS( unsigned int );
     CXXTEST_COPY_CONST_TRAITS( signed short int );
@@ -310,7 +310,7 @@ namespace CxxTest
     class ValueTraits<const double>
     {
     public:
-        ValueTraits( double t ) 
+        ValueTraits( double t )
         {
             ( requiredDigitsOnLeft( t ) > MAX_DIGITS_ON_LEFT ) ?
                 hugeNumber( t ) :
@@ -318,7 +318,7 @@ namespace CxxTest
         }
 
         const char *asString( void ) const { return _asString; }
-        
+
     private:
         enum { MAX_DIGITS_ON_LEFT = 24, DIGITS_ON_RIGHT = 4, BASE = 10 };
         char _asString[1 + MAX_DIGITS_ON_LEFT + 1 + DIGITS_ON_RIGHT + 1];

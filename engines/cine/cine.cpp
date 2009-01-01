@@ -98,7 +98,7 @@ Common::Error CineEngine::go() {
 	delete renderer;
 	delete[] collisionPage;
 	delete g_sound;
-	
+
 	return Common::kNoError;
 }
 
@@ -130,7 +130,7 @@ void CineEngine::initialize() {
 	Common::set_to(zoneData.begin(), zoneData.end(), 0);
 
 	// Resize zone query table to its correct size and reset all its elements
-	zoneQuery.resize(NUM_MAX_ZONE);	
+	zoneQuery.resize(NUM_MAX_ZONE);
 	Common::set_to(zoneQuery.begin(), zoneQuery.end(), 0);
 
 	_timerDelayMultiplier = 12; // Set default speed

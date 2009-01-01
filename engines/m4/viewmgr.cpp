@@ -169,7 +169,7 @@ void View::restore(int x1, int y1, int x2, int y2) {
 void View::onRefresh(RectList *rects, M4Surface *destSurface) {
 	assert(destSurface);
 
-	if (rects == NULL) 
+	if (rects == NULL)
 		// No rect list specified, so copy entire surface
 		copyTo(destSurface, _coords.left, _coords.top, _transparent ? 0 : -1);
 	else {
@@ -222,7 +222,7 @@ void ViewManager::handleKeyboardEvents(uint32 keycode) {
 
 	// Scan view list for one which accepts or blocks keyboard events. If one is found,
 	// then the event is passed to it
-		
+
 	view = NULL;
 	handledFlag = false;
 	foundFlag = false;
@@ -241,7 +241,7 @@ void ViewManager::handleKeyboardEvents(uint32 keycode) {
 			handledFlag = (view->onEvent)(KEVENT_KEY, keycode, mousePos.x, mousePos.y, _captureEvents);
 		}
 	}
-				 
+
 	// Scan view list for one with a hotkey list, aborting if a view is found that either
 	// blocks keyboard events, or has a hotkey list that includes the keycode
 
@@ -303,9 +303,9 @@ void ViewManager::handleMouseEvents(M4EventType event) {
 
 		if (foundFlag)
 			view->onEvent(event, 0, mousePos.x, mousePos.y, _captureEvents);
-		else 
+		else
 			_captureEvents = false;
-		if (_captureEvents) 
+		if (_captureEvents)
 			_captureScreen = view;
 	}
 }
@@ -363,7 +363,7 @@ View *ViewManager::getView(int screenType) {
 			return *i;
 		++i;
 	}
-	
+
 	return NULL;
 }
 
@@ -395,7 +395,7 @@ void ViewManager::refreshAll() {
 void ViewManager::showTextView(const char *textViewName, bool returnToMainMenu) {
 	// Deactivate the scene if it's currently active
 	View *view = _vm->_viewManager->getView(VIEWID_SCENE);
-	if (view != NULL) 
+	if (view != NULL)
 		_vm->_viewManager->deleteView(view);
 
 	// Deactivate the main menu if it's currently active
@@ -416,7 +416,7 @@ void ViewManager::showTextView(const char *textViewName, bool returnToMainMenu) 
 void ViewManager::showAnimView(const char *animViewName, bool returnToMainMenu) {
 	// Deactivate the scene if it's currently active
 	View *view = _vm->_viewManager->getView(VIEWID_SCENE);
-	if (view != NULL) 
+	if (view != NULL)
 		_vm->_viewManager->deleteView(view);
 
 	// Deactivate the main menu if it's currently active

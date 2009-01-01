@@ -318,7 +318,7 @@ void CineEngine::resetEngine() {
 		currentAdditionalBgIdx2 = 0;
 		// TODO: Add resetting of the following variables
 		// adBgVar1 = 0;
-		// adBgVar0 = 0;		
+		// adBgVar0 = 0;
 		// gfxFadeOutCompleted = 0;
 	}
 }
@@ -602,7 +602,7 @@ void makeCommandLine(void) {
 			}
 		}
 	}
-	
+
 	if (g_cine->getGameType() == Cine::GType_OS || !(playerCommand != -1 && choiceResultTable[playerCommand] == 2)) {
 		if (playerCommand == 2) {
 			getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
@@ -829,7 +829,7 @@ uint16 executePlayerInput(void) {
 			renderer->setCommand(commandBuffer);
 			isDrawCommandEnabled = 0;
 		}
-		
+
 		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 		while (mouseButton && currentEntry < 200) {
@@ -870,7 +870,7 @@ uint16 executePlayerInput(void) {
 
 						commandBuffer += " ";
 						commandBuffer += objectTable[si].name;
-						
+
 
 						isDrawCommandEnabled = 1;
 
@@ -1408,14 +1408,14 @@ uint16 addAni(uint16 param1, uint16 objIdx, const int8 *ptr, SeqListElement &ele
 	return 1;
 }
 
-/*! 
+/*!
  * Permutates the overlay list into a different order according to some logic.
  * \todo Check this function for correctness (Wasn't very easy to reverse engineer so there may be errors)
  */
 void resetGfxEntityEntry(uint16 objIdx) {
 	Common::List<overlay>::iterator it, bObjsCutPoint;
 	Common::List<overlay> aReverseObjs, bObjs;
-	bool foundCutPoint = false;	
+	bool foundCutPoint = false;
 
 	// Go through the overlay list and partition the whole list into two categories (Type A and type B objects)
 	for (it = overlayList.begin(); it != overlayList.end(); ++it) {
@@ -1429,14 +1429,14 @@ void resetGfxEntityEntry(uint16 objIdx) {
 			} else {
 				objectMask = objectTable[it->objIdx].mask;
 			}
-	
+
 			if (objectTable[objIdx].mask > objectMask) { // Check for B objects' cut point
 				bObjsCutPoint = bObjs.reverse_begin();
 				foundCutPoint = true;
 			}
 		}
 	}
-	
+
 	// Recreate the overlay list in a different order.
 	overlayList.clear();
 	if (foundCutPoint) {
@@ -1461,7 +1461,7 @@ void processSeqListElement(SeqListElement &element) {
 	int16 var_10;
 	int16 var_4;
 	int16 var_2;
-	
+
 	// Initial interpretations for variables addressed through ptr1 (8-bit addressing):
 	// These may be inaccurate!
 	// 0: ?

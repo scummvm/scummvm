@@ -63,7 +63,7 @@ SndHandle *Sound::getHandle() {
 	return NULL;
 }
 
-void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume, 
+void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume,
 				sndHandleType handleType, bool loop) {
 	byte flags;
 
@@ -85,10 +85,10 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 
 	if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS)) {
 		if (handleType == kVoiceHandle)
-			_mixer->playRaw(Audio::Mixer::kSpeechSoundType, handle, buffer.buffer, 
+			_mixer->playRaw(Audio::Mixer::kSpeechSoundType, handle, buffer.buffer,
 					buffer.size, buffer.frequency, flags, -1, volume);
 		else
-			_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer, 
+			_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer,
 					buffer.size, buffer.frequency, flags, -1, volume);
 	} else {
 		Audio::AudioStream *stream = NULL;
@@ -127,20 +127,20 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 			default:
 				// No compression, play it as raw sound
 				if (handleType == kVoiceHandle)
-					_mixer->playRaw(Audio::Mixer::kSpeechSoundType, handle, buffer.buffer, 
+					_mixer->playRaw(Audio::Mixer::kSpeechSoundType, handle, buffer.buffer,
 							buffer.size, buffer.frequency, flags, -1, volume);
 				else
-					_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer, 
+					_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer,
 							buffer.size, buffer.frequency, flags, -1, volume);
 				break;
 		}
 
 		if (stream != NULL) {
 			if (handleType == kVoiceHandle)
-				_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, handle, stream, -1, 
+				_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, handle, stream, -1,
 							volume, 0, true, false);
 			else
-				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, stream, -1, 
+				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, stream, -1,
 							volume, 0, true, false);
 		}
 	}

@@ -56,7 +56,7 @@ bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSiz
 
 	debug(3, "Context %s =====", context->fileName);
 	context->file->seek(0, SEEK_SET);
-	
+
 	readElement(context->file, origin);
 
 	// Check if the file is valid

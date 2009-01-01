@@ -190,17 +190,17 @@ protected:
 	void suspendLoop();
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);
-	
+
 	bool handleEvent_swipe(Common::Event &event, int direction);
 	void handleEvent_keyPressed(Common::Event &event, int keyPressed);
 	void handleEvent_orientationChanged(int orientation);
 
 	bool handleEvent_mouseDown(Common::Event &event, int x, int y);
 	bool handleEvent_mouseUp(Common::Event &event, int x, int y);
-	
+
 	bool handleEvent_secondMouseDown(Common::Event &event, int x, int y);
 	bool handleEvent_secondMouseUp(Common::Event &event, int x, int y);
-	
+
 	bool handleEvent_mouseDragged(Common::Event &event, int x, int y);
 };
 

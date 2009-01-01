@@ -176,7 +176,7 @@ void MidiOutput::send(uint32 b) {
 	byte param2 = (b >> 16) & 0xFF;
 
 	if (event == 0xE0) {							// Pitch-Wheel
-		_channels[channel].pitchWheel = 
+		_channels[channel].pitchWheel =
 		_sources[_curSource].channelPW[channel] = (param2 << 8) | param1;
 	} else if (event == 0xC0) {						// Program change
 		_channels[channel].program =
@@ -382,7 +382,7 @@ int MidiOutput::lockChannel() {
 				notes = _channels[i].noteCount;
 			}
 		}
-		
+
 		if (channel == -1) {
 			if (flags & kChannelProtected)
 				flags &= ~kChannelProtected;
@@ -425,7 +425,7 @@ void MidiOutput::unlockChannel(int channel) {
 
 void MidiOutput::stopNotesOnChannel(int channel) {
 	for (int i = 0; i < 4; ++i) {
-		SoundSource &sound = _sources[i];		
+		SoundSource &sound = _sources[i];
 		for (int j = 0; j < 32; ++j) {
 			if (sound.notes[j].channel == channel) {
 				sound.notes[j].channel = 0xFF;
@@ -520,7 +520,7 @@ bool SoundMidiPC::init() {
 			else
 				pakFile = "INTROVOC.PAK";
 		}
-	
+
 		if (!midiFile)
 			return true;
 
@@ -701,7 +701,7 @@ void SoundMidiPC::onTimer(void *data) {
 			for (int i = 0; i < 16; ++i)
 				midi->_output->stopNotesOnChannel(i);
 			for (int i = 0; i < 4; ++i)
-				midi->_output->deinitSource(i);			
+				midi->_output->deinitSource(i);
 
 			midi->_output->setSoundSource(0);
 			midi->_music->stopPlaying();

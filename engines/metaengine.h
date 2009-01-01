@@ -113,9 +113,9 @@ public:
 	}
 
 	/**
-	 * Remove the specified save state. 
+	 * Remove the specified save state.
 	 *
-	 * For most engines this just amounts to calling _saveFileMan->removeSaveFile().  
+	 * For most engines this just amounts to calling _saveFileMan->removeSaveFile().
 	 * Engines which keep an index file will also update it accordingly.
 	 *
 	 * @note MetaEngines must indicate that this function has been implemented
@@ -141,7 +141,7 @@ public:
 
 	/** @name MetaEngineFeature flags */
 	//@{
-	
+
 	/**
 	 * A feature in this context means an ability of the engine which can be
 	 * either available or not.
@@ -153,7 +153,7 @@ public:
 		 * Used for --list-saves support, as well as the GMM load dialog.
 		 */
 		kSupportsListSaves,
-		
+
 		/**
 		 * Loading from the Launcher / command line (-x)
 		 */
@@ -189,7 +189,7 @@ public:
 		kSavesSupportThumbnail,
 
 		/**
-		 * Features 'save_date' and 'save_time' entries in the 
+		 * Features 'save_date' and 'save_time' entries in the
 		 * savestate returned by querySaveMetaInfo. Those values
 		 * indicate the date/time the savegame was created.
 		 * This flag may only be set when 'kSavesSupportMetaInfo' is set.
@@ -208,7 +208,7 @@ public:
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.
 	 * Used by e.g. the launcher to determine whether to enable the "Load" button.
-	 */	
+	 */
 	virtual bool hasFeature(MetaEngineFeature f) const {
 		return false;
 	}

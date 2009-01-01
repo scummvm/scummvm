@@ -189,10 +189,10 @@ void KyraEngine_MR::showInventory() {
 	redrawInventory(30);
 	drawMalcolmsMoodPointer(-1, 30);
 	drawScore(30, 215, 191);
-	
+
 	if (queryGameFlag(0x97))
 		drawJestersStaff(1, 30);
-	
+
 	_screen->hideMouse();
 
 	if (_itemInHand < 0) {
@@ -238,7 +238,7 @@ void KyraEngine_MR::showInventory() {
 			times = 0;
 			waitTill = _system->getMillis() + _tickLength;
 		}
-		
+
 		height += _inventoryScrollSpeed;
 		y -= _inventoryScrollSpeed;
 	}
@@ -260,10 +260,10 @@ void KyraEngine_MR::hideInventory() {
 	_inventoryState = false;
 	updateCLState();
 	initMainButtonList(true);
-	
+
 	_screen->copyBlockToPage(3, 0, 0, 320, 56, _interface);
 	_screen->hideMouse();
-	
+
 	restorePage3();
 	flagAnimObjsForRefresh();
 	drawAnimObjects();
@@ -306,7 +306,7 @@ void KyraEngine_MR::hideInventory() {
 			times = 0;
 			waitTill = _system->getMillis() + _tickLength;
 		}
-		
+
 		y += _inventoryScrollSpeed;
 		y2 += _inventoryScrollSpeed;
 	}
@@ -479,9 +479,9 @@ void KyraEngine_MR::redrawInventory(int page) {
 
 	_screen->showMouse();
 	_screen->_curPage = pageBackUp;
-	
+
 	if (page == 0 || page == 1)
-		_screen->updateScreen();	
+		_screen->updateScreen();
 }
 
 void KyraEngine_MR::clearInventorySlot(int slot, int page) {
@@ -602,7 +602,7 @@ int KyraEngine_MR::buttonMoodChange(Button *button) {
 
 		drawMalcolmsMoodText();
 		updateDlgIndex();
-		
+
 		EMCData data;
 		EMCState state;
 		memset(&data, 0, sizeof(data));
@@ -717,7 +717,7 @@ void KyraEngine_MR::showAlbum() {
 		_album.leftPage.wsa->setX(_albumWSAX[_album.nextPage+0]);
 		_album.leftPage.wsa->setY(_albumWSAY[_album.nextPage+0]);
 		_album.leftPage.wsa->setDrawPage(2);
-	
+
 		_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 0x4000);
 	}
 	if (_album.rightPage.wsa->opened()) {
@@ -865,7 +865,7 @@ void KyraEngine_MR::processAlbum() {
 	Button *buttonList = 0;
 	for (int i = 0; i < 5; ++i)
 		buttonList = _gui->addButtonToList(buttonList, &albumButtons[i]);
-	
+
 	_album.leftPage.timer = _album.rightPage.timer = _system->getMillis();
 	albumNewPage();
 	_album.running = true;
@@ -876,7 +876,7 @@ void KyraEngine_MR::processAlbum() {
 		removeInputTop();
 
 		musicUpdate(0);
-		
+
 		if (_album.curPage != _album.nextPage) {
 			int oldPage = _album.curPage;
 			_album.curPage = _album.nextPage;
@@ -930,7 +930,7 @@ void KyraEngine_MR::albumNewPage() {
 
 		int id = _album.curPage / 2 + 100;
 		albumChat((const char *)getTableEntry(_album.file, id), 205, id);
-		
+
 		if (id == 107) {
 			_screen->copyRegion(76, 100, 76, 100, 244, 100, 2, 0, Screen::CR_NO_P_CHECK);
 			albumChat((const char *)getTableEntry(_album.file, 108), 205, 108);
@@ -1303,7 +1303,7 @@ int GUI_MR::optionsButton(Button *button) {
 	initMenuLayout(_saveMenu);
 	initMenuLayout(_savenameMenu);
 	initMenuLayout(_deathMenu);
-	
+
 	_currentMenu = &_mainMenu;
 
 	_vm->musicUpdate(0);
@@ -1312,7 +1312,7 @@ int GUI_MR::optionsButton(Button *button) {
 		backUpPage1(_vm->_screenBuffer);
 
 		_loadedSave = false;
-		
+
 		--_loadMenu.numberOfItems;
 		loadMenu(0);
 		++_loadMenu.numberOfItems;
@@ -1503,7 +1503,7 @@ void GUI_MR::setupOptionsButtons() {
 	case 0:
 		_gameOptions.item[1].itemId = 31;
 		break;
-	
+
 	case 1:
 		_gameOptions.item[1].itemId = 32;
 		break;

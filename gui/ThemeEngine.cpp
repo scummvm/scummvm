@@ -195,7 +195,7 @@ void ThemeEngine::unloadTheme() {
 		}
 	}
 	_bitmaps.clear();
-	
+
 	delete _themeArchive;
 	_themeArchive = 0;
 
@@ -395,7 +395,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 		surf->free();
 		delete surf;
 	}
-	
+
 	// Now try to load the bitmap via the ImageDecoder class.
 	surf = Graphics::ImageDecoder::loadFile(filename);
 	if (!surf && _themeArchive) {
@@ -408,7 +408,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 
 	// Store the surface into our hashmap (attention, may store NULL entries!)
 	_bitmaps[filename] = surf;
-	
+
 	return surf != 0;
 }
 

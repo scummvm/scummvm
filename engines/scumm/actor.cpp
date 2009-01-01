@@ -1440,7 +1440,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	}
 
 	setupActorScale();
-	
+
 	BaseCostumeRenderer *bcr = _vm->_costumeRenderer;
 	prepareDrawActorCostume(bcr);
 
@@ -1456,7 +1456,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	}
 }
 
-	
+
 void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 
 	bcr->_actorID = _number;
@@ -1507,7 +1507,7 @@ void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 
 void ActorHE::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 	Actor::prepareDrawActorCostume(bcr);
-	
+
 	bcr->_actorX += _heOffsX;
 	bcr->_actorY += _heOffsY;
 

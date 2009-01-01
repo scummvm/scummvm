@@ -203,7 +203,7 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 	_screen->updateScreen();
 
 	setMousePos(brandonX, brandonY);
-	
+
 	if (in->err() || in->eos()) {
 		warning("Load failed ('%s', '%s').", fileName, header.description.c_str());
 		return Common::kUnknownError;
@@ -223,14 +223,14 @@ Common::Error KyraEngine_LoK::saveGameState(int slot, const char *saveName, cons
 	debugC(9, kDebugLevelMain, "KyraEngine_LoK::saveGame(%d, '%s', %p)", slot, saveName, (const void *)thumb);
 
 	const char *fileName = getSavegameFilename(slot);
-	
+
 	if (shouldQuit())
 		return Common::kNoError;
 
 	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName, thumb);
 	if (!out)
 		return _saveFileMan->getError();
-	
+
 	for (int i = 0; i < 11; i++) {
 		out->writeUint16BE(_characterList[i].sceneId);
 		out->writeByte(_characterList[i].height);

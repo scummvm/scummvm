@@ -118,14 +118,14 @@ LureEngine &LureEngine::getReference() {
 
 Common::Error LureEngine::go() {
 	Game *gameInstance = new Game();
-	
+
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
 		_gameToLoad = ConfMan.getInt("save_slot");
 		if (_gameToLoad < 0 || _gameToLoad > 999)
 			_gameToLoad = -1;
 	}
-	
+
 	if (_gameToLoad == -1) {
 		if (ConfMan.getBool("copy_protection")) {
 			CopyProtectionDialog *dialog = new CopyProtectionDialog();
@@ -249,7 +249,7 @@ void LureEngine::GUIError(const char *msg, ...) {
 	GUIErrorMessage(buffer);
 }
 
-void LureEngine::syncSoundSettings() {	
+void LureEngine::syncSoundSettings() {
 	Sound.syncSounds();
 }
 

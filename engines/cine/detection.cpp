@@ -589,7 +589,7 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 				if (pos < (sizeof(saveDesc) - 1)) {
 					if (ch < 32 || in->eos()) {
 						saveDesc[pos++] = '\0';
-					} 
+					}
 					else if (ch >= 32) {
 						saveDesc[pos++] = ch;
 					}
@@ -697,11 +697,11 @@ Common::Error CineEngine::saveGameState(int slot, const char *desc) {
 	return Common::kNoError;
 }
 
-bool CineEngine::canLoadGameStateCurrently() { 
+bool CineEngine::canLoadGameStateCurrently() {
 	return (!disableSystemMenu && !inMenu);
 }
 
-bool CineEngine::canSaveGameStateCurrently() { 
+bool CineEngine::canSaveGameStateCurrently() {
 	return (allowPlayerInput && !disableSystemMenu && !inMenu);
 }
 

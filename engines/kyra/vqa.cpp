@@ -657,7 +657,7 @@ void VQAMovie::play() {
 
 			if (_vm->_mixer->isSoundHandleActive(_sound))
 				elapsedTime = _vm->_mixer->getSoundElapsedTime(_sound);
-			else 
+			else
 				elapsedTime = _system->getMillis() - startTick;
 
 			if (elapsedTime >= (i * 1000) / _header.frameRate)

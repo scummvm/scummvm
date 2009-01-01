@@ -207,7 +207,7 @@ int DrasculaEngine::whichObject() {
 
 	for (n = 1; n < 43; n++) {
 		if (mouseX > _itemLocations[n].x && mouseY > _itemLocations[n].y &&
-			mouseX < _itemLocations[n].x + OBJWIDTH && 
+			mouseX < _itemLocations[n].x + OBJWIDTH &&
 			mouseY < _itemLocations[n].y + OBJHEIGHT)
 			break;
 	}

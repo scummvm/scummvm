@@ -285,7 +285,7 @@ static void ActorTinselProcess(CORO_PARAM, const void *param) {
 		// Run the Glitter code
 		assert(actorInfo[atp->id - 1].actorCode); // no code to run
 
-		_ctx->pic = InitInterpretContext(GS_ACTOR, actorInfo[atp->id - 1].actorCode, 
+		_ctx->pic = InitInterpretContext(GS_ACTOR, actorInfo[atp->id - 1].actorCode,
 			atp->event, NOPOLY, atp->id, NULL);
 		CORO_INVOKE_1(Interpret, _ctx->pic);
 
@@ -374,7 +374,7 @@ void ActorEvent(CORO_PARAM, int ano, TINSEL_EVENT tEvent, bool bWait, int myEsca
 			ano,			// Actor
 			NULL,			// No object
 			myEscape);
-	
+
 	if (atp.pic != NULL) {
 		_ctx->pProc = g_scheduler->createProcess(PID_TCODE, ActorTinselProcess, &atp, sizeof(atp));
 		AttachInterpret(atp.pic, _ctx->pProc);
@@ -386,7 +386,7 @@ void ActorEvent(CORO_PARAM, int ano, TINSEL_EVENT tEvent, bool bWait, int myEsca
 	CORO_END_CODE;
 }
 
- 
+
 /**
  * Called at the start of each scene for each actor with a code block.
  * @param as			Actor structure
@@ -1525,7 +1525,7 @@ bool ActorTagIsWanted(int actor) {
 }
 
 /**
- * Given cursor position and an actor number, ascertains 
+ * Given cursor position and an actor number, ascertains
  * whether the cursor is within the actor's tag area.
  * Returns True for a positive result, False for negative.
  */
@@ -1664,7 +1664,7 @@ int GetActorFilmNumber(int ano) {
 void StoreActorReel(int actor, int column, OBJECT *pObj) {
 	RANGE_CHECK(actor);
 	int i;
- 
+
 	for (i = 0; i < MAX_REELS; i++) {
 		if (actorInfo[actor-1].presColumns[i] == -1) {
 			// Store reel and object

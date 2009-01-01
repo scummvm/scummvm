@@ -134,7 +134,7 @@ void CEActionsPocket::initInstanceGame() {
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || 
+	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob ||
 			is_samnmax || is_cine || is_touche || is_parallaction || is_drascula)
 		_right_click_needed = true;
 
@@ -173,7 +173,7 @@ void CEActionsPocket::initInstanceGame() {
 	// Skip
 	if (!is_cine && !is_parallaction)
 		_action_enabled[POCKET_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || 
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob ||
 			is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula)
 		_key_action[POCKET_ACTION_SKIP].setKey(VK_ESCAPE);
 	else

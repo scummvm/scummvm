@@ -478,7 +478,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
 	},
 
-	{ 
+	{
 		{
 			"kyra2",
 			"CD",
@@ -490,7 +490,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
 	},
 
-	{ 
+	{
 		{
 			"kyra2",
 			"CD",
@@ -502,7 +502,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
 	},
 
-	{ 
+	{
 		{
 			"kyra2",
 			"CD",
@@ -608,9 +608,9 @@ const KYRAGameDescription adGameDescs[] = {
 	},
 
 	// Kyra3
-	
+
 	// non installed version
-	{ 
+	{
 		{
 			"kyra3",
 			0,
@@ -657,7 +657,7 @@ const KYRAGameDescription adGameDescs[] = {
 	},
 
 	// installed version
-	{ 
+	{
 		{
 			"kyra3",
 			0,
@@ -704,7 +704,7 @@ const KYRAGameDescription adGameDescs[] = {
 	},
 
 	// Mac version
-	{ 
+	{
 		{
 			"kyra3",
 			0,
@@ -843,7 +843,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_FAN_FLAGS(Common::IT_ITA, Common::FR_FRA)
 	},
-	
+
 	// Lands of Lore CD
 	{
 		{
@@ -860,7 +860,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		LOL_CD_FLAGS
 	},
-	
+
 	{
 		{
 			"lol",
@@ -876,7 +876,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		LOL_CD_FLAGS
 	},
-	
+
 	{
 		{
 			"lol",
@@ -908,7 +908,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		LOL_CD_FLAGS
 	},
-	
+
 	{
 		{
 			"lol",
@@ -924,7 +924,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		LOL_CD_FLAGS
 	},
-	
+
 	{
 		{
 			"lol",
@@ -1144,7 +1144,7 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
-		
+
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
@@ -1184,7 +1184,7 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 
 		error = Kyra::KyraEngine_v1::readSaveHeader(in, true, header);
 		delete in;
-		
+
 		if (error == Kyra::KyraEngine_v1::kRSHENoError) {
 			SaveStateDescriptor desc(slot, header.description);
 
@@ -1195,7 +1195,7 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 			return desc;
 		}
 	}
-	
+
 	return SaveStateDescriptor();
 }
 

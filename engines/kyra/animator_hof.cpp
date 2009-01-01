@@ -124,10 +124,10 @@ void KyraEngine_HoF::updateItemAnimations() {
 	bool nextFrame = false;
 
 	if (_itemAnimData[0].itemIndex == -1 || _inventorySaved)
-		return;	
+		return;
 
 	const ItemAnimData_v2 *s = &_itemAnimData[_nextAnimItem];
-	ActiveItemAnim *a = &_activeItemAnim[_nextAnimItem];	
+	ActiveItemAnim *a = &_activeItemAnim[_nextAnimItem];
 	_nextAnimItem = ++_nextAnimItem % _itemAnimDataSize;
 
 	uint32 ctime = _system->getMillis();

@@ -153,7 +153,7 @@ void GUI::initMenu(Menu &menu) {
 		scrollUpButton->buttonCallback = getScrollUpButtonHandler();
 		scrollUpButton->nextButton = 0;
 		scrollUpButton->mouseWheel = -1;
-		
+
 		_menuButtonList = addButtonToList(_menuButtonList, scrollUpButton);
 		updateMenuButton(scrollUpButton);
 
@@ -348,7 +348,7 @@ void GUI::checkTextfieldInput() {
 			if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
 				_vm->quitGame();
 			else
-				_keyPressed = event.kbd; 
+				_keyPressed = event.kbd;
 			running = false;
 			break;
 

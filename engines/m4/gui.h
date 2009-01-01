@@ -92,7 +92,7 @@ enum ObjectType {
 
 enum GameMenuSpriteType {
 	GM_DIALOG_BOX,
-	
+
 	GM_BUTTON_GREYED,
 	GM_BUTTON_NORMAL,
 	GM_BUTTON_MOUSEOVER,
@@ -178,7 +178,7 @@ enum TextColors {
 
 	TEXT_COLOR_PRESSED_HILIGHT    = 236,
 	TEXT_COLOR_PRESSED_FOREGROUND = 130,
-	TEXT_COLOR_PRESSED_SHADOW     = 129  
+	TEXT_COLOR_PRESSED_SHADOW     = 129
 };
 
 #define MENU_SS_FIELD_NORMAL 5
@@ -261,8 +261,8 @@ public:
 
 	DialogView *parent() { return (DialogView *)_parent; }
 	MenuObjectState getState() { return _objectState; }
-	virtual void setState(MenuObjectState state) { 
-		_objectState = state; 
+	virtual void setState(MenuObjectState state) {
+		_objectState = state;
 		onRefresh();
 	}
 	int getObjectId() { return _objectId; }
@@ -273,7 +273,7 @@ public:
 
 class MenuButton: public MenuObject {
 public:
-	MenuButton(DialogView *owner, int buttonId, int xs, int ys, int width, int height, 
+	MenuButton(DialogView *owner, int buttonId, int xs, int ys, int width, int height,
 		Callback callbackFn = NULL, bool greyed = false, bool transparent = false,
 		ObjectType buttonType = OBJTYPE_BUTTON);
 
@@ -293,7 +293,7 @@ protected:
 	int _percent;
 	int _thumbX;
 public:
-	MenuHorizSlider(DialogView *owner, int sliderId, int xs, int ys, int width, int height, 
+	MenuHorizSlider(DialogView *owner, int sliderId, int xs, int ys, int width, int height,
 		int initialPercentage, Callback callbackFn = NULL, bool transparent = false);
 
 	void onRefresh();
@@ -322,7 +322,7 @@ protected:
 	MenuVertSliderState getSliderArea(int y);
 	void updateThumbnails() {}
 public:
-	MenuVertSlider(DialogView *owner, int sliderId, int xs, int ys, int width, int height, 
+	MenuVertSlider(DialogView *owner, int sliderId, int xs, int ys, int width, int height,
 		int initialPercentage, Callback callbackFn = NULL, bool transparent = false);
 
 	void onRefresh();
@@ -343,13 +343,13 @@ class MenuImage: public MenuObject {
 private:
 	M4Surface *_sprite;
 public:
-	MenuImage(DialogView *owner, int objectId, int xs, int ys, int width, int height, 
+	MenuImage(DialogView *owner, int objectId, int xs, int ys, int width, int height,
 		M4Surface *image, bool transparent = false);
 
 	void onRefresh();
 	const M4Surface *sprite() { return _sprite; }
-	void setSprite(M4Surface *v) { 
-		_sprite = v; 
+	void setSprite(M4Surface *v) {
+		_sprite = v;
 		onRefresh();
 	}
 };
@@ -362,7 +362,7 @@ private:
 	int _index;
 	bool _visible;
 public:
-	MenuSaveLoadText(DialogView *owner, int textId, int xs, int ys, int width, int height, 
+	MenuSaveLoadText(DialogView *owner, int textId, int xs, int ys, int width, int height,
 		Callback callbackFn = NULL, bool greyed = false, bool transparent = false,
 		bool loadFlag = false, const char *displayText = NULL, int displayValue = 0);
 
@@ -383,8 +383,8 @@ private:
 	char *_promptEnd;
 	char *_cursor;
 public:
-	MenuTextField(DialogView *owner, int fieldId, int xs, int ys, int width, int height, 
-		bool greyed, Callback callbackFn = NULL, const char *displayText = NULL, 
+	MenuTextField(DialogView *owner, int fieldId, int xs, int ys, int width, int height,
+		bool greyed, Callback callbackFn = NULL, const char *displayText = NULL,
 		int displayValue = 0, bool transparent = true);
 
 	void onRefresh();
@@ -414,7 +414,7 @@ protected:
 	bool _visible;
 	bool _tracking;
 public:
-	GUIButton(View *owner, const Common::Rect &bounds, int tag, 
+	GUIButton(View *owner, const Common::Rect &bounds, int tag,
 		M4Surface *normalSprite, M4Surface *mouseOverSprite, M4Surface *pressedSprite);
 
 	void onRefresh();
@@ -427,11 +427,11 @@ private:
 	Common::String _text;
 public:
 	GUITextField(View *owner, const Common::Rect &bounds);
-	void setText(const char *value) { 
-		_text = value; 
+	void setText(const char *value) {
+		_text = value;
 		onRefresh();
 	}
-	
+
 	void onRefresh();
 };
 

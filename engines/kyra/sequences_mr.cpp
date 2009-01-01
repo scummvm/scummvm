@@ -50,7 +50,7 @@ void KyraEngine_MR::showBadConscience() {
 
 	if (_goodConscienceShown)
 		_badConsciencePosition = !_goodConsciencePosition;
-	
+
 	int anim = _badConscienceAnim + (_badConsciencePosition ? 0 : 8);
 	TalkObject &talkObject = _talkObjectList[1];
 
@@ -118,7 +118,7 @@ void KyraEngine_MR::showGoodConscience() {
 	_goodConscienceShown = true;
 	++_goodConscienceAnim;
 	_goodConscienceAnim %= 5;
-	
+
 	setNextIdleAnimTimer();
 	_goodConsciencePosition = (_mainCharacter.x1 <= 160);
 
@@ -214,7 +214,7 @@ void KyraEngine_MR::eelScript() {
 	case 2:
 		runAnimationScript("EELS03.EMC", 0, 0, 1, 1);
 		break;
-	
+
 	case 3:
 		runAnimationScript("EELS04.EMC", 0, 0, 1, 1);
 		break;

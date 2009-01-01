@@ -102,7 +102,7 @@ static const Common::ADParams detectionParams = {
 class AgosMetaEngine : public Common::AdvancedMetaEngine {
 public:
 	AgosMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
-	
+
 	virtual const char *getName() const {
 		return "AGOS";
 	}
@@ -110,7 +110,7 @@ public:
 	virtual const char *getCopyright() const {
 		return "AGOS (C) Adventure Soft";
 	}
-	
+
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;

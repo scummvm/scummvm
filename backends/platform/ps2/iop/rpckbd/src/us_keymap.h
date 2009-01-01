@@ -16,8 +16,8 @@
 
 /* Default US keymap */
 
-u8 us_keymap[PS2KBD_KEYMAP_SIZE] = 
-  { 
+u8 us_keymap[PS2KBD_KEYMAP_SIZE] =
+  {
     0,
     0,
     0,
@@ -83,7 +83,7 @@ u8 us_keymap[PS2KBD_KEYMAP_SIZE] =
     0, // F5
     0, // F6
     0, // F7
-    0, // F8 
+    0, // F8
     0, // F9
     0, // F10
     0, // F11
@@ -92,7 +92,7 @@ u8 us_keymap[PS2KBD_KEYMAP_SIZE] =
     0, // Scroll Lock
     0, // Pause
     0, // Insert
-    0, // Home 
+    0, // Home
     0, // Pg Up
     0, // Delete
     0, // End
@@ -102,7 +102,7 @@ u8 us_keymap[PS2KBD_KEYMAP_SIZE] =
     0, // Down
     0, // Up
     0, // Numlock
-    '/', // Keypad 
+    '/', // Keypad
     '*',
     '-',
     '+',
@@ -276,7 +276,7 @@ u8 us_keymap[PS2KBD_KEYMAP_SIZE] =
     0
   };
 
-u8 us_shiftkeymap[PS2KBD_KEYMAP_SIZE] = 
+u8 us_shiftkeymap[PS2KBD_KEYMAP_SIZE] =
   {
     0,
     0,
@@ -343,7 +343,7 @@ u8 us_shiftkeymap[PS2KBD_KEYMAP_SIZE] =
     0, // F5
     0, // F6
     0, // F7
-    0, // F8 
+    0, // F8
     0, // F9
     0, // F10
     0, // F11
@@ -352,7 +352,7 @@ u8 us_shiftkeymap[PS2KBD_KEYMAP_SIZE] =
     0, // Scroll Lock
     0, // Pause
     0, // Insert
-    0, // Home 
+    0, // Home
     0, // Pg Up
     0, // Delete
     0, // End
@@ -362,7 +362,7 @@ u8 us_shiftkeymap[PS2KBD_KEYMAP_SIZE] =
     0, // Down
     0, // Up
     0, // Numlock
-    '/', // Keypad 
+    '/', // Keypad
     '*',
     '-',
     '+',
@@ -536,7 +536,7 @@ u8 us_shiftkeymap[PS2KBD_KEYMAP_SIZE] =
     0
   };
 
-u8 us_keycap[PS2KBD_KEYMAP_SIZE] = 
+u8 us_keycap[PS2KBD_KEYMAP_SIZE] =
   {
     0,
     0,
@@ -603,7 +603,7 @@ u8 us_keycap[PS2KBD_KEYMAP_SIZE] =
     0, // F5
     0, // F6
     0, // F7
-    0, // F8 
+    0, // F8
     0, // F9
     0, // F10
     0, // F11
@@ -612,7 +612,7 @@ u8 us_keycap[PS2KBD_KEYMAP_SIZE] =
     0, // Scroll Lock
     0, // Pause
     0, // Insert
-    0, // Home 
+    0, // Home
     0, // Pg Up
     0, // Delete
     0, // End
@@ -622,7 +622,7 @@ u8 us_keycap[PS2KBD_KEYMAP_SIZE] =
     0, // Down
     0, // Up
     0, // Numlock
-    0, // Keypad 
+    0, // Keypad
     0,
     0,
     0,
@@ -796,7 +796,7 @@ u8 us_keycap[PS2KBD_KEYMAP_SIZE] =
     0
   };
 
-u8 us_special_keys[PS2KBD_KEYMAP_SIZE] = { 
+u8 us_special_keys[PS2KBD_KEYMAP_SIZE] = {
 
     0,
     0,
@@ -863,7 +863,7 @@ u8 us_special_keys[PS2KBD_KEYMAP_SIZE] = {
     5, // F5
     6, // F6
     7, // F7
-    8, // F8 
+    8, // F8
     9, // F9
     10, // F10
     11, // F11
@@ -872,7 +872,7 @@ u8 us_special_keys[PS2KBD_KEYMAP_SIZE] = {
     33, // Scroll Lock
     34, // Pause
     35, // Insert
-    36, // Home 
+    36, // Home
     37, // Pg Up
     38, // Delete
     39, // End
@@ -882,7 +882,7 @@ u8 us_special_keys[PS2KBD_KEYMAP_SIZE] = {
     43, // Down
     44, // Up
     0, // Numlock
-    0, // Keypad / 
+    0, // Keypad /
     0, // Keypad *
     0, // Keypad -
     0, // Keypad +
@@ -1056,7 +1056,7 @@ u8 us_special_keys[PS2KBD_KEYMAP_SIZE] = {
     0
   };
 
-u8 us_control_map[PS2KBD_KEYMAP_SIZE] = { 
+u8 us_control_map[PS2KBD_KEYMAP_SIZE] = {
 
     0,
     0,
@@ -1123,7 +1123,7 @@ u8 us_control_map[PS2KBD_KEYMAP_SIZE] = {
     0, // F5
     0, // F6
     0, // F7
-    0, // F8 
+    0, // F8
     0, // F9
     0, // F10
     0, // F11
@@ -1132,7 +1132,7 @@ u8 us_control_map[PS2KBD_KEYMAP_SIZE] = {
     0, // Scroll Lock
     0, // Pause
     0, // Insert
-    0, // Home 
+    0, // Home
     0, // Pg Up
     0, // Delete
     0, // End
@@ -1142,7 +1142,7 @@ u8 us_control_map[PS2KBD_KEYMAP_SIZE] = {
     0, // Down
     0, // Up
     0, // Numlock
-    0, // Keypad 
+    0, // Keypad
     0,
     0,
     0,
@@ -1316,7 +1316,7 @@ u8 us_control_map[PS2KBD_KEYMAP_SIZE] = {
     0
 };
 
-u8 us_alt_map[PS2KBD_KEYMAP_SIZE] = { 
+u8 us_alt_map[PS2KBD_KEYMAP_SIZE] = {
 
     0,
     0,
@@ -1383,7 +1383,7 @@ u8 us_alt_map[PS2KBD_KEYMAP_SIZE] = {
     0, // F5
     0, // F6
     0, // F7
-    0, // F8 
+    0, // F8
     0, // F9
     0, // F10
     0, // F11
@@ -1392,7 +1392,7 @@ u8 us_alt_map[PS2KBD_KEYMAP_SIZE] = {
     0, // Scroll Lock
     0, // Pause
     0, // Insert
-    0, // Home 
+    0, // Home
     0, // Pg Up
     0, // Delete
     0, // End
@@ -1402,7 +1402,7 @@ u8 us_alt_map[PS2KBD_KEYMAP_SIZE] = {
     0, // Down
     0, // Up
     0, // Numlock
-    0, // Keypad 
+    0, // Keypad
     0,
     0,
     0,

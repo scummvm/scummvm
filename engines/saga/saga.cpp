@@ -233,7 +233,7 @@ Common::Error SagaEngine::init() {
 
 	// Initialize system specific sound
 	_sound = new Sound(this, _mixer);
-	
+
 	if (!isSaga2()) {
 		_interface->converseInit();
 		_script->setVerb(_script->getVerbType(kVerbWalkTo));

@@ -47,7 +47,7 @@ void PlayFilm(CORO_PARAM, SCNHANDLE film, int x, int y, int actorid, bool splay,
 
 void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int myescEvent, bool bTop);
 
-void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact, 
+void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact,
 			bool escOn, int myescEvent, bool bTop);
 
 void RestoreActorReels(SCNHANDLE hFilm, short reelnum, short z, int x, int y);

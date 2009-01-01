@@ -1442,7 +1442,7 @@ Common::SeekableReadStream *ZipArchive::openFile(const Common::String &name) {
 	unzReadCurrentFile(_zipFile, buffer, fileInfo.uncompressed_size);
 	unzCloseCurrentFile(_zipFile);
 	return new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size+1, true);
-	
+
 	// FIXME: instead of reading all into a memory stream, we could
 	// instead create a new ZipStream class. But then we have to be
 	// careful to handle the case where the client code opens multiple

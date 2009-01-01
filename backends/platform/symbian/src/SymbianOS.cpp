@@ -25,7 +25,7 @@
 #include <eikenv.h> // for CEikonEnv::Static() @ Symbian::FatalError()
 #include <sdlapp.h> // for CSDLApp::GetExecutablePathCStr() @ Symbian::GetExecutablePath()
 #include <bautils.h>
-	
+
 #include "backends/fs/symbian/symbian-fs-factory.h"
 #include "backends/platform/symbian/src/SymbianOS.h"
 #include "backends/platform/symbian/src/SymbianActions.h"
@@ -156,7 +156,7 @@ void OSystem_SDL_Symbian::initBackend() {
 	// If savepath has not already been set then set it
 	if (!ConfMan.hasKey("savepath")) {
 		ConfMan.set("savepath", savePath);
-	
+
 	}
 
 	// Ensure that the current set path (might have been altered by the user) exists
@@ -164,7 +164,7 @@ void OSystem_SDL_Symbian::initBackend() {
 	TFileName fname;
 	TPtrC8 ptr((const unsigned char*)currentPath.c_str(),currentPath.size());
 	fname.Copy(ptr);
-	BaflUtils::EnsurePathExistsL(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), fname);		
+	BaflUtils::EnsurePathExistsL(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), fname);
 
 	ConfMan.setBool("FM_high_quality", false);
 #if !defined(S60) || defined(S60V3) // S60 has low quality as default
@@ -268,12 +268,12 @@ void OSystem_SDL_Symbian::setupMixer() {
 		// even if it didn't. Probably only happens for "weird" rates, though.
 		_samplesPerSec = obtained.freq;
 		_channels = obtained.channels;
-	
+
 		// Need to create mixbuffer for stereo mix to downmix
 		if (_channels != 2) {
 			_stereo_mix_buffer = new byte [obtained.size*2];//*2 for stereo values
 		}
-	
+
 		// Tell the mixer that we are ready and start the sound processing
 		_mixer->setOutputRate(_samplesPerSec);
 		_mixer->setReady(true);

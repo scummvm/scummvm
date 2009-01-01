@@ -356,7 +356,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	if (!artificialEventQueue.empty()) {
 		event = artificialEventQueue.pop();
 		result = true;
-	} else 	
+	} else
 		result = _boss->pollEvent(event);
 
 	if (_recordMode != kPassthrough)  {
@@ -397,7 +397,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				if (g_engine && !g_engine->isPaused()) {
 					Common::Event menuEvent;
 					menuEvent.type = Common::EVENT_MAINMENU;
-					
+
 					// FIXME: GSoC RTL branch passes the F6 key event to the
 					// engine, and also enqueues a EVENT_MAINMENU. For now,
 					// we just drop the key event and return an EVENT_MAINMENU
@@ -406,7 +406,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 					//
 					// However, this has other consequences, possibly negative ones.
 					// Like, what happens with key repeat for the trigger key?
-					
+
 					//pushEvent(menuEvent);
 					event = menuEvent;
 
@@ -519,8 +519,8 @@ void DefaultEventManager::pushEvent(Common::Event event) {
 	if (event.type == Common::EVENT_QUIT) {
 		if (!_shouldQuit)
 			artificialEventQueue.push(event);
-	} else 
-		artificialEventQueue.push(event);	
+	} else
+		artificialEventQueue.push(event);
 }
 
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)

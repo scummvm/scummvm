@@ -76,7 +76,7 @@ private:
 	/**
 	 * Get bits from the source stream.
 	 * @note Changes the bit position in the source stream.
-	 * @param numBits Number of bits to read from the source stream.	 
+	 * @param numBits Number of bits to read from the source stream.
 	 * @return Integer value consisting of the bits read from the source stream (In range [0, (2 ** numBits) - 1]).
 	 * @return Later the bit was read from the source, the less significant it is in the return value.
 	 */

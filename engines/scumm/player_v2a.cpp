@@ -1474,7 +1474,7 @@ private:
 	uint16 _curfreq;
 };
 
-// plays a series of double-looped sounds at varying frequencies and delays, very specialized 
+// plays a series of double-looped sounds at varying frequencies and delays, very specialized
 // Guardian of the Sphinx, perhaps?
 class V2A_Sound_Special_Zak82 : public V2A_Sound_Base<4> {
 public:
@@ -1616,7 +1616,7 @@ public:
 			}
 			_mod->stopChannel(_id | 0x000);
 			_mode = 1;
-			
+
 			size = 0x2B8E;
 			offset = _offset;
 			assert(offset + size <= _offset + _size);

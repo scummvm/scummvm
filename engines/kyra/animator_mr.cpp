@@ -201,7 +201,7 @@ void KyraEngine_MR::updateItemAnimations() {
 	bool nextFrame = false;
 
 	if (_itemAnimData[0].itemIndex == -1)
-		return;	
+		return;
 
 	const ItemAnimData_v2 *s = &_itemAnimData[_nextAnimItem];
 	ActiveItemAnim *a = &_activeItemAnim[_nextAnimItem];
@@ -438,7 +438,7 @@ void KyraEngine_MR::setCharacterAnimDim(int w, int h) {
 	_charBackUpWidth2 = _animObjects[0].width2;
 	_charBackUpHeight = _animObjects[0].height;
 	_charBackUpHeight2 = _animObjects[0].height2;
-	
+
 	_animObjects[0].width2 = (w - _charBackUpWidth) / 2;
 	_animObjects[0].height2 = h - _charBackUpHeight;
 	_animObjects[0].width = w;

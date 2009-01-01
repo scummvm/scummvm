@@ -933,7 +933,7 @@ uint8 Wiz::getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint 
 		return (READ_LE_UINT16(data) & 1) ? color : READ_LE_UINT16(data + 1);
 	else
 		return (data[0] & 1) ? color : data[1];
-	
+
 }
 
 uint8 Wiz::getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint bitDepth, uint8 color) {

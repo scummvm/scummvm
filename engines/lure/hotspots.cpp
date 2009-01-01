@@ -2277,7 +2277,7 @@ void Hotspot::startTalk(HotspotData *charHotspot, uint16 id) {
 void Hotspot::saveToStream(Common::WriteStream *stream) {
 	if (_data)
 		_data->npcSchedule.saveToStream(stream);
-	else 
+	else
 		// Hotspot doesn't have an underlying data object, so write out an empty actions list
 		stream->writeByte(0xff);
 
@@ -2322,7 +2322,7 @@ void Hotspot::saveToStream(Common::WriteStream *stream) {
 void Hotspot::loadFromStream(Common::ReadStream *stream) {
 	if (_data)
 		_data->npcSchedule.loadFromStream(stream);
-	else 
+	else
 		// Dummy read of terminator for empty actions list
 		assert(stream->readByte() == 0xff);
 

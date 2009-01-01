@@ -98,7 +98,7 @@ struct ScriptValue {
 		value = intValue;
 		return *this;
 	}
-	
+
 };
 
 class ScriptDataItem {
@@ -284,13 +284,13 @@ public:
 	//TODO void unloadData();
 	/* Executes a function. */
 	int runFunction(ScriptFunction *scriptFunction);
-	
+
 	void push(const ScriptValue &value);
 	void pop(ScriptValue &value);
 	void dumpStack();
 	void dumpRegisters();
 	void dumpGlobalVars();
-	
+
 	int toInteger(const ScriptValue &value);
 
 	const char *toString(const ScriptValue &value);
@@ -320,10 +320,10 @@ protected:
 	Common::File *_scriptFile;
 	/* An array of offset/ScriptFunction* pairs for each script function */
 	Common::Array<ScriptFunctionEntry*> _functions;
-	
+
 	// DEBUG only
 	Common::Array<Common::String> _scriptFunctionNames;
-	
+
 	Common::Array<ScriptDataEntry*> _data;
 	/* Maps function name -> index of function in _functions array */
 	FunctionNameMap _functionNames;
@@ -339,7 +339,7 @@ protected:
 
 	int _globalVarCount;
 	ScriptValue _globalVars[1024];
-	
+
 	int _logicGlobals[512];
 
 	int _cmpFlags;
@@ -369,7 +369,7 @@ protected:
 	void writeValue(ScriptValue &value);
 	void copyValue(ScriptValue &destValue, ScriptValue &sourceValue);
 	void derefValue(ScriptValue &value);
-	
+
 	void callKernelFunction(uint32 index);
 	ScriptValue getArg(uint32 index);
 	void dumpArgs(uint32 count);

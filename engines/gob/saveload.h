@@ -51,7 +51,7 @@ public:
 
 	bool toBuffer(byte *buffer, int32 size, bool palette) const;
 	bool fromBuffer(const byte *buffer, int32 size, bool palette);
-	
+
 private:
 	byte *_sprite;
 	int16 _width;

@@ -41,7 +41,7 @@ namespace M4 {
 #define RIGHT_BUTTON_DOWN	1 << 1
 
 enum M4EventType {
-	MEVENT_NO_EVENT, MEVENT_MOVE, 
+	MEVENT_NO_EVENT, MEVENT_MOVE,
 	MEVENT_LEFT_CLICK, MEVENT_LEFT_HOLD, MEVENT_LEFT_DRAG, MEVENT_LEFT_RELEASE,
 	MEVENT_RIGHT_CLICK, MEVENT_RIGHT_HOLD, MEVENT_RIGHT_DRAG, MEVENT_RIGHT_RELEASE,
 	MEVENT_BOTH_CLICK, MEVENT_BOTH_HOLD, MEVENT_BOTH_DRAG, MEVENT_BOTH_RELEASE,
@@ -79,7 +79,7 @@ public:
 
 	Common::Event &event() { return _event; }
 	Common::EventType type() { return _event.type; }
-	
+
 	// M4-centric methods
 	M4EventType handleEvents();
 	bool kbdCheck(uint32 &keyCode);
@@ -117,7 +117,7 @@ public:
 	bool getCursorOn() { return _cursorOn; }
 	void lockCursor(int cursorIndex);
 	void unlockCursor();
-	
+
 	const char *getVerb();
 
 	void resetMouse();

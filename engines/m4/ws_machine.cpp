@@ -125,7 +125,7 @@ bool Machine::searchPersistentMessages(uint32 messageHash, uint32 messageValue, 
 void Machine::enterState() {
 
 	MachineAsset *machineAsset = _ws->assets()->getMachine(_machHash);
-	
+
 	_code->jumpAbsolute(machineAsset->getStateOffset(_currentState));
 
 	int32 instruction = -1;
@@ -207,7 +207,7 @@ void Machine::execBlock(int32 offset, int32 count) {
 		instruction = execInstruction();
 		//g_system->delayMillis(500);
 	}
-	
+
 	//printf("---------------------------------------\n"); fflush(stdout);
 
 	if (instruction == 3) {

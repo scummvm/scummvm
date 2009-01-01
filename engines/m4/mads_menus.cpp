@@ -33,12 +33,12 @@ namespace M4 {
 #define DRAGON_MENUSCREEN 922
 
 static Common::Point rexMenuItemPosList[6] = {
-	Common::Point(12, 68), Common::Point(12, 87), Common::Point(12, 107), 
+	Common::Point(12, 68), Common::Point(12, 87), Common::Point(12, 107),
 	Common::Point(184, 75), Common::Point(245, 75), Common::Point(184, 99)
 };
 
 static Common::Point dragonMenuItemPosList[6] = {
-	Common::Point(46, 187), Common::Point(92, 187), Common::Point(138, 187), 
+	Common::Point(46, 187), Common::Point(92, 187), Common::Point(138, 187),
 	Common::Point(184, 187), Common::Point(230, 187), Common::Point(276, 187)
 };
 
@@ -85,7 +85,7 @@ RexMainMenuView::~RexMainMenuView() {
 	for (uint i = 0; i < _itemPalData.size(); ++i) {
 		_vm->_palette->deleteRange(_itemPalData[i]);
 		delete _itemPalData[i];
-	}		
+	}
 }
 
 bool RexMainMenuView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) {
@@ -100,7 +100,7 @@ bool RexMainMenuView::onEvent(M4EventType eventType, int param, int x, int y, bo
 		case Common::KEYCODE_F1:
 			handleAction(START_GAME);
 			break;
-			
+
 		case Common::KEYCODE_F2:
 			handleAction(RESUME_GAME);
 			break;
@@ -162,7 +162,7 @@ bool RexMainMenuView::onEvent(M4EventType eventType, int param, int x, int y, bo
 			menuIndex = getHighlightedItem(x, y);
 			if (menuIndex != _highlightedIndex) {
 				_bgSurface->copyTo(this, 0, row);
-				
+
 				_highlightedIndex = menuIndex;
 				if (_highlightedIndex != -1) {
 					M4Sprite *spr = _menuItem->getFrame(_highlightedIndex);
@@ -184,7 +184,7 @@ bool RexMainMenuView::onEvent(M4EventType eventType, int param, int x, int y, bo
 	default:
 		break;
 	}
-	
+
 	return false;
 }
 
@@ -195,7 +195,7 @@ void RexMainMenuView::updateState() {
 	int itemSize;
 
 	uint32 currTime = g_system->getMillis();
-	if (currTime < _delayTimeout) 
+	if (currTime < _delayTimeout)
 		return;
 	_delayTimeout = currTime + MADS_MENU_ANIM_DELAY;
 
@@ -213,8 +213,8 @@ void RexMainMenuView::updateState() {
 			if (_menuItem) {
 				// Draw the final frame of the menuitem
 				M4Sprite *spr = _menuItem->getFrame(0);
-				itemSize = _menuItem->getFrame(0)->height();	
-				spr->copyTo(this, rexMenuItemPosList[_menuItemIndex - 1].x, 
+				itemSize = _menuItem->getFrame(0)->height();
+				spr->copyTo(this, rexMenuItemPosList[_menuItemIndex - 1].x,
 					rexMenuItemPosList[_menuItemIndex - 1].y + row + (itemSize / 2) - (spr->height() / 2), 0);
 
 				delete _menuItem;
@@ -243,7 +243,7 @@ void RexMainMenuView::updateState() {
 		if (_menuItem) {
 			delete _menuItem;
 
-			// Copy over the current display surface area to the background, so the final frame 
+			// Copy over the current display surface area to the background, so the final frame
 			// of the previous menuitem should be kept on the screen
 			copyTo(_bgSurface, Common::Rect(0, row, width(), row + MADS_SURFACE_HEIGHT), 0, 0);
 		}
@@ -262,7 +262,7 @@ void RexMainMenuView::updateState() {
 
 		_frameIndex = _menuItem->getCount() - 1;
 
-		// If the final resource is now loaded, which contains the highlighted versions of 
+		// If the final resource is now loaded, which contains the highlighted versions of
 		// each menuitem, then the startup animation is complete
 		if (_menuItemIndex == 7) {
 			_vm->_mouse->cursorOn();
@@ -274,7 +274,7 @@ void RexMainMenuView::updateState() {
 
 	// Move to the next menuitem frame
 
-	itemSize = _menuItem->getFrame(0)->height();	
+	itemSize = _menuItem->getFrame(0)->height();
 
 	_bgSurface->copyTo(this, 0, row);
 	M4Sprite *spr = _menuItem->getFrame(_frameIndex);
@@ -289,7 +289,7 @@ int RexMainMenuView::getHighlightedItem(int x, int y) {
 		const Common::Point &pt = rexMenuItemPosList[index];
 		M4Sprite *spr = _menuItem->getFrame(index);
 
-		if ((x >= pt.x) && (y >= pt.y) && (x < (pt.x + spr->width())) && (y < (pt.y + spr->height()))) 
+		if ((x >= pt.x) && (y >= pt.y) && (x < (pt.x + spr->width())) && (y < (pt.y + spr->height())))
 			return index;
 	}
 
@@ -346,9 +346,9 @@ void RexMainMenuView::handleAction(MadsGameAction action) {
 
 //--------------------------------------------------------------------------
 
-MadsMainMenuView::MadsMainMenuView(M4Engine *vm): 
+MadsMainMenuView::MadsMainMenuView(M4Engine *vm):
 		View(vm, Common::Rect(0, 0, vm->_screen->width(), vm->_screen->height())) {
-	
+
 }
 
 bool MadsMainMenuView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) {
@@ -391,7 +391,7 @@ DragonMainMenuView::~DragonMainMenuView() {
 	for (uint i = 0; i < _itemPalData.size(); ++i) {
 		_vm->_palette->deleteRange(_itemPalData[i]);
 		delete _itemPalData[i];
-	}		
+	}
 }
 
 bool DragonMainMenuView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) {
@@ -409,7 +409,7 @@ bool DragonMainMenuView::onEvent(M4EventType eventType, int param, int x, int y,
 		case Common::KEYCODE_F1:
 			handleAction(START_GAME);
 			break;
-			
+
 		case Common::KEYCODE_F2:
 			handleAction(RESUME_GAME);
 			break;
@@ -439,7 +439,7 @@ bool DragonMainMenuView::onEvent(M4EventType eventType, int param, int x, int y,
 		if (_vm->_mouse->getCursorOn()) {
 			menuIndex = getHighlightedItem(x, y);
 			if (menuIndex != _highlightedIndex) {
-				
+
 				_highlightedIndex = menuIndex;
 				if (_highlightedIndex != -1) {
 					sprintf(resName, "MAIN%d.SS", menuIndex);
@@ -465,7 +465,7 @@ bool DragonMainMenuView::onEvent(M4EventType eventType, int param, int x, int y,
 	default:
 		break;
 	}
-	
+
 	return false;
 }
 

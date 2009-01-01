@@ -24,7 +24,7 @@
  * This is a utility for storing all the hardcoded data of Drascula in a separate
  * data file, used by the game engine
  */
- 
+
  // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
@@ -369,7 +369,7 @@ int main(int argc, char *argv[]) {
 			fwrite(padBuf, pad, 1, outFile);
 		}
 	}
-  
+
 	// Write _textt
 	writeUint16BE(outFile, NUM_TEXTT);
 	for (lang = 0; lang < NUM_LANGS; lang++) {

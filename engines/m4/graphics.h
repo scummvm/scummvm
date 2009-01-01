@@ -51,7 +51,7 @@ struct M4Rect {
 class M4Surface;
 
 // RGBList
-// Implements a list of RGB entries 
+// Implements a list of RGB entries
 
 class RGBList {
 private:
@@ -92,7 +92,7 @@ private:
 	void madsLoadBackground(int roomNumber, RGBList **palData = NULL);
 	void m4LoadBackground(Common::SeekableReadStream *source);
 public:
-	M4Surface(bool isScreen = false) { 
+	M4Surface(bool isScreen = false) {
 		create(g_system->getWidth(), g_system->getHeight(), 1);
 		_isScreen = isScreen;
 	}
@@ -118,7 +118,7 @@ public:
 	void line(int x1, int y1, int x2, int y2, byte color);
 	void frameRect(int x1, int y1, int x2, int y2);
 	void fillRect(int x1, int y1, int x2, int y2);
-	
+
 	void drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &clipRect);
 
 	// Surface methods
@@ -134,16 +134,16 @@ public:
 	void copyFrom(M4Surface *src, const Common::Rect &srcBounds, int destX, int destY,
 		int transparentColor = -1);
 
-	void update() { 
+	void update() {
 		if (_isScreen) {
 			g_system->copyRectToScreen((const byte *)pixels, pitch, 0, 0, w, h);
-			g_system->updateScreen(); 
+			g_system->updateScreen();
 		}
 	}
 
 	// copyTo methods
-	void copyTo(M4Surface *dest, int transparentColor = -1) { 
-		dest->copyFrom(this, Common::Rect(width(), height()), 0, 0, transparentColor);		
+	void copyTo(M4Surface *dest, int transparentColor = -1) {
+		dest->copyFrom(this, Common::Rect(width(), height()), 0, 0, transparentColor);
 	}
 	void copyTo(M4Surface *dest, int x, int y, int transparentColor = -1) {
 		dest->copyFrom(this, Common::Rect(width(), height()), x, y, transparentColor);

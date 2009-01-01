@@ -98,7 +98,7 @@ void loadBgIncrustFromSave(Common::SeekableReadStream &fHandle) {
 		tmp.y = fHandle.readUint16BE();
 		tmp.frame = fHandle.readUint16BE();
 		tmp.part = fHandle.readUint16BE();
-	
+
 		bgIncrustList.push_back(tmp);
 
 		if (tmp.param == 0) {

@@ -58,11 +58,11 @@ static int oldx = 0, oldy = 0;
 /** Boundaries and numbers of boundaries */
 static SCROLLDATA sd = {
 		{
-			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 
+			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0},
 			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}
 		},
 		{
-			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 
+			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0},
 			{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}
 		},
 		0,
@@ -415,9 +415,9 @@ void ScrollProcess(CORO_PARAM, const void *) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// In Tinsel v2, scenes may play movies, so the background may not always 
+	// In Tinsel v2, scenes may play movies, so the background may not always
 	// already be initialised like it is in v1
-	while (!GetBgObject()) 
+	while (!GetBgObject())
 		CORO_SLEEP(1);
 
 	ImageH = BgHeight();		// Dimensions

@@ -44,7 +44,7 @@ void loadPal(const char *fileName) {
 	if (!palFileHandle.open(buffer))
 		error("loadPal(): Cannot open file %s", fileName);
 
-	uint16 palEntriesCount = palFileHandle.readUint16LE();	
+	uint16 palEntriesCount = palFileHandle.readUint16LE();
 	palFileHandle.readUint16LE(); // entry size
 
 	palArray.resize(palEntriesCount);

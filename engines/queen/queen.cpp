@@ -147,13 +147,13 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 2 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 2);
-		
+
 		if (slotNum >= 0 && slotNum <= 99) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
 				for (int i = 0; i < 4; i++)
 					in->readUint32BE();
-				in->read(saveDesc, 32);	
+				in->read(saveDesc, 32);
 				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
 				delete in;
 			}
@@ -353,7 +353,7 @@ Common::Error QueenEngine::saveGameState(int slot, const char *desc) {
 		warning("Can't create file '%s', game not saved", name);
 		err = Common::kCreatingFileFailed;
 	}
-	
+
 	return err;
 }
 

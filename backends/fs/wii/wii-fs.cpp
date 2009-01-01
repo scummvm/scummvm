@@ -91,7 +91,7 @@ bool WiiFilesystemNode::getDevopChildren(AbstractFSList &list, ListMode mode, bo
 
 		if (!dt || !dt->name || !dt->open_r || !dt->diropen_r)
 			continue;
-	
+
 		list.push_back(new WiiFilesystemNode(Common::String(dt->name) + ":/", true));
 	}
 

@@ -203,7 +203,7 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(file->c_str() + file->size() - 3);
-		
+
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
@@ -264,7 +264,7 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 		int year = saveDate & 0xFFFF;
 
 		desc.setSaveDate(year, month, day);
-			
+
 		int hour = (saveTime >> 8) & 0xFF;
 		int minutes = saveTime & 0xFF;
 
@@ -276,7 +276,7 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 
 		return desc;
 	}
-	
+
 	return SaveStateDescriptor();
 }
 
@@ -305,11 +305,11 @@ Common::Error SwordEngine::saveGameState(int slot, const char *desc) {
 	return Common::kNoError;	// TODO: return success/failure
 }
 
-bool SwordEngine::canLoadGameStateCurrently() { 
+bool SwordEngine::canLoadGameStateCurrently() {
 	return mouseIsActive();
 }
 
-bool SwordEngine::canSaveGameStateCurrently() { 
+bool SwordEngine::canSaveGameStateCurrently() {
 	return mouseIsActive();
 }
 #endif

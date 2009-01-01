@@ -86,7 +86,7 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 	}
 
 	uint32 scriptResourceId = 0;
-	
+
 	if (!_vm->isSaga2()) {
 		scriptResourceId = _vm->getResourceDescription()->moduleLUTResourceId;
 		debug(3, "Loading module LUT from resource %i", scriptResourceId);

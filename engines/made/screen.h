@@ -88,9 +88,9 @@ public:
 	~Screen();
 
 	void clearScreen();
-	
+
 	void drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo);
-	
+
 	void loadRGBPalette(byte *palRGB, int count = 256);
 	void setRGBPalette(byte *palRGB, int start = 0, int count = 256);
 	bool isPaletteLocked() { return _paletteLock; }
@@ -127,16 +127,16 @@ public:
 		_dropShadowColor = -1;
 	}
 
-	void setDropShadowColor(int16 color) { 
+	void setDropShadowColor(int16 color) {
 		_outlineColor = -1;
 		_dropShadowColor = color;
 	}
-	
+
 	void setTextXY(int16 x, int16 y) {
 		_textX = x;
 		_textY = y;
 	}
-	
+
 	void homeText() {
 		_textX = _textRect.left;
 		_textY = _textRect.top;
@@ -153,18 +153,18 @@ public:
 	void drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask, int16 excludeStateMask);
 	void updateSprites();
 	void clearChannels();
-	
+
 	uint16 drawFlex(uint16 flexIndex, int16 x, int16 y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo);
 
 	void drawAnimFrame(uint16 animIndex, int16 x, int16 y, int16 frameNum, int16 flipX, int16 flipY, const ClipInfo &clipInfo);
 
 	uint16 drawPic(uint16 index, int16 x, int16 y, int16 flipX, int16 flipY);
 	uint16 drawMask(uint16 index, int16 x, int16 y);
-	
+
 	uint16 drawAnimPic(uint16 animIndex, int16 x, int16 y, int16 frameNum, int16 flipX, int16 flipY);
-	
+
 	void addSprite(uint16 spriteIndex);
-	
+
 	uint16 drawSprite(uint16 flexIndex, int16 x, int16 y);
 	uint16 placeSprite(uint16 channelIndex, uint16 flexIndex, int16 x, int16 y);
 
@@ -173,7 +173,7 @@ public:
 	int16 getAnimFrame(uint16 channelIndex);
 
 	uint16 placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, int16 y, uint16 fontNum, int16 textColor, int16 outlineColor);
-	
+
 	void show();
 	void flash(int count);
 
@@ -193,13 +193,13 @@ public:
 	int16 addToSpriteList(int16 index, int16 xofs, int16 yofs);
 	SpriteListItem getFromSpriteList(int16 index);
 	void clearSpriteList();
-	
+
 	void setDefaultMouseCursor();
 
 protected:
 	MadeEngine *_vm;
 	ScreenEffects *_fx;
-	
+
 	bool _screenLock;
 	bool _paletteLock;
 
@@ -219,18 +219,18 @@ protected:
 
 	int16 _clip, _exclude, _ground, _mask;
 	int _visualEffectNum;
-	
+
 	Graphics::Surface *_backgroundScreen, *_workScreen, *_screenMask;
 	ClipInfo _clipArea, _backgroundScreenDrawCtx, _workScreenDrawCtx, _maskDrawCtx;
-	
+
 	ClipInfo _excludeClipArea[4];
 	bool _excludeClipAreaEnabled[4];
-	
+
 	uint16 _channelsUsedCount;
 	SpriteChannel _channels[100];
-	
+
 	Common::Array<SpriteListItem> _spriteList;
-	
+
 };
 
 } // End of namespace Made

@@ -197,7 +197,7 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 				}
 			} else
 				sioprintf("Module \"%s\" wasn't found: %d\n", modules[i].path, modules[i].errorCode);
-			
+
 			if ((modules[i].errorCode < 0) || (res < 0) || (rv < 0)) {
 				if (!(modules[i].fileRef->flags & OPTIONAL)) {
 					if (modules[i].errorCode < 0)
@@ -208,7 +208,7 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 					quit();
 				}
 			}
-			
+
 			if (modules[i].buffer)
 				free(modules[i].buffer);
 		} else {
@@ -283,7 +283,7 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 
 		hddPreparePoweroff();
 		//poweroffInit();
-		dbg_printf("romeo : hddPreparePoweroff done\n");     
+		dbg_printf("romeo : hddPreparePoweroff done\n");
 
 		hddSetUserPoweroffCallback(gluePowerOffCallback, this);
 		//poweroffSetCallback(gluePowerOffCallback, this);
@@ -464,7 +464,7 @@ bool OSystem_PS2::hddPresent(void) {
 }
 
 bool OSystem_PS2::usbMassPresent(void) {
-	
+
 	if (_usbMassLoaded) {
 		int testFd = fio.dopen("mass:/");
 		if (testFd >= 0)
@@ -670,7 +670,7 @@ void OSystem_PS2::msgPrintf(int millis, char *format, ...) {
 		while ((*lnEnd) && (*lnEnd != '\n'))
 			lnEnd++;
 		*lnEnd = '\0';
-		
+
 		Common::String str(lnSta);
 		int width = Graphics::g_sysfont.getStringWidth(str);
 		if (width > maxWidth)

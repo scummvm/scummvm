@@ -43,7 +43,7 @@ class ViewManager;
 enum {SCREEN_DIALOG, SCREEN_BUFFER, SCREEN_TEXT, SCREEN_TRANSPARENT};
 enum ScreenEventType {SCREVENT_NONE = 0, SCREVENT_KEY = 1, SCREVENT_MOUSE = 2, SCREVENT_ALL = 3};
 enum ScreenLayers {
-	LAYER_BACKGROUND = 0, LAYER_DRIFTER = 1, LAYER_INTERFACE = 1, LAYER_FLOATER = 2, 
+	LAYER_BACKGROUND = 0, LAYER_DRIFTER = 1, LAYER_INTERFACE = 1, LAYER_FLOATER = 2,
 	LAYER_SURFACE = 3, LAYER_MENU = 9, LAYER_MOUSE = 15
 };
 
@@ -121,7 +121,7 @@ public:
 	void moveRelative(int x, int y);
 	void resize(int newWidth, int newHeight);
 	void restore(int x1, int y1, int x2, int y2);
-	
+
 	Common::Rect bounds() const { return _coords; }
 	bool isInside(int x, int y) const { return _coords.contains(x, y); }
 	ScreenFlags screenFlags() const { return _screenFlags; }

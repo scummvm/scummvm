@@ -35,7 +35,7 @@ class LoLEngine;
 class Screen_LoL : public Screen_v2 {
 public:
 	Screen_LoL(LoLEngine *vm, OSystem *system);
-	
+
 	void setScreenDim(int dim);
 	const ScreenDim *getScreenDim(int dim);
 

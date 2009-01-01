@@ -334,12 +334,12 @@ void Util::setScrollOffset(int16 x, int16 y) {
 	processInput();
 
 	if (x >= 0)
-		_vm->_video->_scrollOffsetX = x; 
+		_vm->_video->_scrollOffsetX = x;
 	else
 		_vm->_video->_scrollOffsetX = _vm->_draw->_scrollOffsetX;
 
 	if (y >= 0)
-		_vm->_video->_scrollOffsetY = y; 
+		_vm->_video->_scrollOffsetY = y;
 	else
 		_vm->_video->_scrollOffsetY = _vm->_draw->_scrollOffsetY;
 

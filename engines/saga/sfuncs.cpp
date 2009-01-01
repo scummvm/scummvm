@@ -279,7 +279,7 @@ void Script::sfTakeObject(SCRIPTFUNC_PARAMS) {
 		// Normally, when objects are picked up, they should always have the same
 		// _spriteListResourceId as their _index value. Some don't in IHNM, so
 		// we fix their sprite here
-		// Fixes bugs #2057200 - "IHNM: Invisible inventory objects", 
+		// Fixes bugs #2057200 - "IHNM: Invisible inventory objects",
 		// #1861126 - "IHNM: Crash when Gorrister cuts sheet in the mooring ring"
 		// and some incorrect objects in the IHNM demo
 		if (_vm->getGameId() == GID_IHNM)

@@ -2186,7 +2186,7 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
-		
+
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
@@ -2250,7 +2250,7 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 			int year = saveDate & 0xFFFF;
 
 			desc.setSaveDate(year, month, day);
-			
+
 			int hour = (saveTime >> 8) & 0xFF;
 			int minutes = saveTime & 0xFF;
 
@@ -2264,7 +2264,7 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		return desc;
 	}
-	
+
 	return SaveStateDescriptor();
 }
 
@@ -2414,8 +2414,8 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSL
 	// Check if we found a match with any of the fallback methods
 	if (matchedUsingWag || matchedUsingFilenames) {
 		_extra = description + (!_extra.empty() ? " " : "") + _extra; // Let's combine the description and extra
-		
-		// Override the gameid & extra values in g_fallbackDesc.desc. This only works 
+
+		// Override the gameid & extra values in g_fallbackDesc.desc. This only works
 		// until the fallback detector is called again, and while the MetaEngine instance
 		// is alive (as else the string storage is modified/deleted).
 		g_fallbackDesc.desc.gameid = _gameid.c_str();
@@ -2454,11 +2454,11 @@ Common::Error AgiBase::saveGameState(int slot, const char *desc) {
 	return Common::kNoError;	// TODO: return success/failure
 }
 
-bool AgiBase::canLoadGameStateCurrently() { 
+bool AgiBase::canLoadGameStateCurrently() {
 	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork));
 }
 
-bool AgiBase::canSaveGameStateCurrently() { 
+bool AgiBase::canSaveGameStateCurrently() {
 	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork));
 }
 

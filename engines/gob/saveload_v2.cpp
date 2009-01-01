@@ -223,7 +223,7 @@ bool SaveLoad_v2::loadGame(SaveFile &saveFile,
 		int slot = getSlot(offset);
 		int slotRem = getSlotRemainder(offset);
 
-		debugC(2, kDebugSaveLoad, "Loading from slot %d", slot); 
+		debugC(2, kDebugSaveLoad, "Loading from slot %d", slot);
 
 		SaveLoad::setCurrentSlot(saveFile.destName, slot);
 

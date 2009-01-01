@@ -75,7 +75,7 @@ void escapeHotkeyHandler(M4Engine *vm, View *view, uint32 key) {
 void textviewHotkeyHandler(M4Engine *vm, View *view, uint32 key) {
 	// Deactivate the scene if it's currently active
 	View *sceneView = vm->_viewManager->getView(VIEWID_SCENE);
-	if (sceneView != NULL) 
+	if (sceneView != NULL)
 		vm->_viewManager->deleteView(sceneView);
 
 	// Activate the textview view
@@ -206,7 +206,7 @@ void M4Engine::eventHandler() {
 			_viewManager->handleMouseEvents(event);
 	}
 
-	if (_events->kbdCheck(keycode)) 
+	if (_events->kbdCheck(keycode))
 		_viewManager->handleKeyboardEvents(keycode);
 }
 
@@ -217,9 +217,9 @@ bool M4Engine::delay(int duration, bool keyAborts, bool clickAborts) {
 
 	while (!_events->quitFlag && (g_system->getMillis() < endTime)) {
 		event = _events->handleEvents();
-		if (clickAborts && (event == MEVENT_LEFT_RELEASE) || (event == MEVENT_RIGHT_RELEASE)) 
+		if (clickAborts && (event == MEVENT_LEFT_RELEASE) || (event == MEVENT_RIGHT_RELEASE))
 			return true;
-			
+
 		if (_events->kbdCheck(keycode)) {
 			if (keyAborts)
 				return true;
@@ -403,7 +403,7 @@ Common::Error M4Engine::goM4() {
 	_viewManager->addView(_scene);
 
 	// Setup game wide hotkeys. Note that Orion Burger used F2/F3 for Save/Restore,
-	// but for standardisation with most other games, F5/F7 are also mapped 
+	// but for standardisation with most other games, F5/F7 are also mapped
 
 	_viewManager->systemHotkeys().add(Common::KEYCODE_ESCAPE, &escapeHotkeyHandler);
 	_viewManager->systemHotkeys().add(Common::KEYCODE_F2, &saveGameHotkeyHandler);
@@ -454,7 +454,7 @@ Common::Error M4Engine::goM4() {
 			_kernel->loadRoomScriptFunctions();
 
 			_kernel->roomInit();
-			
+
 #ifdef INTRO_TEST
 			if (_kernel->currentRoom == 951) {
 				curPart = 0;
@@ -505,13 +505,13 @@ Common::Error M4Engine::goM4() {
 			_ws->update();
 			_viewManager->refreshAll();
 			nextFrame = g_system->getMillis();// + GAME_FRAME_DELAY;
-			
+
 			// TEST STUFF ONLY
 			if (_player->commandReady) {
 				_kernel->roomParser();
 				_player->commandReady = false;
 			}
-			
+
 		}
 
 		g_system->delayMillis(10);

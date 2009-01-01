@@ -99,7 +99,7 @@ OSystem_PSP::~OSystem_PSP() {
 
 void OSystem_PSP::initBackend() {
 	_savefile = new PSPSaveFileManager;
-	
+
 	_timer = new DefaultTimerManager();
 	setTimerCallback(&timer_handler, 10);
 
@@ -614,7 +614,7 @@ void OSystem_PSP::setupMixer(void) {
 		// least on some platforms SDL will lie and claim it did get the rate
 		// even if it didn't. Probably only happens for "weird" rates, though.
 		_samplesPerSec = obtained.freq;
-		
+
 		// Tell the mixer that we are ready and start the sound processing
 		_mixer->setOutputRate(_samplesPerSec);
 		_mixer->setReady(true);

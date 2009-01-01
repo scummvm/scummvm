@@ -190,7 +190,7 @@ void M4Surface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &c
 	printf("M4Surface::drawSprite() info.width = %d; info.scaleX = %d; info.height = %d; info.scaleY = %d; scaledWidth = %d; scaledHeight = %d\n",
 		info.width, info.scaleX, info.height, info.scaleY, scaledWidth, scaledHeight); fflush(stdout);
 	*/
-	
+
 	int clipX = 0, clipY = 0;
 	// Clip the sprite's width and height according to the clip rectangle's dimensions
 	// This clips the sprite to the bottom and right
@@ -302,7 +302,7 @@ void M4Surface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &c
 		}
 
 	}
-	
+
 	delete[] scaledLineBuf;
 
 }
@@ -383,7 +383,7 @@ void M4Surface::loadBackgroundRiddle(const char *sceneName) {
 	Common::SeekableReadStream *stream;
 	// Loads a Riddle scene
 	sprintf(resourceName, "%s.tt", sceneName);
-	stream = _vm->_resourceManager->get(resourceName);	
+	stream = _vm->_resourceManager->get(resourceName);
 	m4LoadBackground(stream);
 	_vm->_resourceManager->toss(resourceName);
 }
@@ -398,17 +398,17 @@ void M4Surface::loadBackground(int sceneNumber, RGBList **palData) {
 		if (_vm->getGameType() == GType_RexNebular) {
 			// Load Rex Nebular screen
 			sprintf(resourceName, "rm%d.art", sceneNumber);
-			stream = _vm->_resourceManager->get(resourceName);	
+			stream = _vm->_resourceManager->get(resourceName);
 			rexLoadBackground(stream, palData);
 		} else {
 			// Loads M4 game scene
 			if (palData)
 				*palData = NULL;
 			sprintf(resourceName, "%i.tt", sceneNumber);
-			stream = _vm->_resourceManager->get(resourceName);	
+			stream = _vm->_resourceManager->get(resourceName);
 			m4LoadBackground(stream);
 		}
-		 
+
 		_vm->_resourceManager->toss(resourceName);
 
 	} else {
@@ -519,7 +519,7 @@ void M4Surface::madsLoadBackground(int roomNumber, RGBList **palData) {
 	// --------------------------------------------------------------------------------
 
 	// Loop through the mapping data to place the tiles on the screen
-	
+
 	uint16 *tIndex = &tileMap[0];
 	for (int y = 0; y < tileCountY; y++) {
 		for (int x = 0; x < tileCountX; x++) {
@@ -569,7 +569,7 @@ void M4Surface::rexLoadBackground(Common::SeekableReadStream *source, RGBList **
 
 	byte *pData = (byte *)pixels;
 	sourceUnc->read(pData, sceneSize);
-	
+
 	freeData();
 	delete sourceUnc;
 }
@@ -593,9 +593,9 @@ void M4Surface::m4LoadBackground(Common::SeekableReadStream *source) {
 	uint8 blackIndex = 0;
 
 	// Debug
-	//printf("loadBackground(): %dx%d picture (%d bytes) - %dx%d tiles of size %dx%d\n", 
+	//printf("loadBackground(): %dx%d picture (%d bytes) - %dx%d tiles of size %dx%d\n",
 	//	   widthVal, heightVal, size, tilesX, tilesY, tileWidth, tileHeight);
-	
+
 	// BGR data, which is converted to RGB8
 	for (uint i = 0; i < 256; i++) {
 		palette[i].b = source->readByte() << 2;
@@ -606,7 +606,7 @@ void M4Surface::m4LoadBackground(Common::SeekableReadStream *source) {
 		if ((blackIndex == 0) && !palette[i].r && !palette[i].g && !palette[i].b)
 			blackIndex = i;
 	}
-	
+
 	_vm->_palette->setPalette(palette, 0, 256);
 
 	// resize or create the surface
@@ -644,7 +644,7 @@ void M4Surface::madsloadInterface(int index, RGBList **palData) {
 
 	// Chunk 0, palette
 	Common::SeekableReadStream *intStream = intFile.getItemStream(0);
-	
+
 	for (int i = 0; i < 16; i++) {
 		palette[i].r = intStream->readByte() << 2;
 		palette[i].g = intStream->readByte() << 2;
@@ -711,14 +711,14 @@ static void makeTranslationList(RGB8 *palData, byte transList[NUM_GREENS]) {
 			if (minDistance == 0)
 				break;
 		}
-			
+
 		transList[i] = bestIndex;
 	}
 }
 
 // Support function for fading in or out
 
-static void fadeRange(M4Engine *vm, RGB8 *srcPal, RGB8 *destPal,  int startIndex, int endIndex, 
+static void fadeRange(M4Engine *vm, RGB8 *srcPal, RGB8 *destPal,  int startIndex, int endIndex,
 					 int numSteps, uint delayAmount) {
 	RGB8 tempPal[256];
 
@@ -733,11 +733,11 @@ static void fadeRange(M4Engine *vm, RGB8 *srcPal, RGB8 *destPal,  int startIndex
 
 		for (int i = startIndex; i <= endIndex; ++i) {
 			// Handle the intermediate rgb values for fading
-			tempPal[i].r = (byte) (srcPal[i].r + (destPal[i].r - srcPal[i].r) * stepCtr / numSteps);   
-			tempPal[i].g = (byte) (srcPal[i].g + (destPal[i].g - srcPal[i].g) * stepCtr / numSteps); 
-			tempPal[i].b = (byte) (srcPal[i].b + (destPal[i].b - srcPal[i].b) * stepCtr / numSteps); 
+			tempPal[i].r = (byte) (srcPal[i].r + (destPal[i].r - srcPal[i].r) * stepCtr / numSteps);
+			tempPal[i].g = (byte) (srcPal[i].g + (destPal[i].g - srcPal[i].g) * stepCtr / numSteps);
+			tempPal[i].b = (byte) (srcPal[i].b + (destPal[i].b - srcPal[i].b) * stepCtr / numSteps);
 		}
-		
+
 		vm->_palette->setPalette(&tempPal[startIndex], startIndex, endIndex - startIndex + 1);
 		vm->_viewManager->refreshAll();
 	}
@@ -845,7 +845,7 @@ void Palette::fadeToGreen(int numSteps, uint delayAmount) {
 	// using palette indexes in the range the range #32-63 into values from #64-255
 
 	makeTranslationList(destPalette, translationList);
-	
+
 	// Use palette indexes from #32-63 for the range of possible shades
 
 	for (i = GREEN_START; i <= GREEN_END; ++i, greenAmount += 8) {
@@ -854,12 +854,12 @@ void Palette::fadeToGreen(int numSteps, uint delayAmount) {
 	}
 
 	// Remap all pixels into the #32-63 range
-	
+
 	tempP = _vm->_scene->getData();
-	for (int pixelCtr = 0; pixelCtr < _vm->_scene->width() * _vm->_scene->height(); 
+	for (int pixelCtr = 0; pixelCtr < _vm->_scene->width() * _vm->_scene->height();
 			++pixelCtr, ++tempP) {
 		// If pixel is in #32-63 range already, remap to higher palette entries
-		if ((*tempP >= GREEN_START) && (*tempP <= GREEN_END)) 
+		if ((*tempP >= GREEN_START) && (*tempP <= GREEN_END))
 			*tempP = translationList[*tempP - GREEN_START];
 
 		*tempP = (uint8) (GREEN_START + (destPalette[*tempP].g >> 3));
@@ -883,7 +883,7 @@ void Palette::fadeFromGreen(int numSteps, uint delayAmount, bool fadeToBlack) {
 		destPalette = &blackPalette[0];
 	}
 
-	// Initially restore the faded palette 
+	// Initially restore the faded palette
 	_vm->_palette->setPalette(fadedPalette, 0, 256);
 	_vm->_viewManager->refreshAll();
 
@@ -956,7 +956,7 @@ void Palette::setMadsSystemPalette() {
 	palData[1].r = palData[1].g = palData[1].b = 0x54;
 	palData[2].r = palData[2].g = palData[2].b = 0xb4;
 	palData[3].r = palData[3].g = palData[3].b = 0xff;
-	
+
 	setPalette(palData, 0, 4);
 	blockRange(0, 4);
 }
@@ -976,18 +976,18 @@ void Palette::addRange(RGBList *list) {
 	RGB8 palData[256];
 	g_system->grabPalette((byte *)&palData[0], 0, 256);
 	bool paletteChanged = false;
-	
+
 	for (int colIndex = 0; colIndex < list->size(); ++colIndex) {
 		// Scan through for an existing copy of the RGB value
-		int palIndex = -1; 
+		int palIndex = -1;
 		while (++palIndex < 256) {
 			if (_usageCount[palIndex] <= 0)
 				// Palette index is to be skipped
 				continue;
 
-			if ((palData[palIndex].r == data[colIndex].r) && 
+			if ((palData[palIndex].r == data[colIndex].r) &&
 				(palData[palIndex].g == data[colIndex].g) &&
-				(palData[palIndex].b == data[colIndex].b)) 
+				(palData[palIndex].b == data[colIndex].b))
 				// Match found
 				break;
 		}
@@ -1000,7 +1000,7 @@ void Palette::addRange(RGBList *list) {
 					break;
 			}
 
-			if (palIndex == 256) 
+			if (palIndex == 256)
 				error("addRange - Ran out of palette space to allocate");
 
 			palData[palIndex].r = data[colIndex].r;

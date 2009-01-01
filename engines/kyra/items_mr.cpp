@@ -138,7 +138,7 @@ bool KyraEngine_MR::processItemDrop(uint16 sceneId, uint16 item, int x, int y, i
 		itemPos = -1;
 
 	if (itemPos >= 0) {
-		exchangeMouseItem(itemPos, 1);	
+		exchangeMouseItem(itemPos, 1);
 		return true;
 	}
 
@@ -304,7 +304,7 @@ void KyraEngine_MR::itemDropDown(int startX, int startY, int dstX, int dstY, int
 				}
 
 				restoreGfxRect32x32(x, y);
-			} 
+			}
 		}
 
 		_itemList[itemSlot].x = dstX;
@@ -439,7 +439,7 @@ bool KyraEngine_MR::itemListMagic(int handItem, int itemSlot) {
 		} else {
 			setGameFlag(0x1AE);
 		}
-		
+
 		_timer->setCountdown(12, 1);
 		_timer->enable(12);
 	}
@@ -458,7 +458,7 @@ bool KyraEngine_MR::itemListMagic(int handItem, int itemSlot) {
 		_screen->hideMouse();
 		deleteItemAnimEntry(itemSlot);
 		addItemToAnimList(itemSlot);
-		
+
 		if (newItem == 0xFE)
 			removeHandItem();
 		else if (newItem != 0xFF)
@@ -468,7 +468,7 @@ bool KyraEngine_MR::itemListMagic(int handItem, int itemSlot) {
 		if (_lang != 1)
 			updateItemCommand(resItem, 3, 0xFF);
 
-		// Unlike the original we give points for when combining with scene items 
+		// Unlike the original we give points for when combining with scene items
 		if (resItem == 7) {
 			updateScore(35, 100);
 			delay(60*_tickLength, true);
@@ -519,7 +519,7 @@ bool KyraEngine_MR::itemInventoryMagic(int handItem, int invSlot) {
 		_screen->hideMouse();
 		clearInventorySlot(invSlot, 0);
 		drawInventorySlot(0, resItem, invSlot);
-		
+
 		if (newItem == 0xFE)
 			removeHandItem();
 		else if (newItem != 0xFF)

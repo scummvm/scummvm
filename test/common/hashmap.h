@@ -95,7 +95,7 @@ class HashMapTestSuite : public CxxTest::TestSuite
 		container.clear();
 		TS_ASSERT( container.begin() == container.end() );
 	}
-	
+
 	void test_hash_map_copy(void) {
 		Common::HashMap<int, int> map1, container2;
 		map1[323] = 32;

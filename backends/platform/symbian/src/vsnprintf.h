@@ -1,9 +1,9 @@
 /*
- * This is the vsnprintf for scummvm/symbian implementation from the original snprintf.c, 
+ * This is the vsnprintf for scummvm/symbian implementation from the original snprintf.c,
  * all support functions has been removed and vsnprintf renamed to symbian_vsnprintf
  * snprintf.c - a portable implementation of snprintf
  * According to the homepage this function could be licensed as either Frontier Aritistic or GPL.
- * 
+ *
  * AUTHOR
  *   Mark Martinec <mark.martinec@ijs.si>, April 1999.
  *
@@ -230,14 +230,14 @@ static char credits[] = "\n\
 @(#)snprintf.c, v2.2: Copyright 1999, Mark Martinec. Frontier Artistic License applies.\n\
 @(#)snprintf.c, v2.2: http://www.ijs.si/software/snprintf/\n";
 int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
-	
+
 	size_t str_l = 0;
 	const char *p = fmt;
-	
+
 	/* In contrast with POSIX, the ISO C99 now says
 	* that str can be NULL and str_m can be 0.
 	* This is more useful than the old:  if (str_m < 1) return -1; */
-	
+
 	if (!p) p = "";
 	while (*p) {
 		if (*p != '%') {
@@ -260,7 +260,7 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 			the ' ' flag should be ignored. */
 			char length_modifier = '\0';            /* allowed values: \0, h, l, L */
 			char tmp[32];/* temporary buffer for simple numeric->string conversion */
-			
+
 			const char *str_arg;      /* string address in case of string argument */
 									  size_t str_arg_l;         /* natural field width of arg without padding
 									  and sign */
@@ -268,17 +268,17 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 									  /* unsigned char argument value - only defined for c conversion.
 									  N.B. standard explicitly states the char argument for
 									  the c conversion is unsigned */
-									  
+
 									  size_t number_of_zeros_to_pad = 0;
 									  /* number of zeros to be inserted for numeric conversions
 									  as required by the precision or minimal field width */
-									  
+
 									  size_t zero_padding_insertion_ind = 0;
 									  /* index into tmp where zero padding is to be inserted */
-									  
+
 									  char fmt_spec = '\0';
 									  /* current conversion specifier character */
-									  
+
 									  str_arg = credits;/* just to make compiler happy (defined but not used)*/
 									  str_arg = NULL;
 									  starting_p = p; p++;  /* skip '%' */
@@ -298,7 +298,7 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 										  p++;
 									  }
 									  /* If the '0' and '-' flags both appear, the '0' flag should be ignored. */
-									  
+
 									  /* parse field width */
 									  if (*p == '*') {
 										  int j;
@@ -397,21 +397,21 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 										  case 'd': case 'u': case 'o': case 'x': case 'X': case 'p': {
 										  /* NOTE: the u, o, x, X and p conversion specifiers imply
 											  the value is unsigned;  d implies a signed value */
-											  
+
 											  int arg_sign = 0;
 											  /* 0 if numeric argument is zero (or if pointer is NULL for 'p'),
 											  +1 if greater than zero (or nonzero for unsigned arguments),
 											  -1 if negative (unsigned argument is never negative) */
-											  
+
 											  int int_arg = 0;  unsigned int uint_arg = 0;
 											  /* only defined for length modifier h, or for no length modifiers */
-											  
+
 											  long int long_arg = 0;  unsigned long int ulong_arg = 0;
 											  /* only defined for length modifier l */
-											  
+
 											  void *ptr_arg = NULL;
 											  /* pointer argument value -only defined for p conversion */
-											  
+
 #ifdef SNPRINTF_LONGLONG_SUPPORT
 											  long long int long_long_arg = 0;
 											  unsigned long long int ulong_long_arg = 0;
@@ -554,7 +554,7 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 												  }
 											  }
 											  /* zero padding to specified precision? */
-											  if (num_of_digits < precision) 
+											  if (num_of_digits < precision)
 												  number_of_zeros_to_pad = precision - num_of_digits;
 											  }
 											  /* zero padding to specified minimal field width? */
@@ -659,10 +659,10 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 int symbian_snprintf(char *text, size_t maxlen, const char *fmt, ...) {
 	va_list ap;
 	int retval;
-	
+
 	va_start(ap, fmt);
 	retval = symbian_vsnprintf(text, maxlen, fmt, ap);
 	va_end(ap);
-	
+
 	return retval;
 }

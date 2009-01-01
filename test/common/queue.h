@@ -34,7 +34,7 @@ public:
 
 	void test_front_back_pop() {
 		Common::Queue<int> queue;
-		
+
 		queue.push( 42);
 		queue.push(-23);
 
@@ -49,7 +49,7 @@ public:
 		queue.pop();
 		TS_ASSERT_EQUALS(queue.front(), 42);
 	}
-	
+
 	void test_assign() {
 		Common::Queue<int> q1, q2;
 

@@ -116,10 +116,10 @@ void TextviewView::setScript(const char *resourceName, TextviewCallback callback
 
 	_script = _vm->res()->get(_resourceName);
 
-	processLines();	
+	processLines();
 }
 
-bool TextviewView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) { 
+bool TextviewView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) {
 	if (!_processEvents)
 		return false;
 
@@ -180,7 +180,7 @@ void TextviewView::updateState() {
 			byte *lineTemp = new byte[_panX];
 			for (int y = 0; y < _bgSurface.height(); ++y) {
 				byte *pixelsP = _bgSurface.getBasePtr(0, y);
-				
+
 				// Copy the first X pixels into temp buffer, move the rest of the line
 				// to the start of the line, and then move temp buffer pixels to end of line
 				Common::copy(pixelsP, pixelsP + _panX, lineTemp);
@@ -231,10 +231,10 @@ void TextviewView::updateState() {
 	// Refresh the view
 	int yp = (height() - _bgSurface.height()) / 2;
 	_bgSurface.copyTo(this, 0, yp);
-	_textSurface.copyTo(this, Common::Rect(0, 0, _textSurface.width(), _bgSurface.height()), 
+	_textSurface.copyTo(this, Common::Rect(0, 0, _textSurface.width(), _bgSurface.height()),
 		0, yp, _vm->_palette->BLACK);
 }
-		
+
 void TextviewView::scriptDone() {
 	TextviewCallback fn = _callback;
 	M4Engine *vm = _vm;
@@ -242,7 +242,7 @@ void TextviewView::scriptDone() {
 	// Remove this view from manager and destroy it
 	_vm->_viewManager->deleteView(this);
 
-	if (fn) 
+	if (fn)
 		fn(vm);
 }
 
@@ -341,7 +341,7 @@ void TextviewView::processCommand() {
 		// Set sound number
 		paramP = commandStr + 5;
 		//int soundId = getParameter(&paramP);
-		
+
 		//TODO: Proper handling of the sound drivers/sounds
 		//if (!_soundDriverLoaded)
 		//	error("Attempted to set sound without loading any driver\n");
@@ -433,7 +433,7 @@ void TextviewView::processText() {
 	// Copy the text line onto the bottom of the textSurface surface, which will allow it
 	// to gradually scroll onto the screen
 	int yp = _textSurface.height() - _vm->_font->getHeight() - TEXTVIEW_LINE_SPACING;
-	_textSurface.fillRect(Common::Rect(0, yp, _textSurface.width(), _textSurface.height()), 
+	_textSurface.fillRect(Common::Rect(0, yp, _textSurface.width(), _textSurface.height()),
 		_vm->_palette->BLACK);
 	_vm->_font->writeString(&_textSurface, _currentLine, xStart, yp);
 }
@@ -492,10 +492,10 @@ void AnimviewView::setScript(const char *resourceName, AnimviewCallback callback
 
 	_script = _vm->res()->get(_resourceName);
 
-	processLines();	
+	processLines();
 }
 
-bool AnimviewView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) { 
+bool AnimviewView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) {
 	// Wait for the Escape key or a mouse press
 	if (((eventType == KEVENT_KEY) && (param == Common::KEYCODE_ESCAPE)) ||
 		(eventType == MEVENT_LEFT_RELEASE) || (eventType == MEVENT_RIGHT_RELEASE)) {
@@ -510,7 +510,7 @@ bool AnimviewView::onEvent(M4EventType eventType, int param, int x, int y, bool 
 void AnimviewView::updateState() {
 	char bgFile[10];
 	int bgNumber = 0;
-	
+
 	// Only update state if wait period has expired
 	if (_previousUpdate > 0) {
 		if (g_system->getMillis() - _previousUpdate < 3000) {
@@ -584,7 +584,7 @@ void AnimviewView::updateState() {
 	// Read next line
 	processLines();
 }
-		
+
 void AnimviewView::scriptDone() {
 	AnimviewCallback fn = _callback;
 	M4Engine *vm = _vm;
@@ -592,7 +592,7 @@ void AnimviewView::scriptDone() {
 	// Remove this view from manager and destroy it
 	_vm->_viewManager->deleteView(this);
 
-	if (fn) 
+	if (fn)
 		fn(vm);
 }
 

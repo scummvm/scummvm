@@ -30,18 +30,18 @@
 
 /**
  * Creates PS2FilesystemNode objects.
- * 
+ *
  * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
  */
-class Ps2FilesystemFactory : public FilesystemFactory, public Common::Singleton<Ps2FilesystemFactory> {	
+class Ps2FilesystemFactory : public FilesystemFactory, public Common::Singleton<Ps2FilesystemFactory> {
 public:
 	virtual AbstractFSNode *makeRootFileNode() const;
 	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
 	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
-	
+
 protected:
 	Ps2FilesystemFactory() {};
-		
+
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 };

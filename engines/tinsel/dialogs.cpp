@@ -351,9 +351,9 @@ struct INV_DEF {
 	int FirstDisp;		// Index to first item currently displayed
 
 	int inventoryX;		// } Display position
-	int inventoryY;		// } 
+	int inventoryY;		// }
 	int otherX;		// } Display position
-	int otherY;		// } 
+	int otherY;		// }
 
 	int MaxInvObj;		// Max. allowed contents
 
@@ -417,7 +417,7 @@ static OBJECT *RectObject = 0, *SlideObject = 0;	// Current display objects, for
 					// objects are in objArray.
 
 static int sliderYpos = 0;			// For positioning the slider
-static int sliderYmax = 0, sliderYmin = 0;	// 
+static int sliderYmax = 0, sliderYmin = 0;	//
 
 #define sliderRange	(sliderYmax - sliderYmin)
 
@@ -541,14 +541,14 @@ enum BFUNC {
 	OPENQUIT,
 	INITGAME,
 	MUSICVOL,
-	
+
 	HOPPER2,		// Call up Scene Hopper 2
 	BF_CHANGESCENE,
 
 	CLANG,
 	RLANG
 #ifdef MAC_OPTIONS
-	, MASTERVOL, SAMPVOL 
+	, MASTERVOL, SAMPVOL
 #endif
 };
 
@@ -1418,7 +1418,7 @@ static void ObjectProcess(CORO_PARAM, const void *param) {
  */
 void InvTinselEvent(INV_OBJECT *pinvo, TINSEL_EVENT event, PLR_EVENT be, int index) {
 	OP_INIT to = { pinvo, event, be, 0 };
-	
+
 	if (InventoryHidden || (TinselV2 && !pinvo->hScript))
 		return;
 
@@ -1523,7 +1523,7 @@ void InvLoadGame(void) {
 		if (iconArray[HL1] != NULL) {
 			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), iconArray[HL1]);
 			iconArray[HL1] = NULL;
-		}	
+		}
 		RestoreGame(rGame+cd.extraBase);
 	}
 }
@@ -1643,7 +1643,7 @@ void Select(int i, bool force) {
 	// New highlight box
 	switch (cd.box[i].boxType) {
 	case RGROUP:
-		iconArray[HL2] = RectangleObject(BgPal(), 
+		iconArray[HL2] = RectangleObject(BgPal(),
 			(TinselV2 ? HighlightColour() : COL_HILIGHT), cd.box[i].w, cd.box[i].h);
 		MultiInsertObject(GetPlayfieldList(FIELD_STATUS), iconArray[HL2]);
 		MultiSetAniXY(iconArray[HL2],
@@ -1745,8 +1745,8 @@ void AddToInventory(int invno, int icon, bool hold) {
 	INV_OBJECT *invObj;
 
 	// Validate trying to add to a legal inventory
-	assert(invno == INV_1 || invno == INV_2 || invno == INV_CONV 
-		|| invno == INV_OPEN || (invno == INV_DEFAULT && TinselV2)); 
+	assert(invno == INV_1 || invno == INV_2 || invno == INV_CONV
+		|| invno == INV_OPEN || (invno == INV_DEFAULT && TinselV2));
 
 	if (invno == INV_OPEN) {
 		assert(InventoryState == ACTIVE_INV && (ino == INV_1 || ino == INV_2)); // addopeninv() with inventry not open
@@ -2219,11 +2219,11 @@ static int WhichMenuBox(int curX, int curY, bool bSlides) {
 	// Slider on extra window
 	if (cd.bExtraWin) {
 		const Common::Rect &r = TinselV2 ?
-			Common::Rect(411, 46, 425, 339) : 
+			Common::Rect(411, 46, 425, 339) :
 			Common::Rect(20 + 181, 24 + 2, 20 + 181 + 8, 24 + 139 + 5);
 
 		if (r.contains(curX, curY)) {
-		
+
 			if (curY < (r.top + (TinselV2 ? 18 : 5)))
 				return IB_UP;
 			else if (curY > (r.bottom - (TinselV2 ? 18 : 5)))
@@ -2269,7 +2269,7 @@ void InvBoxes(bool InBody, int curX, int curY) {
 		if (iconArray[HL1] != NULL) {
 			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), iconArray[HL1]);
 			iconArray[HL1] = NULL;
-		}	
+		}
 	} else if (index != cd.pointBox) {
 		cd.pointBox = index;
 		// A new box is pointed to - high-light it
@@ -2281,7 +2281,7 @@ void InvBoxes(bool InBody, int curX, int curY) {
 ///* I don't agree */ cd.box[cd.pointBox].boxType == RGROUP ||
 		    cd.box[cd.pointBox].boxType == AATBUT ||
 		    cd.box[cd.pointBox].boxType == AABUT) {
-			iconArray[HL1] = RectangleObject(BgPal(), 
+			iconArray[HL1] = RectangleObject(BgPal(),
 				(TinselV2 ? HighlightColour() : COL_HILIGHT),
 				cd.box[cd.pointBox].w, cd.box[cd.pointBox].h);
 			MultiInsertObject(GetPlayfieldList(FIELD_STATUS), iconArray[HL1]);
@@ -2633,7 +2633,7 @@ static void AddBackground(OBJECT **rect, OBJECT **title, int extraH, int extraV,
 
 	// add it to display list and position it
 	MultiInsertObject(GetPlayfieldList(FIELD_STATUS), *rect);
-	MultiSetAniXY(*rect, InvD[ino].inventoryX + NM_BG_POS_X, 
+	MultiSetAniXY(*rect, InvD[ino].inventoryX + NM_BG_POS_X,
 		InvD[ino].inventoryY + NM_BG_POS_Y);
 	MultiSetZPosition(*rect, Z_INV_BRECT);
 
@@ -2752,7 +2752,7 @@ void AddBox(int *pi, int i) {
 		*pi += 1;
 
 		// Stick in the text
-		if ((cd.box[i].textMethod == TM_POINTER) || 
+		if ((cd.box[i].textMethod == TM_POINTER) ||
 				(!TinselV2 && (cd.box[i].ixText == USE_POINTER))) {
 			if (cd.box[i].boxText != NULL) {
 				if (cd.box[i].boxType == RGROUP) {
@@ -2849,7 +2849,7 @@ void AddBox(int *pi, int i) {
 			assert(cd.box[i].ixText != USE_POINTER);
 			LoadStringRes(configStrings[cd.box[i].ixText], TextBufferAddr(), TBUFSZ);
 		}
-		iconArray[*pi] = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), 
+		iconArray[*pi] = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS),
 			TextBufferAddr(), 0, x + MDTEXT_XOFF, y + MDTEXT_YOFF, GetTagFontHandle(), TXT_RIGHT);
 		MultiSetZPosition(iconArray[*pi], Z_INV_ITEXT);
 		*pi += 1;
@@ -2915,7 +2915,7 @@ void AddBox(int *pi, int i) {
 			assert(cd.box[i].ixText != USE_POINTER);
 			LoadStringRes(configStrings[cd.box[i].ixText], TextBufferAddr(), TBUFSZ);
 		}
-		iconArray[*pi] = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), 
+		iconArray[*pi] = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS),
 			TextBufferAddr(), 0, x+MDTEXT_XOFF, y+MDTEXT_YOFF, GetTagFontHandle(), TXT_RIGHT);
 		MultiSetZPosition(iconArray[*pi], Z_INV_ITEXT);
 		*pi += 1;
@@ -3060,7 +3060,7 @@ int AddExtraWindow(int x, int y, OBJECT **retObj) {
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
 	retObj[n] = AddObject(&pfilm->reels[IX_H156], -1);	// Bottom
-	MultiSetAniXY(retObj[n], x + (TinselV2 ? TLwidth : 6), y + 
+	MultiSetAniXY(retObj[n], x + (TinselV2 ? TLwidth : 6), y +
 		(TinselV2 ? TLheight + 208 + BLheight + NM_BSY : 143));
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
@@ -3241,7 +3241,7 @@ void ConstructInventory(InventoryType filling) {
 		// Bottom side extra
 		retObj[n] = AddObject(&pfilm->reels[IX_H26], -1);
 		MultiSetAniXY(retObj[n], invX + offx, invY + TLheight + eV + BLheight + NM_BSY);
-			
+
 		MultiSetZPosition(retObj[n], zpos);
 		n++;
 	}
@@ -3387,7 +3387,7 @@ bool RePosition(void) {
 		InvD[ino].inventoryY += MAXTOP - p;
 		bMoveitMoveit = true;			// I like to....
 	}
-		
+
 	return bMoveitMoveit;
 }
 
@@ -3731,7 +3731,7 @@ void HideConversation(bool bHide) {
 				case CONV_DEF:
 					InvD[INV_CONV].inventoryY = y - SysVar(SV_CONV_ABOVE_Y);
 					break;
-					
+
 				default:
 					break;
 				}
@@ -3764,7 +3764,7 @@ void HideConversation(bool bHide) {
 					int Loffset, Toffset;
 
 					PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
-					y = GetActorBottom(thisConvActor) - MultiHighest(RectObject) + 
+					y = GetActorBottom(thisConvActor) - MultiHighest(RectObject) +
 						SysVar(SV_CONV_BELOW_Y);
 					y -= Toffset;
 				}
@@ -3816,7 +3816,7 @@ bool ConvIsHidden(void) {
  * Start up an inventory window.
  */
 void PopUpInventory(int invno) {
-	assert(invno == INV_1 || invno == INV_2 || invno == INV_CONV 
+	assert(invno == INV_1 || invno == INV_2 || invno == INV_CONV
 		|| invno == INV_CONF || invno == INV_MENU); // Trying to open illegal inventory
 
 	if (InventoryState == IDLE_INV) {
@@ -4220,7 +4220,7 @@ void InventoryProcess(CORO_PARAM, const void *) {
 				}
 			} else
 				CORO_INVOKE_1(ButtonToggle, g_buttonEffect.box);
-		
+
 			g_buttonEffect.bButAnim = false;
 		}
 
@@ -5098,7 +5098,7 @@ void InvPickup(int index) {
 		return;
 
 	// If not holding anything
-	if (HeldItem == INV_NOICON && InvD[ino].contents[index] && 
+	if (HeldItem == INV_NOICON && InvD[ino].contents[index] &&
 			(!TinselV2 || InvD[ino].contents[index] != HeldItem)) {
 		// Pick-up
 		invObj = GetInvObject(InvD[ino].contents[index]);
@@ -5186,7 +5186,7 @@ static void InvWalkTo(const Common::Point &coOrds) {
 
 			// To cater for drop in dead space between icons,
 			// look 1 pixel right, then 1 down, then 1 right and down.
-			if (i == INV_NOICON && HeldItem != INV_NOICON && 
+			if (i == INV_NOICON && HeldItem != INV_NOICON &&
 					(ino == INV_1 || ino == INV_2)) {
 				pt.x += 1;				// 1 to the right
 				i = InvItem(pt, false);
@@ -5203,7 +5203,7 @@ static void InvWalkTo(const Common::Point &coOrds) {
 
 			if (ino == INV_CONV) {
 				ConvAction(i);
-			} else 
+			} else
 				InvPickup(i);
 		}
 		break;

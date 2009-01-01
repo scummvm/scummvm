@@ -74,7 +74,7 @@ void Animation::load(const char *filename) {
 		//printf("%03d: %s\n", i, _spriteSeriesNames[i].c_str());
 
 		spriteSeriesStream = _vm->res()->get(_spriteSeriesNames[i].c_str());
-		_spriteSeries = new SpriteAsset(_vm, spriteSeriesStream, 
+		_spriteSeries = new SpriteAsset(_vm, spriteSeriesStream,
 										spriteSeriesStream->size(), _spriteSeriesNames[i].c_str());
 		_vm->res()->toss(_spriteSeriesNames[i].c_str());
 
@@ -101,7 +101,7 @@ void Animation::load(const char *filename) {
 	//printf("Chunk 1, size %i\n", animStream->size());
 
 	_frameEntries = new AnimationFrame[_frameEntryCount];
-	
+
 	for (int i = 0; i < _frameEntryCount; i++) {
 
 		frame.animFrameIndex = animStream->readUint16LE();
@@ -112,7 +112,7 @@ void Animation::load(const char *filename) {
 		frame.y = animStream->readUint16LE();
 		frame.v = animStream->readByte();
 		frame.w = animStream->readByte();
-		
+
 		_frameEntries[i] = frame;
 
 		/*
@@ -187,7 +187,7 @@ bool Animation::updateAnim() {
 		//printf("_curFrameEntry = %d\n", _curFrameEntry);
 		_curFrameEntry++;
 	}
-	
+
 	//printf("_curFrame = %d\n", _curFrame);
 
 	_curFrame++;

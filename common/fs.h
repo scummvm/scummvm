@@ -223,7 +223,7 @@ public:
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
 	virtual WriteStream *openForWriting() const;
-	
+
 	// Compatibility with ArchiveMember API.
 	SeekableReadStream *open() {
 		return openForReading();

@@ -113,7 +113,7 @@ bool DefaultSaveFileManager::removeSavefile(const char *filename) {
 		return false;
 
 	Common::FSNode file = savePath.getChild(filename);
-	
+
 	// FIXME: remove does not exist on all systems. If your port fails to
 	// compile because of this, please let us know (scummvm-devel or Fingolfin).
 	// There is a nicely portable workaround, too: Make this method overloadable.

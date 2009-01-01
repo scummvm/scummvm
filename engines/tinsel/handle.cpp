@@ -411,7 +411,7 @@ uint8 *LockMem(SCNHANDLE offset) {
 		if (pH->pNode->pBaseAddr && (pH->filesize & fLoaded))
 			// already allocated and loaded
 			return pH->pNode->pBaseAddr + (offset & OFFSETMASK);
-		
+
 		if (pH->pNode->pBaseAddr == NULL)
 			// must have been discarded - reallocate the memory
 			MemoryReAlloc(pH->pNode, pH->filesize & FSIZE_MASK,

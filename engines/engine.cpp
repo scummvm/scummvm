@@ -76,7 +76,7 @@ Engine::Engine(OSystem *syst)
 
 Engine::~Engine() {
 	_mixer->stopAll();
-	
+
 	delete _mainMenuDialog;
 	g_engine = NULL;
 }
@@ -156,9 +156,9 @@ void initGraphics(int width, int height, bool defaultTo1xScaler) {
 		message += "'.";
 
 		GUI::MessageDialog dialog(message);
-		dialog.runModal();		
+		dialog.runModal();
 	}
-	
+
 	if (gfxError & OSystem::kTransactionAspectRatioFailed) {
 		GUI::MessageDialog dialog("Could not apply aspect ratio setting.");
 		dialog.runModal();

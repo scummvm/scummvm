@@ -84,7 +84,7 @@ void PmvPlayer::play(const char *filename) {
 	uint32 palSize = 0;
 	byte *frameData, *audioData, *soundData, *palData, *imageData;
 	bool firstTime = true;
-	
+
 	uint32 soundStartTime = 0, skipFrames = 0;
 
 	uint32 frameNum;
@@ -106,7 +106,7 @@ void PmvPlayer::play(const char *filename) {
 
 		frameData = new byte[chunkSize];
 		_fd->read(frameData, chunkSize);
-		
+
 		soundChunkOfs = READ_LE_UINT32(frameData + 8);
 		palChunkOfs = READ_LE_UINT32(frameData + 16);
 
@@ -156,7 +156,7 @@ void PmvPlayer::play(const char *filename) {
 		}
 
 		decompressMovieImage(imageData, *_surface, cmdOffs, pixelOffs, maskOffs, lineSize);
-	
+
 		if (firstTime) {
 			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
 			soundStartTime = g_system->getMillis();
@@ -188,7 +188,7 @@ void PmvPlayer::play(const char *filename) {
 
 	_audioStream->finish();
 	_mixer->stopHandle(_audioStreamHandle);
-	
+
 	//delete _audioStream;
 	delete _fd;
 	delete _surface;
@@ -221,7 +221,7 @@ void PmvPlayer::handleEvents() {
 }
 
 void PmvPlayer::updateScreen() {
-	_vm->_system->copyRectToScreen((const byte*)_surface->pixels, _surface->pitch, 
+	_vm->_system->copyRectToScreen((const byte*)_surface->pixels, _surface->pitch,
 									(320 - _surface->w) / 2, (200 - _surface->h) / 2, _surface->w, _surface->h);
 	_vm->_system->updateScreen();
 }

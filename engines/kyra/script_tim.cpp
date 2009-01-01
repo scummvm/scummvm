@@ -82,13 +82,13 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *sy
 
 	_commands = commandProcs;
 	_commandsSize = ARRAYSIZE(commandProcs);
-	
+
 	memset(&_animations, 0, sizeof(_animations));
 	_langData = 0;
 	_textDisplayed = false;
 	_textAreaBuffer = new uint8[320*40];
 	assert(_textAreaBuffer);
-	
+
 	_palDelayInc = _palDiff = _palDelayAcc = 0;
 }
 
@@ -134,10 +134,10 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 	avtlChunkSize >>= 1;
 	for (uint i = 0; i < avtlChunkSize; ++i)
 		tim->avtl[i] = READ_LE_UINT16(tim->avtl + i);
-	
+
 	int num = (avtlChunkSize < TIM::kCountFuncs) ? avtlChunkSize : (int)TIM::kCountFuncs;
 	for (int i = 0; i < num; ++i)
-		tim->func[i].avtl = tim->avtl + tim->avtl[i];	
+		tim->func[i].avtl = tim->avtl + tim->avtl[i];
 
 	strncpy(tim->filename, filename, 13);
 
@@ -328,7 +328,7 @@ void TIMInterpreter::setupTextPalette(uint index, int fadePalette) {
 		palette[1] = c2;
 		palette[2] = c3;
 	}
-	
+
 	if (!fadePalette && !_palDiff) {
 		_screen->setScreenPalette(_screen->getPalette(0));
 	} else {
@@ -347,14 +347,14 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 
 	char file[32];
 	snprintf(file, 32, "%s.WSA", filename);
-	
+
 	if (_vm->resource()->exists(file)) {
 		anim->wsa = new WSAMovie_v2(_vm, _screen);
 		assert(anim->wsa);
 
 		anim->wsa->open(file, wsaOpenFlags, (index == 1) ? _screen->getPalette(0) : 0);
 	}
-	
+
 	if (anim->wsa && anim->wsa->opened()) {
 		if (x == -1)
 			anim->x = x = 0;
@@ -382,7 +382,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 			anim->wsa->setY(y);
 			anim->wsa->setDrawPage(0);
 			anim->wsa->displayFrame(0, 0, 0, 0);
-		} 
+		}
 
 		if (wsaFlags & 2)
 			_screen->fadePalette(_screen->getPalette(0), 30, 0);
@@ -406,7 +406,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 		if (wsaFlags & 2)
 			_screen->fadePalette(_screen->getPalette(0), 30, 0);
 	}
-	
+
 	return anim;
 }
 
@@ -460,13 +460,13 @@ int TIMInterpreter::cmd_initWSA(const uint16 *param) {
 	const int index = param[0];
 
 	TIM::WSASlot &slot = _currentTim->wsa[index];
-	
+
 	slot.x = int16(param[2]);
 	slot.y = int16(param[3]);
 	slot.offscreen = param[4];
 	slot.wsaFlags = param[5];
 	const char *filename = (const char *)(_currentTim->text + READ_LE_UINT16(_currentTim->text + (param[1]<<1)));
-	
+
 	slot.anim = initAnimStruct(index, filename, slot.x, slot.y, 10, slot.offscreen, slot.wsaFlags);
 	return 1;
 }
@@ -475,12 +475,12 @@ int TIMInterpreter::cmd_uninitWSA(const uint16 *param) {
 	const int index = param[0];
 
 	TIM::WSASlot &slot = _currentTim->wsa[index];
-	
+
 	if (!slot.anim)
 		return 0;
-	
+
 	Animation &anim = _animations[index];
-	
+
 	if (slot.offscreen) {
 		delete anim.wsa;
 		anim.wsa = 0;
@@ -492,7 +492,7 @@ int TIMInterpreter::cmd_uninitWSA(const uint16 *param) {
 		memset(&anim, 0, sizeof(Animation));
 		memset(&slot, 0, sizeof(TIM::WSASlot));
 	}
-	
+
 	return 1;
 }
 
@@ -516,7 +516,7 @@ int TIMInterpreter::cmd_stopFunc(const uint16 *param) {
 int TIMInterpreter::cmd_wsaDisplayFrame(const uint16 *param) {
 	Animation &anim = _animations[param[0]];
 	const int frame = param[1];
-	
+
 	anim.wsa->setX(anim.x);
 	anim.wsa->setY(anim.y);
 	anim.wsa->setDrawPage((anim.wsaCopyParams & 0x4000) != 0 ? 2 : 8);
@@ -553,7 +553,7 @@ int TIMInterpreter::cmd_playVocFile(const uint16 *param) {
 		_vm->sound()->voicePlay(_vocFiles[index].c_str()/*, volume*/, true);
 	else
 		_vm->snd_playSoundEffect(index, volume);
-	
+
 	return 1;
 }
 
@@ -579,7 +579,7 @@ int TIMInterpreter::cmd_setLoopIp(const uint16 *param) {
 
 int TIMInterpreter::cmd_continueLoop(const uint16 *param) {
 	TIM::Function &func = _currentTim->func[_currentFunc];
-	
+
 	if (!func.loopIp)
 		return -2;
 
@@ -591,7 +591,7 @@ int TIMInterpreter::cmd_continueLoop(const uint16 *param) {
 		uint32 waitTime = (random * factor) / 0x8000;
 		func.nextTime += waitTime * _vm->tickLength();
 	}
-	
+
 	return 1;
 }
 

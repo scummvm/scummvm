@@ -180,7 +180,7 @@ void Render::drawScene() {
 		textPoint.x = (_vm->_gfx->getBackBufferWidth() - _vm->_font->getStringWidth(kKnownFontPause, pauseString, 0, kFontOutline)) / 2;
 		textPoint.y = 90;
 
-		_vm->_font->textDraw(kKnownFontPause, pauseString, textPoint, 
+		_vm->_font->textDraw(kKnownFontPause, pauseString, textPoint,
 							_vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
 	}
 

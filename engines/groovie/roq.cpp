@@ -225,7 +225,7 @@ bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
 				// Upsample the 4x4 pixel block
 				break;
 			}
-			case 3: // CCC: 
+			case 3: // CCC:
 				//printf("coding type 3:\n");
 				processBlockQuadVectorSub(blockHeader);
 				break;

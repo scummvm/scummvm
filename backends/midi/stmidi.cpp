@@ -17,9 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/*  
+/*
  * Raw MIDI output for the Atari ST line of computers.
- * Based on the ScummVM SEQ & CoreMIDI drivers.  
+ * Based on the ScummVM SEQ & CoreMIDI drivers.
  * Atari code by Keith Scroggins
  * We, unfortunately, could not use the SEQ driver because the /dev/midi under
  * FreeMiNT (and hence in libc) is considered to be a serial port for machine

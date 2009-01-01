@@ -320,7 +320,7 @@ void KyraEngine_HoF::scrollInventoryWheel() {
 
 int KyraEngine_HoF::bookButton(Button *button) {
 	if (!queryGameFlag(1)) {
-		objectChat(getTableString(0xEB, _cCodeBuffer, 1), 0, 0x83, 0xEB); 
+		objectChat(getTableString(0xEB, _cCodeBuffer, 1), 0, 0x83, 0xEB);
 		return 0;
 	}
 
@@ -418,7 +418,7 @@ void KyraEngine_HoF::loadBookBkgd() {
 		strcpy(filename, (_bookBkgd == 0) ? "_BOOKD.CPS" : "_BOOKC.CPS");
 
 	_bookBkgd ^= 1;
-	
+
 	if (_flags.isTalkie) {
 		if (!_bookCurPage)
 			strcpy(filename, "_XBOOKB.CPS");
@@ -475,7 +475,7 @@ void KyraEngine_HoF::showBookPage() {
 			rightPage = _res->fileData(filename, 0);
 		}
 	}
-	
+
 	int rightPageY = _bookPageYOffset[_bookCurPage+1];
 
 	_screen->hideMouse();
@@ -508,7 +508,7 @@ void KyraEngine_HoF::bookLoop() {
 	bookButtons[4].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::bookNextPage);
 
 	Button *buttonList = 0;
-	
+
 	for (uint i = 0; i < ARRAYSIZE(bookButtons); ++i)
 		buttonList = _gui->addButtonToList(buttonList, &bookButtons[i]);
 
@@ -539,7 +539,7 @@ void KyraEngine_HoF::bookDecodeText(uint8 *str) {
 	while (*op != 0x1A) {
 		while (*op != 0x1A && *op != 0x0D)
 			*dst++ = *op++;
-		
+
 		if (*op == 0x1A)
 			break;
 
@@ -619,7 +619,7 @@ int KyraEngine_HoF::cauldronButton(Button *button) {
 		return 0;
 
 	if (queryGameFlag(0xE4)) {
-		snd_playSoundEffect(0x0D);	
+		snd_playSoundEffect(0x0D);
 		return 0;
 	}
 
@@ -724,7 +724,7 @@ int GUI_HoF::optionsButton(Button *button) {
 	initMenuLayout(_saveMenu);
 	initMenuLayout(_savenameMenu);
 	initMenuLayout(_deathMenu);
-	
+
 	_currentMenu = &_mainMenu;
 
 	if (_vm->_menuDirectlyToLoad) {
@@ -732,7 +732,7 @@ int GUI_HoF::optionsButton(Button *button) {
 		setupPalette();
 
 		_loadedSave = false;
-		
+
 		loadMenu(0);
 
 		if (_loadedSave) {
@@ -1004,7 +1004,7 @@ int GUI_HoF::gameOptionsTalkie(Button *caller) {
 
 	if (_vm->_lang != lang) {
 		_reloadTemporarySave = true;
-	
+
 		Graphics::Surface thumb;
 		createScreenThumbnail(thumb);
 		_vm->saveGameState(999, "Autosave", &thumb);
@@ -1053,7 +1053,7 @@ void GUI_HoF::setupOptionsButtons() {
 	case 0:
 		_gameOptions.item[1].itemId = 31;
 		break;
-	
+
 	case 1:
 		_gameOptions.item[1].itemId = 32;
 		break;
@@ -1079,7 +1079,7 @@ int GUI_HoF::sliderHandler(Button *caller) {
 	assert(button >= 0 && button <= 3);
 
 	int oldVolume = 0;
-	
+
 	if (_vm->gameFlags().isTalkie) {
 		oldVolume = _vm->getVolume(KyraEngine_v1::kVolumeEntry(button));
 	} else {
@@ -1151,7 +1151,7 @@ int GUI_HoF::sliderHandler(Button *caller) {
 			_vm->_configTextspeed = newVolume;
 		}
 	}
-	
+
 	drawSliderBar(button, _vm->_buttonShapes[17]);
 	if (playSoundEffect)
 		_vm->snd_playSoundEffect(0x18);

@@ -4,7 +4,7 @@
 //
 // The QtGui displays a simple progress bar using the Qt Toolkit.  It
 // has been tested with versions 2.x and 3.x.
-// 
+//
 // Apart from normal Qt command-line arguments, it accepts the following options:
 //   -minimized    Start minimized, pop up on error
 //   -keep         Don't close the window at the end
@@ -63,7 +63,7 @@ namespace CxxTest
             getTotalTests();
             processEvents();
         }
-        
+
         void redBar()
         {
             if ( _startMinimized && _mainWindow->isMinimized() )
@@ -100,7 +100,7 @@ namespace CxxTest
         {
             _startMinimized = _keep = false;
             _title = argv[0];
-            
+
             for ( int i = 1; i < argc; ++ i ) {
                 QString arg( argv[i] );
                 if ( arg == "-minimized" )
@@ -115,11 +115,11 @@ namespace CxxTest
         void createApplication( int &argc, char **argv )
         {
             _application = new QApplication( argc, argv );
-        }       
-        
+        }
+
         void createWindow( const WorldDescription &wd )
         {
-            getTotalTests( wd );            
+            getTotalTests( wd );
             createMainWindow();
             createProgressBar();
             createStatusBar();
@@ -236,7 +236,7 @@ namespace CxxTest
             QWidget *desktop = QApplication::desktop();
             int xCenter = desktop->x() + (desktop->width() / 2);
             int yCenter = desktop->y() + (desktop->height() / 2);
-            
+
             int windowWidth = (desktop->width() * 4) / 5;
             int windowHeight = _mainWindow->height();
             _mainWindow->setGeometry( xCenter - (windowWidth / 2), yCenter - (windowHeight / 2), windowWidth, windowHeight );

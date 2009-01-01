@@ -128,7 +128,7 @@ protected:
 	virtual void restorePalette() {}
 
 	virtual char *getTableString(int id) = 0;
-	
+
 	virtual uint8 textFieldColor1() const = 0;
 	virtual uint8 textFieldColor2() const = 0;
 	virtual uint8 textFieldColor3() const = 0;

@@ -257,7 +257,7 @@ ObjectTableData ITE_ObjectTable[ITE_OBJECTCOUNT] = {
 	{ 40, 269,  644,  416,  0, 41, 39, kObjNotFlat }, // Electrical Cable
 	{ 41,  12,  280,  516,  0, 43, 17, kObjUseWith }, // Piece of flint
 	{ 42,   5,  876,  332, 32, 65, 18, 0           }, // Rat Cloak
-	{ 43,  52,  556, 1612,  0, 49, 28, kObjUseWith | 
+	{ 43,  52,  556, 1612,  0, 49, 28, kObjUseWith |
 									   kObjNotFlat }, // Bucket
 	{ 48,  52,  732,  948,  0, 50, 27, kObjUseWith }, // Cup
 	{ 49,  52,  520, 1872,  0, 53, 29, 0           }, // Fertilizer

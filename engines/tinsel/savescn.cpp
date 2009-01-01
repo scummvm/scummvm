@@ -226,7 +226,7 @@ static void SortMAProcess(CORO_PARAM, const void *) {
 				HideMover(GetMover(rsd->SavedMoverInfo[_ctx->i].actorID));
 		}
 
-		ActorPalette(rsd->SavedMoverInfo[_ctx->i].actorID, 
+		ActorPalette(rsd->SavedMoverInfo[_ctx->i].actorID,
 			rsd->SavedMoverInfo[_ctx->i].startColour, rsd->SavedMoverInfo[_ctx->i].paletteLength);
 
 		if (rsd->SavedMoverInfo[_ctx->i].brightness != BOGUS_BRIGHTNESS)
@@ -237,7 +237,7 @@ static void SortMAProcess(CORO_PARAM, const void *) {
 	SetSysVar(ISV_DIVERT_ACTOR, _ctx->viaActor);
 
 	bNotDoneYet = false;
-	
+
 	CORO_END_CODE;
 }
 
@@ -311,7 +311,7 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 	case RS_COUNT:
 		_vm->_sound->stopAllSamples();
 		ClearScreen();
-		
+
 		// Master script only affected on restore game, not restore scene
 		if (TinselV2 && (sd == &sgData)) {
 			g_scheduler->killMatchingProcess(PID_MASTER_SCR);
@@ -350,7 +350,7 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 			PlayfieldSetPos(FIELD_WORLD, sd->SavedLoffset, sd->SavedToffset);
 			SetNoBlocking(sd->SavedNoBlocking);
 		}
-		
+
 		RestoreNoScrollData(&sd->SavedNoScrollData);
 
 		if (TinselV2) {
@@ -422,7 +422,7 @@ void SaveGame(char *name, char *desc) {
 	DoSaveScene(&sgData);
 
 	RequestSaveGame(name, desc, &sgData, &savedSceneCount, ssData);
-	
+
 	// Actual saving is performed by ProcessSRQueue
 }
 

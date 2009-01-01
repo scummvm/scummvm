@@ -127,7 +127,7 @@ bool Imd::load(Common::SeekableReadStream &stream) {
 			return false;
 		}
 
-		_soundSliceLength = (uint32) (((double) (1000 << 16)) / 
+		_soundSliceLength = (uint32) (((double) (1000 << 16)) /
 				((double) _soundFreq / (double) _soundSliceSize));
 		_frameLength = _soundSliceLength >> 16;
 
@@ -1027,7 +1027,7 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 			_soundSliceSize = -_soundSliceSize;
 		}
 
-		_soundSliceLength = (uint32) (((double) (1000 << 16)) / 
+		_soundSliceLength = (uint32) (((double) (1000 << 16)) /
 				((double) _soundFreq / (double) _soundSliceSize));
 		_frameLength = _soundSliceLength >> 16;
 
@@ -1116,7 +1116,7 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 
 				if ((((uint32) data.realSize) >= ssize) || (data.name[0] == 0))
 					continue;
-					
+
 				_extraData.push_back(data);
 
 			} else

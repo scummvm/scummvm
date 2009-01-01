@@ -161,7 +161,7 @@ void Game_v6::prepareStart(void) {
 	if (Common::File::exists("cd1.itk") && Common::File::exists("cd2.itk") &&
 	    Common::File::exists("cd3.itk") && Common::File::exists("cd4.itk")) {
 		_noCd = true;
-	}	
+	}
 
 	Game_v2::prepareStart();
 }
@@ -344,7 +344,7 @@ int16 Game_v6::checkCollisions(byte handleMouse, int16 deltaTime, int16 *pResId,
 				_lastCollKey = checkMousePoint(1, &_lastCollId, &_lastCollAreaIndex);
 				if ((_lastCollKey != 0) && (_lastCollId & 0x8000))
 					collAreaSub(_lastCollAreaIndex, 1);
-			} else 
+			} else
 				sub_1BA78();
 		}
 
@@ -356,7 +356,7 @@ int16 Game_v6::checkCollisions(byte handleMouse, int16 deltaTime, int16 *pResId,
 				*pResIndex = 0;
 
 			return 0;
-			
+
 		} else if (handleMouse != 0)
 			_vm->_draw->animateCursor(-1);
 

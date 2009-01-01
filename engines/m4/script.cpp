@@ -59,9 +59,9 @@ enum OpcodeType {
 	opXor,
 	opShl,
 	opShr,
-	
+
 	opDebug,
-	
+
 	opInvalid
 };
 
@@ -262,7 +262,7 @@ void ScriptInterpreter::open(const char *filename) {
 		}
 		_functions.push_back(new ScriptFunctionEntry(offset));
 	}
-	
+
 	int dataCount = _scriptFile->readUint32LE();
 	printf("dataCount = %d\n", dataCount);
 	for (int i = 0; i < dataCount; i++) {
@@ -304,7 +304,7 @@ void ScriptInterpreter::initScriptKernel() {
 
 	_kernelFunctions = kernelFunctions;
 	_kernelFunctionsMax = ARRAYSIZE(kernelFunctions) + 1;
-	
+
 	_kernelVars = kernelVars;
 	_kernelVarsMax = ARRAYSIZE(kernelVars) + 1;
 
@@ -360,7 +360,7 @@ int ScriptInterpreter::runFunction(ScriptFunction *scriptFunction) {
 		done = !execOpcode(opcode);
 		fflush(stdout);
 	}
-	
+
 	_localStackPtr = oldLocalStackPtr;
 	_runningFunction = oldRunningFunction;
 
@@ -425,11 +425,11 @@ const char *ScriptInterpreter::toString(const ScriptValue &value) {
 
 	case kConstString:
 		return _constStrings[value.value];
-	
+
 	default:
 		printf("ScriptInterpreter::toString() Invalid type %d!\n", value.type);
 		return NULL;
-	
+
 	}
 
 }
@@ -487,7 +487,7 @@ void ScriptInterpreter::copyValue(ScriptValue &destValue, ScriptValue &sourceVal
 	case kRegister:
 		_registers[destValue.value] = sourceValue;
 		break;
-	
+
 	case kLogicVar:
 		// TODO: Move to own method
 		if (sourceValue.type == kInteger) {
@@ -546,7 +546,7 @@ void ScriptInterpreter::derefValue(ScriptValue &value) {
 void ScriptInterpreter::callKernelFunction(uint32 index) {
 
 	printf("ScriptInterpreter::callKernelFunction() index = %d\n", index);
-	
+
 	if (index > _kernelFunctionsMax) {
 		printf("ScriptInterpreter::callKernelFunction() Invalid kernel functionindex (%d)\n", index);
 		return;
@@ -558,7 +558,7 @@ void ScriptInterpreter::callKernelFunction(uint32 index) {
 	// Now remove values from the stack if the function used any
  	if (args > 4)
 		_stackPtr -= args - 4;
-	
+
 	printf("-------------\n");
 
 }
@@ -656,7 +656,7 @@ bool ScriptInterpreter::execOpcode(byte opcode) {
 		printf("-> ofs = %08X\n", temp);
 		_runningFunction->jumpAbsolute(temp);
 		return true;
-	
+
 	case opJl:
 		temp = _runningFunction->readUint32();
 		if (_cmpFlags < 0) {
@@ -779,7 +779,7 @@ bool ScriptInterpreter::execOpcode(byte opcode) {
 	default:
 		printf("Invalid opcode %d!\n", opcode);
 		return false;
-		
+
 	}
 
 	return false;
@@ -947,13 +947,13 @@ int ScriptInterpreter::o1_playSound() {
 	int room = INTEGER(4);
 	printf("name = %s; channel = %d; volume = %d; trigger = %d; room = %d\n",
 		name, channel, volume, trigger, room);
-		
+
 	Common::String soundName = Common::String(name) + ".raw";
 	_vm->_sound->playVoice(soundName.c_str(), 100);
-	
+
 	// HACK until fixed
 	_vm->_kernel->sendTrigger(trigger);
-		
+
 	return 5;
 }
 
@@ -994,10 +994,10 @@ int ScriptInterpreter::o1_fadeInit() {
 	int trigger = INTEGER(5);
 	printf("first = %d; last = %d; percent = %d; ticks = %d; trigger = %d\n",
 		first, last, percent, ticks, trigger);
-		
+
 	// HACK until palette fading is implemented
 	_vm->_kernel->sendTrigger(trigger);
-		
+
 	return 6;
 }
 
@@ -1029,12 +1029,12 @@ int ScriptInterpreter::o1_hasPlayerSaid() {
 	for (int i = 0; i < 3; i++)
 		words[i] = STRING(i);
 	printf("'%s', '%s', '%s'\n", words[0], words[1], words[2]);
-	
+
 	int result = _vm->_player->said(words[0], words[1], words[2]);
 
 	printf("   -> '%d'\n", result);
 	fflush(stdout);
-	
+
 	RETURN(result);
 	return 3;
 }
@@ -1046,7 +1046,7 @@ int ScriptInterpreter::o1_hasPlayerSaidAny() {
 
 	printf("'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'\n",
 		words[0], words[1], words[2], words[3], words[4], words[5], words[6], words[7], words[8], words[9]);
-		
+
 	int result = _vm->_player->saidAny(words[0], words[1], words[2], words[3], words[4], words[5], words[6], words[7], words[8], words[9]);
 	printf("   -> '%d'\n", result);
 	fflush(stdout);
@@ -1097,9 +1097,9 @@ int ScriptInterpreter::o1_setHotspot() {
 	const char *name = STRING(1);
 	int value = INTEGER(2);
 	printf("name = '%s' -> %d\n", name, value);
-	
+
 	_vm->_scene->getSceneResources().hotspots->setActive(name, (value != 0));
-	
+
 	return 2;
 }
 
@@ -1110,7 +1110,7 @@ int ScriptInterpreter::o1_loadConversation() {
 
 	// TODO; just to show something
 	_vm->_converse->startConversation(name);
-	
+
 	return 3;
 }
 
@@ -1126,7 +1126,7 @@ int ScriptInterpreter::o1_playSeries() {
 	int y = INTEGER(8);
 	int firstFrame = INTEGER(9);
 	int lastFrame = INTEGER(10);
-	
+
 	printf("name = %s; layer = %04X; flags = %08X; trigger = %d; frameRate = %d; loopCount = %d; scale = %d; x = %d; y = %d: firstFrame = %d; lastFrame = %d\n",
 		name, layer, flags, trigger, frameRate, loopCount, scale, x, y, firstFrame, lastFrame);
 		fflush(stdout);
@@ -1165,9 +1165,9 @@ int ScriptInterpreter::o1_loadSeries() {
 
 	printf("name = %s; hash = %d\n", name, hash);
 	fflush(stdout);
-	
+
 	int result = _vm->_ws->loadSeries(name, hash, NULL);
-	
+
 	RETURN(result);
 	return 3;
 }
@@ -1210,10 +1210,10 @@ int ScriptInterpreter::o1_triggerTimerProc() {
 int ScriptInterpreter::o1_dispatchTrigger() {
 	int trigger = INTEGER(0);
 	printf("trigger = %d\n", trigger);
-	
+
 	_vm->_kernel->sendTrigger(trigger);
 	//g_system->delayMillis(5000);
-	
+
 	return 1;
 }
 
@@ -1226,11 +1226,11 @@ int ScriptInterpreter::o1_getRangedRandomValue() {
 
 int ScriptInterpreter::o1_wilburSaid() {
 	const SaidArray& saidArray = DATA(0, SaidArray);
-	
+
 	int result = 0;
 
 	// NOTE: The "Common::String soundName" stuff is just temporary until playVoice is fixed.
-	
+
 	for (int i = 0; i < saidArray.size(); i++) {
 		SaidArrayItem *item = saidArray[i];
 
@@ -1265,7 +1265,7 @@ int ScriptInterpreter::o1_wilburSaid() {
 	}
 	printf("   -> '%d'\n", result);
 	fflush(stdout);
-	
+
 	RETURN(result);
 	return 1;
 }
@@ -1287,13 +1287,13 @@ int ScriptInterpreter::o1_wilburSpeech() {
 	printf("%s; %d; %d; %d; %d; %d\n", name, trigger, room, flag, volume, slot);
 	fflush(stdout);
 	//g_system->delayMillis(5000);
-	
+
 	KernelTriggerType oldTriggerMode = _vm->_kernel->triggerMode;
 
 	// TODO
 	Common::String soundName = Common::String(name) + ".raw";
 	_vm->_sound->playVoice(soundName.c_str(), 100);
-	
+
 	_vm->_kernel->triggerMode = oldTriggerMode;
 
 	return 6;
@@ -1346,7 +1346,7 @@ void ScriptInterpreter::getKernelVar(int index, ScriptValue &value) {
 	case kPlayerCommandReady:
 		value = (int)_vm->_player->commandReady;
 		break;
-		
+
 	default:
 		printf("ScriptInterpreter::getKernelVar() Invalid kernel var %d!\n", var);
 		//g_system->delayMillis(2000);
@@ -1358,14 +1358,14 @@ void ScriptInterpreter::getKernelVar(int index, ScriptValue &value) {
 void ScriptInterpreter::setKernelVar(int index, const ScriptValue &value) {
 
 	printf("ScriptInterpreter::setKernelVar() index = %d\n", index);
-	
+
 	if (index > _kernelVarsMax) {
 		printf("ScriptInterpreter::setKernelVar() Invalid kernel var index %d!\n", index);
 		return;
 	}
 
 	printf("ScriptInterpreter::setKernelVar() name = %s\n", _kernelVars[index].desc);
-	
+
 	ScriptKernelVariable var = _kernelVars[index].var;
 
 	switch (var) {
@@ -1374,7 +1374,7 @@ void ScriptInterpreter::setKernelVar(int index, const ScriptValue &value) {
 		_vm->_kernel->trigger = toInteger(value);
 		printf("kKernelTrigger -> %d\n", toInteger(value));
 		break;
-		
+
 	case kKernelTriggerMode:
 		_vm->_kernel->triggerMode = (KernelTriggerType)toInteger(value);
 		printf("kKernelTrigger -> %d\n", toInteger(value));
@@ -1389,7 +1389,7 @@ void ScriptInterpreter::setKernelVar(int index, const ScriptValue &value) {
 		_vm->_kernel->newRoom = toInteger(value);
 		printf("kGameNewRoom -> %d\n", toInteger(value));
 		break;
-		
+
 	case kPlayerCommandReady:
 		// TODO
 		printf("kPlayerCommandReady -> %d\n", toInteger(value));

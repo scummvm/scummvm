@@ -54,7 +54,7 @@ static const PlainGameDescriptor groovieGames[] = {
 static const GroovieGameDescription gameDescriptions[] = {
 
 	// The 7th Guest DOS English
-	{ 
+	{
 		{
 			"t7g", "",
 			AD_ENTRY1s("script.grv", "d1b8033b40aa67c076039881eccce90d", 16659),
@@ -74,7 +74,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	},
 
 	// The 7th Guest DOS Russian (Akella)
-	{ 
+	{
 		{
 			"t7g", "",
 			{
@@ -89,7 +89,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 
 #ifdef GROOVIE_EXPERIMENTAL
 	// The 11th Hour DOS English
-	{ 
+	{
 		{
 			"11h", "",
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
@@ -97,7 +97,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		},
 		kGroovieV2, 1
 	},
-	
+
 	// The 11th Hour DOS Demo English
 	{
 		{
@@ -109,7 +109,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	},
 
 	// The Making of The 11th Hour DOS English
-	{ 
+	{
 		{
 			"making11h", "",
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
@@ -119,7 +119,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	},
 
 	// Clandestiny Trailer DOS English
-	{ 
+	{
 		{
 			"clantrailer", "",
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
@@ -129,7 +129,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	},
 
 	// Clandestiny DOS English
-	{ 
+	{
 		{
 			"clandestiny", "",
 			AD_ENTRY1s("disk.1", "f79fc1515174540fef6a34132efc4c53", 76),
@@ -139,7 +139,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	},
 
 	// Uncle Henry's Playhouse PC English
-	{ 
+	{
 		{
 			"unclehenry", "",
 			AD_ENTRY1s("disk.1", "0e1b1d3cecc4fc7efa62a968844d1f7a", 72),
@@ -149,7 +149,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	},
 
 	// Tender Loving Care PC English
-	{ 
+	{
 		{
 			"tlc", "",
 			AD_ENTRY1s("disk.1", "32a1afa68478f1f9d2b25eeea427f2e3", 84),

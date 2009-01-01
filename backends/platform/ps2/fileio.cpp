@@ -355,7 +355,7 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 			file = new Ps2McWriteFile((Ps2SaveFileManager *)g_systemPs2->getSavefileManager());
 		if (file->open(fname + 4)) // + 4 to skip "mc0:"
 			return (FILE *)file;
-		
+
 		delete file;
 		return NULL;
 	} else {

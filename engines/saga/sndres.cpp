@@ -193,7 +193,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 		char soundFileName[40];
 		int dirIndex = resourceId / 64;
-	
+
 		if ((context->fileType & GAME_VOICEFILE) != 0) {
 			if (_voiceSerial == 0) {
 				sprintf(soundFileName, "Voices/VoicesS/Voices%d/VoicesS%03x", dirIndex, resourceId);
@@ -203,7 +203,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		} else {
 			sprintf(soundFileName, "SFX/SFX%d/SFX%03x", dirIndex, resourceId);
 		}
-		
+
 		file = new Common::File();
 
 		file->open(soundFileName);
@@ -212,7 +212,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 		ResourceData* resourceData = context->getResourceData(resourceId);
 		file = context->getFile(resourceData);
-	
+
 		file->seek(resourceData->offset);
 		soundResourceLength = resourceData->size;
 

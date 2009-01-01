@@ -107,7 +107,7 @@ int JustifyText(char *szStr, int xPos, const FONT *pFont, int mode) {
  * @param mode			Mode flags for the string
  * @param sleepTime		Sleep time between each character (if non-zero)
  */
-OBJECT *ObjectTextOut(CORO_PARAM, OBJECT *pList, char *szStr, int colour, 
+OBJECT *ObjectTextOut(CORO_PARAM, OBJECT *pList, char *szStr, int colour,
 					  int xPos, int yPos, SCNHANDLE hFont, int mode, int sleepTime) {
 	int xJustify;	// x position of text after justification
 	int yOffset;	// offset to next line of text
@@ -153,7 +153,7 @@ OBJECT *ObjectTextOut(CORO_PARAM, OBJECT *pList, char *szStr, int colour,
 			} else {	// printable character
 
 				int aniX, aniY;		// char image animation offsets
-				
+
 				OBJ_INIT oi;
 				oi.hObjImg  = FROM_LE_32(pFont->fontInit.hObjImg);
 				oi.objFlags = FROM_LE_32(pFont->fontInit.objFlags);
@@ -265,7 +265,7 @@ OBJECT *ObjectTextOut(CORO_PARAM, OBJECT *pList, char *szStr, int colour,
  */
 bool IsCharImage(SCNHANDLE hFont, char c) {
 	byte c2 = (byte)c;
-	
+
 	// Inventory save game name editor needs to be more clever for
 	// multi-byte characters. This bodge will stop it erring.
 	if (bMultiByte && (c2 & 0x80))

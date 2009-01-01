@@ -97,7 +97,7 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_itemAnimData = 0;
 	_demoAnimData = 0;
 	_nextAnimItem = 0;
-	
+
 	for (int i = 0; i < 15; i++)
 		memset(&_activeItemAnim[i], 0, sizeof(ActiveItemAnim));
 
@@ -212,7 +212,7 @@ void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 		}
 
 		_nextIdleAnim += pausedTime;
-		
+
 		for (int x = 0; x < _itemAnimDataSize; x++)
 			_activeItemAnim[x].nextFrame += pausedTime;
 
@@ -270,7 +270,7 @@ Common::Error KyraEngine_HoF::init() {
 
 	for (int i = 0; i < 2; i++)
 		addShapeToPool(shapes, i, i);
-	
+
 	delete[] shapes;
 
 	_screen->setMouseCursor(0, 0, getShapePtr(0));
@@ -284,7 +284,7 @@ Common::Error KyraEngine_HoF::go() {
 
 		if (_flags.isDemo && !_flags.isTalkie) {
 			if (_flags.gameID == GI_LOL)
-				seq_playSequences(kSequenceLolDemoScene1, kSequenceLolDemoScene6);	
+				seq_playSequences(kSequenceLolDemoScene1, kSequenceLolDemoScene6);
 			else
 				seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);
 			_menuChoice = 4;
@@ -322,7 +322,7 @@ Common::Error KyraEngine_HoF::go() {
 		if (!shouldQuit())
 			runLoop();
 		cleanup();
-		
+
 		if (_showOutro)
 			seq_playSequences(kSequenceFunters, kSequenceFrash);
 	}
@@ -1202,7 +1202,7 @@ int KyraEngine_HoF::inputSceneChange(int x, int y, int unk1, int unk2) {
 	int vocH = _flags.isTalkie ? 131 : -1;
 
 	if (_pathfinderFlag) {
-		if (findItem(curScene, 13) >= 0 && _unk3 <= -3) {			
+		if (findItem(curScene, 13) >= 0 && _unk3 <= -3) {
 			strId = 252;
 		} else if (_itemInHand == 72) {
 			strId = 257;
@@ -1539,7 +1539,7 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 
 		// TODO ?? Maybe there is a way to let users select whether they want
 		// voc, midi or adl sfx (even though it makes no sense to choose anything but voc).
-		// The PC-98 version has support for non-pcm sound effects, but only for tracks 
+		// The PC-98 version has support for non-pcm sound effects, but only for tracks
 		// which also have voc files. The syntax would be:
 		// KyraEngine_v1::snd_playSoundEffect(vocIndex);
 	}
@@ -1748,7 +1748,7 @@ void KyraEngine_HoF::cauldronItemAnim(int item) {
 		}
 
 		snd_playSoundEffect(0x17);
-		
+
 		for (int i = 16; i > 0; i -= 2, curY += 2) {
 			_screen->setNewShapeHeight(shape, i);
 			restoreGfxRect32x32(x, y);
@@ -1992,7 +1992,7 @@ void KyraEngine_HoF::writeSettings() {
 	case 3:
 		_flags.lang = Common::JA_JPN;
 		break;
-	
+
 	case 0:
 	default:
 		_flags.lang = Common::EN_ANY;

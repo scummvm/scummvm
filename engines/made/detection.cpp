@@ -244,7 +244,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		0,
 	},
-	
+
 	{
 		// The Manhole: New and Enhanced
 		{

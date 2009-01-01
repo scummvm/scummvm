@@ -3,12 +3,12 @@
 
 #include <cxxtest/ValueTraits.h>
 
-namespace CxxTest 
+namespace CxxTest
 {
     //
     // Non-inline functions from ValueTraits.h
     //
-    
+
     char digitToChar( unsigned digit )
     {
         if ( digit < 10 )
@@ -26,7 +26,7 @@ namespace CxxTest
         asHex[2] = '\0';
         return asHex;
     }
-    
+
     char *copyString( char *dst, const char *src )
     {
         while ( (*dst = *src) != '\0' ) {
@@ -78,13 +78,13 @@ namespace CxxTest
     {
         return charToString( (unsigned long)(unsigned char)c, s );
     }
-    
+
     char *bytesToString( const unsigned char *bytes, unsigned numBytes, unsigned maxBytes, char *s )
     {
         bool truncate = (numBytes > maxBytes);
         if ( truncate )
             numBytes = maxBytes;
-        
+
         s = copyString( s, "{ " );
         for ( unsigned i = 0; i < numBytes; ++ i, ++ bytes )
             s = copyString( copyString( s, byteToHex( *bytes ) ), " " );
@@ -120,7 +120,7 @@ namespace CxxTest
         s = copyString( s, "E" );
         s = numberToString( requiredDigitsOnLeft( t ) - 1, s );
     }
-        
+
     void ValueTraits<const double>::normalNumber( double t )
     {
         char *s = doNegative( t );

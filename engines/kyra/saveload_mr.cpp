@@ -184,7 +184,7 @@ Common::Error KyraEngine_MR::loadGameState(int slot) {
 
 	for (int i = 0; i < 30; ++i)
 		in.read(_conversationState[i], 30);
-	
+
 	if (!header.originalSave) {
 		in.read(_newSceneDlgState, 40);
 	} else {
@@ -309,7 +309,7 @@ Common::Error KyraEngine_MR::loadGameState(int slot) {
 	_badConsciencePosition = false;
 	_goodConscienceShown = false;
 	_goodConsciencePosition = false;
-	
+
 	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 	setHandItem(_itemInHand);
 

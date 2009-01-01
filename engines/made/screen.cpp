@@ -70,10 +70,10 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_clip = 0;
 	_exclude = 0;
 	_mask = 0;
-	
+
 	_visualEffectNum = 0;
 	_fx = new ScreenEffects(this);
-	
+
 	_textX = 0;
 	_textY = 0;
 	_textColor = 0;
@@ -138,7 +138,7 @@ void Screen::setExcludeArea(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 		_excludeClipArea[3].clipRect = Common::Rect(x2, y1, 320, y2);
 		_excludeClipAreaEnabled[3] = true;
 	}
-	
+
 }
 
 void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo) {
@@ -148,7 +148,7 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 	int startY = 0;
 	int clipWidth = sourceSurface->w;
 	int clipHeight = sourceSurface->h;
-	
+
 	if (x < clipInfo.clipRect.left) {
 		startX = clipInfo.clipRect.left - x;
 		clipWidth -= startX;
@@ -280,17 +280,17 @@ void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask
 		_excludeClipArea[i].destSurface = clipInfo.destSurface;
 
 	_clipArea.destSurface = clipInfo.destSurface;
-	
+
 	for (uint16 i = 0; i < _channelsUsedCount; i++) {
-	
+
 		debug(2, "drawSpriteChannels() i = %d\n", i);
-	
+
 		if (((_channels[i].state & includeStateMask) == includeStateMask) && (_channels[i].state & excludeStateMask) == 0) {
 			int16 flipX = _channels[i].state & 0x10;
 			int16 flipY = _channels[i].state & 0x20;
-			
+
 			debug(2, "drawSpriteChannels() type = %d; index = %04X\n", _channels[i].type, _channels[i].index);
-			
+
 			switch (_channels[i].type) {
 
 			case 1: // drawFlex
@@ -306,7 +306,7 @@ void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask
 					drawFlex(_channels[i].index, _channels[i].x, _channels[i].y, flipX, flipY, _channels[i].mask, clipInfo);
 				}
 				break;
-				
+
 			case 2: // drawObjectText
 				printObjectText(_channels[i].index, _channels[i].x, _channels[i].y, _channels[i].fontNum, _channels[i].textColor, _channels[i].outlineColor, clipInfo);
 				break;
@@ -328,14 +328,14 @@ void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask
 			case 4: // drawMenuText
 				// Never used in any game
 				break;
-				
+
 			default:
 				break;
 
 			}
 
 		}
-	
+
 	}
 
 }
@@ -349,9 +349,9 @@ void Screen::updateSprites() {
 	drawSpriteChannels(_workScreenDrawCtx, 1, 2);
 
 	_vm->_system->copyRectToScreen((const byte*)_workScreen->pixels, _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
-	
+
 	_vm->_system->updateScreen();
-	
+
 }
 
 void Screen::clearChannels() {
@@ -432,30 +432,30 @@ uint16 Screen::placeSprite(uint16 channelIndex, uint16 flexIndex, int16 x, int16
 
 	if (channelIndex < 1 || channelIndex >= 100)
 		return 0;
-		
+
 	channelIndex--;
-		
+
 	PictureResource *flex = _vm->_res->getPicture(flexIndex);
-	
+
 	if (flex) {
 		Graphics::Surface *surf = flex->getPicture();
-	
+
 		int16 state = 1;
 		int16 x1, y1, x2, y2;
-		
+
 		x1 = x;
 		y1 = y;
 		x2 = x + surf->w + 1;
 		y2 = y + surf->h + 1;
 		//TODO: clipRect(x1, y1, x2, y2);
-		
+
 		if (_ground == 0)
 			state |= 2;
 		if (_clip != 0)
 			state |= 4;
 		if (_exclude != 0)
 			state |= 8;
-			
+
 		_channels[channelIndex].state = state;
 		_channels[channelIndex].type = 1;
 		_channels[channelIndex].index = flexIndex;
@@ -564,7 +564,7 @@ uint16 Screen::placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, i
 
 	int textWidth = _font->getTextWidth(text);
 	int textHeight = _font->getHeight();
-	
+
 	if (outlineColor != -1) {
 		textWidth += 2;
 		textHeight += 2;
@@ -582,9 +582,9 @@ uint16 Screen::placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, i
 		x++;
 		y++;
 	}
-	
+
 	int16 state = 1;
-	
+
 	if (_ground == 0)
 		state |= 2;
 
@@ -652,7 +652,7 @@ void Screen::printChar(uint c, int16 x, int16 y, byte color) {
 
 	uint width = 8, height = _font->getHeight();
 	byte *charData = _font->getChar(c);
-	
+
 	if (!charData)
 		return;
 
@@ -683,9 +683,9 @@ void Screen::printText(const char *text) {
 	int linePos = 1;
 	int16 x = _textX;
 	int16 y = _textY;
-	
+
 	for (int textPos = 0; textPos < textLen; textPos++) {
-	
+
 		uint c = ((const byte*)text)[textPos];
 		int charWidth = _font->getCharWidth(c);
 
@@ -714,17 +714,17 @@ void Screen::printText(const char *text) {
 				// TODO: text[textPos] = '\x01';
 			}
 		}
-		
+
 		if (x + charWidth > _textRect.right) {
 			linePos = 1;
 			x = _textRect.left;
 			y += textHeight;
 		}
-		
+
 		if (y + textHeight > _textRect.bottom) {
 			// TODO
 		}
-		
+
 		if (c >= 28 && c <= 255) {
 			if (_dropShadowColor != -1) {
 				printChar(c, x + 1, y + 1, _dropShadowColor);
@@ -743,7 +743,7 @@ void Screen::printText(const char *text) {
 			x += charWidth;
 			linePos++;
 		}
-	
+
 	}
 
 	_textX = x;
@@ -760,7 +760,7 @@ void Screen::printTextEx(const char *text, int16 x, int16 y, int16 fontNum, int1
 	ClipInfo oldFontDrawCtx = _fontDrawCtx;
 
 	_fontDrawCtx = clipInfo;
-	
+
 	getTextRect(oldTextRect);
 	setFont(fontNum);
 	setTextColor(textColor);
@@ -770,7 +770,7 @@ void Screen::printTextEx(const char *text, int16 x, int16 y, int16 fontNum, int1
 	setTextRect(oldTextRect);
 	setFont(oldFontNum);
 	_fontDrawCtx = oldFontDrawCtx;
-	
+
 }
 
 void Screen::printObjectText(int16 objectIndex, int16 x, int16 y, int16 fontNum, int16 textColor, int16 outlineColor, const ClipInfo &clipInfo) {
@@ -780,7 +780,7 @@ void Screen::printObjectText(int16 objectIndex, int16 x, int16 y, int16 fontNum,
 
 	Object *obj = _vm->_dat->getObject(objectIndex);
 	const char *text = obj->getString();
-	
+
 	printTextEx(text, x, y, fontNum, textColor, outlineColor, clipInfo);
 
 }

@@ -34,11 +34,11 @@ void DrasculaEngine::playTalkSequence(int sequence) {
 		if (_talkSequences[i].chapter == currentChapter &&
 			_talkSequences[i].sequence == sequence) {
 			seen = true;
-		
+
 			doTalkSequenceCommand(_talkSequences[i]);
 		} else if (seen) // Stop searching down the list
 			break;
-	}	
+	}
 }
 
 void DrasculaEngine::doTalkSequenceCommand(TalkSequenceCommand cmd) {
@@ -138,7 +138,7 @@ void DrasculaEngine::converse(int index) {
 		error("missing data file %s", fileName);
 
 	int size = _arj.size();
-	int game1 = kDialogOptionUnselected, 
+	int game1 = kDialogOptionUnselected,
 		game2 = kDialogOptionUnselected,
 		game3 = kDialogOptionUnselected;
 	char phrase1[78], phrase2[78], phrase3[78], phrase4[78];

@@ -150,7 +150,7 @@ enum MASTER_LIB_CODES {
 	CLOSEINVENTORY, CONTROL, CONVERSATION, CONVTOPIC, CURSOR, CURSORXPOS, CURSORYPOS,
 	CUTSCENE, DECCONVW, DECCSTRINGS, DECCURSOR, DECFLAGS, DECINV1, DECINV2, DECINVW,
 	DECLARELANGUAGE, DECLEAD, DECSCALE, DECTAGFONT, DECTALKFONT, DELICON,
-	DELINV, DELTOPIC, DIMMUSIC, DROP, DROPEVERYTHING, DROPOUT, EFFECTACTOR, ENABLEMENU, 
+	DELINV, DELTOPIC, DIMMUSIC, DROP, DROPEVERYTHING, DROPOUT, EFFECTACTOR, ENABLEMENU,
 	ENDACTOR, ESCAPE, ESCAPEOFF, ESCAPEON, EVENT, FACETAG, FADEIN, FADEMIDI,
 	FADEOUT, FRAMEGRAB, FREEZECURSOR, GETINVLIMIT, GHOST, GLOBALVAR, GRABMOVIE, HAILSCENE,
 	HASRESTARTED, HAVE, HELDOBJECT, HIDEACTOR, HIDEBLOCK, HIDEEFFECT, HIDEPATH,
@@ -164,8 +164,8 @@ enum MASTER_LIB_CODES {
 	RESUMELASTGAME, RUNMODE, SAMPLEPLAYING, SAVESCENE, SAY, SAYAT, SCALINGREELS,
 	SCANICON, SCREENXPOS, SCREENYPOS, SCROLL, SCROLLPARAMETERS, SENDACTOR, SENDGLOBALPROCESS,
 	SENDOBJECT, SENDPROCESS, SENDTAG, SETACTOR, SETBLOCK, SETBRIGHTNESS, SETEXIT, SETINVLIMIT,
-	SETINVSIZE, SETLANGUAGE, SETPALETTE, SETSYSTEMREEL, SETSYSTEMSTRING, SETSYSTEMVAR, 
-	SETTAG, SETTIMER, SHELL, SHOWACTOR, SHOWBLOCK, SHOWEFFECT, SHOWMENU, SHOWPATH, 
+	SETINVSIZE, SETLANGUAGE, SETPALETTE, SETSYSTEMREEL, SETSYSTEMSTRING, SETSYSTEMVAR,
+	SETTAG, SETTIMER, SHELL, SHOWACTOR, SHOWBLOCK, SHOWEFFECT, SHOWMENU, SHOWPATH,
 	SHOWPOS, SHOWREFER, SHOWSTRING, SHOWTAG, SPLAY, STAND, STANDTAG, STARTGLOBALPROCESS,
 	STARTPROCESS, STARTTIMER, STOPMIDI, STOPSAMPLE, STOPWALK, SUBTITLES, SWALK, SWALKZ,
 	SYSTEMVAR, TAGACTOR, TAGTAGXPOS, TAGTAGYPOS, TAGWALKXPOS, TAGWALKYPOS, TALK, TALKAT,
@@ -223,14 +223,14 @@ const MASTER_LIB_CODES DW2_CODES[] = {
 	ACTORREF, ACTORRGB, ACTORSCALE, ACTORXPOS, ACTORYPOS,
 	ADDHIGHLIGHT, ADDINV, ADDINV1, ADDINV2, ADDOPENINV, ADDTOPIC,
 	BACKGROUND, CALLACTOR, CALLGLOBALPROCESS, CALLOBJECT,
-	CALLPROCESS, CALLSCENE, CALLTAG, CAMERA, CDCHANGESCENE, 
+	CALLPROCESS, CALLSCENE, CALLTAG, CAMERA, CDCHANGESCENE,
 	CDDOCHANGE, CDLOAD, CDPLAY, CLEARHOOKSCENE, CLOSEINVENTORY,
 	CONTROL, CONVERSATION, CURSOR, CURSORXPOS, CURSORYPOS,
 	DECCONVW, DECCURSOR, DECFLAGS, DECINV1, DECINV2, DECINVW,
 	DECLEAD, DECSCALE, DECTAGFONT, DECTALKFONT, DELTOPIC,
 	DIMMUSIC, DROP, DROPOUT, EFFECTACTOR, ENABLEMENU, ENDACTOR,
 	ESCAPEOFF, ESCAPEON, EVENT, FACETAG, FADEIN, FADEOUT, FRAMEGRAB,
-	FREEZECURSOR, GETINVLIMIT, GHOST, GLOBALVAR, GRABMOVIE, 
+	FREEZECURSOR, GETINVLIMIT, GHOST, GLOBALVAR, GRABMOVIE,
 	HASRESTARTED, HAVE, HELDOBJECT, HIDEACTOR, HIDEBLOCK, HIDEEFFECT,
 	HIDEPATH, HIDEREFER, HIDETAG, HOLD, HOOKSCENE, IDLETIME,
 	INSTANTSCROLL, INVENTORY, INVPLAY, INWHICHINV, KILLACTOR,
@@ -292,7 +292,7 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, int hold, bool ig
 //----------------- SUPPORT FUNCTIONS --------------------
 
 /**
- * For Scroll() and Offset(), work out top left for a 
+ * For Scroll() and Offset(), work out top left for a
  * given screen position.
  */
 static void DecodeExtreme(EXTREME extreme, int *px, int *py) {
@@ -582,7 +582,7 @@ static void AddTopic(int icon) {
  */
 static void AddInv(int invno, int object) {
 	// illegal inventory number
-	assert(invno == INV_1 || invno == INV_2 || invno == INV_OPEN || invno == INV_DEFAULT); 
+	assert(invno == INV_1 || invno == INV_2 || invno == INV_OPEN || invno == INV_DEFAULT);
 
 	AddToInventory(invno, object, false);
 }
@@ -1160,13 +1160,13 @@ static int GetInvLimit(int invno) {
  */
 static void Ghost(int actor, int tColour, int tPalOffset) {
 	SetSysVar(ISV_GHOST_ACTOR, actor);
-	SetSysVar(ISV_GHOST_COLOUR,  tColour); 
+	SetSysVar(ISV_GHOST_COLOUR,  tColour);
 	SetSysVar(ISV_GHOST_BASE, tPalOffset);
 	CreateGhostPalette(BgPal());
 }
 
 /**
- * 
+ *
  */
 static void HailScene(SCNHANDLE scene) {
 	DoHailScene(scene);
@@ -1463,7 +1463,7 @@ void Offset(EXTREME extreme, int x, int y) {
 
 	if (TinselV2)
 		DecodeExtreme(extreme, &x, &y);
-	
+
 	PlayfieldSetPos(FIELD_WORLD, x, y);
 }
 
@@ -1798,7 +1798,7 @@ static void PostActor(CORO_PARAM, int actor, TINSEL_EVENT event, HPOLYGON hp,
 		assert(hp == NOPOLY && taggedActor);
 		assert(IsTaggedActor(actor));
 	}
-	
+
 	if (IsTaggedActor(actor)) {
 		assert(actor);
 		ActorEvent(coroParam, actor, event, false, myEscape);
@@ -1895,7 +1895,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	if (time == 0) {
 		// This is a 'talky' print
 		_ctx->time = TextTime(TextBufferAddr());
-		
+
 		// Cut short-able if sustain was not set
 		_ctx->myleftEvent = bSustain ? 0 : GetLeftEvents();
 	} else {
@@ -1923,7 +1923,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 		int Loffset, Toffset;	// Screen position
 		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 		_ctx->pText = ObjectTextOut(coroParam, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-					0, x - Loffset, y - Toffset, 
+					0, x - Loffset, y - Toffset,
 					TinselV2 ? GetTagFontHandle() : GetTalkFontHandle(), TXT_CENTRE);
 		assert(_ctx->pText); // string produced NULL text
 		if (IsTopWindow())
@@ -2197,7 +2197,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 				if (_ctx->bTookControl)
 					ControlOn();		// Free control if we took it
 			}
-			
+
 		} else {
 			if (event == POINTED) {
 				// FIXME: Is there ever an associated sound if in POINTED mode???
@@ -2341,7 +2341,7 @@ static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *p
 static void PrintTag(HPOLYGON hp, SCNHANDLE text, int actor = 0, bool bCursor = false) {
 	// printtag() may only be called from a polygon code block in Tinsel 1, or
 	// additionally from a moving actor code block in Tinsel 2
-	assert((hp != NOPOLY) || (TinselV2 && (actor != 0))); 
+	assert((hp != NOPOLY) || (TinselV2 && (actor != 0)));
 
 	if (hp != NOPOLY) {
 		// Poly handling
@@ -3264,7 +3264,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 
 	} else if (_ctx->whatSort == IS_TALKAT) {
 		_ctx->bTalkReel = false;
-	
+
 	} else if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_SAYAT)) {
 		_ctx->bTalkReel = false;
 		if (IsTaggedActor(_ctx->actor)) {
@@ -3338,7 +3338,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 					yshift = MultiHighest(_ctx->pText);
 					if (yshift < 4)
 						MultiMoveRelXY(_ctx->pText, 0, 4 - yshift);	// Not off top
-				
+
 					/*
 					 * Don't go off the side of the screen
 					 */
@@ -3392,7 +3392,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 
 			// Handle timeout decrementing and Escape presses
 			if (TinselV2) {
-				if ((_ctx->escEvents && _ctx->escEvents != GetEscEvents()) || 
+				if ((_ctx->escEvents && _ctx->escEvents != GetEscEvents()) ||
 					(!bSustain && LeftEventChange(_ctx->myLeftEvent)) ||
 					(--_ctx->timeout <= 0)) {
 					// Left event only kills current sub-string
@@ -3748,7 +3748,7 @@ static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
 
 		if (!MenuActive())
 			return;
-		
+
 		do {
 			CORO_SLEEP(1);
 		} while (MenuActive());
@@ -3804,14 +3804,14 @@ static void WaitTime(CORO_PARAM, int time, bool frame, bool escOn, int myEscape)
 		if (escOn && myEscape != GetEscEvents())
 			break;
 	} while (_ctx->time--);
-	
+
 	CORO_END_CODE;
 }
 
 /**
  * Set a moving actor off on a walk.
  */
-void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool igPath, 
+void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool igPath,
 		  int zOverride, bool escOn, int myescEvent) {
 	CORO_BEGIN_CONTEXT;
 		int thisWalk;
@@ -3933,7 +3933,7 @@ static void Walked(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, bool esc
 	} else {
 		// Pause before starting the walk
 		CORO_SLEEP(ONE_SECOND);
-		
+
 		assert(pMover->hCpath != NOPOLY); // moving actor not in path
 
 		// Briefly aquire token to kill off any other normal walk
@@ -4563,7 +4563,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		// DW2 only
 		DimMusic();
 		return 0;
-		
+
 	case DROP:
 		// DW2 only
 		Drop(pp[0]);
@@ -4603,7 +4603,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case EVENT:
 		// Common to both DW1 & DW2
-		if (TinselVersion == TINSEL_V2) 
+		if (TinselVersion == TINSEL_V2)
 			pp[0] = pic->event;
 		else
 			pp[0] = TINSEL1_EVENT_MAP[pic->event];
@@ -4890,7 +4890,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 			if (*pResumeState == RES_1 && IsCdPlayHandle(pp[0]))
 				*pResumeState = RES_NOT;
 			else {
-				Play(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape, false, 
+				Play(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape, false,
 						pic->event, pic->hPoly, pic->idActor);
 
 				if (coroParam)
@@ -5442,7 +5442,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		// DW2 only
 		pp[0] = ThisObject(pic->pinvo);
 		return 0;
-		
+
 	case THISTAG:
 		// DW2 only
 		pp[0] = ThisTag(pic->hPoly);

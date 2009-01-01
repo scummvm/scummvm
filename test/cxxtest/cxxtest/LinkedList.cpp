@@ -12,7 +12,7 @@ namespace CxxTest
     {
         _head = _tail = 0;
     }
-    
+
     Link *List::head()
     {
         Link *l = _head;
@@ -89,12 +89,12 @@ namespace CxxTest
     Link::~Link()
     {
     }
-    
+
     bool Link::active() const
     {
         return _active;
     }
-    
+
     void Link::setActive( bool value )
     {
         _active = value;
@@ -104,12 +104,12 @@ namespace CxxTest
     {
         return _next;
     }
-    
+
     Link * Link::justPrev()
     {
         return _prev;
     }
-        
+
     Link * Link::next()
     {
         Link *l = _next;
@@ -117,7 +117,7 @@ namespace CxxTest
             l = l->_next;
         return l;
     }
-    
+
     Link * Link::prev()
     {
         Link *l = _prev;
@@ -125,7 +125,7 @@ namespace CxxTest
             l = l->_prev;
         return l;
     }
-    
+
     const Link * Link::next() const
     {
         Link *l = _next;
@@ -133,7 +133,7 @@ namespace CxxTest
             l = l->_next;
         return l;
     }
-    
+
     const Link * Link::prev() const
     {
         Link *l = _prev;
@@ -141,7 +141,7 @@ namespace CxxTest
             l = l->_prev;
         return l;
     }
-    
+
     void Link::attach( List &l )
     {
         if ( l._tail )
@@ -149,7 +149,7 @@ namespace CxxTest
 
         _prev = l._tail;
         _next = 0;
-            
+
         if ( l._head == 0 )
             l._head = this;
         l._tail = this;
@@ -161,7 +161,7 @@ namespace CxxTest
             _prev->_next = _next;
         else
             l._head = _next;
-            
+
         if ( _next )
             _next->_prev = _prev;
         else

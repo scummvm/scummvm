@@ -3,7 +3,7 @@
 
 //
 // X11Gui displays a simple progress bar using X11
-// 
+//
 // It accepts the following command-line arguments:
 //  -title <title>              - Sets the application title
 //  -fn or -font <font>         - Sets the font
@@ -29,7 +29,7 @@ namespace CxxTest
         {
             parseCommandLine( argc, argv );
         }
-        
+
         void enterWorld( const WorldDescription &wd )
         {
             openDisplay();
@@ -44,7 +44,7 @@ namespace CxxTest
                 processEvents();
             }
         }
-        
+
         void guiEnterTest( const char *suiteName, const char *testName )
         {
             if ( _display ) {
@@ -53,7 +53,7 @@ namespace CxxTest
                 redraw();
             }
         }
-        
+
         void yellowBar()
         {
             if ( _display ) {
@@ -148,7 +148,7 @@ namespace CxxTest
             XAllocColor( _display, _colormap, &color );
             return color.pixel;
         }
-        
+
         void createWindow()
         {
             _window = XCreateSimpleWindow( _display, RootWindow( _display, 0 ), 0, 0, 1, 1, 0, 0, _background );
@@ -218,7 +218,7 @@ namespace CxxTest
         void centerWindow()
         {
             XMapWindow( _display, _window );
-            
+
             Screen *screen = XDefaultScreenOfDisplay( _display );
             int screenWidth = WidthOfScreen( screen );
             int screenHeight = HeightOfScreen( screen );
@@ -227,14 +227,14 @@ namespace CxxTest
 
             _width = (screenWidth * 4) / 5;
             _height = screenHeight / 14;
-            
+
             XMoveResizeWindow( _display, _window, xCenter - (_width / 2), yCenter - (_height / 2), _width, _height );
         }
 
         void processEvents()
         {
             redraw();
-            
+
             XEvent event;
             while( XCheckMaskEvent( _display, _eventMask, &event ) )
                 redraw();
@@ -290,7 +290,7 @@ namespace CxxTest
         void drawPercentage()
         {
             XSetForeground( _display, _gc, _foreground );
-            
+
             char str[sizeof("1000000000 of ") + sizeof(_strTotalTests) + sizeof(" (100%)")];
             sprintf( str, "%u of %s (%u%%)", _testsDone, _strTotalTests, (_testsDone * 100) / _numTotalTests );
             unsigned len = strlen( str );

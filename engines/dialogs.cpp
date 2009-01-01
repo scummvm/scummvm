@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id$ 
+ * $Id$
  */
 
 #include "base/version.h"
@@ -87,13 +87,13 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 
 	StaticTextWidget *version = new StaticTextWidget(this, "GlobalMenu.Version", gScummVMVersionDate);
 	version->setAlign(Graphics::kTextAlignCenter);
-		
+
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", "Resume", kPlayCmd, 'P');
 
 	_loadButton = new GUI::ButtonWidget(this, "GlobalMenu.Load", "Load", kLoadCmd, 'L');
 	// TODO: setEnabled -> setVisible
 	_loadButton->setEnabled(_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
- 
+
 	_saveButton = new GUI::ButtonWidget(this, "GlobalMenu.Save", "Save", kSaveCmd, 'S');
 	// TODO: setEnabled -> setVisible
 	_saveButton->setEnabled(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
@@ -102,7 +102,7 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 
 	new GUI::ButtonWidget(this, "GlobalMenu.About", "About", kAboutCmd, 'A');
 
-	_rtlButton = new GUI::ButtonWidget(this, "GlobalMenu.RTL", "Return to Launcher", kRTLCmd, 'R');	
+	_rtlButton = new GUI::ButtonWidget(this, "GlobalMenu.RTL", "Return to Launcher", kRTLCmd, 'R');
 	_rtlButton->setEnabled(_engine->hasFeature(Engine::kSupportsRTL));
 
 
@@ -184,7 +184,7 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		eventRTL.type = Common::EVENT_RTL;
 		g_system->getEventManager()->pushEvent(eventRTL);
 		close();
-		}	
+		}
 		break;
 	case kQuitCmd: {
 		Common::Event eventQ;
@@ -199,7 +199,7 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 void MainMenuDialog::reflowLayout() {
-	if (_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime)) 
+	if (_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime))
 		_loadButton->setEnabled(_engine->canLoadGameStateCurrently());
 	if (_engine->hasFeature(Engine::kSupportsSavingDuringRuntime))
 		_saveButton->setEnabled(_engine->canSaveGameStateCurrently());

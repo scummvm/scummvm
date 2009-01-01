@@ -301,7 +301,7 @@ void OSystem_SDL::setGraphicsModeIntern() {
 	}
 
 	_scalerProc = newScalerProc;
-	
+
 	if (_videoMode.mode != GFX_NORMAL) {
 		for (int i = 0; i < ARRAYSIZE(s_gfxModeSwitchTable); i++) {
 			if (s_gfxModeSwitchTable[i][1] == _videoMode.mode || s_gfxModeSwitchTable[i][2] == _videoMode.mode) {
@@ -742,7 +742,7 @@ bool OSystem_SDL::saveScreenshot(const char *filename) {
 
 void OSystem_SDL::setFullscreenMode(bool enable) {
 	Common::StackLock lock(_graphicsMutex);
-	
+
 	if (_oldVideoMode.setup && _oldVideoMode.fullscreen == enable)
 		return;
 

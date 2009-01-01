@@ -69,17 +69,17 @@ Scheduler::Scheduler() {
 #endif
 
 	pRCfunction = 0;
-	
+
 	active = new PROCESS;
 	active->pPrevious = NULL;
-	
+
 	g_scheduler = this;	// FIXME HACK
 }
 
 Scheduler::~Scheduler() {
 	free(processList);
 	processList = NULL;
-	
+
 	delete active;
 	active = 0;
 }
@@ -342,7 +342,7 @@ PROCESS *Scheduler::createProcess(int pid, CORO_ADDR coroAddr, const void *pPara
 		if (pProc->pNext)
 			pProc->pNext->pPrevious = pProc;
 		active->pNext = pProc;
-		
+
 	}
 
 	// set coroutine entry point
@@ -377,7 +377,7 @@ PROCESS *Scheduler::createProcess(int pid, CORO_ADDR coroAddr, const void *pPara
 void Scheduler::killProcess(PROCESS *pKillProc) {
 	// make sure a valid process pointer
 	assert(pKillProc >= processList && pKillProc <= processList + NUM_PROCESS - 1);
-	
+
 	// can not kill the current process using killProcess !
 	assert(pCurrent != pKillProc);
 
@@ -490,7 +490,7 @@ int Scheduler::killMatchingProcess(int pidKill, int pidMask) {
 
 /**
  * Set pointer to a function to be called by killProcess().
- * 
+ *
  * May be called by a resource allocator, the function supplied is
  * called by killProcess() to allow the resource allocator to free
  * resources allocated to the dying process.
@@ -603,7 +603,7 @@ void SceneProcessEvent(CORO_PARAM, uint32 procID, TINSEL_EVENT event, bool bWait
 			if (_ctx->pic == NULL)
 				return;
 
-			_ctx->pProc = g_scheduler->createProcess(PID_PROCESS + i, ProcessTinselProcess, 
+			_ctx->pProc = g_scheduler->createProcess(PID_PROCESS + i, ProcessTinselProcess,
 				&_ctx->pic, sizeof(_ctx->pic));
 			AttachInterpret(_ctx->pic, _ctx->pProc);
 			break;

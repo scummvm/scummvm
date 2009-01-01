@@ -83,10 +83,10 @@ void WriteConfig(void) {
 		default:
 			lang = Common::EN_ANY;
 		}
-		
+
 		ConfMan.set("language", Common::getLanguageCode(lang));
 	}
-	
+
 	// Write to disk
 	ConfMan.flushToDisk();
 }

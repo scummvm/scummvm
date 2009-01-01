@@ -555,7 +555,7 @@ Common::Error AGOSEngine::init() {
 		// Setup midi driver
 		int midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_MIDI);
 		_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-		
+
 		_driver = MidiDriver::createMidi(midiDriver);
 
 		if (_nativeMT32) {
@@ -890,7 +890,7 @@ AGOSEngine::~AGOSEngine() {
 	free(_tablesHeapPtr - _tablesHeapCurPos);
 
 	free(_mouseData);
-	
+
 	free(_gameOffsetsPtr);
 	free(_iconFilePtr);
 	free(_itemArrayPtr);
@@ -1029,7 +1029,7 @@ Common::Error AGOSEngine::go() {
 
 
 /*  I do not think that this will be used
- *  
+ *
 void AGOSEngine::shutdown() {
 	// Sync with AGOSEngine::~AGOSEngine()
 	// In Simon 2, this gets deleted along with _sound further down

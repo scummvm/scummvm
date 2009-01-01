@@ -79,7 +79,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
 		_system->openCD(cd_num);
-		
+
 	_pmvPlayer = new PmvPlayer(this, _mixer);
 	_res = new ProjectReader();
 	_screen = new Screen(this);
@@ -279,7 +279,7 @@ Common::Error MadeEngine::go() {
 
 	_autoStopSound = false;
 	_eventNum = _eventKey = _eventMouseX = _eventMouseY = 0;
-	
+
 #ifdef DUMP_SCRIPTS
 	_script->dumpAllScripts();
 #else

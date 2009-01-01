@@ -42,7 +42,7 @@ private:
     public:
         Number( int ) {}
     };
-    
+
     int throwThis( int i )
     {
         throw Number( i );

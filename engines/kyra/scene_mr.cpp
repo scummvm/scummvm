@@ -765,7 +765,7 @@ int KyraEngine_MR::runSceneScript1(int x, int y) {
 		return 0;
 	if (_deathHandler >= 0)
 		return 0;
-	
+
 	_emc->init(&_sceneScriptState, &_sceneScriptData);
 	_sceneScriptState.regs[1] = x;
 	_sceneScriptState.regs[2] = y;

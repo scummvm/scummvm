@@ -285,7 +285,7 @@ static void PrepBMV(const byte *sourceData, int length, short deltaFetchDisp) {
 				// Shift another 2 bits to get hi nibble
 				eax = (eax & 0xffffff00) | ((eax & 0xff) >> 2);
 				NEXT_BYTE(esi);
-			
+
 				if ((eax & 0xC) != 0) {
 					flag = true;
 					ROL(eax, ecx);
@@ -679,10 +679,10 @@ static int FollowingPacket(int thisPacket, bool bReallyImportant) {
 		// Following 3 bytes are the length
 		if (bReallyImportant) {
 			// wrapped round or at least 3 bytes
-			assert(((nextReadSlot * SLOT_SIZE) < thisPacket) || 
+			assert(((nextReadSlot * SLOT_SIZE) < thisPacket) ||
 				((thisPacket + 3) < (nextReadSlot * SLOT_SIZE)));
 
-			if ((nextReadSlot * SLOT_SIZE >= thisPacket) && 
+			if ((nextReadSlot * SLOT_SIZE >= thisPacket) &&
 				((thisPacket + 3) >= nextReadSlot*SLOT_SIZE)) {
 				// MaintainBuffer calls this back, but with false
 				MaintainBuffer();
@@ -1005,7 +1005,7 @@ static bool DoBMVFrame(void) {
 			xscr = -640;
 		else
 			xscr = 0;
-			
+
 		PrepBMV(bigBuffer + graphOffset, length, xscr);
 
 		currentFrame++;
@@ -1112,7 +1112,7 @@ void CopyMovieToScreen(void) {
 	int yStart = (SCREEN_HEIGHT - SCREEN_HIGH) / 2;
 	memset(_vm->screen().getBasePtr(0, 0), 0, yStart * SCREEN_WIDTH);
 	memcpy(_vm->screen().getBasePtr(0, yStart), ScreenBeg, SCREEN_WIDTH * SCREEN_HIGH);
-	memset(_vm->screen().getBasePtr(0, yStart + SCREEN_HIGH), 0, 
+	memset(_vm->screen().getBasePtr(0, yStart + SCREEN_HIGH), 0,
 		(SCREEN_HEIGHT - SCREEN_HIGH - yStart) * SCREEN_WIDTH);
 
 	BmvDrawText(true);

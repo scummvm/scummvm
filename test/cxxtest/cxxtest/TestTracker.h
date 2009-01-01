@@ -13,12 +13,12 @@
 namespace CxxTest
 {
     class TestListener;
-    
+
     class TestTracker : public TestListener
     {
     public:
         virtual ~TestTracker();
-        
+
         static TestTracker &tracker();
 
         const TestDescription *fixTest( const TestDescription *d ) const;
@@ -28,11 +28,11 @@ namespace CxxTest
         const TestDescription &test() const { return *_test; }
         const SuiteDescription &suite() const { return *_suite; }
         const WorldDescription &world() const { return *_world; }
-        
+
         bool testFailed() const { return (testFailedAsserts() > 0); }
         bool suiteFailed() const { return (suiteFailedTests() > 0); }
         bool worldFailed() const { return (failedSuites() > 0); }
-        
+
         unsigned warnings() const { return _warnings; }
         unsigned failedTests() const { return _failedTests; }
         unsigned testFailedAsserts() const { return _testFailedAsserts; }
@@ -77,7 +77,7 @@ namespace CxxTest
                                  const char *expression, const char *type,
                                  bool otherThrown );
         void failedAssertThrowsNot( const char *file, unsigned line, const char *expression );
-        
+
     private:
         TestTracker( const TestTracker & );
         TestTracker &operator=( const TestTracker & );
@@ -94,7 +94,7 @@ namespace CxxTest
         const TestDescription &dummyTest() const;
         const SuiteDescription &dummySuite() const;
         const WorldDescription &dummyWorld() const;
-        
+
         void setWorld( const WorldDescription *w );
         void setSuite( const SuiteDescription *s );
         void setTest( const TestDescription *t );
@@ -102,7 +102,7 @@ namespace CxxTest
         void countFailure();
 
         friend class TestRunner;
-        
+
         TestTracker();
         void initialize();
         void setListener( TestListener *l );

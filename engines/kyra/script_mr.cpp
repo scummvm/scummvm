@@ -358,7 +358,7 @@ int KyraEngine_MR::o3_drawSceneShape(EMCState *script) {
 int KyraEngine_MR::o3_drawSceneShapeOnPage(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_drawSceneShapeOnPage(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	const int shape = stackPos(0);
-	
+
 	int x = _sceneShapeDescs[shape].drawX;
 	int y = _sceneShapeDescs[shape].drawY;
 	_screen->drawShape(stackPos(2), _sceneShapes[shape], x, y, 2, (stackPos(1) != 0) ? 1 : 0);
@@ -397,7 +397,7 @@ int KyraEngine_MR::o3_updateConversations(EMCState *script) {
 	case 0:
 		dlgIndex -= 34;
 		break;
-	
+
 	case 1:
 		dlgIndex -= 54;
 		break;
@@ -616,7 +616,7 @@ int KyraEngine_MR::o3_setSceneAnimPosAndFrame(EMCState *script) {
 	const int newY2 = stackPos(2);
 	const int newX = stackPos(3);
 	const int newY = stackPos(4);
-	
+
 	if (newX2 >= 0)
 		anim.x2 = newX2;
 	if (newY2 >= 0)
@@ -767,7 +767,7 @@ int KyraEngine_MR::o3_daggerWarning(EMCState *script) {
 
 	const char *str = 0;
 	int x = 0;
-	
+
 	str = (const char *)getTableEntry(_cCodeFile, 120);
 	x = _text->getCenterStringX(str, 0xF, 0x68);
 	_text->printText(str, x, 174, 0xFF, 0xF0, 0x00);
@@ -1370,7 +1370,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	OpcodeUnImpl();
 	Opcode(o3_dummy);
-	
+
 	SetOpcodeTable(_opcodesAnimation);
 	// 0x00
 	Opcode(o2a_setAnimationShapes);

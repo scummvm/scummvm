@@ -136,7 +136,7 @@ Common::Error GroovieEngine::init() {
 			return Common::kUnknownError;
 		}
 	}
-	
+
 	// Check the script file extension
 	if (!filename.hasSuffix(".grv")) {
 		error("%s isn't a valid script filename", filename.c_str());
@@ -162,7 +162,7 @@ Common::Error GroovieEngine::init() {
 Common::Error GroovieEngine::go() {
 	// Check that the game files and the audio tracks aren't together run from
 	// the same cd
-	
+
 	checkCD();
 
 	// Game timer counter
@@ -224,7 +224,7 @@ Common::Error GroovieEngine::go() {
 			_cursorMan->animate();
 			_system->updateScreen();
 			tmr++;
-			// Wait a little bit between increments.  While mouse is moving, this triggers 
+			// Wait a little bit between increments.  While mouse is moving, this triggers
 			// only negligably slower.
 			if (tmr > 4) {
 				_script.timerTick();
@@ -280,4 +280,4 @@ void GroovieEngine::waitForInput() {
 	_waitingForInput = true;
 }
 
-} // End of namespace Groovie 
+} // End of namespace Groovie

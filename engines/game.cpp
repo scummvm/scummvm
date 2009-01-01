@@ -98,11 +98,11 @@ bool SaveStateDescriptor::getBool(const Common::String &key) const {
 	if (contains(key)) {
 		Common::String value = getVal(key);
 		if (value.equalsIgnoreCase("true") ||
-			value.equalsIgnoreCase("yes") || 
+			value.equalsIgnoreCase("yes") ||
 			value.equals("1"))
 			return true;
 		if (value.equalsIgnoreCase("false") ||
-			value.equalsIgnoreCase("no") || 
+			value.equalsIgnoreCase("no") ||
 			value.equals("0"))
 			return false;
 		error("SaveStateDescriptor: %s '%s' has unknown value '%s' for boolean '%s'",

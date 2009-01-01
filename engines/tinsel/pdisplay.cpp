@@ -317,7 +317,7 @@ int GetTaggedActor(void) {
 }
 
 /**
- * Tag process keeps us updated as to which polygon is currently tagged 
+ * Tag process keeps us updated as to which polygon is currently tagged
  * (if one is). Tag process asks us for this information, as does ProcessUserEvent().
  */
 static void SaveTaggedPoly(HPOLYGON hp) {
@@ -559,7 +559,7 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 				int strLen;
 				if (GetPolyTagHandle(hp) != 0)
 					strLen = LoadStringRes(GetPolyTagHandle(hp), TextBufferAddr(), TBUFSZ);
-				else 
+				else
 					strLen = LoadStringRes(hTagtext, TextBufferAddr(), TBUFSZ);
 
 				if (strLen == 0)
@@ -656,7 +656,7 @@ void TagProcess(CORO_PARAM, const void *) {
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
-	
+
 	_ctx->pText = NULL;
 	_ctx->Tag = NO_HOTSPOT_TAG;
 
@@ -735,7 +735,7 @@ static void leavingpoly(CORO_PARAM, HPOLYGON hp) {
 		SetPolyTagWanted(hp, false, false, 0);
 
 	} else if (PolyTagState(hp) == TAG_ON) {
-		// Delete this tag entry 
+		// Delete this tag entry
 		SetPolyTagState(hp, TAG_OFF);
 	}
 

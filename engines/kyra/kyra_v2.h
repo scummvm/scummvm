@@ -267,7 +267,7 @@ protected:
 
 	int _characterShapeFile;
 	virtual void loadCharacterShapes(int shapes) = 0;
-	
+
 	// pathfinder
 	int _movFacingTable[600];
 	int _pathfinderFlag;

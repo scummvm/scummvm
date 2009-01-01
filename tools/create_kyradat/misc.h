@@ -536,13 +536,13 @@ const SpecialExtension specialTable[] = {
 	{ k2CDFile2E, "CD" },
 	{ k2CDFile2F, "CD" },
 	{ k2CDFile2G, "CD" },
-	
+
 	{ k2TownsFile1E, "TNS" },
 	{ k2TownsFile1J, "TNS" },
 	{ k2TownsFile2E, "TNS" },
 	{ k2TownsFile2J, "TNS" },
 	{ k2DemoVersion, "DEM" },
-	{ k2DemoLol, "DEM" },	
+	{ k2DemoLol, "DEM" },
 
 	{ -1, 0 }
 };

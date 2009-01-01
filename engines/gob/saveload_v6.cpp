@@ -190,7 +190,7 @@ bool SaveLoad_v6::loadGame(SaveFile &saveFile,
 		int slot = getSlot(offset);
 		int slotRem = getSlotRemainder(offset);
 
-		debugC(2, kDebugSaveLoad, "Loading from slot %d", slot); 
+		debugC(2, kDebugSaveLoad, "Loading from slot %d", slot);
 
 		if ((slot >= 60) || (slotRem != 0)) {
 			warning("Invalid loading procedure (%d, %d, %d, %d, %d)",

@@ -122,10 +122,10 @@ int ObjectV2::load(Common::SeekableReadStream &source) {
 		delete[] _objData;
 
 	_freeData = true;
-	
+
 	byte header[4];
 	source.read(header, 4);
-	
+
 	uint16 type = READ_LE_UINT16(header);
 	if (type == 0x7FFF) {
 		_objSize = READ_LE_UINT16(header + 2);
@@ -370,11 +370,11 @@ GameDatabaseV2::~GameDatabaseV2() {
 }
 
 void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
-	
+
 	// TODO: Read/verifiy header
-	
+
 	sourceS.seek(0x1C);
-	
+
 	uint32 textOffs = sourceS.readUint16LE() * 512;
 	uint16 objectCount = sourceS.readUint16LE();
 	uint16 varObjectCount = sourceS.readUint16LE();
@@ -409,7 +409,7 @@ void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
 		sourceS.skip(objSize % 2);
 		_objects.push_back(obj);
 	}
-	
+
 }
 
 void GameDatabaseV2::reloadFromStream(Common::SeekableReadStream &sourceS) {
@@ -700,7 +700,7 @@ int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, i
 	}
 
 	return NULL;
-	
+
 }
 
 const char *GameDatabaseV3::getString(uint16 offset) {

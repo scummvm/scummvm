@@ -8,7 +8,7 @@
 
 #include <cxxtest/LinkedList.h>
 
-namespace CxxTest 
+namespace CxxTest
 {
     class TestSuite;
 
@@ -16,28 +16,28 @@ namespace CxxTest
     {
     public:
         virtual ~TestDescription();
-        
+
         virtual const char *file() const = 0;
         virtual unsigned line() const = 0;
         virtual const char *testName() const = 0;
         virtual const char *suiteName() const = 0;
-        
+
         virtual void run() = 0;
 
         virtual const TestDescription *next() const = 0;
-        virtual TestDescription *next() = 0;        
+        virtual TestDescription *next() = 0;
     };
 
     class SuiteDescription : public Link
     {
     public:
         virtual ~SuiteDescription();
-        
+
         virtual const char *file() const = 0;
         virtual unsigned line() const = 0;
         virtual const char *suiteName() const = 0;
         virtual TestSuite *suite() const = 0;
-        
+
         virtual unsigned numTests() const = 0;
         virtual const TestDescription &testDescription( unsigned /*i*/ ) const = 0;
 
@@ -54,7 +54,7 @@ namespace CxxTest
     {
     public:
         virtual ~WorldDescription();
-        
+
         virtual unsigned numSuites( void ) const = 0;
         virtual unsigned numTotalTests( void ) const = 0;
         virtual const SuiteDescription &suiteDescription( unsigned /*i*/ ) const = 0;

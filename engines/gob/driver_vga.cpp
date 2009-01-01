@@ -90,7 +90,7 @@ void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y,
 		int width = fontDesc->itemWidth;
 
 		for (int k = 0; k < nWidth; k++) {
-	
+
 			data = *src++;
 			for (int j = 0; j < MIN(8, width); j++) {
 				if (data & 0x80)
@@ -128,7 +128,7 @@ void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 	byte *destPos = dest->getVidMem() + (y * dest->getWidth()) + x;
 
 	uint32 size = width * height;
-	
+
 	if (transp) {
 
 		while (height--) {

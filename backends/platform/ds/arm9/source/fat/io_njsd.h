@@ -1,11 +1,11 @@
 /*
- io_njsd.h 
+ io_njsd.h
 
  Hardware Routines for reading an SD card using
  a NinjaDS SD adapter.
 
  Copyright (c) 2006 Michael "Chishm" Chisholm
-	
+
  Redistribution and use in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
 

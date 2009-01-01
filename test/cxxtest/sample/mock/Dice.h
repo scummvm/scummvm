@@ -5,7 +5,7 @@ class Dice
 {
 public:
     Dice();
-    
+
     unsigned roll();
 };
 

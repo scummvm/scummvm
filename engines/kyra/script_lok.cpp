@@ -1356,7 +1356,7 @@ int KyraEngine_LoK::o1_waitForConfirmationMouseClick(EMCState *script) {
 		_animator->updateAllObjectShapes();
 
 		updateInput();
-		
+
 		int input = checkInput(_buttonList, false) & 0xFF;
 		removeInputTop();
 		if (input == 200)

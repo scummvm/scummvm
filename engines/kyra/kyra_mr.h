@@ -252,7 +252,7 @@ private:
 	void drawMalcolmsMoodText();
 	void drawMalcolmsMoodPointer(int frame, int page);
 	void drawJestersStaff(int type, int page);
-	
+
 	void drawScore(int page, int x, int y);
 	void drawScoreCounting(int oldScore, int newScore, int drawOld, const int x);
 	int getScoreX(const char *str);
@@ -494,7 +494,7 @@ private:
 
 	// special script code
 	bool _useFrameTable;
-	
+
 	int o3a_setCharacterFrame(EMCState *script);
 
 	// special shape code
@@ -523,7 +523,7 @@ private:
 
 	int _score;
 	int _scoreMax;
-	
+
 	const uint8 *_scoreTable;
 	int _scoreTableSize;
 
@@ -564,7 +564,7 @@ private:
 
 	void printAlbumPageText();
 	void printAlbumText(int page, const char *str, int x, int y, uint8 c0);
-	
+
 	void processAlbum();
 
 	void albumNewPage();

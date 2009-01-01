@@ -20,7 +20,7 @@ public:
     Pet( const char *petName ) { strcpy( _name, petName ); }
 
     const char *name() const { return _name; }
-    
+
     bool operator== ( const Pet &other ) const
     {
         return !strcmp( name(), other.name() );
@@ -32,13 +32,13 @@ public:
 // Note: Most compilers do not require that you define both
 //       ValueTraits<const T> and ValueTraits<T>, but some do.
 //
-namespace CxxTest 
+namespace CxxTest
 {
     CXXTEST_TEMPLATE_INSTANTIATION
     class ValueTraits<const Pet>
     {
         char _asString[256];
-        
+
     public:
         ValueTraits( const Pet &pet ) { sprintf( _asString, "Pet(\"%s\")", pet.name() ); }
         const char *asString() const { return _asString; }

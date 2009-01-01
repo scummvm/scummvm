@@ -98,7 +98,7 @@ struct TEXTOUT {
  * @param mode			mode flags for the string
  * @param sleepTime		Sleep time between each character (if non-zero)
  */
-OBJECT *ObjectTextOut(CORO_PARAM, OBJECT *pList, char *szStr, int colour, 
+OBJECT *ObjectTextOut(CORO_PARAM, OBJECT *pList, char *szStr, int colour,
 					int xPos, int yPos, SCNHANDLE hFont, int mode, int sleepTime = 0);
 
 OBJECT *ObjectTextOutIndirect(	// output a string of text

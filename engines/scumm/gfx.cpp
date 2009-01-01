@@ -614,13 +614,13 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		const uint32 *src32 = (const uint32 *)src;
 		const uint32 *text32 = (const uint32 *)text;
 		uint32 *dst32 = (uint32 *)_compositeBuf;
-		
+
 		vsPitch >>= 2;
 		const int textPitch = (_textSurface.pitch - width * m) >> 2;
 		for (int h = height * m; h > 0; --h) {
 			for (int w = width*m; w > 0; w-=4) {
 				uint32 temp = *text32++;
-				
+
 				// Generate a byte mask for those text pixels (bytes) with
 				// value CHARSET_MASK_TRANSPARENCY. In the end, each byte
 				// in mask will be either equal to 0x00 or 0xFF.
@@ -629,7 +629,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 				uint32 mask = temp ^ CHARSET_MASK_TRANSPARENCY_32;
 				mask = (((mask & 0x7f7f7f7f) + 0x7f7f7f7f) | mask) & 0x80808080;
 				mask = ((mask >> 7) + 0x7f7f7f7f) ^ 0x80808080;
-				
+
 				// The following line is equivalent to this code:
 				//   *dst32++ = (*src32++ & mask) | (temp & ~mask);
 				// However, some compilers can generate somewhat better

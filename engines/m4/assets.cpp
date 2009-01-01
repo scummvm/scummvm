@@ -152,7 +152,7 @@ void SpriteAsset::loadM4SpriteAsset(M4Engine *vm, Common::SeekableReadStream* st
 
 		// Load & unpack RLE data if it's not a streaming animation
 		if (frame.stream != 1) {
-		
+
 			frame.frame = new M4Sprite(stream, frame.x, frame.y, frame.w, frame.h, true, frame.comp);
 #if 0
 			char fn[512];
@@ -191,7 +191,7 @@ void SpriteAsset::loadMadsSpriteAsset(M4Engine *vm, Common::SeekableReadStream* 
 	int numColors = 0;
 	RGB8 *palData = Palette::decodeMadsPalette(spriteStream, &numColors);
 	Common::copy(palData, &palData[numColors], &_palette[0]);
-	if (numColors < 256) 
+	if (numColors < 256)
 		Common::set_to((byte *)&_palette[numColors], (byte *)&_palette[256], 0);
 	_colorCount = numColors;
 	delete[] palData;
@@ -241,7 +241,7 @@ int32 SpriteAsset::parseSprite(bool isBigEndian) {
 		uint32 numColors = (!isBigEndian) ? _stream->readUint32LE() : _stream->readUint32BE();
 		// TODO
 		//if (palette) {
-			// TODO: A sprite set palette specifies the indexes, which need not start at 
+			// TODO: A sprite set palette specifies the indexes, which need not start at
 			// index 0. For now, I'm simply preloading the currently active palette
 			// before starting to replace existing entries
 
@@ -321,7 +321,7 @@ RGBList *SpriteAsset::getRgbList() {
 }
 
 void SpriteAsset::translate(RGBList *list, bool isTransparent) {
-	for (int frameIndex = 0; frameIndex < _frameCount; ++frameIndex) 
+	for (int frameIndex = 0; frameIndex < _frameCount; ++frameIndex)
 		_frames[frameIndex].frame->translate(list, isTransparent);
 }
 
@@ -329,7 +329,7 @@ int32 SpriteAsset::getFrameSize(int index) {
 	/*
 	if (index + 1 == _frameCount) {
 	} else {
-	
+
 	}
 	*/
 	return _frameOffsets[index + 1] - _frameOffsets[index];
@@ -417,7 +417,7 @@ bool AssetManager::loadAsset(const char *assetName, RGB8 *palette) {
 
 		// Until loading code is complete, so that chunks not fully read are skipped correctly
 		uint32 nextOfs = assetS->pos() + chunkSize;
-		
+
 		switch (chunkType) {
 		case CHUNK_MACH:
 			printf("MACH\n");
@@ -484,7 +484,7 @@ int32 AssetManager::addSpriteAsset(const char *assetName, int32 hash, RGB8 *pale
 		printf("AssetManager::addSpriteAsset() asset %s not loaded, loading into %d\n", assetName, hash);
 
 		clearAssets(kAssetTypeCELS, hash, hash);
-			
+
 		Common::SeekableReadStream *assetS = _vm->res()->get(assetName);
 		_CELS[hash] = new SpriteAsset(_vm, assetS, assetS->size(), assetName);
 		_vm->res()->toss(assetName);

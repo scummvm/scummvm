@@ -159,9 +159,9 @@ WoodScript::WoodScript(M4Engine *vm) {
 	_assets = new AssetManager(vm);
 	_globals = new long[256]; //FIXME Find out how many globals there should be
 	memset(_globals, 0, sizeof(long));
-	
+
 	_backgroundSurface = NULL;
-	
+
 	Common::Rect viewBounds = Common::Rect(0, 0, 640, 480);
 	//_surfaceView = new View(viewBounds);
 }
@@ -206,10 +206,10 @@ Machine *WoodScript::createMachine(int32 machineHash, Sequence *parentSeq,
 	_machineId++;
 
 	_machines.push_back(machine);
-	
+
 	// goto first state for initialization
 	machine->enterState();
-	
+
 	return machine;
 }
 
@@ -278,7 +278,7 @@ Machine *WoodScript::showSeries(const char *seriesName, long layer, uint32 flags
 	_globals[kGlobTemp16] = (flags & SERIES_HORZ_FLIP) ? 0x10000 : 0;
 
 	return createMachine(1, NULL, -1, -1, kCallbackTriggerDispatch, seriesName);
-	
+
 }
 
 Machine *WoodScript::streamSeries(const char *seriesName, int32 frameRate, long layer, int32 triggerNum) {
@@ -297,7 +297,7 @@ Machine *WoodScript::streamSeries(const char *seriesName, int32 frameRate, long 
 void WoodScript::update() {
 	// TODO: Don't show hidden sequences etc.
 
-	// TODO: For now, prevent any engine action if a menu is being displayed - eventually this should be 
+	// TODO: For now, prevent any engine action if a menu is being displayed - eventually this should be
 	// changed to a proper check of the engine paused variable, which the menus should set while active
 	if (_vm->_viewManager->getView(VIEWID_MENU) != NULL)
 		return;
@@ -334,11 +334,11 @@ void WoodScript::update() {
 		// TODO: Use correct clipRect etc.
 		Common::Rect clipRect = Common::Rect(0, 0, 640, 480);
 		Common::Rect updateRect;
-		
+
 		sequence->draw(_surfaceView, clipRect, updateRect);
 
 	}
-	
+
 	// Handle end-of-sequence requests
 	if (_endOfSequenceRequestList.size() > 0) {
 		for (Common::Array<Sequence*>::iterator it = _endOfSequenceRequestList.begin(); it != _endOfSequenceRequestList.end(); it++) {
@@ -357,11 +357,11 @@ void WoodScript::clear() {
 	for (Common::Array<Sequence*>::iterator it = _sequences.begin(); it != _sequences.end(); it++)
 		delete *it;
 	_sequences.clear();
-	
+
 	for (Common::Array<Machine*>::iterator it = _machines.begin(); it != _machines.end(); it++)
 		delete *it;
 	_machines.clear();
-	
+
 	_layers.clear();
 	_endOfSequenceRequestList.clear();
 

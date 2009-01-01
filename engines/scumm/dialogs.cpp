@@ -228,7 +228,7 @@ enum {
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine)
 	: Dialog("ScummSaveLoad"), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0), _vm(engine) {
-		
+
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
 
 	new StaticTextWidget(this, "ScummSaveLoad.Title", title);
@@ -318,17 +318,17 @@ void SaveLoadChooser::reflowLayout() {
 	if (g_gui.xmlEval()->getVar("Globals.ScummSaveLoad.ExtInfo.Visible") == 1) {
 		int16 x, y;
 		uint16 w, h;
-		
+
 		if (!g_gui.xmlEval()->getWidgetData("ScummSaveLoad.Thumbnail", x, y, w, h))
 			error("Error when loading position data for Save/Load Thumbnails.");
-			
-		int thumbW = kThumbnailWidth;	
+
+		int thumbW = kThumbnailWidth;
 		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
 		int thumbX = x + (w >> 1) - (thumbW >> 1);
 		int thumbY = y + kLineHeight;
-		
+
 		_container->resize(x, y, w, h);
-		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH); 
+		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH);
 
 		int height = thumbY + thumbH + kLineHeight;
 
@@ -380,7 +380,7 @@ void SaveLoadChooser::updateInfos(bool redraw) {
 
 	InfoStuff infos;
 	memset(&infos, 0, sizeof(InfoStuff));
-	if (selItem >= 0 && !_list->getSelectedString().empty() 
+	if (selItem >= 0 && !_list->getSelectedString().empty()
 		   && _vm->loadInfosFromSlot(_saveMode ? selItem + 1 : selItem, &infos)) {
 		char buffer[32];
 		snprintf(buffer, 32, "Date: %.2d.%.2d.%.4d",
@@ -654,13 +654,13 @@ void HelpDialog::reflowLayout() {
 	int lineHeight = g_gui.getFontHeight();
 	int16 x, y;
 	uint16 w, h;
-	
+
 	g_gui.xmlEval()->getWidgetData("ScummHelp.HelpText", x, y, w, h);
-	
+
 	int keyW = w * 20 / 100;
 	int dscX = x + keyW + 32;
 	int dscW = w * 80 / 100;
-	
+
 	int xoff = (_w >> 1) - (w >> 1);
 
 	for (int i = 0; i < HELP_NUM_LINES; i++) {

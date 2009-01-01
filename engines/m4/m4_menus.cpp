@@ -139,7 +139,7 @@ void OrionCallbacks::saveLoadSaveFn(DialogView *view, MenuObject *item) {
 		GUI::MessageDialog dialog("Save game failed!");
 		dialog.runModal();
 	}
-		
+
 	// Close the menu
 	closeMenuFn(view, item);
 }
@@ -170,7 +170,7 @@ void OrionCallbacks::saveLoadSlotFn(DialogView *view, MenuObject *item) {
 	if (view->getMenuType() == SAVE_MENU) {
 		// Add in a text field for entry of the savegame name
 		vw->items().push_back(new MenuTextField(view, SLTAG_TEXTFIELD,
-			slotBounds.left, slotBounds.top, slotBounds.width(), slotBounds.height(), false, 
+			slotBounds.left, slotBounds.top, slotBounds.width(), slotBounds.height(), false,
 			saveLoadSaveFn, (button->getText() == EmptySaveString) ? NULL : button->getText(),
 			button->getIndex() + 1));
 
@@ -180,7 +180,7 @@ void OrionCallbacks::saveLoadSlotFn(DialogView *view, MenuObject *item) {
 			saveLoadLoadFn, button->getText(), button->getIndex() + 1));
 	}
 
-	// Hide the existing slot 
+	// Hide the existing slot
 	button->setVisible(false);
 
 	// Disable the slider
@@ -207,7 +207,7 @@ void OrionCallbacks::saveLoadCancelFn(DialogView *view, MenuObject *item) {
 				currentItem->setState(OS_NORMAL);
 			}
 		}
-	
+
 		// Show the previously hidden slot again
 		MenuSaveLoadText *slot = (MenuSaveLoadText *) view->getItem(SLTAG_SLOTS_START + view->_selectedSlot);
 		slot->setVisible(true);
@@ -257,7 +257,7 @@ void OrionCallbacks::saveLoadSliderFn(DialogView *view, MenuObject *item) {
 
 		switch (slider->sliderState()) {
 		case VSLIDER_UP:
-			if (newIndex > 0) 
+			if (newIndex > 0)
 				--newIndex;
 			break;
 
@@ -344,9 +344,9 @@ OrionMenuView::OrionMenuView(M4Engine *Vm, int x, int y, MenuType menuType, bool
 		_menuObjects.push_back(new MenuButton(this, BTNID_RESUME, 45, 135, 24, 24, &OrionCallbacks::closeMenuFn));
 		_menuObjects.push_back(new MenuButton(this, BTNID_QUIT, 141, 135, 24, 24, &OrionCallbacks::gameExitFn));
 		_menuObjects.push_back(new MenuButton(this, BTNID_SAVE, 141, 53, 24, 24, &OrionCallbacks::gameSaveGameFn, _calledFromMainMenu));
-		_menuObjects.push_back(new MenuButton(this, BTNID_LOAD, 141, 94, 24, 24, &OrionCallbacks::gameLoadGameFn, 
+		_menuObjects.push_back(new MenuButton(this, BTNID_LOAD, 141, 94, 24, 24, &OrionCallbacks::gameLoadGameFn,
 			!_vm->_saveLoad->hasSaves()));
-		
+
 		_escapeHandler = &OrionCallbacks::closeMenuFn;
 		_returnHandler = &OrionCallbacks::closeMenuFn;
 		break;
@@ -359,13 +359,13 @@ OrionMenuView::OrionMenuView(M4Engine *Vm, int x, int y, MenuType menuType, bool
 
 		// Add menu contents
 		// TODO: Currently the Digi slider isn't hooked up to anything
-		_menuObjects.push_back(new MenuButton(this, OPTIONID_CANCEL, 93, 141, 74, 43, 
+		_menuObjects.push_back(new MenuButton(this, OPTIONID_CANCEL, 93, 141, 74, 43,
 			&OrionCallbacks::optionsCancelFn, false, false, OBJTYPE_OM_CANCEL));
-		_menuObjects.push_back(new MenuButton(this, OPTIONID_DONE, 168, 141, 74, 43, 
+		_menuObjects.push_back(new MenuButton(this, OPTIONID_DONE, 168, 141, 74, 43,
 			&OrionCallbacks::optionsDoneFn, false, false, OBJTYPE_OM_DONE));
-		_menuObjects.push_back(new MenuHorizSlider(this, OPTIONID_HSLIDER_MIDI, 47, 64, 212, 24, 
+		_menuObjects.push_back(new MenuHorizSlider(this, OPTIONID_HSLIDER_MIDI, 47, 64, 212, 24,
 			_originalMidiVolume * 100 / 255, &OrionCallbacks::optionsMidiSliderFn, true));
-		_menuObjects.push_back(new MenuHorizSlider(this, OPTIONID_HSLIDER_DIGI, 47, 104, 212, 24, 
+		_menuObjects.push_back(new MenuHorizSlider(this, OPTIONID_HSLIDER_DIGI, 47, 104, 212, 24,
 			0, &OrionCallbacks::optionsDigiSliderFn, true));
 
 		_escapeHandler = &OrionCallbacks::optionsEscapeFn;
@@ -381,21 +381,21 @@ OrionMenuView::OrionMenuView(M4Engine *Vm, int x, int y, MenuType menuType, bool
 		_selectedSlot = -1;
 		_highlightedSlot = -1;
 		_saveNames = _vm->_saveLoad->getSaves();
-		
+
 		// Set up menu elements
 		_menuObjects.push_back(new MenuMessage(this, SLTAG_SAVELOAD_LABEL, 50, 241, 70, 16));
-		_menuObjects.push_back(new MenuButton(this, SLTAG_SAVELOAD, 214, 384, 72, 41, 
-			(menuType == SAVE_MENU) ? &OrionCallbacks::saveLoadSaveFn : &OrionCallbacks::saveLoadLoadFn, 
+		_menuObjects.push_back(new MenuButton(this, SLTAG_SAVELOAD, 214, 384, 72, 41,
+			(menuType == SAVE_MENU) ? &OrionCallbacks::saveLoadSaveFn : &OrionCallbacks::saveLoadLoadFn,
 			true, true, (menuType == SAVE_MENU) ? OBJTYPE_SL_SAVE : OBJTYPE_SL_LOAD));
-		_menuObjects.push_back(new MenuButton(this, SLTAG_CANCEL, 139, 384, 74, 43, 
+		_menuObjects.push_back(new MenuButton(this, SLTAG_CANCEL, 139, 384, 74, 43,
 			&OrionCallbacks::saveLoadCancelFn, false, false, OBJTYPE_SL_CANCEL));
-		_menuObjects.push_back(new MenuVertSlider(this, SLTAG_VSLIDER, 291, 255, 23, 127, 0, 
+		_menuObjects.push_back(new MenuVertSlider(this, SLTAG_VSLIDER, 291, 255, 23, 127, 0,
 			&OrionCallbacks::saveLoadSliderFn));
 
 		if (_menuType == SAVE_MENU)
 			_savegameThumbnail = createThumbnail();
 
-		_menuObjects.push_back(new MenuImage(this, SLTAG_THUMBNAIL, 66, 28, 215, 162, 
+		_menuObjects.push_back(new MenuImage(this, SLTAG_THUMBNAIL, 66, 28, 215, 162,
 			(_savegameThumbnail == NULL) ? _sprites->getFrame(SL_EMPTY_THUMBNAIL) : _savegameThumbnail));
 
 
@@ -405,9 +405,9 @@ OrionMenuView::OrionMenuView(M4Engine *Vm, int x, int y, MenuType menuType, bool
 				// Get save slot
 				bool isEmpty = (slotIndex >= _saveNames->size()) || (*slot).empty();
 
-				_menuObjects.push_back(new MenuSaveLoadText(this, SLTAG_SLOTS_START + slotIndex, 
+				_menuObjects.push_back(new MenuSaveLoadText(this, SLTAG_SLOTS_START + slotIndex,
 					50, 256 + slotIndex * 15, 238, 15, &OrionCallbacks::saveLoadSlotFn,
-					(menuType == LOAD_MENU) && isEmpty, true, (menuType == LOAD_MENU), 
+					(menuType == LOAD_MENU) && isEmpty, true, (menuType == LOAD_MENU),
 					isEmpty ? EmptySaveString : slot->c_str(), slotIndex + 1));
 			}
 		}
@@ -428,7 +428,7 @@ OrionMenuView::OrionMenuView(M4Engine *Vm, int x, int y, MenuType menuType, bool
 
 OrionMenuView::~OrionMenuView() {
 	delete _sprites;
-	
+
 	for (MenuObjectList::iterator i = _menuObjects.begin(); i != _menuObjects.end(); ++i)
 		delete *i;
 	_menuObjects.clear();
@@ -506,7 +506,7 @@ M4Surface *OrionMenuView::createThumbnail() {
 	for (int yCtr = yStart; yCtr <= yEnd; yCtr += 3) {
 		srcP = (byte *)srcSurface.pixels + (yCtr * _vm->_screen->width());
 
-		for (int xCtr = 0; xCtr < result->width(); ++xCtr, srcP += 3) 
+		for (int xCtr = 0; xCtr < result->width(); ++xCtr, srcP += 3)
 			*destP++ = *srcP;
 	}
 
@@ -518,7 +518,7 @@ void OrionMenuView::destroyView() {
 	bool interfaceVisible = _interfaceWasVisible;
 	engine->_viewManager->deleteView(this);
 
-	// Fade the game back in if no menu views are active (such as if a button was pressed in one menu 
+	// Fade the game back in if no menu views are active (such as if a button was pressed in one menu
 	// to activate another menu dialog)
 	bool fadeIn = engine->_viewManager->getView(VIEWID_MENU) == NULL;
 
@@ -589,7 +589,7 @@ bool OrionMenuView::onEvent(M4EventType eventType, int param, int x, int y, bool
 		}
 
 		if (_currentItem) {
-			captureEvents = 
+			captureEvents =
 				(Common::find(_menuObjects.begin(), _menuObjects.end(), _currentItem) != _menuObjects.end());
 			if (!captureEvents)
 				// The menu object is no longer active, so reset current item
@@ -614,11 +614,11 @@ bool OrionMenuView::onEvent(M4EventType eventType, int param, int x, int y, bool
 		return handledFlag;
 
 	} else {
-		// Handle mouse events by scanning the item list to see if the cursor is within any 
+		// Handle mouse events by scanning the item list to see if the cursor is within any
 
 		for (i = _menuObjects.begin(); (i != _menuObjects.end()) && !handledFlag; ++i) {
 			MenuObject *menuObj = *i;
-		
+
 			if (menuObj->isInside(localX, localY)) {
 				// Found an item, so pass it the event
 				menuObj->onEvent(eventType, param, localX, localY, _currentItem);
@@ -631,7 +631,7 @@ bool OrionMenuView::onEvent(M4EventType eventType, int param, int x, int y, bool
 				}
 
 				if (_currentItem) {
-					captureEvents = 
+					captureEvents =
 						(Common::find(_menuObjects.begin(), _menuObjects.end(), _currentItem) != _menuObjects.end());
 					if (!captureEvents)
 						// The menu object is no longer active, so reset current item
@@ -708,7 +708,7 @@ void OrionMenuView::setTopSaveSlot(int slotNumber) {
 
 		bool isEmpty = (slotIndex >= _saveNames->size()) || slot->empty();
 		item->setDisplay(slotIndex + 1, isEmpty ? EmptySaveString : slot->c_str());
-		
+
 		item->setState((_menuType == SAVE_MENU) || !isEmpty ? OS_NORMAL : OS_GREYED);
 	}
 }

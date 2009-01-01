@@ -245,7 +245,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		// Music stuff
 		char *cptr = (char *)FindChunk(scene, CHUNK_MUSIC_FILENAME);
 		assert(cptr);
-		_vm->_pcmMusic->setMusicSceneDetails(FROM_LE_32(ss->hMusicScript), 
+		_vm->_pcmMusic->setMusicSceneDetails(FROM_LE_32(ss->hMusicScript),
 			FROM_LE_32(ss->hMusicSegment), cptr);
 	}
 
@@ -289,7 +289,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 				++es;
 			else
 				es = (const ENTRANCE_STRUC *)((const byte *)es + 8);
-				
+
 		}
 
 		if (i == FROM_LE_32(ss->numEntrance))

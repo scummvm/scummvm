@@ -729,7 +729,7 @@ void Control::readSavegameDescriptions(void) {
 	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(file->c_str() + file->size() - 3);
-		
+
 		while (num < slotNum) {
 			_saveNames.push_back("");
 			num++;
@@ -818,7 +818,7 @@ void Control::checkForOldSaveGames() {
 		slot++;
 	} while ((ch != 255) && (!inf->eos()));
 
-	delete inf;	
+	delete inf;
 
 	// Delete index file
 	_saveFileMan->removeSavefile("SAVEGAME.INF");
@@ -1050,7 +1050,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	if (saveHeader != SAVEGAME_HEADER) {
 		// Display an error message, and do nothing
 		displayMessage(0, "Save game '%s' is corrupt", fName);
-		return false;		
+		return false;
 	}
 
 	inf->skip(40);		// skip description
@@ -1060,7 +1060,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 		warning("Different save game version");
 		return false;
 	}
-	
+
 	bool hasThumbnail = inf->readByte();
 
 	if (hasThumbnail) {
@@ -1156,7 +1156,7 @@ bool Control::convertSaveGame(uint8 slot, char* desc) {
 		free(saveData);
 		saveData = NULL;
 		return false;
-	}	
+	}
 
 	newSave->writeUint32LE(SAVEGAME_HEADER);
 	newSave->write(desc, 40);

@@ -56,7 +56,7 @@ void Font::printstring(char *messagein) {
 	Common::Rect topbar(640, 80);
 	Graphics::Surface *gamescreen;
 	gamescreen = _syst->lockScreen();
-	gamescreen->fillRect(topbar, 0);	
+	gamescreen->fillRect(topbar, 0);
 	_syst->unlockScreen();
 
 	for (i = 0; i < 14; i++) {
@@ -121,7 +121,7 @@ uint8 Font::printletter(char letter, uint16 xoffset) {
 	_sphinxfnt->read(data, width * height);
 	_syst->copyRectToScreen(data, width, xoffset, 16, width, height);
 	delete[] data;
-	
+
 	return width;
 }
 

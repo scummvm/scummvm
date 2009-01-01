@@ -17,7 +17,7 @@ class CreatedTest : public CxxTest::TestSuite
 public:
     CreatedTest( unsigned size ) : _buffer( new char[size] ) {}
     virtual ~CreatedTest() { delete[] _buffer; }
-    
+
     static CreatedTest *createSuite() { return new CreatedTest( 16 ); }
     static void destroySuite( CreatedTest *suite ) { delete suite; }
 

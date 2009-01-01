@@ -103,7 +103,7 @@ void MenuObject::onExecute() {
 //--------------------------------------------------------------------------
 // MenuButton class
 //
-// Defines a button object 
+// Defines a button object
 //--------------------------------------------------------------------------
 
 MenuButton::MenuButton(DialogView *owner, int buttonId, int xs, int ys, int width, int height,
@@ -164,9 +164,9 @@ bool MenuButton::onEvent(M4EventType event, int param, int x, int y, MenuObject 
 		if (isInside(x, y)) {
 			if (currentItem) {
 				callbackFlag = true;
-				if (_objectType == OBJTYPE_OM_SWITCH_ON) 
+				if (_objectType == OBJTYPE_OM_SWITCH_ON)
 					_objectType = OBJTYPE_OM_SWITCH_OFF;
-				else if (_objectType == OBJTYPE_OM_SWITCH_OFF) 
+				else if (_objectType == OBJTYPE_OM_SWITCH_OFF)
 					_objectType = OBJTYPE_OM_SWITCH_ON;
 			}
 			else {
@@ -183,7 +183,7 @@ bool MenuButton::onEvent(M4EventType event, int param, int x, int y, MenuObject 
 			handledFlag = false;
 		}
 		break;
-		
+
 	case MEVENT_MOVE:
 		if (isInside(x, y)) {
 			currentItem = this;
@@ -222,7 +222,7 @@ bool MenuButton::onEvent(M4EventType event, int param, int x, int y, MenuObject 
 
 	// If a callback is flagged, then handle it
 
-	if (callbackFlag) 
+	if (callbackFlag)
 		onExecute();
 
 	return handledFlag;
@@ -268,8 +268,8 @@ void MenuButton::onRefresh() {
 
 	case OBJTYPE_OM_DONE:
 		sprite = sprites[OM_DONE_BTN_GREYED + _objectState];
-		break;																			  
-					  		
+		break;
+
 	case OBJTYPE_OM_CANCEL:
 		sprite = (_objectState == OS_GREYED) ? sprites[OM_CANCEL_BTN_NORMAL] :
 			sprites[OM_CANCEL_BTN_NORMAL + _objectState - 1];
@@ -291,26 +291,26 @@ void MenuButton::onRefresh() {
 	case OBJTYPE_SL_TEXT:
 		switch (_objectState) {
 		case OS_MOUSEOVER:
-			_vm->_font->setColors(TEXT_COLOR_MOUSEOVER_SHADOW, TEXT_COLOR_MOUSEOVER_FOREGROUND, 
+			_vm->_font->setColors(TEXT_COLOR_MOUSEOVER_SHADOW, TEXT_COLOR_MOUSEOVER_FOREGROUND,
 				TEXT_COLOR_MOUSEOVER_HILIGHT);
 			sprite = sprites[SL_LINE_MOUSEOVER];
 			break;
 
 		case OS_PRESSED:
-			_vm->_font->setColors(TEXT_COLOR_PRESSED_SHADOW, TEXT_COLOR_PRESSED_FOREGROUND, 
+			_vm->_font->setColors(TEXT_COLOR_PRESSED_SHADOW, TEXT_COLOR_PRESSED_FOREGROUND,
 				TEXT_COLOR_PRESSED_HILIGHT);
 			sprite = sprites[SL_LINE_PRESSED];
 			break;
 
 		case OS_GREYED:
-			_vm->_font->setColors(TEXT_COLOR_GREYED_SHADOW, TEXT_COLOR_GREYED_FOREGROUND, 
+			_vm->_font->setColors(TEXT_COLOR_GREYED_SHADOW, TEXT_COLOR_GREYED_FOREGROUND,
 				TEXT_COLOR_GREYED_HILIGHT);
 			sprite = sprites[SL_LINE_NORMAL];
 			break;
 
 		default:
 		case OS_NORMAL:
-			_vm->_font->setColors(TEXT_COLOR_NORMAL_SHADOW, TEXT_COLOR_NORMAL_FOREGROUND, 
+			_vm->_font->setColors(TEXT_COLOR_NORMAL_SHADOW, TEXT_COLOR_NORMAL_FOREGROUND,
 				TEXT_COLOR_NORMAL_HILIGHT);
 			sprite = sprites[SL_LINE_NORMAL];
 			break;
@@ -344,10 +344,10 @@ void MenuButton::onRefresh() {
 // Defines a horizontal slider that allows selection of a percentage
 //--------------------------------------------------------------------------
 
-MenuHorizSlider::MenuHorizSlider(DialogView *owner, int objectId, int xs, int ys, 
+MenuHorizSlider::MenuHorizSlider(DialogView *owner, int objectId, int xs, int ys,
 		int width, int height, int initialPercentage, Callback callbackFn, bool transparent):
 		MenuObject(owner, objectId, xs, ys, width, height, false, transparent) {
-	
+
 	_objectType = OBJTYPE_SLIDER;
 	_callback = callbackFn;
 
@@ -366,7 +366,7 @@ void MenuHorizSlider::onRefresh() {
 		// Transparent button
 		if (!_background)
 			return;
-		
+
 		_background->copyTo(parent(), _bounds.left, _bounds.top, 0);
 	}
 
@@ -377,7 +377,7 @@ void MenuHorizSlider::onRefresh() {
 
 	// Fill in the area to the left of the thumbnail
 	if (_thumbX > 2) {
-		Common::Rect leftBounds(_bounds.left + 3, _bounds.top + 9, _bounds.left + _thumbX, 
+		Common::Rect leftBounds(_bounds.left + 3, _bounds.top + 9, _bounds.left + _thumbX,
 			_bounds.top + _thumbSize.y - 9);
 		parent()->fillRect(leftBounds, SLIDER_BAR_COLOR);
 	}
@@ -397,7 +397,7 @@ bool MenuHorizSlider::onEvent(M4EventType event, int param, int x, int y, MenuOb
 	switch (event) {
 	case MEVENT_LEFT_CLICK:
 	case MEVENT_DOUBLECLICK:
-		if (isInside(x, y) && (x - _bounds.left >= _thumbX) && 
+		if (isInside(x, y) && (x - _bounds.left >= _thumbX) &&
 			(x - _bounds.left <= _thumbX + _thumbSize.x - 1)) {
 			// The thumbnail has been clicked
 			_sliderState = HSLIDER_THUMB_PRESSED;
@@ -427,7 +427,7 @@ bool MenuHorizSlider::onEvent(M4EventType event, int param, int x, int y, MenuOb
 				_percent = _thumbX * 100 / _maxThumbX;
 				redrawFlag = callbackFlag = true;
 			}
-			movingX = CLIP(x, _bounds.left + _thumbX, 
+			movingX = CLIP(x, _bounds.left + _thumbX,
 							_bounds.left + _thumbX + _thumbSize.x - 1);
 		} else {
 			currentItem = NULL;
@@ -452,7 +452,7 @@ bool MenuHorizSlider::onEvent(M4EventType event, int param, int x, int y, MenuOb
 		redrawFlag = true;
 		callbackFlag = true;
 		break;
-		
+
 	case MEVENT_MOVE:
 		if (isInside(x, y) && (x - _bounds.left >= _thumbX) &&
 				(x - _bounds.left <= _thumbX + _thumbSize.x - 1)) {
@@ -469,7 +469,7 @@ bool MenuHorizSlider::onEvent(M4EventType event, int param, int x, int y, MenuOb
 		}
 		redrawFlag = true;
 		break;
-		
+
 	default:
 		break;
 	}
@@ -477,7 +477,7 @@ bool MenuHorizSlider::onEvent(M4EventType event, int param, int x, int y, MenuOb
 	if (redrawFlag)
 		onRefresh();
 
-	if (callbackFlag) 
+	if (callbackFlag)
 		onExecute();
 
 	return handledFlag;
@@ -489,10 +489,10 @@ bool MenuHorizSlider::onEvent(M4EventType event, int param, int x, int y, MenuOb
 // Defines a vertical slider that's used in the save/load dialog
 //--------------------------------------------------------------------------
 
-MenuVertSlider::MenuVertSlider(DialogView *owner, int objectId, int xs, int ys, 
+MenuVertSlider::MenuVertSlider(DialogView *owner, int objectId, int xs, int ys,
 		int width, int height, int initialPercentage, Callback callbackFn, bool transparent):
 		MenuObject(owner, objectId, xs, ys, width, height, false, transparent) {
-	
+
 	_objectType = OBJTYPE_SLIDER;
 	_callback = callbackFn;
 
@@ -527,7 +527,7 @@ void MenuVertSlider::onRefresh() {
 		// Transparent button
 		if (!_background)
 			return;
-		
+
 		_background->copyTo(parent(), _bounds.left, _bounds.top, 0);
 	}
 
@@ -544,22 +544,22 @@ void MenuVertSlider::onRefresh() {
 		thumbSprite = NULL;
 
 	} else if (_objectState == OS_MOUSEOVER) {
-		if (_sliderState == VSLIDER_UP) 
+		if (_sliderState == VSLIDER_UP)
 			upSprite = sprites[SL_UP_BTN_MOUSEOVER];
-		else if (_sliderState == VSLIDER_THUMBNAIL) 
+		else if (_sliderState == VSLIDER_THUMBNAIL)
 			thumbSprite = sprites[SL_SLIDER_BTN_MOUSEOVER];
 		else if (_sliderState == VSLIDER_DOWN)
 			downSprite = sprites[SL_DOWN_BTN_MOUSEOVER];
 	}
 	else if (_objectState == OS_PRESSED) {
-		if (_sliderState == VSLIDER_UP) 
+		if (_sliderState == VSLIDER_UP)
 			upSprite = sprites[SL_UP_BTN_PRESSED];
-		else if (_sliderState == VSLIDER_THUMBNAIL) 
+		else if (_sliderState == VSLIDER_THUMBNAIL)
 			thumbSprite = sprites[SL_SLIDER_BTN_PRESSED];
-		else if (_sliderState == VSLIDER_DOWN) 
+		else if (_sliderState == VSLIDER_DOWN)
 			downSprite = sprites[SL_DOWN_BTN_PRESSED];
 	}
-		
+
 	// Draw the sprites
 	upSprite->copyTo(parent(), _bounds.left, _bounds.top, 0);
 	barSprite->copyTo(parent(), _bounds.left, _bounds.top + upSprite->height(), 0);
@@ -615,7 +615,7 @@ bool MenuVertSlider::onEvent(M4EventType event, int param, int x, int y, MenuObj
 
 	case MEVENT_LEFT_DRAG:
 	case MEVENT_DOUBLECLICK_DRAG:
-		if (!currentItem) 
+		if (!currentItem)
 			return true;
 
 		if (movingFlag) {
@@ -639,9 +639,9 @@ bool MenuVertSlider::onEvent(M4EventType event, int param, int x, int y, MenuObj
 			}
 			movingY = y;
 
-			if (movingY < (_thumbY + _bounds.top)) 
+			if (movingY < (_thumbY + _bounds.top))
 				movingY = _thumbY + _bounds.top;
-			else if (movingY > (_bounds.top + _thumbY + _thumbSize.y - 1)) 
+			else if (movingY > (_bounds.top + _thumbY + _thumbSize.y - 1))
 				movingY = _bounds.top + _thumbY + _thumbSize.y - 1;
 
 		} else {
@@ -654,7 +654,7 @@ bool MenuVertSlider::onEvent(M4EventType event, int param, int x, int y, MenuObj
 						setState(OS_PRESSED);
 						redrawFlag = true;
 					}
-					if (currentTime - callbackTime > 100) 
+					if (currentTime - callbackTime > 100)
 						callbackFlag = true;
 
 				} else {
@@ -672,13 +672,13 @@ bool MenuVertSlider::onEvent(M4EventType event, int param, int x, int y, MenuObj
 			}
 		}
 		break;
-			
+
 	case MEVENT_LEFT_RELEASE:
 	case MEVENT_DOUBLECLICK_RELEASE:
 		movingFlag = false;
 		if (isInside(x, y)) {
 			tempState = getSliderArea(y - _bounds.top);
-			if ((tempState == VSLIDER_PAGE_UP) || (tempState == VSLIDER_PAGE_DOWN)) 
+			if ((tempState == VSLIDER_PAGE_UP) || (tempState == VSLIDER_PAGE_DOWN))
 				setState(OS_NORMAL);
 			else {
 				setState(OS_MOUSEOVER);
@@ -693,13 +693,13 @@ bool MenuVertSlider::onEvent(M4EventType event, int param, int x, int y, MenuObj
 		if (parent()->getMenuType() == LOAD_MENU)
 			updateThumbnails();
 		break;
-	
+
 	case MEVENT_MOVE:
 		if (isInside(x, y)) {
 			currentItem = this;
 			tempState = getSliderArea(y - _bounds.top);
 			if (_sliderState != tempState) {
-				if ((tempState == VSLIDER_PAGE_UP) || (tempState == VSLIDER_PAGE_DOWN)) 
+				if ((tempState == VSLIDER_PAGE_UP) || (tempState == VSLIDER_PAGE_DOWN))
 					_objectState = OS_NORMAL;
 				else {
 					_sliderState = tempState;
@@ -725,9 +725,9 @@ bool MenuVertSlider::onEvent(M4EventType event, int param, int x, int y, MenuObj
 
 		if (isInside(x, y)) {
 			tempState = getSliderArea(y - _bounds.top);
-			
+
 			if (_sliderState == tempState) {
-				if (currentTime - callbackTime > 100) 
+				if (currentTime - callbackTime > 100)
 					callbackFlag = true;
 			}
 		}
@@ -737,7 +737,7 @@ bool MenuVertSlider::onEvent(M4EventType event, int param, int x, int y, MenuObj
 		break;
 	}
 
-	if (redrawFlag) 
+	if (redrawFlag)
 		onRefresh();
 
 	if (callbackFlag) {
@@ -748,7 +748,7 @@ bool MenuVertSlider::onEvent(M4EventType event, int param, int x, int y, MenuObj
 	return handledFlag;
 }
 
-void MenuVertSlider::setPercentage(int value) { 
+void MenuVertSlider::setPercentage(int value) {
 	_percent = value;
 	_thumbY = _minThumbY + ((_percent * (_maxThumbY - _minThumbY)) / 100);
 	onRefresh();
@@ -760,7 +760,7 @@ void MenuVertSlider::setPercentage(int value) {
 // Defines a message menu object
 //--------------------------------------------------------------------------
 
-MenuMessage::MenuMessage(DialogView *owner, int objectId, int xs, int ys, int width, int height, 
+MenuMessage::MenuMessage(DialogView *owner, int objectId, int xs, int ys, int width, int height,
 						 bool transparent):
 		MenuObject(owner, objectId, xs, ys, width, height, false, transparent) {
 }
@@ -772,7 +772,7 @@ void MenuMessage::onRefresh() {
 	// Get the correct sprite to use
 	switch (_objectId) {
 	case SLTAG_SAVELOAD_LABEL:
-		sprite = (parent()->getMenuType() == SAVE_MENU) ? sprites[SL_SAVE_LABEL] : 
+		sprite = (parent()->getMenuType() == SAVE_MENU) ? sprites[SL_SAVE_LABEL] :
 			sprites[SL_LOAD_LABEL];
 		break;
 	}
@@ -783,7 +783,7 @@ void MenuMessage::onRefresh() {
 		// Transparent button
 		if (!_background)
 			return;
-		
+
 		// Restore original background and then do a transparent copy of the sprite
 		_background->copyTo(parent(), _bounds.left, _bounds.top);
 	}
@@ -797,7 +797,7 @@ void MenuMessage::onRefresh() {
 // Defines a menu item that displays a given surface
 //--------------------------------------------------------------------------
 
-MenuImage::MenuImage(DialogView *owner, int objectId, int xs, int ys, int width, int height, 
+MenuImage::MenuImage(DialogView *owner, int objectId, int xs, int ys, int width, int height,
 					 M4Surface *image, bool transparent):
 		MenuObject(owner, objectId, xs, ys, width, height, false, transparent) {
 
@@ -813,7 +813,7 @@ void MenuImage::onRefresh() {
 		// Transparent button
 		if (!_background)
 			return;
-		
+
 		// Restore original background and then do a transparent copy of the sprite
 		_background->copyTo(parent(), _bounds.left, _bounds.top);
 	}
@@ -828,7 +828,7 @@ void MenuImage::onRefresh() {
 // Defines a save/load dialog text entry
 //--------------------------------------------------------------------------
 
-MenuSaveLoadText::MenuSaveLoadText(DialogView *owner, int textId, int xs, int ys, 
+MenuSaveLoadText::MenuSaveLoadText(DialogView *owner, int textId, int xs, int ys,
 		int width, int height, Callback callbackFn, bool greyed, bool transparent,
 		bool loadFlag, const char *displayText, int displayValue):
 		MenuButton(owner, textId, xs, ys, width, height, callbackFn, greyed, transparent, OBJTYPE_SL_TEXT) {
@@ -882,7 +882,7 @@ bool MenuSaveLoadText::onEvent(M4::M4EventType event, int param, int x, int y, M
 				delete parent()->_savegameThumbnail;
 
 			parent()->_highlightedSlot = _index;
-			parent()->_savegameThumbnail = _vm->_saveLoad->getThumbnail(_index + 1); 
+			parent()->_savegameThumbnail = _vm->_saveLoad->getThumbnail(_index + 1);
 			thumbnail->setSprite(parent()->_savegameThumbnail);
 		}
 
@@ -901,12 +901,12 @@ bool MenuSaveLoadText::onEvent(M4::M4EventType event, int param, int x, int y, M
 			parent()->_highlightedSlot = -1;
 		}
 	}
-	
+
 	return handledFlag;
 }
 
-void MenuSaveLoadText::setVisible(bool value) { 
-	_visible = value; 
+void MenuSaveLoadText::setVisible(bool value) {
+	_visible = value;
 	parent()->refresh(_bounds);
 }
 
@@ -916,8 +916,8 @@ void MenuSaveLoadText::setVisible(bool value) {
 // Defines a text entry field
 //--------------------------------------------------------------------------
 
-MenuTextField::MenuTextField(DialogView *owner, int fieldId, int xs, int ys, int width, 
-							 int height, bool greyed, Callback callbackFn, 
+MenuTextField::MenuTextField(DialogView *owner, int fieldId, int xs, int ys, int width,
+							 int height, bool greyed, Callback callbackFn,
 							 const char *displayText, int displayValue, bool transparent):
 		MenuObject(owner, fieldId, xs, ys, width, height, greyed, transparent) {
 
@@ -946,7 +946,7 @@ void MenuTextField::onRefresh() {
 		// Transparent button
 		if (!_background)
 			return;
-		
+
 		_background->copyTo(parent(), _bounds.left, _bounds.top, 0);
 	}
 
@@ -956,7 +956,7 @@ void MenuTextField::onRefresh() {
 	// Draw the text
 
 	_vm->_font->setFont(FONT_MENU);
-	_vm->_font->setColors(TEXT_COLOR_NORMAL_SHADOW, TEXT_COLOR_NORMAL_FOREGROUND, 
+	_vm->_font->setColors(TEXT_COLOR_NORMAL_SHADOW, TEXT_COLOR_NORMAL_FOREGROUND,
 		TEXT_COLOR_NORMAL_HILIGHT);
 	int xp = _bounds.left + 4;
 
@@ -989,7 +989,7 @@ bool MenuTextField::onEvent(M4EventType event, int param, int x, int y, MenuObje
 	char tempStr[MAX_SAVEGAME_NAME];
 	int tempLen;
 	char *tempP;
-	bool handledFlag = false, redrawFlag = false, callbackFlag = false;	
+	bool handledFlag = false, redrawFlag = false, callbackFlag = false;
 
 	if (_objectState == OS_GREYED)
 		return false;
@@ -1102,7 +1102,7 @@ bool MenuTextField::onEvent(M4EventType event, int param, int x, int y, MenuObje
 			tempLen = _vm->_font->getWidth(_displayText);
 			if ((strlen(_displayText) < MAX_SAVEGAME_NAME - 1) &&
 				(tempLen < _pixelWidth - 12) && (param >= 32) && (param <= 127)) {
-			
+
 				// Valid displayable character
 				if (_cursor < _promptEnd) {
 					strcpy(tempStr, _cursor);
@@ -1124,10 +1124,10 @@ bool MenuTextField::onEvent(M4EventType event, int param, int x, int y, MenuObje
 		break;
 	}
 
-	if (redrawFlag) 
+	if (redrawFlag)
 		onRefresh();
 
-	if (callbackFlag) 
+	if (callbackFlag)
 		onExecute();
 
 	return handledFlag;
@@ -1148,8 +1148,8 @@ void GUITextField::onRefresh() {
 
 //--------------------------------------------------------------------------
 
-GUIButton::GUIButton(View *owner, const Common::Rect &bounds, int tag, 
-		M4Surface *normalSprite, M4Surface *mouseOverSprite,  M4Surface *pressedSprite): 
+GUIButton::GUIButton(View *owner, const Common::Rect &bounds, int tag,
+		M4Surface *normalSprite, M4Surface *mouseOverSprite,  M4Surface *pressedSprite):
 		GUIRect(owner, bounds, tag) {
 
 	_normalSprite = normalSprite;
@@ -1161,7 +1161,7 @@ GUIButton::GUIButton(View *owner, const Common::Rect &bounds, int tag,
 
 void GUIButton::onRefresh() {
 	_parent->fillRect(_bounds, _vm->_palette->BLACK);
-	
+
 	if (_visible) {
 		switch (_buttonState) {
 		case BUTTON_MOUSEOVER:

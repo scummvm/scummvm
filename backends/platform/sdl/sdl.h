@@ -378,7 +378,7 @@ protected:
 	SDL_Thread *_soundThread;
 	bool _soundThreadIsRunning;
 	bool _soundThreadShouldQuit;
-	
+
 	byte _activeSoundBuf;
 	uint _soundBufSize;
 	byte *_soundBuffers[2];

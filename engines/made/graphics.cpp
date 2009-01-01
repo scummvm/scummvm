@@ -183,7 +183,7 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 	int bitBufLastCount = ((width + 3) >> 2) & 7;
 	if (bitBufLastCount == 0)
 		bitBufLastCount = 8;
-		
+
 	debug(1, "width = %d; bw = %d", width, bw);
 
 	while (height > 0) {

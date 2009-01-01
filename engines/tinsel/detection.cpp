@@ -52,8 +52,8 @@ uint32 TinselEngine::getFeatures() const {
 	return _gameDescription->features;
 }
 
-Common::Language TinselEngine::getLanguage() const { 
-	return _gameDescription->desc.language; 
+Common::Language TinselEngine::getLanguage() const {
+	return _gameDescription->desc.language;
 }
 
 Common::Platform TinselEngine::getPlatform() const {
@@ -454,14 +454,14 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 
-	virtual bool hasFeature(MetaEngineFeature f) const;	
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };
 
 bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return 
+	return
 		(f == kSupportsListSaves) ||
 		// TODO: See tinsel.cpp ll 994-1005
 #if 0
@@ -561,7 +561,7 @@ Common::Error TinselEngine::loadGameState(int slot) {
 	// slot numbers instead of savelist entry numbers for loading.
 	// This would also allow '-2' as slot for CD changes without
 	// any major hackery.
-	
+
 	int listSlot = -1;
 	const int numStates = Tinsel::getList();
 	for (int i = 0; i < numStates; ++i) {

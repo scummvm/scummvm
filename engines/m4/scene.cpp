@@ -127,7 +127,7 @@ void Scene::loadScene(int sceneNumber) {
 		}
 	}
 
-	if (_vm->getGameType() == GType_Burger && 
+	if (_vm->getGameType() == GType_Burger &&
 		sceneNumber != TITLE_SCENE_BURGER && sceneNumber != MAINMENU_SCENE_BURGER)
 		_vm->_interfaceView->setStatusText("");
 
@@ -148,7 +148,7 @@ void Scene::loadScene(int sceneNumber) {
 
 	// Load scene walk path file (*.COD/*.WW?)
 	loadSceneCodes(sceneNumber);
-	
+
 	// Load inverse color table file (*.IPL)
 	loadSceneInverseColorTable(sceneNumber);
 
@@ -277,7 +277,7 @@ void Scene::loadSceneInverseColorTable(int sceneNumber) {
 		// TODO?
 		return;
 	}
-	
+
 }
 
 

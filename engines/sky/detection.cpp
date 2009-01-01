@@ -69,7 +69,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const Common::FSList &fslist) const;	
+	virtual GameList detectGames(const Common::FSList &fslist) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
@@ -303,11 +303,11 @@ Common::Error SkyEngine::saveGameState(int slot, const char *desc) {
 	return Common::kNoError;
 }
 
-bool SkyEngine::canLoadGameStateCurrently() { 
+bool SkyEngine::canLoadGameStateCurrently() {
 	return _systemVars.pastIntro && _skyControl->loadSaveAllowed();
 }
 
-bool SkyEngine::canSaveGameStateCurrently() { 
+bool SkyEngine::canSaveGameStateCurrently() {
 	return _systemVars.pastIntro && _skyControl->loadSaveAllowed();
 }
 

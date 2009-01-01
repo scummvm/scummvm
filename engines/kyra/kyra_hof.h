@@ -724,7 +724,7 @@ protected:
 	int o2_displayWsaSequentialFrames(EMCState *script);
 	int o2_displayWsaSequence(EMCState *script);
 	int o2_addItemToInventory(EMCState *script);
-	int o2_drawShape(EMCState *script);	
+	int o2_drawShape(EMCState *script);
 	int o2_addItemToCurScene(EMCState *script);
 	int o2_loadSoundFile(EMCState *script);
 	int o2_removeSlotFromInventory(EMCState *script);
@@ -863,7 +863,7 @@ protected:
 	const uint16 *_ingameTalkObjIndex;
 	int _ingameTalkObjIndexSize;
 	const char *const *_ingameTimJpStr;
-	int _ingameTimJpStrSize;	
+	int _ingameTimJpStrSize;
 	const HofSeqData *_sequences;
 	const ItemAnimData_v2 *_itemAnimData;
 	int _itemAnimDataSize;

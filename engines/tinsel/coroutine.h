@@ -35,7 +35,7 @@ namespace Tinsel {
  *   <http://www.chiark.greenend.org.uk/~sgtatham/coroutines.html>.
  * However, many improvements and tweaks have been made, in particular
  * by taking advantage of C++ features not available in C.
- * 
+ *
  * Why is this code here? Well, the Tinsel engine apparently used
  * setjmp/longjmp based coroutines as a core tool from the start, and
  * so they are deeply ingrained into the whole code base. When we
@@ -45,7 +45,7 @@ namespace Tinsel {
  * would have meant a major restructuring of the entire code base, a
  * rather daunting task. Also, it would have very likely introduced
  * tons of regressons.
- * 
+ *
  * So instead of getting rid of the coroutines, we chose to implement
  * them in an alternate way, using Simon Tatham's trick as described
  * above. While the trick is dirty, the result seems to be clear enough,

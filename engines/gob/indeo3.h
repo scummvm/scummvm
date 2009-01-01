@@ -75,7 +75,7 @@ private:
 		uint16 y_w, y_h;
 		uint16 uv_w, uv_h;
 	};
-	
+
 	int16 _width;
 	int16 _height;
 	YUVBufs _iv_frame[2];

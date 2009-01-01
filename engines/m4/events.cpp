@@ -91,7 +91,7 @@ M4EventType Events::handleEvents() {
 
 	// State machine for moving between states
 	switch (_mouseState) {
-	case MSTATE_NO_EVENT:		
+	case MSTATE_NO_EVENT:
 		if (_mouseButtons & LEFT_BUTTON_DOWN) {
 			if ((dclickTime != 0) && (g_system->getMillis() < dclickTime)) {
 				_mouseState = MSTATE_DOUBLECLICK_DOWN;
@@ -199,7 +199,7 @@ bool Mouse::init(const char *seriesName, RGB8 *palette) {
 					data = _cursorSprites->getFrame(i)->getBasePtr(x, y);
 					if (*data == 1) {
 						// It seems that some cursors have more than one hotspot
-						// In such a case, the first hotspot seems to set the x and 
+						// In such a case, the first hotspot seems to set the x and
 						// the second one the y hotspot offset
 						if (!hotSpotSet) {
 							_cursorSprites->getFrame(i)->xOffset = x;
@@ -232,7 +232,7 @@ bool Mouse::setCursorNum(int cursorIndex) {
 		return false;
 
 	_lockedCursor = cursorIndex;
-	if (_locked) 
+	if (_locked)
 		// Cursor is locked, so don't go ahead with changing cursor
 		return true;
 
@@ -241,7 +241,7 @@ bool Mouse::setCursorNum(int cursorIndex) {
 
 	// Set the cursor to the sprite
 	CursorMan.replaceCursor((const byte *)_cursor->getData(), _cursor->w, _cursor->h, _cursor->xOffset, _cursor->yOffset, 0);
-	
+
 	return true;
 }
 
@@ -284,7 +284,7 @@ const char *Mouse::getVerb() {
 }
 
 void Mouse::resetMouse() {
-	_hideRect.left = -1; 
+	_hideRect.left = -1;
 	_hideRect.top = -1;
 	_hideRect.right = -1;
 	_hideRect.bottom = -1;
@@ -342,7 +342,7 @@ bool Mouse::inHideArea() {
 	if ((_showRect.top == -1) && (_showRect.left == -1))
 		// No show rect defined
 		return false;
-	
+
 	// Return true if the mouse is outside the show area
 	return (_currentPos.x < _showRect.left) || (_currentPos.x > _showRect.right) ||
 		(_currentPos.y < _showRect.top) || (_currentPos.y > _showRect.bottom);

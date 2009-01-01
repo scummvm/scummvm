@@ -43,11 +43,11 @@ protected:
 	Common::String _path;
 	bool _isDirectory;
 	bool _isValid;
-	
+
 	virtual AbstractFSNode *makeNode(const Common::String &path) const {
 		return new POSIXFilesystemNode(path);
 	}
-	
+
 	/**
 	 * Plain constructor, for internal use only (hence protected).
 	 */

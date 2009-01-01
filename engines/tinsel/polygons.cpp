@@ -95,7 +95,7 @@ struct POLYGON {
 	int	a[4];		// y1-y2       }
 	int	b[4];		// x2-x1       } See IsInPolygon()
 	long	c[4];		// y1x2 - x1y2 }
-      
+
 	/*
 	 * Internal derived data for speed and conveniance
 	 * set up by PseudoCentre()
@@ -173,7 +173,7 @@ public:
 	int32 nodecount;		//!<The number of nodes in this polygon
 	int32 pnodelistx,pnodelisty;	//!<offset in chunk to this array if present
 	int32 plinelist;
-	
+
 	SCNHANDLE hScript;	//!< handle of code segment for polygon events
 };
 
@@ -219,7 +219,7 @@ void Poly::nextPoly() {
 
 	for (int i = 0; i < 4; ++i) x[i] = nextLong(_pData);
 	for (int i = 0; i < 4; ++i) y[i] = nextLong(_pData);
-	
+
 	if (TinselV2) {
 		xoff = nextLong(_pData);
 		yoff = nextLong(_pData);
@@ -599,7 +599,7 @@ void FindBestPoint(HPOLYGON hp, int *x, int *y, int *pline) {
 			int32	b2 = (int)FROM_LE_32(line->b2);             //!< b squared
 			int32	a2pb2 = (int)FROM_LE_32(line->a2pb2);          //!< a squared + b squared
 			int32	ra2pb2 = (int)FROM_LE_32(line->ra2pb2);         //!< root(a squared + b squared)
-		
+
 			int32	ab = (int)FROM_LE_32(line->ab);
 			int32	ac = (int)FROM_LE_32(line->ac);
 			int32	bc = (int)FROM_LE_32(line->bc);
@@ -736,7 +736,7 @@ static const POLYGON *TryPath(POLYGON *last, POLYGON *whereto, POLYGON *current)
  */
 static HPOLYGON PathOnTheWay(HPOLYGON from, HPOLYGON to) {
 	// TODO: Fingolfin says: This code currently uses DFS (depth first search),
-	// in the TryPath function, to compute a path between 'from' and 'to'. 
+	// in the TryPath function, to compute a path between 'from' and 'to'.
 	// However, a BFS (breadth first search) might yield more natural results,
 	// at least in cases where there are multiple possible paths.
 	// There is a small risk of regressions caused by such a change, though.
@@ -753,7 +753,7 @@ static HPOLYGON PathOnTheWay(HPOLYGON from, HPOLYGON to) {
 
 	for (i = 0; i < MAX_POLY; i++) {		// For each polygon..
 		POLYGON *p = Polys[i];
-		if (p && p->polyType == PATH)	//...if it's a path 
+		if (p && p->polyType == PATH)	//...if it's a path
 			p->tried = false;
 	}
 	Polys[from]->tried = true;
@@ -818,7 +818,7 @@ int NearestEndNode(HPOLYGON hPath, int x, int y) {
 
 	nlistx = (int32 *)(pps + (int)FROM_LE_32(ptp.pnodelistx));
 	nlisty = (int32 *)(pps + (int)FROM_LE_32(ptp.pnodelisty));
-	
+
 	const int nodecount = (int)FROM_LE_32(ptp.nodecount);
 
 	d1 = ABS(x - (int)FROM_LE_32(nlistx[0])) + ABS(y - (int)FROM_LE_32(nlisty[0]));
@@ -926,7 +926,7 @@ int NearestNodeWithin(HPOLYGON hNpath, int x, int y) {
  */
 void NearestCorner(int *x, int *y, HPOLYGON hStartPoly, HPOLYGON hDestPoly) {
 	const POLYGON *psp, *pdp;
-	int	j;	
+	int	j;
 	int	ncorn = 0;			// nearest corner
 	HPOLYGON hNpath = NOPOLY;	// path containing nearest corner
 	int ThisD, SmallestD = 1000;
@@ -942,7 +942,7 @@ void NearestCorner(int *x, int *y, HPOLYGON hStartPoly, HPOLYGON hDestPoly) {
 	for (j = 0; j < 4; j++)	{
 		if (IsInPolygon(psp->cx[j], psp->cy[j], hDestPoly)) {
 			ThisD = ABS(*x - psp->cx[j]) + ABS(*y - psp->cy[j]);
-			if (ThisD < SmallestD) {  
+			if (ThisD < SmallestD) {
 				hNpath = hStartPoly;
 				ncorn = j;
 				// Try to ignore it if virtually stood on it
@@ -956,7 +956,7 @@ void NearestCorner(int *x, int *y, HPOLYGON hStartPoly, HPOLYGON hDestPoly) {
 		for (j = 0; j < 4; j++) {
 			if (IsInPolygon(pdp->cx[j], pdp->cy[j], hStartPoly)) {
 				ThisD = ABS(*x - pdp->cx[j]) + ABS(*y - pdp->cy[j]);
-				if (ThisD < SmallestD) {  
+				if (ThisD < SmallestD) {
 					hNpath = hDestPoly;
 					ncorn = j;
 					// Try to ignore it if virtually stood on it
@@ -1187,7 +1187,7 @@ bool deadPolys[MAX_POLY];	// Currently just for dead blocks
 void RebootDeadTags(void) {
 	nextfreeT = numScenesT = 0;
 	nextfreeE = numScenesE = 0;
-	
+
 	memset(SceneTags, 0, sizeof(SceneTags));
 	memset(SceneExits, 0, sizeof(SceneExits));
 	memset(TagStates, 0, sizeof(TagStates));
@@ -1357,14 +1357,14 @@ static void SetPathAdjacencies() {
 
 	// For each polygon..
 	for (i1 = 0; i1 < MAX_POLY-1; i1++) {
-		// Get polygon, but only carry on if it's a path 
+		// Get polygon, but only carry on if it's a path
 		p1 = Polys[i1];
 		if (!p1 || p1->polyType != PATH)
 			continue;
 
 		// For each subsequent polygon..
 		for (i2 = i1 + 1; i2 < MAX_POLY; i2++) {
-			// Get polygon, but only carry on if it's a path 
+			// Get polygon, but only carry on if it's a path
 			p2 = Polys[i2];
 			if (!p2 || p2->polyType != PATH)
 				continue;
@@ -1421,7 +1421,7 @@ void CheckNPathIntegrity() {
 
 	for (i = 0; i < MAX_POLY; i++) {		// For each polygon..
 		rp = Polys[i];
-		if (rp && rp->polyType == PATH && rp->subtype == NODE) { //...if it's a node path 
+		if (rp && rp->polyType == PATH && rp->subtype == NODE) { //...if it's a node path
 			// Get compiled polygon structure
 			cp = (const POLY *)pps + rp->pIndex;	// This polygon
 			nlistx = (int32 *)(pps + (int)FROM_LE_32(cp.pnodelistx));
@@ -1495,7 +1495,7 @@ static void SetExTags(SCNHANDLE ph) {
 			return;
 		}
 	}
-	
+
 	i = numScenesT++;
 	currentTScene = i;
 	assert(numScenesT < MAX_SCENES); // Dead tag remembering: scene limit
@@ -1582,7 +1582,7 @@ static void FiddlyBit(POLYGON *p) {
 		p->lright[t1]   = MAX(p->cx[t1], p->cx[(t1+1)%4]);
 		p->lleft[t1]    = MIN(p->cx[t1], p->cx[(t1+1)%4]);
 
-		p->ltop[t1]     = MIN(p->cy[t1], p->cy[(t1+1)%4]);    
+		p->ltop[t1]     = MIN(p->cy[t1], p->cy[(t1+1)%4]);
 		p->lbottom[t1]  = MAX(p->cy[t1], p->cy[(t1+1)%4]);
 
 		p->a[t1] = p->cy[t1] - p->cy[(t1+1)%4];

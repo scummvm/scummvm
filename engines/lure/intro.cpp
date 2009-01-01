@@ -61,7 +61,7 @@ bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySiz
 	Palette p(paletteId);
 
 	if (LureEngine::getReference().shouldQuit()) return true;
-	
+
 	if (isEGA) screen.setPalette(&p);
 	else screen.paletteFadeIn(&p);
 

@@ -275,7 +275,7 @@ int GUI_LoK::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) 
 				list->flags2 &= 0xFFFE;
 				processButton(list);
 			}
-			
+
 			if (list->flags2 & 4) {
 				list->flags2 &= 0xFFFB;
 				processButton(list);
