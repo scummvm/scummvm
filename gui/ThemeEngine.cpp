@@ -362,18 +362,20 @@ bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
 /**********************************************************
  *	Theme XML loading
  *********************************************************/
-void ThemeEngine::loadTheme(const Common::String &themeid) {
+void ThemeEngine::loadTheme(const Common::String &themeId) {
 	unloadTheme();
 
-	if (themeid == "builtin") {
+	if (themeId == "builtin") {
 		_themeOk = loadDefaultXML();
 	} else {
 		// Load the archive containing image and XML data
-		_themeOk = loadThemeXML(themeid);
+		_themeOk = loadThemeXML(themeId);
 	}
 	
 	if (!_themeOk) {
-		warning("Failed to load theme '%s'", themeid.c_str());
+		delete _themeArchive;
+		_themeArchive = 0;
+		warning("Failed to load theme '%s'", themeId.c_str());
 		return;
 	}
 
@@ -449,74 +451,71 @@ bool ThemeEngine::loadDefaultXML() {
 #endif
 }
 
-bool ThemeEngine::loadThemeXML(const Common::String &themeName) {
+bool ThemeEngine::loadThemeXML(const Common::String &themeId) {
 	assert(_parser);
 	_themeName.clear();
 
-	Common::FSNode node(themeName);
+	//
+	// Try to create a Common::Archive with the files of the theme
+	//
+	Common::FSNode node(themeId);
 	if (!node.exists() || !node.isReadable())
 		return false;
-
-	Common::Archive *archive = 0;
 
 	if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
 #ifdef USE_ZLIB
 		Common::ZipArchive *zipArchive = new Common::ZipArchive(node);
-		archive = zipArchive;
 
 		if (!zipArchive || !zipArchive->isOpen()) {
 			delete zipArchive;
-			warning("Failed to open Zip archive '%s'.", themeName.c_str());
-			return false;
+			zipArchive = 0;
+			warning("Failed to open Zip archive '%s'.", themeId.c_str());
 		}
+		_themeArchive = zipArchive;
 
 #endif
 	} else if (node.isDirectory()) {
-		archive = new Common::FSDirectory(node);
+		_themeArchive = new Common::FSDirectory(node);
 	}
 
-	if (!archive)
+	if (!_themeArchive)
 		return false;
 
+	//
+	// Now that we have a Common::Archive, verify that it contains a valid THEMERC File
+	//
 	Common::File themercFile;
-	themercFile.open("THEMERC", *archive);
+	themercFile.open("THEMERC", *_themeArchive);
 	if (!themercFile.isOpen()) {
-		delete archive;
-		warning("Theme '%s' contains no 'THEMERC' file.", themeName.c_str());
+		warning("Theme '%s' contains no 'THEMERC' file.", themeId.c_str());
 		return false;
 	}
 
 	Common::String stxHeader = themercFile.readLine();
 	if (!themeConfigParseHeader(stxHeader, _themeName) || _themeName.empty()) {
-		delete archive;
-		warning("Corrupted 'THEMERC' file in theme '%s'", _themeId.c_str());
+		warning("Corrupted 'THEMERC' file in theme '%s'", themeId.c_str());
 		return false;
 	}
 
 	Common::ArchiveMemberList members;
-	if (0 == archive->listMatchingMembers(members, "*.stx")) {
-		delete archive;
-		warning("Found no STX files for theme '%s'.", themeName.c_str());
+	if (0 == _themeArchive->listMatchingMembers(members, "*.stx")) {
+		warning("Found no STX files for theme '%s'.", themeId.c_str());
 		return false;
 	}
 
-	_themeArchive = archive;
-
-	// Loop over all STX files
+	//
+	// Loop over all STX files, load and parse them
+	//
 	for (Common::ArchiveMemberList::iterator i = members.begin(); i != members.end(); ++i) {
 		assert((*i)->getName().hasSuffix(".stx"));
 
 		if (_parser->loadStream((*i)->open()) == false) {
-			_themeArchive = 0;
-			delete archive;
 			warning("Failed to load STX file '%s'", (*i)->getDisplayName().c_str());
 			_parser->close();
 			return false;
 		}
 
 		if (_parser->parse() == false) {
-			_themeArchive = 0;
-			delete archive;
 			warning("Failed to parse STX file '%s'", (*i)->getDisplayName().c_str());
 			_parser->close();
 			return false;
