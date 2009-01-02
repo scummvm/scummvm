@@ -557,11 +557,7 @@ void Video::drawOSDText(const char *text) {
 	uint32 color = 0x2;
 	Graphics::Surface surf;
 
-	surf.w = g_system->getWidth();
-	surf.h = font.getFontHeight();
-	surf.pitch = surf.w;
-	surf.bytesPerPixel = 1;
-	surf.pixels = calloc(surf.w, surf.h);
+	surf.create(g_system->getWidth(), font.getFontHeight(), surf.bytesPerPixel);
 
 	font.drawString(&surf, text, 0, 0, surf.w, color, Graphics::kTextAlignCenter);
 
@@ -569,7 +565,7 @@ void Video::drawOSDText(const char *text) {
 	g_system->copyRectToScreen((byte *)surf.pixels, surf.pitch, 0, y, surf.w, surf.h);
 	g_system->updateScreen();
 
-	free(surf.pixels);
+	surf.free();
 }
 
 } // End of namespace Gob
