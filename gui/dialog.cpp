@@ -294,10 +294,7 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 		_mouseWidget = w;
 	}
 
-	// We only sent mouse move events under the following conditions:
-	// 1) We have a widget in drag mode
-	// 2) The widget wants to track the mouse movement
-	w = _dragWidget;
+	// We only sent mouse move events when the widget requests to be informed about them.
 	if (w && (w->getFlags() & WIDGET_TRACK_MOUSE))
 		w->handleMouseMoved(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button);
 }
