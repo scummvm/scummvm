@@ -124,8 +124,8 @@ bool GuiManager::loadNewTheme(Common::String filename, ThemeEngine::GraphicsMode
 	// some other event may cause a widget to be
 	// redrawn before redraw() has been called.
 	_redrawStatus = kRedrawFull;
-//	redraw();
-//	_system->updateScreen();
+	redraw();
+	_system->updateScreen();
 
 	return true;
 }
