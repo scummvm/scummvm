@@ -143,7 +143,25 @@ public:
 	SagaMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Saga engine";
+		return "Saga engine ["
+
+#if defined(ENABLE_IHNM) && defined(ENABLE_SAGA2)
+			"all games"
+#else
+			"ITE"
+
+#if defined(ENABLE_IHNM)
+			", IHNM"
+#endif
+
+#if defined(ENABLE_SAGA2)
+			", SAGA2 games"
+#endif
+
+#endif
+		"]";
+
+;
 	}
 
 	virtual const char *getCopyright() const {

@@ -956,7 +956,23 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 }
 
 const char *ScummMetaEngine::getName() const {
-	return "Scumm Engine";
+	return "SCUMM Engine ["
+
+#if defined(ENABLE_SCUMM_7_8) && defined(ENABLE_HE)
+		"all games"
+#else
+
+		"v0-v6 games"
+
+#if defined(ENABLE_SCUMM_7_8)
+		", v7 & v8 games"
+#endif
+#if defined(ENABLE_HE)
+		", HE71+ games"
+#endif
+
+#endif
+		"]";
 }
 
 const char *ScummMetaEngine::getCopyright() const {
