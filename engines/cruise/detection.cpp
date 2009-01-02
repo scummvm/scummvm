@@ -74,6 +74,18 @@ static const CRUISEGameDescription gameDescriptions[] = {
 		0,
     },
 	{
+	    {
+			"cruise",
+			"256 colors",
+			AD_ENTRY1("D1", "a90d2b9ead6b4d812cd14268672cf178"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_CRUISE,
+		0,
+	},
+	{
 		{
 			"cruise",
 			"256 colors",
@@ -86,11 +98,35 @@ static const CRUISEGameDescription gameDescriptions[] = {
 		0,
 	},
 	{
-	    {
+		{
 			"cruise",
 			"256 colors",
-			AD_ENTRY1("D1", "a90d2b9ead6b4d812cd14268672cf178"),
-			Common::EN_ANY,
+			AD_ENTRY1("D1", "f2a26522d49983c4ae32bcccbb801b02"),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_CRUISE,
+		0,
+	},
+	{
+		{
+			"cruise",
+			"256 colors",
+			AD_ENTRY1("D1", "e19a4ab2e24a69087e4ea994a5506231"),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_CRUISE,
+		0,
+	},
+	{
+		{
+			"cruise",
+			"256 colors",
+			AD_ENTRY1("D1", "9a302ada55600d96061fda1d63a6ccda"),
+			Common::ES_ESP,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
