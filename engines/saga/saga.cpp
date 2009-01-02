@@ -167,13 +167,17 @@ Common::Error SagaEngine::init() {
 		case GID_ITE:
 			_resource = new Resource_RSC(this);
 			break;
+#ifdef ENABLE_IHNM
 		case GID_IHNM:
 			_resource = new Resource_RES(this);
 			break;
+#endif
+#ifdef ENABLE_SAGA2
 		case GID_DINO:
 		case GID_FTA2:
 			_resource = new Resource_HRS(this);
 			break;
+#endif
 	}
 
 	// Detect game and open resource files
@@ -513,6 +517,7 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 		default:
 			error("SagaEngine::KnownColor2ColorId unknown color %i", knownColor);
 		}
+#ifdef ENABLE_IHNM
 	} else if (getGameId() == GID_IHNM) {
 		// The default colors in the Spanish version of IHNM are shifted by one
 		// Fixes bug #1848016 - "IHNM: Wrong Subtitles Color (Spanish)"
@@ -544,6 +549,7 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 		default:
 			error("SagaEngine::KnownColor2ColorId unknown color %i", knownColor);
 		}
+#endif
 	}
 	return colorId;
 }

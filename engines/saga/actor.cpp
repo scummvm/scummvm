@@ -51,6 +51,7 @@ static int commonObjectCompare(const CommonObjectDataPointer& obj1, const Common
 	return 1;
 }
 
+#ifdef ENABLE_IHNM
 static int commonObjectCompareIHNM(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
 	int p1 = obj1->_location.y;
 	int p2 = obj2->_location.y;
@@ -60,6 +61,7 @@ static int commonObjectCompareIHNM(const CommonObjectDataPointer& obj1, const Co
 		return -1;
 	return 1;
 }
+#endif
 
 static int tileCommonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
 	int p1 = -obj1->_location.u() - obj1->_location.v() - obj1->_location.z;
@@ -182,6 +184,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			obj->_location.z = ITE_ObjectTable[i].z;
 		}
 	} else {
+#ifdef ENABLE_IHNM
 		// TODO. This is causing problems for SYMBIAN os as it doesn't like a static class here
 		ActorData dummyActor;
 
@@ -189,6 +192,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 		dummyActor._walkStepsPoints = NULL;
 
 		_protagonist = &dummyActor;
+#endif
 	}
 
 	_dragonHunt = true;
@@ -612,6 +616,7 @@ ActorData *Actor::getActor(uint16 actorId) {
 void Actor::setProtagState(int state) {
 	_protagState = state;
 
+#ifdef ENABLE_IHNM
 	if (_vm->getGameId() == GID_IHNM) {
 		if (!_protagonist->_shareFrames)
 			free(_protagonist->_frames);
@@ -620,6 +625,8 @@ void Actor::setProtagState(int state) {
 		_protagonist->_framesCount = _protagStates[state]._framesCount;
 		_protagonist->_shareFrames = true;
 	}
+#endif
+
 }
 
 int Actor::getFrameType(ActorFrameTypes frameType) {
@@ -643,8 +650,8 @@ int Actor::getFrameType(ActorFrameTypes frameType) {
 		case kFrameLook:
 			return kFrameITELook;
 		}
-	}
-	else {
+#ifdef ENABLE_IHNM
+	} else if (_vm->getGameId() == GID_IHNM) {
 		switch (frameType) {
 		case kFrameStand:
 			return kFrameIHNMStand;
@@ -662,6 +669,7 @@ int Actor::getFrameType(ActorFrameTypes frameType) {
 			error("Actor::getFrameType() unknown frame type %d", frameType);
 			return kFrameIHNMStand;
 		}
+#endif
 	}
 	error("Actor::getFrameType() unknown frame type %d", frameType);
 }
@@ -689,6 +697,7 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 		return &actor->_frames[frameType].directions[fourDirection];
 	}
 
+#ifdef ENABLE_IHNM
 	if (_vm->getGameId() == GID_IHNM) {
 		// It is normal for some actors to have no frames for a given frameType
 		// These are mainly actors with no frames at all (e.g. narrators or immovable actors)
@@ -703,6 +712,8 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 		fourDirection = actorDirectionsLUT[actor->_facingDirection];
 		return &actor->_frames[frameType].directions[fourDirection];
 	}
+#endif
+
 	return NULL;
 }
 
@@ -875,10 +886,12 @@ bool Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 
 		if (middle <= beginSlope) {
 			commonObjectData->_screenScale = 256;
+#ifdef ENABLE_IHNM
 		} else if (_vm->getGameId() == GID_IHNM && (objectTypeId(commonObjectData->_id) & kGameObjectObject)) {
 			commonObjectData->_screenScale = 256;
 		} else if (_vm->getGameId() == GID_IHNM && (commonObjectData->_flags & kNoScale)) {
 			commonObjectData->_screenScale = 256;
+#endif
 		} else if (middle >= endSlope) {
 			commonObjectData->_screenScale = 1;
 		} else {
@@ -951,15 +964,17 @@ void Actor::createDrawOrderList() {
 	int i;
 	ActorData *actor;
 	ObjectData *obj;
-	CommonObjectOrderList::CompareFunction compareFunction;
+	CommonObjectOrderList::CompareFunction compareFunction = 0;
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		compareFunction = &tileCommonObjectCompare;
 	} else {
 		if (_vm->getGameId() == GID_ITE)
 			compareFunction = &commonObjectCompare;
-		else
+#ifdef ENABLE_IHNM
+		else if (_vm->getGameId() == GID_IHNM)
 			compareFunction = &commonObjectCompareIHNM;
+#endif
 	}
 
 	_drawOrderList.clear();

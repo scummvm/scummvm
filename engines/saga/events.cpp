@@ -155,9 +155,11 @@ int Events::handleContinuous(Event *event) {
 		case kEventPalToBlack:
 			_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc);
 			break;
+#ifdef ENABLE_IHNM
 		case kEventPalFade:
 			_vm->_gfx->palFade((PalEntry *)event->data, event->param, event->param2, event->param3, event->param4, event_pc);
 			break;
+#endif
 		default:
 			break;
 		}
@@ -240,9 +242,11 @@ int Events::handleImmediate(Event *event) {
 		case kEventPalToBlack:
 			_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc);
 			break;
+#ifdef ENABLE_IHNM
 		case kEventPalFade:
 			_vm->_gfx->palFade((PalEntry *)event->data, event->param, event->param2, event->param3, event->param4, event_pc);
 			break;
+#endif
 		default:
 			break;
 		}
@@ -338,6 +342,7 @@ int Events::handleOneShot(Event *event) {
 				if (event->param == kEvPSetPalette) {
 					PalEntry *palPointer;
 
+#ifdef ENABLE_IHNM
 					if (_vm->getGameId() == GID_IHNM) {
 						if (_vm->_spiritualBarometer > 255)
 							_vm->_gfx->setPaletteColor(kIHNMColorPortrait, 0xff, 0xff, 0xff);
@@ -347,6 +352,7 @@ int Events::handleOneShot(Event *event) {
 								_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.green / 256,
 								_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.blue / 256);
 					}
+#endif
 
 					_vm->_scene->getBGPal(palPointer);
 					_vm->_gfx->setPalette(palPointer);
@@ -539,6 +545,7 @@ int Events::handleOneShot(Event *event) {
 		default:
 			break;
 		}
+#ifdef ENABLE_IHNM
 	case kCutawayEvent:
 		switch (event->op) {
 		case kEventClear:
@@ -550,6 +557,7 @@ int Events::handleOneShot(Event *event) {
 		default:
 			break;
 		}
+#endif
 	case kActorEvent:
 		switch (event->op) {
 		case kEventMove:

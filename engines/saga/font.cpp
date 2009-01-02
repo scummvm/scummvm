@@ -681,6 +681,7 @@ Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 			fontId = _vm->_font->valid(kBigFont) ? kBigFont : kMediumFont;
 			break;
 		}
+#ifdef ENABLE_IHNM
 	} else if (_vm->getGameId() == GID_IHNM && !(_vm->getFeatures() & GF_IHNM_DEMO)) {
 		switch (font) {
 		case (kKnownFontSmall):
@@ -703,6 +704,7 @@ Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 			fontId = kMediumFont; // unchecked
 			break;
 		}
+#endif
 	}
 	return fontId;
 }

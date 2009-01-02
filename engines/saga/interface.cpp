@@ -180,6 +180,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		_optionPanel.sprites.spriteCount = 0;
 	}
 
+#ifdef ENABLE_IHNM
 	// Quit panel
 	if (_vm->getGameId() == GID_IHNM) {
 		_quitPanel.buttons = _vm->getDisplayInfo().quitPanelButtons;
@@ -212,6 +213,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 			&_loadPanel.imageLength, &_loadPanel.imageWidth, &_loadPanel.imageHeight);
 		free(resource);
 	}
+#endif
 
 	// Main panel sprites
 	_vm->_sprite->loadList(_vm->getResourceDescription()->mainPanelSpritesResourceId, _mainPanel.sprites);
@@ -703,6 +705,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		}
 		break;
 	case kPanelPlacard:
+#ifdef ENABLE_IHNM
 		if (_vm->getGameId() == GID_IHNM) {
 			// Any keypress here returns the user back to the game
 			if (!(_vm->getFeatures() & GF_IHNM_DEMO)) {
@@ -713,6 +716,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 				_vm->_script->wakeUpThreads(kWaitTypeDelay);
 			}
 		}
+#endif
 		break;
 	}
 	return false;
@@ -1055,9 +1059,11 @@ void Interface::setQuit(PanelButton *panelButton) {
 			setMode(kPanelOption);
 			break;
 		case kTextQuit:
+#ifdef ENABLE_IHNM
 			if (_vm->getFeatures() & GF_IHNM_DEMO)
 				_vm->_scene->creditsScene();	// display sales info for IHNM demo
 			else
+#endif
 				_vm->quitGame();
 			break;
 	}
@@ -1822,6 +1828,7 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		break;
 
 	case kPanelPlacard:
+#ifdef ENABLE_IHNM
 		if (_vm->getGameId() == GID_IHNM) {
 			// Any mouse click here returns the user back to the game
 			if (updateFlag & UPDATE_MOUSECLICK) {
@@ -1834,6 +1841,7 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 				}
 			}
 		}
+#endif
 		break;
 
 	case kPanelNull:

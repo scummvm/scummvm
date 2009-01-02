@@ -60,6 +60,7 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 	if (_vm->getGameId() == GID_ITE) {
 		_fxTable = ITE_SfxTable;
 		_fxTableLen = ITE_SFXCOUNT;
+#ifdef ENABLE_IHNM
 	} else if (_vm->getGameId() == GID_IHNM) {
 		ResourceContext *resourceContext;
 
@@ -94,6 +95,7 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 
 		_fxTable = 0;
 		_fxTableLen = 0;
+#endif
 	} else if (_vm->getGameId() == GID_DINO) {
 		// TODO
 	} else if (_vm->getGameId() == GID_FTA2) {

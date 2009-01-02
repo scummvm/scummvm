@@ -163,7 +163,19 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 	free(stringsPointer);
 
 	setupScriptOpcodeList();
-	setupScriptFuncList();
+
+	// Setup script functions
+	switch (_vm->getGameId()) {
+		case GID_ITE:
+			setupITEScriptFuncList();
+			break;
+#ifdef ENABLE_IHNM
+		case GID_IHNM:
+			setupIHNMScriptFuncList();
+			break;
+#endif
+		// TODO: FTA2 and DINO
+	}
 }
 
 // Shut down script module gracefully; free all allocated module resources
@@ -566,11 +578,17 @@ void Script::opCcall(SCRIPTOP_PARAMS) {
 	if (stopParsing)
 		return;
 
-	if (scriptFunction == &Saga::Script::sfScriptGotoScene ||
-		scriptFunction == &Saga::Script::sfVsetTrack) {
+	if (scriptFunction == &Saga::Script::sfScriptGotoScene) {
 		stopParsing = true; // cause abortAllThreads called and _this_ thread destroyed
 		return;
 	}
+
+#ifdef ENABLE_IHNM
+	if (scriptFunction == &Saga::Script::sfVsetTrack) {
+		stopParsing = true;
+		return;		// cause abortAllThreads called and _this_ thread destroyed
+	}
+#endif
 
 	thread->_stackTopIndex = checkStackTopIndex;
 
@@ -607,11 +625,17 @@ void Script::opCcallV(SCRIPTOP_PARAMS) {
 	if (stopParsing)
 		return;
 	
-	if (scriptFunction == &Saga::Script::sfScriptGotoScene ||
-		scriptFunction == &Saga::Script::sfVsetTrack) {
+	if (scriptFunction == &Saga::Script::sfScriptGotoScene) {
 		stopParsing = true;
 		return;		// cause abortAllThreads called and _this_ thread destroyed
 	}
+
+#ifdef ENABLE_IHNM
+	if (scriptFunction == &Saga::Script::sfVsetTrack) {
+		stopParsing = true;
+		return;		// cause abortAllThreads called and _this_ thread destroyed
+	}
+#endif
 
 	thread->_stackTopIndex = checkStackTopIndex;
 
@@ -1556,6 +1580,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 		}
 	}
 
+#ifdef ENABLE_IHNM
 	if (_vm->getGameId() == GID_IHNM) {
 
 		if ((_pendingVerb == getVerbType(kVerbWalkTo)) ||
@@ -1607,6 +1632,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 			}
 		}
 	}
+#endif
 
 }
 

@@ -61,6 +61,7 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 	if (_vm->getGameId() == GID_ITE) {
 		loadList(_vm->getResourceDescription()->mainSpritesResourceId, _mainSprites);
 		_arrowSprites = _saveReminderSprites = _inventorySprites = _mainSprites;
+#ifdef ENABLE_IHNM
 	} else if (_vm->getGameId() == GID_IHNM) {
 		if (_vm->getFeatures() & GF_IHNM_DEMO) {
 			loadList(RID_IHNMDEMO_ARROW_SPRITES, _arrowSprites);
@@ -69,6 +70,7 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 			loadList(RID_IHNM_ARROW_SPRITES, _arrowSprites);
 			loadList(RID_IHNM_SAVEREMINDER_SPRITES, _saveReminderSprites);
 		}
+#endif
 	} else {
 		error("Sprite: unknown game type");
 	}
@@ -167,6 +169,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 			memoryError("Sprite::loadList");
 		}
 
+#ifdef ENABLE_IHNM
 		// IHNM sprites are upside-down, for reasons which i can only
 		// assume are perverse. To simplify things, flip them now. Not
 		// at drawing time.
@@ -181,6 +184,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 				dst += spriteInfo->width;
 			}
 		} else
+#endif
 			memcpy(spriteInfo->decodedBuffer, _decodeBuf, outputLength);
 	}
 

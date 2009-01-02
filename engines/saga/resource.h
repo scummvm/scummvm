@@ -183,6 +183,7 @@ private:
 	}
 };
 
+#ifdef ENABLE_IHNM
 // IHNM
 class Resource_RES : public Resource {
 public:
@@ -197,7 +198,9 @@ private:
 	}
 	MetaResource _metaResource;
 };
+#endif
 
+#ifdef ENABLE_SAGA2
 // DINO, FTA2
 class Resource_HRS : public Resource {
 public:
@@ -215,6 +218,7 @@ private:
 	}
 	bool loadResContext_v2(ResourceContext *context, uint32 contextSize);
 };
+#endif
 
 } // End of namespace Saga
 

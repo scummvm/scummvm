@@ -626,7 +626,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 
 	// TODO: Add the Amiga versions here (not supported yet)
 
-
+#ifdef ENABLE_IHNM
 	// IHNM Section ///////////////////////////////////////////////////////////////////////////////////////////
 
 	// I Have No Mouth And I Must Scream - Demo version
@@ -833,6 +833,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 		NULL,
 	},
+#endif
 
 	// Dinotopia Section //////////////////////////////////////////////////////////////////////////////////////
 

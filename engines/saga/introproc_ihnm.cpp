@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_IHNM
+
 // "I Have No Mouth" Intro sequence scene procedures
 
 #include "saga/saga.h"
@@ -290,3 +292,5 @@ bool Scene::playLoopingTitle(int title, int seconds) {
 }
 
 } // End of namespace Saga
+
+#endif

@@ -82,6 +82,7 @@ SAGA_UNKNOWN,
 	SAGA_PALETTE
 };
 
+#ifdef ENABLE_IHNM
 static SAGAResourceTypes IHNMSceneResourceTypes[28] = {
 	SAGA_ACTOR,
 SAGA_UNKNOWN,
@@ -112,6 +113,7 @@ SAGA_UNKNOWN,
 	SAGA_FACES,
 	SAGA_PALETTE
 };
+#endif
 
 const char *SAGAResourceTypesString[] = {
 	"SAGA_UNKNOWN",
@@ -238,12 +240,14 @@ Scene::~Scene() {
 }
 
 void Scene::getResourceTypes(SAGAResourceTypes *&types, int &typesCount) {
-	if (_vm->getGameId() == GID_IHNM) {
-		typesCount = ARRAYSIZE(IHNMSceneResourceTypes);
-		types = IHNMSceneResourceTypes;
-	} else {
+	if (_vm->getGameId() == GID_ITE) {
 		typesCount = ARRAYSIZE(ITESceneResourceTypes);
 		types = ITESceneResourceTypes;
+#ifdef ENABLE_IHNM
+	} else if (_vm->getGameId() == GID_IHNM) {
+		typesCount = ARRAYSIZE(IHNMSceneResourceTypes);
+		types = IHNMSceneResourceTypes;
+#endif
 	}
 }
 
@@ -286,15 +290,19 @@ void Scene::startScene() {
 	case GID_ITE:
 		ITEStartProc();
 		break;
+#ifdef ENABLE_IHNM
 	case GID_IHNM:
 		IHNMStartProc();
 		break;
+#endif
+#ifdef ENABLE_SAGA2
 	case GID_DINO:
 		// TODO
 		break;
 	case GID_FTA2:
 		FTA2StartProc();
 		break;
+#endif
 	default:
 		error("Scene::start(): Error: Can't start game... gametype not supported");
 		break;
@@ -313,6 +321,8 @@ void Scene::startScene() {
 
 	loadScene(sceneQueue);
 }
+
+#ifdef ENABLE_IHNM
 
 void Scene::creditsScene() {
 	// End the last game ending scene
@@ -338,6 +348,8 @@ void Scene::creditsScene() {
 	_vm->quitGame();
 	return;
 }
+
+#endif
 
 void Scene::nextScene() {
 	SceneQueueList::iterator queueIterator;
@@ -619,6 +631,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	_chapterPointsChanged = false;
 
+#ifdef ENABLE_IHNM
 	if ((_vm->getGameId() == GID_IHNM) && (loadSceneParams->chapter != NO_CHAPTER_CHANGE)) {
 		if (loadSceneParams->loadFlag != kLoadBySceneNumber) {
 			error("loadScene wrong usage");
@@ -657,6 +670,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			return;
 		}
 	}
+#endif
 
 	if (_sceneLoaded) {
 		error("Scene::loadScene(): Error, a scene is already loaded");
@@ -664,11 +678,13 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	_loadDescription = true;
 
+#ifdef ENABLE_IHNM
 	if (_vm->getGameId() == GID_IHNM) {
 		if (loadSceneParams->loadFlag == kLoadBySceneNumber) // When will we get rid of it?
 			if (loadSceneParams->sceneDescriptor <= 0)
 				loadSceneParams->sceneDescriptor = _vm->_resource->getMetaResource()->sceneIndex;
 	}
+#endif
 
 	switch (loadSceneParams->loadFlag) {
 	case kLoadByResourceId:
@@ -1365,6 +1381,7 @@ void Scene::clearPlacard() {
 	event.duration = 0;
 	q_event = _vm->_events->chain(q_event, &event);
 
+#ifdef ENABLE_IHNM
 	if (_vm->getGameId() == GID_IHNM) {
 		// set mode to main
 		event.type = kEvTImmediate;
@@ -1375,6 +1392,7 @@ void Scene::clearPlacard() {
 		event.duration = 0;
 		q_event = _vm->_events->chain(q_event, &event);
 	}
+#endif
 
 	// Display scene background, but stay with black palette
 	event.type = kEvTImmediate;

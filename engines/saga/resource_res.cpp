@@ -39,6 +39,8 @@
 
 namespace Saga {
 
+#ifdef ENABLE_IHNM
+
 static int metaResourceTable[] = { 0, 326, 517, 677, 805, 968, 1165, 0, 1271 };
 static int metaResourceTableDemo[] = { 0, 0, 0, 0, 0, 0, 0, 285, 0 };
 
@@ -213,5 +215,6 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->_spiritualBarometer = 0;
 	_vm->_scene->setChapterNumber(chapter);
 }
+#endif
 
 } // End of namespace Saga

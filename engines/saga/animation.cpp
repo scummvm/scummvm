@@ -55,8 +55,12 @@ Anim::Anim(SagaEngine *vm) : _vm(vm) {
 
 Anim::~Anim(void) {
 	reset();
+#ifdef ENABLE_IHNM
 	freeCutawayList();
+#endif
 }
+
+#ifdef ENABLE_IHNM
 
 void Anim::loadCutawayList(const byte *resourcePointer, size_t resourceLength) {
 	free(_cutawayList);
@@ -390,6 +394,8 @@ void Anim::returnFromVideo(void) {
 
 	returnFromCutaway();
 }
+
+#endif
 
 void Anim::load(uint16 animId, const byte *animResourceData, size_t animResourceLength) {
 	AnimationData *anim;
@@ -935,6 +941,7 @@ void Anim::animInfo() {
 	}
 }
 
+#ifdef ENABLE_IHNM
 void Anim::cutawayInfo() {
 	uint16 i;
 
@@ -946,6 +953,7 @@ void Anim::cutawayInfo() {
 			_cutawayList[i].cycles, _cutawayList[i].frameRate);
 	}
 }
+#endif
 
 void Anim::resumeAll() {
 	// Restore the animations

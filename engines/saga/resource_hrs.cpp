@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_SAGA2
+
 // HRS Resource file management module (SAGA 2, used in DINO and FTA2)
 
 #include "saga/saga.h"
@@ -102,3 +104,5 @@ bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSiz
 }
 
 } // End of namespace Saga
+
+#endif

@@ -275,6 +275,7 @@ typedef SortedList<ScriptThread> ScriptThreadList;
 
 #define SCRIPTOP_PARAMS ScriptThread *thread, MemoryReadStream *scriptS, bool &stopParsing, bool &breakOut
 #define SCRIPTFUNC_PARAMS ScriptThread *thread, int nArgs, bool &disContinue
+#define OPCODE(x) {&Script::x, #x}
 
 class Script {
 public:
@@ -498,7 +499,8 @@ private:
 	};
 	const ScriptFunctionDescription *_scriptFunctionsList;
 
-	void setupScriptFuncList();
+	void setupITEScriptFuncList();
+	void setupIHNMScriptFuncList();
 
 	void sfPutString(SCRIPTFUNC_PARAMS);
 	void sfWait(SCRIPTFUNC_PARAMS);
@@ -613,7 +615,7 @@ private:
 	void sfQueueMusic(SCRIPTFUNC_PARAMS);
 	void sfDisableAbortSpeeches(SCRIPTFUNC_PARAMS);
 
-	void SF_stub(const char *name, ScriptThread *thread, int nArgs);
+	void sfStub(const char *name, ScriptThread *thread, int nArgs);
 };
 
 } // End of namespace Saga

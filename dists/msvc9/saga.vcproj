@@ -44,7 +44,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
+				PreprocessorDefinitions="WIN32;_DEBUG;ENABLE_IHNM;ENABLE_SAGA2;USE_ZLIB;USE_MAD;USE_VORBIS"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -121,7 +121,7 @@
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
+				PreprocessorDefinitions="WIN32;NDEBUG;ENABLE_IHNM;ENABLE_SAGA2;USE_ZLIB;USE_MAD;USE_VORBIS"
 				StringPooling="true"
 				ExceptionHandling="1"
 				RuntimeLibrary="0"
@@ -377,6 +377,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\sfuncs.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\saga\sfuncs_ihnm.cpp"
 			>
 		</File>
 		<File

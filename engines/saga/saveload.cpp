@@ -199,6 +199,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 	// Surrounding scene
 	out->writeSint32LE(_scene->getOutsetSceneNumber());
+#ifdef ENABLE_IHNM
 	if (getGameId() == GID_IHNM) {
 		out->writeSint32LE(_scene->currentChapterNumber());
 		// Protagonist
@@ -206,15 +207,17 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 		out->writeSint32LE(_scene->getCurrentMusicTrack());
 		out->writeSint32LE(_scene->getCurrentMusicRepeat());
 	}
-
+#endif
 	// Inset scene
 	out->writeSint32LE(_scene->currentSceneNumber());
 
+#ifdef ENABLE_IHNM
 	if (getGameId() == GID_IHNM) {
 		out->writeUint32LE(_globalFlags);
 		for (int i = 0; i < ARRAYSIZE(_ethicsPoints); i++)
 			out->writeSint16LE(_ethicsPoints[i]);
 	}
+#endif
 
 	_interface->saveState(out);
 
@@ -288,6 +291,7 @@ void SagaEngine::load(const char *fileName) {
 
 	// Surrounding scene
 	sceneNumber = in->readSint32LE();
+#ifdef ENABLE_IHNM
 	if (getGameId() == GID_IHNM) {
 		int currentChapter = _scene->currentChapterNumber();
 		_scene->setChapterNumber(in->readSint32LE());
@@ -305,15 +309,18 @@ void SagaEngine::load(const char *fileName) {
 			_music->play(3, MUSIC_LOOP);
 		}
 	}
+#endif
 
 	// Inset scene
 	insetSceneNumber = in->readSint32LE();
 
+#ifdef ENABLE_IHNM
 	if (getGameId() == GID_IHNM) {
 		_globalFlags = in->readUint32LE();
 		for (int i = 0; i < ARRAYSIZE(_ethicsPoints); i++)
 			_ethicsPoints[i] = in->readSint16LE();
 	}
+#endif
 
 	_interface->loadState(in);
 
@@ -334,6 +341,7 @@ void SagaEngine::load(const char *fileName) {
 	if (getGameId() == GID_ITE)
 		_isoMap->setMapPosition(mapx, mapy);
 
+#ifdef ENABLE_IHNM
 	// Protagonist swapping
 	if (getGameId() == GID_IHNM) {
 		if (_scene->currentProtag() != 0 && _scene->currentChapterNumber() != 6) {
@@ -355,6 +363,7 @@ void SagaEngine::load(const char *fileName) {
 			_scene->setProtag(actor1->_id);
 		}
 	}
+#endif
 
 	_scene->clearSceneQueue();
 	_scene->changeScene(sceneNumber, ACTOR_NO_ENTRANCE, kTransitionNoFade);

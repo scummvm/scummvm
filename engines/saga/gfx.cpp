@@ -398,6 +398,8 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
 }
 
+#ifdef ENABLE_IHNM
+
 // Used in IHNM only
 void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 numColors, double percent) {
 	int i;
@@ -463,6 +465,8 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 
 	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
 }
+
+#endif
 
 void Gfx::showCursor(bool state) {
 	// Don't show the mouse cursor in the non-interactive part of the IHNM demo

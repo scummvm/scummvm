@@ -104,15 +104,19 @@ bool Console::cmdAnimInfo(int argc, const char **argv) {
 }
 
 bool Console::cmdCutawayInfo(int argc, const char **argv) {
+#ifdef ENABLE_IHNM
 	_vm->_anim->cutawayInfo();
+#endif
 	return true;
 }
 
 bool Console::cmdPlayCutaway(int argc, const char **argv) {
+#ifdef ENABLE_IHNM
 	if (argc != 2)
 		DebugPrintf("Usage: %s <Cutaway number>\n", argv[0]);
 	else
 		_vm->_anim->playCutaway(atoi(argv[1]), false);
+#endif
 	return true;
 }
 

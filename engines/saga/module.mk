@@ -14,9 +14,7 @@ MODULE_OBJS := \
 	image.o \
 	input.o \
 	interface.o \
-	introproc_ihnm.o \
 	introproc_ite.o \
-	introproc_fta2.o \
 	isomap.o \
 	itedata.o \
 	music.o \
@@ -25,8 +23,6 @@ MODULE_OBJS := \
 	puzzle.o \
 	render.o \
 	resource.o \
-	resource_hrs.o \
-	resource_res.o \
 	resource_rsc.o \
 	saga.o \
 	saveload.o \
@@ -37,6 +33,19 @@ MODULE_OBJS := \
 	sound.o \
 	sprite.o \
 	sthread.o
+
+ifdef ENABLE_IHNM
+MODULE_OBJS += \
+	introproc_ihnm.o \
+	resource_res.o \
+	sfuncs_ihnm.o
+endif
+
+ifdef ENABLE_SAGA2
+MODULE_OBJS += \
+	introproc_fta2.o \
+	resource_hrs.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SAGA), DYNAMIC_PLUGIN)

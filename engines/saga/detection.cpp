@@ -321,15 +321,17 @@ const GameDisplayInfo &SagaEngine::getDisplayInfo() {
 	switch (_gameDescription->gameId) {
 		case GID_ITE:
 			return ITE_DisplayInfo;
+#ifdef ENABLE_IHNM
 		case GID_IHNM:
 			return IHNM_DisplayInfo;
+#endif
 		case GID_DINO:
-			return IHNM_DisplayInfo;	// TODO
+			return FTA2_DisplayInfo;	// TODO
 		case GID_FTA2:
 			return FTA2_DisplayInfo;
 		default:
 			error("getDisplayInfo: Unknown game ID");
-			return IHNM_DisplayInfo;	// unreachable
+			return ITE_DisplayInfo;		// unreachable
 	}
 }
 

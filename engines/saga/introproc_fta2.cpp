@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_SAGA2
+
 // "Faery Tale Adventure II: Halls of the Dead" Intro sequence scene procedures
 
 #include "saga/saga.h"
@@ -209,3 +211,5 @@ int Scene::FTA2EndProc(FTA2Endings whichEnding) {
 }
 
 } // End of namespace Saga
+
+#endif
