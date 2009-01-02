@@ -835,6 +835,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 	},
 #endif
 
+#ifdef ENABLE_SAGA2
+
 	// Dinotopia Section //////////////////////////////////////////////////////////////////////////////////////
 
 	// TODO
@@ -868,6 +870,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,	// SFX info
 		NULL,
 	},
+
+#endif
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0, NULL, 0, NULL, NULL, NULL, NULL }
 };
