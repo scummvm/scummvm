@@ -52,6 +52,7 @@ class DefaultEventManager : public Common::EventManager {
 	int _modifierState;
 	bool _shouldQuit;
 	bool _shouldRTL;
+	bool _confirmExitDialogActive;
 
 	class RandomSourceRecord {
 	public:

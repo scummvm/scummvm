@@ -94,7 +94,8 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	_buttonState(0),
 	_modifierState(0),
 	_shouldQuit(false),
-	_shouldRTL(false) {
+	_shouldRTL(false),
+	_confirmExitDialogActive(false) {
 
 	assert(_boss);
 
@@ -482,12 +483,18 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 		case Common::EVENT_QUIT:
 			if (ConfMan.getBool("confirm_exit")) {
+				if (_confirmExitDialogActive) {
+					result = false;
+					break;
+				}
+				_confirmExitDialogActive = true;
 				if (g_engine)
 					g_engine->pauseEngine(true);
 				GUI::MessageDialog alert("Do you really want to quit?", "Quit", "Cancel");
 				result = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
 				if (g_engine)
 					g_engine->pauseEngine(false);
+				_confirmExitDialogActive = false;
 			} else
 				_shouldQuit = true;
 
