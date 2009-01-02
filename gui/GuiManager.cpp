@@ -35,10 +35,6 @@
 
 #include "graphics/cursorman.h"
 
-#ifdef MACOSX
-#include <CoreFoundation/CoreFoundation.h>
-#endif
-
 DECLARE_SINGLETON(GUI::GuiManager);
 
 namespace GUI {

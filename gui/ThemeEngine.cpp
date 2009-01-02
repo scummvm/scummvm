@@ -43,6 +43,10 @@
 #include "gui/ThemeParser.h"
 #include "gui/ThemeData.h"
 
+#ifdef MACOSX
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 #define GUI_ENABLE_BUILTIN_THEME
 
 namespace GUI {
@@ -1280,7 +1284,7 @@ Common::String ThemeEngine::getThemeFile(const Common::String &id) {
 	Common::FSNode node(id);
 
 	// If the given id is a full path we'll just use it
-	if (node.exists() && (node.isDirectory() || (node.getName().hasSuffix(".zip") && !node.isDirectory())))
+	if (node.exists() && (node.isDirectory() || node.getName().hasSuffix(".zip")))
 		return id;
 
 	// FIXME:
