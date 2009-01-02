@@ -45,7 +45,14 @@ namespace GUI {
 Dialog::Dialog(int x, int y, int w, int h)
 	: GuiObject(x, y, w, h),
 	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false),
-	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {}
+	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
+	// Some dialogs like LauncherDialog use internally a fixed size, even though
+	// their widgets rely on the layout to be initialized correctly by the theme.
+	// Thus we need to catch screen changes here too. If we do not do that, it
+	// will for example crash after returning to the launcher when the user
+	// started a 640x480 game with a non 1x scaler.
+	g_gui.checkScreenChange();
+}
 
 Dialog::Dialog(const Common::String &name)
 	: GuiObject(name),
