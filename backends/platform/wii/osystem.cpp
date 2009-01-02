@@ -152,7 +152,7 @@ void OSystem_Wii::delayMillis(uint msecs) {
 
 OSystem::MutexRef OSystem_Wii::createMutex() {
 	mutex_t *mutex = (mutex_t *) malloc(sizeof(mutex_t));
-	s32 res = LWP_MutexInit(mutex, false);
+	s32 res = LWP_MutexInit(mutex, true);
 
 	if (res) {
 		printf("ERROR creating mutex\n");
