@@ -155,6 +155,11 @@ StdioStream *StdioStream::makeFromPath(const Common::String &path, bool writeMod
 	}
 #endif
 
+#if defined(__WII__)
+	// disable newlib's buffering, the device libraries handle caching
+	if (handle)
+		setvbuf(handle, NULL, _IONBF, 0);
+#endif
 
 	if (handle)
 		return new StdioStream(handle);
