@@ -73,7 +73,7 @@ void ThemeBrowser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 			break;
 
 		// TODO: 
-		// Currently GuiManager::listUseableThemes uses a
+		// Currently ThemeEngine::listUseableThemes uses a
 		// list. Thus we can not use operator[] here but
 		// need to iterate through the list. We might want
 		// to think of changing it, but it should not be
@@ -95,7 +95,7 @@ void ThemeBrowser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 void ThemeBrowser::updateListing() {
 	_themes.clear();
 
-	GuiManager::listUsableThemes(_themes);
+	ThemeEngine::listUsableThemes(_themes);
 
 	Common::StringList list;
 	for (ThemeDescList::const_iterator i = _themes.begin(); i != _themes.end(); ++i)

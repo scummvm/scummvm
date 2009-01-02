@@ -34,7 +34,7 @@
 
 #include "sound/mididrv.h"
 
-#include "gui/GuiManager.h"
+#include "gui/ThemeEngine.h"
 
 #define DETECTOR_TESTING_HACK
 
@@ -625,9 +625,9 @@ static void listSaves(const char *target) {
 
 /** Lists all usable themes */
 static void listThemes() {
-	typedef Common::List<GUI::GuiManager::ThemeDescriptor> ThList;
+	typedef Common::List<GUI::ThemeEngine::ThemeDescriptor> ThList;
 	ThList thList;
-	GUI::GuiManager::listUsableThemes(thList);
+	GUI::ThemeEngine::listUsableThemes(thList);
 
 	printf("Theme          Description\n");
 	printf("-------------- ------------------------------------------------\n");

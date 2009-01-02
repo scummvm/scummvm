@@ -29,8 +29,6 @@
 #include "common/singleton.h"
 #include "common/stack.h"
 #include "common/str.h"
-#include "common/list.h"
-#include "common/fs.h"
 
 #include "graphics/fontman.h"
 
@@ -75,7 +73,7 @@ public:
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 
-	bool loadNewTheme(Common::String file, ThemeEngine::GraphicsMode gfx = ThemeEngine::kGfxDisabled);
+	bool loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx = ThemeEngine::kGfxDisabled);
 	ThemeEngine *theme() { return _theme; }
 
 	ThemeEval *xmlEval() { return _theme->getEvaluator(); }
@@ -92,17 +90,6 @@ public:
 	 * @return true if the a screen change indeed occurred, false otherwise
 	 */
 	bool checkScreenChange();
-
-	struct ThemeDescriptor {
-		Common::String name;
-		Common::String id;
-		Common::String filename;
-	};
-
-	/**
-	 * Lists all theme files useable.
-	 */
-	static void listUsableThemes(Common::List<ThemeDescriptor> &list);
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
@@ -111,8 +98,6 @@ protected:
 		kRedrawTopDialog,
 		kRedrawFull
 	};
-
-
 
 	OSystem			*_system;
 
@@ -157,9 +142,6 @@ protected:
 	Dialog *getTopDialog() const;
 
 	void screenChange();
-
-	Common::String findThemeFile(const Common::String &id);
-	static void listUsableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list);
 };
 
 } // End of namespace GUI

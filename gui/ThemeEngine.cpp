@@ -50,7 +50,7 @@ namespace GUI {
 /**********************************************************
  *	ThemeEngine class
  *********************************************************/
-ThemeEngine::ThemeEngine(Common::String fileName, GraphicsMode mode) :
+ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 	_system(0), _vectorRenderer(0),
 	_buffering(false), _bytesPerPixel(0),  _graphicsMode(kGfxDisabled),
 	_font(0), _initOk(false), _themeOk(false), _enabled(false), _cursor(0) {
@@ -69,8 +69,17 @@ ThemeEngine::ThemeEngine(Common::String fileName, GraphicsMode mode) :
 		_texts[i] = 0;
 	}
 
+	// We currently allow two different ways of theme selection in our config file:
+	// 1) Via full path
+	// 2) Via a basename, which will need to be translated into a full path
+	// This function assures we have a correct path to pass to the ThemeEngine
+	// constructor.
+	_themeFile = getThemeFile(id);
+	// We will use getThemeId to retrive the theme id from the given filename
+	// here, since the user could have passed a fixed filename as 'id'.
+	_themeId = getThemeId(_themeFile);
+
 	_graphicsMode = mode;
-	_themeId = fileName;
 	_themeArchive = 0;
 	_initOk = false;
 }
@@ -164,10 +173,10 @@ bool ThemeEngine::init() {
 	}
 
 	// Try to create a Common::Archive with the files of the theme.
-	if (!_themeArchive && _themeId != "builtin") {
-		Common::FSNode node(_themeId);
+	if (!_themeArchive && !_themeFile.empty()) {
+		Common::FSNode node(_themeFile);
 		if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
-	#ifdef USE_ZLIB
+#ifdef USE_ZLIB
 			Common::ZipArchive *zipArchive = new Common::ZipArchive(node);
 	
 			if (!zipArchive || !zipArchive->isOpen()) {
@@ -176,15 +185,20 @@ bool ThemeEngine::init() {
 				warning("Failed to open Zip archive '%s'.", node.getPath().c_str());
 			}
 			_themeArchive = zipArchive;
-	
-	#endif
+#else
+			warning("Trying to load theme '%s' in a Zip archive without zLib support", _themeFile.c_str());
+			return false;
+#endif
 		} else if (node.isDirectory()) {
 			_themeArchive = new Common::FSDirectory(node);
 		}
 	}
 	
 	// Load the theme
-	loadTheme(_themeId);
+	// We pass the theme file here by default, so the user will
+	// have a descriptive error message. The only exception will
+	// be the builtin theme which has no filename.
+	loadTheme(_themeFile.empty() ? _themeId : _themeFile);
 
 	return ready();
 }
@@ -448,8 +462,6 @@ bool ThemeEngine::loadDefaultXML() {
 	// file inside the themes directory.
 	// Use the Python script "makedeftheme.py" to convert a normal XML theme
 	// into the "default.inc" file, which is ready to be included in the code.
-	bool result;
-
 #ifdef GUI_ENABLE_BUILTIN_THEME
 	const char *defaultXML =
 #include "themes/default.inc"
@@ -460,8 +472,9 @@ bool ThemeEngine::loadDefaultXML() {
 
 	_themeName = "ScummVM Classic Theme (Builtin Version)";
 	_themeId = "builtin";
+	_themeFile.clear();
 
-	result = _parser->parse();
+	bool result = _parser->parse();
 	_parser->close();
 
 	return result;
@@ -1114,7 +1127,7 @@ bool ThemeEngine::themeConfigParseHeader(Common::String header, Common::String &
 	return tok.empty();
 }
 
-bool ThemeEngine::themeConfigUseable(const Common::FSNode &node, Common::String &themeName) {
+bool ThemeEngine::themeConfigUsable(const Common::FSNode &node, Common::String &themeName) {
 	Common::File stream;
 	bool foundHeader = false;
 
@@ -1138,6 +1151,176 @@ bool ThemeEngine::themeConfigUseable(const Common::FSNode &node, Common::String 
 	}
 
 	return foundHeader;
+}
+
+namespace {
+
+struct TDComparator {
+	const Common::String _id;
+	TDComparator(const Common::String &id) : _id(id) {}
+
+	bool operator()(const ThemeEngine::ThemeDescriptor &r) { return _id == r.id; }
+};
+
+} // end of anonymous namespace
+
+void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
+#ifdef GUI_ENABLE_BUILTIN_THEME
+	ThemeDescriptor th;
+	th.name = "ScummVM Classic Theme (Builtin Version)";
+	th.id = "builtin";
+	th.filename = "";
+	list.push_back(th);
+#endif
+
+	if (ConfMan.hasKey("themepath"))
+		listUsableThemes(Common::FSNode(ConfMan.get("themepath")), list);
+
+#ifdef DATA_PATH
+	listUsableThemes(Common::FSNode(DATA_PATH), list);
+#endif
+
+#ifdef MACOSX
+	CFURLRef resourceUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
+	if (resourceUrl) {
+		char buf[256];
+		if (CFURLGetFileSystemRepresentation(resourceUrl, true, (UInt8 *)buf, 256)) {
+			Common::FSNode resourcePath(buf);
+			listUsableThemes(resourcePath, list);
+		}
+		CFRelease(resourceUrl);
+	}
+#endif
+
+	if (ConfMan.hasKey("extrapath"))
+		listUsableThemes(Common::FSNode(ConfMan.get("extrapath")), list);
+
+	listUsableThemes(Common::FSNode("."), list);
+
+	// Now we need to strip all duplicates
+	// TODO: It might not be the best idea to strip duplicates. The user might
+	// have different versions of a specific theme in his paths, thus this code
+	// might show him the wrong version. The problem is we have no ways of checking
+	// a theme version currently. Also since we want to avoid saving the full path
+	// in the config file we can not do any better currently.
+	Common::List<ThemeDescriptor> output;
+
+	for (Common::List<ThemeDescriptor>::const_iterator i = list.begin(); i != list.end(); ++i) {
+		if (find_if(output.begin(), output.end(), TDComparator(i->id)) == output.end())
+			output.push_back(*i);
+	}
+
+	list = output;
+	output.clear();
+}
+
+void ThemeEngine::listUsableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list) {
+	if (!node.exists() || !node.isReadable() || !node.isDirectory())
+		return;
+
+	ThemeDescriptor td;
+
+	// Check whether we point to a valid theme directory.
+	if (themeConfigUsable(node, td.name)) {
+		td.filename = node.getPath();
+		td.id = node.getName();
+
+		list.push_back(td);
+
+		// A theme directory should never contain any other themes
+		// thus we just return to the caller here.
+		return;
+	}
+
+	Common::FSList fileList;
+#ifdef USE_ZLIB
+	// Check all files. We need this to find all themes inside ZIP archives.
+	if (!node.getChildren(fileList, Common::FSNode::kListFilesOnly))
+		return;
+
+	for (Common::FSList::iterator i = fileList.begin(); i != fileList.end(); ++i) {
+		// We will only process zip files for now
+		if (!i->getPath().hasSuffix(".zip"))
+			continue;
+
+		td.name.clear();
+		if (themeConfigUsable(*i, td.name)) {
+			td.filename = i->getPath();
+			td.id = i->getName();
+
+			// If the name of the node object also contains
+			// the ".zip" suffix, we will strip it.
+			if (td.id.hasSuffix(".zip")) {
+				for (int j = 0; j < 4; ++j)
+					td.id.deleteLastChar();
+			}
+
+			list.push_back(td);
+		}
+	}
+	
+	fileList.clear();
+#endif
+	
+	// As next step we will search all subdirectories
+	if (!node.getChildren(fileList, Common::FSNode::kListDirectoriesOnly))
+		return;
+
+	for (Common::FSList::iterator i = fileList.begin(); i != fileList.end(); ++i)
+		listUsableThemes(*i, list);
+}
+
+Common::String ThemeEngine::getThemeFile(const Common::String &id) {
+	// FIXME: Actually "default" rather sounds like it should use
+	// our default theme which would mean "scummmodern" instead
+	// of the builtin one.
+	if (id.equalsIgnoreCase("default"))
+		return "";
+
+	Common::FSNode node(id);
+
+	// If the given id is a full path we'll just use it
+	if (node.exists() && (node.isDirectory() || (node.getName().hasSuffix(".zip") && !node.isDirectory())))
+		return id;
+
+	// FIXME:
+	// A very ugly hack to map a id to a filename, this will generate
+	// a complete theme list, thus it is slower than it could be.
+	// But it is the easiest solution for now.
+	Common::List<ThemeDescriptor> list;
+	listUsableThemes(list);
+
+	for (Common::List<ThemeDescriptor>::const_iterator i = list.begin(); i != list.end(); ++i) {
+		if (id.equalsIgnoreCase(i->id))
+			return i->filename;
+	}
+
+	warning("Could not find theme '%s' falling back to builtin", id.c_str());
+
+	// If no matching id has been found we will
+	// just fall back to the builtin theme
+	return "";
+}
+
+Common::String ThemeEngine::getThemeId(const Common::String &filename) {
+	// If no filename has been given we will initialize the builtin theme
+	if (filename.empty())
+		return "builtin";
+
+	Common::FSNode node(filename);
+	if (!node.exists())
+		return "builtin";
+
+	if (node.getName().hasSuffix(".zip")) {
+		Common::String id = node.getName();
+
+		for (int i = 0; i < 4; ++i)
+			id.deleteLastChar();
+
+		return id;
+	} else {
+		return node.getName();
+	}
 }
 
 

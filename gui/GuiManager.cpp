@@ -81,17 +81,10 @@ GuiManager::~GuiManager() {
 	delete _theme;
 }
 
-bool GuiManager::loadNewTheme(Common::String filename, ThemeEngine::GraphicsMode gfx) {
-	// We currently allow two different ways of theme selection in our config file:
-	// 1) Via full path
-	// 2) Via a basename, which will need to be translated into a full path
-	// This function assures we have a correct path to pass to the ThemeEngine
-	// constructor.
-	filename = findThemeFile(filename);
-
+bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx) {
 	// If we are asked to reload the currently active theme, just do nothing
 	// FIXME: Actually, why? It might be desirable at times to force a theme reload...
-	if (_theme && filename == _theme->getThemeId() && gfx == _theme->getGraphicsMode())
+	if (_theme && id == _theme->getThemeId() && gfx == _theme->getGraphicsMode())
 		return true;
 
 	ThemeEngine *newTheme = 0;
@@ -100,7 +93,7 @@ bool GuiManager::loadNewTheme(Common::String filename, ThemeEngine::GraphicsMode
 		gfx = ThemeEngine::_defaultRendererMode;
 
 	// Try to load the new theme
-	newTheme = new ThemeEngine(filename, gfx);
+	newTheme = new ThemeEngine(id, gfx);
 	assert(newTheme);
 
 	if (!newTheme->init())
@@ -137,153 +130,6 @@ bool GuiManager::loadNewTheme(Common::String filename, ThemeEngine::GraphicsMode
 	_system->updateScreen();
 
 	return true;
-}
-
-namespace {
-
-struct TDComparator {
-	const Common::String _id;
-	TDComparator(const Common::String &id) : _id(id) {}
-
-	bool operator()(const GuiManager::ThemeDescriptor &r) { return _id == r.id; }
-};
-
-} // end of anonymous namespace
-
-void GuiManager::listUsableThemes(Common::List<ThemeDescriptor> &list) {
-	ThemeDescriptor th;
-	th.name = "ScummVM Classic Theme (Builtin Version)";
-	th.id = "builtin";
-	th.filename = "builtin";
-	list.push_back(th);
-
-	if (ConfMan.hasKey("themepath"))
-		listUsableThemes(Common::FSNode(ConfMan.get("themepath")), list);
-
-#ifdef DATA_PATH
-	listUsableThemes(Common::FSNode(DATA_PATH), list);
-#endif
-
-#ifdef MACOSX
-	CFURLRef resourceUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
-	if (resourceUrl) {
-		char buf[256];
-		if (CFURLGetFileSystemRepresentation(resourceUrl, true, (UInt8 *)buf, 256)) {
-			Common::FSNode resourcePath(buf);
-			listUsableThemes(resourcePath, list);
-		}
-		CFRelease(resourceUrl);
-	}
-#endif
-
-	if (ConfMan.hasKey("extrapath"))
-		listUsableThemes(Common::FSNode(ConfMan.get("extrapath")), list);
-
-	listUsableThemes(Common::FSNode("."), list);
-
-	// Now we need to strip all duplicates
-	// TODO: It might not be the best idea to strip duplicates. The user might
-	// have different versions of a specific theme in his paths, thus this code
-	// might show him the wrong version. The problem is we have no ways of checking
-	// a theme version currently. Also since we want to avoid saving the full path
-	// in the config file we can not do any better currently.
-	Common::List<ThemeDescriptor> output;
-
-	for (Common::List<ThemeDescriptor>::const_iterator i = list.begin(); i != list.end(); ++i) {
-		if (find_if(output.begin(), output.end(), TDComparator(i->id)) == output.end())
-			output.push_back(*i);
-	}
-
-	list = output;
-	output.clear();
-}
-
-void GuiManager::listUsableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list) {
-	if (!node.exists() || !node.isReadable() || !node.isDirectory())
-		return;
-
-	ThemeDescriptor td;
-
-	// Check whether we point to a valid theme directory.
-	if (ThemeEngine::themeConfigUseable(node, td.name)) {
-		td.filename = node.getPath();
-		td.id = node.getName();
-
-		list.push_back(td);
-
-		// A theme directory should never contain any other themes
-		// thus we just return to the caller here.
-		return;
-	}
-
-	Common::FSList fileList;
-#ifdef USE_ZLIB
-	// Check all files. We need this to find all themes inside ZIP archives.
-	if (!node.getChildren(fileList, Common::FSNode::kListFilesOnly))
-		return;
-
-	for (Common::FSList::iterator i = fileList.begin(); i != fileList.end(); ++i) {
-		// We will only process zip files for now
-		if (!i->getPath().hasSuffix(".zip"))
-			continue;
-
-		td.name.clear();
-		if (ThemeEngine::themeConfigUseable(*i, td.name)) {
-			td.filename = i->getPath();
-			td.id = i->getName();
-
-			// If the name of the node object also contains
-			// the ".zip" suffix, we will strip it.
-			if (td.id.hasSuffix(".zip")) {
-				for (int j = 0; j < 4; ++j)
-					td.id.deleteLastChar();
-			}
-
-			list.push_back(td);
-		}
-	}
-	
-	fileList.clear();
-#endif
-	
-	// As next step we will search all subdirectories
-	if (!node.getChildren(fileList, Common::FSNode::kListDirectoriesOnly))
-		return;
-
-	for (Common::FSList::iterator i = fileList.begin(); i != fileList.end(); ++i)
-		listUsableThemes(*i, list);
-}
-
-Common::String GuiManager::findThemeFile(const Common::String &id) {
-	// FIXME: Actually "default" rather sounds like it should use
-	// our default theme which would me "scummmodern" instead
-	// of the builtin one.
-	if (id.equalsIgnoreCase("default"))
-		return "builtin";
-
-	Common::FSNode node(id);
-
-	// If the given id is a full path we'll just use it
-	if (node.exists() && (node.isDirectory() || (node.getName().hasSuffix(".zip") && !node.isDirectory())))
-		return id;
-
-	// FIXME:
-	// A very ugly hack to map a id to a filename, this will generate
-	// a complete theme list, thus it is slower than it could be.
-	// But it is the easiest solution for now.
-	Common::List<ThemeDescriptor> list;
-	listUsableThemes(list);
-
-	for (Common::List<ThemeDescriptor>::const_iterator i = list.begin(); i != list.end(); ++i) {
-		if (id.equalsIgnoreCase(i->id))
-			return i->filename;
-	}
-
-	warning("Could not find theme '%s' falling back to builtin", id.c_str());
-
-	// If no matching id has been found we will
-	// just fall back to the builtin theme
-	return "builtin";
 }
 
 void GuiManager::redraw() {

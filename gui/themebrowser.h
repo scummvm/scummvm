@@ -26,7 +26,7 @@
 #define GUI_THEMEBROWSER_H
 
 #include "gui/dialog.h"
-#include "gui/GuiManager.h"
+#include "gui/ThemeEngine.h"
 
 #include "common/str.h"
 #include "common/list.h"
@@ -48,7 +48,7 @@ private:
 	ListWidget *_fileList;
 	Common::String _select;
 
-	typedef Common::List<GuiManager::ThemeDescriptor> ThemeDescList;
+	typedef Common::List<ThemeEngine::ThemeDescriptor> ThemeDescList;
 	ThemeDescList _themes;
 
 	void updateListing();

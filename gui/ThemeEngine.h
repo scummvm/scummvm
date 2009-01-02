@@ -235,7 +235,7 @@ public:
 	static const char *findModeConfigName(GraphicsMode mode);
 
 	/** Default constructor */
-	ThemeEngine(Common::String fileName, GraphicsMode mode);
+	ThemeEngine(Common::String id, GraphicsMode mode);
 
 	/** Default destructor */
 	~ThemeEngine();
@@ -584,14 +584,29 @@ protected:
 	void debugWidgetPosition(const char *name, const Common::Rect &r);
 
 public:
+	struct ThemeDescriptor {
+		Common::String name;
+		Common::String id;
+		Common::String filename;
+	};
 
+	/**
+	 * Lists all theme files useable.
+	 */
+	static void listUsableThemes(Common::List<ThemeDescriptor> &list);
+private:
+	static bool themeConfigUsable(const Common::FSNode &node, Common::String &themeName);
+	static bool themeConfigParseHeader(Common::String header, Common::String &themeName);
+
+	static Common::String getThemeFile(const Common::String &id);
+	static Common::String getThemeId(const Common::String &filename);
+	static void listUsableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list);
+
+public:
 	/**
 	 * @name LEGACY: Old GUI::Theme API
 	 */
 	//@{
-
-	static bool themeConfigUseable(const Common::FSNode &node, Common::String &themeName);
-	static bool themeConfigParseHeader(Common::String header, Common::String &themeName);
 
 	int getTabSpacing() const { return 0; }
 	int getTabPadding() const { return 3; }
@@ -656,6 +671,7 @@ protected:
 
 	Common::String _themeName; //!< Name of the currently loaded theme
 	Common::String _themeId;
+	Common::String _themeFile;
 	Common::Archive *_themeArchive;
 
 	bool _useCursor;
