@@ -97,7 +97,9 @@ add_engine m4 "M4/MADS" no
 add_engine made "MADE" no
 add_engine parallaction "Parallaction" yes
 add_engine queen "Flight of the Amazon Queen" yes
-add_engine saga "SAGA" yes
+add_engine saga "SAGA" yes "ihnm saga2"
+add_engine ihnm "I Have No Mouth, and I must Scream" yes
+add_engine saga2 "SAGA 2 games" yes
 add_engine sky "Beneath a Steel Sky" yes
 add_engine sword1 "Broken Sword 1" yes
 add_engine sword2 "Broken Sword 2" yes
