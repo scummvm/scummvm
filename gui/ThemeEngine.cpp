@@ -82,9 +82,21 @@ ThemeEngine::~ThemeEngine() {
 	_backBuffer.free();
 
 	unloadTheme();
+
+	// Release all graphics surfaces
+	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
+		Graphics::Surface *surf = i->_value;
+		if (surf) {
+			surf->free();
+			delete surf;
+		}
+	}
+	_bitmaps.clear();
+
 	delete _parser;
 	delete _themeEval;
 	delete[] _cursor;
+	delete _themeArchive;
 }
 
 
@@ -151,6 +163,27 @@ bool ThemeEngine::init() {
 		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	}
 
+	// Try to create a Common::Archive with the files of the theme.
+	if (!_themeArchive && _themeId != "builtin") {
+		Common::FSNode node(_themeId);
+		if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
+	#ifdef USE_ZLIB
+			Common::ZipArchive *zipArchive = new Common::ZipArchive(node);
+	
+			if (!zipArchive || !zipArchive->isOpen()) {
+				delete zipArchive;
+				zipArchive = 0;
+				warning("Failed to open Zip archive '%s'.", node.getPath().c_str());
+			}
+			_themeArchive = zipArchive;
+	
+	#endif
+		} else if (node.isDirectory()) {
+			_themeArchive = new Common::FSDirectory(node);
+		}
+	}
+	
+	// Load the theme
 	loadTheme(_themeId);
 
 	return ready();
@@ -321,14 +354,12 @@ bool ThemeEngine::addFont(const Common::String &fontId, const Common::String &fi
 }
 
 bool ThemeEngine::addBitmap(const Common::String &filename) {
-	// Release any existing surface with that name.
+	// Nothing has to be done if the bitmap already has been loaded.
 	Graphics::Surface *surf = _bitmaps[filename];
-	if (surf) {
-		surf->free();
-		delete surf;
-	}
+	if (surf)
+		return true;
 
-	// Now try to load the bitmap via the ImageDecoder class.
+	// If not, try to load the bitmap via the ImageDecoder class.
 	surf = Graphics::ImageDecoder::loadFile(filename);
 	if (!surf && _themeArchive) {
 		Common::SeekableReadStream *stream = _themeArchive->openFile(filename);
@@ -377,8 +408,6 @@ void ThemeEngine::loadTheme(const Common::String &themeId) {
 	}
 	
 	if (!_themeOk) {
-		delete _themeArchive;
-		_themeArchive = 0;
 		warning("Failed to load theme '%s'", themeId.c_str());
 		return;
 	}
@@ -408,19 +437,6 @@ void ThemeEngine::unloadTheme() {
 		delete _texts[i];
 		_texts[i] = 0;
 	}
-
-	// Release all graphics surfaces
-	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
-		Graphics::Surface *surf = i->_value;
-		if (surf) {
-			surf->free();
-			delete surf;
-		}
-	}
-	_bitmaps.clear();
-
-	delete _themeArchive;
-	_themeArchive = 0;
 
 	_themeEval->reset();
 	_themeOk = false;
@@ -457,33 +473,10 @@ bool ThemeEngine::loadDefaultXML() {
 
 bool ThemeEngine::loadThemeXML(const Common::String &themeId) {
 	assert(_parser);
+	assert(_themeArchive);
+
 	_themeName.clear();
 
-	//
-	// Try to create a Common::Archive with the files of the theme
-	//
-	Common::FSNode node(themeId);
-	if (!node.exists() || !node.isReadable())
-		return false;
-
-	if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
-#ifdef USE_ZLIB
-		Common::ZipArchive *zipArchive = new Common::ZipArchive(node);
-
-		if (!zipArchive || !zipArchive->isOpen()) {
-			delete zipArchive;
-			zipArchive = 0;
-			warning("Failed to open Zip archive '%s'.", themeId.c_str());
-		}
-		_themeArchive = zipArchive;
-
-#endif
-	} else if (node.isDirectory()) {
-		_themeArchive = new Common::FSDirectory(node);
-	}
-
-	if (!_themeArchive)
-		return false;
 
 	//
 	// Now that we have a Common::Archive, verify that it contains a valid THEMERC File
