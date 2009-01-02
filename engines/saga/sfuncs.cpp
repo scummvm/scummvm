@@ -54,8 +54,8 @@ namespace Saga {
 
 #define OPCODE(x) {&Script::x, #x}
 
-void Script::setupScriptFuncList(void) {
-	static const ScriptFunctionDescription ITEscriptFunctionsList[ITE_SCRIPT_FUNCTION_MAX] = {
+void Script::setupScriptFuncList() {
+	static const ScriptFunctionDescription ITEScriptFunctionsList[ITE_SCRIPT_FUNCTION_MAX] = {
 		OPCODE(sfPutString),
 		OPCODE(sfWait),
 		OPCODE(sfTakeObject),
@@ -80,7 +80,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfScriptOpenDoor),
 		OPCODE(sfScriptCloseDoor),
 		OPCODE(sfSetBgdAnimSpeed),
-		OPCODE(SF_cycleColors),
+		OPCODE(sfCycleColors),
 		OPCODE(sfDoCenterActor),
 		OPCODE(sfStartBgdAnimSpeed),
 		OPCODE(sfScriptWalkToAsync),
@@ -136,7 +136,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfPlayVoice)
 	};
 
-static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCTION_MAX] = {
+static const ScriptFunctionDescription IHNMScriptFunctionsList[IHNM_SCRIPT_FUNCTION_MAX] = {
 		OPCODE(sfNull),
 		OPCODE(sfWait),
 		OPCODE(sfTakeObject),
@@ -161,7 +161,7 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfScriptOpenDoor),
 		OPCODE(sfScriptCloseDoor),
 		OPCODE(sfSetBgdAnimSpeed),
-		OPCODE(SF_cycleColors),
+		OPCODE(sfCycleColors),
 		OPCODE(sfDoCenterActor),
 		OPCODE(sfStartBgdAnimSpeed),
 		OPCODE(sfScriptWalkToAsync),
@@ -244,9 +244,9 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfDisableAbortSpeeches)
 	};
 	if (_vm->getGameId() == GID_IHNM)
-		_scriptFunctionsList = IHNMscriptFunctionsList;
+		_scriptFunctionsList = IHNMScriptFunctionsList;
 	else
-		_scriptFunctionsList = ITEscriptFunctionsList;
+		_scriptFunctionsList = ITEScriptFunctionsList;
 }
 
 // Script function #0 (0x00)
@@ -688,8 +688,8 @@ void Script::sfSetBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #24 (0x18)
-void Script::SF_cycleColors(SCRIPTFUNC_PARAMS) {
-	SF_stub("SF_cycleColors", thread, nArgs);
+void Script::sfCycleColors(SCRIPTFUNC_PARAMS) {
+	SF_stub("sfCycleColors", thread, nArgs);
 
 	error("Please, report this to sev");
 }

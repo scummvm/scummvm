@@ -109,75 +109,6 @@ enum ThreadWaitTypes {
 	kWaitTypeWakeUp = 11		// IHNM. wait until get waken up
 };
 
-enum OpCodes {
-	opNextBlock = 0x01,
-	opDup = 0x02,
-	opDrop = 0x03,
-	opZero = 0x04,
-	opOne = 0x05,
-	opConstint = 0x06,
-//...
-	opStrlit = 0x08,
-//...
-	opGetFlag = 0x0B,
-	opGetInt = 0x0C,
-//...
-	opPutFlag = 0x0F,
-	opPutInt = 0x10,
-	//...
-	opPutFlagV = 0x13,
-	opPutIntV = 0x14,
-//...
-	opCall = 0x17,
-	opCcall = 0x18,
-	opCcallV = 0x19,
-	opEnter = 0x1A,
-	opReturn = 0x1B,
-	opReturnV = 0x1C,
-	opJmp = 0x1D,
-	opJmpTrueV = 0x1E,
-	opJmpFalseV = 0x1F,
-	opJmpTrue = 0x20,
-	opJmpFalse = 0x21,
-	opJmpSwitch = 0x22,
-//...
-	opJmpRandom = 0x24,
-	opNegate = 0x25,
-	opNot = 0x26,
-	opCompl = 0x27,
-	opIncV = 0x28,
-	opDecV = 0x29,
-	opPostInc = 0x2A,
-	opPostDec = 0x2B,
-	opAdd = 0x2C,
-	opSub = 0x2D,
-	opMul = 0x2E,
-	opDiv = 0x2F,
-	opMod = 0x30,
-//...
-	opEq = 0x33,
-	opNe = 0x34,
-	opGt = 0x35,
-	opLt = 0x36,
-	opGe = 0x37,
-	opLe = 0x38,
-//...
-	opRsh = 0x3F,
-	opLsh = 0x40,
-	opAnd = 0x41,
-	opOr = 0x42,
-	opXor = 0x43,
-	opLAnd = 0x44,
-	opLOr = 0x45,
-	opLXor = 0x46,
-//...
-	opSpeak = 0x53,
-	opDialogBegin = 0x54,
-	opDialogEnd = 0x55,
-	opReply = 0x56,
-	opAnimate = 0x57
-};
-
 enum CycleFlags {
 	kCyclePong    = 1 << 0,
 	kCycleOnce    = 1 << 1,
@@ -342,7 +273,7 @@ public:
 
 typedef SortedList<ScriptThread> ScriptThreadList;
 
-
+#define SCRIPTOP_PARAMS ScriptThread *thread, MemoryReadStream *scriptS, bool &stopParsing, bool &breakOut
 #define SCRIPTFUNC_PARAMS ScriptThread *thread, int nArgs, bool &disContinue
 
 class Script {
@@ -472,7 +403,7 @@ private:
 	void loadModuleBase(ModuleData &module, const byte *resourcePointer, size_t resourceLength);
 
 	// runThread returns true if we should break running of other threads
-	bool runThread(ScriptThread *thread, uint instructionLimit);
+	bool runThread(ScriptThread *thread);
 	void setThreadEntrypoint(ScriptThread *thread, int entrypointNumber);
 
 public:
@@ -480,6 +411,85 @@ public:
 
 private:
 
+	// Script opcodes ------------------------------------------------------------
+	typedef void (Script::*ScriptOpType)(SCRIPTOP_PARAMS);
+	struct ScriptOpDescription {
+		ScriptOpType scriptOp;
+		const char *scriptOpName;
+	};
+	const ScriptOpDescription *_scriptOpsList;
+
+	void setupScriptOpcodeList();
+	void opDummy(SCRIPTOP_PARAMS) { warning("Dummy opcode called"); }
+	void opNextBlock(SCRIPTOP_PARAMS) { 
+		thread->_instructionOffset = (((thread->_instructionOffset) >> 10) + 1) << 10;
+	}
+	void opDup(SCRIPTOP_PARAMS);
+	void opDrop(SCRIPTOP_PARAMS);
+	void opZero(SCRIPTOP_PARAMS);
+	void opOne(SCRIPTOP_PARAMS);
+	void opConstInt(SCRIPTOP_PARAMS);
+	void opStrLit(SCRIPTOP_PARAMS);
+	void opGetFlag(SCRIPTOP_PARAMS);
+	void opGetByte(SCRIPTOP_PARAMS);		// SAGA 2
+	void opGetInt(SCRIPTOP_PARAMS);
+	void opPutFlag(SCRIPTOP_PARAMS);
+	void opPutByte(SCRIPTOP_PARAMS);		// SAGA 2
+	void opPutInt(SCRIPTOP_PARAMS);
+	void opPutFlagV(SCRIPTOP_PARAMS);
+	void opPutByteV(SCRIPTOP_PARAMS);
+	void opPutIntV(SCRIPTOP_PARAMS);
+	void opCall(SCRIPTOP_PARAMS);			// SAGA 1
+	void opCallNear(SCRIPTOP_PARAMS);		// SAGA 2
+	void opCallFar(SCRIPTOP_PARAMS);		// SAGA 2
+	void opCcall(SCRIPTOP_PARAMS);
+	void opCcallV(SCRIPTOP_PARAMS);
+	void opCallMember(SCRIPTOP_PARAMS);		// SAGA 2
+	void opCallMemberV(SCRIPTOP_PARAMS);	// SAGA 2
+	void opEnter(SCRIPTOP_PARAMS);
+	void opReturn(SCRIPTOP_PARAMS);
+	void opReturnV(SCRIPTOP_PARAMS);
+	void opJmp(SCRIPTOP_PARAMS);
+	void opJmpTrueV(SCRIPTOP_PARAMS);
+	void opJmpFalseV(SCRIPTOP_PARAMS);
+	void opJmpTrue(SCRIPTOP_PARAMS);
+	void opJmpFalse(SCRIPTOP_PARAMS);
+	void opJmpSwitch(SCRIPTOP_PARAMS);
+	void opJmpRandom(SCRIPTOP_PARAMS);
+	void opNegate(SCRIPTOP_PARAMS);
+	void opNot(SCRIPTOP_PARAMS);
+	void opCompl(SCRIPTOP_PARAMS);
+	void opIncV(SCRIPTOP_PARAMS);
+	void opDecV(SCRIPTOP_PARAMS);
+	void opPostInc(SCRIPTOP_PARAMS);
+	void opPostDec(SCRIPTOP_PARAMS);
+	void opAdd(SCRIPTOP_PARAMS);
+	void opSub(SCRIPTOP_PARAMS);
+	void opMul(SCRIPTOP_PARAMS);
+	void opDiv(SCRIPTOP_PARAMS);
+	void opMod(SCRIPTOP_PARAMS);
+	void opEq(SCRIPTOP_PARAMS);
+	void opNe(SCRIPTOP_PARAMS);
+	void opGt(SCRIPTOP_PARAMS);
+	void opLt(SCRIPTOP_PARAMS);
+	void opGe(SCRIPTOP_PARAMS);
+	void opLe(SCRIPTOP_PARAMS);
+	void opRsh(SCRIPTOP_PARAMS);
+	void opLsh(SCRIPTOP_PARAMS);
+	void opAnd(SCRIPTOP_PARAMS);
+	void opOr(SCRIPTOP_PARAMS);
+	void opXor(SCRIPTOP_PARAMS);
+	void opLAnd(SCRIPTOP_PARAMS);
+	void opLOr(SCRIPTOP_PARAMS);
+	void opLXor(SCRIPTOP_PARAMS);
+	void opSpeak(SCRIPTOP_PARAMS);
+	void opDialogBegin(SCRIPTOP_PARAMS);
+	void opDialogEnd(SCRIPTOP_PARAMS);
+	void opReply(SCRIPTOP_PARAMS);
+	void opAnimate(SCRIPTOP_PARAMS);
+	void opJmpSeedRandom(SCRIPTOP_PARAMS);
+
+	// Script functions ----------------------------------------------------------
 	typedef void (Script::*ScriptFunctionType)(SCRIPTFUNC_PARAMS);
 
 	struct ScriptFunctionDescription {
@@ -488,7 +498,7 @@ private:
 	};
 	const ScriptFunctionDescription *_scriptFunctionsList;
 
-	void setupScriptFuncList(void);
+	void setupScriptFuncList();
 
 	void sfPutString(SCRIPTFUNC_PARAMS);
 	void sfWait(SCRIPTFUNC_PARAMS);
@@ -515,7 +525,7 @@ private:
 	void sfScriptOpenDoor(SCRIPTFUNC_PARAMS);
 	void sfScriptCloseDoor(SCRIPTFUNC_PARAMS);
 	void sfSetBgdAnimSpeed(SCRIPTFUNC_PARAMS);
-	void SF_cycleColors(SCRIPTFUNC_PARAMS);
+	void sfCycleColors(SCRIPTFUNC_PARAMS);
 	void sfDoCenterActor(SCRIPTFUNC_PARAMS);
 	void sfStartBgdAnimSpeed(SCRIPTFUNC_PARAMS);
 	void sfScriptWalkToAsync(SCRIPTFUNC_PARAMS);

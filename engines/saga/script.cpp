@@ -41,7 +41,8 @@
 
 namespace Saga {
 
-
+#define RID_SCENE1_VOICE_START 57
+#define RID_SCENE1_VOICE_END 186
 
 // Initializes the scripting module.
 // Loads script resource look-up table, initializes script data system
@@ -161,6 +162,7 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 	_vm->loadStrings(_mainStrings, stringsPointer, stringsLength);
 	free(stringsPointer);
 
+	setupScriptOpcodeList();
 	setupScriptFuncList();
 }
 
@@ -177,6 +179,823 @@ Script::~Script() {
 		free(_modules);
 
 	free(_commonBuffer);
+}
+
+// Script opcodes
+#define OPCODE(x) {&Script::x, #x}
+
+void Script::setupScriptOpcodeList() {
+	static const ScriptOpDescription SAGA1ScriptOpcodes[] = {
+		OPCODE(opDummy),		// 00: Undefined
+		// Internal operations
+		OPCODE(opNextBlock),	// 01: Continue execution at next block
+		OPCODE(opDup),			// 02: Duplicate 16-bit value on stack
+		OPCODE(opDrop),			// 03: Drop 16-bit value on stack
+		// Primary values
+		OPCODE(opZero),			// 04: Push a zero on the stack
+		OPCODE(opOne),			// 05: Push a one on the stack
+		OPCODE(opConstInt),		// 06: Constant integer
+		OPCODE(opDummy),		// 07: Constant ID reference (unused)
+		OPCODE(opStrLit),		// 08: String literal
+		OPCODE(opDummy),		// 09: Symbol address (unused)
+		OPCODE(opDummy),		// 10: Symbol contents (unused)
+		// References within this module
+		OPCODE(opGetFlag),		// 11: Read flag bit
+		OPCODE(opGetInt),		// 12: Read integer
+		OPCODE(opDummy),		// 13: Read string (unused)
+		OPCODE(opDummy),		// 14: Read id (unused)
+		OPCODE(opPutFlag),		// 15: Write flag bit
+		OPCODE(opPutInt),		// 16: Write integer
+		OPCODE(opDummy),		// 17: Write string (unused)
+		OPCODE(opDummy),		// 18: Write id (unused)
+		// Void versions, which consume their arguments
+		OPCODE(opPutFlagV),		// 19: Write flag bit
+		OPCODE(opPutIntV),		// 20: Write integer
+		OPCODE(opDummy),		// 21: Write string (unused)
+		OPCODE(opDummy),		// 22: Write id (unused)
+		// Function calling
+		OPCODE(opCall),			// 23: Call function
+		OPCODE(opCcall),		// 24: Call C function
+		OPCODE(opCcallV),		// 25: Call C function (void)
+		OPCODE(opEnter),		// 26: Enter a function
+		OPCODE(opReturn),		// 27: Return from a function
+		OPCODE(opReturnV),		// 28: Return from a function (void)
+		// Branching
+		OPCODE(opJmp),			// 29
+		OPCODE(opJmpTrueV),		// 30: Test argument and consume it
+		OPCODE(opJmpFalseV),	// 31: Test argument and consume it
+		OPCODE(opJmpTrue),		// 32: Test argument but don't consume it
+		OPCODE(opJmpFalse),		// 33: Test argument but don't consume it
+		OPCODE(opJmpSwitch),	// 34: Switch (integer)
+		OPCODE(opDummy),		// 35: Switch (string) (unused)
+		OPCODE(opJmpRandom),	// 36: Random jump
+		// Unary operators
+		OPCODE(opNegate),		// 37
+		OPCODE(opNot),			// 38
+		OPCODE(opCompl),		// 39
+		OPCODE(opIncV),			// 40: Increment, don't push
+		OPCODE(opDecV),			// 41: Increment, don't push
+		OPCODE(opPostInc),		// 42
+		OPCODE(opPostDec),		// 43
+		// Arithmetic
+		OPCODE(opAdd),			// 44
+		OPCODE(opSub),			// 45
+		OPCODE(opMul),			// 46
+		OPCODE(opDiv),			// 47
+		OPCODE(opMod),			// 48
+		// Conditional
+		OPCODE(opDummy),		// 49: opConditional (unused)
+		OPCODE(opDummy),		// 50: opComma (unused)
+		// Comparison
+		OPCODE(opEq),			// 51
+		OPCODE(opNe),			// 52
+		OPCODE(opGt),			// 53
+		OPCODE(opLt),			// 54
+		OPCODE(opGe),			// 55
+		OPCODE(opLe),			// 56
+		// String comparison
+		OPCODE(opDummy),		// 57: opStrEq (unused)
+		OPCODE(opDummy),		// 58: opStrNe (unused)
+		OPCODE(opDummy),		// 59: opStrGt (unused)
+		OPCODE(opDummy),		// 60: opStrLt (unused)
+		OPCODE(opDummy),		// 61: opStrGe (unused)
+		OPCODE(opDummy),		// 62: opStrLe (unused)
+		// Shift
+		OPCODE(opRsh),			// 63
+		OPCODE(opLsh),			// 64
+		// Bitwise
+		OPCODE(opAnd),			// 65
+		OPCODE(opOr),			// 66
+		OPCODE(opXor),			// 67
+		// Logical
+		OPCODE(opLAnd),			// 68
+		OPCODE(opLOr),			// 69
+		OPCODE(opLXor),			// 70
+		// String manipulation
+		OPCODE(opDummy),		// 71: opStrCat, string concatenation (unused)
+		OPCODE(opDummy),		// 72: opStrFormat, string formatting (unused)
+		// Assignment 
+		OPCODE(opDummy),		// 73: assign (unused)
+		OPCODE(opDummy),		// 74: += (unused)
+		OPCODE(opDummy),		// 75: -= (unused)
+		OPCODE(opDummy),		// 76: *= (unused)
+		OPCODE(opDummy),		// 77: /= (unused)
+		OPCODE(opDummy),		// 78: %= (unused)
+		OPCODE(opDummy),		// 79: <<= (unused)
+		OPCODE(opDummy),		// 80: >>= (unused)
+		OPCODE(opDummy),		// 81: and (unused)
+		OPCODE(opDummy),		// 82: or (unused)
+		// Special
+		OPCODE(opSpeak),		// 83
+		OPCODE(opDialogBegin),	// 84
+		OPCODE(opDialogEnd),	// 85
+		OPCODE(opReply),		// 86
+		OPCODE(opAnimate)		// 87
+	};
+
+	static const ScriptOpDescription SAGA2ScriptOpcodes[] = {
+		OPCODE(opDummy),		// 00: Undefined
+		// Internal operations
+		OPCODE(opNextBlock),	// 01: Continue execution at next block
+		OPCODE(opDup),			// 02: Duplicate 16-bit value on stack
+		OPCODE(opDrop),			// 03: Drop 16-bit value on stack
+		// Primary values
+		OPCODE(opZero),			// 04: Push a zero on the stack
+		OPCODE(opOne),			// 05: Push a one on the stack
+		OPCODE(opConstInt),		// 06: Constant integer
+		OPCODE(opDummy),		// 07: Constant ID reference (unused)
+		OPCODE(opStrLit),		// 08: String literal
+		OPCODE(opDummy),		// 09: Symbol address (unused)
+		OPCODE(opDummy),		// 10: Symbol contents (unused)
+		OPCODE(opDummy),		// 11: Reference to "this" (unused)
+		OPCODE(opDummy),		// 12: Dereference of an ID (unused)
+		// References within this module
+		OPCODE(opGetFlag),		// 13: Read flag bit
+		OPCODE(opGetByte),		// 14: Read byte
+		OPCODE(opGetInt),		// 15: Read integer
+		OPCODE(opDummy),		// 16: Read string (unused)
+		OPCODE(opDummy),		// 17: Read id (unused)
+		OPCODE(opPutFlag),		// 18: Write flag bit
+		OPCODE(opPutByte),		// 19: Write byte
+		OPCODE(opPutInt),		// 20: Write integer
+		OPCODE(opDummy),		// 21: Write string (unused)
+		OPCODE(opDummy),		// 22: Write id (unused)
+		OPCODE(opDummy),		// 23: Push effective address (unused)
+		// Void versions, which consume their arguments
+		OPCODE(opPutFlagV),		// 24: Write flag bit
+		OPCODE(opPutByteV),		// 25: Write byte
+		OPCODE(opPutIntV),		// 26: Write integer
+		OPCODE(opDummy),		// 27: Write string (unused)
+		OPCODE(opDummy),		// 28: Write id (unused)
+		// Function calling
+		OPCODE(opCallNear),		// 29: Call function in the same segment
+		OPCODE(opCallFar),		// 30: Call function in other segment
+		OPCODE(opCcall),		// 31: Call C function
+		OPCODE(opCcallV),		// 32: Call C function (void)
+		OPCODE(opCallMember),	// 33: Call member function
+		OPCODE(opCallMemberV),	// 34: Call member function (void)
+		OPCODE(opEnter),		// 35: Enter a function
+		OPCODE(opReturn),		// 36: Return from a function
+		OPCODE(opReturnV),		// 37: Return from a function (void)
+		// Branching
+		OPCODE(opJmp),			// 38
+		OPCODE(opJmpTrueV),		// 39: Test argument and consume it
+		OPCODE(opJmpFalseV),	// 40: Test argument and consume it
+		OPCODE(opJmpTrue),		// 41: Test argument but don't consume it
+		OPCODE(opJmpFalse),		// 42: Test argument but don't consume it
+		OPCODE(opJmpSwitch),	// 43: Switch (integer)
+		OPCODE(opDummy),		// 44: Switch (string) (unused)
+		OPCODE(opJmpRandom),	// 45: Random jump
+		// Unary operators
+		OPCODE(opNegate),		// 46
+		OPCODE(opNot),			// 47
+		OPCODE(opCompl),		// 48
+		OPCODE(opIncV),			// 49: Increment, don't push
+		OPCODE(opDecV),			// 50: Increment, don't push
+		OPCODE(opPostInc),		// 51
+		OPCODE(opPostDec),		// 52
+		// Arithmetic
+		OPCODE(opAdd),			// 53
+		OPCODE(opSub),			// 54
+		OPCODE(opMul),			// 55
+		OPCODE(opDiv),			// 56
+		OPCODE(opMod),			// 57
+		// Conditional
+		OPCODE(opDummy),		// 58: opConditional (unused)
+		OPCODE(opDummy),		// 59: opComma (unused)
+		// Comparison
+		OPCODE(opEq),			// 60
+		OPCODE(opNe),			// 61
+		OPCODE(opGt),			// 62
+		OPCODE(opLt),			// 63
+		OPCODE(opGe),			// 64
+		OPCODE(opLe),			// 65
+		// String comparison
+		OPCODE(opDummy),		// 66: opStrEq (unused)
+		OPCODE(opDummy),		// 67: opStrNe (unused)
+		OPCODE(opDummy),		// 68: opStrGt (unused)
+		OPCODE(opDummy),		// 69: opStrLt (unused)
+		OPCODE(opDummy),		// 70: opStrGe (unused)
+		OPCODE(opDummy),		// 71: opStrLe (unused)
+		// Shift
+		OPCODE(opRsh),			// 72
+		OPCODE(opLsh),			// 73
+		// Bitwise
+		OPCODE(opAnd),			// 74
+		OPCODE(opOr),			// 75
+		OPCODE(opXor),			// 76
+		// Logical
+		OPCODE(opLAnd),			// 77
+		OPCODE(opLOr),			// 78
+		OPCODE(opLXor),			// 79
+		// String manipulation
+		OPCODE(opDummy),		// 80: opStrCat, string concatenation (unused)
+		OPCODE(opDummy),		// 81: opStrFormat, string formatting (unused)
+		// Assignment 
+		OPCODE(opDummy),		// 82: assign (unused)
+		OPCODE(opDummy),		// 83: += (unused)
+		OPCODE(opDummy),		// 84: -= (unused)
+		OPCODE(opDummy),		// 85: *= (unused)
+		OPCODE(opDummy),		// 86: /= (unused)
+		OPCODE(opDummy),		// 87: %= (unused)
+		OPCODE(opDummy),		// 88: <<= (unused)
+		OPCODE(opDummy),		// 89: >>= (unused)
+		OPCODE(opDummy),		// 90: and (unused)
+		OPCODE(opDummy),		// 91: or (unused)
+		// Special
+		OPCODE(opSpeak),		// 92
+		OPCODE(opDialogBegin),	// 93
+		OPCODE(opDialogEnd),	// 94
+		OPCODE(opReply),		// 95
+		OPCODE(opAnimate),		// 96
+		OPCODE(opJmpSeedRandom),// 97: Seeded random jump
+		OPCODE(opDummy)			// 98: Get seeded export number (unused)
+	};
+
+	if (!_vm->isSaga2()) {
+		_scriptOpsList = SAGA1ScriptOpcodes;
+	} else {
+		_scriptOpsList = SAGA2ScriptOpcodes;		
+	}
+}
+
+
+void Script::opDup(SCRIPTOP_PARAMS) {
+	thread->push(thread->stackTop());
+}
+
+void Script::opDrop(SCRIPTOP_PARAMS) {
+	thread->pop();
+}
+
+void Script::opZero(SCRIPTOP_PARAMS) {
+	thread->push(0);
+}
+
+void Script::opOne(SCRIPTOP_PARAMS) {
+	thread->push(1);
+}
+
+void Script::opConstInt(SCRIPTOP_PARAMS) {
+	thread->push(scriptS->readSint16LE());
+}
+
+void Script::opStrLit(SCRIPTOP_PARAMS) {
+	thread->push(scriptS->readSint16LE());
+}
+
+void Script::opGetFlag(SCRIPTOP_PARAMS) {
+	byte *addr = thread->baseAddress(scriptS->readByte());
+	int16 iparam1 = scriptS->readSint16LE();
+	addr += (iparam1 >> 3);
+	iparam1 = (1 << (iparam1 & 7));
+	thread->push((*addr) & iparam1 ? 1 : 0);
+}
+
+void Script::opGetByte(SCRIPTOP_PARAMS) {
+	// SAGA 2 opcode
+	// TODO
+	warning("opGetByte");
+}
+
+void Script::opGetInt(SCRIPTOP_PARAMS) {
+	byte mode = scriptS->readByte();
+	byte *addr = thread->baseAddress(mode);
+	int16 iparam1 = scriptS->readSint16LE();
+	addr += iparam1;
+	thread->push(readUint16(addr, mode));
+	debug(8, "0x%X", readUint16(addr, mode));
+}
+
+void Script::opPutFlag(SCRIPTOP_PARAMS) {
+	byte *addr = thread->baseAddress(scriptS->readByte());
+	int16 iparam1 = scriptS->readSint16LE();
+	addr += (iparam1 >> 3);
+	iparam1 = (1 << (iparam1 & 7));
+	if (thread->stackTop()) {
+		*addr |= iparam1;
+	} else {
+		*addr &= ~iparam1;
+	}
+}
+
+void Script::opPutByte(SCRIPTOP_PARAMS) {
+	// SAGA 2 opcode
+	// TODO
+	warning("opPutByte");
+}
+
+void Script::opPutInt(SCRIPTOP_PARAMS) {
+	byte mode = scriptS->readByte();
+	byte *addr = thread->baseAddress(mode);
+	int16 iparam1 = scriptS->readSint16LE();
+	addr += iparam1;
+	writeUint16(addr, thread->stackTop(), mode);
+}
+
+void Script::opPutFlagV(SCRIPTOP_PARAMS) {
+	byte *addr = thread->baseAddress(scriptS->readByte());
+	int16 iparam1 = scriptS->readSint16LE();
+	addr += (iparam1 >> 3);
+	iparam1 = (1 << (iparam1 & 7));
+	if (thread->pop()) {
+		*addr |= iparam1;
+	} else {
+		*addr &= ~iparam1;
+	}
+}
+
+void Script::opPutByteV(SCRIPTOP_PARAMS) {
+	// SAGA 2 opcode
+	// TODO
+	warning("opPutByteV");
+}
+
+void Script::opPutIntV(SCRIPTOP_PARAMS) {
+	byte mode = scriptS->readByte();
+	byte *addr = thread->baseAddress(mode);
+	int16 iparam1 = scriptS->readSint16LE();
+	addr += iparam1;
+	writeUint16(addr, thread->pop(), mode);
+}
+
+void Script::opCall(SCRIPTOP_PARAMS) {
+	byte argumentsCount = scriptS->readByte();
+	int16 iparam1 = scriptS->readByte();
+	if (iparam1 != kAddressModule) {
+		error("Script::runThread iparam1 != kAddressModule");
+	}
+	byte *addr = thread->baseAddress(iparam1);
+	iparam1 = scriptS->readSint16LE();
+	addr += iparam1;
+	thread->push(argumentsCount);
+
+	// NOTE: The original pushes the program
+	// counter as a pointer here. But I don't think
+	// we will have to do that.
+	thread->push(scriptS->pos());
+	// NOTE2: program counter is 32bit - so we should "emulate" it size - because kAddressStack relies on it
+	thread->push(0);
+	thread->_instructionOffset = iparam1;
+}
+
+void Script::opCallNear(SCRIPTOP_PARAMS) {
+	// SAGA 2 opcode
+	// TODO
+	warning("opCallNear");
+}
+
+void Script::opCallFar(SCRIPTOP_PARAMS) {
+	// SAGA 2 opcode
+	// TODO
+	warning("opCallFar");
+}
+
+void Script::opCcall(SCRIPTOP_PARAMS) {
+	byte argumentsCount = scriptS->readByte();
+	uint16 functionNumber = scriptS->readUint16LE();
+	if (functionNumber >= ((_vm->getGameId() == GID_IHNM) ?
+						   IHNM_SCRIPT_FUNCTION_MAX : ITE_SCRIPT_FUNCTION_MAX)) {
+		error("Script::opCcall() Invalid script function number (%d)", functionNumber);
+	}
+
+	debug(2, "Calling #%d %s argCount=%i", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName, argumentsCount);
+	ScriptFunctionType scriptFunction = _scriptFunctionsList[functionNumber].scriptFunction;
+	uint16 checkStackTopIndex = thread->_stackTopIndex + argumentsCount;
+	(this->*scriptFunction)(thread, argumentsCount, stopParsing);
+	if (stopParsing)
+		return;
+
+	if (scriptFunction == &Saga::Script::sfScriptGotoScene ||
+		scriptFunction == &Saga::Script::sfVsetTrack) {
+		stopParsing = true; // cause abortAllThreads called and _this_ thread destroyed
+		return;
+	}
+
+	thread->_stackTopIndex = checkStackTopIndex;
+
+	thread->push(thread->_returnValue);		// return value
+
+	if (thread->_flags & kTFlagAsleep)
+		breakOut = true;	// break out of loop!
+}
+
+void Script::opCallMember(SCRIPTOP_PARAMS) {
+	// SAGA 2 opcode
+	// TODO
+	warning("opCallMember");
+}
+
+void Script::opCallMemberV(SCRIPTOP_PARAMS) {
+	// SAGA 2 opcode
+	// TODO
+	warning("opCallMemberV");
+}
+
+void Script::opCcallV(SCRIPTOP_PARAMS) {
+	byte argumentsCount = scriptS->readByte();
+	uint16 functionNumber = scriptS->readUint16LE();
+	if (functionNumber >= ((_vm->getGameId() == GID_IHNM) ?
+						   IHNM_SCRIPT_FUNCTION_MAX : ITE_SCRIPT_FUNCTION_MAX)) {
+		error("Script::opCcallV() Invalid script function number (%d)", functionNumber);
+	}
+
+	debug(2, "Calling #%d %s argCount=%i", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName, argumentsCount);
+	ScriptFunctionType scriptFunction = _scriptFunctionsList[functionNumber].scriptFunction;
+	uint16 checkStackTopIndex = thread->_stackTopIndex + argumentsCount;
+	(this->*scriptFunction)(thread, argumentsCount, stopParsing);
+	if (stopParsing)
+		return;
+	
+	if (scriptFunction == &Saga::Script::sfScriptGotoScene ||
+		scriptFunction == &Saga::Script::sfVsetTrack) {
+		stopParsing = true;
+		return;		// cause abortAllThreads called and _this_ thread destroyed
+	}
+
+	thread->_stackTopIndex = checkStackTopIndex;
+
+	if (thread->_flags & kTFlagAsleep)
+		breakOut = true;	// break out of loop!
+}
+
+void Script::opEnter(SCRIPTOP_PARAMS) {
+	thread->push(thread->_frameIndex);
+	thread->_frameIndex = thread->_stackTopIndex;
+	thread->_stackTopIndex -= (scriptS->readSint16LE() / 2);
+}
+
+void Script::opReturn(SCRIPTOP_PARAMS) {
+	thread->_returnValue = thread->pop();		// return value
+
+	thread->_stackTopIndex = thread->_frameIndex;
+	thread->_frameIndex = thread->pop();
+	if (thread->pushedSize() == 0) {
+		thread->_flags |= kTFlagFinished;
+		stopParsing = true;
+		return;
+	} else {
+		thread->pop(); //cause it 0
+		thread->_instructionOffset = thread->pop();
+
+		// Pop all the call parameters off the stack
+		int16 iparam1 = thread->pop();
+		while (iparam1--) {
+			thread->pop();
+		}
+
+		thread->push(thread->_returnValue);
+	}
+}
+
+void Script::opReturnV(SCRIPTOP_PARAMS) {
+	thread->_stackTopIndex = thread->_frameIndex;
+	thread->_frameIndex = thread->pop();
+	if (thread->pushedSize() == 0) {
+		thread->_flags |= kTFlagFinished;
+		stopParsing = true;
+		return;
+	} else {
+		thread->pop(); //cause it 0
+		thread->_instructionOffset = thread->pop();
+
+		// Pop all the call parameters off the stack
+		int16 iparam1 = thread->pop();
+		while (iparam1--) {
+			thread->pop();
+		}
+	}
+}
+
+void Script::opJmp(SCRIPTOP_PARAMS) {
+	thread->_instructionOffset = scriptS->readUint16LE();
+}
+
+void Script::opJmpTrueV(SCRIPTOP_PARAMS) {
+	uint16 jmpOffset1 = scriptS->readUint16LE();
+	if (thread->pop())
+		thread->_instructionOffset = jmpOffset1;
+}
+
+void Script::opJmpFalseV(SCRIPTOP_PARAMS) {
+	uint16 jmpOffset1 = scriptS->readUint16LE();
+	if (!thread->pop())
+		thread->_instructionOffset = jmpOffset1;
+}
+
+void Script::opJmpTrue(SCRIPTOP_PARAMS) {
+	uint16 jmpOffset1 = scriptS->readUint16LE();
+	if (thread->stackTop())
+		thread->_instructionOffset = jmpOffset1;
+}
+
+void Script::opJmpFalse(SCRIPTOP_PARAMS) {
+	uint16 jmpOffset1 = scriptS->readUint16LE();
+	if (!thread->stackTop())
+		thread->_instructionOffset = jmpOffset1;
+}
+
+void Script::opJmpSwitch(SCRIPTOP_PARAMS) {
+	int16 iparam1 = scriptS->readSint16LE();
+	int16 iparam2 = thread->pop();
+	int16 iparam3;
+
+	while (iparam1--) {
+		iparam3 = scriptS->readUint16LE();
+		thread->_instructionOffset = scriptS->readUint16LE();
+		if (iparam3 == iparam2)
+			break;
+	}
+
+	if (iparam1 < 0)
+		thread->_instructionOffset = scriptS->readUint16LE();
+}
+
+void Script::opJmpRandom(SCRIPTOP_PARAMS) {
+	// Supposedly the number of possible branches.
+	// The original interpreter ignores it.
+	scriptS->readUint16LE();
+	int16 iparam1 = scriptS->readSint16LE();
+	iparam1 = _vm->_rnd.getRandomNumber(iparam1 - 1);
+	int16 iparam2;
+
+	while (1) {
+		iparam2 = scriptS->readSint16LE();
+		thread->_instructionOffset = scriptS->readUint16LE();
+
+		iparam1 -= iparam2;
+		if (iparam1 < 0)
+			break;
+	}
+}
+
+void Script::opNegate(SCRIPTOP_PARAMS) {
+	thread->push(-thread->pop());
+}
+
+void Script::opNot(SCRIPTOP_PARAMS) {
+	thread->push(!thread->pop());
+}
+
+void Script::opCompl(SCRIPTOP_PARAMS) {
+	thread->push(~thread->pop());
+}
+
+void Script::opIncV(SCRIPTOP_PARAMS) {
+	byte mode = scriptS->readByte();
+	byte *addr = thread->baseAddress(mode);
+	int16 iparam1 = scriptS->readSint16LE();
+	addr += iparam1;
+	iparam1 = readUint16(addr, mode);
+	writeUint16(addr, iparam1 + 1, mode);
+}
+
+void Script::opDecV(SCRIPTOP_PARAMS) {
+	byte mode = scriptS->readByte();
+	byte *addr = thread->baseAddress(mode);
+	int16 iparam1 = scriptS->readSint16LE();
+	addr += iparam1;
+	iparam1 = readUint16(addr, mode);
+	writeUint16(addr, iparam1 - 1, mode);
+}
+
+void Script::opPostInc(SCRIPTOP_PARAMS) {
+	byte mode = scriptS->readByte();
+	byte *addr = thread->baseAddress(mode);
+	int16 iparam1 = scriptS->readSint16LE();
+	addr += iparam1;
+	iparam1 = readUint16(addr, mode);
+	thread->push(iparam1);
+	writeUint16(addr, iparam1 + 1, mode);
+}
+
+void Script::opPostDec(SCRIPTOP_PARAMS) {
+	byte mode = scriptS->readByte();
+	byte *addr = thread->baseAddress(mode);
+	int16 iparam1 = scriptS->readSint16LE();
+	addr += iparam1;
+	iparam1 = readUint16(addr, mode);
+	thread->push(iparam1);
+	writeUint16(addr, iparam1 - 1, mode);
+}
+
+void Script::opAdd(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push(iparam1 + iparam2);
+}
+
+void Script::opSub(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push(iparam1 - iparam2);
+}
+
+void Script::opMul(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push(iparam1 * iparam2);
+}
+
+void Script::opDiv(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push(iparam1 / iparam2);
+}
+
+void Script::opMod(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push(iparam1 % iparam2);
+}
+
+void Script::opEq(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push((iparam1 == iparam2) ? 1 : 0);
+}
+
+void Script::opNe(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push((iparam1 != iparam2) ? 1 : 0);
+}
+
+void Script::opGt(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push((iparam1 > iparam2) ? 1 : 0);
+}
+
+void Script::opLt(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push((iparam1 < iparam2) ? 1 : 0);
+}
+
+void Script::opGe(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push((iparam1 >= iparam2) ? 1 : 0);
+}
+
+void Script::opLe(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push((iparam1 <= iparam2) ? 1 : 0);
+}
+
+void Script::opRsh(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push(iparam1 >> iparam2);
+}
+
+void Script::opLsh(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push(iparam1 << iparam2);
+}
+
+void Script::opAnd(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push(iparam1 & iparam2);
+}
+
+void Script::opOr(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push(iparam1 | iparam2);
+}
+
+void Script::opXor(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push(iparam1 ^ iparam2);
+}
+
+void Script::opLAnd(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push((iparam1 && iparam2) ? 1 : 0);
+}
+
+void Script::opLOr(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push((iparam1 || iparam2) ? 1 : 0);
+}
+
+void Script::opLXor(SCRIPTOP_PARAMS) {
+	int16 iparam2 = thread->pop();
+	int16 iparam1 = thread->pop();
+	thread->push(((iparam1 && !iparam2) || (!iparam1 && iparam2)) ? 1 : 0);
+}
+
+void Script::opSpeak(SCRIPTOP_PARAMS) {
+	if (_vm->_actor->isSpeaking()) {
+		thread->wait(kWaitTypeSpeech);
+		stopParsing = false;
+		return;
+	}
+
+	int stringsCount = scriptS->readByte();
+	uint16 actorId = scriptS->readUint16LE();
+	uint16 speechFlags = scriptS->readByte();
+	int sampleResourceId = -1;
+	int16 first;
+	const char *strings[ACTOR_SPEECH_STRING_MAX];
+
+	scriptS->readUint16LE(); // x,y skip
+
+	if (stringsCount == 0)
+		error("opSpeak stringsCount == 0");
+
+	if (stringsCount > ACTOR_SPEECH_STRING_MAX)
+		error("opSpeak stringsCount=0x%X exceed ACTOR_SPEECH_STRING_MAX", stringsCount);
+
+	int16 iparam1 = first = thread->stackTop();
+	for (int i = 0; i < stringsCount; i++) {
+		iparam1 = thread->pop();
+		strings[i] = thread->_strings->getString(iparam1);
+	}
+
+	// now data contains last string index
+
+	if (_vm->getFeatures() & GF_OLD_ITE_DOS) { // special ITE dos
+		if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) &&
+			(iparam1 >= 288) && (iparam1 <= (RID_SCENE1_VOICE_END - RID_SCENE1_VOICE_START + 288))) {
+			sampleResourceId = RID_SCENE1_VOICE_START + iparam1 - 288;
+		}
+	} else {
+		if (thread->_voiceLUT->voicesCount > first)
+			sampleResourceId = thread->_voiceLUT->voices[first];
+	}
+
+	if (sampleResourceId < 0 || sampleResourceId > 4000)
+		sampleResourceId = -1;
+
+	if (_vm->getGameId() == GID_ITE && !sampleResourceId)
+		sampleResourceId = -1;
+
+	_vm->_actor->actorSpeech(actorId, strings, stringsCount, sampleResourceId, speechFlags);
+
+	if (!(speechFlags & kSpeakAsync)) {
+		thread->wait(kWaitTypeSpeech);
+	}
+}
+
+void Script::opDialogBegin(SCRIPTOP_PARAMS) {
+	if (_conversingThread) {
+		thread->wait(kWaitTypeDialogBegin);
+		stopParsing = false;
+		return;
+	}
+	_conversingThread = thread;
+	_vm->_interface->converseClear();
+}
+
+void Script::opDialogEnd(SCRIPTOP_PARAMS) {
+	if (thread == _conversingThread) {
+		_vm->_interface->activate();
+		_vm->_interface->setMode(kPanelConverse);
+		thread->wait(kWaitTypeDialogEnd);
+		stopParsing = false;
+		return;
+	}
+}
+
+void Script::opReply(SCRIPTOP_PARAMS) {
+	const char *str;
+	byte replyNum = scriptS->readByte();
+	byte flags = scriptS->readByte();
+	int16 iparam1 = 0;
+	int strID = thread->pop();
+
+	if (flags & kReplyOnce) {
+		iparam1 = scriptS->readSint16LE();
+		byte *addr = thread->_staticBase + (iparam1 >> 3);
+		if (*addr & (1 << (iparam1 & 7))) {
+			return;
+		}
+	}
+
+	str = thread->_strings->getString(strID);
+	if (_vm->_interface->converseAddText(str, strID, replyNum, flags, iparam1))
+		warning("Error adding ConverseText (%s, %d, %d, %d)", str, replyNum, flags, iparam1);
+}
+
+void Script::opAnimate(SCRIPTOP_PARAMS) {
+	scriptS->readUint16LE();
+	scriptS->readUint16LE();
+	thread->_instructionOffset += scriptS->readByte();
+}
+
+void Script::opJmpSeedRandom(SCRIPTOP_PARAMS) {
+	// SAGA 2 opcode
+	// TODO
+	warning("opJmpSeedRandom");
 }
 
 void Script::loadModule(int scriptModuleNumber) {
