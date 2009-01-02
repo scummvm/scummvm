@@ -557,7 +557,7 @@ void Video::drawOSDText(const char *text) {
 	uint32 color = 0x2;
 	Graphics::Surface surf;
 
-	surf.create(g_system->getWidth(), font.getFontHeight(), surf.bytesPerPixel);
+	surf.create(g_system->getWidth(), font.getFontHeight(), 1);
 
 	font.drawString(&surf, text, 0, 0, surf.w, color, Graphics::kTextAlignCenter);
 
