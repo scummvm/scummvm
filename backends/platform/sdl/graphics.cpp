@@ -155,6 +155,12 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 
 			_videoMode.setup = true;
 			_modeChanged = true;
+			// OSystem_SDL::pollEvent used to update the screen change count,
+			// but actually it gives problems when a video mode was changed
+			// but OSystem_SDL::pollEvent was not called. This for example
+			// caused a crash under certain circumstances when doing an RTL.
+			// To fix this issue we update the screen change count right here.
+			_screenChangeCount++;
 		}
 	} else if (_transactionDetails.needHotswap) {
 		setGraphicsModeIntern();
@@ -166,6 +172,12 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 		} else {
 			_videoMode.setup = true;
 			_modeChanged = true;
+			// OSystem_SDL::pollEvent used to update the screen change count,
+			// but actually it gives problems when a video mode was changed
+			// but OSystem_SDL::pollEvent was not called. This for example
+			// caused a crash under certain circumstances when doing an RTL.
+			// To fix this issue we update the screen change count right here.
+			_screenChangeCount++;
 
 			if (_transactionDetails.needUpdatescreen)
 				internUpdateScreen();

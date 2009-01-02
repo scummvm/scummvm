@@ -183,7 +183,6 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 	if (_modeChanged) {
 		_modeChanged = false;
 		event.type = Common::EVENT_SCREEN_CHANGED;
-		_screenChangeCount++;
 		return true;
 	}
 
