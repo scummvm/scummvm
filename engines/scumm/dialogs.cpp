@@ -35,7 +35,7 @@
 
 #include "gui/about.h"
 
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 #include "gui/ListWidget.h"
 #include "gui/ThemeEval.h"
 

@@ -9,11 +9,11 @@ MODULE_OBJS := \
 	dialog.o \
 	editable.o \
 	EditTextWidget.o \
+	GuiManager.o \
 	launcher.o \
 	ListWidget.o \
 	massadd.o \
 	message.o \
-	newgui.o \
 	object.o \
 	options.o \
 	PopUpWidget.o \

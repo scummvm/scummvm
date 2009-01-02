@@ -25,7 +25,7 @@
 #include "common/util.h"
 #include "gui/TabWidget.h"
 #include "gui/dialog.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 
 #include "gui/ThemeEval.h"
 

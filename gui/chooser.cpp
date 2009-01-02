@@ -24,7 +24,7 @@
 
 #include "common/system.h"
 #include "gui/chooser.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 #include "gui/ListWidget.h"
 
 namespace GUI {

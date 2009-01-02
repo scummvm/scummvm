@@ -27,7 +27,7 @@
 #include "gui/ListWidget.h"
 #include "gui/ScrollBarWidget.h"
 #include "gui/dialog.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 
 #include "gui/ThemeEval.h"
 

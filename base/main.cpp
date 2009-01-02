@@ -43,7 +43,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 #include "gui/message.h"
 
 #if defined(_WIN32_WCE)

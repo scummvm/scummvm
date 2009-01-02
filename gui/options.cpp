@@ -26,7 +26,7 @@
 #include "gui/themebrowser.h"
 #include "gui/chooser.h"
 #include "gui/message.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 #include "gui/ThemeEval.h"
 #include "gui/options.h"
 #include "gui/PopUpWidget.h"

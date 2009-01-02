@@ -30,7 +30,7 @@
 #include "common/system.h"
 
 #include "gui/message.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 
 #include "graphics/cursorman.h"
 

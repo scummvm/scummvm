@@ -33,7 +33,7 @@
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 #include "gui/ThemeParser.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 #include "graphics/VectorRenderer.h"
 
 namespace GUI {

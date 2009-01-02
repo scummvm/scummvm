@@ -25,7 +25,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "gui/dialog.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 #include "gui/PopUpWidget.h"
 #include "engines/engine.h"
 

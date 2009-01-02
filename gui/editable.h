@@ -28,7 +28,7 @@
 #include "common/str.h"
 #include "common/rect.h"
 #include "gui/widget.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 
 namespace GUI {
 

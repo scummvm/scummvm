@@ -28,7 +28,7 @@
 #include "common/system.h"
 
 #include "gui/message.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"

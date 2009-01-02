@@ -39,7 +39,7 @@
 #include "common/config-manager.h"
 
 #include "gui/message.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 
 namespace Sword1 {
 

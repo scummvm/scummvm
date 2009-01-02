@@ -37,7 +37,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "gui/message.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 #include "sound/mixer.h"
 #include "engines/dialogs.h"
 #include "engines/metaengine.h"

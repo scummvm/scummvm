@@ -24,7 +24,7 @@
 
 #include "common/events.h"
 #include "gui/editable.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 
 namespace GUI {
 

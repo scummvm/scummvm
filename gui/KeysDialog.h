@@ -26,7 +26,7 @@
 #ifndef KEYSDIALOG_H
 #define KEYSDIALOG_H
 
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 #include "gui/dialog.h"
 #include "gui/ListWidget.h"
 #include "common/str.h"

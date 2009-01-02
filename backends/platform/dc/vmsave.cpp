@@ -28,7 +28,7 @@
 #include "dc.h"
 #include "icon.h"
 #include <common/savefile.h>
-#include <gui/newgui.h>
+#include <gui/GuiManager.h>
 #include <gui/message.h>
 #include <backends/saves/compressed/compressed-saves.h>
 

@@ -23,7 +23,7 @@
 #include "dsoptions.h"
 #include "dsmain.h"
 #include "gui/dialog.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 #include "gui/ListWidget.h"
 #include "gui/TabWidget.h"
 #include "osystem_ds.h"
