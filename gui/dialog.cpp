@@ -250,9 +250,6 @@ void Dialog::handleKeyUp(Common::KeyState state) {
 void Dialog::handleMouseMoved(int x, int y, int button) {
 	Widget *w;
 
-	//if (!button)
-	//	_dragWidget = 0;
-
 	if (_focusedWidget && !_dragWidget) {
 		w = _focusedWidget;
 		int wx = w->getAbsX() - _x;
@@ -271,27 +268,38 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 			w->handleMouseLeft(button);
 		}
 
-		w->handleMouseMoved(x - wx, y - wy, button);
+		if (w->getFlags() & WIDGET_TRACK_MOUSE)
+			w->handleMouseMoved(x - wx, y - wy, button);
 	}
 
-	// While a "drag" is in process (i.e. mouse is moved while a button is pressed),
-	// only deal with the widget in which the click originated.
-	if (_dragWidget)
-		w = _dragWidget;
-	else
+	// We process mouseEntered/Left events if we don't have any
+	// currently active dragged widget or if the currently dragged widget
+	// does not want to be informed about the mouse mouse events.
+	if (!_dragWidget || !(_dragWidget->getFlags() & WIDGET_TRACK_MOUSE))
 		w = findWidget(x, y);
+	else
+		w = _dragWidget;
 
 	if (_mouseWidget != w) {
 		if (_mouseWidget)
 			_mouseWidget->handleMouseLeft(button);
+
+		// If we have a widget in drag mode we prevent mouseEntered
+		// events from being sent to other widgets.
+		if (_dragWidget && w != _dragWidget)
+			w = 0;
+
 		if (w)
 			w->handleMouseEntered(button);
 		_mouseWidget = w;
 	}
 
-	if (w && (w->getFlags() & WIDGET_TRACK_MOUSE)) {
+	// We only sent mouse move events under the following conditions:
+	// 1) We have a widget in drag mode
+	// 2) The widget wants to track the mouse movement
+	w = _dragWidget;
+	if (w && (w->getFlags() & WIDGET_TRACK_MOUSE))
 		w->handleMouseMoved(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button);
-	}
 }
 
 void Dialog::handleTickle() {
