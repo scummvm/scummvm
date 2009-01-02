@@ -1122,6 +1122,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\gui\GuiManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\GuiManager.h"
+				>
+			</File>			
+			<File
 				RelativePath="..\..\gui\Key.cpp"
 				>
 			</File>
@@ -1159,14 +1167,6 @@
 			</File>
 			<File
 				RelativePath="..\..\gui\message.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\newgui.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\newgui.h"
 				>
 			</File>
 			<File
