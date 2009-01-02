@@ -26,9 +26,10 @@
 #define GUI_THEMEBROWSER_H
 
 #include "gui/dialog.h"
+#include "gui/GuiManager.h"
+
 #include "common/str.h"
-#include "common/fs.h"
-#include "common/array.h"
+#include "common/list.h"
 
 namespace GUI {
 
@@ -44,20 +45,13 @@ public:
 
 	const Common::String &getSelected() const { return _select; }
 private:
-	struct ThemeDescriptor {
-		Common::String name;
-		Common::String file;
-	};
-
 	ListWidget *_fileList;
 	Common::String _select;
-	typedef Common::Array<ThemeDescriptor> ThemeDescList;
+
+	typedef Common::List<GuiManager::ThemeDescriptor> ThemeDescList;
 	ThemeDescList _themes;
 
 	void updateListing();
-
-	void addDir(ThemeDescList &list, const Common::FSNode &node);
-	bool isTheme(const Common::FSNode &node, ThemeDescriptor &out);
 };
 
 } // end of namespace GUI

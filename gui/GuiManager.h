@@ -29,6 +29,9 @@
 #include "common/singleton.h"
 #include "common/stack.h"
 #include "common/str.h"
+#include "common/list.h"
+#include "common/fs.h"
+
 #include "graphics/fontman.h"
 
 #include "gui/widget.h"
@@ -90,6 +93,16 @@ public:
 	 */
 	bool checkScreenChange();
 
+	struct ThemeDescriptor {
+		Common::String name;
+		Common::String id;
+		Common::String filename;
+	};
+
+	/**
+	 * Lists all theme files useable.
+	 */
+	void listUseableThemes(Common::List<ThemeDescriptor> &list);
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
@@ -144,6 +157,9 @@ protected:
 	Dialog *getTopDialog() const;
 
 	void screenChange();
+
+	Common::String findThemeFile(const Common::String &id);
+	void listUseableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list);
 };
 
 } // End of namespace GUI

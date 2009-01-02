@@ -25,13 +25,6 @@
 #include "gui/themebrowser.h"
 #include "gui/ListWidget.h"
 #include "gui/widget.h"
-#include "common/config-manager.h"
-
-#include "common/fs.h"
-
-#ifdef MACOSX
-#include "CoreFoundation/CoreFoundation.h"
-#endif
 
 namespace GUI {
 
@@ -78,7 +71,18 @@ void ThemeBrowser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		int selection = _fileList->getSelected();
 		if (selection < 0)
 			break;
-		_select = _themes[selection].file;
+
+		// TODO: 
+		// Currently GuiManager::listUseableThemes uses a
+		// list. Thus we can not use operator[] here but
+		// need to iterate through the list. We might want
+		// to think of changing it, but it should not be
+		// of high importance anyway.
+		ThemeDescList::const_iterator sel = _themes.begin();
+		for (int i = 0; i < selection; ++i)
+			++sel;
+
+		_select = sel->id;
 		setResult(1);
 		close();
 		break;
@@ -91,43 +95,9 @@ void ThemeBrowser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 void ThemeBrowser::updateListing() {
 	_themes.clear();
 
-	// classic is always built-in
-	ThemeDescriptor th;
-	th.name = "ScummVM Classic Theme (Builtin Version)";
-	th.file = "builtin";
-	_themes.push_back(th);
+	g_gui.listUseableThemes(_themes);
 
-	// we are using only the paths 'themepath', 'extrapath', DATA_PATH and '.'
-	// since these are the default locations for the theme files
-	// files in other places are ignored in this dialog
-	// TODO: let the user browse the complete FS too/only the FS?
-	if (ConfMan.hasKey("themepath"))
-		addDir(_themes, Common::FSNode(ConfMan.get("themepath")));
-
-#ifdef DATA_PATH
-	addDir(_themes, Common::FSNode(DATA_PATH));
-#endif
-
-#ifdef MACOSX
-	CFURLRef resourceUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
-	if (resourceUrl) {
-		char buf[256];
-		if (CFURLGetFileSystemRepresentation(resourceUrl, true, (UInt8 *)buf, 256)) {
-			Common::FSNode resourcePath(buf);
-			addDir(_themes, resourcePath);
-		}
-		CFRelease(resourceUrl);
-	}
-#endif
-
-	if (ConfMan.hasKey("extrapath"))
-		addDir(_themes, Common::FSNode(ConfMan.get("extrapath")));
-
-	addDir(_themes, Common::FSNode("."));
-
-	// Populate the ListWidget
 	Common::StringList list;
-
 	for (ThemeDescList::const_iterator i = _themes.begin(); i != _themes.end(); ++i)
 		list.push_back(i->name);
 
@@ -136,53 +106,6 @@ void ThemeBrowser::updateListing() {
 
 	// Finally, redraw
 	draw();
-}
-
-
-void ThemeBrowser::addDir(ThemeDescList &list, const Common::FSNode &node) {
-	if (!node.exists() || !node.isReadable())
-		return;
-
-	// Scan this dir, all files and all subdirs in it for themes
-	Common::FSList fslist;
-	if (!node.getChildren(fslist, Common::FSNode::kListAll))
-		return;
-	fslist.push_back(node);	// Yup, also scan the dir itself
-
-	for (Common::FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
-
-		ThemeDescriptor th;
-		if (isTheme(*i, th)) {
-			bool add = true;
-
-			for (ThemeDescList::const_iterator p = list.begin(); p != list.end(); ++p) {
-				if (p->name == th.name || p->file == th.file) {
-					add = false;
-					break;
-				}
-			}
-
-			if (add)
-				list.push_back(th);
-		}
-	}
-}
-
-bool ThemeBrowser::isTheme(const Common::FSNode &node, ThemeDescriptor &out) {
-	out.file = node.getPath();
-
-#ifdef USE_ZLIB
-	if (!out.file.hasSuffix(".zip") && !node.isDirectory())
-		return false;
-#else
-	if (!node.isDirectory())
-		return false;
-#endif
-
-	if (!ThemeEngine::themeConfigUseable(node, out.name))
-		return false;
-
-	return true;
 }
 
 } // end of namespace GUI
