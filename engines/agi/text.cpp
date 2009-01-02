@@ -128,7 +128,7 @@ void AgiEngine::blitTextbox(const char *p, int y, int x, int len) {
 	int xoff, yoff, lin, h, w;
 	char *msg, *m;
 
-	debugC(3, kDebugLevelText, "x=%d, y=%d, len=%d", x, y, len);
+	debugC(3, kDebugLevelText, "blitTextbox(): x=%d, y=%d, len=%d", x, y, len);
 	if (_game.window.active)
 		closeWindow();
 
@@ -140,7 +140,6 @@ void AgiEngine::blitTextbox(const char *p, int y, int x, int len) {
 
 	xoff = x * CHAR_COLS;
 	yoff = y * CHAR_LINES;
-	len--;
 
 	m = msg = wordWrapString(agiSprintf(p), &len);
 
@@ -176,11 +175,11 @@ void AgiEngine::blitTextbox(const char *p, int y, int x, int len) {
 
 void AgiEngine::eraseTextbox() {
 	if (!_game.window.active) {
-		debugC(3, kDebugLevelText, "no window active");
+		debugC(3, kDebugLevelText, "eraseTextbox(): no window active");
 		return;
 	}
 
-	debugC(4, kDebugLevelText, "x1=%d, y1=%d, x2=%d, y2=%d", _game.window.x1,
+	debugC(4, kDebugLevelText, "eraseTextbox(): x1=%d, y1=%d, x2=%d, y2=%d", _game.window.x1,
 			_game.window.y1, _game.window.x2, _game.window.y2);
 
 	_gfx->restoreBlock(_game.window.x1, _game.window.y1,
@@ -204,7 +203,7 @@ void AgiEngine::printText(const char *msg, int f, int x, int y, int len, int fg,
 	x *= CHAR_COLS;
 	y *= CHAR_LINES;
 
-	debugC(4, kDebugLevelText, "%s, %d, %d, %d, %d, %d, %d", msg, f, x, y, len, fg, bg);
+	debugC(4, kDebugLevelText, "printText(): %s, %d, %d, %d, %d, %d, %d", msg, f, x, y, len, fg, bg);
 	printText2(0, agiSprintf(msg), f, x, y, len, fg, bg, checkerboard);
 }
 
@@ -222,71 +221,83 @@ void AgiEngine::printTextConsole(const char *msg, int x, int y, int len, int fg,
  * Wrap text line to the specified width.
  * @param str  String to wrap.
  * @param len  Length of line.
+ *
+ * Based on GBAGI implementaiton with permission from the author
  */
-char *AgiEngine::wordWrapString(char *str, int *len) {
-	/* If the message has a long word (longer than 31 character) then
-	 * loop in line 239 (for (; *v != ' '; v--, c--);) can wrap
-	 * around 0 and write large number in c. This causes returned
-	 * length to be negative (!) and eventually crashes in calling
-	 * code. The fix is simple -- remove unsigned in maxc, c, l
-	 * declaration.  --Vasyl
-	 */
-	char *msg, *v, *e;
-	int maxc, c, l = *len;
+char *AgiEngine::wordWrapString(char *s, int *len) {
+	char *pWord, *outStr, *msgBuf, maxWidth = *len;
+	int lnLen, wLen;
 
-	v = msg = strdup(str);
-	e = msg + strlen(msg);
-	maxc = 0;
+	msgBuf = outStr = strdup(s);
 
-	for (;;) {
-		debugC(3, kDebugLevelText, "[%s], %d", msg, maxc);
-		if (strchr(v, ' ') == NULL && (int)strlen(v) > l) {
-			debugC(1, kDebugLevelText | kDebugLevelMain, "Word too long in message");
-			l = strlen(v);
+	int msgWidth = 0;
+
+	lnLen = 0;
+
+	while (*s) {
+		pWord = s;
+		wLen = 0;
+
+		while (*s != '\0' && *s != ' ' && *s != '\n' && *s != '\r')
+			s++;
+
+		wLen = (int)(s - pWord);
+
+		if (wLen && *s == '\n' && s[-1] == ' ')
+			wLen--;
+
+		if (wLen + lnLen >= maxWidth) {
+			if (outStr != msgBuf) {
+				if (outStr[-1] == ' ')
+					outStr[-1] = '\n';
+				else
+					*outStr++ = '\n';
+			}
+
+			lnLen = 0;
+
+			while (wLen >= maxWidth) {
+				msgWidth = maxWidth;
+
+				memcpy(outStr, pWord, maxWidth);
+
+				wLen -= maxWidth;
+				outStr += maxWidth;
+				pWord  += maxWidth;
+				*outStr++ = '\n';
+			}
 		}
-		/* Must include \r for MacOS 8 */
-		while ((c = strcspn(v, "\n\r")) <= l) {
-			debugC(3, kDebugLevelText, "c = %d, maxc = %d", c, maxc);
-			if (c > maxc)
-				maxc = c;
-			if ((v += c + 1) >= e)
-				goto end;
-		}
-		c = l;
-		if ((v += l) >= e)
-			break;
 
-		/* The same line that caused that bug I mentioned
-		 * should also do another check:
-		 * for (; *v != ' ' && *v != '\n'; v--, c--);
-		 * While this does not matter in most cases, in the case of
-		 * long words it caused extra \n inserted in the line
-		 * preceding long word. This one is definitely non-critical;
-		 * one might argue that the function is not supposed to deal
-		 * with long words. BTW, that condition at the beginning of
-		 * the while loop that checks word length does not make much
-		 * sense -- it verifies the length of the first word but for
-		 * the rest it does something odd. Overall, even with these
-		 * changes the function is still not completely robust.
-		 * --Vasyl
-		 */
-		if (*v != ' ')
-			for (; *v != ' ' && *v != '\n' && *v != '\r';
-			    v--, c--);
-		if (c > maxc)
-			maxc = c;
-		*v++ = '\n';
+		if (wLen) {
+			memcpy(outStr, pWord, wLen);
+			outStr += wLen;
+		}   
+		lnLen += wLen+1;
+		
+		if (lnLen > msgWidth) {
+			msgWidth = lnLen;
+
+			if (*s == '\0' || *s == ' ' || *s == '\n' || *s == '\r')
+				msgWidth--;
+		}
+
+		if (*s == '\n')
+			lnLen = 0;
+
+		if (*s)
+			*outStr++ = *s++;
 	}
-      end:
-	*len = maxc;
-	return msg;
+	*outStr = '\0';
+	*len = msgWidth;
+
+	return msgBuf;
 }
 
 /**
  * Remove existing window, if any.
  */
 void AgiEngine::closeWindow() {
-	debugC(4, kDebugLevelText, "close window");
+	debugC(4, kDebugLevelText, "closeWindow()");
 	_sprites->eraseBoth();
 	eraseTextbox();	/* remove window, if any */
 	_sprites->blitBoth();
@@ -307,7 +318,7 @@ int AgiEngine::messageBox(const char *s) {
 	blitTextbox(s, -1, -1, -1);
 	_sprites->blitBoth();
 	k = waitKey();
-	debugC(4, kDebugLevelText, "wait_key returned %02x", k);
+	debugC(4, kDebugLevelText, "messageBox(): wait_key returned %02x", k);
 	closeWindow();
 
 	return k;
@@ -333,7 +344,7 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 	x = _game.window.x1 + 5 * CHAR_COLS / 2;
 	y = _game.window.y2 - 5 * CHAR_LINES / 2;
 	s = _game.window.x2 - _game.window.x1 + 1 - 5 * CHAR_COLS;
-	debugC(3, kDebugLevelText, "s = %d", s);
+	debugC(3, kDebugLevelText, "selectionBox(): s = %d", s);
 
 	/* Automatically position buttons */
 	for (i = 0; b[i]; i++) {
@@ -342,7 +353,7 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 	}
 
 	if (i > 1) {
-		debugC(3, kDebugLevelText, "s / %d = %d", i - 1, s / (i - 1));
+		debugC(3, kDebugLevelText, "selectionBox(): s / %d = %d", i - 1, s / (i - 1));
 		s /= (i - 1);
 	} else {
 		x += s / 2;
@@ -363,7 +374,7 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 
 	AllowSyntheticEvents on(this);
 
-	debugC(4, kDebugLevelText, "waiting...");
+	debugC(4, kDebugLevelText, "selectionBox(): waiting...");
 	while (!shouldQuit()) {
 		for (i = 0; b[i]; i++)
 			_gfx->drawCurrentStyleButton(bx[i], by[i], b[i], i == active, false, i == 0);
@@ -396,7 +407,7 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 			}
 			break;
 		case 0x09:	/* Tab */
-			debugC(3, kDebugLevelText, "Focus change");
+			debugC(3, kDebugLevelText, "selectionBox(): Focus change");
 			active++;
 			active %= i;
 			break;
@@ -405,11 +416,11 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 	}
 
 press:
-	debugC(4, kDebugLevelText, "Button pressed: %d", rc);
+	debugC(4, kDebugLevelText, "selectionBox(): Button pressed: %d", rc);
 
 getout:
 	closeWindow();
-	debugC(2, kDebugLevelText, "Result = %d", rc);
+	debugC(2, kDebugLevelText, "selectionBox(): Result = %d", rc);
 
 	return rc;
 }
@@ -421,7 +432,7 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 	if (p == NULL)
 		return 0;
 
-	debugC(4, kDebugLevelText, "lin = %d, col = %d, len = %d", lin, col, len);
+	debugC(4, kDebugLevelText, "print(): lin = %d, col = %d, len = %d", lin, col, len);
 
 	if (col == 0 && lin == 0 && len == 0)
 		lin = col = -1;
