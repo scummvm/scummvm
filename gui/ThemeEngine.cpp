@@ -1096,7 +1096,7 @@ Common::String ThemeEngine::genCacheFilename(const char *filename) {
 		}
 	}
 
-	return "";
+	return Common::String();
 }
 
 
@@ -1169,7 +1169,7 @@ void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 	ThemeDescriptor th;
 	th.name = "ScummVM Classic Theme (Builtin Version)";
 	th.id = "builtin";
-	th.filename = "";
+	th.filename.clear();
 	list.push_back(th);
 #endif
 
@@ -1275,7 +1275,7 @@ Common::String ThemeEngine::getThemeFile(const Common::String &id) {
 	// our default theme which would mean "scummmodern" instead
 	// of the builtin one.
 	if (id.equalsIgnoreCase("default"))
-		return "";
+		return Common::String();
 
 	Common::FSNode node(id);
 
@@ -1299,7 +1299,7 @@ Common::String ThemeEngine::getThemeFile(const Common::String &id) {
 
 	// If no matching id has been found we will
 	// just fall back to the builtin theme
-	return "";
+	return Common::String();
 }
 
 Common::String ThemeEngine::getThemeId(const Common::String &filename) {
