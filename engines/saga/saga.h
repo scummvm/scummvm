@@ -84,7 +84,6 @@ using Common::MemoryReadStreamEndian;
 #define OBJECT_TYPE_SHIFT 13
 #define OBJECT_TYPE_MASK ((1 << OBJECT_TYPE_SHIFT) - 1)
 
-#define OBJ_SPRITE_BASE 9
 #define IHNM_OBJ_PROFILE 0x4000
 
 #define memoryError(Place) error("%s Memory allocation error.", Place)

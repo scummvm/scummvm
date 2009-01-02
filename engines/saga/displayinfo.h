@@ -429,6 +429,7 @@ static const GameDisplayInfo IHNM_DisplayInfo = {
 };
 #endif
 
+#ifdef ENABLE_SAGA2
 // TODO: Fill in missing bits, currently contains IHNM_DisplayInfo
 static const GameDisplayInfo FTA2_DisplayInfo = {
 	640, 480,	// logical width&height
@@ -495,6 +496,7 @@ static const GameDisplayInfo FTA2_DisplayInfo = {
 	ARRAYSIZE(IHNM_SavePanelButtons),
 	IHNM_SavePanelButtons
 };
+#endif
 
 } // End of namespace Saga
 

@@ -238,14 +238,18 @@ bool Resource::createContexts() {
 		{	"soundsd.cmp",		true	}
 	};
 
+#ifdef ENABLE_IHNM
 	SoundFileInfo sfxFilesIHNM[] = {
 		{	"sfx.res",			false	},
 		{	"sfx.cmp",			true	}
 	};
+#endif
 
+#ifdef ENABLE_SAGA2
 	SoundFileInfo sfxFilesFTA2[] = {
 		{	"ftasound.hrs",		false	}
 	};
+#endif
 
 	if (!soundFileInArray) {
 		// If the sound file is not specified in the detector table, add it here
@@ -256,10 +260,13 @@ bool Resource::createContexts() {
 				curSoundfiles = sfxFilesITE;
 				maxFile = 4;
 				break;
+#ifdef ENABLE_IHNM
 			case GID_IHNM:
 				curSoundfiles = sfxFilesIHNM;
 				maxFile = 2;
 				break;
+#endif
+#ifdef ENABLE_SAGA2
 			case GID_DINO:
 				// TODO
 				curSoundfiles = NULL;
@@ -269,6 +276,7 @@ bool Resource::createContexts() {
 				curSoundfiles = sfxFilesFTA2;
 				maxFile = 1;
 				break;
+#endif
 		}
 
 		for (i = 0; i < maxFile; i++) {
@@ -303,16 +311,20 @@ bool Resource::createContexts() {
 		{	"ite voices.bin",				false	}
 	};
 
+#ifdef ENABLE_IHNM
 	SoundFileInfo voiceFilesIHNM[] = {
 		{	"voicess.res",					false	},
 		{	"voicess.cmp",					true	},
 		{	"voicesd.res",					false	},
 		{	"voicesd.cmp",					true	},
 	};
+#endif
 
+#ifdef ENABLE_SAGA2
 	SoundFileInfo voiceFilesFTA2[] = {
 		{	"ftavoice.hrs",					false	},
 	};
+#endif
 
 	// Detect and add voice files
 	fileFound = false;
@@ -322,10 +334,13 @@ bool Resource::createContexts() {
 			curSoundfiles = voiceFilesITE;
 			maxFile = 7;
 			break;
+#ifdef ENABLE_IHNM
 		case GID_IHNM:
 			curSoundfiles = voiceFilesIHNM;
 			maxFile = 4;
 			break;
+#endif
+#ifdef ENABLE_SAGA2
 		case GID_DINO:
 			// TODO
 			curSoundfiles = NULL;
@@ -335,6 +350,7 @@ bool Resource::createContexts() {
 			curSoundfiles = voiceFilesFTA2;
 			maxFile = 1;
 			break;
+#endif
 	}
 
 	for (i = 0; i < maxFile; i++) {

@@ -38,7 +38,9 @@
 #include "sound/wave.h"
 #include "sound/adpcm.h"
 #include "sound/aiff.h"
+#ifdef ENABLE_SAGA2
 #include "sound/shorten.h"
+#endif
 #include "sound/audiostream.h"
 
 namespace Saga {
@@ -96,24 +98,29 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 		_fxTable = 0;
 		_fxTableLen = 0;
 #endif
+#ifdef ENABLE_SAGA2
 	} else if (_vm->getGameId() == GID_DINO) {
 		// TODO
 	} else if (_vm->getGameId() == GID_FTA2) {
 		// TODO
+#endif
 	}
 }
 
 SndRes::~SndRes() {
+#ifdef ENABLE_IHNM
 	if (_vm->getGameId() == GID_IHNM) {
 		free(_fxTable);
 		free(_fxTableIDs);
 	}
+#endif
 }
 
 void SndRes::setVoiceBank(int serial) {
 	if (_voiceSerial == serial)
 		return;
 
+#ifdef ENABLE_IHNM
 	// If we got the Macintosh version of IHNM, just set the voice bank
 	// so that we know which voices* subfolder to look for later
 	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
@@ -125,6 +132,7 @@ void SndRes::setVoiceBank(int serial) {
 		_voiceContext->serial = 0;
 		return;
 	}
+#endif
 
 	// If there are no voice files present, don't set the voice bank
 	if (!_vm->_voiceFilesExist)
@@ -192,6 +200,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		return false;
 	}
 
+#ifdef ENABLE_IHNM
 	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 		char soundFileName[40];
 		int dirIndex = resourceId / 64;
@@ -210,14 +219,14 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 		file->open(soundFileName);
 		soundResourceLength = file->size();
-	} else {
-
+	} else 
+#endif
+	{
 		ResourceData* resourceData = context->getResourceData(resourceId);
 		file = context->getFile(resourceData);
 
 		file->seek(resourceData->offset);
 		soundResourceLength = resourceData->size;
-
 	}
 
 	Common::SeekableReadStream& readS = *file;
@@ -314,13 +323,15 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			result = Audio::loadWAVFromStream(readS, size, rate, flags);
 		} else if (resourceType == kSoundAIFF) {
 			result = Audio::loadAIFFFromStream(readS, size, rate, flags);
-		} else if (resourceType == kSoundShorten) {
-			result = Audio::loadShortenFromStream(readS, size, rate, flags);
 		} else if (resourceType == kSoundVOC) {
 			data = Audio::loadVOCFromStream(readS, size, rate);
 			result = (data != 0);
 			if (onlyHeader)
 				free(data);
+#ifdef ENABLE_SAGA2
+		} else if (resourceType == kSoundShorten) {
+			result = Audio::loadShortenFromStream(readS, size, rate, flags);
+#endif
 		}
 
 		if (result) {

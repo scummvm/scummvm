@@ -500,12 +500,8 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 void Script::sfSetObjImage(SCRIPTFUNC_PARAMS) {
 	uint16 objectId = thread->pop();
 	uint16 spriteId = thread->pop();
-	ObjectData *obj = _vm->_actor->getObj(objectId);
 
-	if (_vm->getGameId() == GID_IHNM)
-		obj->_spriteListResourceId = spriteId;
-	else
-		obj->_spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
+	_vm->_actor->getObj(objectId)->_spriteListResourceId = spriteId + (_vm->getGameId() == GID_ITE ? 9 : 0);
 	_vm->_interface->refreshInventory();
 }
 
@@ -515,21 +511,14 @@ void Script::sfSetObjImage(SCRIPTFUNC_PARAMS) {
 void Script::sfSetObjName(SCRIPTFUNC_PARAMS) {
 	uint16 objectId = thread->pop();
 	uint16 nameIdx = thread->pop();
-	ObjectData *obj = _vm->_actor->getObj(objectId);
-
-	obj->_nameIndex = nameIdx;
+	_vm->_actor->getObj(objectId)->_nameIndex = nameIdx;
 }
 
 // Script function #19 (0x13)
 // Param1: object id
 void Script::sfGetObjImage(SCRIPTFUNC_PARAMS) {
 	uint16 objectId = thread->pop();
-	ObjectData *obj = _vm->_actor->getObj(objectId);
-
-	if (_vm->getGameId() == GID_IHNM)
-		thread->_returnValue = obj->_spriteListResourceId;
-	else
-		thread->_returnValue = obj->_spriteListResourceId - OBJ_SPRITE_BASE;
+	thread->_returnValue = _vm->_actor->getObj(objectId)->_spriteListResourceId - (_vm->getGameId() == GID_ITE ? 9 : 0);
 }
 
 // Script function #20 (0x14)
@@ -732,7 +721,7 @@ void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
 		if (spriteId > 0 || (spriteId == 0 && objectId == IHNM_OBJ_PROFILE))
 			obj->_spriteListResourceId = spriteId;
 	} else {
-		obj->_spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
+		obj->_spriteListResourceId = spriteId + 9;
 	}
 }
 
@@ -1360,7 +1349,8 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 		} else {
 			_vm->_music->stop();
 		}
-	} else {
+#ifdef ENABLE_IHNM
+	} else if (_vm->getGameId() == GID_IHNM) {
 		int16 param1 = thread->pop();
 		int16 param2 = thread->pop();
 
@@ -1382,6 +1372,7 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 				_vm->_scene->setChapterPointsChanged(false);
 			}
 		}
+#endif
 	}
 }
 

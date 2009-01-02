@@ -305,6 +305,7 @@ void Script::setupScriptOpcodeList() {
 		OPCODE(opAnimate)		// 87
 	};
 
+#ifdef ENABLE_SAGA2
 	static const ScriptOpDescription SAGA2ScriptOpcodes[] = {
 		OPCODE(opDummy),		// 00: Undefined
 		// Internal operations
@@ -423,11 +424,14 @@ void Script::setupScriptOpcodeList() {
 		OPCODE(opJmpSeedRandom),// 97: Seeded random jump
 		OPCODE(opDummy)			// 98: Get seeded export number (unused)
 	};
+#endif
 
 	if (!_vm->isSaga2()) {
 		_scriptOpsList = SAGA1ScriptOpcodes;
+#ifdef ENABLE_SAGA2
 	} else {
-		_scriptOpsList = SAGA2ScriptOpcodes;		
+		_scriptOpsList = SAGA2ScriptOpcodes;
+#endif
 	}
 }
 
@@ -1222,8 +1226,8 @@ int Script::getVerbType(VerbTypes verbType) {
 		case kVerbOptions:
 			return kVerbITEOptions;
 		}
-	}
-	else {
+#ifdef ENABLE_IHNM
+	} else if (_vm->getGameId() == GID_IHNM) {
 		switch (verbType) {
 		case kVerbNone:
 			return kVerbIHNMNone;
@@ -1252,6 +1256,7 @@ int Script::getVerbType(VerbTypes verbType) {
 		case kVerbOptions:
 			return kVerbIHNMOptions;
 		}
+#endif
 	}
 	error("Script::getVerbType() unknown verb type %d", verbType);
 }

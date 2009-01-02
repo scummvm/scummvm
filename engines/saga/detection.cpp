@@ -343,10 +343,12 @@ const GameDisplayInfo &SagaEngine::getDisplayInfo() {
 		case GID_IHNM:
 			return IHNM_DisplayInfo;
 #endif
+#ifdef ENABLE_SAGA2
 		case GID_DINO:
 			return FTA2_DisplayInfo;	// TODO
 		case GID_FTA2:
 			return FTA2_DisplayInfo;
+#endif
 		default:
 			error("getDisplayInfo: Unknown game ID");
 			return ITE_DisplayInfo;		// unreachable
