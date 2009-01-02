@@ -194,10 +194,12 @@ Common::Error SagaEngine::init() {
 	if (!isSaga2()) {
 		_font = new Font(this);
 		_sprite = new Sprite(this);
+		_script = new SAGA1Script(this);
+	} else {
+		_script = new SAGA2Script(this);
 	}
 
 	_anim = new Anim(this);
-	_script = new Script(this);
 	_interface = new Interface(this); // requires script module
 	_scene = new Scene(this);
 	_actor = new Actor(this);

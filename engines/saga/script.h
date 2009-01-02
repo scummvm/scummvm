@@ -37,9 +37,6 @@ namespace Saga {
 
 #define COMMON_BUFFER_SIZE 1024   // Why 1024?
 
-#define S_LUT_ENTRYLEN_ITECD 22
-#define S_LUT_ENTRYLEN_ITEDISK 16
-
 #define SCRIPT_TBLENTRY_LEN 4
 
 #define SCRIPT_MAX 5000
@@ -313,7 +310,7 @@ public:
 	int getVerbType(VerbTypes verbType);
 	TextListEntry *getPlacardTextEntry() { return _placardTextEntry; }
 
-private:
+protected:
 	// When reading or writing data to the common buffer, we have to use a
 	// well-defined byte order since it's stored in savegames. Otherwise,
 	// we use native byte ordering since that data may be accessed in other
@@ -348,22 +345,19 @@ private:
 
 	SagaEngine *_vm;
 	ResourceContext *_scriptContext;
+	ResourceContext *_dataContext;
 
 	uint16 _modulesLUTEntryLen;
 	ModuleData *_modules;
 	int _modulesCount;
 	TextListEntry *_placardTextEntry;
 
-protected:
 	friend class SagaEngine;
 	byte *_commonBuffer;
 	uint _commonBufferSize;
 
-private:
 	uint _staticSize;
-
 	ScriptThreadList _threadList;
-
 	ScriptThread *_conversingThread;
 
 //verb
@@ -400,7 +394,7 @@ public:
 
 	void loadVoiceLUT(VoiceLUT &voiceLUT, const byte *resourcePointer, size_t resourceLength);
 
-private:
+protected:
 	void loadModuleBase(ModuleData &module, const byte *resourcePointer, size_t resourceLength);
 
 	// runThread returns true if we should break running of other threads
@@ -410,8 +404,7 @@ private:
 public:
 	void finishDialog(int strID, int replyID, int flags, int bitOffset);
 
-private:
-
+protected:
 	// Script opcodes ------------------------------------------------------------
 	typedef void (Script::*ScriptOpType)(SCRIPTOP_PARAMS);
 	struct ScriptOpDescription {
@@ -616,6 +609,18 @@ private:
 	void sfDisableAbortSpeeches(SCRIPTFUNC_PARAMS);
 
 	void sfStub(const char *name, ScriptThread *thread, int nArgs);
+};
+
+class SAGA1Script : public Script {
+public:
+	SAGA1Script(SagaEngine *vm);
+	~SAGA1Script();
+};
+
+class SAGA2Script : public Script {
+public:
+	SAGA2Script(SagaEngine *vm);
+	~SAGA2Script();
 };
 
 } // End of namespace Saga

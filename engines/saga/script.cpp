@@ -44,9 +44,7 @@ namespace Saga {
 #define RID_SCENE1_VOICE_START 57
 #define RID_SCENE1_VOICE_END 186
 
-// Initializes the scripting module.
-// Loads script resource look-up table, initializes script data system
-Script::Script(SagaEngine *vm) : _vm(vm) {
+SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 	ResourceContext *resourceContext;
 	byte *resourcePointer;
 	size_t resourceLength;
@@ -59,7 +57,6 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 	_abortEnabled = true;
 	_skipSpeeches = false;
 	_conversingThread = NULL;
-
 	_firstObjectSet = false;
 	_secondObjectNeeded = false;
 	_pendingVerb = getVerbType(kVerbNone);
@@ -87,34 +84,15 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 	}
 
 	uint32 scriptResourceId = 0;
-
-	if (!_vm->isSaga2()) {
-		scriptResourceId = _vm->getResourceDescription()->moduleLUTResourceId;
-		debug(3, "Loading module LUT from resource %i", scriptResourceId);
-		_vm->_resource->loadResource(resourceContext, scriptResourceId, resourcePointer, resourceLength);
-	} else {
-		uint32 saga2DataSegId = MKID_BE('__DA');
-		int32 scr = _scriptContext->getEntryNum(saga2DataSegId);
-		if (scr < 0)
-			error("Unable to locate the script's data segment");
-		scriptResourceId = (uint32)scr;
-		debug(3, "Loading module LUT from resource %i", scriptResourceId);
-		_vm->_resource->loadResource(_scriptContext, scriptResourceId, resourcePointer, resourceLength);
-
-		//uint32 saga2ExportSegId = MKID_BE('_EXP');
-		// TODO: SAGA2 script export segment
-	}
-
-	// Do nothing for SAGA2 games for now
-	if (_vm->isSaga2()) {
-		return;
-	}
+	scriptResourceId = _vm->getResourceDescription()->moduleLUTResourceId;
+	debug(3, "Loading module LUT from resource %i", scriptResourceId);
+	_vm->_resource->loadResource(resourceContext, scriptResourceId, resourcePointer, resourceLength);
 
 	// Create logical script LUT from resource
-	if (resourceLength % S_LUT_ENTRYLEN_ITECD == 0) {
-		_modulesLUTEntryLen = S_LUT_ENTRYLEN_ITECD;
-	} else if (resourceLength % S_LUT_ENTRYLEN_ITEDISK == 0) {
-		_modulesLUTEntryLen = S_LUT_ENTRYLEN_ITEDISK;
+	if (resourceLength % 22 == 0) {			// ITE CD
+		_modulesLUTEntryLen = 22;
+	} else if (resourceLength % 16 == 0) {	// ITE disk, IHNM
+		_modulesLUTEntryLen = 16;
 	} else {
 		error("Script::Script() Invalid script lookup table length (%i)", (int)resourceLength);
 	}
@@ -128,6 +106,11 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 	_modules = (ModuleData *)malloc(_modulesCount * sizeof(*_modules));
 	if (_modules == NULL) {
 		memoryError("Script::Script()");
+	}
+
+	// Do nothing for SAGA2 games for now
+	if (_vm->isSaga2()) {
+		return;
 	}
 
 	// Convert LUT resource to logical LUT
@@ -174,23 +157,75 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 			setupIHNMScriptFuncList();
 			break;
 #endif
-		// TODO: FTA2 and DINO
 	}
 }
 
-// Shut down script module gracefully; free all allocated module resources
-Script::~Script() {
-
+SAGA1Script::~SAGA1Script() {
 	debug(8, "Shutting down scripting subsystem.");
 
 	_mainStrings.freeMem();
 	_globalVoiceLUT.freeMem();
 
 	freeModules();
-	if (!_vm->isSaga2())	// TODO: remove this once the script module is working for SAGA2
-		free(_modules);
+	free(_modules);
 
 	free(_commonBuffer);
+}
+
+SAGA2Script::SAGA2Script(SagaEngine *vm) : Script(vm) {
+	byte *resourcePointer;
+	size_t resourceLength;
+
+	debug(8, "Initializing scripting subsystem");
+	// Load script resource file context
+	_scriptContext = _vm->_resource->getContext(GAME_SCRIPTFILE);
+	if (_scriptContext == NULL) {
+		error("Script::Script() script context not found");
+	}
+
+	// Script export segment (lookup table)
+	uint32 saga2ExportSegId = MKID_BE('_EXP');
+	int32 entryNum = _scriptContext->getEntryNum(saga2ExportSegId);
+	if (entryNum < 0)
+		error("Unable to locate the script's export segment");
+	debug(3, "Loading module LUT from resource %i", entryNum);
+	_vm->_resource->loadResource(_scriptContext, (uint32)entryNum, resourcePointer, resourceLength);
+
+	_modulesLUTEntryLen = sizeof(uint32);
+
+	// Calculate number of entries
+	_modulesCount = resourceLength / _modulesLUTEntryLen + 1;
+
+	debug(3, "LUT has %i entries", _modulesCount);
+
+	// Script data segment
+	/*
+	uint32 saga2DataSegId = MKID_BE('__DA');
+	entryNum = _scriptContext->getEntryNum(saga2DataSegId);
+	if (entryNum < 0)
+		error("Unable to locate the script's data segment");
+	debug(3, "Loading module data from resource %i", entryNum);
+	_vm->_resource->loadResource(_scriptContext, (uint32)entryNum, resourcePointer, resourceLength);
+	*/
+
+	// TODO
+}
+
+SAGA2Script::~SAGA2Script() {
+	debug(8, "Shutting down scripting subsystem.");
+
+	// TODO
+}
+
+// Initializes the scripting module.
+// Loads script resource look-up table, initializes script data system
+Script::Script(SagaEngine *vm) : _vm(vm) {
+
+}
+
+// Shut down script module gracefully; free all allocated module resources
+Script::~Script() {
+
 }
 
 // Script opcodes
