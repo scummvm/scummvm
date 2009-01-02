@@ -37,15 +37,24 @@ namespace GUI {
 class Dialog;
 
 enum {
-	WIDGET_ENABLED		= 1 << 0,
-	WIDGET_INVISIBLE	= 1 << 1,
-	WIDGET_HILITED		= 1 << 2,
-	WIDGET_BORDER		= 1 << 3,
-	//WIDGET_INV_BORDER	= 1 << 4,
-	WIDGET_CLEARBG		= 1 << 5,
-	WIDGET_WANT_TICKLE	= 1 << 7,
-	WIDGET_TRACK_MOUSE	= 1 << 8,
-	WIDGET_RETAIN_FOCUS	= 1 << 9		// Retain focus on mouse up. By default widgets lose focus on mouseup, but some widgets might want to retain it - widgets where you enter text, for instance
+	WIDGET_ENABLED		= 1 <<  0,
+	WIDGET_INVISIBLE	= 1 <<  1,
+	WIDGET_HILITED		= 1 <<  2,
+	WIDGET_BORDER		= 1 <<  3,
+	//WIDGET_INV_BORDER	= 1 <<  4,
+	WIDGET_CLEARBG		= 1 <<  5,
+	WIDGET_WANT_TICKLE	= 1 <<  7,
+	WIDGET_TRACK_MOUSE	= 1 <<  8,
+	// Retain focus on mouse up. By default widgets lose focus on mouseup, 
+	// but some widgets might want to retain it - widgets where you enter
+	// text, for instance
+	WIDGET_RETAIN_FOCUS	= 1 <<  9,
+	// Usually widgets would lock mouse input when the user pressed the
+	// left mouse button till the user releases it.
+	// The PopUpWidget for example does not want this behavior, since the
+	// mouse down will open up a new dialog which silently eats the mouse
+	// up event for its own purposes.
+	WIDGET_IGNORE_DRAG	= 1 << 10
 };
 
 enum {

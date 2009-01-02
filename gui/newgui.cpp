@@ -394,11 +394,6 @@ void GuiManager::animateCursor() {
 	}
 }
 
-void GuiManager::clearDragWidget() {
-	if (!_dialogStack.empty())
-		_dialogStack.top()->_dragWidget = 0;
-}
-
 bool GuiManager::checkScreenChange() {
 	int tmpScreenChangeID = _system->getScreenChangeID();
 	if (_lastScreenChangeID != tmpScreenChangeID) {

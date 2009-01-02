@@ -152,7 +152,8 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 
 	w = findWidget(x, y);
 
-	_dragWidget = w;
+	if (w && !(w->getFlags() & WIDGET_IGNORE_DRAG))
+		_dragWidget = w;
 
 	// If the click occured inside a widget which is not the currently
 	// focused one, change the focus to that widget.
@@ -184,7 +185,10 @@ void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
 		}
 	}
 
-	w = _dragWidget;
+	if (_dragWidget)
+		w = _dragWidget;
+	else
+		w = findWidget(x, y);
 
 	if (w)
 		w->handleMouseUp(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);

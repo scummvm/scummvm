@@ -358,7 +358,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 
 PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const String &label, uint labelWidth)
 	: Widget(boss, name), CommandSender(boss), _label(label), _labelWidth(labelWidth) {
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
 	_type = kPopUpWidget;
 
 	_selectedItem = -1;
@@ -375,7 +375,6 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 			_selectedItem = newSel;
 			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
 		}
-		g_gui.clearDragWidget();
 	}
 }
 
