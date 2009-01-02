@@ -98,7 +98,7 @@ add_engine made "MADE" no
 add_engine parallaction "Parallaction" yes
 add_engine queen "Flight of the Amazon Queen" yes
 add_engine saga "SAGA" yes "ihnm saga2"
-add_engine ihnm "I Have No Mouth, and I must Scream" yes
+add_engine ihnm "IHNM" yes
 add_engine saga2 "SAGA 2 games" yes
 add_engine sky "Beneath a Steel Sky" yes
 add_engine sword1 "Broken Sword 1" yes
@@ -552,6 +552,15 @@ get_scumm_build_string() {
 	if test `get_engine_build $1` != no ; then
 		if test $2 != no ; then
 			base="[v0-v6 games]"
+		fi
+		get_subengines_build_string $1 $2 "$base"
+	fi
+}
+
+get_saga_build_string() {
+	if test `get_engine_build $1` != no ; then
+		if test $2 != no ; then
+			base="[ITE]"
 		fi
 		get_subengines_build_string $1 $2 "$base"
 	fi
