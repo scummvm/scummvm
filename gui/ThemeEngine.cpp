@@ -176,7 +176,8 @@ void ThemeEngine::refresh() {
 }
 
 void ThemeEngine::enable() {
-	init();
+	if (_enabled)
+		return;
 
 	if (_useCursor) {
 		CursorMan.pushCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
@@ -190,6 +191,9 @@ void ThemeEngine::enable() {
 }
 
 void ThemeEngine::disable() {
+	if (!_enabled)
+		return;
+
 	_system->hideOverlay();
 
 	if (_useCursor) {

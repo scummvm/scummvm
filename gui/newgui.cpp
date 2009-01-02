@@ -113,8 +113,19 @@ bool GuiManager::loadNewTheme(Common::String filename, ThemeEngine::GraphicsMode
 	// Enable the new theme
 	//
 	_theme = newTheme;
-	screenChange();
 	_themeChange = true;
+
+	// refresh all dialogs
+	for (int i = 0; i < _dialogStack.size(); ++i) {
+		_dialogStack[i]->reflowLayout();
+	}
+
+	// We need to redraw immediately. Otherwise
+	// some other event may cause a widget to be
+	// redrawn before redraw() has been called.
+	_redrawStatus = kRedrawFull;
+//	redraw();
+//	_system->updateScreen();
 
 	return true;
 }
@@ -179,6 +190,12 @@ void GuiManager::runLoop() {
 		_useStdCursor = !_theme->ownCursor();
 		if (_useStdCursor)
 			setupCursor();
+
+//		_theme->refresh();
+
+		_themeChange = false;
+		_redrawStatus = kRedrawFull;
+		redraw();
 	}
 
 	Common::EventManager *eventMan = _system->getEventManager();
@@ -226,7 +243,7 @@ void GuiManager::runLoop() {
 				if (_useStdCursor)
 					setupCursor();
 
-				_theme->refresh();
+//				_theme->refresh();
 
 				_themeChange = false;
 				_redrawStatus = kRedrawFull;
@@ -322,7 +339,8 @@ void GuiManager::restoreState() {
 
 void GuiManager::openDialog(Dialog *dialog) {
 	_dialogStack.push(dialog);
-	_redrawStatus = kRedrawOpenDialog;
+	if (_redrawStatus != kRedrawFull)
+		_redrawStatus = kRedrawOpenDialog;
 
 	// We reflow the dialog just before opening it. If the screen changed
 	// since the last time we looked, also refresh the loaded theme,
@@ -338,7 +356,8 @@ void GuiManager::closeTopDialog() {
 
 	// Remove the dialog from the stack
 	_dialogStack.pop();
-	_redrawStatus = kRedrawCloseDialog;
+	if (_redrawStatus != kRedrawFull)
+		_redrawStatus = kRedrawCloseDialog;
 }
 
 void GuiManager::setupCursor() {
@@ -394,6 +413,7 @@ void GuiManager::screenChange() {
 
 	// reinit the whole theme
 	_theme->refresh();
+
 	// refresh all dialogs
 	for (int i = 0; i < _dialogStack.size(); ++i) {
 		_dialogStack[i]->reflowLayout();
@@ -403,7 +423,6 @@ void GuiManager::screenChange() {
 	// redrawn before redraw() has been called.
 	_redrawStatus = kRedrawFull;
 	redraw();
-	_system->showOverlay();
 	_system->updateScreen();
 }
 
