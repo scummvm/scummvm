@@ -102,7 +102,7 @@ public:
 	/**
 	 * Lists all theme files useable.
 	 */
-	void listUseableThemes(Common::List<ThemeDescriptor> &list);
+	static void listUsableThemes(Common::List<ThemeDescriptor> &list);
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
@@ -159,7 +159,7 @@ protected:
 	void screenChange();
 
 	Common::String findThemeFile(const Common::String &id);
-	void listUseableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list);
+	static void listUsableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list);
 };
 
 } // End of namespace GUI

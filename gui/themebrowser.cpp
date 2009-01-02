@@ -95,7 +95,7 @@ void ThemeBrowser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 void ThemeBrowser::updateListing() {
 	_themes.clear();
 
-	g_gui.listUseableThemes(_themes);
+	GuiManager::listUsableThemes(_themes);
 
 	Common::StringList list;
 	for (ThemeDescList::const_iterator i = _themes.begin(); i != _themes.end(); ++i)

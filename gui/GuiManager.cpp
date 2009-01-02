@@ -60,7 +60,6 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled),
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
 
-
 	ConfMan.registerDefault("gui_theme", "scummmodern");
 	Common::String themefile(ConfMan.get("gui_theme"));
 
@@ -151,7 +150,7 @@ struct TDComparator {
 
 } // end of anonymous namespace
 
-void GuiManager::listUseableThemes(Common::List<ThemeDescriptor> &list) {
+void GuiManager::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 	ThemeDescriptor th;
 	th.name = "ScummVM Classic Theme (Builtin Version)";
 	th.id = "builtin";
@@ -159,10 +158,10 @@ void GuiManager::listUseableThemes(Common::List<ThemeDescriptor> &list) {
 	list.push_back(th);
 
 	if (ConfMan.hasKey("themepath"))
-		listUseableThemes(Common::FSNode(ConfMan.get("themepath")), list);
+		listUsableThemes(Common::FSNode(ConfMan.get("themepath")), list);
 
 #ifdef DATA_PATH
-	listUseableThemes(Common::FSNode(DATA_PATH), list);
+	listUsableThemes(Common::FSNode(DATA_PATH), list);
 #endif
 
 #ifdef MACOSX
@@ -171,16 +170,16 @@ void GuiManager::listUseableThemes(Common::List<ThemeDescriptor> &list) {
 		char buf[256];
 		if (CFURLGetFileSystemRepresentation(resourceUrl, true, (UInt8 *)buf, 256)) {
 			Common::FSNode resourcePath(buf);
-			listUseableThemes(resourcePath, list);
+			listUsableThemes(resourcePath, list);
 		}
 		CFRelease(resourceUrl);
 	}
 #endif
 
 	if (ConfMan.hasKey("extrapath"))
-		listUseableThemes(Common::FSNode(ConfMan.get("extrapath")), list);
+		listUsableThemes(Common::FSNode(ConfMan.get("extrapath")), list);
 
-	listUseableThemes(Common::FSNode("."), list);
+	listUsableThemes(Common::FSNode("."), list);
 
 	// Now we need to strip all duplicates
 	// TODO: It might not be the best idea to strip duplicates. The user might
@@ -199,7 +198,7 @@ void GuiManager::listUseableThemes(Common::List<ThemeDescriptor> &list) {
 	output.clear();
 }
 
-void GuiManager::listUseableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list) {
+void GuiManager::listUsableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list) {
 	if (!node.exists() || !node.isReadable() || !node.isDirectory())
 		return;
 
@@ -252,7 +251,7 @@ void GuiManager::listUseableThemes(Common::FSNode node, Common::List<ThemeDescri
 		return;
 
 	for (Common::FSList::iterator i = fileList.begin(); i != fileList.end(); ++i)
-		listUseableThemes(*i, list);
+		listUsableThemes(*i, list);
 }
 
 Common::String GuiManager::findThemeFile(const Common::String &id) {
@@ -273,7 +272,7 @@ Common::String GuiManager::findThemeFile(const Common::String &id) {
 	// a complete theme list, thus it is slower than it could be.
 	// But it is the easiest solution for now.
 	Common::List<ThemeDescriptor> list;
-	listUseableThemes(list);
+	listUsableThemes(list);
 
 	for (Common::List<ThemeDescriptor>::const_iterator i = list.begin(); i != list.end(); ++i) {
 		if (id.equalsIgnoreCase(i->id))

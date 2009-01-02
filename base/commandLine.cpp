@@ -34,6 +34,8 @@
 
 #include "sound/mididrv.h"
 
+#include "gui/GuiManager.h"
+
 #define DETECTOR_TESTING_HACK
 
 namespace Base {
@@ -68,8 +70,9 @@ static const char HELP_STRING[] =
 	"  -g, --gfx-mode=MODE      Select graphics scaler (1x,2x,3x,2xsai,super2xsai,\n"
 	"                           supereagle,advmame2x,advmame3x,hq2x,hq3x,tv2x,\n"
 	"                           dotmatrix)\n"
-	"  --gui-theme=THEME        Select GUI theme (default, modern, classic)\n"
+	"  --gui-theme=THEME        Select GUI theme\n"
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
+	"  --list-themes            Lists all usable GUI themes\n"
 	"  -e, --music-driver=MODE  Select music driver (see README for details)\n"
 	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
 	"                           hb,ru,cz)\n"
@@ -484,6 +487,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 				}
 			END_OPTION
 
+			DO_LONG_COMMAND("list-themes")
+			END_OPTION
+
 			DO_LONG_OPTION("target-md5")
 			END_OPTION
 
@@ -617,6 +623,19 @@ static void listSaves(const char *target) {
 	ConfMan.setActiveDomain(oldDomain);
 }
 
+/** Lists all usable themes */
+static void listThemes() {
+	typedef Common::List<GUI::GuiManager::ThemeDescriptor> ThList;
+	ThList thList;
+	GUI::GuiManager::listUsableThemes(thList);
+
+	printf("Theme          Description\n");
+	printf("-------------- ------------------------------------------------\n");
+
+	for (ThList::const_iterator i = thList.begin(); i != thList.end(); ++i)
+		printf("%-14s %s\n", i->id.c_str(), i->name.c_str());
+}
+
 
 #ifdef DETECTOR_TESTING_HACK
 static void runDetectorTest() {
@@ -714,6 +733,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 		return false;
 	} else if (command == "list-saves") {
 		listSaves(settings["list-saves"].c_str());
+		return false;
+	} else if (command == "list-themes") {
+		listThemes();
 		return false;
 	} else if (command == "version") {
 		printf("%s\n", gScummVMFullVersion);
