@@ -467,7 +467,6 @@ uint32 Channel::getElapsedTime() {
 	// the Broken Sword cutscenes noticeably jerkier. I guess the mixer
 	// isn't invoked at the regular intervals that I first imagined.
 
-	// FIXME: This won't work very well if the sound is paused.
 	return 1000 * seconds + milliseconds + delta;
 }
 
