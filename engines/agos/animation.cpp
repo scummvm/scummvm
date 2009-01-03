@@ -425,8 +425,7 @@ void MoviePlayerSMK::startSound() {
 
 void MoviePlayerSMK::handleNextFrame() {
 	decodeNextFrame();
-	if (processFrame())
-		_vm->_system->updateScreen();
+	processFrame();
 
 	MoviePlayer::handleNextFrame();
 }
@@ -472,6 +471,9 @@ bool MoviePlayerSMK::processFrame() {
 		return false;
 	}
 
+	_vm->_system->updateScreen();
+
+	// Wait before showing the next frame
 	_vm->_system->delayMillis(waitTime);
 	return true;
 }
