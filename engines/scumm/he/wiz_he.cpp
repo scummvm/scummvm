@@ -1534,12 +1534,18 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 	debug(3, "drawWizPolygonTransform(resNum %d, flags 0x%X, shadow %d dstResNum %d palette %d)", resNum, flags, shadow, dstResNum, palette);
 	int i;
 
-	if (flags & 0x800000) {
-		debug(0, "drawWizPolygonTransform() unhandled flag 0x800000");
+	if (_vm->_game.heversion >= 99) {
+		flags |= kWIFBlitToMemBuffer;
+
+		if (flags & 0x800000) {
+			debug(0, "drawWizPolygonTransform() unhandled flag 0x800000");
+		}
+	} else {
+		flags = kWIFBlitToMemBuffer;
 	}
 
 	const Common::Rect *r = NULL;
-	uint8 *srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, shadow, 0, r, kWIFBlitToMemBuffer, 0, palette);
+	uint8 *srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, shadow, 0, r, flags, 0, palette);
 	if (srcWizBuf) {
 		uint8 *dst;
 		int32 dstw, dsth, dstpitch, wizW, wizH;
