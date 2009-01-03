@@ -351,16 +351,16 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 		DebugPrintf("Deactivated\n");
 
 	} else {
+		if (strcmp(argv[2], "schedule") == 0) {
+			// List any current schedule for the character
+			hs->npcSchedule.list(buffer);
+			DebugPrintf("%s", buffer);
+		}
 		if (!h)
 			DebugPrintf("The specified hotspot is not currently active\n");
 		else if (strcmp(argv[2], "paths") == 0) {
 			// List any paths for a charcter
 			h->pathFinder().list(buffer);
-			DebugPrintf("%s", buffer);
-		}
-		else if (strcmp(argv[2], "schedule") == 0) {
-			// List any current schedule for the character
-			h->currentActions().list(buffer);
 			DebugPrintf("%s", buffer);
 		}
 		else if (strcmp(argv[2], "pixels") == 0) {
