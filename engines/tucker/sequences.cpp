@@ -498,10 +498,12 @@ AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *
 	_newSeq = false;
 	memset(_animationPalette, 0, sizeof(_animationPalette));
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
-	_soundsListSeqData = 0;
-	_soundsList1 = 0;
+	_soundSeqDataOffset = 0;
+	_soundSeqDataCount = 0;
+	_soundSeqDataIndex = 0;
+	_soundsList1Offset = 0;
 	_soundsList1Count = 0;
-	_soundsList2 = 0;
+	_soundsList2Offset = 0;
 	_soundsList2Count = 0;
 	_musicVolume = 0;
 	_offscreenBuffer = (uint8 *)malloc(kScreenWidth * kScreenHeight);
@@ -585,13 +587,23 @@ void AnimationSequencePlayer::syncTime() {
 	} while (_lastFrameTime <= end);
 }
 
-Audio::AudioStream *AnimationSequencePlayer::loadSoundFileAsStream(const char *name, AnimationSoundType type) {
+Audio::AudioStream *AnimationSequencePlayer::loadSoundFileAsStream(int index, AnimationSoundType type) {
+	const char *name = 0;
+	switch (type) {
+	case kAnimationSoundType8BitsRAW:
+	case kAnimationSoundType16BitsRAW:
+		name = _musicFileNamesTable[index];
+		break;
+	case kAnimationSoundTypeWAV:
+	case kAnimationSoundTypeLoopingWAV:
+		name = _audioFileNamesTable[index];
+		break;
+	}
 	Audio::AudioStream *stream = 0;
 	char fileName[64];
 	snprintf(fileName, sizeof(fileName), "audio/%s", name);
 	Common::File f;
 	if (f.open(fileName)) {
-		uint8 *sampleData = 0;
 		int size = 0, rate = 0;
 		uint8 flags = 0;
 		switch (type) {
@@ -613,7 +625,7 @@ Audio::AudioStream *AnimationSequencePlayer::loadSoundFileAsStream(const char *n
 			break;
 		}
 		if (size != 0) {
-			sampleData = (uint8 *)malloc(size);
+			uint8 *sampleData = (uint8 *)malloc(size);
 			if (sampleData) {
 				f.read(sampleData, size);
 				flags |= Audio::Mixer::FLAG_AUTOFREE;
@@ -632,26 +644,29 @@ void AnimationSequencePlayer::loadSounds(int type, int num) {
 		case 0:
 			index = 1;
 			_soundsList1Count = 14;
-			_soundsList1 = _soundFilesList1;
+			_soundsList1Offset = 0;
 			_soundsList2Count = 10;
-			_soundsList2 = _soundFilesList2;
-			_soundsListSeqData = _soundSeqData2;
+			_soundsList2Offset = 14;
+			_soundSeqDataCount = 58;
+			_soundSeqDataOffset = 0;
 			break;
 		case 1:
 			index = 1;
 			_soundsList1Count = 14;
-			_soundsList1 = _soundFilesList3;
+			_soundsList1Offset = 24;
 			_soundsList2Count = 5;
-			_soundsList2 = _soundFilesList4;
-			_soundsListSeqData = _soundSeqData3;
+			_soundsList2Offset = 38;
+			_soundSeqDataCount = 60;
+			_soundSeqDataOffset = 58;
 			break;
 		case 2:
 			index = 1;
 			_soundsList1Count = 14;
-			_soundsList1 = _soundFilesList5;
+			_soundsList1Offset = 43;
 			_soundsList2Count = 9;
-			_soundsList2 = _soundFilesList6;
-			_soundsListSeqData = _soundSeqData4;
+			_soundsList2Offset = 57;
+			_soundSeqDataCount = 48;
+			_soundSeqDataOffset = 118;
 			break;
 		}
 		_musicVolume = 0;
@@ -661,32 +676,36 @@ void AnimationSequencePlayer::loadSounds(int type, int num) {
 		case 0:
 			index = 3;
 			_soundsList1Count = 13;
-			_soundsList1 = _soundFilesList7;
+			_soundsList1Offset = 66;
 			_soundsList2Count = 0;
-			_soundsListSeqData = _soundSeqData5;
+			_soundSeqDataCount = 19;
+			_soundSeqDataOffset = 166;
 			break;
 		case 1:
 			index = 6;
 			_soundsList1Count = 14;
-			_soundsList1 = _soundFilesList8;
+			_soundsList1Offset = 79;
 			_soundsList2Count = 4;
-			_soundsList2 = _soundFilesList9;
-			_soundsListSeqData = _soundSeqData6;
+			_soundsList2Offset = 93;
+			_soundSeqDataCount = 25;
+			_soundSeqDataOffset = 185;
 			break;
 		case 2:
 			index = 7;
 			_soundsList1Count = 13;
-			_soundsList1 = _soundFilesList10;
+			_soundsList1Offset = 97;
 			_soundsList2Count = 9;
-			_soundsList2 = _soundFilesList11;
-			_soundsListSeqData = _soundSeqData7;
+			_soundsList2Offset = 110;
+			_soundSeqDataCount = 43;
+			_soundSeqDataOffset = 210;
 			break;
 		case 3:
 			index = 10;
 			_soundsList1Count = 11;
-			_soundsList1 = _soundFilesList12;
+			_soundsList1Offset = 119;
 			_soundsList2Count = 0;
-			_soundsListSeqData = _soundSeqData8;
+			_soundSeqDataCount = 11;
+			_soundSeqDataOffset = 253;
 			break;
 		}
 		_musicVolume = 80;
@@ -696,16 +715,18 @@ void AnimationSequencePlayer::loadSounds(int type, int num) {
 		case 0:
 			index = 4;
 			_soundsList1Count = 6;
-			_soundsList1 = _soundFilesList13;
+			_soundsList1Offset = 130;
 			_soundsList2Count = 0;
-			_soundsListSeqData = _soundSeqData9;
+			_soundSeqDataCount = 12;
+			_soundSeqDataOffset = 264;
 			break;
 		case 1:
 			index = 9;
 			_soundsList1Count = 10;
-			_soundsList1 = _soundFilesList14;
+			_soundsList1Offset = 136;
 			_soundsList2Count = 0;
-			_soundsListSeqData = _soundSeqData10;
+			_soundSeqDataCount = 24;
+			_soundSeqDataOffset = 276;
 			break;
 		}
 		_musicVolume = 80;
@@ -714,63 +735,64 @@ void AnimationSequencePlayer::loadSounds(int type, int num) {
 		index = 5;
 		_soundsList1Count = 0;
 		_soundsList2Count = 0;
-		_soundsListSeqData = _soundSeqData1;
+		_soundSeqDataCount = 0;
 		_musicVolume = 100;
 		break;
 	case 9:
 		index = 8;
 		_soundsList1Count = 0;
 		_soundsList2Count = 0;
-		_soundsListSeqData = _soundSeqData1;
+		_soundSeqDataCount = 0;
 		_musicVolume = 100;
 		break;
 	case 10:
 		index = 0;
 		_soundsList1Count = 4;
-		_soundsList1 = _soundFilesList15;
+		_soundsList1Offset = 146;
 		_soundsList2Count = 0;
-		_soundsListSeqData = _soundSeqData11;
+		_soundSeqDataCount = 7;
+		_soundSeqDataOffset = 300;
 		_musicVolume = 100;
 		break;
 	default:
 		index = 0;
 		_soundsList1Count = 0;
 		_soundsList2Count = 0;
-		_soundsListSeqData = _soundSeqData1;
+		_soundSeqDataCount = 0;
 		_musicVolume = 100;
 		break;
 	}
 	if (_musicVolume != 0) {
 		Audio::AudioStream *s;
-		if ((s = loadSoundFileAsStream(_musicFileNamesTable[index], (type == 5) ? kAnimationSoundType16BitsRAW : kAnimationSoundType8BitsRAW)) != 0) {
+		if ((s = loadSoundFileAsStream(index, (type == 5) ? kAnimationSoundType16BitsRAW : kAnimationSoundType8BitsRAW)) != 0) {
 			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_musicVolume));
 		}
 	}
+	_soundSeqDataIndex = 0;
 }
 
 void AnimationSequencePlayer::updateSounds() {
 	Audio::AudioStream *s = 0;
-	int index;
-	const int *p = _soundsListSeqData;
-	while (p[0] != -1 && p[0] <= _frameCounter) {
-		switch (p[2]) {
+	const SoundSequenceData *p = &_soundSeqData[_soundSeqDataOffset + _soundSeqDataIndex];
+	while (_soundSeqDataIndex < _soundSeqDataCount && p->timestamp <= _frameCounter) {
+		switch (p->opcode) {
 		case 0:
-			if ((index = p[1]) < _soundsList1Count) {
-				if ((s = loadSoundFileAsStream(_soundsList1[index], kAnimationSoundTypeWAV)) != 0) {
-					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[index], s, -1, scaleMixerVolume(p[3]));
+			if (p->index < _soundsList1Count) {
+				if ((s = loadSoundFileAsStream(_soundsList1Offset + p->index, kAnimationSoundTypeWAV)) != 0) {
+					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, -1, scaleMixerVolume(p->volume));
 				}
 			}
 			break;
 		case 1:
-			if ((index = p[1]) < _soundsList1Count) {
-				if ((s = loadSoundFileAsStream(_soundsList1[index], kAnimationSoundTypeLoopingWAV)) != 0) {
-					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[index], s, -1, scaleMixerVolume(p[3]));
+			if (p->index < _soundsList1Count) {
+				if ((s = loadSoundFileAsStream(_soundsList1Offset + p->index, kAnimationSoundTypeLoopingWAV)) != 0) {
+					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, -1, scaleMixerVolume(p->volume));
 				}
 			}
 			break;
 		case 2:
-			if ((index = p[1]) < _soundsList1Count) {
-				_mixer->stopHandle(_soundsHandle[index]);
+			if (p->index < _soundsList1Count) {
+				_mixer->stopHandle(_soundsHandle[p->index]);
 			}
 			break;
 		case 3:
@@ -778,34 +800,32 @@ void AnimationSequencePlayer::updateSounds() {
 			break;
 		case 4:
 			_mixer->stopHandle(_musicHandle);
-			index = p[1];
-			if ((s = loadSoundFileAsStream(_musicFileNamesTable[index], kAnimationSoundType8BitsRAW)) != 0) {
-				_musicVolume = p[3];
+			if ((s = loadSoundFileAsStream(p->index, kAnimationSoundType8BitsRAW)) != 0) {
+				_musicVolume = p->volume;
 				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_musicVolume));
 			}
 			break;
 		case 5:
-			if ((index = p[1]) < _soundsList2Count) {
-				if ((s = loadSoundFileAsStream(_soundsList2[index], kAnimationSoundTypeWAV)) != 0) {
-					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, s, -1, scaleMixerVolume(p[3]));
+			if (p->index < _soundsList2Count) {
+				if ((s = loadSoundFileAsStream(_soundsList2Offset + p->index, kAnimationSoundTypeWAV)) != 0) {
+					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, s, -1, scaleMixerVolume(p->volume));
 				}
 			}
 			break;
 		case 6:
 			_mixer->stopHandle(_musicHandle);
-			index = p[1];
-			if ((s = loadSoundFileAsStream(_musicFileNamesTable[index], kAnimationSoundType16BitsRAW)) != 0) {
-				_musicVolume = p[3];
+			if ((s = loadSoundFileAsStream(p->index, kAnimationSoundType16BitsRAW)) != 0) {
+				_musicVolume = p->volume;
 				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_musicVolume));
 			}
 			break;
 		default:
-			warning("Unhandled sound opcode %d (%d,%d)", p[2], _frameCounter, p[0]);
+			warning("Unhandled sound opcode %d (%d,%d)", p->opcode, _frameCounter, p->timestamp);
 			break;
 		}
-		p += 4;
+		++p;
+		++_soundSeqDataIndex;
 	}
-	_soundsListSeqData = p;
 }
 
 void AnimationSequencePlayer::fadeInPalette() {

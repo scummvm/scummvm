@@ -843,6 +843,13 @@ enum AnimationSoundType {
 	kAnimationSoundTypeLoopingWAV
 };
 
+struct SoundSequenceData {
+	int timestamp;
+	int index;
+	int opcode;
+	int volume;
+};
+
 class AnimationSequencePlayer {
 public:
 
@@ -859,7 +866,7 @@ private:
 
 	void syncTime();
 	void loadSounds(int type, int num);
-	Audio::AudioStream *loadSoundFileAsStream(const char *name, AnimationSoundType type);
+	Audio::AudioStream *loadSoundFileAsStream(int index, AnimationSoundType type);
 	void updateSounds();
 	void fadeInPalette();
 	void fadeOutPalette();
@@ -889,11 +896,13 @@ private:
 	int _seqNum, _currentSeqNum;
 	::Graphics::FlicPlayer _flicPlayer[2];
 	uint8 _animationPalette[256 * 4], _paletteBuffer[256 * 4];
-	const int *_soundsListSeqData;
-	const char **_soundsList1;
+	int _soundsList1Offset;
 	int _soundsList1Count;
-	const char **_soundsList2;
+	int _soundsList2Offset;
 	int _soundsList2Count;
+	int _soundSeqDataOffset;
+	int _soundSeqDataCount;
+	int _soundSeqDataIndex;
 	int _musicVolume;
 	uint8 *_offscreenBuffer;
 	int _updateScreenWidth;
@@ -907,33 +916,9 @@ private:
 	Audio::SoundHandle _sfxHandle;
 	Audio::SoundHandle _musicHandle;
 
-	static const int _soundSeqData1[1];
-	static const int _soundSeqData2[233];
-	static const int _soundSeqData3[241];
-	static const int _soundSeqData4[193];
-	static const int _soundSeqData5[77];
-	static const int _soundSeqData6[101];
-	static const int _soundSeqData7[173];
-	static const int _soundSeqData8[45];
-	static const int _soundSeqData9[49];
-	static const int _soundSeqData10[97];
-	static const int _soundSeqData11[29];
-	static const char *_musicFileNamesTable[53];
-	static const char *_soundFilesList1[14];
-	static const char *_soundFilesList2[10];
-	static const char *_soundFilesList3[14];
-	static const char *_soundFilesList4[5];
-	static const char *_soundFilesList5[14];
-	static const char *_soundFilesList6[9];
-	static const char *_soundFilesList7[13];
-	static const char *_soundFilesList8[14];
-	static const char *_soundFilesList9[4];
-	static const char *_soundFilesList10[13];
-	static const char *_soundFilesList11[9];
-	static const char *_soundFilesList12[11];
-	static const char *_soundFilesList13[6];
-	static const char *_soundFilesList14[10];
-	static const char *_soundFilesList15[4];
+	static const SoundSequenceData _soundSeqData[];
+	static const char *_musicFileNamesTable[];
+	static const char *_audioFileNamesTable[];
 };
 
 } // namespace Tucker

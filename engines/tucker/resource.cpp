@@ -928,6 +928,7 @@ void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, 
 				if (tmp) {
 					stream = (compressedSoundFilesTable[_compressedSoundType].makeStream)(tmp, true, 0, 0, 1);
 				}
+				// FIXME: looping not handled
 			}
 		}
 	}
