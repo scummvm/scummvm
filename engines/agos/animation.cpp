@@ -465,32 +465,15 @@ bool MoviePlayerSMK::processFrame() {
 	copyFrameToBuffer((byte *)screen->pixels, (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, _vm->_screenWidth);
 	_vm->_system->unlockScreen();
 
-	if (!getAudioLag() || getFrameWaitTime() || _frameSkipped > getFrameRate()) {
-		if (_frameSkipped > getFrameRate()) {
-			warning("force frame %i redraw", getCurFrame());
-			_frameSkipped = 0;
-		}
+	uint32 waitTime = getFrameWaitTime();
 
-		if (getAudioLag() > 0) {
-			while (getAudioLag() > 0) {
-				_vm->_system->delayMillis(10);
-			}
-			// In case the background sound ends prematurely, update
-			// _ticks so that we can still fall back on the no-sound
-			// sync case for the subsequent frames.
-			_ticks = _vm->_system->getMillis();
-		} else {
-			_ticks += getFrameDelay();
-			while ((_vm->_system->getMillis() * 100) < _ticks)
-				_vm->_system->delayMillis(10);
-		}
-
-		return true;
+	if (!waitTime) {
+		warning("dropped frame %i", getCurFrame());
+		return false;
 	}
 
-	warning("dropped frame %i", getCurFrame());
-	_frameSkipped++;
-	return false;
+	_vm->_system->delayMillis(waitTime);
+	return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
