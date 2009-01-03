@@ -184,6 +184,7 @@ private:
 	Audio::SoundHandle _audioHandle;
 
 	uint32 _currentSMKFrame;
+	uint32 _startTime;
 
 	BigHuffmanTree *_MMapTree;
 	BigHuffmanTree *_MClrTree;

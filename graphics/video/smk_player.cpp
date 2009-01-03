@@ -370,12 +370,22 @@ int32 SMKPlayer::getFrameDelay() {
 }
 
 int32 SMKPlayer::getAudioLag() {
-	if (!_fileStream || !_audioStream)
+	if (!_fileStream)
 		return 0;
 
 	int32 frameDelay = getFrameDelay();
 	int32 videoTime = _currentSMKFrame * frameDelay;
-	int32 audioTime = (((int32) _mixer->getSoundElapsedTime(_audioHandle)) * 100);
+	int32 audioTime;
+
+	if (!_audioStream) {
+		/* No audio.
+		   Calculate the lag by how much time has gone by since the first frame
+		   and how much time *should* have passed.
+		*/
+
+		audioTime = (g_system->getMillis() - _startTime) * 100;
+	} else
+		audioTime = (((int32) _mixer->getSoundElapsedTime(_audioHandle)) * 100);
 
 	return videoTime - audioTime;
 }
@@ -545,6 +555,9 @@ bool SMKPlayer::decodeNextFrame() {
 	uint32 dataSizeUnpacked = 0;
 
 	uint32 startPos = _fileStream->pos();
+
+	if (_currentSMKFrame == 0)
+		_startTime = g_system->getMillis();
 
 	// Check if we got a frame with palette data, and
 	// call back the virtual setPalette function to set
