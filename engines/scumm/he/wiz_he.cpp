@@ -1532,20 +1532,38 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, i
 
 void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int flags, int shadow, int dstResNum, int palette) {
 	debug(3, "drawWizPolygonTransform(resNum %d, flags 0x%X, shadow %d dstResNum %d palette %d)", resNum, flags, shadow, dstResNum, palette);
+	const Common::Rect *r = NULL;
+	uint8 *srcWizBuf = NULL;
+	bool freeBuffer = true;
 	int i;
 
 	if (_vm->_game.heversion >= 99) {
-		flags |= kWIFBlitToMemBuffer;
+		if (getWizImageData(resNum, state, 0) != 0 || (flags & (kWIFRemapPalette | kWIFFlipX | kWIFFlipY)) || palette != 0) {
+			flags |= kWIFBlitToMemBuffer;
 
-		if (flags & 0x800000) {
-			debug(0, "drawWizPolygonTransform() unhandled flag 0x800000");
+			if (flags & 0x800000) {
+				debug(0, "drawWizPolygonTransform() unhandled flag 0x800000");
+			}
+			srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, shadow, 0, r, flags, 0, palette);
+		} else {
+			uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
+			assert(dataPtr);
+			srcWizBuf = _vm->findWrappedBlock(MKID_BE('WIZD'), dataPtr, state, 0);
+			assert(srcWizBuf);
+			freeBuffer = false;
 		}
 	} else {
-		flags = kWIFBlitToMemBuffer;
+		if (getWizImageData(resNum, state, 0) != 0) {
+			srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, shadow, 0, r, kWIFBlitToMemBuffer, 0, palette);
+		} else {
+			uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
+			assert(dataPtr);
+			srcWizBuf = _vm->findWrappedBlock(MKID_BE('WIZD'), dataPtr, state, 0);
+			assert(srcWizBuf);
+			freeBuffer = false;
+		}
 	}
 
-	const Common::Rect *r = NULL;
-	uint8 *srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, shadow, 0, r, flags, 0, palette);
 	if (srcWizBuf) {
 		uint8 *dst;
 		int32 dstw, dsth, dstpitch, wizW, wizH;
@@ -1683,7 +1701,8 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 			_vm->restoreBackgroundHE(bound);
 		}
 
-		free(srcWizBuf);
+		if (freeBuffer)
+			free(srcWizBuf);
 	}
 }
 
