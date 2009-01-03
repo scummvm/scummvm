@@ -481,7 +481,7 @@ bool MoviePlayerSMK::processFrame() {
 			_ticks = _vm->_system->getMillis();
 		} else {
 			_ticks += getFrameDelay();
-			while (_vm->_system->getMillis() < _ticks)
+			while ((_vm->_system->getMillis() * 100) < _ticks)
 				_vm->_system->delayMillis(10);
 		}
 
