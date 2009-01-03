@@ -1210,32 +1210,12 @@ void ProgramParser_br::init() {
 	INSTRUCTION_PARSER(endscript);
 }
 
-
-/*
-	Ancillary routine to support hooking preprocessor and
-	parser.
-*/
-Common::ReadStream *getStream(StatementList &list) {
-	Common::String text;
-	StatementList::iterator it = list.begin();
-	for ( ; it != list.end(); it++) {
-		text += (*it)._text;
-	}
-	return new ReadStringStream(text);
-}
-
 void LocationParser_br::parse(Script *script) {
-
-	PreProcessor pp;
-	StatementList list;
-	pp.preprocessScript(*script, list);
-	Script *script2 = new Script(getStream(list), true);
-
 	ctxt.numZones = 0;
 	ctxt.characterName = 0;
 	ctxt.info = new BackgroundInfo;
 
-	LocationParser_ns::parse(script2);
+	LocationParser_ns::parse(script);
 
 	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.info);
 
@@ -1250,8 +1230,6 @@ void LocationParser_br::parse(Script *script) {
 	}
 
 	free(ctxt.characterName);
-
-	delete script2;
 }
 
 } // namespace Parallaction
