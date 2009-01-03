@@ -61,6 +61,7 @@ LD      = $(PREFIX)gcc
 AR      = $(PREFIX)ar cru
 RANLIB  = $(PREFIX)ranlib
 STRIP   = $(PREFIX)strip -g
+GDB     = $(PREFIX)gdb
 MKDIR   = mkdir -p
 RM      = rm -f
 RM_REC  = rm -rf
@@ -161,6 +162,12 @@ ifeq ($(GAMECUBE),1)
 else
 	$(DEVKITPPC)/bin/wiiload $(TARGET).dol
 endif
+
+gdb:
+	$(GDB) -n $(TARGET).elf
+
+debug:
+	$(GDB) -n $(TARGET).elf -x gdb.txt
 
 dist:
 	$(MKDIR) dist/scummvm
