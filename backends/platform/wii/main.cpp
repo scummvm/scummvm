@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 		printf("fatInitDefault failed\n");
 	} else {
 #ifdef LIBFAT_READAHEAD_CACHE
-		fatSetReadAheadDefault(8, 128);
+		fatSetReadAheadDefault(16, 32);
 #else
 		printf("read ahead cache not available\n");
 #endif
@@ -100,7 +100,9 @@ int main(int argc, char *argv[]) {
 
 	printf("shutdown\n");
 
+#ifdef LIBFAT_READAHEAD_CACHE
 	fatUnmountDefault();
+#endif
 
 	if (power_btn_pressed) {
 		printf("shutting down\n");
