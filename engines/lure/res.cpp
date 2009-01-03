@@ -620,6 +620,9 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 			// Special post-load handling
 			if (res->loadOffset == 3) hotspot->setPersistant(true);
 			if (res->loadOffset == 5) hotspot->handleTalkDialog();
+			if (hotspotId == CASTLE_SKORL_ID)
+				// The Castle skorl has a default room #99, so it needs to be adjusted dynamically
+				res->npcSchedule.top().setRoomNumber(res->roomNumber);
 
 			// TODO: Figure out why there's a room set in the animation decode for a range of characters,
 			// particularly since it doesn't seem to match what happens in-game
