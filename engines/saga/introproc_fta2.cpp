@@ -45,25 +45,18 @@ protected:
 	virtual void setPalette(byte *pal);
 public:
 	MoviePlayerSMK(SagaEngine *vm): _vm(vm), SMKPlayer(vm->_mixer) {
-		_frameSkipped = 0;
-		_ticks = 0;
+		_eventMan = _vm->_system->getEventManager();
 	}
-	~MoviePlayerSMK(void) { closeFile(); }
+	~MoviePlayerSMK(void) { }
 
-	bool load(const char *filename) {
-		_skipVideo = false;
-		return loadFile(filename);
-	}
-	void playVideo();
-	void stopVideo() { closeFile(); }
+	bool playVideo(const char *filename);
 private:
-	bool processFrame();
+	void processFrame();
+	void processEvents();
 	PalEntry _smkPalette[256];
-	uint32 _ticks;
-	uint16 _frameSkipped;
 	bool _skipVideo;
 	SagaEngine *_vm;
-	Common::Event _event;
+	Common::EventManager *_eventMan;
 };
 
 void MoviePlayerSMK::setPalette(byte *pal) {
@@ -76,31 +69,43 @@ void MoviePlayerSMK::setPalette(byte *pal) {
 	_vm->_gfx->setPalette(_smkPalette, true);
 }
 
-void MoviePlayerSMK::playVideo() {
-	while (getCurFrame() < getFrameCount() && !_skipVideo && !_vm->shouldQuit()) {
-		Common::EventManager *eventMan = _vm->_system->getEventManager();
-		// process events, and skip video if esc is pressed
-		while (eventMan->pollEvent(_event)) {
-			switch (_event.type) {
-				case Common::EVENT_KEYDOWN:
-					if (_event.kbd.keycode == Common::KEYCODE_ESCAPE)
-						_skipVideo = true;
-					break;
-				case Common::EVENT_RTL:
-				case Common::EVENT_QUIT:
+void MoviePlayerSMK::processEvents() {
+	Common::Event curEvent;
+	// Process events, and skip video if esc is pressed
+	while (_eventMan->pollEvent(curEvent)) {
+		switch (curEvent.type) {
+			case Common::EVENT_KEYDOWN:
+				if (curEvent.kbd.keycode == Common::KEYCODE_ESCAPE)
 					_skipVideo = true;
-					break;
-				default:
-					break;
-			}
+				break;
+			case Common::EVENT_RTL:
+			case Common::EVENT_QUIT:
+				_skipVideo = true;
+				break;
+			default:
+				break;
 		}
-		decodeNextFrame();
-		if (processFrame())
-			_vm->_system->updateScreen();
 	}
 }
 
-bool MoviePlayerSMK::processFrame() {
+bool MoviePlayerSMK::playVideo(const char *filename) {
+	_skipVideo = false;
+	if (!loadFile(filename))
+		return false;
+
+	while (getCurFrame() < getFrameCount() && !_skipVideo && !_vm->shouldQuit()) {
+		processEvents();
+		processFrame();			
+	}
+
+	closeFile();
+
+	return true;
+}
+
+void MoviePlayerSMK::processFrame() {
+	decodeNextFrame();
+
 	Graphics::Surface *screen = _vm->_system->lockScreen();
 	copyFrameToBuffer((byte *)screen->pixels,
 						(_vm->getDisplayInfo().width - getWidth()) / 2,
@@ -108,32 +113,18 @@ bool MoviePlayerSMK::processFrame() {
 						_vm->getDisplayInfo().width);
 	_vm->_system->unlockScreen();
 
-	if (!getAudioLag() || getFrameWaitTime() || _frameSkipped > getFrameRate()) {
-		if (_frameSkipped > getFrameRate()) {
-			warning("force frame %i redraw", getCurFrame());
-			_frameSkipped = 0;
-		}
+	uint32 waitTime = getFrameWaitTime();
 
-		if (getAudioLag() > 0) {
-			while (getAudioLag() > 0) {
-				_vm->_system->delayMillis(10);
-			}
-			// In case the background sound ends prematurely, update
-			// _ticks so that we can still fall back on the no-sound
-			// sync case for the subsequent frames.
-			_ticks = _vm->_system->getMillis();
-		} else {
-			_ticks += getFrameDelay();
-			//while (_vm->_system->getMillis() < _ticks)	// FIXME
-				_vm->_system->delayMillis(10);
-		}
-
-		return true;
+	if (!waitTime) {
+		warning("dropped frame %i", getCurFrame());
+		return;
 	}
 
-	warning("dropped frame %i", getCurFrame());
-	_frameSkipped++;
-	return false;
+	// Update the screen
+	_vm->_system->updateScreen();
+
+	// Wait before showing the net frame
+	_vm->_system->delayMillis(waitTime);
 }
 
 int Scene::FTA2StartProc() {
@@ -142,21 +133,15 @@ int Scene::FTA2StartProc() {
 	_vm->_gfx->showCursor(false);
 
 	// Show Ignite logo
-	if (smkPlayer->load("trimark.smk")) {
-		debug(0, "Playing video trimark.smk");
-		smkPlayer->playVideo();
-		smkPlayer->stopVideo();
-	} else {
+	debug(0, "Playing video trimark.smk");
+	if (!smkPlayer->playVideo("trimark.smk")) {
 		warning("Failed to load video file trimark.smk");
 	}
 
 	// Play introduction
-	if (smkPlayer->load("intro.smk")) {
-		debug(0, "Playing video intro.smk");
-		smkPlayer->playVideo();
-		smkPlayer->stopVideo();
-	} else {
-		warning("Failed to load video file intro.smk");
+	debug(0, "Playing video intro.smk");
+	if (!smkPlayer->playVideo("intro.smk")) {
+		warning("Failed to load video file intro.smk");	
 	}
 
 	// Cleanup
@@ -196,11 +181,8 @@ int Scene::FTA2EndProc(FTA2Endings whichEnding) {
 	_vm->_gfx->showCursor(false);
 
 	// Play ending
-	if (smkPlayer->load(videoName)) {
-		debug(0, "Playing video %s", videoName);
-		smkPlayer->playVideo();
-		smkPlayer->stopVideo();
-	} else {
+	debug(0, "Playing video %s", videoName);
+	if (!smkPlayer->playVideo(videoName)) {
 		warning("Failed to load video file %s", videoName);
 	}
 
