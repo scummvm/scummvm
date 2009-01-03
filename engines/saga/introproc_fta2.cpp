@@ -123,7 +123,7 @@ void MoviePlayerSMK::processFrame() {
 	// Update the screen
 	_vm->_system->updateScreen();
 
-	// Wait before showing the net frame
+	// Wait before showing the next frame
 	_vm->_system->delayMillis(waitTime);
 }
 
