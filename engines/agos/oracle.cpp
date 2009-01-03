@@ -383,7 +383,7 @@ void AGOSEngine_Feeble::listSaveGames(int n) {
 		z++;
 	}
 
-	while (1) {
+	while (!shouldQuit()) {
 		OK = 1;
 		if (getBitFlag(93) || getBitFlag(94)) {
 			OK = 0;
@@ -407,7 +407,7 @@ void AGOSEngine_Feeble::listSaveGames(int n) {
 				showMessageFormat("\n");
 				hyperLinkOn(j + 400);
 				setTextColor(116);
-				showMessageFormat(" %d. ",1);
+				showMessageFormat(" %d. ", 1);
 				hyperLinkOff();
 				setTextColor(113);
 				k++;
@@ -425,9 +425,9 @@ void AGOSEngine_Feeble::listSaveGames(int n) {
 		setTextColor(116);
 		if (k < 10)
 			showMessageFormat(" ");
-		showMessageFormat("%d. ",k);
+		showMessageFormat("%d. ", k);
 		setTextColor(113);
-		showMessageFormat("%s ",b);
+		showMessageFormat("%s ", b);
 		hyperLinkOff();
 		j--;
 		k++;

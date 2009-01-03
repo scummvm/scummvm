@@ -38,7 +38,7 @@ void AGOSEngine_Feeble::doOutput(const byte *src, uint len) {
 	if (_textWindow == NULL)
 		return;
 
-	while (len-- != 0) {
+	while (len-- != 0 && !shouldQuit()) {
 		if (getBitFlag(93)) {
 			if (_curWindow == 3) {
 				if ((_newLines >= _textWindow->scrollY) && (_newLines < (_textWindow->scrollY + 3)))
