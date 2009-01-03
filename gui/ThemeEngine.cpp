@@ -1199,7 +1199,7 @@ void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 	if (ConfMan.hasKey("extrapath"))
 		listUsableThemes(Common::FSNode(ConfMan.get("extrapath")), list);
 
-	listUsableThemes(Common::FSNode("."), list);
+	listUsableThemes(Common::FSNode("."), list, 1);
 
 	// Now we need to strip all duplicates
 	// TODO: It might not be the best idea to strip duplicates. The user might
@@ -1218,7 +1218,7 @@ void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 	output.clear();
 }
 
-void ThemeEngine::listUsableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list) {
+void ThemeEngine::listUsableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list, int depth) {
 	if (!node.exists() || !node.isReadable() || !node.isDirectory())
 		return;
 
@@ -1266,12 +1266,16 @@ void ThemeEngine::listUsableThemes(Common::FSNode node, Common::List<ThemeDescri
 	fileList.clear();
 #endif
 	
+	// Check if we exceeded the given recursion depth
+	if (depth - 1 == -1)
+		return;
+
 	// As next step we will search all subdirectories
 	if (!node.getChildren(fileList, Common::FSNode::kListDirectoriesOnly))
 		return;
 
 	for (Common::FSList::iterator i = fileList.begin(); i != fileList.end(); ++i)
-		listUsableThemes(*i, list);
+		listUsableThemes(*i, list, depth == -1 ? - 1 : depth - 1);
 }
 
 Common::String ThemeEngine::getThemeFile(const Common::String &id) {
@@ -1279,6 +1283,10 @@ Common::String ThemeEngine::getThemeFile(const Common::String &id) {
 	// our default theme which would mean "scummmodern" instead
 	// of the builtin one.
 	if (id.equalsIgnoreCase("default"))
+		return Common::String();
+	
+	// For our builtin theme we don't have to do anything for now too
+	if (id.equalsIgnoreCase("builtin"))
 		return Common::String();
 
 	Common::FSNode node(id);
