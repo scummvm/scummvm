@@ -71,6 +71,7 @@ struct ResourceContext {
 	Common::File *file;
 	int serial;			// IHNM speech files
 
+	bool isCompressed;
 	bool isBigEndian;
 	ResourceData *table;
 	size_t count;

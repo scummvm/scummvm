@@ -83,7 +83,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 	if (!buffer.isSigned)
 		flags |= Audio::Mixer::FLAG_UNSIGNED;
 
-	if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS)) {
+	if (!buffer.isCompressed) {
 		if (handleType == kVoiceHandle)
 			_mixer->playRaw(Audio::Mixer::kSpeechSoundType, handle, buffer.buffer,
 					buffer.size, buffer.frequency, flags, -1, volume);

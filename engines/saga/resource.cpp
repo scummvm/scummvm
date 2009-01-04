@@ -205,6 +205,8 @@ bool Resource::createContexts() {
 	bool soundFileInArray = false;
 	bool multipleVoices = false;
 	bool censoredVersion = false;
+	bool compressedSounds = false;
+	bool compressedMusic = false;
 	uint16 voiceFileType = GAME_VOICEFILE;
 	bool fileFound = false;
 	int maxFile = 0;
@@ -284,7 +286,7 @@ bool Resource::createContexts() {
 				_contextsCount++;
 				soundFileIndex = _contextsCount - 1;
 				strcpy(soundFileName, curSoundfiles[i].fileName);
-				_vm->_gf_compressed_sounds = curSoundfiles[i].isCompressed;
+				compressedSounds = curSoundfiles[i].isCompressed;
 				fileFound = true;
 				break;
 			}
@@ -358,7 +360,7 @@ bool Resource::createContexts() {
 			_contextsCount++;
 			voicesFileIndex = _contextsCount - 1;
 			strcpy(_voicesFileName[0], curSoundfiles[i].fileName);
-			_vm->_gf_compressed_sounds = curSoundfiles[i].isCompressed;
+			compressedSounds = curSoundfiles[i].isCompressed;
 			fileFound = true;
 
 			// Special cases
@@ -406,11 +408,10 @@ bool Resource::createContexts() {
 	}
 
 	//// Detect and add ITE music files /////////////////////////////////////////
-	// We don't set the compressed flag here
 	SoundFileInfo musicFilesITE[] = {
-		{	"music.rsc",	true	},
+		{	"music.rsc",	false	},
 		{	"music.cmp",	true	},
-		{	"musicd.rsc",	true	},
+		{	"musicd.rsc",	false	},
 		{	"musicd.cmp",	true	},
 	};
 
@@ -422,6 +423,7 @@ bool Resource::createContexts() {
 			if (Common::File::exists(musicFilesITE[i].fileName)) {
 				_contextsCount++;
 				digitalMusic = true;
+				compressedMusic = musicFilesITE[i].isCompressed;
 				fileFound = true;
 				strcpy(musicFileName, musicFilesITE[i].fileName);
 				break;
@@ -445,27 +447,32 @@ bool Resource::createContexts() {
 		if (_vm->getGameId() == GID_ITE && digitalMusic && i == _contextsCount - 1) {
 			context->fileName = musicFileName;
 			context->fileType = GAME_MUSICFILE;
+			context->isCompressed = compressedMusic;
 		} else if (!soundFileInArray && i == soundFileIndex) {
 			context->fileName = soundFileName;
 			context->fileType = GAME_SOUNDFILE;
+			context->isCompressed = compressedSounds;
 		} else if (_vm->_voiceFilesExist && i == voicesFileIndex && !(_vm->getGameId() == GID_IHNM && _vm->isMacResources())) {
 			context->fileName = _voicesFileName[0];
 			// can be GAME_VOICEFILE or GAME_SOUNDFILE | GAME_VOICEFILE or GAME_VOICEFILE | GAME_SWAPENDIAN
 			context->fileType = voiceFileType;
+			context->isCompressed = compressedSounds;
 		} else {
 			if (!(_vm->_voiceFilesExist && multipleVoices && (i > voicesFileIndex))) {
 				context->fileName = _vm->getFilesDescriptions()[i].fileName;
 				context->fileType = _vm->getFilesDescriptions()[i].fileType;
+				context->isCompressed = compressedSounds;
 			} else {
 				int token = (censoredVersion && (i - voicesFileIndex >= 4)) ? 1 : 0;	// censored versions don't have voice4
 
-				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+				if (compressedSounds)
 					sprintf(_voicesFileName[i - voicesFileIndex + token], "voices%i.cmp", i - voicesFileIndex + token);
 				else
 					sprintf(_voicesFileName[i - voicesFileIndex + token], "voices%i.res", i - voicesFileIndex + token);
 
 				context->fileName = _voicesFileName[i - voicesFileIndex + token];
 				context->fileType = GAME_VOICEFILE;
+				context->isCompressed = compressedSounds;
 
 				// IHNM has several different voice files, so we need to allow
 				// multiple resource contexts of the same type. We tell them

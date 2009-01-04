@@ -229,7 +229,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::ADGF_DEMO
 		},
 		GID_ITE,
-		GF_WYRMKEEP | GF_SCENE_SUBSTITUTES | GF_MONO_MUSIC,
+		GF_WYRMKEEP | GF_SCENE_SUBSTITUTES | GF_MONO_MUSIC | GF_LE_VOICES,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -256,7 +256,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::ADGF_DEMO
 		},
 		GID_ITE,
-		GF_WYRMKEEP | GF_NON_INTERACTIVE,
+		GF_WYRMKEEP | GF_NON_INTERACTIVE | GF_LE_VOICES,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),

@@ -157,7 +157,6 @@ Common::Error SagaEngine::init() {
 	_readingSpeed = getTalkspeed();
 	_copyProtection = ConfMan.getBool("copy_protection");
 	_gf_wyrmkeep = false;
-	_gf_compressed_sounds = false;
 	_musicWasPlaying = false;
 
 	if (_readingSpeed > 3)

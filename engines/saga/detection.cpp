@@ -84,9 +84,6 @@ uint32 SagaEngine::getFeatures() const {
 	if (_gf_wyrmkeep)
 		result |= GF_WYRMKEEP;
 
-	if (_gf_compressed_sounds)
-		result |= GF_COMPRESSED_SOUNDS;
-
 	return result;
 }
 

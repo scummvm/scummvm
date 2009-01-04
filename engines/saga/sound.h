@@ -47,6 +47,7 @@ struct SoundBuffer {
 	int sampleBits;
 	bool stereo;
 	bool isSigned;
+	bool isCompressed;
 
 	byte *buffer;
 	size_t size;

@@ -118,12 +118,12 @@ enum GameFeatures {
 	GF_WYRMKEEP          = 1 << 0,
 	GF_ITE_FLOPPY        = 1 << 1,
 	GF_SCENE_SUBSTITUTES = 1 << 2,
-	GF_COMPRESSED_SOUNDS = 1 << 3,
-	GF_NON_INTERACTIVE   = 1 << 4,
-	GF_OLD_ITE_DOS       = 1 << 5,
-	GF_MONO_MUSIC		 = 1 << 6,
-	GF_EXTRA_ITE_CREDITS = 1 << 7,
-	GF_IHNM_DEMO         = 1 << 8
+	GF_NON_INTERACTIVE   = 1 << 3,
+	GF_OLD_ITE_DOS       = 1 << 4,
+	GF_MONO_MUSIC        = 1 << 5,
+	GF_EXTRA_ITE_CREDITS = 1 << 6,
+	GF_IHNM_DEMO         = 1 << 7,
+	GF_LE_VOICES         = 1 << 8
 };
 
 enum VerbTypeIds {
@@ -495,7 +495,6 @@ public:
 
 	bool _copyProtection;
 	bool _gf_wyrmkeep;
-	bool _gf_compressed_sounds;
 	bool _musicWasPlaying;
 
 	SndRes *_sndRes;

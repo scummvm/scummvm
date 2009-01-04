@@ -130,6 +130,8 @@ void SndRes::setVoiceBank(int serial) {
 		_voiceContext->fileType = GAME_VOICEFILE;
 		_voiceContext->count = 0;
 		_voiceContext->serial = 0;
+		_voiceContext->isBigEndian = true;
+		_voiceContext->isCompressed = false;
 		return;
 	}
 #endif
@@ -219,6 +221,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 		file->open(soundFileName);
 		soundResourceLength = file->size();
+		context->isBigEndian = true;
 	} else 
 #endif
 	{
@@ -231,7 +234,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 	Common::SeekableReadStream& readS = *file;
 
-	if ((context->fileType & GAME_VOICEFILE) != 0) {
+	if (context->fileType & GAME_VOICEFILE) {
 		soundInfo = _vm->getVoiceInfo();
 	} else {
 		soundInfo = _vm->getSfxInfo();
@@ -265,7 +268,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		if (_vm->getGameId() == GID_IHNM && (context->fileType & GAME_SOUNDFILE))
 			uncompressedSound = true;
 
-		if ((_vm->getFeatures() & GF_COMPRESSED_SOUNDS) && !uncompressedSound) {
+		if (context->isCompressed && !uncompressedSound) {
 			if (header[0] == char(0)) {
 				resourceType = kSoundMP3;
 			} else if (header[0] == char(1)) {
@@ -277,7 +280,10 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 	}
 
-	buffer.isBigEndian = _vm->isMacResources();
+	buffer.isBigEndian = context->isBigEndian;
+	if ((context->fileType & GAME_VOICEFILE) && (_vm->getFeatures() & GF_LE_VOICES))
+		buffer.isBigEndian = false;
+	buffer.isCompressed = context->isCompressed;
 	buffer.soundType = resourceType;
 	buffer.originalSize = 0;
 	buffer.stereo = false;
@@ -398,7 +404,7 @@ int SndRes::getVoiceLength(uint32 resourceId) {
 		return -1;
 	}
 
-	if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS) || buffer.originalSize == 0)
+	if (!_voiceContext->isCompressed || buffer.originalSize == 0)
 		msDouble = (double)buffer.size;
 	else
 		msDouble = (double)buffer.originalSize;
