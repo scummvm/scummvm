@@ -408,7 +408,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 		uint j = 0;
 		extra = p[3];
 		uint8 n = extra;
-		assert(n < ARRAYSIZE(heCondMaskIndex));
+		assert(n <= ARRAYSIZE(heCondMaskIndex));
 		while (n--) {
 			heCondMaskIndex[j++] = aksq[s++];
 		}
