@@ -341,10 +341,23 @@ void Parallaction::runGame() {
 	if (shouldQuit())
 		return;
 
-	runGuiFrame();
-	runDialogueFrame();
-	runCommentFrame();
-	runGameFrame(event);
+	switch (_input->_inputMode) {
+	case Input::kInputModeMenu:
+		runGuiFrame();
+		break;
+
+	case Input::kInputModeDialogue:
+		runDialogueFrame();
+		break;
+
+	case Input::kInputModeComment:
+		runCommentFrame();
+		break;
+
+	case Input::kInputModeGame:
+		runGameFrame(event);
+		break;
+	}
 
 	if (shouldQuit())
 		return;

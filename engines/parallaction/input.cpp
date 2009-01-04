@@ -212,6 +212,8 @@ int Input::updateGameInput() {
 
 int Input::updateInput() {
 
+	int oldMode = _inputMode;
+
 	int event = kEvNone;
 	readInput();
 
@@ -223,6 +225,13 @@ int Input::updateInput() {
 	case kInputModeInventory:
 		updateInventoryInput();
 		break;
+	}
+
+	// when mode changes, then consider any input consumed
+	// for the current frame
+	if (oldMode != _inputMode) {
+		_mouseButtons = kEvNone;
+		_hasKeyPressEvent = false;
 	}
 
 	return event;
