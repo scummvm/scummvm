@@ -411,6 +411,8 @@ void AGOSEngine::o_msg() {
 void AGOSEngine::o_end() {
 	// 68: exit interpreter
 	quitGame();
+	// Make sure the quit event is processed immediately.
+	delay(0);
 }
 
 void AGOSEngine::o_done() {
