@@ -1646,7 +1646,9 @@ void OSystem_WINCE3::internUpdateScreen() {
 			if (routy + routh < 0)	continue;
 			if (routy < 0) {
 				routh += routy;
+				r->y -= routy * _scaleFactorYd / _scaleFactorYm;
 				routy = 0;
+				r->h = routh * _scaleFactorYd / _scaleFactorYm;
 			}
 			if (_orientationLandscape) {
 				if (routy > _platformScreenWidth)	continue;
