@@ -1530,7 +1530,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	static bool old_overlayVisible = false;
 	int numRectsOut = 0;
-	int16 routx, routy, routw, routh, stretch;
+	int16 routx, routy, routw, routh, stretch, shakestretch;
 
 	assert(_hwscreen != NULL);
 
@@ -1634,10 +1634,11 @@ void OSystem_WINCE3::internUpdateScreen() {
 			}
 
 			// transform
-			routx = r->x * _scaleFactorXm / _scaleFactorXd;				// locate position in scaled screen
-			routy = (r->y + _currentShakePos) * _scaleFactorYm / _scaleFactorYd;	// adjust for shake offset
+			shakestretch = _currentShakePos * _scaleFactorYm / _scaleFactorYd;
+			routx = r->x * _scaleFactorXm / _scaleFactorXd;					// locate position in scaled screen
+			routy = r->y * _scaleFactorYm / _scaleFactorYd + shakestretch;	// adjust for shake offset
 			routw = r->w * _scaleFactorXm / _scaleFactorXd;
-			routh = r->h * _scaleFactorYm / _scaleFactorYd;
+			routh = r->h * _scaleFactorYm / _scaleFactorYd - shakestretch;
 
 			// clipping destination rectangle inside device screen (more strict, also more tricky but more stable)
 			// note that all current scalers do not make dst rect exceed left/right, unless chosen badly (FIXME)
@@ -1668,11 +1669,11 @@ void OSystem_WINCE3::internUpdateScreen() {
 			// blit it (with added voodoo from the sdl backend, shifting the source rect again)
 			_scalerProc(	(byte *)srcSurf->pixels + (r->x * 2 + 2)+ (r->y + 1) * srcPitch, srcPitch,
 					(byte *)_hwscreen->pixels + routx * 2 + routy * dstPitch, dstPitch,
-					r->w, r->h);
+					r->w, r->h - _currentShakePos);
 
 			// add this rect to output
-			rout->x = routx;	rout->y = routy;
-			rout->w = routw;	rout->h = routh;
+			rout->x = routx;	rout->y = routy - shakestretch;
+			rout->w = routw;	rout->h = routh + shakestretch;
 			numRectsOut++;
 			rout++;
 
