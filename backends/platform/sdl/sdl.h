@@ -275,7 +275,7 @@ protected:
 	};
 	VideoState _videoMode, _oldVideoMode;
 
-	void setGraphicsModeIntern();
+	virtual void setGraphicsModeIntern(); // overloaded by CE backend
 
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;

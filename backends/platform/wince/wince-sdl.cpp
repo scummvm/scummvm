@@ -1135,6 +1135,11 @@ int OSystem_WINCE3::getDefaultGraphicsMode() const {
     return GFX_NORMAL;
 }
 
+void OSystem_WINCE3::setGraphicsModeIntern() {
+	// Scalers have been pre-selected for the desired mode.
+	// No further tuning required.
+}
+
 bool OSystem_WINCE3::update_scalers() {
 	if (_videoMode.mode != GFX_NORMAL)
 		return false;

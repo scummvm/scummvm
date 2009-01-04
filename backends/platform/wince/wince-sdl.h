@@ -65,8 +65,8 @@ public:
 	// Update the dirty areas of the screen
 	void internUpdateScreen();
 
+	void setGraphicsModeIntern();
 	void initSize(uint w, uint h);
-
 	void initBackend();
 
 	// Overloaded from SDL backend (toolbar handling)
