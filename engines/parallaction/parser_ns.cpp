@@ -231,6 +231,7 @@ DECLARE_ANIM_PARSER(label)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(label) ");
 
 	ctxt.a->_label = _vm->_gfx->renderFloatingLabel(_vm->_labelFont, _tokens[1]);
+	ctxt.a->_flags &= ~kFlagsNoName;
 }
 
 
