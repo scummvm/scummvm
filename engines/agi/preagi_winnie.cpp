@@ -241,7 +241,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 	// extract header from buffer
 	parseRoomHeader(&hdr, buffer, sizeof(WTP_ROOM_HDR));
 
-	for (;;) {
+	while (!_vm->shouldQuit()) {
 		pc = startpc;
 
 		// check if block is to be run
@@ -434,7 +434,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 				opcode = 0;
 				break;
 			}
-		} while (opcode);
+		} while (opcode && !_vm->shouldQuit());
 
 		if (iNewRoom) {
 			_room = iNewRoom;
@@ -446,6 +446,8 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();
 	}
+	
+	return IDI_WTP_PAR_OK;
 }
 
 void Winnie::keyHelp() {
@@ -1014,6 +1016,7 @@ phase2:
 		if (parser(hdr.ofsDesc[iBlock] - _roomOffset, iBlock, roomdata) == IDI_WTP_PAR_BACK)
 			goto phase1;
 	}
+	
 	while (!_vm->shouldQuit()) {
 		for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
 			switch(parser(hdr.ofsBlock[iBlock] - _roomOffset, iBlock, roomdata)) {
