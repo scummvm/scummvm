@@ -264,6 +264,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_palManipPalette = NULL;
 	_palManipIntermediatePal = NULL;
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
+	_hePaletteCache = NULL;
 	_hePalettes = NULL;
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
@@ -805,6 +806,7 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 		delete _logicHE;
 	}
 	if (_game.heversion >= 99) {
+		free(_hePaletteCache);
 		free(_hePalettes);
 	}
 }
@@ -1520,6 +1522,9 @@ void ScummEngine_v99he::resetScumm() {
 	int len;
 
 	ScummEngine_v90he::resetScumm();
+
+	_hePaletteCache = (int16 *)malloc(65536);
+	memset(_hePaletteCache, -1, 65536);
 
 	_hePalettes = (uint8 *)malloc((_numPalettes + 1) * 1024);
 	memset(_hePalettes, 0, (_numPalettes + 1) * 1024);

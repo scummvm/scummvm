@@ -310,6 +310,9 @@ void ScummEngine::setDirtyColors(int min, int max) {
 		_palDirtyMin = min;
 	if (_palDirtyMax < max)
 		_palDirtyMax = max;
+
+	if (_hePaletteCache)
+		memset(_hePaletteCache, -1, 65536);
 }
 
 void ScummEngine::initCycl(const byte *ptr) {
@@ -809,6 +812,16 @@ void ScummEngine_v8::desaturatePalette(int hueScale, int satScale, int lightScal
 }
 #endif
 
+
+int ScummEngine::convert16BitColor(uint16 color, uint8 r, uint8 g, uint8 b) {
+	// HACK: Find the closest matching color, and store in
+	// cache for faster access.
+	if (_hePaletteCache[color] == -1) {
+		_hePaletteCache[color] = remapPaletteColor(r, g, b, -1);
+	}
+
+	return _hePaletteCache[color];
+}
 
 int ScummEngine::remapPaletteColor(int r, int g, int b, int threshold) {
 	byte *pal;
