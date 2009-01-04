@@ -73,7 +73,8 @@ protected:
 	const byte *akcd;		// costume data (contains the data for the codecs)
 
 	const byte *akct;		// HE specific: condition table
-	const uint8 *xmap;		// HE specific: shadow color table ?!?
+	const byte *rgbs;		// HE specific: RGB table
+	const uint8 *xmap;		// HE specific: shadow color table
 
 	struct {
 		bool repeatMode;
@@ -97,6 +98,7 @@ public:
 		akof = 0;
 		akcd = 0;
 		akct = 0;
+		rgbs = 0;
 		xmap = 0;
 		_actorHitMode = false;
 	}

@@ -570,7 +570,12 @@ void Wiz::copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth,
 		dst += r2.left + r2.top * dstw;
 		while (h--) {
 			for (int i = 0; i < w; ++i) {
-				uint16 col = READ_LE_UINT16(src + 2 * i) / 256;
+				uint16 col = READ_LE_UINT16(src + 2 * i);
+				uint8 r = ((col >> 10) & 0x1F) << 3;
+				uint8 g = ((col >>  5) & 0x1F) << 3;
+				uint8 b = ((col >>  0) & 0x1F) << 3;
+				col = _vm->remapPaletteColor(r, g, b, -1);
+
 				if (transColor == -1 || transColor != col) {
 					dst[i] = palPtr[col];
 				}
@@ -653,7 +658,12 @@ void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, const uint8 *src, co
 						code += w;
 					}
 					while (code--) {
-						uint16 col = READ_LE_UINT16(dataPtr) / 256;
+						uint16 col = READ_LE_UINT16(dataPtr);
+						uint8 r = ((col >> 10) & 0x1F) << 3;
+						uint8 g = ((col >>  5) & 0x1F) << 3;
+						uint8 b = ((col >>  0) & 0x1F) << 3;
+						col = _vm->remapPaletteColor(r, g, b, -1);
+
 						if (type == kWizXMap) {
 							*dstPtr = xmapPtr[col * 256 + *dstPtr];
 						}
@@ -682,7 +692,12 @@ void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, const uint8 *src, co
 						code += w;
 					}
 					while (code--) {
-						uint16 col = READ_LE_UINT16(dataPtr) / 256;
+						uint16 col = READ_LE_UINT16(dataPtr);
+						uint8 r = ((col >> 10) & 0x1F) << 3;
+						uint8 g = ((col >>  5) & 0x1F) << 3;
+						uint8 b = ((col >>  0) & 0x1F) << 3;
+						col = _vm->remapPaletteColor(r, g, b, -1);
+
 						if (type == kWizXMap) {
 							*dstPtr = xmapPtr[col * 256 + *dstPtr];
 						}

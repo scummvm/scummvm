@@ -303,6 +303,19 @@ void AkosRenderer::setPalette(byte *new_palette) {
 	if (_vm->_game.heversion >= 99 && _paletteNum) {
 		for (i = 0; i < size; i++)
 			_palette[i] = (byte)_vm->_hePalettes[_paletteNum * 1024 + 768 + akpl[i]];
+	} else if (_vm->_game.heversion >= 99 && rgbs) {
+		for (i = 0; i < size; i++) {
+			if (new_palette[i] == 0xFF) {
+				uint8 col = akpl[i];
+				uint8 r = rgbs[col * 3 + 0];
+				uint8 g = rgbs[col * 3 + 1];
+				uint8 b = rgbs[col * 3 + 2];
+
+				_palette[i] = _vm->remapPaletteColor(r, g, b, -1);
+			} else {
+				_palette[i] = new_palette[i];
+			}
+		}
 	} else {
 		for (i = 0; i < size; i++) {
 			_palette[i] = new_palette[i] != 0xFF ? new_palette[i] : akpl[i];
@@ -336,6 +349,7 @@ void AkosRenderer::setCostume(int costume, int shadow) {
 	akpl = _vm->findResourceData(MKID_BE('AKPL'), akos);
 	_codec = READ_LE_UINT16(&akhd->codec);
 	akct = _vm->findResourceData(MKID_BE('AKCT'), akos);
+	rgbs = _vm->findResourceData(MKID_BE('RGBS'), akos);
 
 	xmap = 0;
 	if (shadow) {
