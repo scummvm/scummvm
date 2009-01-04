@@ -123,8 +123,8 @@ struct CommandData {
 	// BRA specific
 	Common::Point	_startPos;
 	Common::Point	_startPos2;
-	uint			_lvalue;
-	int				_rvalue;
+	Common::String	_counterName;
+	int				_counterValue;
 	int				_zeta0;
 	int				_zeta1;
 	int				_zeta2;
@@ -170,6 +170,12 @@ struct Answer {
 	CommandList	_commands;
 	uint32		_noFlags;
 	uint32		_yesFlags;
+
+	// BRA specific
+	bool _hasCounterCondition;
+	Common::String	_counterName;
+	int	_counterValue;
+	int	_counterOp;
 
 	Answer();
 };

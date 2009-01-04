@@ -199,42 +199,36 @@ DECLARE_COMMAND_OPCODE(leave) {
 
 
 DECLARE_COMMAND_OPCODE(inc) {
-	_vm->_counters[_ctxt.cmd->u._lvalue] += _ctxt.cmd->u._rvalue;
+	int v = _vm->getCounterValue(_ctxt.cmd->u._counterName);
+	_vm->setCounterValue(_ctxt.cmd->u._counterName, v + _ctxt.cmd->u._counterValue);
 }
 
 
 DECLARE_COMMAND_OPCODE(dec) {
-	_vm->_counters[_ctxt.cmd->u._lvalue] -= _ctxt.cmd->u._rvalue;
+	int v = _vm->getCounterValue(_ctxt.cmd->u._counterName);
+	_vm->setCounterValue(_ctxt.cmd->u._counterName, v - _ctxt.cmd->u._counterValue);
 }
 
+// these definitions must match those in parser_br.cpp
+#define CMD_TEST		25
+#define CMD_TEST_GT		26
+#define CMD_TEST_LT		27
 
 DECLARE_COMMAND_OPCODE(ifeq) {
-	if (_vm->_counters[_ctxt.cmd->u._lvalue] == _ctxt.cmd->u._rvalue) {
-		_vm->setLocationFlags(kFlagsTestTrue);
-	} else {
-		_vm->clearLocationFlags(kFlagsTestTrue);
-	}
+	_vm->testCounterCondition(_ctxt.cmd->u._counterName, CMD_TEST, _ctxt.cmd->u._counterValue);
 }
 
 DECLARE_COMMAND_OPCODE(iflt) {
-	if (_vm->_counters[_ctxt.cmd->u._lvalue] < _ctxt.cmd->u._rvalue) {
-		_vm->setLocationFlags(kFlagsTestTrue);
-	} else {
-		_vm->clearLocationFlags(kFlagsTestTrue);
-	}
+	_vm->testCounterCondition(_ctxt.cmd->u._counterName, CMD_TEST_LT, _ctxt.cmd->u._counterValue);
 }
 
 DECLARE_COMMAND_OPCODE(ifgt) {
-	if (_vm->_counters[_ctxt.cmd->u._lvalue] > _ctxt.cmd->u._rvalue) {
-		_vm->setLocationFlags(kFlagsTestTrue);
-	} else {
-		_vm->clearLocationFlags(kFlagsTestTrue);
-	}
+	_vm->testCounterCondition(_ctxt.cmd->u._counterName, CMD_TEST_GT, _ctxt.cmd->u._counterValue);
 }
 
 
 DECLARE_COMMAND_OPCODE(let) {
-	_vm->_counters[_ctxt.cmd->u._lvalue] = _ctxt.cmd->u._rvalue;
+	_vm->setCounterValue(_ctxt.cmd->u._counterName, _ctxt.cmd->u._counterValue);
 }
 
 
@@ -544,5 +538,6 @@ ProgramExec_br::ProgramExec_br(Parallaction_br *vm) : ProgramExec_ns(vm), _vm(vm
 
 ProgramExec_br::~ProgramExec_br() {
 }
+
 
 } // namespace Parallaction

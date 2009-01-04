@@ -862,53 +862,7 @@ Question *LocationParser_ns::parseQuestion() {
 	return question;
 }
 
-void LocationParser_ns::parseAnswerVariants(Answer *answer) {
-	if (!_tokens[1][0]) {
-		return;
-	}
-
-	if (!scumm_stricmp(_tokens[1], "counter")) {
-		// TODO: parse the counter and the condition. This is done creating a new
-		// Command and usng the command parser for CMD_TEST in the original.
-
-	} else {
-
-		Table* flagNames;
-		uint16 token;
-
-		if (!scumm_stricmp(_tokens[1], "global")) {
-			token = 2;
-			flagNames = _vm->_globalFlagsNames;
-			answer->_yesFlags |= kFlagsGlobal;
-		} else {
-			token = 1;
-			flagNames = _vm->_localFlagNames;
-		}
-
-		do {
-
-			if (!scumm_strnicmp(_tokens[token], "no", 2)) {
-				byte _al = flagNames->lookup(_tokens[token]+2);
-				answer->_noFlags |= 1 << (_al - 1);
-			} else {
-				byte _al = flagNames->lookup(_tokens[token]);
-				answer->_yesFlags |= 1 << (_al - 1);
-			}
-
-			token++;
-
-		} while (!scumm_stricmp(_tokens[token++], "|"));
-
-	}
-}
-
-Answer *LocationParser_ns::parseAnswer() {
-
-	Answer *answer = new Answer;
-	assert(answer);
-
-	parseAnswerVariants(answer);
-
+void LocationParser_ns::parseAnswerBody(Answer *answer) {
 	answer->_text = parseDialogueString();
 
 	_script->readLineToken(true);
@@ -927,7 +881,45 @@ Answer *LocationParser_ns::parseAnswer() {
 
 		_script->readLineToken(true);
 	}
+}
 
+void LocationParser_ns::parseAnswerFlags(Answer *answer) {
+	if (!_tokens[1][0]) {
+		return;
+	}
+
+	Table* flagNames;
+	uint16 token;
+
+	if (!scumm_stricmp(_tokens[1], "global")) {
+		token = 2;
+		flagNames = _vm->_globalFlagsNames;
+		answer->_yesFlags |= kFlagsGlobal;
+	} else {
+		token = 1;
+		flagNames = _vm->_localFlagNames;
+	}
+
+	do {
+
+		if (!scumm_strnicmp(_tokens[token], "no", 2)) {
+			byte _al = flagNames->lookup(_tokens[token]+2);
+			answer->_noFlags |= 1 << (_al - 1);
+		} else {
+			byte _al = flagNames->lookup(_tokens[token]);
+			answer->_yesFlags |= 1 << (_al - 1);
+		}
+
+		token++;
+
+	} while (!scumm_stricmp(_tokens[token++], "|"));
+}
+
+Answer *LocationParser_ns::parseAnswer() {
+	Answer *answer = new Answer;
+	assert(answer);
+	parseAnswerFlags(answer);
+	parseAnswerBody(answer);
 	return answer;
 }
 

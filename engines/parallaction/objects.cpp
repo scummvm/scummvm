@@ -249,6 +249,7 @@ Answer::Answer() {
 	_followingQuestion =  NULL;
 	_noFlags = 0;
 	_yesFlags = 0;
+	_hasCounterCondition = false;
 }
 
 Question::Question() {

@@ -362,6 +362,7 @@ public:
 	virtual	void callFunction(uint index, void* parm) = 0;
 	virtual void runPendingZones() = 0;
 	virtual void cleanupGame() = 0;
+	virtual DialogueManager *createDialogueManager(ZonePtr z) = 0;
 };
 
 
@@ -383,6 +384,8 @@ public:
 	virtual void 	callFunction(uint index, void* parm);
 	virtual void 	runPendingZones();
 	virtual void 	cleanupGame();
+
+	virtual DialogueManager *createDialogueManager(ZonePtr z);
 
 	void 	switchBackground(const char* background, const char* mask);
 
@@ -474,11 +477,18 @@ public:
 	virtual void runPendingZones();
 	virtual void cleanupGame();
 
+	virtual DialogueManager *createDialogueManager(ZonePtr z);
+
 	void setupSubtitles(char *s, char *s2, int y);
 	void clearSubtitles();
 
+	void testCounterCondition(const Common::String &name, int op, int value);
+
 public:
-	Table		*_countersNames;
+	bool	counterExists(const Common::String &name);
+	int		getCounterValue(const Common::String &name);
+	void	setCounterValue(const Common::String &name, int value);
+
 	const char **_audioCommandsNamesRes;
 	static const char *_partNames[];
 	int			_part;
@@ -489,13 +499,15 @@ public:
 	int			_subtitleY;
 	int			_subtitle[2];
 	ZonePtr		_activeZone2;
-	int32		_counters[32];
 	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
 
 
 private:
 	LocationParser_br		*_locationParser;
 	ProgramParser_br		*_programParser;
+
+	int32		_counters[32];
+	Table		*_countersNames;
 
 private:
 	void	initResources();

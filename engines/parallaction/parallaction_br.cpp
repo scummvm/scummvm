@@ -326,6 +326,64 @@ void Parallaction_br::changeCharacter(const char *name) {
 	_char._ani->_flags |= kFlagsActive;
 }
 
+bool Parallaction_br::counterExists(const Common::String &name) {
+	return Table::notFound != _countersNames->lookup(name.c_str());
+}
+
+int	Parallaction_br::getCounterValue(const Common::String &name) {
+	int index = _countersNames->lookup(name.c_str());
+	if (index != Table::notFound) {
+		return _counters[index - 1];
+	}
+	return 0;
+}
+
+void Parallaction_br::setCounterValue(const Common::String &name, int value) {
+	int index = _countersNames->lookup(name.c_str());
+	if (index != Table::notFound) {
+		_counters[index - 1] = value;
+	}
+}
+
+void Parallaction_br::testCounterCondition(const Common::String &name, int op, int value) {
+	int index = _countersNames->lookup(name.c_str());
+	if (index == Table::notFound) {
+		clearLocationFlags(kFlagsTestTrue);
+		return;
+	}
+
+	int c = _counters[index - 1];
+
+// these definitions must match those in parser_br.cpp
+#define CMD_TEST		25
+#define CMD_TEST_GT		26
+#define CMD_TEST_LT		27
+
+	bool res = false;
+	switch (op) {
+	case CMD_TEST:
+		res = (c == value);
+		break;
+
+	case CMD_TEST_GT:
+		res = (c > value);
+		break;
+
+	case CMD_TEST_LT:
+		res = (c < value);
+		break;
+
+	default:
+		error("unknown operator in testCounterCondition");
+	}
+
+	if (res) {
+		setLocationFlags(kFlagsTestTrue);
+	} else {
+		clearLocationFlags(kFlagsTestTrue);
+	}
+}
+
 
 
 } // namespace Parallaction

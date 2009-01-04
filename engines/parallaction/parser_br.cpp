@@ -564,9 +564,13 @@ DECLARE_COMMAND_PARSER(math)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->u._lvalue = _vm->_countersNames->lookup(_tokens[1]);
+	if (!_vm->counterExists(_tokens[1])) {
+		error("counter '%s' doesn't exists", _tokens[1]);
+	}
+
+	ctxt.cmd->u._counterName = _tokens[1];
 	ctxt.nextToken++;
-	ctxt.cmd->u._rvalue = atoi(_tokens[2]);
+	ctxt.cmd->u._counterValue = atoi(_tokens[2]);
 	ctxt.nextToken++;
 
 	parseCommandFlags();
@@ -578,19 +582,17 @@ DECLARE_COMMAND_PARSER(test)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(test) ");
 
 	createCommand(_parser->_lookup);
-
-	uint counter = _vm->_countersNames->lookup(_tokens[1]);
 	ctxt.nextToken++;
 
-	if (counter == Table::notFound) {
+	if (!_vm->counterExists(_tokens[1])) {
 		if (!scumm_stricmp("SFX", _tokens[1])) {
 			ctxt.cmd->_id = CMD_TEST_SFX;
 		} else {
 			error("unknown counter '%s' in test opcode", _tokens[1]);
 		}
 	} else {
-		ctxt.cmd->u._lvalue = counter;
-		ctxt.cmd->u._rvalue = atoi(_tokens[3]);
+		ctxt.cmd->u._counterName = _tokens[1];
+		ctxt.cmd->u._counterValue = atoi(_tokens[3]);
 		ctxt.nextToken++;
 
 		if (_tokens[2][0] == '>') {
@@ -704,7 +706,7 @@ DECLARE_COMMAND_PARSER(unary)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->u._rvalue = atoi(_tokens[1]);
+	ctxt.cmd->u._counterValue = atoi(_tokens[1]);
 	ctxt.nextToken++;
 
 	parseCommandFlags();
@@ -895,6 +897,45 @@ DECLARE_ANIM_PARSER(endanimation)  {
 }
 
 
+void LocationParser_br::parseAnswerCounter(Answer *answer) {
+	if (!_tokens[1][0]) {
+		return;
+	}
+
+	if (scumm_stricmp(_tokens[1], "counter")) {
+		return;
+	}
+
+	if (!_vm->counterExists(_tokens[2])) {
+		error("unknown counter '%s' in dialogue", _tokens[2]);
+	}
+
+	answer->_hasCounterCondition = true;
+
+	answer->_counterName = _tokens[2];
+	answer->_counterValue = atoi(_tokens[4]);
+
+	if (_tokens[3][0] == '>') {
+		answer->_counterOp = CMD_TEST_GT;
+	} else
+	if (_tokens[3][0] == '<') {
+		answer->_counterOp = CMD_TEST_LT;
+	} else {
+		answer->_counterOp = CMD_TEST;
+	}
+
+}
+
+
+
+Answer *LocationParser_br::parseAnswer() {
+	Answer *answer = new Answer;
+	assert(answer);
+	parseAnswerFlags(answer);
+	parseAnswerCounter(answer);
+	parseAnswerBody(answer);
+	return answer;
+}
 
 
 

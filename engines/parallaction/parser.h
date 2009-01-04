@@ -189,8 +189,9 @@ protected:
 	Common::String	parseDialogueString();
 	Dialogue	*parseDialogue();
 	void		resolveDialogueForwards(Dialogue *dialogue, uint numQuestions, Table &forwards);
-	Answer		*parseAnswer();
-	void 		parseAnswerVariants(Answer *answer);
+	virtual Answer *parseAnswer();
+	void 		parseAnswerFlags(Answer *answer);
+	void 		parseAnswerBody(Answer *answer);
 	Question	*parseQuestion();
 
 	void		parseZone(ZoneList &list, char *name);
@@ -306,6 +307,8 @@ protected:
 	virtual void	parseZoneTypeBlock(ZonePtr z);
 	void			parsePathData(ZonePtr z);
 	void 			parseGetData(ZonePtr z);
+	void 			parseAnswerCounter(Answer *answer);
+	virtual Answer *parseAnswer();
 
 public:
 	LocationParser_br(Parallaction_br *vm) : LocationParser_ns((Parallaction_ns*)vm), _vm(vm),
