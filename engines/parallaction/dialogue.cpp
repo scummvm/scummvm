@@ -237,7 +237,7 @@ bool DialogueManager::displayAnswers() {
 		resetPassword();
 	} else
 	if (_numVisAnswers == 1) {
-		Answer *a = _q->_answers[_visAnswers[0]];
+		a = _q->_answers[_visAnswers[0]];
 		mood = a->_mood & 0xF;
 		_vm->_balloonMan->setBalloonText(0, a->_text.c_str(), BalloonManager::kNormalColor);
 	} else
