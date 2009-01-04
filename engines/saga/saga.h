@@ -123,7 +123,8 @@ enum GameFeatures {
 	GF_MONO_MUSIC        = 1 << 5,
 	GF_EXTRA_ITE_CREDITS = 1 << 6,
 	GF_IHNM_DEMO         = 1 << 7,
-	GF_LE_VOICES         = 1 << 8
+	GF_LE_VOICES         = 1 << 8,
+	GF_8BIT_UNSIGNED_PCM = 1 << 9
 };
 
 enum VerbTypeIds {
@@ -287,12 +288,6 @@ struct GameFontDescription {
 };
 
 struct GameDisplayInfo;
-
-struct GameSoundInfo {
-	GameSoundTypes resourceType;
-	int sampleBits;
-	bool isSigned;
-};
 
 struct GamePatchDescription {
 	const char *fileName;
@@ -594,9 +589,6 @@ public:
 	bool isMacResources() const;
 	bool isSaga2() const { return getGameId() == GID_DINO || getGameId() == GID_FTA2; }
 	const GameResourceDescription *getResourceDescription();
-	const GameSoundInfo *getVoiceInfo() const;
-	const GameSoundInfo *getSfxInfo() const;
-	const GameSoundInfo *getMusicInfo() const;
 
 	const GameFontDescription *getFontDescription(int index);
 	int getFontsCount() const;

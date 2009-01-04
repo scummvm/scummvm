@@ -189,13 +189,11 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	Audio::AudioStream *voxStream;
 	size_t soundResourceLength;
 	bool result = false;
-	GameSoundTypes resourceType;
+	GameSoundTypes resourceType = kSoundPCM;
 	byte *data = 0;
 	int rate;
 	int size;
 	byte flags = 0;
-	size_t voxSize;
-	const GameSoundInfo *soundInfo = 0;
 	Common::File* file;
 
 	if (resourceId == (uint32)-1) {
@@ -234,12 +232,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 	Common::SeekableReadStream& readS = *file;
 
-	if (context->fileType & GAME_VOICEFILE) {
-		soundInfo = _vm->getVoiceInfo();
-	} else {
-		soundInfo = _vm->getSfxInfo();
-	}
-
 	if (soundResourceLength >= 8) {
 		byte header[8];
 
@@ -254,8 +246,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			resourceType = kSoundAIFF;
 		} else if (!memcmp(header, "ajkg", 4) != 0) {
 			resourceType = kSoundShorten;
-		} else if (soundInfo) {
-			resourceType = soundInfo->resourceType;
 		}
 
 		bool uncompressedSound = false;
@@ -280,6 +270,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 	}
 
+	// Default sound type is 16-bit PCM (used in ITE)
 	buffer.isBigEndian = context->isBigEndian;
 	if ((context->fileType & GAME_VOICEFILE) && (_vm->getFeatures() & GF_LE_VOICES))
 		buffer.isBigEndian = false;
@@ -287,7 +278,19 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	buffer.soundType = resourceType;
 	buffer.originalSize = 0;
 	buffer.stereo = false;
+	buffer.isSigned = true;			// default for PCM and VOX
 	buffer.frequency = 22050;		// default for PCM and VOX
+	buffer.sampleBits = 16;			// default for PCM and VOX
+	if (_vm->getGameId() == GID_ITE) {
+		if (_vm->getFeatures() & GF_8BIT_UNSIGNED_PCM) {	// older ITE demos
+			buffer.isSigned = false;
+			buffer.sampleBits = 8;
+		} else {
+			// Voice files in newer ITE demo versions are OKI ADPCM (VOX) encoded
+			if (!scumm_stricmp(context->fileName, "voicesd.rsc"))
+				resourceType = kSoundVOX;
+		}
+	}
 	buffer.buffer = NULL;
 
 	// Older Mac versions of ITE were Macbinary packed
@@ -295,8 +298,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 	switch (resourceType) {
 	case kSoundPCM:
-		buffer.isSigned = soundInfo->isSigned;
-		buffer.sampleBits = soundInfo->sampleBits;
 		buffer.size = soundResourceLength - soundOffset;
 		if (!onlyHeader) {
 			buffer.buffer = (byte *) malloc(buffer.size);
@@ -307,16 +308,11 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		result = true;
 		break;
 	case kSoundVOX:
-		buffer.isSigned = soundInfo->isSigned;
-		buffer.sampleBits = soundInfo->sampleBits;
 		buffer.size = soundResourceLength * 4;
 		if (!onlyHeader) {
 			voxStream = Audio::makeADPCMStream(&readS, false, soundResourceLength, Audio::kADPCMOki);
 			buffer.buffer = (byte *)malloc(buffer.size);
-			voxSize = voxStream->readBuffer((int16*)buffer.buffer, soundResourceLength * 2);
-			if (voxSize != soundResourceLength * 2) {
-				error("SndRes::load() wrong VOX output size");
-			}
+			voxStream->readBuffer((int16*)buffer.buffer, soundResourceLength * 2);
 			delete voxStream;
 		}
 		result = true;

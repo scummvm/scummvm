@@ -112,14 +112,6 @@ static const GameFontDescription IHNMDEMO_GameFonts[]   = { {2}, {3}, {4} };
 // Font 6 is kIHNMFont8, font 8 is kIHNMMainFont
 static const GameFontDescription IHNMCD_GameFonts[]     = { {2}, {3}, {4}, {5}, {6}, {7}, {8} };
 
-// Game sound overrides
-// Information for WAV, VOC, AIFF and Shorten audio files is obtained automatically. For other
-// audio types, we specify it here
-//                                                         sampleBits,  isSigned
-static const GameSoundInfo ITE_GameSound         = { kSoundPCM,    16,  true  };
-static const GameSoundInfo ITEWINDEMO1_GameSound = { kSoundPCM,     8,  false };
-static const GameSoundInfo ITEDEMO_GameVoice     = { kSoundVOX,    16,  true  };
-
 // Patch files. Files not found will be ignored
 static const GamePatchDescription ITEPatch_Files[] = {
 	{       "cave.mid", GAME_RESOURCEFILE,    9},
@@ -209,8 +201,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEDEMO_GameFonts),
 		ITEDEMO_GameFonts,
 		NULL,
-		NULL,
-		NULL,
 	},
 #endif
 
@@ -234,8 +224,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITEDEMO_GameVoice,
-		&ITE_GameSound,
 		ITEMacPatch_Files,
 	},
 
@@ -261,8 +249,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITEDEMO_GameVoice,
-		&ITE_GameSound,
 		ITEMacPatch_Files,
 	},
 
@@ -288,8 +274,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITEDEMO_GameVoice,
-		&ITE_GameSound,
 		ITEPatch_Files,
 	},
 
@@ -310,13 +294,11 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::ADGF_DEMO
 		},
 		GID_ITE,
-		GF_WYRMKEEP | GF_NON_INTERACTIVE,
+		GF_WYRMKEEP | GF_NON_INTERACTIVE | GF_8BIT_UNSIGNED_PCM,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITEWINDEMO1_GameSound,
-		&ITEWINDEMO1_GameSound,
 		ITEPatch_Files,
 	},
 
@@ -349,8 +331,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITE_GameSound,
-		&ITE_GameSound,
 		NULL,
 	},
 
@@ -374,8 +354,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITE_GameSound,
-		&ITE_GameSound,
 		ITEMacPatch_Files,
 	},
 
@@ -407,8 +385,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
-		&ITE_GameSound,
-		&ITE_GameSound,
 		NULL,
 	},
 
@@ -438,8 +414,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
-		&ITE_GameSound,
-		&ITE_GameSound,
 		NULL,
 	},
 
@@ -463,8 +437,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
-		&ITE_GameSound,
-		&ITE_GameSound,
 		ITEPatch_Files,
 	},
 
@@ -488,8 +460,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
-		&ITE_GameSound,
-		&ITE_GameSound,
 		ITEPatch_Files,
 	},
 
@@ -513,8 +483,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
-		&ITE_GameSound,
-		&ITE_GameSound,
 		ITEPatch_Files,
 	},
 
@@ -539,8 +507,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
-		&ITE_GameSound,
-		&ITE_GameSound,
 		NULL,
 	},
 
@@ -568,8 +534,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		NULL,
-		NULL,
-		NULL,
 	},
 
 	// Inherit the earth - Disk version
@@ -592,8 +556,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
-		NULL,
-		NULL,
 		ITEPatch_Files,
 	},
 
@@ -617,8 +579,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
-		NULL,
-		NULL,
 		ITEPatch_Files,
 	},
 
@@ -652,8 +612,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMDEMO_GameFonts),
 		IHNMDEMO_GameFonts,
 		NULL,
-		NULL,
-		NULL,
 	},
 
 	// I Have No Mouth And I Must Scream - English CD version
@@ -685,8 +643,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		NULL,
-		NULL,
-		NULL,
 	},
 
 	// I Have No Mouth And I Must Scream - De CD version
@@ -716,8 +672,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		NULL,
-		NULL,
-		NULL,
 	},
 
 	// I Have No Mouth And I Must Scream - Sp CD version
@@ -744,8 +698,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
-		NULL,
-		NULL,
 		NULL,
 	},
 
@@ -775,8 +727,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		NULL,
-		NULL,
-		NULL,
 	},
 
 	// I Have No Mouth And I Must Scream - Italian fan CD translation
@@ -804,8 +754,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		NULL,
-		NULL,
-		NULL,
 	},
 	// I Have No Mouth And I Must Scream - Mac English CD
 	{
@@ -829,8 +777,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
-		NULL,
-		NULL,
 		NULL,
 	},
 #endif
@@ -866,14 +812,12 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,	// game resources
 		0,		// number of fonts
 		NULL,	// font array
-		NULL,	// voice info
-		NULL,	// SFX info
 		NULL,
 	},
 
 #endif
 
-	{ AD_TABLE_END_MARKER, 0, 0, 0, NULL, 0, NULL, NULL, NULL, NULL }
+	{ AD_TABLE_END_MARKER, 0, 0, 0, NULL, 0, NULL, NULL }
 };
 
 } // End of namespace Saga

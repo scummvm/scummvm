@@ -56,7 +56,6 @@ private:
 	int16 _buf[BUFFER_SIZE];
 	const int16 *_bufferEnd;
 	const int16 *_pos;
-	const GameSoundInfo *_musicInfo;
 	MemoryReadStream *_memoryStream;
 	SagaEngine *_vm;
 
@@ -88,11 +87,6 @@ DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext
 
 	resourceData = context->getResourceData(resourceId);
 	_file = context->getFile(resourceData);
-	_musicInfo = _vm->getMusicInfo();
-
-	if (_musicInfo == NULL) {
-		error("DigitalMusicInputStream() wrong musicInfo");
-	}
 
 	_compressedStream = NULL;
 

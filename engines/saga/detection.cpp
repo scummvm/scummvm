@@ -51,24 +51,12 @@ struct SAGAGameDescription {
 	const GameResourceDescription *resourceDescription;
 	int fontsCount;
 	const GameFontDescription *fontDescriptions;
-	const GameSoundInfo *voiceInfo;
-	const GameSoundInfo *sfxInfo;
 	const GamePatchDescription *patchDescriptions;
 };
 
 bool SagaEngine::isBigEndian() const { return isMacResources() && getGameId() == GID_ITE; }
 bool SagaEngine::isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
 const GameResourceDescription *SagaEngine::getResourceDescription() { return _gameDescription->resourceDescription; }
-const GameSoundInfo *SagaEngine::getVoiceInfo() const { return _gameDescription->voiceInfo; }
-const GameSoundInfo *SagaEngine::getSfxInfo() const { return _gameDescription->sfxInfo; }
-const GameSoundInfo *SagaEngine::getMusicInfo() const {
-	static GameSoundInfo musicInfo;
-	musicInfo.resourceType = kSoundPCM;
-	musicInfo.sampleBits = 16;
-	musicInfo.isSigned = true;
-
-	return &musicInfo;
-}
 
 const GameFontDescription *SagaEngine::getFontDescription(int index) {
 	assert(index < _gameDescription->fontsCount);
