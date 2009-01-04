@@ -1629,7 +1629,7 @@ void ScummEngine_v90he::o90_getActorData() {
 		break;
 	case 2:
 		assertRange(0, val, 15, "o90_getActorData: Limb");
-		push(a->_cost.frame[val]);
+		push(a->_cost.frame[val] * 4);
 		break;
 	case 3:
 		push(a->getAnimSpeed());
