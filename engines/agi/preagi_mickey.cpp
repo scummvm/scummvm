@@ -102,7 +102,7 @@ void Mickey::readOfsData(int offset, int iItem, uint8 *buffer, long buflen) {
 bool Mickey::chooseY_N(int ofsPrompt, bool fErrorMsg) {
 	printExeStr(ofsPrompt);
 
-	for (;;) {
+	while (!_vm->shouldQuit()) {
 		switch (_vm->getSelection(kSelYesNo)) {
 		case 0: return false;
 		case 1: return true;
@@ -115,13 +115,15 @@ bool Mickey::chooseY_N(int ofsPrompt, bool fErrorMsg) {
 			break;
 		}
 	}
+	
+	return false;
 }
 
 int Mickey::choose1to9(int ofsPrompt) {
 	int answer = 0;
 	printExeStr(ofsPrompt);
 
-	for (;;) {
+	while (!_vm->shouldQuit()) {
 		answer = _vm->getSelection(kSelNumber);
 		if (answer == 10) {
 			printExeStr(IDO_MSA_PRESS_1_TO_9);
@@ -131,6 +133,7 @@ int Mickey::choose1to9(int ofsPrompt) {
 		} else return answer;
 	}
 
+	return 0;
 }
 
 void Mickey::printStr(char *buffer) {
@@ -343,7 +346,7 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 
 	drawMenu(menu, *sel0, *sel1);
 
-	for(;;) {
+	while (!_vm->shouldQuit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
 			case Common::EVENT_RTL:
@@ -495,6 +498,8 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 		animate();
 		drawMenu(menu, *sel0, *sel1);
 	}
+	
+	return false;
 }
 
 void Mickey::getMenuSel(char *buffer, int *sel0, int *sel1) {
@@ -508,8 +513,8 @@ void Mickey::getMenuSel(char *buffer, int *sel0, int *sel1) {
 	// Show the mouse cursor for the menu
 	CursorMan.showMouse(true);
 
-	for (;;) {
-		for (;;) {
+	while (!_vm->shouldQuit()) {
+		while (!_vm->shouldQuit()) {
 			if (getMenuSelRow(menu, sel0, sel1, 0)) {
 				if (_clickToMove)
 					break;
@@ -519,6 +524,7 @@ void Mickey::getMenuSel(char *buffer, int *sel0, int *sel1) {
 				}
 			}
 		}
+		
 		if (_clickToMove || getMenuSelRow(menu, sel0, sel1, 2)) {
 			break;
 		}
@@ -1208,6 +1214,10 @@ void Mickey::insertDisk(int iDisk) {
 }
 
 void Mickey::gameOver() {
+	// We shouldn't run the game over segment if we're quitting.
+	if (_vm->shouldQuit())
+		return;
+
 	drawPic(IDI_MSA_PIC_EARTH_SHIP_LEAVING);
 	printExeMsg(IDO_MSA_GAME_OVER[3]);
 	playSound(IDI_MSA_SND_GAME_OVER);
@@ -1222,7 +1232,6 @@ void Mickey::gameOver() {
 	}
 
 	waitAnyKey();
-	_vm->quitGame();
 }
 
 void Mickey::flipSwitch() {
@@ -1338,6 +1347,11 @@ void Mickey::intro() {
 
 	// show copyright and play theme
 	printExeMsg(IDO_MSA_COPYRIGHT);
+	
+	// Quit if necessary
+	if (_vm->shouldQuit())
+		return;
+	
 	playSound(IDI_MSA_SND_THEME);
 
 	// load game
@@ -1350,6 +1364,10 @@ void Mickey::intro() {
 			return;
 		}
 	}
+	
+	// Quit if necessary
+	if (_vm->shouldQuit())
+		return;
 
 	// play spaceship landing scene
 	_game.iPlanet = IDI_MSA_PLANET_EARTH;
@@ -1357,11 +1375,15 @@ void Mickey::intro() {
 
 	drawRoom();
 	printRoomDesc();
+	
+	// Quit if necessary
+	if (_vm->shouldQuit())
+		return;
 
 	playSound(IDI_MSA_SND_SHIP_LAND);
 
 	// Flash screen 3 times
-	for (int i = 1; i <= 3; i++) {
+	for (byte i = 0; i < 3; i++) {
 		playSound(IDI_MSA_SND_PRESS_BLUE);
 
 		//Set screen to white
@@ -2058,7 +2080,7 @@ void Mickey::waitAnyKey(bool anim) {
 	if (!anim)
 		_vm->_gfx->doUpdate();
 
-	for (;;) {
+	while (!_vm->shouldQuit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
 			case Common::EVENT_RTL:
@@ -2071,6 +2093,7 @@ void Mickey::waitAnyKey(bool anim) {
 				break;
 			}
 		}
+		
 		if (anim) {
 			animate();
 			_vm->_gfx->doUpdate();
@@ -2177,7 +2200,7 @@ void Mickey::run() {
 			done = false;
 		}
 
-		while (!done) {
+		while (!done && !_vm->shouldQuit()) {
 			// Check air supply
 			if (_game.fSuit) {
 				_game.nAir -= 1;
@@ -2186,9 +2209,8 @@ void Mickey::run() {
 						playSound(IDI_MSA_SND_XL30);
 						printExeMsg(IDO_MSA_XL30_SPEAKING);
 						printExeMsg(IDO_MSA_AIR_SUPPLY[i]);
-						if (i == 3) {
-							exit(0);
-						}
+						if (i == 3)
+							return;
 					}
 				}
 			} else {
