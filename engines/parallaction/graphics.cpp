@@ -600,8 +600,6 @@ void Gfx::updateFloatingLabel() {
 
 
 uint Gfx::createLabel(Font *font, const char *text, byte color) {
-	assert(_labels.size() < MAX_NUM_LABELS);
-
 	Graphics::Surface *cnv = new Graphics::Surface;
 
 	uint w, h;

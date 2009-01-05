@@ -512,8 +512,10 @@ public:
 	void freeLocationObjects();
 	void showGfxObj(GfxObj* obj, bool visible);
 	void clearGfxObjects(uint filter);
+	void loadGfxObjMask(const char *name, GfxObj *obj);
 	void sortScene();
-
+    void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
+	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
 
 	// labels
 	void showFloatingLabel(uint label);
@@ -551,6 +553,8 @@ public:
 	void setProjectorProgram(int16 *data);
 	int16 *_nextProjectorPos;
 
+	int getScrollPos();
+	void setScrollPos(int scrollX);
 
 	// init
 	Gfx(Parallaction* vm);
@@ -573,8 +577,6 @@ protected:
 	// BRA specific
 	Palette				_backupPal;
 
-	// frame data stored in programmable variables
-	int32 				getRenderMode(const char *type);
 
 	Graphics::Surface	*lockScreen();
 	void				unlockScreen();
@@ -588,13 +590,6 @@ protected:
 	int					_scrollPos;
 	int					_minScroll, _maxScroll;
 
-	// overlay mode enables drawing of graphics with automatic screen-to-game coordinate translation
-	bool				_overlayMode;
-	void				drawOverlay(Graphics::Surface &surf);
-
-public:
-
-	#define MAX_NUM_LABELS	20
 	#define NO_FLOATING_LABEL	1000
 
 	GfxObjArray	_labels;
@@ -603,27 +598,22 @@ public:
 
 	uint _floatingLabel;
 
-	void drawInventory();
-	void updateFloatingLabel();
+	// overlay mode enables drawing of graphics with automatic screen-to-game coordinate translation
+	bool				_overlayMode;
+	void				drawOverlay(Graphics::Surface &surf);
+	void 				drawInventory();
+
 	void drawList(Graphics::Surface &surface, GfxObjArray &list);
-
+	void updateFloatingLabel();
 	void copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surface &dst);
-
-	int getScrollPos();
-	void setScrollPos(int scrollX);
-
-	// low level text and patches
 	void drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
-
 	void drawGfxObject(GfxObj *obj, Graphics::Surface &surf);
-    void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
-	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
-
 	void bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
 	void bltMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
 	void bltNoMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, byte transparentColor);
 
-	void loadGfxObjMask(const char *name, GfxObj *obj);
+public:
+
 };
 
 
