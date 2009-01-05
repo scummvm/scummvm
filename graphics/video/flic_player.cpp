@@ -273,4 +273,18 @@ void FlicPlayer::setPalette(uint8 *mem) {
 	}
 }
 
+void FlicPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
+	uint h = _flicInfo.height;
+	uint w = _flicInfo.width;
+
+	byte *src = (byte *)_offscreen;
+	dst += y * pitch + x;
+
+	do {
+		memcpy(dst, src, w);
+		dst += pitch;
+		src += w;
+	} while (--h);
+}
+
 } // End of namespace Graphics
