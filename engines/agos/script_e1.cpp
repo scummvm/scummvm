@@ -563,9 +563,6 @@ void AGOSEngine_Elvira1::oe1_look() {
 	if (l) {
 		lobjFunc(l, "You can see ");	/* Show objects */
 	}
-	if (r && (r->flags & 4) && levelOf(i) < 10000) {
-		quitGame();
-	}
 }
 
 void AGOSEngine_Elvira1::oe1_doClass() {
@@ -971,14 +968,6 @@ void AGOSEngine_Elvira1::oe1_printMonsterHit() {
 	mouseOff();
 	writeChar(window, 35, 166, 4, _variableArray[415]);
 	mouseOn();
-}
-
-int16 AGOSEngine::levelOf(Item *item) {
-	SubPlayer *p = (SubPlayer *)findChildOfType(item, kPlayerType);
-	if (p == NULL)
-		return 0;
-
-	return p->level;
 }
 
 int16 AGOSEngine::moreText(Item *i) {

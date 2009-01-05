@@ -1066,7 +1066,6 @@ public:
 	void o_setDollar();
 	void o_isBox();
 
-	int16 levelOf(Item *item);
 	int16 moreText(Item *i);
 	void lobjFunc(Item *i, const char *f);
 	uint confirmYesOrNo(uint16 x, uint16 y);
