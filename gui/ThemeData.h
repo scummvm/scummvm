@@ -58,14 +58,7 @@ struct WidgetDrawData {
 	/** Texture where the cached widget is stored. */
 	Graphics::Surface *_surfaceCache;
 
-	~WidgetDrawData() {
-		_steps.clear();
-
-		if (_surfaceCache) {
-			_surfaceCache->free();
-			delete _surfaceCache;
-		}
-	}
+	~WidgetDrawData();
 };
 
 class ThemeItem {
