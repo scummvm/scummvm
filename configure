@@ -1052,7 +1052,19 @@ case $_host_os in
 	beos*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lbind -lsocket for the timidity MIDI driver
+		LDFLAGS="-L/boot/home/config/lib"
+		CFLAGS="-I/boot/home/config/include"
+		CXXFLAGS="$CXXFLAGS -fhuge-objects"
 		LIBS="$LIBS -lbind -lsocket"
+		type_1_byte='char'
+		type_2_byte='short'
+		type_4_byte='long'
+		;;	
+	haiku*)
+		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		# Needs -lnetwork for the timidity MIDI driver
+		LIBS="$LIBS -lnetwork"
+		CXXFLAGS="$CXXFLAGS -fhuge-objects"
 		type_1_byte='char'
 		type_2_byte='short'
 		type_4_byte='long'
