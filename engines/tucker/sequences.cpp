@@ -896,7 +896,7 @@ void AnimationSequencePlayer::openAnimation(int index, const char *fileName) {
 		_seqNum = 1;
 		return;
 	}
-	_flicPlayer[index].decodeFrame();
+	_flicPlayer[index].decodeNextFrame();
 	if (index == 0) {
 		memcpy(_animationPalette, _flicPlayer[index].getPalette(), 1024);
 		memcpy(_offscreenBuffer, _flicPlayer[index].getOffscreen(), kScreenWidth * kScreenHeight);
@@ -904,7 +904,7 @@ void AnimationSequencePlayer::openAnimation(int index, const char *fileName) {
 }
 
 void AnimationSequencePlayer::decodeNextAnimationFrame(int index) {
-	_flicPlayer[index].decodeFrame();
+	_flicPlayer[index].decodeNextFrame();
 	memcpy(_offscreenBuffer, _flicPlayer[index].getOffscreen(), kScreenWidth * kScreenHeight);
 	if (index == 0) {
 		if (_flicPlayer[index].isPaletteDirty()) {
@@ -940,12 +940,12 @@ void AnimationSequencePlayer::introSeq19_20() {
 		_newSeq = false;
 	}
 	if (_flicPlayer[0].getCurFrame() >= 116) {
-		_flicPlayer[1].decodeFrame();
+		_flicPlayer[1].decodeNextFrame();
 		if (_flicPlayer[1].isLastFrame()) {
 			_flicPlayer[1].reset();
 		}
 	}
-	_flicPlayer[0].decodeFrame();
+	_flicPlayer[0].decodeNextFrame();
 	const uint8 *t = _flicPlayer[1].getOffscreen();
 	for (int i = 0; i < 64000; ++i) {
 		const uint8 color = _flicPlayer[0].getOffscreen()[i];

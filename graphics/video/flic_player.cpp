@@ -190,7 +190,7 @@ void FlicPlayer::decodeDeltaFLC(uint8 *data) {
 #define PSTAMP     18
 #define FRAME_TYPE 0xF1FA
 
-void FlicPlayer::decodeFrame() {
+void FlicPlayer::decodeNextFrame() {
 	FrameTypeChunkHeader frameHeader;
 
 	// Read chunk

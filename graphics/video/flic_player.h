@@ -63,14 +63,46 @@ public:
 	FlicPlayer();
 	~FlicPlayer();
 
-	bool loadFile(const char *fileName);
-	void closeFile();
-	void decodeFrame();
+	/**
+	 * Returns the width of the video
+	 * @return the width of the video
+	 */
 	int getWidth() const { return _flicInfo.width; }
+
+	/**
+	 * Returns the height of the video
+	 * @return the height of the video
+	 */
 	int getHeight() const { return _flicInfo.height; }
-	bool hasFrames() const { return _flicInfo.numFrames > 0; }
+
+	/**
+	 * Returns the current frame number of the video
+	 * @return the current frame number of the video
+	 */
 	int getCurFrame() const { return _currFrame; }
+
+	/**
+	 * Returns the amount of frames in the video
+	 * @return the amount of frames in the video
+	 */
 	int getFrameCount() const { return _flicInfo.numFrames; }
+
+	/**
+	 * Load a FLIC encoded video file
+	 * @param filename	the filename to load
+	 */
+	bool loadFile(const char *fileName);
+
+	/**
+	 * Close a FLIC encoded video file
+	 */
+	void closeFile();
+
+	/**
+	 * Decode the next frame
+	 */
+	void decodeNextFrame();
+
 	bool isLastFrame() const { return _currFrame == _flicInfo.numFrames; }
 	uint32 getSpeed() const { return _flicInfo.speed; }
 	bool isPaletteDirty() const { return _paletteDirty; }
