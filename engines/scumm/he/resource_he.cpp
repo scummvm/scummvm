@@ -1665,11 +1665,35 @@ int ScummEngine_v72he::getSoundResourceSize(int id) {
 	return size;
 }
 
-void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
-	// HACK: Unsupported sound format
-	if (_game.id == GID_MOONBASE)
-		return;
+byte *getSoundOffset(byte *ptr) {
+	byte *endPtr;
+	uint32 offset, size;
 
+	if (READ_BE_UINT32(ptr) != MKID_BE('RIFF'))
+		return NULL;
+
+	endPtr = (ptr + 12);
+	size = READ_LE_UINT32(ptr + 4) - 4;
+
+	while (size > 0) {
+		offset = READ_LE_UINT32(endPtr + 4);
+
+		if (offset <= 0)
+			error("Illegal chunk length - %d bytes.", offset);
+
+		if (offset > size)
+			error("Chunk extends beyond file end - %d versus %d.", offset, size);
+
+		if (READ_BE_UINT32(endPtr) == MKID_BE('data'))
+			return endPtr;
+
+		endPtr = endPtr + offset + 8;
+	}
+
+	return NULL;
+}
+
+void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	byte *snd1Ptr, *snd2Ptr;
 	byte *sbng1Ptr, *sbng2Ptr;
 	byte *sdat1Ptr, *sdat2Ptr;
@@ -1677,9 +1701,13 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	int len, offs, size;
 	int sdat1size, sdat2size;
 
+	sbng1Ptr = NULL;
+	sbng2Ptr = NULL;
+
 	if (snd2id == -1) {
 		_sndPtrOffs = 0;
 		_sndTmrOffs = 0;
+		_sndDataSize = 0;
 		return;
 	}
 
@@ -1687,6 +1715,7 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		_curSndId = snd1id;
 		_sndPtrOffs = 0;
 		_sndTmrOffs = 0;
+		_sndDataSize = 0;
 	}
 
 	snd1Ptr = getResourceAddress(rtSound, snd1id);
@@ -1701,8 +1730,10 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 			chan =  i;
 	}
 
-	sbng1Ptr = heFindResource(MKID_BE('SBNG'), snd1Ptr);
-	sbng2Ptr = heFindResource(MKID_BE('SBNG'), snd2Ptr);
+	if (!getSoundOffset(snd1Ptr)) {
+		sbng1Ptr = heFindResource(MKID_BE('SBNG'), snd1Ptr);
+		sbng2Ptr = heFindResource(MKID_BE('SBNG'), snd2Ptr);
+	}
 
 	if (sbng1Ptr != NULL && sbng2Ptr != NULL) {
 		if (chan != -1 && ((SoundHE *)_sound)->_heChannel[chan].codeOffs > 0) {
@@ -1745,14 +1776,28 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		}
 	}
 
-	sdat1Ptr = heFindResource(MKID_BE('SDAT'), snd1Ptr);
-	assert(sdat1Ptr);
-	sdat2Ptr = heFindResource(MKID_BE('SDAT'), snd2Ptr);
-	assert(sdat2Ptr);
+	if (getSoundOffset(snd1Ptr)) {
+		sdat1Ptr = getSoundOffset(snd1Ptr);
+		assert(sdat1Ptr);
+		sdat2Ptr = getSoundOffset(snd2Ptr);
+		assert(sdat2Ptr);
 
-	sdat1size = READ_BE_UINT32(sdat1Ptr + 4) - 8 - _sndPtrOffs;
-	sdat2size = READ_BE_UINT32(sdat2Ptr + 4) - 8;
+		if (!_sndDataSize)
+			_sndDataSize = READ_LE_UINT32(sdat1Ptr + 4) - 8;
 
+		sdat2size = READ_LE_UINT32(sdat2Ptr + 4) - 8;
+	} else {
+		sdat1Ptr = heFindResource(MKID_BE('SDAT'), snd1Ptr);
+		assert(sdat1Ptr);
+		sdat2Ptr = heFindResource(MKID_BE('SDAT'), snd2Ptr);
+		assert(sdat2Ptr);
+
+		_sndDataSize = READ_BE_UINT32(sdat1Ptr + 4) - 8;
+
+		sdat2size = READ_BE_UINT32(sdat2Ptr + 4) - 8;
+	}
+
+	sdat1size = _sndDataSize - _sndPtrOffs;
 	if (sdat2size < sdat1size) {
 		src = sdat2Ptr + 8;
 		dst = sdat1Ptr + 8 + _sndPtrOffs;

@@ -772,6 +772,7 @@ ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const DetectorResult &dr)
 	_curSndId = 0;
 	_sndPtrOffs = 0;
 	_sndTmrOffs = 0;
+	_sndDataSize = 0;
 
 	VAR_PLATFORM = 0xFF;
 	VAR_PLATFORM_VERSION = 0xFF;

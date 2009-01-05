@@ -393,7 +393,7 @@ protected:
 
 	const OpcodeEntryV80he *_opcodesV80he;
 
-	int32 _heSndResId, _curSndId, _sndPtrOffs, _sndTmrOffs;
+	int32 _heSndResId, _curSndId, _sndPtrOffs, _sndTmrOffs, _sndDataSize;
 
 public:
 	ScummEngine_v80he(OSystem *syst, const DetectorResult &dr);
