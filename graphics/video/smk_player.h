@@ -35,8 +35,6 @@
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
 
-class OSystem;
-
 namespace Graphics {
 
 class BigHuffmanTree;
