@@ -576,8 +576,7 @@ public:
 	void getStringFromLine(char *buf, int len, char* result);
 
 	void grr();
-	void updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delayVal = 3);
-	void updateAnim2(int y, int px, int py, int width, int height, int count, byte* src);
+	void updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delayVal = 3, bool copyRectangle = false);
 
 	bool room(int rN, int fl);
 	bool room_0(int);

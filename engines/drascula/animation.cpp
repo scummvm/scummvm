@@ -27,28 +27,17 @@
 
 namespace Drascula {
 
-void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delayVal) {
+void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delayVal, bool copyRectangle) {
 	int x = 0;
 
 	for (int n = 0; n < count; n++){
 		x++;
 		copyBackground(x, y, destX, destY, width, height, src, screenSurface);
+		if (copyRectangle)
+			copyRect(x, y, destX, destY, width, height, src, screenSurface);
 		updateScreen(destX, destY, destX, destY, width, height, screenSurface);
 		x += width;
 		pause(delayVal);
-	}
-}
-
-void DrasculaEngine::updateAnim2(int y, int px, int py, int width, int height, int count, byte* src) {
-	int x = 0;
-
-	for (int n = 0; n < count; n++) {
-		x++;
-		copyBackground(px, py, px, py, width, height, bgSurface, screenSurface);
-		copyRect(x, y, px, py, width, height, src, screenSurface);
-		updateScreen(px, py, px, py, width, height, screenSurface);
-		x = x + width;
-		pause(3);
 	}
 }
 
@@ -1087,12 +1076,12 @@ void DrasculaEngine::animation_3_3() {
 	loadPic("an2y_2.alg", extraSurface);
 	loadPic("an2y_3.alg", backSurface);
 
-	updateAnim2(2, px, py, 71, 72, 4, frontSurface);
-	updateAnim2(75, px, py, 71, 72, 4, frontSurface);
-	updateAnim2(2, px, py, 71, 72, 4, extraSurface);
-	updateAnim2(75, px, py, 71, 72, 4, extraSurface);
-	updateAnim2(2, px, py, 71, 72, 4, backSurface);
-	updateAnim2(75, px, py, 71, 72, 4, backSurface);
+	updateAnim(2, px, py, 71, 72, 4, frontSurface, 3, true);
+	updateAnim(75, px, py, 71, 72, 4, frontSurface, 3, true);
+	updateAnim(2, px, py, 71, 72, 4, extraSurface, 3, true);
+	updateAnim(75, px, py, 71, 72, 4, extraSurface, 3, true);
+	updateAnim(2, px, py, 71, 72, 4, backSurface, 3, true);
+	updateAnim(75, px, py, 71, 72, 4, backSurface, 3, true);
 }
 
 void DrasculaEngine::animation_4_3() {
@@ -1102,12 +1091,12 @@ void DrasculaEngine::animation_4_3() {
 	loadPic("any_2.alg", extraSurface);
 	loadPic("any_3.alg", backSurface);
 
-	updateAnim2(1, px, py, 77, 89, 4, frontSurface);
-	updateAnim2(91, px, py, 77, 89, 4, frontSurface);
-	updateAnim2(1, px, py, 77, 89, 4, extraSurface);
-	updateAnim2(91, px, py, 77, 89, 4, extraSurface);
-	updateAnim2(1, px, py, 77, 89, 4, backSurface);
-	updateAnim2(91, px, py, 77, 89, 4, backSurface);
+	updateAnim(1, px, py, 77, 89, 4, frontSurface, 3, true);
+	updateAnim(91, px, py, 77, 89, 4, frontSurface, 3, true);
+	updateAnim(1, px, py, 77, 89, 4, extraSurface, 3, true);
+	updateAnim(91, px, py, 77, 89, 4, extraSurface, 3, true);
+	updateAnim(1, px, py, 77, 89, 4, backSurface, 3, true);
+	updateAnim(91, px, py, 77, 89, 4, backSurface, 3, true);
 }
 
 void DrasculaEngine::animation_5_3() {
@@ -1117,12 +1106,12 @@ void DrasculaEngine::animation_5_3() {
 	loadPic("an3y_2.alg", extraSurface);
 	loadPic("an3y_3.alg", backSurface);
 
-	updateAnim2(2, px, py, 71, 72, 4, frontSurface);
-	updateAnim2(75, px, py, 71, 72, 4, frontSurface);
-	updateAnim2(2, px, py, 71, 72, 4, extraSurface);
-	updateAnim2(75, px, py, 71, 72, 4, extraSurface);
-	updateAnim2(2, px, py, 71, 72, 4, backSurface);
-	updateAnim2(75, px, py, 71, 72, 4, backSurface);
+	updateAnim(2, px, py, 71, 72, 4, frontSurface, 3, true);
+	updateAnim(75, px, py, 71, 72, 4, frontSurface, 3, true);
+	updateAnim(2, px, py, 71, 72, 4, extraSurface, 3, true);
+	updateAnim(75, px, py, 71, 72, 4, extraSurface, 3, true);
+	updateAnim(2, px, py, 71, 72, 4, backSurface, 3, true);
+	updateAnim(75, px, py, 71, 72, 4, backSurface, 3, true);
 }
 
 void DrasculaEngine::animation_6_3() {
@@ -1894,34 +1883,34 @@ void DrasculaEngine::animation_7_2() {
 
 	updateScreen();
 
-	updateAnim2(1, 80, 64, 51, 73, 6, backSurface);
-	updateAnim2(75, 80, 64, 51, 73, 6, backSurface);
-	updateAnim2(1, 80, 64, 51, 73, 6, extraSurface);
-	updateAnim2(75, 80, 64, 51, 73, 6, extraSurface);
-	updateAnim2(1, 80, 64, 51, 73, 6, frontSurface);
+	updateAnim(1, 80, 64, 51, 73, 6, backSurface, 3, true);
+	updateAnim(75, 80, 64, 51, 73, 6, backSurface, 3, true);
+	updateAnim(1, 80, 64, 51, 73, 6, extraSurface, 3, true);
+	updateAnim(75, 80, 64, 51, 73, 6, extraSurface, 3, true);
+	updateAnim(1, 80, 64, 51, 73, 6, frontSurface, 3, true);
 
 	loadPic("an7_4.alg", backSurface);
 	loadPic("an7_5.alg", extraSurface);
 	loadPic("an7_6.alg", frontSurface);
 	loadPic("an7_7.alg", drawSurface3);
 
-	updateAnim2(1, 80, 64, 51, 73, 6, backSurface);
-	updateAnim2(75, 80, 64, 51, 73, 6, backSurface);
-	updateAnim2(1, 80, 64, 51, 73, 6, extraSurface);
-	updateAnim2(75, 80, 64, 51, 73, 6, extraSurface);
-	updateAnim2(1, 80, 64, 51, 73, 6, frontSurface);
-	updateAnim2(75, 80, 64, 51, 73, 6, extraSurface);
-	updateAnim2(1, 80, 64, 51, 73, 6, frontSurface);
-	updateAnim2(75, 80, 64, 51, 73, 6, frontSurface);
-	updateAnim2(1, 80, 64, 51, 73, 6, drawSurface3);
-	updateAnim2(75, 80, 64, 51, 73, 2, drawSurface3);
+	updateAnim(1, 80, 64, 51, 73, 6, backSurface, 3, true);
+	updateAnim(75, 80, 64, 51, 73, 6, backSurface, 3, true);
+	updateAnim(1, 80, 64, 51, 73, 6, extraSurface, 3, true);
+	updateAnim(75, 80, 64, 51, 73, 6, extraSurface, 3, true);
+	updateAnim(1, 80, 64, 51, 73, 6, frontSurface, 3, true);
+	updateAnim(75, 80, 64, 51, 73, 6, extraSurface, 3, true);
+	updateAnim(1, 80, 64, 51, 73, 6, frontSurface, 3, true);
+	updateAnim(75, 80, 64, 51, 73, 6, frontSurface, 3, true);
+	updateAnim(1, 80, 64, 51, 73, 6, drawSurface3, 3, true);
+	updateAnim(75, 80, 64, 51, 73, 2, drawSurface3, 3, true);
 
 	loadPic("an7_8.alg", backSurface);
 	loadPic("an7_9.alg", extraSurface);
 
-	updateAnim2(1, 80, 64, 51, 73, 6, backSurface);
-	updateAnim2(75, 80, 64, 51, 73, 6, backSurface);
-	updateAnim2(1, 80, 64, 51, 73, 6, extraSurface);
+	updateAnim(1, 80, 64, 51, 73, 6, backSurface, 3, true);
+	updateAnim(75, 80, 64, 51, 73, 6, backSurface, 3, true);
+	updateAnim(1, 80, 64, 51, 73, 6, extraSurface, 3, true);
 
 	copyBackground(80, 64, 80, 64, 51, 73, bgSurface, screenSurface);
 	copyRect(1, 75, 80, 64, 51, 73, extraSurface, screenSurface);
