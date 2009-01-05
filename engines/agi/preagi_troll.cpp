@@ -203,7 +203,7 @@ void Troll::waitAnyKeyIntro() {
 	Common::Event event;
 	int iMsg = 0;
 
-	for (;;) {
+	while (!_vm->shouldQuit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
 			case Common::EVENT_RTL:
@@ -280,7 +280,7 @@ void Troll::tutorial() {
 		_vm->setDefaultTextColor(0x0F);
 
 		done = false;
-		while (!done) {
+		while (!done && !_vm->shouldQuit()) {
 			getMenuSel(IDS_TRO_TUTORIAL_1, &iSel, IDI_TRO_MAX_OPTION);
 			switch(iSel) {
 			case IDI_TRO_SEL_OPTION_1:
@@ -386,6 +386,11 @@ void Troll::intro() {
 }
 
 void Troll::gameOver() {
+	// We do a check to see if the game should quit. Without this, the game show the picture, plays the
+	// music, and then quits. So if the game is quitting, we shouldn't run the "game over" part.
+	if (_vm->shouldQuit())
+		return;
+
 	char szMoves[40];
 
 	_vm->clearTextArea();
@@ -560,8 +565,8 @@ void Troll::gameLoop() {
 	memset(_roomStates, 0, sizeof(_roomStates));
 
 	memset(_inventory, 0, sizeof(_inventory));
-
-	while (!done) {
+	
+	while (!done && !_vm->shouldQuit()) {
 		*menu = 0;
 
 		currentOption = 0;
@@ -765,11 +770,9 @@ void Troll::init() {
 }
 
 void Troll::run() {
-	while (1) {
+	while (!_vm->shouldQuit()) {
 		intro();
-
 		gameLoop();
-
 		gameOver();
 	}
 }
