@@ -47,7 +47,7 @@ struct Surface {
 	Surface() : w(0), h(0), pitch(0), pixels(0), bytesPerPixel(0) {}
 
 	inline const void *getBasePtr(int x, int y) const {
-		return static_cast<const byte *>(pixels) + y * pitch + x * bytesPerPixel;
+		return (const byte *)(pixels) + y * pitch + x * bytesPerPixel;
 	}
 
 	inline void *getBasePtr(int x, int y) {
