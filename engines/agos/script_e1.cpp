@@ -942,6 +942,8 @@ restart:
 
 		if (confirmYesOrNo(120, 62) == 0x7FFF) {
 			quitGame();
+			// Make sure the quit event is processed immediately.
+			delay(0);
 		} else {
 			goto restart;
 		}
