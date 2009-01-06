@@ -430,7 +430,7 @@ void MoviePlayerDXA::setPalette(byte *pal) {
 }
 
 bool MoviePlayerDXA::decodeFrame(void) {
-	if (_currentFrame < _framesCount) {
+	if ((uint32)_currentFrame < (uint32)getFrameCount()) {
 		decodeNextFrame();
 		return true;
 	}
@@ -441,7 +441,8 @@ void MoviePlayerDXA::processFrame(void) {
 }
 
 void MoviePlayerDXA::updateScreen(void) {
-	_system->copyRectToScreen(_drawBuffer, _frameWidth, _frameX, _frameY, _frameWidth, _frameHeight);
+	Graphics::Surface *frameBuffer = _system->lockScreen();
+	copyFrameToBuffer((byte *)frameBuffer->pixels, _frameX, _frameY, _frameWidth);
 
 	// TODO: Handle the advanced cutscene packs. Do they really exist?
 
@@ -452,7 +453,6 @@ void MoviePlayerDXA::updateScreen(void) {
 	// frame to it, and draw on that.
 
 	if (_textMan->giveSpriteData(2)) {
-		Graphics::Surface *frameBuffer = _system->lockScreen();
 		byte *src = (byte *)_textMan->giveSpriteData(2) + sizeof(FrameHeader);
 		byte *dst = (byte *)frameBuffer->getBasePtr(_textX, _textY);
 
@@ -471,8 +471,9 @@ void MoviePlayerDXA::updateScreen(void) {
 			dst += frameBuffer->pitch;
 		}
 
-		_system->unlockScreen();
 	}
+
+	_system->unlockScreen();
 
 	_system->updateScreen();
 }
