@@ -326,7 +326,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		GID_ITE,
-		0,
+		GF_8BIT_UNSIGNED_PCM,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
