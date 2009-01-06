@@ -49,6 +49,7 @@ public:
 
 	void play(Common::SeekableReadStream *stream);
 	void stop();
+	void pause(bool p);
 	void updateTimer();
 	void adjustVolume(int diff);
 	void setVolume(int volume);
@@ -74,6 +75,7 @@ private:
 	uint8 *_midiData;
 	bool _isLooping;
 	bool _isPlaying;
+	bool _paused;
 	int _masterVolume;
 	MidiChannel *_channelsTable[NUM_CHANNELS];
 	uint8 _channelsVolume[NUM_CHANNELS];
@@ -81,10 +83,12 @@ private:
 };
 
 MidiPlayer::MidiPlayer(MidiDriver *driver)
-	: _driver(driver), _parser(0), _midiData(0), _isLooping(false), _isPlaying(false), _masterVolume(0) {
+	: _driver(driver), _parser(0), _midiData(0), _isLooping(false), _isPlaying(false), _paused(false), _masterVolume(0) {
 	assert(_driver);
 	memset(_channelsTable, 0, sizeof(_channelsTable));
-	memset(_channelsVolume, 0, sizeof(_channelsVolume));
+	for (int i = 0; i < NUM_CHANNELS; i++) {
+		_channelsVolume[i] = 127;
+	}
 
 	open();
 }
@@ -125,7 +129,21 @@ void MidiPlayer::stop() {
 	_mutex.unlock();
 }
 
+void MidiPlayer::pause(bool p) {
+	_paused = p;
+
+	for (int i = 0; i < NUM_CHANNELS; ++i) {
+		if (_channelsTable[i]) {
+			_channelsTable[i]->volume(_paused ? 0 : _channelsVolume[i] * _masterVolume / 255);
+		}
+	}
+}
+
 void MidiPlayer::updateTimer() {
+	if (_paused) {
+		return;
+	}
+
 	_mutex.lock();
 	if (_isPlaying) {
 		_parser->onTimer();
@@ -217,7 +235,6 @@ void MidiPlayer::timerCallback(void *p) {
 	player->updateTimer();
 }
 
-
 DosSoundMan::DosSoundMan(Parallaction *vm, MidiDriver *midiDriver) : SoundMan(vm), _musicData1(0) {
 	_midiPlayer = new MidiPlayer(midiDriver);
 }
@@ -254,10 +271,16 @@ void DosSoundMan::playMusic() {
 
 	Common::SeekableReadStream *stream = _vm->_disk->loadMusic(_musicFile);
 	_midiPlayer->play(stream);
+	_midiPlayer->setVolume(255);
 }
 
 void DosSoundMan::stopMusic() {
 	_midiPlayer->stop();
+}
+
+void DosSoundMan::pause(bool p) {
+	SoundMan::pause(p);
+	_midiPlayer->pause(p);
 }
 
 void DosSoundMan::playCharacterMusic(const char *character) {

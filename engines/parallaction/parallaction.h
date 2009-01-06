@@ -253,6 +253,7 @@ public:
 	// Engine APIs
 	virtual Common::Error init();
 	virtual bool hasFeature(EngineFeature f) const;
+	virtual void pauseEngineIntern(bool pause);
 
 	// info
 	int32			_screenWidth;

@@ -62,6 +62,8 @@ public:
 	virtual void stopMusic() = 0;
 	virtual void playCharacterMusic(const char *character) = 0;
 	virtual void playLocationMusic(const char *location) = 0;
+	virtual void pause(bool p) { }
+
 	void setMusicVolume(int value);
 };
 
@@ -80,6 +82,8 @@ public:
 
 	void playCharacterMusic(const char *character);
 	void playLocationMusic(const char *location);
+
+	void pause(bool p);
 };
 
 #define NUM_AMIGA_CHANNELS 4

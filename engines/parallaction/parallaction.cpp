@@ -134,6 +134,12 @@ Common::Error Parallaction::init() {
 	return Common::kNoError;
 }
 
+void Parallaction::pauseEngineIntern(bool pause) {
+	if (_soundMan) {
+		_soundMan->pause(pause);
+	}
+}
+
 bool canScroll() {
 	return (_vm->_gfx->_backgroundInfo->width > _vm->_screenWidth);
 }
