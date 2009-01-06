@@ -512,7 +512,6 @@ protected:
 	void sfFaceTowards(SCRIPTFUNC_PARAMS);
 	void sfSetFollower(SCRIPTFUNC_PARAMS);
 	void sfScriptGotoScene(SCRIPTFUNC_PARAMS);
-
 	void sfSetObjImage(SCRIPTFUNC_PARAMS);
 	void sfSetObjName(SCRIPTFUNC_PARAMS);
 	void sfGetObjImage(SCRIPTFUNC_PARAMS);

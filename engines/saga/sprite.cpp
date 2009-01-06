@@ -134,6 +134,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		if (offset >= spriteListLength) {
 			// ITE Mac demos throw this warning
 			warning("Sprite::loadList offset exceeded");
+			spriteList.spriteCount = i;
 			return;
 		}
 
