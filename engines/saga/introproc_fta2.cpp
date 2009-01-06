@@ -44,12 +44,12 @@ class MoviePlayerSMK : Graphics::SMKPlayer {
 protected:
 	virtual void setPalette(byte *pal);
 public:
-	MoviePlayerSMK(SagaEngine *vm): _vm(vm), SMKPlayer(vm->_mixer) {
-		_eventMan = _vm->_system->getEventManager();
+	MoviePlayerSMK(SagaEngine *vm): _vm(vm), SMKPlayer(vm->_mixer), 
+									_eventMan(vm->_system->getEventManager()) {
 	}
 	~MoviePlayerSMK(void) { }
 
-	bool playVideo(const char *filename);
+	void playVideo(const char *filename);
 private:
 	void processFrame();
 	void processEvents();
@@ -74,24 +74,28 @@ void MoviePlayerSMK::processEvents() {
 	// Process events, and skip video if esc is pressed
 	while (_eventMan->pollEvent(curEvent)) {
 		switch (curEvent.type) {
-			case Common::EVENT_KEYDOWN:
-				if (curEvent.kbd.keycode == Common::KEYCODE_ESCAPE)
-					_skipVideo = true;
-				break;
-			case Common::EVENT_RTL:
-			case Common::EVENT_QUIT:
+		case Common::EVENT_KEYDOWN:
+			if (curEvent.kbd.keycode == Common::KEYCODE_ESCAPE)
 				_skipVideo = true;
-				break;
-			default:
-				break;
+			break;
+		case Common::EVENT_RTL:
+		case Common::EVENT_QUIT:
+			_skipVideo = true;
+			break;
+		default:
+			break;
 		}
 	}
 }
 
-bool MoviePlayerSMK::playVideo(const char *filename) {
+void MoviePlayerSMK::playVideo(const char *filename) {
 	_skipVideo = false;
-	if (!loadFile(filename))
-		return false;
+	debug(0, "Playing video %s", filename);
+
+	if (!loadFile(filename)) {
+		warning("Failed to load video file %s", filename);
+		return;
+	}
 
 	while (getCurFrame() < getFrameCount() && !_skipVideo && !_vm->shouldQuit()) {
 		processEvents();
@@ -99,11 +103,10 @@ bool MoviePlayerSMK::playVideo(const char *filename) {
 	}
 
 	closeFile();
-
-	return true;
 }
 
 void MoviePlayerSMK::processFrame() {
+	uint32 startTime = 0;
 	decodeNextFrame();
 
 	Graphics::Surface *screen = _vm->_system->lockScreen();
@@ -123,28 +126,21 @@ void MoviePlayerSMK::processFrame() {
 	// Update the screen
 	_vm->_system->updateScreen();
 
+	startTime = _vm->_system->getMillis();
+
 	// Wait before showing the next frame
-	_vm->_system->delayMillis(waitTime);
+	while (_vm->_system->getMillis() < startTime + waitTime && !_skipVideo && !_vm->shouldQuit()) {
+		processEvents();
+		_vm->_system->delayMillis(10);
+	}
 }
 
 int Scene::FTA2StartProc() {
-	MoviePlayerSMK *smkPlayer = new MoviePlayerSMK(_vm);
-
 	_vm->_gfx->showCursor(false);
 
-	// Show Ignite logo
-	debug(0, "Playing video trimark.smk");
-	if (!smkPlayer->playVideo("trimark.smk")) {
-		warning("Failed to load video file trimark.smk");
-	}
-
-	// Play introduction
-	debug(0, "Playing video intro.smk");
-	if (!smkPlayer->playVideo("intro.smk")) {
-		warning("Failed to load video file intro.smk");	
-	}
-
-	// Cleanup
+	MoviePlayerSMK *smkPlayer = new MoviePlayerSMK(_vm);
+	smkPlayer->playVideo("trimark.smk");      // Show Ignite logo
+	smkPlayer->playVideo("intro.smk");        // Play introduction
 	delete smkPlayer;
 
 	// HACK: Forcibly quit here
@@ -157,36 +153,30 @@ int Scene::FTA2EndProc(FTA2Endings whichEnding) {
 	char videoName[20];
 
 	switch (whichEnding) {
-		case kFta2BadEndingLaw:
-			strcpy(videoName, "end_1.smk");
-			break;
-		case kFta2BadEndingChaos:
-			strcpy(videoName, "end_2.smk");
-			break;
-		case kFta2GoodEnding1:
-			strcpy(videoName, "end_3a.smk");
-			break;
-		case kFta2GoodEnding2:
-			strcpy(videoName, "end_3b.smk");
-			break;
-		case kFta2BadEndingDeath:
-			strcpy(videoName, "end_4.smk");
-			break;
-		default:
-			error("Unknown FTA2 ending");
+	case kFta2BadEndingLaw:
+		strcpy(videoName, "end_1.smk");
+		break;
+	case kFta2BadEndingChaos:
+		strcpy(videoName, "end_2.smk");
+		break;
+	case kFta2GoodEnding1:
+		strcpy(videoName, "end_3a.smk");
+		break;
+	case kFta2GoodEnding2:
+		strcpy(videoName, "end_3b.smk");
+		break;
+	case kFta2BadEndingDeath:
+		strcpy(videoName, "end_4.smk");
+		break;
+	default:
+		error("Unknown FTA2 ending");
 	}
-
-	MoviePlayerSMK *smkPlayer = new MoviePlayerSMK(_vm);
 
 	_vm->_gfx->showCursor(false);
 
 	// Play ending
-	debug(0, "Playing video %s", videoName);
-	if (!smkPlayer->playVideo(videoName)) {
-		warning("Failed to load video file %s", videoName);
-	}
-
-	// Cleanup
+	MoviePlayerSMK *smkPlayer = new MoviePlayerSMK(_vm);
+	smkPlayer->playVideo(videoName);
 	delete smkPlayer;
 
 	return SUCCESS;
