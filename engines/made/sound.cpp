@@ -24,13 +24,14 @@
  */
 
 #include "common/endian.h"
+#include "common/list.h"
 #include "common/util.h"
 
 #include "made/sound.h"
 
 namespace Made {
 
-int soundEnergy = 0;
+Common::List<int> soundEnergy;
 
 void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount) {
 
@@ -68,8 +69,8 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 
 		case 0:
 			memset(soundBuffer, 0x80, workChunkSize);
-			workSample = 0;
-			soundEnergy = 0;
+			workSample = 0;			
+			soundEnergy.push_back(0);
 			break;
 
 		case 1:
@@ -96,14 +97,14 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 				}
 			}
 
-			soundEnergy = type - 1;
+			soundEnergy.push_back(type - 1);
 			break;
 
 		case 5:
 			for (i = 0; i < workChunkSize; i++)
 				soundBuffer[i] = *source++;
 			workSample = soundBuffer[workChunkSize - 1] - 128;
-			soundEnergy = 4;
+			soundEnergy.push_back(type - 1);
 			break;
 
 		default:

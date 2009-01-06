@@ -237,6 +237,7 @@ int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 		_vm->_autoStopSound = (argv[0] == 1);
 	}
 	if (soundNum > 0) {
+		soundEnergy.clear();
 		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
 			_vm->_res->getSound(soundNum)->getAudioStream(_vm->_soundRate, false));
 	}
@@ -546,6 +547,7 @@ int16 ScriptFunctions::sfPlayVoice(int16 argc, int16 *argv) {
 	int16 soundNum = argv[0];
 	_vm->_mixer->stopHandle(_audioStreamHandle);
 	if (soundNum > 0) {
+		soundEnergy.clear();
 		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
 			_vm->_res->getSound(soundNum)->getAudioStream(_vm->_soundRate, false));
 		_vm->_autoStopSound = true;
@@ -599,7 +601,12 @@ int16 ScriptFunctions::sfClearMono(int16 argc, int16 *argv) {
 int16 ScriptFunctions::sfGetSoundEnergy(int16 argc, int16 *argv) {
 	// This is called while in-game voices are played to animate 
 	// mouths when NPCs are talking
-	return soundEnergy;
+	int result = 0;
+	if (soundEnergy.size() > 0) {
+		result = *soundEnergy.begin();
+		soundEnergy.pop_front();
+	}
+	return result;
 }
 
 int16 ScriptFunctions::sfClearText(int16 argc, int16 *argv) {

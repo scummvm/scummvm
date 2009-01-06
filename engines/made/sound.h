@@ -28,11 +28,12 @@
 
 #include "common/util.h"
 #include "common/file.h"
+#include "common/list.h"
 #include "common/stream.h"
 
 namespace Made {
 
-extern int soundEnergy;
+extern Common::List<int> soundEnergy;
 
 void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount);
 
