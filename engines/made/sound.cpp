@@ -30,6 +30,8 @@
 
 namespace Made {
 
+int soundEnergy = 0;
+
 void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount) {
 
 	int16 prevSample = 0, workSample = 0;
@@ -67,6 +69,7 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 		case 0:
 			memset(soundBuffer, 0x80, workChunkSize);
 			workSample = 0;
+			soundEnergy = 0;
 			break;
 
 		case 1:
@@ -93,12 +96,14 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 				}
 			}
 
+			soundEnergy = type - 1;
 			break;
 
 		case 5:
 			for (i = 0; i < workChunkSize; i++)
 				soundBuffer[i] = *source++;
 			workSample = soundBuffer[workChunkSize - 1] - 128;
+			soundEnergy = 4;
 			break;
 
 		default:

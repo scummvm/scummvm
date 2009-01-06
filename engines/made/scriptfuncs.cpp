@@ -34,6 +34,7 @@
 #include "made/database.h"
 #include "made/screen.h"
 #include "made/script.h"
+#include "made/sound.h"
 #include "made/pmvplayer.h"
 #include "made/scriptfuncs.h"
 #include "made/music.h"
@@ -596,12 +597,9 @@ int16 ScriptFunctions::sfClearMono(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfGetSoundEnergy(int16 argc, int16 *argv) {
-	// This is called while in-game voices are played
-	// Not sure what it's used for
-	// -> It's used to animate mouths when NPCs are talking
-	// FIXME: This is a workaround for the "sound energy" problem
-	// At least the characters move their lips when talking now
-	return _vm->_rnd->getRandomNumber(5);
+	// This is called while in-game voices are played to animate 
+	// mouths when NPCs are talking
+	return soundEnergy;
 }
 
 int16 ScriptFunctions::sfClearText(int16 argc, int16 *argv) {

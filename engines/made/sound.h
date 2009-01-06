@@ -32,6 +32,8 @@
 
 namespace Made {
 
+extern int soundEnergy;
+
 void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount);
 
 } // End of namespace Made
