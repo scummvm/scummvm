@@ -302,7 +302,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		if (!onlyHeader) {
 			buffer.buffer = (byte *) malloc(buffer.size);
 			if (soundOffset > 0)
-				readS.seek(soundOffset, SEEK_CUR);
+				readS.skip(soundOffset);
 			readS.read(buffer.buffer, buffer.size);
 		}
 		result = true;
