@@ -109,8 +109,8 @@ public:
 
 protected:
 	/**
-	 * Set palette, based on current frame
-	 * @param pal		the palette data
+	 * Set RGB palette, based on current frame
+	 * @param pal		the RGB palette data
 	 */
 	virtual void setPalette(byte *pal) = 0;
 
