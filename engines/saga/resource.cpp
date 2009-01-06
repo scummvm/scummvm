@@ -369,7 +369,8 @@ bool Resource::createContexts() {
 				// The resources in the Wyrmkeep combined Windows/Mac/Linux CD version are little endian, but
 				// the voice file is big endian. If we got such a version with mixed files, mark this voice file
 				// as big endian
-				voiceFileType = GAME_VOICEFILE | GAME_SWAPENDIAN;	// This file is big endian
+				if (!_vm->isBigEndian())
+					voiceFileType = GAME_VOICEFILE | GAME_SWAPENDIAN;	// This file is big endian
 			}
 
 			if (!scumm_stricmp(curSoundfiles[i].fileName, "ite voices.bin")) {
