@@ -52,6 +52,8 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 		{16, 2, 0x0F, 4}
 	};
 
+	soundEnergy.clear();
+
 	while (chunkCount--) {
 		deltaType = (*source) >> 6;
 		workChunkSize = chunkSize;
