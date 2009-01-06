@@ -148,14 +148,6 @@ public:
 class DialogueManager_br : public DialogueManager {
 	Parallaction_br *_vm;
 
-	bool testAnswerCounter(Answer *a) {
-		if (!a->_hasCounterCondition) {
-			return true;
-		}
-		_vm->testCounterCondition(a->_counterName, a->_counterOp, a->_counterValue);
-		return (_vm->getLocationFlags() & kFlagsTestTrue) != 0;
-	}
-
 public:
 	DialogueManager_br(Parallaction_br *vm, ZonePtr z) : DialogueManager(vm, z), _vm(vm) {
 	}
@@ -164,11 +156,12 @@ public:
 		if (!a)
 			return false;
 
-		if (testAnswerFlags(a)) {
-			return true;
+		if (a->_hasCounterCondition) {
+			_vm->testCounterCondition(a->_counterName, a->_counterOp, a->_counterValue);
+			return (_vm->getLocationFlags() & kFlagsTestTrue) != 0;
 		}
 
-		return testAnswerCounter(a);
+		return testAnswerFlags(a);
 	}
 };
 
