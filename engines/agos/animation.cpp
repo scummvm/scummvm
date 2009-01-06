@@ -260,7 +260,7 @@ bool MoviePlayerDXA::load() {
 }
 
 void MoviePlayerDXA::playVideo() {
-	while (_frameNum < _framesCount && !_skipMovie && !_vm->shouldQuit())
+	while (getCurFrame() < getFrameCount() && !_skipMovie && !_vm->shouldQuit())
 		handleNextFrame();
 }
 
@@ -314,12 +314,12 @@ void MoviePlayerDXA::startSound() {
 }
 
 void MoviePlayerDXA::nextFrame() {
-	if (_vm->_mixer->isSoundHandleActive(_bgSound) && (_vm->_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < _frameNum) {
+	if (_vm->_mixer->isSoundHandleActive(_bgSound) && (_vm->_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < (uint32)getCurFrame()) {
 		copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
 		return;
 	}
 
-	if (_frameNum < _framesCount) {
+	if (getCurFrame() < getFrameCount()) {
 		decodeNextFrame();
 		copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
 	} else {
@@ -352,18 +352,18 @@ void MoviePlayerDXA::setPalette(byte *pal) {
 
 bool MoviePlayerDXA::processFrame() {
 	Graphics::Surface *screen = _vm->_system->lockScreen();
-	copyFrameToBuffer((byte *)screen->pixels, (_vm->_screenWidth - _width) / 2, (_vm->_screenHeight - _height) / 2, _vm->_screenWidth);
+	copyFrameToBuffer((byte *)screen->pixels, (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, _vm->_screenWidth);
 	_vm->_system->unlockScreen();
 
-	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < _frameNum + 1) ||
+	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < getCurFrame() + 1) ||
 		_frameSkipped > getFrameRate()) {
 		if (_frameSkipped > getFrameRate()) {
-			warning("force frame %i redraw", _frameNum);
+			warning("force frame %i redraw", getCurFrame());
 			_frameSkipped = 0;
 		}
 
 		if (_bgSoundStream && _mixer->isSoundHandleActive(_bgSound)) {
-			while (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < _frameNum) {
+			while (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < (uint32)getCurFrame()) {
 				_vm->_system->delayMillis(10);
 			}
 			// In case the background sound ends prematurely, update
@@ -379,7 +379,7 @@ bool MoviePlayerDXA::processFrame() {
 		return true;
 	}
 
-	warning("dropped frame %i", _frameNum);
+	warning("dropped frame %i", getCurFrame());
 	_frameSkipped++;
 	return false;
 }
