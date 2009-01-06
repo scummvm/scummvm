@@ -1331,7 +1331,7 @@ cmd(get_string) {
 
 	do {
 		g_agi->mainCycle();
-	} while (game.inputMode == INPUT_GETSTRING);
+	} while (game.inputMode == INPUT_GETSTRING && !g_agi->shouldQuit());
 }
 
 cmd(get_num) {
@@ -1349,7 +1349,7 @@ cmd(get_num) {
 
 	do {
 		g_agi->mainCycle();
-	} while (game.inputMode == INPUT_GETSTRING);
+	} while (game.inputMode == INPUT_GETSTRING && !g_agi->shouldQuit());
 
 	_v[p1] = atoi(game.strings[MAX_STRINGS]);
 	debugC(4, kDebugLevelScripts, "[%s] -> %d", game.strings[MAX_STRINGS], _v[p1]);

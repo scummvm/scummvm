@@ -365,7 +365,7 @@ void AgiEngine::handleKeys(int key) {
 }
 
 int AgiEngine::waitKey() {
-	int key;
+	int key = 0;
 
 	/* clear key queue */
 	while (_gfx->keypress()) {
@@ -373,7 +373,7 @@ int AgiEngine::waitKey() {
 	}
 
 	debugC(3, kDebugLevelInput, "waiting...");
-	for (;;) {
+	while (!shouldQuit()) {
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = doPollKeyboard();
 		if (key == KEY_ENTER || key == KEY_ESCAPE || key == BUTTON_LEFT)
@@ -388,7 +388,7 @@ int AgiEngine::waitKey() {
 }
 
 int AgiEngine::waitAnyKey() {
-	int key;
+	int key = 0;
 
 	/* clear key queue */
 	while (_gfx->keypress()) {
@@ -396,7 +396,7 @@ int AgiEngine::waitAnyKey() {
 	}
 
 	debugC(3, kDebugLevelInput, "waiting...");
-	for (;;) {
+	while (!shouldQuit()) {
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = doPollKeyboard();
 		if (key)
