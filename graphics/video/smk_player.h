@@ -108,6 +108,11 @@ public:
 	 */
 	void closeFile();
 
+	/**
+	 * Returns if a video file is loaded or not
+	 */
+	bool videoIsLoaded() { return (_fileStream != NULL); }
+
 protected:
 	/**
 	 * Set RGB palette, based on current frame
@@ -129,10 +134,6 @@ protected:
 	 * Decode the next frame
 	 */
 	bool decodeNextFrame();
-
-	Common::SeekableReadStream *_fileStream;
-
-	byte *_image;
 
 private:
 	void unpackPalette();
@@ -188,6 +189,9 @@ private:
 	BigHuffmanTree *_MClrTree;
 	BigHuffmanTree *_FullTree;
 	BigHuffmanTree *_TypeTree;
+
+	Common::SeekableReadStream *_fileStream;
+	byte *_videoFrameBuffer;
 };
 
 } // End of namespace Graphics

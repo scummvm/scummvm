@@ -38,24 +38,6 @@ enum ScaleMode {
 };
 
 class DXAPlayer {
-protected:
-	byte *_frameBuffer1;
-	byte *_frameBuffer2;
-	byte *_scaledBuffer;
-	byte *_drawBuffer;
-	byte *_inBuffer;
-	uint32 _inBufferSize;
-	byte *_decompBuffer;
-	uint32 _decompBufferSize;
-	uint16 _width;
-	uint16 _height, _curHeight;
-	uint16 _framesCount;
-	uint32 _framesPerSec;
-	uint16 _frameNum;
-	uint32 _frameSize;
-	uint32 _frameTicks;
-	ScaleMode _scaleMode;
-
 public:
 	DXAPlayer();
 	virtual ~DXAPlayer();
@@ -107,6 +89,11 @@ public:
 	 */
 	void closeFile();
 
+	/**
+	 * Returns if a video file is loaded or not
+	 */
+	bool videoIsLoaded() { return (_fileStream != NULL); }
+
 protected:
 	/**
 	 * Set RGB palette, based on current frame
@@ -134,6 +121,24 @@ protected:
 	void decode13(int size);
 
 	Common::SeekableReadStream *_fileStream;
+
+private:
+	byte *_frameBuffer1;
+	byte *_frameBuffer2;
+	byte *_scaledBuffer;
+	byte *_drawBuffer;
+	byte *_inBuffer;
+	uint32 _inBufferSize;
+	byte *_decompBuffer;
+	uint32 _decompBufferSize;
+	uint16 _width;
+	uint16 _height, _curHeight;
+	uint16 _framesCount;
+	uint32 _framesPerSec;
+	uint16 _frameNum;
+	uint32 _frameSize;
+	uint32 _frameTicks;
+	ScaleMode _scaleMode;
 };
 
 } // End of namespace Graphics

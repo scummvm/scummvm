@@ -502,8 +502,8 @@ bool SMKPlayer::loadFile(const char *fileName) {
 	_FullTree = new BigHuffmanTree(bs);
 	_TypeTree = new BigHuffmanTree(bs);
 
-	_image = (byte *)malloc(2 * _header.width * _header.height);
-	memset(_image, 0, 2 * _header.width * _header.height);
+	_videoFrameBuffer = (byte *)malloc(2 * _header.width * _header.height);
+	memset(_videoFrameBuffer, 0, 2 * _header.width * _header.height);
 	_palette = (byte *)malloc(3 * 256);
 	memset(_palette, 0, 3 * 256);
 
@@ -521,6 +521,7 @@ void SMKPlayer::closeFile() {
 	}
 
 	delete _fileStream;
+	_fileStream = 0;
 
 	delete _MMapTree;
 	delete _MClrTree;
@@ -529,17 +530,15 @@ void SMKPlayer::closeFile() {
 
 	free(_frameSizes);
 	free(_frameTypes);
-	free(_image);
+	free(_videoFrameBuffer);
 	free(_palette);
-
-	_fileStream = 0;
 }
 
 void SMKPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 	uint h = (_header.flags ? 2 : 1) * _header.height;
 	uint w = _header.width;
 
-	byte *src = _image;
+	byte *src = _videoFrameBuffer;
 	dst += y * pitch + x;
 
 	do {
@@ -653,7 +652,7 @@ bool SMKPlayer::decodeNextFrame() {
 			while (run-- && block < blocks) {
 				clr = _MClrTree->getCode(bs);
 				map = _MMapTree->getCode(bs);
-				out = _image + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
+				out = _videoFrameBuffer + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
 				hi = clr >> 8;
 				lo = clr & 0xff;
 				for (i = 0; i < 4; i++) {
@@ -686,7 +685,7 @@ bool SMKPlayer::decodeNextFrame() {
 			}
 
 			while (run-- && block < blocks) {
-				out = _image + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
+				out = _videoFrameBuffer + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
 				switch (mode) {
 					case 0:
 						for (i = 0; i < 4; ++i) {
@@ -752,7 +751,7 @@ bool SMKPlayer::decodeNextFrame() {
 			uint32 col;
 			mode = type >> 8;
 			while (run-- && block < blocks) {
-				out = _image + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
+				out = _videoFrameBuffer + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
 				col = mode * 0x01010101;
 				for (i = 0; i < 4 * doubleY; ++i) {
 					out[0] = out[1] = out[2] = out[3] = col;

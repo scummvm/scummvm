@@ -23,12 +23,13 @@
  *
  */
 
+#include "common/archive.h"
 #include "graphics/video/flic_player.h"
 
 namespace Graphics {
 
 FlicPlayer::FlicPlayer()
-	: _paletteDirty(false), _offscreen(0), _currFrame(0) {
+	: _paletteDirty(false), _offscreen(0), _currFrame(0), _fileStream(0) {
 	memset(&_flicInfo, 0, sizeof(_flicInfo));
 }
 
@@ -36,29 +37,56 @@ FlicPlayer::~FlicPlayer() {
 	closeFile();
 }
 
+int FlicPlayer::getWidth() {
+	if (!_fileStream)
+		return 0;
+	return _flicInfo.width;
+}
+
+int FlicPlayer::getHeight() {
+	if (!_fileStream)
+		return 0;
+	return _flicInfo.height;
+}
+
+int32 FlicPlayer::getCurFrame() {
+	if (!_fileStream)
+		return -1;
+	return _currFrame;
+}
+
+int32 FlicPlayer::getFrameCount() {
+	if (!_fileStream)
+		return 0;
+	return _flicInfo.numFrames;
+}
+
 bool FlicPlayer::loadFile(const char *fileName) {
 	closeFile();
 
-	if (!_fileStream.open(fileName)) {
+	_fileStream = SearchMan.openFile(fileName);
+	if (!_fileStream)
 		return false;
-	}
 
-	_flicInfo.size = _fileStream.readUint32LE();
-	_flicInfo.type = _fileStream.readUint16LE();
-	_flicInfo.numFrames = _fileStream.readUint16LE();
-	_flicInfo.width = _fileStream.readUint16LE();
-	_flicInfo.height = _fileStream.readUint16LE();
-	_fileStream.skip(4);
-	_flicInfo.speed = _fileStream.readUint32LE();
-
-	_fileStream.seek(80);
-	_flicInfo.offsetFrame1 = _fileStream.readUint32LE();
-	_flicInfo.offsetFrame2 = _fileStream.readUint32LE();
+	_flicInfo.size = _fileStream->readUint32LE();
+	_flicInfo.type = _fileStream->readUint16LE();
 
 	// Check FLC magic number
 	if (_flicInfo.type != 0xAF12) {
-		error("FlicPlayer::FlicPlayer(): attempted to load non-FLC data (type = 0x%04X)", _flicInfo.type);
+		warning("FlicPlayer::FlicPlayer(): attempted to load non-FLC data (type = 0x%04X)", _flicInfo.type);
+		delete _fileStream;
+		return false;
 	}
+
+	_flicInfo.numFrames = _fileStream->readUint16LE();
+	_flicInfo.width = _fileStream->readUint16LE();
+	_flicInfo.height = _fileStream->readUint16LE();
+	_fileStream->skip(4);
+	_flicInfo.speed = _fileStream->readUint32LE();
+
+	_fileStream->seek(80);
+	_flicInfo.offsetFrame1 = _fileStream->readUint32LE();
+	_flicInfo.offsetFrame2 = _fileStream->readUint32LE();
 
 	_offscreen = new uint8[_flicInfo.width * _flicInfo.height];
 	memset(_palette, 0, sizeof(_palette));
@@ -66,13 +94,17 @@ bool FlicPlayer::loadFile(const char *fileName) {
 
 	// Seek to the first frame
 	_currFrame = 0;
-	_fileStream.seek(_flicInfo.offsetFrame1);
+	_fileStream->seek(_flicInfo.offsetFrame1);
 	return true;
 }
 
 void FlicPlayer::closeFile() {
-	memset(&_flicInfo, 0, sizeof(_flicInfo));
-	_fileStream.close();
+	if (!_fileStream)
+		return;
+
+	delete _fileStream;
+	_fileStream = 0;
+
 	delete[] _offscreen;
 	_offscreen = 0;
 }
@@ -85,8 +117,8 @@ void FlicPlayer::redraw() {
 ChunkHeader FlicPlayer::readChunkHeader() {
 	ChunkHeader head;
 
-	head.size = _fileStream.readUint32LE();
-	head.type = _fileStream.readUint16LE();
+	head.size = _fileStream->readUint32LE();
+	head.type = _fileStream->readUint16LE();
 
 	return head;
 }
@@ -95,11 +127,11 @@ FrameTypeChunkHeader FlicPlayer::readFrameTypeChunkHeader(ChunkHeader chunkHead)
 	FrameTypeChunkHeader head;
 
 	head.header = chunkHead;
-	head.numChunks = _fileStream.readUint16LE();
-	head.delay = _fileStream.readUint16LE();
-	head.reserved = _fileStream.readUint16LE();
-	head.widthOverride = _fileStream.readUint16LE();
-	head.heightOverride = _fileStream.readUint16LE();
+	head.numChunks = _fileStream->readUint16LE();
+	head.delay = _fileStream->readUint16LE();
+	head.reserved = _fileStream->readUint16LE();
+	head.widthOverride = _fileStream->readUint16LE();
+	head.heightOverride = _fileStream->readUint16LE();
 
 	return head;
 }
@@ -184,7 +216,7 @@ void FlicPlayer::decodeDeltaFLC(uint8 *data) {
 	}
 }
 
-#define COLOR_256  4
+#define FLI_SETPAL 4
 #define FLI_SS2    7
 #define FLI_BRUN   15
 #define PSTAMP     18
@@ -210,9 +242,9 @@ void FlicPlayer::decodeNextFrame() {
 		for (int i = 0; i < frameHeader.numChunks; ++i) {
 			cHeader = readChunkHeader();
 			uint8 *data = new uint8[cHeader.size - 6];
-			_fileStream.read(data, cHeader.size - 6);
+			_fileStream->read(data, cHeader.size - 6);
 			switch (cHeader.type) {
-			case COLOR_256:
+			case FLI_SETPAL:
 				setPalette(data);
 				_paletteDirty = true;
 				break;
@@ -237,13 +269,13 @@ void FlicPlayer::decodeNextFrame() {
 	// If we just processed the ring frame, set the next frame
 	if (_currFrame == _flicInfo.numFrames + 1) {
 		_currFrame = 1;
-		_fileStream.seek(_flicInfo.offsetFrame2);
+		_fileStream->seek(_flicInfo.offsetFrame2);
 	}
 }
 
 void FlicPlayer::reset() {
 	_currFrame = 0;
-	_fileStream.seek(_flicInfo.offsetFrame1);
+	_fileStream->seek(_flicInfo.offsetFrame1);
 }
 
 void FlicPlayer::setPalette(uint8 *mem) {

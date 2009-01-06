@@ -195,6 +195,7 @@ void DXAPlayer::closeFile() {
 		return;
 
 	delete _fileStream;
+	_fileStream = 0;
 
 	free(_frameBuffer1);
 	free(_frameBuffer2);
@@ -202,7 +203,6 @@ void DXAPlayer::closeFile() {
 	free(_inBuffer);
 	free(_decompBuffer);
 
-	_fileStream = 0;
 	_inBuffer = 0;
 	_decompBuffer = 0;
 }

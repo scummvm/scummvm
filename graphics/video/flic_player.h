@@ -33,17 +33,6 @@
 
 namespace Graphics {
 
-struct FlicHeader {
-	uint32 size;
-	uint16 type;
-	uint16 numFrames;
-	uint16 width;
-	uint16 height;
-	uint32 speed;
-	uint16 offsetFrame1;
-	uint16 offsetFrame2;
-};
-
 struct ChunkHeader {
 	uint32 size;
 	uint16 type;
@@ -67,25 +56,25 @@ public:
 	 * Returns the width of the video
 	 * @return the width of the video
 	 */
-	int getWidth() const { return _flicInfo.width; }
+	int getWidth();
 
 	/**
 	 * Returns the height of the video
 	 * @return the height of the video
 	 */
-	int getHeight() const { return _flicInfo.height; }
+	int getHeight();
 
 	/**
 	 * Returns the current frame number of the video
 	 * @return the current frame number of the video
 	 */
-	int getCurFrame() const { return _currFrame; }
+	int32 getCurFrame();
 
 	/**
 	 * Returns the amount of frames in the video
 	 * @return the amount of frames in the video
 	 */
-	int getFrameCount() const { return _flicInfo.numFrames; }
+	int32 getFrameCount();
 
 	/**
 	 * Load a FLIC encoded video file
@@ -123,7 +112,17 @@ public:
 	 */
 	void copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch);
 
-protected:
+private:
+	struct FlicHeader {
+		uint32 size;
+		uint16 type;
+		uint16 numFrames;
+		uint16 width;
+		uint16 height;
+		uint32 speed;
+		uint16 offsetFrame1;
+		uint16 offsetFrame2;
+	};
 
 	ChunkHeader readChunkHeader();
 	FrameTypeChunkHeader readFrameTypeChunkHeader(ChunkHeader chunkHead);
@@ -131,7 +130,7 @@ protected:
 	void decodeDeltaFLC(uint8 *data);
 	void setPalette(uint8 *mem);
 
-	Common::File _fileStream;
+	Common::SeekableReadStream *_fileStream;
 	bool _paletteDirty;
 	uint8 *_offscreen;
 	uint8 _palette[256 * 4];
