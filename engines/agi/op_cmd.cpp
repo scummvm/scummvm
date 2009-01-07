@@ -1387,7 +1387,13 @@ cmd(set_string) {
 }
 
 cmd(display) {
-	g_agi->printText(curLogic->texts[p2 - 1], p1, 0, p0, 40, game.colorFg, game.colorBg);
+	int len = 40;
+
+	char *s = g_agi->wordWrapString(curLogic->texts[p2 - 1], &len);
+
+	g_agi->printText(s, p1, 0, p0, 40, game.colorFg, game.colorBg);
+
+	free(s);
 }
 
 cmd(display_f) {

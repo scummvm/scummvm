@@ -963,7 +963,7 @@ public:
 	void printText(const char *, int, int, int, int, int, int, bool checkerboard = false);
 	void printTextConsole(const char *, int, int, int, int, int);
 	int print(const char *, int, int, int);
-	char *wordWrapString(char *, int *);
+	char *wordWrapString(const char *, int *);
 	char *agiSprintf(const char *);
 	void writeStatus(void);
 	void writePrompt(void);
