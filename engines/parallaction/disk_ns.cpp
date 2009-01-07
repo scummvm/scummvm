@@ -457,12 +457,13 @@ void DosDisk_ns::loadBackground(BackgroundInfo& info, const char *filename) {
 	parseBackground(info, *stream);
 
 	info.bg.create(info.width, info.height, 1);
-	info.mask.create(info.width, info.height);
-	info.mask.bigEndian = true;
+	info._mask = new MaskBuffer;
+	info._mask->create(info.width, info.height);
+	info._mask->bigEndian = true;
 	info.path.create(info.width, info.height);
 
 	Graphics::PackBitsReadStream pbstream(*stream);
-	unpackBackground(&pbstream, (byte*)info.bg.pixels, info.mask.data, info.path.data);
+	unpackBackground(&pbstream, (byte*)info.bg.pixels, info._mask->data, info.path.data);
 
 	delete stream;
 }
@@ -480,9 +481,10 @@ void DosDisk_ns::loadMaskAndPath(BackgroundInfo& info, const char *name) {
 	parseDepths(info, *stream);
 	info.path.create(info.width, info.height);
 	stream->read(info.path.data, info.path.size);
-	info.mask.create(info.width, info.height);
-	info.mask.bigEndian = true;
-	stream->read(info.mask.data, info.mask.size);
+	info._mask = new MaskBuffer;
+	info._mask->create(info.width, info.height);
+	info._mask->bigEndian = true;
+	stream->read(info._mask->data, info._mask->size);
 	delete stream;
 }
 
@@ -1049,9 +1051,10 @@ void AmigaDisk_ns::loadMask(BackgroundInfo& info, const char *name) {
 	s->seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
 	Graphics::PackBitsReadStream stream(*s);
 
-	info.mask.create(info.width, info.height);
-	stream.read(info.mask.data, info.mask.size);
-	buildMask(info.mask.data);
+	info._mask = new MaskBuffer;
+	info._mask->create(info.width, info.height);
+	stream.read(info._mask->data, info._mask->size);
+	buildMask(info._mask->data);
 
 	delete s;
 

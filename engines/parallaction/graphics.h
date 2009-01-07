@@ -28,6 +28,7 @@
 
 #include "common/list.h"
 #include "common/rect.h"
+#include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/stream.h"
 
@@ -124,161 +125,6 @@ public:
 
 };
 
-
-
-struct MaskBuffer {
-	// handles a 2-bit depth buffer used for z-buffering
-
-	uint16	w;
-	uint16  internalWidth;
-	uint16	h;
-	uint	size;
-	byte	*data;
-	bool	bigEndian;
-
-public:
-	MaskBuffer() : w(0), internalWidth(0), h(0), size(0), data(0), bigEndian(true) {
-	}
-
-	void clone(const MaskBuffer &buf) {
-		if (!buf.data)
-			return;
-
-		create(buf.w, buf.h);
-		bigEndian = buf.bigEndian;
-		memcpy(data, buf.data, size);
-	}
-
-	void create(uint16 width, uint16 height) {
-		free();
-
-		w = width;
-		internalWidth = w >> 2;
-		h = height;
-		size = (internalWidth * h);
-		data = (byte*)calloc(size, 1);
-	}
-
-	void free() {
-		::free(data);
-		data = 0;
-		w = 0;
-		h = 0;
-		internalWidth = 0;
-		size = 0;
-	}
-
-	inline byte getValue(uint16 x, uint16 y) {
-		byte m = data[(x >> 2) + y * internalWidth];
-		uint n;
-		if (bigEndian) {
-			n = (x & 3) << 1;
-		} else {
-			n = (3 - (x & 3)) << 1;
-		}
-		return (m >> n) & 3;
-	}
-
-	inline byte* getPtr(uint16 x, uint16 y) const {
-		return data + (x >> 2) + y * internalWidth;
-	}
-
-	void bltOr(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {
-		assert((width <= w) && (width <= src.w) && (height <= h) && (height <= src.h));
-
-		byte *s = src.getPtr(sx, sy);
-		byte *d = getPtr(dx, dy);
-
-		// this code assumes buffers are aligned on 4-pixels boundaries, as the original does
-		uint16 linewidth = width >> 2;
-		for (uint16 i = 0; i < height; i++) {
-			for (uint16 j = 0; j < linewidth; j++) {
-				*d++ |= *s++;
-			}
-			d += internalWidth - linewidth;
-			s += src.internalWidth - linewidth;
-		}
-	}
-
-	void bltCopy(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {
-		assert((width <= w) && (width <= src.w) && (height <= h) && (height <= src.h));
-
-		byte *s = src.getPtr(sx, sy);
-		byte *d = getPtr(dx, dy);
-
-		// this code assumes buffers are aligned on 4-pixels boundaries, as the original does
-		for (uint16 i = 0; i < height; i++) {
-			memcpy(d, s, (width >> 2));
-			d += internalWidth;
-			s += src.internalWidth;
-		}
-	}
-
-
-};
-
-
-struct PathBuffer {
-	// handles a 1-bit depth buffer used for masking non-walkable areas
-
-	uint16	w;
-	uint16  internalWidth;
-	uint16	h;
-	uint	size;
-	byte	*data;
-
-public:
-	PathBuffer() : w(0), internalWidth(0), h(0), size(0), data(0) {
-	}
-
-	void create(uint16 width, uint16 height) {
-		free();
-
-		w = width;
-		internalWidth = w >> 3;
-		h = height;
-		size = (internalWidth * h);
-		data = (byte*)calloc(size, 1);
-	}
-
-	void free() {
-		::free(data);
-		data = 0;
-		w = 0;
-		h = 0;
-		internalWidth = 0;
-		size = 0;
-	}
-
-	inline byte getValue(uint16 x, uint16 y);
-};
-
-
-class Palette {
-
-	byte	_data[768];
-	uint	_colors;
-	uint	_size;
-	bool	_hb;
-
-public:
-	Palette();
-	Palette(const Palette &pal);
-
-	void clone(const Palette &pal);
-
-	void makeBlack();
-	void setEntries(byte* data, uint first, uint num);
-	void getEntry(uint index, int &red, int &green, int &blue);
-	void setEntry(uint index, int red, int green, int blue);
-	void makeGrayscale();
-	void fadeTo(const Palette& target, uint step);
-	uint fillRGBA(byte *rgba);
-
-	void rotate(uint first, uint last, bool forward);
-};
-
-
 struct Cnv : public Frames {
 	uint16	_count;		// # of frames
 	uint16	_width;		//
@@ -335,6 +181,76 @@ public:
 };
 
 
+struct MaskBuffer {
+	// handles a 2-bit depth buffer used for z-buffering
+
+	uint16	w;
+	uint16  internalWidth;
+	uint16	h;
+	uint	size;
+	byte	*data;
+	bool	bigEndian;
+
+	byte* getPtr(uint16 x, uint16 y) const;
+
+public:
+	MaskBuffer();
+	~MaskBuffer();
+
+	void clone(const MaskBuffer &buf);
+	void create(uint16 width, uint16 height);
+	void free();
+
+	byte getValue(uint16 x, uint16 y) const;
+	void bltOr(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height);
+	void bltCopy(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height);
+};
+
+
+struct PathBuffer {
+	// handles a 1-bit depth buffer used for masking non-walkable areas
+
+	uint16	w;
+	uint16  internalWidth;
+	uint16	h;
+	uint	size;
+	byte	*data;
+
+public:
+	PathBuffer();
+	~PathBuffer();
+
+	void create(uint16 width, uint16 height);
+	void free();
+	byte getValue(uint16 x, uint16 y) const;
+};
+
+
+class Palette {
+
+	byte	_data[768];
+	uint	_colors;
+	uint	_size;
+	bool	_hb;
+
+public:
+	Palette();
+	Palette(const Palette &pal);
+
+	void clone(const Palette &pal);
+
+	void makeBlack();
+	void setEntries(byte* data, uint first, uint num);
+	void getEntry(uint index, int &red, int &green, int &blue);
+	void setEntry(uint index, int red, int green, int blue);
+	void makeGrayscale();
+	void fadeTo(const Palette& target, uint step);
+	uint fillRGBA(byte *rgba);
+
+	void rotate(uint first, uint last, bool forward);
+};
+
+
 #define CENTER_LABEL_HORIZONTAL	-1
 #define CENTER_LABEL_VERTICAL	-1
 
@@ -387,7 +303,7 @@ public:
 	uint transparentKey;
 	uint scale;
 
-	MaskBuffer		_mask;
+	int	_maskId;
 	bool			_hasMask;
 
 
@@ -420,13 +336,20 @@ public:
 	being the most common options.
 */
 struct BackgroundInfo {
+protected:
+	typedef Common::HashMap<int, MaskBuffer*> MaskPatchMap;
+	MaskPatchMap _maskPatches;
+	MaskBuffer		_maskBackup;
+
+	void clearMaskData();
+
+public:
 	int x, y;		// used to display bitmaps smaller than the screen
 	int width;
 	int height;
 
 	Graphics::Surface	bg;
-	MaskBuffer			mask;
-	MaskBuffer			maskBackup;
+	MaskBuffer			*_mask;
 	PathBuffer			path;
 
 	Palette				palette;
@@ -434,37 +357,26 @@ struct BackgroundInfo {
 	int 				layers[4];
 	PaletteFxRange		ranges[6];
 
-	bool				hasMask;
 
-	BackgroundInfo() : x(0), y(0), width(0), height(0), hasMask(false) {
-		layers[0] = layers[1] = layers[2] = layers[3] = 0;
-		memset(ranges, 0, sizeof(ranges));
-	}
+	BackgroundInfo();
+	~BackgroundInfo();
 
-	void setPaletteRange(int index, const PaletteFxRange& range) {
-		assert(index < 6);
-		memcpy(&ranges[index], &range, sizeof(PaletteFxRange));
-	}
+	void setPaletteRange(int index, const PaletteFxRange& range);
 
-	uint16 getLayer(uint16 z) {
-		for (uint16 i = 0; i < 3; i++) {
-			if (layers[i+1] > z) return i;
-		}
-		return LAYER_FOREGROUND;
-	}
+	// mask management
+	bool hasMask();
+	int addMaskPatch(MaskBuffer *patch);
+	void toggleMaskPatch(int id, int x, int y, bool apply);
+	uint16 getMaskLayer(uint16 z) const;
+	void finalizeMask();
 
-	~BackgroundInfo() {
-		bg.free();
-		mask.free();
-		maskBackup.free();
-		path.free();
-		x = 0;
-		y = 0;
-		width = 0;
-		height = 0;
-	}
-
+	// path management
+	bool hasPath();
+	int addPathPatch(PathBuffer *patch);
+	void togglePathPatch(int id, int x, int y, bool apply);
 };
+
+
 
 
 enum {
@@ -611,9 +523,6 @@ protected:
 	void bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
 	void bltMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
 	void bltNoMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, byte transparentColor);
-
-public:
-
 };
 
 

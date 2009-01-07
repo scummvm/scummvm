@@ -456,12 +456,12 @@ void Parallaction::drawAnimations() {
 			} else {
 				if (getGameType() == GType_Nippon) {
 					// Layer in NS depends on where the animation is on the screen, for each animation.
-					layer = _gfx->_backgroundInfo->getLayer(anim->getBottom());
+					layer = _gfx->_backgroundInfo->getMaskLayer(anim->getBottom());
 				} else {
 					// Layer in BRA is calculated from Z value. For characters it is the same as NS,
 					// but other animations can have Z set from scripts independently from their
 					// position on the screen.
-					layer = _gfx->_backgroundInfo->getLayer(anim->getZ());
+					layer = _gfx->_backgroundInfo->getMaskLayer(anim->getZ());
 				}
 			}
 

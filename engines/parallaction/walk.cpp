@@ -27,28 +27,7 @@
 
 namespace Parallaction {
 
-
-
 #define IS_PATH_CLEAR(x,y) _vm->_gfx->_backgroundInfo->path.getValue((x), (y))
-
-inline byte PathBuffer::getValue(uint16 x, uint16 y) {
-	byte m = data[(x >> 3) + y * internalWidth];
-	uint bit = 0;
-	switch (_vm->getGameType()) {
-	case GType_Nippon:
-		bit = (_vm->getPlatform() == Common::kPlatformPC) ? (x & 7) : (7 - (x & 7));
-		break;
-
-	case GType_BRA:
-		// Amiga and PC versions pack the path bits the same way in BRA
-		bit = 7 - (x & 7);
-		break;
-
-	default:
-		error("path mask not yet implemented for this game type");
-	}
-	return ((1 << bit) & m) >> bit;
-}
 
 // adjusts position towards nearest walkable point
 //

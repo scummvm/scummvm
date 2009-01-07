@@ -464,7 +464,7 @@ void Gfx::patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask) 
 	Common::Rect r(surf.w, surf.h);
 	r.moveTo(x, y);
 
-	uint16 z = (mask) ? _backgroundInfo->getLayer(y) : LAYER_FOREGROUND;
+	uint16 z = (mask) ? _backgroundInfo->getMaskLayer(y) : LAYER_FOREGROUND;
 	blt(r, (byte*)surf.pixels, &_backgroundInfo->bg, z, 100, 0);
 }
 
@@ -687,7 +687,7 @@ void Gfx::grabBackground(const Common::Rect& r, Graphics::Surface &dst) {
 
 
 Gfx::Gfx(Parallaction* vm) :
-	_vm(vm), _disk(vm->_disk), _scrollPos(0), _minScroll(0), _maxScroll(0) {
+	_vm(vm), _disk(vm->_disk), _backgroundInfo(0), _scrollPos(0), _minScroll(0), _maxScroll(0) {
 
 	_gameType = _vm->getGameType();
 	_doubleBuffering = _gameType != GType_Nippon;
@@ -778,6 +778,11 @@ void Gfx::freeDialogueObjects() {
 }
 
 void Gfx::setBackground(uint type, BackgroundInfo *info) {
+	if (!info) {
+		warning("Gfx::setBackground() called with an null BackgroundInfo");
+		return;
+	}
+
 	delete _backgroundInfo;
 	_backgroundInfo = info;
 
@@ -801,9 +806,7 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 		setPalette(_backgroundInfo->palette);
 	}
 
-	if (_backgroundInfo->hasMask) {
-		_backgroundInfo->maskBackup.clone(_backgroundInfo->mask);
-	}
+	_backgroundInfo->finalizeMask();
 
 	if (_gameType == GType_BRA) {
 		int width = CLIP(info->width, (int)_vm->_screenWidth, info->width);
@@ -816,6 +819,203 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 
 	_minScroll = 0;
 	_maxScroll = MAX<int>(0, _backgroundInfo->width - _vm->_screenWidth);
+}
+
+
+BackgroundInfo::BackgroundInfo() : x(0), y(0), width(0), height(0), _mask(0) {
+	layers[0] = layers[1] = layers[2] = layers[3] = 0;
+	memset(ranges, 0, sizeof(ranges));
+}
+
+BackgroundInfo::~BackgroundInfo() {
+	bg.free();
+	clearMaskData();
+	path.free();
+}
+
+bool BackgroundInfo::hasMask() {
+	return _mask != 0;
+}
+
+void BackgroundInfo::clearMaskData() {
+	// free mask data
+	MaskPatchMap::iterator it = _maskPatches.begin();
+	for ( ; it != _maskPatches.end(); it++) {
+		delete (*it)._value;
+	}
+	_maskPatches.clear();
+	delete _mask;
+	_mask = 0;
+	_maskBackup.free();
+}
+
+void BackgroundInfo::finalizeMask() {
+	if (_mask) {
+		_maskBackup.clone(*_mask);
+	} else {
+		clearMaskData();
+	}
+}
+
+int BackgroundInfo::addMaskPatch(MaskBuffer *patch) {
+	int id = _maskPatches.size();
+	_maskPatches.setVal(id, patch);
+	return id;
+}
+
+void BackgroundInfo::toggleMaskPatch(int id, int x, int y, bool apply) {
+	if (!hasMask()) {
+		return;
+	}
+	if (!_maskPatches.contains(id)) {
+		return;
+	}
+	MaskBuffer *patch = _maskPatches.getVal(id);
+	if (apply) {
+		_mask->bltOr(x, y, *patch, 0, 0, patch->w, patch->h);
+	} else {
+		_mask->bltCopy(x, y, _maskBackup, x, y, patch->w, patch->h);
+	}
+}
+
+uint16 BackgroundInfo::getMaskLayer(uint16 z) const {
+	for (uint16 i = 0; i < 3; i++) {
+		if (layers[i+1] > z) return i;
+	}
+	return LAYER_FOREGROUND;
+}
+
+void BackgroundInfo::setPaletteRange(int index, const PaletteFxRange& range) {
+	assert(index < 6);
+	memcpy(&ranges[index], &range, sizeof(PaletteFxRange));
+}
+
+MaskBuffer::MaskBuffer() : w(0), internalWidth(0), h(0), size(0), data(0), bigEndian(true) {
+}
+
+MaskBuffer::~MaskBuffer() {
+	free();
+}
+
+byte* MaskBuffer::getPtr(uint16 x, uint16 y) const {
+	return data + (x >> 2) + y * internalWidth;
+}
+
+void MaskBuffer::clone(const MaskBuffer &buf) {
+	if (!buf.data)
+		return;
+
+	create(buf.w, buf.h);
+	bigEndian = buf.bigEndian;
+	memcpy(data, buf.data, size);
+}
+
+void MaskBuffer::create(uint16 width, uint16 height) {
+	free();
+
+	w = width;
+	internalWidth = w >> 2;
+	h = height;
+	size = (internalWidth * h);
+	data = (byte*)calloc(size, 1);
+}
+
+void MaskBuffer::free() {
+	::free(data);
+	data = 0;
+	w = 0;
+	h = 0;
+	internalWidth = 0;
+	size = 0;
+}
+
+byte MaskBuffer::getValue(uint16 x, uint16 y) const {
+	byte m = data[(x >> 2) + y * internalWidth];
+	uint n;
+	if (bigEndian) {
+		n = (x & 3) << 1;
+	} else {
+		n = (3 - (x & 3)) << 1;
+	}
+	return (m >> n) & 3;
+}
+
+void MaskBuffer::bltOr(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {
+	assert((width <= w) && (width <= src.w) && (height <= h) && (height <= src.h));
+
+	byte *s = src.getPtr(sx, sy);
+	byte *d = getPtr(dx, dy);
+
+	// this code assumes buffers are aligned on 4-pixels boundaries, as the original does
+	uint16 linewidth = width >> 2;
+	for (uint16 i = 0; i < height; i++) {
+		for (uint16 j = 0; j < linewidth; j++) {
+			*d++ |= *s++;
+		}
+		d += internalWidth - linewidth;
+		s += src.internalWidth - linewidth;
+	}
+}
+
+void MaskBuffer::bltCopy(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {
+	assert((width <= w) && (width <= src.w) && (height <= h) && (height <= src.h));
+
+	byte *s = src.getPtr(sx, sy);
+	byte *d = getPtr(dx, dy);
+
+	// this code assumes buffers are aligned on 4-pixels boundaries, as the original does
+	for (uint16 i = 0; i < height; i++) {
+		memcpy(d, s, (width >> 2));
+		d += internalWidth;
+		s += src.internalWidth;
+	}
+}
+
+
+
+PathBuffer::PathBuffer() : w(0), internalWidth(0), h(0), size(0), data(0) {
+}
+
+PathBuffer::~PathBuffer() {
+	free();
+}
+
+void PathBuffer::create(uint16 width, uint16 height) {
+	free();
+
+	w = width;
+	internalWidth = w >> 3;
+	h = height;
+	size = (internalWidth * h);
+	data = (byte*)calloc(size, 1);
+}
+
+void PathBuffer::free() {
+	::free(data);
+	data = 0;
+	w = 0;
+	h = 0;
+	internalWidth = 0;
+	size = 0;
+}
+
+byte PathBuffer::getValue(uint16 x, uint16 y) const {
+	byte m = data[(x >> 3) + y * internalWidth];
+	uint bit = 0;
+	switch (_vm->getGameType()) {
+	case GType_Nippon:
+		bit = (_vm->getPlatform() == Common::kPlatformPC) ? (x & 7) : (7 - (x & 7));
+		break;
+
+	case GType_BRA:
+		// Amiga and PC versions pack the path bits the same way in BRA
+		bit = 7 - (x & 7);
+		break;
+
+	default:
+		error("path mask not yet implemented for this game type");
+	}
+	return ((1 << bit) & m) >> bit;
 }
 
 } // namespace Parallaction

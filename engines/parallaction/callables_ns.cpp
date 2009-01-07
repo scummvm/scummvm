@@ -288,7 +288,10 @@ void Parallaction_ns::_c_onMouse(void *parm) {
 
 void Parallaction_ns::_c_setMask(void *parm) {
 
-	memset(_gfx->_backgroundInfo->mask.data + 3600, 0, 3600);
+	if (!_gfx->_backgroundInfo->hasMask())
+		return;
+
+	memset(_gfx->_backgroundInfo->_mask->data + 3600, 0, 3600);
 	_gfx->_backgroundInfo->layers[1] = 500;
 
 	return;
@@ -446,10 +449,13 @@ void Parallaction_ns::_c_moveSheet(void *parm) {
 void zeroMask(int x, int y, int color, void *data) {
 	//_vm->_gfx->zeroMaskValue(x, y, color);
 
-	BackgroundInfo* info = (BackgroundInfo*)data;
+	if (!_vm->_gfx->_backgroundInfo->hasMask())
+		return;
 
-	uint16 _ax = x + y * info->width;
-	info->mask.data[_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
+//	BackgroundInfo* info = (BackgroundInfo*)data;
+
+	uint16 _ax = x + y * _vm->_gfx->_backgroundInfo->_mask->w;
+	_vm->_gfx->_backgroundInfo->_mask->data[_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
 
 }
 
@@ -498,11 +504,11 @@ void Parallaction_ns::_c_shade(void *parm) {
 		_rightHandAnim->getY()
 	);
 
-	uint16 _di = r.left/4 + r.top * _gfx->_backgroundInfo->mask.internalWidth;
+	uint16 _di = r.left/4 + r.top * _vm->_gfx->_backgroundInfo->_mask->internalWidth;
 
 	for (uint16 _si = r.top; _si < r.bottom; _si++) {
-		memset(_gfx->_backgroundInfo->mask.data + _di, 0, r.width()/4+1);
-		_di += _gfx->_backgroundInfo->mask.internalWidth;
+		memset(_vm->_gfx->_backgroundInfo->_mask->data + _di, 0, r.width()/4+1);
+		_di += _vm->_gfx->_backgroundInfo->_mask->internalWidth;
 	}
 
 	return;

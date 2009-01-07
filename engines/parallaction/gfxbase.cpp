@@ -46,7 +46,6 @@ GfxObj::GfxObj(uint objType, Frames *frames, const char* name) :
 GfxObj::~GfxObj() {
 	delete _frames;
 	free(_name);
-	_mask.free();
 }
 
 void GfxObj::release() {
@@ -157,12 +156,15 @@ void Gfx::freeCharacterObjects() {
 	clearGfxObjects(kGfxObjCharacter);
 }
 
-
 void Gfx::loadGfxObjMask(const char *name, GfxObj *obj) {
 	Common::Rect rect;
 	obj->getRect(0, rect);
-	obj->_mask.create(rect.width(), rect.height());
-	_vm->_disk->loadMask(name, obj->_mask);
+
+	MaskBuffer *buf = new MaskBuffer;
+	buf->create(rect.width(), rect.height());
+	_vm->_disk->loadMask(name, *buf);
+
+	obj->_maskId = _backgroundInfo->addMaskPatch(buf);
 	obj->_hasMask = true;
 }
 
@@ -177,12 +179,9 @@ void Gfx::showGfxObj(GfxObj* obj, bool visible) {
 		obj->clearFlags(kGfxObjVisible);
 	}
 
-	if (obj->_hasMask && _backgroundInfo->hasMask) {
-		if (visible) {
-			_backgroundInfo->mask.bltOr(obj->x, obj->y, obj->_mask, 0, 0, obj->_mask.w, obj->_mask.h);
-		} else {
-			_backgroundInfo->mask.bltCopy(obj->x, obj->y, _backgroundInfo->maskBackup, obj->x, obj->y, obj->_mask.w, obj->_mask.h);
-		}
+	//TODO: move handling of mask existence inside MaskManager
+	if (obj->_hasMask) {
+		_backgroundInfo->toggleMaskPatch(obj->_maskId, obj->x, obj->y, visible);
 	}
 }
 
@@ -334,7 +333,7 @@ void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *sur
 			}
 
 			if (*s != transparentColor) {
-				byte v = _backgroundInfo->mask.getValue(dp.x + col, dp.y + line);
+				byte v = _backgroundInfo->_mask->getValue(dp.x + col, dp.y + line);
 				if (z >= v) *d2 = *s;
 			}
 
@@ -351,7 +350,7 @@ void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *sur
 }
 
 void Gfx::bltMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor) {
-	if (!_backgroundInfo->mask.data || (z == LAYER_FOREGROUND)) {
+	if (!_backgroundInfo->hasMask() || (z == LAYER_FOREGROUND)) {
 		// use optimized path
 		bltNoMaskNoScale(r, data, surf, transparentColor);
 		return;
@@ -380,7 +379,7 @@ void Gfx::bltMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *s
 
 		for (uint16 j = 0; j < q.width(); j++) {
 			if (*s != transparentColor) {
-				byte v = _backgroundInfo->mask.getValue(dp.x + j, dp.y + i);
+				byte v = _backgroundInfo->_mask->getValue(dp.x + j, dp.y + i);
 				if (z >= v) *d = *s;
 			}
 

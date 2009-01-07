@@ -472,7 +472,6 @@ DECLARE_LOCATION_PARSER(mask)  {
 	ctxt.info->layers[3] = atoi(_tokens[4]);
 
 	_vm->_disk->loadScenery(*ctxt.info, 0, _tokens[1], 0);
-	ctxt.info->hasMask = true;
 }
 
 
@@ -789,11 +788,7 @@ void LocationParser_br::parseGetData(ZonePtr z) {
 		}
 
 		if (!scumm_stricmp(_tokens[0], "mask")) {
-			if (ctxt.info->hasMask) {
-				_vm->_gfx->loadGfxObjMask(_tokens[1], data->gfxobj);
-			} else {
-				warning("Mask for zone '%s' ignored, since background doesn't have one", z->_name);
-			}
+			_vm->_gfx->loadGfxObjMask(_tokens[1], data->gfxobj);
 		}
 
 		if (!scumm_stricmp(_tokens[0], "path")) {

@@ -339,8 +339,9 @@ void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char 
 	}
 
 	if (mask) {
-		info.mask.create(info.width, info.height);
-		loadMask(mask, info.mask);
+		info._mask = new MaskBuffer;
+		info._mask->create(info.width, info.height);
+		loadMask(mask, *info._mask);
 	}
 
 	if (path) {
