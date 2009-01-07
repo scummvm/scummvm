@@ -1133,7 +1133,7 @@
 			<File
 				RelativePath="..\..\gui\GuiManager.h"
 				>
-			</File>			
+			</File>
 			<File
 				RelativePath="..\..\gui\Key.cpp"
 				>
@@ -1542,6 +1542,14 @@
 				</File>
 				<File
 					RelativePath="..\..\graphics\video\smk_player.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\graphics\video\video_player.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\graphics\video\video_player.h"
 					>
 				</File>
 			</Filter>
