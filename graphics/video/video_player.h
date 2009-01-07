@@ -158,7 +158,6 @@ protected:
 
 	Common::SeekableReadStream *_fileStream;
 	byte *_videoFrameBuffer;
-	byte _videoPalette[256 * 4];
 	bool _skipVideo;
 
 private:

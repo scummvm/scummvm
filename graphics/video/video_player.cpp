@@ -123,14 +123,16 @@ void VideoPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 }
 
 void VideoPlayer::setPalette(byte *pal) {
+	byte videoPalette[256 * 4];
+
 	for (int i = 0; i < 256; i++) {
-		_videoPalette[i * 4 + 0] = *pal++;
-		_videoPalette[i * 4 + 1] = *pal++;
-		_videoPalette[i * 4 + 2] = *pal++;
-		_videoPalette[i * 4 + 3] = 0;
+		videoPalette[i * 4 + 0] = *pal++;
+		videoPalette[i * 4 + 1] = *pal++;
+		videoPalette[i * 4 + 2] = *pal++;
+		videoPalette[i * 4 + 3] = 0;
 	}
 
-	g_system->setPalette(_videoPalette, 0, 256);
+	g_system->setPalette(videoPalette, 0, 256);
 }
 
 bool VideoPlayer::decodeNextFrame() {
