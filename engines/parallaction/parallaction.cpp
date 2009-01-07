@@ -140,6 +140,10 @@ void Parallaction::pauseEngineIntern(bool pause) {
 	}
 }
 
+GUI::Debugger *Parallaction::getDebugger() {
+	return _debugger;
+}
+
 bool canScroll() {
 	return (_vm->_gfx->_backgroundInfo->width > _vm->_screenWidth);
 }

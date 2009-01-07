@@ -254,6 +254,7 @@ public:
 	virtual Common::Error init();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void pauseEngineIntern(bool pause);
+	virtual GUI::Debugger *getDebugger();
 
 	// info
 	int32			_screenWidth;
