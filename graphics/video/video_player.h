@@ -27,11 +27,12 @@
 #define GRAPHICS_VIDEO_PLAYER_H
 
 #include "common/scummsys.h"
-#include "common/stream.h"
-#include "common/system.h"
+#include "common/events.h"
 #include "common/list.h"
-#include "sound/mixer.h"
-#include "sound/audiostream.h"
+
+namespace Common {
+	class SeekableReadStream;
+}
 
 namespace Graphics {
 

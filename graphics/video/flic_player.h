@@ -26,10 +26,13 @@
 #ifndef GRAPHICS_VIDEO_FLICPLAYER_H
 #define GRAPHICS_VIDEO_FLICPLAYER_H
 
-#include "common/endian.h"
+#include "common/scummsys.h"
 #include "common/list.h"
 #include "common/rect.h"
-#include "common/file.h"
+
+namespace Common {
+	class SeekableReadStream;
+}
 
 namespace Graphics {
 

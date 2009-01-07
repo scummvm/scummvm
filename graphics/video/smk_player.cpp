@@ -28,11 +28,14 @@
 // http://svn.ffmpeg.org/ffmpeg/trunk/libavcodec/smacker.c?revision=16143&view=markup
 
 #include "graphics/video/smk_player.h"
+
 #include "common/archive.h"
-#include "common/system.h"
-#include "common/util.h"
 #include "common/array.h"
 #include "common/endian.h"
+#include "common/util.h"
+#include "common/stream.h"
+#include "common/system.h"
+
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
 

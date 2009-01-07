@@ -26,9 +26,6 @@
 #ifndef GRAPHICS_VIDEO_DXA_PLAYER_H
 #define GRAPHICS_VIDEO_DXA_PLAYER_H
 
-#include "common/scummsys.h"
-#include "common/stream.h"
-
 #include "graphics/video/video_player.h"
 
 namespace Graphics {

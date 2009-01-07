@@ -30,12 +30,12 @@
 #ifndef GRAPHICS_VIDEO_SMK_PLAYER_H
 #define GRAPHICS_VIDEO_SMK_PLAYER_H
 
-#include "common/scummsys.h"
-#include "common/stream.h"
-#include "sound/mixer.h"
-#include "sound/audiostream.h"
-
 #include "graphics/video/video_player.h"
+#include "sound/mixer.h"
+
+namespace Audio {
+	class AppendableAudioStream;
+}
 
 namespace Graphics {
 

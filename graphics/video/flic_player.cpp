@@ -23,8 +23,10 @@
  *
  */
 
-#include "common/archive.h"
 #include "graphics/video/flic_player.h"
+#include "common/archive.h"
+#include "common/stream.h"
+#include "common/endian.h"
 
 namespace Graphics {
 
