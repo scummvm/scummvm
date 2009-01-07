@@ -28,6 +28,12 @@
 
 #include "groovie/player.h"
 
+//#define DITHER
+
+#ifdef DITHER
+#include "graphics/dither.h"
+#endif
+
 namespace Groovie {
 
 class GroovieEngine;
@@ -54,14 +60,43 @@ private:
 	bool processBlockInfo(ROQBlockHeader &blockHeader);
 	bool processBlockQuadCodebook(ROQBlockHeader &blockHeader);
 	bool processBlockQuadVector(ROQBlockHeader &blockHeader);
-	bool processBlockQuadVectorSub(ROQBlockHeader &blockHeader);
+	void processBlockQuadVectorBlock(int baseX, int baseY, int8 Mx, int8 My);
+	void processBlockQuadVectorBlockSub(int baseX, int baseY, int8 Mx, int8 My);
 	bool processBlockStill(ROQBlockHeader &blockHeader);
 	bool processBlockSoundMono(ROQBlockHeader &blockHeader);
 	bool processBlockSoundStereo(ROQBlockHeader &blockHeader);
 	bool processBlockAudioContainer(ROQBlockHeader &blockHeader);
 
+	void paint2(byte i, int destx, int desty);
+	void paint4(byte i, int destx, int desty);
+	void paint8(byte i, int destx, int desty);
+	void copy(byte size, int destx, int desty, int offx, int offy);
+
+	// Block coding type
+	byte getCodingType();
+	uint16 _codingType;
+	byte _codingTypeCount;
+
+	// Codebooks
 	uint16 _num2blocks;
 	uint16 _num4blocks;
+	byte _codebook2[256 * 6];
+	byte _codebook4[256 * 4];
+
+	// Buffers
+	Graphics::Surface *_currBuf;
+	Graphics::Surface *_prevBuf;
+	Graphics::Surface _showBuf;
+	void buildShowBuf();
+	byte _scale;
+	byte _offScale;
+	bool _dirty;
+
+#ifdef DITHER
+	// Dithering
+	Graphics::PaletteLUT *_paletteLookup;
+	Graphics::SierraLight *_dither;
+#endif
 };
 
 } // End of Groovie namespace

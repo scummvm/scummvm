@@ -23,6 +23,9 @@
  *
  */
 
+// ROQ video player based on this specification by Dr. Tim Ferguson:
+// http://www.csse.monash.edu.au/~timf/videocodec/idroq.txt
+
 #include "groovie/groovie.h"
 #include "groovie/roq.h"
 
@@ -31,10 +34,74 @@
 namespace Groovie {
 
 ROQPlayer::ROQPlayer(GroovieEngine *vm) :
-	VideoPlayer(vm) {
+#ifdef DITHER
+	_dither(NULL),
+#endif
+	VideoPlayer(vm), _codingTypeCount(0) {
+
+	// Create the work surfaces
+	_currBuf = new Graphics::Surface();
+	_prevBuf = new Graphics::Surface();
+
+	byte pal[256 * 4];
+#ifdef DITHER
+	byte pal3[256 * 3];
+	// Initialize to a black palette
+	for (int i = 0; i < 256 * 3; i++) {
+		pal3[i] = 0;
+	}
+
+	// Build a basic color palette
+	for (int r = 0; r < 4; r++) {
+		for (int g = 0; g < 4; g++) {
+			for (int b = 0; b < 4; b++) {
+				byte col = (r << 4) | (g << 2) | (b << 0);
+				pal3[3 * col + 0] = r << 6;
+				pal3[3 * col + 1] = g << 6;
+				pal3[3 * col + 2] = b << 6;
+			}
+		}
+	}
+
+	// Initialize the dithering algorithm
+	_paletteLookup = new Graphics::PaletteLUT(8, Graphics::PaletteLUT::kPaletteYUV);
+	_paletteLookup->setPalette(pal3, Graphics::PaletteLUT::kPaletteRGB, 8);
+	for (int i = 0; (i < 64) && !_vm->shouldQuit(); i++) {
+		debug("Groovie::ROQ: Building palette table: %02d/63", i);
+		_paletteLookup->buildNext();
+	}
+
+	// Prepare the palette to show
+	for (int i = 0; i < 256; i++) {
+		pal[(i * 4) + 0] = pal3[(i * 3) + 0];
+		pal[(i * 4) + 1] = pal3[(i * 3) + 1];
+		pal[(i * 4) + 2] = pal3[(i * 3) + 2];
+	}
+#else
+	// Set a grayscale palette
+	for (int i = 0; i < 256; i++) {
+		pal[(i * 4) + 0] = i;
+		pal[(i * 4) + 1] = i;
+		pal[(i * 4) + 2] = i;
+	}
+#endif
+
+	_syst->setPalette(pal, 0, 256);
 }
 
 ROQPlayer::~ROQPlayer() {
+	// Free the buffers
+	_currBuf->free();
+	delete _currBuf;
+	_prevBuf->free();
+	delete _prevBuf;
+	_showBuf.free();
+
+#ifdef DITHER
+	// Free the dithering algorithm
+	delete _dither;
+	delete _paletteLookup;
+#endif
 }
 
 uint16 ROQPlayer::loadInternal() {
@@ -46,12 +113,57 @@ uint16 ROQPlayer::loadInternal() {
 	if (!readBlockHeader(blockHeader)) {
 		return 0;
 	}
-	if (blockHeader.type != 0x1084 || blockHeader.size != 0 || blockHeader.param != 0) {
+
+	// Verify the file signature
+	if (blockHeader.type != 0x1084) {
 		return 0;
 	}
 
-	// Hardcoded FPS
-	return 25;
+	// Clear the dirty flag
+	_dirty = true;
+
+	if ((blockHeader.size == 0) && (blockHeader.param == 0)) {
+		// Set the offset scaling to 2
+		_offScale = 2;
+
+		// Hardcoded FPS
+		return 25;
+	} else if (blockHeader.size == (uint32)-1) {
+		// Set the offset scaling to 1
+		_offScale = 1;
+
+		// In this case the block parameter is the framerate
+		return blockHeader.param;
+	} else {
+		warning("Groovie::ROQ: Invalid header with size=%d and param=%d", blockHeader.size, blockHeader.param);
+		return 0;
+	}
+}
+
+void ROQPlayer::buildShowBuf() {
+#ifdef DITHER
+	// Start a new frame dithering
+	_dither->newFrame();
+#endif
+
+	for (int line = 0; line < _showBuf.h; line++) {
+		byte *out = (byte *)_showBuf.getBasePtr(0, line);
+		byte *in = (byte *)_prevBuf->getBasePtr(0, line / _scale);
+		for (int x = 0; x < _showBuf.w; x++) {
+#ifdef DITHER
+			*out = _dither->dither(*in, *(in + 1), *(in + 2), x);
+#else
+			// Just use the luminancy component
+			*out = *in;
+#endif
+			out++;
+			if (!(x % _scale))
+				in += _prevBuf->bytesPerPixel;
+		}
+#ifdef DITHER
+		_dither->nextLine();
+#endif
+	}
 }
 
 bool ROQPlayer::playFrameInternal() {
@@ -63,11 +175,22 @@ bool ROQPlayer::playFrameInternal() {
 		endframe = processBlock();
 	}
 
+	if (_dirty) {
+		// Build the show buffer from the previous (back) buffer
+		buildShowBuf();
+	}
+
 	// Wait until the current frame can be shown
 	waitFrame();
 
-	// Update the screen
-	_syst->updateScreen();
+	if (_dirty) {
+		// Update the screen
+		_syst->copyRectToScreen((byte *)_showBuf.getBasePtr(0, 0), _showBuf.w, 0, (_syst->getHeight() - _showBuf.h) / 2, _showBuf.pitch, _showBuf.h);
+		_syst->updateScreen();
+
+		// Clear the dirty flag
+		_dirty = false;
+	}
 
 	// Return whether the video has ended
 	return _file->eos();
@@ -96,6 +219,14 @@ bool ROQPlayer::processBlock() {
 		return true;
 	}
 
+	// Calculate where the block should end
+	int32 endpos = _file->pos() + blockHeader.size;
+
+	// Detect the end of the video
+	if (_file->eos()) {
+		return false;
+	}
+
 	bool ok = true;
 	bool endframe = false;
 	switch (blockHeader.type) {
@@ -105,16 +236,22 @@ bool ROQPlayer::processBlock() {
 	case 0x1002: // Quad codebook definition
 		ok = processBlockQuadCodebook(blockHeader);
 		break;
-	case 0x1011: // Quad vector quantised video frame
+	case 0x1011: { // Quad vector quantised video frame
 		ok = processBlockQuadVector(blockHeader);
+		_dirty = true;
 		endframe = true;
+
+		// Swap buffers
+		Graphics::Surface *tmp = _prevBuf;
+		_prevBuf = _currBuf;
+		_currBuf = tmp;
 		break;
+	}
 	case 0x1012: // Still image (JPEG)
 		ok = processBlockStill(blockHeader);
-		endframe = true;
 		break;
 	case 0x1013: // Hang
-		//warning("Groovie::ROQ: Hang block (skipped)");
+		assert(blockHeader.size == 0 && blockHeader.param == 0);
 		break;
 	case 0x1020: // Mono sound samples
 		ok = processBlockSoundMono(blockHeader);
@@ -123,12 +260,17 @@ bool ROQPlayer::processBlock() {
 		ok = processBlockSoundStereo(blockHeader);
 		break;
 	case 0x1030: // Audio container
+		endpos = _file->pos();
 		ok = processBlockAudioContainer(blockHeader);
 		break;
 	default:
-		error("Groovie::ROQ: Unknown block type: 0x%04X", blockHeader.type);
+		warning("Groovie::ROQ: Unknown block type: 0x%04X", blockHeader.type);
 		ok = false;
+		_file->skip(blockHeader.size);
 	}
+
+	if (endpos != _file->pos())
+		warning("Groovie::ROQ: BLOCK %04x Should have ended at %d, and has ended at %d", blockHeader.type, endpos, _file->pos());
 
 	// End the frame when the graphics have been modified or when there's an error
 	return endframe || !ok;
@@ -139,30 +281,42 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 
 	// Verify the block header
 	if (blockHeader.type != 0x1001 || blockHeader.size != 8 || blockHeader.param != 0) {
+		warning("Groovie::ROQ: BlockInfo size=%d param=%d", blockHeader.size, blockHeader.param);
 		return false;
 	}
 
-	uint16 tmp;
-	tmp = _file->readUint16LE();
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "w = %d\n", tmp);
-	if (tmp != 640) {
+	// Read the information
+	uint16 width = _file->readUint16LE();
+	uint16 height = _file->readUint16LE();
+	uint16 unk1 = _file->readUint16LE();
+	uint16 unk2 = _file->readUint16LE();
+	if (unk1 != 8 || unk2 != 4) {
+		warning("Groovie::ROQ: unk1 = %d, unk2 = %d", unk1, unk2);
 		return false;
 	}
-	tmp = _file->readUint16LE();
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "h = %d\n", tmp);
-	if (tmp != 320) {
-		return false;
+
+	// If the size of the image has changed, resize the buffers
+	if ((width != _currBuf->w) || (height != _currBuf->h)) {
+		// Calculate the maximum scale that fits the screen
+		_scale = MIN(_syst->getWidth() / width, _syst->getHeight() / height);
+
+		// Free the previous surfaces
+		_currBuf->free();
+		_prevBuf->free();
+		_showBuf.free();
+
+		// Allocate new buffers
+		_currBuf->create(width, height, 3);
+		_prevBuf->create(width, height, 3);
+		_showBuf.create(width * _scale, height * _scale, 1);
+
+#ifdef DITHER
+		// Reset the dithering algorithm with the new width
+		delete _dither;
+		_dither = new Graphics::SierraLight(width, _paletteLookup);
+#endif
 	}
-	tmp = _file->readUint16LE();
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "unk1 = %d\n", tmp);
-	if (tmp != 8) {
-		return false;
-	}
-	tmp = _file->readUint16LE();
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "unk2 = %d\n", tmp);
-	if (tmp != 4) {
-		return false;
-	}
+
 	return true;
 }
 
@@ -177,122 +331,118 @@ bool ROQPlayer::processBlockQuadCodebook(ROQBlockHeader &blockHeader) {
 
 	// Get the number of 4x4 pixel blocks
 	_num4blocks = blockHeader.param & 0xFF;
-	if (_num4blocks == 0 && (blockHeader.size > (uint32)_num2blocks * 6)) {
+	if ((_num4blocks == 0) && (blockHeader.size > (uint32)_num2blocks * 6)) {
 		_num4blocks = 256;
 	}
 
-	_file->skip(_num2blocks * 6);
-	_file->skip(_num4blocks * 4);
+	// Read the 2x2 codebook
+	for (int i = 0; i < _num2blocks; i++) {
+		// Read the 4 Y components and the subsampled Cb and Cr
+		_file->read(&_codebook2[i * 6], 6);
+	}
+
+	// Read the 4x4 codebook
+	_file->read(_codebook4, _num4blocks * 4);
 
 	return true;
 }
 
 bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
 	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing quad vector block");
-	_file->skip(blockHeader.size);
-	return true;
 
 	// Get the mean motion vectors
-	//byte Mx = blockHeader.param >> 8;
-	//byte My = blockHeader.param & 0xFF;
+	int8 Mx = blockHeader.param >> 8;
+	int8 My = blockHeader.param & 0xFF;
 
-	int32 ends =_file->pos() + blockHeader.size;
-	int numblocks = (640 / 8) * (320 / 8);
-	for (int j = 0; j < numblocks && ends > _file->pos(); j++) {
-		debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "doing block %d/%d\n", j, numblocks);
-		uint16 codingType = _file->readUint16LE();
-		for (int i = 0; i < 8; i++) {
-			switch (codingType >> 14) {
-			case 0: // MOT: Skip block
-				//printf("coding type 0\n");
-				break;
-			case 1: { // FCC: Copy an existing block
-				//printf("coding type 1\n");
-				byte argument;
-				argument = _file->readByte();
-				//byte Dx = Mx + (argument >> 4);
-				//byte Dy = My + (argument & 0x0F);
-				// Dx = X + 8 - (argument >> 4) - Mx
-				// Dy = Y + 8 - (argument & 0x0F) - My
-				break;
-			}
-			case 2: { // SLD: Quad vector quantisation
-				//printf("coding type 2\n");
-				byte argument = _file->readByte();
-				if (argument > _num4blocks) {
-					//error("invalid 4x4 block %d of %d", argument, _num4blocks);
+	// Calculate where the block should end
+	int32 endpos =_file->pos() + blockHeader.size;
+
+	// Reset the coding types
+	_codingTypeCount = 0;
+
+	// Traverse the image in 16x16 macroblocks
+	for (int macroY = 0; macroY < _currBuf->h; macroY += 16) {
+		for (int macroX = 0; macroX < _currBuf->w; macroX += 16) {
+			// Traverse the macroblock in 8x8 blocks
+			for (int blockY = 0; blockY < 16; blockY += 8) {
+				for (int blockX = 0; blockX < 16; blockX += 8) {
+					processBlockQuadVectorBlock(macroX + blockX, macroY + blockY, Mx, My);
 				}
-				// Upsample the 4x4 pixel block
-				break;
 			}
-			case 3: // CCC:
-				//printf("coding type 3:\n");
-				processBlockQuadVectorSub(blockHeader);
-				break;
-			}
-			codingType <<= 2;
 		}
 	}
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Should have ended at %d, and has ended at %d\n", ends, _file->pos());
+
+	// HACK: Skip the remaining bytes
+	int32 skipBytes = endpos -_file->pos();
+	if (skipBytes > 0) {
+		_file->skip(skipBytes);
+		if (skipBytes != 2) {
+			warning("Groovie::ROQ: Skipped %d bytes", skipBytes);
+		}
+	}
 	return true;
 }
 
-bool ROQPlayer::processBlockQuadVectorSub(ROQBlockHeader &blockHeader) {
+void ROQPlayer::processBlockQuadVectorBlock(int baseX, int baseY, int8 Mx, int8 My) {
+	uint16 codingType = getCodingType();
+	switch (codingType) {
+	case 0: // MOT: Skip block
+		break;
+	case 1: { // FCC: Copy an existing block
+		byte argument = _file->readByte();
+		int16 DDx = 8 - (argument >> 4);
+		int16 DDy = 8 - (argument & 0x0F);
+		copy(8, baseX, baseY, DDx - Mx, DDy - My);
+		break;
+	}
+	case 2: // SLD: Quad vector quantisation
+		// Upsample the 4x4 pixel block
+		paint8(_file->readByte(), baseX, baseY);
+		break;
+	case 3: // CCC:
+		// Traverse the block in 4x4 sub-blocks
+		for (int subBlockY = 0; subBlockY < 8; subBlockY += 4) {
+			for (int subBlockX = 0; subBlockX < 8; subBlockX += 4) {
+				processBlockQuadVectorBlockSub(baseX + subBlockX, baseY + subBlockY, Mx, My);
+			}
+		}
+		break;
+	}
+}
+
+void ROQPlayer::processBlockQuadVectorBlockSub(int baseX, int baseY, int8 Mx, int8 My) {
 	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing quad vector sub block");
 
-	// Get the mean motion vectors
-	//byte Mx = blockHeader.param >> 8;
-	//byte My = blockHeader.param & 0xFF;
-
-	uint16 codingType = _file->readUint16LE();
-	for (int i = 0; i < 4; i++) {
-		switch (codingType >> 14) {
-		case 0: // MOT: Skip block
-			//printf("coding type 0\n");
-			break;
-		case 1: { // FCC: Copy an existing block
-			//printf("coding type 1\n");
-			byte argument;
-			argument = _file->readByte();
-			//byte Dx = Mx + (argument >> 4);
-			//byte Dy = My + (argument & 0x0F);
-			// Dx = X + 8 - (argument >> 4) - Mx
-			// Dy = Y + 8 - (argument & 0x0F) - My
-			break;
-		}
-		case 2: { // SLD: Quad vector quantisation
-			//printf("coding type 2\n");
-			byte argument = _file->readByte();
-			if (argument > _num2blocks) {
-				//error("invalid 2x2 block: %d of %d", argument, _num2blocks);
-			}
-			break;
-		}
-		case 3:
-			//printf("coding type 3\n");
-			_file->readByte();
-			_file->readByte();
-			_file->readByte();
-			_file->readByte();
-			break;
-		}
-		codingType <<= 2;
+	uint16 codingType = getCodingType();
+	switch (codingType) {
+	case 0: // MOT: Skip block
+		break;
+	case 1: { // FCC: Copy an existing block
+		byte argument = _file->readByte();
+		int16 DDx = 8 - (argument >> 4);
+		int16 DDy = 8 - (argument & 0x0F);
+		copy(4, baseX, baseY, DDx - Mx, DDy - My);
+		break;
 	}
-	return true;
+	case 2: // SLD: Quad vector quantisation
+		paint4(_file->readByte(), baseX, baseY);
+		break;
+	case 3:
+		paint2(_file->readByte(), baseX    , baseY);
+		paint2(_file->readByte(), baseX + 2, baseY);
+		paint2(_file->readByte(), baseX    , baseY + 2);
+		paint2(_file->readByte(), baseX + 2, baseY + 2);
+		break;
+	}
 }
 
 bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing still (JPEG) block");
-	//Common::ReadStream *jpegData = new Common::SubReadStream(_file, blockHeader.size);
-	//Graphics::JPEG jpegFrame;
-	//jpegFrame.read(jpegData);
-	/*
-	Common::File save;
-	save.open("dump.jpg", Common::File::kFileWriteMode);
-	save.write(data, blockHeader.size);
-	save.close();
-	*/
-	error("JPEG!");
+
+	warning("Groovie::ROQ: JPEG frame (unimplemented)");
+	memset(_prevBuf->getBasePtr(0, 0), 0, _prevBuf->w * _prevBuf->h * _prevBuf->bytesPerPixel);
+
+	_file->skip(blockHeader.size);
 	return true;
 }
 
@@ -398,6 +548,100 @@ bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
 bool ROQPlayer::processBlockAudioContainer(ROQBlockHeader &blockHeader) {
 	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing audio container block: 0x%04X", blockHeader.param);
 	return true;
+}
+
+byte ROQPlayer::getCodingType() {
+	_codingType <<= 2;
+	if (!_codingTypeCount) {
+		_codingType = _file->readUint16LE();
+		_codingTypeCount = 8;
+	}
+
+	_codingTypeCount--;
+	return (_codingType >> 14);
+}
+
+void ROQPlayer::paint2(byte i, int destx, int desty) {
+	if (i > _num2blocks) {
+		error("Groovie::ROQ: Invalid 2x2 block %d (%d available)", i, _num2blocks);
+	}
+
+	byte *block = &_codebook2[i * 6];
+	byte u = block[4];
+	byte v = block[5];
+
+	byte *ptr = (byte *)_currBuf->getBasePtr(destx, desty);
+	for (int y = 0; y < 2; y++) {
+		for (int x = 0; x < 2; x++) {
+			*ptr = *block;
+			*(ptr + 1) = u;
+			*(ptr + 2) = v;
+			ptr += 3;
+			block++;
+		}
+		ptr += _currBuf->pitch - 6;
+	}
+}
+
+void ROQPlayer::paint4(byte i, int destx, int desty) {
+	if (i > _num4blocks) {
+		error("Groovie::ROQ: Invalid 4x4 block %d (%d available)", i, _num4blocks);
+	}
+
+	byte *block4 = &_codebook4[i * 4];
+	for (int origy = 0; origy < 4; origy += 2) {
+		for (int origx = 0; origx < 4; origx += 2) {
+			paint2(*block4, destx + origx, desty + origy);
+			block4++;
+		}
+	}
+}
+
+void ROQPlayer::paint8(byte i, int destx, int desty) {
+	if (i > _num4blocks) {
+		error("Groovie::ROQ: Invalid 4x4 block %d (%d available)", i, _num4blocks);
+	}
+
+	byte *block4 = &_codebook4[i * 4];
+	for (int y4 = 0; y4 < 2; y4++) {
+		for (int x4 = 0; x4 < 2; x4++) {
+			byte *block2 = &_codebook2[(*block4) * 6];
+			byte u = block2[4];
+			byte v = block2[5];
+			block4++;
+			for (int y2 = 0; y2 < 2; y2++) {
+				for (int x2 = 0; x2 < 2; x2++) {
+					for (int repy = 0; repy < 2; repy++) {
+						for (int repx = 0; repx < 2; repx++) {
+							byte *ptr = (byte *)_currBuf->getBasePtr(destx + x4*4 + x2*2 + repx, desty + y4*4 + y2*2 + repy);
+							*ptr = *block2;
+							*(ptr + 1) = u;
+							*(ptr + 2) = v;
+						}
+					}
+					block2++;
+				}
+			}
+		}
+	}
+}
+
+void ROQPlayer::copy(byte size, int destx, int desty, int offx, int offy) {
+	offx *= _offScale / _scale;
+	offy *= _offScale / _scale;
+
+	// Get the beginning of the first line
+	byte *dst = (byte *)_currBuf->getBasePtr(destx, desty);
+	byte *src = (byte *)_prevBuf->getBasePtr(destx + offx, desty + offy);
+
+	for (int i = 0; i < size; i++) {
+		// Copy the current line
+		memcpy(dst, src, size * _currBuf->bytesPerPixel);
+
+		// Move to the beginning of the next line
+		dst += _currBuf->pitch;
+		src += _currBuf->pitch;
+	}
 }
 
 } // End of Groovie namespace
