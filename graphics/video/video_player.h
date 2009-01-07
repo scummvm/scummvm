@@ -107,7 +107,7 @@ public:
 	/**
 	 * Returns if a video file is loaded or not
 	 */
-	bool videoIsLoaded() { return (_fileStream != NULL); }
+	bool isVideoLoaded() { return (_fileStream != NULL); }
 
 	/**
 	 * Set RGB palette, based on current frame

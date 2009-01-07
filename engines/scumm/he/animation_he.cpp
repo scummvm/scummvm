@@ -40,13 +40,13 @@ MoviePlayer::MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer)
 }
 
 int MoviePlayer::getImageNum() {
-	if (!videoIsLoaded())
+	if (!isVideoLoaded())
 		return 0;
 	return _wizResNum;
 }
 
 int MoviePlayer::load(const char *filename, int flags, int image) {
-	if (videoIsLoaded()) {
+	if (isVideoLoaded()) {
 		closeFile();
 	}
 
@@ -67,7 +67,7 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 }
 
 void MoviePlayer::handleNextFrame() {
-	if (!videoIsLoaded()) {
+	if (!isVideoLoaded()) {
 		return;
 	}
 
