@@ -314,59 +314,16 @@ uint32 BigHuffmanTree::getCode(BitStream &bs) {
 }
 
 SMKPlayer::SMKPlayer(Audio::Mixer *mixer)
-	: _currentSMKFrame(0), _fileStream(0), _audioStarted(false), _audioStream(0), _mixer(mixer) {
+	: _audioStarted(false), _audioStream(0), _mixer(mixer) {
 }
 
 SMKPlayer::~SMKPlayer() {
-	closeFile();
-}
-
-int SMKPlayer::getWidth() {
-	if (!_fileStream)
-		return 0;
-	return _header.width;
 }
 
 int SMKPlayer::getHeight() {
 	if (!_fileStream)
 		return 0;
-	return (_header.flags ? 2 : 1) * _header.height;
-}
-
-int32 SMKPlayer::getCurFrame() {
-	if (!_fileStream)
-		return -1;
-	return _currentSMKFrame;
-}
-
-int32 SMKPlayer::getFrameCount() {
-	if (!_fileStream)
-		return 0;
-	return _header.frames;
-}
-
-int32 SMKPlayer::getFrameRate() {
-	if (!_fileStream)
-		return 0;
-
-	if (_header.frameRate > 0)
-		return 1000 / _header.frameRate;
-	else if (_header.frameRate < 0)
-		return 100000 / (-_header.frameRate);
-	else
-		return 10;
-}
-
-int32 SMKPlayer::getFrameDelay() {
-	if (!_fileStream)
-		return 0;
-
-	if (_header.frameRate > 0)
-		return _header.frameRate * 100;
-	if (_header.frameRate < 0)
-		return -_header.frameRate;
-
-	return 10000;
+	return (_header.flags ? 2 : 1) * _videoInfo.height;
 }
 
 int32 SMKPlayer::getAudioLag() {
@@ -374,7 +331,7 @@ int32 SMKPlayer::getAudioLag() {
 		return 0;
 
 	int32 frameDelay = getFrameDelay();
-	int32 videoTime = _currentSMKFrame * frameDelay;
+	int32 videoTime = _videoInfo.currentFrame * frameDelay;
 	int32 audioTime;
 
 	if (!_audioStream) {
@@ -383,23 +340,16 @@ int32 SMKPlayer::getAudioLag() {
 		   and how much time *should* have passed.
 		*/
 
-		audioTime = (g_system->getMillis() - _startTime) * 100;
+		audioTime = (g_system->getMillis() - _videoInfo.startTime) * 100;
 	} else
 		audioTime = (((int32) _mixer->getSoundElapsedTime(_audioHandle)) * 100);
 
 	return videoTime - audioTime;
 }
 
-uint32 SMKPlayer::getFrameWaitTime() {
-	int32 waitTime = (getFrameDelay() + getAudioLag()) / 100;
-
-	if (waitTime < 0)
-		return 0;
-
-	return waitTime;
-}
-
 bool SMKPlayer::loadFile(const char *fileName) {
+	int32 frameRate;
+
 	closeFile();
 
 	_fileStream = SearchMan.openFile(fileName);
@@ -407,7 +357,7 @@ bool SMKPlayer::loadFile(const char *fileName) {
 		return false;
 
 	// Seek to the first frame
-	_currentSMKFrame = 0;
+	_videoInfo.currentFrame = 0;
 	_header.signature = _fileStream->readUint32BE();
 
 	// No BINK support available
@@ -419,10 +369,22 @@ bool SMKPlayer::loadFile(const char *fileName) {
 
 	assert(_header.signature == MKID_BE('SMK2') || _header.signature == MKID_BE('SMK4'));
 
-	_header.width = _fileStream->readUint32LE();
-	_header.height = _fileStream->readUint32LE();
-	_header.frames = _fileStream->readUint32LE();
-	_header.frameRate = (int32)_fileStream->readUint32LE();
+	_videoInfo.width = _fileStream->readUint32LE();
+	_videoInfo.height = _fileStream->readUint32LE();
+	_videoInfo.frameCount = _fileStream->readUint32LE();
+	frameRate = _fileStream->readSint32LE();
+
+	if (frameRate > 0) {
+		_videoInfo.frameRate = 1000 / frameRate;
+		_videoInfo.frameDelay = frameRate * 100;
+	} else if (frameRate < 0) {
+		_videoInfo.frameRate = 100000 / (-frameRate);
+		_videoInfo.frameDelay = -frameRate;
+	} else {
+		_videoInfo.frameRate = 10;
+		_videoInfo.frameDelay = 10000;
+	}
+
 	// Flags are determined by which bit is set, which can be one of the following:
 	// 0 - set to 1 if file contains a ring frame.
 	// 1 - set to 1 if file is Y-interlaced
@@ -481,12 +443,12 @@ bool SMKPlayer::loadFile(const char *fileName) {
 
 	_header.dummy = _fileStream->readUint32LE();
 
-	_frameSizes = (uint32 *)malloc(_header.frames * sizeof(uint32));
-	for (i = 0; i < _header.frames; ++i)
+	_frameSizes = (uint32 *)malloc(_videoInfo.frameCount * sizeof(uint32));
+	for (i = 0; i < _videoInfo.frameCount; ++i)
 		_frameSizes[i] = _fileStream->readUint32LE();
 
-	_frameTypes = (byte *)malloc(_header.frames);
-	for (i = 0; i < _header.frames; ++i)
+	_frameTypes = (byte *)malloc(_videoInfo.frameCount);
+	for (i = 0; i < _videoInfo.frameCount; ++i)
 		_frameTypes[i] = _fileStream->readByte();
 
 	Common::Array<byte> huffmanTrees;
@@ -502,8 +464,8 @@ bool SMKPlayer::loadFile(const char *fileName) {
 	_FullTree = new BigHuffmanTree(bs);
 	_TypeTree = new BigHuffmanTree(bs);
 
-	_videoFrameBuffer = (byte *)malloc(2 * _header.width * _header.height);
-	memset(_videoFrameBuffer, 0, 2 * _header.width * _header.height);
+	_videoFrameBuffer = (byte *)malloc(2 * _videoInfo.width * _videoInfo.height);
+	memset(_videoFrameBuffer, 0, 2 * _videoInfo.width * _videoInfo.height);
 	_palette = (byte *)malloc(3 * 256);
 	memset(_palette, 0, 3 * 256);
 
@@ -534,20 +496,6 @@ void SMKPlayer::closeFile() {
 	free(_palette);
 }
 
-void SMKPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
-	uint h = (_header.flags ? 2 : 1) * _header.height;
-	uint w = _header.width;
-
-	byte *src = _videoFrameBuffer;
-	dst += y * pitch + x;
-
-	do {
-		memcpy(dst, src, w);
-		dst += pitch;
-		src += _header.width;
-	} while (--h);
-}
-
 bool SMKPlayer::decodeNextFrame() {
 	uint i;
 	uint32 chunkSize = 0;
@@ -555,20 +503,20 @@ bool SMKPlayer::decodeNextFrame() {
 
 	uint32 startPos = _fileStream->pos();
 
-	if (_currentSMKFrame == 0)
-		_startTime = g_system->getMillis();
+	if (_videoInfo.currentFrame == 0)
+		_videoInfo.startTime = g_system->getMillis();
 
 	// Check if we got a frame with palette data, and
 	// call back the virtual setPalette function to set
 	// the current palette
-	if (_frameTypes[_currentSMKFrame] & 1) {
+	if (_frameTypes[_videoInfo.currentFrame] & 1) {
 		unpackPalette();
 		setPalette(_palette);
 	}
 
 	// Load audio tracks
 	for (i = 0; i < 7; ++i) {
-		if (!(_frameTypes[_currentSMKFrame] & (2 << i)))
+		if (!(_frameTypes[_videoInfo.currentFrame] & (2 << i)))
 			continue;
 
 		chunkSize = _fileStream->readUint32LE();
@@ -612,7 +560,7 @@ bool SMKPlayer::decodeNextFrame() {
 		}
 	}
 
-	uint32 frameSize = _frameSizes[_currentSMKFrame] & ~3;
+	uint32 frameSize = _frameSizes[_videoInfo.currentFrame] & ~3;
 
 	if (_fileStream->pos() - startPos > frameSize)
 		exit(1);
@@ -631,9 +579,9 @@ bool SMKPlayer::decodeNextFrame() {
 	_FullTree->reset();
 	_TypeTree->reset();
 
-	uint bw = _header.width / 4;
-	uint bh = _header.height / 4;
-	uint stride = _header.width;
+	uint bw = _videoInfo.width / 4;
+	uint bh = _videoInfo.height / 4;
+	uint stride = _videoInfo.width;
 	uint block = 0, blocks = bw*bh;
 
 	uint doubleY = _header.flags ? 2 : 1;
@@ -767,7 +715,7 @@ bool SMKPlayer::decodeNextFrame() {
 
 	free(_frameData);
 
-	return ++_currentSMKFrame < _header.frames;
+	return ++_videoInfo.currentFrame < _videoInfo.frameCount;
 }
 
 void SMKPlayer::queueCompressedBuffer(byte *buffer, uint32 bufferSize,

@@ -21,7 +21,8 @@ MODULE_OBJS := \
 	video/dxa_player.o \
 	video/flic_player.o \
 	video/mpeg_player.o \
-	video/smk_player.o
+	video/smk_player.o \
+	video/video_player.o
 
 ifndef DISABLE_SCALERS
 MODULE_OBJS += \

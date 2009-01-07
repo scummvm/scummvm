@@ -29,54 +29,14 @@
 #include "common/scummsys.h"
 #include "common/stream.h"
 
+#include "graphics/video/video_player.h"
+
 namespace Graphics {
 
-enum ScaleMode {
-	S_NONE,
-	S_INTERLACED,
-	S_DOUBLE
-};
-
-class DXAPlayer {
+class DXAPlayer : public VideoPlayer {
 public:
 	DXAPlayer();
 	virtual ~DXAPlayer();
-
-	/**
-	 * Returns the width of the video
-	 * @return the width of the video
-	 */
-	int getWidth();
-
-	/**
-	 * Returns the height of the video
-	 * @return the height of the video
-	 */
-	int getHeight();
-
-	/**
-	 * Returns the current frame number of the video
-	 * @return the current frame number of the video
-	 */
-	int32 getCurFrame();
-
-	/**
-	 * Returns the amount of frames in the video
-	 * @return the amount of frames in the video
-	 */
-	int32 getFrameCount();
-
-	/**
-	 * Returns the frame rate of the video
-	 * @return the frame rate of the video
-	 */
-	int32 getFrameRate();
-
-	/**
-	 * Returns the time to wait for each frame in 1/100 ms
-	 * @return the time to wait for each frame in 1/100 ms
-	 */
-	int32 getFrameDelay();
 
 	/**
 	 * Load a DXA encoded video file
@@ -89,55 +49,28 @@ public:
 	 */
 	void closeFile();
 
-	/**
-	 * Returns if a video file is loaded or not
-	 */
-	bool videoIsLoaded() { return (_fileStream != NULL); }
+	bool decodeNextFrame();
 
-protected:
-	/**
-	 * Set RGB palette, based on current frame
-	 * @param pal		the RGB palette data
-	 */
-	virtual void setPalette(byte *pal) = 0;
-
-	/**
-	 * Copy current frame into the specified position of the destination
-	 * buffer.
-	 * @param dst		the buffer
-	 * @param x		the x position of the buffer
-	 * @param y		the y position of the buffer
-	 * @param pitch		the pitch of buffer
-	 */
-	void copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch);
-
-	/**
-	 * Decode the next frame
-	 */
-	void decodeNextFrame();
-
+private:
 	void decodeZlib(byte *data, int size, int totalSize);
 	void decode12(int size);
 	void decode13(int size);
 
-	Common::SeekableReadStream *_fileStream;
+	enum ScaleMode {
+		S_NONE,
+		S_INTERLACED,
+		S_DOUBLE
+	};
 
-private:
 	byte *_frameBuffer1;
 	byte *_frameBuffer2;
 	byte *_scaledBuffer;
-	byte *_drawBuffer;
 	byte *_inBuffer;
 	uint32 _inBufferSize;
 	byte *_decompBuffer;
 	uint32 _decompBufferSize;
-	uint16 _width;
-	uint16 _height, _curHeight;
-	uint16 _framesCount;
-	uint32 _framesPerSec;
-	uint16 _frameNum;
+	uint16 _curHeight;
 	uint32 _frameSize;
-	uint32 _frameTicks;
 	ScaleMode _scaleMode;
 };
 

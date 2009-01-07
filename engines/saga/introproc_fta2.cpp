@@ -37,110 +37,24 @@
 
 #include "common/events.h"
 #include "common/system.h"
+#include "common/list.h"
 
 namespace Saga {
 
-class MoviePlayerSMK : Graphics::SMKPlayer {
-protected:
-	virtual void setPalette(byte *pal);
-public:
-	MoviePlayerSMK(SagaEngine *vm): _vm(vm), SMKPlayer(vm->_mixer), 
-									_eventMan(vm->_system->getEventManager()) {
-	}
-	~MoviePlayerSMK(void) { }
-
-	void playVideo(const char *filename);
-private:
-	void processFrame();
-	void processEvents();
-	PalEntry _smkPalette[256];
-	bool _skipVideo;
-	SagaEngine *_vm;
-	Common::EventManager *_eventMan;
-};
-
-void MoviePlayerSMK::setPalette(byte *pal) {
-	for (int i = 0; i < 256; i++) {
-		_smkPalette[i].red = *pal++;
-		_smkPalette[i].green = *pal++;
-		_smkPalette[i].blue = *pal++;
-	}
-
-	_vm->_gfx->setPalette(_smkPalette, true);
-}
-
-void MoviePlayerSMK::processEvents() {
-	Common::Event curEvent;
-	// Process events, and skip video if esc is pressed
-	while (_eventMan->pollEvent(curEvent)) {
-		switch (curEvent.type) {
-		case Common::EVENT_KEYDOWN:
-			if (curEvent.kbd.keycode == Common::KEYCODE_ESCAPE)
-				_skipVideo = true;
-			break;
-		case Common::EVENT_RTL:
-		case Common::EVENT_QUIT:
-			_skipVideo = true;
-			break;
-		default:
-			break;
-		}
-	}
-}
-
-void MoviePlayerSMK::playVideo(const char *filename) {
-	_skipVideo = false;
-	debug(0, "Playing video %s", filename);
-
-	if (!loadFile(filename)) {
-		warning("Failed to load video file %s", filename);
-		return;
-	}
-
-	while (getCurFrame() < getFrameCount() && !_skipVideo && !_vm->shouldQuit()) {
-		processEvents();
-		processFrame();			
-	}
-
-	closeFile();
-}
-
-void MoviePlayerSMK::processFrame() {
-	uint32 startTime = 0;
-	decodeNextFrame();
-
-	Graphics::Surface *screen = _vm->_system->lockScreen();
-	copyFrameToBuffer((byte *)screen->pixels,
-						(_vm->getDisplayInfo().width - getWidth()) / 2,
-						(_vm->getDisplayInfo().height - getHeight()) / 2,
-						_vm->getDisplayInfo().width);
-	_vm->_system->unlockScreen();
-
-	uint32 waitTime = getFrameWaitTime();
-
-	if (!waitTime) {
-		warning("dropped frame %i", getCurFrame());
-		return;
-	}
-
-	// Update the screen
-	_vm->_system->updateScreen();
-
-	startTime = _vm->_system->getMillis();
-
-	// Wait before showing the next frame
-	while (_vm->_system->getMillis() < startTime + waitTime && !_skipVideo && !_vm->shouldQuit()) {
-		processEvents();
-		_vm->_system->delayMillis(10);
-	}
-}
+Common::List<Common::Event> stopEvents;
 
 int Scene::FTA2StartProc() {
 	_vm->_gfx->showCursor(false);
 
-	MoviePlayerSMK *smkPlayer = new MoviePlayerSMK(_vm);
-	smkPlayer->playVideo("trimark.smk");      // Show Ignite logo
-	smkPlayer->playVideo("intro.smk");        // Play introduction
+	Common::Event stopEvent;
+	stopEvents.clear();
+	stopEvent.type = Common::EVENT_KEYDOWN;
+	stopEvent.kbd = Common::KEYCODE_ESCAPE;
+	stopEvents.push_back(stopEvent);
+
+	Graphics::SMKPlayer *smkPlayer = new Graphics::SMKPlayer(_vm->_mixer);
+	smkPlayer->playVideo("trimark.smk", &stopEvents);      // Show Ignite logo
+	smkPlayer->playVideo("intro.smk", &stopEvents);        // Play introduction
 	delete smkPlayer;
 
 	// HACK: Forcibly quit here
@@ -174,9 +88,16 @@ int Scene::FTA2EndProc(FTA2Endings whichEnding) {
 
 	_vm->_gfx->showCursor(false);
 
+
+	Common::Event stopEvent;
+	stopEvents.clear();
+	stopEvent.type = Common::EVENT_KEYDOWN;
+	stopEvent.kbd = Common::KEYCODE_ESCAPE;
+	stopEvents.push_back(stopEvent);
+
 	// Play ending
-	MoviePlayerSMK *smkPlayer = new MoviePlayerSMK(_vm);
-	smkPlayer->playVideo(videoName);
+	Graphics::SMKPlayer *smkPlayer = new Graphics::SMKPlayer(_vm->_mixer);
+	smkPlayer->playVideo(videoName, &stopEvents);
 	delete smkPlayer;
 
 	return SUCCESS;

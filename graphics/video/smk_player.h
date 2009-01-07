@@ -35,6 +35,8 @@
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
 
+#include "graphics/video/video_player.h"
+
 namespace Graphics {
 
 class BigHuffmanTree;
@@ -42,97 +44,21 @@ class BigHuffmanTree;
 /**
  * Implementation of a Smacker v2/v4 video decoder
  */
-class SMKPlayer {
+class SMKPlayer : public Graphics::VideoPlayer {
 public:
 	SMKPlayer(Audio::Mixer *mixer);
 	virtual ~SMKPlayer();
 
-	/**
-	 * Returns the width of the video
-	 * @return the width of the video
-	 */
-	int getWidth();
-
-	/**
-	 * Returns the height of the video
-	 * @return the height of the video
-	 */
 	int getHeight();
-
-	/**
-	 * Returns the current frame number of the video
-	 * @return the current frame number of the video
-	 */
-	int32 getCurFrame();
-
-	/**
-	 * Returns the amount of frames in the video
-	 * @return the amount of frames in the video
-	 */
-	int32 getFrameCount();
-
-	/**
-	 * Returns the frame rate of the video
-	 * @return the frame rate of the video
-	 */
-	int32 getFrameRate();
-
-	/**
-	 * Returns the time to wait for each frame in 1/100 ms
-	 * @return the time to wait for each frame in 1/100 ms
-	 */
-	int32 getFrameDelay();
-
-	/**
-	 * Returns the current A/V lag in 1/100 ms
-	 * If > 0, audio lags behind
-	 * If < 0, video lags behind
-	 * @return the current A/V lag in 1/100 ms
-	 */
 	int32 getAudioLag();
-
-	/**
-	 * Returns the time to wait until the next frame in ms, minding any lag
-	 * @return the time to wait until the next frame in ms
-	 */
-	uint32 getFrameWaitTime();
 
 	/**
 	 * Load an SMK encoded video file
 	 * @param filename	the filename to load
 	 */
 	bool loadFile(const char *filename);
-
-	/**
-	 * Close an SMK encoded video file
-	 */
 	void closeFile();
 
-	/**
-	 * Returns if a video file is loaded or not
-	 */
-	bool videoIsLoaded() { return (_fileStream != NULL); }
-
-protected:
-	/**
-	 * Set RGB palette, based on current frame
-	 * @param pal		the RGB palette data
-	 */
-	virtual void setPalette(byte *pal) = 0;
-
-	/**
-	 * Copy current frame into the specified position of the destination
-	 * buffer.
-	 * @param dst		the buffer
-	 * @param x		the x position of the buffer
-	 * @param y		the y position of the buffer
-	 * @param pitch		the pitch of buffer
-	 */
-	void copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch);
-
-	/**
-	 * Decode the next frame
-	 */
 	bool decodeNextFrame();
 
 private:
@@ -152,10 +78,6 @@ private:
 
 	struct {
 		uint32 signature;
-		uint32 width;
-		uint32 height;
-		uint32 frames;
-		int32 frameRate;
 		uint32 flags;
 		uint32 audioSize[7];
 		uint32 treesSize;
@@ -182,16 +104,10 @@ private:
 	Audio::AppendableAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;
 
-	uint32 _currentSMKFrame;
-	uint32 _startTime;
-
 	BigHuffmanTree *_MMapTree;
 	BigHuffmanTree *_MClrTree;
 	BigHuffmanTree *_FullTree;
 	BigHuffmanTree *_TypeTree;
-
-	Common::SeekableReadStream *_fileStream;
-	byte *_videoFrameBuffer;
 };
 
 } // End of namespace Graphics

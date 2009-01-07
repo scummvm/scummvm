@@ -40,7 +40,7 @@ DXAPlayer::DXAPlayer() {
 	_frameBuffer1 = 0;
 	_frameBuffer2 = 0;
 	_scaledBuffer = 0;
-	_drawBuffer = 0;
+	_videoFrameBuffer = 0;
 
 	_inBuffer = 0;
 	_inBufferSize = 0;
@@ -48,14 +48,14 @@ DXAPlayer::DXAPlayer() {
 	_decompBuffer = 0;
 	_decompBufferSize = 0;
 
-	_width = 0;
-	_height = 0;
+	_videoInfo.width = 0;
+	_videoInfo.height = 0;
 
 	_frameSize = 0;
-	_framesCount = 0;
-	_frameNum = 0;
-	_framesPerSec = 0;
-	_frameTicks = 0;
+	_videoInfo.frameCount = 0;
+	_videoInfo.currentFrame = 0;
+	_videoInfo.frameRate = 0;
+	_videoInfo.frameDelay = 0;
 
 	_scaleMode = S_NONE;
 }
@@ -64,46 +64,11 @@ DXAPlayer::~DXAPlayer() {
 	closeFile();
 }
 
-int DXAPlayer::getWidth() {
-	if (!_fileStream)
-		return 0;
-	return _width;
-}
-
-int DXAPlayer::getHeight() {
-	if (!_fileStream)
-		return 0;
-	return _height;
-}
-
-int32 DXAPlayer::getCurFrame() {
-	if (!_fileStream)
-		return -1;
-	return _frameNum;
-}
-
-int32 DXAPlayer::getFrameCount() {
-	if (!_fileStream)
-		return 0;
-	return _framesCount;
-}
-
-int32 DXAPlayer::getFrameRate() {
-	if (!_fileStream)
-		return 0;
-	return _framesPerSec;
-}
-
-int32 DXAPlayer::getFrameDelay() {
-	if (!_fileStream)
-		return 0;
-
-	return _frameTicks;
-}
-
 bool DXAPlayer::loadFile(const char *fileName) {
 	uint32 tag;
 	int32 frameRate;
+
+	closeFile();
 
 	_fileStream = SearchMan.openFile(fileName);
 	if (!_fileStream)
@@ -113,38 +78,37 @@ bool DXAPlayer::loadFile(const char *fileName) {
 	assert(tag == MKID_BE('DEXA'));
 
 	uint8 flags = _fileStream->readByte();
-	_framesCount = _fileStream->readUint16BE();
-	frameRate = _fileStream->readUint32BE();
+	_videoInfo.frameCount = _fileStream->readUint16BE();
+	frameRate = _fileStream->readSint32BE();
 
-	if (frameRate > 0)
-		_framesPerSec = 1000 / frameRate;
-	else if (frameRate < 0)
-		_framesPerSec = 100000 / (-frameRate);
-	else
-		_framesPerSec = 10;
+	if (frameRate > 0) {
+		_videoInfo.frameRate = 1000 / frameRate;
+		_videoInfo.frameDelay = frameRate * 100;
+	} else if (frameRate < 0) {
+		_videoInfo.frameRate = 100000 / (-frameRate);
+		_videoInfo.frameDelay = -frameRate;
+	} else {
+		_videoInfo.frameRate = 10;
+		_videoInfo.frameDelay = 10000;
+	}
 
-	if (frameRate < 0)
-		_frameTicks = -frameRate / 100;
-	else
-		_frameTicks = frameRate;
-
-	_width = _fileStream->readUint16BE();
-	_height = _fileStream->readUint16BE();
+	_videoInfo.width = _fileStream->readUint16BE();
+	_videoInfo.height = _fileStream->readUint16BE();
 
 	if (flags & 0x80) {
 		_scaleMode = S_INTERLACED;
-		_curHeight = _height / 2;
+		_curHeight = _videoInfo.height / 2;
 	} else if (flags & 0x40) {
 		_scaleMode = S_DOUBLE;
-		_curHeight = _height / 2;
+		_curHeight = _videoInfo.height / 2;
 	} else {
 		_scaleMode = S_NONE;
-		_curHeight = _height;
+		_curHeight = _videoInfo.height;
 	}
 
 	debug(2, "flags 0x0%x framesCount %d width %d height %d rate %d ticks %d", flags, getFrameCount(), getWidth(), getHeight(), getFrameRate(), getFrameDelay());
 
-	_frameSize = _width * _height;
+	_frameSize = _videoInfo.width * _videoInfo.height;
 	_decompBufferSize = _frameSize;
 	_frameBuffer1 = (uint8 *)malloc(_frameSize);
 	_frameBuffer2 = (uint8 *)malloc(_frameSize);
@@ -185,7 +149,7 @@ bool DXAPlayer::loadFile(const char *fileName) {
 		} while (tag != 0);
 	}
 #endif
-	_frameNum = 0;
+	_videoInfo.currentFrame = 0;
 
 	return true;
 }
@@ -205,20 +169,6 @@ void DXAPlayer::closeFile() {
 
 	_inBuffer = 0;
 	_decompBuffer = 0;
-}
-
-void DXAPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
-	uint h = _height;
-	uint w = _width;
-
-	byte *src = _drawBuffer;
-	dst += y * pitch + x;
-
-	do {
-		memcpy(dst, src, w);
-		dst += pitch;
-		src += _width;
-	} while (--h);
 }
 
 void DXAPlayer::decodeZlib(byte *data, int size, int totalSize) {
@@ -245,10 +195,10 @@ void DXAPlayer::decode12(int size) {
 
 	memcpy(_frameBuffer2, _frameBuffer1, _frameSize);
 
-	for (int by = 0; by < _height; by += BLOCKH) {
-		for (int bx = 0; bx < _width; bx += BLOCKW) {
+	for (uint32 by = 0; by < _videoInfo.height; by += BLOCKH) {
+		for (uint32 bx = 0; bx < _videoInfo.width; bx += BLOCKW) {
 			byte type = *dat++;
-			byte *b2 = _frameBuffer1 + bx + by * _width;
+			byte *b2 = _frameBuffer1 + bx + by * _videoInfo.width;
 
 			switch (type) {
 			case 0:
@@ -280,7 +230,7 @@ void DXAPlayer::decode12(int size) {
 						}
 						diffMap <<= 1;
 					}
-					b2 += _width;
+					b2 += _videoInfo.width;
 				}
 				break;
 			}
@@ -291,7 +241,7 @@ void DXAPlayer::decode12(int size) {
 					for (int xc = 0; xc < BLOCKW; xc++) {
 						b2[xc] = color;
 					}
-					b2 += _width;
+					b2 += _videoInfo.width;
 				}
 				break;
 			}
@@ -300,7 +250,7 @@ void DXAPlayer::decode12(int size) {
 					for (int xc = 0; xc < BLOCKW; xc++) {
 						b2[xc] = *dat++;
 					}
-					b2 += _width;
+					b2 += _videoInfo.width;
 				}
 				break;
 			}
@@ -312,11 +262,11 @@ void DXAPlayer::decode12(int size) {
 				int my = mbyte & 0x07;
 				if (mbyte & 0x08)
 					my = -my;
-				byte *b1 = _frameBuffer2 + (bx+mx) + (by+my) * _width;
+				byte *b1 = _frameBuffer2 + (bx+mx) + (by+my) * _videoInfo.width;
 				for (int yc = 0; yc < BLOCKH; yc++) {
 					memcpy(b2, b1, BLOCKW);
-					b1 += _width;
-					b2 += _width;
+					b1 += _videoInfo.width;
+					b2 += _videoInfo.width;
 				}
 				break;
 			}
@@ -345,7 +295,7 @@ void DXAPlayer::decode13(int size) {
 
 	memcpy(_frameBuffer2, _frameBuffer1, _frameSize);
 
-	int codeSize = _width * _curHeight / 16;
+	int codeSize = _videoInfo.width * _curHeight / 16;
 	int dataSize, motSize, maskSize;
 
 	dataSize = READ_BE_UINT32(&_decompBuffer[0]);
@@ -357,10 +307,10 @@ void DXAPlayer::decode13(int size) {
 	motBuf = &dataBuf[dataSize];
 	maskBuf = &motBuf[motSize];
 
-	for (int by = 0; by < _curHeight; by += BLOCKH) {
-		for (int bx = 0; bx < _width; bx += BLOCKW) {
+	for (uint32 by = 0; by < _curHeight; by += BLOCKH) {
+		for (uint32 bx = 0; bx < _videoInfo.width; bx += BLOCKW) {
 			uint8 type = *codeBuf++;
-			uint8 *b2 = (uint8*)_frameBuffer1 + bx + by * _width;
+			uint8 *b2 = (uint8*)_frameBuffer1 + bx + by * _videoInfo.width;
 
 			switch (type) {
 			case 0:
@@ -377,7 +327,7 @@ void DXAPlayer::decode13(int size) {
 						}
 						diffMap <<= 1;
 					}
-					b2 += _width;
+					b2 += _videoInfo.width;
 				}
 				break;
 			}
@@ -388,7 +338,7 @@ void DXAPlayer::decode13(int size) {
 					for (int xc = 0; xc < BLOCKW; xc++) {
 						b2[xc] = color;
 					}
-					b2 += _width;
+					b2 += _videoInfo.width;
 				}
 				break;
 			}
@@ -397,7 +347,7 @@ void DXAPlayer::decode13(int size) {
 					for (int xc = 0; xc < BLOCKW; xc++) {
 						b2[xc] = *dataBuf++;
 					}
-					b2 += _width;
+					b2 += _videoInfo.width;
 				}
 				break;
 			}
@@ -411,11 +361,11 @@ void DXAPlayer::decode13(int size) {
 				if (mbyte & 0x08)
 					my = -my;
 
-				uint8 *b1 = (uint8*)_frameBuffer2 + (bx+mx) + (by+my) * _width;
+				uint8 *b1 = (uint8*)_frameBuffer2 + (bx+mx) + (by+my) * _videoInfo.width;
 				for (int yc = 0; yc < BLOCKH; yc++) {
 					memcpy(b2, b1, BLOCKW);
-					b1 += _width;
-					b2 += _width;
+					b1 += _videoInfo.width;
+					b2 += _videoInfo.width;
 				}
 				break;
 			}
@@ -427,7 +377,7 @@ void DXAPlayer::decode13(int size) {
 
 				for (int subBlock = 0; subBlock < 4; subBlock++) {
 					int sx = bx + subX[subBlock], sy = by + subY[subBlock];
-					b2 = (uint8*)_frameBuffer1 + sx + sy * _width;
+					b2 = (uint8*)_frameBuffer1 + sx + sy * _videoInfo.width;
 					switch (subMask & 0xC0) {
 					// 00: skip
 					case 0x00:
@@ -439,7 +389,7 @@ void DXAPlayer::decode13(int size) {
 							for (int xc = 0; xc < BLOCKW / 2; xc++) {
 								b2[xc] = subColor;
 							}
-							b2 += _width;
+							b2 += _videoInfo.width;
 						}
 						break;
 					}
@@ -455,11 +405,11 @@ void DXAPlayer::decode13(int size) {
 						if (mbyte & 0x08)
 							my = -my;
 
-						uint8 *b1 = (uint8*)_frameBuffer2 + (sx+mx) + (sy+my) * _width;
+						uint8 *b1 = (uint8*)_frameBuffer2 + (sx+mx) + (sy+my) * _videoInfo.width;
 						for (int yc = 0; yc < BLOCKH / 2; yc++) {
 							memcpy(b2, b1, BLOCKW / 2);
-							b1 += _width;
-							b2 += _width;
+							b1 += _videoInfo.width;
+							b2 += _videoInfo.width;
 						}
 						break;
 					}
@@ -469,7 +419,7 @@ void DXAPlayer::decode13(int size) {
 							for (int xc = 0; xc < BLOCKW / 2; xc++) {
 								b2[xc] = *dataBuf++;
 							}
-							b2 += _width;
+							b2 += _videoInfo.width;
 						}
 						break;
 					}
@@ -494,7 +444,7 @@ void DXAPlayer::decode13(int size) {
 							b2[xc] = pixels[code & 1];
 							code >>= 1;
 						}
-						b2 += _width;
+						b2 += _videoInfo.width;
 					}
 				} else {
 					uint32 code = READ_BE_UINT32(maskBuf);
@@ -504,7 +454,7 @@ void DXAPlayer::decode13(int size) {
 							b2[xc] = pixels[code & 3];
 							code >>= 2;
 						}
-						b2 += _width;
+						b2 += _videoInfo.width;
 					}
 				}
 				break;
@@ -517,7 +467,7 @@ void DXAPlayer::decode13(int size) {
 #endif
 }
 
-void DXAPlayer::decodeNextFrame() {
+bool DXAPlayer::decodeNextFrame() {
 	uint32 tag;
 
 	tag = _fileStream->readUint32BE();
@@ -560,9 +510,9 @@ void DXAPlayer::decodeNextFrame() {
 		}
 
 		if (type == 3) {
-			for (int j = 0; j < _curHeight; ++j) {
-				for (int i = 0; i < _width; ++i) {
-					const int offs = j * _width + i;
+			for (uint32 j = 0; j < _curHeight; ++j) {
+				for (uint32 i = 0; i < _videoInfo.width; ++i) {
+					const int offs = j * _videoInfo.width + i;
 					_frameBuffer1[offs] ^= _frameBuffer2[offs];
 				}
 			}
@@ -572,24 +522,24 @@ void DXAPlayer::decodeNextFrame() {
 	switch (_scaleMode) {
 	case S_INTERLACED:
 		for (int cy = 0; cy < _curHeight; cy++) {
-			memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
-			memset(&_scaledBuffer[((2 * cy) + 1) * _width], 0, _width);
+			memcpy(&_scaledBuffer[2 * cy * _videoInfo.width], &_frameBuffer1[cy * _videoInfo.width], _videoInfo.width);
+			memset(&_scaledBuffer[((2 * cy) + 1) * _videoInfo.width], 0, _videoInfo.width);
 		}
-		_drawBuffer = _scaledBuffer;
+		_videoFrameBuffer = _scaledBuffer;
 		break;
 	case S_DOUBLE:
 		for (int cy = 0; cy < _curHeight; cy++) {
-			memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
-			memcpy(&_scaledBuffer[((2 * cy) + 1) * _width], &_frameBuffer1[cy * _width], _width);
+			memcpy(&_scaledBuffer[2 * cy * _videoInfo.width], &_frameBuffer1[cy * _videoInfo.width], _videoInfo.width);
+			memcpy(&_scaledBuffer[((2 * cy) + 1) * _videoInfo.width], &_frameBuffer1[cy * _videoInfo.width], _videoInfo.width);
 		}
-		_drawBuffer = _scaledBuffer;
+		_videoFrameBuffer = _scaledBuffer;
 		break;
 	case S_NONE:
-		_drawBuffer = _frameBuffer1;
+		_videoFrameBuffer = _frameBuffer1;
 		break;
 	}
 
-	_frameNum++;
+	return ++_videoInfo.currentFrame < _videoInfo.frameCount;
 }
 
 } // End of namespace Graphics
