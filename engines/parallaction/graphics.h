@@ -356,7 +356,7 @@ protected:
 	void clearPathData();
 
 public:
-	int x, y;		// used to display bitmaps smaller than the screen
+	int _x, _y;		// used to display bitmaps smaller than the screen
 	int width;
 	int height;
 

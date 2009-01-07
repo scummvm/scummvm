@@ -385,7 +385,7 @@ void Gfx::updateScreen() {
 		uint h = _backgroundInfo->height;
 		byte *backgroundData = (byte*)_backgroundInfo->bg.getBasePtr(0, 0);
 		uint16 backgroundPitch = _backgroundInfo->bg.pitch;
-		copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo->x, _backgroundInfo->y, w, h);
+		copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo->_x, _backgroundInfo->_y, w, h);
 	}
 /*
 	if (_varDrawPathZones == 1) {
@@ -823,7 +823,7 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 }
 
 
-BackgroundInfo::BackgroundInfo() : x(0), y(0), width(0), height(0), _mask(0), _path(0) {
+BackgroundInfo::BackgroundInfo() : _x(0), _y(0), width(0), height(0), _mask(0), _path(0) {
 	layers[0] = layers[1] = layers[2] = layers[3] = 0;
 	memset(ranges, 0, sizeof(ranges));
 }

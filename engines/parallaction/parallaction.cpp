@@ -292,8 +292,8 @@ void Parallaction::showSlide(const char *name, int x, int y) {
 	BackgroundInfo *info = new BackgroundInfo;
 	_disk->loadSlide(*info, name);
 
-	info->x = (x == CENTER_LABEL_HORIZONTAL) ? ((_screenWidth - info->width) >> 1) : x;
-	info->y = (y == CENTER_LABEL_VERTICAL) ? ((_screenHeight - info->height) >> 1) : y;
+	info->_x = (x == CENTER_LABEL_HORIZONTAL) ? ((_screenWidth - info->width) >> 1) : x;
+	info->_y = (y == CENTER_LABEL_VERTICAL) ? ((_screenHeight - info->height) >> 1) : y;
 
 	_gfx->setBackground(kBackgroundSlide, info);
 }
