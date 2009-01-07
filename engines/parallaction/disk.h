@@ -34,7 +34,7 @@
 
 #include "graphics/surface.h"
 
-#include "parallaction/graphics.h"
+
 
 namespace Parallaction {
 
@@ -77,7 +77,6 @@ public:
 	virtual void loadMask(const char *name, MaskBuffer &buffer) { }
 };
 
-class NSArchive;
 
 class Disk_ns : public Disk {
 
@@ -246,8 +245,6 @@ public:
 class AmigaDisk_br : public DosDisk_br {
 
 protected:
-	BackgroundInfo	_backgroundTemp;
-
 	Sprites*	createSprites(Common::ReadStream &stream);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
 	void loadBackground(BackgroundInfo& info, Common::SeekableReadStream &stream);
