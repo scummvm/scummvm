@@ -123,7 +123,7 @@ Common::Error GroovieEngine::init() {
 				// A new entry
 				index++;
 			} else if (line.hasPrefix("boot: ") && index == _gameDescription->indexEntry) {
-				// It's the boot of the entry were looking for,
+				// It's the boot of the entry we're looking for,
 				// get the script filename
 				filename = line.c_str() + 6;
 				found = true;
@@ -217,6 +217,12 @@ Common::Error GroovieEngine::go() {
 			default:
 				break;
 			}
+		}
+
+		// The event loop may have triggered the quit status. In this case,
+		// stop the execution.
+		if (shouldQuit()) {
+			continue;
 		}
 
 		if (_waitingForInput) {
