@@ -27,7 +27,7 @@
 
 namespace Parallaction {
 
-#define IS_PATH_CLEAR(x,y) _vm->_gfx->_backgroundInfo->path.getValue((x), (y))
+#define IS_PATH_CLEAR(x,y) _vm->_gfx->_backgroundInfo->_path->getValue((x), (y))
 
 // adjusts position towards nearest walkable point
 //
@@ -35,8 +35,8 @@ void PathBuilder_NS::correctPathPoint(Common::Point &to) {
 
 	if (IS_PATH_CLEAR(to.x, to.y)) return;
 
-	int maxX = _vm->_gfx->_backgroundInfo->path.w;
-	int maxY = _vm->_gfx->_backgroundInfo->path.h;
+	int maxX = _vm->_gfx->_backgroundInfo->_path->w;
+	int maxY = _vm->_gfx->_backgroundInfo->_path->h;
 
 	int16 right = to.x;
 	int16 left = to.x;
@@ -229,7 +229,7 @@ uint16 PathBuilder_NS::walkFunc1(const Common::Point &to, Common::Point& node) {
 
 void PathWalker_NS::clipMove(Common::Point& pos, const Common::Point& to) {
 
-	if ((pos.x < to.x) && (pos.x < _vm->_gfx->_backgroundInfo->path.w) && IS_PATH_CLEAR(pos.x + 2, pos.y)) {
+	if ((pos.x < to.x) && (pos.x < _vm->_gfx->_backgroundInfo->_path->w) && IS_PATH_CLEAR(pos.x + 2, pos.y)) {
 		pos.x = (pos.x + 2 < to.x) ? pos.x + 2 : to.x;
 	}
 
@@ -237,7 +237,7 @@ void PathWalker_NS::clipMove(Common::Point& pos, const Common::Point& to) {
 		pos.x = (pos.x - 2 > to.x) ? pos.x - 2 : to.x;
 	}
 
-	if ((pos.y < to.y) && (pos.y < _vm->_gfx->_backgroundInfo->path.h) && IS_PATH_CLEAR(pos.x, pos.y + 2)) {
+	if ((pos.y < to.y) && (pos.y < _vm->_gfx->_backgroundInfo->_path->h) && IS_PATH_CLEAR(pos.x, pos.y + 2)) {
 		pos.y = (pos.y + 2 <= to.y) ? pos.y + 2 : to.y;
 	}
 

@@ -807,6 +807,7 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 	}
 
 	_backgroundInfo->finalizeMask();
+	_backgroundInfo->finalizePath();
 
 	if (_gameType == GType_BRA) {
 		int width = CLIP(info->width, (int)_vm->_screenWidth, info->width);
@@ -822,7 +823,7 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 }
 
 
-BackgroundInfo::BackgroundInfo() : x(0), y(0), width(0), height(0), _mask(0) {
+BackgroundInfo::BackgroundInfo() : x(0), y(0), width(0), height(0), _mask(0), _path(0) {
 	layers[0] = layers[1] = layers[2] = layers[3] = 0;
 	memset(ranges, 0, sizeof(ranges));
 }
@@ -830,7 +831,7 @@ BackgroundInfo::BackgroundInfo() : x(0), y(0), width(0), height(0), _mask(0) {
 BackgroundInfo::~BackgroundInfo() {
 	bg.free();
 	clearMaskData();
-	path.free();
+	clearPathData();
 }
 
 bool BackgroundInfo::hasMask() {
@@ -851,7 +852,11 @@ void BackgroundInfo::clearMaskData() {
 
 void BackgroundInfo::finalizeMask() {
 	if (_mask) {
-		_maskBackup.clone(*_mask);
+		if (_maskPatches.size() > 0) {
+			// since no more patches can be added after finalization,
+			// avoid creating the backup if there is none
+			_maskBackup.clone(*_mask);
+		}
 	} else {
 		clearMaskData();
 	}
@@ -888,6 +893,55 @@ uint16 BackgroundInfo::getMaskLayer(uint16 z) const {
 void BackgroundInfo::setPaletteRange(int index, const PaletteFxRange& range) {
 	assert(index < 6);
 	memcpy(&ranges[index], &range, sizeof(PaletteFxRange));
+}
+
+bool BackgroundInfo::hasPath() {
+	return _path != 0;
+}
+
+void BackgroundInfo::clearPathData() {
+	// free mask data
+	PathPatchMap::iterator it = _pathPatches.begin();
+	for ( ; it != _pathPatches.end(); it++) {
+		delete (*it)._value;
+	}
+	_pathPatches.clear();
+	delete _path;
+	_path = 0;
+	_pathBackup.free();
+}
+
+void BackgroundInfo::finalizePath() {
+	if (_path) {
+		if (_pathPatches.size() > 0) {
+			// since no more patches can be added after finalization,
+			// avoid creating the backup if there is none
+			_pathBackup.clone(*_path);
+		}
+	} else {
+		clearPathData();
+	}
+}
+
+int BackgroundInfo::addPathPatch(PathBuffer *patch) {
+	int id = _pathPatches.size();
+	_pathPatches.setVal(id, patch);
+	return id;
+}
+
+void BackgroundInfo::togglePathPatch(int id, int x, int y, bool apply) {
+	if (!hasPath()) {
+		return;
+	}
+	if (!_pathPatches.contains(id)) {
+		return;
+	}
+	PathBuffer *patch = _pathPatches.getVal(id);
+	if (apply) {
+		_path->bltOr(x, y, *patch, 0, 0, patch->w, patch->h);
+	} else {
+		_path->bltCopy(x, y, _pathBackup, x, y, patch->w, patch->h);
+	}
 }
 
 MaskBuffer::MaskBuffer() : w(0), internalWidth(0), h(0), size(0), data(0), bigEndian(true) {
@@ -973,11 +1027,20 @@ void MaskBuffer::bltCopy(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx,
 
 
 
-PathBuffer::PathBuffer() : w(0), internalWidth(0), h(0), size(0), data(0) {
+PathBuffer::PathBuffer() : w(0), internalWidth(0), h(0), size(0), data(0), bigEndian(true) {
 }
 
 PathBuffer::~PathBuffer() {
 	free();
+}
+
+void PathBuffer::clone(const PathBuffer &buf) {
+	if (!buf.data)
+		return;
+
+	create(buf.w, buf.h);
+	bigEndian = buf.bigEndian;
+	memcpy(data, buf.data, size);
 }
 
 void PathBuffer::create(uint16 width, uint16 height) {
@@ -1001,21 +1064,43 @@ void PathBuffer::free() {
 
 byte PathBuffer::getValue(uint16 x, uint16 y) const {
 	byte m = data[(x >> 3) + y * internalWidth];
-	uint bit = 0;
-	switch (_vm->getGameType()) {
-	case GType_Nippon:
-		bit = (_vm->getPlatform() == Common::kPlatformPC) ? (x & 7) : (7 - (x & 7));
-		break;
-
-	case GType_BRA:
-		// Amiga and PC versions pack the path bits the same way in BRA
-		bit = 7 - (x & 7);
-		break;
-
-	default:
-		error("path mask not yet implemented for this game type");
-	}
+	uint bit = bigEndian ? (x & 7) : (7 - (x & 7));
 	return ((1 << bit) & m) >> bit;
+}
+
+byte* PathBuffer::getPtr(uint16 x, uint16 y) const {
+	return data + (x >> 3) + y * internalWidth;
+}
+
+void PathBuffer::bltOr(uint16 dx, uint16 dy, const PathBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {
+	assert((width <= w) && (width <= src.w) && (height <= h) && (height <= src.h));
+
+	byte *s = src.getPtr(sx, sy);
+	byte *d = getPtr(dx, dy);
+
+	// this code assumes buffers are aligned on 4-pixels boundaries, as the original does
+	uint16 linewidth = width >> 3;
+	for (uint16 i = 0; i < height; i++) {
+		for (uint16 j = 0; j < linewidth; j++) {
+			*d++ |= *s++;
+		}
+		d += internalWidth - linewidth;
+		s += src.internalWidth - linewidth;
+	}
+}
+
+void PathBuffer::bltCopy(uint16 dx, uint16 dy, const PathBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {
+	assert((width <= w) && (width <= src.w) && (height <= h) && (height <= src.h));
+
+	byte *s = src.getPtr(sx, sy);
+	byte *d = getPtr(dx, dy);
+
+	// this code assumes buffers are aligned on 4-pixels boundaries, as the original does
+	for (uint16 i = 0; i < height; i++) {
+		memcpy(d, s, (width >> 3));
+		d += internalWidth;
+		s += src.internalWidth;
+	}
 }
 
 } // namespace Parallaction

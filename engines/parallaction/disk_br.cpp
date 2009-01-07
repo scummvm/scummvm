@@ -318,6 +318,20 @@ void DosDisk_br::loadMask(const char *name, MaskBuffer &buffer) {
 	delete stream;
 }
 
+void DosDisk_br::loadPath(const char *name, PathBuffer &buffer) {
+	if (!name) {
+		return;
+	}
+
+	Common::SeekableReadStream *stream = openFile("pth/" + Common::String(name), ".pth");
+
+	// NOTE: info.width and info.height are only valid if the background graphics
+	// have already been loaded
+	buffer.bigEndian = false;
+	stream->read(buffer.data, buffer.size);
+	delete stream;
+}
+
 void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char *mask, const char* path) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadScenery");
 
@@ -345,13 +359,9 @@ void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char 
 	}
 
 	if (path) {
-		stream = openFile("pth/" + Common::String(path), ".pth");
-
-		// NOTE: info.width and info.height are only valid if the background graphics
-		// have already been loaded
-		info.path.create(info.width, info.height);
-		stream->read(info.path.data, info.path.size);
-		delete stream;
+		info._path = new PathBuffer;
+		info._path->create(info.width, info.height);
+		loadPath(path, *info._path);
 	}
 
 	return;
@@ -477,8 +487,10 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 		if (stream) {
 			// NOTE: info.width and info.height are only valid if the background graphics
 			// have already been loaded
-			info.path.create(info.width, info.height);
-			stream->read(info.path.data, info.path.size);
+			info._path = new PathBuffer;
+			info._path->bigEndian = false;
+			info._path->create(info.width, info.height);
+			stream->read(info._path->data, info._path->size);
 			delete stream;
 		} else {
 			debugC(1, kDebugDisk, "AmigaDisk_br::loadScenery: (%s) not found", path);

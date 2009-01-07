@@ -168,6 +168,18 @@ void Gfx::loadGfxObjMask(const char *name, GfxObj *obj) {
 	obj->_hasMask = true;
 }
 
+void Gfx::loadGfxObjPath(const char *name, GfxObj *obj) {
+	Common::Rect rect;
+	obj->getRect(0, rect);
+
+	PathBuffer *buf = new PathBuffer;
+	buf->create(rect.width(), rect.height());
+	_vm->_disk->loadPath(name, *buf);
+
+	obj->_pathId = _backgroundInfo->addPathPatch(buf);
+	obj->_hasPath = true;
+}
+
 void Gfx::showGfxObj(GfxObj* obj, bool visible) {
 	if (!obj) {
 		return;
@@ -179,9 +191,11 @@ void Gfx::showGfxObj(GfxObj* obj, bool visible) {
 		obj->clearFlags(kGfxObjVisible);
 	}
 
-	//TODO: move handling of mask existence inside MaskManager
 	if (obj->_hasMask) {
 		_backgroundInfo->toggleMaskPatch(obj->_maskId, obj->x, obj->y, visible);
+	}
+	if (obj->_hasPath) {
+		_backgroundInfo->togglePathPatch(obj->_pathId, obj->x, obj->y, visible);
 	}
 }
 

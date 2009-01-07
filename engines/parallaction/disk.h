@@ -75,6 +75,7 @@ public:
 	virtual Common::SeekableReadStream* loadMusic(const char* name) = 0;
 	virtual Common::ReadStream* loadSound(const char* name) = 0;
 	virtual void loadMask(const char *name, MaskBuffer &buffer) { }
+	virtual void loadPath(const char *name, PathBuffer &buffer) { }
 };
 
 
@@ -230,6 +231,7 @@ public:
 	Common::SeekableReadStream* loadMusic(const char* name);
 	Common::ReadStream* loadSound(const char* name);
 	void loadMask(const char *name, MaskBuffer &buffer);
+	void loadPath(const char *name, PathBuffer &buffer);
 };
 
 class DosDemoDisk_br : public DosDisk_br {

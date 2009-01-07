@@ -460,10 +460,13 @@ void DosDisk_ns::loadBackground(BackgroundInfo& info, const char *filename) {
 	info._mask = new MaskBuffer;
 	info._mask->create(info.width, info.height);
 	info._mask->bigEndian = true;
-	info.path.create(info.width, info.height);
+
+	info._path = new PathBuffer;
+	info._path->create(info.width, info.height);
+	info._path->bigEndian = true;
 
 	Graphics::PackBitsReadStream pbstream(*stream);
-	unpackBackground(&pbstream, (byte*)info.bg.pixels, info._mask->data, info.path.data);
+	unpackBackground(&pbstream, (byte*)info.bg.pixels, info._mask->data, info._path->data);
 
 	delete stream;
 }
@@ -479,8 +482,10 @@ void DosDisk_ns::loadMaskAndPath(BackgroundInfo& info, const char *name) {
 	sprintf(path, "%s.msk", name);
 	Common::SeekableReadStream *stream = openFile(path);
 	parseDepths(info, *stream);
-	info.path.create(info.width, info.height);
-	stream->read(info.path.data, info.path.size);
+	info._path = new PathBuffer;
+	info._path->create(info.width, info.height);
+	info._path->bigEndian = true;
+	stream->read(info._path->data, info._path->size);
 	info._mask = new MaskBuffer;
 	info._mask->create(info.width, info.height);
 	info._mask->bigEndian = true;
@@ -1075,8 +1080,10 @@ void AmigaDisk_ns::loadPath(BackgroundInfo& info, const char *name) {
 
 	Graphics::PackBitsReadStream stream(*s);
 
-	info.path.create(info.width, info.height);
-	stream.read(info.path.data, info.path.size);
+	info._path = new PathBuffer;
+	info._path->create(info.width, info.height);
+	info._path->bigEndian = false;
+	stream.read(info._path->data, info._path->size);
 
 	delete s;
 

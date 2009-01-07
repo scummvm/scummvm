@@ -192,6 +192,8 @@ struct MaskBuffer {
 	bool	bigEndian;
 
 	byte* getPtr(uint16 x, uint16 y) const;
+	void bltOr(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height);
+	void bltCopy(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height);
 
 public:
 	MaskBuffer();
@@ -202,8 +204,6 @@ public:
 	void free();
 
 	byte getValue(uint16 x, uint16 y) const;
-	void bltOr(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height);
-	void bltCopy(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx, uint16 sy, uint width, uint height);
 };
 
 
@@ -215,11 +215,17 @@ struct PathBuffer {
 	uint16	h;
 	uint	size;
 	byte	*data;
+	bool	bigEndian;
+
+	byte* getPtr(uint16 x, uint16 y) const;
+	void bltOr(uint16 dx, uint16 dy, const PathBuffer &src, uint16 sx, uint16 sy, uint width, uint height);
+	void bltCopy(uint16 dx, uint16 dy, const PathBuffer &src, uint16 sx, uint16 sy, uint width, uint height);
 
 public:
 	PathBuffer();
 	~PathBuffer();
 
+	void clone(const PathBuffer &buf);
 	void create(uint16 width, uint16 height);
 	void free();
 	byte getValue(uint16 x, uint16 y) const;
@@ -304,7 +310,9 @@ public:
 	uint scale;
 
 	int	_maskId;
-	bool			_hasMask;
+	bool _hasMask;
+	int _pathId;
+	bool _hasPath;
 
 
 	GfxObj(uint type, Frames *frames, const char *name = NULL);
@@ -340,8 +348,12 @@ protected:
 	typedef Common::HashMap<int, MaskBuffer*> MaskPatchMap;
 	MaskPatchMap _maskPatches;
 	MaskBuffer		_maskBackup;
-
 	void clearMaskData();
+
+	typedef Common::HashMap<int, PathBuffer*> PathPatchMap;
+	PathPatchMap 	_pathPatches;
+	PathBuffer		_pathBackup;
+	void clearPathData();
 
 public:
 	int x, y;		// used to display bitmaps smaller than the screen
@@ -350,7 +362,7 @@ public:
 
 	Graphics::Surface	bg;
 	MaskBuffer			*_mask;
-	PathBuffer			path;
+	PathBuffer			*_path;
 
 	Palette				palette;
 
@@ -374,6 +386,7 @@ public:
 	bool hasPath();
 	int addPathPatch(PathBuffer *patch);
 	void togglePathPatch(int id, int x, int y, bool apply);
+	void finalizePath();
 };
 
 
@@ -425,6 +438,7 @@ public:
 	void showGfxObj(GfxObj* obj, bool visible);
 	void clearGfxObjects(uint filter);
 	void loadGfxObjMask(const char *name, GfxObj *obj);
+	void loadGfxObjPath(const char *name, GfxObj *obj);
 	void sortScene();
     void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
 	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
