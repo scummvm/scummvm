@@ -111,13 +111,16 @@ bool DXAPlayer::loadFile(const char *fileName) {
 	_frameSize = _videoInfo.width * _videoInfo.height;
 	_decompBufferSize = _frameSize;
 	_frameBuffer1 = (uint8 *)malloc(_frameSize);
+	memset(_frameBuffer1, 0, _frameSize);
 	_frameBuffer2 = (uint8 *)malloc(_frameSize);
+	memset(_frameBuffer2, 0, _frameSize);
 	if (!_frameBuffer1 || !_frameBuffer2)
 		error("DXAPlayer: Error allocating frame buffers (size %u)", _frameSize);
 
 	_scaledBuffer = 0;
 	if (_scaleMode != S_NONE) {
 		_scaledBuffer = (uint8 *)malloc(_frameSize);
+		memset(_scaledBuffer, 0, _frameSize);
 		if (!_scaledBuffer)
 			error("Error allocating scale buffer (size %u)", _frameSize);
 	}
@@ -185,6 +188,7 @@ void DXAPlayer::decode12(int size) {
 #ifdef USE_ZLIB
 	if (_decompBuffer == NULL) {
 		_decompBuffer = (byte *)malloc(_decompBufferSize);
+		memset(_decompBuffer, 0, _decompBufferSize);
 		if (_decompBuffer == NULL)
 			error("Error allocating decomp buffer (size %u)", _decompBufferSize);
 	}
@@ -286,6 +290,7 @@ void DXAPlayer::decode13(int size) {
 
 	if (_decompBuffer == NULL) {
 		_decompBuffer = (byte *)malloc(_decompBufferSize);
+		memset(_decompBuffer, 0, _decompBufferSize);
 		if (_decompBuffer == NULL)
 			error("Error allocating decomp buffer (size %u)", _decompBufferSize);
 	}
@@ -485,6 +490,7 @@ bool DXAPlayer::decodeNextFrame() {
 		if ((_inBuffer == NULL) || (_inBufferSize < size)) {
 			free(_inBuffer);
 			_inBuffer = (byte *)malloc(size);
+			memset(_inBuffer, 0, size);
 			if (_inBuffer == NULL)
 				error("Error allocating input buffer (size %u)", size);
 			_inBufferSize = size;
