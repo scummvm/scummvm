@@ -297,6 +297,8 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 		return errBadFileOpen;
 	}
 
+	strncpy(_game.id, loadId, 8);
+
 	for (i = 0; i < MAX_FLAGS; i++)
 		_game.flags[i] = in->readByte();
 	for (i = 0; i < MAX_VARS; i++)
