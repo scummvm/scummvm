@@ -422,8 +422,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Police Quest 1 (Russian)
 	GAME_LPS("pq1", "", "604cc8041d24c4c7e5fa8baf386ef76e", 360, Common::RU_RUS, 0x2917, GID_PQ1, Common::kPlatformPC),
 
-	// Police Quest 1 (Mac) 2.0G 12/3/87
-	GAME_P("pq1", "2.0G 1987-12-03 5.25\"/ST", "231f3e28170d6e982fc0ced4c98c5c1c", 0x2440, GID_PQ1, Common::kPlatformMacintosh),
+	// Police Quest 1 2.0G 12/3/87
+	GAME("pq1", "2.0G 1987-12-03 5.25\"/ST", "231f3e28170d6e982fc0ced4c98c5c1c", 0x2440, GID_PQ1),
 
 	// Police Quest 1 (PC) 2.0G 12/3/87; entry from DAGII, but missing from Sarien?
 	// not sure about disk format -- dsymonds
