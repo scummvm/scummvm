@@ -177,6 +177,8 @@ bool VideoPlayer::playVideo(const char *filename, Common::List<Common::Event> *s
 		return false;
 	}
 
+	g_system->clearScreen();
+
 	while (getCurFrame() < getFrameCount() && !_skipVideo) {
 		processVideoEvents(stopEvents);
 
