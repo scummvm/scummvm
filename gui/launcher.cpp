@@ -646,6 +646,10 @@ void LauncherDialog::addGame() {
 			updateListing();
 			draw();
 		}
+
+		// We need to update the buttons here, so "Mass add" will revert to "Add game"
+		// without any additional event.
+		updateButtons();
 		return;
 	}
 
