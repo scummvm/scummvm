@@ -329,8 +329,6 @@ void Parallaction_ns::changeLocation(char *location) {
 		changeCharacter(locname.character());
 	}
 
-	_gfx->showGfxObj(_char._ani->gfxobj, true);
-
 	strcpy(_saveData1, locname.location());
 	parseLocation(_saveData1);
 
