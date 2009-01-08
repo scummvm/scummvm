@@ -341,6 +341,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Leisure Suit Larry 1 (PC 5.25"/3.5") 1.00 6/1/87 [AGI 2.440]
 	GAME("lsl1", "1.00 1987-06-01 5.25\"/3.5\"", "1fe764e66857e7f305a5f03ca3f4971d", 0x2440, GID_LSL1),
 
+	// Leisure Suit Larry 1 Polish
+	GAME_LPS("lsl1", "2.00 2001-12-11", "7ba1fccc46d27c141e704706c1d0a85f", 303, Common::PL_POL, 0x2440, GID_LSL1, Common::kPlatformPC),
+
+	// Leisure Suit Larry 1 Polish - Demo
+	GAME_LPS("lsl1", "Demo", "3b2f564306c401dff6334441df967ddd", 666, Common::PL_POL, 0x2917, GID_LSL1, Common::kPlatformPC),
+
 	// Leisure Suit Larry 1 (ST) 1.04 6/18/87
 	GAME_P("lsl1", "1.04 1987-06-18", "8b579f8673fe9448c2538f5ed9887cf0", 0x2440, GID_LSL1, Common::kPlatformAtariST),
 
