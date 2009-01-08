@@ -102,8 +102,26 @@ Common::SeekableReadStream *Disk_br::openFile_internal(bool errorOnNotFound, con
 	}
 
 	Common::SeekableReadStream *stream = _sset.openFile(lookup);
+	if (stream) {
+		return stream;
+	}
+
+	// as a very last resort, try trimming the file name to 8 chars
+	if (!ext.empty() && lookup.hasSuffix(ext.c_str())) {
+		Common::String filename = Common::lastPathComponent(lookup, '/');
+		int len = filename.size();
+		if (len > 8) {
+			debugC(9, kDebugDisk, "Disk_br::openFile: trimming filename (%s) to 8 characters", name.c_str());
+			while (len-- > 8) {
+				lookup.deleteLastChar();
+			}
+			lookup += ext;
+			stream = _sset.openFile(lookup);
+		}
+	}
+
 	if (!stream && errorOnNotFound) {
-		errorFileNotFound(lookup);
+		errorFileNotFound(name);
 	}
 	return stream;
 }
