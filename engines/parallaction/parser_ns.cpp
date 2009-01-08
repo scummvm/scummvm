@@ -216,7 +216,7 @@ DECLARE_ANIM_PARSER(type)  {
 	int16 _si = _zoneTypeNames->lookup(_tokens[1]);
 	if (_si != Table::notFound) {
 		ctxt.a->_type |= 1 << (_si-1);
-		if (((ctxt.a->_type & 0xFFFF) != kZoneNone) && ((ctxt.a->_type & 0xFFFF) != kZoneCommand)) {
+		if (/*((ctxt.a->_type & 0xFFFF) != kZoneNone) &&*/ ((ctxt.a->_type & 0xFFFF) != kZoneCommand)) {
 			parseZoneTypeBlock(ctxt.a);
 		}
 	}
@@ -711,66 +711,58 @@ DECLARE_COMMAND_PARSER(endcommands)  {
 	ctxt.endcommands = true;
 }
 
+void LocationParser_ns::parseCommandFlag(CommandPtr cmd, const char *flag, Table *table, bool checkTrap) {
+
+	if (!scumm_stricmp(flag, "exit")) {
+		cmd->_flagsOn |= kFlagsExit;
+	} else
+	if (checkTrap && !scumm_stricmp(flag, "exittrap")) {
+		cmd->_flagsOn |= kFlagsExit;
+	} else
+	if (!scumm_stricmp(flag, "enter")) {
+		cmd->_flagsOn |= kFlagsEnter;
+	} else
+	if (checkTrap && !scumm_stricmp(flag, "entertrap")) {
+		cmd->_flagsOn |= kFlagsEnter;
+	} else
+	if (!scumm_strnicmp(flag, "no", 2)) {
+		byte _al = table->lookup(flag+2);
+		if (_al != Table::notFound) {
+			cmd->_flagsOff |= 1 << (_al - 1);
+		} else {
+			warning("Flag '%s' not found", flag);
+		}
+	} else {
+		byte _al = table->lookup(flag);
+		if (_al != Table::notFound) {
+			cmd->_flagsOn |= 1 << (_al - 1);
+		} else {
+			warning("Flag '%s' not found", flag);
+		}
+	}
+}
+
 void LocationParser_ns::parseCommandFlags() {
 
 	int _si = ctxt.nextToken;
 	CommandPtr cmd = ctxt.cmd;
 
 	if (!scumm_stricmp(_tokens[_si], "flags")) {
-		_si++;
-
 		do {
-			if (!scumm_stricmp(_tokens[_si], "exit") || !scumm_stricmp(_tokens[_si], "exittrap")) {
-				cmd->_flagsOn |= kFlagsExit;
-			} else
-			if (!scumm_stricmp(_tokens[_si], "enter") || !scumm_stricmp(_tokens[_si], "entertrap")) {
-				cmd->_flagsOn |= kFlagsEnter;
-			} else
-			if (!scumm_strnicmp(_tokens[_si], "no", 2)) {
-				byte _al = _vm->_localFlagNames->lookup(&_tokens[_si][2]);
-				assert(_al != Table::notFound);
-				cmd->_flagsOff |= 1 << (_al - 1);
-			} else {
-				byte _al = _vm->_localFlagNames->lookup(_tokens[_si]);
-				assert(_al != Table::notFound);
-				cmd->_flagsOn |= 1 << (_al - 1);
-			}
-
 			_si++;
-
-		} while (!scumm_stricmp(_tokens[_si++], "|"));
-
+			parseCommandFlag(cmd, _tokens[_si], _vm->_localFlagNames, true);
+			_si++;
+		} while (!scumm_stricmp(_tokens[_si], "|"));
 	}
 
 	if (!scumm_stricmp(_tokens[_si], "gflags")) {
-		_si++;
-		cmd->_flagsOn |= kFlagsGlobal;
-
 		do {
-			if (!scumm_stricmp(_tokens[_si], "exit")) {
-				cmd->_flagsOn |= kFlagsExit;
-			} else
-			if (!scumm_stricmp(_tokens[_si], "enter")) {
-				cmd->_flagsOn |= kFlagsEnter;
-			} else
-			if (!scumm_strnicmp(_tokens[_si], "no", 2)) {
-				byte _al = _vm->_globalFlagsNames->lookup(&_tokens[_si][2]);
-				assert(_al != Table::notFound);
-				cmd->_flagsOff |= 1 << (_al - 1);
-			} else {
-				byte _al = _vm->_globalFlagsNames->lookup(_tokens[_si]);
-				assert(_al != Table::notFound);
-				cmd->_flagsOn |= 1 << (_al - 1);
-			}
-
 			_si++;
-
-		} while (!scumm_stricmp(_tokens[_si++], "|"));
-
+			parseCommandFlag(cmd, _tokens[_si], _vm->_globalFlagsNames, false);
+			_si++;
+		} while (!scumm_stricmp(_tokens[_si], "|"));
+		cmd->_flagsOn |= kFlagsGlobal;
 	}
-
-	_si = ctxt.nextToken;
-
 }
 
 void LocationParser_ns::addCommand() {
@@ -1407,7 +1399,7 @@ void LocationParser_ns::parseGetData(ZonePtr z) {
 		}
 
 		_script->readLineToken(true);
-	} while (scumm_stricmp(_tokens[0], "endzone"));
+	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
 
 	z->u.get = data;
 
@@ -1428,7 +1420,7 @@ void LocationParser_ns::parseExamineData(ZonePtr z) {
 		}
 
 		_script->readLineToken(true);
-	} while (scumm_stricmp(_tokens[0], "endzone"));
+	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
 
 	z->u.examine = data;
 
@@ -1472,7 +1464,7 @@ void LocationParser_ns::parseDoorData(ZonePtr z) {
 		}
 
 		_script->readLineToken(true);
-	} while (scumm_stricmp(_tokens[0], "endzone"));
+	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
 
 	z->u.door = data;
 
@@ -1496,7 +1488,7 @@ void LocationParser_ns::parseMergeData(ZonePtr z) {
 		}
 
 		_script->readLineToken(true);
-	} while (scumm_stricmp(_tokens[0], "endzone"));
+	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
 
 	z->u.merge = data;
 
@@ -1517,7 +1509,7 @@ void LocationParser_ns::parseHearData(ZonePtr z) {
 		}
 
 		_script->readLineToken(true);
-	} while (scumm_stricmp(_tokens[0], "endzone"));
+	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
 
 	z->u.hear = data;
 
@@ -1537,7 +1529,7 @@ void LocationParser_ns::parseSpeakData(ZonePtr z) {
 		}
 
 		_script->readLineToken(true);
-	} while (scumm_stricmp(_tokens[0], "endzone"));
+	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
 
 	z->u.speak = data;
 
