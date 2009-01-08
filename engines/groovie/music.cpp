@@ -174,6 +174,14 @@ void MusicPlayer::setGameVolume(uint16 volume, uint16 time) {
 		_fadingEndVolume = 100;
 }
 
+void MusicPlayer::endTrack() {
+	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: End of song");
+	unload();
+	if (_backgroundFileRef) {
+		play(_backgroundFileRef, true);
+	}
+}
+
 void MusicPlayer::applyFading() {
 	Common::StackLock lock(_mutex);
 
@@ -182,6 +190,7 @@ void MusicPlayer::applyFading() {
 	if (time >= _fadingDuration) {
 		// If we were fading to 0, stop the playback and restore the volume
 		if (_fadingEndVolume == 0) {
+			debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Faded to zero: end of song");
 			unload();
 			_fadingEndVolume = 100;
 		}
@@ -221,6 +230,7 @@ bool MusicPlayer::play(uint16 fileref, bool loop) {
 
 	// Set the looping option
 	_midiParser->property(MidiParser::mpAutoLoop, loop);
+	_gameVolume = 100;
 
 	// Load the new file
 	return load(fileref);
@@ -334,10 +344,7 @@ void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F:
 		// End of Track, play the background song
-		debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: End of song");
-		if (_backgroundFileRef) {
-			play(_backgroundFileRef, true);
-		}
+		endTrack();
 		break;
 	default:
 		_driver->metaEvent(type, data, length);

@@ -56,6 +56,7 @@ private:
 	uint16 _fadingStartVolume;
 	uint16 _fadingEndVolume;
 	uint16 _fadingDuration;
+	void endTrack();
 	void applyFading();
 
 	// Song volumes
