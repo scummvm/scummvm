@@ -272,7 +272,6 @@ void Gfx::setHalfbriteMode(bool enable) {
 	if (enable == _halfbrite) return;
 
 	_halfbrite = !_halfbrite;
-	_hbCircleRadius = 0;
 }
 
 #define HALFBRITE_CIRCLE_RADIUS		48
@@ -283,7 +282,9 @@ void Gfx::setProjectorPos(int x, int y) {
 }
 
 void Gfx::setProjectorProgram(int16 *data) {
-	_nextProjectorPos = data;
+	if (_nextProjectorPos == 0) {
+		_nextProjectorPos = data;
+	}
 }
 
 void Gfx::drawInventory() {
@@ -427,11 +428,10 @@ void Gfx::applyHalfbriteEffect_NS(Graphics::Surface &surf) {
 	}
 
 	if (_nextProjectorPos) {
-		int16 x = *_nextProjectorPos++;
-		int16 y = *_nextProjectorPos++;
-		if (x == -1 && y == -1) {
-			_nextProjectorPos = 0;
-		} else {
+		int16 x = *_nextProjectorPos;
+		int16 y = *(_nextProjectorPos + 1);
+		if (x != -1 && y != -1) {
+			_nextProjectorPos += 2;
 			setProjectorPos(x, y);
 		}
 	}
@@ -782,6 +782,9 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 		warning("Gfx::setBackground() called with an null BackgroundInfo");
 		return;
 	}
+
+	_hbCircleRadius = 0;
+	_nextProjectorPos = 0;
 
 	delete _backgroundInfo;
 	_backgroundInfo = info;
