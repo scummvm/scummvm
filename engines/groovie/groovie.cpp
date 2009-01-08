@@ -36,7 +36,7 @@ namespace Groovie {
 
 GroovieEngine::GroovieEngine(OSystem *syst, GroovieGameDescription *gd) :
 	Engine(syst), _gameDescription(gd), _debugger(NULL), _script(this),
-	_resMan(NULL), _cursorMan(NULL), _videoPlayer(NULL), _musicPlayer(NULL),
+	_resMan(NULL), _grvCursorMan(NULL), _videoPlayer(NULL), _musicPlayer(NULL),
 	_graphicsMan(NULL), _waitingForInput(false) {
 
 	// Adding the default directories
@@ -62,7 +62,7 @@ GroovieEngine::~GroovieEngine() {
 	// Delete the remaining objects
 	delete _debugger;
 	delete _resMan;
-	delete _cursorMan;
+	delete _grvCursorMan;
 	delete _videoPlayer;
 	delete _musicPlayer;
 	delete _graphicsMan;
@@ -83,12 +83,12 @@ Common::Error GroovieEngine::init() {
 	switch (_gameDescription->version) {
 	case kGroovieT7G:
 		_resMan = new ResMan_t7g();
-		_cursorMan = new CursorMan_t7g(_system);
+		_grvCursorMan = new GrvCursorMan_t7g(_system);
 		_videoPlayer = new VDXPlayer(this);
 		break;
 	case kGroovieV2:
 		_resMan = new ResMan_v2();
-		_cursorMan = new CursorMan_v2(_system);
+		_grvCursorMan = new GrvCursorMan_v2(_system);
 		_videoPlayer = new ROQPlayer(this);
 		break;
 	}
@@ -227,7 +227,7 @@ Common::Error GroovieEngine::go() {
 
 		if (_waitingForInput) {
 			// Still waiting for input, just update the mouse, game timer and then wait a bit more
-			_cursorMan->animate();
+			_grvCursorMan->animate();
 			_system->updateScreen();
 			tmr++;
 			// Wait a little bit between increments.  While mouse is moving, this triggers

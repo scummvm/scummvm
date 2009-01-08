@@ -28,33 +28,28 @@
 
 #include "graphics/cursorman.h"
 
-// HACK: Since CursorMan is the name of the global
-// cursor manager we just undefine it here
-#define GlobCursorMan (::Graphics::CursorManager::instance())
-#undef CursorMan
-
 namespace Groovie {
 
 // Cursor Manager
 
-CursorMan::CursorMan(OSystem *system) :
+GrvCursorMan::GrvCursorMan(OSystem *system) :
 	_syst(system), _lastTime(0), _current(0), _cursor(NULL) {
 }
 
-CursorMan::~CursorMan() {
+GrvCursorMan::~GrvCursorMan() {
 	// Delete the cursors
 	for (uint cursor = 0; cursor < _cursors.size(); cursor++) {
 		delete _cursors[cursor];
 	}
 
-	GlobCursorMan.popAllCursors();
+	CursorMan.popAllCursors();
 }
 
-uint8 CursorMan::getStyle() {
+uint8 GrvCursorMan::getStyle() {
 	return _current;
 }
 
-void CursorMan::setStyle(uint8 newStyle) {
+void GrvCursorMan::setStyle(uint8 newStyle) {
 	// Reset the animation
 	_lastFrame = 254;
 	_lastTime = 1;
@@ -68,7 +63,7 @@ void CursorMan::setStyle(uint8 newStyle) {
 	animate();
 }
 
-void CursorMan::animate() {
+void GrvCursorMan::animate() {
 	if (_lastTime) {
 		int newTime = _syst->getMillis();
 		if (_lastTime - newTime >= 75) {
@@ -113,13 +108,13 @@ Cursor_t7g::Cursor_t7g(OSystem *system, uint8 *img, uint8 *pal) :
 
 void Cursor_t7g::enable() {
 	// Apply the palette
-	GlobCursorMan.replaceCursorPalette(_pal, 0, 32);
+	CursorMan.replaceCursorPalette(_pal, 0, 32);
 }
 
 void Cursor_t7g::showFrame(uint16 frame) {
 	// Set the mouse cursor
 	int offset = _width * _height * frame;
-	GlobCursorMan.replaceCursor((const byte *)_img + offset, _width, _height, _width >> 1, _height >> 1, 0);
+	CursorMan.replaceCursor((const byte *)_img + offset, _width, _height, _width >> 1, _height >> 1, 0);
 }
 
 
@@ -135,11 +130,11 @@ static const uint16 cursorDataOffsets[NUM_IMGS] = {
 
 #define NUM_STYLES 11
 // pyramid is cursor 8, eyes are 9 & 10
-const uint CursorMan_t7g::_cursorImg[NUM_STYLES] = {3, 5, 4, 3, 1, 0, 2, 6, 7, 8, 8};
-const uint CursorMan_t7g::_cursorPal[NUM_STYLES] = {0, 0, 0, 0, 2, 0, 1, 3, 5, 4, 6};
+const uint GrvCursorMan_t7g::_cursorImg[NUM_STYLES] = {3, 5, 4, 3, 1, 0, 2, 6, 7, 8, 8};
+const uint GrvCursorMan_t7g::_cursorPal[NUM_STYLES] = {0, 0, 0, 0, 2, 0, 1, 3, 5, 4, 6};
 
-CursorMan_t7g::CursorMan_t7g(OSystem *system) :
-	CursorMan(system) {
+GrvCursorMan_t7g::GrvCursorMan_t7g(OSystem *system) :
+	GrvCursorMan(system) {
 
 	// Open the cursors file
 	Common::File robgjd;
@@ -169,7 +164,7 @@ CursorMan_t7g::CursorMan_t7g(OSystem *system) :
 	robgjd.close();
 }
 
-CursorMan_t7g::~CursorMan_t7g() {
+GrvCursorMan_t7g::~GrvCursorMan_t7g() {
 	// Delete the images
 	for (uint img = 0; img < _images.size(); img++) {
 		delete[] _images[img];
@@ -181,7 +176,7 @@ CursorMan_t7g::~CursorMan_t7g() {
 	}
 }
 
-byte *CursorMan_t7g::loadImage(Common::File &file) {
+byte *GrvCursorMan_t7g::loadImage(Common::File &file) {
 	uint16 decompbytes = 0, offset, i, length;
 	uint8 flagbyte, lengthmask = 0x0F, offsetlen, var_8;
 	byte *cursorStorage = new byte[65536];
@@ -219,7 +214,7 @@ byte *CursorMan_t7g::loadImage(Common::File &file) {
 	return cursorStorage;
 }
 
-byte *CursorMan_t7g::loadPalette(Common::File &file) {
+byte *GrvCursorMan_t7g::loadPalette(Common::File &file) {
 	byte *palette = new byte[4 * 32];
 	for (uint8 colournum = 0; colournum < 32; colournum++) {
 		palette[colournum * 4 + 0] = file.readByte();
@@ -287,8 +282,8 @@ void Cursor_v2::showFrame(uint16 frame) {
 
 // v2 Cursor Manager
 
-CursorMan_v2::CursorMan_v2(OSystem *system) :
-	CursorMan(system) {
+GrvCursorMan_v2::GrvCursorMan_v2(OSystem *system) :
+	GrvCursorMan(system) {
 
 	// Open the icons file
 	Common::File iconsFile;
@@ -317,7 +312,7 @@ CursorMan_v2::CursorMan_v2(OSystem *system) :
 	iconsFile.close();
 }
 
-CursorMan_v2::~CursorMan_v2() {
+GrvCursorMan_v2::~GrvCursorMan_v2() {
 }
 
 } // End of Groovie namespace

@@ -92,7 +92,7 @@ public:
 
 	Script _script;
 	ResMan *_resMan;
-	CursorMan *_cursorMan;
+	GrvCursorMan *_grvCursorMan;
 	VideoPlayer *_videoPlayer;
 	MusicPlayer *_musicPlayer;
 	GraphicsMan *_graphicsMan;

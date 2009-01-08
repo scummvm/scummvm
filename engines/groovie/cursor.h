@@ -44,10 +44,10 @@ protected:
 	uint16 _numFrames;
 };
 
-class CursorMan {
+class GrvCursorMan {
 public:
-	CursorMan(OSystem *system);
-	virtual ~CursorMan();
+	GrvCursorMan(OSystem *system);
+	virtual ~GrvCursorMan();
 
 	virtual void animate();
 	virtual void setStyle(uint8 newStyle);
@@ -66,10 +66,10 @@ protected:
 	Cursor *_cursor;
 };
 
-class CursorMan_t7g : public CursorMan {
+class GrvCursorMan_t7g : public GrvCursorMan {
 public:
-	CursorMan_t7g(OSystem *system);
-	~CursorMan_t7g();
+	GrvCursorMan_t7g(OSystem *system);
+	~GrvCursorMan_t7g();
 
 private:
 	// Styles data
@@ -85,10 +85,10 @@ private:
 	byte *loadPalette(Common::File &file);
 };
 
-class CursorMan_v2 : public CursorMan {
+class GrvCursorMan_v2 : public GrvCursorMan {
 public:
-	CursorMan_v2(OSystem *system);
-	~CursorMan_v2();
+	GrvCursorMan_v2(OSystem *system);
+	~GrvCursorMan_v2();
 };
 
 } // End of Groovie namespace

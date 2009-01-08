@@ -699,8 +699,8 @@ void Script::o_inputloopend() {
 
 	// Nothing to do
 	if (_inputLoopAddress) {
-		if (_newCursorStyle != _vm->_cursorMan->getStyle()) {
-			_vm->_cursorMan->setStyle(_newCursorStyle);
+		if (_newCursorStyle != _vm->_grvCursorMan->getStyle()) {
+			_vm->_grvCursorMan->setStyle(_newCursorStyle);
 		}
 		_vm->_system->showMouse(true);
 
