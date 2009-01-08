@@ -199,11 +199,16 @@ void StaticTextWidget::setValue(int value) {
 
 void StaticTextWidget::setLabel(const Common::String &label) {
 	_label = label;
-	// TODO: We should automatically redraw when the label is changed.
-	// The following doesn't quite work when we are using tabs, plus it
-	// is rather clumsy to force a full redraw for a single static text.
-	// However, as long as we do blending, it might be the only way.
-	//_boss->draw();
+	
+	// get parent's size
+	const uint16 w = _boss->getWidth();
+	const uint16 h = _boss->getHeight();
+	const int16 x = _boss->getAbsX();
+	const int16 y = _boss->getAbsY();
+	
+	// restore the parent's background and redraw it again.
+	g_gui.theme()->restoreBackground(Common::Rect(x, y, x + w, y + h));
+	_boss->draw();
 }
 
 void StaticTextWidget::setAlign(Graphics::TextAlign align) {
