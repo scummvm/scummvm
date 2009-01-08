@@ -289,7 +289,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 3 (ST) 1.02 11/18/86
 	// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
-	GAME_FP("kq3", "1.02 1986-11-18", "8846df2654302b623217ba8bd6d657a9", 0x2272, GF_MENUS, GID_KQ3, Common::kPlatformAtariST),
+	GAME_FP("kq3", "1.02 1986-11-18", "8846df2654302b623217ba8bd6d657a9", 0x2272, GF_ESCPAUSE, GID_KQ3, Common::kPlatformAtariST),
 
 	// King's Quest 3 (Mac) 2.14 3/15/88
 	GAME_P("kq3", "2.14 1988-03-15", "7639c0da5ce94848227d409351fabda2", 0x2440, GID_KQ3, Common::kPlatformMacintosh),
