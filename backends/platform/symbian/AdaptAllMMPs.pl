@@ -33,10 +33,12 @@ chdir("../../../");
 	# Target Platform Project Files
 	"S60/ScummVM_S60.mmp",  
 	"S60v3/ScummVM_S60v3.mmp", 
+	"S60v3/ScummVM_A0000658_S60v3.mmp", 
 	"S80/ScummVM_S80.mmp", 
 	"S90/ScummVM_S90.mmp",
 	"UIQ2/ScummVM_UIQ2.mmp", 
-	"UIQ3/ScummVM_UIQ3.mmp" 
+	"UIQ3/ScummVM_UIQ3.mmp",
+	"UIQ3/ScummVM_A0000658_UIQ3.mmp" 
 
 );
 
