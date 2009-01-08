@@ -320,8 +320,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 4 (PC 5.25") 2.3 9/27/88 [AGI 3.002.086]
 	GAME3("kq4", "2.3 1988-09-27", "kq4dir", "6d7714b8b61466a5f5981242b993498f", 0x3086, GID_KQ4),
 
-	// King's Quest 4 (PC 5.25") 2.0 (Information provided by UsualNoise on ScummVM forums). Not sure about the AGI version.
-	GAME3("kq4", "2.0", "kq4dir", "f50f7f997208ca0e35b2650baec43a2d", 0x3086, GID_KQ4),
+	// King's Quest 4 (PC 5.25") 2.0 7/27/88 [AGI 3.002.086]
+	GAME3("kq4", "2.0 1988-07-27", "kq4dir", "f50f7f997208ca0e35b2650baec43a2d", 0x3086, GID_KQ4),
 
 	// King's Quest 4 (IIgs) 1.0K 11/22/88 (CE)
 	// Menus not tested
