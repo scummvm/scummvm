@@ -491,6 +491,38 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 	}
 }
 
+byte *findSoundTag(uint32 tag, byte *ptr) {
+	byte *endPtr;
+	uint32 offset, size;
+
+	if (READ_BE_UINT32(ptr) == MKID_BE('WSOU')) {
+		ptr += 8;
+	}
+
+	if (READ_BE_UINT32(ptr) != MKID_BE('RIFF'))
+		return NULL;
+
+	endPtr = (ptr + 12);
+	size = READ_LE_UINT32(ptr + 4);
+
+	while (endPtr < ptr + size) {
+		offset = READ_LE_UINT32(endPtr + 4);
+
+		if (offset <= 0)
+			error("Illegal chunk length - %d bytes.", offset);
+
+		if (offset > size)
+			error("Chunk extends beyond file end - %d versus %d.", offset, size);
+
+		if (READ_BE_UINT32(endPtr) == tag)
+			return endPtr;
+
+		endPtr = endPtr + offset + 8;
+	}
+
+	return NULL;
+}
+
 void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	byte *ptr, *spoolPtr;
 	int size = -1;
@@ -552,16 +584,17 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		return;
 	}
 
-	// Support for sound in later Backyard sports games
+	// Support for sound in later HE games
 	if (READ_BE_UINT32(ptr) == MKID_BE('RIFF') || READ_BE_UINT32(ptr) == MKID_BE('WSOU')) {
 		uint16 compType;
 		int blockAlign;
 		char *sound;
+		int codeOffs = -1;
 
-		priority = (soundID > _vm->_numSounds) ? 255 : *(ptr + 18);
-
-		if (READ_BE_UINT32(ptr) == MKID_BE('WSOU'))
-			ptr += 8;
+		byte *sbngPtr = findSoundTag(MKID_BE('SBNG'), ptr);
+		if (sbngPtr != NULL) {
+			codeOffs = sbngPtr - ptr + 8;
+		}
 
 		if (_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
 			int curSnd = _heChannel[heChannel].sound;
@@ -571,10 +604,8 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 				return;
 		}
 
-		int codeOffs = -1;
-		if (READ_BE_UINT32(ptr + 36) == MKID_BE('SBNG')) {
-			codeOffs = 36;
-		}
+		if (READ_BE_UINT32(ptr) == MKID_BE('WSOU'))
+			ptr += 8;
 
 		size = READ_LE_UINT32(ptr + 4);
 		Common::MemoryReadStream stream(ptr, size);
@@ -587,7 +618,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		_vm->setHETimer(heChannel + 4);
 		_heChannel[heChannel].sound = soundID;
-		_heChannel[heChannel].priority = priority;
+		_heChannel[heChannel].priority = (soundID > _vm->_numSounds) ? 255 : 128;
 		_heChannel[heChannel].sbngBlock = (codeOffs != -1) ? 1 : 0;
 		_heChannel[heChannel].codeOffs = codeOffs;
 		memset(_heChannel[heChannel].soundVars, 0, sizeof(_heChannel[heChannel].soundVars));
@@ -618,6 +649,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 	// Support for sound in Humongous Entertainment games
 	else if (READ_BE_UINT32(ptr) == MKID_BE('DIGI') || READ_BE_UINT32(ptr) == MKID_BE('TALK')) {
 		byte *sndPtr = ptr;
+		int codeOffs = -1;
 
 		priority = (soundID > _vm->_numSounds) ? 255 : *(ptr + 18);
 		rate = READ_LE_UINT16(ptr + 22);
@@ -633,7 +665,6 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 				return;
 		}
 
-		int codeOffs = -1;
 		if (READ_BE_UINT32(ptr) == MKID_BE('SBNG')) {
 			codeOffs = ptr - sndPtr + 8;
 			ptr += READ_BE_UINT32(ptr + 4);
@@ -670,7 +701,6 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
 		_mixer->playRaw(type, &_heSoundChannels[heChannel], ptr + heOffset + 8, size, rate, flags, soundID);
-
 	}
 	// Support for PCM music in 3DO versions of Humongous Entertainment games
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MRAW')) {
@@ -728,6 +758,140 @@ void SoundHE::startHETalkSound(uint32 offset) {
 
 	int channel = (_vm->VAR_TALK_CHANNEL != 0xFF) ? _vm->VAR(_vm->VAR_TALK_CHANNEL) : 0;
 	addSoundToQueue2(1, 0, channel, 0);
+}
+
+void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
+	byte *snd1Ptr, *snd2Ptr;
+	byte *sbng1Ptr, *sbng2Ptr;
+	byte *sdat1Ptr, *sdat2Ptr;
+	byte *src, *dst, *tmp;
+	int len, offs, size;
+	int sdat1size, sdat2size;
+
+	sbng1Ptr = NULL;
+	sbng2Ptr = NULL;
+
+	if (snd2id == -1) {
+		_sndPtrOffs = 0;
+		_sndTmrOffs = 0;
+		_sndDataSize = 0;
+		return;
+	}
+
+	if (snd1id != _curSndId) {
+		_curSndId = snd1id;
+		_sndPtrOffs = 0;
+		_sndTmrOffs = 0;
+		_sndDataSize = 0;
+	}
+
+	snd1Ptr = getResourceAddress(rtSound, snd1id);
+	assert(snd1Ptr);
+	snd2Ptr = getResourceAddress(rtSound, snd2id);
+	assert(snd2Ptr);
+
+	int i;
+	int chan = -1;
+	for (i = 0; i < ARRAYSIZE(((SoundHE *)_sound)->_heChannel); i++) {
+		if (((SoundHE *)_sound)->_heChannel[i].sound == snd1id)
+			chan =  i;
+	}
+
+	if (!findSoundTag(MKID_BE('data'), snd1Ptr)) {
+		sbng1Ptr = heFindResource(MKID_BE('SBNG'), snd1Ptr);
+		sbng2Ptr = heFindResource(MKID_BE('SBNG'), snd2Ptr);
+	}
+
+	if (sbng1Ptr != NULL && sbng2Ptr != NULL) {
+		if (chan != -1 && ((SoundHE *)_sound)->_heChannel[chan].codeOffs > 0) {
+			int curOffs = ((SoundHE *)_sound)->_heChannel[chan].codeOffs;
+
+			src = snd1Ptr + curOffs;
+			dst = sbng1Ptr + 8;
+			size = READ_BE_UINT32(sbng1Ptr + 4);
+			len = sbng1Ptr - snd1Ptr + size - curOffs;
+
+			byte *data = (byte *)malloc(len);
+			memcpy(data, src, len);
+			memcpy(dst, data, len);
+			free(data);
+
+			dst = sbng1Ptr + 8;
+			while ((size = READ_LE_UINT16(dst)) != 0)
+				dst += size;
+		} else {
+			dst = sbng1Ptr + 8;
+		}
+
+		((SoundHE *)_sound)->_heChannel[chan].codeOffs = sbng1Ptr - snd1Ptr + 8;
+
+		tmp = sbng2Ptr + 8;
+		while ((offs = READ_LE_UINT16(tmp)) != 0) {
+			tmp += offs;
+		}
+
+		src = sbng2Ptr + 8;
+		len = tmp - sbng2Ptr - 6;
+		memcpy(dst, src, len);
+
+		int32 time;
+		while ((size = READ_LE_UINT16(dst)) != 0) {
+			time = READ_LE_UINT32(dst + 2);
+			time += _sndTmrOffs;
+			WRITE_LE_UINT32(dst + 2, time);
+			dst += size;
+		}
+	}
+
+	if (findSoundTag(MKID_BE('data'), snd1Ptr)) {
+		sdat1Ptr = findSoundTag(MKID_BE('data'), snd1Ptr);
+		assert(sdat1Ptr);
+		sdat2Ptr = findSoundTag(MKID_BE('data'), snd2Ptr);
+		assert(sdat2Ptr);
+
+		if (!_sndDataSize)
+			_sndDataSize = READ_LE_UINT32(sdat1Ptr + 4) - 8;
+
+		sdat2size = READ_LE_UINT32(sdat2Ptr + 4) - 8;
+	} else {
+		sdat1Ptr = heFindResource(MKID_BE('SDAT'), snd1Ptr);
+		assert(sdat1Ptr);
+		sdat2Ptr = heFindResource(MKID_BE('SDAT'), snd2Ptr);
+		assert(sdat2Ptr);
+
+		_sndDataSize = READ_BE_UINT32(sdat1Ptr + 4) - 8;
+
+		sdat2size = READ_BE_UINT32(sdat2Ptr + 4) - 8;
+	}
+
+	sdat1size = _sndDataSize - _sndPtrOffs;
+	if (sdat2size < sdat1size) {
+		src = sdat2Ptr + 8;
+		dst = sdat1Ptr + 8 + _sndPtrOffs;
+		len = sdat2size;
+
+		memcpy(dst, src, len);
+
+		_sndPtrOffs += sdat2size;
+		_sndTmrOffs += sdat2size;
+	} else {
+		src = sdat2Ptr + 8;
+		dst = sdat1Ptr + 8 + _sndPtrOffs;
+		len = sdat1size;
+
+		memcpy(dst, src, len);
+
+		if (sdat2size != sdat1size) {
+			src = sdat2Ptr + 8 + sdat1size;
+			dst = sdat1Ptr + 8;
+			len = sdat2size - sdat1size;
+
+			memcpy(dst, src, len);
+		}
+
+		_sndPtrOffs = sdat2size - sdat1size;
+		_sndTmrOffs += sdat2size;
+	}
 }
 
 } // End of namespace Scumm
