@@ -558,8 +558,23 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		int blockAlign;
 		char *sound;
 
+		priority = (soundID > _vm->_numSounds) ? 255 : *(ptr + 18);
+
 		if (READ_BE_UINT32(ptr) == MKID_BE('WSOU'))
 			ptr += 8;
+
+		if (_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
+			int curSnd = _heChannel[heChannel].sound;
+			if (curSnd == 1 && soundID != 1)
+				return;
+			if (curSnd != 0 && curSnd != 1 && soundID != 1 && _heChannel[heChannel].priority > priority)
+				return;
+		}
+
+		int codeOffs = -1;
+		if (READ_BE_UINT32(ptr + 36) == MKID_BE('SBNG')) {
+			codeOffs = 36;
+		}
 
 		size = READ_LE_UINT32(ptr + 4);
 		Common::MemoryReadStream stream(ptr, size);
@@ -568,6 +583,24 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 			error("playHESound: Not a valid WAV file (%d)", soundID);
 		}
 
+		assert(heOffset >= 0 && heOffset < size);
+
+		_vm->setHETimer(heChannel + 4);
+		_heChannel[heChannel].sound = soundID;
+		_heChannel[heChannel].priority = priority;
+		_heChannel[heChannel].sbngBlock = (codeOffs != -1) ? 1 : 0;
+		_heChannel[heChannel].codeOffs = codeOffs;
+		memset(_heChannel[heChannel].soundVars, 0, sizeof(_heChannel[heChannel].soundVars));
+
+		// TODO: Extra sound flags
+		if (heFlags & 1) {
+			flags |= Audio::Mixer::FLAG_LOOP;
+			_heChannel[heChannel].timer = 0;
+		} else {
+			_heChannel[heChannel].timer = size * 1000 / rate;
+		}
+
+		_mixer->stopHandle(_heSoundChannels[heChannel]);
 		if (compType == 17) {
 			Audio::AudioStream *voxStream = Audio::makeADPCMStream(&stream, false, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 
@@ -575,20 +608,12 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 			size = voxStream->readBuffer((int16*)sound, size * 2);
 			size *= 2; // 16bits.
 			delete voxStream;
+
+			flags |= Audio::Mixer::FLAG_AUTOFREE;
+			_mixer->playRaw(type, &_heSoundChannels[heChannel], sound + heOffset, size - heOffset, rate, flags, soundID);
 		} else {
-			// Allocate a sound buffer, copy the data into it, and play
-			sound = (char *)malloc(size);
-			memcpy(sound, ptr + stream.pos(), size);
+			_mixer->playRaw(type, &_heSoundChannels[heChannel], ptr + stream.pos() + heOffset, size - heOffset, rate, flags, soundID);
 		}
-
-		flags |= Audio::Mixer::FLAG_AUTOFREE;
-		// TODO: Extra sound flags
-		if (heFlags & 1) {
-			flags |= Audio::Mixer::FLAG_LOOP;
-		}
-
-		_mixer->stopHandle(_heSoundChannels[heChannel]);
-		_mixer->playRaw(type, &_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
 	}
 	// Support for sound in Humongous Entertainment games
 	else if (READ_BE_UINT32(ptr) == MKID_BE('DIGI') || READ_BE_UINT32(ptr) == MKID_BE('TALK')) {
