@@ -6,6 +6,12 @@
 		kyra lure agi touche parallaction cine
 		cruise igor made m4 tinsel tucker sword1 sword2
 	);
+	
+	@WorkingEngines_2nd = qw(
+		scumm agos sky queen gob groovie saga drascula 
+		kyra lure agi touche parallaction cine
+		cruise igor made m4 tinsel tucker sword1 sword2
+	);
 
 	@TestingEngines = qw(
 		 
@@ -19,6 +25,7 @@
 	@EnablableSubEngines = qw(
 		scumm_7_8
 		he
+		ihnm
 	);
 
 	%UseableFeatures = (
@@ -272,10 +279,10 @@
 		# below here you could specify weird & experimental combinations, non-ready engines
 	
 			# Separate version for the broken sword engines (1&2)
-			$VariationSets{'ALL'}{'brokensword'} = "$DefaultFeatures sword1 sword2";
+			#$VariationSets{'ALL'}{'brokensword'} = "$DefaultFeatures sword1 sword2";
 		
 			# Separate version for Scumm games (COMI) since memory usage might be high
-			$VariationSets{'ALL'}{'scumm'} = "$DefaultFeatures scumm scumm_7_8 he";			
+			#$VariationSets{'ALL'}{'scumm'} = "$DefaultFeatures scumm scumm_7_8 he";			
 	
 			# for mega-fast-testing only plz! Warning: contains to engines!
 			#$VariationSets{'ALL'}{'fast_empty'} = "";
