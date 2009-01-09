@@ -1730,7 +1730,8 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 	if (code2 & 0x80)
 		code2 = READ_BE_UINT16(aksq + curpos);
 
-	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return || code2 == AKC_EndSeq || code2 == AKC_C08E || code2 == AKC_ComplexChan2 || code2 == AKC_C021 || code2 == AKC_C022);
+	if((code2 & 0xC000) == 0xC000 && code2 != AKC_ComplexChan && code2 != AKC_Return && code2 != AKC_EndSeq && code2 != AKC_C08E && code2 != AKC_ComplexChan2 && code2 != AKC_C021 && code2 != AKC_C022)
+		error("Ending with undefined uSweat token %X", code2);
 
 	a->_cost.curpos[chan] = curpos;
 
