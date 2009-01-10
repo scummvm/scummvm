@@ -2613,7 +2613,7 @@ void ScummEngine_v7::o6_kernelSetFunctions() {
 		enqueueText(getStringAddressVar(VAR_STRING2DRAW), args[3], args[4], args[2], args[1], (args[0] == 16));
 		break;
 	case 20:
-		// it's used for turn on/off 'RadioChatter' effect for voice in the dig, but i's not needed
+		_imuseDigital->setRadioChatterSFX(args[1]);
 		break;
 	case 107:
 		a = derefActor(args[1], "o6_kernelSetFunctions: 107");

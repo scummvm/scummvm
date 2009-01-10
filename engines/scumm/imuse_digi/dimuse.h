@@ -85,6 +85,7 @@ private:
 	int32 _curMusicSeq;		// current or previous id of sequence music
 	int32 _curMusicCue;		// current cue for current music. used in FT
 	int _stopingSequence;
+	bool _radioChatterSFX;
 
 	int32 makeMixerFlags(int32 flags);
 	static void timer_handler(void *refConf);
@@ -136,6 +137,9 @@ public:
 
 	void saveOrLoad(Serializer *ser);
 	void resetState();
+	void setRadioChatterSFX(bool state) {
+		_radioChatterSFX = state;
+	}
 
 	void setPriority(int soundId, int priority);
 	void setVolume(int soundId, int volume);
