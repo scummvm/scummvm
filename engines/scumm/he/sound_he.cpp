@@ -760,6 +760,7 @@ void SoundHE::startHETalkSound(uint32 offset) {
 	addSoundToQueue2(1, 0, channel, 0);
 }
 
+#ifdef ENABLE_HE
 void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	byte *snd1Ptr, *snd2Ptr;
 	byte *sbng1Ptr, *sbng2Ptr;
@@ -893,5 +894,6 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		_sndTmrOffs += sdat2size;
 	}
 }
+#endif
 
 } // End of namespace Scumm
