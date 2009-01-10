@@ -591,6 +591,8 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		char *sound;
 		int codeOffs = -1;
 
+		priority = (soundID > _vm->_numSounds) ? 255 : *(ptr + 18);
+
 		byte *sbngPtr = findSoundTag(MKID_BE('SBNG'), ptr);
 		if (sbngPtr != NULL) {
 			codeOffs = sbngPtr - ptr + 8;
@@ -618,7 +620,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		_vm->setHETimer(heChannel + 4);
 		_heChannel[heChannel].sound = soundID;
-		_heChannel[heChannel].priority = (soundID > _vm->_numSounds) ? 255 : 128;
+		_heChannel[heChannel].priority = priority;
 		_heChannel[heChannel].sbngBlock = (codeOffs != -1) ? 1 : 0;
 		_heChannel[heChannel].codeOffs = codeOffs;
 		memset(_heChannel[heChannel].soundVars, 0, sizeof(_heChannel[heChannel].soundVars));
