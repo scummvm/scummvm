@@ -246,16 +246,10 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// GUI:  Button + Label for the additional path
 	new ButtonWidget(tab, "GameOptions_Paths.Extrapath", "Extra Path:", kCmdExtraBrowser, 0);
 	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath);
-	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
-		_extraPathWidget->setLabel("None");
-	}
 
 	// GUI:  Button + Label for the save path
 	new ButtonWidget(tab, "GameOptions_Paths.Savepath", "Save Path:", kCmdSaveBrowser, 0);
 	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath);
-	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
-		_savePathWidget->setLabel("Default");
-	}
 
 	// Activate the first tab
 	tab->setActiveTab(0);
@@ -279,6 +273,16 @@ void EditGameDialog::reflowLayout() {
 
 void EditGameDialog::open() {
 	OptionsDialog::open();
+
+	String extraPath(ConfMan.get("extrapath", _domain));
+	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
+		_extraPathWidget->setLabel("None");
+	}
+
+	String savePath(ConfMan.get("savepath", _domain));
+	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
+		_savePathWidget->setLabel("Default");
+	}
 
 	int sel, i;
 	bool e;
