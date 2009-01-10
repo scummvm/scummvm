@@ -683,7 +683,7 @@ begin_credits("Credits");
 
     begin_section("Documentation");
 	begin_persons();
-		add_person("Joachim Eberhard", "joachimeberhard", "Documentation manager");
+		add_person("Joachim Eberhard", "joachimeberhard", "Numerous contributions to documentation");
 		add_person("Matthew Hoops", "clone2727", "Wiki editor");
 		end_persons();
     end_section();
