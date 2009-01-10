@@ -257,10 +257,14 @@ void ScreenEffects::copyFxRect(Graphics::Surface *surface, int16 x1, int16 y1, i
 
 }
 
-void ScreenEffects::copyRect(Graphics::Surface *surface, int16 x1, int16 y1, int16 x2, int16 y2) {
+void ScreenEffects::copyRect(Graphics::Surface *surface, int16 x1, int16 y1, int16 x2, int16 y2,
+							 int xd, int yd) {
+	if (xd == -1) xd = x1;
+	if (yd == -1) yd = y1;
+
 	Graphics::Surface *vgaScreen = _screen->lockScreen();
 	byte *source = (byte*)surface->getBasePtr(x1, y1);
-	byte *dest = (byte*)vgaScreen->getBasePtr(x1, y1);
+	byte *dest = (byte*)vgaScreen->getBasePtr(xd, yd);
 	for (int y = 0; y < y2 - y1; y++) {
 		memcpy(dest, source, x2 - x1);
 		dest += 320;
@@ -343,10 +347,14 @@ void ScreenEffects::vfx07(Graphics::Surface *surface, byte *palette, byte *newPa
  	setPalette(palette);
 }
 
+// "Screen slide in" right to left
 void ScreenEffects::vfx08(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
-	// TODO
-	warning("Unimplemented visual effect: 8");
-	vfx00(surface, palette, newPalette, colorCount);
+	for (int x = 8; x <= 320; x += 8) {
+		copyRect(surface, 0, 0, x, 200, 320 - x, 0);
+		_screen->updateScreenAndWait(25);
+	}
+
+	setPalette(palette);
 }
 
 // "Checkerboard" effect
