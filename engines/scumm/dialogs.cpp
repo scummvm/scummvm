@@ -351,7 +351,6 @@ void SaveLoadChooser::reflowLayout() {
 		_fillR = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
 		_fillG = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
 		_fillB = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillB");
-		updateInfos(false);
 	} else {
 		_container->setVisible(false);
 		_gfxWidget->setVisible(false);
@@ -361,6 +360,9 @@ void SaveLoadChooser::reflowLayout() {
 	}
 
 	Dialog::reflowLayout();
+
+	if (_container->isVisible())
+		updateInfos(false);
 }
 
 void SaveLoadChooser::updateInfos(bool redraw) {
