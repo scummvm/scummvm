@@ -311,10 +311,12 @@ void IMuseDigital::callback() {
 						}
 					} else if (bits == 8) {
 						curFeedSize = _sound->getDataFromRegion(track->soundDesc, track->curRegion, &tmpSndBufferPtr, track->regionOffset, feedSize);
-						if (_radioChatterSFX && track->volGroupId == IMUSE_VOLGRP_VOICE) {
+						if (_radioChatterSFX && track->soundId == 10000) {
+							if (curFeedSize > feedSize)
+								curFeedSize = feedSize;
 							byte *buf = new byte[curFeedSize];
 							int index = 0;
-							int count = curFeedSize;
+							int count = curFeedSize - 4;
 							byte *ptr_1 = tmpSndBufferPtr;
 							byte *ptr_2 = tmpSndBufferPtr + 4;
 							int value = ptr_1[0] - 0x80;
@@ -324,9 +326,13 @@ void IMuseDigital::callback() {
 							do {
 								int t = *ptr_1++;
 								int v = t - (value / 4);
-								value = (int)(*(ptr_2++) - 0x80) + (value - t + 128);
-								buf[index++] = (byte)v * 4;
+								value = *ptr_2++ - 0x80 + (value - t + 0x80);
+								buf[index++] = v * 2 + 0x80;
 							} while (--count);
+							buf[curFeedSize - 1] = 0x80;
+							buf[curFeedSize - 2] = 0x80;
+							buf[curFeedSize - 3] = 0x80;
+							buf[curFeedSize - 4] = 0x80;
 							delete[] tmpSndBufferPtr;
 							tmpSndBufferPtr = buf;
 						}
