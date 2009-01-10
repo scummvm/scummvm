@@ -159,6 +159,9 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 }
 
 void BrowserDialog::open() {
+	// Call super implementation
+	Dialog::open();
+
 	if (ConfMan.hasKey("browser_lastpath"))
 		_node = Common::FSNode(ConfMan.get("browser_lastpath"));
 	if (!_node.isDirectory())
@@ -166,9 +169,6 @@ void BrowserDialog::open() {
 
 	// Alway refresh file list
 	updateListing();
-
-	// Call super implementation
-	Dialog::open();
 }
 
 void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
