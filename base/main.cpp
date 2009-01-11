@@ -57,36 +57,6 @@
 
 static bool launcherDialog(OSystem &system) {
 
-	system.beginGFXTransaction();
-		// Set the user specified graphics mode (if any).
-		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
-
-		system.initSize(320, 200);
-
-		if (ConfMan.hasKey("aspect_ratio"))
-			system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
-		if (ConfMan.hasKey("fullscreen"))
-			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
-	if (system.endGFXTransaction() != OSystem::kTransactionSuccess)
-		error("Could not switch to graphics mode: 320x200 ('%s')", ConfMan.get("gfx_mode").c_str());
-
-	// When starting up launcher for the first time, the user might have specified
-	// a --gui-theme option, to allow that option to be working, we need to initialize
-	// GUI here.
-	// FIXME: Find a nicer way to allow --gui-theme to be working
-	GUI::GuiManager::instance();
-
-	// Discard any command line options. Those that affect the graphics
-	// mode and the others (like bootparam etc.) should not
-	// blindly be passed to the first game launched from the launcher.
-	ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
-
-	// Set initial window caption
-	system.setWindowCaption(gScummVMFullVersion);
-
-	// Clear the main screen
-	system.clearScreen();
-
 #if defined(_WIN32_WCE)
 	CELauncherDialog dlg;
 #elif defined(__DC__)
@@ -234,6 +204,38 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	return result;
 }
 
+static void setupGraphics(OSystem &system) {
+	
+	system.beginGFXTransaction();
+		// Set the user specified graphics mode (if any).
+		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+
+		system.initSize(320, 200);
+
+		if (ConfMan.hasKey("aspect_ratio"))
+			system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+		if (ConfMan.hasKey("fullscreen"))
+			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+	system.endGFXTransaction();
+
+	// When starting up launcher for the first time, the user might have specified
+	// a --gui-theme option, to allow that option to be working, we need to initialize
+	// GUI here.
+	// FIXME: Find a nicer way to allow --gui-theme to be working
+	GUI::GuiManager::instance();
+
+	// Discard any command line options. Those that affect the graphics
+	// mode and the others (like bootparam etc.) should not
+	// blindly be passed to the first game launched from the launcher.
+	ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
+
+	// Set initial window caption
+	system.setWindowCaption(gScummVMFullVersion);
+
+	// Clear the main screen
+	system.clearScreen();
+}
+
 
 extern "C" int scummvm_main(int argc, char *argv[]) {
 	Common::String specialDebug;
@@ -290,6 +292,12 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// the command line params) was read.
 	system.initBackend();
 
+	setupGraphics(system);
+
+	// Init the event manager. As the virtual keyboard is loaded here, it must 
+	// take place after the backend is initiated and the screen has been setup
+	system.getEventManager()->init();
+
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain())
 		launcherDialog(system);
@@ -334,7 +342,9 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 			// screen to draw on yet.
 			warning("Could not find any engine capable of running the selected game");
 		}
-
+		
+		// reset the graphics to default
+		setupGraphics(system);
 		launcherDialog(system);
 	}
 	PluginManager::instance().unloadPlugins();

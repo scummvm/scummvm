@@ -28,6 +28,9 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "backends/events/default/default-events.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/remap-dialog.h"
+#include "backends/vkeybd/virtual-keyboard.h"
 
 #include "engines/engine.h"
 #include "gui/message.h"
@@ -193,9 +196,23 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 
 		_hasPlaybackEvent = false;
 	}
+
+#ifdef ENABLE_VKEYBD
+	_vk = new Common::VirtualKeyboard();
+#endif
+#ifdef ENABLE_KEYMAPPER
+	_keymapper = new Common::Keymapper(this);
+	_remap = false;
+#endif
 }
 
 DefaultEventManager::~DefaultEventManager() {
+#ifdef ENABLE_KEYMAPPER
+	delete _keymapper;
+#endif
+#ifdef ENABLE_VKEYBD
+	delete _vk;
+#endif
 	_boss->lockMutex(_timeMutex);
 	_boss->lockMutex(_recorderMutex);
 	_recordMode = kPassthrough;
@@ -252,6 +269,16 @@ DefaultEventManager::~DefaultEventManager() {
 	}
 	_boss->deleteMutex(_timeMutex);
 	_boss->deleteMutex(_recorderMutex);
+}
+
+void DefaultEventManager::init() {
+#ifdef ENABLE_VKEYBD
+	if (ConfMan.hasKey("vkeybd_pack_name")) {
+		_vk->loadKeyboardPack(ConfMan.get("vkeybd_pack_name"));
+	} else {
+		_vk->loadKeyboardPack("vkeybd");
+	}
+#endif
 }
 
 bool DefaultEventManager::playback(Common::Event &event) {
@@ -357,8 +384,24 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	if (!artificialEventQueue.empty()) {
 		event = artificialEventQueue.pop();
 		result = true;
-	} else
+	} else {
 		result = _boss->pollEvent(event);
+
+#ifdef ENABLE_KEYMAPPER
+		if (result) {
+			// send key press events to keymapper
+			if (event.type == Common::EVENT_KEYDOWN) {
+				if (_keymapper->mapKeyDown(event.kbd)) {
+					result = false;
+				}
+			} else if (event.type == Common::EVENT_KEYUP) {
+				if (_keymapper->mapKeyUp(event.kbd)) {
+					result = false;
+				}
+			}
+		}
+#endif
+	}
 
 	if (_recordMode != kPassthrough)  {
 
@@ -425,6 +468,32 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 						event.type = Common::EVENT_RTL;
 				}
 			}
+#ifdef ENABLE_VKEYBD	
+			else if (event.kbd.keycode == Common::KEYCODE_F7 && event.kbd.flags == 0) {
+				if (_vk->isDisplaying()) {
+					_vk->close(true);
+				} else {
+					bool isPaused = (g_engine) ? g_engine->isPaused() : true;
+					if (!isPaused) g_engine->pauseEngine(true);
+					_vk->show();
+					if (!isPaused) g_engine->pauseEngine(false);
+					result = false;
+				}
+			}
+#endif
+#ifdef ENABLE_KEYMAPPER	
+			else if (event.kbd.keycode == Common::KEYCODE_F8 && event.kbd.flags == 0) {
+				if (!_remap) {
+					_remap = true;
+					Common::RemapDialog _remapDialog;
+					bool isPaused = (g_engine) ? g_engine->isPaused() : true;
+					if (!isPaused) g_engine->pauseEngine(true);
+					_remapDialog.runModal();
+					if (!isPaused) g_engine->pauseEngine(false);
+					_remap = false;
+				}
+			}
+#endif
 			break;
 
 		case Common::EVENT_KEYUP:
@@ -520,7 +589,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	return result;
 }
 
-void DefaultEventManager::pushEvent(Common::Event event) {
+void DefaultEventManager::pushEvent(const Common::Event &event) {
 
 	// If already received an EVENT_QUIT, don't add another one
 	if (event.type == Common::EVENT_QUIT) {

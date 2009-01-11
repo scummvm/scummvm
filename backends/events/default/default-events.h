@@ -29,8 +29,19 @@
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/mutex.h"
+#include "common/queue.h"
 
 class OSystem;
+
+namespace Common {
+#ifdef ENABLE_KEYMAPPER
+	class Keymapper;
+#endif
+#ifdef ENABLE_VKEYBD
+	class VirtualKeyboard;
+#endif
+}
+
 
 /*
 At some point we will remove pollEvent from OSystem and change
@@ -46,6 +57,17 @@ use a subclass of EventProvider.
 
 class DefaultEventManager : public Common::EventManager {
 	OSystem *_boss;
+
+#ifdef ENABLE_VKEYBD
+	Common::VirtualKeyboard *_vk;
+#endif
+
+#ifdef ENABLE_KEYMAPPER
+	Common::Keymapper *_keymapper;
+	bool _remap;
+#endif
+
+	Common::Queue<Common::Event> _artificialEventQueue;
 
 	Common::Point _mousePos;
 	int _buttonState;
@@ -111,8 +133,9 @@ public:
 	DefaultEventManager(OSystem *boss);
 	~DefaultEventManager();
 
+	virtual void init();
 	virtual bool pollEvent(Common::Event &event);
-	virtual void pushEvent(Common::Event event);
+	virtual void pushEvent(const Common::Event &event);
 	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name);
 	virtual void processMillis(uint32 &millis);
 
@@ -122,6 +145,10 @@ public:
 	virtual int shouldQuit() const { return _shouldQuit; }
 	virtual int shouldRTL() const { return _shouldRTL; }
 	virtual void resetRTL() { _shouldRTL = false; }
+	
+#ifdef ENABLE_KEYMAPPER
+	virtual Common::Keymapper *getKeymapper() { return _keymapper; }
+#endif
 };
 
 #endif

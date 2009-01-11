@@ -28,6 +28,8 @@
 #include "common/config-manager.h"
 #include "common/algorithm.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "gui/GuiManager.h"
 #include "gui/dialog.h"
 #include "gui/ThemeEngine.h"
@@ -200,6 +202,10 @@ void GuiManager::runLoop() {
 	uint32 lastRedraw = 0;
 	const uint32 waitTime = 1000 / 45;
 
+#ifdef ENABLE_KEYMAPPER
+	eventMan->getKeymapper()->pushKeymap("gui");
+#endif
+
 	while (!_dialogStack.empty() && activeDialog == getTopDialog()) {
 		redraw();
 
@@ -305,6 +311,10 @@ void GuiManager::runLoop() {
 		// Delay for a moment
 		_system->delayMillis(10);
 	}
+
+#ifdef ENABLE_KEYMAPPER
+	eventMan->getKeymapper()->popKeymap();
+#endif
 
 	if (didSaveState) {
 		_theme->disable();

@@ -24,6 +24,7 @@
  */
 
 #include "backends/platform/sdl/sdl.h"
+#include "backends/keymapper/keymapper.h"
 #include "common/util.h"
 #include "common/events.h"
 
@@ -519,5 +520,64 @@ bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {
 	}
 #endif
 	return false;
+}
+
+void OSystem_SDL::setupKeymapper() {
+#ifdef ENABLE_KEYMAPPER
+	using namespace Common;
+	Keymapper *mapper = getEventManager()->getKeymapper();
+
+	HardwareKeySet *keySet = new HardwareKeySet();
+	keySet->addHardwareKey(new HardwareKey( "a", KeyState(KEYCODE_a), "a", kActionKeyType ));
+	keySet->addHardwareKey(new HardwareKey( "s", KeyState(KEYCODE_s), "s", kActionKeyType ));
+	keySet->addHardwareKey(new HardwareKey( "d", KeyState(KEYCODE_d), "d", kActionKeyType ));
+	keySet->addHardwareKey(new HardwareKey( "f", KeyState(KEYCODE_f), "f", kActionKeyType ));
+	keySet->addHardwareKey(new HardwareKey( "n", KeyState(KEYCODE_n), "n (vk)", kTriggerLeftKeyType, kVirtualKeyboardActionType ));
+	keySet->addHardwareKey(new HardwareKey( "m", KeyState(KEYCODE_m), "m (remap)", kTriggerRightKeyType, kKeyRemapActionType ));
+	keySet->addHardwareKey(new HardwareKey( "[", KeyState(KEYCODE_LEFTBRACKET), "[ (select)", kSelectKeyType ));
+	keySet->addHardwareKey(new HardwareKey( "]", KeyState(KEYCODE_RIGHTBRACKET), "] (start)", kStartKeyType ));
+	mapper->registerHardwareKeySet(keySet);
+
+	Keymap *globalMap = new Keymap("global");
+	Keymap *guiMap = new Keymap("gui");
+	Action *act;
+	Event evt ;
+
+	act = new Action(globalMap, "MENU", "Menu", kGenericActionType, kSelectKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_F5, ASCII_F5, 0));
+	
+	act = new Action(globalMap, "SKCT", "Skip", kGenericActionType, kActionKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
+
+	act = new Action(globalMap, "PAUS", "Pause", kGenericActionType, kStartKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_SPACE, ' ', 0));
+	
+	act = new Action(globalMap, "SKLI", "Skip line", kGenericActionType, kActionKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_PERIOD, '.', 0));
+
+	act = new Action(globalMap, "VIRT", "Display keyboard", kVirtualKeyboardActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F6, ASCII_F6, 0));
+
+	act = new Action(globalMap, "REMP", "Remap keys", kKeyRemapActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
+
+	mapper->addGlobalKeymap(globalMap);
+
+	act = new Action(guiMap, "CLOS", "Close", kGenericActionType, kStartKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
+	
+	act = new Action(guiMap, "CLIK", "Mouse click");
+	act->addLeftClickEvent();
+
+	act = new Action(guiMap, "VIRT", "Display keyboard", kVirtualKeyboardActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F6, ASCII_F6, 0));
+
+	act = new Action(guiMap, "REMP", "Remap keys", kKeyRemapActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
+
+	mapper->addGlobalKeymap(guiMap);
+
+	mapper->pushKeymap("global");
+#endif
 }
 

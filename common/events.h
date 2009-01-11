@@ -125,6 +125,7 @@ struct Event {
 	Event() : type(EVENT_INVALID), synthetic(false) {}
 };
 
+class Keymapper;
 
 /**
  * The EventManager provides user input events to the client code.
@@ -141,6 +142,12 @@ public:
 		RBUTTON = 1 << 1
 	};
 
+
+	/**
+	 * Initialise the event manager.
+	 * @note	called after graphics system has been set up
+	 */
+	virtual void init() {}
 	/**
 	 * Get the next event in the event queue.
 	 * @param event	point to an Event struct, which will be filled with the event data.
@@ -149,9 +156,9 @@ public:
 	virtual bool pollEvent(Common::Event &event) = 0;
 
 	/**
-	 * Pushes a "fake" event of the specified type into the event queue
+	 * Pushes a "fake" event into the event queue
 	 */
-	virtual void pushEvent(Common::Event event) = 0;
+	virtual void pushEvent(const Common::Event &event) = 0;
 
 	/** Register random source so it can be serialized in game test purposes **/
 	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name) = 0;
@@ -195,6 +202,10 @@ public:
 
 	// TODO: Consider removing OSystem::getScreenChangeID and
 	// replacing it by a generic getScreenChangeID method here
+#ifdef ENABLE_KEYMAPPER
+	virtual Common::Keymapper *getKeymapper() = 0;
+#endif
+
 protected:
 
 	Common::Queue<Common::Event> artificialEventQueue;

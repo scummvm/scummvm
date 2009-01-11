@@ -259,6 +259,10 @@ struct KeyState {
 		keycode = KEYCODE_INVALID;
 		ascii = flags = 0;
 	}
+
+	bool operator ==(const KeyState &x) const {
+		return keycode == x.keycode && ascii == x.ascii && flags == x.flags;
+	}
 };
 
 } // End of namespace Common
