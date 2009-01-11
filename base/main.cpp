@@ -204,7 +204,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	return result;
 }
 
-static void setupGraphics(OSystem &system) {
+static void setupGraphics(OSystem &system, bool clearDomain = false) {
 	
 	system.beginGFXTransaction();
 		// Set the user specified graphics mode (if any).
@@ -227,7 +227,8 @@ static void setupGraphics(OSystem &system) {
 	// Discard any command line options. Those that affect the graphics
 	// mode and the others (like bootparam etc.) should not
 	// blindly be passed to the first game launched from the launcher.
-	ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
+	if (clearDomain)
+		ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
 
 	// Set initial window caption
 	system.setWindowCaption(gScummVMFullVersion);
@@ -344,7 +345,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 		}
 		
 		// reset the graphics to default
-		setupGraphics(system);
+		setupGraphics(system, true);
 		launcherDialog(system);
 	}
 	PluginManager::instance().unloadPlugins();
