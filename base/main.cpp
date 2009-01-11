@@ -57,6 +57,11 @@
 
 static bool launcherDialog(OSystem &system) {
 
+	// Discard any command line options. Those that affect the graphics
+	// mode and the others (like bootparam etc.) should not
+	// blindly be passed to the first game launched from the launcher.
+	ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
+
 #if defined(_WIN32_WCE)
 	CELauncherDialog dlg;
 #elif defined(__DC__)
@@ -204,7 +209,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	return result;
 }
 
-static void setupGraphics(OSystem &system, bool clearDomain = false) {
+static void setupGraphics(OSystem &system) {
 	
 	system.beginGFXTransaction();
 		// Set the user specified graphics mode (if any).
@@ -223,12 +228,6 @@ static void setupGraphics(OSystem &system, bool clearDomain = false) {
 	// GUI here.
 	// FIXME: Find a nicer way to allow --gui-theme to be working
 	GUI::GuiManager::instance();
-
-	// Discard any command line options. Those that affect the graphics
-	// mode and the others (like bootparam etc.) should not
-	// blindly be passed to the first game launched from the launcher.
-	if (clearDomain)
-		ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
 
 	// Set initial window caption
 	system.setWindowCaption(gScummVMFullVersion);
@@ -300,11 +299,8 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	system.getEventManager()->init();
 
 	// Unless a game was specified, show the launcher dialog
-	if (0 == ConfMan.getActiveDomain()) {
-		ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
-
+	if (0 == ConfMan.getActiveDomain())
 		launcherDialog(system);
-	}
 
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
@@ -348,7 +344,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 		}
 		
 		// reset the graphics to default
-		setupGraphics(system, true);
+		setupGraphics(system);
 		launcherDialog(system);
 	}
 	PluginManager::instance().unloadPlugins();
