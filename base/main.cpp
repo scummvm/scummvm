@@ -300,8 +300,11 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	system.getEventManager()->init();
 
 	// Unless a game was specified, show the launcher dialog
-	if (0 == ConfMan.getActiveDomain())
+	if (0 == ConfMan.getActiveDomain()) {
+		ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
+
 		launcherDialog(system);
+	}
 
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
