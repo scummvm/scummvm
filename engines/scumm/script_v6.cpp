@@ -920,6 +920,14 @@ void ScummEngine_v6::o6_drawObjectAt() {
 	int y = pop();
 	int x = pop();
 	int obj = pop();
+
+	// WORKAROUND bug #1846746 : Adjust x and y position of
+	// objects in credits sequence, to match other ports
+	if (_game.id == GID_PUTTMOON && _game.platform == Common::kPlatform3DO &&
+		_roomResource == 38 && vm.slot[_currentScript].number == 206) {
+		x = y = -1;
+	}
+
 	setObjectState(obj, 1, x, y);
 }
 
