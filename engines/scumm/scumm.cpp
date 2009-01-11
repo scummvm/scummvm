@@ -1706,9 +1706,11 @@ void ScummEngine::syncSoundSettings() {
 	if (VAR_VOICE_MODE != 0xFF)
 		VAR(VAR_VOICE_MODE) = _voiceMode;
 
-	_defaultTalkDelay = getTalkDelay();
-	if (VAR_CHARINC != 0xFF)
-		VAR(VAR_CHARINC) = _defaultTalkDelay;
+	if (ConfMan.hasKey("talkspeed", _targetName)) {
+		_defaultTalkDelay = getTalkDelay();
+		if (VAR_CHARINC != 0xFF)
+			VAR(VAR_CHARINC) = _defaultTalkDelay;
+	}
 }
 
 void ScummEngine::setTalkDelay(int talkdelay) {
