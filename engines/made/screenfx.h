@@ -54,6 +54,7 @@ private:
 	void copyFxRect(Graphics::Surface *surface, int16 x1, int16 y1, int16 x2, int16 y2);
 	void copyRect(Graphics::Surface *surface, int16 x1, int16 y1, int16 x2, int16 y2,
 		int xd = -1, int yd = -1);
+	void reposition(int16 x1, int16 y1, int16 x2, int16 y2, int xd, int yd);
 
 	void vfx00(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 	void vfx01(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);

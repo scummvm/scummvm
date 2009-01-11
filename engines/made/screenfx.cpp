@@ -273,6 +273,22 @@ void ScreenEffects::copyRect(Graphics::Surface *surface, int16 x1, int16 y1, int
 	_screen->unlockScreen();
 }
 
+void ScreenEffects::reposition(int16 x1, int16 y1, int16 x2, int16 y2, int xd, int yd) {
+	Graphics::Surface *vgaScreen = _screen->lockScreen();
+	byte *source = (byte *)vgaScreen->getBasePtr(x1, y1);
+	byte *dest = (byte *)vgaScreen->getBasePtr(xd, yd);
+	for (int y = 0; y < y2 - y1; y++) {
+		if (dest < source)
+			memcpy(dest, source, x2 - x1);
+		else
+			Common::copy_backward(source, source + x2 - x1, dest + x2 - x1);
+
+		dest += 320;
+		source += 320;
+	}
+	_screen->unlockScreen();
+}
+
 // No effect
 void ScreenEffects::vfx00(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	setPalette(palette);
@@ -350,6 +366,8 @@ void ScreenEffects::vfx07(Graphics::Surface *surface, byte *palette, byte *newPa
 // "Screen slide in" right to left
 void ScreenEffects::vfx08(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int x = 8; x <= 320; x += 8) {
+		if (x != 320)
+			reposition(8, 0, 328 - x, 200, 0, 0);
 		copyRect(surface, 0, 0, x, 200, 320 - x, 0);
 		_screen->updateScreenAndWait(25);
 	}
@@ -478,10 +496,16 @@ void ScreenEffects::vfx17(Graphics::Surface *surface, byte *palette, byte *newPa
 
 }
 
+// "Screen slide in" left to right
 void ScreenEffects::vfx18(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
-	// TODO
-	warning("Unimplemented visual effect: 18");
-	vfx00(surface, palette, newPalette, colorCount);
+	for (int x = 8; x <= 320; x += 8) {
+		if (x != 320)
+			reposition(x, 0, 312, 200, x + 8, 0);
+		copyRect(surface, 320 - x, 0, 320, 200, 0, 0);
+		_screen->updateScreenAndWait(25);
+	}
+
+	setPalette(palette);
 }
 
 void ScreenEffects::vfx19(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
