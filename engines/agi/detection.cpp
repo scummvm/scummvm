@@ -143,7 +143,7 @@ namespace Agi {
 
 #define GAME3_PS(id,name,fname,md5,size,ver,gid,platform) GAME_LVFPN(id,name,fname,md5,size,Common::EN_ANY,ver,0,gid,platform,GType_V3)
 
-#define FANMADE_ILVF(id,name,md5,lang,ver,features) GAME_LVFPN("agi-fanmade",name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformPC,GType_V2)
+#define FANMADE_ILVF(id,name,md5,lang,ver,features) GAME_LVFPN(id,name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformPC,GType_V2)
 
 #define FANMADE_LVF(name,md5,lang,ver,features) FANMADE_ILVF("agi-fanmade",name,md5,lang,ver,features)
 
