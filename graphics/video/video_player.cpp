@@ -188,6 +188,9 @@ bool VideoPlayer::playVideo(Common::List<Common::Event> *stopEvents) {
 
 	g_system->clearScreen();
 
+	int frameX = (g_system->getWidth() - _decoder->getWidth()) / 2;
+	int frameY = (g_system->getHeight() - _decoder->getHeight()) / 2;
+
 	while (_decoder->getCurFrame() < _decoder->getFrameCount() && !_skipVideo) {
 		processVideoEvents(stopEvents);
 
@@ -195,10 +198,7 @@ bool VideoPlayer::playVideo(Common::List<Common::Event> *stopEvents) {
 		_decoder->decodeNextFrame();
 
 		Graphics::Surface *screen = g_system->lockScreen();
-		_decoder->copyFrameToBuffer((byte *)screen->pixels,
-							(g_system->getWidth() - _decoder->getWidth()) / 2,
-							(g_system->getHeight() - _decoder->getHeight()) / 2,
-							g_system->getWidth());
+		_decoder->copyFrameToBuffer((byte *)screen->pixels, frameX, frameY, g_system->getWidth());
 		performPostProcessing((byte *)screen->pixels);
 		g_system->unlockScreen();
 
