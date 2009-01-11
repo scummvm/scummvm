@@ -47,6 +47,7 @@ ENABLE_CINE = $(ENABLED)
 ENABLE_CRUISE = $(ENABLED)
 ENABLE_DRASCULA = $(ENABLED)
 ENABLE_GOB = $(ENABLED)
+ENABLE_GROOVIE = $(ENABLED)
 ENABLE_IGOR = $(ENABLED)
 ENABLE_IHNM = $(ENABLED)
 ENABLE_KYRA = $(ENABLED)
@@ -60,6 +61,7 @@ ENABLE_SKY = $(ENABLED)
 ENABLE_SWORD1 = $(ENABLED)
 ENABLE_SWORD2 = $(ENABLED)
 ENABLE_TOUCHE = $(ENABLED)
+ENABLE_TUCKER = $(ENABLED)
 
 OBJS :=	dcmain.o time.o display.o audio.o input.o selector.o icon.o \
 	label.o vmsave.o softkbd.o dcloader.o cache.o dc-fs.o
