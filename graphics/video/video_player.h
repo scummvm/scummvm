@@ -26,9 +26,9 @@
 #ifndef GRAPHICS_VIDEO_PLAYER_H
 #define GRAPHICS_VIDEO_PLAYER_H
 
-#include "common/scummsys.h"
 #include "common/events.h"
 #include "common/list.h"
+#include "common/stream.h"
 
 namespace Common {
 	class SeekableReadStream;
@@ -119,12 +119,12 @@ public:
 	/**
 	 * Return the black palette color for the current frame
 	 */
-	byte getBlack() { return _black; }
+	byte getBlack() { return _curFrameBlack; }
 
 	/**
 	 * Return the white palette color for the current frame
 	 */
-	byte getWhite() { return _white; }
+	byte getWhite() { return _curFrameWhite; }
 
 	/**
 	 * Copy current frame into the specified position of the destination
@@ -152,7 +152,7 @@ protected:
 		uint32 startTime;
 	} _videoInfo;
 
-	byte _black, _white;
+	byte _curFrameBlack, _curFrameWhite;
 
 	Common::SeekableReadStream *_fileStream;
 	byte *_videoFrameBuffer;
@@ -162,7 +162,7 @@ class VideoPlayer {
 public:
 	VideoPlayer(VideoDecoder* decoder) : _skipVideo(false), _decoder(decoder)
 		{ }
-	~VideoPlayer() { }
+	virtual ~VideoPlayer() { }
 	/**
 	 * A default implementation of a video player
 	 * Plays a non-interactive full screen video till it's stopped by a
