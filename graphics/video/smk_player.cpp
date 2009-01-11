@@ -321,6 +321,7 @@ SMKPlayer::SMKPlayer(Audio::Mixer *mixer)
 }
 
 SMKPlayer::~SMKPlayer() {
+	closeFile();
 }
 
 int SMKPlayer::getHeight() {

@@ -44,7 +44,7 @@ class BigHuffmanTree;
 /**
  * Implementation of a Smacker v2/v4 video decoder
  */
-class SMKPlayer : public Graphics::VideoPlayer {
+class SMKPlayer : public Graphics::VideoDecoder {
 public:
 	SMKPlayer(Audio::Mixer *mixer);
 	virtual ~SMKPlayer();

@@ -25,6 +25,7 @@
 
 #include "common/endian.h"
 #include "common/archive.h"
+#include "common/system.h"
 #include "common/util.h"
 
 #include "graphics/video/dxa_player.h"
@@ -475,6 +476,9 @@ void DXAPlayer::decode13(int size) {
 
 bool DXAPlayer::decodeNextFrame() {
 	uint32 tag;
+
+	if (_videoInfo.currentFrame == 0)
+		_videoInfo.startTime = g_system->getMillis();
 
 	tag = _fileStream->readUint32BE();
 	if (tag == MKID_BE('CMAP')) {

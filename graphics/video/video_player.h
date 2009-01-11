@@ -39,10 +39,10 @@ namespace Graphics {
 /**
  * Implementation of a generic video decoder
  */
-class VideoPlayer {
+class VideoDecoder {
 public:
-	VideoPlayer();
-	virtual ~VideoPlayer();
+	VideoDecoder();
+	virtual ~VideoDecoder();
 
 	/**
 	 * Returns the width of the video
@@ -98,12 +98,12 @@ public:
 	 * Load a video file
 	 * @param filename	the filename to load
 	 */
-	virtual bool loadFile(const char *filename);
+	virtual bool loadFile(const char *filename) = 0;
 
 	/**
 	 * Close a video file
 	 */
-	virtual void closeFile();
+	virtual void closeFile()=0;
 
 	/**
 	 * Returns if a video file is loaded or not
@@ -117,6 +117,16 @@ public:
 	virtual void setPalette(byte *pal);
 
 	/**
+	 * Return the black palette color for the current frame
+	 */
+	byte getBlack() { return _black; }
+
+	/**
+	 * Return the white palette color for the current frame
+	 */
+	byte getWhite() { return _white; }
+
+	/**
 	 * Copy current frame into the specified position of the destination
 	 * buffer.
 	 * @param dst		the buffer
@@ -127,24 +137,9 @@ public:
 	void copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch);
 
 	/**
-	 * Decode the next frame
+	 * Decode the next frame to _videoFrameBuffer
 	 */
-	virtual bool decodeNextFrame();
-
-	/**
-	 * A default implementation of a video player
-	 * Plays a non-interactive full screen video till it's stopped by a
-	 * specific event
-	 * @param filename		the name of the file to play
-	 * @param stopEvents	a list of events that can stop the video
-	 */
-	bool playVideo(const char *filename, Common::List<Common::Event> *stopEvents);
-
-	/**
-	 * Perform postprocessing once the frame data is copied to the screen,
-	 * right before the frame is drawn. Called from playVideo()
-	 */
-	virtual void performPostProcessing(byte *screen);
+	virtual bool decodeNextFrame() = 0;
 
 protected:
 	struct {
@@ -157,11 +152,38 @@ protected:
 		uint32 startTime;
 	} _videoInfo;
 
+	byte _black, _white;
+
 	Common::SeekableReadStream *_fileStream;
 	byte *_videoFrameBuffer;
-	bool _skipVideo;
+};
 
-private:
+class VideoPlayer {
+public:
+	VideoPlayer(VideoDecoder* decoder) : _skipVideo(false), _decoder(decoder)
+		{ }
+	~VideoPlayer() { }
+	/**
+	 * A default implementation of a video player
+	 * Plays a non-interactive full screen video till it's stopped by a
+	 * specific event
+	 * @param filename		the name of the file to play
+	 * @param stopEvents	a list of events that can stop the video
+	 *
+	 * Returns true if the video was played to the end, false if skipped
+	 */
+	bool playVideo(Common::List<Common::Event> *stopEvents);
+
+protected:
+	/**
+	 * Perform postprocessing once the frame data is copied to the screen,
+	 * right before the frame is drawn. Called by playVideo()
+	 */
+	virtual void performPostProcessing(byte *screen);
+
+	bool _skipVideo;
+	VideoDecoder* _decoder;
+
 	void processVideoEvents(Common::List<Common::Event> *stopEvents);
 };
 

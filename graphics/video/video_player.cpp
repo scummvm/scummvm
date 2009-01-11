@@ -35,50 +35,51 @@
 
 namespace Graphics {
 
-VideoPlayer::VideoPlayer() : _fileStream(0), _skipVideo(false) {
+VideoDecoder::VideoDecoder() : _fileStream(0) {
+	_black = 0;
+	_white = 255;
 }
 
-VideoPlayer::~VideoPlayer() {
-	closeFile();
+VideoDecoder::~VideoDecoder() {
 }
 
-int VideoPlayer::getWidth() {
+int VideoDecoder::getWidth() {
 	if (!_fileStream)
 		return 0;
 	return _videoInfo.width;
 }
 
-int VideoPlayer::getHeight() {
+int VideoDecoder::getHeight() {
 	if (!_fileStream)
 		return 0;
 	return _videoInfo.height;
 }
 
-int32 VideoPlayer::getCurFrame() {
+int32 VideoDecoder::getCurFrame() {
 	if (!_fileStream)
 		return -1;
 	return _videoInfo.currentFrame;
 }
 
-int32 VideoPlayer::getFrameCount() {
+int32 VideoDecoder::getFrameCount() {
 	if (!_fileStream)
 		return 0;
 	return _videoInfo.frameCount;
 }
 
-int32 VideoPlayer::getFrameRate() {
+int32 VideoDecoder::getFrameRate() {
 	if (!_fileStream)
 		return 0;
 	return _videoInfo.frameRate;
 }
 
-int32 VideoPlayer::getFrameDelay() {
+int32 VideoDecoder::getFrameDelay() {
 	if (!_fileStream)
 		return 0;
 	return _videoInfo.frameDelay;
 }
 
-int32 VideoPlayer::getAudioLag() {
+int32 VideoDecoder::getAudioLag() {
 	if (!_fileStream)
 		return 0;
 
@@ -92,7 +93,7 @@ int32 VideoPlayer::getAudioLag() {
 	return videoTime - audioTime;
 }
 
-uint32 VideoPlayer::getFrameWaitTime() {
+uint32 VideoDecoder::getFrameWaitTime() {
 	int32 waitTime = (getFrameDelay() + getAudioLag()) / 100;
 
 	if (waitTime < 0)
@@ -101,14 +102,7 @@ uint32 VideoPlayer::getFrameWaitTime() {
 	return waitTime;
 }
 
-bool VideoPlayer::loadFile(const char *fileName) {
-	return false;
-}
-
-void VideoPlayer::closeFile() {
-}
-
-void VideoPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
+void VideoDecoder::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 	uint h = getHeight();
 	uint w = getWidth();
 
@@ -122,25 +116,45 @@ void VideoPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 	} while (--h);
 }
 
-void VideoPlayer::setPalette(byte *pal) {
+void VideoDecoder::setPalette(byte *pal) {
 	byte videoPalette[256 * 4];
+
+	uint32 maxWeight = 0;
+	uint32 minWeight = 0xFFFFFFFF;
+	uint32 weight = 0;
+	byte r, g, b;
 
 	for (int i = 0; i < 256; i++) {
 		videoPalette[i * 4 + 0] = *pal++;
 		videoPalette[i * 4 + 1] = *pal++;
 		videoPalette[i * 4 + 2] = *pal++;
 		videoPalette[i * 4 + 3] = 0;
+
+		// Try and find the white and black colors for the current palette
+		r = videoPalette[i * 4 + 0];
+		g = videoPalette[i * 4 + 1];
+		b = videoPalette[i * 4 + 2];
+
+		weight = 3 * r * r + 6 * g * g + 2 * b * b;
+
+		if (weight >= maxWeight) {
+			_white = i;
+			maxWeight = weight;
+		}
+
+		if (weight <= minWeight) {
+			_black = i;
+			minWeight = i;
+		}
 	}
 
 	g_system->setPalette(videoPalette, 0, 256);
 }
 
-bool VideoPlayer::decodeNextFrame() {
-	return false;
-}
 
-void VideoPlayer::performPostProcessing(byte *screen) {
-}
+/*
+ *  VideoPlayer
+ */
 
 void VideoPlayer::processVideoEvents(Common::List<Common::Event> *stopEvents) {
 	Common::Event curEvent;
@@ -168,35 +182,30 @@ void VideoPlayer::processVideoEvents(Common::List<Common::Event> *stopEvents) {
 	}
 }
 
-bool VideoPlayer::playVideo(const char *filename, Common::List<Common::Event> *stopEvents) {
+bool VideoPlayer::playVideo(Common::List<Common::Event> *stopEvents) {
 	_skipVideo = false;
-	debug(0, "Playing video %s", filename);
-
-	if (!loadFile(filename)) {
-		warning("Failed to load video file %s", filename);
-		return false;
-	}
+	debug(0, "Playing video");
 
 	g_system->clearScreen();
 
-	while (getCurFrame() < getFrameCount() && !_skipVideo) {
+	while (_decoder->getCurFrame() < _decoder->getFrameCount() && !_skipVideo) {
 		processVideoEvents(stopEvents);
 
 		uint32 startTime = 0;
-		decodeNextFrame();
+		_decoder->decodeNextFrame();
 
 		Graphics::Surface *screen = g_system->lockScreen();
-		copyFrameToBuffer((byte *)screen->pixels,
-							(g_system->getWidth() - getWidth()) / 2,
-							(g_system->getHeight() - getHeight()) / 2,
+		_decoder->copyFrameToBuffer((byte *)screen->pixels,
+							(g_system->getWidth() - _decoder->getWidth()) / 2,
+							(g_system->getHeight() - _decoder->getHeight()) / 2,
 							g_system->getWidth());
 		performPostProcessing((byte *)screen->pixels);
 		g_system->unlockScreen();
 
-		uint32 waitTime = getFrameWaitTime();
+		uint32 waitTime = _decoder->getFrameWaitTime();
 
 		if (!waitTime) {
-			warning("dropped frame %i", getCurFrame());
+			warning("dropped frame %i", _decoder->getCurFrame());
 			continue;
 		}
 
@@ -212,9 +221,10 @@ bool VideoPlayer::playVideo(const char *filename, Common::List<Common::Event> *s
 		}
 	}
 
-	closeFile();
+	return !_skipVideo;
+}
 
-	return true;
+void VideoPlayer::performPostProcessing(byte *screen) {
 }
 
 } // End of namespace Graphics

@@ -52,10 +52,16 @@ int Scene::FTA2StartProc() {
 	stopEvent.kbd = Common::KEYCODE_ESCAPE;
 	stopEvents.push_back(stopEvent);
 
-	Graphics::SMKPlayer *smkPlayer = new Graphics::SMKPlayer(_vm->_mixer);
-	smkPlayer->playVideo("trimark.smk", &stopEvents);      // Show Ignite logo
-	smkPlayer->playVideo("intro.smk", &stopEvents);        // Play introduction
-	delete smkPlayer;
+	Graphics::SMKPlayer *smkDecoder = new Graphics::SMKPlayer(_vm->_mixer);
+	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(smkDecoder);
+	if (smkDecoder->loadFile("trimark.smk"))
+		player->playVideo(&stopEvents);      // Show Ignite logo
+	smkDecoder->closeFile();
+	if (smkDecoder->loadFile("intro.smk"))
+		player->playVideo(&stopEvents);        // Play introduction
+	smkDecoder->closeFile();
+	delete player;
+	delete smkDecoder;
 
 	// HACK: Forcibly quit here
 	_vm->quitGame();
@@ -96,9 +102,14 @@ int Scene::FTA2EndProc(FTA2Endings whichEnding) {
 	stopEvents.push_back(stopEvent);
 
 	// Play ending
-	Graphics::SMKPlayer *smkPlayer = new Graphics::SMKPlayer(_vm->_mixer);
-	smkPlayer->playVideo(videoName, &stopEvents);
-	delete smkPlayer;
+	Graphics::SMKPlayer *smkDecoder = new Graphics::SMKPlayer(_vm->_mixer);
+	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(smkDecoder);
+	if (smkDecoder->loadFile(videoName)) {
+		player->playVideo(&stopEvents);
+		smkDecoder->closeFile();
+	}
+	delete player;
+	delete smkDecoder;
 
 	return SUCCESS;
 }

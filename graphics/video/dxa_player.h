@@ -30,7 +30,7 @@
 
 namespace Graphics {
 
-class DXAPlayer : public VideoPlayer {
+class DXAPlayer : public VideoDecoder {
 public:
 	DXAPlayer();
 	virtual ~DXAPlayer();
