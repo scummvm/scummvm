@@ -41,7 +41,7 @@
 #include "saga/scene.h"
 #include "saga/script.h"
 
-#define CURRENT_SAGA_VER 6
+#define CURRENT_SAGA_VER 7
 
 namespace Saga {
 
@@ -227,8 +227,11 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 	out->write(_script->_commonBuffer, _script->_commonBufferSize);
 
-	out->writeSint16LE(_isoMap->getMapPosition().x);
-	out->writeSint16LE(_isoMap->getMapPosition().y);
+	// ISO map x, y coordinates for ITE
+	if (getGameId() == GID_ITE) {
+		out->writeSint16LE(_isoMap->getMapPosition().x);
+		out->writeSint16LE(_isoMap->getMapPosition().y);
+	}
 
 	out->finalize();
 
@@ -329,17 +332,20 @@ void SagaEngine::load(const char *fileName) {
 	commonBufferSize = in->readSint16LE();
 	in->read(_script->_commonBuffer, commonBufferSize);
 
-	mapx = in->readSint16LE();
-	mapy = in->readSint16LE();
+	if (getGameId() == GID_ITE) {
+		mapx = in->readSint16LE();
+		mapy = in->readSint16LE();
+		_isoMap->setMapPosition(mapx, mapy);
+	}
+	// Note: the mapx, mapy ISO map positions were incorrectly saved
+	// for IHNM too, which has no ISO map scenes, up to save version 6.
+	// Since they're at the end of the savegame, we just ignore them
 
 	delete in;
 
 	// Mute volume to prevent outScene music play
 	int volume = _music->getVolume();
 	_music->setVolume(0);
-
-	if (getGameId() == GID_ITE)
-		_isoMap->setMapPosition(mapx, mapy);
 
 #ifdef ENABLE_IHNM
 	// Protagonist swapping
