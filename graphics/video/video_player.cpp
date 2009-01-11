@@ -36,8 +36,8 @@
 namespace Graphics {
 
 VideoDecoder::VideoDecoder() : _fileStream(0) {
-	_black = 0;
-	_white = 255;
+	_curFrameBlack = 0;
+	_curFrameWhite = 255;
 }
 
 VideoDecoder::~VideoDecoder() {
@@ -138,12 +138,12 @@ void VideoDecoder::setPalette(byte *pal) {
 		weight = 3 * r * r + 6 * g * g + 2 * b * b;
 
 		if (weight >= maxWeight) {
-			_white = i;
+			_curFrameWhite = i;
 			maxWeight = weight;
 		}
 
 		if (weight <= minWeight) {
-			_black = i;
+			_curFrameBlack = i;
 			minWeight = i;
 		}
 	}
