@@ -275,16 +275,23 @@ void ScreenEffects::copyRect(Graphics::Surface *surface, int16 x1, int16 y1, int
 
 void ScreenEffects::reposition(int16 x1, int16 y1, int16 x2, int16 y2, int xd, int yd) {
 	Graphics::Surface *vgaScreen = _screen->lockScreen();
+	bool backwardFlag = (yd > y1) || ((yd == y1) && (xd > x1));
+
 	byte *source = (byte *)vgaScreen->getBasePtr(x1, y1);
 	byte *dest = (byte *)vgaScreen->getBasePtr(xd, yd);
+	if (yd > y1) {
+		source += 320 * (y2 - y1 - 1);
+		dest += 320 * (y2 - y1 - 1);
+	}
+
 	for (int y = 0; y < y2 - y1; y++) {
-		if (dest < source)
+		if (!backwardFlag)
 			memcpy(dest, source, x2 - x1);
 		else
 			Common::copy_backward(source, source + x2 - x1, dest + x2 - x1);
 
-		dest += 320;
-		source += 320;
+		source += (yd > y1) ? -320 : 320;
+		dest += (yd > y1) ? -320 : 320;
 	}
 	_screen->unlockScreen();
 }
@@ -508,16 +515,28 @@ void ScreenEffects::vfx18(Graphics::Surface *surface, byte *palette, byte *newPa
 	setPalette(palette);
 }
 
+// "Screen slide in" top to bottom
 void ScreenEffects::vfx19(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
-	// TODO
-	warning("Unimplemented visual effect: 19");
-	vfx00(surface, palette, newPalette, colorCount);
+	for (int y = 4; y <= 200; y += 4) {
+		if (y != 200)
+			reposition(0, y, 320, 196, 0, y + 4);
+		copyRect(surface, 0, 200 - y, 320, 200, 0, 0);
+		_screen->updateScreenAndWait(25);
+	}
+
+	setPalette(palette);
 }
 
+// "Screen slide in" bottom to top
 void ScreenEffects::vfx20(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
-	// TODO
-	warning("Unimplemented visual effect: 20");
-	vfx00(surface, palette, newPalette, colorCount);
+	for (int y = 4; y <= 200; y += 4) {
+		if (y != 200)
+			reposition(0, 4, 320, 200 - y, 0, 0);
+		copyRect(surface, 0, 0, 320, y, 0, 200 - y);
+		_screen->updateScreenAndWait(25);
+	}
+
+	setPalette(palette);
 }
 
 } // End of namespace Made
