@@ -343,7 +343,7 @@ void EndScene(void) {
 	}
 
 	_vm->_sound->stopAllSamples();		// Kill off any still-running sample
-	_vm->_mixer->stopAll();
+	//_vm->_mixer->stopAll();
 
 	// init the palette manager
 	ResetPalAllocator();
