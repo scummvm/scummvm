@@ -181,29 +181,6 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 
 	if (volMusic != 0) {
 		SetMidiVolume(volMusic);
-
-		// Support for external music from the music enhancement project
-		if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
-			AudioCD.stop();
-
-			int trackNumber = GetTrackNumber(dwFileOffset);
-			if (trackNumber >= 0) {
-				int track = 0;
-				if (_vm->getFeatures() & GF_SCNFILES)
-					track = enhancedAudioSCNVersion[trackNumber];
-				else
-					track = enhancedAudioGRAVersion[trackNumber];
-
-				if (track > 0)
-					AudioCD.play(track, -1, 0, 0);
-			} else {
-				warning("Unknown MIDI offset %d", dwFileOffset);
-			}
-
-			if (AudioCD.isPlaying())
-				return true;
-		}
-
 	}
 
 	// set file offset for this sequence
@@ -211,12 +188,40 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 
 	// the index and length of the last tune loaded
 	static uint32 dwLastMidiIndex;
-	static uint32 dwLastSeqLen;
+	//static uint32 dwLastSeqLen;
 
 	uint32 dwSeqLen = 0;	// length of the sequence
 
 	if (dwMidiIndex == 0)
 		return true;
+
+	// Support for external music from the music enhancement project
+	if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
+		int trackNumber = GetTrackNumber(dwFileOffset);
+		int track = 0;
+		if (trackNumber >= 0) {
+			if (_vm->getFeatures() & GF_SCNFILES)
+				track = enhancedAudioSCNVersion[trackNumber];
+			else
+				track = enhancedAudioGRAVersion[trackNumber];
+
+			if (track > 0) {
+				StopMidi();
+
+				AudioCD.play(track, bLoop ? -1 : 0, 0, 0);
+
+				// Check if an enhanced audio track is being played.
+				// If it is, stop here and don't load a MIDI track
+				if (AudioCD.isPlaying()) {
+					// allow another sequence to play
+					dwMidiIndex = 0;
+					return true;
+				}
+			}
+		} else {
+			warning("Unknown MIDI offset %d", dwFileOffset);
+		}
+	}
 
 	if (dwMidiIndex != dwLastMidiIndex) {
 		Common::File midiStream;
@@ -249,7 +254,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 		_vm->_midiMusic->playXMIDI(midiBuffer.pDat, dwSeqLen, bLoop);
 
 		// Store the length
-		dwLastSeqLen = dwSeqLen;
+		//dwLastSeqLen = dwSeqLen;
 	} else {
 	  	// dwMidiIndex == dwLastMidiIndex
 		_vm->_midiMusic->stop();
