@@ -788,11 +788,11 @@ void LocationParser_br::parseGetData(ZonePtr z) {
 		}
 
 		if (!scumm_stricmp(_tokens[0], "mask")) {
-			_vm->_gfx->loadGfxObjMask(_tokens[1], data->gfxobj);
+			ctxt.info->loadGfxObjMask(_tokens[1], data->gfxobj);
 		}
 
 		if (!scumm_stricmp(_tokens[0], "path")) {
-			_vm->_gfx->loadGfxObjPath(_tokens[1], data->gfxobj);
+			ctxt.info->loadGfxObjPath(_tokens[1], data->gfxobj);
 		}
 
 		if (!scumm_stricmp(_tokens[0], "icon")) {

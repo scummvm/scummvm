@@ -345,13 +345,13 @@ public:
 */
 struct BackgroundInfo {
 protected:
-	typedef Common::HashMap<int, MaskBuffer*> MaskPatchMap;
-	MaskPatchMap _maskPatches;
+	typedef Common::Array<MaskBuffer*> MaskPatches;
+	MaskPatches 	_maskPatches;
 	MaskBuffer		_maskBackup;
 	void clearMaskData();
 
-	typedef Common::HashMap<int, PathBuffer*> PathPatchMap;
-	PathPatchMap 	_pathPatches;
+	typedef Common::Array<PathBuffer*> PathPatches;
+	PathPatches 	_pathPatches;
 	PathBuffer		_pathBackup;
 	void clearPathData();
 
@@ -377,16 +377,18 @@ public:
 
 	// mask management
 	bool hasMask();
-	int addMaskPatch(MaskBuffer *patch);
-	void toggleMaskPatch(int id, int x, int y, bool apply);
+	uint addMaskPatch(MaskBuffer *patch);
+	void toggleMaskPatch(uint id, int x, int y, bool apply);
 	uint16 getMaskLayer(uint16 z) const;
 	void finalizeMask();
+	void loadGfxObjMask(const char *name, GfxObj *obj);
 
 	// path management
 	bool hasPath();
-	int addPathPatch(PathBuffer *patch);
-	void togglePathPatch(int id, int x, int y, bool apply);
+	uint addPathPatch(PathBuffer *patch);
+	void togglePathPatch(uint id, int x, int y, bool apply);
 	void finalizePath();
+	void loadGfxObjPath(const char *name, GfxObj *obj);
 };
 
 
@@ -437,8 +439,6 @@ public:
 	void freeLocationObjects();
 	void showGfxObj(GfxObj* obj, bool visible);
 	void clearGfxObjects(uint filter);
-	void loadGfxObjMask(const char *name, GfxObj *obj);
-	void loadGfxObjPath(const char *name, GfxObj *obj);
 	void sortScene();
     void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
 	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);

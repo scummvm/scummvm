@@ -156,7 +156,7 @@ void Gfx::freeCharacterObjects() {
 	clearGfxObjects(kGfxObjCharacter);
 }
 
-void Gfx::loadGfxObjMask(const char *name, GfxObj *obj) {
+void BackgroundInfo::loadGfxObjMask(const char *name, GfxObj *obj) {
 	Common::Rect rect;
 	obj->getRect(0, rect);
 
@@ -164,11 +164,11 @@ void Gfx::loadGfxObjMask(const char *name, GfxObj *obj) {
 	buf->create(rect.width(), rect.height());
 	_vm->_disk->loadMask(name, *buf);
 
-	obj->_maskId = _backgroundInfo->addMaskPatch(buf);
+	obj->_maskId = addMaskPatch(buf);
 	obj->_hasMask = true;
 }
 
-void Gfx::loadGfxObjPath(const char *name, GfxObj *obj) {
+void BackgroundInfo::loadGfxObjPath(const char *name, GfxObj *obj) {
 	Common::Rect rect;
 	obj->getRect(0, rect);
 
@@ -176,7 +176,7 @@ void Gfx::loadGfxObjPath(const char *name, GfxObj *obj) {
 	buf->create(rect.width(), rect.height());
 	_vm->_disk->loadPath(name, *buf);
 
-	obj->_pathId = _backgroundInfo->addPathPatch(buf);
+	obj->_pathId = addPathPatch(buf);
 	obj->_hasPath = true;
 }
 

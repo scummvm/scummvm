@@ -843,9 +843,9 @@ bool BackgroundInfo::hasMask() {
 
 void BackgroundInfo::clearMaskData() {
 	// free mask data
-	MaskPatchMap::iterator it = _maskPatches.begin();
+	MaskPatches::iterator it = _maskPatches.begin();
 	for ( ; it != _maskPatches.end(); it++) {
-		delete (*it)._value;
+		delete *it;
 	}
 	_maskPatches.clear();
 	delete _mask;
@@ -865,20 +865,20 @@ void BackgroundInfo::finalizeMask() {
 	}
 }
 
-int BackgroundInfo::addMaskPatch(MaskBuffer *patch) {
-	int id = _maskPatches.size();
-	_maskPatches.setVal(id, patch);
+uint BackgroundInfo::addMaskPatch(MaskBuffer *patch) {
+	uint id = _maskPatches.size();
+	_maskPatches.push_back(patch);
 	return id;
 }
 
-void BackgroundInfo::toggleMaskPatch(int id, int x, int y, bool apply) {
+void BackgroundInfo::toggleMaskPatch(uint id, int x, int y, bool apply) {
 	if (!hasMask()) {
 		return;
 	}
-	if (!_maskPatches.contains(id)) {
+	if (id >= _maskPatches.size()) {
 		return;
 	}
-	MaskBuffer *patch = _maskPatches.getVal(id);
+	MaskBuffer *patch = _maskPatches[id];
 	if (apply) {
 		_mask->bltOr(x, y, *patch, 0, 0, patch->w, patch->h);
 	} else {
@@ -904,9 +904,9 @@ bool BackgroundInfo::hasPath() {
 
 void BackgroundInfo::clearPathData() {
 	// free mask data
-	PathPatchMap::iterator it = _pathPatches.begin();
+	PathPatches::iterator it = _pathPatches.begin();
 	for ( ; it != _pathPatches.end(); it++) {
-		delete (*it)._value;
+		delete *it;
 	}
 	_pathPatches.clear();
 	delete _path;
@@ -926,20 +926,20 @@ void BackgroundInfo::finalizePath() {
 	}
 }
 
-int BackgroundInfo::addPathPatch(PathBuffer *patch) {
-	int id = _pathPatches.size();
-	_pathPatches.setVal(id, patch);
+uint BackgroundInfo::addPathPatch(PathBuffer *patch) {
+	uint id = _pathPatches.size();
+	_pathPatches.push_back(patch);
 	return id;
 }
 
-void BackgroundInfo::togglePathPatch(int id, int x, int y, bool apply) {
+void BackgroundInfo::togglePathPatch(uint id, int x, int y, bool apply) {
 	if (!hasPath()) {
 		return;
 	}
-	if (!_pathPatches.contains(id)) {
+	if (id >= _pathPatches.size()) {
 		return;
 	}
-	PathBuffer *patch = _pathPatches.getVal(id);
+	PathBuffer *patch = _pathPatches[id];
 	if (apply) {
 		_path->bltOr(x, y, *patch, 0, 0, patch->w, patch->h);
 	} else {
