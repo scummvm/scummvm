@@ -446,8 +446,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	// The original game did not have menus, they are enabled under ScummVM
 	GAME_FP("sq1", "1.1A 1986-11-13", "8d8c20ab9f4b6e4817698637174a1cb6", 0x2272, GF_MENUS, GID_SQ1, Common::kPlatformPC),
 
-	// The original game did not have menus, they are enabled under ScummVM
 	// Space Quest 1 (Amiga) 1.2			# 2.082
+	// The original game did not have menus, they are enabled under ScummVM
 	GAME_FP("sq1", "1.2 1986", "0b216d931e95750f1f4837d6a4b821e5", 0x2440, GF_MENUS | GF_OLDAMIGAV20, GID_SQ1, Common::kPlatformAmiga),
 
 	// Space Quest 1 (Mac) 1.5D
@@ -515,6 +515,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Troll's Tale
 	GAMEpre_PS("troll", "", "troll.img", "62903f264b3d849be4214b3a5c42a2fa", 184320, 0x0000, GID_TROLL, Common::kPlatformPC),
+	
 	// Winnie the Pooh in the Hundred Acre Wood
 	GAMEpre_P("winnie", "", "title.pic", "2e7900c1ccaa7671d65405f6d1efed30", 0x0000, GID_WINNIE, Common::kPlatformPC),
 
