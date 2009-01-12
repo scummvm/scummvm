@@ -67,6 +67,7 @@ public:
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	void setList(const StringList& list);
 	int runModal(const EnginePlugin *plugin, const String &target);
+	void open();
 
 	const Common::String &getResultString() const;
 	void setSaveMode(bool saveMode);

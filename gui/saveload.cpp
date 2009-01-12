@@ -105,6 +105,14 @@ int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) 
 	return ret;
 }
 
+void SaveLoadChooser::open() {
+	Dialog::open();
+
+	// So that quitting ScummVM will not cause the dialog result to say a
+	// savegame was selected.
+	setResult(-1);
+}
+
 const Common::String &SaveLoadChooser::getResultString() const {
 	return (_list->getSelected() > -1) ? _list->getSelectedString() : _resultString;
 }
