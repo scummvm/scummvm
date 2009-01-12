@@ -107,24 +107,41 @@ const SCNHANDLE midiOffsetsSCNVersion[] = {
 	869822,	875436,	877234,	879818
 };
 
-// TODO: finish this (currently unmapped tracks are 0)
+const int enhancedAudioGRAVersion[] = {
+	 1,   2,   1,   1,   3,   3,   4,   4,   5,   6, //   1-10
+	 1,   7,   8,   9,  10,   3,  11,  11,  12,  13, //  11-20
+	13,  13,  13,  13,  14,  13,  13,  15,  16,  17, //  21-30
+	15,  18,  19,  20, 338,  21,  21,  22,  22,  23, //  31-40
+	24,  25,  26,  27,  28,  29,  30,  31,  32,  33, //  41-50
+	34,  35,  35,  36,  37,  38,  39,  39,  39,  39, //  51-60
+	40,  39,  41,  41,  42,  43,  42,  44,  45,  41, //  61-70
+	46,  48,  47,  48,  49,  50,  51,  52,  53,  54, //  71-80
+	55,  56,  57,  58,  59,  60,  61,  62,  63,  61, //  81-90
+	64,  65,  66,  67,  68,  69,  70,  68,  71,  72, //  91-100
+	73,  74,  75,  12,  76,  77,  78,  79,  80,   4, // 101-110
+	81,  82,  83,  82,  81,  84,  85,  86,  87,  88, // 111-120
+	89,  90,  88,   2,   2,   2,   2,   2,   2,  60, // 121-130
+	91,  92,  93,  94,  94,  95,  96,  52,   4,  97, // 131-140
+	98,  99,  99                                     // 141-143
+};
+
 const int enhancedAudioSCNVersion[] = {
-	 0,  0,  2,  0,  0,  0,  0,  3,  3,  4,
-	 4,  0,  0,  0,  0,  0,  0, 10,  3, 11,
-	11,  0, 13, 13, 13, 13, 13,  0, 13, 13,
-	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0, 24,  0,  0, 27,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0, 55, 56, 56,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  4,  4, 83, 83, 83,  4,
-	 0,  0,  0,  0,  0,  0,  0,  0,  2,  2,
-	 2,  2,  2,  2,  2,  2,  2,  2,  2,  2,
-	 0,  0,  0,  0,  0,  0,  0,  0, 52,  4,
-	 0,  0,  0,  0
+	 301, 302,   2,    1,   1, 301, 302,   3,   3,   4,	//   1-10
+	   4,   5,   6,    1,   7,   8,   9,  10,   8,  11,	//  11-20
+	  11,  12,  13,   13,  13,  13,  13,  14,  13,  13,	//  21-30
+	  15,  16,  17,   15,  18,  19,  20, 338,  21,  21,	//  31-40
+	 341, 342,  22,   22,  23,  24,  25,  26,  27,  28,	//  41-50
+	  29,  30,  31,   32,  33,  34,  35,  35,  36,  37,	//  51-60
+	  38,  39,  39,   39,  39,  40,  39,  41,  41,  42,	//  61-70
+	  43,  42,  44,   45,  41,  46,  48,  47,  48,  49,	//  71-80
+	  50,  51,  52,   53,  54,  55,  56,  57,  58,  59,	//  81-90
+	  60,  61,  62,   63,  61,  64,  65,  66,  67,  68,	//  91-100
+	  69,  70,  68,   71,  72,  73,  74,  75,  12,  76,	// 101-110
+	  77,  78,  79,   80,   4,   4,  82,  83,  77,   4,	// 111-120
+	  84,  85,  86, 3124,  88,  89,  90,  88,   2,   2,	// 121-130
+	   2,   2,   2,    2,   2,   2,   2,   2,   2,   2,	// 131-140
+	3141,  91,  92,   93,  94,  94,  95,  96,  52,   4,	// 141-150
+	  97,  98,  99,   99                              	// 151-154
 };
 
 int GetTrackNumber(SCNHANDLE hMidi) {
@@ -164,23 +181,29 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 
 	if (volMusic != 0) {
 		SetMidiVolume(volMusic);
-		// Support for compressed music from the music enhancement project
-		AudioCD.stop();
 
-		int trackNumber = GetTrackNumber(dwFileOffset);
-		if (trackNumber >= 0) {
-#if 0
-			// TODO: GRA version
-			int track = enhancedAudioSCNVersion[trackNumber];
-			if (track > 0)
-				AudioCD.play(track, -1, 0, 0);
-#endif
-		} else {
-			warning("Unknown MIDI offset %d", dwFileOffset);
+		// Support for external music from the music enhancement project
+		if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
+			AudioCD.stop();
+
+			int trackNumber = GetTrackNumber(dwFileOffset);
+			if (trackNumber >= 0) {
+				int track = 0;
+				if (_vm->getFeatures() & GF_SCNFILES)
+					track = enhancedAudioSCNVersion[trackNumber];
+				else
+					track = enhancedAudioGRAVersion[trackNumber];
+
+				if (track > 0)
+					AudioCD.play(track, -1, 0, 0);
+			} else {
+				warning("Unknown MIDI offset %d", dwFileOffset);
+			}
+
+			if (AudioCD.isPlaying())
+				return true;
 		}
 
-		if (AudioCD.isPlaying())
-			return true;
 	}
 
 	// set file offset for this sequence
@@ -243,7 +266,10 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
  * Returns TRUE if a Midi tune is currently playing.
  */
 bool MidiPlaying(void) {
-	if (AudioCD.isPlaying()) return true;
+	if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
+		if (AudioCD.isPlaying())
+			return true;
+	}
 	return _vm->_midiMusic->isPlaying();
 }
 
@@ -254,7 +280,10 @@ bool StopMidi(void) {
 	currentMidi = 0;
 	currentLoop = false;
 
-	AudioCD.stop();
+	if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
+		AudioCD.stop();
+	}
+
 	_vm->_midiMusic->stop();
 	return true;
 }

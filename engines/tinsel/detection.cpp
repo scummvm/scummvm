@@ -133,7 +133,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_FLOPPY,
+		GF_FLOPPY | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
 
@@ -151,7 +151,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_CD,
+		GF_CD | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
 
@@ -175,7 +175,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_CD | GF_USE_4FLAGS,
+		GF_CD | GF_USE_4FLAGS | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
 	{
@@ -197,7 +197,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_CD | GF_USE_4FLAGS,
+		GF_CD | GF_USE_4FLAGS | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
 	{
@@ -219,7 +219,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_CD | GF_USE_4FLAGS,
+		GF_CD | GF_USE_4FLAGS | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
 	{
@@ -241,7 +241,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_CD | GF_USE_4FLAGS,
+		GF_CD | GF_USE_4FLAGS | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
 
@@ -260,7 +260,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_CD | GF_SCNFILES,
+		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
 
@@ -280,7 +280,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_CD,
+		GF_CD | GC_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
 #endif
@@ -297,7 +297,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_CD | GF_SCNFILES,
+		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
 
