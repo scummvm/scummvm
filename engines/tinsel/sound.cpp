@@ -39,7 +39,6 @@
 #include "common/system.h"
 
 #include "sound/mixer.h"
-#include "sound/audiocd.h"
 #include "sound/adpcm.h"
 
 namespace Tinsel {

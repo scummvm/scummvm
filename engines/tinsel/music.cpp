@@ -312,7 +312,6 @@ void SetMidiVolume(int vol)	{
 		// Nothing to do
 	} else if (vol == 0 && volMusic != 0) {
 		// Stop current midi sequence
-		AudioCD.stop();
 		StopMidi();
 	} else if (vol != 0 && volMusic == 0) {
 		// Perhaps restart last midi sequence
@@ -930,7 +929,6 @@ void CurrentMidiFacts(SCNHANDLE	*pMidi, bool *pLoop) {
 }
 
 void RestoreMidiFacts(SCNHANDLE	Midi, bool Loop) {
-	AudioCD.stop();
 	StopMidi();
 
 	currentMidi = Midi;
