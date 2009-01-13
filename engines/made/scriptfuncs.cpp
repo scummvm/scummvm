@@ -475,8 +475,8 @@ int16 ScriptFunctions::sfSetTextRect(int16 argc, int16 *argv) {
 	int16 y1 = CLIP<int16>(argv[3], 1, 198);
 	int16 x2 = CLIP<int16>(argv[2], 1, 318);
 	int16 y2 = CLIP<int16>(argv[1], 1, 198);
-	//int16 textValue = argv[0];
-	// TODO: textValue
+	//int16 textValue = argv[0];	// looks to be unused
+
 	_vm->_screen->setTextRect(Common::Rect(x1, y1, x2, y2));
 	return 0;
 }
@@ -939,9 +939,9 @@ int16 ScriptFunctions::sfGetSynthType(int16 argc, int16 *argv) {
 	// 3 = ADLIBG
 	// 4 = MT32MPU
 
-	// TODO
+	// There doesn't seem to be any difference in the music no matter what this returns
 
-	warning("Unimplemented opcode: sfGetSynthType");
+	//warning("Unimplemented opcode: sfGetSynthType");
 	return 0;
 }
 
@@ -949,6 +949,9 @@ int16 ScriptFunctions::sfIsSlowSystem(int16 argc, int16 *argv) {
 	//warning("Unimplemented opcode: sfIsSlowSystem");
 	// NOTE: In the original engine this value is set via a command-line parameter
 	// I don't think it's needed here
+	// Update: I believe this is used to determine which version of the intro/ending to show
+	// There are 2 versions of each video: one with sound, and one without
+	// An example is FINTRO00.PMV (with sound) and FINTRO01.PMV (without sound)
 	// One could maybe think about returning 1 here on actually slower systems.
 	return 0;
 }
