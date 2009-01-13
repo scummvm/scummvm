@@ -55,7 +55,7 @@ extern bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL;
 
 void warning(const char *fmt, ...);
 void error(const char *fmt, ...);
-void CDECL debug(int level, const char *s, ...);
-void CDECL debug(const char *s, ...);
+void debug(int level, const char *s, ...);
+void debug(const char *s, ...);
 
 #endif

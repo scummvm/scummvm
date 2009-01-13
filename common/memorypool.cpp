@@ -28,21 +28,10 @@
 
 namespace Common {
 
-static const size_t CHUNK_PAGE_SIZE = 32;
+enum {
+	INITIAL_CHUNKS_PER_PAGE = 8
+};
 
-void* MemoryPool::allocPage() {
-	void* result = ::malloc(CHUNK_PAGE_SIZE * _chunkSize);
-	_pages.push_back(result);
-	void* current = result;
-	for (size_t i = 1; i < CHUNK_PAGE_SIZE; ++i) {
-		void* next    = ((char*)current + _chunkSize);
-		*(void**)current = next;
-
-		current = next;
-	}
-	*(void**)current = NULL;
-	return result;
-}
 
 MemoryPool::MemoryPool(size_t chunkSize) {
 	// You must at least fit the pointer in the node (technically unneeded considering the next rounding statement)
@@ -52,38 +41,71 @@ MemoryPool::MemoryPool(size_t chunkSize) {
 	_chunkSize = (_chunkSize + sizeof(void*) - 1) & (~(sizeof(void*) - 1));
 
 	_next = NULL;
+
+	_chunksPerPage = INITIAL_CHUNKS_PER_PAGE;
 }
 
 MemoryPool::~MemoryPool() {
-	for (size_t i = 0; i<_pages.size(); ++i)
-		::free(_pages[i]);
+	for (size_t i = 0; i < _pages.size(); ++i)
+		::free(_pages[i].start);
 }
 
-void* MemoryPool::malloc() {
-#if 1
-	if (!_next)
-		_next = allocPage();
+void MemoryPool::allocPage() {
+	Page page;
 
-	void* result = _next;
+	// Allocate a new page
+	page.numChunks = _chunksPerPage;
+	assert(page.numChunks * _chunkSize < 16*1024*1024);	// Refuse to allocate pages bigger than 16 MB
+
+	page.start = ::malloc(page.numChunks * _chunkSize);
+	assert(page.start);
+	_pages.push_back(page);
+
+
+	// Next time, we'll alocate a page twice as big as this one.
+	_chunksPerPage *= 2;
+
+	// Add the page to the pool of free chunk
+	addPageToPool(page);
+}
+
+void MemoryPool::addPageToPool(const Page &page) {
+
+	// Add all chunks of the new page to the linked list (pool) of free chunks
+	void *current = page.start;
+	for (size_t i = 1; i < page.numChunks; ++i) {
+		void *next    = ((char*)current + _chunkSize);
+		*(void **)current = next;
+
+		current = next;
+	}
+
+	// Last chunk points to the old _next
+	*(void**)current = _next;
+
+	// From now on, the first free chunk is the first chunk of the new page
+	_next = page.start;
+}
+
+void *MemoryPool::allocChunk() {
+	if (!_next)	// No free chunks left? Allocate a new page
+		allocPage();
+
+	assert(_next);
+	void *result = _next;
 	_next = *(void**)result;
 	return result;
-#else
-	return ::malloc(_chunkSize);
-#endif
 }
 
-void MemoryPool::free(void* ptr) {
-#if 1
+void MemoryPool::freeChunk(void *ptr) {
+	// Add the chunk back to (the start of) the list of free chunks
 	*(void**)ptr = _next;
 	_next = ptr;
-#else
-	::free(ptr);
-#endif
 }
 
 // Technically not compliant C++ to compare unrelated pointers. In practice...
-bool MemoryPool::isPointerInPage(void* ptr, void* page) {
-	return (ptr >= page) && (ptr < (char*)page + CHUNK_PAGE_SIZE * _chunkSize);
+bool MemoryPool::isPointerInPage(void *ptr, const Page &page) {
+	return (ptr >= page.start) && (ptr < (char*)page.start + page.numChunks * _chunkSize);
 }
 
 void MemoryPool::freeUnusedPages() {
@@ -94,9 +116,10 @@ void MemoryPool::freeUnusedPages() {
 		numberOfFreeChunksPerPage[i] = 0;
 	}
 
-	void* iterator = _next;
+	// Compute for each page how many chunks in it are still in use.
+	void *iterator = _next;
 	while (iterator) {
-		// This should be a binary search
+		// TODO: This should be a binary search (requiring us to keep _pages sorted)
 		for (size_t i = 0; i < _pages.size(); ++i) {
 			if (isPointerInPage(iterator, _pages[i])) {
 				++numberOfFreeChunksPerPage[i];
@@ -106,16 +129,41 @@ void MemoryPool::freeUnusedPages() {
 		iterator = *(void**)iterator;
 	}
 
+	// Free all pages which are not in use.
 	size_t freedPagesCount = 0;
-	for (size_t i = 0; i < _pages.size(); ++i) {
-		if (numberOfFreeChunksPerPage[i] == CHUNK_PAGE_SIZE) {
-			::free(_pages[i]);
-			_pages[i] = NULL; // TODO : Remove NULL values
+	for (size_t i = 0; i < _pages.size(); ++i)  {
+		if (numberOfFreeChunksPerPage[i] == _pages[i].numChunks) {
+			// Remove all chunks of this page from the list of free chunks
+			void **iter2 = &_next;
+			while (*iter2) {
+				if (isPointerInPage(*iter2, _pages[i]))
+					*iter2 = **(void***)iter2;
+				else
+					iter2 = *(void***)iter2;
+			}
+			::free(_pages[i].start);
 			++freedPagesCount;
+			_pages[i].start = NULL;
 		}
 	}
 
-	//printf("%d freed pages\n", freedPagesCount); 
+//	printf("freed %d pages out of %d\n", (int)freedPagesCount, (int)_pages.size());
+
+	for (size_t i = 0; i < _pages.size(); )  {
+		if (_pages[i].start == NULL) {
+			_pages.remove_at(i);
+			// We just removed an entry, so we do not advance "i"
+		} else {
+			++i;
+		}
+	}
+
+	// Reset _chunksPerPage
+	_chunksPerPage = INITIAL_CHUNKS_PER_PAGE;
+	for (size_t i = 0; i < _pages.size(); ++i) {
+		if (_chunksPerPage < _pages[i].numChunks)
+			_chunksPerPage = _pages[i].numChunks;
+	}
 }
 
 }	// End of namespace Common

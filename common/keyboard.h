@@ -182,7 +182,7 @@ enum KeyCode {
 };
 
 /**
- * List of certan special and some fake 'ascii' values used in keyboard events.
+ * List of certain special and some fake 'ascii' values used in keyboard events.
  * The values for the function keys listed here are based on what certain SCUMM
  * games expect in their scripts.
  * @todo Get rid of the function key values, and instead enforce that engines use
@@ -258,6 +258,10 @@ struct KeyState {
 	void reset() {
 		keycode = KEYCODE_INVALID;
 		ascii = flags = 0;
+	}
+
+	bool operator ==(const KeyState &x) const {
+		return keycode == x.keycode && ascii == x.ascii && flags == x.flags;
 	}
 };
 

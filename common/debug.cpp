@@ -82,7 +82,7 @@ static void debugHelper(const char *in_buf, bool caret = true) {
 	fflush(stdout);
 }
 
-void CDECL debug(const char *s, ...) {
+void debug(const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
@@ -93,7 +93,7 @@ void CDECL debug(const char *s, ...) {
 	debugHelper(buf);
 }
 
-void CDECL debug(int level, const char *s, ...) {
+void debug(int level, const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
@@ -107,7 +107,7 @@ void CDECL debug(int level, const char *s, ...) {
 	debugHelper(buf);
 }
 
-void NORETURN CDECL error(const char *s, ...) {
+void NORETURN error(const char *s, ...) {
 	char buf_input[STRINGBUFLEN];
 	char buf_output[STRINGBUFLEN];
 	va_list va;
@@ -153,7 +153,7 @@ void NORETURN CDECL error(const char *s, ...) {
 	exit(1);
 }
 
-void CDECL warning(const char *fmt, ...) {
+void warning(const char *fmt, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 

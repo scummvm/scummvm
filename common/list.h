@@ -210,6 +210,11 @@ public:
 				++i;
 	}
 
+	void pop_front() {
+		iterator i = begin();
+		i = erase(i);
+	}
+
 
 	List<t_T> &operator=(const List<t_T> &list) {
 		if (this != &list) {

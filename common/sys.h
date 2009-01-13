@@ -284,10 +284,6 @@ extern "C" int residual_main(int argc, char *argv[]);
 #define MAXPATHLEN 256
 #endif
 
-#ifndef CDECL
-#define CDECL
-#endif
-
 #ifndef NORETURN
 #define NORETURN
 #endif

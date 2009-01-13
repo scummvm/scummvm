@@ -70,7 +70,7 @@ private:
  * To achieve that the object implements an internal reference counting.
  * Thus you should try to avoid using the plain pointer after assigning
  * it to a SharedPtr object for the first time. If you still use the
- * plain pointer be sure you do not delete it on your own. You may also 
+ * plain pointer be sure you do not delete it on your own. You may also
  * not use the plain pointer to create a new SharedPtr object, since that
  * would result in a double deletion of the pointer sooner or later.
  *
@@ -95,7 +95,7 @@ private:
  *
  * The class has implicit upcast support, so if you got a class B derived
  * from class A, you can assign a pointer to B without any problems to a
- * SharedPtr object with template parameter A. The very same applies to 
+ * SharedPtr object with template parameter A. The very same applies to
  * assignment of a SharedPtr<B> object to a SharedPtr<A> object.
  *
  * There are also operators != and == to compare two SharedPtr objects
@@ -121,7 +121,7 @@ public:
 
 	~SharedPtr() { decRef(); }
 
-	SharedPtr &operator =(const SharedPtr &r) {
+	SharedPtr &operator=(const SharedPtr &r) {
 		if (r._refCount)
 			++(*r._refCount);
 		decRef();
@@ -134,7 +134,7 @@ public:
 	}
 
 	template<class T2>
-	SharedPtr &operator =(const SharedPtr<T2> &r) {
+	SharedPtr &operator=(const SharedPtr<T2> &r) {
 		if (r._refCount)
 			++(*r._refCount);
 		decRef();
@@ -146,8 +146,8 @@ public:
 		return *this;
 	}
 
-	ValueType &operator *() const { assert(_pointer); return *_pointer; }
-	Pointer operator ->() const { assert(_pointer); return _pointer; }
+	ValueType &operator*() const { assert(_pointer); return *_pointer; }
+	Pointer operator->() const { assert(_pointer); return _pointer; }
 
 	/**
 	 * Returns the plain pointer value. Be sure you know what you
@@ -169,6 +169,16 @@ public:
 	 * debugging purposes.
 	 */
 	bool unique() const { return refCount() == 1; }
+
+	/**
+	 * Resets the SharedPtr object to a NULL pointer.
+	 */
+	void reset() {
+		decRef();
+		_deletion = 0;
+		_refCount = 0;
+		_pointer = 0;
+	}
 
 	/**
 	 * Returns the number of references to the assigned pointer.
@@ -199,17 +209,13 @@ private:
 } // end of namespace Common
 
 template<class T1, class T2>
-bool operator ==(const Common::SharedPtr<T1> &l, const Common::SharedPtr<T2> &r) {
+bool operator==(const Common::SharedPtr<T1> &l, const Common::SharedPtr<T2> &r) {
 	return l.get() == r.get();
 }
 
 template<class T1, class T2>
-bool operator !=(const Common::SharedPtr<T1> &l, const Common::SharedPtr<T2> &r) {
+bool operator!=(const Common::SharedPtr<T1> &l, const Common::SharedPtr<T2> &r) {
 	return l.get() != r.get();
 }
 
-
 #endif
-
-
-
