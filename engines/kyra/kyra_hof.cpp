@@ -1469,8 +1469,11 @@ void KyraEngine_HoF::openTalkFile(int newFile) {
 
 	if (!_res->loadPakFile(talkFilename)) {
 		if (speechEnabled()) {
-			warning("Couldn't load file '%s' falling back to text only mode", talkFilename);
+			warning("Couldn't load voice file '%s', falling back to text only mode", talkFilename);
 			_configVoice = 0;
+
+			// Sync the config manager with the new settings
+			writeSettings();
 		}
 	}
 }
