@@ -896,7 +896,7 @@ int16 ScriptFunctions::sfGetGameDescription(int16 argc, int16 *argv) {
 
 	int16 descObjectIndex = argv[2];
 	int16 saveNum = argv[1];
-	/*int16 version = argv[0];*/
+	int16 version = argv[0];
 	Common::String description;
 
 	if (saveNum > 999)
@@ -904,7 +904,7 @@ int16 ScriptFunctions::sfGetGameDescription(int16 argc, int16 *argv) {
 
 	Common::String filename = _vm->getSavegameFilename(saveNum);
 
-	if (_vm->_dat->getSavegameDescription(filename.c_str(), description)) {
+	if (_vm->_dat->getSavegameDescription(filename.c_str(), description, version)) {
 		_vm->_dat->setObjectString(descObjectIndex, description.c_str());
 		return 0;
 	} else {

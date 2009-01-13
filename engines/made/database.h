@@ -137,7 +137,7 @@ public:
 
 	virtual int16 *findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) = 0;
 	virtual const char *getString(uint16 offset) = 0;
-	virtual bool getSavegameDescription(const char *filename, Common::String &description) = 0;
+	virtual bool getSavegameDescription(const char *filename, Common::String &description, int16 version) = 0;
 	virtual int16 savegame(const char *filename, const char *description, int16 version) = 0;
 	virtual int16 loadgame(const char *filename, int16 version) = 0;
 
@@ -164,7 +164,7 @@ public:
 	~GameDatabaseV2();
 	int16 *findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag);
 	const char *getString(uint16 offset);
-	bool getSavegameDescription(const char *filename, Common::String &description);
+	bool getSavegameDescription(const char *filename, Common::String &description, int16 version);
 	int16 savegame(const char *filename, const char *description, int16 version);
 	int16 loadgame(const char *filename, int16 version);
 protected:
@@ -178,7 +178,7 @@ public:
 	GameDatabaseV3(MadeEngine *vm);
 	int16 *findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag);
 	const char *getString(uint16 offset);
-	bool getSavegameDescription(const char *filename, Common::String &description);
+	bool getSavegameDescription(const char *filename, Common::String &description, int16 version);
 	int16 savegame(const char *filename, const char *description, int16 version);
 	int16 loadgame(const char *filename, int16 version);
 protected:

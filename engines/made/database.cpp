@@ -416,7 +416,7 @@ void GameDatabaseV2::reloadFromStream(Common::SeekableReadStream &sourceS) {
 	// Not used in version 2 games
 }
 
-bool GameDatabaseV2::getSavegameDescription(const char *filename, Common::String &description) {
+bool GameDatabaseV2::getSavegameDescription(const char *filename, Common::String &description, int16 version) {
 	// Not used in version 2 games
 	return false;
 }
@@ -574,17 +574,38 @@ void GameDatabaseV3::reloadFromStream(Common::SeekableReadStream &sourceS) {
 	sourceS.read(_gameState, _gameStateSize);
 }
 
-bool GameDatabaseV3::getSavegameDescription(const char *filename, Common::String &description) {
+bool GameDatabaseV3::getSavegameDescription(const char *filename, Common::String &description, int16 version) {
 	Common::InSaveFile *in;
 	char desc[64];
+
 	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
 		return false;
 	}
-	in->skip(4); // TODO: Verify marker 'SGAM'
-	in->skip(4); // TODO: Verify size
-	in->skip(2); // TODO: Verify version
+
+	uint32 header = in->readUint32BE();
+	if (header != MKID_BE('SGAM')) {
+		warning("Save game header missing");
+		delete in;
+		return false;
+	}
+
+	int32 size = in->readUint32LE();
+	if (size != in->size() - 64) {
+		warning("Unexpected save game size. Expected %d, size is %d (file size - 64)", size, in->size() - 64);
+		delete in;
+		return false;
+	}
+
+	int16 saveVersion = in->readUint16LE();
+	if (saveVersion != version) {
+		warning("Save game %s was saved with a different version of the game. Game version is %d, save version is %d", filename, version, saveVersion);
+		delete in;
+		return false;
+	}
+
 	in->read(desc, 64);
 	description = desc;
+
 	delete in;
 	return true;
 }
@@ -610,19 +631,38 @@ int16 GameDatabaseV3::savegame(const char *filename, const char *description, in
 
 int16 GameDatabaseV3::loadgame(const char *filename, int16 version) {
 	Common::InSaveFile *in;
-	int16 result = 0;
-	//uint32 expectedSize = 4 + 4 + 2 + _gameStateSize;
+	uint32 expectedSize = 4 + 4 + 2 + _gameStateSize;
+
 	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
 		warning("Can't open file '%s', game not loaded", filename);
 		return 1;
 	}
-	in->skip(4); // TODO: Verify marker 'SGAM'
-	in->skip(4); // TODO: Verify size
-	in->skip(2); // TODO: Verify version
+
+	uint32 header = in->readUint32BE();
+	if (header != MKID_BE('SGAM')) {
+		warning("Save game header missing");
+		delete in;
+		return 1;
+	}
+
+	uint32 size = in->readUint32LE();
+	if (size != expectedSize) {
+		warning("Unexpected save game size. Expected %d, size is %d", expectedSize, size);
+		delete in;
+		return false;
+	}
+
+	int16 saveVersion = in->readUint16LE();
+	if (saveVersion != version) {
+		warning("Save game %s was saved with a different version of the game. Game version is %d, save version is %d", filename, version, saveVersion);
+		delete in;
+		return 1;
+	}
+
 	in->skip(64); // skip savegame description
 	in->read(_gameState, _gameStateSize);
 	delete in;
-	return result;
+	return 0;
 }
 
 int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) {
