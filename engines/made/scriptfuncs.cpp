@@ -237,8 +237,11 @@ int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 		_vm->_autoStopSound = (argv[0] == 1);
 	}
 	if (soundNum > 0) {
+		SoundResource *soundRes = _vm->_res->getSound(soundNum);
 		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
-			_vm->_res->getSound(soundNum)->getAudioStream(_vm->_soundRate, false));
+			soundRes->getAudioStream(_vm->_soundRate, false));
+		_vm->_soundEnergyArray = soundRes->getSoundEnergyArray();
+		_vm->_soundEnergyIndex = 0;
 	}
 	return 0;
 }
@@ -616,20 +619,20 @@ int16 ScriptFunctions::sfGetSoundEnergy(int16 argc, int16 *argv) {
 	// This is called while in-game voices are played to animate 
 	// mouths when NPCs are talking
 
-	// FIXME: the mouth animations are out of sync. This occurs
-	// because the original unpacked sounds on the fly, whereas
-	// in ScummVM we unpack them when they're loaded. In ScummVM,
-	// the "sound energy" values are stored in an array (used as
-	// a stack), which means that sfGetSoundEnergy can empty that
-	// array prematurely. A proper fix would be to figure out
-	// when a value should be popped from the sound energy stack,
-	// or to unpack sounds on the fly like the original does 
-
 	int result = 0;
-	if (soundEnergy.size() > 0) {
-		result = *soundEnergy.begin();
-		soundEnergy.pop_front();
+
+	if (_vm->_mixer->isSoundHandleActive(_audioStreamHandle) && _vm->_soundEnergyArray &&
+		_vm->_soundEnergyIndex < _vm->_soundEnergyArray->size()) {
+		
+		uint32 position = (_vm->_soundRate / 1000) * _vm->_mixer->getSoundElapsedTime(_audioStreamHandle);
+		SoundEnergyItem *soundEnergyItem = &_vm->_soundEnergyArray->operator[](_vm->_soundEnergyIndex);
+
+		result = soundEnergyItem->energy;
+		
+		if (position >= soundEnergyItem->position)
+			_vm->_soundEnergyIndex++;
 	}
+
 	return result;
 }
 

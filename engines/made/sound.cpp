@@ -31,9 +31,7 @@
 
 namespace Made {
 
-Common::List<int> soundEnergy;
-
-void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount) {
+void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount, SoundEnergyArray *soundEnergyArray) {
 
 	int16 prevSample = 0, workSample = 0;
 	byte soundBuffer[1025];
@@ -45,6 +43,8 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 	uint16 ofs = 0;
 	uint16 i = 0, l = 0;
 	byte val;
+	
+	SoundEnergyItem soundEnergyItem;
 
 	const int modeValues[3][4] = {
 		{ 2, 8, 0x01, 1},
@@ -52,7 +52,10 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 		{16, 2, 0x0F, 4}
 	};
 
-	soundEnergy.clear();
+	soundEnergyItem.position = 0;
+
+	if (soundEnergyArray)
+		soundEnergyArray->clear();
 
 	while (chunkCount--) {
 		deltaType = (*source) >> 6;
@@ -71,8 +74,12 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 
 		case 0:
 			memset(soundBuffer, 0x80, workChunkSize);
-			workSample = 0;			
-			soundEnergy.push_back(0);
+			workSample = 0;
+
+			soundEnergyItem.energy = 0;
+			if (soundEnergyArray)
+				soundEnergyArray->push_back(soundEnergyItem);
+
 			break;
 
 		case 1:
@@ -99,14 +106,21 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 				}
 			}
 
-			soundEnergy.push_back(type - 1);
+			soundEnergyItem.energy = type - 1;
+			if (soundEnergyArray)
+				soundEnergyArray->push_back(soundEnergyItem);
+
 			break;
 
 		case 5:
 			for (i = 0; i < workChunkSize; i++)
 				soundBuffer[i] = *source++;
 			workSample = soundBuffer[workChunkSize - 1] - 128;
-			soundEnergy.push_back(type - 1);
+			
+			soundEnergyItem.energy = type - 1;
+			if (soundEnergyArray)
+				soundEnergyArray->push_back(soundEnergyItem);
+			
 			break;
 
 		default:
@@ -137,6 +151,7 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 		prevSample = workSample;
 		memcpy(dest, soundBuffer, chunkSize);
 		dest += chunkSize;
+		soundEnergyItem.position += chunkSize;
 
 	}
 

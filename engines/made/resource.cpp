@@ -157,8 +157,8 @@ SoundResource::SoundResource() : _soundSize(0), _soundData(NULL) {
 }
 
 SoundResource::~SoundResource() {
-	if (_soundData)
-		delete[] _soundData;
+	delete[] _soundData;
+	delete _soundEnergyArray;
 }
 
 void SoundResource::load(byte *source, int size) {
@@ -169,7 +169,10 @@ void SoundResource::load(byte *source, int size) {
 	_soundSize = chunkCount * chunkSize;
 	_soundData = new byte[_soundSize];
 
-	decompressSound(source + 14, _soundData, chunkSize, chunkCount);
+	_soundEnergyArray = new SoundEnergyArray;
+
+	decompressSound(source + 14, _soundData, chunkSize, chunkCount, _soundEnergyArray);
+	
 }
 
 Audio::AudioStream *SoundResource::getAudioStream(int soundRate, bool loop) {

@@ -33,6 +33,8 @@
 #include "graphics/surface.h"
 #include "sound/audiostream.h"
 
+#include "made/sound.h"
+
 namespace Made {
 
 const int kMaxResourceCacheCount = 100;
@@ -104,9 +106,11 @@ public:
 	~SoundResource();
 	void load(byte *source, int size);
 	Audio::AudioStream *getAudioStream(int soundRate, bool loop = false);
+	SoundEnergyArray *getSoundEnergyArray() const { return _soundEnergyArray; }
 protected:
 	byte *_soundData;
 	int _soundSize;
+	SoundEnergyArray *_soundEnergyArray;
 };
 
 class MenuResource : public Resource {

@@ -45,6 +45,8 @@
 
 #include "engines/engine.h"
 
+#include "made/sound.h"
+
 namespace Made {
 
 enum MadeGameID {
@@ -115,6 +117,8 @@ public:
 
 	int _soundRate;
 	bool _autoStopSound;
+	uint _soundEnergyIndex;
+	SoundEnergyArray *_soundEnergyArray;
 
 	// 2 = LGOP2, Manhole N&E
 	// 3 = Return to Zork

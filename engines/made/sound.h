@@ -33,9 +33,14 @@
 
 namespace Made {
 
-extern Common::List<int> soundEnergy;
+struct SoundEnergyItem {
+	uint32 position;
+	byte energy;
+};
 
-void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount);
+typedef Common::Array<SoundEnergyItem> SoundEnergyArray;
+
+void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount, SoundEnergyArray *soundEnergyArray = NULL);
 
 } // End of namespace Made
 
