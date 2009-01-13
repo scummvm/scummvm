@@ -26,6 +26,7 @@
 #include "common/savefile.h"
 
 #include "groovie/groovie.h"
+#include "groovie/saveload.h"
 
 namespace Groovie {
 
@@ -200,6 +201,7 @@ public:
 	SaveStateList listSaves(const char *target) const;
 	int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 bool GroovieMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *gd) const {
@@ -213,76 +215,38 @@ bool GroovieMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
-		//(f == kSavesSupportCreationDate)
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo);
 }
 
 SaveStateList GroovieMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *sfm = g_system->getSavefileManager();
-	SaveStateList list;
-
-	// Get the list of savefiles
-	Common::String pattern = Common::String(target) + ".00?";
-	Common::StringList savefiles = sfm->listSavefiles(pattern.c_str());
-
-	// Sort the list of filenames
-	sort(savefiles.begin(), savefiles.end());
-
-	// Fill the information for the existing savegames
-	Common::StringList::iterator it = savefiles.begin();
-	while (it != savefiles.end()) {
-		int slot = it->lastChar() - '0';
-		if (slot >= 0 && slot <= 9) {
-			Common::InSaveFile *file = sfm->openForLoading(it->c_str());
-
-			// Read the savegame description
-			Common::String description;
-			unsigned char c = 1;
-			for (int i = 0; (c != 0) && (i < 15); i++) {
-				c = file->readByte();
-				switch (c) {
-				case 0:
-					break;
-				case 16: // @
-					c = ' ';
-					break;
-				case 244: // $
-					c = 0;
-					break;
-				default:
-					c += 0x30;
-				}
-				if (c != 0) {
-					description += c;
-				}
-			}
-			delete file;
-
-			list.push_back(SaveStateDescriptor(slot, description));
-		}
-		it++;
-	}
-
-	return list;
+	return SaveLoad::listValidSaves(target);
 }
 
 int GroovieMetaEngine::getMaximumSaveSlot() const {
-	return 9;
+	return SaveLoad::getMaximumSlot();
 }
 
 void GroovieMetaEngine::removeSaveState(const char *target, int slot) const {
-	if (slot < 0 || slot > 9) {
+	if (!SaveLoad::isSlotValid(slot)) {
 		// Invalid slot, do nothing
 		return;
 	}
 
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".00%01d", slot);
-
-	Common::String filename = target;
-	filename += extension;
-
+	Common::String filename = SaveLoad::getSlotSaveName(target, slot);
 	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+}
+
+SaveStateDescriptor GroovieMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	SaveStateDescriptor desc;
+
+	Common::InSaveFile *savefile = SaveLoad::openForLoading(target, slot, &desc);
+	if (savefile) {
+		// Loaded correctly
+		delete savefile;
+	}
+
+	return desc;
 }
 
 } // End of namespace Groovie

@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	player.o \
 	resource.o \
 	roq.o \
+	saveload.o \
 	script.o \
 	vdx.o
 

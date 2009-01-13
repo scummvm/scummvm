@@ -28,11 +28,11 @@
 #include "groovie/script.h"
 #include "groovie/groovie.h"
 #include "groovie/cell.h"
+#include "groovie/saveload.h"
 
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/events.h"
-#include "common/savefile.h"
 
 #define NUM_OPCODES 90
 
@@ -360,8 +360,7 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 }
 
 void Script::loadgame(uint slot) {
-	Common::String filename = ConfMan.getActiveDomainName() + ".00" + ('0' + slot);
-	Common::InSaveFile *file = _vm->_system->getSavefileManager()->openForLoading(filename.c_str());
+	Common::InSaveFile *file = SaveLoad::openForLoading(ConfMan.getActiveDomainName(), slot);
 
 	// Loading the variables. It is endian safe because they're byte variables
 	file->read(_variables, 0x400);
@@ -372,11 +371,13 @@ void Script::loadgame(uint slot) {
 void Script::savegame(uint slot) {
 	char save[15];
 	char newchar;
-	Common::String filename = ConfMan.getActiveDomainName() + ".00" + ('0' + slot);
-	Common::OutSaveFile *file = _vm->_system->getSavefileManager()->openForSaving(filename.c_str());
+	Common::OutSaveFile *file = SaveLoad::openForSaving(ConfMan.getActiveDomainName(), slot);
 
 	// Saving the variables. It is endian safe because they're byte variables
 	file->write(_variables, 0x400);
+	delete file;
+
+	// Cache the saved name
 	for (int i = 0; i < 15; i++) {
 		newchar = _variables[i] + 0x30;
 		if ((newchar < 0x30 || newchar > 0x39) && (newchar < 0x41 || newchar > 0x7A)) {
@@ -387,8 +388,6 @@ void Script::savegame(uint slot) {
 		}
 	}
 	_saveNames[slot] = save;
-
-	delete file;
 }
 
 // OPCODES
@@ -1217,8 +1216,6 @@ void Script::o_hotspot_slot() {
 
 	Common::Rect rect(left, top, right, bottom);
 	if (hotspot(rect, address, cursor)) {
-		char savename[15];
-
 		if (_hotspotSlot == slot) {
 			return;
 		}
@@ -1227,8 +1224,7 @@ void Script::o_hotspot_slot() {
 		if (!_font) {
 			_font = new Font(_vm->_system);
 		}
-		strcpy(savename, _saveNames[slot].c_str());
-		_font->printstring(savename);
+		_font->printstring(_saveNames[slot].c_str());
 
 		// Save the currently highlighted slot
 		_hotspotSlot = slot;
@@ -1252,52 +1248,31 @@ void Script::o_hotspot_slot() {
 void Script::o_checkvalidsaves() {
 	debugScript(1, true, "CHECKVALIDSAVES");
 
-	// Reset the array of valid saves
+	// Reset the array of valid saves and the savegame names cache
 	for (int i = 0; i < 10; i++) {
 		setVariable(i, 0);
+		_saveNames[i] = "E M P T Y";
 	}
 
 	// Get the list of savefiles
-	Common::String pattern = ConfMan.getActiveDomainName() + ".00?";
-	Common::StringList savefiles = _vm->_system->getSavefileManager()->listSavefiles(pattern.c_str());
+	SaveStateList list = SaveLoad::listValidSaves(ConfMan.getActiveDomainName());
 
 	// Mark the existing savefiles as valid
 	uint count = 0;
-	Common::StringList::iterator it = savefiles.begin();
-	while (it != savefiles.end()) {
-		int8 n = it->lastChar() - '0';
-		if (n >= 0 && n <= 9) {
-			// TODO: Check the contents of the file?
-			debugScript(2, true, "  Found valid savegame: %s", it->c_str());
-			setVariable(n, 1);
+	SaveStateList::iterator it = list.begin();
+	while (it != list.end()) {
+		int8 slot = it->getVal("save_slot").lastChar() - '0';
+		if (SaveLoad::isSlotValid(slot)) {
+			debugScript(2, true, "  Found valid savegame: %s", it->getVal("description").c_str());
+
+			// Mark this slot as used
+			setVariable(slot, 1);
+
+			// Cache this slot's description
+			_saveNames[slot] = it->getVal("description");
 			count++;
 		}
 		it++;
-	}
-
-	for (int slots = 0; slots < 10; slots++) {
-		char savename[15];
-		Common::String filename = ConfMan.getActiveDomainName() + ".00" + ('0' + slots);
-		Common::StringList files = _vm->_system->getSavefileManager()->listSavefiles(filename.c_str());
-		if (!files.empty()) {
-			Common::InSaveFile *file = _vm->_system->getSavefileManager()->openForLoading(filename.c_str());
-			if (file) {
-				uint8 i;
-				char temp;
-
-				for (i = 0; i < 15; i++) {
-					file->read(&temp, 1);
-					savename[i] = temp + 0x30;
-				}
-
-				delete file;
-			} else {
-				strcpy(savename, "ERROR");
-			}
-		} else {
-			strcpy(savename, "E M P T Y");
-		}
-		_saveNames[slots] = savename;
 	}
 
 	// Save the number of valid saves
