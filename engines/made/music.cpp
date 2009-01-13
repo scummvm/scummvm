@@ -164,7 +164,7 @@ void MusicPlayer::playXMIDI(GenericResource *midiResource, MusicFlags flags) {
 
 		_parser = parser;
 
-		setVolume(255);
+		setVolume(127);
 
 		_looping = flags & MUSIC_LOOP;
 		_isPlaying = true;
@@ -190,7 +190,7 @@ void MusicPlayer::playSMF(GenericResource *midiResource, MusicFlags flags) {
 
 		_parser = parser;
 
-		setVolume(255);
+		setVolume(127);
 
 		_looping = flags & MUSIC_LOOP;
 		_isPlaying = true;
@@ -213,7 +213,7 @@ void MusicPlayer::pause() {
 }
 
 void MusicPlayer::resume() {
-	setVolume(255);
+	setVolume(127);
 	_isPlaying = true;
 }
 

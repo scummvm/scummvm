@@ -244,15 +244,30 @@ int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfPlayMusic(int16 argc, int16 *argv) {
-	// TODO: Music in LGOP2 and Manhole isn't supported yet
+	int16 musicNum = argv[0];
+
 	if (_vm->getGameID() == GID_RTZ) {
-		int16 musicNum = argv[0];
 		if (musicNum > 0) {
 			_musicRes = _vm->_res->getXmidi(musicNum);
 			if (_musicRes)
 				_vm->_music->playXMIDI(_musicRes);
 		}
+	} else {
+		// HACK: music number 2 in LGOP2 is file MT32SET.TON, which
+		// is used to set the MT32 instruments. This is not loaded
+		// correctly and the game freezes, and since we don't support
+		// MT32 music yet, we ignore it here
+		// FIXME: Remove this hack and handle this file properly
+		if (_vm->getGameID() == GID_LGOP2 && musicNum == 2)
+			return 0;
+
+		if (musicNum > 0) {
+			_musicRes = _vm->_res->getMidi(musicNum);
+			if (_musicRes)
+				_vm->_music->playSMF(_musicRes);
+		}
 	}
+
 	return 0;
 }
 
@@ -321,6 +336,7 @@ int16 ScriptFunctions::sfShowMouseCursor(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfGetMusicBeat(int16 argc, int16 *argv) {
+	// TODO
 	// This is called loads of times in the intro of the floppy version
 	// of RtZ. Not sure what it does. Commented out to reduce spam
 	//warning("Unimplemented opcode: sfGetMusicBeat");
@@ -599,6 +615,16 @@ int16 ScriptFunctions::sfClearMono(int16 argc, int16 *argv) {
 int16 ScriptFunctions::sfGetSoundEnergy(int16 argc, int16 *argv) {
 	// This is called while in-game voices are played to animate 
 	// mouths when NPCs are talking
+
+	// FIXME: the mouth animations are out of sync. This occurs
+	// because the original unpacked sounds on the fly, whereas
+	// in ScummVM we unpack them when they're loaded. In ScummVM,
+	// the "sound energy" values are stored in an array (used as
+	// a stack), which means that sfGetSoundEnergy can empty that
+	// array prematurely. A proper fix would be to figure out
+	// when a value should be popped from the sound energy stack,
+	// or to unpack sounds on the fly like the original does 
+
 	int result = 0;
 	if (soundEnergy.size() > 0) {
 		result = *soundEnergy.begin();
@@ -909,6 +935,9 @@ int16 ScriptFunctions::sfGetSynthType(int16 argc, int16 *argv) {
 	// 2 = SBFM/ADLIB
 	// 3 = ADLIBG
 	// 4 = MT32MPU
+
+	// TODO
+
 	warning("Unimplemented opcode: sfGetSynthType");
 	return 0;
 }

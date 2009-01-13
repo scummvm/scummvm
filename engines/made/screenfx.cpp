@@ -56,7 +56,6 @@ ScreenEffects::ScreenEffects(Screen *screen) : _screen(screen) {
 void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 
 	// TODO: Put effect functions into an array
-	// TODO: Implement more visual effects
 
 	switch (effectNum) {
 
