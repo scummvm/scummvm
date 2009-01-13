@@ -313,7 +313,7 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 #ifdef DITHER
 		// Reset the dithering algorithm with the new width
 		delete _dither;
-		_dither = new Graphics::SierraLight(width, _paletteLookup);
+		_dither = new Graphics::SierraLight(width * _scale, _paletteLookup);
 #endif
 	}
 
