@@ -35,7 +35,7 @@ class Font {
 public:
 	Font(OSystem *syst);
 	~Font();
-	void printstring(char *messagein);
+	void printstring(const char *messagein);
 
 private:
 	OSystem *_syst;

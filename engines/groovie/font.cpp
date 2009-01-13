@@ -46,7 +46,7 @@ Font::~Font() {
 	delete _sphinxfnt;
 }
 
-void Font::printstring(char *messagein) {
+void Font::printstring(const char *messagein) {
 	uint16 totalwidth = 0, currxoffset, i;
 
 	char message[15];
