@@ -70,15 +70,16 @@ bool ThemeLayout::getWidgetData(const Common::String &name, int16 &x, int16 &y, 
 	return false;
 }
 
-int16 ThemeLayoutStacked::getParentW() {
+int16 ThemeLayoutStacked::getParentWidth() {
 	ThemeLayout *p = _parent;
 	int width = 0;
 
 	while (p && p->getLayoutType() != kLayoutMain) {
 		width += p->_padding.right + p->_padding.left;
 		if (p->getLayoutType() == kLayoutHorizontal) {
+			const int spacing = ((ThemeLayoutStacked *)p)->_spacing;
 			for (uint i = 0; i < p->_children.size(); ++i)
-				width += p->_children[i]->getWidth() + p->_spacing;
+				width += p->_children[i]->getWidth() + spacing;
 		}
 		// FIXME: Do we really want to assume that any layout type different
 		// from kLayoutHorizontal corresponds to width 0 ?
@@ -89,15 +90,16 @@ int16 ThemeLayoutStacked::getParentW() {
 	return p->getWidth() - width;
 }
 
-int16 ThemeLayoutStacked::getParentH() {
+int16 ThemeLayoutStacked::getParentHeight() {
 	ThemeLayout *p = _parent;
 	int height = 0;
 
 	while (p && p->getLayoutType() != kLayoutMain) {
 		height += p->_padding.bottom + p->_padding.top;
 		if (p->getLayoutType() == kLayoutVertical) {
+			const int spacing = ((ThemeLayoutStacked *)p)->_spacing;
 			for (uint i = 0; i < p->_children.size(); ++i)
-				height += p->_children[i]->getHeight() + p->_spacing;
+				height += p->_children[i]->getHeight() + spacing;
 		}
 		// FIXME: Do we really want to assume that any layout type different
 		// from kLayoutVertical corresponds to height 0 ?
@@ -156,7 +158,7 @@ void ThemeLayoutMain::reflowLayout() {
 	}
 }
 
-void ThemeLayoutStacked::reflowLayoutV() {
+void ThemeLayoutStacked::reflowLayoutVertical() {
 	int curX, curY;
 	int resize[8];
 	int rescount = 0;
@@ -171,7 +173,7 @@ void ThemeLayoutStacked::reflowLayoutV() {
 		_children[i]->reflowLayout();
 
 		if (_children[i]->getWidth() == -1)
-			_children[i]->setWidth((_w == -1 ? getParentW() : _w) - _padding.left - _padding.right);
+			_children[i]->setWidth((_w == -1 ? getParentWidth() : _w) - _padding.left - _padding.right);
 
 		if (_children[i]->getHeight() == -1) {
 			assert(rescount < ARRAYSIZE(resize));
@@ -179,13 +181,13 @@ void ThemeLayoutStacked::reflowLayoutV() {
 			_children[i]->setHeight(0);
 		}
 
-		_children[i]->setY(curY);
+		_children[i]->offsetY(curY);
 
 		// Center child if it this has been requested *and* the space permits it.
 		if (_centered && _children[i]->getWidth() < _w && _w != -1) {
-			_children[i]->setX((_w >> 1) - (_children[i]->getWidth() >> 1));
+			_children[i]->offsetX((_w >> 1) - (_children[i]->getWidth() >> 1));
 		} else
-			_children[i]->setX(curX);
+			_children[i]->offsetX(curX);
 
 		curY += _children[i]->getHeight() + _spacing;
 		_w = MAX(_w, (int16)(_children[i]->getWidth() + _padding.left + _padding.right));
@@ -195,18 +197,18 @@ void ThemeLayoutStacked::reflowLayoutV() {
 	_h -= _spacing;
 
 	if (rescount) {
-		int newh = (getParentH() - _h - _padding.bottom) / rescount;
+		int newh = (getParentHeight() - _h - _padding.bottom) / rescount;
 
 		for (int i = 0; i < rescount; ++i) {
 			_children[resize[i]]->setHeight(newh);
 			_h += newh;
 			for (uint j = resize[i] + 1; j < _children.size(); ++j)
-				_children[j]->setY(newh);
+				_children[j]->offsetY(newh);
 		}
 	}
 }
 
-void ThemeLayoutStacked::reflowLayoutH() {
+void ThemeLayoutStacked::reflowLayoutHorizontal() {
 	int curX, curY;
 	int resize[8];
 	int rescount = 0;
@@ -221,7 +223,7 @@ void ThemeLayoutStacked::reflowLayoutH() {
 		_children[i]->reflowLayout();
 
 		if (_children[i]->getHeight() == -1)
-			_children[i]->setHeight((_h == -1 ? getParentH() : _h) - _padding.top - _padding.bottom);
+			_children[i]->setHeight((_h == -1 ? getParentHeight() : _h) - _padding.top - _padding.bottom);
 
 		if (_children[i]->getWidth() == -1) {
 			assert(rescount < ARRAYSIZE(resize));
@@ -229,13 +231,13 @@ void ThemeLayoutStacked::reflowLayoutH() {
 			_children[i]->setWidth(0);
 		}
 
-		_children[i]->setX(curX);
+		_children[i]->offsetX(curX);
 
 		// Center child if it this has been requested *and* the space permits it.
 		if (_centered && _children[i]->getHeight() < _h && _h != -1)
-			_children[i]->setY((_h >> 1) - (_children[i]->getHeight() >> 1));
+			_children[i]->offsetY((_h >> 1) - (_children[i]->getHeight() >> 1));
 		else
-			_children[i]->setY(curY);
+			_children[i]->offsetY(curY);
 
 		curX += (_children[i]->getWidth() + _spacing);
 		_w += _children[i]->getWidth() + _spacing;
@@ -245,13 +247,13 @@ void ThemeLayoutStacked::reflowLayoutH() {
 	_w -= _spacing;
 
 	if (rescount) {
-		int neww = (getParentW() - _w - _padding.right) / rescount;
+		int neww = (getParentWidth() - _w - _padding.right) / rescount;
 
 		for (int i = 0; i < rescount; ++i) {
 			_children[resize[i]]->setWidth(neww);
 			_w += neww;
 			for (uint j = resize[i] + 1; j < _children.size(); ++j)
-				_children[j]->setX(neww);
+				_children[j]->offsetX(neww);
 		}
 	}
 }

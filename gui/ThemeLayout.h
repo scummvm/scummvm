@@ -72,24 +72,20 @@ public:
 		_padding.bottom = bottom;
 	}
 
-	void setSpacing(int8 spacing) {
-		_spacing = spacing;
-	}
-
 protected:
 	int16 getWidth() { return _w; }
 	int16 getHeight() { return _h; }
 
-	void setX(int newX) {
+	void offsetX(int newX) {
 		_x += newX;
 		for (uint i = 0; i < _children.size(); ++i)
-			_children[i]->setX(newX);
+			_children[i]->offsetX(newX);
 	}
 
-	void setY(int newY) {
+	void offsetY(int newY) {
 		_y += newY;
 		for (uint i = 0; i < _children.size(); ++i)
-			_children[i]->setY(newY);
+			_children[i]->offsetY(newY);
 	}
 
 	void setWidth(int16 width) { _w = width; }
@@ -114,7 +110,6 @@ protected:
 	ThemeLayout *_parent;
 	int16 _x, _y, _w, _h;
 	Common::Rect _padding;
-	int8 _spacing;
 	Common::Array<ThemeLayout *> _children;
 	bool _centered;
 	int16 _defaultW, _defaultH;
@@ -159,12 +154,12 @@ public:
 
 	void reflowLayout() {
 		if (_type == kLayoutVertical)
-			reflowLayoutV();
+			reflowLayoutVertical();
 		else
-			reflowLayoutH();
+			reflowLayoutHorizontal();
 	}
-	void reflowLayoutH();
-	void reflowLayoutV();
+	void reflowLayoutHorizontal();
+	void reflowLayoutVertical();
 
 #ifdef LAYOUT_DEBUG_DIALOG
 	const char *getName() const {
@@ -174,8 +169,8 @@ public:
 #endif
 
 protected:
-	int16 getParentW();
-	int16 getParentH();
+	int16 getParentWidth();
+	int16 getParentHeight();
 
 	LayoutType getLayoutType() { return _type; }
 
@@ -190,6 +185,7 @@ protected:
 	}
 
 	const LayoutType _type;
+	int8 _spacing;
 };
 
 class ThemeLayoutWidget : public ThemeLayout {
