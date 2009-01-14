@@ -33,7 +33,7 @@ namespace Groovie {
 // Cursor Manager
 
 GrvCursorMan::GrvCursorMan(OSystem *system) :
-	_syst(system), _lastTime(0), _current(0), _cursor(NULL) {
+	_syst(system), _lastTime(0), _current(-1), _cursor(NULL) {
 }
 
 GrvCursorMan::~GrvCursorMan() {
@@ -80,19 +80,18 @@ void GrvCursorMan::animate() {
 
 class Cursor_t7g : public Cursor {
 public:
-	Cursor_t7g(OSystem *system, uint8 *img, uint8 *pal);
+	Cursor_t7g(uint8 *img, uint8 *pal);
 
 	void enable();
 	void showFrame(uint16 frame);
 
 private:
-	OSystem *_syst;
 	byte *_img;
 	byte *_pal;
 };
 
-Cursor_t7g::Cursor_t7g(OSystem *system, uint8 *img, uint8 *pal) :
-	_syst(system), _pal(pal) {
+Cursor_t7g::Cursor_t7g(uint8 *img, uint8 *pal) :
+	_pal(pal) {
 
 	_width = img[0];
 	_height = img[1];
@@ -157,7 +156,7 @@ GrvCursorMan_t7g::GrvCursorMan_t7g(OSystem *system) :
 
 	// Build the cursors
 	for (uint cursor = 0; cursor < NUM_STYLES; cursor++) {
-		Cursor *s = new Cursor_t7g(_syst, _images[_cursorImg[cursor]], _palettes[_cursorPal[cursor]]);
+		Cursor *s = new Cursor_t7g(_images[_cursorImg[cursor]], _palettes[_cursorPal[cursor]]);
 		_cursors.push_back(s);
 	}
 
