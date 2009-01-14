@@ -370,10 +370,21 @@ GameDatabaseV2::~GameDatabaseV2() {
 }
 
 void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
+	int16 version = sourceS.readUint16LE();
 
-	// TODO: Read/verifiy header
+	// Manhole:NE, Rodney's Funscreen and LGOP2 are version 54
+	// The earlier EGA version of Manhole is version 40
+	if (version != 54 && version != 40)
+		warning("Unknown database version, known versions are 54 and 40");
 
-	sourceS.seek(0x1C);
+	char header[6];
+	sourceS.read(header, 6);
+	if (strncmp(header, "ADVSYS", 6))
+		warning ("Unexpected database header, expected ADVSYS");
+
+	/*uint32 unk = */sourceS.readUint16LE();
+
+	sourceS.skip(18);
 
 	uint32 textOffs = sourceS.readUint16LE() * 512;
 	uint16 objectCount = sourceS.readUint16LE();
@@ -527,10 +538,14 @@ GameDatabaseV3::GameDatabaseV3(MadeEngine *vm) : GameDatabase(vm) {
 }
 
 void GameDatabaseV3::load(Common::SeekableReadStream &sourceS) {
+	char header[6];
+	sourceS.read(header, 6);
+	if (strncmp(header, "ADVSYS", 6))
+		warning ("Unexpected database header, expected ADVSYS");
 
-	// TODO: Read/verifiy header
+	/*uint32 unk = */sourceS.readUint32LE();
 
-	sourceS.seek(0x1E);
+	sourceS.skip(20);
 
 	uint32 objectIndexOffs = sourceS.readUint32LE();
 	uint16 objectCount = sourceS.readUint16LE();
@@ -649,7 +664,7 @@ int16 GameDatabaseV3::loadgame(const char *filename, int16 version) {
 	if (size != expectedSize) {
 		warning("Unexpected save game size. Expected %d, size is %d", expectedSize, size);
 		delete in;
-		return false;
+		return 1;
 	}
 
 	int16 saveVersion = in->readUint16LE();
