@@ -65,9 +65,9 @@ void PmvPlayer::play(const char *filename) {
 	int unk;
 	_fd->skip(4);	// always 0?
 	unk = _fd->readByte();
-	debug(2, "%i");
+	debug(2, "%i", unk);
 	unk = _fd->readByte();
-	debug(2, "%i");
+	debug(2, "%i", unk);
 	_fd->skip(4);	// always 0?
 
 	uint soundFreq = _fd->readUint16LE();
