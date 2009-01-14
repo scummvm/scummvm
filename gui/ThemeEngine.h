@@ -684,6 +684,7 @@ protected:
 	bool _needPaletteUpdates;
 	uint _cursorWidth, _cursorHeight;
 	byte _cursorPal[4*MAX_CURS_COLORS];
+	byte _cursorPalSize;
 };
 
 } // end of namespace GUI.

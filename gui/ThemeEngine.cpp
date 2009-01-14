@@ -220,7 +220,7 @@ void ThemeEngine::refresh() {
 		_system->showOverlay();
 
 		if (_useCursor) {
-			CursorMan.replaceCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
+			CursorMan.replaceCursorPalette(_cursorPal, 0, _cursorPalSize);
 			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
 		}
 	}
@@ -231,7 +231,7 @@ void ThemeEngine::enable() {
 		return;
 
 	if (_useCursor) {
-		CursorMan.pushCursorPalette(_cursorPal, 0, MAX_CURS_COLORS);
+		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
 		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
 		CursorMan.showMouse(true);
 	}
@@ -1002,6 +1002,7 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	}
 
 	_useCursor = true;
+	_cursorPalSize = colorsFound;
 
 	return true;
 }
