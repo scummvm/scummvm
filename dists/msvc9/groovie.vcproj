@@ -254,6 +254,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\groovie\saveload.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\groovie\saveload.h"
+			>
+		</File>		
+		<File
 			RelativePath="..\..\engines\groovie\script.cpp"
 			>
 		</File>
