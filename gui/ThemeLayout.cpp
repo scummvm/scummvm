@@ -189,18 +189,31 @@ void ThemeLayoutStacked::reflowLayoutVertical() {
 		} else
 			_children[i]->offsetX(curX);
 
+		// Advance the vertical offset by the height of the newest item, plus
+		// the item spacing value.
 		curY += _children[i]->getHeight() + _spacing;
+		
+		// Update width and height of this stack layout
 		_w = MAX(_w, (int16)(_children[i]->getWidth() + _padding.left + _padding.right));
 		_h += _children[i]->getHeight() + _spacing;
 	}
 
-	_h -= _spacing;
+	// If there are any children at all, then we added the spacing value once
+	// too often. Correct that.
+	if (!_children.empty())
+		_h -= _spacing;
 
+	// If there were any items with undetermined height, then compute and set
+	// their height now. We do so by determining how much space is left, and
+	// then distributing this equally over all items which need auto-resizing. 
 	if (rescount) {
 		int newh = (getParentHeight() - _h - _padding.bottom) / rescount;
 
 		for (int i = 0; i < rescount; ++i) {
+			// Set the height of the item.
 			_children[resize[i]]->setHeight(newh);
+			// Increase the height of this ThemeLayoutStacked accordingly, and
+			// then shift all subsequence children.
 			_h += newh;
 			for (uint j = resize[i] + 1; j < _children.size(); ++j)
 				_children[j]->offsetY(newh);
@@ -239,18 +252,31 @@ void ThemeLayoutStacked::reflowLayoutHorizontal() {
 		else
 			_children[i]->offsetY(curY);
 
+		// Advance the horizontal offset by the width of the newest item, plus
+		// the item spacing value.
 		curX += (_children[i]->getWidth() + _spacing);
+
+		// Update width and height of this stack layout
 		_w += _children[i]->getWidth() + _spacing;
 		_h = MAX(_h, (int16)(_children[i]->getHeight() + _padding.top + _padding.bottom));
 	}
 
-	_w -= _spacing;
+	// If there are any children at all, then we added the spacing value once
+	// too often. Correct that.
+	if (!_children.empty())
+		_w -= _spacing;
 
+	// If there were any items with undetermined width, then compute and set
+	// their width now. We do so by determining how much space is left, and
+	// then distributing this equally over all items which need auto-resizing. 
 	if (rescount) {
 		int neww = (getParentWidth() - _w - _padding.right) / rescount;
 
 		for (int i = 0; i < rescount; ++i) {
+			// Set the width of the item.
 			_children[resize[i]]->setWidth(neww);
+			// Increase the width of this ThemeLayoutStacked accordingly, and
+			// then shift all subsequence children.
 			_w += neww;
 			for (uint j = resize[i] + 1; j < _children.size(); ++j)
 				_children[j]->offsetX(neww);
