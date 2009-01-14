@@ -61,9 +61,6 @@ struct SOUND_BUFFER {
 //static MDI_DRIVER *mDriver;
 //static HSEQUENCE mSeqHandle;
 
-// if non-zero this is the index position of the next MIDI sequence to play
-static uint32 dwMidiIndex = 0;
-
 // MIDI buffer
 static SOUND_BUFFER midiBuffer = { 0, 0 };
 
@@ -183,17 +180,11 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 		SetMidiVolume(volMusic);
 	}
 
-	// set file offset for this sequence
-	dwMidiIndex = dwFileOffset;
-
 	// the index and length of the last tune loaded
 	static uint32 dwLastMidiIndex;
 	//static uint32 dwLastSeqLen;
 
 	uint32 dwSeqLen = 0;	// length of the sequence
-
-	if (dwMidiIndex == 0)
-		return true;
 
 	// Support for external music from the music enhancement project
 	if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
@@ -208,13 +199,11 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 			if (track > 0) {
 				StopMidi();
 
-				AudioCD.play(track, bLoop ? -1 : 0, 0, 0);
+				AudioCD.play(track, bLoop ? -1 : 1, 0, 0);
 
 				// Check if an enhanced audio track is being played.
 				// If it is, stop here and don't load a MIDI track
 				if (AudioCD.isPlaying()) {
-					// allow another sequence to play
-					dwMidiIndex = 0;
 					return true;
 				}
 			}
@@ -223,7 +212,10 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 		}
 	}
 
-	if (dwMidiIndex != dwLastMidiIndex) {
+	if (dwFileOffset == 0)
+		return true;
+
+	if (dwFileOffset != dwLastMidiIndex) {
 		Common::File midiStream;
 
 		// open MIDI sequence file in binary mode
@@ -231,10 +223,10 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 			error(CANNOT_FIND_FILE, MIDI_FILE);
 
 		// update index of last tune loaded
-		dwLastMidiIndex = dwMidiIndex;
+		dwLastMidiIndex = dwFileOffset;
 
 		// move to correct position in the file
-		midiStream.seek(dwMidiIndex, SEEK_SET);
+		midiStream.seek(dwFileOffset, SEEK_SET);
 
 		// read the length of the sequence
 		dwSeqLen = midiStream.readUint32LE();
@@ -256,13 +248,10 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 		// Store the length
 		//dwLastSeqLen = dwSeqLen;
 	} else {
-	  	// dwMidiIndex == dwLastMidiIndex
+	  	// dwFileOffset == dwLastMidiIndex
 		_vm->_midiMusic->stop();
 		_vm->_midiMusic->playXMIDI(midiBuffer.pDat, dwSeqLen, bLoop);
 	}
-
-	// allow another sequence to play
-	dwMidiIndex = 0;
 
 	return true;
 }
