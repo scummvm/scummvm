@@ -366,6 +366,9 @@ void Script::loadgame(uint slot) {
 	file->read(_variables, 0x400);
 
 	delete file;
+
+	// Hide the mouse cursor
+	_vm->_grvCursorMan->show(false);
 }
 
 void Script::savegame(uint slot) {
