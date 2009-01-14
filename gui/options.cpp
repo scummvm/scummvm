@@ -437,6 +437,11 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_subSpeedLabel->setValue(_subSpeedSlider->getValue());
 		_subSpeedLabel->draw();
 		break;
+	case kClearSoundFontCmd:
+		_soundFont->setLabel("None");
+		_soundFontClearButton->setEnabled(false);
+		draw();
+		break;
 	case kOKCmd:
 		setResult(1);
 		close();
@@ -920,12 +925,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 
 			draw();
 		}
-		break;
-	}
-	case kClearSoundFontCmd: {
-		_soundFont->setLabel("None");
-		_soundFontClearButton->setEnabled(false);
-		draw();
 		break;
 	}
 	case kChooseThemeCmd: {
