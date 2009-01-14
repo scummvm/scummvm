@@ -195,9 +195,11 @@ Common::Error GroovieEngine::go() {
 				_waitingForInput = false;
 				break;
 
+			case Common::EVENT_MAINMENU:
+				// Closing the GMM
 			case Common::EVENT_MOUSEMOVE:
-				// Continue the script execution, the mouse
-				// pointer may fall inside a hotspot now
+				// Continue the script execution, the mouse pointer
+				// may fall inside a different hotspot now
 				_waitingForInput = false;
 				break;
 

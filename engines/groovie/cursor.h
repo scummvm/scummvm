@@ -49,6 +49,7 @@ public:
 	GrvCursorMan(OSystem *system);
 	virtual ~GrvCursorMan();
 
+	virtual void show(bool visible);
 	virtual void animate();
 	virtual void setStyle(uint8 newStyle);
 	virtual uint8 getStyle();

@@ -45,6 +45,10 @@ GrvCursorMan::~GrvCursorMan() {
 	CursorMan.popAllCursors();
 }
 
+void GrvCursorMan::show(bool visible) {
+	CursorMan.showMouse(visible);
+}
+
 uint8 GrvCursorMan::getStyle() {
 	return _current;
 }

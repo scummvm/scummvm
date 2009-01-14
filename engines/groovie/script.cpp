@@ -689,7 +689,7 @@ void Script::o_inputloopend() {
 
 		// Exit the input loop
 		_inputLoopAddress = 0;
-		_vm->_system->showMouse(false);
+		_vm->_grvCursorMan->show(false);
 
 		// Force immediate hiding of the mouse cursor (required when the next
 		// video just contains audio)
@@ -701,7 +701,7 @@ void Script::o_inputloopend() {
 		if (_newCursorStyle != _vm->_grvCursorMan->getStyle()) {
 			_vm->_grvCursorMan->setStyle(_newCursorStyle);
 		}
-		_vm->_system->showMouse(true);
+		_vm->_grvCursorMan->show(true);
 
 		// Go back to the begining of the loop
 		_currentInstruction = _inputLoopAddress;
