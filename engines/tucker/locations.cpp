@@ -188,8 +188,7 @@ void TuckerEngine::execData3PreUpdate_locationNum2() {
 			_updateLocationYPosTable2[i] = 0;
 		}
 		if (_flagsTable[10] == 0) {
-			strcpy(_fileToLoad, "path02b.pcx");
-			copyLocBitmap(0, true);
+			copyLocBitmap("path02b.pcx", 0, true);
 		}
 		for (int i = 0; i < 3; ++i) {
 			if (_updateLocationYPosTable2[i] > 0) {

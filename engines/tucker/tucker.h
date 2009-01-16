@@ -256,7 +256,7 @@ protected:
 	void setCursorNum(int num);
 	void setCursorType(int type);
 	void setupNewLocation();
-	void copyLocBitmap(int offset, bool isMask);
+	void copyLocBitmap(const char *filename, int offset, bool isMask);
 	void updateMouseState();
 	void updateCharPositionHelper();
 	void updateCharPosition();
@@ -600,7 +600,6 @@ protected:
 	int _gameHintsDisplayText;
 	int _gameHintsStringNum;
 
-	char _fileToLoad[40];
 	int _fileLoadSize;
 	int _compressedSoundType;
 	Common::File _fCompressedSound;

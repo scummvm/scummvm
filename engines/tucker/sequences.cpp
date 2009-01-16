@@ -126,30 +126,31 @@ void TuckerEngine::handleCreditsSequence() {
 				_spritesTable[i].stateIndex = -1;
 			}
 			++num;
+			char filename[40];
 			if (num == 6) {
 				for (int i = 0; i < 16; ++i) {
-					sprintf(_fileToLoad, "cogs%04d.pcx", i);
-					loadImage(_fileToLoad, imgBuf + i * 64000, 2);
+					sprintf(filename, "cogs%04d.pcx", i);
+					loadImage(filename, imgBuf + i * 64000, 2);
 				}
 			} else {
 				switch (num) {
 				case 1:
-					strcpy(_fileToLoad, "loc75.pcx");
+					strcpy(filename, "loc75.pcx");
 					break;
 				case 2:
-					strcpy(_fileToLoad, "loc76.pcx");
+					strcpy(filename, "loc76.pcx");
 					break;
 				case 3:
-					strcpy(_fileToLoad, "paper-3.pcx");
+					strcpy(filename, "paper-3.pcx");
 					break;
 				case 4:
-					strcpy(_fileToLoad, "loc77.pcx");
+					strcpy(filename, "loc77.pcx");
 					break;
 				case 5:
-					strcpy(_fileToLoad, "loc78.pcx");
+					strcpy(filename, "loc78.pcx");
 					break;
 				}
-				loadImage(_fileToLoad, _quadBackgroundGfxBuf, 2);
+				loadImage(filename, _quadBackgroundGfxBuf, 2);
 			}
 			_spritesCount = _creditsSequenceData2[num];
 			++_flagsTable[236];
@@ -185,6 +186,8 @@ void TuckerEngine::handleCongratulationsSequence() {
 }
 
 void TuckerEngine::handleNewPartSequence() {
+	char filename[40];
+
 	stopSounds();
 	if (_flagsTable[219] == 1) {
 		_flagsTable[219] = 0;
@@ -203,16 +206,16 @@ void TuckerEngine::handleNewPartSequence() {
 	_scrollOffset = 0;
 	switch (_partNum) {
 	case 1:
-		strcpy(_fileToLoad, "pt1bak.pcx");
+		strcpy(filename, "pt1bak.pcx");
 		break;
 	case 2:
-		strcpy(_fileToLoad, "pt2bak.pcx");
+		strcpy(filename, "pt2bak.pcx");
 		break;
 	default:
-		strcpy(_fileToLoad, "pt3bak.pcx");
+		strcpy(filename, "pt3bak.pcx");
 		break;
 	}
-	loadImage(_fileToLoad, _quadBackgroundGfxBuf, 1);
+	loadImage(filename, _quadBackgroundGfxBuf, 1);
 	_spritesCount = 1;
 	memset(&_spritesTable[0], 0, sizeof(Sprite));
 	_spritesTable[0].state = -1;
@@ -223,16 +226,16 @@ void TuckerEngine::handleNewPartSequence() {
 	unloadSprC02_01();
 	switch (_partNum) {
 	case 1:
-		strcpy(_fileToLoad, "sprites/partone.spr");
+		strcpy(filename, "sprites/partone.spr");
 		break;
 	case 2:
-		strcpy(_fileToLoad, "sprites/parttwo.spr");
+		strcpy(filename, "sprites/parttwo.spr");
 		break;
 	default:
-		strcpy(_fileToLoad, "sprites/partthr.spr");
+		strcpy(filename, "sprites/partthr.spr");
 		break;
 	}
-	_sprC02Table[1] = loadFile(_fileToLoad, 0);
+	_sprC02Table[1] = loadFile(filename, 0);
 	startSpeechSound(9000, 60);
 	_fadePaletteCounter = 0;
 	do {
@@ -268,23 +271,24 @@ void TuckerEngine::handleNewPartSequence() {
 }
 
 void TuckerEngine::handleMeanwhileSequence() {
+	char filename[40];
 	uint8 backupPalette[256 * 3];
 	memcpy(backupPalette, _currentPalette, 256 * 3);
 	switch (_partNum) {
 	case 1:
-		strcpy(_fileToLoad, "meanw01.pcx");
+		strcpy(filename, "meanw01.pcx");
 		break;
 	case 2:
-		strcpy(_fileToLoad, "meanw02.pcx");
+		strcpy(filename, "meanw02.pcx");
 		break;
 	default:
-		strcpy(_fileToLoad, "meanw03.pcx");
+		strcpy(filename, "meanw03.pcx");
 		break;
 	}
 	if (_flagsTable[215] == 0 && _flagsTable[231] == 1) {
-		strcpy(_fileToLoad, "loc80.pcx");
+		strcpy(filename, "loc80.pcx");
 	}
-	loadImage(_fileToLoad, _quadBackgroundGfxBuf + 89600, 1);
+	loadImage(filename, _quadBackgroundGfxBuf + 89600, 1);
 	_fadePaletteCounter = 0;
 	for (int i = 0; i < 60; ++i) {
 		if (_fadePaletteCounter < 16) {
@@ -427,20 +431,21 @@ void TuckerEngine::copyMapRect(int x, int y, int w, int h) {
 }
 
 int TuckerEngine::handleSpecialObjectSelectionSequence() {
+	char filename[40];
 	if (_partNum == 1 && _selectedObjectNum == 6) {
-		strcpy(_fileToLoad, "news1.pcx");
+		strcpy(filename, "news1.pcx");
 		_flagsTable[7] = 4;
 	} else if (_partNum == 3 && _selectedObjectNum == 45) {
-		strcpy(_fileToLoad, "profnote.pcx");
+		strcpy(filename, "profnote.pcx");
 	} else if (_partNum == 1 && _selectedObjectNum == 26) {
-		strcpy(_fileToLoad, "photo.pcx");
+		strcpy(filename, "photo.pcx");
 	} else if (_partNum == 3 && _selectedObjectNum == 39) {
-		strcpy(_fileToLoad, "news2.pcx");
+		strcpy(filename, "news2.pcx");
 		_flagsTable[135] = 1;
 	} else if (_currentInfoString1SourceType == 0 && _currentActionObj1Num == 259) {
-		strcpy(_fileToLoad, "postit.pcx");
+		strcpy(filename, "postit.pcx");
 	} else if (_currentInfoString1SourceType == 1 && _currentActionObj1Num == 91) {
-		strcpy(_fileToLoad, "memo.pcx");
+		strcpy(filename, "memo.pcx");
 	} else {
 		return 0;
 	}
@@ -450,7 +455,7 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 		--_fadePaletteCounter;
 	}
 	_mouseClick = 1;
-	loadImage(_fileToLoad, _quadBackgroundGfxBuf, 1);
+	loadImage(filename, _quadBackgroundGfxBuf, 1);
 	_fadePaletteCounter = 0;
 	while (!_quitGame) {
 		waitForTimer(2);

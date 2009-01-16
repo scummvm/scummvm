@@ -335,8 +335,7 @@ void TuckerEngine::loadCharSizeDta() {
 }
 
 void TuckerEngine::loadPanel() {
-	strcpy(_fileToLoad, (_panelNum == 0) ? "panel1.pcx" : "panel2.pcx");
-	loadImage(_fileToLoad, _panelGfxBuf, 0);
+	loadImage((_panelNum == 0) ? "panel1.pcx" : "panel2.pcx", _panelGfxBuf, 0);
 }
 
 void TuckerEngine::loadBudSpr(int startOffset) {
@@ -347,18 +346,19 @@ void TuckerEngine::loadBudSpr(int startOffset) {
 	int spriteOffset = 0;
 	for (int i = startOffset; i < endOffset; ++i) {
 		if (_ctable01Table_sprite[frame] == i) {
+			char filename[40];
 			switch (_flagsTable[137]) {
 			case 0:
-				sprintf(_fileToLoad, "bud_%d.pcx", frame + 1);
+				sprintf(filename, "bud_%d.pcx", frame + 1);
 				break;
 			case 1:
-				sprintf(_fileToLoad, "peg_%d.pcx", frame + 1);
+				sprintf(filename, "peg_%d.pcx", frame + 1);
 				break;
 			default:
-				sprintf(_fileToLoad, "mac_%d.pcx", frame + 1);
+				sprintf(filename, "mac_%d.pcx", frame + 1);
 				break;
 			}
-			loadImage(_fileToLoad, _loadTempBuf, 0);
+			loadImage(filename, _loadTempBuf, 0);
 			++frame;
 		}
 		int sz = Graphics::encodeRLE(_loadTempBuf + _spriteFramesTable[i].sourceOffset, _spritesGfxBuf + spriteOffset, _spriteFramesTable[i].xSize, _spriteFramesTable[i].ySize);
@@ -428,28 +428,30 @@ void TuckerEngine::loadCTable02(int fl) {
 }
 
 void TuckerEngine::loadLoc() {
+	char filename[40];
+
 	int i = _locationWidthTable[_locationNum];
 	_locationHeight = (_locationNum < 73) ? 140 : 200;
-	sprintf(_fileToLoad, (i == 1) ? "loc%02d.pcx" : "loc%02da.pcx", _locationNum);
-	copyLocBitmap(0, false);
+	sprintf(filename, (i == 1) ? "loc%02d.pcx" : "loc%02da.pcx", _locationNum);
+	copyLocBitmap(filename, 0, false);
 	Graphics::copyFrom640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf, 320, _locationHeight);
 	if (_locationHeight == 200) {
 		return;
 	}
-	sprintf(_fileToLoad, (i != 2) ? "path%02d.pcx" : "path%02da.pcx", _locationNum);
-	copyLocBitmap(0, true);
+	sprintf(filename, (i != 2) ? "path%02d.pcx" : "path%02da.pcx", _locationNum);
+	copyLocBitmap(filename, 0, true);
 	if (i > 1) {
-		sprintf(_fileToLoad, "loc%02db.pcx", _locationNum);
-		copyLocBitmap(320, false);
+		sprintf(filename, "loc%02db.pcx", _locationNum);
+		copyLocBitmap(filename, 320, false);
 		Graphics::copyFrom640(_locationBackgroundGfxBuf + 320, _quadBackgroundGfxBuf + 44800, 320, 140);
 		if (i == 2) {
-			sprintf(_fileToLoad, "path%02db.pcx", _locationNum);
-			copyLocBitmap(320, true);
+			sprintf(filename, "path%02db.pcx", _locationNum);
+			copyLocBitmap(filename, 320, true);
 		}
 	}
 	if (i > 2) {
-		sprintf(_fileToLoad, "loc%02dc.pcx", _locationNum);
-		copyLocBitmap(0, false);
+		sprintf(filename, "loc%02dc.pcx", _locationNum);
+		copyLocBitmap(filename, 0, false);
 		Graphics::copyFrom640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf + 89600, 320, 140);
 	}
 	if (_locationNum == 1) {
@@ -457,8 +459,8 @@ void TuckerEngine::loadLoc() {
 		loadImage("rochpath.pcx", _loadLocBufPtr, 0);
 	}
 	if (i > 3) {
-		sprintf(_fileToLoad, "loc%02dd.pcx", _locationNum);
-		copyLocBitmap(0, false);
+		sprintf(filename, "loc%02dd.pcx", _locationNum);
+		copyLocBitmap(filename, 0, false);
 		Graphics::copyFrom640(_locationBackgroundGfxBuf + 320, _quadBackgroundGfxBuf + 134400, 320, 140);
 	}
 	_fullRedrawCounter = 2;
@@ -484,12 +486,15 @@ void TuckerEngine::loadObj() {
 	debug(2, "loadObj() partNum %d locationNum %d", _partNum, _locationNum);
 	handleNewPartSequence();
 	_currentPartNum = _partNum;
-	sprintf(_fileToLoad, "objtxt%d.c", _partNum);
+
+
+	char filename[40];
+	sprintf(filename, "objtxt%d.c", _partNum);
 	free(_objTxtBuf);
-	_objTxtBuf = loadFile(_fileToLoad, 0);
-	sprintf(_fileToLoad, "pt%dtext.c", _partNum);
+	_objTxtBuf = loadFile(filename, 0);
+	sprintf(filename, "pt%dtext.c", _partNum);
 	free(_ptTextBuf);
-	_ptTextBuf = loadFile(_fileToLoad, 0);
+	_ptTextBuf = loadFile(filename, 0);
 	loadData();
 	loadPanObj();
 }
@@ -538,8 +543,9 @@ void TuckerEngine::loadData() {
 	_dataCount = maxCount;
 	int offset = 0;
 	for (int i = 0; i < count; ++i) {
-		sprintf(_fileToLoad, "scrobj%d%d.pcx", _partNum, i);
-		loadImage(_fileToLoad, _loadTempBuf, 0);
+		char filename[40];
+		sprintf(filename, "scrobj%d%d.pcx", _partNum, i);
+		loadImage(filename, _loadTempBuf, 0);
 		offset = loadDataHelper(offset, i);
 	}
 }
@@ -556,8 +562,9 @@ int TuckerEngine::loadDataHelper(int offset, int index) {
 }
 
 void TuckerEngine::loadPanObj() {
-	sprintf(_fileToLoad, "panobjs%d.pcx", _partNum);
-	loadImage(_fileToLoad, _loadTempBuf, 0);
+	char filename[40];
+	sprintf(filename, "panobjs%d.pcx", _partNum);
+	loadImage(filename, _loadTempBuf, 0);
 	int offset = 0;
 	for (int y = 0; y < 5; ++y) {
 		for (int x = 0; x < 10; ++x) {
@@ -651,18 +658,20 @@ void TuckerEngine::loadData4() {
 }
 
 void TuckerEngine::loadActionFile() {
+	char filename[40];
 	switch (_partNum) {
 	case 1:
-		strcpy(_fileToLoad, "action1.c");
+		strcpy(filename, "action1.c");
 		break;
 	case 2:
-		strcpy(_fileToLoad, "action2.c");
+		strcpy(filename, "action2.c");
 		break;
 	default:
-		strcpy(_fileToLoad, "action3.c");
+		strcpy(filename, "action3.c");
 		break;
 	}
-	loadFile(_fileToLoad, _loadTempBuf);
+	loadFile(filename, _loadTempBuf);
+
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	_actionsCount = 0;
 	if (t.findIndex(_locationNum)) {
@@ -759,8 +768,9 @@ void TuckerEngine::loadSprA02_01() {
 	unloadSprA02_01();
 	const int count = _sprA02LookupTable[_locationNum];
 	for (int i = 1; i < count + 1; ++i) {
-		sprintf(_fileToLoad, "sprites/a%02d_%02d.spr", _locationNum, i);
-		_sprA02Table[i] = loadFile(_fileToLoad, 0);
+		char filename[40];
+		sprintf(filename, "sprites/a%02d_%02d.spr", _locationNum, i);
+		_sprA02Table[i] = loadFile(filename, 0);
 	}
 	_sprA02Table[0] = _sprA02Table[1];
 }
@@ -777,8 +787,9 @@ void TuckerEngine::loadSprC02_01() {
 	unloadSprC02_01();
 	const int count = _sprC02LookupTable[_locationNum];
 	for (int i = 1; i < count + 1; ++i) {
-		sprintf(_fileToLoad, "sprites/c%02d_%02d.spr", _locationNum, i);
-		_sprC02Table[i] = loadFile(_fileToLoad, 0);
+		char filename[40];
+		sprintf(filename, "sprites/c%02d_%02d.spr", _locationNum, i);
+		_sprC02Table[i] = loadFile(filename, 0);
 	}
 	_sprC02Table[0] = _sprC02Table[1];
 	_spritesCount = _sprC02LookupTable2[_locationNum];
