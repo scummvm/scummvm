@@ -318,6 +318,8 @@ void loadScriptsFromSave(Common::InSaveFile& currentSaveFile, scriptInstanceStru
 		if (ptr->varA) {
 			ptr->var6 = (uint8 *) mallocAndZero(ptr->varA);
 
+			// FIXME: This code is not endian safe, and breaks if struct
+			// packing changes. Read/write the members one by one instead.
 			currentSaveFile.read(ptr->var6, ptr->varA);
 		}
 
@@ -441,6 +443,8 @@ void saveCT(Common::OutSaveFile& currentSaveFile) {
 
 		if(numberOfWalkboxes)
 		{
+			// FIXME: This code is not endian safe, and breaks if struct
+			// packing changes. Read/write the members one by one instead.
 			currentSaveFile.write(walkboxColor, numberOfWalkboxes * 2);
 			currentSaveFile.write(walkboxState, numberOfWalkboxes * 2);
 		}
@@ -473,6 +477,8 @@ void loadSavegameDataSub6(Common::InSaveFile& currentSaveFile) {
 		numberOfWalkboxes = currentSaveFile.readUint16LE();
 
 		if (numberOfWalkboxes) {
+			// FIXME: This code is not endian safe, and breaks if struct
+			// packing changes. Read/write the members one by one instead.
 			currentSaveFile.read(walkboxColor, numberOfWalkboxes * 2);
 			currentSaveFile.read(walkboxState, numberOfWalkboxes * 2);
 		}
@@ -481,6 +487,8 @@ void loadSavegameDataSub6(Common::InSaveFile& currentSaveFile) {
 			persoTable[i] = (persoStruct*)currentSaveFile.readSint32LE();
 
 			if (persoTable[i]) {
+				// FIXME: This code is not endian safe, and breaks if struct
+				// packing changes. Read/write the members one by one instead.
 				assert(sizeof(persoStruct) == 0x6AA);
 				persoTable[i] = (persoStruct *)mallocAndZero(sizeof(persoStruct));
 				currentSaveFile.read(persoTable[i], 0x6AA);
@@ -736,8 +744,10 @@ int loadSavegameData(int saveGameIdx) {
 	var41 = currentSaveFile->readSint16LE();
 	entrerMenuJoueur = currentSaveFile->readSint16LE();
 
+	// FIXME: This code is not endian safe, and breaks if struct
+	// packing changes. Read/write the members one by one instead.
 	currentSaveFile->read(newPal, sizeof(int16) * NBCOLORS);
-	currentSaveFile->read(newPal, sizeof(int16) * NBCOLORS);
+	currentSaveFile->read(newPal, sizeof(int16) * NBCOLORS);	// FIXME: Should this read into workpal ?
 
 	// here code seems bogus... this should read music name and it may be a buffer overrun
 	currentSaveFile->skip(21);
@@ -751,6 +761,8 @@ int loadSavegameData(int saveGameIdx) {
 		currentSaveFile->read(backgroundTable[i].extention, 6);
 	}
 
+	// FIXME: This code is not endian safe, and breaks if struct
+	// packing changes. Read/write the members one by one instead.
 	currentSaveFile->read(palScreen, sizeof(int16) * NBCOLORS * NBSCREENS);
 	currentSaveFile->read(initVar5, 24);
 	currentSaveFile->read(globalVars, stateID * 2); // ok
