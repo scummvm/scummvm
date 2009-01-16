@@ -42,8 +42,8 @@ void TuckerEngine::handleIntroSequence() {
 }
 
 void TuckerEngine::handleCreditsSequence() {
-	static const int _creditsSequenceData1[] = { 200, 350, 650, 850, 1150, 1450, 12000 };
-	static const int _creditsSequenceData2[] = { 1, 1, 5, 0, 6, 6, 0 };
+	static const int _creditsSequenceTimecounts[] = { 200, 350, 650, 850, 1150, 1450, 12000 };
+	static const int _creditsSequenceSpriteCounts[] = { 1, 1, 5, 0, 6, 6, 0 };
 	int counter4 = 0;
 	int counter3 = 0;
 	int num = 0;
@@ -57,7 +57,7 @@ void TuckerEngine::handleCreditsSequence() {
 	_flagsTable[236] = 74;
 	uint8 *imgBuf = (uint8 *)malloc(16 * 64000);
 	loadSprC02_01();
-	_spritesCount = _creditsSequenceData2[num];
+	_spritesCount = _creditsSequenceSpriteCounts[num];
 	for (int i = 0; i < _spritesCount; ++i) {
 		memset(&_spritesTable[i], 0, sizeof(Sprite));
 		_spritesTable[i].state = -1;
@@ -73,7 +73,7 @@ void TuckerEngine::handleCreditsSequence() {
 			fadeOutPalette();
 			++_fadePaletteCounter;
 		}
-		if (counter4 + 20 > _creditsSequenceData1[num]) {
+		if (counter4 + 20 > _creditsSequenceTimecounts[num]) {
 			fadeInPalette();
 		}
 		++imgNum;
@@ -117,9 +117,9 @@ void TuckerEngine::handleCreditsSequence() {
 		waitForTimer(3);
 		_timerCounter1 = 0;
 		counter4 = _timerCounter2 / 3;
-		if (counter4 == _creditsSequenceData1[num]) {
+		if (counter4 == _creditsSequenceTimecounts[num]) {
 			_fadePaletteCounter = 0;
-			_spritesCount = _creditsSequenceData2[num];
+			_spritesCount = _creditsSequenceSpriteCounts[num];
 			for (int i = 0; i < _spritesCount; ++i) {
 				memset(&_spritesTable[i], 0, sizeof(Sprite));
 				_spritesTable[i].state = -1;
@@ -152,7 +152,7 @@ void TuckerEngine::handleCreditsSequence() {
 				}
 				loadImage(filename, _quadBackgroundGfxBuf, 2);
 			}
-			_spritesCount = _creditsSequenceData2[num];
+			_spritesCount = _creditsSequenceSpriteCounts[num];
 			++_flagsTable[236];
 		}
 	} while (!_quitGame && isSpeechSoundPlaying());
