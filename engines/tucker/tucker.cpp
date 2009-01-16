@@ -1550,9 +1550,7 @@ void TuckerEngine::execData3PreUpdate() {
 		execData3PreUpdate_locationNum13();
 		break;
 	case 14:
-		if (_yPosCurrent > 126) {
-			execData3PreUpdate_locationNum14();
-		}
+		execData3PreUpdate_locationNum14();
 		break;
 	case 15:
 		execData3PreUpdate_locationNum15();
@@ -1655,6 +1653,47 @@ void TuckerEngine::execData3PreUpdate() {
 		break;
 	case 70:
 		execData3PreUpdate_locationNum70();
+		break;
+	}
+}
+
+void TuckerEngine::execData3PostUpdate() {
+	switch (_locationNum) {
+	case 1:
+		execData3PostUpdate_locationNum1();
+		break;
+	case 6:
+		execData3PostUpdate_locationNum6();
+		break;
+	case 8:
+		execData3PostUpdate_locationNum8();
+		break;
+	case 9:
+		execData3PostUpdate_locationNum9();
+		break;
+	case 14:
+		execData3PostUpdate_locationNum14();
+		break;
+	case 21:
+		execData3PostUpdate_locationNum21();
+		break;
+	case 24:
+		execData3PostUpdate_locationNum24();
+		break;
+	case 27:
+		execData3PostUpdate_locationNum27();
+		break;
+	case 28:
+		execData3PostUpdate_locationNum28();
+		break;
+	case 32:
+		execData3PostUpdate_locationNum32();
+		break;
+	case 60:
+		execData3PostUpdate_locationNum60();
+		break;
+	case 66:
+		execData3PostUpdate_locationNum66();
 		break;
 	}
 }
@@ -2181,51 +2220,6 @@ void TuckerEngine::updateCharacterAnimation() {
 	_characterPrevFacingDirection = _characterFacingDirection;
 }
 
-void TuckerEngine::execData3PostUpdate() {
-	switch (_locationNum) {
-	case 1:
-		execData3PostUpdate_locationNum1();
-		break;
-	case 6:
-		if (_flagsTable[26] < 4) {
-			execData3PreUpdate_locationNum6Helper1();
-		}
-		break;
-	case 8:
-		execData3PostUpdate_locationNum8();
-		break;
-	case 9:
-		execData3PostUpdate_locationNum9();
-		break;
-	case 14:
-		if (_yPosCurrent < 127) {
-			execData3PreUpdate_locationNum14();
-		}
-		break;
-	case 21:
-		execData3PostUpdate_locationNum21();
-		break;
-	case 24:
-		execData3PostUpdate_locationNum24();
-		break;
-	case 27:
-		execData3PostUpdate_locationNum27();
-		break;
-	case 28:
-		execData3PostUpdate_locationNum28();
-		break;
-	case 32:
-		execData3PostUpdate_locationNum32();
-		break;
-	case 60:
-		execData3PostUpdate_locationNum60();
-		break;
-	case 66:
-		execData3PostUpdate_locationNum66();
-		break;
-	}
-}
-
 void TuckerEngine::addObjectToInventory(int num) {
 	_inventoryObjectsList[_inventoryObjectsCount] = num;
 	_lastInventoryObjectIndex = _inventoryObjectsCount;
@@ -2618,7 +2612,7 @@ void TuckerEngine::updateSprite(int i) {
 		if (i == 0) {
 			_spritesTable[0].state = -1;
 		} else {
-			updateSprite_locationNum37(i, i + 1, 200 - i * 45);
+			updateSprite_locationNum37(i);
 		}
 		break;
 	case 41:
@@ -2666,13 +2660,7 @@ void TuckerEngine::updateSprite(int i) {
 		}
 		break;
 	case 51:
-		if (i == 2) {
-			updateSprite_locationNum51_2(2);
-		} else if (i == 0) {
-			updateSprite_locationNum51_0(0);
-		} else {
-			updateSprite_locationNum51_1(1);
-		}
+		updateSprite_locationNum51(i);
 		break;
 	case 53:
 		if (i == 0) {

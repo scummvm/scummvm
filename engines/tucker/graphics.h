@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef TUCKER_GRAPHICS_H__
-#define TUCKER_GRAPHICS_H__
+#ifndef TUCKER_GRAPHICS_H
+#define TUCKER_GRAPHICS_H
 
 #include "common/util.h"
 

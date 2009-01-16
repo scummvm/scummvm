@@ -578,6 +578,12 @@ void TuckerEngine::execData3PreUpdate_locationNum6Helper3(int dstOffset, const u
 	addDirtyRect(dstOffset % 640, dstOffset / 640, 4, 51);
 }
 
+void TuckerEngine::execData3PostUpdate_locationNum6() {
+	if (_flagsTable[26] < 4) {
+		execData3PreUpdate_locationNum6Helper1();
+	}
+}
+
 void TuckerEngine::updateSprite_locationNum7_0(int i) {
 	int state;
 	++_spritesTable[i].counter;
@@ -973,6 +979,9 @@ void TuckerEngine::updateSprite_locationNum14(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum14() {
+	if (_yPosCurrent >= 126)
+		return;
+
 	if (!isSoundPlaying(0)) {
 		int num = -1;
 		const int i = getRandomNumber();
@@ -1016,7 +1025,7 @@ void TuckerEngine::execData3PreUpdate_locationNum14() {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum14Helper1(int i) {
-	const int y = 1872; // XXX bug, 187/182 ?
+	const int y = 1872; // FIXME: bug, 187/182 ?
 	if (_updateLocation14ObjNum[i] == 0) {
 		if (getRandomNumber() <= 30000) {
 			return;
@@ -1026,7 +1035,7 @@ void TuckerEngine::execData3PreUpdate_locationNum14Helper1(int i) {
 		_updateLocation14Step[i] = -55 - getRandomNumber() / 512;
 		_updateLocation14ObjNum[i] = 231;
 		_updateLocation14Delay[i] = 16 + getRandomNumber() / 2048;
-		// XXX bug, missing return ?
+		// FIXME: bug, missing return ?
 	}
 	_updateLocation14Step[i] = 4;
 	_updateLocationYPosTable2[i] += _updateLocation14Step[i];
@@ -1051,6 +1060,12 @@ void TuckerEngine::execData3PreUpdate_locationNum14Helper2(int i) {
 		} else if (_updateLocation14ObjNum[i] == 235) {
 			_updateLocation14ObjNum[i] = 231;
 		}
+	}
+}
+
+void TuckerEngine::execData3PostUpdate_locationNum14() {
+	if (_yPosCurrent < 127) {
+		execData3PreUpdate_locationNum14();
 	}
 }
 
@@ -1809,16 +1824,14 @@ void TuckerEngine::execData3PreUpdate_locationNum30() {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum31() {
-	execData3PreUpdate_locationNum31Helper(32000, 110);
-	execData3PreUpdate_locationNum31Helper(31000, 111);
+	if (getRandomNumber() > 32000 && _flagsTable[110] == 0) {
+		_flagsTable[110] = 1;
+	}
+	if (getRandomNumber() > 31000 && _flagsTable[111] == 0) {
+		_flagsTable[111] = 1;
+	}
 	if (_xPosCurrent < 112 && _flagsTable[104] == 0) {
 		_flagsTable[104] = 1;
-	}
-}
-
-void TuckerEngine::execData3PreUpdate_locationNum31Helper(int r, int flag) {
-	if (getRandomNumber() > r && _flagsTable[flag] == 0) {
-		_flagsTable[flag] = 1;
 	}
 }
 
@@ -1969,7 +1982,9 @@ void TuckerEngine::execData3PreUpdate_locationNum36() {
 	}
 }
 
-void TuckerEngine::updateSprite_locationNum37(int i, int j, int offset) {
+void TuckerEngine::updateSprite_locationNum37(int i) {
+	int j = i + 1;
+	int offset = 200 - i * 45;
 	++_spritesTable[i].counter;
 	if (_spritesTable[i].counter > offset) {
 		_spritesTable[i].state = j;
@@ -2069,7 +2084,7 @@ void TuckerEngine::updateSprite_locationNum42(int i) {
 	} else if (_flagsTable[223] == 3) {
 		state = 5;
 		_spritesTable[i].updateDelay = 5;
-		_spritesTable[i].state = _spritesTable[i].firstFrame - 1; // XXX bug, fxNum ?
+		_spritesTable[i].state = _spritesTable[i].firstFrame - 1; // FIXME: bug, fxNum ?
 		_updateSpriteFlag1 = 1;
 	} else {
 		state = 2;
@@ -2273,32 +2288,29 @@ void TuckerEngine::updateSprite_locationNum50(int i) {
 		_updateSpriteFlag1 = 1;
 		state = i + 1;
 	}
-	state = i + 1; // XXX bug ?
+	state = i + 1; // FIXME: bug ?
 	_spritesTable[i].state = state;
 }
 
-void TuckerEngine::updateSprite_locationNum51_0(int i) {
-	static const int stateTable[] = { 3, 3, 4, 5, 3, 3, 5, 4, 3, 3, 4, 5, 4, 4 };
-	++_spritesTable[i].counter;
-	if (_spritesTable[i].counter > 13) {
-		_spritesTable[i].counter = 0;
+void TuckerEngine::updateSprite_locationNum51(int i) {
+	if (i == 2) {
+		_spritesTable[i].state = 1;
+	} else if (i == 0) {
+		static const int stateTable[] = { 3, 3, 4, 5, 3, 3, 5, 4, 3, 3, 4, 5, 4, 4 };
+		++_spritesTable[i].counter;
+		if (_spritesTable[i].counter > 13) {
+			_spritesTable[i].counter = 0;
+		}
+		_spritesTable[i].state = stateTable[_spritesTable[i].counter];
+	} else {
+		i = 1;
+		_spritesTable[i].state = 6;
 	}
-	_spritesTable[i].state = stateTable[_spritesTable[i].counter];
+
 	_spritesTable[i].colorType = 1;
 	_spritesTable[i].yMaxBackground = 0;
 }
 
-void TuckerEngine::updateSprite_locationNum51_1(int i) {
-	_spritesTable[i].state = 6;
-	_spritesTable[i].colorType = 1;
-	_spritesTable[i].yMaxBackground = 0;
-}
-
-void TuckerEngine::updateSprite_locationNum51_2(int i) {
-	_spritesTable[i].state = 1;
-	_spritesTable[i].colorType = 1;
-	_spritesTable[i].yMaxBackground = 0;
-}
 
 void TuckerEngine::execData3PreUpdate_locationNum52() {
 	if (_selectedObject.xPos > 108 && _panelLockedFlag > 0 && _nextAction == 0 && _locationMaskType == 0) {
@@ -2813,7 +2825,7 @@ void TuckerEngine::updateSprite_locationNum65(int i) {
 			_flagsTable[189] = 0;
 		}
 	} else {
-		if (_xPosCurrent >= 150 && _yPosCurrent < 240) { // XXX bug
+		if (_xPosCurrent >= 150 && _yPosCurrent < 240) { // FIXME: bug
 			if (getRandomNumber() > 32000) {
 				state = 2;
 				_flagsTable[189] = 1;

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef TUCKER_ENGINE_H__
-#define TUCKER_ENGINE_H__
+#ifndef TUCKER_ENGINE_H
+#define TUCKER_ENGINE_H
 
 #include "common/file.h"
 #include "common/util.h"
@@ -366,6 +366,7 @@ protected:
 	void execData3PreUpdate_locationNum6Helper1();
 	void execData3PreUpdate_locationNum6Helper2(int dstOffset, const uint8 *src);
 	void execData3PreUpdate_locationNum6Helper3(int dstOffset, const uint8 *src);
+	void execData3PostUpdate_locationNum6();
 	void updateSprite_locationNum7_0(int i);
 	void updateSprite_locationNum7_1(int i);
 	void updateSprite_locationNum8_0(int i);
@@ -392,6 +393,7 @@ protected:
 	void execData3PreUpdate_locationNum14();
 	void execData3PreUpdate_locationNum14Helper1(int i);
 	void execData3PreUpdate_locationNum14Helper2(int i);
+	void execData3PostUpdate_locationNum14();
 	void updateSprite_locationNum15_0(int i);
 	void updateSprite_locationNum15_1(int i);
 	void updateSprite_locationNum15_2(int i);
@@ -443,7 +445,6 @@ protected:
 	void updateSprite_locationNum31_0(int i);
 	void updateSprite_locationNum31_1(int i);
 	void execData3PreUpdate_locationNum31();
-	void execData3PreUpdate_locationNum31Helper(int r, int flag);
 	void updateSprite_locationNum32_0(int i);
 	void execData3PreUpdate_locationNum32();
 	void execData3PostUpdate_locationNum32();
@@ -455,7 +456,7 @@ protected:
 	void execData3PreUpdate_locationNum35();
 	void updateSprite_locationNum36(int i);
 	void execData3PreUpdate_locationNum36();
-	void updateSprite_locationNum37(int i, int j, int offset);
+	void updateSprite_locationNum37(int i);
 	void execData3PreUpdate_locationNum38();
 	void updateSprite_locationNum41(int i);
 	void execData3PreUpdate_locationNum41();
@@ -472,9 +473,7 @@ protected:
 	void updateSprite_locationNum49(int i);
 	void execData3PreUpdate_locationNum49();
 	void updateSprite_locationNum50(int i);
-	void updateSprite_locationNum51_0(int i);
-	void updateSprite_locationNum51_1(int i);
-	void updateSprite_locationNum51_2(int i);
+	void updateSprite_locationNum51(int i);
 	void execData3PreUpdate_locationNum52();
 	void updateSprite_locationNum53_0(int i);
 	void updateSprite_locationNum53_1(int i);
