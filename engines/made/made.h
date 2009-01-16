@@ -67,7 +67,7 @@ const uint32 kTimerResolution = 40;
 
 struct MadeGameDescription;
 
-class ProjectReader;
+class ResourceReader;
 class PmvPlayer;
 class Screen;
 class ScriptInterpreter;
@@ -105,7 +105,7 @@ public:
 private:
 public:
 	PmvPlayer *_pmvPlayer;
-	ProjectReader *_res;
+	ResourceReader *_res;
 	Screen *_screen;
 	GameDatabase *_dat;
 	ScriptInterpreter *_script;
@@ -119,10 +119,6 @@ public:
 	bool _autoStopSound;
 	uint _soundEnergyIndex;
 	SoundEnergyArray *_soundEnergyArray;
-
-	// 2 = LGOP2, Manhole N&E
-	// 3 = Return to Zork
-	int _engineVersion;
 
 	int32 _timers[50];
 	int16 getTicks();

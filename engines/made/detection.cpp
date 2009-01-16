@@ -92,7 +92,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD,
-		0,
+		3,
 	},
 
 	{
@@ -109,7 +109,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		0,
+		3,
 	},
 
 	{
@@ -125,7 +125,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD,
-		0,
+		3,
 	},
 
 	{
@@ -141,7 +141,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		0,
+		3,
 	},
 
 	{
@@ -158,7 +158,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD,
-		0,
+		3,
 	},
 
 	{
@@ -174,7 +174,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		0,
+		3,
 	},
 
 	{
@@ -192,7 +192,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD,
-		0,
+		3,
 	},
 
 	{
@@ -210,7 +210,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_CD_COMPRESSED,
-		0,
+		3,
 	},
 
 	{
@@ -226,7 +226,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_FLOPPY,
-		0,
+		3,
 	},
 
 	{
@@ -242,7 +242,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RTZ,
 		0,
 		GF_DEMO,
-		0,
+		3,
 	},
 
 	{
@@ -258,8 +258,26 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_MANHOLE,
 		0,
 		GF_CD,
-		0,
+		2,
 	},
+
+#if 0
+	{
+		// The Manhole (EGA, 5.25")
+		{
+			"manhole",
+			"EGA",
+			AD_ENTRY1("manhole.dat", "2b1658292599a861c4cd3cf6cdb3c581"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_MANHOLE,
+		0,
+		GF_FLOPPY,
+		1,
+ 	},
+#endif
 
 	{
 		// Leather Goddesses of Phobos 2
@@ -274,7 +292,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_LGOP2,
 		0,
 		GF_FLOPPY,
-		0,
+		2,
 	},
 
 	{
@@ -290,7 +308,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		GID_RODNEY,
 		0,
 		GF_FLOPPY,
-		0,
+		2,
 	},
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
@@ -382,7 +400,7 @@ const Common::ADGameDescription *MadeMetaEngine::fallbackDetect(const Common::FS
 	// Set default values for the fallback descriptor's MadeGameDescription part.
 	Made::g_fallbackDesc.gameID = 0;
 	Made::g_fallbackDesc.features = 0;
-	Made::g_fallbackDesc.version = 0;
+	Made::g_fallbackDesc.version = 3;
 
 	//return (const Common::ADGameDescription *)&Made::g_fallbackDesc;
 	return NULL;

@@ -103,7 +103,6 @@ AnimationResource::~AnimationResource() {
 }
 
 void AnimationResource::load(byte *source, int size) {
-
 	Common::MemoryReadStream *sourceS = new Common::MemoryReadStream(source, size);
 
 	sourceS->readUint32LE();
@@ -148,7 +147,6 @@ void AnimationResource::load(byte *source, int size) {
 	}
 
 	delete sourceS;
-
 }
 
 /* SoundResource */
@@ -162,7 +160,6 @@ SoundResource::~SoundResource() {
 }
 
 void SoundResource::load(byte *source, int size) {
-
 	uint16 chunkCount = READ_LE_UINT16(source + 8);
 	uint16 chunkSize = READ_LE_UINT16(source + 12);
 
@@ -172,7 +169,6 @@ void SoundResource::load(byte *source, int size) {
 	_soundEnergyArray = new SoundEnergyArray;
 
 	decompressSound(source + 14, _soundData, chunkSize, chunkCount, _soundEnergyArray);
-	
 }
 
 Audio::AudioStream *SoundResource::getAudioStream(int soundRate, bool loop) {
@@ -181,6 +177,14 @@ Audio::AudioStream *SoundResource::getAudioStream(int soundRate, bool loop) {
 		flags |= Audio::Mixer::FLAG_LOOP;
 
 	return Audio::makeLinearInputStream(_soundData, _soundSize, soundRate, flags, 0, 0);
+}
+
+void SoundResourceV1::load(byte *source, int size) {
+	// TODO: This is all wrong. Seems like the sound is compressed
+	// but where is the compression info? (chunks, chunk size)
+	_soundSize = size;
+	_soundData = new byte[_soundSize];
+	memcpy(_soundData, source, _soundSize);
 }
 
 /* MenuResource */
@@ -281,16 +285,24 @@ void GenericResource::load(byte *source, int size) {
 	memcpy(_data, source, size);
 }
 
-/* ProjectReader */
+/* ResourceReader */
 
-ProjectReader::ProjectReader() {
+ResourceReader::ResourceReader() {
+	_isV1 = false;
 }
 
-ProjectReader::~ProjectReader() {
+ResourceReader::~ResourceReader() {
+	if (!_isV1) {
+		delete _fd;
+	} else {
+		delete _fdPics;
+		delete _fdSounds;
+		delete _fdMusic;
+	}
 }
 
-void ProjectReader::open(const char *filename) {
-
+// V2
+void ResourceReader::open(const char *filename) {
 	_fd = new Common::File();
 	_fd->open(filename);
 
@@ -326,38 +338,72 @@ void ProjectReader::open(const char *filename) {
 	}
 
 	_cacheCount = 0;
-
 }
 
-PictureResource *ProjectReader::getPicture(int index) {
+// V1
+void ResourceReader::openResourceBlocks() {
+	_isV1 = true;
+	_fdPics = new Common::File();
+	_fdSounds = new Common::File();
+	_fdMusic = new Common::File();
+
+	openResourceBlock("pics.blk", _fdPics, kResFLEX);
+	openResourceBlock("snds.blk", _fdSounds, kResSNDS);
+	openResourceBlock("music.blk", _fdMusic, kResMIDI);
+}
+
+void ResourceReader::openResourceBlock(const char *filename, Common::File *blockFile, uint32 resType) {
+	blockFile->open(filename);
+
+	blockFile->readUint16LE(); // Skip unused
+	uint16 count = blockFile->readUint16LE();
+	blockFile->readUint16LE(); // Skip unused
+	uint32 type = blockFile->readUint32BE();
+	if (type != kResFLEX)
+		warning("openResourceBlocks: resource header is not 'FLEX'");
+
+	_resSlots[resType] = new ResourceSlots();
+
+	for (uint16 i = 0; i < count; i++) {
+		uint32 offset = blockFile->readUint32LE();
+		blockFile->readUint32LE();
+		uint32 size = blockFile->readUint32LE();
+		_resSlots[resType]->push_back(ResourceSlot(offset, size));
+	}
+}
+
+PictureResource *ResourceReader::getPicture(int index) {
 	return createResource<PictureResource>(kResFLEX, index);
 }
 
-AnimationResource *ProjectReader::getAnimation(int index) {
+AnimationResource *ResourceReader::getAnimation(int index) {
 	return createResource<AnimationResource>(kResANIM, index);
 }
 
-SoundResource *ProjectReader::getSound(int index) {
-	return createResource<SoundResource>(kResSNDS, index);
+SoundResource *ResourceReader::getSound(int index) {
+	if (!_isV1)
+		return createResource<SoundResource>(kResSNDS, index);
+	else
+		return createResource<SoundResourceV1>(kResSNDS, index);
 }
 
-MenuResource *ProjectReader::getMenu(int index) {
+MenuResource *ResourceReader::getMenu(int index) {
 	return createResource<MenuResource>(kResMENU, index);
 }
 
-FontResource *ProjectReader::getFont(int index) {
+FontResource *ResourceReader::getFont(int index) {
 	return createResource<FontResource>(kResFONT, index);
 }
 
-GenericResource *ProjectReader::getXmidi(int index) {
+GenericResource *ResourceReader::getXmidi(int index) {
 	return createResource<GenericResource>(kResXMID, index);
 }
 
-GenericResource *ProjectReader::getMidi(int index) {
+GenericResource *ResourceReader::getMidi(int index) {
 	return createResource<GenericResource>(kResMIDI, index);
 }
 
-void ProjectReader::loadIndex(ResourceSlots *slots) {
+void ResourceReader::loadIndex(ResourceSlots *slots) {
 	_fd->readUint32LE(); // skip INDX
 	_fd->readUint32LE(); // skip index size
 	_fd->readUint32LE(); // skip unknown
@@ -372,16 +418,17 @@ void ProjectReader::loadIndex(ResourceSlots *slots) {
 	}
 }
 
-void ProjectReader::freeResource(Resource *resource) {
+void ResourceReader::freeResource(Resource *resource) {
 	tossResourceFromCache(resource->slot);
 }
 
-bool ProjectReader::loadResource(ResourceSlot *slot, byte *&buffer, uint32 &size) {
+bool ResourceReader::loadResource(ResourceSlot *slot, byte *&buffer, uint32 &size) {
+	int offset = !_isV1 ? 62 : 0;
 	if (slot && slot->size > 0) {
-		size = slot->size - 62;
+		size = slot->size - offset;
 		buffer = new byte[size];
-		debug(2, "ProjectReader::loadResource() %08X", slot->offs + 62);
-		_fd->seek(slot->offs + 62);
+		debug(2, "ResourceReader::loadResource() %08X", slot->offs + offset);
+		_fd->seek(slot->offs + offset);
 		_fd->read(buffer, size);
 		return true;
 	} else {
@@ -389,7 +436,7 @@ bool ProjectReader::loadResource(ResourceSlot *slot, byte *&buffer, uint32 &size
 	}
 }
 
-ResourceSlot *ProjectReader::getResourceSlot(uint32 resType, uint index) {
+ResourceSlot *ResourceReader::getResourceSlot(uint32 resType, uint index) {
 	ResourceSlots *slots = _resSlots[resType];
 	if (index >= 1 && index < slots->size()) {
 		return &slots->operator[](index);
@@ -398,13 +445,13 @@ ResourceSlot *ProjectReader::getResourceSlot(uint32 resType, uint index) {
 	}
 }
 
-Resource *ProjectReader::getResourceFromCache(ResourceSlot *slot) {
+Resource *ResourceReader::getResourceFromCache(ResourceSlot *slot) {
 	if (slot->res)
 		slot->refCount++;
 	return slot->res;
 }
 
-void ProjectReader::addResourceToCache(ResourceSlot *slot, Resource *res) {
+void ResourceReader::addResourceToCache(ResourceSlot *slot, Resource *res) {
 	if (_cacheCount >= kMaxResourceCacheCount)
 		purgeCache();
 	slot->res = res;
@@ -412,13 +459,13 @@ void ProjectReader::addResourceToCache(ResourceSlot *slot, Resource *res) {
 	_cacheCount++;
 }
 
-void ProjectReader::tossResourceFromCache(ResourceSlot *slot) {
+void ResourceReader::tossResourceFromCache(ResourceSlot *slot) {
 	if (slot->res)
 		slot->refCount--;
 }
 
-void ProjectReader::purgeCache() {
-	debug(2, "ProjectReader::purgeCache()");
+void ResourceReader::purgeCache() {
+	debug(2, "ResourceReader::purgeCache()");
 	for (ResMap::const_iterator resTypeIter = _resSlots.begin(); resTypeIter != _resSlots.end(); ++resTypeIter) {
 		ResourceSlots *slots = (*resTypeIter)._value;
 		for (ResourceSlots::iterator slotIter = slots->begin(); slotIter != slots->end(); ++slotIter) {

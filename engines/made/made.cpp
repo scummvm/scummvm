@@ -81,7 +81,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 		_system->openCD(cd_num);
 
 	_pmvPlayer = new PmvPlayer(this, _mixer);
-	_res = new ProjectReader();
+	_res = new ResourceReader();
 	_screen = new Screen(this);
 
 	if (getGameID() == GID_LGOP2 || getGameID() == GID_MANHOLE || getGameID() == GID_RODNEY) {
@@ -107,15 +107,22 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	//_music->setAdlib(adlib);
 
 	// Set default sound frequency
-	// Return to Zork sets it itself via a script funtion
-	if (getGameID() == GID_MANHOLE || getGameID() == GID_RODNEY) {
+	switch (getGameID()) {
+	case GID_RODNEY:
 		_soundRate = 11025;
-	} else {
+		break;
+	case GID_MANHOLE:
+		_soundRate = getVersion() == 2 ? 11025 : 4000;
+		break;
+	case GID_LGOP2:
 		_soundRate = 8000;
+		break;
+	case GID_RTZ:
+		// Return to Zork sets it itself via a script funtion
+		break;
 	}
 
 	syncSoundSettings();
-
 }
 
 MadeEngine::~MadeEngine() {
@@ -245,7 +252,6 @@ Common::Error MadeEngine::go() {
 	resetAllTimers();
 
 	if (getGameID() == GID_RTZ) {
-		_engineVersion = 3;
 		if (getFeatures() & GF_DEMO) {
 			_dat->open("demo.dat");
 			_res->open("demo.prj");
@@ -262,15 +268,17 @@ Common::Error MadeEngine::go() {
 			error("Unknown RTZ game features");
 		}
 	} else if (getGameID() == GID_MANHOLE) {
-		_engineVersion = 2;
 		_dat->open("manhole.dat");
-		_res->open("manhole.prj");
+
+		if (getVersion() == 2) {
+			_res->open("manhole.prj");
+		} else {
+			_res->openResourceBlocks();
+		}
 	} else if (getGameID() == GID_LGOP2) {
-		_engineVersion = 2;
 		_dat->open("lgop2.dat");
 		_res->open("lgop2.prj");
 	} else if (getGameID() == GID_RODNEY) {
-		_engineVersion = 2;
 		_dat->open("rodneys.dat");
 		_res->open("rodneys.prj");
 	} else {
@@ -279,6 +287,22 @@ Common::Error MadeEngine::go() {
 
 	_autoStopSound = false;
 	_eventNum = _eventKey = _eventMouseX = _eventMouseY = 0;
+
+#if 0
+	// V1 test code
+	if (getVersion() == 1) {
+		// Music test (works)
+		_music->playSMF(_res->getMidi(1));
+
+		// SFX test (not working)
+		Audio::SoundHandle audioStreamHandle;
+		SoundResource *soundRes = _res->getSound(1);
+		_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &audioStreamHandle,
+			soundRes->getAudioStream(_soundRate, false));
+
+		quitGame();
+	}
+#endif
 
 #ifdef DUMP_SCRIPTS
 	_script->dumpAllScripts();
