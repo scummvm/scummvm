@@ -41,7 +41,7 @@ char *hwMemAddr[] = {
 short int cvtPalette[0x20];
 
 int loadMEN(uint8 **ptr) {
-	char *localPtr = (char *)*ptr;
+	char *localPtr = (char *) * ptr;
 
 	if (!strcmp(localPtr, "MEN")) {
 		localPtr += 4;
@@ -62,7 +62,7 @@ int loadMEN(uint8 **ptr) {
 int CVTLoaded;
 
 int loadCVT(uint8 **ptr) {
-	char *localPtr = (char *)*ptr;
+	char *localPtr = (char *) * ptr;
 
 	if (!strcmp(localPtr, "CVT")) {
 		int i;
@@ -128,57 +128,53 @@ int loadBackground(const char *name, int idx) {
 	}
 
 	if (!strcmp((char*)ptr, "PAL")) {
-		memcpy(palScreen[idx], ptr+4, 256*3);
+		memcpy(palScreen[idx], ptr + 4, 256*3);
 		gfxModuleData_setPal256(palScreen[idx]);
 	} else {
 		int mode = ptr2[1];
 		ptr2 += 2;
 		// read palette
-		switch(mode)
-		{
+		switch (mode) {
 		case 0:
-		case 4: // color on 3 bit
-			{
-				uint16 oldPalette[32];
+		case 4: { // color on 3 bit
+			uint16 oldPalette[32];
 
-				memcpy(oldPalette, ptr2, 0x20);
-				ptr2 += 0x20;
-				flipGen(oldPalette, 0x20);
+			memcpy(oldPalette, ptr2, 0x20);
+			ptr2 += 0x20;
+			flipGen(oldPalette, 0x20);
 
-				for(unsigned long int i=0; i<32; i++) {
-					gfxModuleData_convertOldPalColor(oldPalette[i], &palScreen[idx][i*3]);
-				}
-
-				// duplicate the palette
-				for(unsigned long int i=1; i<8; i++) {
-					memcpy(&palScreen[idx][32*i*3], &palScreen[idx][0], 32*3);
-				}
-
-				break;
+			for (unsigned long int i = 0; i < 32; i++) {
+				gfxModuleData_convertOldPalColor(oldPalette[i], &palScreen[idx][i*3]);
 			}
-		case 5: // color on 4 bit
-			{
-				for(unsigned long int i=0; i<32; i++)
-				{
-					uint8* inPtr = ptr2 + i * 2;
-					uint8* outPtr = palScreen[idx] +i * 3;
 
-					outPtr[2] = ((inPtr[1])&0x0F) * 17;
-					outPtr[1] = (((inPtr[1])&0xF0) >> 4) * 17;
-					outPtr[0] = ((inPtr[0])&0x0F) * 17;
-				}
-				ptr2 += 2*32;
-
-				// duplicate the palette
-				for(unsigned long int i=1; i<8; i++) {
-					memcpy(&palScreen[idx][32*i*3], &palScreen[idx][0], 32*3);
-				}
-
-				break;
+			// duplicate the palette
+			for (unsigned long int i = 1; i < 8; i++) {
+				memcpy(&palScreen[idx][32*i*3], &palScreen[idx][0], 32*3);
 			}
+
+			break;
+		}
+		case 5: { // color on 4 bit
+			for (unsigned long int i = 0; i < 32; i++) {
+				uint8* inPtr = ptr2 + i * 2;
+				uint8* outPtr = palScreen[idx] + i * 3;
+
+				outPtr[2] = ((inPtr[1]) & 0x0F) * 17;
+				outPtr[1] = (((inPtr[1]) & 0xF0) >> 4) * 17;
+				outPtr[0] = ((inPtr[0]) & 0x0F) * 17;
+			}
+			ptr2 += 2 * 32;
+
+			// duplicate the palette
+			for (unsigned long int i = 1; i < 8; i++) {
+				memcpy(&palScreen[idx][32*i*3], &palScreen[idx][0], 32*3);
+			}
+
+			break;
+		}
 		case 8:
 			memcpy(palScreen[idx], ptr2, 256*3);
-			ptr2 += 256*3;
+			ptr2 += 256 * 3;
 			break;
 
 		default:
@@ -190,8 +186,7 @@ int loadBackground(const char *name, int idx) {
 		// read image data
 		gfxModuleData_gfxClearFrameBuffer(backgroundPtrtable[idx]);
 
-		switch(mode)
-		{
+		switch (mode) {
 		case 0:
 		case 4:
 			convertGfxFromMode4(ptr2, 320, 200, backgroundPtrtable[idx]);
@@ -202,7 +197,7 @@ int loadBackground(const char *name, int idx) {
 			break;
 		case 8:
 			memcpy(backgroundPtrtable[idx], ptr2, 320 * 200);
-			ptr2 += 320*200;
+			ptr2 += 320 * 200;
 			break;
 		}
 

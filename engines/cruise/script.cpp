@@ -33,7 +33,7 @@ scriptInstanceStruct procHead;
 scriptInstanceStruct *currentScriptPtr;
 
 int8 getByteFromScript(void) {
-	int8 var = *(int8*)(currentData3DataPtr+currentScriptPtr->var4);
+	int8 var = *(int8*)(currentData3DataPtr + currentScriptPtr->var4);
 
 	currentScriptPtr->var4 = currentScriptPtr->var4 + 1;
 
@@ -41,7 +41,7 @@ int8 getByteFromScript(void) {
 }
 
 short int getShortFromScript(void) {
-	short int var = *(int16 *) (currentData3DataPtr + currentScriptPtr->var4);
+	short int var = *(int16 *)(currentData3DataPtr + currentScriptPtr->var4);
 
 	currentScriptPtr->var4 = currentScriptPtr->var4 + 2;
 
@@ -55,89 +55,85 @@ int32 opcodeType0(void) {
 	int index = 0;
 
 	switch (currentScriptOpcodeType) {
-	case 0:
-		{
-			pushVar(getShortFromScript());
-			return (0);
-		}
+	case 0: {
+		pushVar(getShortFromScript());
+		return (0);
+	}
 	case 5:
 		index = saveOpcodeVar;
-	case 1:
-		{
-			uint8 *address = 0;
-			int type = getByteFromScript();
-			int ovl = getByteFromScript();
-			short int offset = getShortFromScript();
-			offset += index;
+	case 1: {
+		uint8 *address = 0;
+		int type = getByteFromScript();
+		int ovl = getByteFromScript();
+		short int offset = getShortFromScript();
+		offset += index;
 
-			int typ7 = type & 7;
+		int typ7 = type & 7;
 
-			if (!typ7) {
-				return (-10); // unresloved link
+		if (!typ7) {
+			return (-10); // unresloved link
+		}
+
+		if (!ovl) {
+			address = scriptDataPtrTable[typ7];
+		} else	{ // TODO:
+			if (!overlayTable[ovl].alreadyLoaded) {
+				return (-7);
 			}
 
-			if (!ovl) {
-				address = scriptDataPtrTable[typ7];
-			} else	{ // TODO:
-				if (!overlayTable[ovl].alreadyLoaded) {
-					return (-7);
-				}
-
-				if (!overlayTable[ovl].ovlData) {
-					return (-4);
-				}
-
-				if (typ7 == 5) {
-					address = overlayTable[ovl].ovlData->data4Ptr;
-				} else {
-					assert(0);
-				}
+			if (!overlayTable[ovl].ovlData) {
+				return (-4);
 			}
 
-			address += offset;
-
-			int size = (type >> 3) & 3;
-
-			if (size == 1) {
-				address += index;
-				pushVar(loadShort(address));
-				return (0);
-			} else if (size == 2) {
-				pushVar(*address);
-				return (0);
+			if (typ7 == 5) {
+				address = overlayTable[ovl].ovlData->data4Ptr;
 			} else {
-				printf("Unsupported code in opcodeType0 case 1!\n");
-				exit(1);
+				assert(0);
 			}
-
-			return (0);
 		}
-	case 2:
-		{
-			int16 var_16;
-			int di = getByteFromScript();
-			int si = getByteFromScript();
-			int var_2 = getShortFromScript();
 
-			if (!si) {
-				si = currentScriptPtr->overlayNumber;
-			}
+		address += offset;
 
-			if (getSingleObjectParam(si, var_2, di, &var_16)) {
-				return -10;
-			}
+		int size = (type >> 3) & 3;
 
-			pushVar(var_16);
+		if (size == 1) {
+			address += index;
+			pushVar(loadShort(address));
 			return (0);
-
-			break;
-		}
-	default:
-		{
-			printf("Unsupported type %d in opcodeType0\n",
-			    currentScriptOpcodeType);
+		} else if (size == 2) {
+			pushVar(*address);
+			return (0);
+		} else {
+			printf("Unsupported code in opcodeType0 case 1!\n");
 			exit(1);
 		}
+
+		return (0);
+	}
+	case 2: {
+		int16 var_16;
+		int di = getByteFromScript();
+		int si = getByteFromScript();
+		int var_2 = getShortFromScript();
+
+		if (!si) {
+			si = currentScriptPtr->overlayNumber;
+		}
+
+		if (getSingleObjectParam(si, var_2, di, &var_16)) {
+			return -10;
+		}
+
+		pushVar(var_16);
+		return (0);
+
+		break;
+	}
+	default: {
+		printf("Unsupported type %d in opcodeType0\n",
+		       currentScriptOpcodeType);
+		exit(1);
+	}
 	}
 
 	return 0;
@@ -149,105 +145,95 @@ int32 opcodeType1(void)	{
 	int offset = 0;
 
 	switch (currentScriptOpcodeType) {
-	case 0:
-		{
-			return (0);	// strange, but happens also in original interpreter
-		}
-	case 5:
-		{
-			offset = saveOpcodeVar;
-		}
-	case 1:
-		{
-			int var_A = 0;
+	case 0: {
+		return (0);	// strange, but happens also in original interpreter
+	}
+	case 5: {
+		offset = saveOpcodeVar;
+	}
+	case 1: {
+		int var_A = 0;
 
-			int byte1 = getByteFromScript();
-			int byte2 = getByteFromScript();
+		int byte1 = getByteFromScript();
+		int byte2 = getByteFromScript();
 
-			int short1 = getShortFromScript();
+		int short1 = getShortFromScript();
 
-			int var_6 = byte1 & 7;
+		int var_6 = byte1 & 7;
 
-			int var_C = short1;
+		int var_C = short1;
 
-			uint8 *ptr = 0;
-			int type2;
+		uint8 *ptr = 0;
+		int type2;
 
-			if (!var_6)
-				return (-10);
+		if (!var_6)
+			return (-10);
 
-			var_C = short1;
+		var_C = short1;
 
-			if (byte2) {
-				if (!overlayTable[byte2].alreadyLoaded) {
-					return (-7);
-				}
+		if (byte2) {
+			if (!overlayTable[byte2].alreadyLoaded) {
+				return (-7);
+			}
 
-				if (!overlayTable[byte2].ovlData) {
-					return (-4);
-				}
+			if (!overlayTable[byte2].ovlData) {
+				return (-4);
+			}
 
-				if (var_6 == 5) {
-					ptr = overlayTable[byte2].ovlData->data4Ptr + var_C;
-				} else {
-					ASSERT(0);
-				}
+			if (var_6 == 5) {
+				ptr = overlayTable[byte2].ovlData->data4Ptr + var_C;
 			} else {
-				ptr = scriptDataPtrTable[var_6] + var_C;
+				ASSERT(0);
 			}
-
-			type2 = ((byte1 & 0x18) >> 3);
-
-			switch (type2) {
-			case 1:
-				{
-					saveShort(ptr + var_A + offset * 2, var);
-					return 0;
-				}
-			case 2:
-				{
-					*(ptr + var_A + offset) = var;
-					return (0);
-				}
-			default:
-				{
-					printf("Unsupported code in opcodeType1 case 1!\n");
-					exit(1);
-				}
-			}
-
-			break;
+		} else {
+			ptr = scriptDataPtrTable[var_6] + var_C;
 		}
-	case 2:
-		{
-			int mode = getByteFromScript();
-			int di = getByteFromScript();
-			int var_4 = getShortFromScript();
 
-			if (!di) {
-				di = currentScriptPtr->overlayNumber;
-			}
+		type2 = ((byte1 & 0x18) >> 3);
 
-			if ((var == 0x85) && !strcmp((char*)currentCtpName, "S26.CTP") && !di && mode == 1) // patch in bar
-			{
-				var= 0x87;
-			}
-
-			setObjectPosition(di, var_4, mode, var);
-
-			break;
+		switch (type2) {
+		case 1: {
+			saveShort(ptr + var_A + offset * 2, var);
+			return 0;
 		}
-	case 4:
-		{
-			saveOpcodeVar = var;
-			break;
+		case 2: {
+			*(ptr + var_A + offset) = var;
+			return (0);
 		}
-	default:
-		{
-			printf("Unsupported type %d in opcodeType1\n",
-			    currentScriptOpcodeType);
+		default: {
+			printf("Unsupported code in opcodeType1 case 1!\n");
 			exit(1);
 		}
+		}
+
+		break;
+	}
+	case 2: {
+		int mode = getByteFromScript();
+		int di = getByteFromScript();
+		int var_4 = getShortFromScript();
+
+		if (!di) {
+			di = currentScriptPtr->overlayNumber;
+		}
+
+		if ((var == 0x85) && !strcmp((char*)currentCtpName, "S26.CTP") && !di && mode == 1) { // patch in bar
+			var = 0x87;
+		}
+
+		setObjectPosition(di, var_4, mode, var);
+
+		break;
+	}
+	case 4: {
+		saveOpcodeVar = var;
+		break;
+	}
+	default: {
+		printf("Unsupported type %d in opcodeType1\n",
+		       currentScriptOpcodeType);
+		exit(1);
+	}
 	}
 
 	return (0);
@@ -255,48 +241,46 @@ int32 opcodeType1(void)	{
 
 int32 opcodeType2(void) {
 	int index = 0;
-	switch(currentScriptOpcodeType)
-	{
+	switch (currentScriptOpcodeType) {
 	case 5:
 		index = saveOpcodeVar;
-	case 1:
-		{
-			uint8* adresse = NULL;
-			int type = getByteFromScript();
-			int overlay = getByteFromScript();
+	case 1: {
+		uint8* adresse = NULL;
+		int type = getByteFromScript();
+		int overlay = getByteFromScript();
 
-			int firstOffset;
-			int offset;
-			firstOffset = offset = getShortFromScript();
-			offset += index;
+		int firstOffset;
+		int offset;
+		firstOffset = offset = getShortFromScript();
+		offset += index;
 
-			int typ7 = type&7;
-			if(!typ7) {
-				return (-10);
-			}
-			if(!overlay) {
-				adresse = scriptDataPtrTable[typ7];
-			} else {
-				if (!overlayTable[overlay].alreadyLoaded) {
-					return (-7);
-				}
-				if (!overlayTable[overlay].ovlData) {
-					return (-4);
-				}
-				ASSERT(0);
-			}
-
-			adresse += offset;
-			int size = (type>>3)&3;
-
-			if(size == 1) {
-				adresse += index;
-				pushPtr(adresse);
-			} else if(size == 2) {
-				pushPtr(adresse);
-			}
-
+		int typ7 = type & 7;
+		if (!typ7) {
+			return (-10);
 		}
+		if (!overlay) {
+			adresse = scriptDataPtrTable[typ7];
+		} else {
+			if (!overlayTable[overlay].alreadyLoaded) {
+				return (-7);
+			}
+			if (!overlayTable[overlay].ovlData) {
+				return (-4);
+			}
+			ASSERT(0);
+		}
+
+		adresse += offset;
+		int size = (type >> 3) & 3;
+
+		if (size == 1) {
+			adresse += index;
+			pushPtr(adresse);
+		} else if (size == 2) {
+			pushPtr(adresse);
+		}
+
+	}
 	}
 
 	return 0;
@@ -317,42 +301,36 @@ int32 opcodeType4(void) {		// test
 	int var2 = popVar();
 
 	switch (currentScriptOpcodeType) {
-	case 0:
-		{
-			if (var2 != var1)
-				boolVar = 1;
-			break;
-		}
-	case 1:
-		{
-			if (var2 == var1)
-				boolVar = 1;
-			break;
-		}
-	case 2:
-		{
-			if (var2 < var1)
-				boolVar = 1;
-			break;
-		}
-	case 3:
-		{
-			if (var2 <= var1)
-				boolVar = 1;
-			break;
-		}
-	case 4:
-		{
-			if (var2 > var1)
-				boolVar = 1;
-			break;
-		}
-	case 5:
-		{
-			if (var2 >= var1)
-				boolVar = 1;
-			break;
-		}
+	case 0: {
+		if (var2 != var1)
+			boolVar = 1;
+		break;
+	}
+	case 1: {
+		if (var2 == var1)
+			boolVar = 1;
+		break;
+	}
+	case 2: {
+		if (var2 < var1)
+			boolVar = 1;
+		break;
+	}
+	case 3: {
+		if (var2 <= var1)
+			boolVar = 1;
+		break;
+	}
+	case 4: {
+		if (var2 > var1)
+			boolVar = 1;
+		break;
+	}
+	case 5: {
+		if (var2 >= var1)
+			boolVar = 1;
+		break;
+	}
 
 	}
 
@@ -399,57 +377,49 @@ int32 opcodeType5(void) {
 	int bitMask = currentScriptPtr->ccr;
 
 	switch (currentScriptOpcodeType) {
-	case 0:
-		{
-			if (!(bitMask & 1)) {
-				currentScriptPtr->var4 = newSi;
-			}
-			break;
+	case 0: {
+		if (!(bitMask & 1)) {
+			currentScriptPtr->var4 = newSi;
 		}
-	case 1:
-		{
-			if (bitMask & 1) {
-				currentScriptPtr->var4 = newSi;
-			}
-			break;
+		break;
+	}
+	case 1: {
+		if (bitMask & 1) {
+			currentScriptPtr->var4 = newSi;
 		}
-	case 2:
-		{
-			if (bitMask & 2) {
-				currentScriptPtr->var4 = newSi;
-			}
-			break;
+		break;
+	}
+	case 2: {
+		if (bitMask & 2) {
+			currentScriptPtr->var4 = newSi;
 		}
-	case 3:
-		{
-			if (bitMask & 3) {
-				currentScriptPtr->var4 = newSi;
-			}
-			break;
+		break;
+	}
+	case 3: {
+		if (bitMask & 3) {
+			currentScriptPtr->var4 = newSi;
 		}
-	case 4:
-		{
-			if (bitMask & 4) {
-				currentScriptPtr->var4 = newSi;
-			}
-			break;
+		break;
+	}
+	case 4: {
+		if (bitMask & 4) {
+			currentScriptPtr->var4 = newSi;
 		}
-	case 5:
-		{
-			if (bitMask & 5) {
-				currentScriptPtr->var4 = newSi;
-			}
-			break;
+		break;
+	}
+	case 5: {
+		if (bitMask & 5) {
+			currentScriptPtr->var4 = newSi;
 		}
-	case 6:
-		{
-			break;	// never
-		}
-	case 7:
-		{
-			currentScriptPtr->var4 = newSi;	//always
-			break;
-		}
+		break;
+	}
+	case 6: {
+		break;	// never
+	}
+	case 7: {
+		currentScriptPtr->var4 = newSi;	//always
+		break;
+	}
 	}
 
 	return (0);
@@ -460,42 +430,35 @@ int32 opcodeType3(void)	{	// math
 	int pop2 = popVar();
 
 	switch (currentScriptOpcodeType) {
-	case 0:
-		{
-			pushVar(pop1 + pop2);
-			return (0);
-		}
-	case 1:
-		{
-			pushVar(pop1 / pop2);
-			return (0);
-		}
-	case 2:
-		{
-			pushVar(pop1 - pop2);
-			return (0);
-		}
-	case 3:
-		{
-			pushVar(pop1 * pop2);
-			return (0);
-		}
-	case 4:
-		{
-			pushVar(pop1 % pop2);
-			return (0);
-		}
+	case 0: {
+		pushVar(pop1 + pop2);
+		return (0);
+	}
+	case 1: {
+		pushVar(pop1 / pop2);
+		return (0);
+	}
+	case 2: {
+		pushVar(pop1 - pop2);
+		return (0);
+	}
+	case 3: {
+		pushVar(pop1 * pop2);
+		return (0);
+	}
+	case 4: {
+		pushVar(pop1 % pop2);
+		return (0);
+	}
 	case 7:
-	case 5:
-		{
-			pushVar(pop2 | pop1);
-			return (0);
-		}
-	case 6:
-		{
-			pushVar(pop2 & pop1);
-			return (0);
-		}
+	case 5: {
+		pushVar(pop2 | pop1);
+		return (0);
+	}
+	case 6: {
+		pushVar(pop2 & pop1);
+		return (0);
+	}
 	}
 
 	return 0;
@@ -536,13 +499,12 @@ int removeScript(int overlay, int idx, scriptInstanceStruct *headPtr) {
 	if (scriptPtr) {
 		do {
 			if (scriptPtr->overlayNumber == overlay
-			    && (scriptPtr->scriptNumber == idx || idx == -1)) {
+			        && (scriptPtr->scriptNumber == idx || idx == -1)) {
 				scriptPtr->scriptNumber = -1;
 			}
 
 			scriptPtr = scriptPtr->nextScriptPtr;
-		}
-		while (scriptPtr);
+		} while (scriptPtr);
 	}
 
 	return (0);
@@ -674,13 +636,13 @@ int executeScripts(scriptInstanceStruct *ptr) {
 
 	do {
 		if (currentScriptPtr->var4 == 290
-		    && currentScriptPtr->overlayNumber == 4
-		    && currentScriptPtr->scriptNumber == 0) {
+		        && currentScriptPtr->overlayNumber == 4
+		        && currentScriptPtr->scriptNumber == 0) {
 			currentScriptPtr->var4 = 923;
 		}
 		opcodeType = getByteFromScript();
 
-	//	printf("opType: %d\n",(opcodeType&0xFB)>>3);
+		//	printf("opType: %d\n",(opcodeType&0xFB)>>3);
 
 		currentScriptOpcodeType = opcodeType & 7;
 
@@ -689,7 +651,7 @@ int executeScripts(scriptInstanceStruct *ptr) {
 			exit(1);
 			return (-21);
 		}
-	} while (!opcodeTypeTable[(opcodeType & 0xFB) >> 3] ());
+	} while (!opcodeTypeTable[(opcodeType & 0xFB) >> 3]());
 
 	currentScriptPtr = NULL;
 

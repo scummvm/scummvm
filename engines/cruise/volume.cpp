@@ -59,10 +59,8 @@ void loadPal(volumeDataStruct *entry) {
 	PAL_ptr = (uint8 *) malloc(numLoadedPal * fileData2);
 }
 
-void closePal(void)
-{
-	if(PAL_fileHandle)
-	{
+void closePal(void) {
+	if (PAL_fileHandle) {
 		fclose(PAL_fileHandle);
 
 		free(PAL_ptr);
@@ -73,10 +71,8 @@ void closePal(void)
 	}
 }
 
-int closeBase(void)
-{
-	if(currentVolumeFile.isOpen())
-	{
+int closeBase(void) {
+	if (currentVolumeFile.isOpen()) {
 		currentVolumeFile.close();
 
 		free(volumePtrToFileDescriptor);
@@ -84,7 +80,7 @@ int closeBase(void)
 		strcpy(currentBaseName, "");
 	}
 
-	if(PAL_fileHandle) {
+	if (PAL_fileHandle) {
 		closePal();
 	}
 
@@ -344,8 +340,8 @@ int16 findFileInDisks(char *fileName) {
 }
 
 int closeCnf(void) {
-	for(long int i=0; i<numOfDisks; i++) {
-		if(volumeData[i].ptr) {
+	for (long int i = 0; i < numOfDisks; i++) {
+		if (volumeData[i].ptr) {
 			free(volumeData[i].ptr);
 			volumeData[i].ptr = NULL;
 		}
@@ -437,7 +433,7 @@ int16 readVolCnf(void) {
 		buffer = (fileEntry *) mallocAndZero(numEntry * sizeEntry);
 
 		for (j = 0; j < numEntry; j++) {
-			fileHandle.seek(4+j*0x1E);
+			fileHandle.seek(4 + j*0x1E);
 			fileHandle.read(buffer[j].name, 14);
 			buffer[j].offset = fileHandle.readSint32BE();
 			buffer[j].size = fileHandle.readSint32BE();
@@ -458,7 +454,7 @@ int16 readVolCnf(void) {
 			if (buffer[j].size == buffer[j].extSize) {
 				Common::DumpFile fout;
 				fout.open(nameBuffer);
-				if(fout.isOpen())
+				if (fout.isOpen())
 					fout.write(bufferLocal, buffer[j].size);
 			} else {
 				char *uncompBuffer = (char *)mallocAndZero(buffer[j].extSize + 500);
@@ -467,7 +463,7 @@ int16 readVolCnf(void) {
 
 				Common::File fout;
 				fout.open(nameBuffer, Common::File::kFileWriteMode);
-				if(fout.isOpen())
+				if (fout.isOpen())
 					fout.write(uncompBuffer, buffer[j].extSize);
 
 				//free(uncompBuffer);

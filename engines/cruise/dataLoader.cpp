@@ -115,14 +115,14 @@ void decodeGfxFormat5(dataFileEntry *pCurrentFileEntry) {
 
 	uint8 *buffer = (uint8 *) malloc(spriteSize);
 
-	for(int line = 0; line < pCurrentFileEntry->height; line++) {
+	for (int line = 0; line < pCurrentFileEntry->height; line++) {
 		uint8 p0;
 		uint8 p1;
 		uint8 p2;
 		uint8 p3;
 		uint8 p4;
 
-		for(int x = 0; x < pCurrentFileEntry->widthInColumn; x++) {
+		for (int x = 0; x < pCurrentFileEntry->widthInColumn; x++) {
 			int bit = 7 - (x % 8);
 			int col = x / 8;
 
@@ -236,14 +236,13 @@ fileTypeEnum getFileType(const char *name) {
 }
 
 int getNumMaxEntiresInSet(uint8 *ptr) {
-	uint16 numEntries = *(uint16 *) (ptr + 4);
+	uint16 numEntries = *(uint16 *)(ptr + 4);
 	flipShort(&numEntries);
 
 	return numEntries;
 }
 
-int loadFile(const char* name, int idx, int destIdx)
-{
+int loadFile(const char* name, int idx, int destIdx) {
 	uint8 *ptr = NULL;
 	fileTypeEnum fileType;
 
@@ -252,31 +251,27 @@ int loadFile(const char* name, int idx, int destIdx)
 	loadFileSub1(&ptr, name, NULL);
 
 	switch (fileType) {
-	case type_SET:
-		{
+	case type_SET: {
 
-			int numMaxEntriesInSet = getNumMaxEntiresInSet(ptr);
+		int numMaxEntriesInSet = getNumMaxEntiresInSet(ptr);
 
-			if (idx > numMaxEntriesInSet) {
-				return 0;	// exit if limit is reached
-			}
-			return loadSetEntry(name, ptr, idx, destIdx );
+		if (idx > numMaxEntriesInSet) {
+			return 0;	// exit if limit is reached
+		}
+		return loadSetEntry(name, ptr, idx, destIdx);
 
-			break;
-		}
-	case type_FNT:
-		{
-			return loadFNTSub(ptr, idx);
-			break;
-		}
-	case type_UNK:
-		{
-			break;
-		}
-	case type_SPL:
-		{
-			break;
-		}
+		break;
+	}
+	case type_FNT: {
+		return loadFNTSub(ptr, idx);
+		break;
+	}
+	case type_UNK: {
+		break;
+	}
+	case type_SPL: {
+		break;
+	}
 	}
 	return -1;
 }
@@ -290,33 +285,29 @@ int loadFileRange(const char *name, int startIdx, int currentEntryIdx, int numId
 	loadFileSub1(&ptr, name, NULL);
 
 	switch (fileType) {
-	case type_SET:
-		{
-			int i;
-			int numMaxEntriesInSet = getNumMaxEntiresInSet(ptr);
+	case type_SET: {
+		int i;
+		int numMaxEntriesInSet = getNumMaxEntiresInSet(ptr);
 
-			for (i = 0; i < numIdx; i++) {
-				if ((startIdx + i) > numMaxEntriesInSet) {
-					return 0;	// exit if limit is reached
-				}
-				loadSetEntry(name, ptr, startIdx + i, currentEntryIdx + i );
+		for (i = 0; i < numIdx; i++) {
+			if ((startIdx + i) > numMaxEntriesInSet) {
+				return 0;	// exit if limit is reached
 			}
+			loadSetEntry(name, ptr, startIdx + i, currentEntryIdx + i);
+		}
 
-			break;
-		}
-	case type_FNT:
-		{
-			loadFNTSub(ptr, startIdx);
-			break;
-		}
-	case type_UNK:
-		{
-			break;
-		}
-	case type_SPL:
-		{
-			break;
-		}
+		break;
+	}
+	case type_FNT: {
+		loadFNTSub(ptr, startIdx);
+		break;
+	}
+	case type_UNK: {
+		break;
+	}
+	case type_SPL: {
+		break;
+	}
 	}
 	return 0;
 }
@@ -329,36 +320,32 @@ int loadFullBundle(const char *name, int startIdx) {
 
 	loadFileSub1(&ptr, name, NULL);
 
-	if(ptr == NULL)
+	if (ptr == NULL)
 		return 0;
 
 	switch (fileType) {
-	case type_SET:
-		{
-			int i;
-			int numMaxEntriesInSet;
+	case type_SET: {
+		int i;
+		int numMaxEntriesInSet;
 
-			numMaxEntriesInSet = getNumMaxEntiresInSet(ptr);	// get maximum number of sprites/animations in SET file
+		numMaxEntriesInSet = getNumMaxEntiresInSet(ptr);	// get maximum number of sprites/animations in SET file
 
-			for (i = 0; i < numMaxEntriesInSet; i++) {
-				loadSetEntry(name, ptr, i, startIdx + i);
-			}
+		for (i = 0; i < numMaxEntriesInSet; i++) {
+			loadSetEntry(name, ptr, i, startIdx + i);
+		}
 
-			break;
-		}
-	case type_FNT:
-		{
-			loadFNTSub(ptr, startIdx);
-			break;
-		}
-	case type_UNK:
-		{
-			break;
-		}
-	case type_SPL:
-		{
-			break;
-		}
+		break;
+	}
+	case type_FNT: {
+		loadFNTSub(ptr, startIdx);
+		break;
+	}
+	case type_UNK: {
+		break;
+	}
+	case type_SPL: {
+		break;
+	}
 	}
 
 	return 0;
@@ -395,12 +382,12 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 		destPtr = filesDatabase[fileIndex].subData.ptr;
 
 		flipLong((int32 *) destPtr);
-		flipLong((int32 *) (destPtr + 4));
+		flipLong((int32 *)(destPtr + 4));
 		flipGen(destPtr + 8, 6);
 
 		currentPtr = destPtr + 14;
 
-		for (i = 0; i < *(int16 *) (destPtr + 8); i++) {
+		for (i = 0; i < *(int16 *)(destPtr + 8); i++) {
 			flipLong((int32 *) currentPtr);
 			currentPtr += 4;
 
@@ -466,84 +453,72 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 		ptr5 += resourceSize;
 
 		switch (localBuffer.type) {
-		case 0: // polygon
-			{
-				filesDatabase[fileIndex].subData.resourceType = 8;
-				filesDatabase[fileIndex].subData.index = currentEntryIdx;
-				break;
-			}
-		case 1:
-			{
-				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 8;
-				filesDatabase[fileIndex].subData.resourceType = 2;
-				decodeGfxFormat1(&filesDatabase[fileIndex]);
-				filesDatabase[fileIndex].subData.index = currentEntryIdx;
-				filesDatabase[fileIndex].subData.transparency = 0;
-				break;
-			}
-		case 4:
-			{
-				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 2;
-				filesDatabase[fileIndex].subData.resourceType = 4;
-				decodeGfxFormat4(&filesDatabase[fileIndex]);
-				filesDatabase[fileIndex].subData.index = currentEntryIdx;
-				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
-				break;
-			}
-		case 5:
-			{
-				filesDatabase[fileIndex].subData.resourceType = 4;
-				decodeGfxFormat5(&filesDatabase[fileIndex]);
-				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
-				filesDatabase[fileIndex].subData.index = currentEntryIdx;
-				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
-				break;
-			}
-		case 8:
-			{
-				filesDatabase[fileIndex].subData.resourceType = 4;
-				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
-				filesDatabase[fileIndex].subData.index = currentEntryIdx;
-				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
-				break;
-			}
-		default:
-			{
-				printf("Unsuported gfx loading type: %d\n", localBuffer.type);
-				break;
-			}
+		case 0: { // polygon
+			filesDatabase[fileIndex].subData.resourceType = 8;
+			filesDatabase[fileIndex].subData.index = currentEntryIdx;
+			break;
+		}
+		case 1: {
+			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 8;
+			filesDatabase[fileIndex].subData.resourceType = 2;
+			decodeGfxFormat1(&filesDatabase[fileIndex]);
+			filesDatabase[fileIndex].subData.index = currentEntryIdx;
+			filesDatabase[fileIndex].subData.transparency = 0;
+			break;
+		}
+		case 4: {
+			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 2;
+			filesDatabase[fileIndex].subData.resourceType = 4;
+			decodeGfxFormat4(&filesDatabase[fileIndex]);
+			filesDatabase[fileIndex].subData.index = currentEntryIdx;
+			filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
+			break;
+		}
+		case 5: {
+			filesDatabase[fileIndex].subData.resourceType = 4;
+			decodeGfxFormat5(&filesDatabase[fileIndex]);
+			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
+			filesDatabase[fileIndex].subData.index = currentEntryIdx;
+			filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
+			break;
+		}
+		case 8: {
+			filesDatabase[fileIndex].subData.resourceType = 4;
+			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
+			filesDatabase[fileIndex].subData.index = currentEntryIdx;
+			filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
+			break;
+		}
+		default: {
+			printf("Unsuported gfx loading type: %d\n", localBuffer.type);
+			break;
+		}
 		}
 
 		strcpy(filesDatabase[fileIndex].subData.name, name);
 
 		// create the mask
-		switch(localBuffer.type)
-		{
+		switch (localBuffer.type) {
 		case 1:
 		case 4:
 		case 5:
-		case 8:
-			{
-				int maskX;
-				int maskY;
+		case 8: {
+			int maskX;
+			int maskY;
 
-				memset(filesDatabase[fileIndex].subData.ptrMask, 0, filesDatabase[fileIndex].width/8 * filesDatabase[fileIndex].height);
+			memset(filesDatabase[fileIndex].subData.ptrMask, 0, filesDatabase[fileIndex].width / 8 * filesDatabase[fileIndex].height);
 
-				for(maskY=0; maskY<filesDatabase[fileIndex].height; maskY++)
-				{
-					for(maskX=0; maskX<filesDatabase[fileIndex].width; maskX++)
-					{
-						if(*(filesDatabase[fileIndex].subData.ptr + filesDatabase[fileIndex].width * maskY + maskX) != filesDatabase[fileIndex].subData.transparency)
-						{
-							*(filesDatabase[fileIndex].subData.ptrMask + filesDatabase[fileIndex].width/8 * maskY + maskX / 8) |= 0x80 >> (maskX&7);
-						}
+			for (maskY = 0; maskY < filesDatabase[fileIndex].height; maskY++) {
+				for (maskX = 0; maskX < filesDatabase[fileIndex].width; maskX++) {
+					if (*(filesDatabase[fileIndex].subData.ptr + filesDatabase[fileIndex].width * maskY + maskX) != filesDatabase[fileIndex].subData.transparency) {
+						*(filesDatabase[fileIndex].subData.ptrMask + filesDatabase[fileIndex].width / 8 * maskY + maskX / 8) |= 0x80 >> (maskX & 7);
 					}
 				}
-				break;
 			}
-		default:
-			{
-			}
+			break;
+		}
+		default: {
+		}
 		}
 	}
 

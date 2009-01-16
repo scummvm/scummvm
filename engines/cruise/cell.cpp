@@ -37,19 +37,19 @@ void resetPtr(cellStruct *ptr) {
 }
 
 void freeMessageList(cellStruct *objPtr) {
-/*	if (objPtr) {
-		 if (objPtr->next)
-		 free(objPtr->next);
+	/*	if (objPtr) {
+			 if (objPtr->next)
+			 free(objPtr->next);
 
-		free(objPtr);
-	} */
+			free(objPtr);
+		} */
 }
 void saveCell(Common::OutSaveFile& currentSaveFile) {
 
 	int count = 0;
 	cellStruct *t = cellHead.next;
 
-	while(t) {
+	while (t) {
 		count++;
 		t = t->next;
 	}
@@ -57,7 +57,7 @@ void saveCell(Common::OutSaveFile& currentSaveFile) {
 	currentSaveFile.writeSint16LE(count);
 
 	t = cellHead.next;
-	while(t) {
+	while (t) {
 		char dummy[2] = { 0, 0};
 
 		currentSaveFile.write(dummy, 2);
@@ -176,9 +176,9 @@ cellStruct *addCell(cellStruct *pHead, int16 overlayIdx, int16 objIdx, int16 typ
 
 	if (currentHead2) {
 		if ((currentHead2->overlay == overlayIdx) &&
-		    (currentHead2->backgroundPlane == backgroundPlane) &&
-		    (currentHead2->idx == objIdx) &&
-		    (currentHead2->type == type))
+		        (currentHead2->backgroundPlane == backgroundPlane) &&
+		        (currentHead2->idx == objIdx) &&
+		        (currentHead2->type == type))
 
 			return NULL;
 	}
@@ -276,15 +276,15 @@ void createTextObject(cellStruct *pObject, int overlayIdx, int messageIdx, int x
 	}
 }
 
-void removeCell(cellStruct *objPtr, int ovlNumber, int objectIdx, int objType, int backgroundPlane ) {
+void removeCell(cellStruct *objPtr, int ovlNumber, int objectIdx, int objType, int backgroundPlane) {
 	cellStruct *currentObj = objPtr->next;
 	cellStruct *previous;
 
 	while (currentObj) {
 		if (((currentObj->overlay == ovlNumber) || (ovlNumber == -1)) &&
-		    ((currentObj->idx == objectIdx) || (objectIdx == -1)) &&
-		    ((currentObj->type == objType) || (objType == -1)) &&
-		    ((currentObj->backgroundPlane == backgroundPlane) || (backgroundPlane == -1))) {
+		        ((currentObj->idx == objectIdx) || (objectIdx == -1)) &&
+		        ((currentObj->type == objType) || (objType == -1)) &&
+		        ((currentObj->backgroundPlane == backgroundPlane) || (backgroundPlane == -1))) {
 			currentObj->type = -1;
 		}
 
@@ -339,7 +339,7 @@ void linkCell(cellStruct *pHead, int ovl, int obj, int type, int ovl2, int obj2)
 	}
 }
 
-void freezeCell(cellStruct * pObject, int overlayIdx, int objIdx, int objType, int backgroundPlane, int oldFreeze, int newFreeze ) {
+void freezeCell(cellStruct * pObject, int overlayIdx, int objIdx, int objType, int backgroundPlane, int oldFreeze, int newFreeze) {
 	while (pObject) {
 		if ((pObject->overlay == overlayIdx) || (overlayIdx == -1)) {
 			if ((pObject->idx == objIdx) || (objIdx == -1)) {
@@ -358,7 +358,7 @@ void freezeCell(cellStruct * pObject, int overlayIdx, int objIdx, int objType, i
 }
 
 void sortCells(int16 ovlIdx, int16 ovjIdx, cellStruct *objPtr) {
-	cellStruct *pl,*pl2,*pl3,*pl4,*plz,*pllast;
+	cellStruct *pl, *pl2, *pl3, *pl4, *plz, *pllast;
 	cellStruct prov;
 	int16 newz, objz, sobjz;
 
@@ -423,9 +423,9 @@ void sortCells(int16 ovlIdx, int16 ovjIdx, cellStruct *objPtr) {
 		plz->next = pl2;
 		pllast->next = pl4;
 
-		if(plz != objPtr)
+		if (plz != objPtr)
 			pl2->prev = plz;
-		if(!pl4)
+		if (!pl4)
 			objPtr->prev = pllast;
 		else
 			pl4->prev = pllast;

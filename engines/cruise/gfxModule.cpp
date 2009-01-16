@@ -64,7 +64,7 @@ void outputBit(char *buffer, int bitPlaneNumber, uint8 data) {
 
 void convertGfxFromMode4(uint8 *sourcePtr, int width, int height, uint8 *destPtr) {
 	for (int y = 0; y < height; ++y) {
-		for (int x = 0; x < width/16; ++x) {
+		for (int x = 0; x < width / 16; ++x) {
 			for (int bit = 0; bit < 16; ++bit) {
 				uint8 color = 0;
 				for (int p = 0; p < 4; ++p) {
@@ -80,17 +80,17 @@ void convertGfxFromMode4(uint8 *sourcePtr, int width, int height, uint8 *destPtr
 }
 
 void convertGfxFromMode5(uint8 *sourcePtr, int width, int height, uint8 *destPtr) {
-	int range = (width/8) * height;
+	int range = (width / 8) * height;
 
-	for(int line = 0; line < 200; line++) {
+	for (int line = 0; line < 200; line++) {
 		uint8 p0;
 		uint8 p1;
 		uint8 p2;
 		uint8 p3;
 		uint8 p4;
 
-		for(int col = 0; col < 40; col++) {
-			for(int bit = 0; bit <8; bit++ ) {
+		for (int col = 0; col < 40; col++) {
+			for (int bit = 0; bit < 8; bit++) {
 				p0 = (sourcePtr[line*40 + col + range * 0] >> bit) & 1;
 				p1 = (sourcePtr[line*40 + col + range * 1] >> bit) & 1;
 				p2 = (sourcePtr[line*40 + col + range * 2] >> bit) & 1;
@@ -236,7 +236,7 @@ void flip() {
 			paletteRGBA[i * 4 + 2] = lpalette[i].B;
 			paletteRGBA[i * 4 + 3] = 0xFF;
 		}
-		g_system->setPalette(paletteRGBA+palDirtyMin*4, palDirtyMin, palDirtyMax - palDirtyMin + 1);
+		g_system->setPalette(paletteRGBA + palDirtyMin*4, palDirtyMin, palDirtyMax - palDirtyMin + 1);
 		palDirtyMin = 256;
 		palDirtyMax = -1;
 	}
@@ -248,7 +248,7 @@ void flip() {
 
 	if (!bFastMode) {
 		uint32 speed = 50;
-		if(lastTick + speed > currentTick) {
+		if (lastTick + speed > currentTick) {
 			g_system->delayMillis(lastTick + speed - currentTick);
 		}
 	}

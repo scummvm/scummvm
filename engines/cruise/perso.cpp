@@ -169,11 +169,11 @@ int cor_droite(int x1, int y1, int x2, int y2, point* outputTable) {
 }
 
 void processActorWalk(int16 resx_y[4], int16 *inc_droite, int16 *inc_droite0,
-		int16 *inc_chemin, point* cor_joueur,
-		int16 solution0[NUM_NODES + 3][2], int16 *inc_jo1, int16 *inc_jo2,
-		int16 *dir_perso, int16 *inc_jo0, int16 num) {
-		int x1, x2, y1, y2;
-		int i, u;
+                      int16 *inc_chemin, point* cor_joueur,
+                      int16 solution0[NUM_NODES + 3][2], int16 *inc_jo1, int16 *inc_jo2,
+                      int16 *dir_perso, int16 *inc_jo0, int16 num) {
+	int x1, x2, y1, y2;
+	int i, u;
 
 	u = 0;
 	inc_jo = *inc_jo0;
@@ -243,9 +243,9 @@ void affiche_chemin(int16 persoIdx, int16 *returnVar) {
 	ASSERT(pPerso);
 
 	processActorWalk(returnVar, &pPerso->inc_droite, &pPerso->inc_droite0,
-	    &pPerso->inc_chemin, pPerso->coordinates, pPerso->solution,
-	    &pPerso->inc_jo1, &pPerso->inc_jo2, &pPerso->dir_perso,
-	    &pPerso->inc_jo0, persoIdx);
+	                 &pPerso->inc_chemin, pPerso->coordinates, pPerso->solution,
+	                 &pPerso->inc_jo1, &pPerso->inc_jo2, &pPerso->dir_perso,
+	                 &pPerso->inc_jo0, persoIdx);
 }
 
 } // End of namespace Cruise

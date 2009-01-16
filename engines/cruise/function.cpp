@@ -39,7 +39,7 @@ int16 Op_LoadOverlay(void) {
 
 	pOverlayName = (char *) popPtr();
 
-	if(strlen(pOverlayName) == 0)
+	if (strlen(pOverlayName) == 0)
 		return 0;
 
 	strcpy(overlayName, pOverlayName);
@@ -123,7 +123,7 @@ int16 Op_AddProc(void) {
 	int overlay;
 	int param[160];
 
-	for(long int i=0; i<pop1; i++) {
+	for (long int i = 0; i < pop1; i++) {
 		param[i] = popVar();
 	}
 
@@ -139,8 +139,8 @@ int16 Op_AddProc(void) {
 	uint8* procBss = attacheNewScriptToTail(&procHead, overlay, pop2, currentScriptPtr->type, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_PROC);
 
 	if (procBss) {
-		for(long int i=0; i<pop1; i++) {
-			int16* ptr = (int16*)(procBss+i*2);
+		for (long int i = 0; i < pop1; i++) {
+			int16* ptr = (int16*)(procBss + i * 2);
 			*ptr = param[i];
 			flipShort(ptr);
 		}
@@ -535,8 +535,8 @@ int16 Op_GetlowMemory(void) {
 }
 
 int16 Op_FadeOut(void) {
-	for(long int i=0; i< 256; i+=32) {
-		for(long int j=0; j<256; j++) {
+	for (long int i = 0; i < 256; i += 32) {
+		for (long int j = 0; j < 256; j++) {
 			int offsetTable[3];
 			offsetTable[0] = -32;
 			offsetTable[1] = -32;
@@ -839,17 +839,15 @@ int16 Op_SetActiveBackground(void) {
 int16 Op_RemoveBackground(void) {
 	int backgroundIdx = popVar();
 
-	if(backgroundIdx > 0 && backgroundIdx < 8) {
-		if(backgroundPtrtable[backgroundIdx])
+	if (backgroundIdx > 0 && backgroundIdx < 8) {
+		if (backgroundPtrtable[backgroundIdx])
 			free(backgroundPtrtable[backgroundIdx]);
 
-		if(masterScreen == backgroundIdx)
+		if (masterScreen == backgroundIdx)
 			masterScreen = 0;
 
 		strcpy(backgroundTable[backgroundIdx].name, "");
-	}
-	else
-	{
+	} else {
 		strcpy(backgroundTable[0].name, "");
 	}
 
@@ -905,12 +903,12 @@ int16 Op_SetColor(void)	{
 
 #define convertRatio 36.571428571428571428571428571429
 
-	for (i=startIdx; i<=endIdx; i++) {
+	for (i = startIdx; i <= endIdx; i++) {
 		int offsetTable[3];
 
-		offsetTable[0] = (int)(colorR*convertRatio);
-		offsetTable[1] = (int)(colorG*convertRatio);
-		offsetTable[2] = (int)(colorB*convertRatio);
+		offsetTable[0] = (int)(colorR * convertRatio);
+		offsetTable[1] = (int)(colorG * convertRatio);
+		offsetTable[2] = (int)(colorB * convertRatio);
 
 		if (CVTLoaded) {
 			int colorIdx = cvtPalette[i];
@@ -953,7 +951,7 @@ int16 Op_ComputeLine(void) {
 
 	point* pDest = (point*)popPtr();
 
-	int maxValue = cor_droite( x1, y1, x2, y2, pDest);
+	int maxValue = cor_droite(x1, y1, x2, y2, pDest);
 
 	flipGen(pDest, maxValue * 4);
 
@@ -1005,7 +1003,7 @@ actorStruct *addAnimation(actorStruct * pHead, int overlay, int objIdx, int para
 	}
 
 	if (pCurrent && (pCurrent->overlayNumber == overlay)
-	    && (pCurrent->idx == objIdx) && (pCurrent->type == param2)) {
+	        && (pCurrent->idx == objIdx) && (pCurrent->type == param2)) {
 		return NULL;
 	}
 
@@ -1054,8 +1052,8 @@ int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType) {
 		pl2 = pl;
 
 		if (((pl->overlayNumber == overlay) || (overlay == -1)) &&
-			((pl->idx == objIdx) || (objIdx == -1)) &&
-			((pl->type == objType) || (objType == -1))) {
+		        ((pl->idx == objIdx) || (objIdx == -1)) &&
+		        ((pl->type == objType) || (objType == -1))) {
 			pl->type = -1;
 		}
 
@@ -1217,10 +1215,10 @@ int16 Op_BgName(void) {
 	char* bgName = (char*)popPtr();
 	int bgIdx = popVar();
 
-	if((bgIdx >= 0) && (bgIdx < 8) && bgName) {
+	if ((bgIdx >= 0) && (bgIdx < 8) && bgName) {
 		strcpy(bgName, backgroundTable[bgIdx].name);
 
-		if(strlen(bgName))
+		if (strlen(bgName))
 			return 1;
 
 		return 0;
@@ -1348,24 +1346,23 @@ int16 Op_Itoa(void) {
 	char format[30];
 	char nbf[20];
 
-	for(int i=nbp-1; i>= 0; i--)
+	for (int i = nbp - 1; i >= 0; i--)
 		param[i] = popVar();
 
 	int val = popVar();
 	char* pDest = (char*)popPtr();
 
-	if(!nbp)
+	if (!nbp)
 		sprintf(txt, "%d", val);
-	else
-	{
+	else {
 		strcpy(format, "%");
 		sprintf(nbf, "%d", param[0]);
-		strcat(format, nbf );
+		strcat(format, nbf);
 		strcat(format, "d");
 		sprintf(txt, format, val);
 	}
 
-	for(int i=0; txt[i]; i++)
+	for (int i = 0; txt[i]; i++)
 		*(pDest++) = txt[i];
 	*(pDest++) = '\0';
 
@@ -1376,10 +1373,10 @@ int16 Op_Strcat(void) {
 	char *pSource = (char *)popPtr();
 	char *pDest = (char *)popPtr();
 
-	while(*pDest)
+	while (*pDest)
 		pDest++;
 
-	while(*pSource)
+	while (*pSource)
 		*(pDest++) = *(pSource++);
 	*(pDest++) = '\0';
 
@@ -1495,7 +1492,7 @@ int16 Op_DialogOn(void) {
 	dialogueObj = popVar();
 	dialogueOvl = popVar();
 
-	if(dialogueOvl == 0)
+	if (dialogueOvl == 0)
 		dialogueOvl = currentScriptPtr->overlayNumber;
 
 	dialogueEnabled = true;
@@ -1508,7 +1505,7 @@ int16 Op_DialogOff(void) {
 
 	objectReset();
 
-	if(menuTable[0]) {
+	if (menuTable[0]) {
 		freeMenu(menuTable[0]);
 		menuTable[0] = NULL;
 		changeCursor(CURSOR_NORMAL);
@@ -1525,9 +1522,9 @@ int16 Op_LinkObjects(void) {
 	int obj = popVar();
 	int ovl = popVar();
 
-	if(!ovl)
+	if (!ovl)
 		ovl = currentScriptPtr->overlayNumber;
-	if(!ovl2)
+	if (!ovl2)
 		ovl2 = currentScriptPtr->overlayNumber;
 
 	linkCell(&cellHead, ovl, obj, type, ovl2, obj2);
@@ -1535,20 +1532,17 @@ int16 Op_LinkObjects(void) {
 	return 0;
 }
 
-int16 Op_UserDelay(void)
-{
+int16 Op_UserDelay(void) {
 	int delay = popVar();
 
-	if(delay >= 0)
-	{
+	if (delay >= 0) {
 		userDelay = delay;
 	}
 
 	return userDelay;
 }
 
-int16 Op_UserWait(void)
-{
+int16 Op_UserWait(void) {
 	userWait = 1;
 	if (currentScriptPtr->type == scriptType_PROC) {
 		changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &procHead, -1, 9999);
@@ -1559,8 +1553,7 @@ int16 Op_UserWait(void)
 	return 0;
 }
 
-opcodeFunction opcodeTablePtr[] =
-{
+opcodeFunction opcodeTablePtr[] = {
 	NULL, // 0x00
 	Op_FadeIn,
 	Op_FadeOut,
@@ -1699,107 +1692,107 @@ opcodeFunction opcodeTablePtr[] =
 void setupOpcodeTable(void) {
 //	int i;
 
-/*	for (i = 0; i < 256; i++) {
-		opcodeTablePtr[i] = NULL;
-	}
+	/*	for (i = 0; i < 256; i++) {
+			opcodeTablePtr[i] = NULL;
+		}
 
-	opcodeTablePtr[0x1] = Op_FadeIn;
-	opcodeTablePtr[0x2] = Op_FadeOut;
-	opcodeTablePtr[0x3] = Op_LoadBackground;
-	opcodeTablePtr[0x4] = Op_LoadAbs;
-	opcodeTablePtr[0x5] = Op_AddCell;
-	opcodeTablePtr[0x6] = Op_AddProc;
-	opcodeTablePtr[0x7] = Op_InitializeState;
-	opcodeTablePtr[0x8] = Op_RemoveCell;
-	opcodeTablePtr[0x9] = Op_FreeCell;
-	opcodeTablePtr[0xA] = Op_RemoveProc;
-	opcodeTablePtr[0xB] = Op_RemoveFrame;
-	opcodeTablePtr[0xC] = Op_LoadOverlay;
-	opcodeTablePtr[0xD] = Op_SetColor;
-	opcodeTablePtr[0xE] = Op_PlayFX;
-	opcodeTablePtr[0xF] = NULL;	// used to be debug
-	opcodeTablePtr[0x10] = Op_FreeOverlay;
-	opcodeTablePtr[0x11] = Op_FindOverlay;
-	opcodeTablePtr[0x12] = NULL;	// used to be exec debug
-	opcodeTablePtr[0x13] = Op_AddMessage;
-	opcodeTablePtr[0x14] = Op_RemoveMessage;
-	opcodeTablePtr[0x15] = Op_UserWait;
-	opcodeTablePtr[0x16] = Op_FreezeCell;
-	opcodeTablePtr[0x17] = Op_LoadCt;
-	opcodeTablePtr[0x18] = Op_AddAnimation;
-	opcodeTablePtr[0x19] = Op_RemoveAnimation;
-	opcodeTablePtr[0x1A] = Op_SetZoom;
-	opcodeTablePtr[0x1B] = Op_SetObjectAtNode;
-	opcodeTablePtr[0x1D] = Op_SetNodeColor;
-	opcodeTablePtr[0x1E] = Op_TrackAnim;
-	opcodeTablePtr[0x1F] = Op_GetNodeX;
-	opcodeTablePtr[0x20] = Op_GetNodeY;
-	opcodeTablePtr[0x21] = Op_EndAnim;
-	opcodeTablePtr[0x22] = Op_GetZoom;
-	opcodeTablePtr[0x23] = Op_GetStep;
-	opcodeTablePtr[0x24] = Op_SetStringColors;
-	opcodeTablePtr[0x28] = Op_UserOn;
-	opcodeTablePtr[0x29] = Op_FreeCT;
-	opcodeTablePtr[0x2A] = Op_FindObject;
-	opcodeTablePtr[0x2B] = Op_FindProc;
-	opcodeTablePtr[0x2C] = Op_WriteObject;
-	opcodeTablePtr[0x2E] = Op_RemoveOverlay;
-	opcodeTablePtr[0x2F] = Op_AddBackgroundIncrust;
-	opcodeTablePtr[0x30] = Op_RemoveBackgroundIncrust;
-	opcodeTablePtr[0x31] = Op_UnmergeBackgroundIncrust;
-	opcodeTablePtr[0x32] = Op_freeBackgroundInscrustList;
-	opcodeTablePtr[0x33] = Op_DialogOn;
-	opcodeTablePtr[0x34] = Op_DialogOff;
-	opcodeTablePtr[0x35] = Op_UserDelay;
-	opcodeTablePtr[0x37] = Op_Narrator;
-	opcodeTablePtr[0x38] = Op_RemoveBackground;
-	opcodeTablePtr[0x39] = Op_SetActiveBackground;
-	opcodeTablePtr[0x3A] = Op_CTOn;
-	opcodeTablePtr[0x3B] = Op_CTOff;
-	opcodeTablePtr[0x3C] = Op_Random;
-	opcodeTablePtr[0x3D] = Op_LoadSong;
-	opcodeTablePtr[0x3E] = Op_PlaySong;
-	opcodeTablePtr[0x3F] = Op_FadeSong;
-	opcodeTablePtr[0x40] = Op_FreeSong;
-	opcodeTablePtr[0x41] = Op_FrameExist;
-	opcodeTablePtr[0x43] = Op_SongExist;
-	opcodeTablePtr[0x45] = Op_StopSong;
-	opcodeTablePtr[0x4B] = Op_LinkObjects;
-	opcodeTablePtr[0x54] = Op_SetFont;
-	opcodeTablePtr[0x56] = Op_Display;
-	opcodeTablePtr[0x57] = Op_GetMouseX;
-	opcodeTablePtr[0x58] = Op_GetMouseY;
-	opcodeTablePtr[0x59] = Op_GetMouseButton;
-	opcodeTablePtr[0x5A] = Op_FindSet;
-	opcodeTablePtr[0x5B] = Op_regenerateBackgroundIncrust;
-	opcodeTablePtr[0x5C] = Op_BgName;
-	opcodeTablePtr[0x5E] = Op_StopFX;
-	opcodeTablePtr[0x60] = Op_FreezeAni;
-	opcodeTablePtr[0x61] = Op_FindMsg;
-	opcodeTablePtr[0x62] = Op_FreezeParent;
-	opcodeTablePtr[0x63] = Op_UnfreezeParent;
-	opcodeTablePtr[0x64] = Op_Exec;
-	opcodeTablePtr[0x65] = Op_AutoCell;
-	opcodeTablePtr[0x66] = Op_Sizeof;
-	opcodeTablePtr[0x67] = Op_Preload;
-	opcodeTablePtr[0x68] = Op_FreePreload;
-	opcodeTablePtr[0x6A] = Op_VBL;
-	opcodeTablePtr[0x6B] = Op_LoadFrame;
-	opcodeTablePtr[0x6C] = Op_FreezeOverlay;
-	opcodeTablePtr[0x6D] = Op_Strcpy;
-	opcodeTablePtr[0x6E] = Op_Strcat;
-	opcodeTablePtr[0x6F] = Op_Itoa;
-	opcodeTablePtr[0x70] = Op_comment;
-	opcodeTablePtr[0x71] = Op_ComputeLine;
-	opcodeTablePtr[0x72] = Op_FindSymbol;
-	opcodeTablePtr[0x73] = Op_SetXDial;
-	opcodeTablePtr[0x74] = Op_GetlowMemory;
-	opcodeTablePtr[0x76] = Op_Protect;
-	opcodeTablePtr[0x79] = Op_UserMenu;
-	opcodeTablePtr[0x78] = Op_Inventory;
-	opcodeTablePtr[0x7B] = Op_Sec;
-	opcodeTablePtr[0x7C] = Op_ProtectionFlag;
-	opcodeTablePtr[0x7D] = Op_KillMenu;*/
+		opcodeTablePtr[0x1] = Op_FadeIn;
+		opcodeTablePtr[0x2] = Op_FadeOut;
+		opcodeTablePtr[0x3] = Op_LoadBackground;
+		opcodeTablePtr[0x4] = Op_LoadAbs;
+		opcodeTablePtr[0x5] = Op_AddCell;
+		opcodeTablePtr[0x6] = Op_AddProc;
+		opcodeTablePtr[0x7] = Op_InitializeState;
+		opcodeTablePtr[0x8] = Op_RemoveCell;
+		opcodeTablePtr[0x9] = Op_FreeCell;
+		opcodeTablePtr[0xA] = Op_RemoveProc;
+		opcodeTablePtr[0xB] = Op_RemoveFrame;
+		opcodeTablePtr[0xC] = Op_LoadOverlay;
+		opcodeTablePtr[0xD] = Op_SetColor;
+		opcodeTablePtr[0xE] = Op_PlayFX;
+		opcodeTablePtr[0xF] = NULL;	// used to be debug
+		opcodeTablePtr[0x10] = Op_FreeOverlay;
+		opcodeTablePtr[0x11] = Op_FindOverlay;
+		opcodeTablePtr[0x12] = NULL;	// used to be exec debug
+		opcodeTablePtr[0x13] = Op_AddMessage;
+		opcodeTablePtr[0x14] = Op_RemoveMessage;
+		opcodeTablePtr[0x15] = Op_UserWait;
+		opcodeTablePtr[0x16] = Op_FreezeCell;
+		opcodeTablePtr[0x17] = Op_LoadCt;
+		opcodeTablePtr[0x18] = Op_AddAnimation;
+		opcodeTablePtr[0x19] = Op_RemoveAnimation;
+		opcodeTablePtr[0x1A] = Op_SetZoom;
+		opcodeTablePtr[0x1B] = Op_SetObjectAtNode;
+		opcodeTablePtr[0x1D] = Op_SetNodeColor;
+		opcodeTablePtr[0x1E] = Op_TrackAnim;
+		opcodeTablePtr[0x1F] = Op_GetNodeX;
+		opcodeTablePtr[0x20] = Op_GetNodeY;
+		opcodeTablePtr[0x21] = Op_EndAnim;
+		opcodeTablePtr[0x22] = Op_GetZoom;
+		opcodeTablePtr[0x23] = Op_GetStep;
+		opcodeTablePtr[0x24] = Op_SetStringColors;
+		opcodeTablePtr[0x28] = Op_UserOn;
+		opcodeTablePtr[0x29] = Op_FreeCT;
+		opcodeTablePtr[0x2A] = Op_FindObject;
+		opcodeTablePtr[0x2B] = Op_FindProc;
+		opcodeTablePtr[0x2C] = Op_WriteObject;
+		opcodeTablePtr[0x2E] = Op_RemoveOverlay;
+		opcodeTablePtr[0x2F] = Op_AddBackgroundIncrust;
+		opcodeTablePtr[0x30] = Op_RemoveBackgroundIncrust;
+		opcodeTablePtr[0x31] = Op_UnmergeBackgroundIncrust;
+		opcodeTablePtr[0x32] = Op_freeBackgroundInscrustList;
+		opcodeTablePtr[0x33] = Op_DialogOn;
+		opcodeTablePtr[0x34] = Op_DialogOff;
+		opcodeTablePtr[0x35] = Op_UserDelay;
+		opcodeTablePtr[0x37] = Op_Narrator;
+		opcodeTablePtr[0x38] = Op_RemoveBackground;
+		opcodeTablePtr[0x39] = Op_SetActiveBackground;
+		opcodeTablePtr[0x3A] = Op_CTOn;
+		opcodeTablePtr[0x3B] = Op_CTOff;
+		opcodeTablePtr[0x3C] = Op_Random;
+		opcodeTablePtr[0x3D] = Op_LoadSong;
+		opcodeTablePtr[0x3E] = Op_PlaySong;
+		opcodeTablePtr[0x3F] = Op_FadeSong;
+		opcodeTablePtr[0x40] = Op_FreeSong;
+		opcodeTablePtr[0x41] = Op_FrameExist;
+		opcodeTablePtr[0x43] = Op_SongExist;
+		opcodeTablePtr[0x45] = Op_StopSong;
+		opcodeTablePtr[0x4B] = Op_LinkObjects;
+		opcodeTablePtr[0x54] = Op_SetFont;
+		opcodeTablePtr[0x56] = Op_Display;
+		opcodeTablePtr[0x57] = Op_GetMouseX;
+		opcodeTablePtr[0x58] = Op_GetMouseY;
+		opcodeTablePtr[0x59] = Op_GetMouseButton;
+		opcodeTablePtr[0x5A] = Op_FindSet;
+		opcodeTablePtr[0x5B] = Op_regenerateBackgroundIncrust;
+		opcodeTablePtr[0x5C] = Op_BgName;
+		opcodeTablePtr[0x5E] = Op_StopFX;
+		opcodeTablePtr[0x60] = Op_FreezeAni;
+		opcodeTablePtr[0x61] = Op_FindMsg;
+		opcodeTablePtr[0x62] = Op_FreezeParent;
+		opcodeTablePtr[0x63] = Op_UnfreezeParent;
+		opcodeTablePtr[0x64] = Op_Exec;
+		opcodeTablePtr[0x65] = Op_AutoCell;
+		opcodeTablePtr[0x66] = Op_Sizeof;
+		opcodeTablePtr[0x67] = Op_Preload;
+		opcodeTablePtr[0x68] = Op_FreePreload;
+		opcodeTablePtr[0x6A] = Op_VBL;
+		opcodeTablePtr[0x6B] = Op_LoadFrame;
+		opcodeTablePtr[0x6C] = Op_FreezeOverlay;
+		opcodeTablePtr[0x6D] = Op_Strcpy;
+		opcodeTablePtr[0x6E] = Op_Strcat;
+		opcodeTablePtr[0x6F] = Op_Itoa;
+		opcodeTablePtr[0x70] = Op_comment;
+		opcodeTablePtr[0x71] = Op_ComputeLine;
+		opcodeTablePtr[0x72] = Op_FindSymbol;
+		opcodeTablePtr[0x73] = Op_SetXDial;
+		opcodeTablePtr[0x74] = Op_GetlowMemory;
+		opcodeTablePtr[0x76] = Op_Protect;
+		opcodeTablePtr[0x79] = Op_UserMenu;
+		opcodeTablePtr[0x78] = Op_Inventory;
+		opcodeTablePtr[0x7B] = Op_Sec;
+		opcodeTablePtr[0x7C] = Op_ProtectionFlag;
+		opcodeTablePtr[0x7D] = Op_KillMenu;*/
 	// TODO: copy the opcodes here
 }
 
@@ -1813,8 +1806,8 @@ int32 opcodeType8(void) {
 		return (-21);
 
 	if (opcode < ARRAYSIZE(opcodeTablePtr) && opcodeTablePtr[opcode]) {
-	//	printf("Function: %d\n",opcode);
-		pushVar(opcodeTablePtr[opcode] ());
+		//	printf("Function: %d\n",opcode);
+		pushVar(opcodeTablePtr[opcode]());
 		return (0);
 	} else {
 		printf("Unsupported opcode %d in opcode type 8\n", opcode);

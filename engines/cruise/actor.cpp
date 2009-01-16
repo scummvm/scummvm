@@ -32,8 +32,8 @@ int16 mainProc13(int overlayIdx, int param1, actorStruct *pStartEntry, int param
 
 	while (pCurrentEntry) {
 		if ((pCurrentEntry->overlayNumber == overlayIdx || overlayIdx == -1) &&
-			(pCurrentEntry->idx == param1 || param1 == -1) &&
-			(pCurrentEntry->type == param2 || param2 == -1)) {
+		        (pCurrentEntry->idx == param1 || param1 == -1) &&
+		        (pCurrentEntry->type == param2 || param2 == -1)) {
 			if (pCurrentEntry->pathId != -2) {
 				return 0;
 			}
@@ -50,9 +50,9 @@ actorStruct *findActor(actorStruct *pStartEntry, int overlayIdx, int objIdx, int
 
 	while (pCurrentEntry) {
 		if ((pCurrentEntry->overlayNumber == overlayIdx
-			|| overlayIdx == -1) && (pCurrentEntry->idx == objIdx
-			|| objIdx == -1) && (pCurrentEntry->type == type
-			|| type == -1)) {
+		        || overlayIdx == -1) && (pCurrentEntry->idx == objIdx
+		                                 || objIdx == -1) && (pCurrentEntry->type == type
+		                                                      || type == -1)) {
 			return pCurrentEntry;
 		}
 
@@ -71,10 +71,10 @@ void getPixel(int x, int y) {
 	int16* polygone = (int16*)polyStruct0;
 	int16* next;
 
-	while ((next = *(int16**)polygone) != (int16 *) -1) {
-		polygone+=sizeof(uint16*);
+	while ((next = *(int16**)polygone) != (int16 *) - 1) {
+		polygone += sizeof(uint16*);
 
-		int16* tableau = polygone+2;
+		int16* tableau = polygone + 2;
 
 		x_min = *tableau++;
 		x_max = *tableau++;
@@ -85,12 +85,12 @@ void getPixel(int x, int y) {
 
 		if (walkboxState[computedVar14] == 0 && ((x >= x_min && x <= x_max) && (y >= y_min && y <= y_max))) {
 			// click was in given box
-			int u = y-y_min;
-			tableau+=u*2;
+			int u = y - y_min;
+			tableau += u * 2;
 			x_min = *tableau++;
 			x_max = *tableau++;
 
-			if ( (x>=x_min && x<=x_max) ) {
+			if ((x >= x_min && x <= x_max)) {
 				flag_obstacle = walkboxColor[computedVar14];
 
 				return;
@@ -483,7 +483,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 			polyStruct0 = polyStructExp;
 
 			poly2(x2, y2, ctp_routeCoords[select_noeud[1]][0],
-			    ctp_routeCoords[select_noeud[1]][1]);
+			      ctp_routeCoords[select_noeud[1]][1]);
 
 			solution0[1][0] = table_ptselect[1][0] = X;
 			solution0[1][1] = table_ptselect[1][1] = Y;
@@ -526,8 +526,8 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 				}
 				polyStruct0 = polyStructExp;
 				poly2(x2, y2,
-				    ctp_routeCoords[select_noeud[1]][0],
-				    ctp_routeCoords[select_noeud[1]][1]);
+				      ctp_routeCoords[select_noeud[1]][0],
+				      ctp_routeCoords[select_noeud[1]][1]);
 				solution0[i + 1][0] = table_ptselect[1][0] = X;
 				solution0[i + 1][1] = table_ptselect[1][1] = Y;
 				solution0[i + 2][0] = -1;
@@ -536,7 +536,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 					return;
 				}
 
-	/****** COUPE LE CHEMIN ******/
+				/****** COUPE LE CHEMIN ******/
 
 				i++;
 				d = 0;
@@ -588,8 +588,7 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 		}
 	}
 
-	if (!flagCt)
-	{
+	if (!flagCt) {
 		int i;
 		int16 *ptr;
 
@@ -638,7 +637,7 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 		return (-1);
 	}
 
-/******* cherche le premier noeud ******/
+	/******* cherche le premier noeud ******/
 
 	getPixel(x, y);
 
@@ -658,7 +657,7 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 
 	flag_aff_chemin = 0;
 
-/******* cherche le deuxieme noeud ******/
+	/******* cherche le deuxieme noeud ******/
 
 	num = 0;
 	while (num < NUM_PERSONS && persoTable[num] != NULL)
@@ -719,28 +718,28 @@ int raoul_move[][13] = {
 	{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 0},	/* dos         */
 	{13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 0},	/* droite      */
 	{25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 0},	/* face        */
-	{-13, -14, -15, -16, -17, -18, -19, -20, -21, -22, -23, -24, 0}	/* gauche      */
+	{ -13, -14, -15, -16, -17, -18, -19, -20, -21, -22, -23, -24, 0}	/* gauche      */
 };
 
 int raoul_end[][13] = {
 	{37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},	/* stat dos    */
 	{38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},	/* stat droite */
 	{39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},	/* stat face   */
-	{-38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}	/* stat gauche */
+	{ -38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}	/* stat gauche */
 };
 
 int raoul_stat[][13] = {
 	{53, 54, 55, 56, 57, 0, 0, 0, 0, 0, 0, 0, 0},	/* ret dos-dr  */
 	{59, 60, 62, 63, 78, 0, 0, 0, 0, 0, 0, 0, 0},	/* ret dr-face */
-	{-78, -63, -62, -60, -59, 0, 0, 0, 0, 0, 0, 0, 0},	/* ret face-ga */
-	{-57, -56, -55, -54, -53, 0, 0, 0, 0, 0, 0, 0, 0}	/* ret ga-dos  */
+	{ -78, -63, -62, -60, -59, 0, 0, 0, 0, 0, 0, 0, 0},	/* ret face-ga */
+	{ -57, -56, -55, -54, -53, 0, 0, 0, 0, 0, 0, 0, 0}	/* ret ga-dos  */
 };
 
 int raoul_invstat[][13] = {
-	{-53, -54, -55, -56, -57, 0, 0, 0, 0, 0, 0, 0, 0},	/* ret dos-dr  */
+	{ -53, -54, -55, -56, -57, 0, 0, 0, 0, 0, 0, 0, 0},	/* ret dos-dr  */
 	{57, 56, 55, 54, 53, 0, 0, 0, 0, 0, 0, 0, 0},	/* ret ga-dos  */
 	{78, 63, 62, 60, 59, 0, 0, 0, 0, 0, 0, 0, 0},	/* ret face-ga */
-	{-59, -60, -62, -63, -78, 0, 0, 0, 0, 0, 0, 0, 0}	/* ret dr-face */
+	{ -59, -60, -62, -63, -78, 0, 0, 0, 0, 0, 0, 0, 0}	/* ret dr-face */
 
 };
 
@@ -787,286 +786,282 @@ void processAnimation(void) {
 					currentActor->counter = -1;
 				}
 			} else
-			    if ((currentActor->type == 1) && (currentActor->x_dest != -1) && (currentActor->y_dest != -1)) {
-				// track animation
-				currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, currentActor->x_dest, currentActor->y_dest, currentActor->stepX, currentActor->stepY, currentActor->pathId);
+				if ((currentActor->type == 1) && (currentActor->x_dest != -1) && (currentActor->y_dest != -1)) {
+					// track animation
+					currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, currentActor->x_dest, currentActor->y_dest, currentActor->stepX, currentActor->stepY, currentActor->pathId);
 
-				currentActor->x_dest = -1;
-				currentActor->y_dest = -1;
+					currentActor->x_dest = -1;
+					currentActor->y_dest = -1;
 
-				if (currentActor->pathId == -1) {
-					if ((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection)) {
-						currentActor->phase = ANIM_PHASE_STATIC_END;
-						currentActor->nextDirection = currentActor->endDirection;
-						currentActor->endDirection = -1;
-						currentActor->counter = 0;
+					if (currentActor->pathId == -1) {
+						if ((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection)) {
+							currentActor->phase = ANIM_PHASE_STATIC_END;
+							currentActor->nextDirection = currentActor->endDirection;
+							currentActor->endDirection = -1;
+							currentActor->counter = 0;
+						} else {
+							currentActor->pathId = -2;
+							currentActor->flag = 0;
+							currentActor->endDirection = -1;
+							currentActor->phase = ANIM_PHASE_WAIT;
+						}
 					} else {
-						currentActor->pathId = -2;
-						currentActor->flag = 0;
-						currentActor->endDirection = -1;
-						currentActor->phase = ANIM_PHASE_WAIT;
+						currentActor->phase = ANIM_PHASE_STATIC;
+						currentActor->counter = -1;
 					}
-				} else {
-					currentActor->phase = ANIM_PHASE_STATIC;
-					currentActor->counter = -1;
 				}
-			}
 
 			animationStart = false;
 
 			if ((currentActor->pathId >= 0) || (currentActor->phase == ANIM_PHASE_STATIC_END)) {
 				switch (currentActor->phase) {
 				case ANIM_PHASE_STATIC_END:
-				case ANIM_PHASE_STATIC:
-					{
-						if ((currentActor->counter == -1) && (currentActor->phase == ANIM_PHASE_STATIC)) {
-							affiche_chemin(currentActor->pathId, returnVar2);
+				case ANIM_PHASE_STATIC: {
+					if ((currentActor->counter == -1) && (currentActor->phase == ANIM_PHASE_STATIC)) {
+						affiche_chemin(currentActor->pathId, returnVar2);
 
-							if (returnVar2[0] == -1) {
-								currentActor->pathId = -2;
-								currentActor->flag = 0;
-								currentActor->endDirection = -1;
-								currentActor->phase = ANIM_PHASE_WAIT;
-								break;
-							}
-
-							currentActor->x = returnVar2[0];
-							currentActor->y = returnVar2[1];
-							currentActor->nextDirection = returnVar2[2];
-							currentActor->poly = returnVar2[4];
-							currentActor->counter = 0;
-
-							if (currentActor->startDirection == currentActor->nextDirection)
-								currentActor->phase = ANIM_PHASE_MOVE;
-						}
-
-						if ((currentActor->counter >= 0)
-						    && ((currentActor->phase == ANIM_PHASE_STATIC_END)
-							|| (currentActor->phase == ANIM_PHASE_STATIC))) {
-							int newA;
-							int inc = 1;
-							int t_inc = currentActor->startDirection - 1;
-
-							if (t_inc < 0)
-								t_inc = 3;
-
-							if (currentActor->nextDirection == t_inc)
-								inc = -1;
-
-							if (inc > 0)
-								newA =
-								    raoul_stat
-								    [currentActor->
-								    startDirection]
-								    [currentActor->
-								    counter++];
-							else
-								newA =
-								    raoul_invstat
-								    [currentActor->
-								    startDirection]
-								    [currentActor->
-								    counter++];
-
-							if (newA == 0) {
-								currentActor->
-								    startDirection
-								    =
-								    currentActor->
-								    startDirection
-								    + inc;
-
-								if (currentActor->startDirection > 3)
-									currentActor->
-									    startDirection
-									    =
-									    0;
-
-								if (currentActor->startDirection < 0)
-									currentActor->
-									    startDirection
-									    =
-									    3;
-
-								currentActor->
-								    counter =
-								    0;
-
-								if (currentActor->startDirection == currentActor->nextDirection) {
-									if (currentActor->phase == ANIM_PHASE_STATIC)
-										currentActor->
-										    phase
-										    =
-										    ANIM_PHASE_MOVE;
-									else
-										currentActor->
-										    phase
-										    =
-										    ANIM_PHASE_END;
-								} else {
-									newA =
-									    raoul_stat
-									    [currentActor->
-									    startDirection]
-									    [currentActor->
-									    counter++];
-
-									if (inc
-									    ==
-									    -1)
-										newA = -newA;
-
-									set_anim
-									    (currentActor->
-									    overlayNumber,
-									    currentActor->
-									    idx,
-									    currentActor->
-									    start,
-									    params.
-									    X,
-									    params.
-									    Y,
-									    newA,
-									    currentActor->
-									    poly);
-									break;
-								}
-							} else {
-								set_anim
-								    (currentActor->
-								    overlayNumber,
-								    currentActor->
-								    idx,
-								    currentActor->
-								    start,
-								    params.X,
-								    params.Y,
-								    newA,
-								    currentActor->
-								    poly);
-								break;
-							}
-						}
-						break;
-					}
-				case ANIM_PHASE_MOVE:
-					{
-						if (currentActor->counter >= 1) {
-							affiche_chemin
-							    (currentActor->
-							    pathId,
-							    returnVar2);
-							if (returnVar2[0] ==
-							    -1) {
-								if ((currentActor->endDirection == -1) || (currentActor->endDirection == currentActor->nextDirection)) {
-									currentActor->
-									    phase
-									    =
-									    ANIM_PHASE_END;
-								} else {
-									currentActor->
-									    phase
-									    =
-									    ANIM_PHASE_STATIC_END;
-									currentActor->
-									    nextDirection
-									    =
-									    currentActor->
-									    endDirection;
-								}
-								currentActor->
-								    counter =
-								    0;
-								break;
-							} else {
-								currentActor->
-								    x =
-								    returnVar2
-								    [0];
-								currentActor->
-								    y =
-								    returnVar2
-								    [1];
-								currentActor->
-								    nextDirection
-								    =
-								    returnVar2
-								    [2];
-								currentActor->
-								    poly =
-								    returnVar2
-								    [4];
-
-								/*
-								 * if (pl->next_dir!=pl->start_dir)
-								 * {
-								 * pl->phase=PHASE_STATIC;
-								 * pl->cnt=0;
-								 * break;
-								 * }
-								 */
-							}
-						}
-
-						if (currentActor->phase ==
-						    ANIM_PHASE_MOVE) {
-							int newA;
-
-							currentActor->
-							    startDirection =
-							    currentActor->
-							    nextDirection;
-
-							newA =
-							    raoul_move
-							    [currentActor->
-							    startDirection]
-							    [currentActor->
-							    counter++];
-							if (!newA) {
-								currentActor->
-								    counter =
-								    0;
-								newA =
-								    raoul_move
-								    [currentActor->
-								    startDirection]
-								    [currentActor->
-								    counter++];
-							}
-							set_anim(currentActor->
-							    overlayNumber,
-							    currentActor->idx,
-							    currentActor->
-							    start,
-							    currentActor->x,
-							    currentActor->y,
-							    newA,
-							    currentActor->
-							    poly);
+						if (returnVar2[0] == -1) {
+							currentActor->pathId = -2;
+							currentActor->flag = 0;
+							currentActor->endDirection = -1;
+							currentActor->phase = ANIM_PHASE_WAIT;
 							break;
 						}
 
+						currentActor->x = returnVar2[0];
+						currentActor->y = returnVar2[1];
+						currentActor->nextDirection = returnVar2[2];
+						currentActor->poly = returnVar2[4];
+						currentActor->counter = 0;
+
+						if (currentActor->startDirection == currentActor->nextDirection)
+							currentActor->phase = ANIM_PHASE_MOVE;
+					}
+
+					if ((currentActor->counter >= 0)
+					        && ((currentActor->phase == ANIM_PHASE_STATIC_END)
+					            || (currentActor->phase == ANIM_PHASE_STATIC))) {
+						int newA;
+						int inc = 1;
+						int t_inc = currentActor->startDirection - 1;
+
+						if (t_inc < 0)
+							t_inc = 3;
+
+						if (currentActor->nextDirection == t_inc)
+							inc = -1;
+
+						if (inc > 0)
+							newA =
+							    raoul_stat
+							    [currentActor->
+							     startDirection]
+							    [currentActor->
+							     counter++];
+						else
+							newA =
+							    raoul_invstat
+							    [currentActor->
+							     startDirection]
+							    [currentActor->
+							     counter++];
+
+						if (newA == 0) {
+							currentActor->
+							startDirection
+							=
+							    currentActor->
+							    startDirection
+							    + inc;
+
+							if (currentActor->startDirection > 3)
+								currentActor->
+								startDirection
+								=
+								    0;
+
+							if (currentActor->startDirection < 0)
+								currentActor->
+								startDirection
+								=
+								    3;
+
+							currentActor->
+							counter =
+							    0;
+
+							if (currentActor->startDirection == currentActor->nextDirection) {
+								if (currentActor->phase == ANIM_PHASE_STATIC)
+									currentActor->
+									phase
+									=
+									    ANIM_PHASE_MOVE;
+								else
+									currentActor->
+									phase
+									=
+									    ANIM_PHASE_END;
+							} else {
+								newA =
+								    raoul_stat
+								    [currentActor->
+								     startDirection]
+								    [currentActor->
+								     counter++];
+
+								if (inc
+								        ==
+								        -1)
+									newA = -newA;
+
+								set_anim
+								(currentActor->
+								 overlayNumber,
+								 currentActor->
+								 idx,
+								 currentActor->
+								 start,
+								 params.
+								 X,
+								 params.
+								 Y,
+								 newA,
+								 currentActor->
+								 poly);
+								break;
+							}
+						} else {
+							set_anim
+							(currentActor->
+							 overlayNumber,
+							 currentActor->
+							 idx,
+							 currentActor->
+							 start,
+							 params.X,
+							 params.Y,
+							 newA,
+							 currentActor->
+							 poly);
+							break;
+						}
+					}
+					break;
+				}
+				case ANIM_PHASE_MOVE: {
+					if (currentActor->counter >= 1) {
+						affiche_chemin
+						(currentActor->
+						 pathId,
+						 returnVar2);
+						if (returnVar2[0] ==
+						        -1) {
+							if ((currentActor->endDirection == -1) || (currentActor->endDirection == currentActor->nextDirection)) {
+								currentActor->
+								phase
+								=
+								    ANIM_PHASE_END;
+							} else {
+								currentActor->
+								phase
+								=
+								    ANIM_PHASE_STATIC_END;
+								currentActor->
+								nextDirection
+								=
+								    currentActor->
+								    endDirection;
+							}
+							currentActor->
+							counter =
+							    0;
+							break;
+						} else {
+							currentActor->
+							x =
+							    returnVar2
+							    [0];
+							currentActor->
+							y =
+							    returnVar2
+							    [1];
+							currentActor->
+							nextDirection
+							=
+							    returnVar2
+							    [2];
+							currentActor->
+							poly =
+							    returnVar2
+							    [4];
+
+							/*
+							 * if (pl->next_dir!=pl->start_dir)
+							 * {
+							 * pl->phase=PHASE_STATIC;
+							 * pl->cnt=0;
+							 * break;
+							 * }
+							 */
+						}
+					}
+
+					if (currentActor->phase ==
+					        ANIM_PHASE_MOVE) {
+						int newA;
+
+						currentActor->
+						startDirection =
+						    currentActor->
+						    nextDirection;
+
+						newA =
+						    raoul_move
+						    [currentActor->
+						     startDirection]
+						    [currentActor->
+						     counter++];
+						if (!newA) {
+							currentActor->
+							counter =
+							    0;
+							newA =
+							    raoul_move
+							    [currentActor->
+							     startDirection]
+							    [currentActor->
+							     counter++];
+						}
+						set_anim(currentActor->
+						         overlayNumber,
+						         currentActor->idx,
+						         currentActor->
+						         start,
+						         currentActor->x,
+						         currentActor->y,
+						         newA,
+						         currentActor->
+						         poly);
 						break;
 					}
-				case ANIM_PHASE_END:
-					{
-						int newA = raoul_end[currentActor->startDirection][0];
 
-						set_anim(currentActor->overlayNumber, currentActor->idx, currentActor->start, currentActor->x, currentActor->y, newA, currentActor->poly);
+					break;
+				}
+				case ANIM_PHASE_END: {
+					int newA = raoul_end[currentActor->startDirection][0];
 
-						currentActor->pathId = -2;
-						currentActor->phase = ANIM_PHASE_WAIT;
-						currentActor->flag = 0;
-						currentActor->endDirection = -1;
-						break;
-					}
-				default:
-					{
-						printf("Unimplemented currentActor->phase=%d in processAnimation()\n", currentActor->phase);
-						// exit(1);
-					}
+					set_anim(currentActor->overlayNumber, currentActor->idx, currentActor->start, currentActor->x, currentActor->y, newA, currentActor->poly);
+
+					currentActor->pathId = -2;
+					currentActor->phase = ANIM_PHASE_WAIT;
+					currentActor->flag = 0;
+					currentActor->endDirection = -1;
+					break;
+				}
+				default: {
+					printf("Unimplemented currentActor->phase=%d in processAnimation()\n", currentActor->phase);
+					// exit(1);
+				}
 				}
 			}
 		}

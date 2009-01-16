@@ -58,11 +58,11 @@ int computeDistance(int varX, int varY, int paramX, int paramY) {
 
 // this function process path finding coordinates
 void computeAllDistance(int16 table[][10], short int coordCount) {
-	for(int i=0; i<coordCount; i++) {
+	for (int i = 0; i < coordCount; i++) {
 		int x1 = ctp_routeCoords[i][0];
 		int y1 = ctp_routeCoords[i][1];
 
-		for(int j=0; j<ctp_routes[i][0]; j++) {
+		for (int j = 0; j < ctp_routes[i][0]; j++) {
 			int p = ctp_routes[i][j+1];
 
 			int x2 = ctp_routeCoords[p][0];
@@ -79,7 +79,7 @@ void getWalkBoxCenter(int n, int16 table[][40]) {
 	int maxX = -1;
 	int maxY = -1;
 
-	for(int i=0; i< table[n][0]; i++) {
+	for (int i = 0; i < table[n][0]; i++) {
 		int x = table[n][i*2+1];
 		int y = table[n][i*2+2];
 
@@ -101,7 +101,7 @@ void getWalkBoxCenter(int n, int16 table[][40]) {
 }
 
 // ax dx bx
-void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, int Y, int scale ) {
+void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, int Y, int scale) {
 	int numPoints;
 	int i;
 	int16 *destination;
@@ -117,8 +117,8 @@ void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, i
 		int pointX = *(walkboxData++);
 		int pointY = *(walkboxData++);
 
-		int scaledX =((upscaleValue(pointX, scale) + 0x8000) >> 16) + startX;
-		int scaledY =((upscaleValue(pointY, scale) + 0x8000) >> 16) + startX;
+		int scaledX = ((upscaleValue(pointX, scale) + 0x8000) >> 16) + startX;
+		int scaledY = ((upscaleValue(pointY, scale) + 0x8000) >> 16) + startX;
 
 		*(destination++) = scaledX;
 		*(destination++) = scaledY;
@@ -139,7 +139,7 @@ void makeCtStruct(uint8* str, int16 table[][40], int num, int z) {
 	int minX = 1000;
 	int maxX = -1;
 
-	if(table[num][0] < 1)
+	if (table[num][0] < 1)
 		return;
 
 	getWalkBoxCenter(num, table);
@@ -147,7 +147,7 @@ void makeCtStruct(uint8* str, int16 table[][40], int num, int z) {
 	currentWalkBoxCenterXBis = currentWalkBoxCenterX;
 	currentWalkBoxCenterYBis = currentWalkBoxCenterY;
 
-	renderCTPWalkBox(&table[num][0], currentWalkBoxCenterX, currentWalkBoxCenterY,  currentWalkBoxCenterX, currentWalkBoxCenterY, z + 0x200 );
+	renderCTPWalkBox(&table[num][0], currentWalkBoxCenterX, currentWalkBoxCenterY,  currentWalkBoxCenterX, currentWalkBoxCenterY, z + 0x200);
 
 	int16* a1;
 	int16* a2;
@@ -158,16 +158,16 @@ void makeCtStruct(uint8* str, int16 table[][40], int num, int z) {
 	int16* XArray = XMIN_XMAX;
 	int minY = *XArray++;
 
-	int i=0;
+	int i = 0;
 
-	while( *XArray >= 0 ) {
+	while (*XArray >= 0) {
 		int x1 = *XArray++;
 		int x2 = *XArray++;
 
-		if(x1<minX)
+		if (x1 < minX)
 			minX = x1;
 
-		if(x2>maxX)
+		if (x2 > maxX)
 			maxX = x2;
 
 		*a2++ = x1;
@@ -178,18 +178,18 @@ void makeCtStruct(uint8* str, int16 table[][40], int num, int z) {
 
 	adrStructPoly = (uint8*)a2;
 
-	*(uint16**)a2 = (uint16*)-1; //chained list terminator
+	*(uint16**)a2 = (uint16*) - 1; //chained list terminator
 
-	a1+=sizeof(int16*);
-	*a1++=num;
-	*a1++=walkboxColor[num];
-	*a1++=minX;
-	*a1++=maxX;
-	*a1++=minY;
-	*a1++=minY+i+2;
+	a1 += sizeof(int16*);
+	*a1++ = num;
+	*a1++ = walkboxColor[num];
+	*a1++ = minX;
+	*a1++ = maxX;
+	*a1++ = minY;
+	*a1++ = minY + i + 2;
 }
 
-int getNode(int nodeResult[2], int nodeId){
+int getNode(int nodeResult[2], int nodeId) {
 	if (nodeId < 0 || nodeId >= ctp_routeCoordCount)
 		return -1;
 
@@ -205,10 +205,10 @@ int setNodeColor(int nodeIdx, int nodeColor) {
 
 	int oldColor = walkboxColor[nodeIdx];
 
-	if(nodeColor == -1)
+	if (nodeColor == -1)
 		return
 
-	walkboxColor[nodeIdx] = nodeColor;
+		    walkboxColor[nodeIdx] = nodeColor;
 
 	return oldColor;
 }
@@ -219,10 +219,10 @@ int setNodeState(int nodeIdx, int nodeState) {
 
 	int oldState = walkboxState[nodeIdx];
 
-	if(nodeState == -1)
+	if (nodeState == -1)
 		return
 
-	walkboxState[nodeIdx] = nodeState;
+		    walkboxState[nodeIdx] = nodeState;
 
 	return oldState;
 }
@@ -232,7 +232,7 @@ int initCt(const char *ctpName) {
 	char fileType[5];	// string2
 	short int segementSizeTable[7];	// tempTable
 
-	if ( !loadCtFromSave) {
+	if (!loadCtFromSave) {
 		for (int i = 0; i < 10; i++) {
 			persoTable[i] = NULL;
 		}
@@ -257,14 +257,14 @@ int initCt(const char *ctpName) {
 	ctp_routeCoordCount = readB16(dataPointer); // get the number of nods
 	dataPointer += 2;
 
-	for(int i=0; i<7; i++) {
+	for (int i = 0; i < 7; i++) {
 		segementSizeTable[i] = readB16(dataPointer);
 		dataPointer += 2;
 	}
 
 	// get the path-finding coordinates
-	ASSERT((segementSizeTable[0]%4) == 0);
-	for(int i=0; i<segementSizeTable[0]/4; i++) {
+	ASSERT((segementSizeTable[0] % 4) == 0);
+	for (int i = 0; i < segementSizeTable[0] / 4; i++) {
 		ctp_routeCoords[i][0] = readB16(dataPointer);
 		dataPointer += 2;
 		ctp_routeCoords[i][1] = readB16(dataPointer);
@@ -272,18 +272,18 @@ int initCt(const char *ctpName) {
 	}
 
 	// get the path-finding line informations (indexing the routeCoords array)
-	ASSERT((segementSizeTable[1]%20) == 0);
-	for(int i=0; i<segementSizeTable[1]/20; i++) {
-		for(int j=0; j<10; j++) {
+	ASSERT((segementSizeTable[1] % 20) == 0);
+	for (int i = 0; i < segementSizeTable[1] / 20; i++) {
+		for (int j = 0; j < 10; j++) {
 			ctp_routes[i][j] = readB16(dataPointer);
 			dataPointer += 2;
 		}
 	}
 
 	// read polygons
-	ASSERT((segementSizeTable[2]%80) == 0);
-	for(int i=0; i<segementSizeTable[2]/80; i++) {
-		for(int j=0; j<40; j++) {
+	ASSERT((segementSizeTable[2] % 80) == 0);
+	for (int i = 0; i < segementSizeTable[2] / 80; i++) {
+		for (int j = 0; j < 40; j++) {
 			ctp_walkboxTable[i][j] = readB16(dataPointer);
 			dataPointer += 2;
 		}
@@ -297,14 +297,14 @@ int initCt(const char *ctpName) {
 		// get the walkbox type
 		// Type: 0x00 - non walkable, 0x01 - walkable, 0x02 - exit zone
 		ASSERT((segementSizeTable[3] % 2) == 0);
-		for(int i=0; i<segementSizeTable[3]/2; i++) {
+		for (int i = 0; i < segementSizeTable[3] / 2; i++) {
 			walkboxColor[i] = readB16(dataPointer);
 			dataPointer += 2;
 		}
 
 		// change indicator, walkbox type can change, i.e. blocked by object (values are either 0x00 or 0x01)
 		ASSERT((segementSizeTable[4] % 2) == 0);
-		for(int i=0; i<segementSizeTable[4]/2; i++) {
+		for (int i = 0; i < segementSizeTable[4] / 2; i++) {
 			walkboxState[i] = readB16(dataPointer);
 			dataPointer += 2;
 		}
@@ -312,14 +312,14 @@ int initCt(const char *ctpName) {
 
 	//
 	ASSERT((segementSizeTable[5] % 2) == 0);
-	for(int i=0; i<segementSizeTable[5]/2; i++) {
+	for (int i = 0; i < segementSizeTable[5] / 2; i++) {
 		walkboxColorIndex[i] = readB16(dataPointer);
 		dataPointer += 2;
 	}
 
 	//
 	ASSERT((segementSizeTable[6] % 2) == 0);
-	for(int i=0; i<segementSizeTable[6]/2; i++) {
+	for (int i = 0; i < segementSizeTable[6] / 2; i++) {
 		walkboxZoom[i] = readB16(dataPointer);
 		dataPointer += 2;
 	}
@@ -335,26 +335,26 @@ int initCt(const char *ctpName) {
 
 	ptr = (uint8 *) polyStruct;
 
-	for(int i= numberOfWalkboxes-1; i >=0; i--) {
-		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, 0 );
-	}
-
-	polyStructExp = adrStructPoly += sizeof(int16 *);
-
-	for(int i= numberOfWalkboxes-1; i >=0; i--) {
-		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, walkboxZoom[i] * 20 );
-	}
-
-	int ctSize = (adrStructPoly - ptr) + sizeof(int16 *); // for now, the +sizeof(int16 *) is a safe zone
-	adrStructPoly = polyStructNorm = polyStruct = (uint8 *) malloc(ctSize);
-
-	for(int i= numberOfWalkboxes-1; i >=0; i--) {
+	for (int i = numberOfWalkboxes - 1; i >= 0; i--) {
 		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, 0);
 	}
 
 	polyStructExp = adrStructPoly += sizeof(int16 *);
 
-	for(int i= numberOfWalkboxes-1; i >=0; i--) {
+	for (int i = numberOfWalkboxes - 1; i >= 0; i--) {
+		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, walkboxZoom[i] * 20);
+	}
+
+	int ctSize = (adrStructPoly - ptr) + sizeof(int16 *); // for now, the +sizeof(int16 *) is a safe zone
+	adrStructPoly = polyStructNorm = polyStruct = (uint8 *) malloc(ctSize);
+
+	for (int i = numberOfWalkboxes - 1; i >= 0; i--) {
+		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, 0);
+	}
+
+	polyStructExp = adrStructPoly += sizeof(int16 *);
+
+	for (int i = numberOfWalkboxes - 1; i >= 0; i--) {
 		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, walkboxZoom[i] * 20);
 	}
 

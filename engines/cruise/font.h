@@ -42,11 +42,11 @@ int32 getLineHeight(int16 charCount, uint8 * fontPtr, uint8 * fontPrt_Desc);	// 
 int32 getTextLineCount(int32 rightBorder_X, int32 wordSpacingWidth, uint8 * ptr, const uint8 *textString);	// fontProc2
 
 void renderWord(uint8 * fontPtr_Data, uint8 * outBufferPtr,
-    int32 drawPosPixel_X, int32 heightOff, int32 height, int32 param4,
-    int32 stringRenderBufferSize, int32 width, int32 charWidth);
+                int32 drawPosPixel_X, int32 heightOff, int32 height, int32 param4,
+                int32 stringRenderBufferSize, int32 width, int32 charWidth);
 gfxEntryStruct *renderText(int inRightBorder_X, const uint8 *string);
 void drawString(int32 x, int32 y, uint8 * string, uint8 * buffer, uint8 color,
-    int32 inRightBorder_X);
+                int32 inRightBorder_X);
 
 } // End of namespace Cruise
 

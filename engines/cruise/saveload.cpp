@@ -39,14 +39,10 @@ struct overlayRestoreTemporary {
 
 overlayRestoreTemporary ovlRestoreData[90];
 
-void resetPreload()
-{
-	for(unsigned long int i=0; i<64; i++)
-	{
-		if(strlen(preloadData[i].name))
-		{
-			if(preloadData[i].ptr)
-			{
+void resetPreload() {
+	for (unsigned long int i = 0; i < 64; i++) {
+		if (strlen(preloadData[i].name)) {
+			if (preloadData[i].ptr) {
 				free(preloadData[i].ptr);
 				preloadData[i].ptr = NULL;
 			}
@@ -56,8 +52,7 @@ void resetPreload()
 	}
 }
 
-void unloadOverlay(const char*name, int overlayNumber)
-{
+void unloadOverlay(const char*name, int overlayNumber) {
 	releaseOverlay(name);
 
 	strcpy(overlayTable[overlayNumber].overlayName, "");
@@ -65,10 +60,9 @@ void unloadOverlay(const char*name, int overlayNumber)
 	overlayTable[overlayNumber].alreadyLoaded = 0;
 }
 
-void initVars(void)
-{
+void initVars(void) {
 	closeAllMenu();
-	resetFileEntryRange( 0, 257 );
+	resetFileEntryRange(0, 257);
 
 	resetPreload();
 	freeCTP();
@@ -85,10 +79,8 @@ void initVars(void)
 	changeScriptParamInList(-1, -1, &relHead, -1, 0);
 	removeFinishedScripts(&relHead);
 
-	for(unsigned long int i=0; i<90; i++)
-	{
-		if(strlen(overlayTable[i].overlayName) && overlayTable[i].alreadyLoaded)
-		{
+	for (unsigned long int i = 0; i < 90; i++) {
+		if (strlen(overlayTable[i].overlayName) && overlayTable[i].alreadyLoaded) {
 			unloadOverlay(overlayTable[i].overlayName, i);
 		}
 	}
@@ -190,24 +182,24 @@ void initVars(void)
 void saveOverlay(Common::OutSaveFile& currentSaveFile) {
 
 	for (int i = 1; i < numOfLoadedOverlay; i++) {
-		if(overlayTable[i].alreadyLoaded) {
+		if (overlayTable[i].alreadyLoaded) {
 
 			ovlDataStruct* ovlData = overlayTable[i].ovlData;
 
 			// save BSS
 			currentSaveFile.writeSint16LE(ovlData->sizeOfData4);
-			if(ovlData->sizeOfData4)
+			if (ovlData->sizeOfData4)
 				currentSaveFile.write(ovlData->data4Ptr, ovlData->sizeOfData4);
 
 			// save variables
 			currentSaveFile.writeSint16LE(ovlData->size9);
-			for(int j=0; j<ovlData->size9; j++) {
-					currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].X);
-					currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].Y);
-					currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].Z);
-					currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].frame);
-					currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].scale);
-					currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].state);
+			for (int j = 0; j < ovlData->size9; j++) {
+				currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].X);
+				currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].Y);
+				currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].Z);
+				currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].frame);
+				currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].scale);
+				currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].state);
 			}
 		}
 	}
@@ -236,8 +228,7 @@ void loadSavegameDataSub1(Common::InSaveFile& currentSaveFile) {
 				ovlRestoreData[i]._pObj = (objectParams *) mallocAndZero(ovlRestoreData[i]._sNumObj * sizeof(objectParams));
 				ASSERT(ovlRestoreData[i]._pObj);
 
-				for(int j=0; j<ovlRestoreData[i]._sNumObj; j++)
-				{
+				for (int j = 0; j < ovlRestoreData[i]._sNumObj; j++) {
 					ovlRestoreData[i]._pObj[j].X = currentSaveFile.readSint16LE();
 					ovlRestoreData[i]._pObj[j].Y = currentSaveFile.readSint16LE();
 					ovlRestoreData[i]._pObj[j].Z = currentSaveFile.readSint16LE();
@@ -254,7 +245,7 @@ void saveScript(Common::OutSaveFile& currentSaveFile, scriptInstanceStruct *entr
 	int count = 0;
 
 	scriptInstanceStruct* pCurrent = entry->nextScriptPtr;
-	while( pCurrent ) {
+	while (pCurrent) {
 		count ++;
 		pCurrent = pCurrent->nextScriptPtr;
 	}
@@ -262,7 +253,7 @@ void saveScript(Common::OutSaveFile& currentSaveFile, scriptInstanceStruct *entr
 	currentSaveFile.writeSint16LE(count);
 
 	pCurrent = entry->nextScriptPtr;
-	while( pCurrent ) {
+	while (pCurrent) {
 		char dummy[4] = { 0, 0, 0, 0 };
 		currentSaveFile.write(dummy, 2);
 
@@ -334,7 +325,7 @@ void saveAnim(Common::OutSaveFile& currentSaveFile) {
 	int count = 0;
 
 	actorStruct *ptr = actorHead.next;
-	while(ptr) {
+	while (ptr) {
 		count ++;
 		ptr = ptr->next;
 	}
@@ -342,7 +333,7 @@ void saveAnim(Common::OutSaveFile& currentSaveFile) {
 	currentSaveFile.writeSint16LE(count);
 
 	ptr = actorHead.next;
-	while(ptr) {
+	while (ptr) {
 		char dummy[2] = {0, 0};
 		currentSaveFile.write(dummy, 2);
 		currentSaveFile.write(dummy, 2);
@@ -436,13 +427,12 @@ void loadSavegameDataSub5(Common::InSaveFile& currentSaveFile) {
 }
 
 void saveCT(Common::OutSaveFile& currentSaveFile) {
-	if(polyStruct) {
+	if (polyStruct) {
 		currentSaveFile.writeSint32LE(1);
 
 		currentSaveFile.writeSint16LE(numberOfWalkboxes);
 
-		if(numberOfWalkboxes)
-		{
+		if (numberOfWalkboxes) {
 			// FIXME: This code is not endian safe, and breaks if struct
 			// packing changes. Read/write the members one by one instead.
 			currentSaveFile.write(walkboxColor, numberOfWalkboxes * 2);
@@ -460,8 +450,7 @@ void saveCT(Common::OutSaveFile& currentSaveFile) {
 			}
 		}
 
-	}
-	else {
+	} else {
 		currentSaveFile.writeSint32LE(0);
 	}
 }
@@ -539,7 +528,7 @@ int saveSavegameData(int saveGameIdx) {
 	currentSaveFile->writeSint16LE(aniX);
 	currentSaveFile->writeSint16LE(aniY);
 
-	if(animationStart)
+	if (animationStart)
 		currentSaveFile->writeSint16LE(1);
 	else
 		currentSaveFile->writeSint16LE(0);
@@ -578,8 +567,7 @@ int saveSavegameData(int saveGameIdx) {
 	currentSaveFile->write(currentCtpName, 40);
 
 	// restore backgroundTable
-	for(int i=0; i<8; i++)
-	{
+	for (int i = 0; i < 8; i++) {
 		currentSaveFile->write(backgroundTable[i].name, 9);
 		currentSaveFile->write(backgroundTable[i].extention, 6);
 	}
@@ -587,13 +575,12 @@ int saveSavegameData(int saveGameIdx) {
 	currentSaveFile->write(palScreen, sizeof(int16) * NBCOLORS * NBSCREENS);
 	currentSaveFile->write(initVar5, 24);
 	currentSaveFile->write(globalVars, stateID * 2); // ok
-	for(int i=0; i<257; i++)
-	{
+	for (int i = 0; i < 257; i++) {
 		currentSaveFile->writeUint16LE(filesDatabase[i].widthInColumn);
 		currentSaveFile->writeUint16LE(filesDatabase[i].width);
 		currentSaveFile->writeUint16LE(filesDatabase[i].resType);
 		currentSaveFile->writeUint16LE(filesDatabase[i].height);
-		if(filesDatabase[i].subData.ptr) {
+		if (filesDatabase[i].subData.ptr) {
 			currentSaveFile->writeUint32LE(1);
 		} else {
 			currentSaveFile->writeUint32LE(0);
@@ -602,7 +589,7 @@ int saveSavegameData(int saveGameIdx) {
 		currentSaveFile->write(filesDatabase[i].subData.name, 13);
 		currentSaveFile->write(dummy, 1);
 		currentSaveFile->writeUint16LE(filesDatabase[i].subData.transparency);
-		if(filesDatabase[i].subData.ptrMask) {
+		if (filesDatabase[i].subData.ptrMask) {
 			currentSaveFile->writeUint32LE(1);
 		} else {
 			currentSaveFile->writeUint32LE(0);
@@ -612,8 +599,7 @@ int saveSavegameData(int saveGameIdx) {
 		currentSaveFile->writeUint16LE(filesDatabase[i].subData.compression);
 	}
 
-	for(int i=0; i<numOfLoadedOverlay; i++)
-	{
+	for (int i = 0; i < numOfLoadedOverlay; i++) {
 		currentSaveFile->write(overlayTable[i].overlayName, 13);
 		currentSaveFile->write(dummy, 1);
 		currentSaveFile->write(dummy, 4);
@@ -626,8 +612,7 @@ int saveSavegameData(int saveGameIdx) {
 		currentSaveFile->writeUint16LE(overlayTable[i].executeScripts);
 	}
 
-	for(int i=0; i<64; i++)
-	{
+	for (int i = 0; i < 64; i++) {
 		currentSaveFile->write(preloadData[i].name, 15);
 		currentSaveFile->write(dummy, 1);
 		currentSaveFile->writeUint32LE(preloadData[i].size);
@@ -716,7 +701,7 @@ int loadSavegameData(int saveGameIdx) {
 	aniX = currentSaveFile->readSint16LE();
 	aniY = currentSaveFile->readSint16LE();
 
-	if(currentSaveFile->readSint16LE()) // cast to bool
+	if (currentSaveFile->readSint16LE()) // cast to bool
 		animationStart = true;
 	else
 		animationStart = false;
@@ -755,8 +740,7 @@ int loadSavegameData(int saveGameIdx) {
 	currentSaveFile->read(currentCtpName, 40);
 
 	// restore backgroundTable
-	for(int i=0; i<8; i++)
-	{
+	for (int i = 0; i < 8; i++) {
 		currentSaveFile->read(backgroundTable[i].name, 9);
 		currentSaveFile->read(backgroundTable[i].extention, 6);
 	}
@@ -766,8 +750,7 @@ int loadSavegameData(int saveGameIdx) {
 	currentSaveFile->read(palScreen, sizeof(int16) * NBCOLORS * NBSCREENS);
 	currentSaveFile->read(initVar5, 24);
 	currentSaveFile->read(globalVars, stateID * 2); // ok
-	for(int i=0; i<257; i++)
-	{
+	for (int i = 0; i < 257; i++) {
 		filesDatabase[i].widthInColumn = currentSaveFile->readUint16LE();
 		filesDatabase[i].width = currentSaveFile->readUint16LE();
 		filesDatabase[i].resType = currentSaveFile->readUint16LE();
@@ -783,8 +766,7 @@ int loadSavegameData(int saveGameIdx) {
 		filesDatabase[i].subData.compression = currentSaveFile->readSint16LE();
 	}
 
-	for(int i=0; i<numOfLoadedOverlay; i++)
-	{
+	for (int i = 0; i < numOfLoadedOverlay; i++) {
 		currentSaveFile->read(overlayTable[i].overlayName, 13);
 		currentSaveFile->skip(1);
 		currentSaveFile->skip(4);
@@ -797,8 +779,7 @@ int loadSavegameData(int saveGameIdx) {
 		overlayTable[i].executeScripts = currentSaveFile->readSint16LE();
 	}
 
-	for(int i=0; i<64; i++)
-	{
+	for (int i = 0; i < 64; i++) {
 		currentSaveFile->read(preloadData[i].name, 15);
 		currentSaveFile->skip(1);
 		preloadData[i].size = currentSaveFile->readSint32LE();
@@ -870,7 +851,7 @@ int loadSavegameData(int saveGameIdx) {
 			int j;
 			int k;
 
-			for (j = i + 1; j < 257 && filesDatabase[j].subData.ptr && !strcmp(filesDatabase[i].subData.name, filesDatabase[j].subData.name) && (filesDatabase[j].subData.index == (j-i)); j++);
+			for (j = i + 1; j < 257 && filesDatabase[j].subData.ptr && !strcmp(filesDatabase[i].subData.name, filesDatabase[j].subData.name) && (filesDatabase[j].subData.index == (j - i)); j++);
 
 			for (k = i; k < j; k++) {
 				if (filesDatabase[k].subData.ptrMask)

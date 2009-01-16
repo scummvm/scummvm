@@ -154,7 +154,7 @@ int updateScriptImport(int ovlIdx) {
 					pScript = scriptFunc1Sub2(ovlIdx, i);
 				}
 
-				ptrImportData = (importScriptStruct *) (pScript->dataPtr + pScript->offsetToImportData);	// import data
+				ptrImportData = (importScriptStruct *)(pScript->dataPtr + pScript->offsetToImportData);	// import data
 				ptrImportName = (const char*)(pScript->dataPtr + pScript->offsetToImportName);	// import name
 				ptrData = pScript->dataPtr;
 
@@ -213,17 +213,17 @@ int updateScriptImport(int ovlIdx) {
 										*(ptrData + temp) = param2;
 										*(ptrData + temp + 1) = out2;
 
-										*(int16 *) (ptrData + temp + 2) = ptrDest2->idx;
+										*(int16 *)(ptrData + temp + 2) = ptrDest2->idx;
 
 										flipShort
-										    (
+										(
 										    (int16
-											*)
+										     *)
 										    (ptrData
-											+
-											temp
-											+
-											2));
+										     +
+										     temp
+										     +
+										     2));
 									}
 								}
 							}
@@ -259,24 +259,21 @@ int updateScriptImport(int ovlIdx) {
 
 			if (pFoundExport && foundExportIdx) {
 				switch (linkType) {
-				case 0:	// verb
-					{
-						ovlData->arrayMsgRelHeader[linkEntryIdx].verbOverlay = foundExportIdx;
-						ovlData->arrayMsgRelHeader[linkEntryIdx].verbNumber = pFoundExport->idx;
-						break;
-					}
-				case 1:	// obj1
-					{
-						ovlData->arrayMsgRelHeader[linkEntryIdx].obj1Overlay = foundExportIdx;
-						ovlData->arrayMsgRelHeader[linkEntryIdx].obj1Number = pFoundExport->idx;
-						break;
-					}
-				case 2:	// obj2
-					{
-						ovlData->arrayMsgRelHeader[linkEntryIdx].obj2Overlay = foundExportIdx;
-						ovlData->arrayMsgRelHeader[linkEntryIdx].obj2Number = pFoundExport->idx;
-						break;
-					}
+				case 0: {	// verb
+					ovlData->arrayMsgRelHeader[linkEntryIdx].verbOverlay = foundExportIdx;
+					ovlData->arrayMsgRelHeader[linkEntryIdx].verbNumber = pFoundExport->idx;
+					break;
+				}
+				case 1: {	// obj1
+					ovlData->arrayMsgRelHeader[linkEntryIdx].obj1Overlay = foundExportIdx;
+					ovlData->arrayMsgRelHeader[linkEntryIdx].obj1Number = pFoundExport->idx;
+					break;
+				}
+				case 2: {	// obj2
+					ovlData->arrayMsgRelHeader[linkEntryIdx].obj2Overlay = foundExportIdx;
+					ovlData->arrayMsgRelHeader[linkEntryIdx].obj2Number = pFoundExport->idx;
+					break;
+				}
 				}
 			}
 		}

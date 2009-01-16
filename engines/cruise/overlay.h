@@ -99,8 +99,7 @@ struct importDataStruct {
 	uint16 nameOffset;
 };
 
-enum eClass
-{
+enum eClass {
 	MULTIPLE = 0,
 	VARIABLE = 1,
 	UNIQUE = 2,

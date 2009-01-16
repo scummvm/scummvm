@@ -115,7 +115,7 @@ int loadOverlay(const char *scriptName) {
 	if (volumePtrToFileDescriptor[fileIdx].size + 2 != unpackedSize) {
 		char *pakedBuffer =
 		    (char *)mallocAndZero(volumePtrToFileDescriptor[fileIdx].
-		    size + 2);
+		                          size + 2);
 
 		loadPakedFileToMem(fileIdx, (uint8 *) pakedBuffer);
 
@@ -200,7 +200,7 @@ int loadOverlay(const char *scriptName) {
 
 		ovlData->arrayRelocGlob =
 		    (importDataStruct *) mallocAndZero(ovlData->numRelocGlob *
-		    sizeof(importDataStruct));
+		                                       sizeof(importDataStruct));
 
 		if (!ovlData->arrayRelocGlob) {
 			return (-2);
@@ -302,12 +302,12 @@ int loadOverlay(const char *scriptName) {
 
 			if (tempPtr->offsetToImportData) {
 				flipGen(tempPtr->dataPtr + tempPtr->offsetToImportData,
-				    tempPtr->numRelocGlob * 10);
+				        tempPtr->numRelocGlob * 10);
 			}
 
 			if (tempPtr->offsetToSubData2) {
 				flipGen(tempPtr->dataPtr + tempPtr->offsetToSubData2,
-				    tempPtr->subData2Size * 10);
+				        tempPtr->subData2Size * 10);
 			}
 
 			tempPtr++;
@@ -355,12 +355,12 @@ int loadOverlay(const char *scriptName) {
 
 			if (tempPtr->offsetToImportData) {
 				flipGen(tempPtr->dataPtr + tempPtr->offsetToImportData,
-				    tempPtr->numRelocGlob * 10);
+				        tempPtr->numRelocGlob * 10);
 			}
 
 			if (tempPtr->offsetToSubData2) {
 				flipGen(tempPtr->dataPtr + tempPtr->offsetToSubData2,
-				    tempPtr->subData2Size * 10);
+				        tempPtr->subData2Size * 10);
 			}
 
 			tempPtr++;
@@ -371,11 +371,11 @@ int loadOverlay(const char *scriptName) {
 		ovlData->ptr8 = (uint8 *) mallocAndZero(ovlData->size12);
 
 		if (!ovlData->ptr8) {
-/*      releaseScript(scriptIdx,scriptName);
+			/*      releaseScript(scriptIdx,scriptName);
 
-      if (freeIsNeeded) {
-        freePtr(unpackedBuffer);
-      } */
+			      if (freeIsNeeded) {
+			        freePtr(unpackedBuffer);
+			      } */
 
 			return (-2);
 		}
@@ -387,7 +387,7 @@ int loadOverlay(const char *scriptName) {
 		int i;
 		ovlData->arrayObject =
 		    (objDataStruct *) mallocAndZero(ovlData->numObj *
-		    sizeof(objDataStruct));
+		                                    sizeof(objDataStruct));
 
 		if (!ovlData->arrayObject) {
 			return (-2);
@@ -414,7 +414,7 @@ int loadOverlay(const char *scriptName) {
 	if (ovlData->size9) {
 		ovlData->arrayObjVar =
 		    (objectParams *) mallocAndZero(ovlData->size9 *
-		    sizeof(objectParams));
+		                                   sizeof(objectParams));
 
 		if (!ovlData->arrayObjVar) {
 			return (-2);
@@ -425,7 +425,7 @@ int loadOverlay(const char *scriptName) {
 		int i;
 		ovlData->arrayStates =
 		    (objectParams *) mallocAndZero(ovlData->size8 *
-		    sizeof(objectParams));
+		                                   sizeof(objectParams));
 
 		if (!ovlData->arrayStates) {
 			return (-2);
@@ -446,7 +446,7 @@ int loadOverlay(const char *scriptName) {
 
 		ovlData->stringTable =
 		    (stringEntryStruct *) mallocAndZero(ovlData->numStrings *
-		    sizeof(stringEntryStruct));
+		                                        sizeof(stringEntryStruct));
 
 		for (i = 0; i < ovlData->numStrings; i++) {
 			ovlData->stringTable[i].idx = s.readUint16BE();
@@ -463,8 +463,8 @@ int loadOverlay(const char *scriptName) {
 	}
 
 	if (ovlData->
-	    specialString1Length /*|| ovlData->specialString2Length */
-	    || ovlData->stringTable) {
+	        specialString1Length /*|| ovlData->specialString2Length */
+	        || ovlData->stringTable) {
 		int i;
 		//int unpackedSize;
 		//int fileIdx;
@@ -492,11 +492,11 @@ int loadOverlay(const char *scriptName) {
 		}
 
 		if (volumePtrToFileDescriptor[fileIdx].size + 2 !=
-		    unpackedSize) {
+		        unpackedSize) {
 			char *pakedBuffer =
 			    (char *)
 			    mallocAndZero(volumePtrToFileDescriptor[fileIdx].
-			    size + 2);
+			                  size + 2);
 
 			loadPakedFileToMem(fileIdx, (uint8 *) pakedBuffer);
 
@@ -551,7 +551,7 @@ int loadOverlay(const char *scriptName) {
 			if (ovlData->stringTable[i].length) {
 				ovlData->stringTable[i].string =
 				    (char *)mallocAndZero(ovlData->
-				    stringTable[i].length);
+				                          stringTable[i].length);
 
 				if (!ovlData->stringTable[i].string) {
 					/*      releaseScript(scriptIdx,scriptName);
@@ -592,12 +592,12 @@ int loadOverlay(const char *scriptName) {
 
 			if (ovlData->arrayNameObj) {
 				fprintf(fHandle, "----- object %02d -----\n",
-				    i);
+				        i);
 				if (var_34->stringNameOffset != 0xFFFF) {
 					fprintf(fHandle, "name: %s\n",
-					    getObjectName(var_34->
-						stringNameOffset,
-						ovlData->arrayNameObj));
+					        getObjectName(var_34->
+					                      stringNameOffset,
+					                      ovlData->arrayNameObj));
 				}
 			}
 		}
@@ -627,16 +627,16 @@ int releaseOverlay(const char *name) {
 
 	if (!ovlDataPtr)
 		return -4;
-/*
-  if (overlayTable[overlayIdx].var1E) {
-    free(overlayTable[overlayIdx].var1E);
-    overlayTable[overlayIdx].var1E = NULL;
-  }
+	/*
+	  if (overlayTable[overlayIdx].var1E) {
+	    free(overlayTable[overlayIdx].var1E);
+	    overlayTable[overlayIdx].var1E = NULL;
+	  }
 
-  if (overlayTable[overlayIdx].var16) {
-    free(overlayTable[overlayIdx].var16);
-    overlayTable[overlayIdx].var16 = NULL;
-  } */
+	  if (overlayTable[overlayIdx].var16) {
+	    free(overlayTable[overlayIdx].var16);
+	    overlayTable[overlayIdx].var16 = NULL;
+	  } */
 
 	removeScript(overlayIdx, -1, &procHead);
 	removeScript(overlayIdx, -1, &procHead);

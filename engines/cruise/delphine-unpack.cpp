@@ -48,7 +48,8 @@ static int rcr(UnpackCtx *uc, int CF) {
 static int nextChunk(UnpackCtx *uc) {
 	int CF = rcr(uc, 0);
 	if (uc->chk == 0) {
-		uc->chk = READ_BE_UINT32(uc->src); uc->src -= 4;
+		uc->chk = READ_BE_UINT32(uc->src);
+		uc->src -= 4;
 		uc->crc ^= uc->chk;
 		CF = rcr(uc, 1);
 	}
@@ -88,11 +89,14 @@ static void unpackHelper2(UnpackCtx *uc, byte numChunks) {
 bool delphineUnpack(byte *dst, const byte *src, int len) {
 	UnpackCtx uc;
 	uc.src = src + len - 4;
-	uc.datasize = READ_BE_UINT32(uc.src); uc.src -= 4;
+	uc.datasize = READ_BE_UINT32(uc.src);
+	uc.src -= 4;
 	uc.dst = dst + uc.datasize - 1;
 	uc.size = 0;
-	uc.crc = READ_BE_UINT32(uc.src); uc.src -= 4;
-	uc.chk = READ_BE_UINT32(uc.src); uc.src -= 4;
+	uc.crc = READ_BE_UINT32(uc.src);
+	uc.src -= 4;
+	uc.chk = READ_BE_UINT32(uc.src);
+	uc.src -= 4;
 	uc.crc ^= uc.chk;
 	do {
 		if (!nextChunk(&uc)) {

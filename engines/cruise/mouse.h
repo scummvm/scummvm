@@ -28,22 +28,22 @@
 
 namespace Cruise {
 
-	extern int16 main10;
+extern int16 main10;
 
-	enum CursorType {
-		CURSOR_NORMAL = 0,
-		CURSOR_DISK = 1,
-		CURSOR_CROSS = 2,
-		CURSOR_NOMOUSE = 3,
-		CURSOR_WALK = 4,
-		CURSOR_EXIT = 5,
-		CURSOR_MAGNIFYING_GLASS = 6,
+enum CursorType {
+	CURSOR_NORMAL = 0,
+	CURSOR_DISK = 1,
+	CURSOR_CROSS = 2,
+	CURSOR_NOMOUSE = 3,
+	CURSOR_WALK = 4,
+	CURSOR_EXIT = 5,
+	CURSOR_MAGNIFYING_GLASS = 6,
 
-		CURSOR_MAX = 7
-	};
+	CURSOR_MAX = 7
+};
 
-	void changeCursor(CursorType eType);
-	extern CursorType currentCursor;
+void changeCursor(CursorType eType);
+extern CursorType currentCursor;
 
 } // End of namespace Cruise
 

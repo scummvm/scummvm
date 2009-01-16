@@ -40,10 +40,18 @@ struct CRUISEGameDescription {
 	uint32 features;
 };
 
-int CruiseEngine::getGameType() const { return _gameDescription->gameType; }
-uint32 CruiseEngine::getFeatures() const { return _gameDescription->features; }
-Common::Language CruiseEngine::getLanguage() const { return _gameDescription->desc.language; }
-Common::Platform CruiseEngine::getPlatform() const { return _gameDescription->desc.platform; }
+int CruiseEngine::getGameType() const {
+	return _gameDescription->gameType;
+}
+uint32 CruiseEngine::getFeatures() const {
+	return _gameDescription->features;
+}
+Common::Language CruiseEngine::getLanguage() const {
+	return _gameDescription->desc.language;
+}
+Common::Platform CruiseEngine::getPlatform() const {
+	return _gameDescription->desc.platform;
+}
 
 }
 
@@ -62,7 +70,7 @@ namespace Cruise {
 
 static const CRUISEGameDescription gameDescriptions[] = {
 	{
-	    {
+		{
 			"cruise",
 			"16 colors",
 			AD_ENTRY1("D1", "41a7a4d426dbd048eb369cfee4bb2717"),
@@ -72,9 +80,9 @@ static const CRUISEGameDescription gameDescriptions[] = {
 		},
 		GType_CRUISE,
 		0,
-    },
+	},
 	{
-	    {
+		{
 			"cruise",
 			"256 colors",
 			AD_ENTRY1("D1", "a90d2b9ead6b4d812cd14268672cf178"),
@@ -158,18 +166,18 @@ static const Common::ADParams detectionParams = {
 };
 
 class CruiseMetaEngine : public Common::AdvancedMetaEngine {
-public:
-	CruiseMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
+	public:
+		CruiseMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
 
-	virtual const char *getName() const {
-		return "Cinematique evo 2 engine";
-	}
+		virtual const char *getName() const {
+			return "Cinematique evo 2 engine";
+		}
 
-	virtual const char *getCopyright() const {
-		return "Cruise for a Corpse (C) Delphine Software";
-	}
+		virtual const char *getCopyright() const {
+			return "Cruise for a Corpse (C) Delphine Software";
+		}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+		virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 };
 
 bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
@@ -181,7 +189,7 @@ bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const Comm
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CRUISE)
-	REGISTER_PLUGIN_DYNAMIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);
+REGISTER_PLUGIN_STATIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);
 #endif

@@ -52,7 +52,7 @@ int32 getLineHeight(int16 charCount, uint8 * fontPtr, uint8 * fontPrt_Desc) {
 
 // this function determins how many lines the text will have (old: fontProc2(int32 param1, int32 param2, uint8* ptr, uint8* string))
 int32 getTextLineCount(int32 rightBorder_X, int32 wordSpacingWidth,
-	    uint8 *ptr, const uint8 *textString) {
+                       uint8 *ptr, const uint8 *textString) {
 	const uint8 *localString = textString;
 	const uint8 *currentStringPtr;
 	uint8 character;
@@ -77,8 +77,8 @@ int32 getTextLineCount(int32 rightBorder_X, int32 wordSpacingWidth,
 		} else {
 			if (charData >= 0) {	// + 0xA jump to last 2 bytes of the 12 bytes slice = letter width
 				lineLength +=
-				    wordSpacingWidth + *(int16 *) (ptr + 0xA +
-				    charData * 12);
+				    wordSpacingWidth + *(int16 *)(ptr + 0xA +
+				                                  charData * 12);
 			} else {
 				if (character == ' ') {
 					lineLength += wordSpacingWidth + 5;
@@ -148,7 +148,7 @@ void loadFNT(const char *fileName) {
 			fontFileHandle.read(_systemFNT, fontSize);
 
 			flipLong((int32 *) _systemFNT);
-			flipLong((int32 *) (_systemFNT + 4));
+			flipLong((int32 *)(_systemFNT + 4));
 			flipGen(_systemFNT + 8, 6);
 
 			currentPtr = _systemFNT + 14;
@@ -229,8 +229,8 @@ void flipGen(void *var, int32 length) {
 }
 
 void renderWord(uint8 * fontPtr_Data, uint8 * outBufferPtr,
-	    int32 drawPosPixel_X, int32 heightOff, int32 height, int32 param4,
-		int32 stringRenderBufferSize, int32 width, int32 charWidth) {
+                int32 drawPosPixel_X, int32 heightOff, int32 height, int32 param4,
+                int32 stringRenderBufferSize, int32 width, int32 charWidth) {
 	int i;
 	int j;
 	uint8 *fontPtr_Data2 = fontPtr_Data + height * 2;
@@ -250,7 +250,7 @@ void renderWord(uint8 * fontPtr_Data, uint8 * outBufferPtr,
 		for (j = 0; j < charWidth; j++) {
 			*outBufferPtr =
 			    ((currentColor1 >> 15) & 1) | ((currentColor2 >>
-				14) & 2);
+			                                    14) & 2);
 			outBufferPtr++;
 
 			currentColor1 <<= 1;
@@ -262,7 +262,7 @@ void renderWord(uint8 * fontPtr_Data, uint8 * outBufferPtr,
 
 // returns character count and pixel size (via pointer) per line of the string (old: prepareWordRender(int32 param, int32 var1, int16* out2, uint8* ptr3, uint8* string))
 int32 prepareWordRender(int32 inRightBorder_X, int32 wordSpacingWidth,
-	    int16 * strPixelLength, uint8 * ptr3, const uint8 * textString) {
+                        int16 * strPixelLength, uint8 * ptr3, const uint8 * textString) {
 	const uint8 *localString = textString;
 
 	int32 counter = 0;
@@ -280,7 +280,7 @@ int32 prepareWordRender(int32 inRightBorder_X, int32 wordSpacingWidth,
 			temp_pc = pixelCount;
 
 			if (pixelCount + wordSpacingWidth + 5 >=
-			    inRightBorder_X) {
+			        inRightBorder_X) {
 				finish = 1;
 			} else {
 				pixelCount += wordSpacingWidth + 5;
@@ -291,9 +291,9 @@ int32 prepareWordRender(int32 inRightBorder_X, int32 wordSpacingWidth,
 			} else {
 				if (charData) {
 					if (pixelCount + wordSpacingWidth +
-					    *(int16 *) ((ptr3 +
-						    charData * 12) + 0xA) >=
-					    inRightBorder_X) {
+					        *(int16 *)((ptr3 +
+					                    charData * 12) + 0xA) >=
+					        inRightBorder_X) {
 						finish = 1;
 						if (temp_pc) {
 							pixelCount = temp_pc;
@@ -302,8 +302,8 @@ int32 prepareWordRender(int32 inRightBorder_X, int32 wordSpacingWidth,
 					} else {
 						pixelCount +=
 						    wordSpacingWidth +
-						    *(int16 *) ((ptr3 +
-							charData * 12) + 0xA);
+						    *(int16 *)((ptr3 +
+						                charData * 12) + 0xA);
 					}
 				}
 			}
@@ -316,7 +316,7 @@ int32 prepareWordRender(int32 inRightBorder_X, int32 wordSpacingWidth,
 }
 
 void drawString(int32 x, int32 y, uint8 *string, uint8 *buffer, uint8 color,
-	    int32 inRightBorder_X) {
+                int32 inRightBorder_X) {
 	uint8 *fontPtr;
 	uint8 *fontPtr_Data;	// ptr2
 	uint8 *fontPtr_Desc;	// ptr3
@@ -354,13 +354,13 @@ void drawString(int32 x, int32 y, uint8 *string, uint8 *buffer, uint8 color,
 		return;
 	}
 
-	fontPtr_Data = fontPtr + *(int16 *) (fontPtr + 4);
+	fontPtr_Data = fontPtr + *(int16 *)(fontPtr + 4);
 	fontPtr_Desc = fontPtr + 14;
 
-	lineHeight = getLineHeight(*(int16 *) (fontPtr + 8), fontPtr, fontPtr_Desc);	// ok
+	lineHeight = getLineHeight(*(int16 *)(fontPtr + 8), fontPtr, fontPtr_Desc);	// ok
 
-	wordSpacingWidth = *(int16 *) (fontPtr + 10);
-	wordSpacingHeight = *(int16 *) (fontPtr + 12);
+	wordSpacingWidth = *(int16 *)(fontPtr + 10);
+	wordSpacingHeight = *(int16 *)(fontPtr + 12);
 
 	if (inRightBorder_X > 310) {
 		rightBorder_X = 310;
@@ -444,19 +444,19 @@ void drawString(int32 x, int32 y, uint8 *string, uint8 *buffer, uint8 color,
 				} else {
 					if (data) {
 						short int *si =
-						    (int16 *) (fontPtr_Desc +
-						    data * 12);
+						    (int16 *)(fontPtr_Desc +
+						              data * 12);
 						//int var_2     = si[5];
 
 						renderWord(fontPtr_Data +
-						    si[0],
-						    currentStrRenderBuffer,
-						    drawPosPixel_X,
-						    si[4] - si[3] +
-						    lineHeight + heightOffset,
-						    si[3], si[2],
-						    renderBufferSize / 2,
-						    stringWidth * 2, si[5]);
+						           si[0],
+						           currentStrRenderBuffer,
+						           drawPosPixel_X,
+						           si[4] - si[3] +
+						           lineHeight + heightOffset,
+						           si[3], si[2],
+						           renderBufferSize / 2,
+						           stringWidth * 2, si[5]);
 
 						drawPosPixel_X +=
 						    wordSpacingWidth + si[5];
@@ -489,9 +489,9 @@ void drawString(int32 x, int32 y, uint8 *string, uint8 *buffer, uint8 color,
 	}
 
 	gfxModuleData_field_64((char *)currentStrRenderBuffer, stringWidth,
-	    stringHeight, (char *)buffer, x, y, 0);
+	                       stringHeight, (char *)buffer, x, y, 0);
 	gfxModuleData_field_64((char *)currentStrRenderBuffer, stringWidth,
-	    stringHeight, (char *)buffer, x, y, color);
+	                       stringHeight, (char *)buffer, x, y, color);
 
 	if (needFlip) {
 		gfxModuleData_flip();
@@ -541,13 +541,13 @@ gfxEntryStruct *renderText(int inRightBorder_X, const uint8 *string) {
 	if (!fontPtr) {
 		return NULL;
 	}
-	fontPtr_Data = fontPtr + *(int16 *) (fontPtr + 4);	// offset to char data
+	fontPtr_Data = fontPtr + *(int16 *)(fontPtr + 4);	// offset to char data
 	fontPtr_Desc = fontPtr + 14;	// offset to char description
 
-	lineHeight = getLineHeight(*(int16 *) (fontPtr + 8), fontPtr, fontPtr_Desc);	// ok
+	lineHeight = getLineHeight(*(int16 *)(fontPtr + 8), fontPtr, fontPtr_Desc);	// ok
 
-	wordSpacingWidth = *(int16 *) (fontPtr + 10);
-	wordSpacingHeight = *(int16 *) (fontPtr + 12);
+	wordSpacingWidth = *(int16 *)(fontPtr + 10);
+	wordSpacingHeight = *(int16 *)(fontPtr + 12);
 
 	// if right border is higher then screenwidth (+ spacing), adjust border
 	if (inRightBorder_X > 310) {
@@ -620,19 +620,19 @@ gfxEntryStruct *renderText(int inRightBorder_X, const uint8 *string) {
 					drawPosPixel_X += wordSpacingWidth + 5;	// if char = "space" adjust word starting postion (don't render space though);
 				} else {
 					if (charData >= 0) {
-						short int *si = (int16 *) (fontPtr_Desc + charData * 12);	// offset font data
+						short int *si = (int16 *)(fontPtr_Desc + charData * 12);	// offset font data
 						// int var_2 = si[5];                                   // don't need this
 
 						// should ist be stringRenderBufferSize/2 for the second last param?
 						renderWord(fontPtr_Data +
-						    si[0],
-						    currentStrRenderBuffer,
-						    drawPosPixel_X,
-						    si[4] - si[3] +
-						    lineHeight + heightOffset,
-						    si[3], si[2],
-						    stringRenderBufferSize,
-						    stringWidth / 2, si[5]);
+						           si[0],
+						           currentStrRenderBuffer,
+						           drawPosPixel_X,
+						           si[4] - si[3] +
+						           lineHeight + heightOffset,
+						           si[3], si[2],
+						           stringRenderBufferSize,
+						           stringWidth / 2, si[5]);
 
 						drawPosPixel_X +=
 						    wordSpacingWidth + si[5];

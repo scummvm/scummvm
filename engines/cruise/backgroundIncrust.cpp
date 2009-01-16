@@ -43,33 +43,29 @@ void addBackgroundIncrustSub1(int fileIdx, int X, int Y, char *ptr2, int16 scale
 	buildPolyModel(X, Y, scale, ptr2, destBuffer, dataPtr);
 }
 
-void backupBackground(backgroundIncrustStruct *pIncrust, int X, int Y, int width, int height, uint8* pBackground)
-{
+void backupBackground(backgroundIncrustStruct *pIncrust, int X, int Y, int width, int height, uint8* pBackground) {
 	pIncrust->saveWidth = width;
 	pIncrust->saveHeight = height;
-	pIncrust->saveSize = width*height;
+	pIncrust->saveSize = width * height;
 	pIncrust->savedX = X;
 	pIncrust->savedY = Y;
 
-	pIncrust->ptr = (uint8*)malloc(width*height);
-	for(int i=0; i<height; i++)
-	{
-		for(int j=0; j<width; j++)
-		{
+	pIncrust->ptr = (uint8*)malloc(width * height);
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
 			pIncrust->ptr[i*width+j] = pBackground[(i+Y)*320+j+X];
 		}
 	}
 }
 
-void restoreBackground(backgroundIncrustStruct *pIncrust)
-{
-	if(pIncrust->type != 1)
+void restoreBackground(backgroundIncrustStruct *pIncrust) {
+	if (pIncrust->type != 1)
 		return;
-	if(pIncrust->ptr == NULL)
+	if (pIncrust->ptr == NULL)
 		return;
 
 	uint8* pBackground = backgroundPtrtable[pIncrust->backgroundIdx];
-	if(pBackground == NULL)
+	if (pBackground == NULL)
 		return;
 
 	int X = pIncrust->savedX;
@@ -77,10 +73,8 @@ void restoreBackground(backgroundIncrustStruct *pIncrust)
 	int width = pIncrust->saveWidth;
 	int height = pIncrust->saveHeight;
 
-	for(int i=0; i<height; i++)
-	{
-		for(int j=0; j<width; j++)
-		{
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
 			pBackground[(i+Y)*320+j+X] = pIncrust->ptr[i*width+j];
 		}
 	}
@@ -154,7 +148,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 		int width = filesDatabase[params.fileIdx].width;
 		int height = filesDatabase[params.fileIdx].height;
 
-		if(saveBuffer == 1) {
+		if (saveBuffer == 1) {
 			backupBackground(newElement, newElement->X, newElement->Y, width, height, backgroundPtr);
 		}
 
@@ -174,10 +168,10 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 			// this function fills the sizeTable for the poly (OLD: mainDrawSub1Sub2)
 			getPolySize(newX, newY, newScale, sizeTable, (unsigned char*)newFrame);
 
-			int width = (sizeTable[1]+2) - (sizeTable[0]-2) + 1;
-			int height = sizeTable[3]-sizeTable[2]+1;
+			int width = (sizeTable[1] + 2) - (sizeTable[0] - 2) + 1;
+			int height = sizeTable[3] - sizeTable[2] + 1;
 
-			backupBackground(newElement, sizeTable[0]-2, sizeTable[2], width, height, backgroundPtr);
+			backupBackground(newElement, sizeTable[0] - 2, sizeTable[2], width, height, backgroundPtr);
 		}
 
 		addBackgroundIncrustSub1(params.fileIdx, newElement->X, newElement->Y, NULL, params.scale, (char *)backgroundPtr, (char *)filesDatabase[params.fileIdx].subData.ptr);
@@ -190,7 +184,7 @@ void saveIncrust(Common::OutSaveFile& currentSaveFile) {
 	int count = 0;
 
 	backgroundIncrustStruct *pl = backgroundIncrustHead.next;
-	while(pl) {
+	while (pl) {
 		count++;
 		pl = pl->next;
 	}
@@ -198,7 +192,7 @@ void saveIncrust(Common::OutSaveFile& currentSaveFile) {
 	currentSaveFile.writeSint16LE(count);
 
 	pl = backgroundIncrustHead.next;
-	while(pl) {
+	while (pl) {
 		char dummy[4] = {0, 0, 0, 0};
 		currentSaveFile.write(dummy, 2);
 		currentSaveFile.write(dummy, 2);
@@ -214,7 +208,7 @@ void saveIncrust(Common::OutSaveFile& currentSaveFile) {
 		currentSaveFile.writeSint16LE(pl->scriptNumber);
 		currentSaveFile.writeSint16LE(pl->scriptOverlayIdx);
 		currentSaveFile.write(dummy, 4);
-		currentSaveFile.writeSint16LE(pl->saveWidth/2);
+		currentSaveFile.writeSint16LE(pl->saveWidth / 2);
 		currentSaveFile.writeSint16LE(pl->saveHeight);
 		currentSaveFile.writeSint16LE(pl->saveSize);
 		currentSaveFile.writeSint16LE(pl->savedX);
@@ -261,7 +255,7 @@ void loadBackgroundIncrustFromSave(Common::InSaveFile& currentSaveFile) {
 		pl2->scriptNumber = currentSaveFile.readSint16LE();
 		pl2->scriptOverlayIdx = currentSaveFile.readSint16LE();
 		currentSaveFile.skip(4);
-		pl2->saveWidth = currentSaveFile.readSint16LE()*2;
+		pl2->saveWidth = currentSaveFile.readSint16LE() * 2;
 		pl2->saveHeight = currentSaveFile.readSint16LE();
 		pl2->saveSize = currentSaveFile.readUint16LE();
 		pl2->savedX = currentSaveFile.readSint16LE();
@@ -301,26 +295,23 @@ void regenerateBackgroundIncrust(backgroundIncrustStruct *pHead) {
 
 	backgroundIncrustStruct* pl = pHead->next;
 
-	while(pl) {
+	while (pl) {
 		backgroundIncrustStruct* pl2 = pl->next;
 
 		bool bLoad = false;
 		int frame = pl->field_E;
 		//int screen = pl->backgroundIdx;
 
-		if((filesDatabase[frame].subData.ptr == NULL) || (strcmp(pl->name, filesDatabase[frame].subData.name))) {
+		if ((filesDatabase[frame].subData.ptr == NULL) || (strcmp(pl->name, filesDatabase[frame].subData.name))) {
 			frame = 257 - 1;
-			if(loadFile( pl->name, frame, pl->spriteId ) >= 0) {
+			if (loadFile(pl->name, frame, pl->spriteId) >= 0) {
 				bLoad = true;
-			}
-			else
-			{
+			} else {
 				frame = -1;
 			}
 		}
 
-		if( frame >= -1 )
-		{
+		if (frame >= -1) {
 			if (filesDatabase[frame].subData.resourceType == 4) {	// sprite
 				int width = filesDatabase[frame].width;
 				int height = filesDatabase[frame].height;
@@ -411,8 +402,7 @@ void removeBackgroundIncrust(int overlay, int idx, backgroundIncrustStruct * pHe
 	}
 }
 
-void unmergeBackgroundIncrust(backgroundIncrustStruct * pHead, int ovl, int idx)
-{
+void unmergeBackgroundIncrust(backgroundIncrustStruct * pHead, int ovl, int idx) {
 	backgroundIncrustStruct *pl;
 	backgroundIncrustStruct *pl2;
 
@@ -426,12 +416,11 @@ void unmergeBackgroundIncrust(backgroundIncrustStruct * pHead, int ovl, int idx)
 	pl2 = pl;
 	pl = pl2->next;
 
-	while(pl)
-	{
+	while (pl) {
 		pl2 = pl;
-		if((pl->overlayIdx == ovl) || (ovl == -1))
-			if((pl->objectIdx == idx) || (idx == -1))
-				if((pl->X == x) && (pl->Y == y))
+		if ((pl->overlayIdx == ovl) || (ovl == -1))
+			if ((pl->objectIdx == idx) || (idx == -1))
+				if ((pl->X == x) && (pl->Y == y))
 					restoreBackground(pl);
 
 		pl = pl2->next;

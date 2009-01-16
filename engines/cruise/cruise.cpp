@@ -51,13 +51,13 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 #endif
 
 	Common::addSpecialDebugLevel(kCruiseDebugScript, "Script",
-	    "Script debug level");
+	                             "Script debug level");
 
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
-	    ConfMan.getInt("sfx_volume"));
+	                              ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
-	    ConfMan.getInt("music_volume"));
+	                              ConfMan.getInt("music_volume"));
 
 	g_cruise = this;
 

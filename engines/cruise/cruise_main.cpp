@@ -167,10 +167,10 @@ void changeScriptParamInList(int param1, int param2, scriptInstanceStruct *pScri
 	pScriptInstance = pScriptInstance->nextScriptPtr;
 	while (pScriptInstance) {
 		if ((pScriptInstance->overlayNumber == param1) || (param1 == -1))
-		    if ((pScriptInstance->scriptNumber == param2) || (param2 == -1))
+			if ((pScriptInstance->scriptNumber == param2) || (param2 == -1))
 				if ((pScriptInstance->freeze == oldFreeze) || (oldFreeze == -1)) {
 					pScriptInstance->freeze = newValue;
-		}
+				}
 
 		pScriptInstance = pScriptInstance->nextScriptPtr;
 	}
@@ -247,12 +247,12 @@ ovlData3Struct *scriptFunc1Sub2(int32 scriptNumber, int32 param) {
 }
 
 void scriptFunc2(int scriptNumber, scriptInstanceStruct * scriptHandle,
-	    int param, int param2) {
+                 int param, int param2) {
 	if (scriptHandle->nextScriptPtr) {
 		if (scriptNumber == scriptHandle->nextScriptPtr->overlayNumber
-		    || scriptNumber != -1) {
+		        || scriptNumber != -1) {
 			if (param2 == scriptHandle->nextScriptPtr->scriptNumber
-			    || param2 != -1) {
+			        || param2 != -1) {
 				scriptHandle->nextScriptPtr->sysKey = param;
 			}
 		}
@@ -272,33 +272,19 @@ uint8 *getDataFromData3(ovlData3Struct *ptr, int param) {
 
 	switch (param) {
 	case 0:
-		{
-			return (dataPtr);
-		}
+		return (dataPtr);
 	case 1:
-		{
-			return (dataPtr + ptr->offsetToSubData3);	// strings
-		}
+		return (dataPtr + ptr->offsetToSubData3);	// strings
 	case 2:
-		{
-			return (dataPtr + ptr->offsetToSubData2);
-		}
+		return (dataPtr + ptr->offsetToSubData2);
 	case 3:
-		{
-			return (dataPtr + ptr->offsetToImportData);	// import data
-		}
+		return (dataPtr + ptr->offsetToImportData);	// import data
 	case 4:
-		{
-			return (dataPtr + ptr->offsetToImportName);	// import names
-		}
+		return (dataPtr + ptr->offsetToImportName);	// import names
 	case 5:
-		{
-			return (dataPtr + ptr->offsetToSubData5);
-		}
+		return (dataPtr + ptr->offsetToSubData5);
 	default:
-		{
-			return (NULL);
-		}
+		return NULL;
 	}
 }
 
@@ -601,13 +587,12 @@ int removeFinishedScripts(scriptInstanceStruct *ptrHandle) {
 	return (0);
 }
 
-bool testMask(int x, int y, unsigned char* pData, int stride)
-{
-	unsigned char* ptr = y * stride + x/8 + pData;
+bool testMask(int x, int y, unsigned char* pData, int stride) {
+	unsigned char* ptr = y * stride + x / 8 + pData;
 
 	unsigned char bitToTest = 0x80 >> (x & 7);
 
-	if((*ptr) & bitToTest)
+	if ((*ptr) & bitToTest)
 		return true;
 	return false;
 }
@@ -682,7 +667,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 
 								offset += j;
 
-								if (offset >= 0 ) {
+								if (offset >= 0) {
 									if (filesDatabase[offset].resType == 0 && filesDatabase[offset].subData.ptr) {
 										dataPtr = (int16 *)filesDatabase[offset].subData.ptr;
 									}
@@ -712,7 +697,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 							int offsetY = mouseY - y;
 
 							if ((offsetX >= 0) && (offsetX < nWidth) && (offsetY >= 0) && (offsetY <= nHeight) && filesDatabase[j].subData.ptr) {
-								if(testMask(offsetX, offsetY, filesDatabase[j].subData.ptrMask, filesDatabase[j].width/8)) {
+								if (testMask(offsetX, offsetY, filesDatabase[j].subData.ptrMask, filesDatabase[j].width / 8)) {
 									*outObjOvl = linkedObjOvl;
 									*outObjIdx = linkedObjIdx;
 									return currentObject->type;
@@ -725,7 +710,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 						int width = params.fileIdx;
 						int height = params.scale;
 
-						if ((mouseX >= x) && (mouseX <= x+width) && (mouseY >= y) && (mouseY <= y+height)) {
+						if ((mouseX >= x) && (mouseX <= x + width) && (mouseY >= y) && (mouseY <= y + height)) {
 							*outObjOvl = linkedObjOvl;
 							*outObjIdx = linkedObjIdx;
 
@@ -769,9 +754,8 @@ const char *getObjectName(int index, const char *string) {
 	int i = 0;
 //	int j = 0;
 
-	while (i < index)
-	{
-		ptr += strlen(ptr)+1;
+	while (i < index) {
+		ptr += strlen(ptr) + 1;
 		i++;
 	}
 	return ptr;
@@ -793,7 +777,7 @@ void buildInventory(int X, int Y) {
 	pMenu = createMenu(X, Y, "Inventaire");
 	menuTable[1] = pMenu;
 
-	if(pMenu == NULL)
+	if (pMenu == NULL)
 		return;
 
 	int numObjectInInventory = 0;
@@ -801,7 +785,7 @@ void buildInventory(int X, int Y) {
 		ovlDataStruct *pOvlData = overlayTable[i].ovlData;
 
 		if (overlayTable[i].alreadyLoaded) {
-			if(overlayTable[i].ovlData->arrayObject) {
+			if (overlayTable[i].ovlData->arrayObject) {
 				for (int j = 0; j < pOvlData->numObj; j++) {
 					if (getObjectClass(i, j) != 3) {
 						int16 returnVar;
@@ -872,7 +856,7 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 		if (overlayTable[j].alreadyLoaded) {
 			int idHeader = overlayTable[j].ovlData->numMsgRelHeader;
 
-			for (int i=0; i<idHeader; i++) {
+			for (int i = 0; i < idHeader; i++) {
 				linkDataStruct* ptrHead = &overlayTable[j].ovlData->arrayMsgRelHeader[i];
 				int thisOvl = ptrHead->obj1Overlay;
 
@@ -884,21 +868,21 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 
 				getSingleObjectParam(thisOvl, ptrHead->obj1Number, 5, &objectState2);
 
-				if (pObject && (pObject->_class == THEME) && (objectState2 <-1)) {
+				if (pObject && (pObject->_class == THEME) && (objectState2 < -1)) {
 
 					thisOvl = ptrHead->obj2Overlay;
 					if (!thisOvl) {
 						thisOvl = j;
 					}
 
-					if((thisOvl==objOvl) && (ptrHead->obj2Number==objIdx)) {
+					if ((thisOvl == objOvl) && (ptrHead->obj2Number == objIdx)) {
 						int verbeOvl = ptrHead->verbOverlay;
 						int obj1Ovl = ptrHead->obj1Overlay;
 						int obj2Ovl = ptrHead->obj2Overlay;
 
-						if (!verbeOvl) verbeOvl=j;
-						if (!obj1Ovl)  obj1Ovl=j;
-						if (!obj2Ovl)  obj2Ovl=j;
+						if (!verbeOvl) verbeOvl = j;
+						if (!obj1Ovl)  obj1Ovl = j;
+						if (!obj2Ovl)  obj2Ovl = j;
 
 						char verbe_name[80];
 						char obj1_name[80];
@@ -907,12 +891,12 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 						char r_obj1_name[80];
 						char r_obj2_name[80];
 
-						verbe_name[0]	=0;
-						obj1_name[0]	=0;
-						obj2_name[0]	=0;
-						r_verbe_name[0] =0;
-						r_obj1_name[0]	=0;
-						r_obj2_name[0]	=0;
+						verbe_name[0]	= 0;
+						obj1_name[0]	= 0;
+						obj2_name[0]	= 0;
+						r_verbe_name[0] = 0;
+						r_obj1_name[0]	= 0;
+						r_obj2_name[0]	= 0;
 
 						ovlDataStruct *ovl2 = NULL;
 						ovlDataStruct *ovl3 = NULL;
@@ -934,9 +918,9 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 							testState2 = ptrHead->obj2OldState;
 						}
 
-						if ((ovl4) && (ptrHead->verbNumber>=0) &&
-							((testState1 == -1) || (testState1 == objectState2)) &&
-							((testState2 == -1) || (testState2 == objectState)) ) {
+						if ((ovl4) && (ptrHead->verbNumber >= 0) &&
+						        ((testState1 == -1) || (testState1 == objectState2)) &&
+						        ((testState2 == -1) || (testState2 == objectState))) {
 							if (ovl2->nameVerbGlob) {
 								const char *ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
 								strcpy(verbe_name, ptr);
@@ -947,7 +931,7 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 									found = true;
 									int color;
 
-									if(objectState2==-2)
+									if (objectState2 == -2)
 										color = subColor;
 									else
 										color = -1;
@@ -979,7 +963,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 		if (overlayTable[j].alreadyLoaded) {
 			int idHeader = overlayTable[j].ovlData->numMsgRelHeader;
 
-			for (int i=0; i<idHeader; i++) {
+			for (int i = 0; i < idHeader; i++) {
 				linkDataStruct* ptrHead = &overlayTable[j].ovlData->arrayMsgRelHeader[i];
 				int thisOvl = ptrHead->obj1Overlay;
 
@@ -996,9 +980,9 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 					int obj1Ovl = ptrHead->obj1Overlay;
 					int obj2Ovl = ptrHead->obj2Overlay;
 
-					if (!verbeOvl) verbeOvl=j;
-					if (!obj1Ovl)  obj1Ovl=j;
-					if (!obj2Ovl)  obj2Ovl=j;
+					if (!verbeOvl) verbeOvl = j;
+					if (!obj1Ovl)  obj1Ovl = j;
+					if (!obj2Ovl)  obj2Ovl = j;
 
 					char verbe_name[80];
 					char obj1_name[80];
@@ -1007,12 +991,12 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 					char r_obj1_name[80];
 					char r_obj2_name[80];
 
-					verbe_name[0]	=0;
-					obj1_name[0]	=0;
-					obj2_name[0]	=0;
-					r_verbe_name[0] =0;
-					r_obj1_name[0]	=0;
-					r_obj2_name[0]	=0;
+					verbe_name[0]	= 0;
+					obj1_name[0]	= 0;
+					obj2_name[0]	= 0;
+					r_verbe_name[0] = 0;
+					r_obj1_name[0]	= 0;
+					r_obj2_name[0]	= 0;
 
 					ovlDataStruct *ovl2 = NULL;
 					ovlDataStruct *ovl3 = NULL;
@@ -1037,24 +1021,19 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 							first = false;
 						}
 					}
-					if ((ovl2) && (ptrHead->verbNumber>=0)) {
+					if ((ovl2) && (ptrHead->verbNumber >= 0)) {
 						if (ovl2->nameVerbGlob) {
 							const char *ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
 							strcpy(verbe_name, ptr);
 
-							if ( (!first) && ((testState==-1) || (testState==objectState))) {
-								if (!strlen(verbe_name))
-								{
-									if(currentScriptPtr)
-									{
+							if ((!first) && ((testState == -1) || (testState == objectState))) {
+								if (!strlen(verbe_name)) {
+									if (currentScriptPtr) {
 										attacheNewScriptToTail(&relHead, j, ptrHead->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
-									}
-									else
-									{
+									} else {
 										attacheNewScriptToTail(&relHead, j, ptrHead->id, 30, 0, 0, scriptType_REL);
 									}
-								}
-								else if (ovl2->nameVerbGlob) {
+								} else if (ovl2->nameVerbGlob) {
 									found = true;
 									ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
 									addSelectableMenuEntry(j, i, menuTable[0], 1, -1, ptr);
@@ -1123,12 +1102,9 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 
 			if ((pHeader->obj2OldState == -1) || (params.state == pHeader->obj2OldState)) {
 				if (pHeader->type == 30) { // REL
-					if(currentScriptPtr)
-					{
+					if (currentScriptPtr) {
 						attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
-					}
-					else
-					{
+					} else {
 						attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, 0, 0, scriptType_REL);
 					}
 
@@ -1177,10 +1153,10 @@ int findHighColor() {
 	int bestColorResult = -1;
 	int bestColorIdx = -1;
 
-	for(unsigned long int i=0; i<256; i++) {
+	for (unsigned long int i = 0; i < 256; i++) {
 		int colorResult = (workpal[i*3+0] + workpal[i*3+1] + workpal[i*3+2]) / 256;
 
-		if(colorResult > bestColorResult) {
+		if (colorResult > bestColorResult) {
 			bestColorIdx = i;
 			bestColorResult =  colorResult;
 		}
@@ -1203,12 +1179,9 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 		if (pHeader->obj2Number == nObj2) {
 			// REL
 			if (pHeader->type == 30) {
-				if(currentScriptPtr)
-				{
+				if (currentScriptPtr) {
 					attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
-				}
-				else
-				{
+				} else {
 					attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, 0, 0, scriptType_REL);
 				}
 
@@ -1256,7 +1229,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 					getMultipleObjectParam(obj1Ovl, pHeader->obj1Number, &params);
 
 					if (narratorOvl > 0) {
-						if ((pHeader->trackX !=-1) && (pHeader->trackY != -1) && (pHeader->trackX != 9999) && (pHeader->trackY != 9999)) {
+						if ((pHeader->trackX != -1) && (pHeader->trackY != -1) && (pHeader->trackX != 9999) && (pHeader->trackY != 9999)) {
 							x = pHeader->trackX - 100;
 							y = pHeader->trackY - 150;
 						} else {
@@ -1274,12 +1247,9 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 					}
 				}
 
-				if(currentScriptPtr)
-				{
+				if (currentScriptPtr) {
 					createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), masterScreen, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
-				}
-				else
-				{
+				} else {
 					createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), masterScreen, 0, 0);
 				}
 
@@ -1329,12 +1299,12 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 }
 
 void closeAllMenu(void) {
-	if(menuTable[0]) {
+	if (menuTable[0]) {
 		freeMenu(menuTable[0]);
 		menuTable[0] = NULL;
 	}
 
-	if(menuTable[1]) {
+	if (menuTable[1]) {
 		freeMenu(menuTable[1]);
 		menuTable[1] = NULL;
 	}
@@ -1394,7 +1364,7 @@ int processInput(void) {
 
 	if (dialogueEnabled) {
 
-		if( menuDown || selectDown || linkedRelation ) {
+		if (menuDown || selectDown || linkedRelation) {
 			closeAllMenu();
 			menuDown = 0;
 			selectDown = 0;
@@ -1402,26 +1372,23 @@ int processInput(void) {
 			changeCursor(CURSOR_NORMAL);
 		}
 
-		if((menuTable[0]==NULL) && (!buttonDown)) {
+		if ((menuTable[0] == NULL) && (!buttonDown)) {
 			int dialogFound = createDialog(dialogueOvl, dialogueObj, xdial, 0);
 
-			if(menuTable[0]) {
-				if(dialogFound) {
+			if (menuTable[0]) {
+				if (dialogFound) {
 					currentActiveMenu = 0;
-				}
-				else {
+				} else {
 					freeMenu(menuTable[0]);
 					menuTable[0] = NULL;
 					currentActiveMenu = -1;
 				}
-			}
-			else {
+			} else {
 				menuDown = 0;
 			}
-		}
-		else {
-			if((button & 1) && (buttonDown == 0)) {
-				if(menuTable[0]) {
+		} else {
+			if ((button & 1) && (buttonDown == 0)) {
+				if (menuTable[0]) {
 					callRelation(getSelectedEntryInMenu(menuTable[0]), dialogueObj);
 
 					freeMenu(menuTable[0]);
@@ -1429,7 +1396,7 @@ int processInput(void) {
 
 					if (linkedMsgList) {
 						ASSERT(0);
-				//					freeMsgList(linkedMsgList);
+						//					freeMsgList(linkedMsgList);
 					}
 
 					linkedMsgList = NULL;
@@ -1471,10 +1438,10 @@ int processInput(void) {
 				linkedRelation = NULL;
 				changeCursor(CURSOR_NORMAL);
 			} else { // call sub relation when clicking in inventory
-				if(menuTable[0] && menuTable[1]) {
+				if (menuTable[0] && menuTable[1]) {
 					menuElementSubStruct * p0 = getSelectedEntryInMenu(menuTable[1]);
 
-					if(p0)
+					if (p0)
 						callSubRelation(linkedRelation, p0->ovlIdx, p0->header);
 
 					closeAllMenu();
@@ -1516,7 +1483,7 @@ int processInput(void) {
 							animationStart = true;
 							buttonDown = 0;
 						}
-					}else {
+					} else {
 						// No object found, we move the character to the cursor
 						aniX = mouseX;
 						aniY = mouseY;
@@ -1601,41 +1568,41 @@ void manageEvents() {
 	Common::EventManager * eventMan = g_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-			case Common::EVENT_LBUTTONDOWN:
-				currentMouseButton |= 1;
-				break;
-			case Common::EVENT_LBUTTONUP:
-				currentMouseButton &= ~1;
-				break;
-			case Common::EVENT_RBUTTONDOWN:
-				currentMouseButton |= 2;
-				break;
-			case Common::EVENT_RBUTTONUP:
-				currentMouseButton &= ~2;
-				break;
-			case Common::EVENT_MOUSEMOVE:
-				currentMouseX = event.mouse.x;
-				currentMouseY = event.mouse.y;
-				break;
+		case Common::EVENT_LBUTTONDOWN:
+			currentMouseButton |= 1;
+			break;
+		case Common::EVENT_LBUTTONUP:
+			currentMouseButton &= ~1;
+			break;
+		case Common::EVENT_RBUTTONDOWN:
+			currentMouseButton |= 2;
+			break;
+		case Common::EVENT_RBUTTONUP:
+			currentMouseButton &= ~2;
+			break;
+		case Common::EVENT_MOUSEMOVE:
+			currentMouseX = event.mouse.x;
+			currentMouseY = event.mouse.y;
+			break;
 		case Common::EVENT_QUIT:
 			g_system->quit();
 			break;
 		case Common::EVENT_KEYUP:
 			switch (event.kbd.keycode) {
-				case 27: // ESC
-					currentMouseButton &= ~4;
-					break;
-				default:
-					break;
+			case 27: // ESC
+				currentMouseButton &= ~4;
+				break;
+			default:
+				break;
 			}
 			break;
-	    case Common::EVENT_KEYDOWN:
+		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
-				case 27: // ESC
-					currentMouseButton |= 4;
-					break;
-				default:
-					break;
+			case 27: // ESC
+				currentMouseButton |= 4;
+				break;
+			default:
+				break;
 			}
 
 			/*
@@ -1792,18 +1759,19 @@ void mainLoop(void) {
 
 			if (cmdLine[0]) {
 				ASSERT(0);
-/*        redrawStrings(0,&cmdLine,8);
+				/*        redrawStrings(0,&cmdLine,8);
 
-        waitForPlayerInput();
+				        waitForPlayerInput();
 
-        cmdLine = 0; */
+				        cmdLine = 0; */
 			}
 
 			if (displayOn) {
 				if (doFade)
 					PCFadeFlag = 0;
 
-				/*if (!PCFadeFlag)*/ {
+				/*if (!PCFadeFlag)*/
+				{
 					mainDraw(0);
 					flipScreen();
 				}
@@ -1851,7 +1819,7 @@ void mainLoop(void) {
 
 					do {
 						getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
-					}while(mouseButton);
+					} while (mouseButton);
 
 					while (!mouseButton) {
 						manageScripts(&relHead);
@@ -1895,7 +1863,7 @@ void mainLoop(void) {
 						userEnabled = false;
 					}
 				} else if (autoMsg != -1) {
-					removeCell(&cellHead, autoOvl, autoMsg, 5, masterScreen );
+					removeCell(&cellHead, autoOvl, autoMsg, 5, masterScreen);
 					autoMsg = -1;
 				}
 			}

@@ -35,7 +35,7 @@ menuStruct *createMenu(int X, int Y, const char *menuName) {
 	entry = (menuStruct *) malloc(sizeof(menuStruct));
 	ASSERT(entry);
 
-	entry->x = X - 160/2;
+	entry->x = X - 160 / 2;
 	entry->y = Y;
 	entry->stringPtr = menuName;
 	entry->numElements = 0;
@@ -79,7 +79,7 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 						if (pSubStructCurrent->pNext) {
 							do {
 								pSubStructCurrent = pSubStructCurrent->pNext;
-							} while(pSubStructCurrent->pNext);
+							} while (pSubStructCurrent->pNext);
 						}
 
 						pSubStructCurrent->pNext = pSubStruct;
@@ -87,8 +87,7 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 					}
 				}
 				var_6 = var_6->next;
-			}
-			while (var_6);
+			} while (var_6);
 
 			var_6 = di;
 		}
@@ -187,13 +186,12 @@ int processMenu(menuStruct *pMenu) {
 	mainDraw(1);
 	flipScreen();
 
-	if( mouseButton & 1) {
+	if (mouseButton & 1) {
 		menuElementSubStruct* pSelectedEntry = getSelectedEntryInMenu(pMenu);
 
-		if(pSelectedEntry) {
+		if (pSelectedEntry) {
 			return pSelectedEntry->header;
-		}
-		else {
+		} else {
 			return -1;
 		}
 	}
@@ -212,29 +210,29 @@ int playerMenu(int menuX, int menuY) {
 			playMusic = 0;
 			freeStuff2();
 		}
-/*
-    if (currentMenu) {
-      freeMenu(currentMenu);
-      currentMenu = 0;
-      selectDown = 0;
-      menuDown = 0;
-      main9 = -1;
-    }
+		/*
+		    if (currentMenu) {
+		      freeMenu(currentMenu);
+		      currentMenu = 0;
+		      selectDown = 0;
+		      menuDown = 0;
+		      main9 = -1;
+		    }
 
-    if (inventoryMenu) {
-      freeMenu(inventoryMenu);
-      inventoryMenu = 0;
-      selectDown = 0;
-      menuDown = 0;
-      main9 = -1;
-    }*/
+		    if (inventoryMenu) {
+		      freeMenu(inventoryMenu);
+		      inventoryMenu = 0;
+		      selectDown = 0;
+		      menuDown = 0;
+		      main9 = -1;
+		    }*/
 
-/*    if (mouseVar2) {
-      free3(mouseVar2);
-    } */
+		/*    if (mouseVar2) {
+		      free3(mouseVar2);
+		    } */
 
-/*    mouseVar2 = 0;
-    linkedRelation = 0; */
+		/*    mouseVar2 = 0;
+		    linkedRelation = 0; */
 		freeDisk();
 
 		menuTable[0] = createMenu(menuX, menuY, "Menu Joueur");
@@ -253,8 +251,7 @@ int playerMenu(int menuX, int menuY) {
 		freeMenu(menuTable[0]);
 		menuTable[0] = NULL;
 
-		switch(retourMenu)
-		{
+		switch (retourMenu) {
 		case 3: // select save drive
 			break;
 		case 4: // save

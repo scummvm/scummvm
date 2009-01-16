@@ -75,32 +75,28 @@ int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx, objectParamsQuer
 
 	switch (ptr->_class) {
 	case THEME:
-	case MULTIPLE:
-		{
-			state = globalVars[overlayTable[overlayIdx].state + ptr->_stateTableIdx];
+	case MULTIPLE: {
+		state = globalVars[overlayTable[overlayIdx].state + ptr->_stateTableIdx];
 
-			ptr2 = &ovlData->arrayStates[ptr->_firstStateIdx + state];
-			state2 = ptr2->state;
-			break;
-		}
-	case VARIABLE:
-		{
-			ptr2 = &ovlData->arrayObjVar[ptr->_varTableIdx];
+		ptr2 = &ovlData->arrayStates[ptr->_firstStateIdx + state];
+		state2 = ptr2->state;
+		break;
+	}
+	case VARIABLE: {
+		ptr2 = &ovlData->arrayObjVar[ptr->_varTableIdx];
 
-			state = ptr2->state;
-			state2 = state;
-			if(ptr->_firstStateIdx + state < ovlData->size8)
-			{
-				objectParams *ptr3 = &ovlData->arrayStates[ptr->_firstStateIdx + state];
-				state2 = ptr3->state;
-			}
-			break;
+		state = ptr2->state;
+		state2 = state;
+		if (ptr->_firstStateIdx + state < ovlData->size8) {
+			objectParams *ptr3 = &ovlData->arrayStates[ptr->_firstStateIdx + state];
+			state2 = ptr3->state;
 		}
-	default:
-		{
-			printf("Unsupported case %d in getMultipleObjectParam\n",ptr->_class);
-			exit(1);
-		}
+		break;
+	}
+	default: {
+		printf("Unsupported case %d in getMultipleObjectParam\n", ptr->_class);
+		exit(1);
+	}
 	}
 
 	returnParam->X = ptr2->X;
@@ -129,64 +125,54 @@ void setObjectPosition(int16 ovlIdx, int16 objIdx, int16 param3, int16 param4) {
 
 	switch (ptr->_class) {
 	case THEME:
-	case MULTIPLE:
-		{
-			if(param3 != 5)
-				return;
-			globalVars[overlayTable[ovlIdx].state + ptr->_stateTableIdx] = param4;
+	case MULTIPLE: {
+		if (param3 != 5)
+			return;
+		globalVars[overlayTable[ovlIdx].state + ptr->_stateTableIdx] = param4;
+		sortCells(ovlIdx, objIdx, &cellHead);
+		break;
+	}
+	case UNIQUE:
+		return;
+	case VARIABLE: {
+		ptr2 =  &overlayTable[ovlIdx].ovlData->arrayObjVar[ptr->_varTableIdx];
+
+		switch (param3) {
+		case 0: {	// x
+			ptr2->X = param4;
+			break;
+		}
+		case 1: {	// y
+			ptr2->Y = param4;
+			break;
+		}
+		case 2: {	// z
+			ptr2->Z = param4;
 			sortCells(ovlIdx, objIdx, &cellHead);
 			break;
 		}
-	case UNIQUE:
-		return;
-	case VARIABLE:
-		{
-			ptr2 =  &overlayTable[ovlIdx].ovlData->arrayObjVar[ptr->_varTableIdx];
-
-			switch (param3) {
-			case 0:	// x
-				{
-					ptr2->X = param4;
-					break;
-				}
-			case 1:	// y
-				{
-					ptr2->Y = param4;
-					break;
-				}
-			case 2:	// z
-				{
-					ptr2->Z = param4;
-					sortCells(ovlIdx, objIdx, &cellHead);
-					break;
-				}
-			case 3:
-				{
-					ptr2->frame = param4;
-					break;
-				}
-			case 4:	// scale
-				{
-					ptr2->scale = param4;
-					break;
-				}
-			case 5:	// state
-				{
-					ptr2->state = param4;
-					break;
-				}
-			default:
-				{
-					ASSERT(0);
-				}
-			}
-
+		case 3: {
+			ptr2->frame = param4;
 			break;
 		}
-	default:
-		{
+		case 4: {	// scale
+			ptr2->scale = param4;
+			break;
+		}
+		case 5: {	// state
+			ptr2->state = param4;
+			break;
+		}
+		default: {
 			ASSERT(0);
 		}
+		}
+
+		break;
+	}
+	default: {
+		ASSERT(0);
+	}
 	}
 }
 
@@ -204,38 +190,35 @@ int16 objInit(int ovlIdx, int objIdx, int newState) {
 
 	switch (ptr->_class) {
 	case THEME:
-	case MULTIPLE:
-		{
-			globalVars[overlayTable[ovlIdx].state + ptr->_stateTableIdx] = newState;
-			sortCells(ovlIdx, objIdx, &cellHead);
-			break;
-		}
+	case MULTIPLE: {
+		globalVars[overlayTable[ovlIdx].state + ptr->_stateTableIdx] = newState;
+		sortCells(ovlIdx, objIdx, &cellHead);
+		break;
+	}
 	case UNIQUE:
 		break;
-	case VARIABLE:
-		{
-			objectParams *destEntry;
-			objectParams *sourceEntry;
+	case VARIABLE: {
+		objectParams *destEntry;
+		objectParams *sourceEntry;
 
-			if (ptr->_firstStateIdx + newState > ovlData->size8) {
-				return 0;
-			}
-
-			destEntry = &ovlData->arrayObjVar[ptr->_varTableIdx];
-			sourceEntry = &ovlData->arrayStates[ptr->_firstStateIdx + newState];
-
-			memcpy(destEntry, sourceEntry, sizeof(objectParams));
-
-			destEntry->state = newState;
-
-			sortCells(ovlIdx, objIdx, &cellHead);
-			break;
+		if (ptr->_firstStateIdx + newState > ovlData->size8) {
+			return 0;
 		}
-	default:
-		{
-			printf("Unsupported param = %d in objInit\n", ptr->_class);
-			// exit(1);
-		}
+
+		destEntry = &ovlData->arrayObjVar[ptr->_varTableIdx];
+		sourceEntry = &ovlData->arrayStates[ptr->_firstStateIdx + newState];
+
+		memcpy(destEntry, sourceEntry, sizeof(objectParams));
+
+		destEntry->state = newState;
+
+		sortCells(ovlIdx, objIdx, &cellHead);
+		break;
+	}
+	default: {
+		printf("Unsupported param = %d in objInit\n", ptr->_class);
+		// exit(1);
+	}
 	}
 
 	return 0;
@@ -257,75 +240,65 @@ int16 getSingleObjectParam(int16 overlayIdx, int16 param2, int16 param3, int16 *
 
 	switch (ptr->_class) {
 	case THEME:
-	case MULTIPLE:
-		{
-			state = globalVars[overlayTable[overlayIdx].state + ptr->_stateTableIdx];
+	case MULTIPLE: {
+		state = globalVars[overlayTable[overlayIdx].state + ptr->_stateTableIdx];
 
-			ptr2 = &ovlData->arrayStates[ptr->_firstStateIdx + state];
-			break;
-		}
-	case VARIABLE:
-		{
-			ptr2 = &ovlData->arrayObjVar[ptr->_varTableIdx];
+		ptr2 = &ovlData->arrayStates[ptr->_firstStateIdx + state];
+		break;
+	}
+	case VARIABLE: {
+		ptr2 = &ovlData->arrayObjVar[ptr->_varTableIdx];
 
-			state = ptr2->state;
-			break;
-		}
-	default:
-		{
-			printf("Unsupported case %d in getSingleObjectParam\n",ptr->_class);
-			exit(1);
-		}
+		state = ptr2->state;
+		break;
+	}
+	default: {
+		printf("Unsupported case %d in getSingleObjectParam\n", ptr->_class);
+		exit(1);
+	}
 	}
 
 	switch (param3) {
-	case 0:
-		{
-			*returnParam = ptr2->X;
-			break;
-		}
-	case 1:
-		{
-			*returnParam = ptr2->Y;
-			break;
-		}
-	case 2:
-		{
-			*returnParam = ptr2->Z;
-			break;
-		}
-	case 3:
-		{
-			*returnParam = ptr2->frame;
-			break;
-		}
-	case 4:
-		{
-			*returnParam = ptr2->scale;
-			break;
-		}
-	case 5:
-		{
-			*returnParam = state;
-			break;
-		}
-	default:
-		{
-			printf("Unsupported case %d in getSingleObjectParam case 1\n", param3);
-			exit(1);
-		}
+	case 0: {
+		*returnParam = ptr2->X;
+		break;
+	}
+	case 1: {
+		*returnParam = ptr2->Y;
+		break;
+	}
+	case 2: {
+		*returnParam = ptr2->Z;
+		break;
+	}
+	case 3: {
+		*returnParam = ptr2->frame;
+		break;
+	}
+	case 4: {
+		*returnParam = ptr2->scale;
+		break;
+	}
+	case 5: {
+		*returnParam = state;
+		break;
+	}
+	default: {
+		printf("Unsupported case %d in getSingleObjectParam case 1\n", param3);
+		exit(1);
+	}
 	}
 
 	return 0;
 }
 
 void objectReset(void) {
-	for(int i=1; i<numOfLoadedOverlay; i++)	{
-		if(overlayTable[i].alreadyLoaded && overlayTable[i].ovlData) {
-			if(overlayTable[i].ovlData->arrayObject) {
-				for(int j=0; j<overlayTable[i].ovlData->numObj; j++) {
+	for (int i = 1; i < numOfLoadedOverlay; i++)	{
+		if (overlayTable[i].alreadyLoaded && overlayTable[i].ovlData) {
+			if (overlayTable[i].ovlData->arrayObject) {
+				for (int j = 0; j < overlayTable[i].ovlData->numObj; j++) {
 					int stateIdx = overlayTable[i].state + overlayTable[i].ovlData->arrayObject[j]._stateTableIdx;
-					if((overlayTable[i].ovlData->arrayObject[j]._class == THEME) && (globalVars[stateIdx] == -2))
+					if ((overlayTable[i].ovlData->arrayObject[j]._class == THEME) && (globalVars[stateIdx] == -2))
 						globalVars[stateIdx] = 0;
 				}
 			}
