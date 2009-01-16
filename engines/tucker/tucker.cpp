@@ -331,16 +331,11 @@ void TuckerEngine::mainLoop() {
 	loadCharSizeDta();
 	loadCharset();
 	loadPanel();
-	strcpy(_fileToLoad, "infobar.txt");
-	loadFile(_infoBarBuf);
-	strcpy(_fileToLoad, "data5.c");
-	_data5Buf = loadFile();
-	strcpy(_fileToLoad, "bgtext.c");
-	_bgTextBuf = loadFile();
-	strcpy(_fileToLoad, "charname.c");
-	_charNameBuf = loadFile();
-	strcpy(_fileToLoad, "csdata.c");
-	_csDataBuf = loadFile();
+	loadFile("infobar.txt", _infoBarBuf);
+	_data5Buf = loadFile("data5.c", 0);
+	_bgTextBuf = loadFile("bgtext.c", 0);
+	_charNameBuf = loadFile("charname.c", 0);
+	_csDataBuf = loadFile("csdata.c", 0);
 	_csDataSize = _fileLoadSize;
 
 	_currentSaveLoadGameState = 1;
@@ -720,12 +715,12 @@ void TuckerEngine::setupNewLocation() {
 	}
 }
 
-void TuckerEngine::copyLocBitmap(int offset, bool isMask) {
+void TuckerEngine::copyLocBitmap(const char *filename, int offset, bool isMask) {
 	int type = !isMask ? 1 : 0;
 	if (offset > 0 && _locationNum == 16) {
 		type = 0;
 	}
-	loadImage(_loadTempBuf, type);
+	loadImage(filename, _loadTempBuf, type);
 	uint8 *dst = isMask ? _locationBackgroundMaskBuf : _locationBackgroundGfxBuf;
 	dst += offset;
 	const uint8 *src = _loadTempBuf;

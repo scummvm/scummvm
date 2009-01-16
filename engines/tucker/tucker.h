@@ -541,8 +541,8 @@ protected:
 
 	void openCompressedSoundFile();
 	void closeCompressedSoundFile();
-	uint8 *loadFile(uint8 *p = 0);
-	void loadImage(uint8 *dst, int a);
+	uint8 *loadFile(const char *filename, uint8 *p);
+	void loadImage(const char *filename, uint8 *dst, int a);
 	void loadCursor();
 	void loadCharset();
 	void loadCharset2();

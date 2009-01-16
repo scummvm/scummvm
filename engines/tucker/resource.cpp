@@ -161,38 +161,40 @@ public:
 	int _pos;
 };
 
-uint8 *TuckerEngine::loadFile(uint8 *p) {
+uint8 *TuckerEngine::loadFile(const char *fname, uint8 *p) {
+	char filename[80];
+	strcpy(filename, fname);
 	if (_gameLang == Common::DE_DEU) {
-		if (strcmp(_fileToLoad, "bgtext.c") == 0) {
-			strcpy(_fileToLoad, "bgtextgr.c");
-		} else if (strcmp(_fileToLoad, "charname.c") == 0) {
-			strcpy(_fileToLoad, "charnmgr.c");
-		} else if (strcmp(_fileToLoad, "data5.c") == 0) {
-			strcpy(_fileToLoad, "data5gr.c");
-		} else if (strcmp(_fileToLoad, "infobar.txt") == 0) {
-			strcpy(_fileToLoad, "infobrgr.txt");
-		} else if (strcmp(_fileToLoad, "charsize.dta") == 0) {
-			strcpy(_fileToLoad, "charszgr.dta");
-		} else if (strncmp(_fileToLoad, "objtxt", 6) == 0) {
-			const char num = _fileToLoad[6];
-			snprintf(_fileToLoad, sizeof(_fileToLoad), "objtx%cgr.c", num);
-		} else if (strncmp(_fileToLoad, "pt", 2) == 0) {
-			const char num = _fileToLoad[2];
-			snprintf(_fileToLoad, sizeof(_fileToLoad), "pt%ctxtgr.c", num);
+		if (strcmp(filename, "bgtext.c") == 0) {
+			strcpy(filename, "bgtextgr.c");
+		} else if (strcmp(filename, "charname.c") == 0) {
+			strcpy(filename, "charnmgr.c");
+		} else if (strcmp(filename, "data5.c") == 0) {
+			strcpy(filename, "data5gr.c");
+		} else if (strcmp(filename, "infobar.txt") == 0) {
+			strcpy(filename, "infobrgr.txt");
+		} else if (strcmp(filename, "charsize.dta") == 0) {
+			strcpy(filename, "charszgr.dta");
+		} else if (strncmp(filename, "objtxt", 6) == 0) {
+			const char num = filename[6];
+			snprintf(filename, sizeof(filename), "objtx%cgr.c", num);
+		} else if (strncmp(filename, "pt", 2) == 0) {
+			const char num = filename[2];
+			snprintf(filename, sizeof(filename), "pt%ctxtgr.c", num);
 		}
 	}
 	_fileLoadSize = 0;
 	bool decode = false;
 	if (_gameFlags & kGameFlagEncodedData) {
-		char *ext = strrchr(_fileToLoad, '.');
+		char *ext = strrchr(filename, '.');
 		if (ext && strcmp(ext + 1, "c") == 0) {
 			strcpy(ext + 1, "enc");
 			decode = true;
 		}
 	}
 	Common::File f;
-	if (!f.open(_fileToLoad)) {
-		warning("Unable to open '%s'", _fileToLoad);
+	if (!f.open(filename)) {
+		warning("Unable to open '%s'", filename);
 		return 0;
 	}
 	const int sz = f.size();
@@ -227,12 +229,15 @@ void TuckerEngine::closeCompressedSoundFile() {
 	_fCompressedSound.close();
 }
 
-void TuckerEngine::loadImage(uint8 *dst, int type) {
+void TuckerEngine::loadImage(const char *fname, uint8 *dst, int type) {
+	char filename[80];
+	strcpy(filename, fname);
+
 	Common::File f;
-	if (!f.open(_fileToLoad)) {
+	if (!f.open(filename)) {
 		// workaround for "paper-3.pcx" / "paper_3.pcx"
 		bool tryOpen = false;
-		for (char *p = _fileToLoad; *p; ++p) {
+		for (char *p = filename; *p; ++p) {
 			switch (*p) {
 			case '-':
 				*p = '_';
@@ -244,8 +249,8 @@ void TuckerEngine::loadImage(uint8 *dst, int type) {
 				break;
 			}
 		}
-		if (!tryOpen || !f.open(_fileToLoad)) {
-			warning("Unable to open '%s'", _fileToLoad);
+		if (!tryOpen || !f.open(filename)) {
+			warning("Unable to open '%s'", filename);
 			return;
 		}
 	}
@@ -277,16 +282,14 @@ void TuckerEngine::loadImage(uint8 *dst, int type) {
 }
 
 void TuckerEngine::loadCursor() {
-	strcpy(_fileToLoad, "pointer.pcx");
-	loadImage(_loadTempBuf, 0);
+	loadImage("pointer.pcx", _loadTempBuf, 0);
 	for (int cursor = 0; cursor < 7; ++cursor) {
 		Graphics::encodeRAW(_loadTempBuf + cursor * 320 * 16, _cursorGfxBuf + cursor * 256, 16, 16);
 	}
 }
 
 void TuckerEngine::loadCharset() {
-	strcpy(_fileToLoad, "charset.pcx");
-	loadImage(_loadTempBuf, 0);
+	loadImage("charset.pcx", _loadTempBuf, 0);
 	switch (_gameLang) {
 	case Common::EN_ANY:
 		Graphics::setCharset(kCharsetTypeEng);
@@ -302,8 +305,7 @@ void TuckerEngine::loadCharset2() {
 	_charWidthTable[58] = 7;
 	_charWidthTable[32] = 15;
 	memcpy(_charWidthTable + 65, _charWidthCharset2, 58);
-	strcpy(_fileToLoad, "char2.pcx");
-	loadImage(_loadTempBuf, 0);
+	loadImage("char2.pcx", _loadTempBuf, 0);
 	Graphics::setCharset(kCharsetTypeCredits);
 	loadCharsetHelper();
 }
@@ -320,8 +322,7 @@ void TuckerEngine::loadCharsetHelper() {
 }
 
 void TuckerEngine::loadCharSizeDta() {
-	strcpy(_fileToLoad, "charsize.dta");
-	loadFile(_loadTempBuf);
+	loadFile("charsize.dta", _loadTempBuf);
 	if (_fileLoadSize != 0) {
 		DataTokenizer t(_loadTempBuf, _fileLoadSize, true);
 		for (int i = 0; i < 256; ++i) {
@@ -335,7 +336,7 @@ void TuckerEngine::loadCharSizeDta() {
 
 void TuckerEngine::loadPanel() {
 	strcpy(_fileToLoad, (_panelNum == 0) ? "panel1.pcx" : "panel2.pcx");
-	loadImage(_panelGfxBuf, 0);
+	loadImage(_fileToLoad, _panelGfxBuf, 0);
 }
 
 void TuckerEngine::loadBudSpr(int startOffset) {
@@ -357,7 +358,7 @@ void TuckerEngine::loadBudSpr(int startOffset) {
 				sprintf(_fileToLoad, "mac_%d.pcx", frame + 1);
 				break;
 			}
-			loadImage(_loadTempBuf, 0);
+			loadImage(_fileToLoad, _loadTempBuf, 0);
 			++frame;
 		}
 		int sz = Graphics::encodeRLE(_loadTempBuf + _spriteFramesTable[i].sourceOffset, _spritesGfxBuf + spriteOffset, _spriteFramesTable[i].xSize, _spriteFramesTable[i].ySize);
@@ -367,8 +368,7 @@ void TuckerEngine::loadBudSpr(int startOffset) {
 }
 
 void TuckerEngine::loadCTable01(int locationNum, int firstSpriteNum, int &lastSpriteNum) {
-	strcpy(_fileToLoad, "ctable01.c");
-	loadFile(_loadTempBuf);
+	loadFile("ctable01.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf,  _fileLoadSize);
 	lastSpriteNum = firstSpriteNum;
 	int count = 0;
@@ -404,8 +404,7 @@ void TuckerEngine::loadCTable02(int fl) {
 	assert(fl == 0);
 	int entry = 0;
 	int i = 0;
-	strcpy(_fileToLoad, "ctable02.c");
-	loadFile(_loadTempBuf);
+	loadFile("ctable02.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	while (t.findNextToken(kDataTokenDw)) {
 		_spriteAnimationsTable[entry].numParts = t.getNextInteger();
@@ -454,9 +453,8 @@ void TuckerEngine::loadLoc() {
 		Graphics::copyFrom640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf + 89600, 320, 140);
 	}
 	if (_locationNum == 1) {
-		strcpy(_fileToLoad, "rochpath.pcx");
 		_loadLocBufPtr = _quadBackgroundGfxBuf + 89600;
-		loadImage(_loadLocBufPtr, 0);
+		loadImage("rochpath.pcx", _loadLocBufPtr, 0);
 	}
 	if (i > 3) {
 		sprintf(_fileToLoad, "loc%02dd.pcx", _locationNum);
@@ -488,10 +486,10 @@ void TuckerEngine::loadObj() {
 	_currentPartNum = _partNum;
 	sprintf(_fileToLoad, "objtxt%d.c", _partNum);
 	free(_objTxtBuf);
-	_objTxtBuf = loadFile();
+	_objTxtBuf = loadFile(_fileToLoad, 0);
 	sprintf(_fileToLoad, "pt%dtext.c", _partNum);
 	free(_ptTextBuf);
-	_ptTextBuf = loadFile();
+	_ptTextBuf = loadFile(_fileToLoad, 0);
 	loadData();
 	loadPanObj();
 }
@@ -499,8 +497,7 @@ void TuckerEngine::loadObj() {
 void TuckerEngine::loadData() {
 	int flag = 0;
 	int objNum = _partNum * 10;
-	strcpy(_fileToLoad, "data.c");
-	loadFile(_loadTempBuf);
+	loadFile("data.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	_dataCount = 0;
 	int count = 0;
@@ -542,7 +539,7 @@ void TuckerEngine::loadData() {
 	int offset = 0;
 	for (int i = 0; i < count; ++i) {
 		sprintf(_fileToLoad, "scrobj%d%d.pcx", _partNum, i);
-		loadImage(_loadTempBuf, 0);
+		loadImage(_fileToLoad, _loadTempBuf, 0);
 		offset = loadDataHelper(offset, i);
 	}
 }
@@ -560,7 +557,7 @@ int TuckerEngine::loadDataHelper(int offset, int index) {
 
 void TuckerEngine::loadPanObj() {
 	sprintf(_fileToLoad, "panobjs%d.pcx", _partNum);
-	loadImage(_loadTempBuf, 0);
+	loadImage(_fileToLoad, _loadTempBuf, 0);
 	int offset = 0;
 	for (int y = 0; y < 5; ++y) {
 		for (int x = 0; x < 10; ++x) {
@@ -572,8 +569,7 @@ void TuckerEngine::loadPanObj() {
 }
 
 void TuckerEngine::loadData3() {
-	strcpy(_fileToLoad, "data3.c");
-	loadFile(_loadTempBuf);
+	loadFile("data3.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	_locationAnimationsCount = 0;
 	if (t.findIndex(_locationNum)) {
@@ -617,8 +613,7 @@ void TuckerEngine::loadData3() {
 }
 
 void TuckerEngine::loadData4() {
-	strcpy(_fileToLoad,"data4.c");
-	loadFile(_loadTempBuf);
+	loadFile("data4.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	t.findNextToken(kDataTokenDw);
 	_gameDebug = t.getNextInteger() != 0;
@@ -667,7 +662,7 @@ void TuckerEngine::loadActionFile() {
 		strcpy(_fileToLoad, "action3.c");
 		break;
 	}
-	loadFile(_loadTempBuf);
+	loadFile(_fileToLoad, _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	_actionsCount = 0;
 	if (t.findIndex(_locationNum)) {
@@ -699,8 +694,7 @@ void TuckerEngine::loadActionFile() {
 }
 
 void TuckerEngine::loadCharPos() {
-	strcpy(_fileToLoad, "charpos.c");
-	loadFile(_loadTempBuf);
+	loadFile("charpos.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	_charPosCount = 0;
 	if (t.findIndex(_locationNum)) {
@@ -766,7 +760,7 @@ void TuckerEngine::loadSprA02_01() {
 	const int count = _sprA02LookupTable[_locationNum];
 	for (int i = 1; i < count + 1; ++i) {
 		sprintf(_fileToLoad, "sprites/a%02d_%02d.spr", _locationNum, i);
-		_sprA02Table[i] = loadFile();
+		_sprA02Table[i] = loadFile(_fileToLoad, 0);
 	}
 	_sprA02Table[0] = _sprA02Table[1];
 }
@@ -784,7 +778,7 @@ void TuckerEngine::loadSprC02_01() {
 	const int count = _sprC02LookupTable[_locationNum];
 	for (int i = 1; i < count + 1; ++i) {
 		sprintf(_fileToLoad, "sprites/c%02d_%02d.spr", _locationNum, i);
-		_sprC02Table[i] = loadFile();
+		_sprC02Table[i] = loadFile(_fileToLoad, 0);
 	}
 	_sprC02Table[0] = _sprC02Table[1];
 	_spritesCount = _sprC02LookupTable2[_locationNum];
@@ -804,8 +798,7 @@ void TuckerEngine::unloadSprC02_01() {
 }
 
 void TuckerEngine::loadFx() {
-	strcpy(_fileToLoad, "fx.c");
-	loadFile(_loadTempBuf);
+	loadFile("fx.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	t.findIndex(_locationNum);
 	t.findNextToken(kDataTokenDw);

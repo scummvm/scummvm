@@ -63,10 +63,8 @@ void TuckerEngine::handleCreditsSequence() {
 		_spritesTable[i].state = -1;
 		_spritesTable[i].stateIndex = -1;
 	}
-	strcpy(_fileToLoad, "credits.txt");
-	loadFile(_ptTextBuf);
-	strcpy(_fileToLoad, "loc74.pcx");
-	loadImage(_quadBackgroundGfxBuf, 1);
+	loadFile("credits.txt", _ptTextBuf);
+	loadImage("loc74.pcx", _quadBackgroundGfxBuf, 1);
 	startSpeechSound(9001, 120);
 	_timerCounter2 = 0;
 	_fadePaletteCounter = 0;
@@ -128,30 +126,30 @@ void TuckerEngine::handleCreditsSequence() {
 				_spritesTable[i].stateIndex = -1;
 			}
 			++num;
-			switch (num) {
-			case 1:
-				strcpy(_fileToLoad, "loc75.pcx");
-				break;
-			case 2:
-				strcpy(_fileToLoad, "loc76.pcx");
-				break;
-			case 3:
-				strcpy(_fileToLoad, "paper-3.pcx");
-				break;
-			case 4:
-				strcpy(_fileToLoad, "loc77.pcx");
-				break;
-			case 5:
-				strcpy(_fileToLoad, "loc78.pcx");
-				break;
-			}
 			if (num == 6) {
 				for (int i = 0; i < 16; ++i) {
 					sprintf(_fileToLoad, "cogs%04d.pcx", i);
-					loadImage(imgBuf + i * 64000, 2);
+					loadImage(_fileToLoad, imgBuf + i * 64000, 2);
 				}
 			} else {
-				loadImage(_quadBackgroundGfxBuf, 2);
+				switch (num) {
+				case 1:
+					strcpy(_fileToLoad, "loc75.pcx");
+					break;
+				case 2:
+					strcpy(_fileToLoad, "loc76.pcx");
+					break;
+				case 3:
+					strcpy(_fileToLoad, "paper-3.pcx");
+					break;
+				case 4:
+					strcpy(_fileToLoad, "loc77.pcx");
+					break;
+				case 5:
+					strcpy(_fileToLoad, "loc78.pcx");
+					break;
+				}
+				loadImage(_fileToLoad, _quadBackgroundGfxBuf, 2);
 			}
 			_spritesCount = _creditsSequenceData2[num];
 			++_flagsTable[236];
@@ -173,8 +171,7 @@ void TuckerEngine::handleCongratulationsSequence() {
 	_timerCounter2 = 0;
 	_fadePaletteCounter = 0;
 	stopSounds();
-	strcpy(_fileToLoad, "congrat.pcx");
-	loadImage(_loadTempBuf, 1);
+	loadImage("congrat.pcx", _loadTempBuf, 1);
 	Graphics::copyTo640(_locationBackgroundGfxBuf, _loadTempBuf, 320, 320, 200);
 	_fullRedrawCounter = 2;
 	redrawScreen(0);
@@ -215,7 +212,15 @@ void TuckerEngine::handleNewPartSequence() {
 		strcpy(_fileToLoad, "pt3bak.pcx");
 		break;
 	}
-	loadImage(_quadBackgroundGfxBuf, 1);
+	loadImage(_fileToLoad, _quadBackgroundGfxBuf, 1);
+	_spritesCount = 1;
+	memset(&_spritesTable[0], 0, sizeof(Sprite));
+	_spritesTable[0].state = -1;
+	_spritesTable[0].stateIndex = -1;
+	int currentLocation = _locationNum;
+	_locationNum = 98;
+	unloadSprA02_01();
+	unloadSprC02_01();
 	switch (_partNum) {
 	case 1:
 		strcpy(_fileToLoad, "sprites/partone.spr");
@@ -227,15 +232,7 @@ void TuckerEngine::handleNewPartSequence() {
 		strcpy(_fileToLoad, "sprites/partthr.spr");
 		break;
 	}
-	_spritesCount = 1;
-	memset(&_spritesTable[0], 0, sizeof(Sprite));
-	_spritesTable[0].state = -1;
-	_spritesTable[0].stateIndex = -1;
-	int currentLocation = _locationNum;
-	_locationNum = 98;
-	unloadSprA02_01();
-	unloadSprC02_01();
-	_sprC02Table[1] = loadFile();
+	_sprC02Table[1] = loadFile(_fileToLoad, 0);
 	startSpeechSound(9000, 60);
 	_fadePaletteCounter = 0;
 	do {
@@ -287,7 +284,7 @@ void TuckerEngine::handleMeanwhileSequence() {
 	if (_flagsTable[215] == 0 && _flagsTable[231] == 1) {
 		strcpy(_fileToLoad, "loc80.pcx");
 	}
-	loadImage(_quadBackgroundGfxBuf + 89600, 1);
+	loadImage(_fileToLoad, _quadBackgroundGfxBuf + 89600, 1);
 	_fadePaletteCounter = 0;
 	for (int i = 0; i < 60; ++i) {
 		if (_fadePaletteCounter < 16) {
@@ -314,10 +311,8 @@ void TuckerEngine::handleMeanwhileSequence() {
 }
 
 void TuckerEngine::handleMapSequence() {
-	strcpy(_fileToLoad, "map2.pcx");
-	loadImage(_quadBackgroundGfxBuf + 89600, 0);
-	strcpy(_fileToLoad, "map1.pcx");
-	loadImage(_loadTempBuf, 1);
+	loadImage("map2.pcx", _quadBackgroundGfxBuf + 89600, 0);
+	loadImage("map1.pcx", _loadTempBuf, 1);
 	_selectedObject.locationObject_locationNum = 0;
 	if (_flagsTable[7] > 0) {
 		copyMapRect(0, 0, 140, 86);
@@ -455,7 +450,7 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 		--_fadePaletteCounter;
 	}
 	_mouseClick = 1;
-	loadImage(_quadBackgroundGfxBuf, 1);
+	loadImage(_fileToLoad, _quadBackgroundGfxBuf, 1);
 	_fadePaletteCounter = 0;
 	while (!_quitGame) {
 		waitForTimer(2);
