@@ -37,13 +37,13 @@ AbstractFSNode *WiiFilesystemFactory::makeCurrentDirectoryFileNode() const {
 	char buf[MAXPATHLEN];
 
 	if (getcwd(buf, MAXPATHLEN))
-		return new WiiFilesystemNode(buf, true);
+		return new WiiFilesystemNode(buf);
 	else
 		return new WiiFilesystemNode();
 }
 
 AbstractFSNode *WiiFilesystemFactory::makeFileNodePath(const Common::String &path) const {
-	return new WiiFilesystemNode(path, true);
+	return new WiiFilesystemNode(path);
 }
 #endif
 

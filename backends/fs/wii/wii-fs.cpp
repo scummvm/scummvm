@@ -42,10 +42,12 @@ class WiiFilesystemNode : public AbstractFSNode {
 protected:
 	Common::String _displayName;
 	Common::String _path;
-	bool _isDirectory, _isReadable, _isWritable;
+	bool _exists, _isDirectory, _isReadable, _isWritable;
 
 	virtual void initRootNode();
 	virtual bool getDevopChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
+	virtual void setFlags(const struct stat st);
+	virtual void clearFlags();
 
 public:
 	/**
@@ -57,9 +59,9 @@ public:
 	 * Creates a WiiFilesystemNode for a given path.
 	 *
 	 * @param path Common::String with the path the new node should point to.
-	 * @param verify true if the isValid and isDirectory flags should be verified during the construction.
 	 */
-	WiiFilesystemNode(const Common::String &path, bool verify);
+	WiiFilesystemNode(const Common::String &path);
+	WiiFilesystemNode(const Common::String &p, const struct stat st);
 
 	virtual bool exists() const;
 	virtual Common::String getDisplayName() const { return _displayName; }
@@ -92,7 +94,7 @@ bool WiiFilesystemNode::getDevopChildren(AbstractFSList &list, ListMode mode, bo
 		if (!dt || !dt->name || !dt->open_r || !dt->diropen_r)
 			continue;
 
-		list.push_back(new WiiFilesystemNode(Common::String(dt->name) + ":/", true));
+		list.push_back(new WiiFilesystemNode(Common::String(dt->name) + ":/"));
 	}
 
 	return true;
@@ -102,16 +104,31 @@ void WiiFilesystemNode::initRootNode() {
 	_path.clear();
 	_displayName = "<devices>";
 
+	_exists = true;
 	_isDirectory = true;
 	_isReadable = false;
 	_isWritable = false;
+}
+
+void WiiFilesystemNode::clearFlags() {
+	_exists = false;
+	_isDirectory = false;
+	_isReadable = false;
+	_isWritable = false;
+}
+
+void WiiFilesystemNode::setFlags(const struct stat st) {
+	_exists = true;
+	_isDirectory = S_ISDIR(st.st_mode);
+	_isReadable = (st.st_mode & S_IRUSR) > 0;
+	_isWritable = (st.st_mode & S_IWUSR) > 0;
 }
 
 WiiFilesystemNode::WiiFilesystemNode() {
 	initRootNode();
 }
 
-WiiFilesystemNode::WiiFilesystemNode(const Common::String &p, bool verify) {
+WiiFilesystemNode::WiiFilesystemNode(const Common::String &p) {
 	if (p.empty()) {
 		initRootNode();
 		return;
@@ -124,34 +141,44 @@ WiiFilesystemNode::WiiFilesystemNode(const Common::String &p, bool verify) {
 	else
 		_displayName = lastPathComponent(_path, '/');
 
-	if (verify) {
-		_isDirectory = false;
-		_isReadable = false;
-		_isWritable = false;
+	struct stat st;
+	if (!stat(_path.c_str(), &st))
+		setFlags(st);
+	else
+		clearFlags();
+}
 
-		struct stat st;
-		if (!stat(_path.c_str(), &st)) {
-			_isDirectory = S_ISDIR(st.st_mode);
-			_isReadable = (st.st_mode & S_IRUSR) > 0;
-			_isWritable = (st.st_mode & S_IWUSR) > 0;
-		}
+WiiFilesystemNode::WiiFilesystemNode(const Common::String &p, const struct stat st) {
+	if (p.empty()) {
+		initRootNode();
+		return;
 	}
+
+	_path = p;
+
+	if (_path.hasSuffix(":/"))
+		_displayName = _path;
+	else
+		_displayName = lastPathComponent(_path, '/');
+
+	setFlags(st);
 }
 
 bool WiiFilesystemNode::exists() const {
-	struct stat st;
-	return stat(_path.c_str (), &st) == 0;
+	return _exists;
 }
 
 AbstractFSNode *WiiFilesystemNode::getChild(const Common::String &n) const {
 	assert(_isDirectory);
+
+	assert(!n.contains('/'));
 
 	Common::String newPath(_path);
 	if (newPath.lastChar() != '/')
 		newPath += '/';
 	newPath += n;
 
-	return new WiiFilesystemNode(newPath, true);
+	return new WiiFilesystemNode(newPath);
 }
 
 bool WiiFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hidden) const {
@@ -186,7 +213,7 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 		if (isDir)
 			newPath += '/';
 
-		list.push_back(new WiiFilesystemNode(newPath, true));
+		list.push_back(new WiiFilesystemNode(newPath, st));
 	}
 
 	dirclose(dp);
@@ -201,7 +228,7 @@ AbstractFSNode *WiiFilesystemNode::getParent() const {
 	const char *start = _path.c_str();
 	const char *end = lastPathComponent(_path, '/');
 
-	return new WiiFilesystemNode(Common::String(start, end - start), true);
+	return new WiiFilesystemNode(Common::String(start, end - start));
 }
 
 Common::SeekableReadStream *WiiFilesystemNode::openForReading() {
