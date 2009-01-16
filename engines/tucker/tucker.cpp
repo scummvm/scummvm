@@ -720,19 +720,13 @@ void TuckerEngine::setupNewLocation() {
 	}
 }
 
-void TuckerEngine::copyLocBitmap(int offset, int isMask) {
-	int type = (isMask == 0) ? 1 : 0;
+void TuckerEngine::copyLocBitmap(int offset, bool isMask) {
+	int type = !isMask ? 1 : 0;
 	if (offset > 0 && _locationNum == 16) {
 		type = 0;
 	}
-	if (isMask < 2) {
-		char strNum[3];
-		sprintf(strNum, "%02d", _locationNum);
-		const int digitOffset = (isMask == 0) ? 3 : 4;
-		memcpy(_fileToLoad + digitOffset, strNum, 2);
-	}
 	loadImage(_loadTempBuf, type);
-	uint8 *dst = (isMask == 1) ? _locationBackgroundMaskBuf : _locationBackgroundGfxBuf;
+	uint8 *dst = isMask ? _locationBackgroundMaskBuf : _locationBackgroundGfxBuf;
 	dst += offset;
 	const uint8 *src = _loadTempBuf;
 	for (int y = 0; y < _locationHeight; ++y) {

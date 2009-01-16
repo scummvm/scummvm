@@ -431,26 +431,26 @@ void TuckerEngine::loadCTable02(int fl) {
 void TuckerEngine::loadLoc() {
 	int i = _locationWidthTable[_locationNum];
 	_locationHeight = (_locationNum < 73) ? 140 : 200;
-	strcpy(_fileToLoad, (i == 1) ? "loc00.pcx" : "loc00a.pcx");
-	copyLocBitmap(0, 0);
+	sprintf(_fileToLoad, (i == 1) ? "loc%02d.pcx" : "loc%02da.pcx", _locationNum);
+	copyLocBitmap(0, false);
 	Graphics::copyFrom640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf, 320, _locationHeight);
 	if (_locationHeight == 200) {
 		return;
 	}
-	strcpy(_fileToLoad, (i != 2) ? "path00.pcx" : "path00a.pcx");
-	copyLocBitmap(0, 1);
+	sprintf(_fileToLoad, (i != 2) ? "path%02d.pcx" : "path%02da.pcx", _locationNum);
+	copyLocBitmap(0, true);
 	if (i > 1) {
-		strcpy(_fileToLoad, "loc00b.pcx");
-		copyLocBitmap(320, 0);
+		sprintf(_fileToLoad, "loc%02db.pcx", _locationNum);
+		copyLocBitmap(320, false);
 		Graphics::copyFrom640(_locationBackgroundGfxBuf + 320, _quadBackgroundGfxBuf + 44800, 320, 140);
 		if (i == 2) {
-			strcpy(_fileToLoad, "path00b.pcx");
-			copyLocBitmap(320, 1);
+			sprintf(_fileToLoad, "path%02db.pcx", _locationNum);
+			copyLocBitmap(320, true);
 		}
 	}
 	if (i > 2) {
-		strcpy(_fileToLoad, "loc00c.pcx");
-		copyLocBitmap(0, 0);
+		sprintf(_fileToLoad, "loc%02dc.pcx", _locationNum);
+		copyLocBitmap(0, false);
 		Graphics::copyFrom640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf + 89600, 320, 140);
 	}
 	if (_locationNum == 1) {
@@ -459,8 +459,8 @@ void TuckerEngine::loadLoc() {
 		loadImage(_loadLocBufPtr, 0);
 	}
 	if (i > 3) {
-		strcpy(_fileToLoad, "loc00d.pcx");
-		copyLocBitmap(0, 0);
+		sprintf(_fileToLoad, "loc%02dd.pcx", _locationNum);
+		copyLocBitmap(0, false);
 		Graphics::copyFrom640(_locationBackgroundGfxBuf + 320, _quadBackgroundGfxBuf + 134400, 320, 140);
 	}
 	_fullRedrawCounter = 2;
