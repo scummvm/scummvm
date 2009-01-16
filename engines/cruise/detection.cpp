@@ -166,18 +166,18 @@ static const Common::ADParams detectionParams = {
 };
 
 class CruiseMetaEngine : public Common::AdvancedMetaEngine {
-	public:
-		CruiseMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
+public:
+	CruiseMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
 
-		virtual const char *getName() const {
-			return "Cinematique evo 2 engine";
-		}
+	virtual const char *getName() const {
+		return "Cinematique evo 2 engine";
+	}
 
-		virtual const char *getCopyright() const {
-			return "Cruise for a Corpse (C) Delphine Software";
-		}
+	virtual const char *getCopyright() const {
+		return "Cruise for a Corpse (C) Delphine Software";
+	}
 
-		virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 };
 
 bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {

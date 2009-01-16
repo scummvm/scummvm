@@ -43,37 +43,37 @@ struct CRUISEGameDescription;
 
 class CruiseEngine: public Engine {
 
-	protected:
-		// Engine APIs
-		virtual Common::Error init();
-		virtual Common::Error go();
+protected:
+	// Engine APIs
+	virtual Common::Error init();
+	virtual Common::Error go();
 
-		void shutdown();
+	void shutdown();
 
-		bool initGame();
+	bool initGame();
 
-	public:
-		CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc);
-		virtual ~ CruiseEngine();
+public:
+	CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc);
+	virtual ~ CruiseEngine();
 
-		int getGameType() const;
-		uint32 getFeatures() const;
-		Common::Language getLanguage() const;
-		Common::Platform getPlatform() const;
+	int getGameType() const;
+	uint32 getFeatures() const;
+	Common::Language getLanguage() const;
+	Common::Platform getPlatform() const;
 
-		bool loadSaveDirectory(void);
-		void makeSystemMenu(void);
+	bool loadSaveDirectory(void);
+	void makeSystemMenu(void);
 
-		const CRUISEGameDescription *_gameDescription;
+	const CRUISEGameDescription *_gameDescription;
 
-		Common::RandomSource _rnd;
+	Common::RandomSource _rnd;
 
-	private:
-		void initialize(void);
-		bool makeLoad(char *saveName);
-		void mainLoop(int bootScriptIdx);
+private:
+	void initialize(void);
+	bool makeLoad(char *saveName);
+	void mainLoop(int bootScriptIdx);
 
-		bool _preLoad;
+	bool _preLoad;
 };
 
 extern CruiseEngine *g_cruise;
