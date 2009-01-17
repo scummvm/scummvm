@@ -23,7 +23,6 @@ MODULE_OBJS := \
 	themebrowser.o \
 	ThemeEngine.o \
 	ThemeEval.o \
-	ThemeData.o \
 	ThemeLayout.o \
 	ThemeParser.o \
 	widget.o

@@ -43,6 +43,7 @@ namespace GUI {
 
 struct WidgetDrawData;
 struct DrawDataInfo;
+struct TextDataInfo;
 struct TextDrawData;
 class Dialog;
 class GuiObject;
@@ -50,94 +51,73 @@ class ThemeEval;
 class ThemeItem;
 class ThemeParser;
 
+/**
+ *	DrawData sets enumeration.
+ *	Each DD set corresponds to the actual looks
+ *	of a widget in a given state.
+ */
+enum DrawData {
+	kDDMainDialogBackground,
+	kDDSpecialColorBackground,
+	kDDPlainColorBackground,
+	kDDDefaultBackground,
+	kDDTextSelectionBackground,
+
+	kDDWidgetBackgroundDefault,
+	kDDWidgetBackgroundSmall,
+	kDDWidgetBackgroundEditText,
+	kDDWidgetBackgroundSlider,
+
+	kDDButtonIdle,
+	kDDButtonHover,
+	kDDButtonDisabled,
+
+	kDDSliderFull,
+	kDDSliderHover,
+	kDDSliderDisabled,
+
+	kDDCheckboxDefault,
+	kDDCheckboxDisabled,
+	kDDCheckboxSelected,
+
+	kDDTabActive,
+	kDDTabInactive,
+	kDDTabBackground,
+
+	kDDScrollbarBase,
+	kDDScrollbarButtonIdle,
+	kDDScrollbarButtonHover,
+	kDDScrollbarHandleIdle,
+	kDDScrollbarHandleHover,
+
+	kDDPopUpIdle,
+	kDDPopUpHover,
+	kDDPopUpDisabled,
+
+	kDDCaret,
+	kDDSeparator,
+	kDrawDataMAX,
+	kDDNone = -1
+};
+
+enum TextData {
+	kTextDataNone = -1,
+	kTextDataDefault = 0,
+	kTextDataHover,
+	kTextDataDisabled,
+	kTextDataInverted,
+	kTextDataButton,
+	kTextDataButtonHover,
+	kTextDataNormalFont,
+	kTextDataMAX
+};
+
 class ThemeEngine {
 protected:
 	typedef Common::HashMap<Common::String, Graphics::Surface*> ImagesMap;
 
 	friend class GUI::Dialog;
 	friend class GUI::GuiObject;
-
-	/**
-	 *	DrawData sets enumeration.
-	 *	Each DD set corresponds to the actual looks
-	 *	of a widget in a given state.
-	*/
-	enum DrawData {
-		kDDMainDialogBackground,
-		kDDSpecialColorBackground,
-		kDDPlainColorBackground,
-		kDDDefaultBackground,
-		kDDTextSelectionBackground,
-
-		kDDWidgetBackgroundDefault,
-		kDDWidgetBackgroundSmall,
-		kDDWidgetBackgroundEditText,
-		kDDWidgetBackgroundSlider,
-
-		kDDButtonIdle,
-		kDDButtonHover,
-		kDDButtonDisabled,
-
-		kDDSliderFull,
-		kDDSliderHover,
-		kDDSliderDisabled,
-
-		kDDCheckboxDefault,
-		kDDCheckboxDisabled,
-		kDDCheckboxSelected,
-
-		kDDTabActive,
-		kDDTabInactive,
-		kDDTabBackground,
-
-		kDDScrollbarBase,
-		kDDScrollbarButtonIdle,
-		kDDScrollbarButtonHover,
-		kDDScrollbarHandleIdle,
-		kDDScrollbarHandleHover,
-
-		kDDPopUpIdle,
-		kDDPopUpHover,
-		kDDPopUpDisabled,
-
-		kDDCaret,
-		kDDSeparator,
-		kDrawDataMAX,
-		kDDNone = -1
-	};
-
-	/**
-	 * Default values for each DrawData item.
-	 * @see kDrawDataDefaults[] for implementation.
-	 */
-	struct DrawDataInfo {
-		DrawData id;		//!< The actual ID of the DrawData item.
-		const char *name;	//!< The name of the DrawData item as it appears in the Theme Description files
-		bool buffer;		//!< Sets whether this item is buffered on the backbuffer or drawn directly to the screen.
-		DrawData parent;	//!< Parent DrawData item, for items that overlay. E.g. kButtonIdle -> kButtonHover
-	};
-
-	static const DrawDataInfo kDrawDataDefaults[];
-
-
-	enum TextData {
-		kTextDataNone = -1,
-		kTextDataDefault = 0,
-		kTextDataHover,
-		kTextDataDisabled,
-		kTextDataInverted,
-		kTextDataButton,
-		kTextDataButtonHover,
-		kTextDataNormalFont,
-		kTextDataMAX
-	};
-
-	struct TextDataInfo {
-		TextData id;
-		const char *name;
-	};
-
-	static const TextDataInfo kTextDataDefaults[];
 
 public:
 	//! Vertical alignment of the text.
@@ -354,21 +334,12 @@ public:
 	 *	@param name The representing name, as found on Theme Description XML files.
 	 *	@see kDrawDataDefaults[]
 	 */
-	DrawData getDrawDataId(const Common::String &name) {
-		for (int i = 0; i < kDrawDataMAX; ++i)
-			if (name.compareToIgnoreCase(kDrawDataDefaults[i].name) == 0)
-				return kDrawDataDefaults[i].id;
+	DrawData getDrawDataId(const Common::String &name) const;
 
-		return kDDNone;
-	}
+	TextData getTextDataId(const Common::String &name) const;
 
-	TextData getTextDataId(const Common::String &name) {
-		for (int i = 0; i < kTextDataMAX; ++i)
-			if (name.compareToIgnoreCase(kTextDataDefaults[i].name) == 0)
-				return kTextDataDefaults[i].id;
+	TextData getTextData(DrawData ddId) const;
 
-		return kTextDataNone;
-	}
 
 	/**
 	 *	Interface for ThemeParser class: Parsed DrawSteps are added via this function.
@@ -531,8 +502,6 @@ protected:
 	 *	Called from updateScreen()
 	 */
 	void renderDirtyScreen();
-
-	TextData getTextData(DrawData ddId);
 
 	/**
 	 *	Calculates the background threshold offset of a given DrawData item.

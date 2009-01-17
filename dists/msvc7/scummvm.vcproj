@@ -897,12 +897,6 @@
 				RelativePath="..\..\gui\themebrowser.h">
 			</File>
 			<File
-				RelativePath="..\..\gui\ThemeData.cpp">
-			</File>
-			<File
-				RelativePath="..\..\gui\ThemeData.h">
-			</File>
-			<File
 				RelativePath="..\..\gui\ThemeEngine.cpp">
 			</File>
 			<File

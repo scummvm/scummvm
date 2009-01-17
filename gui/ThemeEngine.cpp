@@ -41,7 +41,6 @@
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 #include "gui/ThemeParser.h"
-#include "gui/ThemeData.h"
 
 #ifdef MACOSX
 #include <CoreFoundation/CoreFoundation.h>
@@ -50,6 +49,211 @@
 #define GUI_ENABLE_BUILTIN_THEME
 
 namespace GUI {
+
+struct TextDrawData {
+	const Graphics::Font *_fontPtr;
+
+	struct {
+		uint8 r, g, b;
+	} _color;
+};
+
+struct WidgetDrawData {
+	/** List of all the steps needed to draw this widget */
+	Common::List<Graphics::DrawStep> _steps;
+
+	int _textDataId;
+	Graphics::TextAlign _textAlignH;
+	GUI::ThemeEngine::TextAlignVertical _textAlignV;
+
+	/** Extra space that the widget occupies when it's drawn.
+	    E.g. when taking into account rounded corners, drop shadows, etc
+		Used when restoring the widget background */
+	uint16 _backgroundOffset;
+
+	bool _buffer;
+};
+
+class ThemeItem {
+
+public:
+	ThemeItem(ThemeEngine *engine, const Common::Rect &area) :
+		_engine(engine), _area(area) {}
+	virtual ~ThemeItem() {}
+
+	virtual void drawSelf(bool doDraw, bool doRestore) = 0;
+
+protected:
+	ThemeEngine *_engine;
+	Common::Rect _area;
+};
+
+class ThemeItemDrawData : public ThemeItem {
+public:
+	ThemeItemDrawData(ThemeEngine *engine, const WidgetDrawData *data, const Common::Rect &area, uint32 dynData) :
+		ThemeItem(engine, area), _dynamicData(dynData), _data(data) {}
+
+	void drawSelf(bool draw, bool restore);
+
+protected:
+	uint32 _dynamicData;
+	const WidgetDrawData *_data;
+};
+
+class ThemeItemTextData : public ThemeItem {
+public:
+	ThemeItemTextData(ThemeEngine *engine, const TextDrawData *data, const Common::Rect &area, const Common::String &text,
+		Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV,
+		bool ellipsis, bool restoreBg, int deltaX) :
+		ThemeItem(engine, area), _data(data), _text(text), _alignH(alignH), _alignV(alignV),
+		_ellipsis(ellipsis), _restoreBg(restoreBg), _deltax(deltaX) {}
+
+	void drawSelf(bool draw, bool restore);
+
+protected:
+	const TextDrawData *_data;
+	Common::String _text;
+	Graphics::TextAlign _alignH;
+	GUI::ThemeEngine::TextAlignVertical _alignV;
+	bool _ellipsis;
+	bool _restoreBg;
+	int _deltax;
+};
+
+class ThemeItemBitmap : public ThemeItem {
+public:
+	ThemeItemBitmap(ThemeEngine *engine, const Common::Rect &area, const Graphics::Surface *bitmap, bool alpha) :
+		ThemeItem(engine, area), _bitmap(bitmap), _alpha(alpha) {}
+
+	void drawSelf(bool draw, bool restore);
+
+protected:
+	const Graphics::Surface *_bitmap;
+	bool _alpha;
+};
+
+
+
+/**********************************************************
+ *	Data definitions for theme engine elements
+ *********************************************************/
+struct DrawDataInfo {
+	DrawData id;		//!< The actual ID of the DrawData item.
+	const char *name;	//!< The name of the DrawData item as it appears in the Theme Description files
+	bool buffer;		//!< Sets whether this item is buffered on the backbuffer or drawn directly to the screen.
+	DrawData parent;	//!< Parent DrawData item, for items that overlay. E.g. kButtonIdle -> kButtonHover
+};
+
+/**
+ * Default values for each DrawData item.
+ */
+static const DrawDataInfo kDrawDataDefaults[] = {
+	{kDDMainDialogBackground,		"mainmenu_bg",		true,	kDDNone},
+	{kDDSpecialColorBackground,		"special_bg",		true,	kDDNone},
+	{kDDPlainColorBackground,		"plain_bg",			true,	kDDNone},
+	{kDDDefaultBackground,			"default_bg",		true,	kDDNone},
+	{kDDTextSelectionBackground,	"text_selection",	false,	kDDNone},
+
+	{kDDWidgetBackgroundDefault,	"widget_default",	true,	kDDNone},
+	{kDDWidgetBackgroundSmall,		"widget_small",		true,	kDDNone},
+	{kDDWidgetBackgroundEditText,	"widget_textedit",	true,	kDDNone},
+	{kDDWidgetBackgroundSlider,		"widget_slider",	true,	kDDNone},
+
+	{kDDButtonIdle,					"button_idle",		true,	kDDWidgetBackgroundSlider},
+	{kDDButtonHover,				"button_hover",	false,	kDDButtonIdle},
+	{kDDButtonDisabled,				"button_disabled",	true,	kDDNone},
+
+	{kDDSliderFull,					"slider_full",		false,	kDDNone},
+	{kDDSliderHover,				"slider_hover",		false,	kDDNone},
+	{kDDSliderDisabled,				"slider_disabled",	true,	kDDNone},
+
+	{kDDCheckboxDefault,			"checkbox_default",			true,	kDDNone},
+	{kDDCheckboxDisabled,			"checkbox_disabled",		true,	kDDNone},
+	{kDDCheckboxSelected,			"checkbox_selected",		false,	kDDCheckboxDefault},
+
+	{kDDTabActive,					"tab_active",				false,	kDDTabInactive},
+	{kDDTabInactive,				"tab_inactive",				true,	kDDNone},
+	{kDDTabBackground,				"tab_background",			true,	kDDNone},
+
+	{kDDScrollbarBase,				"scrollbar_base",			true,	kDDNone},
+
+	{kDDScrollbarButtonIdle,		"scrollbar_button_idle",	true,	kDDNone},
+	{kDDScrollbarButtonHover,		"scrollbar_button_hover",	false,	kDDScrollbarButtonIdle},
+
+	{kDDScrollbarHandleIdle,		"scrollbar_handle_idle",	false,	kDDNone},
+	{kDDScrollbarHandleHover,		"scrollbar_handle_hover",	false,	kDDScrollbarBase},
+
+	{kDDPopUpIdle,					"popup_idle",	true,	kDDNone},
+	{kDDPopUpHover,					"popup_hover",	false,	kDDPopUpIdle},
+	{kDDPopUpDisabled,				"popup_disabled",	true,	kDDNone},
+
+	{kDDCaret,						"caret",		false,	kDDNone},
+	{kDDSeparator,					"separator",	true,	kDDNone},
+};
+
+struct TextDataInfo {
+	TextData id;
+	const char *name;
+};
+
+static const TextDataInfo kTextDataDefaults[] = {
+	{kTextDataDefault,		"text_default"},
+	{kTextDataHover,		"text_hover"},
+	{kTextDataDisabled,		"text_disabled"},
+	{kTextDataInverted,		"text_inverted"},
+	{kTextDataButton,		"text_button"},
+	{kTextDataButtonHover,	"text_button_hover"},
+	{kTextDataNormalFont,	"text_normal"}
+};
+
+
+/**********************************************************
+ *	ThemeItem functions for drawing queues.
+ *********************************************************/
+void ThemeItemDrawData::drawSelf(bool draw, bool restore) {
+
+	Common::Rect extendedRect = _area;
+	extendedRect.grow(_engine->kDirtyRectangleThreshold + _data->_backgroundOffset);
+
+	if (restore)
+		_engine->restoreBackground(extendedRect);
+
+	if (draw) {
+		Common::List<Graphics::DrawStep>::const_iterator step;
+		for (step = _data->_steps.begin(); step != _data->_steps.end(); ++step)
+			_engine->renderer()->drawStep(_area, *step, _dynamicData);
+	}
+
+	_engine->addDirtyRect(extendedRect);
+}
+
+void ThemeItemTextData::drawSelf(bool draw, bool restore) {
+	if (_restoreBg || restore)
+		_engine->restoreBackground(_area);
+
+	if (draw) {
+		_engine->renderer()->setFgColor(_data->_color.r, _data->_color.g, _data->_color.b);
+		_engine->renderer()->drawString(_data->_fontPtr, _text, _area, _alignH, _alignV, _deltax, _ellipsis);
+	}
+
+	_engine->addDirtyRect(_area);
+}
+
+void ThemeItemBitmap::drawSelf(bool draw, bool restore) {
+	if (restore)
+		_engine->restoreBackground(_area);
+
+	if (draw) {
+		if (_alpha)
+			_engine->renderer()->blitAlphaBitmap(_bitmap, _area);
+		else
+			_engine->renderer()->blitSubSurface(_bitmap, _area);
+	}
+
+	_engine->addDirtyRect(_area);
+}
+
+
 
 /**********************************************************
  *	ThemeEngine class
@@ -1012,11 +1216,26 @@ int ThemeEngine::getCharWidth(byte c, FontStyle font) const {
 	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getCharWidth(c) : 0;
 }
 
-ThemeEngine::TextData ThemeEngine::getTextData(DrawData ddId) {
+TextData ThemeEngine::getTextData(DrawData ddId) const {
 	return _widgets[ddId] ? (TextData)_widgets[ddId]->_textDataId : kTextDataNone;
 }
 
 
+DrawData ThemeEngine::getDrawDataId(const Common::String &name) const {
+	for (int i = 0; i < kDrawDataMAX; ++i)
+		if (name.compareToIgnoreCase(kDrawDataDefaults[i].name) == 0)
+			return kDrawDataDefaults[i].id;
+
+	return kDDNone;
+}
+
+TextData ThemeEngine::getTextDataId(const Common::String &name) const {
+	for (int i = 0; i < kTextDataMAX; ++i)
+		if (name.compareToIgnoreCase(kTextDataDefaults[i].name) == 0)
+			return kTextDataDefaults[i].id;
+
+	return kTextDataNone;
+}
 
 /**********************************************************
  *	External data loading
