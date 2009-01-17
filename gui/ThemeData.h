@@ -51,14 +51,7 @@ struct WidgetDrawData {
 		Used when restoring the widget background */
 	uint16 _backgroundOffset;
 
-	/** Sets whether the widget is cached beforehand. */
-	bool _cached;
 	bool _buffer;
-
-	/** Texture where the cached widget is stored. */
-	Graphics::Surface *_surfaceCache;
-
-	~WidgetDrawData();
 };
 
 class ThemeItem {

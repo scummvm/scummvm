@@ -133,13 +133,4 @@ void ThemeItemBitmap::drawSelf(bool draw, bool restore) {
 	_engine->addDirtyRect(_area);
 }
 
-WidgetDrawData::~WidgetDrawData() {
-	_steps.clear();
-
-	if (_surfaceCache) {
-		_surfaceCache->free();
-		delete _surfaceCache;
-	}
-}
-
 }

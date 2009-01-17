@@ -484,15 +484,6 @@ public:
 	 */
 	void restoreBackground(Common::Rect r);
 
-	/**
-	 *	Checks if a given DrawData set for a widget has been cached beforehand
-	 *	and is ready to be blit into the screen.
-	 *
-	 *	@param type DrawData type of the widget.
-	 *	@param r Size of the widget which is expected to be cached.
-	 */
-	bool isWidgetCached(DrawData type, const Common::Rect &r);
-
 	const Common::String &getThemeName() const { return _themeName; }
 	const Common::String &getThemeId() const { return _themeId; }
 	int getGraphicsMode() const { return _graphicsMode; }
@@ -542,14 +533,6 @@ protected:
 	void renderDirtyScreen();
 
 	TextData getTextData(DrawData ddId);
-
-	/**
-	 * Draws a cached widget directly on the screen. Currently deprecated.
-	 *
-	 * @param type DrawData type of the widget.
-	 * @param r Position on screen to draw the widget.
-	 */
-	void drawCached(DrawData type, const Common::Rect &r);
 
 	/**
 	 *	Calculates the background threshold offset of a given DrawData item.

@@ -282,17 +282,6 @@ void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 	_vectorRenderer->setSurface(&_screen);
 }
 
-bool ThemeEngine::isWidgetCached(DrawData type, const Common::Rect &r) {
-	return _widgets[type] && _widgets[type]->_cached &&
-		_widgets[type]->_surfaceCache->w == r.width() &&
-		_widgets[type]->_surfaceCache->h == r.height();
-}
-
-void ThemeEngine::drawCached(DrawData type, const Common::Rect &r) {
-	assert(_widgets[type]->_surfaceCache->bytesPerPixel == _screen.bytesPerPixel);
-	_vectorRenderer->blitSurface(_widgets[type]->_surfaceCache, r);
-}
-
 void ThemeEngine::calcBackgroundOffset(DrawData type) {
 	uint maxShadow = 0;
 	for (Common::List<Graphics::DrawStep>::const_iterator step = _widgets[type]->_steps.begin();
@@ -403,9 +392,7 @@ bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
 		delete _widgets[data_id];
 
 	_widgets[data_id] = new WidgetDrawData;
-	_widgets[data_id]->_cached = cached;
 	_widgets[data_id]->_buffer = kDrawDataDefaults[data_id].buffer;
-	_widgets[data_id]->_surfaceCache = 0;
 	_widgets[data_id]->_textDataId = -1;
 
 	return true;
@@ -435,9 +422,6 @@ void ThemeEngine::loadTheme(const Common::String &themeId) {
 			warning("Missing data asset: '%s'", kDrawDataDefaults[i].name);
 		} else {
 			calcBackgroundOffset((DrawData)i);
-
-			// TODO: draw the cached widget to the cache surface
-			if (_widgets[i]->_cached) {}
 		}
 	}
 }
