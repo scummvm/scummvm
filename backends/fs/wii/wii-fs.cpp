@@ -46,7 +46,7 @@ protected:
 
 	virtual void initRootNode();
 	virtual bool getDevopChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual void setFlags(const struct stat st);
+	virtual void setFlags(const struct stat *st);
 	virtual void clearFlags();
 
 public:
@@ -61,7 +61,7 @@ public:
 	 * @param path Common::String with the path the new node should point to.
 	 */
 	WiiFilesystemNode(const Common::String &path);
-	WiiFilesystemNode(const Common::String &p, const struct stat st);
+	WiiFilesystemNode(const Common::String &p, const struct stat *st);
 
 	virtual bool exists() const;
 	virtual Common::String getDisplayName() const { return _displayName; }
@@ -117,11 +117,11 @@ void WiiFilesystemNode::clearFlags() {
 	_isWritable = false;
 }
 
-void WiiFilesystemNode::setFlags(const struct stat st) {
+void WiiFilesystemNode::setFlags(const struct stat *st) {
 	_exists = true;
-	_isDirectory = S_ISDIR(st.st_mode);
-	_isReadable = (st.st_mode & S_IRUSR) > 0;
-	_isWritable = (st.st_mode & S_IWUSR) > 0;
+	_isDirectory = S_ISDIR(st->st_mode);
+	_isReadable = (st->st_mode & S_IRUSR) > 0;
+	_isWritable = (st->st_mode & S_IWUSR) > 0;
 }
 
 WiiFilesystemNode::WiiFilesystemNode() {
@@ -143,12 +143,12 @@ WiiFilesystemNode::WiiFilesystemNode(const Common::String &p) {
 
 	struct stat st;
 	if (!stat(_path.c_str(), &st))
-		setFlags(st);
+		setFlags(&st);
 	else
 		clearFlags();
 }
 
-WiiFilesystemNode::WiiFilesystemNode(const Common::String &p, const struct stat st) {
+WiiFilesystemNode::WiiFilesystemNode(const Common::String &p, const struct stat *st) {
 	if (p.empty()) {
 		initRootNode();
 		return;
@@ -213,7 +213,7 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 		if (isDir)
 			newPath += '/';
 
-		list.push_back(new WiiFilesystemNode(newPath, st));
+		list.push_back(new WiiFilesystemNode(newPath, &st));
 	}
 
 	dirclose(dp);
