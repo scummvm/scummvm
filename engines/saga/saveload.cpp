@@ -292,6 +292,9 @@ void SagaEngine::load(const char *fileName) {
 		// TODO: played time
 	}
 
+	// Clear pending events here, and don't process queued music events
+	_events->clearList(false);
+
 	// Surrounding scene
 	sceneNumber = in->readSint32LE();
 #ifdef ENABLE_IHNM

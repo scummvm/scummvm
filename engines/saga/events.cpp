@@ -625,7 +625,7 @@ int Events::initializeEvent(Event *event) {
 	return SUCCESS;
 }
 
-int Events::clearList() {
+int Events::clearList(bool playQueuedMusic) {
 	Event *chain_walk;
 	Event *next_chain;
 	Event *event_p;
@@ -636,7 +636,16 @@ int Events::clearList() {
 
 		// Only remove events not marked kEvFNoDestory (engine events)
 		if (!(event_p->code & kEvFNoDestory)) {
-			// Remove any events chained off this one */
+			// Handle queued music change events before deleting them
+			// This can happen in IHNM by music events set by sfQueueMusic()
+			// Fixes bug #2057987 - "IHNM: Music stops in Ellen's chapter"
+			if (playQueuedMusic && ((event_p->code & EVENT_MASK) == kMusicEvent)) {
+				_vm->_music->stop();
+				if (event_p->op == kEventPlay)
+					_vm->_music->play(event_p->param, (MusicFlags)event_p->param2);
+			}
+
+			// Remove any events chained off this one
 			for (chain_walk = event_p->chain; chain_walk != NULL; chain_walk = next_chain) {
 				next_chain = chain_walk->chain;
 				free(chain_walk);

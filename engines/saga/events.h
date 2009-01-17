@@ -165,7 +165,7 @@ class Events {
 	Events(SagaEngine *vm);
 	~Events(void);
 	int handleEvents(long msec);
-	int clearList();
+	int clearList(bool playQueuedMusic = true);
 	int freeList();
 	Event *queue(Event *event);
 	Event *chain(Event *headEvent, Event *addEvent);

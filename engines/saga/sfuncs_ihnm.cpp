@@ -422,11 +422,8 @@ void Script::sfQueueMusic(SCRIPTFUNC_PARAMS) {
 		event.param = _vm->_music->_songTable[param1];
 		event.param2 = param2 ? MUSIC_LOOP : MUSIC_NORMAL;
 		event.op = kEventPlay;
-		event.time = _vm->ticksToMSec(500);		// I find the delay in the original to be too long, so I've set it to
-												// wait for half the time, which sounds better when chapter points
-												// change
-												// FIXME: If this is too short for other cases apart from chapter
-												// point change, set it back to 1000
+		event.time = _vm->ticksToMSec(1000);
+
 		_vm->_events->queue(&event);
 
 		if (!_vm->_scene->haveChapterPointsChanged()) {
