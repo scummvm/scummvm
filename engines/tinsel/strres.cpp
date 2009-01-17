@@ -30,6 +30,8 @@
 #include "common/file.h"
 #include "common/endian.h"
 
+#include "gui/message.h"
+
 namespace Tinsel {
 
 #ifdef DEBUG
@@ -94,8 +96,14 @@ void ChangeLanguage(LANGUAGE newLang) {
 	// isn't English, try falling back on opening 'english.txt' - some foreign
 	// language versions reused it rather than their proper filename
 	if (!f.open(_vm->getTextFile(newLang))) {
-		if ((newLang == TXT_ENGLISH) || !f.open(_vm->getTextFile(TXT_ENGLISH)))
+		if ((newLang == TXT_ENGLISH) || !f.open(_vm->getTextFile(TXT_ENGLISH))) {
+			char buf[50];
+			sprintf(buf, CANNOT_FIND_FILE, _vm->getTextFile(newLang));
+			GUI::MessageDialog dialog(buf, "OK");
+ 	 		dialog.runModal();
+
 			error(CANNOT_FIND_FILE, _vm->getTextFile(newLang));
+		}
 	}
 
 	// Check whether the file is compressed or not -  for compressed files the

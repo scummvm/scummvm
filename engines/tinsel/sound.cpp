@@ -41,6 +41,8 @@
 #include "sound/mixer.h"
 #include "sound/adpcm.h"
 
+#include "gui/message.h"
+
 namespace Tinsel {
 
 extern LANGUAGE sampleLanguage;
@@ -439,12 +441,24 @@ void SoundManager::openSampleFiles(void) {
 
 		// convert file size to size in DWORDs
 		_sampleIndexLen /= sizeof(uint32);
-	} else
+	} else {
+		char buf[50];
+		sprintf(buf, CANNOT_FIND_FILE, _vm->getSampleIndex(sampleLanguage));
+		GUI::MessageDialog dialog(buf, "OK");
+ 	 	dialog.runModal();
+
 		error(CANNOT_FIND_FILE, _vm->getSampleIndex(sampleLanguage));
+	}
 
 	// open sample file in binary mode
-	if (!_sampleStream.open(_vm->getSampleFile(sampleLanguage)))
+	if (!_sampleStream.open(_vm->getSampleFile(sampleLanguage))) {
+		char buf[50];
+		sprintf(buf, CANNOT_FIND_FILE, _vm->getSampleFile(sampleLanguage));
+		GUI::MessageDialog dialog(buf, "OK");
+ 	 	dialog.runModal();
+
 		error(CANNOT_FIND_FILE, _vm->getSampleFile(sampleLanguage));
+	}
 
 /*
 	// gen length of the largest sample
