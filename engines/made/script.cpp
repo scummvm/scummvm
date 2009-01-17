@@ -427,6 +427,8 @@ void ScriptInterpreter::cmd_vsize() {
 
 void ScriptInterpreter::cmd_exit() {
 	_vm->quitGame();
+	// Make sure the "quit" event is handled immediately
+	_vm->handleEvents();
 }
 
 void ScriptInterpreter::cmd_return() {
@@ -434,6 +436,8 @@ void ScriptInterpreter::cmd_return() {
 	// Check if returning from main function
 	if (_localStackPos == kScriptStackSize) {
 		_vm->quitGame();
+		// Make sure the "quit" event is handled immediately
+		_vm->handleEvents();
 		return;
 	}
 
