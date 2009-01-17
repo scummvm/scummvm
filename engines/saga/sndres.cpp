@@ -191,8 +191,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	bool result = false;
 	GameSoundTypes resourceType = kSoundPCM;
 	byte *data = 0;
-	int rate;
-	int size;
+	int rate = 0, size = 0;
 	byte flags = 0;
 	Common::File* file;
 
