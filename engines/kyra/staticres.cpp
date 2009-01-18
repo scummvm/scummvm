@@ -43,7 +43,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 33
+#define RESFILE_VERSION 34
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -394,7 +394,6 @@ bool StaticResource::init() {
 		{ lolDscBlockMap, kRawData, "DSCBLOCK1.DEF" },
 		{ lolDscDimMap, kRawData, "DSCDIM.DEF" },
 		{ lolDscDoorScale, lolRawDataBe16, "DSCDOOR3.DEF" },
-		{ lolDscDoor2, kRawData, "DSCDOOR2.DEF" },
 		{ lolDscDoor4, lolRawDataBe16, "DSCDOOR4.DEF" },
 		{ lolDscOvlIndex, kRawData, "DSCBLOCK2.DEF" },
 		{ lolDscBlockIndex, kRawData, "DSCBLOCKX.DEF" },
@@ -1652,7 +1651,6 @@ void LoLEngine::initStaticResource() {
 	_dscBlockMap = _staticres->loadRawData(lolDscBlockMap, _dscBlockMapSize);
 	_dscDimMap = _staticres->loadRawData(lolDscDimMap, _dscDimMapSize);
 	_dscDoorScaleTable = (const uint16 *)_staticres->loadRawDataBe16(lolDscDoorScale, _dscDoorScaleTableSize);
-	_dscDoor2 = _staticres->loadRawData(lolDscDoor2, _dscDoor2Size);
 	_dscShapeOvlIndex = _staticres->loadRawData(lolDscOvlIndex, _dscShapeOvlIndexSize);
 	_dscDoor4 = (const uint16 *)_staticres->loadRawDataBe16(lolDscDoor4, _dscDoor4Size);
 	_dscBlockIndex = (const int8 *)_staticres->loadRawData(lolDscBlockIndex, _dscBlockIndexSize);

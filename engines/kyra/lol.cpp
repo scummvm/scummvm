@@ -137,7 +137,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_dscDoorShpIndex = 0;
 	_dscDim1 = 0;
 	_dscDim2 = 0;
-	_dscBlockMap = _dscDoor1 = _dscDoor2 = _dscShapeOvlIndex = 0;
+	_dscBlockMap = _dscDoor1 = _dscShapeOvlIndex = 0;
 	_dscBlockIndex = 0;
 	_dscDimMap = 0;
 	_dscDoorX = _dscDoorY = 0;

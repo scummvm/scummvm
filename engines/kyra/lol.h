@@ -575,8 +575,6 @@ private:
 	int _dscBlockMapSize;
 	const uint8 *_dscDimMap;
 	int _dscDimMapSize;
-	const uint8 *_dscDoor2;
-	int _dscDoor2Size;
 	const uint16 *_dscDoorScaleTable;
 	int _dscDoorScaleTableSize;
 	const uint16 *_dscDoor4;

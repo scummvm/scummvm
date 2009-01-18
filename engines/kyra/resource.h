@@ -237,7 +237,6 @@ enum kKyraResources {
 	lolDscBlockMap,
 	lolDscDimMap,
 	lolDscDoor1,
-	lolDscDoor2,
 	lolDscDoorScale,
 	lolDscDoor4,
 	lolDscDoorX,

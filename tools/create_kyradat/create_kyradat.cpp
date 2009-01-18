@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 33,
+	kKyraDatVersion = 34,
 	kIndexSize = 12
 };
 
@@ -289,7 +289,6 @@ const ExtractFilename extractFilenames[] = {
 	{ lolDscBlockMap, kTypeRawData, "DSCBLOCK1.DEF" },
 	{ lolDscDimMap, kTypeRawData, "DSCDIM.DEF" },
 	{ lolDscDoorScale, lolTypeRaw16, "DSCDOOR3.DEF" },
-	{ lolDscDoor2, k3TypeRaw16to8, "DSCDOOR2.DEF" },
 	{ lolDscShapeOvlIndex, k3TypeRaw16to8, "DSCBLOCK2.DEF" },
 	{ lolDscBlockIndex, kTypeRawData, "DSCBLOCKX.DEF" },
 	{ lolDscDoor4, lolTypeRaw16, "DSCDOOR4.DEF" },

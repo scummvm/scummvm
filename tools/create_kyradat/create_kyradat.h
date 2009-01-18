@@ -204,7 +204,6 @@ enum kExtractID {
 	lolDscShapeOvlIndex,
 	lolDscBlockIndex,
 	lolDscDoor1,
-	lolDscDoor2,
 	lolDscDoorScale,
 	lolDscDoor4,
 	lolDscDoorX,

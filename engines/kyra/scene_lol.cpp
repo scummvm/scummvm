@@ -1209,7 +1209,7 @@ void LoLEngine::drawDecorations(int index) {
 		uint16 scaleH = _dscShapeScaleH[s];
 		int8 ix = _dscShapeIndex[s];
 		uint8 shpIx = ABS(ix);
-		uint8 ovlIndex = _dscShapeOvlIndex[_dscDimMap[index] * 5] + 2;
+		uint8 ovlIndex = _dscShapeOvlIndex[4 + _dscDimMap[index] * 5] + 2;
 		if (ovlIndex > 7)
 			ovlIndex = 7;
 
@@ -1290,7 +1290,7 @@ void LoLEngine::drawIceShapes(int index, int iceShapeIndex) {
 void LoLEngine::drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w, int h, int flags) {
 	uint8 c = _dscDoor1[(_unkPara2 << 5) + unk2];
 	int r = (c / 5) + 5 * _dscDimMap[index];
-	uint16 d = _dscDoor2[r];
+	uint16 d = _dscShapeOvlIndex[r];
 	uint16 t = (index << 5) + c;
 
 	_shpDoorY = _dscDoorY[t] + 120;

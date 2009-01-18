@@ -150,10 +150,12 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 	_screen->printText(getLangString(0x4254), 39, 1, 152, 0);
 
 	int spellLevels = 0;
-	for (int i = 0; i < 4; i++) {
-		if (_spellProperties[_availableSpells[_selectedSpell]].mpRequired[i] <= _characters[charNum].magicPointsCur &&
-			_spellProperties[_availableSpells[_selectedSpell] + 1].unkArr[i] <= _characters[charNum].hitPointsCur)
-				spellLevels++;
+	if (_availableSpells[_selectedSpell] != -1) {
+		for (int i = 0; i < 4; i++) {
+			if (_spellProperties[_availableSpells[_selectedSpell]].mpRequired[i] <= _characters[charNum].magicPointsCur &&
+				_spellProperties[_availableSpells[_selectedSpell] + 1].unkArr[i] <= _characters[charNum].hitPointsCur)
+					spellLevels++;
+		}
 	}
 
 	if (_characters[charNum].flags & 0x10) {
