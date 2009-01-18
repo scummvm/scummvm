@@ -467,10 +467,10 @@ void TuckerEngine::mainLoop() {
 			continue;
 		}
 		if (_scrollOffset < 320) {
-			Graphics::copyTo640(_locationBackgroundGfxBuf + _scrollOffset, _currentGfxBackground + _scrollOffset, 320 - _scrollOffset, 320, _locationHeight);
+			Graphics::copyRect(_locationBackgroundGfxBuf + _scrollOffset, 640, _currentGfxBackground + _scrollOffset, 320, 320 - _scrollOffset, _locationHeight);
 		}
 		if (_scrollOffset > 0) {
-			Graphics::copyTo640(_locationBackgroundGfxBuf + 320, _currentGfxBackground + 44800, _scrollOffset, 320, _locationHeight);
+			Graphics::copyRect(_locationBackgroundGfxBuf + 320, 640, _currentGfxBackground + 44800, 320, _scrollOffset, _locationHeight);
 		}
 		drawData3();
 		execData3PreUpdate();

@@ -55,8 +55,7 @@ public:
 	static void decodeRLE_248(uint8 *dst, const uint8 *src, int w, int h, int y1, int y2, bool xflip);
 	static void decodeRLE_320(uint8 *dst, const uint8 *src, int w, int h);
 
-	static void copyFrom640(const uint8 *src, uint8 *dst, int w, int h);
-	static void copyTo640(uint8 *dst, const uint8 *src, int w, int srcPitch, int h);
+	static void copyRect(uint8 *dst, int dstPitch, uint8 *src, int srcPitch, int w, int h);
 
 	static void drawStringChar(uint8 *dst, uint8 chr, int pitch, uint8 chrColor, const uint8 *src);
 

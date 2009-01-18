@@ -81,9 +81,9 @@ void TuckerEngine::handleCreditsSequence() {
 			imgNum = 0;
 		}
 		if (num < 6) {
-			Graphics::copyTo640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf, 320, 320, 200);
+			Graphics::copyRect(_locationBackgroundGfxBuf, 640, _quadBackgroundGfxBuf, 320, 320, 200);
 		} else {
-			Graphics::copyTo640(_locationBackgroundGfxBuf, imgBuf + imgNum * 64000, 320, 320, 200);
+			Graphics::copyRect(_locationBackgroundGfxBuf, 640, imgBuf + imgNum * 64000, 320, 320, 200);
 			drawCreditsString(5, 48, counter2 * 6);
 			drawCreditsString(5, 60, counter2 * 6 + 1);
 			drawCreditsString(5, 80, counter2 * 6 + 2);
@@ -173,7 +173,7 @@ void TuckerEngine::handleCongratulationsSequence() {
 	_fadePaletteCounter = 0;
 	stopSounds();
 	loadImage("congrat.pcx", _loadTempBuf, 1);
-	Graphics::copyTo640(_locationBackgroundGfxBuf, _loadTempBuf, 320, 320, 200);
+	Graphics::copyRect(_locationBackgroundGfxBuf, 640, _loadTempBuf, 320, 320, 200);
 	_fullRedrawCounter = 2;
 	redrawScreen(0);
 	while (!_quitGame && _timerCounter2 < 450) {
@@ -243,7 +243,7 @@ void TuckerEngine::handleNewPartSequence() {
 			fadeOutPalette();
 			++_fadePaletteCounter;
 		}
-		Graphics::copyTo640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf, 320, 320, 200);
+		Graphics::copyRect(_locationBackgroundGfxBuf, 640, _quadBackgroundGfxBuf, 320, 320, 200);
 		_fullRedrawCounter = 2;
 		updateSprites();
 		drawSprite(0);
@@ -260,7 +260,7 @@ void TuckerEngine::handleNewPartSequence() {
 			fadeInPalette();
 			--_fadePaletteCounter;
 		}
-		Graphics::copyTo640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf, 320, 320, 200);
+		Graphics::copyRect(_locationBackgroundGfxBuf, 640, _quadBackgroundGfxBuf, 320, 320, 200);
 		_fullRedrawCounter = 2;
 		updateSprites();
 		drawSprite(0);
@@ -295,7 +295,7 @@ void TuckerEngine::handleMeanwhileSequence() {
 			fadeOutPalette();
 			++_fadePaletteCounter;
 		}
-		Graphics::copyTo640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
+		Graphics::copyRect(_locationBackgroundGfxBuf, 640, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
 		_fullRedrawCounter = 2;
 		redrawScreen(0);
 		waitForTimer(3);
@@ -306,7 +306,7 @@ void TuckerEngine::handleMeanwhileSequence() {
 			fadeInPalette();
 			--_fadePaletteCounter;
 		}
-		Graphics::copyTo640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
+		Graphics::copyRect(_locationBackgroundGfxBuf, 640, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
 		_fullRedrawCounter = 2;
 		redrawScreen(0);
 		waitForTimer(3);
@@ -338,7 +338,7 @@ void TuckerEngine::handleMapSequence() {
 	while (!_quitGame) {
 		waitForTimer(2);
 		updateMouseState();
-		Graphics::copyTo640(_locationBackgroundGfxBuf + _scrollOffset, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
+		Graphics::copyRect(_locationBackgroundGfxBuf + _scrollOffset, 640, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
 		_fullRedrawCounter = 2;
 		if (_flagsTable[7] > 0 && _mousePosX > 30 && _mousePosX < 86 && _mousePosY > 36 && _mousePosY < 86) {
 			textNum = 13;
@@ -460,7 +460,7 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 	while (!_quitGame) {
 		waitForTimer(2);
 		updateMouseState();
-		Graphics::copyTo640(_locationBackgroundGfxBuf + _scrollOffset, _quadBackgroundGfxBuf, 320, 320, 200);
+		Graphics::copyRect(_locationBackgroundGfxBuf + _scrollOffset, 640, _quadBackgroundGfxBuf, 320, 320, 200);
 		_fullRedrawCounter = 2;
 		if (_fadePaletteCounter < 14) {
 			fadeOutPalette();

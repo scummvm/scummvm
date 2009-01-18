@@ -157,18 +157,10 @@ void Graphics::decodeRLE_320(uint8 *dst, const uint8 *src, int w, int h) {
 	}
 }
 
-void Graphics::copyFrom640(const uint8 *src, uint8 *dst, int w, int h) {
+void Graphics::copyRect(uint8 *dst, int dstPitch, uint8 *src, int srcPitch, int w, int h) {
 	for (int y = 0; y < h; ++y) {
 		memcpy(dst, src, w);
-		dst += w;
-		src += 640;
-	}
-}
-
-void Graphics::copyTo640(uint8 *dst, const uint8 *src, int w, int srcPitch, int h) {
-	for (int y = 0; y < h; ++y) {
-		memcpy(dst, src, w);
-		dst += 640;
+		dst += dstPitch;
 		src += srcPitch;
 	}
 }

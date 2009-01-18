@@ -427,7 +427,7 @@ void TuckerEngine::loadLoc() {
 	_locationHeight = (_locationNum < 73) ? 140 : 200;
 	sprintf(filename, (i == 1) ? "loc%02d.pcx" : "loc%02da.pcx", _locationNum);
 	copyLocBitmap(filename, 0, false);
-	Graphics::copyFrom640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf, 320, _locationHeight);
+	Graphics::copyRect(_quadBackgroundGfxBuf, 320, _locationBackgroundGfxBuf, 640, 320, _locationHeight);
 	if (_locationHeight == 200) {
 		return;
 	}
@@ -436,7 +436,7 @@ void TuckerEngine::loadLoc() {
 	if (i > 1) {
 		sprintf(filename, "loc%02db.pcx", _locationNum);
 		copyLocBitmap(filename, 320, false);
-		Graphics::copyFrom640(_locationBackgroundGfxBuf + 320, _quadBackgroundGfxBuf + 44800, 320, 140);
+		Graphics::copyRect(_quadBackgroundGfxBuf + 44800, 320, _locationBackgroundGfxBuf + 320, 640, 320, _locationHeight);
 		if (i == 2) {
 			sprintf(filename, "path%02db.pcx", _locationNum);
 			copyLocBitmap(filename, 320, true);
@@ -445,7 +445,7 @@ void TuckerEngine::loadLoc() {
 	if (i > 2) {
 		sprintf(filename, "loc%02dc.pcx", _locationNum);
 		copyLocBitmap(filename, 0, false);
-		Graphics::copyFrom640(_locationBackgroundGfxBuf, _quadBackgroundGfxBuf + 89600, 320, 140);
+		Graphics::copyRect(_quadBackgroundGfxBuf + 89600, 320, _locationBackgroundGfxBuf, 640, 320, 140);
 	}
 	if (_locationNum == 1) {
 		_loadLocBufPtr = _quadBackgroundGfxBuf + 89600;
@@ -454,7 +454,7 @@ void TuckerEngine::loadLoc() {
 	if (i > 3) {
 		sprintf(filename, "loc%02dd.pcx", _locationNum);
 		copyLocBitmap(filename, 0, false);
-		Graphics::copyFrom640(_locationBackgroundGfxBuf + 320, _quadBackgroundGfxBuf + 134400, 320, 140);
+		Graphics::copyRect(_quadBackgroundGfxBuf + 134400, 320, _locationBackgroundGfxBuf + 320, 640, 320, 140);
 	}
 	_fullRedrawCounter = 2;
 }
