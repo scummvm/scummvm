@@ -855,6 +855,12 @@ public:
 		kSequenceFrameTime = 55
 	};
 
+	struct SequenceUpdateFunc {
+		int num;
+		void (AnimationSequencePlayer::*load)();
+		void (AnimationSequencePlayer::*play)();
+	};
+
 	AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, int num);
 	~AnimationSequencePlayer();
 
@@ -872,26 +878,35 @@ private:
 	uint8 *loadPicture(const char *fileName);
 	void openAnimation(int index, const char *fileName);
 	void decodeNextAnimationFrame(int index);
-	void introSeq17_18();
-	void introSeq19_20();
+	void loadIntroSeq17_18();
+	void playIntroSeq17_18();
+	void loadIntroSeq19_20();
+	void playIntroSeq19_20();
 	void displayLoadingScreen();
 	void initPicPart4();
 	void drawPicPart4();
-	void introSeq3_4();
+	void loadIntroSeq3_4();
+	void playIntroSeq3_4();
 	void drawPic2Part10();
 	void drawPic1Part10();
-	void introSeq9_10();
-	void introSeq21_22();
-	void introSeq13_14();
-	void introSeq15_16();
-	void introSeq27_28();
+	void loadIntroSeq9_10();
+	void playIntroSeq9_10();
+	void loadIntroSeq21_22();
+	void playIntroSeq21_22();
+	void loadIntroSeq13_14();
+	void playIntroSeq13_14();
+	void loadIntroSeq15_16();
+	void playIntroSeq15_16();
+	void loadIntroSeq27_28();
+	void playIntroSeq27_28();
 
 	OSystem *_system;
 	Audio::Mixer *_mixer;
 	Common::EventManager *_event;
 
-	bool _newSeq;
 	int _seqNum, _currentSeqNum;
+	const SequenceUpdateFunc *_updateFunc;
+	int _updateFuncIndex;
 	::Graphics::FlicPlayer _flicPlayer[2];
 	uint8 _animationPalette[256 * 4], _paletteBuffer[256 * 4];
 	int _soundsList1Offset;
