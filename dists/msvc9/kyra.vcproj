@@ -224,6 +224,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\gui_lol.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\gui_mr.cpp"
 			>
 		</File>
@@ -245,6 +249,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\items_lok.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\items_lol.cpp"
 			>
 		</File>
 		<File
@@ -344,6 +352,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\scene_lol.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\scene_mr.cpp"
 			>
 		</File>
@@ -417,6 +429,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\script_lok.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\script_lol.cpp"
 			>
 		</File>
 		<File
