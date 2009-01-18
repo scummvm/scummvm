@@ -356,15 +356,13 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 // PopUpWidget
 //
 
-PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const String &label, uint labelWidth)
-	: Widget(boss, name), CommandSender(boss), _label(label), _labelWidth(labelWidth) {
+PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const String &label)
+	: Widget(boss, name), CommandSender(boss), _label(label), _labelWidth(0) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
 	_type = kPopUpWidget;
 
 	_selectedItem = -1;
-
-	if (!_label.empty() && _labelWidth == 0)
-		_labelWidth = g_gui.getStringWidth(_label);
+	_labelWidth = g_gui.xmlEval()->getVar("Globals.PopUpWidget.labelWidth");
 }
 
 void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -396,6 +394,7 @@ void PopUpWidget::handleMouseWheel(int x, int y, int direction) {
 }
 
 void PopUpWidget::reflowLayout() {
+	_labelWidth = g_gui.xmlEval()->getVar("Globals.PopUpWidget.labelWidth");
 	_leftPadding = g_gui.xmlEval()->getVar("Globals.PopUpWidget.Padding.Left", 0);
 	_rightPadding = g_gui.xmlEval()->getVar("Globals.PopUpWidget.Padding.Right", 0);
 	_labelSpacing = g_gui.xmlEval()->getVar("Globals.PopUpWidget.labelSpacing", 10);

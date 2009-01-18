@@ -515,10 +515,8 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 
-	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
-
 	// The GFX mode popup
-	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup", "Graphics mode:", labelWidth);
+	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup", "Graphics mode:");
 
 	_gfxPopUp->appendEntry("<default>");
 	_gfxPopUp->appendEntry("");
@@ -528,7 +526,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 	}
 
 	// RenderMode popup
-	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", "Render mode:", labelWidth);
+	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", "Render mode:");
 	_renderModePopUp->appendEntry("<default>", Common::kRenderDefault);
 	_renderModePopUp->appendEntry("");
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
@@ -546,10 +544,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 }
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
-	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
-
 	// The MIDI mode popup & a label
-	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", "Music driver:", labelWidth);
+	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", "Music driver:");
 
 	// Populate it
 	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
@@ -559,7 +555,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 	}
 
 	// Sample rate settings
-	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup", "Output rate:", labelWidth);
+	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup", "Output rate:");
 
 	for (int i = 0; outputRateLabels[i]; i++) {
 		_outputRatePopUp->appendEntry(outputRateLabels[i], outputRateValues[i]);
@@ -652,19 +648,8 @@ int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 void OptionsDialog::reflowLayout() {
 	Dialog::reflowLayout();
 
-	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
-
 	if (_graphicsTabId != -1 && _tabWidget)
 		_tabWidget->setTabTitle(_graphicsTabId, g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
-
-	if (_midiPopUp)
-		_midiPopUp->changeLabelWidth(labelWidth);
-	if (_outputRatePopUp)
-		_outputRatePopUp->changeLabelWidth(labelWidth);
-	if (_gfxPopUp)
-		_gfxPopUp->changeLabelWidth(labelWidth);
-	if (_renderModePopUp)
-		_renderModePopUp->changeLabelWidth(labelWidth);
 }
 
 #pragma mark -
@@ -731,14 +716,12 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
 
 
-	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
-
-	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.Renderer", "GUI Renderer:", labelWidth);
+	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.Renderer", "GUI Renderer:");
 
 	for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
 		_rendererPopUp->appendEntry(GUI::ThemeEngine::_rendererModes[i].name, GUI::ThemeEngine::_rendererModes[i].mode);
 
-	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriod", "Autosave:", labelWidth);
+	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriod", "Autosave:");
 
 	for (int i = 0; savePeriodLabels[i]; i++) {
 		_autosavePeriodPopUp->appendEntry(savePeriodLabels[i], savePeriodValues[i]);

@@ -56,16 +56,14 @@ protected:
 	int				_selectedItem;
 
 	String			_label;
-	uint			_labelWidth;
+	int				_labelWidth;
 
 	int				_leftPadding;
 	int				_rightPadding;
 	int				_labelSpacing;
 
 public:
-	PopUpWidget(GuiObject *boss, const String &name, const String &label, uint labelWidth = 0);
-
-	void changeLabelWidth(uint newWidth) { _labelWidth = newWidth; }
+	PopUpWidget(GuiObject *boss, const String &name, const String &label);
 
 	void handleMouseDown(int x, int y, int button, int clickCount);
 	void handleMouseWheel(int x, int y, int direction);

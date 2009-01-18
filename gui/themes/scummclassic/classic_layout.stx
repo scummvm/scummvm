@@ -27,10 +27,10 @@
 	<globals>
 		<def var = 'Line.Height' value = '16' />
 		<def var = 'Font.Height' value = '16' />
-		<def var = 'TabLabelWidth' value = '110' />
 		
 		<def var = 'About.OuterBorder' value = '80'/>
 		<def var = 'PopUpWidget.labelSpacing' value = '10' />
+		<def var = 'PopUpWidget.labelWidth' value = '110' />
 		
 		<def var = 'Layout.Spacing' value = '8' />
 		<def var = 'ShowLauncherLogo' value = '0'/>

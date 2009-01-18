@@ -121,8 +121,6 @@ class EditGameDialog : public OptionsDialog {
 public:
 	EditGameDialog(const String &domain, const String &desc);
 
-	virtual void reflowLayout();
-
 	void open();
 	void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
@@ -146,8 +144,6 @@ protected:
 
 EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	: OptionsDialog(domain, "GameOptions") {
-
-	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
 	String gamePath(ConfMan.get("path", _domain));
@@ -177,7 +173,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description);
 
 	// Language popup
-	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.Lang", "Language:", labelWidth);
+	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.Lang", "Language:");
 	_langPopUp->appendEntry("<default>");
 	_langPopUp->appendEntry("");
 	const Common::LanguageDescription *l = Common::g_languages;
@@ -186,7 +182,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// Platform popup
-	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.Platform", "Platform:", labelWidth);
+	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.Platform", "Platform:");
 	_platformPopUp->appendEntry("<default>");
 	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;
@@ -258,17 +254,6 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// Add OK & Cancel buttons
 	new ButtonWidget(this, "GameOptions.Cancel", "Cancel", kCloseCmd, 0);
 	new ButtonWidget(this, "GameOptions.Ok", "OK", kOKCmd, 0);
-}
-
-void EditGameDialog::reflowLayout() {
-	OptionsDialog::reflowLayout();
-
-	int labelWidth = g_gui.xmlEval()->getVar("Globals.TabLabelWidth");
-
-	if (_langPopUp)
-		_langPopUp->changeLabelWidth(labelWidth);
-	if (_platformPopUp)
-		_platformPopUp->changeLabelWidth(labelWidth);
 }
 
 void EditGameDialog::open() {
