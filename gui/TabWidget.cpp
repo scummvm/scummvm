@@ -47,10 +47,6 @@ TabWidget::TabWidget(GuiObject *boss, const String &name)
 }
 
 void TabWidget::init() {
-	_tabOffset = 0;	// TODO
-	_tabSpacing = g_gui.theme()->getTabSpacing();
-	_tabPadding = g_gui.theme()->getTabPadding();
-
 	setFlags(WIDGET_ENABLED);
 	_type = kTabWidget;
 	_activeTab = -1;
@@ -185,8 +181,8 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 	// Determine which tab was clicked
 	int tabID = -1;
-	if (x >= 0 && x % (_tabWidth + _tabSpacing) < _tabWidth) {
-		tabID = x / (_tabWidth + _tabSpacing);
+	if (x >= 0 && (x % _tabWidth) < _tabWidth) {
+		tabID = x / _tabWidth;
 		if (tabID >= (int)_tabs.size())
 			tabID = -1;
 	}
@@ -242,10 +238,6 @@ void TabWidget::reflowLayout() {
 	int y = _butTP - _tabHeight;
 	_navLeft->resize(x, y, _butW, _butH);
 	_navRight->resize(x + _butW + 2, y, _butW, _butH);
-
-	_tabOffset = 0;	// TODO
-	_tabSpacing = g_gui.theme()->getTabSpacing();
-	_tabPadding = g_gui.theme()->getTabPadding();
 }
 
 void TabWidget::drawWidget() {

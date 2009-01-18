@@ -46,9 +46,6 @@ protected:
 	int _tabWidth;
 	int _tabHeight;
 
-	int _tabOffset;
-	int _tabSpacing;
-	int _tabPadding;
 	int _titleVPad;
 
 	int _butRP, _butTP, _butW, _butH;

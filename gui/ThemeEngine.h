@@ -554,17 +554,6 @@ private:
 	static Common::String getThemeId(const Common::String &filename);
 	static void listUsableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list, int depth=-1);
 
-public:
-	/**
-	 * @name LEGACY: Old GUI::Theme API
-	 */
-	//@{
-
-	int getTabSpacing() const { return 0; }
-	int getTabPadding() const { return 3; }
-
-	//@}
-
 protected:
 	OSystem *_system; /** Global system object. */
 
