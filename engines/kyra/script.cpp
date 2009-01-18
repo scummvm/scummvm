@@ -152,9 +152,9 @@ void EMCInterpreter::unload(EMCData *data) {
 void EMCInterpreter::init(EMCState *scriptStat, const EMCData *data) {
 	scriptStat->dataPtr = data;
 	scriptStat->ip = 0;
-	scriptStat->stack[60] = 0;
-	scriptStat->bp = 62;
-	scriptStat->sp = 60;
+	scriptStat->stack[EMCState::kStackLastEntry] = 0;
+	scriptStat->bp = EMCState::kStackSize+1;
+	scriptStat->sp = EMCState::kStackLastEntry;
 }
 
 bool EMCInterpreter::start(EMCState *script, int function) {
@@ -346,7 +346,7 @@ void EMCInterpreter::cmd_popRetOrPos(EMCState* script) {
 		break;
 
 	case 1:
-		if (script->sp >= 60) {
+		if (script->sp >= EMCState::kStackLastEntry) {
 			script->ip = 0;
 		} else {
 			script->bp = script->stack[script->sp++];
@@ -519,12 +519,12 @@ void EMCInterpreter::cmd_eval(EMCState* script) {
 }
 
 void EMCInterpreter::cmd_setRetAndJmp(EMCState* script) {
-	if (script->sp >= 60) {
+	if (script->sp >= EMCState::kStackLastEntry) {
 		script->ip = 0;
 	} else {
 		script->retValue = script->stack[script->sp++];
 		uint16 temp = script->stack[script->sp++];
-		script->stack[60] = 0;
+		script->stack[EMCState::kStackLastEntry] = 0;
 		script->ip = &script->dataPtr->data[temp];
 	}
 }

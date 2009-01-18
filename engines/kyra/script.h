@@ -47,13 +47,18 @@ struct EMCData {
 };
 
 struct EMCState {
+	enum {
+		kStackSize = 100,
+		kStackLastEntry = kStackSize - 1
+	};
+
 	const uint16 *ip;
 	const EMCData *dataPtr;
 	int16 retValue;
 	uint16 bp;
 	uint16 sp;
-	int16 regs[30];		// VM registers
-	int16 stack[100];	// VM stack
+	int16 regs[30];				// VM registers
+	int16 stack[kStackSize];	// VM stack
 };
 
 #define stackPos(x) (script->stack[script->sp+x])
