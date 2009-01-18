@@ -59,7 +59,7 @@ void LoLEngine::loadLevel(int index) {
 	loadLevelWLL(index, true);
 	_loadLevelFlag = 1;
 
-	char filename[] = "level%d.ini";
+	char filename[16];
 	sprintf(filename, "level%d.ini", index);
 	
 	int f = _levelFlagUnk & (1 << ((index + 0xff) & 0xff));
@@ -260,8 +260,8 @@ void LoLEngine::moveItemToCMZ(uint16 *cmzItemIndex, uint16 item) {
 }
 
 void LoLEngine::loadLevelWLL(int index, bool mapShapes) {
-	char filename[] = "level%00d.wll";
-	sprintf(filename, "level%00d.wll", index);
+	char filename[16];
+	sprintf(filename, "level%2d.wll", index);
 
 	uint32 size;
 	uint8 *file = _res->fileData(filename, &size);
@@ -352,14 +352,14 @@ uint8 *LoLEngine::getLevelShapes(int shapeIndex) {
 }
 
 void LoLEngine::loadLevelCMZ(int index) {
-	//char filename[] = "_LEVEL%d.TMP";
+	//char filename[16];
 	//sprintf(filename, "_LEVEL%d.TMP", index);
 	// TODO ???
 	memset(_tempBuffer5120, 0, 5120);
 	uint16 tmpLvlVal = 0;
 
 
-	char filename[] = "level%d.cmz";
+	char filename[16];
 	sprintf(filename, "level%d.cmz", index);
 	
 	_screen->loadBitmap(filename, 3, 3, 0);
@@ -668,8 +668,8 @@ void LoLEngine::loadLevelSupplemenaryFiles(const char *file, int specialColor, i
 	_loadSuppFilesFlag = 0;
 	_screen->generateBrightnessPalette(_screen->_currentPalette, _screen->getPalette(1), _brightness, _lampOilStatus);
 
-	char tname[] = "LEVEL%02d.TLC";
-	sprintf(tname, "LEVEL%02d.TLC", _currentLevel);
+	char tname[16];
+	sprintf(tname, "LEVEL%2d.TLC", _currentLevel);
 	Common::SeekableReadStream *s = _res->getFileStream(tname);
 	s->read(_tlcTable1, 256);
 	s->read(_tlcTable2, 5120);
@@ -1266,7 +1266,7 @@ void LoLEngine::drawDecorations(int index) {
 					y = _dscShapeY[s] + yOffs + ((_levelShapeProperties[l].shapeY[shpIx] * scaleH) >> 8);
 					_screen->drawShape(_sceneDrawPage1, shapeData, x + 112, y, 13, flags, ovl, 1, scaleW, scaleH);
 
-					if ((_levelShapeProperties[l].flags & 1) && (shpIx >= 0) && (shpIx < 4)) {
+					if ((_levelShapeProperties[l].flags & 1) && shpIx < 4) {
 						//draw shadow
 						x += (_screen->getShapeScaledWidth(shapeData, scaleW));
 						flags ^= 1;
@@ -1302,10 +1302,10 @@ void LoLEngine::drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w,
 	int u = 0;
 
 	if (flags & 2) {		
-		uint8 w = _dscDimMap[index];		
-		_doorScaleW = _dscDoorScaleTable[w << 1];
-		_doorScaleH = _dscDoorScaleTable[(w << 1) + 1];
-		u = _dscDoor4[w];
+		uint8 dimW = _dscDimMap[index];		
+		_doorScaleW = _dscDoorScaleTable[dimW << 1];
+		_doorScaleH = _dscDoorScaleTable[(dimW << 1) + 1];
+		u = _dscDoor4[dimW];
 	}
 
 	d += 2;
