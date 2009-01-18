@@ -191,6 +191,8 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 			setMousePos(pos.x, 179);
 	}
 	_screen->showMouse();
+
+	_currentScene = sceneId;
 }
 
 void KyraEngine_MR::enterNewSceneUnk1(int facing, int unk1, int unk2) {
