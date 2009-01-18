@@ -261,7 +261,7 @@ void LoLEngine::moveItemToCMZ(uint16 *cmzItemIndex, uint16 item) {
 
 void LoLEngine::loadLevelWLL(int index, bool mapShapes) {
 	char filename[16];
-	sprintf(filename, "level%2d.wll", index);
+	sprintf(filename, "level%d.wll", index);
 
 	uint32 size;
 	uint8 *file = _res->fileData(filename, &size);
@@ -569,7 +569,7 @@ void LoLEngine::loadLevelShpDat(const char *shpFile, const char *datFile, bool f
 		l->flags = s->readByte();
 	}
 
-	delete []s;
+	delete s;
 
 	if (!flag) {
 		_lvlBlockIndex = 1;
@@ -669,11 +669,11 @@ void LoLEngine::loadLevelSupplemenaryFiles(const char *file, int specialColor, i
 	_screen->generateBrightnessPalette(_screen->_currentPalette, _screen->getPalette(1), _brightness, _lampOilStatus);
 
 	char tname[16];
-	sprintf(tname, "LEVEL%2d.TLC", _currentLevel);
+	sprintf(tname, "LEVEL%.02d.TLC", _currentLevel);
 	Common::SeekableReadStream *s = _res->getFileStream(tname);
 	s->read(_tlcTable1, 256);
 	s->read(_tlcTable2, 5120);
-	delete []s;
+	delete s;
 
 	_loadSuppFilesFlag = 1;
 }
