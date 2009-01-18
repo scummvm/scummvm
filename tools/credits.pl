@@ -473,7 +473,6 @@ begin_credits("Credits");
     begin_section("Engine Teams");
 	  begin_section("SCUMM");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person("Jonathan Gray", "khalek", "");
 		  add_person("Max Horn", "Fingolfin", "");
 		  add_person("Travis Howell", "Kirben", "");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Codecs, iMUSE, Smush, etc.");
@@ -482,7 +481,6 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("HE");
-		  add_person("Jonathan Gray", "khalek", "");
 		  add_person("Travis Howell", "Kirben", "");
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Eugene Sandulenko", "sev", "");
@@ -495,28 +493,22 @@ begin_credits("Credits");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 		  add_person("Kari Salminen", "Buddha^", "");
 		  add_person("Eugene Sandulenko", "sev", "");
-		  add_person("David Symonds", "dsymonds", "");
 	  end_section();
 
 	  begin_section("AGOS");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Travis Howell", "Kirben", "");
-		  add_person("Oliver Kiehl", "olki", "");
 	  end_section();
 
 	  begin_section("BASS");	# Beneath a Steel Sky
-		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "");
-		  add_person("Oliver Kiehl", "olki", "");
 		  add_person("Joost Peters", "joostp", "");
 	  end_section();
 
 	  begin_section("Broken Sword 1");
-		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "");
 	  end_section();
 
 	  begin_section("Broken Sword 2");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person("Jonathan Gray", "khalek", "");
 	  end_section();
 
 	  begin_section("Cinematique evo 1");
@@ -531,7 +523,6 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("FOTAQ");	# Flight of the Amazon Queen
-		  add_person("David Eriksson", "twogood", "");
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Joost Peters", "joostp", "");
 	  end_section();
@@ -694,16 +685,20 @@ begin_credits("Credits");
 		add_person("Nicolas Bacca", "arisme", "Former WinCE porter");
 		add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
 		add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
+		add_person("David Eriksson", "twogood", "Engines: FOTAQ");
 		add_person("Hans-J&ouml;rg Frieden", "", "Former AmigaOS 4 packager");
-		add_person("Robert G&ouml;ffringmann", "lavosspawn", "Original PS2 porter");
+		add_person("Robert G&ouml;ffringmann", "lavosspawn", "Original PS2 porter; Engines: BASS, BS1");
+		add_person("Jonathan Gray", "khalek", "Engines: SCUMM, HE, BS2");
 		add_person("R&uuml;diger Hanke", "", "Port: MorphOS");
 		add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");
+		add_person("Oliver Kiehl", "olki", "Engines: AGOS, BASS");
 		add_person("Mutwin Kraus", "mutle", "Original MacOS porter");
 		add_person("Peter Moraliyski", "ph0x", "Port: GP32");
 		add_person("Juha Niemim&auml;ki", "", "Former AmigaOS 4 packager");
 		add_person("Jeremy Newman", "laxdragon", "Former webmaster");
 		add_person("Lionel Ulmer", "bbrox", "Port: X11");
 		add_person("Won Star", "wonst719", "Former GP32 porter");
+		add_person("David Symonds", "dsymonds", "Engines: AGI");
 	  end_persons();
     end_section();
   end_section();

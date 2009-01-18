@@ -15,7 +15,6 @@ ScummVM Team
   ------------
     SCUMM:
        Torbjorn Andersson   
-       Jonathan Gray        
        Max Horn             
        Travis Howell        
        Pawel Kolodziejski    - Codecs, iMUSE, Smush, etc.
@@ -24,7 +23,6 @@ ScummVM Team
                                Herc/CGA
 
     HE:
-       Jonathan Gray        
        Travis Howell        
        Gregory Montoir      
        Eugene Sandulenko    
@@ -36,24 +34,18 @@ ScummVM Team
        Pawel Kolodziejski   
        Kari Salminen        
        Eugene Sandulenko    
-       David Symonds        
 
     AGOS:
        Torbjorn Andersson   
        Travis Howell        
-       Oliver Kiehl         
 
     BASS:
-       Robert Goeffringmann 
-       Oliver Kiehl         
        Joost Peters         
 
     Broken Sword 1:
-       Robert Goeffringmann 
 
     Broken Sword 2:
        Torbjorn Andersson   
-       Jonathan Gray        
 
     Cinematique evo 1:
        Vincent Hamm          - original CinE engine author
@@ -65,7 +57,6 @@ ScummVM Team
        Vincent Hamm          - original CruisE engine author
 
     FOTAQ:
-       David Eriksson       
        Gregory Montoir      
        Joost Peters         
 
@@ -199,16 +190,20 @@ ScummVM Team
      Nicolas Bacca         - Former WinCE porter
      Ralph Brorsen         - Help with GUI implementation
      Jamieson Christian    - iMUSE, MIDI, all things musical
+     David Eriksson        - Engines: FOTAQ
      Hans-Jorg Frieden     - Former AmigaOS 4 packager
-     Robert Goeffringmann  - Original PS2 porter
+     Robert Goeffringmann  - Original PS2 porter; Engines: BASS, BS1
+     Jonathan Gray         - Engines: SCUMM, HE, BS2
      Ruediger Hanke        - Port: MorphOS
      Felix Jakschitsch     - Zak256 reverse engineering
+     Oliver Kiehl          - Engines: AGOS, BASS
      Mutwin Kraus          - Original MacOS porter
      Peter Moraliyski      - Port: GP32
      Juha Niemimaki        - Former AmigaOS 4 packager
      Jeremy Newman         - Former webmaster
      Lionel Ulmer          - Port: X11
      Won Star              - Former GP32 porter
+     David Symonds         - Engines: AGI
 
 Other contributions
 *******************
