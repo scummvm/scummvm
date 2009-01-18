@@ -28,8 +28,8 @@
 namespace Tucker {
 
 int Graphics::encodeRLE(const uint8 *src, uint8 *dst, int w, int h) {
+	int sz = 0;
 	int count = 0;
-	int dstOffset = 0;
 	int code = 0;
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w; ++x) {
@@ -37,26 +37,26 @@ int Graphics::encodeRLE(const uint8 *src, uint8 *dst, int w, int h) {
 			if (code == 0) {
 				++count;
 				if (count > 200) {
-					dst[dstOffset++] = 0;
-					dst[dstOffset++] = count;
+					dst[sz++] = 0;
+					dst[sz++] = count;
 					count = 0;
 				}
 			} else {
 				if (count > 0) {
-					dst[dstOffset++] = 0;
-					dst[dstOffset++] = count;
+					dst[sz++] = 0;
+					dst[sz++] = count;
 					count = 0;
 				}
-				dst[dstOffset++] = code;
+				dst[sz++] = code;
 			}
 		}
 		src += 320;
 	}
 	if (count > 0) {
-		dst[dstOffset++] = 0;
-		dst[dstOffset++] = count;
+		dst[sz++] = 0;
+		dst[sz++] = count;
 	}
-	return dstOffset;
+	return sz;
 }
 
 int Graphics::encodeRAW(const uint8 *src, uint8 *dst, int w, int h) {
@@ -70,35 +70,19 @@ int Graphics::encodeRAW(const uint8 *src, uint8 *dst, int w, int h) {
 
 void Graphics::decodeRLE(uint8 *dst, const uint8 *src, int w, int h) {
 	int code = 0;
-	int offset = 0;
 	int color = 0;
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w; ++x) {
 			if (code == 0) {
-				color = src[offset++];
+				color = *src++;
 				if (color == 0) {
-					code = src[offset++];
-					--code;
-					if (x + code < w) {
-						x += code;
-						code = 0;
-					} else {
-						code -= w - 1 - x;
-						x = w - 1;
-					}
-				}
-			} else {
-				--code;
-				if (x + code < w) {
-					x += code;
-					code = 0;
-				} else {
-					code -= w - 1 - x;
-					x = w - 1;
+					code = *src++;
 				}
 			}
 			if (color != 0) {
 				dst[x] = color;
+			} else {
+				--code;
 			}
 		}
 		dst += 640;
@@ -107,36 +91,21 @@ void Graphics::decodeRLE(uint8 *dst, const uint8 *src, int w, int h) {
 
 void Graphics::decodeRLE_224(uint8 *dst, const uint8 *src, int w, int h) {
 	int code = 0;
-	int offset = 0;
 	int color = 0;
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w; ++x) {
 			if (code == 0) {
-				color = src[offset++];
-				if (color != 0) {
-					if (dst[x] < 0xE0) {
-						dst[x] = color;
-					}
-				} else {
-					code = src[offset++];
-					--code;
-					if (x + code < w) {
-						x += code;
-						code = 0;
-					} else {
-						code -= w - 1 - x;
-						x = w - 1;
-					}
+				color = *src++;
+				if (color == 0) {
+					code = *src++;
+				}
+			}
+			if (color != 0) {
+				if (dst[x] < 0xE0) {
+					dst[x] = color;
 				}
 			} else {
 				--code;
-				if (x + code < w) {
-					x += code;
-					code = 0;
-				} else {
-					code -= w - 1 - x;
-					x = w - 1;
-				}
 			}
 		}
 		dst += 640;
@@ -145,39 +114,22 @@ void Graphics::decodeRLE_224(uint8 *dst, const uint8 *src, int w, int h) {
 
 void Graphics::decodeRLE_248(uint8 *dst, const uint8 *src, int w, int h, int y1, int y2, bool xflip) {
 	int code = 0;
-	int offset = 0;
 	int color = 0;
-	int dstOffset = 0;
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w; ++x) {
-			dstOffset = xflip ? (w - 1 - x) : x;
+			const int offset = xflip ? (w - 1 - x) : x;
 			if (code == 0) {
-				color = src[offset++];
+				color = *src++;
 				if (color == 0) {
-					code = src[offset++];
-					--code;
-					if (x + code < w) {
-						x += code;
-						code = 0;
-					} else {
-						code -= w - 1 - x;
-						x = w - 1;
-					}
-				}
-			} else {
-				--code;
-				if (x + code < w) {
-					x += code;
-					code = 0;
-				} else {
-					code -= w - 1 - x;
-					x = w - 1;
+					code = *src++;
 				}
 			}
 			if (color != 0) {
-				if ((dst[dstOffset] < 0xE0 || y + y1 < y2) && dst[dstOffset] < 0xF8) {
-					dst[dstOffset] = color;
+				if ((dst[offset] < 0xE0 || y + y1 < y2) && dst[offset] < 0xF8) {
+					dst[offset] = color;
 				}
+			} else {
+				--code;
 			}
 		}
 		dst += 640;
@@ -186,14 +138,13 @@ void Graphics::decodeRLE_248(uint8 *dst, const uint8 *src, int w, int h, int y1,
 
 void Graphics::decodeRLE_320(uint8 *dst, const uint8 *src, int w, int h) {
 	int code = 0;
-	int offset = 0;
 	int color = 0;
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w; ++x) {
 			if (code == 0) {
-				color = src[offset++];
+				color = *src++;
 				if (color == 0) {
-					code = src[offset++];
+					code = *src++;
 				}
 			}
 			if (code == 0) {
