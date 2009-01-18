@@ -49,14 +49,14 @@ Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system), 
 Screen_LoL::~Screen_LoL() {
 	for (int i = 0; i < _screenDimTableCount; i++)
 		delete _customDimTable[i];
-	delete []_customDimTable;
+	delete[] _customDimTable;
 
 	for (int i = 0; i < 8; i++)
-		delete []_levelOverlays[i];
+		delete[] _levelOverlays[i];
 
-	delete []_paletteOverlay1;
-	delete []_paletteOverlay2;
-	delete []_grayOverlay;
+	delete[] _paletteOverlay1;
+	delete[] _paletteOverlay2;
+	delete[] _grayOverlay;
 }
 
 void Screen_LoL::setScreenDim(int dim) {

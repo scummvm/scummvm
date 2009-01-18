@@ -160,91 +160,91 @@ LoLEngine::~LoLEngine() {
 	delete _screen;
 	delete _tim;
 
-	delete [] _itemsInPlay;
-	delete [] _itemProperties;
+	delete[]  _itemsInPlay;
+	delete[]  _itemProperties;
 
-	delete [] _characters;
+	delete[]  _characters;
 
 	if (_itemIconShapes) {
 		for (int i = 0; i < _numItemIconShapes; i++)
-			delete [] _itemIconShapes[i];
-		delete []_itemIconShapes;
+			delete[]  _itemIconShapes[i];
+		delete[] _itemIconShapes;
 	}
 	if (_itemShapes) {
 		for (int i = 0; i < _numItemShapes; i++)
-			delete [] _itemShapes[i];
-		delete []_itemShapes;
+			delete[]  _itemShapes[i];
+		delete[] _itemShapes;
 	}
 	if (_gameShapes) {
 		for (int i = 0; i < _numGameShapes; i++)
-			delete [] _gameShapes[i];
-		delete []_gameShapes;
+			delete[]  _gameShapes[i];
+		delete[] _gameShapes;
 	}
 	if (_thrownShapes) {
 		for (int i = 0; i < _numThrownShapes; i++)
-			delete [] _thrownShapes[i];
-		delete []_thrownShapes;
+			delete[]  _thrownShapes[i];
+		delete[] _thrownShapes;
 	}
 	if (_iceShapes) {
 		for (int i = 0; i < _numIceShapes; i++)
-			delete [] _iceShapes[i];
-		delete []_iceShapes;
+			delete[]  _iceShapes[i];
+		delete[] _iceShapes;
 	}
 	if (_fireballShapes) {
 		for (int i = 0; i < _numFireballShapes; i++)
-			delete [] _fireballShapes[i];
-		delete []_fireballShapes;
+			delete[]  _fireballShapes[i];
+		delete[] _fireballShapes;
 	}
 
 	if (_monsterShapes) {
 		for (int i = 0; i < 48; i++)
-			delete [] _monsterShapes[i];
-		delete []_monsterShapes;
+			delete[]  _monsterShapes[i];
+		delete[] _monsterShapes;
 	}
 	if (_monsterPalettes) {
 		for (int i = 0; i < 48; i++)
-			delete [] _monsterPalettes[i];
-		delete []_monsterPalettes;
+			delete[]  _monsterPalettes[i];
+		delete[] _monsterPalettes;
 	}
 	if (_buf4) {
 		for (int i = 0; i < 384; i++)
-			delete [] _buf4[i];
-		delete []_buf4;
+			delete[]  _buf4[i];
+		delete[] _buf4;
 	}
 
 	for (Common::Array<const TIMOpcode*>::iterator i = _timIntroOpcodes.begin(); i != _timIntroOpcodes.end(); ++i)
 		delete *i;
 	_timIntroOpcodes.clear();
 
-	delete []_wllVmpMap;
-	delete []_wllShapeMap;
-	delete []_wllBuffer3;
-	delete []_wllBuffer4;
-	delete []_wllBuffer5;
-	delete []_lvlShapeTop;
-	delete []_lvlShapeBottom;
-	delete []_lvlShapeLeftRight;
-	delete []_tempBuffer5120;
-	delete []_lvlBuffer;
-	delete []_cmzBuffer;
-	delete []_lvl415;
+	delete[] _wllVmpMap;
+	delete[] _wllShapeMap;
+	delete[] _wllBuffer3;
+	delete[] _wllBuffer4;
+	delete[] _wllBuffer5;
+	delete[] _lvlShapeTop;
+	delete[] _lvlShapeBottom;
+	delete[] _lvlShapeLeftRight;
+	delete[] _tempBuffer5120;
+	delete[] _lvlBuffer;
+	delete[] _cmzBuffer;
+	delete[] _lvl415;
 
-	delete []_lvlShpHeader;
-	delete []_levelFileData;
-	delete []_vcnExpTable;
-	delete []_vcnBlocks;
-	delete []_vcnShift;
-	delete []_vmpPtr;
-	delete []_tlcTable2;
-	delete []_tlcTable1;
-	delete []_levelShapeProperties;
-	delete []_blockDrawingBuffer;
-	delete []_sceneWindowBuffer;
+	delete[] _lvlShpHeader;
+	delete[] _levelFileData;
+	delete[] _vcnExpTable;
+	delete[] _vcnBlocks;
+	delete[] _vcnShift;
+	delete[] _vmpPtr;
+	delete[] _tlcTable2;
+	delete[] _tlcTable1;
+	delete[] _levelShapeProperties;
+	delete[] _blockDrawingBuffer;
+	delete[] _sceneWindowBuffer;
 
 	if (_levelShapes) {
 		for (int i = 0; i < 400; i++)
-			delete [] _levelShapes[i];
-		delete []_levelShapes;
+			delete[]  _levelShapes[i];
+		delete[] _levelShapes;
 	}
 
 	for (int i = 0; i < 2; i++)
@@ -254,8 +254,8 @@ LoLEngine::~LoLEngine() {
 
 	if (_ingameSoundList) {
 		for (int i = 0; i < _ingameSoundListSize; i++)
-			delete []_ingameSoundList[i];
-		delete []_ingameSoundList;	
+			delete[] _ingameSoundList[i];
+		delete[] _ingameSoundList;	
 	}
 }
 
@@ -569,7 +569,7 @@ void LoLEngine::startup() {
 	_screen->generateOverlay(_screen->_currentPalette, _screen->_paletteOverlay1, 1, 6);
 	_screen->generateOverlay(_screen->_currentPalette, _screen->_paletteOverlay2, 0x90, 0x41);
 	memcpy(_screen->_currentPalette, tmpPal, 0x300);
-	delete []tmpPal;
+	delete[] tmpPal;
 
 	memset(_screen->getPalette(1), 0, 0x300);
 	memset(_screen->getPalette(2), 0, 0x300);

@@ -1539,7 +1539,7 @@ private:
 class TownsPC98_OpnPercussionSource {
 public:
 	TownsPC98_OpnPercussionSource(const uint32 timerbase);
-	~TownsPC98_OpnPercussionSource() { delete [] _reg; }
+	~TownsPC98_OpnPercussionSource() { delete[] _reg; }
 
 	void init(const uint8 *instrData = 0);
 	void reset();
@@ -2577,9 +2577,9 @@ TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerb
 }
 
 TownsPC98_OpnSquareSineSource::~TownsPC98_OpnSquareSineSource() {
-	delete [] _tlTable;
-	delete [] _tleTable;
-	delete [] _reg;
+	delete[] _tlTable;
+	delete[] _tleTable;
+	delete[] _reg;
 }
 
 void TownsPC98_OpnSquareSineSource::init(const int *rsTable, const int *rseTable) {
@@ -2588,8 +2588,8 @@ void TownsPC98_OpnSquareSineSource::init(const int *rsTable, const int *rseTable
 		return;
 	}
 
-	delete [] _tlTable;
-	delete [] _tleTable;
+	delete[] _tlTable;
+	delete[] _tleTable;
 	_tlTable = new int32[16];
 	_tleTable = new int32[32];
 	float a, b, d;
@@ -2938,15 +2938,15 @@ TownsPC98_OpnCore::~TownsPC98_OpnCore() {
 	_mixer->stopHandle(_soundHandle);
 	delete _ssg;
 	delete _prc;
-	delete [] _chanInternal;
+	delete[] _chanInternal;
 
-	delete [] _oprRates;
-	delete [] _oprRateshift;
-	delete [] _oprFrq;
-	delete [] _oprAttackDecay;
-	delete [] _oprSinTbl;
-	delete [] _oprLevelOut;
-	delete [] _oprDetune;
+	delete[] _oprRates;
+	delete[] _oprRateshift;
+	delete[] _oprFrq;
+	delete[] _oprAttackDecay;
+	delete[] _oprSinTbl;
+	delete[] _oprLevelOut;
+	delete[] _oprDetune;
 }
 
 bool TownsPC98_OpnCore::init() {
@@ -3224,12 +3224,12 @@ int inline TownsPC98_OpnCore::readBuffer(int16 *buffer, const int numSamples) {
 		tmp += (render << 1);
 	}
 
-	delete [] tmpStart;
+	delete[] tmpStart;
 	return numSamples;
 }
 
 void TownsPC98_OpnCore::generateTables() {
-	delete [] _oprRates;
+	delete[] _oprRates;
 	_oprRates = new uint8[128];
 	memset(_oprRates, 0x90, 32);
 	uint8 *dst = (uint8*) _oprRates + 32;
@@ -3242,7 +3242,7 @@ void TownsPC98_OpnCore::generateTables() {
 	}
 	memset(dst, 0x80, 32);
 
-	delete [] _oprRateshift;
+	delete[] _oprRateshift;
 	_oprRateshift = new uint8[128];
 	memset(_oprRateshift, 0, 128);
 	dst = (uint8*) _oprRateshift + 32;
@@ -3251,18 +3251,18 @@ void TownsPC98_OpnCore::generateTables() {
 		dst += 4;
 	}
 
-	delete [] _oprFrq;
+	delete[] _oprFrq;
 	_oprFrq = new uint32[0x1000];
 	for (uint32 i = 0; i < 0x1000; i++)
 		_oprFrq[i] = (uint32)(_baserate * (float)(i << 11));
 
-	delete [] _oprAttackDecay;
+	delete[] _oprAttackDecay;
 	_oprAttackDecay = new uint8[152];
 	memset(_oprAttackDecay, 0, 152);
 	for (int i = 0; i < 36; i++)
 		WRITE_BE_UINT32(_oprAttackDecay + (i << 2), _adtStat[i]);
 
-	delete [] _oprSinTbl;
+	delete[] _oprSinTbl;
 	_oprSinTbl = new uint32[1024];
 	for (int i = 0; i < 1024; i++) {
 		double val = sin((double) (((i << 1) + 1) * PI / 1024.0));
@@ -3272,7 +3272,7 @@ void TownsPC98_OpnCore::generateTables() {
 		_oprSinTbl[i] = (i_dcb << 1) + (val >= 0.0 ? 0 : 1);
 	}
 
-	delete [] _oprLevelOut;
+	delete[] _oprLevelOut;
 	_oprLevelOut = new int32[0x1a00];
 	for (int i = 0; i < 256; i++) {
 		double val = floor(65536.0 / pow(2.0, 0.00390625 * (double)(1 + i)));
@@ -3290,14 +3290,14 @@ void TownsPC98_OpnCore::generateTables() {
 	memset(dtt + 36, 1, 8);
 	memcpy(dtt + 44, _detSrc, 84);
 
-	delete [] _oprDetune;
+	delete[] _oprDetune;
 	_oprDetune = new int32[256];
 	for (int i = 0; i < 128; i++) {
 		_oprDetune[i] = (int32)	((float)dtt[i] * _baserate * 64.0);
 		_oprDetune[i + 128] = -_oprDetune[i];
 	}
 
-	delete [] dtt;
+	delete[] dtt;
 }
 
 void TownsPC98_OpnCore::nextTick(int32 *buffer, uint32 bufferSize) {
@@ -3413,25 +3413,25 @@ TownsPC98_OpnDriver::~TownsPC98_OpnDriver() {
 	if (_channels) {
 		for (int i = 0; i < _numChan; i++)
 			delete _channels[i];
-		delete [] _channels;
+		delete[] _channels;
 	}
 
 	if (_ssgChannels) {
 		for (int i = 0; i < _numSSG; i++)
 			delete _ssgChannels[i];
-		delete [] _ssgChannels;
+		delete[] _ssgChannels;
 	}
 
 	if (_sfxChannels) {
 		for (int i = 0; i < 2; i++)
 			delete _sfxChannels[i];
-		delete [] _sfxChannels;
+		delete[] _sfxChannels;
 	}
 
 	if (_rhythmChannel)
 		delete _rhythmChannel;
 
-	delete [] _ssgPatches;
+	delete[] _ssgPatches;
 }
 
 bool TownsPC98_OpnDriver::init() {
@@ -4144,7 +4144,7 @@ bool SoundTownsPC98_v2::init() {
 }
 
 void SoundTownsPC98_v2::loadSoundFile(Common::String file) {
-	delete [] _sfxTrackData;
+	delete[] _sfxTrackData;
 	_sfxTrackData = _vm->resource()->fileData(file.c_str(), 0);
 }
 

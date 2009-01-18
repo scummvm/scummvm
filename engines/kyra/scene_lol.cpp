@@ -41,7 +41,7 @@ void LoLEngine::loadLevel(int index) {
 	updatePortraits();
 
 	for (int i = 0; i < 400; i++) {
-		delete [] _levelShapes[i];
+		delete[] _levelShapes[i];
 		_levelShapes[i] = 0;
 	}
 
@@ -293,7 +293,7 @@ void LoLEngine::loadLevelWLL(int index, bool mapShapes) {
 		d += 2;		
 	}
 
-	delete []file;
+	delete[] file;
 
 	delete _lvlShpFileHandle;
 	_lvlShpFileHandle = 0;	
@@ -394,7 +394,7 @@ void LoLEngine::loadLevelCMZ(int index) {
 		
 	loadCMZ_Sub(tmpLvlVal, (_unkGameFlag & 0x30) >> 4);
 
-	delete []cmzdata;
+	delete[] cmzdata;
 }
 
 void LoLEngine::loadCMZ_Sub(int index1, int index2) {
@@ -519,22 +519,22 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int b) {
 		}
 	}
 
-	delete []tmpPal1;
-	delete []tmpPal2;
-	delete []tmpPal3;
-	delete [] tsh;
+	delete[] tmpPal1;
+	delete[] tmpPal2;
+	delete[] tmpPal3;
+	delete[]  tsh;
 }
 
 void LoLEngine::releaseMonsterShapes(int monsterIndex) {
 	for (int i = 0; i < 16; i++) {
 		int pos = (monsterIndex << 4) + i;
 		if (_monsterShapes[pos]) {
-			delete []_monsterShapes[pos];
+			delete[] _monsterShapes[pos];
 			_monsterShapes[pos] = 0;
 		}
 
 		if (_monsterPalettes[pos]) {
-			delete []_monsterPalettes[pos];
+			delete[] _monsterPalettes[pos];
 			_monsterPalettes[pos] = 0;
 		}		
 	}
@@ -545,7 +545,7 @@ void LoLEngine::loadLevelShpDat(const char *shpFile, const char *datFile, bool f
 
 	_lvlShpFileHandle = _res->getFileStream(shpFile);
 	_lvlShpNum = _lvlShpFileHandle->readUint16LE();
-	delete []_lvlShpHeader;
+	delete[] _lvlShpHeader;
 	_lvlShpHeader = new uint32[_lvlShpNum];
 	for (int i = 0; i < _lvlShpNum; i++)
 		_lvlShpHeader[i] = _lvlShpFileHandle->readUint32LE();
@@ -553,7 +553,7 @@ void LoLEngine::loadLevelShpDat(const char *shpFile, const char *datFile, bool f
 	Common::SeekableReadStream *s = _res->getFileStream(datFile);
 
 	_levelFileDataSize = s->readUint16LE();
-	delete []_levelFileData;
+	delete[] _levelFileData;
 	_levelFileData = new LevelShapeProperty[_levelFileDataSize];
 	for (int i = 0; i < _levelFileDataSize; i++) {
 		LevelShapeProperty * l = &_levelFileData[i];
@@ -602,11 +602,11 @@ void LoLEngine::loadLevelSupplemenaryFiles(const char *file, int specialColor, i
 		vcnLen = tlen << 5;
 
 	if (_vcnBlocks)
-		delete []_vcnBlocks;
+		delete[] _vcnBlocks;
 	_vcnBlocks = new uint8[vcnLen];
 
 	if (_vcnShift)
-		delete []_vcnShift;
+		delete[] _vcnShift;
 	_vcnShift = new uint8[tlen];
 
 	memcpy(_vcnShift, v, tlen);
@@ -617,7 +617,7 @@ void LoLEngine::loadLevelSupplemenaryFiles(const char *file, int specialColor, i
 	
 	if (_lastSuppLangFilePtr) {
 		if (_levelLangFile)
-			delete []_levelLangFile;
+			delete[] _levelLangFile;
 		_levelLangFile = _res->fileData(_lastSuppLangFilePtr, 0);
 	}
 
@@ -642,7 +642,7 @@ void LoLEngine::loadLevelSupplemenaryFiles(const char *file, int specialColor, i
 	v += 2;
 
 	if (_vmpPtr)
-		delete []_vmpPtr;
+		delete[] _vmpPtr;
 	_vmpPtr = new uint16[vmpLen];
 
 	for (int i = 0; i < vmpLen; i++)
