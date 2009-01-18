@@ -26,10 +26,10 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "gui/eval.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 #include "gui/PopUpWidget.h"
 #include "gui/ScrollBarWidget.h"
+#include "gui/ThemeEval.h"
 
 namespace Common {
 
@@ -39,21 +39,20 @@ enum {
 };
 
 RemapDialog::RemapDialog()
-	: Dialog("remap"), _keymapTable(0), _activeRemapAction(0), _topAction(0), _remapTimeout(0) {
+	: Dialog("KeyRemapper"), _keymapTable(0), _activeRemapAction(0), _topAction(0), _remapTimeout(0) {
 
 	_keymapper = g_system->getEventManager()->getKeymapper();
 	assert(_keymapper);
 
-	int labelWidth = g_gui.evaluator()->getVar("remap_popup_labelW");
-	_kmPopUp = new GUI::PopUpWidget(this, "remap_popup", "Keymap: ", labelWidth);
+	_kmPopUp = new GUI::PopUpWidget(this, "KeyRemapper.Popup", "Keymap: ");
 
 	_scrollBar = new GUI::ScrollBarWidget(this, 0, 0, 0, 0);
 
-	new GUI::ButtonWidget(this, "remap_close_button", "Close", kCloseCmd);
+	new GUI::ButtonWidget(this, "KeyRemapper.Close", "Close", kCloseCmd);
 }
 
 RemapDialog::~RemapDialog() {
-	if (_keymapTable) free(_keymapTable);
+	free(_keymapTable);
 }
 
 void RemapDialog::open() {
@@ -81,7 +80,7 @@ void RemapDialog::open() {
 			keymapCount += _gameKeymaps->count();
 	}
 
-	_keymapTable = (Keymap**)malloc(sizeof(Keymap*) * keymapCount);
+	_keymapTable = (Keymap **)malloc(sizeof(Keymap*) * keymapCount);
 
 	Keymapper::Domain::iterator it;
 	uint32 idx = 0;
@@ -121,28 +120,23 @@ void RemapDialog::close() {
 }
 
 void RemapDialog::reflowLayout() {
-	int scrollbarWidth, buttonHeight;
-	if (g_gui.getWidgetSize() == GUI::kBigWidgetSize) {
-		buttonHeight = GUI::kBigButtonHeight;
-		scrollbarWidth = GUI::kBigScrollBarWidth;
-	} else {
-		buttonHeight = GUI::kButtonHeight;
-		scrollbarWidth = GUI::kNormalScrollBarWidth;
-	}
-	int areaX = g_gui.evaluator()->getVar("remap_keymap_area.x");
-	int areaY = g_gui.evaluator()->getVar("remap_keymap_area.y");
-	int areaW = g_gui.evaluator()->getVar("remap_keymap_area.w");
-	int areaH = g_gui.evaluator()->getVar("remap_keymap_area.h");
-	int spacing = g_gui.evaluator()->getVar("remap_spacing");
-	int labelWidth = g_gui.evaluator()->getVar("remap_label_width");
-	int buttonWidth = g_gui.evaluator()->getVar("remap_button_width");
+	Dialog::reflowLayout();
+
+	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
+	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
+
+	int areaX = g_gui.xmlEval()->getVar("KeyRemapper.KeymapArea.x");
+	int areaY = g_gui.xmlEval()->getVar("KeyRemapper.KeymapArea.y");
+	int areaW = g_gui.xmlEval()->getVar("KeyRemapper.KeymapArea.w");
+	int areaH = g_gui.xmlEval()->getVar("KeyRemapper.KeymapArea.h");
+	int spacing = 10; //g_gui.xmlEval()->getVar("remap_spacing");
+	int labelWidth = 100; //g_gui.xmlEval()->getVar("remap_label_width");
+	int buttonWidth = 80; //g_gui.xmlEval()->getVar("remap_button_width");
 	int colWidth = labelWidth + buttonWidth + spacing;
 	_colCount = (areaW - scrollbarWidth) / colWidth;
 	_rowCount = (areaH + spacing) / (buttonHeight + spacing);
 	if (_colCount <= 0 || _rowCount <= 0) 
 		error("Remap dialog too small to display any keymaps!");
-
-	_kmPopUp->changeLabelWidth(labelWidth);
 
 	_scrollBar->resize(areaX + areaW - scrollbarWidth, areaY, scrollbarWidth, areaH);
 	_scrollBar->_entriesPerPage = _rowCount;
@@ -176,7 +170,6 @@ void RemapDialog::reflowLayout() {
 		removeWidget(widg.keyButton);
 		delete widg.keyButton;
 	}
-	Dialog::reflowLayout();
 }
 
 void RemapDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
