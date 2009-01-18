@@ -58,26 +58,205 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 		break;
 	}
 
-	memset(_shapes, 0, sizeof(_shapes));
-
 	_chargenWSA = 0;
 	_lastUsedStringBuffer = 0;
 	_landsFile = 0;
+	_levelLangFile = 0;
+
+	_lastSfxTrack = -1;
+
+	memset(_moneyColumnHeight, 0, 5);
+	_credits = 0;
+
+	_itemsInPlay = 0;
+	_itemProperties = 0;
+	_itemInHand = 0;
+	memset(_inventoryItemIndex, 0, 48);
+	_inventoryCurItem = 0;
+	_unkInventFlag = 0;
+
+	_itemIconShapes = _itemShapes = _gameShapes = _thrownShapes = _iceShapes = _fireballShapes = 0;
+	_levelShpList = _levelDatList = 0;
+	_monsterShapes = _monsterPalettes = 0;
+	_buf4 = 0;
+	_gameShapeMap = 0;
+	memset(_monsterUnk, 0, 3);
+
+	_charSelection = -1;
+	_characters = 0;
+	_spellProperties = 0;
+	_charFlagUnk = 0;
+	_selectedSpell = 0;
+	_updateCharNum = _updateCharV1 = _updateCharV2 = _updateCharV3 = _updateCharV4 = _updateCharV5 = _updateCharV6 = 0;
+	_updateCharTime = _updatePortraitNext = 0;
+	_lampStatusTimer = 0xffffffff;
+
+	_weaponsDisabled = false;
+	_unkDrawPortraitIndex = 0;
+	_unkFlag = 0;
+	_scriptBoolSkipExec = _boolScriptFuncDone = false;
+	_unkScriptByte = 0;
+	_unkPara2 = 0;
+	_currentBlock = 0;
+	memset(_scriptExecutedFuncs, 0, 18 * sizeof(uint16));
+
+	_wllVmpMap = _wllBuffer3 = _wllBuffer4 = _wllBuffer5 = 0;
+	_wllShapeMap = 0;
+	_lvlShapeTop = _lvlShapeBottom = _lvlShapeLeftRight = 0;
+	_cmzBuffer = 0;
+	_lvlBuffer = 0;
+	_lvl415 = 0;
+	_lvlBlockIndex = _lvlShapeIndex = 0;
+	_unkDrawLevelBool = true;
+	_vcnBlocks = 0;
+	_vcnShift = 0;
+	_vcnExpTable = 0;
+	_vmpPtr = 0;
+	_tlcTable2 = 0;
+	_tlcTable1 = 0;
+	_levelShapeProperties = 0;
+	_levelShapes = 0;
+	_blockDrawingBuffer = 0;
+	_sceneWindowBuffer = 0;
+	memset (_doorShapes, 0, 2 * sizeof(uint8*));
+
+	_lampOilStatus = _brightness = _lampStatusUnk = 0;
+	_tempBuffer5120 = 0;
+	_lvlBuffer = 0;
+	_unkGameFlag = 0;
+
+	_dscUnk1 = 0;
+	_dscShapeIndex = 0;
+	_dscOvlMap = 0;	
+	_dscShapeScaleW = 0;
+	_dscShapeScaleH = 0;
+	_dscShapeX = 0;
+	_dscShapeY = 0;
+	_dscTileIndex = 0;	
+	_dscUnk2 = 0;
+	_dscDoorShpIndex = 0;
+	_dscDim1 = 0;
+	_dscDim2 = 0;
+	_dscBlockMap = _dscDoor1 = _dscDoor2 = _dscShapeOvlIndex = 0;
+	_dscBlockIndex = 0;
+	_dscDimMap = 0;
+	_dscDoorX = _dscDoorY = 0;
+	_dscDoor4 = 0;
+
+	_ingameSoundList = 0;
+	_ingameSoundListSize = 0;
+
+	_sceneDrawVar1 = _sceneDrawVar2 = _sceneDrawVar3 = _wllProcessFlag = 0;
+	_unkCmzU1 = _unkCmzU2 = 0;
+	_shpDoorX = _shpDoorY = _doorScaleW = _doorScaleH = 0;
 }
 
 LoLEngine::~LoLEngine() {
 	setupPrologueData(false);
 
-	for (uint i = 0; i < ARRAYSIZE(_shapes); ++i)
-		delete[] _shapes[i];
 	delete[] _landsFile;
+	delete[] _levelLangFile;
 
 	delete _screen;
 	delete _tim;
 
+	delete [] _itemsInPlay;
+	delete [] _itemProperties;
+
+	delete [] _characters;
+
+	if (_itemIconShapes) {
+		for (int i = 0; i < _numItemIconShapes; i++)
+			delete [] _itemIconShapes[i];
+		delete []_itemIconShapes;
+	}
+	if (_itemShapes) {
+		for (int i = 0; i < _numItemShapes; i++)
+			delete [] _itemShapes[i];
+		delete []_itemShapes;
+	}
+	if (_gameShapes) {
+		for (int i = 0; i < _numGameShapes; i++)
+			delete [] _gameShapes[i];
+		delete []_gameShapes;
+	}
+	if (_thrownShapes) {
+		for (int i = 0; i < _numThrownShapes; i++)
+			delete [] _thrownShapes[i];
+		delete []_thrownShapes;
+	}
+	if (_iceShapes) {
+		for (int i = 0; i < _numIceShapes; i++)
+			delete [] _iceShapes[i];
+		delete []_iceShapes;
+	}
+	if (_fireballShapes) {
+		for (int i = 0; i < _numFireballShapes; i++)
+			delete [] _fireballShapes[i];
+		delete []_fireballShapes;
+	}
+
+	if (_monsterShapes) {
+		for (int i = 0; i < 48; i++)
+			delete [] _monsterShapes[i];
+		delete []_monsterShapes;
+	}
+	if (_monsterPalettes) {
+		for (int i = 0; i < 48; i++)
+			delete [] _monsterPalettes[i];
+		delete []_monsterPalettes;
+	}
+	if (_buf4) {
+		for (int i = 0; i < 384; i++)
+			delete [] _buf4[i];
+		delete []_buf4;
+	}
+
 	for (Common::Array<const TIMOpcode*>::iterator i = _timIntroOpcodes.begin(); i != _timIntroOpcodes.end(); ++i)
 		delete *i;
 	_timIntroOpcodes.clear();
+
+	delete []_wllVmpMap;
+	delete []_wllShapeMap;
+	delete []_wllBuffer3;
+	delete []_wllBuffer4;
+	delete []_wllBuffer5;
+	delete []_lvlShapeTop;
+	delete []_lvlShapeBottom;
+	delete []_lvlShapeLeftRight;
+	delete []_tempBuffer5120;
+	delete []_lvlBuffer;
+	delete []_cmzBuffer;
+	delete []_lvl415;
+
+	delete []_lvlShpHeader;
+	delete []_levelFileData;
+	delete []_vcnExpTable;
+	delete []_vcnBlocks;
+	delete []_vcnShift;
+	delete []_vmpPtr;
+	delete []_tlcTable2;
+	delete []_tlcTable1;
+	delete []_levelShapeProperties;
+	delete []_blockDrawingBuffer;
+	delete []_sceneWindowBuffer;
+
+	if (_levelShapes) {
+		for (int i = 0; i < 400; i++)
+			delete [] _levelShapes[i];
+		delete []_levelShapes;
+	}
+
+	for (int i = 0; i < 2; i++)
+		delete _doorShapes[i];
+	
+	delete _lvlShpFileHandle;
+
+	if (_ingameSoundList) {
+		for (int i = 0; i < _ingameSoundListSize; i++)
+			delete []_ingameSoundList[i];
+		delete []_ingameSoundList;	
+	}
 }
 
 Screen *LoLEngine::screen() {
@@ -90,6 +269,7 @@ Common::Error LoLEngine::init() {
 	_screen->setResolution();
 
 	KyraEngine_v1::init();
+	initStaticResource();
 
 	_tim = new TIMInterpreter(this, _screen, _system);
 	assert(_tim);
@@ -97,8 +277,76 @@ Common::Error LoLEngine::init() {
 	_screen->setAnimBlockPtr(10000);
 	_screen->setScreenDim(0);
 
+	_itemsInPlay = new ItemInPlay[401];
+	memset(_itemsInPlay, 0, sizeof(ItemInPlay) * 400);
+
+	_characters = new LoLCharacter[4];
+	memset(_characters, 0, sizeof(LoLCharacter) * 3);
+
 	if (!_sound->init())
 		error("Couldn't init sound");
+
+	_unkAudioSpecOffs = 0x48;
+	_unkLangAudio = _lang ? true : false;
+
+	_wllVmpMap = new uint8[80];
+	memset(_wllVmpMap, 0, 80);
+	_wllShapeMap = new int8[80];
+	memset(_wllShapeMap, 0, 80);
+	_wllBuffer3 = new uint8[80];
+	memset(_wllBuffer3, 0, 80);
+	_wllBuffer4 = new uint8[80];
+	memset(_wllBuffer4, 0, 80);
+	_wllBuffer5 = new uint8[80];
+	memset(_wllBuffer5, 0, 80);
+	_lvlShapeTop = new int16[18];
+	memset(_lvlShapeTop, 0, 18 * sizeof(int16));
+	_lvlShapeBottom = new int16[18];
+	memset(_lvlShapeBottom, 0, 18 * sizeof(int16));
+	_lvlShapeLeftRight = new int16[36];
+	memset(_lvlShapeLeftRight, 0, 36 * sizeof(int16));
+	_levelShapeProperties = new LevelShapeProperty[100];
+	memset(_levelShapeProperties, 0, 100 * sizeof(LevelShapeProperty));
+	_levelShapes = new uint8*[400];
+	memset(_levelShapes, 0, 400 * sizeof(uint8*));
+	_blockDrawingBuffer = new uint16[1320];
+	memset(_blockDrawingBuffer, 0, 1320 * sizeof(uint16));
+	_sceneWindowBuffer = new uint8[21120];
+	memset(_sceneWindowBuffer, 0, 21120);
+
+	_cmzBuffer = new CMZ[1025];
+	memset(_cmzBuffer, 0, 1025 * sizeof(CMZ));
+	_lvlBuffer = new LVL[30];
+	memset(_lvlBuffer, 0, 30 * sizeof(LVL));
+	_lvl415 = new uint8[415];
+	memset(_lvl415, 0, 415);
+
+	_vcnExpTable = new uint8[128];
+	for (int i = 0; i < 128; i++)
+		_vcnExpTable[i] = i & 0x0f;
+
+	_tempBuffer5120 = new uint8[5120];
+	memset(_tempBuffer5120, 0, 5120);
+
+	memset(_gameFlags, 0, 15 * sizeof(uint16));
+
+	_lvlShpHeader = 0;
+	_levelFileData = 0;
+	_lvlShpFileHandle = 0;
+
+	_sceneDrawPage1 = 2;
+	_sceneDrawPage2 = 6;
+
+	_monsterShapes = new uint8*[48];
+	memset(_monsterShapes, 0, 48 * sizeof(uint8*));
+	_monsterPalettes = new uint8*[48];
+	memset(_monsterPalettes, 0, 48 * sizeof(uint8*));
+
+	_buf4 = new uint8*[384];
+	memset(_buf4, 0, 384 * sizeof(uint8*));
+	memset(&_scriptData, 0, sizeof(EMCData));
+	
+	_levelFlagUnk = 0;
 
 	return Common::kNoError;
 }
@@ -171,9 +419,16 @@ Common::Error LoLEngine::go() {
 		_sound->playTrack(1);
 		_screen->fadeToBlack();
 		setupPrologueData(true);
-	} else if (processSelection == 3) {
-		//XXX
 	}
+
+	if (!shouldQuit() && (processSelection == 0 || processSelection == 3))
+		startup();
+
+	if (!shouldQuit() && processSelection == 0)
+		startupNew();
+
+	if (!shouldQuit() && (processSelection == 0 || processSelection == 3))
+		runLoop();
 
 	return Common::kNoError;
 }
@@ -223,8 +478,35 @@ void LoLEngine::initializeCursors() {
 	debugC(9, kDebugLevelMain, "LoLEngine::initializeCursors()");
 
 	_screen->loadBitmap("ITEMICN.SHP", 3, 3, 0);
-	_shapes[0] = _screen->makeShapeCopy(_screen->getCPagePtr(3), 0);
-	_screen->setMouseCursor(0, 0, _shapes[0]);
+	const uint8 *shp = _screen->getCPagePtr(3);
+	_numItemIconShapes = READ_LE_UINT16(shp);
+	_itemIconShapes = new uint8*[_numItemIconShapes];
+	for (int i = 0; i < _numItemIconShapes; i++)
+		_itemIconShapes[i] = _screen->makeShapeCopy(shp, i);
+
+	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
+}
+
+void LoLEngine::setMouseCursorToIcon(int icon) {
+	_screen->_drawGuiFlag |= 0x200;
+	int i = _itemProperties[_itemsInPlay[_itemInHand].itemPropertyIndex].shpIndex;
+	if (i == icon)
+		return;
+	_screen->setMouseCursor(0, 0, _itemIconShapes[icon]);
+}
+
+void LoLEngine::setMouseCursorToItemInHand() {
+	_screen->_drawGuiFlag &= 0xFDFF;
+	int o = (_itemInHand == 0) ? 0 : 10;
+	_screen->setMouseCursor(o, o, getItemIconShapePtr(_itemInHand));
+}
+
+uint8 *LoLEngine::getItemIconShapePtr(int index) {
+	int ix = _itemProperties[_itemsInPlay[index].itemPropertyIndex].shpIndex;
+	if (_itemProperties[_itemsInPlay[index].itemPropertyIndex].flags & 0x200)
+		ix += (_itemsInPlay[index].shpCurFrame_flg & 0x1fff) - 1;
+	
+	return _itemIconShapes[ix];
 }
 
 int LoLEngine::mainMenu() {
@@ -273,6 +555,120 @@ int LoLEngine::mainMenu() {
 		selection = 4;
 
 	return selection;
+}
+
+void LoLEngine::startup() {
+	_screen->clearPage(0);
+	_screen->loadBitmap("PLAYFLD.CPS", 3, 3, _screen->_currentPalette);
+
+	uint8 *tmpPal = new uint8[0x300];
+	memcpy(tmpPal, _screen->_currentPalette, 0x300);
+	memset(_screen->_currentPalette, 0x3f, 0x180);
+	memcpy(_screen->_currentPalette + 3, tmpPal + 3, 3);
+	memset(_screen->_currentPalette + 0x240, 0x3f, 12);
+	_screen->generateOverlay(_screen->_currentPalette, _screen->_paletteOverlay1, 1, 6);
+	_screen->generateOverlay(_screen->_currentPalette, _screen->_paletteOverlay2, 0x90, 0x41);
+	memcpy(_screen->_currentPalette, tmpPal, 0x300);
+	delete []tmpPal;
+
+	memset(_screen->getPalette(1), 0, 0x300);
+	memset(_screen->getPalette(2), 0, 0x300);
+
+	_screen->setMouseCursor(0, 0, _itemIconShapes[0x85]);
+
+	_screen->loadBitmap("ITEMSHP.SHP", 3, 3, 0);
+	const uint8 *shp = _screen->getCPagePtr(3);
+	_numItemShapes = READ_LE_UINT16(shp);
+	_itemShapes = new uint8*[_numItemShapes];
+	for (int i = 0; i < _numItemShapes; i++)
+		_itemShapes[i] = _screen->makeShapeCopy(shp, i);
+
+	_screen->loadBitmap("GAMESHP.SHP", 3, 3, 0);
+	shp = _screen->getCPagePtr(3);
+	_numGameShapes = READ_LE_UINT16(shp);
+	_gameShapes = new uint8*[_numGameShapes];
+	for (int i = 0; i < _numGameShapes; i++)
+		_gameShapes[i] = _screen->makeShapeCopy(shp, i);
+
+	_screen->loadBitmap("THROWN.SHP", 3, 3, 0);
+	shp = _screen->getCPagePtr(3);
+	_numThrownShapes = READ_LE_UINT16(shp);
+	_thrownShapes = new uint8*[_numThrownShapes];
+	for (int i = 0; i < _numThrownShapes; i++)
+		_thrownShapes[i] = _screen->makeShapeCopy(shp, i);
+
+	_screen->loadBitmap("ICE.SHP", 3, 3, 0);
+	shp = _screen->getCPagePtr(3);
+	_numIceShapes = READ_LE_UINT16(shp);
+	_iceShapes = new uint8*[_numIceShapes];
+	for (int i = 0; i < _numIceShapes; i++)
+		_iceShapes[i] = _screen->makeShapeCopy(shp, i);
+
+	_screen->loadBitmap("FIREBALL.SHP", 3, 3, 0);
+	shp = _screen->getCPagePtr(3);
+	_numFireballShapes = READ_LE_UINT16(shp);
+	_fireballShapes = new uint8*[_numFireballShapes];
+	for (int i = 0; i < _numFireballShapes; i++)
+		_fireballShapes[i] = _screen->makeShapeCopy(shp, i);
+
+	memset(_itemsInPlay, 0, 400 * sizeof(ItemInPlay));
+	for (int i = 0; i < 400; i++)
+		_itemsInPlay[i].shpCurFrame_flg |= 0x8000;
+
+	runInitScript("ONETIME.INF", 0);
+	_emc->load("ITEM.INF", &_itemScript, &_opcodes);
+
+	_tlcTable1 = new uint8[256];
+	_tlcTable2 = new uint8[5120];
+	
+	_loadSuppFilesFlag = 1;
+
+	setMouseCursorToItemInHand();
+}
+
+void LoLEngine::startupNew() {
+	_selectedSpell = 0;
+	_updateUnk2 = _compassDirectionIndex = -1;
+	/*
+	_unk3 = -1;*/
+	_unkGameFlag |= 0x1B;
+	/*
+	_unk5 = 1;
+	_unk6 = 1;
+	_unk7 = 1
+	_unk8 = 1*/
+	_currentLevel = 1;
+
+	giveCredits(41, 0);
+	_inventoryItemIndex[0] = makeItem(0xd8, 0, 0);
+	_inventoryItemIndex[1] = makeItem(0xd9, 0, 0);
+	_inventoryItemIndex[2] = makeItem(0xda, 0, 0);
+
+	memset(_availableSpells, -1, 7);
+	setupScreenDims();
+
+	//memset(_unkWordArraySize8, 0x100, 8);
+
+	static int selectIds[] = { -9, -1, -8, -5 };
+	addCharacter(selectIds[_charSelection]);
+
+	// TODO 
+
+	loadLevel(1);
+
+	_screen->showMouse();
+}
+
+void LoLEngine::runLoop() {
+	_screen->updateScreen();
+
+	bool _runFlag = true;
+	while (!shouldQuit() && _runFlag) {
+		checkInput(0, false);
+		removeInputTop();
+		_screen->updateScreen();
+		_system->delayMillis(10);
+	}
 }
 
 #pragma mark - Localization
@@ -363,7 +759,7 @@ void LoLEngine::setupPrologueData(bool load) {
 		_chargenWSA = new WSAMovie_v2(this, _screen);
 		assert(_chargenWSA);
 
-		_charSelection = -1;
+		//_charSelection = -1;
 		_charSelectionInfoResult = -1;
 
 		_selectionAnimFrames[0] = _selectionAnimFrames[2] = 0;
@@ -414,6 +810,7 @@ void LoLEngine::showIntro() {
 	}
 	_screen->showMouse();
 	_sound->voiceStop();
+	_sound->beginFadeOut();
 
 	_eventList.clear();
 
@@ -807,7 +1204,237 @@ int LoLEngine::selectionCharAccept() {
 	return -1;
 }
 
+bool LoLEngine::addCharacter(int id) {
+	int numChars = countActiveCharacters();
+	if (numChars == 4)
+		return false;
+
+	int i = 0;
+	for (; i < _charDefaultsSize; i++) {
+		if (_charDefaults[i].id == id) {
+			memcpy(&_characters[numChars], &_charDefaults[i], sizeof(LoLCharacter));
+			break;
+		}
+	}
+	if (i == _charDefaultsSize)
+		return false;
+
+	loadCharFaceShapes(numChars, id);
+
+	_characters[numChars].rand = _rnd.getRandomNumberRng(1, 12);
+
+	i = 0;
+	for (; i < 11; i++) {
+		uint16 *tmp = &_characters[numChars].items[i];
+		if (*tmp) {
+			*tmp = makeItem(*tmp, 0, 0);
+			runItemScript(numChars, *tmp, 0x80, 0, 0);
+		}
+	}
+
+	calcCharPortraitXpos();
+	if (numChars > 0)
+		initCharacter(numChars, 2, 6, 0);
+
+	return true;
+}
+
+void LoLEngine::initCharacter(int charNum, int firstFaceFrame, int unk2, int redraw) {
+	_characters[charNum].nextFaceFrame = firstFaceFrame;
+	if (firstFaceFrame || unk2)
+		initCharacterUnkSub(charNum, 6, unk2, 1);
+	if (redraw)
+		gui_drawCharPortraitWithStats(charNum);
+}
+
+void LoLEngine::initCharacterUnkSub(int charNum, int unk1, int unk2, int unk3) {
+	for (int i = 0; i < 5; i++) {
+		if (_characters[charNum].arrayUnk1[i] == 0 || (unk3 && _characters[charNum].arrayUnk1[i] == unk1)) {
+			_characters[charNum].arrayUnk1[i] = unk1;
+			_characters[charNum].arrayUnk2[i] = unk2;
+
+			// TODO
+
+			break;
+		}
+	}
+}
+
+int LoLEngine::countActiveCharacters() {
+	int i = 0;
+	while (_characters[i].flags & 1)
+		i++;
+	return i;
+}
+
+void LoLEngine::loadCharFaceShapes(int charNum, int id) {
+	if (id < 0)
+		id = -id;
+
+	char file[] = "FACE%02d.SHP";
+	sprintf(file, "FACE%02d.SHP", id);
+	_screen->loadBitmap(file, 3, 3, 0);
+
+	const uint8 *p = _screen->getCPagePtr(3);
+	for (int i = 0; i < 40; i++)
+		_characterFaceShapes[i][charNum] = _screen->makeShapeCopy(p, i);
+}
+
+void LoLEngine::updatePortraitWithStats() {
+	int x = 0;
+	int y = 0;
+	bool redraw = false;
+
+	if (_updateCharV2 == 0) {
+		x = _activeCharsXpos[_updateCharNum];
+		y = 144;
+		redraw = true;
+	} else if (_updateCharV2 == 1) {
+		if (_unkLangAudio) {
+			x = 90;
+			y = 130;
+		} else {
+			x = _activeCharsXpos[_updateCharNum];
+			y = 144;
+		}
+	} else if (_updateCharV2 == 2) {
+		if (_unkLangAudio) {
+			x = 16;
+			y = 134;
+		} else {
+			x = _activeCharsXpos[_updateCharNum] + 10;
+			y = 145;
+		}
+	}
+
+	int f = _rnd.getRandomNumberRng(1, 6) - 1;
+	if (f == _characters[_updateCharNum].curFaceFrame)
+		f++;
+	if (f > 5)
+		f -= 5;
+	f += 7;
+
+	if (_unkAudioSpecOffs) {
+		//TODO
+		//if (unk() == 2)
+		//	_updateCharV1 = 2;
+		//else
+			_updateCharV1 = 1;
+	}
+
+	if (--_updateCharV1) {
+		setCharFaceFrame(_updateCharNum, f);
+		if (redraw)
+			gui_drawCharPortraitWithStats(_updateCharNum);
+		else
+			gui_drawCharFaceShape(_updateCharNum, x, y, 0);
+		_updatePortraitNext = _system->getMillis() + 10 * _tickLength;
+	} else if (_updateCharV1 == 0 && _updateCharV3 != 0) {
+		faceFrameRefresh(_updateCharNum);
+		if (redraw) {
+			gui_drawCharPortraitWithStats(_updateCharNum);
+			updatePortraitUnkTimeSub(0, 0);
+		} else {
+			gui_drawCharFaceShape(_updateCharNum, x, y, 0);
+		}
+		_updateCharNum = -1;
+	}
+}
+
+void LoLEngine::updatePortraits() {
+	if (_updateCharNum == -1)
+		return;
+
+	_updateCharV1 = _updateCharV3 = 1;
+	updatePortraitWithStats();
+	_updateCharV1 = 1;
+	_updateCharNum = -1;
+
+	if (!_updateCharV2)
+		updatePortraitUnkTimeSub(0, 0);
+}
+
+void LoLEngine::updatePortraitUnkTimeSub(int unk1, int unk2) {
+	if (_updateCharV4 == unk1 || !unk1) {
+		_updateCharV5 = 1;
+		_updateCharTime = _system->getMillis();
+	}
+
+	if (!unk2)
+		return;
+
+	updatePortraits();
+	if (_updateCharV6) {
+		_screen->hideMouse();
+		_screen->clearDim(3);
+		_screen->showMouse();
+	}
+	
+	_updateCharV5 = 0;
+	//initGuiUnk(11);
+}
+
+void LoLEngine::setCharFaceFrame(int charNum, int frameNum) {
+	_characters[charNum].curFaceFrame = frameNum;
+}
+
+void LoLEngine::faceFrameRefresh(int charNum) {
+	if (_characters[charNum].curFaceFrame == 1)
+		initCharacter(charNum, 0, 0, 0);
+	else if (_characters[charNum].curFaceFrame == 6)
+		if (_characters[charNum].nextFaceFrame != 5)
+			initCharacter(charNum, 0, 0, 0);
+		else
+			_characters[charNum].curFaceFrame = 5;
+	else
+		_characters[charNum].curFaceFrame = 0;
+}
+
+void LoLEngine::setupScreenDims() {
+	if (_unkLangAudio)
+		_screen->modifyScreenDim(4, 11, 124, 28, 45);
+	else
+		_screen->modifyScreenDim(4, 11, 124, 28, 9);
+	_screen->modifyScreenDim(5, 85, 123, 233, 18);
+}
+
+void LoLEngine::snd_playSoundEffect(int track, int volume) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "LoLEngine::snd_playSoundEffect(%d, %d)", track, volume);
+
+	if (track == 1 && (_lastSfxTrack == -1 || _lastSfxTrack == 1))
+		return;
+
+	_lastSfxTrack = track;
+
+	int16 volIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2 + 1]);
+
+	if (volIndex > 0)
+		volIndex = (volIndex * volume) >> 8;
+	else
+		volIndex *= -1;
+
+	// volume TODO
+
+	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
+	if (vocIndex != -1) {
+		_sound->voicePlay(_ingameSoundList[vocIndex], true);
+	} else if (_flags.platform == Common::kPlatformPC) {
+		if (_sound->getSfxType() == Sound::kMidiMT32)
+			track = track < _ingameMT32SoundIndexSize ? _ingameMT32SoundIndex[track] - 1 : -1;
+		else if (_sound->getSfxType() == Sound::kMidiGM)
+			track = track < _ingameGMSoundIndexSize ? _ingameGMSoundIndex[track] - 1: -1;
+
+		if (track != -1)
+			KyraEngine_v1::snd_playSoundEffect(track);
+	}
+}
+
 #pragma mark - Opcodes
+
+typedef Common::Functor1Mem<EMCState*, int, LoLEngine> OpcodeV2;
+#define SetOpcodeTable(x) table = &x;
+#define Opcode(x) table->push_back(new OpcodeV2(this, &LoLEngine::x))
+#define OpcodeUnImpl() table->push_back(new OpcodeV2(this, 0))
 
 typedef Common::Functor2Mem<const TIM *, const uint16 *, int, LoLEngine> TIMOpcodeLoL;
 #define SetTimOpcodeTable(x) timTable = &x;
@@ -815,6 +1442,297 @@ typedef Common::Functor2Mem<const TIM *, const uint16 *, int, LoLEngine> TIMOpco
 #define OpcodeTimUnImpl() timTable->push_back(new TIMOpcodeLoL(this, 0))
 
 void LoLEngine::setupOpcodeTable() {
+	Common::Array<const Opcode*> *table = 0;
+
+	SetOpcodeTable(_opcodes);
+	// 0x00
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o1_getRand);
+
+	// 0x04
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o2_setGameFlag);
+
+	// 0x08
+	Opcode(o2_testGameFlag);
+	Opcode(o2_loadLevelSupplemenaryFiles);
+	Opcode(o2_loadCmzFile);
+	Opcode(o2_loadMonsterShapes);
+
+	// 0x0C
+	OpcodeUnImpl();
+	Opcode(o2_allocItemPropertiesBuffer);
+	Opcode(o2_setItemProperty);
+	Opcode(o2_makeItem);
+
+	// 0x10
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o2_getItemPara);
+	Opcode(o2_getCharacterStat);
+
+	// 0x14
+	Opcode(o2_setCharacterStat);
+	Opcode(o2_loadLevelShapes);
+	Opcode(o2_closeLevelShapeFile);
+	OpcodeUnImpl();
+
+	// 0x18
+	Opcode(o2_loadDoorShapes);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x1C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x20
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x24
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x28
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x2C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x30
+	Opcode(o2_setGlobalVar);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x34
+	OpcodeUnImpl();
+	Opcode(o2_mapShapeToBlock);
+	Opcode(o2_resetBlockShapeAssignment);
+	OpcodeUnImpl();
+
+	// 0x38
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x3C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x40
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x44
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x48
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x4C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x50
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x54
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x58
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x5C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x60
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x64
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x68
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o2_setPaletteBrightness);
+
+	// 0x6C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x70
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x74
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x78
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x7C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x80
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x84
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x88
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x8C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x90
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x94
+	Opcode(o2_assignCustomSfx);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x98
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x9C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xA0
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xA4
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xA8
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xAC
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xB0
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xB4
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xB8
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xBC
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
 	Common::Array<const TIMOpcode*> *timTable = 0;
 
 	SetTimOpcodeTable(_timIntroOpcodes);

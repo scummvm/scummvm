@@ -90,11 +90,14 @@ void Screen_v2::applyOverlay(int x, int y, int w, int h, int pageNum, const uint
 	}
 }
 
-int Screen_v2::findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *palette, uint16 numColors) {
+int Screen_v2::findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *palette, uint16 numColors, bool skipSpecialColours) {
 	int m = 0x7fff;
 	int r = 0x101;
 
 	for (int i = 0; i < numColors; i++) {
+		if (skipSpecialColours && i >= 0xc0 && i <= 0xc3)
+			continue;
+
 		int v = paletteEntry[0] - *palette++;
 		int c = v * v;
 		v = paletteEntry[1] - *palette++;

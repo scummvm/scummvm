@@ -174,7 +174,41 @@ enum kExtractID {
 	k3ItemMagicTable,
 	k3ItemStringMap,
 
-	lSeqplayIntroTracks,
+	lolSeqplayIntroTracks,
+
+	lolCharacterDefs,
+	lolIngameSfxFiles,
+	lolIngameSfxIndex,
+	lolGMSfxIndex,
+	lolMT32SfxIndex,
+	lolSpellProperties,
+	lolGameShapeMap,
+	lolLevelShpList,
+	lolLevelDatList,
+	lolCompassDefs,
+
+	lolDscUnk1,
+	lolDscShapeIndex1,
+	lolDscShapeIndex2,
+	lolDscScaleWidthData,
+	lolDscScaleHeightData,
+	lolDscX,
+	lolDscY,
+	lolDscTileIndex,
+	lolDscUnk2,
+	lolDscDoorShapeIndex,
+	lolDscDimData1,
+	lolDscDimData2,
+	lolDscBlockMap,
+	lolDscDimMap,
+	lolDscShapeOvlIndex,
+	lolDscBlockIndex,
+	lolDscDoor1,
+	lolDscDoor2,
+	lolDscDoorScale,
+	lolDscDoor4,
+	lolDscDoorX,
+	lolDscDoorY,
 
 	kMaxResIDs
 };
@@ -219,7 +253,9 @@ enum kSpecial {
 	k2DemoVersionTlkE = 19,
 	k2DemoVersionTlkF = 20,
 	k2DemoVersionTlkG = 21,
-	k2DemoLol = 22
+	k2DemoLol = 22,
+
+	kLolCD = 23
 };
 
 struct SpecialExtension {
@@ -267,7 +303,9 @@ enum kExtractType {
 	k2TypeSfxList,
 
 	k3TypeRaw16to8,
-	k3TypeShpData
+	k3TypeShpData,
+
+	lolTypeRaw16
 };
 
 struct ExtractType {

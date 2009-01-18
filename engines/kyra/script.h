@@ -53,7 +53,7 @@ struct EMCState {
 	uint16 bp;
 	uint16 sp;
 	int16 regs[30];		// VM registers
-	int16 stack[61];	// VM stack
+	int16 stack[100];	// VM stack
 };
 
 #define stackPos(x) (script->stack[script->sp+x])

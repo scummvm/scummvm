@@ -43,7 +43,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 32
+#define RESFILE_VERSION 33
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -221,6 +221,11 @@ bool StaticResource::init() {
 		{ k2ShpAnimDataV1, proc(loadShapeAnimData_v1), proc(freeHofShapeAnimDataV1) },
 		{ k2ShpAnimDataV2, proc(loadShapeAnimData_v2), proc(freeHofShapeAnimDataV2) },
 
+		{ lolCharData, proc(loadCharData), proc(freeCharData) },
+		{ lolSpellData, proc(loadSpellData), proc(freeSpellData) },
+		{ lolCompassData, proc(loadCompassData), proc(freeCompassData) },
+		{ lolRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16) },
+
 		{ 0, 0, 0 }
 	};
 #undef proc
@@ -361,6 +366,42 @@ bool StaticResource::init() {
 		{ k2SeqplaySfxFiles, kStringList, "S_SFXFILES.TXT" },
 		{ k2SeqplaySeqData, k2SeqData, "S_DATA.SEQ" },
 		{ k2SeqplayIntroTracks, kStringList, "S_INTRO.TRA" },
+
+		// Ingame
+		{ lolCharacterDefs, lolCharData, "CHARACTER.DEF" },
+		{ lolIngameSfxFiles, kStringList, "SFXFILES.TRA" },
+		{ lolIngameSfxIndex, kRawData, "SFXINDEX.MAP" },
+		{ lolIngameGMSfxIndex, kRawData, "SFX_GM.MAP" },
+		{ lolIngameMT32SfxIndex, kRawData, "SFX_MT32.MAP" },
+		{ lolSpellProperties, lolSpellData, "SPELLS.DEF" },
+		{ lolGameShapeMap, kRawData, "GAMESHP.MAP" },
+		{ lolLevelShpList, kStringList, "SHPFILES.TXT" },
+		{ lolLevelDatList, kStringList, "DATFILES.TXT" },
+		{ lolCompassDefs, lolCompassData, "COMPASS.DEF" },
+		
+		{ lolDscUnk1, kRawData, "DSCSHPU1.DEF" },
+		{ lolDscShapeIndex, kRawData, "DSCSHPI1.DEF" },
+		{ lolDscOvlMap, kRawData, "DSCSHPI2.DEF" },
+		{ lolDscScaleWidthData, lolRawDataBe16, "DSCSHPW.DEF" },
+		{ lolDscScaleHeightData, lolRawDataBe16, "DSCSHPH.DEF" },
+		{ lolDscX, lolRawDataBe16, "DSCSHPX.DEF" },
+		{ lolDscY, kRawData, "DSCSHPY.DEF" },
+		{ lolDscTileIndex, kRawData, "DSCSHPT.DEF" },
+		{ lolDscUnk2, kRawData, "DSCSHPU2.DEF" },
+		{ lolDscDoorShapeIndex, kRawData, "DSCDOOR.DEF" },
+		{ lolDscDimData1, kRawData, "DSCDIM1.DEF" },
+		{ lolDscDimData2, kRawData, "DSCDIM2.DEF" },
+		{ lolDscBlockMap, kRawData, "DSCBLOCK1.DEF" },
+		{ lolDscDimMap, kRawData, "DSCDIM.DEF" },
+		{ lolDscDoorScale, lolRawDataBe16, "DSCDOOR3.DEF" },
+		{ lolDscDoor2, kRawData, "DSCDOOR2.DEF" },
+		{ lolDscDoor4, lolRawDataBe16, "DSCDOOR4.DEF" },
+		{ lolDscOvlIndex, kRawData, "DSCBLOCK2.DEF" },
+		{ lolDscBlockIndex, kRawData, "DSCBLOCKX.DEF" },
+		{ lolDscDoor1, kRawData, "DSCDOOR1.DEF" },
+		{ lolDscDoorX, lolRawDataBe16, "DSCDOORX.DEF" },
+		{ lolDscDoorY, lolRawDataBe16, "DSCDOORY.DEF" },
+
 		{ 0, 0, 0 }
 	};
 
@@ -374,7 +415,7 @@ bool StaticResource::init() {
 		_builtIn = 0;
 		_filenameTable = kyra3StaticRes;
 	} else if (_vm->game() == GI_LOL) {
-		if (!_vm->gameFlags().isDemo)
+		if (!_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie)
 			return true;
 		_builtIn = 0;
 		_filenameTable = lolStaticRes;
@@ -422,6 +463,22 @@ const ItemAnimData_v1 *StaticResource::loadShapeAnimData_v1(int id, int &entries
 
 const ItemAnimData_v2 *StaticResource::loadShapeAnimData_v2(int id, int &entries) {
 	return (const ItemAnimData_v2*)getData(id, k2ShpAnimDataV2, entries);
+}
+
+const LoLCharacter *StaticResource::loadCharData(int id, int &entries) {
+	return (const LoLCharacter*)getData(id, lolCharData, entries);
+}
+
+const SpellProperty *StaticResource::loadSpellData(int id, int &entries) {
+	return (const SpellProperty*)getData(id, lolSpellData, entries);
+}
+
+const CompassDef *StaticResource::loadCompassData(int id, int &entries) {
+	return (const CompassDef*)getData(id, lolCompassData, entries);
+}
+
+const uint16 *StaticResource::loadRawDataBe16(int id, int &entries) {
+	return (const uint16*)getData(id, lolRawDataBe16, entries);
 }
 
 bool StaticResource::prefetchId(int id) {
@@ -852,6 +909,144 @@ bool StaticResource::loadShapeAnimData_v2(const char *filename, void *&ptr, int 
 	return true;
 }
 
+bool StaticResource::loadCharData(const char *filename, void *&ptr, int &size) {
+	Common::SeekableReadStream *file = getFile(filename);
+
+	if (!file)
+		return false;
+
+	size = file->size() / 130;
+	LoLCharacter *charData = new LoLCharacter[size];
+	
+	for (int i = 0; i < size; i++) {
+		LoLCharacter *t = &charData[i];
+
+		t->flags = file->readUint16LE();
+		file->read(t->name, 11);
+		t->raceClassSex = file->readByte();
+		t->id = file->readSint16LE();
+		t->curFaceFrame = file->readByte();
+		t->nextFaceFrame = file->readByte();
+		t->field_12 = file->readUint16LE();
+		t->field_14 = file->readUint16LE();
+		t->field_16 = file->readByte();
+		for (int ii = 0; ii < 5; ii++)
+			t->field_17[ii] = file->readUint16LE();
+		t->field_21 = file->readUint16LE();
+		t->field_23 = file->readUint16LE();
+		t->field_25 = file->readUint16LE();
+		for (int ii = 0; ii < 2; ii++)
+			t->field_27[ii] = file->readUint16LE();
+		t->field_2B = file->readByte();
+		t->field_2C = file->readUint16LE();
+		t->field_2E = file->readUint16LE();
+		t->field_30 = file->readUint16LE();
+		t->field_32 = file->readUint16LE();
+		t->field_34 = file->readUint16LE();
+		t->field_36 = file->readByte();
+		t->field_37 = file->readUint16LE();
+		t->hitPointsCur = file->readUint16LE();;
+		t->hitPointsMax = file->readUint16LE();;
+		t->magicPointsCur = file->readUint16LE();;
+		t->magicPointsMax = file->readUint16LE();;
+		t->field_41 = file->readByte();
+		t->damageSuffered = file->readUint16LE();
+		t->weaponHit = file->readUint16LE();
+		t->field_46 = file->readUint16LE();
+		t->field_48 = file->readUint16LE();
+		t->field_4A = file->readUint16LE();
+		t->field_4C = file->readUint16LE();
+		t->rand = file->readUint16LE();
+		for (int ii = 0; ii < 11; ii++)
+			t->items[ii] = file->readUint16LE();
+		for (int ii = 0; ii < 3; ii++)
+			t->field_66[ii] = file->readByte();
+		for (int ii = 0; ii < 3; ii++)
+			t->field_69[ii] = file->readByte();
+		t->field_6C = file->readByte();
+		t->field_6D = file->readByte();
+		t->field_6E = file->readUint16LE();
+		t->field_70 = file->readUint16LE();
+		t->field_72 = file->readUint16LE();
+		t->field_74 = file->readUint16LE();
+		t->field_76 = file->readUint16LE();
+		for (int ii = 0; ii < 5; ii++)
+			t->arrayUnk2[ii] = file->readByte();
+		for (int ii = 0; ii < 5; ii++)
+			t->arrayUnk1[ii] = file->readByte();
+	};
+
+	ptr = charData;
+	
+	return true;
+}
+
+bool StaticResource::loadSpellData(const char *filename, void *&ptr, int &size) {
+	Common::SeekableReadStream *file = getFile(filename);
+
+	if (!file)
+		return false;
+
+	size = file->size() / 28;
+	SpellProperty *spellData = new SpellProperty[size];
+	
+	for (int i = 0; i < size; i++) {
+		SpellProperty *t = &spellData[i];
+
+		t->field_0 = file->readUint16LE();
+		for (int ii = 0; ii < 4; ii++)
+			t->unkArr[ii] = file->readUint16LE();
+		t->field_A = file->readUint16LE();
+		t->field_C = file->readUint16LE();
+		t->field_E = file->readUint16LE();
+		t->spellNameCode = file->readUint16LE();
+		for (int ii = 0; ii < 4; ii++)
+			t->mpRequired[ii] = file->readUint16LE();
+		t->field_1A = file->readUint16LE();
+	};
+
+	ptr = spellData;
+	
+	return true;
+}
+
+bool StaticResource::loadCompassData(const char *filename, void *&ptr, int &size) {
+	Common::SeekableReadStream *file = getFile(filename);
+
+	if (!file)
+		return false;
+
+	size = file->size() / 4;
+	CompassDef *defs = new CompassDef[size];
+	
+	for (int i = 0; i < size; i++) {
+		CompassDef *t = &defs[i];
+		t->shapeIndex = file->readByte();
+		t->x = file->readByte();
+		t->y = file->readByte();
+		t->flags = file->readByte();
+	};
+
+	ptr = defs;
+	
+	return true;
+}
+
+bool StaticResource::loadRawDataBe16(const char *filename, void *&ptr, int &size) {
+	Common::SeekableReadStream *file = getFile(filename);
+
+	size = file->size() >> 1;
+
+	uint16 *r = new uint16[size];
+
+	for (int i = 0; i < size; i++)
+		r[i] = file->readUint16BE();
+
+	ptr = r;
+	
+	return true;
+}
+
 void StaticResource::freeRawData(void *&ptr, int &size) {
 	uint8 *data = (uint8*)ptr;
 	delete[] data;
@@ -916,6 +1111,34 @@ void StaticResource::freeHofShapeAnimDataV2(void *&ptr, int &size) {
 	for (int i = 0; i < size; i++)
 		delete[] d[i].frames;
 	delete[] d;
+	ptr = 0;
+	size = 0;
+}
+
+void StaticResource::freeCharData(void *&ptr, int &size) {
+	LoLCharacter *d = (LoLCharacter *)ptr;
+	delete[] d;
+	ptr = 0;
+	size = 0;
+}
+
+void StaticResource::freeSpellData(void *&ptr, int &size) {
+	SpellProperty *d = (SpellProperty *)ptr;
+	delete[] d;
+	ptr = 0;
+	size = 0;
+}
+
+void StaticResource::freeCompassData(void *&ptr, int &size) {
+	CompassDef *d = (CompassDef *)ptr;
+	delete[] d;
+	ptr = 0;
+	size = 0;
+}
+
+void StaticResource::freeRawDataBe16(void *&ptr, int &size) {
+	uint16 *data = (uint16*)ptr;
+	delete[] data;
 	ptr = 0;
 	size = 0;
 }
@@ -1401,6 +1624,49 @@ void KyraEngine_MR::initStaticResource() {
 	_itemAnimData = _staticres->loadShapeAnimData_v2(k3ItemAnimData, tmp);
 	_itemMagicTable = _staticres->loadRawData(k3ItemMagicTable, tmp);
 	_itemStringMap = _staticres->loadRawData(k3ItemStringMap, _itemStringMapSize);
+}
+
+void LoLEngine::initStaticResource() {
+	_charDefaults = _staticres->loadCharData(lolCharacterDefs, _charDefaultsSize);	
+	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(lolIngameSfxIndex, _ingameSoundIndexSize);
+	_ingameGMSoundIndex = _staticres->loadRawData(lolIngameGMSfxIndex, _ingameGMSoundIndexSize);
+	_ingameMT32SoundIndex = _staticres->loadRawData(lolIngameMT32SfxIndex, _ingameMT32SoundIndexSize);
+	_spellProperties = _staticres->loadSpellData(lolSpellProperties, _spellPropertiesSize);
+	_gameShapeMap = (const int8*)_staticres->loadRawData(lolGameShapeMap, _gameShapeMapSize);
+	_levelShpList = _staticres->loadStrings(lolLevelShpList, _levelShpListSize);
+	_levelDatList = _staticres->loadStrings(lolLevelDatList, _levelDatListSize);
+	_compassDefs = _staticres->loadCompassData(lolCompassDefs, _compassDefsSize);
+
+	_dscUnk1 = (const int8*)_staticres->loadRawData(lolDscUnk1, _dscUnk1Size);
+	_dscShapeIndex = (const int8*)_staticres->loadRawData(lolDscShapeIndex, _dscShapeIndexSize);
+	_dscOvlMap = _staticres->loadRawData(lolDscOvlMap, _dscOvlMapSize);
+	_dscShapeScaleW = (const uint16 *)_staticres->loadRawDataBe16(lolDscScaleWidthData, _dscShapeScaleWSize);
+	_dscShapeScaleH = (const uint16 *)_staticres->loadRawDataBe16(lolDscScaleHeightData, _dscShapeScaleHSize);
+	_dscShapeX = (const int16 *)_staticres->loadRawDataBe16(lolDscX, _dscShapeXSize);
+	_dscShapeY = (const int8 *)_staticres->loadRawData(lolDscY, _dscShapeYSize);
+	_dscTileIndex = _staticres->loadRawData(lolDscTileIndex, _dscTileIndexSize);
+	_dscUnk2 = _staticres->loadRawData(lolDscUnk2, _dscUnk2Size);
+	_dscDoorShpIndex = _staticres->loadRawData(lolDscDoorShapeIndex, _dscDoorShpIndexSize);
+	_dscDim1 = (const int8 *)_staticres->loadRawData(lolDscDimData1, _dscDim1Size);
+	_dscDim2 = (const int8 *)_staticres->loadRawData(lolDscDimData2, _dscDim2Size);
+	_dscBlockMap = _staticres->loadRawData(lolDscBlockMap, _dscBlockMapSize);
+	_dscDimMap = _staticres->loadRawData(lolDscDimMap, _dscDimMapSize);
+	_dscDoorScaleTable = (const uint16 *)_staticres->loadRawDataBe16(lolDscDoorScale, _dscDoorScaleTableSize);
+	_dscDoor2 = _staticres->loadRawData(lolDscDoor2, _dscDoor2Size);
+	_dscShapeOvlIndex = _staticres->loadRawData(lolDscOvlIndex, _dscShapeOvlIndexSize);
+	_dscDoor4 = (const uint16 *)_staticres->loadRawDataBe16(lolDscDoor4, _dscDoor4Size);
+	_dscBlockIndex = (const int8 *)_staticres->loadRawData(lolDscBlockIndex, _dscBlockIndexSize);
+	_dscDoor1 = _staticres->loadRawData(lolDscDoor1, _dscDoor1Size);
+	_dscDoorX = (const int16 *)_staticres->loadRawDataBe16(lolDscDoorX, _dscDoorXSize);
+	_dscDoorY = (const int16 *)_staticres->loadRawDataBe16(lolDscDoorY, _dscDoorYSize);
+
+	const char *const *tmpSndList = _staticres->loadStrings(lolIngameSfxFiles, _ingameSoundListSize);
+	_ingameSoundList = new char*[_ingameSoundListSize];
+	for (int i = 0; i < _ingameSoundListSize; i++) {
+		_ingameSoundList[i] = new char[strlen(tmpSndList[i]) + 1];
+		strcpy(_ingameSoundList[i], tmpSndList[i]);
+	}
+	_staticres->unloadId(lolIngameSfxFiles);
 }
 
 const ScreenDim Screen_LoK::_screenDimTable[] = {

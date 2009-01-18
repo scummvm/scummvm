@@ -39,6 +39,7 @@
 
 #include "kyra/kyra_v1.h"
 #include "kyra/kyra_hof.h"
+#include "kyra/lol.h"
 
 namespace Kyra {
 
@@ -210,6 +211,40 @@ enum kKyraResources {
 	k3ItemMagicTable,
 	k3ItemStringMap,
 
+	lolCharacterDefs,
+	lolIngameSfxFiles,
+	lolIngameSfxIndex,
+	lolIngameGMSfxIndex,
+	lolIngameMT32SfxIndex,
+	lolSpellProperties,
+	lolGameShapeMap,
+	lolLevelShpList,
+	lolLevelDatList,
+	lolCompassDefs,
+
+	lolDscUnk1,
+	lolDscShapeIndex,
+	lolDscOvlMap,
+	lolDscScaleWidthData,
+	lolDscScaleHeightData,
+	lolDscX,
+	lolDscY,
+	lolDscTileIndex,
+	lolDscUnk2,
+	lolDscDoorShapeIndex,
+	lolDscDimData1,
+	lolDscDimData2,
+	lolDscBlockMap,
+	lolDscDimMap,
+	lolDscDoor1,
+	lolDscDoor2,
+	lolDscDoorScale,
+	lolDscDoor4,
+	lolDscDoorX,
+	lolDscDoorY,
+	lolDscOvlIndex,
+	lolDscBlockIndex,
+
 	kMaxResIDs
 };
 
@@ -236,6 +271,10 @@ public:
 	const HofSeqData *loadHofSequenceData(int id, int &entries);
 	const ItemAnimData_v1 *loadShapeAnimData_v1(int id, int &entries);
 	const ItemAnimData_v2 *loadShapeAnimData_v2(int id, int &entries);
+	const LoLCharacter *loadCharData(int id, int &entries);
+	const SpellProperty *loadSpellData(int id, int &entries);
+	const CompassDef *loadCompassData(int id, int &entries);
+	const uint16 *loadRawDataBe16(int id, int &entries);
 
 	// use '-1' to prefetch/unload all ids
 	// prefetchId retruns false if only on of the resources
@@ -267,6 +306,10 @@ private:
 	bool loadHofSequenceData(const char *filename, void *&ptr, int &size);
 	bool loadShapeAnimData_v1(const char *filename, void *&ptr, int &size);
 	bool loadShapeAnimData_v2(const char *filename, void *&ptr, int &size);
+	bool loadCharData(const char *filename, void *&ptr, int &size);
+	bool loadSpellData(const char *filename, void *&ptr, int &size);
+	bool loadCompassData(const char *filename, void *&ptr, int &size);
+	bool loadRawDataBe16(const char *filename, void *&ptr, int &size);	
 
 	void freeRawData(void *&ptr, int &size);
 	void freeStringTable(void *&ptr, int &size);
@@ -276,6 +319,10 @@ private:
 	void freeHofSequenceData(void *&ptr, int &size);
 	void freeHofShapeAnimDataV1(void *&ptr, int &size);
 	void freeHofShapeAnimDataV2(void *&ptr, int &size);
+	void freeCharData(void *&ptr, int &size);
+	void freeSpellData(void *&ptr, int &size);
+	void freeCompassData(void *&ptr, int &size);
+	void freeRawDataBe16(void *&ptr, int &size);
 
 	const char *getFilename(const char *name);
 	Common::SeekableReadStream *getFile(const char *name);
@@ -290,7 +337,12 @@ private:
 
 		k2SeqData,
 		k2ShpAnimDataV1,
-		k2ShpAnimDataV2
+		k2ShpAnimDataV2,
+
+		lolCharData,
+		lolSpellData,
+		lolCompassData,
+		lolRawDataBe16
 	};
 
 	struct BuiltinRes {

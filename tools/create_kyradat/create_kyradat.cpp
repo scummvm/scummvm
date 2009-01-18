@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 32,
+	kKyraDatVersion = 33,
 	kIndexSize = 12
 };
 
@@ -53,6 +53,7 @@ enum {
 
 #include "malcolm.h"
 
+#include "lol_cd.h"
 #include "lol_demo.h"
 
 const Game kyra1FanTranslations[] = {
@@ -72,6 +73,7 @@ bool extractStringsWoSuffix(PAKFile &out, const Game *g, const byte *data, const
 bool extractPaddedStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractRaw16to8(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractMrShapeAnimData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
+bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 
 int extractHofSeqData_checkString(const void *ptr, uint8 checkSize);
 int extractHofSeqData_isSequence(const void *ptr, const Game *g, uint32 maxCheckSize);
@@ -95,6 +97,8 @@ const ExtractType extractTypeTable[] = {
 	{ k2TypeSfxList, extractPaddedStrings, createFilename },
 	{ k3TypeRaw16to8, extractRaw16to8, createFilename },
 	{ k3TypeShpData, extractMrShapeAnimData, createFilename },
+
+	{ lolTypeRaw16, extractRaw16, createFilename },
 
 	{ -1, 0, 0}
 };
@@ -256,7 +260,42 @@ const ExtractFilename extractFilenames[] = {
 	// LANDS OF LORE
 
 	// Demo Sequence Player
-	{ lSeqplayIntroTracks, k2TypeSoundList, "S_INTRO.TRA" },
+	{ lolSeqplayIntroTracks, k2TypeSoundList, "S_INTRO.TRA" },
+
+	// Ingame
+	{ lolCharacterDefs, kTypeRawData, "CHARACTER.DEF" },
+	{ lolIngameSfxFiles, k2TypeSfxList, "SFXFILES.TRA" },
+	{ lolIngameSfxIndex, kTypeRawData, "SFXINDEX.MAP" },
+	{ lolGMSfxIndex, kTypeRawData, "SFX_GM.MAP" },
+	{ lolMT32SfxIndex, kTypeRawData, "SFX_MT32.MAP" },
+	{ lolSpellProperties, kTypeRawData, "SPELLS.DEF" },
+	{ lolGameShapeMap, kTypeRawData, "GAMESHP.MAP" },
+	{ lolLevelShpList, kTypeStringList, "SHPFILES.TXT" },
+	{ lolLevelDatList, kTypeStringList, "DATFILES.TXT" },
+	{ lolCompassDefs, k3TypeRaw16to8, "COMPASS.DEF" },
+
+	{ lolDscUnk1, kTypeRawData, "DSCSHPU1.DEF" },
+	{ lolDscShapeIndex1, kTypeRawData, "DSCSHPI1.DEF" },
+	{ lolDscShapeIndex2, kTypeRawData, "DSCSHPI2.DEF" },
+	{ lolDscScaleWidthData, lolTypeRaw16, "DSCSHPW.DEF" },
+	{ lolDscScaleHeightData, lolTypeRaw16, "DSCSHPH.DEF" },
+	{ lolDscX, lolTypeRaw16, "DSCSHPX.DEF" },
+	{ lolDscY, kTypeRawData, "DSCSHPY.DEF" },
+	{ lolDscTileIndex, kTypeRawData, "DSCSHPT.DEF" },
+	{ lolDscUnk2, kTypeRawData, "DSCSHPU2.DEF" },
+	{ lolDscDoorShapeIndex, kTypeRawData, "DSCDOOR.DEF" },
+	{ lolDscDimData1, kTypeRawData, "DSCDIM1.DEF" },
+	{ lolDscDimData2, kTypeRawData, "DSCDIM2.DEF" },
+	{ lolDscBlockMap, kTypeRawData, "DSCBLOCK1.DEF" },
+	{ lolDscDimMap, kTypeRawData, "DSCDIM.DEF" },
+	{ lolDscDoorScale, lolTypeRaw16, "DSCDOOR3.DEF" },
+	{ lolDscDoor2, k3TypeRaw16to8, "DSCDOOR2.DEF" },
+	{ lolDscShapeOvlIndex, k3TypeRaw16to8, "DSCBLOCK2.DEF" },
+	{ lolDscBlockIndex, kTypeRawData, "DSCBLOCKX.DEF" },
+	{ lolDscDoor4, lolTypeRaw16, "DSCDOOR4.DEF" },
+	{ lolDscDoor1, kTypeRawData, "DSCDOOR1.DEF" },
+	{ lolDscDoorX, lolTypeRaw16, "DSCDOORX.DEF" },
+	{ lolDscDoorY, lolTypeRaw16, "DSCDOORY.DEF" },
 
 	{ -1, 0, 0 }
 };
@@ -1012,6 +1051,20 @@ bool extractRaw16to8(PAKFile &out, const Game *g, const byte *data, const uint32
 	return out.addFile(filename, buffer, outsize);
 }
 
+bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
+	uint8 *buffer = new uint8[size];
+	const uint8 *src = data;
+	uint8 *dst = buffer;
+
+	for (int i = 0; i < (size >> 1); i++) {
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 2;
+		dst += 2;
+	}
+
+	return out.addFile(filename, buffer, size);
+}
+
 bool extractMrShapeAnimData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
 	int outsize = 1;
 	uint8 *buffer = new uint8[size + 1];
@@ -1070,7 +1123,7 @@ enum {
 uint32 getFeatures(const Game *g) {
 	uint32 features = 0;
 
-	if (g->special == kTalkieVersion || g->special == k2CDFile1E || g->special == k2CDFile1F || g->special == k2CDFile1G || g->special == k2CDFile1I || g->special == k2CDFile2E || g->special == k2CDFile2F || g->special == k2CDFile2G || g->game == kKyra3)
+	if (g->special == kTalkieVersion || g->special == k2CDFile1E || g->special == k2CDFile1F || g->special == k2CDFile1G || g->special == k2CDFile1I || g->special == k2CDFile2E || g->special == k2CDFile2F || g->special == k2CDFile2G || g->special == kLolCD || g->game == kKyra3)
 		features |= GF_TALKIE;
 	else if (g->special == kDemoVersion || g->special == k2DemoVersion || g->special == k2DemoLol)
 		features |= GF_DEMO;
@@ -1352,6 +1405,7 @@ const Game *gameDescs[] = {
 	kyra3Games,
 
 	lolDemos,
+	lolGames,
 
 	0
 };
