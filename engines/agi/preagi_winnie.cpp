@@ -1121,7 +1121,7 @@ void Winnie::printRoomStr(int iRoom, int iStr) {
 
 void Winnie::gameOver() {
 	// sing the Pooh song forever
-	for (;;) {
+	while (!_vm->shouldQuit()) {
 		_vm->printStr(IDS_WTP_SONG_0);
 		playSound(IDI_WTP_SND_POOH_0);
 		_vm->printStr(IDS_WTP_SONG_1);
