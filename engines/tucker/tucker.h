@@ -904,7 +904,8 @@ private:
 	Audio::Mixer *_mixer;
 	Common::EventManager *_event;
 
-	int _seqNum, _currentSeqNum;
+	int _seqNum;
+	bool _changeToNextSequence;
 	const SequenceUpdateFunc *_updateFunc;
 	int _updateFuncIndex;
 	::Graphics::FlicPlayer _flicPlayer[2];

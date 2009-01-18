@@ -494,7 +494,7 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 }
 
 AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, int num)
-	: _system(system), _mixer(mixer), _event(event), _seqNum(num), _currentSeqNum(0) {
+	: _system(system), _mixer(mixer), _event(event), _seqNum(num), _changeToNextSequence(false) {
 	memset(_animationPalette, 0, sizeof(_animationPalette));
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
 	_soundSeqDataOffset = 0;
@@ -525,7 +525,7 @@ void AnimationSequencePlayer::mainLoop() {
 		{ 13, &AnimationSequencePlayer::loadIntroSeq13_14, &AnimationSequencePlayer::playIntroSeq13_14 },
 		{ 15, &AnimationSequencePlayer::loadIntroSeq15_16, &AnimationSequencePlayer::playIntroSeq15_16 },
 		{ 27, &AnimationSequencePlayer::loadIntroSeq27_28, &AnimationSequencePlayer::playIntroSeq27_28 },
-		{ 0, 0, 0 }
+		{  1, 0, 0 }
 	};
 	static const SequenceUpdateFunc _gameSeqUpdateFuncs[] = {
 		{ 17, &AnimationSequencePlayer::loadIntroSeq17_18, &AnimationSequencePlayer::playIntroSeq17_18 },
@@ -533,7 +533,7 @@ void AnimationSequencePlayer::mainLoop() {
 		{  3, &AnimationSequencePlayer::loadIntroSeq3_4,   &AnimationSequencePlayer::playIntroSeq3_4   },
 		{  9, &AnimationSequencePlayer::loadIntroSeq9_10,  &AnimationSequencePlayer::playIntroSeq9_10  },
 		{ 21, &AnimationSequencePlayer::loadIntroSeq21_22, &AnimationSequencePlayer::playIntroSeq21_22 },
-		{ 0, 0, 0 }
+		{  1, 0, 0 }
 	};
 	switch (_seqNum) {
 	case kFirstAnimationSequenceDemo:
@@ -544,9 +544,10 @@ void AnimationSequencePlayer::mainLoop() {
 		break;
 	}
 	_updateFuncIndex = 0;
+	_changeToNextSequence = true;
 	do {
-		if (_seqNum != _currentSeqNum) {
-			_currentSeqNum = _seqNum;
+		if (_changeToNextSequence) {
+			_changeToNextSequence = false;
 			_frameCounter = 0;
 			_lastFrameTime = _system->getMillis();
 			(this->*(_updateFunc[_updateFuncIndex].load))();
@@ -555,12 +556,10 @@ void AnimationSequencePlayer::mainLoop() {
 			}
 		}
 		(this->*(_updateFunc[_updateFuncIndex].play))();
-		if (_seqNum != _currentSeqNum) {
+		if (_changeToNextSequence) {
 			unloadAnimation();
 			++_updateFuncIndex;
-			if (this->_updateFunc[_updateFuncIndex].num == 0) {
-				break;
-			}
+			_seqNum = this->_updateFunc[_updateFuncIndex].num;
 		}
 		_system->copyRectToScreen(_offscreenBuffer, 320, 0, 0, kScreenWidth, kScreenHeight);
 		_system->setPalette(_animationPalette, 0, 256);
@@ -931,7 +930,7 @@ void AnimationSequencePlayer::loadIntroSeq17_18() {
 void AnimationSequencePlayer::playIntroSeq17_18() {
 	decodeNextAnimationFrame(0);
 	if (_flicPlayer[0].isLastFrame()) {
-		_seqNum = 19;
+		_changeToNextSequence = true;
 	}
 	updateSounds();
 }
@@ -959,7 +958,7 @@ void AnimationSequencePlayer::playIntroSeq19_20() {
 	}
 	updateSounds();
 	if (_flicPlayer[0].isLastFrame()) {
-		_seqNum = 3;
+		_changeToNextSequence = true;
 	}
 }
 
@@ -1019,7 +1018,7 @@ void AnimationSequencePlayer::playIntroSeq3_4() {
 			initPicPart4();
 		}
 		if (_flicPlayer[0].isLastFrame()) {
-			_seqNum = 9;
+			_changeToNextSequence = true;
 		}
 	} else {
 		drawPicPart4();
@@ -1091,7 +1090,7 @@ void AnimationSequencePlayer::playIntroSeq9_10() {
 		}
 	}
 	if (_flicPlayer[0].isLastFrame()) {
-		_seqNum = 21;
+		_changeToNextSequence = true;
 	}
 	updateSounds();
 }
@@ -1105,7 +1104,7 @@ void AnimationSequencePlayer::loadIntroSeq21_22() {
 void AnimationSequencePlayer::playIntroSeq21_22() {
 	decodeNextAnimationFrame(0);
 	if (_flicPlayer[0].isLastFrame()) {
-		_seqNum = 1;
+		_changeToNextSequence = true;
 	}
 	updateSounds();
 }
@@ -1119,7 +1118,7 @@ void AnimationSequencePlayer::loadIntroSeq13_14() {
 void AnimationSequencePlayer::playIntroSeq13_14() {
 	decodeNextAnimationFrame(0);
 	if (_flicPlayer[0].isLastFrame()) {
-		_seqNum = 15;
+		_changeToNextSequence = true;
 	}
 	updateSounds();
 }
@@ -1133,7 +1132,7 @@ void AnimationSequencePlayer::loadIntroSeq15_16() {
 void AnimationSequencePlayer::playIntroSeq15_16() {
 	decodeNextAnimationFrame(0);
 	if (_flicPlayer[0].isLastFrame()) {
-		_seqNum = 27;
+		_changeToNextSequence = true;
 	}
 	updateSounds();
 }
@@ -1147,7 +1146,7 @@ void AnimationSequencePlayer::loadIntroSeq27_28() {
 void AnimationSequencePlayer::playIntroSeq27_28() {
 	decodeNextAnimationFrame(0);
 	if (_flicPlayer[0].isLastFrame()) {
-		_seqNum = 1;
+		_changeToNextSequence = true;
 	}
 	updateSounds();
 }
