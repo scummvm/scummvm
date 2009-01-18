@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef NEWGUI_H
-#define NEWGUI_H
+#ifndef GUIMANAGER_H
+#define GUIMANAGER_H
 
 #include "common/scummsys.h"
 #include "common/singleton.h"
@@ -33,7 +33,6 @@
 #include "graphics/fontman.h"
 
 #include "gui/widget.h"
-
 #include "gui/ThemeEngine.h"
 
 class OSystem;
@@ -41,7 +40,6 @@ class OSystem;
 namespace GUI {
 
 class Dialog;
-class Eval;
 class ThemeEval;
 
 #define g_gui	(GUI::GuiManager::instance())
