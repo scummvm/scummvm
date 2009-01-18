@@ -62,8 +62,7 @@ const char IDS_MSA_ERRORS[][40] = {
 	"MICKEY WOULDN'T WANT TO DO THAT!",
 	"WHICH DIRECTION?",
 	"THAT DOESN'T MAKE SENSE!",
-	"MICKEY WOULDN'T WANT TO DO THAT!",
-	"MICKEY TAKES THE ROPE"
+	"MICKEY WOULDN'T WANT TO DO THAT!"
 };
 
 // patch Mickey.exe offset 0x21E to value 0x01 to enable debug mode
@@ -76,17 +75,11 @@ const char IDS_MSA_INSERT_DISK[][40] = {
 
 #define IDI_MSA_MAX_PLANET				9
 #define IDI_MSA_MAX_DAT					10
-#define IDI_MSA_MAX_OBJ					32
-#define IDI_MSA_MAX_PIC					240
 #define IDI_MSA_MAX_PIC_ROOM			224
-#define IDI_MSA_MAX_SOUND				8
 #define IDI_MSA_MAX_ROOM				160
 
 #define IDI_MSA_MAX_BUTTON				6
 #define IDI_MSA_MAX_ITEM				11
-#define IDI_MSA_MAX_HINT				20
-#define IDI_MSA_MAX_PLANET_INFO			4
-#define IDI_MSA_MAX_AIR_SUPPLY			50
 
 #define IDI_MSA_ANIM_DELAY				25
 
@@ -101,29 +94,12 @@ const char IDS_MSA_INSERT_DISK[][40] = {
 #define IDI_MSA_ROW_INV_ITEMS			5
 #define IDI_MSA_ROW_TEMPERATURE			21
 #define IDI_MSA_ROW_PLANET				22
-#define IDI_MSA_ROW_BUTTONS				20
 #define IDI_MSA_ROW_INSERT_DISK			23
 
 #define IDI_MSA_COL_INV_TITLE			4
 #define IDI_MSA_COL_INV_ITEMS			15
-#define IDI_MSA_COL_TEMPERATURE_C		15
-#define IDI_MSA_COL_TEMPERATURE_F		23
 #define IDI_MSA_COL_PLANET				28
-#define IDI_MSA_COL_BUTTONS				22
 #define IDI_MSA_COL_INSERT_DISK			1
-
-// messages
-
-#define IDI_MSA_MSG_STAR_MAP_0						46
-#define IDI_MSA_MSG_STAR_MAP_1						47
-#define IDI_MSA_MSG_STAR_MAP_2						48
-#define IDI_MSA_MSG_SPACESUIT_WEAR					11
-#define IDI_MSA_MSG_SPACESUIT_REMOVE				13
-#define IDI_MSA_MSG_SPACESUIT_0						3
-#define IDI_MSA_MSG_SPACESUIT_CANT_WEAR_ON_EARTH	12
-#define IDI_MSA_MSG_SHIP_LAUNCH						16
-#define IDI_MSA_MSG_SHIP_LAND						22
-#define IDI_MSA_MSG_MICKEY_ALREADY_HAS_ITEM			90
 
 // screen
 
@@ -606,7 +582,6 @@ const int IDO_MSA_LOAD_GAME[] = {
 const int IDO_MSA_AIR_SUPPLY[] = {
 	0x7D10, 0x7D31, 0x7D51, 0x7D9B
 	// be aware, low, dangerously low, out of air
-	// 30, 20, 10, 0
 };
 
 const int IDI_MSA_AIR_SUPPLY[] = { 30, 20, 10, 0 };
@@ -645,26 +620,15 @@ const int IDO_MSA_NEXT_PIECE[IDI_MSA_MAX_PLANET][5] = {
 #define IDO_MSA_INTRO							0x4679
 #define IDO_MSA_GAME_STORY						0x6E9C
 
-#define IDO_MSA_CHECK_DISK_DRIVE				0x7885
-#define IDO_MSA_YOU_CAN_SEE_MICKEY_ALREADY		0x46D1
-#define IDO_MSA_THE_CABINET_IS_ALREADY_OPEN		0x46EF
-
 #define IDO_MSA_PRESS_1_TO_9					0x7530
 #define IDO_MSA_PRESS_YES_OR_NO					0x480D
 #define IDO_MSA_TOO_MANY_BUTTONS_PRESSED		0x5DF7
 
-#define IDO_MSA_MICKEY_HAS_PRESSED				0x5D90
-
 #define IDO_MSA_XL30_SPEAKING					0x4725
 #define IDO_MSA_CRYSTAL_PIECE_FOUND				0x600C
 
-#define IDO_MSA_ROOM_TEXT						0x4B80
 #define IDO_MSA_ROOM_TEXT_OFFSETS				0x8B01
-#define IDO_MSA_ROOM_OBJECT						0x475C
-#define IDO_MSA_ROOM_PICTURE					0x4AE4
 #define IDO_MSA_ROOM_OBJECT_XY_OFFSETS			0x8EA8
-#define IDO_MSA_PIC_SHIP_LIGHT					0x8F38
-#define IDO_MSA_XTAL_ROOM_XY					0x97F8
 #define IDO_MSA_ROOM_MENU_FIX					0x4a27
 
 // offsets to offset arrays
@@ -790,7 +754,7 @@ protected:
 
 	bool mickeyHasItem(int item) {
 		if (_game.fItem[item]) {
-			printDatMessage(IDI_MSA_MSG_MICKEY_ALREADY_HAS_ITEM);
+			printDatMessage(90);	// Mickey already has item
 			return true;
 		} else {
 			return false;

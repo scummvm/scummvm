@@ -163,6 +163,8 @@ void Mickey::printLine(const char *buffer) {
 	// Show the string on screen
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();
+
+	waitAnyKey(true);
 }
 
 void Mickey::printExeStr(int ofs) {
@@ -944,7 +946,7 @@ bool Mickey::loadGame() {
 		// load game
 		sprintf(szFile, "%s.s%02d", _vm->getTargetName().c_str(), sel);
 		if (!(infile = _vm->getSaveFileMan()->openForLoading(szFile))) {
-			printExeStr(IDO_MSA_CHECK_DISK_DRIVE);
+			printLine("PLEASE CHECK THE DISK DRIVE");
 			if (_vm->getSelection(kSelAnyKey) == 0)
 				return false;
 		} else {
@@ -1060,7 +1062,7 @@ void Mickey::saveGame() {
 		// save game
 		sprintf(szFile, "%s.s%02d", _vm->getTargetName().c_str(), sel);
 		if (!(outfile = _vm->getSaveFileMan()->openForSaving(szFile))) {
-			printExeStr(IDO_MSA_CHECK_DISK_DRIVE);
+			printLine("PLEASE CHECK THE DISK DRIVE");
 			if (_vm->getSelection(kSelAnyKey) == 0)
 				return;
 		} else {
@@ -1137,7 +1139,7 @@ void Mickey::saveGame() {
 }
 
 void Mickey::showPlanetInfo() {
-	for (int i = 0; i < IDI_MSA_MAX_PLANET_INFO; i++) {
+	for (int i = 0; i < 4; i++) {
 		printExeStr(IDO_MSA_PLANET_INFO[_game.iPlanet][i]);
 		waitAnyKey();
 	}
@@ -1211,8 +1213,8 @@ void Mickey::pressOB(int iButton) {
 	}
 
 	// print pressed buttons
-	printExeStr(IDO_MSA_MICKEY_HAS_PRESSED);
-	_vm->drawStr(IDI_MSA_ROW_BUTTONS, IDI_MSA_COL_BUTTONS, IDA_DEFAULT, szButtons);
+	printLine("MICKEY HAS PRESSED:                   ");
+	_vm->drawStr(20, 22, IDA_DEFAULT, szButtons);
 	waitAnyKey();
 }
 
@@ -1441,7 +1443,6 @@ bool Mickey::parse(int cmd, int arg) {
 		return true;
 	case IDI_MSA_ACTION_SHOW_INT_STR:
 		printLine(IDS_MSA_ERRORS[arg]);
-		waitAnyKey(true);
 		break;
 	case IDI_MSA_ACTION_SHOW_DAT_STR:
 		printDatMessage(arg);
@@ -1456,7 +1457,7 @@ bool Mickey::parse(int cmd, int arg) {
 		saveGame();
 		break;
 	case IDI_MSA_ACTION_LOOK_MICKEY:
-		printExeMsg(IDO_MSA_YOU_CAN_SEE_MICKEY_ALREADY);
+		printLine("YOU CAN SEE MICKEY ALREADY");
 		break;
 
 	// EARTH
@@ -1466,8 +1467,7 @@ bool Mickey::parse(int cmd, int arg) {
 			_game.iRmObj[_game.iRoom] = IDI_MSA_OBJECT_NONE;
 			_game.iRmMenu[_game.iRoom] = 3;
 			getItem(IDI_MSA_ITEM_ROPE);
-			printLine(IDS_MSA_ERRORS[7]);
-			waitAnyKey(true);
+			printLine("MICKEY TAKES THE ROPE");
 		} else {
 			_game.iRmMenu[_game.iRoom] = 1;
 			printDatMessage(11);
@@ -1988,9 +1988,9 @@ bool Mickey::parse(int cmd, int arg) {
 		break;
 	case IDI_MSA_ACTION_READ_GAUGE:
 		printDatString(arg);
-		_vm->drawStr(IDI_MSA_ROW_TEMPERATURE, IDI_MSA_COL_TEMPERATURE_C, IDA_DEFAULT,
+		_vm->drawStr(21, 15, IDA_DEFAULT,
 			(const char *)IDS_MSA_TEMP_C[_game.iPlanet]);
-		_vm->drawStr(IDI_MSA_ROW_TEMPERATURE, IDI_MSA_COL_TEMPERATURE_F, IDA_DEFAULT,
+		_vm->drawStr(21, 23, IDA_DEFAULT,
 			(const char *)IDS_MSA_TEMP_F[_game.iPlanet]);
 		waitAnyKey();
 		break;
@@ -2056,7 +2056,7 @@ bool Mickey::parse(int cmd, int arg) {
 		break;
 	case IDI_MSA_ACTION_OPEN_CABINET_1:
 		if (_game.iRmMenu[_game.iRoom]) {
-			printExeMsg(IDO_MSA_THE_CABINET_IS_ALREADY_OPEN);
+			printLine("THE CABINET IS ALREADY OPEN");
 		} else {
 			_game.iRmMenu[_game.iRoom] = 1;
 			_game.iRmPic[_game.iRoom] = IDI_MSA_PIC_SHIP_KITCHEN_1;
@@ -2225,7 +2225,7 @@ void Mickey::run() {
 					}
 				}
 			} else {
-				_game.nAir = IDI_MSA_MAX_AIR_SUPPLY;
+				_game.nAir = 50;	// max air supply
 			}
 
 			done = checkMenu();
