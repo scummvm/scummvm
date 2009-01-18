@@ -295,7 +295,11 @@ Common::Archive *ResLoaderPak::load(Common::SharedPtr<Common::ArchiveMember> mem
 
 			for (uint j = 0; j < sources; ++j) {
 				Common::String dest = readString(stream);
-				files.push_back(*iter);
+
+				PlainArchive::InputEntry link = *iter;
+				link.name = dest;
+				files.push_back(link);
+
 				// Better safe than sorry, we update the 'iter' value, in case push_back invalidated it
 				iter = Common::find_if(files.begin(), files.end(), PlainArchiveListSearch(linksTo));
 			}
