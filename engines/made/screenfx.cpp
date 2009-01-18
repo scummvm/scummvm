@@ -386,9 +386,9 @@ void ScreenEffects::vfx09(Graphics::Surface *surface, byte *palette, byte *newPa
 	for (int i = 0; i < 8; i++) {
 		copyFxRect(surface, 0, 0, 320, 200);
 		for (int j = 0; j < 4; j++) {
-			setBlendedPalette(palette, newPalette, colorCount, i * 4 + j, 36/*FIX?*/);
-			_screen->updateScreenAndWait(25);
+			setBlendedPalette(palette, newPalette, colorCount, i * 4 + j, 32);
 		}
+		_screen->updateScreenAndWait(25);
 	}
 	setPalette(palette);
 }
