@@ -857,6 +857,7 @@ public:
 
 	struct SequenceUpdateFunc {
 		int num;
+		int frameTime;
 		void (AnimationSequencePlayer::*load)();
 		void (AnimationSequencePlayer::*play)();
 	};

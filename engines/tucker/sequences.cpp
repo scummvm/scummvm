@@ -494,7 +494,7 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 }
 
 AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, int num)
-	: _system(system), _mixer(mixer), _event(event), _seqNum(num), _changeToNextSequence(false) {
+	: _system(system), _mixer(mixer), _event(event), _seqNum(num) {
 	memset(_animationPalette, 0, sizeof(_animationPalette));
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
 	_soundSeqDataOffset = 0;
@@ -509,9 +509,6 @@ AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *
 	_updateScreenWidth = 0;
 	_updateScreenPicture = 0;
 	_updateScreenOffset = 0;
-	_frameCounter = 0;
-	_frameTime = 1;
-	_lastFrameTime = 0;
 	_picBufPtr = _pic2BufPtr = 0;
 }
 
@@ -522,18 +519,18 @@ AnimationSequencePlayer::~AnimationSequencePlayer() {
 
 void AnimationSequencePlayer::mainLoop() {
 	static const SequenceUpdateFunc _demoSeqUpdateFuncs[] = {
-		{ 13, &AnimationSequencePlayer::loadIntroSeq13_14, &AnimationSequencePlayer::playIntroSeq13_14 },
-		{ 15, &AnimationSequencePlayer::loadIntroSeq15_16, &AnimationSequencePlayer::playIntroSeq15_16 },
-		{ 27, &AnimationSequencePlayer::loadIntroSeq27_28, &AnimationSequencePlayer::playIntroSeq27_28 },
-		{  1, 0, 0 }
+		{ 13, 2, &AnimationSequencePlayer::loadIntroSeq13_14, &AnimationSequencePlayer::playIntroSeq13_14 },
+		{ 15, 2, &AnimationSequencePlayer::loadIntroSeq15_16, &AnimationSequencePlayer::playIntroSeq15_16 },
+		{ 27, 2, &AnimationSequencePlayer::loadIntroSeq27_28, &AnimationSequencePlayer::playIntroSeq27_28 },
+		{  1, 0, 0, 0 }
 	};
 	static const SequenceUpdateFunc _gameSeqUpdateFuncs[] = {
-		{ 17, &AnimationSequencePlayer::loadIntroSeq17_18, &AnimationSequencePlayer::playIntroSeq17_18 },
-		{ 19, &AnimationSequencePlayer::loadIntroSeq19_20, &AnimationSequencePlayer::playIntroSeq19_20 },
-		{  3, &AnimationSequencePlayer::loadIntroSeq3_4,   &AnimationSequencePlayer::playIntroSeq3_4   },
-		{  9, &AnimationSequencePlayer::loadIntroSeq9_10,  &AnimationSequencePlayer::playIntroSeq9_10  },
-		{ 21, &AnimationSequencePlayer::loadIntroSeq21_22, &AnimationSequencePlayer::playIntroSeq21_22 },
-		{  1, 0, 0 }
+		{ 17, 1, &AnimationSequencePlayer::loadIntroSeq17_18, &AnimationSequencePlayer::playIntroSeq17_18 },
+		{ 19, 1, &AnimationSequencePlayer::loadIntroSeq19_20, &AnimationSequencePlayer::playIntroSeq19_20 },
+		{  3, 2, &AnimationSequencePlayer::loadIntroSeq3_4,   &AnimationSequencePlayer::playIntroSeq3_4   },
+		{  9, 2, &AnimationSequencePlayer::loadIntroSeq9_10,  &AnimationSequencePlayer::playIntroSeq9_10  },
+		{ 21, 2, &AnimationSequencePlayer::loadIntroSeq21_22, &AnimationSequencePlayer::playIntroSeq21_22 },
+		{  1, 0, 0, 0 }
 	};
 	switch (_seqNum) {
 	case kFirstAnimationSequenceDemo:
@@ -550,6 +547,7 @@ void AnimationSequencePlayer::mainLoop() {
 			_changeToNextSequence = false;
 			_frameCounter = 0;
 			_lastFrameTime = _system->getMillis();
+			_frameTime = this->_updateFunc[_updateFuncIndex].frameTime;
 			(this->*(_updateFunc[_updateFuncIndex].load))();
 			if (_seqNum == 1) {
 				break;
@@ -924,7 +922,6 @@ void AnimationSequencePlayer::decodeNextAnimationFrame(int index) {
 void AnimationSequencePlayer::loadIntroSeq17_18() {
 	loadSounds(9, 0);
 	openAnimation(0, "graphics/merit.flc");
-	_frameTime = 1;
 }
 
 void AnimationSequencePlayer::playIntroSeq17_18() {
@@ -940,7 +937,6 @@ void AnimationSequencePlayer::loadIntroSeq19_20() {
 	loadSounds(10, 1);
 	openAnimation(0, "graphics/budttle2.flc");
 	openAnimation(1, "graphics/machine.flc");
-	_frameTime = 1;
 }
 
 void AnimationSequencePlayer::playIntroSeq19_20() {
@@ -1008,7 +1004,6 @@ void AnimationSequencePlayer::loadIntroSeq3_4() {
 	_system->copyRectToScreen(_offscreenBuffer, 320, 0, 0, kScreenWidth, kScreenHeight);
 	fadeInPalette();
 	_updateScreenPicture = false;
-	_frameTime = 2;
 }
 
 void AnimationSequencePlayer::playIntroSeq3_4() {
@@ -1071,7 +1066,6 @@ void AnimationSequencePlayer::loadIntroSeq9_10() {
 	_picBufPtr = loadPicture("graphics/lab.pic");
 	openAnimation(0, "graphics/intro2.flc");
 	_updateScreenWidth = 0;
-	_frameTime = 2;
 }
 
 void AnimationSequencePlayer::playIntroSeq9_10() {
@@ -1098,7 +1092,6 @@ void AnimationSequencePlayer::playIntroSeq9_10() {
 void AnimationSequencePlayer::loadIntroSeq21_22() {
 	loadSounds(1, 2);
 	openAnimation(0, "graphics/intro3.flc");
-	_frameTime = 2;
 }
 
 void AnimationSequencePlayer::playIntroSeq21_22() {
@@ -1112,7 +1105,6 @@ void AnimationSequencePlayer::playIntroSeq21_22() {
 void AnimationSequencePlayer::loadIntroSeq13_14() {
 	loadSounds(3, 1);
 	openAnimation(0, "graphics/allseg02.flc");
-	_frameTime = 2;
 }
 
 void AnimationSequencePlayer::playIntroSeq13_14() {
@@ -1126,7 +1118,6 @@ void AnimationSequencePlayer::playIntroSeq13_14() {
 void AnimationSequencePlayer::loadIntroSeq15_16() {
 	loadSounds(3, 2);
 	openAnimation(0, "graphics/allseg03.flc");
-	_frameTime = 2;
 }
 
 void AnimationSequencePlayer::playIntroSeq15_16() {
@@ -1140,7 +1131,6 @@ void AnimationSequencePlayer::playIntroSeq15_16() {
 void AnimationSequencePlayer::loadIntroSeq27_28() {
 	loadSounds(3, 3);
 	openAnimation(0, "graphics/allseg04.flc");
-	_frameTime = 2;
 }
 
 void AnimationSequencePlayer::playIntroSeq27_28() {

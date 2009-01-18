@@ -269,14 +269,7 @@ void TuckerEngine::loadImage(const char *fname, uint8 *dst, int type) {
 	}
 	if (type != 0) {
 		f.seek(-768, SEEK_END);
-		for (int i = 0; i < 256; ++i) {
-			if (type == 2) {
-				isSpeechSoundPlaying();
-			}
-			for (int c = 0; c < 3; ++c) {
-				_currentPalette[3 * i + c] = f.readByte();
-			}
-		}
+		f.read(_currentPalette, 768);
 		setBlackPalette();
 	}
 }
@@ -486,7 +479,6 @@ void TuckerEngine::loadObj() {
 	debug(2, "loadObj() partNum %d locationNum %d", _partNum, _locationNum);
 	handleNewPartSequence();
 	_currentPartNum = _partNum;
-
 
 	char filename[40];
 	sprintf(filename, "objtxt%d.c", _partNum);
