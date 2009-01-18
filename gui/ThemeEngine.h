@@ -100,6 +100,7 @@ enum DrawData {
 	kDDNone = -1
 };
 
+// FIXME: TextData is really a bad name, not conveying what this enum is about.
 enum TextData {
 	kTextDataNone = -1,
 	kTextDataDefault = 0,
@@ -334,9 +335,7 @@ public:
 	 *	@param name The representing name, as found on Theme Description XML files.
 	 *	@see kDrawDataDefaults[]
 	 */
-	DrawData getDrawDataId(const Common::String &name) const;
-
-	TextData getTextDataId(const Common::String &name) const;
+	DrawData parseDrawDataId(const Common::String &name) const;
 
 	TextData getTextData(DrawData ddId) const;
 
@@ -372,7 +371,7 @@ public:
 	 *	@param file Name of the font file.
 	 *	@param r, g, b Color of the font.
 	 */
-	bool addFont(const Common::String &fontName, const Common::String &file, int r, int g, int b);
+	bool addFont(TextData textId, const Common::String &file, int r, int g, int b);
 
 
 	/**
@@ -385,9 +384,9 @@ public:
 
 	/**
 	 *	Adds a new TextStep from the ThemeParser. This will be deprecated/removed once the
-	 *	new Font API is in place.
+	 *	new Font API is in place. FIXME: Is that so ???
 	 */
-	bool addTextData(const Common::String &drawDataId, const Common::String &textDataId, Graphics::TextAlign alignH, TextAlignVertical alignV);
+	bool addTextData(const Common::String &drawDataId, TextData textId, Graphics::TextAlign alignH, TextAlignVertical alignV);
 
 protected:
 	/**
@@ -502,17 +501,6 @@ protected:
 	 *	Called from updateScreen()
 	 */
 	void renderDirtyScreen();
-
-	/**
-	 *	Calculates the background threshold offset of a given DrawData item.
-	 *	After fully loading all DrawSteps of a DrawData item, this function must be
-	 *	called in order to calculate if such draw steps would be drawn outside of
-	 *	the actual widget drawing zone (e.g. shadows). If this is the case, a constant
-	 *	value will be added when restoring the background of the widget.
-	 *
-	 *	@param type DrawData type of the widget.
-	 */
-	void calcBackgroundOffset(DrawData type);
 
 	/**
 	 *	Generates a DrawQueue item and enqueues it so it's drawn to the screen

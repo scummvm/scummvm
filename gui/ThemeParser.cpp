@@ -38,6 +38,31 @@
 
 namespace GUI {
 
+struct TextDataInfo {
+	TextData id;
+	const char *name;
+};
+
+static const TextDataInfo kTextDataDefaults[] = {
+	{kTextDataDefault,		"text_default"},
+	{kTextDataHover,		"text_hover"},
+	{kTextDataDisabled,		"text_disabled"},
+	{kTextDataInverted,		"text_inverted"},
+	{kTextDataButton,		"text_button"},
+	{kTextDataButtonHover,	"text_button_hover"},
+	{kTextDataNormalFont,	"text_normal"}
+};
+
+
+static TextData parseTextDataId(const Common::String &name) {
+	for (int i = 0; i < kTextDataMAX; ++i)
+		if (name.compareToIgnoreCase(kTextDataDefaults[i].name) == 0)
+			return kTextDataDefaults[i].id;
+
+	return kTextDataNone;
+}
+
+
 ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {
 
 	_drawFunctions["circle"]  = &Graphics::VectorRenderer::drawCallback_CIRCLE;
@@ -134,7 +159,8 @@ bool ThemeParser::parserCallback_font(ParserNode *node) {
 	else if (!parseIntegerKey(node->values["color"].c_str(), 3, &red, &green, &blue))
 		return parserError("Error parsing color value for font definition.");
 
-	if (!_theme->addFont(node->values["id"], node->values["file"], red, green, blue))
+	TextData textDataId = parseTextDataId(node->values["id"]);
+	if (!_theme->addFont(textDataId, node->values["file"], red, green, blue))
 		return parserError("Error loading Font in theme engine.");
 
 	return true;
@@ -186,7 +212,8 @@ bool ThemeParser::parserCallback_text(ParserNode *node) {
 		alignH = Graphics::kTextAlignRight;
 	else if (node->values["horizontal_align"] == "center")
 		alignH = Graphics::kTextAlignCenter;
-	else return parserError("Invalid value for text alignment.");
+	else
+		return parserError("Invalid value for text alignment.");
 
 	if (node->values["vertical_align"] == "top")
 		alignV = GUI::ThemeEngine::kTextAlignVTop;
@@ -194,10 +221,14 @@ bool ThemeParser::parserCallback_text(ParserNode *node) {
 		alignV = GUI::ThemeEngine::kTextAlignVCenter;
 	else if (node->values["vertical_align"] == "bottom")
 		alignV = GUI::ThemeEngine::kTextAlignVBottom;
-	else return parserError("Invalid value for text alignment.");
+	else
+		return parserError("Invalid value for text alignment.");
 
-	if (!_theme->addTextData(getParentNode(node)->values["id"], node->values["font"], alignH, alignV))
-		return parserError("Error adding Text Data for '%s'.", getParentNode(node)->values["id"].c_str());
+	Common::String id = getParentNode(node)->values["id"];
+	TextData textDataId = parseTextDataId(node->values["font"]);
+
+	if (!_theme->addTextData(id, textDataId, alignH, alignV))
+		return parserError("Error adding Text Data for '%s'.", id.c_str());
 
 	return true;
 }
@@ -506,6 +537,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 			return parserError("Error parsing Layout properties of '%s'.", var.c_str());
 
 	} else {
+		// FIXME: Shouldn't we distinguish the name/id and the label of a widget?
 		var = node->values["name"];
 		int width = -1;
 		int height = -1;

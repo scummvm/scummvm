@@ -62,7 +62,7 @@ struct WidgetDrawData {
 	/** List of all the steps needed to draw this widget */
 	Common::List<Graphics::DrawStep> _steps;
 
-	int _textDataId;
+	TextData _textDataId;
 	Graphics::TextAlign _textAlignH;
 	GUI::ThemeEngine::TextAlignVertical _textAlignV;
 
@@ -72,6 +72,16 @@ struct WidgetDrawData {
 	uint16 _backgroundOffset;
 
 	bool _buffer;
+
+
+	/**
+	 *	Calculates the background threshold offset of a given DrawData item.
+	 *	After fully loading all DrawSteps of a DrawData item, this function must be
+	 *	called in order to calculate if such draw steps would be drawn outside of
+	 *	the actual widget drawing zone (e.g. shadows). If this is the case, a constant
+	 *	value will be added when restoring the background of the widget.
+	 */
+	void calcBackgroundOffset();
 };
 
 class ThemeItem {
@@ -189,21 +199,6 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 
 	{kDDCaret,						"caret",		false,	kDDNone},
 	{kDDSeparator,					"separator",	true,	kDDNone},
-};
-
-struct TextDataInfo {
-	TextData id;
-	const char *name;
-};
-
-static const TextDataInfo kTextDataDefaults[] = {
-	{kTextDataDefault,		"text_default"},
-	{kTextDataHover,		"text_hover"},
-	{kTextDataDisabled,		"text_disabled"},
-	{kTextDataInverted,		"text_inverted"},
-	{kTextDataButton,		"text_button"},
-	{kTextDataButtonHover,	"text_button_hover"},
-	{kTextDataNormalFont,	"text_normal"}
 };
 
 
@@ -486,10 +481,10 @@ void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 	_vectorRenderer->setSurface(&_screen);
 }
 
-void ThemeEngine::calcBackgroundOffset(DrawData type) {
+void WidgetDrawData::calcBackgroundOffset() {
 	uint maxShadow = 0;
-	for (Common::List<Graphics::DrawStep>::const_iterator step = _widgets[type]->_steps.begin();
-		step != _widgets[type]->_steps.end(); ++step) {
+	for (Common::List<Graphics::DrawStep>::const_iterator step = _steps.begin();
+		step != _steps.end(); ++step) {
 		if ((step->autoWidth || step->autoHeight) && step->shadow > maxShadow)
 			maxShadow = step->shadow;
 
@@ -497,7 +492,7 @@ void ThemeEngine::calcBackgroundOffset(DrawData type) {
 			maxShadow = step->bevel;
 	}
 
-	_widgets[type]->_backgroundOffset = maxShadow;
+	_backgroundOffset = maxShadow;
 }
 
 void ThemeEngine::restoreBackground(Common::Rect r) {
@@ -511,15 +506,14 @@ void ThemeEngine::restoreBackground(Common::Rect r) {
  *	Theme elements management
  *********************************************************/
 void ThemeEngine::addDrawStep(const Common::String &drawDataId, const Graphics::DrawStep &step) {
-	DrawData id = getDrawDataId(drawDataId);
+	DrawData id = parseDrawDataId(drawDataId);
 
 	assert(_widgets[id] != 0);
 	_widgets[id]->_steps.push_back(step);
 }
 
-bool ThemeEngine::addTextData(const Common::String &drawDataId, const Common::String &textDataId, Graphics::TextAlign alignH, TextAlignVertical alignV) {
-	DrawData id = getDrawDataId(drawDataId);
-	TextData textId = getTextDataId(textDataId);
+bool ThemeEngine::addTextData(const Common::String &drawDataId, TextData textId, Graphics::TextAlign alignH, TextAlignVertical alignV) {
+	DrawData id = parseDrawDataId(drawDataId);
 
 	if (id == -1 || textId == -1 || !_widgets[id])
 		return false;
@@ -531,9 +525,7 @@ bool ThemeEngine::addTextData(const Common::String &drawDataId, const Common::St
 	return true;
 }
 
-bool ThemeEngine::addFont(const Common::String &fontId, const Common::String &file, int r, int g, int b) {
-	TextData textId = getTextDataId(fontId);
-
+bool ThemeEngine::addFont(TextData textId, const Common::String &file, int r, int g, int b) {
 	if (textId == -1)
 		return false;
 
@@ -551,7 +543,7 @@ bool ThemeEngine::addFont(const Common::String &fontId, const Common::String &fi
 			_texts[textId]->_fontPtr = loadFont(file);
 
 			if (!_texts[textId]->_fontPtr)
-				error("Couldn't load %s font '%s'", fontId.c_str(), file.c_str());
+				error("Couldn't load font '%s'", file.c_str());
 
 			FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
 		}
@@ -587,17 +579,17 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 }
 
 bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
-	DrawData data_id = getDrawDataId(data);
+	DrawData id = parseDrawDataId(data);
 
-	if (data_id == -1)
+	if (id == -1)
 		return false;
 
-	if (_widgets[data_id] != 0)
-		delete _widgets[data_id];
+	if (_widgets[id] != 0)
+		delete _widgets[id];
 
-	_widgets[data_id] = new WidgetDrawData;
-	_widgets[data_id]->_buffer = kDrawDataDefaults[data_id].buffer;
-	_widgets[data_id]->_textDataId = -1;
+	_widgets[id] = new WidgetDrawData;
+	_widgets[id]->_buffer = kDrawDataDefaults[id].buffer;
+	_widgets[id]->_textDataId = kTextDataNone;
 
 	return true;
 }
@@ -625,7 +617,7 @@ void ThemeEngine::loadTheme(const Common::String &themeId) {
 		if (_widgets[i] == 0) {
 			warning("Missing data asset: '%s'", kDrawDataDefaults[i].name);
 		} else {
-			calcBackgroundOffset((DrawData)i);
+			_widgets[i]->calcBackgroundOffset();
 		}
 	}
 }
@@ -1221,20 +1213,12 @@ TextData ThemeEngine::getTextData(DrawData ddId) const {
 }
 
 
-DrawData ThemeEngine::getDrawDataId(const Common::String &name) const {
+DrawData ThemeEngine::parseDrawDataId(const Common::String &name) const {
 	for (int i = 0; i < kDrawDataMAX; ++i)
 		if (name.compareToIgnoreCase(kDrawDataDefaults[i].name) == 0)
 			return kDrawDataDefaults[i].id;
 
 	return kDDNone;
-}
-
-TextData ThemeEngine::getTextDataId(const Common::String &name) const {
-	for (int i = 0; i < kTextDataMAX; ++i)
-		if (name.compareToIgnoreCase(kTextDataDefaults[i].name) == 0)
-			return kTextDataDefaults[i].id;
-
-	return kTextDataNone;
 }
 
 /**********************************************************
