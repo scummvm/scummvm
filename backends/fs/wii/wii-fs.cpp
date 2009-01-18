@@ -134,12 +134,13 @@ WiiFilesystemNode::WiiFilesystemNode(const Common::String &p) {
 		return;
 	}
 
-	_path = p;
+	_path = Common::normalizePath(p, '/');
 
-	if (_path.hasSuffix(":/"))
-		_displayName = _path;
-	else
-		_displayName = lastPathComponent(_path, '/');
+	// "fat:" is not a valid directory, but "fat:/" is
+	if (_path.lastChar() == ':')
+		_path += '/';
+
+	_displayName = lastPathComponent(_path, '/');
 
 	struct stat st;
 	if (!stat(_path.c_str(), &st))
@@ -154,12 +155,13 @@ WiiFilesystemNode::WiiFilesystemNode(const Common::String &p, const struct stat 
 		return;
 	}
 
-	_path = p;
+	_path = Common::normalizePath(p, '/');
 
-	if (_path.hasSuffix(":/"))
-		_displayName = _path;
-	else
-		_displayName = lastPathComponent(_path, '/');
+	// "fat:" is not a valid directory, but "fat:/" is
+	if (_path.lastChar() == ':')
+		_path += '/';
+
+	_displayName = lastPathComponent(_path, '/');
 
 	setFlags(st);
 }
@@ -209,9 +211,6 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 		if ((mode == Common::FSNode::kListFilesOnly && isDir) ||
 			(mode == Common::FSNode::kListDirectoriesOnly && !isDir))
 			continue;
-
-		if (isDir)
-			newPath += '/';
 
 		list.push_back(new WiiFilesystemNode(newPath, &st));
 	}
