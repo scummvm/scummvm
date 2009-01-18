@@ -37,7 +37,6 @@ namespace Agi {
 #define IDS_MSA_PATH_OBJ	"obj/%s.ooo"
 #define IDS_MSA_PATH_PIC	"%d.pic"
 #define IDS_MSA_PATH_LOGO	"logos.bcg"
-#define IDS_MSA_PATH_EXE	"mickey.exe"
 
 #define IDS_MSA_INVENTORY	"MICKEY IS CARRYING THE FOLLOWING:"
 #define IDS_MSA_CRYSTALS	"%s CRYSTALS"
@@ -56,13 +55,22 @@ const char IDS_MSA_PLANETS[][10] = {
 	"PLUTO.  ", "IO.     ", "MARS.   ", "OBERON. "
 };
 
+const char IDS_MSA_ERRORS[][40] = {
+	"THAT CANNOT BE UNDERSTOOD",
+	"TRY GOING THERE INSTEAD",
+	"THAT CAN'T BE DONE",
+	"MICKEY WOULDN'T WANT TO DO THAT!",
+	"WHICH DIRECTION?",
+	"THAT DOESN'T MAKE SENSE!",
+	"MICKEY WOULDN'T WANT TO DO THAT!",
+	"MICKEY TAKES THE ROPE"
+};
+
 // patch Mickey.exe offset 0x21E to value 0x01 to enable debug mode
 
 const char IDS_MSA_INSERT_DISK[][40] = {
 	"Please insert disk 1 and press any key", "Please insert disk 2 and press any key"
 };
-
-#define IDS_MSA_ERROR_EXE_NOT_FOUND		"File 'mickey.exe' not found in folder 'mickey\'."
 
 // max values
 
@@ -121,9 +129,6 @@ const char IDS_MSA_INSERT_DISK[][40] = {
 
 #define IDI_MSA_PIC_WIDTH	140
 #define IDI_MSA_PIC_HEIGHT	159
-#define IDI_MSA_PIC_X0		10
-#define IDI_MSA_PIC_Y0		0
-#define IDI_MSA_PIC_FLAGS	IDF_AGI_PIC_V2
 
 // pictures
 
@@ -474,10 +479,8 @@ struct MSA_SND_NOTE {
 
 // file offset modifiers
 
-#define IDI_MSA_OFS_INVALID				0xFE9A
 #define IDI_MSA_OFS_DAT					0x0002
 #define IDI_MSA_OFS_EXE					0x35C0
-#define IDI_MSA_OFS_OBJECT_DATA			0x58E8
 
 // actions
 
@@ -581,10 +584,6 @@ enum ENUM_MSA_SOUND {
 
 // message offsets within mickey.exe
 
-const int IDO_MSA_ERROR[] = {
-	0x4C9C, 0x4CB9, 0x4CD4, 0x4CEA, 0x4D0D, 0x4D20, 0x4D3B, 0x4D5E
-};
-
 const int IDO_MSA_HIDDEN_MSG[] = {
 	0x8C44, 0x8C83, 0x8D23, 0x8D97, 0x8E2A
 };
@@ -659,8 +658,6 @@ const int IDO_MSA_NEXT_PIECE[IDI_MSA_MAX_PLANET][5] = {
 #define IDO_MSA_XL30_SPEAKING					0x4725
 #define IDO_MSA_CRYSTAL_PIECE_FOUND				0x600C
 
-#define IDO_MSA_FONT							0x7EDC // 256 chars, 2048 bytes  (00110010 * 8 = character)
-
 #define IDO_MSA_ROOM_TEXT						0x4B80
 #define IDO_MSA_ROOM_TEXT_OFFSETS				0x8B01
 #define IDO_MSA_ROOM_OBJECT						0x475C
@@ -668,21 +665,12 @@ const int IDO_MSA_NEXT_PIECE[IDI_MSA_MAX_PLANET][5] = {
 #define IDO_MSA_ROOM_OBJECT_XY_OFFSETS			0x8EA8
 #define IDO_MSA_PIC_SHIP_LIGHT					0x8F38
 #define IDO_MSA_XTAL_ROOM_XY					0x97F8
-//#define IDO_MSA_PLANET_INFO						0x6048
 #define IDO_MSA_ROOM_MENU_FIX					0x4a27
-#define IDO_MSA_ROOM_MENU_FIX_OFFSETS			0x5E7A
 
 // offsets to offset arrays
 
-#define IDOFS_MSA_INTERPRETER_ERRORS			0x4c8e
-#define IDOFS_MSA_HIDDEN_FEATURE				0x8c3a
 #define IDOFS_MSA_MENU_PATCHES					0x5e7a
 #define IDOFS_MSA_SOUND_DATA					0x9deb
-#define IDOFS_MSA_NEXT_PLANET_CLUES				0x4d7c
-#define IDOFS_MSA_PLANET_INFORMATION			0x6048
-#define IDOFS_MSA_PLANET_ADDRESSES				0x5e40
-#define IDOFS_MSA_OBJECT_DATA					0x8ea8
-#define IDOFS_MSA_EXTENDED_ROOM_DESCRIPTIONS	0x8b01
 
 // game structure
 
@@ -756,6 +744,7 @@ protected:
 	bool chooseY_N(int, bool);
 	int choose1to9(int);
 	void printStr(char*);
+	void printLine(const char*);
 	void printExeStr(int);
 	void printExeMsg(int);
 	void printDesc(int);

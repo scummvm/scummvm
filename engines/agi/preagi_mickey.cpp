@@ -51,7 +51,7 @@ int Mickey::getDat(int iRoom) {
 
 void Mickey::readExe(int ofs, uint8 *buffer, long buflen) {
 	Common::File infile;
-	if (!infile.open(IDS_MSA_PATH_EXE))
+	if (!infile.open("mickey.exe"))
 		return;
 	infile.seek(ofs, SEEK_SET);
 	infile.read(buffer, buflen);
@@ -155,6 +155,16 @@ void Mickey::printStr(char *buffer) {
 	_vm->_system->updateScreen();
 }
 
+void Mickey::printLine(const char *buffer) {
+	_vm->clearTextArea();
+
+	_vm->drawStr(22, 18 - strlen(buffer) / 2, IDA_DEFAULT, buffer);
+
+	// Show the string on screen
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen();
+}
+
 void Mickey::printExeStr(int ofs) {
 	uint8 buffer[256] = {0};
 
@@ -174,7 +184,7 @@ void Mickey::printExeMsg(int ofs) {
 }
 
 void Mickey::printDatString(int iStr) {
-	char *buffer = (char *)malloc(256);
+	char buffer[256];
 	int iDat = getDat(_game.iRoom);
 
 	MSA_DAT_HEADER hdr;
@@ -193,7 +203,6 @@ void Mickey::printDatString(int iStr) {
 	infile.close();
 
 	printStr(buffer);
-	free(buffer);
 }
 
 void Mickey::printDesc(int iRoom) {
@@ -1431,7 +1440,8 @@ bool Mickey::parse(int cmd, int arg) {
 		_game.iRoom = arg;
 		return true;
 	case IDI_MSA_ACTION_SHOW_INT_STR:
-		printExeMsg(IDO_MSA_ERROR[arg]);
+		printLine(IDS_MSA_ERRORS[arg]);
+		waitAnyKey(true);
 		break;
 	case IDI_MSA_ACTION_SHOW_DAT_STR:
 		printDatMessage(arg);
@@ -1456,7 +1466,8 @@ bool Mickey::parse(int cmd, int arg) {
 			_game.iRmObj[_game.iRoom] = IDI_MSA_OBJECT_NONE;
 			_game.iRmMenu[_game.iRoom] = 3;
 			getItem(IDI_MSA_ITEM_ROPE);
-			printExeMsg(IDO_MSA_ERROR[7]);
+			printLine(IDS_MSA_ERRORS[7]);
+			waitAnyKey(true);
 		} else {
 			_game.iRmMenu[_game.iRoom] = 1;
 			printDatMessage(11);
