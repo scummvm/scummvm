@@ -336,7 +336,7 @@ void LoLEngine::gui_drawCompass() {
 
 	if (_updateUnk2 == -1) {
 		_compassDirectionIndex = -1;
-		_updateUnk2 = _unkPara2 << 6;
+		_updateUnk2 = _currentDirection << 6;
 	}
 
 	int t = ((_updateUnk2 + 4) >> 3) & 0x1f;

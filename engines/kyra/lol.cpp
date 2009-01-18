@@ -96,7 +96,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_unkFlag = 0;
 	_scriptBoolSkipExec = _boolScriptFuncDone = false;
 	_unkScriptByte = 0;
-	_unkPara2 = 0;
+	_currentDirection = 0;
 	_currentBlock = 0;
 	memset(_scriptExecutedFuncs, 0, 18 * sizeof(uint16));
 
@@ -140,15 +140,19 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_dscBlockMap = _dscDoor1 = _dscShapeOvlIndex = 0;
 	_dscBlockIndex = 0;
 	_dscDimMap = 0;
-	_dscDoorX = _dscDoorY = 0;
+	_dscDoorMonsterX = _dscDoorMonsterY = 0;
 	_dscDoor4 = 0;
 
 	_ingameSoundList = 0;
+	_ingameSoundIndex = 0;
 	_ingameSoundListSize = 0;
+	_musicTrackMap = 0;
+	_curMusicTheme = -1;
+	_curMusicFileExt = 0;
 
 	_sceneDrawVar1 = _sceneDrawVar2 = _sceneDrawVar3 = _wllProcessFlag = 0;
 	_unkCmzU1 = _unkCmzU2 = 0;
-	_shpDoorX = _shpDoorY = _doorScaleW = _doorScaleH = 0;
+	_shpDmX = _shpDmY = _dmScaleW = _dmScaleH = 0;
 }
 
 LoLEngine::~LoLEngine() {
@@ -685,7 +689,7 @@ const char *LoLEngine::getLangString(uint16 id) {
 	if (id & 0x4000)
 		buffer = _landsFile;
 	else
-		buffer = 0;	// TODO
+		buffer = _levelLangFile;
 
 	if (!buffer)
 		return 0;
@@ -1429,6 +1433,24 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 	}
 }
 
+void LoLEngine::snd_playTrack(int track) {
+	if (_unkGameFlag & 2) {
+		char filename[13];
+		int t = (track - 250) * 3;
+
+		if (_curMusicTheme != _musicTrackMap[t] || _curMusicFileExt != (char)_musicTrackMap[t + 1]) {
+			snprintf(filename, sizeof(filename), "LORE%02d%c", _musicTrackMap[t], (char)_musicTrackMap[t + 1]);
+			_sound->loadSoundFile(filename);
+			_curMusicTheme = _musicTrackMap[t];
+			_curMusicFileExt = (char)_musicTrackMap[t + 1];
+		}
+		
+		_sound->playTrack(_musicTrackMap[t + 2]);
+	} else {
+
+	}
+}
+
 #pragma mark - Opcodes
 
 typedef Common::Functor1Mem<EMCState*, int, LoLEngine> OpcodeV2;
@@ -1459,7 +1481,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x08
 	Opcode(o2_testGameFlag);
-	Opcode(o2_loadLevelSupplemenaryFiles);
+	Opcode(o2_loadLevelGraphics);
 	Opcode(o2_loadCmzFile);
 	Opcode(o2_loadMonsterShapes);
 
@@ -1574,7 +1596,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x54
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o2_loadLangFile);
 	OpcodeUnImpl();
 
 	// 0x58
@@ -1593,7 +1615,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o2_playTrack);
 
 	// 0x64
 	OpcodeUnImpl();

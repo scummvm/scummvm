@@ -2,6 +2,7 @@ const ExtractEntry lolCDFile2[] = {
 	{ lolCharacterDefs, 0x00029D60, 0x0002A1F2 },
 	{ lolIngameSfxFiles, 0x0002A330, 0x0002AC22 },
 	{ lolIngameSfxIndex, 0x0002AC22, 0x0002B00A },
+	{ lolMusicTrackMap, 0x0002A240, 0x0002A330 },	
 	{ lolGMSfxIndex, 0x0002B010, 0x0002B10A },
 	{ lolMT32SfxIndex, 0x0002B110, 0x0002B20A },
 	{ lolSpellProperties, 0x0002B5D0, 0x0002B6E8 },

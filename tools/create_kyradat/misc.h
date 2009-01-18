@@ -485,6 +485,7 @@ const int lolCDFile2Need[] = {
 	lolCharacterDefs,
 	lolIngameSfxFiles,
 	lolIngameSfxIndex,
+	lolMusicTrackMap,
 	lolGMSfxIndex,
 	lolMT32SfxIndex,
 	lolSpellProperties,

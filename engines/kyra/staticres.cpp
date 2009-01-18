@@ -43,7 +43,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 34
+#define RESFILE_VERSION 35
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -371,6 +371,7 @@ bool StaticResource::init() {
 		{ lolCharacterDefs, lolCharData, "CHARACTER.DEF" },
 		{ lolIngameSfxFiles, kStringList, "SFXFILES.TRA" },
 		{ lolIngameSfxIndex, kRawData, "SFXINDEX.MAP" },
+		{ lolMusicTrackMap, kRawData, "MUSIC.MAP" },
 		{ lolIngameGMSfxIndex, kRawData, "SFX_GM.MAP" },
 		{ lolIngameMT32SfxIndex, kRawData, "SFX_MT32.MAP" },
 		{ lolSpellProperties, lolSpellData, "SPELLS.DEF" },
@@ -1628,6 +1629,7 @@ void KyraEngine_MR::initStaticResource() {
 void LoLEngine::initStaticResource() {
 	_charDefaults = _staticres->loadCharData(lolCharacterDefs, _charDefaultsSize);	
 	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(lolIngameSfxIndex, _ingameSoundIndexSize);
+	_musicTrackMap = _staticres->loadRawData(lolMusicTrackMap, _musicTrackMapSize);
 	_ingameGMSoundIndex = _staticres->loadRawData(lolIngameGMSfxIndex, _ingameGMSoundIndexSize);
 	_ingameMT32SoundIndex = _staticres->loadRawData(lolIngameMT32SfxIndex, _ingameMT32SoundIndexSize);
 	_spellProperties = _staticres->loadSpellData(lolSpellProperties, _spellPropertiesSize);
@@ -1650,13 +1652,13 @@ void LoLEngine::initStaticResource() {
 	_dscDim2 = (const int8 *)_staticres->loadRawData(lolDscDimData2, _dscDim2Size);
 	_dscBlockMap = _staticres->loadRawData(lolDscBlockMap, _dscBlockMapSize);
 	_dscDimMap = _staticres->loadRawData(lolDscDimMap, _dscDimMapSize);
-	_dscDoorScaleTable = (const uint16 *)_staticres->loadRawDataBe16(lolDscDoorScale, _dscDoorScaleTableSize);
+	_dscDoorMonsterScaleTable = (const uint16 *)_staticres->loadRawDataBe16(lolDscDoorScale, _dscDoorMonsterScaleTableSize);
 	_dscShapeOvlIndex = _staticres->loadRawData(lolDscOvlIndex, _dscShapeOvlIndexSize);
 	_dscDoor4 = (const uint16 *)_staticres->loadRawDataBe16(lolDscDoor4, _dscDoor4Size);
 	_dscBlockIndex = (const int8 *)_staticres->loadRawData(lolDscBlockIndex, _dscBlockIndexSize);
 	_dscDoor1 = _staticres->loadRawData(lolDscDoor1, _dscDoor1Size);
-	_dscDoorX = (const int16 *)_staticres->loadRawDataBe16(lolDscDoorX, _dscDoorXSize);
-	_dscDoorY = (const int16 *)_staticres->loadRawDataBe16(lolDscDoorY, _dscDoorYSize);
+	_dscDoorMonsterX = (const int16 *)_staticres->loadRawDataBe16(lolDscDoorX, _dscDoorMonsterXSize);
+	_dscDoorMonsterY = (const int16 *)_staticres->loadRawDataBe16(lolDscDoorY, _dscDoorMonsterYSize);
 
 	const char *const *tmpSndList = _staticres->loadStrings(lolIngameSfxFiles, _ingameSoundListSize);
 	_ingameSoundList = new char*[_ingameSoundListSize];

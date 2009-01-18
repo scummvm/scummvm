@@ -179,6 +179,7 @@ enum kExtractID {
 	lolCharacterDefs,
 	lolIngameSfxFiles,
 	lolIngameSfxIndex,
+	lolMusicTrackMap,
 	lolGMSfxIndex,
 	lolMT32SfxIndex,
 	lolSpellProperties,

@@ -60,7 +60,7 @@ void LoLEngine::loadLevel(int index) {
 	_loadLevelFlag = 1;
 
 	char filename[16];
-	sprintf(filename, "level%d.ini", index);
+	sprintf(filename, "LEVEL%d.INI", index);
 	
 	int f = _levelFlagUnk & (1 << ((index + 0xff) & 0xff));
 
@@ -69,7 +69,7 @@ void LoLEngine::loadLevel(int index) {
 	if (f)
 		loadLevelCMZ(index);
 
-	sprintf(filename, "level%d.inf", index);
+	sprintf(filename, "LEVEL%d.INF", index);
 	runInfScript(filename);
 
 	addLevelItems();
@@ -471,6 +471,7 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int b) {
 			uint8 **of = &_buf4[(monsterIndex << 7) + (i << 5) + (ii << 1)];
 			int s = (i << 4) + ii + 17;
 			*of = _screen->makeShapeCopy(p, s);
+			
 			////TODO
 		}
 	}*/
@@ -577,16 +578,16 @@ void LoLEngine::loadLevelShpDat(const char *shpFile, const char *datFile, bool f
 	}
 }
 
-void LoLEngine::loadLevelSupplemenaryFiles(const char *file, int specialColor, int weight, int vcnLen, int vmpLen, const char *langFile) {
+void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight, int vcnLen, int vmpLen, const char *palFile) {
 	if (file) {
 		_lastSpecialColor = specialColor;
 		_lastSpecialColorWeight = weight;
 		strcpy(_lastSuppFile, file);
-		if (langFile) {
-			strcpy(_lastSuppLangFile, langFile);
-			_lastSuppLangFilePtr = _lastSuppLangFile;
+		if (palFile) {
+			strcpy(_lastOverridePalFile, palFile);
+			_lastOverridePalFilePtr = _lastOverridePalFile;
 		} else {
-			_lastSuppLangFilePtr = 0;
+			_lastOverridePalFilePtr = 0;
 		}
 	}
 	
@@ -615,13 +616,14 @@ void LoLEngine::loadLevelSupplemenaryFiles(const char *file, int specialColor, i
 	memcpy(_vcnExpTable, v, 128);
 	v += 128;
 	
-	if (_lastSuppLangFilePtr) {
-		if (_levelLangFile)
-			delete[] _levelLangFile;
-		_levelLangFile = _res->fileData(_lastSuppLangFilePtr, 0);
+	if (_lastOverridePalFilePtr) {
+		uint8 *tpal = _res->fileData(_lastOverridePalFilePtr, 0);
+		memcpy(_screen->_currentPalette, tpal, 384);
+		delete[] tpal;		
+	} else {
+		memcpy(_screen->_currentPalette, v, 384);
 	}
 
-	memcpy(_screen->_currentPalette, v, 384);
 	v += 384;
 	/*uint8 tmpPal = new uint8[384];
 	memcpy(tmpPal, _screen->_currentPalette + 384, 384);
@@ -757,7 +759,7 @@ void LoLEngine::drawScene(int pageNum) {
 		updateSceneWindow();
 	}
 
-	generateBlockDrawingBuffer(_currentBlock, _unkPara2);
+	generateBlockDrawingBuffer(_currentBlock, _currentDirection);
 	drawVcnBlocks(_vcnBlocks, _blockDrawingBuffer, _vcnShift, _sceneDrawPage1);
 	drawSceneShapes();
 
@@ -782,13 +784,13 @@ void LoLEngine::updateSceneWindow() {
 }
 
 void LoLEngine::generateBlockDrawingBuffer(int block, int b) {
-	_sceneDrawVar1 = _dscBlockMap[_unkPara2];
-	_sceneDrawVar2 = _dscBlockMap[_unkPara2 + 4];
-	_sceneDrawVar3 = _dscBlockMap[_unkPara2 + 8];
+	_sceneDrawVar1 = _dscBlockMap[_currentDirection];
+	_sceneDrawVar2 = _dscBlockMap[_currentDirection + 4];
+	_sceneDrawVar3 = _dscBlockMap[_currentDirection + 8];
 
 	memset(_blockDrawingBuffer, 0, 660 * sizeof(uint16));
 
-	_wllProcessFlag = ((block >> 5) + (block & 0x1f) + _unkPara2) & 1;
+	_wllProcessFlag = ((block >> 5) + (block & 0x1f) + _currentDirection) & 1;
 
 	if (_wllProcessFlag)
 		generateBlockDrawingBufferF1(0, 15, 1, -330, 22, 15);
@@ -1094,8 +1096,8 @@ void LoLEngine::drawSceneShapes() {
 
 		drawIceShapes(t, 0);
 
-		//if (_curBlockCaps[t]->itemIndex && (w & 0x80))
-			//sub_3AA55(t);
+		if (_curBlockCaps[t]->itemIndex && (w & 0x80))
+			drawMonstersAndItems(t);
 
 		drawIceShapes(t, 1);
 
@@ -1216,7 +1218,7 @@ void LoLEngine::drawDecorations(int index) {
 		if (!scaleW || !scaleH)
 			continue;
 
-		uint8 d = (_unkPara2 + _dscUnk1[s]) & 3;
+		uint8 d = (_currentDirection + _dscUnk1[s]) & 3;
 		int8 l = _wllShapeMap[_curBlockCaps[index]->unk[d]];
 
 		uint8 *shapeData = 0;
@@ -1287,13 +1289,17 @@ void LoLEngine::drawIceShapes(int index, int iceShapeIndex) {
 		return;
 }
 
+void LoLEngine::drawMonstersAndItems(int index) {
+
+}
+
 void LoLEngine::drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w, int h, int flags) {
-	uint8 c = _dscDoor1[(_unkPara2 << 5) + unk2];
+	uint8 c = _dscDoor1[(_currentDirection << 5) + unk2];
 	int r = (c / 5) + 5 * _dscDimMap[index];
 	uint16 d = _dscShapeOvlIndex[r];
 	uint16 t = (index << 5) + c;
 
-	_shpDoorY = _dscDoorY[t] + 120;
+	_shpDmY = _dscDoorMonsterY[t] + 120;
 
 	if (flags & 1) {
 		// TODO
@@ -1303,40 +1309,40 @@ void LoLEngine::drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w,
 
 	if (flags & 2) {		
 		uint8 dimW = _dscDimMap[index];		
-		_doorScaleW = _dscDoorScaleTable[dimW << 1];
-		_doorScaleH = _dscDoorScaleTable[(dimW << 1) + 1];
+		_dmScaleW = _dscDoorMonsterScaleTable[dimW << 1];
+		_dmScaleH = _dscDoorMonsterScaleTable[(dimW << 1) + 1];
 		u = _dscDoor4[dimW];
 	}
 
 	d += 2;
 
-	if (!_doorScaleW || !_doorScaleH)
+	if (!_dmScaleW || !_dmScaleH)
 		return;
 
-	int s = _screen->getShapeScaledHeight(shape, _doorScaleH) >> 1;
+	int s = _screen->getShapeScaledHeight(shape, _dmScaleH) >> 1;
 
 	if (w)
-		w = (w * _doorScaleW) >> 8;
+		w = (w * _dmScaleW) >> 8;
 
 	if (h)
-		h = (h * _doorScaleH) >> 8;
+		h = (h * _dmScaleH) >> 8;
 
-	_shpDoorX = _dscDoorX[t] + w + 200;
-	_shpDoorY = _shpDoorY + 4 - s + h - u;
+	_shpDmX = _dscDoorMonsterX[t] + w + 200;
+	_shpDmY = _shpDmY + 4 - s + h - u;
 
 	if (d > 7)
 		d = 7;
 
 	uint8 *ovl = _screen->getLevelOverlay(d);
-	int doorScaledWitdh = _screen->getShapeScaledWidth(shape, _doorScaleW);
+	int doorScaledWitdh = _screen->getShapeScaledWidth(shape, _dmScaleW);
 	
-	_shpDoorX -= (doorScaledWitdh >> 1);
-	_shpDoorY -= s;
+	_shpDmX -= (doorScaledWitdh >> 1);
+	_shpDmY -= s;
 
-	drawDoorShapes(shape, table, _shpDoorX, _shpDoorY, flags, ovl);
+	drawDoorOrMonsterShape(shape, table, _shpDmX, _shpDmY, flags, ovl);
 }
 
-void LoLEngine::drawDoorShapes(uint8 *shape, uint8 *table, int x, int y, int flags, const uint8 *ovl) {
+void LoLEngine::drawDoorOrMonsterShape(uint8 *shape, uint8 *table, int x, int y, int flags, const uint8 *ovl) {
 	int flg = 0;
 
 	if (flags & 0x10)
@@ -1350,14 +1356,14 @@ void LoLEngine::drawDoorShapes(uint8 *shape, uint8 *table, int x, int y, int fla
 
 	if (flg & 0x1000) {
 		if (table)
-			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x9104, table, ovl, 1, _tlcTable1, _tlcTable2, _doorScaleW, _doorScaleH);			
+			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x9104, table, ovl, 1, _tlcTable1, _tlcTable2, _dmScaleW, _dmScaleH);			
 		else
-			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x1104, ovl, 1, _tlcTable1, _tlcTable2, _doorScaleW, _doorScaleH);			
+			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x1104, ovl, 1, _tlcTable1, _tlcTable2, _dmScaleW, _dmScaleH);			
 	} else {
 		if (table)
-			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x8104, table, ovl, 1, _doorScaleW, _doorScaleH);
+			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x8104, table, ovl, 1, _dmScaleW, _dmScaleH);
 		else
-			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x104, ovl, 1, _doorScaleW, _doorScaleH);
+			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x104, ovl, 1, _dmScaleW, _dmScaleH);
 	}
 }
 

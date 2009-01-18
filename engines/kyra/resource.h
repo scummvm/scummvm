@@ -214,6 +214,7 @@ enum kKyraResources {
 	lolCharacterDefs,
 	lolIngameSfxFiles,
 	lolIngameSfxIndex,
+	lolMusicTrackMap,
 	lolIngameGMSfxIndex,
 	lolIngameMT32SfxIndex,
 	lolSpellProperties,

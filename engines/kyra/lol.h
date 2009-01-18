@@ -260,8 +260,10 @@ private:
 	// sound
 	void snd_playVoiceFile(int) { /* XXX */ }
 	void snd_playSoundEffect(int track, int volume);
+	void snd_playTrack(int track);
 
 	int _lastSfxTrack;
+	char _curMusicFileExt;
 
 	int _unkAudioSpecOffs;
 	bool _unkLangAudio;
@@ -269,6 +271,8 @@ private:
 	char **_ingameSoundList;
 	int _ingameSoundListSize;
 
+	const uint8 *_musicTrackMap;
+	int _musicTrackMapSize;
 	const uint16 *_ingameSoundIndex;
 	int _ingameSoundIndexSize;
 	const uint8 *_ingameGMSoundIndex;
@@ -308,7 +312,7 @@ private:
 	EMCData _scriptData;
 	bool _scriptBoolSkipExec;
 	uint8 _unkScriptByte;
-	uint16 _unkPara2;
+	uint16 _currentDirection;
 	uint16 _currentBlock;
 	bool _boolScriptFuncDone;
 	int16 _scriptExecutedFuncs[18];
@@ -318,7 +322,7 @@ private:
 	// emc opcode
 	int o2_setGameFlag(EMCState *script);
 	int o2_testGameFlag(EMCState *script);
-	int o2_loadLevelSupplemenaryFiles(EMCState *script);
+	int o2_loadLevelGraphics(EMCState *script);
 	int o2_loadCmzFile(EMCState *script);
 	int o2_loadMonsterShapes(EMCState *script);
 	int o2_allocItemPropertiesBuffer(EMCState *script);
@@ -333,6 +337,8 @@ private:
 	int o2_setGlobalVar(EMCState *script);
 	int o2_mapShapeToBlock(EMCState *script);
 	int o2_resetBlockShapeAssignment(EMCState *script);
+	int o2_loadLangFile(EMCState *script);
+	int o2_playTrack(EMCState *script);
 	int o2_setPaletteBrightness(EMCState *script);
 	int o2_assignCustomSfx(EMCState *script);
 
@@ -443,7 +449,7 @@ private:
 	void loadMonsterShapes(const char *file, int monsterIndex, int b);
 	void releaseMonsterShapes(int monsterIndex);
 	void loadLevelShpDat(const char *shpFile, const char *datFile, bool flag);
-	void loadLevelSupplemenaryFiles(const char *file, int specialColor, int weight, int vcnLen, int vmpLen, const char *langFile);
+	void loadLevelGraphics(const char *file, int specialColor, int weight, int vcnLen, int vmpLen, const char *palFile);
 
 	void drawScene(int pageNum);
 
@@ -460,8 +466,9 @@ private:
 	void drawLevelModifyScreenDim(int dim, int16 x1, int16 y1, int16 x2, int16 y2);
 	void drawDecorations(int index);
 	void drawIceShapes(int index, int iceShapeIndex);
+	void drawMonstersAndItems(int index);
 	void drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w, int h, int flags);
-	void drawDoorShapes(uint8 *shape, uint8 *table, int x, int y, int flags, const uint8 *ovl);
+	void drawDoorOrMonsterShape(uint8 *shape, uint8 *table, int x, int y, int flags, const uint8 *ovl);
 	void drawScriptShapes(int pageNum);
 	void updateSceneWindow();
 
@@ -488,8 +495,8 @@ private:
 	uint8 **_levelShapes;
 
 	char _lastSuppFile[12];
-	char _lastSuppLangFile[12];
-	char *_lastSuppLangFilePtr;
+	char _lastOverridePalFile[12];
+	char *_lastOverridePalFilePtr;
 	int _lastSpecialColor;
 	int _lastSpecialColorWeight;
 
@@ -533,10 +540,10 @@ private:
 	LevelShapeProperty *_levelFileData;
 
 	uint8 *_doorShapes[2];
-	int16 _shpDoorX;
-	int16 _shpDoorY;
-	int16 _doorScaleW;
-	int16 _doorScaleH;
+	int16 _shpDmX;
+	int16 _shpDmY;
+	int16 _dmScaleW;
+	int16 _dmScaleH;
 
 	uint8 _unkGameFlag;
 
@@ -575,8 +582,8 @@ private:
 	int _dscBlockMapSize;
 	const uint8 *_dscDimMap;
 	int _dscDimMapSize;
-	const uint16 *_dscDoorScaleTable;
-	int _dscDoorScaleTableSize;
+	const uint16 *_dscDoorMonsterScaleTable;
+	int _dscDoorMonsterScaleTableSize;
 	const uint16 *_dscDoor4;
 	int _dscDoor4Size;
 	const uint8 *_dscShapeOvlIndex;
@@ -585,10 +592,10 @@ private:
 	int _dscBlockIndexSize;
 	const uint8 *_dscDoor1;
 	int _dscDoor1Size;
-	const int16 *_dscDoorX;
-	int _dscDoorXSize;
-	const int16 *_dscDoorY;
-	int _dscDoorYSize;
+	const int16 *_dscDoorMonsterX;
+	int _dscDoorMonsterXSize;
+	const int16 *_dscDoorMonsterY;
+	int _dscDoorMonsterYSize;
 	
 	int _sceneDrawPage1;
 	int _sceneDrawPage2;
