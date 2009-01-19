@@ -115,6 +115,9 @@ void OSystem_Wii::quit() {
 	deinitEvents();
 	deinitSfx();
 	deinitGfx();
+
+	// umount all async filesystems
+	WiiFilesystemFactory::asyncHandler(false, NULL);
 }
 
 bool OSystem_Wii::hasFeature(Feature f) {
@@ -210,5 +213,10 @@ FilesystemFactory *OSystem_Wii::getFilesystemFactory() {
 void OSystem_Wii::getTimeAndDate(struct tm &t) const {
 	time_t curTime = time(0);
 	t = *localtime(&curTime);
+}
+
+void OSystem_Wii::engineInit() {
+	// umount not required filesystems for this game
+	WiiFilesystemFactory::asyncHandler(false, &ConfMan.get("path"));
 }
 

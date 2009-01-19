@@ -167,8 +167,10 @@ public:
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual Audio::Mixer *getMixer();
 	virtual Common::TimerManager *getTimerManager();
-	FilesystemFactory *getFilesystemFactory();
-	void getTimeAndDate(struct tm &t) const;
+	virtual FilesystemFactory *getFilesystemFactory();
+	virtual void getTimeAndDate(struct tm &t) const;
+
+	virtual void engineInit();
 };
 
 #endif

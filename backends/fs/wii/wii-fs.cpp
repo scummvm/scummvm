@@ -33,6 +33,10 @@
 
 #include <gctypes.h>
 
+#ifndef GAMECUBE
+#include <di/di.h>
+#endif
+
 /**
  * Implementation of the ScummVM file system API based on Wii.
  *
@@ -77,7 +81,59 @@ public:
 
 	virtual Common::SeekableReadStream *openForReading();
 	virtual Common::WriteStream *openForWriting();
+
+	static void asyncHandler(bool umount, const Common::String *path);
 };
+
+void WiiFilesystemNode::asyncHandler(bool mount, const Common::String *path) {
+#ifndef GAMECUBE
+	static bool di_tryMount = true;
+	static bool di_isMounted = false;
+
+	// umount not required filesystems
+	if (!mount) {
+		if (di_isMounted && (!path || (path && !path->hasPrefix("dvd:/")))) {
+			printf("umount ISO9660\n");
+			ISO9660_Unmount();
+			DI_StopMotor();
+			di_tryMount = false;
+			di_isMounted = false;
+		}
+
+		if (!path)
+			return;
+	}
+
+	// re-mount DVD if data from its path has been requested. in this case, we
+	// have to wait for DI_Mount() to finish
+	if (!di_tryMount && !di_isMounted && path && path->hasPrefix("dvd:/")) {
+		printf("remount ISO9660\n");
+		DI_Mount();
+
+		while (DI_GetStatus() & DVD_INIT)
+			usleep(20 * 1000);
+
+		di_tryMount = true;
+	}
+
+	if (!di_tryMount)
+		return;
+
+	// check if the async DI_Mount() call has finished
+	if (DI_GetStatus() & DVD_READY) {
+		di_tryMount = false;
+
+		printf("mount ISO9660\n");
+		if (ISO9660_Mount()) {
+			di_isMounted = true;
+			printf("ISO9660 mounted\n");
+		} else {
+			DI_StopMotor();
+			printf("ISO9660 mount failed\n");
+		}
+	}
+#endif
+}
 
 // gets all registered devoptab devices
 bool WiiFilesystemNode::getDevopChildren(AbstractFSList &list, ListMode mode, bool hidden) const {
@@ -86,6 +142,8 @@ bool WiiFilesystemNode::getDevopChildren(AbstractFSList &list, ListMode mode, bo
 
 	if (mode == Common::FSNode::kListFilesOnly)
 		return true;
+
+	asyncHandler(true, NULL);
 
 	// skip in, out and err
 	for (i = 3; i < STD_MAX; ++i) {
@@ -141,6 +199,8 @@ WiiFilesystemNode::WiiFilesystemNode(const Common::String &p) {
 		_path += '/';
 
 	_displayName = lastPathComponent(_path, '/');
+
+	asyncHandler(true, &_path);
 
 	struct stat st;
 	if (!stat(_path.c_str(), &st))

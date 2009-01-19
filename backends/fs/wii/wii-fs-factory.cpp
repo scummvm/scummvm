@@ -45,5 +45,10 @@ AbstractFSNode *WiiFilesystemFactory::makeCurrentDirectoryFileNode() const {
 AbstractFSNode *WiiFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new WiiFilesystemNode(path);
 }
+
+void WiiFilesystemFactory::asyncHandler(bool mount, const Common::String *path) {
+	WiiFilesystemNode::asyncHandler(mount, path);
+}
+
 #endif
 

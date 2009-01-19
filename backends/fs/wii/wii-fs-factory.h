@@ -37,6 +37,8 @@ public:
 	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
 	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
 
+	static void asyncHandler(bool mount, const Common::String *path);
+
 protected:
 	WiiFilesystemFactory() {};
 

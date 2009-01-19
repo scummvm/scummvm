@@ -27,11 +27,15 @@
 #include <ogc/machine/processor.h>
 #include <fat.h>
 
-#include "osystem.h"
+#ifndef GAMECUBE
+#include <di/di.h>
+#endif
 
 #ifdef DEBUG_WII_GDB
 #include <debug.h>
 #endif
+
+#include "osystem.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -79,6 +83,10 @@ void wii_memstats(void) {
 int main(int argc, char *argv[]) {
 	s32 res;
 
+#ifndef GAMECUBE
+	DI_Init();
+#endif
+
 	VIDEO_Init();
 	PAD_Init();
 	AUDIO_Init(NULL);
@@ -100,6 +108,11 @@ int main(int argc, char *argv[]) {
 	SYS_SetResetCallback(reset_cb);
 #ifndef GAMECUBE
 	SYS_SetPowerCallback(power_cb);
+#endif
+
+#ifndef GAMECUBE
+	// initial async mount for the browser, see wii-fs.cpp
+	DI_Mount();
 #endif
 
 	if (!fatInitDefault()) {
@@ -134,6 +147,10 @@ int main(int argc, char *argv[]) {
 
 #ifdef LIBFAT_READAHEAD_CACHE
 	fatUnmountDefault();
+#endif
+
+#ifndef GAMECUBE
+	DI_Close();
 #endif
 
 	if (power_btn_pressed) {
