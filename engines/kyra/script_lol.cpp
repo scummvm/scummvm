@@ -150,7 +150,7 @@ int LoLEngine::o2_allocItemPropertiesBuffer(EMCState *script) {
 }
 
 int LoLEngine::o2_setItemProperty(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_setItemProperty(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_setItemProperty(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
 	ItemProperty *tmp = &_itemProperties[stackPos(0)];
 	
 	tmp->nameStringId = stackPos(1);
