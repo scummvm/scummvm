@@ -1,10 +1,20 @@
-# this enables port specific debug messages and redirects stdout/err over
-# usbgecko in memcard slot b
-DEBUG_WII = 1
+# This toggle redirects stdout/err over a USB Gecko adapter in memcard slot b.
+# It is safe to keep this enabled, even if no such adapter is present.
+DEBUG_WII_USBGECKO = 1
 
-# builds a gamecube version. cleanup object files before flipping this
+# This toggle enables simple memory statistics. The amount of physical
+# available memory will be printed to stderr when it shrinks.
+# The buckets of the allocator are not taken into account.
+DEBUG_WII_MEMSTATS = 0
+
+# This toggle sets up the GDB stub. Upon a crash or a reset button press
+# attach a remote GDB via `make debug` (requires a USB Gecko adapter).
+DEBUG_WII_GDB = 0
+
+# Builds a Gamecube version. Cleanup object files before flipping this!
 GAMECUBE = 0
 
+# List of game engines to compile in. Comment the line to disable an engine.
 ENABLE_SCUMM = STATIC_PLUGIN
 ENABLE_SCUMM_7_8 = STATIC_PLUGIN
 ENABLE_HE = STATIC_PLUGIN
@@ -32,19 +42,29 @@ ENABLE_TINSEL = STATIC_PLUGIN
 ENABLE_TOUCHE = STATIC_PLUGIN
 ENABLE_TUCKER = STATIC_PLUGIN
 
+# Scalers are currently not supported by this port.
 DISABLE_HQ_SCALERS = 1
 DISABLE_SCALERS = 1
 
-USE_ZLIB = 1
-USE_MAD = 1
-USE_TREMOR = 1
-USE_FLAC = 1
-#USE_MPEG2 = 1
+# MT32 emulation, included in ScummVM. The Gamecube does not have enough
+# memory to use it.
 ifeq ($(GAMECUBE),1)
 USE_MT32EMU = 0
 else
 USE_MT32EMU = 1
 endif
+
+# Additional features to compile in. zLib and MAD are inluded in libogc, the
+# others require installed headers and crosscompiled static libraries.
+USE_ZLIB = 1
+USE_MAD = 1
+USE_TREMOR = 1
+USE_FLAC = 1
+#USE_MPEG2 = 1
+
+#
+# Don't change anything below this line unless you know what you are doing.
+#
 
 srcdir = ../../..
 VPATH = $(srcdir)
@@ -95,37 +115,45 @@ LDFLAGS  += $(addprefix -L,$(LIBDIR))
 CXXFLAGS += -I$(DEVKITPRO)/3rd/wii/include
 LDFLAGS  += -L$(DEVKITPRO)/3rd/wii/lib
 
-ifdef DEBUG_WII
-CXXFLAGS += -DDEBUG_WII
+ifeq ($(DEBUG_WII_USBGECKO),1)
+CXXFLAGS += -DDEBUG_WII_USBGECKO
 LIBS     += -ldb
 endif
 
-ifdef USE_ZLIB
+ifeq ($(DEBUG_WII_MEMSTATS),1)
+CXXFLAGS += -DDEBUG_WII_MEMSTATS
+endif
+
+ifeq ($(DEBUG_WII_GDB),1)
+CXXFLAGS += -DDEBUG_WII_GDB
+endif
+
+ifeq ($(USE_ZLIB),1)
 CXXFLAGS += -DUSE_ZLIB
 LIBS     += -lz
 endif
 
-ifdef USE_MAD
+ifeq ($(USE_MAD),1)
 CXXFLAGS += -DUSE_MAD -I$(DEVKITPRO)/libogc/include/mad
 LIBS     += -lmad
 endif
 
-ifdef USE_TREMOR
+ifeq ($(USE_TREMOR),1)
 CXXFLAGS += -DUSE_VORBIS -DUSE_TREMOR
 LIBS     += -lvorbisidec
 endif
 
-ifdef USE_FLAC
+ifeq ($(USE_FLAC),1)
 CXXFLAGS += -DUSE_FLAC
 LIBS     += -lFLAC
 endif
 
-ifdef USE_MPEG2
+ifeq ($(USE_MPEG2),1)
 CXXFLAGS += -DUSE_MPEG2
 LIBS     += -lmpeg2
 endif
 
-ifdef USE_MT32EMU
+ifeq ($(USE_MT32EMU),1)
 CXXFLAGS += -DUSE_MT32EMU
 endif
 

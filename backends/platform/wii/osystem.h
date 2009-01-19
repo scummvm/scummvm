@@ -44,6 +44,10 @@ extern "C" {
 extern bool reset_btn_pressed;
 extern bool power_btn_pressed;
 
+#ifdef DEBUG_WII_MEMSTATS
+extern void wii_memstats(void);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

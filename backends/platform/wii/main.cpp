@@ -24,11 +24,12 @@
 #include <errno.h>
 #include <unistd.h>
 
+#include <ogc/machine/processor.h>
 #include <fat.h>
 
 #include "osystem.h"
 
-#ifdef DEBUG_WII
+#ifdef DEBUG_WII_GDB
 #include <debug.h>
 #endif
 
@@ -40,12 +41,40 @@ bool reset_btn_pressed = false;
 bool power_btn_pressed = false;
 
 void reset_cb(void) {
+#ifdef DEBUG_WII_GDB
+	printf("attach gdb now\n");
+	_break();
+	SYS_SetResetCallback(reset_cb);
+#else
 	reset_btn_pressed = true;
+#endif
 }
 
 void power_cb(void) {
 	power_btn_pressed = true;
 }
+
+#ifdef DEBUG_WII_MEMSTATS
+void wii_memstats(void) {
+	static u32 min_free = UINT_MAX;
+	static u32 temp_free;
+	static u32 level;
+
+	_CPU_ISR_Disable(level);
+#ifdef GAMECUBE
+	temp_free = (u32) SYS_GetArenaHi() - (u32) SYS_GetArenaLo();
+#else
+	temp_free = (u32) SYS_GetArena1Hi() - (u32) SYS_GetArena1Lo() +
+				(u32) SYS_GetArena2Hi() - (u32) SYS_GetArena2Lo();
+#endif
+	_CPU_ISR_Restore(level);
+
+	if (temp_free < min_free) {
+		min_free = temp_free;
+		fprintf(stderr, "free: %8u\n", min_free);
+	}
+}
+#endif
 
 int main(int argc, char *argv[]) {
 	s32 res;
@@ -54,9 +83,12 @@ int main(int argc, char *argv[]) {
 	PAD_Init();
 	AUDIO_Init(NULL);
 
-#ifdef DEBUG_WII
+#ifdef DEBUG_WII_USBGECKO
 	CON_EnableGecko(1, false);
-	//DEBUG_Init(GDBSTUB_DEVICE_USB, 1);
+#endif
+
+#ifdef DEBUG_WII_GDB
+	DEBUG_Init(GDBSTUB_DEVICE_USB, 1);
 #endif
 
 	printf("startup as ");

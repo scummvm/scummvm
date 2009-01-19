@@ -275,6 +275,10 @@ void OSystem_Wii::updateScreen() {
 	if (now - _lastScreenUpdate < 1000 / MAX_FPS)
 		return;
 
+#ifdef DEBUG_WII_MEMSTATS
+	wii_memstats();
+#endif
+
 	_lastScreenUpdate = now;
 
 	h = 0;
