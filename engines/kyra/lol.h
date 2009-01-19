@@ -108,15 +108,13 @@ struct LevelBlockProperty {
 };
 
 struct LVL {
-	uint8 field_0;
-	uint8 field_1;
+	uint16 itemIndexUnk;
 	uint8 field_2;
-	uint8 field_3;
-	uint8 field_4;
+	uint16 field_3;
 	uint16 blockPropertyIndex;
 	uint16 p_1a;
 	uint16 p_1b;
-	uint8 field_B;
+	int8 level;
 	uint16 p_2a;
 	uint16 p_2b;
 	uint8 field_10;
@@ -258,12 +256,18 @@ private:
 	void setupTimers() {}
 
 	// sound
-	void snd_playVoiceFile(int) { /* XXX */ }
+	void loadTalkFile(int index);
+	void snd_playVoiceFile(int);
 	void snd_playSoundEffect(int track, int volume);
-	void snd_playTrack(int track);
+	void snd_loadSoundFile(int track);
+	int snd_playTrack(int track);
+	int snd_stopMusic();
 
 	int _lastSfxTrack;
+	int _lastMusicTrack;
+	int _curMusicFileIndex;
 	char _curMusicFileExt;
+	int _curTlkFile;	
 
 	int _unkAudioSpecOffs;
 	bool _unkLangAudio;
@@ -316,8 +320,8 @@ private:
 	uint16 _currentBlock;
 	bool _boolScriptFuncDone;
 	int16 _scriptExecutedFuncs[18];
-
 	uint16 _gameFlags[15];
+	uint16 _unkEMC46[16];
 
 	// emc opcode
 	int o2_setGameFlag(EMCState *script);
@@ -334,11 +338,14 @@ private:
 	int o2_loadLevelShapes(EMCState *script);
 	int o2_closeLevelShapeFile(EMCState *script);
 	int o2_loadDoorShapes(EMCState *script);
+	int o2_setMusicTrack(EMCState *script);
+	int o2_getUnkArrayVal(EMCState *script);
+	int o2_setUnkArrayVal(EMCState *script);
 	int o2_setGlobalVar(EMCState *script);
 	int o2_mapShapeToBlock(EMCState *script);
 	int o2_resetBlockShapeAssignment(EMCState *script);
 	int o2_loadLangFile(EMCState *script);
-	int o2_playTrack(EMCState *script);
+	int o2_loadSoundFile(EMCState *script);
 	int o2_setPaletteBrightness(EMCState *script);
 	int o2_assignCustomSfx(EMCState *script);
 
@@ -451,6 +458,11 @@ private:
 	void loadLevelShpDat(const char *shpFile, const char *datFile, bool flag);
 	void loadLevelGraphics(const char *file, int specialColor, int weight, int vcnLen, int vmpLen, const char *palFile);
 
+	void resetItems(int flag);
+	void resetLvlBuffer();
+	void resetBlockProperties();
+	bool testWallInvisibility(int block, int direction);
+
 	void drawScene(int pageNum);
 
 	void generateBlockDrawingBuffer(int block, int direction);
@@ -551,6 +563,7 @@ private:
 	uint8 _unkGameFlag;
 
 	uint8 *_tempBuffer5120;
+	uint8 *_tmpData136;
 	
 	const char *const * _levelDatList;
 	int _levelDatListSize;

@@ -354,6 +354,21 @@ int LoLEngine::o2_loadDoorShapes(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::o2_setMusicTrack(EMCState *script) {
+	_curMusicTheme = stackPos(0);
+	return 1;
+}
+
+int LoLEngine::o2_getUnkArrayVal(EMCState *script) {
+	return _unkEMC46[stackPos(0)];
+}
+
+int LoLEngine::o2_setUnkArrayVal(EMCState *script) {
+	int a=stackPos(0);
+	_unkEMC46[stackPos(0)] = stackPos(1);
+	return 1;
+}
+
 int LoLEngine::o2_setGlobalVar(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_setGlobalVar(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	//uint16 a = stackPos(1);
@@ -431,9 +446,9 @@ int LoLEngine::o2_loadLangFile(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::o2_playTrack(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_playTrack(%p) (%d)", (const void *)script, stackPos(0));
-	snd_playTrack(stackPos(0));
+int LoLEngine::o2_loadSoundFile(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_loadSoundFile(%p) (%d)", (const void *)script, stackPos(0));
+	snd_loadSoundFile(stackPos(0));
 	return 1;
 }
 

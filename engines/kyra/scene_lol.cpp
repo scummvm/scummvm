@@ -26,6 +26,7 @@
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/resource.h"
+#include "kyra/sound.h"
 
 #include "common/endian.h"
 
@@ -36,7 +37,7 @@ void LoLEngine::loadLevel(int index) {
 	setMouseCursorToIcon(0x85);
 	_scriptFuncIndex = 0;
 
-	// TODO
+	snd_stopMusic();
 
 	updatePortraits();
 
@@ -44,18 +45,24 @@ void LoLEngine::loadLevel(int index) {
 		delete[] _levelShapes[i];
 		_levelShapes[i] = 0;
 	}
-
 	_emc->unload(&_scriptData);
 
-	_currentLevel = index;
-	_charFlagUnk = 0;
+	resetItems(1);
+	resetLvlBuffer();
+	resetBlockProperties();	
 
 	releaseMonsterShapes(0);
 	releaseMonsterShapes(1);
 
-	//TODO
+	// TODO
+	
+	_currentLevel = index;
+	_charFlagUnk = 0;
 
-	//loadTalkFile(index);
+	// TODO
+
+	loadTalkFile(index);
+
 	loadLevelWLL(index, true);
 	_loadLevelFlag = 1;
 
@@ -85,7 +92,8 @@ void LoLEngine::loadLevel(int index) {
 
 	_screen->setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
 	setMouseCursorToItemInHand();
-	//TODO
+
+	snd_playTrack(_curMusicTheme);
 }
 
 void LoLEngine::addLevelItems() {
@@ -106,7 +114,7 @@ int LoLEngine::initCmzWithScript(int block) {
 
 	while (i) {
 		void *t = cmzGetItemOffset(i);
-		i = (i & 0x8000) ? ((LVL*)t)->field_0 : ((ItemInPlay*)t)->itemIndexUnk;
+		i = (i & 0x8000) ? ((LVL*)t)->itemIndexUnk : ((ItemInPlay*)t)->itemIndexUnk;
 		if (!(i & 0x8000))
 			continue;
 
@@ -678,6 +686,59 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	delete s;
 
 	_loadSuppFilesFlag = 1;
+}
+
+void LoLEngine::resetItems(int flag) {
+	for (int i = 0; i < 1024; i++) {
+		_levelBlockProperties[i].field_8 = 5;
+		uint16 id = _levelBlockProperties[i].itemIndex;
+		LVL * r = 0;
+
+		while (id & 0x8000) {
+			LVL * r = (LVL*) cmzGetItemOffset(id);
+			id = r->itemIndexUnk;
+		}
+
+		if (!id)
+			continue;
+
+		ItemInPlay *it = &_itemsInPlay[id];
+		it->level = _currentLevel;
+		it->blockPropertyIndex = i;
+		r->itemIndexUnk = 0;
+	}
+
+	if (flag)
+		memset(_tmpData136, 0, 136);
+}
+
+void LoLEngine::resetLvlBuffer() {
+	memset(_lvlBuffer, 0, 30 * sizeof(LVL));
+	for (int i = 0; i < 30; i++)
+		_lvlBuffer[i].field_14 = 0x10;
+}
+
+void LoLEngine::resetBlockProperties() {
+	for (int i = 0; i < 1024; i++) {
+		LevelBlockProperty *l = &_levelBlockProperties[i];
+		if (l->flags & 0x10) {
+			l->flags &= 0xef;
+			if (testWallInvisibility(i, 0) && testWallInvisibility(i, 1))
+				l->flags |= 0x40;
+		} else {
+			if (l->flags & 0x40)
+				l->flags &= 0xbf;
+			else if (l->flags & 0x80)
+				l->flags &= 0x7f;			
+		}
+	}
+}
+
+bool LoLEngine::testWallInvisibility(int block, int direction) {
+	uint8 w = _levelBlockProperties[block].walls[direction];
+	if (_wllVmpMap[w] || _wllShapeMap[w] || _levelBlockProperties[block].flags & 0x80)
+		return false;
+	return true;
 }
 
 void LoLEngine::turnOnLamp() {
@@ -1301,6 +1362,7 @@ void LoLEngine::drawIceShapes(int index, int iceShapeIndex) {
 }
 
 void LoLEngine::drawMonstersAndItems(int index) {
+
 
 }
 

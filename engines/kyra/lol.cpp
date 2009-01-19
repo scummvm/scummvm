@@ -63,7 +63,9 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_landsFile = 0;
 	_levelLangFile = 0;
 
+	_lastMusicTrack = -1;
 	_lastSfxTrack = -1;
+	_curTlkFile = -1;
 
 	memset(_moneyColumnHeight, 0, 5);
 	_credits = 0;
@@ -122,6 +124,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 	_lampOilStatus = _brightness = _lampStatusUnk = 0;
 	_tempBuffer5120 = 0;
+	_tmpData136 = 0;
 	_lvlBuffer = 0;
 	_unkGameFlag = 0;
 
@@ -149,6 +152,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_musicTrackMap = 0;
 	_curMusicTheme = -1;
 	_curMusicFileExt = 0;
+	_curMusicFileIndex = -1;
 
 	_sceneDrawVar1 = _sceneDrawVar2 = _sceneDrawVar3 = _wllProcessFlag = 0;
 	_unkCmzU1 = _unkCmzU2 = 0;
@@ -229,6 +233,7 @@ LoLEngine::~LoLEngine() {
 	delete[] _lvlShapeBottom;
 	delete[] _lvlShapeLeftRight;
 	delete[] _tempBuffer5120;
+	delete[] _tmpData136;
 	delete[] _lvlBuffer;
 	delete[] _levelBlockProperties;
 	delete[] _lvl415;
@@ -332,7 +337,11 @@ Common::Error LoLEngine::init() {
 	_tempBuffer5120 = new uint8[5120];
 	memset(_tempBuffer5120, 0, 5120);
 
+	_tmpData136 = new uint8[136];
+	memset(_tmpData136, 0, 136);
+
 	memset(_gameFlags, 0, 15 * sizeof(uint16));
+	memset(_unkEMC46, 0, 16 * sizeof(uint16));	
 
 	_lvlShpHeader = 0;
 	_levelFileData = 0;
@@ -468,7 +477,7 @@ void LoLEngine::preInit() {
 
 	_eventList.clear();
 
-	//loadTalkFile(0);
+	loadTalkFile(0);
 
 	char filename[32];
 	snprintf(filename, sizeof(filename), "LANDS.%s", _languageExt[_lang]);
@@ -1402,6 +1411,27 @@ void LoLEngine::setupScreenDims() {
 	_screen->modifyScreenDim(5, 85, 123, 233, 18);
 }
 
+void LoLEngine::loadTalkFile(int index) {
+	char file[8];
+	
+	if (index == _curTlkFile)
+		return;
+
+	if (_curTlkFile >= 0) {
+		snprintf(file, sizeof(file), "%02d.TLK", _curTlkFile);
+		_res->unloadPakFile(file);
+	}
+
+	snprintf(file, sizeof(file), "%02d.TLK", index);
+	_res->loadPakFile(file);
+	
+	_curTlkFile = index;
+}
+
+void LoLEngine::snd_playVoiceFile(int) {
+
+}
+
 void LoLEngine::snd_playSoundEffect(int track, int volume) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "LoLEngine::snd_playSoundEffect(%d, %d)", track, volume);
 
@@ -1433,22 +1463,51 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 	}
 }
 
-void LoLEngine::snd_playTrack(int track) {
+void LoLEngine::snd_loadSoundFile(int track) {
 	if (_unkGameFlag & 2) {
 		char filename[13];
 		int t = (track - 250) * 3;
 
-		if (_curMusicTheme != _musicTrackMap[t] || _curMusicFileExt != (char)_musicTrackMap[t + 1]) {
+		if (_curMusicFileIndex != _musicTrackMap[t] || _curMusicFileExt != (char)_musicTrackMap[t + 1]) {
+			snd_stopMusic();
 			snprintf(filename, sizeof(filename), "LORE%02d%c", _musicTrackMap[t], (char)_musicTrackMap[t + 1]);
 			_sound->loadSoundFile(filename);
-			_curMusicTheme = _musicTrackMap[t];
+			_curMusicFileIndex = _musicTrackMap[t];
 			_curMusicFileExt = (char)_musicTrackMap[t + 1];
+		} else {
+			snd_stopMusic();
 		}
-		
-		_sound->playTrack(_musicTrackMap[t + 2]);
 	} else {
-
+		//XXX
 	}
+}
+
+int LoLEngine::snd_playTrack(int track) {
+	if (track == -1)
+		return _lastMusicTrack;
+	
+	int res = _lastMusicTrack;
+	_lastMusicTrack = track;
+
+	if (_unkGameFlag & 2) {
+		snd_loadSoundFile(track);
+		int t = (track - 250) * 3;
+		_sound->playTrack(_musicTrackMap[t + 2]);
+	}
+
+	return res;
+}
+
+int LoLEngine::snd_stopMusic() {
+	if (_unkGameFlag & 2) {
+		if (_sound->isPlaying()) {
+			_sound->beginFadeOut();
+			_system->delayMillis(3 * _tickLength);
+		}
+
+		_sound->haltTrack();
+	}
+	return snd_playTrack(-1);
 }
 
 #pragma mark - Opcodes
@@ -1512,7 +1571,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x1C
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o2_setMusicTrack);
 	OpcodeUnImpl();
 
 	// 0x20
@@ -1534,9 +1593,9 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	// 0x2C
-	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	OpcodeUnImpl();	
+	Opcode(o2_getUnkArrayVal);
+	Opcode(o2_setUnkArrayVal);
 	OpcodeUnImpl();
 
 	// 0x30
@@ -1615,7 +1674,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	Opcode(o2_playTrack);
+	Opcode(o2_loadSoundFile);
 
 	// 0x64
 	OpcodeUnImpl();
