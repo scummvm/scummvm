@@ -1,7 +1,12 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.svn.sourceforge.net/viewvc/scummvm/?view=log
 
-0.13.0 (????-??-??)
+0.14.0
+ New Games:
+   - Added support for Discworld.
+   - Added support for Discworld 2 - Missing Presumed ...!?
+
+0.13.0 (2009-02-??)
  General:
    - Added MIDI driver for Atari ST / FreeMint.
    - Added a 'Load' button to the Launcher (not supported by all engines).
@@ -12,8 +17,6 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Blue's 123 Time Activities.
    - Added support for Blue's ABC Time Activities.
    - Added support for Bud Tucker in Double Trouble.
-   - Added support for Discworld.
-   - Added support for Discworld 2 - Missing Presumed ...!?
    - Added support for The 7th Guest.
 
  KYRA:
