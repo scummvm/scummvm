@@ -100,10 +100,10 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_currentBlock = 0;
 	memset(_scriptExecutedFuncs, 0, 18 * sizeof(uint16));
 
-	_wllVmpMap = _wllBuffer3 = _wllBuffer4 = _wllBuffer5 = 0;
+	_wllVmpMap = _wllBuffer3 = _wllBuffer4 = _wllWallFlags = 0;
 	_wllShapeMap = 0;
 	_lvlShapeTop = _lvlShapeBottom = _lvlShapeLeftRight = 0;
-	_cmzBuffer = 0;
+	_levelBlockProperties = 0;
 	_lvlBuffer = 0;
 	_lvl415 = 0;
 	_lvlBlockIndex = _lvlShapeIndex = 0;
@@ -224,13 +224,13 @@ LoLEngine::~LoLEngine() {
 	delete[] _wllShapeMap;
 	delete[] _wllBuffer3;
 	delete[] _wllBuffer4;
-	delete[] _wllBuffer5;
+	delete[] _wllWallFlags;
 	delete[] _lvlShapeTop;
 	delete[] _lvlShapeBottom;
 	delete[] _lvlShapeLeftRight;
 	delete[] _tempBuffer5120;
 	delete[] _lvlBuffer;
-	delete[] _cmzBuffer;
+	delete[] _levelBlockProperties;
 	delete[] _lvl415;
 
 	delete[] _lvlShpHeader;
@@ -301,8 +301,8 @@ Common::Error LoLEngine::init() {
 	memset(_wllBuffer3, 0, 80);
 	_wllBuffer4 = new uint8[80];
 	memset(_wllBuffer4, 0, 80);
-	_wllBuffer5 = new uint8[80];
-	memset(_wllBuffer5, 0, 80);
+	_wllWallFlags = new uint8[80];
+	memset(_wllWallFlags, 0, 80);
 	_lvlShapeTop = new int16[18];
 	memset(_lvlShapeTop, 0, 18 * sizeof(int16));
 	_lvlShapeBottom = new int16[18];
@@ -318,8 +318,8 @@ Common::Error LoLEngine::init() {
 	_sceneWindowBuffer = new uint8[21120];
 	memset(_sceneWindowBuffer, 0, 21120);
 
-	_cmzBuffer = new CMZ[1025];
-	memset(_cmzBuffer, 0, 1025 * sizeof(CMZ));
+	_levelBlockProperties = new LevelBlockProperty[1025];
+	memset(_levelBlockProperties, 0, 1025 * sizeof(LevelBlockProperty));
 	_lvlBuffer = new LVL[30];
 	memset(_lvlBuffer, 0, 30 * sizeof(LVL));
 	_lvl415 = new uint8[415];

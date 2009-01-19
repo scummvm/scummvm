@@ -180,7 +180,7 @@ int LoLEngine::o2_getItemPara(EMCState *script) {
 
 	switch(stackPos(1)) {
 		case 0:
-			return i->cmzIndex;
+			return i->blockPropertyIndex;
 		case 1:
 			return i->unk7;
 		case 2:
@@ -333,22 +333,22 @@ int LoLEngine::o2_loadDoorShapes(EMCState *script) {
 	_doorShapes[1] = _screen->makeShapeCopy(p, stackPos(2));
 
 	for (int i = 0; i < 20; i++) {
-		_wllBuffer5[i + 3] |= 7;
+		_wllWallFlags[i + 3] |= 7;
 		int t = i % 5;
 		if (t == 4)
-			_wllBuffer5[i + 3] &= 0xf8;
+			_wllWallFlags[i + 3] &= 0xf8;
 		if (t == 3)
-			_wllBuffer5[i + 3] &= 0xfd;
+			_wllWallFlags[i + 3] &= 0xfd;
 	}
 
 	if (stackPos(3)) {
 		for (int i = 3; i < 13; i++) 
-			_wllBuffer5[i] &= 0xfd;
+			_wllWallFlags[i] &= 0xfd;
 	}
 
 	if (stackPos(4)) {
 		for (int i = 13; i < 23; i++) 
-			_wllBuffer5[i] &= 0xfd;
+			_wllWallFlags[i] &= 0xfd;
 	}
 	
 	return 1;

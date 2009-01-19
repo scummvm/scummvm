@@ -67,7 +67,7 @@ void LoLEngine::loadLevel(int index) {
 	runInitScript(filename, f ? 0 : 1);
 
 	if (f)
-		loadLevelCMZ(index);
+		loadLevelCmzFile(index);
 
 	sprintf(filename, "LEVEL%d.INF", index);
 	runInfScript(filename);
@@ -93,15 +93,15 @@ void LoLEngine::addLevelItems() {
 		if (_itemsInPlay[i].level != _currentLevel)
 			continue;
 
-		moveItemToCMZ(&_cmzBuffer[_itemsInPlay[i].cmzIndex].itemIndex, i);
+		moveItemToBlock(&_levelBlockProperties[_itemsInPlay[i].blockPropertyIndex].itemIndex, i);
 
-		_cmzBuffer[_itemsInPlay[i].cmzIndex].field_8 = 5;
+		_levelBlockProperties[_itemsInPlay[i].blockPropertyIndex].field_8 = 5;
 		_itemsInPlay[i].unk2 = 0;
 	}
 }
 
 int LoLEngine::initCmzWithScript(int block) {
-	int i = _cmzBuffer[block].itemIndex;
+	int i = _levelBlockProperties[block].itemIndex;
 	int cnt = 0;
 
 	while (i) {
@@ -116,7 +116,7 @@ int LoLEngine::initCmzWithScript(int block) {
 		cnt++;
 		initCMZ1(l, 14);
 
-		checkScriptUnk(l->cmzIndex);
+		checkScriptUnk(l->blockPropertyIndex);
 
 		initCMZ2(l, 0, 0);
 	}
@@ -152,7 +152,7 @@ void LoLEngine::initCMZ1(LVL *l, int a) {
 			if (_currentLevel != 29)
 				initCMZ1(l, 14);
 			runResidentScriptCustom(0x404, -1, l->field_16, l->field_16, 0, 0);
-			checkScriptUnk(l->cmzIndex);
+			checkScriptUnk(l->blockPropertyIndex);
 			if (l->field_14 == 14)
 				initCMZ2(l, 0, 0);
 		}
@@ -162,16 +162,16 @@ void LoLEngine::initCMZ1(LVL *l, int a) {
 
 void LoLEngine::initCMZ2(LVL *l, uint16 a, uint16 b) {
 	bool cont = true;
-	int t = l->cmzIndex;
-	if (l->cmzIndex) {
-		cmzS4(_cmzBuffer[l->cmzIndex].itemIndex, ((uint16)l->field_16) | 0x8000);
-		_cmzBuffer[l->cmzIndex].field_8 = 5;
-		checkScriptUnk(l->cmzIndex);
+	int t = l->blockPropertyIndex;
+	if (l->blockPropertyIndex) {
+		cmzS4(_levelBlockProperties[l->blockPropertyIndex].itemIndex, ((uint16)l->field_16) | 0x8000);
+		_levelBlockProperties[l->blockPropertyIndex].field_8 = 5;
+		checkScriptUnk(l->blockPropertyIndex);
 	} else {
 		cont = false;
 	}
 	
-	l->cmzIndex = cmzS5(a, b);
+	l->blockPropertyIndex = cmzS5(a, b);
 	
 	if (l->p_1a != a || l->p_1b != b) {
 		l->p_1a = a;
@@ -179,27 +179,27 @@ void LoLEngine::initCMZ2(LVL *l, uint16 a, uint16 b) {
 		l->field_13 = (++l->field_13) & 3;
 	}
 
-	if (l->cmzIndex == 0)
+	if (l->blockPropertyIndex == 0)
 		return;
 
-	cmzS6(_cmzBuffer[l->cmzIndex].itemIndex, ((uint16)l->field_16) | 0x8000);
-	_cmzBuffer[l->cmzIndex].field_8 = 5;
-	checkScriptUnk(l->cmzIndex);
+	cmzS6(_levelBlockProperties[l->blockPropertyIndex].itemIndex, ((uint16)l->field_16) | 0x8000);
+	_levelBlockProperties[l->blockPropertyIndex].field_8 = 5;
+	checkScriptUnk(l->blockPropertyIndex);
 	uint8 *v = l->offs_lvl415;
 	
 	if (v[80] == 0 || cont == false)
 		return;
 
-	if ((!(READ_LE_UINT16(&v[62]) & 0x100) || ((l->field_13 & 1) == 0)) && l->cmzIndex == t)
+	if ((!(READ_LE_UINT16(&v[62]) & 0x100) || ((l->field_13 & 1) == 0)) && l->blockPropertyIndex == t)
 		return;
 
-	if (l->cmzIndex != t)
-		runResidentScriptCustom(l->cmzIndex, 0x800, -1, l->field_16, 0, 0);
+	if (l->blockPropertyIndex != t)
+		runResidentScriptCustom(l->blockPropertyIndex, 0x800, -1, l->field_16, 0, 0);
 
 	if (_charFlagUnk & 1)
 		return;
 
-	cmzS7(l->offs_lvl415[50], l->cmzIndex);
+	cmzS7(l->offs_lvl415[50], l->blockPropertyIndex);
 }
 
 int LoLEngine::cmzS1(uint16 a, uint16 b, uint16 c, uint16 d) {
@@ -236,7 +236,7 @@ void LoLEngine::cmzS7(int itemIndex, int a) {
 	// TODO
 }
 
-void LoLEngine::moveItemToCMZ(uint16 *cmzItemIndex, uint16 item) {
+void LoLEngine::moveItemToBlock(uint16 *cmzItemIndex, uint16 item) {
 	uint16 *tmp = 0;
 	while (*cmzItemIndex & 0x8000) {
 		tmp = (uint16*) cmzGetItemOffset(*cmzItemIndex);
@@ -287,7 +287,7 @@ void LoLEngine::loadLevelWLL(int index, bool mapShapes) {
 		d += 2;
 		_wllBuffer3[c] = *d;
 		d += 2;
-		_wllBuffer5[c] = *d;
+		_wllWallFlags[c] = *d;
 		d += 2;
 		_wllBuffer4[c] = *d;
 		d += 2;		
@@ -351,7 +351,7 @@ uint8 *LoLEngine::getLevelShapes(int shapeIndex) {
 	return res;
 }
 
-void LoLEngine::loadLevelCMZ(int index) {
+void LoLEngine::loadLevelCmzFile(int index) {
 	//char filename[16];
 	//sprintf(filename, "_LEVEL%d.TMP", index);
 	// TODO ???
@@ -371,22 +371,22 @@ void LoLEngine::loadLevelCMZ(int index) {
 	for (int i = 0; i < 1024; i++)
 		 memcpy(&cmzdata[i << 2], &p[i * len + 6], 4);
 
-	memset(_cmzBuffer, 0, 1024 * sizeof(CMZ));
+	memset(_levelBlockProperties, 0, 1024 * sizeof(LevelBlockProperty));
 
 	uint8 *c = cmzdata;
 	uint8 *t = _tempBuffer5120;
 
 	for (int i = 0; i < 1024; i++) {
 		for (int ii = 0; ii < 4; ii++)
-			_cmzBuffer[i].unk[ii] = *c++ ^ *t++;
+			_levelBlockProperties[i].walls[ii] = *c++ ^ *t++;
 	}
 
 	for (int i = 0; i < 1024; i++)
-		_cmzBuffer[i].flags = *t++;
+		_levelBlockProperties[i].flags = *t++;
 
 	for (int i = 0; i < 30; i++) {
-		if (_lvlBuffer[i].cmzIndex) {
-			_lvlBuffer[i].cmzIndex = 0;
+		if (_lvlBuffer[i].blockPropertyIndex) {
+			_lvlBuffer[i].blockPropertyIndex = 0;
 			_lvlBuffer[i].offs_lvl415 = _lvl415 + _lvlBuffer[i].field_20;
 			initCMZ2(&_lvlBuffer[i], _lvlBuffer[i].p_1a, _lvlBuffer[i].p_1b);
 		}
@@ -404,7 +404,7 @@ void LoLEngine::loadCMZ_Sub(int index1, int index2) {
 	//int r = 0;
 	
 	for (int i = 0; i < 30; i++) {
-		if (_lvlBuffer[i].field_14 >= 14 || _lvlBuffer[i].cmzIndex == 0 || _lvlBuffer[i].field_1D <= 0)
+		if (_lvlBuffer[i].field_14 >= 14 || _lvlBuffer[i].blockPropertyIndex == 0 || _lvlBuffer[i].field_1D <= 0)
 			continue;
 
 		int t = (val * _lvlBuffer[i].field_1D) >> 8;
@@ -417,7 +417,7 @@ void LoLEngine::loadCMZ_Sub(int index1, int index2) {
 }
 
 void LoLEngine::loadCmzFile(const char *file) {
-	memset(_cmzBuffer, 0, 1024 * sizeof(CMZ));
+	memset(_levelBlockProperties, 0, 1024 * sizeof(LevelBlockProperty));
 	_screen->loadBitmap(file, 2, 2, 0);
 	const uint8 *h = _screen->getCPagePtr(2);
 	uint16 len = READ_LE_UINT16(&h[4]);
@@ -425,13 +425,13 @@ void LoLEngine::loadCmzFile(const char *file) {
 	
 	for (int i = 0; i < 1024; i++) {
 		for (int ii = 0; ii < 4; ii++)
-			_cmzBuffer[i].unk[ii] = p[i * len + ii];
+			_levelBlockProperties[i].walls[ii] = p[i * len + ii];
 
-		_cmzBuffer[i].field_8 = 5;
+		_levelBlockProperties[i].field_8 = 5;
 
-		if (_wllBuffer4[_cmzBuffer[i].unk[0]] == 17) {
-			_cmzBuffer[i].flags &= 0xef;
-			_cmzBuffer[i].flags |= 0x20;
+		if (_wllBuffer4[_levelBlockProperties[i].walls[0]] == 17) {
+			_levelBlockProperties[i].flags &= 0xef;
+			_levelBlockProperties[i].flags |= 0x20;
 		}
 	}
 }
@@ -731,6 +731,17 @@ void LoLEngine::updateLampStatus() {
 	_lampOilStatus = newLampOilStatus;
 }
 
+void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int unk3) {
+	// TODO
+	_currentBlock = calcNewBlockPostion(_currentBlock, direction);
+	// XXXX
+}
+
+uint16 LoLEngine::calcNewBlockPostion(uint16 curBlock, uint16 direction) {
+	static const int16 blockPosTable[] = { -32, 1, 32, -1, 1, -1, 3, 2, -1, 0, -1, 0, 1, -32, 0, 32 };
+	return (curBlock + blockPosTable[direction]) & 0x3ff;
+}
+
 void LoLEngine::setLF1(uint16 & a, uint16 & b, int block, uint16 d, uint16 e) {
 	a = block & 0x1f;
 	a = ((a >> 8) | ((a & 0xff) << 8)) | d;
@@ -740,7 +751,7 @@ void LoLEngine::setLF1(uint16 & a, uint16 & b, int block, uint16 d, uint16 e) {
 void LoLEngine::setLF2(int block) {
 	if (!(_screen->_drawGuiFlag & 0x1000))
 		return;		
-	_cmzBuffer[block].flags |= 7;
+	_levelBlockProperties[block].flags |= 7;
 	// TODO
 }
 
@@ -783,7 +794,7 @@ void LoLEngine::updateSceneWindow() {
 	_screen->showMouse();
 }
 
-void LoLEngine::generateBlockDrawingBuffer(int block, int b) {
+void LoLEngine::generateBlockDrawingBuffer(int block, int direction) {
 	_sceneDrawVar1 = _dscBlockMap[_currentDirection];
 	_sceneDrawVar2 = _dscBlockMap[_currentDirection + 4];
 	_sceneDrawVar3 = _dscBlockMap[_currentDirection + 8];
@@ -797,110 +808,110 @@ void LoLEngine::generateBlockDrawingBuffer(int block, int b) {
 	else
 		generateBlockDrawingBufferF0(0, 15, 1, -330, 22, 15);
 
-	assignBlockCaps(block, b);
+	assignBlockCaps(block, direction);
 
-	uint8 t = _curBlockCaps[0]->unk[_sceneDrawVar2];
+	uint8 t = _curBlockCaps[0]->walls[_sceneDrawVar2];
 	if (t)
 		generateBlockDrawingBufferF0(-2, 3, t, 102, 3, 5);
 
-	t = _curBlockCaps[6]->unk[_sceneDrawVar3];
+	t = _curBlockCaps[6]->walls[_sceneDrawVar3];
 	if (t)
 		generateBlockDrawingBufferF1(21, 3, t, 102, 3, 5);
 
-	t = _curBlockCaps[1]->unk[_sceneDrawVar2];
-	uint8 t2 = _curBlockCaps[2]->unk[_sceneDrawVar1];
+	t = _curBlockCaps[1]->walls[_sceneDrawVar2];
+	uint8 t2 = _curBlockCaps[2]->walls[_sceneDrawVar1];
 
-	if (testWllBuffer5Value(t) && !(_wllBuffer5[t2] & 8))
+	if (hasWall(t) && !(_wllWallFlags[t2] & 8))
 		generateBlockDrawingBufferF0(2, 3, t, 102, 3, 5);
-	else if (t && (_wllBuffer5[t2] & 8))
+	else if (t && (_wllWallFlags[t2] & 8))
 		generateBlockDrawingBufferF0(2, 3, t2, 102, 3, 5);
 
-	t = _curBlockCaps[5]->unk[_sceneDrawVar3];
-	t2 = _curBlockCaps[4]->unk[_sceneDrawVar1];
+	t = _curBlockCaps[5]->walls[_sceneDrawVar3];
+	t2 = _curBlockCaps[4]->walls[_sceneDrawVar1];
 
-	if (testWllBuffer5Value(t) && !(_wllBuffer5[t2] & 8))
+	if (hasWall(t) && !(_wllWallFlags[t2] & 8))
 		generateBlockDrawingBufferF1(17, 3, t, 102, 3, 5);
-	else if(t && (_wllBuffer5[t2] & 8))
+	else if(t && (_wllWallFlags[t2] & 8))
 		generateBlockDrawingBufferF1(17, 3, t2, 102, 3, 5);
 
-	t = _curBlockCaps[2]->unk[_sceneDrawVar2];
+	t = _curBlockCaps[2]->walls[_sceneDrawVar2];
 	if (t)
 		generateBlockDrawingBufferF0(8, 3, t, 97, 1, 5);
 
-	t = _curBlockCaps[4]->unk[_sceneDrawVar3];
+	t = _curBlockCaps[4]->walls[_sceneDrawVar3];
 	if (t)
 		generateBlockDrawingBufferF1(13, 3, t, 97, 1, 5);
 
-	t = _curBlockCaps[1]->unk[_sceneDrawVar1];
-	if (testWllBuffer5Value(t))
+	t = _curBlockCaps[1]->walls[_sceneDrawVar1];
+	if (hasWall(t))
 		generateBlockDrawingBufferF0(-4, 3, t, 129, 6, 5);
 
-	t = _curBlockCaps[5]->unk[_sceneDrawVar1];
-	if (testWllBuffer5Value(t))
+	t = _curBlockCaps[5]->walls[_sceneDrawVar1];
+	if (hasWall(t))
 		generateBlockDrawingBufferF0(20, 3, t, 129, 6, 5);
 
-	t = _curBlockCaps[2]->unk[_sceneDrawVar1];
-	if (testWllBuffer5Value(t))
+	t = _curBlockCaps[2]->walls[_sceneDrawVar1];
+	if (hasWall(t))
 		generateBlockDrawingBufferF0(2, 3, t, 129, 6, 5);
 
-	t = _curBlockCaps[4]->unk[_sceneDrawVar1];
-	if (testWllBuffer5Value(t))
+	t = _curBlockCaps[4]->walls[_sceneDrawVar1];
+	if (hasWall(t))
 		generateBlockDrawingBufferF0(14, 3, t, 129, 6, 5);
 
-	t = _curBlockCaps[3]->unk[_sceneDrawVar1];
+	t = _curBlockCaps[3]->walls[_sceneDrawVar1];
 	if (t)
 		generateBlockDrawingBufferF0(8, 3, t, 129, 6, 5);
 
-	t = _curBlockCaps[7]->unk[_sceneDrawVar2];
+	t = _curBlockCaps[7]->walls[_sceneDrawVar2];
 	if (t)
 		generateBlockDrawingBufferF0(0, 3, t, 117, 2, 6);
 
-	t = _curBlockCaps[11]->unk[_sceneDrawVar3];
+	t = _curBlockCaps[11]->walls[_sceneDrawVar3];
 	if (t)
 		generateBlockDrawingBufferF1(20, 3, t, 117, 2, 6);
 
-	t = _curBlockCaps[8]->unk[_sceneDrawVar2];
+	t = _curBlockCaps[8]->walls[_sceneDrawVar2];
 	if (t)
 		generateBlockDrawingBufferF0(6, 2, t, 81, 2, 8);
 
-	t = _curBlockCaps[10]->unk[_sceneDrawVar3];
+	t = _curBlockCaps[10]->walls[_sceneDrawVar3];
 	if (t)
 		generateBlockDrawingBufferF1(14, 2, t, 81, 2, 8);
 
-	t = _curBlockCaps[8]->unk[_sceneDrawVar1];
-	if (testWllBuffer5Value(t))
+	t = _curBlockCaps[8]->walls[_sceneDrawVar1];
+	if (hasWall(t))
 		generateBlockDrawingBufferF0(-4, 2, t, 159, 10, 8);
 
-	t = _curBlockCaps[10]->unk[_sceneDrawVar1];
-	if (testWllBuffer5Value(t))
+	t = _curBlockCaps[10]->walls[_sceneDrawVar1];
+	if (hasWall(t))
 		generateBlockDrawingBufferF0(16, 2, t, 159, 10, 8);
 
-	t = _curBlockCaps[9]->unk[_sceneDrawVar1];
+	t = _curBlockCaps[9]->walls[_sceneDrawVar1];
 	if (t)
 		generateBlockDrawingBufferF0(6, 2, t, 159, 10, 8);
 
-	t = _curBlockCaps[12]->unk[_sceneDrawVar2];
+	t = _curBlockCaps[12]->walls[_sceneDrawVar2];
 	if (t)
 		generateBlockDrawingBufferF0(3, 1, t, 45, 3, 12);
 
-	t = _curBlockCaps[14]->unk[_sceneDrawVar3];
+	t = _curBlockCaps[14]->walls[_sceneDrawVar3];
 	if (t)
 		generateBlockDrawingBufferF1(16, 1, t, 45, 3, 12);
 
-	t = _curBlockCaps[12]->unk[_sceneDrawVar1];
-	if (!(_wllBuffer5[t] & 8))
+	t = _curBlockCaps[12]->walls[_sceneDrawVar1];
+	if (!(_wllWallFlags[t] & 8))
 		generateBlockDrawingBufferF0(-13, 1, t, 239, 16, 12);
 
-	t = _curBlockCaps[14]->unk[_sceneDrawVar1];
-	if (!(_wllBuffer5[t] & 8))
+	t = _curBlockCaps[14]->walls[_sceneDrawVar1];
+	if (!(_wllWallFlags[t] & 8))
 		generateBlockDrawingBufferF0(19, 1, t, 239, 16, 12);
 
-	t = _curBlockCaps[13]->unk[_sceneDrawVar1];
+	t = _curBlockCaps[13]->walls[_sceneDrawVar1];
 	if (t)
 		generateBlockDrawingBufferF0(3, 1, t, 239, 16, 12);
 
-	t = _curBlockCaps[15]->unk[_sceneDrawVar2];
-	t2 = _curBlockCaps[17]->unk[_sceneDrawVar3];
+	t = _curBlockCaps[15]->walls[_sceneDrawVar2];
+	t2 = _curBlockCaps[17]->walls[_sceneDrawVar3];
 	if (t)
 		generateBlockDrawingBufferF0(0, 0, t, 0, 3, 15);
 	if (t2)
@@ -947,18 +958,18 @@ void LoLEngine::generateBlockDrawingBufferF1(int16 wllOffset, uint8 wllIndex, ui
 	}
 }
 
-bool LoLEngine::testWllBuffer5Value(int index) {
-	if (!index || (_wllBuffer5[index] & 8))
+bool LoLEngine::hasWall(int index) {
+	if (!index || (_wllWallFlags[index] & 8))
 		return false;
 	return true;
 }
 
-void LoLEngine::assignBlockCaps(int a, int b) {
+void LoLEngine::assignBlockCaps(int block, int direction) {
 	for (int i = 0; i < 18; i++) {
-		uint16 t = (a + _dscBlockIndex[b * 18 + i]) & 0x3ff;
+		uint16 t = (block + _dscBlockIndex[direction * 18 + i]) & 0x3ff;
 		_scriptExecutedFuncs[i] = t;
 
-		_curBlockCaps[i] = &_cmzBuffer[t];
+		_curBlockCaps[i] = &_levelBlockProperties[t];
 		_lvlShapeLeftRight[i] = _lvlShapeLeftRight[18 + i] = -1;
 	}
 }
@@ -1074,7 +1085,7 @@ void LoLEngine::drawVcnBlocks(uint8 *vcnBlocks, uint16 *blockDrawingBuffer, uint
 void LoLEngine::drawSceneShapes() {
 	for (int i = 0; i < 18; i++) {
 		uint8 t = _dscTileIndex[i];
-		uint8 s = _curBlockCaps[t]->unk[_sceneDrawVar1];
+		uint8 s = _curBlockCaps[t]->walls[_sceneDrawVar1];
 
 		int16 x1 = 0;
 		int16 x2 = 0;
@@ -1089,7 +1100,7 @@ void LoLEngine::drawSceneShapes() {
 
 		drawDecorations(t);
 
-		uint16 w = _wllBuffer5[s];
+		uint16 w = _wllWallFlags[s];
 
 		if (i == 16)
 			w |= 0x80;
@@ -1123,8 +1134,8 @@ void LoLEngine::setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim) {
 		int m = index * 18;
 
 		for (int i = 0; i < 18; i++) {
-			uint8 d = _curBlockCaps[i]->unk[_sceneDrawVar1];
-			uint8 a = _wllBuffer5[d];
+			uint8 d = _curBlockCaps[i]->walls[_sceneDrawVar1];
+			uint8 a = _wllWallFlags[d];
 
 			if (a & 8) {
 				int t = _dscDim2[(m + i) << 1];
@@ -1219,7 +1230,7 @@ void LoLEngine::drawDecorations(int index) {
 			continue;
 
 		uint8 d = (_currentDirection + _dscUnk1[s]) & 3;
-		int8 l = _wllShapeMap[_curBlockCaps[index]->unk[d]];
+		int8 l = _wllShapeMap[_curBlockCaps[index]->walls[d]];
 
 		uint8 *shapeData = 0;
 

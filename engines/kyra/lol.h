@@ -98,8 +98,8 @@ struct SpellProperty {
 	uint16 field_1A;
 };
 
-struct CMZ {
-	uint8 unk[4];
+struct LevelBlockProperty {
+	uint8 walls[4];
 	uint16 itemIndex;
 	uint8 field_6;
 	uint8 field_7;
@@ -113,7 +113,7 @@ struct LVL {
 	uint8 field_2;
 	uint8 field_3;
 	uint8 field_4;
-	uint16 cmzIndex;
+	uint16 blockPropertyIndex;
 	uint16 p_1a;
 	uint16 p_1b;
 	uint8 field_B;
@@ -440,10 +440,10 @@ private:
 	void cmzS6(uint16 &itemIndex, int a);
 	void cmzS7(int itemIndex, int a);
 	void loadLevelWLL(int index, bool mapShapes);
-	void moveItemToCMZ(uint16 *cmzItemIndex, uint16 item);
+	void moveItemToBlock(uint16 *cmzItemIndex, uint16 item);
 	int assignLevelShapes(int index);
 	uint8 *getLevelShapes(int index);
-	void loadLevelCMZ(int index);
+	void loadLevelCmzFile(int index);
 	void loadCMZ_Sub(int index1, int index2);
 	void loadCmzFile(const char *file);
 	void loadMonsterShapes(const char *file, int monsterIndex, int b);
@@ -453,11 +453,11 @@ private:
 
 	void drawScene(int pageNum);
 
-	void generateBlockDrawingBuffer(int block, int b);
+	void generateBlockDrawingBuffer(int block, int direction);
 	void generateBlockDrawingBufferF0(int16 wllOffset, uint8 wllIndex, uint8 wllVmpIndex, int16 vmpOffset, uint8 len, uint8 numEntries);
 	void generateBlockDrawingBufferF1(int16 wllOffset, uint8 wllIndex, uint8 wllVmpIndex, int16 vmpOffset, uint8 len, uint8 numEntries);
-	bool testWllBuffer5Value(int index);
-	void assignBlockCaps(int a, int b);
+	bool hasWall(int index);
+	void assignBlockCaps(int block, int direction);
 
 	void drawVcnBlocks(uint8 *vcnBlocks, uint16 *blockDrawingBuffer, uint8 *vcnShift, int pageNum);
 	void drawSceneShapes();
@@ -474,6 +474,9 @@ private:
 
 	void turnOnLamp();
 	void updateLampStatus();
+
+	void moveParty(uint16 direction, int unk1, int unk2, int unk3);
+	uint16 calcNewBlockPostion(uint16 curBlock, uint16 direction);
 
 	void setLF1(uint16 & a, uint16 & b, int block, uint16 d, uint16 e);
 	void setLF2(int block);
@@ -519,14 +522,14 @@ private:
 	int8 *_wllShapeMap;
 	uint8 *_wllBuffer3;
 	uint8 *_wllBuffer4;
-	uint8 *_wllBuffer5;
+	uint8 *_wllWallFlags;
 
 	int16 *_lvlShapeTop;
 	int16 *_lvlShapeBottom;
 	int16 *_lvlShapeLeftRight;
 
-	CMZ *_cmzBuffer;
-	CMZ *_curBlockCaps[18];
+	LevelBlockProperty *_levelBlockProperties;
+	LevelBlockProperty *_curBlockCaps[18];
 	LVL *_lvlBuffer;
 	uint8 *_lvl415;
 
@@ -605,7 +608,7 @@ private:
 		uint16 itemIndexUnk;
 		uint8 unk2;
 		uint16 unk3;
-		uint16 cmzIndex;
+		uint16 blockPropertyIndex;
 		uint16 unk7;
 		uint16 anonymous_4;
 		int8 level;
