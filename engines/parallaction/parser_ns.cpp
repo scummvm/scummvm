@@ -813,7 +813,7 @@ Dialogue *LocationParser_ns::parseDialogue() {
 	Dialogue *dialogue = new Dialogue;
 	assert(dialogue);
 
-	Table forwards(20);
+	Table forwards(40);
 
 	_script->readLineToken(true);
 

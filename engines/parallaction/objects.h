@@ -158,8 +158,8 @@ typedef Common::SharedPtr<Command> CommandPtr;
 typedef Common::List<CommandPtr> CommandList;
 
 
-#define NUM_QUESTIONS		20
-#define NUM_ANSWERS			10
+#define NUM_QUESTIONS		40
+#define NUM_ANSWERS			20
 
 struct Answer {
 	Common::String	_text;
