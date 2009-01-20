@@ -22,11 +22,13 @@
  * $Id$
  */
 
+#ifdef ENABLE_VKEYBD
+
 #include "backends/vkeybd/imageman.h"
-#include "graphics/imagedec.h"
-#include "graphics/surface.h"
 
 #include "common/unzip.h"
+#include "graphics/imagedec.h"
+#include "graphics/surface.h"
 
 DECLARE_SINGLETON(Graphics::ImageManager);
 
@@ -128,4 +130,8 @@ ImageManager::Iterator ImageManager::searchHandle(const Common::String &name) {
 	}
 	return pos;
 }
+
 } // end of namespace Graphics
+
+#endif // #ifdef ENABLE_VKEYBD
+

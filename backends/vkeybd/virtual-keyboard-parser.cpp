@@ -23,9 +23,10 @@
  *
  */
 
-#include "backends/vkeybd/virtual-keyboard-parser.h"
 
 #ifdef ENABLE_VKEYBD
+
+#include "backends/vkeybd/virtual-keyboard-parser.h"
 
 #include "common/keyboard.h"
 #include "common/util.h"

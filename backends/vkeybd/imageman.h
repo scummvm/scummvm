@@ -25,8 +25,9 @@
 #ifndef GRAPHICS_IMAGEMAN_H
 #define GRAPHICS_IMAGEMAN_H
 
-#include "common/scummsys.h"
+#ifdef ENABLE_VKEYBD
 
+#include "common/scummsys.h"
 #include "common/archive.h"
 #include "common/singleton.h"
 #include "common/str.h"
@@ -107,5 +108,6 @@ private:
 /** Shortcut for accessing the image manager. */
 #define ImageMan		(Graphics::ImageManager::instance())
 
-#endif
+#endif // #ifdef ENABLE_VKEYBD
 
+#endif

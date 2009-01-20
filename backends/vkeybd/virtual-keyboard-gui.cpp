@@ -23,9 +23,9 @@
 *
 */
 
-#include "backends/vkeybd/virtual-keyboard-gui.h"
-
 #ifdef ENABLE_VKEYBD
+
+#include "backends/vkeybd/virtual-keyboard-gui.h"
 
 #include "graphics/cursorman.h"
 #include "gui/GuiManager.h"

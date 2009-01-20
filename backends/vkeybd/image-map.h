@@ -26,10 +26,9 @@
 #ifndef COMMON_IMAGEMAP_H
 #define COMMON_IMAGEMAP_H
 
-#include "common/scummsys.h"
-
 #ifdef ENABLE_VKEYBD
 
+#include "common/scummsys.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "backends/vkeybd/polygon.h"

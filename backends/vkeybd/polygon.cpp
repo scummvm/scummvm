@@ -23,9 +23,9 @@
  *
  */
 
-#include "backends/vkeybd/polygon.h"
-
 #ifdef ENABLE_VKEYBD
+
+#include "backends/vkeybd/polygon.h"
 
 namespace Common {
 

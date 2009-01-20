@@ -23,9 +23,9 @@
  *
  */
 
-#include "backends/vkeybd/image-map.h"
-
 #ifdef ENABLE_VKEYBD
+
+#include "backends/vkeybd/image-map.h"
 
 namespace Common {
 
