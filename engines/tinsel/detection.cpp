@@ -463,10 +463,7 @@ public:
 bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
-		// TODO: See tinsel.cpp ll 994-1005
-#if 0
 		(f == kSupportsLoadingDuringStartup) ||
-#endif
 		(f == kSupportsDeleteSave);
 }
 
