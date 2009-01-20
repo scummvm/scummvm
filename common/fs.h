@@ -245,7 +245,7 @@ public:
  * would be cached as 'data/file.ext' if FSDirectory was created on 'c:/my' with
  * depth > 1. If depth was 1, then the 'data' subdirectory would have been
  * ignored, instead.
- * Again, only BACKSLASHES are used as separators independently from the
+ * Again, only SLASHES are used as separators independently from the
  * underlying file system.
  *
  * Relative paths can be specified when calling matching functions like openFile(),
