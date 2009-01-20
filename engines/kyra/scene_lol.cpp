@@ -692,10 +692,11 @@ void LoLEngine::resetItems(int flag) {
 	for (int i = 0; i < 1024; i++) {
 		_levelBlockProperties[i].field_8 = 5;
 		uint16 id = _levelBlockProperties[i].itemIndex;
-		LVL * r = 0;
+		LVL *r = 0;
 
 		while (id & 0x8000) {
-			LVL * r = (LVL*) cmzGetItemOffset(id);
+			r = (LVL*)cmzGetItemOffset(id);
+			assert(r);
 			id = r->itemIndexUnk;
 		}
 

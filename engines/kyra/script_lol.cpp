@@ -364,7 +364,6 @@ int LoLEngine::o2_getUnkArrayVal(EMCState *script) {
 }
 
 int LoLEngine::o2_setUnkArrayVal(EMCState *script) {
-	int a=stackPos(0);
 	_unkEMC46[stackPos(0)] = stackPos(1);
 	return 1;
 }
