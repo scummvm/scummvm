@@ -28,8 +28,8 @@
 #ifdef ENABLE_VKEYBD
 
 #include "common/keyboard.h"
-#include "graphics/imageman.h"
 #include "common/util.h"
+#include "common/system.h"
 
 namespace Common {
 
@@ -261,21 +261,26 @@ bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
 			return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
 	}
 	
+	const Graphics::PixelFormat format = g_system->getOverlayFormat();
+	int r, g, b;
 	if (node->values.contains("transparent_color")) {
-		int r, g, b;
 		if (!parseIntegerKey(node->values["transparent_color"].c_str(), 3, &r, &g, &b))
 			return parserError("Could not parse color value");
-		_mode->transparentColor = g_system->RGBToColor(r, g, b);
-	} else // default to purple
-		_mode->transparentColor = g_system->RGBToColor(255, 0, 255); 
+	} else {
+		// default to purple
+		r = 255;
+		g = 0;
+		b = 255;
+	}
+	_mode->transparentColor = Graphics::RGBToColor(r, g, b, format);
 
 	if (node->values.contains("display_font_color")) {
-		int r, g, b;
 		if (!parseIntegerKey(node->values["display_font_color"].c_str(), 3, &r, &g, &b))
 			return parserError("Could not parse color value");
-		_mode->displayFontColor = g_system->RGBToColor(r, g, b);
-	} else
-		_mode->displayFontColor = g_system->RGBToColor(0, 0, 0); // default to black
+	} else {
+		r = g = b = 0; // default to black
+	}
+	_mode->displayFontColor = Graphics::RGBToColor(r, g, b, format);
 
 	_layoutParsed = true;
 

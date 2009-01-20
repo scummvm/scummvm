@@ -35,10 +35,13 @@ class OSystem;
 #include "common/events.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
-#include "backends/vkeybd/image-map.h"
 #include "common/keyboard.h"
 #include "common/list.h"
 #include "common/str.h"
+
+#include "backends/vkeybd/image-map.h"
+#include "graphics/surface.h"
+
 
 namespace Common {
 

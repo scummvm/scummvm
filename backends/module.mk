@@ -36,7 +36,12 @@ MODULE_OBJS := \
 	saves/compressed/compressed-saves.o \
 	saves/posix/posix-saves.o \
 	saves/psp/psp-saves.o \
-	timer/default/default-timer.o
+	timer/default/default-timer.o \
+	vkeybd/image-map.o \
+	vkeybd/polygon.o \
+	vkeybd/virtual-keyboard.o \
+	vkeybd/virtual-keyboard-gui.o \
+	vkeybd/virtual-keyboard-parser.o
 
 # Include common rules
 include $(srcdir)/rules.mk

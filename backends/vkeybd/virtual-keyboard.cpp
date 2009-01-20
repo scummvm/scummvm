@@ -32,7 +32,6 @@
 #include "backends/vkeybd/keycode-descriptions.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
-#include "graphics/imageman.h"
 #include "common/unzip.h"
 
 #define KEY_START_CHAR ('[')
@@ -81,25 +80,25 @@ bool VirtualKeyboard::loadKeyboardPack(String packName) {
 
 	_kbdGUI->initSize(_system->getOverlayWidth(), _system->getOverlayHeight());
 
-	FilesystemNode *vkDir = 0;
+	FSNode vkDir;
 	if (ConfMan.hasKey("vkeybdpath")) {
-		vkDir = new FilesystemNode(ConfMan.get("vkeybdpath"));
+		vkDir = FSNode(ConfMan.get("vkeybdpath"));
 	} else if (ConfMan.hasKey("extrapath")) {
-		vkDir = new FilesystemNode(ConfMan.get("extrapath"));
+		vkDir = FSNode(ConfMan.get("extrapath"));
 	} else { // use current directory
-		vkDir = new FilesystemNode(".");
+		vkDir = FSNode(".");
 	}
 
-	if (vkDir->getChild(packName + ".xml").exists()) {
+	if (vkDir.getChild(packName + ".xml").exists()) {
 		// uncompressed keyboard pack
 		
-		if (!_parser->loadFile(vkDir->getChild(packName + ".xml")))
+		if (!_parser->loadFile(vkDir.getChild(packName + ".xml")))
 			return false;
 		
-	} else if (vkDir->getChild(packName + ".zip").exists()) {
+	} else if (vkDir.getChild(packName + ".zip").exists()) {
 		// compressed keyboard pack
 #ifdef USE_ZLIB
-		ZipArchive arch(vkDir->getChild(packName + ".zip").getPath().c_str());
+		ZipArchive arch(vkDir.getChild(packName + ".zip").getPath().c_str());
 		if (arch.hasFile(packName + ".xml")) {
 			if (!_parser->loadStream(arch.openFile(packName + ".xml")))
 				return false;
@@ -107,7 +106,7 @@ bool VirtualKeyboard::loadKeyboardPack(String packName) {
 			warning("Could not find %s.xml file in %s.zip keyboard pack", packName.c_str(), packName.c_str());
 			return false;
 		}
-		ImageMan.addArchive(vkDir->getChild(packName + ".zip").getPath().c_str());
+		ImageMan.addArchive(vkDir.getChild(packName + ".zip").getPath().c_str());
 #else
 		return false;
 #endif

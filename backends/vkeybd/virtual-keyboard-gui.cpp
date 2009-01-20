@@ -28,7 +28,7 @@
 #ifdef ENABLE_VKEYBD
 
 #include "graphics/cursorman.h"
-#include "gui/newgui.h"
+#include "gui/GuiManager.h"
 
 namespace Common {
 
