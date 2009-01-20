@@ -27,6 +27,7 @@
 
 #ifdef ENABLE_VKEYBD
 
+#include "backends/vkeybd/imageman.h"
 #include "backends/vkeybd/virtual-keyboard-gui.h"
 #include "backends/vkeybd/virtual-keyboard-parser.h"
 #include "backends/vkeybd/keycode-descriptions.h"

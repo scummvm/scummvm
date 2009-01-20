@@ -30,6 +30,7 @@
 #include "common/keyboard.h"
 #include "common/util.h"
 #include "common/system.h"
+#include "backends/vkeybd/imageman.h"
 
 namespace Common {
 
