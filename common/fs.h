@@ -238,7 +238,7 @@ public:
  * FSDirectory can represent a single directory, or a tree with specified depth,
  * depending on the value passed to the 'depth' parameter in the constructors.
  * Filenames are cached with their relative path, with elements separated by
- * backslashes, e.g.:
+ * slashes, e.g.:
  *
  * c:\my\data\file.ext
  *
@@ -255,7 +255,7 @@ public:
  * Client code can customize cache by using the constructors with the 'prefix'
  * parameter. In this case, the prefix is prepended to each entry in the cache,
  * and effectively treated as a 'virtual' parent subdirectory. FSDirectory adds
- * a trailing backslash to prefix if needed. Following on with the previous example
+ * a trailing slash to prefix if needed. Following on with the previous example
  * and using 'your' as prefix, the cache entry would have been 'your/data/file.ext'.
  *
  */
