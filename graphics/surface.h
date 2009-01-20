@@ -78,8 +78,6 @@ struct Surface {
 	void frameRect(const Common::Rect &r, uint32 color);
 	// See comment in graphics/surface.cpp about it
 	void move(int dx, int dy, int height);
-
-	void blit(Surface *surf_src, int16 x, int16 y, OverlayColor transparent);
 };
 
 /**

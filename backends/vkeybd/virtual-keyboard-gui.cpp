@@ -32,6 +32,47 @@
 
 namespace Common {
 
+static void blit(Graphics::Surface *surf_dst, Graphics::Surface *surf_src, int16 x, int16 y, OverlayColor transparent) {
+	if (surf_dst->bytesPerPixel != sizeof(OverlayColor) || surf_src->bytesPerPixel != sizeof(OverlayColor))
+		return;
+
+	const OverlayColor *src = (const OverlayColor *)surf_src->pixels;
+	int blitW = surf_src->w;
+	int blitH = surf_src->h;
+
+	// clip co-ordinates
+	if (x < 0) {
+		blitW += x;
+		src -= x;
+		x = 0;
+	}
+	if (y < 0) {
+		blitH += y;
+		src -= y * surf_src->w;
+		y = 0;
+	}
+	if (blitW > surf_dst->w - x)
+		blitW = surf_dst->w - x;
+	if (blitH > surf_dst->h - y)
+		blitH = surf_dst->h - y;
+	if (blitW <= 0 || blitH <= 0)
+		return;
+
+	OverlayColor *dst = (OverlayColor *)surf_dst->getBasePtr(x, y);
+	int dstAdd = surf_dst->w - blitW;
+	int srcAdd = surf_src->w - blitW;
+
+	for (int i = 0; i < blitH; ++i) { 
+		for (int j = 0; j < blitW; ++j, ++dst, ++src) { 
+			OverlayColor col = *src;
+			if (col != transparent)
+				*dst = col;
+		}
+		dst += dstAdd;
+		src += srcAdd; 
+	}
+}
+
 VirtualKeyboardGUI::VirtualKeyboardGUI(VirtualKeyboard *kbd)
 	: _kbd(kbd), _displaying(false), _drag(false),	
 	_drawCaret(false), 	_displayEnabled(false),	_firstRun(true), 
@@ -313,10 +354,10 @@ void VirtualKeyboardGUI::redraw() {
 		src += _overlayBackup.w;
 	}
 
-	surf.blit(_kbdSurface, _kbdBound.left - _dirtyRect.left, 
+	blit(&surf, _kbdSurface, _kbdBound.left - _dirtyRect.left, 
 			  _kbdBound.top - _dirtyRect.top, _kbdTransparentColor);
 	if (_displayEnabled) {
-		surf.blit(&_dispSurface, _dispX - _dirtyRect.left, 
+		blit(&surf, &_dispSurface, _dispX - _dirtyRect.left, 
 				  _dispY - _dirtyRect.top, _dispBackColor);
 	}
 	_system->copyRectToOverlay((OverlayColor*)surf.pixels, surf.w, 
