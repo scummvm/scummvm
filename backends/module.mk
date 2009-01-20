@@ -37,6 +37,7 @@ MODULE_OBJS := \
 	saves/posix/posix-saves.o \
 	saves/psp/psp-saves.o \
 	timer/default/default-timer.o \
+	vkeybd/imageman.o \
 	vkeybd/image-map.o \
 	vkeybd/polygon.o \
 	vkeybd/virtual-keyboard.o \
