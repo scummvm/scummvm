@@ -32,7 +32,6 @@
 
 namespace Tinsel {
 
-static bool restoringfromGMM = false;
 static char currentCD = '1';
 static uint32 cdFlags[] = { fCd1, fCd2, fCd3, fCd4, fCd5, fCd6, fCd7, fCd8 };
 
