@@ -422,7 +422,14 @@ void AGOSEngine::o_done() {
 
 void AGOSEngine::o_process() {
 	// 71: start subroutine
-	Subroutine *sub = getSubroutineByID(getVarOrWord());
+	uint16 id = getVarOrWord();
+
+	if (!_copyProtection && getGameType() == GType_WW && id == 71) {
+		// Copy protection was disabled in Good Old Games release
+		return;
+	}
+
+	Subroutine *sub = getSubroutineByID(id);
 	if (sub != NULL) {
 #ifdef __DS__
 		// HACK: Skip scene of Simon reading letter from Calypso
