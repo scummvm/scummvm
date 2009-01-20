@@ -301,7 +301,7 @@ void VirtualKeyboardGUI::redraw() {
 	int16 h = _dirtyRect.height();
 	if (w <= 0 || h <= 0) return;
 	
-	Graphics::SurfaceKeyColored surf;
+	Graphics::Surface surf;
 	surf.create(w, h, sizeof(OverlayColor));
 
 	OverlayColor *dst = (OverlayColor *)surf.pixels;

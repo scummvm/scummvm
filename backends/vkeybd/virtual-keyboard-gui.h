@@ -34,7 +34,7 @@
 #include "common/rect.h"
 #include "common/system.h"
 #include "graphics/fontman.h"
-#include "graphics/surface-keycolored.h"
+#include "graphics/surface.h"
 
 namespace Common {
 
