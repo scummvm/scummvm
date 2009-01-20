@@ -74,8 +74,7 @@ void KyraEngine_LoK::snd_playWanderScoreViaMap(int command, int restart) {
 void KyraEngine_LoK::snd_playVoiceFile(int id) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_LoK::snd_playVoiceFile(%d)", id);
 	char vocFile[9];
-	assert(id >= 0 && id < 9999);
-	sprintf(vocFile, "%03d", id);
+	snprintf(vocFile, sizeof(vocFile), "%03d", id);
 	_speechFile = vocFile;
 	_speechPlayTime = _sound->voicePlay(vocFile);
 }

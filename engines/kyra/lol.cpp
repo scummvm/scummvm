@@ -1284,8 +1284,8 @@ void LoLEngine::loadCharFaceShapes(int charNum, int id) {
 	if (id < 0)
 		id = -id;
 
-	char file[] = "FACE%02d.SHP";
-	sprintf(file, "FACE%02d.SHP", id);
+	char file[13];
+	snprintf(file, sizeof(file), "FACE%02d.SHP", id);
 	_screen->loadBitmap(file, 3, 3, 0);
 
 	const uint8 *p = _screen->getCPagePtr(3);

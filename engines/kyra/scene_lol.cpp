@@ -66,8 +66,8 @@ void LoLEngine::loadLevel(int index) {
 	loadLevelWLL(index, true);
 	_loadLevelFlag = 1;
 
-	char filename[16];
-	sprintf(filename, "LEVEL%d.INI", index);
+	char filename[13];
+	snprintf(filename, sizeof(filename), "LEVEL%d.INI", index);
 	
 	int f = _levelFlagUnk & (1 << ((index + 0xff) & 0xff));
 
@@ -76,7 +76,7 @@ void LoLEngine::loadLevel(int index) {
 	if (f)
 		loadLevelCmzFile(index);
 
-	sprintf(filename, "LEVEL%d.INF", index);
+	snprintf(filename, sizeof(filename), "LEVEL%d.INF", index);
 	runInfScript(filename);
 
 	addLevelItems();
@@ -268,8 +268,8 @@ void LoLEngine::moveItemToBlock(uint16 *cmzItemIndex, uint16 item) {
 }
 
 void LoLEngine::loadLevelWLL(int index, bool mapShapes) {
-	char filename[16];
-	sprintf(filename, "level%d.wll", index);
+	char filename[13];
+	snprintf(filename, sizeof(filename), "LEVEL%d.WLL", index);
 
 	uint32 size;
 	uint8 *file = _res->fileData(filename, &size);
@@ -360,15 +360,15 @@ uint8 *LoLEngine::getLevelShapes(int shapeIndex) {
 }
 
 void LoLEngine::loadLevelCmzFile(int index) {
-	//char filename[16];
-	//sprintf(filename, "_LEVEL%d.TMP", index);
+	//char filename[13];
+	//snprintf(filename, sizeof(filename), "_LEVEL%d.TMP", index);
 	// TODO ???
 	memset(_tempBuffer5120, 0, 5120);
 	uint16 tmpLvlVal = 0;
 
 
-	char filename[16];
-	sprintf(filename, "level%d.cmz", index);
+	char filename[13];
+	snprintf(filename, sizeof(filename), "LEVEL%d.CMZ", index);
 	
 	_screen->loadBitmap(filename, 3, 3, 0);
 	const uint8 *p = _screen->getCPagePtr(2);
@@ -599,8 +599,8 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		}
 	}
 	
-	char fname[] = "            ";
-	sprintf(fname, "%s.%s", _lastSuppFile, "VCN");
+	char fname[13];
+	snprintf(fname, sizeof(fname), "%s.VCN", _lastSuppFile);
 
 	_screen->loadBitmap(fname, 3, 3, 0);
 	const uint8 *v = _screen->getCPagePtr(2);
@@ -643,7 +643,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	memcpy(_vcnBlocks, v, vcnLen);
 	v += vcnLen;
 
-	sprintf(fname, "%s.%s", _lastSuppFile, "VMP");
+	snprintf(fname, sizeof(fname), "%s.VMP", _lastSuppFile);
 	_screen->loadBitmap(fname, 3, 3, 0);
 	v = _screen->getCPagePtr(2);
 
@@ -678,8 +678,8 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	_loadSuppFilesFlag = 0;
 	_screen->generateBrightnessPalette(_screen->_currentPalette, _screen->getPalette(1), _brightness, _lampOilStatus);
 
-	char tname[16];
-	sprintf(tname, "LEVEL%.02d.TLC", _currentLevel);
+	char tname[13];
+	snprintf(tname, sizeof(tname), "LEVEL%.02d.TLC", _currentLevel);
 	Common::SeekableReadStream *s = _res->getFileStream(tname);
 	s->read(_tlcTable1, 256);
 	s->read(_tlcTable2, 5120);
