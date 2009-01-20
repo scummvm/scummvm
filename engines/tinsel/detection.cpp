@@ -469,6 +469,10 @@ bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {
 	return
+#if 0
+		// FIXME: tinsel does not exit cleanly yet
+		(f == kSupportsRTL) ||
+#endif
 		(f == kSupportsLoadingDuringRuntime);
 }
 
