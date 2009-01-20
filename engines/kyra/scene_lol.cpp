@@ -893,7 +893,7 @@ void LoLEngine::generateBlockDrawingBuffer(int block, int direction) {
 
 	if (hasWall(t) && !(_wllWallFlags[t2] & 8))
 		generateBlockDrawingBufferF1(17, 3, t, 102, 3, 5);
-	else if(t && (_wllWallFlags[t2] & 8))
+	else if (t && (_wllWallFlags[t2] & 8))
 		generateBlockDrawingBufferF1(17, 3, t2, 102, 3, 5);
 
 	t = _curBlockCaps[2]->walls[_sceneDrawVar2];

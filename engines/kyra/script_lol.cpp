@@ -172,7 +172,7 @@ int LoLEngine::olol_makeItem(EMCState *script) {
 
 int LoLEngine::olol_getItemPara(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getItemPara(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	if(!stackPos(0))
+	if (!stackPos(0))
 		return 0;
 
 	ItemInPlay *i = &_itemsInPlay[stackPos(0)];
@@ -272,7 +272,7 @@ int LoLEngine::olol_setCharacterStat(EMCState *script) {
 	// case 8 should fall through till case 10. case 8 seems to handle
 	// max magic points settings, while case 10 seems to remove an
 	// item from the inventory of a character. If it should really
-	// fall through please add "// fall throught" at the end of the
+	// fall through please add "// fall through" at the end of the
 	// case.
 	switch (stackPos(1)) {
 	case 0:
