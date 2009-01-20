@@ -255,6 +255,14 @@ void Parallaction_br::changeLocation(char *location) {
 	freeLocation(false);
 	// load new location
 	parseLocation(location);
+
+	if (_location._startPosition.x != -1000) {
+		_char.setFoot(_location._startPosition);
+		_char._ani->setF(_location._startFrame);
+		_location._startPosition.y = -1000;
+		_location._startPosition.x = -1000;
+	}
+
 	// kFlagsRemove is cleared because the character is visible by default.
 	// Commands can hide the character, anyway.
 	_char._ani->_flags &= ~kFlagsRemove;
