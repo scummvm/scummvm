@@ -144,7 +144,7 @@ int LoLEngine::olol_loadMonsterShapes(EMCState *script) {
 
 int LoLEngine::olol_allocItemPropertiesBuffer(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_allocItemPropertiesBuffer(%p) (%d)", (const void *)script, stackPos(0));
-	delete []_itemProperties;
+	delete[] _itemProperties;
 	_itemProperties = new ItemProperty[stackPos(0)];
 	return 1;
 }
@@ -178,43 +178,43 @@ int LoLEngine::olol_getItemPara(EMCState *script) {
 	ItemInPlay *i = &_itemsInPlay[stackPos(0)];
 	ItemProperty *p = &_itemProperties[i->itemPropertyIndex];
 
-	switch(stackPos(1)) {
-		case 0:
-			return i->blockPropertyIndex;
-		case 1:
-			return i->unk7;
-		case 2:
-			return i->anonymous_4;
-		case 3:
-			return i->level;
-		case 4:
-			return i->itemPropertyIndex;
-		case 5:
-			return i->shpCurFrame_flg;
-		case 6:
-			return p->nameStringId;
-		case 7:
-			break;			
-		case 8:
-			return p->shpIndex;
-		case 9:
-			return p->unk5;
-		case 10:
-			return p->itemScriptFunc;
-		case 11:
-		case 12:
-		case 13:
-			return p[stackPos(1)].unkB & 0x0f;
-		case 14:
-			return p->unkB;
-		case 15:
-			return i->shpCurFrame_flg & 0x1fff;
-		case 16:
-			return p->flags;
-		case 17:
-			return (p->unk9 << 8) | p->unk8;
-		default:
-			break;
+	switch (stackPos(1)) {
+	case 0:
+		return i->blockPropertyIndex;
+	case 1:
+		return i->unk7;
+	case 2:
+		return i->anonymous_4;
+	case 3:
+		return i->level;
+	case 4:
+		return i->itemPropertyIndex;
+	case 5:
+		return i->shpCurFrame_flg;
+	case 6:
+		return p->nameStringId;
+	case 7:
+		break;			
+	case 8:
+		return p->shpIndex;
+	case 9:
+		return p->unk5;
+	case 10:
+		return p->itemScriptFunc;
+	case 11:
+	case 12:
+	case 13:
+		return p[stackPos(1)].unkB & 0x0f;
+	case 14:
+		return p->unkB;
+	case 15:
+		return i->shpCurFrame_flg & 0x1fff;
+	case 16:
+		return p->flags;
+	case 17:
+		return (p->unk9 << 8) | p->unk8;
+	default:
+		break;
 	}
 
 	return -1;
@@ -225,38 +225,38 @@ int LoLEngine::olol_getCharacterStat(EMCState *script) {
 	LoLCharacter *c = &_characters[stackPos(0)];
 	int d = stackPos(2);
 
-	switch(stackPos(1)) {
-		case 0:
-			return c->flags;
-		case 1:
-			return c->raceClassSex;
-		case 2:
-		case 3:
-		case 4:
-		default:
-			break;
-		case 5:
-			return c->hitPointsCur;
-		case 6:
-			return c->hitPointsMax;
-		case 7:
-			return c->magicPointsCur;
-		case 8:
-			return c->magicPointsMax;
-		case 9:
-			return c->field_37;
-		case 10:
-			return c->items[d];
-		case 11:
-			return c->field_66[d] + c->field_69[d];
-		case 12:
-			return c->field_27[d];
-		case 13:
-			return (d & 0x80) ? c->field_25 : c->field_17[d];
-		case 14:
-			return c->field_69[d];
-		case 15:
-			return c->id;
+	switch (stackPos(1)) {
+	case 0:
+		return c->flags;
+	case 1:
+		return c->raceClassSex;
+	case 2:
+	case 3:
+	case 4:
+	default:
+		break;
+	case 5:
+		return c->hitPointsCur;
+	case 6:
+		return c->hitPointsMax;
+	case 7:
+		return c->magicPointsCur;
+	case 8:
+		return c->magicPointsMax;
+	case 9:
+		return c->field_37;
+	case 10:
+		return c->items[d];
+	case 11:
+		return c->field_66[d] + c->field_69[d];
+	case 12:
+		return c->field_27[d];
+	case 13:
+		return (d & 0x80) ? c->field_25 : c->field_17[d];
+	case 14:
+		return c->field_69[d];
+	case 15:
+		return c->id;
 	}
 
 	return 0;
@@ -268,41 +268,47 @@ int LoLEngine::olol_setCharacterStat(EMCState *script) {
 	int d = stackPos(2);
 	int e = stackPos(3);
 
-	switch(stackPos(1)) {
-		case 0:
-			c->flags = e;
-		case 1:
-			c->raceClassSex = e & 0x0f;
-		case 2:
-		case 3:
-		case 4:
-		default:
-			break;
-		case 5:
-			//// TODO
-			break;
-		case 6:
-			c->hitPointsMax = e;
-		case 7:
-			//// TODO
-			break;
-		case 8:
-			c->magicPointsMax = e;
-		case 9:
-			c->field_37 = e;
-		case 10:
-			c->items[d] = 0;
-		case 11:
-			c->field_66[d] = e;
-		case 12:
-			c->field_27[d] = e;
-		case 13:
-			if (d & 0x80)
-				c->field_25 = e;
-			else
-				c->field_17[d] = e;
-		case 14:
-			c->field_69[d] = e;
+	// FIXME: This looks really strange, especially why for example
+	// case 8 should fall through till case 10. case 8 seems to handle
+	// max magic points settings, while case 10 seems to remove an
+	// item from the inventory of a character. If it should really
+	// fall through please add "// fall throught" at the end of the
+	// case.
+	switch (stackPos(1)) {
+	case 0:
+		c->flags = e;
+	case 1:
+		c->raceClassSex = e & 0x0f;
+	case 2:
+	case 3:
+	case 4:
+	default:
+		break;
+	case 5:
+		//// TODO
+		break;
+	case 6:
+		c->hitPointsMax = e;
+	case 7:
+		//// TODO
+		break;
+	case 8:
+		c->magicPointsMax = e;
+	case 9:
+		c->field_37 = e;
+	case 10:
+		c->items[d] = 0;
+	case 11:
+		c->field_66[d] = e;
+	case 12:
+		c->field_27[d] = e;
+	case 13:
+		if (d & 0x80)
+			c->field_25 = e;
+		else
+			c->field_17[d] = e;
+	case 14:
+		c->field_69[d] = e;
 	}
 
 	return 0;
@@ -326,10 +332,10 @@ int LoLEngine::olol_loadDoorShapes(EMCState *script) {
 	_screen->loadBitmap(stackPosString(0), 3, 3, 0);
 	const uint8 *p = _screen->getCPagePtr(2);
 	if (_doorShapes[0])
-		delete []_doorShapes[0];
+		delete[] _doorShapes[0];
 	_doorShapes[0] = _screen->makeShapeCopy(p, stackPos(1));
 	if (_doorShapes[1])
-		delete []_doorShapes[1];
+		delete[] _doorShapes[1];
 	_doorShapes[1] = _screen->makeShapeCopy(p, stackPos(2));
 
 	for (int i = 0; i < 20; i++) {
@@ -374,49 +380,49 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 	uint16 b = stackPos(2);
 	
 	switch (stackPos(0)) {
-		case 0:
-			_currentBlock = b;
-			setLF1(_unkCmzU1, _unkCmzU2, _currentBlock, 0x80, 0x80);
-			setLF2(_currentBlock);			
-			break;
-		case 1:
-			_currentDirection = b;
-			break;
-		case 2:
-			_currentLevel = b & 0xff;
-			break;
-		case 3:
-			break;
-		case 4:
-			_brightness = b & 0xff;
-			break;
-		case 5:
-			_credits = b;
-			break;
-		case 6:
-			//TODO
-			break;
-		case 7:			
-			break;
-		case 8:
-			_charFlagUnk = b;
-			//TODO
-			break;
-		case 9:
-			_lampStatusUnk = b & 0xff;
-			break;
-		case 10:
-			_loadLevelFlag2 = b & 0xff;
-			//TODO
-			break;
-		case 11:
-			//TODO
-			break;
-		case 12:
-			//TODO
-			break;
-		default:
-			break;
+	case 0:
+		_currentBlock = b;
+		setLF1(_unkCmzU1, _unkCmzU2, _currentBlock, 0x80, 0x80);
+		setLF2(_currentBlock);			
+		break;
+	case 1:
+		_currentDirection = b;
+		break;
+	case 2:
+		_currentLevel = b & 0xff;
+		break;
+	case 3:
+		break;
+	case 4:
+		_brightness = b & 0xff;
+		break;
+	case 5:
+		_credits = b;
+		break;
+	case 6:
+		//TODO
+		break;
+	case 7:			
+		break;
+	case 8:
+		_charFlagUnk = b;
+		//TODO
+		break;
+	case 9:
+		_lampStatusUnk = b & 0xff;
+		break;
+	case 10:
+		_loadLevelFlag2 = b & 0xff;
+		//TODO
+		break;
+	case 11:
+		//TODO
+		break;
+	case 12:
+		//TODO
+		break;
+	default:
+		break;
 	}
 
 	return 1;
