@@ -27,7 +27,6 @@
 
 #include "backends/vkeybd/virtual-keyboard.h"
 
-#include "backends/vkeybd/imageman.h"
 #include "backends/vkeybd/virtual-keyboard-gui.h"
 #include "backends/vkeybd/virtual-keyboard-parser.h"
 #include "backends/vkeybd/keycode-descriptions.h"
@@ -47,13 +46,14 @@ VirtualKeyboard::VirtualKeyboard() : _currentMode(0) {
 	_parser = new VirtualKeyboardParser(this);
 	_kbdGUI = new VirtualKeyboardGUI(this);
 	_submitKeys = _loaded = false;
-
+	_fileArchive = 0;
 }
 
 VirtualKeyboard::~VirtualKeyboard() {
 	deleteEvents();
 	delete _kbdGUI;
 	delete _parser;
+	delete _fileArchive;
 }
 
 void VirtualKeyboard::deleteEvents() {
@@ -80,6 +80,9 @@ void VirtualKeyboard::reset() {
 bool VirtualKeyboard::loadKeyboardPack(String packName) {
 	_kbdGUI->initSize(_system->getOverlayWidth(), _system->getOverlayHeight());
 
+	delete _fileArchive;
+	_fileArchive = 0;
+
 	FSNode vkDir;
 	if (ConfMan.hasKey("vkeybdpath"))
 		vkDir = FSNode(ConfMan.get("vkeybdpath"));
@@ -89,6 +92,8 @@ bool VirtualKeyboard::loadKeyboardPack(String packName) {
 		vkDir = FSNode(".");
 
 	if (vkDir.getChild(packName + ".xml").exists()) {
+		_fileArchive = new FSDirectory(vkDir, 1);
+
 		// uncompressed keyboard pack
 		if (!_parser->loadFile(vkDir.getChild(packName + ".xml")))
 			return false;
@@ -96,15 +101,14 @@ bool VirtualKeyboard::loadKeyboardPack(String packName) {
 	} else if (vkDir.getChild(packName + ".zip").exists()) {
 		// compressed keyboard pack
 #ifdef USE_ZLIB
-		ZipArchive arch(vkDir.getChild(packName + ".zip"));
-		if (arch.hasFile(packName + ".xml")) {
-			if (!_parser->loadStream(arch.openFile(packName + ".xml")))
+		_fileArchive = new ZipArchive(vkDir.getChild(packName + ".zip"));
+		if (_fileArchive->hasFile(packName + ".xml")) {
+			if (!_parser->loadStream(_fileArchive->openFile(packName + ".xml")))
 				return false;
 		} else {
 			warning("Could not find %s.xml file in %s.zip keyboard pack", packName.c_str(), packName.c_str());
 			return false;
 		}
-		ImageMan.addArchive(vkDir.getChild(packName + ".zip").getPath().c_str());
 #else
 		return false;
 #endif

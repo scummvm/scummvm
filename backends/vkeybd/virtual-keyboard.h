@@ -44,6 +44,8 @@ class OSystem;
 
 namespace Common {
 
+class Archive;
+
 class VirtualKeyboardGUI;
 class VirtualKeyboardParser;
 
@@ -118,7 +120,7 @@ protected:
 		OverlayColor		displayFontColor;
 
 		Mode() : image(0), displayArea(0) {}
-		~Mode() { delete displayArea; }
+		~Mode() { delete image; delete displayArea; }
 	};
 	
 	typedef HashMap<String, Mode, IgnoreCase_Hash, IgnoreCase_EqualTo> ModeMap;
@@ -219,6 +221,7 @@ public:
 protected:	
 
 	OSystem *_system;
+	Archive *_fileArchive;
 
 	friend class VirtualKeyboardGUI;
 	VirtualKeyboardGUI	*_kbdGUI;

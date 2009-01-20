@@ -31,7 +31,9 @@
 #include "common/keyboard.h"
 #include "common/util.h"
 #include "common/system.h"
-#include "backends/vkeybd/imageman.h"
+#include "common/archive.h"
+
+#include "graphics/imagedec.h"
 
 namespace Common {
 
@@ -150,8 +152,8 @@ bool VirtualKeyboardParser::parserCallback_mode(ParserNode *node) {
 			return true;
 		} else {
 			// remove data relating to old resolution
-			ImageMan.unregisterSurface(_mode->bitmapName);
 			_mode->bitmapName.clear();
+			delete _mode->image;
 			_mode->image = 0;
 			_mode->imageMap.removeAllAreas();
 			delete _mode->displayArea;
@@ -249,16 +251,17 @@ bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
 	}
 
 	_mode->bitmapName = node->values["bitmap"];
-	_mode->image = ImageMan.getSurface(_mode->bitmapName);
-	if (!_mode->image) {
-		if (!ImageMan.registerSurface(_mode->bitmapName, 0))
-			return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
 
-		_mode->image = ImageMan.getSurface(_mode->bitmapName);
-		if (!_mode->image)
-			return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
-	}
-	
+	SeekableReadStream *file = _keyboard->_fileArchive->openFile(_mode->bitmapName);
+	if (!file)
+		return parserError("Bitmap '%s' not found", _mode->bitmapName.c_str());
+
+	_mode->image = Graphics::ImageDecoder::loadFile(*file);
+	delete file;
+
+	if (!_mode->image)
+		return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
+
 	const Graphics::PixelFormat format = g_system->getOverlayFormat();
 	int r, g, b;
 	if (node->values.contains("transparent_color")) {
