@@ -324,30 +324,30 @@ private:
 	uint16 _unkEMC46[16];
 
 	// emc opcode
-	int o2_setGameFlag(EMCState *script);
-	int o2_testGameFlag(EMCState *script);
-	int o2_loadLevelGraphics(EMCState *script);
-	int o2_loadCmzFile(EMCState *script);
-	int o2_loadMonsterShapes(EMCState *script);
-	int o2_allocItemPropertiesBuffer(EMCState *script);
-	int o2_setItemProperty(EMCState *script);
-	int o2_makeItem(EMCState *script);	
-	int o2_getItemPara(EMCState *script);
-	int o2_getCharacterStat(EMCState *script);
-	int o2_setCharacterStat(EMCState *script);
-	int o2_loadLevelShapes(EMCState *script);
-	int o2_closeLevelShapeFile(EMCState *script);
-	int o2_loadDoorShapes(EMCState *script);
-	int o2_setMusicTrack(EMCState *script);
-	int o2_getUnkArrayVal(EMCState *script);
-	int o2_setUnkArrayVal(EMCState *script);
-	int o2_setGlobalVar(EMCState *script);
-	int o2_mapShapeToBlock(EMCState *script);
-	int o2_resetBlockShapeAssignment(EMCState *script);
-	int o2_loadLangFile(EMCState *script);
-	int o2_loadSoundFile(EMCState *script);
-	int o2_setPaletteBrightness(EMCState *script);
-	int o2_assignCustomSfx(EMCState *script);
+	int olol_setGameFlag(EMCState *script);
+	int olol_testGameFlag(EMCState *script);
+	int olol_loadLevelGraphics(EMCState *script);
+	int olol_loadCmzFile(EMCState *script);
+	int olol_loadMonsterShapes(EMCState *script);
+	int olol_allocItemPropertiesBuffer(EMCState *script);
+	int olol_setItemProperty(EMCState *script);
+	int olol_makeItem(EMCState *script);	
+	int olol_getItemPara(EMCState *script);
+	int olol_getCharacterStat(EMCState *script);
+	int olol_setCharacterStat(EMCState *script);
+	int olol_loadLevelShapes(EMCState *script);
+	int olol_closeLevelShapeFile(EMCState *script);
+	int olol_loadDoorShapes(EMCState *script);
+	int olol_setMusicTrack(EMCState *script);
+	int olol_getUnkArrayVal(EMCState *script);
+	int olol_setUnkArrayVal(EMCState *script);
+	int olol_setGlobalVar(EMCState *script);
+	int olol_mapShapeToBlock(EMCState *script);
+	int olol_resetBlockShapeAssignment(EMCState *script);
+	int olol_loadLangFile(EMCState *script);
+	int olol_loadSoundFile(EMCState *script);
+	int olol_setPaletteBrightness(EMCState *script);
+	int olol_assignCustomSfx(EMCState *script);
 
 	// tim opcode
 	void setupOpcodeTable();

@@ -103,8 +103,8 @@ bool LoLEngine::checkScriptUnk(int func) {
 	return false;
 }
 
-int LoLEngine::o2_setGameFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_setGameFlag(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+int LoLEngine::olol_setGameFlag(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setGameFlag(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	if (stackPos(1))
 		_gameFlags[stackPos(0) >> 4] |= (1 << (stackPos(0) & 0x0f));
 	else
@@ -113,8 +113,8 @@ int LoLEngine::o2_setGameFlag(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::o2_testGameFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_testGameFlag(%p) (%d)", (const void *)script, stackPos(0));
+int LoLEngine::olol_testGameFlag(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_testGameFlag(%p) (%d)", (const void *)script, stackPos(0));
 	if (!stackPos(0))
 		return 0;
 
@@ -124,33 +124,33 @@ int LoLEngine::o2_testGameFlag(EMCState *script) {
 	return 0;
 }
 
-int LoLEngine::o2_loadLevelGraphics(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_loadLevelGraphics(%p) (%s, %d, %d, %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+int LoLEngine::olol_loadLevelGraphics(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadLevelGraphics(%p) (%s, %d, %d, %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	loadLevelGraphics(stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), (stackPos(5) == -1) ? 0 : stackPosString(5));
 	return 1;
 }
 
-int LoLEngine::o2_loadCmzFile(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_loadCmzFile(%p) (%s)", (const void *)script, stackPosString(0));
+int LoLEngine::olol_loadCmzFile(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadCmzFile(%p) (%s)", (const void *)script, stackPosString(0));
 	loadCmzFile(stackPosString(0));
 	return 1;
 }
 
-int LoLEngine::o2_loadMonsterShapes(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_loadMonsterShapes(%p) (%s, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2));
+int LoLEngine::olol_loadMonsterShapes(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadMonsterShapes(%p) (%s, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2));
 	loadMonsterShapes(stackPosString(0), stackPos(1), stackPos(2));
 	return 1;
 }
 
-int LoLEngine::o2_allocItemPropertiesBuffer(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_allocItemPropertiesBuffer(%p) (%d)", (const void *)script, stackPos(0));
+int LoLEngine::olol_allocItemPropertiesBuffer(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_allocItemPropertiesBuffer(%p) (%d)", (const void *)script, stackPos(0));
 	delete []_itemProperties;
 	_itemProperties = new ItemProperty[stackPos(0)];
 	return 1;
 }
 
-int LoLEngine::o2_setItemProperty(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_setItemProperty(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
+int LoLEngine::olol_setItemProperty(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setItemProperty(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
 	ItemProperty *tmp = &_itemProperties[stackPos(0)];
 	
 	tmp->nameStringId = stackPos(1);
@@ -165,13 +165,13 @@ int LoLEngine::o2_setItemProperty(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::o2_makeItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_makeItem(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+int LoLEngine::olol_makeItem(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_makeItem(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	return makeItem(stackPos(0), stackPos(1), stackPos(2));
 }
 
-int LoLEngine::o2_getItemPara(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_getItemPara(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+int LoLEngine::olol_getItemPara(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getItemPara(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	if(!stackPos(0))
 		return 0;
 
@@ -220,8 +220,8 @@ int LoLEngine::o2_getItemPara(EMCState *script) {
 	return -1;
 }
 
-int LoLEngine::o2_getCharacterStat(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_getCharacterStat(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+int LoLEngine::olol_getCharacterStat(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getCharacterStat(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	LoLCharacter *c = &_characters[stackPos(0)];
 	int d = stackPos(2);
 
@@ -262,8 +262,8 @@ int LoLEngine::o2_getCharacterStat(EMCState *script) {
 	return 0;
 }
 
-int LoLEngine::o2_setCharacterStat(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_setCharacterStat(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+int LoLEngine::olol_setCharacterStat(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setCharacterStat(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	LoLCharacter *c = &_characters[stackPos(0)];
 	int d = stackPos(2);
 	int e = stackPos(3);
@@ -308,21 +308,21 @@ int LoLEngine::o2_setCharacterStat(EMCState *script) {
 	return 0;
 }
 
-int LoLEngine::o2_loadLevelShapes(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_loadLevelShapes(%p) (%s, %s)", (const void *)script, stackPosString(0), stackPosString(1));
+int LoLEngine::olol_loadLevelShapes(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadLevelShapes(%p) (%s, %s)", (const void *)script, stackPosString(0), stackPosString(1));
 	loadLevelShpDat(stackPosString(0), stackPosString(1), true);
 	return 1;
 }
 
-int LoLEngine::o2_closeLevelShapeFile(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_closeLevelShapeFile(%p) ()", (const void *)script);
+int LoLEngine::olol_closeLevelShapeFile(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_closeLevelShapeFile(%p) ()", (const void *)script);
 	delete _lvlShpFileHandle;
 	_lvlShpFileHandle = 0;
 	return 1;
 }
 
-int LoLEngine::o2_loadDoorShapes(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_loadDoorShapes(%p) (%s, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2));
+int LoLEngine::olol_loadDoorShapes(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadDoorShapes(%p) (%s, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2));
 	_screen->loadBitmap(stackPosString(0), 3, 3, 0);
 	const uint8 *p = _screen->getCPagePtr(2);
 	if (_doorShapes[0])
@@ -354,22 +354,22 @@ int LoLEngine::o2_loadDoorShapes(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::o2_setMusicTrack(EMCState *script) {
+int LoLEngine::olol_setMusicTrack(EMCState *script) {
 	_curMusicTheme = stackPos(0);
 	return 1;
 }
 
-int LoLEngine::o2_getUnkArrayVal(EMCState *script) {
+int LoLEngine::olol_getUnkArrayVal(EMCState *script) {
 	return _unkEMC46[stackPos(0)];
 }
 
-int LoLEngine::o2_setUnkArrayVal(EMCState *script) {
+int LoLEngine::olol_setUnkArrayVal(EMCState *script) {
 	_unkEMC46[stackPos(0)] = stackPos(1);
 	return 1;
 }
 
-int LoLEngine::o2_setGlobalVar(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_setGlobalVar(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+int LoLEngine::olol_setGlobalVar(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setGlobalVar(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	//uint16 a = stackPos(1);
 	uint16 b = stackPos(2);
 	
@@ -422,21 +422,21 @@ int LoLEngine::o2_setGlobalVar(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::o2_mapShapeToBlock(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_mapShapeToBlock(%p) (%d)", (const void *)script, stackPos(0));
+int LoLEngine::olol_mapShapeToBlock(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_mapShapeToBlock(%p) (%d)", (const void *)script, stackPos(0));
 	return assignLevelShapes(stackPos(0));
 }
 	
-int LoLEngine::o2_resetBlockShapeAssignment(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_resetBlockShapeAssignment(%p) (%d)", (const void *)script, stackPos(0));
+int LoLEngine::olol_resetBlockShapeAssignment(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_resetBlockShapeAssignment(%p) (%d)", (const void *)script, stackPos(0));
 	uint8 v = stackPos(0) & 0xff;
 	memset(_wllShapeMap + 3, v, 5);
 	memset(_wllShapeMap + 13, v, 5);
 	return 1;
 }
 
-int LoLEngine::o2_loadLangFile(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_loadLangFile(%p) (%s)", (const void *)script, stackPosString(0));
+int LoLEngine::olol_loadLangFile(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadLangFile(%p) (%s)", (const void *)script, stackPosString(0));
 	char filename[13];
 	snprintf(filename, sizeof(filename), "%s.%s", stackPosString(0), _languageExt[_lang]);
 	if (_levelLangFile)
@@ -445,14 +445,14 @@ int LoLEngine::o2_loadLangFile(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::o2_loadSoundFile(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_loadSoundFile(%p) (%d)", (const void *)script, stackPos(0));
+int LoLEngine::olol_loadSoundFile(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadSoundFile(%p) (%d)", (const void *)script, stackPos(0));
 	snd_loadSoundFile(stackPos(0));
 	return 1;
 }
 
-int LoLEngine::o2_setPaletteBrightness(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_setPaletteBrightness(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+int LoLEngine::olol_setPaletteBrightness(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setPaletteBrightness(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	uint16 old = _brightness;
 	_brightness = stackPos(0);
 	if (stackPos(1) == 1)
@@ -460,8 +460,8 @@ int LoLEngine::o2_setPaletteBrightness(EMCState *script) {
 	return old;
 }
 
-int LoLEngine::o2_assignCustomSfx(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::o2_assignCustomSfx(%p) (%s, %d)", (const void *)script, stackPosString(0), stackPos(1));
+int LoLEngine::olol_assignCustomSfx(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_assignCustomSfx(%p) (%s, %d)", (const void *)script, stackPosString(0), stackPos(1));
 	const char *c = stackPosString(0);
 	int i = stackPos(1);
 
@@ -476,6 +476,385 @@ int LoLEngine::o2_assignCustomSfx(EMCState *script) {
 	return 0;
 }
 
-} // end of namespace Kyra
+#pragma mark -
 
+int LoLEngine::tlol_setupPaletteFade(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::t2_playSoundEffect(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	_screen->getFadeParams(_screen->getPalette(0), param[0], _tim->_palDelayInc, _tim->_palDiff);
+	_tim->_palDelayAcc = 0;
+	return 1;
+}
+
+int LoLEngine::tlol_loadPalette(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_loadPalette(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	const char *palFile = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0]<<1)));
+	_res->loadFileToBuf(palFile, _screen->getPalette(0), 768);
+	return 1;
+}
+
+int LoLEngine::tlol_setupPaletteFadeEx(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_setupPaletteFadeEx(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
+
+	_screen->getFadeParams(_screen->getPalette(0), param[0], _tim->_palDelayInc, _tim->_palDiff);
+	_tim->_palDelayAcc = 0;
+	return 1;
+}
+
+int LoLEngine::tlol_processWsaFrame(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_processWsaFrame(%p, %p) (%d, %d, %d, %d, %d)",
+		(const void*)tim, (const void*)param, param[0], param[1], param[2], param[3], param[4]);
+	TIMInterpreter::Animation *anim = (TIMInterpreter::Animation *)tim->wsa[param[0]].anim;
+	const int frame = param[1];
+	const int x2 = param[2];
+	const int y2 = param[3];
+	const int factor = MAX<int>(0, (int16)param[4]);
+
+	const int x1 = anim->x;
+	const int y1 = anim->y;
+
+	int w1 = anim->wsa->width();
+	int h1 = anim->wsa->height();
+	int w2 = (w1 * factor) / 100;
+	int h2 = (h1 * factor) / 100;
+
+	anim->wsa->setDrawPage(2);
+	anim->wsa->setX(x1);
+	anim->wsa->setY(y1);
+	anim->wsa->displayFrame(frame, anim->wsaCopyParams & 0xF0FF, 0, 0);
+	_screen->wsaFrameAnimationStep(x1, y1, x2, y2, w1, h1, w2, h2, 2, 8, 0);
+	_screen->checkedPageUpdate(8, 4);
+	_screen->updateScreen();
+
+	return 1;
+}
+
+int LoLEngine::tlol_displayText(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_displayText(%p, %p) (%d, %d)", (const void*)tim, (const void*)param, param[0], (int16)param[1]);
+	_tim->displayText(param[0], param[1]);
+	return 1;
+}
+
+#pragma mark -
+
+typedef Common::Functor1Mem<EMCState*, int, LoLEngine> OpcodeV2;
+#define SetOpcodeTable(x) table = &x;
+#define Opcode(x) table->push_back(new OpcodeV2(this, &LoLEngine::x))
+#define OpcodeUnImpl() table->push_back(new OpcodeV2(this, 0))
+
+typedef Common::Functor2Mem<const TIM *, const uint16 *, int, LoLEngine> TIMOpcodeLoL;
+#define SetTimOpcodeTable(x) timTable = &x;
+#define OpcodeTim(x) timTable->push_back(new TIMOpcodeLoL(this, &LoLEngine::x))
+#define OpcodeTimUnImpl() timTable->push_back(new TIMOpcodeLoL(this, 0))
+
+void LoLEngine::setupOpcodeTable() {
+	Common::Array<const Opcode*> *table = 0;
+
+	SetOpcodeTable(_opcodes);
+	// 0x00
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(o1_getRand);
+
+	// 0x04
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(olol_setGameFlag);
+
+	// 0x08
+	Opcode(olol_testGameFlag);
+	Opcode(olol_loadLevelGraphics);
+	Opcode(olol_loadCmzFile);
+	Opcode(olol_loadMonsterShapes);
+
+	// 0x0C
+	OpcodeUnImpl();
+	Opcode(olol_allocItemPropertiesBuffer);
+	Opcode(olol_setItemProperty);
+	Opcode(olol_makeItem);
+
+	// 0x10
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(olol_getItemPara);
+	Opcode(olol_getCharacterStat);
+
+	// 0x14
+	Opcode(olol_setCharacterStat);
+	Opcode(olol_loadLevelShapes);
+	Opcode(olol_closeLevelShapeFile);
+	OpcodeUnImpl();
+
+	// 0x18
+	Opcode(olol_loadDoorShapes);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x1C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(olol_setMusicTrack);
+	OpcodeUnImpl();
+
+	// 0x20
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x24
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x28
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x2C
+	OpcodeUnImpl();	
+	Opcode(olol_getUnkArrayVal);
+	Opcode(olol_setUnkArrayVal);
+	OpcodeUnImpl();
+
+	// 0x30
+	Opcode(olol_setGlobalVar);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x34
+	OpcodeUnImpl();
+	Opcode(olol_mapShapeToBlock);
+	Opcode(olol_resetBlockShapeAssignment);
+	OpcodeUnImpl();
+
+	// 0x38
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x3C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x40
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x44
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x48
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x4C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x50
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x54
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(olol_loadLangFile);
+	OpcodeUnImpl();
+
+	// 0x58
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x5C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x60
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(olol_loadSoundFile);
+
+	// 0x64
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x68
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	Opcode(olol_setPaletteBrightness);
+
+	// 0x6C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x70
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x74
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x78
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x7C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x80
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x84
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x88
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x8C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x90
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x94
+	Opcode(olol_assignCustomSfx);
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x98
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0x9C
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xA0
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xA4
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xA8
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xAC
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xB0
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xB4
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xB8
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	// 0xBC
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+	OpcodeUnImpl();
+
+	Common::Array<const TIMOpcode*> *timTable = 0;
+
+	SetTimOpcodeTable(_timIntroOpcodes);
+
+	// 0x00
+	OpcodeTim(tlol_setupPaletteFade);
+	OpcodeTimUnImpl();
+	OpcodeTim(tlol_loadPalette);
+	OpcodeTim(tlol_setupPaletteFadeEx);
+
+	// 0x04
+	OpcodeTim(tlol_processWsaFrame);
+	OpcodeTim(tlol_displayText);
+	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+}
+
+} // end of namespace Kyra
 
