@@ -500,13 +500,13 @@ MoviePlayer *makeMoviePlayer(AGOSEngine *vm, const char *name) {
 		sprintf(filename, "%s~1.dxa", shortName);
 		if (Common::File::exists(filename)) {
 			memset(baseName, 0, sizeof(baseName));
-			memcpy(baseName, shortName, 8);
+			memcpy(baseName, filename, 8);
 		}
 
 		sprintf(filename, "%s~1.smk", shortName);
 		if (Common::File::exists(filename)) {
 			memset(baseName, 0, sizeof(baseName));
-			memcpy(baseName, shortName, 8);
+			memcpy(baseName, filename, 8);
 		}
 	}
 
