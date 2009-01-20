@@ -445,15 +445,16 @@ class SagaEngine : public Engine {
 
 public:
 	// Engine APIs
-	virtual Common::Error init();
-	virtual Common::Error go();
-	virtual bool hasFeature(EngineFeature f) const;
-	virtual void syncSoundSettings();
-	virtual void pauseEngineIntern(bool pause);
+	Common::Error init();
+	Common::Error go();
+	bool hasFeature(EngineFeature f) const;
+	void syncSoundSettings();
+	void pauseEngineIntern(bool pause);
 
-public:
+	GUI::Debugger *getDebugger();
+
 	SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc);
-	virtual ~SagaEngine();
+	~SagaEngine();
 
 	void save(const char *fileName, const char *saveName);
 	void load(const char *fileName);
