@@ -116,11 +116,11 @@ protected:
 		OverlayColor		transparentColor;
 		ImageMap			imageMap;
 		VKEventMap			events;
-		Rect				*displayArea;
+		Rect				displayArea;
 		OverlayColor		displayFontColor;
 
-		Mode() : image(0), displayArea(0) {}
-		~Mode() { delete image; delete displayArea; }
+		Mode() : image(0) {}
+		~Mode() { delete image; }
 	};
 	
 	typedef HashMap<String, Mode, IgnoreCase_Hash, IgnoreCase_EqualTo> ModeMap;

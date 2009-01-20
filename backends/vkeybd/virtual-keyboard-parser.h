@@ -260,9 +260,9 @@ protected:
 
 	/** Parse helper functions */
 	byte parseFlags(const String& flags);
-	bool parseRect(Rect *rect, const String& coords);
-	bool parsePolygon(Polygon *poly, const String& coords);
-	bool parseRectAsPolygon(Polygon *poly, const String& coords);
+	bool parseRect(Rect &rect, const String& coords);
+	bool parsePolygon(Polygon &poly, const String& coords);
+	bool parseRectAsPolygon(Polygon &poly, const String& coords);
 };
 
 } // end of namespace GUI

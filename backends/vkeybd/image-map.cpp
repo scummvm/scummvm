@@ -26,6 +26,7 @@
 #ifdef ENABLE_VKEYBD
 
 #include "backends/vkeybd/image-map.h"
+#include "backends/vkeybd/polygon.h"
 
 namespace Common {
 
@@ -64,7 +65,7 @@ String ImageMap::findMapArea(int16 x, int16 y) {
 		if (it->_value->contains(x, y))
 			return it->_key;
 	}
-	return "";
+	return String();
 }
 
 

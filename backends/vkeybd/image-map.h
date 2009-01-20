@@ -31,9 +31,10 @@
 #include "common/scummsys.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
-#include "backends/vkeybd/polygon.h"
 
 namespace Common {
+
+struct Polygon;
 
 class ImageMap {
 
@@ -47,7 +48,7 @@ public:
 	String findMapArea(int16 x, int16 y);
 
 protected:
-	HashMap<String, Polygon*> _areas;
+	HashMap<String, Polygon *> _areas;
 };
 
 

@@ -96,13 +96,14 @@ VirtualKeyboardGUI::~VirtualKeyboardGUI() {
 }
 
 void VirtualKeyboardGUI::initMode(VirtualKeyboard::Mode *mode) {
+	assert(mode->image);
+
 	_kbdSurface = mode->image;
 	_kbdTransparentColor = mode->transparentColor;
 	_kbdBound.setWidth(_kbdSurface->w);
 	_kbdBound.setHeight(_kbdSurface->h);
 
-	if (mode->displayArea)
-		setupDisplayArea(*(mode->displayArea), mode->displayFontColor);
+	setupDisplayArea(mode->displayArea, mode->displayFontColor);
 
 	if (_displaying) {
 		extendDirtyRect(_kbdBound);

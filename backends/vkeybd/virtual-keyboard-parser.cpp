@@ -27,6 +27,7 @@
 #ifdef ENABLE_VKEYBD
 
 #include "backends/vkeybd/virtual-keyboard-parser.h"
+#include "backends/vkeybd/polygon.h"
 
 #include "common/keyboard.h"
 #include "common/util.h"
@@ -156,8 +157,7 @@ bool VirtualKeyboardParser::parserCallback_mode(ParserNode *node) {
 			delete _mode->image;
 			_mode->image = 0;
 			_mode->imageMap.removeAllAreas();
-			delete _mode->displayArea;
-			_mode->displayArea = 0;
+			_mode->displayArea = Rect();
 		}
 	}
 
@@ -298,16 +298,16 @@ bool VirtualKeyboardParser::parserCallback_area(ParserNode *node) {
 	String& coords = node->values["coords"];
 
 	if (target.equalsIgnoreCase("display_area")) {
-		if (! shape.equalsIgnoreCase("rect"))
+		if (!shape.equalsIgnoreCase("rect"))
 			return parserError("display_area must be a rect area");
-		_mode->displayArea = new Rect();
+		_mode->displayArea = Rect();
 		return parseRect(_mode->displayArea, coords);
 	} else if (shape.equalsIgnoreCase("rect")) {
 		Polygon *poly = _mode->imageMap.createArea(target);
-		return parseRectAsPolygon(poly, coords);
+		return parseRectAsPolygon(*poly, coords);
 	} else if (shape.equalsIgnoreCase("poly")) {
 		Polygon *poly = _mode->imageMap.createArea(target);
-		return parsePolygon(poly, coords);
+		return parsePolygon(*poly, coords);
 	}
 	return parserError("Area shape '%s' not known", shape.c_str());
 }
@@ -329,18 +329,21 @@ byte VirtualKeyboardParser::parseFlags(const String& flags) {
 	return val;
 }
 
-bool VirtualKeyboardParser::parseRect(Rect *rect, const String& coords) {
+bool VirtualKeyboardParser::parseRect(Rect &rect, const String& coords) {
 	int x1, y1, x2, y2;
 	if (!parseIntegerKey(coords.c_str(), 4, &x1, &y1, &x2, &y2))
 		return parserError("Invalid coords for rect area");
-	rect->left = x1; rect->top = y1; rect->right = x2; rect->bottom = y2;
-	if (!rect->isValidRect())
+	rect.left = x1;
+	rect.top = y1;
+	rect.right = x2;
+	rect.bottom = y2;
+	if (!rect.isValidRect())
 		return parserError("Rect area is not a valid rectangle");
 	return true;
 }
 
-bool VirtualKeyboardParser::parsePolygon(Polygon *poly, const String& coords) {
-	StringTokenizer tok (coords, ", ");
+bool VirtualKeyboardParser::parsePolygon(Polygon &poly, const String& coords) {
+	StringTokenizer tok(coords, ", ");
 	for (String st = tok.nextToken(); !st.empty(); st = tok.nextToken()) {
 		int x, y;
 		if (sscanf(st.c_str(), "%d", &x) != 1)
@@ -348,22 +351,22 @@ bool VirtualKeyboardParser::parsePolygon(Polygon *poly, const String& coords) {
 		st = tok.nextToken();
 		if (sscanf(st.c_str(), "%d", &y) != 1)
 			return parserError("Invalid coords for polygon area");
-		poly->addPoint(x, y);
+		poly.addPoint(x, y);
 	}
-	if (poly->getPointCount() < 3)
+	if (poly.getPointCount() < 3)
 		return parserError("Invalid coords for polygon area");
 
 	return true;
 }
 
-bool VirtualKeyboardParser::parseRectAsPolygon(Polygon *poly, const String& coords) {
+bool VirtualKeyboardParser::parseRectAsPolygon(Polygon &poly, const String& coords) {
 	Rect rect;
-	if (!parseRect(&rect, coords))
+	if (!parseRect(rect, coords))
 		return false;
-	poly->addPoint(rect.left, rect.top);
-	poly->addPoint(rect.right, rect.top);
-	poly->addPoint(rect.right, rect.bottom);
-	poly->addPoint(rect.left, rect.bottom);
+	poly.addPoint(rect.left, rect.top);
+	poly.addPoint(rect.right, rect.top);
+	poly.addPoint(rect.right, rect.bottom);
+	poly.addPoint(rect.left, rect.bottom);
 	return true;
 }
 

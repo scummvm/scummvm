@@ -36,13 +36,9 @@ namespace Common {
 
 struct Polygon {
 
-
 	Polygon() {}
-	Polygon(const Polygon& p) : _points(p._points), _bound(p._bound) {}
 	Polygon(Array<Point> p) : _points(p) {
-		if (p.empty()) return;
-		_bound = Rect(p[0].x, p[0].y, p[0].x, p[0].y);
-		for (uint i = 1; i < p.size(); i++) {
+		for (uint i = 0; i < p.size(); i++) {
 			_bound.extend(Rect(p[i].x, p[i].y, p[i].x, p[i].y));
 		}
 	}
@@ -51,7 +47,6 @@ struct Polygon {
 			addPoint(p[i]);
 		}
 	}
-	virtual ~Polygon() {}
 
 	void addPoint(const Point& p) {
 		_points.push_back(p);
@@ -66,36 +61,36 @@ struct Polygon {
 		return _points.size();
 	}
 
-	/*!	@brief check if given position is inside this polygon
-
-		@param x the horizontal position to check
-		@param y the vertical position to check
-
-		@return true if the given position is inside this polygon, false otherwise
+	/**
+	 * Check if given position is inside this polygon.
+	 *
+	 * @param x the horizontal position to check
+	 * @param y the vertical position to check
+	 * @return true if the given position is inside this polygon, false otherwise
 	*/
-	virtual bool contains(int16 x, int16 y) const;
+	bool contains(int16 x, int16 y) const;
 
-	/*!	@brief check if given point is inside this polygon
-
-		@param p the point to check
-
-		@return true if the given point is inside this polygon, false otherwise
+	/**
+	 * Check if given point is inside this polygon.
+	 *
+	 * @param p the point to check
+	 * @return true if the given point is inside this polygon, false otherwise
 	*/
-	virtual bool contains(const Point &p) const {
+	bool contains(const Point &p) const {
 		return contains(p.x, p.y);
 	}
 
-	virtual void moveTo(int16 x, int16 y) {
+	void moveTo(int16 x, int16 y) {
 		int16 dx = x - ((_bound.right + _bound.left) / 2);
 		int16 dy = y - ((_bound.bottom + _bound.top) / 2);
 		translate(dx, dy);
 	}
 
-	virtual void moveTo(const Point &p) {
+	void moveTo(const Point &p) {
 		moveTo(p.x, p.y);
 	}
 
-	virtual void translate(int16 dx, int16 dy) {
+	void translate(int16 dx, int16 dy) {
 		Array<Point>::iterator it;
 		for (it = _points.begin(); it != _points.end(); it++) {
 			it->x += dx;
@@ -103,7 +98,7 @@ struct Polygon {
 		}
 	}
 
-	virtual Rect getBoundingRect() const {
+	Rect getBoundingRect() const {
 		return _bound;
 	}
 
