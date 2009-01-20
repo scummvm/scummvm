@@ -844,6 +844,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_FAN_FLAGS(Common::IT_ITA, Common::FR_FRA)
 	},
 
+#if 0
 	// Lands of Lore CD
 	{
 		{
@@ -1019,6 +1020,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		LOL_DEMO_FLAGS
 	},
+#endif
 
 	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0) }
 };
@@ -1027,7 +1029,9 @@ const PlainGameDescriptor gameList[] = {
 	{ "kyra1", "The Legend of Kyrandia" },
 	{ "kyra2", "The Legend of Kyrandia: The Hand of Fate" },
 	{ "kyra3", "The Legend of Kyrandia: Malcolm's Revenge" },
+#if 0
 	{ "lol", "Lands of Lore: The Throne of Chaos" },
+#endif
 	{ 0, 0 }
 };
 
