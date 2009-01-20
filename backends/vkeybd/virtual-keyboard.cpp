@@ -78,21 +78,18 @@ void VirtualKeyboard::reset() {
 }
 
 bool VirtualKeyboard::loadKeyboardPack(String packName) {
-
 	_kbdGUI->initSize(_system->getOverlayWidth(), _system->getOverlayHeight());
 
 	FSNode vkDir;
-	if (ConfMan.hasKey("vkeybdpath")) {
+	if (ConfMan.hasKey("vkeybdpath"))
 		vkDir = FSNode(ConfMan.get("vkeybdpath"));
-	} else if (ConfMan.hasKey("extrapath")) {
+	else if (ConfMan.hasKey("extrapath"))
 		vkDir = FSNode(ConfMan.get("extrapath"));
-	} else { // use current directory
+	else // use current directory
 		vkDir = FSNode(".");
-	}
 
 	if (vkDir.getChild(packName + ".xml").exists()) {
 		// uncompressed keyboard pack
-		
 		if (!_parser->loadFile(vkDir.getChild(packName + ".xml")))
 			return false;
 		
@@ -124,11 +121,11 @@ bool VirtualKeyboard::loadKeyboardPack(String packName) {
 	return _loaded;
 }
 
-bool VirtualKeyboard::checkModeResolutions()
-{
+bool VirtualKeyboard::checkModeResolutions() {
 	_parser->setParseMode(VirtualKeyboardParser::kParseCheckResolutions);
 	_loaded = _parser->parse();
-	if (_currentMode) _kbdGUI->initMode(_currentMode);
+	if (_currentMode)
+		_kbdGUI->initMode(_currentMode);
 	return _loaded;
 }
 
@@ -137,15 +134,16 @@ String VirtualKeyboard::findArea(int16 x, int16 y) {
 }
 
 void VirtualKeyboard::processAreaClick(const String& area) {
-	if (!_currentMode->events.contains(area)) return;
+	if (!_currentMode->events.contains(area))
+		return;
+
 	VKEvent *evt = _currentMode->events[area];
 
 	switch (evt->type) {
-	case kVKEventKey: {
+	case kVKEventKey:
 		// add virtual keypress to queue
 		_keyQueue.insertKey(*(KeyState*)evt->data);
 		break;
-	}
 	case kVKEventModifier:
 		_keyQueue.toggleFlags(*(byte*)(evt->data));
 		break;
@@ -183,9 +181,9 @@ void VirtualKeyboard::switchMode(Mode *newMode) {
 void VirtualKeyboard::switchMode(const String& newMode) {
 	if (!_modes.contains(newMode)) {
 		warning("Keyboard mode '%s' unknown", newMode.c_str());
-		return;
+	} else {
+		switchMode(&_modes[newMode]);
 	}
-	switchMode(&_modes[newMode]);
 }
 
 void VirtualKeyboard::handleMouseDown(int16 x, int16 y) {
@@ -203,10 +201,11 @@ void VirtualKeyboard::handleMouseUp(int16 x, int16 y) {
 }
 
 void VirtualKeyboard::show() {
-	if (_loaded) _kbdGUI->checkScreenChanged();
 	if (!_loaded) {
 		warning("Virtual keyboard not loaded");
 		return;
+	} else {
+		_kbdGUI->checkScreenChanged();
 	}
 
 	switchMode(_initialMode);
@@ -356,13 +355,11 @@ void VirtualKeyboard::KeyPressQueue::clear() {
 	_strChanged = true;
 }
 
-bool VirtualKeyboard::KeyPressQueue::empty()
-{ 
+bool VirtualKeyboard::KeyPressQueue::empty() { 
 	return _keys.empty();
 }
 
-String VirtualKeyboard::KeyPressQueue::getString()
-{
+String VirtualKeyboard::KeyPressQueue::getString() {
 	if (_keysStr.empty())
 		return _flagsStr;
 	if (_flagsStr.empty())

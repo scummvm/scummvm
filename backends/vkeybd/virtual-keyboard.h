@@ -96,7 +96,8 @@ protected:
 		
 		VKEvent() : data(0) {}
 		~VKEvent() {
-			if (data) free(data);
+			if (data)
+				free(data);
 		}
 	};
 	

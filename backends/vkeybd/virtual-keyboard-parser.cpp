@@ -64,7 +64,6 @@ bool VirtualKeyboardParser::closedKeyCallback(ParserNode *node) {
 }
 
 bool VirtualKeyboardParser::parserCallback_keyboard(ParserNode *node) {
-
 	if (_kbdParsed)
 		return parserError("Only a single keyboard element is allowed");
 
@@ -98,7 +97,6 @@ bool VirtualKeyboardParser::parserCallback_keyboard(ParserNode *node) {
 }
 
 bool VirtualKeyboardParser::parserCallback_mode(ParserNode *node) {
-
 	String name = node->values["name"];
 
 	if (_parseMode == kParseFull) {
@@ -168,7 +166,6 @@ bool VirtualKeyboardParser::parserCallback_mode(ParserNode *node) {
 }
 
 bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
-	
 	// if just checking resolutions we're done
 	if (_parseMode == kParseCheckResolutions)
 		return true;
@@ -242,7 +239,6 @@ bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
 }
 
 bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
-
 	assert(!_mode->resolution.empty());
 
 	String res = node->values["resolution"];
@@ -294,7 +290,6 @@ bool VirtualKeyboardParser::parserCallback_map(ParserNode *node) {
 }
 
 bool VirtualKeyboardParser::parserCallback_area(ParserNode *node) {
-
 	String& shape = node->values["shape"];
 	String& target = node->values["target"];
 	String& coords = node->values["coords"];
