@@ -26,6 +26,7 @@
 
 #include "backends/vkeybd/imageman.h"
 
+#include "common/fs.h"
 #include "common/unzip.h"
 #include "graphics/imagedec.h"
 #include "graphics/surface.h"
@@ -49,7 +50,7 @@ ImageManager::~ImageManager() {
 
 bool ImageManager::addArchive(const Common::String &name) {
 #ifdef USE_ZLIB
-	Common::ZipArchive *arch = new Common::ZipArchive(name);
+	Common::ZipArchive *arch = new Common::ZipArchive(Common::FSNode(name));
 	if (!arch || !arch->isOpen())
 		return false;
 	_archives.add(name, arch);

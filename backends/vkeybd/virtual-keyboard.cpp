@@ -99,7 +99,7 @@ bool VirtualKeyboard::loadKeyboardPack(String packName) {
 	} else if (vkDir.getChild(packName + ".zip").exists()) {
 		// compressed keyboard pack
 #ifdef USE_ZLIB
-		ZipArchive arch(vkDir.getChild(packName + ".zip").getPath().c_str());
+		ZipArchive arch(vkDir.getChild(packName + ".zip"));
 		if (arch.hasFile(packName + ".xml")) {
 			if (!_parser->loadStream(arch.openFile(packName + ".xml")))
 				return false;
