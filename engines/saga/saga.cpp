@@ -570,6 +570,10 @@ int SagaEngine::getTalkspeed() {
 	return (ConfMan.getInt("talkspeed") * 3 + 255 / 2) / 255;
 }
 
+GUI::Debugger *SagaEngine::getDebugger() {
+	return _console;
+}
+
 void SagaEngine::syncSoundSettings() {
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
 	_readingSpeed = getTalkspeed();
