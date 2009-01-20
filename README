@@ -525,11 +525,6 @@ called data1.cab, which ScummVM is unable to unpack. You will need to use the
 original installer or i5comp to unpack the contents of this file. The i5comp
 decompression tool, can be found via a search on the internet.
 
-The game uses Smacker cutscenes extensively, which we can't support directly,
-due to reasons described above. The cutscenes have to be re-encoded to DXA,
-which is the format used by the cutscenes in the Amiga and Macintosh versions.
-See the tools README for a brief guide on converting the cutscenes.
-
 To use the speech files with ScummVM, they need to be renamed as follows:
 Rename voices.wav on CD1 to voices1.wav
 Rename voices.wav on CD2 to voices2.wav
