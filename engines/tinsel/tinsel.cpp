@@ -104,6 +104,7 @@ void SetNewScene(SCNHANDLE scene, int entrance, int transition);
 
 bool bRestart = false;
 bool bHasRestarted = false;
+bool loadingFromGMM = false;
 
 static bool bCuttingScene = false;
 
@@ -509,7 +510,7 @@ void SetNewScene(SCNHANDLE scene, int entrance, int transition) {
 		WrapScene();
 
 	// If CD change will be required, stick in the scene change scene
-	if (CdNumber(scene) != GetCurrentCD()) {
+	if (CdNumber(scene) != GetCurrentCD() || loadingFromGMM) {
 		// This scene gets delayed
 		DelayedScene.scene = scene;
 		DelayedScene.entry = entrance;
@@ -518,6 +519,8 @@ void SetNewScene(SCNHANDLE scene, int entrance, int transition) {
 		NextScene.scene = hCdChangeScene;
 		NextScene.entry = CdNumber(scene) - '0';
 		NextScene.trans = TRANS_FADE;
+
+		loadingFromGMM = false;
 		return;
 	}
 
@@ -997,10 +1000,12 @@ Common::Error TinselEngine::go() {
 	// when loading the save state.
 	//
 	// TODO: This works fine when loading saves, which require a CD change
-	// in DW2. For every other save it'll fail though.
+	// in DW2. It will also work for DW1. For every other save it'll fail though.
+
 #if 0
 	if (ConfMan.hasKey("save_slot")) {
 		loadGameState(ConfMan.getInt("save_slot"));
+		loadingFromGMM = true;
 	}
 #endif
 
