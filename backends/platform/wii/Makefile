@@ -14,7 +14,7 @@ DEBUG_WII_GDB = 0
 # Builds a Gamecube version. Cleanup object files before flipping this!
 GAMECUBE = 0
 
-# List of game engines to compile in. Comment the line to disable an engine.
+# List of game engines to compile in. Comment a to disable the engine.
 ENABLE_SCUMM = STATIC_PLUGIN
 ENABLE_SCUMM_7_8 = STATIC_PLUGIN
 ENABLE_HE = STATIC_PLUGIN
@@ -117,7 +117,6 @@ LDFLAGS  += -L$(DEVKITPRO)/3rd/wii/lib
 
 ifeq ($(DEBUG_WII_USBGECKO),1)
 CXXFLAGS += -DDEBUG_WII_USBGECKO
-LIBS     += -ldb
 endif
 
 ifeq ($(DEBUG_WII_MEMSTATS),1)
@@ -126,6 +125,7 @@ endif
 
 ifeq ($(DEBUG_WII_GDB),1)
 CXXFLAGS += -DDEBUG_WII_GDB
+LIBS     += -ldb
 endif
 
 ifeq ($(USE_ZLIB),1)
