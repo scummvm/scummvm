@@ -1621,8 +1621,12 @@ add_to_config_mk_if_yes $_nasm 'HAVE_NASM = 1'
 #
 # Enable vkeybd / keymapper 
 #
-add_to_config_h_if_yes $_vkeybd '#define ENABLE_VKEYBD'
-add_to_config_h_if_yes $_keymapper '#define ENABLE_KEYMAPPER'
+if test "$_vkeybd" = yes ; then
+	DEFINES="$DEFINES -DENABLE_VKEYBD"
+fi
+if test "$_keymapper" = yes ; then
+	DEFINES="$DEFINES -DENABLE_KEYMAPPER"
+fi
 
 #
 # figure out installation directories
