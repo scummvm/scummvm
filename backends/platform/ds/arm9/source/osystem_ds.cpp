@@ -453,8 +453,7 @@ void OSystem_DS::warpMouse(int x, int y) {
 }
 
 void OSystem_DS::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetCursorScale) {
-	if ((w > 0) && (w < 64) && (h > 0) && (h < 64))
-	{
+	if ((w > 0) && (w < 64) && (h > 0) && (h < 64)) {
 		memcpy(_cursorImage, buf, w * h);
 		_cursorW = w;
 		_cursorH = h;

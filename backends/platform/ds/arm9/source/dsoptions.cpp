@@ -35,6 +35,20 @@
 
 namespace DS {
 
+static bool confGetBool(Common::String key, bool defaultVal) {
+	if (ConfMan.hasKey(key, "ds"))
+		return ConfMan.getBool(key, "ds");
+	return defaultVal;
+}
+
+static int confGetInt(Common::String key, int defaultVal) {
+	if (ConfMan.hasKey(key, "ds"))
+		return ConfMan.getInt(key, "ds");
+	return defaultVal;
+}
+
+
+
 DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	new GUI::ButtonWidget(this, 10, 170, 72, 16, "Close", GUI::kCloseCmd, 'C');
@@ -113,37 +127,15 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 //#endif
 
 
-
-
-
-
-	if (ConfMan.hasKey("snaptoborder", "ds")) {
-		_snapToBorderCheckbox->setState(ConfMan.getBool("snaptoborder", "ds"));
-	} else {
 #ifdef DS_BUILD_D
-		_snapToBorderCheckbox->setState(true);
+	_snapToBorderCheckbox->setState(confGetBool("snaptoborder", true));
 #else
-		_snapToBorderCheckbox->setState(false);
+	_snapToBorderCheckbox->setState(confGetBool("snaptoborder", false));
 #endif
-	}
 
-	if (ConfMan.hasKey("showcursor", "ds")) {
-		_showCursorCheckbox->setState(ConfMan.getBool("showcursor", "ds"));
-	} else {
-		_showCursorCheckbox->setState(true);
-	}
-
-	if (ConfMan.hasKey("lefthanded", "ds")) {
-		_leftHandedCheckbox->setState(ConfMan.getBool("lefthanded", "ds"));
-	} else {
-		_leftHandedCheckbox->setState(false);
-	}
-
-	if (ConfMan.hasKey("unscaled", "ds")) {
-		_unscaledCheckbox->setState(ConfMan.getBool("unscaled", "ds"));
-	} else {
-		_unscaledCheckbox->setState(false);
-	}
+	_showCursorCheckbox->setState(confGetBool("showcursor", true));
+	_leftHandedCheckbox->setState(confGetBool("lefthanded", false));
+	_unscaledCheckbox->setState(confGetBool("unscaled", false));
 
 
 	if (ConfMan.hasKey("topscreenzoom", "ds")) {
@@ -152,8 +144,7 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 		_150PercentCheckbox->setState(false);
 		_200PercentCheckbox->setState(false);
 
-		switch (ConfMan.getInt("topscreenzoom", "ds"))
-		{
+		switch (ConfMan.getInt("topscreenzoom", "ds")) {
 			case 100: {
 				_100PercentCheckbox->setState(true);
 				break;
@@ -177,57 +168,21 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 		_150PercentCheckbox->setState(true);
 	}
 
-	if (ConfMan.hasKey("22khzaudio", "ds")) {
-		_highQualityAudioCheckbox->setState(ConfMan.getBool("22khzaudio", "ds"));
-	} else {
-		_highQualityAudioCheckbox->setState(false);
-	}
-
-	if (ConfMan.hasKey("disablepoweroff", "ds")) {
-		_disablePowerOff->setState(ConfMan.getBool("disablepoweroff", "ds"));
-	} else {
-		_disablePowerOff->setState(false);
-	}
+	_highQualityAudioCheckbox->setState(confGetBool("22khzaudio", false));
+	_disablePowerOff->setState(confGetBool("disablepoweroff", false));
 
     #ifdef ALLOW_CPU_SCALER
-	if (ConfMan.hasKey("cpu_scaler", "ds")) {
-		_cpuScaler->setState(ConfMan.getBool("cpu_scaler", "ds"));
-	} else {
-		_cpuScaler->setState(false);
-	}
+	_cpuScaler->setState(confGetBool("cpu_scaler", false));
     #endif
 
 	_indyFightCheckbox->setState(DS::getIndyFightState());
 
-	if (ConfMan.hasKey("xoffset", "ds")) {
-		_touchX->setValue(ConfMan.getInt("xoffset", "ds"));
-	} else {
-		_touchX->setValue(0);
-	}
+	_touchX->setValue(confGetInt("xoffset", 0));
+	_touchY->setValue(confGetInt("yoffset", 0));
+	_sensitivity->setValue(confGetInt("sensitivity", 8));
 
-	if (ConfMan.hasKey("yoffset", "ds")) {
-		_touchY->setValue(ConfMan.getInt("yoffset", "ds"));
-	} else {
-		_touchY->setValue(0);
-	}
-
-	if (ConfMan.hasKey("sensitivity", "ds")) {
-		_sensitivity->setValue(ConfMan.getInt("sensitivity", "ds"));
-	} else {
-		_sensitivity->setValue(8);
-	}
-
-	if (ConfMan.hasKey("touchpad", "ds")) {
-		_touchPadStyle->setState(ConfMan.getBool("touchpad", "ds"));
-	} else {
-		_touchPadStyle->setState(0);
-	}
-
-	if (ConfMan.hasKey("screentaps", "ds")) {
-		_screenTaps->setState(ConfMan.getBool("screentaps", "ds"));
-	} else {
-		_screenTaps->setState(0);
-	}
+	_touchPadStyle->setState(confGetBool("touchpad", false));
+	_screenTaps->setState(confGetBool("screentaps", false));
 
 	_screenTaps->setEnabled(!_touchPadStyle->getState());
 	_sensitivity->setEnabled(_touchPadStyle->getState());
@@ -381,6 +336,7 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 
 void togglePause() {
 	// Toggle pause mode by simulating pressing 'p'.  Not a good way of doing things!
+	// FIXME: What is this code meant to do ?!?
 
 	if (getCurrentGame()->control == CONT_SCUMM_ORIGINAL) {
 		Common::Event event;
@@ -418,33 +374,16 @@ void setOptions() {
 
 	ConfMan.addGameDomain("ds");
 
-	if (ConfMan.hasKey("lefthanded", "ds")) {
-		DS::setLeftHanded(ConfMan.getBool("lefthanded", "ds"));
-	} else {
-		DS::setLeftHanded(false);
-	}
+	DS::setLeftHanded(confGetBool("lefthanded", false));
+	DS::setMouseCursorVisible(confGetBool("showcursor", true));
 
-	if (ConfMan.hasKey("showcursor", "ds")) {
-		DS::setMouseCursorVisible(ConfMan.getBool("showcursor", "ds"));
-	} else {
-		DS::setMouseCursorVisible(true);
-	}
-
-	if (ConfMan.hasKey("snaptoborder", "ds")) {
-		DS::setSnapToBorder(ConfMan.getBool("snaptoborder", "ds"));
-	} else {
 #ifdef DS_BUILD_D
-		DS::setSnapToBorder(true);
+	DS::setSnapToBorder(confGetBool("snaptoborder", true));
 #else
-		DS::setSnapToBorder(false);
+	DS::setSnapToBorder(confGetBool("snaptoborder", false));
 #endif
-	}
 
-	if (ConfMan.hasKey("unscaled", "ds")) {
-		DS::setUnscaledMode(ConfMan.getBool("unscaled", "ds"));
-	} else {
-		DS::setUnscaledMode(false);
-	}
+	DS::setUnscaledMode(confGetBool("unscaled", false));
 
 	if (firstLoad) {
 		if (ConfMan.hasKey("topscreenzoom", "ds")) {
@@ -458,37 +397,15 @@ void setOptions() {
 		}
 	}
 
-	if (ConfMan.hasKey("xoffset", "ds")) {
-		DS::setTouchXOffset(ConfMan.getInt("xoffset", "ds"));
-	} else {
-		DS::setTouchXOffset(0);
-	}
-
-	if (ConfMan.hasKey("yoffset", "ds")) {
-		DS::setTouchYOffset(ConfMan.getInt("yoffset", "ds"));
-	} else {
-		DS::setTouchXOffset(0);
-	}
-
-	if (ConfMan.hasKey("sensitivity", "ds")) {
-		DS::setSensitivity(ConfMan.getInt("sensitivity", "ds"));
-	} else {
-		DS::setSensitivity(8);
-	}
+	DS::setTouchXOffset(confGetInt("xoffset", 0));
+	DS::setTouchYOffset(confGetInt("yoffset", 0));
+	DS::setSensitivity(confGetInt("sensitivity", 8));
 
 #ifdef ALLOW_CPU_SCALER
-	if (ConfMan.hasKey("cpu_scaler", "ds")) {
-		DS::setCpuScalerEnable(ConfMan.getBool("cpu_scaler", "ds"));
-	} else {
-		DS::setCpuScalerEnable(false);
-	}
+	DS::setCpuScalerEnable(confGetBool("cpu_scaler", false));
 #endif
 
-	if (ConfMan.hasKey("screentaps", "ds")) {
-		DS::setTapScreenClicksEnable(ConfMan.getBool("screentaps", "ds"));
-	} else {
-		DS::setTapScreenClicksEnable(false);
-	}
+	DS::setTapScreenClicksEnable(confGetBool("screentaps", false));
 
 	if (ConfMan.hasKey("touchpad", "ds")) {
 		bool enable = ConfMan.getBool("touchpad", "ds");
@@ -514,4 +431,3 @@ void setOptions() {
 }
 
 }
-
