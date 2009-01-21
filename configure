@@ -1036,7 +1036,7 @@ test $TMP -eq 0 || exit 1	# check exit code of subshell
 #
 # Check whether we can use x86 asm routines
 #
-echo_n "Running on x86... "
+echo_n "Compiling for x86... "
 case $_host_cpu in
 	i386|i486|i586|i686)
 		_have_x86=yes
