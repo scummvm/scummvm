@@ -33,7 +33,7 @@
 
 #include <gctypes.h>
 
-#ifndef GAMECUBE
+#ifdef USE_WII_DI
 #include <di/di.h>
 #endif
 
@@ -86,7 +86,7 @@ public:
 };
 
 void WiiFilesystemNode::asyncHandler(bool mount, const Common::String *path) {
-#ifndef GAMECUBE
+#ifdef USE_WII_DI
 	static bool di_tryMount = true;
 	static bool di_isMounted = false;
 

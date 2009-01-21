@@ -27,7 +27,7 @@
 #include <ogc/machine/processor.h>
 #include <fat.h>
 
-#ifndef GAMECUBE
+#ifdef USE_WII_DI
 #include <di/di.h>
 #endif
 
@@ -83,7 +83,7 @@ void wii_memstats(void) {
 int main(int argc, char *argv[]) {
 	s32 res;
 
-#ifndef GAMECUBE
+#ifdef USE_WII_DI
 	DI_Init();
 #endif
 
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
 	SYS_SetPowerCallback(power_cb);
 #endif
 
-#ifndef GAMECUBE
+#ifdef USE_WII_DI
 	// initial async mount for the browser, see wii-fs.cpp
 	DI_Mount();
 #endif
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
 	fatUnmountDefault();
 #endif
 
-#ifndef GAMECUBE
+#ifdef USE_WII_DI
 	DI_Close();
 #endif
 
