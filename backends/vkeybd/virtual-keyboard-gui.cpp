@@ -248,12 +248,19 @@ void VirtualKeyboardGUI::move(int16 x, int16 y) {
 }
 
 void VirtualKeyboardGUI::screenChanged() {
+	g_gui.checkScreenChange();
+
 	_lastScreenChanged = _system->getScreenChangeID();
 	int16 newScreenW = _system->getOverlayWidth();
 	int16 newScreenH = _system->getOverlayHeight();
+
 	if (_screenW != newScreenW || _screenH != newScreenH) {
 		_screenW = newScreenW;
 		_screenH = newScreenH;
+
+		_overlayBackup.create(_screenW, _screenH, sizeof(OverlayColor));
+		_system->grabOverlay((OverlayColor*)_overlayBackup.pixels, _overlayBackup.w);
+
 		if (!_kbd->checkModeResolutions()) {
 			_displaying = false;
 			return;
