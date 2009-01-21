@@ -67,17 +67,17 @@ void RemapDialog::open() {
 	Keymapper::Domain *_gameKeymaps = 0;
 
 	int keymapCount = 0;
-	if (_globalKeymaps->count() == 0)
+	if (_globalKeymaps->empty())
 		_globalKeymaps = 0;
 	else
-		keymapCount += _globalKeymaps->count();
+		keymapCount += _globalKeymaps->size();
 
 	if (ConfMan.getActiveDomain() != 0) {
 		_gameKeymaps = &_keymapper->getGameDomain();
-		if (_gameKeymaps->count() == 0)
+		if (_gameKeymaps->empty())
 			_gameKeymaps = 0;
 		else
-			keymapCount += _gameKeymaps->count();
+			keymapCount += _gameKeymaps->size();
 	}
 
 	_keymapTable = (Keymap **)malloc(sizeof(Keymap*) * keymapCount);
@@ -85,7 +85,8 @@ void RemapDialog::open() {
 	Keymapper::Domain::iterator it;
 	uint32 idx = 0;
 	if (_globalKeymaps) {
-		if (divider) _kmPopUp->appendEntry("");
+		if (divider)
+			_kmPopUp->appendEntry("");
 		for (it = _globalKeymaps->begin(); it != _globalKeymaps->end(); it++) {
 			_kmPopUp->appendEntry(it->_value->getName() + " (Global)", idx);
 			_keymapTable[idx++] = it->_value;
@@ -93,7 +94,8 @@ void RemapDialog::open() {
 		divider = true;
 	}
 	if (_gameKeymaps) {
-		if (divider) _kmPopUp->appendEntry("");
+		if (divider)
+			_kmPopUp->appendEntry("");
 		for (it = _gameKeymaps->begin(); it != _gameKeymaps->end(); it++) {
 			_kmPopUp->appendEntry(it->_value->getName() + " (Game)", idx);
 			_keymapTable[idx++] = it->_value;
@@ -110,10 +112,8 @@ void RemapDialog::open() {
 
 void RemapDialog::close() {
 	_kmPopUp->clearEntries();
-	if (_keymapTable) {
-		free(_keymapTable);
-		_keymapTable = 0;
-	}
+	free(_keymapTable);
+	_keymapTable = 0;
 	if (_changes) 
 		ConfMan.flushToDisk();
 	Dialog::close();

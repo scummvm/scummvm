@@ -32,22 +32,21 @@
 namespace Common {
 
 void Keymapper::Domain::addKeymap(Keymap *map) {
-	KeymapMap::iterator it = _keymaps.find(map->getName());
-	if (it != _keymaps.end())
-		delete _keymaps[map->getName()];
-	_keymaps[map->getName()] = map;
+	iterator it = find(map->getName());
+	if (it != end())
+		delete it->_value;
+	setVal(map->getName(), map);
 }
 
 void Keymapper::Domain::deleteAllKeyMaps() {
-	KeymapMap::iterator it;
-	for (it = _keymaps.begin(); it != _keymaps.end(); it++)
+	for (iterator it = begin(); it != end(); it++)
 		delete it->_value;
-	_keymaps.clear();
+	clear();
 }
 
 Keymap *Keymapper::Domain::getKeymap(const String& name) {
-	KeymapMap::iterator it = _keymaps.find(name);
-	if (it != _keymaps.end())
+	iterator it = find(name);
+	if (it != end())
 		return it->_value;
 	else
 		return 0;
@@ -149,8 +148,8 @@ bool Keymapper::mapKeyUp(const KeyState& key) {
 }
 
 bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
-	if (!_enabled) return false;
-	if (_activeMaps.empty()) return false;
+	if (!_enabled || _activeMaps.empty())
+		return false;
 
 	Action *action = 0;
 	if (keyDown) {

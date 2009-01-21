@@ -49,7 +49,7 @@ template<> struct Hash<KeyState>
 	: public UnaryFunction<KeyState, uint> {
 
 	uint operator()(const KeyState &val) const { 
-		return (uint)(val.keycode * (val.flags << 1));
+		return (uint)val.keycode | ((uint)val.flags << 24);
 	}
 };
 

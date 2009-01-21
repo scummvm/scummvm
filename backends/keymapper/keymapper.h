@@ -49,10 +49,8 @@ public:
 	};
 
 	/* Nested class that represents a set of keymaps */
-	class Domain {
-		typedef HashMap<String, Keymap*, 
-			IgnoreCase_Hash, IgnoreCase_EqualTo> KeymapMap;
-
+	class Domain : public HashMap<String, Keymap*,
+				IgnoreCase_Hash, IgnoreCase_EqualTo>  {
 	public:
 		Domain() : _configDomain(0) {}
 		~Domain() { 
@@ -72,16 +70,8 @@ public:
 
 		Keymap *getKeymap(const String& name);
 		
-		typedef KeymapMap::iterator iterator;
-		typedef KeymapMap::const_iterator const_iterator;
-		iterator begin() { return _keymaps.begin(); }
-		const_iterator begin() const { return _keymaps.begin(); }
-		iterator end() { return _keymaps.end(); }
-		const_iterator end() const { return _keymaps.end(); }
-		uint32 count() { return _keymaps.size(); }
 	private:
 		ConfigManager::Domain *_configDomain;
-		KeymapMap _keymaps;
 	};
 
 	Keymapper(EventManager *eventMan);
