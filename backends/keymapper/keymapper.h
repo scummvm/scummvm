@@ -168,7 +168,7 @@ public:
 
 	Domain& getGlobalDomain() { return _globalDomain; }
 	Domain& getGameDomain() { return _gameDomain; }
-	Stack<MapRecord>& getActiveStack() { return _activeMaps; }
+	const Stack<MapRecord>& getActiveStack() const { return _activeMaps; }
 
 private:
 

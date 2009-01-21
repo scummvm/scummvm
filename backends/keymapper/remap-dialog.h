@@ -68,7 +68,6 @@ protected:
 	void stopRemapping();
 
 	Keymapper *_keymapper;
-	Stack<Keymapper::MapRecord> *_activeKeymaps;
 	Keymap** _keymapTable;
 
 	Array<ActionInfo> _currentActions;

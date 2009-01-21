@@ -57,9 +57,9 @@ RemapDialog::~RemapDialog() {
 
 void RemapDialog::open() {
 	bool divider = false;
-	_activeKeymaps = &_keymapper->getActiveStack();
-	if (_activeKeymaps->size() > 0) {
-		_kmPopUp->appendEntry(_activeKeymaps->top().keymap->getName() + " (Active)");
+	const Stack<Keymapper::MapRecord> &activeKeymaps = _keymapper->getActiveStack();
+	if (!activeKeymaps.size() > 0) {
+		_kmPopUp->appendEntry(activeKeymaps.top().keymap->getName() + " (Active)");
 		divider = true;
 	}
 
@@ -232,13 +232,14 @@ void RemapDialog::handleTickle() {
 
 void RemapDialog::loadKeymap() {
 	_currentActions.clear();
-	if (_activeKeymaps->size() > 0 && _kmPopUp->getSelected() == 0) {
+	const Stack<Keymapper::MapRecord> &activeKeymaps = _keymapper->getActiveStack();
+	if (!activeKeymaps.empty() && _kmPopUp->getSelected() == 0) {
 		// load active keymaps
 
-		List<const HardwareKey*> freeKeys (_keymapper->getHardwareKeys());
+		List<const HardwareKey*> freeKeys(_keymapper->getHardwareKeys());
 
 		// add most active keymap's keys
-		Keymapper::MapRecord top = _activeKeymaps->top();
+		Keymapper::MapRecord top = activeKeymaps.top();
 		List<Action*>::iterator actIt;
 		for (actIt = top.keymap->getActions().begin(); actIt != top.keymap->getActions().end(); ++actIt) {
 			Action *act = *actIt;
@@ -250,8 +251,8 @@ void RemapDialog::loadKeymap() {
 		
 		// loop through remaining finding mappings for unmapped keys
 		if (top.inherit) {
-			for (int i = _activeKeymaps->size() - 2; i >= 0; --i) {
-				Keymapper::MapRecord mr = (*_activeKeymaps)[i];
+			for (int i = activeKeymaps.size() - 2; i >= 0; --i) {
+				Keymapper::MapRecord mr = activeKeymaps[i];
 				List<const HardwareKey*>::iterator keyIt = freeKeys.begin();
 				while (keyIt != freeKeys.end()) {
 					Action *act = mr.keymap->getMappedAction((*keyIt)->key);
@@ -288,7 +289,8 @@ void RemapDialog::loadKeymap() {
 
 void RemapDialog::refreshKeymap() {
 	int newTopAction = _scrollBar->_currentPos * _colCount;
-	if (newTopAction == _topAction) return;
+	if (newTopAction == _topAction)
+		return;
 	_topAction = newTopAction;
 
 	//_container->draw();
@@ -306,12 +308,12 @@ void RemapDialog::refreshKeymap() {
 				widg.keyButton->setLabel(mappedKey->description);
 			else
 				widg.keyButton->setLabel("-");
-			widg.actionText->clearFlags(GUI::WIDGET_INVISIBLE);
-			widg.keyButton->clearFlags(GUI::WIDGET_INVISIBLE);
+			widg.actionText->setVisible(true);
+			widg.keyButton->setVisible(true);
 			actionI++; 
 		} else {
-			widg.actionText->setFlags(GUI::WIDGET_INVISIBLE);
-			widg.keyButton->setFlags(GUI::WIDGET_INVISIBLE);
+			widg.actionText->setVisible(false);
+			widg.keyButton->setVisible(false);
 		}
 		//widg.actionText->draw();
 		//widg.keyButton->draw();
