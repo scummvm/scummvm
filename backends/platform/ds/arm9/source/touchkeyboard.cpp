@@ -299,7 +299,7 @@ void setKeyHighlight(int key, bool highlight) {
 	}
 }
 
-void addAutoComplete(char* word) {
+void addAutoComplete(const char* word) {
 	if (autoCompleteCount == NUM_WORDS) return;
 	strcpy(&autoCompleteWord[autoCompleteCount++][0], word);
 	drawAutoComplete();

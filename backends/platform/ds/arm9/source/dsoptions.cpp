@@ -284,28 +284,23 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 
 	static bool guard = false;
 
-	if ((!guard) && (_radioButtonMode))
-	{
+	if ((!guard) && (_radioButtonMode)) {
 		guard = true;
 
-		if ((cmd & 0xFF000000) == 0x10000000)
-		{
+		if ((cmd & 0xFF000000) == 0x10000000) {
 			_cpuScaler->setState(false);
 			_hardScaler->setState(false);
 			_unscaledCheckbox->setState(false);
 
-			if ((sender == _cpuScaler) && (cmd == 0x10000002))
-			{
+			if ((sender == _cpuScaler) && (cmd == 0x10000002)) {
 				_cpuScaler->setState(true);
 			}
 
-			if ((sender == _hardScaler) && (cmd == 0x10000001))
-			{
+			if ((sender == _hardScaler) && (cmd == 0x10000001)) {
 				_hardScaler->setState(true);
 			}
 
-			if ((sender == _unscaledCheckbox) && (cmd == 0x10000003))
-			{
+			if ((sender == _unscaledCheckbox) && (cmd == 0x10000003)) {
 				_unscaledCheckbox->setState(true);
 			}
 		}

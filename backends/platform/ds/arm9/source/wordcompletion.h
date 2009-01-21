@@ -1,7 +1,7 @@
 namespace DS {
 
-extern bool findWordCompletions(char* input);
-extern void addAutoCompleteLine(char* line);
+extern bool findWordCompletions(const char *input);
+extern void addAutoCompleteLine(const char *line);
 extern void sortAutoCompleteWordList();
 
 }

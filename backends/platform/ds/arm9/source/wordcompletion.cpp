@@ -17,16 +17,14 @@ int wordBufferPos = 0;
 char* wordBufferPtr[MAX_WORD_COUNT];
 int wordBufferPtrPos = 0;
 
-void addAutoCompleteLine(char* line) {
+void addAutoCompleteLine(const char *line) {
 
-	while (*line != 0)
-	{
+	while (*line != 0) {
 		char word[32];
 		int length;
 
 		// Skip the T9-style numbers
-		while (*line != ' ')
-		{
+		while (*line != ' ') {
 			line++;
 		}
 		line++;
@@ -64,15 +62,14 @@ int stringCompare(const void* a, const void* b) {
 
 void sortAutoCompleteWordList() {
 	// Sort the whole word list into alphabetical order
-	qsort((void *) wordBufferPtr, wordBufferPtrPos, 4, stringCompare);
+	qsort((void *)wordBufferPtr, wordBufferPtrPos, 4, stringCompare);
 }
 
 // Sends the current available words to the virtual keyboard code for display
-bool findWordCompletions(char* input)
-{
+bool findWordCompletions(const char* input) {
 	int min = 0;
 	int max = wordBufferPtrPos - 1;
-	char* word;
+	char *word;
 	int position;
 	char partialWord[32];
 
@@ -92,8 +89,7 @@ bool findWordCompletions(char* input)
 	}
 	strcpy(partialWord, &input[start]);
 
-	if (strlen(partialWord) == 0)
-	{
+	if (*partialWord == 0) {
 		return false;
 	}
 
@@ -103,10 +99,8 @@ bool findWordCompletions(char* input)
 		// Get the word from the dictonary line
 		word = wordBufferPtr[position];
 
-
-
 		// Now check to see if the word is before or after the stub we're after
-		int result = scumm_stricmp((const char *) partialWord, (const char *) word);
+		int result = scumm_stricmp(partialWord, word);
 
 		if (result == 0) {
 			// We've found the whole word.  Aren't we good.
@@ -144,7 +138,8 @@ bool findWordCompletions(char* input)
 
 	if (!match) {
 		position++;
-		if (position == wordBufferPtrPos) return false;
+		if (position == wordBufferPtrPos)
+			return false;
 		word = wordBufferPtr[position];
 //		consolePrintf("Final word: %s\n", word);
 	}

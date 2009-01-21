@@ -85,18 +85,17 @@ void OSystem_DS::initBackend() {
 }
 
 bool OSystem_DS::hasFeature(Feature f) {
-//	consolePrintf("hasfeature\n");
 	return (f == kFeatureVirtualKeyboard) || (f == kFeatureCursorHasPalette);
 }
 
 void OSystem_DS::setFeatureState(Feature f, bool enable) {
-//	consolePrintf("setfeature f=%d e=%d\n", f, enable);
-	if (f == kFeatureVirtualKeyboard) DS::setKeyboardIcon(enable);
+	if (f == kFeatureVirtualKeyboard)
+		DS::setKeyboardIcon(enable);
 }
 
 bool OSystem_DS::getFeatureState(Feature f) {
-//	consolePrintf("getfeat\n");
-	if (f == kFeatureVirtualKeyboard) return DS::getKeyboardIcon();
+	if (f == kFeatureVirtualKeyboard)
+		return DS::getKeyboardIcon();
 	return false;
 }
 
@@ -201,11 +200,9 @@ bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
 
 
 	const u16* image = (const u16 *) DS::get8BitBackBuffer();
-	for (int y = 0; y <  DS::getGameHeight(); y++)
-	{
+	for (int y = 0; y <  DS::getGameHeight(); y++) {
 		DC_FlushRange(image + (y << 8), DS::getGameWidth());
-		for (int x = 0; x < DS::getGameWidth() >> 1; x++)
-		{
+		for (int x = 0; x < DS::getGameWidth() >> 1; x++) {
 			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[(y << 8) + x];
 		}
 	}
@@ -235,16 +232,16 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 
 	u16* bg;
 	s32 stride;
-	u16* bgSub = (u16 *) BG_GFX_SUB;
+	u16* bgSub = (u16 *)BG_GFX_SUB;
 
 	// The DS video RAM doesn't support 8-bit writes because Nintendo wanted
 	// to save a few pennies/euro cents on the hardware.
 
 	if (_frameBufferExists) {
-		bg = (u16 *) _framebuffer.pixels;
+		bg = (u16 *)_framebuffer.pixels;
 		stride = _framebuffer.pitch;
 	} else {
-		bg = (u16 *) DS::get8BitBackBuffer();
+		bg = (u16 *)DS::get8BitBackBuffer();
 		stride = DS::get8BitBackBufferStride();
 	}
 
@@ -370,6 +367,7 @@ void OSystem_DS::updateScreen() {
 //	DS::doTimerCallback();
 	DS::addEventsToQueue();
 
+	// FIXME: Evil game specific hack.
 	// Force back buffer usage for Nippon Safes, as it doesn't double buffer it's output
 	if (DS::getControlType() == DS::CONT_NIPPON) {
 		OSystem_DS::instance()->lockScreen();
@@ -381,25 +379,25 @@ void OSystem_DS::setShakePos(int shakeOffset) {
 	DS::setShakePos(shakeOffset);
 }
 
-void OSystem_DS::showOverlay () {
+void OSystem_DS::showOverlay() {
 //	consolePrintf("showovl\n");
 	DS::displayMode16Bit();
 }
 
-void OSystem_DS::hideOverlay () {
+void OSystem_DS::hideOverlay() {
 	DS::displayMode8Bit();
 }
 
-void OSystem_DS::clearOverlay () {
+void OSystem_DS::clearOverlay() {
 	memset((u16 *) DS::get16BitBackBuffer(), 0, 512 * 256 * 2);
 //	consolePrintf("clearovl\n");
 }
 
-void OSystem_DS::grabOverlay (OverlayColor *buf, int pitch) {
+void OSystem_DS::grabOverlay(OverlayColor *buf, int pitch) {
 //	consolePrintf("grabovl\n");
 }
 
-void OSystem_DS::copyRectToOverlay (const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_DS::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	u16* bg = (u16 *) DS::get16BitBackBuffer();
 	const u16* src = (const u16 *) buf;
 
@@ -591,8 +589,7 @@ void OSystem_DS::stopCD() {
 	DS::CD::stopTrack();
 }
 
-void OSystem_DS::updateCD()
-{
+void OSystem_DS::updateCD() {
 }
 
 void OSystem_DS::quit() {
@@ -638,10 +635,12 @@ Graphics::Surface* OSystem_DS::createTempFrameBuffer() {
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
 
-	// If the scaler is enabled, we can just return the 8 bit back buffer, since it's in system memory
-	// memory anyway.  Otherwise, we need to copy the back buffer into the memory normally used by the scaler buffer and
-	// then return it.
-	// We must make sure that once the frame buffer is created, future calls to copyRectToScreen() copy to this buffer
+	// If the scaler is enabled, we can just return the 8 bit back buffer,
+	// since it's in system memory anyway.  Otherwise, we need to copy the back
+	// buffer into the memory normally used by the scaler buffer and then
+	// return it.
+	// We also must ensure that once the frame buffer is created, future calls
+	// to copyRectToScreen() copy to this buffer.
 
 	if (DS::isCpuScalerEnabled()) {
 
@@ -650,7 +649,6 @@ Graphics::Surface* OSystem_DS::createTempFrameBuffer() {
 		_framebuffer.h = DS::getGameHeight();
 		_framebuffer.pitch = DS::getGameWidth();
 		_framebuffer.bytesPerPixel = 1;
-
 
 	} else {
 
@@ -720,7 +718,7 @@ void OSystem_DS::clearFocusRectangle() {
 
 
 void OSystem_DS::addAutoComplete(const char *word) {
-	DS::addAutoComplete((char *) word);
+	DS::addAutoComplete(word);
 }
 
 void OSystem_DS::clearAutoComplete() {
@@ -730,10 +728,3 @@ void OSystem_DS::clearAutoComplete() {
 void OSystem_DS::setCharactersEntered(int count) {
 	DS::setCharactersEntered(count);
 }
-
-OSystem *OSystem_DS_create() {
-	return new OSystem_DS();
-}
-
-
-
