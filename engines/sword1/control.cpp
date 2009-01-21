@@ -697,7 +697,7 @@ void Control::handleSaveKey(Common::KeyState kbd) {
 		uint8 len = _saveNames[_selectedSavegame].size();
 		if ((kbd.keycode == Common::KEYCODE_BACKSPACE) && len)  // backspace
 			_saveNames[_selectedSavegame].deleteLastChar();
-		else if (keyAccepted(kbd.ascii) && (len < 31)) {
+		else if (kbd.ascii && keyAccepted(kbd.ascii) && (len < 31)) {
 			_saveNames[_selectedSavegame].insertChar(kbd.ascii, len);
 		}
 		showSavegameNames();
