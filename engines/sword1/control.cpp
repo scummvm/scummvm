@@ -724,6 +724,8 @@ void Control::readSavegameDescriptions(void) {
 	Common::StringList filenames = _saveFileMan->listSavefiles(pattern.c_str());
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
+	_saveNames.clear();
+
 	int num = 0;
 	int slotNum = 0;
 	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
