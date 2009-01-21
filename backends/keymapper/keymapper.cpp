@@ -96,10 +96,14 @@ void Keymapper::initKeymap(Domain &domain, Keymap *map) {
 }
 
 void Keymapper::cleanupGameKeymaps() {
+	// Flush all game specific keymaps
 	_gameDomain.deleteAllKeyMaps();
+	
+	// Now restore the stack of active maps. Re-add all global keymaps, drop
+	// the game specific (=deleted) ones.
 	Stack<MapRecord> newStack;
 	for (int i = 0; i < _activeMaps.size(); i++) {
-		if (!_activeMaps[i].global)
+		if (_activeMaps[i].global)
 			newStack.push(_activeMaps[i]);
 	}
 	_activeMaps = newStack;
