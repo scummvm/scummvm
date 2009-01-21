@@ -205,7 +205,7 @@ void RemapDialog::stopRemapping() {
 
 void RemapDialog::handleKeyUp(Common::KeyState state) {
 	if (_activeRemapAction) {
-		const HardwareKey *hwkey = _keymapper->getHardwareKey(state);
+		const HardwareKey *hwkey = _keymapper->findHardwareKey(state);
 		if (hwkey) {
 			_activeRemapAction->mapKey(hwkey);
 			// TODO:   _activeRemapAction->getParent()->saveMappings();
@@ -235,7 +235,7 @@ void RemapDialog::loadKeymap() {
 	if (_activeKeymaps->size() > 0 && _kmPopUp->getSelected() == 0) {
 		// load active keymaps
 
-		List<const HardwareKey*> freeKeys (_keymapper->getHardwareKeySet()->getHardwareKeys());
+		List<const HardwareKey*> freeKeys (_keymapper->getHardwareKeys());
 
 		// add most active keymap's keys
 		Keymapper::MapRecord top = _activeKeymaps->top();

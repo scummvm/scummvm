@@ -139,21 +139,20 @@ void Keymap::loadMappings(const HardwareKeySet *hwKeys) {
 }
 
 void Keymap::saveMappings() {
-	if (!_configDomain) return;
+	if (!_configDomain)
+		return;
 	List<Action*>::const_iterator it;
 	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 	for (it = _actions.begin(); it != _actions.end(); it++) {
 		uint actIdLen = strlen((*it)->id);
 		actIdLen = (actIdLen > ACTION_ID_SIZE) ? ACTION_ID_SIZE : actIdLen;
 		String actId((*it)->id, (*it)->id + actIdLen);
+		char hwId[HWKEY_ID_SIZE+1];
+		memset(hwId, 0, HWKEY_ID_SIZE+1);
 		if ((*it)->getMappedKey()) {
-			uint hwIdLen = strlen((*it)->getMappedKey()->id);
-			hwIdLen = (hwIdLen > HWKEY_ID_SIZE) ? HWKEY_ID_SIZE : hwIdLen;
-			String hwId((*it)->getMappedKey()->id, (*it)->getMappedKey()->id + hwIdLen);
-			_configDomain->setVal(prefix + actId, hwId);
-		} else {
-			_configDomain->setVal(prefix + actId, "");
+			memcpy(hwId, (*it)->getMappedKey()->hwKeyId, HWKEY_ID_SIZE);
 		}
+		_configDomain->setVal(prefix + actId, hwId);
 	}
 }
 
@@ -168,7 +167,7 @@ bool Keymap::isComplete(const HardwareKeySet *hwKeys) {
 			allMapped = false;
 		}
 	}
-	return allMapped || (numberMapped == hwKeys->count());
+	return allMapped || (numberMapped == hwKeys->size());
 }
 
 // TODO:

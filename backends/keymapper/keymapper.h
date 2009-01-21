@@ -84,9 +84,12 @@ public:
 	void registerHardwareKeySet(HardwareKeySet *keys);
 
 	/**
-	 * Get the HardwareKeySet that is registered with the Keymapper
+	 * Get a list of all registered HardwareKeys
 	 */
-	HardwareKeySet *getHardwareKeySet() { return _hardwareKeys; }
+	const List<const HardwareKey*> &getHardwareKeys() const {
+		assert(_hardwareKeys);
+		return _hardwareKeys->getHardwareKeys();
+	}
 
 	/**
 	 * Add a keymap to the global domain.
@@ -161,7 +164,7 @@ public:
 	/**
 	 * Return a HardwareKey pointer for the given key state
 	 */
-	const HardwareKey *getHardwareKey(const KeyState& key);
+	const HardwareKey *findHardwareKey(const KeyState& key);
 
 	Domain& getGlobalDomain() { return _globalDomain; }
 	Domain& getGameDomain() { return _gameDomain; }
@@ -169,8 +172,7 @@ public:
 
 private:
 
-	void initKeymap(ConfigManager::Domain *domain, Keymap *keymap);
-	void refreshGameDomain();
+	void initKeymap(Domain &domain, Keymap *keymap);
 
 	Domain _globalDomain;
 	Domain _gameDomain;

@@ -68,34 +68,31 @@ void Keymapper::registerHardwareKeySet(HardwareKeySet *keys) {
 }
 
 void Keymapper::addGlobalKeymap(Keymap *keymap) {
-	initKeymap(_globalDomain.getConfigDomain(), keymap);
-	_globalDomain.addKeymap(keymap);
-}
-
-void Keymapper::refreshGameDomain() {
-	if (_gameDomain.getConfigDomain() != ConfMan.getActiveDomain()) {
-		cleanupGameKeymaps();
-		_gameDomain.setConfigDomain(ConfMan.getActiveDomain());
-	}
+	initKeymap(_globalDomain, keymap);
 }
 
 void Keymapper::addGameKeymap(Keymap *keymap) {
 	if (ConfMan.getActiveDomain() == 0)
 		error("Call to Keymapper::addGameKeymap when no game loaded");
-		
-	refreshGameDomain();
-	initKeymap(_gameDomain.getConfigDomain(), keymap);
-	_gameDomain.addKeymap(keymap);
+	
+	// Detect whether the active game changed since last call.
+	// If so, flush the game key configuration.
+	if (_gameDomain.getConfigDomain() != ConfMan.getActiveDomain()) {
+		cleanupGameKeymaps();
+		_gameDomain.setConfigDomain(ConfMan.getActiveDomain());
+	}
+	initKeymap(_gameDomain, keymap);
 }
 
-void Keymapper::initKeymap(ConfigManager::Domain *domain, Keymap *map) {
-	map->setConfigDomain(domain);
+void Keymapper::initKeymap(Domain &domain, Keymap *map) {
+	map->setConfigDomain(domain.getConfigDomain());
 	map->loadMappings(_hardwareKeys);
 	if (map->isComplete(_hardwareKeys) == false) {
 		map->automaticMapping(_hardwareKeys);
 		map->saveMappings();
 		ConfMan.flushToDisk();
 	}
+	domain.addKeymap(map);
 }
 
 void Keymapper::cleanupGameKeymaps() {
@@ -157,9 +154,11 @@ bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 		for (int i = _activeMaps.size() - 1; i >= 0; --i) {
 			MapRecord mr = _activeMaps[i];
 			action = mr.keymap->getMappedAction(key);
-			if (action || mr.inherit == false) break;
+			if (action || mr.inherit == false)
+				break;
 		}
-		if (action) _keysDown[key] = action;
+		if (action)
+			_keysDown[key] = action;
 	} else {
 		HashMap<KeyState, Action*>::iterator it = _keysDown.find(key);
 		if (it != _keysDown.end()) {
@@ -167,7 +166,8 @@ bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 			_keysDown.erase(key);
 		}
 	}
-	if (!action) return false;
+	if (!action)
+		return false;
 	executeAction(action, keyDown);
 	return true;
 }
@@ -215,7 +215,7 @@ void Keymapper::executeAction(const Action *action, bool keyDown) {
 	}
 }
 
-const HardwareKey *Keymapper::getHardwareKey(const KeyState& key) {
+const HardwareKey *Keymapper::findHardwareKey(const KeyState& key) {
 	return (_hardwareKeys) ? _hardwareKeys->findHardwareKey(key) : 0;
 }
 
