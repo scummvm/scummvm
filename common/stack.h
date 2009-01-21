@@ -102,7 +102,11 @@ public:
 	void push(const T &x) {
 		_stack.push_back(x);
 	}
-	T top() const {
+	T &top() {
+		const int s = size();
+		return _stack[s - 1];
+	}
+	const T &top() const {
 		const int s = size();
 		return _stack[s - 1];
 	}
@@ -114,7 +118,10 @@ public:
 	int size() const {
 		return _stack.size();
 	}
-	T operator[](int i) {
+	T &operator[](int i) {
+		return _stack[i];
+	}
+	const T &operator[](int i) const {
 		return _stack[i];
 	}
 };

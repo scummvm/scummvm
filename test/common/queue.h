@@ -75,6 +75,8 @@ public:
 		}
 
 		TS_ASSERT(q3.empty());
+		TS_ASSERT(!q1.empty());
+		TS_ASSERT(!q2.empty());
 	}
 };
 
