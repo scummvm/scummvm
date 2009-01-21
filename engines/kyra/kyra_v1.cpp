@@ -226,11 +226,8 @@ void KyraEngine_v1::setMousePos(int x, int y) {
 
 int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::checkInput(%p, %d)", (const void*)buttonList, mainLoop);
-	if (mainLoop)
-		_isSaveAllowed = true;
-
+	_isSaveAllowed = mainLoop;
 	updateInput();
-
 	_isSaveAllowed = false;
 
 	int keys = 0;

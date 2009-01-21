@@ -476,7 +476,9 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 			updateMousePointer();
 		}
 
+		_isSaveAllowed = isMainLoop;
 		updateInput();
+		_isSaveAllowed = false;
 
 		if (_currentCharacter && _currentCharacter->sceneId == 210 && update)
 			updateKyragemFading();
