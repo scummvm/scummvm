@@ -539,9 +539,7 @@ void OSystem_SDL::setupKeymapper() {
 	mapper->registerHardwareKeySet(keySet);
 
 	Keymap *globalMap = new Keymap("global");
-	Keymap *guiMap = new Keymap("gui");
 	Action *act;
-	Event evt ;
 
 	act = new Action(globalMap, "MENU", "Menu", kGenericActionType, kSelectKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_F5, ASCII_F5, 0));
@@ -556,12 +554,15 @@ void OSystem_SDL::setupKeymapper() {
 	act->addKeyEvent(KeyState(KEYCODE_PERIOD, '.', 0));
 
 	act = new Action(globalMap, "VIRT", "Display keyboard", kVirtualKeyboardActionType);
-	act->addKeyEvent(KeyState(KEYCODE_F6, ASCII_F6, 0));
-
-	act = new Action(globalMap, "REMP", "Remap keys", kKeyRemapActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
 
+	act = new Action(globalMap, "REMP", "Remap keys", kKeyRemapActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
+
 	mapper->addGlobalKeymap(globalMap);
+
+
+	Keymap *guiMap = new Keymap("gui");
 
 	act = new Action(guiMap, "CLOS", "Close", kGenericActionType, kStartKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));

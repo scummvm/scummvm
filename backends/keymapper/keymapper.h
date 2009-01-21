@@ -124,7 +124,7 @@ public:
 	 * it for use.
 	 * @param name		name of the keymap to push
 	 * @param inherit	if true keymapper will iterate down the 
-	 *					stack it cannot find a key in the new map
+	 *					stack if it cannot find a key in the new map
 	 * @return			true if succesful
 	 */
 	bool pushKeymap(const String& name, bool inherit = false);
@@ -183,8 +183,6 @@ private:
 	
 	Action *getAction(const KeyState& key);
 	void executeAction(const Action *act, bool keyDown);
-
-	typedef List<HardwareKey*>::iterator Iterator;
 
 	EventManager *_eventMan;
 
