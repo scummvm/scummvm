@@ -325,8 +325,7 @@ void uploadSpriteGfx();
 TransferSound soundControl;
 
 
-bool isCpuScalerEnabled()
-{
+bool isCpuScalerEnabled() {
 	return cpuScalerEnable || !displayModeIs8Bit;
 }
 
@@ -372,8 +371,7 @@ controlType getControlType() {
 
 
 //plays an 8 bit mono sample at 11025Hz
-void playSound(const void* data, u32 length, bool loop, bool adpcm, int rate)
-{
+void playSound(const void* data, u32 length, bool loop, bool adpcm, int rate) {
 
 	if (!IPC->soundData) {
 		soundControl.count = 0;
@@ -445,7 +443,7 @@ void saveGameBackBuffer() {
 	// Sometimes the only copy of the game screen is in video memory.
 	// So, I lock the video memory here, as if I'm going to modify it.  This
 	// forces OSystem_DS to create a system memory copy if one doesn't exist.
-	// This will be automatially resotred by OSystem_DS::updateScreen().
+	// This will be automatially restored by OSystem_DS::updateScreen().
 
 	OSystem_DS::instance()->lockScreen();
 	OSystem_DS::instance()->unlockScreen();
@@ -578,8 +576,7 @@ void displayMode8Bit() {
 
 	displayModeIs8Bit = true;
 
-	if (isCpuScalerEnabled())
-	{
+	if (isCpuScalerEnabled()) {
 		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
 		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
 
@@ -598,9 +595,7 @@ void displayMode8Bit() {
 	    BG3_YDX = 0;
 	    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
 
-	}
-	else
-	{
+	} else {
 		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
 		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
 
@@ -693,10 +688,8 @@ void checkSleepMode() {
 	}
 }
 
-void setShowCursor(bool enable)
-{
-	if ((currentGame) && (currentGame->control == CONT_SCUMM_SAMNMAX))
-	{
+void setShowCursor(bool enable) {
+	if ((currentGame) && (currentGame->control == CONT_SCUMM_SAMNMAX)) {
 		if (cursorEnable) {
 			sprites[1].attribute[0] = ATTR0_BMP | 150;
 		} else {
@@ -708,42 +701,40 @@ void setShowCursor(bool enable)
 	cursorEnable = enable;
 }
 
-void setMouseCursorVisible(bool enable)
-{
+void setMouseCursorVisible(bool enable) {
 	mouseCursorVisible = enable;
 }
 
 void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, int hotspotY) {
+
+	int off;
 
 	mouseHotspotX = hotspotX;
 	mouseHotspotY = hotspotY;
 
 	//consolePrintf("Set cursor icon %d, %d\n", w, h);
 
-	{
-		int off = 128*64;
+	off = 128*64;
 
 
-		memset(SPRITE_GFX + off, 0, 32 * 32 * 2);
-		memset(SPRITE_GFX_SUB + off, 0, 32 * 32 * 2);
+	memset(SPRITE_GFX + off, 0, 32 * 32 * 2);
+	memset(SPRITE_GFX_SUB + off, 0, 32 * 32 * 2);
 
 
-		for (uint y=0; y<h; y++) {
-			for (uint x=0; x<w; x++) {
-				int color = icon[y*w+x];
+	for (uint y=0; y<h; y++) {
+		for (uint x=0; x<w; x++) {
+			int color = icon[y*w+x];
 
-				//consolePrintf("%d:%d ", color, OSystem_DS::instance()->getDSPaletteEntry(color));
+			//consolePrintf("%d:%d ", color, OSystem_DS::instance()->getDSPaletteEntry(color));
 
-				if (color == keycolor) {
-					SPRITE_GFX[off+(y)*32+x] = 0x0000; // black background
-					SPRITE_GFX_SUB[off+(y)*32+x] = 0x0000; // black background
-				} else {
-					SPRITE_GFX[off+(y)*32+x] = OSystem_DS::instance()->getDSCursorPaletteEntry(color) | 0x8000;
-					SPRITE_GFX_SUB[off+(y)*32+x] = OSystem_DS::instance()->getDSCursorPaletteEntry(color) | 0x8000;
-				}
+			if (color == keycolor) {
+				SPRITE_GFX[off+(y)*32+x] = 0x0000; // black background
+				SPRITE_GFX_SUB[off+(y)*32+x] = 0x0000; // black background
+			} else {
+				SPRITE_GFX[off+(y)*32+x] = OSystem_DS::instance()->getDSCursorPaletteEntry(color) | 0x8000;
+				SPRITE_GFX_SUB[off+(y)*32+x] = OSystem_DS::instance()->getDSCursorPaletteEntry(color) | 0x8000;
 			}
 		}
-
 	}
 
 	if (currentGame->control != CONT_SCUMM_SAMNMAX)
@@ -752,7 +743,7 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, 
 	uint16 border = RGB15(24,24,24) | 0x8000;
 
 
-	int off = 176*64;
+	off = 176*64;
 	memset(SPRITE_GFX_SUB+off, 0, 64*64*2);
 	memset(SPRITE_GFX+off, 0, 64*64*2);
 
@@ -793,7 +784,7 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, 
 	}
 
 
-	if ((cursorEnable)) {
+	if (cursorEnable) {
 		sprites[1].attribute[0] = ATTR0_BMP | 150;
 		sprites[1].attribute[1] = ATTR1_SIZE_64 | pos;
 		sprites[1].attribute[2] = ATTR2_ALPHA(1) | 176;
@@ -891,19 +882,14 @@ void displayMode16BitFlipBuffer() {
 //		highBuffer = !highBuffer;
 //		BG3_CR = BG_BMP16_512x256 |	BG_BMP_RAM(highBuffer? 1: 0);
 
-		if (isCpuScalerEnabled())
-		{
+		if (isCpuScalerEnabled()) {
 			Rescale_320x256x1555_To_256x256x1555(BG_GFX, back, 512, 512);
-		}
-		else
-		{
+		} else {
 			for (int r = 0; r < 512 * 256; r++) {
 				*(BG_GFX + r) = *(back + r);
 			}
 		}
-	}
-	else if (isCpuScalerEnabled())
-	{
+	} else if (isCpuScalerEnabled()) {
         //#define SCALER_PROFILE
 
         #ifdef SCALER_PROFILE

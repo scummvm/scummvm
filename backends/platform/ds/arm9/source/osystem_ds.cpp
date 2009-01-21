@@ -59,7 +59,7 @@ OSystem_DS::~OSystem_DS() {
 }
 
 int OSystem_DS::timerHandler(int t) {
-	DSTimerManager *tm = (DSTimerManager *)g_system->getTimerManager();
+	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
 	tm->handler();
 	return t;
 }
@@ -68,9 +68,9 @@ void OSystem_DS::initBackend() {
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_medium_quality", true);
 
-	_mixer = new DSAudioMixer(this);
-	_timer = new DSTimerManager();
-    	DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
+	_mixer = new Audio::MixerImpl(this);
+	_timer = new DefaultTimerManager();
+    DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
 
 	if (ConfMan.hasKey("22khzaudio", "ds") && ConfMan.getBool("22khzaudio", "ds")) {
 		DS::startSound(22050, 8192);
@@ -370,8 +370,7 @@ void OSystem_DS::updateScreen() {
 	// FIXME: Evil game specific hack.
 	// Force back buffer usage for Nippon Safes, as it doesn't double buffer it's output
 	if (DS::getControlType() == DS::CONT_NIPPON) {
-		OSystem_DS::instance()->lockScreen();
-		OSystem_DS::instance()->unlockScreen();
+		lockScreen();
 	}
 }
 

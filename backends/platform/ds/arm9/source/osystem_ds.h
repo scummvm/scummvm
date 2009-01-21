@@ -33,16 +33,6 @@
 #include "sound/mixer_intern.h"
 #include "graphics/surface.h"
 
-class DSAudioMixer : public Audio::MixerImpl {
-
-public:
-	DSAudioMixer(OSystem* system) : Audio::MixerImpl(system) { }
-};
-
-class DSTimerManager : public DefaultTimerManager {
-};
-
-
 class OSystem_DS : public OSystem {
 protected:
 
@@ -56,8 +46,8 @@ protected:
 	DSSaveFileManager saveManager;
 #endif
 	GBAMPSaveFileManager mpSaveManager;
-	DSAudioMixer* _mixer;
-	DSTimerManager* _timer;
+	Audio::MixerImpl* _mixer;
+	DefaultTimerManager* _timer;
 	Graphics::Surface _framebuffer;
 	bool _frameBufferExists;
 	bool _graphicsEnable;
