@@ -345,14 +345,15 @@ uint8 *LoLEngine::getLevelShapes(int shapeIndex) {
 	if (_lvlShpNum <= shapeIndex)
 		return 0;
 
-	uint32 offs = _lvlShpHeader[shapeIndex] + 2;
-	_lvlShpFileHandle->seek(offs, 0);
+	_lvlShpFileHandle->seek(shapeIndex * 4 + 2, SEEK_SET);
+	uint32 offs = _lvlShpFileHandle->readUint32LE() + 2;
+	_lvlShpFileHandle->seek(offs, SEEK_SET);
 
 	uint8 tmp[16];
 	_lvlShpFileHandle->read(tmp, 16);
 	uint16 size = _screen->getShapeSize(tmp);
 
-	_lvlShpFileHandle->seek(offs, 0);
+	_lvlShpFileHandle->seek(offs, SEEK_SET);
 	uint8 *res = new uint8[size];
 	_lvlShpFileHandle->read(res, size);
 	
@@ -554,10 +555,6 @@ void LoLEngine::loadLevelShpDat(const char *shpFile, const char *datFile, bool f
 
 	_lvlShpFileHandle = _res->getFileStream(shpFile);
 	_lvlShpNum = _lvlShpFileHandle->readUint16LE();
-	delete[] _lvlShpHeader;
-	_lvlShpHeader = new uint32[_lvlShpNum];
-	for (int i = 0; i < _lvlShpNum; i++)
-		_lvlShpHeader[i] = _lvlShpFileHandle->readUint32LE();
 
 	Common::SeekableReadStream *s = _res->getFileStream(datFile);
 

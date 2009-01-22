@@ -550,7 +550,6 @@ private:
 	
 	Common::SeekableReadStream *_lvlShpFileHandle;
 	uint16 _lvlShpNum;
-	uint32 *_lvlShpHeader;
 	uint16 _levelFileDataSize;
 	LevelShapeProperty *_levelFileData;
 

@@ -238,7 +238,6 @@ LoLEngine::~LoLEngine() {
 	delete[] _levelBlockProperties;
 	delete[] _lvl415;
 
-	delete[] _lvlShpHeader;
 	delete[] _levelFileData;
 	delete[] _vcnExpTable;
 	delete[] _vcnBlocks;
@@ -343,7 +342,6 @@ Common::Error LoLEngine::init() {
 	memset(_gameFlags, 0, 15 * sizeof(uint16));
 	memset(_unkEMC46, 0, 16 * sizeof(uint16));	
 
-	_lvlShpHeader = 0;
 	_levelFileData = 0;
 	_lvlShpFileHandle = 0;
 
