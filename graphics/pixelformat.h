@@ -54,6 +54,10 @@ struct PixelFormat {
 		return 0 == memcmp(this, &fmt, sizeof(PixelFormat));
 	}
 
+	inline bool operator!=(const PixelFormat &fmt) const {
+		return !(*this == fmt);
+	}
+
 	inline uint32 RGBToColor(uint8 r, uint8 g, uint8 b) const {
 		return
 			((0xFF >> aLoss) << aShift) |
