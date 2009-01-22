@@ -30,7 +30,7 @@
 #include <common/savefile.h>
 #include <gui/GuiManager.h>
 #include <gui/message.h>
-#include <backends/saves/compressed/compressed-saves.h>
+#include <common/zlib.h>
 
 
 // Savegame can not be bigger than this
@@ -323,13 +323,13 @@ class VMSaveManager : public Common::SaveFileManager {
 public:
 
   virtual Common::OutSaveFile *openForSaving(const char *filename) {
-	return wrapOutSaveFile(new OutVMSave(filename));
+	return Common::wrapCompressedWriteStream(new OutVMSave(filename));
   }
 
   virtual Common::InSaveFile *openForLoading(const char *filename) {
 	InVMSave *s = new InVMSave();
 	if (s->readSaveGame(filename)) {
-	  return wrapInSaveFile(s);
+	  return Common::wrapCompressedReadStream(s);
 	} else {
 	  delete s;
 	  return NULL;

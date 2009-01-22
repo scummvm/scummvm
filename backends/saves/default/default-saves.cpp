@@ -26,13 +26,13 @@
 #if !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
 #include "backends/saves/default/default-saves.h"
-#include "backends/saves/compressed/compressed-saves.h"
 
 #include "common/savefile.h"
 #include "common/util.h"
 #include "common/fs.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/zlib.h"
 
 #include <errno.h>	// for removeSavefile()
 
@@ -86,7 +86,7 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename)
 	// Open the file for reading
 	Common::SeekableReadStream *sf = file.openForReading();
 
-	return wrapInSaveFile(sf);
+	return Common::wrapCompressedReadStream(sf);
 }
 
 Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename) {
@@ -101,7 +101,7 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 	// Open the file for saving
 	Common::WriteStream *sf = file.openForWriting();
 
-	return wrapOutSaveFile(sf);
+	return Common::wrapCompressedWriteStream(sf);
 }
 
 bool DefaultSaveFileManager::removeSavefile(const char *filename) {
