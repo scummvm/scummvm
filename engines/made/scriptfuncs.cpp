@@ -263,7 +263,6 @@ int16 ScriptFunctions::sfPlayMusic(int16 argc, int16 *argv) {
 		// FIXME: Remove this hack and handle this file properly
 		if (_vm->getGameID() == GID_LGOP2 && musicNum == 2)
 			return 0;
-
 		if (musicNum > 0) {
 			_musicRes = _vm->_res->getMidi(musicNum);
 			if (_musicRes)
@@ -292,7 +291,6 @@ int16 ScriptFunctions::sfIsMusicPlaying(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfSetTextPos(int16 argc, int16 *argv) {
 	// Used in Manhole:NE
-	//warning("Unimplemented opcode: sfSetTextPos");
 	// This seems to be some kind of low-level opcode.
 	// The original engine calls int 10h to set the VGA cursor position.
 	// Since this seems to be used for debugging purposes only it's left out.
@@ -305,25 +303,25 @@ int16 ScriptFunctions::sfFlashScreen(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfPlayNote(int16 argc, int16 *argv) {
-	// TODO: Used in Manhole:NE
+	// TODO: Used in Manhole:NE, Manhole EGA
 	warning("Unimplemented opcode: sfPlayNote");
 	return 0;
 }
 
 int16 ScriptFunctions::sfStopNote(int16 argc, int16 *argv) {
-	// TODO: Used in Manhole:NE
+	// TODO: Used in Manhole:NE, Manhole EGA
 	warning("Unimplemented opcode: sfStopNote");
 	return 0;
 }
 
 int16 ScriptFunctions::sfPlayTele(int16 argc, int16 *argv) {
-	// TODO: Used in Manhole:NE
+	// TODO: Used in Manhole:NE, Manhole EGA
 	warning("Unimplemented opcode: sfPlayTele");
 	return 0;
 }
 
 int16 ScriptFunctions::sfStopTele(int16 argc, int16 *argv) {
-	// TODO: Used in Manhole:NE
+	// TODO: Used in Manhole:NE, Manhole EGA
 	warning("Unimplemented opcode: sfStopTele");
 	return 0;
 }
@@ -618,21 +616,19 @@ int16 ScriptFunctions::sfClearMono(int16 argc, int16 *argv) {
 int16 ScriptFunctions::sfGetSoundEnergy(int16 argc, int16 *argv) {
 	// This is called while in-game voices are played to animate 
 	// mouths when NPCs are talking
-
 	int result = 0;
-
-	if (_vm->_mixer->isSoundHandleActive(_audioStreamHandle) && _vm->_soundEnergyArray &&
-		_vm->_soundEnergyIndex < _vm->_soundEnergyArray->size()) {
-		
-		uint32 position = (_vm->_soundRate / 1000) * _vm->_mixer->getSoundElapsedTime(_audioStreamHandle);
-		SoundEnergyItem *soundEnergyItem = &_vm->_soundEnergyArray->operator[](_vm->_soundEnergyIndex);
-
-		result = soundEnergyItem->energy;
-		
-		if (position >= soundEnergyItem->position)
+	if (_vm->_mixer->isSoundHandleActive(_audioStreamHandle) && _vm->_soundEnergyArray) {
+		while (_vm->_soundEnergyIndex < _vm->_soundEnergyArray->size()) {
+			SoundEnergyItem *soundEnergyItem = &_vm->_soundEnergyArray->operator[](_vm->_soundEnergyIndex);
+			if (((_vm->_soundRate / 1000) * _vm->_mixer->getSoundElapsedTime(_audioStreamHandle)) < soundEnergyItem->position) {
+				result = soundEnergyItem->energy;
+				break;
+			}
 			_vm->_soundEnergyIndex++;
+		}
+		if (_vm->_soundEnergyIndex >= _vm->_soundEnergyArray->size())
+			result = 0;
 	}
-
 	return result;
 }
 
@@ -660,9 +656,10 @@ int16 ScriptFunctions::sfGetTextWidth(int16 argc, int16 *argv) {
 int16 ScriptFunctions::sfPlayMovie(int16 argc, int16 *argv) {
 	const char *movieName = _vm->_dat->getObjectString(argv[1]);
 	_vm->_system->showMouse(false);
-	_vm->_pmvPlayer->play(movieName);
+	bool completed = _vm->_pmvPlayer->play(movieName);
 	_vm->_system->showMouse(true);
-	return 0;
+	// Return true/false according to if the movie was canceled or not
+	return completed ? -1 : 0;
 }
 
 int16 ScriptFunctions::sfLoadSound(int16 argc, int16 *argv) {

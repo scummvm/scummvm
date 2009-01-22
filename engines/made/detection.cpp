@@ -261,7 +261,6 @@ static const MadeGameDescription gameDescriptions[] = {
 		2,
 	},
 
-#if 0
 	{
 		// The Manhole (EGA, 5.25")
 		{
@@ -277,7 +276,6 @@ static const MadeGameDescription gameDescriptions[] = {
 		GF_FLOPPY,
 		1,
  	},
-#endif
 
 	{
 		// Leather Goddesses of Phobos 2

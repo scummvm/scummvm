@@ -34,15 +34,15 @@ PmvPlayer::PmvPlayer(MadeEngine *vm, Audio::Mixer *mixer) : _fd(NULL), _vm(vm), 
 PmvPlayer::~PmvPlayer() {
 }
 
-void PmvPlayer::play(const char *filename) {
+bool PmvPlayer::play(const char *filename) {
 
-	_abort = false;
+	_aborted = false;
 	_surface = NULL;
 
 	_fd = new Common::File();
 	if (!_fd->open(filename)) {
 		delete _fd;
-		return;
+		return false;
 	}
 
 	uint32 chunkType, chunkSize;
@@ -51,14 +51,14 @@ void PmvPlayer::play(const char *filename) {
 	if (chunkType != MKID_BE('MOVE')) {
 		warning("Unexpected PMV video header, expected 'MOVE'");
 		delete _fd;
-		return;
+		return false;
 	}
 
 	readChunk(chunkType, chunkSize);	// "MHED"
 	if (chunkType != MKID_BE('MHED')) {
 		warning("Unexpected PMV video header, expected 'MHED'");
 		delete _fd;
-		return;
+		return false;
 	}
 
 	uint frameDelay = _fd->readUint16LE();
@@ -108,7 +108,7 @@ void PmvPlayer::play(const char *filename) {
 	// get it to work well?
 	_audioStream = Audio::makeAppendableAudioStream(soundFreq, Audio::Mixer::FLAG_UNSIGNED);
 
-	while (!_vm->shouldQuit() && !_abort && !_fd->eos()) {
+	while (!_vm->shouldQuit() && !_aborted && !_fd->eos()) {
 
 		int32 frameTime = _vm->_system->getMillis();
 
@@ -208,6 +208,8 @@ void PmvPlayer::play(const char *filename) {
 	delete _fd;
 	delete _surface;
 
+	return !_aborted;
+
 }
 
 void PmvPlayer::readChunk(uint32 &chunkType, uint32 &chunkSize) {
@@ -227,7 +229,7 @@ void PmvPlayer::handleEvents() {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
-				_abort = true;
+				_aborted = true;
 			break;
 		default:
 			break;

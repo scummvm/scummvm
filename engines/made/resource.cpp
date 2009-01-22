@@ -55,7 +55,16 @@ PictureResource::~PictureResource() {
 }
 
 void PictureResource::load(byte *source, int size) {
+	if (READ_BE_UINT32(source) == MKID_BE('Flex')) {
+		loadChunked(source, size);
+	} else {
+		loadRaw(source, size);
+	}
+}
 
+void PictureResource::loadRaw(byte *source, int size) {
+	// Loads a "raw" picture as used in RtZ, LGoP2, Manhole:N&E and Rodney's Funscreen
+	
 	Common::MemoryReadStream *sourceS = new Common::MemoryReadStream(source, size);
 
 	_hasPalette = (sourceS->readByte() != 0);
@@ -71,7 +80,7 @@ void PictureResource::load(byte *source, int size) {
 	uint16 height = sourceS->readUint16LE();
 
 	if (cmdFlags || pixelFlags || maskFlags) {
-		warning("PictureResource::load() Graphic has flags set");
+		warning("PictureResource::loadRaw() Graphic has flags set (%d, %d, %d)", cmdFlags, pixelFlags, maskFlags);
 	}
 
 	_paletteColorCount = (cmdOffs - 18) / 3; // 18 = sizeof header
@@ -81,6 +90,84 @@ void PictureResource::load(byte *source, int size) {
 	if (_hasPalette) {
 		_picturePalette = new byte[_paletteColorCount * 3];
 		sourceS->read(_picturePalette, _paletteColorCount * 3);
+	}
+
+	_picture = new Graphics::Surface();
+	_picture->create(width, height, 1);
+
+	decompressImage(source, *_picture, cmdOffs, pixelOffs, maskOffs, lineSize, cmdFlags, pixelFlags, maskFlags);
+
+	delete sourceS;
+
+}
+
+void PictureResource::loadChunked(byte *source, int size) {
+	// Loads a "chunked" picture as used in Manhole EGA
+
+	Common::MemoryReadStream *sourceS = new Common::MemoryReadStream(source, size);
+
+	byte cmdFlags, pixelFlags, maskFlags;
+	uint16 cmdOffs = 0, pixelOffs = 0, maskOffs = 0;
+	uint16 lineSize = 0, width = 0, height = 0;
+
+	sourceS->skip(36); // skip the "Flex" header
+
+	_hasPalette = false;
+
+	int i = 0;
+
+	while (!sourceS->eos()) {
+
+		uint32 chunkType = sourceS->readUint32BE();
+		uint32 chunkSize = sourceS->readUint32BE();
+		
+		if (sourceS->eos())
+			break;
+
+		debug(0, "chunkType = %08X; chunkSize = %d", chunkType, chunkSize);
+
+		if (chunkType == MKID_BE('Rect')) {
+			debug(0, "Rect");
+			sourceS->skip(4);
+			height = sourceS->readUint16BE();
+			width = sourceS->readUint16BE();
+			debug(0, "width = %d; height = %d", width, height);
+		} else if (chunkType == MKID_BE('fMap')) {
+			debug(0, "fMap");
+			lineSize = sourceS->readUint16BE();
+			sourceS->skip(11);
+			cmdFlags = sourceS->readByte();
+			cmdOffs = sourceS->pos();
+			sourceS->skip(chunkSize - 14);
+			debug(0, "lineSize = %d; cmdFlags = %d; cmdOffs = %04X", lineSize, cmdFlags, cmdOffs);
+		} else if (chunkType == MKID_BE('fLCo')) {
+			debug(0, "fLCo");
+			sourceS->skip(9);
+			pixelFlags = sourceS->readByte();
+			pixelOffs = sourceS->pos();
+			sourceS->skip(chunkSize - 10);
+			debug(0, "pixelFlags = %d; pixelOffs = %04X", pixelFlags, pixelOffs);
+		} else if (chunkType == MKID_BE('fPix')) {
+			debug(0, "fPix");
+			sourceS->skip(9);
+			maskFlags = sourceS->readByte();
+			maskOffs = sourceS->pos();
+			sourceS->skip(chunkSize - 10);
+			debug(0, "maskFlags = %d; maskOffs = %04X", maskFlags, maskOffs);
+		} else if (chunkType == MKID_BE('fGCo')) {
+			debug(0, "fGCo");
+			_hasPalette = true;
+			_paletteColorCount = chunkSize / 3;
+			_picturePalette = new byte[_paletteColorCount * 3];
+			sourceS->read(_picturePalette, _paletteColorCount * 3);
+		} else {
+			error("PictureResource::loadChunked() Invalid chunk %08X at %08X", chunkType, sourceS->pos());
+		}
+
+	}
+
+	if (!cmdOffs || !pixelOffs /*|| !maskOffs*/ || !lineSize || !width || !height) {
+		error("PictureResource::loadChunked() Error parsing the picture data, one or more chunks/parameters are missing");
 	}
 
 	_picture = new Graphics::Surface();
@@ -182,9 +269,14 @@ Audio::AudioStream *SoundResource::getAudioStream(int soundRate, bool loop) {
 void SoundResourceV1::load(byte *source, int size) {
 	// TODO: This is all wrong. Seems like the sound is compressed
 	// but where is the compression info? (chunks, chunk size)
+	
 	_soundSize = size;
 	_soundData = new byte[_soundSize];
-	memcpy(_soundData, source, _soundSize);
+
+	// TODO: We set the audio to silent for now
+	//memcpy(_soundData, source, _soundSize);
+	memset(_soundData, 0x80, _soundSize);
+
 }
 
 /* MenuResource */
@@ -363,6 +455,9 @@ void ResourceReader::openResourceBlock(const char *filename, Common::File *block
 		warning("openResourceBlocks: resource header is not 'FLEX'");
 
 	_resSlots[resType] = new ResourceSlots();
+
+	// Add dummy entry since the resources are 1-based
+	_resSlots[resType]->push_back(ResourceSlot(0, 0));
 
 	for (uint16 i = 0; i < count; i++) {
 		uint32 offset = blockFile->readUint32LE();

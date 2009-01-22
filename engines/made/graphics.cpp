@@ -46,6 +46,22 @@ byte ValueReader::readPixel() {
 	return value;
 }
 
+uint16 ValueReader::readUint16() {
+	uint16 value = READ_LE_UINT16(_buffer);
+	_buffer += 2;
+	return value;
+}
+
+uint32 ValueReader::readUint32() {
+	uint32 value = READ_LE_UINT32(_buffer);
+	_buffer += 4;
+	return value;
+}
+
+void ValueReader::resetNibbleSwitch() {
+	_nibbleSwitch = false;
+}
+
 void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize, byte cmdFlags, byte pixelFlags, byte maskFlags, bool deltaFrame) {
 
 	const int offsets[] = {
@@ -59,8 +75,11 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 	uint16 height = surface.h;
 
 	byte *cmdBuffer = source + cmdOffs;
-	byte *maskBuffer = source + maskOffs;
+	ValueReader maskReader(source + maskOffs, (maskFlags & 2) != 0);
 	ValueReader pixelReader(source + pixelOffs, (pixelFlags & 2) != 0);
+	
+	if ((maskFlags != 0) && (maskFlags != 2) && (pixelFlags != 0) && (pixelFlags != 2) && (cmdFlags != 0))
+		error("decompressImage() Unsupported flags: cmdFlags = %02X; maskFlags = %02X, pixelFlags = %02X", cmdFlags, maskFlags, pixelFlags);
 
 	byte *destPtr = (byte*)surface.getBasePtr(0, 0);
 
@@ -109,8 +128,7 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 				case 1:
 					pixels[0] = pixelReader.readPixel();
 					pixels[1] = pixelReader.readPixel();
-					mask = READ_LE_UINT16(maskBuffer);
-					maskBuffer += 2;
+					mask = maskReader.readUint16();
 					for (int i = 0; i < 16; i++) {
 						lineBuf[drawDestOfs + offsets[i]] = pixels[mask & 1];
 						mask >>= 1;
@@ -122,8 +140,7 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 					pixels[1] = pixelReader.readPixel();
 					pixels[2] = pixelReader.readPixel();
 					pixels[3] = pixelReader.readPixel();
-					mask = READ_LE_UINT32(maskBuffer);
-					maskBuffer += 4;
+					mask = maskReader.readUint32();
 					for (int i = 0; i < 16; i++) {
 						lineBuf[drawDestOfs + offsets[i]] = pixels[mask & 3];
 						mask >>= 2;
@@ -132,9 +149,11 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 
 				case 3:
 					if (!deltaFrame) {
-						// Yes, it reads from maskBuffer here
+						// For EGA pictures: Pixels are read starting from a new byte
+						maskReader.resetNibbleSwitch();
+						// Yes, it reads from maskReader here
 						for (int i = 0; i < 16; i++)
-							lineBuf[drawDestOfs + offsets[i]] = *maskBuffer++;
+							lineBuf[drawDestOfs + offsets[i]] = maskReader.readPixel();
 					}
 					break;
 

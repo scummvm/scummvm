@@ -39,6 +39,7 @@ namespace Made {
 
 class Object {
 public:
+
 	Object();
 	virtual ~Object();
 
@@ -86,7 +87,11 @@ public:
 	bool isConstant() {
 		return false;
 	}
+};
 
+class ObjectV1 : public ObjectV2 {
+public:
+	int load(Common::SeekableReadStream &source);
 };
 
 class ObjectV3 : public Object {

@@ -75,6 +75,8 @@ protected:
 	byte *_picturePalette;
 	int _paletteColorCount;
 	bool _hasPalette;
+	void loadRaw(byte *source, int size);
+	void loadChunked(byte *source, int size);
 };
 
 class AnimationResource : public Resource {

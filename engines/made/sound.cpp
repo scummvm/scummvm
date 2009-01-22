@@ -70,6 +70,8 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 
 		workSample = prevSample;
 
+		soundEnergyItem.position += chunkSize;
+
 		switch (type) {
 
 		case 0:
@@ -77,10 +79,6 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 			workSample = 0;
 
 			soundEnergyItem.energy = 0;
-			// FIXME: I believe that this should be added in a different manner than the
-			// rest of the values. 0 means "mouth shut", but it seems to be occuring too
-			// often. Removing this bit makes the mouth of the lighthouse keeper move
-			// without going too much off-sync. If I'm wrong here, please remove this.
 			if (soundEnergyArray)
 				soundEnergyArray->push_back(soundEnergyItem);
 
@@ -121,7 +119,7 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 				soundBuffer[i] = *source++;
 			workSample = soundBuffer[workChunkSize - 1] - 128;
 			
-			soundEnergyItem.energy = type - 1;
+			soundEnergyItem.energy = 4;
 			if (soundEnergyArray)
 				soundEnergyArray->push_back(soundEnergyItem);
 			
@@ -155,7 +153,6 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 		prevSample = workSample;
 		memcpy(dest, soundBuffer, chunkSize);
 		dest += chunkSize;
-		soundEnergyItem.position += chunkSize;
 
 	}
 

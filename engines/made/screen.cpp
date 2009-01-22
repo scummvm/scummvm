@@ -447,7 +447,6 @@ uint16 Screen::placeSprite(uint16 channelIndex, uint16 flexIndex, int16 x, int16
 		y1 = y;
 		x2 = x + surf->w + 1;
 		y2 = y + surf->h + 1;
-		//TODO: clipRect(x1, y1, x2, y2);
 
 		if (_ground == 0)
 			state |= 2;
@@ -498,7 +497,6 @@ uint16 Screen::placeAnim(uint16 channelIndex, uint16 animIndex, int16 x, int16 y
 		y1 = y;
 		x2 = x + anim->getWidth();
 		y2 = y + anim->getHeight();
-		//TODO: clipRect(x1, y1, x2, y2);
 
 		if (anim->getFlags() == 1 || _ground == 0)
 			state |= 2;
@@ -576,7 +574,6 @@ uint16 Screen::placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, i
 	y1 = y;
 	x2 = x + textWidth;
 	y2 = y + textHeight;
-	//TODO: clipRect(x1, y1, x2, y2);
 
 	if (textWidth > 0 && outlineColor != -1) {
 		x++;
@@ -609,8 +606,6 @@ uint16 Screen::placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, i
 }
 
 void Screen::show() {
-
-	// TODO
 
 	if (_screenLock)
 		return;

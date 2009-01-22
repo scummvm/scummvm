@@ -44,7 +44,8 @@ class PmvPlayer {
 public:
 	PmvPlayer(MadeEngine *vm, Audio::Mixer *mixer);
 	~PmvPlayer();
-	void play(const char *filename);
+	// Returns true if the movie was played till the end
+	bool play(const char *filename);
 protected:
 	MadeEngine *_vm;
 	Audio::Mixer *_mixer;
@@ -53,7 +54,7 @@ protected:
 	Audio::SoundHandle _audioStreamHandle;
 	byte _paletteRGB[768];
 	Graphics::Surface *_surface;
-	bool _abort;
+	bool _aborted;
 	void readChunk(uint32 &chunkType, uint32 &chunkSize);
 	void handleEvents();
 	void updateScreen();

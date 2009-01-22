@@ -179,6 +179,13 @@ byte *ObjectV2::getData() {
 	return _objData + 4;
 }
 
+int ObjectV1::load(Common::SeekableReadStream &source) {
+	ObjectV2::load(source);
+	// Manhole EGA has the two property counts reversed
+	SWAP(_objData[2], _objData[3]);
+	return _objSize;
+}
+
 int ObjectV3::load(Common::SeekableReadStream &source) {
 
 	_freeData = true;
@@ -382,23 +389,37 @@ void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
 	if (strncmp(header, "ADVSYS", 6))
 		warning ("Unexpected database header, expected ADVSYS");
 
-	/*uint32 unk = */sourceS.readUint16LE();
+	uint32 textOffs, objectsOffs, objectsSize, textSize;
+	uint16 objectCount, varObjectCount;
 
-	sourceS.skip(18);
+	sourceS.readUint16LE(); // skip sub-version
+	sourceS.skip(18); // skip program name
 
-	uint32 textOffs = sourceS.readUint16LE() * 512;
-	uint16 objectCount = sourceS.readUint16LE();
-	uint16 varObjectCount = sourceS.readUint16LE();
-	_gameStateSize = sourceS.readUint16LE() * 2;
-	sourceS.readUint16LE(); // unknown
-	uint32 objectsOffs = sourceS.readUint16LE() * 512;
-	sourceS.readUint16LE(); // unknown
-	_mainCodeObjectIndex = sourceS.readUint16LE();
-	sourceS.readUint16LE(); // unknown
-	uint32 objectsSize = sourceS.readUint32LE() * 2;
-	uint32 textSize = objectsOffs - textOffs;
+	if (version == 40) {
+		sourceS.readUint16LE(); // skip unused
+		objectCount = sourceS.readUint16LE();
+		_gameStateSize = sourceS.readUint16LE() * 2;
+		objectsOffs = sourceS.readUint16LE() * 512;
+		textOffs = sourceS.readUint16LE() * 512;
+		_mainCodeObjectIndex = sourceS.readUint16LE();
+		varObjectCount = 0; // unused in V1
+		objectsSize = 0; // unused in V1
+	} else if (version == 54) {
+		textOffs = sourceS.readUint16LE() * 512;
+		objectCount = sourceS.readUint16LE();
+		varObjectCount = sourceS.readUint16LE();
+		_gameStateSize = sourceS.readUint16LE() * 2;
+		sourceS.readUint16LE(); // unknown
+		objectsOffs = sourceS.readUint16LE() * 512;
+		sourceS.readUint16LE(); // unknown
+		_mainCodeObjectIndex = sourceS.readUint16LE();
+		sourceS.readUint16LE(); // unknown
+		objectsSize = sourceS.readUint32LE() * 2;
+	}
 
-	debug(2, "textOffs = %08X; textSize = %08X; objectCount = %d; varObjectCount = %d; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d\n", textOffs, textSize, objectCount, varObjectCount, _gameStateSize, objectsOffs, objectsSize);
+	textSize = objectsOffs - textOffs;
+
+	debug(0, "textOffs = %08X; textSize = %08X; objectCount = %d; varObjectCount = %d; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d; _mainCodeObjectIndex = %04X\n", textOffs, textSize, objectCount, varObjectCount, _gameStateSize, objectsOffs, objectsSize, _mainCodeObjectIndex);
 
 	_gameState = new byte[_gameStateSize + 2];
 	memset(_gameState, 0, _gameStateSize + 2);
@@ -410,15 +431,35 @@ void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
 	// "Decrypt" the text data
 	for (uint32 i = 0; i < textSize; i++)
 		_gameText[i] += 0x1E;
-
+		
 	sourceS.seek(objectsOffs);
 
-	for (uint32 i = 0; i < objectCount; i++) {
-		Object *obj = new ObjectV2();
-		int objSize = obj->load(sourceS);
-		// objects are aligned on 2-byte-boundaries, skip unused bytes
-		sourceS.skip(objSize % 2);
-		_objects.push_back(obj);
+	if (version == 40) {
+		// Initialize the object array
+		for (uint32 i = 0; i < objectCount; i++)
+			_objects.push_back(NULL);
+		// Read two "sections" of objects
+		// It seems the first section is data while the second one is code.
+		// The interpreter however doesn't care which section the objects come from.
+		for (int section = 0; section < 2; section++) {
+			while (!sourceS.eos()) {
+				int16 objIndex = sourceS.readUint16LE();
+				debug("objIndex = %04X; section = %d", objIndex, section);
+				if (objIndex == 0)
+					break;
+				Object *obj = new ObjectV1();
+				obj->load(sourceS);
+				_objects[objIndex - 1] = obj;
+			}
+		}
+	} else if (version == 54) {
+		for (uint32 i = 0; i < objectCount; i++) {
+			Object *obj = new ObjectV2();
+			int objSize = obj->load(sourceS);
+			// Objects are aligned on 2-byte-boundaries, skip unused bytes
+			sourceS.skip(objSize % 2);
+			_objects.push_back(obj);
+		}
 	}
 
 }
@@ -464,7 +505,11 @@ int16 GameDatabaseV2::loadgame(const char *filename, int16 version) {
 }
 
 int16 *GameDatabaseV2::findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) {
+
 	Object *obj = getObject(objectIndex);
+	if (obj->getClass() >= 0x7FFE) {
+		error("GameDatabaseV2::findObjectProperty(%04X, %04X) Not an object", objectIndex, propertyId);
+	}
 
 	int16 *prop = (int16*)obj->getData();
 	byte count1 = obj->getCount1();
@@ -568,11 +613,9 @@ void GameDatabaseV3::load(Common::SeekableReadStream &sourceS) {
 
 	for (uint32 i = 0; i < objectCount; i++) {
 		Object *obj = new ObjectV3();
-
 		// The LSB indicates if it's a constant or variable object.
 		// Constant objects are loaded from disk, while variable objects exist
 		// in the _gameState buffer.
-
 		if (objectOffsets[i] & 1) {
 			sourceS.seek(objectsOffs + objectOffsets[i] - 1);
 			obj->load(sourceS);
@@ -682,6 +725,9 @@ int16 GameDatabaseV3::loadgame(const char *filename, int16 version) {
 
 int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) {
 	Object *obj = getObject(objectIndex);
+	if (obj->getClass() >= 0x7FFE) {
+		error("GameDatabaseV2::findObjectProperty(%04X, %04X) Not an object", objectIndex, propertyId);
+	}
 
 	int16 *prop = (int16*)obj->getData();
 	byte count1 = obj->getCount1();
