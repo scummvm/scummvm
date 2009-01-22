@@ -114,8 +114,6 @@ void PictureResource::loadChunked(byte *source, int size) {
 
 	_hasPalette = false;
 
-	int i = 0;
-
 	while (!sourceS->eos()) {
 
 		uint32 chunkType = sourceS->readUint32BE();
