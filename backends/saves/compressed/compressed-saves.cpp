@@ -28,9 +28,9 @@
 
 
 Common::InSaveFile *wrapInSaveFile(Common::InSaveFile *toBeWrapped) {
-	return wrapCompressedReadStream(toBeWrapped);
+	return Common::wrapCompressedReadStream(toBeWrapped);
 }
 
 Common::OutSaveFile *wrapOutSaveFile(Common::OutSaveFile *toBeWrapped) {
-	return wrapCompressedWriteStream(toBeWrapped);
+	return Common::wrapCompressedWriteStream(toBeWrapped);
 }
