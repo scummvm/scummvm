@@ -72,7 +72,7 @@ void createThumbnail_4(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 
 	}
 }
 
-void createThumbnail(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 dstPitch, int width, int height) {
+static void createThumbnail(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 dstPitch, int width, int height) {
 	// only 1/2 and 1/4 downscale supported
 	if (width != 320 && width != 640)
 		return;
@@ -80,15 +80,9 @@ void createThumbnail(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 ds
 	int downScaleMode = (width == 320) ? 2 : 4;
 
 	if (downScaleMode == 2) {
-		if (gBitFormat == 565)
-			createThumbnail_2<565>(src, srcPitch, dstPtr, dstPitch, width, height);
-		else if (gBitFormat == 555)
-			createThumbnail_2<555>(src, srcPitch, dstPtr, dstPitch, width, height);
+		createThumbnail_2<565>(src, srcPitch, dstPtr, dstPitch, width, height);
 	} else if (downScaleMode == 4) {
-		if (gBitFormat == 565)
-			createThumbnail_4<565>(src, srcPitch, dstPtr, dstPitch, width, height);
-		else if (gBitFormat == 555)
-			createThumbnail_4<555>(src, srcPitch, dstPtr, dstPitch, width, height);
+		createThumbnail_4<565>(src, srcPitch, dstPtr, dstPitch, width, height);
 	}
 }
 
@@ -174,11 +168,8 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 
 	uint16 newHeight = !(inHeight % 240) ? kThumbnailHeight2 : kThumbnailHeight1;
 
-	int gBitFormatBackUp = gBitFormat;
-	gBitFormat = 565;
 	out.create(kThumbnailWidth, newHeight, sizeof(uint16));
 	createThumbnail((const uint8 *)in.pixels, width * sizeof(uint16), (uint8 *)out.pixels, out.pitch, width, inHeight);
-	gBitFormat = gBitFormatBackUp;
 
 	in.free();
 

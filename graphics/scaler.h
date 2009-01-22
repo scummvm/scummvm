@@ -75,7 +75,6 @@ enum {
 	kThumbnailHeight1 = 100,
 	kThumbnailHeight2 = 120
 };
-extern void createThumbnail(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 dstPitch, int width, int height);
 
 /**
  * Creates a thumbnail from the current screen (without overlay).
