@@ -1041,7 +1041,7 @@ void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font 
 	charArea.clip(_screen.w, _screen.h);
 
 	Graphics::PixelFormat format = _system->getOverlayFormat();
-	uint32 color = Graphics::RGBToColor(_texts[kTextDataDefault]->_color.r, _texts[kTextDataDefault]->_color.g, _texts[kTextDataDefault]->_color.b, format);
+	uint32 color = format.RGBToColor(_texts[kTextDataDefault]->_color.r, _texts[kTextDataDefault]->_color.g, _texts[kTextDataDefault]->_color.b);
 
 	restoreBackground(charArea);
 	font->drawChar(&_screen, ch, charArea.left, charArea.top, color);
@@ -1150,7 +1150,7 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	for (uint y = 0; y < _cursorHeight; ++y) {
 		for (uint x = 0; x < _cursorWidth; ++x) {
 			byte r, g, b;
-			Graphics::colorToRGB(src[x], r, g, b, format);
+			format.colorToRGB(src[x], r, g, b);
 			const int col = (r << 16) | (g << 8) | b;
 
 			// Skip transparency (the transparent color actually is 0xFF00FF,

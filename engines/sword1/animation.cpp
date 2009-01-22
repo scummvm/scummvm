@@ -544,7 +544,7 @@ bool MoviePlayerMPEG::initOverlays(uint32 id) {
 		_introPal = (OverlayColor *)malloc(256 * sizeof(OverlayColor));
 		Graphics::PixelFormat format = _system->getOverlayFormat();
 		for (uint16 cnt = 0; cnt < 256; cnt++)
-			_introPal[cnt] = Graphics::RGBToColor(pal[cnt * 3 + 0], pal[cnt * 3 + 1], pal[cnt * 3 + 2], format);
+			_introPal[cnt] = format.RGBToColor(pal[cnt * 3 + 0], pal[cnt * 3 + 1], pal[cnt * 3 + 2]);
 	}
 
 	return true;

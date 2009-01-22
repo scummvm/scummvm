@@ -399,7 +399,7 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 
 	OverlayColor *dst = (OverlayColor*)_gfx.pixels;
 	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
-	OverlayColor fillCol = Graphics::RGBToColor(r, g, b, overlayFormat);
+	OverlayColor fillCol = overlayFormat.RGBToColor(r, g, b);
 	while (h--) {
 		for (int i = 0; i < w; ++i) {
 			*dst++ = fillCol;

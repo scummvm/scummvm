@@ -24,6 +24,7 @@
 
 #include "graphics/thumbnail.h"
 #include "graphics/scaler.h"
+#include "graphics/colormasks.h"
 #include "common/endian.h"
 #include "common/system.h"
 
@@ -115,7 +116,7 @@ bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface &to) {
 			colorToRGB<ColorMasks<565> >(in.readUint16BE(), r, g, b);
 
 			// converting to current OSystem Color
-			*pixels++ = Graphics::RGBToColor(r, g, b, format);
+			*pixels++ = format.RGBToColor(r, g, b);
 		}
 	}
 

@@ -26,6 +26,8 @@
 #ifndef GRAPHICS_COLORMASKS_H
 #define GRAPHICS_COLORMASKS_H
 
+#include "graphics/pixelformat.h"
+
 namespace Graphics {
 
 template<int bitFormat>
@@ -81,7 +83,7 @@ struct ColorMasks<565> {
 		kGreenBits  = 6,
 		kBlueBits   = 5,
 
-		kAlphaShift = kRedBits+kGreenBits+kBlueBits,
+		kAlphaShift = 0,
 		kRedShift   = kGreenBits+kBlueBits,
 		kGreenShift = kBlueBits,
 		kBlueShift  = 0,
@@ -112,7 +114,7 @@ struct ColorMasks<555> {
 		kGreenBits  = 5,
 		kBlueBits   = 5,
 
-		kAlphaShift = kRedBits+kGreenBits+kBlueBits,
+		kAlphaShift = 0,
 		kRedShift   = kGreenBits+kBlueBits,
 		kGreenShift = kBlueBits,
 		kBlueShift  = 0,
@@ -184,7 +186,7 @@ struct ColorMasks<888> {
 		kGreenBits  = 8,
 		kBlueBits   = 8,
 
-		kAlphaShift = kRedBits+kGreenBits+kBlueBits,
+		kAlphaShift = 0,
 		kRedShift   = kGreenBits+kBlueBits,
 		kGreenShift = kBlueBits,
 		kBlueShift  = 0,
@@ -253,27 +255,12 @@ void colorToARGB(uint32 color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) {
 	b = ((color & T::kBlueMask) >> T::kBlueShift) << (8 - T::kBlueBits);
 }
 
+
+
 /**
- * A pixel format description.
- *
- * Like ColorMasks it includes the given values to create colors from RGB
- * values and to retrieve RGB values from colors.
- *
- * Unlike ColorMasks it is not dependend on knowing the exact pixel format
- * on compile time.
- *
- * A minor difference between ColorMasks and PixelFormat is that ColorMasks
- * stores the bit count per channel in 'kFooBits', while PixelFormat stores
- * the loss compared to 8 bits per channel in '#Loss'. It also doesn't
- * contain mask values.
+ * Convert a 'bitFormat' as defined by one of the ColorMasks
+ * into a PixelFormat.
  */
-struct PixelFormat {
-	byte bytesPerPixel; /**< Number of bytes used in the pixel format. */
-
-	byte rLoss, gLoss, bLoss, aLoss; /**< Precision loss of each color component. */
-	byte rShift, gShift, bShift, aShift; /**< Binary left shift of each color component in the pixel value. */
-};
-
 template<int bitFormat>
 PixelFormat createPixelFormat() {
 	PixelFormat format;
@@ -293,34 +280,6 @@ PixelFormat createPixelFormat() {
 	return format;
 }
 
-inline uint32 RGBToColor(uint8 r, uint8 g, uint8 b, const PixelFormat &fmt) {
-	return
-		((0xFF >> fmt.aLoss) << fmt.aShift) |
-		((   r >> fmt.rLoss) << fmt.rShift) |
-		((   g >> fmt.gLoss) << fmt.gShift) |
-		((   b >> fmt.bLoss) << fmt.bShift);
-}
-
-inline uint32 ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b, const PixelFormat &fmt) {
-	return
-		((a >> fmt.aLoss) << fmt.aShift) |
-		((r >> fmt.rLoss) << fmt.rShift) |
-		((g >> fmt.gLoss) << fmt.gShift) |
-		((b >> fmt.bLoss) << fmt.bShift);
-}
-
-inline void colorToRGB(uint32 color, uint8 &r, uint8 &g, uint8 &b, const PixelFormat &fmt) {
-	r = ((color >> fmt.rShift) << fmt.rLoss) & 0xFF;
-	g = ((color >> fmt.gShift) << fmt.gLoss) & 0xFF;
-	b = ((color >> fmt.bShift) << fmt.bLoss) & 0xFF;
-}
-
-inline void colorToARGB(uint32 color, uint8 &a, uint8 &r, uint8 &g, uint8 &b, const PixelFormat &fmt) {
-	a = ((color >> fmt.aShift) << fmt.aLoss) & 0xFF;
-	r = ((color >> fmt.rShift) << fmt.rLoss) & 0xFF;
-	g = ((color >> fmt.gShift) << fmt.gLoss) & 0xFF;
-	b = ((color >> fmt.bShift) << fmt.bLoss) & 0xFF;
-}
 
 } // end of namespace Graphics
 

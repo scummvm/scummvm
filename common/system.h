@@ -31,7 +31,7 @@
 #include "common/noncopyable.h"
 #include "common/rect.h"
 
-#include "graphics/colormasks.h"
+#include "graphics/pixelformat.h"
 
 namespace Audio {
 	class Mixer;

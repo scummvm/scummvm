@@ -127,7 +127,7 @@ Surface *BMPDecoder::decodeImage(Common::SeekableReadStream &stream) {
 			b = stream.readByte();
 			g = stream.readByte();
 			r = stream.readByte();
-			*curPixel = RGBToColor(r, g, b, overlayFormat);
+			*curPixel = overlayFormat.RGBToColor(r, g, b);
 			++curPixel;
 		}
 		stream.seek(pitchAdd, SEEK_CUR);

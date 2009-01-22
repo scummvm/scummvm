@@ -410,12 +410,6 @@ bool OSystem_SDL::loadGFXMode() {
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
 	//
 
-	// Distinguish 555 and 565 mode
-	if (_hwscreen->format->Rmask == 0x7C00)
-		InitScalers(555);
-	else
-		InitScalers(565);
-
 	// Need some extra bytes around when using 2xSaI
 	_tmpscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth + 3, _videoMode.screenHeight + 3,
 						16,
@@ -478,6 +472,12 @@ bool OSystem_SDL::loadGFXMode() {
 	_km.y_max = effectiveScreenHeight() - 1;
 	_km.delay_time = 25;
 	_km.last_time = 0;
+
+	// Distinguish 555 and 565 mode
+	if (_hwscreen->format->Rmask == 0x7C00)
+		InitScalers(555);
+	else
+		InitScalers(565);
 
 	return true;
 }

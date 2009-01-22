@@ -273,7 +273,7 @@ bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
 		g = 0;
 		b = 255;
 	}
-	_mode->transparentColor = Graphics::RGBToColor(r, g, b, format);
+	_mode->transparentColor = format.RGBToColor(r, g, b);
 
 	if (node->values.contains("display_font_color")) {
 		if (!parseIntegerKey(node->values["display_font_color"].c_str(), 3, &r, &g, &b))
@@ -281,7 +281,7 @@ bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
 	} else {
 		r = g = b = 0; // default to black
 	}
-	_mode->displayFontColor = Graphics::RGBToColor(r, g, b, format);
+	_mode->displayFontColor = format.RGBToColor(r, g, b);
 
 	_layoutParsed = true;
 
