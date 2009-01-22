@@ -10,7 +10,7 @@
 #
 install: all
 	$(INSTALL) -d "$(DESTDIR)$(BINDIR)"
-	$(INSTALL) -c -s -m 755 "./scummvm$(EXEEXT)" "$(DESTDIR)$(BINDIR)/scummvm$(EXEEXT)"
+	$(INSTALL) -c -s -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(BINDIR)/$(EXECUTABLE)"
 	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man6/"
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.6" "$(DESTDIR)$(MANDIR)/man6/scummvm.6"
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/pixmaps/"
@@ -25,7 +25,7 @@ ifdef DYNAMIC_MODULES
 endif
 
 uninstall:
-	rm -f "$(DESTDIR)$(BINDIR)/scummvm$(EXEEXT)"
+	rm -f "$(DESTDIR)$(BINDIR)/$(EXECUTABLE)"
 	rm -f "$(DESTDIR)$(MANDIR)/man6/scummvm.6"
 	rm -f "$(DESTDIR)$(PREFIX)/share/pixmaps/scummvm.xpm"
 	rm -rf "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
@@ -151,9 +151,9 @@ scummvmico.o: $(srcdir)/icons/scummvm.ico
 	$(WINDRES) -I$(srcdir) $(srcdir)/dists/scummvm.rc scummvmico.o
 
 # Special target to create a win32 snapshot binary
-win32dist: scummvm$(EXEEXT)
+win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
-	strip scummvm.exe -o $(WIN32PATH)/scummvm$(EXEEXT)
+	strip $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(srcdir)/dists/pred.dic $(WIN32PATH)
 	cp $(DIST_FILES_THEMES) $(WIN32PATH)
 	cp $(DIST_FILES_ENGINEDATA) $(WIN32PATH)
@@ -171,7 +171,7 @@ win32dist: scummvm$(EXEEXT)
 #
 
 # Special target to create an AmigaOS snapshot installation
-aos4dist: scummvm
+aos4dist: $(EXECUTABLE)
 	mkdir -p $(AOS4PATH)
 	strip -R.comment $< -o $(AOS4PATH)/$<_SVN
 	cp icons/scummvm.info $(AOS4PATH)/$<_SVN.info
