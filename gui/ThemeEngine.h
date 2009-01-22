@@ -584,6 +584,7 @@ protected:
 	TextDrawData *_texts[kTextDataMAX];
 
 	ImagesMap _bitmaps;
+	Graphics::PixelFormat _overlayFormat;
 
 	/** List of all the dirty screens that must be blitted to the overlay. */
 	Common::List<Common::Rect> _dirtyScreen;
