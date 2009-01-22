@@ -45,7 +45,7 @@ BaseAnimationState::BaseAnimationState(OSystem *sys, int width, int height)
 
 	_colorTab = NULL;
 	_rgbToPix = NULL;
-	_bitFormat = 0;
+	memset(&_overlayFormat, 0, sizeof(_overlayFormat));
 #endif
 }
 
@@ -353,7 +353,8 @@ void BaseAnimationState::buildLookup(int p, int lines) {
 
 void BaseAnimationState::buildLookup() {
 	// Do we already have lookup tables for this bit format?
-	if (gBitFormat == _bitFormat && _colorTab && _rgbToPix)
+	Graphics::PixelFormat format = _sys->getOverlayFormat();
+	if (format == _overlayFormat && _colorTab && _rgbToPix)
 		return;
 
 	free(_colorTab);
@@ -389,7 +390,6 @@ void BaseAnimationState::buildLookup() {
 	}
 
 	// Set up entries 0-255 in rgb-to-pixel value tables.
-	Graphics::PixelFormat format = _sys->getOverlayFormat();
 	for (i = 0; i < 256; i++) {
 		r_2_pix_alloc[i + 256] = format.RGBToColor(i, 0, 0);
 		g_2_pix_alloc[i + 256] = format.RGBToColor(0, i, 0);
@@ -407,7 +407,7 @@ void BaseAnimationState::buildLookup() {
 		b_2_pix_alloc[i + 512] = b_2_pix_alloc[511];
 	}
 
-	_bitFormat = gBitFormat;
+	_overlayFormat = format;
 }
 
 void BaseAnimationState::plotYUV(int width, int height, byte *const *dat) {

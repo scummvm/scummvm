@@ -197,8 +197,6 @@ void OSystem_Dreamcast::initSize(uint w, uint h)
 {
   assert(w <= SCREEN_W && h <= SCREEN_H);
 
-  gBitFormat = 4444;
-
   _overlay_visible = false;
   _overlay_fade = 0.0;
   _screen_w = w;

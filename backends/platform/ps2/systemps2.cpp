@@ -76,8 +76,6 @@ volatile uint32 msecCount = 0;
 
 OSystem_PS2 *g_systemPs2;
 
-int gBitFormat = 555;
-
 #define FOREVER 2147483647
 
 namespace Graphics {

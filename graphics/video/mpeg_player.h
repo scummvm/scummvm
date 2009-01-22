@@ -27,6 +27,7 @@
 #define GRAPHICS_VIDEO_MPEG_PLAYER_H
 
 #include "common/scummsys.h"
+#include "graphics/pixelformat.h"
 
 // Uncomment this if you are using libmpeg2 0.3.1.
 // #define USE_MPEG2_0_3_1
@@ -122,7 +123,7 @@ protected:
 	} _palettes[50];
 #else
 	OverlayColor *_overlay;
-	int _bitFormat;
+	Graphics::PixelFormat _overlayFormat;
 	int16 *_colorTab;
 	OverlayColor *_rgbToPix;
 #endif
