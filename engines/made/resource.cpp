@@ -106,7 +106,7 @@ void PictureResource::loadChunked(byte *source, int size) {
 
 	Common::MemoryReadStream *sourceS = new Common::MemoryReadStream(source, size);
 
-	byte cmdFlags, pixelFlags, maskFlags;
+	byte cmdFlags = 0, pixelFlags = 0, maskFlags = 0;
 	uint16 cmdOffs = 0, pixelOffs = 0, maskOffs = 0;
 	uint16 lineSize = 0, width = 0, height = 0;
 
