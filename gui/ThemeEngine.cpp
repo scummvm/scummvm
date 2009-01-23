@@ -362,6 +362,7 @@ bool ThemeEngine::init() {
 	// reset everything and reload the graphics
 	_initOk = false;
 	setGraphicsMode(_graphicsMode);
+	_overlayFormat = _system->getOverlayFormat();
 
 	if (_screen.pixels && _backBuffer.pixels) {
 		_initOk = true;
@@ -414,6 +415,20 @@ void ThemeEngine::clearAll() {
 }
 
 void ThemeEngine::refresh() {
+	
+	// Flush all bitmaps if the overlay pixel format changed.
+	const Graphics::PixelFormat tmpFormat = _system->getOverlayFormat();
+	if (0 != memcmp(&_overlayFormat, &tmpFormat, sizeof(Graphics::PixelFormat))) {
+		for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
+			Graphics::Surface *surf = i->_value;
+			if (surf) {
+				surf->free();
+				delete surf;
+			}
+		}
+		_bitmaps.clear();
+	}
+
 	init();
 	if (_enabled) {
 		_system->showOverlay();
@@ -1040,8 +1055,7 @@ void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font 
 	Common::Rect charArea = r;
 	charArea.clip(_screen.w, _screen.h);
 
-	Graphics::PixelFormat format = _system->getOverlayFormat();
-	uint32 color = Graphics::RGBToColor(_texts[kTextDataDefault]->_color.r, _texts[kTextDataDefault]->_color.g, _texts[kTextDataDefault]->_color.b, format);
+	uint32 color = Graphics::RGBToColor(_texts[kTextDataDefault]->_color.r, _texts[kTextDataDefault]->_color.g, _texts[kTextDataDefault]->_color.b, _overlayFormat);
 
 	restoreBackground(charArea);
 	font->drawChar(&_screen, ch, charArea.left, charArea.top, color);
@@ -1146,11 +1160,10 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	uint colorsFound = 0;
 	Common::HashMap<int, int>	colorToIndex;
 	const OverlayColor *src = (const OverlayColor*)cursor->pixels;
-	Graphics::PixelFormat format = _system->getOverlayFormat();
 	for (uint y = 0; y < _cursorHeight; ++y) {
 		for (uint x = 0; x < _cursorWidth; ++x) {
 			byte r, g, b;
-			Graphics::colorToRGB(src[x], r, g, b, format);
+			Graphics::colorToRGB(src[x], r, g, b, _overlayFormat);
 			const int col = (r << 16) | (g << 8) | b;
 
 			// Skip transparency (the transparent color actually is 0xFF00FF,
