@@ -60,24 +60,21 @@ DSFileSystemNode::DSFileSystemNode() {
 DSFileSystemNode::DSFileSystemNode(const Common::String& path) {
 //	consolePrintf("--%s ",path.c_str());
 
-	char disp[128];
-	char* pathStr = (char *) path.c_str();
-
 	int lastSlash = 3;
-	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
+	for (int r = 0; r < (int) path.size() - 1; r++) {
 		if (path[r] == '\\') {
 			lastSlash = r;
 		}
 	}
 
-	strcpy(disp, pathStr + lastSlash + 1);
-
-	_displayName = Common::String(disp);
+	_displayName = Common::String(path.c_str() + lastSlash + 1);
 	_path = path;
 //	_isValid = true;
 //	_isDirectory = false;
 
-	if (!strncmp(pathStr, "ds:/", 4)) {
+	const char *pathStr = path.c_str();
+
+	if (path.hasPrefix("ds:/")) {
 		pathStr += 4;
 	}
 
@@ -103,18 +100,14 @@ DSFileSystemNode::DSFileSystemNode(const Common::String& path) {
 DSFileSystemNode::DSFileSystemNode(const Common::String& path, bool isDir) {
 //	consolePrintf("--%s ",path.c_str());
 
-	char disp[128];
-	char* pathStr = (char *) path.c_str();
 	int lastSlash = 3;
-	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
+	for (int r = 0; r < (int) path.size() - 1; r++) {
 		if (path[r] == '\\') {
 			lastSlash = r;
 		}
 	}
 
-	strcpy(disp, pathStr + lastSlash + 1);
-
-	_displayName = Common::String(disp);
+	_displayName = Common::String(path.c_str() + lastSlash + 1);
 	_path = path;
 	_isValid = true;
 	_isDirectory = isDir;
@@ -142,14 +135,11 @@ bool DSFileSystemNode::getChildren(AbstractFSList &dirList, ListMode mode, bool 
 
 	//TODO: honor the hidden flag
 
-	char temp[128];
-	strcpy(temp, _path.c_str());
+//	consolePrintf("This dir: %s\n", _path.c_str());
 
-//	consolePrintf("This dir: %s\n", temp);
-
-	if ((temp[0] == 'd') && (temp[1] == 's') && (temp[2] == ':') && (temp[3] == '/')) {
-		if (strlen(temp) != 4) {
-			_zipFile->changeDirectory(&temp[4]);
+	if (_path.hasPrefix("ds:/")) {
+		if (_path.size() > 4) {
+			_zipFile->changeDirectory(_path.c_str() + 4);
 		} else {
 			_zipFile->changeToRoot();
 
@@ -160,7 +150,7 @@ bool DSFileSystemNode::getChildren(AbstractFSList &dirList, ListMode mode, bool 
 */
 		}
 	} else {
-		_zipFile->changeDirectory(temp);
+		_zipFile->changeDirectory(_path.c_str());
 	}
 
 	if (_zipFile->restartFile()) {
@@ -191,14 +181,14 @@ AbstractFSNode* DSFileSystemNode::getParent() const {
 		char *path = (char *) _path.c_str();
 		int lastSlash = 4;
 
-		for (int r = 4; r < (int) strlen((char *) path); r++) {
+		for (int r = 4; r < (int) _path.size(); r++) {
 			if (path[r] == '\\') {
 				lastSlash = r;
 			}
 		}
 
 		p = new DSFileSystemNode(Common::String(path, lastSlash));
-		((DSFileSystemNode *) (p))->_isDirectory = true;
+		p->_isDirectory = true;
 	} else {
 		p = new DSFileSystemNode();
 	}
@@ -229,79 +219,58 @@ GBAMPFileSystemNode::GBAMPFileSystemNode() {
 GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path) {
 //	consolePrintf("'%s'",path.c_str());
 
-	char disp[128];
-	char* pathStr = (char *) path.c_str();
 	int lastSlash = 3;
-	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
+	for (int r = 0; r < (int) path.size() - 1; r++) {
 		if ((path[r] == '\\') || (path[r] == '/')) {
 			lastSlash = r;
 		}
 	}
-
-	strcpy(disp, pathStr + lastSlash + 1);
-
-	char check[128];
-	int fileOrDir;
-
-	if (!strcmp(pathStr, "mp:/")) {
+	
+	if (path == "mp:/") {
 		// This is the root directory
 		_isDirectory = true;
 		_isValid = false;		// Old code returned false here, but I'm not sure why
-	} else if ((strlen(pathStr) > 4) && (!strncmp(pathStr, "mp:/", 4))) {
-		// Files which start with mp:/
-
-		// Clear the filename to 128 bytes, because a libfat bug occationally tries to read in this area.
+	} else {
+		char check[128];
 		memset(check, 0, 128);
-		strcpy(check, pathStr + 3);
+
+		if (path.size() > 4 && path.hasPrefix("mp:/")) {
+			// Files which start with mp:/
+			// Clear the filename to 128 bytes, because a libfat bug occasionally tries to read in this area.
+			strcpy(check, path.c_str() + 3);
+		} else {
+			// Clear the filename to 128 bytes, because a libfat bug occationally tries to read in this area.
+			strcpy(check, path.c_str());
+		}
 
 		// Remove terminating slash - FileExists fails without this
 		if (check[strlen(check) - 1] == '/') {
 			check[strlen(check) - 1] = 0;
 		}
-		fileOrDir = FAT_FileExists(check);
+		int fileOrDir = FAT_FileExists(check);
 
 		_isDirectory = fileOrDir == FT_DIR;
 		_isValid = fileOrDir == FT_FILE;
-	} else {
-		// Files which don't start with mp:/ (like scummvm.ini in default implementation)
-
-		// Clear the filename to 128 bytes, because a libfat bug occationally tries to read in this area.
-		memset(check, 0, 128);
-		strcpy(check, pathStr);
-
-		// Remove terminating slash - FileExists fails on directories without this
-		if (check[strlen(check) - 1] == '/') {
-			check[strlen(check) - 1] = 0;
-		}
-		fileOrDir = FAT_FileExists(check);
-
-		_isDirectory = fileOrDir == FT_DIR;
-		_isValid = fileOrDir == FT_FILE;
-
 	}
 
 
 //	consolePrintf("Path: %s \n", check);
 
-	_displayName = Common::String(disp);
+	_displayName = Common::String(path.c_str() + lastSlash + 1);
 	_path = path;
 }
 
 GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path, bool isDirectory) {
 	//consolePrintf("'%s'",path.c_str());
 
-	char disp[128];
-	char* pathStr = (char *) path.c_str();
 	int lastSlash = 3;
-	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
+	for (int r = 0; r < (int) path.size() - 1; r++) {
 		if ((path[r] == '\\') || (path[r] == '/')) {
 			lastSlash = r;
 		}
 	}
 
-	strcpy(disp, pathStr + lastSlash + 1);
-
-	_displayName = Common::String(disp);
+	_displayName = Common::String(path.c_str() + lastSlash + 1);
 	_path = path;
 	_isValid = true;
 	_isDirectory = isDirectory;

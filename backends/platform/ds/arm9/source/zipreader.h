@@ -52,14 +52,13 @@ class ZipFile {
 
 public:
 	ZipFile();
-	~ZipFile();
 
 	bool isReady();
 
 	// These operations set the current file
 	bool restartFile();
 	bool skipFile();
-	bool findFile(char* search);
+	bool findFile(const char *search);
 
 	// These return the file's data and information
 	char* getFile();
@@ -68,15 +67,11 @@ public:
 	bool isDirectory();
 
 	// These set the current directory
-	void changeDirectory(char* name);
+	void changeDirectory(const char* name);
 	void changeToRoot();
 	void setAllFilesVisible(bool state) { _allFilesVisible = state; }
 
 	bool currentFileInFolder();
-
-	u16 misaligned16(u16* v);
-	u32 misaligned32(u32* v);
-
 };
 
 

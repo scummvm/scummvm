@@ -23,10 +23,6 @@
 
 #include "zipreader.h"
 
-#define SWAP_U16(v) (((v & 0xFF) << 8) + (v & 0xFF00))
-#define SWAP_U32(v) ((SWAP_U16((v & 0XFFFF0000) >> 16) + (SWAP_U16(v & 0x0000FFFF) << 16)))
-
-
 ZipFile::ZipFile() {
 	// Locate a zip file in cartridge memory space
 
@@ -90,7 +86,8 @@ bool ZipFile::restartFile() {
 bool ZipFile::currentFileInFolder() {
 	char name[128];
 
-	if (_allFilesVisible) return true;
+	if (_allFilesVisible)
+		return true;
 
 	getFileName(name);
 
@@ -118,7 +115,7 @@ bool ZipFile::currentFileInFolder() {
 void ZipFile::getFileName(char* name) {
 	strncpy(name, (char *) (_currentFile + 1), _currentFile->nameLength);
 
-	for (int r = 0; r < (int) strlen(name); r++) {
+	for (int r = 0; name[r] != 0; r++) {
 		if (name[r] == '/') name[r] = '\\';
 	}
 
@@ -136,11 +133,11 @@ bool ZipFile::skipFile() {
 
 		// Move on to the next file
 		_currentFile = (FileHeader *) (
-			((char *) (_currentFile)) + sizeof(*_currentFile) + _currentFile->nameLength + _currentFile->fileSize + _currentFile->extraLength
+			getFile() + _currentFile->fileSize
 		);
 
 			// Return true if there are more files.  Check this by looking for the magic number
-		valid =  (_currentFile->magic[0] == 0x50) &&
+		valid = (_currentFile->magic[0] == 0x50) &&
 				(_currentFile->magic[1] == 0x4B) &&
 				(_currentFile->magic[2] == 0x03) &&
 				(_currentFile->magic[3] == 0x04);
@@ -155,16 +152,6 @@ bool ZipFile::skipFile() {
 
 
 
-u32 ZipFile::misaligned32(u32* v) {
-	char* b = (char *) v;
-	return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + b[3];
-}
-
-u16 ZipFile::misaligned16(u16* v) {
-	char* b = (char *) v;
-	return (b[0] << 8) + b[1];
-}
-
 int ZipFile::getFileSize() {
 	return _currentFile->fileSize;
 }
@@ -173,22 +160,27 @@ bool ZipFile::isDirectory() {
 	return _currentFile->fileSize == 0; 		// This is a bit wrong, but seems to work.
 }
 
-char* ZipFile::getFile() {
+char *ZipFile::getFile() {
 	return ((char *) (_currentFile)) + sizeof(*_currentFile) + _currentFile->nameLength + _currentFile->extraLength;
 }
 
-bool ZipFile::findFile(char* search) {
+bool ZipFile::findFile(const char *search) {
 	changeToRoot();
 	restartFile();
 
 	char searchName[128];
 	strcpy(searchName, search);
-	for (int r = 0; r < (int) strlen(searchName); r++) {
-		if (searchName[r] == '/') searchName[r] = '\\';
+	char *tmp = searchName;
+	
+	// Change slashes to backslashes
+	for (; *tmp; ++tmp) {
+		if (*tmp == '/')
+			*tmp = '\\';
 	}
 
-	if (*(searchName + strlen(searchName) - 1) == '\\') {	// Directories have a terminating slash
-		*(searchName + strlen(searchName) - 1) = '\0';		// which we need to dispose of.
+	// Remove trailing slashes
+	if (*(tmp-1) == '\\') {
+		*(tmp-1) = 0;
 	}
 
 
@@ -215,19 +207,22 @@ void ZipFile::changeToRoot() {
 	_directory[0] = 0;
 }
 
-void ZipFile::changeDirectory(char* dir) {
+void ZipFile::changeDirectory(const char* dir) {
 //	consolePrintf("Current dir now '%s'\n", dir);
 
-	strcpy(_directory, dir);
-	for (int r = 0; r < (int) strlen(_directory); r++) {
-		if (_directory[r] == '/') _directory[r] = '\\';
+	assert(dir && *dir);
+
+	// Copy dir to _directory, changing slashes to backslashes
+	char *dst = _directory;
+	for (; *dir; ++dir) {
+		if (*dir == '/')
+			*dst++ = '\\';
+		else
+			*dst++ = *dir;
 	}
 
-	if (_directory[strlen(_directory) - 1] == '\\')	{
-		_directory[strlen(_directory) - 1] = '\0';
+	// Remove trailing backslash
+	if (*(dst-1) == '\\') {
+		*(dst-1) = 0;
 	}
-}
-
-ZipFile::~ZipFile() {
-
 }
