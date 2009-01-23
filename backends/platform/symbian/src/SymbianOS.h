@@ -70,8 +70,8 @@ protected:
 	static void symbianMixCallback(void *s, byte *samples, int len);
 
 
-	virtual Common::SeekableReadStream *openConfigFileForReading();
-	virtual Common::WriteStream *openConfigFileForWriting();
+	virtual Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::WriteStream *createConfigWriteStream();
 public:
 	// vibration support
 #ifdef USE_VIBRA_SE_PXXX

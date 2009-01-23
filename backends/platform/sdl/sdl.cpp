@@ -384,12 +384,12 @@ static Common::String getDefaultConfigFileName() {
 	return configFile;
 }
 
-Common::SeekableReadStream *OSystem_SDL::openConfigFileForReading() {
+Common::SeekableReadStream *OSystem_SDL::createConfigReadStream() {
 	Common::FSNode file(getDefaultConfigFileName());
 	return file.openForReading();
 }
 
-Common::WriteStream *OSystem_SDL::openConfigFileForWriting() {
+Common::WriteStream *OSystem_SDL::createConfigWriteStream() {
 	Common::FSNode file(getDefaultConfigFileName());
 	return file.openForWriting();
 }

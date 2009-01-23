@@ -205,8 +205,8 @@ public:
 	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 
-	virtual Common::SeekableReadStream *openConfigFileForReading();
-	virtual Common::WriteStream *openConfigFileForWriting();
+	virtual Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::WriteStream *createConfigWriteStream();
 
 protected:
 	bool _inited;

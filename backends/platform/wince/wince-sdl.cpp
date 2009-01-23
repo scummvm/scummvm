@@ -463,12 +463,12 @@ static Common::String getDefaultConfigFileName() {
 	return configFile;
 }
 
-Common::SeekableReadStream *OSystem_WINCE3::openConfigFileForReading() {
+Common::SeekableReadStream *OSystem_WINCE3::createConfigReadStream() {
 	Common::FSNode file(getDefaultConfigFileName());
 	return file.openForReading();
 }
 
-Common::WriteStream *OSystem_WINCE3::openConfigFileForWriting() {
+Common::WriteStream *OSystem_WINCE3::createConfigWriteStream() {
 	Common::FSNode file(getDefaultConfigFileName());
 	return file.openForWriting();
 }

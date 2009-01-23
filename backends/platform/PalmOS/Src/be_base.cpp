@@ -181,12 +181,12 @@ Common::TimerManager *OSystem_PalmBase::getTimerManager() {
 
 #define PALMOS_CONFIG_FILE "/PALM/Programs/ScummVM/scummvm.ini"
 
-Common::SeekableReadStream *OSystem_PalmBase::openConfigFileForReading() {
+Common::SeekableReadStream *OSystem_PalmBase::createConfigReadStream() {
 	Common::FSNode file(PALMOS_CONFIG_FILE);
 	return file.openForReading();
 }
 
-Common::WriteStream *OSystem_PalmBase::openConfigFileForWriting() {
+Common::WriteStream *OSystem_PalmBase::createConfigWriteStream() {
 	Common::FSNode file(PALMOS_CONFIG_FILE);
 	return file.openForWriting();
 }

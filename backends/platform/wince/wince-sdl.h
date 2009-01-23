@@ -86,8 +86,8 @@ public:
 	// Overloaded from OSystem
 	//void engineInit();
 	void getTimeAndDate(struct tm &t) const;
-	virtual Common::SeekableReadStream *openConfigFileForReading();
-	virtual Common::WriteStream *openConfigFileForWriting();
+	virtual Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::WriteStream *createConfigWriteStream();
 
 
 	// Overloaded from SDL_Common (FIXME)

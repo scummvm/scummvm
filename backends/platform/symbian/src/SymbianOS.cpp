@@ -123,12 +123,12 @@ static Common::String getDefaultConfigFileName() {
 	return configFile;
 }
 
-Common::SeekableReadStream *OSystem_SDL_Symbian::openConfigFileForReading() {
+Common::SeekableReadStream *OSystem_SDL_Symbian::createConfigReadStream() {
 	Common::FSNode file(getDefaultConfigFileName());
 	return file.openForReading();
 }
 
-Common::WriteStream *OSystem_SDL_Symbian::openConfigFileForWriting() {
+Common::WriteStream *OSystem_SDL_Symbian::createConfigWriteStream() {
 	Common::FSNode file(getDefaultConfigFileName());
 	return file.openForWriting();
 }

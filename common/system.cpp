@@ -114,12 +114,12 @@ void OSystem::clearScreen() {
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 #endif
 
-Common::SeekableReadStream *OSystem::openConfigFileForReading() {
+Common::SeekableReadStream *OSystem::createConfigReadStream() {
 	Common::FSNode file(DEFAULT_CONFIG_FILE);
 	return file.openForReading();
 }
 
-Common::WriteStream *OSystem::openConfigFileForWriting() {
+Common::WriteStream *OSystem::createConfigWriteStream() {
 #ifdef __DC__
 	return 0;
 #else

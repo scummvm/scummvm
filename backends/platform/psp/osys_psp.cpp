@@ -643,12 +643,12 @@ void OSystem_PSP::displayMessageOnOSD(const char *msg) {
 
 #define PSP_CONFIG_FILE "ms0:/scummvm.ini"
 
-Common::SeekableReadStream *OSystem_PSP::openConfigFileForReading() {
+Common::SeekableReadStream *OSystem_PSP::createConfigReadStream() {
 	Common::FSNode file(PSP_CONFIG_FILE);
 	return file.openForReading();
 }
 
-Common::WriteStream *OSystem_PSP::openConfigFileForWriting() {
+Common::WriteStream *OSystem_PSP::createConfigWriteStream() {
 	Common::FSNode file(PSP_CONFIG_FILE);
 	return file.openForWriting();
 }

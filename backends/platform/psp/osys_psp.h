@@ -142,7 +142,7 @@ public:
 
 	virtual void displayMessageOnOSD(const char *msg);
 
-	virtual Common::SeekableReadStream *openConfigFileForReading();
-	virtual Common::WriteStream *openConfigFileForWriting();
+	virtual Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::WriteStream *createConfigWriteStream();
 };
 

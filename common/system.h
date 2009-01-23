@@ -908,7 +908,7 @@ public:
 	 * ReadStream instance. It is the callers responsiblity to delete
 	 * the stream after use.
 	 */
-	virtual Common::SeekableReadStream *openConfigFileForReading();
+	virtual Common::SeekableReadStream *createConfigReadStream();
 
 	/**
 	 * Open the default config file for writing, by returning a suitable
@@ -917,7 +917,7 @@ public:
 	 *
 	 * May return 0 to indicate that writing to config file is not possible.
 	 */
-	virtual Common::WriteStream *openConfigFileForWriting();
+	virtual Common::WriteStream *createConfigWriteStream();
 
 	//@}
 };

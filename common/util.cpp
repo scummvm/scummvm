@@ -27,6 +27,8 @@
 #include "common/system.h"
 #include "gui/debugger.h"
 
+#include <stdarg.h>	// For va_list etc.
+
 #ifdef _WIN32_WCE
 // This is required for the debugger attachment
 extern bool isSmartphone(void);

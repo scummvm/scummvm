@@ -1312,12 +1312,12 @@ OSystem *OSystem_IPHONE_create() {
 	return new OSystem_IPHONE();
 }
 
-Common::SeekableReadStream *OSystem_IPHONE::openConfigFileForReading() {
+Common::SeekableReadStream *OSystem_IPHONE::createConfigReadStream() {
 	Common::FSNode file(SCUMMVM_PREFS_PATH);
 	return file.openForReading();
 }
 
-Common::WriteStream *OSystem_IPHONE::openConfigFileForWriting() {
+Common::WriteStream *OSystem_IPHONE::createConfigWriteStream() {
 	Common::FSNode file(SCUMMVM_PREFS_PATH);
 	return file.openForWriting();
 }

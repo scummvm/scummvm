@@ -178,8 +178,8 @@ public:
 	void startSoundsystem();
 	void stopSoundsystem();
 
-	virtual Common::SeekableReadStream *openConfigFileForReading();
-	virtual Common::WriteStream *openConfigFileForWriting();
+	virtual Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::WriteStream *createConfigWriteStream();
 
 protected:
 	inline void addDirtyRect(int16 x1, int16 y1, int16 w, int16 h);

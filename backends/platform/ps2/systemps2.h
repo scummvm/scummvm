@@ -107,8 +107,8 @@ public:
 
 	virtual void quit();
 
-	virtual Common::SeekableReadStream *openConfigFileForReading();
-	virtual Common::WriteStream *openConfigFileForWriting();
+	virtual Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::WriteStream *createConfigWriteStream();
 
 	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<555>(); }
 

@@ -62,7 +62,7 @@ ConfigManager::ConfigManager()
 
 void ConfigManager::loadDefaultConfigFile() {
 	// Open the default config file
-	SeekableReadStream *stream = g_system->openConfigFileForReading();
+	SeekableReadStream *stream = g_system->createConfigReadStream();
 	_filename.clear();	// clear the filename to indicate that we are using the default config file
 
 	// ... load it, if available ...
@@ -190,7 +190,7 @@ void ConfigManager::flushToDisk() {
 
 	if (_filename.empty()) {
 		// Write to the default config file
-		stream = g_system->openConfigFileForWriting();
+		stream = g_system->createConfigWriteStream();
 		if (!stream)	// If writing to the config file is not possible, do nothing
 			return;
 	} else {
