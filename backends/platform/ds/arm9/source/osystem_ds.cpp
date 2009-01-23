@@ -554,7 +554,7 @@ void OSystem_DS::getTimeAndDate(struct tm &t) const {
 #if 0
 	curTime = time(0);
 #else
-	curTime = 0xABCD1234 + getMillis() / 1000;
+	curTime = 0xABCD1234 + DS::getMillis() / 1000;
 #endif
 	t = *localtime(&curTime);
 }
