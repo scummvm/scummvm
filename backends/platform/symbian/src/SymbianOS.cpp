@@ -125,12 +125,12 @@ static Common::String getDefaultConfigFileName() {
 
 Common::SeekableReadStream *OSystem_SDL_Symbian::createConfigReadStream() {
 	Common::FSNode file(getDefaultConfigFileName());
-	return file.openForReading();
+	return file.createReadStream();
 }
 
 Common::WriteStream *OSystem_SDL_Symbian::createConfigWriteStream() {
 	Common::FSNode file(getDefaultConfigFileName());
-	return file.openForWriting();
+	return file.createWriteStream();
 }
 
 OSystem_SDL_Symbian::zoneDesc OSystem_SDL_Symbian::_zones[TOTAL_ZONES] = {

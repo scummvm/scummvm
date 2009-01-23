@@ -79,8 +79,8 @@ public:
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFSNode *getParent() const;
 
-	virtual Common::SeekableReadStream *openForReading();
-	virtual Common::WriteStream *openForWriting();
+	virtual Common::SeekableReadStream *createReadStream();
+	virtual Common::WriteStream *createWriteStream();
 };
 
 /**
@@ -252,11 +252,11 @@ AbstractFSNode *SymbianFilesystemNode::getParent() const {
 	return p;
 }
 
-Common::SeekableReadStream *SymbianFilesystemNode::openForReading() {
+Common::SeekableReadStream *SymbianFilesystemNode::createReadStream() {
 	return SymbianStdioStream::makeFromPath(getPath().c_str(), false);
 }
 
-Common::WriteStream *SymbianFilesystemNode::openForWriting() {
+Common::WriteStream *SymbianFilesystemNode::createWriteStream() {
 	return SymbianStdioStream::makeFromPath(getPath().c_str(), true);
 }
 #endif //#if defined (__SYMBIAN32__)

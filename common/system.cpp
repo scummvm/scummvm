@@ -116,7 +116,7 @@ void OSystem::clearScreen() {
 
 Common::SeekableReadStream *OSystem::createConfigReadStream() {
 	Common::FSNode file(DEFAULT_CONFIG_FILE);
-	return file.openForReading();
+	return file.createReadStream();
 }
 
 Common::WriteStream *OSystem::createConfigWriteStream() {
@@ -124,6 +124,6 @@ Common::WriteStream *OSystem::createConfigWriteStream() {
 	return 0;
 #else
 	Common::FSNode file(DEFAULT_CONFIG_FILE);
-	return file.openForWriting();
+	return file.createWriteStream();
 #endif
 }

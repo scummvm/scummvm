@@ -150,7 +150,7 @@ SeekableReadStream *FSDirectory::openFile(const String &name) {
 		return 0;
 	}
 
-	SeekableReadStream *stream = node.openForReading();
+	SeekableReadStream *stream = node.createReadStream();
 	if (!stream)
 		warning("FSDirectory::openFile: Can't create stream for file '%s'", name.c_str());
 

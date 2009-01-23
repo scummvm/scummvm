@@ -1381,7 +1381,7 @@ ZipArchive::ZipArchive(const Common::String &name) {
 }
 
 ZipArchive::ZipArchive(const Common::FSNode &node) {
-	SeekableReadStream *stream = node.openForReading();
+	SeekableReadStream *stream = node.createReadStream();
 	_zipFile = unzOpen(stream);
 }
 

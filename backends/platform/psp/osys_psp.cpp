@@ -645,10 +645,10 @@ void OSystem_PSP::displayMessageOnOSD(const char *msg) {
 
 Common::SeekableReadStream *OSystem_PSP::createConfigReadStream() {
 	Common::FSNode file(PSP_CONFIG_FILE);
-	return file.openForReading();
+	return file.createReadStream();
 }
 
 Common::WriteStream *OSystem_PSP::createConfigWriteStream() {
 	Common::FSNode file(PSP_CONFIG_FILE);
-	return file.openForWriting();
+	return file.createWriteStream();
 }

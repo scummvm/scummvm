@@ -386,12 +386,12 @@ static Common::String getDefaultConfigFileName() {
 
 Common::SeekableReadStream *OSystem_SDL::createConfigReadStream() {
 	Common::FSNode file(getDefaultConfigFileName());
-	return file.openForReading();
+	return file.createReadStream();
 }
 
 Common::WriteStream *OSystem_SDL::createConfigWriteStream() {
 	Common::FSNode file(getDefaultConfigFileName());
-	return file.openForWriting();
+	return file.createWriteStream();
 }
 
 void OSystem_SDL::setWindowCaption(const char *caption) {

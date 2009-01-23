@@ -258,7 +258,7 @@ bool md5_file(const FSNode &file, uint8 digest[16], uint32 length) {
 		return false;
 	}
 
-	ReadStream *stream = file.openForReading();
+	ReadStream *stream = file.createReadStream();
 	if (!stream) {
 		warning("md5_file: failed to open '%s'", file.getPath().c_str());
 		return false;

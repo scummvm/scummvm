@@ -84,7 +84,7 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename)
 	Common::FSNode file = savePath.getChild(filename);
 
 	// Open the file for reading
-	Common::SeekableReadStream *sf = file.openForReading();
+	Common::SeekableReadStream *sf = file.createReadStream();
 
 	return Common::wrapCompressedReadStream(sf);
 }
@@ -99,7 +99,7 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 	Common::FSNode file = savePath.getChild(filename);
 
 	// Open the file for saving
-	Common::WriteStream *sf = file.openForWriting();
+	Common::WriteStream *sf = file.createWriteStream();
 
 	return Common::wrapCompressedWriteStream(sf);
 }

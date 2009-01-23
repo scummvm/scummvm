@@ -84,7 +84,7 @@ bool File::open(const FSNode &node) {
 		return false;
 	}
 
-	SeekableReadStream *stream = node.openForReading();
+	SeekableReadStream *stream = node.createReadStream();
 	return open(stream, node.getPath());
 }
 
@@ -192,7 +192,7 @@ bool DumpFile::open(const FSNode &node) {
 		return false;
 	}
 
-	_handle = node.openForWriting();
+	_handle = node.createWriteStream();
 
 	if (_handle == NULL)
 		debug(2, "File %s not found", node.getName().c_str());

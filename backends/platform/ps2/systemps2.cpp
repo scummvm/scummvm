@@ -776,14 +776,14 @@ Common::SeekableReadStream *OSystem_PS2::createConfigReadStream() {
 	char configFile[MAXPATHLEN];
 	makeConfigPath(configFile);
 	Common::FSNode file(configFile);
-	return file.openForReading();
+	return file.createReadStream();
 }
 
 Common::WriteStream *OSystem_PS2::createConfigWriteStream() {
 	char configFile[MAXPATHLEN];
 	makeConfigPath(configFile);
 	Common::FSNode file(configFile);
-	return file.openForWriting();
+	return file.createWriteStream();
 }
 
 bool OSystem_PS2::runningFromHost(void) {

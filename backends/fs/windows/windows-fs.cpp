@@ -102,8 +102,8 @@ public:
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFSNode *getParent() const;
 
-	virtual Common::SeekableReadStream *openForReading();
-	virtual Common::WriteStream *openForWriting();
+	virtual Common::SeekableReadStream *createReadStream();
+	virtual Common::WriteStream *createWriteStream();
 
 private:
 	/**
@@ -313,11 +313,11 @@ AbstractFSNode *WindowsFilesystemNode::getParent() const {
 	return p;
 }
 
-Common::SeekableReadStream *WindowsFilesystemNode::openForReading() {
+Common::SeekableReadStream *WindowsFilesystemNode::createReadStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), false);
 }
 
-Common::WriteStream *WindowsFilesystemNode::openForWriting() {
+Common::WriteStream *WindowsFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 

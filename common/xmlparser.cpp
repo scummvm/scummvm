@@ -40,7 +40,7 @@ bool XMLParser::loadFile(const Common::String &filename) {
 }
 
 bool XMLParser::loadFile(const FSNode &node) {
-	_stream = node.openForReading();
+	_stream = node.createReadStream();
 	if (!_stream)
 		return false;
 

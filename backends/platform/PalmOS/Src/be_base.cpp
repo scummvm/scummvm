@@ -183,10 +183,10 @@ Common::TimerManager *OSystem_PalmBase::getTimerManager() {
 
 Common::SeekableReadStream *OSystem_PalmBase::createConfigReadStream() {
 	Common::FSNode file(PALMOS_CONFIG_FILE);
-	return file.openForReading();
+	return file.createReadStream();
 }
 
 Common::WriteStream *OSystem_PalmBase::createConfigWriteStream() {
 	Common::FSNode file(PALMOS_CONFIG_FILE);
-	return file.openForWriting();
+	return file.createWriteStream();
 }

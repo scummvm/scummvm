@@ -109,9 +109,9 @@ public:
 	 * If a child matching the name exists, a normal node for it is returned.
 	 * If no child with the name exists, a node for it is still returned,
 	 * but exists() will return 'false' for it. This node can however be used
-	 * to create a new file using the openForWriting() method.
+	 * to create a new file using the createWriteStream() method.
 	 *
-	 * @todo If openForWriting() (or a hypothetical future mkdir() method) is used,
+	 * @todo If createWriteStream() (or a hypothetical future mkdir() method) is used,
 	 *       this should affect what exists/isDirectory/isReadable/isWritable return
 	 *       for existing nodes. However, this is not the case for many existing
 	 *       FSNode implementations. Either fix those, or document that FSNodes
@@ -213,7 +213,7 @@ public:
 	 *
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
-	virtual SeekableReadStream *openForReading() const;
+	virtual SeekableReadStream *createReadStream() const;
 
 	/**
 	 * Creates a WriteStream instance corresponding to the file
@@ -222,11 +222,11 @@ public:
 	 *
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
-	virtual WriteStream *openForWriting() const;
+	virtual WriteStream *createWriteStream() const;
 
 	// Compatibility with ArchiveMember API.
 	SeekableReadStream *open() {
-		return openForReading();
+		return createReadStream();
 	}
 };
 

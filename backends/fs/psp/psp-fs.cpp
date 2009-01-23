@@ -71,8 +71,8 @@ public:
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFSNode *getParent() const;
 
-	virtual Common::SeekableReadStream *openForReading();
-	virtual Common::WriteStream *openForWriting();
+	virtual Common::SeekableReadStream *createReadStream();
+	virtual Common::WriteStream *createWriteStream();
 };
 
 PSPFilesystemNode::PSPFilesystemNode() {
@@ -161,11 +161,11 @@ AbstractFSNode *PSPFilesystemNode::getParent() const {
 	return new PSPFilesystemNode(Common::String(start, end - start), false);
 }
 
-Common::SeekableReadStream *PSPFilesystemNode::openForReading() {
+Common::SeekableReadStream *PSPFilesystemNode::createReadStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), false);
 }
 
-Common::WriteStream *PSPFilesystemNode::openForWriting() {
+Common::WriteStream *PSPFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 

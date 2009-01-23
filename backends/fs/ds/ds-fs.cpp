@@ -196,11 +196,11 @@ AbstractFSNode* DSFileSystemNode::getParent() const {
 	return p;
 }
 
-Common::SeekableReadStream *DSFileSystemNode::openForReading() {
+Common::SeekableReadStream *DSFileSystemNode::createReadStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), false);
 }
 
-Common::WriteStream *DSFileSystemNode::openForWriting() {
+Common::WriteStream *DSFileSystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
@@ -372,7 +372,7 @@ AbstractFSNode* GBAMPFileSystemNode::getParent() const {
 	return p;
 }
 
-Common::SeekableReadStream *GBAMPFileSystemNode::openForReading() {
+Common::SeekableReadStream *GBAMPFileSystemNode::createReadStream() {
 //	consolePrintf("Opening: %s\n", getPath().c_str());
 
 	if (!strncmp(getPath().c_str(), "mp:/", 4)) {
@@ -382,7 +382,7 @@ Common::SeekableReadStream *GBAMPFileSystemNode::openForReading() {
 	}
 }
 
-Common::WriteStream *GBAMPFileSystemNode::openForWriting() {
+Common::WriteStream *GBAMPFileSystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 

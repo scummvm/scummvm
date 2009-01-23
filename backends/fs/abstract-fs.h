@@ -52,7 +52,7 @@ protected:
 	 * When called with a name not matching any of the files/dirs contained in this
 	 * directory, a valid node shold be returned, which returns 'false' upon calling
 	 * the exists() method. The idea is that this node can then still can be used to
-	 * create a new file via the openForWriting() method.
+	 * create a new file via the createWriteStream() method.
 	 *
 	 * Example:
 	 *			Calling getChild() for a node with path "/foo/bar" using name="file.txt",
@@ -169,7 +169,7 @@ public:
 	 *
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
-	virtual Common::SeekableReadStream *openForReading() = 0;
+	virtual Common::SeekableReadStream *createReadStream() = 0;
 
 	/**
 	 * Creates a WriteStream instance corresponding to the file
@@ -178,7 +178,7 @@ public:
 	 *
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
-	virtual Common::WriteStream *openForWriting() = 0;
+	virtual Common::WriteStream *createWriteStream() = 0;
 };
 
 

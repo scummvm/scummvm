@@ -135,31 +135,31 @@ bool FSNode::isWritable() const {
 	return _realNode->isWritable();
 }
 
-Common::SeekableReadStream *FSNode::openForReading() const {
+Common::SeekableReadStream *FSNode::createReadStream() const {
 	if (_realNode == 0)
 		return 0;
 
 	if (!_realNode->exists()) {
-		warning("FSNode::openForReading: FSNode does not exist");
+		warning("FSNode::createReadStream: FSNode does not exist");
 		return false;
 	} else if (_realNode->isDirectory()) {
-		warning("FSNode::openForReading: FSNode is a directory");
+		warning("FSNode::createReadStream: FSNode is a directory");
 		return false;
 	}
 
-	return _realNode->openForReading();
+	return _realNode->createReadStream();
 }
 
-Common::WriteStream *FSNode::openForWriting() const {
+Common::WriteStream *FSNode::createWriteStream() const {
 	if (_realNode == 0)
 		return 0;
 
 	if (_realNode->isDirectory()) {
-		warning("FSNode::openForWriting: FSNode is a directory");
+		warning("FSNode::createWriteStream: FSNode is a directory");
 		return 0;
 	}
 
-	return _realNode->openForWriting();
+	return _realNode->createWriteStream();
 }
 
 }	// End of namespace Common

@@ -79,8 +79,8 @@ public:
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFSNode *getParent() const;
 
-	virtual Common::SeekableReadStream *openForReading();
-	virtual Common::WriteStream *openForWriting();
+	virtual Common::SeekableReadStream *createReadStream();
+	virtual Common::WriteStream *createWriteStream();
 
 	static void asyncHandler(bool umount, const Common::String *path);
 };
@@ -290,11 +290,11 @@ AbstractFSNode *WiiFilesystemNode::getParent() const {
 	return new WiiFilesystemNode(Common::String(start, end - start));
 }
 
-Common::SeekableReadStream *WiiFilesystemNode::openForReading() {
+Common::SeekableReadStream *WiiFilesystemNode::createReadStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), false);
 }
 
-Common::WriteStream *WiiFilesystemNode::openForWriting() {
+Common::WriteStream *WiiFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 

@@ -107,8 +107,8 @@ public:
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFSNode *getParent() const;
 
-	virtual Common::SeekableReadStream *openForReading();
-	virtual Common::WriteStream *openForWriting();
+	virtual Common::SeekableReadStream *createReadStream();
+	virtual Common::WriteStream *createWriteStream();
 
 	/**
 	 * Creates a list with all the volumes present in the root node.
@@ -569,11 +569,11 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
 	return myList;
 }
 
-Common::SeekableReadStream *AmigaOSFilesystemNode::openForReading() {
+Common::SeekableReadStream *AmigaOSFilesystemNode::createReadStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), false);
 }
 
-Common::WriteStream *AmigaOSFilesystemNode::openForWriting() {
+Common::WriteStream *AmigaOSFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 

@@ -237,11 +237,11 @@ AbstractFSNode *POSIXFilesystemNode::getParent() const {
 	return makeNode(Common::String(start, end));
 }
 
-Common::SeekableReadStream *POSIXFilesystemNode::openForReading() {
+Common::SeekableReadStream *POSIXFilesystemNode::createReadStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), false);
 }
 
-Common::WriteStream *POSIXFilesystemNode::openForWriting() {
+Common::WriteStream *POSIXFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 

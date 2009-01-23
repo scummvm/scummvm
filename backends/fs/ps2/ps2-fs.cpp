@@ -100,8 +100,8 @@ public:
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFSNode *getParent() const;
 
-	virtual Common::SeekableReadStream *openForReading();
-	virtual Common::WriteStream *openForWriting();
+	virtual Common::SeekableReadStream *createReadStream();
+	virtual Common::WriteStream *createWriteStream();
 };
 
 Ps2FilesystemNode::Ps2FilesystemNode() {
@@ -341,10 +341,10 @@ char *Ps2FilesystemNode::getDeviceDescription(const char *path) const {
 		return "Harddisk";
 }
 
-Common::SeekableReadStream *Ps2FilesystemNode::openForReading() {
+Common::SeekableReadStream *Ps2FilesystemNode::createReadStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), false);
 }
 
-Common::WriteStream *Ps2FilesystemNode::openForWriting() {
+Common::WriteStream *Ps2FilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
