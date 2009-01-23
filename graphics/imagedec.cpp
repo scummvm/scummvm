@@ -24,7 +24,6 @@
 
 #include "graphics/imagedec.h"
 
-#include "common/system.h"
 #include "common/file.h"
 
 namespace Graphics {
@@ -37,7 +36,7 @@ public:
 	virtual ~BMPDecoder() {}
 
 	bool decodeable(Common::SeekableReadStream &stream);
-	Surface *decodeImage(Common::SeekableReadStream &stream);
+	Surface *decodeImage(Common::SeekableReadStream &stream, const PixelFormat &format);
 
 	struct BitmapHeader {
 		uint16 type;
@@ -75,7 +74,7 @@ bool BMPDecoder::decodeable(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-Surface *BMPDecoder::decodeImage(Common::SeekableReadStream &stream) {
+Surface *BMPDecoder::decodeImage(Common::SeekableReadStream &stream, const PixelFormat &format) {
 	if (!decodeable(stream)) {
 		return 0;
 	}
@@ -120,14 +119,13 @@ Surface *BMPDecoder::decodeImage(Common::SeekableReadStream &stream) {
 	newSurf->create(info.width, info.height, sizeof(OverlayColor));
 	assert(newSurf->pixels);
 	OverlayColor *curPixel = (OverlayColor*)newSurf->pixels + (newSurf->h-1) * newSurf->w;
-	PixelFormat overlayFormat = g_system->getOverlayFormat();
 	int pitchAdd = info.width % 4;
 	for (int i = 0; i < newSurf->h; ++i) {
 		for (int i2 = 0; i2 < newSurf->w; ++i2) {
 			b = stream.readByte();
 			g = stream.readByte();
 			r = stream.readByte();
-			*curPixel = overlayFormat.RGBToColor(r, g, b);
+			*curPixel = format.RGBToColor(r, g, b);
 			++curPixel;
 		}
 		stream.seek(pitchAdd, SEEK_CUR);
@@ -140,18 +138,18 @@ Surface *BMPDecoder::decodeImage(Common::SeekableReadStream &stream) {
 
 #pragma mark -
 
-Surface *ImageDecoder::loadFile(const Common::String &name) {
+Surface *ImageDecoder::loadFile(const Common::String &name, const PixelFormat &format) {
 	Surface *newSurf = 0;
 
 	Common::File imageFile;
 	if (imageFile.open(name)) {
-		newSurf = loadFile(imageFile);
+		newSurf = loadFile(imageFile, format);
 	}
 
 	return newSurf;
 }
 
-Surface *ImageDecoder::loadFile(Common::SeekableReadStream &stream) {
+Surface *ImageDecoder::loadFile(Common::SeekableReadStream &stream, const PixelFormat &format) {
 	// TODO: implement support for bzipped memory
 
 	// FIXME: this is not a very nice solution but it should work
@@ -174,6 +172,6 @@ Surface *ImageDecoder::loadFile(Common::SeekableReadStream &stream) {
 	if (!decoder)
 		return 0;
 
-	return decoder->decodeImage(stream);
+	return decoder->decodeImage(stream, format);
 }
 } // end of namespace Graphics

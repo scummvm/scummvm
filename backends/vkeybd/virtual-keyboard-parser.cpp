@@ -256,13 +256,14 @@ bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
 	if (!file)
 		return parserError("Bitmap '%s' not found", _mode->bitmapName.c_str());
 
-	_mode->image = Graphics::ImageDecoder::loadFile(*file);
+	const Graphics::PixelFormat format = g_system->getOverlayFormat();
+
+	_mode->image = Graphics::ImageDecoder::loadFile(*file, format);
 	delete file;
 
 	if (!_mode->image)
 		return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
 
-	const Graphics::PixelFormat format = g_system->getOverlayFormat();
 	int r, g, b;
 	if (node->values.contains("transparent_color")) {
 		if (!parseIntegerKey(node->values["transparent_color"].c_str(), 3, &r, &g, &b))

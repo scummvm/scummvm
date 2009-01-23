@@ -578,11 +578,11 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 		return true;
 
 	// If not, try to load the bitmap via the ImageDecoder class.
-	surf = Graphics::ImageDecoder::loadFile(filename);
+	surf = Graphics::ImageDecoder::loadFile(filename, _overlayFormat);
 	if (!surf && _themeArchive) {
 		Common::SeekableReadStream *stream = _themeArchive->createReadStreamForMember(filename);
 		if (stream) {
-			surf = Graphics::ImageDecoder::loadFile(*stream);
+			surf = Graphics::ImageDecoder::loadFile(*stream, _overlayFormat);
 			delete stream;
 		}
 	}

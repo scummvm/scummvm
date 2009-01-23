@@ -30,15 +30,17 @@
 #include "common/stream.h"
 
 #include "graphics/surface.h"
+#include "graphics/pixelformat.h"
 
 namespace Graphics {
+
 class ImageDecoder {
 public:
 	ImageDecoder() {}
 	virtual ~ImageDecoder() {}
 
-	static Surface *loadFile(const Common::String &name);
-	static Surface *loadFile(Common::SeekableReadStream &stream);
+	static Surface *loadFile(const Common::String &name, const PixelFormat &format);
+	static Surface *loadFile(Common::SeekableReadStream &stream, const PixelFormat &format);
 
 	/**
 	 * checks if the data can be decoded by this decoder
@@ -54,9 +56,10 @@ public:
 	 * with delete;
 	 *
 	 * @param stream the memory stream which should be decoded
+	 * @param format the pixel format used to generate the surface
 	 * @return returns a new surface if the image could be decoded, otherwise 0
 	 */
-	virtual Surface *decodeImage(Common::SeekableReadStream &stream) = 0;
+	virtual Surface *decodeImage(Common::SeekableReadStream &stream, const PixelFormat &format) = 0;
 };
 } // end of namespace Graphics
 
