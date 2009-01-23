@@ -1635,9 +1635,6 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		case Common::FR_FRA:
 			src = french_commonFont + (chr - 32) * 8;
 			break;
-		case Common::DE_DEU:
-			src = english_commonFont + (chr - 32) * 8;
-			break;
 		case Common::EN_ANY:
 			src = english_commonFont + (chr - 32) * 8;
 			break;
