@@ -45,6 +45,8 @@ reg_blank    dd  0,0
 const7       dd  0x00070007,0x00000007
 threshold    dd  0x00300706,0x00000000
 zerolowbits  dd  0xF7DEF7DE
+; FIXME: zerlowbits assumes 565 mode.
+; Also, in the code, the constant 0x0821 is used which also assumes 565 mode
 moduloSrc    dd  0
 moduloDst    dd  0
 
