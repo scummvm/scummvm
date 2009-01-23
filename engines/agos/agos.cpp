@@ -1080,8 +1080,7 @@ void AGOSEngine::shutdown() {
 */
 
 uint32 AGOSEngine::getTime() const {
-	// FIXME: calling time() is not portable, use OSystem::getMillis instead
-	return (uint32)time(NULL);
+	return _system->getMillis() / 1000;
 }
 
 
