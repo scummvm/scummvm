@@ -69,12 +69,12 @@ Common::ArchiveMemberPtr PlainArchive::getMember(const Common::String &name) {
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *PlainArchive::openFile(const Common::String &name) {
+Common::SeekableReadStream *PlainArchive::openFile(const Common::String &name) const {
 	FileMap::const_iterator fDesc = _files.find(name);
 	if (fDesc == _files.end())
 		return 0;
 
-	Common::SeekableReadStream *parent = _file->open();
+	Common::SeekableReadStream *parent = _file->createReadStream();
 	if (!parent)
 		return 0;
 
@@ -124,7 +124,7 @@ Common::ArchiveMemberPtr CachedArchive::getMember(const Common::String &name) {
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *CachedArchive::openFile(const Common::String &name) {
+Common::SeekableReadStream *CachedArchive::openFile(const Common::String &name) const {
 	FileMap::const_iterator fDesc = _files.find(name);
 	if (fDesc == _files.end())
 		return 0;

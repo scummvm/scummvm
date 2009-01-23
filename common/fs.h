@@ -223,11 +223,6 @@ public:
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
 	virtual WriteStream *createWriteStream() const;
-
-	// Compatibility with ArchiveMember API.
-	SeekableReadStream *open() {
-		return createReadStream();
-	}
 };
 
 /**
@@ -262,22 +257,24 @@ public:
 class FSDirectory : public Archive {
 	FSNode	_node;
 
-	// Caches are case insensitive, clashes are dealt with when creating
-	// Key is stored in lowercase.
-	typedef HashMap<String, FSNode, IgnoreCase_Hash, IgnoreCase_EqualTo> NodeCache;
-	NodeCache	_fileCache, _subDirCache;
 	String	_prefix;	// string that is prepended to each cache item key
 	void setPrefix(const String &prefix);
 
+	// Caches are case insensitive, clashes are dealt with when creating
+	// Key is stored in lowercase.
+	typedef HashMap<String, FSNode, IgnoreCase_Hash, IgnoreCase_EqualTo> NodeCache;
+	mutable NodeCache	_fileCache, _subDirCache;
+	mutable bool _cached;
+	mutable int	_depth;
+
 	// look for a match
-	FSNode lookupCache(NodeCache &cache, const String &name);
+	FSNode lookupCache(NodeCache &cache, const String &name) const;
 
 	// cache management
-	void cacheDirectoryRecursive(FSNode node, int depth, const String& prefix);
+	void cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) const;
+
 	// fill cache if not already cached
-	void ensureCached();
-	bool _cached;
-	int	_depth;
+	void ensureCached() const;
 
 public:
 	/**
@@ -336,7 +333,7 @@ public:
 	 * Open the specified file. A full match of relative path and filename is needed
 	 * for success.
 	 */
-	virtual SeekableReadStream *openFile(const String &name);
+	virtual SeekableReadStream *openFile(const String &name) const;
 };
 
 

@@ -72,13 +72,13 @@ class NSArchive : public Common::Archive {
 	uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
 	uint32			_numFiles;
 
-	uint32 			lookup(const char *name);
+	uint32 			lookup(const char *name) const;
 
 public:
 	NSArchive(Common::SeekableReadStream *stream, Common::Platform platform, uint32 features);
 	~NSArchive();
 
-	Common::SeekableReadStream *openFile(const Common::String &name);
+	Common::SeekableReadStream *openFile(const Common::String &name) const;
 	bool hasFile(const Common::String &name);
 	int listMembers(Common::ArchiveMemberList &list);
 	Common::ArchiveMemberPtr getMember(const Common::String &name);
@@ -119,7 +119,7 @@ NSArchive::~NSArchive() {
 	delete _stream;
 }
 
-uint32 NSArchive::lookup(const char *name) {
+uint32 NSArchive::lookup(const char *name) const {
 	uint32 i = 0;
  	for ( ; i < _numFiles; i++) {
 		if (!scumm_stricmp(_archiveDir[i], name)) break;
@@ -127,7 +127,7 @@ uint32 NSArchive::lookup(const char *name) {
 	return i;
 }
 
-Common::SeekableReadStream *NSArchive::openFile(const Common::String &name) {
+Common::SeekableReadStream *NSArchive::openFile(const Common::String &name) const {
 	debugC(3, kDebugDisk, "NSArchive::openFile(%s)", name.c_str());
 
 	if (name.empty())

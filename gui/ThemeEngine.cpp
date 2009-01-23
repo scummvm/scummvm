@@ -718,7 +718,7 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeId) {
 	for (Common::ArchiveMemberList::iterator i = members.begin(); i != members.end(); ++i) {
 		assert((*i)->getName().hasSuffix(".stx"));
 
-		if (_parser->loadStream((*i)->open()) == false) {
+		if (_parser->loadStream((*i)->createReadStream()) == false) {
 			warning("Failed to load STX file '%s'", (*i)->getDisplayName().c_str());
 			_parser->close();
 			return false;

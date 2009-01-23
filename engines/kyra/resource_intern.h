@@ -52,7 +52,7 @@ public:
 	bool hasFile(const Common::String &name);
 	int listMembers(Common::ArchiveMemberList &list);
 	Common::ArchiveMemberPtr getMember(const Common::String &name);
-	Common::SeekableReadStream *openFile(const Common::String &name);
+	Common::SeekableReadStream *openFile(const Common::String &name) const;
 private:
 	struct Entry {
 		uint32 offset;
@@ -82,7 +82,7 @@ public:
 	bool hasFile(const Common::String &name);
 	int listMembers(Common::ArchiveMemberList &list);
 	Common::ArchiveMemberPtr getMember(const Common::String &name);
-	Common::SeekableReadStream *openFile(const Common::String &name);
+	Common::SeekableReadStream *openFile(const Common::String &name) const;
 private:
 	struct Entry {
 		byte *data;

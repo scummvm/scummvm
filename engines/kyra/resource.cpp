@@ -319,7 +319,7 @@ Common::Archive *Resource::loadArchive(const Common::String &name, Common::Share
 	if (cachedArchive != _archiveCache.end())
 		return cachedArchive->_value;
 
-	Common::SeekableReadStream *stream = member->open();
+	Common::SeekableReadStream *stream = member->createReadStream();
 
 	if (!stream)
 		return 0;

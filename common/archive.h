@@ -50,7 +50,7 @@ class SeekableReadStream;
 class ArchiveMember {
 public:
 	virtual ~ArchiveMember() { }
-	virtual SeekableReadStream *open() = 0;
+	virtual SeekableReadStream *createReadStream() const = 0;
 	virtual String getName() const = 0;
 	virtual String getDisplayName() const { return getName(); }
 };
@@ -75,7 +75,7 @@ class GenericArchiveMember : public ArchiveMember {
 public:
 	GenericArchiveMember(String name, Archive *parent);
 	String getName() const;
-	SeekableReadStream *open();
+	SeekableReadStream *createReadStream() const;
 };
 
 
@@ -120,7 +120,7 @@ public:
 	 * Create a stream bound to a file in the archive.
 	 * @return the newly created input stream
 	 */
-	virtual SeekableReadStream *openFile(const String &name) = 0;
+	virtual SeekableReadStream *openFile(const String &name) const = 0;
 };
 
 
@@ -197,7 +197,7 @@ public:
 	 * Implements openFile from Archive base class. The current policy is
 	 * opening the first file encountered that matches the name.
 	 */
-	virtual SeekableReadStream *openFile(const String &name);
+	virtual SeekableReadStream *openFile(const String &name) const;
 };
 
 

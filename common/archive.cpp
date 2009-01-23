@@ -38,7 +38,7 @@ String GenericArchiveMember::getName() const {
 	return _name;
 }
 
-SeekableReadStream *GenericArchiveMember::open() {
+SeekableReadStream *GenericArchiveMember::createReadStream() const {
 	return _parent->openFile(_name);
 }
 
@@ -99,7 +99,7 @@ FSNode FSDirectory::getFSNode() const {
 	return _node;
 }
 
-FSNode FSDirectory::lookupCache(NodeCache &cache, const String &name) {
+FSNode FSDirectory::lookupCache(NodeCache &cache, const String &name) const {
 	// make caching as lazy as possible
 	if (!name.empty()) {
 		ensureCached();
@@ -136,7 +136,7 @@ ArchiveMemberPtr FSDirectory::getMember(const String &name) {
 	return ArchiveMemberPtr(new FSNode(node));
 }
 
-SeekableReadStream *FSDirectory::openFile(const String &name) {
+SeekableReadStream *FSDirectory::openFile(const String &name) const {
 	if (name.empty() || !_node.isDirectory())
 		return 0;
 
@@ -169,7 +169,7 @@ FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &na
 	return new FSDirectory(prefix, node, depth);
 }
 
-void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) {
+void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) const {
 	if (depth <= 0)
 		return;
 
@@ -203,7 +203,7 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& 
 
 }
 
-void FSDirectory::ensureCached() {
+void FSDirectory::ensureCached() const  {
 	if (_cached)
 		return;
 	cacheDirectoryRecursive(_node, _depth, _prefix);
@@ -434,7 +434,7 @@ ArchiveMemberPtr SearchSet::getMember(const String &name) {
 	return ArchiveMemberPtr();
 }
 
-SeekableReadStream *SearchSet::openFile(const String &name) {
+SeekableReadStream *SearchSet::openFile(const String &name) const {
 	if (name.empty())
 		return 0;
 

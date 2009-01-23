@@ -144,7 +144,7 @@ bool StaticResource::loadStaticResourceFile() {
 
 	bool foundWorkingKyraDat = false;
 	for (Common::ArchiveMemberList::iterator i = kyraDatFiles.begin(); i != kyraDatFiles.end(); ++i) {
-		Common::SeekableReadStream *file = (*i)->open();
+		Common::SeekableReadStream *file = (*i)->createReadStream();
 		if (!checkKyraDat(file)) {
 			delete file;
 			continue;
