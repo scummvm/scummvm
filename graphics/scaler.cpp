@@ -87,12 +87,11 @@ uint32 *RGBtoYUV = 0;
 uint32 *LUT16to32 = 0;
 }
 
-template<class T>
-void InitLUT() {
-	int r, g, b;
+void InitLUT(Graphics::PixelFormat format) {
+	uint8 r, g, b;
 	int Y, u, v;
 
-	assert(T::kBytesPerPixel == 2);
+	assert(format.bytesPerPixel == 2);
 
 	// Allocate the YUV/LUT buffers on the fly if needed.
 	if (RGBtoYUV == 0)
@@ -101,9 +100,7 @@ void InitLUT() {
 		LUT16to32 = (uint32 *)malloc(65536 * sizeof(uint32));
 
 	for (int color = 0; color < 65536; ++color) {
-		r = ((color & T::kRedMask) >> T::kRedShift) << (8 - T::kRedBits);
-		g = ((color & T::kGreenMask) >> T::kGreenShift) << (8 - T::kGreenBits);
-		b = ((color & T::kBlueMask) >> T::kBlueShift) << (8 - T::kBlueBits);
+		format.colorToRGB(color, r, g, b);
 		LUT16to32[color] = (r << 16) | (g << 8) | b;
 
 		Y = (r + g + b) >> 2;
@@ -119,9 +116,9 @@ void InitScalers(uint32 BitFormat) {
 	gBitFormat = BitFormat;
 #ifndef DISABLE_HQ_SCALERS
 	if (gBitFormat == 555)
-		InitLUT<Graphics::ColorMasks<555> >();
+		InitLUT(Graphics::createPixelFormat<555>());
 	if (gBitFormat == 565)
-		InitLUT<Graphics::ColorMasks<565> >();
+		InitLUT(Graphics::createPixelFormat<565>());
 #endif
 }
 
