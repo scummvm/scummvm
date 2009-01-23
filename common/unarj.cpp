@@ -350,7 +350,7 @@ bool ArjFile::open(const Common::String &filename) {
 		error("Attempt to open another instance of archive");
 
 	if (_fallBack) {
-		_uncompressed = SearchMan.openFile(filename);
+		_uncompressed = SearchMan.createReadStreamForMember(filename);
 		if (_uncompressed)
 			return true;
 	}

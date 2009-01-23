@@ -31,7 +31,7 @@
 namespace Common {
 
 bool XMLParser::loadFile(const Common::String &filename) {
-	_stream = SearchMan.openFile(filename);
+	_stream = SearchMan.createReadStreamForMember(filename);
 	if (!_stream)
 		return false;
 

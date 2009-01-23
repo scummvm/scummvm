@@ -95,7 +95,7 @@ public:
 
 	/**
 	 * Add all the names present in the Archive which match pattern to
-	 * list. Returned names can be used as parameters to openFile.
+	 * list. Returned names can be used as parameters to createReadStreamForMember.
 	 * Must not remove elements from the list.
 	 *
 	 * @return the number of names added to list
@@ -104,7 +104,7 @@ public:
 
 	/**
 	 * Add all the names present in the Archive to list. Returned
-	 * names can be used as parameters to openFile.
+	 * names can be used as parameters to createReadStreamForMember.
 	 * Must not remove elements from the list.
 	 *
 	 * @return the number of names added to list
@@ -120,7 +120,7 @@ public:
 	 * Create a stream bound to a file in the archive.
 	 * @return the newly created input stream
 	 */
-	virtual SeekableReadStream *openFile(const String &name) const = 0;
+	virtual SeekableReadStream *createReadStreamForMember(const String &name) const = 0;
 };
 
 
@@ -194,10 +194,10 @@ public:
 	virtual ArchiveMemberPtr getMember(const String &name);
 
 	/**
-	 * Implements openFile from Archive base class. The current policy is
+	 * Implements createReadStreamForMember from Archive base class. The current policy is
 	 * opening the first file encountered that matches the name.
 	 */
-	virtual SeekableReadStream *openFile(const String &name) const;
+	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
 };
 
 

@@ -103,7 +103,7 @@ bool VirtualKeyboard::loadKeyboardPack(String packName) {
 #ifdef USE_ZLIB
 		_fileArchive = new ZipArchive(vkDir.getChild(packName + ".zip"));
 		if (_fileArchive->hasFile(packName + ".xml")) {
-			if (!_parser->loadStream(_fileArchive->openFile(packName + ".xml")))
+			if (!_parser->loadStream(_fileArchive->createReadStreamForMember(packName + ".xml")))
 				return false;
 		} else {
 			warning("Could not find %s.xml file in %s.zip keyboard pack", packName.c_str(), packName.c_str());

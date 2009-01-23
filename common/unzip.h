@@ -62,7 +62,7 @@ public:
 	virtual bool hasFile(const String &name);
 	virtual int listMembers(ArchiveMemberList &list);
 	virtual ArchiveMemberPtr getMember(const String &name);
-	virtual SeekableReadStream *openFile(const String &name) const;
+	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
 };
 
 }	// End of namespace Common

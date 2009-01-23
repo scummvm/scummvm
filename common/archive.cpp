@@ -39,7 +39,7 @@ String GenericArchiveMember::getName() const {
 }
 
 SeekableReadStream *GenericArchiveMember::createReadStream() const {
-	return _parent->openFile(_name);
+	return _parent->createReadStreamForMember(_name);
 }
 
 
@@ -136,23 +136,23 @@ ArchiveMemberPtr FSDirectory::getMember(const String &name) {
 	return ArchiveMemberPtr(new FSNode(node));
 }
 
-SeekableReadStream *FSDirectory::openFile(const String &name) const {
+SeekableReadStream *FSDirectory::createReadStreamForMember(const String &name) const {
 	if (name.empty() || !_node.isDirectory())
 		return 0;
 
 	FSNode node = lookupCache(_fileCache, name);
 
 	if (!node.exists()) {
-		warning("FSDirectory::openFile: FSNode does not exist");
+		warning("FSDirectory::createReadStreamForMember: FSNode does not exist");
 		return 0;
 	} else if (node.isDirectory()) {
-		warning("FSDirectory::openFile: FSNode is a directory");
+		warning("FSDirectory::createReadStreamForMember: FSNode is a directory");
 		return 0;
 	}
 
 	SeekableReadStream *stream = node.createReadStream();
 	if (!stream)
-		warning("FSDirectory::openFile: Can't create stream for file '%s'", name.c_str());
+		warning("FSDirectory::createReadStreamForMember: Can't create stream for file '%s'", name.c_str());
 
 	return stream;
 }
@@ -434,14 +434,14 @@ ArchiveMemberPtr SearchSet::getMember(const String &name) {
 	return ArchiveMemberPtr();
 }
 
-SeekableReadStream *SearchSet::openFile(const String &name) const {
+SeekableReadStream *SearchSet::createReadStreamForMember(const String &name) const {
 	if (name.empty())
 		return 0;
 
 	ArchiveNodeList::iterator it = _list.begin();
 	for ( ; it != _list.end(); ++it) {
 		if (it->_arc->hasFile(name))
-			return it->_arc->openFile(name);
+			return it->_arc->createReadStreamForMember(name);
 	}
 
 	return 0;

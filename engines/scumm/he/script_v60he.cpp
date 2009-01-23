@@ -1010,7 +1010,7 @@ void ScummEngine_v60he::o60_openFile() {
 			// TODO / FIXME: Consider using listSavefiles to avoid unneccessary openForLoading calls
 			_hInFileTable[slot] = _saveFileMan->openForLoading(filename);
 			if (_hInFileTable[slot] == 0) {
-				_hInFileTable[slot] = SearchMan.openFile(filename);
+				_hInFileTable[slot] = SearchMan.createReadStreamForMember(filename);
 			}
 			break;
 		case 2:

@@ -66,7 +66,7 @@ int32 FlicPlayer::getFrameCount() {
 bool FlicPlayer::loadFile(const char *fileName) {
 	closeFile();
 
-	_fileStream = SearchMan.openFile(fileName);
+	_fileStream = SearchMan.createReadStreamForMember(fileName);
 	if (!_fileStream)
 		return false;
 

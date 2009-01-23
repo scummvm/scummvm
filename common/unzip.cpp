@@ -1376,7 +1376,7 @@ public:
 */
 
 ZipArchive::ZipArchive(const Common::String &name) {
-	SeekableReadStream *stream = SearchMan.openFile(name);
+	SeekableReadStream *stream = SearchMan.createReadStreamForMember(name);
 	_zipFile = unzOpen(stream);
 }
 
@@ -1428,7 +1428,7 @@ ArchiveMemberPtr ZipArchive::getMember(const String &name) {
 	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *ZipArchive::openFile(const Common::String &name) const {
+Common::SeekableReadStream *ZipArchive::createReadStreamForMember(const Common::String &name) const {
 	if (!_zipFile)
 		return 0;
 

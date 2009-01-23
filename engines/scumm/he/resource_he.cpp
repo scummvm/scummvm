@@ -167,7 +167,7 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 	}
 
 	/* get file size */
-	fi.file = SearchMan.openFile(_fileName);
+	fi.file = SearchMan.createReadStreamForMember(_fileName);
 	if (!fi.file) {
 		error("Cannot open file %s", _fileName.c_str());
 	}

@@ -243,7 +243,7 @@ public:
  * Again, only SLASHES are used as separators independently from the
  * underlying file system.
  *
- * Relative paths can be specified when calling matching functions like openFile(),
+ * Relative paths can be specified when calling matching functions like createReadStreamForMember(),
  * hasFile(), listMatchingMembers() and listMembers(). Please see the function
  * specific comments for more information.
  *
@@ -333,7 +333,7 @@ public:
 	 * Open the specified file. A full match of relative path and filename is needed
 	 * for success.
 	 */
-	virtual SeekableReadStream *openFile(const String &name) const;
+	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
 };
 
 

@@ -78,7 +78,7 @@ public:
 	NSArchive(Common::SeekableReadStream *stream, Common::Platform platform, uint32 features);
 	~NSArchive();
 
-	Common::SeekableReadStream *openFile(const Common::String &name) const;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 	bool hasFile(const Common::String &name);
 	int listMembers(Common::ArchiveMemberList &list);
 	Common::ArchiveMemberPtr getMember(const Common::String &name);
@@ -127,8 +127,8 @@ uint32 NSArchive::lookup(const char *name) const {
 	return i;
 }
 
-Common::SeekableReadStream *NSArchive::openFile(const Common::String &name) const {
-	debugC(3, kDebugDisk, "NSArchive::openFile(%s)", name.c_str());
+Common::SeekableReadStream *NSArchive::createReadStreamForMember(const Common::String &name) const {
+	debugC(3, kDebugDisk, "NSArchive::createReadStreamForMember(%s)", name.c_str());
 
 	if (name.empty())
 		return 0;
@@ -136,7 +136,7 @@ Common::SeekableReadStream *NSArchive::openFile(const Common::String &name) cons
 	uint32 index = lookup(name.c_str());
 	if (index == _numFiles) return 0;
 
-	debugC(9, kDebugDisk, "NSArchive::openFile: '%s' found in slot %i", name.c_str(), index);
+	debugC(9, kDebugDisk, "NSArchive::createReadStreamForMember: '%s' found in slot %i", name.c_str(), index);
 
 	int offset = _archiveOffsets[index];
 	int endOffset = _archiveOffsets[index] + _archiveLenghts[index];
@@ -195,7 +195,7 @@ Common::SeekableReadStream *Disk_ns::openFile(const char *filename) {
 
 
 void Disk_ns::addArchive(const Common::String& name, int priority) {
-	Common::SeekableReadStream *stream = _sset.openFile(name);
+	Common::SeekableReadStream *stream = _sset.createReadStreamForMember(name);
 	if (!stream)
 		error("Disk_ns::addArchive() couldn't find archive '%s'", name.c_str());
 
@@ -257,13 +257,13 @@ void DosDisk_ns::init() {
 Common::SeekableReadStream *DosDisk_ns::tryOpenFile(const char* name) {
 	debugC(3, kDebugDisk, "DosDisk_ns::tryOpenFile(%s)", name);
 
-	Common::SeekableReadStream *stream = _sset.openFile(name);
+	Common::SeekableReadStream *stream = _sset.createReadStreamForMember(name);
 	if (stream)
 		return stream;
 
 	char path[PATH_LEN];
 	sprintf(path, "%s.pp", name);
-	return _sset.openFile(path);
+	return _sset.createReadStreamForMember(path);
 }
 
 
@@ -896,18 +896,18 @@ GfxObj* AmigaDisk_ns::loadStatic(const char* name) {
 Common::SeekableReadStream *AmigaDisk_ns::tryOpenFile(const char* name) {
 	debugC(3, kDebugDisk, "AmigaDisk_ns::tryOpenFile(%s)", name);
 
-	Common::SeekableReadStream *stream = _sset.openFile(name);
+	Common::SeekableReadStream *stream = _sset.createReadStreamForMember(name);
 	if (stream)
 		return stream;
 
 	char path[PATH_LEN];
 	sprintf(path, "%s.pp", name);
-	stream = _sset.openFile(path);
+	stream = _sset.createReadStreamForMember(path);
 	if (stream)
 		return new PowerPackerStream(*stream);
 
 	sprintf(path, "%s.dd", name);
-	stream = _sset.openFile(path);
+	stream = _sset.createReadStreamForMember(path);
 	if (stream)
 		return new PowerPackerStream(*stream);
 

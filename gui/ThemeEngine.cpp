@@ -580,7 +580,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 	// If not, try to load the bitmap via the ImageDecoder class.
 	surf = Graphics::ImageDecoder::loadFile(filename);
 	if (!surf && _themeArchive) {
-		Common::SeekableReadStream *stream = _themeArchive->openFile(filename);
+		Common::SeekableReadStream *stream = _themeArchive->createReadStreamForMember(filename);
 		if (stream) {
 			surf = Graphics::ImageDecoder::loadFile(*stream);
 			delete stream;
@@ -1243,7 +1243,7 @@ const Graphics::Font *ThemeEngine::loadFontFromArchive(const Common::String &fil
 	const Graphics::Font *font = 0;
 
 	if (_themeArchive)
-		stream = _themeArchive->openFile(filename);
+		stream = _themeArchive->createReadStreamForMember(filename);
 	if (stream) {
 		font = Graphics::NewFont::loadFromCache(*stream);
 		delete stream;

@@ -311,7 +311,7 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 }
 
 Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) {
-	return _files.openFile(file);
+	return _files.createReadStreamForMember(file);
 }
 
 Common::Archive *Resource::loadArchive(const Common::String &name, Common::SharedPtr<Common::ArchiveMember> member) {

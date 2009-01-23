@@ -101,7 +101,7 @@ Common::SeekableReadStream *Disk_br::openFile_internal(bool errorOnNotFound, con
 		lookup = name + ext;
 	}
 
-	Common::SeekableReadStream *stream = _sset.openFile(lookup);
+	Common::SeekableReadStream *stream = _sset.createReadStreamForMember(lookup);
 	if (stream) {
 		return stream;
 	}
@@ -116,7 +116,7 @@ Common::SeekableReadStream *Disk_br::openFile_internal(bool errorOnNotFound, con
 				lookup.deleteLastChar();
 			}
 			lookup += ext;
-			stream = _sset.openFile(lookup);
+			stream = _sset.createReadStreamForMember(lookup);
 		}
 	}
 
