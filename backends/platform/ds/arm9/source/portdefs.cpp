@@ -33,24 +33,3 @@ extern "C" time_t __wrap_time(time_t* t) {
 	return OSystem_DS::instance()->getMillis() / 1000;
 }
 */
-
-
-
-time_t DS_time(time_t) {
-	if (OSystem_DS::instance()) {
-		return 0xABCD1234 + (OSystem_DS::instance()->getMillis() / 1000);
-	} else {
-		return 0xABCD1234;
-	}
-}
-
-time_t DS_time(long* t) {
-	if (OSystem_DS::instance()) {
-		if (t) *t = 0xABCD1234 + (OSystem_DS::instance()->getMillis() / 1000);
-		return 0xABCD1234 + (OSystem_DS::instance()->getMillis() / 1000);
-	} else {
-		if (t) *t = 0xABCD1234;
-		return 0xABCD1234;
-	}
-}
-

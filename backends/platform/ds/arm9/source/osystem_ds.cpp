@@ -38,6 +38,9 @@
 #include "touchkeyboard.h"
 #include "backends/fs/ds/ds-fs-factory.h"
 
+#include <time.h>
+
+
 OSystem_DS* OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
@@ -545,8 +548,14 @@ void OSystem_DS::delayMillis(uint msecs) {
 	DS::addEventsToQueue();
 }
 
+
 void OSystem_DS::getTimeAndDate(struct tm &t) const {
-	time_t curTime = time(0);
+	time_t curTime;
+#if 0
+	curTime = time(0);
+#else
+	curTime = 0xABCD1234 + getMillis() / 1000;
+#endif
 	t = *localtime(&curTime);
 }
 
