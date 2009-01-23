@@ -127,6 +127,8 @@ SECTION .text
 %%fin:
 %endmacro
 
+; interpolate16_2<bitFormat,3,1>
+; Mix two pixels with weight 3 and 1, respectively: (c1*3+c2)/4;
 %macro Interp1 3
     mov edx,%2
     mov ecx,%3
@@ -144,6 +146,8 @@ SECTION .text
     mov %1,dx
 %endmacro
 
+; interpolate16_3<bitFormat,2,1,1>
+; Mix three pixels with weight 2, 1, and 1, respectively: (c1*2+c2+c3)/4;
 %macro Interp2 4
     mov edx,%3
     mov ecx,%4
@@ -166,6 +170,8 @@ SECTION .text
     mov %1,dx
 %endmacro
 
+; interpolate16_2<bitFormat,1,1>
+; Mix two pixels with weight 1 and 1, respectively: (c1+c2)/2;
 %macro Interp5 3
     mov edx,%2
     mov ecx,%3
@@ -179,6 +185,8 @@ SECTION .text
     mov %1,dx
 %endmacro
 
+; interpolate16_3<bitFormat,5,2,1>
+; Mix three pixels with weight 5, 2, and 1, respectively: (c1*5+c2*2+c3)/8;
 %macro Interp6 3
     mov        ecx, [_LUT16to32]
     movd       mm1, [ecx+eax*4]
@@ -203,6 +211,8 @@ SECTION .text
     mov        %1,  dx
 %endmacro
 
+; interpolate16_3<bitFormat,6,1,1>
+; Mix three pixels with weight 6, 1, and 1, respectively: (c1*6+c2+c3)/8;
 %macro Interp7 3
     mov        ecx, [_LUT16to32]
     movd       mm1, [ecx+eax*4]
@@ -226,6 +236,8 @@ SECTION .text
     mov        %1,  dx
 %endmacro
 
+; interpolate16_3<bitFormat,2,3,3>
+; Mix three pixels with weight 2, 3, and 3, respectively: (c1*2+(c2+c3)*3)/8;
 %macro Interp9 3
     mov        ecx, [_LUT16to32]
     movd       mm1, [ecx+eax*4]
@@ -250,6 +262,8 @@ SECTION .text
     mov        %1,  dx
 %endmacro
 
+; interpolate16_3<bitFormat,14,1,1>
+; Mix three pixels with weight 14, 1, and 1, respectively: (c1*14+c2+c3)/16;
 %macro Interp10 3
     mov        ecx, [_LUT16to32]
     movd       mm1, [ecx+eax*4]
