@@ -119,6 +119,8 @@ public:
 	bool _autoStopSound;
 	uint _soundEnergyIndex;
 	SoundEnergyArray *_soundEnergyArray;
+	
+	uint32 _musicBeatStart;
 
 	int32 _timers[50];
 	int16 getTicks();

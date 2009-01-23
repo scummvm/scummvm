@@ -249,6 +249,8 @@ int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 int16 ScriptFunctions::sfPlayMusic(int16 argc, int16 *argv) {
 	int16 musicNum = argv[0];
 
+	_vm->_musicBeatStart = _vm->_system->getMillis();
+
 	if (_vm->getGameID() == GID_RTZ) {
 		if (musicNum > 0) {
 			_musicRes = _vm->_res->getXmidi(musicNum);
@@ -337,11 +339,8 @@ int16 ScriptFunctions::sfShowMouseCursor(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfGetMusicBeat(int16 argc, int16 *argv) {
-	// TODO
-	// This is called loads of times in the intro of the floppy version
-	// of RtZ. Not sure what it does. Commented out to reduce spam
-	//warning("Unimplemented opcode: sfGetMusicBeat");
-	return 0;
+	// This is used as timer in some games
+	return (_vm->_system->getMillis() - _vm->_musicBeatStart) / 360;
 }
 
 int16 ScriptFunctions::sfSetScreenLock(int16 argc, int16 *argv) {
