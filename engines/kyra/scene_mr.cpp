@@ -363,7 +363,7 @@ void KyraEngine_MR::loadSceneMsc() {
 	strcat(filename, ".MSC");
 
 	_res->exists(filename, true);
-	Common::SeekableReadStream *stream = _res->getFileStream(filename);
+	Common::SeekableReadStream *stream = _res->createReadStream(filename);
 	assert(stream);
 	int16 minY = 0, height = 0;
 	minY = stream->readSint16LE();
@@ -399,7 +399,7 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 	strcat(filename, ".DAT");
 
 	_res->exists(filename, true);
-	Common::SeekableReadStream *stream = _res->getFileStream(filename);
+	Common::SeekableReadStream *stream = _res->createReadStream(filename);
 	assert(stream);
 	stream->seek(2, SEEK_CUR);
 

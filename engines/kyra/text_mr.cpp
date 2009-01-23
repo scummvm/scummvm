@@ -676,8 +676,8 @@ void KyraEngine_MR::updateDlgBuffer() {
 
 	_res->exists(cnvFile, true);
 	_res->exists(dlgFile, true);
-	_cnvFile = _res->getFileStream(cnvFile);
-	_dlgBuffer = _res->getFileStream(dlgFile);
+	_cnvFile = _res->createReadStream(cnvFile);
+	_dlgBuffer = _res->createReadStream(dlgFile);
 	assert(_cnvFile);
 	assert(_dlgBuffer);
 }

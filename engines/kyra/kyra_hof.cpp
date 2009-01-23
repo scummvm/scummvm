@@ -1669,7 +1669,7 @@ void KyraEngine_HoF::displayInvWsaLastFrame() {
 
 void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
 	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
-	Common::SeekableReadStream *file = _res->getFileStream("_POTIONS.PAL");
+	Common::SeekableReadStream *file = _res->createReadStream("_POTIONS.PAL");
 	if (!file)
 		error("Couldn't load cauldron palette");
 	file->seek(state*18, SEEK_SET);
@@ -1841,7 +1841,7 @@ bool KyraEngine_HoF::updateCauldron() {
 void KyraEngine_HoF::cauldronRndPaletteFade() {
 	showMessage(0, 0xCF);
 	int index = _rnd.getRandomNumberRng(0x0F, 0x16);
-	Common::SeekableReadStream *file = _res->getFileStream("_POTIONS.PAL");
+	Common::SeekableReadStream *file = _res->createReadStream("_POTIONS.PAL");
 	if (!file)
 		error("Couldn't load cauldron palette");
 	file->seek(index*18, SEEK_SET);

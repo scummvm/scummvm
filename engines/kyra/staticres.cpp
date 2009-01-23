@@ -1177,7 +1177,7 @@ const char *StaticResource::getFilename(const char *name) {
 }
 
 Common::SeekableReadStream *StaticResource::getFile(const char *name) {
-	return _vm->resource()->getFileStream(getFilename(name));
+	return _vm->resource()->createReadStream(getFilename(name));
 }
 
 #pragma mark -

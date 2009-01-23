@@ -881,7 +881,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 		sprintf(filenameExt, extension.c_str(), currentFile);
 		filenameTemp = filenameBase + Common::String(filenameExt);
 
-		if (!(tmpFile = owner->getFileStream(filenameTemp))) {
+		if (!(tmpFile = owner->createReadStream(filenameTemp))) {
 			debug(3, "couldn't open file '%s'\n", filenameTemp.c_str());
 			break;
 		}
@@ -958,7 +958,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 			sprintf(filenameExt, extension.c_str(), i);
 			filenameTemp = a->filename + Common::String(filenameExt);
 
-			if (!(tmpFile = owner->getFileStream(filenameTemp))) {
+			if (!(tmpFile = owner->createReadStream(filenameTemp))) {
 				debug(3, "couldn't open file '%s'\n", filenameTemp.c_str());
 				break;
 			}
@@ -1017,7 +1017,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 					sprintf(filenameExt, extension.c_str(), i + 1);
 					filenameTemp = a->filename + Common::String(filenameExt);
 
-					Common::SeekableReadStream *tmpFile2 = owner->getFileStream(filenameTemp);
+					Common::SeekableReadStream *tmpFile2 = owner->createReadStream(filenameTemp);
 					tmpFile->read(hdr, m);
 					tmpFile2->read(hdr + m, b);
 					delete tmpFile2;

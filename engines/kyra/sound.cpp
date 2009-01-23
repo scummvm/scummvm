@@ -81,7 +81,7 @@ int32 Sound::voicePlay(const char *file, bool isSfx) {
 		strcpy(filenamebuffer, file);
 		strcat(filenamebuffer, _supportedCodecs[i].fileext);
 
-		Common::SeekableReadStream *stream = _vm->resource()->getFileStream(filenamebuffer);
+		Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filenamebuffer);
 		if (!stream)
 			continue;
 		audioStream = _supportedCodecs[i].streamFunc(stream, true, 0, 0, 1);

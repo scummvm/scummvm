@@ -401,7 +401,7 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 		if (!_vm->resource()->exists(file.c_str()))
 			continue;
 
-		stream = _vm->resource()->getFileStream(file);
+		stream = _vm->resource()->createReadStream(file);
 		usedCodec = i;
 	}
 

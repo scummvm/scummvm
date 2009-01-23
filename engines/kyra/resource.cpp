@@ -164,7 +164,7 @@ bool Resource::loadPakFile(Common::String name, Common::SharedPtr<Common::Archiv
 }
 
 bool Resource::loadFileList(const Common::String &filedata) {
-	Common::SeekableReadStream *f = getFileStream(filedata);
+	Common::SeekableReadStream *f = createReadStream(filedata);
 
 	if (!f)
 		return false;
@@ -267,7 +267,7 @@ void Resource::listFiles(const Common::String &pattern, Common::ArchiveMemberLis
 }
 
 uint8 *Resource::fileData(const char *file, uint32 *size) {
-	Common::SeekableReadStream *stream = getFileStream(file);
+	Common::SeekableReadStream *stream = createReadStream(file);
 	if (!stream)
 		return 0;
 
@@ -290,7 +290,7 @@ bool Resource::exists(const char *file, bool errorOutOnFail) {
 }
 
 uint32 Resource::getFileSize(const char *file) {
-	Common::SeekableReadStream *stream = getFileStream(file);
+	Common::SeekableReadStream *stream = createReadStream(file);
 	if (!stream)
 		return 0;
 
@@ -300,7 +300,7 @@ uint32 Resource::getFileSize(const char *file) {
 }
 
 bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
-	Common::SeekableReadStream *stream = getFileStream(file);
+	Common::SeekableReadStream *stream = createReadStream(file);
 	if (!stream)
 		return false;
 
@@ -310,7 +310,7 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 	return true;
 }
 
-Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) {
+Common::SeekableReadStream *Resource::createReadStream(const Common::String &file) {
 	return _files.createReadStreamForMember(file);
 }
 

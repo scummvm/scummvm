@@ -224,7 +224,7 @@ void ScriptFileParser::setFile(const char *filename, Resource *res) {
 	destroy();
 
 	res->exists(filename, true);
-	_stream = res->getFileStream(filename);
+	_stream = res->createReadStream(filename);
 	assert(_stream);
 	_startOffset = 0;
 	_endOffset = _stream->size();

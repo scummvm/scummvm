@@ -553,10 +553,10 @@ void LoLEngine::releaseMonsterShapes(int monsterIndex) {
 void LoLEngine::loadLevelShpDat(const char *shpFile, const char *datFile, bool flag) {
 	memset(_tempBuffer5120, 0, 5120);
 
-	_lvlShpFileHandle = _res->getFileStream(shpFile);
+	_lvlShpFileHandle = _res->createReadStream(shpFile);
 	_lvlShpNum = _lvlShpFileHandle->readUint16LE();
 
-	Common::SeekableReadStream *s = _res->getFileStream(datFile);
+	Common::SeekableReadStream *s = _res->createReadStream(datFile);
 
 	_levelFileDataSize = s->readUint16LE();
 	delete[] _levelFileData;
@@ -677,7 +677,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 
 	char tname[13];
 	snprintf(tname, sizeof(tname), "LEVEL%.02d.TLC", _currentLevel);
-	Common::SeekableReadStream *s = _res->getFileStream(tname);
+	Common::SeekableReadStream *s = _res->createReadStream(tname);
 	s->read(_tlcTable1, 256);
 	s->read(_tlcTable2, 5120);
 	delete s;
