@@ -32,6 +32,7 @@
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer_intern.h"
 #include "graphics/surface.h"
+#include "graphics/colormasks.h"
 
 class OSystem_DS : public OSystem {
 protected:
