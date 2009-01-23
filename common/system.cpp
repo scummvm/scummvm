@@ -26,10 +26,8 @@
 #include "backends/events/default/default-events.h"
 #include "backends/fs/fs-factory.h"
 
-#include "common/config-manager.h"
 #include "common/system.h"
 
-#include "graphics/colormasks.h"
 #include "gui/message.h"
 
 OSystem *g_system = 0;
