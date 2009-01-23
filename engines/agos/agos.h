@@ -1188,7 +1188,6 @@ protected:
 	void clsCheck(WindowBlock *window);
 
 	void quickLoadOrSave();
-	void shutdown();
 
 	byte *vc10_uncompressFlip(const byte *src, uint w, uint h);
 	byte *vc10_flip(const byte *src, uint w, uint h);
