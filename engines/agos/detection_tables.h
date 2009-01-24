@@ -33,9 +33,9 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Demo",
 
 			{
-	{ "agos.mdf",		GAME_MENUFILE,	"825bc8eecd599f4c26732902ba2c2c77", -1},
-	{ "englishdemo",	GAME_BASEFILE,	"7bbc2dfe8619ef579004ff57674c6e92", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"68b329da9893e34099c7d8ad5cb9c940", -1},
+	{ "agos.mdf",		GAME_MENUFILE,	"825bc8eecd599f4c26732902ba2c2c77", 98},
+	{ "englishdemo",	GAME_BASEFILE,	"7bbc2dfe8619ef579004ff57674c6e92", 21587},
+	{ "icon.dat",		GAME_ICONFILE,	"68b329da9893e34099c7d8ad5cb9c940", 1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -54,8 +54,8 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"elvira1",
 			"Floppy",
 			{
-	{ "gameamiga",		GAME_BASEFILE,	"7bdaff4a118d8035047cf9b1393b3fa0", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", -1},
+	{ "gameamiga",		GAME_BASEFILE,	"7bdaff4a118d8035047cf9b1393b3fa0", 218977},
+	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", 36573},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -115,9 +115,9 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Demo",
 
 			{
-	{ "991.out",		0,	"9238242d3274bb770cb4925d2b268f83", -1},
-	{ "992.out",		0,	"5526cd64e515f1c5f9ff8f2fb569c4eb", -1},
-	{ "993.out",		0,	"d41d8cd98f00b204e9800998ecf8427e", -1},
+	{ "991.out",		0,	"9238242d3274bb770cb4925d2b268f83", 1822},
+	{ "992.out",		0,	"5526cd64e515f1c5f9ff8f2fb569c4eb", 192236},
+	{ "993.out",		0,	"d41d8cd98f00b204e9800998ecf8427e", 0},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -159,9 +159,9 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gamest",		GAME_BASEFILE,	"ce2100ba71284f55ac302847d7f94747", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", -1},
-	{ "tbllist",		GAME_TBLFILE,	"5b6ff494bf7e24213758598ef4ac0a8b", -1},
+	{ "gamest",		GAME_BASEFILE,	"ce2100ba71284f55ac302847d7f94747", 119851},
+	{ "icon.dat",		GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", 36573},
+	{ "tbllist",		GAME_TBLFILE,	"5b6ff494bf7e24213758598ef4ac0a8b", 476},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::FR_FRA,
@@ -181,9 +181,9 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gamepc",		GAME_BASEFILE,	"a49e132a1f18306dd5d1ec2fe435e178", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45", -1},
-	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149", -1},
+	{ "gamepc",		GAME_BASEFILE,	"a49e132a1f18306dd5d1ec2fe435e178", 135332},
+	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45", 56448},
+	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149", 368},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -203,9 +203,9 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gamepc",		GAME_BASEFILE,	"97d2f74db08845c43474312a87330cf6", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45", -1},
-	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149", -1},
+	{ "gamepc",		GAME_BASEFILE,	"97d2f74db08845c43474312a87330cf6", 137361},
+	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45", 56448},
+	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149", 368},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::ES_ESP,
@@ -269,12 +269,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gameamiga",		GAME_BASEFILE,	"4aa163967f5d2bd319f8350d6af03186", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"a88b1c02e13ab04dd790ec30502c323d", -1},
-	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", -1},
-	{ "start",		GAME_RESTFILE,	"a9f876c6c66dfd011b971da3dc7b4ada", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"41c975a9c1106cb5298a0bc3df0a266e", -1},
-	{ "tbllist",		GAME_TBLFILE,	"177f5f2640e80ef92d1421d32de06a5e", -1},
+	{ "gameamiga",		GAME_BASEFILE,	"4aa163967f5d2bd319f8350d6af03186", 134799},
+	{ "icon.dat",		GAME_ICONFILE,	"a88b1c02e13ab04dd790ec30502c323d", 69860},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", 108},
+	{ "start",		GAME_RESTFILE,	"a9f876c6c66dfd011b971da3dc7b4ada", 27752},
+	{ "stripped.txt",	GAME_STRFILE,	"41c975a9c1106cb5298a0bc3df0a266e", 72},
+	{ "tbllist",		GAME_TBLFILE,	"177f5f2640e80ef92d1421d32de06a5e", 272},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -324,7 +324,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ "gameamiga",		GAME_BASEFILE,	"7af80eb9759bcafcd8df21e61c5af200", -1},
 	{ "icon.dat",		GAME_ICONFILE,	"a88b1c02e13ab04dd790ec30502c323d", -1},
 	{ "tbllist",		GAME_TBLFILE,	"177f5f2640e80ef92d1421d32de06a5e", -1},
-	{ "start",			GAME_RESTFILE,	"a9f876c6c66dfd011b971da3dc7b4ada", -1},
+	{ "start",		GAME_RESTFILE,	"a9f876c6c66dfd011b971da3dc7b4ada", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::DE_DEU,
@@ -344,12 +344,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gameamiga",		GAME_BASEFILE,	"3d4e0c8da4ebd222e50de2dffed92955", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"a88b1c02e13ab04dd790ec30502c323d", -1},
-	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", -1},
-	{ "start",		GAME_RESTFILE,	"a9f876c6c66dfd011b971da3dc7b4ada", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"41c975a9c1106cb5298a0bc3df0a266e", -1},
-	{ "tbllist",		GAME_TBLFILE,	"177f5f2640e80ef92d1421d32de06a5e", -1},
+	{ "gameamiga",		GAME_BASEFILE,	"3d4e0c8da4ebd222e50de2dffed92955", 139505},
+	{ "icon.dat",		GAME_ICONFILE,	"a88b1c02e13ab04dd790ec30502c323d", 69860},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", 108},
+	{ "start",		GAME_RESTFILE,	"a9f876c6c66dfd011b971da3dc7b4ada", 27752},
+	{ "stripped.txt",	GAME_STRFILE,	"41c975a9c1106cb5298a0bc3df0a266e", 72},
+	{ "tbllist",		GAME_TBLFILE,	"177f5f2640e80ef92d1421d32de06a5e", 272},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::IT_ITA,
@@ -369,12 +369,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gameamiga",		GAME_BASEFILE,	"fddfac048a759c84ecf96e3d0cb368cc", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"a88b1c02e13ab04dd790ec30502c323d", -1},
-	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", -1},
-	{ "start",		GAME_RESTFILE,	"a9f876c6c66dfd011b971da3dc7b4ada", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"41c975a9c1106cb5298a0bc3df0a266e", -1},
-	{ "tbllist",		GAME_TBLFILE,	"177f5f2640e80ef92d1421d32de06a5e", -1},
+	{ "gameamiga",		GAME_BASEFILE,	"fddfac048a759c84ecf96e3d0cb368cc", 139126},
+	{ "icon.dat",		GAME_ICONFILE,	"a88b1c02e13ab04dd790ec30502c323d", 69860},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", 108},
+	{ "start",		GAME_RESTFILE,	"a9f876c6c66dfd011b971da3dc7b4ada", 27752},
+	{ "stripped.txt",	GAME_STRFILE,	"41c975a9c1106cb5298a0bc3df0a266e", 72},
+	{ "tbllist",		GAME_TBLFILE,	"177f5f2640e80ef92d1421d32de06a5e", 272},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::ES_ESP,
@@ -445,12 +445,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gamepc",		GAME_BASEFILE,	"3313254722031b22d833a2cf45a91fd7", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", -1},
-	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", -1},
-	{ "start",		GAME_RESTFILE,	"4d380a35ba941d03ee5084c71d20055b", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"c2533277b7ff11f5495967d55355ea17", -1},
-	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", -1},
+	{ "gamepc",		GAME_BASEFILE,	"3313254722031b22d833a2cf45a91fd7", 125702},
+	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", 54471},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", 108},
+	{ "start",		GAME_RESTFILE,	"4d380a35ba941d03ee5084c71d20055b", 27876},
+	{ "stripped.txt",	GAME_STRFILE,	"c2533277b7ff11f5495967d55355ea17", 81},
+	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", 284},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -463,7 +463,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE
 	},
 
-	// Elvira 2 - English DOS Floppy, Alternate
+	// Elvira 2 - English DOS Floppy, Alternate 1
 	{
 		{
 			"elvira2",
@@ -488,6 +488,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE
 	},
 
+	// Elvira 2 - English DOS Floppy, Alternate 2
+	{
+		{
+			"elvira2",
+			"Floppy",
+
+			{
+	{ "gamepc",		GAME_BASEFILE,	"75d814739585b6fa89a025045885e3b9", 125665},
+	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", 54471},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", 108},
+	{ "start",		GAME_RESTFILE,	"016107aced82d0cc5d758a9fba716270", 27852},
+	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7", 81},
+	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", 284},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_ELVIRA2,
+		GID_ELVIRA2,
+		GF_OLD_BUNDLE
+	},
+
 	// Elvira 2 - French DOS Floppy
 	{
 		{
@@ -495,12 +520,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gamepc",		GAME_BASEFILE,	"4bf28ab00f5324fd938e632595742382", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", -1},
-	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", -1},
-	{ "start",		GAME_RESTFILE,	"016107aced82d0cc5d758a9fba716270", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7", -1},
-	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", -1},
+	{ "gamepc",		GAME_BASEFILE,	"4bf28ab00f5324fd938e632595742382", 130980},
+	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", 54471},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", 108},
+	{ "start",		GAME_RESTFILE,	"016107aced82d0cc5d758a9fba716270", 27852},
+	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7", 81},
+	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", 284},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::FR_FRA,
@@ -545,12 +570,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gamepc",		GAME_BASEFILE,	"09a3f1087f2977ff462ad2417bde0a5c", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", -1},
-	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", -1},
-	{ "start",		GAME_RESTFILE,	"016107aced82d0cc5d758a9fba716270", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7", -1},
-	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", -1},
+	{ "gamepc",		GAME_BASEFILE,	"09a3f1087f2977ff462ad2417bde0a5c", 129833},
+	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", 54471},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", 108},
+	{ "start",		GAME_RESTFILE,	"016107aced82d0cc5d758a9fba716270", 27852},
+	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7", 81},
+	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", 284},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::IT_ITA,
@@ -570,12 +595,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gamepc",		GAME_BASEFILE,	"bfcd74d704ad481d75eb6ba5b828333a", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", -1},
-	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", -1},
-	{ "start",		GAME_RESTFILE,	"016107aced82d0cc5d758a9fba716270", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7", -1},
-	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", -1},
+	{ "gamepc",		GAME_BASEFILE,	"bfcd74d704ad481d75eb6ba5b828333a", 129577},
+	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", 54471},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", 108},
+	{ "start",		GAME_RESTFILE,	"016107aced82d0cc5d758a9fba716270", 27852},
+	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7", 81},
+	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", 284},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::ES_ESP,
@@ -595,12 +620,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gamepc",		GAME_BASEFILE,	"e84e1ac84f63d9a39270e517196c5ff9", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", -1},
-	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", -1},
-	{ "start",		GAME_RESTFILE,	"016107aced82d0cc5d758a9fba716270", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7", -1},
-	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", -1},
+	{ "gamepc",		GAME_BASEFILE,	"e84e1ac84f63d9a39270e517196c5ff9", 129577},
+	{ "icon.dat",		GAME_ICONFILE,	"83a7278bff55c82fbb3aef92981866c9", 54471},
+	{ "menus.dat",		GAME_MENUFILE,	"a2fdc88a77c8bdffec6b36cbeda4d955", 108},
+	{ "start",		GAME_RESTFILE,	"016107aced82d0cc5d758a9fba716270", 27852},
+	{ "stripped.txt",	GAME_STRFILE,	"c3a8f644551a27c8a2fec0f8070b46b7", 81},
+	{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", 284},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::ES_ESP,
@@ -620,13 +645,13 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gameamiga",		GAME_BASEFILE,	"eca24fe7c3e005caca47cecac56f7245", -1},
-	{ "icon.pkd",		GAME_ICONFILE,	"4822a91c18b1b2005ac17fc617f7dcbe", -1},
-	{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e", -1},
-	{ "start",		GAME_RESTFILE,	"b575b336e741dde1725edd4079d5ab67", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"6faaebff2786216900061eeb978f10af", -1},
-	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0", -1},
-	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f", -1},
+	{ "gameamiga",		GAME_BASEFILE,	"eca24fe7c3e005caca47cecac56f7245", 43392},
+	{ "icon.pkd",		GAME_ICONFILE,	"4822a91c18b1b2005ac17fc617f7dcbe", 18940},
+	{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e", 320},
+	{ "start",		GAME_RESTFILE,	"b575b336e741dde1725edd4079d5ab67", 20902},
+	{ "stripped.txt",	GAME_STRFILE,	"6faaebff2786216900061eeb978f10af", 225},
+	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0", 309},
+	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f", 88},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -646,13 +671,13 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gameamiga",		GAME_BASEFILE,	"2938a17103de603c4c6f05e6a433b365", -1},
-	{ "icon.pkd",		GAME_ICONFILE,	"4822a91c18b1b2005ac17fc617f7dcbe", -1},
-	{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e", -1},
-	{ "start",		GAME_RESTFILE,	"b575b336e741dde1725edd4079d5ab67", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"6faaebff2786216900061eeb978f10af", -1},
-	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0", -1},
-	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f", -1},
+	{ "gameamiga",		GAME_BASEFILE,	"2938a17103de603c4c6f05e6a433b365", 44640},
+	{ "icon.pkd",		GAME_ICONFILE,	"4822a91c18b1b2005ac17fc617f7dcbe", 18940},
+	{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e", 320},
+	{ "start",		GAME_RESTFILE,	"b575b336e741dde1725edd4079d5ab67", 20902},
+	{ "stripped.txt",	GAME_STRFILE,	"6faaebff2786216900061eeb978f10af", 225},
+	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0", 309},
+	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f", 88},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::DE_DEU,
@@ -672,9 +697,9 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Demo",
 
 			{
-	{ "demo",		GAME_BASEFILE,	"50704abde6c68a226001400461620129", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"ef1b8ad3494cf103dc10a99fe152ef9a", -1},
-	{ "menus.dat",		GAME_MENUFILE,	"c4103f122d27677c9db144cae1394a66", -1},
+	{ "demo",		GAME_BASEFILE,	"50704abde6c68a226001400461620129", 7238},
+	{ "icon.dat",		GAME_ICONFILE,	"ef1b8ad3494cf103dc10a99fe152ef9a", 20901},
+	{ "menus.dat",		GAME_MENUFILE,	"c4103f122d27677c9db144cae1394a66", 2},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -694,15 +719,15 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gamepc",		GAME_BASEFILE,	"7751e9358e894e32ef40ef3b3bae0f2a", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"ef1b8ad3494cf103dc10a99fe152ef9a", -1},
-	{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e", -1},
-	{ "roomslst",		GAME_RMSLFILE,	"e3758c46ab8f3c23a1ac012bd607108d", -1},
-	{ "start",		GAME_RESTFILE,	"036b647973d6884cdfc2042a3d12df83", -1},
-	{ "statelst",		GAME_STATFILE,	"469e98c69f00928a8366ba415d91902d", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"f259e3e07a1cde8d0404a767d815e12c", -1},
-	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0", -1},
-	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f", -1},
+	{ "gamepc",		GAME_BASEFILE,	"7751e9358e894e32ef40ef3b3bae0f2a", 51327},
+	{ "icon.dat",		GAME_ICONFILE,	"ef1b8ad3494cf103dc10a99fe152ef9a", 20901},
+	{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e", 320},
+	{ "roomslst",		GAME_RMSLFILE,	"e3758c46ab8f3c23a1ac012bd607108d", 128},
+	{ "start",		GAME_RESTFILE,	"036b647973d6884cdfc2042a3d12df83", 15354},
+	{ "statelst",		GAME_STATFILE,	"469e98c69f00928a8366ba415d91902d", 11104},
+	{ "stripped.txt",	GAME_STRFILE,	"f259e3e07a1cde8d0404a767d815e12c", 225},
+	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0", 309},
+	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f", 88},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -722,15 +747,15 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gamepc",		GAME_BASEFILE,	"b0d513069920a5e2eac2ea5d290692f1", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"ef1b8ad3494cf103dc10a99fe152ef9a", -1},
-	{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e", -1},
-	{ "roomslst",		GAME_RMSLFILE,	"e3758c46ab8f3c23a1ac012bd607108d", -1},
-	{ "start",		GAME_RESTFILE,	"036b647973d6884cdfc2042a3d12df83", -1},
+	{ "gamepc",		GAME_BASEFILE,	"b0d513069920a5e2eac2ea5d290692f1", 53307},
+	{ "icon.dat",		GAME_ICONFILE,	"ef1b8ad3494cf103dc10a99fe152ef9a", 20901},
+	{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e", 320},
+	{ "roomslst",		GAME_RMSLFILE,	"e3758c46ab8f3c23a1ac012bd607108d", 128},
+	{ "start",		GAME_RESTFILE,	"036b647973d6884cdfc2042a3d12df83", 15354},
 	{ "statelst",		GAME_STATFILE,	"469e98c69f00928a8366ba415d91902d", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"f259e3e07a1cde8d0404a767d815e12c", -1},
-	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0", -1},
-	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f", -1},
+	{ "stripped.txt",	GAME_STRFILE,	"f259e3e07a1cde8d0404a767d815e12c", 225},
+	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0", 309},
+	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f", 88},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::ES_ESP,
@@ -750,10 +775,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gamebase.dat",	GAME_BASEFILE,	"c392e494dcabed797b98cbcfc687b33a", -1},
-	{ "icondata.dat",	GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
-	{ "stripped.dat",	GAME_STRFILE,	"c95a0a1ee973e19c2a1c5d12026c139f", -1},
-	{ "tbllist.dat",	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ "gamebase.dat",	GAME_BASEFILE,	"c392e494dcabed797b98cbcfc687b33a", 36980},
+	{ "icondata.dat",	GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+	{ "stripped.dat",	GAME_STRFILE,	"c95a0a1ee973e19c2a1c5d12026c139f", 252},
+	{ "tbllist.dat",	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -773,11 +798,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD Demo",
 
 			{
-	{ "data",	GAME_GMEFILE,	"b4a7526ced425ba8ad0d548d0ec69900", -1},
-	{ "gamebase",	GAME_BASEFILE,	"425c7d1957699d35abca7e12a08c7422", -1},
-	{ "icondata",	GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
-	{ "stripped",	GAME_STRFILE,	"d9de7542612d9f4e0819ad0df5eac56b", -1},
-	{ "tbllist",	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ "data",	GAME_GMEFILE,	"b4a7526ced425ba8ad0d548d0ec69900", 1237886},
+	{ "gamebase",	GAME_BASEFILE,	"425c7d1957699d35abca7e12a08c7422", 30879},
+	{ "icondata",	GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+	{ "stripped",	GAME_STRFILE,	"d9de7542612d9f4e0819ad0df5eac56b", 252},
+	{ "tbllist",	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -797,11 +822,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "data",	GAME_GMEFILE,	"64958b3a38afdcb85da1eeed85169806", -1},
-	{ "gamebase",	GAME_BASEFILE,	"28261b99cd9da1242189b4f6f2841bd6", -1},
-	{ "icondata",	GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
-	{ "stripped",	GAME_STRFILE,	"f3b27a3fbb45dcd323a48159496e45e8", -1},
-	{ "tbllist",	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ "data",	GAME_GMEFILE,	"64958b3a38afdcb85da1eeed85169806", 6943110},
+	{ "gamebase",	GAME_BASEFILE,	"28261b99cd9da1242189b4f6f2841bd6", 29176},
+	{ "icondata",	GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+	{ "stripped",	GAME_STRFILE,	"f3b27a3fbb45dcd323a48159496e45e8", 252},
+	{ "tbllist",	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -821,10 +846,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"OCS Floppy",
 
 			{
-	{ "gameamiga",		GAME_BASEFILE,	"bb94a688e247695d912cce9d0173d73a", -1},
-	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"f5fc67db3b8c5283cda51c43b98a74f8", -1},
-	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b", -1},
+	{ "gameamiga",		GAME_BASEFILE,	"bb94a688e247695d912cce9d0173d73a", 37991},
+	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed", 18979},
+	{ "stripped.txt",	GAME_STRFILE,	"f5fc67db3b8c5283cda51c43b98a74f8", 243},
+	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b", 696},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -844,10 +869,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"OCS Demo",
 
 			{
-	{ "gameamiga",		GAME_BASEFILE,	"4696309eed9d7335c62ebb87a0f006ad", -1},
-	{ "icon.pkd",		GAME_ICONFILE,	"ebc96af15bfaf75ba8210326b9260d2f", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"8edde5b9498dc9f31da1093028da467c", -1},
-	{ "tbllist",		GAME_TBLFILE,	"1247e024e1f13ca54c1e354120c7519c", -1},
+	{ "gameamiga",		GAME_BASEFILE,	"4696309eed9d7335c62ebb87a0f006ad", 12764},
+	{ "icon.pkd",		GAME_ICONFILE,	"ebc96af15bfaf75ba8210326b9260d2f", 9124},
+	{ "stripped.txt",	GAME_STRFILE,	"8edde5b9498dc9f31da1093028da467c", 27},
+	{ "tbllist",		GAME_TBLFILE,	"1247e024e1f13ca54c1e354120c7519c", 105},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -867,10 +892,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"AGA Floppy",
 
 			{
-	{ "gameamiga",		GAME_BASEFILE,	"6c9ad2ff571d34a4cf0c696cf4e13500", -1},
-	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"c649fcc0439766810e5097ee7e81d4c8", -1},
-	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b", -1},
+	{ "gameamiga",		GAME_BASEFILE,	"6c9ad2ff571d34a4cf0c696cf4e13500", 38057},
+	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed", 18979},
+	{ "stripped.txt",	GAME_STRFILE,	"c649fcc0439766810e5097ee7e81d4c8", 243},
+	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b", 696},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -936,10 +961,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"AGA Floppy",
 
 			{
-	{ "gameamiga",		GAME_BASEFILE,	"55dc304e7d3f8ad518af3b7f69da02b6", -1},
-	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"c649fcc0439766810e5097ee7e81d4c8", -1},
-	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b", -1},
+	{ "gameamiga",		GAME_BASEFILE,	"55dc304e7d3f8ad518af3b7f69da02b6", 38941},
+	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed", 18979},
+	{ "stripped.txt",	GAME_STRFILE,	"c649fcc0439766810e5097ee7e81d4c8", 243},
+	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b", 696},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::IT_ITA,
@@ -959,10 +984,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD32",
 
 			{
-	{ "gameamiga",		GAME_BASEFILE,	"bab7f19237cf7d7619b6c73631da1854", -1},
-	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"59be788020441e21861e284236fd08c1", -1},
-	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b", -1},
+	{ "gameamiga",		GAME_BASEFILE,	"bab7f19237cf7d7619b6c73631da1854", 30139},
+	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed", 18979},
+	{ "stripped.txt",	GAME_STRFILE,	"59be788020441e21861e284236fd08c1", 243},
+	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b", 696},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -1005,10 +1030,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy Demo",
 
 			{
-	{ "gdemo",		GAME_BASEFILE,	"2be4a21bc76e2fdc071867c130651439", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"55af3b4d93972bc58bfee38a86b76c3f", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"33a2e329b97b2a349858d6a093159eb7", -1},
-	{ "tbllist",		GAME_TBLFILE,	"1247e024e1f13ca54c1e354120c7519c", -1},
+	{ "gdemo",		GAME_BASEFILE,	"2be4a21bc76e2fdc071867c130651439", 25288},
+	{ "icon.dat",		GAME_ICONFILE,	"55af3b4d93972bc58bfee38a86b76c3f", 11495},
+	{ "stripped.txt",	GAME_STRFILE,	"33a2e329b97b2a349858d6a093159eb7", 27},
+	{ "tbllist",		GAME_TBLFILE,	"1247e024e1f13ca54c1e354120c7519c", 105},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -1097,10 +1122,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gamepc",		GAME_BASEFILE,	"9f93d27432ce44a787eef10adb640870", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"2af9affc5981eec44b90d4c556145cb8", -1},
-	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ "gamepc",		GAME_BASEFILE,	"9f93d27432ce44a787eef10adb640870", 37070},
+	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+	{ "stripped.txt",	GAME_STRFILE,	"2af9affc5981eec44b90d4c556145cb8", 252},
+	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -1258,11 +1283,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD Demo",
 
 			{
-	{ "simon.gme",		GAME_GMEFILE,	"b4a7526ced425ba8ad0d548d0ec69900", -1},
-	{ "gamepc"	,	GAME_BASEFILE,	"425c7d1957699d35abca7e12a08c7422", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"d9de7542612d9f4e0819ad0df5eac56b", -1},
-	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ "simon.gme",		GAME_GMEFILE,	"b4a7526ced425ba8ad0d548d0ec69900", 1237886},
+	{ "gamepc"	,	GAME_BASEFILE,	"425c7d1957699d35abca7e12a08c7422", 30879},
+	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+	{ "stripped.txt",	GAME_STRFILE,	"d9de7542612d9f4e0819ad0df5eac56b", 252},
+	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -1282,11 +1307,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "gamepc",		GAME_BASEFILE,	"28261b99cd9da1242189b4f6f2841bd6", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
-	{ "simon.gme",		GAME_GMEFILE,	"64958b3a38afdcb85da1eeed85169806", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"f3b27a3fbb45dcd323a48159496e45e8", -1},
-	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ "gamepc",		GAME_BASEFILE,	"28261b99cd9da1242189b4f6f2841bd6", 29176},
+	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+	{ "simon.gme",		GAME_GMEFILE,	"64958b3a38afdcb85da1eeed85169806", 6943110},
+	{ "stripped.txt",	GAME_STRFILE,	"f3b27a3fbb45dcd323a48159496e45e8", 252},
+	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -1402,11 +1427,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "gamepc",		GAME_BASEFILE,	"bc66e9c0b296e1b155a246917133f71a", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
-	{ "simon.gme",		GAME_GMEFILE,	"a34b2c8642f2e3676d7088b5c8b3e884", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"9d31bef42db1a8abe4e9f368014df1d5", -1},
-	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ "gamepc",		GAME_BASEFILE,	"bc66e9c0b296e1b155a246917133f71a", 34348},
+	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+	{ "simon.gme",		GAME_GMEFILE,	"a34b2c8642f2e3676d7088b5c8b3e884", 6976948},
+	{ "stripped.txt",	GAME_STRFILE,	"9d31bef42db1a8abe4e9f368014df1d5", 252},
+	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::HB_ISR,
@@ -1499,11 +1524,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "gamepc",		GAME_BASEFILE,	"c7c12fea7f6d0bfd22af5cdbc8166862", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
-	{ "simon.gme",		GAME_GMEFILE,	"b1b18d0731b64c0738c5cc4a2ee792fc", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"a27e87a9ba21212d769804b3df47bfb2", -1},
-	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ "gamepc",		GAME_BASEFILE,	"c7c12fea7f6d0bfd22af5cdbc8166862", 36152},
+	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+	{ "simon.gme",		GAME_GMEFILE,	"b1b18d0731b64c0738c5cc4a2ee792fc", 7030377},
+	{ "stripped.txt",	GAME_STRFILE,	"a27e87a9ba21212d769804b3df47bfb2", 252},
+	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -1643,11 +1668,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD Demo",
 
 			{
-	{ "gsptr30",		GAME_BASEFILE,	"3794c15887539b8578bacab694ccf08a", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
-	{ "simon2.gme",		GAME_GMEFILE,	"f8c9e6df1e55923a749e115ba74210c4", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", -1},
-	{ "tbllist",		GAME_TBLFILE,	"a0d5a494b5d3d209d1a1d76cc8d76601", -1},
+	{ "gsptr30",		GAME_BASEFILE,	"3794c15887539b8578bacab694ccf08a", 58757},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", 18089},
+	{ "simon2.gme",		GAME_GMEFILE,	"f8c9e6df1e55923a749e115ba74210c4", 4187270},
+	{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", 171},
+	{ "tbllist",		GAME_TBLFILE,	"a0d5a494b5d3d209d1a1d76cc8d76601", 513},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -1691,11 +1716,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "gsptr30",		GAME_BASEFILE,	"8c301fb9c4fcf119d2730ccd2a565eb3", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
-	{ "simon2.gme",		GAME_GMEFILE,	"9c535d403966750ae98bdaf698375a38", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", -1},
-	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
+	{ "gsptr30",		GAME_BASEFILE,	"8c301fb9c4fcf119d2730ccd2a565eb3", 58652},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", 18089},
+	{ "simon2.gme",		GAME_GMEFILE,	"9c535d403966750ae98bdaf698375a38", 19687892},
+	{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", 171},
+	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", 513},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -1811,11 +1836,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "gsptr30",		GAME_BASEFILE,	"952a2b1be23c3c609ba8d988a9a1627d", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
-	{ "simon2.gme",		GAME_GMEFILE,	"a2b249a82ea182af09789eb95fb6c5be", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"de9dbc24158660e153483fa0cf6c3172", -1},
-	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
+	{ "gsptr30",		GAME_BASEFILE,	"952a2b1be23c3c609ba8d988a9a1627d", 53366},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", 18089},
+	{ "simon2.gme",		GAME_GMEFILE,	"a2b249a82ea182af09789eb95fb6c5be", 19650639},
+	{ "stripped.txt",	GAME_STRFILE,	"de9dbc24158660e153483fa0cf6c3172", 171},
+	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", 513},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::HB_ISR,
@@ -1908,11 +1933,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "gsptr30",		GAME_BASEFILE,	"608e277904d87dd28725fa08eacc2c0d", -1},
-	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
-	{ "simon2.gme",		GAME_GMEFILE,	"e749c4c103d7e7d51b34620ed76c5a04", -1},
-	{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", -1},
-	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
+	{ "gsptr30",		GAME_BASEFILE,	"608e277904d87dd28725fa08eacc2c0d", 58652},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", 18089},
+	{ "simon2.gme",		GAME_GMEFILE,	"e749c4c103d7e7d51b34620ed76c5a04", 20046789},
+	{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", 171},
+	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", 513},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -2004,10 +2029,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "game22",		GAME_BASEFILE,	"629762ea9ca9ee9ff85f4774d219f5c7", -1},
-	{ "gfxindex.dat",	GAME_GFXIDXFILE,"f550f7915c5ce3a68c9f870f507449c2", -1},
-	{ "setup",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", -1},
-	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", -1},
+	{ "game22",		GAME_BASEFILE,	"629762ea9ca9ee9ff85f4774d219f5c7", 259576},
+	{ "gfxindex.dat",	GAME_GFXIDXFILE,"f550f7915c5ce3a68c9f870f507449c2", 48000},
+	{ "setup",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", 3360},
+	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", 668},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -2027,10 +2052,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "game22",		GAME_BASEFILE,	"bcd76ac080003eee3649df18db25b60e", -1},
-	{ "gfxindex.dat",	GAME_GFXIDXFILE,"f550f7915c5ce3a68c9f870f507449c2", -1},
-	{ "setup",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", -1},
-	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", -1},
+	{ "game22",		GAME_BASEFILE,	"bcd76ac080003eee3649df18db25b60e", 262517},
+	{ "gfxindex.dat",	GAME_GFXIDXFILE,"f550f7915c5ce3a68c9f870f507449c2", 48000},
+	{ "setup",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", 3360},
+	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", 668},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::DE_DEU,
@@ -2050,10 +2075,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "game22",		GAME_BASEFILE,	"629762ea9ca9ee9ff85f4774d219f5c7", -1},
-	{ "graphics.vga",	GAME_GFXIDXFILE,"11a4853cb35956846976e9473ee0e41e", -1},
-	{ "setup",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", -1},
-	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", -1},
+	{ "game22",		GAME_BASEFILE,	"629762ea9ca9ee9ff85f4774d219f5c7", 259576},
+	{ "graphics.vga",	GAME_GFXIDXFILE,"11a4853cb35956846976e9473ee0e41e", 67456693},
+	{ "setup",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", 3360},
+	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", 668},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -2073,10 +2098,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "game22",		GAME_BASEFILE,	"ba90b40a47726039671d9e91630dd7ed", -1},
-	{ "graphics.vga",	GAME_GFXIDXFILE,"11a4853cb35956846976e9473ee0e41e", -1},
-	{ "setup",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", -1},
-	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", -1},
+	{ "game22",		GAME_BASEFILE,	"ba90b40a47726039671d9e91630dd7ed", 259668},
+	{ "graphics.vga",	GAME_GFXIDXFILE,"11a4853cb35956846976e9473ee0e41e", 67456693},
+	{ "setup",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", 3360},
+	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", 668},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::FR_FRA,
@@ -2096,10 +2121,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "game22",		GAME_BASEFILE,	"bcd76ac080003eee3649df18db25b60e", -1},
-	{ "graphics.vga",	GAME_GFXIDXFILE,"11a4853cb35956846976e9473ee0e41e", -1},
-	{ "setup",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", -1},
-	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", -1},
+	{ "game22",		GAME_BASEFILE,	"bcd76ac080003eee3649df18db25b60e", 262517},
+	{ "graphics.vga",	GAME_GFXIDXFILE,"11a4853cb35956846976e9473ee0e41e", 67456693},
+	{ "setup",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", 3360},
+	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", 668},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::DE_DEU,
@@ -2119,10 +2144,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "game22",		GAME_BASEFILE,	"71d7d2d5e479b053c5a9757f1702c9c3", -1},
-	{ "graphics.vga",	GAME_GFXIDXFILE,"11a4853cb35956846976e9473ee0e41e", -1},
-	{ "setup",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", -1},
-	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", -1},
+	{ "game22",		GAME_BASEFILE,	"71d7d2d5e479b053c5a9757f1702c9c3", 265629},
+	{ "graphics.vga",	GAME_GFXIDXFILE,"11a4853cb35956846976e9473ee0e41e", 67456693},
+	{ "setup",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", 3360},
+	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", 668},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::ES_ESP,
@@ -2142,12 +2167,34 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"2CD",
 
 			{
-	{ "game22",		GAME_BASEFILE,	"629762ea9ca9ee9ff85f4774d219f5c7", -1},
-	{ "save.999",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", -1},
-	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", -1},
+	{ "game22",		GAME_BASEFILE,	"629762ea9ca9ee9ff85f4774d219f5c7", 259576},
+	{ "save.999",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", 3360},
+	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", 668},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
+			Common::kPlatformWindows,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_FF,
+		GID_FEEBLEFILES,
+		GF_OLD_BUNDLE | GF_TALKIE
+	},
+
+	// The Feeble Files - Polish Windows 2CD
+	{
+		{
+			"feeble",
+			"2CD",
+
+			{
+	{ "game22",		GAME_BASEFILE,	"629762ea9ca9ee9ff85f4774d219f5c7", 259576},
+	{ "save.999",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", 3360},
+	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", 668},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::PL_POL,
 			Common::kPlatformWindows,
 			Common::ADGF_NO_FLAGS
 		},
@@ -2164,9 +2211,9 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"4CD",
 
 			{
-	{ "game22",		GAME_BASEFILE,	"a8746407a5b20a7da0da0a14c380af1c", -1},
-	{ "save.999",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", -1},
-	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", -1},
+	{ "game22",		GAME_BASEFILE,	"a8746407a5b20a7da0da0a14c380af1c", 251647},
+	{ "save.999",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", 3360},
+	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", 668},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -2245,28 +2292,6 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
-	// The Feeble Files - Polish Windows 2CD
-	{
-		{
-			"feeble",
-			"2CD",
-
-			{
-	{ "game22",		GAME_BASEFILE,	"629762ea9ca9ee9ff85f4774d219f5c7", -1},
-	{ "save.999",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", -1},
-	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", -1},
-	{ NULL, 0, NULL, 0}
-			},
-			Common::PL_POL,
-			Common::kPlatformWindows,
-			Common::ADGF_NO_FLAGS
-		},
-
-		GType_FF,
-		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_TALKIE
-	},
-
 	// The Feeble Files - Spanish Windows 4CD
 	{
 		{
@@ -2296,7 +2321,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "Gdimp",		GAME_BASEFILE,	"0b1e89ae1dc2e012b7fa7a987b4ac42a", -1},
+	{ "Gdimp",		GAME_BASEFILE,	"0b1e89ae1dc2e012b7fa7a987b4ac42a", 6208},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -2316,7 +2341,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "Gjumble",		GAME_BASEFILE,	"d54cce46d339038d1a6b74ea213655bc", -1},
+	{ "Gjumble",		GAME_BASEFILE,	"d54cce46d339038d1a6b74ea213655bc", 5953},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -2336,7 +2361,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "Gpuzzle",		GAME_BASEFILE,	"3f80dac8e0d85401a1058a560fe49ab6", -1},
+	{ "Gpuzzle",		GAME_BASEFILE,	"3f80dac8e0d85401a1058a560fe49ab6", 23218},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -2356,7 +2381,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "Gswampy",		GAME_BASEFILE,	"3a6d4d7b2433e660f2483f9396cc87a2", -1},
+	{ "Gswampy",		GAME_BASEFILE,	"3a6d4d7b2433e660f2483f9396cc87a2", 30360},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
