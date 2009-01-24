@@ -288,22 +288,6 @@ Common::Error MadeEngine::go() {
 	_autoStopSound = false;
 	_eventNum = _eventKey = _eventMouseX = _eventMouseY = 0;
 
-#if 0
-	// V1 test code
-	if (getVersion() == 1) {
-		// Music test (works)
-		_music->playSMF(_res->getMidi(1));
-
-		// SFX test (not working)
-		Audio::SoundHandle audioStreamHandle;
-		SoundResource *soundRes = _res->getSound(1);
-		_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &audioStreamHandle,
-			soundRes->getAudioStream(_soundRate, false));
-
-		quitGame();
-	}
-#endif
-
 #ifdef DUMP_SCRIPTS
 	_script->dumpAllScripts();
 #else
