@@ -198,7 +198,8 @@ middleloop:
 	@ r14= len
 
 	MOV	r5,r12		@ loopCount = height
-	CMP	r5,r14		@ if (loopCount > len)
+	CMP	r14,#0
+	CMPNE	r5,r14		@ if (len != 0 && loopCount > len)
 	MOVGT	r5,r14		@	loopCount = len
 	SUB	r12,r12,r5	@ height -= loopCount
 	SUB	r14,r14,r5	@ len    -= loopCount
