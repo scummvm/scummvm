@@ -130,8 +130,6 @@ SECTION .text
 %macro Interp1 3
     mov edx,%2
     mov ecx,%3
-    cmp edx,ecx
-    je  %%fin
     and edx,[_hqx_highbits]
     and ecx,[_hqx_highbits]
     add ecx,edx
@@ -140,7 +138,6 @@ SECTION .text
     and ecx,[_hqx_highbits]
     add edx,ecx
     shr edx,1
-%%fin:
     mov %1,dx
 %endmacro
 
@@ -149,22 +146,16 @@ SECTION .text
 %macro Interp2 4
     mov edx,%3
     mov ecx,%4
-    cmp edx,ecx
-    je  %%fin1
     and edx,[_hqx_highbits]
     and ecx,[_hqx_highbits]
     add ecx,edx
     shr ecx,1
     add ecx,[_hqx_lowbits]
-%%fin1:
     mov edx,%2
-    cmp edx,ecx
-    je  %%fin2
     and ecx,[_hqx_highbits]
     and edx,[_hqx_highbits]
     add edx,ecx
     shr edx,1
-%%fin2:
     mov %1,dx
 %endmacro
 
@@ -220,13 +211,10 @@ SECTION .text
 %macro Interp5 3
     mov edx,%2
     mov ecx,%3
-    cmp edx,ecx
-    je  %%fin
     and edx,[_hqx_highbits]
     and ecx,[_hqx_highbits]
     add edx,ecx
     shr edx,1
-%%fin:
     mov %1,dx
 %endmacro
 

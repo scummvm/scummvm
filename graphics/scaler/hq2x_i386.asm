@@ -154,26 +154,11 @@ SECTION .text
     add ecx,edx
     shr ecx,1
     add ecx,[_hqx_lowbits]
-%%fin1:
     mov edx,%2
     and ecx,[_hqx_highbits]
     and edx,[_hqx_highbits]
     add edx,ecx
     shr edx,1
-%%fin2:
-    mov %1,dx
-%endmacro
-
-; interpolate16_2<bitFormat,1,1>
-; Mix two pixels with weight 1 and 1, respectively: (c1+c2)/2;
-%macro Interp5 3
-    mov edx,%2
-    mov ecx,%3
-    and edx,[_hqx_highbits]
-    and ecx,[_hqx_highbits]
-    add edx,ecx
-    shr edx,1
-%%fin:
     mov %1,dx
 %endmacro
 
