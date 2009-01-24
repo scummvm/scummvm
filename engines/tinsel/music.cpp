@@ -199,7 +199,8 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 			if (track > 0) {
 				StopMidi();
 
-				AudioCD.play(track, bLoop ? -1 : 1, 0, 0);
+				// try to play track, but don't fall back to a true CD
+				AudioCD.play(track, bLoop ? -1 : 1, 0, 0, true);
 
 				// Check if an enhanced audio track is being played.
 				// If it is, stop here and don't load a MIDI track

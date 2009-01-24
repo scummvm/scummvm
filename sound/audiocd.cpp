@@ -47,7 +47,7 @@ AudioCDManager::AudioCDManager() {
 	assert(_mixer);
 }
 
-void AudioCDManager::play(int track, int numLoops, int startFrame, int duration) {
+void AudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool only_emulate) {
 	if (numLoops != 0 || startFrame != 0) {
 		_cd.track = track;
 		_cd.numLoops = numLoops;
@@ -80,7 +80,8 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration)
 			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_handle, stream);
 		} else {
 			_emulating = false;
-			g_system->playCD(track, numLoops, startFrame, duration);
+			if (!only_emulate)
+				g_system->playCD(track, numLoops, startFrame, duration);
 		}
 	}
 }

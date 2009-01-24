@@ -53,8 +53,9 @@ public:
 	 * @param num_loops		how often playback should be repeated (-1 = infinitely often).
 	 * @param start_frame	the frame at which playback should start (75 frames = 1 second).
 	 * @param duration		the number of frames to play (0: play until end)
+	 * @param only_emulate  if true, don't try to play from a real CD
 	 */
-	void play(int track, int numLoops, int startFrame, int duration);
+	void play(int track, int numLoops, int startFrame, int duration, bool only_emulate = false);
 	void stop();
 	bool isPlaying() const;
 
