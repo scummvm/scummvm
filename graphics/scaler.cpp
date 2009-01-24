@@ -54,9 +54,14 @@ extern "C" {
 #if !defined(_WIN32) && !defined(MACOSX) && !defined(__OS2__)
 #define RGBtoYUV _RGBtoYUV
 #define LUT16to32 _LUT16to32
+#define hqx_highbits _hqx_highbits
+#define hqx_lowbits _hqx_lowbits
 #endif
 
 #endif
+
+uint32 hqx_highbits = 0xF7DEF7DE;
+uint32 hqx_lowbits = 0x0821;
 
 // FIXME/TODO: The following two tables suck up 512 KB. This is bad.
 // In addition we never free them...
@@ -114,11 +119,25 @@ void InitLUT(Graphics::PixelFormat format) {
 
 void InitScalers(uint32 BitFormat) {
 	gBitFormat = BitFormat;
+
 #ifndef DISABLE_HQ_SCALERS
-	if (gBitFormat == 555)
+	#undef highBits;
+	#undef lowBits;
+
+	if (gBitFormat == 555) {
 		InitLUT(Graphics::createPixelFormat<555>());
-	if (gBitFormat == 565)
+#ifdef USE_NASM
+		hqx_highbits = Graphics::ColorMasks<555>::highBits;
+		hqx_lowbits = Graphics::ColorMasks<555>::lowBits & 0xFFFF;
+#endif
+	}
+	if (gBitFormat == 565) {
 		InitLUT(Graphics::createPixelFormat<565>());
+#ifdef USE_NASM
+		hqx_highbits = Graphics::ColorMasks<565>::highBits;
+		hqx_lowbits = Graphics::ColorMasks<565>::lowBits & 0xFFFF;
+#endif
+	}
 #endif
 }
 

@@ -22,6 +22,8 @@ GLOBAL _hq3x_16
 
 EXTERN _LUT16to32
 EXTERN _RGBtoYUV
+EXTERN _hqx_highbits
+EXTERN _hqx_lowbits
 
 SECTION .bss
 linesleft resd 1
@@ -44,10 +46,6 @@ SECTION .data
 reg_blank    dd  0,0
 const7       dd  0x00070007,0x00000007
 threshold    dd  0x00300706,0x00000000
-; FIXME: zerlowbits assumes 565 mode.
-; Also, in the code, the constant 0x0821 is used which also assumes 565 mode
-highbits     dd  0xF7DEF7DE
-lowbits      dd  0x0821
 moduloSrc    dd  0
 moduloDst    dd  0
 
@@ -134,12 +132,12 @@ SECTION .text
     mov ecx,%3
     cmp edx,ecx
     je  %%fin
-    and edx,[highbits]
-    and ecx,[highbits]
+    and edx,[_hqx_highbits]
+    and ecx,[_hqx_highbits]
     add ecx,edx
     shr ecx,1
-    add ecx,[lowbits]
-    and ecx,[highbits]
+    add ecx,[_hqx_lowbits]
+    and ecx,[_hqx_highbits]
     add edx,ecx
     shr edx,1
 %%fin:
@@ -153,17 +151,17 @@ SECTION .text
     mov ecx,%4
     cmp edx,ecx
     je  %%fin1
-    and edx,[highbits]
-    and ecx,[highbits]
+    and edx,[_hqx_highbits]
+    and ecx,[_hqx_highbits]
     add ecx,edx
     shr ecx,1
-    add ecx,[lowbits]
+    add ecx,[_hqx_lowbits]
 %%fin1:
     mov edx,%2
     cmp edx,ecx
     je  %%fin2
-    and ecx,[highbits]
-    and edx,[highbits]
+    and ecx,[_hqx_highbits]
+    and edx,[_hqx_highbits]
     add edx,ecx
     shr edx,1
 %%fin2:
@@ -224,8 +222,8 @@ SECTION .text
     mov ecx,%3
     cmp edx,ecx
     je  %%fin
-    and edx,[highbits]
-    and ecx,[highbits]
+    and edx,[_hqx_highbits]
+    and ecx,[_hqx_highbits]
     add edx,ecx
     shr edx,1
 %%fin:
@@ -2303,12 +2301,12 @@ _hq3x_16:
     shl eax,16
     or  eax,edx
     mov ecx,[w2]
-    and edx,[highbits]
-    and ecx,[highbits]
+    and edx,[_hqx_highbits]
+    and ecx,[_hqx_highbits]
     add ecx,edx
     shr ecx,1
-    add ecx,[lowbits]
-    and ecx,[highbits]
+    add ecx,[_hqx_lowbits]
+    and ecx,[_hqx_highbits]
     add edx,ecx
     shr edx,1
     mov [edi],dx
@@ -2324,12 +2322,12 @@ _hq3x_16:
     shl eax,16
     or  eax,edx
     mov ecx,[w4]
-    and edx,[highbits]
-    and ecx,[highbits]
+    and edx,[_hqx_highbits]
+    and ecx,[_hqx_highbits]
     add ecx,edx
     shr ecx,1
-    add ecx,[lowbits]
-    and ecx,[highbits]
+    add ecx,[_hqx_lowbits]
+    and ecx,[_hqx_highbits]
     add edx,ecx
     shr edx,1
     mov [edi],dx
@@ -2344,12 +2342,12 @@ _hq3x_16:
     shl eax,16
     or  eax,edx
     mov ecx,[w6]
-    and edx,[highbits]
-    and ecx,[highbits]
+    and edx,[_hqx_highbits]
+    and ecx,[_hqx_highbits]
     add ecx,edx
     shr ecx,1
-    add ecx,[lowbits]
-    and ecx,[highbits]
+    add ecx,[_hqx_lowbits]
+    and ecx,[_hqx_highbits]
     add edx,ecx
     shr edx,1
     mov [edi],eax
@@ -2364,12 +2362,12 @@ _hq3x_16:
     shl eax,16
     or  eax,edx
     mov ecx,[w8]
-    and edx,[highbits]
-    and ecx,[highbits]
+    and edx,[_hqx_highbits]
+    and ecx,[_hqx_highbits]
     add ecx,edx
     shr ecx,1
-    add ecx,[lowbits]
-    and ecx,[highbits]
+    add ecx,[_hqx_lowbits]
+    and ecx,[_hqx_highbits]
     add edx,ecx
     shr edx,1
     mov [edi],eax
