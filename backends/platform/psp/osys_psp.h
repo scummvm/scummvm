@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "graphics/surface.h"
+#include "graphics/colormasks.h"
 #include "sound/mixer_intern.h"
 #include "backends/fs/psp/psp-fs-factory.h"
 
