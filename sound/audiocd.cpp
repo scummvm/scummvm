@@ -43,6 +43,7 @@ AudioCDManager::AudioCDManager() {
 	_cd.duration = 0;
 	_cd.numLoops = 0;
 	_mixer = g_system->getMixer();
+	_emulating = false;
 	assert(_mixer);
 }
 
@@ -72,24 +73,23 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration)
 		}
 
 		// Stop any currently playing emulated track
-		_mixer->stopHandle(_cd.handle);
+		_mixer->stopHandle(_handle);
 
-		// HACK: We abuse _cd.playing to store whether we are playing a real or an emulated track.
 		if (stream != 0) {
-			_cd.playing = true;
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_cd.handle, stream);
+			_emulating = true;
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_handle, stream);
 		} else {
-			_cd.playing = false;
+			_emulating = false;
 			g_system->playCD(track, numLoops, startFrame, duration);
 		}
 	}
 }
 
 void AudioCDManager::stop() {
-	if (_cd.playing) {
+	if (_emulating) {
 		// Audio CD emulation
-		_mixer->stopHandle(_cd.handle);
-		_cd.playing = false;
+		_mixer->stopHandle(_handle);
+		_emulating = false;
 	} else {
 		// Real Audio CD
 		g_system->stopCD();
@@ -97,9 +97,9 @@ void AudioCDManager::stop() {
 }
 
 bool AudioCDManager::isPlaying() const {
-	if (_cd.playing) {
+	if (_emulating) {
 		// Audio CD emulation
-		return _mixer->isSoundHandleActive(_cd.handle);
+		return _mixer->isSoundHandleActive(_handle);
 	} else {
 		// Real Audio CD
 		return g_system->pollCD();
@@ -107,15 +107,15 @@ bool AudioCDManager::isPlaying() const {
 }
 
 void AudioCDManager::updateCD() {
-	if (_cd.playing) {
+	if (_emulating) {
 		// Check whether the audio track stopped playback
-		if (!_mixer->isSoundHandleActive(_cd.handle)) {
+		if (!_mixer->isSoundHandleActive(_handle)) {
 			// FIXME: We do not update the numLoops parameter here (and in fact,
 			// currently can't do that). Luckily, only one engine ever checks
 			// this part of the AudioCD status, namely the SCUMM engine; and it
 			// only checks whether the track is currently set to infinite looping
 			// or not.
-			_cd.playing = false;
+			_emulating = false;
 		}
 	} else {
 		g_system->updateCD();

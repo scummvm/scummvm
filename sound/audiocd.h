@@ -67,11 +67,10 @@ private:
 	AudioCDManager();
 
 	/* used for emulated CD music */
-	struct ExtStatus : Status {
-		SoundHandle handle;
-	};
-	ExtStatus _cd;
+	SoundHandle _handle;
+	bool _emulating;
 
+	Status _cd;
 	Mixer	*_mixer;
 };
 
