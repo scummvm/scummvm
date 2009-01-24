@@ -129,12 +129,14 @@ bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 
 			entry._isValid = true;
 			entry._displayName = dir.d_name;
-			entry._path = _path;
-			entry._path += dir.d_name;
-			entry._isDirectory = dir.d_stat.st_attr & FIO_SO_IFDIR;
 
-			if (entry._isDirectory)
-				entry._path += "/";
+			Common::String newPath(_path);
+			if (newPath.lastChar() != '/')
+				newPath += '/';
+			newPath += dir.d_name;
+
+			entry._path = newPath;
+			entry._isDirectory = dir.d_stat.st_attr & FIO_SO_IFDIR;
 
 			// Honor the chosen mode
 			if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) ||
