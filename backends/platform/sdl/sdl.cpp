@@ -782,7 +782,7 @@ bool OSystem_SDL::pollCD() {
 	if (!_cdrom)
 		return false;
 
-	return (_cdNumLoops != 0 && (SDL_GetTicks() < _cdEndTime || SDL_CDStatus(_cdrom) != CD_STOPPED));
+	return (_cdNumLoops != 0 && (SDL_GetTicks() < _cdEndTime || SDL_CDStatus(_cdrom) == CD_PLAYING));
 }
 
 void OSystem_SDL::updateCD() {
