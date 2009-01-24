@@ -55,7 +55,7 @@
 #endif
 
 
-static bool launcherDialog(OSystem &system) {
+static bool launcherDialog() {
 
 	// Discard any command line options. Those that affect the graphics
 	// mode and the others (like bootparam etc.) should not
@@ -300,7 +300,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain())
-		launcherDialog(system);
+		launcherDialog();
 
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
@@ -345,7 +345,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 		
 		// reset the graphics to default
 		setupGraphics(system);
-		launcherDialog(system);
+		launcherDialog();
 	}
 	PluginManager::instance().unloadPlugins();
 	PluginManager::destroy();
