@@ -175,7 +175,8 @@ enum {
 	kScreenHeight = 200,
 	kScreenPitch = 640,
 	kFadePaletteStep = 5,
-	kStartupLocation = 1,
+	kStartupLocationDemo = 9,
+	kStartupLocationGame = 1,
 	kDefaultCharSpeechSoundCounter = 1,
 	kMaxSoundVolume = 127,
 	kLastSaveSlot = 99
@@ -205,7 +206,8 @@ enum InputKey {
 enum GameFlag {
 	kGameFlagDemo = 1 << 0,
 	kGameFlagEncodedData = 1 << 1,
-	kGameFlagNoSubtitles = 1 << 2
+	kGameFlagNoSubtitles = 1 << 2,
+	kGameFlagIntroOnly = 1 << 3
 };
 
 inline int scaleMixerVolume(int volume, int max = 100) {

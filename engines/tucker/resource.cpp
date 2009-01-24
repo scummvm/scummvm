@@ -342,7 +342,11 @@ void TuckerEngine::loadBudSpr(int startOffset) {
 			char filename[40];
 			switch (_flagsTable[137]) {
 			case 0:
-				sprintf(filename, "bud_%d.pcx", frame + 1);
+				if ((_gameFlags & kGameFlagDemo) != 0) {
+					sprintf(filename, "budl00_%d.pcx", frame + 1);
+				} else {
+					sprintf(filename, "bud_%d.pcx", frame + 1);
+				}
 				break;
 			case 1:
 				sprintf(filename, "peg_%d.pcx", frame + 1);
@@ -411,7 +415,8 @@ void TuckerEngine::loadCTable02(int fl) {
 		}
 		int start = 0;
 		_spriteAnimationsTable[entry].firstFrameIndex = i;
-		while (start != 999) {
+		// 9999 is also used as the end marker in the demo version
+		while (start != 999 && start != 9999) {
 			start = t.getNextInteger();
 			_spriteAnimationFramesTable[i] = start;
 			++i;
@@ -447,7 +452,7 @@ void TuckerEngine::loadLoc() {
 		copyLocBitmap(filename, 0, false);
 		Graphics::copyRect(_quadBackgroundGfxBuf + 89600, 320, _locationBackgroundGfxBuf, 640, 320, 140);
 	}
-	if (_locationNum == 1) {
+	if ((_gameFlags & kGameFlagDemo) == 0 && _locationNum == 1) {
 		_loadLocBufPtr = _quadBackgroundGfxBuf + 89600;
 		loadImage("rochpath.pcx", _loadLocBufPtr, 0);
 	}
@@ -477,7 +482,9 @@ void TuckerEngine::loadObj() {
 		return;
 	}
 	debug(2, "loadObj() partNum %d locationNum %d", _partNum, _locationNum);
-	handleNewPartSequence();
+	if ((_gameFlags & kGameFlagDemo) == 0) {
+		handleNewPartSequence();
+	}
 	_currentPartNum = _partNum;
 
 	char filename[40];
@@ -651,16 +658,20 @@ void TuckerEngine::loadData4() {
 
 void TuckerEngine::loadActionFile() {
 	char filename[40];
-	switch (_partNum) {
-	case 1:
-		strcpy(filename, "action1.c");
-		break;
-	case 2:
-		strcpy(filename, "action2.c");
-		break;
-	default:
-		strcpy(filename, "action3.c");
-		break;
+	if ((_gameFlags & kGameFlagDemo) != 0) {
+		strcpy(filename, "action.c");
+	} else {
+		switch (_partNum) {
+		case 1:
+			strcpy(filename, "action1.c");
+			break;
+		case 2:
+			strcpy(filename, "action2.c");
+			break;
+		default:
+			strcpy(filename, "action3.c");
+			break;
+		}
 	}
 	loadFile(filename, _loadTempBuf);
 

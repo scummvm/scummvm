@@ -60,7 +60,7 @@ bool TuckerEngine::hasFeature(EngineFeature f) const {
 
 Common::Error TuckerEngine::go() {
 	handleIntroSequence();
-	if ((_gameFlags & kGameFlagDemo) == 0 && !shouldQuit()) {
+	if ((_gameFlags & kGameFlagIntroOnly) == 0 && !shouldQuit()) {
 		mainLoop();
 	}
 	return Common::kNoError;
@@ -130,7 +130,7 @@ void TuckerEngine::restart() {
 	_locationNum = 0;
 	_nextLocationNum = ConfMan.getInt("boot_param");
 	if (_nextLocationNum == 0) {
-		_nextLocationNum = kStartupLocation;
+		_nextLocationNum = (_gameFlags & kGameFlagDemo) == 0 ? kStartupLocationGame : kStartupLocationDemo;
 	}
 	_gamePaused = _gamePaused2 = false;
 	_gameDebug = false;
@@ -329,6 +329,10 @@ void TuckerEngine::mainLoop() {
 
 	openCompressedSoundFile();
 	loadCharSizeDta();
+	if ((_gameFlags & kGameFlagDemo) != 0) {
+		addObjectToInventory(30);
+		addObjectToInventory(12);
+	}
 	loadCharset();
 	loadPanel();
 	loadFile("infobar.txt", _infoBarBuf);
@@ -1523,7 +1527,9 @@ void TuckerEngine::drawData3() {
 void TuckerEngine::execData3PreUpdate() {
 	switch (_locationNum) {
 	case 1:
-		execData3PreUpdate_locationNum1();
+		if ((_gameFlags & kGameFlagDemo) == 0) {
+			execData3PreUpdate_locationNum1();
+		}
 		break;
 	case 2:
 		execData3PreUpdate_locationNum2();

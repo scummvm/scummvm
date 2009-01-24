@@ -87,6 +87,14 @@ static const Common::ADGameDescription tuckerGameDescriptions[] = {
 		Common::kPlatformPC,
 		Tucker::kGameFlagEncodedData
 	},
+	{
+		"tucker",
+		"Demo",
+		AD_ENTRY1s("infobar.txt", "010b055de42097b140d5bcb6e95a5c7c", 203),
+		Common::EN_ANY,
+		Common::kPlatformPC,
+		Common::ADGF_DEMO | Tucker::kGameFlagDemo,
+	},
 	AD_TABLE_END_MARKER
 };
 
@@ -103,11 +111,11 @@ static const Common::ADParams detectionParams = {
 
 static const Common::ADGameDescription tuckerDemoGameDescription = {
 	"tucker",
-	"Demo",
+	"Non-Interactive Demo",
 	AD_ENTRY1(0, 0),
 	Common::EN_ANY,
 	Common::kPlatformPC,
-	Common::ADGF_DEMO | Tucker::kGameFlagDemo
+	Common::ADGF_DEMO | Tucker::kGameFlagDemo | Tucker::kGameFlagIntroOnly
 };
 
 class TuckerMetaEngine : public Common::AdvancedMetaEngine {
