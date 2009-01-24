@@ -389,8 +389,8 @@ void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
 	if (strncmp(header, "ADVSYS", 6))
 		warning ("Unexpected database header, expected ADVSYS");
 
-	uint32 textOffs, objectsOffs, objectsSize, textSize;
-	uint16 objectCount, varObjectCount;
+	uint32 textOffs = 0, objectsOffs = 0, objectsSize = 0, textSize;
+	uint16 objectCount = 0, varObjectCount = 0;
 
 	sourceS.readUint16LE(); // skip sub-version
 	sourceS.skip(18); // skip program name
