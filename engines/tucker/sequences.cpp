@@ -496,7 +496,6 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, int num)
 	: _system(system), _mixer(mixer), _event(event), _seqNum(num) {
 	memset(_animationPalette, 0, sizeof(_animationPalette));
-	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
 	_soundSeqDataOffset = 0;
 	_soundSeqDataCount = 0;
 	_soundSeqDataIndex = 0;
@@ -559,7 +558,7 @@ void AnimationSequencePlayer::mainLoop() {
 			++_updateFuncIndex;
 			_seqNum = this->_updateFunc[_updateFuncIndex].num;
 		}
-		_system->copyRectToScreen(_offscreenBuffer, 320, 0, 0, kScreenWidth, kScreenHeight);
+		_system->copyRectToScreen(_offscreenBuffer, kScreenWidth, 0, 0, kScreenWidth, kScreenHeight);
 		_system->setPalette(_animationPalette, 0, 256);
 		_system->updateScreen();
 		syncTime();
@@ -832,19 +831,20 @@ void AnimationSequencePlayer::updateSounds() {
 }
 
 void AnimationSequencePlayer::fadeInPalette() {
-	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
+	uint8 paletteBuffer[256 * 4];
+	memset(paletteBuffer, 0, sizeof(paletteBuffer));
 	bool fadeColors = true;
 	for (int step = 0; step < 64; ++step) {
 		if (fadeColors) {
 			fadeColors = false;
 			for (int i = 0; i < 1024; ++i) {
-				if ((i & 3) != 3 && _paletteBuffer[i] < _animationPalette[i]) {
-					const int color = _paletteBuffer[i] + 4;
-					_paletteBuffer[i] = MIN<int>(color, _animationPalette[i]);
+				if ((i & 3) != 3 && paletteBuffer[i] < _animationPalette[i]) {
+					const int color = paletteBuffer[i] + 4;
+					paletteBuffer[i] = MIN<int>(color, _animationPalette[i]);
 					fadeColors = true;
 				}
 			}
-			_system->setPalette(_paletteBuffer, 0, 256);
+			_system->setPalette(paletteBuffer, 0, 256);
 			_system->updateScreen();
 		}
 		_system->delayMillis(1000 / 60);
@@ -852,19 +852,20 @@ void AnimationSequencePlayer::fadeInPalette() {
 }
 
 void AnimationSequencePlayer::fadeOutPalette() {
-	memcpy(_paletteBuffer, _animationPalette, 1024);
+	uint8 paletteBuffer[256 * 4];
+	memcpy(paletteBuffer, _animationPalette, 1024);
 	bool fadeColors = true;
 	for (int step = 0; step < 64; ++step) {
 		if (fadeColors) {
 			fadeColors = false;
 			for (int i = 0; i < 1024; ++i) {
-				if ((i & 3) != 3 && _paletteBuffer[i] > 0) {
-					const int color = _paletteBuffer[i] - 4;
-					_paletteBuffer[i] = MAX<int>(0, color);
+				if ((i & 3) != 3 && paletteBuffer[i] > 0) {
+					const int color = paletteBuffer[i] - 4;
+					paletteBuffer[i] = MAX<int>(0, color);
 					fadeColors = true;
 				}
 			}
-			_system->setPalette(_paletteBuffer, 0, 256);
+			_system->setPalette(paletteBuffer, 0, 256);
 			_system->updateScreen();
 		}
 		_system->delayMillis(1000 / 60);
@@ -902,13 +903,13 @@ void AnimationSequencePlayer::openAnimation(int index, const char *fileName) {
 	_flicPlayer[index].decodeNextFrame();
 	if (index == 0) {
 		memcpy(_animationPalette, _flicPlayer[index].getPalette(), 1024);
-		memcpy(_offscreenBuffer, _flicPlayer[index].getOffscreen(), kScreenWidth * kScreenHeight);
+		_flicPlayer[index].copyDirtyRectsToBuffer(_offscreenBuffer, kScreenWidth);
 	}
 }
 
 void AnimationSequencePlayer::decodeNextAnimationFrame(int index) {
 	_flicPlayer[index].decodeNextFrame();
-	memcpy(_offscreenBuffer, _flicPlayer[index].getOffscreen(), kScreenWidth * kScreenHeight);
+	_flicPlayer[index].copyDirtyRectsToBuffer(_offscreenBuffer, kScreenWidth);
 	if (index == 0) {
 		if (_flicPlayer[index].isPaletteDirty()) {
 			memcpy(_animationPalette, _flicPlayer[index].getPalette(), 1024);
@@ -946,11 +947,11 @@ void AnimationSequencePlayer::playIntroSeq19_20() {
 			_flicPlayer[1].reset();
 		}
 	}
-	_flicPlayer[0].decodeNextFrame();
-	const uint8 *t = _flicPlayer[1].getOffscreen();
-	for (int i = 0; i < 64000; ++i) {
-		const uint8 color = _flicPlayer[0].getOffscreen()[i];
-		_offscreenBuffer[i] = color ? color : t[i];
+	decodeNextAnimationFrame(0);
+	for (int i = 0; i < kScreenWidth * kScreenHeight; ++i) {
+		if (_offscreenBuffer[i] == 0) {
+			_offscreenBuffer[i] = _flicPlayer[1].getOffscreen()[i];
+		}
 	}
 	updateSounds();
 	if (_flicPlayer[0].isLastFrame()) {
@@ -1049,13 +1050,14 @@ void AnimationSequencePlayer::drawPic2Part10() {
 }
 
 void AnimationSequencePlayer::drawPic1Part10() {
-	for (int y = 0; y < 200; ++y) {
-		memcpy(_offscreenBuffer + y * 320, _picBufPtr + 800 + y * 640 + _updateScreenWidth, 320);
-	}
-	for (int i = 0; i < 64000; ++i) {
-		const uint8 color = _flicPlayer[0].getOffscreen()[i];
-		if (color) {
-			_offscreenBuffer[i] = color;
+	int offset = 0;
+	for (int y = 0; y < kScreenHeight; ++y) {
+		for (int x = 0; x < kScreenWidth; ++x) {
+			uint8 color = _flicPlayer[0].getOffscreen()[offset];
+			if (color == 0) {
+				color = _picBufPtr[800 + y * 640 + _updateScreenWidth + x];
+			}
+			_offscreenBuffer[offset++] = color;
 		}
 	}
 }
@@ -1070,12 +1072,11 @@ void AnimationSequencePlayer::loadIntroSeq9_10() {
 
 void AnimationSequencePlayer::playIntroSeq9_10() {
 	decodeNextAnimationFrame(0);
-	if (_flicPlayer[0].getCurFrame() == 984) {
-		drawPic2Part10();
-	}
 	if (_flicPlayer[0].getCurFrame() >= 264 && _flicPlayer[0].getCurFrame() <= 295) {
 		drawPic1Part10();
 		_updateScreenWidth += 6;
+	} else if (_flicPlayer[0].getCurFrame() == 984) {
+		drawPic2Part10();
 	} else if (_flicPlayer[0].getCurFrame() >= 988 && _flicPlayer[0].getCurFrame() <= 996) {
 		drawPic1Part10();
 		_updateScreenWidth -= 25;

@@ -910,7 +910,7 @@ private:
 	const SequenceUpdateFunc *_updateFunc;
 	int _updateFuncIndex;
 	::Graphics::FlicPlayer _flicPlayer[2];
-	uint8 _animationPalette[256 * 4], _paletteBuffer[256 * 4];
+	uint8 _animationPalette[256 * 4];
 	int _soundsList1Offset;
 	int _soundsList1Count;
 	int _soundsList2Offset;
