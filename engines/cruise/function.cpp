@@ -191,7 +191,7 @@ int16 Op_Random(void) {		// TODO: implement
 		return (0);
 	}
 
-	return (g_cruise->_rnd.getRandomNumber(var - 1));
+	return (_vm->_rnd.getRandomNumber(var - 1));
 }
 
 int16 Op_PlayFX(void) {		// TODO: implement

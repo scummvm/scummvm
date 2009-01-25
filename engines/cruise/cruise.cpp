@@ -40,9 +40,8 @@ namespace Cruise {
 
 //SoundDriver *g_soundDriver;
 //SfxPlayer *g_sfxPlayer;
-Common::SaveFileManager * g_saveFileMan;
 
-CruiseEngine *g_cruise;
+CruiseEngine *_vm;
 
 CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
@@ -59,7 +58,7 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
 	                              ConfMan.getInt("music_volume"));
 
-	g_cruise = this;
+	_vm = this;
 
 	syst->getEventManager()->registerRandomSource(_rnd, "cruise");
 }
