@@ -31,6 +31,113 @@
 
 namespace Made {
 
+void ManholeEgaSoundDecompressor::decompress(byte *source, byte *dest, uint32 size) {
+	/* Some kind of ADPCM compression. I hope this works on BE machines. */
+	int newmode;
+	_source = source;
+	_dest = dest;
+	_size = size;
+	_bitBuffer = 0;
+	_bitsLeft = 0;
+	_writeFlag = false;
+	_eof = false;
+	_sample1 = 0x80000;
+ 	_sample2 = 0x800000;
+ 	_sample3 = 0x800000;
+ 	_sample4 = 0x800000;
+ 	_mode = getBit();
+ 	while (!_eof) {
+		update1();
+		update3();
+		update0();
+		newmode = getBit();
+		if (_eof)
+			break;
+		if (newmode == _mode) {
+			update1();
+			update3();
+			do {
+				update0();
+				newmode = getBit();
+				if (_eof || newmode != _mode)
+					break;
+				update2();
+				update3();
+			} while (1);
+		}
+		_mode = newmode;
+	}
+}
+
+int ManholeEgaSoundDecompressor::getBit() {
+	if (_bitsLeft == 0) {
+		if (_size == 0) {
+			_eof = true;
+			return 0;
+		}
+		_bitBuffer = READ_BE_UINT16(_source);
+		_source += 2;
+		_bitsLeft = 16;
+		_size -= 2;
+	}
+	int temp = _bitBuffer & 0x8000;
+	_bitBuffer <<= 1;
+	_bitsLeft--;
+	return temp;
+}
+
+void ManholeEgaSoundDecompressor::update0() {
+	SWAP(_sample1, _sample3);
+	if (_sample2 & 0x80000000) {
+		_sample2 -= (_sample2 >> 8) | 0xFF000000;
+	} else {
+		_sample2 -= _sample2 >> 8;
+	}
+	_sample2 += 0x8000;
+	if (_sample2 & 0x80000000) {
+		_sample2 = 0;
+	} else if ((_sample2 & 0xFFFF0000) > 0x00FF0000) {
+		_sample2 = 0xFF0000;
+	}
+	_sample1 += _sample2;
+	_sample1 >>= 1;
+	_sample1 -= _sample4;
+	_sample1 >>= 2;
+	_sample4 += _sample1;
+	if (_writeFlag) {
+		*_dest++ = (_sample4 & 0xFF0000) >> 16;
+	}
+	_writeFlag = !_writeFlag;
+	_sample1 = _sample2;
+	SWAP(_sample1, _sample3);
+}
+
+void ManholeEgaSoundDecompressor::update1() {
+	if (_sample1 & 0x80000000) {
+		_sample1 -= (_sample1 >> 8) | 0xFF000000;
+	} else {
+		_sample1 -= _sample1 >> 8;
+	}
+	_sample1 += 500;
+}
+
+void ManholeEgaSoundDecompressor::update2() {
+	uint32 temp = (_sample1 >> 6) | ((_sample1 & 0xFF) << 27) | ((_sample1 & 0xC0) >> 5);
+	if (_sample1 & 0x80000000) {
+		_sample1 += temp | 0xFC000000;
+	} else {
+		_sample1 += temp & 0x03FFFFFF;
+	}
+	_sample1 += 500;
+}
+
+void ManholeEgaSoundDecompressor::update3() {
+	if (_mode)
+		_sample2 -= _sample1;
+	else
+		_sample2 += _sample1;
+}
+
 void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount, SoundEnergyArray *soundEnergyArray) {
 
 	int16 prevSample = 0, workSample = 0;

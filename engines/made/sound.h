@@ -33,6 +33,25 @@
 
 namespace Made {
 
+class ManholeEgaSoundDecompressor {
+public:
+	void decompress(byte *source, byte *dest, uint32 size);
+protected:
+	byte *_source, *_dest;
+	uint32 _size;
+	uint16 _bitBuffer;
+	int _bitsLeft;
+	int32 _sample1, _sample2, _sample3, _sample4;
+	bool _writeFlag;
+	bool _eof;
+	int _mode;
+	int getBit();
+	void update0();
+	void update1();
+	void update2();
+	void update3();
+};
+
 struct SoundEnergyItem {
 	uint32 position;
 	byte energy;

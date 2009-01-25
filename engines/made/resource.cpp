@@ -265,16 +265,10 @@ Audio::AudioStream *SoundResource::getAudioStream(int soundRate, bool loop) {
 }
 
 void SoundResourceV1::load(byte *source, int size) {
-	// TODO: This is all wrong. Seems like the sound is compressed
-	// but where is the compression info? (chunks, chunk size)
-	
-	_soundSize = size;
+	_soundSize = size * 4;
 	_soundData = new byte[_soundSize];
-
-	// TODO: We set the audio to silent for now
-	//memcpy(_soundData, source, _soundSize);
-	memset(_soundData, 0x80, _soundSize);
-
+	ManholeEgaSoundDecompressor dec;
+	dec.decompress(source, _soundData, size);
 }
 
 /* MenuResource */
