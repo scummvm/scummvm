@@ -24,6 +24,7 @@
  */
 
 #include "cruise/cruise_main.h"
+#include "cruise/staticres.h"
 
 namespace Cruise {
 
@@ -235,16 +236,19 @@ int playerMenu(int menuX, int menuY) {
 		    linkedRelation = 0; */
 		freeDisk();
 
-		menuTable[0] = createMenu(menuX, menuY, "Menu Joueur");
+		// Get the correct string set to use
+		const char **sl = getStringList();
+
+		menuTable[0] = createMenu(menuX, menuY, sl[SL_MENU]);
 		ASSERT(menuTable[0]);
 
-		//addSelectableMenuEntry(0, 3, menuTable[0], 1, -1, "Lecteur de Sauvegarde");
+		//addSelectableMenuEntry(0, 3, menuTable[0], 1, -1, "Save game disk");
 		if (userEnabled) {
-			addSelectableMenuEntry(0, 4, menuTable[0], 1, -1, "Sauvegarde");
+			addSelectableMenuEntry(0, 4, menuTable[0], 1, -1, sl[SL_SAVE]);
 		}
-		addSelectableMenuEntry(0, 5, menuTable[0], 1, -1, "Chargement");
-		addSelectableMenuEntry(0, 6, menuTable[0], 1, -1, "Recommencer le jeu");
-		addSelectableMenuEntry(0, 7, menuTable[0], 1, -1, "Quitter");
+		addSelectableMenuEntry(0, 5, menuTable[0], 1, -1, sl[SL_LOAD]);
+		addSelectableMenuEntry(0, 6, menuTable[0], 1, -1, sl[SL_RESTART]);
+		addSelectableMenuEntry(0, 7, menuTable[0], 1, -1, sl[SL_QUIT]);
 
 		retourMenu = processMenu(menuTable[0]);
 

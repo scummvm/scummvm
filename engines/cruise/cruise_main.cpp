@@ -29,6 +29,7 @@
 
 #include "cruise/cruise_main.h"
 #include "cruise/cell.h"
+#include "cruise/staticres.h"
 
 namespace Cruise {
 
@@ -774,7 +775,8 @@ int getObjectClass(int overlayIdx, int objIdx) {
 void buildInventory(int X, int Y) {
 	menuStruct *pMenu;
 
-	pMenu = createMenu(X, Y, "Inventaire");
+	const char **sl = getStringList();
+	pMenu = createMenu(X, Y, sl[SL_INVENTORY]);
 	menuTable[1] = pMenu;
 
 	if (pMenu == NULL)
