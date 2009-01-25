@@ -257,7 +257,7 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 
 			if (TinselV2)
 				// Copy all the colours
-				memcpy(p->palRGB, pNewPal->palRGB, pNewPal->numColours * sizeof(COLORREF));
+				memcpy(p->palRGB, pNewPal->palRGB, FROM_LE_32(pNewPal->numColours) * sizeof(COLORREF));
 
 #ifdef DEBUG
 			// one more palette in use
@@ -267,7 +267,7 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 
 			// Q the change to the video DAC
 			if (TinselV2)
-				UpdateDACqueue(p->posInDAC, pNewPal->numColours, p->palRGB);
+				UpdateDACqueue(p->posInDAC, FROM_LE_32(pNewPal->numColours), p->palRGB);
 			else
 				UpdateDACqueueHandle(p->posInDAC, p->numColours, p->hPal);
 

@@ -97,12 +97,12 @@ void PokeInPalette(const MULTI_INIT *pmi) {
 
 	// Could be an empty column
 	if (pmi->hMulFrame) {
-		pFrame = (FRAME *)LockMem(pmi->hMulFrame);
+		pFrame = (FRAME *)LockMem(FROM_LE_32(pmi->hMulFrame));
 
 		// get pointer to image
-		pim = (IMAGE *)LockMem(*pFrame);	// handle to image
+		pim = (IMAGE *)LockMem(READ_LE_UINT32(pFrame));	// handle to image
 
-		pim->hImgPal = BgPal();
+		pim->hImgPal = TO_LE_32(BgPal());
 	}
 }
 

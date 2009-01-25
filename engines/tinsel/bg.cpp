@@ -135,18 +135,18 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 		} else {
 			/*** At start of scene ***/
 			pFilm = (const FILM *)LockMem(hBackground);
-			bgReels = pFilm->numreels;
+			bgReels = FROM_LE_32(pFilm->numreels);
 
 			int i;
 			for (i = 0; i < bgReels; i++) {
 				// Get the MULTI_INIT structure
-				pmi = (PMULTI_INIT) LockMem(pFilm->reels[i].mobj);
+				pmi = (PMULTI_INIT) LockMem(FROM_LE_32(pFilm->reels[i].mobj));
 
 				// Initialise and insert the object, and initialise its script.
 				pBG[i] = MultiInitObject(pmi);
 				MultiInsertObject(GetPlayfieldList(FIELD_WORLD), pBG[i]);
 				MultiSetZPosition(pBG[i], 0);
-				InitStepAnimScript(&thisAnim[i], pBG[i], pFilm->reels[i].script, BGspeed);
+				InitStepAnimScript(&thisAnim[i], pBG[i], FROM_LE_32(pFilm->reels[i].script), BGspeed);
 
 				if (i > 0)
 					pBG[i-1]->pSlave = pBG[i];
@@ -175,7 +175,7 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 			StepAnimScript(&thisAnim[0]);
 		} else {
 			pFilm = (const FILM *)LockMem(hBackground);
-			assert(bgReels == pFilm->numreels);
+			assert(bgReels == FROM_LE_32(pFilm->numreels));
 
 			// Just re-initialise the scripts.
 			for (int i = 0; i < bgReels; i++) {

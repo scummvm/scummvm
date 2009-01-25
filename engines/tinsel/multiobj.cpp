@@ -46,7 +46,7 @@ OBJECT *MultiInitObject(const MULTI_INIT *pInitTbl) {
 	OBJECT *pFirst, *pObj;	// object pointers
 	FRAME *pFrame;		// list of images for the multi-part object
 
-	if (pInitTbl->hMulFrame) {
+	if (FROM_LE_32(pInitTbl->hMulFrame)) {
 		// we have a frame handle
 		pFrame = (FRAME *)LockMem(FROM_LE_32(pInitTbl->hMulFrame));
 

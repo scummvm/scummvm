@@ -482,7 +482,7 @@ static void InitCurObj(void) {
 	if (TinselV2) {
 		pFilm = (const FILM *)LockMem(hCursorFilm);
 		pfr = (const FREEL *)&pFilm->reels[0];
-		pmi = (MULTI_INIT *)LockMem(pfr->mobj);
+		pmi = (MULTI_INIT *)LockMem(FROM_LE_32(pfr->mobj));
 
 		PokeInPalette(pmi);
 	} else {
