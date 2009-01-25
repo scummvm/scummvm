@@ -249,23 +249,6 @@ void MadeEngine::handleEvents() {
 
 Common::Error MadeEngine::go() {
 
-/*
-	byte source[200000], dest[500000];
-
-	int size;
-	FILE *f = fopen("Q:\\OldGames\\scummvm\\00000003.snd", "rb");
-	size = fread(source, 1, 200000, f);
-	fclose(f);
-
-	ManholeEgaSoundDecompressor dec;
-	dec.decompress(source, dest, size);
-
-	FILE *x = fopen("Q:\\OldGames\\scummvm\\test.0", "wb");
-	fwrite(dest, size * 4, 1, x);
-	fclose(x);
-
-	return Common::kNoError;
-*/
 	resetAllTimers();
 
 	if (getGameID() == GID_RTZ) {
