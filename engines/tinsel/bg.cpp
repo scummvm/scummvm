@@ -175,7 +175,7 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 			StepAnimScript(&thisAnim[0]);
 		} else {
 			pFilm = (const FILM *)LockMem(hBackground);
-			assert(bgReels == FROM_LE_32(pFilm->numreels));
+			assert(bgReels == (int32)FROM_LE_32(pFilm->numreels));
 
 			// Just re-initialise the scripts.
 			for (int i = 0; i < bgReels; i++) {
