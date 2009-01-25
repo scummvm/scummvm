@@ -34,6 +34,7 @@
 #endif
 
 #include "common/rect.h"
+#include "graphics/colormasks.h"
 
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
