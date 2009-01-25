@@ -360,6 +360,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\cruise\staticres.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\cruise\staticres.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\cruise\various.cpp"
 			>
 		</File>
