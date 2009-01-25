@@ -60,7 +60,7 @@ bool TuckerEngine::hasFeature(EngineFeature f) const {
 
 Common::Error TuckerEngine::go() {
 	handleIntroSequence();
-	if ((_gameFlags & kGameFlagDemo) == 0 && !shouldQuit()) {
+	if ((_gameFlags & kGameFlagIntroOnly) == 0 && !shouldQuit()) {
 		mainLoop();
 	}
 	return Common::kNoError;
@@ -130,7 +130,7 @@ void TuckerEngine::restart() {
 	_locationNum = 0;
 	_nextLocationNum = ConfMan.getInt("boot_param");
 	if (_nextLocationNum == 0) {
-		_nextLocationNum = kStartupLocation;
+		_nextLocationNum = (_gameFlags & kGameFlagDemo) == 0 ? kStartupLocationGame : kStartupLocationDemo;
 	}
 	_gamePaused = _gamePaused2 = false;
 	_gameDebug = false;
@@ -142,6 +142,14 @@ void TuckerEngine::restart() {
 	_gameHintsCounter = 0;
 	_gameHintsDisplayText = 0;
 	_gameHintsStringNum = 0;
+
+	if ((_gameFlags & kGameFlagDemo) == 0) {
+		_locationWidthTable = _locationWidthTableGame;
+		_locationHeightTable = _locationHeightTableGame;
+	} else {
+		_locationWidthTable = _locationWidthTableDemo;
+		_locationHeightTable = _locationHeightTableDemo;
+	}
 
 	memset(_sprA02Table, 0, sizeof(_sprA02Table));
 	memset(_sprC02Table, 0, sizeof(_sprC02Table));
@@ -329,6 +337,10 @@ void TuckerEngine::mainLoop() {
 
 	openCompressedSoundFile();
 	loadCharSizeDta();
+	if ((_gameFlags & kGameFlagDemo) != 0) {
+		addObjectToInventory(30);
+		addObjectToInventory(12);
+	}
 	loadCharset();
 	loadPanel();
 	loadFile("infobar.txt", _infoBarBuf);
@@ -2813,7 +2825,7 @@ void TuckerEngine::drawStringAlt(int offset, int color, const uint8 *str, int st
 		offset += _charWidthTable[chr];
 		++pos;
 	}
-	addDirtyRect(startOffset % 640, startOffset / 640, (offset - startOffset) % 640, Graphics::_charset.charH);
+	addDirtyRect(startOffset % 640, startOffset / 640, Graphics::_charset.charW * pos, Graphics::_charset.charH);
 }
 
 void TuckerEngine::drawItemString(int offset, int num, const uint8 *str) {
@@ -3770,13 +3782,13 @@ int TuckerEngine::splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int
 
 void TuckerEngine::drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, int dstOffset, uint8 color) {
 	int startOffset = dstOffset;
-	while (count > 0 && dataPtr[pos] != '\n') {
+	int i = 0;
+	for (; i < count && dataPtr[pos] != '\n'; ++i) {
 		Graphics::drawStringChar(_locationBackgroundGfxBuf + dstOffset, dataPtr[pos], 640, color, _charsetGfxBuf);
 		dstOffset += _charWidthTable[dataPtr[pos]];
 		++pos;
-		--count;
 	}
-	addDirtyRect(startOffset % 640, startOffset / 640, (dstOffset - startOffset) % 640, Graphics::_charset.charH);
+	addDirtyRect(startOffset % 640, startOffset / 640, Graphics::_charset.charW * i, Graphics::_charset.charH);
 }
 
 void TuckerEngine::redrawScreen(int offset) {

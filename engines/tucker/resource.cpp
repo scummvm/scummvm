@@ -342,7 +342,11 @@ void TuckerEngine::loadBudSpr(int startOffset) {
 			char filename[40];
 			switch (_flagsTable[137]) {
 			case 0:
-				sprintf(filename, "bud_%d.pcx", frame + 1);
+				if ((_gameFlags & kGameFlagDemo) != 0) {
+					sprintf(filename, "budl00_%d.pcx", frame + 1);
+				} else {
+					sprintf(filename, "bud_%d.pcx", frame + 1);
+				}
 				break;
 			case 1:
 				sprintf(filename, "peg_%d.pcx", frame + 1);
@@ -413,6 +417,9 @@ void TuckerEngine::loadCTable02(int fl) {
 		_spriteAnimationsTable[entry].firstFrameIndex = i;
 		while (start != 999) {
 			start = t.getNextInteger();
+			if (start == 9999) { // end marker in the demo version
+				start = 999;
+			}
 			_spriteAnimationFramesTable[i] = start;
 			++i;
 		}
@@ -477,7 +484,9 @@ void TuckerEngine::loadObj() {
 		return;
 	}
 	debug(2, "loadObj() partNum %d locationNum %d", _partNum, _locationNum);
-	handleNewPartSequence();
+	if ((_gameFlags & kGameFlagDemo) == 0) {
+		handleNewPartSequence();
+	}
 	_currentPartNum = _partNum;
 
 	char filename[40];
@@ -651,16 +660,20 @@ void TuckerEngine::loadData4() {
 
 void TuckerEngine::loadActionFile() {
 	char filename[40];
-	switch (_partNum) {
-	case 1:
-		strcpy(filename, "action1.c");
-		break;
-	case 2:
-		strcpy(filename, "action2.c");
-		break;
-	default:
-		strcpy(filename, "action3.c");
-		break;
+	if ((_gameFlags & kGameFlagDemo) != 0) {
+		strcpy(filename, "action.c");
+	} else {
+		switch (_partNum) {
+		case 1:
+			strcpy(filename, "action1.c");
+			break;
+		case 2:
+			strcpy(filename, "action2.c");
+			break;
+		default:
+			strcpy(filename, "action3.c");
+			break;
+		}
 	}
 	loadFile(filename, _loadTempBuf);
 
