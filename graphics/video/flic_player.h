@@ -105,6 +105,8 @@ public:
 	void redraw();
 	void reset();
 
+	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
+
 	/**
 	 * Copy current frame into the specified position of the destination
 	 * buffer.

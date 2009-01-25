@@ -77,6 +77,7 @@ bool FlicPlayer::loadFile(const char *fileName) {
 	if (_flicInfo.type != 0xAF12) {
 		warning("FlicPlayer::FlicPlayer(): attempted to load non-FLC data (type = 0x%04X)", _flicInfo.type);
 		delete _fileStream;
+		_fileStream = 0;
 		return false;
 	}
 
@@ -109,6 +110,8 @@ void FlicPlayer::closeFile() {
 
 	delete[] _offscreen;
 	_offscreen = 0;
+
+	_dirtyRects.clear();
 }
 
 void FlicPlayer::redraw() {
@@ -305,6 +308,16 @@ void FlicPlayer::setPalette(uint8 *mem) {
 			mem += (change * 3);
 		}
 	}
+}
+
+void FlicPlayer::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
+	for (Common::List<Common::Rect>::const_iterator it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+		for (int y = (*it).top; y < (*it).bottom; ++y) {
+			const int x = (*it).left;
+			memcpy(dst + y * pitch + x, _offscreen + y * _flicInfo.width + x, (*it).right - x);
+		}
+	}
+	_dirtyRects.clear();
 }
 
 void FlicPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
