@@ -469,27 +469,27 @@ void ScriptInterpreter::cmd_call() {
 }
 
 void ScriptInterpreter::cmd_svar() {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented command: cmd_svar");
 }
 
 void ScriptInterpreter::cmd_sset() {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented command: cmd_sset");
 }
 
 void ScriptInterpreter::cmd_split() {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented command: cmd_split");
 }
 
 void ScriptInterpreter::cmd_snlit() {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented command: cmd_snlit");
 }
 
 void ScriptInterpreter::cmd_yorn() {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented command: cmd_yorn");
 }
 
@@ -540,7 +540,7 @@ void ScriptInterpreter::cmd_tspace() {
 }
 
 void ScriptInterpreter::cmd_class() {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented command: cmd_class");
 }
 
@@ -553,7 +553,7 @@ void ScriptInterpreter::cmd_objectp() {
 }
 
 void ScriptInterpreter::cmd_vectorp() {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented command: cmd_vectorp");
 }
 
@@ -637,22 +637,22 @@ void ScriptInterpreter::cmd_extend() {
 }
 
 void ScriptInterpreter::cmd_catch() {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented command: cmd_catch");
 }
 
 void ScriptInterpreter::cmd_cdone() {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented command: cmd_cdone");
 }
 
 void ScriptInterpreter::cmd_throw() {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented command: cmd_throw");
 }
 
 void ScriptInterpreter::cmd_functionp() {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented command: cmd_functionp");
 }
 
@@ -673,12 +673,12 @@ void ScriptInterpreter::cmd_ge() {
 }
 
 void ScriptInterpreter::cmd_varx() {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented command: cmd_varx");
 }
 
 void ScriptInterpreter::cmd_setx() {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented command: cmd_setx");
 }
 

@@ -530,7 +530,7 @@ int16 ScriptFunctions::sfSetSpriteGround(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfLoadResText(int16 argc, int16 *argv) {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented opcode: sfLoadResText");
 	return 0;
 }
@@ -605,7 +605,7 @@ int16 ScriptFunctions::sfGetCdTime(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfPlayCdSegment(int16 argc, int16 *argv) {
-	// Never used in LGOP2, RTZ, Manhole:NE
+	// Never used in LGOP2, RTZ, Manhole:NE, Rodney
 	warning("Unimplemented opcode: sfPlayCdSegment");
 	return 0;
 }
