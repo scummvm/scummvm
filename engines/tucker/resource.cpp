@@ -415,9 +415,11 @@ void TuckerEngine::loadCTable02(int fl) {
 		}
 		int start = 0;
 		_spriteAnimationsTable[entry].firstFrameIndex = i;
-		// 9999 is also used as the end marker in the demo version
-		while (start != 999 && start != 9999) {
+		while (start != 999) {
 			start = t.getNextInteger();
+			if (start == 9999) { // end marker in the demo version
+				start = 999;
+			}
 			_spriteAnimationFramesTable[i] = start;
 			++i;
 		}
@@ -452,7 +454,7 @@ void TuckerEngine::loadLoc() {
 		copyLocBitmap(filename, 0, false);
 		Graphics::copyRect(_quadBackgroundGfxBuf + 89600, 320, _locationBackgroundGfxBuf, 640, 320, 140);
 	}
-	if ((_gameFlags & kGameFlagDemo) == 0 && _locationNum == 1) {
+	if (_locationNum == 1) {
 		_loadLocBufPtr = _quadBackgroundGfxBuf + 89600;
 		loadImage("rochpath.pcx", _loadLocBufPtr, 0);
 	}

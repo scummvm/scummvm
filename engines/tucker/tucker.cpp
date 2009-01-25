@@ -143,6 +143,14 @@ void TuckerEngine::restart() {
 	_gameHintsDisplayText = 0;
 	_gameHintsStringNum = 0;
 
+	if ((_gameFlags & kGameFlagDemo) == 0) {
+		_locationWidthTable = _locationWidthTableGame;
+		_locationHeightTable = _locationHeightTableGame;
+	} else {
+		_locationWidthTable = _locationWidthTableDemo;
+		_locationHeightTable = _locationHeightTableDemo;
+	}
+
 	memset(_sprA02Table, 0, sizeof(_sprA02Table));
 	memset(_sprC02Table, 0, sizeof(_sprC02Table));
 	memset(_actionsTable, 0, sizeof(_actionsTable));
@@ -1527,9 +1535,7 @@ void TuckerEngine::drawData3() {
 void TuckerEngine::execData3PreUpdate() {
 	switch (_locationNum) {
 	case 1:
-		if ((_gameFlags & kGameFlagDemo) == 0) {
-			execData3PreUpdate_locationNum1();
-		}
+		execData3PreUpdate_locationNum1();
 		break;
 	case 2:
 		execData3PreUpdate_locationNum2();
@@ -2819,7 +2825,7 @@ void TuckerEngine::drawStringAlt(int offset, int color, const uint8 *str, int st
 		offset += _charWidthTable[chr];
 		++pos;
 	}
-	addDirtyRect(startOffset % 640, startOffset / 640, (offset - startOffset) % 640, Graphics::_charset.charH);
+	addDirtyRect(startOffset % 640, startOffset / 640, Graphics::_charset.charW * pos, Graphics::_charset.charH);
 }
 
 void TuckerEngine::drawItemString(int offset, int num, const uint8 *str) {
@@ -3776,13 +3782,13 @@ int TuckerEngine::splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int
 
 void TuckerEngine::drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, int dstOffset, uint8 color) {
 	int startOffset = dstOffset;
-	while (count > 0 && dataPtr[pos] != '\n') {
+	int i = 0;
+	for (; i < count && dataPtr[pos] != '\n'; ++i) {
 		Graphics::drawStringChar(_locationBackgroundGfxBuf + dstOffset, dataPtr[pos], 640, color, _charsetGfxBuf);
 		dstOffset += _charWidthTable[dataPtr[pos]];
 		++pos;
-		--count;
 	}
-	addDirtyRect(startOffset % 640, startOffset / 640, (dstOffset - startOffset) % 640, Graphics::_charset.charH);
+	addDirtyRect(startOffset % 640, startOffset / 640, Graphics::_charset.charW * i, Graphics::_charset.charH);
 }
 
 void TuckerEngine::redrawScreen(int offset) {

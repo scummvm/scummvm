@@ -624,6 +624,8 @@ protected:
 	uint8 *_csDataBuf;
 	int _csDataSize;
 	uint8 _charWidthTable[256];
+	const uint8 *_locationWidthTable;
+	uint8 *_locationHeightTable;
 
 	int _mousePosX, _mousePosY;
 	int _prevMousePosX, _prevMousePosY;
@@ -817,12 +819,14 @@ protected:
 	int _updateLocation70StringLen;
 	uint8 _updateLocation70String[20];
 
-	static const int _locationWidthTable[85];
+	static const uint8 _locationWidthTableGame[85];
+	static const uint8 _locationWidthTableDemo[70];
 	static const uint8 _sprA02LookupTable[88];
 	static const uint8 _sprC02LookupTable[100];
 	static const uint8 _sprC02LookupTable2[100];
 	static const int _staticData3Table[1600];
-	static int _locationHeightTable[80];
+	static uint8 _locationHeightTableGame[80];
+	static uint8 _locationHeightTableDemo[70];
 	static int _objectKeysPosXTable[80];
 	static int _objectKeysPosYTable[80];
 	static int _objectKeysLocationTable[80];
