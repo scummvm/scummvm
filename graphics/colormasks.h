@@ -56,7 +56,7 @@ The meaning of these is masks is the following:
  appropriate data).
 
 
- The highBits / lowBits / qhighBits / qlowBits are special values that are
+ The kHighBitsMask / kLowBitsMask / qhighBits / qlowBits are special values that are
  used in the super-optimized interpolation functions in scaler/intern.h
  and scaler/aspect.cpp. Currently they are only available in 555 and 565 mode.
  To be specific: They pack the masks for two 16 bit pixels at once. The pixels
@@ -70,8 +70,8 @@ The meaning of these is masks is the following:
 template<>
 struct ColorMasks<565> {
 	enum {
-		highBits    = 0xF7DEF7DE,
-		lowBits     = 0x08210821,
+		kHighBitsMask    = 0xF7DEF7DE,
+		kLowBitsMask     = 0x08210821,
 		qhighBits   = 0xE79CE79C,
 		qlowBits    = 0x18631863,
 
@@ -88,21 +88,21 @@ struct ColorMasks<565> {
 		kGreenShift = kBlueBits,
 		kBlueShift  = 0,
 
-		kAlphaMask = ((1 << kAlphaBits) - 1) << kAlphaShift,
-		kRedMask   = ((1 << kRedBits) - 1) << kRedShift,
-		kGreenMask = ((1 << kGreenBits) - 1) << kGreenShift,
-		kBlueMask  = ((1 << kBlueBits) - 1) << kBlueShift,
+		kAlphaMask  = ((1 << kAlphaBits) - 1) << kAlphaShift,
+		kRedMask    = ((1 << kRedBits) - 1) << kRedShift,
+		kGreenMask  = ((1 << kGreenBits) - 1) << kGreenShift,
+		kBlueMask   = ((1 << kBlueBits) - 1) << kBlueShift,
 
-		kRedBlueMask = kRedMask | kBlueMask
-
+		kRedBlueMask = kRedMask | kBlueMask,
+		kLowBits    = (1 << kRedShift) | (1 << kGreenShift) | (1 << kBlueShift)
 	};
 };
 
 template<>
 struct ColorMasks<555> {
 	enum {
-		highBits    = 0x7BDE7BDE,
-		lowBits     = 0x04210421,
+		kHighBitsMask    = 0x7BDE7BDE,
+		kLowBitsMask     = 0x04210421,
 		qhighBits   = 0x739C739C,
 		qlowBits    = 0x0C630C63,
 
@@ -124,7 +124,8 @@ struct ColorMasks<555> {
 		kGreenMask = ((1 << kGreenBits) - 1) << kGreenShift,
 		kBlueMask  = ((1 << kBlueBits) - 1) << kBlueShift,
 
-		kRedBlueMask = kRedMask | kBlueMask
+		kRedBlueMask = kRedMask | kBlueMask,
+		kLowBits    = (1 << kRedShift) | (1 << kGreenShift) | (1 << kBlueShift)
 	};
 };
 

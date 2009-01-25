@@ -121,21 +121,21 @@ void InitScalers(uint32 BitFormat) {
 	gBitFormat = BitFormat;
 
 #ifndef DISABLE_HQ_SCALERS
-	#undef highBits;
-	#undef lowBits;
+	#undef kHighBitsMask;
+	#undef kLowBitsMask;
 
 	if (gBitFormat == 555) {
 		InitLUT(Graphics::createPixelFormat<555>());
 #ifdef USE_NASM
-		hqx_highbits = Graphics::ColorMasks<555>::highBits;
-		hqx_lowbits = Graphics::ColorMasks<555>::lowBits & 0xFFFF;
+		hqx_highbits = Graphics::ColorMasks<555>::kHighBitsMask;
+		hqx_lowbits = Graphics::ColorMasks<555>::kLowBitsMask & 0xFFFF;
 #endif
 	}
 	if (gBitFormat == 565) {
 		InitLUT(Graphics::createPixelFormat<565>());
 #ifdef USE_NASM
-		hqx_highbits = Graphics::ColorMasks<565>::highBits;
-		hqx_lowbits = Graphics::ColorMasks<565>::lowBits & 0xFFFF;
+		hqx_highbits = Graphics::ColorMasks<565>::kHighBitsMask;
+		hqx_lowbits = Graphics::ColorMasks<565>::kLowBitsMask & 0xFFFF;
 #endif
 	}
 #endif

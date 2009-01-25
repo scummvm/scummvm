@@ -30,8 +30,8 @@
 #include "graphics/colormasks.h"
 
 
-#define highBits	Graphics::ColorMasks<bitFormat>::highBits
-#define lowBits		Graphics::ColorMasks<bitFormat>::lowBits
+#define kHighBitsMask	Graphics::ColorMasks<bitFormat>::kHighBitsMask
+#define kLowBitsMask		Graphics::ColorMasks<bitFormat>::kLowBitsMask
 #define qhighBits	Graphics::ColorMasks<bitFormat>::qhighBits
 #define qlowBits	Graphics::ColorMasks<bitFormat>::qlowBits
 #define redblueMask	Graphics::ColorMasks<bitFormat>::kRedBlueMask
@@ -45,7 +45,7 @@
  */
 template<int bitFormat>
 static inline uint32 interpolate32_1_1(uint32 A, uint32 B) {
-	return (((A & highBits) >> 1) + ((B & highBits) >> 1) + (A & B & lowBits));
+	return (((A & kHighBitsMask) + (B & kHighBitsMask)) >> 1) + (A & B & kLowBitsMask);
 }
 
 /**
@@ -97,55 +97,6 @@ static inline uint16 interpolate16_3(uint16 p1, uint16 p2, uint16 p3) {
 	return ((((p1 & redblueMask) * w1 + (p2 & redblueMask) * w2 + (p3 & redblueMask) * w3) / (w1 + w2 + w3)) & redblueMask) |
 		   ((((p1 & greenMask) * w1 + (p2 & greenMask) * w2 + (p3 & greenMask) * w3) / (w1 + w2 + w3)) & greenMask);
 }
-
-
-template<int bitFormat>
-static inline unsigned interpolate16_3_1(unsigned c1, unsigned c2) { 
-   const unsigned lowbits=(((c1<<1)&(lowBits<<1))+(c1&qlowBits)+(c2&qlowBits))&qlowBits; 
-   return ((c1*3+c2) - lowbits) >> 2; 
-} 
-
-template<int bitFormat>
-static inline unsigned interpolate16_2_1_1(unsigned c1, unsigned c2, unsigned c3) { 
-   c1<<=1; 
-   const unsigned lowbits=((c1&(lowBits<<1))+(c2&qlowBits)+(c3&qlowBits))&qlowBits; 
-   return ((c1+c2+c3) - lowbits) >> 2; 
-} 
-
-template<int bitFormat>
-static inline unsigned interpolate16_1_1(unsigned c1, unsigned c2) { 
-   return ( c1+c2 - ((c1^c2)&lowBits) ) >> 1; 
-} 
-
-template<int bitFormat>
-static inline unsigned interpolate16_5_2_1(unsigned c1, unsigned c2, unsigned c3) { 
-   c2<<=1; 
-   const unsigned lowbits=( ((c1<<2)&(lowBits<<2))+(c1&0x1CE7)+(c2&0x18C6)+(c3&0x1CE7) ) & 0x1CE7; 
-   return ((c1*5+c2+c3) - lowbits) >> 3; 
-} 
-
-template<int bitFormat>
-static inline unsigned interpolate16_6_1_1(unsigned c1, unsigned c2, unsigned c3) { 
-   const unsigned lowbits=(((((c1<<1)&(lowBits<<1))+(c1&qlowBits))<<1)+(c2&0x1CE7)+(c3&0x1CE7))&0x1CE7; 
-   return ((c1*6+c2+c3) - lowbits) >> 3; 
-} 
-
-template<int bitFormat>
-static inline unsigned interpolate16_2_3_3(unsigned c1, unsigned c2, unsigned c3) { 
-   c1<<=1; 
-   const unsigned rb=(c1&(redblueMask<<1))+((c2&redblueMask)+(c3&redblueMask))*3; 
-   const unsigned g=(c1&(greenMask<<1))+((c2&greenMask)+(c3&greenMask))*3; 
-   return ((rb&(redblueMask<<3))|(g&(greenMask<<8)))>>3; 
-} 
-
-template<int bitFormat>
-static inline unsigned interpolate16_14_1_1(unsigned c1, unsigned c2, unsigned c3) { 
-   const unsigned rb=(c1&redblueMask)*14+(c2&redblueMask)+(c3&redblueMask); 
-   const unsigned g=(c1&greenMask)*14+(c2&greenMask)+(c3&greenMask); 
-   return ((rb&(redblueMask<<4))|(g&(greenMask<<4)))>>4; 
-}
-
-
 
 
 /**
