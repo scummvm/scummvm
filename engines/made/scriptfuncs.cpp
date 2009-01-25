@@ -306,24 +306,34 @@ int16 ScriptFunctions::sfFlashScreen(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfPlayNote(int16 argc, int16 *argv) {
 	// TODO: Used in Manhole:NE, Manhole EGA
+	// This is used when using the piano in the desk screen inside the ship.
+	// It takes 2 parameters:
+	// The first parameter is the key pressed
+	// The second parameter is some sort of modifier (volume, perhaps?),
+	// depending on which of the 3 keys on the right has been pressed (12 - 14)
 	warning("Unimplemented opcode: sfPlayNote");
 	return 0;
 }
 
 int16 ScriptFunctions::sfStopNote(int16 argc, int16 *argv) {
 	// TODO: Used in Manhole:NE, Manhole EGA
+	// Used in the same place as sfPlayNote, with the same parameters
 	warning("Unimplemented opcode: sfStopNote");
 	return 0;
 }
 
 int16 ScriptFunctions::sfPlayTele(int16 argc, int16 *argv) {
 	// TODO: Used in Manhole:NE, Manhole EGA
+	// This is used when pressing the phone keys while using the phone in
+	// the desk screen inside the ship.
+	// It takes 1 parameter, the key pressed (0-9, 10 for asterisk, 11 for hash)
 	warning("Unimplemented opcode: sfPlayTele");
 	return 0;
 }
 
 int16 ScriptFunctions::sfStopTele(int16 argc, int16 *argv) {
 	// TODO: Used in Manhole:NE, Manhole EGA
+	// Used in the same place as sfPlayTele, with the same parameters
 	warning("Unimplemented opcode: sfStopTele");
 	return 0;
 }
