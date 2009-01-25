@@ -121,8 +121,8 @@ void InitScalers(uint32 BitFormat) {
 	gBitFormat = BitFormat;
 
 #ifndef DISABLE_HQ_SCALERS
-	#undef kHighBitsMask;
-	#undef kLowBitsMask;
+	#undef kHighBitsMask
+	#undef kLowBitsMask
 
 	if (gBitFormat == 555) {
 		InitLUT(Graphics::createPixelFormat<555>());
@@ -134,7 +134,9 @@ void InitScalers(uint32 BitFormat) {
 	if (gBitFormat == 565) {
 		InitLUT(Graphics::createPixelFormat<565>());
 #ifdef USE_NASM
-		hqx_highbits = Graphics::ColorMasks<565>::kHighBitsMask;
+		// The uint32 cast here is needed to silence an MSVC warning
+		// (warning C4245: '=': conversion from '' to 'uint32', signed/unsigned mismatch
+		hqx_highbits = (uint32)Graphics::ColorMasks<565>::kHighBitsMask;
 		hqx_lowbits = Graphics::ColorMasks<565>::kLowBitsMask & 0xFFFF;
 #endif
 	}
