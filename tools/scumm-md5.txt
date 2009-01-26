@@ -124,6 +124,7 @@ indy3	Indiana Jones and the Last Crusade
 	62b8c16b6db226ba95aaa8be73f9885c	-1	es	Amiga	EGA	EGA	-	
 	157367c3c21e0d03a0cba44361b4cf65	-1	en	Atari	No Adlib	EGA	-	Andreas Bylund
 	0f9c7a76657f0840b8f7ccb5bffeb9f4	-1	fr	Atari	No Adlib	EGA	-	Andreas Bylund
+	aaa7f36a253f277dd29dd1c051b0c4b9	-1	de	Atari	No Adlib	EGA	-	Jimmy Kohl
 	5fbe557049892eb4b709d90916ec97ca	5361	en	DOS	EGA	EGA	v1.0, 7/09/89	Fingolfin
 	6b3ec67da214f558dc5ceaa2acd47453	-1	en	DOS	EGA	EGA	v1.3, 14 Aug 89	tsuteiuQ, Andrea Petrucci, Peter Eckerlein
 	6508fd55530e6915507e1cc37f7f045d	-1	en	DOS	EGA	EGA	v1.3, 8/14/89 (5.25\")	Zer02
