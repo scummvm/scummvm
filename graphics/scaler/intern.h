@@ -40,12 +40,13 @@
 
 /**
  * Interpolate two 16 bit pixel *pairs* at once with equal weights 1.
- * In particular, A and B can contain two pixels/each in the upper
- * and lower halves.
+ * In particular, p1 and p2 can contain two pixels each in the upper
+ * and lower halves. Requires only 5 operations!
+ * See <http://www.slack.net/~ant/info/rgb_mixing.html> for details on how this works.
  */
 template<int bitFormat>
-static inline uint32 interpolate32_1_1(uint32 A, uint32 B) {
-	return (((A & kHighBitsMask) + (B & kHighBitsMask)) >> 1) + (A & B & kLowBitsMask);
+static inline uint32 interpolate32_1_1(uint32 p1, uint32 p2) {
+	return (p1 + p2 - ((p1 ^ p2) & kLowBitsMask)) >> 1; 
 }
 
 /**
