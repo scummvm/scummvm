@@ -249,6 +249,10 @@ void LureEngine::GUIError(const char *msg, ...) {
 	GUIErrorMessage(buffer);
 }
 
+GUI::Debugger *LureEngine::getDebugger() {
+	return &Game::getReference().debugger();
+}
+
 void LureEngine::syncSoundSettings() {
 	Sound.syncSounds();
 }
