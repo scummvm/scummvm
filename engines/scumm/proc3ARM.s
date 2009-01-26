@@ -181,6 +181,7 @@ outerloop:
        	BICS	r14,r14,r1,LSL r5	@ r14= len
        	LDREQB	r14,[r11],#1		@ if (!len)  r14 = len = *src++
 	STR	r11,[r13,#src]
+	CMP	r14,#0
 middleloop:
 	@ r0 = _scaleY
 	@ r1 = color
@@ -198,7 +199,6 @@ middleloop:
 	@ r14= len
 
 	MOV	r5,r12		@ loopCount = height
-	CMP	r14,#0
 	CMPNE	r5,r14		@ if (len != 0 && loopCount > len)
 	MOVGT	r5,r14		@	loopCount = len
 	SUB	r12,r12,r5	@ height -= loopCount
