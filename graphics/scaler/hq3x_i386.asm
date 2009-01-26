@@ -20,10 +20,14 @@
 
 GLOBAL _hq3x_16
 
-EXTERN _LUT16to32
 EXTERN _RGBtoYUV
 EXTERN _hqx_highbits
 EXTERN _hqx_lowbits
+EXTERN _hqx_low2bits
+EXTERN _hqx_low3bits
+EXTERN _hqx_greenMask
+EXTERN _hqx_redBlueMask
+EXTERN _hqx_green_redBlue_Mask
 
 SECTION .bss
 linesleft resd 1
@@ -40,6 +44,8 @@ w6        resd 1
 w7        resd 1
 w8        resd 1
 w9        resd 1
+
+tmpData        resd 1
 
 SECTION .data
 
@@ -162,48 +168,87 @@ SECTION .text
 ; interpolate16_2<bitFormat,7,1>
 ; Mix two pixels with weight 7 and 1, respectively: (c1*7+c2)/8;
 %macro Interp3 2
-    mov        ecx, [_LUT16to32]
-    movd       mm1, [ecx+eax*4]
-    mov        edx, %2
-    movd       mm2, [ecx+edx*4]
-    punpcklbw  mm1, [reg_blank]
-    punpcklbw  mm2, [reg_blank]
-    pmullw     mm1, [const7]
-    paddw      mm1, mm2
-    psrlw      mm1, 5
-    packuswb   mm1, [reg_blank]
-    movd       edx, mm1
-    shl        dl,  2
-    shr        edx, 1
-    shl        dx,  3
-    shr        edx, 5
-    mov        %1,  dx
+	; ((p1&kLowBitsMask)<<2)
+	mov ecx,eax
+	and ecx,[_hqx_lowbits]
+	shl ecx,2
+	
+	; + ((p1&kLow2Bits)<<1)
+	mov edx,eax
+	and edx,[_hqx_low2bits]
+	shl edx,1
+	add ecx,edx
+	
+	; + (p1&kLow3Bits)
+	mov edx,eax
+	and edx,[_hqx_low3bits]
+	add ecx,edx
+	
+	; + (p2&kLow3Bits)
+	mov edx,%2
+	and edx,[_hqx_low3bits]
+	add ecx,edx
+	
+	; & kLow3Bits  -> ecx
+	and ecx,[_hqx_low3bits]
+	
+	; compute ((p1*7+p2) - ecx) >> 3;
+	mov edx,eax
+	shl edx,3
+	sub edx,eax
+	sub edx,ecx
+	mov ecx,%2
+	add edx,ecx
+	shr edx,3
+
+    mov %1,dx
 %endmacro
 
 ; interpolate16_3<bitFormat,2,7,7>
 ; Mix three pixels with weight 2, 7, and 7, respectively: (c1*2+(c2+c3)*7)/16;
 %macro Interp4 3
-    mov        ecx, [_LUT16to32]
-    movd       mm1, [ecx+eax*4]
-    mov        edx, %2
-    movd       mm2, [ecx+edx*4]
-    mov        edx, %3
-    movd       mm3, [ecx+edx*4]
-    punpcklbw  mm1, [reg_blank]
-    punpcklbw  mm2, [reg_blank]
-    punpcklbw  mm3, [reg_blank]
-    psllw      mm1, 1
-    paddw      mm2, mm3
-    pmullw     mm2, [const7]
-    paddw      mm1, mm2
-    psrlw      mm1, 6
-    packuswb   mm1, [reg_blank]
-    movd       edx, mm1
-    shl        dl,  2
-    shr        edx, 1
-    shl        dx,  3
-    shr        edx, 5
-    mov        %1,  dx
+	; unpack c2
+	mov eax, %2
+	mov edx, eax
+	shl edx, 16
+	or  edx, eax
+	and edx, [_hqx_green_redBlue_Mask]
+	
+	; unpack c3
+	mov eax, %3
+	mov ecx, eax
+	shl ecx, 16
+	or  ecx, eax
+	and ecx, [_hqx_green_redBlue_Mask]
+	
+	; sum c2 and c3
+	add edx, ecx
+
+	; multiply (c2+c3) by 7
+	;imul edx, 7	; imul works, too, but might be slower on older systems?
+	mov ecx, edx
+	shl edx, 3
+	sub edx, ecx
+	
+	; Restore eax, unpack it and multiply by 2
+	mov eax, [w5]
+	mov ecx, eax
+	shl ecx, 16
+	or  ecx, eax
+	and ecx, [_hqx_green_redBlue_Mask]
+	add ecx, ecx	; multiply by 2
+	
+	; sum 2*eax + 7*(c2+c3), divide by 16, mask the result
+	add edx, ecx
+	shr edx, 4
+	and edx, [_hqx_green_redBlue_Mask]
+	
+	; finally, repack the mixed pixel
+	mov ecx, edx
+	shr ecx, 16
+	or  edx, ecx
+
+    mov %1,  dx
 %endmacro
 
 ; interpolate16_2<bitFormat,1,1>
@@ -211,9 +256,14 @@ SECTION .text
 %macro Interp5 3
     mov edx,%2
     mov ecx,%3
-    and edx,[_hqx_highbits]
-    and ecx,[_hqx_highbits]
-    add edx,ecx
+     
+    xor edx,ecx       ; xor pixels
+    mov [tmpData],edx ; store tmp result
+    xor edx,ecx       ; restore original value of edx (avoids a reload)
+    add edx,ecx       ; sum pixels
+    mov ecx,[tmpData]
+    and ecx,[_hqx_lowbits]
+    sub edx,ecx
     shr edx,1
     mov %1,dx
 %endmacro

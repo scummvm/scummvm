@@ -53,17 +53,26 @@ extern "C" {
 
 #if !defined(_WIN32) && !defined(MACOSX) && !defined(__OS2__)
 #define RGBtoYUV _RGBtoYUV
-#define LUT16to32 _LUT16to32
 #define hqx_highbits _hqx_highbits
 #define hqx_lowbits _hqx_lowbits
+#define hqx_low2bits _hqx_low2bits
+#define hqx_low3bits _hqx_low3bits
+#define hqx_greenMask _hqx_greenMask
+#define hqx_redBlueMask _hqx_redBlueMask
+#define hqx_green_redBlue_Mask _hqx_green_redBlue_Mask
 #endif
 
 #endif
 
 uint32 hqx_highbits = 0xF7DEF7DE;
 uint32 hqx_lowbits = 0x0821;
+uint32 hqx_low2bits = 0x0C63;
+uint32 hqx_low3bits = 0x1CE7;
+uint32 hqx_greenMask = 0;
+uint32 hqx_redBlueMask = 0;
+uint32 hqx_green_redBlue_Mask = 0;
 
-// FIXME/TODO: The following two tables suck up 512 KB. This is bad.
+// FIXME/TODO: The RGBtoYUV table sucks up 256 KB. This is bad.
 // In addition we never free them...
 //
 // Note: a memory lookup table is *not* necessarily faster than computing
@@ -72,14 +81,7 @@ uint32 hqx_lowbits = 0x0821;
 // systems, so main memory has to be accessed, which is about the worst thing
 // that can happen to code which tries to be fast...
 //
-// So we should think about ways to get these smaller / removed. The LUT16to32
-// is only used by the HQX asm right now; maybe somebody can modify the code
-// there to work w/o it (and do some benchmarking, too?). To do that, just
-// do the conversion on the fly, or even do w/o it (as the C++ code manages to),
-// by making different versions of the code based on gBitFormat (or by writing
-// bit masks into registers which are computed based on gBitFormat).
-//
-// RGBtoYUV is also used by the C(++) version of the HQX code. Maybe we can
+// So we should think about ways to get these smaller / removed. Maybe we can
 // use the same technique which is employed by our MPEG code to reduce the
 // size of the lookup tables at the cost of some additional computations? That
 // might actually result in a speedup, too, if done right (and the code code
@@ -89,7 +91,6 @@ uint32 hqx_lowbits = 0x0821;
 // differences are likely to vary a lot between different architectures and
 // CPUs.
 uint32 *RGBtoYUV = 0;
-uint32 *LUT16to32 = 0;
 }
 
 void InitLUT(Graphics::PixelFormat format) {
@@ -101,18 +102,29 @@ void InitLUT(Graphics::PixelFormat format) {
 	// Allocate the YUV/LUT buffers on the fly if needed.
 	if (RGBtoYUV == 0)
 		RGBtoYUV = (uint32 *)malloc(65536 * sizeof(uint32));
-	if (LUT16to32 == 0)
-		LUT16to32 = (uint32 *)malloc(65536 * sizeof(uint32));
 
 	for (int color = 0; color < 65536; ++color) {
 		format.colorToRGB(color, r, g, b);
-		LUT16to32[color] = (r << 16) | (g << 8) | b;
-
 		Y = (r + g + b) >> 2;
 		u = 128 + ((r - b) >> 2);
 		v = 128 + ((-r + 2 * g - b) >> 3);
 		RGBtoYUV[color] = (Y << 16) | (u << 8) | v;
 	}
+
+#ifdef USE_NASM
+	hqx_lowbits  = (1 << format.rShift) | (1 << format.gShift) | (1 << format.bShift),
+	hqx_low2bits = (3 << format.rShift) | (3 << format.gShift) | (3 << format.bShift),
+	hqx_low3bits = (7 << format.rShift) | (7 << format.gShift) | (7 << format.bShift),
+
+	hqx_highbits = format.RGBToColor(255,255,255) ^ hqx_lowbits;
+	
+	// FIXME: The following code only does the right thing
+	// if the color order is RGB or BGR, i.e., green is in the middle.
+	hqx_greenMask = format.RGBToColor(0,255,0);
+	hqx_redBlueMask = format.RGBToColor(255,0,255);
+	
+	hqx_green_redBlue_Mask = (hqx_greenMask << 16) | hqx_redBlueMask;
+#endif
 }
 #endif
 
@@ -121,24 +133,11 @@ void InitScalers(uint32 BitFormat) {
 	gBitFormat = BitFormat;
 
 #ifndef DISABLE_HQ_SCALERS
-	#undef kHighBitsMask
-	#undef kLowBitsMask
-
 	if (gBitFormat == 555) {
 		InitLUT(Graphics::createPixelFormat<555>());
-#ifdef USE_NASM
-		hqx_highbits = Graphics::ColorMasks<555>::kHighBitsMask;
-		hqx_lowbits = Graphics::ColorMasks<555>::kLowBitsMask & 0xFFFF;
-#endif
 	}
 	if (gBitFormat == 565) {
 		InitLUT(Graphics::createPixelFormat<565>());
-#ifdef USE_NASM
-		// The uint32 cast here is needed to silence an MSVC warning
-		// (warning C4245: '=': conversion from '' to 'uint32', signed/unsigned mismatch
-		hqx_highbits = (uint32)Graphics::ColorMasks<565>::kHighBitsMask;
-		hqx_lowbits = Graphics::ColorMasks<565>::kLowBitsMask & 0xFFFF;
-#endif
 	}
 #endif
 }
@@ -146,9 +145,7 @@ void InitScalers(uint32 BitFormat) {
 void DestroyScalers(){
 #ifndef DISABLE_HQ_SCALERS
 	free(RGBtoYUV);
-	free(LUT16to32);
 	RGBtoYUV = 0;
-	LUT16to32 = 0;
 #endif
 }
 
