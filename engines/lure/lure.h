@@ -88,6 +88,7 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
+	virtual GUI::Debugger *getDebugger();
 	bool isEGA() const { return (getFeatures() & GF_EGA) != 0; }
 };
 	Common::String getSaveName(Common::InSaveFile *in);
