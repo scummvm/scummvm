@@ -178,15 +178,14 @@ VectorRenderer *createRenderer(int mode) {
 	PixelFormat format = g_system->getOverlayFormat();
 	if (format == createPixelFormat<1555>()) {
 		CREATE_RENDERER_16(1555)
-	}
-	if (format == createPixelFormat<4444>()) {
+	} else if (format == createPixelFormat<4444>()) {
 		CREATE_RENDERER_16(4444)
-	}
-	if (format == createPixelFormat<555>()) {
+	} else if (format == createPixelFormat<555>()) {
 		CREATE_RENDERER_16(555)
-	}
-	if (format == createPixelFormat<565>()) {
+	} else if (format == createPixelFormat<565>()) {
 		CREATE_RENDERER_16(565)
+	} else {
+		error("createRenderer(): PixelFormat not supported");
 	}
 
 	return 0;
