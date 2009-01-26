@@ -486,6 +486,16 @@ protected:
 
 	TextLocation _textLocation1, _textLocation2, _textLocation3, _textLocation4;
 
+	byte _awaitTwoByteToken;
+	byte *_byteTokens;
+	byte *_byteTokenStrings;
+	byte *_twoByteTokens;
+	byte *_twoByteTokenStrings;
+	byte *_secondTwoByteTokenStrings;
+	byte *_thirdTwoByteTokenStrings;
+	byte _textBuffer[180];
+	int _textCount;
+
 	int _freeStringSlot;
 
 	byte _stringReturnBuffer[2][180];
@@ -657,6 +667,9 @@ protected:
 	uint itemPtrToID(Item *id);
 	Item *me();
 	Item *actor();
+
+	void uncompressText(byte *ptr);
+	byte *uncompressToken(byte a, byte *ptr);
 
 	void showMessageFormat(const char *s, ...);
 	const byte *getStringPtrByID(uint16 stringId, bool upperCase = false);
