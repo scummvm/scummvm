@@ -427,6 +427,16 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	memset(_fcsData1, 0, sizeof(_fcsData1));
 	memset(_fcsData2, 0, sizeof(_fcsData2));
 
+	_awaitTwoByteToken = 0;
+	_byteTokens = 0;
+	_byteTokenStrings = 0;
+	_twoByteTokens = 0;
+	_twoByteTokenStrings = 0;
+	_secondTwoByteTokenStrings = 0;
+	_thirdTwoByteTokenStrings = 0;
+	memset(_textBuffer, 0, sizeof(_textBuffer));
+	_textCount = 0;
+
 	_freeStringSlot = 0;
 
 	memset(_stringReturnBuffer, 0, sizeof(_stringReturnBuffer));

@@ -152,7 +152,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
-	// Elvira 1 - French Atari ST Floppy
+	// Elvira 1 - English Atari ST Floppy alternative?
 	{
 		{
 			"elvira1",
@@ -164,7 +164,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ "tbllist",		GAME_TBLFILE,	"5b6ff494bf7e24213758598ef4ac0a8b", 476},
 	{ NULL, 0, NULL, 0}
 			},
-			Common::FR_FRA,
+			Common::EN_ANY,
 			Common::kPlatformAtariST,
 			Common::ADGF_NO_FLAGS
 		},

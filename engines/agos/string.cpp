@@ -32,20 +32,106 @@ using Common::File;
 
 namespace AGOS {
 
+void AGOSEngine::uncompressText(byte *ptr) {
+	byte a;
+	while (1) {
+		if (_awaitTwoByteToken != 0)
+			a = _awaitTwoByteToken;
+		else
+			a = *ptr++;
+		if (a == 0)
+			return;
+		ptr = uncompressToken(a, ptr);
+		if (ptr == 0)
+			return;
+	}
+}
+
+byte *AGOSEngine::uncompressToken(byte a, byte *ptr) {
+	byte *ptr1;
+	byte *ptr2;
+	byte b;
+	int count1 = 0;
+
+	if (a == 0xFF || a == 0xFE || a == 0xFD) {
+		if (a == 0xFF)
+			ptr2 = _twoByteTokenStrings;
+		if (a == 0xFE) 
+			ptr2 = _secondTwoByteTokenStrings;
+		if (a == 0xFD)
+			ptr2 = _thirdTwoByteTokenStrings;
+		_awaitTwoByteToken = a;
+		b = a;
+		a = *ptr++;
+		if (a == 0)		/* Need to return such that next byte   */
+			return 0;	/* is used as two byte token		*/
+
+		_awaitTwoByteToken = 0;
+		ptr1 = _twoByteTokens;
+		while (*ptr1 != a) {
+			ptr1++;
+			count1++;
+			if (*ptr1 == 0)	{	/* If was not a two byte token  */
+				count1 = 0;	/* then was a byte token.	*/
+				ptr1 = _byteTokens;
+				while (*ptr1 != a) {
+					ptr1++;
+					count1++;
+				}
+				ptr1 = _byteTokenStrings;		/* Find it */
+				while (count1--)	{			
+					while (*ptr1++);
+				}
+				ptr1 = uncompressToken(b, ptr1);	/* Try this one as a two byte token */
+				uncompressText(ptr1);			/* Uncompress rest of this token    */
+				return ptr;
+			}
+		}
+		while (count1--) {
+			while (*ptr2++);
+		}
+		uncompressText(ptr2);
+	} else {
+		ptr1 = _byteTokens;
+		while (*ptr1 != a) {
+			ptr1++;
+			count1++;
+			if (*ptr1 == 0) {
+				_textBuffer[_textCount++] = a;	/* Not a byte token */
+				return ptr;			/* must be real character */
+			}
+		}
+		ptr1 = _byteTokenStrings;
+		while (count1--)	{		/* Is a byte token so count */
+			while (*ptr1++);		/* to start of token */
+		}
+		uncompressText(ptr1);			/* and do it */
+	}
+	return ptr;
+}
+
 const byte *AGOSEngine::getStringPtrByID(uint16 stringId, bool upperCase) {
 	const byte *string_ptr;
 	byte *dst;
 
 	_freeStringSlot ^= 1;
-
-	if (stringId < 0x8000) {
-		string_ptr = _stringTabPtr[stringId];
-	} else {
-		string_ptr = getLocalStringByID(stringId);
-	}
-
 	dst = _stringReturnBuffer[_freeStringSlot];
-	strcpy((char *)dst, (const char *)string_ptr);
+
+	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAtariST) {
+		byte *ptr = _stringTabPtr[stringId];
+		_textCount = 0;
+		_awaitTwoByteToken = 0;
+		uncompressText(ptr);
+		_textBuffer[_textCount] = 0;
+		strcpy((char *)dst, (const char *)_textBuffer);
+	} else {
+		if (stringId < 0x8000) {
+			string_ptr = _stringTabPtr[stringId];
+		} else {
+			string_ptr = getLocalStringByID(stringId);
+		}
+		strcpy((char *)dst, (const char *)string_ptr);
+	}
 
 	if (upperCase && *dst) {
 		if (islower(*dst))
@@ -86,15 +172,53 @@ void AGOSEngine::allocateStringTable(int num) {
 
 void AGOSEngine::setupStringTable(byte *mem, int num) {
 	int i = 0;
-	for (;;) {
-		_stringTabPtr[i++] = mem;
-		if (--num == 0)
-			break;
-		for (; *mem; mem++);
-		mem++;
-	}
 
-	_stringTabPos = i;
+	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAtariST) {
+		int ct1;
+
+		_twoByteTokens = mem;
+		while (*mem++) {
+			i++;
+		}
+		_twoByteTokenStrings = mem;
+		ct1 = i;
+		while (*mem++) {
+			while (*mem++);
+			i--;
+			if ((i == 0) && (ct1 != 0)) {
+				_secondTwoByteTokenStrings = mem;
+				i = ct1;
+				ct1 = 0;
+			}
+			if (i == 0)
+				_thirdTwoByteTokenStrings = mem;
+		}
+		_byteTokens = mem;
+		while (*mem++);
+		_byteTokenStrings = mem;
+		while (*mem++) {
+			while(*mem++);
+		}
+		i = 0;
+l1:		_stringTabPtr[i++] = mem;
+		num--;
+		if (!num) {
+			_stringTabPos = i;
+			return;
+		}
+		while (*mem++);
+		goto l1;
+	} else {
+		for (;;) {
+			_stringTabPtr[i++] = mem;
+			if (--num == 0)
+				break;
+			for (; *mem; mem++);
+			mem++;
+		}
+	
+		_stringTabPos = i;
+	}
 }
 
 void AGOSEngine::setupLocalStringTable(byte *mem, int num) {
@@ -665,26 +789,26 @@ uint16 AGOSEngine_Waxworks::getBoxSize() {
 }
 
 
-uint16 AGOSEngine_Waxworks::checkFit(char *Ptr, int width, int lines) {
+uint16 AGOSEngine_Waxworks::checkFit(char *ptr, int width, int lines) {
 	int countw = 0;
 	int countl = 0;
 	char *x = NULL;
-	while (*Ptr) {
-		if (*Ptr == '\n')
+	while (*ptr) {
+		if (*ptr == '\n')
 			return 1;
 		if (countw == width) {
 			countl++;
 			countw = 0;
-			Ptr = x;
+			ptr = x;
 		}
-		if (*Ptr == ' ') {
-			x = Ptr;
+		if (*ptr == ' ') {
+			x = ptr;
 			x++;
 		}
 		countw++;
 		if (countl == lines)
 			return 0;
-		Ptr++;
+		ptr++;
 	}
 
 	return 1;
