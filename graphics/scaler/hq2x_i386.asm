@@ -148,7 +148,7 @@ SECTION .text
     mov %1,dx
 %endmacro
 
-; interpolate16_3<bitFormat,2,1,1>
+; interpolate16_2_1_1
 ; Mix three pixels with weight 2, 1, and 1, respectively: (c1*2+c2+c3)/4;
 %macro Interp2 4
     mov edx,%3
@@ -166,7 +166,7 @@ SECTION .text
     mov %1,dx
 %endmacro
 
-; interpolate16_3<bitFormat,5,2,1>
+; interpolate16_5_2_1
 ; Mix three pixels with weight 5, 2, and 1, respectively: (c1*5+c2*2+c3)/8;
 %macro Interp6 3
 	; Unpack eax to ecx and multiply by 5
@@ -212,7 +212,7 @@ SECTION .text
     mov %1,  dx
 %endmacro
 
-; interpolate16_3<bitFormat,6,1,1>
+; interpolate16_6_1_1
 ; Mix three pixels with weight 6, 1, and 1, respectively: (c1*6+c2+c3)/8;
 %macro Interp7 3
 	; Unpack eax to ecx and multiply by 6
@@ -258,7 +258,7 @@ SECTION .text
     mov %1,  dx
 %endmacro
 
-; interpolate16_3<bitFormat,2,3,3>
+; interpolate16_2_3_3
 ; Mix three pixels with weight 2, 3, and 3, respectively: (c1*2+(c2+c3)*3)/8;
 %macro Interp9 3
 	; unpack c2
@@ -305,7 +305,7 @@ SECTION .text
     mov %1,  dx
 %endmacro
 
-; interpolate16_3<bitFormat,14,1,1>
+; interpolate16_14_1_1
 ; Mix three pixels with weight 14, 1, and 1, respectively: (c1*14+c2+c3)/16;
 %macro Interp10 3
 	; Unpack eax to ecx and multiply by 14

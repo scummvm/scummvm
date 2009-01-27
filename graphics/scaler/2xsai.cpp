@@ -46,9 +46,9 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 	return rmap[y][x];
 }
 
-#define interpolate_1_1		interpolate16_2<bitFormat, 1, 1>
-#define interpolate_3_1		interpolate16_2<bitFormat, 3, 1>
-#define interpolate_6_1_1	interpolate16_3<bitFormat, 6, 1, 1>
+#define interpolate_1_1		interpolate16_1_1<Graphics::ColorMasks<bitFormat> >
+#define interpolate_3_1		interpolate16_3_1<Graphics::ColorMasks<bitFormat> >
+#define interpolate_6_1_1	interpolate16_6_1_1<Graphics::ColorMasks<bitFormat> >
 #define interpolate_1_1_1_1	interpolate32_1_1_1_1<bitFormat>
 
 template<int bitFormat>

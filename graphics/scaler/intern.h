@@ -77,29 +77,6 @@ static inline uint32 interpolate32_1_1_1_1(uint32 p1, uint32 p2, uint32 p3, uint
 }
 
 /**
- * Interpolate two 16 bit pixels with the weights specified in the template
- * parameters.
- * @note w1 and w2 must sum up to 2, 4, 8 or 16.
- */
-template<int bitFormat, int w1, int w2>
-static inline uint16 interpolate16_2(uint16 p1, uint16 p2) {
-	return ((((p1 & redblueMask) * w1 + (p2 & redblueMask) * w2) / (w1 + w2)) & redblueMask) |
-	       ((((p1 & greenMask) * w1 + (p2 & greenMask) * w2) / (w1 + w2)) & greenMask);
-}
-
-/**
- * Interpolate three 16 bit pixels with the weights specified in the template
- * parameters.
- * @note w1, w2 and w3 must sum up to 2, 4, 8 or 16.
- */
-template<int bitFormat, int w1, int w2, int w3>
-static inline uint16 interpolate16_3(uint16 p1, uint16 p2, uint16 p3) {
-	return ((((p1 & redblueMask) * w1 + (p2 & redblueMask) * w2 + (p3 & redblueMask) * w3) / (w1 + w2 + w3)) & redblueMask) |
-		   ((((p1 & greenMask) * w1 + (p2 & greenMask) * w2 + (p3 & greenMask) * w3) / (w1 + w2 + w3)) & greenMask);
-}
-
-
-/**
  * Interpolate two 16 bit pixels with weights 1 and 1, i.e., (p1+p2)/2.
  * See <http://www.slack.net/~ant/info/rgb_mixing.html> for details on how this works.
  */
