@@ -501,6 +501,7 @@ int16 ADPCMInputStream::decodeTinsel(int16 code, double eVal) {
 	return (int16) CLIP<double>(sample, -32768.0, 32767.0);
 }
 
+// TODO: Add optional support for sound looping
 AudioStream *makeADPCMStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign) {
 	return new ADPCMInputStream(stream, disposeAfterUse, size, type, rate, channels, blockAlign);
 }

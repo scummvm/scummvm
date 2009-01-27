@@ -739,7 +739,7 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 	uint16 compType;
 	int blockAlign, rate;
 
-	// FIXME: How about using makeWAVStream() here?
+	// TODO: Use makeWAVStream() in future, when makeADPCMStream() allows sound looping
 	int size = READ_LE_UINT32(soundData + 4);
 	Common::MemoryReadStream stream(soundData, size);
 	if (!Audio::loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign))
