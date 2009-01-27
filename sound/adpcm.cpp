@@ -107,9 +107,6 @@ public:
 // IMA ADPCM support is based on
 //   <http://wiki.multimedia.cx/index.php?title=IMA_ADPCM>
 //
-// Apple IMA ADPCM support is based on
-//   <http://wiki.multimedia.cx/index.php?title=Apple_QuickTime_IMA_ADPCM>
-//
 // In addition, also MS IMA ADPCM is supported. See
 //   <http://wiki.multimedia.cx/index.php?title=Microsoft_IMA_ADPCM>.
 
