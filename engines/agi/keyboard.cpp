@@ -274,7 +274,7 @@ void AgiEngine::handleGetstring(int key) {
 void AgiEngine::handleKeys(int key) {
 	uint8 *p = NULL;
 	int c = 0;
-	static uint8 formatedEntry[256];
+	static uint8 formattedEntry[256];
 	int l = _game.lineUserInput;
 	int fg = _game.colorFg, bg = _game.colorBg;
 	int promptLength = strlen(agiSprintf(_game.strings[0]));
@@ -298,14 +298,14 @@ void AgiEngine::handleKeys(int key) {
 				p++;
 				continue;
 			}
-			formatedEntry[c++] = tolower(*p);
+			formattedEntry[c++] = tolower(*p);
 		}
-		formatedEntry[c++] = 0;
+		formattedEntry[c++] = 0;
 
 		/* Handle string only if it's not empty */
-		if (formatedEntry[0]) {
+		if (formattedEntry[0]) {
 			strcpy((char *)_game.echoBuffer, (const char *)_game.inputBuffer);
-			strcpy(_lastSentence, (const char *)formatedEntry);
+			strcpy(_lastSentence, (const char *)formattedEntry);
 			dictionaryWords(_lastSentence);
 		}
 
