@@ -937,8 +937,8 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		SaveStateDescriptor desc(slot, name);
 
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
+		desc.setDeletableFlag(slot != 0);
+		desc.setWriteProtectedFlag(slot == 0);
 
 		char saveVersion = in->readByte();
 		if (saveVersion >= 4) {
