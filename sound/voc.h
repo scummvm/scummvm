@@ -76,11 +76,11 @@ extern byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate)
 /**
  * Try to load a VOC from the given seekable stream and create an AudioStream
  * from that data. Currently this function only supports uncompressed raw PCM
- * data. Looping is not supported.
+ * data. Optionally supports (infinite) looping of a portion of the data.
  *
  * This function uses loadVOCFromStream() internally.
  */
-AudioStream *makeVOCStream(Common::ReadStream &stream);
+AudioStream *makeVOCStream(Common::ReadStream &stream, byte flags = 0, uint loopStart = 0, uint loopEnd = 0);
 
 } // End of namespace Audio
 

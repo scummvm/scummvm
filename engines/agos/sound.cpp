@@ -261,11 +261,8 @@ void VocSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 
 	_file->seek(_offsets[sound], SEEK_SET);
 
-	int size, rate;
-	byte *buffer = Audio::loadVOCFromStream(*_file, size, rate);
-	// TODO: Use makeVOCStream
-	assert(buffer);
-	_mixer->playRaw(type, handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
+	Audio::AudioStream *stream = Audio::makeVOCStream(*_file, flags);
+	_mixer->playInputStream(type, handle, stream);
 }
 
 void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
