@@ -788,7 +788,7 @@ bool PCMMusicPlayer::getNextChunk() {
 	int id;
 	int snum;
 	uint32 sampleOffset, sampleLength, sampleCLength;
-	Common::File f;
+	Common::File file;
 	byte *buffer;
 	Common::MemoryReadStream *sampleStream;
 
@@ -797,7 +797,7 @@ bool PCMMusicPlayer::getNextChunk() {
 	case S_NEXT:
 		_forcePlay = false;
 
-		script = scriptBuffer = (int32 *) LockMem(_hScript);
+		script = scriptBuffer = (int32 *)LockMem(_hScript);
 
 		// Set parameters for this chunk of music
 		id = _scriptNum;
@@ -805,8 +805,7 @@ bool PCMMusicPlayer::getNextChunk() {
 			script = scriptBuffer + FROM_LE_32(*script);
 		snum = FROM_LE_32(script[_scriptIndex++]);
 
-		if (snum == MUSIC_JUMP || snum == MUSIC_END)
-		{
+		if (snum == MUSIC_JUMP || snum == MUSIC_END) {
 			// Let usual code sort it out!
 			_scriptIndex--;    // Undo increment
 			_forcePlay = true; // Force a Play
@@ -823,18 +822,18 @@ bool PCMMusicPlayer::getNextChunk() {
 		sampleLength = FROM_LE_32(musicSegments[snum].sampleLength);
 		sampleCLength = (((sampleLength + 63) & ~63)*33)/64;
 
-		if (!f.open(_fileName))
+		if (!file.open(_fileName))
 			error(CANNOT_FIND_FILE, _fileName);
 
-		f.seek(sampleOffset);
-		if (f.ioFailed() || (uint32)f.pos() != sampleOffset)
+		file.seek(sampleOffset);
+		if (file.ioFailed() || (uint32)file.pos() != sampleOffset)
 			error(FILE_IS_CORRUPT, _fileName);
 
 		buffer = (byte *) malloc(sampleCLength);
 		assert(buffer);
 
 		// read all of the sample
-		if (f.read(buffer, sampleCLength) != sampleCLength)
+		if (file.read(buffer, sampleCLength) != sampleCLength)
 			error(FILE_IS_CORRUPT, _fileName);
 
 		sampleStream = new Common::MemoryReadStream(buffer, sampleCLength, true);
