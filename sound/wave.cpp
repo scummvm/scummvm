@@ -162,34 +162,30 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	return true;
 }
 
-AudioStream *makeWAVStream(Common::SeekableReadStream &stream) {
+AudioStream *makeWAVStream(Common::SeekableReadStream *stream, bool disposeAfterUse) {
 	int size, rate;
 	byte *data, flags;
 	uint16 type;
 	int blockAlign;
 
-	if (!loadWAVFromStream(stream, size, rate, flags, &type, &blockAlign))
+	if (!loadWAVFromStream(*stream, size, rate, flags, &type, &blockAlign)) {
+		if (disposeAfterUse)
+			delete stream;
 		return 0;
+	}
 
 	if (type == 17) { // MS IMA ADPCM
-		Audio::AudioStream *sndStream = Audio::makeADPCMStream(&stream, false, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
-		data = (byte *)malloc(size * 4);
-		assert(data);
-		size = sndStream->readBuffer((int16*)data, size * 2);
-		size *= 2; // 16bits.
-		delete sndStream;
+		return Audio::makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 	} else if (type == 2) { // MS ADPCM
-		Audio::AudioStream *sndStream = Audio::makeADPCMStream(&stream, false, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
-		data = (byte *)malloc(size * 4);
-		assert(data);
-		size = sndStream->readBuffer((int16*)data, size * 2);
-		size *= 2; // 16bits.
-		delete sndStream;
-	} else {
-		data = (byte *)malloc(size);
-		assert(data);
-		stream.read(data, size);
+		return Audio::makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 	}
+
+	// Plain data. Just read everything at once.
+	// TODO: More elegant would be to wrap the stream.
+	data = (byte *)malloc(size);
+	assert(data);
+	stream->read(data, size);
+	delete stream;
 
 	// Since we allocated our own buffer for the data, we must set the autofree flag.
 	flags |= Audio::Mixer::FLAG_AUTOFREE;

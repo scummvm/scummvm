@@ -247,7 +247,7 @@ Audio::AudioStream *WavSound::makeAudioStream(uint sound) {
 		return NULL;
 
 	_file->seek(_offsets[sound], SEEK_SET);
-	return Audio::makeWAVStream(*_file);
+	return Audio::makeWAVStream(_file, false);
 }
 
 void WavSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
@@ -263,6 +263,7 @@ void VocSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 
 	int size, rate;
 	byte *buffer = Audio::loadVOCFromStream(*_file, size, rate);
+	// TODO: Use makeVOCStream
 	assert(buffer);
 	_mixer->playRaw(type, handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
 }
@@ -741,6 +742,7 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 	uint16 compType;
 	int blockAlign, rate;
 
+	// FIXME: How about using makeWAVStream() here?
 	int size = READ_LE_UINT32(soundData + 4);
 	Common::MemoryReadStream stream(soundData, size);
 	if (!Audio::loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign))
