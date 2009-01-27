@@ -49,7 +49,7 @@ void AGOSEngine::uncompressText(byte *ptr) {
 
 byte *AGOSEngine::uncompressToken(byte a, byte *ptr) {
 	byte *ptr1;
-	byte *ptr2;
+	byte *ptr2 = NULL;
 	byte b;
 	int count1 = 0;
 
