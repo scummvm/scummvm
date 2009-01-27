@@ -45,7 +45,8 @@ enum typesADPCM {
 	kADPCMMS,		// Microsoft ADPCM
 	kADPCMTinsel4,	// 4-bit ADPCM used by the Tinsel engine
 	kADPCMTinsel6,	// 6-bit ADPCM used by the Tinsel engine
-	kADPCMTinsel8	// 8-bit ADPCM used by the Tinsel engine
+	kADPCMTinsel8,	// 8-bit ADPCM used by the Tinsel engine
+	kADPCMIma		// Standard IMA ADPCM
 };
 
 /**
@@ -59,6 +60,7 @@ enum typesADPCM {
  * @param rate				the sampling rate (default = 22050)
  * @param channels			the number of channels (default = 2)
  * @param blockAlign		block alignment ??? (default = 0)
+ * @param numLoop		how many types the sounds should loop, 0 for infinite loop (default = 1)
  * @return	a new AudioStream, or NULL, if an error occured
  */
 AudioStream *makeADPCMStream(
@@ -68,7 +70,8 @@ AudioStream *makeADPCMStream(
 	typesADPCM type,
 	int rate = 22050,
 	int channels = 2,
-	uint32 blockAlign = 0);
+	uint32 blockAlign = 0,
+	uint numLoops = 1);
 
 } // End of namespace Audio
 
