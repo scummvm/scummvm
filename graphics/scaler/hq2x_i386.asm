@@ -132,7 +132,7 @@ SECTION .text
 %%fin:
 %endmacro
 
-; interpolate16_2<bitFormat,3,1>
+; interpolate16_3_1
 ; Mix two pixels with weight 3 and 1, respectively: (c1*3+c2)/4;
 %macro Interp1 3
     mov edx,%2
@@ -170,7 +170,6 @@ SECTION .text
 ; Mix three pixels with weight 5, 2, and 1, respectively: (c1*5+c2*2+c3)/8;
 %macro Interp6 3
 	; Unpack eax to ecx and multiply by 5
-	mov eax, [w5]
 	mov ecx, eax
 	shl ecx, 16
 	or  ecx, eax
@@ -182,10 +181,9 @@ SECTION .text
 	add ecx, edx
 
 	; unpack c2 to edx
-	mov eax, %2
-	mov edx, eax
+	mov edx, %2
 	shl edx, 16
-	or  edx, eax
+	or  edx, %2
 	and edx, [_hqx_green_redBlue_Mask]
 	
 	; add 2*c2 to c1*5
@@ -193,10 +191,9 @@ SECTION .text
 	add ecx, edx
 	
 	; unpack c3 to edx
-	mov eax, %3
-	mov edx, eax
+	mov edx, %3
 	shl edx, 16
-	or  edx, eax
+	or  edx, %3
 	and edx, [_hqx_green_redBlue_Mask]
 	
 	; add c3 and 2*c2+c1*5, divide by 8, mask the result
@@ -216,7 +213,6 @@ SECTION .text
 ; Mix three pixels with weight 6, 1, and 1, respectively: (c1*6+c2+c3)/8;
 %macro Interp7 3
 	; Unpack eax to ecx and multiply by 6
-	mov eax, [w5]
 	mov ecx, eax
 	shl ecx, 16
 	or  ecx, eax
@@ -229,20 +225,18 @@ SECTION .text
 	add ecx, ecx
 
 	; unpack c2 to edx
-	mov eax, %2
-	mov edx, eax
+	mov edx, %2
 	shl edx, 16
-	or  edx, eax
+	or  edx, %2
 	and edx, [_hqx_green_redBlue_Mask]
 	
 	; add c2 to c1*3
 	add ecx, edx
 	
 	; unpack c3 to edx
-	mov eax, %3
-	mov edx, eax
+	mov edx, %3
 	shl edx, 16
-	or  edx, eax
+	or  edx, %3
 	and edx, [_hqx_green_redBlue_Mask]
 	
 	; add c3 and c2+c1*3, divide by 8, mask the result
@@ -262,17 +256,15 @@ SECTION .text
 ; Mix three pixels with weight 2, 3, and 3, respectively: (c1*2+(c2+c3)*3)/8;
 %macro Interp9 3
 	; unpack c2
-	mov eax, %2
-	mov edx, eax
+	mov edx, %2
 	shl edx, 16
-	or  edx, eax
+	or  edx, %2
 	and edx, [_hqx_green_redBlue_Mask]
 	
 	; unpack c3
-	mov eax, %3
-	mov ecx, eax
+	mov ecx, %3
 	shl ecx, 16
-	or  ecx, eax
+	or  ecx, %3
 	and ecx, [_hqx_green_redBlue_Mask]
 	
 	; sum c2 and c3
@@ -284,8 +276,7 @@ SECTION .text
 	add edx, edx
 	add edx, ecx
 	
-	; Restore eax, unpack it and multiply by 2
-	mov eax, [w5]
+	; unpack eax and multiply by 2
 	mov ecx, eax
 	shl ecx, 16
 	or  ecx, eax
@@ -309,7 +300,6 @@ SECTION .text
 ; Mix three pixels with weight 14, 1, and 1, respectively: (c1*14+c2+c3)/16;
 %macro Interp10 3
 	; Unpack eax to ecx and multiply by 14
-	mov eax, [w5]
 	mov ecx, eax
 	shl ecx, 16
 	or  ecx, eax
@@ -322,20 +312,18 @@ SECTION .text
 	add ecx, ecx
 
 	; unpack c2 to edx
-	mov eax, %2
-	mov edx, eax
+	mov edx, %2
 	shl edx, 16
-	or  edx, eax
+	or  edx, %2
 	and edx, [_hqx_green_redBlue_Mask]
 	
 	; add c2 to c1*14
 	add ecx, edx
 	
 	; unpack c3 to edx
-	mov eax, %3
-	mov edx, eax
+	mov edx, %3
 	shl edx, 16
-	or  edx, eax
+	or  edx, %3
 	and edx, [_hqx_green_redBlue_Mask]
 	
 	; add c3 and c2+c1*14, divide by 16, mask the result
