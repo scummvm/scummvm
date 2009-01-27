@@ -63,20 +63,6 @@ static inline uint32 interpolate32_3_1(uint32 p1, uint32 p2) {
 }
 
 /**
- * Interpolate four 16 bit pixel pairs at once with equal weights 1.
- * In particular, p1, p2, p3 and p3 can each contain two pixels in the upper
- * and lower halves.
- */
-template<int bitFormat>
-static inline uint32 interpolate32_1_1_1_1(uint32 p1, uint32 p2, uint32 p3, uint32 p4) {
-	register uint32 x = ((p1 & qhighBits) >> 2) + ((p2 & qhighBits) >> 2) + ((p3 & qhighBits) >> 2) + ((p4 & qhighBits) >> 2);
-	register uint32 y = ((p1 & qlowBits) + (p2 & qlowBits) + (p3 & qlowBits) + (p4 & qlowBits)) >> 2;
-
-	y &= qlowBits;
-	return x + y;
-}
-
-/**
  * Interpolate two 16 bit pixels with weights 1 and 1, i.e., (p1+p2)/2.
  * See <http://www.slack.net/~ant/info/rgb_mixing.html> for details on how this works.
  */
@@ -178,6 +164,18 @@ static inline unsigned interpolate16_14_1_1(unsigned p1, unsigned p2, unsigned p
 	const unsigned  g = (p1&ColorMask::kGreenMask)*14
 	                  + (p2&ColorMask::kGreenMask) + (p3&ColorMask::kGreenMask);
 	return ((rb&(ColorMask::kRedBlueMask<<4)) | (g&(ColorMask::kGreenMask<<4))) >> 4;
+}
+
+/**
+ * Interpolate four 16 bit pixels with weights 1, 1, 1, and 1, i.e., (p1+p2+p3+p4)/4.
+ */
+template<typename ColorMask>
+static inline unsigned interpolate16_1_1_1_1(unsigned p1, unsigned p2, unsigned p3, unsigned p4) {
+	const unsigned lowbits = ((p1 & ColorMask::kLow2Bits)
+		                   +  (p2 & ColorMask::kLow2Bits)
+		                   +  (p3 & ColorMask::kLow2Bits)
+		                   +  (p4 & ColorMask::kLow2Bits)) & ColorMask::kLow2Bits;
+	return ((p1+p2+p3+p4) - lowbits) >> 2;
 }
 
 /**

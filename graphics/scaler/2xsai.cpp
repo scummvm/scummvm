@@ -44,7 +44,7 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 #define interpolate_1_1		interpolate16_1_1<Graphics::ColorMasks<bitFormat> >
 #define interpolate_3_1		interpolate16_3_1<Graphics::ColorMasks<bitFormat> >
 #define interpolate_6_1_1	interpolate16_6_1_1<Graphics::ColorMasks<bitFormat> >
-#define interpolate_1_1_1_1	interpolate32_1_1_1_1<bitFormat>
+#define interpolate_1_1_1_1	interpolate16_1_1_1_1<Graphics::ColorMasks<bitFormat> >
 
 template<int bitFormat>
 void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
@@ -57,12 +57,12 @@ void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 		dP = (uint16 *)dstPtr;
 
 		for (int i = 0; i < width; ++i) {
-			uint32 color4, color5, color6;
-			uint32 color1, color2, color3;
-			uint32 colorA0, colorA1, colorA2, colorA3;
-			uint32 colorB0, colorB1, colorB2, colorB3;
-			uint32 colorS1, colorS2;
-			uint32 product1a, product1b, product2a, product2b;
+			unsigned color4, color5, color6;
+			unsigned color1, color2, color3;
+			unsigned colorA0, colorA1, colorA2, colorA3;
+			unsigned colorB0, colorB1, colorB2, colorB3;
+			unsigned colorS1, colorS2;
+			unsigned product1a, product1b, product2a, product2b;
 
 //---------------------------------------    B1 B2
 //                                         4  5  6 S2
@@ -165,10 +165,10 @@ void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 		bP = (const uint16 *)srcPtr;
 		dP = (uint16 *)dstPtr;
 		for (int i = 0; i < width; ++i) {
-			uint32 color4, color5, color6;
-			uint32 color1, color2, color3;
-			uint32 colorA1, colorA2, colorB1, colorB2, colorS1, colorS2;
-			uint32 product1a, product1b, product2a, product2b;
+			unsigned color4, color5, color6;
+			unsigned color1, color2, color3;
+			unsigned colorA1, colorA2, colorB1, colorB2, colorS1, colorS2;
+			unsigned product1a, product1b, product2a, product2b;
 
 			colorB1 = *(bP - nextlineSrc);
 			colorB2 = *(bP - nextlineSrc + 1);
@@ -272,10 +272,10 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 
 		for (int i = 0; i < width; ++i) {
 
-			register uint32 colorA, colorB;
-			uint32 colorC, colorD,
+			register unsigned colorA, colorB;
+			unsigned colorC, colorD,
 				colorE, colorF, colorG, colorH, colorI, colorJ, colorK, colorL, colorM, colorN, colorO, colorP;
-			uint32 product, product1, product2;
+			unsigned product, product1, product2;
 
 //---------------------------------------
 // Map of the pixels:                    I|E F|J

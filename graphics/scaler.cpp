@@ -222,8 +222,8 @@ void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 	}
 }
 
-#define interpolate32_1_1		interpolate32_1_1<bitFormat>
-#define interpolate32_1_1_1_1	interpolate32_1_1_1_1<bitFormat>
+#define interpolate_1_1		interpolate16_1_1<Graphics::ColorMasks<bitFormat> >
+#define interpolate_1_1_1_1	interpolate16_1_1_1_1<Graphics::ColorMasks<bitFormat> >
 
 /**
  * Trivial nearest-neighbour 1.5x scaler.
@@ -246,13 +246,13 @@ void Normal1o5xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 			uint16 color3 = *(((const uint16 *)(srcPtr + srcPitch)) + i + 1);
 
 			*(uint16 *)(r + 0) = color0;
-			*(uint16 *)(r + 2) = interpolate32_1_1(color0, color1);
+			*(uint16 *)(r + 2) = interpolate_1_1(color0, color1);
 			*(uint16 *)(r + 4) = color1;
-			*(uint16 *)(r + 0 + dstPitch) = interpolate32_1_1(color0, color2);
-			*(uint16 *)(r + 2 + dstPitch) = interpolate32_1_1_1_1(color0, color1, color2, color3);
-			*(uint16 *)(r + 4 + dstPitch) = interpolate32_1_1(color1, color3);
+			*(uint16 *)(r + 0 + dstPitch) = interpolate_1_1(color0, color2);
+			*(uint16 *)(r + 2 + dstPitch) = interpolate_1_1_1_1(color0, color1, color2, color3);
+			*(uint16 *)(r + 4 + dstPitch) = interpolate_1_1(color1, color3);
 			*(uint16 *)(r + 0 + dstPitch2) = color2;
-			*(uint16 *)(r + 2 + dstPitch2) = interpolate32_1_1(color2, color3);
+			*(uint16 *)(r + 2 + dstPitch2) = interpolate_1_1(color2, color3);
 			*(uint16 *)(r + 4 + dstPitch2) = color3;
 		}
 		srcPtr += srcPitch2;
