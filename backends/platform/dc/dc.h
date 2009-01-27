@@ -25,6 +25,7 @@
 
 #include <common/system.h>
 #include <graphics/surface.h>
+#include <graphics/colormasks.h>
 #include <ronin/soundcommon.h>
 #include "backends/timer/default/default-timer.h"
 #include "backends/fs/fs-factory.h"
