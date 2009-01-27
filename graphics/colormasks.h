@@ -94,7 +94,10 @@ struct ColorMasks<565> {
 		kBlueMask   = ((1 << kBlueBits) - 1) << kBlueShift,
 
 		kRedBlueMask = kRedMask | kBlueMask,
-		kLowBits    = (1 << kRedShift) | (1 << kGreenShift) | (1 << kBlueShift)
+
+		kLowBits    = (1 << kRedShift) | (1 << kGreenShift) | (1 << kBlueShift),
+		kLow2Bits   = (3 << kRedShift) | (3 << kGreenShift) | (3 << kBlueShift),
+		kLow3Bits   = (7 << kRedShift) | (7 << kGreenShift) | (7 << kBlueShift)
 	};
 };
 
@@ -125,7 +128,10 @@ struct ColorMasks<555> {
 		kBlueMask  = ((1 << kBlueBits) - 1) << kBlueShift,
 
 		kRedBlueMask = kRedMask | kBlueMask,
-		kLowBits    = (1 << kRedShift) | (1 << kGreenShift) | (1 << kBlueShift)
+
+		kLowBits    = (1 << kRedShift) | (1 << kGreenShift) | (1 << kBlueShift),
+		kLow2Bits   = (3 << kRedShift) | (3 << kGreenShift) | (3 << kBlueShift),
+		kLow3Bits   = (7 << kRedShift) | (7 << kGreenShift) | (7 << kBlueShift)
 	};
 };
 

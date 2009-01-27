@@ -31,7 +31,7 @@
 
 
 #define kHighBitsMask	Graphics::ColorMasks<bitFormat>::kHighBitsMask
-#define kLowBitsMask		Graphics::ColorMasks<bitFormat>::kLowBitsMask
+#define kLowBitsMask	Graphics::ColorMasks<bitFormat>::kLowBitsMask
 #define qhighBits	Graphics::ColorMasks<bitFormat>::qhighBits
 #define qlowBits	Graphics::ColorMasks<bitFormat>::qlowBits
 #define redblueMask	Graphics::ColorMasks<bitFormat>::kRedBlueMask
@@ -78,7 +78,7 @@ static inline uint32 interpolate32_1_1_1_1(uint32 p1, uint32 p2, uint32 p3, uint
 
 /**
  * Interpolate two 16 bit pixels with the weights specified in the template
- * parameters. Used by the hq scaler family.
+ * parameters.
  * @note w1 and w2 must sum up to 2, 4, 8 or 16.
  */
 template<int bitFormat, int w1, int w2>
@@ -89,7 +89,7 @@ static inline uint16 interpolate16_2(uint16 p1, uint16 p2) {
 
 /**
  * Interpolate three 16 bit pixels with the weights specified in the template
- * parameters. Used by the hq scaler family.
+ * parameters.
  * @note w1, w2 and w3 must sum up to 2, 4, 8 or 16.
  */
 template<int bitFormat, int w1, int w2, int w3>
@@ -98,6 +98,110 @@ static inline uint16 interpolate16_3(uint16 p1, uint16 p2, uint16 p3) {
 		   ((((p1 & greenMask) * w1 + (p2 & greenMask) * w2 + (p3 & greenMask) * w3) / (w1 + w2 + w3)) & greenMask);
 }
 
+
+/**
+ * Interpolate two 16 bit pixels with weights 1 and 1, i.e., (p1+p2)/2.
+ * See <http://www.slack.net/~ant/info/rgb_mixing.html> for details on how this works.
+ */
+template<typename ColorMask>
+static inline unsigned interpolate16_1_1(unsigned p1, unsigned p2) {
+	const unsigned lowbits = (p1 ^ p2) & ColorMask::kLowBits;
+	return ((p1 + p2) - lowbits) >> 1;
+}
+
+/**
+ * Interpolate two 16 bit pixels with weights 3 and 1, i.e., (3*p1+p2)/4.
+ */
+template<typename ColorMask>
+static inline unsigned interpolate16_3_1(unsigned p1, unsigned p2) {
+	const unsigned lowbits = (((p1 & ColorMask::kLowBits) << 1) + (p1 & ColorMask::kLow2Bits)
+		                   + (p2 & ColorMask::kLow2Bits)) & ColorMask::kLow2Bits;
+	return ((p1*3 + p2) - lowbits) >> 2;
+}
+
+/**
+ * Interpolate two 16 bit pixels with weights 7 and 1, i.e., (7*p1+p2)/8.
+ */
+template<typename ColorMask>
+static inline unsigned interpolate16_7_1(unsigned p1, unsigned p2) {
+	const unsigned lowbits = (((p1 & ColorMask::kLowBits) << 2) + ((p1 & ColorMask::kLow2Bits) << 1) + (p1 & ColorMask::kLow3Bits)
+		                   +  (p2 & ColorMask::kLow3Bits)) & ColorMask::kLow3Bits;
+	return ((p1*7+p2) - lowbits) >> 3;
+}
+
+/**
+ * Interpolate three 16 bit pixels with weights 2, 1, and 1, i.e., (2*p1+p2+p3)/4.
+ */
+template<typename ColorMask>
+static inline unsigned interpolate16_2_1_1(unsigned p1, unsigned p2, unsigned p3) {
+	p1<<=1;
+	const unsigned lowbits = ((p1 & (ColorMask::kLowBits << 1))
+		                   +  (p2 & ColorMask::kLow2Bits)
+		                   +  (p3 & ColorMask::kLow2Bits)) & ColorMask::kLow2Bits;
+	return ((p1+p2+p3) - lowbits) >> 2;
+}
+
+/**
+ * Interpolate three 16 bit pixels with weights 5, 2, and 1, i.e., (5*p1+2*p2+p3)/8.
+ */
+template<typename ColorMask>
+static inline unsigned interpolate16_5_2_1(unsigned p1, unsigned p2, unsigned p3) {
+	p2<<=1;
+	const unsigned lowbits = (((p1 & ColorMask::kLowBits) << 2) + (p1 & ColorMask::kLow3Bits)
+		                   +  (p2 & (ColorMask::kLow2Bits << 1))
+		                   +  (p3 & ColorMask::kLow3Bits)) & ColorMask::kLow3Bits;
+	return ((p1*5 + p2 + p3) - lowbits) >> 3;
+}
+
+/**
+ * Interpolate three 16 bit pixels with weights 6, 1, and 1, i.e., (6*p1+p2+p3)/8.
+ */
+template<typename ColorMask>
+static inline unsigned interpolate16_6_1_1(unsigned p1, unsigned p2, unsigned p3) {
+	const unsigned lowbits = (((((p1 & ColorMask::kLowBits) << 1) + (p1 & ColorMask::kLow2Bits)) << 1)
+		                   + (p2 & ColorMask::kLow3Bits)
+		                   + (p3 & ColorMask::kLow3Bits)) & ColorMask::kLow3Bits;
+	return ((p1*6 + p2 + p3) - lowbits) >> 3;
+}
+
+/**
+ * Interpolate three 16 bit pixels with weights 2, 3, and 3, i.e., (2*p1+3*(p2+p3))/8.
+ */
+template<typename ColorMask>
+static inline unsigned interpolate16_2_3_3(unsigned p1, unsigned p2, unsigned p3) {
+	p1 <<= 1;
+	const unsigned rb = (p1 & (ColorMask::kRedBlueMask<<1))
+		              + ((p2 & ColorMask::kRedBlueMask) + (p3 & ColorMask::kRedBlueMask))*3;
+	const unsigned  g = (p1 & (ColorMask::kGreenMask<<1))
+		              + ((p2 & ColorMask::kGreenMask) + (p3 & ColorMask::kGreenMask))*3;
+	return ((rb & (ColorMask::kRedBlueMask<<3)) | (g & (ColorMask::kGreenMask<<3))) >> 3;
+}
+
+/**
+ * Interpolate three 16 bit pixels with weights 2, 7, and 7, i.e., (2*p1+7*(p2+p3))/16.
+ */
+template<typename ColorMask>
+static inline unsigned interpolate16_2_7_7(unsigned p1, unsigned p2, unsigned p3) {
+	p1 <<= 1;
+	const unsigned rb = (p1 & (ColorMask::kRedBlueMask<<1))
+		              + ((p2 & ColorMask::kRedBlueMask) + (p3 & ColorMask::kRedBlueMask))*7;
+	const unsigned  g = (p1 & (ColorMask::kGreenMask<<1))
+		              + ((p2 & ColorMask::kGreenMask) + (p3 & ColorMask::kGreenMask))*7;
+	return ((rb & (ColorMask::kRedBlueMask<<4)) | (g & (ColorMask::kGreenMask<<4))) >> 4;
+}
+
+/**
+ * Interpolate three 16 bit pixels with weights 14, 1, and 1, i.e., (14*p1+p2+p3)/16.
+ */
+template<typename ColorMask>
+static inline unsigned interpolate16_14_1_1(unsigned p1, unsigned p2, unsigned p3) {
+	const unsigned rb = (p1&ColorMask::kRedBlueMask)*14
+	                  + (p2&ColorMask::kRedBlueMask)
+	                  + (p3&ColorMask::kRedBlueMask);
+	const unsigned  g = (p1&ColorMask::kGreenMask)*14
+	                  + (p2&ColorMask::kGreenMask) + (p3&ColorMask::kGreenMask);
+	return ((rb&(ColorMask::kRedBlueMask<<4)) | (g&(ColorMask::kGreenMask<<4))) >> 4;
+}
 
 /**
  * Compare two YUV values (encoded 8-8-8) and check if they differ by more than
