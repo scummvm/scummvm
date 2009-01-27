@@ -465,6 +465,9 @@ bool AGOSEngine::processSpecialKeys() {
 		}
 	}
 
+	if (shouldQuit())
+		_exitCutscene = true;		
+
 	switch (_keyPressed.keycode) {
 	case Common::KEYCODE_UP:
 		if (getGameType() == GType_PP)
