@@ -38,11 +38,11 @@ void hq2x_16(const byte *, byte *, uint32, uint32, uint32, uint32);
 
 }
 
-void HQ2x_ASM(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	hq2x_16(srcPtr, dstPtr, width, height, srcPitch, dstPitch);
 }
 
-#endif
+#else
 
 #define PIXEL00_0	*(q) = w5;
 #define PIXEL00_10	*(q) = interpolate16_3_1<ColorMask>(w5, w1);
@@ -118,3 +118,5 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 	else
 		HQ2x_555(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 }
+
+#endif // Assembly version

@@ -39,11 +39,11 @@ void hq3x_16(const byte *, byte *, uint32, uint32, uint32, uint32);
 
 }
 
-void HQ3x_ASM(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	hq3x_16(srcPtr, dstPtr, width, height, srcPitch, dstPitch);
 }
 
-#endif
+#else
 
 #define PIXEL00_1M  *(q) = interpolate16_3_1<ColorMask>(w5, w1);
 #define PIXEL00_1U  *(q) = interpolate16_3_1<ColorMask>(w5, w2);
@@ -121,3 +121,5 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 	else
 		HQ3x_555(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 }
+
+#endif // Assembly version
