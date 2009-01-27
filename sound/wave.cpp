@@ -185,6 +185,8 @@ AudioStream *makeWAVStream(Common::SeekableReadStream *stream, bool disposeAfter
 	data = (byte *)malloc(size);
 	assert(data);
 	stream->read(data, size);
+	if (disposeAfterUse)
+		delete stream;
 
 	// Since we allocated our own buffer for the data, we must set the autofree flag.
 	flags |= Audio::Mixer::FLAG_AUTOFREE;
