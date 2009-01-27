@@ -38,12 +38,7 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 	const int y2 = (bd & !ad);
 	const int x = x1+x2;
 	const int y = y1+y2;
-	static const int rmap[3][3] = {
-			{0, 0, -1},
-			{0, 0, -1},
-			{1, 1,  0}
-		};
-	return rmap[y][x];
+	return (y>>1) - (x>>1);
 }
 
 #define interpolate_1_1		interpolate16_1_1<Graphics::ColorMasks<bitFormat> >
