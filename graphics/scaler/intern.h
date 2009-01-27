@@ -41,23 +41,22 @@
 /**
  * Interpolate two 16 bit pixel *pairs* at once with equal weights 1.
  * In particular, p1 and p2 can contain two pixels each in the upper
- * and lower halves. Requires only 5 operations!
- * See <http://www.slack.net/~ant/info/rgb_mixing.html> for details on how this works.
+ * and lower halves.
  */
 template<int bitFormat>
 static inline uint32 interpolate32_1_1(uint32 p1, uint32 p2) {
-	return (p1 + p2 - ((p1 ^ p2) & kLowBitsMask)) >> 1; 
+	return (((p1 & kHighBitsMask) >> 1) + ((p2 & kHighBitsMask) >> 1) + (p1 & p2 & kLowBitsMask));
 }
 
 /**
  * Interpolate two 16 bit pixel *pairs* at once with weights 3 resp. 1.
- * In particular, A and B can contain two pixels/each in the upper
+ * In particular, p1 and p2 can contain two pixels/each in the upper
  * and lower halves.
  */
 template<int bitFormat>
-static inline uint32 interpolate32_3_1(uint32 A, uint32 B) {
-	register uint32 x = ((A & qhighBits) >> 2) * 3 + ((B & qhighBits) >> 2);
-	register uint32 y = ((A & qlowBits) * 3 + (B & qlowBits)) >> 2;
+static inline uint32 interpolate32_3_1(uint32 p1, uint32 p2) {
+	register uint32 x = ((p1 & qhighBits) >> 2) * 3 + ((p2 & qhighBits) >> 2);
+	register uint32 y = ((p1 & qlowBits) * 3 + (p2 & qlowBits)) >> 2;
 
 	y &= qlowBits;
 	return x + y;
@@ -65,13 +64,13 @@ static inline uint32 interpolate32_3_1(uint32 A, uint32 B) {
 
 /**
  * Interpolate four 16 bit pixel pairs at once with equal weights 1.
- * In particular, A and B can contain two pixels/each in the upper
+ * In particular, p1, p2, p3 and p3 can each contain two pixels in the upper
  * and lower halves.
  */
 template<int bitFormat>
-static inline uint32 interpolate32_1_1_1_1(uint32 A, uint32 B, uint32 C, uint32 D) {
-	register uint32 x = ((A & qhighBits) >> 2) + ((B & qhighBits) >> 2) + ((C & qhighBits) >> 2) + ((D & qhighBits) >> 2);
-	register uint32 y = ((A & qlowBits) + (B & qlowBits) + (C & qlowBits) + (D & qlowBits)) >> 2;
+static inline uint32 interpolate32_1_1_1_1(uint32 p1, uint32 p2, uint32 p3, uint32 p4) {
+	register uint32 x = ((p1 & qhighBits) >> 2) + ((p2 & qhighBits) >> 2) + ((p3 & qhighBits) >> 2) + ((p4 & qhighBits) >> 2);
+	register uint32 y = ((p1 & qlowBits) + (p2 & qlowBits) + (p3 & qlowBits) + (p4 & qlowBits)) >> 2;
 
 	y &= qlowBits;
 	return x + y;
