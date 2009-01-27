@@ -509,7 +509,7 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 
 const char *AgiEngine::getSavegameFilename(int num) {
 	static char saveLoadSlot[12];
-	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), num + _firstSlot);
+	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), num);
 	return saveLoadSlot;
 }
 
@@ -550,7 +550,7 @@ int AgiEngine::selectSlot() {
 	const char *buttonText[] = { "  OK  ", "Cancel", NULL };
 
 	for (i = 0; i < NUM_VISIBLE_SLOTS; i++) {
-		getSavegameDescription(i, desc[i]);
+		getSavegameDescription(_firstSlot + i, desc[i]);
 	}
 
 	textCentre = GFX_WIDTH / CHAR_LINES / 2;
@@ -657,7 +657,7 @@ int AgiEngine::selectSlot() {
 					_firstSlot++;
 					for (i = 1; i < NUM_VISIBLE_SLOTS; i++)
 						memcpy(desc[i - 1], desc[i], sizeof(desc[0]));
-					getSavegameDescription(NUM_VISIBLE_SLOTS - 1, desc[NUM_VISIBLE_SLOTS - 1]);
+					getSavegameDescription(_firstSlot + NUM_VISIBLE_SLOTS - 1, desc[NUM_VISIBLE_SLOTS - 1]);
 				}
 				active = NUM_VISIBLE_SLOTS - 1;
 			}
@@ -670,7 +670,7 @@ int AgiEngine::selectSlot() {
 					_firstSlot--;
 					for (i = NUM_VISIBLE_SLOTS - 1; i > 0; i--)
 						memcpy(desc[i], desc[i - 1], sizeof(desc[0]));
-					getSavegameDescription(0, desc[0]);
+					getSavegameDescription(_firstSlot, desc[0]);
 				}
 			}
 			break;
@@ -683,7 +683,7 @@ int AgiEngine::selectSlot() {
 				_firstSlot++;
 				for (i = 1; i < NUM_VISIBLE_SLOTS; i++)
 					memcpy(desc[i - 1], desc[i], sizeof(desc[0]));
-				getSavegameDescription(NUM_VISIBLE_SLOTS - 1, desc[NUM_VISIBLE_SLOTS - 1]);
+				getSavegameDescription(_firstSlot + NUM_VISIBLE_SLOTS - 1, desc[NUM_VISIBLE_SLOTS - 1]);
 			}
 			break;
 		case WHEEL_UP:
@@ -691,7 +691,7 @@ int AgiEngine::selectSlot() {
 				_firstSlot--;
 				for (i = NUM_VISIBLE_SLOTS - 1; i > 0; i--)
 					memcpy(desc[i], desc[i - 1], sizeof(desc[0]));
-				getSavegameDescription(0, desc[0]);
+				getSavegameDescription(_firstSlot, desc[0]);
 			}
 			break;
 		case KEY_DOWN_RIGHT:
@@ -701,7 +701,7 @@ int AgiEngine::selectSlot() {
 				_firstSlot = NUM_SLOTS - NUM_VISIBLE_SLOTS;
 			}
 			for (i = 0; i < NUM_VISIBLE_SLOTS; i++)
-				getSavegameDescription(i, desc[i]);
+				getSavegameDescription(_firstSlot + i, desc[i]);
 			break;
 		case KEY_UP_RIGHT:
 			// This is probably triggered by Page Up.
@@ -710,7 +710,7 @@ int AgiEngine::selectSlot() {
 				_firstSlot = 0;
 			}
 			for (i = 0; i < NUM_VISIBLE_SLOTS; i++)
-				getSavegameDescription(i, desc[i]);
+				getSavegameDescription(_firstSlot + i, desc[i]);
 			break;
 		}
 		_gfx->doUpdate();
@@ -738,8 +738,6 @@ int AgiEngine::saveGameDialog() {
 	hp = hm * CHAR_COLS;
 	vp = vm * CHAR_LINES;
 	w = (40 - 2 * hm) - 1;
-
-	sprintf(fileName, "%s", getSavegameFilename(slot));
 
 	do {
 		drawWindow(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
@@ -776,7 +774,7 @@ int AgiEngine::saveGameDialog() {
 	char name[40];
 	int numChars;
 
-	getSavegameDescription(slot, name, false);
+	getSavegameDescription(_firstSlot + slot, name, false);
 
 	for (numChars = 0; numChars < 28 && name[numChars]; numChars++)
 		handleGetstring(name[numChars]);
@@ -789,7 +787,7 @@ int AgiEngine::saveGameDialog() {
 
 	desc = _game.strings[MAX_STRINGS];
 	sprintf(dstr, "Are you sure you want to save the game "
-			"described as:\n\n%s\n\nin slot %d?\n\n\n", desc, slot + _firstSlot);
+			"described as:\n\n%s\n\nin slot %d?\n\n\n", desc, _firstSlot + slot);
 
 	rc = selectionBox(dstr, buttons);
 
@@ -798,7 +796,7 @@ int AgiEngine::saveGameDialog() {
 		return errOK;
 	}
 
-	sprintf(fileName, "%s", getSavegameFilename(slot));
+	sprintf(fileName, "%s", getSavegameFilename(_firstSlot + slot));
 	debugC(8, kDebugLevelMain | kDebugLevelResources, "file is [%s]", fileName);
 
 	int result = saveGame(fileName, desc);
@@ -833,8 +831,6 @@ int AgiEngine::loadGameDialog() {
 	vp = vm * CHAR_LINES;
 	w = (40 - 2 * hm) - 1;
 
-	sprintf(fileName, "%s", getSavegameFilename(slot));
-
 	_sprites->eraseBoth();
 	_sound->stopSound();
 
@@ -849,7 +845,7 @@ int AgiEngine::loadGameDialog() {
 		return errOK;
 	}
 
-	sprintf(fileName, "%s", getSavegameFilename(slot));
+	sprintf(fileName, "%s", getSavegameFilename(_firstSlot + slot));
 
 	if ((rc = loadGame(fileName)) == errOK) {
 		messageBox("Game restored.");
