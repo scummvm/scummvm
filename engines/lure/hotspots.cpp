@@ -2654,11 +2654,13 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		break;
 
 	case START_WALKING:
-		// Start the player walking to the given destination
+		// Start the character walking to the given destination
 
 		debugC(ERROR_DETAILED, kLureDebugAnimations,
 			"Hotspot standard character exec start walking => (%d,%d)",
 			h.destX(), h.destY());
+
+		h.setCoveredFlag(VB_INITIAL);
 		h.setOccupied(false);
 		pathFinder.reset(paths);
 		h.currentActions().top().setAction(PROCESSING_PATH);
@@ -2988,6 +2990,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 
 	case START_WALKING:
 		// Start the player walking to the given destination
+		h.setCoveredFlag(VB_INITIAL);
 		h.setOccupied(false);
 
 		// Reset the path finder / walking sequence
