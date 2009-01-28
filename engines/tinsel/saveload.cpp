@@ -383,7 +383,7 @@ char *ListEntry(int i, letype which) {
 }
 
 static void DoSync(Serializer &s) {
-	int	sg;
+	int	sg = 0;
 
 	if (TinselV2) {
 		if (s.isSaving())
