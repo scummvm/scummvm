@@ -41,6 +41,7 @@ public:
 	void playSong(uint16 fileref);
 	void setBackgroundSong(uint16 fileref);
 	void playCD(uint8 track);
+	void startBackground();
 
 	// Volume
 	void setUserVolume(uint16 volume);
@@ -99,6 +100,7 @@ private:
 	MidiParser *_midiParser;
 	MidiDriver *_driver;
 	uint8 _musicType;
+	bool _isPlaying;
 
 	uint16 _backgroundFileRef;
 	uint8 _prevCDtrack;

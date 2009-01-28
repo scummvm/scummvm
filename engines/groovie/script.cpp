@@ -582,6 +582,8 @@ void Script::o_inputloopstart() {
 	_mouseClicked = _eventMouseClicked;
 	_eventMouseClicked = false;
 
+	_vm->_musicPlayer->startBackground();
+
 	// Save the current pressed character for the whole loop
 	_kbdChar = _eventKbdChar;
 	_eventKbdChar = 0;

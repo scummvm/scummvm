@@ -33,7 +33,7 @@ namespace Groovie {
 
 MusicPlayer::MusicPlayer(GroovieEngine *vm, const Common::String &gtlName) :
 	_vm(vm), _midiParser(NULL), _data(NULL), _driver(NULL),
-	_backgroundFileRef(0), _gameVolume(100), _prevCDtrack(0) {
+	_backgroundFileRef(0), _gameVolume(100), _prevCDtrack(0), _isPlaying(0) {
 	// Create the parser
 	_midiParser = MidiParser::createParser_XMIDI();
 
@@ -174,12 +174,17 @@ void MusicPlayer::setGameVolume(uint16 volume, uint16 time) {
 		_fadingEndVolume = 100;
 }
 
+void MusicPlayer::startBackground() {
+	if (!_isPlaying && _backgroundFileRef) {
+		play(_backgroundFileRef, true);
+	}
+}
+
 void MusicPlayer::endTrack() {
 	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: End of song");
 	unload();
-	if (_backgroundFileRef) {
-		play(_backgroundFileRef, true);
-	}
+	_isPlaying = false;
+	startBackground();
 }
 
 void MusicPlayer::applyFading() {
@@ -232,6 +237,7 @@ bool MusicPlayer::play(uint16 fileref, bool loop) {
 	_midiParser->property(MidiParser::mpAutoLoop, loop);
 	_gameVolume = 100;
 
+	_isPlaying = true;
 	// Load the new file
 	return load(fileref);
 }
