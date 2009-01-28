@@ -3822,7 +3822,12 @@ void TuckerEngine::redrawScreenRect(const Common::Rect &clip, const Common::Rect
 		r.clip(clip);
 		const uint8 *src = _locationBackgroundGfxBuf + r.top * 640 + r.left;
 		r.translate(-clip.left, -clip.top);
-		_system->copyRectToScreen(src, 640, r.left, r.top, r.right - r.left, r.bottom - r.top);
+		const int w = r.right - r.left;
+		const int h = r.bottom - r.top;
+		if (w <= 0 || h <= 0) {
+			return;
+		}
+		_system->copyRectToScreen(src, 640, r.left, r.top, w, h);
 	}
 }
 
