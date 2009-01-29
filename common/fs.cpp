@@ -37,6 +37,7 @@ FSNode::FSNode(AbstractFSNode *realNode)
 }
 
 FSNode::FSNode(const Common::String &p) {
+	assert(g_system);
 	FilesystemFactory *factory = g_system->getFilesystemFactory();
 	AbstractFSNode *tmp = 0;
 

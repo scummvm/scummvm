@@ -472,17 +472,16 @@ static void debugHelper(const char *in_buf, bool caret = true) {
 		g_engine->errorString(in_buf, buf, STRINGBUFLEN);
 	} else {
 		strncpy(buf, in_buf, STRINGBUFLEN);
-		buf[STRINGBUFLEN-1] = '\0';
 	}
+	buf[STRINGBUFLEN-2] = '\0';
+	buf[STRINGBUFLEN-1] = '\0';
 
-	if (caret)
-		printf("%s\n", buf);
-	else
-		printf("%s", buf);
-
-#if defined( USE_WINDBG )
 	if (caret)
 		strcat(buf, "\n");
+
+	fprintf(stdout, "%s", buf);	// FIXME: Use fputs instead
+
+#if defined( USE_WINDBG )
 #if defined( _WIN32_WCE )
 	TCHAR buf_unicode[1024];
 	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
