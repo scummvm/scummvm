@@ -24,7 +24,7 @@
  */
 
 #include "common/config-manager.h"
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/fs.h"
@@ -38,7 +38,7 @@ static const PlainGameDescriptor tuckerGames[] = {
 	{ 0, 0 }
 };
 
-static const Common::ADGameDescription tuckerGameDescriptions[] = {
+static const ADGameDescription tuckerGameDescriptions[] = {
 	{
 		"tucker",
 		"",
@@ -93,14 +93,14 @@ static const Common::ADGameDescription tuckerGameDescriptions[] = {
 		AD_ENTRY1s("infobar.txt", "010b055de42097b140d5bcb6e95a5c7c", 203),
 		Common::EN_ANY,
 		Common::kPlatformPC,
-		Common::ADGF_DEMO | Tucker::kGameFlagDemo,
+		ADGF_DEMO | Tucker::kGameFlagDemo,
 	},
 	AD_TABLE_END_MARKER
 };
 
-static const Common::ADParams detectionParams = {
+static const ADParams detectionParams = {
 	(const byte *)tuckerGameDescriptions,
-	sizeof(Common::ADGameDescription),
+	sizeof(ADGameDescription),
 	512,
 	tuckerGames,
 	0,
@@ -109,18 +109,18 @@ static const Common::ADParams detectionParams = {
 	0
 };
 
-static const Common::ADGameDescription tuckerDemoGameDescription = {
+static const ADGameDescription tuckerDemoGameDescription = {
 	"tucker",
 	"Non-Interactive Demo",
 	AD_ENTRY1(0, 0),
 	Common::EN_ANY,
 	Common::kPlatformPC,
-	Common::ADGF_DEMO | Tucker::kGameFlagDemo | Tucker::kGameFlagIntroOnly
+	ADGF_DEMO | Tucker::kGameFlagDemo | Tucker::kGameFlagIntroOnly
 };
 
-class TuckerMetaEngine : public Common::AdvancedMetaEngine {
+class TuckerMetaEngine : public AdvancedMetaEngine {
 public:
-	TuckerMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {
+	TuckerMetaEngine() : AdvancedMetaEngine(detectionParams) {
 	}
 
 	virtual const char *getName() const {
@@ -141,14 +141,14 @@ public:
 		}
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		if (desc) {
 			*engine = new Tucker::TuckerEngine(syst, desc->language, desc->flags);
 		}
 		return desc != 0;
 	}
 
-	virtual const Common::ADGameDescription *fallbackDetect(const Common::FSList &fslist) const {
+	virtual const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const {
 		for (Common::FSList::const_iterator d = fslist.begin(); d != fslist.end(); ++d) {
 			Common::FSList audiofslist;
 			if (d->isDirectory() && d->getName().equalsIgnoreCase("audio") && d->getChildren(audiofslist, Common::FSNode::kListFilesOnly)) {

@@ -25,13 +25,13 @@
 
 #include "base/plugins.h"
 
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 
 #include "igor/igor.h"
 
 struct IgorGameDescription {
-	Common::ADGameDescription desc;
+	ADGameDescription desc;
 	int gameVersion;
 	int gameFlags;
 };
@@ -48,7 +48,7 @@ static const IgorGameDescription igorGameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_DEMO
+			ADGF_DEMO
 		},
 		Igor::kIdEngDemo100,
 		Igor::kFlagDemo | Igor::kFlagFloppy
@@ -64,7 +64,7 @@ static const IgorGameDescription igorGameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_DEMO
+			ADGF_DEMO
 		},
 		Igor::kIdEngDemo110,
 		Igor::kFlagDemo | Igor::kFlagFloppy
@@ -80,7 +80,7 @@ static const IgorGameDescription igorGameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		Igor::kIdSpaCD,
 		Igor::kFlagTalkie
@@ -93,7 +93,7 @@ static const PlainGameDescriptor igorGameDescriptors[] = {
 	{ 0, 0 }
 };
 
-static const Common::ADParams igorDetectionParams = {
+static const ADParams igorDetectionParams = {
 	(const byte *)igorGameDescriptions,
 	sizeof(IgorGameDescription),
 	1024, // number of md5 bytes
@@ -104,9 +104,9 @@ static const Common::ADParams igorDetectionParams = {
 	0
 };
 
-class IgorMetaEngine : public Common::AdvancedMetaEngine {
+class IgorMetaEngine : public AdvancedMetaEngine {
 public:
-	IgorMetaEngine() : Common::AdvancedMetaEngine(igorDetectionParams) {}
+	IgorMetaEngine() : AdvancedMetaEngine(igorDetectionParams) {}
 
 	virtual const char *getName() const {
 		return "Igor: Objective Uikokahonia";
@@ -116,10 +116,10 @@ public:
 		return "Igor: Objective Uikokahonia (C) Pendulo Studios";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 
-bool IgorMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+bool IgorMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const IgorGameDescription *gd = (const IgorGameDescription *)desc;
 	if (gd) {
 		Igor::DetectedGameVersion dgv;

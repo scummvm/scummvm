@@ -26,7 +26,7 @@
 #ifndef SCUMM_DETECTION_TABLES_H
 #define SCUMM_DETECTION_TABLES_H
 
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "common/rect.h"
 #include "common/util.h"
 
@@ -139,7 +139,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
  * Conversion table mapping old obsolete game IDs to the
  * corresponding new game ID and platform combination.
  */
-static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
+static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 	{"bluesabctimedemo", "bluesabctime", UNK},
 	{"BluesBirthdayDemo", "BluesBirthday", UNK},
 	{"comidemo", "comi", UNK},

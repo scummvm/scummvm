@@ -25,7 +25,7 @@
 
 #include "base/plugins.h"
 
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 
 #include "m4/m4.h"
 #include "m4/resource.h"
@@ -33,7 +33,7 @@
 namespace M4 {
 
 struct M4GameDescription {
-	Common::ADGameDescription desc;
+	ADGameDescription desc;
 
 	int gameType;
 	uint32 features;
@@ -79,7 +79,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GType_Burger,
 		kFeaturesCD
@@ -94,7 +94,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GType_Burger,
 		kFeaturesCD
@@ -109,7 +109,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_DEMO
+			ADGF_DEMO
 		},
 		GType_Burger,
 		kFeaturesDemo
@@ -124,7 +124,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_DEMO
+			ADGF_DEMO
 		},
 		GType_Burger,
 		kFeaturesDemo
@@ -139,7 +139,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -154,7 +154,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -169,7 +169,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -184,7 +184,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -199,7 +199,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -214,7 +214,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_DEMO
+			ADGF_DEMO
 		},
 		GType_Riddle,
 		kFeaturesDemo
@@ -229,7 +229,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GType_RexNebular,
 		kFeaturesNone
@@ -244,7 +244,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_DEMO
+			ADGF_DEMO
 		},
 		GType_RexNebular,
 		kFeaturesDemo
@@ -259,7 +259,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GType_DragonSphere,
 		kFeaturesNone
@@ -275,7 +275,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GType_DragonSphere,
 		kFeaturesCD
@@ -290,7 +290,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_DEMO
+			ADGF_DEMO
 		},
 		GType_DragonSphere,
 		kFeaturesDemo
@@ -305,7 +305,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GType_Phantom,
 		kFeaturesNone
@@ -320,7 +320,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GType_Phantom,
 		kFeaturesCD
@@ -335,17 +335,17 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_DEMO
+			ADGF_DEMO
 		},
 		GType_Phantom,
 		kFeaturesDemo
 	},
-	{ { NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, Common::ADGF_NO_FLAGS }, 0, 0 }
+	{ { NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, ADGF_NO_FLAGS }, 0, 0 }
 };
 
 }
 
-static const Common::ADParams detectionParams = {
+static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)M4::gameDescriptions,
 	// Size of that superset structure
@@ -364,9 +364,9 @@ static const Common::ADParams detectionParams = {
 	0
 };
 
-class M4MetaEngine : public Common::AdvancedMetaEngine {
+class M4MetaEngine : public AdvancedMetaEngine {
 public:
-	M4MetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
+	M4MetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "MADS/M4 engine";
@@ -376,10 +376,10 @@ public:
 		return "Riddle of Master Lu & Orion Burger (C) Sanctuary Woods";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 
-bool M4MetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+bool M4MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const M4::M4GameDescription *gd = (const M4::M4GameDescription *)desc;
 	if (gd) {
 		*engine = new M4::M4Engine(syst, gd);

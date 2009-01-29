@@ -25,7 +25,7 @@
 
 #include "base/plugins.h"
 
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "common/file.h"
 #include "common/savefile.h"
 
@@ -36,7 +36,7 @@
 namespace Tinsel {
 
 struct TinselGameDescription {
-	Common::ADGameDescription desc;
+	ADGameDescription desc;
 
 	int gameID;
 	int gameType;
@@ -96,7 +96,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			//AD_ENTRY1s("dw.scn", "ccd72f02183d0e96b6e7d8df9492cda8", 23308),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_DEMO
+			ADGF_DEMO
 		},
 		GID_DW1,
 		0,
@@ -114,7 +114,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_DEMO
+			ADGF_DEMO
 		},
 		GID_DW1,
 		0,
@@ -129,7 +129,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("dw.gra", "c8808ccd988d603dd35dff42013ae7fd", 781656),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_DW1,
 		0,
@@ -147,7 +147,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_DW1,
 		0,
@@ -171,7 +171,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			Common::ADGF_DROPLANGUAGE
+			ADGF_DROPLANGUAGE
 		},
 		GID_DW1,
 		0,
@@ -193,7 +193,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			Common::ADGF_DROPLANGUAGE
+			ADGF_DROPLANGUAGE
 		},
 		GID_DW1,
 		0,
@@ -215,7 +215,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			Common::ADGF_DROPLANGUAGE
+			ADGF_DROPLANGUAGE
 		},
 		GID_DW1,
 		0,
@@ -237,7 +237,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			Common::ADGF_DROPLANGUAGE
+			ADGF_DROPLANGUAGE
 		},
 		GID_DW1,
 		0,
@@ -256,7 +256,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_DW1,
 		0,
@@ -276,7 +276,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_DW1,
 		0,
@@ -293,7 +293,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("dw.scn", "6182c7986eaec893c62fb6ea13a9f225", 774556),
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_DW1,
 		0,
@@ -312,7 +312,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_GRB,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_DW2,
 		0,
@@ -331,7 +331,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_USA,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_DW2,
 		0,
@@ -350,7 +350,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_DW2,
 		0,
@@ -369,7 +369,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_DW2,
 		0,
@@ -389,7 +389,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_DW2,
 		0,
@@ -408,7 +408,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_DW2,
 		0,
@@ -421,7 +421,7 @@ static const TinselGameDescription gameDescriptions[] = {
 
 } // End of namespace Tinsel
 
-static const Common::ADParams detectionParams = {
+static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Tinsel::gameDescriptions,
 	// Size of that superset structure
@@ -440,9 +440,9 @@ static const Common::ADParams detectionParams = {
 	0
 };
 
-class TinselMetaEngine : public Common::AdvancedMetaEngine {
+class TinselMetaEngine : public AdvancedMetaEngine {
 public:
-	TinselMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
+	TinselMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "Tinsel Engine";
@@ -452,7 +452,7 @@ public:
 		return "Tinsel (C) Psygnosis";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
@@ -512,7 +512,7 @@ SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-bool TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+bool TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Tinsel::TinselGameDescription *gd = (const Tinsel::TinselGameDescription *)desc;
 	if (gd) {
 		*engine = new Tinsel::TinselEngine(syst, gd);

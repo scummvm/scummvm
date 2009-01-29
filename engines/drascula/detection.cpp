@@ -25,7 +25,7 @@
 
 #include "base/plugins.h"
 
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "common/file.h"
 
 #include "drascula/drascula.h"
@@ -34,7 +34,7 @@
 namespace Drascula {
 
 struct DrasculaGameDescription {
-	Common::ADGameDescription desc;
+	ADGameDescription desc;
 };
 
 uint32 DrasculaEngine::getFeatures() const {
@@ -46,7 +46,7 @@ Common::Language DrasculaEngine::getLanguage() const {
 }
 
 void DrasculaEngine::loadArchives() {
-	const Common::ADGameFileDescription *ag;
+	const ADGameFileDescription *ag;
 
 	if (getFeatures() & GF_PACKED) {
 		for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++)
@@ -76,7 +76,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("14.ald", "09b2735953edcd43af115c65ae00b10e", 1595),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 	},
 
@@ -88,7 +88,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("packet.001", "c6a8697396e213a18472542d5f547cb4", 32847563),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_KEEPMATCH | GF_PACKED
+			ADGF_KEEPMATCH | GF_PACKED
 		},
 	},
 
@@ -144,7 +144,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("14.ald", "0746ed1a5cc8d9728f790c29813f4b43", 23059),
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 	},
 
@@ -156,7 +156,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("14.ald", "72e46089033d56bad1c179ac36e2a9d2", 610),
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 	},
 
@@ -168,7 +168,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("14.ald", "eeeee96b82169003630e08992248296c", 608),
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 	},
 
@@ -191,7 +191,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("14.ald", "02b49a18328d0bf2efe6ba658c9c7a1d", 2098),
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 	},
 
@@ -232,7 +232,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 
 } // End of namespace Drascula
 
-static const Common::ADParams detectionParams = {
+static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Drascula::gameDescriptions,
 	// Size of that superset structure
@@ -251,9 +251,9 @@ static const Common::ADParams detectionParams = {
 	0
 };
 
-class DrasculaMetaEngine : public Common::AdvancedMetaEngine {
+class DrasculaMetaEngine : public AdvancedMetaEngine {
 public:
-	DrasculaMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
+	DrasculaMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "Drascula Engine";
@@ -263,10 +263,10 @@ public:
 		return "Drascula Engine (C) 2000 Alcachofa Soft, 1996 (C) Digital Dreams Multimedia, 1994 (C) Emilio de Paz";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 
-bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Drascula::DrasculaGameDescription *gd = (const Drascula::DrasculaGameDescription *)desc;
 	if (gd) {
 		*engine = new Drascula::DrasculaEngine(syst, gd);

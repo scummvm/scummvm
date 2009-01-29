@@ -25,7 +25,7 @@
 
 #include "base/plugins.h"
 
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -35,7 +35,7 @@
 namespace AGOS {
 
 struct AGOSGameDescription {
-	Common::ADGameDescription desc;
+	ADGameDescription desc;
 
 	int gameType;
 	int gameId;
@@ -49,7 +49,7 @@ struct AGOSGameDescription {
  * corresponding new target and platform combination.
  *
  */
-static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
+static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 	{"simon1acorn", "simon1", Common::kPlatformAcorn},
 	{"simon1amiga", "simon1", Common::kPlatformAmiga},
 	{"simon1cd32", "simon1", Common::kPlatformAmiga},
@@ -80,7 +80,7 @@ static const PlainGameDescriptor simonGames[] = {
 
 #include "agos/detection_tables.h"
 
-static const Common::ADParams detectionParams = {
+static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)AGOS::gameDescriptions,
 	// Size of that superset structure
@@ -99,9 +99,9 @@ static const Common::ADParams detectionParams = {
 	0
 };
 
-class AgosMetaEngine : public Common::AdvancedMetaEngine {
+class AgosMetaEngine : public AdvancedMetaEngine {
 public:
-	AgosMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
+	AgosMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "AGOS";
@@ -112,7 +112,7 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 };
@@ -127,7 +127,7 @@ bool AGOS::AGOSEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsRTL);
 }
 
-bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const AGOS::AGOSGameDescription *gd = (const AGOS::AGOSGameDescription *)desc;
 	bool res = true;
 

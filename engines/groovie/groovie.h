@@ -26,7 +26,7 @@
 #ifndef GROOVIE_H
 #define GROOVIE_H
 
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
 
@@ -62,7 +62,7 @@ enum kEngineVersion {
 };
 
 struct GroovieGameDescription {
-	Common::ADGameDescription desc;
+	ADGameDescription desc;
 
 	kEngineVersion version; // Version of the engine
 	int indexEntry; // The index of the entry in disk.1 for V2 games

@@ -719,7 +719,7 @@ GameList ScummMetaEngine::getSupportedGames() const {
 }
 
 GameDescriptor ScummMetaEngine::findGame(const char *gameid) const {
-	return Common::AdvancedDetector::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
+	return AdvancedDetector::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
 }
 
 GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
@@ -783,7 +783,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// We start by checking whether the specified game ID is obsolete.
 	// If that is the case, we automatically upgrade the target to use
 	// the correct new game ID (and platform, if specified).
-	for (const Common::ADObsoleteGameID *o = obsoleteGameIDsTable; o->from; ++o) {
+	for (const ADObsoleteGameID *o = obsoleteGameIDsTable; o->from; ++o) {
 		if (!scumm_stricmp(gameid, o->from)) {
 			// Match found, perform upgrade
 			gameid = o->to;

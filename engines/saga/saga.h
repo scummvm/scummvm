@@ -34,9 +34,7 @@
 #include "saga/gfx.h"
 #include "saga/list.h"
 
-namespace Common {
 struct ADGameFileDescription;
-}
 
 namespace Saga {
 
@@ -603,7 +601,7 @@ public:
 
 	const GamePatchDescription *getPatchDescriptions() const;
 
-	const Common::ADGameFileDescription *getFilesDescriptions() const;
+	const ADGameFileDescription *getFilesDescriptions() const;
 
 	const Common::Rect &getDisplayClip() const { return _displayClip;}
 	Common::Error loadGameState(int slot);

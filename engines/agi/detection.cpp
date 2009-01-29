@@ -25,7 +25,7 @@
 
 #include "base/plugins.h"
 
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "graphics/thumbnail.h"
@@ -38,7 +38,7 @@
 namespace Agi {
 
 struct AGIGameDescription {
-	Common::ADGameDescription desc;
+	ADGameDescription desc;
 
 	int gameID;
 	int gameType;
@@ -114,7 +114,7 @@ namespace Agi {
 			AD_ENTRY1s(fname,md5,size),		\
 			lang, \
 			platform, \
-			Common::ADGF_NO_FLAGS \
+			ADGF_NO_FLAGS \
 		}, \
 		gid, \
 		interp, \
@@ -237,7 +237,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_GOLDRUSH,
 		GType_V3,
@@ -484,7 +484,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_SQ2,
 		GType_V2,
@@ -612,7 +612,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "421da3a18004122a966d64ab6bd86d2e"),
 			Common::RU_RUS,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_FANMADE,
 		GType_V2,
@@ -628,7 +628,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "aaea5b4a348acb669d13b0e6f22d4dc9"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_GETOUTTASQ,
 		GType_V2,
@@ -787,7 +787,7 @@ static AGIGameDescription g_fallbackDesc = {
 		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
 		Common::UNK_LANG,
 		Common::kPlatformPC,
-		Common::ADGF_NO_FLAGS
+		ADGF_NO_FLAGS
 	},
 	GID_FANMADE,
 	GType_V2,
@@ -795,7 +795,7 @@ static AGIGameDescription g_fallbackDesc = {
 	0x2917,
 };
 
-static const Common::ADParams detectionParams = {
+static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Agi::gameDescriptions,
 	// Size of that superset structure
@@ -818,12 +818,12 @@ static const Common::ADParams detectionParams = {
 
 using namespace Agi;
 
-class AgiMetaEngine : public Common::AdvancedMetaEngine {
+class AgiMetaEngine : public AdvancedMetaEngine {
 	mutable Common::String	_gameid;
 	mutable Common::String	_extra;
 
 public:
-	AgiMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
+	AgiMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "AGI preAGI + v2 + v3 Engine";
@@ -833,13 +833,13 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 
-	const Common::ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
+	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 };
 
 bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -860,7 +860,7 @@ bool AgiBase::hasFeature(EngineFeature f) const {
 }
 
 
-bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Agi::AGIGameDescription *gd = (const Agi::AGIGameDescription *)desc;
 	bool res = true;
 
@@ -977,7 +977,7 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 	return SaveStateDescriptor();
 }
 
-const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
+const ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
 	typedef Common::HashMap<Common::String, int32> IntMap;
 	IntMap allFiles;
 	bool matchedUsingFilenames = false;
@@ -994,7 +994,7 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSL
 	// Set the default values for the fallback descriptor's ADGameDescription part.
 	g_fallbackDesc.desc.language = Common::UNK_LANG;
 	g_fallbackDesc.desc.platform = Common::kPlatformPC;
-	g_fallbackDesc.desc.flags = Common::ADGF_NO_FLAGS;
+	g_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
 
 	// Set default values for the fallback descriptor's AGIGameDescription part.
 	g_fallbackDesc.gameID = GID_FANMADE;
@@ -1135,7 +1135,7 @@ const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSL
 		printf("If this is an original and unmodified version or new made Fanmade game,\n");
 		printf("please report any, information previously printed by ScummVM to the team.\n");
 
-		return (const Common::ADGameDescription *)&g_fallbackDesc;
+		return (const ADGameDescription *)&g_fallbackDesc;
 	}
 
 	return 0;

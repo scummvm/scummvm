@@ -25,7 +25,7 @@
 
 #include "base/plugins.h"
 
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "common/savefile.h"
 
 #include "lure/lure.h"
@@ -33,7 +33,7 @@
 namespace Lure {
 
 struct LureGameDescription {
-	Common::ADGameDescription desc;
+	ADGameDescription desc;
 
 	uint32 features;
 };
@@ -60,7 +60,7 @@ static const LureGameDescription gameDescriptions[] = {
 			AD_ENTRY1("disk1.ega", "e9c9fdd8a19f7910d68e53cb84651273"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GF_FLOPPY | GF_EGA,
 	},
@@ -72,7 +72,7 @@ static const LureGameDescription gameDescriptions[] = {
 			AD_ENTRY1("disk1.vga", "b2a8aa6d7865813a17a3c636e063572e"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GF_FLOPPY,
 	},
@@ -84,7 +84,7 @@ static const LureGameDescription gameDescriptions[] = {
 			AD_ENTRY1("disk1.ega", "b80aced0321f64c58df2c7d3d74dfe79"),
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GF_FLOPPY | GF_EGA,
 	},
@@ -96,7 +96,7 @@ static const LureGameDescription gameDescriptions[] = {
 			AD_ENTRY1("disk1.vga", "cf69d5ada228dd74f89046691c16aafb"),
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GF_FLOPPY,
 	},
@@ -108,7 +108,7 @@ static const LureGameDescription gameDescriptions[] = {
 			AD_ENTRY1("disk1.vga", "7aa19e444dab1ac7194d9f7a40ffe54a"),
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GF_FLOPPY,
 	},
@@ -120,7 +120,7 @@ static const LureGameDescription gameDescriptions[] = {
 			AD_ENTRY1("disk1.vga", "894a2c2caeccbad2fc2f4a79a8ee47b0"),
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GF_FLOPPY,
 	},
@@ -132,7 +132,7 @@ static const LureGameDescription gameDescriptions[] = {
 			AD_ENTRY1("disk1.vga", "1c94475c1bb7e0e88c1757d3b5377e94"),
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GF_FLOPPY,
 	},
@@ -144,7 +144,7 @@ static const LureGameDescription gameDescriptions[] = {
 			AD_ENTRY1("disk1.vga", "1751145b653959f7a64fe1618d6b97ac"),
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GF_FLOPPY,
 	},
@@ -154,7 +154,7 @@ static const LureGameDescription gameDescriptions[] = {
 
 } // End of namespace Lure
 
-static const Common::ADParams detectionParams = {
+static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Lure::gameDescriptions,
 	// Size of that superset structure
@@ -170,12 +170,12 @@ static const Common::ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
-	Common::kADFlagUseExtraAsHint
+	kADFlagUseExtraAsHint
 };
 
-class LureMetaEngine : public Common::AdvancedMetaEngine {
+class LureMetaEngine : public AdvancedMetaEngine {
 public:
-	LureMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
+	LureMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "Lure of the Temptress Engine";
@@ -186,7 +186,7 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -204,7 +204,7 @@ bool Lure::LureEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsRTL);
 }
 
-bool LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+bool LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Lure::LureGameDescription *gd = (const Lure::LureGameDescription *)desc;
 	if (gd) {
 		*engine = new Lure::LureEngine(syst, gd);

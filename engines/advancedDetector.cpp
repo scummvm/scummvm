@@ -29,15 +29,13 @@
 #include "common/hash-str.h"
 #include "common/file.h"
 #include "common/md5.h"
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "common/config-manager.h"
-
-namespace Common {
 
 /**
  * A list of pointers to ADGameDescription structs (or subclasses thereof).
  */
-typedef Array<const ADGameDescription*> ADGameDescList;
+typedef Common::Array<const ADGameDescription*> ADGameDescList;
 
 
 /**
@@ -52,14 +50,14 @@ typedef Array<const ADGameDescription*> ADGameDescList;
  * @param platform	restrict results to specified platform only
  * @return	list of ADGameDescription (or subclass) pointers corresponding to matched games
  */
-static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra);
+static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &params, Common::Language language, Common::Platform platform, const Common::String extra);
 
 
 /**
  * Returns list of targets supported by the engine.
  * Distinguishes engines with single ID
  */
-static GameList gameIDList(const Common::ADParams &params) {
+static GameList gameIDList(const ADParams &params) {
 	if (params.singleid != NULL) {
 		GameList gl;
 
@@ -78,13 +76,13 @@ static GameList gameIDList(const Common::ADParams &params) {
 	return GameList(params.list);
 }
 
-static void upgradeTargetIfNecessary(const Common::ADParams &params) {
+static void upgradeTargetIfNecessary(const ADParams &params) {
 	if (params.obsoleteList == 0)
 		return;
 
-	String gameid = ConfMan.get("gameid");
+	Common::String gameid = ConfMan.get("gameid");
 
-	for (const Common::ADObsoleteGameID *o = params.obsoleteList; o->from; ++o) {
+	for (const ADObsoleteGameID *o = params.obsoleteList; o->from; ++o) {
 		if (gameid.equalsIgnoreCase(o->from)) {
 			gameid = o->to;
 			ConfMan.set("gameid", gameid);
@@ -111,7 +109,7 @@ namespace AdvancedDetector {
 GameDescriptor findGameID(
 	const char *gameid,
 	const PlainGameDescriptor *list,
-	const Common::ADObsoleteGameID *obsoleteList
+	const ADObsoleteGameID *obsoleteList
 	) {
 	// First search the list of supported game IDs for a match.
 	const PlainGameDescriptor *g = findPlainGameDescriptor(gameid, list);
@@ -121,7 +119,7 @@ GameDescriptor findGameID(
 	// If we didn't find the gameid in the main list, check if it
 	// is an obsolete game id.
 	if (obsoleteList != 0) {
-		const Common::ADObsoleteGameID *o = obsoleteList;
+		const ADObsoleteGameID *o = obsoleteList;
 		while (o->from) {
 			if (0 == scumm_stricmp(gameid, o->from)) {
 				g = findPlainGameDescriptor(o->to, list);
@@ -160,8 +158,8 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
  * or (if ADGF_DEMO has been set)
  *   GAMEID-demo-PLAFORM-LANG
  */
-static String generatePreferredTarget(const String &id, const ADGameDescription *desc) {
-	String res(id);
+static Common::String generatePreferredTarget(const Common::String &id, const ADGameDescription *desc) {
+	Common::String res(id);
 
 	if (desc->flags & ADGF_DEMO) {
 		res = res + "-demo";
@@ -171,18 +169,18 @@ static String generatePreferredTarget(const String &id, const ADGameDescription 
 		res = res + "-cd";
 	}
 
-	if (desc->platform != kPlatformPC && desc->platform != kPlatformUnknown) {
+	if (desc->platform != Common::kPlatformPC && desc->platform != Common::kPlatformUnknown) {
 		res = res + "-" + getPlatformAbbrev(desc->platform);
 	}
 
-	if (desc->language != EN_ANY && desc->language != UNK_LANG && !(desc->flags & ADGF_DROPLANGUAGE)) {
+	if (desc->language != Common::EN_ANY && desc->language != Common::UNK_LANG && !(desc->flags & ADGF_DROPLANGUAGE)) {
 		res = res + "-" + getLanguageCode(desc->language);
 	}
 
 	return res;
 }
 
-static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc, const Common::ADParams &params) {
+static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc, const ADParams &params) {
 	if (params.singleid != NULL) {
 		desc["preferredtarget"] = desc["gameid"];
 		desc["gameid"] = params.singleid;
@@ -199,13 +197,13 @@ static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *
 		desc["extra"] = realDesc->extra;
 }
 
-GameList AdvancedMetaEngine::detectGames(const FSList &fslist) const {
+GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
 	ADGameDescList matches = detectGame(fslist, params, Common::UNK_LANG, Common::kPlatformUnknown, "");
 	GameList detectedGames;
 
 	// Use fallback detector if there were no matches by other means
 	if (matches.empty()) {
-		const Common::ADGameDescription *fallbackDesc = fallbackDetect(fslist);
+		const ADGameDescription *fallbackDesc = fallbackDetect(fslist);
 		if (fallbackDesc != 0) {
 			GameDescriptor desc(toGameDescriptor(*fallbackDesc, params.list));
 			updateGameDescriptor(desc, fallbackDesc, params);
@@ -246,11 +244,11 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		path = ".";
 		warning("No path was provided. Assuming the data files are in the current directory");
 	}
-	FSNode dir(path);
-	FSList files;
-	if (!dir.isDirectory() || !dir.getChildren(files, FSNode::kListAll)) {
+	Common::FSNode dir(path);
+	Common::FSList files;
+	if (!dir.isDirectory() || !dir.getChildren(files, Common::FSNode::kListAll)) {
 		warning("Game data path does not exist or is not a directory (%s)", path.c_str());
-		return kNoGameDataFoundError;
+		return Common::kNoGameDataFoundError;
 	}
 
 	ADGameDescList matches = detectGame(files, params, language, platform, extra);
@@ -278,14 +276,14 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	}
 
 	if (agdDesc == 0) {
-		return kNoGameDataFoundError;
+		return Common::kNoGameDataFoundError;
 	}
 
 	debug(2, "Running %s", toGameDescriptor(*agdDesc, params.list).description().c_str());
 	if (!createInstance(syst, engine, agdDesc)) {
-		return kNoGameDataFoundError;
+		return Common::kNoGameDataFoundError;
 	}
-	return kNoError;
+	return Common::kNoError;
 }
 
 struct SizeMD5 {
@@ -293,8 +291,8 @@ struct SizeMD5 {
 	char md5[32+1];
 };
 
-typedef HashMap<String, SizeMD5, IgnoreCase_Hash, IgnoreCase_EqualTo> SizeMD5Map;
-typedef HashMap<String, FSNode, IgnoreCase_Hash, IgnoreCase_EqualTo> FileMap;
+typedef Common::HashMap<Common::String, SizeMD5, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeMD5Map;
+typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 
 static void reportUnknown(const SizeMD5Map &filesSizeMD5) {
 	// TODO: This message should be cleaned up / made more specific.
@@ -312,9 +310,9 @@ static void reportUnknown(const SizeMD5Map &filesSizeMD5) {
 	printf("\n");
 }
 
-static ADGameDescList detectGameFilebased(const FileMap &allFiles, const Common::ADParams &params);
+static ADGameDescList detectGameFilebased(const FileMap &allFiles, const ADParams &params);
 
-static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra) {
+static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &params, Common::Language language, Common::Platform platform, const Common::String extra) {
 	FileMap allFiles;
 	SizeMD5Map filesSizeMD5;
 
@@ -326,11 +324,11 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 
 	// First we compose a hashmap of all files in fslist.
 	// Includes nifty stuff like removing trailing dots and ignoring case.
-	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory())
 			continue;
 
-		String tstr = file->getName();
+		Common::String tstr = file->getName();
 
 		// Strip any trailing dot
 		if (tstr.lastChar() == '.')
@@ -345,7 +343,7 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 		g = (const ADGameDescription *)descPtr;
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
-			String fname = fileDesc->fileName;
+			Common::String fname = fileDesc->fileName;
 			if (allFiles.contains(fname) && !filesSizeMD5.contains(fname)) {
 				debug(3, "+ %s", fname.c_str());
 
@@ -355,7 +353,7 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 
 				debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5);
 
-				File testFile;
+				Common::File testFile;
 				if (testFile.open(allFiles[fname]))
 					tmp.size = (int32)testFile.size();
 				else
@@ -377,8 +375,8 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 
 		// Do not even bother to look at entries which do not have matching
 		// language and platform (if specified).
-		if ((language != UNK_LANG && g->language != UNK_LANG && g->language != language) ||
-			(platform != kPlatformUnknown && g->platform != kPlatformUnknown && g->platform != platform)) {
+		if ((language != Common::UNK_LANG && g->language != Common::UNK_LANG && g->language != language) ||
+			(platform != Common::kPlatformUnknown && g->platform != Common::kPlatformUnknown && g->platform != platform)) {
 			continue;
 		}
 
@@ -387,7 +385,7 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
 
 		// Try to match all files for this game
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
-			String tstr = fileDesc->fileName;
+			Common::String tstr = fileDesc->fileName;
 
 			if (!filesSizeMD5.contains(tstr)) {
 				fileMissing = true;
@@ -460,7 +458,7 @@ static ADGameDescList detectGame(const FSList &fslist, const Common::ADParams &p
  * the maximal number of matching files. In case of a tie, the entry
  * coming first in the list is chosen.
  */
-static ADGameDescList detectGameFilebased(const FileMap &allFiles, const Common::ADParams &params) {
+static ADGameDescList detectGameFilebased(const FileMap &allFiles, const ADParams &params) {
 	const ADFileBasedFallback *ptr;
 	const char* const* filenames;
 
@@ -515,5 +513,3 @@ GameList AdvancedMetaEngine::getSupportedGames() const {
 GameDescriptor AdvancedMetaEngine::findGame(const char *gameid) const {
 	return AdvancedDetector::findGameID(gameid, params.list, params.obsoleteList);
 }
-
-}	// End of namespace Common

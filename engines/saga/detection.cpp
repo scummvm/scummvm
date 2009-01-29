@@ -30,7 +30,7 @@
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "graphics/thumbnail.h"
 
@@ -43,7 +43,7 @@
 
 namespace Saga {
 struct SAGAGameDescription {
-	Common::ADGameDescription desc;
+	ADGameDescription desc;
 
 	int gameId;
 	uint32 features;
@@ -81,7 +81,7 @@ int SagaEngine::getGameNumber() const { return _gameNumber; }
 int SagaEngine::getStartSceneNumber() const { return _gameDescription->startSceneNumber; }
 
 const GamePatchDescription *SagaEngine::getPatchDescriptions() const { return _gameDescription->patchDescriptions; }
-const Common::ADGameFileDescription *SagaEngine::getFilesDescriptions() const { return _gameDescription->desc.filesDescriptions; }
+const ADGameFileDescription *SagaEngine::getFilesDescriptions() const { return _gameDescription->desc.filesDescriptions; }
 
 }
 
@@ -94,7 +94,7 @@ static const PlainGameDescriptor sagaGames[] = {
 	{0, 0}
 };
 
-static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
+static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 	{"ite", "saga", Common::kPlatformUnknown},
 	{"ihnm", "saga", Common::kPlatformUnknown},
 	{"dino", "saga", Common::kPlatformUnknown},
@@ -104,7 +104,7 @@ static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
 
 #include "saga/detection_tables.h"
 
-static const Common::ADParams detectionParams = {
+static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Saga::gameDescriptions,
 	// Size of that superset structure
@@ -123,9 +123,9 @@ static const Common::ADParams detectionParams = {
 	0
 };
 
-class SagaMetaEngine : public Common::AdvancedMetaEngine {
+class SagaMetaEngine : public AdvancedMetaEngine {
 public:
-	SagaMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
+	SagaMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "Saga engine ["
@@ -154,7 +154,7 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -178,7 +178,7 @@ bool Saga::SagaEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Saga::SAGAGameDescription *gd = (const Saga::SAGAGameDescription *)desc;
 	if (gd) {
 		*engine = new Saga::SagaEngine(syst, gd);

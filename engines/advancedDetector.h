@@ -22,15 +22,14 @@
  * $Id$
  *
  */
-#ifndef COMMON_ADVANCED_DETECTOR_H
-#define COMMON_ADVANCED_DETECTOR_H
+#ifndef ENGINES_ADVANCED_DETECTOR_H
+#define ENGINES_ADVANCED_DETECTOR_H
 
 #include "common/fs.h"
 #include "common/error.h"
 
 #include "engines/metaengine.h"
 
-namespace Common {
 
 struct ADGameFileDescription {
 	const char *fileName;
@@ -55,8 +54,8 @@ struct ADGameDescription {
 	const char *gameid;
 	const char *extra;
 	ADGameFileDescription filesDescriptions[14];
-	Language language;
-	Platform platform;
+	Common::Language language;
+	Common::Platform platform;
 
 	/**
 	 * A bitmask of extra flags. The top 8 bits are reserved for generic flags
@@ -71,7 +70,7 @@ struct ADGameDescription {
  * terminate a list to be passed to the AdvancedDetector API.
  */
 #define AD_TABLE_END_MARKER	\
-	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, Common::ADGF_NO_FLAGS }
+	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, ADGF_NO_FLAGS }
 
 
 struct ADObsoleteGameID {
@@ -147,7 +146,7 @@ struct ADParams {
 	 *
 	 * @todo Properly explain this.
 	 */
-	const Common::ADObsoleteGameID *obsoleteList;
+	const ADObsoleteGameID *obsoleteList;
 
 	/**
 	 * Name of single gameid (optional).
@@ -185,7 +184,7 @@ namespace AdvancedDetector {
 GameDescriptor findGameID(
 	const char *gameid,
 	const PlainGameDescriptor *list,
-	const Common::ADObsoleteGameID *obsoleteList = 0
+	const ADObsoleteGameID *obsoleteList = 0
 	);
 
 } // End of namespace AdvancedDetector
@@ -194,28 +193,26 @@ GameDescriptor findGameID(
  * A MetaEngine implementation based around the advanced detector code.
  */
 class AdvancedMetaEngine : public MetaEngine {
-	const Common::ADParams &params;
+	const ADParams &params;
 public:
-	AdvancedMetaEngine(const Common::ADParams &dp) : params(dp) {}
+	AdvancedMetaEngine(const ADParams &dp) : params(dp) {}
 
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const FSList &fslist) const;
+	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
 	// To be provided by subclasses
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const = 0;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const = 0;
 
 	/**
 	 * An (optional) generic fallback detect function which is invoked
 	 * if both the regular MD5 based detection as well as the file
 	 * based fallback failed to detect anything.
 	 */
-	virtual const Common::ADGameDescription *fallbackDetect(const FSList &fslist) const {
+	virtual const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const {
 		return 0;
 	}
 };
-
-}	// End of namespace Common
 
 #endif

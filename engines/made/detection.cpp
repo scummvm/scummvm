@@ -25,7 +25,7 @@
 
 #include "base/plugins.h"
 
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "common/file.h"
 
 #include "made/made.h"
@@ -34,7 +34,7 @@
 namespace Made {
 
 struct MadeGameDescription {
-	Common::ADGameDescription desc;
+	ADGameDescription desc;
 
 	int gameID;
 	int gameType;
@@ -87,7 +87,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			AD_ENTRY1("rtzcd.dat", "e95c38ded389e39cfbf87a8cb250b12e"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_RTZ,
 		0,
@@ -104,7 +104,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			AD_ENTRY1("rtzcd.red", "cd8b62ece4677c438688c1de3f5379b9"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_RTZ,
 		0,
@@ -120,7 +120,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			AD_ENTRY1("rtzcd.dat", "a1db8c97a78dae10f91d356f16ad07b8"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_RTZ,
 		0,
@@ -136,7 +136,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			AD_ENTRY1("rtzcd.red", "c4e2430e6b6c6ff1562a80fb4a9df24c"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_RTZ,
 		0,
@@ -153,7 +153,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			AD_ENTRY1("rtzcd.dat", "9d740378da2d16e83d0d0efff01bf83a"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_RTZ,
 		0,
@@ -169,7 +169,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			AD_ENTRY1("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_RTZ,
 		0,
@@ -187,7 +187,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			AD_ENTRY1("rtzcd.dat", "9d740378da2d16e83d0d0efff01bf83a"),
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_RTZ,
 		0,
@@ -205,7 +205,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			AD_ENTRY1("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2"),
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_RTZ,
 		0,
@@ -221,7 +221,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			AD_ENTRY1("rtz.prj", "764d02f52ce1c219f2c0066677fba4ce"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_RTZ,
 		0,
@@ -237,7 +237,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			AD_ENTRY1("demo.dat", "2a6a1354bd5346fad4aee08e5b56caaa"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_DEMO
+			ADGF_DEMO
 		},
 		GID_RTZ,
 		0,
@@ -253,7 +253,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			AD_ENTRY1("manhole.dat", "cb21e31ed35c963208343bc995225b73"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_MANHOLE,
 		0,
@@ -269,7 +269,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			AD_ENTRY1("manhole.dat", "2b1658292599a861c4cd3cf6cdb3c581"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_MANHOLE,
 		0,
@@ -285,7 +285,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			AD_ENTRY1("lgop2.dat", "8137996db200ff67e8f172ff106f2e48"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_LGOP2,
 		0,
@@ -301,7 +301,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			AD_ENTRY1("rodneys.dat", "a79887dbaa47689facd7c6f09258ba5a"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 		GID_RODNEY,
 		0,
@@ -323,7 +323,7 @@ static MadeGameDescription g_fallbackDesc = {
 		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
 		Common::UNK_LANG,
 		Common::kPlatformPC,
-		Common::ADGF_NO_FLAGS
+		ADGF_NO_FLAGS
 	},
 	0,
 	0,
@@ -333,7 +333,7 @@ static MadeGameDescription g_fallbackDesc = {
 
 } // End of namespace Made
 
-static const Common::ADParams detectionParams = {
+static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Made::gameDescriptions,
 	// Size of that superset structure
@@ -352,9 +352,9 @@ static const Common::ADParams detectionParams = {
 	0
 };
 
-class MadeMetaEngine : public Common::AdvancedMetaEngine {
+class MadeMetaEngine : public AdvancedMetaEngine {
 public:
-	MadeMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
+	MadeMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "MADE Engine";
@@ -365,9 +365,9 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 
-	const Common::ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
+	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 
 };
 
@@ -381,7 +381,7 @@ bool Made::MadeEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsRTL);
 }
 
-bool MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+bool MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Made::MadeGameDescription *gd = (const Made::MadeGameDescription *)desc;
 	if (gd) {
 		*engine = new Made::MadeEngine(syst, gd);
@@ -389,18 +389,18 @@ bool MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return gd != 0;
 }
 
-const Common::ADGameDescription *MadeMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
+const ADGameDescription *MadeMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
 	// Set the default values for the fallback descriptor's ADGameDescription part.
 	Made::g_fallbackDesc.desc.language = Common::UNK_LANG;
 	Made::g_fallbackDesc.desc.platform = Common::kPlatformPC;
-	Made::g_fallbackDesc.desc.flags = Common::ADGF_NO_FLAGS;
+	Made::g_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
 
 	// Set default values for the fallback descriptor's MadeGameDescription part.
 	Made::g_fallbackDesc.gameID = 0;
 	Made::g_fallbackDesc.features = 0;
 	Made::g_fallbackDesc.version = 3;
 
-	//return (const Common::ADGameDescription *)&Made::g_fallbackDesc;
+	//return (const ADGameDescription *)&Made::g_fallbackDesc;
 	return NULL;
 }
 

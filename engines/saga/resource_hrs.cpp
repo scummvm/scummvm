@@ -37,7 +37,7 @@
 #include "saga/scene.h"
 #include "saga/sndres.h"
 
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "common/endian.h"
 
 namespace Saga {
