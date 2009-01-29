@@ -321,7 +321,9 @@ void TuckerEngine::loadCharSizeDta() {
 		for (int i = 0; i < 256; ++i) {
 			_charWidthTable[i] = t.getNextInteger();
 		}
-		_charWidthTable[225] = 0;
+		if (_gameLang == Common::FR_FRA) {
+			_charWidthTable[225] = 0;
+		}
 	} else {
 		memcpy(_charWidthTable + 32, _charWidthCharset1, 224);
 	}
