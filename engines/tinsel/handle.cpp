@@ -382,7 +382,7 @@ uint8 *LockMem(SCNHANDLE offset) {
 		return (uint8 *)pH->pNode + sizeof(MEM_NODE) + (offset & OFFSETMASK);
 	} else if (handle == cdPlayHandle) {
 		// Must be in currently loaded/loadable range
-		if(offset < cdBaseHandle || offset >= cdTopHandle)
+		if (offset < cdBaseHandle || offset >= cdTopHandle)
 			error("Overlapping (in time) CD-plays!");
 
 		if (pH->pNode->pBaseAddr && (pH->filesize & fLoaded))
@@ -394,7 +394,7 @@ uint8 *LockMem(SCNHANDLE offset) {
 			MemoryReAlloc(pH->pNode, cdTopHandle-cdBaseHandle,
 				DWM_MOVEABLE | DWM_DISCARDABLE);
 
-		if(pH->pNode->pBaseAddr == NULL)
+		if (pH->pNode->pBaseAddr == NULL)
 			error("Out of memory");
 
 		LoadCDGraphData(pH);

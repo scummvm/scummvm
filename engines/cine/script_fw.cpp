@@ -428,7 +428,8 @@ int RawScript::getNextLabel(const FWScriptInfo &info, int offset) const {
 			case 'l': // label
 				return pos;
 			case 's': // string
-				while (_data[pos++] != 0);
+				while (_data[pos++] != 0)
+					;
 				break;
 			case 'x': // exit script
 				return -pos-1;

@@ -55,7 +55,7 @@ void LoLEngine::giveCredits(int credits, int redraw) {
 					_moneyColumnHeight[d]++;
 				}
 				_credits++;
-			} while(++cnt < t);
+			} while (++cnt < t);
 		} else if (_credits >= 60) {
 			_credits += t;
 		}
@@ -114,7 +114,7 @@ int LoLEngine::makeItem(int itemIndex, int curFrame, int flags) {
 			slot = r;
 		} else {
 			int ii = _itemsInPlay[slot].itemIndexUnk;
-			while(ii) {				
+			while (ii) {				
 				if (testUnkItemFlags(ii)) {
 					_itemsInPlay[slot].itemIndexUnk = _itemsInPlay[ii].itemIndexUnk;
 					clearItemTableEntry(ii);

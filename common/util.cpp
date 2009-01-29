@@ -85,9 +85,11 @@ bool StringTokenizer::empty() const {
 
 String StringTokenizer::nextToken() {
 	// Seek to next token's start (i.e. jump over the delimiters before next token)
-	for (_tokenBegin = _tokenEnd; _tokenBegin < _str.size() && _delimiters.contains(_str[_tokenBegin]); _tokenBegin++);
+	for (_tokenBegin = _tokenEnd; _tokenBegin < _str.size() && _delimiters.contains(_str[_tokenBegin]); _tokenBegin++)
+		;
 	// Seek to the token's end (i.e. jump over the non-delimiters)
-	for (_tokenEnd = _tokenBegin; _tokenEnd < _str.size() && !_delimiters.contains(_str[_tokenEnd]); _tokenEnd++);
+	for (_tokenEnd = _tokenBegin; _tokenEnd < _str.size() && !_delimiters.contains(_str[_tokenEnd]); _tokenEnd++)
+		;
 	// Return the found token
 	return String(_str.c_str() + _tokenBegin, _tokenEnd - _tokenBegin);
 }

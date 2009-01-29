@@ -406,7 +406,8 @@ int16 Parse_v2::parseValExpr(byte stopToken) {
 
 			for (brackPos = (stkPos - 2); (brackPos > 0) &&
 			    (operStack[brackPos] < 30) && (operStack[brackPos] != 9);
-					brackPos--);
+					brackPos--)
+				;
 
 			if ((operStack[brackPos] >= 30) || (operStack[brackPos] == 9))
 				brackPos++;
@@ -791,7 +792,8 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 
 				for (brackStart = (stkPos - 2); (brackStart > 0) &&
 				    (operStack[brackStart] < 30) && (operStack[brackStart] != 9);
-						brackStart--);
+						brackStart--)
+					;
 
 				if ((operStack[brackStart] >= 30) || (operStack[brackStart] == 9))
 					brackStart++;

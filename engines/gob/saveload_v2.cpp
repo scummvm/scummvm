@@ -113,7 +113,7 @@ bool SaveLoad_v2::loadVersioned(int type, int16 dataVar, int32 size, int32 offse
 		break;
 
 	case kSaveTempSprite:
-		if(loadTempSprite(_saveFiles[type], dataVar, size, offset))
+		if (loadTempSprite(_saveFiles[type], dataVar, size, offset))
 			return true;
 
 		warning("While loading the temporary sprite");
@@ -142,7 +142,7 @@ bool SaveLoad_v2::saveVersioned(int type, int16 dataVar, int32 size, int32 offse
 		break;
 
 	case kSaveTempSprite:
-		if(saveTempSprite(_saveFiles[type], dataVar, size, offset))
+		if (saveTempSprite(_saveFiles[type], dataVar, size, offset))
 			return true;
 
 		warning("While saving the temporary sprite");
@@ -319,7 +319,7 @@ bool SaveLoad_v2::saveGame(SaveFile &saveFile,
 
 		byte sizes[40];
 		memset(sizes, 0, 40);
-		if(!_save->save(0, 40, 0, saveFile.destName, _indexBuffer + (slot * 40), sizes))
+		if (!_save->save(0, 40, 0, saveFile.destName, _indexBuffer + (slot * 40), sizes))
 			return false;
 
 		if (!_save->save(dataVar, size, 40, saveFile.destName, _vm->_inter->_variables))

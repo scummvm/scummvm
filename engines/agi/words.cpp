@@ -193,7 +193,8 @@ void AgiEngine::dictionaryWords(char *msg) {
 		}
 
 		if (q != NULL) {
-			for (; (*q != 0 && *q != 0x20); q++);
+			for (; (*q != 0 && *q != 0x20); q++)
+				;
 			if (*q) {
 				*q = 0;
 				q++;

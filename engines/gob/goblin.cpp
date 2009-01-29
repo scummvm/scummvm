@@ -659,7 +659,8 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 		resDeltaPix = 0;
 
 		for (i = 1; (i <= _pressedMapX) &&
-				(_vm->_map->getPass(_pressedMapX - i, _pressedMapY) == 0); i++);
+				(_vm->_map->getPass(_pressedMapX - i, _pressedMapY) == 0); i++)
+			;
 
 		if (i <= _pressedMapX) {
 			resDeltaPix = (i - 1) * 12 + (posX % 12) + 1;
@@ -667,7 +668,8 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 		}
 
 		for (i = 1; ((i + _pressedMapX) < _vm->_map->_mapWidth) &&
-				(_vm->_map->getPass(_pressedMapX + i, _pressedMapY) == 0); i++);
+				(_vm->_map->getPass(_pressedMapX + i, _pressedMapY) == 0); i++)
+			;
 
 		if ((_pressedMapX + i) < _vm->_map->_mapWidth) {
 			deltaPix = (i * 12) - (posX % 12);
@@ -679,7 +681,8 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 		}
 
 		for (i = 1; ((i + _pressedMapY) < _vm->_map->_mapHeight) &&
-				(_vm->_map->getPass(_pressedMapX, _pressedMapY + i) == 0); i++);
+				(_vm->_map->getPass(_pressedMapX, _pressedMapY + i) == 0); i++)
+			;
 
 		if ((_pressedMapY + i) < _vm->_map->_mapHeight) {
 			deltaPix = (i * 6) - (posY % 6);
@@ -691,7 +694,8 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 		}
 
 		for (i = 1; (i <= _pressedMapY) &&
-				(_vm->_map->getPass(_pressedMapX, _pressedMapY - i) == 0); i++);
+				(_vm->_map->getPass(_pressedMapX, _pressedMapY - i) == 0); i++)
+			;
 
 		if (i <= _pressedMapY) {
 			deltaPix = (i * 6) + (posY % 6);

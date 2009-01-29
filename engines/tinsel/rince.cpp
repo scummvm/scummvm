@@ -361,11 +361,11 @@ static void InitMover(PMOVER pMover) {
 
 	pMover->Tline = 0;
 
-	if(pMover->direction != FORWARD || pMover->direction != AWAY
+	if (pMover->direction != FORWARD || pMover->direction != AWAY
 	|| pMover->direction != LEFTREEL || pMover->direction != RIGHTREEL)
 		pMover->direction = FORWARD;
 
-	if(pMover->scale < 0 || pMover->scale > TOTAL_SCALES)
+	if (pMover->scale < 0 || pMover->scale > TOTAL_SCALES)
 		pMover->scale = 1;
 
 	pMover->brightness = BOGUS_BRIGHTNESS;	// Force initial setup

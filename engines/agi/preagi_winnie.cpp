@@ -1150,13 +1150,13 @@ void Winnie::saveGame() {
 	outfile->writeByte(_game.nObjRet);
 	outfile->writeByte(_game.iObjHave);
 
-	for(i = 0; i < IDI_WTP_MAX_FLAG; i++)
+	for (i = 0; i < IDI_WTP_MAX_FLAG; i++)
 		outfile->writeByte(_game.fGame[i]);
 
-	for(i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++)
+	for (i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++)
 		outfile->writeByte(_game.iUsedObj[i]);
 
-	for(i = 0; i < IDI_WTP_MAX_ROOM_OBJ; i++)
+	for (i = 0; i < IDI_WTP_MAX_ROOM_OBJ; i++)
 		outfile->writeByte(_game.iObjRoom[i]);
 
 	outfile->finalize();
@@ -1216,13 +1216,13 @@ void Winnie::loadGame() {
 		infile->readUint16LE();				// skip unused field
 	}
 
-	for(i = 0; i < IDI_WTP_MAX_FLAG; i++)
+	for (i = 0; i < IDI_WTP_MAX_FLAG; i++)
 		_game.fGame[i] = infile->readByte();
 
-	for(i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++)
+	for (i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++)
 		_game.iUsedObj[i] = infile->readByte();
 
-	for(i = 0; i < IDI_WTP_MAX_ROOM_OBJ; i++)
+	for (i = 0; i < IDI_WTP_MAX_ROOM_OBJ; i++)
 		_game.iObjRoom[i] = infile->readByte();
 
 	// Note that saved games from the original interpreter have 2 more 16-bit fields here

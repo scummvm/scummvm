@@ -1932,7 +1932,7 @@ bool TownsPC98_OpnChannel::processVibrato() {
 	_vbrCurDelay = _vbrInitDelayHi;
 	_frequency += _vbrModCurVal;
 
-	if(!--_vbrDurLeft) {
+	if (!--_vbrDurLeft) {
 		_vbrDurLeft = _vbrDuration;
 		_vbrModCurVal = -_vbrModCurVal;
 	}
@@ -2425,7 +2425,7 @@ bool TownsPC98_OpnChannelSSG::control_fc_decOutLevel(uint8 para) {
 	if (_drv->_fading)
 		return true;
 
-	if(_totalLevel + 1 < 0x10)
+	if (_totalLevel + 1 < 0x10)
 		_totalLevel++;
 
 	return true;

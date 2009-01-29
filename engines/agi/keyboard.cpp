@@ -289,7 +289,8 @@ void AgiEngine::handleKeys(int key) {
 		_game.keypress = 0;
 
 		/* Remove all leading spaces */
-		for (p = _game.inputBuffer; *p && *p == 0x20; p++);
+		for (p = _game.inputBuffer; *p && *p == 0x20; p++)
+			;
 
 		/* Copy to internal buffer */
 		for (; *p; p++) {

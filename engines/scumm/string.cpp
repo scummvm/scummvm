@@ -1126,11 +1126,13 @@ int ScummEngine_v72he::convertMessageToString(const byte *msg, byte *dst, int ds
 			// (pickup4)
 			// (PU1)
 			// (PU2)
-			while (src[num++] != ')');
+			while (src[num++] != ')')
+				;
 			continue;
 		}
 		if ((_game.features & GF_HE_LOCALIZED) && chr == '[') {
-			while (src[num++] != ']');
+			while (src[num++] != ']')
+				;
 			continue;
 		}
 

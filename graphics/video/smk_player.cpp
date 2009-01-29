@@ -669,7 +669,7 @@ bool SMKPlayer::decodeNextFrame() {
 						out += stride;
 						break;
 					case 2:
-						for(i = 0; i < 2; i++) {
+						for (i = 0; i < 2; i++) {
 							// We first get p2 and then p1
 							// Check ffmpeg thread "[PATCH] Smacker video decoder bug fix"
 							// http://article.gmane.org/gmane.comp.video.ffmpeg.devel/78768

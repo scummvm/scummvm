@@ -208,7 +208,7 @@ AnimData::AnimData(const AnimData &src) : _width(src._width),
 		memcpy(_data, src._data, _size*sizeof(byte));
 	}
 
-	if(src._mask) {
+	if (src._mask) {
 		_mask = new byte[_size];
 		assert(_mask);
 		memcpy(_mask, src._mask, _size*sizeof(byte));

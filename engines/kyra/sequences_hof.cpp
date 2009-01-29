@@ -2772,7 +2772,7 @@ void KyraEngine_HoF::seq_scrollPage(int bottom, int top) {
 
 				_screen->fillRect(12, def->y - 8, 28, def->y + 8, 0, 4);
 				_screen->drawShape(4, getShapePtr(def->itemIndex + def->frames[a->currentFrame]), 12, def->y - 8, 0, 0);
-				if(_seqFrameCounter % 2 == 0)
+				if (_seqFrameCounter % 2 == 0)
 					a->currentFrame = ++a->currentFrame % 20;
 			}
 		}
@@ -2807,7 +2807,7 @@ void KyraEngine_HoF::seq_showStarcraftLogo() {
 		_screen->updateScreen();
 		delay(_seqEndTime - _system->getMillis());
 	}
-	if(!skipFlag()) {
+	if (!skipFlag()) {
 		_seqEndTime = _system->getMillis() + 50;
 		ci->displayFrame(0, 0);
 		_screen->copyPage(2, 0);

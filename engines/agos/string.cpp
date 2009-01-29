@@ -80,7 +80,8 @@ byte *AGOSEngine::uncompressToken(byte a, byte *ptr) {
 				}
 				ptr1 = _byteTokenStrings;		/* Find it */
 				while (count1--)	{			
-					while (*ptr1++);
+					while (*ptr1++)
+						;
 				}
 				ptr1 = uncompressToken(b, ptr1);	/* Try this one as a two byte token */
 				uncompressText(ptr1);			/* Uncompress rest of this token    */
@@ -88,7 +89,8 @@ byte *AGOSEngine::uncompressToken(byte a, byte *ptr) {
 			}
 		}
 		while (count1--) {
-			while (*ptr2++);
+			while (*ptr2++)
+				;
 		}
 		uncompressText(ptr2);
 	} else {
@@ -103,7 +105,8 @@ byte *AGOSEngine::uncompressToken(byte a, byte *ptr) {
 		}
 		ptr1 = _byteTokenStrings;
 		while (count1--)	{		/* Is a byte token so count */
-			while (*ptr1++);		/* to start of token */
+			while (*ptr1++)		/* to start of token */
+				;
 		}
 		uncompressText(ptr1);			/* and do it */
 	}
@@ -183,7 +186,8 @@ void AGOSEngine::setupStringTable(byte *mem, int num) {
 		_twoByteTokenStrings = mem;
 		ct1 = i;
 		while (*mem++) {
-			while (*mem++);
+			while (*mem++)
+				;
 			i--;
 			if ((i == 0) && (ct1 != 0)) {
 				_secondTwoByteTokenStrings = mem;
@@ -194,10 +198,12 @@ void AGOSEngine::setupStringTable(byte *mem, int num) {
 				_thirdTwoByteTokenStrings = mem;
 		}
 		_byteTokens = mem;
-		while (*mem++);
+		while (*mem++)
+			;
 		_byteTokenStrings = mem;
 		while (*mem++) {
-			while(*mem++);
+			while (*mem++)
+				;
 		}
 		i = 0;
 l1:		_stringTabPtr[i++] = mem;
@@ -206,14 +212,16 @@ l1:		_stringTabPtr[i++] = mem;
 			_stringTabPos = i;
 			return;
 		}
-		while (*mem++);
+		while (*mem++)
+			;
 		goto l1;
 	} else {
 		for (;;) {
 			_stringTabPtr[i++] = mem;
 			if (--num == 0)
 				break;
-			for (; *mem; mem++);
+			for (; *mem; mem++)
+				;
 			mem++;
 		}
 	
@@ -227,7 +235,8 @@ void AGOSEngine::setupLocalStringTable(byte *mem, int num) {
 		_localStringtable[i++] = mem;
 		if (--num == 0)
 			break;
-		for (; *mem; mem++);
+		for (; *mem; mem++)
+			;
 		mem++;
 	}
 }

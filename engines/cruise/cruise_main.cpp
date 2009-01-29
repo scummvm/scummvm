@@ -70,7 +70,8 @@ void drawInfoStringSmallBlackBox(uint8 *string) {
 
 	flipScreen();
 
-	while (1);
+	while (1)
+		;
 }
 
 void loadPakedFileToMem(int fileIdx, uint8 *buffer) {

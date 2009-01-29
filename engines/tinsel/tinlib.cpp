@@ -386,7 +386,7 @@ static void ScrollMonitorProcess(CORO_PARAM, const void *param) {
 
 		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 
-	} while(Loffset != psm->x || Toffset != psm->y);
+	} while (Loffset != psm->x || Toffset != psm->y);
 
 	CORO_END_CODE;
 }
@@ -2152,7 +2152,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 					// Carry on until the cursor leaves this icon
 					GetCursorXY(&x, &y, false);
 
-				} while(InvItemId(x, y) == pinvo->id);
+				} while (InvItemId(x, y) == pinvo->id);
 			} else {
 				/*
 				 * PrintObj() called from other event

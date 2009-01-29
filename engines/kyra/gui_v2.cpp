@@ -612,7 +612,7 @@ int GUI_v2::saveMenu(Button *caller) {
 		initMenu(*_currentMenu);
 		updateAllMenuButtons();
 		return 0;
-	} else if(_saveSlot <= -1) {
+	} else if (_saveSlot <= -1) {
 		return 0;
 	}
 

@@ -94,7 +94,8 @@ void CDROM::startTrack(const char *trackName) {
 	stopPlaying();
 	_curTrackBuffer = matchPtr;
 
-	while (getTrackPos() >= 0);
+	while (getTrackPos() >= 0)
+		;
 
 	uint32 start = READ_LE_UINT32(matchPtr + 12);
 	uint32 end   = READ_LE_UINT32(matchPtr + 16);
@@ -151,7 +152,8 @@ const char *CDROM::getCurTrack() const {
 void CDROM::stopPlaying() {
 	stop();
 
-	while (getTrackPos() != -1);
+	while (getTrackPos() != -1)
+		;
 }
 
 void CDROM::stop() {

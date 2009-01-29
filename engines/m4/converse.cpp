@@ -290,7 +290,7 @@ void ConversationView::playNextReply() {
 			int previousWeight = 1;
 			int currentWeight = 0;
 
-			for(uint32 j = 0; j < currentEntry->entries.size(); j++) {
+			for (uint32 j = 0; j < currentEntry->entries.size(); j++) {
 				currentWeight += currentEntry->entries[j]->weight;
 				if (selectedWeight >= previousWeight && selectedWeight <= currentWeight) {
 					sprintf(buffer, "%s.raw", currentEntry->entries[j]->voiceFile);
@@ -406,7 +406,7 @@ void Converse::loadConversation(const char *convName) {
 	convS->read(buffer, 8);
 	if (debugFlag) printf("Conversation name: %s\n", buffer);
 
-	while(true) {
+	while (true) {
 		chunkPos = convS->pos();
 		chunk = convS->readUint32LE();	// read chunk
 		if (convS->eos()) break;
@@ -716,7 +716,7 @@ void Converse::loadConversationMads(const char *convName) {
 	printf("Chunk 0\n");
 	printf("Conv stream size: %i\n", convS->size());
 
-	while(!convS->eos()) { // FIXME (eos changed)
+	while (!convS->eos()) { // FIXME (eos changed)
 		printf("%i ", convS->readByte());
 	}
 	printf("\n");
@@ -727,7 +727,7 @@ void Converse::loadConversationMads(const char *convName) {
 	printf("Chunk 1\n");
 	printf("Conv stream size: %i\n", convS->size());
 
-	while(!convS->eos()) { // FIXME (eos changed)
+	while (!convS->eos()) { // FIXME (eos changed)
 		printf("%i ", convS->readByte());
 	}
 	printf("\n");
@@ -738,7 +738,7 @@ void Converse::loadConversationMads(const char *convName) {
 	printf("Chunk 2\n");
 	printf("Conv stream size: %i\n", convS->size());
 
-	while(!convS->eos()) { // FIXME (eos changed)
+	while (!convS->eos()) { // FIXME (eos changed)
 		printf("%i ", convS->readByte());
 	}
 	printf("\n");
@@ -792,7 +792,7 @@ void Converse::loadConversationMads(const char *convName) {
 	convS->read(buffer, 14);		// speech file
 	printf("Speech file: %s\n", buffer);
 
-	while(!convS->eos()) { // FIXME: eos changed
+	while (!convS->eos()) { // FIXME: eos changed
 		printf("%i ", convS->readByte());
 	}
 	printf("\n");
@@ -805,7 +805,7 @@ void Converse::loadConversationMads(const char *convName) {
 	printf("Chunk 1: conversation nodes\n");
 	printf("Conv stream size: %i\n", convS->size());
 
-	while(true) {
+	while (true) {
 		uint16 id = convS->readUint16LE();
 		if (convS->eos()) break;
 
@@ -844,7 +844,7 @@ void Converse::loadConversationMads(const char *convName) {
 
 	*buffer = 0;
 
-	while(true) {
+	while (true) {
 		//if (curPos == 0)
 		//	printf("%i: Offset %i: ", _convStrings.size(), convS->pos());
 		uint8 b = convS->readByte();
@@ -900,7 +900,7 @@ void Converse::loadConversationMads(const char *convName) {
 	//printf("Chunk 3 - MESG chunk data\n");
 	//printf("Conv stream size: %i\n", convS->size());
 
-	while(true) {
+	while (true) {
 		uint16 index = convS->readUint16LE();
 		if (convS->eos()) break;
 
@@ -926,7 +926,7 @@ void Converse::loadConversationMads(const char *convName) {
 	convS = convData.getItemStream(6);
 	printf("Chunk 6\n");
 	printf("Conv stream size: %i\n", convS->size());
-	/*while(!convS->eos()) { // FIXME (eos changed)
+	/*while (!convS->eos()) { // FIXME (eos changed)
 		printf("%i ", convS->readByte());
 		printf("%i ", convS->readByte());
 		printf("%i ", convS->readByte());
@@ -965,7 +965,7 @@ void Converse::readConvEntryActions(Common::SubReadStream *convS, ConvEntry *cur
 	int messageIndex = 0;
 	int unk = 0;
 
-	while(true) {
+	while (true) {
 		chunk = convS->readByte();
 		if (convS->eos()) break;
 

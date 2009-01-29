@@ -528,7 +528,7 @@ void M4Engine::dumpFile(const char* filename, bool uncompress) {
 	printf("Dumping %s, size: %i\n", filename, fileS->size());
 
 	if (!uncompress) {
-		while(!fileS->eos()) {
+		while (!fileS->eos()) {
 			bytesRead = fileS->read(buffer, 256);
 			fwrite(buffer, bytesRead, 1, destFile);
 		}
@@ -538,7 +538,7 @@ void M4Engine::dumpFile(const char* filename, bool uncompress) {
 		for (int i = 0; i < packData.getCount(); i++) {
 			sourceUnc = packData.getItemStream(i);
 			printf("Dumping compressed chunk %i of %i, size is %i\n", i + 1, packData.getCount(), sourceUnc->size());
-			while(!sourceUnc->eos()) {
+			while (!sourceUnc->eos()) {
 				bytesRead = sourceUnc->read(buffer, 256);
 				fwrite(buffer, bytesRead, 1, destFile);
 			}

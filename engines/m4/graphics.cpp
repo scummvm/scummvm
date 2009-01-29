@@ -723,7 +723,7 @@ static void fadeRange(M4Engine *vm, RGB8 *srcPal, RGB8 *destPal,  int startIndex
 	RGB8 tempPal[256];
 
 	// perform the fade
-	for(int stepCtr = 1; stepCtr <= numSteps; ++stepCtr) {
+	for (int stepCtr = 1; stepCtr <= numSteps; ++stepCtr) {
 		// Delay the specified amount
 		uint32 startTime = g_system->getMillis();
 		while ((g_system->getMillis() - startTime) < delayAmount) {

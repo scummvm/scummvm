@@ -397,10 +397,10 @@ bool SaveLoad_v4::saveGame(SaveFile &saveFile,
 
 		_hasIndex = false;
 
-		if(!_save->save(0, 500, 0, saveFile.destName, _propBuffer, _propBuffer + 500))
+		if (!_save->save(0, 500, 0, saveFile.destName, _propBuffer, _propBuffer + 500))
 			return false;
 
-		if(!_save->save(0, 40, 500, saveFile.destName, _indexBuffer + (slot * 40), 0))
+		if (!_save->save(0, 40, 500, saveFile.destName, _indexBuffer + (slot * 40), 0))
 			return false;
 
 		if (!_save->save(dataVar, size, 540, saveFile.destName, _vm->_inter->_variables))

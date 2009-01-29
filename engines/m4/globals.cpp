@@ -273,11 +273,11 @@ Globals::Globals(M4Engine *vm): _vm(vm) {
 Globals::~Globals() {
 	uint32 i;
 
-	for(i = 0; i < _madsVocab.size(); i++)
+	for (i = 0; i < _madsVocab.size(); i++)
 		free(_madsVocab[i]);
 	_madsVocab.clear();
 
-	for(i = 0; i < _madsQuotes.size(); i++)
+	for (i = 0; i < _madsQuotes.size(); i++)
 		free(_madsQuotes[i]);
 	_madsQuotes.clear();
 
@@ -295,7 +295,7 @@ void Globals::loadMadsVocab() {
 	char buffer[30];
 	strcpy(buffer, "");
 
-	while(true) {
+	while (true) {
 		uint8 b = vocabS->readByte();
 		if (vocabS->eos()) break;
 
@@ -318,7 +318,7 @@ void Globals::loadMadsQuotes() {
 	char buffer[128];
 	strcpy(buffer, "");
 
-	while(true) {
+	while (true) {
 		uint8 b = quoteS->readByte();
 		if (quoteS->eos()) break;
 

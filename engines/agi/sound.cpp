@@ -843,7 +843,8 @@ void SoundMgr::playSound() {
 
 	if (!_playing) {
 		if (_vm->_soundemu != SOUND_EMU_APPLE2GS) {
-			for (i = 0; i < NUM_CHANNELS; _chn[i++].vol = 0);
+			for (i = 0; i < NUM_CHANNELS; _chn[i++].vol = 0)
+				;
 		}
 
 		if (_endflag != -1)

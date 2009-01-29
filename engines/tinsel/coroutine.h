@@ -126,7 +126,7 @@ public:
 
 /** Stop the currently running coroutine */
 #define CORO_KILL_SELF() \
-		do { if (&coroParam != &nullContext) { coroParam->_sleep = -1; } return; } while(0)
+		do { if (&coroParam != &nullContext) { coroParam->_sleep = -1; } return; } while (0)
 
 /** Invoke another coroutine */
 #define CORO_INVOKE_ARGS(subCoro, ARGS)  \
@@ -139,7 +139,7 @@ public:
 				coroParam->_sleep = coroParam->_subctx->_sleep;\
 				assert(&coroParam != &nullContext);\
 				return; case __LINE__:;\
-			} while(1);\
+			} while (1);\
 		} while (0)
 #define CORO_INVOKE_ARGS_V(subCoro, RESULT, ARGS)  \
 		do {\
@@ -151,7 +151,7 @@ public:
 				coroParam->_sleep = coroParam->_subctx->_sleep;\
 				assert(&coroParam != &nullContext);\
 				return RESULT; case __LINE__:;\
-			} while(1);\
+			} while (1);\
 		} while (0)
 
 #define CORO_INVOKE_0(subCoroutine) \

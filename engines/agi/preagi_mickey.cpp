@@ -974,10 +974,10 @@ bool Mickey::loadGame() {
 
 			_game.nXtals = infile->readByte();
 
-			for(i = 0; i < IDI_MSA_MAX_DAT; i++)
+			for (i = 0; i < IDI_MSA_MAX_DAT; i++)
 				_game.iPlanetXtal[i] = infile->readByte();
 
-			for(i = 0; i < IDI_MSA_MAX_PLANET; i++)
+			for (i = 0; i < IDI_MSA_MAX_PLANET; i++)
 				_game.iClue[i] = infile->readUint16LE();
 
 			infile->read(_game.szAddr, IDI_MSA_MAX_BUTTON + 1);
@@ -992,30 +992,30 @@ bool Mickey::loadGame() {
 			_game.fTempleDoorOpen = infile->readByte() == 1;
 			_game.fAnimXL30 = infile->readByte() == 1;
 
-			for(i = 0; i < IDI_MSA_MAX_ITEM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ITEM; i++)
 				_game.fItem[i] = infile->readByte() == 1;
 
-			for(i = 0; i < IDI_MSA_MAX_ITEM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ITEM; i++)
 				_game.fItemUsed[i] = infile->readByte() == 1;
 
-			for(i = 0; i < IDI_MSA_MAX_ITEM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ITEM; i++)
 				_game.iItem[i] = infile->readSByte();
 
 			_game.nItems = infile->readByte();
 
-			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ROOM; i++)
 				_game.iRmObj[i] = infile->readSByte();
 
-			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ROOM; i++)
 				_game.iRmPic[i] = infile->readByte();
 
-			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ROOM; i++)
 				_game.oRmTxt[i] = infile->readUint16LE();
 
-			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ROOM; i++)
 				_game.iRmMenu[i] = infile->readByte();
 
-			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ROOM; i++)
 				_game.nRmMenu[i] = infile->readByte();
 
 			_game.nFrame = infile->readSByte();
@@ -1079,10 +1079,10 @@ void Mickey::saveGame() {
 
 			outfile->writeByte(_game.nXtals);
 
-			for(i = 0; i < IDI_MSA_MAX_DAT; i++)
+			for (i = 0; i < IDI_MSA_MAX_DAT; i++)
 				outfile->writeByte(_game.iPlanetXtal[i]);
 
-			for(i = 0; i < IDI_MSA_MAX_PLANET; i++)
+			for (i = 0; i < IDI_MSA_MAX_PLANET; i++)
 				outfile->writeUint16LE(_game.iClue[i]);
 
 			outfile->write(_game.szAddr, IDI_MSA_MAX_BUTTON + 1);
@@ -1097,30 +1097,30 @@ void Mickey::saveGame() {
 			outfile->writeByte(_game.fTempleDoorOpen ? 1 : 0);
 			outfile->writeByte(_game.fAnimXL30 ? 1 : 0);
 
-			for(i = 0; i < IDI_MSA_MAX_ITEM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ITEM; i++)
 				outfile->writeByte(_game.fItem[i] ? 1 : 0);
 
-			for(i = 0; i < IDI_MSA_MAX_ITEM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ITEM; i++)
 				outfile->writeByte(_game.fItemUsed[i] ? 1 : 0);
 
-			for(i = 0; i < IDI_MSA_MAX_ITEM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ITEM; i++)
 				outfile->writeSByte(_game.iItem[i]);
 
 			outfile->writeByte(_game.nItems);
 
-			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ROOM; i++)
 				outfile->writeSByte(_game.iRmObj[i]);
 
-			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ROOM; i++)
 				outfile->writeByte(_game.iRmPic[i]);
 
-			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ROOM; i++)
 				outfile->writeUint16LE(_game.oRmTxt[i]);
 
-			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ROOM; i++)
 				outfile->writeByte(_game.iRmMenu[i]);
 
-			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+			for (i = 0; i < IDI_MSA_MAX_ROOM; i++)
 				outfile->writeByte(_game.nRmMenu[i]);
 
 			outfile->writeSByte(_game.nFrame);

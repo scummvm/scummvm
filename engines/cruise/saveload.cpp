@@ -851,7 +851,8 @@ int loadSavegameData(int saveGameIdx) {
 			int j;
 			int k;
 
-			for (j = i + 1; j < 257 && filesDatabase[j].subData.ptr && !strcmp(filesDatabase[i].subData.name, filesDatabase[j].subData.name) && (filesDatabase[j].subData.index == (j - i)); j++);
+			for (j = i + 1; j < 257 && filesDatabase[j].subData.ptr && !strcmp(filesDatabase[i].subData.name, filesDatabase[j].subData.name) && (filesDatabase[j].subData.index == (j - i)); j++)
+				;
 
 			for (k = i; k < j; k++) {
 				if (filesDatabase[k].subData.ptrMask)

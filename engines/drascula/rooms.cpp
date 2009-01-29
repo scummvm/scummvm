@@ -565,11 +565,11 @@ bool DrasculaEngine::room_21(int fl) {
 		toggleDoor(0, 1, kOpenDoor);
 	else if (pickedObject == kVerbClose && fl == 101)
 		toggleDoor(0, 1, kCloseDoor);
-	else if(pickedObject == kVerbPick && fl == 141) {
+	else if (pickedObject == kVerbPick && fl == 141) {
 		pickObject(19);
 		visible[2] = 0;
 		flags[10] = 1;
-	} else if(pickedObject == 7 && fl == 101) {
+	} else if (pickedObject == 7 && fl == 101) {
 		flags[28] = 1;
 		toggleDoor(0, 1, kOpenDoor);
 		selectVerb(0);
@@ -616,14 +616,14 @@ bool DrasculaEngine::room_23(int fl) {
 	if (pickedObject == kVerbOpen && fl == 103) {
 		toggleDoor(0, 0, kOpenDoor);
 		updateVisible();
-	} else if(pickedObject == kVerbClose && fl == 103) {
+	} else if (pickedObject == kVerbClose && fl == 103) {
 		toggleDoor(0, 0, kCloseDoor);
 		updateVisible();
-	} else if(pickedObject == kVerbOpen && fl == 104)
+	} else if (pickedObject == kVerbOpen && fl == 104)
 		toggleDoor(1, 1, kOpenDoor);
-	else if(pickedObject == kVerbClose && fl == 104)
+	else if (pickedObject == kVerbClose && fl == 104)
 		toggleDoor(1, 1, kCloseDoor);
-	else if(pickedObject == kVerbPick && fl == 142) {
+	else if (pickedObject == kVerbPick && fl == 142) {
 		pickObject(8);
 		visible[2] = 0;
 		flags[11] = 1;

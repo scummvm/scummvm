@@ -446,8 +446,7 @@ void PictureMgr::plotPattern(int x, int y) {
 	circle_ptr = &circle_data[circle_list[pen_size]];
 
 	// SGEORGE : Fix v3 picture data for drawing circles. Manifests in goldrush
-	if(_pictureVersion == 3)
-	{
+	if (_pictureVersion == 3) {
 		circle_data[1] = 0;
 		circle_data[3] = 0;
 	}

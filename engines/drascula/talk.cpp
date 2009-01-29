@@ -943,7 +943,8 @@ void DrasculaEngine::grr() {
 
 	updateScreen();
 
-	while (!isTalkFinished());
+	while (!isTalkFinished())
+		;
 
 	updateRoom();
 	updateScreen();

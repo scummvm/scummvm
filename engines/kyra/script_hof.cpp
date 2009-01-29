@@ -946,7 +946,7 @@ int KyraEngine_HoF::o2_useItemOnMainChar(EMCState *script) {
 	int oldVocH = _vocHigh;
 	_vocHigh = 0x5a;
 
-	while(_emc->isValid(&tmpScript))
+	while (_emc->isValid(&tmpScript))
 		_emc->run(&tmpScript);
 
 	_vocHigh = oldVocH;

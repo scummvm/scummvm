@@ -2064,7 +2064,8 @@ void ScummEngine_v5::o5_roomOps() {
 
 			a = getVarOrDirectByte(PARAM_1);
 			s = filename;
-			while ((*s++ = fetchScriptByte()));
+			while ((*s++ = fetchScriptByte()))
+				;
 
 			file = _saveFileMan->openForSaving(filename);
 			if (file != NULL) {
@@ -2083,7 +2084,8 @@ void ScummEngine_v5::o5_roomOps() {
 
 			a = getVarOrDirectByte(PARAM_1);
 			s = filename;
-			while ((*s++ = fetchScriptByte()));
+			while ((*s++ = fetchScriptByte()))
+				;
 
 			file = _saveFileMan->openForLoading(filename);
 			if (file != NULL) {

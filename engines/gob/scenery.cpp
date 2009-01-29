@@ -184,7 +184,8 @@ int16 Scenery::loadStatic(char search) {
 			_spriteRefs[sprIndex]++;
 		} else {
 			for (sprIndex = 19; _vm->_draw->_spritesArray[sprIndex] != 0;
-				sprIndex--);
+				sprIndex--)
+				;
 
 			_staticPictToSprite[7 * sceneryIndex + i] = sprIndex;
 			_spriteRefs[sprIndex] = 1;
@@ -517,7 +518,8 @@ int16 Scenery::loadAnim(char search) {
 			_spriteRefs[sprIndex]++;
 		} else {
 			for (sprIndex = 19; _vm->_draw->_spritesArray[sprIndex] != 0;
-				sprIndex--);
+				sprIndex--)
+				;
 
 			_animPictToSprite[7 * sceneryIndex + i] = sprIndex;
 			_spriteRefs[sprIndex] = 1;

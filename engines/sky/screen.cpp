@@ -401,7 +401,8 @@ void Screen::waitForTimer(void) {
 		Common::Event event;
 
 		_system->delayMillis(10);
-		while (eventMan->pollEvent(event));
+		while (eventMan->pollEvent(event))
+			;
 	}
 }
 
@@ -411,7 +412,8 @@ void Screen::waitForSequence(void) {
 		Common::Event event;
 
 		_system->delayMillis(20);
-		while (eventMan->pollEvent(event));
+		while (eventMan->pollEvent(event))
+			;
 	}
 }
 

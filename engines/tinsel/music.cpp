@@ -801,7 +801,7 @@ bool PCMMusicPlayer::getNextChunk() {
 
 		// Set parameters for this chunk of music
 		id = _scriptNum;
-		while(id--)
+		while (id--)
 			script = scriptBuffer + FROM_LE_32(*script);
 		snum = FROM_LE_32(script[_scriptIndex++]);
 
@@ -849,7 +849,7 @@ bool PCMMusicPlayer::getNextChunk() {
 		script = scriptBuffer = (int32 *) LockMem(_hScript);
 
 		id = _scriptNum;
-		while(id--)
+		while (id--)
 			script = scriptBuffer + FROM_LE_32(*script);
 
 		switch (script[_scriptIndex]) {

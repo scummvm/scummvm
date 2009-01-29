@@ -323,7 +323,7 @@ static void SingleLeftProcess(CORO_PARAM, const void *) {
 	// Timeout a double click (may not work once every 49 days!)
 	do {
 		CORO_SLEEP(1);
-	} while(DwGetCurrentTime() < _ctx->endTicks);
+	} while (DwGetCurrentTime() < _ctx->endTicks);
 
 	if (GetProvNotProcessed())
 		PlayerEvent(PLR_WALKTO, clickPos);
@@ -1043,7 +1043,8 @@ Common::Error TinselEngine::go() {
 			continue;		// run flat-out
 #endif
 		// Loop processing events while there are any pending
-		while (pollEvent());
+		while (pollEvent())
+			;
 
 		DoCdChange();
 

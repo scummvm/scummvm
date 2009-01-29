@@ -398,7 +398,8 @@ void Game_v2::popCollisions(void) {
 	_lastCollId = _collLasts[_collStackSize].id;
 	_lastCollAreaIndex = _collLasts[_collStackSize].areaIndex;
 
-	for (destPtr = _collisionAreas; destPtr->left != 0xFFFF; destPtr++);
+	for (destPtr = _collisionAreas; destPtr->left != 0xFFFF; destPtr++)
+		;
 
 	srcPtr = _collStack[_collStackSize];
 	memcpy(destPtr, srcPtr,
@@ -1583,7 +1584,8 @@ int16 Game_v2::inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			else
 				handleMouse = 0;
 
-			while (_vm->_global->_pressedKeys[1] != 0);
+			while (_vm->_global->_pressedKeys[1] != 0)
+				;
 			continue;
 
 		default:

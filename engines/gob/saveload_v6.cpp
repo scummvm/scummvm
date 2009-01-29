@@ -244,7 +244,7 @@ bool SaveLoad_v6::saveGame(SaveFile &saveFile,
 
 		byte sizes[40];
 		memset(sizes, 0, 40);
-		if(!_save->save(0, 40, 0, saveFile.destName, _indexBuffer + 500 + (slot * 40), sizes))
+		if (!_save->save(0, 40, 0, saveFile.destName, _indexBuffer + 500 + (slot * 40), sizes))
 			return false;
 
 		if (!_save->save(dataVar, size, 40, saveFile.destName, _vm->_inter->_variables))

@@ -1056,7 +1056,7 @@ int GetBrightness(HPOLYGON hPath, int y) {
 		top += zlen;
 		if (y < top)
 			return brightness;
-	} while(--brightness);
+	} while (--brightness);
 
 	return FROM_LE_32(pp.bright2);
 }
