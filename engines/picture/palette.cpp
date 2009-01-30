@@ -167,6 +167,7 @@ void Palette::buildColorTransTable(byte limit, char deltaValue, byte mask) {
 
 		if (deltaValue < 0) {
 			// TODO
+			warning("Palette::buildColorTransTable(%d, %d, %02X) not yet implemented!", limit, deltaValue, mask);
 		} else {
 			r = _mainPalette[i * 3 + 0];
 			g = _mainPalette[i * 3 + 1];

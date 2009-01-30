@@ -25,7 +25,7 @@
 
 #include "base/plugins.h"
 
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "common/file.h"
 
 #include "picture/picture.h"
@@ -34,7 +34,7 @@
 namespace Picture {
 
 struct PictureGameDescription {
-	Common::ADGameDescription desc;
+	ADGameDescription desc;
 };
 
 uint32 PictureEngine::getFeatures() const {
@@ -65,7 +65,7 @@ static const PictureGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("WESTERN", "05472037e9cfde146e953c434e74f0f4", 337643527),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 	},
 
@@ -77,7 +77,7 @@ static const PictureGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("WESTERN", "ba1742d3193b68ceb9434e2ab7a09a9b", 391462783),
 			Common::RU_RUS,
 			Common::kPlatformPC,
-			Common::ADGF_NO_FLAGS
+			ADGF_NO_FLAGS
 		},
 	},
 
@@ -86,7 +86,7 @@ static const PictureGameDescription gameDescriptions[] = {
 
 } // End of namespace Picture
 
-static const Common::ADParams detectionParams = {
+static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Picture::gameDescriptions,
 	// Size of that superset structure
@@ -105,9 +105,9 @@ static const Common::ADParams detectionParams = {
 	0
 };
 
-class PictureMetaEngine : public Common::AdvancedMetaEngine {
+class PictureMetaEngine : public AdvancedMetaEngine {
 public:
-	PictureMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
+	PictureMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "Picture Engine";
@@ -118,7 +118,7 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
@@ -141,7 +141,7 @@ bool Picture::PictureEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool PictureMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+bool PictureMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Picture::PictureGameDescription *gd = (const Picture::PictureGameDescription *)desc;
 	if (gd) {
 		*engine = new Picture::PictureEngine(syst, gd);

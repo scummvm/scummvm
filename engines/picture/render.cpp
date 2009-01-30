@@ -176,7 +176,7 @@ void RenderQueue::update() {
 	for (RenderQueueArray::iterator iter = _currQueue->begin(); iter != _currQueue->end(); iter++) {
 		const RenderQueueItem *item = &(*iter);
 		
-		if (item->flags == kRefresh) {
+		if (item->flags == kRefresh || doFullRefresh) {
 
 			switch (item->type) {
 			case kSprite:

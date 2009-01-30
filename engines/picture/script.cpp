@@ -170,36 +170,29 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 	case 1:
 		// ok
 		_regs.reg0 = readInt16();
-		debug(1, "mov reg0, #%d", _regs.reg0);
 		break;
 	case 2:
 		// ok
 		_regs.reg1 = readInt16();
-		debug(1, "mov reg1, #%d", _regs.reg1);
 		break;
 	case 3:
 		// ok
 		_regs.reg3 = readInt16();
-		debug(1, "mov reg3, #%d", _regs.reg3);
 		break;
 	case 4:
 		// ok
 		_regs.reg5 = _regs.reg0;
-		debug(1, "mov reg5, reg0");
 		break;
 	case 5:
 		// ok
 		_regs.reg3 = _regs.reg0;
-		debug(1, "mov reg3, reg0");
 		break;
 	case 6:
 		// ok
 		_regs.reg1 = _regs.reg0;
-		debug(1, "mov reg1, reg0");
 		break;
 	case 7:
 		_regs.reg1 = localRead16(_regs.reg3);
-		debug(1, "mov reg1, *%d", _regs.reg3);
 		break;
 	case 8:
 		localWrite16(_regs.reg3, _regs.reg0);
@@ -281,19 +274,15 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		break;
 	case 34:
 		pushInt16(_regs.reg0);
-		debug(1, "pushw reg0");
 		break;
 	case 35:
 		pushInt16(_regs.reg1);
-		debug(1, "pushw reg1");
 		break;
 	case 36:
 		_regs.reg1 = popInt16();
-		debug(1, "popw reg1");
 		break;
 	case 37:
 		_regs.reg0 = popInt16();
-		debug(1, "popw reg0");
 		break;
 	case 38:
 		_regs.reg2 = -_regs.reg2;
@@ -315,23 +304,19 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		_cmpBitTest = true;
 		break;
 	case 43:
-		debug(1, "retn (slot: %d; ofs: %04X)\n", _regs.reg4, _regs.reg0);
 		_code = getSlotData(_regs.reg4) + _regs.reg0;
 		break;
 	case 44:
-		debug(1, "retf (slot: %d; ofs: %04X)\n", _regs.reg5, _regs.reg0);
 		_code = getSlotData(_regs.reg5) + _regs.reg0;
 		_regs.reg4 = _regs.reg5;
 		_switchLocalDataNear = true;
 		break;
 	case 45:
-		debug(1, "callnear %04X (slot: %d; ofs: %04X)\n", _regs.reg0, _regs.reg4, _regs.reg0);
 		pushInt16(_code - getSlotData(_regs.reg4));
 		pushInt16(_regs.reg4);
 		_code = getSlotData(_regs.reg4) + _regs.reg0;
 		break;
 	case 46:
-		debug(1, "callfar %04X (slot: %d; ofs: %04X)\n", _regs.reg0, _regs.reg5, _regs.reg0);
 		pushInt16(_code - getSlotData(_regs.reg4));
 		pushInt16(_regs.reg4);
 		_code = getSlotData(_regs.reg5) + _regs.reg0;
@@ -342,16 +327,12 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		_regs.reg4 = popInt16();
 		ofs = popInt16();
 		_code = getSlotData(_regs.reg4) + ofs;
-		debug(1, "ret (slot: %d; ofs: %04X)\n", _regs.reg4, ofs);
-		//_code = getSlotData(_regs.reg4) + popInt16();
 		_switchLocalDataNear = true;
 		break;
 	case 48:
 		_regs.reg4 = popInt16();
 		ofs = popInt16();
 		_code = getSlotData(_regs.reg4) + ofs;
-		debug(1, "retsp (slot: %d; ofs: %04X)\n", _regs.reg4, ofs);
-		//_code = getSlotData(_regs.reg4) + popInt16();
 		_regs.sp += _regs.reg0;
 		_switchLocalDataNear = true;
 		break;
@@ -402,14 +383,7 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		_code++;
 		break;
 	default:
-	{
-		/*
-		FILE *ex = fopen("error.0", "wb");
-		fwrite(_code - 8, 4096, 1, ex);
-		fclose(ex);
-		*/
 		error("Invalid opcode %d", opcode);
-	}
 	}
 
 }
@@ -614,6 +588,7 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 	case 23:// ok
 	{
 		debug(0, "o2_findMouseInRectIndex1(offset: %d; slot: %d; elemSize: %d; var: %d; index: %d)", arg16(3), arg16(5), arg16(7), arg16(9), arg16(11));
+
 		int16 index = -1;
 		if (_vm->_mouseY < _vm->_cameraHeight) {
 			index = _vm->findRectAtPoint(getSlotData(arg16(5)) + arg16(3),
@@ -627,19 +602,11 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 
 	case 24:// ok
 	{
+
 		debug(0, "o2_findMouseInRectIndex2(offset: %d, slot: %d, elemSize: %d, var: %d)", arg16(3), arg16(5), arg16(7), arg16(9));
 		int16 index = -1;
 
-		debug(0, "_vm->_mouseDisabled = %d", _vm->_mouseDisabled);
-
-		/* FIXME: This opcode is called after the Revistronic logo at the beginning,
-			but at the slot/offset there's bytecode and not a rect array as expected.
-			To avoid crashes we skip searching the rectangle index for now when scene 215 is active.
-			I don't know yet whether this is a bug in the original engine as well or just here.
-			Needs some more checking.
-			Annoyingly scene 215 is the map which becomes unusable with this hack.
-		*/
-		if (_vm->_sceneResIndex != 215) {
+		if (_vm->_sceneResIndex != 0) {
 			if (_vm->_mouseY < _vm->_cameraHeight) {
 				index = _vm->findRectAtPoint(getSlotData(arg16(5)) + arg16(3),
 					_vm->_mouseX + _vm->_cameraX,
@@ -647,9 +614,9 @@ void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
 					0, arg16(7));
 			}
 		}
-		
+
 		localWrite16(arg16(9), index);
-		
+
 		break;
 	}
 

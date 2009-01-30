@@ -116,12 +116,11 @@ public:
 
 	uint _sceneResIndex;
 	int16 _sceneWidth, _sceneHeight;
-
+	
 	int _counter01, _counter02;
 	bool _movieSceneFlag;
 	byte _flag01;
 
-	// TODO: Move camera stuff into own Scene class
 	int16 _cameraX, _cameraY;
 	int16 _newCameraX, _newCameraY;
 	int16 _cameraHeight;

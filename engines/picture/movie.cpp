@@ -203,7 +203,6 @@ void MoviePlayer::fetchAudioChunks() {
 			chunkBuffer = NULL;
 			prefetchChunkCount++;
 			_soundChunkFramesLeft += _framesPerSoundChunk;
-			delete[] chunkBuffer;
 		} else {
 			_vm->_arc->seek(chunkSize, SEEK_CUR);
 		}
