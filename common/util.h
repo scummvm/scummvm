@@ -27,7 +27,6 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/debug.h"
 
 #ifdef MIN
 #undef MIN

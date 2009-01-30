@@ -27,6 +27,7 @@
 
 #include "base/plugins.h"
 #include "sound/mididrv.h"
+#include "common/list.h"
 
 /**
  * Music types that music drivers can implement and engines can rely on.

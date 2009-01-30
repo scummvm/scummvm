@@ -23,7 +23,7 @@
  *
  */
 
-
+#include "common/debug.h"
 #include "common/util.h"
 
 #include "sword1/router.h"

@@ -26,6 +26,7 @@
 #include "common/file.h"
 #include "common/util.h"
 #include "common/fs.h"
+#include "common/debug.h"
 
 #include "agi/wagparser.h"
 

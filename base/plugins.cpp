@@ -26,6 +26,7 @@
 #include "base/plugins.h"
 
 #include "common/func.h"
+#include "common/debug.h"
 
 #ifdef DYNAMIC_MODULES
 #include "common/config-manager.h"

@@ -23,7 +23,7 @@
  *
  */
 
-
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/config-manager.h"
 #include "queen/resource.h"

@@ -30,6 +30,8 @@
 #include "queen/logic.h"
 #include "queen/queen.h"
 
+#include "common/debug.h"
+
 namespace Queen {
 
 Grid::Grid(QueenEngine *vm)

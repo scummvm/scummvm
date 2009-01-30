@@ -28,6 +28,7 @@
 
 #include "common/scummsys.h"
 #include "common/util.h"
+#include "common/debug.h"
 
 namespace Common {
 

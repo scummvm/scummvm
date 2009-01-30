@@ -24,6 +24,7 @@
  */
 
 #include "common/archive.h"
+#include "common/debug.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/util.h"

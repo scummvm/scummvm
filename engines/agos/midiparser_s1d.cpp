@@ -23,8 +23,7 @@
  *
  */
 
-
-
+#include "common/debug.h"
 #include "common/util.h"
 
 #include "sound/mididrv.h"

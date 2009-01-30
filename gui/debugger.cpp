@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/system.h"
 
 #include "gui/debugger.h"

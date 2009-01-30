@@ -33,6 +33,7 @@
 #include "sound/mpu401.h"
 
 #include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/system.h"

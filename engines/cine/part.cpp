@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/endian.h"
 
 #include "cine/cine.h"

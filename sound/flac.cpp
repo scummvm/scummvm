@@ -27,6 +27,7 @@
 
 #ifdef USE_FLAC
 
+#include "common/debug.h"
 #include "common/stream.h"
 #include "common/util.h"
 

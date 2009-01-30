@@ -25,12 +25,14 @@
 
 #include "base/plugins.h"
 
+#include "common/debug.h"
 #include "common/util.h"
 #include "common/hash-str.h"
 #include "common/file.h"
 #include "common/md5.h"
-#include "engines/advancedDetector.h"
 #include "common/config-manager.h"
+
+#include "engines/advancedDetector.h"
 
 /**
  * A list of pointers to ADGameDescription structs (or subclasses thereof).

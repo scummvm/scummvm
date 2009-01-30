@@ -25,8 +25,9 @@
 
 
 #include "queen/bankman.h"
-
 #include "queen/resource.h"
+
+#include "common/debug.h"
 
 namespace Queen {
 

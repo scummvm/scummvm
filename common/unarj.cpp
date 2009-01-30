@@ -29,6 +29,7 @@
 
 #include "common/scummsys.h"
 #include "common/archive.h"
+#include "common/debug.h"
 #include "common/util.h"
 #include "common/unarj.h"
 

@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/mutex.h"
 #include "common/system.h"
 

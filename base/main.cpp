@@ -39,6 +39,7 @@
 
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"

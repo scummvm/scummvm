@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/savefile.h"
 
 #include "cine/cine.h"

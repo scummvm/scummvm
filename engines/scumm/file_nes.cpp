@@ -24,6 +24,7 @@
  */
 
 #include "scumm/file_nes.h"
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/md5.h"
 

@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/util.h"
 #include "common/stream.h"
 

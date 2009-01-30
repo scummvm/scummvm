@@ -23,6 +23,7 @@
  */
 
 #include "sound/softsynth/emumidi.h"
+#include "common/debug.h"
 #include "common/util.h"
 #include "sound/fmopl.h"
 #include "sound/musicplugin.h"
