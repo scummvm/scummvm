@@ -49,8 +49,7 @@ void VDXPlayer::setOrigin(int16 x, int16 y) {
 }
 
 uint16 VDXPlayer::loadInternal() {
-	uint32 engine_level = kGroovieDebugVideo | kGroovieDebugAll;
-	if ((gDebugLevel == 11) || (Common::getEnabledSpecialDebugLevels() & engine_level)) {
+	if (Common::isSpecialDebugLevelEnabled(kGroovieDebugVideo | kGroovieDebugAll)) {
 		int8 i;
 		debugN(1, "Groovie::VDX: New VDX: bitflags are ");
 		for (i = 15; i >= 0; i--) {

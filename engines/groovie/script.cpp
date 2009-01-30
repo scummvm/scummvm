@@ -42,11 +42,8 @@ void debugScript(int level, bool nl, const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
-	uint32 engine_level = kGroovieDebugScript | kGroovieDebugAll;
-
-	if (gDebugLevel != 11)
-		if (!(Common::getEnabledSpecialDebugLevels() & engine_level))
-			return;
+	if (!Common::isSpecialDebugLevelEnabled(kGroovieDebugScript | kGroovieDebugAll))
+		return;
 
 	va_start(va, s);
 	vsnprintf(buf, STRINGBUFLEN, s, va);

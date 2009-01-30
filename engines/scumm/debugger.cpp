@@ -498,59 +498,35 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 }
 
 bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
-	const Common::DebugLevelContainer &lvls = Common::listSpecialDebugLevels();
+	const Common::SpecialDebugLevelList &lvls = Common::listSpecialDebugLevels();
 
-	bool setFlag = false;	// Remove or add debug channel?
-
-	if ((argc == 1) && (Common::getEnabledSpecialDebugLevels() == 0)) {
-		DebugPrintf("No debug flags are enabled\n");
-		DebugPrintf("Available Channels: ");
-		for (Common::DebugLevelContainer::iterator i = lvls.begin(); i != lvls.end(); ++i) {
-			DebugPrintf("%s, ", i->option.c_str());
-		}
-		DebugPrintf("\n");
-		return true;
-	}
-
-	if ((argc == 1) && (Common::getEnabledSpecialDebugLevels() > 0)) {
-		for (Common::DebugLevelContainer::iterator i = lvls.begin(); i != lvls.end(); ++i) {
-			if (i->enabled)
-				DebugPrintf("%s - %s\n", i->option.c_str(), i->description.c_str());
+	// No parameters given: Print out a list of all channels and their status
+	if (argc <= 1) {
+		DebugPrintf("Available debug channels: ");
+		for (Common::SpecialDebugLevelList::iterator i = lvls.begin(); i != lvls.end(); ++i) {
+			DebugPrintf("%c%s - %s (%s)\n", i->enabled ? '+' : ' ',
+					i->name.c_str(), i->description.c_str(),
+					i->enabled ? "enabled" : "disabled");
 		}
 		return true;
 	}
 
 	// Enable or disable channel?
+	bool result = false;
 	if (argv[1][0] == '+') {
-		setFlag = true;
+		result = Common::enableSpecialDebugLevel(argv[1] + 1);
 	} else if (argv[1][0] == '-') {
-		setFlag = false;
+		result = Common::disableSpecialDebugLevel(argv[1] + 1);
+	}
+	
+	if (result) {
+		DebugPrintf("%s %s\n", (argv[1][0] == '+') ? "Enabled" : "Disabled", argv[1] + 1);
 	} else {
-		DebugPrintf("Syntax: Debug +CHANNEL, or Debug -CHANNEL\n");
-		DebugPrintf("Available Channels: ");
-		for (Common::DebugLevelContainer::iterator i = lvls.begin(); i != lvls.end(); ++i) {
-			DebugPrintf("%s\n", i->option.c_str());
-		}
+		DebugPrintf("Usage: debug [+CHANNEL|-CHANNEL]\n");
+		DebugPrintf("Enables or disables the given debug channel.\n");
+		DebugPrintf("When used without parameters, lists all avaiable debug channels and their status.\n");
 	}
 
-	// Identify flag
-	const char *realFlag = argv[1] + 1;
-	for (Common::DebugLevelContainer::iterator i = lvls.begin(); i != lvls.end(); ++i) {
-		if (i->option.equalsIgnoreCase(realFlag)) {
-			if (setFlag) {
-				enableSpecialDebugLevel(i->option);
-				DebugPrintf("Enable ");
-			} else {
-				disableSpecialDebugLevel(i->option);
-				DebugPrintf("Disable ");
-			}
-
-			DebugPrintf("%s\n", i->description.c_str());
-			return true;
-		}
-	}
-
-	DebugPrintf("Unknown flag. Type 'Debug ?' for syntax\n");
 	return true;
 }
 

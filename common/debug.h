@@ -33,12 +33,12 @@
 namespace Common {
 
 
-struct EngineDebugLevel {
-	EngineDebugLevel() : option(""), description(""), level(0), enabled(false) {}
-	EngineDebugLevel(uint32 l, const String &o, const String &d)
-		: option(o), description(d), level(l), enabled(false) {}
+struct SpecialDebugLevel {
+	SpecialDebugLevel() : level(0), enabled(false) {}
+	SpecialDebugLevel(uint32 l, const String &n, const String &d)
+		: name(n), description(d), level(l), enabled(false) {}
 
-	String option;
+	String name;
 	String description;
 
 	uint32 level;
@@ -48,48 +48,63 @@ struct EngineDebugLevel {
 /**
  * Adds a engine debug level.
  * @param level the level flag (should be OR-able i.e. first one should be 1 than 2,4,...)
- * @param option the option name which is used in the debugger/on the command line to enable
+ * @param name the option name which is used in the debugger/on the command line to enable
  *               this special debug level, the option will be compared case !insentiv! later
  * @param description the description which shows up in the debugger
  * @return true on success false on failure
  */
-bool addSpecialDebugLevel(uint32 level, const String &option, const String &description);
+bool addSpecialDebugLevel(uint32 level, const String &name, const String &description);
 
 /**
- * Resets all engine debug levels
+ * Resets all engine debug levels.
  */
 void clearAllSpecialDebugLevels();
 
 /**
- * Enables a engine debug level
- * @param option the option which should be enabled
- * @return true on success false on failure
+ * Enables an engine debug level.
+ * @param name the name of the debug level to enable
+ * @return true on success, false on failure
  */
-bool enableSpecialDebugLevel(const String &option);
-
-// only used for parsing the levels from the commandline
-void enableSpecialDebugLevelList(const String &option);
+bool enableSpecialDebugLevel(const String &name);
 
 /**
- * Disables a engine debug level
- * @param option the option to disable
- * @return true on success false on failure
+ * Enables a list of engine debug levels, given as a comma-separated list
+ * of level names.
+ * @param name the list of names of debug levels to enable
  */
-bool disableSpecialDebugLevel(const String &option);
+void enableSpecialDebugLevelList(const String &names);
 
-typedef List<EngineDebugLevel> DebugLevelContainer;
+/**
+ * Disables an engine debug level
+ * @param name the name of the debug level to disable
+ * @return true on success, false on failure
+ */
+bool disableSpecialDebugLevel(const String &name);
+
+typedef List<SpecialDebugLevel> SpecialDebugLevelList;
 
 /**
  * Lists all debug levels
  * @return returns a arry with all debug levels
  */
-const DebugLevelContainer &listSpecialDebugLevels();
+const SpecialDebugLevelList &listSpecialDebugLevels();
 
 /**
  * Return the active debug flag mask (i.e. all active debug flags ORed
  * together into a single uint32).
  */
 uint32 getEnabledSpecialDebugLevels();
+
+
+/**
+ * Test whether the given debug level is enabled.
+ */
+bool isSpecialDebugLevelEnabled(uint32 level);
+
+/**
+ * Test whether the given debug level is enabled.
+ */
+bool isSpecialDebugLevelEnabled(const String &name);
 
 
 }	// End of namespace Common

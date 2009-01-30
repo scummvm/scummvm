@@ -57,35 +57,35 @@ namespace Common {
 
 namespace {
 
-DebugLevelContainer gDebugLevels;
+SpecialDebugLevelList gDebugLevels;
 uint32 gDebugLevelsEnabled = 0;
 
 struct DebugLevelSort {
-	bool operator()(const EngineDebugLevel &l, const EngineDebugLevel &r) {
-		return (l.option.compareToIgnoreCase(r.option) < 0);
+	bool operator()(const SpecialDebugLevel &l, const SpecialDebugLevel &r) {
+		return (l.name.compareToIgnoreCase(r.name) < 0);
 	}
 };
 
 struct DebugLevelSearch {
-	const String &_option;
+	const String &_name;
 
-	DebugLevelSearch(const String &option) : _option(option) {}
+	DebugLevelSearch(const String &name) : _name(name) {}
 
-	bool operator()(const EngineDebugLevel &l) {
-		return _option.equalsIgnoreCase(l.option);
+	bool operator()(const SpecialDebugLevel &l) {
+		return _name.equalsIgnoreCase(l.name);
 	}
 };
 
 }
 
-bool addSpecialDebugLevel(uint32 level, const String &option, const String &description) {
-	DebugLevelContainer::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(option));
+bool addSpecialDebugLevel(uint32 level, const String &name, const String &description) {
+	SpecialDebugLevelList::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(name));
 
 	if (i != gDebugLevels.end()) {
-		warning("Declared engine debug level '%s' again", option.c_str());
-		*i = EngineDebugLevel(level, option, description);
+		warning("Declared engine debug level '%s' again", name.c_str());
+		*i = SpecialDebugLevel(level, name, description);
 	} else {
-		gDebugLevels.push_back(EngineDebugLevel(level, option, description));
+		gDebugLevels.push_back(SpecialDebugLevel(level, name, description));
 		sort(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSort());
 	}
 
@@ -97,8 +97,8 @@ void clearAllSpecialDebugLevels() {
 	gDebugLevels.clear();
 }
 
-bool enableSpecialDebugLevel(const String &option) {
-	DebugLevelContainer::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(option));
+bool enableSpecialDebugLevel(const String &name) {
+	SpecialDebugLevelList::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(name));
 
 	if (i != gDebugLevels.end()) {
 		gDebugLevelsEnabled |= i->level;
@@ -110,8 +110,8 @@ bool enableSpecialDebugLevel(const String &option) {
 	}
 }
 
-void enableSpecialDebugLevelList(const String &option) {
-	StringTokenizer tokenizer(option, " ,");
+void enableSpecialDebugLevelList(const String &names) {
+	StringTokenizer tokenizer(names, " ,");
 	String token;
 
 	while (!tokenizer.empty()) {
@@ -122,7 +122,7 @@ void enableSpecialDebugLevelList(const String &option) {
 }
 
 bool disableSpecialDebugLevel(const String &option) {
-	DebugLevelContainer::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(option));
+	SpecialDebugLevelList::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(option));
 
 	if (i != gDebugLevels.end()) {
 		gDebugLevelsEnabled &= ~i->level;
@@ -134,13 +134,34 @@ bool disableSpecialDebugLevel(const String &option) {
 	}
 }
 
-const DebugLevelContainer &listSpecialDebugLevels() {
+const SpecialDebugLevelList &listSpecialDebugLevels() {
 	return gDebugLevels;
 }
 
 uint32 getEnabledSpecialDebugLevels() {
 	return gDebugLevelsEnabled;
 }
+
+bool isSpecialDebugLevelEnabled(uint32 level) {
+	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
+	if (gDebugLevel == 11)
+		return true;
+//	return gDebugLevelsEnabled & (1 << level);
+	return gDebugLevelsEnabled & level;
+}
+
+bool isSpecialDebugLevelEnabled(const String &name) {
+	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
+	if (gDebugLevel == 11)
+		return true;
+
+	// Search for the debug level with the given name and check if it is enabled
+	SpecialDebugLevelList::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(name));
+	if (i != gDebugLevels.end())
+		return gDebugLevelsEnabled & i->level;
+	return false;
+}
+
 
 }	// End of namespace Common
 
@@ -217,6 +238,7 @@ void debugN(int level, const char *s, ...) {
 void debugC(int level, uint32 engine_level, const char *s, ...) {
 	va_list va;
 
+	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
 	if (gDebugLevel != 11)
 		if (level > gDebugLevel || !(Common::gDebugLevelsEnabled & engine_level))
 			return;
