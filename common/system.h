@@ -617,6 +617,20 @@ public:
 	/**
 	 * Blit a graphics buffer to the overlay.
 	 * In a sense, this is the reverse of grabOverlay.
+	 *
+	 * @note The pitch parameter actually contains the 'pixel pitch', i.e.,
+	 * the number of pixels per scanline, and not as usual the number of bytes
+	 * per scanline.
+	 *
+	 * @todo Change 'pitch' to be byte and not pixel based
+	 *
+	 * @param buf		the buffer containing the graphics data source
+	 * @param pitch		the pixel pitch of the buffer (number of pixels in a scanline)
+	 * @param x			the x coordinate of the destination rectangle
+	 * @param y			the y coordinate of the destination rectangle
+	 * @param w			the width of the destination rectangle
+	 * @param h			the height of the destination rectangle
+	 *
 	 * @see copyRectToScreen
 	 * @see grabOverlay
 	 */
