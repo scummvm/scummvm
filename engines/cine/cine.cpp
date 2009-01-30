@@ -50,9 +50,9 @@ Common::SaveFileManager *g_saveFileMan;
 CineEngine *g_cine;
 
 CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-	Common::addSpecialDebugLevel(kCineDebugScript, "Script", "Script debug level");
-	Common::addSpecialDebugLevel(kCineDebugPart,   "Part",   "Part debug level");
-	Common::addSpecialDebugLevel(kCineDebugSound,  "Sound",  "Sound debug level");
+	Common::addDebugChannel(kCineDebugScript, "Script", "Script debug level");
+	Common::addDebugChannel(kCineDebugPart,   "Part",   "Part debug level");
+	Common::addDebugChannel(kCineDebugSound,  "Sound",  "Sound debug level");
 
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
@@ -71,7 +71,7 @@ CineEngine::~CineEngine() {
 	if (g_cine->getGameType() == Cine::GType_OS) {
 		freeErrmessDat();
 	}
-	Common::clearAllSpecialDebugLevels();
+	Common::clearAllDebugChannels();
 }
 
 Common::Error CineEngine::init() {

@@ -111,8 +111,8 @@ M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc) :
 	Common::File::addDefaultDirectory("goodstuf");	// FIXME: This is nonsense
 	Common::File::addDefaultDirectory("resource");	// FIXME: This is nonsense
 
-	Common::addSpecialDebugLevel(kDebugScript, "script", "Script debug level");
-	Common::addSpecialDebugLevel(kDebugConversations, "conversations", "Conversations debugging");
+	Common::addDebugChannel(kDebugScript, "script", "Script debug level");
+	Common::addDebugChannel(kDebugConversations, "conversations", "Conversations debugging");
 }
 
 

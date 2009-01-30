@@ -33,9 +33,9 @@
 namespace Common {
 
 
-struct SpecialDebugLevel {
-	SpecialDebugLevel() : level(0), enabled(false) {}
-	SpecialDebugLevel(uint32 l, const String &n, const String &d)
+struct DebugChannel {
+	DebugChannel() : level(0), enabled(false) {}
+	DebugChannel(uint32 l, const String &n, const String &d)
 		: name(n), description(d), level(l), enabled(false) {}
 
 	String name;
@@ -53,47 +53,47 @@ struct SpecialDebugLevel {
  * @param description the description which shows up in the debugger
  * @return true on success false on failure
  */
-bool addSpecialDebugLevel(uint32 level, const String &name, const String &description);
+bool addDebugChannel(uint32 level, const String &name, const String &description);
 
 /**
  * Resets all engine debug levels.
  */
-void clearAllSpecialDebugLevels();
+void clearAllDebugChannels();
 
 /**
  * Enables an engine debug level.
  * @param name the name of the debug level to enable
  * @return true on success, false on failure
  */
-bool enableSpecialDebugLevel(const String &name);
+bool enableDebugChannel(const String &name);
 
 /**
  * Disables an engine debug level
  * @param name the name of the debug level to disable
  * @return true on success, false on failure
  */
-bool disableSpecialDebugLevel(const String &name);
+bool disableDebugChannel(const String &name);
 
 
 
-typedef List<SpecialDebugLevel> SpecialDebugLevelList;
+typedef List<DebugChannel> DebugChannelList;
 
 /**
  * Lists all debug levels
  * @return returns a arry with all debug levels
  */
-SpecialDebugLevelList listSpecialDebugLevels();
+DebugChannelList listDebugChannels();
 
 
 /**
  * Test whether the given debug level is enabled.
  */
-bool isSpecialDebugLevelEnabled(uint32 level);
+bool isDebugChannelEnabled(uint32 level);
 
 /**
  * Test whether the given debug level is enabled.
  */
-bool isSpecialDebugLevelEnabled(const String &name);
+bool isDebugChannelEnabled(const String &name);
 
 
 }	// End of namespace Common
@@ -139,7 +139,7 @@ void debugN(int level, const char *s, ...) GCC_PRINTF(2, 3);
  * As a rule of thumb, the more important the message, the lower the level.
  * Automatically appends a newline.
  *
- * @see enableSpecialDebugLevel
+ * @see enableDebugChannel
  */
 void debugC(int level, uint32 engine_level, const char *s, ...) GCC_PRINTF(3, 4);
 

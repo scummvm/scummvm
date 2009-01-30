@@ -70,17 +70,17 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_mouseX = _mouseY = 0;
 
 	// sets up all engine specific debug levels
-	Common::addSpecialDebugLevel(kDebugLevelScriptFuncs, "ScriptFuncs", "Script function debug level");
-	Common::addSpecialDebugLevel(kDebugLevelScript, "Script", "Script interpreter debug level");
-	Common::addSpecialDebugLevel(kDebugLevelSprites, "Sprites", "Sprite debug level");
-	Common::addSpecialDebugLevel(kDebugLevelScreen, "Screen", "Screen debug level");
-	Common::addSpecialDebugLevel(kDebugLevelSound, "Sound", "Sound debug level");
-	Common::addSpecialDebugLevel(kDebugLevelAnimator, "Animator", "Animator debug level");
-	Common::addSpecialDebugLevel(kDebugLevelMain, "Main", "Generic debug level");
-	Common::addSpecialDebugLevel(kDebugLevelGUI, "GUI", "GUI debug level");
-	Common::addSpecialDebugLevel(kDebugLevelSequence, "Sequence", "Sequence debug level");
-	Common::addSpecialDebugLevel(kDebugLevelMovie, "Movie", "Movie debug level");
-	Common::addSpecialDebugLevel(kDebugLevelTimer, "Timer", "Timer debug level");
+	Common::addDebugChannel(kDebugLevelScriptFuncs, "ScriptFuncs", "Script function debug level");
+	Common::addDebugChannel(kDebugLevelScript, "Script", "Script interpreter debug level");
+	Common::addDebugChannel(kDebugLevelSprites, "Sprites", "Sprite debug level");
+	Common::addDebugChannel(kDebugLevelScreen, "Screen", "Screen debug level");
+	Common::addDebugChannel(kDebugLevelSound, "Sound", "Sound debug level");
+	Common::addDebugChannel(kDebugLevelAnimator, "Animator", "Animator debug level");
+	Common::addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
+	Common::addDebugChannel(kDebugLevelGUI, "GUI", "GUI debug level");
+	Common::addDebugChannel(kDebugLevelSequence, "Sequence", "Sequence debug level");
+	Common::addDebugChannel(kDebugLevelMovie, "Movie", "Movie debug level");
+	Common::addDebugChannel(kDebugLevelTimer, "Timer", "Timer debug level");
 
 	system->getEventManager()->registerRandomSource(_rnd, "kyra");
 }

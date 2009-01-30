@@ -40,12 +40,12 @@ static LureEngine *int_engine = NULL;
 
 LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc): Engine(system), _gameDescription(gameDesc) {
 
-	Common::addSpecialDebugLevel(kLureDebugScripts, "scripts", "Scripts debugging");
-	Common::addSpecialDebugLevel(kLureDebugAnimations, "animations", "Animations debugging");
-	Common::addSpecialDebugLevel(kLureDebugHotspots, "hotspots", "Hotspots debugging");
-	Common::addSpecialDebugLevel(kLureDebugFights, "fights", "Fights debugging");
-	Common::addSpecialDebugLevel(kLureDebugSounds, "sounds", "Sounds debugging");
-	Common::addSpecialDebugLevel(kLureDebugStrings, "strings", "Strings debugging");
+	Common::addDebugChannel(kLureDebugScripts, "scripts", "Scripts debugging");
+	Common::addDebugChannel(kLureDebugAnimations, "animations", "Animations debugging");
+	Common::addDebugChannel(kLureDebugHotspots, "hotspots", "Hotspots debugging");
+	Common::addDebugChannel(kLureDebugFights, "fights", "Fights debugging");
+	Common::addDebugChannel(kLureDebugSounds, "sounds", "Sounds debugging");
+	Common::addDebugChannel(kLureDebugStrings, "strings", "Strings debugging");
 }
 
 Common::Error LureEngine::init() {
@@ -94,7 +94,7 @@ Common::Error LureEngine::init() {
 
 LureEngine::~LureEngine() {
 	// Remove all of our debug levels here
-	Common::clearAllSpecialDebugLevels();
+	Common::clearAllDebugChannels();
 
 	if (_initialised) {
 		// Delete and deinitialise subsystems

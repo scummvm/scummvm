@@ -110,7 +110,7 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 		_emc->unload(&_scriptClickData);
 	}
 
-	Common::clearAllSpecialDebugLevels();
+	Common::clearAllDebugChannels();
 
 	delete _screen;
 	delete _sprites;

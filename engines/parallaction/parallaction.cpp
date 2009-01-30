@@ -61,16 +61,16 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 	Engine(syst), _gameDescription(gameDesc), _char(this) {
 
 	_vm = this;
-	Common::addSpecialDebugLevel(kDebugDialogue, "dialogue", "Dialogues debug level");
-	Common::addSpecialDebugLevel(kDebugParser, "parser", "Parser debug level");
-	Common::addSpecialDebugLevel(kDebugDisk, "disk", "Disk debug level");
-	Common::addSpecialDebugLevel(kDebugWalk, "walk", "Walk debug level");
-	Common::addSpecialDebugLevel(kDebugGraphics, "gfx", "Gfx debug level");
-	Common::addSpecialDebugLevel(kDebugExec, "exec", "Execution debug level");
-	Common::addSpecialDebugLevel(kDebugInput, "input", "Input debug level");
-	Common::addSpecialDebugLevel(kDebugAudio, "audio", "Audio debug level");
-	Common::addSpecialDebugLevel(kDebugMenu, "menu", "Menu debug level");
-	Common::addSpecialDebugLevel(kDebugInventory, "inventory", "Inventory debug level");
+	Common::addDebugChannel(kDebugDialogue, "dialogue", "Dialogues debug level");
+	Common::addDebugChannel(kDebugParser, "parser", "Parser debug level");
+	Common::addDebugChannel(kDebugDisk, "disk", "Disk debug level");
+	Common::addDebugChannel(kDebugWalk, "walk", "Walk debug level");
+	Common::addDebugChannel(kDebugGraphics, "gfx", "Gfx debug level");
+	Common::addDebugChannel(kDebugExec, "exec", "Execution debug level");
+	Common::addDebugChannel(kDebugInput, "input", "Input debug level");
+	Common::addDebugChannel(kDebugAudio, "audio", "Audio debug level");
+	Common::addDebugChannel(kDebugMenu, "menu", "Menu debug level");
+	Common::addDebugChannel(kDebugInventory, "inventory", "Inventory debug level");
 
 	syst->getEventManager()->registerRandomSource(_rnd, "parallaction");
 }

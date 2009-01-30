@@ -42,8 +42,8 @@ void debugScript(int level, bool nl, const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
-	if (!Common::isSpecialDebugLevelEnabled(kGroovieDebugScript) &&
-	    !Common::isSpecialDebugLevelEnabled(kGroovieDebugAll))
+	if (!Common::isDebugChannelEnabled(kGroovieDebugScript) &&
+	    !Common::isDebugChannelEnabled(kGroovieDebugAll))
 		return;
 
 	va_start(va, s);
@@ -330,8 +330,8 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 	bool contained = rect.contains(mousepos);
 
 	// Show hotspots when debugging
-	if (Common::isSpecialDebugLevelEnabled(kGroovieDebugHotspots) ||
-	    Common::isSpecialDebugLevelEnabled(kGroovieDebugAll)) {
+	if (Common::isDebugChannelEnabled(kGroovieDebugHotspots) ||
+	    Common::isDebugChannelEnabled(kGroovieDebugAll)) {
 		rect.translate(0, -80);
 		_vm->_graphicsMan->_foreground.frameRect(rect, 250);
 		_vm->_system->copyRectToScreen((byte*)_vm->_graphicsMan->_foreground.getBasePtr(0, 0), 640, 0, 80, 640, 320);

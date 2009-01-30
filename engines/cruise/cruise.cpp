@@ -49,7 +49,7 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	_currentVolumeFile = new Common::File();
 #endif
 
-	Common::addSpecialDebugLevel(kCruiseDebugScript, "Script",
+	Common::addDebugChannel(kCruiseDebugScript, "Script",
 	                             "Script debug level");
 
 	// Setup mixer

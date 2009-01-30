@@ -58,34 +58,34 @@ namespace Common {
 
 namespace {
 
-typedef HashMap<String, SpecialDebugLevel, IgnoreCase_Hash, IgnoreCase_EqualTo> DebugLevelMap;
+typedef HashMap<String, DebugChannel, IgnoreCase_Hash, IgnoreCase_EqualTo> DebugLevelMap;
 
 static DebugLevelMap gDebugLevels;
 static uint32 gDebugLevelsEnabled = 0;
 
 struct DebugLevelComperator {
-	bool operator()(const SpecialDebugLevel &l, const SpecialDebugLevel &r) {
+	bool operator()(const DebugChannel &l, const DebugChannel &r) {
 		return (l.name.compareToIgnoreCase(r.name) < 0);
 	}
 };
 
 }
 
-bool addSpecialDebugLevel(uint32 level, const String &name, const String &description) {
+bool addDebugChannel(uint32 level, const String &name, const String &description) {
 	if (gDebugLevels.contains(name)) {
 		warning("Duplicate declaration of engine debug level '%s'", name.c_str());
 	}
-	gDebugLevels[name] = SpecialDebugLevel(level, name, description);
+	gDebugLevels[name] = DebugChannel(level, name, description);
 
 	return true;
 }
 
-void clearAllSpecialDebugLevels() {
+void clearAllDebugChannels() {
 	gDebugLevelsEnabled = 0;
 	gDebugLevels.clear();
 }
 
-bool enableSpecialDebugLevel(const String &name) {
+bool enableDebugChannel(const String &name) {
 	DebugLevelMap::iterator i = gDebugLevels.find(name);
 
 	if (i != gDebugLevels.end()) {
@@ -98,7 +98,7 @@ bool enableSpecialDebugLevel(const String &name) {
 	}
 }
 
-bool disableSpecialDebugLevel(const String &name) {
+bool disableDebugChannel(const String &name) {
 	DebugLevelMap::iterator i = gDebugLevels.find(name);
 
 	if (i != gDebugLevels.end()) {
@@ -112,8 +112,8 @@ bool disableSpecialDebugLevel(const String &name) {
 }
 
 
-SpecialDebugLevelList listSpecialDebugLevels() {
-	SpecialDebugLevelList tmp;
+DebugChannelList listDebugChannels() {
+	DebugChannelList tmp;
 	for (DebugLevelMap::iterator i = gDebugLevels.begin(); i != gDebugLevels.end(); ++i)
 		tmp.push_back(i->_value);
 	sort(tmp.begin(), tmp.end(), DebugLevelComperator());
@@ -121,7 +121,7 @@ SpecialDebugLevelList listSpecialDebugLevels() {
 	return tmp;
 }
 
-bool isSpecialDebugLevelEnabled(uint32 level) {
+bool isDebugChannelEnabled(uint32 level) {
 	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
 	if (gDebugLevel == 11)
 		return true;
@@ -129,7 +129,7 @@ bool isSpecialDebugLevelEnabled(uint32 level) {
 	return gDebugLevelsEnabled & level;
 }
 
-bool isSpecialDebugLevelEnabled(const String &name) {
+bool isDebugChannelEnabled(const String &name) {
 	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
 	if (gDebugLevel == 11)
 		return true;

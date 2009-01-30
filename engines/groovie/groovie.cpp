@@ -45,17 +45,17 @@ GroovieEngine::GroovieEngine(OSystem *syst, GroovieGameDescription *gd) :
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("system"));
 
 	// Initialize the custom debug levels
-	Common::addSpecialDebugLevel(kGroovieDebugAll, "All", "Debug everything");
-	Common::addSpecialDebugLevel(kGroovieDebugVideo, "Video", "Debug video and audio playback");
-	Common::addSpecialDebugLevel(kGroovieDebugResource, "Resource", "Debug resouce management");
-	Common::addSpecialDebugLevel(kGroovieDebugScript, "Script", "Debug the scripts");
-	Common::addSpecialDebugLevel(kGroovieDebugUnknown, "Unknown", "Report values of unknown data in files");
-	Common::addSpecialDebugLevel(kGroovieDebugHotspots, "Hotspots", "Show the hotspots");
-	Common::addSpecialDebugLevel(kGroovieDebugCursor, "Cursor", "Debug cursor decompression / switching");
-	Common::addSpecialDebugLevel(kGroovieDebugMIDI, "MIDI", "Debug MIDI / XMIDI files");
-	Common::addSpecialDebugLevel(kGroovieDebugScriptvars, "Scriptvars", "Print out any change to script variables");
-	Common::addSpecialDebugLevel(kGroovieDebugCell, "Cell", "Debug the cell game (in the microscope)");
-	Common::addSpecialDebugLevel(kGroovieDebugFast, "Fast", "Play videos quickly, with no sound (unstable)");
+	Common::addDebugChannel(kGroovieDebugAll, "All", "Debug everything");
+	Common::addDebugChannel(kGroovieDebugVideo, "Video", "Debug video and audio playback");
+	Common::addDebugChannel(kGroovieDebugResource, "Resource", "Debug resouce management");
+	Common::addDebugChannel(kGroovieDebugScript, "Script", "Debug the scripts");
+	Common::addDebugChannel(kGroovieDebugUnknown, "Unknown", "Report values of unknown data in files");
+	Common::addDebugChannel(kGroovieDebugHotspots, "Hotspots", "Show the hotspots");
+	Common::addDebugChannel(kGroovieDebugCursor, "Cursor", "Debug cursor decompression / switching");
+	Common::addDebugChannel(kGroovieDebugMIDI, "MIDI", "Debug MIDI / XMIDI files");
+	Common::addDebugChannel(kGroovieDebugScriptvars, "Scriptvars", "Print out any change to script variables");
+	Common::addDebugChannel(kGroovieDebugCell, "Cell", "Debug the cell game (in the microscope)");
+	Common::addDebugChannel(kGroovieDebugFast, "Fast", "Play videos quickly, with no sound (unstable)");
 }
 
 GroovieEngine::~GroovieEngine() {

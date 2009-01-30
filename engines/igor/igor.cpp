@@ -53,11 +53,11 @@ IgorEngine::IgorEngine(OSystem *system, const DetectedGameVersion *dgv)
 	_inventoryImagesBuffer = (uint8 *)malloc(48000);
 	_verbsPanelBuffer = (uint8 *)malloc(3840);
 
-	Common::addSpecialDebugLevel(kDebugEngine,   "Engine",   "Engine debug level");
-	Common::addSpecialDebugLevel(kDebugResource, "Resource", "Resource debug level");
-	Common::addSpecialDebugLevel(kDebugScreen,   "Screen",   "Screen debug level");
-	Common::addSpecialDebugLevel(kDebugWalk,     "Walk",     "Walk debug level");
-	Common::addSpecialDebugLevel(kDebugGame,     "Game",     "Game debug level");
+	Common::addDebugChannel(kDebugEngine,   "Engine",   "Engine debug level");
+	Common::addDebugChannel(kDebugResource, "Resource", "Resource debug level");
+	Common::addDebugChannel(kDebugScreen,   "Screen",   "Screen debug level");
+	Common::addDebugChannel(kDebugWalk,     "Walk",     "Walk debug level");
+	Common::addDebugChannel(kDebugGame,     "Game",     "Game debug level");
 
 	if (_game.flags & kFlagFloppy) {
 		_midiPlayer = new MidiPlayer(this);
@@ -83,7 +83,7 @@ IgorEngine::~IgorEngine() {
 	free(_inventoryImagesBuffer);
 	free(_verbsPanelBuffer);
 
-	Common::clearAllSpecialDebugLevels();
+	Common::clearAllDebugChannels();
 
 	delete _midiPlayer;
 }

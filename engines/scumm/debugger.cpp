@@ -47,7 +47,7 @@ void debugC(int channel, const char *s, ...) {
 
 	// FIXME: Still spew all debug at -d9, for crashes in startup etc.
 	//	  Add setting from commandline ( / abstract channel interface)
-	if (!Common::isSpecialDebugLevelEnabled(channel) && (gDebugLevel < 9))
+	if (!Common::isDebugChannelEnabled(channel) && (gDebugLevel < 9))
 		return;
 
 	va_start(va, s);
@@ -498,12 +498,12 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 }
 
 bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
-	const Common::SpecialDebugLevelList &lvls = Common::listSpecialDebugLevels();
+	const Common::DebugChannelList &lvls = Common::listDebugChannels();
 
 	// No parameters given: Print out a list of all channels and their status
 	if (argc <= 1) {
 		DebugPrintf("Available debug channels: ");
-		for (Common::SpecialDebugLevelList::iterator i = lvls.begin(); i != lvls.end(); ++i) {
+		for (Common::DebugChannelList::iterator i = lvls.begin(); i != lvls.end(); ++i) {
 			DebugPrintf("%c%s - %s (%s)\n", i->enabled ? '+' : ' ',
 					i->name.c_str(), i->description.c_str(),
 					i->enabled ? "enabled" : "disabled");
@@ -514,9 +514,9 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 	// Enable or disable channel?
 	bool result = false;
 	if (argv[1][0] == '+') {
-		result = Common::enableSpecialDebugLevel(argv[1] + 1);
+		result = Common::enableDebugChannel(argv[1] + 1);
 	} else if (argv[1][0] == '-') {
-		result = Common::disableSpecialDebugLevel(argv[1] + 1);
+		result = Common::disableDebugChannel(argv[1] + 1);
 	}
 	
 	if (result) {
