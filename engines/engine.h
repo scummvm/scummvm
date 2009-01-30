@@ -219,13 +219,13 @@ public:
 	 * Request the engine to quit. Sends a EVENT_QUIT event to the Event
 	 * Manager.
 	 */
-	void quitGame();
+	static void quitGame();
 
 	/**
 	 * Return whether the ENGINE should quit respectively should return to the
 	 * launcher.
 	 */
-	bool shouldQuit() const;
+	static bool shouldQuit();
 
 	/**
 	 * Pause or resume the engine. This should stop/resume any audio playback

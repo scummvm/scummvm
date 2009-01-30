@@ -328,11 +328,12 @@ void Engine::quitGame() {
 	Common::Event event;
 
 	event.type = Common::EVENT_QUIT;
-	_eventMan->pushEvent(event);
+	g_system->getEventManager()->pushEvent(event);
 }
 
-bool Engine::shouldQuit() const {
-	return (_eventMan->shouldQuit() || _eventMan->shouldRTL());
+bool Engine::shouldQuit() {
+	Common::EventManager *eventMan = g_system->getEventManager();
+	return (eventMan->shouldQuit() || eventMan->shouldRTL());
 }
 
 /*
