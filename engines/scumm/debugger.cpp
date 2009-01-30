@@ -47,7 +47,7 @@ void debugC(int channel, const char *s, ...) {
 
 	// FIXME: Still spew all debug at -d9, for crashes in startup etc.
 	//	  Add setting from commandline ( / abstract channel interface)
-	if (!(Common::getEnabledSpecialDebugLevels() & channel) && (gDebugLevel < 9))
+	if (!Common::isSpecialDebugLevelEnabled(channel) && (gDebugLevel < 9))
 		return;
 
 	va_start(va, s);

@@ -49,7 +49,7 @@ struct SpecialDebugLevel {
  * Adds a engine debug level.
  * @param level the level flag (should be OR-able i.e. first one should be 1 than 2,4,...)
  * @param name the option name which is used in the debugger/on the command line to enable
- *               this special debug level, the option will be compared case !insentiv! later
+ *               this special debug level (case will be ignored)
  * @param description the description which shows up in the debugger
  * @return true on success false on failure
  */
@@ -68,18 +68,13 @@ void clearAllSpecialDebugLevels();
 bool enableSpecialDebugLevel(const String &name);
 
 /**
- * Enables a list of engine debug levels, given as a comma-separated list
- * of level names.
- * @param name the list of names of debug levels to enable
- */
-void enableSpecialDebugLevelList(const String &names);
-
-/**
  * Disables an engine debug level
  * @param name the name of the debug level to disable
  * @return true on success, false on failure
  */
 bool disableSpecialDebugLevel(const String &name);
+
+
 
 typedef List<SpecialDebugLevel> SpecialDebugLevelList;
 
@@ -88,12 +83,6 @@ typedef List<SpecialDebugLevel> SpecialDebugLevelList;
  * @return returns a arry with all debug levels
  */
 const SpecialDebugLevelList &listSpecialDebugLevels();
-
-/**
- * Return the active debug flag mask (i.e. all active debug flags ORed
- * together into a single uint32).
- */
-uint32 getEnabledSpecialDebugLevels();
 
 
 /**

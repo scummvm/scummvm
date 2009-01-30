@@ -175,9 +175,14 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 		SearchMan.addDirectory(dir.getPath(), dir);
 	}
 
-	// On creation the engine should've set up all debug levels so we can use
+	// On creation the engine should have set up all debug levels so we can use
 	// the command line arugments here
-	Common::enableSpecialDebugLevelList(edebuglevels);
+	Common::StringTokenizer tokenizer(edebuglevels, " ,");
+	while (!tokenizer.empty()) {
+		Common::String token = tokenizer.nextToken();
+		if (!enableSpecialDebugLevel(token))
+			warning("Engine does not support debug level '%s'", token.c_str());
+	}
 
 	// Inform backend that the engine is about to be run
 	system.engineInit();

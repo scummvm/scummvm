@@ -57,8 +57,8 @@ namespace Common {
 
 namespace {
 
-SpecialDebugLevelList gDebugLevels;
-uint32 gDebugLevelsEnabled = 0;
+static SpecialDebugLevelList gDebugLevels;
+static uint32 gDebugLevelsEnabled = 0;
 
 struct DebugLevelSort {
 	bool operator()(const SpecialDebugLevel &l, const SpecialDebugLevel &r) {
@@ -110,17 +110,6 @@ bool enableSpecialDebugLevel(const String &name) {
 	}
 }
 
-void enableSpecialDebugLevelList(const String &names) {
-	StringTokenizer tokenizer(names, " ,");
-	String token;
-
-	while (!tokenizer.empty()) {
-		token = tokenizer.nextToken();
-		if (!enableSpecialDebugLevel(token))
-			warning("Engine does not support debug level '%s'", token.c_str());
-	}
-}
-
 bool disableSpecialDebugLevel(const String &option) {
 	SpecialDebugLevelList::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(option));
 
@@ -136,10 +125,6 @@ bool disableSpecialDebugLevel(const String &option) {
 
 const SpecialDebugLevelList &listSpecialDebugLevels() {
 	return gDebugLevels;
-}
-
-uint32 getEnabledSpecialDebugLevels() {
-	return gDebugLevelsEnabled;
 }
 
 bool isSpecialDebugLevelEnabled(uint32 level) {
