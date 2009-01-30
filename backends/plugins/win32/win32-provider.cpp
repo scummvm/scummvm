@@ -27,6 +27,7 @@
 
 #include "backends/plugins/win32/win32-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
+#include "common/debug.h"
 #include "common/fs.h"
 
 #include <windows.h>

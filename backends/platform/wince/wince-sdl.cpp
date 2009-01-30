@@ -26,6 +26,7 @@
 #include "backends/platform/wince/wince-sdl.h"
 
 #include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/events.h"
 #include "common/util.h"
 #include "common/timer.h"

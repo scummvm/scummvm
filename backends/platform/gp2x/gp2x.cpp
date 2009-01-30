@@ -32,6 +32,7 @@
 #include "backends/platform/gp2x/gp2x-hw.h"
 #include "backends/platform/gp2x/gp2x-mem.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/util.h"
 #include "base/main.h"

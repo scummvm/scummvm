@@ -35,6 +35,7 @@
 #include <strings.h>
 #endif
 
+#include "common/debug.h"
 #include "common/util.h"
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/stdiostream.h"
