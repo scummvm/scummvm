@@ -658,6 +658,9 @@ Common::Error AGOSEngine::init() {
 		_subtitles = true;
 	}
 
+	// TODO: Use special debug levels instead of the following hack.
+	// Also, the current variable names (_continousMainScript, ...)
+	// are not very suggestive.
 	_debugMode = (gDebugLevel >= 0);
 	if (gDebugLevel == 2)
 		_continousMainScript = true;
