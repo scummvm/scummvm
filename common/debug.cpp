@@ -24,6 +24,7 @@
 
 #include "common/debug.h"
 #include "common/util.h"
+#include "common/hashmap.h"
 
 #include "engines/engine.h"
 
@@ -57,37 +58,24 @@ namespace Common {
 
 namespace {
 
-static SpecialDebugLevelList gDebugLevels;
+typedef HashMap<String, SpecialDebugLevel, IgnoreCase_Hash, IgnoreCase_EqualTo> DebugLevelMap;
+
+static DebugLevelMap gDebugLevels;
 static uint32 gDebugLevelsEnabled = 0;
 
-struct DebugLevelSort {
+struct DebugLevelComperator {
 	bool operator()(const SpecialDebugLevel &l, const SpecialDebugLevel &r) {
 		return (l.name.compareToIgnoreCase(r.name) < 0);
-	}
-};
-
-struct DebugLevelSearch {
-	const String &_name;
-
-	DebugLevelSearch(const String &name) : _name(name) {}
-
-	bool operator()(const SpecialDebugLevel &l) {
-		return _name.equalsIgnoreCase(l.name);
 	}
 };
 
 }
 
 bool addSpecialDebugLevel(uint32 level, const String &name, const String &description) {
-	SpecialDebugLevelList::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(name));
-
-	if (i != gDebugLevels.end()) {
-		warning("Declared engine debug level '%s' again", name.c_str());
-		*i = SpecialDebugLevel(level, name, description);
-	} else {
-		gDebugLevels.push_back(SpecialDebugLevel(level, name, description));
-		sort(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSort());
+	if (gDebugLevels.contains(name)) {
+		warning("Duplicate declaration of engine debug level '%s'", name.c_str());
 	}
+	gDebugLevels[name] = SpecialDebugLevel(level, name, description);
 
 	return true;
 }
@@ -98,11 +86,11 @@ void clearAllSpecialDebugLevels() {
 }
 
 bool enableSpecialDebugLevel(const String &name) {
-	SpecialDebugLevelList::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(name));
+	DebugLevelMap::iterator i = gDebugLevels.find(name);
 
 	if (i != gDebugLevels.end()) {
-		gDebugLevelsEnabled |= i->level;
-		i->enabled = true;
+		gDebugLevelsEnabled |= i->_value.level;
+		i->_value.enabled = true;
 
 		return true;
 	} else {
@@ -110,12 +98,12 @@ bool enableSpecialDebugLevel(const String &name) {
 	}
 }
 
-bool disableSpecialDebugLevel(const String &option) {
-	SpecialDebugLevelList::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(option));
+bool disableSpecialDebugLevel(const String &name) {
+	DebugLevelMap::iterator i = gDebugLevels.find(name);
 
 	if (i != gDebugLevels.end()) {
-		gDebugLevelsEnabled &= ~i->level;
-		i->enabled = false;
+		gDebugLevelsEnabled &= ~i->_value.level;
+		i->_value.enabled = false;
 
 		return true;
 	} else {
@@ -123,8 +111,14 @@ bool disableSpecialDebugLevel(const String &option) {
 	}
 }
 
-const SpecialDebugLevelList &listSpecialDebugLevels() {
-	return gDebugLevels;
+
+SpecialDebugLevelList listSpecialDebugLevels() {
+	SpecialDebugLevelList tmp;
+	for (DebugLevelMap::iterator i = gDebugLevels.begin(); i != gDebugLevels.end(); ++i)
+		tmp.push_back(i->_value);
+	sort(tmp.begin(), tmp.end(), DebugLevelComperator());
+
+	return tmp;
 }
 
 bool isSpecialDebugLevelEnabled(uint32 level) {
@@ -141,9 +135,9 @@ bool isSpecialDebugLevelEnabled(const String &name) {
 		return true;
 
 	// Search for the debug level with the given name and check if it is enabled
-	SpecialDebugLevelList::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(name));
+	DebugLevelMap::iterator i = gDebugLevels.find(name);
 	if (i != gDebugLevels.end())
-		return gDebugLevelsEnabled & i->level;
+		return i->_value.enabled;
 	return false;
 }
 

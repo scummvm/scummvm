@@ -82,7 +82,7 @@ typedef List<SpecialDebugLevel> SpecialDebugLevelList;
  * Lists all debug levels
  * @return returns a arry with all debug levels
  */
-const SpecialDebugLevelList &listSpecialDebugLevels();
+SpecialDebugLevelList listSpecialDebugLevels();
 
 
 /**
