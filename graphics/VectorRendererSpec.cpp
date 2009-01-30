@@ -194,43 +194,6 @@ VectorRenderer *createRenderer(int mode) {
 #endif
 }
 
-#ifndef DISABLE_FANCY_THEMES
-template <typename PixelType, typename PixelFormat>
-void VectorRendererSpec<PixelType, PixelFormat>::
-areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset) {
-	PixelType *ptr = 0;
-	int newR, newG, newB;
-	uint8 r, g, b;
-	int yVal;
-
-	for (int y = area.top; y < area.bottom; ++y) {
-		for (int x = area.left; x < area.right; ++x) {
-			newR = newG = newB = 0;
-
-			for (int j = 0; j < 3; ++j) {
-				yVal = MIN(MAX(y - 1 + j, 0), area.bottom - 1);
-
-				for (int i = 0; i < 3; ++i) {
-					ptr = (PixelType *)Base::_activeSurface->getBasePtr(MIN(MAX(x - 1 + j, 0), area.right - 1), yVal);
-					colorToRGB<PixelFormat>((uint32)*ptr, r, g, b);
-
-					newR += r * filter[j][i];
-					newG += g * filter[j][i];
-					newB += b * filter[j][i];
-				}
-			}
-
-			newR = (newR / filterDiv) + offset;
-			newG = (newG / filterDiv) + offset;
-			newB = (newB / filterDiv) + offset;
-
-			ptr = (PixelType *)Base::_activeSurface->getBasePtr(x, y);
-			*ptr = RGBToColor<PixelFormat>(CLIP(newR, 0, 255), CLIP(newG, 0, 255), CLIP(newB, 0, 255));
-		}
-	}
-}
-#endif
-
 template <typename PixelType, typename PixelFormat>
 void VectorRendererSpec<PixelType, PixelFormat>::
 setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2) {

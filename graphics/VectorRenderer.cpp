@@ -37,17 +37,6 @@
 
 namespace Graphics {
 
-#ifndef DISABLE_FANCY_THEMES
-const VectorRenderer::ConvolutionDataSet VectorRenderer::_convolutionData[VectorRenderer::kConvolutionMAX] = {
-	{ {{1, 1, 1}, {1, 8, 1}, {1, 1, 1}}, 16, 0 }, // soft blur matrix
-	{ {{2, 2, 2}, {2, 2, 2}, {2, 2, 2}}, 18, 0 }, // hard blur matrix
-	{ {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}}, 16, 0 }, // gaussian blur matrix
-	{ {{2, 0, 0}, {0, -1, 0}, {0, 0, -1}}, 1, 127}, // emboss matrix
-	{ {{-1, -1, -1}, {-1, 9, -1}, {-1, -1, -1}}, 1, 0}, // sharpen matrix
-	{ {{1, 1, 1}, {1, -7, 1}, {1, 1, 1}}, 1, 0} // edge find matrix
-};
-#endif
-
 /********************************************************************
  * DRAWSTEP handling functions
  ********************************************************************/

@@ -128,24 +128,6 @@ public:
 		kTriangleRight
 	};
 
-#ifndef DISABLE_FANCY_THEMES
-	enum ConvolutionData {
-		kConvolutionSoftBlur,
-		kConvolutionHardBlur,
-		kConvolutionGaussianBlur,
-		kConvolutionEmboss,
-		kConvolutionSharpen,
-		kConvolutionEdgeDetect,
-		kConvolutionMAX
-	};
-
-	struct ConvolutionDataSet {
-		int matrix[3][3];
-		int divisor;
-		int offset;
-	};
-#endif
-
 	/**
 	 * Draws a line by considering the special cases for optimization.
 	 *
@@ -517,34 +499,6 @@ public:
 	virtual void disableShadows() { _disableShadows = true; }
 	virtual void enableShadows() { _disableShadows = false; }
 
-#ifndef DISABLE_FANCY_THEMES
-	/**
-	 * Applies a convolution matrix on the given surface area.
-	 * Call applyConvolutionMatrix() instead if you want to use
-	 * the embedded matrixes (blur/sharpen masks, bevels, etc).
-	 *
-	 * @param area Area in which the convolution matrix will be applied.
-	 * @param filter Convolution matrix (3X3)
-	 * @param filterDiv Divisor for the convolution matrix.
-	 *					Make sure this equals the total sum of the elements
-	 *					of the matrix or brightness data will be distorted.
-	 * @param offset Offset on the convolution area.
-	 */
-	virtual void areaConvolution(const Common::Rect &area, const int filter[3][3], int filterDiv, int offset) = 0;
-
-	/**
-	 * Applies one of the predefined convolution effects on the given area.
-	 *
-	 * WARNING: Because of performance issues, this is currently disabled on all renderers.
-	 *
-	 * @param id Id of the convolution data set (see VectorRenderer::ConvolutionData)
-	 * @param area Area in which the convolution effect will be applied.
-	 */
-	virtual void applyConvolutionMatrix(const ConvolutionData id, const Common::Rect &area) {
-		areaConvolution(area, _convolutionData[id].matrix, _convolutionData[id].divisor, _convolutionData[id].offset);
-	}
-#endif
-
 	/**
 	 * Applies a whole-screen shading effect, used before opening a new dialog.
 	 * Currently supports screen dimmings and luminance (b&w).
@@ -564,10 +518,6 @@ protected:
 
 	int _gradientFactor; /**< Multiplication factor of the active gradient */
 	int _gradientBytes[3]; /**< Color bytes of the active gradient, used to speed up calculation */
-
-#ifndef DISABLE_FANCY_THEMES
-	static const ConvolutionDataSet _convolutionData[kConvolutionMAX];
-#endif
 };
 
 } // end of namespace Graphics
