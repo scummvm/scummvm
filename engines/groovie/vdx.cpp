@@ -488,7 +488,7 @@ void VDXPlayer::chunkSound(Common::ReadStream *in) {
 	if (!_audioStream) {
 		_audioStream = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE);
 		Audio::SoundHandle sound_handle;
-		::g_engine->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
+		g_system->getMixer()->playInputStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
 	}
 
 	byte *data = new byte[60000];

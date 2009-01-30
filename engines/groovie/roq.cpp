@@ -462,7 +462,7 @@ bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
 #endif
 		_audioStream = Audio::makeAppendableAudioStream(22050, flags);
 		Audio::SoundHandle sound_handle;
-		::g_engine->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
+		g_system->getMixer()->playInputStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
 	}
 
 	// Create the audio buffer
@@ -505,7 +505,7 @@ bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
 #endif
 		_audioStream = Audio::makeAppendableAudioStream(22050, flags);
 		Audio::SoundHandle sound_handle;
-		::g_engine->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
+		g_system->getMixer()->playInputStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
 	}
 
 	// Create the audio buffer
