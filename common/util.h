@@ -27,7 +27,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/list.h"
+#include "common/debug.h"
 
 #ifdef MIN
 #undef MIN
@@ -49,6 +49,7 @@ template<typename T> inline T CLIP (T v, T amin, T amax)
 template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+
 
 namespace Common {
 
@@ -86,6 +87,18 @@ private:
  * @param bytesPerLine	number of bytes to print per line (default: 16)
  */
 extern void hexdump(const byte * data, int len, int bytesPerLine = 16);
+
+
+/**
+ * Take a 32 bit value and turn it into a four character string, where each of
+ * the four bytes is turned into one character. Most significant byte is printed
+ * first.
+ */
+String tag2string(uint32 tag);
+#define tag2str(x)	Common::tag2string(x).c_str()
+
+
+
 
 /**
  * Simple random number generator. Although it is definitely not suitable for
@@ -243,65 +256,6 @@ extern const char *getRenderModeCode(RenderMode id);
 extern const char *getRenderModeDescription(RenderMode id);
 
 
-struct EngineDebugLevel {
-	EngineDebugLevel() : option(""), description(""), level(0), enabled(false) {}
-	EngineDebugLevel(uint32 l, const String &o, const String &d)
-		: option(o), description(d), level(l), enabled(false) {}
-
-	String option;
-	String description;
-
-	uint32 level;
-	bool enabled;
-};
-
-/**
- * Adds a engine debug level.
- * @param level the level flag (should be OR-able i.e. first one should be 1 than 2,4,...)
- * @param option the option name which is used in the debugger/on the command line to enable
- *               this special debug level, the option will be compared case !insentiv! later
- * @param description the description which shows up in the debugger
- * @return true on success false on failure
- */
-bool addSpecialDebugLevel(uint32 level, const String &option, const String &description);
-
-/**
- * Resets all engine debug levels
- */
-void clearAllSpecialDebugLevels();
-
-/**
- * Enables a engine debug level
- * @param option the option which should be enabled
- * @return true on success false on failure
- */
-bool enableSpecialDebugLevel(const String &option);
-
-// only used for parsing the levels from the commandline
-void enableSpecialDebugLevelList(const String &option);
-
-/**
- * Disables a engine debug level
- * @param option the option to disable
- * @return true on success false on failure
- */
-bool disableSpecialDebugLevel(const String &option);
-
-typedef List<EngineDebugLevel> DebugLevelContainer;
-
-/**
- * Lists all debug levels
- * @return returns a arry with all debug levels
- */
-const DebugLevelContainer &listSpecialDebugLevels();
-
-/**
- * Return the active debug flag mask (i.e. all active debug flags ORed
- * together into a single uint32).
- */
-uint32 getEnabledSpecialDebugLevels();
-
-
 }	// End of namespace Common
 
 
@@ -317,26 +271,15 @@ inline int printf(const char *s, ...) { return 0; }
 
 inline void warning(const char *s, ...) {}
 
-inline void debug(int level, const char *s, ...) {}
-inline void debug(const char *s, ...) {}
-inline void debugN(int level, const char *s, ...) {}
-inline void debugC(int level, uint32 engine_level, const char *s, ...) {}
-
 #else
 
+/**
+ * Print a warning message to the text console (stdout).
+ * Automatically prepends the text "WARNING: " and appends
+ * an exclamation mark and a newline.
+ */
 void warning(const char *s, ...) GCC_PRINTF(1, 2);
 
-void debug(int level, const char *s, ...) GCC_PRINTF(2, 3);
-void debug(const char *s, ...) GCC_PRINTF(1, 2);
-void debugN(int level, const char *s, ...) GCC_PRINTF(2, 3);
-void debugC(int level, uint32 engine_level, const char *s, ...) GCC_PRINTF(3, 4);
-
 #endif
-
-extern int gDebugLevel;
-
-Common::String tag2string(uint32 tag);
-#define tag2str(x)	tag2string(x).c_str()
-
 
 #endif

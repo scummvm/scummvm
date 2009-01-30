@@ -22,10 +22,10 @@
  * $Id$
  */
 
-#include "engines/engine.h"
 #include "common/util.h"
 #include "common/system.h"
 #include "gui/debugger.h"
+#include "engines/engine.h"
 
 #include <stdarg.h>	// For va_list etc.
 
@@ -41,24 +41,18 @@ extern bool isSmartphone(void);
 	#include "backends/platform/ps2/fileio.h"
 
 	#define fprintf				ps2_fprintf
+	#define fputs(str, file)	ps2_fputs(str, file)
 	#define fflush(a)			ps2_fflush(a)
 #endif
 
 #ifdef __DS__
 	#include "backends/fs/ds/ds-fs.h"
 
-	#undef stderr
-	#undef stdout
-	#undef stdin
-
-	#define stdout ((DS::fileHandle*) -1)
-	#define stderr ((DS::fileHandle*) -2)
-	#define stdin ((DS::fileHandle*) -3)
-
 	void	std_fprintf(FILE* handle, const char* fmt, ...);
 	void	std_fflush(FILE* handle);
 
-	#define fprintf(file, fmt, ...)				{ char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); }
+	#define fprintf(file, fmt, ...)				do { char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); } while(0)
+	#define fputs(str, file)					DS::std_fwrite(str, strlen(str), 1, file)
 	#define fflush(file)						DS::std_fflush(file)
 #endif
 
@@ -145,6 +139,22 @@ void hexdump(const byte * data, int len, int bytesPerLine) {
 		printf(" ");
 	printf("|\n");
 }
+
+String tag2string(uint32 tag) {
+	char str[5];
+	str[0] = (char)(tag >> 24);
+	str[1] = (char)(tag >> 16);
+	str[2] = (char)(tag >> 8);
+	str[3] = (char)tag;
+	str[4] = '\0';
+	// Replace non-printable chars by dot
+	for (int i = 0; i < 4; ++i) {
+		if (!isprint(str[i]))
+			str[i] = '.';
+	}
+	return Common::String(str);
+}
+
 
 #pragma mark -
 
@@ -360,193 +370,12 @@ const char *getRenderModeDescription(RenderMode id) {
 	return 0;
 }
 
-#pragma mark -
-
-namespace {
-
-DebugLevelContainer gDebugLevels;
-uint32 gDebugLevelsEnabled = 0;
-
-struct DebugLevelSort {
-	bool operator()(const EngineDebugLevel &l, const EngineDebugLevel &r) {
-		return (l.option.compareToIgnoreCase(r.option) < 0);
-	}
-};
-
-struct DebugLevelSearch {
-	const String &_option;
-
-	DebugLevelSearch(const String &option) : _option(option) {}
-
-	bool operator()(const EngineDebugLevel &l) {
-		return _option.equalsIgnoreCase(l.option);
-	}
-};
-
-}
-
-bool addSpecialDebugLevel(uint32 level, const String &option, const String &description) {
-	DebugLevelContainer::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(option));
-
-	if (i != gDebugLevels.end()) {
-		warning("Declared engine debug level '%s' again", option.c_str());
-		*i = EngineDebugLevel(level, option, description);
-	} else {
-		gDebugLevels.push_back(EngineDebugLevel(level, option, description));
-		sort(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSort());
-	}
-
-	return true;
-}
-
-void clearAllSpecialDebugLevels() {
-	gDebugLevelsEnabled = 0;
-	gDebugLevels.clear();
-}
-
-bool enableSpecialDebugLevel(const String &option) {
-	DebugLevelContainer::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(option));
-
-	if (i != gDebugLevels.end()) {
-		gDebugLevelsEnabled |= i->level;
-		i->enabled = true;
-
-		return true;
-	} else {
-		return false;
-	}
-}
-
-void enableSpecialDebugLevelList(const String &option) {
-	StringTokenizer tokenizer(option, " ,");
-	String token;
-
-	while (!tokenizer.empty()) {
-		token = tokenizer.nextToken();
-		if (!enableSpecialDebugLevel(token))
-			warning("Engine does not support debug level '%s'", token.c_str());
-	}
-}
-
-bool disableSpecialDebugLevel(const String &option) {
-	DebugLevelContainer::iterator i = find_if(gDebugLevels.begin(), gDebugLevels.end(), DebugLevelSearch(option));
-
-	if (i != gDebugLevels.end()) {
-		gDebugLevelsEnabled &= ~i->level;
-		i->enabled = false;
-
-		return true;
-	} else {
-		return false;
-	}
-}
-
-const DebugLevelContainer &listSpecialDebugLevels() {
-	return gDebugLevels;
-}
-
-uint32 getEnabledSpecialDebugLevels() {
-	return gDebugLevelsEnabled;
-}
-
 
 }	// End of namespace Common
 
 
 
-/**
- * The debug level. Initially set to -1, indicating that no debug output
- * should be shown. Positive values usually imply an increasing number of
- * debug output shall be generated, the higher the value, the more verbose the
- * information (although the exact semantics are up to the engines).
- */
-int gDebugLevel = -1;
-
 #ifndef DISABLE_TEXT_CONSOLE
-
-static void debugHelper(const char *in_buf, bool caret = true) {
-	char buf[STRINGBUFLEN];
-
-	// Next, give the active engine (if any) a chance to augment the message
-	if (g_engine) {
-		g_engine->errorString(in_buf, buf, STRINGBUFLEN);
-	} else {
-		strncpy(buf, in_buf, STRINGBUFLEN);
-	}
-	buf[STRINGBUFLEN-2] = '\0';
-	buf[STRINGBUFLEN-1] = '\0';
-
-	if (caret)
-		strcat(buf, "\n");
-
-	fprintf(stdout, "%s", buf);	// FIXME: Use fputs instead
-
-#if defined( USE_WINDBG )
-#if defined( _WIN32_WCE )
-	TCHAR buf_unicode[1024];
-	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
-	OutputDebugString(buf_unicode);
-#else
-	OutputDebugString(buf);
-#endif
-#endif
-
-	fflush(stdout);
-}
-
-void debug(int level, const char *s, ...) {
-	char buf[STRINGBUFLEN];
-	va_list va;
-
-	if (level > gDebugLevel)
-		return;
-
-	va_start(va, s);
-	vsnprintf(buf, STRINGBUFLEN, s, va);
-	va_end(va);
-
-	debugHelper(buf);
-}
-
-void debugN(int level, const char *s, ...) {
-	char buf[STRINGBUFLEN];
-	va_list va;
-
-	if (level > gDebugLevel)
-		return;
-
-	va_start(va, s);
-	vsnprintf(buf, STRINGBUFLEN, s, va);
-	va_end(va);
-
-	debugHelper(buf, false);
-}
-
-void debug(const char *s, ...) {
-	char buf[STRINGBUFLEN];
-	va_list va;
-
-	va_start(va, s);
-	vsnprintf(buf, STRINGBUFLEN, s, va);
-	va_end(va);
-
-	debugHelper(buf);
-}
-
-void debugC(int level, uint32 engine_level, const char *s, ...) {
-	char buf[STRINGBUFLEN];
-	va_list va;
-
-	if (gDebugLevel != 11)
-		if (level > gDebugLevel || !(Common::gDebugLevelsEnabled & engine_level))
-			return;
-
-	va_start(va, s);
-	vsnprintf(buf, STRINGBUFLEN, s, va);
-	va_end(va);
-
-	debugHelper(buf);
-}
 
 void warning(const char *s, ...) {
 	char buf[STRINGBUFLEN];
@@ -590,12 +419,16 @@ void NORETURN error(const char *s, ...) {
 		g_engine->errorString(buf_input, buf_output, STRINGBUFLEN);
 	} else {
 		strncpy(buf_output, buf_input, STRINGBUFLEN);
-		buf_output[STRINGBUFLEN-1] = '\0';
 	}
+
+	buf_output[STRINGBUFLEN-3] = '\0';
+	buf_output[STRINGBUFLEN-2] = '\0';
+	buf_output[STRINGBUFLEN-1] = '\0';
+	strcat(buf_output, "!\n");
 
 
 	// Print the error message to stderr
-	fprintf(stderr, "%s!\n", buf_output);
+	fputs(buf_output, stderr);
 
 	// Unless this error -originated- within the debugger itself, we
 	// now invoke the debugger, if available / supported.
@@ -641,14 +474,4 @@ void NORETURN error(const char *s, ...) {
 		g_system->quit();
 
 	exit(1);
-}
-
-Common::String tag2string(uint32 tag) {
-	char str[5];
-	str[0] = (char)(tag >> 24);
-	str[1] = (char)(tag >> 16);
-	str[2] = (char)(tag >> 8);
-	str[3] = (char)tag;
-	str[4] = '\0';
-	return Common::String(str);
 }

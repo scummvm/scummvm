@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	archive.o \
 	config-file.o \
 	config-manager.o \
+	debug.o \
 	file.o \
 	fs.o \
 	hashmap.o \
