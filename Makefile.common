@@ -25,9 +25,9 @@ MODULES += \
 	gui \
 	graphics \
 	sound \
-	engines \
+	backends \
 	common \
-	backends
+	engines \
 
 ifdef USE_MT32EMU
 MODULES += sound/softsynth/mt32
