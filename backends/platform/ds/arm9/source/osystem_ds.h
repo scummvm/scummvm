@@ -23,7 +23,8 @@
 
 #ifndef _OSYSTEM_DS_H_
 #define _OSYSTEM_DS_H_
-#include "common/system.h"
+
+#include "backends/base-backend.h"
 #include "common/events.h"
 #include "nds.h"
 #include "ramsave.h"
@@ -34,7 +35,7 @@
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
 
-class OSystem_DS : public OSystem {
+class OSystem_DS : public BaseBackend {
 protected:
 
 	int eventNum;

@@ -27,7 +27,7 @@
 
 #include "graphics/surface.h"
 #include "iphone_common.h"
-#include "common/system.h"
+#include "backends/base-backend.h"
 #include "common/events.h"
 #include "sound/mixer_intern.h"
 #include "backends/fs/posix/posix-fs-factory.h"
@@ -52,7 +52,7 @@ typedef struct AQCallbackStruct {
     AudioStreamBasicDescription dataFormat;
 } AQCallbackStruct;
 
-class OSystem_IPHONE : public OSystem {
+class OSystem_IPHONE : public BaseBackend {
 protected:
 
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[];

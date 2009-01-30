@@ -24,10 +24,10 @@
  */
 
 #include "common/scummsys.h"
-#include "common/system.h"
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
 #include "sound/mixer_intern.h"
+#include "backends/base-backend.h"
 #include "backends/fs/psp/psp-fs-factory.h"
 
 
@@ -40,7 +40,7 @@ enum GraphicModeID {
 	CENTERED_362X272
 };
 
-class OSystem_PSP : public OSystem {
+class OSystem_PSP : public BaseBackend {
 public:
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[];
 	static OSystem *instance();

@@ -25,8 +25,8 @@ MODULES += \
 	gui \
 	graphics \
 	sound \
-	common \
 	engines \
+	common \
 	backends
 
 ifdef USE_MT32EMU

@@ -23,11 +23,11 @@
 #define _WII_OSYSTEM_H_
 
 #include "base/main.h"
-#include "common/system.h"
 #include "common/fs.h"
 #include "common/rect.h"
 #include "common/events.h"
 
+#include "backends/base-backend.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "graphics/colormasks.h"
@@ -53,7 +53,7 @@ extern void wii_memstats(void);
 }
 #endif
 
-class OSystem_Wii : public OSystem {
+class OSystem_Wii : public BaseBackend {
 private:
 	s64 _startup_time;
 	syswd_t _alarm;

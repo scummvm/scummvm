@@ -31,8 +31,6 @@
 #include "common/mutex.h"
 #include "common/queue.h"
 
-class OSystem;
-
 namespace Common {
 #ifdef ENABLE_KEYMAPPER
 	class Keymapper;
@@ -43,20 +41,20 @@ namespace Common {
 }
 
 
-/*
-At some point we will remove pollEvent from OSystem and change
-DefaultEventManager to use a "boss" derived from this class:
 class EventProvider {
-public
+public:
+	virtual ~EventProvider() {}
+	/**
+	 * Get the next event in the event queue.
+	 * @param event	point to an Common::Event struct, which will be filled with the event data.
+	 * @return true if an event was retrieved.
+	 */
 	virtual bool pollEvent(Common::Event &event) = 0;
 };
 
-Backends which wish to use the DefaultEventManager then simply can
-use a subclass of EventProvider.
-*/
 
 class DefaultEventManager : public Common::EventManager {
-	OSystem *_boss;
+	EventProvider *_boss;
 
 #ifdef ENABLE_VKEYBD
 	Common::VirtualKeyboard *_vk;
@@ -130,7 +128,7 @@ class DefaultEventManager : public Common::EventManager {
 	void record(Common::Event &event);
 	bool playback(Common::Event &event);
 public:
-	DefaultEventManager(OSystem *boss);
+	DefaultEventManager(EventProvider *boss);
 	~DefaultEventManager();
 
 	virtual void init();

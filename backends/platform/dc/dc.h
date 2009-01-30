@@ -23,7 +23,7 @@
  *
  */
 
-#include <common/system.h>
+#include "backends/base-backend.h"
 #include <graphics/surface.h>
 #include <graphics/colormasks.h>
 #include <ronin/soundcommon.h>
@@ -43,7 +43,7 @@ class Interactive
 
 #include "softkbd.h"
 
-class OSystem_Dreamcast : public OSystem, public FilesystemFactory {
+class OSystem_Dreamcast : public BaseBackend, public FilesystemFactory {
 
  public:
   OSystem_Dreamcast();

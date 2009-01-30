@@ -92,7 +92,7 @@ void writeRecord(Common::OutSaveFile *outFile, uint32 diff, Common::Event &event
 	}
 }
 
-DefaultEventManager::DefaultEventManager(OSystem *boss) :
+DefaultEventManager::DefaultEventManager(EventProvider *boss) :
 	_boss(boss),
 	_buttonState(0),
 	_modifierState(0),
@@ -106,8 +106,8 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	_recordTimeFile = NULL;
 	_playbackFile = NULL;
 	_playbackTimeFile = NULL;
-	_timeMutex = _boss->createMutex();
-	_recorderMutex = _boss->createMutex();
+	_timeMutex = g_system->createMutex();
+	_recorderMutex = g_system->createMutex();
 
 	_eventCount = 0;
 	_lastEventCount = 0;
@@ -144,8 +144,8 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	if (_recordMode == kRecorderRecord) {
 		_recordCount = 0;
 		_recordTimeCount = 0;
-		_recordFile = _boss->getSavefileManager()->openForSaving(_recordTempFileName.c_str());
-		_recordTimeFile = _boss->getSavefileManager()->openForSaving(_recordTimeFileName.c_str());
+		_recordFile = g_system->getSavefileManager()->openForSaving(_recordTempFileName.c_str());
+		_recordTimeFile = g_system->getSavefileManager()->openForSaving(_recordTimeFileName.c_str());
 		_recordSubtitles = ConfMan.getBool("subtitles");
 	}
 
@@ -155,8 +155,8 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	if (_recordMode == kRecorderPlayback) {
 		_playbackCount = 0;
 		_playbackTimeCount = 0;
-		_playbackFile = _boss->getSavefileManager()->openForLoading(_recordFileName.c_str());
-		_playbackTimeFile = _boss->getSavefileManager()->openForLoading(_recordTimeFileName.c_str());
+		_playbackFile = g_system->getSavefileManager()->openForLoading(_recordFileName.c_str());
+		_playbackTimeFile = g_system->getSavefileManager()->openForLoading(_recordTimeFileName.c_str());
 
 		if (!_playbackFile) {
 			warning("Cannot open playback file %s. Playback was switched off", _recordFileName.c_str());
@@ -213,11 +213,11 @@ DefaultEventManager::~DefaultEventManager() {
 #ifdef ENABLE_VKEYBD
 	delete _vk;
 #endif
-	_boss->lockMutex(_timeMutex);
-	_boss->lockMutex(_recorderMutex);
+	g_system->lockMutex(_timeMutex);
+	g_system->lockMutex(_recorderMutex);
 	_recordMode = kPassthrough;
-	_boss->unlockMutex(_timeMutex);
-	_boss->unlockMutex(_recorderMutex);
+	g_system->unlockMutex(_timeMutex);
+	g_system->unlockMutex(_recorderMutex);
 
 	if (!artificialEventQueue.empty())
 		artificialEventQueue.clear();
@@ -235,9 +235,9 @@ DefaultEventManager::~DefaultEventManager() {
 		_recordTimeFile->finalize();
 		delete _recordTimeFile;
 
-		_playbackFile = _boss->getSavefileManager()->openForLoading(_recordTempFileName.c_str());
+		_playbackFile = g_system->getSavefileManager()->openForLoading(_recordTempFileName.c_str());
 
-		_recordFile = _boss->getSavefileManager()->openForSaving(_recordFileName.c_str());
+		_recordFile = g_system->getSavefileManager()->openForSaving(_recordFileName.c_str());
 		_recordFile->writeUint32LE(RECORD_SIGNATURE);
 		_recordFile->writeUint32LE(RECORD_VERSION);
 
@@ -267,8 +267,8 @@ DefaultEventManager::~DefaultEventManager() {
 
 		//TODO: remove recordTempFileName'ed file
 	}
-	_boss->deleteMutex(_timeMutex);
-	_boss->deleteMutex(_recorderMutex);
+	g_system->deleteMutex(_timeMutex);
+	g_system->deleteMutex(_recorderMutex);
 }
 
 void DefaultEventManager::init() {
@@ -301,7 +301,7 @@ bool DefaultEventManager::playback(Common::Event &event) {
 			case Common::EVENT_RBUTTONUP:
 			case Common::EVENT_WHEELUP:
 			case Common::EVENT_WHEELDOWN:
-				_boss->warpMouse(_playbackEvent.mouse.x, _playbackEvent.mouse.y);
+				g_system->warpMouse(_playbackEvent.mouse.x, _playbackEvent.mouse.y);
 				break;
 			default:
 				break;
@@ -349,7 +349,7 @@ void DefaultEventManager::processMillis(uint32 &millis) {
 		return;
 	}
 
-	_boss->lockMutex(_timeMutex);
+	g_system->lockMutex(_timeMutex);
 	if (_recordMode == kRecorderRecord) {
 		//Simple RLE compression
 		d = millis - _lastMillis;
@@ -374,11 +374,11 @@ void DefaultEventManager::processMillis(uint32 &millis) {
 	}
 
 	_lastMillis = millis;
-	_boss->unlockMutex(_timeMutex);
+	g_system->unlockMutex(_timeMutex);
 }
 
 bool DefaultEventManager::pollEvent(Common::Event &event) {
-	uint32 time = _boss->getMillis();
+	uint32 time = g_system->getMillis();
 	bool result;
 
 	if (!artificialEventQueue.empty()) {
@@ -405,7 +405,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 	if (_recordMode != kPassthrough)  {
 
-		_boss->lockMutex(_recorderMutex);
+		g_system->lockMutex(_recorderMutex);
 		_eventCount++;
 
 		if (_recordMode == kRecorderPlayback)  {
@@ -419,7 +419,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				}
 			}
 		}
-		_boss->unlockMutex(_recorderMutex);
+		g_system->unlockMutex(_recorderMutex);
 	}
 
 	if (result) {

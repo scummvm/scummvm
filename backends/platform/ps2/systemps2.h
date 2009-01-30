@@ -26,7 +26,7 @@
 #ifndef SYSTEMPS2_H
 #define SYSTEMPS2_H
 
-#include "common/system.h"
+#include "backends/base-backend.h"
 
 class DefaultTimerManager;
 
@@ -52,7 +52,7 @@ namespace Audio {
 	class MixerImpl;
 };
 
-class OSystem_PS2 : public OSystem {
+class OSystem_PS2 : public BaseBackend {
 public:
 	OSystem_PS2(const char *elfPath);
 	virtual ~OSystem_PS2(void);

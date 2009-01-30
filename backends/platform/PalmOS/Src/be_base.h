@@ -31,8 +31,7 @@
 #include "PalmVersion.h"
 #include "globals.h"
 
-#include "common/scummsys.h"
-#include "common/system.h"
+#include "backends/base-backend.h"
 #include "common/events.h"
 #include "graphics/surface.h"
 
@@ -89,7 +88,7 @@ typedef struct {
 	void *param;
 } SoundType, *SoundPtr;
 
-class OSystem_PalmBase : public OSystem {
+class OSystem_PalmBase : public BaseBackend {
 private:
 	virtual void int_initBackend() { }
 

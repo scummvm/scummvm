@@ -23,41 +23,21 @@
  *
  */
 
+#ifndef BACKENDS_BASE_BACKEND_H
+#define BACKENDS_BASE_BACKEND_H
+
 #include "common/system.h"
+#include "backends/events/default/default-events.h"
 
-OSystem *g_system = 0;
+class BaseBackend : public OSystem, EventProvider {
+public:
+	virtual Common::EventManager *getEventManager();
+	virtual void displayMessageOnOSD(const char *msg);
+	virtual void clearScreen();
 
-OSystem::OSystem() {
-}
+	virtual Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::WriteStream *createConfigWriteStream();
+};
 
-OSystem::~OSystem() {
-}
 
-bool OSystem::setGraphicsMode(const char *name) {
-	if (!name)
-		return false;
-
-	// Special case for the 'default' filter
-	if (!scumm_stricmp(name, "normal") || !scumm_stricmp(name, "default")) {
-		return setGraphicsMode(getDefaultGraphicsMode());
-	}
-
-	const GraphicsMode *gm = getSupportedGraphicsModes();
-
-	while (gm->name) {
-		if (!scumm_stricmp(gm->name, name)) {
-			return setGraphicsMode(gm->id);
-		}
-		gm++;
-	}
-
-	return false;
-}
-
-bool OSystem::openCD(int drive) {
-	return false;
-}
-
-bool OSystem::pollCD() {
-	return false;
-}
+#endif

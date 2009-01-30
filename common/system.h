@@ -27,7 +27,6 @@
 #define COMMON_SYSTEM_H
 
 #include "common/scummsys.h"
-#include "common/mutex.h"
 #include "common/noncopyable.h"
 #include "common/rect.h"
 
@@ -515,7 +514,7 @@ public:
 	/**
 	 * Clear the screen to black.
 	 */
-	virtual void clearScreen();
+	virtual void clearScreen() = 0;
 
 	/**
 	 * Flush the whole screen, that is render the current content of the screen
@@ -697,17 +696,6 @@ public:
 	/** @name Events and Time */
 	//@{
 
-protected:
-	friend class DefaultEventManager;
-
-	/**
-	 * Get the next event in the event queue.
-	 * @param event	point to an Common::Event struct, which will be filled with the event data.
-	 * @return true if an event was retrieved.
-	 */
-	virtual bool pollEvent(Common::Event &event) = 0;
-
-public:
 	/** Get the number of milliseconds since the program was started. */
 	virtual uint32 getMillis() = 0;
 
@@ -731,7 +719,7 @@ public:
 	 * Return the event manager singleton. For more information, refer
 	 * to the EventManager documentation.
 	 */
-	virtual Common::EventManager *getEventManager();
+	virtual Common::EventManager *getEventManager() = 0;
 
 	//@}
 
@@ -754,7 +742,7 @@ public:
 	 */
 	//@{
 
-	typedef Common::MutexRef	MutexRef;
+	typedef struct OpaqueMutex *MutexRef;
 
 	/**
 	 * Create a new mutex.
@@ -831,17 +819,17 @@ public:
 	 * @param start_frame	the frame at which playback should start (75 frames = 1 second).
 	 * @param duration		the number of frames to play.
 	 */
-	virtual void playCD(int track, int num_loops, int start_frame, int duration);
+	virtual void playCD(int track, int num_loops, int start_frame, int duration) {}
 
 	/**
 	 * Stop audio CD playback.
 	 */
-	virtual void stopCD();
+	virtual void stopCD() {}
 
 	/**
 	 * Update cdrom audio status.
 	 */
-	virtual void updateCD();
+	virtual void updateCD() {}
 
 	//@}
 
@@ -875,7 +863,7 @@ public:
 	 *
 	 * @param msg	the message to display on screen
 	 */
-	virtual void displayMessageOnOSD(const char *msg);
+	virtual void displayMessageOnOSD(const char *msg) = 0;
 
 	/**
 	 * Return the SaveFileManager, used to store and load savestates
@@ -908,7 +896,7 @@ public:
 	 * ReadStream instance. It is the callers responsiblity to delete
 	 * the stream after use.
 	 */
-	virtual Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::SeekableReadStream *createConfigReadStream() = 0;
 
 	/**
 	 * Open the default config file for writing, by returning a suitable
@@ -917,7 +905,7 @@ public:
 	 *
 	 * May return 0 to indicate that writing to config file is not possible.
 	 */
-	virtual Common::WriteStream *createConfigWriteStream();
+	virtual Common::WriteStream *createConfigWriteStream() = 0;
 
 	//@}
 };

@@ -32,8 +32,7 @@
 #include <SDL.h>
 #endif
 
-#include "common/scummsys.h"
-#include "common/system.h"
+#include "backends/base-backend.h"
 #include "graphics/scaler.h"
 
 
@@ -72,7 +71,7 @@ enum {
 };
 
 
-class OSystem_SDL : public OSystem {
+class OSystem_SDL : public BaseBackend {
 public:
 	OSystem_SDL();
 	virtual ~OSystem_SDL();

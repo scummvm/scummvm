@@ -29,8 +29,7 @@
 #define __GP2X__
 #define USE_OSD
 
-#include "common/scummsys.h"
-#include "common/system.h"
+#include "backends/base-backend.h"
 #include "graphics/scaler.h"
 
 #include <SDL.h>
@@ -58,7 +57,7 @@ enum {
 };
 
 
-class OSystem_GP2X : public OSystem {
+class OSystem_GP2X : public BaseBackend {
 public:
 	OSystem_GP2X();
 	virtual ~OSystem_GP2X();

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/system.h"
+#include "backends/base-backend.h"
 #include "base/main.h"
 
 #if defined(USE_NULL_DRIVER)
@@ -51,7 +51,7 @@
 	#include "backends/fs/windows/windows-fs-factory.h"
 #endif
 
-class OSystem_NULL : public OSystem {
+class OSystem_NULL : public BaseBackend {
 protected:
 	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;

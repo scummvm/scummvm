@@ -24,6 +24,7 @@
  */
 
 #include "backends/platform/sdl/sdl.h"
+#include "common/mutex.h"
 #include "common/util.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
