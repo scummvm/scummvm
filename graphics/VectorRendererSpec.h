@@ -207,24 +207,6 @@ protected:
 		while (first != last) blendPixelPtr(first++, color, alpha);
 	}
 
-	/**
-	 * Fills several pixels in a row with a given color.
-	 *
-	 * This is a replacement function for Common::set_to, using an unrolled
-	 * loop to maximize performance on most architectures.
-	 * This function may (and should) be overloaded in any child renderers
-	 * for portable platforms with platform-specific assembly code.
-	 *
-	 * This fill operation is extensively used throughout the renderer, so this
-	 * counts as one of the main bottlenecks. Please replace it with assembly
-	 * when possible!
-	 *
-	 * @param first Pointer to the first pixel to fill.
-	 * @param last Pointer to the last pixel to fill.
-	 * @param color Color of the pixel
-	 */
-	inline void colorFill(PixelType *first, PixelType *last, PixelType color);
-
 	PixelType _fgColor; /**< Foreground color currently being used to draw on the renderer */
 	PixelType _bgColor; /**< Background color currently being used to draw on the renderer */
 

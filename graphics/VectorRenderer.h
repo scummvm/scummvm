@@ -218,28 +218,6 @@ public:
 	}
 
 	/**
-	 * Gets the pixel pitch for the current drawing surface.
-	 * Note: This is a real pixel-pitch, not a byte-pitch.
-	 * That means it can be safely used in pointer arithmetics and
-	 * in pixel manipulation.
-	 *
-	 * @return integer with the active bytes per pixel
-	 */
-	virtual uint16 surfacePitch() {
-		return _activeSurface->pitch / _activeSurface->bytesPerPixel;
-	}
-
-	/**
-	 * Gets the BYTES (not bits) per Pixel we are working on,
-	 * based on the active drawing surface.
-	 *
-	 * @return integer byte with the active bytes per pixel value
-	 */
-	virtual uint8 bytesPerPixel() {
-		return _activeSurface->bytesPerPixel;
-	}
-
-	/**
 	 * Set the active foreground painting color for the renderer.
 	 * All the foreground drawing from then on will be done with that color, unless
 	 * specified otherwise.
@@ -303,7 +281,7 @@ public:
 	 */
 	virtual void clearSurface() {
 		byte *src = (byte *)_activeSurface->pixels;
-		memset(src, 0, _activeSurface->w * _activeSurface->h * _activeSurface->bytesPerPixel);
+		memset(src, 0, _activeSurface->pitch * _activeSurface->h);
 	}
 
 	/**
