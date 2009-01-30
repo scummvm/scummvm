@@ -76,6 +76,8 @@ public:
 	virtual void clearOverlay();
 	virtual void grabOverlay(OverlayColor *buf, int pitch);
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	virtual int16 getOverlayHeight()  { return getHeight(); }
+	virtual int16 getOverlayWidth()   { return getWidth(); }
 
 	virtual bool showMouse(bool visible);
 

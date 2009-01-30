@@ -640,13 +640,13 @@ public:
 	 * Return the height of the overlay.
 	 * @see getHeight
 	 */
-	virtual int16 getOverlayHeight()  { return getHeight(); }
+	virtual int16 getOverlayHeight() = 0;
 
 	/**
 	 * Return the width of the overlay.
 	 * @see getWidth
 	 */
-	virtual int16 getOverlayWidth()   { return getWidth(); }
+	virtual int16 getOverlayWidth() = 0;
 
 	//@}
 
