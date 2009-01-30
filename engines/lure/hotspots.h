@@ -41,8 +41,8 @@ class Support {
 private:
 	static bool changeRoomCheckBumped(Hotspot &h);
 public:
-	static int findIntersectingCharacters(Hotspot &h, uint16 *charList);
-	static bool checkForIntersectingCharacter(Hotspot &h);
+	static int findIntersectingCharacters(Hotspot &h, uint16 *charList, int16 xp = -1, int16 yp = -1, int roomNumber = -1);
+	static bool checkForIntersectingCharacter(Hotspot &h, int16 xp = -1, int16 yp = -1, int roomNumber = -1);
 	static bool checkRoomChange(Hotspot &h);
 	static void characterChangeRoom(Hotspot &h, uint16 roomNumber,
 								  int16 newX, int16 newY, Direction dir);
