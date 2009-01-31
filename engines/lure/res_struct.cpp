@@ -1173,11 +1173,9 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 			hotspot->setPauseCtr(IDLE_COUNTDOWN_SIZE);
 		}
 
+		if (result == 0)
+			charHotspot->setRandomDest();
 		result = 2;
-		if (charHotspot->currentActions().isEmpty())
-			charHotspot->currentActions().addFront(START_WALKING, charHotspot->roomNumber());
-		else
-			charHotspot->currentActions().top().setAction(START_WALKING);
 	}
 
 	return result;
