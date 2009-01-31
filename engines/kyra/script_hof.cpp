@@ -403,7 +403,8 @@ int KyraEngine_HoF::o2_addItemToCurScene(EMCState *script) {
 
 int KyraEngine_HoF::o2_loadSoundFile(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_loadSoundFile(%p) (%d)", (const void *)script, stackPos(0));
-	snd_loadSoundFile(stackPos(0));
+	if (_flags.platform == Common::kPlatformPC)
+		snd_loadSoundFile(stackPos(0));
 	return 0;
 }
 
