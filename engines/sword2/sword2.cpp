@@ -470,6 +470,10 @@ Common::Error Sword2Engine::go() {
 					else
 						pauseEngine(true);
 					break;
+#if 0
+				// Disabled because of strange rumors about the
+				// credits running spontaneously every few
+				// minutes.
 				case Common::KEYCODE_c:
 					if (!_logic->readVar(DEMO) && !_mouse->isChoosing()) {
 						ScreenInfo *screenInfo = _screen->getScreenInfo();
@@ -477,6 +481,7 @@ Common::Error Sword2Engine::go() {
 						screenInfo->new_palette = 99;
 					}
 					break;
+#endif
 #ifdef SWORD2_DEBUG
 				case Common::KEYCODE_SPACE:
 					if (_gamePaused) {
