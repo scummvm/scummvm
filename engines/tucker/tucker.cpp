@@ -1407,7 +1407,7 @@ void TuckerEngine::redrawPanelOverBackground() {
 	if (_conversationOptionsCount > 0) {
 		drawConversationTexts();
 	}
-	addDirtyRect(0, 140, 320, 60);
+	addDirtyRect(_scrollOffset, 140, 320, 60);
 }
 
 void TuckerEngine::drawConversationTexts() {
@@ -1948,7 +1948,7 @@ void TuckerEngine::drawInfoString() {
 	if (_actionRequiresTwoObjects) {
 		verbPreposition = (_actionVerb == 5) ? 12 : 11;
 		verbPrepositionWidth = getStringWidth(verbPreposition, infoStrBuf) + 4;
-		if (_gameLang == Common::FR_FRA) {
+		if (_gameLang == Common::FR_FRA || _gameLang == Common::DE_DEU) {
 			if ((_actionObj2Num > 0 || _actionObj2Type > 0) && verbPreposition > 0) {
 				infoStringWidth = 0;
 				verbWidth = 0;
