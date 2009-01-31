@@ -465,7 +465,7 @@ void KyraEngine_HoF::runLoop() {
 			_gui->optionsButton(0);
 			_deathHandler = -1;
 
-			if (!_runFlag || !shouldQuit())
+			if (!_runFlag || shouldQuit())
 				break;
 		}
 
