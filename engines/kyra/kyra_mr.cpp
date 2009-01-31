@@ -1012,7 +1012,7 @@ void KyraEngine_MR::runLoop() {
 			_gui->optionsButton(0);
 			_deathHandler = -1;
 
-			if (shouldQuit())
+			if (!_runFlag || shouldQuit())
 				break;
 		}
 
