@@ -216,6 +216,9 @@ AnimationSequence::~AnimationSequence() {
 	if (_lineRefs != NULL)
 		delete _lineRefs;
 	delete _decodedData;
+
+	// Renable GMM saving/loading now that the animation is done
+	LureEngine::getReference()._saveLoadAllowed = true;
 }
 
 // show
@@ -226,6 +229,9 @@ AnimAbortType AnimationSequence::show() {
 	AnimAbortType result;
 	const AnimSoundSequence *soundFrame = _soundList;
 	int frameCtr = 0;
+
+	// Disable GMM saving/loading whilst animation is running
+	LureEngine::getReference()._saveLoadAllowed = false;
 
 	// Loop through displaying the animations
 	while (_pPixels < _pPixelsEnd) {
