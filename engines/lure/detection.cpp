@@ -26,6 +26,7 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "engines/engine.h"
 #include "common/savefile.h"
 
 #include "lure/lure.h"
@@ -201,7 +202,9 @@ bool LureMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Lure::LureEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 bool LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -216,8 +219,7 @@ SaveStateList LureMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringList filenames;
 	Common::String saveDesc;
-	Common::String pattern = target;
-	pattern += ".???";
+	Common::String pattern = "lure.???";
 
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)

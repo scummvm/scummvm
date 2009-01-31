@@ -51,6 +51,7 @@ LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc): En
 Common::Error LureEngine::init() {
 	int_engine = this;
 	_initialised = false;
+	_saveLoadAllowed = false;
 
 	initGraphics(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT, false);
 
@@ -150,6 +151,7 @@ Common::Error LureEngine::go() {
 	// Play the game
 	if (!shouldQuit()) {
 		// Play the game
+		_saveLoadAllowed = true;
 		Sound.loadSection(Sound.isRoland() ? ROLAND_MAIN_SOUND_RESOURCE_ID : ADLIB_MAIN_SOUND_RESOURCE_ID);
 		gameInstance->execute();
 	}
