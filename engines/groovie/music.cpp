@@ -188,19 +188,21 @@ void MusicPlayer::applyFading() {
 	// Calculate the passed time
 	uint32 time = _vm->_system->getMillis() - _fadingStartTime;
 	if (time >= _fadingDuration) {
-		// If we were fading to 0, stop the playback and restore the volume
-		if (_fadingEndVolume == 0) {
-			debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Faded to zero: end of song");
-			unload();
-			_fadingEndVolume = 100;
-		}
-
 		// Set the end volume
 		_gameVolume = _fadingEndVolume;
 	} else {
 		// Calculate the interpolated volume for the current time
 		_gameVolume = (_fadingStartVolume * (_fadingDuration - time) +
 			_fadingEndVolume * time) / _fadingDuration;
+	}
+
+	if (_gameVolume == _fadingEndVolume) {
+		// If we were fading to 0, stop the playback and restore the volume
+		if (_fadingEndVolume == 0) {
+			debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Faded to zero: end of song");
+			unload();
+			_fadingEndVolume = 100;
+		}
 	}
 
 	// Apply the new volume to all the channels
