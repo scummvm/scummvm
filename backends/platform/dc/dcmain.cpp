@@ -53,6 +53,7 @@ OSystem_Dreamcast::OSystem_Dreamcast()
 
 void OSystem_Dreamcast::initBackend()
 {
+  ConfMan.setInt("autosave_period", 0);
   _savefile = createSavefileManager();
   _mixer = new Audio::MixerImpl(this);
   _timer = new DefaultTimerManager();
