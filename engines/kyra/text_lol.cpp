@@ -40,7 +40,7 @@ TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm
 	_out = new char[1024];
 	memset(_out, 0, 1024);
 
-	_backupBuffer = new char[40];
+	_backupBuffer = new byte[40];
 	memset(_out, 0, 40);
 
 	_currentLine = new char[85];
@@ -139,7 +139,7 @@ void TextDisplayer_LoL::setAnimParameters(const char *str, int x, uint8 col1, ui
 
 void TextDisplayer_LoL::play(int dim, char *str, EMCState *script, int16 *paramList, int16 paramIndex) {
 	memcpy(_curPara, _stringParameters, 15 * sizeof(char*));
-	char *cmds = _curPara[0];	
+	//char *cmds = _curPara[0];	
 
 	if (dim == 3) {
 		if (_vm->_updateFlags & 2) {
@@ -169,7 +169,7 @@ void TextDisplayer_LoL::play(int dim, char *str, EMCState *script, int16 *paramL
 	memset(_backupBuffer, 0, 40);
 
 	if (preprocessString(str, script, paramList, paramIndex)) {
-		vsnprintf(_out, 1024, str, cmds);
+		//vsnprintf(_out, 1024, str, cmds);
 		_stringLength = strlen(_out);
 		displayText(_out);
 	} else {

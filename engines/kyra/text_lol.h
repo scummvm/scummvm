@@ -65,7 +65,7 @@ private:
 	char *_curPara[15];
 	char *_buffer;
 	char *_out;
-	char *_backupBuffer;
+	byte *_backupBuffer;
 	char *_tempString1;
 	char *_tempString2;
 	char *_currentLine;

@@ -149,6 +149,10 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 	if (!_vm->resource()->exists(filename))
 		return 0;
 
+	for (int i = 0; i < ARRAYSIZE(_animations); ++i)
+		delete _animations[i].wsa;
+	memset(_animations, 0, sizeof(_animations));
+
 	ScriptFileParser file(filename, _vm->resource());
 	if (!file)
 		error("Couldn't open TIM file '%s'", filename);
