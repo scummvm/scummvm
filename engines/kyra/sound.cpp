@@ -127,7 +127,7 @@ void Sound::voicePlayFromList(Common::List<const char*> fileList) {
 	for (Common::List<const char*>::iterator i = fileList.begin(); i != fileList.end(); i++) {
 		uint32 fileSize = 0;
 		uint8 *file = _vm->resource()->fileData(*i, &fileSize);
-		Common::MemoryReadStream vocStream(file, fileSize, true);
+		Common::MemoryReadStream vocStream(file, fileSize, false);
 
 		int size, rate;
 		uint8 *data = Audio::loadVOCFromStream(vocStream, size, rate);
