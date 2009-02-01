@@ -432,7 +432,6 @@ Common::Error LoLEngine::go() {
 			break;
 
 		case 1:		// Show intro
-			setupPrologueData(true);
 			showIntro();
 			break;
 
@@ -456,7 +455,6 @@ Common::Error LoLEngine::go() {
 		return Common::kNoError;
 
 	if (processSelection == 0) {
-		setupPrologueData(true);
 		_sound->loadSoundFile("LOREINTR");
 		_sound->playTrack(6);		
 		/*int character = */chooseCharacter();
