@@ -214,7 +214,7 @@ void Poly::nextPoly() {
 	const byte *pRecord = _pData;
 
 	int typeVal = nextLong(_pData);
-	if ((typeVal == 5) && TinselV2) ++typeVal;
+	if ((FROM_LE_32(typeVal) == 5) && TinselV2) typeVal = TO_LE_32(6);
 	type = (POLY_TYPE)typeVal;
 
 	for (int i = 0; i < 4; ++i) x[i] = nextLong(_pData);
