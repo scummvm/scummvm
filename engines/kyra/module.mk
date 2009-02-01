@@ -52,6 +52,7 @@ MODULE_OBJS := \
 	script_tim.o \
 	seqplayer.o \
 	sequences_lok.o \
+	sequences_lol.o \
 	sequences_v2.o \
 	sequences_hof.o \
 	sequences_mr.o \
