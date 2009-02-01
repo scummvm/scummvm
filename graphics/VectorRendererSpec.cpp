@@ -405,7 +405,10 @@ blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha)	{
 		(int)(idst & PixelFormat::kGreenMask)) * alpha) >> 8))) |
 		(PixelFormat::kBlueMask & ((idst & PixelFormat::kBlueMask) +
 		((int)(((int)(isrc & PixelFormat::kBlueMask) -
-		(int)(idst & PixelFormat::kBlueMask)) * alpha) >> 8))) );
+		(int)(idst & PixelFormat::kBlueMask)) * alpha) >> 8))) |
+		(PixelFormat::kAlphaMask & ((idst & PixelFormat::kAlphaMask) +
+                ((alpha >> (8 - PixelFormat::kAlphaBits)) << PixelFormat::kAlphaShift) -
+                (((int)(idst & PixelFormat::kAlphaMask) * alpha) >> 8))));
 }
 
 template <typename PixelType, typename PixelFormat>
