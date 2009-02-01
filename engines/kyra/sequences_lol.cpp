@@ -121,6 +121,10 @@ void LoLEngine::showIntro() {
 	memset(pal, 0, 768);
 	_screen->setScreenPalette(pal);
 
+	_screen->clearPage(0);
+	_screen->clearPage(4);
+	_screen->clearPage(8);
+
 	TIM *intro = _tim->load("LOLINTRO.TIM", &_timIntroOpcodes);
 
 	_screen->loadFont(Screen::FID_8_FNT, "NEW8P.FNT");
