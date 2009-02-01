@@ -85,18 +85,18 @@ void LoLEngine::runResidentScriptCustom(int func, int reg0, int reg1, int reg2, 
 }
 
 bool LoLEngine::checkScriptUnk(int func) {
-	if (_boolScriptFuncDone)
+	if (_sceneUpdateRequired)
 		return true;
 
 	for (int i = 0; i < 15; i++) {
 		if (_scriptExecutedFuncs[i] == func) {
-			_boolScriptFuncDone = true;
+			_sceneUpdateRequired = true;
 			return true;
 		}
 	}
 
 	if (_currentBlock == func){
-		_boolScriptFuncDone = true;
+		_sceneUpdateRequired = true;
 		return true;
 	}
 
@@ -182,9 +182,9 @@ int LoLEngine::olol_getItemPara(EMCState *script) {
 	case 0:
 		return i->blockPropertyIndex;
 	case 1:
-		return i->unk7;
+		return i->p_1a;
 	case 2:
-		return i->anonymous_4;
+		return i->p_1b;
 	case 3:
 		return i->level;
 	case 4:
@@ -228,35 +228,45 @@ int LoLEngine::olol_getCharacterStat(EMCState *script) {
 	switch (stackPos(1)) {
 	case 0:
 		return c->flags;
+
 	case 1:
 		return c->raceClassSex;
-	case 2:
-	case 3:
-	case 4:
-	default:
-		break;
+
 	case 5:
 		return c->hitPointsCur;
+
 	case 6:
 		return c->hitPointsMax;
+
 	case 7:
 		return c->magicPointsCur;
+
 	case 8:
 		return c->magicPointsMax;
+
 	case 9:
 		return c->field_37;
+
 	case 10:
 		return c->items[d];
+
 	case 11:
 		return c->field_66[d] + c->field_69[d];
+
 	case 12:
 		return c->field_27[d];
+
 	case 13:
 		return (d & 0x80) ? c->field_25 : c->field_17[d];
+
 	case 14:
 		return c->field_69[d];
+
 	case 15:
 		return c->id;
+
+	default:
+		break;
 	}
 
 	return 0;
@@ -275,40 +285,60 @@ int LoLEngine::olol_setCharacterStat(EMCState *script) {
 	// fall through please add "// fall through" at the end of the
 	// case.
 	switch (stackPos(1)) {
+
 	case 0:
 		c->flags = e;
+		break;
+
 	case 1:
 		c->raceClassSex = e & 0x0f;
-	case 2:
-	case 3:
-	case 4:
-	default:
 		break;
+
 	case 5:
 		//// TODO
 		break;
+
 	case 6:
 		c->hitPointsMax = e;
+		break;
+
 	case 7:
 		//// TODO
 		break;
+
 	case 8:
 		c->magicPointsMax = e;
+		break;
+
 	case 9:
 		c->field_37 = e;
+		break;
+
 	case 10:
 		c->items[d] = 0;
+		break;
+
 	case 11:
 		c->field_66[d] = e;
+		break;
+
 	case 12:
 		c->field_27[d] = e;
+		break;
+
 	case 13:
 		if (d & 0x80)
 			c->field_25 = e;
 		else
 			c->field_17[d] = e;
+		break;
+
 	case 14:
 		c->field_69[d] = e;
+		break;
+
+	default:
+		break;
 	}
 
 	return 0;
@@ -360,6 +390,18 @@ int LoLEngine::olol_loadDoorShapes(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_initAnimStruct(EMCState *script) {
+	if (initTimAnimStruct(stackPos(1), stackPosString(0), stackPos(2), stackPos(3), stackPos(4), stackPos(5)))
+		return 1;
+	return 0;
+}
+
+int LoLEngine::olol_freeAnimStruct(EMCState *script) {
+	if (_tim->freeAnimStruct(stackPos(0)))
+		return 1;
+	return 0;
+}
+
 int LoLEngine::olol_setMusicTrack(EMCState *script) {
 	_curMusicTheme = stackPos(0);
 	return 1;
@@ -382,7 +424,7 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 	switch (stackPos(0)) {
 	case 0:
 		_currentBlock = b;
-		setLF1(_unkCmzU1, _unkCmzU2, _currentBlock, 0x80, 0x80);
+		calcCoordinates(_partyPosX, _partyPosY, _currentBlock, 0x80, 0x80);
 		setLF2(_currentBlock);			
 		break;
 	case 1:
@@ -405,8 +447,14 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 	case 7:			
 		break;
 	case 8:
-		_charFlagUnk = b;
-		//TODO
+		_updateFlags = b;
+		if (b == 1) {
+			if (!textEnabled() || !(_hideControls & 2))
+				charCallback4(1);
+			removeUnkFlags(2);
+		} else {
+			setUnkFlags(2);
+		}
 		break;
 	case 9:
 		_lampStatusUnk = b & 0xff;
@@ -441,6 +489,95 @@ int LoLEngine::olol_resetBlockShapeAssignment(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadMonsterProperties(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)",
+		(const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5),
+		stackPos(6), stackPos(7), stackPos(8), stackPos(9), stackPos(10), stackPos(11), stackPos(12), stackPos(13),
+		stackPos(14), stackPos(15), stackPos(16), stackPos(17), stackPos(18), stackPos(19), stackPos(20),
+		stackPos(21), stackPos(22), stackPos(23), stackPos(24), stackPos(25), stackPos(26),	stackPos(27),
+		stackPos(28), stackPos(29), stackPos(30), stackPos(31), stackPos(32), stackPos(33), stackPos(34),
+		stackPos(35), stackPos(36), stackPos(37), stackPos(38), stackPos(39), stackPos(40), stackPos(41));
+
+	MonsterProperty *l = &_monsterProperties[stackPos(0) * 83];
+	l->id = stackPos(1) & 0xff;
+
+	int shpWidthMax = 0;
+
+	for (int i = 0; i < 16; i++) {
+		uint8 m = _monsterShapes[(l->id << 4) + i][3];
+		if (m > shpWidthMax)
+			shpWidthMax = m;	
+	}
+
+	l->maxWidth = shpWidthMax;
+
+	l->unk[0] = (stackPos(2) << 8) / 100;
+	l->unk[1] = 256;
+	l->unk[2] = (stackPos(3) << 8) / 100;
+	l->unk[3] = stackPos(4);
+	l->unk[4] = (stackPos(5) << 8) / 100;
+	l->unk[5] = (stackPos(6) << 8) / 100;
+	l->unk[6] = (stackPos(7) << 8) / 100;
+	l->unk[7] = (stackPos(8) << 8) / 100;
+	l->unk[8] = 0;
+
+	for (int i = 0; i < 8; i++) {
+		l->unk2[i] = stackPos(9 + i);
+		l->unk3[i] = (stackPos(17 + i) << 8) / 100;
+	}
+
+	l->pos = &l->unk[0];
+	l->unk4[0] = stackPos(25);
+	l->unk4[1] = stackPos(26);
+	l->b = 1;
+	l->unk5[0] = stackPos(27);
+	l->unk5[1] = stackPos(28);
+	// FIXME???
+	l->unk5[1] = stackPos(29);
+	//
+
+	for (int i = 0; i < 5; i++)
+		l->unk6[2 + i] = stackPos(30 + i);
+
+	for (int i = 0; i < 2; i++) {
+		l->unk7[i] = stackPos(35 + i);
+		l->unk7[i + 2] = stackPos(37 + i);
+	}
+
+	for (int i = 0; i < 3; i++)
+		l->unk8[2 + i] = stackPos(39 + i);
+
+	return 1;
+}
+
+int LoLEngine::olol_loadTimScript(EMCState *script) {
+	if (_activeTim[stackPos(0)])
+		return 1;	
+	char file[13];
+	snprintf(file, sizeof(file), "%s.TIM", stackPosString(1));
+	_activeTim[stackPos(0)] = _tim->load(file, &_timIngameOpcodes);
+	return 1;
+}
+
+int LoLEngine::olol_runTimScript(EMCState *script) {
+	return _tim->exec(_activeTim[stackPos(0)], stackPos(1));
+}
+
+int LoLEngine::olol_releaseTimScript(EMCState *script) {
+	_tim->unload(_activeTim[stackPos(0)]);
+	return 1;
+}
+
+int LoLEngine::olol_initDialogueSequence(EMCState *script) {
+	initDialogueSequence(stackPos(0));
+	return 1;
+}
+
+int LoLEngine::olol_restoreSceneAfterDialogueSequence(EMCState *script) {
+	restoreSceneAfterDialogueSequence(stackPos(0));
+	return 1;
+}
+
 int LoLEngine::olol_loadLangFile(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadLangFile(%p) (%s)", (const void *)script, stackPosString(0));
 	char filename[13];
@@ -448,6 +585,11 @@ int LoLEngine::olol_loadLangFile(EMCState *script) {
 	if (_levelLangFile)
 		delete[] _levelLangFile;
 	_levelLangFile = _res->fileData(filename, 0);
+	return 1;
+}
+
+int LoLEngine::olol_stopTimScript(EMCState *script) {
+	_tim->stopAllFuncs(_activeTim[stackPos(0)]);
 	return 1;
 }
 
@@ -464,6 +606,23 @@ int LoLEngine::olol_setPaletteBrightness(EMCState *script) {
 	if (stackPos(1) == 1)
 		_screen->setPaletteBrightness(_screen->_currentPalette, stackPos(0), _lampOilStatus);
 	return old;
+}
+
+int LoLEngine::olol_playDialogueTalkText(EMCState *script) {
+	int track = stackPos(0);
+	
+	if (!snd_playCharacterSpeech(track, 0, 0) || textEnabled()) {
+		char *s = getLangString(track);
+		_dlg->play(4, s, script, 0, 1);
+	}
+
+	return 1;
+}
+
+int LoLEngine::olol_setNextFunc(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setNextFunc(%p) (%d)", (const void *)script, stackPos(0));
+	_nextScriptFunc = stackPos(0);
+	return 1;
 }
 
 int LoLEngine::olol_assignCustomSfx(EMCState *script) {
@@ -483,6 +642,37 @@ int LoLEngine::olol_assignCustomSfx(EMCState *script) {
 }
 
 #pragma mark -
+
+TIMInterpreter::Animation *LoLEngine::initTimAnimStruct(int index, const char *filename, int x, int y, uint16 copyPara, uint16 wsaFlags) {
+	TIMInterpreter::Animation *a = _tim->initAnimStructIntern(index, filename, x, y, copyPara, wsaFlags);
+
+	_tim->setWsaDrawPage2(0);
+
+	if (wsaFlags & 1) {
+		if (_screen->_fadeFlag != 1)
+			_screen->fadeClearSceneWindow(10);
+		memcpy(_screen->getPalette(3) + 384, _screen->_currentPalette + 384, 384);
+	} else if (wsaFlags & 2) {
+		_screen->fadeToBlack(10);
+	}
+
+	if (wsaFlags & 7) {
+		_screen->hideMouse();
+		a->wsa->setDrawPage(0);
+		a->wsa->setX(x);
+		a->wsa->setY(y);
+		a->wsa->displayFrame(0, 0);
+		_screen->showMouse();
+	}
+
+	if (wsaFlags & 3) {
+		_screen->loadSpecialColours(_screen->getPalette(3));
+		_screen->fadePalette(_screen->getPalette(3), 10);
+		_screen->_fadeFlag = 0;
+	}
+
+	return a;
+}
 
 int LoLEngine::tlol_setupPaletteFade(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::t2_playSoundEffect(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
@@ -595,9 +785,9 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x18
 	Opcode(olol_loadDoorShapes);
+	Opcode(olol_initAnimStruct);
 	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_freeAnimStruct);
 
 	// 0x1C
 	OpcodeUnImpl();
@@ -651,7 +841,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_loadMonsterProperties);
 
 	// 0x40
 	OpcodeUnImpl();
@@ -674,13 +864,13 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x4C
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_loadTimScript);
+	Opcode(olol_runTimScript);
 
 	// 0x50
-	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_releaseTimScript);
+	Opcode(olol_initDialogueSequence);
+	Opcode(olol_restoreSceneAfterDialogueSequence);
 	OpcodeUnImpl();
 
 	// 0x54
@@ -691,7 +881,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x58
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_stopTimScript);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 
@@ -740,11 +930,11 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x78
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_playDialogueTalkText);
 	OpcodeUnImpl();
 
 	// 0x7C
-	OpcodeUnImpl();
+	Opcode(olol_setNextFunc);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
@@ -846,7 +1036,6 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	Common::Array<const TIMOpcode*> *timTable = 0;
-
 	SetTimOpcodeTable(_timIntroOpcodes);
 
 	// 0x00
@@ -859,6 +1048,35 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeTim(tlol_processWsaFrame);
 	OpcodeTim(tlol_displayText);
 	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+
+	SetTimOpcodeTable(_timIngameOpcodes);
+
+	// 0x00
+	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+
+	// 0x04
+	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+
+	// 0x08
+	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+
+	// 0x0C
+	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+
+	// 0x10
 	OpcodeTimUnImpl();
 }
 

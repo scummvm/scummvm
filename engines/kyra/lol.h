@@ -29,6 +29,9 @@
 #include "kyra/kyra_v1.h"
 #include "kyra/script_tim.h"
 #include "kyra/script.h"
+#include "kyra/sound.h"
+#include "kyra/gui_lol.h"
+#include "kyra/text_lol.h"
 
 #include "common/list.h"
 
@@ -107,20 +110,35 @@ struct LevelBlockProperty {
 	uint8 flags;
 };
 
-struct LVL {
+struct MonsterProperty {
+	uint8 id;
+	uint8 maxWidth;
+	uint16 unk[9];
+	uint16 *pos;
+	uint16 unk2[8];
+	uint16 unk3[8];
+	uint16 unk4[2];
+	uint8 b;
+	uint16 unk5[2];
+	uint16 unk6[5];
+	uint8 unk7[4];
+	uint8 unk8[3];
+};
+
+struct CLevelItem {
 	uint16 itemIndexUnk;
-	uint8 field_2;
-	uint16 field_3;
+	uint8 unk2;
+	uint16 unk3;
 	uint16 blockPropertyIndex;
 	uint16 p_1a;
 	uint16 p_1b;
 	int8 level;
-	uint16 p_2a;
-	uint16 p_2b;
-	uint8 field_10;
-	uint8 field_11;
-	uint8 field_12;
-	uint8 field_13;
+	uint16 itemPosX;
+	uint16 itemPosY;
+	uint8 field10;
+	uint16 anon8;
+	uint8 anon9;
+
 	uint8 field_14;
 	uint8 field_15;
 	uint8 field_16;
@@ -132,7 +150,7 @@ struct LVL {
 	int16 field_1D;
 	uint8 field_1F;
 	uint8 field_20;
-	uint8 *offs_lvl415;
+	MonsterProperty *monsters;
 	uint8 field_25;
 	uint8 field_26;
 	uint8 field_27;
@@ -143,6 +161,34 @@ struct LVL {
 	uint8 field_2C;
 	uint8 field_2D;
 	uint8 field_2E;
+};
+
+struct ItemInPlay {
+	uint16 itemIndexUnk;
+	uint8 unk2;
+	uint16 unk3;
+	uint16 blockPropertyIndex;
+	uint16 p_1a;
+	uint16 p_1b;
+	int8 level;
+	uint16 itemPropertyIndex;
+	uint16 shpCurFrame_flg;
+	uint8 field10;
+	uint16 anon8;
+	uint8 anon9;
+};
+
+struct ItemProperty {
+	uint16 nameStringId;
+	uint8 shpIndex;
+	uint16 flags;
+	uint16 unk5;
+	uint8 itemScriptFunc;
+	int8 unk8;
+	uint8 unk9;
+	uint8 unkA;
+	uint16 unkB;
+	uint8 unkD;
 };
 
 struct LevelShapeProperty {
@@ -161,26 +207,31 @@ struct CompassDef {
 	uint8 flags;
 };
 
-struct ScriptOffsUnkStruct {
-	uint8 field_0;
-	uint8 field_1;
-	uint8 field_2;
-	uint8 field_3;
-	uint8 field_4;
-	uint8 field_5;
-	uint8 field_6;
-	uint8 field_7;
-	uint8 field_8;
+struct ButtonDef {
+	uint16 buttonflags;
+	uint8 clickedShapeId;
+	uint8 unk1;
+	uint16 unk2;
+	int16 x;
+	int16 y;
+	uint16 w;
+	uint16 h;
+	uint16 index;
+	uint16 flag;
 };
 
 class LoLEngine : public KyraEngine_v1 {
+friend class GUI_LoL;
+friend class TextDisplayer_LoL;
 public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
 	~LoLEngine();
 
 	Screen *screen();
+	GUI *gui() const;
 private:
 	Screen_LoL *_screen;
+	GUI_LoL *_gui;
 	TIMInterpreter *_tim;
 
 	Common::Error init();
@@ -190,18 +241,28 @@ private:
 	void initStaticResource();
 	void preInit();
 
-	void initializeCursors();
+	void loadItemIconShapes();
 	int mainMenu();
 
 	void startup();
 	void startupNew();
 
+	// main loop
 	void runLoop();
+	void update();
+	
+	int setUnkFlags(int unk);
+	int removeUnkFlags(int unk);
 
+	int _intFlag3;
+	
 	// mouse
 	void setMouseCursorToIcon(int icon);
 	void setMouseCursorToItemInHand();
 	uint8 *getItemIconShapePtr(int index);
+	bool posWithinRect(int mouseX, int mouseY, int x1, int y1, int x2, int y2);
+
+	int _floatingMouseArrowControl;
 
 	// intro
 	void setupPrologueData(bool load);
@@ -257,20 +318,25 @@ private:
 
 	// sound
 	void loadTalkFile(int index);
-	void snd_playVoiceFile(int);
+	void snd_playVoiceFile(int track) {}
+	bool snd_playCharacterSpeech(int id, int8 speaker, int);
+	int snd_characterSpeaking();
+	int snd_dialogueSpeechUpdate(int finish);
 	void snd_playSoundEffect(int track, int volume);
 	void snd_loadSoundFile(int track);
 	int snd_playTrack(int track);
 	int snd_stopMusic();
 
+	int _lastSpeechId;
+	int _lastSpeaker;
+	char _activeVoiceFile[13];
 	int _lastSfxTrack;
 	int _lastMusicTrack;
 	int _curMusicFileIndex;
 	char _curMusicFileExt;
-	int _curTlkFile;	
 
-	int _unkAudioSpecOffs;
-	bool _unkLangAudio;
+	int _curTlkFile;
+	int _speechFlag;
 
 	char **_ingameSoundList;
 	int _ingameSoundListSize;
@@ -289,7 +355,7 @@ private:
 	void gui_drawScene(int pageNum);
 	void gui_drawAllCharPortraitsWithStats();
 	void gui_drawCharPortraitWithStats(int charNum);
-	void gui_drawPortraitBox(int x, int y, int w, int h, int frameColor1, int frameColor2, int fillColor);
+	void gui_drawBox(int x, int y, int w, int h, int frameColor1, int frameColor2, int fillColor);
 	void gui_drawCharFaceShape(int charNum, int x, int y, int pageNum);
 	void gui_drawLiveMagicBar(int x, int y, int curPoints, int unk, int maxPoints, int w, int h, int col1, int col2, int flag);
 	void gui_drawMoneyBox(int pageNum);
@@ -298,13 +364,62 @@ private:
 	void gui_drawCompass();
 	void gui_drawScroll();
 
+	int gui_enableControls();
+	int gui_disableControls(int controlMode);
+	void gui_disableArrowButton(int shapeIndex, int mode);
+	void gui_toggleFightButtons(bool disable);
+	void gui_prepareForSequence(int x, int y, int w, int h, int unk);
+
 	bool _weaponsDisabled;
-	int _unkDrawPortraitIndex;
-	int _updateUnk2;
+	int _lastArrowButtonShape;
+	uint32 _arrowButtonTimer;
+	int _selectedCharacter;
+	int _compassDirection;
+	int _compassUnk;
 	int _compassDirectionIndex;
 
 	const CompassDef *_compassDefs;
 	int _compassDefsSize;
+
+	void initButtonList();
+	ButtonDef *_buttonData;
+	Button *_buttonList;
+
+	int clickedUpArrow(Button *button);
+	int clickedDownArrow(Button *button);
+	int clickedLeftArrow(Button *button);
+	int clickedRightArrow(Button *button);
+	int clickedTurnLeftArrow(Button *button);
+	int clickedTurnRightArrow(Button *button);
+	int clickedAttackButton(Button *button);
+	int clickedMagicButton(Button *button);
+	int clickedUnk9(Button *button);
+	int clickedScreen(Button *button);
+	int clickedPortraitLeft(Button *button);
+	int clickedLiveMagicBarsLeft(Button *button);
+	int clickedPortraitEtcRight(Button *button);
+	int clickedUnk14(Button *button);
+	int clickedUnk15(Button *button);
+	int clickedUnk16(Button *button);
+	int clickedUnk17(Button *button);
+	int clickedInventorySlot(Button *button);
+	int clickedInventoryScroll(Button *button);
+	int clickedUnk20(Button *button);
+	int clickedUnk21(Button *button);
+	int clickedScroll(Button *button);
+	int clickedUnk23(Button *button);
+	int clickedUnk24(Button *button);
+	int clickedUnk25(Button *button);
+	int clickedOptions(Button *button);
+	int clickedRestParty(Button *button);
+	int clickedUnk28(Button *button);
+	int clickedUnk29(Button *button);
+	int clickedUnk30(Button *button);
+	int clickedUnk31(Button *button);
+	int clickedUnk32(Button *button);
+
+	// text
+	TextDisplayer_LoL *_dlg;
 
 	// emc scripts
 	void runInitScript(const char *filename, int func);
@@ -318,7 +433,7 @@ private:
 	uint8 _unkScriptByte;
 	uint16 _currentDirection;
 	uint16 _currentBlock;
-	bool _boolScriptFuncDone;
+	bool _sceneUpdateRequired;
 	int16 _scriptExecutedFuncs[18];
 	uint16 _gameFlags[15];
 	uint16 _unkEMC46[16];
@@ -338,17 +453,32 @@ private:
 	int olol_loadLevelShapes(EMCState *script);
 	int olol_closeLevelShapeFile(EMCState *script);
 	int olol_loadDoorShapes(EMCState *script);
+	int olol_initAnimStruct(EMCState *script);
+	int olol_freeAnimStruct(EMCState *script);
 	int olol_setMusicTrack(EMCState *script);
 	int olol_getUnkArrayVal(EMCState *script);
 	int olol_setUnkArrayVal(EMCState *script);
 	int olol_setGlobalVar(EMCState *script);
 	int olol_mapShapeToBlock(EMCState *script);
 	int olol_resetBlockShapeAssignment(EMCState *script);
+	int olol_loadMonsterProperties(EMCState *script);
+	int olol_loadTimScript(EMCState *script);
+	int olol_runTimScript(EMCState *script);
+	int olol_releaseTimScript(EMCState *script);
+	int olol_initDialogueSequence(EMCState *script);
+	int olol_restoreSceneAfterDialogueSequence(EMCState *script);
 	int olol_loadLangFile(EMCState *script);
+	int olol_stopTimScript(EMCState *script);
 	int olol_loadSoundFile(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
+	int olol_playDialogueTalkText(EMCState *script);
+	int olol_setNextFunc(EMCState *script);
 	int olol_assignCustomSfx(EMCState *script);
 
+	// tim scripts
+	TIMInterpreter::Animation *initTimAnimStruct(int index, const char *filename, int x, int y, uint16 copyPara, uint16 wsaFlags);
+	TIM *_activeTim[10];
+	
 	// tim opcode
 	void setupOpcodeTable();
 
@@ -359,6 +489,8 @@ private:
 	int tlol_processWsaFrame(const TIM *tim, const uint16 *param);
 	int tlol_displayText(const TIM *tim, const uint16 *param);
 
+	Common::Array<const TIMOpcode*> _timIngameOpcodes;
+
 	// translation
 	int _lang;
 
@@ -368,13 +500,19 @@ private:
 	int _lastUsedStringBuffer;
 	char _stringBuffer[5][512];	// TODO: The original used a size of 512, it looks a bit large.
 								// Maybe we can someday reduce the size.
-	const char *getLangString(uint16 id);
+	char *getLangString(uint16 id);
 	uint8 *getTableEntry(uint8 *buffer, uint16 id);
 
 	static const char * const _languageExt[];
 
 	// graphics
 	void setupScreenDims();
+	void initDialogueSequence(int controlMode);
+	void unkHideInventory();
+	void restoreSceneAfterDialogueSequence(int redraw);
+	void toggleSelectedCharacterFrame(bool mode);
+	void restorePaletteEntry();
+	void updateWsaAnimations();
 
 	uint8 **_itemIconShapes;
 	int _numItemIconShapes;
@@ -405,21 +543,21 @@ private:
 	void updatePortraitWithStats();
 	void updatePortraits();
 	void updatePortraitUnkTimeSub(int unk1, int unk2);
-
+	void charCallback4(int redraw);
 	void setCharFaceFrame(int charNum, int frameNum);
 	void faceFrameRefresh(int charNum);
 
 	LoLCharacter *_characters;
 	uint16 _activeCharsXpos[3];
-	int _charFlagUnk;
+	int _updateFlags;
 	int _updateCharNum;
 	int _updateCharV1;
 	int _updateCharV2;
 	int _updateCharV3;
 	int _updateCharV4;
-	int _updateCharV5;
-	int _updateCharV6;
-	uint32 _updateCharTime;
+	int _restorePalette;
+	int _hideInventory;
+	uint32 _palUpdateTimer;
 	uint32 _updatePortraitNext;
 
 	int _loadLevelFlag;
@@ -433,19 +571,30 @@ private:
 	const LoLCharacter *_charDefaults;
 	int _charDefaultsSize;
 
+	// lamp
+	void resetLampStatus();
+	void setLampMode(bool lampOn);
+	void updateLampStatus();
+
+	int _lampOilStatus;
+	int _brightness;
+	int _lampStatusUnk;
+	uint32 _lampStatusTimer;
+	bool _lampStatusSuspended;
+
 	// level
 	void loadLevel(int index);
 	void addLevelItems();
 	int initCmzWithScript(int block);
-	void initCMZ1(LVL *l, int a);
-	void initCMZ2(LVL *l, uint16 a, uint16 b);
-	int cmzS1(uint16 a, uint16 b, uint16 c, uint16 d);
-	void cmzS2(LVL *l, int a);
-	void cmzS3(LVL *l);
+	void initCMZ1(CLevelItem *l, int a);
+	void initCMZ2(CLevelItem *l, uint16 a, uint16 b);
+	int cmzS1(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void cmzS2(CLevelItem *l, int a);
+	void cmzS3(CLevelItem *l);
 	void cmzS4(uint16 &itemIndex, int a);
 	int cmzS5(uint16 a, uint16 b);
 	void cmzS6(uint16 &itemIndex, int a);
-	void cmzS7(int itemIndex, int a);
+	void cmzS7(int a, int block);
 	void loadLevelWLL(int index, bool mapShapes);
 	void moveItemToBlock(uint16 *cmzItemIndex, uint16 item);
 	int assignLevelShapes(int index);
@@ -484,17 +633,15 @@ private:
 	void drawScriptShapes(int pageNum);
 	void updateSceneWindow();
 
-	void turnOnLamp();
-	void updateLampStatus();
+	void updateCompass();
 
 	void moveParty(uint16 direction, int unk1, int unk2, int unk3);
 	uint16 calcNewBlockPostion(uint16 curBlock, uint16 direction);
 
-	void setLF1(uint16 & a, uint16 & b, int block, uint16 d, uint16 e);
 	void setLF2(int block);
 	
 	int _unkFlag;
-	int _scriptFuncIndex;
+	int _nextScriptFunc;
 	uint8 _currentLevel;
 	bool _loadLevelFlag2;
 	int _lvlBlockIndex;
@@ -520,15 +667,10 @@ private:
 	int _sceneDrawVar3;
 	int _wllProcessFlag;
 
-	uint8 *_tlcTable2;
-	uint8 *_tlcTable1;
+	uint8 *_trueLightTable2;
+	uint8 *_trueLightTable1;
 
 	int _loadSuppFilesFlag;
-
-	int _lampOilStatus;
-	int _brightness;
-	int _lampStatusUnk;
-	uint32 _lampStatusTimer;
 
 	uint8 *_wllVmpMap;
 	int8 *_wllShapeMap;
@@ -542,11 +684,11 @@ private:
 
 	LevelBlockProperty *_levelBlockProperties;
 	LevelBlockProperty *_curBlockCaps[18];
-	LVL *_lvlBuffer;
-	uint8 *_lvl415;
+	CLevelItem *_cLevelItems;
+	MonsterProperty *_monsterProperties;
 
-	uint16 _unkCmzU1;
-	uint16 _unkCmzU2;
+	uint16 _partyPosX;
+	uint16 _partyPosY;
 	
 	Common::SeekableReadStream *_lvlShpFileHandle;
 	uint16 _lvlShpNum;
@@ -559,6 +701,8 @@ private:
 	int16 _dmScaleW;
 	int16 _dmScaleH;
 
+	int _lastMouseRegion;
+	int _preSeq_X1, _preSeq_Y1,	_preSeq_X2, _preSeq_Y2;
 	uint8 _unkGameFlag;
 
 	uint8 *_tempBuffer5120;
@@ -616,39 +760,11 @@ private:
 	int _sceneDrawPage2;
 
 	// items
-	struct ItemInPlay {
-		uint16 itemIndexUnk;
-		uint8 unk2;
-		uint16 unk3;
-		uint16 blockPropertyIndex;
-		uint16 unk7;
-		uint16 anonymous_4;
-		int8 level;
-		uint16 itemPropertyIndex;
-		uint16 shpCurFrame_flg;
-		uint8 field10;
-		uint16 anon8;
-		uint8 anon9;
-	};
-
-	struct ItemProperty {
-		uint16 nameStringId;
-		uint8 shpIndex;
-		uint16 flags;
-		uint16 unk5;
-		uint8 itemScriptFunc;
-		uint8 unk8;
-		uint8 unk9;
-		uint8 unkA;
-		uint16 unkB;
-		uint8 unkD;
-	};
-
 	void giveCredits(int credits, int redraw);
 	int makeItem(int itemIndex, int curFrame, int flags);
 	bool testUnkItemFlags(int itemIndex);
 	void clearItemTableEntry(int itemIndex);
-	void *cmzGetItemOffset(uint16 index);
+	CLevelItem *findItem(uint16 index);
 	void runItemScript(int reg1, int item, int reg0, int reg3, int reg4);
 
 	uint8 _moneyColumnHeight[5];
@@ -658,11 +774,15 @@ private:
 	ItemProperty *_itemProperties;
 
 	int _itemInHand;
-	uint16 _inventoryItemIndex[48];
+	uint16 _inventory[48];
 	int _inventoryCurItem;
-	int _unkInventFlag;
+	int _hideControls;
 
 	EMCData _itemScript;
+
+	// misc
+	void runLoopSub4(int a);
+	void calcCoordinates(uint16 & x, uint16 & y, int block, uint16 xOffs, uint16 yOffs);
 
 	// spells
 	int8 _availableSpells[7];

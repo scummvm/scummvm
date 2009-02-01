@@ -65,6 +65,7 @@ MODULE_OBJS := \
 	staticres.o \
 	text.o \
 	text_lok.o \
+	text_lol.o \
 	text_hof.o \
 	text_mr.o \
 	timer.o \

@@ -257,6 +257,29 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
 					_debugger->attach();
 				else if (event.kbd.keycode == 'q')
 					quitGame();
+			} else {
+				switch(event.kbd.keycode) {
+					case Common::KEYCODE_SPACE:
+						keys = 100;
+						break;
+					case Common::KEYCODE_RETURN:
+						keys = 101;
+						break;
+					case Common::KEYCODE_UP:
+						keys = 110;
+						break;
+					case Common::KEYCODE_RIGHT:
+						keys = 111;
+						break;
+					case Common::KEYCODE_DOWN:
+						keys = 112;
+						break;
+					case Common::KEYCODE_LEFT:
+						keys = 113;
+						break;
+					default:
+						break;
+				}
 			}
 			break;
 
@@ -272,6 +295,15 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
 			_mouseX = pos.x;
 			_mouseY = pos.y;
 			keys = (event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800));
+			breakLoop = true;
+			} break;
+
+		case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONUP: {
+			Common::Point pos = getMousePos();
+			_mouseX = pos.x;
+			_mouseY = pos.y;
+			keys = (event.type == Common::EVENT_RBUTTONDOWN ? 299 : (300 | 0x800));
 			breakLoop = true;
 			} break;
 

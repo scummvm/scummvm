@@ -39,6 +39,7 @@ public:
 
 	void setScreenDim(int dim);
 	const ScreenDim *getScreenDim(int dim);
+	int curDimIndex() { return _curDimIndex; }
 	void modifyScreenDim(int dim, int x, int y, int w, int h);
 	void clearDim(int dim);
 	void clearCurDim();
@@ -47,15 +48,17 @@ public:
 	void fprintStringIntro(const char *format, int x, int y, uint8 c1, uint8 c2, uint8 c3, uint16 flags, ...);
 
 	void drawGridBox(int x, int y, int w, int h, int col);
+	void fadeClearSceneWindow(int delay);
 
 	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
 	void setPaletteBrightness(uint8 *palDst, int brightness, int modifier);
 	void generateBrightnessPalette(uint8 *palSrc, uint8 *palDst, int brightness, int modifier);
-	void setPaletteColoursSpecial(uint8 *palette);
+	void loadSpecialColours(uint8 *destPalette);
+	void loadColour254(uint8 *destPalEntry);
+	bool copyColour(int dstColorIndex, int srcColorIndex, uint32 time1, uint32 time2);
 
 	void generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool skipSpecialColours);
 	uint8 *generateLevelOverlay(const uint8 *srcPal, uint8 *ovl, int opColor, int weight);
-
 	uint8 *getLevelOverlay(int index) { return _levelOverlays[index]; }
 
 	uint8 getShapePaletteSize(const uint8 *shp);
@@ -65,6 +68,7 @@ public:
 	uint8 *_grayOverlay;
 	int _fadeFlag;
 	int _drawGuiFlag;
+	int _dimLineCount;
 
 private:
 	LoLEngine *_vm;
@@ -73,6 +77,7 @@ private:
 	static const int _screenDimTableCount;
 
 	ScreenDim **_customDimTable;
+	int _curDimIndex;
 
 	uint8 *_levelOverlays[8];
 };

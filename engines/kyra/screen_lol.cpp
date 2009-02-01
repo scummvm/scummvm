@@ -44,6 +44,8 @@ Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system), 
 	
 	_fadeFlag = 2;
 	_drawGuiFlag = 0;
+	_curDimIndex = 0;
+	_dimLineCount = 0;
 }
 
 Screen_LoL::~Screen_LoL() {
@@ -63,6 +65,8 @@ void Screen_LoL::setScreenDim(int dim) {
 	debugC(9, kDebugLevelScreen, "Screen_LoL::setScreenDim(%d)", dim);
 	assert(dim < _screenDimTableCount);
 	_curDim = _customDimTable[dim] ? (const ScreenDim *)_customDimTable[dim] : &_screenDimTable[dim];
+	_curDimIndex = dim;
+	_dimLineCount = 0;
 }
 
 const ScreenDim *Screen_LoL::getScreenDim(int dim) {
@@ -89,6 +93,7 @@ void Screen_LoL::clearDim(int dim) {
 
 void Screen_LoL::clearCurDim() {
 	fillRect(_curDim->sx << 3, _curDim->sy, ((_curDim->sx + _curDim->w) << 3) - 1, (_curDim->sy + _curDim->h) - 1, _curDim->unkA);
+	_dimLineCount = 0;
 }
 
 void Screen_LoL::fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...) {
@@ -277,6 +282,22 @@ void Screen_LoL::drawGridBox(int x, int y, int w, int h, int col) {
 	}
 }
 
+void Screen_LoL::fadeClearSceneWindow(int delay) {
+	if (_fadeFlag == 1)
+		return;
+	
+	uint8 *tpal = new uint8[768];
+
+	memcpy(tpal, _currentPalette, 768);
+	memset(tpal, 0, 384);
+	loadSpecialColours(tpal);
+	fadePalette(tpal, delay);
+	fillRect(112, 0, 288, 120, 0);
+	delete[] tpal;
+
+	_fadeFlag = 1;
+}
+
 void Screen_LoL::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
 	Screen::fadeToBlack(delay, upFunc);
 	_fadeFlag = 2;
@@ -290,7 +311,7 @@ void Screen_LoL::setPaletteBrightness(uint8 *palette, int brightness, int modifi
 
 void Screen_LoL::generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier) {
 	memcpy(dst, src, 0x300);
-	setPaletteColoursSpecial(dst);
+	loadSpecialColours(dst);
 	brightness = (8 - brightness) << 5;
 	if (modifier >= 0 && modifier < 8 && _drawGuiFlag & 0x800) {
 		brightness = 256 - ((((modifier & 0xfffe) << 5) * (256 - brightness)) >> 8);
@@ -304,10 +325,55 @@ void Screen_LoL::generateBrightnessPalette(uint8 *src, uint8 *dst, int brightnes
 	}
 }
 
-void Screen_LoL::setPaletteColoursSpecial(uint8 *palette) {
-	const uint8 src[] = { 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 };
-	palette += 0x240;
-	memcpy(palette, src, 12);	
+void Screen_LoL::loadSpecialColours(uint8 *destPalette) {
+	memcpy(destPalette + 0x240, _screenPalette + 0x240, 12);	
+}
+
+void Screen_LoL::loadColour254(uint8 *destPalEntry) {
+	memcpy(destPalEntry, _screenPalette + 0x2fa, 3);
+}
+
+bool Screen_LoL::copyColour(int dstColorIndex, int srcColorIndex, uint32 time1, uint32 time2) {
+	uint8 *s = _screenPalette + 3 * dstColorIndex;
+	uint8 *e = _screenPalette + 3 * srcColorIndex;
+	uint8 *p = getPalette(1) + 3 * dstColorIndex;
+
+	bool res = false;
+
+	uint16 t1 = 0;
+	uint16 t2 = 0;
+	int32 t3 = 0;
+
+	uint8 tmpPalEntry[3];
+
+	for (int i = 0; i < 3; i++) {
+		if (time1 < time2) {
+			t1 = *e & 0x3f;
+			t2 = *s & 0x3f;
+
+			t3 = t1 - t2;
+			if (!t3)
+				res = true;
+
+			t3 = (((((t3 << 8) / time2) * time1) >> 8) & 0xffff) + t2;
+		} else {
+			t1 = *e & 0x3f;
+			*p = t3 = t1;
+			res = false;
+		}
+
+		tmpPalEntry[i] = t3 & 0xff;
+		s++;
+		e++;
+		p++;
+	}
+
+	uint8 tpal[768];
+	memcpy(tpal, _screenPalette, 768);
+	memcpy(tpal + dstColorIndex * 3, tmpPalEntry, 3);
+	setScreenPalette(tpal);
+
+	return res;
 }
 
 uint8 Screen_LoL::getShapePaletteSize(const uint8 *shp) {

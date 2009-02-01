@@ -42,6 +42,9 @@ typedef Common::Functor2<const TIM*, const uint16*, int> TIMOpcode;
 struct TIM {
 	char filename[13];
 
+	uint16 clickedButton;
+	int16 dlgFunc;
+
 	int16 procFunc;
 	uint16 procParam;
 
@@ -50,14 +53,14 @@ struct TIM {
 	};
 
 	struct Function {
-		const uint16 *ip;
+		uint16 *ip;
 
 		uint32 lastTime;
 		uint32 nextTime;
 
-		const uint16 *loopIp;
+		uint16 *loopIp;
 
-		const uint16 *avtl;
+		uint16 *avtl;
 	} func[kCountFuncs];
 
 	enum {
@@ -92,16 +95,26 @@ public:
 	TIM *load(const char *filename, const Common::Array<const TIMOpcode*> *opcodes);
 	void unload(TIM *&tim) const;
 
+	Animation *initAnimStructIntern(int index, const char *filename, int x, int y, uint16 copyPara, uint16 wsaFlags);
+	int freeAnimStruct(int index);
+
 	void setLangData(const char *filename);
 	void clearLangData() { delete[] _langData; _langData = 0; }
+
+	void toggleDialogueSpeech(bool enable) { _dlgSpeechEnabled = enable; }
+	void toggleRefresh(bool enable) { _refresh = enable; }
+	void setWsaDrawPage2(int pageNum) { _drawPage2 = pageNum; }
+	void setDialogueCompleteFlag(int val) { _dialogueComplete = val; }
+	void setActiveSpeechFile(const char *filename) { _activeVoiceFile = filename; }
 
 	const char *getCTableEntry(uint idx) const;
 
 	void resetFinishedFlag() { _finished = false; }
 	bool finished() const { return _finished; }
 
-	void exec(TIM *tim, bool loop);
+	int exec(TIM *tim, bool loop);
 	void stopCurFunc() { if (_currentTim) cmd_stopCurFunc(0); }
+	void stopAllFuncs(TIM *tim);
 
 	void refreshTimersAfterPause(uint32 elapsedTime);
 
@@ -109,6 +122,7 @@ public:
 	void setupTextPalette(uint index, int fadePalette);
 
 	int _palDelayInc, _palDiff, _palDelayAcc;
+
 private:
 	KyraEngine_v1 *_vm;
 	Screen_v2 *_screen;
@@ -121,9 +135,8 @@ private:
 
 	Common::String _vocFiles[120];
 
-	Animation _animations[TIM::kWSASlots];
-
 	Animation *initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags);
+	Animation _animations[TIM::kWSASlots];
 
 	char _audioFilename[32];
 
@@ -132,6 +145,14 @@ private:
 	bool _textDisplayed;
 	uint8 *_textAreaBuffer;
 
+	bool _dlgSpeechEnabled;
+	bool _refresh;
+	int _drawPage2;
+
+	int _dialogueComplete;
+	const char *_activeVoiceFile;
+
+	void advanceToOpcode(int del);
 	int execCommand(int cmd, const uint16 *param);
 
 	typedef int (TIMInterpreter::*CommandProc)(const uint16 *);
@@ -163,6 +184,11 @@ private:
 	int cmd_execOpcode(const uint16 *param);
 	int cmd_initFuncNow(const uint16 *param);
 	int cmd_stopFuncNow(const uint16 *param);
+
+	int cmd_stopAllFuncs(const uint16 *param);
+	int cmd_processDialogue(const uint16 *param);
+	int cmd_dialogueBox(const uint16 *param);
+
 #define cmd_return(n, v) \
 	int cmd_return_##n(const uint16 *) { return v; }
 

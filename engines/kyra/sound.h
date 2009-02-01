@@ -197,6 +197,14 @@ public:
 	virtual int32 voicePlay(const char *file, bool isSfx = false);
 
 	/**
+	 * Queues the specified voice files in an AppendableAudioStream
+	 * and plays them.
+	 *
+	 * @param fileList:	files to be played
+	 */
+	virtual void voicePlayFromList(Common::List<const char*> fileList);
+
+	/**
 	 * Checks if a voice is being played.
 	 *
 	 * @return true when playing, else false

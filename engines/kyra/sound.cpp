@@ -115,6 +115,29 @@ int32 Sound::voicePlay(const char *file, bool isSfx) {
 	return audioStream->getTotalPlayTime();
 }
 
+void Sound::voicePlayFromList(Common::List<const char*> fileList) {
+	int h = 0;
+	while (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle) && h < kNumChannelHandles)
+		h++;
+	if (h >= kNumChannelHandles)
+		return;
+
+	Audio::AppendableAudioStream *out = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
+	
+	for (Common::List<const char*>::iterator i = fileList.begin(); i != fileList.end(); i++) {
+		int size;
+		int rate;
+		uint8 *file = _vm->resource()->fileData(*i, (uint32*)&size);
+		Common::MemoryReadStream vocStream(file, (uint32)size);
+		uint8 *data = Audio::loadVOCFromStream(vocStream, size, rate);
+		out->queueBuffer(data, size);		
+	}
+	out->finish();
+	
+	_soundChannels[h].file = *fileList.begin();
+	_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, out);
+}
+
 void Sound::voiceStop(const char *file) {
 	if (!file) {
 		for (int h = 0; h < kNumChannelHandles; h++) {

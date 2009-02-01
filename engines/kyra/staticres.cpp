@@ -40,6 +40,7 @@
 #include "kyra/gui_lok.h"
 #include "kyra/gui_hof.h"
 #include "kyra/gui_mr.h"
+#include "kyra/gui_lol.h"
 
 namespace Kyra {
 
@@ -2621,6 +2622,14 @@ const int8 KyraEngine_MR::_albumWSAY[] = {
 };
 
 // lands of lore static res
+
+void GUI_LoL::initStaticData() {
+
+}
+
+void LoLEngine::initButtonList() {
+	
+}
 
 const ScreenDim Screen_LoL::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 },	// Taken from Intro

@@ -28,6 +28,7 @@
 #include "kyra/resource.h"
 #include "kyra/sound.h"
 #include "kyra/wsamovie.h"
+#include "kyra/gui_lol.h"
 
 #include "common/endian.h"
 
@@ -37,7 +38,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *sy
 #define COMMAND(x) { &TIMInterpreter::x, #x }
 #define COMMAND_UNIMPL() { 0, 0 }
 #define cmd_return(n) cmd_return_##n
-	static const CommandEntry commandProcs[] = {
+	static const CommandEntry commandProcsHOF[] = {
 		// 0x00
 		COMMAND(cmd_initFunc0),
 		COMMAND(cmd_stopCurFunc),
@@ -74,22 +75,69 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *sy
 		COMMAND(cmd_initFuncNow),
 		COMMAND(cmd_stopFuncNow),
 		// 0x1C
+		COMMAND(cmd_processDialogue),
+		COMMAND(cmd_dialogueBox),
+		COMMAND(cmd_return(n1))
+	};
+
+	static const CommandEntry commandProcsLOL[] = {
+		// 0x00
+		COMMAND(cmd_initFunc0),
+		COMMAND(cmd_stopAllFuncs),
+		COMMAND(cmd_initWSA),
+		COMMAND(cmd_uninitWSA),
+		// 0x04
+		COMMAND(cmd_initFunc),
+		COMMAND(cmd_stopFunc),
+		COMMAND(cmd_wsaDisplayFrame),
+		COMMAND_UNIMPL(),
+		// 0x08
+		COMMAND(cmd_loadVocFile),
+		COMMAND(cmd_unloadVocFile),
+		COMMAND(cmd_playVocFile),
+		COMMAND_UNIMPL(),
+		// 0x0C
+		COMMAND(cmd_loadSoundFile),
+		COMMAND(cmd_return(1)),
+		COMMAND(cmd_playMusicTrack),
+		COMMAND_UNIMPL(),
+		// 0x10
 		COMMAND(cmd_return(1)),
 		COMMAND(cmd_return(1)),
+		COMMAND_UNIMPL(),
+		COMMAND_UNIMPL(),
+		// 0x14
+		COMMAND(cmd_setLoopIp),
+		COMMAND(cmd_continueLoop),
+		COMMAND(cmd_resetLoopIp),
+		COMMAND(cmd_resetAllRuntimes),
+		// 0x18
+		COMMAND(cmd_return(1)),
+		COMMAND(cmd_execOpcode),
+		COMMAND(cmd_initFuncNow),
+		COMMAND(cmd_stopFuncNow),
+		// 0x1C
+		COMMAND(cmd_processDialogue),
+		COMMAND(cmd_dialogueBox),
 		COMMAND(cmd_return(n1))
 	};
 #undef cmd_return
 
-	_commands = commandProcs;
-	_commandsSize = ARRAYSIZE(commandProcs);
+	_commands = vm->game() == GI_LOL ? commandProcsLOL : commandProcsHOF ;
+	_commandsSize = vm->game() == GI_LOL ? ARRAYSIZE(commandProcsLOL) : ARRAYSIZE(commandProcsHOF);
 
 	memset(&_animations, 0, sizeof(_animations));
 	_langData = 0;
 	_textDisplayed = false;
 	_textAreaBuffer = new uint8[320*40];
 	assert(_textAreaBuffer);
+	_dlgSpeechEnabled = false;
+	_refresh = false;
+	_drawPage2 = 8;
 
-	_palDelayInc = _palDiff = _palDelayAcc = 0;
+	_palDelayInc = _palDiff = _palDelayAcc = 0;	
+	_dialogueComplete = 0;
+	_activeVoiceFile = 0;
 }
 
 TIMInterpreter::~TIMInterpreter() {
@@ -159,9 +207,9 @@ void TIMInterpreter::setLangData(const char *filename) {
 	_langData = _vm->resource()->fileData(filename, 0);
 }
 
-void TIMInterpreter::exec(TIM *tim, bool loop) {
+int TIMInterpreter::exec(TIM *tim, bool loop) {
 	if (!tim)
-		return;
+		return 0;
 
 	_currentTim = tim;
 	if (!_currentTim->func[0].ip) {
@@ -170,14 +218,37 @@ void TIMInterpreter::exec(TIM *tim, bool loop) {
 	}
 
 	do {
+		if (_refresh)
+			_vm->gui()->update();
 		for (_currentFunc = 0; _currentFunc < TIM::kCountFuncs; ++_currentFunc) {
 			TIM::Function &cur = _currentTim->func[_currentFunc];
 
 			if (_currentTim->procFunc != -1)
 				execCommand(28, &_currentTim->procParam);
 
-			bool running = true;
+			if (_refresh)
+				_vm->gui()->update();
+
+			if (_dlgSpeechEnabled && _currentTim->procParam > 1 && cur.loopIp) {
+				if (!_vm->sound()->voiceIsPlaying(_activeVoiceFile)) {
+					cur.loopIp = 0;
+					_currentTim->dlgFunc = _currentFunc;
+					advanceToOpcode(21);
+					_currentTim->dlgFunc = -1;
+				}
+			}
+
+			bool running = true;			
+			int cnt = 0;
 			while (cur.ip && cur.nextTime <= _system->getMillis() && running) {
+				if (cnt++ > 0) {
+					if (_currentTim->procFunc != -1)
+						execCommand(28, &_currentTim->procParam);
+
+					if (_refresh)
+						_vm->gui()->update();
+				}
+
 				int8 opcode = int8(cur.ip[2] & 0xFF);
 
 				switch (execCommand(opcode, cur.ip + 3)) {
@@ -193,6 +264,7 @@ void TIMInterpreter::exec(TIM *tim, bool loop) {
 
 				case -3:
 					_currentTim->procFunc = _currentFunc;
+					_currentTim->dlgFunc = -1;
 					break;
 
 				case 22:
@@ -206,11 +278,18 @@ void TIMInterpreter::exec(TIM *tim, bool loop) {
 				if (cur.ip) {
 					cur.ip += cur.ip[0];
 					cur.lastTime = cur.nextTime;
-					cur.nextTime += cur.ip[1] * _vm->tickLength();
+					cur.nextTime += (cur.ip[1] ) * _vm->tickLength();
 				}
 			}
 		}
-	} while (loop);
+	} while (loop && !_vm->shouldQuit());
+
+	return _currentTim->clickedButton;
+}
+
+void TIMInterpreter::stopAllFuncs(TIM *tim) {
+	for (int i = 0; i < TIM::kCountFuncs; ++i)
+		tim->func[i].ip = 0;
 }
 
 void TIMInterpreter::refreshTimersAfterPause(uint32 elapsedTime) {
@@ -342,6 +421,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 	anim->x = x;
 	anim->y = y;
 	anim->wsaCopyParams = wsaFlags;
+	_drawPage2 = 8;
 
 	uint16 wsaOpenFlags = ((wsaFlags & 0x10) != 0) ? 2 : 0;
 
@@ -367,7 +447,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 			_screen->checkedPageUpdate(8, 4);
 			_screen->updateScreen();
 		}
-
+		
 		if (wsaFlags & 4) {
 			snprintf(file, 32, "%s.CPS", filename);
 
@@ -410,6 +490,41 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 	return anim;
 }
 
+TIMInterpreter::Animation *TIMInterpreter::initAnimStructIntern(int index, const char *filename, int x, int y, uint16 copyPara, uint16 wsaFlags) {
+	Animation *anim = &_animations[index];
+	anim->x = x;
+	anim->y = y;
+	anim->wsaCopyParams = wsaFlags;
+
+	uint16 wsaOpenFlags = 0;
+	if (wsaFlags & 0x10)
+		wsaOpenFlags |= 2;
+	if (wsaFlags & 8)
+		wsaOpenFlags |= 1;
+
+	char file[32];
+	snprintf(file, 32, "%s.WSA", filename);
+
+	if (_vm->resource()->exists(file)) {
+		anim->wsa = new WSAMovie_v2(_vm, _screen);
+		assert(anim->wsa);
+		anim->wsa->open(file, wsaOpenFlags, _screen->getPalette(3));
+	}
+
+	return anim;
+}
+
+int TIMInterpreter::freeAnimStruct(int index) {
+	Animation *anim = &_animations[index];
+	if (!anim)
+		return 0;
+
+	delete anim->wsa;
+	memset(anim, 0, sizeof(Animation));
+
+	return 1;
+}
+
 char *TIMInterpreter::getTableEntry(uint idx) {
 	if (!_langData)
 		return 0;
@@ -422,6 +537,22 @@ const char *TIMInterpreter::getCTableEntry(uint idx) const {
 		return 0;
 	else
 		return (const char *)(_langData + READ_LE_UINT16(_langData + (idx<<1)));
+}
+
+void TIMInterpreter::advanceToOpcode(int opcode) {
+	TIM::Function *f = &_currentTim->func[_currentTim->dlgFunc];
+	uint16 len = f->ip[0];
+
+	while ((f->ip[2] & 0xFF) != opcode) {
+		if ((f->ip[2] & 0xFF) == 1) {
+			f->ip[0] = len;
+			break;
+		}
+		len = f->ip[0];
+		f->ip += len;
+	}
+
+	f->nextTime = _system->getMillis();
 }
 
 int TIMInterpreter::execCommand(int cmd, const uint16 *param) {
@@ -519,8 +650,10 @@ int TIMInterpreter::cmd_wsaDisplayFrame(const uint16 *param) {
 
 	anim.wsa->setX(anim.x);
 	anim.wsa->setY(anim.y);
-	anim.wsa->setDrawPage((anim.wsaCopyParams & 0x4000) != 0 ? 2 : 8);
+	anim.wsa->setDrawPage((anim.wsaCopyParams & 0x4000) != 0 ? 2 : _drawPage2);
 	anim.wsa->displayFrame(frame, anim.wsaCopyParams & 0xF0FF, 0, 0);
+	if (!_drawPage2)
+		_screen->updateScreen();
 	return 1;
 }
 
@@ -573,7 +706,14 @@ int TIMInterpreter::cmd_playMusicTrack(const uint16 *param) {
 }
 
 int TIMInterpreter::cmd_setLoopIp(const uint16 *param) {
-	_currentTim->func[_currentFunc].loopIp = _currentTim->func[_currentFunc].ip;
+	if (_dlgSpeechEnabled) {
+		if (_vm->sound()->voiceIsPlaying(_activeVoiceFile))
+			_currentTim->func[_currentFunc].loopIp = _currentTim->func[_currentFunc].ip;
+		else
+			advanceToOpcode(21);
+	} else {
+		_currentTim->func[_currentFunc].loopIp = _currentTim->func[_currentFunc].ip;
+	}
 	return 1;
 }
 
@@ -585,14 +725,16 @@ int TIMInterpreter::cmd_continueLoop(const uint16 *param) {
 
 	func.ip = func.loopIp;
 
-	uint16 factor = param[0];
-	if (factor) {
-		const uint32 random = _vm->_rnd.getRandomNumberRng(0, 0x8000);
-		uint32 waitTime = (random * factor) / 0x8000;
-		func.nextTime += waitTime * _vm->tickLength();
+	if (!_vm->sound()->voiceIsPlaying(_activeVoiceFile)) {
+		uint16 factor = param[0];
+		if (factor) {
+			const uint32 random = _vm->_rnd.getRandomNumberRng(0, 0x8000);
+			uint32 waitTime = (random * factor) / 0x8000;
+			func.nextTime += waitTime * _vm->tickLength();
+		}
 	}
 
-	return 1;
+	return -2;
 }
 
 int TIMInterpreter::cmd_resetLoopIp(const uint16 *param) {
@@ -643,6 +785,60 @@ int TIMInterpreter::cmd_stopFuncNow(const uint16 *param) {
 	_currentTim->func[func].ip = 0;
 	_currentTim->func[func].lastTime = _currentTim->func[func].nextTime = _system->getMillis();
 	return 1;
+}
+
+int TIMInterpreter::cmd_stopAllFuncs(const uint16 *param) {
+	while (_currentTim->dlgFunc == -1 && _currentTim->clickedButton == 0 && !_vm->shouldQuit()) {
+		_vm->gui()->update();
+		_currentTim->clickedButton = _vm->gui()->processDialogue();
+	}
+
+	for (int i = 0; i < TIM::kCountFuncs; ++i)
+		_currentTim->func[i].ip = 0;
+
+	return -1;
+}
+
+int TIMInterpreter::cmd_processDialogue(const uint16 *param) {
+	int res = _vm->gui()->processDialogue();
+	if (!res ||!_currentTim->procParam)
+		return 0;
+
+	if (_vm->sound()->voiceIsPlaying(_activeVoiceFile))
+		_dialogueComplete = 0;
+
+	_currentTim->func[_currentTim->procFunc].loopIp = 0;
+	_currentTim->dlgFunc = _currentTim->procFunc;
+	_currentTim->procFunc = -1;
+	_currentTim->clickedButton = res;
+
+	if (_currentTim->procParam)
+		advanceToOpcode(21);	
+
+	return res;
+}
+
+int TIMInterpreter::cmd_dialogueBox(const uint16 *param) {
+	uint16 func = *param;
+	assert(func < TIM::kCountFuncs);
+	_currentTim->procParam = func;
+	_currentTim->clickedButton = 0;
+
+	const char *tmpStr[3];
+	int cnt = 0;
+
+	for (int i = 1; i < 4; i++) {
+		if (param[i] != 0xffff) {
+			tmpStr[i-1] = _vm->gui()->getTableString(param[i]);
+			cnt++;
+		} else {
+			tmpStr[i-1] = 0;
+		}
+	}
+
+	_vm->gui()->drawDialogueBox(cnt, tmpStr[0], tmpStr[1], tmpStr[2]);
+
+	return -3;
 }
 
 } // end of namespace Kyra

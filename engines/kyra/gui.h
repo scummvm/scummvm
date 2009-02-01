@@ -158,6 +158,13 @@ public:
 
 	// utilities for thumbnail creation
 	virtual void createScreenThumbnail(Graphics::Surface &dst) = 0;
+
+	// LOL tim player specific
+	virtual void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3) {}
+	virtual uint16 processDialogue() { return 0; }
+	virtual void update() {}
+	virtual char *getTableString(int id) { return 0; }
+
 protected:
 	KyraEngine_v1 *_vm;
 	Screen *_screen;

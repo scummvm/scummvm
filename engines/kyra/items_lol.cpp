@@ -62,8 +62,8 @@ void LoLEngine::giveCredits(int credits, int redraw) {
 
 		if (redraw) {
 			gui_drawMoneyBox(6);
-			//if (credits)
-			//	TODO: delay/update
+			if (credits)
+				update();
 		}
 		credits -= t;
 	}
@@ -153,18 +153,18 @@ void LoLEngine::clearItemTableEntry(int itemIndex) {
 	_itemsInPlay[itemIndex].shpCurFrame_flg |= 0x8000;
 }
 
-void *LoLEngine::cmzGetItemOffset(uint16 index) {
+CLevelItem *LoLEngine::findItem(uint16 index) {
 	if (index & 0x8000)
-		return &_lvlBuffer[index & 0x7fff];
+		return &_cLevelItems[index & 0x7fff];
 	else
-		return &_itemsInPlay[index];
+		return (CLevelItem *)&_itemsInPlay[index];
 }
 
-void LoLEngine::runItemScript(int reg1, int slot, int reg0, int reg3, int reg4) {
+void LoLEngine::runItemScript(int reg1, int item, int reg0, int reg3, int reg4) {
 	EMCState scriptState;
 	memset(&scriptState, 0, sizeof(EMCState));
 
-	uint8 func = slot ? _itemProperties[_itemsInPlay[slot].itemPropertyIndex].itemScriptFunc : 3;
+	uint8 func = item ? _itemProperties[_itemsInPlay[item].itemPropertyIndex].itemScriptFunc : 3;
 	if (func == 0xff)
 		return;
 
@@ -173,7 +173,7 @@ void LoLEngine::runItemScript(int reg1, int slot, int reg0, int reg3, int reg4) 
 
 	scriptState.regs[0] = reg0;
 	scriptState.regs[1] = reg1;
-	scriptState.regs[2] = slot;
+	scriptState.regs[2] = item;
 	scriptState.regs[3] = reg3;
 	scriptState.regs[4] = reg4;
 
