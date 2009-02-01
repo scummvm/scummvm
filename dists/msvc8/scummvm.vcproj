@@ -243,14 +243,6 @@
 			Name="common"
 			>
 			<File
-				RelativePath="..\..\common\advancedDetector.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\advancedDetector.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\common\algorithm.h"
 				>
 			</File>
@@ -280,6 +272,14 @@
 			</File>
 			<File
 				RelativePath="..\..\common\config-manager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\debug.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\debug.h"
 				>
 			</File>
 			<File
@@ -911,6 +911,14 @@
 		<Filter
 			Name="backends"
 			>
+			<File
+				RelativePath="..\..\backends\base-backend.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\backends\base-backend.h"
+				>
+			</File>
 			<Filter
 				Name="sdl"
 				>
@@ -1544,6 +1552,14 @@
 		<Filter
 			Name="engines"
 			>
+			<File
+				RelativePath="..\..\engines\advancedDetector.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\advancedDetector.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\engines\dialogs.cpp"
 				>
