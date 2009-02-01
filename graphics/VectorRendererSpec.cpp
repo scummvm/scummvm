@@ -393,6 +393,7 @@ inline void VectorRendererSpec<PixelType, PixelFormat>::
 blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha)	{
 	register int idst = *ptr;
 	register int isrc = color;
+	int rightShift = 8 - PixelFormat::kAlphaBits;
 
 	*ptr = (PixelType)(
 		(PixelFormat::kRedMask & ((idst & PixelFormat::kRedMask) +
@@ -405,7 +406,7 @@ blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha)	{
 		((int)(((int)(isrc & PixelFormat::kBlueMask) -
 		(int)(idst & PixelFormat::kBlueMask)) * alpha) >> 8))) |
 		(PixelFormat::kAlphaMask & ((idst & PixelFormat::kAlphaMask) +
-                ((alpha >> (8 - PixelFormat::kAlphaBits)) << PixelFormat::kAlphaShift) -
+                ((alpha >> rightShift) << PixelFormat::kAlphaShift) -
                 (((int)(idst & PixelFormat::kAlphaMask) * alpha) >> 8))));
 }
 
