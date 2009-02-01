@@ -76,7 +76,7 @@ private:
 	void reset();
 	int16 stepAdjust(byte);
 	int16 decodeOKI(byte);
-	int16 decodeIMA(byte code, bool right = false); // Default to using the left channel/using one channel
+	int16 decodeIMA(byte code, int channel = 0); // Default to using the left channel/using one channel
 	int16 decodeMS(ADPCMChannelStatus *c, byte);
 	int16 decodeTinsel(int16, double);
 
@@ -219,7 +219,7 @@ int ADPCMInputStream::readBufferIMA(int16 *buffer, const int numSamples) {
 	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
 		data = _stream->readByte();
 		buffer[samples] = TO_LE_16(decodeIMA((data >> 4) & 0x0f));
-		buffer[samples + 1] = TO_LE_16(decodeIMA(data & 0x0f, _channels == 2));
+		buffer[samples + 1] = TO_LE_16(decodeIMA(data & 0x0f, _channels == 2 ? 1 : 0));
 	}
 	return samples;
 }
@@ -520,14 +520,14 @@ static const uint16 imaStepTable[89] = {
 	32767
 };
 
-int16 ADPCMInputStream::decodeIMA(byte code, bool right) {
-	int32 E = (2 * (code & 0x7) + 1) * imaStepTable[_status.ima_ch[right].stepIndex] / 8;
+int16 ADPCMInputStream::decodeIMA(byte code, int channel) {
+	int32 E = (2 * (code & 0x7) + 1) * imaStepTable[_status.ima_ch[channel].stepIndex] / 8;
 	int32 diff = (code & 0x08) ? -E : E;
-	int32 samp = CLIP<int32>(_status.ima_ch[right].last + diff, -32768, 32767);
+	int32 samp = CLIP<int32>(_status.ima_ch[channel].last + diff, -32768, 32767);
 
-	_status.ima_ch[right].last = samp;
-	_status.ima_ch[right].stepIndex += stepAdjust(code);
-	_status.ima_ch[right].stepIndex = CLIP<int32>(_status.ima_ch[right].stepIndex, 0, ARRAYSIZE(imaStepTable) - 1);
+	_status.ima_ch[channel].last = samp;
+	_status.ima_ch[channel].stepIndex += stepAdjust(code);
+	_status.ima_ch[channel].stepIndex = CLIP<int32>(_status.ima_ch[channel].stepIndex, 0, ARRAYSIZE(imaStepTable) - 1);
 
 	return samp;
 }
