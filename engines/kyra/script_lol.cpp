@@ -278,14 +278,7 @@ int LoLEngine::olol_setCharacterStat(EMCState *script) {
 	int d = stackPos(2);
 	int e = stackPos(3);
 
-	// FIXME: This looks really strange, especially why for example
-	// case 8 should fall through till case 10. case 8 seems to handle
-	// max magic points settings, while case 10 seems to remove an
-	// item from the inventory of a character. If it should really
-	// fall through please add "// fall through" at the end of the
-	// case.
 	switch (stackPos(1)) {
-
 	case 0:
 		c->flags = e;
 		break;
