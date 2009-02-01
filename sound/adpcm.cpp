@@ -134,7 +134,8 @@ ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, bool disp
 	
 	_startpos = stream->pos();
 	_endpos = _startpos + size;
-	_curLoop = 0;	
+	_curLoop = 0;
+	_blockPos = 0;
 	reset();
 }
 
@@ -148,7 +149,6 @@ void ADPCMInputStream::reset() {
 	_blockLen = 0;
 	_blockPos = _blockAlign; // To make sure first header is read
 	_chunkPos = 0;
-	_blockPos = 0;
 }
 
 int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
