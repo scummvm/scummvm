@@ -228,6 +228,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\gui_lol.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\gui_mr.cpp"
 			>
 		</File>
@@ -472,6 +476,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\sequences_lol.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\sequences_mr.cpp"
 			>
 		</File>
@@ -537,6 +545,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\text_lok.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\text_lol.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\text_lol.h"
 			>
 		</File>
 		<File
