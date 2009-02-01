@@ -125,15 +125,28 @@ void Sound::voicePlayFromList(Common::List<const char*> fileList) {
 	Audio::AppendableAudioStream *out = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
 	
 	for (Common::List<const char*>::iterator i = fileList.begin(); i != fileList.end(); i++) {
-		uint32 fileSize = 0;
-		uint8 *file = _vm->resource()->fileData(*i, &fileSize);
-		Common::MemoryReadStream vocStream(file, fileSize, false);
+		Common::SeekableReadStream *file = _vm->resource()->createReadStream(*i);
+
+		// TODO: Maybe output an warning like "file not found"?
+		if (!file)
+			continue;
 
 		int size, rate;
-		uint8 *data = Audio::loadVOCFromStream(vocStream, size, rate);
-		out->queueBuffer(data, size);
-		delete[] file;
+		uint8 *data = Audio::loadVOCFromStream(*file, size, rate);
+		delete file;
+
+		// FIXME/HACK: While loadVOCStream uses malloc / realloc,
+		// AppendableAudioStream uses delete[] to free the passed buffer.
+		// As a consequence we just 'move' the data to a buffer allocated
+		// via new[].
+		uint8 *vocBuffer = new uint8[size];
+		assert(vocBuffer);
+		memcpy(vocBuffer, data, size);
+		free(data);
+
+		out->queueBuffer(vocBuffer, size);
 	}
+
 	out->finish();
 	
 	_soundChannels[h].file = *fileList.begin();
