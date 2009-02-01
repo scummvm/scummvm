@@ -125,12 +125,14 @@ void Sound::voicePlayFromList(Common::List<const char*> fileList) {
 	Audio::AppendableAudioStream *out = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
 	
 	for (Common::List<const char*>::iterator i = fileList.begin(); i != fileList.end(); i++) {
-		int size;
-		int rate;
-		uint8 *file = _vm->resource()->fileData(*i, (uint32*)&size);
-		Common::MemoryReadStream vocStream(file, (uint32)size);
+		uint32 fileSize = 0;
+		uint8 *file = _vm->resource()->fileData(*i, &fileSize);
+		Common::MemoryReadStream vocStream(file, fileSize, true);
+
+		int size, rate;
 		uint8 *data = Audio::loadVOCFromStream(vocStream, size, rate);
-		out->queueBuffer(data, size);		
+		out->queueBuffer(data, size);
+		delete[] file;
 	}
 	out->finish();
 	
