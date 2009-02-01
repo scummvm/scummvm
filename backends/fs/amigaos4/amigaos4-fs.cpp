@@ -316,14 +316,6 @@ AbstractFSNode *AmigaOSFilesystemNode::getChild(const Common::String &n) const {
 		newPath += '/';
 
 	newPath += n;
-	BPTR lock = IDOS->Lock(newPath.c_str(), SHARED_LOCK);
-
-	if (!lock) {
-		debug(6, "Bad path");
-		return 0;
-	}
-
-	IDOS->UnLock(lock);
 
 	LEAVE();
 	return new AmigaOSFilesystemNode(newPath);
