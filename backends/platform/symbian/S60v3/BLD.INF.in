@@ -8,4 +8,5 @@ PRJ_MMPFILES
 	
 //STOP_AUTO_PROJECTS//
 gnumakefile icons.mk
+.\ScummVM_A0000658_S60v3.mmp
 .\ScummVM_S60v3.mmp
