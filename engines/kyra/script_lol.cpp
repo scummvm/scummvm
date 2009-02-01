@@ -498,7 +498,7 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 		stackPos(28), stackPos(29), stackPos(30), stackPos(31), stackPos(32), stackPos(33), stackPos(34),
 		stackPos(35), stackPos(36), stackPos(37), stackPos(38), stackPos(39), stackPos(40), stackPos(41));
 
-	MonsterProperty *l = &_monsterProperties[stackPos(0) * 83];
+	MonsterProperty *l = &_monsterProperties[stackPos(0)];
 	l->id = stackPos(1) & 0xff;
 
 	int shpWidthMax = 0;
