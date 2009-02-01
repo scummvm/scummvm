@@ -190,11 +190,12 @@ public:
 	 * TODO: add support for queueing voice
 	 * files
 	 *
-	 * @param file	file to be played
-	 * @param isSfx marks file as sfx instead of voice
+	 * @param file		file to be played
+	 * @param volume	volume of the voice file
+	 * @param isSfx		marks file as sfx instead of voice
 	 * @return playtime of the voice file (-1 marks unknown playtime)
 	 */
-	virtual int32 voicePlay(const char *file, bool isSfx = false);
+	virtual int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false);
 
 	/**
 	 * Queues the specified voice files in an AppendableAudioStream
@@ -455,7 +456,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	int32 voicePlay(const char *file, bool isSfx = false) { return -1; }
+	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false) { return -1; }
 	void playSoundEffect(uint8);
 
 protected:
@@ -482,7 +483,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	int32 voicePlay(const char *file, bool isSfx = false);
+	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false);
 	void playSoundEffect(uint8 track);
 
 protected:

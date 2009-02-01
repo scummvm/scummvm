@@ -66,7 +66,7 @@ bool Sound::voiceFileIsPresent(const char *file) {
 	return false;
 }
 
-int32 Sound::voicePlay(const char *file, bool isSfx) {
+int32 Sound::voicePlay(const char *file, uint8 volume, bool isSfx) {
 	char filenamebuffer[25];
 
 	int h = 0;
@@ -110,7 +110,7 @@ int32 Sound::voicePlay(const char *file, bool isSfx) {
 	}
 
 	_soundChannels[h].file = file;
-	_mixer->playInputStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, audioStream);
+	_mixer->playInputStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, audioStream, -1, volume);
 
 	return audioStream->getTotalPlayTime();
 }

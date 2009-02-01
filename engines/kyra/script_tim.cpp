@@ -683,7 +683,7 @@ int TIMInterpreter::cmd_playVocFile(const uint16 *param) {
 	const int volume = (param[1] * 255) / 100;
 
 	if (index < ARRAYSIZE(_vocFiles) && !_vocFiles[index].empty())
-		_vm->sound()->voicePlay(_vocFiles[index].c_str()/*, volume*/, true);
+		_vm->sound()->voicePlay(_vocFiles[index].c_str(), volume, true);
 	else
 		_vm->snd_playSoundEffect(index, volume);
 
