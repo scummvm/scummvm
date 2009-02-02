@@ -41,11 +41,14 @@
 #include "tinsel/handle.h"
 #include "tinsel/sysvar.h"
 
-#define MUSIC_JUMP  (-1)
-#define MUSIC_END (-2)
-#define BLMAGIC (-3458)
+enum {
+	MUSIC_JUMP = -1,
+	MUSIC_END = -2,
 
-#define DIM_SPEED 8
+	BLMAGIC  = -3458,
+
+	DIM_SPEED = 8
+};
 
 namespace Tinsel {
 
@@ -851,23 +854,16 @@ bool PCMMusicPlayer::getNextChunk() {
 		id = _scriptNum;
 		while (id--)
 			script = scriptBuffer + READ_LE_UINT32(script);
+		snum = FROM_LE_32(script[_scriptIndex]);
 
-		switch (FROM_LE_32(script[_scriptIndex])) {
-
-		case MUSIC_END:
+		if (snum == MUSIC_END) {
 			_state = S_END2;
-			break;
+		} else {
+			if (snum == MUSIC_JUMP)
+				_scriptIndex = FROM_LE_32(script[++_scriptIndex]);
 
-		case MUSIC_JUMP:
-			_scriptIndex = FROM_LE_32(script[++_scriptIndex]);
-			// Fall through
-		default:
-			if (_forcePlay)
-				_state = S_NEW;
-			else
-				_state = S_NEXT;
+			_state = _forcePlay ? S_NEW : S_NEXT;
 			_forcePlay = false;
-			break;
 		}
 
 		return true;
