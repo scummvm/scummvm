@@ -49,6 +49,18 @@ SOURCEPATH ..\..\..\..\engines\saga
 
 //STOP_AUTO_OBJECTS_SAGA_//
 
+//START_AUTO_OBJECTS_SAGA_ENABLE_IHNM//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_SAGA_ENABLE_IHNM//
+
+//START_AUTO_OBJECTS_SAGA_ENABLE_SAGA2//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_SAGA_ENABLE_SAGA2//
+
 // *** Include paths
 
 USERINCLUDE     ..\..\..\..\engines
