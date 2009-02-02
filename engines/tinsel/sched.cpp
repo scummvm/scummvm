@@ -562,7 +562,7 @@ void RestoreSceneProcess(INT_CONTEXT *pic) {
 
 	pStruc = (PROCESS_STRUC *)LockMem(hSceneProcess);
 	for (i = 0; i < numSceneProcess; i++) {
-		if (pStruc[i].hProcessCode == pic->hCode) {
+		if (FROM_LE_32(pStruc[i].hProcessCode) == pic->hCode) {
 			g_scheduler->createProcess(PID_PROCESS + i, RestoredProcessProcess,
 					 &pic, sizeof(pic));
 			break;
@@ -590,11 +590,11 @@ void SceneProcessEvent(CORO_PARAM, uint32 procID, TINSEL_EVENT event, bool bWait
 
 	_ctx->pStruc = (PROCESS_STRUC *)LockMem(hSceneProcess);
 	for (i = 0; i < numSceneProcess; i++) {
-		if (_ctx->pStruc[i].processId == procID) {
+		if (FROM_LE_32(_ctx->pStruc[i].processId) == procID) {
 			assert(_ctx->pStruc[i].hProcessCode);		// Must have some code to run
 
 			_ctx->pic = InitInterpretContext(GS_PROCESS,
-				_ctx->pStruc[i].hProcessCode,
+				FROM_LE_32(_ctx->pStruc[i].hProcessCode),
 				event,
 				NOPOLY,			// No polygon
 				0,			// No actor
@@ -629,7 +629,7 @@ void KillSceneProcess(uint32 procID) {
 
 	pStruc = (PROCESS_STRUC *) LockMem(hSceneProcess);
 	for (i = 0; i < numSceneProcess; i++) {
-		if (pStruc[i].processId == procID) {
+		if (FROM_LE_32(pStruc[i].processId) == procID) {
 			g_scheduler->killMatchingProcess(PID_PROCESS + i, -1);
 			break;
 		}
