@@ -59,6 +59,12 @@
 #define INADDR_NONE 0xffffffff
 #endif
 
+// BeOS BONE uses snooze (x/1000) in place of usleep(x)
+#ifdef __BEOS__
+#define usleep(v) snooze(v/1000)
+#endif
+
+
 #define SEQ_MIDIPUTC 5
 
 #define TIMIDITY_LOW_DELAY
