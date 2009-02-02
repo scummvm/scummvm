@@ -89,23 +89,17 @@ public:
 		uint16 wsaCopyParams;
 	};
 
-	TIMInterpreter(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *system);
-	~TIMInterpreter();
+	TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSystem *system);
+	virtual ~TIMInterpreter();
 
 	TIM *load(const char *filename, const Common::Array<const TIMOpcode*> *opcodes);
 	void unload(TIM *&tim) const;
 
-	Animation *initAnimStructIntern(int index, const char *filename, int x, int y, uint16 copyPara, uint16 wsaFlags);
+	virtual Animation *initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags);
 	int freeAnimStruct(int index);
 
 	void setLangData(const char *filename);
 	void clearLangData() { delete[] _langData; _langData = 0; }
-
-	void toggleDialogueSpeech(bool enable) { _dlgSpeechEnabled = enable; }
-	void toggleRefresh(bool enable) { _refresh = enable; }
-	void setWsaDrawPage2(int pageNum) { _drawPage2 = pageNum; }
-	void setDialogueCompleteFlag(int val) { _dialogueComplete = val; }
-	void setActiveSpeechFile(const char *filename) { _activeVoiceFile = filename; }
 
 	const char *getCTableEntry(uint idx) const;
 
@@ -121,9 +115,15 @@ public:
 	void displayText(uint16 textId, int16 flags);
 	void setupTextPalette(uint index, int fadePalette);
 
-	int _palDelayInc, _palDiff, _palDelayAcc;
+	int _drawPage2;
 
-private:
+	int _palDelayInc, _palDiff, _palDelayAcc;
+	int _dialogueComplete;
+
+protected:
+	virtual KyraEngine_v1 *vm();
+	virtual Screen_v2 *screen();
+	
 	KyraEngine_v1 *_vm;
 	Screen_v2 *_screen;
 	OSystem *_system;
@@ -135,8 +135,11 @@ private:
 
 	Common::String _vocFiles[120];
 
-	Animation *initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags);
 	Animation _animations[TIM::kWSASlots];
+
+	virtual void update() {}
+	virtual void checkSpeechProgress() {}
+	virtual uint16 processDialogue() { return 1; }
 
 	char _audioFilename[32];
 
@@ -145,15 +148,7 @@ private:
 	bool _textDisplayed;
 	uint8 *_textAreaBuffer;
 
-	bool _dlgSpeechEnabled;
-	bool _refresh;
-	int _drawPage2;
-
-	int _dialogueComplete;
-	const char *_activeVoiceFile;
-
-	void advanceToOpcode(int del);
-	int execCommand(int cmd, const uint16 *param);
+	virtual int execCommand(int cmd, const uint16 *param);
 
 	typedef int (TIMInterpreter::*CommandProc)(const uint16 *);
 	struct CommandEntry {
@@ -177,24 +172,68 @@ private:
 	int cmd_playVocFile(const uint16 *param);
 	int cmd_loadSoundFile(const uint16 *param);
 	int cmd_playMusicTrack(const uint16 *param);
-	int cmd_setLoopIp(const uint16 *param);
-	int cmd_continueLoop(const uint16 *param);
+	virtual int cmd_setLoopIp(const uint16 *param);
+	virtual int cmd_continueLoop(const uint16 *param);
 	int cmd_resetLoopIp(const uint16 *param);
 	int cmd_resetAllRuntimes(const uint16 *param);
 	int cmd_execOpcode(const uint16 *param);
 	int cmd_initFuncNow(const uint16 *param);
 	int cmd_stopFuncNow(const uint16 *param);
-
 	int cmd_stopAllFuncs(const uint16 *param);
-	int cmd_processDialogue(const uint16 *param);
-	int cmd_dialogueBox(const uint16 *param);
-
 #define cmd_return(n, v) \
 	int cmd_return_##n(const uint16 *) { return v; }
-
 	cmd_return( 1,  1);
 	cmd_return(n1, -1);
 #undef cmd_return
+};
+
+class LoLEngine;
+class Screen_LoL;
+class TIMInterpreter_LoL : public TIMInterpreter {
+friend class LoLEngine;
+public:
+	TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, OSystem *system);
+	Animation *initAnimStruct(int index, const char *filename, int x, int y, int copyPara, int, uint16 wsaFlags);
+		
+private:
+	KyraEngine_v1 *vm();
+	Screen_v2 *screen();
+
+	void update();
+	void checkSpeechProgress();
+	uint16 processDialogue();
+	
+	char *getTableString(int id);
+	void advanceToOpcode(int opcode);
+
+	void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3);	
+	void drawDialogueButtons();
+
+	LoLEngine *_vm;
+	Screen_LoL *_screen;
+
+	const char *_dialogueButtonString[3];
+	uint16 _dialogueButtonPosX;
+	uint16 _dialogueButtonPosY;
+	int _dialogueNumButtons;
+	uint16 _dialogueButtonXoffs;
+	int _dialogueHighlightedButton;
+
+	virtual int execCommand(int cmd, const uint16 *param);
+
+	typedef int (TIMInterpreter_LoL::*CommandProc)(const uint16 *);
+	struct CommandEntry {
+		CommandProc proc;
+		const char *desc;
+	};
+
+	const CommandEntry *_commands;
+	int _commandsSize;
+
+	int cmd_setLoopIp(const uint16 *param);
+	int cmd_continueLoop(const uint16 *param);
+	int cmd_processDialogue(const uint16 *param);
+	int cmd_dialogueBox(const uint16 *param);
 };
 
 } // end of namespace Kyra

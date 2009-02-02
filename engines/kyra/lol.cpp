@@ -41,6 +41,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_screen = 0;
 	_gui = 0;
 	_dlg = 0;
+	_tim = 0;
 
 	switch (_flags.lang) {
 	case Common::EN_ANY:
@@ -313,7 +314,7 @@ Common::Error LoLEngine::init() {
 	_gui->initStaticData();
 	initButtonList();
 
-	_tim = new TIMInterpreter(this, _screen, _system);
+	_tim = new TIMInterpreter_LoL(this, _screen, _system);
 	assert(_tim);
 
 	_dlg = new TextDisplayer_LoL(this, _screen);
@@ -464,6 +465,8 @@ Common::Error LoLEngine::go() {
 
 	setupPrologueData(false);
 
+	_tim = new TIMInterpreter_LoL(this, _screen, _system);
+
 	if (!shouldQuit() && (processSelection == 0 || processSelection == 3))
 		startup();
 
@@ -477,6 +480,11 @@ Common::Error LoLEngine::go() {
 		setUnkFlags(1);
 		runLoop();
 	}
+
+	delete _tim;
+	_tim = 0;
+
+	// TODO: outro
 
 	return Common::kNoError;
 }
@@ -668,10 +676,6 @@ void LoLEngine::startup() {
 	_dlg->setAnimFlag(true);
 
 	_screen->_dimLineCount = 0;
-
-	// reconfigure TIM player for ingame scripts
-	_tim->toggleDialogueSpeech(speechEnabled());
-	_tim->toggleRefresh(true);
 
 	setMouseCursorToItemInHand();
 }
@@ -1212,7 +1216,6 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	} while (_sound->voiceIsPlaying());
 
 	strcpy(_activeVoiceFile, *playList.begin());
-	_tim->setActiveSpeechFile(_activeVoiceFile);
 
 	_sound->voicePlayFromList(playList);
 		
@@ -1220,7 +1223,7 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 		delete []*i;
 	playList.clear();
 
-	_tim->setDialogueCompleteFlag(0);
+	_tim->_dialogueComplete = 0;
 
 	return true;
 }
@@ -1241,7 +1244,7 @@ int LoLEngine::snd_dialogueSpeechUpdate(int finish) {
 	//_dlgTimer = 0;
 
 	if (finish)
-		_tim->setDialogueCompleteFlag(1);
+		_tim->_dialogueComplete = 1;
 	
 	return 1;
 }

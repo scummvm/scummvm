@@ -117,13 +117,15 @@ void LoLEngine::setupPrologueData(bool load) {
 void LoLEngine::showIntro() {
 	debugC(9, kDebugLevelMain, "LoLEngine::showIntro()");
 
+	_tim = new TIMInterpreter(this, _screen, _system);
+
 	uint8 *pal = _screen->getPalette(0);
 	memset(pal, 0, 768);
 	_screen->setScreenPalette(pal);
 
 	_screen->clearPage(0);
 	_screen->clearPage(4);
-	_screen->clearPage(8);
+	_screen->clearPage(8);	
 
 	TIM *intro = _tim->load("LOLINTRO.TIM", &_timIntroOpcodes);
 
@@ -170,12 +172,16 @@ void LoLEngine::showIntro() {
 	for (int i = 0; i < TIM::kWSASlots; i++)
 		_tim->freeAnimStruct(i);
 
+	delete _tim;
+	_tim = 0;
+
 	_screen->fadePalette(_screen->getPalette(1), 30, 0);
 }
 
 int LoLEngine::chooseCharacter() {
 	debugC(9, kDebugLevelMain, "LoLEngine::chooseCharacter()");
 
+	_tim = new TIMInterpreter(this, _screen, _system);
 	_tim->setLangData("LOLINTRO.DIP");
 
 	_screen->loadFont(Screen::FID_9_FNT, "FONT9P.FNT");
@@ -259,6 +265,9 @@ int LoLEngine::chooseCharacter() {
 	_eventList.clear();
 
 	_tim->clearLangData();
+
+	delete _tim;
+	_tim = 0;
 
 	return _charSelection;
 }

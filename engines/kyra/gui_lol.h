@@ -47,12 +47,6 @@ public:
 	// utilities for thumbnail creation
 	void createScreenThumbnail(Graphics::Surface &dst) {}
 
-	// tim player specific
-	void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3);
-	uint16 processDialogue();
-	void update();
-	char *getTableString(int id);
-
 private:
 	LoLEngine *_vm;
 	Screen_LoL *_screen;
@@ -77,15 +71,6 @@ private:
 	const char *getMenuTitle(const Menu &menu) { return 0; }
 	const char *getMenuItemTitle(const MenuItem &menuItem) { return 0; }
 	const char *getMenuItemLabel(const MenuItem &menuItem) { return 0; }
-
-	void drawDialogueButtons();
-
-	const char *_dialogueButtonString[3];
-	uint16 _dialogueButtonPosX;
-	uint16 _dialogueButtonPosY;
-	int _dialogueNumButtons;
-	uint16 _dialogueButtonXoffs;
-	int _dialogueHighlightedButton;
 };
 
 } // end of namespace Kyra

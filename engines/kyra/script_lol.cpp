@@ -384,7 +384,7 @@ int LoLEngine::olol_loadDoorShapes(EMCState *script) {
 }
 
 int LoLEngine::olol_initAnimStruct(EMCState *script) {
-	if (initTimAnimStruct(stackPos(1), stackPosString(0), stackPos(2), stackPos(3), stackPos(4), stackPos(5)))
+	if (_tim->initAnimStruct(stackPos(1), stackPosString(0), stackPos(2), stackPos(3), stackPos(4), 0, stackPos(5)))
 		return 1;
 	return 0;
 }
@@ -635,37 +635,6 @@ int LoLEngine::olol_assignCustomSfx(EMCState *script) {
 }
 
 #pragma mark -
-
-TIMInterpreter::Animation *LoLEngine::initTimAnimStruct(int index, const char *filename, int x, int y, uint16 copyPara, uint16 wsaFlags) {
-	TIMInterpreter::Animation *a = _tim->initAnimStructIntern(index, filename, x, y, copyPara, wsaFlags);
-
-	_tim->setWsaDrawPage2(0);
-
-	if (wsaFlags & 1) {
-		if (_screen->_fadeFlag != 1)
-			_screen->fadeClearSceneWindow(10);
-		memcpy(_screen->getPalette(3) + 384, _screen->_currentPalette + 384, 384);
-	} else if (wsaFlags & 2) {
-		_screen->fadeToBlack(10);
-	}
-
-	if (wsaFlags & 7) {
-		_screen->hideMouse();
-		a->wsa->setDrawPage(0);
-		a->wsa->setX(x);
-		a->wsa->setY(y);
-		a->wsa->displayFrame(0, 0);
-		_screen->showMouse();
-	}
-
-	if (wsaFlags & 3) {
-		_screen->loadSpecialColours(_screen->getPalette(3));
-		_screen->fadePalette(_screen->getPalette(3), 10);
-		_screen->_fadeFlag = 0;
-	}
-
-	return a;
-}
 
 int LoLEngine::tlol_setupPaletteFade(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::t2_playSoundEffect(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);

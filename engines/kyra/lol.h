@@ -223,6 +223,7 @@ struct ButtonDef {
 class LoLEngine : public KyraEngine_v1 {
 friend class GUI_LoL;
 friend class TextDisplayer_LoL;
+friend class TIMInterpreter_LoL;
 public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
 	~LoLEngine();
@@ -232,6 +233,7 @@ public:
 private:
 	Screen_LoL *_screen;
 	GUI_LoL *_gui;
+
 	TIMInterpreter *_tim;
 
 	Common::Error init();
@@ -476,7 +478,6 @@ private:
 	int olol_assignCustomSfx(EMCState *script);
 
 	// tim scripts
-	TIMInterpreter::Animation *initTimAnimStruct(int index, const char *filename, int x, int y, uint16 copyPara, uint16 wsaFlags);
 	TIM *_activeTim[10];
 	
 	// tim opcode
