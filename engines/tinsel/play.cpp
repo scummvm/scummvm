@@ -709,16 +709,16 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 	// Get the reel and MULTI_INIT structure
 	_ctx->pFreel = GetReel(hFilm, column);
-	_ctx->pmi = (MULTI_INIT *)LockMem(_ctx->pFreel->mobj);
+	_ctx->pmi = (MULTI_INIT *)LockMem(FROM_LE_32(_ctx->pFreel->mobj));
 
-	if (_ctx->pmi->mulID == -2) {
+	if ((int32)FROM_LE_32(_ctx->pmi->mulID) == -2) {
 		CORO_INVOKE_ARGS(SoundReel, (CORO_SUBCTX, hFilm, column, speed, myescEvent,
 			_ctx->pmi->otherFlags & OTH_RELATEDACTOR));
 		return;
 	}
 
 	// Save actor's ID
-	_ctx->reelActor = _ctx->pmi->mulID;
+	_ctx->reelActor = FROM_LE_32(_ctx->pmi->mulID);
 
 	UpdateActorEsc(_ctx->reelActor, myescEvent);
 
@@ -762,8 +762,8 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 	// Set ghost bit if wanted
 	if (ActorIsGhost(_ctx->reelActor)) {
-		assert(_ctx->pmi->mulFlags == DMA_WNZ || _ctx->pmi->mulFlags == (DMA_WNZ | DMA_GHOST));
-		_ctx->pmi->mulFlags |= DMA_GHOST;
+		assert(FROM_LE_32(_ctx->pmi->mulFlags) == DMA_WNZ || FROM_LE_32(_ctx->pmi->mulFlags) == (DMA_WNZ | DMA_GHOST));
+		_ctx->pmi->mulFlags = TO_LE_32(FROM_LE_32(_ctx->pmi->mulFlags) | DMA_GHOST);
 	}
 
 	// Set up and insert the multi-object
@@ -796,10 +796,10 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 	/*
 	 * Sort out x and y
 	 */
-	assert( ((_ctx->pmi->otherFlags & OTH_RELATIVE) && !(_ctx->pmi->otherFlags & OTH_ABSOLUTE))
-		|| ((_ctx->pmi->otherFlags & OTH_ABSOLUTE) && !(_ctx->pmi->otherFlags & OTH_RELATIVE)) );
+	assert( ((FROM_LE_32(_ctx->pmi->otherFlags) & OTH_RELATIVE) && !(FROM_LE_32(_ctx->pmi->otherFlags) & OTH_ABSOLUTE))
+		|| ((FROM_LE_32(_ctx->pmi->otherFlags) & OTH_ABSOLUTE) && !(FROM_LE_32(_ctx->pmi->otherFlags) & OTH_RELATIVE)) );
 
-	_ctx->bRelative = _ctx->pmi->otherFlags & OTH_RELATIVE;
+	_ctx->bRelative = FROM_LE_32(_ctx->pmi->otherFlags) & OTH_RELATIVE;
 
 	if (_ctx->bRelative) {
 		// Use actor's position. If (x, y) specified, move the actor.
@@ -811,7 +811,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 		x = y = 0;		// Use (0,0) if no specified
 
 	// Add embedded co-ords
-	MultiSetAniXY(_ctx->pPlayObj, x + _ctx->pmi->mulX, y + _ctx->pmi->mulY);
+	MultiSetAniXY(_ctx->pPlayObj, x + FROM_LE_32(_ctx->pmi->mulX), y + FROM_LE_32(_ctx->pmi->mulY));
 
 	/*
 	 * Sort out z
@@ -826,10 +826,10 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 		// N.B. It HAS been ensured that the first column gets here first
 
-		if (_ctx->pmi->mulZ != -1) {
+		if ((int32)FROM_LE_32(_ctx->pmi->mulZ) != -1) {
 			// Z override in script
 
-			baseZfact = _ctx->pmi->mulZ;
+			baseZfact = FROM_LE_32(_ctx->pmi->mulZ);
 			baseZposn = (baseZfact << ZSHIFT) + MultiLowest(_ctx->pPlayObj);
 			if (bTop)
 				baseZposn += Z_TOPPLAY;
@@ -852,7 +852,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 	 * another reel starts up for this actor,
 	 * or the actor gets killed.
 	 */
-	InitStepAnimScript(&_ctx->thisAnim, _ctx->pPlayObj, _ctx->pFreel->script, speed);
+	InitStepAnimScript(&_ctx->thisAnim, _ctx->pPlayObj, FROM_LE_32(_ctx->pFreel->script), speed);
 
 	if (bRestore || (ActorEsc(_ctx->reelActor) == true &&
 				ActorEev(_ctx->reelActor) != GetEscEvents())) {
