@@ -802,7 +802,7 @@ bool PCMMusicPlayer::getNextChunk() {
 		// Set parameters for this chunk of music
 		id = _scriptNum;
 		while (id--)
-			script = scriptBuffer + FROM_LE_32(*script);
+			script = scriptBuffer + READ_LE_UINT32(script);
 		snum = FROM_LE_32(script[_scriptIndex++]);
 
 		if (snum == MUSIC_JUMP || snum == MUSIC_END) {
@@ -850,16 +850,16 @@ bool PCMMusicPlayer::getNextChunk() {
 
 		id = _scriptNum;
 		while (id--)
-			script = scriptBuffer + FROM_LE_32(*script);
+			script = scriptBuffer + READ_LE_UINT32(script);
 
-		switch (script[_scriptIndex]) {
+		switch (FROM_LE_32(script[_scriptIndex])) {
 
 		case MUSIC_END:
 			_state = S_END2;
 			break;
 
 		case MUSIC_JUMP:
-			_scriptIndex = script[++_scriptIndex];
+			_scriptIndex = FROM_LE_32(script[++_scriptIndex]);
 			// Fall through
 		default:
 			if (_forcePlay)
