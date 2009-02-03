@@ -499,10 +499,10 @@ void PathWalker_BR::walk() {
 
 		if (_ch->_walkPath.empty()) {
 			finalizeWalk();
-			debugC(3, kDebugWalk, "PathWalker_BR::walk, case 0\n");
+			debugC(3, kDebugWalk, "PathWalker_BR::walk, case 0");
 			return;
 		} else {
-			debugC(3, kDebugWalk, "PathWalker_BR::walk, moving to next node\n");
+			debugC(3, kDebugWalk, "PathWalker_BR::walk, moving to next node");
 		}
 	}
 
@@ -512,7 +512,7 @@ void PathWalker_BR::walk() {
 	int xStep = (scale * 16) / 100 + 1;
 	int yStep = (scale * 10) / 100 + 1;
 
-	debugC(9, kDebugWalk, "calculated step: (%i, %i)\n", xStep, yStep);
+	debugC(9, kDebugWalk, "calculated step: (%i, %i)", xStep, yStep);
 
 	_fieldC = 0;
 	_step++;
@@ -579,10 +579,10 @@ void PathWalker_BR::walk() {
 		}
 	}
 
-	debugC(9, kDebugWalk, "foot (%i, %i) dest (%i, %i) deltas = %i/%i \n", _startFoot.x, _startFoot.y, p.x, p.y, delta.x, delta.y);
+	debugC(9, kDebugWalk, "foot (%i, %i) dest (%i, %i) deltas = %i/%i ", _startFoot.x, _startFoot.y, p.x, p.y, delta.x, delta.y);
 
 	if (_fieldC) {
-		debugC(9, kDebugWalk, "PathWalker_BR::walk, foot moved from (%i, %i) to (%i, %i)\n", _startFoot.x, _startFoot.y, newpos.x, newpos.y);
+		debugC(9, kDebugWalk, "PathWalker_BR::walk, foot moved from (%i, %i) to (%i, %i)", _startFoot.x, _startFoot.y, newpos.x, newpos.y);
 		_ch->_ani->setF(walkFrame + _dirFrame + 1);
 		_startFoot.x = newpos.x;
 		_startFoot.y = newpos.y;
@@ -592,11 +592,11 @@ void PathWalker_BR::walk() {
 
 	if (_fieldC || !_ch->_walkPath.empty()) {
 //		checkTrap();
-		debugC(3, kDebugWalk, "PathWalker_BR::walk, case 1\n");
+		debugC(3, kDebugWalk, "PathWalker_BR::walk, case 1");
 		return;
 	}
 
-	debugC(3, kDebugWalk, "PathWalker_BR::walk, case 2\n");
+	debugC(3, kDebugWalk, "PathWalker_BR::walk, case 2");
 	finalizeWalk();
 	return;
 }
