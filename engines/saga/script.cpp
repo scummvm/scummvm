@@ -108,11 +108,6 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 		memoryError("Script::Script()");
 	}
 
-	// Do nothing for SAGA2 games for now
-	if (_vm->isSaga2()) {
-		return;
-	}
-
 	// Convert LUT resource to logical LUT
 	MemoryReadStreamEndian scriptS(resourcePointer, resourceLength, resourceContext->isBigEndian);
 	for (i = 0; i < _modulesCount; i++) {
