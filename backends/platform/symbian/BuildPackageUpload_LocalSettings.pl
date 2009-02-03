@@ -26,7 +26,8 @@
 	@BrokenEngines = qw(				
 	);
 
-	@EnablableEngines = (@WorkingEngines, @TestingEngines);
+	@EnablableEngines1 = (@WorkingEngines_1st, @TestingEngines);
+	@EnablableEngines = (@WorkingEngines_2nd, @TestingEngines);
 
 	@EnablableSubEngines = qw(
 		scumm_7_8
@@ -110,7 +111,7 @@
 		# now you can add $VariationSets only built on this PC below this line :)
 
 		#$VariationSets{'ALL'}{'scumm'} = "$DefaultFeatures scumm scumm_7_8 he";
-		#$VariationSets{'ALL'}{'all'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
+		#$VariationSets{'ALL'}{'all'} = "$DefaultFeatures @WorkingEngines_1st @EnablableSubEngines";
 
 	}
 	elsif ($ENV{'COMPUTERNAME'} eq "TSSLND0106") #################################################################
@@ -261,12 +262,12 @@
 	{
 		# the first one includes all SDKs & release-ready engines
 	
-			$VariationSets{'ALL'}{'all'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
-	
+		$VariationSets{'ALL'}{'all'} = "$DefaultFeatures @WorkingEngines_1st @EnablableSubEngines";
+		$VariationSets{'ALL'}{'all2nd'} = "$DefaultFeatures @WorkingEngines_2nd @EnablableSubEngines";
 		# now one for each ready-for-release engine
 		if (0)
 		{
-			foreach (@WorkingEngines)
+			foreach (@WorkingEngines_1st)
 			{
 				$VariationSets{'ALL'}{$_} = "$DefaultFeatures $_";
 			}
