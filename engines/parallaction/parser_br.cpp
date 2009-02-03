@@ -1258,7 +1258,8 @@ void LocationParser_br::parse(Script *script) {
 	ZoneList::iterator it = _vm->_location._zones.begin();
 	for ( ; it != _vm->_location._zones.end(); it++) {
 		bool visible = ((*it)->_flags & kFlagsRemove) == 0;
-		_vm->showZone((*it), visible);
+		if (visible)
+			_vm->showZone((*it), visible);
 	}
 
 	if (ctxt.characterName) {

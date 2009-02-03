@@ -941,7 +941,7 @@ void BackgroundInfo::togglePathPatch(uint id, int x, int y, bool apply) {
 	}
 	PathBuffer *patch = _pathPatches[id];
 	if (apply) {
-		_path->bltOr(x, y, *patch, 0, 0, patch->w, patch->h);
+		_path->bltCopy(x, y, *patch, 0, 0, patch->w, patch->h);
 	} else {
 		_path->bltCopy(x, y, _pathBackup, x, y, patch->w, patch->h);
 	}
@@ -1073,23 +1073,6 @@ byte PathBuffer::getValue(uint16 x, uint16 y) const {
 
 byte* PathBuffer::getPtr(uint16 x, uint16 y) const {
 	return data + (x >> 3) + y * internalWidth;
-}
-
-void PathBuffer::bltOr(uint16 dx, uint16 dy, const PathBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {
-	assert((width <= w) && (width <= src.w) && (height <= h) && (height <= src.h));
-
-	byte *s = src.getPtr(sx, sy);
-	byte *d = getPtr(dx, dy);
-
-	// this code assumes buffers are aligned on 4-pixels boundaries, as the original does
-	uint16 linewidth = width >> 3;
-	for (uint16 i = 0; i < height; i++) {
-		for (uint16 j = 0; j < linewidth; j++) {
-			*d++ |= *s++;
-		}
-		d += internalWidth - linewidth;
-		s += src.internalWidth - linewidth;
-	}
 }
 
 void PathBuffer::bltCopy(uint16 dx, uint16 dy, const PathBuffer &src, uint16 sx, uint16 sy, uint width, uint height) {

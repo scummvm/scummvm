@@ -218,7 +218,6 @@ struct PathBuffer {
 	bool	bigEndian;
 
 	byte* getPtr(uint16 x, uint16 y) const;
-	void bltOr(uint16 dx, uint16 dy, const PathBuffer &src, uint16 sx, uint16 sy, uint width, uint height);
 	void bltCopy(uint16 dx, uint16 dy, const PathBuffer &src, uint16 sx, uint16 sy, uint width, uint height);
 
 public:
