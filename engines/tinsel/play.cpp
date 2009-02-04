@@ -237,8 +237,8 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 		PMULTI_INIT pmi;		// MULTI_INIT structure
 
 		pReel = GetReel(hFilm, actorCol - 1);
-		pmi = (PMULTI_INIT) LockMem(pReel->mobj);
-		_ctx->reelActor = pmi->mulID;
+		pmi = (PMULTI_INIT) LockMem(FROM_LE_32(pReel->mobj));
+		_ctx->reelActor = (int32)FROM_LE_32(pmi->mulID);
 	} else
 		_ctx->reelActor = 0;
 
@@ -254,27 +254,27 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 		pFilm = (FILM *)LockMem(hFilm);
 		pReel = &pFilm->reels[column];
 
-		pAni = (ANI_SCRIPT *)LockMem(pReel->script);
+		pAni = (ANI_SCRIPT *)LockMem(FROM_LE_32(pReel->script));
 
 		if (_ctx->speed == -1) {
 			_ctx->speed = (ONE_SECOND/pFilm->frate);
 
 			// Restored reel
 			for (;;) {
-				if (pAni[_ctx->frameNumber].op == ANI_END)
+				if (FROM_LE_32(pAni[_ctx->frameNumber].op) == ANI_END)
 					break;
-				else if (pAni[_ctx->frameNumber].op == ANI_JUMP) {
+				else if (FROM_LE_32(pAni[_ctx->frameNumber].op) == ANI_JUMP) {
 					_ctx->frameNumber++;
-					_ctx->frameNumber += pAni[_ctx->frameNumber].op;
+					_ctx->frameNumber += FROM_LE_32(pAni[_ctx->frameNumber].op);
 					break;
 				}
 				// Could check for the other stuff here
 				// but they really dont happen
 				// OH YES THEY DO
-				else if (pAni[_ctx->frameNumber].op == ANI_ADJUSTX
-					||	 pAni[_ctx->frameNumber].op == ANI_ADJUSTY) {
+				else if (FROM_LE_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTX
+					||	 FROM_LE_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTY) {
 					_ctx->frameNumber += 2;
-				} else if (pAni[_ctx->frameNumber].op == ANI_ADJUSTXY) {
+				} else if (FROM_LE_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTXY) {
 					_ctx->frameNumber += 3;
 				} else {
 					// ANI_STOP, ANI_HIDE, ANI_HFLIP,
@@ -284,7 +284,7 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 			}
 		}
 
-		switch (pAni[_ctx->frameNumber].op) {
+		switch (FROM_LE_32(pAni[_ctx->frameNumber].op)) {
 		case ANI_END:
 			// Stop this sample if repeating
 			if (_ctx->sampleNumber && _ctx->bLooped)
@@ -297,7 +297,7 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 
 			assert(pAni[_ctx->frameNumber].op < 0);
 
-			_ctx->frameNumber += pAni[_ctx->frameNumber].op;
+			_ctx->frameNumber += FROM_LE_32(pAni[_ctx->frameNumber].op);
 
 			assert(_ctx->frameNumber >= 0);
 			continue;
@@ -332,15 +332,15 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 			if (_ctx->sampleNumber)
 				_vm->_sound->stopSpecSample(_ctx->sampleNumber, 0);
 
-			_ctx->sampleNumber = pAni[_ctx->frameNumber++].op;
+			_ctx->sampleNumber = FROM_LE_32(pAni[_ctx->frameNumber++].op);
 			if (_ctx->sampleNumber > 0)
 				_ctx->bLooped = false;
 			else {
 				_ctx->sampleNumber = ~_ctx->sampleNumber;
 				_ctx->bLooped = true;
 			}
-			x = (short)(pAni[_ctx->frameNumber].op >> 16);
-			y = (short)(pAni[_ctx->frameNumber].op & 0xffff);
+			x = (short)(FROM_LE_32(pAni[_ctx->frameNumber].op) >> 16);
+			y = (short)(FROM_LE_32(pAni[_ctx->frameNumber].op) & 0xffff);
 
 			if (x == 0)
 				x = -1;
