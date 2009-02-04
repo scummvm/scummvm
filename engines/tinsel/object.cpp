@@ -442,7 +442,7 @@ void AnimateObjectFlags(OBJECT *pAniObj, int newflags, SCNHANDLE hNewImg) {
 			pAniObj->width  = FROM_LE_16(pNewImg->imgWidth);
 			pAniObj->height = FROM_LE_16(pNewImg->imgHeight) & ~C16_FLAG_MASK;
 			newflags &= ~C16_FLAG_MASK;
-			newflags |= pNewImg->imgHeight & C16_FLAG_MASK;
+			newflags |= FROM_LE_16(pNewImg->imgHeight) & C16_FLAG_MASK;
 
 			// set objects bitmap definition
 			pAniObj->hBits  = FROM_LE_32(pNewImg->hImgBits);
