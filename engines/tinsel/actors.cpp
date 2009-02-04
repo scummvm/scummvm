@@ -1296,9 +1296,9 @@ void SetActorRGB(int ano, COLORREF colour) {
 	assert(ano >= 0 && ano <= NumActors);
 
 	if (ano)
-		actorInfo[ano - 1].textColour = colour;
+		actorInfo[ano - 1].textColour = TO_LE_32(colour);
 	else
-		defaultColour = colour;
+		defaultColour = TO_LE_32(colour);
 }
 
 /**
