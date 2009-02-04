@@ -284,6 +284,9 @@ Common::Error MadeEngine::go() {
 	} else {
 		error ("Unknown MADE game");
 	}
+	
+	if ((getFeatures() & GF_CD) || (getFeatures() & GF_CD_COMPRESSED))
+		checkCD();
 
 	_autoStopSound = false;
 	_eventNum = _eventKey = _eventMouseX = _eventMouseY = 0;

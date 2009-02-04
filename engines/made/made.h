@@ -121,6 +121,7 @@ public:
 	SoundEnergyArray *_soundEnergyArray;
 	
 	uint32 _musicBeatStart;
+	uint32 _cdTimeStart;
 
 	int32 _timers[50];
 	int16 getTicks();
