@@ -117,7 +117,7 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 		// fade palette using next multiplier
 		if (TinselV2)
 			FadePalette(_ctx->fadeRGB, pFade->pPalQ->palRGB,
-				FROM_LE_32(pFade->pPalQ->numColours), (uint32) *_ctx->pColMult);
+				pFade->pPalQ->numColours, (uint32) *_ctx->pColMult);
 		else
 			FadePalette(_ctx->fadeRGB, _ctx->pPalette->palRGB,
 				FROM_LE_32(_ctx->pPalette->numColours), (uint32) *_ctx->pColMult);

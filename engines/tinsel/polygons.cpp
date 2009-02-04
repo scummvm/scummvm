@@ -1041,8 +1041,8 @@ int GetBrightness(HPOLYGON hPath, int y) {
 	Poly pp(LockMem(pHandle), Polys[hPath]->pIndex);
 
 	// Path is of a constant brightness?
-	if (pp.bright1 == pp.bright2)
-		return pp.bright1;
+	if (FROM_LE_32(pp.bright1) == FROM_LE_32(pp.bright2))
+		return FROM_LE_32(pp.bright1);
 
 	assert(FROM_LE_32(pp.bright1) >= FROM_LE_32(pp.bright2));
 
