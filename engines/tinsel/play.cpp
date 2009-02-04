@@ -295,7 +295,7 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 		case ANI_JUMP:
 			_ctx->frameNumber++;
 
-			assert(pAni[_ctx->frameNumber].op < 0);
+			assert((int32)FROM_LE_32(pAni[_ctx->frameNumber].op) < 0);
 
 			_ctx->frameNumber += FROM_LE_32(pAni[_ctx->frameNumber].op);
 

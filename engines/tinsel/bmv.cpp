@@ -125,9 +125,9 @@ typedef struct {
 
 typedef struct {
 
-	short	x;
-	short	y;
-	short	stringId;
+	int16	x;
+	int16	y;
+	int16	stringId;
 	unsigned char	duration;
 	unsigned char	fontId;
 
@@ -596,10 +596,10 @@ static int MovieCommand(char cmd, int commandOffset) {
 		PPRINT_CMD pCmd;
 
 		pCmd = (PPRINT_CMD)(bigBuffer + commandOffset);
-
-		MovieText(nullContext, pCmd->stringId,
-				pCmd->x,
-				pCmd->y,
+		
+		MovieText(nullContext, (int16)READ_LE_UINT16(&pCmd->stringId),
+				(int16)READ_LE_UINT16(&pCmd->x),
+				(int16)READ_LE_UINT16(&pCmd->y),
 				pCmd->fontId,
 				NULL,
 				pCmd->duration);
@@ -612,9 +612,9 @@ static int MovieCommand(char cmd, int commandOffset) {
 			pCmd = (PTALK_CMD)(bigBuffer + commandOffset);
 			talkColour = RGB(pCmd->r, pCmd->g, pCmd->b);
 
-			MovieText(nullContext, pCmd->stringId,
-					pCmd->x,
-					pCmd->y,
+			MovieText(nullContext, (int16)READ_LE_UINT16(&pCmd->stringId),
+					(int16)READ_LE_UINT16(&pCmd->x),
+					(int16)READ_LE_UINT16(&pCmd->y),
 					0,
 					&talkColour,
 					pCmd->duration);

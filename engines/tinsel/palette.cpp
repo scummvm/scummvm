@@ -257,7 +257,7 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 
 			if (TinselV2)
 				// Copy all the colours
-				memcpy(p->palRGB, pNewPal->palRGB, FROM_LE_32(pNewPal->numColours) * sizeof(COLORREF));
+				memcpy(p->palRGB, pNewPal->palRGB, p->numColours * sizeof(COLORREF));
 
 #ifdef DEBUG
 			// one more palette in use
@@ -267,7 +267,7 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 
 			// Q the change to the video DAC
 			if (TinselV2)
-				UpdateDACqueue(p->posInDAC, FROM_LE_32(pNewPal->numColours), p->palRGB);
+				UpdateDACqueue(p->posInDAC, p->numColours, p->palRGB);
 			else
 				UpdateDACqueueHandle(p->posInDAC, p->numColours, p->hPal);
 
@@ -372,10 +372,10 @@ void SwapPalette(PALQ *pPalQ, SCNHANDLE hNewPal) {
 		pPalQ->hPal = hNewPal;
 
 		if (TinselV2) {
-			pPalQ->numColours = pNewPal->numColours;
+			pPalQ->numColours = FROM_LE_32(pNewPal->numColours);
 
 			// Copy all the colours
-			memcpy(pPalQ->palRGB, pNewPal->palRGB, pNewPal->numColours * sizeof(COLORREF));
+			memcpy(pPalQ->palRGB, pNewPal->palRGB, FROM_LE_32(pNewPal->numColours) * sizeof(COLORREF));
 
 			if (!pPalQ->bFading)
 				// Q the change to the video DAC
@@ -512,7 +512,7 @@ void CreateGhostPalette(SCNHANDLE hPalette) {
 	// leave background colour alone
 	ghostPalette[0] = 0;
 
-	for (i = 0; i < pPal->numColours; i++) {
+	for (i = 0; i < (int)FROM_LE_32(pPal->numColours); i++) {
 		// get the RGB colour model values
 		uint8 red   = GetRValue(pPal->palRGB[i]);
 		uint8 green = GetGValue(pPal->palRGB[i]);

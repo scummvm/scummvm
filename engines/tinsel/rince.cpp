@@ -804,7 +804,7 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
 	InitialPathChecks(pMover, rpos->X, rpos->Y);
 
 	pFilm = (FILM *)LockMem(pMover->walkReels[i][FORWARD]);	// Any old reel
-	pmi = (PMULTI_INIT)LockMem(pFilm->reels[0].mobj);
+	pmi = (PMULTI_INIT)LockMem(FROM_LE_32(pFilm->reels[0].mobj));
 
 	// Poke in the background palette
 	PokeInPalette(pmi);
