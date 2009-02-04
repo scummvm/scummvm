@@ -371,8 +371,8 @@ int ADPCMInputStream::readBufferTinsel4(int channels, int16 *buffer, const int n
 		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2, _blockPos++) {
 			// Read 1 byte = 8 bits = two 4 bit blocks
 			data = _stream->readByte();
-			buffer[samples] = TO_LE_16(decodeTinsel((data << 8) & 0xF000, eVal));
-			buffer[samples+1] = TO_LE_16(decodeTinsel((data << 12) & 0xF000, eVal));
+			buffer[samples] = decodeTinsel((data << 8) & 0xF000, eVal);
+			buffer[samples+1] = decodeTinsel((data << 12) & 0xF000, eVal);
 		}
 	}
 
@@ -397,21 +397,21 @@ int ADPCMInputStream::readBufferTinsel6(int channels, int16 *buffer, const int n
 			switch (_chunkPos) {
 			case 0:
 				_chunkData = _stream->readByte();
-				buffer[samples] = TO_LE_16(decodeTinsel((_chunkData << 8) & 0xFC00, eVal));
+				buffer[samples] = decodeTinsel((_chunkData << 8) & 0xFC00, eVal);
 				break;
 			case 1:
 				_chunkData = (_chunkData << 8) | (_stream->readByte());
-				buffer[samples] = TO_LE_16(decodeTinsel((_chunkData << 6) & 0xFC00, eVal));
+				buffer[samples] = decodeTinsel((_chunkData << 6) & 0xFC00, eVal);
 				_blockPos++;
 				break;
 			case 2:
 				_chunkData = (_chunkData << 8) | (_stream->readByte());
-				buffer[samples] = TO_LE_16(decodeTinsel((_chunkData << 4) & 0xFC00, eVal));
+				buffer[samples] = decodeTinsel((_chunkData << 4) & 0xFC00, eVal);
 				_blockPos++;
 				break;
 			case 3:
 				_chunkData = (_chunkData << 8);
-				buffer[samples] = TO_LE_16(decodeTinsel((_chunkData << 2) & 0xFC00, eVal));
+				buffer[samples] = decodeTinsel((_chunkData << 2) & 0xFC00, eVal);
 				_blockPos++;
 				break;
 			}
@@ -439,7 +439,7 @@ int ADPCMInputStream::readBufferTinsel8(int channels, int16 *buffer, const int n
 		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples++, _blockPos++) {
 			// Read 1 byte = 8 bits = one 8 bit block
 			data = _stream->readByte();
-			buffer[samples] = TO_LE_16(decodeTinsel(data << 8, eVal));
+			buffer[samples] = decodeTinsel(data << 8, eVal);
 		}
 	}
 
