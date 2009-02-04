@@ -994,22 +994,10 @@ Common::Error AGOSEngine::go() {
 
 	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAtariST &&
 		(getFeatures() & GF_DEMO)) {
-		int i;
+		setWindowImage(3, 9900);
+		while (!shouldQuit())
+			delay(0);
 
-		while (!shouldQuit()) {
-			for (i = 0; i < 4; i++) {
-				setWindowImage(3, 9902 + i);
-				debug(0, "Displaying image %d", 9902 + i);
-				delay(3000);
-
-			}
-
-			for (i = 4; i < 16; i++) {
-				setWindowImage(4, 9902 + i);
-				debug(0, "Displaying image %d", 9902 + i);
-				delay(3000);
-			}
-		}
 	}
 
 	if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
