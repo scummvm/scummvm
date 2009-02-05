@@ -354,7 +354,7 @@ void KyraEngine_MR::objectChatWaitToFinish() {
 			_emc->start(&_chatScriptState, 1);
 
 		_animNeedUpdate = false;
-		while (!_animNeedUpdate && _emc->isValid(&_chatScriptState)) {
+		while (!_animNeedUpdate && _emc->isValid(&_chatScriptState) && !shouldQuit()) {
 			musicUpdate(0);
 			_emc->run(&_chatScriptState);
 		}
@@ -861,7 +861,7 @@ void KyraEngine_MR::npcChatSequence(const char *str, int object, int vocHigh, in
 
 	uint32 endTime = _chatEndTime;
 	bool running = true;
-	while (running) {
+	while (running && !shouldQuit()) {
 		if (!_emc->run(&_dialogScriptState)) {
 			_emc->init(&_dialogScriptState, &_dialogScriptData);
 			_emc->start(&_dialogScriptState, _dialogScriptFuncProc);
