@@ -937,9 +937,8 @@ void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, 
 				_fCompressedSound.seek(dirOffset + dirSize * 8 + soundOffset);
 				Common::MemoryReadStream *tmp = _fCompressedSound.readStream(soundSize);
 				if (tmp) {
-					stream = (compressedSoundFilesTable[_compressedSoundType].makeStream)(tmp, true, 0, 0, 1);
+					stream = (compressedSoundFilesTable[_compressedSoundType].makeStream)(tmp, true, 0, 0, loop ? 0 : 1);
 				}
-				// FIXME: looping not handled
 			}
 		}
 	}
