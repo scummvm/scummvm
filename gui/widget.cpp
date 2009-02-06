@@ -199,15 +199,7 @@ void StaticTextWidget::setValue(int value) {
 
 void StaticTextWidget::setLabel(const Common::String &label) {
 	_label = label;
-	
-	// get parent's size
-	const uint16 w = _boss->getWidth();
-	const uint16 h = _boss->getHeight();
-	const int16 x = _boss->getAbsX();
-	const int16 y = _boss->getAbsY();
-	
-	// restore the parent's background and redraw it again.
-	g_gui.theme()->restoreBackground(Common::Rect(x, y, x + w, y + h));
+	this->draw();
 	_boss->draw();
 }
 

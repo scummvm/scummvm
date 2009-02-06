@@ -131,11 +131,7 @@ void Dialog::releaseFocus() {
 }
 
 void Dialog::draw() {
-	//TANOKU - FIXME when is this enabled? what does this do?
-	// Update: called on tab drawing, mainly...
-	// we can pass this as open a new dialog or something
-//	g_gui._needRedraw = true;
-	g_gui._redrawStatus = GUI::GuiManager::kRedrawTopDialog;
+	g_gui._redrawStatus = GUI::GuiManager::kRedrawFull;
 }
 
 void Dialog::drawDialog() {

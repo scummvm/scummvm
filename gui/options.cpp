@@ -251,6 +251,8 @@ void OptionsDialog::open() {
 
 		_subMode = getSubtitleMode(ConfMan.getBool("subtitles", _domain), ConfMan.getBool("speech_mute", _domain));
 		_subToggleButton->setLabel(_subModeDesc[_subMode]);
+		_subToggleButton->draw();
+		
 
 		// Engines that reuse the subtitle speed widget set their own max value.
 		// Scale the config value accordingly (see addSubtitleControls)
