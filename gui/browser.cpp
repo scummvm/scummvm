@@ -43,7 +43,7 @@ enum {
  */
 
 BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
-	: Dialog("Browser") {
+	: Dialog("browser") {
 	_titleRef = CFStringCreateWithCString(0, title, CFStringGetSystemEncoding());
 	_isDirBrowser = dirBrowser;
 }

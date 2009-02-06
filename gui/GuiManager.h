@@ -91,6 +91,9 @@ public:
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
+		kRedrawOpenDialog,
+		kRedrawCloseDialog,
+		kRedrawTopDialog,
 		kRedrawFull
 	};
 

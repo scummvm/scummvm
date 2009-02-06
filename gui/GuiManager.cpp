@@ -139,20 +139,29 @@ void GuiManager::redraw() {
 	if (_dialogStack.empty())
 		return;
 
-    if (_dialogStack.size() > 1) {
-        _theme->clearAll();
-        _theme->openDialog(true);
+	switch (_redrawStatus) {
+		case kRedrawCloseDialog:
+		case kRedrawFull:
+		case kRedrawTopDialog:
+			_theme->clearAll();
+			_theme->openDialog(true);
 
-        for (i = 0; i < _dialogStack.size() - 1; i++)
-            _dialogStack[i]->drawDialog();
+			for (i = 0; i < _dialogStack.size() - 1; i++) {
+				_dialogStack[i]->drawDialog();
+			}
 
-        _theme->finishBuffering();
-        _theme->updateScreen();
-    }
+			_theme->finishBuffering();
 
-    _theme->openDialog(true, (ThemeEngine::ShadingStyle)xmlEval()->getVar("Dialog." + _dialogStack.top()->_name + ".Shading", 0));
-    _dialogStack.top()->drawDialog();
-    _theme->finishBuffering();
+		case kRedrawOpenDialog:
+			_theme->updateScreen();
+			_theme->openDialog(true, (ThemeEngine::ShadingStyle)xmlEval()->getVar("Dialog." + _dialogStack.top()->_name + ".Shading", 0));
+			_dialogStack.top()->drawDialog();
+			_theme->finishBuffering();
+			break;
+
+		default:
+			return;
+	}
 
 	_theme->updateScreen();
 	_redrawStatus = kRedrawDisabled;
@@ -237,6 +246,8 @@ void GuiManager::runLoop() {
 				_useStdCursor = !_theme->ownCursor();
 				if (_useStdCursor)
 					setupCursor();
+
+//				_theme->refresh();
 
 				_themeChange = false;
 				_redrawStatus = kRedrawFull;
@@ -336,7 +347,8 @@ void GuiManager::restoreState() {
 
 void GuiManager::openDialog(Dialog *dialog) {
 	_dialogStack.push(dialog);
-	_redrawStatus = kRedrawFull;
+	if (_redrawStatus != kRedrawFull)
+		_redrawStatus = kRedrawOpenDialog;
 
 	// We reflow the dialog just before opening it. If the screen changed
 	// since the last time we looked, also refresh the loaded theme,
@@ -352,7 +364,8 @@ void GuiManager::closeTopDialog() {
 
 	// Remove the dialog from the stack
 	_dialogStack.pop();
-    _redrawStatus = kRedrawFull;
+	if (_redrawStatus != kRedrawFull)
+		_redrawStatus = kRedrawCloseDialog;
 }
 
 void GuiManager::setupCursor() {
