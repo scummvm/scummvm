@@ -424,7 +424,7 @@ void IgorEngine::playSound(int num, int type) {
 		return;
 	}
 	_sndFile.seek(soundOffset);
-	Audio::AudioStream *stream = Audio::makeVOCStream(_sndFile);
+	Audio::AudioStream *stream = Audio::makeVOCStream(_sndFile, Audio::Mixer::FLAG_UNSIGNED);
 	if (stream) {
 		_mixer->playInputStream(soundType, soundHandle, stream);
 	}

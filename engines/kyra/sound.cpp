@@ -98,7 +98,7 @@ int32 Sound::voicePlay(const char *file, uint8 volume, bool isSfx) {
 			return 0;
 
 		Common::MemoryReadStream vocStream(fileData, fileSize);
-		audioStream = Audio::makeVOCStream(vocStream);
+		audioStream = Audio::makeVOCStream(vocStream, Audio::Mixer::FLAG_UNSIGNED);
 
 		delete[] fileData;
 		fileSize = 0;

@@ -164,10 +164,6 @@ AudioStream *makeVOCStream(Common::ReadStream &stream, byte flags, uint loopStar
 	if (!data)
 		return 0;
 
-	// Default to unsigned sound data, if not flags set
-	if (!flags)
-		 flags |= Audio::Mixer::FLAG_UNSIGNED;
-
 	return makeLinearInputStream(data, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, loopStart, loopEnd);
 }
 
