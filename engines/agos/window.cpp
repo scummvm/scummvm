@@ -61,8 +61,8 @@ WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, 
 	window->width = w;
 	window->height = h;
 	window->flags = flags;
-	window->fill_color = fillColor;
-	window->text_color = textColor;
+	window->fillColor = fillColor;
+	window->textColor = textColor;
 	window->textColumn = 0;
 	window->textColumnOffset = 0;
 	window->textRow = 0;
@@ -77,8 +77,8 @@ WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, 
 	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		clearWindow(window);
 
-	if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformAmiga && window->fill_color == 225)
-		window->fill_color = (getFeatures() & GF_32COLOR) ? 17 : 241;
+	if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformAmiga && window->fillColor == 225)
+		window->fillColor = (getFeatures() & GF_32COLOR) ? 17 : 241;
 
 	return window;
 }
@@ -130,8 +130,8 @@ void AGOSEngine_Feeble::colorWindow(WindowBlock *window) {
 
 	for (h = 0; h < window->height; h++) {
 		for (w = 0; w < window->width; w++) {
-			if (dst[w] == 113  || dst[w] == 116 || dst[w] == 252)
-				dst[w] = window->fill_color;
+			if (dst[w] == 113 || dst[w] == 116 || dst[w] == 252)
+				dst[w] = window->fillColor;
 		}
 		dst += _screenWidth;
 	}
@@ -146,7 +146,7 @@ void AGOSEngine::colorWindow(WindowBlock *window) {
 	h = window->height * 8;
 
 	if (getGameType() == GType_ELVIRA2 && window->y == 146) {
-		if (window->fill_color == 1) {
+		if (window->fillColor == 1) {
 			_displayPalette[33 * 4 + 0] = 48 * 4;
 			_displayPalette[33 * 4 + 1] = 40 * 4;
 			_displayPalette[33 * 4 + 2] = 32 * 4;
@@ -171,7 +171,7 @@ void AGOSEngine::colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, u
 	Graphics::Surface *screen = _system->lockScreen();
 	byte *dst = (byte *)screen->pixels + y * _screenWidth + x;
 
-	uint8 color = window->fill_color;
+	uint8 color = window->fillColor;
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		color += dst[0] & 0xF0;
 
@@ -256,13 +256,13 @@ void AGOSEngine::setTextColor(uint color) {
 	WindowBlock *window = _windowArray[_curWindow];
 
 	if ((getFeatures() & GF_32COLOR) && color != 0) {
-		if (window->fill_color == 17)
+		if (window->fillColor == 17)
 			color = 25;
 		else
 			color = 220;
 	}
 
-	window->text_color = color;
+	window->textColor = color;
 }
 
 void AGOSEngine::sendWindow(uint a) {
@@ -323,13 +323,13 @@ void AGOSEngine::writeChar(WindowBlock *window, int x, int y, int offs, int val)
 
 	// Clear background of first digit
 	window->textColumnOffset = offs;
-	window->text_color = 0;
+	window->textColor = 0;
 	windowDrawChar(window, x * 8, y, 129);
 
 	if (val != -1) {
 		// Print first digit
 		chr = val / 10 + 48;
-		window->text_color = 15;
+		window->textColor = 15;
 		windowDrawChar(window, x * 8, y, chr);
 	}
 
@@ -341,13 +341,13 @@ void AGOSEngine::writeChar(WindowBlock *window, int x, int y, int offs, int val)
 
 	// Clear background of second digit
 	window->textColumnOffset = offs;
-	window->text_color = 0;
+	window->textColor = 0;
 	windowDrawChar(window, x * 8, y, 129);
 
 	if (val != -1) {
 		// Print second digit
 		chr = val % 10 + 48;
-		window->text_color = 15;
+		window->textColor = 15;
 		windowDrawChar(window, x * 8, y, chr);
 	}
 }

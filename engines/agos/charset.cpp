@@ -194,23 +194,23 @@ static const byte simon_agaFont[] = {
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x7C,0x04,0x38,0x40,0x82,0x08,0x40,0x00,0xB4,0x00,0x10,0x00,0x6C,0x04,0x20,0x00,0x5A,0x3C,0x00,0x40,0x82,0x00,0x00,0x00,0x7C,0x00,0x00,0x00,0x00,0x07
 };
 
-void AGOSEngine::renderStringAmiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
+void AGOSEngine::renderStringAmiga(uint vgaSpriteId, uint color, uint width, uint height, const char *txt) {
 	VgaPointersEntry *vpe = &_vgaBufferPointers[2];
 	byte *p, *dst, *dst_org, chr;
 	uint count;
 
-	if (vga_sprite_id >= 100) {
-		vga_sprite_id -= 100;
+	if (vgaSpriteId >= 100) {
+		vgaSpriteId -= 100;
 		vpe++;
 	}
 
 	dst = vpe->vgaFile2;
 
 	count = 2000;
-	if (vga_sprite_id == 1)
+	if (vgaSpriteId == 1)
 		count *= 2;
 
-	p = dst + vga_sprite_id * 8;
+	p = dst + vgaSpriteId * 8;
 	WRITE_BE_UINT16(p + 4, height);
 	WRITE_BE_UINT16(p + 6, width);
 	dst += READ_BE_UINT32(p);
@@ -278,29 +278,29 @@ void AGOSEngine::renderStringAmiga(uint vga_sprite_id, uint color, uint width, u
 	}
 }
 
-void AGOSEngine::renderString(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
+void AGOSEngine::renderString(uint vgaSpriteId, uint color, uint width, uint height, const char *txt) {
 	VgaPointersEntry *vpe = &_vgaBufferPointers[2];
 	byte *src, *dst, *p, *dst_org, chr;
 	const int textHeight = (getGameType() == GType_FF || getGameType() == GType_PP) ? 15: 10;
 	uint count = 0;
 
-	if (vga_sprite_id >= 100) {
-		vga_sprite_id -= 100;
+	if (vgaSpriteId >= 100) {
+		vgaSpriteId -= 100;
 		vpe++;
 	}
 
 	src = dst = vpe->vgaFile2;
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		if (vga_sprite_id == 1)
+		if (vgaSpriteId == 1)
 			count = 45000;
 	} else {
 		count = 4000;
-		if (vga_sprite_id == 1)
+		if (vgaSpriteId == 1)
 			count *= 2;
 	}
 
-	p = dst + vga_sprite_id * 8;
+	p = dst + vgaSpriteId * 8;
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		WRITE_LE_UINT16(p + 4, height);

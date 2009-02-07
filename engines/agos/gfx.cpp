@@ -244,14 +244,14 @@ void AGOSEngine_Feeble::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scro
 
 	xscale = ((w * factor) / 2);
 
-	dstRect.left   = (int16)(x - xscale);
+	dstRect.left = (int16)(x - xscale);
 	if (dstRect.left > _screenWidth - 1)
 		return;
-	dstRect.top    = (int16)(y - (h * factor));
+	dstRect.top = (int16)(y - (h * factor));
 	if (dstRect.top > _screenHeight - 1)
 		return;
 
-	dstRect.right  = (int16)(x + xscale);
+	dstRect.right = (int16)(x + xscale);
 	dstRect.bottom = y;
 
 	_feebleRect = dstRect;
@@ -381,7 +381,7 @@ void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 
 			if (state->flags & kDFMasked) {
 				if (getGameType() == GType_FF && !getBitFlag(81)) {
-					if (state->x  > _feebleRect.right) {
+					if (state->x > _feebleRect.right) {
 						return;
 					}
 					if (state->y > _feebleRect.bottom) {
@@ -826,7 +826,7 @@ void AGOSEngine::drawVertImageCompressed(VC10_state *state) {
 		byte *dst = dstPtr;
 
 		h = 0;
-		if (state->flags & kDFNonTrans)  {
+		if (state->flags & kDFNonTrans) {
 			do {
 				byte colors = *src;
 				color = (colors / 16);
@@ -902,7 +902,7 @@ void AGOSEngine::drawImage(VC10_state *state) {
 			xoffs = (vlut[0] * 2 + state->x) * 8;
 			yoffs = vlut[1] + state->y;
 		}
-	} else {
+	} else if (getGameType() == GType_ELVIRA1) {
 		if (_windowNum == 6) {
 			state->surf_addr = _window6BackScn;
 			state->surf_pitch = 48;
@@ -1158,14 +1158,14 @@ void AGOSEngine::animate(uint16 windowNum, uint16 zoneNum, uint16 vgaSpriteId, i
 	}
 }
 
-void AGOSEngine::setImage(uint16 vga_res_id, bool vgaScript) {
+void AGOSEngine::setImage(uint16 vgaSpriteId, bool vgaScript) {
 	uint zoneNum;
 	VgaPointersEntry *vpe;
 	byte *bb, *b;
 	uint16 count;
 	const byte *vc_ptr_org;
 
-	zoneNum = vga_res_id / 100;
+	zoneNum = vgaSpriteId / 100;
 
 	for (;;) {
 		vpe = &_vgaBufferPointers[zoneNum];
@@ -1198,22 +1198,22 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool vgaScript) {
 		b = bb + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageTable);
 
 		while (count--) {
-			if (READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) == vga_res_id)
+			if (READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) == vgaSpriteId)
 				break;
 			b += sizeof(ImageHeader_Feeble);
 		}
-		assert(READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) == vga_res_id);
+		assert(READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) == vgaSpriteId);
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		b = bb + READ_BE_UINT16(bb + 4);
 		count = READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageCount);
 		b = bb + READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageTable);
 
 		while (count--) {
-			if (READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == vga_res_id)
+			if (READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == vgaSpriteId)
 				break;
 			b += sizeof(ImageHeader_Simon);
 		}
-		assert(READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == vga_res_id);
+		assert(READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) == vgaSpriteId);
 
 		if (!vgaScript)
 			clearVideoWindow(_windowNum, READ_BE_UINT16(&((ImageHeader_Simon *) b)->color));
@@ -1225,11 +1225,11 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool vgaScript) {
 		b = bb + READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->imageTable);
 
 		while (count--) {
-			if (READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == vga_res_id)
+			if (READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == vgaSpriteId)
 				break;
 			b += sizeof(ImageHeader_WW);
 		}
-		assert(READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == vga_res_id);
+		assert(READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == vgaSpriteId);
 
 		if (!vgaScript)
 			clearVideoWindow(_windowNum, READ_BE_UINT16(&((ImageHeader_WW *) b)->color));
@@ -1237,11 +1237,11 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool vgaScript) {
 
 	if (_startVgaScript) {
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			dumpVgaScript(_curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble*)b)->scriptOffs), zoneNum, vga_res_id);
+			dumpVgaScript(_curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble*)b)->scriptOffs), zoneNum, vgaSpriteId);
 		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-			dumpVgaScript(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon*)b)->scriptOffs), zoneNum, vga_res_id);
+			dumpVgaScript(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon*)b)->scriptOffs), zoneNum, vgaSpriteId);
 		} else {
-			dumpVgaScript(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW*)b)->scriptOffs), zoneNum, vga_res_id);
+			dumpVgaScript(_curVgaFile1 + READ_BE_UINT16(&((ImageHeader_WW*)b)->scriptOffs), zoneNum, vgaSpriteId);
 		}
 	}
 
@@ -1259,7 +1259,7 @@ void AGOSEngine::setImage(uint16 vga_res_id, bool vgaScript) {
 	_vcPtr = vc_ptr_org;
 }
 
-void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vga_res) {
+void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vgaSpriteId) {
 	_window3Flag = 0;
 
 	if (mode == 4) {
@@ -1284,19 +1284,19 @@ void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vga_res) {
 
 	if (getGameType() != GType_PP && getGameType() != GType_FF) {
 		if (getGameType() == GType_WW && (mode == 6 || mode == 8 || mode == 9)) {
-			setWindowImage(mode, vga_res);
+			setWindowImage(mode, vgaSpriteId);
 		} else {
 			while (_copyScnFlag && !shouldQuit())
 				delay(1);
 
-			setWindowImage(mode, vga_res);
+			setWindowImage(mode, vgaSpriteId);
 		}
 	} else {
-		setWindowImage(mode, vga_res);
+		setWindowImage(mode, vgaSpriteId);
 	}
 }
 
-void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
+void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId) {
 	uint16 updateWindow;
 
 	_windowNum = updateWindow = mode;
@@ -1328,7 +1328,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 		}
 	}
 
-	setImage(vga_res_id);
+	setImage(vgaSpriteId);
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		fillBackGroundFromBack();
@@ -1408,7 +1408,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vga_res_id) {
 				_lockWord &= ~0x20;
 				return;
 			}
-		} else {
+		} else if (getGameType() == GType_ELVIRA1) {
 			if (updateWindow == 6) {
 				_window6Flag = 1;
 				src = _window6BackScn;

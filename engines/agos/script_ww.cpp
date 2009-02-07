@@ -393,12 +393,12 @@ void AGOSEngine_Waxworks::oww_pauseGame() {
 }
 
 void AGOSEngine_Waxworks::oww_boxMessage() {
-	// 184:  print message to box
+	// 184: print message to box
 	boxTextMessage((const char *)getStringPtrByID(getNextStringID()));
 }
 
 void AGOSEngine_Waxworks::oww_boxMsg() {
-	// 185:  print msg to box
+	// 185: print msg to box
 	boxTextMsg((const char *)getStringPtrByID(getNextStringID()));
 }
 

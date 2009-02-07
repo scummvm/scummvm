@@ -166,7 +166,7 @@ void AGOSEngine::animateSprites() {
 			_wallOn--;
 
 			VC10_state state;
-			state.srcPtr  = getBackGround() + 3 * _screenWidth + 3 * 16;
+			state.srcPtr = getBackGround() + 3 * _screenWidth + 3 * 16;
 			state.height = state.draw_height = 127;
 			state.width = state.draw_width = 14;
 			state.y = 0;
@@ -449,7 +449,7 @@ void AGOSEngine::restoreBackGround() {
 		_windowNum = animTable->windowNum & ~0x8000;
 
 		VC10_state state;
-		state.srcPtr  = animTable->srcPtr;
+		state.srcPtr = animTable->srcPtr;
 		state.height = state.draw_height = animTable->height;
 		state.width = state.draw_width = animTable->width;
 		state.y = animTable->y;
@@ -559,9 +559,9 @@ void AGOSEngine::displayBoxStars() {
 						continue;
 				} else {
 					dha = _hitAreas;
-					while (dha != ha && dha->item_ptr != ha->item_ptr)
+					while (dha != ha && dha->itemPtr != ha->itemPtr)
 						++dha;
-					if (dha != ha && dha->item_ptr == ha->item_ptr)
+					if (dha != ha && dha->itemPtr == ha->itemPtr)
 						continue;
 				}
 

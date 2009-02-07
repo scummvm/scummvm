@@ -288,7 +288,7 @@ File *AGOSEngine::openTablesFile_gme(const char *filename) {
 	return _gameFile;
 }
 
-bool AGOSEngine::loadTablesIntoMem(uint16 subr_id) {
+bool AGOSEngine::loadTablesIntoMem(uint16 subrId) {
 	byte *p;
 	uint16 min_num, max_num, file_num;
 	File *in;
@@ -305,7 +305,7 @@ bool AGOSEngine::loadTablesIntoMem(uint16 subr_id) {
 	p += 6;
 
 	while (min_num) {
-		if ((subr_id >= min_num) && (subr_id <= max_num)) {
+		if ((subrId >= min_num) && (subrId <= max_num)) {
 			_subroutineList = _subroutineListOrg;
 			_tablesHeapPtr = _tablesHeapPtrOrg;
 			_tablesHeapCurPos = _tablesHeapCurPosOrg;
@@ -333,11 +333,11 @@ bool AGOSEngine::loadTablesIntoMem(uint16 subr_id) {
 		p += 6;
 	}
 
-	debug(1,"loadTablesIntoMem: didn't find %d", subr_id);
+	debug(1,"loadTablesIntoMem: didn't find %d", subrId);
 	return 0;
 }
 
-bool AGOSEngine_Waxworks::loadTablesIntoMem(uint16 subr_id) {
+bool AGOSEngine_Waxworks::loadTablesIntoMem(uint16 subrId) {
 	byte *p;
 	int i;
 	uint min_num, max_num;
@@ -365,7 +365,7 @@ bool AGOSEngine_Waxworks::loadTablesIntoMem(uint16 subr_id) {
 
 			max_num = READ_BE_UINT16(p); p += 2;
 
-			if (subr_id >= min_num && subr_id <= max_num) {
+			if (subrId >= min_num && subrId <= max_num) {
 				_subroutineList = _subroutineListOrg;
 				_tablesHeapPtr = _tablesHeapPtrOrg;
 				_tablesHeapCurPos = _tablesHeapCurPosOrg;
@@ -395,11 +395,11 @@ bool AGOSEngine_Waxworks::loadTablesIntoMem(uint16 subr_id) {
 		}
 	}
 
-	debug(1,"loadTablesIntoMem: didn't find %d", subr_id);
+	debug(1,"loadTablesIntoMem: didn't find %d", subrId);
 	return 0;
 }
 
-bool AGOSEngine::loadXTablesIntoMem(uint16 subr_id) {
+bool AGOSEngine::loadXTablesIntoMem(uint16 subrId) {
 	byte *p;
 	int i;
 	uint min_num, max_num;
@@ -426,7 +426,7 @@ bool AGOSEngine::loadXTablesIntoMem(uint16 subr_id) {
 			max_num = READ_BE_UINT16(p);
 			p += 2;
 
-			if (subr_id >= min_num && subr_id <= max_num) {
+			if (subrId >= min_num && subrId <= max_num) {
 				_subroutineList = _xsubroutineListOrg;
 				_tablesHeapPtr = _xtablesHeapPtrOrg;
 				_tablesHeapCurPos = _xtablesHeapCurPosOrg;
@@ -450,7 +450,7 @@ bool AGOSEngine::loadXTablesIntoMem(uint16 subr_id) {
 		}
 	}
 
-	debug(1,"loadXTablesIntoMem: didn't find %d", subr_id);
+	debug(1,"loadXTablesIntoMem: didn't find %d", subrId);
 	return 0;
 }
 
@@ -696,7 +696,7 @@ void AGOSEngine::readSubroutineLine(Common::SeekableReadStream *in, SubroutineLi
 
 byte *AGOSEngine::readSingleOpcode(Common::SeekableReadStream *in, byte *ptr) {
 	int i, l;
-	const char *string_ptr;
+	const char *stringPtr;
 	uint16 opcode, val;
 
 	const char *const *table;
@@ -728,15 +728,15 @@ byte *AGOSEngine::readSingleOpcode(Common::SeekableReadStream *in, byte *ptr) {
 		opcode = *ptr++;
 	}
 
-	string_ptr = table[opcode];
-	if (!string_ptr)
+	stringPtr = table[opcode];
+	if (!stringPtr)
 		error("Unable to locate opcode table. Perhaps you are using the wrong game target?");
 
 	for (;;) {
-		if (string_ptr[i] == ' ')
+		if (stringPtr[i] == ' ')
 			return ptr;
 
-		l = string_ptr[i++];
+		l = stringPtr[i++];
 
 		switch (l) {
 		case 'F':

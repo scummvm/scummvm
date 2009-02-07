@@ -284,13 +284,13 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool one_opcode_only) {
 	} while (!one_opcode_only);
 }
 
-void AGOSEngine::dumpVgaScript(const byte *ptr, uint res, uint sprite_id) {
-	dumpVgaScriptAlways(ptr, res, sprite_id);
+void AGOSEngine::dumpVgaScript(const byte *ptr, uint res, uint id) {
+	dumpVgaScriptAlways(ptr, res, id);
 }
 
-void AGOSEngine::dumpVgaScriptAlways(const byte *ptr, uint res, uint sprite_id) {
+void AGOSEngine::dumpVgaScriptAlways(const byte *ptr, uint res, uint id) {
 	printf("; address=%x, vgafile=%d  vgasprite=%d\n",
-					(unsigned int)(ptr - _vgaBufferPointers[res].vgaFile1), res, sprite_id);
+					(unsigned int)(ptr - _vgaBufferPointers[res].vgaFile1), res, id);
 	dumpVideoScript(ptr, false);
 	printf("; end\n");
 }

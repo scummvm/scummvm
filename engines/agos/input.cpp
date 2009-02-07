@@ -152,8 +152,8 @@ void AGOSEngine::setup_cond_c_helper() {
 			inventoryUp(_lastHitArea->window);
 		} else if (_lastHitArea->id == 0x7FFC) {
 			inventoryDown(_lastHitArea->window);
-		} else if (_lastHitArea->item_ptr != NULL) {
-			_hitAreaObjectItem = _lastHitArea->item_ptr;
+		} else if (_lastHitArea->itemPtr != NULL) {
+			_hitAreaObjectItem = _lastHitArea->itemPtr;
 			setVerbText(_lastHitArea);
 			break;
 		}
@@ -218,7 +218,7 @@ void AGOSEngine::waitForInput() {
 		if (!_lastHitArea3 && _dragMode) {
 			ha = _lastClickRem;
 
-			if (ha == 0 || ha->item_ptr == NULL || !(ha->flags & kBFDragBox)) {
+			if (ha == 0 || ha->itemPtr == NULL || !(ha->flags & kBFDragBox)) {
 				_dragFlag = 0;
 				_dragMode = 0;
 				_dragCount = 0;
@@ -226,7 +226,7 @@ void AGOSEngine::waitForInput() {
 				continue;
 			}
 
-			_hitAreaSubjectItem = ha->item_ptr;
+			_hitAreaSubjectItem = ha->itemPtr;
 			_verbHitArea = 500;
 
 			do {
@@ -250,7 +250,7 @@ void AGOSEngine::waitForInput() {
 			boxController(_mouse.x, _mouse.y, 1);
 
 			if (_currentBox != NULL) {
-				_hitAreaObjectItem = _currentBox->item_ptr;
+				_hitAreaObjectItem = _currentBox->itemPtr;
 				setVerbText(ha);
 			}
 
@@ -299,10 +299,10 @@ void AGOSEngine::waitForInput() {
 					waitForSync(34);
 				}
 			}
-			if (ha->item_ptr && (!ha->verb || _verbHitArea ||
-					(_hitAreaSubjectItem != ha->item_ptr && (ha->flags & kBFBoxItem)))
+			if (ha->itemPtr && (!ha->verb || _verbHitArea ||
+					(_hitAreaSubjectItem != ha->itemPtr && (ha->flags & kBFBoxItem)))
 				) {
-				_hitAreaSubjectItem = ha->item_ptr;
+				_hitAreaSubjectItem = ha->itemPtr;
 				id = setVerbText(ha);
 				_nameLocked = 0;
 				displayName(ha);
@@ -313,21 +313,21 @@ void AGOSEngine::waitForInput() {
 				}
 
 				if (getGameType() == GType_WW)
-					doMenuStrip(menuFor_ww(ha->item_ptr, id));
+					doMenuStrip(menuFor_ww(ha->itemPtr, id));
 				else if (getGameType() == GType_ELVIRA2)
-					doMenuStrip(menuFor_e2(ha->item_ptr));
+					doMenuStrip(menuFor_e2(ha->itemPtr));
 				else if (getGameType() == GType_ELVIRA1)
-					lightMenuStrip(getUserFlag1(ha->item_ptr, 6));
+					lightMenuStrip(getUserFlag1(ha->itemPtr, 6));
 			} else {
 				if (ha->verb) {
 					if (getGameType() == GType_WW && _mouseCursor && _mouseCursor < 4) {
-						_hitAreaSubjectItem = ha->item_ptr;
+						_hitAreaSubjectItem = ha->itemPtr;
 						break;
 					}
 
 					_verbHitArea = ha->verb & 0xBFFF;
 					if (ha->verb & 0x4000) {
-						_hitAreaSubjectItem = ha->item_ptr;
+						_hitAreaSubjectItem = ha->itemPtr;
 						break;
 					}
 					if (_hitAreaSubjectItem != NULL)

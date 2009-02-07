@@ -51,7 +51,7 @@ uint16 AGOSEngine::getDoorState(Item *item, uint16 d) {
 
 	SubRoom *subRoom = (SubRoom *)findChildOfType(item, kRoomType);
 	if (subRoom == NULL)
-	    return 0;
+		return 0;
 
 	d <<= 1;
 	mask <<= d;
@@ -95,7 +95,7 @@ void AGOSEngine::setDoorState(Item *i, uint16 d, uint16 n) {
 
 	r = (SubRoom *)findChildOfType(i, kRoomType);
 	if (r == NULL)
-	    return;
+		return;
 	d1 = d;
 	while (d > y) {
 		if (getDoorState(i, y) == 0)
@@ -109,7 +109,7 @@ void AGOSEngine::setDoorState(Item *i, uint16 d, uint16 n) {
 		return;
 	r1 = (SubRoom *)findChildOfType(j, kRoomType);
 	if (r1 == NULL)
-	    return;
+		return;
 	d = getBackExit(d);
 	d1 = d;
 	y = 0;
@@ -321,7 +321,7 @@ uint16 AGOSEngine_Elvira2::getExitState(Item *i, uint16 x, uint16 d) {
 
 	sr = (SubSuperRoom *)findChildOfType(i, kSuperRoomType);
 	if (sr == NULL)
-	    return 0;
+		return 0;
 
 	d <<= 1;
 	mask <<= d;

@@ -300,7 +300,7 @@ void AGOSEngine_PuzzlePack::opp_iconifyWindow() {
 	getNextWord();
 	if (_clockStopped != 0)
 		_gameTime += getTime() - _clockStopped;
-	_clockStopped  = 0;
+	_clockStopped = 0;
 	_system->setFeatureState(OSystem::kFeatureIconifyWindow, true);
 }
 

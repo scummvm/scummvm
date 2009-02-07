@@ -1580,7 +1580,7 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		dst = getBackGround() + y * _dxSurfacePitch + x + window->textColumnOffset;
 		h = 13;
-		w =  feebleFontSize[chr - 32];
+		w = feebleFontSize[chr - 32];
 
 		src = feeble_windowFont + (chr - 32) * 13;
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
@@ -1643,7 +1643,7 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		}
 	}
 
-	color = window->text_color;
+	color = window->textColor;
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		color += dst[0] & 0xF0;
 

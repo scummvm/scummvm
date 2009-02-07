@@ -319,7 +319,7 @@ void AGOSEngine::showActionString(const byte *string) {
 	const uint len = (getGameType() == GType_WW) ? 29 : 53;
 
 	window = _windowArray[1];
-	if (window == NULL || window->text_color == 0)
+	if (window == NULL || window->textColor == 0)
 		return;
 
 	// Arisme : hack for long strings in the French version
@@ -407,7 +407,7 @@ void AGOSEngine::resetNameWindow() {
 		return;
 
 	window = _windowArray[1];
-	if (window != NULL && window->text_color != 0)
+	if (window != NULL && window->textColor != 0)
 		clearWindow(window);
 
 	_lastNameOn = NULL;
@@ -496,7 +496,7 @@ bool AGOSEngine::isBoxDead(uint hitarea) {
 	return (ha->flags & kBFBoxDead) == 0;
 }
 
-void AGOSEngine::defineBox(int id, int x, int y, int width, int height, int flags, int verb, Item *item_ptr) {
+void AGOSEngine::defineBox(int id, int x, int y, int width, int height, int flags, int verb, Item *itemPtr) {
 	HitArea *ha;
 	undefineBox(id);
 
@@ -508,7 +508,7 @@ void AGOSEngine::defineBox(int id, int x, int y, int width, int height, int flag
 	ha->flags = flags | kBFBoxInUse;
 	ha->id = ha->priority = id;
 	ha->verb = verb;
-	ha->item_ptr = item_ptr;
+	ha->itemPtr = itemPtr;
 
 	if (getGameType() == GType_FF && (ha->flags & kBFHyperBox)) {
 		ha->data = _hyperLink;
@@ -770,7 +770,7 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 
 	if ((getGameType() == GType_WW) && (_mouseCursor == 0 || _mouseCursor >= 4)) {
 		uint verb = best_ha->verb & 0x3FFF;
-		if  (verb >= 239 && verb <= 242) {
+		if (verb >= 239 && verb <= 242) {
 			uint cursor = verb - 235;
 			if (_mouseCursor != cursor) {
 				_mouseCursor = cursor;
@@ -831,7 +831,7 @@ void AGOSEngine::displayName(HitArea *ha) {
 	if (ha->flags & kBFTextBox) {
 		result = printTextOf(ha->flags / 256, x, y);
 	} else {
-		result = printNameOf(ha->item_ptr, x, y);
+		result = printNameOf(ha->itemPtr, x, y);
 	}
 
 	if (result)
@@ -903,17 +903,17 @@ void AGOSEngine::invertBox(HitArea *ha, byte a, byte b, byte c, byte d) {
 	do {
 		for (i = 0; i != w; ++i) {
 			color = src[i];
-			if (getGameType() == GType_WW)  {
+			if (getGameType() == GType_WW) {
 				if (!(color & 0xF) || (color & 0xF) == 10) {
 					color ^= 10;
 					src[i] = color;
 				}
-			} else if (getGameType() == GType_ELVIRA2)  {
+			} else if (getGameType() == GType_ELVIRA2) {
 				if (!(color & 1)) {
 					color ^= 2;
 					src[i] = color;
 				}
-			} else if (getGameType() == GType_ELVIRA1)  {
+			} else if (getGameType() == GType_ELVIRA1) {
 				if (color & 1) {
 					color ^= 2;
 					src[i] = color;

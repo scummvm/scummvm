@@ -878,8 +878,8 @@ void AGOSEngine::userGameBackSpace(WindowBlock *window, int x, byte b) {
 	byte old_text;
 
 	windowPutChar(window, x, b);
-	old_text = window->text_color;
-	window->text_color = window->fill_color;
+	old_text = window->textColor;
+	window->textColor = window->fillColor;
 
 	if (_language == Common::HB_ISR) {
 		x = 128;
@@ -891,14 +891,14 @@ void AGOSEngine::userGameBackSpace(WindowBlock *window, int x, byte b) {
 
 	windowPutChar(window, x);
 
-	window->text_color = old_text;
+	window->textColor = old_text;
 	windowPutChar(window, 8);
 }
 
-void AGOSEngine::fileError(WindowBlock *window, bool save_error) {
+void AGOSEngine::fileError(WindowBlock *window, bool saveError) {
 	const char *message1, *message2;
 
-	if (save_error) {
+	if (saveError) {
 		switch (_language) {
 		case Common::RU_RUS:
 			if (getGameType() == GType_SIMON2) {

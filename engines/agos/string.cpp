@@ -114,7 +114,7 @@ byte *AGOSEngine::uncompressToken(byte a, byte *ptr) {
 }
 
 const byte *AGOSEngine::getStringPtrByID(uint16 stringId, bool upperCase) {
-	const byte *string_ptr;
+	const byte *stringPtr;
 	byte *dst;
 
 	_freeStringSlot ^= 1;
@@ -129,11 +129,11 @@ const byte *AGOSEngine::getStringPtrByID(uint16 stringId, bool upperCase) {
 		strcpy((char *)dst, (const char *)_textBuffer);
 	} else {
 		if (stringId < 0x8000) {
-			string_ptr = _stringTabPtr[stringId];
+			stringPtr = _stringTabPtr[stringId];
 		} else {
-			string_ptr = getLocalStringByID(stringId);
+			stringPtr = getLocalStringByID(stringId);
 		}
-		strcpy((char *)dst, (const char *)string_ptr);
+		strcpy((char *)dst, (const char *)stringPtr);
 	}
 
 	if (upperCase && *dst) {
@@ -576,7 +576,7 @@ void AGOSEngine_Feeble::printScreenText(uint vgaSpriteId, uint color, const char
 		height += textHeight;
 		y -= textHeight;
 		if (y < 2)
-		    y = 2;
+			y = 2;
 		string = string2;
 	}
 
@@ -758,7 +758,7 @@ uint16 AGOSEngine_Waxworks::getBoxSize() {
 		if ((_lineCounts[0] <= 96) && (checkFit(_linePtrs[0], 48, 3))) {
 			if (_lineCounts[1] <= 48) {
 				if (_lineCounts[2] <= 48)
-				    return 5;
+					return 5;
 			}
 			return 6;
 		}
@@ -794,7 +794,7 @@ uint16 AGOSEngine_Waxworks::getBoxSize() {
 			return 5;
 	default:
 		return 6;
-    }
+	}
 }
 
 

@@ -158,7 +158,7 @@ struct WindowBlock {
 	int16 textColumn, textRow;
 	int16 scrollY;
 	uint16 textColumnOffset, textLength, textMaxLength;
-	uint8 fill_color, text_color;
+	uint8 fillColor, textColor;
 	IconBlock *iconPtr;
 	WindowBlock() { memset(this, 0, sizeof(*this)); }
 	~WindowBlock() { free (iconPtr); }
