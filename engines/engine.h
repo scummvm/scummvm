@@ -103,6 +103,12 @@ public:
 	 */
 	enum EngineFeature {
 		/**
+		 * Enables the subtitle speed and toggle items in the Options section
+		 * of the global main menu.
+		 */
+		kSupportsSubtitleOptions,
+
+		/**
 		 * 'Return to launcher' feature is supported, i.e., EVENT_RTL is handled
 		 * either directly, or indirectly (that is, the engine calls and honors
 		 * the result of the Engine::shouldQuit() method appropriately).

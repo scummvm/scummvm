@@ -109,7 +109,7 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	new GUI::ButtonWidget(this, "GlobalMenu.Quit", "Quit", kQuitCmd, 'Q');
 
 	_aboutDialog = new GUI::AboutDialog();
-	_optionsDialog = new ConfigDialog();
+	_optionsDialog = new ConfigDialog(_engine->hasFeature(Engine::kSupportsSubtitleOptions));
 	_loadDialog = new GUI::SaveLoadChooser("Load game:", "Load");
 	_loadDialog->setSaveMode(false);
 	_saveDialog = new GUI::SaveLoadChooser("Save game:", "Save");
@@ -269,7 +269,7 @@ enum {
 // These changes will achieve two things at once: Allow us to get rid of using
 //  "" as value for the domain, and in fact provide a somewhat better user
 // experience at the same time.
-ConfigDialog::ConfigDialog()
+ConfigDialog::ConfigDialog(bool subtitleControls)
 	: GUI::OptionsDialog("", "ScummConfig") {
 
 	//
@@ -279,11 +279,13 @@ ConfigDialog::ConfigDialog()
 	addVolumeControls(this, "ScummConfig.");
 
 	//
-	// Some misc options
+	// Subtitle speed and toggle controllers
 	//
 
-	// SCUMM has a talkspeed range of 0-9
-	addSubtitleControls(this, "ScummConfig.", 9);
+	if (subtitleControls) {
+		// Global talkspeed range of 0-255
+		addSubtitleControls(this, "ScummConfig.", 255);
+	}
 
 	//
 	// Add the buttons

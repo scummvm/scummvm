@@ -155,7 +155,8 @@ bool Touche::ToucheEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
 		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+		(f == kSupportsSavingDuringRuntime) ||
+		(f == kSupportsSubtitleOptions);
 }
 
 bool ToucheMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
