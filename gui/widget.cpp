@@ -198,17 +198,16 @@ void StaticTextWidget::setValue(int value) {
 }
 
 void StaticTextWidget::setLabel(const Common::String &label) {
-	_label = label;
-	
-	// get parent's size
-	const uint16 w = _boss->getWidth();
-	const uint16 h = _boss->getHeight();
-	const int16 x = _boss->getAbsX();
-	const int16 y = _boss->getAbsY();
-	
-	// restore the parent's background and redraw it again.
-	g_gui.theme()->restoreBackground(Common::Rect(x, y, x + w, y + h));
-	_boss->draw();
+    if (_label != label) {
+        _label = label;
+
+        // when changing the label, add the CLEARBG flag
+        // so the widget is completely redrawn, otherwise
+        // the new text is drawn on top of the old one.
+        setFlags(WIDGET_CLEARBG);
+        draw();
+        clearFlags(WIDGET_CLEARBG);
+    }
 }
 
 void StaticTextWidget::setAlign(Graphics::TextAlign align) {
@@ -225,7 +224,7 @@ void StaticTextWidget::drawWidget() {
 #pragma mark -
 
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, x, y, w, h, label, Graphics::kTextAlignCenter), CommandSender(boss),
+	: StaticTextWidget(boss, x, y, w, h, label, Graphics::kTextAlignCenter), CommandSender(boss), 
 	  _cmd(cmd), _hotkey(hotkey) {
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
@@ -244,7 +243,7 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void ButtonWidget::drawWidget() {
-	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, 0);
+	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, getFlags());
 }
 
 #pragma mark -

@@ -513,7 +513,7 @@ protected:
 	 *
 	 *	This function is called from all the Widget Drawing methods.
 	 */
-	void queueDD(DrawData type,  const Common::Rect &r, uint32 dynamic = 0);
+	void queueDD(DrawData type,  const Common::Rect &r, uint32 dynamic = 0, bool restore = false);
 	void queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
 		bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0);
 	void queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha);
