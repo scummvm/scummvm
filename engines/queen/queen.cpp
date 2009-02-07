@@ -85,7 +85,8 @@ bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Queen::QueenEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsRTL) ||
+		(f == kSupportsSubtitleOptions);
 }
 
 GameList QueenMetaEngine::getSupportedGames() const {

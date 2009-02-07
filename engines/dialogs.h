@@ -66,7 +66,7 @@ protected:
 #endif
 
 public:
-	ConfigDialog();
+	ConfigDialog(bool subtitleControls);
 	~ConfigDialog();
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
