@@ -23,8 +23,6 @@
  *
  */
 
-#include <time.h>	// for AGOSEngine::getTime()
-
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
