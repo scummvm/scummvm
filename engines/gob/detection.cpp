@@ -676,6 +676,109 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		"intro"
 	},
+	{ // Supplied by vampir_raziel in bug report #1658373
+		{
+			"ween",
+			"",
+			{
+				{"intro.stk", 0, "bfd9d02faf3d8d60a2cf744f95eb48dd", 456570},
+				{"ween.ins", 0, "d2cb24292c9ddafcad07e23382027218", 87800},
+				{NULL, 0, NULL, 0}
+			},
+			EN_GRB,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeWeen,
+		kFeaturesNone,
+		"intro"
+	},
+	{ // Supplied by vampir_raziel in bug report #1658373
+		{
+			"ween",
+			"",
+			AD_ENTRY1s("intro.stk", "257fe669705ac4971efdfd5656eef16a", 457719),
+			FR_FRA,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeWeen,
+		kFeaturesNone,
+		"intro"
+	},
+	{ // Supplied by vampir_raziel in bug report #1658373
+		{
+			"ween",
+			"",
+			AD_ENTRY1s("intro.stk", "dffd1ab98fe76150d6933329ca6f4cc4", 459458),
+			FR_FRA,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeWeen,
+		kFeaturesNone,
+		"intro"
+	},
+	{ // Supplied by vampir_raziel in bug report #1658373
+		{
+			"ween",
+			"",
+			AD_ENTRY1s("intro.stk", "af83debf2cbea21faa591c7b4608fe92", 458192),
+			DE_DEU,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeWeen,
+		kFeaturesNone,
+		"intro"
+	},
+	{ // Supplied by goodoldgeorg in bug report #2563539 
+		{
+			"ween",
+			"",
+			{
+				{"intro.stk", 0, "dffd1ab98fe76150d6933329ca6f4cc4", 459458},
+				{"ween.ins", 0, "d2cb24292c9ddafcad07e23382027218", 87800},
+				{NULL, 0, NULL, 0}
+			},
+			IT_ITA,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeWeen,
+		kFeaturesNone,
+		"intro"
+	},
+	{ // Supplied by pwigren in bug report #1764174
+		{
+			"ween",
+			"",
+			{
+				{"intro.stk", 0, "bfd9d02faf3d8d60a2cf744f95eb48dd", 456570},
+				{"music__5.snd", 0, "7d1819b9981ecddd53d3aacbc75f1cc8", 13446},
+				{NULL, 0, NULL, 0}
+			},
+			EN_GRB,
+			kPlatformAtariST,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeWeen,
+		kFeaturesNone,
+		"intro"
+	},
+	{
+		{
+			"ween",
+			"",
+			AD_ENTRY1("intro.stk", "e6d13fb3b858cb4f78a8780d184d5b2c"),
+			FR_FRA,
+			kPlatformAtariST,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeWeen,
+		kFeaturesNone,
+		"intro"
+	},
 	{
 		{
 			"ween",
@@ -713,92 +816,6 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
-		"intro"
-	},
-	{ // Supplied by vampir_raziel in bug report #1658373
-		{
-			"ween",
-			"",
-			{
-				{"intro.stk", 0, "bfd9d02faf3d8d60a2cf744f95eb48dd", 456570},
-				{"ween.ins", 0, "d2cb24292c9ddafcad07e23382027218", 87800},
-				{NULL, 0, NULL, 0}
-			},
-			EN_GRB,
-			kPlatformAmiga,
-			ADGF_NO_FLAGS
-		},
-		kGameTypeWeen,
-		kFeaturesNone,
-		"intro"
-	},
-	{ // Supplied by pwigren in bug report #1764174
-		{
-			"ween",
-			"",
-			{
-				{"intro.stk", 0, "bfd9d02faf3d8d60a2cf744f95eb48dd", 456570},
-				{"music__5.snd", 0, "7d1819b9981ecddd53d3aacbc75f1cc8", 13446},
-				{NULL, 0, NULL, 0}
-			},
-			EN_GRB,
-			kPlatformAtariST,
-			ADGF_NO_FLAGS
-		},
-		kGameTypeWeen,
-		kFeaturesNone,
-		"intro"
-	},
-	{ // Supplied by vampir_raziel in bug report #1658373
-		{
-			"ween",
-			"",
-			AD_ENTRY1s("intro.stk", "af83debf2cbea21faa591c7b4608fe92", 458192),
-			DE_DEU,
-			kPlatformAmiga,
-			ADGF_NO_FLAGS
-		},
-		kGameTypeWeen,
-		kFeaturesNone,
-		"intro"
-	},
-	{ // Supplied by vampir_raziel in bug report #1658373
-		{
-			"ween",
-			"",
-			AD_ENTRY1s("intro.stk", "257fe669705ac4971efdfd5656eef16a", 457719),
-			FR_FRA,
-			kPlatformAmiga,
-			ADGF_NO_FLAGS
-		},
-		kGameTypeWeen,
-		kFeaturesNone,
-		"intro"
-	},
-	{ // Supplied by vampir_raziel in bug report #1658373
-		{
-			"ween",
-			"",
-			AD_ENTRY1s("intro.stk", "dffd1ab98fe76150d6933329ca6f4cc4", 459458),
-			FR_FRA,
-			kPlatformAmiga,
-			ADGF_NO_FLAGS
-		},
-		kGameTypeWeen,
-		kFeaturesNone,
-		"intro"
-	},
-	{
-		{
-			"ween",
-			"",
-			AD_ENTRY1("intro.stk", "e6d13fb3b858cb4f78a8780d184d5b2c"),
-			FR_FRA,
-			kPlatformAtariST,
-			ADGF_NO_FLAGS
-		},
-		kGameTypeWeen,
-		kFeaturesNone,
 		"intro"
 	},
 	{
