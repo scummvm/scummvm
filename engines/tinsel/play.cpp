@@ -1149,15 +1149,15 @@ void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y) {
 	ppi.x = (short)x;
 	ppi.y = (short)y;
 	ppi.bRestore = true;
-	ppi.speed = (short)(ONE_SECOND/pFilm->frate);
+	ppi.speed = (short)(ONE_SECOND/FROM_LE_32(pFilm->frate));
 	ppi.bTop = false;
 	ppi.myescEvent = 0;
 
 	// Search backwards for now as later column will be the one
-	for (i = pFilm->numreels - 1; i >= 0; i--) {
+	for (i = (int)FROM_LE_32(pFilm->numreels) - 1; i >= 0; i--) {
 		pFreel = &pFilm->reels[i];
-		pmi = (PMULTI_INIT) LockMem(pFreel->mobj);
-		if (pmi->mulID == actor) {
+		pmi = (PMULTI_INIT) LockMem(FROM_LE_32(pFreel->mobj));
+		if ((int32)FROM_LE_32(pmi->mulID) == actor) {
 			ppi.column = (short)i;
 			NewestFilm(hFilm, &pFilm->reels[i]);
 
