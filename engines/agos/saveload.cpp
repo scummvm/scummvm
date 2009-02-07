@@ -581,7 +581,7 @@ int AGOSEngine_Elvira2::userGameGetKey(bool *b, char *buf, uint maxChar) {
 
 void AGOSEngine_Simon1::listSaveGames(char *dst) {
 	Common::InSaveFile *in;
-	uint i, slot, lastSlot;
+	uint16 i, slot, lastSlot;
 
 	disableFileBoxes();
 

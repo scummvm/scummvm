@@ -61,7 +61,7 @@ void AGOSEngine::vc56_delayLong() {
 	}
 
 	addVgaEvent(num + _vgaBaseDelay, ANIMATE_EVENT, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
-	_vcPtr = (byte *)&_vc_get_out_of_code;
+	_vcPtr = (byte *)&_vcGetOutOfCode;
 }
 
 void AGOSEngine::vc58_changePriority() {

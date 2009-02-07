@@ -193,31 +193,29 @@ static const char *const opcodeArgTable_puzzlepack[256] = {
 	" ", " ", "BT ", " ", "B ", " ", "BBBB ", " ", " ", "BBBB ", "B ", "B ", "B ", "B "
 };
 
-Subroutine *AGOSEngine::getSubroutineByID(uint subroutine_id) {
+Subroutine *AGOSEngine::getSubroutineByID(uint subroutineId) {
 	Subroutine *cur;
 
-	_subroutine = subroutine_id;
-
 	for (cur = _subroutineList; cur; cur = cur->next) {
-		if (cur->id == subroutine_id)
+		if (cur->id == subroutineId)
 			return cur;
 	}
 
-	if (loadXTablesIntoMem(subroutine_id)) {
+	if (loadXTablesIntoMem(subroutineId)) {
 		for (cur = _subroutineList; cur; cur = cur->next) {
-			if (cur->id == subroutine_id)
+			if (cur->id == subroutineId)
 				return cur;
 		}
 	}
 
-	if (loadTablesIntoMem(subroutine_id)) {
+	if (loadTablesIntoMem(subroutineId)) {
 		for (cur = _subroutineList; cur; cur = cur->next) {
-			if (cur->id == subroutine_id)
+			if (cur->id == subroutineId)
 				return cur;
 		}
 	}
 
-	debug(0,"getSubroutineByID: subroutine %d not found", subroutine_id);
+	debug(0,"getSubroutineByID: subroutine %d not found", subroutineId);
 	return NULL;
 }
 
@@ -534,7 +532,7 @@ int AGOSEngine::startSubroutine(Subroutine *sub) {
 	_classMode1 = 0;
 	_classMode2 = 0;
 
-	if (_startMainScript)
+	if (_dumpScripts)
 		dumpSubroutine(sub);
 
 	if (++_recursionDepth > 40)
@@ -568,7 +566,7 @@ restart:
 			else
 				_codePtr += 8;
 
-			if (_continousMainScript)
+			if (_dumpOpcodes)
 				printf("; %d\n", sub->id);
 			result = runScript();
 			if (result != 0) {

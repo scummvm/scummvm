@@ -210,7 +210,7 @@ bool Debugger::Cmd_StartSubroutine(int argc, const char **argv) {
 		if (sub != NULL)
 			_vm->startSubroutine(sub);
 	} else
-		DebugPrintf("Subroutine %d\n", _vm->_subroutine);
+		DebugPrintf("Subroutine %d\n", _vm->_currentTable->id);
 
 	return true;
 }

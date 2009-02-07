@@ -152,8 +152,8 @@ void AGOSEngine::runVgaScript() {
 	for (;;) {
 		uint opcode;
 
-		if (_continousVgaScript) {
-			if (_vcPtr != (const byte *)&_vc_get_out_of_code) {
+		if (_dumpVgaOpcodes) {
+			if (_vcPtr != (const byte *)&_vcGetOutOfCode) {
 				printf("%.5d %.5X: %5d %4d ", _vgaTickCounter, (unsigned int)(_vcPtr - _curVgaFile1), _vgaCurSpriteId, _vgaCurZoneNum);
 				dumpVideoScript(_vcPtr, true);
 			}
@@ -367,7 +367,7 @@ void AGOSEngine::vcSkipNextInstruction() {
 		_vcPtr += opcodeParamLenElvira1[opcode];
 	}
 
-	if (_continousVgaScript)
+	if (_dumpVgaOpcodes)
 		printf("; skipped\n");
 }
 
@@ -472,7 +472,7 @@ void AGOSEngine::vc9_ifObjectStateIs() {
 		vcSkipNextInstruction();
 }
 
-byte *AGOSEngine::vc10_uncompressFlip(const byte *src, uint w, uint h) {
+byte *AGOSEngine::vc10_uncompressFlip(const byte *src, uint16 w, uint16 h) {
 	w *= 8;
 
 	byte *dst, *dstPtr, *srcPtr;
@@ -539,7 +539,7 @@ byte *AGOSEngine::vc10_uncompressFlip(const byte *src, uint w, uint h) {
 	return _videoBuf1;
 }
 
-byte *AGOSEngine::vc10_flip(const byte *src, uint w, uint h) {
+byte *AGOSEngine::vc10_flip(const byte *src, uint16 w, uint16 h) {
 	byte *dstPtr;
 	uint i;
 
@@ -717,7 +717,7 @@ void AGOSEngine::vc12_delay() {
 	num += _vgaBaseDelay;
 
 	addVgaEvent(num, ANIMATE_EVENT, _vcPtr, _vgaCurSpriteId, _vgaCurZoneNum);
-	_vcPtr = (byte *)&_vc_get_out_of_code;
+	_vcPtr = (byte *)&_vcGetOutOfCode;
 }
 
 void AGOSEngine::vc13_addToSpriteX() {
@@ -770,7 +770,7 @@ void AGOSEngine::vc16_waitSync() {
 	vfs->id = _vgaCurSpriteId;
 	vfs->zoneNum = _vgaCurZoneNum;
 
-	_vcPtr = (byte *)&_vc_get_out_of_code;
+	_vcPtr = (byte *)&_vcGetOutOfCode;
 }
 
 void AGOSEngine::checkWaitEndTable() {
@@ -801,7 +801,7 @@ void AGOSEngine::vc17_waitEnd() {
 		vfs->codePtr = _vcPtr;
 		vfs->id = _vgaCurSpriteId;
 		vfs->zoneNum = _vgaCurZoneNum;
-		_vcPtr = (byte *)&_vc_get_out_of_code;
+		_vcPtr = (byte *)&_vcGetOutOfCode;
 	}
 }
 
@@ -818,8 +818,8 @@ void AGOSEngine::vc19_loop() {
 	b = _curVgaFile1 + READ_BE_UINT16(bb + 10);
 	b += 20;
 
-	count = READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->animationCount);
-	b = bb + READ_BE_UINT16(&((VgaFileHeader2_Common *) b)->animationTable);
+	count = READ_BE_UINT16(&((VgaFile1Header_Common *) b)->animationCount);
+	b = bb + READ_BE_UINT16(&((VgaFile1Header_Common *) b)->animationTable);
 
 	while (count--) {
 		if (READ_BE_UINT16(&((AnimationHeader_WW *) b)->id) == _vgaCurSpriteId)
@@ -975,7 +975,7 @@ void AGOSEngine::vc25_halt_sprite() {
 		memcpy(vsp, vsp + 1, sizeof(VgaSprite));
 		vsp++;
 	}
-	_vcPtr = (byte *)&_vc_get_out_of_code;
+	_vcPtr = (byte *)&_vcGetOutOfCode;
 
 	dirtyBackGround();
 	_vgaSpriteChanged++;
@@ -1295,7 +1295,7 @@ void AGOSEngine::vc42_delayIfNotEQ() {
 	uint16 val = vcReadVar(vcReadNextWord());
 	if (val != vcReadNextWord()) {
 		addVgaEvent(_frameCount + 1, ANIMATE_EVENT, _vcPtr - 4, _vgaCurSpriteId, _vgaCurZoneNum);
-		_vcPtr = (byte *)&_vc_get_out_of_code;
+		_vcPtr = (byte *)&_vcGetOutOfCode;
 	}
 }
 

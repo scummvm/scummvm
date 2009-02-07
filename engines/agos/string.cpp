@@ -170,7 +170,7 @@ TextLocation *AGOSEngine::getTextLocation(uint a) {
 void AGOSEngine::allocateStringTable(int num) {
 	_stringTabPtr = (byte **)calloc(num, sizeof(byte *));
 	_stringTabPos = 0;
-	_stringtab_numalloc = num;
+	_stringTabSize = num;
 }
 
 void AGOSEngine::setupStringTable(byte *mem, int num) {
@@ -283,7 +283,7 @@ void AGOSEngine::loadTextIntoMem(uint16 stringId) {
 	byte *p;
 	char filename[30];
 	int i;
-	uint base_min = 0x8000, base_max, size;
+	uint16 baseMin = 0x8000, baseMax, size;
 
 	_tablesHeapPtr = _tablesheapPtrNew;
 	_tablesHeapCurPos = _tablesHeapCurPosNew;
@@ -301,22 +301,22 @@ void AGOSEngine::loadTextIntoMem(uint16 stringId) {
 			sprintf(filename, "%s.DAT", filename);
 		}
 
-		base_max = (p[0] * 256) | p[1];
+		baseMax = (p[0] * 256) | p[1];
 		p += 2;
 
-		if (stringId < base_max) {
-			_stringIdLocalMin = base_min;
-			_stringIdLocalMax = base_max;
+		if (stringId < baseMax) {
+			_stringIdLocalMin = baseMin;
+			_stringIdLocalMax = baseMax;
 
 			_localStringtable = (byte **)_tablesHeapPtr;
 
-			size = (base_max - base_min + 1) * sizeof(byte *);
+			size = (baseMax - baseMin + 1) * sizeof(byte *);
 			_tablesHeapPtr += size;
 			_tablesHeapCurPos += size;
 
 			size = loadTextFile(filename, _tablesHeapPtr);
 
-			setupLocalStringTable(_tablesHeapPtr, base_max - base_min + 1);
+			setupLocalStringTable(_tablesHeapPtr, baseMax - baseMin + 1);
 
 			_tablesHeapPtr += size;
 			_tablesHeapCurPos += size;
@@ -327,7 +327,7 @@ void AGOSEngine::loadTextIntoMem(uint16 stringId) {
 			return;
 		}
 
-		base_min = base_max;
+		baseMin = baseMax;
 	}
 
 	error("loadTextIntoMem: didn't find %d", stringId);

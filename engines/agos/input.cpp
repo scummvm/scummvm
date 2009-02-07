@@ -598,19 +598,19 @@ bool AGOSEngine::processSpecialKeys() {
 		break;
 	case Common::KEYCODE_r:
 		if (_debugMode)
-			_startMainScript ^= 1;
+			_dumpScripts ^= 1;
 		break;
 	case Common::KEYCODE_o:
 		if (_debugMode)
-			_continousMainScript ^= 1;
+			_dumpOpcodes ^= 1;
 		break;
 	case Common::KEYCODE_a:
 		if (_debugMode)
-			_startVgaScript ^= 1;
+			_dumpVgaScripts ^= 1;
 		break;
 	case Common::KEYCODE_g:
 		if (_debugMode)
-			_continousVgaScript ^= 1;
+			_dumpVgaOpcodes ^= 1;
 		break;
 	case Common::KEYCODE_d:
 		if (_debugMode)

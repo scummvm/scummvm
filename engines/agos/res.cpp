@@ -110,43 +110,43 @@ void AGOSEngine::loadOffsets(const char *filename, int number, uint32 &file, uin
 }
 
 int AGOSEngine::allocGamePcVars(Common::SeekableReadStream *in) {
-	uint item_array_size, item_array_inited, stringtable_num;
+	uint32 itemArraySize, itemArrayInited, stringTableNum;
 	uint32 version;
-	uint i;
+	uint32 i;
 
-	item_array_size = in->readUint32BE();
+	itemArraySize = in->readUint32BE();
 	version = in->readUint32BE();
-	item_array_inited = in->readUint32BE();
-	stringtable_num = in->readUint32BE();
+	itemArrayInited = in->readUint32BE();
+	stringTableNum = in->readUint32BE();
 
 	// First two items are predefined
 	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
-		item_array_size += 2;
-		item_array_inited = item_array_size;
+		itemArraySize += 2;
+		itemArrayInited = itemArraySize;
 	} else {
-		item_array_inited += 2;
-		item_array_size += 2;
+		itemArrayInited += 2;
+		itemArraySize += 2;
 	}
 
 	if (version != 0x80)
 		error("allocGamePcVars: Not a runtime database");
 
-	_itemArrayPtr = (Item **)calloc(item_array_size, sizeof(Item *));
+	_itemArrayPtr = (Item **)calloc(itemArraySize, sizeof(Item *));
 	if (_itemArrayPtr == NULL)
 		error("allocGamePcVars: Out of memory for Item array");
 
-	_itemArraySize = item_array_size;
-	_itemArrayInited = item_array_inited;
+	_itemArraySize = itemArraySize;
+	_itemArrayInited = itemArrayInited;
 
-	for (i = 1; i < item_array_inited; i++) {
+	for (i = 1; i < itemArrayInited; i++) {
 		_itemArrayPtr[i] = (Item *)allocateItem(sizeof(Item));
 	}
 
 	// The rest is cleared automatically by calloc
-	allocateStringTable(stringtable_num + 10);
-	_stringTabNum = stringtable_num;
+	allocateStringTable(stringTableNum + 10);
+	_stringTabNum = stringTableNum;
 
-	return item_array_inited;
+	return itemArrayInited;
 }
 
 void AGOSEngine::loadGamePcFile() {

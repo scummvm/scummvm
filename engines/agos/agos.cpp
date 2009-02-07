@@ -92,7 +92,7 @@ AGOSEngine_Elvira1::AGOSEngine_Elvira1(OSystem *system)
 AGOSEngine::AGOSEngine(OSystem *syst)
 	: Engine(syst) {
 	_vcPtr = 0;
-	_vc_get_out_of_code = 0;
+	_vcGetOutOfCode = 0;
 	_gameOffsetsPtr = 0;
 
 	_debugger = 0;
@@ -128,7 +128,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_textSize = 0;
 	_stringTabNum = 0;
 	_stringTabPos = 0;
-	_stringtab_numalloc = 0;
+	_stringTabSize = 0;
 	_stringTabPtr = 0;
 
 	_itemArrayPtr = 0;
@@ -166,7 +166,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_subroutineListOrg = 0;
 
 	_subroutineList = 0;
-	_subroutine = 0;
 
 	_dxSurfacePitch = 0;
 
@@ -192,10 +191,10 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_backFlag = 0;
 
 	_debugMode = 0;
-	_startMainScript = false;
-	_continousMainScript = false;
-	_startVgaScript = false;
-	_continousVgaScript = false;
+	_dumpScripts = false;
+	_dumpOpcodes = false;
+	_dumpVgaScripts = false;
+	_dumpVgaOpcodes = false;
 	_dumpImages = false;
 
 	_copyProtection = false;
@@ -242,8 +241,8 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_objectItem = 0;
 	_currentPlayer = 0;
 
-	_iOverflow = 0;
-	_nameLocked = 0;
+	_iOverflow = false;
+	_nameLocked = false;
 	_hitAreaObjectItem = 0;
 	_lastHitArea = 0;
 	_lastNameOn = 0;
@@ -258,11 +257,11 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_defaultVerb = 0;
 	_mouseHideCount = 0;
 
-	_dragAccept = 0;
-	_dragFlag = 0;
+	_dragAccept = false;
+	_dragEnd = false;
+	_dragFlag = false;
 	_dragMode = 0;
 	_dragCount = 0;
-	_dragEnd = 0;
 	_lastClickRem = 0;
 
 	_windowNum = 0;
@@ -308,7 +307,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_fastFadeOutFlag = 0;
 	_exitCutscene = 0;
 	_paletteFlag = 0;
-	_bottomPalette = 0;
+	_bottomPalette = false;
 	_picture8600 = 0;
 
 	_soundFileId = 0;
@@ -389,8 +388,8 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_superRoomNumber = 0;
 	_wallOn = 0;
 
+	_boxCR = false;
 	_boxLineCount = 0;
-	_boxCR = 0;
 	memset(_boxBuffer, 0, sizeof(_boxBuffer));
 	_boxBufferPtr = _boxBuffer;
 
@@ -550,11 +549,6 @@ Common::Error AGOSEngine::init() {
 
 	initGraphics(_screenWidth, _screenHeight, getGameType() == GType_FF || getGameType() == GType_PP);
 
-	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-
 	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) ||
 		(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
 		((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
@@ -585,6 +579,9 @@ Common::Error AGOSEngine::init() {
 	} else {
 		_driver = NULL;
 	}
+
+	// Setup mixer
+	syncSoundSettings();
 
 	// allocate buffers
 	_backGroundBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
@@ -657,17 +654,15 @@ Common::Error AGOSEngine::init() {
 	}
 
 	// TODO: Use special debug levels instead of the following hack.
-	// Also, the current variable names (_continousMainScript, ...)
-	// are not very suggestive.
 	_debugMode = (gDebugLevel >= 0);
 	if (gDebugLevel == 2)
-		_continousMainScript = true;
+		_dumpOpcodes = true;
 	if (gDebugLevel == 3)
-		_continousVgaScript = true;
+		_dumpVgaOpcodes = true;
 	if (gDebugLevel == 4)
-		_startMainScript = true;
+		_dumpScripts = true;
 	if (gDebugLevel == 5)
-		_startVgaScript = true;
+		_dumpVgaScripts = true;
 
 	return Common::kNoError;
 }
@@ -882,7 +877,6 @@ void AGOSEngine::setupGame() {
 }
 
 AGOSEngine::~AGOSEngine() {
-	// Sync with AGOSEngine::shutdown()
 	// In Simon 2, this gets deleted along with _sound further down
 	if (getGameType() != GType_SIMON2)
 		delete _gameFile;
@@ -1036,7 +1030,9 @@ void AGOSEngine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	_midi.setVolume(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
+
+	if (_midiEnabled)
+		_midi.setVolume(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
 }
 
 } // End of namespace AGOS

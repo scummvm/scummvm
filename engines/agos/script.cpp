@@ -845,9 +845,9 @@ void AGOSEngine::o_freezeZones() {
 	// 138: freeze zones
 	freezeBottom();
 
-	if (!_copyProtection && !(getFeatures() & GF_TALKIE)) {
-		if ((getGameType() == GType_SIMON1 && _subroutine == 2924) ||
-			(getGameType() == GType_SIMON2 && _subroutine == 1322)) {
+	if (!_copyProtection && !(getFeatures() & GF_TALKIE) && _currentTable) {
+		if ((getGameType() == GType_SIMON1 && _currentTable->id == 2924) ||
+			(getGameType() == GType_SIMON2 && _currentTable->id == 1322)) {
 			_variableArray[134] = 3;
 			_variableArray[135] = 3;
 			setBitFlag(135, 1);
@@ -978,7 +978,7 @@ int AGOSEngine::runScript() {
 		return 1;
 
 	do {
-		if (_continousMainScript)
+		if (_dumpOpcodes)
 			dumpOpcode(_codePtr);
 
 		if (getGameType() == GType_ELVIRA1) {

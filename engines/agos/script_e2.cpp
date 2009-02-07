@@ -469,7 +469,7 @@ void AGOSEngine_Elvira2::oe2_bNotZero() {
 	uint bit = getVarWrapper();
 
 	// WORKAROUND: Enable copy protection again, in cracked version.
-	if (getGameType() == GType_SIMON1 && _subroutine == 2962 && bit == 63) {
+	if (getGameType() == GType_SIMON1 && _currentTable && _currentTable->id == 2962 && bit == 63) {
 		bit = 50;
 	}
 

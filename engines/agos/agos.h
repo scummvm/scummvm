@@ -175,7 +175,7 @@ class AGOSEngine : public Engine {
 
 public:
 	virtual void setupOpcodes();
-	int _numOpcodes, _opcode;
+	uint16 _numOpcodes, _opcode;
 
 	typedef void (AGOSEngine::*VgaOpcodeProc) ();
 
@@ -201,7 +201,7 @@ protected:
 	void playSting(uint16 a);
 
 	const byte *_vcPtr;								/* video code ptr */
-	uint16 _vc_get_out_of_code;
+	uint16 _vcGetOutOfCode;
 
 
 	uint32 *_gameOffsetsPtr;
@@ -231,13 +231,13 @@ protected:
 
 	byte *_strippedTxtMem;
 	byte *_textMem;
-	uint _textSize;
-	uint _stringTabNum, _stringTabPos, _stringtab_numalloc;
+	uint32 _textSize;
+	uint32 _stringTabNum, _stringTabPos, _stringTabSize;
 	byte **_stringTabPtr;
 
 	Item **_itemArrayPtr;
-	uint _itemArraySize;
-	uint _itemArrayInited;
+	uint32 _itemArraySize;
+	uint32 _itemArrayInited;
 
 	Common::Array<byte *> _itemHeap;
 
@@ -246,7 +246,7 @@ protected:
 	const byte *_codePtr;
 
 	byte **_localStringtable;
-	uint _stringIdLocalMin, _stringIdLocalMax;
+	uint16 _stringIdLocalMin, _stringIdLocalMax;
 
 	RoomState *_roomStates;
 	uint16 _numRoomStates;
@@ -257,17 +257,16 @@ protected:
 
 	byte *_xtblList;
 	byte *_xtablesHeapPtrOrg;
-	uint _xtablesHeapCurPosOrg;
+	uint32 _xtablesHeapCurPosOrg;
 	Subroutine *_xsubroutineListOrg;
 
 	byte *_tblList;
 	byte *_tablesHeapPtr, *_tablesHeapPtrOrg, *_tablesheapPtrNew;
-	uint _tablesHeapSize, _tablesHeapCurPos, _tablesHeapCurPosOrg;
-	uint _tablesHeapCurPosNew;
+	uint32 _tablesHeapSize, _tablesHeapCurPos, _tablesHeapCurPosOrg;
+	uint32 _tablesHeapCurPosNew;
 	Subroutine *_subroutineListOrg;
 
 	Subroutine *_subroutineList;
-	uint _subroutine;
 
 	uint16 _dxSurfacePitch;
 
@@ -280,7 +279,7 @@ protected:
 	bool _scriptVar2;
 	bool _runScriptReturn1;
 	bool _runScriptCondition[40];
-	int _runScriptReturn[40];
+	int16 _runScriptReturn[40];
 	bool _skipVgaWait;
 	bool _noParentNotify;
 	bool _beardLoaded;
@@ -297,10 +296,10 @@ protected:
 	uint16 _language;
 	bool _copyProtection;
 	bool _pause;
-	bool _startMainScript;
-	bool _continousMainScript;
-	bool _startVgaScript;
-	bool _continousVgaScript;
+	bool _dumpScripts;
+	bool _dumpOpcodes;
+	bool _dumpVgaScripts;
+	bool _dumpVgaOpcodes;
 	bool _dumpImages;
 	bool _speech;
 	bool _subtitles;
@@ -314,20 +313,20 @@ protected:
 	const byte *_scrollImage;
 	byte _boxStarHeight;
 
+	bool _boxCR;
 	char _boxBuffer[310];
 	char *_boxBufferPtr;
 	int _boxLineCount;
 	int _lineCounts[6];
 	char *_linePtrs[6];
-	int _boxCR;
 
 	SubroutineLine *_classLine;
-	uint _classMask, _classMode1, _classMode2;
+	int16 _classMask, _classMode1, _classMode2;
 	Item *_findNextPtr;
 	Subroutine *_currentTable;
 	SubroutineLine *_currentLine;
 
-	int _agosMenu;
+	uint8 _agosMenu;
 	byte _textMenu[10];
 	uint16 _currentRoom, _superRoomNumber;
 	uint8 _wallOn;
@@ -352,17 +351,17 @@ protected:
 	Item *_hitAreaSubjectItem;
 	HitArea *_currentBox, *_currentVerbBox, *_lastVerbOn;
 	uint16 	_currentBoxNum;
-	uint _needHitAreaRecalc;
-	uint _verbHitArea;
+	uint16 _needHitAreaRecalc;
+	uint16 _verbHitArea;
 	uint16 _defaultVerb;
-	uint _iOverflow;
-	uint _nameLocked;
+	bool _iOverflow;
+	bool _nameLocked;
 
-	uint _dragAccept;
-	uint _dragFlag;
-	uint _dragMode;
-	uint _dragCount;
-	uint _dragEnd;
+	bool _dragAccept;
+	bool _dragEnd;
+	bool _dragFlag;
+	uint8 _dragMode;
+	uint8 _dragCount;
 	HitArea *_lastClickRem;
 
 	uint16 _windowNum;
@@ -370,7 +369,7 @@ protected:
 	int16 _printCharCurPos, _printCharMaxPos, _printCharPixelCount;
 	uint16 _numLettersToPrint;
 
-	uint _numTextBoxes;
+	uint8 _numTextBoxes;
 
 	uint32 getTime() const;
 
@@ -390,7 +389,7 @@ protected:
 	byte _mouseAnim, _mouseAnimMax, _mouseCursor;
 	byte _currentMouseAnim, _currentMouseCursor;
 	byte _oldMouseAnimMax, _oldMouseCursor;
-	uint _mouseHideCount;
+	uint16 _mouseHideCount;
 	bool _mouseToggle;
 
 	byte _leftButtonDown;
@@ -409,18 +408,18 @@ protected:
 
 	bool _fastFadeOutFlag;
 	byte _paletteFlag;
-	int _bottomPalette;
-	uint _fastFadeCount;
+	bool _bottomPalette;
+	uint16 _fastFadeCount;
 	volatile uint16 _fastFadeInFlag;
 
-	int _screenWidth, _screenHeight;
+	uint16 _screenWidth, _screenHeight;
 
 	uint16 _noOverWrite;
 	bool _rejectBlock;
 
 	bool _exitCutscene, _picture8600;
 
-	uint _soundFileId;
+	uint16 _soundFileId;
 	int16 _lastMusicPlayed;
 	int16 _nextMusicToPlay;
 
@@ -428,7 +427,7 @@ protected:
 	bool _showMessageFlag;
 
 	bool _newDirtyClip;
-	uint _copyScnFlag, _vgaSpriteChanged;
+	uint16 _copyScnFlag, _vgaSpriteChanged;
 
 	byte *_block, *_blockEnd;
 	byte *_vgaMemPtr, *_vgaMemEnd, *_vgaMemBase;
@@ -558,9 +557,9 @@ protected:
 
 	Debugger *_debugger;
 
-	uint _saveGameNameLen;
-	uint _saveLoadRowCurPos;
-	uint _numSaveGameRows;
+	uint8 _saveGameNameLen;
+	uint16 _saveLoadRowCurPos;
+	uint16 _numSaveGameRows;
 	bool _saveDialogFlag;
 	bool _saveOrLoad;
 	bool _saveLoadEdit;
@@ -632,7 +631,7 @@ protected:
 	byte *readSingleOpcode(Common::SeekableReadStream *in, byte *ptr);
 	void readSubroutineBlock(Common::SeekableReadStream *in);
 
-	Subroutine *getSubroutineByID(uint subroutine_id);
+	Subroutine *getSubroutineByID(uint subroutineId);
 
 	/* used in debugger */
 	void dumpAllSubroutines();
@@ -676,7 +675,7 @@ protected:
 	const byte *getLocalStringByID(uint16 stringId);
 	uint getNextStringID();
 
-	void addTimeEvent(uint16 timeout, uint16 subroutine_id);
+	void addTimeEvent(uint16 timeout, uint16 subroutineId);
 	void delTimeEvent(TimeEvent *te);
 
 	Item *findInByClass(Item *i, int16 m);
@@ -1184,13 +1183,13 @@ protected:
 	void clearSurfaces();
 	void displayScreen();
 
-	void dumpVideoScript(const byte *src, bool one_opcode_only);
+	void dumpVideoScript(const byte *src, bool singeOpcode);
 	virtual void dumpVgaFile(const byte *vga);
-	void dumpVgaScript(const byte *ptr, uint res, uint id);
-	void dumpVgaScriptAlways(const byte *ptr, uint res, uint id);
+	void dumpVgaScript(const byte *ptr, uint16 res, uint16 id);
+	void dumpVgaScriptAlways(const byte *ptr, uint16 res, uint16 id);
 	void dumpVgaBitmaps(const byte *vga, byte *vga1, int res);
 	void dumpSingleBitmap(int file, int image, const byte *offs, int w, int h, byte base);
-	void dumpBitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette, byte base);
+	void dumpBitmap(const char *filename, const byte *offs, uint16 w, uint16 h, int flags, const byte *palette, byte base);
 
 	void fillBackFromBackGround(uint16 height, uint16 width);
 	void fillBackFromFront();
@@ -1202,8 +1201,8 @@ protected:
 
 	void quickLoadOrSave();
 
-	byte *vc10_uncompressFlip(const byte *src, uint w, uint h);
-	byte *vc10_flip(const byte *src, uint w, uint h);
+	byte *vc10_uncompressFlip(const byte *src, uint16 w, uint16 h);
+	byte *vc10_flip(const byte *src, uint16 w, uint16 h);
 
 	Item *getNextItemPtrStrange();
 
@@ -1229,8 +1228,8 @@ protected:
 	void waitForMark(uint i);
 	void scrollScreen();
 
-	void decodeColumn(byte *dst, const byte *src, int height);
-	void decodeRow(byte *dst, const byte *src, int width);
+	void decodeColumn(byte *dst, const byte *src, uint16 height);
+	void decodeRow(byte *dst, const byte *src, uint16 width);
 	void hitarea_stuff_helper_2();
 	void fastFadeIn();
 	void slowFadeIn();

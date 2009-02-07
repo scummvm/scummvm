@@ -31,7 +31,7 @@ namespace AGOS {
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 // Feeble Files
-struct VgaFileHeader2_Feeble {
+struct VgaFile1Header_Feeble {
 	uint16 imageCount;
 	uint16 x_2;
 	uint16 animationCount;
@@ -86,7 +86,7 @@ struct AnimationHeader_WW {
 } PACKED_STRUCT;
 
 // Common
-struct VgaFileHeader2_Common {
+struct VgaFile1Header_Common {
 	uint16 x_1;
 	uint16 imageCount;
 	uint16 x_2;
