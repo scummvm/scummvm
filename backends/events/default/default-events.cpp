@@ -436,8 +436,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
 			// Global Main Menu
-			// FIXME: F6 is not the best trigger, it conflicts with some games!!!
-			if (event.kbd.keycode == Common::KEYCODE_F6) {
+			if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == Common::KEYCODE_F5) {
 				if (g_engine && !g_engine->isPaused()) {
 					Common::Event menuEvent;
 					menuEvent.type = Common::EVENT_MAINMENU;
