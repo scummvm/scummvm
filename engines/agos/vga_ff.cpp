@@ -331,7 +331,30 @@ void AGOSEngine::centreScroll() {
 	}
 }
 
-void AGOSEngine::startOverlayAnims() {
+// Puzzle Pack specific code
+
+void AGOSEngine_PuzzlePack::vc3_loadSprite() {
+	if (getBitFlag(100)) {
+		startAnOverlayAnim();
+		return;
+	}
+
+	AGOSEngine::vc3_loadSprite();
+}
+
+void AGOSEngine_PuzzlePack::vc63_fastFadeIn() {
+	_fastFadeInFlag = 256;
+	if (getBitFlag(100)) {
+		startOverlayAnims();
+	} else if (getBitFlag(103)) {
+		printf("NameAndTime\n");
+	} else if (getBitFlag(104)) {
+		printf("HiScoreTable\n");
+	}
+	_fastFadeOutFlag = false;
+}
+
+void AGOSEngine_PuzzlePack::startOverlayAnims() {
 	VgaSprite *vsp = _vgaSprites;
 	uint16 zoneNum;
 	int i;
@@ -362,7 +385,7 @@ void AGOSEngine::startOverlayAnims() {
 	}
 }
 
-void AGOSEngine::startAnOverlayAnim() {
+void AGOSEngine_PuzzlePack::startAnOverlayAnim() {
 	VgaSprite *vsp = _vgaSprites;
 	const byte *vcPtrOrg;
 	uint16 a, sprite, file, tmp, zoneNum;

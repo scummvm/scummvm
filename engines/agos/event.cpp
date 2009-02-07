@@ -451,7 +451,7 @@ void AGOSEngine::delay(uint amount) {
 				_lastVgaTick = cur;
 
 			_inCallBack = true;
-			timer_callback();
+			timerCallback();
 			_inCallBack = false;
 		}
 
@@ -547,18 +547,18 @@ void AGOSEngine::delay(uint amount) {
 	} while (cur < start + amount && !shouldQuit());
 }
 
-void AGOSEngine::timer_callback() {
-	if (getGameId() == GID_DIMP) {
-		_lastTickCount = _system->getMillis();
+void AGOSEngine_PuzzlePack::timerCallback() {
+	_lastTickCount = _system->getMillis();
 
-		timer_proc1();
-		dimp_idle();
-	} else {
-		timer_proc1();
-	}
+	timerProc();
+	dimpIdle();
 }
 
-void AGOSEngine_Feeble::timer_proc1() {
+void AGOSEngine::timerCallback() {
+	timerProc();
+}
+
+void AGOSEngine_Feeble::timerProc() {
 	if (_lockWord & 0x80E9 || _lockWord & 2)
 		return;
 
@@ -611,7 +611,7 @@ void AGOSEngine_Feeble::timer_proc1() {
 	_lockWord &= ~2;
 }
 
-void AGOSEngine::timer_proc1() {
+void AGOSEngine::timerProc() {
 	if (_lockWord & 0x80E9 || _lockWord & 2)
 		return;
 
@@ -637,7 +637,7 @@ void AGOSEngine::timer_proc1() {
 	_lockWord &= ~2;
 }
 
-void AGOSEngine::dimp_idle() {
+void AGOSEngine_PuzzlePack::dimpIdle() {
 	int z, n;
 
 	_iconToggleCount++;

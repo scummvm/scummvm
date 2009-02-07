@@ -252,16 +252,7 @@ void AGOSEngine::vc62_fastFadeOut() {
 }
 
 void AGOSEngine::vc63_fastFadeIn() {
-	if (getGameType() == GType_PP) {
-		_fastFadeInFlag = 256;
-		if (getBitFlag(100)) {
-			startOverlayAnims();
-		} else if (getBitFlag(103)) {
-			printf("NameAndTime\n");
-		} else if (getBitFlag(104)) {
-			printf("HiScoreTable\n");
-		}
-	} else if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF) {
 		_fastFadeInFlag = 256;
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		_fastFadeInFlag = 208;

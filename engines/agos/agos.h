@@ -440,10 +440,6 @@ protected:
 
 	uint16 _syncCount;
 
-	int16 _iconToggleCount, _voiceCount;
-	uint32 _lastTickCount, _thisTickCount;
-	uint32 _startSecondCount, _tSecondCount;
-
 	uint16 _frameCount;
 
 	uint16 _zoneNumber;
@@ -869,7 +865,7 @@ public:
 	// Video Script Opcodes, Common
 	void vc1_fadeOut();
 	void vc2_call();
-	void vc3_loadSprite();
+	virtual void vc3_loadSprite();
 	void vc4_fadeIn();
 	void vc5_ifEqual();
 	void vc6_ifObjectHere();
@@ -935,7 +931,7 @@ public:
 	void vc60_stopAnimation();
 	void vc61();
 	void vc62_fastFadeOut();
-	void vc63_fastFadeIn();
+	virtual void vc63_fastFadeIn();
 
 	// Video Script Opcodes, Simon 1
 	void vc11_clearPathFinder();
@@ -1120,9 +1116,6 @@ protected:
 	void setPaletteSlot(uint16 srcOffs, uint8 dstOffs);
 	void checkWaitEndTable();
 
-	void startOverlayAnims();
-	void startAnOverlayAnim();
-
 	bool ifObjectHere(uint16 val);
 	bool ifObjectAt(uint16 a, uint16 b);
 	bool ifObjectState(uint16 a, int16 b);
@@ -1168,9 +1161,8 @@ protected:
 	void openGameFile();
 	void readGameFile(void *dst, uint32 offs, uint32 size);
 
-	void dimp_idle();
-	void timer_callback();
-	virtual void timer_proc1();
+	virtual void timerCallback();
+	virtual void timerProc();
 
 	virtual void animateSprites();
 
@@ -1662,7 +1654,7 @@ protected:
 
 	void oracleLogo();
 	void swapCharacterLogo();
-	virtual void timer_proc1();
+	virtual void timerProc();
 
 	virtual void addArrows(WindowBlock *window, uint8 num);
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr);
@@ -1727,6 +1719,9 @@ public:
 
 	virtual void executeOpcode(int opcode);
 
+	virtual void vc3_loadSprite();
+	virtual void vc63_fastFadeIn();
+
 	void opp_iconifyWindow();
 	void opp_restoreOopsPosition();
 	void opp_loadMouseImage();
@@ -1753,6 +1748,10 @@ protected:
 
 	const OpcodeEntryPuzzlePack *_opcodesPuzzlePack;
 
+	int16 _iconToggleCount, _voiceCount;
+	uint32 _lastTickCount, _thisTickCount;
+	uint32 _startSecondCount, _tSecondCount;
+
 	virtual void initMouse();
 	virtual void handleMouseMoved();
 	virtual void drawMousePointer();
@@ -1760,6 +1759,12 @@ protected:
 	virtual void resetVerbs();
 
 	void loadMouseImage();
+
+	void dimpIdle();
+	virtual void timerCallback();
+
+	void startOverlayAnims();
+	void startAnOverlayAnim();
 
 	virtual char *genSaveName(int slot);
 };

@@ -401,11 +401,6 @@ void AGOSEngine::vc3_loadSprite() {
 	int16 x, y;
 	byte *old_file_1;
 
-	if (getGameType() == GType_PP && getBitFlag(100)) {
-		startAnOverlayAnim();
-		return;
-	}
-
 	windowNum = vcReadNextWord();
 	if (getGameType() == GType_SIMON1 && windowNum == 3) {
 		_window3Flag = 1;

@@ -63,6 +63,14 @@ static const GameSpecificSettings puzzlepack_settings = {
 
 AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system)
 	: AGOSEngine_Feeble(system) {
+
+	_iconToggleCount = 0;
+	_voiceCount = 0;
+
+	_lastTickCount = 0;
+	_thisTickCount = 0;
+	_startSecondCount = 0;
+	_tSecondCount = 0;
 }
 
 AGOSEngine_Feeble::AGOSEngine_Feeble(OSystem *system)
@@ -335,14 +343,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_curSfxFile = 0;
 
 	_syncCount = 0;
-
-	_iconToggleCount = 0;
-	_voiceCount = 0;
-
-	_lastTickCount = 0;
-	_thisTickCount = 0;
-	_startSecondCount = 0;
-	_tSecondCount = 0;
 
 	_frameCount = 0;
 
