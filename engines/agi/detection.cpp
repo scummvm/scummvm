@@ -225,6 +225,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Gold Rush! (PC 3.5") 2.01 12/22/88 [AGI 3.002.149]
 	GAME3("goldrush", "2.01 1988-12-22 3.5\"", "grdir", "6a285235745f69b4b421403659497216", 0x3149, GID_GOLDRUSH),
 
+	// Gold Rush! (PC 3.5", bought from The Software Farm) 3.0 1998-12-22 [AGI 3.002.149]
+	GAME3("goldrush", "3.0 1998-12-22 3.5\"", "grdir", "6882b6090473209da4cd78bb59f78dbe", 0x3149, GID_GOLDRUSH),
+
 	{
 		// Gold Rush! (PC 5.25") 2.01 12/22/88 [AGI 3.002.149]
 		{
