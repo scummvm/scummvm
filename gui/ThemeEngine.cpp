@@ -742,7 +742,7 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeId) {
 /**********************************************************
  *	Drawing Queue management
  *********************************************************/
-void ThemeEngine::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic) {
+void ThemeEngine::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic, bool restore) {
 	if (_widgets[type] == 0)
 		return;
 
@@ -761,7 +761,7 @@ void ThemeEngine::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic) 
 			_screenQueue.push_back(q);
 		}
 	} else {
-		q->drawSelf(!_widgets[type]->_buffer, _widgets[type]->_buffer);
+		q->drawSelf(!_widgets[type]->_buffer, restore || _widgets[type]->_buffer);
 		delete q;
 	}
 }
@@ -818,7 +818,7 @@ void ThemeEngine::drawButton(const Common::Rect &r, const Common::String &str, W
 	else if (state == kStateDisabled)
 		dd = kDDButtonDisabled;
 
-	queueDD(dd, r);
+	queueDD(dd, r, 0, hints & WIDGET_CLEARBG);
 	queueDDText(getTextData(dd), r, str, false, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 

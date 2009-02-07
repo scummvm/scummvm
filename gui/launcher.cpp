@@ -912,10 +912,8 @@ void LauncherDialog::updateButtons() {
 		? "Mass Add"
 		: "Add Game";
 
-	if (_addButton->getLabel() != newAddButtonLabel) {
+	if (_addButton->getLabel() != newAddButtonLabel) 
 		_addButton->setLabel(newAddButtonLabel);
-		_addButton->draw();
-	}
 }
 
 void LauncherDialog::reflowLayout() {
