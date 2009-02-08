@@ -983,7 +983,7 @@ will be scaled to 1280x960 and 1920x1440.
 ---- ------------
 
 The Global Menu is a general menu which is available to all of the game engines 
-by pressing F6.  From this menu there are the following buttons: Resume, 
+by pressing Ctrl-F5.  From this menu there are the following buttons: Resume, 
 Options, About, Return to Launcher, and Quit. Selecting 'Options' will display 
 a dialog where basic audio settings, such as volume levels, can be adjusted.  
 Selecting 'Return to Launcher' will close the current game and return the user 
@@ -998,6 +998,7 @@ Engines which currently support Returning to the Launcher are:
         AGOS
         CINE
         GOB
+        GROOVIE
         KYRA
         LURE
         PARALLACTION
@@ -1008,6 +1009,7 @@ Engines which currently support Returning to the Launcher are:
         SWORD1
         SWORD2
         TOUCHE
+        TUCKER
 
 
 5.5) Hot Keys:
@@ -1017,7 +1019,7 @@ ScummVM supports various in-game hotkeys. They differ between SCUMM games and
 other games.
 
     Common:
-        F6                     - Displays the Global Menu
+        Ctrl-F5                - Displays the Global Menu
         Cmd-q                  - Quit (Mac OS X)
         Ctrl-q                 - Quit (other unices including Linux)
         Ctrl-z OR Alt-x        - Quit (other platforms)
@@ -1227,6 +1229,7 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
              AGI
              AGOS
              CINE
+             GROOVIE
              KYRA
              LURE
              PARALLACTION
@@ -1237,6 +1240,7 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
              SWORD1
              SWORD2
              TOUCHE
+             TUCKER
 
 --save-slot/-x:
 
@@ -1248,6 +1252,7 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
 
              AGI
              CINE
+             GROOVIE
              KYRA
              LURE
              PARALLACTION
