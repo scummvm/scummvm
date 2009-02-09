@@ -50,14 +50,20 @@ static const PlainGameDescriptor gobGames[] = {
 	{"gob2cd", "Gobliins 2 CD"},
 	{"ween", "Ween: The Prophecy"},
 	{"bargon", "Bargon Attack"},
+#if 0
 	{"ajworld", "A.J's World of Discovery"},
+#endif
 	{"gob3", "Goblins Quest 3"},
 	{"gob3cd", "Goblins Quest 3 CD"},
 	{"lostintime", "Lost in Time"},
+#if 0
 	{"inca2", "Inca II: Wiracocha"},
+#endif
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
+#if 0
 	{"dynasty", "The Last Dynasty"},
 	{"urban", "Urban Runner"},
+#endif
 	{0, 0}
 };
 
@@ -974,6 +980,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		"intro"
 	},
+#if 0
 	{
 		{
 			"ajworld",
@@ -987,6 +994,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro"
 	},
+#endif
 	{
 		{
 			"lostintime",
@@ -1528,6 +1536,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro"
 	},
+#if 0
 	{
 		{
 			"inca2",
@@ -1632,6 +1641,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro"
 	},
+#endif
 	{
 		{
 			"woodruff",
@@ -1957,6 +1967,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro"
 	},
+#if 0
 	{
 		{
 			"dynasty",
@@ -2035,6 +2046,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro"
 	},
+#endif
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, NULL }
 };
 
@@ -2194,7 +2206,8 @@ static const GOBGameDescription fallbackDescs[] = {
 		kGameTypeLostInTime,
 		kFeaturesCD,
 		"intro"
-	},
+	}
+#if 0
 	{
 		{
 			"urban",
@@ -2208,6 +2221,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesCD,
 		"intro"
 	}
+#endif
 };
 
 static const ADFileBasedFallback fileBased[] = {
@@ -2224,7 +2238,9 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[ 9], { "intro.stk", "commun1.itk", 0 } },
 	{ &fallbackDescs[10], { "intro.stk", "commun1.itk", "musmac1.mid", 0 } },
 	{ &fallbackDescs[11], { "intro.stk", "commun1.itk", "lost.lic", 0 } },
+#if 0
 	{ &fallbackDescs[12], { "intro.stk", "cd1.itk", "objet1.itk", 0 } },
+#endif
 	{ 0, { 0 } }
 };
 
