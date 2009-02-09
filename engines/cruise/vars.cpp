@@ -51,7 +51,7 @@ int32 volumeDataLoaded = 0;
 
 int16 numOfDisks;
 
-char musicName[15];
+char musicName[21];
 char lastOverlay[15];
 char nextOverlay[15];
 
@@ -82,11 +82,11 @@ int16 displayOn = 1;
 
 int16 globalVars[2000];
 
-dataFileEntry filesDatabase[257];
+dataFileEntry filesDatabase[NUM_FILE_ENTRIES];
 
 int16 bootOverlayNumber;
 
-int16 initVar5[12];
+SoundEntry soundList[4];
 
 opcodeTypeFunction opcodeTypeTable[64];
 

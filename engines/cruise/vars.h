@@ -132,6 +132,13 @@ struct dataFileEntry {
 	uint16 height;
 	dataFileEntrySub subData;
 };
+
+struct SoundEntry {
+	int16 frameNum;
+	uint16 frequency;
+	int16 volume;
+};
+
 /*
 struct systemStringsStruct {
 	int8 param;
@@ -147,7 +154,7 @@ extern int32 volumeDataLoaded;
 
 extern int16 numOfDisks;
 
-extern char musicName[15];
+extern char musicName[21];
 extern char lastOverlay[15];
 extern char nextOverlay[15];
 
@@ -177,12 +184,14 @@ extern int16 volumeNumberOfEntry;
 
 extern int16 displayOn;
 
+#define NUM_FILE_ENTRIES 257
+
 extern int16 globalVars[2000];
-extern dataFileEntry filesDatabase[257];
+extern dataFileEntry filesDatabase[NUM_FILE_ENTRIES];
 
 extern int16 bootOverlayNumber;
 
-extern int16 initVar5[12];
+extern SoundEntry soundList[4];
 
 extern opcodeTypeFunction opcodeTypeTable[64];
 

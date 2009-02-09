@@ -39,6 +39,570 @@ struct overlayRestoreTemporary {
 
 overlayRestoreTemporary ovlRestoreData[90];
 
+static void syncPalette(Serializer &s, uint8 *p) {
+	// This is different from the original, where palette entries are 2 bytes each
+	s.syncBytes(p, NBCOLORS * 3);
+}
+
+static void syncBasicInfo(Serializer &s) {
+	s.syncAsSint16LE(songLoaded);
+	s.syncAsSint16LE(songPlayed);
+	s.syncAsSint16LE(songLoop);
+	s.syncAsSint16LE(activeMouse);
+	s.syncAsSint16LE(userEnabled);
+	s.syncAsSint16LE(dialogueEnabled);
+	s.syncAsSint16LE(dialogueOvl);
+	s.syncAsSint16LE(dialogueObj);
+	s.syncAsSint16LE(userDelay);
+	s.syncAsSint16LE(sysKey);
+	s.syncAsSint16LE(sysX);
+	s.syncAsSint16LE(sysY);
+	s.syncAsSint16LE(automoveInc);
+	s.syncAsSint16LE(automoveMax);
+	s.syncAsSint16LE(displayOn);
+	s.syncAsSint16LE(isMessage);
+	s.syncAsSint16LE(fadeFlag);
+	s.syncAsSint16LE(playMusic);
+	s.syncAsSint16LE(playMusic2);
+	s.syncAsSint16LE(automaticMode);
+	s.syncAsSint16LE(titleColor);
+	s.syncAsSint16LE(itemColor);
+	s.syncAsSint16LE(selectColor);
+	s.syncAsSint16LE(subColor);
+	s.syncAsSint16LE(narratorOvl);
+	s.syncAsSint16LE(narratorIdx);
+	s.syncAsSint16LE(aniX);
+	s.syncAsSint16LE(aniY);
+
+	if (s.isSaving()) {
+		uint16 v = animationStart ? 1 : 0;
+		s.syncAsUint16LE(v);
+	} else {
+		uint16 v;
+		s.syncAsUint16LE(v);
+		animationStart = v != 0;
+	}
+
+	s.syncAsSint16LE(masterScreen);
+	s.syncAsSint16LE(switchPal);
+	s.syncAsSint16LE(scroll);
+	s.syncAsSint16LE(fadeFlag);
+	s.syncAsSint16LE(doFade);
+	s.syncAsSint16LE(numOfLoadedOverlay);
+	s.syncAsSint16LE(stateID);
+	s.syncAsSint16LE(fontFileIndex);
+	s.syncAsSint16LE(currentActiveMenu);
+	s.syncAsSint16LE(userWait);
+	s.syncAsSint16LE(autoOvl);
+	s.syncAsSint16LE(autoMsg);
+	s.syncAsSint16LE(autoTrack);
+	s.syncAsSint16LE(var39);
+	s.syncAsSint16LE(var42);
+	s.syncAsSint16LE(var45);
+	s.syncAsSint16LE(var46);
+	s.syncAsSint16LE(var47);
+	s.syncAsSint16LE(var48);
+	s.syncAsSint16LE(flagCt);
+	s.syncAsSint16LE(var41);
+	s.syncAsSint16LE(entrerMenuJoueur);
+}
+
+static void syncBackgroundTable(Serializer &s) {
+	// restore backgroundTable
+	for (int i = 0; i < 8; i++) {
+		s.syncString(backgroundTable[i].name, 9);
+		s.syncString(backgroundTable[i].extention, 6);
+	}
+}
+
+static void syncPalScreen(Serializer &s) {
+	for (int i = 0; i < NBSCREENS; ++i) {
+		for (int j = 0; j < NBCOLORS; ++j)
+			s.syncAsUint16LE(palScreen[i][j]);
+	}
+}
+
+static void syncSoundList(Serializer &s) {
+	for (int i = 0; i < 4; ++i) {
+		SoundEntry &se = soundList[i];
+		s.syncAsSint16LE(se.frameNum);
+		s.syncAsUint16LE(se.frequency);
+		s.syncAsSint16LE(se.volume);
+	}
+}
+
+static void syncFilesDatabase(Serializer &s) {
+	uint8 dummyVal = 0;
+
+	for (int i = 0; i < NUM_FILE_ENTRIES; i++) {
+		dataFileEntry &fe = filesDatabase[i];
+
+		s.syncAsUint16LE(fe.widthInColumn);
+		s.syncAsUint16LE(fe.width);
+		s.syncAsUint16LE(fe.resType);
+		s.syncAsUint16LE(fe.height);
+	
+		// TODO: Have a look at the saving/loading of this pointer
+		if (s.isLoading()) {
+			uint32 v;
+			s.syncAsUint32LE(v);
+			fe.subData.ptr = (uint8 *)v;
+		} else {
+			uint32 v = (fe.subData.ptr) ? 1 : 0;
+			s.syncAsUint32LE(v);
+		}
+
+		s.syncAsSint16LE(fe.subData.index);
+		s.syncString(fe.subData.name, 13);
+		s.syncAsByte(dummyVal);
+
+		s.syncAsSint16LE(fe.subData.transparency);
+
+		// TODO: Have a look at the saving/loading of this pointer
+		if (s.isLoading()) {
+			uint32 v;
+			s.syncAsUint32LE(v);
+			fe.subData.ptrMask = (uint8 *)v;
+		} else {
+			uint32 v = (fe.subData.ptrMask) ? 1 : 0;
+			s.syncAsUint32LE(v);
+		}
+
+		s.syncAsUint16LE(fe.subData.resourceType);
+		s.syncAsSint16LE(fe.subData.compression);
+	}
+}
+
+static void syncPreloadData(Serializer &s) {
+	uint8 dummyByte = 0;
+	uint32 dummyLong = 0;
+
+	for (int i = 0; i < 64; i++) {
+		preloadStruct &pe = preloadData[i];
+
+		s.syncString(pe.name, 15);
+		s.syncAsByte(dummyByte);
+		s.syncAsUint32LE(pe.size);
+		s.syncAsUint32LE(pe.sourceSize);
+		s.syncAsUint32LE(dummyLong);
+		s.syncAsUint16LE(pe.nofree);
+		s.syncAsUint16LE(pe.protect);
+		s.syncAsUint16LE(pe.ovl);
+	}
+}
+
+static void syncOverlays1(Serializer &s) {
+	uint8 dummyByte = 0;
+	uint32 dummyLong = 0;
+
+	for (int i = 0; i < numOfLoadedOverlay; i++) {
+		overlayStruct &oe = overlayTable[i];
+
+		s.syncString(oe.overlayName, 13);
+		s.syncAsByte(dummyByte);
+		s.syncAsUint32LE(dummyLong);
+		s.syncAsUint16LE(oe.alreadyLoaded);
+		s.syncAsUint16LE(oe.state);
+		s.syncAsUint32LE(dummyLong);
+		s.syncAsUint32LE(dummyLong);
+		s.syncAsUint32LE(dummyLong);
+		s.syncAsUint32LE(dummyLong);
+		s.syncAsUint16LE(oe.executeScripts);
+	}
+}
+
+static void syncOverlays2(Serializer &s) {
+
+	for (int i = 1; i < numOfLoadedOverlay; i++) {
+
+		if (s.isSaving()) {
+			// Saving code
+			if (!overlayTable[i].alreadyLoaded)
+				continue;
+
+			ovlDataStruct *ovlData = overlayTable[i].ovlData;
+
+			// save BSS
+			s.syncAsSint16LE(ovlData->sizeOfData4);
+			if (ovlData->sizeOfData4)
+				// FIXME: Endian and structure packing problems for this data pointer
+				s.syncBytes(ovlData->data4Ptr, ovlData->sizeOfData4);
+
+			// save variables
+			s.syncAsSint16LE(ovlData->size9);
+			for (int j = 0; j < ovlData->size9; j++) {
+				s.syncAsSint16LE(ovlData->arrayObjVar[j].X);
+				s.syncAsSint16LE(ovlData->arrayObjVar[j].Y);
+				s.syncAsSint16LE(ovlData->arrayObjVar[j].Z);
+				s.syncAsSint16LE(ovlData->arrayObjVar[j].frame);
+				s.syncAsSint16LE(ovlData->arrayObjVar[j].scale);
+				s.syncAsSint16LE(ovlData->arrayObjVar[j].state);
+			}
+		} else {
+			// Loading code
+			ovlRestoreData[i]._sBssSize = ovlRestoreData[i]._sNumObj = 0;
+			ovlRestoreData[i]._pBss = NULL;
+			ovlRestoreData[i]._pObj = NULL;
+
+			if (overlayTable[i].alreadyLoaded) {
+				s.syncAsSint16LE(ovlRestoreData[i]._sBssSize);
+
+				if (ovlRestoreData[i]._sBssSize) {
+					ovlRestoreData[i]._pBss = (uint8 *) mallocAndZero(ovlRestoreData[i]._sBssSize);
+					ASSERT(ovlRestoreData[i]._pBss);
+
+					s.syncBytes(ovlRestoreData[i]._pBss, ovlRestoreData[i]._sBssSize);
+				}
+
+				s.syncAsSint16LE(ovlRestoreData[i]._sNumObj);
+
+				if (ovlRestoreData[i]._sNumObj) {
+					ovlRestoreData[i]._pObj = (objectParams *) mallocAndZero(ovlRestoreData[i]._sNumObj * sizeof(objectParams));
+					ASSERT(ovlRestoreData[i]._pObj);
+
+					for (int j = 0; j < ovlRestoreData[i]._sNumObj; j++) {
+						s.syncAsSint16LE(ovlRestoreData[i]._pObj[j].X);
+						s.syncAsSint16LE(ovlRestoreData[i]._pObj[j].Y);
+						s.syncAsSint16LE(ovlRestoreData[i]._pObj[j].Z);
+						s.syncAsSint16LE(ovlRestoreData[i]._pObj[j].frame);
+						s.syncAsSint16LE(ovlRestoreData[i]._pObj[j].scale);
+						s.syncAsSint16LE(ovlRestoreData[i]._pObj[j].state);
+					}
+				}
+			}
+		}
+	}
+}
+
+void syncScript(Serializer &s, scriptInstanceStruct *entry) {
+	int numScripts = 0;
+	uint32 dummyLong = 0;
+	uint16 dummyWord = 0;
+
+	if (s.isSaving()) {
+		// Figure out the number of scripts to save
+		scriptInstanceStruct* pCurrent = entry->nextScriptPtr;
+		while (pCurrent) {
+			++numScripts;
+			pCurrent = pCurrent->nextScriptPtr;
+		}
+	}
+	s.syncAsSint16LE(numScripts);
+
+	scriptInstanceStruct *ptr = entry->nextScriptPtr;
+	for (int i = 0; i < numScripts; ++i) {
+		if (s.isLoading())
+			ptr = (scriptInstanceStruct *)mallocAndZero(sizeof(scriptInstanceStruct));
+
+		s.syncAsUint16LE(dummyWord);
+		s.syncAsSint16LE(ptr->ccr);
+		s.syncAsSint16LE(ptr->var4);
+		s.syncAsUint32LE(dummyLong);
+		s.syncAsSint16LE(ptr->varA);
+		s.syncAsSint16LE(ptr->scriptNumber);
+		s.syncAsSint16LE(ptr->overlayNumber);
+		s.syncAsSint16LE(ptr->sysKey);
+		s.syncAsSint16LE(ptr->freeze);
+		s.syncAsSint16LE(ptr->type);
+		s.syncAsSint16LE(ptr->var16);
+		s.syncAsSint16LE(ptr->var18);
+		s.syncAsSint16LE(ptr->var1A);
+
+		s.syncAsSint16LE(ptr->varA);
+
+		if (ptr->varA) {
+			// FIXME: This code is not endian safe, and breaks if struct
+			// packing changes. Read/write the members one by one instead.
+			if (s.isLoading())
+				ptr->var6 = (byte *)mallocAndZero(ptr->varA);
+			s.syncBytes(ptr->var6, ptr->varA);
+		}
+
+		if (s.isLoading()) {
+			ptr->nextScriptPtr = NULL;
+			entry->nextScriptPtr = ptr;
+			entry = ptr;
+		} else {
+			ptr = ptr->nextScriptPtr;
+		}
+	}
+}
+
+static void syncCell(Serializer &s) {
+	int chunkCount = 0;
+	cellStruct *t, *p;
+	uint16 dummyWord = 0;
+
+	if (s.isSaving()) {
+		// Figure out the number of chunks to save
+		t = cellHead.next;
+		while (t) {
+			++chunkCount;
+			t = t->next;
+		}
+	} else {
+		cellHead.next = NULL; // Not in ASM code, but I guess the variable is defaulted in the EXE
+	}
+	s.syncAsSint16LE(chunkCount);
+
+	t = s.isSaving() ? cellHead.next : &cellHead;
+	for (int i = 0; i < chunkCount; ++i) {
+		p = s.isSaving() ? t : (cellStruct *)mallocAndZero(sizeof(cellStruct));
+
+		s.syncAsUint16LE(dummyWord);
+		s.syncAsUint16LE(dummyWord);
+
+		s.syncAsSint16LE(p->idx);
+		s.syncAsSint16LE(p->type);
+		s.syncAsSint16LE(p->overlay);
+		s.syncAsSint16LE(p->x);
+		s.syncAsSint16LE(p->field_C);
+		s.syncAsSint16LE(p->spriteIdx);
+		s.syncAsSint16LE(p->color);
+		s.syncAsSint16LE(p->backgroundPlane);
+		s.syncAsSint16LE(p->freeze);
+		s.syncAsSint16LE(p->parent);
+		s.syncAsSint16LE(p->parentOverlay);
+		s.syncAsSint16LE(p->parentType);
+		s.syncAsSint16LE(p->followObjectOverlayIdx);
+		s.syncAsSint16LE(p->followObjectIdx);
+		s.syncAsSint16LE(p->animStart);
+		s.syncAsSint16LE(p->animEnd);
+		s.syncAsSint16LE(p->animWait);
+		s.syncAsSint16LE(p->animStep);
+		s.syncAsSint16LE(p->animChange);
+		s.syncAsSint16LE(p->animType);
+		s.syncAsSint16LE(p->animSignal);
+		s.syncAsSint16LE(p->animCounter);
+		s.syncAsSint16LE(p->animLoop);
+		s.syncAsUint16LE(dummyWord);
+
+		if (s.isSaving())
+			t = t->next;
+		else {
+			p->next = NULL;
+			t->next = p;
+			p->prev = cellHead.prev;
+			cellHead.prev = p;
+			t = p;
+		}
+	}
+}
+
+static void syncIncrust(Serializer &s) {
+	int numEntries = 0;
+	backgroundIncrustStruct *pl, *pl1;
+	uint8 dummyByte = 0;
+	uint16 dummyWord = 0;
+	uint32 dummyLong = 0;
+
+	if (s.isSaving()) {
+		// Figure out the number of entries to save
+		pl = backgroundIncrustHead.next;
+		while (pl) {
+			++numEntries;
+			pl = pl->next;
+		}
+	}
+	s.syncAsSint16LE(numEntries);
+
+	pl = s.isSaving() ? backgroundIncrustHead.next : &backgroundIncrustHead;
+	pl1 = &backgroundIncrustHead;
+
+	for (int i = 0; i < numEntries; ++i) {
+		backgroundIncrustStruct *t = s.isSaving() ? pl :
+			(backgroundIncrustStruct *)mallocAndZero(sizeof(backgroundIncrustStruct));
+
+		s.syncAsUint32LE(dummyLong);
+
+		s.syncAsSint16LE(t->objectIdx);
+		s.syncAsSint16LE(t->type);
+		s.syncAsSint16LE(t->overlayIdx);
+		s.syncAsSint16LE(t->X);
+		s.syncAsSint16LE(t->Y);
+		s.syncAsSint16LE(t->field_E);
+		s.syncAsSint16LE(t->scale);
+		s.syncAsSint16LE(t->backgroundIdx);
+		s.syncAsSint16LE(t->scriptNumber);
+		s.syncAsSint16LE(t->scriptOverlayIdx);
+		s.syncAsUint32LE(dummyLong);
+
+		if (s.isSaving()) {
+			int v = t->saveWidth / 2;
+			s.syncAsSint16LE(v);
+		} else {
+			int v;
+			s.syncAsSint16LE(v);
+			t->saveWidth = v / 2;
+		}
+		s.syncAsSint16LE(t->saveHeight);
+		s.syncAsSint16LE(t->saveSize);
+		s.syncAsSint16LE(t->savedX);
+		s.syncAsSint16LE(t->savedY);
+		s.syncString(t->name, 13);
+		s.syncAsByte(dummyByte);
+		s.syncAsSint16LE(t->spriteId);
+		s.syncAsUint16LE(dummyWord);
+
+		if (t->saveSize) {
+			byte *buffer = (byte *)malloc(t->saveSize);
+			memset(buffer, 0, t->saveSize);
+			s.syncBytes(buffer, t->saveSize);
+			free(buffer);
+
+			// TODO: convert graphic format here
+			if (s.isLoading()) {
+				int width = t->saveWidth;
+				int height = t->saveHeight;
+				t->ptr = (uint8*)malloc(width * height);
+				memset(t->ptr, 0, width * height);
+			}
+		}
+
+		if (s.isSaving())
+			pl = pl->next;
+		else {
+			t->next = NULL;
+			pl->next = t;
+			t->prev = pl1->prev;
+			pl1->prev = t;
+			pl = t;
+		}
+	}
+}
+
+static void syncActors(Serializer &s) {
+	int numEntries = 0;
+	actorStruct *ptr;
+	uint16 dummyLong = 0;
+
+	if (s.isSaving()) {
+		ptr = actorHead.next;
+		while (ptr) {
+			++numEntries;
+			ptr = ptr->next;
+		}
+	}
+	s.syncAsSint16LE(numEntries);
+
+	ptr = s.isSaving() ? actorHead.next : &actorHead;
+	for (int i = 0; i < numEntries; ++i) {
+		actorStruct *p = s.isSaving() ? ptr : (actorStruct *)mallocAndZero(sizeof(actorStruct));
+
+		s.syncAsUint32LE(dummyLong);
+		s.syncAsSint16LE(p->idx);
+		s.syncAsSint16LE(p->type);
+		s.syncAsSint16LE(p->overlayNumber);
+		s.syncAsSint16LE(p->x_dest);
+		s.syncAsSint16LE(p->y_dest);
+		s.syncAsSint16LE(p->x);
+		s.syncAsSint16LE(p->y);
+		s.syncAsSint16LE(p->startDirection);
+		s.syncAsSint16LE(p->nextDirection);
+		s.syncAsSint16LE(p->endDirection);
+		s.syncAsSint16LE(p->stepX);
+		s.syncAsSint16LE(p->stepY);
+		s.syncAsSint16LE(p->pathId);
+		s.syncAsSint16LE(p->phase);
+		s.syncAsSint16LE(p->counter);
+		s.syncAsSint16LE(p->poly);
+		s.syncAsSint16LE(p->flag);
+		s.syncAsSint16LE(p->start);
+		s.syncAsSint16LE(p->freeze);
+
+		if (s.isSaving())
+			ptr = ptr->next;
+		else {
+			p->next = NULL;
+			ptr->next = p;
+			p->prev = actorHead.prev;
+			actorHead.prev = p;
+			ptr = p->next;
+		}
+	}
+}
+
+static void syncSongs(Serializer &s) {
+	int size = 0;
+
+	if (songLoaded) {
+		// TODO: implement
+		s.syncAsByte(size);
+		if (s.isLoading()) {
+			saveVar1 = size;
+			if (saveVar1)
+				s.syncBytes(saveVar2, saveVar1);
+		}
+	} else {
+		s.syncAsByte(size);
+	}
+}
+
+static void syncCT(Serializer &s) {
+	int v = (polyStruct) ? 1 : 0;
+	s.syncAsSint32LE(v);
+
+	if (v == 0)
+		// There is no further data to load or save
+		return;
+
+	s.syncAsSint16LE(numberOfWalkboxes);
+
+	if (numberOfWalkboxes) {
+		for (int i = 0; i < numberOfWalkboxes; ++i)
+			s.syncAsSint16LE(walkboxColor[i]);
+		for (int i = 0; i < numberOfWalkboxes; ++i)
+			s.syncAsSint16LE(walkboxState[i]);
+	}
+
+	for (int i = 0; i < 10; i++) {
+		v = 0;
+		if (s.isSaving()) v = (persoTable[i]) ? 1 : 0;
+		s.syncAsSint32LE(v);
+
+		if (s.isLoading())
+			// Set up the pointer for the next structure
+			persoTable[i] = (v == 0) ? NULL : (persoStruct *)mallocAndZero(sizeof(persoStruct));
+
+		if (v != 0) {
+			// FIXME: This code is not endian safe, and breaks if struct
+			// packing changes. Read/write the members one by one instead.
+			assert(sizeof(persoStruct) == 0x6AA);
+			s.syncBytes((byte *)persoTable[i], 0x6AA);
+		}
+	}
+}
+
+static void DoSync(Serializer &s) {
+	syncBasicInfo(s);
+
+	syncPalette(s, newPal);
+	syncPalette(s, workpal);
+
+	s.syncString(musicName, 21);
+	s.syncString(currentCtpName, 40);
+
+	syncBackgroundTable(s);
+	syncPalScreen(s);
+	syncSoundList(s);
+	
+	for (int i = 0; i < stateID; ++i)
+		s.syncAsSint16LE(globalVars[i]);
+
+	syncFilesDatabase(s);
+	syncOverlays1(s);
+	syncPreloadData(s);
+	syncOverlays2(s);
+	syncScript(s, &procHead);
+	syncScript(s, &relHead);
+	syncCell(s);
+	syncIncrust(s);
+	syncActors(s);
+	syncSongs(s);
+	syncCT(s);
+}
+
+
 void resetPreload() {
 	for (unsigned long int i = 0; i < 64; i++) {
 		if (strlen(preloadData[i].name)) {
@@ -99,10 +663,10 @@ void initVars(void) {
 
 	freeDisk();
 
-	initVar5[0] = -1;
-	initVar5[3] = -1;
-	initVar5[6] = -1;
-	initVar5[9] = -1;
+	soundList[0].frameNum = -1;
+	soundList[1].frameNum = -1;
+	soundList[2].frameNum = -1;
+	soundList[3].frameNum = -1;
 
 	for (unsigned long int i = 0; i < 8; i++) {
 		menuTable[i] = NULL;
@@ -205,436 +769,35 @@ void saveOverlay(Common::OutSaveFile& currentSaveFile) {
 	}
 }
 
-void loadSavegameDataSub1(Common::InSaveFile& currentSaveFile) {
-
-	for (int i = 1; i < numOfLoadedOverlay; i++) {
-		ovlRestoreData[i]._sBssSize = ovlRestoreData[i]._sNumObj = 0;
-		ovlRestoreData[i]._pBss = NULL;
-		ovlRestoreData[i]._pObj = NULL;
-
-		if (overlayTable[i].alreadyLoaded) {
-			ovlRestoreData[i]._sBssSize = currentSaveFile.readSint16LE();
-
-			if (ovlRestoreData[i]._sBssSize) {
-				ovlRestoreData[i]._pBss = (uint8 *) mallocAndZero(ovlRestoreData[i]._sBssSize);
-				ASSERT(ovlRestoreData[i]._pBss);
-
-				currentSaveFile.read(ovlRestoreData[i]._pBss, ovlRestoreData[i]._sBssSize);
-			}
-
-			ovlRestoreData[i]._sNumObj = currentSaveFile.readSint16LE();
-
-			if (ovlRestoreData[i]._sNumObj) {
-				ovlRestoreData[i]._pObj = (objectParams *) mallocAndZero(ovlRestoreData[i]._sNumObj * sizeof(objectParams));
-				ASSERT(ovlRestoreData[i]._pObj);
-
-				for (int j = 0; j < ovlRestoreData[i]._sNumObj; j++) {
-					ovlRestoreData[i]._pObj[j].X = currentSaveFile.readSint16LE();
-					ovlRestoreData[i]._pObj[j].Y = currentSaveFile.readSint16LE();
-					ovlRestoreData[i]._pObj[j].Z = currentSaveFile.readSint16LE();
-					ovlRestoreData[i]._pObj[j].frame = currentSaveFile.readSint16LE();
-					ovlRestoreData[i]._pObj[j].scale = currentSaveFile.readSint16LE();
-					ovlRestoreData[i]._pObj[j].state = currentSaveFile.readSint16LE();
-				}
-			}
-		}
-	}
-}
-
-void saveScript(Common::OutSaveFile& currentSaveFile, scriptInstanceStruct *entry) {
-	int count = 0;
-
-	scriptInstanceStruct* pCurrent = entry->nextScriptPtr;
-	while (pCurrent) {
-		count ++;
-		pCurrent = pCurrent->nextScriptPtr;
-	}
-
-	currentSaveFile.writeSint16LE(count);
-
-	pCurrent = entry->nextScriptPtr;
-	while (pCurrent) {
-		char dummy[4] = { 0, 0, 0, 0 };
-		currentSaveFile.write(dummy, 2);
-
-		currentSaveFile.writeSint16LE(pCurrent->ccr);
-		currentSaveFile.writeSint16LE(pCurrent->var4);
-		currentSaveFile.write(dummy, 4);
-		currentSaveFile.writeSint16LE(pCurrent->varA);
-		currentSaveFile.writeSint16LE(pCurrent->scriptNumber);
-		currentSaveFile.writeSint16LE(pCurrent->overlayNumber);
-		currentSaveFile.writeSint16LE(pCurrent->sysKey);
-		currentSaveFile.writeSint16LE(pCurrent->freeze);
-		currentSaveFile.writeSint16LE(pCurrent->type);
-		currentSaveFile.writeSint16LE(pCurrent->var16);
-		currentSaveFile.writeSint16LE(pCurrent->var18);
-		currentSaveFile.writeSint16LE(pCurrent->var1A);
-
-		currentSaveFile.writeSint16LE(pCurrent->varA);
-
-		if (pCurrent->varA) {
-			currentSaveFile.write(pCurrent->var6, pCurrent->varA);
-		}
-
-		pCurrent = pCurrent->nextScriptPtr;
-	}
-}
-
-void loadScriptsFromSave(Common::InSaveFile& currentSaveFile, scriptInstanceStruct *entry) {
-	short int numScripts;
-	int i;
-
-	numScripts = currentSaveFile.readSint16LE();
-
-	for (i = 0; i < numScripts; i++) {
-		scriptInstanceStruct *ptr = (scriptInstanceStruct *)mallocAndZero(sizeof(scriptInstanceStruct));
-
-		currentSaveFile.skip(2);
-
-		ptr->ccr = currentSaveFile.readSint16LE();
-		ptr->var4 = currentSaveFile.readSint16LE();
-		currentSaveFile.skip(4);
-		ptr->varA = currentSaveFile.readSint16LE();
-		ptr->scriptNumber = currentSaveFile.readSint16LE();
-		ptr->overlayNumber = currentSaveFile.readSint16LE();
-		ptr->sysKey = currentSaveFile.readSint16LE();
-		ptr->freeze = currentSaveFile.readSint16LE();
-		ptr->type = (scriptTypeEnum)currentSaveFile.readSint16LE();
-		ptr->var16 = currentSaveFile.readSint16LE();
-		ptr->var18 = currentSaveFile.readSint16LE();
-		ptr->var1A = currentSaveFile.readSint16LE();
-
-		ptr->varA = currentSaveFile.readUint16LE();
-
-		if (ptr->varA) {
-			ptr->var6 = (uint8 *) mallocAndZero(ptr->varA);
-
-			// FIXME: This code is not endian safe, and breaks if struct
-			// packing changes. Read/write the members one by one instead.
-			currentSaveFile.read(ptr->var6, ptr->varA);
-		}
-
-		ptr->nextScriptPtr = 0;
-
-		entry->nextScriptPtr = ptr;
-		entry = ptr;
-	}
-}
-
-void saveAnim(Common::OutSaveFile& currentSaveFile) {
-	int count = 0;
-
-	actorStruct *ptr = actorHead.next;
-	while (ptr) {
-		count ++;
-		ptr = ptr->next;
-	}
-
-	currentSaveFile.writeSint16LE(count);
-
-	ptr = actorHead.next;
-	while (ptr) {
-		char dummy[2] = {0, 0};
-		currentSaveFile.write(dummy, 2);
-		currentSaveFile.write(dummy, 2);
-
-		currentSaveFile.writeSint16LE(ptr->idx);
-		currentSaveFile.writeSint16LE(ptr->type);
-		currentSaveFile.writeSint16LE(ptr->overlayNumber);
-		currentSaveFile.writeSint16LE(ptr->x_dest);
-		currentSaveFile.writeSint16LE(ptr->y_dest);
-		currentSaveFile.writeSint16LE(ptr->x);
-		currentSaveFile.writeSint16LE(ptr->y);
-		currentSaveFile.writeSint16LE(ptr->startDirection);
-		currentSaveFile.writeSint16LE(ptr->nextDirection);
-		currentSaveFile.writeSint16LE(ptr->endDirection);
-		currentSaveFile.writeSint16LE(ptr->stepX);
-		currentSaveFile.writeSint16LE(ptr->stepY);
-		currentSaveFile.writeSint16LE(ptr->pathId);
-		currentSaveFile.writeSint16LE(ptr->phase);
-		currentSaveFile.writeSint16LE(ptr->counter);
-		currentSaveFile.writeSint16LE(ptr->poly);
-		currentSaveFile.writeSint16LE(ptr->flag);
-		currentSaveFile.writeSint16LE(ptr->start);
-		currentSaveFile.writeSint16LE(ptr->freeze);
-
-		ptr = ptr->next;
-	}
-}
-
-void loadSavegameActor(Common::InSaveFile& currentSaveFile) {
-	short int numEntry;
-	actorStruct *ptr;
-	int i;
-
-	numEntry = currentSaveFile.readSint16LE();
-
-	ptr = &actorHead;
-
-	for (i = 0; i < numEntry; i++) {
-		actorStruct *current = (actorStruct *) mallocAndZero(sizeof(actorStruct));
-		currentSaveFile.skip(2);
-		currentSaveFile.skip(2);
-
-		current->idx = currentSaveFile.readSint16LE();
-		current->type = currentSaveFile.readSint16LE();
-		current->overlayNumber = currentSaveFile.readSint16LE();
-		current->x_dest = currentSaveFile.readSint16LE();
-		current->y_dest = currentSaveFile.readSint16LE();
-		current->x = currentSaveFile.readSint16LE();
-		current->y = currentSaveFile.readSint16LE();
-		current->startDirection = currentSaveFile.readSint16LE();
-		current->nextDirection = currentSaveFile.readSint16LE();
-		current->endDirection = currentSaveFile.readSint16LE();
-		current->stepX = currentSaveFile.readSint16LE();
-		current->stepY = currentSaveFile.readSint16LE();
-		current->pathId = currentSaveFile.readSint16LE();
-		current->phase = (animPhase)currentSaveFile.readSint16LE();
-		current->counter = currentSaveFile.readSint16LE();
-		current->poly = currentSaveFile.readSint16LE();
-		current->flag = currentSaveFile.readSint16LE();
-		current->start = currentSaveFile.readSint16LE();
-		current->freeze = currentSaveFile.readSint16LE();
-
-		current->next = NULL;
-		ptr->next = current;
-		current->prev = actorHead.prev;
-		actorHead.prev = current;
-		ptr = current->next;
-	}
-}
-
-void saveSong(Common::OutSaveFile& currentSaveFile) {
-	if (songLoaded) {
-		// TODO: implement
-		currentSaveFile.writeByte(0);
-	} else {
-		currentSaveFile.writeByte(0);
-	}
-}
-
-void loadSavegameDataSub5(Common::InSaveFile& currentSaveFile) {
-	if (songLoaded) {
-		saveVar1 = currentSaveFile.readByte();
-
-		if (saveVar1) {
-			currentSaveFile.read(saveVar2, saveVar1);
-		}
-	} else {
-		saveVar1 = currentSaveFile.readByte();
-	}
-
-}
-
-void saveCT(Common::OutSaveFile& currentSaveFile) {
-	if (polyStruct) {
-		currentSaveFile.writeSint32LE(1);
-
-		currentSaveFile.writeSint16LE(numberOfWalkboxes);
-
-		if (numberOfWalkboxes) {
-			// FIXME: This code is not endian safe, and breaks if struct
-			// packing changes. Read/write the members one by one instead.
-			currentSaveFile.write(walkboxColor, numberOfWalkboxes * 2);
-			currentSaveFile.write(walkboxState, numberOfWalkboxes * 2);
-		}
-
-		for (unsigned long int i = 0; i < 10; i++) {
-
-			if (persoTable[i]) {
-				currentSaveFile.writeSint32LE(1);
-				assert(sizeof(persoStruct) == 0x6AA);
-				currentSaveFile.write(persoTable[i], 0x6AA);
-			} else {
-				currentSaveFile.writeSint32LE(0);
-			}
-		}
-
-	} else {
-		currentSaveFile.writeSint32LE(0);
-	}
-}
-
-void loadSavegameDataSub6(Common::InSaveFile& currentSaveFile) {
-	int32 var;
-
-	var = currentSaveFile.readUint32BE();
-
-	if (var) {
-		int i;
-
-		numberOfWalkboxes = currentSaveFile.readUint16LE();
-
-		if (numberOfWalkboxes) {
-			// FIXME: This code is not endian safe, and breaks if struct
-			// packing changes. Read/write the members one by one instead.
-			currentSaveFile.read(walkboxColor, numberOfWalkboxes * 2);
-			currentSaveFile.read(walkboxState, numberOfWalkboxes * 2);
-		}
-
-		for (i = 0; i < 10; i++) {
-			persoTable[i] = (persoStruct*)currentSaveFile.readSint32LE();
-
-			if (persoTable[i]) {
-				// FIXME: This code is not endian safe, and breaks if struct
-				// packing changes. Read/write the members one by one instead.
-				assert(sizeof(persoStruct) == 0x6AA);
-				persoTable[i] = (persoStruct *)mallocAndZero(sizeof(persoStruct));
-				currentSaveFile.read(persoTable[i], 0x6AA);
-			}
-		}
-	}
-}
-
 int saveSavegameData(int saveGameIdx) {
 	char buffer[256];
 
 	sprintf(buffer, "CR.%d", saveGameIdx);
 
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::OutSaveFile *currentSaveFile;
-	currentSaveFile = saveMan->openForSaving(buffer);
+	Common::OutSaveFile *f = saveMan->openForSaving(buffer);
+	if (f == NULL)
+		return 0;
 
+	// Write out a savegame header
 	char saveIdentBuffer[6];
 	strcpy(saveIdentBuffer, "SAVPC");
+	f->write(saveIdentBuffer, 6);
 
-	currentSaveFile->write(saveIdentBuffer, 6);
-	currentSaveFile->writeSint16LE(songLoaded);
-	currentSaveFile->writeSint16LE(songPlayed);
-	currentSaveFile->writeSint16LE(songLoop);
-	currentSaveFile->writeSint16LE(activeMouse);
-	currentSaveFile->writeSint16LE(userEnabled);
-	currentSaveFile->writeSint16LE(dialogueEnabled);
-	currentSaveFile->writeSint16LE(dialogueOvl);
-	currentSaveFile->writeSint16LE(dialogueObj);
-	currentSaveFile->writeSint16LE(userDelay);
-	currentSaveFile->writeSint16LE(sysKey);
-	currentSaveFile->writeSint16LE(sysX);
-	currentSaveFile->writeSint16LE(sysY);
-	currentSaveFile->writeSint16LE(automoveInc);
-	currentSaveFile->writeSint16LE(automoveMax);
-	currentSaveFile->writeSint16LE(displayOn);
-	currentSaveFile->writeSint16LE(isMessage);
-	currentSaveFile->writeSint16LE(fadeFlag);
-	currentSaveFile->writeSint16LE(playMusic);
-	currentSaveFile->writeSint16LE(playMusic2);
-	currentSaveFile->writeSint16LE(automaticMode);
-	currentSaveFile->writeSint16LE(titleColor);
-	currentSaveFile->writeSint16LE(itemColor);
-	currentSaveFile->writeSint16LE(selectColor);
-	currentSaveFile->writeSint16LE(subColor);
-	currentSaveFile->writeSint16LE(narratorOvl);
-	currentSaveFile->writeSint16LE(narratorIdx);
-	currentSaveFile->writeSint16LE(aniX);
-	currentSaveFile->writeSint16LE(aniY);
+	if (!f->ioFailed()) {
+		Serializer s(NULL, f);
 
-	if (animationStart)
-		currentSaveFile->writeSint16LE(1);
-	else
-		currentSaveFile->writeSint16LE(0);
+		DoSync(s);
 
-	currentSaveFile->writeSint16LE(masterScreen);
-	currentSaveFile->writeSint16LE(switchPal);
-	currentSaveFile->writeSint16LE(scroll);
-	currentSaveFile->writeSint16LE(fadeFlag);
-	currentSaveFile->writeSint16LE(doFade);
-	currentSaveFile->writeSint16LE(numOfLoadedOverlay);
-	currentSaveFile->writeSint16LE(stateID);
-	currentSaveFile->writeSint16LE(fontFileIndex);
-	currentSaveFile->writeSint16LE(currentActiveMenu);
-	currentSaveFile->writeSint16LE(userWait);
-	currentSaveFile->writeSint16LE(autoOvl);
-	currentSaveFile->writeSint16LE(autoMsg);
-	currentSaveFile->writeSint16LE(autoTrack);
-	currentSaveFile->writeSint16LE(var39);
-	currentSaveFile->writeSint16LE(var42);
-	currentSaveFile->writeSint16LE(var45);
-	currentSaveFile->writeSint16LE(var46);
-	currentSaveFile->writeSint16LE(var47);
-	currentSaveFile->writeSint16LE(var48);
-	currentSaveFile->writeSint16LE(flagCt);
-	currentSaveFile->writeSint16LE(var41);
-	currentSaveFile->writeSint16LE(entrerMenuJoueur);
+		f->finalize();
+		delete f;
+		return 1;
 
-	currentSaveFile->write(newPal, sizeof(int16) * NBCOLORS);
-	currentSaveFile->write(workpal, sizeof(int16) * NBCOLORS);
-
-	currentSaveFile->write(musicName, 15);
-
-	const char dummy[6] = { 0, 0, 0, 0, 0, 0 };
-	currentSaveFile->write(dummy, 6);
-
-	currentSaveFile->write(currentCtpName, 40);
-
-	// restore backgroundTable
-	for (int i = 0; i < 8; i++) {
-		currentSaveFile->write(backgroundTable[i].name, 9);
-		currentSaveFile->write(backgroundTable[i].extention, 6);
+	} else {
+		delete f;
+		saveMan->removeSavefile(buffer);
+		return 0;
 	}
-
-	currentSaveFile->write(palScreen, sizeof(int16) * NBCOLORS * NBSCREENS);
-	currentSaveFile->write(initVar5, 24);
-	currentSaveFile->write(globalVars, stateID * 2); // ok
-	for (int i = 0; i < 257; i++) {
-		currentSaveFile->writeUint16LE(filesDatabase[i].widthInColumn);
-		currentSaveFile->writeUint16LE(filesDatabase[i].width);
-		currentSaveFile->writeUint16LE(filesDatabase[i].resType);
-		currentSaveFile->writeUint16LE(filesDatabase[i].height);
-		if (filesDatabase[i].subData.ptr) {
-			currentSaveFile->writeUint32LE(1);
-		} else {
-			currentSaveFile->writeUint32LE(0);
-		}
-		currentSaveFile->writeUint16LE(filesDatabase[i].subData.index);
-		currentSaveFile->write(filesDatabase[i].subData.name, 13);
-		currentSaveFile->write(dummy, 1);
-		currentSaveFile->writeUint16LE(filesDatabase[i].subData.transparency);
-		if (filesDatabase[i].subData.ptrMask) {
-			currentSaveFile->writeUint32LE(1);
-		} else {
-			currentSaveFile->writeUint32LE(0);
-		}
-		currentSaveFile->writeByte(filesDatabase[i].subData.resourceType);
-		currentSaveFile->write(dummy, 1);
-		currentSaveFile->writeUint16LE(filesDatabase[i].subData.compression);
-	}
-
-	for (int i = 0; i < numOfLoadedOverlay; i++) {
-		currentSaveFile->write(overlayTable[i].overlayName, 13);
-		currentSaveFile->write(dummy, 1);
-		currentSaveFile->write(dummy, 4);
-		currentSaveFile->writeUint16LE(overlayTable[i].alreadyLoaded);
-		currentSaveFile->writeUint16LE(overlayTable[i].state);
-		currentSaveFile->write(dummy, 4);
-		currentSaveFile->write(dummy, 4);
-		currentSaveFile->write(dummy, 4);
-		currentSaveFile->write(dummy, 4);
-		currentSaveFile->writeUint16LE(overlayTable[i].executeScripts);
-	}
-
-	for (int i = 0; i < 64; i++) {
-		currentSaveFile->write(preloadData[i].name, 15);
-		currentSaveFile->write(dummy, 1);
-		currentSaveFile->writeUint32LE(preloadData[i].size);
-		currentSaveFile->writeUint32LE(preloadData[i].sourceSize);
-		currentSaveFile->write(dummy, 4);
-		currentSaveFile->writeUint16LE(preloadData[i].nofree);
-		currentSaveFile->writeUint16LE(preloadData[i].protect);
-		currentSaveFile->writeUint16LE(preloadData[i].ovl);
-	}
-
-	saveOverlay(*currentSaveFile);
-	saveScript(*currentSaveFile, &procHead);
-	saveScript(*currentSaveFile, &relHead);
-	saveCell(*currentSaveFile);
-	saveIncrust(*currentSaveFile);
-	saveAnim(*currentSaveFile);
-	saveSong(*currentSaveFile);
-	saveCT(*currentSaveFile);
-
-	currentSaveFile->finalize();
-	delete currentSaveFile;
-	return 0;
 }
 
 int loadSavegameData(int saveGameIdx) {
@@ -646,165 +809,33 @@ int loadSavegameData(int saveGameIdx) {
 	sprintf(buffer, "CR.%d", saveGameIdx);
 
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::InSaveFile *currentSaveFile;
-	currentSaveFile = saveMan->openForLoading(buffer);
+	Common::InSaveFile *f = saveMan->openForLoading(buffer);
 
-	if (currentSaveFile == NULL) {
+	if (f == NULL) {
 		printInfoBlackBox("Savegame not found...");
 		waitForPlayerInput();
-		return (-1);
+		return -1;
 	}
 
 	printInfoBlackBox("Loading in progress...");
 
-	currentSaveFile->read(saveIdentBuffer, 6);
-
+	f->read(saveIdentBuffer, 6);
 	if (strcmp(saveIdentBuffer, "SAVPC")) {
-		delete currentSaveFile;
-		return (-1);
+		delete f;
+		return -1;
 	}
+
 	initVars();
 
-	songLoaded = currentSaveFile->readSint16LE();
-	songPlayed = currentSaveFile->readSint16LE();
-	songLoop = currentSaveFile->readSint16LE();
-	activeMouse = currentSaveFile->readSint16LE();
-	userEnabled = currentSaveFile->readSint16LE();
-	dialogueEnabled = currentSaveFile->readSint16LE();
+	Serializer s(f, NULL);
+	DoSync(s);
 
-	dialogueOvl = currentSaveFile->readSint16LE();
-	dialogueObj = currentSaveFile->readSint16LE();
-	userDelay = currentSaveFile->readSint16LE();
-	sysKey = currentSaveFile->readSint16LE();
-	sysX = currentSaveFile->readSint16LE();
-	sysY = currentSaveFile->readSint16LE();
-	automoveInc = currentSaveFile->readSint16LE();
-	automoveMax = currentSaveFile->readSint16LE();
-	displayOn = currentSaveFile->readSint16LE();
-	isMessage = currentSaveFile->readSint16LE();
-	fadeFlag = currentSaveFile->readSint16LE();
-	playMusic = currentSaveFile->readSint16LE();
-	playMusic2 = currentSaveFile->readSint16LE();
-	automaticMode = currentSaveFile->readSint16LE();
+	delete f;
 
-	// video param (not loaded in EGA mode)
+	// Post processing
 
-	titleColor = currentSaveFile->readSint16LE();
-	itemColor = currentSaveFile->readSint16LE();
-	selectColor = currentSaveFile->readSint16LE();
-	subColor = currentSaveFile->readSint16LE();
-
-	//
-
-	narratorOvl = currentSaveFile->readSint16LE();
-	narratorIdx = currentSaveFile->readSint16LE();
-	aniX = currentSaveFile->readSint16LE();
-	aniY = currentSaveFile->readSint16LE();
-
-	if (currentSaveFile->readSint16LE()) // cast to bool
-		animationStart = true;
-	else
-		animationStart = false;
-
-	masterScreen = currentSaveFile->readSint16LE();
-	switchPal = currentSaveFile->readSint16LE();
-	scroll = currentSaveFile->readSint16LE();
-	fadeFlag = currentSaveFile->readSint16LE();
-	doFade = currentSaveFile->readSint16LE();
-	numOfLoadedOverlay = currentSaveFile->readSint16LE();
-	stateID = currentSaveFile->readSint16LE();
-	fontFileIndex = currentSaveFile->readSint16LE();
-	currentActiveMenu = currentSaveFile->readSint16LE();
-	userWait = currentSaveFile->readSint16LE();
-	autoOvl = currentSaveFile->readSint16LE();
-	autoMsg = currentSaveFile->readSint16LE();
-	autoTrack = currentSaveFile->readSint16LE();
-	var39 = currentSaveFile->readSint16LE();
-	var42 = currentSaveFile->readSint16LE();
-	var45 = currentSaveFile->readSint16LE();
-	var46 = currentSaveFile->readSint16LE();
-	var47 = currentSaveFile->readSint16LE();
-	var48 = currentSaveFile->readSint16LE();
-	flagCt = currentSaveFile->readSint16LE();
-	var41 = currentSaveFile->readSint16LE();
-	entrerMenuJoueur = currentSaveFile->readSint16LE();
-
-	// FIXME: This code is not endian safe, and breaks if struct
-	// packing changes. Read/write the members one by one instead.
-	currentSaveFile->read(newPal, sizeof(int16) * NBCOLORS);
-	currentSaveFile->read(newPal, sizeof(int16) * NBCOLORS);	// FIXME: Should this read into workpal ?
-
-	// here code seems bogus... this should read music name and it may be a buffer overrun
-	currentSaveFile->skip(21);
-
-	currentSaveFile->read(currentCtpName, 40);
-
-	// restore backgroundTable
-	for (int i = 0; i < 8; i++) {
-		currentSaveFile->read(backgroundTable[i].name, 9);
-		currentSaveFile->read(backgroundTable[i].extention, 6);
-	}
-
-	// FIXME: This code is not endian safe, and breaks if struct
-	// packing changes. Read/write the members one by one instead.
-	currentSaveFile->read(palScreen, sizeof(int16) * NBCOLORS * NBSCREENS);
-	currentSaveFile->read(initVar5, 24);
-	currentSaveFile->read(globalVars, stateID * 2); // ok
-	for (int i = 0; i < 257; i++) {
-		filesDatabase[i].widthInColumn = currentSaveFile->readUint16LE();
-		filesDatabase[i].width = currentSaveFile->readUint16LE();
-		filesDatabase[i].resType = currentSaveFile->readUint16LE();
-		filesDatabase[i].height = currentSaveFile->readUint16LE();
-		filesDatabase[i].subData.ptr = (uint8*)currentSaveFile->readSint32LE();
-		filesDatabase[i].subData.index = currentSaveFile->readSint16LE();
-		currentSaveFile->read(filesDatabase[i].subData.name, 13);
-		currentSaveFile->skip(1);
-		filesDatabase[i].subData.transparency = currentSaveFile->readSint16LE();
-		filesDatabase[i].subData.ptrMask = (uint8*)currentSaveFile->readSint32LE();
-		filesDatabase[i].subData.resourceType = currentSaveFile->readByte();
-		currentSaveFile->skip(1);
-		filesDatabase[i].subData.compression = currentSaveFile->readSint16LE();
-	}
-
-	for (int i = 0; i < numOfLoadedOverlay; i++) {
-		currentSaveFile->read(overlayTable[i].overlayName, 13);
-		currentSaveFile->skip(1);
-		currentSaveFile->skip(4);
-		overlayTable[i].alreadyLoaded = currentSaveFile->readSint16LE();
-		overlayTable[i].state = currentSaveFile->readSint16LE();
-		currentSaveFile->skip(4);
-		currentSaveFile->skip(4);
-		currentSaveFile->skip(4);
-		currentSaveFile->skip(4);
-		overlayTable[i].executeScripts = currentSaveFile->readSint16LE();
-	}
-
-	for (int i = 0; i < 64; i++) {
-		currentSaveFile->read(preloadData[i].name, 15);
-		currentSaveFile->skip(1);
-		preloadData[i].size = currentSaveFile->readSint32LE();
-		preloadData[i].sourceSize = currentSaveFile->readSint32LE();
-		currentSaveFile->skip(4);
-		preloadData[i].nofree = currentSaveFile->readSint16LE();
-		preloadData[i].protect = currentSaveFile->readSint16LE();
-		preloadData[i].ovl = currentSaveFile->readSint16LE();
-	}
-
-	loadSavegameDataSub1(*currentSaveFile);
-	loadScriptsFromSave(*currentSaveFile, &procHead);
-	loadScriptsFromSave(*currentSaveFile, &relHead);
-
-	loadSavegameDataSub2(*currentSaveFile);
-	loadBackgroundIncrustFromSave(*currentSaveFile);
-	loadSavegameActor(*currentSaveFile);
-	loadSavegameDataSub5(*currentSaveFile);
-	loadSavegameDataSub6(*currentSaveFile);
-
-	delete currentSaveFile;
-
-	for (int j = 0; j < 64; j++) {
+	for (int j = 0; j < 64; j++)
 		preloadData[j].ptr = NULL;
-	}
 
 	for (int j = 1; j < numOfLoadedOverlay; j++) {
 		if (overlayTable[j].alreadyLoaded) {
@@ -913,7 +944,7 @@ int loadSavegameData(int saveGameIdx) {
 		}
 	}
 
-	//regenerateBackgroundIncrust(&backgroundIncrustHead);
+	regenerateBackgroundIncrust(&backgroundIncrustHead);
 
 	// to finish
 

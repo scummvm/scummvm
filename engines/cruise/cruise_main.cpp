@@ -432,10 +432,10 @@ int initAllData(void) {
 
 	freeDisk();
 
-	initVar5[0] = -1;
-	initVar5[3] = -1;
-	initVar5[6] = -1;
-	initVar5[9] = -1;
+	soundList[0].frameNum = -1;
+	soundList[1].frameNum = -1;
+	soundList[2].frameNum = -1;
+	soundList[3].frameNum = -1;
 
 	menuTable[0] = NULL;
 
