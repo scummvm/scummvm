@@ -61,6 +61,13 @@
 
 namespace Cruise {
 
+enum MouseButton {
+	MB_LEFT = 1,
+	MB_RIGHT = 2,
+	MB_MIDDLE = 4,
+	MB_BOTH = MB_LEFT | MB_RIGHT
+};
+
 /*#define DUMP_SCRIPT
 #define DUMP_OBJECT*/
 

@@ -732,7 +732,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 	return -1;
 }
 
-char keyboardVar = 0;
+Common::KeyCode keyboardCode = Common::KEYCODE_INVALID;
 
 void freeStuff2(void) {
 	printf("implement freeStuff2\n");
@@ -1350,12 +1350,16 @@ int processInput(void) {
 		return 0;
 	}
 
-	// test both buttons
-	if (((button & 3) == 3) || keyboardVar == 0x44 || keyboardVar == 0x53) {
+	// Player Menu - test for both buttons or the F10 key
+	if (((button & MB_BOTH) == MB_BOTH) || (keyboardCode == Common::KEYCODE_F10)) {
 		changeCursor(CURSOR_NORMAL);
-		keyboardVar = 0;
+		keyboardCode = Common::KEYCODE_INVALID;
 		return (playerMenu(mouseX, mouseY));
 	}
+
+	// Check for Exit 'X' key
+	if (keyboardCode == Common::KEYCODE_x)
+		return 1;
 
 	if (!userEnabled) {
 		return 0;
@@ -1390,7 +1394,7 @@ int processInput(void) {
 				menuDown = 0;
 			}
 		} else {
-			if ((button & 1) && (buttonDown == 0)) {
+			if ((button & MB_LEFT) && (buttonDown == 0)) {
 				if (menuTable[0]) {
 					callRelation(getSelectedEntryInMenu(menuTable[0]), dialogueObj);
 
@@ -1412,7 +1416,7 @@ int processInput(void) {
 			}
 		}
 
-	} else if ((button & 1) && (buttonDown == 0)) {
+	} else if ((button & MB_LEFT) && (buttonDown == 0)) {
 		// left click
 		buttonDown = 1;
 
@@ -1530,9 +1534,9 @@ int processInput(void) {
 				}
 			}
 		}
-	} else if ((button & 2) || (keyboardVar == 0x43) || (keyboardVar == 0x52)) { // test right button
+	} else if ((button & MB_RIGHT) || (keyboardCode == Common::KEYCODE_F9)) {
 		if (buttonDown == 0) {
-			keyboardVar = 0;
+			keyboardCode = Common::KEYCODE_INVALID;
 
 			// close object menu if there is no linked relation
 			if ((linkedRelation == 0) && (menuTable[0])) {
@@ -1572,16 +1576,16 @@ void manageEvents() {
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
-			currentMouseButton |= 1;
+			currentMouseButton |= MB_LEFT;
 			break;
 		case Common::EVENT_LBUTTONUP:
-			currentMouseButton &= ~1;
+			currentMouseButton &= ~MB_LEFT;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			currentMouseButton |= 2;
+			currentMouseButton |= MB_RIGHT;
 			break;
 		case Common::EVENT_RBUTTONUP:
-			currentMouseButton &= ~2;
+			currentMouseButton &= ~MB_RIGHT;
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			currentMouseX = event.mouse.x;
@@ -1592,8 +1596,8 @@ void manageEvents() {
 			break;
 		case Common::EVENT_KEYUP:
 			switch (event.kbd.keycode) {
-			case 27: // ESC
-				currentMouseButton &= ~4;
+			case Common::KEYCODE_ESCAPE:
+				currentMouseButton &= ~MB_MIDDLE;
 				break;
 			default:
 				break;
@@ -1601,10 +1605,11 @@ void manageEvents() {
 			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
-			case 27: // ESC
-				currentMouseButton |= 4;
+			case Common::KEYCODE_ESCAPE:
+				currentMouseButton |= MB_MIDDLE;
 				break;
 			default:
+				keyboardCode = event.kbd.keycode;
 				break;
 			}
 
@@ -1676,9 +1681,11 @@ void manageEvents() {
 			 * break; */
 			if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == Common::KEYCODE_d) {
-					// enable debugging stuff ?
+					// Start the debugger
+					keyboardCode = Common::KEYCODE_INVALID;
 				} else if (event.kbd.keycode == Common::KEYCODE_f) {
 					bFastMode = !bFastMode;
+					keyboardCode = Common::KEYCODE_INVALID;
 				}
 			}
 
