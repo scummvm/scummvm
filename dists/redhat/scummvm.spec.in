@@ -58,13 +58,13 @@ make
 install -m755 -D scummvm %{buildroot}%{_bindir}/scummvm
 install -m644 -D dists/scummvm.6 %{buildroot}%{_mandir}/man6/scummvm.6
 install -m644 -D icons/scummvm.xpm %{buildroot}%{_datadir}/pixmaps/scummvm.xpm
-install -m644 -D gui/themes/modern.ini %{buildroot}%{_datadir}/scummvm/modern.ini
-install -m644 -D gui/themes/modern.zip %{buildroot}%{_datadir}/scummvm/modern.zip
+install -m644 -D gui/themes/scummmodern.zip %{buildroot}%{_datadir}/scummvm/scummmodern.zip
 install -m644 -D dists/pred.dic %{buildroot}%{_datadir}/scummvm/pred.dic
 install -m644 -D dists/engine-data/kyra.dat %{buildroot}%{_datadir}/scummvm/kyra.dat
 install -m644 -D dists/engine-data/lure.dat %{buildroot}%{_datadir}/scummvm/lure.dat
 install -m644 -D dists/engine-data/queen.tbl %{buildroot}%{_datadir}/scummvm/queen.tbl
 install -m644 -D dists/engine-data/sky.cpt %{buildroot}%{_datadir}/scummvm/sky.cpt
+install -m644 -D dists/engine-data/drascula.dat %{buildroot}%{_datadir}/scummvm/drascula.dat
 desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications dists/scummvm.desktop
 
 %clean
@@ -75,16 +75,17 @@ rm -Rf ${RPM_BUILD_ROOT}
 #------------------------------------------------------------------------------
 %files
 %defattr(0644,root,root,0755)
-%doc AUTHORS README NEWS COPYING COPYRIGHT
+%doc AUTHORS README NEWS COPYING COPYING.LGPL COPYRIGHT
 %attr(0755,root,root)%{_bindir}/scummvm
 %{_datadir}/applications/*
 %{_datadir}/pixmaps/scummvm.xpm
-%{_datadir}/scummvm/modern.*
+%{_datadir}/scummvm/scumm*.zip
 %{_datadir}/scummvm/pred.dic
 %{_datadir}/scummvm/kyra.dat
 %{_datadir}/scummvm/queen.tbl
 %{_datadir}/scummvm/sky.cpt
 %{_datadir}/scummvm/lure.dat
+%{_datadir}/scummvm/drascula.dat
 %{_mandir}/man6/scummvm.6*
 
 #------------------------------------------------------------------------------
