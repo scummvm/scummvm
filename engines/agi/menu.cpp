@@ -260,11 +260,6 @@ void Menu::submit() {
 			--iter;
 		}
 	}
-
-	// We need to wait till the main menu is submitted by the game scripts
-	// before checking if we can start loading a save game from the command line.
-	// Menu initialization and submital takes place when the game starts only
-	_vm->checkQuickLoad();
 }
 
 bool Menu::keyhandler(int key) {
