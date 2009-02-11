@@ -362,6 +362,17 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		_scummVars[VAR_CAMERA_ACCEL_Y] = _scummVars[110];
 	}
 
+	// For a long time, we used incorrect values for some camera related
+	// scumm vars. We now know the proper values. To be able to properly use
+	// old save games, we update the old (bad) values to the new (correct)
+	// ones.
+	if (hdr.ver < VER(77) && _game.version >= 7) {
+		_scummVars[VAR_CAMERA_THRESHOLD_X] = 100;
+		_scummVars[VAR_CAMERA_THRESHOLD_Y] = 70;
+		_scummVars[VAR_CAMERA_ACCEL_X] = 100;
+		_scummVars[VAR_CAMERA_ACCEL_Y] = 100;
+	}
+
 	// With version 22, we replaced the scale items with scale slots. So when
 	// loading such an old save game, try to upgrade the old to new format.
 	if (hdr.ver < VER(22)) {
