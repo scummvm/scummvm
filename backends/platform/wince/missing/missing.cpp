@@ -291,8 +291,7 @@ struct dirent* readdir(DIR* dir) {
 	}
 }
 
-int closedir(DIR* dir)
-{
+int closedir(DIR* dir) {
 	if (dir == NULL)
 		return 0;
 
@@ -306,11 +305,10 @@ int closedir(DIR* dir)
 }
 
 /* Make directory, Unix style */
-void mkdir(char* dirname, int mode)
-{
+void mkdir(char* dirname, int mode) {
 	char  path[MAX_PATH+1];
 	TCHAR pathUnc[MAX_PATH+1];
-	char* ptr;
+	char *ptr;
 	strncpy(path, dirname, MAX_PATH);
 	if (*path == '/')
 		*path = '\\';
@@ -327,10 +325,9 @@ void mkdir(char* dirname, int mode)
 	CreateDirectory(pathUnc, 0);
 }
 
-char *strdup(const char *strSource)
-{
-	char* buffer;
-	size_z len = strlen(strSource)+1;
+char *strdup(const char *strSource) {
+	char *buffer;
+	size_z len = strlen(strSource) + 1;
 	buffer = (char*)malloc(len);
 	if (buffer)
 		memcpy(buffer, strSource, len);
