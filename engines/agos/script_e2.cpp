@@ -312,7 +312,7 @@ void AGOSEngine_Elvira2::oe2_pObj() {
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), kObjectType);
 
 	if (subObject != NULL && subObject->objectFlags & kOFText)
-		showMessageFormat("%s\n", (const char *)getStringPtrByID(subObject->objectFlagValue[0])); // Difference
+		showMessageFormat("%s", (const char *)getStringPtrByID(subObject->objectFlagValue[0]));
 }
 
 void AGOSEngine_Elvira2::oe2_isCalled() {
