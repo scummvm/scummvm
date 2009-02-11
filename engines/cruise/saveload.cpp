@@ -743,32 +743,6 @@ void initVars(void) {
 	PCFadeFlag = 0;
 }
 
-void saveOverlay(Common::OutSaveFile& currentSaveFile) {
-
-	for (int i = 1; i < numOfLoadedOverlay; i++) {
-		if (overlayTable[i].alreadyLoaded) {
-
-			ovlDataStruct* ovlData = overlayTable[i].ovlData;
-
-			// save BSS
-			currentSaveFile.writeSint16LE(ovlData->sizeOfData4);
-			if (ovlData->sizeOfData4)
-				currentSaveFile.write(ovlData->data4Ptr, ovlData->sizeOfData4);
-
-			// save variables
-			currentSaveFile.writeSint16LE(ovlData->size9);
-			for (int j = 0; j < ovlData->size9; j++) {
-				currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].X);
-				currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].Y);
-				currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].Z);
-				currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].frame);
-				currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].scale);
-				currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].state);
-			}
-		}
-	}
-}
-
 int saveSavegameData(int saveGameIdx) {
 	char buffer[256];
 
