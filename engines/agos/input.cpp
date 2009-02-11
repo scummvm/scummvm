@@ -251,7 +251,7 @@ void AGOSEngine::waitForInput() {
 
 			if (_currentBox != NULL) {
 				_hitAreaObjectItem = _currentBox->itemPtr;
-				setVerbText(ha);
+				setVerbText(_currentBox);
 			}
 
 			break;
