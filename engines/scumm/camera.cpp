@@ -341,10 +341,10 @@ void ScummEngine_v7::moveCamera() {
 		VAR(VAR_CAMERA_SPEED_X) += camera._accel.x / 100;
 		VAR(VAR_CAMERA_SPEED_Y) += camera._accel.y / 100;
 
-		if (VAR(VAR_CAMERA_SPEED_X) < 8)
+		if (VAR(VAR_CAMERA_SPEED_X) > 8)
 			VAR(VAR_CAMERA_SPEED_X) = 8;
 
-		if (VAR(VAR_CAMERA_SPEED_Y) < 8)
+		if (VAR(VAR_CAMERA_SPEED_Y) > 8)
 			VAR(VAR_CAMERA_SPEED_Y) = 8;
 
 	}
