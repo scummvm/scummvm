@@ -292,8 +292,6 @@ static const char *credits[] = {
 "C2""ScummVM logo",
 "C0""Raina",
 "C2""ScummVM forum buttons",
-"C0""Clemens Steinhuber",
-"C2""ScummVM forum theme",
 "",
 "C1""Code contributions",
 "C0""Ori Avtalion",
@@ -384,7 +382,7 @@ static const char *credits[] = {
 "C0""",
 "C0""Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at LucasFilm/LucasArts who made SCUMM the insane mess to reimplement that it is today. Feel free to drop us a line and tell us what you think, guys!",
 "C0""",
-"C0""Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for sharing the source code of The Feeble Files and Simon the Sorcerer's Puzzle Pack with us.",
+"C0""Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for sharing the source code of some of their games with us.",
 "C0""",
 "",
 };

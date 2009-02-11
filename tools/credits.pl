@@ -773,7 +773,6 @@ begin_credits("Credits");
 		  add_person("David Jensen", "Tyst", "SVG logo conversion");
 		  add_person("Jean Marc", "", "ScummVM logo");
 		  add_person("", "Raina", "ScummVM forum buttons");
-		  add_person("Clemens Steinhuber", "", "ScummVM forum theme");
 	  end_persons();
 	end_section();
 
