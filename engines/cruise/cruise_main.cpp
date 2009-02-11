@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/system.h"	// for g_system->getEventManager()
 
+#include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
 #include "cruise/cell.h"
 #include "cruise/staticres.h"
@@ -745,32 +746,6 @@ void *allocAndZero(int size) {
 	memset(ptr, 0, size);
 
 	return ptr;
-}
-
-const char *getObjectName(int index, const char *string) {
-	const char *ptr = string;
-
-	if (!string)
-		return NULL;
-
-	int i = 0;
-//	int j = 0;
-
-	while (i < index) {
-		ptr += strlen(ptr) + 1;
-		i++;
-	}
-	return ptr;
-}
-
-int getObjectClass(int overlayIdx, int objIdx) {
-	objDataStruct *pObjectData = getObjectDataFromOverlay(overlayIdx, objIdx);
-
-	if (pObjectData) {
-		return pObjectData->_class;
-	} else {
-		return -11;
-	}
 }
 
 void buildInventory(int X, int Y) {
@@ -1682,6 +1657,7 @@ void manageEvents() {
 			if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == Common::KEYCODE_d) {
 					// Start the debugger
+					_vm->getDebugger()->attach();
 					keyboardCode = Common::KEYCODE_INVALID;
 				} else if (event.kbd.keycode == Common::KEYCODE_f) {
 					bFastMode = !bFastMode;

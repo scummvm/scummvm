@@ -59,6 +59,7 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	                              ConfMan.getInt("music_volume"));
 
 	_vm = this;
+	_debugger = new Debugger();
 
 	syst->getEventManager()->registerRandomSource(_rnd, "cruise");
 }
@@ -67,6 +68,7 @@ CruiseEngine::~CruiseEngine() {
 #ifdef PALMOS_MODE
 	delete _currentVolumeFile;
 #endif
+	delete _debugger;
 }
 
 Common::Error CruiseEngine::init() {

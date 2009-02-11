@@ -23,39 +23,22 @@
  *
  */
 
-#ifndef CRUISE_OBJECT_H
-#define CRUISE_OBJECT_H
+#ifndef CRUISE_DEBUGGER_H
+#define CRUISE_DEBUGGER_H
 
-#include "cruise/overlay.h"
+#include "gui/debugger.h"
 
 namespace Cruise {
 
-struct gfxEntryStruct {
-	uint8 *imagePtr;
-	int imageSize;
-	int fontIndex;
-	int height;
-	int width;		// for font: max right border; for sprite: just width
+class Debugger : public GUI::Debugger {
+public:
+	Debugger();
+	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
+
+protected:
+	bool cmd_hotspots(int argc, const char **argv);
+	bool cmd_items(int argc, const char **argv);
 };
-
-
-struct objectParamsQuery {
-	int16 X;
-	int16 Y;
-	int16 baseFileIdx;
-	int16 fileIdx;
-	int16 scale;
-	int16 state;
-	int16 state2;
-	int16 nbState;
-};
-
-objDataStruct *getObjectDataFromOverlay(int ovlIdx, int objIdx);
-int16 getSingleObjectParam(int16 overlayIdx, int16 param2, int16 param3, int16 * returnParam);
-int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx, objectParamsQuery * returnParam);
-void objectReset(void);
-const char *getObjectName(int index, const char *string);
-int getObjectClass(int overlayIdx, int objIdx);
 
 } // End of namespace Cruise
 

@@ -27,6 +27,7 @@
 #include "common/system.h"
 #include "common/endian.h"
 
+#include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
 
 namespace Cruise {
@@ -223,7 +224,7 @@ void gfxModuleData_flipScreen(void) {
 
 extern bool bFastMode;
 
-static uint32 lastTick;
+static uint32 lastTick = 0, lastTickDebug = 0;
 
 void flip() {
 	int i;
@@ -245,6 +246,13 @@ void flip() {
 	g_system->updateScreen();
 
 	uint32 currentTick = g_system->getMillis();
+
+	if (currentTick >= (lastTickDebug + 10)) {
+		lastTickDebug = currentTick;
+
+		if (_vm->getDebugger()->isAttached())
+			_vm->getDebugger()->onFrame();
+	}
 
 	if (!bFastMode) {
 		uint32 speed = 50;

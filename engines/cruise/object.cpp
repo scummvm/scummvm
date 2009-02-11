@@ -306,4 +306,30 @@ void objectReset(void) {
 	}
 }
 
+const char *getObjectName(int index, const char *string) {
+	const char *ptr = string;
+
+	if (!string)
+		return NULL;
+
+	int i = 0;
+//	int j = 0;
+
+	while (i < index) {
+		ptr += strlen(ptr) + 1;
+		i++;
+	}
+	return ptr;
+}
+
+int getObjectClass(int overlayIdx, int objIdx) {
+	objDataStruct *pObjectData = getObjectDataFromOverlay(overlayIdx, objIdx);
+
+	if (pObjectData) {
+		return pObjectData->_class;
+	} else {
+		return -11;
+	}
+}
+
 } // End of namespace Cruise

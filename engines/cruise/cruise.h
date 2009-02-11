@@ -32,6 +32,7 @@
 #include "engines/engine.h"
 
 #include "cruise/cruise_main.h"
+#include "cruise/debugger.h"
 
 namespace Cruise {
 
@@ -42,6 +43,13 @@ enum CruiseGameType {
 struct CRUISEGameDescription;
 
 class CruiseEngine: public Engine {
+private:
+	void initialize(void);
+	bool makeLoad(char *saveName);
+	void mainLoop(int bootScriptIdx);
+
+	bool _preLoad;
+	Debugger *_debugger;
 
 protected:
 	// Engine APIs
@@ -60,6 +68,7 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
+	virtual GUI::Debugger *getDebugger() { return _debugger; }
 
 	bool loadSaveDirectory(void);
 	void makeSystemMenu(void);
@@ -67,13 +76,6 @@ public:
 	const CRUISEGameDescription *_gameDescription;
 
 	Common::RandomSource _rnd;
-
-private:
-	void initialize(void);
-	bool makeLoad(char *saveName);
-	void mainLoop(int bootScriptIdx);
-
-	bool _preLoad;
 };
 
 extern CruiseEngine *_vm;

@@ -232,6 +232,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\cruise\debugger.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\cruise\debugger.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\cruise\delphine-unpack.cpp"
 			>
 		</File>
