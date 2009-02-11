@@ -330,6 +330,8 @@ int AgiEngine::playGame() {
 	_game.vars[vKey] = 0;
 
 	debugC(2, kDebugLevelMain, "Entering main loop");
+	bool firstLoop = true;
+
 	do {
 
 		if (!mainCycle())
@@ -345,6 +347,13 @@ int AgiEngine::playGame() {
 			}
 
 			interpretCycle();
+			
+			// Check if the user has asked to load a game from the command line
+			// or the launcher
+			if (firstLoop) {
+				checkQuickLoad();
+				firstLoop = false;
+			}
 
 			setflag(fEnteredCli, false);
 			setflag(fSaidAcceptedInput, false);
