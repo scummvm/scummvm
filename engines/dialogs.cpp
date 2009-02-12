@@ -295,7 +295,7 @@ ConfigDialog::ConfigDialog(bool subtitleControls)
 	new GUI::ButtonWidget(this, "ScummConfig.Cancel", "Cancel", kCloseCmd, 'C');
 
 #ifdef SMALL_SCREEN_DEVICE
-	//new GUI::ButtonWidget(this, "ScummConfig.Keys", "Keys", kKeysCmd, 'K');
+	new GUI::ButtonWidget(this, "ScummConfig.Keys", "Keys", kKeysCmd, 'K');
 #endif
 }
 
