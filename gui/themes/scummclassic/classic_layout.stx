@@ -353,7 +353,6 @@
 					height='Globals.Line.Height' 
 			/> 
 			<widget name='List'/> 
-			<space size='Globals.Line.Height'/>
 			<widget name='Mapping' 
 					height='Globals.Line.Height' 
 			/> 
@@ -610,6 +609,9 @@
 			</layout>
 			<space size = '60'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
+				<widget name = 'Keys'
+						type = 'Button'
+				/>	
 				<space size = 'Globals.Button.Width' />
 				<widget name = 'Cancel'
 						type = 'Button'
