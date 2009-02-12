@@ -1688,7 +1688,7 @@ By default, the configuration file is saved in, and loaded from:
         <windir>\Profiles\username\Application Data\ScummVM\scummvm.ini,
 
         Windows 95/98/ME:
-       <windir>\scummvm.ini,
+        <windir>\scummvm.ini,
 
         If an earlier version of ScummVM was installed under Windows, the
         previous default location of '<windir>\scummvm.ini' will be kept.
