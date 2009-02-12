@@ -26,6 +26,7 @@
 #include "common/util.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "common/frac.h"
 
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
@@ -37,12 +38,27 @@
 #define VECTOR_RENDERER_FAST_TRIANGLES
 
 /** Fixed point SQUARE ROOT **/
-inline uint32 fp_sqroot(uint32 x) {
+inline frac_t fp_sqroot(uint32 x) {
+#if 0
+	// Use the FPU to compute the square root and then convert it to fixed
+	// point data. On systems with a fast FPU, this can be a lot faster than
+	// the integer based code below - on my system roughly 50x! However, on
+	// systems without an FPU, the converse might be true.
+	// For now, we only use the integer based code.
+	return doubleToFrac(sqrt((double)x));
+#else
+	// The code below wants to use a lot of registers, which is not good on
+	// x86 processors. By taking advantage of the fact the the input value is
+	// an integer, it might be possible to improve this. Furthermore, we could
+	// take advantage of the fact that we call this function several times on
+	// decreasing values. By feeding it the sqrt of the previous old x, as well
+	// as the old x, it should be possible to compute the correct sqrt with far
+	// fewer than 23 iterations.
 	register uint32 root, remHI, remLO, testDIV, count;
 
 	root = 0;
 	remHI = 0;
-	remLO = x;
+	remLO = x << 16;
 	count = 23;
 
 	do {
@@ -58,6 +74,7 @@ inline uint32 fp_sqroot(uint32 x) {
 	} while (count--);
 
 	return root;
+#endif
 }
 
 /*
@@ -141,7 +158,7 @@ inline uint32 fp_sqroot(uint32 x) {
 // optimized Wu's algorithm
 #define __WU_ALGORITHM() { \
 	oldT = T; \
-	T = fp_sqroot(rsq - ((y * y) << 16)) ^ 0xFFFF; \
+	T = fp_sqroot(rsq - y*y) ^ 0xFFFF; \
 	py += pitch; \
 	if (T < oldT) { \
 		x--; px -= pitch; \
@@ -1359,8 +1376,8 @@ drawRoundedSquareFakeBevel(int x1, int y1, int r, int w, int h, int amount) {
 	int px, py;
 	int sw = 0, sp = 0;
 
-	uint32 rsq = (r * r) << 16;
-	uint32 T = 0, oldT;
+	uint32 rsq = r*r;
+	frac_t T = 0, oldT;
 	uint8 a1, a2;
 
 	PixelType color = _bevelColor; //RGBToColor<PixelFormat>(63, 60, 17);
@@ -1480,8 +1497,8 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 	int px, py;
 	int sw = 0, sp = 0, hp = h * pitch;
 
-	uint32 rsq = (r * r) << 16;
-	uint32 T = 0, oldT;
+	uint32 rsq = r*r;
+	frac_t T = 0, oldT;
 	uint8 a1, a2;
 
 	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
@@ -1498,8 +1515,11 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 			colorFill<PixelType>(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color);
 			sp += pitch;
 
-			x = r - (sw - 1); y = 0; T = 0;
-			px = pitch * x; py = 0;
+			x = r - (sw - 1);
+			y = 0;
+			T = 0;
+			px = pitch * x;
+			py = 0;
 
 			while (x > y++) {
 				__WU_ALGORITHM();
@@ -1519,7 +1539,9 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 			ptr_fill += pitch;
 		}
 	} else {
-		x = r; y = 0; T = 0;
+		x = r;
+		y = 0;
+		T = 0;
 		px = pitch * x;
 		py = 0;
 
@@ -1551,15 +1573,17 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode f
 	const int pitch = Base::_activeSurface->pitch / Base::_activeSurface->bytesPerPixel;
 	int px, py;
 
-	uint32 rsq = (r * r) << 16;
-	uint32 T = 0, oldT;
+	uint32 rsq = r*r;
+	frac_t T = 0, oldT;
 	uint8 a1, a2;
 
 	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 
 	if (fill_m == VectorRenderer::kFillDisabled) {
 		while (sw++ < Base::_strokeWidth) {
-			x = r - (sw - 1); y = 0; T = 0;
+			x = r - (sw - 1);
+			y = 0;
+			T = 0;
 			px = pitch * x;
 			py = 0;
 
@@ -1580,8 +1604,11 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode f
 		}
 	} else {
 		colorFill<PixelType>(ptr - r, ptr + r + 1, color);
-		x = r; y = 0; T = 0;
-		px = pitch * x; py = 0;
+		x = r;
+		y = 0;
+		T = 0;
+		px = pitch * x;
+		py = 0;
 
 		while (x > y++) {
 			__WU_ALGORITHM();
