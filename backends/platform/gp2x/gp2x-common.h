@@ -26,20 +26,20 @@
 #ifndef GP2X_COMMON_H
 #define GP2X_COMMON_H
 
-#define __GP2X__
-#define USE_OSD
+#include <SDL.h>
+#include <SDL_gp2x.h>
 
 #include "backends/base-backend.h"
 #include "graphics/scaler.h"
 
-#include <SDL.h>
-#include <SDL_gp2x.h>
+#define __GP2X__
+#define USE_OSD
+/* #define DISABLE_SCALERS */
+#define MIXER_DOUBLE_BUFFERING 1
 
 namespace Audio {
 	class MixerImpl;
 }
-
-//#define DISABLE_SCALERS
 
 enum {
 	GFX_NORMAL = 0,
@@ -65,11 +65,12 @@ public:
 	virtual void initBackend();
 
 	void beginGFXTransaction(void);
-	void endGFXTransaction(void);
+	TransactionError endGFXTransaction(void);
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
 	void initSize(uint w, uint h);
+
 	int getScreenChangeID() const { return _screenChangeCount; }
 
 	// Set colors of the palette
@@ -106,7 +107,7 @@ public:
 	void disableCursorPalette(bool disable) {
 		_cursorPaletteDisabled = disable;
 		blitCursor();
-	};
+	}
 
 	// Shaking is used in SCUMM. Set current shake position.
 	void setShakePos(int shake_pos);
@@ -121,9 +122,15 @@ public:
 	// Returns true if an event was retrieved.
 	virtual bool pollEvent(Common::Event &event); // overloaded by CE backend
 
+	// Sets up the keymapper with the backends hardware key set
+	void setupKeymapper();
+
 	// Set function that generates samples
 	void setupMixer();
 	static void mixCallback(void *s, byte *samples, int len);
+
+	void closeMixer();
+
 	virtual Audio::Mixer *getMixer();
 
 	// Poll CD status
@@ -152,6 +159,7 @@ public:
 	void deleteMutex(MutexRef mutex);
 
 	// Overlay
+	Graphics::PixelFormat getOverlayFormat() const { return _overlayFormat; }
 	void showOverlay();
 	void hideOverlay();
 	void clearOverlay();
@@ -159,8 +167,8 @@ public:
 	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	int16 getHeight();
 	int16 getWidth();
-	int16 getOverlayHeight()  { return _overlayHeight; }
-	int16 getOverlayWidth()   { return _overlayWidth; }
+	int16 getOverlayHeight()  { return _videoMode.overlayHeight; }
+	int16 getOverlayWidth()   { return _videoMode.overlayWidth; }
 
 	const GraphicsMode *getSupportedGraphicsModes() const;
 	int getDefaultGraphicsMode() const;
@@ -176,6 +184,11 @@ public:
 	void displayMessageOnOSD(const char *msg);
 
 	virtual Common::SaveFileManager *getSavefileManager();
+	virtual FilesystemFactory *getFilesystemFactory();
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
+
+	virtual Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::WriteStream *createConfigWriteStream();
 
 protected:
 	bool _inited;
@@ -195,7 +208,6 @@ protected:
 
 	// unseen game screen
 	SDL_Surface *_screen;
-	int _screenWidth, _screenHeight;
 
 	// temporary screen (for scalers)
 	SDL_Surface *_tmpscreen;
@@ -203,8 +215,8 @@ protected:
 
 	// overlay
 	SDL_Surface *_overlayscreen;
-	int _overlayWidth, _overlayHeight;
 	bool _overlayVisible;
+	Graphics::PixelFormat _overlayFormat;
 
 	// Audio
 	int _samplesPerSec;
@@ -215,42 +227,44 @@ protected:
 	uint32 _cdEndTime, _cdStopTime;
 
 	enum {
-		DF_WANT_RECT_OPTIM			= 1 << 0,
-		DF_UPDATE_EXPAND_1_PIXEL	= 1 << 1
+		DF_WANT_RECT_OPTIM			= 1 << 0
 	};
 
 	enum {
 		kTransactionNone = 0,
-		kTransactionCommit = 1,
-		kTransactionActive = 2
+		kTransactionActive = 1,
+		kTransactionRollback = 2
 	};
 
 	struct TransactionDetails {
-		int mode;
-		bool modeChanged;
-		int w;
-		int h;
 		bool sizeChanged;
-		bool fs;
-		bool fsChanged;
-		bool ar;
-		bool arChanged;
 		bool needHotswap;
 		bool needUpdatescreen;
-		bool needUnload;
-		bool needToggle;
 		bool normal1xScaler;
 	};
 	TransactionDetails _transactionDetails;
+
+	struct VideoState {
+		bool setup;
+
+		bool fullscreen;
+		bool aspectRatio;
+
+		int mode;
+		int scaleFactor;
+
+		int screenWidth, screenHeight;
+		int overlayWidth, overlayHeight;
+	};
+	VideoState _videoMode, _oldVideoMode;
+
+	virtual void setGraphicsModeIntern(); // overloaded by CE backend
 
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;
 	ScalerProc *_scalerProc;
 	int _scalerType;
-	int _scaleFactor;
-	int _mode;
 	int _transactionMode;
-	bool _fullscreen;
 
 	bool _screenIsLocked;
 	Graphics::Surface _framebuffer;
@@ -352,32 +366,50 @@ protected:
 	 */
 	MutexRef _graphicsMutex;
 
-	Common::SaveFileManager *_savefile;
-	FilesystemFactory *getFilesystemFactory();
+#ifdef MIXER_DOUBLE_BUFFERING
+	SDL_mutex *_soundMutex;
+	SDL_cond *_soundCond;
+	SDL_Thread *_soundThread;
+	bool _soundThreadIsRunning;
+	bool _soundThreadShouldQuit;
 
+	byte _activeSoundBuf;
+	uint _soundBufSize;
+	byte *_soundBuffers[2];
+
+	void mixerProducerThread();
+	static int SDLCALL mixerProducerThreadEntry(void *arg);
+	void initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize);
+	void deinitThreadedMixer();
+#endif
+
+	FilesystemFactory *_fsFactory;
+	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
 
 	SDL_TimerID _timerID;
 	Common::TimerManager *_timer;
 
+protected:
 	void addDirtyRgnAuto(const byte *buf);
 	void makeChecksums(const byte *buf);
 
 	virtual void addDirtyRect(int x, int y, int w, int h, bool realCoordinates = false);
 
 	void drawMouse();
-	virtual void undrawMouse();
-	virtual void blitCursor();
+	void undrawMouse();
+	void blitCursor();
 
 	/** Set the position of the virtual mouse cursor. */
 	void setMousePos(int x, int y);
 	void fillMouseEvent(Common::Event &event, int x, int y);
+	void toggleMouseGrab();
 
 	void internUpdateScreen();
 
-	void loadGFXMode();
+	bool loadGFXMode();
 	void unloadGFXMode();
-	void hotswapGFXMode();
+	bool hotswapGFXMode();
 
 	void setFullscreenMode(bool enable);
 	void setAspectRatioCorrection(bool enable);
@@ -386,7 +418,10 @@ protected:
 
 	bool saveScreenshot(const char *filename);
 
-	int effectiveScreenHeight() const { return (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor; }
+	int effectiveScreenHeight() const {
+		return (_videoMode.aspectRatio ? real2Aspect(_videoMode.screenHeight) : _videoMode.screenHeight)
+			* _videoMode.scaleFactor;
+	}
 
 	void setupIcon();
 	void handleKbdMouse();

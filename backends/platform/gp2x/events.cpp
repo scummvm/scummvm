@@ -30,6 +30,7 @@
 
 #include "backends/platform/gp2x/gp2x-common.h"
 #include "backends/platform/gp2x/gp2x-hw.h"
+#include "backends/keymapper/keymapper.h"
 #include "common/util.h"
 #include "common/events.h"
 
@@ -90,9 +91,9 @@ void OSystem_GP2X::fillMouseEvent(Common::Event &event, int x, int y) {
 
 	// Adjust for the screen scaling
 	if (!_overlayVisible) {
-		event.mouse.x /= _scaleFactor;
-		event.mouse.y /= _scaleFactor;
-		if (_adjustAspectRatio)
+		event.mouse.x /= _videoMode.scaleFactor;
+		event.mouse.y /= _videoMode.scaleFactor;
+		if (_videoMode.aspectRatio)
 			event.mouse.y = aspect2Real(event.mouse.y);
 	}
 }
@@ -161,7 +162,7 @@ void OSystem_GP2X::handleKbdMouse() {
 				_km.y_down_count = 1;
 			}
 
-			SDL_WarpMouse(_km.x, _km.y);
+			SDL_WarpMouse((Uint16)_km.x, (Uint16)_km.y);
 		}
 	}
 }
@@ -257,7 +258,6 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 	if (_modeChanged) {
 		_modeChanged = false;
 		event.type = Common::EVENT_SCREEN_CHANGED;
-		_screenChangeCount++;
 		return true;
 	}
 
@@ -591,5 +591,64 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 
 bool OSystem_GP2X::remapKey(SDL_Event &ev,Common::Event &event) {
 	return false;
+}
+
+void OSystem_GP2X::setupKeymapper() {
+#ifdef ENABLE_KEYMAPPER
+	using namespace Common;
+	Keymapper *mapper = getEventManager()->getKeymapper();
+
+	HardwareKeySet *keySet = new HardwareKeySet();
+	keySet->addHardwareKey(new HardwareKey( "a", KeyState(KEYCODE_a), "a", kActionKeyType ));
+	keySet->addHardwareKey(new HardwareKey( "s", KeyState(KEYCODE_s), "s", kActionKeyType ));
+	keySet->addHardwareKey(new HardwareKey( "d", KeyState(KEYCODE_d), "d", kActionKeyType ));
+	keySet->addHardwareKey(new HardwareKey( "f", KeyState(KEYCODE_f), "f", kActionKeyType ));
+	keySet->addHardwareKey(new HardwareKey( "n", KeyState(KEYCODE_n), "n (vk)", kTriggerLeftKeyType, kVirtualKeyboardActionType ));
+	keySet->addHardwareKey(new HardwareKey( "m", KeyState(KEYCODE_m), "m (remap)", kTriggerRightKeyType, kKeyRemapActionType ));
+	keySet->addHardwareKey(new HardwareKey( "[", KeyState(KEYCODE_LEFTBRACKET), "[ (select)", kSelectKeyType ));
+	keySet->addHardwareKey(new HardwareKey( "]", KeyState(KEYCODE_RIGHTBRACKET), "] (start)", kStartKeyType ));
+	mapper->registerHardwareKeySet(keySet);
+
+	Keymap *globalMap = new Keymap("global");
+	Keymap *guiMap = new Keymap("gui");
+	Action *act;
+	Event evt ;
+
+	act = new Action(globalMap, "MENU", "Menu", kGenericActionType, kSelectKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_F5, ASCII_F5, 0));
+
+	act = new Action(globalMap, "SKCT", "Skip", kGenericActionType, kActionKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
+
+	act = new Action(globalMap, "PAUS", "Pause", kGenericActionType, kStartKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_SPACE, ' ', 0));
+
+	act = new Action(globalMap, "SKLI", "Skip line", kGenericActionType, kActionKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_PERIOD, '.', 0));
+
+	act = new Action(globalMap, "VIRT", "Display keyboard", kVirtualKeyboardActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F6, ASCII_F6, 0));
+
+	act = new Action(globalMap, "REMP", "Remap keys", kKeyRemapActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
+
+	mapper->addGlobalKeymap(globalMap);
+
+	act = new Action(guiMap, "CLOS", "Close", kGenericActionType, kStartKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
+
+	act = new Action(guiMap, "CLIK", "Mouse click");
+	act->addLeftClickEvent();
+
+	act = new Action(guiMap, "VIRT", "Display keyboard", kVirtualKeyboardActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F6, ASCII_F6, 0));
+
+	act = new Action(guiMap, "REMP", "Remap keys", kKeyRemapActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
+
+	mapper->addGlobalKeymap(guiMap);
+
+	mapper->pushKeymap("global");
+#endif
 }
 
