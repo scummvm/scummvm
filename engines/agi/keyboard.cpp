@@ -374,7 +374,7 @@ int AgiEngine::waitKey() {
 	}
 
 	debugC(3, kDebugLevelInput, "waiting...");
-	while (!shouldQuit()) {
+	while (!(shouldQuit() || restartGame)) {
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = doPollKeyboard();
 		if (key == KEY_ENTER || key == KEY_ESCAPE || key == BUTTON_LEFT)
@@ -397,7 +397,7 @@ int AgiEngine::waitAnyKey() {
 	}
 
 	debugC(3, kDebugLevelInput, "waiting...");
-	while (!shouldQuit()) {
+	while (!(shouldQuit() || restartGame)) {
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = doPollKeyboard();
 		if (key)

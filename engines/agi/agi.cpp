@@ -382,6 +382,8 @@ int AgiEngine::agiInit() {
 
 	initWords();
 
+	restartGame = false;
+
 	if (!_menu)
 		_menu = new Menu(this, _gfx, _picture);
 

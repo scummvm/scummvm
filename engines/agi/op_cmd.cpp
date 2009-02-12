@@ -1231,7 +1231,7 @@ cmd(restart_game) {
 		g_agi->selectionBox(" Restart game, or continue? \n\n\n", buttons);
 
 	if (sel == 0) {
-		g_agi->quitGame();
+		g_agi->restartGame = true;
 		g_agi->setflag(fRestartGame, true);
 		g_agi->_menu->enableAll();
 	}
@@ -1331,7 +1331,7 @@ cmd(get_string) {
 
 	do {
 		g_agi->mainCycle();
-	} while (game.inputMode == INPUT_GETSTRING && !g_agi->shouldQuit());
+	} while (game.inputMode == INPUT_GETSTRING && !(g_agi->shouldQuit() || g_agi->restartGame));
 }
 
 cmd(get_num) {
@@ -1349,7 +1349,7 @@ cmd(get_num) {
 
 	do {
 		g_agi->mainCycle();
-	} while (game.inputMode == INPUT_GETSTRING && !g_agi->shouldQuit());
+	} while (game.inputMode == INPUT_GETSTRING && !(g_agi->shouldQuit() || g_agi->restartGame));
 
 	_v[p1] = atoi(game.strings[MAX_STRINGS]);
 	debugC(4, kDebugLevelScripts, "[%s] -> %d", game.strings[MAX_STRINGS], _v[p1]);
@@ -1745,7 +1745,7 @@ int AgiEngine::runLogic(int n) {
 	curLogic->cIP = curLogic->sIP;
 
 	timerHack = 0;
-	while (ip < _game.logics[n].size && !shouldQuit()) {
+	while (ip < _game.logics[n].size && !(shouldQuit() || restartGame)) {
 		if (_debug.enabled) {
 			if (_debug.steps > 0) {
 				if (_debug.logic0 || n) {

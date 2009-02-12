@@ -165,7 +165,6 @@ enum AGIErrors {
 	errNotEnoughMemory,
 	errBadResource,
 	errUnknownAGIVersion,
-	errRestartGame,
 	errNoLoopsInView,
 	errViewDataError,
 	errNoGameList,
@@ -799,6 +798,7 @@ public:
 
 	uint8 *_intobj;
 	int _oldMode;
+	bool restartGame;
 
 	Menu* _menu;
 
