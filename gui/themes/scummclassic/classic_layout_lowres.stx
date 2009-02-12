@@ -349,8 +349,7 @@
 			<widget name='Action' 
 					height='Globals.Line.Height' 
 			/> 
-			<widget name='List'/> 
-			<space size='Globals.Line.Height'/>
+			<widget name='List'/> 		
 			<widget name='Mapping' 
 					height='Globals.Line.Height' 
 			/> 
@@ -614,9 +613,12 @@
 				<widget name = 'subSubtitleSpeedLabel'
 						type = 'SmallLabel'
 				/>
-			</layout>
+			</layout>			
 			<space size = '20'/>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4'>
+				<widget name = 'Keys'
+						type = 'Button'
+				/>				
 				<space size = 'Globals.Button.Width' />
 				<widget name = 'Cancel'
 						type = 'Button'
