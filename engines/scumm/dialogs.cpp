@@ -591,14 +591,6 @@ ConfigDialog::ConfigDialog()
 #ifdef SMALL_SCREEN_DEVICE
 	new GUI::ButtonWidget(this, "ScummConfig.Keys", "Keys", kKeysCmd, 'K');
 #endif
-
-#ifdef SMALL_SCREEN_DEVICE
-	//
-	// Create the sub dialog(s)
-	//
-
-	_keysDialog = new GUI::KeysDialog();
-#endif
 }
 
 ConfigDialog::~ConfigDialog() {
@@ -611,7 +603,13 @@ void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 	switch (cmd) {
 	case kKeysCmd:
 #ifdef SMALL_SCREEN_DEVICE
+		//
+		// Create the sub dialog(s)
+		//
+		_keysDialog = new GUI::KeysDialog();
 		_keysDialog->runModal();
+		delete _keysDialog;
+		_keysDialog = NULL;
 #endif
 		break;
 	default:
