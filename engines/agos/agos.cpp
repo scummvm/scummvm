@@ -902,10 +902,14 @@ AGOSEngine::~AGOSEngine() {
 	free(_gameOffsetsPtr);
 	free(_iconFilePtr);
 	free(_itemArrayPtr);
+	free(_menuBase);
+	free(_roomsList);
+	free(_roomStates);
 	free(_stringTabPtr);
 	free(_strippedTxtMem);
 	free(_tblList);
 	free(_textMem);
+	free(_xtblList);
 
 	free(_backGroundBuf);
 	free(_backBuf);
@@ -1024,60 +1028,6 @@ Common::Error AGOSEngine::go() {
 	return Common::kNoError;
 }
 
-
-/*  I do not think that this will be used
- *
-void AGOSEngine::shutdown() {
-	// Sync with AGOSEngine::~AGOSEngine()
-	// In Simon 2, this gets deleted along with _sound further down
-	if (getGameType() != GType_SIMON2)
-		delete _gameFile;
-
-	_midi.close();
-	delete _driver;
-
-	for (uint i = 0; i < _itemHeap.size(); i++) {
-		delete[] _itemHeap[i];
-	}
-	_itemHeap.clear();
-
-	free(_tablesHeapPtr - _tablesHeapCurPos);
-
-	free(_gameOffsetsPtr);
-	free(_iconFilePtr);
-	free(_itemArrayPtr);
-	free(_roomsList);
-	free(_roomStates);
-	free(_stringTabPtr);
-	free(_strippedTxtMem);
-	free(_tblList);
-	free(_textMem);
-	free(_xtblList);
-
-	free(_backGroundBuf);
-	free(_backBuf);
-	free(_scaleBuf);
-
-	free(_window4BackScn);
-	free(_window6BackScn);
-
-	free(_variableArray);
-	free(_variableArray2);
-
-	delete _dummyItem1;
-	delete _dummyItem2;
-	delete _dummyItem3;
-
-	delete _dummyWindow;
-	delete[] _windowList;
-
-	delete _debugger;
-	delete _moviePlayer;
-	delete _sound;
-
-	_system->shouldQuit();
-}
-*/
 
 uint32 AGOSEngine::getTime() const {
 	return _system->getMillis() / 1000;
