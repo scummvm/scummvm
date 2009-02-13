@@ -183,6 +183,5 @@ aos4dist: $(EXECUTABLE)
 	cp $(srcdir)/COPYRIGHT $(AOS4PATH)/COPYRIGHT.txt
 	cp $(srcdir)/NEWS $(AOS4PATH)/NEWS.txt
 	cp $(srcdir)/README $(AOS4PATH)/README.txt
-	cp /sdk/local/documentation/SDL-1.2.9/README-SDL.txt $(AOS4PATH)
 
 .PHONY: deb bundle osxsnap win32dist install uninstall
