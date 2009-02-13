@@ -42,21 +42,16 @@ namespace Graphics {
  * @param PixelType Defines a type which may hold the color value of a single
  *        pixel, such as "byte" or "uint16" for 8 and 16 BPP respectively.
  *
- * @param PixelFormat Defines the type of the PixelFormat struct which contains all
- *        the actual information of the pixels being used, as declared in "graphics/colormasks.h"
- *
  * TODO: Expand documentation.
  *
  * @see VectorRenderer
  */
-template<typename PixelType, typename PixelFormat>
+template<typename PixelType>
 class VectorRendererSpec : public VectorRenderer {
 	typedef VectorRenderer Base;
 
 public:
-	VectorRendererSpec() {
-		_bitmapAlphaColor = RGBToColor<PixelFormat>(255, 0, 255);
-	}
+	VectorRendererSpec(PixelFormat format);
 
 	void drawLine(int x1, int y1, int x2, int y2);
 	void drawCircle(int x, int y, int r);
@@ -71,9 +66,9 @@ public:
 					const Common::Rect &area, Graphics::TextAlign alignH,
 					GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool elipsis);
 
-	void setFgColor(uint8 r, uint8 g, uint8 b) { _fgColor = RGBToColor<PixelFormat>(r, g, b); }
-	void setBgColor(uint8 r, uint8 g, uint8 b) { _bgColor = RGBToColor<PixelFormat>(r, g, b); }
-	void setBevelColor(uint8 r, uint8 g, uint8 b) { _bevelColor = RGBToColor<PixelFormat>(r, g, b); }
+	void setFgColor(uint8 r, uint8 g, uint8 b) { _fgColor = _format.RGBToColor(r, g, b); }
+	void setBgColor(uint8 r, uint8 g, uint8 b) { _bgColor = _format.RGBToColor(r, g, b); }
+	void setBevelColor(uint8 r, uint8 g, uint8 b) { _bevelColor = _format.RGBToColor(r, g, b); }
 	void setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2);
 
 	void copyFrame(OSystem *sys, const Common::Rect &r);
@@ -207,6 +202,9 @@ protected:
 		while (first != last) blendPixelPtr(first++, color, alpha);
 	}
 
+	const PixelFormat _format;
+	const PixelType _redMask, _greenMask, _blueMask, _alphaMask;
+
 	PixelType _fgColor; /**< Foreground color currently being used to draw on the renderer */
 	PixelType _bgColor; /**< Background color currently being used to draw on the renderer */
 
@@ -231,9 +229,13 @@ protected:
  * @see VectorRenderer
  * @see VectorRendererSpec
  */
-template<typename PixelType, typename PixelFormat>
-class VectorRendererAA : public VectorRendererSpec<PixelType, PixelFormat> {
-	typedef VectorRendererSpec<PixelType, PixelFormat> Base;
+template<typename PixelType>
+class VectorRendererAA : public VectorRendererSpec<PixelType> {
+	typedef VectorRendererSpec<PixelType> Base;
+public:
+	VectorRendererAA(PixelFormat format) : VectorRendererSpec<PixelType>(format) {
+	}
+
 protected:
 	/**
 	 * "Wu's Line Antialiasing Algorithm" as published by Xiaolin Wu, July 1991

@@ -30,7 +30,7 @@
 #include "common/system.h"
 
 #include "graphics/surface.h"
-#include "graphics/colormasks.h"
+#include "graphics/pixelformat.h"
 
 #include "gui/ThemeEngine.h"
 
