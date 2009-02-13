@@ -418,9 +418,9 @@ calcGradient(uint32 pos, uint32 max) {
 	PixelType output = 0;
 	pos = (MIN(pos * Base::_gradientFactor, max) << 12) / max;
 
-	output |= (_gradientStart + ((Base::_gradientBytes[0] * pos) >> 12)) & PixelFormat::kRedMask;
-	output |= (_gradientStart + ((Base::_gradientBytes[1] * pos) >> 12)) & PixelFormat::kGreenMask;
-	output |= (_gradientStart + ((Base::_gradientBytes[2] * pos) >> 12)) & PixelFormat::kBlueMask;
+	output |= ((_gradientStart & PixelFormat::kRedMask) + ((Base::_gradientBytes[0] * pos) >> 12)) & PixelFormat::kRedMask;
+	output |= ((_gradientStart & PixelFormat::kGreenMask) + ((Base::_gradientBytes[1] * pos) >> 12)) & PixelFormat::kGreenMask;
+	output |= ((_gradientStart & PixelFormat::kBlueMask) + ((Base::_gradientBytes[2] * pos) >> 12)) & PixelFormat::kBlueMask;
 	output |= ~(PixelFormat::kRedMask | PixelFormat::kGreenMask | PixelFormat::kBlueMask);
 
 	return output;
