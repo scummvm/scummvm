@@ -423,9 +423,9 @@ calcGradient(uint32 pos, uint32 max) {
 	PixelType output = 0;
 	pos = (MIN(pos * Base::_gradientFactor, max) << 12) / max;
 
-	output |= (_gradientStart + ((Base::_gradientBytes[0] * pos) >> 12)) & _redMask;
-	output |= (_gradientStart + ((Base::_gradientBytes[1] * pos) >> 12)) & _greenMask;
-	output |= (_gradientStart + ((Base::_gradientBytes[2] * pos) >> 12)) & _blueMask;
+	output |= ((_gradientStart&_redMask) + ((Base::_gradientBytes[0] * pos) >> 12)) & _redMask;
+	output |= ((_gradientStart&_greenMask) + ((Base::_gradientBytes[1] * pos) >> 12)) & _greenMask;
+	output |= ((_gradientStart&_blueMask) + ((Base::_gradientBytes[2] * pos) >> 12)) & _blueMask;
 	output |= ~(_redMask | _greenMask | _blueMask);
 
 	return output;
