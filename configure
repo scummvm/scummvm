@@ -1178,7 +1178,7 @@ if test -n "$_host"; then
 			type_2_byte='short'
 			type_4_byte='long'
 			CXXFLAGS="$CFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
-			LDFLAGS="$LDFLAGS -mcrt=newlib"
+			LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -Lsobjs:"
 			;;
 		m68k-atari-mint)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
