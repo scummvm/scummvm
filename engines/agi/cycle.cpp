@@ -115,7 +115,7 @@ void AgiEngine::interpretCycle() {
 	oldSound = getflag(fSoundOn);
 
 	_game.exitAllLogics = false;
-	while (runLogic(0) == 0 && !shouldQuit()) {
+	while (runLogic(0) == 0 && !(shouldQuit() || restartGame)) {
 		_game.vars[vWordNotFound] = 0;
 		_game.vars[vBorderTouchObj] = 0;
 		_game.vars[vBorderCode] = 0;
@@ -361,16 +361,11 @@ int AgiEngine::playGame() {
 			_game.vars[vKey] = 0;
 		}
 
-		// FIXME: This has been broken with the merge of the RTL GSoC project. shouldQuit() returns a boolean, and we're trying to
-		// check it against 0xff, which is never going to be true
-		//if (shouldQuit() == 0xff)
-		//	ec = errRestartGame;
-
 		if (shouldPerformAutoSave(_lastSaveTime)) {
 			saveGame(getSavegameFilename(0), "Autosave");
 		}
 
-	} while (shouldQuit() == 0);
+	} while (!(shouldQuit() || restartGame));
 
 	_sound->stopSound();
 
@@ -390,8 +385,11 @@ int AgiEngine::runGame() {
 
 		if (agiInit() != errOK)
 			break;
-		if (ec == errRestartGame)
+
+		if (restartGame) {
 			setflag(fRestartGame, true);
+			restartGame = false;
+		}
 
 		// Set computer type (v20 i.e. vComputer)
 		switch (getPlatform()) {
@@ -444,7 +442,7 @@ int AgiEngine::runGame() {
 		ec = playGame();
 		_game.state = STATE_LOADED;
 		agiDeinit();
-	} while (ec == errRestartGame);
+	} while (restartGame);
 
 	delete _menu;
 	_menu = NULL;

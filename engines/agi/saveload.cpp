@@ -566,7 +566,7 @@ int AgiEngine::selectSlot() {
 	int oldFirstSlot = _firstSlot + 1;
 	int oldActive = active + 1;
 
-	while (!shouldQuit()) {
+	while (!(shouldQuit() || restartGame)) {
 		int sbPos = 0;
 
 		// Use the extreme scrollbar positions only if the extreme
