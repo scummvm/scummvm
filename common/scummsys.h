@@ -449,7 +449,7 @@
 	typedef byte OverlayColor;
 #else
 	// 15/16 bit color mode everywhere else...
-	typedef int16 OverlayColor;
+	typedef uint16 OverlayColor;
 #endif
 
 
