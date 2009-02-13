@@ -73,19 +73,17 @@ uint32 hqx_redBlueMask = 0;
 uint32 hqx_green_redBlue_Mask = 0;
 
 // FIXME/TODO: The RGBtoYUV table sucks up 256 KB. This is bad.
-// In addition we never free them...
+// In addition we never free it...
 //
 // Note: a memory lookup table is *not* necessarily faster than computing
-// these things on the fly, because of its size. Both tables together, plus
-// the code, plus the input/output GFX data, won't fit in the cache on many
+// these things on the fly, because of its size. The table together with
+// the code, plus the input/output GFX data, may not fit in the cache on some
 // systems, so main memory has to be accessed, which is about the worst thing
 // that can happen to code which tries to be fast...
 //
-// So we should think about ways to get these smaller / removed. Maybe we can
-// use the same technique which is employed by our MPEG code to reduce the
-// size of the lookup tables at the cost of some additional computations? That
-// might actually result in a speedup, too, if done right (and the code code
-// might actually be suitable for AltiVec/MMX/SSE speedup).
+// So we should think about ways to get this smaller / removed. Maybe we can
+// use the same technique employed by our MPEG code to reduce the size of the
+// lookup table at the cost of some additional computations?
 //
 // Of course, the above is largely a conjecture, and the actual speed
 // differences are likely to vary a lot between different architectures and
