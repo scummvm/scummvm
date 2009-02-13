@@ -212,19 +212,6 @@ VectorRenderer *createRenderer(int mode) {
 	assert(mode == GUI::ThemeEngine::kGfxStandard16bit);
 	return new VectorRendererSpec<uint16, ColorMasks<VECTOR_RENDERER_FORMAT> >;
 #else
-#define CREATE_RENDERER_16(bitFormat) \
-	switch (mode) { \
-	case GUI::ThemeEngine::kGfxStandard16bit: \
-		return new VectorRendererSpec<uint16, ColorMasks<bitFormat> >; \
-	\
-	case GUI::ThemeEngine::kGfxAntialias16bit: \
-		return new VectorRendererAA<uint16, ColorMasks<bitFormat> >; \
-	\
-	default: \
-		return 0; \
-	}
-
-
 	// FIXME/TODO: This looks like a real gross hack.
 	// It might be fine to assume that '1555' only happens for PSP
 	// so it could maybe be handled via DISABLE_FANCY_THEMES,
@@ -239,7 +226,6 @@ VectorRenderer *createRenderer(int mode) {
 
 	return 0;
 
-#undef CREATE_RENDERER_16
 #endif
 }
 
