@@ -913,6 +913,9 @@ AGOSEngine::~AGOSEngine() {
 	free(_window4BackScn);
 	free(_window6BackScn);
 
+	free(_firstTimeStruct);
+	free(_pendingDeleteTimeEvent);
+
 	free(_variableArray);
 	free(_variableArray2);
 
@@ -990,7 +993,6 @@ Common::Error AGOSEngine::go() {
 		setWindowImage(3, 9900);
 		while (!shouldQuit())
 			delay(0);
-
 	}
 
 	if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
