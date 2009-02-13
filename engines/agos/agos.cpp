@@ -899,6 +899,7 @@ AGOSEngine::~AGOSEngine() {
 	free(_gameOffsetsPtr);
 	free(_iconFilePtr);
 	free(_itemArrayPtr);
+	free(_menuBase);
 	free(_roomsList);
 	free(_roomStates);
 	free(_stringTabPtr);
