@@ -906,6 +906,7 @@ AGOSEngine::~AGOSEngine() {
 
 	free(_backGroundBuf);
 	free(_backBuf);
+	free(_planarBuf);
 	free(_scaleBuf);
 	free(_zoneBuffers);
 
