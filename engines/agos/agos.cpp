@@ -1046,10 +1046,13 @@ void AGOSEngine::shutdown() {
 	free(_gameOffsetsPtr);
 	free(_iconFilePtr);
 	free(_itemArrayPtr);
+	free(_roomsList);
+	free(_roomStates);
 	free(_stringTabPtr);
 	free(_strippedTxtMem);
 	free(_tblList);
 	free(_textMem);
+	free(_xtblList);
 
 	free(_backGroundBuf);
 	free(_backBuf);
