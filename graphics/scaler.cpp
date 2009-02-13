@@ -26,6 +26,7 @@
 #include "graphics/scaler/intern.h"
 #include "graphics/scaler/scalebit.h"
 #include "common/util.h"
+#include "common/system.h"
 
 int gBitFormat = 565;
 
@@ -127,17 +128,35 @@ void InitLUT(Graphics::PixelFormat format) {
 #endif
 
 
+/** Lookup table for the DotMatrix scaler. */
+uint16 g_dotmatrix[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+/** Init the scaler subsystem. */
 void InitScalers(uint32 BitFormat) {
 	gBitFormat = BitFormat;
 
-#ifndef DISABLE_HQ_SCALERS
+	// FIXME: The pixelformat should be param to this function, not the bitformat.
+	// Until then, determine the pixelformat in other ways. Unfortunately,
+	// calling OSystem::getOverlayFormat() here might not be safe on all ports.
+	Graphics::PixelFormat format;
 	if (gBitFormat == 555) {
-		InitLUT(Graphics::createPixelFormat<555>());
+		format = Graphics::createPixelFormat<555>();
+	} else if (gBitFormat == 565) {
+		format = Graphics::createPixelFormat<565>();
+	} else {
+		format = g_system->getOverlayFormat();
 	}
-	if (gBitFormat == 565) {
-		InitLUT(Graphics::createPixelFormat<565>());
-	}
+
+#ifndef DISABLE_HQ_SCALERS
+	InitLUT(format);
 #endif
+
+	// Build dotmatrix lookup table for the DotMatrix scaler.
+	g_dotmatrix[0] = g_dotmatrix[10] = format.RGBToColor(0, 63, 0);
+	g_dotmatrix[1] = g_dotmatrix[11] = format.RGBToColor(0, 0, 63);
+	g_dotmatrix[2] = g_dotmatrix[8] = format.RGBToColor(63, 0, 0);
+	g_dotmatrix[4] = g_dotmatrix[6] =
+		g_dotmatrix[12] = g_dotmatrix[14] = format.RGBToColor(63, 63, 63);
 }
 
 void DestroyScalers(){
@@ -155,12 +174,12 @@ void DestroyScalers(){
 void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	// Spot the case when it can all be done in 1 hit
-	if (((int)srcPitch == 2 * width) && ((int)dstPitch == 2 * width)) {
-		width *= height;
-		height = 1;
+	if ((srcPitch == sizeof(OverlayColor) * (uint)width) && (dstPitch == sizeof(OverlayColor) * (uint)width)) {
+		memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width * height);
+		return;
 	}
 	while (height--) {
-		memcpy(dstPtr, srcPtr, 2 * width);
+		memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
 		srcPtr += srcPitch;
 		dstPtr += dstPitch;
 	}
@@ -175,10 +194,11 @@ void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 	uint8 *r;
 
 	assert(((long)dstPtr & 3) == 0);
+	assert(sizeof(OverlayColor) == 2);
 	while (height--) {
 		r = dstPtr;
 		for (int i = 0; i < width; ++i, r += 4) {
-			uint32 color = *(((const uint16 *)srcPtr) + i);
+			uint32 color = *(((const OverlayColor *)srcPtr) + i);
 
 			color |= color << 16;
 
@@ -306,22 +326,10 @@ void TV2xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 }
 MAKE_WRAPPER(TV2x)
 
-static const uint16 dotmatrix_565[16] = {
-	0x01E0, 0x0007, 0x3800, 0x0000,
-	0x39E7, 0x0000, 0x39E7, 0x0000,
-	0x3800, 0x0000, 0x01E0, 0x0007,
-	0x39E7, 0x0000, 0x39E7, 0x0000
-};
-static const uint16 dotmatrix_555[16] = {
-	0x00E0, 0x0007, 0x1C00, 0x0000,
-	0x1CE7, 0x0000, 0x1CE7, 0x0000,
-	0x1C00, 0x0000, 0x00E0, 0x0007,
-	0x1CE7, 0x0000, 0x1CE7, 0x0000
-};
-
 static inline uint16 DOT_16(const uint16 *dotmatrix, uint16 c, int j, int i) {
-	return c - ((c >> 2) & *(dotmatrix + ((j & 3) << 2) + (i & 3)));
+	return c - ((c >> 2) & dotmatrix[((j & 3) << 2) + (i & 3)]);
 }
+
 
 // FIXME: This scaler doesn't quite work. Either it needs to know where on the
 // screen it's drawing, or the dirty rects will have to be adjusted so that
@@ -332,14 +340,7 @@ static inline uint16 DOT_16(const uint16 *dotmatrix, uint16 c, int j, int i) {
 void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 					int width, int height) {
 
-	const uint16 *dotmatrix;
-	if (gBitFormat == 565) {
-		dotmatrix = dotmatrix_565;
-	} else if (gBitFormat == 555) {
-		dotmatrix = dotmatrix_555;
-	} else {
-		error("Unknown bit format %d", gBitFormat);
-	}
+	const uint16 *dotmatrix = g_dotmatrix;
 
 	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;
