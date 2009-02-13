@@ -82,7 +82,6 @@ bool Disk::fileExists(uint16 fileNr) {
 
 // allocate memory, load the file and return a pointer
 uint8 *Disk::loadFile(uint16 fileNr) {
-
 	uint8 cflag;
 
 	debug(2, "load file %d,%d (%d)", (fileNr >> 11), (fileNr & 2047), fileNr);
@@ -188,7 +187,6 @@ uint16 *Disk::loadScriptFile(uint16 fileNr) {
 }
 
 uint8 *Disk::getFileInfo(uint16 fileNr) {
-
 	uint16 i;
 	uint16 *dnrTbl16Ptr = (uint16 *)_dinnerTableArea;
 
@@ -204,7 +202,6 @@ uint8 *Disk::getFileInfo(uint16 fileNr) {
 }
 
 void Disk::fnCacheChip(uint16 *fList) {
-
 	// fnCacheChip is called after fnCacheFast
 	uint16 cnt = 0;
 	while (_buildList[cnt])
@@ -228,7 +225,6 @@ void Disk::fnCacheFast(uint16 *fList) {
 }
 
 void Disk::fnCacheFiles(void) {
-
 	uint16 lCnt, bCnt, targCnt;
 	targCnt = lCnt = 0;
 	bool found;
@@ -282,7 +278,6 @@ void Disk::fnCacheFiles(void) {
 }
 
 void Disk::refreshFilesList(uint32 *list) {
-
 	uint8 cnt = 0;
 	while (_loadedFilesList[cnt]) {
 		if (SkyEngine::_itemList[_loadedFilesList[cnt] & 2047])
@@ -300,7 +295,6 @@ void Disk::refreshFilesList(uint32 *list) {
 }
 
 void Disk::fnMiniLoad(uint16 fileNum) {
-
 	uint16 cnt = 0;
 	while (_loadedFilesList[cnt]) {
 		if (_loadedFilesList[cnt] == fileNum)
@@ -313,7 +307,6 @@ void Disk::fnMiniLoad(uint16 fileNum) {
 }
 
 void Disk::fnFlushBuffers(void) {
-
 	// dump all loaded sprites
 	uint8 lCnt = 0;
 	while (_loadedFilesList[lCnt]) {

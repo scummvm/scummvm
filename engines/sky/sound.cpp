@@ -1036,7 +1036,6 @@ Sound::~Sound(void) {
 }
 
 void Sound::playSound(uint32 id, byte *sound, uint32 size, Audio::SoundHandle *handle) {
-
 	byte flags = 0;
 	flags |= Audio::Mixer::FLAG_UNSIGNED|Audio::Mixer::FLAG_AUTOFREE;
 	size -= sizeof(struct dataFileHeader);
@@ -1048,7 +1047,6 @@ void Sound::playSound(uint32 id, byte *sound, uint32 size, Audio::SoundHandle *h
 }
 
 void Sound::loadSection(uint8 pSection) {
-
 	fnStopFx();
 	_mixer->stopAll();
 
@@ -1082,7 +1080,6 @@ void Sound::loadSection(uint8 pSection) {
 }
 
 void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
-
 	if (channel == 0)
 		_mixer->stopID(SOUND_CH0);
 	else
@@ -1128,7 +1125,6 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 }
 
 void Sound::fnStartFx(uint32 sound, uint8 channel) {
-
 	_saveSounds[channel] = 0xFFFF;
 	if (sound < 256 || sound > MAX_FX_NUMBER || (SkyEngine::_systemVars.systemFlags & SF_FX_OFF))
 		return;
@@ -1191,7 +1187,6 @@ void Sound::checkFxQueue(void) {
 }
 
 void Sound::restoreSfx(void) {
-
 	// queue sfx, so they will be started when the player exits the control panel
 	memset(_sfxQueue, 0, sizeof(_sfxQueue));
 	uint8 queueSlot = 0;
@@ -1221,7 +1216,6 @@ void Sound::stopSpeech(void) {
 }
 
 bool Sound::startSpeech(uint16 textNum) {
-
 	if (!(SkyEngine::_systemVars.systemFlags & SF_ALLOW_SPEECH))
 		return false;
 	uint16 speechFileNum = _speechConvertTable[textNum >> 12] + (textNum & 0xFFF);
@@ -1254,7 +1248,6 @@ bool Sound::startSpeech(uint16 textNum) {
 }
 
 void Sound::fnPauseFx(void) {
-
 	if (!_isPaused) {
 		_isPaused = true;
 		_mixer->pauseID(SOUND_CH0, true);
@@ -1263,7 +1256,6 @@ void Sound::fnPauseFx(void) {
 }
 
 void Sound::fnUnPauseFx(void) {
-
 	if (_isPaused) {
 		_isPaused = false;
 		_mixer->pauseID(SOUND_CH0, false);

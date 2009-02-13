@@ -33,13 +33,10 @@
 namespace Sky {
 
 void GmMusic::passTimerFunc(void *param) {
-
 	((GmMusic*)param)->timerCall();
 }
 
-GmMusic::GmMusic(MidiDriver *pMidiDrv, Disk *pDisk)
-	: MusicBase(pDisk) {
-
+GmMusic::GmMusic(MidiDriver *pMidiDrv, Disk *pDisk) : MusicBase(pDisk) {
 	_driverFileBase = 60200;
 	_midiDrv = pMidiDrv;
 	int midiRes = _midiDrv->open();
@@ -50,7 +47,6 @@ GmMusic::GmMusic(MidiDriver *pMidiDrv, Disk *pDisk)
 }
 
 GmMusic::~GmMusic(void) {
-
 	_midiDrv->setTimerCallback(NULL, NULL);
 	if (_currentMusic)
 		stopMusic();
@@ -64,7 +60,6 @@ GmMusic::~GmMusic(void) {
 }
 
 void GmMusic::setVolume(uint16 param) {
-
 	_musicVolume = param;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		_channels[cnt]->updateVolume(_musicVolume);
@@ -81,7 +76,6 @@ void GmMusic::timerCall(void) {
 }
 
 void GmMusic::setupPointers(void) {
-
 	if (SkyEngine::_systemVars.gameVersion == 109) {
 		_musicDataLoc = READ_LE_UINT16(_musicData + 0x79B);
 		_sysExSequence = _musicData + 0x1EF2;
@@ -92,7 +86,6 @@ void GmMusic::setupPointers(void) {
 }
 
 void GmMusic::setupChannels(uint8 *channelData) {
-
 	_numberOfChannels = channelData[0];
 	channelData++;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {

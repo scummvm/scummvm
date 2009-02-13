@@ -625,7 +625,6 @@ uint16 Intro::_floppyIntroSeq[] = {
 };
 
 Intro::Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *text, Audio::Mixer *mixer, OSystem *system) {
-
 	_skyDisk = disk;
 	_skyScreen = screen;
 	_skyMusic = music;
@@ -648,7 +647,6 @@ Intro::~Intro(void) {
 }
 
 bool Intro::doIntro(bool floppyIntro) {
-
 	if (!SkyEngine::isCDVersion())
 		floppyIntro = true;
 
@@ -678,7 +676,6 @@ bool Intro::doIntro(bool floppyIntro) {
 }
 
 bool Intro::nextPart(uint16 *&data) {
-
 	uint8 *vData = NULL;
 	// return false means cancel intro
 	uint16 command = *data++;
@@ -771,7 +768,6 @@ bool Intro::nextPart(uint16 *&data) {
 }
 
 bool Intro::floppyScrollFlirt(void) {
-
 	uint8 *scrollScreen = (uint8*)malloc(FRAME_SIZE * 2);
 	memset(scrollScreen, 0, FRAME_SIZE);
 	memcpy(scrollScreen + FRAME_SIZE, _skyScreen->giveCurrent(), FRAME_SIZE);
@@ -815,7 +811,6 @@ bool Intro::floppyScrollFlirt(void) {
 }
 
 bool Intro::commandFlirt(uint16 *&data) {
-
 	_skyScreen->startSequence(*data++);
 	while ((*data != COMMANDEND) || _skyScreen->sequenceRunning()) {
 		while ((_skyScreen->seqFramesLeft() < *data)) {
@@ -854,7 +849,6 @@ bool Intro::commandFlirt(uint16 *&data) {
 }
 
 void Intro::showTextBuf(void) {
-
 	uint16 x = ((dataFileHeader*)_textBuf)->s_x;
 	uint16 y = ((dataFileHeader*)_textBuf)->s_y;
 	uint16 width = ((dataFileHeader*)_textBuf)->s_width;
@@ -877,7 +871,6 @@ void Intro::showTextBuf(void) {
 }
 
 void Intro::restoreScreen(void) {
-
 	uint16 x = ((dataFileHeader*)_saveBuf)->s_x;
 	uint16 y = ((dataFileHeader*)_saveBuf)->s_y;
 	uint16 width = ((dataFileHeader*)_saveBuf)->s_width;
@@ -893,7 +886,6 @@ void Intro::restoreScreen(void) {
 }
 
 bool Intro::escDelay(uint32 msecs) {
-
 	Common::EventManager *eventMan = _system->getEventManager();
 	Common::Event event;
 	if (_relDelay == 0) // first call, init with system time

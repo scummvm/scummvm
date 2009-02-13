@@ -33,9 +33,7 @@
 
 namespace Sky {
 
-AdlibMusic::AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk)
-	: MusicBase(pDisk) {
-
+AdlibMusic::AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pDisk) {
 	_driverFileBase = 60202;
 	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
@@ -46,13 +44,11 @@ AdlibMusic::AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk)
 }
 
 AdlibMusic::~AdlibMusic(void) {
-
 	OPLDestroy(_opl);
 	_mixer->stopHandle(_soundHandle);
 }
 
 int AdlibMusic::readBuffer(int16 *data, const int numSamples) {
-
 	if (_musicData == NULL) {
 		// no music loaded
 		memset(data, 0, numSamples * sizeof(int16));
@@ -81,7 +77,6 @@ int AdlibMusic::readBuffer(int16 *data, const int numSamples) {
 }
 
 void AdlibMusic::setupPointers(void) {
-
 	if (SkyEngine::_systemVars.gameVersion == 109) {
 		// disk demo uses a different adlib driver version, some offsets have changed
 		//_musicDataLoc = (_musicData[0x11CC] << 8) | _musicData[0x11CB];
@@ -100,7 +95,6 @@ void AdlibMusic::setupPointers(void) {
 }
 
 void AdlibMusic::setupChannels(uint8 *channelData) {
-
 	_numberOfChannels = channelData[0];
 	channelData++;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
@@ -110,7 +104,6 @@ void AdlibMusic::setupChannels(uint8 *channelData) {
 }
 
 void AdlibMusic::startDriver(void) {
-
 	uint16 cnt = 0;
 	while (_initSequence[cnt] || _initSequence[cnt + 1]) {
 		OPLWriteReg (_opl, _initSequence[cnt], _initSequence[cnt + 1]);

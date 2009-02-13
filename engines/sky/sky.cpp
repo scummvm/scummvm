@@ -81,7 +81,6 @@ SkyEngine::SkyEngine(OSystem *syst)
 }
 
 SkyEngine::~SkyEngine() {
-
 	_timer->removeTimerProc(&timerHandler);
 
 	delete _skyLogic;
@@ -110,7 +109,6 @@ void SkyEngine::initVirgin() {
 }
 
 void SkyEngine::handleKey(void) {
-
 	if (_keyPressed.keycode && _systemVars.paused) {
 		_skySound->fnUnPauseFx();
 		_systemVars.paused = false;
@@ -155,7 +153,6 @@ void SkyEngine::handleKey(void) {
 }
 
 Common::Error SkyEngine::go() {
-
 	_keyPressed.reset();
 
 	uint16 result = 0;
@@ -355,7 +352,6 @@ Common::Error SkyEngine::init() {
 }
 
 void SkyEngine::initItemList() {
-
 	//See List.asm for (cryptic) item # descriptions
 
 	for (int i = 0; i < 300; i++)
@@ -363,7 +359,6 @@ void SkyEngine::initItemList() {
 }
 
 void SkyEngine::loadFixedItems(void) {
-
 	_itemList[49] = _skyDisk->loadFile(49);
 	_itemList[50] = _skyDisk->loadFile(50);
 	_itemList[73] = _skyDisk->loadFile(73);
@@ -383,22 +378,18 @@ void SkyEngine::loadFixedItems(void) {
 }
 
 void *SkyEngine::fetchItem(uint32 num) {
-
 	return _itemList[num];
 }
 
 void SkyEngine::timerHandler(void *refCon) {
-
 	((SkyEngine *)refCon)->gotTimerTick();
 }
 
 void SkyEngine::gotTimerTick(void) {
-
 	_skyScreen->handleTimer();
 }
 
 void SkyEngine::delay(int32 amount) {
-
 	Common::Event event;
 
 	uint32 start = _system->getMillis();
@@ -457,7 +448,6 @@ bool SkyEngine::isDemo(void) {
 }
 
 bool SkyEngine::isCDVersion(void) {
-
 	switch (_systemVars.gameVersion) {
 	case 109:
 	case 267:

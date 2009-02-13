@@ -87,7 +87,6 @@ Text::~Text(void) {
 }
 
 void Text::fnSetFont(uint32 fontNr) {
-
 	struct charSet *newCharSet;
 
 	switch (fontNr) {
@@ -111,7 +110,6 @@ void Text::fnSetFont(uint32 fontNr) {
 }
 
 void Text::fnTextModule(uint32 textInfoId, uint32 textNo) {
-
 	fnSetFont(1);
 	uint16* msgData = (uint16 *)_skyCompact->fetchCpt(textInfoId);
 	lowTextManager_t textId = lowTextManager(textNo, msgData[1], msgData[2], 209, false);
@@ -123,7 +121,6 @@ void Text::fnTextModule(uint32 textInfoId, uint32 textNo) {
 }
 
 void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
-
 	if (patchMessage(textNr))
 		return;
 
@@ -185,7 +182,6 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 }
 
 void Text::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
-
 	Compact *ptrComp = _skyCompact->fetchCpt(pointedId);
 	lowTextManager_t text = lowTextManager(ptrComp->cursorText, TEXT_MOUSE_WIDTH, L_CURSOR, 242, false);
 	Logic::_scriptVariables[CURSOR_ID] = text.compactNum;
@@ -207,7 +203,6 @@ void Text::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
 }
 
 void Text::logicCursor(Compact *textCompact, uint16 mouseX, uint16 mouseY) {
-
 	textCompact->xcood = (uint16)(mouseX + _mouseOfsX);
 	textCompact->ycood = (uint16)(mouseY + _mouseOfsY);
 	if (textCompact->ycood < TOP_LEFT_Y)
@@ -215,7 +210,6 @@ void Text::logicCursor(Compact *textCompact, uint16 mouseX, uint16 mouseY) {
 }
 
 bool Text::getTextBit(uint8 **data, uint32 *bitPos) {
-
 	if (*bitPos) {
 		(*bitPos)--;
 	} else {
@@ -247,7 +241,6 @@ displayText_t Text::displayText(uint32 textNum, uint8 *dest, bool centre, uint16
 }
 
 displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
-
 	//Render text pointed to by *textPtr in buffer *dest
 	uint32 centerTable[10];
 	uint16 lineWidth = 0;
@@ -353,7 +346,6 @@ displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 }
 
 void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color, uint16 bufPitch) {
-
 	bool maskBit, dataBit;
 	uint8 charWidth = (uint8)((*(charSetPtr + textChar)) + 1 - _dtCharSpacing);
 	uint16 data, mask;
@@ -392,7 +384,6 @@ void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, ui
 }
 
 lowTextManager_t Text::lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre) {
-
 	getText(textNum);
 	struct displayText_t textInfo = displayText(_textBuffer, NULL, centre, width, color);
 
@@ -423,7 +414,6 @@ lowTextManager_t Text::lowTextManager(uint32 textNum, uint16 width, uint16 logic
 }
 
 void Text::changeTextSpriteColour(uint8 *sprData, uint8 newCol) {
-
 	dataFileHeader *header = (dataFileHeader *)sprData;
 	sprData += sizeof(dataFileHeader);
 	for (uint16 cnt = 0; cnt < header->s_sp_size; cnt++)
@@ -470,7 +460,6 @@ void Text::initHuffTree() {
 }
 
 bool Text::patchMessage(uint32 textNum) {
-
 	uint16 patchIdx = _patchLangIdx[SkyEngine::_systemVars.language];
 	uint16 patchNum = _patchLangNum[SkyEngine::_systemVars.language];
 	for (uint16 cnt = 0; cnt < patchNum; cnt++) {

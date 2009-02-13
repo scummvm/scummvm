@@ -58,7 +58,6 @@ uint8 Screen::_top16Colours[16*3] = {
 };
 
 Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
-
 	_system = pSystem;
 	_skyDisk = pDisk;
 	_skyCompact = skyCompact;
@@ -93,7 +92,6 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 }
 
 Screen::~Screen(void) {
-
 	free(_gameGrid);
 	if (_currentScreen)
 		free(_currentScreen);
@@ -102,7 +100,6 @@ Screen::~Screen(void) {
 }
 
 void Screen::clearScreen(void) {
-
 	memset(_currentScreen, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_system->copyRectToScreen(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 	_system->updateScreen();
@@ -114,14 +111,12 @@ void Screen::setFocusRectangle(const Common::Rect& rect) {
 
 //set a new palette, pal is a pointer to dos vga rgb components 0..63
 void Screen::setPalette(uint8 *pal) {
-
 	convertPalette(pal, _palette);
 	_system->setPalette(_palette, 0, GAME_COLOURS);
 	_system->updateScreen();
 }
 
 void Screen::setPaletteEndian(uint8 *pal) {
-
 #ifdef SCUMM_BIG_ENDIAN
 	uint8 endPalette[256 * 3];
 	for (uint16 cnt = 0; cnt < 256 * 3; cnt++)
@@ -135,7 +130,6 @@ void Screen::setPaletteEndian(uint8 *pal) {
 }
 
 void Screen::halvePalette(void) {
-
 	uint8 halfPalette[1024];
 	for (uint8 cnt = 0; cnt < GAME_COLOURS; cnt++) {
 		halfPalette[(cnt << 2) | 0] = _palette[(cnt << 2) | 0] >> 1;
@@ -147,7 +141,6 @@ void Screen::halvePalette(void) {
 }
 
 void Screen::setPalette(uint16 fileNum) {
-
 	uint8 *tmpPal = _skyDisk->loadFile(fileNum);
 	if (tmpPal) {
 		setPalette(tmpPal);
@@ -171,13 +164,11 @@ void Screen::showScreen(uint16 fileNum) {
 }
 
 void Screen::showScreen(uint8 *pScreen) {
-
 	_system->copyRectToScreen(pScreen, 320, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 	_system->updateScreen();
 }
 
 void Screen::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0..63 rgb to 4byte 0..255 rgbx
-
 	int i;
 
 	for (i = 0; i < VGA_COLOURS; i++) {
@@ -189,7 +180,6 @@ void Screen::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0..6
 }
 
 void Screen::recreate(void) {
-
 	// check the game grid for changed blocks
 	if (!Logic::_scriptVariables[LAYER_0_ID])
 		return;
@@ -223,7 +213,6 @@ void Screen::recreate(void) {
 }
 
 void Screen::flip(bool doUpdate) {
-
 	uint32 copyX, copyWidth;
 	copyX = copyWidth = 0;
 	for (uint8 cnty = 0; cnty < GRID_Y; cnty++) {
@@ -248,7 +237,6 @@ void Screen::flip(bool doUpdate) {
 }
 
 void Screen::fnDrawScreen(uint32 palette, uint32 scroll) {
-
 	// set up the new screen
 	fnFadeDown(scroll);
 	forceRefresh();
@@ -259,7 +247,6 @@ void Screen::fnDrawScreen(uint32 palette, uint32 scroll) {
 }
 
 void Screen::fnFadeDown(uint32 scroll) {
-
 	if (((scroll != 123) && (scroll != 321)) || (SkyEngine::_systemVars.systemFlags & SF_NO_SCROLL)) {
 		uint32 delayTime = _system->getMillis();
 		for (uint8 cnt = 0; cnt < 32; cnt++) {
@@ -303,7 +290,6 @@ void Screen::palette_fadedown_helper(uint32 *pal, uint num) {
 }
 
 void Screen::paletteFadeUp(uint16 fileNr) {
-
 	uint8 *pal = _skyDisk->loadFile(fileNr);
 	if (pal) {
 		paletteFadeUp(pal);
@@ -313,7 +299,6 @@ void Screen::paletteFadeUp(uint16 fileNr) {
 }
 
 void Screen::paletteFadeUp(uint8 *pal) {
-
 	byte tmpPal[1024];
 
 	convertPalette(pal, tmpPal);
@@ -336,7 +321,6 @@ void Screen::paletteFadeUp(uint8 *pal) {
 }
 
 void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
-
 	//_currentScreen points to new screen,
 	//_scrollScreen points to graphic showing old room
 	if ((scroll != 123) && (scroll != 321))
@@ -394,7 +378,6 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 }
 
 void Screen::waitForTimer(void) {
-
 	Common::EventManager *eventMan = _system->getEventManager();
 	_gotTick = false;
 	while (!_gotTick) {
@@ -418,14 +401,12 @@ void Screen::waitForSequence(void) {
 }
 
 void Screen::handleTimer(void) {
-
 	_gotTick = true;
 	if (_seqInfo.running)
 		processSequence();
 }
 
 void Screen::startSequence(uint16 fileNum) {
-
 	_seqInfo.seqData = _skyDisk->loadFile(fileNum);
 	_seqInfo.framesLeft = _seqInfo.seqData[0];
 	_seqInfo.seqDataPos = _seqInfo.seqData + 1;
@@ -435,7 +416,6 @@ void Screen::startSequence(uint16 fileNum) {
 }
 
 void Screen::startSequenceItem(uint16 itemNum) {
-
 	_seqInfo.seqData = (uint8 *)SkyEngine::fetchItem(itemNum);
 	_seqInfo.framesLeft = _seqInfo.seqData[0] - 1;
 	_seqInfo.seqDataPos = _seqInfo.seqData + 1;
@@ -445,7 +425,6 @@ void Screen::startSequenceItem(uint16 itemNum) {
 }
 
 void Screen::stopSequence() {
-
 	_seqInfo.running = false;
 	waitForTimer();
 	waitForTimer();
@@ -455,7 +434,6 @@ void Screen::stopSequence() {
 }
 
 void Screen::processSequence(void) {
-
 	uint32 screenPos = 0;
 
 	_seqInfo.delay--;
@@ -533,14 +511,12 @@ void Screen::processSequence(void) {
 //- sprites.asm routines
 
 void Screen::spriteEngine(void) {
-
 	doSprites(BACK);
 	sortSprites();
 	doSprites(FORE);
 }
 
 void Screen::sortSprites(void) {
-
 	StSortList sortList[30];
 	uint32 currDrawList = DRAW_LIST_NO;
 	uint32 loadDrawList;
@@ -610,7 +586,6 @@ void Screen::sortSprites(void) {
 }
 
 void Screen::doSprites(uint8 layer) {
-
 	uint16 drawListNum = DRAW_LIST_NO;
 	uint32 idNum;
 	uint16* drawList;
@@ -650,7 +625,6 @@ void Screen::doSprites(uint8 layer) {
 }
 
 void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
-
 	if (spriteInfo == NULL) {
 		warning("Screen::drawSprite Can't draw sprite. Data %d was not loaded", sprCompact->frame >> 6);
 		sprCompact->status = 0;
@@ -739,7 +713,6 @@ void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 }
 
 void Screen::vectorToGame(uint8 gridVal) {
-
 	if (_sprWidth == 0)
 		return;
 	uint8 *trgGrid = _gameGrid + _sprY * GRID_X +_sprX;
@@ -751,7 +724,6 @@ void Screen::vectorToGame(uint8 gridVal) {
 }
 
 void Screen::vertMaskSub(uint16 *grid, uint32 gridOfs, uint8 *screenPtr, uint32 layerId) {
-
 	for (uint32 cntx = 0; cntx < _sprHeight; cntx++) { // start_x | block_loop
 		if (grid[gridOfs]) {
 			if (!(FROM_LE_16(grid[gridOfs]) & 0x8000)) {
@@ -775,7 +747,6 @@ void Screen::vertMaskSub(uint16 *grid, uint32 gridOfs, uint8 *screenPtr, uint32 
 }
 
 void Screen::verticalMask(void) {
-
 	if (_sprWidth == 0)
 		return;
 	uint32 startGridOfs = (_sprY + _sprHeight - 1) * GRID_X + _sprX;
@@ -803,7 +774,6 @@ void Screen::verticalMask(void) {
 }
 
 void Screen::paintBox(uint16 x, uint16 y) {
-
 	uint8 *screenPos = _currentScreen + y * GAME_SCREEN_WIDTH + x;
 	memset(screenPos, 255, 8);
 	for (uint8 cnt = 1; cnt < 8; cnt++) {
@@ -814,7 +784,6 @@ void Screen::paintBox(uint16 x, uint16 y) {
 }
 
 void Screen::showGrid(uint8 *gridBuf) {
-
 	uint32 gridData = 0;
 	uint8 bitsLeft = 0;
 	for (uint16 cnty = 0; cnty < GAME_SCREEN_HEIGHT >> 3; cnty++) {

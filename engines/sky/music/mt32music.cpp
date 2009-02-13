@@ -33,13 +33,10 @@
 namespace Sky {
 
 void MT32Music::passTimerFunc(void *param) {
-
 	((MT32Music*)param)->timerCall();
 }
 
-MT32Music::MT32Music(MidiDriver *pMidiDrv, Disk *pDisk)
-	: MusicBase(pDisk) {
-
+MT32Music::MT32Music(MidiDriver *pMidiDrv, Disk *pDisk) : MusicBase(pDisk) {
 	_driverFileBase = 60200;
 	_midiDrv = pMidiDrv;
 	int midiRes = _midiDrv->open();
@@ -50,7 +47,6 @@ MT32Music::MT32Music(MidiDriver *pMidiDrv, Disk *pDisk)
 }
 
 MT32Music::~MT32Music(void) {
-
 	_midiDrv->close();
 	_midiDrv->setTimerCallback(NULL, NULL);
 	delete _midiDrv;
@@ -78,13 +74,11 @@ void MT32Music::setVolume(uint16 volume) {
 }
 
 void MT32Music::setupPointers(void) {
-
 	_musicDataLoc = READ_LE_UINT16(_musicData + 0x7DC);
 	_sysExSequence = READ_LE_UINT16(_musicData + 0x7E0) + _musicData;
 }
 
 void MT32Music::setupChannels(uint8 *channelData) {
-
 	_numberOfChannels = channelData[0];
 	channelData++;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
@@ -95,7 +89,6 @@ void MT32Music::setupChannels(uint8 *channelData) {
 }
 
 bool MT32Music::processPatchSysEx(uint8 *sysExData) {
-
 	uint8 sysExBuf[15];
 	uint8 crc = 0;
 	if (sysExData[0] & 0x80)
@@ -125,7 +118,6 @@ bool MT32Music::processPatchSysEx(uint8 *sysExData) {
 }
 
 void MT32Music::startDriver(void) {
-
 	// setup timbres and patches using SysEx data
 	uint8* sysExData = _sysExSequence;
 	uint8 timbreNum = sysExData[0];

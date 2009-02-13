@@ -31,7 +31,6 @@
 namespace Sky {
 
 MusicBase::MusicBase(Disk *pDisk) {
-
 	_musicData = NULL;
 	_skyDisk = pDisk;
 	_currentMusic = 0;
@@ -40,14 +39,12 @@ MusicBase::MusicBase(Disk *pDisk) {
 }
 
 MusicBase::~MusicBase(void) {
-
 	stopMusic();
 	if (_musicData)
 		free(_musicData);
 }
 
 void MusicBase::loadSection(uint8 pSection) {
-
 	_mutex.lock();
 	if (_currentMusic)
 		stopMusicInternal();
@@ -67,7 +64,6 @@ void MusicBase::loadSection(uint8 pSection) {
 }
 
 bool MusicBase::musicIsPlaying(void) {
-
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		if (_channels[cnt]->isActive())
 			return true;
@@ -75,21 +71,18 @@ bool MusicBase::musicIsPlaying(void) {
 }
 
 void MusicBase::stopMusic(void) {
-
 	_mutex.lock();
 	stopMusicInternal();
 	_mutex.unlock();
 }
 
 void MusicBase::stopMusicInternal(void) {
-
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		delete _channels[cnt];
 	_numberOfChannels = 0;
 }
 
 void MusicBase::updateTempo(void) {
-
 	uint16 tempoMul = _musicTempo0 * _musicTempo1;
 	uint16 divisor = 0x4446390/ 23864;
 	_tempo = (tempoMul / divisor) << 16;
@@ -97,7 +90,6 @@ void MusicBase::updateTempo(void) {
 }
 
 void MusicBase::loadNewMusic(void) {
-
 	uint16 musicPos;
 	if (_onNextPoll.musicToProcess > _musicData[_musicDataLoc]) {
 		error("Music %d requested but doesn't exist in file.", _onNextPoll.musicToProcess);
@@ -123,7 +115,6 @@ void MusicBase::loadNewMusic(void) {
 }
 
 void MusicBase::pollMusic(void) {
-
 	_mutex.lock();
 	uint8 newTempo;
 	if (_onNextPoll.musicToProcess != _currentMusic)

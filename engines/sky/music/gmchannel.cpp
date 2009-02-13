@@ -30,7 +30,6 @@
 namespace Sky {
 
 GmChannel::GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, const byte *pInstMap, const byte *veloTab) {
-
 	_musicData = pMusicData;
 	_midiDrv = pMidiDrv;
 	_channelData.midiChannelNumber = 0;
@@ -54,7 +53,6 @@ bool GmChannel::isActive(void) {
 }
 
 void GmChannel::updateVolume(uint16 pVolume) {
-
 	_musicVolume = pVolume;
 	if (_musicVolume > 0)
 		_musicVolume = (_musicVolume * 2) / 3 + 43;
@@ -64,7 +62,6 @@ void GmChannel::updateVolume(uint16 pVolume) {
 }
 
 void GmChannel::stopNote(void) {
-
 	// All Notes Off
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x7B00 | 0 | 0x79000000);
 	// Reset the Pitch Wheel. See bug #1016556.
@@ -72,7 +69,6 @@ void GmChannel::stopNote(void) {
 }
 
 int32 GmChannel::getNextEventTime(void) {
-
 	int32 retV = 0;
 	uint8 cnt, lVal = 0;
 	for (cnt = 0; cnt < 4; cnt++) {
@@ -89,7 +85,6 @@ int32 GmChannel::getNextEventTime(void) {
 }
 
 uint8 GmChannel::process(uint16 aktTime) {
-
 	if (!_channelData.channelActive)
 		return 0;
 
@@ -145,13 +140,11 @@ uint8 GmChannel::process(uint16 aktTime) {
 //- command 90h routines
 
 void GmChannel::com90_caseNoteOff(void) {
-
 	_midiDrv->send((0x90 | _channelData.midiChannelNumber) | (_musicData[_channelData.eventDataPtr] << 8));
 	_channelData.eventDataPtr++;
 }
 
 void GmChannel::com90_stopChannel(void) {
-
 	stopNote();
 	_channelData.channelActive = false;
 }
@@ -169,41 +162,34 @@ uint8 GmChannel::com90_updateTempo(void) {
 }
 
 void GmChannel::com90_getPitch(void) {
-
 	_midiDrv->send((0xE0 | _channelData.midiChannelNumber) | 0 | (_musicData[_channelData.eventDataPtr] << 16));
 	_channelData.eventDataPtr++;
 }
 
 void GmChannel::com90_getChannelVolume(void) {
-
 	_currentChannelVolume = _musicData[_channelData.eventDataPtr++];
 	uint8 newVol = (uint8)((_currentChannelVolume * _musicVolume) >> 7);
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x700 | (newVol << 16));
 }
 
 void GmChannel::com90_loopMusic(void) {
-
 	_channelData.eventDataPtr = _channelData.loopPoint;
 }
 
 void GmChannel::com90_keyOff(void) {
-
 	_midiDrv->send((0x90 | _channelData.midiChannelNumber) | (_channelData.note << 8) | 0);
 }
 
 void GmChannel::com90_setLoopPoint(void) {
-
 	_channelData.loopPoint = _channelData.eventDataPtr;
 }
 
 void GmChannel::com90_getChannelPanValue(void) {
-
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x0A00 | (_musicData[_channelData.eventDataPtr] << 16));
 	_channelData.eventDataPtr++;
 }
 
 void GmChannel::com90_getChannelControl(void) {
-
 	uint8 conNum = _musicData[_channelData.eventDataPtr++];
 	uint8 conDat = _musicData[_channelData.eventDataPtr++];
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | (conNum << 8) | (conDat << 16));

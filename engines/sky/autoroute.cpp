@@ -44,7 +44,6 @@ const int16 AutoRoute::_routeDirections[4] = {    -1,     1, -ROUTE_GRID_WIDTH, 
 const uint16 AutoRoute::_logicCommands[4] = { RIGHTY, LEFTY,             DOWNY,              UPY };
 
 AutoRoute::AutoRoute(Grid *pGrid, SkyCompact *compact) {
-
 	_grid = pGrid;
 	_skyCompact = compact;
 	_routeGrid = (uint16 *)malloc(ROUTE_GRID_SIZE);
@@ -52,13 +51,11 @@ AutoRoute::AutoRoute(Grid *pGrid, SkyCompact *compact) {
 }
 
 AutoRoute::~AutoRoute(void) {
-
 	free(_routeGrid);
 	free(_routeBuf);
 }
 
 uint16 AutoRoute::checkBlock(uint16 *blockPos) {
-
 	uint16 retVal = 0xFFFF;
 
 	for (uint8 cnt = 0; cnt < 4; cnt++) {
@@ -96,7 +93,6 @@ void AutoRoute::clipCoordY(uint16 y, uint8 &blkY, int16 &initY) {
 }
 
 void AutoRoute::initWalkGrid(uint8 screen, uint8 width) {
-
 	uint16 *wGridPos;
 	uint8 stretch = 0;
 	uint8 *screenGrid = _grid->giveGrid(screen);
@@ -129,7 +125,6 @@ void AutoRoute::initWalkGrid(uint8 screen, uint8 width) {
 }
 
 bool AutoRoute::calcWalkGrid(uint8 startX, uint8 startY, uint8 destX, uint8 destY) {
-
 	int16 directionX, directionY;
 	uint8 roiX, roiY; // Rectangle Of Interest in the walk grid
 	if (startY > destY) {
@@ -195,7 +190,6 @@ bool AutoRoute::calcWalkGrid(uint8 startX, uint8 startY, uint8 destX, uint8 dest
 }
 
 uint16 *AutoRoute::makeRouteData(uint8 startX, uint8 startY, uint8 destX, uint8 destY) {
-
 	memset(_routeBuf, 0, ROUTE_SPACE);
 
 	uint16 *routePos = _routeGrid + (destY + 1) * ROUTE_GRID_WIDTH + destX + 1;
@@ -238,7 +232,6 @@ uint16 *AutoRoute::checkInitMove(uint16 *data, int16 initStaX) {
 }
 
 uint16 AutoRoute::autoRoute(Compact *cpt) {
-
 	uint8 cptScreen = (uint8)cpt->screen;
 	uint8 cptWidth = (uint8)SkyCompact::getMegaSet(cpt)->gridWidth;
 	initWalkGrid(cptScreen, cptWidth);

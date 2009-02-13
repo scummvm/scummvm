@@ -93,7 +93,6 @@ uint32 Mouse::_mouseLincObjects[21] = {
 };
 
 Mouse::Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact) {
-
 	_skyDisk = skyDisk;
 	_skyCompact = skyCompact;
 	_system = system;
@@ -172,7 +171,6 @@ void Mouse::drawNewMouse() {
 }
 
 void Mouse::waitMouseNotPressed(int minDelay) {
-
 	bool mousePressed = true;
 	uint32 now = _system->getMillis();
 	Common::Event event;
@@ -205,7 +203,6 @@ void Mouse::waitMouseNotPressed(int minDelay) {
 }
 
 void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
-
 	_currentCursor = frameNum;
 
 	byte *newCursor = _miceData;
@@ -301,7 +298,6 @@ void Mouse::resetCursor() {
 }
 
 uint16 Mouse::findMouseCursor(uint32 itemNum) {
-
 	uint8 cnt;
 	for (cnt = 0; cnt < NO_MAIN_OBJECTS; cnt++) {
 		if (itemNum == _mouseMainObjects[cnt]) {
@@ -317,7 +313,6 @@ uint16 Mouse::findMouseCursor(uint32 itemNum) {
 }
 
 void Mouse::fnOpenCloseHand(bool open) {
-
 	if ((!open) && (!Logic::_scriptVariables[OBJECT_HELD])) {
 		spriteMouse(1, 0, 0);
 		return;
@@ -337,7 +332,6 @@ void Mouse::fnOpenCloseHand(bool open) {
 }
 
 bool Mouse::wasClicked(void) {
-
 	if (_logicClick) {
 		_logicClick = false;
 		return true;
