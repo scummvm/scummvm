@@ -836,7 +836,8 @@ arguments -- see the next section.
                            Steel Sky and Flight of the Amazon Queen
   --copy-protection        Enable copy protection in games, when
                            ScummVM disables it by default.
-  --talkspeed=NUM          Set talk speed for games (default: 60)
+  --talkspeed=NUM          Set talk delay for SCUMM games, or talk speed for
+                           other games (default: 60)
   --demo-mode              Start demo mode of Maniac Mansion (Classic version)
   --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games
                            (default: 100)
@@ -1748,7 +1749,8 @@ The following keywords are recognized:
                                  jp, zh, kr, se, gb, hb, cz, ru)
         speech_mute     bool     If true, speech is muted
         subtitles       bool     Set to true to enable subtitles.
-        talkspeed       number   Text speed
+        talkspeed       number   Text delay in SCUMM games, or text speed in
+                                 other games.
 
         fullscreen      bool     Fullscreen mode
         aspect_ratio    bool     Enable aspect ratio correction

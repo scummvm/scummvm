@@ -474,8 +474,8 @@ protected:
 	virtual void loadLanguageBundle() {}
 	void loadCJKFont();
 	void setupMusic(int midi);
-	void setTalkDelay(int talkdelay);
-	int getTalkDelay();
+	void setTalkSpeed(int talkspeed);
+	int getTalkSpeed();
 
 	// Scumm main loop & helper functions.
 	virtual void scummLoop(int delta);
