@@ -488,6 +488,7 @@ const int lolCDFile2Need[] = {
 	lolMusicTrackMap,
 	lolGMSfxIndex,
 	lolMT32SfxIndex,
+	//lolADLSfxIndex,
 	lolSpellProperties,
 	lolGameShapeMap,
 	lolLevelShpList,
@@ -514,6 +515,22 @@ const int lolCDFile2Need[] = {
 	lolDscDoor4,
 	lolDscDoorX,
 	lolDscDoorY,
+
+	lolScrollXTop,
+	lolScrollYTop,
+	lolScrollXBottom,
+	lolScrollYBottom,
+
+	lolButtonDefs,
+	lolButtonList1,
+	lolButtonList1,
+	lolButtonList2,
+	lolButtonList3,
+	lolButtonList4,
+	lolButtonList5,
+	lolButtonList6,
+	lolButtonList7,
+	lolButtonList8,
 
 	-1
 };

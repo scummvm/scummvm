@@ -44,7 +44,8 @@ public:
 	void setupField(bool mode);
 	void expandField();
 
-	void play(int dim, char *str, EMCState *script, int16 *paramList, int16 paramIndex);
+	void playDialogue(int dim, char *str, EMCState *script, int16 *paramList, int16 paramIndex);
+	void printMessage(uint16 colSnd, char *str, ...);
 	
 	int16 _scriptParameter;
 
@@ -90,6 +91,7 @@ private:
 	uint8 _posY;
 	uint8 _colour1;
 	uint8 _colour2;
+	bool _colour1prot;
 
 	uint8 *_pageBuffer1;
 	uint8 *_pageBuffer2;

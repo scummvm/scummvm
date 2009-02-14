@@ -182,6 +182,7 @@ enum kExtractID {
 	lolMusicTrackMap,
 	lolGMSfxIndex,
 	lolMT32SfxIndex,
+	//lolADLSfxIndex,
 	lolSpellProperties,
 	lolGameShapeMap,
 	lolLevelShpList,
@@ -209,6 +210,21 @@ enum kExtractID {
 	lolDscDoor4,
 	lolDscDoorX,
 	lolDscDoorY,
+
+	lolScrollXTop,
+	lolScrollYTop,
+	lolScrollXBottom,
+	lolScrollYBottom,
+
+	lolButtonDefs,
+	lolButtonList1,
+	lolButtonList2,
+	lolButtonList3,
+	lolButtonList4,
+	lolButtonList5,
+	lolButtonList6,
+	lolButtonList7,
+	lolButtonList8,
 
 	kMaxResIDs
 };
@@ -305,7 +321,8 @@ enum kExtractType {
 	k3TypeRaw16to8,
 	k3TypeShpData,
 
-	lolTypeRaw16
+	lolTypeRaw16,
+	lolTypeButtonDef
 };
 
 struct ExtractType {

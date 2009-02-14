@@ -298,6 +298,236 @@ void Screen_LoL::fadeClearSceneWindow(int delay) {
 	_fadeFlag = 1;
 }
 
+void Screen_LoL::backupSceneWindow(int srcPageNum, int dstPageNum) {
+	uint8 *src = getPagePtr(srcPageNum) + 112;
+	uint8 *dst = getPagePtr(dstPageNum) + 0xa500;
+
+	for (int h = 0; h < 120; h++) {
+		for (int w = 0; w < 176; w++)
+			*dst++ = *src++;
+		src += 144;
+	}
+}
+
+void Screen_LoL::restoreSceneWindow(int srcPageNum, int dstPageNum) {
+	uint8 *src = getPagePtr(srcPageNum) + 0xa500;
+	uint8 *dst = getPagePtr(dstPageNum) + 112;
+
+	for (int h = 0; h < 120; h++) {
+		memcpy(dst, src, 176);
+		src += 176;
+		dst += 320;
+	}
+
+	if (!dstPageNum)
+		addDirtyRect(112, 0, 176, 120);
+}
+
+void Screen_LoL::smoothScrollZoomStepTop(int srcPageNum, int dstPageNum, int x, int y) {
+	uint8 *src = getPagePtr(srcPageNum) + 0xa500 + y * 176 + x;
+	uint8 *dst = getPagePtr(dstPageNum) + 0xa500;
+
+	x <<= 1;
+	uint16 width = 176 - x;
+	uint16 scaleX = (((x + 1) << 8) / width + 0x100);
+	uint16 cntW = scaleX >> 8;
+	scaleX <<= 8;
+	width--;
+	uint16 widthCnt = width;
+
+	uint16 height = 46 - y;
+	uint16 scaleY = (((y + 1) << 8) / height + 0x100);
+	scaleY <<= 8;
+
+	uint32 scaleYc = 0;
+	while (height) {
+		uint32 scaleXc = 0;
+		do {
+			scaleXc += scaleX;
+			int numbytes = cntW + (scaleXc >> 16);
+			scaleXc &= 0xffff;
+			memset(dst, *src++, numbytes);
+			dst += numbytes;
+		} while (--widthCnt);
+
+		*dst++ = *src++;
+		widthCnt = width;
+
+		src += x;
+		scaleYc += scaleY;
+
+		if (scaleYc >> 16) {
+			scaleYc = 0;
+			src -= 176;
+			continue;
+		}
+
+		height--;
+	}
+}
+
+void Screen_LoL::smoothScrollZoomStepBottom(int srcPageNum, int dstPageNum, int x, int y) {
+	uint8 *src = getPagePtr(srcPageNum) + 0xc4a0 + x;
+	uint8 *dst = getPagePtr(dstPageNum) + 0xc4a0;
+
+	x <<= 1;
+	uint16 width = 176 - x;
+	uint16 scaleX = (((x + 1) << 8) / width + 0x100);
+	uint16 cntW = scaleX >> 8;
+	scaleX <<= 8;
+	width--;
+	uint16 widthCnt = width;
+
+	uint16 height = 74 - y;
+	uint16 scaleY = (((y + 1) << 8) / height + 0x100);
+	scaleY <<= 8;
+
+	uint32 scaleYc = 0;
+	while (height) {
+		uint32 scaleXc = 0;
+		do {
+			scaleXc += scaleX;
+			int numbytes = cntW + (scaleXc >> 16);
+			scaleXc &= 0xffff;
+			memset(dst, *src++, numbytes);
+			dst += numbytes;
+		} while (--widthCnt);
+
+		*dst++ = *src++;
+		widthCnt = width;
+
+		src += x;
+		scaleYc += scaleY;
+
+		if (scaleYc >> 16) {
+			scaleYc = 0;
+			src -= 176;
+			continue;
+		}
+
+		height--;
+	}
+}
+
+void Screen_LoL::smoothScrollHorizontalStep(int pageNum, int srcX, int dstX, int w) {
+	uint8 *d = getPagePtr(pageNum);
+	uint8 *s = d + 112 + srcX;
+
+	int w2 = srcX + w - dstX;
+	int pitchS = 320 + w2 - (w << 1);
+
+	int pitchD = 320 - w;
+	int h = 120;
+
+	while (h--) {
+		for (int i = 0; i < w; i++)
+			*d++ = *s++;
+		d -= w;
+		s -= w2;
+
+		for (int i = 0; i < w; i++)
+			*s++ = *d++;
+		
+		s += pitchS;
+		d += pitchD;
+	}
+}
+
+void Screen_LoL::smoothScrollTurnStep1(int srcPage1Num, int srcPage2Num, int dstPageNum) {
+	uint8 *s = getPagePtr(srcPage1Num) + 273;
+	uint8 *d = getPagePtr(dstPageNum) + 0xa500;
+
+	for (int i = 0; i < 120; i++) {
+		uint8 a = *s++;
+		*d++ = a;
+		*d++ = a;
+
+		for (int ii = 0; ii < 14; ii++) {
+			a = *s++;
+			*d++ = a;
+			*d++ = a;
+			*d++ = a;
+		}
+
+		s += 305;
+		d += 132;
+	}
+
+	s = getPagePtr(srcPage2Num) + 112;
+	d = getPagePtr(dstPageNum)  + 0xa52c;
+
+	for (int i = 0; i < 120; i++) {
+		for (int ii = 0; ii < 33; ii++) {
+			*d++ = *s++;
+			*d++ = *s++;
+			uint8 a = *s++;
+			*d++ = a;
+			*d++ = a;
+		}
+
+		s += 221;
+		d += 44;
+	}
+}
+
+void Screen_LoL::smoothScrollTurnStep2(int srcPage1Num, int srcPage2Num, int dstPageNum) {
+	uint8 *s = getPagePtr(srcPage1Num) + 244;
+	uint8 *d = getPagePtr(dstPageNum) + 0xa500;
+
+	for (int k = 0; k < 2; k++) {
+		for (int i = 0; i < 120; i++) {
+			for (int ii = 0; ii < 44; ii++) {
+				uint8 a = *s++;
+				*d++ = a;
+				*d++ = a;
+			}
+
+			s += 276;
+			d += 88;
+		}
+
+		s = getPagePtr(srcPage2Num) + 112;
+		d = getPagePtr(dstPageNum) + 0xa558;
+	}
+}
+
+void Screen_LoL::smoothScrollTurnStep3(int srcPage1Num, int srcPage2Num, int dstPageNum) {
+	uint8 *s = getPagePtr(srcPage1Num) + 189;
+	uint8 *d = getPagePtr(dstPageNum) + 0xa500;
+
+	for (int i = 0; i < 120; i++) {
+		for (int ii = 0; ii < 33; ii++) {
+			*d++ = *s++;
+			*d++ = *s++;
+			uint8 a = *s++;
+			*d++ = a;
+			*d++ = a;
+		}
+
+		s += 221;
+		d += 44;
+	}
+
+	s = getPagePtr(srcPage2Num) + 112;
+	d = getPagePtr(dstPageNum)  + 0xa584;
+
+	for (int i = 0; i < 120; i++) {
+		for (int ii = 0; ii < 14; ii++) {
+			uint8 a = *s++;
+			*d++ = a;
+			*d++ = a;
+			*d++ = a;
+		}
+
+		uint8 a = *s++;
+		*d++ = a;
+		*d++ = a;
+
+		s += 305;
+		d += 132;
+	}
+}
+
 void Screen_LoL::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
 	Screen::fadeToBlack(delay, upFunc);
 	_fadeFlag = 2;
@@ -329,49 +559,61 @@ void Screen_LoL::loadSpecialColours(uint8 *destPalette) {
 	memcpy(destPalette + 0x240, _screenPalette + 0x240, 12);	
 }
 
-void Screen_LoL::loadColour254(uint8 *destPalEntry) {
-	memcpy(destPalEntry, _screenPalette + 0x2fa, 3);
+void Screen_LoL::copyColour(int dstColourIndex, int srcColourIndex) {
+	uint8 *s = _screenPalette + srcColourIndex * 3;
+	uint8 *d = _screenPalette + dstColourIndex * 3;
+	memcpy(d, s, 3);
+
+	uint8 ci[4];
+	ci[0] = (d[0] << 2) | (d[0] & 3);
+	ci[1] = (d[1] << 2) | (d[1] & 3);
+	ci[2] = (d[2] << 2) | (d[2] & 3);
+	ci[3] = 0;
+
+	_system->setPalette(ci, dstColourIndex, 1);
 }
 
-bool Screen_LoL::copyColour(int dstColorIndex, int srcColorIndex, uint32 time1, uint32 time2) {
-	uint8 *s = _screenPalette + 3 * dstColorIndex;
-	uint8 *e = _screenPalette + 3 * srcColorIndex;
-	uint8 *p = getPalette(1) + 3 * dstColorIndex;
+bool Screen_LoL::fadeColour(int dstColourIndex, int srcColourIndex, uint32 elapsedTime, uint32 targetTime) {
+	uint8 *dst = _screenPalette + 3 * dstColourIndex;
+	uint8 *src = _screenPalette + 3 * srcColourIndex;
+	uint8 *p = getPalette(1) + 3 * dstColourIndex;
 
 	bool res = false;
 
-	uint16 t1 = 0;
-	uint16 t2 = 0;
+	int16 t1 = 0;
+	int16 t2 = 0;
 	int32 t3 = 0;
 
 	uint8 tmpPalEntry[3];
 
 	for (int i = 0; i < 3; i++) {
-		if (time1 < time2) {
-			t1 = *e & 0x3f;
-			t2 = *s & 0x3f;
+		if (elapsedTime < targetTime) {
+			t1 = *src & 0x3f;
+			t2 = *dst & 0x3f;
 
 			t3 = t1 - t2;
-			if (!t3)
+			if (t3)
 				res = true;
 
-			t3 = (((((t3 << 8) / time2) * time1) >> 8) & 0xffff) + t2;
+			t3 = (((t3 << 8) / (int)targetTime) * (int)elapsedTime) >> 8;
+			t3 =  t2 + t3;
 		} else {
-			t1 = *e & 0x3f;
+			t1 = *dst & 0x3f;
 			*p = t3 = t1;
 			res = false;
 		}
 
 		tmpPalEntry[i] = t3 & 0xff;
-		s++;
-		e++;
+		src++;
+		dst++;
 		p++;
 	}
 
 	uint8 tpal[768];
 	memcpy(tpal, _screenPalette, 768);
-	memcpy(tpal + dstColorIndex * 3, tmpPalEntry, 3);
+	memcpy(tpal + dstColourIndex * 3, tmpPalEntry, 3);
 	setScreenPalette(tpal);
+	updateScreen();
 
 	return res;
 }

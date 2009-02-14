@@ -59,7 +59,7 @@ void LoLEngine::loadLevel(int index) {
 	_currentLevel = index;
 	_updateFlags = 0;
 
-	// TODO
+	restoreDefaultGui();
 
 	loadTalkFile(index);
 
@@ -84,7 +84,7 @@ void LoLEngine::loadLevel(int index) {
 
 	_screen->generateGrayOverlay(_screen->_currentPalette, _screen->_grayOverlay,32, 16, 0, 0, 128, true);
 
-	_loadLevelFlag2 = false;
+	_sceneDefaultUpdate = 0;
 	if (_screen->_fadeFlag == 3)
 		_screen->fadeToBlack(10);
 
@@ -160,7 +160,7 @@ void LoLEngine::initCMZ1(CLevelItem *l, int a) {
 			cmzS3(l);
 			if (_currentLevel != 29)
 				initCMZ1(l, 14);
-			runResidentScriptCustom(0x404, -1, l->field_16, l->field_16, 0, 0);
+			runSceneScriptCustom(0x404, -1, l->field_16, l->field_16, 0, 0);
 			checkScriptUnk(l->blockPropertyIndex);
 			if (l->field_14 == 14)
 				initCMZ2(l, 0, 0);
@@ -202,7 +202,7 @@ void LoLEngine::initCMZ2(CLevelItem *l, uint16 a, uint16 b) {
 		return;
 
 	if (l->blockPropertyIndex != t)
-		runResidentScriptCustom(l->blockPropertyIndex, 0x800, -1, l->field_16, 0, 0);
+		runSceneScriptCustom(l->blockPropertyIndex, 0x800, -1, l->field_16, 0, 0);
 
 	if (_updateFlags & 1)
 		return;
@@ -767,6 +767,21 @@ void LoLEngine::resetBlockProperties() {
 	}
 }
 
+bool LoLEngine::testWallFlag(int block, int direction, int flag) {
+	if (_levelBlockProperties[block].flags & 0x10)
+		return true;
+
+	if (direction != -1)		
+		return (_wllWallFlags[_levelBlockProperties[block].walls[direction ^ 2]] & flag) ? true : false;
+
+	for (int i = 0; i < 4; i++) {
+		if (_wllWallFlags[_levelBlockProperties[block].walls[i]] & flag)
+			return true;
+	}
+
+	return false;	
+}
+
 bool LoLEngine::testWallInvisibility(int block, int direction) {
 	uint8 w = _levelBlockProperties[block].walls[direction];
 	if (_wllVmpMap[w] || _wllShapeMap[w] || _levelBlockProperties[block].flags & 0x80)
@@ -838,15 +853,370 @@ void LoLEngine::updateCompass() {
 	
 }
 
-void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int unk3) {
-	// TODO
-	_currentBlock = calcNewBlockPostion(_currentBlock, direction);
-	// XXXX
+void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape) {
+	if (buttonShape)
+		gui_toggleButtonDisplayMode(buttonShape, 1);
+
+	uint16 opos = _currentBlock;
+	uint16 npos = calcNewBlockPostion(_currentBlock, direction);
+	
+	if (!checkBlockPassability(npos, direction)) {
+		notifyBlockNotPassable(unk2 ? 0 : 1);
+		gui_toggleButtonDisplayMode(buttonShape, 0);
+		return;
+	}
+
+	_scriptDirection = direction;
+	_currentBlock = npos;
+	_sceneDefaultUpdate = 1;
+
+	calcCoordinates(_partyPosX, _partyPosY, opos, 0x80, 0x80);
+	_unkFlag &= 0xfdff;
+	
+	runSceneScript(opos, 4);
+	runSceneScript(npos, 1);
+
+	if (!(_unkFlag & 0x200)) {
+		updatePortraitUnkTimeSub(2, 0);
+
+		if (_sceneDefaultUpdate) {
+			switch (unk2) {
+				case 0:
+					movePartySmoothScrollUp(2);
+					break;
+				case 1:
+					movePartySmoothScrollDown(2);
+					break;
+				case 2:
+					movePartySmoothScrollLeft(1);
+					break;
+				case 3:
+					movePartySmoothScrollRight(1);
+					break;
+				default:
+					break;
+			}
+		} else {
+			gui_drawScene(0);
+		}
+
+		gui_toggleButtonDisplayMode(buttonShape, 0);
+
+		runSceneScript(opos, 8);
+		runSceneScript(npos, 2);
+
+		if (_levelBlockProperties[npos].walls[0] == 0x1a)
+			memset(_levelBlockProperties[npos].walls, 0, 4);
+	}
+
+	setLF2(_currentBlock);
 }
 
 uint16 LoLEngine::calcNewBlockPostion(uint16 curBlock, uint16 direction) {
 	static const int16 blockPosTable[] = { -32, 1, 32, -1, 1, -1, 3, 2, -1, 0, -1, 0, 1, -32, 0, 32 };
 	return (curBlock + blockPosTable[direction]) & 0x3ff;
+}
+
+bool LoLEngine::checkBlockPassability(uint16 block, uint16 direction) {
+	if (testWallFlag(block, direction, 1))
+		return false;
+
+	uint16 d = _levelBlockProperties[block].itemIndex;
+
+	while (d) {
+		if (d & 0x8000)
+			return false;
+		d = findItem(d)->itemIndexUnk;
+	}
+
+	return true;
+}
+
+void LoLEngine::notifyBlockNotPassable(int scrollFlag) {
+	if (scrollFlag)
+		movePartySmoothScrollBlocked(2);
+
+	snd_dialogueSpeechUpdate(1);
+	_txt->printMessage(0x8002, getLangString(0x403f));
+	snd_playSoundEffect(19, 255);
+}
+
+void LoLEngine::movePartySmoothScrollBlocked(int speed) {
+	if (!(_unkGameFlag & 8) || ((_unkGameFlag & 8) && _hideInventory))
+		return;
+
+	_screen->backupSceneWindow(_sceneDrawPage2 == 2 ? 2 : 6, 6);
+
+	for (int i = 0; i < 2; i++) {
+		_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
+		_screen->smoothScrollZoomStepTop(6, 2, _scrollXTop[i], _scrollYTop[i]);
+		_screen->smoothScrollZoomStepBottom(6, 2, _scrollXBottom[i], _scrollYBottom[i]);
+		_screen->restoreSceneWindow(2, 0);
+		_screen->updateScreen();
+		fadeText();		
+		delayUntil(_smoothScrollTimer);
+		if (!_smoothScrollModeNormal)
+			i++;
+	}
+
+	for (int i = 2; i; i--) {
+		_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
+		_screen->smoothScrollZoomStepTop(6, 2, _scrollXTop[i], _scrollYTop[i]);
+		_screen->smoothScrollZoomStepBottom(6, 2, _scrollXBottom[i], _scrollYBottom[i]);
+		_screen->restoreSceneWindow(2, 0);
+		_screen->updateScreen();
+		fadeText();		
+		delayUntil(_smoothScrollTimer);
+		if (!_smoothScrollModeNormal)
+			i++;
+	}
+
+	if (_sceneDefaultUpdate != 2) {
+		_screen->restoreSceneWindow(6, 0);
+		_screen->updateScreen();
+	}
+
+	updateSceneWindow();
+}
+
+void LoLEngine::movePartySmoothScrollUp(int speed) {
+	if (!(_unkGameFlag & 8) || ((_unkGameFlag & 8) && _hideInventory))
+		return;
+
+	int d = 0;
+
+	if (_sceneDrawPage2 == 2) {
+		d = smoothScrollDrawSpecialShape(6);
+		gui_drawScene(6);
+		_screen->copyRegionToBuffer(6, 112, 0, 176, 120, _scrollSceneBuffer);
+		_screen->backupSceneWindow(2, 6);
+	} else {
+		d = smoothScrollDrawSpecialShape(2);
+		gui_drawScene(2);
+		_screen->copyRegionToBuffer(2, 112, 0, 176, 120, _scrollSceneBuffer);
+		_screen->backupSceneWindow(6, 6);
+	}
+	
+	for (int i = 0; i < 5; i++) {
+		_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
+		_screen->smoothScrollZoomStepTop(6, 2, _scrollXTop[i], _scrollYTop[i]);
+		_screen->smoothScrollZoomStepBottom(6, 2, _scrollXBottom[i], _scrollYBottom[i]);
+
+		//if (d)
+		//	unk(_tempBuffer5120, page2);
+		
+		_screen->restoreSceneWindow(2, 0);
+		_screen->updateScreen();
+		fadeText();
+		delayUntil(_smoothScrollTimer);
+		if (!_smoothScrollModeNormal)
+			i++;
+	}
+
+	//if (d)
+	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+
+	if (_sceneDefaultUpdate != 2) {
+		_screen->copyBlockToPage(0, 112, 0, 176, 120, _scrollSceneBuffer);
+		_screen->updateScreen();
+	}
+
+	updateSceneWindow();
+}
+
+void LoLEngine::movePartySmoothScrollDown(int speed) {
+	if (!(_unkGameFlag & 8))
+		return;
+
+	//int d = smoothScrollDrawSpecialShape(2);
+	gui_drawScene(2);
+	_screen->backupSceneWindow(2, 6);
+
+	for (int i = 4; i >= 0; i--) {
+		_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
+		_screen->smoothScrollZoomStepTop(6, 2, _scrollXTop[i], _scrollYTop[i]);
+		_screen->smoothScrollZoomStepBottom(6, 2, _scrollXBottom[i], _scrollYBottom[i]);
+
+		//if (d)
+		//	unk(_tempBuffer5120, page2);
+		
+		_screen->restoreSceneWindow(2, 0);
+		_screen->updateScreen();
+		fadeText();
+		delayUntil(_smoothScrollTimer);
+		if (!_smoothScrollModeNormal)
+			i++;
+	}
+
+	//if (d)
+	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+
+	if (_sceneDefaultUpdate != 2) {
+		_screen->restoreSceneWindow(6, 0);
+		_screen->updateScreen();
+	}
+
+	updateSceneWindow();
+}
+
+void LoLEngine::movePartySmoothScrollLeft(int speed) {
+	if (!(_unkGameFlag & 8))
+		return;
+
+	speed <<= 1;
+
+	gui_drawScene(_sceneDrawPage1);
+
+	for (int i = 88, d = 88; i > 22; i -= 22, d += 22) {
+		_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
+		_screen->smoothScrollHorizontalStep(_sceneDrawPage2, 66, d, i);
+		_screen->copyRegion(112 + i, 0, 112, 0, d, 120, _sceneDrawPage1, _sceneDrawPage2, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+		fadeText();
+		delayUntil(_smoothScrollTimer);
+	}
+
+	if (_sceneDefaultUpdate != 2) {
+		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+	}
+
+	SWAP(_sceneDrawPage1, _sceneDrawPage2);
+}
+
+void LoLEngine::movePartySmoothScrollRight(int speed) {
+	if (!(_unkGameFlag & 8))
+		return;
+
+	speed <<= 1;
+
+	gui_drawScene(_sceneDrawPage1);
+
+	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
+	_screen->copyRegion(112, 0, 222, 0, 66, 120, _sceneDrawPage1, _sceneDrawPage2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage2, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+	fadeText();
+	delayUntil(_smoothScrollTimer);
+
+	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
+	_screen->smoothScrollHorizontalStep(_sceneDrawPage2, 22, 0, 66);
+	_screen->copyRegion(112, 0, 200, 0, 88, 120, _sceneDrawPage1, _sceneDrawPage2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage2, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+	fadeText();
+	delayUntil(_smoothScrollTimer);
+
+	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
+	_screen->smoothScrollHorizontalStep(_sceneDrawPage2, 44, 0, 22);
+	_screen->copyRegion(112, 0, 178, 0, 110, 120, _sceneDrawPage1, _sceneDrawPage2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage2, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+	fadeText();
+	delayUntil(_smoothScrollTimer);
+
+	if (_sceneDefaultUpdate != 2) {
+		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+	}
+
+	SWAP(_sceneDrawPage1, _sceneDrawPage2);
+}
+
+void LoLEngine::movePartySmoothScrollTurnLeft(int speed) {
+	if (!(_unkGameFlag & 8))
+		return;
+
+	speed <<= 1;
+
+	//int d = smoothScrollDrawSpecialShape(_sceneDrawPage1);
+	gui_drawScene(_sceneDrawPage1);
+	int dp = _sceneDrawPage2 == 2 ? _sceneDrawPage2 : _sceneDrawPage1;
+
+	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
+	_screen->smoothScrollTurnStep1(_sceneDrawPage1, _sceneDrawPage2, dp);
+	//if (d)
+	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+	_screen->restoreSceneWindow(dp, 0);
+	_screen->updateScreen();
+	fadeText();
+	delayUntil(_smoothScrollTimer);
+
+	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
+	_screen->smoothScrollTurnStep2(_sceneDrawPage1, _sceneDrawPage2, dp);
+	//if (d)
+	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+	_screen->restoreSceneWindow(dp, 0);
+	_screen->updateScreen();
+	fadeText();
+	delayUntil(_smoothScrollTimer);
+
+	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
+	_screen->smoothScrollTurnStep3(_sceneDrawPage1, _sceneDrawPage2, dp);
+	//if (d)
+	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+	_screen->restoreSceneWindow(dp, 0);
+	_screen->updateScreen();
+	fadeText();
+	delayUntil(_smoothScrollTimer);
+
+	if (_sceneDefaultUpdate != 2) {
+		drawScriptShapes(_sceneDrawPage1);
+		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+	}
+}
+
+void LoLEngine::movePartySmoothScrollTurnRight(int speed) {
+	if (!(_unkGameFlag & 8))
+		return;
+
+	speed <<= 1;
+
+	//int d = smoothScrollDrawSpecialShape(_sceneDrawPage1);
+	gui_drawScene(_sceneDrawPage1);
+	int dp = _sceneDrawPage2 == 2 ? _sceneDrawPage2 : _sceneDrawPage1;
+
+	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
+	_screen->smoothScrollTurnStep3(_sceneDrawPage2, _sceneDrawPage1, dp);
+	//if (d)
+	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+	_screen->restoreSceneWindow(dp, 0);
+	_screen->updateScreen();
+	fadeText();
+	delayUntil(_smoothScrollTimer);
+
+	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
+	_screen->smoothScrollTurnStep2(_sceneDrawPage2, _sceneDrawPage1, dp);
+	//if (d)
+	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+	_screen->restoreSceneWindow(dp, 0);
+	_screen->updateScreen();
+	fadeText();
+	delayUntil(_smoothScrollTimer);
+
+	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
+	_screen->smoothScrollTurnStep1(_sceneDrawPage2, _sceneDrawPage1, dp);
+	//if (d)
+	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+	_screen->restoreSceneWindow(dp, 0);
+	_screen->updateScreen();
+	fadeText();
+	delayUntil(_smoothScrollTimer);
+
+	if (_sceneDefaultUpdate != 2) {
+		drawScriptShapes(_sceneDrawPage1);
+		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+	}
+}
+
+int LoLEngine::smoothScrollDrawSpecialShape(int pageNum) {
+	// TODO
+	if(!_scriptAssignedLevelShape)
+		return 0;
+	return 0;
 }
 
 void LoLEngine::setLF2(int block) {
@@ -858,16 +1228,12 @@ void LoLEngine::setLF2(int block) {
 
 void LoLEngine::drawScene(int pageNum) {
 	if (pageNum && pageNum != _sceneDrawPage1) {
-		_sceneDrawPage1 ^= _sceneDrawPage2;
-		_sceneDrawPage2 ^= _sceneDrawPage1;
-		_sceneDrawPage1 ^= _sceneDrawPage2;
+		SWAP(_sceneDrawPage1, _sceneDrawPage2);
 		updateSceneWindow();
 	}
 
 	if (pageNum && pageNum != _sceneDrawPage1) {
-		_sceneDrawPage1 ^= _sceneDrawPage2;
-		_sceneDrawPage2 ^= _sceneDrawPage1;
-		_sceneDrawPage1 ^= _sceneDrawPage2;
+		SWAP(_sceneDrawPage1, _sceneDrawPage2);
 		updateSceneWindow();
 	}
 
@@ -879,9 +1245,7 @@ void LoLEngine::drawScene(int pageNum) {
 		drawScriptShapes(_sceneDrawPage1);
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage1, _sceneDrawPage2, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
-		_sceneDrawPage1 ^= _sceneDrawPage2;
-		_sceneDrawPage2 ^= _sceneDrawPage1;
-		_sceneDrawPage1 ^= _sceneDrawPage2;
+		SWAP(_sceneDrawPage1, _sceneDrawPage2);
 	}
 
 	runLoopSub4(0);
@@ -896,6 +1260,21 @@ void LoLEngine::updateSceneWindow() {
 	_screen->showMouse();
 }
 
+void LoLEngine::setSequenceGui(int x, int y, int w, int h, int enableFlags) {
+	gui_enableSequenceButtons(x, y, w, h, enableFlags);
+	int offs = _itemInHand ? 10 : 0;
+	_screen->setMouseCursor(offs, offs, getItemIconShapePtr(_itemInHand));
+	setLampMode(0);
+	_lampStatusSuspended = true;
+}
+
+void LoLEngine::restoreDefaultGui() {
+	gui_enableDefaultPlayfieldButtons();
+	if (_lampStatusSuspended)
+		resetLampStatus();
+	_lampStatusSuspended = false;
+}
+
 void LoLEngine::generateBlockDrawingBuffer(int block, int direction) {
 	_sceneDrawVar1 = _dscBlockMap[_currentDirection];
 	_sceneDrawVar2 = _dscBlockMap[_currentDirection + 4];
@@ -905,7 +1284,7 @@ void LoLEngine::generateBlockDrawingBuffer(int block, int direction) {
 
 	_wllProcessFlag = ((block >> 5) + (block & 0x1f) + _currentDirection) & 1;
 
-	if (_wllProcessFlag)
+	if (_wllProcessFlag) // floor and ceiling
 		generateBlockDrawingBufferF1(0, 15, 1, -330, 22, 15);
 	else
 		generateBlockDrawingBufferF0(0, 15, 1, -330, 22, 15);
@@ -1014,10 +1393,10 @@ void LoLEngine::generateBlockDrawingBuffer(int block, int direction) {
 
 	t = _curBlockCaps[15]->walls[_sceneDrawVar2];
 	t2 = _curBlockCaps[17]->walls[_sceneDrawVar3];
-	if (t)
+	if (t)	// wall to the immediate left
 		generateBlockDrawingBufferF0(0, 0, t, 0, 3, 15);
-	if (t2)
-		generateBlockDrawingBufferF1(19, 0, t, 0, 3, 15);
+	if (t2) // wall to the immediate right
+		generateBlockDrawingBufferF1(19, 0, t2, 0, 3, 15);
 }
 
 void LoLEngine::generateBlockDrawingBufferF0(int16 wllOffset, uint8 wllIndex, uint8 wllVmpIndex, int16 vmpOffset, uint8 len, uint8 numEntries) {
@@ -1045,17 +1424,19 @@ void LoLEngine::generateBlockDrawingBufferF1(int16 wllOffset, uint8 wllIndex, ui
 
 	for (int i = 0; i < numEntries; i++) {
 		for (int ii = 0; ii < len; ii++) {
-			if ((wllOffset + ii >= 0) && (wllOffset + ii < 22)) {
-				uint16 t = vmp[len * i + len - 1 - ii];
-				if (t) {				
-					if (t & 04000)
-						t -= 0x4000;
-					else
-						t |= 0x4000;
+			if ((wllOffset + ii) < 0 || (wllOffset + ii) > 21)
+				continue;
 
-					_blockDrawingBuffer[(wllIndex + i) * 22 + wllOffset + ii] = t;
-				}
-			}
+			uint16 v = vmp[i * len + (len - 1 - ii)];
+			if (!v)
+				continue;
+
+			if (v & 0x4000)
+				v -= 0x4000;
+			else
+				v |= 0x4000;
+
+			_blockDrawingBuffer[(wllIndex + i) * 22 + wllOffset + ii] = v;
 		}
 	}
 }
@@ -1069,7 +1450,7 @@ bool LoLEngine::hasWall(int index) {
 void LoLEngine::assignBlockCaps(int block, int direction) {
 	for (int i = 0; i < 18; i++) {
 		uint16 t = (block + _dscBlockIndex[direction * 18 + i]) & 0x3ff;
-		_scriptExecutedFuncs[i] = t;
+		_currentBlockPropertyIndex[i] = t;
 
 		_curBlockCaps[i] = &_levelBlockProperties[t];
 		_lvlShapeLeftRight[i] = _lvlShapeLeftRight[18 + i] = -1;
@@ -1482,7 +1863,8 @@ void LoLEngine::drawDoorOrMonsterShape(uint8 *shape, uint8 *table, int x, int y,
 }
 
 void LoLEngine::drawScriptShapes(int pageNum) {
-	// TODO
+	if (!_scriptAssignedLevelShape)
+		return;
 }
 
 } // end of namespace Kyra

@@ -54,34 +54,34 @@ void LoLEngine::runInitScript(const char *filename, int func) {
 
 void LoLEngine::runInfScript(const char *filename) {
 	_emc->load(filename, &_scriptData, &_opcodes);
-	runResidentScript(0x400, -1);
+	runSceneScript(0x400, -1);
 }
 
-void LoLEngine::runResidentScript(int func, int reg0) {
-	runResidentScriptCustom(func, reg0, -1, 0, 0, 0);
+void LoLEngine::runSceneScript(int block, int sub) {
+	runSceneScriptCustom(block, sub, -1, 0, 0, 0);
 }
 
-void LoLEngine::runResidentScriptCustom(int func, int reg0, int reg1, int reg2, int reg3, int reg4) {
+void LoLEngine::runSceneScriptCustom(int block, int sub, int charNum, int item, int reg3, int reg4) {
 	EMCState scriptState;
 	memset(&scriptState, 0, sizeof(EMCState));
 
 	if (!_scriptBoolSkipExec) {
 		_emc->init(&scriptState, &_scriptData);
-		_emc->start(&scriptState, func);
+		_emc->start(&scriptState, block);
 
-		scriptState.regs[0] = reg0;
-		scriptState.regs[1] = reg1;
-		scriptState.regs[2] = reg2;
+		scriptState.regs[0] = sub;
+		scriptState.regs[1] = charNum;
+		scriptState.regs[2] = item;
 		scriptState.regs[3] = reg3;
 		scriptState.regs[4] = reg4;
-		scriptState.regs[5] = func;
-		scriptState.regs[6] = _unkScriptByte;
+		scriptState.regs[5] = block;
+		scriptState.regs[6] = _scriptDirection;
 
 		while (_emc->isValid(&scriptState))
 			_emc->run(&scriptState);
 	}
 
-	checkScriptUnk(func);
+	checkScriptUnk(block);
 }
 
 bool LoLEngine::checkScriptUnk(int func) {
@@ -89,7 +89,7 @@ bool LoLEngine::checkScriptUnk(int func) {
 		return true;
 
 	for (int i = 0; i < 15; i++) {
-		if (_scriptExecutedFuncs[i] == func) {
+		if (_currentBlockPropertyIndex[i] == func) {
 			_sceneUpdateRequired = true;
 			return true;
 		}
@@ -420,25 +420,33 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 		calcCoordinates(_partyPosX, _partyPosY, _currentBlock, 0x80, 0x80);
 		setLF2(_currentBlock);			
 		break;
+
 	case 1:
 		_currentDirection = b;
 		break;
+
 	case 2:
 		_currentLevel = b & 0xff;
 		break;
+
 	case 3:
 		break;
+
 	case 4:
 		_brightness = b & 0xff;
 		break;
+
 	case 5:
 		_credits = b;
 		break;
+
 	case 6:
 		//TODO
 		break;
+
 	case 7:			
 		break;
+
 	case 8:
 		_updateFlags = b;
 		if (b == 1) {
@@ -449,19 +457,24 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 			setUnkFlags(2);
 		}
 		break;
+
 	case 9:
 		_lampStatusUnk = b & 0xff;
 		break;
+
 	case 10:
-		_loadLevelFlag2 = b & 0xff;
+		_sceneDefaultUpdate = b & 0xff;
 		//TODO
 		break;
+
 	case 11:
 		//TODO
 		break;
+
 	case 12:
 		//TODO
 		break;
+
 	default:
 		break;
 	}
@@ -606,7 +619,7 @@ int LoLEngine::olol_playDialogueTalkText(EMCState *script) {
 	
 	if (!snd_playCharacterSpeech(track, 0, 0) || textEnabled()) {
 		char *s = getLangString(track);
-		_dlg->play(4, s, script, 0, 1);
+		_txt->playDialogue(4, s, script, 0, 1);
 	}
 
 	return 1;

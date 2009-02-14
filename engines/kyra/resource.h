@@ -217,6 +217,7 @@ enum kKyraResources {
 	lolMusicTrackMap,
 	lolIngameGMSfxIndex,
 	lolIngameMT32SfxIndex,
+	//lolIngameADLSfxIndex,
 	lolSpellProperties,
 	lolGameShapeMap,
 	lolLevelShpList,
@@ -244,6 +245,21 @@ enum kKyraResources {
 	lolDscDoorY,
 	lolDscOvlIndex,
 	lolDscBlockIndex,
+
+	lolScrollXTop,
+	lolScrollYTop,
+	lolScrollXBottom,
+	lolScrollYBottom,
+
+	lolButtonDefs,
+	lolButtonList1,
+	lolButtonList2,
+	lolButtonList3,
+	lolButtonList4,
+	lolButtonList5,
+	lolButtonList6,
+	lolButtonList7,
+	lolButtonList8,
 
 	kMaxResIDs
 };
@@ -275,6 +291,7 @@ public:
 	const SpellProperty *loadSpellData(int id, int &entries);
 	const CompassDef *loadCompassData(int id, int &entries);
 	const uint16 *loadRawDataBe16(int id, int &entries);
+	const ButtonDef *loadButtonDefs(int id, int &entries);
 
 	// use '-1' to prefetch/unload all ids
 	// prefetchId retruns false if only on of the resources
@@ -309,7 +326,8 @@ private:
 	bool loadCharData(const char *filename, void *&ptr, int &size);
 	bool loadSpellData(const char *filename, void *&ptr, int &size);
 	bool loadCompassData(const char *filename, void *&ptr, int &size);
-	bool loadRawDataBe16(const char *filename, void *&ptr, int &size);	
+	bool loadRawDataBe16(const char *filename, void *&ptr, int &size);
+	bool loadButtonDefs(const char *filename, void *&ptr, int &size);
 
 	void freeRawData(void *&ptr, int &size);
 	void freeStringTable(void *&ptr, int &size);
@@ -323,6 +341,7 @@ private:
 	void freeSpellData(void *&ptr, int &size);
 	void freeCompassData(void *&ptr, int &size);
 	void freeRawDataBe16(void *&ptr, int &size);
+	void freeButtonDefs(void *&ptr, int &size);
 
 	const char *getFilename(const char *name);
 	Common::SeekableReadStream *getFile(const char *name);
@@ -342,7 +361,8 @@ private:
 		lolCharData,
 		lolSpellData,
 		lolCompassData,
-		lolRawDataBe16
+		lolRawDataBe16,
+		lolButtonData
 	};
 
 	struct BuiltinRes {

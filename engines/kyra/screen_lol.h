@@ -50,12 +50,23 @@ public:
 	void drawGridBox(int x, int y, int w, int h, int col);
 	void fadeClearSceneWindow(int delay);
 
+	// smooth scrolling
+	void backupSceneWindow(int srcPageNum, int dstPageNum);
+	void restoreSceneWindow(int srcPageNum, int dstPageNum);
+	void smoothScrollZoomStepTop(int srcPageNum, int dstPageNum, int x, int y);
+	void smoothScrollZoomStepBottom(int srcPageNum, int dstPageNum, int x, int y);
+	void smoothScrollHorizontalStep(int pageNum, int x, int u2, int w);
+	void smoothScrollTurnStep1(int srcPage1Num, int srcPage2Num, int dstPageNum);
+	void smoothScrollTurnStep2(int srcPage1Num, int srcPage2Num, int dstPageNum);
+	void smoothScrollTurnStep3(int srcPage1Num, int srcPage2Num, int dstPageNum);
+
+	// palette stuff
 	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
 	void setPaletteBrightness(uint8 *palDst, int brightness, int modifier);
 	void generateBrightnessPalette(uint8 *palSrc, uint8 *palDst, int brightness, int modifier);
 	void loadSpecialColours(uint8 *destPalette);
-	void loadColour254(uint8 *destPalEntry);
-	bool copyColour(int dstColorIndex, int srcColorIndex, uint32 time1, uint32 time2);
+	void copyColour(int dstColourIndex, int srcColourIndex);
+	bool fadeColour(int dstColourIndex, int srcColourIndex, uint32 elapsedTime, uint32 targetTime);
 
 	void generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool skipSpecialColours);
 	uint8 *generateLevelOverlay(const uint8 *srcPal, uint8 *ovl, int opColor, int weight);

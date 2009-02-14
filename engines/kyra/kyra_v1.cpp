@@ -341,8 +341,11 @@ void KyraEngine_v1::updateInput() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == '.' || event.kbd.keycode == Common::KEYCODE_ESCAPE)
-				_eventList.push_back(Event(event, true));
+			if (event.kbd.keycode == '.' || event.kbd.keycode == Common::KEYCODE_ESCAPE ||
+				event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_RETURN ||
+				event.kbd.keycode == Common::KEYCODE_UP || event.kbd.keycode == Common::KEYCODE_RIGHT ||
+				event.kbd.keycode == Common::KEYCODE_DOWN || event.kbd.keycode == Common::KEYCODE_LEFT)
+					_eventList.push_back(Event(event, true));
 			else if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
 				quitGame();
 			else
@@ -350,6 +353,7 @@ void KyraEngine_v1::updateInput() {
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
 			_eventList.push_back(Event(event, true));
 			break;
 
@@ -358,6 +362,7 @@ void KyraEngine_v1::updateInput() {
 			// fall through
 
 		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
 		case Common::EVENT_WHEELUP:
 		case Common::EVENT_WHEELDOWN:
 			_eventList.push_back(event);

@@ -40,7 +40,7 @@ namespace Kyra {
 LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(system, flags) {
 	_screen = 0;
 	_gui = 0;
-	_dlg = 0;
+	_txt = 0;
 	_tim = 0;
 
 	switch (_flags.lang) {
@@ -91,26 +91,31 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_gameShapeMap = 0;
 	memset(_monsterUnk, 0, 3);
 
+	_ingameMT32SoundIndex = _ingameGMSoundIndex = /*_ingameADLSoundIndex =*/ 0;
+
 	_charSelection = -1;
 	_characters = 0;
 	_spellProperties = 0;
 	_updateFlags = 0;
 	_selectedSpell = 0;
-	_updateCharNum = _updateCharV1 = _updateCharV2 = _updateCharV3 = _updateCharV4 = _restorePalette = _hideInventory = 0;
+	_updateCharNum = _updateCharV1 = _updateCharV2 = _updateCharV3 = _textColourFlag = _hideInventory = 0;
+	_fadeText = false;
 	_palUpdateTimer = _updatePortraitNext = 0;
 	_lampStatusTimer = 0xffffffff;
 
 	_weaponsDisabled = false;
-	_lastArrowButtonShape = 0;
-	_arrowButtonTimer = 0;
+	_lastButtonShape = 0;
+	_buttonPressTimer = 0;
 	_selectedCharacter = 0;
 	_unkFlag = 0;
 	_scriptBoolSkipExec = _sceneUpdateRequired = false;
-	_unkScriptByte = 0;
+	_scriptDirection = 0;
 	_currentDirection = 0;
 	_currentBlock = 0;
-	memset(_scriptExecutedFuncs, 0, 18 * sizeof(uint16));
+	memset(_currentBlockPropertyIndex, 0, 18 * sizeof(uint16));
 
+	_scrollSceneBuffer = 0;
+	_smoothScrollModeNormal = 1;
 	_wllVmpMap = _wllBuffer3 = _wllBuffer4 = _wllWallFlags = 0;
 	_wllShapeMap = 0;
 	_lvlShapeTop = _lvlShapeBottom = _lvlShapeLeftRight = 0;
@@ -127,6 +132,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_trueLightTable1 = 0;
 	_levelShapeProperties = 0;
 	_levelShapes = 0;
+	_scriptAssignedLevelShape = 0;
 	_blockDrawingBuffer = 0;
 	_sceneWindowBuffer = 0;
 	memset (_doorShapes, 0, 2 * sizeof(uint8*));
@@ -137,7 +143,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_cLevelItems = 0;
 	_unkGameFlag = 0;
 	_lastMouseRegion = 0;
-	_preSeq_X1 = _preSeq_Y1 = _preSeq_X2 = _preSeq_Y2 = 0;
+	//_preSeq_X1 = _preSeq_Y1 = _preSeq_X2 = _preSeq_Y2 = 0;
 
 	_dscUnk1 = 0;
 	_dscShapeIndex = 0;
@@ -175,7 +181,9 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	memset(_activeTim, 0, 10 * sizeof(TIM*));
 	memset(_activeVoiceFile, 0, sizeof(_activeVoiceFile));
 		
-	//_dlgAnimCallback = &TextDisplayer_LoL::portraitAnimation1;
+	_buttonData = 0;
+	_activeButtons = 0;
+	_buttonList1 = _buttonList2 = _buttonList3 = _buttonList4 = _buttonList5 = _buttonList6 = _buttonList7 = _buttonList8 = 0;
 }
 
 LoLEngine::~LoLEngine() {
@@ -187,7 +195,7 @@ LoLEngine::~LoLEngine() {
 	delete _screen;
 	delete _gui;
 	delete _tim;
-	delete _dlg;
+	delete _txt;
 
 	delete[]  _itemsInPlay;
 	delete[]  _itemProperties;
@@ -263,6 +271,8 @@ LoLEngine::~LoLEngine() {
 	delete[] _cLevelItems;
 	delete[] _levelBlockProperties;
 	delete[] _monsterProperties;
+	delete[] _scrollSceneBuffer;
+	delete[] _scriptAssignedLevelShape;
 
 	delete[] _levelFileData;
 	delete[] _vcnExpTable;
@@ -291,6 +301,8 @@ LoLEngine::~LoLEngine() {
 			delete[] _ingameSoundList[i];
 		delete[] _ingameSoundList;	
 	}
+
+	gui_resetButtonList();
 }
 
 Screen *LoLEngine::screen() {
@@ -312,12 +324,11 @@ Common::Error LoLEngine::init() {
 	_gui = new GUI_LoL(this);
 	assert(_gui);
 	_gui->initStaticData();
-	initButtonList();
 
 	_tim = new TIMInterpreter_LoL(this, _screen, _system);
 	assert(_tim);
 
-	_dlg = new TextDisplayer_LoL(this, _screen);
+	_txt = new TextDisplayer_LoL(this, _screen);
 
 	_screen->setAnimBlockPtr(10000);
 	_screen->setScreenDim(0);
@@ -365,6 +376,8 @@ Common::Error LoLEngine::init() {
 	_monsterProperties = new MonsterProperty[5];
 	memset(_monsterProperties, 0, 5 * sizeof(MonsterProperty));
 
+	_scrollSceneBuffer = new uint8[21120];
+
 	_vcnExpTable = new uint8[128];
 	for (int i = 0; i < 128; i++)
 		_vcnExpTable[i] = i & 0x0f;
@@ -394,6 +407,7 @@ Common::Error LoLEngine::init() {
 	memset(&_scriptData, 0, sizeof(EMCData));
 	
 	_levelFlagUnk = 0;
+	_unkCharNum = -1;
 
 	return Common::kNoError;
 }
@@ -614,8 +628,8 @@ void LoLEngine::startup() {
 	memset(_screen->_currentPalette, 0x3f, 0x180);
 	memcpy(_screen->_currentPalette + 3, tmpPal + 3, 3);
 	memset(_screen->_currentPalette + 0x240, 0x3f, 12);
-	_screen->generateOverlay(_screen->_currentPalette, _screen->_paletteOverlay1, 1, 6);
-	_screen->generateOverlay(_screen->_currentPalette, _screen->_paletteOverlay2, 0x90, 0x41);
+	_screen->generateOverlay(_screen->_currentPalette, _screen->_paletteOverlay1, 1, 96);
+	_screen->generateOverlay(_screen->_currentPalette, _screen->_paletteOverlay2, 144, 65);
 	memcpy(_screen->_currentPalette, tmpPal, 0x300);
 	delete[] tmpPal;
 
@@ -672,10 +686,12 @@ void LoLEngine::startup() {
 	
 	_loadSuppFilesFlag = 1;
 
-	_dlg->setAnimParameters("<MORE>", 10, 31, 0);
-	_dlg->setAnimFlag(true);
+	_txt->setAnimParameters("<MORE>", 10, 31, 0);
+	_txt->setAnimFlag(true);
 
 	_screen->_dimLineCount = 0;
+
+	_sound->loadSfxFile("LORESFX");
 
 	setMouseCursorToItemInHand();
 }
@@ -708,7 +724,7 @@ void LoLEngine::startupNew() {
 	static int selectIds[] = { -9, -1, -8, -5 };
 	addCharacter(selectIds[_charSelection]);
 
-	// TODO 
+	gui_enableDefaultPlayfieldButtons();
 
 	loadLevel(1);
 
@@ -743,14 +759,13 @@ void LoLEngine::runLoop() {
 
 	while (!shouldQuit() && _runFlag) {
 		if (_nextScriptFunc) {
-			runResidentScript(_nextScriptFunc, 2);
+			runSceneScript(_nextScriptFunc, 2);
 			_nextScriptFunc = 0;
 		}
 
 		//processUnkAnimStructs();
 		//checkFloatingPointerRegions();
-		//processCharacters();
-		checkInput(0, true);
+		gui_updateInput();
 		
 		update();
 
@@ -781,7 +796,7 @@ void LoLEngine::update() {
 		updateCompass();
 
 	snd_characterSpeaking();
-	restorePaletteEntry();
+	fadeText();
 
 	_screen->updateScreen();
 }
@@ -974,8 +989,8 @@ void LoLEngine::updatePortraits() {
 }
 
 void LoLEngine::updatePortraitUnkTimeSub(int unk1, int unk2) {
-	if (_updateCharV4 == unk1 || !unk1) {
-		_restorePalette = 1;
+	if (_textColourFlag == unk1 || !unk1) {
+		_fadeText = true;
 		_palUpdateTimer = _system->getMillis();
 	}
 
@@ -989,7 +1004,7 @@ void LoLEngine::updatePortraitUnkTimeSub(int unk1, int unk2) {
 		_screen->showMouse();
 	}
 	
-	_restorePalette = 0;
+	_fadeText = false;
 	//initGuiUnk(11);
 }
 
@@ -1045,8 +1060,8 @@ void LoLEngine::initDialogueSequence(int controlMode) {
 
 	_updateFlags |= 3;
 
-	_dlg->setupField(true);
-	_dlg->expandField();
+	_txt->setupField(true);
+	_txt->expandField();
 	setupScreenDims();
 	gui_disableControls(controlMode);
 }
@@ -1073,13 +1088,13 @@ void LoLEngine::unkHideInventory() {
 	removeUnkFlags(2);
 }
 
-void LoLEngine::gui_prepareForSequence(int x, int y, int w, int h, int unk) {
-	//resetGuiUnk(x, y, w, h, unk);
+void LoLEngine::gui_prepareForSequence(int x, int y, int w, int h, int buttonFlags) {
+	setSequenceGui(x, y, w, h, buttonFlags);
 
-	_preSeq_X1 = x;
+	/*_preSeq_X1 = x;
 	_preSeq_Y1 = y;
 	_preSeq_X2 = x + w;
-	_preSeq_Y2 = y + h;
+	_preSeq_Y2 = y + h;*/
 
 	int mouseOffs = _itemInHand ? 10 : 0;
 	_screen->setMouseCursor(mouseOffs, mouseOffs, getItemIconShapePtr(_itemInHand));
@@ -1094,10 +1109,10 @@ void LoLEngine::gui_prepareForSequence(int x, int y, int w, int h, int unk) {
 
 void LoLEngine::restoreSceneAfterDialogueSequence(int redraw) {
 	gui_enableControls();
-	_dlg->setupField(false);
+	_txt->setupField(false);
 	_updateFlags &= 0xffdf;
 
-	//loadLevel_initGui()
+	restoreDefaultGui();
 
 	for (int i = 0; i < 6; i++)
 		_tim->freeAnimStruct(i);
@@ -1115,11 +1130,12 @@ void LoLEngine::restoreSceneAfterDialogueSequence(int redraw) {
 	_hideInventory = 0;
 }
 
-void LoLEngine::restorePaletteEntry() {
-	if (!_restorePalette)
+void LoLEngine::fadeText() {
+	if (!_fadeText)
 		return;
 
-	_screen->copyColour(192, 252, _system->getMillis() - _palUpdateTimer, 60 * _tickLength);
+	if (_screen->fadeColour(192, 252, _system->getMillis() - _palUpdateTimer, 60 * _tickLength))
+		return;
 
 	if (_hideInventory)
 		return;
@@ -1128,7 +1144,7 @@ void LoLEngine::restorePaletteEntry() {
 
 	///initGuiUnk(11);
 
-	_restorePalette = 0;
+	_fadeText = false;
 }
 
 void LoLEngine::updateWsaAnimations() {
@@ -1274,6 +1290,11 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 			track = track < _ingameMT32SoundIndexSize ? _ingameMT32SoundIndex[track] - 1 : -1;
 		else if (_sound->getSfxType() == Sound::kMidiGM)
 			track = track < _ingameGMSoundIndexSize ? _ingameGMSoundIndex[track] - 1: -1;
+		//else if (_sound->getSfxType() == Sound::kAdlib)
+		//	track = track < _ingameADLSoundIndexSize ? _ingameADLSoundIndex[track] - 1: -1;
+		
+		if (track == 168)
+			track = 167;
 
 		if (track != -1)
 			KyraEngine_v1::snd_playSoundEffect(track);

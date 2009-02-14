@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 35
+#define RESFILE_VERSION 36
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -226,6 +226,7 @@ bool StaticResource::init() {
 		{ lolSpellData, proc(loadSpellData), proc(freeSpellData) },
 		{ lolCompassData, proc(loadCompassData), proc(freeCompassData) },
 		{ lolRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16) },
+		{ lolButtonData, proc(loadButtonDefs), proc(freeButtonDefs) },
 
 		{ 0, 0, 0 }
 	};
@@ -375,6 +376,7 @@ bool StaticResource::init() {
 		{ lolMusicTrackMap, kRawData, "MUSIC.MAP" },
 		{ lolIngameGMSfxIndex, kRawData, "SFX_GM.MAP" },
 		{ lolIngameMT32SfxIndex, kRawData, "SFX_MT32.MAP" },
+		//{ lolIngameADLSfxIndex, kRawData, "SFX_ADL.MAP" },
 		{ lolSpellProperties, lolSpellData, "SPELLS.DEF" },
 		{ lolGameShapeMap, kRawData, "GAMESHP.MAP" },
 		{ lolLevelShpList, kStringList, "SHPFILES.TXT" },
@@ -402,6 +404,21 @@ bool StaticResource::init() {
 		{ lolDscDoor1, kRawData, "DSCDOOR1.DEF" },
 		{ lolDscDoorX, lolRawDataBe16, "DSCDOORX.DEF" },
 		{ lolDscDoorY, lolRawDataBe16, "DSCDOORY.DEF" },
+
+		{ lolScrollXTop, kRawData, "SCROLLXT.DEF" },
+		{ lolScrollYTop, kRawData, "SCROLLYT.DEF" },
+		{ lolScrollXBottom, kRawData, "SCROLLXB.DEF" },
+		{ lolScrollYBottom, kRawData, "SCROLLYB.DEF" },
+
+		{ lolButtonDefs, lolButtonData, "BUTTONS.DEF" },
+		{ lolButtonList1, lolRawDataBe16, "BUTTON1.LST" },
+		{ lolButtonList2, lolRawDataBe16, "BUTTON2.LST" },
+		{ lolButtonList3, lolRawDataBe16, "BUTTON3.LST" },
+		{ lolButtonList4, lolRawDataBe16, "BUTTON4.LST" },
+		{ lolButtonList5, lolRawDataBe16, "BUTTON5.LST" },
+		{ lolButtonList6, lolRawDataBe16, "BUTTON6.LST" },
+		{ lolButtonList7, lolRawDataBe16, "BUTTON7.LST" },
+		{ lolButtonList8, lolRawDataBe16, "BUTTON84.LST" },
 
 		{ 0, 0, 0 }
 	};
@@ -480,6 +497,10 @@ const CompassDef *StaticResource::loadCompassData(int id, int &entries) {
 
 const uint16 *StaticResource::loadRawDataBe16(int id, int &entries) {
 	return (const uint16*)getData(id, lolRawDataBe16, entries);
+}
+
+const ButtonDef *StaticResource::loadButtonDefs(int id, int &entries) {
+	return (const ButtonDef*)getData(id, lolButtonData, entries);
 }
 
 bool StaticResource::prefetchId(int id) {
@@ -1048,6 +1069,31 @@ bool StaticResource::loadRawDataBe16(const char *filename, void *&ptr, int &size
 	return true;
 }
 
+bool StaticResource::loadButtonDefs(const char *filename, void *&ptr, int &size) {
+	Common::SeekableReadStream *file = getFile(filename);
+
+	size = file->size() / 18;
+
+	ButtonDef *r = new ButtonDef[size];
+
+	for (int i = 0; i < size; i++) {
+		r[i].buttonflags = file->readUint16BE();
+		r[i].clickedShapeId = file->readByte();
+		file->readByte();
+		r[i].unk2 = file->readUint16BE();
+		r[i].x = file->readSint16BE();
+		r[i].y = file->readSint16BE();
+		r[i].w = file->readUint16BE();
+		r[i].h = file->readUint16BE();
+		r[i].index = file->readUint16BE();
+		r[i].screenDim = file->readUint16BE();
+	}
+	
+	ptr = r;
+	
+	return true;
+}
+
 void StaticResource::freeRawData(void *&ptr, int &size) {
 	uint8 *data = (uint8*)ptr;
 	delete[] data;
@@ -1140,6 +1186,13 @@ void StaticResource::freeCompassData(void *&ptr, int &size) {
 void StaticResource::freeRawDataBe16(void *&ptr, int &size) {
 	uint16 *data = (uint16*)ptr;
 	delete[] data;
+	ptr = 0;
+	size = 0;
+}
+
+void StaticResource::freeButtonDefs(void *&ptr, int &size) {
+	ButtonDef *d = (ButtonDef*)ptr;
+	delete[] d;
 	ptr = 0;
 	size = 0;
 }
@@ -1633,6 +1686,7 @@ void LoLEngine::initStaticResource() {
 	_musicTrackMap = _staticres->loadRawData(lolMusicTrackMap, _musicTrackMapSize);
 	_ingameGMSoundIndex = _staticres->loadRawData(lolIngameGMSfxIndex, _ingameGMSoundIndexSize);
 	_ingameMT32SoundIndex = _staticres->loadRawData(lolIngameMT32SfxIndex, _ingameMT32SoundIndexSize);
+	//_ingameADLSoundIndex = _staticres->loadRawData(lolIngameADLSfxIndex, _ingameADLSoundIndexSize);
 	_spellProperties = _staticres->loadSpellData(lolSpellProperties, _spellPropertiesSize);
 	_gameShapeMap = (const int8*)_staticres->loadRawData(lolGameShapeMap, _gameShapeMapSize);
 	_levelShpList = _staticres->loadStrings(lolLevelShpList, _levelShpListSize);
@@ -1642,24 +1696,29 @@ void LoLEngine::initStaticResource() {
 	_dscUnk1 = (const int8*)_staticres->loadRawData(lolDscUnk1, _dscUnk1Size);
 	_dscShapeIndex = (const int8*)_staticres->loadRawData(lolDscShapeIndex, _dscShapeIndexSize);
 	_dscOvlMap = _staticres->loadRawData(lolDscOvlMap, _dscOvlMapSize);
-	_dscShapeScaleW = (const uint16 *)_staticres->loadRawDataBe16(lolDscScaleWidthData, _dscShapeScaleWSize);
-	_dscShapeScaleH = (const uint16 *)_staticres->loadRawDataBe16(lolDscScaleHeightData, _dscShapeScaleHSize);
-	_dscShapeX = (const int16 *)_staticres->loadRawDataBe16(lolDscX, _dscShapeXSize);
-	_dscShapeY = (const int8 *)_staticres->loadRawData(lolDscY, _dscShapeYSize);
+	_dscShapeScaleW = _staticres->loadRawDataBe16(lolDscScaleWidthData, _dscShapeScaleWSize);
+	_dscShapeScaleH = _staticres->loadRawDataBe16(lolDscScaleHeightData, _dscShapeScaleHSize);
+	_dscShapeX = (const int16*)_staticres->loadRawDataBe16(lolDscX, _dscShapeXSize);
+	_dscShapeY = (const int8*)_staticres->loadRawData(lolDscY, _dscShapeYSize);
 	_dscTileIndex = _staticres->loadRawData(lolDscTileIndex, _dscTileIndexSize);
 	_dscUnk2 = _staticres->loadRawData(lolDscUnk2, _dscUnk2Size);
 	_dscDoorShpIndex = _staticres->loadRawData(lolDscDoorShapeIndex, _dscDoorShpIndexSize);
-	_dscDim1 = (const int8 *)_staticres->loadRawData(lolDscDimData1, _dscDim1Size);
-	_dscDim2 = (const int8 *)_staticres->loadRawData(lolDscDimData2, _dscDim2Size);
+	_dscDim1 = (const int8*)_staticres->loadRawData(lolDscDimData1, _dscDim1Size);
+	_dscDim2 = (const int8*)_staticres->loadRawData(lolDscDimData2, _dscDim2Size);
 	_dscBlockMap = _staticres->loadRawData(lolDscBlockMap, _dscBlockMapSize);
 	_dscDimMap = _staticres->loadRawData(lolDscDimMap, _dscDimMapSize);
-	_dscDoorMonsterScaleTable = (const uint16 *)_staticres->loadRawDataBe16(lolDscDoorScale, _dscDoorMonsterScaleTableSize);
+	_dscDoorMonsterScaleTable = _staticres->loadRawDataBe16(lolDscDoorScale, _dscDoorMonsterScaleTableSize);
 	_dscShapeOvlIndex = _staticres->loadRawData(lolDscOvlIndex, _dscShapeOvlIndexSize);
-	_dscDoor4 = (const uint16 *)_staticres->loadRawDataBe16(lolDscDoor4, _dscDoor4Size);
-	_dscBlockIndex = (const int8 *)_staticres->loadRawData(lolDscBlockIndex, _dscBlockIndexSize);
+	_dscDoor4 = _staticres->loadRawDataBe16(lolDscDoor4, _dscDoor4Size);
+	_dscBlockIndex = (const int8*)_staticres->loadRawData(lolDscBlockIndex, _dscBlockIndexSize);
 	_dscDoor1 = _staticres->loadRawData(lolDscDoor1, _dscDoor1Size);
-	_dscDoorMonsterX = (const int16 *)_staticres->loadRawDataBe16(lolDscDoorX, _dscDoorMonsterXSize);
-	_dscDoorMonsterY = (const int16 *)_staticres->loadRawDataBe16(lolDscDoorY, _dscDoorMonsterYSize);
+	_dscDoorMonsterX = (const int16*)_staticres->loadRawDataBe16(lolDscDoorX, _dscDoorMonsterXSize);
+	_dscDoorMonsterY = (const int16*)_staticres->loadRawDataBe16(lolDscDoorY, _dscDoorMonsterYSize);
+
+	_scrollXTop = _staticres->loadRawData(lolScrollXTop, _scrollXTopSize);
+	_scrollYTop = _staticres->loadRawData(lolScrollYTop, _scrollYTopSize);
+	_scrollXBottom = _staticres->loadRawData(lolScrollXBottom, _scrollXBottomSize);
+	_scrollYBottom = _staticres->loadRawData(lolScrollYBottom, _scrollYBottomSize);
 
 	const char *const *tmpSndList = _staticres->loadStrings(lolIngameSfxFiles, _ingameSoundListSize);
 	_ingameSoundList = new char*[_ingameSoundListSize];
@@ -1668,6 +1727,120 @@ void LoLEngine::initStaticResource() {
 		strcpy(_ingameSoundList[i], tmpSndList[i]);
 	}
 	_staticres->unloadId(lolIngameSfxFiles);
+
+	_buttonData = _staticres->loadButtonDefs(lolButtonDefs, _buttonDataSize);
+	_buttonList1 = (const int16*)_staticres->loadRawDataBe16(lolButtonList1, _buttonList1Size);
+	_buttonList2 = (const int16*)_staticres->loadRawDataBe16(lolButtonList2, _buttonList2Size);
+	_buttonList3 = (const int16*)_staticres->loadRawDataBe16(lolButtonList3, _buttonList3Size);
+	_buttonList4 = (const int16*)_staticres->loadRawDataBe16(lolButtonList4, _buttonList4Size);
+	_buttonList5 = (const int16*)_staticres->loadRawDataBe16(lolButtonList5, _buttonList5Size);
+	_buttonList6 = (const int16*)_staticres->loadRawDataBe16(lolButtonList6, _buttonList6Size);
+	_buttonList7 = (const int16*)_staticres->loadRawDataBe16(lolButtonList7, _buttonList7Size);
+	_buttonList8 = (const int16*)_staticres->loadRawDataBe16(lolButtonList8, _buttonList8Size);
+}
+
+void LoLEngine::assignButtonCallback(Button *button, int index) {
+#define cb(x) BUTTON_FUNCTOR(LoLEngine, this, &LoLEngine::x)
+	static Button::Callback buttonCallbacks[] = {
+		cb(clickedUpArrow),
+		cb(clickedDownArrow),
+		cb(clickedDownArrow),
+		cb(clickedLeftArrow),
+		cb(clickedRightArrow),
+		cb(clickedTurnLeftArrow),
+		cb(clickedTurnRightArrow),
+		cb(clickedAttackButton),
+		cb(clickedAttackButton),
+		cb(clickedAttackButton),
+		cb(clickedAttackButton),
+		cb(clickedMagicButton),
+		cb(clickedMagicButton),
+		cb(clickedMagicButton),
+		cb(clickedMagicButton),
+		cb(clickedUnk9),
+		cb(clickedScreen),
+		cb(clickedPortraitLeft),
+		cb(clickedPortraitLeft),
+		cb(clickedPortraitLeft),
+		cb(clickedPortraitLeft),
+		cb(clickedPortraitLeft),
+		cb(clickedPortraitLeft),
+		cb(clickedPortraitLeft),
+		cb(clickedPortraitLeft),
+		cb(clickedLiveMagicBarsLeft),
+		cb(clickedLiveMagicBarsLeft),
+		cb(clickedLiveMagicBarsLeft),
+		cb(clickedLiveMagicBarsLeft),
+		cb(clickedPortraitEtcRight),
+		cb(clickedPortraitEtcRight),
+		cb(clickedPortraitEtcRight),
+		cb(clickedPortraitEtcRight),
+		cb(clickedUnk14),
+		cb(clickedUnk14),
+		cb(clickedUnk14),
+		cb(clickedUnk14),
+		cb(clickedUnk14),
+		cb(clickedUnk14),
+		cb(clickedUnk14),
+		cb(clickedUnk14),
+		cb(clickedUnk14),
+		cb(clickedUnk14),
+		cb(clickedUnk14),
+		cb(clickedUnk15),
+		cb(clickedUnk16),
+		cb(clickedUnk16),
+		cb(clickedUnk16),
+		cb(clickedUnk16),
+		cb(clickedUnk17),
+		cb(clickedInventorySlot),
+		cb(clickedInventorySlot),
+		cb(clickedInventorySlot),
+		cb(clickedInventorySlot),
+		cb(clickedInventorySlot),
+		cb(clickedInventorySlot),
+		cb(clickedInventorySlot),
+		cb(clickedInventorySlot),
+		cb(clickedInventorySlot),
+		cb(clickedInventorySlot),
+		cb(clickedInventoryScroll),
+		cb(clickedInventoryScroll),
+		cb(clickedUnk20),
+		cb(clickedUnk20),
+		cb(clickedScene),
+		cb(clickedUpArrow),
+		cb(clickedDownArrow),
+		cb(clickedLeftArrow),
+		cb(clickedRightArrow),
+		cb(clickedTurnLeftArrow),
+		cb(clickedTurnRightArrow),
+		cb(clickedScroll),
+		cb(clickedScroll),
+		cb(clickedScroll),
+		cb(clickedScroll),
+		cb(clickedScroll),
+		cb(clickedScroll),
+		cb(clickedScroll),
+		cb(clickedScroll),
+		cb(clickedScroll),
+		cb(clickedScroll),
+		cb(clickedUnk23),
+		cb(clickedUnk23),
+		cb(clickedUnk23),
+		cb(clickedUnk23),
+		cb(clickedUnk24),
+		cb(clickedUnk25),
+		cb(clickedUnk25),
+		cb(clickedOptions),
+		cb(clickedRestParty),
+		cb(clickedMoneyBox),
+		cb(clickedCompass),
+		cb(clickedAutomap),
+		cb(clickedLamp),
+		cb(clickedUnk32),
+	};
+#undef cb
+
+	button->buttonCallback = buttonCallbacks[index];	
 }
 
 const ScreenDim Screen_LoK::_screenDimTable[] = {
@@ -2625,10 +2798,6 @@ const int8 KyraEngine_MR::_albumWSAY[] = {
 
 void GUI_LoL::initStaticData() {
 
-}
-
-void LoLEngine::initButtonList() {
-	
 }
 
 const ScreenDim Screen_LoL::_screenDimTable[] = {

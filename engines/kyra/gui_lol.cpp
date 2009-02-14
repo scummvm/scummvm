@@ -124,6 +124,10 @@ void LoLEngine::gui_drawScroll() {
 	}
 }
 
+void LoLEngine::gui_highlightSelectedSpell(int unk) {
+
+}
+
 void LoLEngine::gui_drawAllCharPortraitsWithStats() {
 	int numChars = countActiveCharacters();
 	if (!numChars)
@@ -364,7 +368,7 @@ int LoLEngine::gui_enableControls() {
 
 	if (!_hideControls) {
 		for (int i = 76; i < 85; i++)
-			gui_disableArrowButton(i, 2);
+			gui_toggleButtonDisplayMode(i, 2);
 	}
 
 	gui_toggleFightButtons(false);
@@ -380,14 +384,14 @@ int LoLEngine::gui_disableControls(int controlMode) {
 	gui_toggleFightButtons(true);
 
 	for (int i = 76; i < 85; i++)
-		gui_disableArrowButton(i, ((controlMode & 2) && (i > 78)) ? 2 : 3);
+		gui_toggleButtonDisplayMode(i, ((controlMode & 2) && (i > 78)) ? 2 : 3);
 
 	return 1;
 }
 
-void LoLEngine::gui_disableArrowButton(int shapeIndex, int mode) {
-	static const int16 arrowButtonX[] = { 0x000C, 0x0021, 0x0122, 0x000C, 0x0021, 0x0036, 0x000C, 0x0021, 0x0036 };
-	static const int16 arrowButtonY[] = { 0x00B4, 0x00B4, 0x0020, 0x0084, 0x0084, 0x0084, 0x0096, 0x0096, 0x0096 };
+void LoLEngine::gui_toggleButtonDisplayMode(int shapeIndex, int mode) {
+	static const int16 buttonX[] = { 0x0056, 0x0128, 0x000C, 0x0021, 0x0122, 0x000C, 0x0021, 0x0036, 0x000C, 0x0021, 0x0036 };
+	static const int16 buttonY[] = { 0x00B4, 0x00B4, 0x00B4, 0x00B4, 0x0020, 0x0084, 0x0084, 0x0084, 0x0096, 0x0096, 0x0096 };
 
 	if (shapeIndex == 78 && !(_screen->_drawGuiFlag & 0x1000))
 		return;
@@ -396,12 +400,12 @@ void LoLEngine::gui_disableArrowButton(int shapeIndex, int mode) {
 		return;
 
 	if (mode == 0)
-		shapeIndex = _lastArrowButtonShape;
+		shapeIndex = _lastButtonShape;
 
 	int pageNum = 0;
 
-	int16 x1 = arrowButtonX[shapeIndex - 76];
-	int16 y1 = arrowButtonY[shapeIndex - 76];
+	int16 x1 = buttonX[shapeIndex - 74];
+	int16 y1 = buttonY[shapeIndex - 74];
 	int16 x2 = 0;
 	int16 y2 = 0;
 	uint32 t = 0;
@@ -409,25 +413,25 @@ void LoLEngine::gui_disableArrowButton(int shapeIndex, int mode) {
 	switch (mode) {
 		case 1:
 			mode = 0x100;
-			_lastArrowButtonShape = shapeIndex;
+			_lastButtonShape = shapeIndex;
 			break;
 
 		case 0:
-			if (!_lastArrowButtonShape)
+			if (!_lastButtonShape)
 				return;
 
 			t = _system->getMillis();
-			if (_arrowButtonTimer > t)
-				delay(_arrowButtonTimer - t);
+			if (_buttonPressTimer > t)
+				delay(_buttonPressTimer - t);
 
 		case 2:
 			mode = 0;
-			_lastArrowButtonShape = 0;
+			_lastButtonShape = 0;
 			break;
 
 		case 3:
 			mode = 0;
-			_lastArrowButtonShape = 0;
+			_lastButtonShape = 0;
 			pageNum = 6;
 
 			x2 = x1;
@@ -442,17 +446,20 @@ void LoLEngine::gui_disableArrowButton(int shapeIndex, int mode) {
 
 	_screen->drawShape(pageNum, _gameShapes[shapeIndex], x1, y1, 0, mode, _screen->_paletteOverlay1, 1);
 	
-	if (pageNum != 6)
-		return;
+	if (!pageNum)
+		_screen->updateScreen();
+		
+	if (pageNum == 6) {
+		int cp = _screen->setCurPage(6);
 
-	int cp = _screen->setCurPage(6);
+		_screen->drawGridBox(x1, y1, _gameShapes[shapeIndex][3], _gameShapes[shapeIndex][2], 1);
+		_screen->copyRegion(x1, y1, x2, y2, _gameShapes[shapeIndex][3], _gameShapes[shapeIndex][2], pageNum, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
 
-	_screen->drawGridBox(x1, y1, _gameShapes[shapeIndex][3], _gameShapes[shapeIndex][2], 1);
-	_screen->copyRegion(x1, y1, x2, y2, _gameShapes[shapeIndex][3], _gameShapes[shapeIndex][2], pageNum, 0, Screen::CR_NO_P_CHECK);
+		_screen->setCurPage(cp);
+	}
 
-	_screen->setCurPage(cp);
-
-	_arrowButtonTimer = _system->getMillis() + 6 * _tickLength;
+	_buttonPressTimer = _system->getMillis() + 6 * _tickLength;
 }
 
 void LoLEngine::gui_toggleFightButtons(bool disable) {
@@ -481,27 +488,222 @@ void LoLEngine::gui_toggleFightButtons(bool disable) {
 	}	
 }
 
+void LoLEngine::gui_updateInput() {
+	int inputFlag = checkInput(_activeButtons, true);
+	removeInputTop();
+
+	if (inputFlag && _unkCharNum != -1 && !(inputFlag & 0x8800)) {
+		gui_enableDefaultPlayfieldButtons();
+		_characters[_unkCharNum].flags &= 0xffef;
+		gui_drawCharPortraitWithStats(_unkCharNum);
+		//processMouseButtonEvent(inputFlag);
+		_unkCharNum = -1;
+		inputFlag = 0;
+	}
+
+	if (inputFlag == 1) {
+		if (_weaponsDisabled || _availableSpells[1] == -1)
+			return;
+
+		gui_highlightSelectedSpell(0);
+		if (_availableSpells[++_selectedSpell] == -1)
+			_selectedSpell = 0;
+		gui_highlightSelectedSpell(1);
+
+		gui_drawAllCharPortraitsWithStats();
+	} else if (inputFlag == 3) {
+		// TODO
+		//processPortraitGuiText
+	} else {
+		snd_dialogueSpeechUpdate(1);
+	}
+}
+
+void LoLEngine::gui_enableDefaultPlayfieldButtons() {
+	gui_resetButtonList();
+	gui_initButtonsFromList(_buttonList1);
+	gui_initCharacterControlButtons(7, 44);
+	gui_initCharacterControlButtons(11, 44);
+	gui_initCharacterControlButtons(17, 0);
+	gui_initCharacterControlButtons(29, 0);
+	gui_initCharacterControlButtons(25, 33);
+
+	if (_screen->_drawGuiFlag & 0x2000)
+		gui_initMagicScrollButtons();
+}
+
+void LoLEngine::gui_enableSequenceButtons(int x, int y, int w, int h, int enableFlags) {
+	gui_resetButtonList();
+
+	_sceneWindowButton.x = x;
+	_sceneWindowButton.y = y;
+	_sceneWindowButton.w = w;
+	_sceneWindowButton.h = h;
+
+	gui_initButtonsFromList(_buttonList3);
+	
+	if (enableFlags & 1)
+		gui_initButtonsFromList(_buttonList4);
+
+	if (enableFlags & 2)
+		gui_initButtonsFromList(_buttonList5);
+}
+	
+void LoLEngine::gui_resetButtonList() {
+	while (_activeButtons) {
+		Button *n = _activeButtons->nextButton;
+		delete _activeButtons;
+		_activeButtons = n;
+	}
+
+	_activeButtons = 0;
+}
+
+void LoLEngine::gui_initButtonsFromList(const int16 *list) {
+	while (*list != -1)
+		gui_initButton(*list++);
+}
+
+void LoLEngine::gui_initCharacterControlButtons(int index, int xOffs) {
+	int c = countActiveCharacters();
+	for (int i = 0; i < c; i++)
+		gui_initButton(index + i, _activeCharsXpos[i] + xOffs);
+}
+
+void LoLEngine::gui_initMagicScrollButtons() {
+
+}
+
+void LoLEngine::gui_initButton(int index, int x) {
+	Button *b = new Button;
+	memset (b, 0, sizeof(Button));
+
+	int cnt = 1;
+
+	if (_activeButtons) {
+		cnt++;
+		Button *n = _activeButtons;
+
+		while (n->nextButton) {
+			n = n->nextButton;
+			cnt++;
+		}
+
+		n->nextButton = b;
+
+	} else {
+		_activeButtons = b;
+	}
+
+	b->data0Val2 = 0xfe;
+	b->data0Val3 = 0x01;
+	b->data1Val2 = 0xfe;
+	b->data1Val3 = 0x01;
+	b->data2Val2 = 0xfe;
+	b->data2Val3 = 0x01;
+
+	b->index = cnt;
+	b->unk6 = _buttonData[index].clickedShapeId;
+	b->unk8 = _buttonData[index].unk2;
+	b->dimTableIndex = _buttonData[index].screenDim;
+	b->flags = _buttonData[index].buttonflags;
+	
+	b->data2Val2 = _buttonData[index].index;
+
+	if (index == 64) {
+		// scene window button
+		b->x = _sceneWindowButton.x;
+		b->y = _sceneWindowButton.y;
+		b->width = _sceneWindowButton.w - 1;
+		b->height = _sceneWindowButton.h - 1;
+	} else {
+		b->x = x != -1 ? x : _buttonData[index].x;
+		b->y = _buttonData[index].y;
+		b->width = _buttonData[index].w - 1;
+		b->height = _buttonData[index].h - 1;
+	}
+
+	assignButtonCallback(b, index);
+}
+
 int LoLEngine::clickedUpArrow(Button *button) {
+	if (button->data2Val2 && !(_unkGameFlag & 4))
+		return 0;
+
+	moveParty(_currentDirection, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 0, 80);
+
 	return 1;
 }
 
 int LoLEngine::clickedDownArrow(Button *button) {
+	if (button->data2Val2 && !(_unkGameFlag & 4))
+		return 0;
+
+	moveParty(_currentDirection ^ 2, 0, 1, 83);
+
 	return 1;
 }
 
 int LoLEngine::clickedLeftArrow(Button *button) {
+	if (button->data2Val2 && !(_unkGameFlag & 4))
+		return 0;
+
+	moveParty((_currentDirection - 1) & 3, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 2, 82);
+
 	return 1;
 }
 
 int LoLEngine::clickedRightArrow(Button *button) {
+	if (button->data2Val2 && !(_unkGameFlag & 4))
+		return 0;
+
+	moveParty((_currentDirection + 1) & 3, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 3, 84);
+
 	return 1;
 }
 
 int LoLEngine::clickedTurnLeftArrow(Button *button) {
+	if (button->data2Val2 && !(_unkGameFlag & 4))
+		return 0;
+
+	gui_toggleButtonDisplayMode(79, 1);
+	_currentDirection = (--_currentDirection) & 3;
+
+	_sceneDefaultUpdate = 1;
+
+	runSceneScript(_currentBlock, 0x4000);
+	updatePortraitUnkTimeSub(2, 0);
+
+	if (!_sceneDefaultUpdate)
+		gui_drawScene(0);
+	else
+		movePartySmoothScrollTurnLeft(1);		
+
+	gui_toggleButtonDisplayMode(79, 0);
+	runSceneScript(_currentBlock, 0x10);
 	return 1;
 }
 
 int LoLEngine::clickedTurnRightArrow(Button *button) {
+	if (button->data2Val2 && !(_unkGameFlag & 4))
+		return 0;
+
+	gui_toggleButtonDisplayMode(81, 1);
+	_currentDirection = (++_currentDirection) & 3;
+
+	_sceneDefaultUpdate = 1;
+
+	runSceneScript(_currentBlock, 0x4000);
+	updatePortraitUnkTimeSub(2, 0);
+
+	if (!_sceneDefaultUpdate)
+		gui_drawScene(0);
+	else
+		movePartySmoothScrollTurnRight(1);		
+
+	gui_toggleButtonDisplayMode(81, 0);
+	runSceneScript(_currentBlock, 0x10);
+
 	return 1;
 }
 
@@ -554,6 +756,12 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 }
 
 int LoLEngine::clickedInventoryScroll(Button *button) {
+	int8 dir = (int8) button->data2Val2;
+	int shp = (dir == 1) ? 75 : 74;
+
+	gui_toggleButtonDisplayMode(shp, 1);
+
+	gui_toggleButtonDisplayMode(shp, 0);
 	return 1;
 }
 
@@ -561,7 +769,7 @@ int LoLEngine::clickedUnk20(Button *button) {
 	return 1;
 }
 
-int LoLEngine::clickedUnk21(Button *button) {
+int LoLEngine::clickedScene(Button *button) {
 	return 1;
 }
 
@@ -582,26 +790,34 @@ int LoLEngine::clickedUnk25(Button *button) {
 }
 
 int LoLEngine::clickedOptions(Button *button) {
+	gui_toggleButtonDisplayMode(76, 1);
+
+	gui_toggleButtonDisplayMode(76, 0);
+
 	return 1;
 }
 
 int LoLEngine::clickedRestParty(Button *button) {
+	gui_toggleButtonDisplayMode(77, 1);
+
+	gui_toggleButtonDisplayMode(77, 0);
+
 	return 1;
 }
 
-int LoLEngine::clickedUnk28(Button *button) {
+int LoLEngine::clickedMoneyBox(Button *button) {
 	return 1;
 }
 
-int LoLEngine::clickedUnk29(Button *button) {
+int LoLEngine::clickedCompass(Button *button) {
 	return 1;
 }
 
-int LoLEngine::clickedUnk30(Button *button) {
+int LoLEngine::clickedAutomap(Button *button) {
 	return 1;
 }
 
-int LoLEngine::clickedUnk31(Button *button) {
+int LoLEngine::clickedLamp(Button *button) {
 	return 1;
 }
 
@@ -615,13 +831,13 @@ GUI_LoL::GUI_LoL(LoLEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 }
 
 int GUI_LoL::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) {
-	if ((inputFlag & 0xFF) == 199)
-		_pressFlag = true;
-	else if ((inputFlag & 0xFF) == 200)
-		_pressFlag = false;
+	inputFlag &= 0x7fff;
 
 	int returnValue = 0;
 	while (list) {
+		bool processMouseClick = (inputFlag == 199 && list->flags & 0x100) || (inputFlag == 299 && list->flags & 0x1000);
+		bool target = _vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, list->x, list->y, list->x + list->width, list->y + list->height);
+
 		/*if (list->flags & 8) {
 			list = list->nextButton;
 			continue;
@@ -682,9 +898,15 @@ int GUI_LoL::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) 
 				processButton(list);
 				_screen->updateScreen();
 			}
+		}*/
+		if (processMouseClick && target) {
+			if (list->buttonCallback) {
+				if ((*list->buttonCallback.get())(list))
+					break;
+			}
 		}
 
-		list = list->nextButton;*/
+		list = list->nextButton;
 	}
 
 	if (!returnValue)

@@ -97,8 +97,8 @@ void TextDisplayer_LoL::setupField(bool mode) {
 
 void TextDisplayer_LoL::expandField() {
 	if (_vm->textEnabled()) {
-		_vm->_restorePalette = 0;
-		_vm->_updateCharV4 = 0;
+		_vm->_fadeText = false;
+		_vm->_textColourFlag = 0;
 		//_vm->toggleGuiUnk(11, 0);
 		_screen->clearDim(3);
 		_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _pageBuffer1);
@@ -137,30 +137,32 @@ void TextDisplayer_LoL::setAnimParameters(const char *str, int x, uint8 col1, ui
 	}
 }
 
-void TextDisplayer_LoL::play(int dim, char *str, EMCState *script, int16 *paramList, int16 paramIndex) {
+void TextDisplayer_LoL::playDialogue(int dim, char *str, EMCState *script, int16 *paramList, int16 paramIndex) {
 	memcpy(_curPara, _stringParameters, 15 * sizeof(char*));
 	//char *cmds = _curPara[0];
+	_colour1prot = false;
 
 	if (dim == 3) {
 		if (_vm->_updateFlags & 2) {
 			_screen->clearDim(4);
 			dim = _screen->curDimIndex();
 			_colour1 = 254;
+			_colour1prot = true;
 		} else {
 			_screen->clearDim(3);
 			dim = _screen->curDimIndex();
 			_colour1 = 192;
-			uint8 col[3];
-			_screen->loadColour254(col);
-			_screen->setPaletteIndex(192, col[0], col[1], col[2]);
+			_colour1prot = true;
+			_screen->copyColour(192, 254);
 			//toggleGuiUnk(11, 1);
-			_vm->_updateCharV4 = 0;
-			_vm->_restorePalette = 0;
+			_vm->_textColourFlag = 0;
+			_vm->_fadeText = false;
 		}
 
 	} else {
 		_screen->setScreenDim(dim);
 		_colour1 = 254;
+		_colour1prot = true;
 	}
 
 	int cp = _screen->setCurPage(0);
@@ -188,7 +190,50 @@ void TextDisplayer_LoL::play(int dim, char *str, EMCState *script, int16 *paramL
 	_screen->setCurPage(cp);
 	_screen->setFont(of);
 
-	_vm->_restorePalette = 0;
+	_vm->_fadeText = false;
+}
+
+void TextDisplayer_LoL::printMessage(uint16 flags, char *str, ...) {
+	static uint8 textColours[] = { 0xfe, 0xa2, 0x84, 0x97, 0x9F };
+	static uint8 soundEffect[] = { 0x0B, 0x00, 0x2B, 0x1B, 0x00 };
+	if (flags & 4)
+		flags ^= 4;
+	else
+		_vm->updatePortraits();
+
+	uint16 col = textColours[flags & 0x7fff];
+
+	int od = _screen->curDimIndex();
+
+	if (_vm->_updateFlags & 2) {
+		_screen->setScreenDim(4);
+		_screen->clearCurDim();		
+	} else {
+		_screen->setScreenDim(3);
+		_screen->clearCurDim();
+		_screen->copyColour(192, col);
+		//toggleGuiUnk(11, 1);
+	}
+
+	_colour1 = 192;
+	_colour1prot = true;
+
+	va_list args;
+	va_start(args, str);
+
+	vsnprintf((char*) _buffer, 240, str, args);
+
+	va_end(args);
+	
+	displayText(str);
+
+	_screen->setScreenDim(od);
+
+	if (!(flags & 0x8000) && soundEffect[flags])
+		_vm->sound()->playSoundEffect(soundEffect[flags]);
+
+	_vm->_textColourFlag = flags & 0x7fff;
+	_vm->_fadeText = false;
 }
 
 bool TextDisplayer_LoL::preprocessString(char *str, EMCState *script, int16 *paramList, int16 paramIndex) {
@@ -322,7 +367,8 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 
 	memset(_ctrl, 0, 3);
 
-	_colour1 = _screen->_curDim->unk8;
+	if (!_colour1prot)
+		_colour1 = _screen->_curDim->unk8;
 	_colour2 = _screen->_curDim->unkA;
 	_posX = _screen->_curDim->unkC;
 	_posY = _screen->_curDim->unkE;

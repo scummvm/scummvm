@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 35,
+	kKyraDatVersion = 36,
 	kIndexSize = 12
 };
 
@@ -74,6 +74,7 @@ bool extractPaddedStrings(PAKFile &out, const Game *g, const byte *data, const u
 bool extractRaw16to8(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractMrShapeAnimData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
+bool extractLolButtonDefs(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 
 int extractHofSeqData_checkString(const void *ptr, uint8 checkSize);
 int extractHofSeqData_isSequence(const void *ptr, const Game *g, uint32 maxCheckSize);
@@ -99,6 +100,7 @@ const ExtractType extractTypeTable[] = {
 	{ k3TypeShpData, extractMrShapeAnimData, createFilename },
 
 	{ lolTypeRaw16, extractRaw16, createFilename },
+	{ lolTypeButtonDef, extractLolButtonDefs, createFilename },
 
 	{ -1, 0, 0}
 };
@@ -269,6 +271,7 @@ const ExtractFilename extractFilenames[] = {
 	{ lolMusicTrackMap, kTypeRawData, "MUSIC.MAP" },
 	{ lolGMSfxIndex, kTypeRawData, "SFX_GM.MAP" },
 	{ lolMT32SfxIndex, kTypeRawData, "SFX_MT32.MAP" },
+	//{ lolADLSfxIndex, kTypeRawData, "SFX_ADL.MAP" },
 	{ lolSpellProperties, kTypeRawData, "SPELLS.DEF" },
 	{ lolGameShapeMap, kTypeRawData, "GAMESHP.MAP" },
 	{ lolLevelShpList, kTypeStringList, "SHPFILES.TXT" },
@@ -296,6 +299,21 @@ const ExtractFilename extractFilenames[] = {
 	{ lolDscDoor1, kTypeRawData, "DSCDOOR1.DEF" },
 	{ lolDscDoorX, lolTypeRaw16, "DSCDOORX.DEF" },
 	{ lolDscDoorY, lolTypeRaw16, "DSCDOORY.DEF" },
+
+	{ lolScrollXTop, k3TypeRaw16to8, "SCROLLXT.DEF" },
+	{ lolScrollYTop, k3TypeRaw16to8, "SCROLLYT.DEF" },
+	{ lolScrollXBottom, k3TypeRaw16to8, "SCROLLXB.DEF" },
+	{ lolScrollYBottom, k3TypeRaw16to8, "SCROLLYB.DEF" },
+
+	{ lolButtonDefs, lolTypeButtonDef, "BUTTONS.DEF" },
+	{ lolButtonList1, lolTypeRaw16, "BUTTON1.LST" },
+	{ lolButtonList2, lolTypeRaw16, "BUTTON2.LST" },
+	{ lolButtonList3, lolTypeRaw16, "BUTTON3.LST" },
+	{ lolButtonList4, lolTypeRaw16, "BUTTON4.LST" },
+	{ lolButtonList5, lolTypeRaw16, "BUTTON5.LST" },
+	{ lolButtonList6, lolTypeRaw16, "BUTTON6.LST" },
+	{ lolButtonList7, lolTypeRaw16, "BUTTON7.LST" },
+	{ lolButtonList8, lolTypeRaw16, "BUTTON84.LST" },
 
 	{ -1, 0, 0 }
 };
@@ -1060,6 +1078,37 @@ bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 si
 		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
 		src += 2;
 		dst += 2;
+	}
+
+	return out.addFile(filename, buffer, size);
+}
+
+bool extractLolButtonDefs(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
+	int num = size / 22;
+	uint32 outsize = num * 18;
+	uint8 *buffer = new uint8[size];
+	const uint8 *src = data;
+	uint8 *dst = buffer;
+
+	for (int i = 0; i < num; i++) {
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 2; dst += 2;
+		*dst++ = *src++;
+		*dst++ = *src++;
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 6; dst += 2;
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 2; dst += 2;
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 2; dst += 2;
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 2; dst += 2;
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 2; dst += 2;
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 2; dst += 2;
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 2; dst += 2;
 	}
 
 	return out.addFile(filename, buffer, size);

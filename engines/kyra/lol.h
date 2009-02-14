@@ -210,14 +210,13 @@ struct CompassDef {
 struct ButtonDef {
 	uint16 buttonflags;
 	uint8 clickedShapeId;
-	uint8 unk1;
 	uint16 unk2;
 	int16 x;
 	int16 y;
 	uint16 w;
 	uint16 h;
 	uint16 index;
-	uint16 flag;
+	uint16 screenDim;
 };
 
 class LoLEngine : public KyraEngine_v1 {
@@ -351,6 +350,8 @@ private:
 	int _ingameGMSoundIndexSize;
 	const uint8 *_ingameMT32SoundIndex;
 	int _ingameMT32SoundIndexSize;
+	/*const uint8 *_ingameADLSoundIndex;
+	int _ingameADLSoundIndexSize;*/
 
 	// gui
 	void gui_drawPlayField();
@@ -365,16 +366,17 @@ private:
 	void gui_drawInventoryItem(int index);
 	void gui_drawCompass();
 	void gui_drawScroll();
+	void gui_highlightSelectedSpell(int unk);
 
 	int gui_enableControls();
 	int gui_disableControls(int controlMode);
-	void gui_disableArrowButton(int shapeIndex, int mode);
+	void gui_toggleButtonDisplayMode(int shapeIndex, int mode);
 	void gui_toggleFightButtons(bool disable);
-	void gui_prepareForSequence(int x, int y, int w, int h, int unk);
+	void gui_prepareForSequence(int x, int y, int w, int h, int buttonFlags);
 
 	bool _weaponsDisabled;
-	int _lastArrowButtonShape;
-	uint32 _arrowButtonTimer;
+	int _lastButtonShape;
+	uint32 _buttonPressTimer;
 	int _selectedCharacter;
 	int _compassDirection;
 	int _compassUnk;
@@ -383,9 +385,19 @@ private:
 	const CompassDef *_compassDefs;
 	int _compassDefsSize;
 
-	void initButtonList();
-	ButtonDef *_buttonData;
-	Button *_buttonList;
+	void gui_updateInput();
+	void gui_enableDefaultPlayfieldButtons();
+	void gui_enableSequenceButtons(int x, int y, int w, int h, int enableFlags);
+
+	void gui_resetButtonList();
+	void gui_initButtonsFromList(const int16 *list);
+	void gui_initCharacterControlButtons(int index, int xOffs);
+	void gui_initMagicScrollButtons();
+	void gui_initButton(int index, int x = -1);
+	void assignButtonCallback(Button *button, int index);
+
+	Button *_activeButtons;
+	ButtonDef _sceneWindowButton;
 
 	int clickedUpArrow(Button *button);
 	int clickedDownArrow(Button *button);
@@ -407,36 +419,55 @@ private:
 	int clickedInventorySlot(Button *button);
 	int clickedInventoryScroll(Button *button);
 	int clickedUnk20(Button *button);
-	int clickedUnk21(Button *button);
+	int clickedScene(Button *button);
 	int clickedScroll(Button *button);
 	int clickedUnk23(Button *button);
 	int clickedUnk24(Button *button);
 	int clickedUnk25(Button *button);
 	int clickedOptions(Button *button);
 	int clickedRestParty(Button *button);
-	int clickedUnk28(Button *button);
-	int clickedUnk29(Button *button);
-	int clickedUnk30(Button *button);
-	int clickedUnk31(Button *button);
+	int clickedMoneyBox(Button *button);
+	int clickedCompass(Button *button);
+	int clickedAutomap(Button *button);
+	int clickedLamp(Button *button);
 	int clickedUnk32(Button *button);
 
+	const ButtonDef *_buttonData;
+	int _buttonDataSize;
+	const int16 *_buttonList1;
+	int _buttonList1Size;
+	const int16 *_buttonList2;
+	int _buttonList2Size;
+	const int16 *_buttonList3;
+	int _buttonList3Size;
+	const int16 *_buttonList4;
+	int _buttonList4Size;
+	const int16 *_buttonList5;
+	int _buttonList5Size;
+	const int16 *_buttonList6;
+	int _buttonList6Size;
+	const int16 *_buttonList7;
+	int _buttonList7Size;
+	const int16 *_buttonList8;
+	int _buttonList8Size;
+
 	// text
-	TextDisplayer_LoL *_dlg;
+	TextDisplayer_LoL *_txt;
 
 	// emc scripts
 	void runInitScript(const char *filename, int func);
 	void runInfScript(const char *filename);
-	void runResidentScript(int func, int reg0);
-	void runResidentScriptCustom(int func, int reg0, int reg1, int reg2, int reg3, int reg4);
+	void runSceneScript(int block, int sub);
+	void runSceneScriptCustom(int block, int sub, int charNum, int item, int reg3, int reg4);
 	bool checkScriptUnk(int func);
 	
 	EMCData _scriptData;
 	bool _scriptBoolSkipExec;
-	uint8 _unkScriptByte;
+	uint16 _scriptDirection;
 	uint16 _currentDirection;
 	uint16 _currentBlock;
 	bool _sceneUpdateRequired;
-	int16 _scriptExecutedFuncs[18];
+	int16 _currentBlockPropertyIndex[18];
 	uint16 _gameFlags[15];
 	uint16 _unkEMC46[16];
 
@@ -512,7 +543,7 @@ private:
 	void unkHideInventory();
 	void restoreSceneAfterDialogueSequence(int redraw);
 	void toggleSelectedCharacterFrame(bool mode);
-	void restorePaletteEntry();
+	void fadeText();
 	void updateWsaAnimations();
 
 	uint8 **_itemIconShapes;
@@ -555,14 +586,15 @@ private:
 	int _updateCharV1;
 	int _updateCharV2;
 	int _updateCharV3;
-	int _updateCharV4;
-	int _restorePalette;
+	int _textColourFlag;
+	bool _fadeText;
 	int _hideInventory;
 	uint32 _palUpdateTimer;
 	uint32 _updatePortraitNext;
 
 	int _loadLevelFlag;
 	int _levelFlagUnk;
+	int _unkCharNum;
 
 	uint8 **_monsterShapes;
 	uint8 **_monsterPalettes;
@@ -611,10 +643,11 @@ private:
 	void resetItems(int flag);
 	void resetLvlBuffer();
 	void resetBlockProperties();
+	bool testWallFlag(int block, int direction, int flag);
 	bool testWallInvisibility(int block, int direction);
 
 	void drawScene(int pageNum);
-
+	
 	void generateBlockDrawingBuffer(int block, int direction);
 	void generateBlockDrawingBufferF0(int16 wllOffset, uint8 wllIndex, uint8 wllVmpIndex, int16 vmpOffset, uint8 len, uint8 numEntries);
 	void generateBlockDrawingBufferF1(int16 wllOffset, uint8 wllIndex, uint8 wllVmpIndex, int16 vmpOffset, uint8 len, uint8 numEntries);
@@ -634,17 +667,44 @@ private:
 	void drawScriptShapes(int pageNum);
 	void updateSceneWindow();
 
+	void setSequenceGui(int x, int y, int w, int h, int enableFlags);
+	void restoreDefaultGui();
+
 	void updateCompass();
 
-	void moveParty(uint16 direction, int unk1, int unk2, int unk3);
+	void moveParty(uint16 direction, int unk1, int unk2, int buttonShape);
 	uint16 calcNewBlockPostion(uint16 curBlock, uint16 direction);
+	bool checkBlockPassability(uint16 block, uint16 direction);
+	void notifyBlockNotPassable(int scrollFlag);	
 
+	void movePartySmoothScrollBlocked(int speed);
+	void movePartySmoothScrollUp(int speed);
+	void movePartySmoothScrollDown(int speed);
+	void movePartySmoothScrollLeft(int speed);
+	void movePartySmoothScrollRight(int speed);
+	void movePartySmoothScrollTurnLeft(int speed);
+	void movePartySmoothScrollTurnRight(int speed);
+		
+	int smoothScrollDrawSpecialShape(int pageNum);
 	void setLF2(int block);
+
+	uint8 *_scrollSceneBuffer;
+	uint32 _smoothScrollTimer;
+	int _smoothScrollModeNormal;
+
+	const uint8 *_scrollXTop;
+	int _scrollXTopSize;
+	const uint8 *_scrollYTop;
+	int _scrollYTopSize;
+	const uint8 *_scrollXBottom;
+	int _scrollXBottomSize;
+	const uint8 *_scrollYBottom;
+	int _scrollYBottomSize;
 	
 	int _unkFlag;
 	int _nextScriptFunc;
 	uint8 _currentLevel;
-	bool _loadLevelFlag2;
+	int _sceneDefaultUpdate;
 	int _lvlBlockIndex;
 	int _lvlShapeIndex;
 	bool _unkDrawLevelBool;
@@ -656,6 +716,7 @@ private:
 	uint8 *_sceneWindowBuffer;
 	LevelShapeProperty *_levelShapeProperties;
 	uint8 **_levelShapes;
+	uint8 *_scriptAssignedLevelShape;
 
 	char _lastSuppFile[12];
 	char _lastOverridePalFile[12];
@@ -703,7 +764,7 @@ private:
 	int16 _dmScaleH;
 
 	int _lastMouseRegion;
-	int _preSeq_X1, _preSeq_Y1,	_preSeq_X2, _preSeq_Y2;
+	//int _preSeq_X1, _preSeq_Y1,	_preSeq_X2, _preSeq_Y2;
 	uint8 _unkGameFlag;
 
 	uint8 *_tempBuffer5120;

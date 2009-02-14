@@ -5,6 +5,7 @@ const ExtractEntry lolCDFile2[] = {
 	{ lolMusicTrackMap, 0x0002A240, 0x0002A330 },	
 	{ lolGMSfxIndex, 0x0002B010, 0x0002B10A },
 	{ lolMT32SfxIndex, 0x0002B110, 0x0002B20A },
+	//{ lolADLSfxIndex, 0x0002B210, 0x0002B30A },
 	{ lolSpellProperties, 0x0002B5D0, 0x0002B6E8 },
 	{ lolGameShapeMap, 0x0002B35D, 0x0002B52C },
 	{ lolLevelShpList, 0x00032826, 0x000328A5 },
@@ -31,7 +32,22 @@ const ExtractEntry lolCDFile2[] = {
 	{ lolDscBlockIndex, 0x00033B53, 0x00033B9B },
 	{ lolDscDoor1, 0x0002B550, 0x0002B5D0 },
 	{ lolDscDoorX, 0x00027CC0, 0x00028140 },
-	{ lolDscDoorY, 0x00028140, 0x000285C0 },	
+	{ lolDscDoorY, 0x00028140, 0x000285C0 },
+
+	{ lolScrollXTop, 0x00033D40, 0x00033D4A },
+	{ lolScrollYTop, 0x00033D4A, 0x00033D54 },
+	{ lolScrollXBottom, 0x00033D54, 0x00033D5E },
+	{ lolScrollYBottom, 0x00033D5E, 0x00033D68 },
+
+	{ lolButtonDefs, 0x00028E80, 0x000296AA },
+	{ lolButtonList1, 0x000296B0, 0x00029700 },
+	{ lolButtonList2, 0x00029700, 0x0002971E },
+	{ lolButtonList3, 0x00029720, 0x00029724 },
+	{ lolButtonList4, 0x00029730, 0x0002974E },
+	{ lolButtonList5, 0x00029750, 0x00029770 },
+	{ lolButtonList6, 0x00029770, 0x0002978C },
+	{ lolButtonList7, 0x00029790, 0x00029796 },
+	{ lolButtonList8, 0x000297A0, 0x000297A4 },
 
 	{ -1, 0, 0 }
 };
