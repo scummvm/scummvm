@@ -39,6 +39,4 @@ DECLARE_SCALER(PocketPCHalfZoom);
 DECLARE_SCALER(SmartphoneLandscape);
 //#endif
 
-void initCEScaler(void);
-
 #endif

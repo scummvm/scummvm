@@ -1399,7 +1399,6 @@ bool OSystem_WINCE3::loadGFXMode() {
 		InitScalers(555);
 	else
 		InitScalers(565);
-	initCEScaler();
 	_overlayFormat.bytesPerPixel = _hwscreen->format->BytesPerPixel;
 	_overlayFormat.rLoss = _hwscreen->format->Rloss;
 	_overlayFormat.gLoss = _hwscreen->format->Gloss;
