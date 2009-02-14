@@ -120,7 +120,7 @@ int LoLEngine::olol_testGameFlag(EMCState *script) {
 
 	if (_gameFlags[stackPos(0) >> 4] & (1 << (stackPos(0) & 0x0f)))
 		return 1;
-	
+
 	return 0;
 }
 
@@ -152,7 +152,7 @@ int LoLEngine::olol_allocItemPropertiesBuffer(EMCState *script) {
 int LoLEngine::olol_setItemProperty(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setItemProperty(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
 	ItemProperty *tmp = &_itemProperties[stackPos(0)];
-	
+
 	tmp->nameStringId = stackPos(1);
 	tmp->shpIndex = stackPos(2);
 	tmp->unk5 = stackPos(3);
@@ -194,7 +194,7 @@ int LoLEngine::olol_getItemPara(EMCState *script) {
 	case 6:
 		return p->nameStringId;
 	case 7:
-		break;			
+		break;
 	case 8:
 		return p->shpIndex;
 	case 9:
@@ -371,31 +371,34 @@ int LoLEngine::olol_loadDoorShapes(EMCState *script) {
 	}
 
 	if (stackPos(3)) {
-		for (int i = 3; i < 13; i++) 
+		for (int i = 3; i < 13; i++)
 			_wllWallFlags[i] &= 0xfd;
 	}
 
 	if (stackPos(4)) {
-		for (int i = 13; i < 23; i++) 
+		for (int i = 13; i < 23; i++)
 			_wllWallFlags[i] &= 0xfd;
 	}
-	
+
 	return 1;
 }
 
 int LoLEngine::olol_initAnimStruct(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_initAnimStruct(%p) (%s, %d, %d, %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	if (_tim->initAnimStruct(stackPos(1), stackPosString(0), stackPos(2), stackPos(3), stackPos(4), 0, stackPos(5)))
 		return 1;
 	return 0;
 }
 
 int LoLEngine::olol_freeAnimStruct(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_freeAnimStruct(%p) (%d)", (const void *)script, stackPos(0));
 	if (_tim->freeAnimStruct(stackPos(0)))
 		return 1;
 	return 0;
 }
 
 int LoLEngine::olol_setMusicTrack(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setMusicTrack(%p) (%d)", (const void *)script, stackPos(0));
 	_curMusicTheme = stackPos(0);
 	return 1;
 }
@@ -413,12 +416,12 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setGlobalVar(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	//uint16 a = stackPos(1);
 	uint16 b = stackPos(2);
-	
+
 	switch (stackPos(0)) {
 	case 0:
 		_currentBlock = b;
 		calcCoordinates(_partyPosX, _partyPosY, _currentBlock, 0x80, 0x80);
-		setLF2(_currentBlock);			
+		setLF2(_currentBlock);
 		break;
 
 	case 1:
@@ -444,7 +447,7 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 		//TODO
 		break;
 
-	case 7:			
+	case 7:
 		break;
 
 	case 8:
@@ -486,7 +489,7 @@ int LoLEngine::olol_mapShapeToBlock(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_mapShapeToBlock(%p) (%d)", (const void *)script, stackPos(0));
 	return assignLevelShapes(stackPos(0));
 }
-	
+
 int LoLEngine::olol_resetBlockShapeAssignment(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_resetBlockShapeAssignment(%p) (%d)", (const void *)script, stackPos(0));
 	uint8 v = stackPos(0) & 0xff;
@@ -512,7 +515,7 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 	for (int i = 0; i < 16; i++) {
 		uint8 m = _monsterShapes[(l->id << 4) + i][3];
 		if (m > shpWidthMax)
-			shpWidthMax = m;	
+			shpWidthMax = m;
 	}
 
 	l->maxWidth = shpWidthMax;
@@ -557,8 +560,9 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 }
 
 int LoLEngine::olol_loadTimScript(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadTimScript(%p) (%d, %s)", (const void *)script, stackPos(0), stackPosString(1));
 	if (_activeTim[stackPos(0)])
-		return 1;	
+		return 1;
 	char file[13];
 	snprintf(file, sizeof(file), "%s.TIM", stackPosString(1));
 	_activeTim[stackPos(0)] = _tim->load(file, &_timIngameOpcodes);
@@ -566,20 +570,24 @@ int LoLEngine::olol_loadTimScript(EMCState *script) {
 }
 
 int LoLEngine::olol_runTimScript(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_runTimScript(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	return _tim->exec(_activeTim[stackPos(0)], stackPos(1));
 }
 
 int LoLEngine::olol_releaseTimScript(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_releaseTimScript(%p) (%d)", (const void *)script, stackPos(0));
 	_tim->unload(_activeTim[stackPos(0)]);
 	return 1;
 }
 
 int LoLEngine::olol_initDialogueSequence(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_initDialogueSequence(%p) (%d)", (const void *)script, stackPos(0));
 	initDialogueSequence(stackPos(0));
 	return 1;
 }
 
 int LoLEngine::olol_restoreSceneAfterDialogueSequence(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreSceneAfterDialogueSequence(%p) (%d)", (const void *)script, stackPos(0));
 	restoreSceneAfterDialogueSequence(stackPos(0));
 	return 1;
 }
@@ -595,6 +603,7 @@ int LoLEngine::olol_loadLangFile(EMCState *script) {
 }
 
 int LoLEngine::olol_stopTimScript(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_stopTimScript(%p) (%d)", (const void *)script, stackPos(0));
 	_tim->stopAllFuncs(_activeTim[stackPos(0)]);
 	return 1;
 }
@@ -615,8 +624,9 @@ int LoLEngine::olol_setPaletteBrightness(EMCState *script) {
 }
 
 int LoLEngine::olol_playDialogueTalkText(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playDialogueTalkText(%p) (%d)", (const void *)script, stackPos(0));
 	int track = stackPos(0);
-	
+
 	if (!snd_playCharacterSpeech(track, 0, 0) || textEnabled()) {
 		char *s = getLangString(track);
 		_txt->playDialogue(4, s, script, 0, 1);
@@ -789,7 +799,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	// 0x2C
-	OpcodeUnImpl();	
+	OpcodeUnImpl();
 	Opcode(olol_getUnkArrayVal);
 	Opcode(olol_setUnkArrayVal);
 	OpcodeUnImpl();
