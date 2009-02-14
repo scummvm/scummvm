@@ -220,7 +220,7 @@ Common::Error SkyEngine::go() {
 		else {
 			delayCount += _systemVars.gameSpeed;
 			int needDelay = delayCount - (int)_system->getMillis();
-			if ((needDelay < 0) || (needDelay > 4 * _systemVars.gameSpeed)) {
+			if ((needDelay < 0) || (needDelay > _systemVars.gameSpeed)) {
 				needDelay = 0;
 				delayCount = _system->getMillis();
 			}
@@ -282,7 +282,7 @@ Common::Error SkyEngine::init() {
 		_systemVars.systemFlags |= SF_ALLOW_TEXT;
 
 	_systemVars.systemFlags |= SF_PLAY_VOCS;
-	_systemVars.gameSpeed = 50;
+	_systemVars.gameSpeed = 80;
 
 	_skyCompact = new SkyCompact();
 	_skyText = new Text(_skyDisk, _skyCompact);
