@@ -262,7 +262,7 @@ void renderWord(uint8 * fontPtr_Data, uint8 * outBufferPtr,
 
 // returns character count and pixel size (via pointer) per line of the string (old: prepareWordRender(int32 param, int32 var1, int16* out2, uint8* ptr3, uint8* string))
 int32 prepareWordRender(int32 inRightBorder_X, int32 wordSpacingWidth,
-                        int16 * strPixelLength, uint8 * ptr3, const uint8 * textString) {
+                        int16 * strPixelLength, uint8 * ptr3, const uint8 *textString) {
 	const uint8 *localString = textString;
 
 	int32 counter = 0;
@@ -315,7 +315,7 @@ int32 prepareWordRender(int32 inRightBorder_X, int32 wordSpacingWidth,
 	return counter;
 }
 
-void drawString(int32 x, int32 y, uint8 *string, uint8 *buffer, uint8 color,
+void drawString(int32 x, int32 y, const uint8 *string, uint8 *buffer, uint8 color,
                 int32 inRightBorder_X) {
 	uint8 *fontPtr;
 	uint8 *fontPtr_Data;	// ptr2
@@ -414,7 +414,7 @@ void drawString(int32 x, int32 y, uint8 *string, uint8 *buffer, uint8 color,
 		int spacesCount = 0;	// si
 		char character = *(string);
 		short int strPixelLength;	// var_16;
-		uint8 *ptrStringEnd;	// var_4        //ok
+		const uint8 *ptrStringEnd;	// var_4        //ok
 		int drawPosPixel_X;	// di
 
 		while (character == ' ') {

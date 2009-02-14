@@ -29,22 +29,4 @@
 
 namespace Cruise {
 
-const char *english_strings[] = {
-	"Player Menu", "Save", "Load", "Start again", "Quit", "Inventory"
-};
-const char *french_strings[] = {
-	"Menu Joueur", "Sauvegarde", "Chargement", "Recommencer le jeu", "Quitter", "Inventaire"
-};
-
-const char **getStringList() {
-	switch (_vm->getLanguage()) {
-	case Common::EN_ANY:
-		return english_strings;
-	case Common::FR_FRA:
-		return french_strings;
-	default:
-		error("Unknown language encountered");
-	}
-}
-
 } // End of namespace Cruise

@@ -58,21 +58,16 @@ void resetRaster(uint8 *rasterPtr, int32 rasterSize) {
 	memset(rasterPtr, 0, rasterSize);
 }
 
-void drawInfoStringSmallBlackBox(uint8 *string) {
-	//uint8 buffer[256];
-
+void drawInfoStringSmallBlackBox(const char *s) {
 	gfxModuleData_field_90();
 	gfxModuleData_gfxWaitVSync();
 	drawBlackSolidBoxSmall();
 
-	drawString(10, 100, string, gfxModuleData.pPage10, titleColor, 300);
+	drawString(10, 100, (const uint8 *)s, gfxModuleData.pPage10, titleColor, 300);
 
 	gfxModuleData_flip();
 
 	flipScreen();
-
-	while (1)
-		;
 }
 
 void loadPakedFileToMem(int fileIdx, uint8 *buffer) {
@@ -751,8 +746,7 @@ void *allocAndZero(int size) {
 void buildInventory(int X, int Y) {
 	menuStruct *pMenu;
 
-	const char **sl = getStringList();
-	pMenu = createMenu(X, Y, sl[SL_INVENTORY]);
+	pMenu = createMenu(X, Y, _vm->langString(ID_INVENTORY));
 	menuTable[1] = pMenu;
 
 	if (pMenu == NULL)
@@ -1335,6 +1329,11 @@ int processInput(void) {
 	// Check for Exit 'X' key
 	if (keyboardCode == Common::KEYCODE_x)
 		return 1;
+
+	// Check for Pause 'P' key
+	if (keyboardCode == Common::KEYCODE_p) {
+		drawInfoStringSmallBlackBox(_vm->langString(ID_PAUSED));
+	}
 
 	if (!userEnabled) {
 		return 0;

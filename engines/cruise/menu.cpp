@@ -23,6 +23,7 @@
  *
  */
 
+#include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
 #include "cruise/staticres.h"
 
@@ -236,19 +237,16 @@ int playerMenu(int menuX, int menuY) {
 		    linkedRelation = 0; */
 		freeDisk();
 
-		// Get the correct string set to use
-		const char **sl = getStringList();
-
-		menuTable[0] = createMenu(menuX, menuY, sl[SL_MENU]);
+		menuTable[0] = createMenu(menuX, menuY, _vm->langString(ID_PLAYER_MENU));
 		ASSERT(menuTable[0]);
 
 		//addSelectableMenuEntry(0, 3, menuTable[0], 1, -1, "Save game disk");
 		if (userEnabled) {
-			addSelectableMenuEntry(0, 4, menuTable[0], 1, -1, sl[SL_SAVE]);
+			addSelectableMenuEntry(0, 4, menuTable[0], 1, -1, _vm->langString(ID_SAVE));
 		}
-		addSelectableMenuEntry(0, 5, menuTable[0], 1, -1, sl[SL_LOAD]);
-		addSelectableMenuEntry(0, 6, menuTable[0], 1, -1, sl[SL_RESTART]);
-		addSelectableMenuEntry(0, 7, menuTable[0], 1, -1, sl[SL_QUIT]);
+		addSelectableMenuEntry(0, 5, menuTable[0], 1, -1, _vm->langString(ID_LOAD));
+		addSelectableMenuEntry(0, 6, menuTable[0], 1, -1, _vm->langString(ID_RESTART));
+		addSelectableMenuEntry(0, 7, menuTable[0], 1, -1, _vm->langString(ID_QUIT));
 
 		retourMenu = processMenu(menuTable[0]);
 

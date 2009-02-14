@@ -75,6 +75,9 @@ Common::Error CruiseEngine::init() {
 	// Initialize backend
 	initGraphics(320, 200, false);
 
+	if (!loadLanguageStrings())
+		return Common::kUnknownError;
+
 	initialize();
 
 	return Common::kNoError;
@@ -107,6 +110,33 @@ void CruiseEngine::initialize() {
 
 	readVolCnf();
 
+}
+
+bool CruiseEngine::loadLanguageStrings() {
+	Common::File f;
+
+	if (!f.open("DELPHINE.LNG"))
+		return false;
+
+	char *data = (char *)malloc(f.size());
+	f.read(data, f.size());
+	char *ptr = data;
+
+	for (int i = 0; i < MAX_LANGUAGE_STRINGS; ++i) {
+		// Get the start of the next string
+		while (*ptr != '"') ++ptr;
+		const char *v = ++ptr;
+
+		// Find the end of the string, and replace the end '"' with a NULL
+		while (*ptr != '"') ++ptr;
+		*ptr++ = '\0';
+
+		// Add the string to the list
+		_langStrings.push_back(v);
+	}
+
+	f.close();
+	return true;
 }
 
 } // End of namespace Cruise

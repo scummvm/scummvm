@@ -28,12 +28,6 @@
 
 namespace Cruise {
 
-enum MenuConstants {
-	SL_MENU, SL_SAVE, SL_LOAD, SL_RESTART, SL_QUIT, SL_INVENTORY
-};
-
-const char **getStringList();
-
 } // End of namespace Cruise
 
 #endif

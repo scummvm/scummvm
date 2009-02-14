@@ -40,16 +40,23 @@ enum CruiseGameType {
 	GType_CRUISE = 1
 };
 
+#define MAX_LANGUAGE_STRINGS 25
+
+enum LangStringId { ID_PAUSED = 0, ID_INVENTORY = 5, ID_PLAYER_MENU = 7,
+	ID_SAVE = 9, ID_LOAD = 10, ID_RESTART = 11, ID_QUIT = 12};
+
 struct CRUISEGameDescription;
 
 class CruiseEngine: public Engine {
 private:
 	void initialize(void);
+	bool loadLanguageStrings();
 	bool makeLoad(char *saveName);
 	void mainLoop(int bootScriptIdx);
 
 	bool _preLoad;
 	Debugger *_debugger;
+	Common::StringList _langStrings;
 
 protected:
 	// Engine APIs
@@ -69,6 +76,7 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	virtual GUI::Debugger *getDebugger() { return _debugger; }
+	const char *langString(LangStringId langId) { return _langStrings[(int)langId].c_str(); }
 
 	bool loadSaveDirectory(void);
 	void makeSystemMenu(void);
