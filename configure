@@ -1765,7 +1765,7 @@ case $_backend in
 		;;
 	iphone)
 		OBJCFLAGS="$OBJCFLAGS --std=c99"
-		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework CoreSurface -framework LayerKit -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
+		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework QuartzCore -framework CoreSurface -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
 		DEFINES="$DEFINES -DIPHONE_BACKEND"
 		MODULES="$MODULES backends/platform/iphone"
 		;;

@@ -27,11 +27,9 @@
 #include "iphone_common.h"
 
 #import <UIKit/UIKit.h>
-#import <UIKit/UIView-Geometry.h>
 #import <GraphicsServices/GraphicsServices.h>
 #import <Foundation/Foundation.h>
 #import <CoreSurface/CoreSurface.h>
-#import <UIKit/UIKeyboardLayoutQWERTY.h>
 #import <QuartzCore/QuartzCore.h>
 
 static iPhoneView *sharedInstance = nil;
@@ -278,10 +276,10 @@ bool getLocalMouseCoords(CGPoint *point) {
 	];
 }
 
-- (void)mouseDown:(GSEvent*)event {
+- (void)mouseDown:(struct __GSEvent *)event {
 	//printf("mouseDown()\n");
-	CGRect rect = GSEventGetLocationInWindow(event);
-	CGPoint point = CGPointMake(rect.origin.x, rect.origin.y);
+	CGPoint point = GSEventGetLocationInWindow(event);
+	point = [self convertPoint:point fromView:nil];
 	
 	if (!getLocalMouseCoords(&point))
 		return;
@@ -300,10 +298,10 @@ bool getLocalMouseCoords(CGPoint *point) {
 	//printf("touchesBegan()\n");	
 }
 	
-- (void)mouseUp:(GSEvent*)event {
+- (void)mouseUp:(struct __GSEvent *)event {
 	//printf("mouseUp()\n");
-	CGRect rect = GSEventGetLocationInWindow(event);
-	CGPoint point = CGPointMake(rect.origin.x, rect.origin.y);
+	CGPoint point = GSEventGetLocationInWindow(event);
+	point = [self convertPoint:point fromView:nil];
 	
 	if (!getLocalMouseCoords(&point))
 		return;
@@ -318,10 +316,10 @@ bool getLocalMouseCoords(CGPoint *point) {
 	];
 }
 
-- (void)mouseDragged:(GSEvent*)event {
+- (void)mouseDragged:(struct __GSEvent *)event {
 	//printf("mouseDragged()\n");
-	CGRect rect = GSEventGetLocationInWindow(event);
-	CGPoint point = CGPointMake(rect.origin.x, rect.origin.y);
+	CGPoint point = GSEventGetLocationInWindow(event);
+	point = [self convertPoint:point fromView:nil];
 	
 	if (!getLocalMouseCoords(&point))
 		return;
@@ -336,10 +334,10 @@ bool getLocalMouseCoords(CGPoint *point) {
 	];
 }
 
-- (void)mouseEntered:(GSEvent*)event {
+- (void)mouseEntered:(struct __GSEvent *)event {
 	//printf("mouseEntered()\n");
-	CGRect rect = GSEventGetLocationInWindow(event);
-	CGPoint point = CGPointMake(rect.origin.x, rect.origin.y);
+	CGPoint point = GSEventGetLocationInWindow(event);
+	point = [self convertPoint:point fromView:nil];
 
 	
 	if (!getLocalMouseCoords(&point))
@@ -355,7 +353,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 	];
 }
 
-- (void)mouseExited:(GSEvent*)event {
+- (void)mouseExited:(struct __GSEvent *)event {
 	//printf("mouseExited().\n");
 	// [self addEvent:
 	//	[[NSDictionary alloc] initWithObjectsAndKeys:
@@ -365,7 +363,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 	// ];
 }
 
-- (void)mouseMoved:(GSEvent*)event
+- (void)mouseMoved:(struct __GSEvent *)event
 {
 	//printf("mouseMoved()\n");
 	// struct CGPoint point = GSEventGetLocationInWindow(event);
@@ -411,7 +409,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 	];
 }
 
-- (void)view:(UIView *)view handleTapWithCount:(int)count event:(GSEvent *)event fingerCount:(int)fingerCount{
+- (void)view:(UIView *)view handleTapWithCount:(int)count event:(struct __GSEvent *)event fingerCount:(int)fingerCount{
 	//printf("handleTapWithCount(%i, %i)\n", count, fingerCount);
 }
 
