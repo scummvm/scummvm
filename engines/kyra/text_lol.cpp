@@ -193,15 +193,15 @@ void TextDisplayer_LoL::playDialogue(int dim, char *str, EMCState *script, int16
 	_vm->_fadeText = false;
 }
 
-void TextDisplayer_LoL::printMessage(uint16 flags, char *str, ...) {
+void TextDisplayer_LoL::printMessage(uint16 type, char *str, ...) {
 	static uint8 textColours[] = { 0xfe, 0xa2, 0x84, 0x97, 0x9F };
 	static uint8 soundEffect[] = { 0x0B, 0x00, 0x2B, 0x1B, 0x00 };
-	if (flags & 4)
-		flags ^= 4;
+	if (type & 4)
+		type ^= 4;
 	else
 		_vm->updatePortraits();
 
-	uint16 col = textColours[flags & 0x7fff];
+	uint16 col = textColours[type & 0x7fff];
 
 	int od = _screen->curDimIndex();
 
@@ -225,14 +225,14 @@ void TextDisplayer_LoL::printMessage(uint16 flags, char *str, ...) {
 
 	va_end(args);
 	
-	displayText(str);
+	displayText(_buffer);
 
 	_screen->setScreenDim(od);
 
-	if (!(flags & 0x8000) && soundEffect[flags])
-		_vm->sound()->playSoundEffect(soundEffect[flags]);
+	if (!(type & 0x8000) && soundEffect[type])
+		_vm->sound()->playSoundEffect(soundEffect[type]);
 
-	_vm->_textColourFlag = flags & 0x7fff;
+	_vm->_textColourFlag = type & 0x7fff;
 	_vm->_fadeText = false;
 }
 

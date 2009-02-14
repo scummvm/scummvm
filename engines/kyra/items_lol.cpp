@@ -84,7 +84,7 @@ int LoLEngine::makeItem(int itemIndex, int curFrame, int flags) {
 			continue;
 
 		int diff = ABS(_currentLevel - _itemsInPlay[i].level);
-		
+
 		if (diff <= cnt)
 			continue;
 
@@ -95,7 +95,7 @@ int LoLEngine::makeItem(int itemIndex, int curFrame, int flags) {
 			if (t)
 				break;
 			else
-				ii = _itemsInPlay[ii - 1].itemIndexUnk;				
+				ii = _itemsInPlay[ii - 1].itemIndexUnk;
 		}
 
 		if (t) {
@@ -114,7 +114,7 @@ int LoLEngine::makeItem(int itemIndex, int curFrame, int flags) {
 			slot = r;
 		} else {
 			int ii = _itemsInPlay[slot].itemIndexUnk;
-			while (ii) {				
+			while (ii) {
 				if (testUnkItemFlags(ii)) {
 					_itemsInPlay[slot].itemIndexUnk = _itemsInPlay[ii].itemIndexUnk;
 					clearItemTableEntry(ii);
@@ -129,7 +129,7 @@ int LoLEngine::makeItem(int itemIndex, int curFrame, int flags) {
 	}
 
 	memset(&_itemsInPlay[slot], 0, sizeof(ItemInPlay));
-	
+
 	_itemsInPlay[slot].itemPropertyIndex = itemIndex;
 	_itemsInPlay[slot].shpCurFrame_flg = (curFrame & 0x1fff) | flags;
 	_itemsInPlay[slot].level = -1;

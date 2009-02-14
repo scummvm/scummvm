@@ -147,12 +147,12 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 	_dscUnk1 = 0;
 	_dscShapeIndex = 0;
-	_dscOvlMap = 0;	
+	_dscOvlMap = 0;
 	_dscShapeScaleW = 0;
 	_dscShapeScaleH = 0;
 	_dscShapeX = 0;
 	_dscShapeY = 0;
-	_dscTileIndex = 0;	
+	_dscTileIndex = 0;
 	_dscUnk2 = 0;
 	_dscDoorShpIndex = 0;
 	_dscDim1 = 0;
@@ -180,7 +180,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 	memset(_activeTim, 0, 10 * sizeof(TIM*));
 	memset(_activeVoiceFile, 0, sizeof(_activeVoiceFile));
-		
+
 	_buttonData = 0;
 	_activeButtons = 0;
 	_buttonList1 = _buttonList2 = _buttonList3 = _buttonList4 = _buttonList5 = _buttonList6 = _buttonList7 = _buttonList8 = 0;
@@ -293,13 +293,13 @@ LoLEngine::~LoLEngine() {
 
 	for (int i = 0; i < 2; i++)
 		delete[] _doorShapes[i];
-	
+
 	delete _lvlShpFileHandle;
 
 	if (_ingameSoundList) {
 		for (int i = 0; i < _ingameSoundListSize; i++)
 			delete[] _ingameSoundList[i];
-		delete[] _ingameSoundList;	
+		delete[] _ingameSoundList;
 	}
 
 	gui_resetButtonList();
@@ -389,7 +389,7 @@ Common::Error LoLEngine::init() {
 	memset(_tmpData136, 0, 136);
 
 	memset(_gameFlags, 0, 15 * sizeof(uint16));
-	memset(_unkEMC46, 0, 16 * sizeof(uint16));	
+	memset(_unkEMC46, 0, 16 * sizeof(uint16));
 
 	_levelFileData = 0;
 	_lvlShpFileHandle = 0;
@@ -405,7 +405,7 @@ Common::Error LoLEngine::init() {
 	_buf4 = new uint8*[384];
 	memset(_buf4, 0, 384 * sizeof(uint8*));
 	memset(&_scriptData, 0, sizeof(EMCData));
-	
+
 	_levelFlagUnk = 0;
 	_unkCharNum = -1;
 
@@ -471,7 +471,7 @@ Common::Error LoLEngine::go() {
 
 	if (processSelection == 0) {
 		_sound->loadSoundFile("LOREINTR");
-		_sound->playTrack(6);		
+		_sound->playTrack(6);
 		/*int character = */chooseCharacter();
 		_sound->playTrack(1);
 		_screen->fadeToBlack();
@@ -567,7 +567,7 @@ uint8 *LoLEngine::getItemIconShapePtr(int index) {
 	int ix = _itemProperties[_itemsInPlay[index].itemPropertyIndex].shpIndex;
 	if (_itemProperties[_itemsInPlay[index].itemPropertyIndex].flags & 0x200)
 		ix += (_itemsInPlay[index].shpCurFrame_flg & 0x1fff) - 1;
-	
+
 	return _itemIconShapes[ix];
 }
 
@@ -683,7 +683,7 @@ void LoLEngine::startup() {
 
 	_trueLightTable1 = new uint8[256];
 	_trueLightTable2 = new uint8[5120];
-	
+
 	_loadSuppFilesFlag = 1;
 
 	_txt->setAnimParameters("<MORE>", 10, 31, 0);
@@ -766,7 +766,7 @@ void LoLEngine::runLoop() {
 		//processUnkAnimStructs();
 		//checkFloatingPointerRegions();
 		gui_updateInput();
-		
+
 		update();
 
 		if (_sceneUpdateRequired)
@@ -967,7 +967,7 @@ void LoLEngine::updatePortraitWithStats() {
 		faceFrameRefresh(_updateCharNum);
 		if (redraw) {
 			gui_drawCharPortraitWithStats(_updateCharNum);
-			updatePortraitUnkTimeSub(0, 0);
+			initTextFading(0, 0);
 		} else {
 			gui_drawCharFaceShape(_updateCharNum, x, y, 0);
 		}
@@ -985,25 +985,22 @@ void LoLEngine::updatePortraits() {
 	_updateCharNum = -1;
 
 	if (!_updateCharV2)
-		updatePortraitUnkTimeSub(0, 0);
+		initTextFading(0, 0);
 }
 
-void LoLEngine::updatePortraitUnkTimeSub(int unk1, int unk2) {
-	if (_textColourFlag == unk1 || !unk1) {
+void LoLEngine::initTextFading(int textType, int clearField) {
+	if (_textColourFlag == textType || !textType) {
 		_fadeText = true;
 		_palUpdateTimer = _system->getMillis();
 	}
 
-	if (!unk2)
+	if (!clearField)
 		return;
 
 	updatePortraits();
-	if (_hideInventory) {
-		_screen->hideMouse();
+	if (_hideInventory)
 		_screen->clearDim(3);
-		_screen->showMouse();
-	}
-	
+
 	_fadeText = false;
 	//initGuiUnk(11);
 }
@@ -1051,7 +1048,7 @@ void LoLEngine::setupScreenDims() {
 	} else {
 		_screen->modifyScreenDim(4, 11, 124, 28, 9);
 		_screen->modifyScreenDim(5, 85, 123, 233, 18);
-	}	
+	}
 }
 
 void LoLEngine::initDialogueSequence(int controlMode) {
@@ -1082,7 +1079,7 @@ void LoLEngine::toggleSelectedCharacterFrame(bool mode) {
 void LoLEngine::unkHideInventory() {
 	_hideInventory = 1;
 
-	if (!textEnabled() || !(_hideControls & 2)) 
+	if (!textEnabled() || !(_hideControls & 2))
 		charCallback4(1);
 
 	removeUnkFlags(2);
@@ -1201,7 +1198,7 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	if (id & 0x4000) {
 		snprintf(pattern1, sizeof(pattern1), "%03X", id & 0x3fff);
 	} else if (id < 1000) {
-		snprintf(pattern1, sizeof(pattern1), "%03d", id);		
+		snprintf(pattern1, sizeof(pattern1), "%03d", id);
 	} else {
 		snprintf(pattern1, sizeof(pattern1), "@%04d", id - 1000);
 	}
@@ -1234,7 +1231,7 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	strcpy(_activeVoiceFile, *playList.begin());
 
 	_sound->voicePlayFromList(playList);
-		
+
 	for (Common::List<const char*>::iterator i = playList.begin(); i != playList.end(); i++)
 		delete []*i;
 	playList.clear();
@@ -1247,21 +1244,21 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 int LoLEngine::snd_characterSpeaking() {
 	if (_sound->voiceIsPlaying(_activeVoiceFile))
 		return 2;
-		
+
 	_lastSpeechId = _lastSpeaker = -1;
-	
+
 	return 1;
 }
 
 int LoLEngine::snd_dialogueSpeechUpdate(int finish) {
 	if (!_sound->voiceIsPlaying(_activeVoiceFile))
 		return -1;
-	
+
 	//_dlgTimer = 0;
 
 	if (finish)
 		_tim->_dialogueComplete = 1;
-	
+
 	return 1;
 }
 
@@ -1292,7 +1289,7 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 			track = track < _ingameGMSoundIndexSize ? _ingameGMSoundIndex[track] - 1: -1;
 		//else if (_sound->getSfxType() == Sound::kAdlib)
 		//	track = track < _ingameADLSoundIndexSize ? _ingameADLSoundIndex[track] - 1: -1;
-		
+
 		if (track == 168)
 			track = 167;
 
@@ -1323,7 +1320,7 @@ void LoLEngine::snd_loadSoundFile(int track) {
 int LoLEngine::snd_playTrack(int track) {
 	if (track == -1)
 		return _lastMusicTrack;
-	
+
 	int res = _lastMusicTrack;
 	_lastMusicTrack = track;
 

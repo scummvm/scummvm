@@ -251,12 +251,12 @@ private:
 	// main loop
 	void runLoop();
 	void update();
-	
+
 	int setUnkFlags(int unk);
 	int removeUnkFlags(int unk);
 
 	int _intFlag3;
-	
+
 	// mouse
 	void setMouseCursorToIcon(int icon);
 	void setMouseCursorToItemInHand();
@@ -460,7 +460,7 @@ private:
 	void runSceneScript(int block, int sub);
 	void runSceneScriptCustom(int block, int sub, int charNum, int item, int reg3, int reg4);
 	bool checkScriptUnk(int func);
-	
+
 	EMCData _scriptData;
 	bool _scriptBoolSkipExec;
 	uint16 _scriptDirection;
@@ -479,7 +479,7 @@ private:
 	int olol_loadMonsterShapes(EMCState *script);
 	int olol_allocItemPropertiesBuffer(EMCState *script);
 	int olol_setItemProperty(EMCState *script);
-	int olol_makeItem(EMCState *script);	
+	int olol_makeItem(EMCState *script);
 	int olol_getItemPara(EMCState *script);
 	int olol_getCharacterStat(EMCState *script);
 	int olol_setCharacterStat(EMCState *script);
@@ -510,7 +510,7 @@ private:
 
 	// tim scripts
 	TIM *_activeTim[10];
-	
+
 	// tim opcode
 	void setupOpcodeTable();
 
@@ -574,7 +574,7 @@ private:
 
 	void updatePortraitWithStats();
 	void updatePortraits();
-	void updatePortraitUnkTimeSub(int unk1, int unk2);
+	void initTextFading(int textType, int clearField);
 	void charCallback4(int redraw);
 	void setCharFaceFrame(int charNum, int frameNum);
 	void faceFrameRefresh(int charNum);
@@ -647,7 +647,7 @@ private:
 	bool testWallInvisibility(int block, int direction);
 
 	void drawScene(int pageNum);
-	
+
 	void generateBlockDrawingBuffer(int block, int direction);
 	void generateBlockDrawingBufferF0(int16 wllOffset, uint8 wllIndex, uint8 wllVmpIndex, int16 vmpOffset, uint8 len, uint8 numEntries);
 	void generateBlockDrawingBufferF1(int16 wllOffset, uint8 wllIndex, uint8 wllVmpIndex, int16 vmpOffset, uint8 len, uint8 numEntries);
@@ -675,7 +675,7 @@ private:
 	void moveParty(uint16 direction, int unk1, int unk2, int buttonShape);
 	uint16 calcNewBlockPostion(uint16 curBlock, uint16 direction);
 	bool checkBlockPassability(uint16 block, uint16 direction);
-	void notifyBlockNotPassable(int scrollFlag);	
+	void notifyBlockNotPassable(int scrollFlag);
 
 	void movePartySmoothScrollBlocked(int speed);
 	void movePartySmoothScrollUp(int speed);
@@ -684,7 +684,7 @@ private:
 	void movePartySmoothScrollRight(int speed);
 	void movePartySmoothScrollTurnLeft(int speed);
 	void movePartySmoothScrollTurnRight(int speed);
-		
+
 	int smoothScrollDrawSpecialShape(int pageNum);
 	void setLF2(int block);
 
@@ -700,7 +700,7 @@ private:
 	int _scrollXBottomSize;
 	const uint8 *_scrollYBottom;
 	int _scrollYBottomSize;
-	
+
 	int _unkFlag;
 	int _nextScriptFunc;
 	uint8 _currentLevel;
@@ -751,7 +751,7 @@ private:
 
 	uint16 _partyPosX;
 	uint16 _partyPosY;
-	
+
 	Common::SeekableReadStream *_lvlShpFileHandle;
 	uint16 _lvlShpNum;
 	uint16 _levelFileDataSize;
@@ -769,7 +769,7 @@ private:
 
 	uint8 *_tempBuffer5120;
 	uint8 *_tmpData136;
-	
+
 	const char *const * _levelDatList;
 	int _levelDatListSize;
 	const char *const * _levelShpList;
@@ -817,7 +817,7 @@ private:
 	int _dscDoorMonsterXSize;
 	const int16 *_dscDoorMonsterY;
 	int _dscDoorMonsterYSize;
-	
+
 	int _sceneDrawPage1;
 	int _sceneDrawPage2;
 

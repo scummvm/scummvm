@@ -382,7 +382,7 @@ bool StaticResource::init() {
 		{ lolLevelShpList, kStringList, "SHPFILES.TXT" },
 		{ lolLevelDatList, kStringList, "DATFILES.TXT" },
 		{ lolCompassDefs, lolCompassData, "COMPASS.DEF" },
-		
+
 		{ lolDscUnk1, kRawData, "DSCSHPU1.DEF" },
 		{ lolDscShapeIndex, kRawData, "DSCSHPI1.DEF" },
 		{ lolDscOvlMap, kRawData, "DSCSHPI2.DEF" },
@@ -939,7 +939,7 @@ bool StaticResource::loadCharData(const char *filename, void *&ptr, int &size) {
 
 	size = file->size() / 130;
 	LoLCharacter *charData = new LoLCharacter[size];
-	
+
 	for (int i = 0; i < size; i++) {
 		LoLCharacter *t = &charData[i];
 
@@ -999,7 +999,7 @@ bool StaticResource::loadCharData(const char *filename, void *&ptr, int &size) {
 	};
 
 	ptr = charData;
-	
+
 	return true;
 }
 
@@ -1011,7 +1011,7 @@ bool StaticResource::loadSpellData(const char *filename, void *&ptr, int &size) 
 
 	size = file->size() / 28;
 	SpellProperty *spellData = new SpellProperty[size];
-	
+
 	for (int i = 0; i < size; i++) {
 		SpellProperty *t = &spellData[i];
 
@@ -1028,7 +1028,7 @@ bool StaticResource::loadSpellData(const char *filename, void *&ptr, int &size) 
 	};
 
 	ptr = spellData;
-	
+
 	return true;
 }
 
@@ -1040,7 +1040,7 @@ bool StaticResource::loadCompassData(const char *filename, void *&ptr, int &size
 
 	size = file->size() / 4;
 	CompassDef *defs = new CompassDef[size];
-	
+
 	for (int i = 0; i < size; i++) {
 		CompassDef *t = &defs[i];
 		t->shapeIndex = file->readByte();
@@ -1050,7 +1050,7 @@ bool StaticResource::loadCompassData(const char *filename, void *&ptr, int &size
 	};
 
 	ptr = defs;
-	
+
 	return true;
 }
 
@@ -1065,7 +1065,7 @@ bool StaticResource::loadRawDataBe16(const char *filename, void *&ptr, int &size
 		r[i] = file->readUint16BE();
 
 	ptr = r;
-	
+
 	return true;
 }
 
@@ -1088,9 +1088,9 @@ bool StaticResource::loadButtonDefs(const char *filename, void *&ptr, int &size)
 		r[i].index = file->readUint16BE();
 		r[i].screenDim = file->readUint16BE();
 	}
-	
+
 	ptr = r;
-	
+
 	return true;
 }
 
@@ -1681,7 +1681,7 @@ void KyraEngine_MR::initStaticResource() {
 }
 
 void LoLEngine::initStaticResource() {
-	_charDefaults = _staticres->loadCharData(lolCharacterDefs, _charDefaultsSize);	
+	_charDefaults = _staticres->loadCharData(lolCharacterDefs, _charDefaultsSize);
 	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(lolIngameSfxIndex, _ingameSoundIndexSize);
 	_musicTrackMap = _staticres->loadRawData(lolMusicTrackMap, _musicTrackMapSize);
 	_ingameGMSoundIndex = _staticres->loadRawData(lolIngameGMSfxIndex, _ingameGMSoundIndexSize);
@@ -1840,7 +1840,7 @@ void LoLEngine::assignButtonCallback(Button *button, int index) {
 	};
 #undef cb
 
-	button->buttonCallback = buttonCallbacks[index];	
+	button->buttonCallback = buttonCallbacks[index];
 }
 
 const ScreenDim Screen_LoK::_screenDimTable[] = {

@@ -45,7 +45,7 @@ public:
 	void expandField();
 
 	void playDialogue(int dim, char *str, EMCState *script, int16 *paramList, int16 paramIndex);
-	void printMessage(uint16 colSnd, char *str, ...);
+	void printMessage(uint16 type, char *str, ...);
 	
 	int16 _scriptParameter;
 

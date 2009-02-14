@@ -97,7 +97,7 @@ void LoLEngine::gui_drawInventoryItem(int index) {
 void LoLEngine::gui_drawScroll() {
 	_screen->copyRegion(112, 0, 12, 0, 87, 15, 2, 2, Screen::CR_NO_P_CHECK);
 	int h = 0;
-	
+
 	for (int i = 0; i < 7; i++) {
 		if (_availableSpells[i] != -1)
 			h += 9;
@@ -106,7 +106,7 @@ void LoLEngine::gui_drawScroll() {
 	if (h == 18)
 		h = 27;
 
-	if (h) {		
+	if (h) {
 		_screen->copyRegion(201, 1, 17, 15, 6, h, 2, 2, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(208, 1, 89, 15, 6, h, 2, 2, Screen::CR_NO_P_CHECK);
 		_screen->fillRect(21, 15, 89, h + 15, 206);
@@ -169,12 +169,12 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 			_screen->drawGridBox(44, (spellLevels << 3) + 1, 22, 32 - (spellLevels << 3), 1);
 	} else {
 		// magic submenu closed
-		int handIndex = 0;		
+		int handIndex = 0;
 		if (_characters[charNum].items[0]) {
 			if (_itemProperties[_itemsInPlay[_characters[charNum].items[0]].itemPropertyIndex].unk8 != -1)
 				handIndex = _itemsInPlay[_characters[charNum].items[0]].itemPropertyIndex;
 		}
-		
+
 		handIndex =  _gameShapeMap[_itemProperties[handIndex].shpIndex << 1];
 		if (handIndex == 0x5a) { // draw raceClassSex specific hand shape
 			handIndex = _characters[charNum].raceClassSex - 1;
@@ -190,7 +190,7 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 
 		if (spellLevels == 0)
 			_screen->drawGridBox(44, 17, 22, 15, 1);
-	}	
+	}
 
 	uint16 f = _characters[charNum].flags & 0x314C;
 	if ((f == 0 && _weaponsDisabled) || (f && (f != 4 || _characters[charNum].weaponHit == 0 || _weaponsDisabled)))
@@ -200,7 +200,7 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 		_screen->drawShape(_screen->_curPage, _gameShapes[34], 44, 0, 0, 0);
 		_screen->fprintString("%d", 57, 7, 254, 0, 1, _characters[charNum].weaponHit);
 	}
-	if (_characters[charNum].damageSuffered) 
+	if (_characters[charNum].damageSuffered)
 		_screen->fprintString("%d", 17, 28, 254, 0, 1, _characters[charNum].damageSuffered);
 
 	if (!cp)
@@ -226,7 +226,7 @@ void LoLEngine::gui_drawBox(int x, int y, int w, int h, int frameColor1, int fra
 	_screen->drawClippedLine(x + 1, y, x + w, y, frameColor2);
 	_screen->drawClippedLine(x + w, y, x + w, y + h - 1, frameColor2);
 	_screen->drawClippedLine(x, y, x, y + h, frameColor1);
-	_screen->drawClippedLine(x, y + h, x + w, y + h, frameColor1);		
+	_screen->drawClippedLine(x, y + h, x + w, y + h, frameColor1);
 }
 
 void LoLEngine::gui_drawCharFaceShape(int charNum, int x, int y, int pageNum) {
@@ -297,7 +297,7 @@ void LoLEngine::calcCharPortraitXpos() {
 
 	int t = (235 - (nc * 66)) / (nc + 1);
 	for (int i = 0; i < nc; i++)
-		_activeCharsXpos[i] = i * 66 + t * (i + 1) + 83;	
+		_activeCharsXpos[i] = i * 66 + t * (i + 1) + 83;
 }
 
 void LoLEngine::gui_drawMoneyBox(int pageNum) {
@@ -322,7 +322,7 @@ void LoLEngine::gui_drawMoneyBox(int pageNum) {
 	}
 
 	Screen::FontId backupFont = _screen->setFont(Screen::FID_6_FNT);
-	_screen->fprintString("%d", 305, 98, 254, 0, 1, _credits); 
+	_screen->fprintString("%d", 305, 98, 254, 0, 1, _credits);
 
 	_screen->setFont(backupFont);
 	_screen->_curPage = backupPage;
@@ -445,10 +445,10 @@ void LoLEngine::gui_toggleButtonDisplayMode(int shapeIndex, int mode) {
 	}
 
 	_screen->drawShape(pageNum, _gameShapes[shapeIndex], x1, y1, 0, mode, _screen->_paletteOverlay1, 1);
-	
+
 	if (!pageNum)
 		_screen->updateScreen();
-		
+
 	if (pageNum == 6) {
 		int cp = _screen->setCurPage(6);
 
@@ -485,7 +485,7 @@ void LoLEngine::gui_toggleFightButtons(bool disable) {
 		} else {
 			gui_drawCharPortraitWithStats(i);
 		}
-	}	
+	}
 }
 
 void LoLEngine::gui_updateInput() {
@@ -541,14 +541,14 @@ void LoLEngine::gui_enableSequenceButtons(int x, int y, int w, int h, int enable
 	_sceneWindowButton.h = h;
 
 	gui_initButtonsFromList(_buttonList3);
-	
+
 	if (enableFlags & 1)
 		gui_initButtonsFromList(_buttonList4);
 
 	if (enableFlags & 2)
 		gui_initButtonsFromList(_buttonList5);
 }
-	
+
 void LoLEngine::gui_resetButtonList() {
 	while (_activeButtons) {
 		Button *n = _activeButtons->nextButton;
@@ -607,7 +607,7 @@ void LoLEngine::gui_initButton(int index, int x) {
 	b->unk8 = _buttonData[index].unk2;
 	b->dimTableIndex = _buttonData[index].screenDim;
 	b->flags = _buttonData[index].buttonflags;
-	
+
 	b->data2Val2 = _buttonData[index].index;
 
 	if (index == 64) {
@@ -672,12 +672,12 @@ int LoLEngine::clickedTurnLeftArrow(Button *button) {
 	_sceneDefaultUpdate = 1;
 
 	runSceneScript(_currentBlock, 0x4000);
-	updatePortraitUnkTimeSub(2, 0);
+	initTextFading(2, 0);
 
 	if (!_sceneDefaultUpdate)
 		gui_drawScene(0);
 	else
-		movePartySmoothScrollTurnLeft(1);		
+		movePartySmoothScrollTurnLeft(1);
 
 	gui_toggleButtonDisplayMode(79, 0);
 	runSceneScript(_currentBlock, 0x10);
@@ -694,12 +694,12 @@ int LoLEngine::clickedTurnRightArrow(Button *button) {
 	_sceneDefaultUpdate = 1;
 
 	runSceneScript(_currentBlock, 0x4000);
-	updatePortraitUnkTimeSub(2, 0);
+	initTextFading(2, 0);
 
 	if (!_sceneDefaultUpdate)
 		gui_drawScene(0);
 	else
-		movePartySmoothScrollTurnRight(1);		
+		movePartySmoothScrollTurnRight(1);
 
 	gui_toggleButtonDisplayMode(81, 0);
 	runSceneScript(_currentBlock, 0x10);
@@ -806,6 +806,7 @@ int LoLEngine::clickedRestParty(Button *button) {
 }
 
 int LoLEngine::clickedMoneyBox(Button *button) {
+	_txt->printMessage(0, getLangString(_credits == 1 ? 0x402D : 0x402E), _credits);
 	return 1;
 }
 
