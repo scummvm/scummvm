@@ -360,6 +360,7 @@ private:
 	void gui_drawCharPortraitWithStats(int charNum);
 	void gui_drawBox(int x, int y, int w, int h, int frameColor1, int frameColor2, int fillColor);
 	void gui_drawCharFaceShape(int charNum, int x, int y, int pageNum);
+	void gui_highlightPortraitFrame(int charNum);
 	void gui_drawLiveMagicBar(int x, int y, int curPoints, int unk, int maxPoints, int w, int h, int col1, int col2, int flag);
 	void gui_drawMoneyBox(int pageNum);
 	void gui_drawInventory();

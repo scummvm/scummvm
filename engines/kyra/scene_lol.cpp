@@ -870,7 +870,7 @@ void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape)
 	_currentBlock = npos;
 	_sceneDefaultUpdate = 1;
 
-	calcCoordinates(_partyPosX, _partyPosY, opos, 0x80, 0x80);
+	calcCoordinates(_partyPosX, _partyPosY, _currentBlock, 0x80, 0x80);
 	_unkFlag &= 0xfdff;
 
 	runSceneScript(opos, 4);
@@ -902,11 +902,13 @@ void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape)
 
 		gui_toggleButtonDisplayMode(buttonShape, 0);
 
-		runSceneScript(opos, 8);
-		runSceneScript(npos, 2);
+		if (npos == _currentBlock) {
+			runSceneScript(opos, 8);
+			runSceneScript(npos, 2);
 
-		if (_levelBlockProperties[npos].walls[0] == 0x1a)
-			memset(_levelBlockProperties[npos].walls, 0, 4);
+			if (_levelBlockProperties[npos].walls[0] == 0x1a)
+				memset(_levelBlockProperties[npos].walls, 0, 4);
+		}		
 	}
 
 	setLF2(_currentBlock);

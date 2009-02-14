@@ -254,6 +254,16 @@ void LoLEngine::gui_drawCharFaceShape(int charNum, int x, int y, int pageNum) {
 		_screen->showMouse();
 }
 
+void LoLEngine::gui_highlightPortraitFrame(int charNum) {
+	if (charNum != _selectedCharacter) {
+		int o = _selectedCharacter;
+		_selectedCharacter = charNum;
+		gui_drawCharPortraitWithStats(o);
+	}
+
+	gui_drawCharPortraitWithStats(charNum);
+}
+
 void LoLEngine::gui_drawLiveMagicBar(int x, int y, int curPoints, int unk, int maxPoints, int w, int h, int col1, int col2, int flag) {
 	w--;
 	h--;
@@ -728,6 +738,9 @@ int LoLEngine::clickedPortraitLeft(Button *button) {
 }
 
 int LoLEngine::clickedLiveMagicBarsLeft(Button *button) {
+	gui_highlightPortraitFrame(button->data2Val2);
+	_txt->printMessage(0, getLangString(0x4047), _characters[button->data2Val2].name, _characters[button->data2Val2].hitPointsCur,
+		_characters[button->data2Val2].hitPointsMax, _characters[button->data2Val2].magicPointsCur, _characters[button->data2Val2].magicPointsMax);
 	return 1;
 }
 
