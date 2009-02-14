@@ -144,6 +144,7 @@ void InitScalers(uint32 BitFormat) {
 	} else if (gBitFormat == 565) {
 		format = Graphics::createPixelFormat<565>();
 	} else {
+		assert(g_system);
 		format = g_system->getOverlayFormat();
 	}
 
@@ -169,7 +170,7 @@ void DestroyScalers(){
 
 /**
  * Trivial 'scaler' - in fact it doesn't do any scaling but just copies the
- * source to the destionation.
+ * source to the destination.
  */
 void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
