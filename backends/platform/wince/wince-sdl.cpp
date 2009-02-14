@@ -1398,7 +1398,6 @@ bool OSystem_WINCE3::loadGFXMode() {
 		InitScalers(555);
 	else
 		InitScalers(565);
-	initCEScaler();
 
 	// Need some extra bytes around when using 2xSaI
 	_tmpscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth + 3, _videoMode.screenHeight + 3, 16, _hwscreen->format->Rmask, _hwscreen->format->Gmask, _hwscreen->format->Bmask, _hwscreen->format->Amask);
