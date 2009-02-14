@@ -757,12 +757,6 @@
 			<Filter
 				Name="saves">
 				<File
-					RelativePath="..\..\backends\saves\compressed\compressed-saves.cpp">
-				</File>
-				<File
-					RelativePath="..\..\backends\saves\compressed\compressed-saves.h">
-				</File>
-				<File
 					RelativePath="..\..\backends\saves\default\default-saves.cpp">
 				</File>
 				<File
