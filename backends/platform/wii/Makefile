@@ -108,7 +108,7 @@ TARGET  = scummvm-wii
 MACHDEP  = -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float \
 			-ffunction-sections -fdata-sections -fmodulo-sched
 LIBDIR   = $(DEVKITPRO)/libogc/lib/wii
-LIBS      = -lstdc++ -ldi -lfat -lwiiuse -lbte -logc -lm
+LIBS      = -lstdc++ -ldi -lfat -lwiiuse -lbte -logc -lwiikeyboard -lm
 endif
 
 INCDIR   = $(srcdir) . $(srcdir)/engines/ $(DEVKITPRO)/libogc/include

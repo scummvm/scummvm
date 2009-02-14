@@ -100,6 +100,7 @@ private:
 	void initEvents();
 	void deinitEvents();
 	void updateEventScreenResolution();
+	bool pollKeyboard(Common::Event &event);
 
 protected:
 	Common::SaveFileManager *_savefile;
