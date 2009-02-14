@@ -70,9 +70,7 @@ void Screen::clearScreen(void) {
 	if (_screenBuf) {
 		_fullRefresh = true;
 		memset(_screenBuf, 0, _scrnSizeX * _scrnSizeY);
-		// The buffer isn't necessarily big enough to clear the entire
-		// screen, so the menu areas are unaffected. For now.
-		_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
+		_system->clearScreen();
 	}
 }
 
