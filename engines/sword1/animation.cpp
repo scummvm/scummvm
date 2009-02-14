@@ -442,7 +442,7 @@ void MoviePlayerDXA::processFrame(void) {
 
 void MoviePlayerDXA::updateScreen(void) {
 	Graphics::Surface *frameBuffer = _system->lockScreen();
-	copyFrameToBuffer((byte *)frameBuffer->pixels, _frameX, _frameY, _frameWidth);
+	copyFrameToBuffer((byte *)frameBuffer->pixels, _frameX, _frameY, 640);
 
 	// TODO: Handle the advanced cutscene packs. Do they really exist?
 
