@@ -373,9 +373,13 @@ void AGOSEngine::linkItem(Item *item, Item *parent) {
 }
 
 int AGOSEngine::wordMatch(Item *item, int16 a, int16 n) {
-	if ((a == -1) && (n == item->noun))
+	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+		if (a == -1 && n == -1)
+			return 1;
+	}
+	if (a == -1 && n == item->noun)
 		return 1;
-	if ((a == item->adjective) && (n == item->noun))
+	if (a == item->adjective && n == item->noun)
 		return 1 ;
 
 	return 0;
