@@ -85,9 +85,6 @@ OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0)
 	sceDisplaySetMode(0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	sceDisplaySetFrameBuf((char *)DisplayBuffer, 512, 1, 1);
 	sceDisplayWaitVblankStart();
-
-	// Correct pixel format ABBBBBGGGGGRRRRR
-	InitScalers(1555);
 }
 
 OSystem_PSP::~OSystem_PSP() {
