@@ -190,7 +190,7 @@ typedef mem_obj_t *mem_obj_ptr;
 #line 102 "savegame.cfsml"
 
 #include <stdarg.h> /* We need va_lists */
-#include <sci_memory.h>
+#include "sci/include/sci_memory.h"
 
 #ifdef CFSML_DEBUG_MALLOC
 /*
