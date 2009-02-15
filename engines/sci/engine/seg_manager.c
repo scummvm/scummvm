@@ -25,10 +25,10 @@
 
 ***************************************************************************/
 
-#include <seg_manager.h>
-#include <sciresource.h>
-#include <versions.h>
-#include <engine.h>
+#include "sci/include/seg_manager.h"
+#include "sci/include/sciresource.h"
+#include "sci/include/versions.h"
+#include "sci/include/engine.h"
 
 
 /*#define GC_DEBUG*/ /* Debug garbage collection */

@@ -29,7 +29,7 @@
 #ifndef _SCI_VM_TYPES_H_
 #define _SCI_VM_TYPES_H_
 
-#include <scitypes.h>
+#include "sci/include/scitypes.h"
 
 #define SCI_REG_SIZE 16;
 #define SCI_SEG_SIZE 16;

@@ -1,9 +1,9 @@
-#include <common/scummsys.h>
-#include <common/system.h>
-#include <common/events.h>
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "common/events.h"
 
-#include "gfx_driver.h"
-#include "gfx_tools.h"
+#include "sci/include/gfx_driver.h"
+#include "sci/include/gfx_tools.h"
 
 struct _scummvm_driver_state {
 	gfx_pixmap_t *priority[2];
@@ -499,6 +499,9 @@ scummvm_get_event(struct _gfx_driver *drv)
 		// Misc events
 		case Common::EVENT_QUIT:
 			input.type = SCI_EVT_QUIT;
+			break;
+
+		default:
 			break;
 		}
 	}

@@ -39,11 +39,11 @@
 #	endif
 #endif
 
-#include <sciresource.h>
-#include <engine.h>
-#include <versions.h>
-#include <kernel.h>
-#include "kernel_types.h"
+#include "sci/include/sciresource.h"
+#include "sci/include/engine.h"
+#include "sci/include/versions.h"
+#include "sci/include/kernel.h"
+#include "sci/engine/kernel_types.h"
 
 /* Structures and data from vm.c: */
 extern calls_struct_t *send_calls;

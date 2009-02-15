@@ -25,14 +25,14 @@
 ***************************************************************************/
 
 
-#include <sciresource.h>
-#include <engine.h>
-#include <versions.h>
-#include <kdebug.h>
-#include "kernel_types.h"
-#include <seg_manager.h>
-#include "gc.h"
-#include <sfx_player.h>
+#include "sci/include/sciresource.h"
+#include "sci/include/engine.h"
+#include "sci/include/versions.h"
+#include "sci/include/kdebug.h"
+#include "sci/engine/kernel_types.h"
+#include "sci/include/seg_manager.h"
+#include "sci/engine/gc.h"
+#include "sci/include/sfx_player.h"
 
 #ifdef HAVE_SETJMP_H
 #include <setjmp.h>

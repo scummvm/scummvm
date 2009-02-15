@@ -28,11 +28,11 @@
 #ifndef _GFX_STATE_INTERNAL_H_
 #define _GFX_STATE_INTERNAL_H_
 
-#include <gfx_tools.h>
-#include <gfx_options.h>
-#include <gfx_operations.h>
-#include <gfx_resmgr.h>
-#include <gfx_system.h>
+#include "sci/include/gfx_tools.h"
+#include "sci/include/gfx_options.h"
+#include "sci/include/gfx_operations.h"
+#include "sci/include/gfx_resmgr.h"
+#include "sci/include/gfx_system.h"
 
 
 #define GFXW_FLAG_VISIBLE (1<<0)

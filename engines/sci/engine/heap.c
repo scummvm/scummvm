@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <engine.h>
-#include <console.h>
-#include "heap.h"
+#include "sci/include/engine.h"
+#include "sci/include/console.h"
+#include "sci/engine/heap.h"
 
 #define assert_in_range(pos) assert(pos>=1000 && pos<=0xffff)
 

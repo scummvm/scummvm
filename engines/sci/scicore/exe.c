@@ -25,10 +25,10 @@
 
 ***************************************************************************/
 
-#include <sci_memory.h>
+#include "sci/include/sci_memory.h"
 
-#include "exe.h"
-#include "exe_dec.h"
+#include "sci/scicore/exe.h"
+#include "sci/scicore/exe_dec.h"
 
 extern exe_decompressor_t exe_decompressor_lzexe;
 extern exe_decompressor_t exe_decompressor_raw;

@@ -25,7 +25,7 @@
 
 ***************************************************************************/
 
-#include "message.h"
+#include "sci/engine/message.h"
 
 static
 int get_talker_trivial(index_record_cursor_t *cursor)

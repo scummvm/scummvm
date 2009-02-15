@@ -22,8 +22,8 @@
 #ifndef GC_H_
 #define GC_H_
 
-#include <reg_t_hashmap.h>
-#include <engine.h>
+#include "sci/include/reg_t_hashmap.h"
+#include "sci/include/engine.h"
 
 reg_t_hash_map_ptr
 find_all_used_references(state_t *s);

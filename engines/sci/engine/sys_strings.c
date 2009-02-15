@@ -25,9 +25,9 @@
 
 ***************************************************************************/
 
-#include <sys_strings.h>
+#include "sci/include/sys_strings.h"
 #include <stdio.h>
-#include <sci_memory.h>
+#include "sci/include/sci_memory.h"
 
 void
 sys_string_acquire(sys_strings_t *strings, int index, const char *name, int max_len)

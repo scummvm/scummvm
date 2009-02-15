@@ -26,9 +26,9 @@
 ***************************************************************************/
 /* String and parser handling */
 
-#include <sciresource.h>
-#include <engine.h>
-#include "message.h"
+#include "sci/include/sciresource.h"
+#include "sci/include/engine.h"
+#include "sci/engine/message.h"
 
 #define CHECK_OVERFLOW1(pt, size, rv) \
 	if (((pt) - (str_base)) + (size) > maxsize) { \

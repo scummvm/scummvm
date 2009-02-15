@@ -25,15 +25,15 @@
 
 ***************************************************************************/
 
-#include "gc.h"
-#include <sciresource.h>
-#include <engine.h>
+#include "sci/engine/gc.h"
+#include "sci/include/sciresource.h"
+#include "sci/include/engine.h"
 #ifdef _WIN32
 #	include <windows.h>
 #endif /* _WIN32 */
 
-#include <gfx_operations.h>
-#include "kernel_types.h"
+#include "sci/include/gfx_operations.h"
+#include "sci/engine/kernel_types.h"
 
 
 /* New kernel functions */

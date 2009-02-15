@@ -28,8 +28,8 @@
 #ifndef _SFX_ITERATOR_INTERNAL_
 #define _SFX_ITERATOR_INTERNAL_
 
-#include <sfx_iterator.h>
-#include <sci_midi.h>
+#include "sci/include/sfx_iterator.h"
+#include "sci/include/sci_midi.h"
 
 
 /* States */

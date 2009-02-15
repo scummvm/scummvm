@@ -25,11 +25,11 @@
 ***************************************************************************/
 /* The interpreter-specific part of the resource manager, for SCI */
 
-#include <sci_memory.h>
-#include <sciresource.h>
-#include <gfx_widgets.h>
-#include <gfx_resmgr.h>
-#include <gfx_options.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/sciresource.h"
+#include "sci/include/gfx_widgets.h"
+#include "sci/include/gfx_resmgr.h"
+#include "sci/include/gfx_options.h"
 
 int
 gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,

@@ -26,8 +26,8 @@
 ***************************************************************************/
 
 
-#include <sciresource.h>
-#include <sci_memory.h>
+#include "sci/include/sciresource.h"
+#include "sci/include/sci_memory.h"
 
 
 void

@@ -27,8 +27,8 @@
 
 ***************************************************************************/
 
-#include <sciresource.h>
-#include <engine.h>
+#include "sci/include/sciresource.h"
+#include "sci/include/engine.h"
 
 /* #define SCRIPT_DEBUG */
 

@@ -29,7 +29,7 @@
 
 #ifndef CONF_PARSE_H_
 #define CONF_PARSE_H_
-#include <conf_extension.h>
+#include "sci/include/conf_extension.h"
 
 #define CONF_PARSE_TYPE_WHITESPACE		1	/* Whitespace, comments */
 #define CONF_PARSE_TYPE_SUBSECTION		2	/* Subsection division */

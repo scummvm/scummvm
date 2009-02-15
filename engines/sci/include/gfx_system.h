@@ -28,8 +28,8 @@
 #ifndef _SCI_GFX_SYSTEM_
 #define _SCI_GFX_SYSTEM_
 
-#include <sci_memory.h>
-#include <resource.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/resource.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -19,12 +19,12 @@
 ***************************************************************************/
 
 #define NEED_SCI_VERSIONS
-#include <versions.h>
-#include <engine.h>
-#include <resource.h>
+#include "sci/include/versions.h"
+#include "sci/include/engine.h"
+#include "sci/include/resource.h"
 #include <ctype.h>
-#include "games.h"
-#include "exe.h"
+#include "sci/scicore/games.h"
+#include "sci/scicore/exe.h"
 
 /* Maxmimum number of bytes to hash from start of file */
 #define VERSION_DETECT_HASH_SIZE 1000000

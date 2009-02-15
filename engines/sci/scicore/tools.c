@@ -27,7 +27,7 @@
 #define _GNU_SOURCE /* For FNM_CASEFOLD in fnmatch.h */
 
 #include <stdlib.h>
-#include <engine.h>
+#include "sci/include/engine.h"
 
 #ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>

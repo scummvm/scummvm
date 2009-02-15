@@ -29,8 +29,8 @@
 #ifndef _FREESCI_HEAPMGR_H_
 #define _FREESCI_HEAPMGR_H_
 
-#include <resource.h>
-#include <sci_memory.h>
+#include "sci/include/resource.h"
+#include "sci/include/sci_memory.h"
 
 #define HEAPENTRY_INVALID -1
 

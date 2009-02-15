@@ -93,7 +93,7 @@ MODULE_OBJS = \
 
 # FIXME: The following is supposed to be a set of *temporary* hacks
 CXXFLAGS += -Wno-variadic-macros
-CPPFLAGS := -DSCUMMVM -I$(srcdir)/engines/sci/include $(CPPFLAGS)
+CPPFLAGS += -DSCUMMVM
 
 # Build .c files as C++
 %.o: %.c
@@ -101,7 +101,7 @@ CPPFLAGS := -DSCUMMVM -I$(srcdir)/engines/sci/include $(CPPFLAGS)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 
 # Generate savegame.cpp
-$(srcdir)/engines/sci/src/engine/savegame.cpp: $(srcdir)/engines/sci/src/engine/savegame.cfsml
+$(srcdir)/engines/sci/engine/savegame.c: $(srcdir)/engines/sci/engine/savegame.cfsml
 	cat $< | perl $(srcdir)/engines/sci/engine/cfsml.pl -f savegame.cfsml > $@
 
 # This module can be built as a plugin

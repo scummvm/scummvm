@@ -29,8 +29,8 @@
 #ifndef _SCI_MENUBAR_H_
 #define _SCI_MENUBAR_H_
 
-#include <gfx_operations.h>
-#include <gfx_widgets.h>
+#include "sci/include/gfx_operations.h"
+#include "sci/include/gfx_widgets.h"
 
 struct _state;
 

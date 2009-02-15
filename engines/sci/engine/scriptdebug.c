@@ -25,16 +25,16 @@
 ***************************************************************************/
 /* Script debugger functionality. Absolutely not threadsafe. */
 
-#include "gc.h"
-#include <sciresource.h>
-#include <engine.h>
-#include <console.h>
-#include <kdebug.h>
-#include <vocabulary.h>
-#include "kernel_types.h"
-#include <sci_midi.h>
-#include <sci_widgets.h>
-#include <reg_t_hashmap.h>
+#include "sci/engine/gc.h"
+#include "sci/include/sciresource.h"
+#include "sci/include/engine.h"
+#include "sci/include/console.h"
+#include "sci/include/kdebug.h"
+#include "sci/include/vocabulary.h"
+#include "sci/engine/kernel_types.h"
+#include "sci/include/sci_midi.h"
+#include "sci/include/sci_widgets.h"
+#include "sci/include/reg_t_hashmap.h"
 
 #ifdef _WIN32
 #	include <win32/sci_win32.h>

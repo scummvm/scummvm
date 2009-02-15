@@ -25,7 +25,7 @@
 
 ***************************************************************************/
 
-#include <engine.h>
+#include "sci/include/engine.h"
 
 #ifdef LOOKUP_NODE
 #  undef LOOKUP_NODE

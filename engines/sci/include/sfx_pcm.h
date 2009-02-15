@@ -28,10 +28,10 @@
 #ifndef _SFX_PCM_H_
 #define _SFX_PCM_H_
 
-#include <sfx_core.h>
-#include <sfx_timer.h>
-#include <sfx_time.h>
-#include <scitypes.h>
+#include "sci/include/sfx_core.h"
+#include "sci/include/sfx_timer.h"
+#include "sci/include/sfx_time.h"
+#include "sci/include/scitypes.h"
 
 /* A number of standard options most devices will support */
 #define SFX_PCM_OPTION_RATE "rate"            /* Sampling rate: Number of samples per second */

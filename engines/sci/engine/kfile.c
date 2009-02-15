@@ -25,7 +25,7 @@
 
 ***************************************************************************/
 
-#include <engine.h>
+#include "sci/include/engine.h"
 
 #ifdef _WIN32
 #  ifndef PATH_MAX

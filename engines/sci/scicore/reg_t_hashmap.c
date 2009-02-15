@@ -26,9 +26,9 @@
 ***************************************************************************/
 
 #define BUILD_MAP_FUNCTIONS
-#include "reg_t_hashmap.h"
+#include "sci/include/reg_t_hashmap.h"
 
-#include "hashmap.c"
+#include "sci/scicore/hashmap.c"
 
 static inline int
 compare_reg_t (reg_t lhs, reg_t rhs)

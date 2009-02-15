@@ -28,7 +28,7 @@
 #ifndef _SFX_MIXER_H_
 #define _SFX_MIXER_H_
 
-#include <sfx_pcm.h>
+#include "sci/include/sfx_pcm.h"
 
 
 #define SFX_PCM_FEED_MODE_ALIVE 0

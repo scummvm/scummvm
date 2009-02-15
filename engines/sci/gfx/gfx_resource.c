@@ -25,9 +25,9 @@
 
 ***************************************************************************/
 
-#include <gfx_system.h>
-#include <gfx_resource.h>
-#include <gfx_tools.h>
+#include "sci/include/gfx_system.h"
+#include "sci/include/gfx_resource.h"
+#include "sci/include/gfx_tools.h"
 
 gfx_mode_t mode_1x1_color_index = { /* Fake 1x1 mode */
 	/* xfact */ 1, /* yfact */ 1,

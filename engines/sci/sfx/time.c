@@ -27,8 +27,8 @@
 
 ***************************************************************************/
 
-#include <sfx_time.h>
-#include <resource.h>
+#include "sci/include/sfx_time.h"
+#include "sci/include/resource.h"
 
 sfx_timestamp_t
 sfx_new_timestamp(long secs, long usecs, int frame_rate)

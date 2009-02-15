@@ -26,8 +26,8 @@
 ***************************************************************************/
 /* Reads data from a resource file and stores the result in memory */
 
-#include <sci_memory.h>
-#include <sciresource.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/sciresource.h"
 
 
 

@@ -30,18 +30,18 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <resource.h>
-#include <sciresource.h>
-#include <script.h>
-#include <vocabulary.h>
-#include <console.h>
-#include <vm.h>
-#include <menubar.h>
+#include "sci/include/resource.h"
+#include "sci/include/sciresource.h"
+#include "sci/include/script.h"
+#include "sci/include/vocabulary.h"
+#include "sci/include/console.h"
+#include "sci/include/vm.h"
+#include "sci/include/menubar.h"
 #include <time.h>
-#include <versions.h>
-#include <kernel.h>
-#include <gfx_state_internal.h>
-#include <sfx_engine.h>
+#include "sci/include/versions.h"
+#include "sci/include/kernel.h"
+#include "sci/include/gfx_state_internal.h"
+#include "sci/include/sfx_engine.h"
 
 #define FREESCI_CURRENT_SAVEGAME_VERSION 7
 #define FREESCI_MINIMUM_SAVEGAME_VERSION 7

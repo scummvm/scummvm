@@ -25,9 +25,9 @@
 
 ***************************************************************************/
 
-#include <sciresource.h>
-#include <engine.h>
-#include "kernel_types.h"
+#include "sci/include/sciresource.h"
+#include "sci/include/engine.h"
+#include "sci/engine/kernel_types.h"
 
 reg_t
 read_selector(state_t *s, reg_t object, selector_t selector_id, const char *file, int line)

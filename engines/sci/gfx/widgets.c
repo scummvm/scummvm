@@ -25,8 +25,8 @@
 
 ***************************************************************************/
 
-#include <sci_memory.h>
-#include <gfx_widgets.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/gfx_widgets.h"
 
 #undef GFXW_DEBUG_DIRTY /* Enable to debug dirty rectangle propagation (writes to stderr) */
 

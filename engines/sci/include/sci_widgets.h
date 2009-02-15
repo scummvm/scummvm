@@ -29,7 +29,7 @@
 #ifndef _SCI_WIDGETS_H_
 #define _SCI_WIDGETS_H_
 
-#include <engine.h>
+#include "sci/include/engine.h"
 
 /* The following flags are applicable to windows in SCI0: */
 #define WINDOW_FLAG_TRANSPARENT 0x01

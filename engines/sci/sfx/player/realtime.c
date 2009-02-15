@@ -28,8 +28,8 @@
 ** prays for some reasonable amount of soft real-time, but it's close
 ** enough, I guess.  */
 
-#include <sfx_player.h>
-#include "../sequencer.h"
+#include "sci/include/sfx_player.h"
+#include "sci/sfx/sequencer.h"
 
 static sfx_sequencer_t *seq;
 

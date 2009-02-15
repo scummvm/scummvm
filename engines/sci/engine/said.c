@@ -104,10 +104,10 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 28 "said.y"
+#line 28 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
 
 
-#include <engine.h>
+#include "sci/include/engine.h"
 
 #define SAID_BRANCH_NULL 0
 
@@ -228,7 +228,7 @@ typedef int YYSTYPE;
 
 
 /* Line 216 of yacc.c.  */
-#line 232 "said.c"
+#line 232 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -1472,178 +1472,178 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 139 "said.y"
+#line 139 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_top_branch(said_attach_branch((yyvsp[(1) - (2)]), (yyvsp[(2) - (2)]))); }
     break;
 
   case 3:
-#line 141 "said.y"
+#line 141 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_top_branch(said_attach_branch((yyvsp[(1) - (3)]), said_attach_branch((yyvsp[(2) - (3)]), (yyvsp[(3) - (3)])))); }
     break;
 
   case 4:
-#line 143 "said.y"
+#line 143 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_top_branch(said_attach_branch((yyvsp[(1) - (4)]), said_attach_branch((yyvsp[(2) - (4)]), said_attach_branch((yyvsp[(3) - (4)]), (yyvsp[(4) - (4)]))))); }
     break;
 
   case 5:
-#line 148 "said.y"
+#line 148 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = SAID_BRANCH_NULL; }
     break;
 
   case 6:
-#line 150 "said.y"
+#line 150 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_paren(said_value(0x14b, said_value(0xf900, said_terminal(0xf900))), SAID_BRANCH_NULL); }
     break;
 
   case 7:
-#line 156 "said.y"
+#line 156 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = SAID_BRANCH_NULL; }
     break;
 
   case 8:
-#line 158 "said.y"
+#line 158 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_paren(said_value(0x141, said_value(0x149, (yyvsp[(1) - (1)]))), SAID_BRANCH_NULL); }
     break;
 
   case 9:
-#line 164 "said.y"
+#line 164 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_aug_branch(0x142, 0x14a, (yyvsp[(2) - (2)]), SAID_BRANCH_NULL); }
     break;
 
   case 10:
-#line 166 "said.y"
+#line 166 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_aug_branch(0x152, 0x142, said_aug_branch(0x142, 0x14a, (yyvsp[(3) - (4)]), SAID_BRANCH_NULL), SAID_BRANCH_NULL); }
     break;
 
   case 11:
-#line 168 "said.y"
+#line 168 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = SAID_BRANCH_NULL; }
     break;
 
   case 12:
-#line 174 "said.y"
+#line 174 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_aug_branch(0x143, 0x14a, (yyvsp[(2) - (2)]), SAID_BRANCH_NULL); }
     break;
 
   case 13:
-#line 176 "said.y"
+#line 176 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_aug_branch(0x152, 0x143, said_aug_branch(0x143, 0x14a, (yyvsp[(3) - (4)]), SAID_BRANCH_NULL), SAID_BRANCH_NULL); }
     break;
 
   case 14:
-#line 178 "said.y"
+#line 178 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = SAID_BRANCH_NULL; }
     break;
 
   case 15:
-#line 184 "said.y"
+#line 184 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_paren(said_value(0x141, said_value(0x153, said_terminal((yyvsp[(1) - (1)])))), SAID_BRANCH_NULL); }
     break;
 
   case 16:
-#line 189 "said.y"
+#line 189 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_aug_branch(0x141, 0x14f, (yyvsp[(1) - (1)]), SAID_BRANCH_NULL); }
     break;
 
   case 17:
-#line 191 "said.y"
+#line 191 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_aug_branch(0x141, 0x14f, said_aug_branch(0x152, 0x14c, said_aug_branch(0x141, 0x14f, (yyvsp[(2) - (3)]), SAID_BRANCH_NULL), SAID_BRANCH_NULL), SAID_BRANCH_NULL); }
     break;
 
   case 18:
-#line 196 "said.y"
+#line 196 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 19:
-#line 198 "said.y"
+#line 198 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = (yyvsp[(1) - (3)]); }
     break;
 
   case 20:
-#line 200 "said.y"
+#line 200 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_attach_branch((yyvsp[(1) - (3)]), (yyvsp[(3) - (3)])); }
     break;
 
   case 21:
-#line 202 "said.y"
+#line 202 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_attach_branch((yyvsp[(1) - (4)]), (yyvsp[(3) - (4)])); }
     break;
 
   case 22:
-#line 204 "said.y"
+#line 204 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_attach_branch((yyvsp[(1) - (5)]), (yyvsp[(3) - (5)])); }
     break;
 
   case 23:
-#line 210 "said.y"
+#line 210 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_attach_branch((yyvsp[(1) - (2)]), (yyvsp[(2) - (2)])); }
     break;
 
   case 24:
-#line 212 "said.y"
+#line 212 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 25:
-#line 214 "said.y"
+#line 214 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 26:
-#line 220 "said.y"
+#line 220 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 27:
-#line 222 "said.y"
+#line 222 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_aug_branch(0x152, 0x144, (yyvsp[(2) - (3)]), SAID_BRANCH_NULL); }
     break;
 
   case 28:
-#line 224 "said.y"
+#line 224 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_attach_branch((yyvsp[(1) - (4)]), said_aug_branch(0x152, 0x144, (yyvsp[(3) - (4)]), SAID_BRANCH_NULL)); }
     break;
 
   case 29:
-#line 230 "said.y"
+#line 230 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_aug_branch(0x144, 0x14f, (yyvsp[(2) - (3)]), (yyvsp[(3) - (3)])); }
     break;
 
   case 30:
-#line 232 "said.y"
+#line 232 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_aug_branch(0x144, 0x14f, said_aug_branch(0x141, 0x144, (yyvsp[(2) - (4)]), SAID_BRANCH_NULL), SAID_BRANCH_NULL); }
     break;
 
   case 31:
-#line 234 "said.y"
+#line 234 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_aug_branch(0x144, 0x14f, (yyvsp[(2) - (2)]), SAID_BRANCH_NULL); }
     break;
 
   case 32:
-#line 236 "said.y"
+#line 236 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_aug_branch(0x152, 0x144, said_aug_branch(0x144, 0x14f, (yyvsp[(3) - (4)]), SAID_BRANCH_NULL), SAID_BRANCH_NULL); }
     break;
 
   case 33:
-#line 242 "said.y"
+#line 242 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_aug_branch(0x141, 0x144, said_aug_branch(0x144, 0x14f, (yyvsp[(2) - (3)]), SAID_BRANCH_NULL), (yyvsp[(3) - (3)])); }
     break;
 
   case 34:
-#line 244 "said.y"
+#line 244 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_aug_branch(0x141, 0x144, said_aug_branch(0x144, 0x14f, (yyvsp[(2) - (2)]), SAID_BRANCH_NULL), SAID_BRANCH_NULL); }
     break;
 
   case 35:
-#line 246 "said.y"
+#line 246 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
     { (yyval) = said_aug_branch(0x141, 0x14c, (yyvsp[(2) - (4)]), SAID_BRANCH_NULL); }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1647 "said.c"
+#line 1647 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1857,7 +1857,7 @@ yyreturn:
 }
 
 
-#line 251 "said.y"
+#line 251 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
 
 
 

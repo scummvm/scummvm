@@ -26,9 +26,9 @@
 ***************************************************************************/
 /* song player structure */
 
-#include <sfx_engine.h>
-#include <sfx_iterator.h>
-#include <sciresource.h>
+#include "sci/include/sfx_engine.h"
+#include "sci/include/sfx_iterator.h"
+#include "sci/include/sciresource.h"
 
 #ifndef _SFX_PLAYER_H
 #define _SFX_PLAYER_H

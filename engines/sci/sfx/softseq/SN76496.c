@@ -28,8 +28,8 @@
 ***************************************************************************/
 /* Tandy/PCJr sequencer for FreeSCI */
 
-#include "../softseq.h"
-#include <sci_midi.h>
+#include "sci/sfx/softseq.h"
+#include "sci/include/sci_midi.h"
 
 #define FREQUENCY 44100
 #define CHANNELS_NR 3

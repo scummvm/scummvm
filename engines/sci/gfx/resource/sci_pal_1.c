@@ -26,9 +26,9 @@
 ***************************************************************************/
 /* SCI1 palette resource defrobnicator */
 
-#include <sci_memory.h>
-#include <gfx_system.h>
-#include <gfx_resource.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/gfx_system.h"
+#include "sci/include/gfx_resource.h"
 
 #define MAX_COLORS 256
 #define PALETTE_START 260

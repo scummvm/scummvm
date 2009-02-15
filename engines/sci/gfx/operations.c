@@ -25,8 +25,8 @@
 ***************************************************************************/
 /* Graphical operations, called from the widget state manager */
 
-#include <sci_memory.h>
-#include <gfx_operations.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/gfx_operations.h"
 
 #include <ctype.h>
 

@@ -44,7 +44,7 @@ extern struct _midi_device sfx_device_midi_camd;
 #endif
 #endif // SCUMMVM
 
-#include <resource.h>
+#include "sci/include/resource.h"
 
 static struct _midi_device *devices_midi[] = {
 #ifndef SCUMMVM

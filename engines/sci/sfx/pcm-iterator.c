@@ -27,9 +27,9 @@
 
 ***************************************************************************/
 
-#include <sfx_iterator.h>
-#include <resource.h> /* for BREAKPOINT */
-#include <sci_memory.h>
+#include "sci/include/sfx_iterator.h"
+#include "sci/include/resource.h" /* for BREAKPOINT */
+#include "sci/include/sci_memory.h"
 
 #define D ((pcm_data_internal_t *)self->internal)
 

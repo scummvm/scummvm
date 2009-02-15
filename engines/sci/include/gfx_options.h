@@ -29,9 +29,9 @@
 #ifndef _GFX_OPTIONS_H_
 #define _GFX_OPTIONS_H_
 
-#include <gfx_resource.h>
-#include <gfx_tools.h>
-#include <gfx_res_options.h>
+#include "sci/include/gfx_resource.h"
+#include "sci/include/gfx_tools.h"
+#include "sci/include/gfx_res_options.h"
 
 /* Dirty rectangle heuristics: */
 

@@ -28,8 +28,8 @@
 #ifndef _SCI_SFX_ITERATOR_H_
 #define _SCI_SFX_ITERATOR_H_
 
-#include <sfx_pcm.h>
-#include <listener.h>
+#include "sci/include/sfx_pcm.h"
+#include "sci/include/listener.h"
 
 #define SI_FINISHED -1 /* Song finished playing */
 #define SI_LOOP -2 /* Song just looped */

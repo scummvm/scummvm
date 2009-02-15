@@ -27,7 +27,7 @@
 
 %{
 
-#include <engine.h>
+#include "sci/include/engine.h"
 
 #define SAID_BRANCH_NULL 0
 

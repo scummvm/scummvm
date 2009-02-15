@@ -29,8 +29,8 @@
 #ifndef _GFX_TOOLS_H_
 #define _GFX_TOOLS_H_
 
-#include <gfx_system.h>
-#include <gfx_driver.h>
+#include "sci/include/gfx_system.h"
+#include "sci/include/gfx_driver.h"
 
 typedef enum {
 	GFX_XLATE_FILTER_NONE,

@@ -31,9 +31,9 @@
 
 #include <math.h>
 
-#include <engine.h>
-#include <aatree.h>
-#include <list.h>
+#include "sci/include/engine.h"
+#include "sci/include/aatree.h"
+#include "sci/include/list.h"
 
 #define POLY_LAST_POINT 0x7777
 #define POLY_POINT_SIZE 4

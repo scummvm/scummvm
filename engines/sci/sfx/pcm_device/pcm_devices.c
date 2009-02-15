@@ -17,8 +17,8 @@
 
 ***************************************************************************/
 
-#include <sfx_pcm.h>
-#include <resource.h>
+#include "sci/include/sfx_pcm.h"
+#include "sci/include/resource.h"
 
 #ifndef NO_PCMOUT
 #ifdef SCUMMVM

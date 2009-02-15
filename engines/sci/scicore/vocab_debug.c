@@ -4,8 +4,8 @@
 
 
 #include <string.h>
-#include <engine.h>
-#include <sciresource.h>
+#include "sci/include/engine.h"
+#include "sci/include/sciresource.h"
 
 /* Default kernel name table */
 #define SCI0_KNAMES_WELL_DEFINED 0x6e

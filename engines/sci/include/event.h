@@ -1,7 +1,7 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#include <uinput.h>
+#include "sci/include/uinput.h"
 
 struct _state;
 

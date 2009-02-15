@@ -26,9 +26,9 @@
 ***************************************************************************/
 
 
-#include <gfx_system.h>
-#include <gfx_resource.h>
-#include <gfx_tools.h>
+#include "sci/include/gfx_system.h"
+#include "sci/include/gfx_resource.h"
+#include "sci/include/gfx_tools.h"
 
 int font_counter = 0;
 

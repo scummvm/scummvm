@@ -26,9 +26,9 @@
 ***************************************************************************/
 
 #include <stdlib.h>
-#include <aatree.h>
+#include "sci/include/aatree.h"
 
-#include <sci_memory.h>
+#include "sci/include/sci_memory.h"
 
 struct aatree
 {

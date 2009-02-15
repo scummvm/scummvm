@@ -25,8 +25,8 @@
 
 ***************************************************************************/
 
-#include <sci_memory.h>
-#include <gfx_tools.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/gfx_tools.h"
 
 /* set optimisations for Win32: */
 #ifdef _WIN32

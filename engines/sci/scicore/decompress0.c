@@ -28,8 +28,8 @@
 ** This is for SCI version 0 style compression.
 */
 
-#include <sci_memory.h>
-#include <sciresource.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/sciresource.h"
 
 /* #define _SCI_DECOMPRESS_DEBUG */
 

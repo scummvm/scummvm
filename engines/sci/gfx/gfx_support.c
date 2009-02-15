@@ -28,8 +28,8 @@
 ** for use with the graphical state manager
 */
 
-#include <gfx_system.h>
-#include <gfx_tools.h>
+#include "sci/include/gfx_system.h"
+#include "sci/include/gfx_tools.h"
 
 #ifdef HAVE_ALPHA_EV6_SUPPORT
 int axp_have_mvi = 0;

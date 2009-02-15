@@ -26,10 +26,10 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif /* HAVE_CONFIG_H */
-#include <sfx_core.h>
+#include "sci/include/sfx_core.h"
 #include <stdio.h>
-#include "device.h"
-#include <scitypes.h>
+#include "sci/sfx/device.h"
+#include "sci/include/scitypes.h"
 
 #define SFX_SEQ_PATCHFILE_NONE -1
 

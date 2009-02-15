@@ -28,8 +28,8 @@
 #ifndef _GFX_RESMGR_H_
 #define _GFX_RESMGR_H_
 
-#include <gfx_resource.h>
-#include <sbtree.h>
+#include "sci/include/gfx_resource.h"
+#include "sci/include/sbtree.h"
 
 typedef enum {
 	GFX_RESOURCE_TYPE_VIEW = 0,

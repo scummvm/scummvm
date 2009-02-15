@@ -25,8 +25,8 @@
 
 ***************************************************************************/
 
-#include <sfx_timer.h>
-#include <resource.h>
+#include "sci/include/sfx_timer.h"
+#include "sci/include/resource.h"
 
 #ifdef SCUMMVM
 extern sfx_timer_t sfx_timer_scummvm;

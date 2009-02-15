@@ -30,10 +30,10 @@
 #ifndef SFX_SOFTSEQ_H_
 #define SFX_SOFTSEQ_H_
 
-#include <sfx_core.h>
-#include <sfx_pcm.h>
-#include "sequencer.h"
-#include <resource.h>
+#include "sci/include/sfx_core.h"
+#include "sci/include/sfx_pcm.h"
+#include "sci/sfx/sequencer.h"
+#include "sci/include/resource.h"
 
 
 /* Software sequencer */

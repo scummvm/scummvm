@@ -24,12 +24,12 @@
 
 ***************************************************************************/
 
-#include <sci_memory.h>
+#include "sci/include/sci_memory.h"
 #include <assert.h>
 #include <math.h>
 #include <time.h>
-#include <gfx_resource.h>
-#include <gfx_tools.h>
+#include "sci/include/gfx_resource.h"
+#include "sci/include/gfx_tools.h"
 
 #undef GFXR_DEBUG_PIC0 /* Enable to debug pic0 messages */
 #undef FILL_RECURSIVE_DEBUG /* Enable for verbose fill debugging */

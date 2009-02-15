@@ -26,10 +26,10 @@
 ***************************************************************************/
 /* SCI 1 view resource defrobnicator */
 
-#include <sci_memory.h>
-#include <gfx_system.h>
-#include <gfx_resource.h>
-#include <gfx_tools.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/gfx_system.h"
+#include "sci/include/gfx_resource.h"
+#include "sci/include/gfx_tools.h"
 
 #define V1_LOOPS_NR_OFFSET 0
 #define V1_MIRROR_MASK 2

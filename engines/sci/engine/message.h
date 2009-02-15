@@ -25,7 +25,7 @@
 
 ***************************************************************************/
 
-#include <sciresource.h>
+#include "sci/include/sciresource.h"
 
 typedef struct
 {

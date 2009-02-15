@@ -27,8 +27,8 @@
 #ifndef _SCI_GFX_DRIVER_H_
 #define _SCI_GFX_DRIVER_H_
 
-#include <gfx_system.h>
-#include <uinput.h>
+#include "sci/include/gfx_system.h"
+#include "sci/include/uinput.h"
 
 
 typedef enum {

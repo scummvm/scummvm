@@ -28,8 +28,8 @@
 #ifndef VOCABULARY_H
 #define VOCABULARY_H
 
-#include <versions.h>
-#include <sciresource.h>
+#include "sci/include/versions.h"
+#include "sci/include/sciresource.h"
 
 /*#define VOCABULARY_DEBUG */
 /*#define SCI_SIMPLE_SAID_CODE */ /* Whether the simplified Said() matching should be used */

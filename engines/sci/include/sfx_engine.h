@@ -28,10 +28,10 @@
 #ifndef _SFX_ENGINE_H_
 #define _SFX_ENGINE_H_
 
-#include <sfx_core.h>
-#include <sfx_songlib.h>
-#include <sfx_iterator.h>
-#include <sciresource.h>
+#include "sci/include/sfx_core.h"
+#include "sci/include/sfx_songlib.h"
+#include "sci/include/sfx_iterator.h"
+#include "sci/include/sciresource.h"
 
 #define SOUND_TICK 1000000 / 60
 /* Approximately 16666 microseconds */

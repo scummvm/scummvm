@@ -28,7 +28,7 @@
 #ifndef _SCI_HEAP_H
 #define _SCI_HEAP_H
 
-#include <resource.h>
+#include "sci/include/resource.h"
 
 #define SCI_HEAP_SIZE 0x10000
 

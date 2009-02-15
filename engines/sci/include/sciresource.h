@@ -35,8 +35,8 @@
 /*#define _SCI_RESOURCE_DEBUG */
 /*#define _SCI_DECOMPRESS_DEBUG*/
 
-#include <resource.h>
-#include <versions.h>
+#include "sci/include/resource.h"
+#include "sci/include/versions.h"
 
 #define SCI_MAX_RESOURCE_SIZE 0x0400000
 /* The maximum allowed size for a compressed or decompressed resource */

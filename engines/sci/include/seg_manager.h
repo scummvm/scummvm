@@ -29,9 +29,9 @@
 #ifndef _SCI_SEG_MANAGER_H
 #define _SCI_SEG_MANAGER_H
 
-#include <int_hashmap.h>
-#include <sys_strings.h>
-#include <vm.h>
+#include "sci/include/int_hashmap.h"
+#include "sci/include/sys_strings.h"
+#include "sci/include/vm.h"
 
 #define DEFAULT_SCRIPTS 32
 #define DEFAULT_OBJECTS 8	    /* default # of objects per script */

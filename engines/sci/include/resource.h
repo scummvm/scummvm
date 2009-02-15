@@ -99,7 +99,7 @@
 #  include <dmalloc.h>
 #endif
 
-#include <scitypes.h>
+#include "sci/include/scitypes.h"
 
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>

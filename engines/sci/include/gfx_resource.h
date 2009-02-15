@@ -30,8 +30,8 @@
 #ifndef _GFX_RESOURCE_H_
 #define _GFX_RESOURCE_H_
 
-#include <gfx_system.h>
-#include <gfx_driver.h>
+#include "sci/include/gfx_system.h"
+#include "sci/include/gfx_driver.h"
 
 /*** Styles for pic0 drawing ***/
 /* Dithering modes */

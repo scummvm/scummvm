@@ -28,8 +28,8 @@
 /* Based on public domain code by Mitugu Kurizono. */
 
 #include <stdio.h>
-#include <sci_memory.h>
-#include "exe_dec.h"
+#include "sci/include/sci_memory.h"
+#include "sci/scicore/exe_dec.h"
 
 /* Macro to interpret two sequential bytes as an unsigned integer. */
 #define UINT16(A) ((*((A) + 1) << 8) + *(A))

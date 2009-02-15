@@ -26,7 +26,7 @@
 #ifndef FMOPL_H_
 #define FMOPL_H_
 
-#include <scitypes.h>
+#include "sci/include/scitypes.h"
 
 #define TWELVE_VOICE 1
 #ifdef TWELVE_VOICE

@@ -25,7 +25,7 @@
 
 ***************************************************************************/
 
-#include <sfx_player.h>
+#include "sci/include/sfx_player.h"
 
 extern sfx_player_t sfx_player_realtime;
 extern sfx_player_t sfx_player_polled;

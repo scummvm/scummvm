@@ -1,6 +1,6 @@
 #include "common/timer.h"
 #include "engines/engine.h"
-#include "sfx_timer.h"
+#include "sci/include/sfx_timer.h"
 
 
 #define FREQ 60
@@ -32,7 +32,7 @@ int scummvm_timer_start(void (*func)(void *), void *data) {
 	scummvm_timer_callback = func;
 	scummvm_timer_callback_data = data;
 
-	::g_engine->_timer->installTimerProc(&scummvm_timer_update_internal, DELAY, NULL);
+	::g_engine->getTimerManager()->installTimerProc(&scummvm_timer_update_internal, DELAY, NULL);
 	return SFX_OK;
 }
 

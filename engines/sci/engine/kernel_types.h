@@ -28,7 +28,7 @@
 #ifndef _FREESCI_KERNEL_TYPES_H_
 #define _FREESCI_KERNEL_TYPES_H_
 
-#include "vm_types.h"
+#include "sci/include/vm_types.h"
 
 #define KSIG_TERMINATOR 0
 

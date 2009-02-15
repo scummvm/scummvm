@@ -25,11 +25,11 @@
 
 ***************************************************************************/
 
-#include <gfx_operations.h>
-#include <gfx_widgets.h>
-#include <engine.h>
-#include <menubar.h>
-#include <sci_widgets.h>
+#include "sci/include/gfx_operations.h"
+#include "sci/include/gfx_widgets.h"
+#include "sci/include/engine.h"
+#include "sci/include/menubar.h"
+#include "sci/include/sci_widgets.h"
 
 #define SCI_SPECIAL_CHAR_ARROW_UP 0x18
 #define SCI_SPECIAL_CHAR_ARROW_DOWN 0x19

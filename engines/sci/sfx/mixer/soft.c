@@ -26,7 +26,7 @@
 ***************************************************************************/
 
 #include "../mixer.h"
-#include <sci_memory.h>
+#include "sci/include/sci_memory.h"
 
 /* Max. number of microseconds in difference allowed between independent audio streams */
 #define TIMESTAMP_MAX_ALLOWED_DELTA 2000

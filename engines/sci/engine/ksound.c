@@ -25,8 +25,8 @@
 
 ***************************************************************************/
 
-#include <engine.h>
-#include <sfx_player.h>
+#include "sci/include/engine.h"
+#include "sci/include/sfx_player.h"
 
 #define _K_SCI0_SOUND_INIT_HANDLE 0
 #define _K_SCI0_SOUND_PLAY_HANDLE 1

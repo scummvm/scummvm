@@ -31,7 +31,7 @@
 #ifndef _SCI_VERSIONS_H_
 #define _SCI_VERSIONS_H_
 
-#include <scitypes.h>
+#include "sci/include/scitypes.h"
 
 struct _state;
 

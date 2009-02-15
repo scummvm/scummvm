@@ -26,14 +26,14 @@
 ***************************************************************************/
 
 #include <stdio.h>
-#include <sci_memory.h>
+#include "sci/include/sci_memory.h"
 
 struct _exe_handle
 {
 	FILE *f;
 };
 
-#include "exe_dec.h"
+#include "sci/scicore/exe_dec.h"
 
 static exe_handle_t *
 raw_open(const char *filename)

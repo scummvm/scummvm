@@ -18,7 +18,7 @@
 
 ***************************************************************************/
 
-#include "gc.h"
+#include "sci/engine/gc.h"
 
 #define WORKLIST_CHUNK_SIZE 32
 

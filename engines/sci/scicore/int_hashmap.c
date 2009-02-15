@@ -26,8 +26,8 @@
 ***************************************************************************/
 
 #define BUILD_MAP_FUNCTIONS
-#include "int_hashmap.h"
+#include "sci/include/int_hashmap.h"
 
-#include "hashmap.c"
+#include "sci/scicore/hashmap.c"
 
 DEFINE_FUNCTIONS(int)

@@ -25,8 +25,8 @@
 
 ***************************************************************************/
 
-#include <sciresource.h>
-#include <engine.h>
+#include "sci/include/sciresource.h"
+#include "sci/include/engine.h"
 
 /*
 Compute "velocity" vector (xStep,yStep)=(vx,vy) for a jump from (0,0) to (dx,dy), with gravity gy. 

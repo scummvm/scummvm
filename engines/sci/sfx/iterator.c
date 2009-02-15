@@ -27,10 +27,10 @@
 /* Song iterators */
 
 #include <stdio.h>
-#include <sfx_iterator_internal.h>
-#include <sfx_player.h>
-#include <resource.h>
-#include <sci_memory.h>
+#include "sci/include/sfx_iterator_internal.h"
+#include "sci/include/sfx_player.h"
+#include "sci/include/resource.h"
+#include "sci/include/sci_memory.h"
 
 static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0,
 				    2, 2, 2, 2, 1, 1, 2, 0};

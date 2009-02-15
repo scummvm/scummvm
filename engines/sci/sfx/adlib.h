@@ -23,7 +23,7 @@
 #ifndef _SFX_ADLIB_H_
 #define _SFX_ADLIB_H_
 
-#include <resource.h>
+#include "sci/include/resource.h"
 
 
 #define ADLIB_VOICES 12

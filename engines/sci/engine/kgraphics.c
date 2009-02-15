@@ -25,11 +25,11 @@
 
 ***************************************************************************/
 
-#include <sciresource.h>
-#include <engine.h>
-#include <gfx_widgets.h>
-#include "sci_graphics.h"
-#include <sci_widgets.h>
+#include "sci/include/sciresource.h"
+#include "sci/include/engine.h"
+#include "sci/include/gfx_widgets.h"
+#include "sci/engine/sci_graphics.h"
+#include "sci/include/sci_widgets.h"
 
 #undef DEBUG_LSRECT
 

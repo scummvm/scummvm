@@ -31,8 +31,8 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
-#include <scitypes.h>
-#include <sfx_iterator.h>
+#include "sci/include/scitypes.h"
+#include "sci/include/sfx_iterator.h"
 
 #define SOUND_STATUS_STOPPED   0
 #define SOUND_STATUS_PLAYING   1

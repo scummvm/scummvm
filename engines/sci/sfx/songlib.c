@@ -25,8 +25,8 @@
 ***************************************************************************/
 
 #include <stdio.h>
-#include <sfx_engine.h>
-#include <sci_memory.h>
+#include "sci/include/sfx_engine.h"
+#include "sci/include/sci_memory.h"
 
 #define debug_stream stderr
 

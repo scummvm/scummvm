@@ -70,7 +70,7 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include <resource.h>
+#include "sci/include/resource.h"
 
 #ifdef _WIN32
 #  undef scim_inline /* just to be sure it is not defined */

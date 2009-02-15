@@ -1,5 +1,5 @@
-#include "sfx_time.h"
-#include "sfx_pcm.h"
+#include "sci/include/sfx_time.h"
+#include "sci/include/sfx_pcm.h"
 #include "engines/engine.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"

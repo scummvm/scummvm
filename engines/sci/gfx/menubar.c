@@ -29,9 +29,9 @@
 ** used for any actual actions on behalf of the interpreter.
 */
 
-#include <sci_memory.h>
-#include <engine.h>
-#include <menubar.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/engine.h"
+#include "sci/include/menubar.h"
 
 #define SIZE_INF 32767
 

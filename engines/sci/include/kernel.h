@@ -29,10 +29,10 @@
 
 #include <math.h>
 #include <ctype.h>
-#include <kdebug.h>
-#include <uinput.h>
-#include <event.h>
-#include <console.h> /* sciprintf() */
+#include "sci/include/kdebug.h"
+#include "sci/include/uinput.h"
+#include "sci/include/event.h"
+#include "sci/include/console.h" /* sciprintf() */
 
 #ifdef HAVE_FNMATCH_H
 #include <fnmatch.h>

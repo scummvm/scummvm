@@ -27,8 +27,8 @@
 
 /** Antialiasing code **/
 
-#include <gfx_system.h>
-#include <gfx_tools.h>
+#include "sci/include/gfx_system.h"
+#include "sci/include/gfx_tools.h"
 
 static void
 antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t *mode)

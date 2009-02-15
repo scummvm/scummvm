@@ -20,7 +20,7 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
-#include <sciresource.h>
+#include "sci/include/sciresource.h"
 
 /*#define SCRIPT_DEBUG */
 

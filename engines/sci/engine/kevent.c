@@ -25,7 +25,7 @@
 
 ***************************************************************************/
 
-#include <engine.h>
+#include "sci/include/engine.h"
 
 int stop_on_event;
 

@@ -29,7 +29,7 @@
 #ifndef _GFX_WIDGETS_H_
 #define _GFX_WIDGETS_H_
 
-#include <gfx_state_internal.h>
+#include "sci/include/gfx_state_internal.h"
 
 /* Enable the next line to keep a list of pointers to all widgets, with up to the specified amount
 ** of members (/SLOW/) */

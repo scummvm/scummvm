@@ -25,9 +25,9 @@
 
 ***************************************************************************/
 
-#include <sci_memory.h>
-#include <sciresource.h>
-#include <resource.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/sciresource.h"
+#include "sci/include/resource.h"
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #endif

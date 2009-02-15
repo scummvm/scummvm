@@ -32,8 +32,8 @@
 #ifndef _GFX_RES_OPTIONS_H_
 #define _GFX_RES_OPTIONS_H_
 
-#include <gfx_resource.h>
-#include <gfx_resmgr.h>
+#include "sci/include/gfx_resource.h"
+#include "sci/include/gfx_resmgr.h"
 
 #define GFX_RES_PATTERN_MIN 0
 #define GFX_RES_PATTERN_MAX 65535

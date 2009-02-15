@@ -33,9 +33,9 @@
 #ifndef _SCI_CONSOLE_H_
 #define _SCI_CONSOLE_H_
 
-#include <sci_memory.h>
-#include <resource.h>
-#include <vm_types.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/resource.h"
+#include "sci/include/vm_types.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -46,7 +46,7 @@
 #endif
 
 #define SCI_CONSOLE
-#include <gfx_operations.h>
+#include "sci/include/gfx_operations.h"
 
 
 extern DLLEXTERN int con_passthrough;

@@ -30,12 +30,12 @@
 ** savegame.cfsml. If this doesn't solve your problem, contact the maintainer.
 */
 
-#include <sci_memory.h>
-#include <gfx_operations.h>
-#include <sfx_engine.h>
-#include <engine.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/gfx_operations.h"
+#include "sci/include/sfx_engine.h"
+#include "sci/include/engine.h"
 #include <assert.h>
-#include "heap.h"
+#include "sci/engine/heap.h"
 
 #ifdef _MSC_VER
 #include <direct.h>

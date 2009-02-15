@@ -18,7 +18,7 @@
 #	endif
 #endif
 
-#include <sci_memory.h>
+#include "sci/include/sci_memory.h"
 
 #define EXTEND_COLOR(x) (unsigned) ((((unsigned) x) << 24) | (((unsigned) x) << 16) | (((unsigned) x) << 8) | ((unsigned) x))
 #define PALETTE_MODE mode->palette

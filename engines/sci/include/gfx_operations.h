@@ -28,11 +28,11 @@
 #ifndef _GFX_OPERATIONS_H_
 #define _GFX_OPERATIONS_H_
 
-#include <gfx_resmgr.h>
-#include <gfx_tools.h>
-#include <gfx_options.h>
-#include <gfx_system.h>
-#include <uinput.h>
+#include "sci/include/gfx_resmgr.h"
+#include "sci/include/gfx_tools.h"
+#include "sci/include/gfx_options.h"
+#include "sci/include/gfx_system.h"
+#include "sci/include/uinput.h"
 
 #define GFXOP_NO_POINTER -1
 

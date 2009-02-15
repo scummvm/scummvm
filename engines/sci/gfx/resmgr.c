@@ -27,11 +27,11 @@
 /* Resource manager core part */
 
 
-#include <gfx_resource.h>
-#include <gfx_tools.h>
-#include <gfx_driver.h>
-#include <gfx_resmgr.h>
-#include <gfx_state_internal.h>
+#include "sci/include/gfx_resource.h"
+#include "sci/include/gfx_tools.h"
+#include "sci/include/gfx_driver.h"
+#include "sci/include/gfx_resmgr.h"
+#include "sci/include/gfx_state_internal.h"
 
 #undef TIME_PICDRAWING
 

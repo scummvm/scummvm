@@ -30,9 +30,9 @@
 ***************************************************************************/
 /* Resource library */
 
-#include <sci_memory.h>
-#include <sciresource.h>
-#include <vocabulary.h> /* For SCI version auto-detection */
+#include "sci/include/sci_memory.h"
+#include "sci/include/sciresource.h"
+#include "sci/include/vocabulary.h" /* For SCI version auto-detection */
 
 #include <ctype.h>
 

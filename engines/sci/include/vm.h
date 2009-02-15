@@ -28,13 +28,13 @@
 /* VM and kernel declarations */
 
 
-#include <script.h>
-#include <vocabulary.h>
-#include <versions.h>
-#include <seg_manager.h>
-#include <vm_types.h>
-#include <sys_strings.h>
-#include <heapmgr.h>
+#include "sci/include/script.h"
+#include "sci/include/vocabulary.h"
+#include "sci/include/versions.h"
+#include "sci/include/seg_manager.h"
+#include "sci/include/vm_types.h"
+#include "sci/include/sys_strings.h"
+#include "sci/include/heapmgr.h"
 
 #ifndef _SCI_VM_H
 #define _SCI_VM_H

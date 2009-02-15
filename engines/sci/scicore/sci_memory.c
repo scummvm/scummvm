@@ -33,7 +33,7 @@
 
 ***************************************************************************/
 
-#include <sci_memory.h>
+#include "sci/include/sci_memory.h"
 
 /*#define POISON_MEMORY*/
 
