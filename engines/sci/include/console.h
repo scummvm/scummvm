@@ -33,13 +33,11 @@
 #ifndef _SCI_CONSOLE_H_
 #define _SCI_CONSOLE_H_
 
+#include "common/scummsys.h"
+
 #include "sci/include/sci_memory.h"
 #include "sci/include/resource.h"
 #include "sci/include/vm_types.h"
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
 
 #define SCI_CONSOLE
 #include "sci/include/gfx_operations.h"

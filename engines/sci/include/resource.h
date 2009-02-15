@@ -32,6 +32,8 @@
 #ifndef FREESCI_PRIMARY_RESOURCE_H_
 #define FREESCI_PRIMARY_RESOURCE_H_
 
+#include "common/scummsys.h"
+
 /** This header file defines (mostly) generic tools and utility functions.
  ** It also handles portability stuff, in cooperation with scitypes.h
  ** (which specializes in primitive data types).
@@ -57,7 +59,6 @@
 #  define SCI_SAFE_ALLOC /* Undefine for debugging */
 #endif
 
-#ifdef SCUMMVM
 //TODO: Remove these defines by replacing their functionality by their ScummVM counterparts
 #define HAVE_MEMCHR
 #define HAVE_UNLINK
@@ -69,35 +70,6 @@
 #define HAVE_GETTIMEOFDAY
 #endif
 #define VERSION "0.6.4"
-#endif // SCUMMVM
-
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#ifndef __unix__
-#  if defined(__OpenBSD__) || defined(__NetBSD__)
-#    define __unix__
-#  endif
-#endif
-
-#if defined(HAVE_FORK) && !defined(__BEOS__)
-#  define HAVE_SYSV_IPC
-#else
-#  undef HAVE_SYSV_IPC
-#endif
-
-#ifdef __DECC
-#  include <c_asm.h>
-#endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-
-#ifdef WITH_DMALLOC
-#  include <dmalloc.h>
-#endif
 
 #include "sci/include/scitypes.h"
 
@@ -106,6 +78,7 @@
 #include <unistd.h>
 #endif
 
+// FIXME: Replace strcasecmp by scumm_stricmp
 #ifdef _MSC_VER
 #	undef strcasecmp
 #	undef strncasecmp

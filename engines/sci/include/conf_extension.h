@@ -33,8 +33,7 @@
 #ifndef CONF_EXTENSION_H_
 #define CONF_EXTENSION_H_
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "common/scummsys.h"
 
 #define CONF_EXT_TYPE_INVALID	-1
 #define CONF_EXT_TYPE_GFX	0

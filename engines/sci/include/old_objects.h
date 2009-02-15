@@ -1,8 +1,9 @@
 #ifndef OLD_OBJECTS_H
 #define OLD_OBJECTS_H
 
-#include <sciresource.h>
-#include <util.h>
+#include "common/scummsys.h"
+#include "engine/sci/include/sciresource.h"
+#include "engine/sci/include/util.h"
 
 typedef FLEXARRAY(script_opcode, int number;) script_method;
 

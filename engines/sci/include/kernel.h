@@ -27,22 +27,13 @@
 #ifndef _SCI_KERNEL_H_
 #define _SCI_KERNEL_H_
 
-#include <math.h>
-#include <ctype.h>
+#include "common/scummsys.h"
+
 #include "sci/include/kdebug.h"
 #include "sci/include/uinput.h"
 #include "sci/include/event.h"
 #include "sci/include/vm.h"
 #include "sci/include/console.h" /* sciprintf() */
-
-#ifdef _MSC_VER
-#  include <direct.h>
-#  include <ctype.h>
-#endif
-
-#ifndef PI
-#  define PI 3.14159265358979323846
-#endif /* !PI */
 
 extern int _kdebug_cheap_event_hack;
 extern int _kdebug_cheap_soundcue_hack;

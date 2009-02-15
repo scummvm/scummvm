@@ -28,8 +28,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include <stdlib.h>
-#include <stdio.h>
+#include "common/scummsys.h"
 
 /* An excercise in bloated macro writing ;-)*/
 

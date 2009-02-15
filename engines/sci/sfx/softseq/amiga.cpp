@@ -31,6 +31,8 @@
 #include "sci/include/sci_memory.h"
 #include "sci/sfx/softseq.h"
 
+#include "common/frac.h"
+
 #define FREQUENCY 44100
 #define CHANNELS_NR 10
 #define HW_CHANNELS_NR 16
@@ -144,10 +146,10 @@ set_envelope(channel_t *channel, envelope_t *envelope, int phase) {
 
 static inline int
 interpolate(sbyte *samples, frac_t offset) {
-	int x = frac_to_int(offset);
+	int x = fracToInt(offset);
 	int diff = (samples[x + 1] - samples[x]) << 8;
 
-	return (samples[x] << 8) + frac_to_int(diff * (offset & FRAC_LO_MASK));
+	return (samples[x] << 8) + fracToInt(diff * (offset & FRAC_LO_MASK));
 }
 
 static void
@@ -170,7 +172,7 @@ play_instrument(gint16 *dest, channel_t *channel, int count) {
 			seg_end = instrument->size;
 		}
 
-		lin_avail = int_to_frac(seg_end) - channel->offset;
+		lin_avail = intToFrac(seg_end) - channel->offset;
 
 		rem = count - index;
 
@@ -239,10 +241,10 @@ play_instrument(gint16 *dest, channel_t *channel, int count) {
 		if (index == count)
 			break;
 
-		if (frac_to_int(channel->offset) >= seg_end) {
+		if (fracToInt(channel->offset) >= seg_end) {
 			if (instrument->mode & MODE_LOOP) {
 				/* Loop the samples */
-				channel->offset -= int_to_frac(seg_end);
+				channel->offset -= intToFrac(seg_end);
 				channel->looping = 1;
 			} else {
 				/* All samples have been played */
@@ -338,9 +340,9 @@ start_note(int ch, int note, int velocity) {
 		}
 
 		/* Compute rate for note */
-		channels[channel].rate = double_to_frac(freq_table[fnote] / (double) FREQUENCY);
+		channels[channel].rate = doubleToFrac(freq_table[fnote] / (double) FREQUENCY);
 	} else
-		channels[channel].rate = double_to_frac(BASE_FREQ / (double) FREQUENCY);
+		channels[channel].rate = doubleToFrac(BASE_FREQ / (double) FREQUENCY);
 
 	channels[channel].instrument = hw_channels[ch].instrument;
 	channels[channel].note = note;

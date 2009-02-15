@@ -26,9 +26,7 @@
 #ifndef _SCI_ENGINE_H
 #define _SCI_ENGINE_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
+#include "common/scummsys.h"
 
 // FIXME. Remove after transiton to File class
 #include <sys/stat.h>
