@@ -130,6 +130,7 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_lure = (gameid == "lure");
 	bool is_feeble = (gameid == "feeble");
 	bool is_drascula = (strncmp(gameid.c_str(), "drascula",8) == 0);
+	bool is_tucker = (strncmp(gameid.c_str(), "tucker",6) == 0);
 
 	GUI_Actions::initInstanceGame();
 
@@ -147,7 +148,7 @@ void CEActionsPocket::initInstanceGame() {
 	_key_action[POCKET_ACTION_PAUSE].setKey(VK_SPACE);
 	_action_enabled[POCKET_ACTION_PAUSE] = true;
 	// Save
-	if (is_simon || is_sword2 || is_gob || is_kyra || is_feeble)
+	if (is_simon || is_sword2 || is_gob || is_kyra || is_feeble || is_tucker)
 		_action_enabled[POCKET_ACTION_SAVE] = false;
 	else if (is_queen) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
@@ -174,7 +175,7 @@ void CEActionsPocket::initInstanceGame() {
 	if (!is_cine && !is_parallaction)
 		_action_enabled[POCKET_ACTION_SKIP] = true;
 	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob ||
-			is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula)
+			is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker)
 		_key_action[POCKET_ACTION_SKIP].setKey(VK_ESCAPE);
 	else
 		_key_action[POCKET_ACTION_SKIP].setKey(KEY_ALL_SKIP);
