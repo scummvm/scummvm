@@ -587,6 +587,7 @@ sub create_reader
 	print "        return CFSML_FAILURE;\n";
 	print "      }\n\n";
 	print "      lastval++; /* ...and skip the opening quotes locally */\n";
+	print "      length--;\n";
 	print "    }\n";
 	print "    *save_struc = _cfsml_unmangle_string(lastval, length);\n";
 	print "    _cfsml_register_pointer(*save_struc);\n";
