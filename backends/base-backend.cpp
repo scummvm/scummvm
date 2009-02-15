@@ -45,10 +45,10 @@ Common::EventManager *BaseBackend::getEventManager() {
 	return s_eventManager;
 }
 
-void BaseBackend::clearScreen() {
+void BaseBackend::fillScreen(uint32 col) {
 	Graphics::Surface *screen = lockScreen();
 	if (screen && screen->pixels)
-		memset(screen->pixels, 0, screen->h * screen->pitch);
+		memset(screen->pixels, col, screen->h * screen->pitch);
 	unlockScreen();
 }
 

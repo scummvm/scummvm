@@ -239,7 +239,7 @@ static void setupGraphics(OSystem &system) {
 	system.setWindowCaption(gScummVMFullVersion);
 
 	// Clear the main screen
-	system.clearScreen();
+	system.fillScreen(0);
 }
 
 

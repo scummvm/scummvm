@@ -285,7 +285,7 @@ int MidiDriver_MT32::open() {
 	if (!_synth->open(prop))
 		return MERR_DEVICE_NOT_AVAILABLE;
 	_initialising = false;
-	g_system->clearScreen();
+	g_system->fillScreen(0);
 	g_system->updateScreen();
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle, this, -1, 255, 0, false, true);
 	return 0;

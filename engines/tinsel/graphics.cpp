@@ -493,7 +493,7 @@ static void PackedWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP,
 void ClearScreen() {
 	void *pDest = _vm->screen().getBasePtr(0, 0);
 	memset(pDest, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
-	g_system->clearScreen();
+	g_system->fillScreen(0);
 	g_system->updateScreen();
 }
 

@@ -1023,7 +1023,7 @@ void Script::o_loadgame() {
 	debugScript(1, true, "LOADGAME var[0x%04X] -> slot=%d (TODO)", varnum, slot);
 
 	loadgame(slot);
-	_vm->_system->clearScreen();
+	_vm->_system->fillScreen(0);
 }
 
 void Script::o_savegame() {

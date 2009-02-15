@@ -70,7 +70,7 @@ void Screen::clearScreen(void) {
 	if (_screenBuf) {
 		_fullRefresh = true;
 		memset(_screenBuf, 0, _scrnSizeX * _scrnSizeY);
-		_system->clearScreen();
+		_system->fillScreen(0);
 	}
 }
 

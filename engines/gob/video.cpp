@@ -177,7 +177,7 @@ SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height,
 }
 
 void Video::clearScreen() {
-	g_system->clearScreen();
+	g_system->fillScreen(0);
 }
 
 void Video::setSize(bool defaultTo1XScaler) {

@@ -337,7 +337,7 @@ void Gfx::clearScreen() {
 			_backBuffer.fillRect(r, 0);
 		}
 	} else {
-		_vm->_system->clearScreen();
+		_vm->_system->fillScreen(0);
 	}
 }
 

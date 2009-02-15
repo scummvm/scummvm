@@ -870,7 +870,7 @@ void AnimationSequencePlayer::fadeOutPalette() {
 		}
 		_system->delayMillis(1000 / 60);
 	}
-	_system->clearScreen();
+	_system->fillScreen(0);
 }
 
 void AnimationSequencePlayer::unloadAnimation() {

@@ -33,7 +33,7 @@ class BaseBackend : public OSystem, EventProvider {
 public:
 	virtual Common::EventManager *getEventManager();
 	virtual void displayMessageOnOSD(const char *msg);
-	virtual void clearScreen();
+	virtual void fillScreen(uint32 col);
 
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();

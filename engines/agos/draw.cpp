@@ -710,7 +710,7 @@ void AGOSEngine::scrollScreen() {
 }
 
 void AGOSEngine::clearSurfaces() {
-	_system->clearScreen();
+	_system->fillScreen(0);
 
 	if (_backBuf) {
 		memset(_backBuf, 0, _screenHeight * _screenWidth);

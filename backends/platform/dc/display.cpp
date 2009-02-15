@@ -626,9 +626,9 @@ void OSystem_Dreamcast::unlockScreen()
   _screen_dirty = true;
 }
 
-void OSystem_Dreamcast::clearScreen()
+void OSystem_Dreamcast::fillScreen(uint32 col)
 {
-  memset(screen, 0, SCREEN_W*SCREEN_H);
+  memset(screen, col, SCREEN_W*SCREEN_H);
   _screen_dirty = true;
 }
 

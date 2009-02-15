@@ -512,9 +512,13 @@ public:
 	virtual void unlockScreen() = 0;
 
 	/**
-	 * Clear the screen to black.
+	 * Fills the screen with a given color value.
+	 *
+	 * @note We are using uint32 here even though currently
+	 * we only support 8bpp indexed mode. Thus the value should
+	 * be always inside [0, 255] for now.
 	 */
-	virtual void clearScreen() = 0;
+	virtual void fillScreen(uint32 col) = 0;
 
 	/**
 	 * Flush the whole screen, that is render the current content of the screen

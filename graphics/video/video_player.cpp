@@ -187,7 +187,7 @@ bool VideoPlayer::playVideo(Common::List<Common::Event> *stopEvents) {
 	_skipVideo = false;
 	debug(0, "Playing video");
 
-	g_system->clearScreen();
+	g_system->fillScreen(0);
 
 	int frameX = (g_system->getWidth() - _decoder->getWidth()) / 2;
 	int frameY = (g_system->getHeight() - _decoder->getHeight()) / 2;
