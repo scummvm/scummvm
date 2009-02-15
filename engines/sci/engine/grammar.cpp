@@ -56,7 +56,7 @@ vocab_print_rule(parse_rule_t *rule)
     sciprintf("e");
 
   for(i = 0; i < rule->length; i++) {
-    int token = rule->data[i];
+    uint token = rule->data[i];
 
     if (token == TOKEN_OPAREN) {
 
@@ -529,9 +529,9 @@ static int
 _vbpt_write_subexpression(parse_tree_node_t *nodes, int *pos,
 			  parse_rule_t *rule, int rulepos, int writepos)
 {
-  int token;
+  uint token;
   while ((token = ((rulepos < rule->length)? rule->data[rulepos++] : TOKEN_CPAREN)) != TOKEN_CPAREN) {
-    int nexttoken = (rulepos < rule->length)? rule->data[rulepos] : TOKEN_CPAREN;
+    uint nexttoken = (rulepos < rule->length)? rule->data[rulepos] : TOKEN_CPAREN;
     if (token == TOKEN_OPAREN) {
       int wpold;
       int writepos2 = _vbpt_pareno(nodes, pos, wpold = writepos);

@@ -919,7 +919,7 @@ kSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 		if ((idfile = sci_fopen(game_id_file_name, "w"))) {
 
-			fprintf(idfile, game_description);
+			fprintf(idfile, "%s", game_description);
 			fclose(idfile);
 
 		} else {
