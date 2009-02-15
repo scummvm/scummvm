@@ -1203,9 +1203,10 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 		snprintf(pattern1, sizeof(pattern1), "@%04d", id - 1000);
 	}
 
-	for (char i = '0'; i != -1; i++) {
-		snprintf(file1, sizeof(file1), "%s%c%c.%s", pattern1, (char)speaker, i, pattern2);
-		snprintf(file2, sizeof(file2), "%s%c%c.%s", pattern1, '_', i, pattern2);
+	for (char i = 0; ; i++) {
+		char symbol = '0' + i;
+		snprintf(file1, sizeof(file1), "%s%c%c.%s", pattern1, (char)speaker, symbol, pattern2);
+		snprintf(file2, sizeof(file2), "%s%c%c.%s", pattern1, '_', symbol, pattern2);
 		if (_res->exists(file1)) {
 			char *f = new char[strlen(file1) + 1];
 			strcpy(f, file1);
@@ -1215,7 +1216,7 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 			strcpy(f, file2);
 			playList.push_back(f);
 		} else {
-			i = -2;
+			break;
 		}
 	}
 
