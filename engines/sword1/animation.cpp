@@ -144,8 +144,8 @@ bool MoviePlayer::load(uint32 id) {
 	}
 
 	if (_decoder->loadFile(filename)) {
-		// The Broken Sword games always use external audio tracks.
-		if (_decoder->readSoundHeader() != MKID_BE('NULL'))
+		// The DXA animations in the Broken Sword games always use external audio tracks.
+		if (_decoderType == kVideoDecoderDXA && _decoder->readSoundHeader() != MKID_BE('NULL'))
 			return false;
 	} else {
 		return false;
