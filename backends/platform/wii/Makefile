@@ -14,12 +14,23 @@ DEBUG_WII_GDB = 0
 # Builds a Gamecube version. Cleanup object files before flipping this!
 GAMECUBE = 0
 
-# Enable DVD ISO9660/Joliet support using libdi (included in libogc)
-# This requires a working DVDX install to function, not available on Gamecube
+# Enable DVD ISO9660/Joliet support using libdi (included in libogc, but the
+# ISO9660 support has not been commited to the official svn yet, requires the
+# git repository for now).
+# This requires a working DVDX install to function, not available on Gamecube.
 ifeq ($(GAMECUBE),1)
 USE_WII_DI = 0
 else
 USE_WII_DI = 1
+endif
+
+# Enable USB keyboard support through libwiikeyboard (included in libogc, but
+# it has not been commited to the official svn yet, requires the git repository
+# for now). Not available on Gamecube.
+ifeq ($(GAMECUBE),1)
+USE_WII_KBD = 0
+else
+USE_WII_KBD = 1
 endif
 
 # List of game engines to compile in. Comment a to disable the engine.
@@ -140,6 +151,10 @@ endif
 
 ifeq ($(USE_WII_DI),1)
 CXXFLAGS += -DUSE_WII_DI
+endif
+
+ifeq ($(USE_WII_KBD),1)
+CXXFLAGS += -DUSE_WII_KBD
 endif
 
 ifeq ($(USE_ZLIB),1)
