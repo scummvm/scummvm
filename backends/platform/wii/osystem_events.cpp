@@ -122,7 +122,16 @@ static bool kbd_thread_running = false;
 static bool kbd_thread_quit = false;
 
 static void * kbd_thread_func(void *arg) {
+	u8 turns = 0;
+
 	while (!kbd_thread_quit) {
+		// scan for new attached keyboards every 3s
+		turns++;
+		if (turns % (3 * 100) == 0) {
+			KEYBOARD_ScanForKeyboard();
+			turns = 0;
+		}
+
 		KEYBOARD_Scan();
 		usleep(1000 * 10);
 	}
@@ -154,7 +163,7 @@ void OSystem_Wii::initEvents() {
 	WPAD_SetDataFormat(WPAD_CHAN_0, WPAD_FMT_BTNS_ACC_IR);
 	WPAD_SetIdleTimeout(120);
 
-	if(KEYBOARD_Init() > 0) {
+	if(KEYBOARD_Init() >= 0) {
 		kbd_thread_quit = false;
 
 		kbd_stack = (u8 *) memalign(32, KBD_THREAD_STACKSIZE);
