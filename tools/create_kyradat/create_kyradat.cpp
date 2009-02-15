@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 37,
+	kKyraDatVersion = 38,
 	kIndexSize = 12
 };
 
@@ -1074,7 +1074,7 @@ bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 si
 	const uint8 *src = data;
 	uint8 *dst = buffer;
 
-	for (uint i = 0; i < (size >> 1); i++) {
+	for (uint32 i = 0; i < (size >> 1); i++) {
 		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
 		src += 2;
 		dst += 2;
@@ -1086,6 +1086,7 @@ bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 si
 bool extractLolButtonDefs(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
 	int num = size / 22;
 	uint8 *buffer = new uint8[size];
+	uint32 outsize = num * 18;
 	const uint8 *src = data;
 	uint8 *dst = buffer;
 
@@ -1110,7 +1111,7 @@ bool extractLolButtonDefs(PAKFile &out, const Game *g, const byte *data, const u
 		src += 2; dst += 2;
 	}
 
-	return out.addFile(filename, buffer, size);
+	return out.addFile(filename, buffer, outsize);
 }
 
 bool extractMrShapeAnimData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
