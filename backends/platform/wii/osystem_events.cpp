@@ -123,7 +123,7 @@ static bool kbd_thread_quit = false;
 
 static void * kbd_thread_func(void *arg) {
 	while (!kbd_thread_quit) {
-		KEYBOARD_ScanKeyboards();
+		KEYBOARD_Scan();
 		usleep(1000 * 10);
 	}
 
@@ -214,9 +214,9 @@ void OSystem_Wii::updateEventScreenResolution() {
 #ifndef GAMECUBE
 bool OSystem_Wii::pollKeyboard(Common::Event &event) {
 	int i;
-	keyboardEvent kbdEvent;
+	keyboard_event kbdEvent;
 
-	if (!KEYBOARD_getEvent(&kbdEvent))
+	if (!KEYBOARD_GetEvent(&kbdEvent) > 0)
 		return false;
 
 	switch (kbdEvent.type) {
@@ -281,7 +281,7 @@ bool OSystem_Wii::pollKeyboard(Common::Event &event) {
 }
 #endif
 
-#define KBD_EVENT(pad_button, kbd_keycode, kbd_ascii) \
+#define KBD_EVENT(pad_button, kbd_keycode, kbd_ascii, modifier) \
 	do { \
 		if ((bd | bu) & pad_button) { \
 			if (bd & pad_button) \
@@ -290,6 +290,7 @@ bool OSystem_Wii::pollKeyboard(Common::Event &event) {
 				event.type = Common::EVENT_KEYUP; \
 			event.kbd.keycode = kbd_keycode; \
 			event.kbd.ascii = kbd_ascii; \
+			event.kbd.flags = modifier; \
 			return true; \
 		} \
 	} while (0)
@@ -326,17 +327,14 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 #endif
 
 	if (bd || bu) {
-		if (bh & PADS_UP)
-			event.kbd.flags = Common::KBD_SHIFT;
-
-		KBD_EVENT(PADS_Z, Common::KEYCODE_RETURN, Common::ASCII_RETURN);
-		KBD_EVENT(PADS_X, Common::KEYCODE_ESCAPE, Common::ASCII_ESCAPE);
-		KBD_EVENT(PADS_Y, Common::KEYCODE_PERIOD, '.');
-		KBD_EVENT(PADS_START, Common::KEYCODE_F5, Common::ASCII_F5);
-		KBD_EVENT(PADS_UP, Common::KEYCODE_LSHIFT, 0);
-		KBD_EVENT(PADS_DOWN, Common::KEYCODE_0, '0');
-		KBD_EVENT(PADS_LEFT, Common::KEYCODE_y, 'y');
-		KBD_EVENT(PADS_RIGHT, Common::KEYCODE_n, 'n');
+		KBD_EVENT(PADS_Z, Common::KEYCODE_RETURN, Common::ASCII_RETURN, 0);
+		KBD_EVENT(PADS_X, Common::KEYCODE_ESCAPE, Common::ASCII_ESCAPE, 0);
+		KBD_EVENT(PADS_Y, Common::KEYCODE_PERIOD, '.', 0);
+		KBD_EVENT(PADS_START, Common::KEYCODE_F5, Common::ASCII_F5, 0);
+		KBD_EVENT(PADS_UP, Common::KEYCODE_F5, Common::ASCII_F5, Common::KBD_CTRL);
+		KBD_EVENT(PADS_DOWN, Common::KEYCODE_F7, Common::ASCII_F7, 0);
+		//KBD_EVENT(PADS_LEFT, Common::KEYCODE_F8, Common::ASCII_F8, 0);
+		//KBD_EVENT(PADS_RIGHT, Common::KEYCODE_n, 'n');
 
 		if ((bd | bu) & (PADS_A | PADS_B)) {
 			if (bd & PADS_A)
