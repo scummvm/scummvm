@@ -56,8 +56,8 @@ write_pic_png(char *filename, guint8 *pic);
 
 int
 png_save_buffer(picture_t pic, char *name,
-		int xoffset, int yoffset, int width, int height,
-		byte *data, int force_8bpp_special);
+                int xoffset, int yoffset, int width, int height,
+                byte *data, int force_8bpp_special);
 /* Stores any buffer in a png file
 ** Parameters: (picture_t) pic: The picture_t containing the parameters of the buffer
 **             (char *) name: File name to write to
@@ -77,8 +77,8 @@ png_save_buffer(picture_t pic, char *name,
 
 byte *
 png_load_buffer(picture_t pic, char *name,
-		int *xoffset, int *yoffset, int *width, int *height,
-		int *size, int force_8bpp_special);
+                int *xoffset, int *yoffset, int *width, int *height,
+                int *size, int force_8bpp_special);
 /* Loads a buffer from a png file
 ** Parameters: (picture_t) pic: The picture_t containing the target parameters
 **             (char *) name: The file name of the file to read from

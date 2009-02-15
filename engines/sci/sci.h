@@ -29,15 +29,15 @@ struct SciGameDescription {
 //class Console;
 
 class SciEngine : public Engine {
-	public:
-		SciEngine(OSystem *syst, const SciGameDescription *desc);
-		~SciEngine();
+public:
+	SciEngine(OSystem *syst, const SciGameDescription *desc);
+	~SciEngine();
 
-		virtual Common::Error init(void);
-		virtual Common::Error go(void);
+	virtual Common::Error init(void);
+	virtual Common::Error go(void);
 
-	private:
-		//Console *_console;
+private:
+	//Console *_console;
 };
 
 /*

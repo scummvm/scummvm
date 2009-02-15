@@ -37,8 +37,7 @@
 extern gfx_driver_t gfx_driver_scummvm;
 
 int
-c_quit(state_t *s)
-{
+c_quit(state_t *s) {
 	script_abort_flag = 1; /* Terminate VM */
 	_debugstate_valid = 0;
 	_debug_seeking = 0;
@@ -47,15 +46,13 @@ c_quit(state_t *s)
 }
 
 int
-c_die(state_t *s)
-{
+c_die(state_t *s) {
 	exit(0); /* Die */
 	return 0; /* ;-P (fixes warning) */
 }
 
 static void
-init_console()
-{
+init_console() {
 #ifdef WANT_CONSOLE
 	con_gfx_init();
 #endif
@@ -75,29 +72,28 @@ init_console()
 		"Dirty frames management\n");
 	*/
 	con_hook_int(&gfx_crossblit_alpha_threshold, "alpha_threshold",
-		"Alpha threshold for crossblitting\n");
+	             "Alpha threshold for crossblitting\n");
 	con_hook_int(&sci0_palette, "sci0_palette",
-		"SCI0 palette- 0: EGA, 1:AGI/Amiga, 2:Grayscale\n");
+	             "SCI0 palette- 0: EGA, 1:AGI/Amiga, 2:Grayscale\n");
 	con_hook_int(&sci01_priority_table_flags, "sci01_priority_table_flags",
-		"SCI01 priority table debugging flags: 1:Disable, 2:Print on change\n");
+	             "SCI01 priority table debugging flags: 1:Disable, 2:Print on change\n");
 
 	con_passthrough = 1; /* enables all sciprintf data to be sent to stdout */
 }
 
 static int
-init_gamestate(state_t *gamestate, sci_version_t version)
-{
+init_gamestate(state_t *gamestate, sci_version_t version) {
 	int errc;
 
 	if ((errc = script_init_engine(gamestate, version))) { /* Initialize game state */
 		int recovered = 0;
 
 		if (errc == SCI_ERROR_INVALID_SCRIPT_VERSION) {
-			int tversion = SCI_VERSION_FTU_NEW_SCRIPT_HEADER - ((version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER)? 0 : 1);
+			int tversion = SCI_VERSION_FTU_NEW_SCRIPT_HEADER - ((version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) ? 0 : 1);
 
 			while (!recovered && tversion) {
 				printf("Trying version %d.%03x.%03d instead\n", SCI_VERSION_MAJOR(tversion),
-					SCI_VERSION_MINOR(tversion), SCI_VERSION_PATCHLEVEL(tversion));
+				       SCI_VERSION_MINOR(tversion), SCI_VERSION_PATCHLEVEL(tversion));
 
 				errc = script_init_engine(gamestate, tversion);
 
@@ -126,7 +122,7 @@ init_gamestate(state_t *gamestate, sci_version_t version)
 		}
 
 		if (!recovered) {
-			fprintf(stderr,"Script initialization failed. Aborting...\n");
+			fprintf(stderr, "Script initialization failed. Aborting...\n");
 			return 1;
 		}
 	}
@@ -134,8 +130,7 @@ init_gamestate(state_t *gamestate, sci_version_t version)
 }
 
 static void
-detect_versions(sci_version_t *version, int *res_version)
-{
+detect_versions(sci_version_t *version, int *res_version) {
 	sci_version_t exe_version;
 	sci_version_t hash_version;
 	int hash_res_version;
@@ -149,9 +144,9 @@ detect_versions(sci_version_t *version, int *res_version)
 
 	if (got_exe_version) {
 		sciprintf("Interpreter version: %d.%03d.%03d (by executable scan)\n",
-				  SCI_VERSION_MAJOR(exe_version),
-				  SCI_VERSION_MINOR(exe_version),
-				  SCI_VERSION_PATCHLEVEL(exe_version));
+		          SCI_VERSION_MAJOR(exe_version),
+		          SCI_VERSION_MINOR(exe_version),
+		          SCI_VERSION_PATCHLEVEL(exe_version));
 
 		if (SCI_VERSION_MAJOR(exe_version) >= 1) {
 			sciprintf("FIXME: Implement version mapping (results of executable scan ignored)\n");
@@ -164,20 +159,20 @@ detect_versions(sci_version_t *version, int *res_version)
 
 	if (game_name) {
 		sciprintf("Interpreter version: %d.%03d.%03d (by hash code %08X)\n",
-				  SCI_VERSION_MAJOR(hash_version),
-				  SCI_VERSION_MINOR(hash_version),
-				  SCI_VERSION_PATCHLEVEL(hash_version), code);
+		          SCI_VERSION_MAJOR(hash_version),
+		          SCI_VERSION_MINOR(hash_version),
+		          SCI_VERSION_PATCHLEVEL(hash_version), code);
 		if (got_exe_version && exe_version != hash_version)
-				sciprintf("UNEXPECTED INCONSISTENCY: Hash code %08X indicates interpreter version\n"
-					  "  %d.%03d.%03d, but analysis of the executable yields %d.%03d.%03d (for game\n"
-					  "  '%s'). Please report this!\n",
-					  code,
-					  SCI_VERSION_MAJOR(hash_version),
-					  SCI_VERSION_MINOR(hash_version),
-					  SCI_VERSION_PATCHLEVEL(hash_version),
-					  SCI_VERSION_MAJOR(exe_version),
-					  SCI_VERSION_MINOR(exe_version),
-					  SCI_VERSION_PATCHLEVEL(exe_version), game_name);
+			sciprintf("UNEXPECTED INCONSISTENCY: Hash code %08X indicates interpreter version\n"
+			          "  %d.%03d.%03d, but analysis of the executable yields %d.%03d.%03d (for game\n"
+			          "  '%s'). Please report this!\n",
+			          code,
+			          SCI_VERSION_MAJOR(hash_version),
+			          SCI_VERSION_MINOR(hash_version),
+			          SCI_VERSION_PATCHLEVEL(hash_version),
+			          SCI_VERSION_MAJOR(exe_version),
+			          SCI_VERSION_MINOR(exe_version),
+			          SCI_VERSION_PATCHLEVEL(exe_version), game_name);
 
 		if (hash_res_version != SCI_VERSION_AUTODETECT)
 			sciprintf("Resource version: %d (by hash code)\n", hash_res_version);
@@ -188,8 +183,8 @@ detect_versions(sci_version_t *version, int *res_version)
 
 		if (got_exe_version)
 			sciprintf("Please report the preceding two lines and the name of the game you were trying\n"
-				  "to run to the FreeSCI development team to help other users!\n",
-				  code);
+			          "to run to the FreeSCI development team to help other users!\n",
+			          code);
 	}
 
 	if (game_name)
@@ -206,17 +201,16 @@ detect_versions(sci_version_t *version, int *res_version)
 
 	if (*version)
 		sciprintf("Using interpreter version %d.%03d.%03d\n",
-				  SCI_VERSION_MAJOR(*version),
-				  SCI_VERSION_MINOR(*version),
-				  SCI_VERSION_PATCHLEVEL(*version));
+		          SCI_VERSION_MAJOR(*version),
+		          SCI_VERSION_MINOR(*version),
+		          SCI_VERSION_PATCHLEVEL(*version));
 
 	if (*res_version != SCI_VERSION_AUTODETECT)
 		sciprintf("Using resource version %d\n", *res_version);
 }
 
 int
-main_()
-{
+main_() {
 	resource_mgr_t *resmgr;
 
 	init_console(); /* So we can get any output */
@@ -234,11 +228,11 @@ main_()
 	char resource_dir[MAXPATHLEN+1] = "";
 	getcwd(resource_dir, MAXPATHLEN); /* Store resource directory */
 
-	resmgr = scir_new_resource_manager(resource_dir, res_version, 1, 256*1024);
+	resmgr = scir_new_resource_manager(resource_dir, res_version, 1, 256 * 1024);
 
 	if (!resmgr) {
 		printf("No resources found in '%s'.\nAborting...\n",
-			resource_dir);
+		       resource_dir);
 		exit(1);
 	}
 
@@ -262,7 +256,7 @@ main_()
 
 
 	if (game_init(gamestate)) { /* Initialize */
-		fprintf(stderr,"Game initialization failed: Aborting...\n");
+		fprintf(stderr, "Game initialization failed: Aborting...\n");
 		return 1;
 	}
 
@@ -283,7 +277,7 @@ main_()
 	gfx_state.version = resmgr->sci_version;
 	gamestate->gfx_state = &gfx_state;
 
-/**** Default config: */
+	/**** Default config: */
 	gfx_options_t gfx_options;
 	gfx_options.workarounds = 0;
 	gfx_options.buffer_pics_nr = 0;
@@ -299,32 +293,32 @@ main_()
 	gfx_options.text_xlate_filter = GFX_XLATE_FILTER_NONE;
 	gfx_options.dirty_frames = GFXOP_DIRTY_FRAMES_CLUSTERS;
 	gfx_options.pic0_antialiasing = GFXR_ANTIALIASING_NONE;
-	gfx_options.pic_port_bounds = gfx_rect(0,10,320,190);
+	gfx_options.pic_port_bounds = gfx_rect(0, 10, 320, 190);
 	for (int i = 0; i < GFX_RESOURCE_TYPES_NR; i++) {
 		gfx_options.res_conf.assign[i] = NULL;
 		gfx_options.res_conf.mod[i] = NULL;
 	}
-/**** Default config ends */
+	/**** Default config ends */
 
 	if (gfxop_init_default(&gfx_state, &gfx_options, resmgr)) {
-		fprintf(stderr,"Graphics initialization failed. Aborting...\n");
+		fprintf(stderr, "Graphics initialization failed. Aborting...\n");
 		return 1;
 	}
 
 	if (game_init_graphics(gamestate)) { /* Init interpreter graphics */
-		fprintf(stderr,"Game initialization failed: Error in GFX subsystem. Aborting...\n");
+		fprintf(stderr, "Game initialization failed: Error in GFX subsystem. Aborting...\n");
 		return 1;
 	}
 
 	if (game_init_sound(gamestate, 0)) {
-		fprintf(stderr,"Game initialization failed: Error in sound subsystem. Aborting...\n");
+		fprintf(stderr, "Game initialization failed: Error in sound subsystem. Aborting...\n");
 		return 1;
 	}
 
 	printf("Emulating SCI version %d.%03d.%03d\n",
-		SCI_VERSION_MAJOR(gamestate->version),
-		SCI_VERSION_MINOR(gamestate->version),
-		SCI_VERSION_PATCHLEVEL(gamestate->version));
+	       SCI_VERSION_MAJOR(gamestate->version),
+	       SCI_VERSION_MINOR(gamestate->version),
+	       SCI_VERSION_PATCHLEVEL(gamestate->version));
 
 	game_run(&gamestate); /* Run the game */
 
@@ -344,7 +338,7 @@ main_()
 }
 
 SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
-	: Engine(syst) {
+		: Engine(syst) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from init().

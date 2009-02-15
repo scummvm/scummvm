@@ -46,8 +46,7 @@ typedef struct {
 
 
 unsigned int
-invert_bits(unsigned int s, int bits)
-{
+invert_bits(unsigned int s, int bits) {
 	unsigned int rv = 0;
 	int i;
 	for (i = 0; i < bits; i++)
@@ -58,13 +57,12 @@ invert_bits(unsigned int s, int bits)
 }
 
 void
-read_single_glyph(FILE *in_file, glyph_t *dest, int index, int char_height)
-{
+read_single_glyph(FILE *in_file, glyph_t *dest, int index, int char_height) {
 	int width = -1;
 	int bytes = 0;
 	int i;
 	unsigned char *data
-		= dest->bitmap = (unsigned char *) malloc(char_height * 4); /* Let's waste memory */
+	= dest->bitmap = (unsigned char *) malloc(char_height * 4); /* Let's waste memory */
 
 	do {
 		unsigned int d = 0;
@@ -105,8 +103,8 @@ read_single_glyph(FILE *in_file, glyph_t *dest, int index, int char_height)
 	} while (inbuf[0] == '.' || inbuf[0] == '#');
 
 	if (char_height >= 0) {
-			fprintf(stderr, "Char 0x%02x is too short (by %d)!\n", index, char_height);
-			exit(1);
+		fprintf(stderr, "Char 0x%02x is too short (by %d)!\n", index, char_height);
+		exit(1);
 	}
 
 	dest->width = width;
@@ -117,8 +115,7 @@ read_single_glyph(FILE *in_file, glyph_t *dest, int index, int char_height)
 }
 
 glyph_t *
-read_glyphs(FILE *in_file, int nr, int char_height)
-{
+read_glyphs(FILE *in_file, int nr, int char_height) {
 	int i;
 	glyph_t *glyphs = (glyph_t *) calloc(sizeof(glyph_t), nr);
 
@@ -129,8 +126,7 @@ read_glyphs(FILE *in_file, int nr, int char_height)
 }
 
 void
-convert_font(FILE *in_file, char *structname, FILE *out_file)
-{
+convert_font(FILE *in_file, char *structname, FILE *out_file) {
 	int chars_nr;
 	glyph_t *glyphs;
 	int bytes_per_row;
@@ -157,7 +153,7 @@ convert_font(FILE *in_file, char *structname, FILE *out_file)
 	for (i = 0; i < chars_nr; i++) {
 		int rw = GLYPH(i).width;
 		fprintf(out_file, "\t%d%s\t/* 0x%02x */\n", rw,
-			(i < (chars_nr-1))? ",":"", i);
+		        (i < (chars_nr - 1)) ? "," : "", i);
 	}
 	fprintf(out_file, "};\n\n");
 
@@ -176,17 +172,17 @@ convert_font(FILE *in_file, char *structname, FILE *out_file)
 
 		if (bytes_to_read <= 0) {
 			fprintf(stderr, "No bytes per row: bytes=%d, w=%d, h=%d\n",
-				GLYPH(i).bytes, rw, rh);
+			        GLYPH(i).bytes, rw, rh);
 			exit(1);
 		}
 
 		if (bot_pad < 0) {
 			fprintf(stderr, "Bottom padding <0: height=%d/%d, top_pad=%d\n",
-				rh, char_height, yoff);
+			        rh, char_height, yoff);
 			exit(1);
 		}
 
-		fprintf(out_file,"\t/* 0x%02x ('%c') */\n", i, ((i>31)&&(i<0x7f))?i:'.');
+		fprintf(out_file, "\t/* 0x%02x ('%c') */\n", i, ((i > 31) && (i < 0x7f)) ? i : '.');
 		/* First, pad everything */
 		for (j = 0; j < top_pad; j++) {
 			fprintf(out_file, "\t");
@@ -208,12 +204,12 @@ convert_font(FILE *in_file, char *structname, FILE *out_file)
 			oldb = b;
 
 			for (k = 0; k < bytes_per_row; k++) {
-				fprintf(out_file, "0x%02x%s", (b & 0xff), (bot_pad || (i+1 < chars_nr) || (j+1 < rh) || (k+1 < bytes_per_row))?", ":"");
+				fprintf(out_file, "0x%02x%s", (b & 0xff), (bot_pad || (i + 1 < chars_nr) || (j + 1 < rh) || (k + 1 < bytes_per_row)) ? ", " : "");
 				b >>= 8;
 			}
 			fprintf(out_file, "\t/* ");
 			for (k = 0; k < rw; k++)
-				fprintf(out_file, (oldb & (1 << ((bytes_per_row * 8) - 1 - k)))? "##":"..");
+				fprintf(out_file, (oldb & (1 << ((bytes_per_row * 8) - 1 - k))) ? "##" : "..");
 			fprintf(out_file, " */");
 
 			fprintf(out_file, "\n");
@@ -223,7 +219,7 @@ convert_font(FILE *in_file, char *structname, FILE *out_file)
 		for (j = 0; j < bot_pad; j++) {
 			fprintf(out_file, "\t");
 			for (k = 0; k < bytes_per_row; k++)
-				fprintf(out_file, "0x00%s", ((i+1 < chars_nr) || (j+1 < bot_pad) || (k+1 < bytes_per_row))?", ":"");
+				fprintf(out_file, "0x00%s", ((i + 1 < chars_nr) || (j + 1 < bot_pad) || (k + 1 < bytes_per_row)) ? ", " : "");
 			fprintf(out_file, "\n");
 		}
 	}
@@ -245,8 +241,7 @@ convert_font(FILE *in_file, char *structname, FILE *out_file)
 
 
 int
-main(int argc, char **argv)
-{
+main(int argc, char **argv) {
 	FILE *f = NULL;
 
 	if (argc < 4) {

@@ -49,12 +49,11 @@ bdf_options_t bdf_opts = {
 #define GLYPH(n) glyphs[(((n) > 31)? ((n) - 31) : 0)]
 
 void
-convert_font(FILE *in_file, FILE *out_file)
-{
+convert_font(FILE *in_file, FILE *out_file) {
 	bdf_font_t *font =
-		bdf_load_font(in_file,
-			      &bdf_opts,
-			      NULL, NULL);
+	    bdf_load_font(in_file,
+	                  &bdf_opts,
+	                  NULL, NULL);
 
 	int chars_nr = font->glyphs_used;
 	int width = font->monowidth;
@@ -92,7 +91,7 @@ convert_font(FILE *in_file, FILE *out_file)
 			char_height = rh;
 	}
 
-		
+
 
 	line_height = char_height + 1;
 	char_byte_size = bytes_per_row * char_height;
@@ -112,13 +111,13 @@ convert_font(FILE *in_file, FILE *out_file)
 
 		if (bytes_to_read <= 0) {
 			fprintf(stderr, "No bytes per row: bytes=%d, w=%d, h=%d\n",
-				GLYPH(i).bytes, rw, rh);
+			        GLYPH(i).bytes, rw, rh);
 			exit(1);
 		}
 
 		if (bot_pad < 0) {
 			fprintf(stderr, "Bottom padding <0: height=%d/%d, top_pad=%d\n",
-				rh, char_height, yoff);
+			        rh, char_height, yoff);
 			exit(1);
 		}
 
@@ -141,7 +140,7 @@ convert_font(FILE *in_file, FILE *out_file)
 			oldb = b;
 
 			for (k = 0; k < rw; k++)
-				fprintf(out_file, (oldb & (1 << ((bytes_per_row * 8) - 1 - k)))? "#":".");
+				fprintf(out_file, (oldb & (1 << ((bytes_per_row * 8) - 1 - k))) ? "#" : ".");
 
 			fprintf(out_file, "\n");
 		}
@@ -152,7 +151,7 @@ convert_font(FILE *in_file, FILE *out_file)
 				fprintf(out_file, ".");
 			fprintf(out_file, "\n");
 		}
-		fprintf(out_file,"----\t 0x%02x ('%c') */\n", i, ((i>31)&&(i<0x7f))?i:'.');
+		fprintf(out_file, "----\t 0x%02x ('%c') */\n", i, ((i > 31) && (i < 0x7f)) ? i : '.');
 	}
 	fprintf(out_file, "\n\n");
 
@@ -161,8 +160,7 @@ convert_font(FILE *in_file, FILE *out_file)
 
 
 int
-main(int argc, char **argv)
-{
+main(int argc, char **argv) {
 	FILE *f = NULL;
 	bdf_setup();
 

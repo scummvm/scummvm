@@ -97,8 +97,7 @@ resource_mgr_t *resmgr;
 #endif
 
 void
-print_resource_filename(FILE* file, int type, int number)
-{
+print_resource_filename(FILE* file, int type, int number) {
 	if (resmgr->sci_version < SCI_VERSION_1)
 		fprintf(file, "%s.%03d", sci_resource_types[type], number);
 	else
@@ -106,8 +105,7 @@ print_resource_filename(FILE* file, int type, int number)
 }
 
 void
-sprint_resource_filename(char* buf, int type, int number)
-{
+sprint_resource_filename(char* buf, int type, int number) {
 	if (resmgr->sci_version < SCI_VERSION_1)
 		sprintf(buf, "%s.%03d", sci_resource_types[type], number);
 	else
@@ -137,7 +135,8 @@ static struct option options[] = {
 #endif /* DRAW_GRAPHICS */
 	{"gamedir", required_argument, 0, 'd'},
 	{"midimask", required_argument, 0, 'M'},
-	{0, 0, 0, 0}};
+	{0, 0, 0, 0}
+};
 
 #endif /* HAVE_GETOPT_LONG */
 
@@ -145,8 +144,7 @@ static struct option options[] = {
 void unpack_resource(int stype, int snr, char *outfilename);
 
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 	int retval = 0;
 	int i;
 	int stype = -1;
@@ -157,7 +155,7 @@ int main(int argc, char** argv)
 	int c;
 	char *gamedir = sci_getcwd();
 	int res_version = SCI_VERSION_AUTODETECT;
-	
+
 #ifdef HAVE_GETOPT_LONG
 	while ((c = getopt_long(argc, argv, "WOVUvhLcr:o:d:M:", options, &optindex)) > -1) {
 #else /* !HAVE_GETOPT_LONG */
@@ -175,53 +173,53 @@ int main(int argc, char** argv)
 
 		case 'h': {
 			char *gcc_3_0_can_kiss_my_ass =
-			       "Usage: sciunpack [options] [-U] <resource.number>\n"
-			       "       sciunpack [options] [-U] <resource> <number>\n"
-			       "Unpacks resource data\n"
-			       "If * is specified instead of <number>, \n"
-			       "all resources of given type will be unpacked.\n\n"
-			       "       sciunpack [options] -W\n"
-			       "Lists vocabulary words\n\n"
-			       "       sciunpack [options] -O\n"
-			       "Dumps the complete object hierarchy\n\n"
-			       "       sciunpack [options] -V\n"
-			       "Prints selector names, opcodes, kernel names, and classes\n\n"
-			       "\nAvalable operations:\n"
-			       " --unpack      -U       Decompress resource\n"
-			       " --list        -L       List all resources\n"
-			       " --words       -W       List all vocabulary words\n"
-			       " --objects     -O       Print all objects\n"
-			       " --vocab       -V       Lists the complete vocabulary\n"
-			       "\nAvailable options:\n"
-			       "General:\n"
-			       " --version              Prints the version number\n"
-			       " --verbose     -v       Enables additional output\n"
-			       " --help        -h       Displays this help message\n"
-			       " --midimask    -M       What 'play mask' to use.  Defaults to MT-32 (0x01)\n"
+			    "Usage: sciunpack [options] [-U] <resource.number>\n"
+			    "       sciunpack [options] [-U] <resource> <number>\n"
+			    "Unpacks resource data\n"
+			    "If * is specified instead of <number>, \n"
+			    "all resources of given type will be unpacked.\n\n"
+			    "       sciunpack [options] -W\n"
+			    "Lists vocabulary words\n\n"
+			    "       sciunpack [options] -O\n"
+			    "Dumps the complete object hierarchy\n\n"
+			    "       sciunpack [options] -V\n"
+			    "Prints selector names, opcodes, kernel names, and classes\n\n"
+			    "\nAvalable operations:\n"
+			    " --unpack      -U       Decompress resource\n"
+			    " --list        -L       List all resources\n"
+			    " --words       -W       List all vocabulary words\n"
+			    " --objects     -O       Print all objects\n"
+			    " --vocab       -V       Lists the complete vocabulary\n"
+			    "\nAvailable options:\n"
+			    "General:\n"
+			    " --version              Prints the version number\n"
+			    " --verbose     -v       Enables additional output\n"
+			    " --help        -h       Displays this help message\n"
+			    " --midimask    -M       What 'play mask' to use.  Defaults to MT-32 (0x01)\n"
 
-			       "Listing words:\n"
-			       " --sort-alpha		sort in alphabetical order\n"
-			       " --sort-group		sort in group order\n"
-			       "Unpacking:\n"
-			       " --convert     -c       Converts selected resources\n"
-			       " --output-file -o       Selects output file\n"
-			       " --gamedir     -d       Read game resources from dir\n"
-			       " --with-header          Forces the SCI header to be written (default)\n"
-			       " --without-header       Prevents the two SCI header bytes from being written\n"
+			    "Listing words:\n"
+			    " --sort-alpha		sort in alphabetical order\n"
+			    " --sort-group		sort in group order\n"
+			    "Unpacking:\n"
+			    " --convert     -c       Converts selected resources\n"
+			    " --output-file -o       Selects output file\n"
+			    " --gamedir     -d       Read game resources from dir\n"
+			    " --with-header          Forces the SCI header to be written (default)\n"
+			    " --without-header       Prevents the two SCI header bytes from being written\n"
 #ifdef DRAW_GRAPHICS
-			       " --palette-dither       Forces colors in 16 color games to be dithered\n"
-			       " --palette-interpolate  Does color interpolation when drawing picture resources\n"
-			       " --palette-dither256    Does dithering in 256 colors\n"
+			    " --palette-dither       Forces colors in 16 color games to be dithered\n"
+			    " --palette-interpolate  Does color interpolation when drawing picture resources\n"
+			    " --palette-dither256    Does dithering in 256 colors\n"
 #endif /* DRAW_GRAPHICS */
-			       "\nAs a default, 'resource.number' is the output filename.\n"
-			       "If conversion is enabled, the following resources will be treated specially:\n"
-			       "  sound resources:   Will be converted to MIDI, stored in <number>.midi\n"
-			       "  script resources:  Will be dissected and  stored in <number>.script\n"
+			    "\nAs a default, 'resource.number' is the output filename.\n"
+			    "If conversion is enabled, the following resources will be treated specially:\n"
+			    "  sound resources:   Will be converted to MIDI, stored in <number>.midi\n"
+			    "  script resources:  Will be dissected and  stored in <number>.script\n"
 #ifdef DRAW_GRAPHICS
-			       "  picture resources: Will be converted to PNG, stored in <number>.png\n"
+			    "  picture resources: Will be converted to PNG, stored in <number>.png\n"
 
 #endif /* DRAW_GRAPHICS */
-				;
+			    ;
 
 			printf(gcc_3_0_can_kiss_my_ass);
 			exit(0);
@@ -252,8 +250,8 @@ int main(int argc, char** argv)
 			break;
 
 		case 'd':
-			if (gamedir) sci_free (gamedir);
-			gamedir = sci_strdup (optarg);
+			if (gamedir) sci_free(gamedir);
+			gamedir = sci_strdup(optarg);
 			break;
 
 		case 'r':
@@ -282,39 +280,39 @@ int main(int argc, char** argv)
 		char *resstring = argv[optind];
 
 		if (optind == argc) {
-			fprintf(stderr,"Resource identifier required\n");
+			fprintf(stderr, "Resource identifier required\n");
 			return 1;
 		}
 
 		if ((resourcenumber_string = (char *) strchr(resstring, '.'))) {
 			*resourcenumber_string++ = 0;
-		} else if (optind+1 == argc) {
-			fprintf(stderr,"Resource number required\n");
+		} else if (optind + 1 == argc) {
+			fprintf(stderr, "Resource number required\n");
 			return 1;
 		} else resourcenumber_string = argv[optind+1];
 
-		for (i=0; i< 18; i++)
-			if ((strcmp(sci_resource_types[i], resstring)==0)) stype = i;
-		if (stype==-1) {
+		for (i = 0; i < 18; i++)
+			if ((strcmp(sci_resource_types[i], resstring) == 0)) stype = i;
+		if (stype == -1) {
 			printf("Could not find the resource type '%s'.\n", resstring);
 			return 1;
 		}
 	} /* ACT_UNPACK */
 
 	if (gamedir)
-		if (chdir (gamedir)) {
-			printf ("Error changing to game directory '%s'\n", gamedir);
+		if (chdir(gamedir)) {
+			printf("Error changing to game directory '%s'\n", gamedir);
 			exit(1);
 		}
 
 	if (!(resmgr = scir_new_resource_manager(gamedir, res_version,
-						 0, 1024*128))) {
-		fprintf(stderr,"Could not find any resources; quitting.\n");
+	               0, 1024 * 128))) {
+		fprintf(stderr, "Could not find any resources; quitting.\n");
 		exit(1);
 	}
 
 	if (verbose) printf("Autodetect determined: %s\n",
-			    sci_version_types[resmgr->sci_version]);
+		                    sci_version_types[resmgr->sci_version]);
 
 
 	switch (action) {
@@ -323,21 +321,21 @@ int main(int argc, char** argv)
 		int i;
 
 		if (verbose) {
-			for (i=0; i < resmgr->resources_nr; i++) {
-				printf("%i: ",i);
+			for (i = 0; i < resmgr->resources_nr; i++) {
+				printf("%i: ", i);
 				print_resource_filename(stdout,
-							resmgr->resources[i].type,
-							resmgr->resources[i].number);
+				                        resmgr->resources[i].type,
+				                        resmgr->resources[i].number);
 				printf("   has size %i\n", resmgr->resources[i].size);
 			}
 
-			fprintf(stderr," Reading complete. Actual resource count is %i\n",
-				resmgr->resources_nr);
+			fprintf(stderr, " Reading complete. Actual resource count is %i\n",
+			        resmgr->resources_nr);
 		} else {
-			for (i=0; i<resmgr->resources_nr; i++) {
+			for (i = 0; i < resmgr->resources_nr; i++) {
 				print_resource_filename(stdout,
-							resmgr->resources[i].type,
-							resmgr->resources[i].number);
+				                        resmgr->resources[i].type,
+				                        resmgr->resources[i].number);
 				printf("\n");
 			}
 		}
@@ -346,11 +344,11 @@ int main(int argc, char** argv)
 
 	case ACT_UNPACK: {
 
-		if (!strcmp (resourcenumber_string, "*")) {
+		if (!strcmp(resourcenumber_string, "*")) {
 			int i;
-			for (i=0; i<resmgr->resources_nr; i++)
+			for (i = 0; i < resmgr->resources_nr; i++)
 				if (resmgr->resources[i].type == stype)
-					unpack_resource (stype, resmgr->resources[i].number, NULL);
+					unpack_resource(stype, resmgr->resources[i].number, NULL);
 		} else {
 			snr = atoi(resourcenumber_string);
 			unpack_resource(stype, snr, outfilename);
@@ -371,7 +369,7 @@ int main(int argc, char** argv)
 		break;
 
 	default:
-		fprintf(stderr,"Invalid action %d- internal error!\n", action);
+		fprintf(stderr, "Invalid action %d- internal error!\n", action);
 		return 1;
 	}
 
@@ -381,13 +379,12 @@ int main(int argc, char** argv)
 }
 
 
-void unpack_resource(int stype, int snr, char *outfilename)
-{
+void unpack_resource(int stype, int snr, char *outfilename) {
 	char fnamebuffer[12]; /* stores default file name */
 	resource_t *found;
 
 	if ((stype == sci_sound) && conversion && (resmgr->sci_version > SCI_VERSION_0)) {
-		fprintf(stderr,"MIDI conversion is only supported for SCI version 0\n");
+		fprintf(stderr, "MIDI conversion is only supported for SCI version 0\n");
 		conversion = 0;
 	}
 
@@ -397,11 +394,11 @@ void unpack_resource(int stype, int snr, char *outfilename)
 #ifdef HAVE_OBSTACK_H
 			map_MIDI_instruments(resmgr);
 #endif
-			sprintf(outfilename,"%03d.midi", snr);
+			sprintf(outfilename, "%03d.midi", snr);
 		}
 #ifdef DRAW_GRAPHICS
 		else if ((stype == sci_pic) && conversion)
-			sprintf(outfilename,"%03d.png", snr);
+			sprintf(outfilename, "%03d.png", snr);
 #endif /* DRAW_GRAPHICS */
 		else
 			sprint_resource_filename(outfilename, stype, snr);
@@ -421,59 +418,59 @@ void unpack_resource(int stype, int snr, char *outfilename)
 			picture_t pic = alloc_empty_picture(SCI_RESOLUTION_320X200, SCI_COLORDEPTH_8BPP);
 			draw_pic0(pic, 1, 0, found->data);
 			if ((i = write_pic_png(outfilename, pic->maps[0]))) {
-				fprintf(stderr,"Writing the png failed (%d)\n",i);
+				fprintf(stderr, "Writing the png failed (%d)\n", i);
 			} else if (verbose) printf("Done.\n");
 			free_picture(pic);
 		} else
 #endif /* DRAW_GRAPHICS */
-		if ((stype == sci_script) && conversion) {
-			sprintf (outfilename, "%03d.script", snr);
-                        open_console_file (outfilename);
-			script_dissect(resmgr, snr, NULL, 0);
-                        close_console_file();
-		} else {
+			if ((stype == sci_script) && conversion) {
+				sprintf(outfilename, "%03d.script", snr);
+				open_console_file(outfilename);
+				script_dissect(resmgr, snr, NULL, 0);
+				close_console_file();
+			} else {
 
-/* Visual C++ doesn't allow to specify O_BINARY with creat() */
+				/* Visual C++ doesn't allow to specify O_BINARY with creat() */
 #ifdef _MSC_VER
-                        int outf = open(outfilename, _O_CREAT | _O_BINARY | _O_RDWR);
+				int outf = open(outfilename, _O_CREAT | _O_BINARY | _O_RDWR);
 #else
-                        int outf = creat(outfilename, CREAT_OPTIONS);
+				int outf = creat(outfilename, CREAT_OPTIONS);
 #endif
 
 #ifdef HAVE_OBSTACK_H
-			if ((stype == sci_sound) && conversion) {
-				int midilength;
-				guint8 *outdata = makeMIDI0(found->data, &midilength, midimask);
-				if (!outdata) {
-					fprintf(stderr,"MIDI conversion failed. Aborting...\n");
-					return;
-				}
-				if (verbose) printf("MIDI conversion from %d bytes of sound resource"
-						    " to a %d bytes MIDI file.\n",
-						    found->size, midilength);
-				write(outf, outdata, midilength);
-				free(outdata);
-			} else {
+				if ((stype == sci_sound) && conversion) {
+					int midilength;
+					guint8 *outdata = makeMIDI0(found->data, &midilength, midimask);
+					if (!outdata) {
+						fprintf(stderr, "MIDI conversion failed. Aborting...\n");
+						return;
+					}
+					if (verbose) printf("MIDI conversion from %d bytes of sound resource"
+						                    " to a %d bytes MIDI file.\n",
+						                    found->size, midilength);
+					write(outf, outdata, midilength);
+					free(outdata);
+				} else {
 #endif /* HAVE_OBSTACK_H */
-				guint8 header = 0x80 | found->type;
+					guint8 header = 0x80 | found->type;
 
-				if (with_header) {
-					write(outf, &header, 1);
-					header = 0x00;
-					write(outf, &header, 1);
-				}
+					if (with_header) {
+						write(outf, &header, 1);
+						header = 0x00;
+						write(outf, &header, 1);
+					}
 
-				write(outf,  found->data, found->size);
+					write(outf,  found->data, found->size);
 #ifdef HAVE_OBSTACK_H
-			}
+				}
 #endif /* HAVE_OBSTACK_H */
 
-			fchmod(outf, 0644);
-			close(outf);
-			fchmod(outf, 0644);
+				fchmod(outf, 0644);
+				close(outf);
+				fchmod(outf, 0644);
 
-			if (verbose) printf("Done.\n");
-		}
+				if (verbose) printf("Done.\n");
+			}
 
 	} else printf("Resource not found.\n");
 }

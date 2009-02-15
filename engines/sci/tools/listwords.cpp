@@ -34,13 +34,12 @@
 #include <kernel.h>
 
 int
-_vocab_cmp_group(const void *word1, const void *word2)
-{
+_vocab_cmp_group(const void *word1, const void *word2) {
 #define fw (* ((word_t **) word1))
 #define sw (* ((word_t **) word2))
-	if (fw->group<sw->group)
+	if (fw->group < sw->group)
 		return -1;
-	else if (fw->group==sw->group)
+	else if (fw->group == sw->group)
 		return 0;
 	else
 		return 1;
@@ -49,33 +48,34 @@ _vocab_cmp_group(const void *word1, const void *word2)
 int vocab_sort = DEFAULT_SORTING;
 
 int
-vocab_print(void)
-{
+vocab_print(void) {
 	int b, words_nr, counter;
 	word_t **words, **tracker;
 
 	tracker = words = vocab_get_words(resmgr, &words_nr);
 
-	counter=words_nr;
+	counter = words_nr;
 
-	if (vocab_sort==SORT_METHOD_GROUP)
+	if (vocab_sort == SORT_METHOD_GROUP)
 		qsort(words, words_nr, sizeof(word_t *), _vocab_cmp_group); /* Sort entries */
 
 	while (counter--) {
 		printf("%s (class %03x, group %03x) ", &tracker[0]->word,
 		       tracker[0]->w_class, tracker[0]->group);
-      
-		if ((tracker[0]->w_class>=0xf00)||
-		    (tracker[0]->w_class==0)) 
-			printf("anyword\n"); else
-				while (tracker[0]->w_class) {
-					b=sci_ffs(tracker[0]->w_class)-1;
-					tracker[0]->w_class&=~(1<<b);
-					printf("%s", class_names[b]);
-					if (tracker[0]->w_class)
-						printf("|"); else
-							printf("\n");
-				}    
+
+		if ((tracker[0]->w_class >= 0xf00) ||
+		        (tracker[0]->w_class == 0))
+			printf("anyword\n");
+		else
+			while (tracker[0]->w_class) {
+				b = sci_ffs(tracker[0]->w_class) - 1;
+				tracker[0]->w_class &= ~(1 << b);
+				printf("%s", class_names[b]);
+				if (tracker[0]->w_class)
+					printf("|");
+				else
+					printf("\n");
+			}
 		tracker++;
 	}
 

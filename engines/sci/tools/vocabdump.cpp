@@ -33,8 +33,7 @@
 #include "sciunpack.h"
 
 int
-vocab_dump()
-{
+vocab_dump() {
 	char **names;
 	opcode *opcodes;
 	int i = 0, count;
@@ -61,17 +60,17 @@ vocab_dump()
 	printf("\nKernel names:\n");
 	if (names == 0) printf("Error loading kernel names\n");
 	else {
-		for (i=0; i<count; i++) printf("0x%02X: %s\n", i, names[i]);
+		for (i = 0; i < count; i++) printf("0x%02X: %s\n", i, names[i]);
 		vocabulary_free_knames(names);
 	}
 
 	classes = vocabulary_get_classes(resmgr, &count);
-	printf ("\nClasses:\n");
+	printf("\nClasses:\n");
 	if (classes == 0) printf("Error loading classes\n");
 	else {
-		for (i=0; i<count; i++) printf("0x%02X: script %i\n", i, classes [i]);
+		for (i = 0; i < count; i++) printf("0x%02X: script %i\n", i, classes [i]);
 		free(classes);
 	}
-  
+
 	return 0;
 }

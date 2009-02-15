@@ -34,16 +34,14 @@
 #include <engine.h>
 #include "sciunpack.h"
 
-int script_dump()
-{
+int script_dump() {
 	con_passthrough = 1;
 
-	if(loadObjects(resmgr))
-	{
+	if (loadObjects(resmgr)) {
 		fprintf(stderr, "Unable to load object hierarchy\n");
 		return 1;
 	}
 
-	printObject(object_root, SCRIPT_PRINT_METHODS|SCRIPT_PRINT_CHILDREN);
+	printObject(object_root, SCRIPT_PRINT_METHODS | SCRIPT_PRINT_CHILDREN);
 	return 0;
 }
