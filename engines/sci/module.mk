@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	engine/kscripts.o \
 	engine/ksound.o \
 	engine/kstring.o \
+	engine/message.o \
 	engine/said.o \
 	engine/savegame.o \
 	engine/scriptconsole.o \
@@ -83,7 +84,6 @@ MODULE_OBJS = \
 	sfx/player/realtime.o \
 	sfx/seq/sequencers.o \
 	sfx/softseq/amiga.o \
-	sfx/softseq/fmopl.o \
 	sfx/softseq/opl2.o \
 	sfx/softseq/pcspeaker.o \
 	sfx/softseq/SN76496.o \

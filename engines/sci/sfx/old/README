@@ -1,6 +1,0 @@
-type 'make' and './sciplaymidi' to program your MT-32 with the file
-'patch.001' in the current directory
-
-Only tested with Linux and ALSA...
-
-Rickard Lind <rpl@dd.chalmers.se>
