@@ -978,7 +978,7 @@ static void OPL_UnLockTable(void) {
 /*******************************************************************************/
 
 /* ---------- update one of chip ----------- */
-void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
+void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length, int interleave) {
 	int i;
 	int data;
 	int16 *buf = buffer;
@@ -1020,7 +1020,7 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
 		/* limit check */
 		data = CLIP(outd[0], OPL_MINOUT, OPL_MAXOUT);
 		/* store to sound buffer */
-		buf[i] = data >> OPL_OUTSB;
+		buf[i << interleave] = data >> OPL_OUTSB;
 	}
 
 	OPL->amsCnt = amsCnt;

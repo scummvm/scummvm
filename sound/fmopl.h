@@ -165,7 +165,7 @@ int OPLWrite(FM_OPL *OPL, int a, int v);
 unsigned char OPLRead(FM_OPL *OPL, int a);
 int OPLTimerOver(FM_OPL *OPL, int c);
 void OPLWriteReg(FM_OPL *OPL, int r, int v);
-void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
+void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length, int interleave = 0);
 
 // Factory method
 FM_OPL *makeAdlibOPL(int rate);
