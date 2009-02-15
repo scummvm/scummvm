@@ -35,7 +35,7 @@
 #ifdef HAVE_ALSA
 extern struct _midi_device sfx_device_midi_alsa;
 #endif
-#if !defined(_DOS) && !defined(_WIN32) && !defined(_DREAMCAST) && !defined(__MORPHOS__) && !defined(ARM_WINCE) && !defined(_GP32)
+#if !defined(WIN32) && !defined(__DC__) && !defined(__MORPHOS__) && !defined(ARM_WINCE) && !defined(_GP32)
 extern struct _midi_device sfx_device_midi_unixraw;
 #endif
 
@@ -54,7 +54,7 @@ static struct _midi_device *devices_midi[] = {
 #ifdef HAVE_ALSA
 		&sfx_device_midi_alsa,
 #endif
-#if !defined(_DOS) && !defined(_WIN32) && !defined(_DREAMCAST) && !defined(__MORPHOS__) && !defined(ARM_WINCE) && !defined(_GP32)
+#ifdef UNIX
 		&sfx_device_midi_unixraw,
 #endif
 #endif // SCUMMVM

@@ -593,11 +593,9 @@ script_free_vm_memory(state_t *s)
 	s->classtable = NULL;
 
 	/* Close all opened file handles */
-#ifndef _DOS
 	for (i = 1; i < s->file_handles_nr; i++)
 		if (s->file_handles[i])
 			fclose(s->file_handles[i]);
-#endif
 
 	sci_free(s->file_handles);
 	s->file_handles = NULL;

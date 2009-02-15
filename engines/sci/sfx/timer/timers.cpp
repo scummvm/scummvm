@@ -36,7 +36,7 @@ extern sfx_timer_t sfx_timer_scummvm;
 extern sfx_timer_t sfx_timer_sigalrm;
 #endif
 
-#ifdef _DREAMCAST
+#ifdef __DC__
 extern sfx_timer_t sfx_timer_pthread;
 #endif
 #endif // SCUMMVM
@@ -48,7 +48,7 @@ sfx_timer_t *sfx_timers[] = {
 #ifdef HAVE_SETITIMER
 	&sfx_timer_sigalrm,
 #endif
-#ifdef _DREAMCAST
+#ifdef __DC__
 	&sfx_timer_pthread,
 #endif
 #endif // SCUMMVM

@@ -30,7 +30,7 @@ extern sfx_pcm_device_t sfx_pcm_driver_sdl;
 #	ifdef HAVE_ALSA
 extern sfx_pcm_device_t sfx_pcm_driver_alsa;
 #	endif
-#	ifdef _DREAMCAST
+#	ifdef __DC__
 extern sfx_pcm_device_t sfx_pcm_driver_dc;
 #	endif
 #endif // SCUMMVM
@@ -47,7 +47,7 @@ sfx_pcm_device_t *pcmout_drivers[] = {
 #	ifdef HAVE_ALSA
 		&sfx_pcm_driver_alsa,
 #	endif
-#	ifdef _DREAMCAST
+#	ifdef __DC__
 		&sfx_pcm_driver_dc,
 #	endif
 #endif // SCUMMVM

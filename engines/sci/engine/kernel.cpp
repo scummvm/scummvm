@@ -28,7 +28,7 @@
 #include "sci/engine/gc.h"
 #include "sci/include/sciresource.h"
 #include "sci/include/engine.h"
-#ifdef _WIN32
+#ifdef WIN32
 #	include <windows.h>
 #	include <mmsystem.h>
 #endif
@@ -90,7 +90,7 @@ reg_t kGlobalToLocal(struct _state *s, int funct_nr, int argc, reg_t *argv);
 reg_t kLocalToGlobal(struct _state *s, int funct_nr, int argc, reg_t *argv);
 reg_t kWait(struct _state *s, int funct_nr, int argc, reg_t *argv);
 reg_t kRestartGame(struct _state *s, int funct_nr, int argc, reg_t *argv);
-#ifdef _WIN32
+#ifdef WIN32
 reg_t kDeviceInfo_Win32(struct _state *s, int funct_nr, int argc, reg_t *argv);
 #else
 reg_t kDeviceInfo_Unix(struct _state *s, int funct_nr, int argc, reg_t *argv);
@@ -300,9 +300,9 @@ sci_kernel_function_t kfunct_mappers[] = {
 /*64*/	DEFUN("ValidPath", kValidPath, "r"),
 /*65*/	DEFUN("CoordPri", kCoordPri, "i"),
 /*66*/	DEFUN("StrAt", kStrAt, "rii*"),
-#ifdef _WIN32
+#ifdef WIN32
 /*67*/	DEFUN("DeviceInfo", kDeviceInfo_Win32, "i.*"),
-#else /* !_WIN32 */
+#else /* !WIN32 */
 /*67*/	DEFUN("DeviceInfo", kDeviceInfo_Unix, "i.*"),
 #endif
 /*68*/	DEFUN("GetSaveDir", kGetSaveDir, ""),
@@ -547,22 +547,22 @@ kGetTime(state_t *s, int funct_nr, int argc, reg_t *argv)
 				 | KERNEL_OPT_FLAG_GOT_2NDEVENT);
 #endif
 
-#ifdef _WIN32
+#ifdef WIN32
 	if (TIMERR_NOERROR != timeBeginPeriod(1))
 	{
 		fprintf(stderr, "timeBeginPeriod(1) failed in kGetTime!\n");
 	}
-#endif /* _WIN32 */
+#endif /* WIN32 */
 
 	the_time = time(NULL);
 	loc_time = localtime(&the_time);
 
-#ifdef _WIN32
+#ifdef WIN32
 	if (TIMERR_NOERROR != timeEndPeriod(1))
 	{
 		fprintf(stderr, "timeEndPeriod(1) failed in kGetTime!\n");
 	}
-#endif /* _WIN32 */
+#endif /* WIN32 */
 
 	if (s->version<SCI_VERSION_FTU_NEW_GETTIME) { /* Use old semantics */
 		if (argc) { /* Get seconds since last am/pm switch */

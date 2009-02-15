@@ -71,7 +71,7 @@ void usleep (long usec);
 	} while (0);
 #endif
 
-#ifdef _DREAMCAST
+#ifdef __DC__
 #  include <kos/thread.h>
 #endif
 
@@ -512,7 +512,7 @@ sci_get_homedir(void)
 	return _path_buf;
 #elif defined(__unix__) || !defined(X_DISPLAY_MISSING) || defined (__BEOS__) || defined(MACOSX)
 	return getenv("HOME");
-#elif defined(_DREAMCAST)
+#elif defined(__DC__)
 	return NULL;
 #elif defined(__amigaos4__)
 	return "/PROGDIR/";
@@ -581,7 +581,7 @@ sci_sched_yield(void)
 	sched_yield();
 }
 
-#elif defined (_DREAMCAST)
+#elif defined (__DC__)
 
 void
 sci_sched_yield()
@@ -736,7 +736,7 @@ sci_getcwd(void)
 	return NULL;
 }
 
-#ifdef _DREAMCAST
+#ifdef __DC__
 
 int
 sci_fd_size(int fd)

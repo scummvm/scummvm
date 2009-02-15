@@ -26,7 +26,7 @@
 #include "instrument-map.h"
 #include <resource.h>
 
-#ifdef _WIN32
+#ifdef WIN32
 #  include <win32/sci_win32.h>
 #  include <windows.h>
 #endif
@@ -381,7 +381,7 @@ midi_mt32_sysex_delay(void)
   /* Under Win32, we won't get any sound, in any case... */
 #ifdef HAVE_USLEEP
 	usleep(320 * 63); /* One MIDI byte is 320us, 320us * 63 > 20ms */
-#elif defined (_WIN32)
+#elif defined (WIN32)
 	Sleep(((320 * 63) / 1000) + 1);
 #elif defined (__BEOS__)
 	snooze(320 * 63);

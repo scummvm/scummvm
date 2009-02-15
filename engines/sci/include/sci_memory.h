@@ -71,7 +71,7 @@
 #include "common/scummsys.h"
 #include "sci/include/resource.h"
 
-#ifdef _WIN32
+#ifdef WIN32
 #  undef scim_inline /* just to be sure it is not defined */
 #  define scim_inline __inline
 #elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199900L
@@ -371,7 +371,7 @@ sci_refcount_memdup(void *data, size_t len);
 
 /********** other memory/debug related routines **********/
 
-#ifdef _WIN32
+#ifdef WIN32
 extern void
 debug_win32_memory(int dbg_setting);
 /* Sets debugging for Win32 memory.

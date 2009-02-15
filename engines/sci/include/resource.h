@@ -44,7 +44,7 @@
 #define SCI_INVALID_FD -1
 #define IS_VALID_FD(a) ((a) != SCI_INVALID_FD) /* Tests validity of a file descriptor */
 
-#ifdef _WIN32
+#ifdef WIN32
 #  ifndef _Win32
 #    define _Win32
 /* Work around problem with some versions of flex */
@@ -123,14 +123,12 @@
 #  include <sys/stat.h>
 #endif
 #include <assert.h>
-#ifdef _DOS
-#  include <sci_dos.h>
-#endif
 #ifdef HAVE_LIMITS_H
 #  include <limits.h>
 #endif
 
-#if _MSC_VER || _DOS
+// FIXME: Get rid of G_DIR_SEPARATOR  / G_DIR_SEPARATOR_S
+#if _MSC_VER
 #  define G_DIR_SEPARATOR_S "\\"
 #  define G_DIR_SEPARATOR '\\'
 #else
@@ -138,6 +136,7 @@
 #  define G_DIR_SEPARATOR '/'
 #endif
 
+// FIXME: Get rid of MIN / MAX, use common/util.h instead
 #ifndef MIN
 #  define MIN(a, b)  (((a) < (b)) ? (a) : (b))
 #endif
@@ -161,13 +160,13 @@
 
 #define MAX_HOMEDIR_SIZE 255
 
-#ifdef _WIN32
+#ifdef WIN32
 #  define FO_BINARY "b"
 #else
 #  define FO_BINARY ""
 #endif
 
-#ifdef _WIN32
+#ifdef WIN32
 #  define FO_TEXT "t"
 #else
 #  define FO_TEXT ""
@@ -179,7 +178,7 @@
 
 /**** FUNCTION DECLARATIONS ****/
 
-#ifdef _WIN32
+#ifdef WIN32
 #    define scimkdir(arg1,arg2) mkdir(arg1)
 #else
 #    define scimkdir(arg1,arg2) mkdir(arg1,arg2)

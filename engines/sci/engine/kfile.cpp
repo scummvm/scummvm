@@ -30,12 +30,12 @@
 #include "sci/include/engine.h"
 
 
-#ifdef _WIN32
+#ifdef WIN32
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
-#elif defined (_DREAMCAST)
+#elif defined (__DC__)
 #  include <dc.h>
 #endif
 
@@ -405,7 +405,7 @@ delete_savegame(state_t *s, int savedir_nr)
 #define K_DEVICE_INFO_GET_SAVECAT_NAME 7
 #define K_DEVICE_INFO_GET_SAVEFILE_NAME 8
 
-#ifdef _WIN32
+#ifdef WIN32
 
 reg_t
 kDeviceInfo_Win32(state_t *s, int funct_nr, int argc, reg_t *argv)
@@ -487,7 +487,7 @@ kDeviceInfo_Win32(state_t *s, int funct_nr, int argc, reg_t *argv)
 	return s->r_acc;
 }
 
-#else /* !_WIN32 */
+#else /* !WIN32 */
 
 reg_t
 kDeviceInfo_Unix(state_t *s, int funct_nr, int argc, reg_t *argv)
@@ -553,7 +553,7 @@ kDeviceInfo_Unix(state_t *s, int funct_nr, int argc, reg_t *argv)
 	return s->r_acc;
 }
 
-#endif /* !_WIN32 */
+#endif /* !WIN32 */
 
 
 reg_t
@@ -662,7 +662,7 @@ _k_find_savegame_by_name(char *game_id_file, char *name)
 	return 0;
 }
 
-#ifdef _DREAMCAST
+#ifdef __DC__
 static long
 get_file_mtime(int fd)
 {
@@ -1140,7 +1140,7 @@ kFileIO(state_t *s, int funct_nr, int argc, reg_t *argv)
 	reg_t buf = argv[2];
 	/* int attr = UKPV(3); */ /* We won't use this, Win32 might, though... */
 
-#ifndef _WIN32
+#ifndef WIN32
 	if (strcmp(mask, "*.*")==0) strcpy(mask, "*"); /* For UNIX */
 #endif
 	first_file(s, ".", mask, buf);

@@ -26,7 +26,7 @@
 ***************************************************************************/
 
 /* set optimisations for Win32: */
-#ifdef _WIN32
+#ifdef WIN32
 #  include <memory.h>
 //#  pragma intrinsic( memcpy, memset )
 #endif

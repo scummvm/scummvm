@@ -25,7 +25,7 @@
 
 #include "fmopl.h"
 
-#ifdef _DREAMCAST
+#ifdef __DC__
 #define SAMPLE_RATE 22050
 #define CHANNELS SFX_PCM_MONO
 #define STEREO 0

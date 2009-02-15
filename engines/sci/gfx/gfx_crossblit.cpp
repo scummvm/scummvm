@@ -42,7 +42,7 @@
 /* t on: use fast code */
 /* y on: suppress creation of frame pointers on stack */
 /* s off: disable minimize size code */
-#ifdef _WIN32
+#ifdef WIN32
 #	include <memory.h>
 #	ifndef SATISFY_PURIFY
 #		pragma optimize( "s", off )
@@ -104,6 +104,6 @@ static void FUNCTION_NAME(byte *dest, byte *src, int bytes_per_dest_line, int by
 
 /* reset to original optimisations for Win32: */
 /* (does not reset intrinsics) */
-#ifdef _WIN32
+#ifdef WIN32
 #  pragma optimize( "", on )
 #endif

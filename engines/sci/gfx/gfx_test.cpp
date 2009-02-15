@@ -84,7 +84,7 @@ sci_gettime(long *seconds, long *useconds)
 {
         struct timeval tv;
 
-#ifdef _WIN32
+#ifdef WIN32
 	timeBeginPeriod(0);
 #endif
 
@@ -92,7 +92,7 @@ sci_gettime(long *seconds, long *useconds)
          *seconds = time(NULL);
          *useconds = tv.tv_usec;
 
-#ifdef _WIN32
+#ifdef WIN32
 	timeEndPeriod(0);
 #endif
 }

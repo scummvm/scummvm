@@ -41,7 +41,7 @@
 #include <direct.h>
 #endif
 
-#ifdef _WIN32
+#ifdef WIN32
 #pragma warning( disable : 4101 )
 #endif
 

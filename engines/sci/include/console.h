@@ -41,10 +41,6 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 
-#ifdef _DOS
-#include <sci_dos.h>
-#endif
-
 #define SCI_CONSOLE
 #include "sci/include/gfx_operations.h"
 

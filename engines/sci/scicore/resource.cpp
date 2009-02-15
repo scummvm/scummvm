@@ -36,7 +36,7 @@
 
 #include <ctype.h>
 
-#ifdef _WIN32
+#ifdef WIN32
 #include <direct.h>
 #endif
 

@@ -29,7 +29,7 @@
 #include "sci/include/sciresource.h"
 #include "sci/include/sci_memory.h"
 
-#ifdef _WIN32
+#ifdef WIN32
 #include <direct.h>
 #endif
 

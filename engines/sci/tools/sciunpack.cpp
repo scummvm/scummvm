@@ -49,7 +49,7 @@
 #endif
 
 #ifdef HAVE_GETOPT_H
-#	ifndef _WIN32
+#	ifndef WIN32
 #		include <getopt.h>
 #	else
 #		include <win32/getopt.h>
@@ -62,7 +62,7 @@
 #  endif /* HAVE_LIBPNG */
 #endif /* DRAW_GRAPHICS */
 
-#if defined (_MSC_VER) || defined (__BEOS__) || defined(_DOS) || defined(__amigaos4__)
+#if defined (_MSC_VER) || defined (__BEOS__) || defined(__amigaos4__)
 /* [DJ] fchmod is not in Visual C++ RTL - and probably not needed,anyway */
 /* [RS] (see comment above, but read MS-DOS instead of Visual C++ RTL) */
 #  define fchmod(file,mode)
@@ -92,7 +92,7 @@ static guint8 midimask = 0x01;  /* MT-32 */
 
 resource_mgr_t *resmgr;
 
-#ifdef _WIN32
+#ifdef WIN32
 #define fchmod(arg1, arg2)
 #endif
 

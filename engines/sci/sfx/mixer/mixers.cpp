@@ -30,12 +30,12 @@
 
 extern sfx_pcm_mixer_t sfx_pcm_mixer_soft_linear;
 
-#ifdef _DREAMCAST
+#ifdef __DC__
 extern sfx_pcm_mixer_t sfx_pcm_mixer_dc;
 #endif
 
 static sfx_pcm_mixer_t *mixers[] = {
-#ifdef _DREAMCAST
+#ifdef __DC__
 	&sfx_pcm_mixer_dc,
 #endif
 	&sfx_pcm_mixer_soft_linear,

@@ -62,15 +62,15 @@ typedef uint32 guint32;
 #  include <sys/types.h>
 #  include <dirent.h>
 #endif
-#ifdef _WIN32
+#ifdef WIN32
 #  include <io.h>
 #  include <sci_win32.h>
 #endif
-#ifdef _DREAMCAST
+#ifdef __DC__
 #  include <stdio.h>
 #endif
 
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(WIN32) && defined(_MSC_VER)
 #  define TYPE_16 short
 #  define TYPE_32 int
 #endif
@@ -124,7 +124,7 @@ typedef struct {
 } GTimeVal;
 
 typedef struct {
-#ifdef _WIN32
+#ifdef WIN32
 	long search;
 	struct _finddata_t fileinfo;
 #else
