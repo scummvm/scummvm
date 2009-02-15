@@ -819,10 +819,8 @@ c_step(state_t *s)
 	return 0;
 }
 
-#ifdef __GNUC__
-#warning "Re-implement con:so"
-#endif
 #if 0
+// TODO Re-implement con:so
 int
 c_stepover(state_t *s)
 {
@@ -1545,7 +1543,6 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 			int stackframe = (scr[pos.offset + 2] >> 1)
 				+ (*p_restadjust);
 			int argc = ((*p_sp)[- stackframe - 1]).offset;
-			int i;
 
 			if (s->version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER)
 				argc += (*p_restadjust);
@@ -1554,9 +1551,9 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 
 			sciprintf(" Kernel params: (");
 
-			for (i = 0; i < argc; i++) {
-				sciprintf(PREG, PRINT_REG((*p_sp)[i - stackframe]));
-				if (i+1 < argc)
+			for (int j = 0; j < argc; j++) {
+				sciprintf(PREG, PRINT_REG((*p_sp)[j - stackframe]));
+				if (j+1 < argc)
 					sciprintf(", ");
 			}
 			sciprintf(")\n");
@@ -3556,10 +3553,8 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
 			con_hook_command(c_vmvarlist, "vmvarlist", "!", "Displays the addresses of variables in the VM");
 			con_hook_command(c_step, "s", "i*", "Executes one or several operations\n\nEXAMPLES\n\n"
 					 "    s 4\n\n  Execute 4 commands\n\n    s\n\n  Execute next command");
-#ifdef __GNUC__
-#warning "Re-enable con:so hook"
-#endif
 #if 0
+			// TODO Re-implement con:so
 			con_hook_command(c_stepover, "so", "", "Executes one operation skipping over sends");
 #endif
 			con_hook_command(c_disasm_addr, "disasm-addr", "!as*", "Disassembles one or more commands\n\n"
@@ -3701,10 +3696,8 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
 			con_hook_command(c_gfx_update_zone, "gfx_update_zone", "iiii", "Propagates a rectangular area from\n  the back buffer to the front buffer"
 					 "\n\nUSAGE\n\n"
 					 "  gfx_update_zone <x> <y> <xl> <yl>");
-#ifdef __GNUC__
-#warning "Re-enable con:draw_viewobj"
-#endif
 #if 0
+			// TODO: Re-enable con:draw_viewobj
 			con_hook_command(c_gfx_draw_viewobj, "draw_viewobj", "i", "Draws the nsRect and brRect of a\n  dynview object.\n\n  nsRect is green, brRect\n"
 					 "  is blue.\n");
 #endif

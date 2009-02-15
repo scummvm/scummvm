@@ -146,18 +146,18 @@ sciw_new_window(state_t *s, rect_t area, int font, gfx_color_t color, gfx_color_
 	gfx_state_t *state = s->gfx_state;
 	int shadow_offset = 2;
 	rect_t frame;
-	gfx_color_t black	= {0};
+	gfx_color_t black	= {{0, 0, 0, 0}, 0, 0, 0, 0};
 	gfxw_port_t *win;
 	gfxw_list_t *decorations;
-	int xextra = !(flags & WINDOW_FLAG_NOFRAME) ? 1 : 0;
-	int yextra = !(flags & WINDOW_FLAG_NOFRAME) ? 2 : 0;
+//	int xextra = !(flags & WINDOW_FLAG_NOFRAME) ? 1 : 0;
+//	int yextra = !(flags & WINDOW_FLAG_NOFRAME) ? 2 : 0;
 
 	if (area.xl == 319 && area.yl == 189)
 	{
 		flags |= WINDOW_FLAG_NOFRAME;
 		/* The below line makes the points bar in QfG2 work, but breaks
 		   the one in QfG1. Hm. */
-		if (bgcolor.priority == 255) /* Yep, QfG2 */
+		if ((byte)bgcolor.priority == 255) /* Yep, QfG2 */
 			area.y += 3;
 	}
 
@@ -297,7 +297,7 @@ _sciw_add_text_to_list(gfxw_list_t *list, gfxw_port_t *port, rect_t zone, char *
 		       int font, gfx_alignment_t align, char framed, char inverse, int flags,
 		       char gray_text)
 {
-	gfx_color_t *color1, *color2, *bgcolor	= {0};
+	gfx_color_t *color1, *color2, *bgcolor;
 
 	if (inverse) {
 		color1 = color2 = &(port->bgcolor);
@@ -683,7 +683,7 @@ _make_menu_entry(menu_item_t *item, int offset, int width, gfxw_port_t *port, gf
 	rect_t area		= gfx_rect(MENU_BOX_LEFT_PADDING, 0, width - MENU_BOX_LEFT_PADDING, 10);
 	rect_t list_area	= gfx_rect(port->zone.x, area.y + offset + port->zone.y, width, area.yl);
 	gfxw_list_t *list	= (gfxw_list_t *) gfxw_set_id(GFXW(gfxw_new_list(list_area, 0)), ID, GFXW_NO_ID);
-	gfx_color_t xcolor	= {0};
+	gfx_color_t xcolor	= {{0, 0, 0, 0}, 0, 0, 0, 0};
 
 	color = un_prioritize(color);
 	bgcolor = un_prioritize(bgcolor);
