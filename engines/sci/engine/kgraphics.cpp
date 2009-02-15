@@ -3378,7 +3378,7 @@ kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int index = UKPV_OR_ALT(1, 0);
 	int temp;
 	int save_under = 0;
-	gfx_color_t transparent;
+	gfx_color_t transparent = { { 0, 0, 0, 0 }, 0, 0, 0, 0 };
 	char *text;
 	gfxw_port_t *port = (s->port) ? s->port : s->picture_port;
 	int update_immediately = 1;
@@ -3390,8 +3390,6 @@ kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int gray = port->gray_text;
 	int font_nr = port->font_nr;
 	gfxw_text_t *text_handle;
-
-	transparent.mask = 0;
 
 	color0 = port->color;
 	bg_color = port->bgcolor;

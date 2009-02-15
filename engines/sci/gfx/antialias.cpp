@@ -44,7 +44,7 @@ antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t 
 
 	for (y = 0; y < pixmap->yl; y++) {
 		int visimode = (y > 0 && y + 1 < pixmap->yl) ? 1 : 0;
-		unsigned long last_pixel;
+		unsigned long last_pixel = 0;
 
 		memcpy(lastline[y & 1], data_p, line_size);
 		lastline_p = lastline[(y & 1)^1];

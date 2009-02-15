@@ -61,9 +61,8 @@ int send_calls_allocated = 0;
 int bp_flag = 0;
 static reg_t _dummy_register = NULL_REG_INITIALIZER;
 
-
-static int jump_initialized = 0;
 #ifdef HAVE_SETJMP_H
+static int jump_initialized = 0;
 static jmp_buf vm_error_address;
 #endif
 

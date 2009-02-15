@@ -351,8 +351,7 @@ scummvm_set_palette(struct _gfx_driver *drv, int index, byte red, byte green, by
 
 static sci_event_t
 scummvm_get_event(struct _gfx_driver *drv) {
-	sci_event_t input;
-	input.type = SCI_EVT_NONE;
+	sci_event_t input = { SCI_EVT_NONE, 0, 0, 0 };
 
 	Common::EventManager *em = g_system->getEventManager();
 	Common::Event ev;
