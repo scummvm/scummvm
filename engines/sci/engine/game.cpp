@@ -732,12 +732,9 @@ game_exit(state_t *s)
 		sci_free(s->execution_stack);
 	}
 
-#if 0
 	sfx_exit(&s->sound);
 /* Reinit because some other code depends on having a valid state */
 	game_init_sound(s, SFX_STATE_FLAG_NOSOUND); 
-#else
-#endif
 
 	sm_destroy(&s->seg_manager);
 	
