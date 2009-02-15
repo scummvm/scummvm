@@ -43,6 +43,8 @@
 
 #ifdef _WIN32
 #pragma warning( disable : 4101 )
+#undef strcasecmp
+#define strcasecmp _stricmp
 #endif
 
 #define HUNK_TYPE_GFX_SNAPSHOT_STRING "g\n"
@@ -4126,7 +4128,7 @@ int min, max, i;
 
 /* Auto-generated CFSML declaration and function block ends here */
 /* Auto-generation performed by cfsml.pl 0.8.2 */
-#line 402 "savegame.cfsml"
+#line 404 "savegame.cfsml"
 
 void 
 write_songlib_t(FILE *fh, songlib_t *songlib)
@@ -4146,7 +4148,7 @@ write_songlib_t(FILE *fh, songlib_t *songlib)
   _cfsml_write_song_t(fh, seeker);
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 417 "savegame.cfsml"
+#line 419 "savegame.cfsml"
       seeker = seeker->next;
     }
   fprintf(fh, "]\n");
@@ -4192,7 +4194,7 @@ read_songlib_t(FILE *fh, songlib_t *songlib, char *lastval, int *line, int *hite
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 440 "savegame.cfsml"
+#line 442 "savegame.cfsml"
       song_lib_add(*songlib, newsong);
     }  
   fscanf(fh, "]\n");
@@ -4239,7 +4241,7 @@ write_int_hash_map_tp(FILE *fh, int_hash_map_t **foo)
   _cfsml_write_int_hash_map_t(fh, *foo);
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 482 "savegame.cfsml"
+#line 484 "savegame.cfsml"
 }
 
 void
@@ -4250,7 +4252,7 @@ write_song_tp(FILE *fh, song_t **foo)
   _cfsml_write_song_t(fh, *foo);
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 488 "savegame.cfsml"
+#line 490 "savegame.cfsml"
 }
 
 song_iterator_t *
@@ -4286,7 +4288,7 @@ read_song_tp(FILE *fh, song_t **foo, char *lastval, int *line, int *hiteof)
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 501 "savegame.cfsml"
+#line 503 "savegame.cfsml"
   (*foo)->delay = 0;
   (*foo)->it = NULL;
   (*foo)->next_playing = (*foo)->next_stopping = (*foo)->next = NULL;
@@ -4319,7 +4321,7 @@ read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, char *lastval, int *line, i
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 511 "savegame.cfsml"
+#line 513 "savegame.cfsml"
 	(*foo)->holes = NULL;
 	return 0;
 }
@@ -4340,7 +4342,7 @@ write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo)
   write_int_hash_map_node_tp(fh, &((*foo)->next));
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 527 "savegame.cfsml"
+#line 529 "savegame.cfsml"
 		} else fputc('L', fh);
 		fputs("]", fh);
 	}
@@ -4399,7 +4401,7 @@ write_menubar_tp(FILE *fh, menubar_t **foo)
   _cfsml_write_menubar_t(fh, (*foo));
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 581 "savegame.cfsml"
+#line 583 "savegame.cfsml"
 
 	} else { /* Nothing to write */
 		fputs("\\null\\", fh);
@@ -4439,7 +4441,7 @@ read_menubar_tp(FILE *fh, menubar_t **foo, char *lastval, int *line, int *hiteof
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 598 "savegame.cfsml"
+#line 600 "savegame.cfsml"
 
 	}
 	return *hiteof;
@@ -4454,7 +4456,7 @@ write_mem_obj_t(FILE *fh, mem_obj_t *foo)
   _cfsml_write_int(fh, &foo->segmgr_id);
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 608 "savegame.cfsml"
+#line 610 "savegame.cfsml"
 	switch (foo->type)
 	{
 	case MEM_OBJ_SCRIPT:
@@ -4463,7 +4465,7 @@ write_mem_obj_t(FILE *fh, mem_obj_t *foo)
   _cfsml_write_script_t(fh, &foo->data.script);
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 612 "savegame.cfsml"
+#line 614 "savegame.cfsml"
 	break;
 	case MEM_OBJ_CLONES:
 #line 877 "savegame.cfsml"
@@ -4471,7 +4473,7 @@ write_mem_obj_t(FILE *fh, mem_obj_t *foo)
   _cfsml_write_clone_table_t(fh, &foo->data.clones);
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 615 "savegame.cfsml"
+#line 617 "savegame.cfsml"
 	break;
 	case MEM_OBJ_LOCALS:
 #line 877 "savegame.cfsml"
@@ -4479,7 +4481,7 @@ write_mem_obj_t(FILE *fh, mem_obj_t *foo)
   _cfsml_write_local_variables_t(fh, &foo->data.locals);
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 618 "savegame.cfsml"
+#line 620 "savegame.cfsml"
 	break;
 	case MEM_OBJ_SYS_STRINGS:
 #line 877 "savegame.cfsml"
@@ -4487,7 +4489,7 @@ write_mem_obj_t(FILE *fh, mem_obj_t *foo)
   _cfsml_write_sys_strings_t(fh, &foo->data.sys_strings);
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 621 "savegame.cfsml"
+#line 623 "savegame.cfsml"
 	break;
 	case MEM_OBJ_STACK:
 #line 877 "savegame.cfsml"
@@ -4495,7 +4497,7 @@ write_mem_obj_t(FILE *fh, mem_obj_t *foo)
   _cfsml_write_int(fh, &foo->data.stack.nr);
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 624 "savegame.cfsml"
+#line 626 "savegame.cfsml"
 	break;
 	case MEM_OBJ_HUNK:
 		break;
@@ -4505,7 +4507,7 @@ write_mem_obj_t(FILE *fh, mem_obj_t *foo)
   _cfsml_write_list_table_t(fh, &foo->data.lists);
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 629 "savegame.cfsml"
+#line 631 "savegame.cfsml"
 	break;
 	case MEM_OBJ_NODES:	
 #line 877 "savegame.cfsml"
@@ -4513,7 +4515,7 @@ write_mem_obj_t(FILE *fh, mem_obj_t *foo)
   _cfsml_write_node_table_t(fh, &foo->data.nodes);
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 632 "savegame.cfsml"
+#line 634 "savegame.cfsml"
 	break;
 	case MEM_OBJ_DYNMEM:
 #line 877 "savegame.cfsml"
@@ -4521,7 +4523,7 @@ write_mem_obj_t(FILE *fh, mem_obj_t *foo)
   _cfsml_write_dynmem_t(fh, &foo->data.dynmem);
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 635 "savegame.cfsml"
+#line 637 "savegame.cfsml"
 	break;
 	}
 }
@@ -4561,7 +4563,7 @@ read_mem_obj_t(FILE *fh, mem_obj_t *foo, char *lastval, int *line, int *hiteof)
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 651 "savegame.cfsml"
+#line 653 "savegame.cfsml"
 	switch (foo->type)
 	{
 	case MEM_OBJ_SCRIPT:
@@ -4589,7 +4591,7 @@ read_mem_obj_t(FILE *fh, mem_obj_t *foo, char *lastval, int *line, int *hiteof)
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 655 "savegame.cfsml"
+#line 657 "savegame.cfsml"
 	break;
 	case MEM_OBJ_CLONES:
 /* Auto-generated CFSML data reader code */
@@ -4616,7 +4618,7 @@ read_mem_obj_t(FILE *fh, mem_obj_t *foo, char *lastval, int *line, int *hiteof)
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 658 "savegame.cfsml"
+#line 660 "savegame.cfsml"
 	break;
 	case MEM_OBJ_LOCALS:
 /* Auto-generated CFSML data reader code */
@@ -4643,7 +4645,7 @@ read_mem_obj_t(FILE *fh, mem_obj_t *foo, char *lastval, int *line, int *hiteof)
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 661 "savegame.cfsml"
+#line 663 "savegame.cfsml"
 	break;
 	case MEM_OBJ_SYS_STRINGS:
 /* Auto-generated CFSML data reader code */
@@ -4670,7 +4672,7 @@ read_mem_obj_t(FILE *fh, mem_obj_t *foo, char *lastval, int *line, int *hiteof)
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 664 "savegame.cfsml"
+#line 666 "savegame.cfsml"
 	break;
 	case MEM_OBJ_LISTS:
 /* Auto-generated CFSML data reader code */
@@ -4697,7 +4699,7 @@ read_mem_obj_t(FILE *fh, mem_obj_t *foo, char *lastval, int *line, int *hiteof)
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 667 "savegame.cfsml"
+#line 669 "savegame.cfsml"
 	break;
 	case MEM_OBJ_NODES:
 /* Auto-generated CFSML data reader code */
@@ -4724,7 +4726,7 @@ read_mem_obj_t(FILE *fh, mem_obj_t *foo, char *lastval, int *line, int *hiteof)
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 670 "savegame.cfsml"
+#line 672 "savegame.cfsml"
 	break;
 	case MEM_OBJ_STACK:
 /* Auto-generated CFSML data reader code */
@@ -4751,7 +4753,7 @@ read_mem_obj_t(FILE *fh, mem_obj_t *foo, char *lastval, int *line, int *hiteof)
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 673 "savegame.cfsml"
+#line 675 "savegame.cfsml"
 	foo->data.stack.entries = (reg_t *)sci_calloc(foo->data.stack.nr, sizeof(reg_t));
 	break;
 	case MEM_OBJ_HUNK:
@@ -4782,7 +4784,7 @@ read_mem_obj_t(FILE *fh, mem_obj_t *foo, char *lastval, int *line, int *hiteof)
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 680 "savegame.cfsml"
+#line 682 "savegame.cfsml"
 	break;
 	}
 
@@ -4799,7 +4801,7 @@ write_mem_obj_tp(FILE *fh, mem_obj_t **foo)
   write_mem_obj_t(fh, (*foo));
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 692 "savegame.cfsml"
+#line 694 "savegame.cfsml"
 
 	} else { /* Nothing to write */
 		fputs("\\null\\", fh);
@@ -4837,7 +4839,7 @@ read_mem_obj_tp(FILE *fh, mem_obj_t **foo, char *lastval, int *line, int *hiteof
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 707 "savegame.cfsml"
+#line 709 "savegame.cfsml"
 		return *hiteof;
 	}
 	return 0;
@@ -4909,7 +4911,7 @@ SCI_MEMTEST;
   _cfsml_write_state_t(fh, s);
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
-#line 774 "savegame.cfsml"
+#line 776 "savegame.cfsml"
 SCI_MEMTEST;
 
 	fclose(fh);
@@ -5282,7 +5284,7 @@ gamestate_restore(state_t *s, char *dirname)
      }
   }
 /* End of auto-generated CFSML data reader code */
-#line 1117 "savegame.cfsml"
+#line 1119 "savegame.cfsml"
 
 	fclose(fh);
 
