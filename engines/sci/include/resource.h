@@ -59,8 +59,8 @@
 
 #ifdef SCUMMVM
 //TODO: Remove these defines by replacing their functionality by their ScummVM counterparts
-#define HAVE_ISBLANK
 #ifndef _MSC_VER
+#define HAVE_ISBLANK
 #define HAVE_UNISTD_H
 #define HAVE_FCNTL_H
 #define HAVE_UNLINK
