@@ -1074,7 +1074,7 @@ bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 si
 	const uint8 *src = data;
 	uint8 *dst = buffer;
 
-	for (int i = 0; i < (size >> 1); i++) {
+	for (uint i = 0; i < (size >> 1); i++) {
 		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
 		src += 2;
 		dst += 2;
@@ -1085,7 +1085,6 @@ bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 si
 
 bool extractLolButtonDefs(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
 	int num = size / 22;
-	uint32 outsize = num * 18;
 	uint8 *buffer = new uint8[size];
 	const uint8 *src = data;
 	uint8 *dst = buffer;
