@@ -36,12 +36,9 @@
 #include "sci/include/sci_widgets.h"
 #include "sci/include/reg_t_hashmap.h"
 
-#ifdef _MSC_VER
-#	include <mmsystem.h>
-#endif
-
 #ifdef _WIN32
 #	include <windows.h>
+#	include <mmsystem.h>
 #	include <io.h>
 #	ifdef sleep
 #		undef sleep

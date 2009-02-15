@@ -28,11 +28,8 @@
 #include "sci/include/engine.h"
 
 
-#ifdef _MSC_VER
-#define MAX_PATHLEN MAXPATHLEN
-#endif
-
 #ifdef _WIN32
+#define MAX_PATHLEN MAXPATHLEN
 #  ifndef PATH_MAX
 #    define PATH_MAX 255
 #  endif
@@ -40,7 +37,6 @@
 #  include <windows.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
-#  define stat _stat
 #elif defined (_DREAMCAST)
 #  include <dc.h>
 #endif

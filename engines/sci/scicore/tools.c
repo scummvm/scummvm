@@ -35,13 +35,13 @@
 #ifdef _MSC_VER
 #  include <sys/timeb.h>
 #  include <windows.h>
-#  include <mmsystem.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
 #endif
 
 #ifdef _WIN32
 #  include <windows.h>
+#  include <mmsystem.h>
 
 void usleep (long usec);
 
@@ -63,7 +63,7 @@ void usleep (long usec);
 	} while (0);
 #endif
 
-#if !defined(HAVE_FNMATCH) && !defined(_MSC_VER)
+#if !defined(HAVE_FNMATCH) && !defined(_WIN32)
 #  include <beos/fnmatch.h>
 #endif
 
@@ -296,7 +296,7 @@ sci_get_current_time(GTimeVal *val)
 
 
 /************* Directory entities *************/
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
 /******** Dir: Win32 CODE ********/
 
 void
