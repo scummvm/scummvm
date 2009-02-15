@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     ];
 
     UIApplicationUseLegacyEvents(1);
-    int returnCode = UIApplicationMain(argc, argv, nil, @"iPhoneMain");
+    int returnCode = UIApplicationMain(argc, argv, @"iPhoneMain", @"iPhoneMain");
     [ autoreleasePool release ];
     return returnCode;
 }
@@ -89,8 +89,11 @@ int main(int argc, char** argv) {
 	_view = [[iPhoneView alloc] initWithFrame: rect];	
 	[_window setContentView: _view];
 
-	[_window orderFront: self];
-	[_window makeKey: self];
+	//[_window orderFront: self];
+	//[_window makeKey: self];
+
+  	[_window addSubview:_view];
+	[_window makeKeyAndVisible];
 
 	[NSThread detachNewThreadSelector:@selector(mainLoop:) toTarget:self withObject:nil];
 }

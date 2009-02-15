@@ -300,7 +300,7 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 	}
 #endif
 
-#if defined(MACOSX) || defined(IPHONE)
+#ifdef MACOSX
 	// Get URL of the Resource directory of the .app bundle
 	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
 	if (fileUrl) {
