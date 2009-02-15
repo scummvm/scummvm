@@ -53,6 +53,7 @@ public:
 	void open();
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	const Common::String& getDomain() const { return _domain; }
 
 	virtual void reflowLayout();
 
