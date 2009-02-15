@@ -597,9 +597,9 @@ kSort(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	for (i=0;i<input_size;i++)
 	{
-		reg_t node = _k_new_node(s, temp_array[i].key,
+		reg_t lNode = _k_new_node(s, temp_array[i].key,
 					 temp_array[i].value);
-		_k_add_to_end(s, output_data, node);
+		_k_add_to_end(s, output_data, lNode);
 	}
 
 	free(temp_array);

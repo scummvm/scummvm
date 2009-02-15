@@ -415,7 +415,7 @@ reg_t
 kMoveCursor(state_t *s, int funct_nr, int argc, reg_t *argv)
 {
 	point_t newpos;
-	static point_t oldpos = {0};
+	static point_t oldpos = {0,0};
 
 	newpos = s->gfx_state->pointer_pos;
 
@@ -2168,7 +2168,7 @@ _k_make_view_list(state_t *s, gfxw_list_t **widget_list, list_t *list, int optio
 	while (node) {
 		reg_t obj = node->value; /* The object we're using */
 		reg_t next_node;
-		gfxw_dyn_view_t *widget;
+		gfxw_dyn_view_t *tempWidget;
 
 		if (options & _K_MAKE_VIEW_LIST_CYCLE) {
 			unsigned int signal = GET_SEL32V(obj, signal);
@@ -2186,10 +2186,10 @@ _k_make_view_list(state_t *s, gfxw_list_t **widget_list, list_t *list, int optio
 		    list->first.offset == 0) /* The cast list was completely emptied! */
 			break;
 
-		widget = _k_make_dynview_obj(s, obj, options, sequence_nr--,
+		tempWidget = _k_make_dynview_obj(s, obj, options, sequence_nr--,
 					     funct_nr, argc, argv);
-		if (widget) 
-			GFX_ASSERT((*widget_list)->add(GFXWC(*widget_list), GFXW(widget)));
+		if (tempWidget) 
+			GFX_ASSERT((*widget_list)->add(GFXWC(*widget_list), GFXW(tempWidget)));
 
 			node = LOOKUP_NODE(next_node); /* Next node */
 		}
@@ -2583,7 +2583,7 @@ kSetPort(state_t *s, int funct_nr, int argc, reg_t *argv)
 		   official semantics) would cut off the lower part of the
 		   icons in an SCI1 icon bar. Instead we have an
 		   iconbar_port that does not exist in SSCI. */
-		if (port_nr == -1) port_nr = s->iconbar_port->ID;
+		if (port_nr == (unsigned int)-1) port_nr = s->iconbar_port->ID;
 
 		new_port = gfxw_find_port(s->visual, port_nr);
 
@@ -2728,7 +2728,7 @@ kNewWindow(state_t *s, int funct_nr, int argc, reg_t *argv)
 	gfx_color_t bgcolor;
 	gfx_color_t fgcolor;
 	gfx_color_t black;
-	gfx_color_t white;
+	gfx_color_t lWhite;
 	int priority;
 	int argextra = argc == 13 ? 4 : 0; /* Triggers in PQ3 */
 
@@ -2766,13 +2766,13 @@ kNewWindow(state_t *s, int funct_nr, int argc, reg_t *argv)
 	black.visual = *(get_pic_color(s, 0));
 	black.mask = GFX_MASK_VISUAL;
 	black.alpha = 0;
-	white.visual = *(get_pic_color(s, s->resmgr->sci_version < SCI_VERSION_01_VGA ? 15 : 255)),
-	white.mask = GFX_MASK_VISUAL;
-	white.alpha = 0;
+	lWhite.visual = *(get_pic_color(s, s->resmgr->sci_version < SCI_VERSION_01_VGA ? 15 : 255)),
+	lWhite.mask = GFX_MASK_VISUAL;
+	lWhite.alpha = 0;
 
 	window = sciw_new_window(s, gfx_rect(x, y, xl, yl), s->titlebar_port->font_nr,
 				 fgcolor, bgcolor, s->titlebar_port->font_nr,
-				 white,
+				 lWhite,
 				 black,
 				 argv[4+argextra].segment ? kernel_dereference_char_pointer(s, argv[4+argextra], 0) : NULL, 
 				 flags);
