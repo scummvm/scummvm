@@ -1336,11 +1336,11 @@ static bool MatchingLevels(PPOLYGON p1, PPOLYGON p2) {
 	Poly pp1(pps, p1->pIndex);	// This polygon 1
 	Poly pp2(pps, p2->pIndex);	// This polygon 2
 
-	assert(pp1.level1 <= pp1.level2);
-	assert(pp2.level1 <= pp2.level2);
+	assert((int32)FROM_LE_32(pp1.level1) <= (int32)FROM_LE_32(pp1.level2));
+	assert((int32)FROM_LE_32(pp2.level1) <= (int32)FROM_LE_32(pp2.level2));
 
-	for (int pl = pp1.level1; pl <= pp1.level2; pl++) {
-		if (pl >= pp2.level1 && pl <= pp2.level2)
+	for (int pl = (int32)FROM_LE_32(pp1.level1); pl <= (int32)FROM_LE_32(pp1.level2); pl++) {
+		if (pl >= (int32)FROM_LE_32(pp2.level1) && pl <= (int32)FROM_LE_32(pp2.level2))
 			return true;
 	}
 
