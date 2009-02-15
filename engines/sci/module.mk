@@ -88,7 +88,7 @@ MODULE_OBJS = \
 	sfx/softseq/pcspeaker.o \
 	sfx/softseq/SN76496.o \
 	sfx/softseq/softsequencers.o \
-	sfx/timer/scummvm.o \
+	sfx/timer/timer_scummvm.o \
 	sfx/timer/timers.o
 
 # FIXME: The following is supposed to be a set of *temporary* hacks
