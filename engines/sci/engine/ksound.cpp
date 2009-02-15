@@ -421,7 +421,7 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 	case _K_SCI01_SOUND_PLAY_HANDLE :
 	{
 		int looping = GET_SEL32V(obj, loop);
-		int vol = GET_SEL32V(obj, vol);
+		//int vol = GET_SEL32V(obj, vol);
 		int pri = GET_SEL32V(obj, pri);
 		RESTORE_BEHAVIOR rb = (RESTORE_BEHAVIOR) UKPV(2); 		/* Too lazy to look up a default value for this */
 
@@ -439,9 +439,9 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 	}
 	case _K_SCI01_SOUND_INIT_HANDLE :
 	{
-		int looping = GET_SEL32V(obj, loop);
-		int vol = GET_SEL32V(obj, vol);
-		int pri = GET_SEL32V(obj, pri);
+		//int looping = GET_SEL32V(obj, loop);
+		//int vol = GET_SEL32V(obj, vol);
+		//int pri = GET_SEL32V(obj, pri);
 
 		if (obj.segment && (scir_test_resource(s->resmgr, sci_sound, number)))
 		{
@@ -475,7 +475,7 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 		/* FIXME: Update the sound server state with 'vol' */
 		int looping = GET_SEL32V(obj, loop);
-		int vol = GET_SEL32V(obj, vol);
+		//int vol = GET_SEL32V(obj, vol);
 		int pri = GET_SEL32V(obj, pri);
 
 		sfx_song_set_loops(&s->sound,
@@ -604,14 +604,14 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 	case _K_SCI01_SOUND_MIDI_SEND :
 	{
 		int channel = SKPV(2);
-		int command = UKPV(3) == 0xff ? 
+		int midiCmd = UKPV(3) == 0xff ? 
 		  0xe0 : /* Pitch wheel */
 		  0xb0; /* UKPV(3) is actually a controller number */
 		int controller = UKPV(3);
 		int param = UKPV(4);
 
 		sfx_send_midi(&s->sound, handle, 
-			      channel, command, controller, param);
+			      channel, midiCmd, controller, param);
 		break;
 	}
 	case _K_SCI01_SOUND_REVERB :
@@ -620,7 +620,7 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 	}
 	case _K_SCI01_SOUND_HOLD :
 	{
-		int flag = SKPV(2);
+		//int flag = SKPV(2);
 		break;
 	}
 	}
@@ -723,7 +723,7 @@ kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv)
 	case _K_SCI1_SOUND_PLAY_HANDLE :
 	{
 		int looping = GET_SEL32V(obj, loop);
-		int vol = GET_SEL32V(obj, vol);
+		//int vol = GET_SEL32V(obj, vol);
 		int pri = GET_SEL32V(obj, pri);
 		song_t *song = song_lib_find(s->sound.songlib, handle);
 
@@ -766,9 +766,9 @@ kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv)
 	}
 	case _K_SCI1_SOUND_INIT_HANDLE :
 	{
-		int looping = GET_SEL32V(obj, loop);
-		int vol = GET_SEL32V(obj, vol);
-		int pri = GET_SEL32V(obj, pri);
+		//int looping = GET_SEL32V(obj, loop);
+		//int vol = GET_SEL32V(obj, vol);
+		//int pri = GET_SEL32V(obj, pri);
 
 		if (GET_SEL32V(obj, nodePtr))
 		{
@@ -869,9 +869,9 @@ kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv)
 	case _K_SCI1_SOUND_UPDATE_CUES :
 	{
 		int signal = 0;
-		int min = 0;
-		int sec = 0;
-		int frame = 0;
+		//int min = 0;
+		//int sec = 0;
+		//int frame = 0;
 		int result = SI_LOOP; /* small hack */
 		int cue = 0;
 
