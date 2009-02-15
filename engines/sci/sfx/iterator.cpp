@@ -799,7 +799,7 @@ _sci1_song_init(sci1_song_iterator_t *self)
 {
 	sci1_sample_t *seeker;
 	int last_time;
-	int offset = 0;
+	unsigned int offset = 0;
 	self->channels_nr = 0;
 	self->next_sample = 0;
 //	self->device_id = 0x0c;
@@ -947,6 +947,8 @@ _sci1_no_delta_time(sci1_song_iterator_t *self)
 	return 1;
 }
 
+#if 0
+// Unreferenced - removed
 static void
 _sci1_dump_state(sci1_song_iterator_t *self)
 {
@@ -982,6 +984,7 @@ _sci1_dump_state(sci1_song_iterator_t *self)
 	}
 	sciprintf("------------------------------------------\n");
 }
+#endif
 
 #define COMMAND_INDEX_NONE -1
 #define COMMAND_INDEX_PCM -2
@@ -1537,7 +1540,7 @@ _tee_read_next_command(tee_song_iterator_t *it, unsigned char *buf,
 	if ((it->status & (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE))
 	    != (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE)) {
 		/* Not all are is active? */
-		int which;
+		int which = 0;
 #ifdef DEBUG_TEE_ITERATOR
 		fprintf(stderr, "\tRequesting transformation...\n");
 #endif
@@ -1742,6 +1745,8 @@ _tee_init(tee_song_iterator_t *it)
 	it->children[TEE_RIGHT].it->init(it->children[TEE_RIGHT].it);
 }
 
+#if 0
+// Unreferenced - removed
 static void
 _tee_free(tee_song_iterator_t *it)
 {
@@ -1750,6 +1755,7 @@ _tee_free(tee_song_iterator_t *it)
 		if (it->children[i].it && it->may_destroy)
 			songit_free(it->children[i].it);
 }
+#endif
 
 static void
 songit_tee_death_notification(tee_song_iterator_t *self,

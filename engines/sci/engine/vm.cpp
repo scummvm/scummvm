@@ -683,7 +683,7 @@ run_vm(state_t *s, int restoring)
 	seg_id_t variables_seg[4]; /* Same as above, contains segment IDs */
 #ifndef DISABLE_VALIDATIONS
 	int variables_max[4]; /* Max. values for all variables */
-	int code_buf_size = 0 /* (Avoid spurious warning) */;
+	unsigned int code_buf_size = 0 /* (Avoid spurious warning) */;
 #endif
 	int temp;
 	gint16 aux_acc; /* Auxiliary 16 bit accumulator */

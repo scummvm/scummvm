@@ -18,6 +18,8 @@
 
 ***************************************************************************/
 
+#include "sci/include/gfx_resource.h"
+
 /* Generic pic filling code, to be included by sci_pic_0.c
  *
  *

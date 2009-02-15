@@ -111,6 +111,8 @@ _gfxop_alloc_colors(gfx_state_t *state, gfx_pixmap_color_t *colors, int colors_n
 		gfx_alloc_color(state->driver->mode->palette, colors + i);
 }
 
+#if 0
+// Unreferenced - removed
 static void
 _gfxop_free_colors(gfx_state_t *state, gfx_pixmap_color_t *colors, int colors_nr)
 {
@@ -122,7 +124,7 @@ _gfxop_free_colors(gfx_state_t *state, gfx_pixmap_color_t *colors, int colors_nr
 	for (i = 0; i < colors_nr; i++)
 		gfx_free_color(state->driver->mode->palette, colors + i);
 }
-
+#endif
 
 int _gfxop_clip(rect_t *rect, rect_t clipzone)
 /* Returns 1 if nothing is left */

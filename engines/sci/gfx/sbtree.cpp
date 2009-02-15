@@ -191,6 +191,7 @@ sbtree_get(sbtree_t *tree, int key)
 		return NULL;
 }
 
+#if 0
 static void
 sbtree_print(sbtree_t *tree)
 {
@@ -216,7 +217,7 @@ sbtree_print(sbtree_t *tree)
 	}
 	fprintf(stderr,"\n");
 }
-
+#endif
 
 
 /***************************** TEST CODE ********************************/

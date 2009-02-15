@@ -1977,7 +1977,7 @@ c_visible_map(state_t *s)
     sciprintf("Not in debug state\n");
     return 1;
   }
-WARNING(fixme!)
+//WARNING(fixme!)
 #if 0
   if (s->onscreen_console)
     con_restore_screen(s, s->osc_backup);
@@ -2296,6 +2296,8 @@ rr = GET_SELECTOR(pos, rr); \
 tt = GET_SELECTOR(pos, tt); \
 bb = GET_SELECTOR(pos, bb);
 
+#if 0
+// Unreferenced - removed
 static int
 c_gfx_draw_viewobj(state_t *s)
 {
@@ -2379,7 +2381,7 @@ c_gfx_draw_viewobj(state_t *s)
 	return 0;
 #endif
 }
-
+#endif
 
 static int
 c_gfx_flush_resources(state_t *s)

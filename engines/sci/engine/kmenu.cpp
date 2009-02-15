@@ -321,7 +321,7 @@ kMenuSelect(state_t *s, int funct_nr, int argc, reg_t *argv)
 	int type = GET_SEL32V(event, type);
 	int message = GET_SEL32V(event, message);
 	int modifiers = GET_SEL32V(event, modifiers);
-	int menu_nr = -1, item_nr;
+	int menu_nr = -1, item_nr = 0;
 	menu_item_t *item;
 	int menu_mode = 0; /* Menu is active */
 	int mouse_down = 0;

@@ -35,6 +35,8 @@
 ** BYTESPP: Bytes per pixel
 */
 
+#include "common/scummsys.h"
+
 /* set optimisations for Win32: */
 /* g on: enable global optimizations */
 /* t on: use fast code */

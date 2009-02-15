@@ -363,7 +363,7 @@ script_dissect(resource_mgr_t *resmgr, int res_no, char **snames, int snames_nr)
   while (_seeker < script->size) {
     int objtype = getInt16(script->data + _seeker);
     int objsize;
-    int seeker = _seeker + 4;
+    unsigned int seeker = _seeker + 4;
 
     if (!objtype) {
       sciprintf("End of script object (#0) encountered.\n");

@@ -132,7 +132,7 @@ typedef struct { /* gfx_pixmap_color_t: Pixmap-specific color entries */
 typedef struct { /* gfx_color_t: Full color */
 	gfx_pixmap_color_t visual;
 	guint8 alpha; /* transparency = (1-opacity) */
-	byte priority, control;
+	signed char priority, control;
 	byte mask; /* see mask values below */
 } gfx_color_t;
 

@@ -1083,7 +1083,7 @@ c_man (state_t * s)
 	unsigned int i;
 	char *name = cmd_params[0].str;
 	char *c = strchr(name, '.');
-	cmd_mm_entry_t *entry;
+	cmd_mm_entry_t *entry = 0;
 
 	if (c) {
 		*c = 0;

@@ -104,6 +104,9 @@ _vfree(parse_rule_t *rule)
   rule = NULL;
 }
 
+#if 0
+// Unreferenced - removed
+
 static parse_rule_t *
 _vbuild(int id, int argc, ...)
 {
@@ -132,7 +135,10 @@ _vbuild(int id, int argc, ...)
   va_end(args);
   return rule;
 }
+#endif
 
+#if 0
+// Unreferenced - removed
 static parse_rule_t *
 _vcat(int id, parse_rule_t *a, parse_rule_t *b)
 {
@@ -149,6 +155,7 @@ _vcat(int id, parse_rule_t *a, parse_rule_t *b)
 
   return rule;
 }
+#endif
 
 static parse_rule_t *
 _vdup(parse_rule_t *a)
@@ -197,7 +204,8 @@ _vinsert(parse_rule_t *turkey, parse_rule_t *stuffing)
   return rule;
 }
 
-
+#if 0
+// Unreferenced - removed
 static int
 _greibach_rule_p(parse_rule_t *rule)
 {
@@ -212,6 +220,7 @@ _greibach_rule_p(parse_rule_t *rule)
 
   return (rule->data[pos] & TOKEN_TERMINAL);
 }
+#endif
 
 static parse_rule_t *
 _vbuild_rule(parse_tree_branch_t *branch)

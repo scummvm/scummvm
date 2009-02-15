@@ -476,6 +476,8 @@ sm_free_script ( mem_obj_t* mem )
 }
 
 /* memory operations */
+#if 0
+// Unreferenced - removed
 static void
 sm_mset (seg_manager_t* self, int offset, int c, size_t n, int id, int flag) {
 	mem_obj_t* mem_obj;
@@ -495,7 +497,10 @@ sm_mset (seg_manager_t* self, int offset, int c, size_t n, int id, int flag) {
 		break;
 	}
 }
+#endif
 
+#if 0
+// Unreferenced - removed
 static void
 sm_mcpy_in_in (seg_manager_t* self, int dst, const int src, size_t n, int id, int flag) {
 	mem_obj_t* mem_obj;
@@ -515,6 +520,7 @@ sm_mcpy_in_in (seg_manager_t* self, int dst, const int src, size_t n, int id, in
 		break;
 	}
 }
+#endif
 
 void
 sm_mcpy_in_out (seg_manager_t* self, int dst, const void* src, size_t n, int id, int flag) {
@@ -536,6 +542,8 @@ sm_mcpy_in_out (seg_manager_t* self, int dst, const void* src, size_t n, int id,
 	}
 }
 
+#if 0
+// Unreferenced - removed
 static void
 sm_mcpy_out_in (seg_manager_t* self, void* dst, const int src, size_t n, int id, int flag) {
 	mem_obj_t* mem_obj;
@@ -555,6 +563,7 @@ sm_mcpy_out_in (seg_manager_t* self, void* dst, const int src, size_t n, int id,
 		break;
 	}
 }
+#endif
 
 gint16
 sm_get_heap (seg_manager_t* self, reg_t reg)
@@ -701,6 +710,8 @@ sm_set_export_width(struct _seg_manager_t* self, int flag)
 	self->exports_wide = flag;
 }
 
+#if 0
+// Unreferenced - removed
 static guint16 *
 sm_get_export_table_offset (struct _seg_manager_t* self, int id, int flag, int *max)
 {
@@ -709,6 +720,7 @@ sm_get_export_table_offset (struct _seg_manager_t* self, int id, int flag, int *
 		*max = self->heap[id]->data.script.exports_nr;
 	return self->heap[id]->data.script.export_table;
 }
+#endif
 
 void
 sm_set_synonyms_offset (struct _seg_manager_t* self, int offset, int id, id_flag flag) {
@@ -737,13 +749,18 @@ sm_get_synonyms_nr (struct _seg_manager_t* self, int id, id_flag flag)
 	return self->heap[id]->data.script.synonyms_nr;
 }
 
+#if 0
+// Unreferenced - removed
 static int
 sm_get_heappos (struct _seg_manager_t* self, int id, int flag)
 {
 	GET_SEGID();
 	return 0;
 }
+#endif
 
+#if 0
+// Unreferenced - removed
 static void
 sm_set_variables (struct _seg_manager_t* self, reg_t reg, int obj_index, reg_t variable_reg, int variable_index ) {
 	script_t* script;
@@ -760,7 +777,7 @@ sm_set_variables (struct _seg_manager_t* self, reg_t reg, int obj_index, reg_t v
 
 	script->objects[obj_index].variables[variable_index] = variable_reg;
 }
-
+#endif
 
 static inline int
 _relocate_block(seg_manager_t *self, reg_t *block, int block_location, int block_items, seg_id_t segment, int location)
@@ -959,7 +976,7 @@ sm_script_obj_init0(seg_manager_t *self, state_t *s, reg_t obj_pos)
 	script_t *scr;
 	object_t *obj;
 	int id;
-	int base = obj_pos.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
+	unsigned int base = obj_pos.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 	reg_t temp;
 
 	VERIFY( !(obj_pos.segment >= self->heap_size || mobj->type != MEM_OBJ_SCRIPT),
@@ -1165,7 +1182,7 @@ void
 sm_script_initialise_locals(seg_manager_t *self, reg_t location)
 {
 	mem_obj_t *mobj = self->heap[location.segment];
-	int count;
+	unsigned int count;
 	script_t *scr;
 	local_variables_t *locals;
 

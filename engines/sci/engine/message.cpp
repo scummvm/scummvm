@@ -27,14 +27,19 @@
 
 #include "sci/engine/message.h"
 
+#if 0
+// Unreferenced - removed
 static
 int get_talker_trivial(index_record_cursor_t *cursor)
 {
 	return -1;
 }
+#endif
 
 /* Version 2.101 and later code ahead */
 
+#if 0
+// Unreferenced - removed
 static
 void index_record_parse_2101(index_record_cursor_t *cursor, message_tuple_t *t)
 {
@@ -45,7 +50,10 @@ void index_record_parse_2101(index_record_cursor_t *cursor, message_tuple_t *t)
 	t->verb = verb;
 	t->cond = t->seq = 0;
 }
+#endif
 
+#if 0
+// Unreferenced - removed
 static
 void index_record_get_text_2101(index_record_cursor_t *cursor, char *buffer, int buffer_size)
 {
@@ -54,12 +62,16 @@ void index_record_get_text_2101(index_record_cursor_t *cursor, char *buffer, int
 	
 	strncpy(buffer, stringptr, buffer_size);
 }
+#endif
 
+#if 0
+// Unreferenced - removed
 static
 int header_get_index_record_count_2101(byte *header)
 {
 	return getUInt16(header + 4);
 }
+#endif
 
 /* Version 3.411 and later code ahead */
 
@@ -211,7 +223,7 @@ static message_handler_t fixed_handler = {3411,
 void message_state_initialize(resource_mgr_t *resmgr, message_state_t *state)
 {
 	resource_t *tester = scir_find_resource(resmgr, sci_message, 0, 0);
-	int version;
+	//int version;
 
 //	if (tester == NULL) return;
 

@@ -42,7 +42,7 @@ gfxr_read_pal11(int id, int *colors_nr, byte *resource, int size)
 {
 	int start_color = resource[25];
 	int format = resource[32];
-	int entry_size;
+	int entry_size = 0;
 	gfx_pixmap_color_t *retval;
 	byte *pal_data = resource + 37;
 	int _colors_nr = *colors_nr = getUInt16(resource + 29);

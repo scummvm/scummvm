@@ -1091,9 +1091,9 @@ nearest_intersection(pf_state_t *s, point_t p, point_t q, point_t *ret)
 **             (point_t) *ret: On success, the closest intersection point
 */
 {
-	polygon_t *polygon;
+	polygon_t *polygon = 0;
 	pointf_t isec;
-	polygon_t *ipolygon;
+	polygon_t *ipolygon = 0;
 	float dist = HUGE_DISTANCE;
 
 	LIST_FOREACH(polygon, &s->polygons, entries) {

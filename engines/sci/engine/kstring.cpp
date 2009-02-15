@@ -203,7 +203,7 @@ kSetSynonyms(state_t *s, int funct_nr, int argc, reg_t *argv)
 	while (node) {
 		reg_t objpos = node->value;
 		int seg;
-		int synonyms_nr;
+		int synonyms_nr = 0;
 
 		script = GET_SEL32V(objpos, number);
 		seg = sm_seg_get(&(s->seg_manager), script);

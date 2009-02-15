@@ -368,7 +368,8 @@ _gfxr_auxbuf_tag_line(gfxr_pic_t *pic, int pos, int width)
 		pic->aux_map[i+pos] |= FRESH_PAINT;
 }
 
-
+#if 0
+// Unreferenced - removed
 static void
 _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *max_y)
 {
@@ -518,7 +519,7 @@ _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *ma
 		(*max_y)++;
 }
 
-
+#endif
 
 /*** Regular drawing operations ***/
 

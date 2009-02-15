@@ -125,7 +125,8 @@ _freeze_time(sfx_state_t *self)
 	}
 }
 
-
+#if 0
+// Unreferenced - removed
 static void
 _dump_playing_list(sfx_state_t *self, char *msg)
 {
@@ -148,6 +149,7 @@ _dump_playing_list(sfx_state_t *self, char *msg)
 
 	fprintf(stderr, "]\n");
 }
+#endif
 
 static void
 _dump_songs(sfx_state_t *self)

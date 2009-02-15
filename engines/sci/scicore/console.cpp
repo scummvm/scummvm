@@ -48,7 +48,7 @@ sciprintf (const char *fmt, ...)
 {
 	va_list argp;
 	size_t bufsize = 256;
-	int i;
+	unsigned int i;
 	char *buf 	= (char *) sci_malloc (bufsize);
 
 	if (NULL == fmt) {

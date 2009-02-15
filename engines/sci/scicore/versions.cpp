@@ -115,7 +115,7 @@ is_mac_exe(char *filename)
 	FILE *file;
 	byte buf[4];
 	guint32 val;
-	int i;
+	unsigned int i;
 
 	/* Mac executables have no extension */
 	if (strchr(filename, '.'))
