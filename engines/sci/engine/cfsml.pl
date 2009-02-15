@@ -136,8 +136,8 @@ static struct _cfsml_pointer_refstruct {
 
 static struct _cfsml_pointer_refstruct **_cfsml_pointer_references_current = &_cfsml_pointer_references;
 
-static char *_cfsml_last_value_retreived = NULL;
-static char *_cfsml_last_identifier_retreived = NULL;
+static char *_cfsml_last_value_retrieved = NULL;
+static char *_cfsml_last_identifier_retrieved = NULL;
 
 static void
 _cfsml_free_pointer_references_recursively(struct _cfsml_pointer_refstruct *refs, int free_pointers)
@@ -251,9 +251,9 @@ _cfsml_get_identifier(FILE *fd, int *line, int *hiteof, int *assignment)
   int done = 0;
   char *retval = (char *) sci_malloc(mem);
 
-  if (_cfsml_last_identifier_retreived) {
-      free(_cfsml_last_identifier_retreived);
-      _cfsml_last_identifier_retreived = NULL;
+  if (_cfsml_last_identifier_retrieved) {
+      free(_cfsml_last_identifier_retrieved);
+      _cfsml_last_identifier_retrieved = NULL;
   }
 
   while (isspace(c = fgetc(fd)) && (c != EOF));
@@ -321,7 +321,7 @@ if ($debug) {
   write_line_pp($firstline, 0);
   print <<'EOF2';
 
-  return _cfsml_last_identifier_retreived = retval;
+  return _cfsml_last_identifier_retrieved = retval;
 }
 
 
@@ -333,9 +333,9 @@ _cfsml_get_value(FILE *fd, int *line, int *hiteof)
   int pos = 0;
   char *retval = (char *) sci_malloc(mem);
 
-  if (_cfsml_last_value_retreived) {
-      free(_cfsml_last_value_retreived);
-      _cfsml_last_value_retreived = NULL;
+  if (_cfsml_last_value_retrieved) {
+      free(_cfsml_last_value_retrieved);
+      _cfsml_last_value_retrieved = NULL;
   }
 
   while (((c = fgetc(fd)) != EOF) && (c != '\n')) {
@@ -377,7 +377,7 @@ EOF2
     $firstline += 4;
     write_line_pp($firstline, 0);
   print <<'EOF3';
-  return (_cfsml_last_value_retreived = (char *) sci_realloc(retval, strlen(retval) + 1));
+  return (_cfsml_last_value_retrieved = (char *) sci_realloc(retval, strlen(retval) + 1));
   /* Re-allocate; this value might be used for quite some while (if we are
   ** restoring a string)
   */
@@ -857,13 +857,13 @@ sub insert_reader_code {
       print "     _cfsml_free_pointer_references(_cfsml_myptrrefptr, _cfsml_error);\n";
   }
   write_line_pp(__LINE__, 0);
-  print "     if (_cfsml_last_value_retreived) {\n";
-  print "       free(_cfsml_last_value_retreived);\n";
-  print "       _cfsml_last_value_retreived = NULL;\n";
+  print "     if (_cfsml_last_value_retrieved) {\n";
+  print "       free(_cfsml_last_value_retrieved);\n";
+  print "       _cfsml_last_value_retrieved = NULL;\n";
   print "     }\n";
-  print "     if (_cfsml_last_identifier_retreived) {\n";
-  print "       free(_cfsml_last_identifier_retreived);\n";
-  print "       _cfsml_last_identifier_retreived = NULL;\n";
+  print "     if (_cfsml_last_identifier_retrieved) {\n";
+  print "       free(_cfsml_last_identifier_retrieved);\n";
+  print "       _cfsml_last_identifier_retrieved = NULL;\n";
   print "     }\n";
   print "  }\n";
   print "/* End of auto-generated CFSML data reader code */\n";
