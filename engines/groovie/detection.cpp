@@ -206,7 +206,7 @@ public:
 
 bool GroovieMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	if (gd) {
-		*engine = new GroovieEngine(syst, (GroovieGameDescription *)gd);
+		*engine = new GroovieEngine(syst, (const GroovieGameDescription *)gd);
 	}
 	return gd != 0;
 }

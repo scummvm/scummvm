@@ -34,7 +34,7 @@
 
 namespace Groovie {
 
-GroovieEngine::GroovieEngine(OSystem *syst, GroovieGameDescription *gd) :
+GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	Engine(syst), _gameDescription(gd), _debugger(NULL), _script(this),
 	_resMan(NULL), _grvCursorMan(NULL), _videoPlayer(NULL), _musicPlayer(NULL),
 	_graphicsMan(NULL), _waitingForInput(false) {

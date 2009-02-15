@@ -70,7 +70,7 @@ struct GroovieGameDescription {
 
 class GroovieEngine : public Engine {
 public:
-	GroovieEngine(OSystem *syst, GroovieGameDescription *gd);
+	GroovieEngine(OSystem *syst, const GroovieGameDescription *gd);
 	~GroovieEngine();
 
 protected:
@@ -98,7 +98,7 @@ public:
 	GraphicsMan *_graphicsMan;
 
 private:
-	GroovieGameDescription *_gameDescription;
+	const GroovieGameDescription *_gameDescription;
 	Debugger *_debugger;
 	bool _waitingForInput;
 };
