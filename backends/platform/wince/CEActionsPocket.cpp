@@ -130,7 +130,8 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_lure = (gameid == "lure");
 	bool is_feeble = (gameid == "feeble");
 	bool is_drascula = (strncmp(gameid.c_str(), "drascula",8) == 0);
-	bool is_tucker = (strncmp(gameid.c_str(), "tucker",6) == 0);
+	bool is_tucker = (gameid == "tucker");
+	bool is_groovie = (gameid == "groovie");
 
 	GUI_Actions::initInstanceGame();
 
@@ -140,7 +141,7 @@ void CEActionsPocket::initInstanceGame() {
 		_right_click_needed = true;
 
 	// See if a "hide toolbar" mapping could be needed
-	if (is_sword1 || is_sword2 || is_comi)
+	if (is_sword1 || is_sword2 || is_comi || is_groovie)
 		_hide_toolbar_needed = true;
 
 	// Initialize keys for different actions
@@ -148,7 +149,7 @@ void CEActionsPocket::initInstanceGame() {
 	_key_action[POCKET_ACTION_PAUSE].setKey(VK_SPACE);
 	_action_enabled[POCKET_ACTION_PAUSE] = true;
 	// Save
-	if (is_simon || is_sword2 || is_gob || is_kyra || is_feeble || is_tucker)
+	if (is_simon || is_sword2 || is_gob || is_kyra || is_feeble || is_tucker || is_groovie)
 		_action_enabled[POCKET_ACTION_SAVE] = false;
 	else if (is_queen) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
@@ -172,7 +173,7 @@ void CEActionsPocket::initInstanceGame() {
 	// Quit
 	_action_enabled[POCKET_ACTION_QUIT] = true;
 	// Skip
-	if (!is_cine && !is_parallaction)
+	if (!is_cine && !is_parallaction && !is_groovie)
 		_action_enabled[POCKET_ACTION_SKIP] = true;
 	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob ||
 			is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker)

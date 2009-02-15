@@ -120,7 +120,8 @@ void CEActionsSmartphone::initInstanceGame() {
 	bool is_lure = (gameid == "lure");
 	bool is_feeble = (gameid == "feeble");
 	bool is_drascula = (strncmp(gameid.c_str(), "drascula",8) == 0);
-	bool is_tucker = (strncmp(gameid.c_str(), "tucker",6) == 0);
+	bool is_tucker = (gameid == "tucker");
+	bool is_groovie = (gameid == "groovie");
 
 	GUI_Actions::initInstanceGame();
 
@@ -131,7 +132,7 @@ void CEActionsSmartphone::initInstanceGame() {
 
 	// Initialize keys for different actions
 	// Save
-	if (is_simon || is_sword2 || is_gob || is_kyra || is_feeble)
+	if (is_simon || is_sword2 || is_gob || is_kyra || is_feeble || is_groovie)
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = false;
 	else if (is_queen) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
@@ -155,7 +156,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	// Skip
 	_action_enabled[SMARTPHONE_ACTION_SKIP] = true;
 	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob ||
-			is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker)
+			is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker || is_groovie)
 		_key_action[SMARTPHONE_ACTION_SKIP].setKey(VK_ESCAPE);
 	else
 		_key_action[SMARTPHONE_ACTION_SKIP].setKey(KEY_ALL_SKIP);
