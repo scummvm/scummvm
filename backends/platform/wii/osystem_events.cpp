@@ -117,20 +117,22 @@ void OSystem_Wii::initEvents() {
 	timer_thread_quit = false;
 
 	timer_stack = (u8 *) memalign(32, TIMER_THREAD_STACKSIZE);
-	memset(timer_stack, 0, TIMER_THREAD_STACKSIZE);
+	if (timer_stack) {
+		memset(timer_stack, 0, TIMER_THREAD_STACKSIZE);
 
-	LWP_InitQueue(&timer_queue);
+		LWP_InitQueue(&timer_queue);
 
-	s32 res = LWP_CreateThread(&timer_thread, timer_thread_func, NULL,
-								timer_stack, TIMER_THREAD_STACKSIZE,
-								TIMER_THREAD_PRIO);
+		s32 res = LWP_CreateThread(&timer_thread, timer_thread_func, NULL,
+									timer_stack, TIMER_THREAD_STACKSIZE,
+									TIMER_THREAD_PRIO);
 
-	if (res) {
-		printf("ERROR creating timer thread: %d\n", res);
-		LWP_CloseQueue(timer_queue);
+		if (res) {
+			printf("ERROR creating timer thread: %d\n", res);
+			LWP_CloseQueue(timer_queue);
+		}
+
+		timer_thread_running = res == 0;
 	}
-
-	timer_thread_running = res == 0;
 
 #ifndef GAMECUBE
 	WPAD_Init();
@@ -151,6 +153,7 @@ void OSystem_Wii::deinitEvents() {
 		LWP_JoinThread(timer_thread, NULL);
 		LWP_CloseQueue(timer_queue);
 
+		free(timer_stack);
 		timer_thread_running = false;
 	}
 

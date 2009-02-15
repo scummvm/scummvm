@@ -69,20 +69,23 @@ void OSystem_Wii::initSfx() {
 	sfx_thread_quit = false;
 
 	sfx_stack = (u8 *) memalign(32, SFX_THREAD_STACKSIZE);
-	memset(sfx_stack, 0, SFX_THREAD_STACKSIZE);
 
-	LWP_InitQueue(&sfx_queue);
+	if (sfx_stack) {
+		memset(sfx_stack, 0, SFX_THREAD_STACKSIZE);
 
-	s32 res = LWP_CreateThread(&sfx_thread, sfx_thread_func, _mixer, sfx_stack,
-								SFX_THREAD_STACKSIZE, SFX_THREAD_PRIO);
+		LWP_InitQueue(&sfx_queue);
 
-	if (res) {
-		printf("ERROR creating sfx thread: %d\n", res);
-		LWP_CloseQueue(sfx_queue);
-		return;
+		s32 res = LWP_CreateThread(&sfx_thread, sfx_thread_func, _mixer, sfx_stack,
+									SFX_THREAD_STACKSIZE, SFX_THREAD_PRIO);
+
+		if (res) {
+			printf("ERROR creating sfx thread: %d\n", res);
+			LWP_CloseQueue(sfx_queue);
+			return;
+		}
+
+		sfx_thread_running = true;
 	}
-
-	sfx_thread_running = true;
 
 	sound_buffer[0] = (u8 *) memalign(32, SFX_THREAD_FRAG_SIZE);
 	sound_buffer[1] = (u8 *) memalign(32, SFX_THREAD_FRAG_SIZE);
@@ -116,6 +119,7 @@ void OSystem_Wii::deinitSfx() {
 		LWP_JoinThread(sfx_thread, NULL);
 		LWP_CloseQueue(sfx_queue);
 
+		free(sfx_stack);
 		sfx_thread_running = false;
 
 		free(sound_buffer[0]);
