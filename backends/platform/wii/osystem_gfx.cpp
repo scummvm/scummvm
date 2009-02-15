@@ -35,6 +35,16 @@ enum GraphicModeID {
 	GM_OVERSCAN5
 };
 
+static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
+	{ "standard", "Standard", GM_DEFAULT },
+	{ "overscan1", "Overscan 1", GM_OVERSCAN1 },
+	{ "overscan2", "Overscan 2", GM_OVERSCAN2 },
+	{ "overscan3", "Overscan 3", GM_OVERSCAN3 },
+	{ "overscan4", "Overscan 4", GM_OVERSCAN4 },
+	{ "overscan5", "Overscan 5", GM_OVERSCAN5 },
+	{ 0, 0, 0 }
+};
+
 void OSystem_Wii::initGfx() {
 	_surface.w = 0;
 	_surface.h = 0;
@@ -61,29 +71,6 @@ void OSystem_Wii::initGfx() {
 	_cursorPalette = (u16 *) memalign(32, 256 * 2);
 	memset(_cursorPalette, 0, 256 * 2);
 
-	_supportedGraphicsModes = new OSystem::GraphicsMode[7];
-	_supportedGraphicsModes[0].name = strdup("standard");
-	_supportedGraphicsModes[0].description = strdup("standard");
-	_supportedGraphicsModes[0].id = GM_DEFAULT;
-	_supportedGraphicsModes[1].name = strdup("overscan1");
-	_supportedGraphicsModes[1].description = strdup("overscan 1");
-	_supportedGraphicsModes[1].id = GM_OVERSCAN1;
-	_supportedGraphicsModes[2].name = strdup("overscan2");
-	_supportedGraphicsModes[2].description = strdup("overscan 2");
-	_supportedGraphicsModes[2].id = GM_OVERSCAN2;
-	_supportedGraphicsModes[3].name = strdup("overscan3");
-	_supportedGraphicsModes[3].description = strdup("overscan 3");
-	_supportedGraphicsModes[3].id = GM_OVERSCAN3;
-	_supportedGraphicsModes[4].name = strdup("overscan4");
-	_supportedGraphicsModes[4].description = strdup("overscan 4");
-	_supportedGraphicsModes[4].id = GM_OVERSCAN4;
-	_supportedGraphicsModes[5].name = strdup("overscan5");
-	_supportedGraphicsModes[5].description = strdup("overscan 5");
-	_supportedGraphicsModes[5].id = GM_OVERSCAN5;
-	_supportedGraphicsModes[6].name = 0;
-	_supportedGraphicsModes[6].description = 0;
-	_supportedGraphicsModes[6].id = 0;
-
 	_texture = (u16 *) memalign(32, 640 * 480 * 2);
 
 	setGraphicsMode(_activeGraphicsMode);
@@ -91,11 +78,6 @@ void OSystem_Wii::initGfx() {
 
 void OSystem_Wii::deinitGfx() {
 	GX_AbortFrame();
-
-	if (_supportedGraphicsModes) {
-		delete[] _supportedGraphicsModes;
-		_supportedGraphicsModes = NULL;
-	}
 
 	if (_gamePixels) {
 		free(_gamePixels);
@@ -129,7 +111,7 @@ void OSystem_Wii::deinitGfx() {
 }
 
 const OSystem::GraphicsMode* OSystem_Wii::getSupportedGraphicsModes() const {
-	return _supportedGraphicsModes;
+	return s_supportedGraphicsModes;
 }
 
 int OSystem_Wii::getDefaultGraphicsMode() const {

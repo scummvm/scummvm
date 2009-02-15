@@ -52,7 +52,6 @@ OSystem_Wii::OSystem_Wii() :
 	_currentWidth(0),
 	_currentHeight(0),
 
-	_supportedGraphicsModes(NULL),
 	_activeGraphicsMode(0),
 
 	_fullscreen(false),

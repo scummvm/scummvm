@@ -75,7 +75,6 @@ private:
 	u16 *_texture;
 	u16 _currentWidth, _currentHeight;
 
-	OSystem::GraphicsMode *_supportedGraphicsModes;
 	s32 _activeGraphicsMode;
 
 	bool _fullscreen;
