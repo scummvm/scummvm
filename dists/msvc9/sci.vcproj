@@ -43,7 +43,7 @@
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
 				Optimization="0"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines/sci/include;../../engines"
+				AdditionalIncludeDirectories="../../;../../engines"
 				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;SCUMMVM;HAVE_MEMCHR;HAVE_SYS_STAT_H;HAVE_FCNTL_H;HAVE_STRING_H;HAVE_UNLINK;HAVE_RMDIR;WANT_CONSOLE"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -119,7 +119,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines/sci/include;../../engines"
+				AdditionalIncludeDirectories="../../;../../engines"
 				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;SCUMMVM;HAVE_MEMCHR;HAVE_SYS_STAT_H;HAVE_FCNTL_H;HAVE_STRING_H;HAVE_UNLINK;HAVE_RMDIR;WANT_CONSOLE"
 				StringPooling="true"
 				ExceptionHandling="1"
@@ -431,10 +431,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\scicore\exe_raw.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\fnmatch.c"
 				>
 			</File>
 			<File
