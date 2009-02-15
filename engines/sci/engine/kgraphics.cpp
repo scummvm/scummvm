@@ -173,7 +173,7 @@ _find_view_priority(state_t *s, int y)
 	}
 }
 
-inline int
+int
 _find_priority_band(state_t *s, int nr)
 {
 	if (s->version >= SCI_VERSION_FTU_PRIORITY_14_ZONES && (nr < 0 || nr > 14)) {
