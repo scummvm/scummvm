@@ -1,1 +1,0 @@
-EXTRA_DIST = collsyms.h fnmatch.h
