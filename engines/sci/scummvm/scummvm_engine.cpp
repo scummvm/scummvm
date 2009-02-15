@@ -371,11 +371,7 @@ SciEngine::~SciEngine() {
 }
 
 Common::Error SciEngine::init() {
-	initCommonGFX(false);
-	_system->beginGFXTransaction();
-	//_system->initSize(640, 400),;
-	_system->initSize(320, 200);
-	_system->endGFXTransaction();
+	initGraphics(320, 200, false);
 
 	//GUIErrorMessage("lalalal asfa w4 haha hreh au u<w");
 
