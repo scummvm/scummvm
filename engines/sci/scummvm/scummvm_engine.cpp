@@ -215,7 +215,7 @@ detect_versions(sci_version_t *version, int *res_version)
 }
 
 int
-main_(const char* gamedir)
+main_()
 {
 	resource_mgr_t *resmgr;
 
@@ -224,11 +224,6 @@ main_(const char* gamedir)
 	char startdir[MAXPATHLEN+1] = "";
 	getcwd(startdir, MAXPATHLEN);
 	script_debug_flag = 0;
-
-	if (chdir(gamedir)) {
-		printf ("Error changing to game directory '%s'\n", gamedir);
-		exit(1);
-	}
 
 	sci_version_t version;
 	int res_version;
@@ -408,8 +403,7 @@ Common::Error SciEngine::go() {
 		_system->delayMillis(10);
 	} */
 
-	// FIXME: Not a good idea to use _gameDataDir.getPath() like this...
-	main_(_gameDataDir.getPath().c_str());
+	main_();
 
 	return Common::kNoError;
 }
