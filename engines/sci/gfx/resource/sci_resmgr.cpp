@@ -262,7 +262,7 @@ gfxr_interpreter_get_resources(gfx_resstate_t *state, gfx_resource_type_t type,
 		break;
 
 	default:
-		GFX_DEBUG("Unsupported resource %d\n", type);
+		GFXDEBUG("Unsupported resource %d\n", type);
 		return NULL; /* unsupported resource */
 
 	}
@@ -308,7 +308,7 @@ gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr,
 		return gfxr_read_pal1(res->id, colors_nr, res->data, res->size);
 	case SCI_VERSION_1_1 :
 	case SCI_VERSION_32 :
-		GFX_DEBUG("Palettes are not yet supported in this SCI version\n");
+		GFXDEBUG("Palettes are not yet supported in this SCI version\n");
 		return NULL;
 
 	default:

@@ -43,8 +43,8 @@ static int c_set(struct _state *s); /* sets an int variable */
 static int c_print(struct _state *s); /* prints a variable */
 static int c_size(struct _state *s); /* displays the size of a resource */
 static int c_dump(struct _state *s); /* gives a hex dump of a resource */
-static int c_objinfo(struct _state *s); /* shows some info about one class */
-static int c_objmethods(struct _state *s); /* Disassembles all methods of a class */
+//static int c_objinfo(struct _state *s); /* shows some info about one class */
+//static int c_objmethods(struct _state *s); /* Disassembles all methods of a class */
 static int c_hexgrep(struct _state *s); /* Searches a string in one resource or resource class */
 static int c_selectornames(struct _state *s); /* Displays all selector names */
 static int c_kernelnames(struct _state *s); /* Displays all kernel function names */

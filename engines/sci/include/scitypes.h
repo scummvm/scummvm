@@ -35,8 +35,6 @@
 #include <dirent.h>
 #else
 #include <io.h>
-#	undef inline /* just to be sure it is not defined */
-#	define inline __inline
 #endif
 
 typedef int8 gint8;

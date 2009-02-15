@@ -254,7 +254,6 @@ _gfxop_install_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
 	if (driver->mode->palette &&
 	        (!(pxm->flags & GFX_PIXMAP_FLAG_PALETTE_SET))) {
 		int i;
-		int error;
 
 		for (i = 0; i < pxm->colors_nr; i++) {
 			if ((error = driver->set_palette(driver, pxm->colors[i].global_index,
@@ -806,7 +805,7 @@ gfxop_set_clip_zone(gfx_state_t *state, rect_t zone) {
 int
 gfxop_set_color(gfx_state_t *state, gfx_color_t *color, int r, int g, int b, int a,
                 int priority, int control) {
-	gfx_pixmap_color_t pixmap_color = {0};
+	gfx_pixmap_color_t pixmap_color = {0, 0, 0, 0};
 	int error_code;
 	int mask = ((r >= 0 && g >= 0 && b >= 0) ? GFX_MASK_VISUAL : 0)
 	           | ((priority >= 0) ? GFX_MASK_PRIORITY : 0)
@@ -872,8 +871,8 @@ gfxop_set_system_color(gfx_state_t *state, gfx_color_t *color) {
 
 int
 gfxop_free_color(gfx_state_t *state, gfx_color_t *color) {
-	gfx_palette_color_t *palette_color	= {0};
-	gfx_pixmap_color_t pixmap_color		= {0};
+	gfx_palette_color_t *palette_color	= 0;
+	gfx_pixmap_color_t pixmap_color		= {0, 0, 0, 0};
 	int error_code;
 	BASIC_CHECKS(GFX_FATAL);
 
@@ -1231,7 +1230,6 @@ gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color_t c
 	float mod_offset = 0.0, mod_breadth = 1.0; /* 0.0 to 1.0: Color adjustment */
 	gfx_rectangle_fill_t driver_shade_type;
 	rect_t new_box;
-	gfx_color_t draw_color1, draw_color2	= {{0, 0, 0}, 0, 0, 0, 0};
 
 	BASIC_CHECKS(GFX_FATAL);
 	REMOVE_POINTER;
@@ -1303,6 +1301,9 @@ gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color_t c
 			GFXWARN("Attempting to draw shaded box in palette mode!\n");
 			return GFX_ERROR;
 		}
+
+		gfx_color_t draw_color1 = {{0, 0, 0, 0}, 0, 0, 0, 0};
+		gfx_color_t draw_color2 = {{0, 0, 0, 0}, 0, 0, 0, 0};
 
 		draw_color1.mask = draw_color2.mask = color1.mask;
 		draw_color1.priority = draw_color2.priority = color1.priority;
@@ -1540,8 +1541,8 @@ gfxop_usleep(gfx_state_t *state, long usecs) {
 
 int
 _gfxop_set_pointer(gfx_state_t *state, gfx_pixmap_t *pxm) {
-	rect_t old_pointer_bounds = {0};
-	rect_t pointer_bounds = {0};
+	rect_t old_pointer_bounds = {0, 0, 0, 0};
+	rect_t pointer_bounds = {0, 0, 0, 0};
 	int retval = -1;
 	int draw_old;
 	int draw_new = 0;
@@ -1817,7 +1818,7 @@ _gfxop_numlockify(int c) {
 
 sci_event_t
 gfxop_get_event(gfx_state_t *state, unsigned int mask) {
-	sci_event_t error_event = { SCI_EVT_ERROR, 0, 0 };
+	sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
 	sci_event_t event;
 	event.data = 0;
 	event.buckybits = 0;
@@ -2209,10 +2210,10 @@ gfxop_new_text(gfx_state_t *state, int font_nr, char *text, int maxwidth,
                gfx_alignment_t halign, gfx_alignment_t valign,
                gfx_color_t color1, gfx_color_t color2, gfx_color_t bg_color,
                int flags) {
-	gfx_text_handle_t *handle			= {0};
-	gfx_bitmap_font_t *font				= {0};
+	gfx_text_handle_t *handle;
+	gfx_bitmap_font_t *font;
 	int i;
-	gfx_pixmap_color_t pxm_col1, pxm_col2, pxm_colbg = {0};
+	gfx_pixmap_color_t pxm_col1, pxm_col2, pxm_colbg;
 	BASIC_CHECKS(NULL);
 
 	COL_XLATE(pxm_col1, color1);
