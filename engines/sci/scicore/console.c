@@ -27,8 +27,8 @@
 /* First part of the console implmentation: VM independent stuff */
 /* Remember, it doesn't have to be fast. */
 
-#include <sci_memory.h>
-#include <engine.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/engine.h"
 #ifdef SCI_CONSOLE
 
 int con_passthrough = 0;
