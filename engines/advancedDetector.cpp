@@ -296,15 +296,15 @@ struct SizeMD5 {
 typedef Common::HashMap<Common::String, SizeMD5, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeMD5Map;
 typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 
-static void reportUnknown(const SizeMD5Map &filesSizeMD5) {
+static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSizeMD5) {
 	// TODO: This message should be cleaned up / made more specific.
 	// For example, we should specify at least which engine triggered this.
 	//
 	// Might also be helpful to display the full path (for when this is used
 	// from the mass detector).
-	printf("Your game version appears to be unknown. Please, report the following\n");
-	printf("data to the ScummVM team along with name of the game you tried to add\n");
-	printf("and its version/language/etc.:\n");
+	printf("The game in '%s' seems to be unknown.\n", path.getPath().c_str());
+	printf("Please, report the following data to the ScummVM team along with name\n");
+	printf("of the game you tried to add and its version/language/etc.:\n");
 
 	for (SizeMD5Map::const_iterator file = filesSizeMD5.begin(); file != filesSizeMD5.end(); ++file)
 		printf("  \"%s\", \"%s\", %d\n", file->_key.c_str(), file->_value.md5, file->_value.size);
@@ -443,8 +443,10 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 
 	// We didn't find a match
 	if (matched.empty()) {
-		if (!filesSizeMD5.empty())
-			reportUnknown(filesSizeMD5);
+		if (!filesSizeMD5.empty()) {
+			Common::FSNode parent = fslist.begin()->getParent();
+			reportUnknown(parent, filesSizeMD5);
+		}
 
 		// Filename based fallback
 		if (params.fileBasedFallback != 0)
