@@ -96,7 +96,7 @@ CXXFLAGS += -Wno-variadic-macros
 CPPFLAGS += -DSCUMMVM
 
 # Generate savegame.cpp
-$(srcdir)/engines/sci/engine/savegame.c: $(srcdir)/engines/sci/engine/savegame.cfsml
+$(srcdir)/engines/sci/engine/savegame.cpp: $(srcdir)/engines/sci/engine/savegame.cfsml
 	cat $< | perl $(srcdir)/engines/sci/engine/cfsml.pl -f savegame.cfsml > $@
 
 # This module can be built as a plugin
