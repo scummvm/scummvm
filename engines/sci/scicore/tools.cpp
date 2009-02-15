@@ -24,9 +24,15 @@
 
 ***************************************************************************/
 
-#define _GNU_SOURCE /* For FNM_CASEFOLD in fnmatch.h */
 
 #include <stdlib.h>
+
+#ifndef _WIN32
+#define _GNU_SOURCE /* For FNM_CASEFOLD in fnmatch.h */
+#include <fnmatch.h>
+#endif
+
+#include "common/str.h"
 #include "sci/include/engine.h"
 
 #ifdef HAVE_SYS_TIME_H
@@ -422,8 +428,13 @@ sci_find_next(sci_dir_t *dir)
 		if (match->d_name[0] == '.')
 			continue;
 
+#ifdef _WIN32
+		if (Common::matchString(match->d_name, dir->mask_copy, true))
+			return match->d_name;
+#else
 		if (!fnmatch(dir->mask_copy, match->d_name, FNM_CASEFOLD))
 			return match->d_name;
+#endif
 	}
 
 	sci_finish_find(dir);
