@@ -1838,6 +1838,8 @@ gfxop_get_event(gfx_state_t *state, unsigned int mask)
 {
 	sci_event_t error_event = { SCI_EVT_ERROR, 0, 0 };
 	sci_event_t event;
+	event.data = 0;
+	event.buckybits = 0;
 	gfx_input_event_t **seekerp = &(state->events);
 
 	BASIC_CHECKS(error_event);

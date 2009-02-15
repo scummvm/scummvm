@@ -244,7 +244,7 @@ _scir_init_trivial(resource_mgr_t *mgr)
 static void
 _scir_load_from_patch_file(int fh, resource_t *res, char *filename)
 {
-	int really_read;
+	unsigned int really_read;
 
 	res->data = (unsigned char*)sci_malloc(res->size);
 	really_read = read(fh, res->data, res->size);

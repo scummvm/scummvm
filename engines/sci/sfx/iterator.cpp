@@ -753,7 +753,7 @@ _sci1_sample_init(sci1_song_iterator_t *self, int offset)
 	int begin;
 	int end;
 
-	CHECK_FOR_END_ABSOLUTE(offset + 10);
+	CHECK_FOR_END_ABSOLUTE((unsigned int)offset + 10);
 	if (self->data[offset + 1] != 0)
 		sciprintf("[iterator-1] In sample at offset 0x04x: Byte #1 is %02x instead of zero\n",
 			  self->data[offset + 1]);
@@ -763,7 +763,7 @@ _sci1_sample_init(sci1_song_iterator_t *self, int offset)
 	begin = getInt16(self->data + offset + 6);
 	end = getInt16(self->data + offset + 8);
 
-	CHECK_FOR_END_ABSOLUTE(offset + 10 + length);
+	CHECK_FOR_END_ABSOLUTE((unsigned int)(offset + 10 + length));
 
 	sample = (sci1_sample_t*)sci_malloc(sizeof(sci1_sample_t));
 	sample->delta = begin;

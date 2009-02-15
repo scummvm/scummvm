@@ -430,7 +430,7 @@ static instrument_t *read_instrument(FILE *file, int *id)
 	sciprintf("                Segment offsets: 0 %i %i\n", loop_offset, read_int32(header + 43));
 #endif
 	instrument->samples = (sbyte *) sci_malloc(size + 1);
-	if (fread(instrument->samples, 1, size, file) < size) {
+	if (fread(instrument->samples, 1, size, file) < (unsigned int)size) {
 		sciprintf("[sfx:seq:amiga] Error: failed to read instrument samples\n");
 		return NULL;
 	}

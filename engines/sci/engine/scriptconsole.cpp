@@ -459,6 +459,7 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest)
 				int valid = 1;
 				object_t *obj = NULL; /* Surpress spurious warning */
 				reg_t objpos;
+				objpos.offset = 0;
 				objpos.segment = i;
 
 				if (mobj->type == MEM_OBJ_SCRIPT) {
