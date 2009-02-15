@@ -393,20 +393,20 @@ kMenuSelect(state_t *s, int funct_nr, int argc, reg_t *argv)
 		old_menu = -1;
 
 		while (menu_mode) {
-			sci_event_t event = gfxop_get_event(s->gfx_state, SCI_EVT_ANY);
+			sci_event_t ev = gfxop_get_event(s->gfx_state, SCI_EVT_ANY);
 
 			claimed = 0;
 
-			switch (event.type) {
+			switch (ev.type) {
 			case SCI_EVT_QUIT:
 				quit_vm();
 				return NULL_REG;
 
 			case SCI_EVT_KEYBOARD:
-				switch (event.data) {
+				switch (ev.data) {
 
 				case '`':
-					if (event.buckybits & SCI_EVM_CTRL)
+					if (ev.buckybits & SCI_EVM_CTRL)
 						s->visual->print(GFXW(s->visual), 0);
 					break;
 

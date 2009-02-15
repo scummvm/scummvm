@@ -80,19 +80,11 @@
 /* Floating point struct */
 typedef struct pointf
 {
+	pointf() : x(0), y(0) {}
+	pointf(float x_, float y_) : x(x_), y(y_) {}
+
 	float x, y;
 } pointf_t;
-
-pointf_t
-pointf(float x, float y)
-{
-	pointf_t p;
-
-	p.x = x;
-	p.y = y;
-
-	return p;
-}
 
 pointf_t
 to_pointf(point_t p)
