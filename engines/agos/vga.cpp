@@ -1120,7 +1120,7 @@ void AGOSEngine::vc34_setMouseOff() {
 
 void AGOSEngine::clearVideoBackGround(uint16 num, uint16 color) {
 	const uint16 *vlut = &_videoWindows[num * 4];
-	byte *dst = getBackGround() + vlut[0] * 16 + (vlut[1] * (vlut[2] * 16));
+	byte *dst = getBackGround() + vlut[0] * 16 + vlut[1] * _dxSurfacePitch;
 
 	for (uint h = 0; h < vlut[3]; h++) {
 		memset(dst, color, vlut[2] * 16);
@@ -1183,10 +1183,6 @@ void AGOSEngine::vc35_clearWindow() {
 	uint16 num = vcReadNextWord();
 	uint16 color = vcReadNextWord();
 
-	// Clear video window
-	clearVideoWindow(num, color);
-	_vgaSpriteChanged++;
-
 	// Clear video background
 	if (getGameType() == GType_ELVIRA1) {
 		if (num == 2 || num == 6)
@@ -1199,7 +1195,10 @@ void AGOSEngine::vc35_clearWindow() {
 			return;
 	}
 
+	// Clear video window
+	clearVideoWindow(num, color);
 	clearVideoBackGround(num, color);
+	_vgaSpriteChanged++;
 }
 
 void AGOSEngine::vc36_setWindowImage() {
