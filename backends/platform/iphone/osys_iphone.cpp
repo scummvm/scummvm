@@ -46,9 +46,6 @@
 #include "blit_arm.h"
 #include <sys/time.h>
 
-#include <CoreGraphics/CGDirectDisplay.h>
-#include <CoreSurface/CoreSurface.h>
-
 const OSystem::GraphicsMode OSystem_IPHONE::s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
@@ -513,7 +510,7 @@ void OSystem_IPHONE::updateHardwareSurfaceForRect(const Common::Rect& updatedRec
 				break;
 			}
 		}
-	}	
+	}
 }
 
 Graphics::Surface *OSystem_IPHONE::lockScreen() {

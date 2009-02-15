@@ -28,14 +28,30 @@
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
-#import <CoreSurface/CoreSurface.h>
-
 #import <QuartzCore/QuartzCore.h>
+
 #import "iphone_keyboard.h"
+
+void *CoreSurfaceBufferGetBaseAddress(void* surface);
+int CoreSurfaceBufferLock(void* surface, unsigned int lockType);
+int CoreSurfaceBufferUnlock(void* surface);
+void* CoreSurfaceBufferCreate(CFDictionaryRef dict);
+
+extern CFStringRef kCoreSurfaceBufferGlobal;
+extern CFStringRef kCoreSurfaceBufferMemoryRegion;
+extern CFStringRef kCoreSurfaceBufferPitch;
+extern CFStringRef kCoreSurfaceBufferWidth;
+extern CFStringRef kCoreSurfaceBufferHeight;
+extern CFStringRef kCoreSurfaceBufferPixelFormat;
+extern CFStringRef kCoreSurfaceBufferAllocSize;
+
+struct __GSEvent;
+CGPoint GSEventGetLocationInWindow(struct __GSEvent *ev); 
+unsigned int GSEventDeviceOrientation(struct __GSEvent *ev);
 
 @interface iPhoneView : UIView
 {
-	CoreSurfaceBufferRef _screenSurface;
+	void* _screenSurface;
 	NSMutableArray* _events;
 	NSLock* _lock;
 	SoftKeyboard* _keyboardView;
@@ -51,7 +67,7 @@
 
 - (void)drawRect:(CGRect)frame;
 
-- (CoreSurfaceBufferRef)getSurface;
+- (void *)getSurface;
 
 - (void)initSurface;
 

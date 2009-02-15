@@ -27,16 +27,13 @@
 #include "iphone_common.h"
 
 #import <UIKit/UIKit.h>
-#import <GraphicsServices/GraphicsServices.h>
 #import <Foundation/Foundation.h>
-#import <CoreSurface/CoreSurface.h>
 #import <QuartzCore/QuartzCore.h>
 
 static iPhoneView *sharedInstance = nil;
 static int _width = 0;
 static int _height = 0;
 static bool _landscape;
-static int _orientation = -1;
 static CGRect _screenRect;
 
 // static long lastTick = 0;
@@ -126,7 +123,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 	}
 }
 
-- (CoreSurfaceBufferRef)getSurface {
+- (void *)getSurface {
 	return _screenSurface;
 }
 
@@ -220,9 +217,9 @@ bool getLocalMouseCoords(CGPoint *point) {
 	[screenLayer setOpaque: YES];
 
 	if (_screenLayer != nil) {
-		[[sharedInstance _layer] replaceSublayer: _screenLayer with: screenLayer];
+		[[sharedInstance layer] replaceSublayer: _screenLayer with: screenLayer];
 	} else {
-		[[sharedInstance _layer] addSublayer: screenLayer];
+		[[sharedInstance layer] addSublayer: screenLayer];
 	}
 	_screenLayer = screenLayer;
 
@@ -396,7 +393,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 	return TRUE;
 }
 
-- (int)swipe:(int)num withEvent:(GSEvent*)event {
+- (int)swipe:(int)num withEvent:(struct __GSEvent *)event {
 	//printf("swipe: %i\n", num);
 
 	[self addEvent:
