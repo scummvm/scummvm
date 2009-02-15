@@ -43,8 +43,6 @@
 
 #ifdef _WIN32
 #pragma warning( disable : 4101 )
-#undef strcasecmp
-#define strcasecmp _stricmp
 #endif
 
 #define HUNK_TYPE_GFX_SNAPSHOT_STRING "g\n"
