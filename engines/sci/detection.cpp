@@ -789,6 +789,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{}},
 
+	// Space Quest 4 - English Amiga
+	{{"sq4", "", {
+		{"resource.map", 0, "d87ae90031e7fd04f32a27db054f5c9c", 6174},
+		{"resource.000", 0, "19671ac620a0a4720a1937c20c2e24a1", 323309},
+		{"resource.001", 0, "abca51a4c896df550f095a2db71dce46", 805915},
+		{"resource.002", 0, "5667852471ba5b7f5b9a770eabd07df2", 796615},
+		{"resource.003", 0, "6ec43464f6a17e612636e2928fd9471c", 803868},
+		{"resource.004", 0, "1887ed88bb34ae7238650e8f77f26315", 798226},
+		{"resource.005", 0, "3540d1cc84d674cf4b2c898b88a3b563", 790296},
+		{"resource.006", 0, "ade814bc4d56244c156d9e9bcfebbc11", 664085},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
+		{}},
+
 	// Space Quest 4 - German Amiga (from www.back2roots.org)
 	{{"sq4", "", {
 		{"resource.map", 0, "79641c0d43408e33c251a1d494d2575e", 6252},
