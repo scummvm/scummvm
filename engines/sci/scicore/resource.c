@@ -259,7 +259,7 @@ _scir_load_from_patch_file(int fh, resource_t *res, char *filename)
 static void
 _scir_load_resource(resource_mgr_t *mgr, resource_t *res, int protect)
 {
-	char filename[PATH_MAX];
+	char filename[MAXPATHLEN];
 	int fh;
 	resource_t backup;
 	char *save_cwd = sci_getcwd();
@@ -356,7 +356,7 @@ int
 sci_test_view_type(resource_mgr_t *mgr)
 {
 	int fh;
-	char filename[PATH_MAX];
+	char filename[MAXPATHLEN];
 	int compression;
 	resource_t *res;
 	int i;
@@ -445,7 +445,7 @@ scir_add_appropriate_sources(resource_mgr_t *mgr,
 	char *name;
 	resource_source_t *map;
 	int fd;
-	char fullname[PATH_MAX];
+	char fullname[MAXPATHLEN];
 
 	if (dir[strlen(dir)-1] != G_DIR_SEPARATOR)
 	{

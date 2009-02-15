@@ -48,7 +48,7 @@ process_patch(resource_source_t *source,
 	      char *entry, int restype, int resnumber, resource_t **resource_p, int *resource_nr_p)
 {
 	int fsize;
-	char filename[PATH_MAX];
+	char filename[MAXPATHLEN];
 
 	if (restype == sci_invalid_resource)
 		return;

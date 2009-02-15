@@ -30,6 +30,9 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 
+// FIXME. Remove after transiton to File class
+#include <sys/stat.h>
+
 #include "sci/include/resource.h"
 #include "sci/include/sciresource.h"
 #include "sci/include/script.h"

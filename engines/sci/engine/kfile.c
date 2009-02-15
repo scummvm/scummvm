@@ -411,7 +411,7 @@ delete_savegame(state_t *s, int savedir_nr)
 reg_t
 kDeviceInfo_Win32(state_t *s, int funct_nr, int argc, reg_t *argv)
 {
-	char dir_buffer [MAX_PATH], dir_buffer2 [MAX_PATH];
+	char dir_buffer [MAXPATHLEN], dir_buffer2 [MAX_PATHLEN];
 	int mode = UKPV(0);
 
 
@@ -991,8 +991,8 @@ reg_t
 kValidPath(state_t *s, int funct_nr, int argc, reg_t *argv)
 {
 	char *pathname = kernel_dereference_char_pointer(s, argv[0], 0);
-	char cpath[PATH_MAX + 1];
-	getcwd(cpath, PATH_MAX + 1);
+	char cpath[MAXPATHLEN + 1];
+	getcwd(cpath, MAXPATHLEN + 1);
 
 	s->r_acc = make_reg(0, !chdir(pathname)); /* Try to go there. If it works, return 1, 0 otherwise. */
 
