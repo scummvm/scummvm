@@ -47,7 +47,7 @@ class FWScript;
 typedef int (FWScript::*opFunc)();
 
 struct Opcode {
-	opFunc proc;
+	const opFunc proc;
 	const char *args;
 };
 
@@ -148,7 +148,7 @@ private:
 	FWScriptInfo *_info; ///< Script info
 
 protected:
-	static Opcode *_opcodeTable;
+	static const Opcode *_opcodeTable;
 	static unsigned int _numOpcodes;
 
 	int o1_modifyObjectParam();
@@ -300,7 +300,7 @@ public:
  */
 class OSScript : public FWScript {
 private:
-	static Opcode *_opcodeTable;
+	static const Opcode *_opcodeTable;
 	static unsigned int _numOpcodes;
 
 protected:

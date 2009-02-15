@@ -38,7 +38,7 @@
 
 namespace Cine {
 
-Opcode *OSScript::_opcodeTable = 0;
+const Opcode *OSScript::_opcodeTable = 0;
 unsigned int OSScript::_numOpcodes = 0;
 
 void OSScript::setupTable() {
@@ -257,7 +257,7 @@ void OSScript::setupTable() {
 		{ 0, 0 },
 		{ &FWScript::o1_changeDataDisk, "b" } /* Same as opcodes 0x6B and 0x95. */
 	};
-	OSScript::_opcodeTable = (Opcode *)opcodeTable;
+	OSScript::_opcodeTable = (const Opcode *)opcodeTable;
 	OSScript::_numOpcodes = ARRAYSIZE(opcodeTable);
 }
 

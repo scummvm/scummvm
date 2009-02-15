@@ -49,7 +49,7 @@ ScriptVars globalVars(NUM_MAX_VAR + 1);
 uint16 compareVars(int16 a, int16 b);
 
 
-Opcode *FWScript::_opcodeTable = 0;
+const Opcode *FWScript::_opcodeTable = 0;
 unsigned int FWScript::_numOpcodes = 0;
 
 void FWScript::setupTable() {
@@ -211,7 +211,7 @@ void FWScript::setupTable() {
 		{ &FWScript::o1_unloadMask5, "b" }
 	};
 
-	FWScript::_opcodeTable = (Opcode *)opcodeTable;
+	FWScript::_opcodeTable = (const Opcode *)opcodeTable;
 	FWScript::_numOpcodes = ARRAYSIZE(opcodeTable);
 }
 
