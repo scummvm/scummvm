@@ -62,7 +62,7 @@ decompress_sci_view(int id, int loop, int cel, byte *resource, byte *dest, int m
 			int op = resource[runlength_pos];
 			int bytes;
 			int readbytes = 0;
-			int color;
+			int color = 0;
 
 			NEXT_RUNLENGTH_BYTE(1);
 

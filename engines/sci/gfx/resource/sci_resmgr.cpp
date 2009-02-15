@@ -175,7 +175,7 @@ gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int pal
 	resource_mgr_t *resmgr = (resource_mgr_t *) state->misc_payload;
 	resource_t *res = scir_find_resource(resmgr, sci_view, nr, 0);
 	int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
-	gfxr_view_t *result;
+	gfxr_view_t *result = 0;
 
 	if (!res || !res->data)
 		return NULL;

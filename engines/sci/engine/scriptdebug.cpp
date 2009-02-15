@@ -3277,6 +3277,7 @@ c_type(state_t *s)
 	}
 	
 	sciprintf("%s\n", invalid ? " (invalid)" : "");
+	return 0;
 }
 
 int
@@ -3403,6 +3404,7 @@ c_gc_list_reachable(state_t *s)
 	apply_to_reg_t_hash_map(use_map, NULL, print_all_of_them);
 
 	free_reg_t_hash_map (use_map);
+	return 0;
 }
 
 
