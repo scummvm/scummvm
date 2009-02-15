@@ -248,7 +248,7 @@ version_require_later_than(state_t *s, sci_version_t version)
 }
 
 int
-version_parse(char *vn, sci_version_t *result)
+version_parse(const char *vn, sci_version_t *result)
 {
 	char *endptr[3];
 	int major = strtol(vn, &endptr[0], 10);

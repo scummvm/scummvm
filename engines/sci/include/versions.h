@@ -143,7 +143,7 @@ version_require_later_than(struct _state *s, sci_version_t version);
 */
 
 int
-version_parse(char *vn, sci_version_t *result);
+version_parse(const char *vn, sci_version_t *result);
 /* Parse a string containing an SCI version number
 ** Parameters: (char *) vn: The string to parse
 ** Returns   : (int) 0 on success, 1 on failure
