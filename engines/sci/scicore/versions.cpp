@@ -179,7 +179,7 @@ is_exe(char *filename)
 {
 	FILE *file;
 	char buf[4];
-	char header[] = {0x00, 0x00, 0x03, 0xf3};
+	unsigned char header[] = {0x00, 0x00, 0x03, 0xf3};
 
 	/* PC and Atari ST executable extensions */
 	if (strstr(filename, ".exe") || strstr(filename, ".EXE")

@@ -830,6 +830,7 @@ ACQUIRE_LOCK();
 	int have_timestamp = 0;
 	sfx_timestamp_t start_timestamp; /* The timestamp at which the first frame will be played */
 	sfx_timestamp_t min_timestamp;
+	min_timestamp.secs = 0;
 	sfx_timestamp_t timestamp;
 
 	if (self->dev->get_output_timestamp)
