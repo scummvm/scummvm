@@ -212,11 +212,6 @@ putInt16(byte* dest, int src)
 **             (int) src: value to write
 */
 
-#ifdef _cplusplus
-#  define delete _freesci_cplusplus_workaround_delete
-#  define new _freesci_cplusplus_workaround_new
-#endif
-
 #define SCI_MEMTEST memtest(__FILE__, __LINE__)
 
 /*-- queues --*/

@@ -39,12 +39,6 @@
 #ifndef _SCI_VM_H
 #define _SCI_VM_H
 
-#ifdef __cplusplus
-#  define new new_
-#  define delete delete_
-#  define class class_
-#endif /* __cplusplus */
-
 #define VM_STACK_SIZE 0x1000
 /* Number of bytes to be allocated for the stack */
 
@@ -338,7 +332,7 @@ typedef struct {
 
 	selector_t caller, moveDone, moveSpeed; /* Used for DoBresen */
 
-	selector_t delete; /* Called by Animate() to dispose a view object */
+	selector_t delete_; /* Called by Animate() to dispose a view object */
 
 	selector_t vol;
 	selector_t pri;

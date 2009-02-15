@@ -471,8 +471,8 @@ vocab_build_simple_parse_tree(parse_tree_node_t *nodes, result_word_t *words, in
   int i, length, pos = 0;
 
   for (i = 0; i < words_nr; ++i) {
-    if (words[i].class != VOCAB_CLASS_ANYWORD) {
-      nodes[pos].type = words[i].class;
+    if (words[i].classID != VOCAB_CLASS_ANYWORD) {
+      nodes[pos].type = words[i].classID;
       nodes[pos].content.value = words[i].group;
       pos += 2; /* Link information is filled in below */
     }

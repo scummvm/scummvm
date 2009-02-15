@@ -499,7 +499,7 @@ k_Unknown(state_t *s, int funct_nr, int argc, reg_t *argv)
 	} else switch(kfunct_mappers[funct_nr].type) {
 
 	case KF_NEW:
-		return kfunct_mappers[funct_nr].new.fun(s, funct_nr, argc, argv);
+		return kfunct_mappers[funct_nr].sig_pair.fun(s, funct_nr, argc, argv);
 
 	case KF_NONE:
 	default:
@@ -907,7 +907,7 @@ script_map_kernel(state_t *s)
 			break;
 
 		case KF_NEW:
-			s->kfunct_table[functnr] = kfunct_mappers[found].new;
+			s->kfunct_table[functnr] = kfunct_mappers[found].sig_pair;
 			kernel_compile_signature(&(s->kfunct_table[functnr].signature));
 			++mapped;
 			break;

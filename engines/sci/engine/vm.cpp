@@ -230,7 +230,7 @@ script_error(state_t *s, const char *file, int line, const char *reason)
 reg_t
 get_class_address(state_t *s, int classnr, int lock, reg_t caller)
 {
-	class_t *class = s->classtable + classnr;
+	class_t *the_class = s->classtable + classnr;
 
 	if (NULL == s) {
 		sciprintf("vm.c: get_class_address(): NULL passed for \"s\"\n");
@@ -239,26 +239,26 @@ get_class_address(state_t *s, int classnr, int lock, reg_t caller)
 
 	if (classnr < 0
 	    || s->classtable_size <= classnr
-	    || class->script < 0) {
+	    || the_class->script < 0) {
 		sciprintf("[VM] Attempt to dereference class %x, which doesn't exist (max %x)\n",
 			  classnr, s->classtable_size);
 		script_error_flag = script_debug_flag = 1;
 		return NULL_REG;
 	} else {
-		if (!class->reg.segment) {
-			script_get_segment(s, class->script, lock);
+		if (!the_class->reg.segment) {
+			script_get_segment(s, the_class->script, lock);
 
-			if (!class->reg.segment) {
+			if (!the_class->reg.segment) {
 				sciprintf("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed;"
-					  " Entering debugger.\n", classnr, class->script);
+					  " Entering debugger.\n", classnr, the_class->script);
 				script_error_flag = script_debug_flag = 1;
 				return NULL_REG;
 			}
 		} else
-			if (caller.segment != class->reg.segment)
-				sm_increment_lockers(&s->seg_manager, class->reg.segment, SEG_ID);
+			if (caller.segment != the_class->reg.segment)
+				sm_increment_lockers(&s->seg_manager, the_class->reg.segment, SEG_ID);
 
-		return class->reg;
+		return the_class->reg;
 	}
 }
 
@@ -458,11 +458,11 @@ send_selector(state_t *s, reg_t send_obj, reg_t work_obj,
 				{ /* Argument is supplied -> Selector should be set */
 
 				if (print_send_action) {
-					reg_t val = *varp;
-					reg_t new = argp[1];
+					reg_t oldReg = *varp;
+					reg_t newReg = argp[1];
 
 					sciprintf("[write to selector: change "PREG" to "PREG"]\n",
-						  PRINT_REG(val), PRINT_REG(new));
+						  PRINT_REG(oldReg), PRINT_REG(newReg));
 					print_send_action = 0;
 				}
 				send_calls[send_calls_nr].address.var = varp; /* register the call */

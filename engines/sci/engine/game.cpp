@@ -305,13 +305,13 @@ game_init_sound(state_t *s, int sound_flags)
 /* Maps a class ID to the script the corresponding class is contained in */
 /* Returns the script number suggested by vocab.996, or -1 if there's none */
 static int
-suggested_script(resource_t *res, unsigned int class)
+suggested_script(resource_t *res, unsigned int classId)
 {
 	int offset;
-	if (!res || class >= res->size >> 2)
+	if (!res || classId >= res->size >> 2)
 		return -1;
 
-	offset = 2 + (class << 2);
+	offset = 2 + (classId << 2);
 
 	return getInt16(res->data + offset);
 }

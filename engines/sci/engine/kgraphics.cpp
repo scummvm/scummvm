@@ -1997,7 +1997,7 @@ _k_view_list_dispose_loop(state_t *s, list_t *list, gfxw_dyn_view_t *widget,
 				}
 
 				if (is_object(s, obj)) {
-					if (invoke_selector(INV_SEL(obj, delete, 1), 0))
+					if (invoke_selector(INV_SEL(obj, delete_, 1), 0))
 						SCIkwarn(SCIkWARNING, "Object at "PREG" requested deletion, but does not have"
 							 " a delete funcselector\n", PRINT_REG(obj));
 					if (_k_animate_ran) {
