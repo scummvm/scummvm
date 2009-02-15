@@ -155,7 +155,7 @@ midi_hexdump(byte *data, int size, int notational_offset)
 					size);
 		int cmd;
 		int pleft;
-		int firstarg;
+		int firstarg = 0;
 		int i;
 		int blanks = 0;
 

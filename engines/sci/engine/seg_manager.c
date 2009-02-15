@@ -92,7 +92,7 @@ static inline int
 find_free_id(seg_manager_t *self, int *id)
 {
 	char was_added = 0;
-	int retval;
+	int retval = 0;
 
 	while (!was_added) {
 		retval = int_hash_map_check_value(self->id_seg_map, self->reserved_id,

@@ -873,7 +873,7 @@ kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv)
 		int sec = 0;
 		int frame = 0;
 		int result = SI_LOOP; /* small hack */
-		int cue;
+		int cue = 0;
 
 		while (result == SI_LOOP)
 		       result = sfx_poll_specific(&s->sound, handle, &cue);

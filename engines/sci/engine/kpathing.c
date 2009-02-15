@@ -1516,7 +1516,7 @@ dijkstra(pf_state_t *s)
 	/* Loop until we find vertex_end */
 	while (1) {
 		int i;
-		vertex_t *vertex, *vertex_min;
+		vertex_t *vertex, *vertex_min = 0;
 		float min = HUGE_DISTANCE;
 
 		/* Find vertex at shortest distance from set done */
