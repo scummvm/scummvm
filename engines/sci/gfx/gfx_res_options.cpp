@@ -33,6 +33,12 @@
 
 #include <ctype.h>
 
+#ifdef _MSC_VER
+#ifndef isblank
+#  define isblank(c)	((c) == ' ' || (c) == '\t')
+#endif
+#endif
+
 /*#define DEBUG*/
 
 static gfx_res_pattern_list_t*

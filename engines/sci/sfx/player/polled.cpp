@@ -30,7 +30,9 @@
 #include "sci/sfx/softseq.h"
 #include "sci/sfx/mixer.h"
 
+#ifndef _MSC_VER
 #include <unistd.h> // for close()
+#endif
 
 static song_iterator_t *play_it;
 static int play_paused = 0;

@@ -102,10 +102,12 @@
 #include "sci/include/scitypes.h"
 
 // FIXME: Mostly for close() in lots of places. Get rid of this!
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 
 #ifdef _MSC_VER
-#	include <sys/timeb.h>
+//#	include <sys/timeb.h>
 #   include <fcntl.h>
 #	include <windows.h>
 #	undef strcasecmp
