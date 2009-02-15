@@ -44,7 +44,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;SCUMMVM;HAVE_MEMCHR;HAVE_SYS_STAT_H;HAVE_FCNTL_H;HAVE_STRING_H;HAVE_UNLINK;HAVE_RMDIR;WANT_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;SCUMMVM;HAVE_MEMCHR;HAVE_SYS_STAT_H;HAVE_FCNTL_H;HAVE_STRING_H;HAVE_UNLINK;HAVE_RMDIR"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -120,7 +120,7 @@
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;SCUMMVM;HAVE_MEMCHR;HAVE_SYS_STAT_H;HAVE_FCNTL_H;HAVE_STRING_H;HAVE_UNLINK;HAVE_RMDIR;WANT_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;SCUMMVM;HAVE_MEMCHR;HAVE_SYS_STAT_H;HAVE_FCNTL_H;HAVE_STRING_H;HAVE_UNLINK;HAVE_RMDIR"
 				StringPooling="true"
 				ExceptionHandling="1"
 				RuntimeLibrary="0"
@@ -170,11 +170,11 @@
 			Name="engine"
 			>
 			<File
-				RelativePath="..\..\engines\sci\engine\game.c"
+				RelativePath="..\..\engines\sci\engine\game.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\gc.c"
+				RelativePath="..\..\engines\sci\engine\gc.cpp"
 				>
 			</File>
 			<File
@@ -182,15 +182,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\include\win32\getopt.h"
+				RelativePath="..\..\engines\sci\engine\grammar.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\grammar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kernel.c"
+				RelativePath="..\..\engines\sci\engine\kernel.cpp"
 				>
 			</File>
 			<File
@@ -202,55 +198,63 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\kevent.c"
+				RelativePath="..\..\engines\sci\engine\kevent.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\kfile.c"
+				RelativePath="..\..\engines\sci\engine\kfile.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\kgraphics.c"
+				RelativePath="..\..\engines\sci\engine\kgraphics.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\klists.c"
+				RelativePath="..\..\engines\sci\engine\klists.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\kmath.c"
+				RelativePath="..\..\engines\sci\engine\kmath.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\kmenu.c"
+				RelativePath="..\..\engines\sci\engine\kmenu.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\kmovement.c"
+				RelativePath="..\..\engines\sci\engine\kmovement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\kpathing.c"
+				RelativePath="..\..\engines\sci\engine\kpathing.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\kscripts.c"
+				RelativePath="..\..\engines\sci\engine\kscripts.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\ksound.c"
+				RelativePath="..\..\engines\sci\engine\ksound.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\kstring.c"
+				RelativePath="..\..\engines\sci\engine\kstring.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\said.c"
+				RelativePath="..\..\engines\sci\engine\message.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\savegame.c"
+				RelativePath="..\..\engines\sci\engine\message.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\said.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\savegame.cpp"
 				>
 			</File>
 			<File
@@ -258,31 +262,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\include\win32\sci_win32.h"
+				RelativePath="..\..\engines\sci\engine\scriptconsole.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\scriptconsole.c"
+				RelativePath="..\..\engines\sci\engine\scriptdebug.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\scriptdebug.c"
+				RelativePath="..\..\engines\sci\engine\seg_manager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\seg_manager.c"
+				RelativePath="..\..\engines\sci\engine\sys_strings.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\sys_strings.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\win32\usleep.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\vm.c"
+				RelativePath="..\..\engines\sci\engine\vm.cpp"
 				>
 			</File>
 		</Filter>
@@ -290,94 +286,94 @@
 			Name="gfx"
 			>
 			<File
-				RelativePath="..\..\engines\sci\gfx\antialias.c"
+				RelativePath="..\..\engines\sci\gfx\antialias.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\font-5x8.c"
+				RelativePath="..\..\engines\sci\gfx\font-5x8.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\font-6x10.c"
+				RelativePath="..\..\engines\sci\gfx\font-6x10.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\font.c"
+				RelativePath="..\..\engines\sci\gfx\font.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_res_options.c"
+				RelativePath="..\..\engines\sci\gfx\gfx_driver.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_resource.c"
+				RelativePath="..\..\engines\sci\gfx\gfx_res_options.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_support.c"
+				RelativePath="..\..\engines\sci\gfx\gfx_resource.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_tools.c"
+				RelativePath="..\..\engines\sci\gfx\gfx_support.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\menubar.c"
+				RelativePath="..\..\engines\sci\gfx\gfx_tools.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\operations.c"
+				RelativePath="..\..\engines\sci\gfx\menubar.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\resmgr.c"
+				RelativePath="..\..\engines\sci\gfx\operations.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\sbtree.c"
+				RelativePath="..\..\engines\sci\gfx\resmgr.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\sci_widgets.c"
+				RelativePath="..\..\engines\sci\gfx\sbtree.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\drivers\scummvm_driver.cpp"
+				RelativePath="..\..\engines\sci\gfx\sci_widgets.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\widgets.c"
+				RelativePath="..\..\engines\sci\gfx\widgets.cpp"
 				>
 			</File>
 			<Filter
 				Name="resource"
 				>
 				<File
-					RelativePath="..\..\engines\sci\gfx\resource\sci_cursor_0.c"
+					RelativePath="..\..\engines\sci\gfx\resource\sci_cursor_0.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\gfx\resource\sci_font.c"
+					RelativePath="..\..\engines\sci\gfx\resource\sci_font.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\gfx\resource\sci_pal_1.c"
+					RelativePath="..\..\engines\sci\gfx\resource\sci_pal_1.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\gfx\resource\sci_pic_0.c"
+					RelativePath="..\..\engines\sci\gfx\resource\sci_pic_0.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\gfx\resource\sci_resmgr.c"
+					RelativePath="..\..\engines\sci\gfx\resource\sci_resmgr.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\gfx\resource\sci_view_0.c"
+					RelativePath="..\..\engines\sci\gfx\resource\sci_view_0.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\gfx\resource\sci_view_1.c"
+					RelativePath="..\..\engines\sci\gfx\resource\sci_view_1.cpp"
 					>
 				</File>
 			</Filter>
@@ -386,31 +382,31 @@
 			Name="scicore"
 			>
 			<File
-				RelativePath="..\..\engines\sci\scicore\aatree.c"
+				RelativePath="..\..\engines\sci\scicore\aatree.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\console.c"
+				RelativePath="..\..\engines\sci\scicore\console.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\decompress0.c"
+				RelativePath="..\..\engines\sci\scicore\decompress0.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\decompress01.c"
+				RelativePath="..\..\engines\sci\scicore\decompress01.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\decompress1.c"
+				RelativePath="..\..\engines\sci\scicore\decompress1.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\decompress11.c"
+				RelativePath="..\..\engines\sci\scicore\decompress11.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\exe.c"
+				RelativePath="..\..\engines\sci\scicore\exe.cpp"
 				>
 			</File>
 			<File
@@ -422,11 +418,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\exe_lzexe.c"
+				RelativePath="..\..\engines\sci\scicore\exe_lzexe.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\exe_raw.c"
+				RelativePath="..\..\engines\sci\scicore\exe_raw.cpp"
 				>
 			</File>
 			<File
@@ -434,63 +430,47 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\int_hashmap.c"
+				RelativePath="..\..\engines\sci\scicore\int_hashmap.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\reg_t_hashmap.c"
+				RelativePath="..\..\engines\sci\scicore\reg_t_hashmap.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\resource.c"
+				RelativePath="..\..\engines\sci\scicore\resource.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\resource_map.c"
+				RelativePath="..\..\engines\sci\scicore\resource_map.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\resource_patch.c"
+				RelativePath="..\..\engines\sci\scicore\resource_patch.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\sci_memory.c"
+				RelativePath="..\..\engines\sci\scicore\sci_memory.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\script.c"
+				RelativePath="..\..\engines\sci\scicore\script.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\tools.c"
+				RelativePath="..\..\engines\sci\scicore\tools.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\versions.c"
+				RelativePath="..\..\engines\sci\scicore\versions.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\vocab.c"
+				RelativePath="..\..\engines\sci\scicore\vocab.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\vocab_debug.c"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="scummvm"
-			>
-			<File
-				RelativePath="..\..\engines\sci\scummvm\detection.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scummvm\scummvm_engine.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scummvm\scummvm_engine.h"
+				RelativePath="..\..\engines\sci\scicore\vocab_debug.cpp"
 				>
 			</File>
 		</Filter>
@@ -498,7 +478,7 @@
 			Name="sfx"
 			>
 			<File
-				RelativePath="..\..\engines\sci\sfx\adlib.c"
+				RelativePath="..\..\engines\sci\sfx\adlib.cpp"
 				>
 			</File>
 			<File
@@ -506,7 +486,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\sfx\core.c"
+				RelativePath="..\..\engines\sci\sfx\core.cpp"
 				>
 			</File>
 			<File
@@ -514,7 +494,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\sfx\iterator.c"
+				RelativePath="..\..\engines\sci\sfx\iterator.cpp"
 				>
 			</File>
 			<File
@@ -522,7 +502,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\sfx\pcm-iterator.c"
+				RelativePath="..\..\engines\sci\sfx\pcm-iterator.cpp"
 				>
 			</File>
 			<File
@@ -534,18 +514,18 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\sfx\songlib.c"
+				RelativePath="..\..\engines\sci\sfx\songlib.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\sfx\time.c"
+				RelativePath="..\..\engines\sci\sfx\time.cpp"
 				>
 			</File>
 			<Filter
 				Name="device"
 				>
 				<File
-					RelativePath="..\..\engines\sci\sfx\device\devices.c"
+					RelativePath="..\..\engines\sci\sfx\device\devices.cpp"
 					>
 				</File>
 			</Filter>
@@ -553,11 +533,11 @@
 				Name="mixer"
 				>
 				<File
-					RelativePath="..\..\engines\sci\sfx\mixer\mixers.c"
+					RelativePath="..\..\engines\sci\sfx\mixer\mixers.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\sfx\mixer\soft.c"
+					RelativePath="..\..\engines\sci\sfx\mixer\soft.cpp"
 					>
 				</File>
 			</Filter>
@@ -565,7 +545,7 @@
 				Name="pcm_device"
 				>
 				<File
-					RelativePath="..\..\engines\sci\sfx\pcm_device\pcm_devices.c"
+					RelativePath="..\..\engines\sci\sfx\pcm_device\pcm_devices.cpp"
 					>
 				</File>
 				<File
@@ -577,15 +557,15 @@
 				Name="player"
 				>
 				<File
-					RelativePath="..\..\engines\sci\sfx\player\players.c"
+					RelativePath="..\..\engines\sci\sfx\player\players.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\sfx\player\polled.c"
+					RelativePath="..\..\engines\sci\sfx\player\polled.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\sfx\player\realtime.c"
+					RelativePath="..\..\engines\sci\sfx\player\realtime.cpp"
 					>
 				</File>
 			</Filter>
@@ -593,7 +573,7 @@
 				Name="seq"
 				>
 				<File
-					RelativePath="..\..\engines\sci\sfx\seq\sequencers.c"
+					RelativePath="..\..\engines\sci\sfx\seq\sequencers.cpp"
 					>
 				</File>
 			</Filter>
@@ -601,23 +581,27 @@
 				Name="softseq"
 				>
 				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\amiga.c"
+					RelativePath="..\..\engines\sci\sfx\softseq\amiga.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\opl2.c"
+					RelativePath="..\..\engines\sci\sfx\softseq\fmopl.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\pcspeaker.c"
+					RelativePath="..\..\engines\sci\sfx\softseq\opl2.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\SN76496.c"
+					RelativePath="..\..\engines\sci\sfx\softseq\pcspeaker.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\softsequencers.c"
+					RelativePath="..\..\engines\sci\sfx\softseq\SN76496.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\engines\sci\sfx\softseq\softsequencers.cpp"
 					>
 				</File>
 			</Filter>
@@ -625,11 +609,11 @@
 				Name="timer"
 				>
 				<File
-					RelativePath="..\..\engines\sci\sfx\timer\scummvm.cpp"
+					RelativePath="..\..\engines\sci\sfx\timer\timer_scummvm.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\sfx\timer\timers.c"
+					RelativePath="..\..\engines\sci\sfx\timer\timers.cpp"
 					>
 				</File>
 			</Filter>
@@ -655,10 +639,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\conf_subsystems.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\conf_summary.h"
 				>
 			</File>
 			<File
@@ -750,10 +730,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\include\modules.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\include\old_objects.h"
 				>
 			</File>
@@ -767,10 +743,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\sbtree.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sci_conf.h"
 				>
 			</File>
 			<File
@@ -870,6 +842,18 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\..\engines\sci\detection.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\sci.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\sci.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -625,7 +625,7 @@ _fcaseseek(const char *fname, sci_dir_t *dir)
 	char *retval = NULL, *name;
 
 #ifdef _MSC_VER
-	return fname;
+	return (char *)fname;
 #endif
 
 	if (strchr(fname, G_DIR_SEPARATOR)) {

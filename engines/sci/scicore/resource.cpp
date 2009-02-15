@@ -193,6 +193,7 @@ scir_add_volume(resource_mgr_t *mgr, resource_source_t *map, char *filename,
 	newsrc->location.file.name = strdup(filename);
 	newsrc->location.file.volume_number = number;
 	newsrc->associated_map = map;
+	return 0;
 }
 
 resource_source_t *
@@ -208,6 +209,7 @@ scir_add_patch_dir(resource_mgr_t *mgr, int type, char *dirname)
 	newsrc->source_type = RESSOURCE_TYPE_DIRECTORY;
 	newsrc->scanned = 0;
 	newsrc->location.dir.name = strdup(dirname);
+	return 0;
 }
 
 resource_source_t *
@@ -585,6 +587,7 @@ int
 scir_scan_new_sources(resource_mgr_t *mgr, int *detected_version)
 {
 	_scir_scan_new_sources(mgr, detected_version, mgr->sources);
+	return 0;
 }
 
 static void

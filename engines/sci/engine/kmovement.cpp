@@ -140,7 +140,7 @@ kSetJump(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 		// FIXME: This choice of vy makes t roughly (2+sqrt(2))/gy * sqrt(dy);
 		// so if gy==3, then t is roughly sqrt(dy)...
-		vy = (int)sqrt((float)gy * (float)abs(2 * dy)) + 1;
+		vy = (int)sqrt((double)gy * abs(2 * dy)) + 1;
 	} else {
 		// As stated above, the vertical direction is correlated to the horizontal by the
 		// (non-zero) factor c.
