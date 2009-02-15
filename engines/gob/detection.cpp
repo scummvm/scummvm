@@ -369,13 +369,69 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro"
 	},
+	{ // Supplied by fac76 in bug report #1883808
+		{
+			"gob2",
+			"",
+			AD_ENTRY1s("intro.stk", "eebf2810122cfd17399260cd1468e994", 554014),
+			EN_ANY,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesNone,
+		"intro"
+	},
 	{
 		{
 			"gob2",
 			"",
-			AD_ENTRY1s("intro.stk", "a13ecb4f6d8fd881ebbcc02e45cb5475", 837275),
+			AD_ENTRY1("intro.stk", "d28b9e9b41f31acfa58dcd12406c7b2c"),
+			DE_DEU,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesNone,
+		"intro"
+	},
+	{ // Supplied by goodoldgeorg in bug report #2602057
+		{
+			"gob2",
+			"",
+			AD_ENTRY1("intro.stk", "686c88f7302a80b744aae9f8413e853d"),
+			IT_ITA,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesNone,
+		"intro"
+	},
+	{ // Supplied by bgk in bug report #1706861
+		{
+			"gob2",
+			"",
+			AD_ENTRY1s("intro.stk", "4b13c02d1069b86bcfec80f4e474b98b", 554680),
 			FR_FRA,
-			kPlatformPC,
+			kPlatformAtariST,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesNone,
+		"intro"
+	},
+	{ // Supplied by fac76 in bug report #1673397
+		{
+			"gob2",
+			"",
+			{
+				{"intro.stk", 0, "b45b984ee8017efd6ea965b9becd4d66", 828443},
+				{"musmac1.mid", 0, "7f96f491448c7a001b32df89cf8d2af2", 1658},
+				{NULL, 0, NULL, 0}
+			},
+			UNK_LANG,
+			kPlatformMacintosh,
 			ADGF_NO_FLAGS
 		},
 		kGameTypeGob2,
@@ -399,19 +455,6 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro"
 	},
-	{ // Supplied by arcepi in bug report #1659884
-		{
-			"gob2",
-			"",
-			AD_ENTRY1s("intro.stk", "5f53c56e3aa2f1e76c2e4f0caa15887f", 829232),
-			ES_ESP,
-			kPlatformPC,
-			ADGF_NO_FLAGS
-		},
-		kGameTypeGob2,
-		kFeaturesAdlib,
-		"intro"
-	},
 	{
 		{
 			"gob2",
@@ -419,23 +462,6 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1("intro.stk", "b45b984ee8017efd6ea965b9becd4d66"),
 			EN_GRB,
 			kPlatformPC,
-			ADGF_NO_FLAGS
-		},
-		kGameTypeGob2,
-		kFeaturesAdlib,
-		"intro"
-	},
-	{ // Supplied by fac76 in bug report #1673397
-		{
-			"gob2",
-			"",
-			{
-				{"intro.stk", 0, "b45b984ee8017efd6ea965b9becd4d66", 828443},
-				{"musmac1.mid", 0, "7f96f491448c7a001b32df89cf8d2af2", 1658},
-				{NULL, 0, NULL, 0}
-			},
-			UNK_LANG,
-			kPlatformMacintosh,
 			ADGF_NO_FLAGS
 		},
 		kGameTypeGob2,
@@ -472,8 +498,47 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"gob2",
 			"",
+			AD_ENTRY1s("intro.stk", "a13ecb4f6d8fd881ebbcc02e45cb5475", 837275),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		"intro"
+	},
+	{ // Supplied by blackwhiteeagle in bug report #1605235
+		{
+			"gob2",
+			"",
+			AD_ENTRY1("intro.stk", "3e4e7db0d201587dd2df4003b2993ef6"),
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		"intro"
+	},
+	{
+		{
+			"gob2",
+			"",
 			AD_ENTRY1("intro.stk", "a13892cdf4badda85a6f6fb47603a128"),
 			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		"intro"
+	},
+	{ // Supplied by goodoldgeorg in bug report #2602017
+		{
+			"gob2",
+			"",
+			AD_ENTRY1("intro.stk", "c47faf1d406504e6ffe63243610bb1f4"),
+			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS
 		},
@@ -494,56 +559,17 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro"
 	},
-	{ // Supplied by fac76 in bug report #1883808
+	{ // Supplied by arcepi in bug report #1659884
 		{
 			"gob2",
 			"",
-			AD_ENTRY1s("intro.stk", "eebf2810122cfd17399260cd1468e994", 554014),
-			EN_ANY,
-			kPlatformAmiga,
-			ADGF_NO_FLAGS
-		},
-		kGameTypeGob2,
-		kFeaturesNone,
-		"intro"
-	},
-	{
-		{
-			"gob2",
-			"",
-			AD_ENTRY1("intro.stk", "d28b9e9b41f31acfa58dcd12406c7b2c"),
-			DE_DEU,
-			kPlatformAmiga,
-			ADGF_NO_FLAGS
-		},
-		kGameTypeGob2,
-		kFeaturesNone,
-		"intro"
-	},
-	{ // Supplied by blackwhiteeagle in bug report #1605235
-		{
-			"gob2",
-			"",
-			AD_ENTRY1("intro.stk", "3e4e7db0d201587dd2df4003b2993ef6"),
-			DE_DEU,
+			AD_ENTRY1s("intro.stk", "5f53c56e3aa2f1e76c2e4f0caa15887f", 829232),
+			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
-	},
-	{ // Supplied by bgk in bug report #1706861
-		{
-			"gob2",
-			"",
-			AD_ENTRY1s("intro.stk", "4b13c02d1069b86bcfec80f4e474b98b", 554680),
-			FR_FRA,
-			kPlatformAtariST,
-			ADGF_NO_FLAGS
-		},
-		kGameTypeGob2,
-		kFeaturesNone,
 		"intro"
 	},
 	{
@@ -676,6 +702,15 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		"intro"
 	},
+
+
+
+
+
+
+
+
+
 	{ // Supplied by vampir_raziel in bug report #1658373
 		{
 			"ween",
