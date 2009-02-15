@@ -26,7 +26,6 @@
 #ifndef COMMON_ARCHIVE_H
 #define COMMON_ARCHIVE_H
 
-//#include "common/fs.h"
 #include "common/str.h"
 #include "common/hash-str.h"
 #include "common/list.h"

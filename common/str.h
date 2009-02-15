@@ -166,11 +166,12 @@ public:
 	 *
 	 * @param str Text to be matched against the given pattern.
 	 * @param pat Glob pattern.
+	 * @param pathMode Whether to use path mode, i.e., whether slashes must be matched explicitly.
 	 *
 	 * @return true if str matches the pattern, false otherwise.
 	 */
-	bool matchString(const char *pat) const;
-	bool matchString(const String &pat) const;
+	bool matchString(const char *pat, bool pathMode = false) const;
+	bool matchString(const String &pat, bool pathMode = false) const;
 
 
 	inline const char *c_str() const		{ return _str; }
@@ -306,10 +307,11 @@ Common::String normalizePath(const Common::String &path, const char sep);
  *
  * @param str Text to be matched against the given pattern.
  * @param pat Glob pattern.
+ * @param pathMode Whether to use path mode, i.e., whether slashes must be matched explicitly.
  *
  * @return true if str matches the pattern, false otherwise.
  */
-bool matchString(const char *str, const char *pat);
+bool matchString(const char *str, const char *pat, bool pathMode = false);
 
 
 class StringList : public Array<String> {
