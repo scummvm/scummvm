@@ -1,0 +1,123 @@
+  ----------------------------------------------------------------------
+  | *QUEST FOR GLORY I*  | So U Want 2 B A HERO |   QUEST FOR GLORY I  |
+--------------------------------------------------------------------------
+| ## | MT-32 Timbre | KSh FTn BR | General MIDI Patch      |  KSh VolA V |
+--------------------------------------------------------------------------
+| 03 | m Toms    MS |  00  00 12 | Melodic Tom             |  000  000 1 |
+| 04 |   Trumpet 2  |  00  00 12 | Trumpet                 |  000  022 2 |
+| 05 | m T-Bone2 MS |  00  00 12 | Trombone                |  000  065 2 |
+| 06 | m FrHorn1 MS |  00  00 12 | French Horn             |  000  040 3 |
+| 07 | m StrSect1MS |  00  00 12 | String Ensemble 1       |  000  127 2 |
+| 08 |   Timpani    |  00  00 12 | Timpani                 |  000  000 2 |
+| 09 |   Contrabass |  00  00 12 | Contrabass              |  000  080 2 |
+| 10 | m Glock   MS |  00  00 12 | Glockenspiel            |  012  080 3 |
+| 11 | m Flute   MS |  00  00 12 | Flute                   |  000  045 3 |
+| 12 |   Tuba       |  00  00 12 | Tuba                    |  000  127 3 |
+| 13 |   Brs Sect 1 |  00  00 12 | Brass Section           |  000  100 3 |
+| 14 |   Fr Horn 1  |  00  00 12 | French Horn             |  000  040 3 |
+| 15 |   Pizzicato  |  00  00 12 | Pizzicato Strings       |  000  000 2 |
+| 17 |   Acou Bass1 | -12  00 00 | Acoustic Bass           |  000  050 2 |
+| 18 |   Sax 2      |  00  00 00 | Alto Sax                |  000  040 1 |
+| 19 | m EnglHornMS |  00  00 12 | English Horn            |  012  040 3 |
+| 20 |   Pipe Org 1 |  00  00 00 | Church Organ            |  000  000 3 |
+| 21 |   Panpipes   |  00  00 12 | Pan Flute               |  000  020 1 |
+| 22 |   Clarinet 1 |  00  00 12 | Clarinet                |  000  020 3 |
+| 23 | m BassPizzMS |  00  00 12 | Orchestral Harp         | -012  050 1 |
+| 24 | m Conga   MS |  00  00 12 | Taiko Drum              |  000  000 1 |
+| 25 |   Sitar      |  00  00 12 | Sitar                   |  000  080 3 |
+| 26 | m Snare   MS |  00  00 00 | Taiko Drum              |  000  000 1 |
+| 27 | m ClarinetMS |  00  00 12 | Clarinet                |  000  020 3 |
+| 28 | m Fantasy2MS |  00  00 12 | Pad 4 (choir)           |  000  050 1 |
+| 29 |   Guitar 1   |  00  00 12 | Acoustic Guitar (nylon) |  000  000 1 |
+| 30 |   Chorale    |  00  00 12 | Pad 4 (choir)           |  000  020 2 |
+| 31 |   Syn Bass 1 |  00  00 12 | Synth Bass 1            |  000  020 1 |
+| 32 | m GameSnd MS |  00  00 12 | Lead 1 (square)         |  000  000 1 |
+| 33 | m Calliope   |  00  00 12 | Drawbar Organ           |  000  000 1 |
+| 34 |   Whistle 1  |  00  00 12 | Whistle                 |  000  040 3 |
+| 47 | m SKATE2     |  00  00 24 |                         |             |
+| 48 | m Claw    MS |  00  00 12 | Synth Drum              |  000  000 1 |
+| 49 | m Flames  MS |  00  00 12 | Breath Noise            |  000  000 1 |
+| 50 | m Swords  MS |  00  00 12 |                         |             |
+| 51 | m Armor   MS |  00  00 12 |                         |             |
+| 52 | m Splat   MS |  00  00 00 | Synth Drum              |  000  000 1 |
+| 53 | m Fall    MS |  00  00 00 |                         |             |
+| 54 | m Crash   MS |  00  00 00 | Gunshot                 |  000  127 3 |
+| 55 | m Laser   MS |  00  00 00 | Lead 2 (sawtooth)       |  000 -040 1 |
+| 56 | m Vase    MS |  00  00 00 | Gunshot                 | -012  000 1 |
+| 57 | m Spit    MS |  00  00 12 | Woodblock               | -012  000 1 |
+| 58 | m Bubbles    |  00  00 12 |                         |             |
+| 59 | m Ninga   MS |  00  00 12 | Breath Noise            |  000  100 1 |
+| 60 | m Flame2  MS |  00  00 12 | Breath Noise            |  000  100 1 |
+| 61 | m CracklesMS |  00  00 12 | Woodblock               |  000  040 1 |
+| 62 | m Gulp    MS |  00  00 12 |                         |             |
+| 63 | m KnifeStkMS |  00  00 12 | Woodblock               |  000  110 1 |
+| 64 | m Pft     MS |  00  00 12 | Helicopter              |  000  110 1 |
+| 65 | m Poof    MS |  00  00 12 |                         |             |
+| 66 |   Bird Tweet |  00  00 12 | Bird Tweet              |  000  000 1 |
+| 67 | m Owl     MS |  00  00 12 | Bird Tweet              | -012  000 1 |
+| 68 | m Wind    MS |  00  00 12 |                         |             |
+| 69 | m Cricket    |  00  00 12 | Guitar Fret Noise       |  000  000 1 |
+| 70 | m SwmpBackgr |  00  00 12 | Guitar Fret Noise       |  000  000 1 |
+| 71 | m FireDartMS |  00  00 00 | Seashore                |  000  120 1 |
+| 72 | m LghtboltMS |  00  00 12 | Seashore                |  000  120 1 |
+| 73 | m Raspbry MS |  00  00 12 | Lead 2 (sawtooth)       |  000  000 1 |
+| 74 | m Explode MS |  00  00 13 | Helicopter              |  000  000 1 |
+| 75 | m Lock    MS |  00  00 12 | Gunshot                 |  080  000 1 |
+| 76 | m Buildup MS |  00  00 12 |                         |             |
+| 77 | m Boing   MS |  00  00 24 | Taiko Drum              |  000  000 1 |
+| 78 | m Flames3 MS |  00  00 12 | Helicopter              |  000  080 1 |
+| 79 | m Thunder MS |  00  00 12 | Helicopter              | -012  100 1 |
+| 80 | m Meeps   MS |  00  00 12 | SynthBrass 1            |  000  000 1 |
+| 81 | m Bells   MS |  00  00 12 | Tinkle Bell             |  012  080 1 |
+| 82 | m Skid    MS |  00  00 12 | Helicopter              |  000  000 1 |
+| 83 | m RimShot MS |  00  00 12 | Woodblock               |  000  000 1 |
+| 84 | m WtrFall MS |  00  00 12 |                         |             |
+| 85 | m DoorSlamMS |  00  00 12 | Taiko Drum              |  000  000 1 |
+| 86 | m SmileFacMS |  00  00 12 | Helicopter              |  000  040 1 |
+| 87 | m Tumble  MS |  00  00 12 | Synth Drum              |  000  040 1 |
+| 88 | m Punch   MS |  00  00 12 | Synth Drum              |  000  080 1 |
+| 89 | m CreakyD MS |  00  00 12 |                         |             |
+| 90 | m CstlGateMS |  00  00 12 | Gunshot                 | -050  050 1 |
+| 91 | m Hammer  MS |  00  00 12 |                         |             |
+| 92 | m Horse1  MS |  00  00 12 | Woodblock               |  000  000 1 |
+| 93 | m Horse2  MS |  00  00 12 | Woodblock               |  000  000 1 |
+| 94 | m Kiss    MS |  00  00 12 | Gunshot                 |  100  000 1 |
+| 95 | m StrSect1MS |  00  00 12 | String Ensemble 1       |  000  127 2 |
+--------------------------------------------------------------------------
+         | ## | MT-32 Timbre |  OL PP | General MIDI Rhythm Key |
+         --------------------------------------------------------
+         | 36 | r Acou BD    | 100 07 | Bass Drum 1             |
+         | 37 | r Rim Shot   | 100 06 | Side Stick              |
+         | 38 | r Acou SD    | 100 07 | Acoustic Snare          |
+         | 39 | r Hand Clap  | 100 08 | Hand Clap               |
+         | 40 | r Elec SD    | 100 06 | Electric Snare          |
+         | 41 | r AcouLowTom | 100 11 | Low Floor Tom           |
+         | 42 | r Clsd HiHat | 100 06 | Closed Hi-Hat           |
+         | 43 | r AcouLowTom | 100 11 | Low Floor Tom           |
+         | 44 | r OpenHiHat2 | 100 06 | Open Hi-Hat             |
+         | 45 | r AcouMidTom | 100 08 | Low-Mid Tom             |
+         | 46 | r OpenHiHat1 | 100 06 | Open Hi-Hat             |
+         | 47 | r AcouMidTom | 100 08 | Hi-Mid Tom              |
+         | 48 | r Acou HiTom | 100 03 | High Tom                |
+         | 49 | r Crash Cym  | 100 06 | Crash Cymbal 1          |
+         | 50 | r Acou HiTom | 100 03 | High Tom                |
+         | 51 | r Ride Cym   | 100 08 | Ride Cymbal 1           |
+         | 52 | m CymSwellMS | 100 07 |                         |
+         | 54 | r Tambourine | 100 09 | Tambourine              |
+         | 56 | r Cowbell    | 100 07 | Cowbell                 |
+         | 60 | r High Bongo | 100 02 | Hi Bongo                |
+         | 61 | r Low Bongo  | 100 04 | Low Bongo               |
+         | 62 | r Mt HiConga | 100 08 | Mute Hi Conga           |
+         | 63 | r High Conga | 100 09 | Open Hi Conga           |
+         | 64 | r Low Conga  | 100 10 | Low Conga               |
+         | 65 | r Hi Timbale | 100 07 | High Timbale            |
+         | 66 | r LowTimbale | 100 05 | Low Timbale             |
+         | 67 | r High Agogo | 100 02 | High Agogo              |
+         | 68 | r Low Agogo  | 100 02 | Low Agogo               |
+         | 69 | r Cabasa     | 100 09 | Cabasa                  |
+         | 70 | r Maracas    | 100 04 | Maracas                 |
+         | 71 | r SmbaWhis S | 100 09 | Short Whistle           |
+         | 72 | r SmbaWhis L | 100 09 | Long Whistle            |
+         | 73 | r Quijada    | 100 00 | Short Guiro             |
+         | 75 | r Claves     | 100 12 | Claves                  |
+         --------------------------------------------------------

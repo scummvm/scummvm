@@ -1,0 +1,135 @@
+  ----------------------------------------------------------------------
+  |  ..THE DEATH ANGEL.. |    POLICE QUEST I    | <THANKS FOR PLAYING> |
+--------------------------------------------------------------------------
+| ## | MT-32 Timbre | KSh FTn BR | General MIDI Patch      |  KSh VolA V |
+--------------------------------------------------------------------------
+| 00 | m FEEDBAK AX |  00  00 12 | Distortion Guitar       | -012  065 3 |
+| 01 | m REV CYMBAL |  00  00 12 | Reverse Cymbal          |  000  000 0 |
+| 02 | m ANALOG SYN |  00  00 12 | Pad 3 (polysynth)       |  000  127 3 |
+| 03 | m STACKBASS  |  00  00 12 | Slap Bass 2             | -012  100 3 |
+| 04 | m ORGAN B    |  00  00 12 | Drawbar Organ           |  000  055 3 |
+| 05 |   Syn Mallet |  00  00 12 | Dulcimer                |  000  000 0 |
+| 06 | m HARD RIDE  |  00  00 12 |                         |             |
+| 07 |   Orche Hit  |  00  00 12 | Orchestra Hit           |  000  000 0 |
+| 08 | m HEFTY BASS |  00  00 12 | Electric Bass (finger)  | -024  100 3 |
+| 09 |   AcouPiano1 |  00  00 12 | Acoustic Grand Piano    |  000  000 0 |
+| 10 | m SpaceVibes |  00  00 12 | Vibraphone              |  000  000 0 |
+| 11 | m CIGARETTE  | -24  00 12 |                         |             |
+| 12 |   AcouPiano1 |  00  00 12 | Acoustic Grand Piano    |  000  000 0 |
+| 13 |   Castanets  |  00  00 12 |                         |             |
+| 14 |   AcouPiano1 |  00  00 12 | Acoustic Grand Piano    |  000  000 0 |
+| 15 | m LUSH STRNG |  00  00 12 | String Ensemble 1       |  000  117 3 |
+| 16 |   Fantasy    |  00  00 12 | Pad 1 (new age)         |  000  000 0 |
+| 17 |   AcouPiano1 |  00  00 12 | Acoustic Grand Piano    |  000  000 0 |
+| 18 | m BIG BANJO  |  00  00 12 | FX 3 (crystal)          |  000 -010 3 |
+| 19 |   Soundtrack |  00  00 12 | FX 2 (soundtrack)       |  000  000 0 |
+| 20 |   Timpani    |  00  00 12 | Timpani                 |  000  000 0 |
+| 21 |   Fr Horn 1  |  00  00 12 | French Horn             |  000  000 0 |
+| 22 |   Trumpet 2  |  00  00 12 | Trumpet                 |  000  000 3 |
+| 23 | m SMOKING    |  00  00 12 |                         |             |
+| 24 | m F VoxStrg  |  00  00 12 | String Ensemble 1       |  000  000 0 |
+| 25 | m SqurWaveMS |  00  00 12 |                         |             |
+| 26 | m TYPIMG     |  00  00 12 |                         |             |
+| 27 | m SnglVox MS |  00  00 12 |                         |             |
+| 28 |   Str Sect 2 |  00  00 12 | String Ensemble 1       |  000  000 0 |
+| 29 |   Guitar 2   |  00  00 12 | Electric Guitar (clean) |  000  000 0 |
+| 30 |   Elec Gtr 2 |  00  00 12 | Electric Guitar (clean) |  000  000 0 |
+| 31 |   Harmonica  |  00  00 12 | Harmonica               |  000  000 0 |
+| 35 |   Sax 3      |  00  00 12 | Alto Sax                |  000  000 0 |
+| 36 |   Slap Bass1 |  00  00 12 | Slap Bass 1             |  000  000 0 |
+| 37 |   Fretless 1 |  00  00 12 | Fretless Bass           |  000  000 0 |
+| 38 |   Acou Bass1 |  00  00 12 | Acoustic Bass           |  000  000 0 |
+| 41 | r Crash Cym  |  00  00 12 |                         |             |
+| 42 | r Acou BD    |  00  00 12 |                         |             |
+| 43 | m RAP SNARE  |  00  00 12 |                         |             |
+| 44 | m BIG SNARE  |  00  00 00 |                         |             |
+| 45 | m CLOSED HAT |  00  00 12 |                         |             |
+| 46 | m SLOSH HAT  |  00  00 12 |                         |             |
+| 47 | m Gun     MS |  00  00 12 | Gunshot                 |  000  000 0 |
+| 48 | m IceBreakMS |  00  00 12 |                         |             |
+| 49 | m SHOWER     |  00  00 12 |                         |             |
+| 50 | m Pft     MS |  00  00 12 |                         |             |
+| 51 | m Chicago MS |  00  00 12 | Bright Acoustic Piano   |  000  030 0 |
+| 52 | m ROCK GUIT1 |  00  00 12 | Distortion Guitar       | -012  127 3 |
+| 53 | m Dog     MS |  00  00 12 |                         |             |
+| 54 | m TriangleMS |  00  00 12 |                         |             |
+| 55 | m CLICKS     |  00  00 12 | Woodblock               |  000  000 0 |
+| 56 |   Bird Tweet |  00  00 12 | Bird Tweet              |  000  000 0 |
+| 57 |   AcouPiano1 |  00  00 12 | Acoustic Grand Piano    |  000  000 0 |
+| 58 | m CARHORN3+4 |  00  00 12 |                         |             |
+| 59 | m CUFFS      |  00  00 12 |                         |             |
+| 60 | m ELEC PHONE |  00  00 12 |                         |             |
+| 61 | m KongHit    |  00  00 12 |                         |             |
+| 62 | m SCUFFLE    |  00  00 12 |                         |             |
+| 63 | m FUNK PING  |  00  00 12 | Orchestral Harp         |  027 -010 0 |
+| 64 | m BIG TOMS   |  00  00 12 | Taiko Drum              |  000  000 0 |
+| 65 | m ElecGtr MS |  00  00 12 | Electric Guitar (clean) | -012 -005 3 |
+| 66 | m Lock    MS |  00  00 12 |                         |             |
+| 67 |   Fretless 1 |  00  00 02 | Fretless Bass           |  000  000 0 |
+| 70 | m Armor   MS |  00  00 12 |                         |             |
+| 71 | m ElecGtr MS |  00  00 02 | Electric Guitar (clean) |  000  000 0 |
+| 77 |   Telephone  |  00  00 00 | Telephone Ring          |  000  000 0 |
+| 78 | m StoneDr MS |  00  00 12 |                         |             |
+| 79 | m Shuffle    |  00  00 12 |                         |             |
+| 80 | m Buzzer     |  00  00 12 |                         |             |
+| 81 |   Vibe 1     |  00  00 12 | Vibraphone              |  000  000 0 |
+| 82 | m ElecGtr MS |  00  00 12 | Electric Guitar (clean) |  000  000 0 |
+| 83 | r Hand Clap  |  00  00 12 |                         |             |
+| 84 | m Drip    MS |  00  00 12 |                         |             |
+| 85 | m CracklesMS |  00  00 12 |                         |             |
+| 86 | m TireSqueal |  00  00 12 | Bag pipe                |  000  025 3 |
+| 87 | m Explode MS |  00  00 12 |                         |             |
+| 88 | m DRAWER     |  00  00 12 |                         |             |
+| 89 | m KABOOM     |  00  00 12 |                         |             |
+| 90 | m GUN/STATIC |  00  00 12 |                         |             |
+| 91 | m TRAFFIC    |  00  00 12 | Seashore                |  000  000 0 |
+| 92 | m DOOR SLAM  |  00  00 12 |                         |             |
+| 93 | m CAR DOOR   |  00  00 12 |                         |             |
+| 94 | m STEPS      |  00  00 12 |                         |             |
+| 95 | m DIESEL     |  00  00 12 |                         |             |
+--------------------------------------------------------------------------
+         | ## | MT-32 Timbre |  OL PP | General MIDI Rhythm Key |
+         --------------------------------------------------------
+         | 34 | r Acou SD    | 100 07 | Electric Snare          |
+         | 35 | r Acou BD    | 100 07 | Acoustic Bass Drum      |
+         | 36 | m BIG KICK   | 095 07 | Bass Drum 1             |
+         | 37 | r Rim Shot   | 100 06 | Side Stick              |
+         | 38 | m RAP SNARE  | 100 07 | Electric Snare          |
+         | 39 | m SLAPSTICK  | 096 08 | Hand Clap               |
+         | 40 | m BIG SNARE  | 100 06 | Acoustic Snare          |
+         | 41 | m ACOU TOMS  | 080 07 | Low Floor Tom           |
+         | 42 | m CLOSED HAT | 090 06 | Closed Hi-Hat           |
+         | 43 | m ACOU TOMS  | 080 11 | High Floor Tom          |
+         | 44 | m SLOSH HAT  | 082 06 | Pedal Hi-Hat            |
+         | 45 | m ACOU TOMS  | 085 13 | Low Tom                 |
+         | 46 | m CHOKE HAT  | 072 06 | Open Hi-Hat             |
+         | 47 | m ACOU TOMS  | 080 08 | Low-Mid Tom             |
+         | 48 | m ACOU TOMS  | 069 06 | Hi-Mid Tom              |
+         | 49 | r Crash Cym  | 095 06 | Crash Cymbal 1          |
+         | 50 | m HARD RIDE  | 100 08 | Ride Cymbal 2           |
+         | 51 | m RIDE CYM   | 090 08 | Ride Cymbal 1           |
+         | 52 | m CRASH CYM  | 077 11 | Crash Cymbal 1          |
+         | 53 | m HEFTY BASS | 082 04 |                         |
+         | 54 | r Tambourine | 100 09 | Tambourine              |
+         | 56 | r Cowbell    | 100 07 | Cowbell                 |
+         | 57 | m StoneDr MS | 100 07 |                         |
+         | 58 | r Tambourine | 100 09 | Tambourine              |
+         | 60 | r High Bongo | 100 02 | Hi Bongo                |
+         | 61 | r Low Bongo  | 100 04 | Low Bongo               |
+         | 62 | r Mt HiConga | 100 08 | Mute Hi Conga           |
+         | 63 | r High Conga | 100 09 | Open Hi Conga           |
+         | 64 | r Low Conga  | 100 10 | Low Conga               |
+         | 65 | r Hi Timbale | 100 07 | High Timbale            |
+         | 66 | r LowTimbale | 100 05 | Low Timbale             |
+         | 67 | r High Agogo | 100 02 | High Agogo              |
+         | 68 | r Low Agogo  | 100 02 | Low Agogo               |
+         | 69 | r Cabasa     | 100 09 | Cabasa                  |
+         | 70 | r Maracas    | 100 04 | Maracas                 |
+         | 71 | r SmbaWhis S | 100 09 | Short Whistle           |
+         | 72 | r SmbaWhis L | 100 09 | Long Whistle            |
+         | 73 | r Quijada    | 100 10 | Short Guiro             |
+         | 75 | r Claves     | 100 12 | Claves                  |
+         | 76 | m Stir       | 100 07 | Long Guiro              |
+         | 77 | m Hit        | 100 07 | Acoustic Snare          |
+         | 78 | m Brushcym   | 090 07 | Ride Cymbal 1           |
+         --------------------------------------------------------

@@ -1,0 +1,22 @@
+#
+# FreeSCI/DOS Makefile
+#
+# 19991220              rink            created this file
+# 20000615              rink            updated this file
+#
+#
+TARGET  :       libsciengine.a
+
+FILES   =       savegame.o kernel.o kscripts.o klists.o kfile.o kgraphics.o \
+                kmath.o kevent.o kstring.o kmenu.o ksound.o vm.o game.o \
+                scriptdebug.o heap.o simplesaid.o said.o grammar.o
+
+		
+CC	= gcc
+CFLAGS	= -g -c -I../include -I../.. -D_DOS -DHAVE_LIBPNG -DHAVE_UNISTD_H
+
+clean:
+		del *.o *.a
+
+libsciengine.a:      ${FILES}
+	ar r libsciengine.a ${FILES}

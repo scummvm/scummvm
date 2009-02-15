@@ -1,0 +1,72 @@
+The way I would have made things if I had the time to do it
+Rickard Lind <rpl@dd.chalmers.se>, 2000-12-30
+-------------------------------------------------------------------------------
+
+Step 1:
+
+D rename "src/sound/midi.c" in freesci to "oldmidi.c" and still use it
+D move my "midi*" and "midiout*" to "src/sound"
+D change all "glib.h" to the real thing
+	
+Step 2:
+
+D implement all note-playing, volume changing, reverb etc in "midi_mt32.*"
+  use disassembled sierra SCI1.1 driver as the main source of inspiration
+D change "soundserver_null.c" to use the new device driver for MT-32
+* use "~/.freesci/config" to set ALSA/OSS and other options 
+
+Step 3:
+
+* Implement a GM translation driver "midi_gm.*" using a parsed textfile
+  for instrument mapping
+* Improve instrument mappings using new features such as keyshift,
+  volume adjust and velocity remap
+
+Step 4:
+
+* Reimplement a SCI0 soundserver using the new sound sub sytem
+* PCM support (samples) with ALSA and possibly DirectX
+* MPU-401 UART midiout driver for DOS/Windows
+
+Step 5:
+
+* SCI01, SCI1, SCI32 soundserver
+* Adlib support "midi_opl2.*", "oplout_alsaraw.*", "oplout_pcmemu.*"
+* PCM support Sound Blaster DOS
+
+Step 6:
+
+* Make it possible to play samples and use opl2 emulation (found in MAME
+  I think) at the same time through the same sound device
+
+Step 7:
+
+* All those other little nifty things...
+
+-------------------------------------------------------------------------------
+
+My idea concerning naming of the files:
+
+src/sound/midi.*		wrapper for MIDI device drivers
+src/sound/midiout.*		wrapper for different methods to output
+				MIDI data
+src/sound/pcm.*			wrapper for PCM device drivers
+src/sound/pcmout.*		wrapper for different methods to output
+				PCM data
+src/sound/midi_mt32.*		Roland MT-32 device driver
+src/sound/midi_opl2.*		Adlib/OPL2 device driver
+src/sound/midiout_alsaraw.*	rawmidi output using alsalib
+src/sound/midiout_unixraw.*	rawmidi output using unix filesystem
+src/sound/oplout_alsaraw.*	opl output using alsa
+
+-------------------------------------------------------------------------------
+
+Use Linux and ALSA 0.5.x (or later) and Roland MT-32 while developing.
+Don't implement supremely stupid abstract frameworks without consulting
+experienced people on the mailinglist first. There are infinite ways to
+implement the sound subsystem the VERY VERY WRONG way. Don't make
+everything too much of a hack either.
+
+Use the files is in "lists/" when doing text output for debugging purposes.
+
+Good luck!

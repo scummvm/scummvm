@@ -1,0 +1,20 @@
+#
+# FreeSCI/DOS Makefile
+#
+# 19991220              rink            created this file
+#
+#
+TARGET  :       freesci.exe
+
+FILES   =       main.o config.o
+LIBS	=	engine/libsciengine.a graphics/scigraphics.a scicore/scicore.a \
+		sound/scisound.a
+		
+CC	= gcc
+CFLAGS  = -g -c -Iinclude -I../.. -D_DOS -DHAVE_LIBPNG -DHAVE_DGFX
+
+clean:
+		del *.o *.a
+
+freesci.exe:	${FILES} ${LIBS}
+		gcc -g -o freesci.exe ${FILES} ${LIBS} -lpng -lz

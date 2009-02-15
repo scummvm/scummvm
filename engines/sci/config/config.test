@@ -1,0 +1,48 @@
+pic0_dither_mode = dither256
+pic0_brush_mode = random_ellipses
+pic0_scaled = yes
+view_filter = trilinear
+pic_filter = linear
+cursor_filter = bilinear
+text_filter = linear
+#pic_antialiasing = simple
+midiout.alsaraw.card = 0
+debugflags = +a
+
+[qg1]
+
+resource_dir = /home/creichen/work/port/sci/qg1
+
+[sq1]
+
+resource_dir = /home/creichen/work/port/sci/sq1
+
+[sq4]
+
+resource_dir = /home/creichen/work/port/sci/sq4
+
+[qg2]
+
+pic(*) *= (0.7, 0.7, 0.7);
+resource_dir = /home/creichen/work/port/sci/qg2
+version = 1.000.120
+
+[cb1]
+
+resource_dir = /home/creichen/work/port/sci/rei/cb1
+
+[lb1]
+
+resource_dir = /home/creichen/work/port/sci/amiga/cb1
+
+
+[lsl1]
+
+resource_dir = /home/creichen/work/port/sci/lsl1
+version = 1.000.577
+pic0_scaled = false
+
+[lsl2]
+
+resource_dir = /home/creichen/work/port/sci/lsl2
+%include<lsl2.scifx>

@@ -1,0 +1,28 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fsci_dll", "fsci_dll\fsci_dll.vcproj", "{B605B919-02BD-4E2D-B043-08A21736B01A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sciv", "sciv\sciv.vcproj", "{6BF71632-BD06-4D48-AE7C-21C6EB76CACA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B605B919-02BD-4E2D-B043-08A21736B01A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B605B919-02BD-4E2D-B043-08A21736B01A}.Debug|Win32.Build.0 = Debug|Win32
+		{B605B919-02BD-4E2D-B043-08A21736B01A}.Release|Win32.ActiveCfg = Release|Win32
+		{B605B919-02BD-4E2D-B043-08A21736B01A}.Release|Win32.Build.0 = Release|Win32
+		{6BF71632-BD06-4D48-AE7C-21C6EB76CACA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6BF71632-BD06-4D48-AE7C-21C6EB76CACA}.Debug|Win32.Build.0 = Debug|Win32
+		{6BF71632-BD06-4D48-AE7C-21C6EB76CACA}.Release|Win32.ActiveCfg = Release|Win32
+		{6BF71632-BD06-4D48-AE7C-21C6EB76CACA}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
+		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
+	EndGlobalSection
+EndGlobal

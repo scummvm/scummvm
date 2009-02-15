@@ -96,6 +96,11 @@ endif
 
 endif
 
+ifdef ENABLE_SCI
+DEFINES += -DENABLE_SCI=$(ENABLE_SCI)
+MODULES += engines/sci
+endif
+
 ifdef ENABLE_SKY
 DEFINES += -DENABLE_SKY=$(ENABLE_SKY)
 MODULES += engines/sky

@@ -1,0 +1,19 @@
+Directory structure:
+
+scicore/ contains all files concerning resource management and (de)compression,
+
+engine/ contains the files directly related to the VM and the text parser, such
+as heap and state management and handling for script and vocab resources.
+
+graphics/ contains graphics and input management (since input handlers are
+usually bundled with graphics libraries) and stuff for specific graphics/
+input libs.
+
+include/ contains all global header files.
+
+sound/ contains sound management, both general and specific to certain
+libraries/interfaces/daemons.
+
+tools/ contains all 'tools' for working with SCI resource data.
+
+win32/ contains the workspace and projects for Visual C++.

@@ -103,6 +103,7 @@ add_engine queen "Flight of the Amazon Queen" yes
 add_engine saga "SAGA" yes "ihnm saga2"
 add_engine ihnm "IHNM" yes
 add_engine saga2 "SAGA 2 games" no
+add_engine sci "SCI" no
 add_engine sky "Beneath a Steel Sky" yes
 add_engine sword1 "Broken Sword 1" yes
 add_engine sword2 "Broken Sword 2" yes

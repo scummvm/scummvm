@@ -1,0 +1,34 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fsci_dll", "fsci_dll\fsci_dll.vcproj", "{B605B919-02BD-4E2D-B043-08A21736B01A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sciv", "sciv\sciv.vcproj", "{6BF71632-BD06-4D48-AE7C-21C6EB76CACA}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{B605B919-02BD-4E2D-B043-08A21736B01A}.Debug.ActiveCfg = Debug|Win32
+		{B605B919-02BD-4E2D-B043-08A21736B01A}.Debug.Build.0 = Debug|Win32
+		{B605B919-02BD-4E2D-B043-08A21736B01A}.Release.ActiveCfg = Release|Win32
+		{B605B919-02BD-4E2D-B043-08A21736B01A}.Release.Build.0 = Release|Win32
+		{6BF71632-BD06-4D48-AE7C-21C6EB76CACA}.Debug.ActiveCfg = Debug|Win32
+		{6BF71632-BD06-4D48-AE7C-21C6EB76CACA}.Debug.Build.0 = Debug|Win32
+		{6BF71632-BD06-4D48-AE7C-21C6EB76CACA}.Release.ActiveCfg = Release|Win32
+		{6BF71632-BD06-4D48-AE7C-21C6EB76CACA}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
+		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
+	EndGlobalSection
+EndGlobal

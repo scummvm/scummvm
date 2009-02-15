@@ -1,0 +1,2 @@
+void
+usleep (long usec);
