@@ -88,9 +88,6 @@ class OSystem_Dreamcast : public BaseBackend, public FilesystemFactory {
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
 
-  // Fill the screen with a given color
-  void fillScreen(uint32 col);
-
   // Update the dirty areas of the screen
   void updateScreen();
 

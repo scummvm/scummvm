@@ -626,12 +626,6 @@ void OSystem_Dreamcast::unlockScreen()
   _screen_dirty = true;
 }
 
-void OSystem_Dreamcast::fillScreen(uint32 col)
-{
-  memset(screen, col, SCREEN_W*SCREEN_H);
-  _screen_dirty = true;
-}
-
 int16 OSystem_Dreamcast::getOverlayHeight()
 {
   return OVL_H;
