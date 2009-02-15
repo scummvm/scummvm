@@ -95,6 +95,8 @@ MusicPlayer::~MusicPlayer() {
 void MusicPlayer::playSong(uint16 fileref) {
 	Common::StackLock lock(_mutex);
 
+	_fadingEndVolume = 100;
+	_gameVolume = 100;
 	// Play the referenced file once
 	play(fileref, false);
 }
@@ -185,7 +187,6 @@ void MusicPlayer::startBackground() {
 void MusicPlayer::endTrack() {
 	debugC(3, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: endTrack()");
 	unload();
-	startBackground();
 }
 
 void MusicPlayer::applyFading() {
@@ -207,7 +208,6 @@ void MusicPlayer::applyFading() {
 		// If we were fading to 0, stop the playback and restore the volume
 		if (_fadingEndVolume == 0) {
 			debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Faded to zero: end of song. _fadingEndVolume set to 100");
-			_fadingEndVolume = 100;
 			unload();
 		}
 	}
@@ -239,7 +239,6 @@ bool MusicPlayer::play(uint16 fileref, bool loop) {
 
 	// Set the looping option
 	_midiParser->property(MidiParser::mpAutoLoop, loop);
-	_gameVolume = 100;
 
 	_isPlaying = true;
 	// Load the new file

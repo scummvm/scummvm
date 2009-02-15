@@ -567,7 +567,7 @@ void Script::o_bf5on() {			// 0x0A
 	_bitflags |= 1 << 5;
 }
 
-void Script::o_inputloopstart() {
+void Script::o_inputloopstart() {	//0x0B
 	debugScript(5, true, "Input loop start");
 
 	// Reset the input action and the mouse cursor
@@ -584,6 +584,8 @@ void Script::o_inputloopstart() {
 	// Save the current pressed character for the whole loop
 	_kbdChar = _eventKbdChar;
 	_eventKbdChar = 0;
+
+	_vm->_musicPlayer->startBackground();
 }
 
 void Script::o_keyboardaction() {
